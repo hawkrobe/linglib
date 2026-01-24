@@ -137,3 +137,6 @@ import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 import Linglib.Phenomena.Semantics.Entailments
 import Linglib.Phenomena.Semantics.Monotonicity
 import Linglib.Phenomena.Semantics.TruthConditions
+
+-- Word order alternations (verb position, etc.)
+import Linglib.Phenomena.WordOrderAlternations.VerbPosition.Data

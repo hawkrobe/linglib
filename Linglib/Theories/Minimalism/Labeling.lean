@@ -26,218 +26,314 @@ import Linglib.Theories.Minimalism.Containment
 namespace Minimalism.Harizanov
 
 -- ============================================================================
--- Part 1: Selection
+-- Part 1: Getting Categories from SOs
 -- ============================================================================
 
-/-- X selects Y iff X's outer sel stack starts with Y's category
+/-- Helper: does sel stack contain category? -/
+def selContains (sel : SelStack) (c : Cat) : Bool :=
+  sel.any (· == c)
+
+/-- Helper: check if option cat matches any in sel stack -/
+def selMatchesOpt (sel : SelStack) (oc : Option Cat) : Bool :=
+  match oc with
+  | some c => selContains sel c
+  | none => false
+
+/-- Get the category of an SO by finding the projecting head
+    This must match the logic in `label` -/
+partial def getCategory (so : SyntacticObject) : Option Cat :=
+  match so with
+  | .leaf tok => some tok.item.outerCat
+  | .node a b =>
+    match a.getLIToken with
+    | some tokA =>
+      match b.getLIToken with
+      | some tokB =>
+        -- Both leaves: check selection
+        if selContains tokA.item.outerSel tokB.item.outerCat then
+          some tokA.item.outerCat
+        else if selContains tokB.item.outerSel tokA.item.outerCat then
+          some tokB.item.outerCat
+        else if tokA.item.outerSel.isEmpty && !tokB.item.outerSel.isEmpty then
+          some tokB.item.outerCat
+        else
+          some tokA.item.outerCat
+      | none =>
+        -- a is leaf, b is phrase
+        let bCat := getCategory b
+        if selMatchesOpt tokA.item.outerSel bCat then
+          some tokA.item.outerCat  -- a selects b → a projects
+        else
+          bCat  -- specifier-head: phrase projects (a doesn't select b)
+    | none =>
+      match b.getLIToken with
+      | some tokB =>
+        -- a is phrase, b is leaf
+        let aCat := getCategory a
+        if selMatchesOpt tokB.item.outerSel aCat then
+          some tokB.item.outerCat  -- b selects a → b projects
+        else
+          aCat  -- specifier-head: phrase projects (b doesn't select a)
+      | none =>
+        -- Both phrases - prefer second (complement position typically)
+        let bCat := getCategory b
+        match bCat with
+        | some _ => bCat
+        | none => getCategory a
+
+/-- Get the LI of an SO (the projecting head) -/
+partial def getProjectingLI (so : SyntacticObject) : Option LexicalItem :=
+  match so with
+  | .leaf tok => some tok.item
+  | .node a b =>
+    match a.getLIToken with
+    | some tokA =>
+      match b.getLIToken with
+      | some tokB =>
+        if selContains tokA.item.outerSel tokB.item.outerCat then some tokA.item
+        else if selContains tokB.item.outerSel tokA.item.outerCat then some tokB.item
+        else if tokA.item.outerSel.isEmpty && !tokB.item.outerSel.isEmpty then some tokB.item
+        else some tokA.item
+      | none =>
+        let bCat := getCategory b
+        if selMatchesOpt tokA.item.outerSel bCat then some tokA.item
+        else getProjectingLI b  -- specifier-head: phrase projects
+    | none =>
+      match b.getLIToken with
+      | some tokB =>
+        let aCat := getCategory a
+        if selMatchesOpt tokB.item.outerSel aCat then some tokB.item
+        else getProjectingLI a  -- specifier-head: phrase projects
+      | none =>
+        match getProjectingLI b with
+        | some li => some li
+        | none => getProjectingLI a
+
+-- ============================================================================
+-- Part 2: Selection (Decidable)
+-- ============================================================================
+
+/-- X selects Y iff X's selectional requirements include Y's category
 
     Selection is what triggers projection: the selector projects.
     When V[D] merges with DP, V selects D, so V projects. -/
+def selectsB (selector selected : SyntacticObject) : Bool :=
+  match selector.getLIToken with
+  | some tok =>
+    match tok.item.outerSel, getCategory selected with
+    | c :: _, some selCat => c == selCat
+    | _, _ => false
+  | none =>
+    -- selector is a phrase - check its head's selection
+    match getProjectingLI selector with
+    | some li =>
+      match li.outerSel, getCategory selected with
+      | c :: _, some selCat => c == selCat
+      | _, _ => false
+    | none => false
+
+/-- Propositional version of selection -/
 def selects (selector selected : SyntacticObject) : Prop :=
-  match selector.getLIToken, selected with
-  | some tok, _ =>
-    match tok.item.outerSel with
-    | [] => False  -- nothing to select
-    | c :: _ =>
-      -- The selector's first selectional requirement must match
-      -- the category of the selected element
-      match selected.getLIToken with
-      | some selTok => selTok.item.outerCat = c
-      | none => False  -- For now, require selected to be LI
-  | none, _ => False
+  selectsB selector selected = true
+
+instance (x y : SyntacticObject) : Decidable (selects x y) :=
+  inferInstanceAs (Decidable (selectsB x y = true))
 
 -- ============================================================================
--- Part 2: Labels (Definition 16-17)
+-- Part 3: Labels (Definition 16-17) - Selection-Based
 -- ============================================================================
 
-/-- The label of an SO
+/-- The label of an SO - determined by which element projects
 
     - For an LI token: its lexical item
-    - For a set {X, Y}: the label of whichever element projects
+    - For a set {X, Y}: the label of whichever element selects the other
 
-    "The label of X is the label of the projecting element"
-
-    Note: This is partial - not all SOs have a label (e.g., if neither
-    element projects, as in certain symmetric structures) -/
+    "The label of X is the label of the projecting element" -/
 def label : SyntacticObject → Option LexicalItem
   | .leaf tok => some tok.item
-  | .node a _b =>
-    -- The projecting element determines the label
-    -- For now: the first element projects if it's an LI
-    -- (Full implementation requires tracking selection)
-    match a with
-    | .leaf tok => some tok.item
-    | .node _ _ => label a
+  | .node a b =>
+    -- The selector projects
+    if selectsB a b then label a
+    else if selectsB b a then label b
+    else
+      -- Neither selects directly. This happens in specifier-head structures.
+      -- Try to find which one is the "head" (has selectional features remaining)
+      match a.getLIToken, b.getLIToken with
+      | some tokA, some tokB =>
+        -- Both are leaves - the one with selectional features projects
+        if tokA.item.outerSel.isEmpty && !tokB.item.outerSel.isEmpty then
+          some tokB.item  -- b is the head
+        else
+          some tokA.item  -- default: a projects
+      | some _tok, none =>
+        -- a is leaf, b is phrase: phrase projects (specifier-head)
+        -- The leaf is a specifier unless it selects the phrase
+        label b
+      | none, some _tok =>
+        -- a is phrase, b is leaf: phrase projects (specifier-head)
+        -- The leaf is a specifier unless it selects the phrase
+        label a
+      | none, none =>
+        -- Both are phrases - recurse on both, prefer the one with sel features
+        match label a, label b with
+        | some liA, some liB =>
+          if liA.outerSel.isEmpty && !liB.outerSel.isEmpty then some liB
+          else some liA
+        | some li, none => some li
+        | none, some li => some li
+        | none, none => none
+
+/-- Get the category from the label -/
+def labelCat (so : SyntacticObject) : Option Cat :=
+  (label so).map (·.outerCat)
 
 /-- Two SOs have the same label -/
 def sameLabel (x y : SyntacticObject) : Prop :=
   label x = label y ∧ label x ≠ none
 
+def sameLabelB (x y : SyntacticObject) : Bool :=
+  match label x, label y with
+  | some lx, some ly => lx.features == ly.features
+  | _, _ => false
+
+instance (x y : SyntacticObject) : Decidable (sameLabel x y) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 -- ============================================================================
--- Part 3: Projection (Definition 20)
+-- Part 4: Projection (Definition 20)
 -- ============================================================================
 
-/-- X projects in Y iff X's label = Y's label and X is immediately contained in Y
-
-    "X projects in Y iff X is immediately contained in Y and
-    the label of X is the label of Y"
-
-    This captures the notion that X's categorial identity becomes
-    the categorial identity of the larger structure Y. -/
+/-- X projects in Y iff X's label = Y's label and X is immediately contained in Y -/
 def projectsIn (x y : SyntacticObject) : Prop :=
   immediatelyContains y x ∧ sameLabel x y
+
+def projectsInB (x y : SyntacticObject) : Bool :=
+  match y with
+  | .leaf _ => false
+  | .node a b => (x == a || x == b) && sameLabelB x y
+
+instance (x y : SyntacticObject) : Decidable (projectsIn x y) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- X projects iff X projects in some containing SO -/
 def projects (x root : SyntacticObject) : Prop :=
   ∃ y, containsOrEq root y ∧ projectsIn x y
 
 -- ============================================================================
--- Part 4: Maximality and Minimality (Definition 21)
+-- Part 5: Maximality and Minimality (Definition 21)
 -- ============================================================================
 
 /-- X is minimal in Y iff X is a term of Y and X doesn't project in anything in Y
 
-    "X is +minimal in Y iff X is a term of Y and there is no Z such that
-    Z is a term of Y and X projects in Z"
-
-    Intuitively: nothing in Y has X's label as a result of X projecting. -/
+    Intuitively: X is at the bottom of a projection chain -/
 def isMinimalIn (x y : SyntacticObject) : Prop :=
   isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn x z
 
-/-- X is maximal in Y iff X is a term of Y and nothing in Y projects into X
+/-- X is maximal in Y iff X is a term of Y and nothing projects into X
+    (except X itself, trivially)
 
-    "X is +maximal in Y iff X is a term of Y and there is no Z such that
-    Z is a term of Y and Z projects in X and Z ≠ X"
-
-    Intuitively: X's label is not "inherited" from a projecting element inside it. -/
+    Intuitively: X is at the top of its projection chain -/
 def isMaximalIn (x y : SyntacticObject) : Prop :=
   isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn z x ∧ z ≠ x
 
 -- ============================================================================
--- Part 5: Heads and Phrases (Definition 22)
+-- Part 6: Heads and Phrases (Definition 22)
 -- ============================================================================
 
 /-- A head in Y: +minimal, -maximal
 
-    "X is a head in Y iff X is +minimal and -maximal in Y"
-
-    Heads project but are not themselves projections of something larger.
-    They are "at the bottom" of a projection chain. -/
+    Heads project upward - they are at the bottom of their chain
+    but the chain continues above them. -/
 def isHeadIn (x y : SyntacticObject) : Prop :=
   isMinimalIn x y ∧ ¬isMaximalIn x y
 
 /-- A phrase in Y: +maximal
 
-    "X is a phrase in Y iff X is +maximal in Y"
-
-    Phrases are projections that have "topped out" - they don't project further.
-    Minimality is irrelevant for phrasehood. -/
+    Phrases are at the top of their projection chain. -/
 def isPhraseIn (x y : SyntacticObject) : Prop :=
   isMaximalIn x y
 
-/-- X-bar level: +minimal, +maximal
-
-    Not a head (would need -maximal) and not necessarily a phrase in the
-    traditional sense. These are intermediate projections. -/
+/-- Intermediate projection: +minimal, +maximal
+    (A lone LI that neither projects from below nor above) -/
 def isIntermediateIn (x y : SyntacticObject) : Prop :=
   isMinimalIn x y ∧ isMaximalIn x y
 
 -- ============================================================================
--- Part 6: Key Theorem: LI Tokens are Minimal
+-- Part 7: Concrete Examples for Testing
 -- ============================================================================
 
-/-- An LI token is always minimal in any containing structure
+/-- A verb "eat" that selects D (needs an object) -/
+def verbEat : LIToken := ⟨.simple .V [.D], 1⟩
 
-    Reasoning: LI tokens don't contain anything, so they can't have
-    anything project into them. And they don't project "in" themselves. -/
-theorem li_token_minimal (tok : LIToken) (root : SyntacticObject)
-    (h : isTermOf (.leaf tok) root) :
-    isMinimalIn (.leaf tok) root := by
-  constructor
-  · exact h
-  · intro ⟨z, _, hproj⟩
-    -- x projects in z means z immediately contains x
-    obtain ⟨himm, _⟩ := hproj
-    -- But z immediately containing leaf tok means z = node _ _
-    -- and then leaf tok would need to be contained, but we showed
-    -- leaf_contains_nothing, which is about contains not immediatelyContains
-    -- Actually immediatelyContains is fine here
-    cases z with
-    | leaf _ => simp [immediatelyContains] at himm
-    | node a b =>
-      -- This is fine - the leaf can be immediately contained
-      -- The issue is whether the leaf "projects in" z
-      -- For a leaf to project in z, we need sameLabel (leaf tok) z
-      -- which requires label z = some tok.item
-      -- This can happen if z's label comes from the leaf
-      sorry  -- Need more careful tracking of projection
+/-- A noun "pizza" with no selectional requirements -/
+def nounPizza : LIToken := ⟨.simple .N [], 2⟩
+
+/-- A determiner "the" that selects N -/
+def detThe : LIToken := ⟨.simple .D [.N], 3⟩
+
+/-- Build: [D the] merges with [N pizza] → D projects (D selects N) -/
+def theDP : SyntacticObject := .node (.leaf detThe) (.leaf nounPizza)
+
+#eval selectsB (.leaf detThe) (.leaf nounPizza)  -- true: D selects N
+#eval labelCat theDP  -- some .D (the determiner projects)
+
+/-- Build: [V eat] merges with [DP the pizza] → V projects (V selects D) -/
+def eatPizzaVP : SyntacticObject := .node (.leaf verbEat) theDP
+
+#eval selectsB (.leaf verbEat) theDP  -- true: V selects D
+#eval labelCat eatPizzaVP  -- some .V (the verb projects)
 
 -- ============================================================================
--- Part 7: Projection Chains
--- ============================================================================
-
-/-- A projection chain is a sequence of SOs where each projects in the next -/
-def ProjectionChain : List SyntacticObject → Prop
-  | [] => True
-  | [_] => True
-  | x :: y :: rest => projectsIn x y ∧ ProjectionChain (y :: rest)
-
-/-- The head of a projection chain -/
-def chainHead : List SyntacticObject → Option SyntacticObject
-  | [] => none
-  | x :: _ => some x
-
-/-- The maximal projection of a chain -/
-def chainMax : List SyntacticObject → Option SyntacticObject
-  | [] => none
-  | [x] => some x
-  | _ :: rest => chainMax rest
-
--- ============================================================================
--- Part 8: Specifier, Complement, Adjunct
--- ============================================================================
-
-/-- X is a specifier in Y iff X is a phrase immediately contained in Y
-    and X's sister projects
-
-    Specifiers are maximal projections that are sisters to projecting heads. -/
-def isSpecifierIn (x y root : SyntacticObject) : Prop :=
-  isPhraseIn x root ∧ immediatelyContains y x ∧
-  ∃ z, immediatelyContains y z ∧ z ≠ x ∧ projectsIn z y
-
-/-- X is a complement of Y iff X is selected by Y
-
-    Complements satisfy selectional requirements. -/
-def isComplementOf (comp head : SyntacticObject) : Prop :=
-  selects head comp
-
--- ============================================================================
--- Part 9: The Critical Insight: Maximality is Relational
+-- Part 8: Understanding Min/Max with Examples
 -- ============================================================================
 
 /-
-## Why Maximality Matters for Head Movement
+## How Minimality and Maximality Work
 
-Harizanov's key insight: The same LI can be:
-- A HEAD in one position: +min, -max (projects further up)
-- A PHRASE in another position: +max (does not project)
+Given the definitions:
+- X projects in Z ⟺ Z immediately contains X AND label(X) = label(Z)
+- +minimal in Y: X doesn't project in anything in Y
+- +maximal in Y: nothing in Y projects in X
 
-When a head X moves:
-- **Head-to-specifier**: X becomes +max in the new position (a phrase)
-- **Head-to-head**: X remains -max (reprojects, stays a head)
+For our example structures:
 
-This relational view explains:
-1. How head movement changes syntactic status
-2. Why head-to-head requires complex LIs (for reprojection)
-3. The interpretive differences between movement types
+**theDP = {D, N}** where D selects N, so D projects:
+- label(theDP) = D's LI
+- D projects in theDP (theDP contains D, same label)
+- N does NOT project in theDP (different label)
+
+Status of D in theDP:
+- D projects in theDP → D is -minimal
+- Nothing projects in D (D is a leaf) → D is +maximal
+- D: -min, +max
+
+Status of theDP in theDP:
+- theDP doesn't project in anything (nothing contains it) → theDP is +minimal
+- D projects in theDP → theDP is -maximal
+- theDP: +min, -max
+
+**eatPizzaVP = {V, theDP}** where V selects D, so V projects:
+- label(eatPizzaVP) = V's LI
+
+Status of V in eatPizzaVP:
+- V projects in eatPizzaVP → V is -minimal
+- Nothing projects in V (V is a leaf) → V is +maximal
+- V: -min, +max
+
+**Summary Table:**
+| Element | in itself | in containing phrase |
+|---------|-----------|---------------------|
+| Leaf head | -min, +max | -min, +max |
+| Phrase | +min, -max | +min, +max (if not selected) |
+
+The key insight: "head" in Harizanov's sense (+min, -max) refers to
+the PHRASE that is projected into, not the lexical item doing the projecting!
 -/
 
-/-- An element's maximality can differ between positions
-
-    This is the formalization of Harizanov's key insight. -/
-theorem maximality_is_relational :
-    ∃ (x : SyntacticObject) (y z : SyntacticObject),
-      isMaximalIn x y ∧ ¬isMaximalIn x z := by
-  sorry  -- Constructive proof requires building specific structures
+-- Verify with computation
+#eval projectsInB (.leaf detThe) theDP        -- true: D projects in DP
+#eval projectsInB (.leaf nounPizza) theDP     -- false: N doesn't project
+#eval projectsInB (.leaf verbEat) eatPizzaVP  -- true: V projects in VP
+#eval projectsInB theDP eatPizzaVP            -- false: DP doesn't project in VP
 
 end Minimalism.Harizanov
