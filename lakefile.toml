@@ -1,0 +1,10 @@
+name = "linglib"
+version = "0.1.0"
+defaultTargets = ["Linglib"]
+
+[leanOptions]
+autoImplicit = false
+
+[[lean_lib]]
+name = "Linglib"
+globs = ["Linglib.+"]

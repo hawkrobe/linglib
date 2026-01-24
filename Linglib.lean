@@ -1,0 +1,115 @@
+/-
+# Linglib
+
+A Lean 4 library for formalizing syntactic theories from theoretical linguistics
+and connecting them to computational pragmatics (RSA - Rational Speech Acts).
+
+## Architecture
+
+### Core/ - Shared types and interfaces
+- Core.Basic: Word, Cat, ClauseType, Lexicon
+- Core.Grammar: Abstract Grammar typeclass
+- Core.SemanticTypes: Semantic types
+- Core.SemanticBackend: Interface that RSA needs from syntax
+
+### Theories/ - Theoretical frameworks
+- CCG/: Combinatory Categorial Grammar
+- HPSG/: Head-Driven Phrase Structure Grammar
+- Minimalism/: Minimalist Program
+- DependencyGrammar/: Word Grammar (Hudson)
+- Montague/: Montague-style compositional semantics
+- NeoGricean/: Neo-Gricean pragmatics (Geurts 2010)
+- Surface/: Simple constraint-checking grammar
+
+### Phenomena/ - Empirical data (theory-independent)
+- Basic: MinimalPair, PhenomenonData
+- EmpiricalData: Data types, linking functions
+- SubjectAuxInversion/, Coordination/, LongDistanceDependencies/
+- ScalarImplicatures/, FreeChoice/, DisjunctionIgnorance/
+- GoodmanStuhlmuller2013/, FrankGoodman2012/ (RSA reference game experiments)
+- GeurtsPouscoulous2009/ (scalar implicature rates: defaultism vs contextualism)
+
+## Coverage Matrix
+
+                    Coordination  Inversion  LongDistance  ScalarImplicature
+CCG                      ✓            -           -              -
+HPSG                     -            ✓           -              -
+Minimalism               -            ✓           -              -
+DependencyGrammar        ✓            ✓           ✓              -
+Montague                 -            -           -              -
+NeoGricean               -            -           -              ✓
+RSA                      -            -           -              ✓
+
+Missing Theories/X/Y.lean = conjecture (theory hasn't proven it handles Y)
+-/
+
+-- Core types and interfaces
+import Linglib.Core.Basic
+import Linglib.Core.Grammar
+import Linglib.Core.SemanticTypes
+import Linglib.Core.SemanticBackend
+import Linglib.Core.Frac
+import Linglib.Core.RSA
+
+-- Phenomena (empirical data)
+import Linglib.Phenomena.Basic
+import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.SubjectAuxInversion.Data
+import Linglib.Phenomena.Coordination.Data
+import Linglib.Phenomena.LongDistanceDependencies.Data
+import Linglib.Phenomena.GoodmanStuhlmuller2013.Data
+import Linglib.Phenomena.FrankGoodman2012.Data
+
+-- BasicPhenomena
+import Linglib.Phenomena.BasicPhenomena.Agreement
+import Linglib.Phenomena.BasicPhenomena.Case
+import Linglib.Phenomena.BasicPhenomena.DativeAlternation
+import Linglib.Phenomena.BasicPhenomena.DetNounAgreement
+import Linglib.Phenomena.BasicPhenomena.Passive
+import Linglib.Phenomena.BasicPhenomena.Subcategorization
+import Linglib.Phenomena.BasicPhenomena.WordOrder
+import Linglib.Phenomena.BasicPhenomena.Proofs
+
+-- Theories
+import Linglib.Theories.HPSG.Basic
+import Linglib.Theories.HPSG.Features
+import Linglib.Theories.HPSG.Inversion
+
+import Linglib.Theories.Minimalism.Basic
+import Linglib.Theories.Minimalism.Structure
+import Linglib.Theories.Minimalism.Inversion
+
+import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.LexicalRules
+import Linglib.Theories.DependencyGrammar.Inversion
+import Linglib.Theories.DependencyGrammar.Coordination
+import Linglib.Theories.DependencyGrammar.LongDistance
+
+import Linglib.Theories.CCG.Basic
+import Linglib.Theories.CCG.Semantics
+import Linglib.Theories.CCG.Coordination
+
+import Linglib.Theories.Montague.Basic
+
+import Linglib.Theories.Semantics.Numbers
+import Linglib.Theories.Semantics.Scales
+import Linglib.Theories.Semantics.Entailment
+
+import Linglib.Theories.NeoGricean.Basic
+import Linglib.Theories.NeoGricean.Competence
+import Linglib.Theories.NeoGricean.Alternatives
+import Linglib.Theories.NeoGricean.ScalarImplicatures
+
+import Linglib.Theories.RSA.Basic
+import Linglib.Theories.RSA.GoodmanStuhlmuller2013
+import Linglib.Theories.RSA.FrankGoodman2012
+
+import Linglib.Theories.Surface.Basic
+
+-- Pragmatic phenomena (theory-neutral examples)
+import Linglib.Phenomena.ScalarImplicatures.Data
+import Linglib.Phenomena.FreeChoice.Data
+import Linglib.Phenomena.DisjunctionIgnorance.Data
+
+-- Experimental studies on scalar implicatures
+import Linglib.Phenomena.GeurtsPouscoulous2009.Data
