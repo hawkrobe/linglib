@@ -26,6 +26,7 @@ and connecting them to computational pragmatics (RSA - Rational Speech Acts).
 - EmpiricalData: Data types, linking functions
 - SubjectAuxInversion/, Coordination/, LongDistanceDependencies/
 - ScalarImplicatures/, FreeChoice/, DisjunctionIgnorance/
+- WordOrderAlternations/VerbPosition/ (V2, verb raising, long head movement)
 - GoodmanStuhlmuller2013/, FrankGoodman2012/ (RSA reference game experiments)
 - GeurtsPouscoulous2009/ (scalar implicature rates: defaultism vs contextualism)
 

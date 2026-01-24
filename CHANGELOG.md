@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.1] - 2025-01-24
+
+### Changed
+- **Renamed** `Phenomena/HeadMovement/` → `Phenomena/WordOrderAlternations/VerbPosition/` (theory-neutral naming)
+- **Fixed** specifier-head labeling: in `{Spec, XP}` configurations, the phrase XP now correctly projects
+
+### Fixed
+- Labeling in specifier-head structures: previously defaulted to leaf; now correctly chooses phrase
+- All `#eval` tests pass: V in Spec-CP yields C label, V doesn't project in specifier position
+
 ## [0.4.0] - 2025-01-24
 
 ### Added
@@ -9,6 +19,7 @@
 - **Minimalism/Labeling.lean**: Labels, projection, maximality/minimality (relational properties), heads vs phrases
 - **Minimalism/HeadMovement/Basic.lean**: Two movement types (head-to-spec, head-to-head), complex LI formation
 - **Minimalism/Constraints/HMC.lean**: Head Movement Constraint, violations, Amalgamation distinction
+- **Phenomena/WordOrderAlternations/VerbPosition/Data.lean**: Concrete phrase structures for testing
 - **docs/MILESTONE_HEAD_MOVEMENT.md**: Detailed roadmap for full formalization
 
 ### Key Formalizations
@@ -21,6 +32,7 @@
 ### Architecture
 - Harizanov's definitions live in `Minimalism.Harizanov` namespace (separate from existing Minimalism)
 - Core insight formalized: maximality is RELATIONAL, not intrinsic
+- Phenomena use theory-neutral names (`WordOrderAlternations/VerbPosition/`)
 
 ## [0.3.0] - 2025-01-24
 
