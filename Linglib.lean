@@ -86,6 +86,7 @@ import Linglib.Theories.Minimalism.Containment
 import Linglib.Theories.Minimalism.Labeling
 import Linglib.Theories.Minimalism.HeadMovement.Basic
 import Linglib.Theories.Minimalism.Constraints.HMC
+import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
 
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Theories.DependencyGrammar.LexicalRules

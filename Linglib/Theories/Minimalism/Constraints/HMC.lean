@@ -76,12 +76,28 @@ def interveningHead (x y intervener root : SyntacticObject) : Prop :=
 def skipsHead (m : Movement) (root : SyntacticObject) : Prop :=
   ∃ intervener, interveningHead m.mover m.target intervener root
 
-/-- Skipping a head violates HMC -/
+/-- Skipping a head violates HMC
+
+    Proof sketch: If there's an intervening head Z between X (mover) and Y (target),
+    then for any potential landing site L:
+    - Either L doesn't immediately c-command X (because Z is between)
+    - Or L = Z (but then L doesn't satisfy HMC's "immediate" requirement
+      since there may be further interveners)
+
+    The key is that immediatelyCCommands requires NO element between L and X,
+    but interveningHead provides exactly such an element. -/
 theorem skipping_violates_hmc (m : Movement) (root : SyntacticObject)
-    (_h : skipsHead m root) : violatesHMC m root := by
+    (h : skipsHead m root) : violatesHMC m root := by
   -- The existence of an intervening head contradicts the
   -- "immediate c-command" requirement of HMC
-  sorry
+  --
+  -- h says: ∃ intervener, isHeadIn intervener ∧ intervener between target and mover
+  -- respectsHMC requires: ∃ landingSite, immediatelyCCommands landingSite mover
+  -- But the intervener breaks "immediate" - there's always something in between
+  --
+  -- Full proof requires showing that any landingSite satisfying c-command
+  -- must have the intervener between it and the mover.
+  sorry  -- Requires formalizing tree geometry of c-command paths
 
 -- ============================================================================
 -- Part 4: Both Syntactic Head Movement Types Violate HMC
@@ -107,17 +123,111 @@ This violation is what distinguishes syntactic head movement from
 Amalgamation (which happens at PF and respects locality).
 -/
 
-/-- Head-to-specifier movement can violate HMC -/
-theorem head_to_spec_can_violate_hmc :
-    ∃ (m : HeadToSpecMovement) (root : SyntacticObject),
-      violatesHMC m.toMovement root := by
-  sorry  -- Constructive proof requires building Bulgarian LHM example
+/-- Head-to-specifier movement ALWAYS violates HMC (universal claim)
 
-/-- Head-to-head movement can violate HMC -/
+    From Harizanov (p.12, p.29): In head-to-specifier movement, the head X
+    becomes a maximal projection in its derived position.
+
+    This violates HMC because:
+    - HMC requires `isHeadIn mover root`
+    - `isHeadIn` requires `¬isMaximalIn mover root`
+    - But head-to-spec movement is DEFINED by `isMaximalIn mover result`
+    - Therefore the mover is NOT a head in the result
+    - Therefore HMC fails
+
+    This is a universal proof: ANY head-to-spec movement violates HMC,
+    by the very definition of what head-to-spec movement is. -/
+theorem head_to_spec_violates_hmc (m : HeadToSpecMovement) :
+    violatesHMC m.toMovement m.result := by
+  -- The mover is maximal in result (by definition of head-to-spec)
+  -- But respectsHMC requires isHeadIn mover root
+  -- And isHeadIn requires ¬isMaximalIn
+  -- Contradiction!
+  unfold violatesHMC respectsHMC
+  intro ⟨_landingSite, _hImm, hMoverHead, _hLandingHead⟩
+  -- hMoverHead : isHeadIn m.mover m.result
+  -- But m.mover_is_maximal : isMaximalIn m.mover m.result
+  unfold isHeadIn at hMoverHead
+  obtain ⟨_hMin, hNotMax⟩ := hMoverHead
+  exact hNotMax m.mover_is_maximal
+
+-- ============================================================================
+-- Part 4a: Position-Aware HMC Violation (for Multidominance)
+-- ============================================================================
+
+/-
+## Position-Specific HMC Violation
+
+The standard `head_to_spec_violates_hmc` uses global `isMaximalIn`.
+In multidominant structures (copy theory), this fails because the mover
+projects at its base position (in VP) even though it's maximal at its
+derived position (Spec-CP).
+
+The position-aware version captures Harizanov's insight that maximality
+is evaluated AT A SPECIFIC POSITION, not globally. The mover is maximal
+"at its derived position" (p.29), which is sufficient to violate HMC.
+
+Key insight: HMC requires the mover to be a HEAD at its landing site.
+Being maximal at the landing site means NOT being a head there.
+Position-specific maximality captures this correctly.
+-/
+
+/-- Position-aware HMC: a head must be non-maximal AT ITS POSITION -/
+def respectsHMC_positional (m : Movement) (root : SyntacticObject) (pos : TreePos) : Prop :=
+  ∃ landingSite : SyntacticObject,
+    immediatelyCCommands landingSite m.mover root ∧
+    isHeadIn m.mover root ∧
+    isHeadIn landingSite root ∧
+    -- Additionally: mover must not be maximal at this position
+    ¬isMaximalAtPosition m.mover root pos
+
+/-- Position-aware HMC violation -/
+def violatesHMC_positional (m : Movement) (root : SyntacticObject) (pos : TreePos) : Prop :=
+  ¬respectsHMC_positional m root pos
+
+/-- Head-to-specifier movement (positional) violates HMC
+
+    This version works correctly with multidominance:
+    - The mover is maximal AT ITS DERIVED POSITION
+    - This means it's NOT a head at that position
+    - Therefore HMC fails for the derived position
+
+    Unlike the global version, we don't need to claim global maximality. -/
+theorem head_to_spec_violates_hmc_positional (m : HeadToSpecMovementPositional) :
+    violatesHMC_positional m.toMovement m.result derivedSpecPosition := by
+  unfold violatesHMC_positional respectsHMC_positional
+  intro ⟨_landingSite, _hImm, _hMoverHead, _hLandingHead, hNotMax⟩
+  -- hNotMax : ¬isMaximalAtPosition m.mover m.result derivedSpecPosition
+  -- But m.mover_maximal_at_derived : isMaximalAtPosition m.mover m.result derivedSpecPosition
+  exact hNotMax m.mover_maximal_at_derived
+
+/-- Head-to-head movement can violate HMC (when there are intervening heads)
+
+    Unlike head-to-spec (which violates HMC by definition), head-to-head
+    violations depend on the STRUCTURE of the target: specifically, whether
+    there are intervening heads between mover and landing site.
+
+    From Harizanov (p.36): "verb raises directly to its final landing site,
+    moving across any and all intervening functional heads"
+
+    The key difference from head-to-spec:
+    - Head-to-spec: Mover becomes +max, so `isHeadIn mover result` fails
+    - Head-to-head: Mover stays a head, but `immediatelyCCommands` fails
+      due to intervening heads
+
+    This is an EXISTENTIAL claim because not all head-to-head movements
+    necessarily have intervening heads (though empirically attested cases do). -/
 theorem head_to_head_can_violate_hmc :
     ∃ (m : HeadToHeadMovement) (root : SyntacticObject),
       violatesHMC m.toMovement root := by
-  sorry  -- Constructive proof requires building V2 example
+  -- This requires constructing a specific structure with intervening heads
+  -- (e.g., V-to-C with T intervening)
+  sorry
+
+/-- If a head-to-head movement skips a head, it violates HMC -/
+theorem head_to_head_with_intervener_violates_hmc (m : HeadToHeadMovement)
+    (h : skipsHead m.toMovement m.result) : violatesHMC m.toMovement m.result :=
+  skipping_violates_hmc m.toMovement m.result h
 
 -- ============================================================================
 -- Part 5: Amalgamation Respects HMC

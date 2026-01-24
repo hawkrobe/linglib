@@ -106,9 +106,26 @@ theorem head_to_head_yields_minimal (m : HeadToHeadMovement) :
 /-- Head-to-head: the mover determines the label (reprojection) -/
 theorem head_to_head_mover_labels (m : HeadToHeadMovement) :
     ∃ z, containsOrEq m.result z ∧ projectsIn m.mover z := by
-  -- The mover projects in the result (by not being maximal)
-  -- This follows from the definition of non-maximality
-  sorry  -- Requires more detailed projection tracking
+  -- From mover_is_minimal, we get isTermOf m.mover m.result
+  -- From mover_not_maximal combined with the above, we get
+  -- ∃ z, isTermOf z m.result ∧ projectsIn m.mover z
+  --
+  -- Then isTermOf z m.result ↔ containsOrEq m.result z
+  have hTerm : isTermOf m.mover m.result := m.mover_is_minimal.1
+  -- ¬isMaximalIn means: ¬isTermOf ∨ ∃z, isTermOf z ∧ projectsIn mover z
+  -- Since we have isTermOf, we must have the existential
+  have hNotMax := m.mover_not_maximal
+  unfold isMaximalIn at hNotMax
+  push_neg at hNotMax
+  obtain ⟨z, hzTerm, hProj⟩ := hNotMax hTerm
+  use z
+  constructor
+  · -- isTermOf z m.result means z = m.result ∨ contains m.result z
+    -- containsOrEq m.result z means m.result = z ∨ contains m.result z
+    rcases hzTerm with rfl | hContains
+    · exact Or.inl rfl
+    · exact Or.inr hContains
+  · exact hProj
 
 -- ============================================================================
 -- Part 4: Complex LI Formation
@@ -209,5 +226,76 @@ axiom head_to_head_is_local :
     isLocal m.toMovement phaseHead
 
 -- Head-to-spec can be non-local (No axiom requiring locality - it's permitted to be long-distance)
+
+-- ============================================================================
+-- Part 8: Position-Indexed Head Movement (Collins & Stabler)
+-- ============================================================================
+
+/-
+## Position-Specific Maximality
+
+Following Collins & Stabler (2016, cited in Harizanov footnote 11), maximality
+is evaluated at a POSITION (path from root), not globally.
+
+In multidominant structures (copy theory), the same element can be:
+- Maximal at Spec-CP (derived position): doesn't project there
+- Non-maximal at VP (base position): projects there
+
+The key insight: we need to check maximality AT THE DERIVED POSITION specifically,
+not globally across all occurrences.
+-/
+
+/-- Head-to-specifier movement with position-specific maximality.
+
+    This structure uses position-indexed maximality rather than global maximality.
+    The mover is maximal AT ITS DERIVED POSITION (Spec), even if it projects
+    at other positions (e.g., its base position in VP under multidominance).
+
+    In Internal Merge forming {X, Y}:
+    - X (mover) goes to the LEFT (specifier position = derivedSpecPosition)
+    - Y (target) stays on the RIGHT and projects -/
+structure HeadToSpecMovementPositional extends Movement where
+  /-- Mover was a head somewhere in the target (before extraction) -/
+  mover_was_head : isHeadIn mover target
+  /-- At the derived position (Spec), mover is maximal -/
+  mover_maximal_at_derived : isMaximalAtPosition mover result derivedSpecPosition
+  /-- The target projects (determines the label of result) -/
+  target_projects : projectsIn target result
+
+/-- In head-to-spec, the mover is at the left daughter of result -/
+theorem head_to_spec_mover_position (m : HeadToSpecMovementPositional) :
+    atPosition m.result derivedSpecPosition = some m.mover := by
+  simp only [derivedSpecPosition]
+  rw [m.is_merge]
+  simp only [merge, atPosition]
+
+/-- The target (Y) projects, so it has the same label as the result -/
+theorem head_to_spec_target_labels_positional (m : HeadToSpecMovementPositional) :
+    sameLabel m.target m.result := by
+  obtain ⟨_, hsame⟩ := m.target_projects
+  exact hsame
+
+/-- Convert positional head-to-spec to the standard version when possible.
+
+    If an element is maximal at its derived position AND doesn't project
+    anywhere else in the result, then global maximality holds.
+
+    This doesn't apply in true multidominance where the element projects
+    at some other position, but works for simple cases. -/
+def positionalToGlobal (m : HeadToSpecMovementPositional)
+    (h : ¬∃ z, isTermOf z m.result ∧ projectsIn m.mover z) : HeadToSpecMovement where
+  toMovement := m.toMovement
+  mover_was_head := m.mover_was_head
+  mover_is_maximal := by
+    unfold isMaximalIn
+    constructor
+    · -- mover is a term of result
+      unfold isTermOf
+      right
+      rw [m.is_merge]
+      simp only [merge]
+      exact contains.imm _ _ (Or.inl rfl)
+    · exact h
+  target_projects := m.target_projects
 
 end Minimalism.Harizanov

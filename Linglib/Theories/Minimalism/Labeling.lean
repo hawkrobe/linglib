@@ -356,4 +356,112 @@ The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection
 #eval projectsInB (.leaf verbEat) eatPizzaVP  -- true: V projects in VP
 #eval projectsInB theDP eatPizzaVP            -- false: DP doesn't project in VP
 
+-- ============================================================================
+-- Part 9: Position-Indexed Maximality (Collins & Stabler 2016)
+-- ============================================================================
+
+/-
+## Position vs Occurrence (Harizanov footnote 11, p.9)
+
+Following Collins & Stabler (2016), a POSITION is a path from the root to
+an element. An OCCURRENCE is a pair of (element, position).
+
+In multidominant structures (copy theory), the same element can appear at
+multiple positions with DIFFERENT maximality properties:
+- At Spec-CP: verb is maximal (doesn't project there)
+- At VP: verb projects (not maximal there)
+
+The global `isMaximalIn` checks ALL positions. For head-to-specifier movement,
+we need position-specific maximality: the element is maximal AT ITS DERIVED POSITION.
+-/
+
+/-- A position in a tree: path from root to an element.
+    `here` = at this node
+    `left p` = go left, then follow p
+    `right p` = go right, then follow p -/
+inductive TreePos where
+  | here : TreePos
+  | left : TreePos → TreePos
+  | right : TreePos → TreePos
+  deriving Repr, DecidableEq
+
+/-- Get the SO at a given position (if it exists) -/
+def atPosition : SyntacticObject → TreePos → Option SyntacticObject
+  | so, .here => some so
+  | .leaf _, .left _ => none
+  | .leaf _, .right _ => none
+  | .node a _, .left p => atPosition a p
+  | .node _ b, .right p => atPosition b p
+
+/-- The parent position (one step up toward root) -/
+def parentPos : TreePos → Option TreePos
+  | .here => none
+  | .left p => some p
+  | .right p => some p
+
+/-- Get the parent SO of a position -/
+def parentSO (root : SyntacticObject) (pos : TreePos) : Option SyntacticObject :=
+  match parentPos pos with
+  | none => none
+  | some pp => atPosition root pp
+
+/-- Get the sibling SO at a position -/
+def siblingSO (root : SyntacticObject) (pos : TreePos) : Option SyntacticObject :=
+  match parentSO root pos with
+  | none => none
+  | some parent =>
+    match parent with
+    | .leaf _ => none
+    | .node a b =>
+      match pos with
+      | .here => none  -- root has no sibling
+      | .left _ => some b  -- if we went left, sibling is right
+      | .right _ => some a  -- if we went right, sibling is left
+
+/-- X projects AT POSITION p in root iff:
+    - X is at position p
+    - The parent at p has the same label as X
+
+    This is position-specific: checks projection only at this occurrence -/
+def projectsAtPosition (x root : SyntacticObject) (pos : TreePos) : Prop :=
+  atPosition root pos = some x ∧
+  match parentSO root pos with
+  | none => False  -- root cannot project (nothing contains it)
+  | some parent => sameLabel x parent
+
+/-- X is maximal AT POSITION p in root iff:
+    - X is at position p
+    - X does NOT project at position p (parent has different label or is root)
+
+    This captures Harizanov's "maximal in its derived position" -/
+def isMaximalAtPosition (x root : SyntacticObject) (pos : TreePos) : Prop :=
+  atPosition root pos = some x ∧
+  ¬projectsAtPosition x root pos
+
+/-- X is a specifier at position p iff:
+    - X is at position p
+    - X is maximal at p (doesn't project)
+    - X's sibling DOES project (the sibling is the "head" of the phrase) -/
+def isSpecifierAtPosition (x root : SyntacticObject) (pos : TreePos) : Prop :=
+  isMaximalAtPosition x root pos ∧
+  match siblingSO root pos with
+  | none => False
+  | some sib =>
+    match parentSO root pos with
+    | none => False
+    | some parent => sameLabel sib parent
+
+/-- Find positions where x occurs in root -/
+def findPositions (x root : SyntacticObject) : List TreePos :=
+  let rec go (so : SyntacticObject) (pos : TreePos) (acc : List TreePos) : List TreePos :=
+    let acc' := if so == x then pos :: acc else acc
+    match so with
+    | .leaf _ => acc'
+    | .node a b => go b (.right pos) (go a (.left pos) acc')
+  go root .here []
+
+/-- The derived position in head-to-specifier movement is the specifier position.
+    In {X, Y} where Y is the target (projects), X is at the LEFT (Spec) position -/
+def derivedSpecPosition : TreePos := .left .here
+
 end Minimalism.Harizanov
