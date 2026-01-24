@@ -23,8 +23,12 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.Montague.Scales
+import Linglib.Theories.Montague.SemDerivation
 
 namespace NeoGricean.Alternatives
+
+-- Use shared ContextPolarity from SemDerivation
+open Montague.SemDeriv (ContextPolarity)
 
 -- ============================================================================
 -- PART 1: Horn Sets (Not Scales)
@@ -95,16 +99,8 @@ def numeralSet : HornSet String :=
 -- PART 3: Sentence Context
 -- ============================================================================
 
-/--
-Context type determines which direction is "stronger".
-
-In UE context, more specific/restrictive is stronger.
-In DE context, the entailment pattern reverses.
--/
-inductive ContextPolarity where
-  | upwardEntailing   -- Default: stronger = more informative
-  | downwardEntailing -- Reversed: weaker word = stronger sentence
-  deriving DecidableEq, BEq, Repr
+-- Note: ContextPolarity is imported from Montague.SemDeriv
+-- with constructors .upward and .downward
 
 /--
 A sentence context for alternative generation.
@@ -123,7 +119,7 @@ structure SentenceContext where
 Common UE context: simple assertion
 -/
 def simpleAssertion : SentenceContext :=
-  { polarity := .upwardEntailing
+  { polarity := .upward
   , description := "Simple assertion (e.g., 'John ate ___')"
   }
 
@@ -131,7 +127,7 @@ def simpleAssertion : SentenceContext :=
 Common DE context: under negation
 -/
 def underNegation : SentenceContext :=
-  { polarity := .downwardEntailing
+  { polarity := .downward
   , description := "Under negation (e.g., 'No one ate ___')"
   }
 
@@ -139,7 +135,7 @@ def underNegation : SentenceContext :=
 DE context: restrictor of universal
 -/
 def universalRestrictor : SentenceContext :=
-  { polarity := .downwardEntailing
+  { polarity := .downward
   , description := "Restrictor of 'every' (e.g., 'Every student who ate ___')"
   }
 
@@ -228,8 +224,8 @@ Entailment checker for quantifiers.
 def quantifierChecker : EntailmentChecker String :=
   { isStronger := fun pol q1 q2 =>
       match pol with
-      | .upwardEntailing => quantifierStrengthUE q1 q2
-      | .downwardEntailing => quantifierStrengthDE q1 q2
+      | .upward => quantifierStrengthUE q1 q2
+      | .downward => quantifierStrengthDE q1 q2
   }
 
 -- ============================================================================

@@ -88,6 +88,7 @@ import Linglib.Theories.DependencyGrammar.LongDistance
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.CCG.Coordination
+import Linglib.Theories.CCG.Interpret
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
@@ -100,6 +101,8 @@ import Linglib.Theories.Montague.SyntaxInterface
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Entailment
+import Linglib.Theories.Montague.Lexicon
+import Linglib.Theories.Montague.SemDerivation
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence
@@ -109,6 +112,9 @@ import Linglib.Theories.NeoGricean.ScalarImplicatures
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
 import Linglib.Theories.RSA.FrankGoodman2012
+import Linglib.Theories.RSA.ScalarImplicatures
+
+import Linglib.Theories.PragmaticComparison
 
 import Linglib.Theories.Surface.Basic
 

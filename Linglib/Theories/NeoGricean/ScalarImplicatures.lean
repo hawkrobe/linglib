@@ -24,12 +24,14 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 
 import Linglib.Theories.NeoGricean.Alternatives
 import Linglib.Theories.Montague.Entailment
+import Linglib.Theories.Montague.SemDerivation
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 
 namespace NeoGricean.ScalarImplicatures
 
 open NeoGricean.Alternatives
 open NeoGricean
+open Montague.SemDeriv (ContextPolarity)
 
 -- ============================================================================
 -- PART 1: DE Environment Effects
@@ -147,8 +149,8 @@ def connectiveStrengthUE (c1 c2 : String) : Bool :=
 def connectiveChecker : EntailmentChecker String :=
   { isStronger := fun pol c1 c2 =>
       match pol with
-      | .upwardEntailing => connectiveStrengthUE c1 c2
-      | .downwardEntailing => c1 == "or" && c2 == "and"  -- reversed
+      | .upward => connectiveStrengthUE c1 c2
+      | .downward => c1 == "or" && c2 == "and"  -- reversed
   }
 
 /--
@@ -396,40 +398,162 @@ theorem some_de_no_implicatures :
   native_decide
 
 -- ============================================================================
--- PART 6: Summary
+-- PART 6: Derivation from Semantic Interface
 -- ============================================================================
 
 /-
-## What This Module Provides
+## Connection to Syntax via SemDeriv.Derivation
 
-### Types
-- `ImplicatureDerivation`: Result of attempting to derive an implicature
-- `DisjunctionInference`: Exclusivity vs ignorance
-- `DisjunctionAnalysis`: Analysis of disjunctive utterance
-- `LongDisjunction`: Analysis of n-way disjunction
-- `SubstitutionComparison`: Comparing substitution to closure
-- `ScalarImplicatureResult`: Complete derivation result
+This part connects NeoGricean pragmatics to the syntax-semantics pipeline.
+Any syntax theory (CCG, HPSG, Minimalism) that produces a `SemDeriv.Derivation`
+can feed into these functions.
+
+```
+CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarImplicatureResult
+```
+-/
+
+open Montague
+open Montague.SemDeriv
+open Montague.Lexicon
+
+/--
+Map scale membership to the appropriate HornSet and EntailmentChecker.
+-/
+def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
+  match sm with
+  | .quantifier _ => (quantifierSet, quantifierChecker)
+  | .connective _ => (connectiveSet, connectiveChecker)
+  | .modal _ => (connectiveSet, connectiveChecker)  -- simplified for now
+  | .numeral _ => (quantifierSet, quantifierChecker)  -- simplified for now
+
+/--
+Create a SentenceContext from a ContextPolarity.
+-/
+def toSentenceContext (ctx : ContextPolarity) : SentenceContext :=
+  { polarity := ctx
+  , description := match ctx with
+    | .upward => "Upward-entailing context"
+    | .downward => "Downward-entailing context"
+  }
+
+/--
+Derive scalar implicatures from a semantic derivation.
+
+This is the key function that connects syntax to pragmatics:
+1. Takes a SemDeriv.Derivation (produced by any syntax theory)
+2. Extracts scalar items from the derivation
+3. For each scalar item, derives implicatures based on its scale
+4. Returns all derived implicatures
+
+**Syntax-agnostic**: Works with CCG, HPSG, Minimalism, or any theory
+that implements the SemDeriv interface.
+-/
+def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
+    : List ScalarImplicatureResult :=
+  d.scalarItems.filterMap fun occ =>
+    match occ.entry.scaleMembership with
+    | none => none
+    | some sm =>
+      let (hornSet, checker) := getScaleInfo sm
+      let sentCtx := toSentenceContext ctx
+      some (deriveScalarImplicatures occ.entry.form hornSet checker sentCtx)
+
+/--
+Check if any implicature in the results negates a given alternative.
+-/
+def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Bool :=
+  results.any fun r => r.implicatures.contains s!"not({alt})"
+
+/--
+**Example: "some students sleep" via CCG**
+
+Using the CCG derivation from CCG/Interpret.lean:
+-/
+def someStudentsSleep_result : List ScalarImplicatureResult :=
+  deriveFromDerivation Montague.SemDeriv.someStudentsSleep .upward
+
+/--
+**Theorem: "some students sleep" derives "not(all)"**
+
+This is the key milestone theorem: starting from a semantic derivation
+(which could come from CCG), NeoGricean pragmatics derives "not all".
+-/
+theorem some_students_derives_not_all :
+    hasImplicature someStudentsSleep_result "all" = true := by
+  native_decide
+
+/--
+**Theorem: "some students sleep" derives "not(most)" as well**
+-/
+theorem some_students_derives_not_most :
+    hasImplicature someStudentsSleep_result "most" = true := by
+  native_decide
+
+/--
+**Example: "every student sleeps" in UE**
+
+"every" is at the top of the quantifier scale, so no stronger alternatives.
+-/
+def everyStudentsSleeps_result : List ScalarImplicatureResult :=
+  deriveFromDerivation Montague.SemDeriv.everyStudentSleeps .upward
+
+/--
+**Theorem: "every student sleeps" has no implicatures**
+
+Since "every/all" is the strongest quantifier, there are no stronger
+alternatives to negate.
+-/
+theorem every_students_no_implicatures :
+    everyStudentsSleeps_result.all (·.implicatures.isEmpty) = true := by
+  native_decide
+
+/--
+**Example: "some students sleep" in DE context**
+
+In a downward-entailing context (e.g., "No one thinks some students sleep"),
+the "not all" implicature is blocked.
+-/
+def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
+  deriveFromDerivation Montague.SemDeriv.someStudentsSleep .downward
+
+/--
+**Theorem: "some" in DE has no "not all" implicature**
+
+Downward-entailing contexts block the standard scalar implicature.
+-/
+theorem some_students_de_no_not_all :
+    hasImplicature someStudentsSleep_DE_result "all" = false := by
+  native_decide
+
+-- ============================================================================
+-- PART 6b: Summary (Derivation Interface)
+-- ============================================================================
+
+/-
+## What the Derivation Interface Provides
 
 ### Key Functions
-- `deriveImplicature`: Derive single implicature
-- `analyzeDisjunction`: Analyze disjunction inferences
-- `analyzeLongDisjunction`: Get all alternatives for n-way disjunction
-- `deriveScalarImplicatures`: Complete implicature derivation
+- `deriveFromDerivation`: Main pipeline function
+- `hasImplicature`: Check for specific implicature
+- `getScaleInfo`: Map scale membership to HornSet
 
 ### Key Theorems
-- `de_blocks_some_not_all`: DE blocks "some → not all"
-- `de_all_has_implicature`: In DE, "all" gets implicatures
-- `disjunction_exclusivity_ue`: Disjunction has exclusivity in UE
-- `exclusivity_ignorance_compatible`: Both inferences compatible
-- `substitution_works_n2`: Substitution OK for 2-way disjunction
-- `substitution_fails_n3`: Substitution fails for 3+ disjuncts
-- `some_ue_implicatures`: "some" in UE → [not(most), not(all)]
-- `some_de_no_implicatures`: "some" in DE → []
+- `some_students_derives_not_all`: Pipeline derives "not all" from "some"
+- `some_students_derives_not_most`: Also derives "not most"
+- `every_students_no_implicatures`: Top of scale has no SIs
+- `some_students_de_no_not_all`: DE blocks SIs
 
-### Connection to Geurts (2010)
-- Ch. 3.2: DE blocking
-- Ch. 3.3: Disjunction (p.61-64)
-- Substitution vs closure for long disjunctions
+### Architecture
+```
+SemDeriv.Derivation (syntax-agnostic)
+        │
+        ▼
+deriveFromDerivation (this file)
+        │
+        ▼
+ScalarImplicatureResult
+```
 -/
 
 -- ============================================================================

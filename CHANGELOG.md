@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.3.0] - 2025-01-24
+
+### Added
+- **End-to-end scalar implicature pipeline**: CCG → Montague → NeoGricean/RSA
+- **Montague/Lexicon.lean**: Lexical entries with semantic denotations and scale membership
+- **Montague/SemDerivation.lean**: Syntax-agnostic interface for pragmatics (`SemDeriv.Derivation`)
+- **CCG/Interpret.lean**: Converts CCG derivations to semantic derivations
+- **RSA/ScalarImplicatures.lean**: RSA derivation of "some → not all"
+- **PragmaticComparison.lean**: Agreement theorem proving NeoGricean and RSA derive same implicature
+- **docs/ROADMAP.md**: Technical debt and future work tracking
+- **docs/MILESTONE_SCALAR_IMPLICATURE.md**: Pipeline architecture documentation
+
+### Changed
+- Consolidated `ContextPolarity` (was duplicated in SemDeriv and Alternatives)
+- Extended `NeoGricean/ScalarImplicatures.lean` with `deriveFromDerivation` consuming `SemDeriv.Derivation`
+
+### Architecture
+- Pragmatics imports from Montague's `SemDerivation`, not from specific syntax theories
+- Any syntax theory (CCG, HPSG, Minimalism) can produce derivations for pragmatics
+
 ## [0.2.0] - 2025-01-24
 
 ### Added
