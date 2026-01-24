@@ -223,39 +223,54 @@ def projects (x root : SyntacticObject) : Prop :=
 -- Part 5: Maximality and Minimality (Definition 21)
 -- ============================================================================
 
-/-- X is minimal in Y iff X is a term of Y and X doesn't project in anything in Y
+/-- X is minimal in Y iff X is a term of Y and X doesn't contain anything
 
-    Intuitively: X is at the bottom of a projection chain -/
+    From Harizanov: "A head is thus a strictly minimal element, one that
+    does not contain anything (and is therefore an LI)"
+
+    +min = is a leaf/LI -/
 def isMinimalIn (x y : SyntacticObject) : Prop :=
-  isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn x z
+  isTermOf x y ∧
+  match x with
+  | .leaf _ => True
+  | .node _ _ => False
 
-/-- X is maximal in Y iff X is a term of Y and nothing projects into X
-    (except X itself, trivially)
+/-- X is maximal in Y iff X is a term of Y and X doesn't project in anything in Y
 
-    Intuitively: X is at the top of its projection chain -/
+    +max = X is at the top of its projection chain (nothing contains X with same label)
+
+    From Harizanov: a phrase is +max, meaning it's a maximal projection -/
 def isMaximalIn (x y : SyntacticObject) : Prop :=
-  isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn z x ∧ z ≠ x
+  isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn x z
 
 -- ============================================================================
 -- Part 6: Heads and Phrases (Definition 22)
 -- ============================================================================
 
-/-- A head in Y: +minimal, -maximal
+/-- A head in Y: +minimal AND -maximal
 
-    Heads project upward - they are at the bottom of their chain
-    but the chain continues above them. -/
+    From Harizanov (22b): "A head is an SO that is both +min and −max"
+
+    This means: X is an LI (doesn't contain anything) AND X projects
+    (is contained by something with same label).
+
+    Footnote: "a head is an LI which projects" -/
 def isHeadIn (x y : SyntacticObject) : Prop :=
   isMinimalIn x y ∧ ¬isMaximalIn x y
 
 /-- A phrase in Y: +maximal
 
-    Phrases are at the top of their projection chain. -/
+    From Harizanov (22a): "A phrase is an SO that is +max (and ±min)"
+
+    A phrase is a maximal projection - at the top of its projection chain. -/
 def isPhraseIn (x y : SyntacticObject) : Prop :=
   isMaximalIn x y
 
-/-- Intermediate projection: +minimal, +maximal
-    (A lone LI that neither projects from below nor above) -/
-def isIntermediateIn (x y : SyntacticObject) : Prop :=
+/-- An LI that doesn't project: +minimal AND +maximal
+
+    This is an LI that is simultaneously at the bottom (is a leaf)
+    and top (doesn't project) of its chain. Not a "head" per (22b). -/
+def isNonProjectingLI (x y : SyntacticObject) : Prop :=
   isMinimalIn x y ∧ isMaximalIn x y
 
 -- ============================================================================
@@ -288,46 +303,51 @@ def eatPizzaVP : SyntacticObject := .node (.leaf verbEat) theDP
 -- ============================================================================
 
 /-
-## How Minimality and Maximality Work
+## How Minimality and Maximality Work (Corrected)
+
+From Harizanov's text:
+- **+minimal**: "does not contain anything (and is therefore an LI)" = is a leaf
+- **+maximal**: doesn't project (nothing contains it with same label)
+- **Head (22b)**: +min AND -max = "an LI which projects"
+- **Phrase (22a)**: +max (and ±min) = maximal projection
 
 Given the definitions:
 - X projects in Z ⟺ Z immediately contains X AND label(X) = label(Z)
-- +minimal in Y: X doesn't project in anything in Y
-- +maximal in Y: nothing in Y projects in X
+- +minimal: X is a leaf (doesn't contain anything)
+- +maximal: X doesn't project in anything (top of projection chain)
 
 For our example structures:
 
 **theDP = {D, N}** where D selects N, so D projects:
 - label(theDP) = D's LI
 - D projects in theDP (theDP contains D, same label)
-- N does NOT project in theDP (different label)
 
 Status of D in theDP:
-- D projects in theDP → D is -minimal
-- Nothing projects in D (D is a leaf) → D is +maximal
-- D: -min, +max
+- D is a leaf → D is +minimal
+- D projects in theDP → D is -maximal
+- D: +min, -max = HEAD ✓
 
 Status of theDP in theDP:
-- theDP doesn't project in anything (nothing contains it) → theDP is +minimal
-- D projects in theDP → theDP is -maximal
-- theDP: +min, -max
+- theDP is a node → theDP is -minimal
+- theDP doesn't project in anything (it's the root) → theDP is +maximal
+- theDP: -min, +max = PHRASE ✓
 
 **eatPizzaVP = {V, theDP}** where V selects D, so V projects:
 - label(eatPizzaVP) = V's LI
 
 Status of V in eatPizzaVP:
-- V projects in eatPizzaVP → V is -minimal
-- Nothing projects in V (V is a leaf) → V is +maximal
-- V: -min, +max
+- V is a leaf → V is +minimal
+- V projects in eatPizzaVP → V is -maximal
+- V: +min, -max = HEAD ✓
 
 **Summary Table:**
-| Element | in itself | in containing phrase |
-|---------|-----------|---------------------|
-| Leaf head | -min, +max | -min, +max |
-| Phrase | +min, -max | +min, +max (if not selected) |
+| Element    | +min?        | +max?           | Status  |
+|------------|--------------|-----------------|---------|
+| Leaf (LI)  | Yes (leaf)   | No (projects)   | HEAD    |
+| Phrase     | No (node)    | Yes (top)       | PHRASE  |
+| Non-proj LI| Yes (leaf)   | Yes (no proj)   | ±min,+max |
 
-The key insight: "head" in Harizanov's sense (+min, -max) refers to
-the PHRASE that is projected into, not the lexical item doing the projecting!
+The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection.
 -/
 
 -- Verify with computation
