@@ -22,6 +22,7 @@ LingLean is a Lean 4 library for formalizing syntactic theories from theoretical
    - `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
    - `HPSG/`: Head-Driven Phrase Structure Grammar (constraint-based, feature structures)
    - `Minimalism/`: Minimalist Program (derivational, Merge + Move operations)
+   - `DependencyGrammar/`: Word Grammar (Hudson 1984, 1990) - dependency-based, auxiliaries as heads
 
 2. **Semantics Layer** (`LingLean/Semantics/`)
    - `Basic.lean`: Semantic types (`Model`, `SemType`)
@@ -29,7 +30,9 @@ LingLean is a Lean 4 library for formalizing syntactic theories from theoretical
 
 3. **Phenomena Layer** (`LingLean/Phenomena/`)
    - `Basic.lean`: `MinimalPair`, `PhenomenonData` - data structures for empirical generalizations
-   - `SubjectAuxInversion/`: Case study with both HPSG and Minimalist analyses
+   - `SubjectAuxInversion/`: Subject-auxiliary inversion (HPSG, Minimalism, Word Grammar analyses)
+   - `LongDistanceDependencies/`: Wh-questions, relative clauses, complement clauses
+   - `Coordination/`: NP, VP, and S coordination
 
 ### Key Abstractions
 
@@ -39,10 +42,21 @@ LingLean is a Lean 4 library for formalizing syntactic theories from theoretical
 
 ### Design Pattern
 
-Phenomena are specified as minimal pairs (grammatical/ungrammatical sentence lists with clause types). Multiple frameworks (HPSG, Minimalism) implement analyses. Proofs show each framework captures the phenomenon. This enables comparing frameworks on the same empirical data.
+Each phenomenon has:
+- `Data.lean`: Minimal pairs (grammatical/ungrammatical sentences) + `Captures*` typeclass
+- `HPSG.lean`, `Minimalism.lean`, `WordGrammar.lean`: Framework-specific analyses
+
+Multiple frameworks (HPSG, Minimalism, Word Grammar) implement analyses for the same empirical data. Proofs show each framework captures the phenomenon. This enables comparing frameworks on identical data.
 
 ## Lean Conventions
 
 - `autoImplicit` is disabled (explicit type parameters required)
 - `pp.unicode.fun` is enabled for pretty printing
 - No external dependencies beyond Lean 4 standard library
+
+## References
+
+- Gibson (2025) "Syntax", MIT Press. https://mitpress.mit.edu/9780262553575/syntax/
+- Hudson (1984, 1990) "Word Grammar" / "English Word Grammar"
+- Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
+- Chomsky (1995) "The Minimalist Program"
