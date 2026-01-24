@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.4.0] - 2025-01-24
+
+### Added
+- **Harizanov's Head Movement Theory** (first pass formalization)
+- **Minimalism/SyntacticObjects.lean**: Lexical Items (simple & complex), LI tokens, Syntactic Objects, Merge
+- **Minimalism/Containment.lean**: Immediate containment, transitive containment (dominance), c-command, sisters
+- **Minimalism/Labeling.lean**: Labels, projection, maximality/minimality (relational properties), heads vs phrases
+- **Minimalism/HeadMovement/Basic.lean**: Two movement types (head-to-spec, head-to-head), complex LI formation
+- **Minimalism/Constraints/HMC.lean**: Head Movement Constraint, violations, Amalgamation distinction
+- **docs/MILESTONE_HEAD_MOVEMENT.md**: Detailed roadmap for full formalization
+
+### Key Formalizations
+- **Definition 10-11**: Lexical Items as ⟨CAT, SEL⟩ pairs; complex LIs for head-to-head movement
+- **Definition 13-14**: Immediate containment and transitive containment (dominance)
+- **Definition 16-22**: Labeling, projection, maximality/minimality, heads/phrases
+- **Two movement types**: Head-to-specifier (mover becomes +max) vs head-to-head (mover stays +min)
+- **HMC**: Both syntactic head movement types violate HMC (distinguishes from Amalgamation)
+
+### Architecture
+- Harizanov's definitions live in `Minimalism.Harizanov` namespace (separate from existing Minimalism)
+- Core insight formalized: maximality is RELATIONAL, not intrinsic
+
 ## [0.3.0] - 2025-01-24
 
 ### Added
