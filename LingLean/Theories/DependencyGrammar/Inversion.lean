@@ -10,9 +10,8 @@ Word Grammar (Hudson 1984, 1990) handles inversion via:
 Reference: Hudson (1990), Gibson (2025) Section 3.5-3.6
 -/
 
+import LingLean.Theories.DependencyGrammar.LexicalRules
 import LingLean.Phenomena.SubjectAuxInversion.Data
-import LingLean.Syntax.DependencyGrammar.Basic
-import LingLean.Syntax.DependencyGrammar.LexicalRules
 
 open DepGrammar Lexicon
 
@@ -154,10 +153,6 @@ theorem inverted_tree_satisfies_inv_argstr :
 /-- The non-inverted tree satisfies the non-inverted argument structure -/
 theorem noninverted_tree_satisfies_argstr :
     satisfiesArgStr johnCanSleepTree 1 argStr_Aux = true := rfl
-
--- ============================================================================
--- Summary
--- ============================================================================
 
 /-
 The Dependency Grammar analysis correctly predicts:

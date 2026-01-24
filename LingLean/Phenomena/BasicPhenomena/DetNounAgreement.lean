@@ -27,7 +27,7 @@ Some determiners (the, some) are compatible with either.
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

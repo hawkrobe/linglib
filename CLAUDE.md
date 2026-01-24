@@ -15,38 +15,65 @@ LingLean is a Lean 4 library for formalizing syntactic theories from theoretical
 
 ## Architecture
 
-### Three-Layer Design
+### Core/ - Shared Types and Interfaces
 
-1. **Syntax Layer** (`LingLean/Syntax/`)
-   - `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
-   - `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
-   - `HPSG/`: Head-Driven Phrase Structure Grammar (constraint-based, feature structures)
-   - `Minimalism/`: Minimalist Program (derivational, Merge + Move operations)
-   - `DependencyGrammar/`: Word Grammar (Hudson 1984, 1990) - dependency-based, auxiliaries as heads
+Minimal, theory-neutral definitions that all frameworks can extend:
 
-2. **Semantics Layer** (`LingLean/Semantics/`)
-   - `Basic.lean`: Semantic types (`Model`, `SemType`)
-   - `Backend.lean`: `SemanticBackend` typeclass defining the interface RSA needs (Utterance, World, φ function)
+- `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
+- `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
+- `SemanticTypes.lean`: Basic semantic types
+- `SemanticBackend.lean`: Interface RSA needs from syntax (Utterance, World, φ function)
 
-3. **Phenomena Layer** (`LingLean/Phenomena/`)
-   - `Basic.lean`: `MinimalPair`, `PhenomenonData` - data structures for empirical generalizations
-   - `SubjectAuxInversion/`: Subject-auxiliary inversion (HPSG, Minimalism, Word Grammar analyses)
-   - `LongDistanceDependencies/`: Wh-questions, relative clauses, complement clauses
-   - `Coordination/`: NP, VP, and S coordination
+### Theories/ - Theoretical Frameworks
+
+All syntactic/semantic frameworks live here. Theories can extend Core types and implement interfaces:
+
+- `CCG/`: Combinatory Categorial Grammar
+- `HPSG/`: Head-Driven Phrase Structure Grammar (constraint-based, feature structures)
+- `Minimalism/`: Minimalist Program (derivational, Merge + Move operations)
+- `DependencyGrammar/`: Word Grammar (Hudson 1984, 1990) - dependency-based
+- `Montague/`: Montague-style compositional semantics
+- `Surface/`: Simple constraint-checking grammar for basic phenomena
+
+Each theory directory contains:
+- `Basic.lean`: Core machinery for that framework
+- `{Phenomenon}.lean`: Theory's coverage of specific phenomena (e.g., `Coordination.lean`, `Inversion.lean`)
+
+### Phenomena/ - Empirical Data (Theory-Independent)
+
+Pure empirical facts with citations, no theoretical commitments:
+
+- `Basic.lean`: `MinimalPair`, `PhenomenonData` - data structures for empirical generalizations
+- `EmpiricalData.lean`: Data types, linking functions
+- `SubjectAuxInversion/Data.lean`: Inversion minimal pairs
+- `Coordination/Data.lean`: Coordination minimal pairs
+- `LongDistanceDependencies/Data.lean`: Wh-questions, relative clauses
+- `BasicPhenomena/`: Agreement, case, subcategorization, word order, etc.
 
 ### Key Abstractions
 
 - **Grammar typeclass**: Defines `Derivation`, `realizes`, and `derives` - any syntactic framework must implement this
-- **CapturesInversion typeclass**: Framework-neutral spec that a grammar correctly handles subject-aux inversion
 - **SemanticBackend typeclass**: What pragmatics needs from syntax - utterances, worlds, and agreement function φ
+- **Captures* typeclasses**: Framework-neutral specs that a grammar correctly handles a phenomenon
 
 ### Design Pattern
 
-Each phenomenon has:
-- `Data.lean`: Minimal pairs (grammatical/ungrammatical sentences) + `Captures*` typeclass
-- `HPSG.lean`, `Minimalism.lean`, `WordGrammar.lean`: Framework-specific analyses
+- **Phenomena/X/Data.lean** = empirical facts + citations (theory-neutral)
+- **Theories/Y/X.lean** = theory Y's coverage of phenomenon X
+- Missing `Theories/Y/X.lean` = conjecture (theory hasn't proven it handles X)
 
-Multiple frameworks (HPSG, Minimalism, Word Grammar) implement analyses for the same empirical data. Proofs show each framework captures the phenomenon. This enables comparing frameworks on identical data.
+Multiple frameworks can implement analyses for the same empirical data. This enables comparing frameworks on identical data.
+
+### Coverage Matrix
+
+```
+                    Coordination  Inversion  LongDistance
+CCG                      ✓            -           -
+HPSG                     -            ✓           -
+Minimalism               -            ✓           -
+DependencyGrammar        ✓            ✓           ✓
+Montague                 -            -           -
+```
 
 ## Lean Conventions
 

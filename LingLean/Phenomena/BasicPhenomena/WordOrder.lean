@@ -17,7 +17,7 @@ The subject precedes the verb, and the object follows the verb.
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

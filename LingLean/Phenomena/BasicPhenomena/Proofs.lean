@@ -5,7 +5,7 @@ Formal verification that the surface grammar correctly distinguishes
 grammatical from ungrammatical sentences for each phenomenon.
 -/
 
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 import LingLean.Phenomena.BasicPhenomena.Agreement
 import LingLean.Phenomena.BasicPhenomena.Subcategorization
 import LingLean.Phenomena.BasicPhenomena.WordOrder

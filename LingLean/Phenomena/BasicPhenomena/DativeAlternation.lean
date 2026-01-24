@@ -34,7 +34,7 @@ A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

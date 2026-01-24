@@ -1,7 +1,7 @@
 /-
-# LingLean.Syntax.Basic
+# LingLean.Core.Basic
 
-Core syntactic types shared across all frameworks.
+Core types shared across all theoretical frameworks.
 -/
 
 -- ============================================================================

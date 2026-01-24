@@ -23,7 +23,7 @@ English pronouns show morphological case:
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

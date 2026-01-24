@@ -22,7 +22,7 @@ Spec,CP  C'
 Subject is in Spec,TP. T hosts tense/auxiliaries. C hosts complementizers.
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
 namespace Minimalism
 

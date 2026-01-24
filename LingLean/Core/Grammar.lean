@@ -1,10 +1,10 @@
 /-
-# LingLean.Syntax.Grammar
+# LingLean.Core.Grammar
 
 Abstract grammar interface that all syntactic frameworks implement.
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
 -- ============================================================================
 -- Grammar Typeclass

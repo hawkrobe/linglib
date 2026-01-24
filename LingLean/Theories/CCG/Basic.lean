@@ -24,7 +24,7 @@ CCG is a lexicalized grammar where:
 - Steedman & Baldridge (2011). Combinatory Categorial Grammar.
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
 namespace CCG
 

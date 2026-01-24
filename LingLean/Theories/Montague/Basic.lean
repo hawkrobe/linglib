@@ -18,9 +18,9 @@ The meaning of a phrase is computed from its parts:
 - Function application: if α has type σ → τ and β has type σ, then ⟦α β⟧ = ⟦α⟧(⟦β⟧)
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
-namespace Semantics
+namespace Montague
 
 -- ============================================================================
 -- Semantic Types
@@ -237,4 +237,4 @@ The agreement function φ is 1 if true, 0 if false.
 (This would require importing SemanticBackend and more setup)
 -/
 
-end Semantics
+end Montague

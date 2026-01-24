@@ -16,7 +16,7 @@ This file defines the feature types. Phrase structure rules and
 unification are in Basic.lean.
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
 namespace HPSG
 
@@ -25,7 +25,7 @@ namespace HPSG
 -- ============================================================================
 
 /-- Verb form features -/
-inductive VForm where
+inductive VForm' where
   | finite
   | infinitive
   | gerund
@@ -40,8 +40,8 @@ inductive Inv where
   deriving Repr, DecidableEq
 
 /-- Head features bundle -/
-structure HeadFeatures where
-  vform : VForm := .finite
+structure HeadFeatures' where
+  vform : VForm' := .finite
   inv : Inv := .minus
   aux : Bool := false
   deriving Repr, DecidableEq

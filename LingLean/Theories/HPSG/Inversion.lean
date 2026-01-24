@@ -14,7 +14,8 @@ Builds on the general feature system from Features.lean.
 This derives the word order asymmetry between matrix and embedded questions.
 -/
 
-import LingLean.Syntax.HPSG.Features
+import LingLean.Theories.HPSG.Features
+import LingLean.Phenomena.SubjectAuxInversion.Data
 
 namespace HPSG
 
@@ -143,5 +144,59 @@ example : licenses [john, can, eat] .embeddedQuestion :=
 
 example : ¬ licenses [can, john, eat] .embeddedQuestion :=
   not_licenses_embedded_aux_first _ rfl
+
+-- ============================================================================
+-- Connect HPSG.licenses to Grammar.derives
+-- ============================================================================
+
+/-- HPSG licensing as a grammar -/
+structure HPSGInversionGrammar where
+
+instance : Grammar HPSGInversionGrammar where
+  Derivation := List Word × ClauseType
+  realizes d ws ct := d.1 = ws ∧ d.2 = ct
+  derives _ ws ct := licenses ws ct
+
+-- ============================================================================
+-- Proofs for Inversion Minimal Pairs
+-- ============================================================================
+
+-- Pair 1: Matrix wh-question
+#eval auxPrecedesSubject [what, can, john, eat]  -- true (grammatical)
+#eval auxPrecedesSubject [what, john, can, eat]  -- false (ungrammatical)
+
+-- Pair 2: Matrix yes-no question
+#eval auxPrecedesSubject [can, john, eat, pizza]  -- true (grammatical)
+#eval auxPrecedesSubject [john, can, eat, pizza]  -- false (ungrammatical)
+
+/-- "What can John eat?" is licensed as a matrix question -/
+theorem pair1_grammatical : licenses [what, can, john, eat] .matrixQuestion :=
+  licenses_matrix_aux_first _ rfl
+
+/-- "What John can eat?" is NOT licensed as a matrix question -/
+theorem pair1_ungrammatical : ¬ licenses [what, john, can, eat] .matrixQuestion :=
+  not_licenses_matrix_subject_first _ rfl
+
+/-- "Can John eat pizza?" is licensed as a matrix question -/
+theorem pair2_grammatical : licenses [can, john, eat, pizza] .matrixQuestion :=
+  licenses_matrix_aux_first _ rfl
+
+/-- "John can eat pizza?" is NOT licensed as a matrix question -/
+theorem pair2_ungrammatical : ¬ licenses [john, can, eat, pizza] .matrixQuestion :=
+  not_licenses_matrix_subject_first _ rfl
+
+/-
+The HPSG analysis correctly predicts:
+
+| Sentence              | ClauseType     | Licensed? | Reason           |
+|-----------------------|----------------|-----------|------------------|
+| What can John eat?    | matrixQuestion | ✓         | aux < subj, INV+ |
+| What John can eat?    | matrixQuestion | ✗         | subj < aux, need INV+ |
+| Can John eat pizza?   | matrixQuestion | ✓         | aux < subj, INV+ |
+| John can eat pizza?   | matrixQuestion | ✗         | subj < aux, need INV+ |
+
+For embedded questions, we would need to extend the model to handle
+complex sentences with embedded clauses.
+-/
 
 end HPSG

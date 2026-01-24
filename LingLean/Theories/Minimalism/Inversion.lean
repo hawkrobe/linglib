@@ -15,7 +15,8 @@ This derives the word order asymmetry:
 - Embedded: no T-to-C → subject precedes T
 -/
 
-import LingLean.Syntax.Minimalism.Structure
+import LingLean.Theories.Minimalism.Structure
+import LingLean.Phenomena.SubjectAuxInversion.Data
 
 namespace Minimalism
 
@@ -174,5 +175,29 @@ example : licenses [john, can, eat] .embeddedQuestion :=
 
 example : ¬ licenses [can, john, eat] .embeddedQuestion :=
   not_licenses_embedded_t_first _ rfl
+
+-- ============================================================================
+-- Comparison: HPSG vs Minimalism
+-- ============================================================================
+
+/-
+Both frameworks predict the same surface patterns:
+
+| Sentence              | ClauseType     | HPSG           | Minimalism      |
+|-----------------------|----------------|----------------|-----------------|
+| What can John eat?    | matrixQuestion | INV+ → aux<subj| T-to-C → T<Subj |
+| What John can eat?    | matrixQuestion | *needs INV+    | *needs T-to-C   |
+| Can John eat pizza?   | matrixQuestion | INV+ → aux<subj| T-to-C → T<Subj |
+| John can eat pizza?   | matrixQuestion | *needs INV+    | *needs T-to-C   |
+
+The mechanisms differ:
+- HPSG: [INV+] feature constrains word order directly (declarative)
+- Minimalism: T-to-C movement derives word order (derivational)
+
+But the predictions are identical for these cases.
+
+Question for future work: Are there cases where the frameworks diverge?
+(e.g., languages with different clause structures, or complex sentences)
+-/
 
 end Minimalism

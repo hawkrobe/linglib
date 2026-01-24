@@ -21,7 +21,7 @@ In English, the verb must agree with its subject in number (and person for some 
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

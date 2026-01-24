@@ -1,5 +1,5 @@
 /-
-# LingLean.Syntax.HPSG.Basic
+# LingLean.Theories.HPSG.Basic
 
 Head-Driven Phrase Structure Grammar (HPSG) formalization.
 
@@ -16,8 +16,8 @@ Key characteristics:
 - Ginzburg & Sag (2000). Interrogative Investigations.
 -/
 
-import LingLean.Syntax.Basic
-import LingLean.Syntax.Grammar
+import LingLean.Core.Basic
+import LingLean.Core.Grammar
 
 namespace HPSG
 

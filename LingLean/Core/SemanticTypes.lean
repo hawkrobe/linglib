@@ -1,5 +1,5 @@
 /-
-# LingLean.Semantics.Basic
+# LingLean.Core.SemanticTypes
 
 Core semantic types and interfaces.
 -/

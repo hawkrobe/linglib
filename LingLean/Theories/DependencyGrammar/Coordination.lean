@@ -6,8 +6,8 @@ Word Grammar (Hudson 1984, 1990) analysis of coordination structures.
 Reference: Hudson (1990), Gibson (2025) Section 3.8
 -/
 
+import LingLean.Theories.DependencyGrammar.Basic
 import LingLean.Phenomena.Coordination.Data
-import LingLean.Syntax.DependencyGrammar.Basic
 
 namespace Coordination.WordGrammarAnalysis
 

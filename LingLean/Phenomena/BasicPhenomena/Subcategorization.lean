@@ -22,7 +22,7 @@ Verbs select for a specific number and type of arguments.
 -/
 
 import LingLean.Phenomena.Basic
-import LingLean.Syntax.Surface.Basic
+import LingLean.Theories.Surface.Basic
 
 open Lexicon
 

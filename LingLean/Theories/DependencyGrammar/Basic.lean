@@ -20,8 +20,8 @@ References:
 - Gibson (2025) "Syntax", MIT Press. https://mitpress.mit.edu/9780262553575/syntax/
 -/
 
-import LingLean.Syntax.Basic
-import LingLean.Syntax.Grammar
+import LingLean.Core.Basic
+import LingLean.Core.Grammar
 
 namespace DepGrammar
 

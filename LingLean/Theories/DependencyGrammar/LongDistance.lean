@@ -6,8 +6,8 @@ Word Grammar (Hudson 1984, 1990) analysis using SLASH features and filler-gap tr
 Reference: Hudson (1990), Gibson (2025) Section 3.9
 -/
 
+import LingLean.Theories.DependencyGrammar.Basic
 import LingLean.Phenomena.LongDistanceDependencies.Data
-import LingLean.Syntax.DependencyGrammar.Basic
 
 namespace LongDistanceDependencies.WordGrammarAnalysis
 

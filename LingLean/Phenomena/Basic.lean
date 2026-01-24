@@ -4,8 +4,8 @@
 Core types for specifying linguistic phenomena.
 -/
 
-import LingLean.Syntax.Basic
-import LingLean.Syntax.Grammar
+import LingLean.Core.Basic
+import LingLean.Core.Grammar
 
 -- ============================================================================
 -- Minimal Pairs

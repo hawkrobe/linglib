@@ -14,7 +14,7 @@ References:
 - Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
 -/
 
-import LingLean.Syntax.DependencyGrammar.Basic
+import LingLean.Theories.DependencyGrammar.Basic
 
 namespace DepGrammar
 

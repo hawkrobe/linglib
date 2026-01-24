@@ -25,7 +25,7 @@ The Rational Speech Act framework provides a principled linking function
 from semantic/pragmatic representations to behavioral data.
 -/
 
-import LingLean.Syntax.Basic
+import LingLean.Core.Basic
 
 namespace Phenomena
 

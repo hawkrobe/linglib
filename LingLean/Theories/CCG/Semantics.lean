@@ -11,12 +11,12 @@ The key insight of CCG: syntactic categories directly encode semantic types.
 Combinatory rules correspond to function application/composition.
 -/
 
-import LingLean.Syntax.CCG.Basic
-import LingLean.Semantics.Montague
+import LingLean.Theories.CCG.Basic
+import LingLean.Theories.Montague.Basic
 
 namespace CCG
 
-open Semantics
+open Montague
 
 -- ============================================================================
 -- Type Correspondence

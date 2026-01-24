@@ -6,8 +6,8 @@ No feature structures or derivations - just pattern matching and constraint chec
 Useful as a reference implementation before encoding in HPSG or Minimalism.
 -/
 
-import LingLean.Syntax.Basic
-import LingLean.Syntax.Grammar
+import LingLean.Core.Basic
+import LingLean.Core.Grammar
 
 namespace Surface
 

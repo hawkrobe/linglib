@@ -1,5 +1,5 @@
 /-
-# LingLean.Syntax.Minimalism.Basic
+# LingLean.Theories.Minimalism.Basic
 
 Minimalist Program formalization.
 
@@ -14,8 +14,8 @@ The Minimalist Program (Chomsky 1995+) builds structure through:
 - Radford (2009). Analysing English Sentences.
 -/
 
-import LingLean.Syntax.Basic
-import LingLean.Syntax.Grammar
+import LingLean.Core.Basic
+import LingLean.Core.Grammar
 
 namespace Minimalism
 

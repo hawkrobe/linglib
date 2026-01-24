@@ -33,7 +33,8 @@ Both conjuncts have category S/NP, so they can coordinate normally.
   Language and Cognitive Processes, 6(3), 229-259.
 -/
 
-import LingLean.Syntax.CCG.Basic
+import LingLean.Theories.CCG.Basic
+import LingLean.Phenomena.Coordination.Data
 
 namespace Phenomena.Coordination
 

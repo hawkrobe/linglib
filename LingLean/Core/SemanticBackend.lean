@@ -1,5 +1,5 @@
 /-
-# LingLean.Semantics.Backend
+# LingLean.Core.SemanticBackend
 
 The semantic interface that connects syntax to pragmatics (RSA).
 
