@@ -90,6 +90,7 @@ import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.CCG.Coordination
 
 import Linglib.Theories.Montague.Basic
+import Linglib.Theories.Montague.Quantifiers
 
 import Linglib.Theories.Semantics.Numbers
 import Linglib.Theories.Semantics.Scales
@@ -113,3 +114,7 @@ import Linglib.Phenomena.DisjunctionIgnorance.Data
 
 -- Experimental studies on scalar implicatures
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
+
+-- Semantic phenomena
+import Linglib.Phenomena.Semantics.Entailments
+import Linglib.Phenomena.Semantics.Monotonicity
