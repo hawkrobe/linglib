@@ -21,7 +21,7 @@ knowledge state affects interpretation.
 -/
 
 import Linglib.Theories.RSA.Basic
-import Linglib.Theories.Semantics.Numbers
+import Linglib.Theories.Montague.Numbers
 import Linglib.Core.Frac
 
 namespace RSA.GoodmanStuhlmuller2013

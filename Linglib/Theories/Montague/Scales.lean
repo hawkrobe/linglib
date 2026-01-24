@@ -22,7 +22,7 @@ Reference: Horn, L. (1972). On the Semantic Properties of Logical Operators in E
 
 import Linglib.Core.Frac
 
-namespace Semantics.Scales
+namespace Montague.Scales
 
 -- ============================================================================
 -- General Scale Infrastructure
@@ -348,4 +348,4 @@ These scales can be used to:
 3. Predict DE blocking effects
 -/
 
-end Semantics.Scales
+end Montague.Scales

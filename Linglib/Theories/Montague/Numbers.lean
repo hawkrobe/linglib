@@ -15,7 +15,7 @@ an implicature to cancel.
 
 import Linglib.Core.RSA
 
-namespace Semantics.Numbers
+namespace Montague.Numbers
 
 -- ============================================================================
 -- Shared Types
@@ -162,4 +162,4 @@ theorem lowerbound_has_ambiguity_exact_doesnt :
 The empirical data shows cancellation → Lower-bound is correct.
 -/
 
-end Semantics.Numbers
+end Montague.Numbers

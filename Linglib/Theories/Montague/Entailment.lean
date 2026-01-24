@@ -17,9 +17,9 @@ This module provides the semantic foundation for understanding:
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981)
 -/
 
-import Linglib.Theories.Semantics.Scales
+import Linglib.Theories.Montague.Scales
 
-namespace Semantics.Entailment
+namespace Montague.Entailment
 
 -- ============================================================================
 -- PART 1: Finite World Semantics
@@ -276,7 +276,7 @@ This explains why "some → not all" is blocked in DE contexts:
 - In DE: "all" is NOT a stronger alternative (scale reversed)
 -/
 
-open Semantics.Scales
+open Montague.Scales
 
 /--
 **Scale Reversal in DE Contexts**
@@ -331,4 +331,4 @@ This module imports Scales.lean and shows how the semantic property of
 downward entailment causes the scale reversal that blocks implicatures.
 -/
 
-end Semantics.Entailment
+end Montague.Entailment

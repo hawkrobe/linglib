@@ -31,14 +31,14 @@ and connecting them to computational pragmatics (RSA - Rational Speech Acts).
 
 ## Coverage Matrix
 
-                    Coordination  Inversion  LongDistance  ScalarImplicature
-CCG                      ✓            -           -              -
-HPSG                     -            ✓           -              -
-Minimalism               -            ✓           -              -
-DependencyGrammar        ✓            ✓           ✓              -
-Montague                 -            -           -              -
-NeoGricean               -            -           -              ✓
-RSA                      -            -           -              ✓
+                    Coordination  Inversion  LongDistance  ScalarImplicature  TruthConditions
+CCG                      ✓            -           -              -                   -
+HPSG                     -            ✓           -              -                   -
+Minimalism               -            ✓           -              -                   -
+DependencyGrammar        ✓            ✓           ✓              -                   -
+Montague                 -            -           -              -                   ✓
+NeoGricean               -            -           -              ✓                   -
+RSA                      -            -           -              ✓                   -
 
 Missing Theories/X/Y.lean = conjecture (theory hasn't proven it handles Y)
 -/
@@ -91,10 +91,15 @@ import Linglib.Theories.CCG.Coordination
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Attitudes
+import Linglib.Theories.Montague.Modality
+import Linglib.Theories.Montague.Derivations
+import Linglib.Theories.Montague.SemanticBackendInstance
+import Linglib.Theories.Montague.SyntaxInterface
 
-import Linglib.Theories.Semantics.Numbers
-import Linglib.Theories.Semantics.Scales
-import Linglib.Theories.Semantics.Entailment
+import Linglib.Theories.Montague.Numbers
+import Linglib.Theories.Montague.Scales
+import Linglib.Theories.Montague.Entailment
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence
@@ -118,3 +123,4 @@ import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 -- Semantic phenomena
 import Linglib.Phenomena.Semantics.Entailments
 import Linglib.Phenomena.Semantics.Monotonicity
+import Linglib.Phenomena.Semantics.TruthConditions

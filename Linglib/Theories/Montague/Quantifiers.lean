@@ -36,12 +36,12 @@ open Montague
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
 -- ============================================================================
--- Quantifier Denotations (Generic over any Model with finite domain)
+-- Finite Model Class (computable enumeration)
 -- ============================================================================
 
 /--
 A model with a finite, enumerable domain.
-Needed for computing quantifiers.
+This is computable (unlike Fintype.elems.toList in some contexts).
 -/
 class FiniteModel (m : Model) where
   elements : List m.Entity
@@ -78,7 +78,7 @@ def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
     decide (inBoth.length > inROnly.length)
 
 -- ============================================================================
--- Toy Model Instance
+-- Toy Model FiniteModel Instance
 -- ============================================================================
 
 instance : FiniteModel toyModel where
@@ -176,6 +176,10 @@ def somePersonSleeps : toyModel.interpTy .t :=
 - `no_sem`: λR.λS. ¬∃x. R(x) ∧ S(x)
 - `most_sem`: λR.λS. |R ∩ S| > |R - S|
 
+### FiniteModel Class
+Uses computable `FiniteModel` with explicit element list
+for quantifier evaluation.
+
 ### Composition Examples
 - "Every student sleeps" via function application
 - "Some student laughs" etc.
@@ -183,10 +187,6 @@ def somePersonSleeps : toyModel.interpTy .t :=
 ### Key Properties
 - Entailment: every → some (demonstrated)
 - Monotonicity: UE/DE patterns (demonstrated)
-
-### Design
-These quantifiers compose with the basic Montague infrastructure.
-One unified system, not separate φ functions.
 -/
 
 end Montague.Quantifiers

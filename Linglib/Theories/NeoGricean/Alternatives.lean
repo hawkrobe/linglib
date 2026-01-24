@@ -22,7 +22,7 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
 import Linglib.Theories.NeoGricean.Basic
-import Linglib.Theories.Semantics.Scales
+import Linglib.Theories.Montague.Scales
 
 namespace NeoGricean.Alternatives
 
@@ -275,24 +275,24 @@ theorem context_determines_alternatives :
   native_decide
 
 -- ============================================================================
--- PART 7: Connection to Semantics.Scales
+-- PART 7: Connection to Montague.Scales
 -- ============================================================================
 
 /--
-Convert a HornScale (from Semantics.Scales) to a HornSet.
+Convert a HornScale (from Montague.Scales) to a HornSet.
 
 This allows us to reuse the scale definitions while treating them
 as unordered sets. The ordering comes from the SentenceContext.
 -/
-def fromHornScale {α : Type} (scale : Semantics.Scales.HornScale α) : HornSet α :=
+def fromHornScale {α : Type} (scale : Montague.Scales.HornScale α) : HornSet α :=
   ⟨scale.members⟩
 
 -- Import the scales and convert to sets
-open Semantics.Scales in
+open Montague.Scales in
 def quantifierSetFromScale : HornSet Quantifiers.QuantExpr :=
   fromHornScale Quantifiers.quantScale
 
-open Semantics.Scales in
+open Montague.Scales in
 def connectiveSetFromScale : HornSet Connectives.ConnExpr :=
   fromHornScale Connectives.connScale
 

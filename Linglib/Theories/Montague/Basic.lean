@@ -19,6 +19,8 @@ The meaning of a phrase is computed from its parts:
 -/
 
 import Linglib.Core.Basic
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 namespace Montague
 
@@ -155,43 +157,10 @@ def apply {m : Model} {σ τ : Ty}
   f x
 
 -- ============================================================================
--- Example Derivations
+-- Connecting to Syntactic Derivations
 -- ============================================================================
 
 open ToyLexicon
-
--- "John sleeps" = sleeps(john) = true
-#eval apply sleeps_sem john_sem  -- true
-
--- "Mary sleeps" = sleeps(mary) = false
-#eval apply sleeps_sem mary_sem  -- false
-
--- "John laughs" = laughs(john) = true
-#eval apply laughs_sem john_sem  -- true
-
--- "Mary laughs" = laughs(mary) = true
-#eval apply laughs_sem mary_sem  -- true
-
--- "John sees Mary" = sees(mary)(john) = true
--- First: apply sees to object (Mary)
--- Then: apply result to subject (John)
-#eval apply (apply sees_sem mary_sem) john_sem  -- true
-
--- "Mary sees John" = sees(john)(mary) = true
-#eval apply (apply sees_sem john_sem) mary_sem  -- true
-
--- "John sees John" = sees(john)(john) = false
-#eval apply (apply sees_sem john_sem) john_sem  -- false
-
--- "John eats pizza" = eats(pizza)(john) = true
-#eval apply (apply eats_sem ToyEntity.pizza) john_sem  -- true
-
--- "John eats Mary" = eats(mary)(john) = false
-#eval apply (apply eats_sem mary_sem) john_sem  -- false
-
--- ============================================================================
--- Connecting to Syntactic Derivations
--- ============================================================================
 
 /-- A semantic derivation pairs a syntactic structure with its meaning -/
 structure SemanticDeriv (m : Model) where
@@ -236,5 +205,96 @@ A model-theoretic semantics provides a SemanticBackend.
 The agreement function φ is 1 if true, 0 if false.
 (This would require importing SemanticBackend and more setup)
 -/
+
+-- ============================================================================
+-- Characteristic Functions (Set ↔ Predicate Correspondence)
+-- ============================================================================
+
+/-
+Following Heim & Kratzer (1998) §1.2.4:
+
+For any set A ⊆ D, there is a unique characteristic function f : D → {0,1}
+such that f(x) = 1 iff x ∈ A.
+
+Using Mathlib's `Set`, we can now express this correspondence properly.
+-/
+
+/-- Convert a predicate (e → t) to a Set (the extension) -/
+def predicateToSet {m : Model} (p : m.interpTy (.e ⇒ .t)) : Set m.Entity :=
+  { x | p x = true }
+
+/-- Convert a Set to a predicate (characteristic function) -/
+noncomputable def setToPredicate {m : Model} (s : Set m.Entity) [DecidablePred (· ∈ s)]
+    : m.interpTy (.e ⇒ .t) :=
+  fun x => if x ∈ s then true else false
+
+/-- Check if an entity is in the extension of a predicate -/
+def inExtension {m : Model} (p : m.interpTy (.e ⇒ .t)) (x : m.Entity) : Bool := p x
+
+/-- The extension of "sleeps" is {john} -/
+theorem sleeps_extension :
+    predicateToSet sleeps_sem = {ToyEntity.john} := by
+  ext x
+  simp only [predicateToSet, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  cases x <;> simp [sleeps_sem]
+
+/-- The extension of "laughs" is {john, mary} -/
+theorem laughs_extension :
+    predicateToSet laughs_sem = {ToyEntity.john, ToyEntity.mary} := by
+  ext x
+  simp only [predicateToSet, Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  cases x <;> simp [laughs_sem]
+
+/-- John is in the extension of "sleeps" -/
+theorem john_in_sleeps : inExtension sleeps_sem ToyEntity.john = true := rfl
+
+/-- Mary is not in the extension of "sleeps" -/
+theorem mary_not_in_sleeps : inExtension sleeps_sem ToyEntity.mary = false := rfl
+
+/-- Both John and Mary are in the extension of "laughs" -/
+theorem john_mary_in_laughs :
+    inExtension laughs_sem ToyEntity.john = true ∧
+    inExtension laughs_sem ToyEntity.mary = true := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- Schönfinkelization / Currying
+-- ============================================================================
+
+/-
+Following Heim & Kratzer (1998) §1.3.3:
+
+For any relation R ⊆ D × D, there is a unique curried function f : D → (D → Bool)
+such that f(y)(x) = 1 iff (x,y) ∈ R.
+
+In Lean, all functions are already curried. This section makes the correspondence explicit.
+-/
+
+/-- Uncurry a binary predicate to a relation on pairs -/
+def uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) : m.Entity × m.Entity → Bool :=
+  fun (x, y) => f y x  -- Note: object first, then subject (linguistic convention)
+
+/-- Curry a relation on pairs to a binary predicate -/
+def curry {m : Model} (r : m.Entity × m.Entity → Bool) : m.interpTy (.e ⇒ .e ⇒ .t) :=
+  fun y x => r (x, y)
+
+/-- Curry and uncurry are inverses -/
+theorem curry_uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) :
+    curry (uncurry f) = f := rfl
+
+theorem uncurry_curry {m : Model} (r : m.Entity × m.Entity → Bool) :
+    uncurry (curry r) = r := rfl
+
+/-- The "sees" relation as a predicate on pairs -/
+def seesRelation : ToyEntity × ToyEntity → Bool
+  | (ToyEntity.john, ToyEntity.mary) => true
+  | (ToyEntity.mary, ToyEntity.john) => true
+  | _ => false
+
+/-- uncurry(sees_sem) agrees with seesRelation -/
+theorem sees_uncurry_matches :
+    ∀ p : ToyEntity × ToyEntity,
+      uncurry sees_sem p = seesRelation p := by
+  intro ⟨x, y⟩
+  cases x <;> cases y <;> rfl
 
 end Montague
