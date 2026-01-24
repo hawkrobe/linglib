@@ -27,9 +27,14 @@ import LingLean.Syntax.DependencyGrammar.Examples
 import LingLean.Syntax.DependencyGrammar.LexicalRules
 import LingLean.Syntax.DependencyGrammar.Proofs
 
+-- CCG
+import LingLean.Syntax.CCG.Basic
+import LingLean.Syntax.CCG.Semantics
+
 -- Semantics
 import LingLean.Semantics.Basic
 import LingLean.Semantics.Backend
+import LingLean.Semantics.Montague
 
 -- Phenomena
 import LingLean.Phenomena.Basic
