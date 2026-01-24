@@ -15,6 +15,7 @@ Concrete syntactic structures demonstrating verb position patterns.
 -/
 
 import Linglib.Theories.Minimalism.Labeling
+import Linglib.Theories.Minimalism.HeadMovement.Basic
 
 namespace Phenomena.WordOrderAlternations.VerbPosition
 
@@ -205,7 +206,108 @@ def cpWithVInSpec : SyntacticObject :=
 #eval projectsInB theVerb cpWithVInSpec  -- false (V doesn't project here)
 
 -- ============================================================================
--- Part 9: Summary
+-- Part 9: Building Blocks for Movement Proofs
+-- ============================================================================
+
+-- Step 1: Prove containment relations (needed for Internal Merge)
+
+/-- V is immediately contained in VP -/
+theorem v_in_vp : immediatelyContains vpEatPizza theVerb := by
+  simp [immediatelyContains, vpEatPizza, theVerb]
+
+/-- V is contained in VP (immediate → transitive) -/
+theorem v_contained_in_vp : contains vpEatPizza theVerb :=
+  contains.imm _ _ v_in_vp
+
+/-- VP is contained in T' -/
+theorem vp_in_tbar : immediatelyContains tBarEatPizza vpEatPizza := by
+  simp [immediatelyContains, tBarEatPizza]
+
+/-- V is transitively contained in T' -/
+theorem v_in_tbar : contains tBarEatPizza theVerb :=
+  contains.trans _ _ _ vp_in_tbar v_contained_in_vp
+
+/-- V is transitively contained in TP -/
+theorem v_in_tp : contains tpJohnEatPizza theVerb := by
+  apply contains.trans _ _ tBarEatPizza
+  · simp [immediatelyContains, tpJohnEatPizza]
+  · exact v_in_tbar
+
+/-- V is transitively contained in CP -/
+theorem v_in_cp : contains cpJohnEatPizza theVerb := by
+  apply contains.trans _ _ tpJohnEatPizza
+  · simp [immediatelyContains, cpJohnEatPizza, cBarJohnEatPizza]
+  · exact v_in_tp
+
+-- Step 2: Simplest Internal Merge - V re-merges with VP
+
+/-- Result of V moving to edge of VP: {V, {V, DP}} -/
+def vpWithVMoved : SyntacticObject := merge theVerb vpEatPizza
+
+/-- The simplest Movement: V moves within VP -/
+def simpleVMovement : Movement where
+  mover := theVerb
+  target := vpEatPizza
+  result := vpWithVMoved
+  mover_in_target := v_contained_in_vp
+  is_merge := rfl
+
+-- Step 3: Phrasal movement - DP moves (A-movement analog)
+
+/-- DP subject is contained in TP -/
+theorem dp_in_tp : contains tpJohnEatPizza dpJohn := by
+  apply contains.imm
+  simp [immediatelyContains, tpJohnEatPizza]
+
+/-- Result of DP moving: {DP, TP} -/
+def tpWithDPMoved : SyntacticObject := merge dpJohn tpJohnEatPizza
+
+/-- A-movement: DP moves to edge of TP -/
+def simpleAMovement : Movement where
+  mover := dpJohn
+  target := tpJohnEatPizza
+  result := tpWithDPMoved
+  mover_in_target := dp_in_tp
+  is_merge := rfl
+
+-- ============================================================================
+-- Part 10: Terminological Note on "Head"
+-- ============================================================================
+
+/-
+## The "Head" Terminology Issue
+
+Harizanov's Definition 22 defines "head" as +minimal, -maximal:
+- +minimal: doesn't project in anything
+- -maximal: something projects into it
+
+For a LEXICAL ITEM V in VP = {V, DP}:
+- V projects in VP → V is -minimal
+- Nothing projects in V → V is +maximal
+- V: -min, +max → "phrase" in Def 22 sense
+
+For VP in the same structure:
+- VP doesn't project further → VP is +minimal
+- V projects in VP → VP is -maximal
+- VP: +min, -max → "head" in Def 22 sense
+
+This INVERTS standard terminology:
+- Lexical item V = "phrase" (Definition 22)
+- Maximal projection VP = "head" (Definition 22)
+
+The `HeadToSpecMovement.mover_was_head` constraint requires the mover
+to be +min, -max, which means the mover should be a PHRASE (in standard
+terms), not a lexical item.
+
+This suggests either:
+1. Harizanov's "head movement" moves maximal projections, not lexical items
+2. The manuscript uses "head" ambiguously
+3. Additional machinery (like feature checking) is needed to track
+   the lexical item within the moving phrase
+-/
+
+-- ============================================================================
+-- Part 11: Summary
 -- ============================================================================
 
 /-
@@ -226,6 +328,10 @@ def cpWithVInSpec : SyntacticObject :=
 4. **Movement changes projection relations**:
    - Head-to-head: mover reprojects (stays -minimal)
    - Head-to-spec: mover stops projecting (becomes +minimal)
+
+5. **Terminological inversion**:
+   - Lexical items are "phrases" in Def 22 sense (+max)
+   - Maximal projections are "heads" in Def 22 sense (+min, -max)
 -/
 
 end Phenomena.WordOrderAlternations.VerbPosition
