@@ -117,6 +117,35 @@ def combine : Cat → Cat → Option Cat
     backwardComp c1 c2
 
 -- ============================================================================
+-- Type-Raising
+-- ============================================================================
+
+/-- Forward type-raising: X ⇒ T/(T\X)
+    Typically used for subjects: NP ⇒ S/(S\NP) -/
+def forwardTypeRaise (x : Cat) (t : Cat) : Cat :=
+  t / (t \ x)
+
+/-- Backward type-raising: X ⇒ T\(T/X)
+    Typically used for objects: NP ⇒ S\(S/NP) -/
+def backwardTypeRaise (x : Cat) (t : Cat) : Cat :=
+  t \ (t / x)
+
+-- Common type-raised categories
+def NPsubj : Cat := forwardTypeRaise NP S    -- S/(S\NP) - subject
+def NPobj : Cat := backwardTypeRaise NP S    -- S\(S/NP) - object (less common)
+
+#eval NPsubj  -- S/(S\NP)
+
+-- ============================================================================
+-- Coordination
+-- ============================================================================
+
+/-- Coordination: X conj X ⇒ X
+    Both conjuncts must have the same category -/
+def coordinate : Cat → Cat → Option Cat
+  | x, y => if x == y then some x else none
+
+-- ============================================================================
 -- Lexical Entries
 -- ============================================================================
 
@@ -148,6 +177,7 @@ def exampleLexicon : Lexicon := [
   ⟨"dog", N⟩,
   ⟨"book", N⟩,
   ⟨"pizza", N⟩,
+  ⟨"beans", NP⟩,  -- bare plural (simplified as NP)
 
   -- Intransitive verbs: S\NP
   ⟨"sleeps", IV⟩,
@@ -158,6 +188,7 @@ def exampleLexicon : Lexicon := [
   ⟨"sees", TV⟩,
   ⟨"eats", TV⟩,
   ⟨"likes", TV⟩,
+  ⟨"hates", TV⟩,
   ⟨"reads", TV⟩,
 
   -- Ditransitive verbs: ((S\NP)/NP)/NP
@@ -183,6 +214,9 @@ inductive DerivStep where
   | bapp : DerivStep → DerivStep → DerivStep   -- backward app
   | fcomp : DerivStep → DerivStep → DerivStep  -- forward comp
   | bcomp : DerivStep → DerivStep → DerivStep  -- backward comp
+  | ftr : DerivStep → Cat → DerivStep          -- forward type-raise to target
+  | btr : DerivStep → Cat → DerivStep          -- backward type-raise to target
+  | coord : DerivStep → DerivStep → DerivStep  -- coordination (X and X ⇒ X)
   deriving Repr
 
 /-- Get the category of a derivation -/
@@ -204,6 +238,16 @@ def DerivStep.cat : DerivStep → Option Cat
     let c1 ← d1.cat
     let c2 ← d2.cat
     backwardComp c1 c2
+  | .ftr d t => do
+    let x ← d.cat
+    some (forwardTypeRaise x t)
+  | .btr d t => do
+    let x ← d.cat
+    some (backwardTypeRaise x t)
+  | .coord d1 d2 => do
+    let c1 ← d1.cat
+    let c2 ← d2.cat
+    coordinate c1 c2
 
 -- ============================================================================
 -- Example Derivations
@@ -267,9 +311,123 @@ def the_big_cat_sleeps : DerivStep :=
 def derivesS (d : DerivStep) : Bool :=
   d.cat == some S
 
+-- ============================================================================
+-- Derivation Complexity Measures
+-- ============================================================================
+
+/-- Count combinatory operations in a derivation -/
+def DerivStep.opCount : DerivStep → Nat
+  | .lex _ => 0
+  | .fapp d1 d2 => 1 + d1.opCount + d2.opCount
+  | .bapp d1 d2 => 1 + d1.opCount + d2.opCount
+  | .fcomp d1 d2 => 2 + d1.opCount + d2.opCount   -- composition is "harder"
+  | .bcomp d1 d2 => 2 + d1.opCount + d2.opCount
+  | .ftr d _ => 1 + d.opCount                     -- type-raising has cost
+  | .btr d _ => 1 + d.opCount
+  | .coord d1 d2 => 1 + d1.opCount + d2.opCount
+
+/-- Depth of derivation tree -/
+def DerivStep.depth : DerivStep → Nat
+  | .lex _ => 1
+  | .fapp d1 d2 => 1 + max d1.depth d2.depth
+  | .bapp d1 d2 => 1 + max d1.depth d2.depth
+  | .fcomp d1 d2 => 1 + max d1.depth d2.depth
+  | .bcomp d1 d2 => 1 + max d1.depth d2.depth
+  | .ftr d _ => 1 + d.depth
+  | .btr d _ => 1 + d.depth
+  | .coord d1 d2 => 1 + max d1.depth d2.depth
+
 example : derivesS john_sleeps = true := rfl
 example : derivesS john_sees_mary = true := rfl
 example : derivesS the_cat_sleeps = true := rfl
 example : derivesS the_big_cat_sleeps = true := rfl
+
+-- ============================================================================
+-- Non-Constituent Coordination (Steedman's Classic Example)
+-- ============================================================================
+
+/-
+"John likes and Mary hates beans"
+
+This is the canonical CCG example where "John likes" and "Mary hates"
+are NOT traditional constituents, yet they coordinate.
+
+The derivation requires:
+1. Type-raising: NP ⇒ S/(S\NP)
+2. Forward composition: S/(S\NP) + (S\NP)/NP ⇒ S/NP
+3. Coordination: S/NP conj S/NP ⇒ S/NP
+4. Forward application: S/NP + NP ⇒ S
+
+Derivation tree:
+         John        likes         and    Mary        hates        beans
+          NP      (S\NP)/NP        conj    NP       (S\NP)/NP        NP
+          ↓ >T                             ↓ >T
+      S/(S\NP)                         S/(S\NP)
+          └───────>B──────┘                └───────>B──────┘
+               S/NP                             S/NP
+               └─────────────Φ──────────────────┘
+                            S/NP
+                            └──────────────>─────────────────┘
+                                            S
+-/
+
+-- Step 1: Type-raise John to S/(S\NP)
+def john_tr : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
+
+#eval john_tr.cat  -- S/(S\NP) ✓
+
+-- Step 2: Forward compose with "likes" to get S/NP
+-- S/(S\NP) + (S\NP)/NP ⇒ S/NP
+def john_likes : DerivStep := .fcomp john_tr (.lex ⟨"likes", TV⟩)
+
+#eval john_likes.cat  -- S/NP ✓ (an incomplete sentence looking for object)
+
+-- Step 3: Type-raise Mary and compose with "hates"
+def mary_tr : DerivStep := .ftr (.lex ⟨"Mary", NP⟩) S
+def mary_hates : DerivStep := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
+
+#eval mary_hates.cat  -- S/NP ✓
+
+-- Step 4: Coordinate "John likes" and "Mary hates"
+-- S/NP conj S/NP ⇒ S/NP
+def john_likes_and_mary_hates : DerivStep := .coord john_likes mary_hates
+
+#eval john_likes_and_mary_hates.cat  -- S/NP ✓
+
+-- Step 5: Apply to "beans"
+def john_likes_and_mary_hates_beans : DerivStep :=
+  .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
+
+#eval john_likes_and_mary_hates_beans.cat  -- S ✓
+
+-- Verify the full derivation yields S
+example : derivesS john_likes_and_mary_hates_beans = true := rfl
+
+/-
+Key insight: The "non-constituents" John likes and Mary hates
+are actually constituents in CCG! They have category S/NP.
+CCG's flexible constituency allows coordination of these phrases.
+-/
+
+-- ============================================================================
+-- Contrast: Why Standard Phrase Structure Can't Do This
+-- ============================================================================
+
+/-
+In standard phrase structure grammar:
+
+    [S [NP John] [VP likes [NP ___]]] and [S [NP Mary] [VP hates [NP ___]]] beans
+
+"John likes" is not a constituent - it's NP + part of VP.
+Standard coordination requires matching constituents.
+
+CCG solves this by:
+1. Making constituency flexible via type-raising
+2. Using composition to build partial structures
+3. Coordinating those partial structures
+
+This is why CCG is called "mildly context-sensitive" -
+it can handle some non-context-free phenomena.
+-/
 
 end CCG
