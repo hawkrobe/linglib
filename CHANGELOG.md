@@ -10,7 +10,6 @@
 - **RSA/ScalarImplicatures.lean**: RSA derivation of "some → not all"
 - **PragmaticComparison.lean**: Agreement theorem proving NeoGricean and RSA derive same implicature
 - **docs/ROADMAP.md**: Technical debt and future work tracking
-- **docs/MILESTONE_SCALAR_IMPLICATURE.md**: Pipeline architecture documentation
 
 ### Changed
 - Consolidated `ContextPolarity` (was duplicated in SemDeriv and Alternatives)
