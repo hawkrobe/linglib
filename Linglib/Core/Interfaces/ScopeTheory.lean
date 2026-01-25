@@ -34,11 +34,7 @@ This interface abstracts over these mechanisms.
 - Scontras & Pearl (2021) "When pragmatics matters more for truth-value judgments"
 -/
 
-import Linglib.Theories.Montague.Scope
-
 namespace ScopeTheory
-
-open Montague.Scope
 
 -- ============================================================================
 -- Scope Reading Enumeration
@@ -198,23 +194,6 @@ Typeclass for binary scope theories.
 class HasBinaryScope (T : Type) (Form : Type) where
   /-- Determine binary scope availability -/
   binaryScope : BinaryScopeForm Form → BinaryScopeAvailability
-
--- ============================================================================
--- Connection to WorldParametricScopeDerivation
--- ============================================================================
-
-/--
-Convert AvailableScopes to the list of ScopeConfigs used in RSA.
-
-This bridges the abstract interface to the concrete RSA implementation.
--/
-def toScopeConfigs (a : AvailableScopes) : List ScopeConfig :=
-  a.readings.filterMap fun r =>
-    if r.ordering.length == 2 then
-      if r.ordering == r.ordering.reverse then none  -- degenerate case
-      else if r == ScopeReading.surface r.ordering then some .surface
-      else some .inverse
-    else none
 
 -- ============================================================================
 -- Summary

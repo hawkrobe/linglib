@@ -24,7 +24,10 @@
   - `AvailableScopes`: Set of available readings for a form
   - `ScopePreference`: Ranked preferences (connects to RSA)
   - Typeclasses: `HasAvailableScopes`, `HasScopePreference`, `HasBinaryScope`
-  - `toScopeConfigs`: Bridge to RSA's `ScopeConfig`
+
+- **Theories/Montague/Scope.lean**: Implements `HasAvailableScopes` interface
+  - `ScopeConfig.toScopeReading`: Convert binary scope to abstract reading
+  - `MontagueScopeTheory`: Marker type for instance
 
 - **Phenomena/ScopeWordOrder/Data.lean**: Dutch/German scope-word order interactions
   - `VerbOrder`: verbRaising vs verbProjectionRaising
@@ -37,7 +40,9 @@
 - Information Structure connects to Scope via QUD:
   - QUD influences scope preferences
   - `QUDSemantics.informativity` provides what RSA needs for scope disambiguation
-- Two-level design: Core interface + CCG implementation
+- Two-level design: Core interface + theory implementations
+  - `ScopeTheory` (abstract) ← `Montague.Scope` (implements interface)
+  - `InformationStructure` (abstract) ← `CCG.Intonation` (implements interface)
 
 ### References
 - Steedman (2000) "The Syntactic Process" Chapter 5

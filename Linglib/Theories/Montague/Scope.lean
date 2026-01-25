@@ -25,8 +25,11 @@ This module provides:
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
+import Linglib.Core.Interfaces.ScopeTheory
 
 namespace Montague.Scope
+
+open ScopeTheory
 
 open Montague
 open Montague.Quantifiers
@@ -51,6 +54,25 @@ inductive QNScope where
 def toQNScope : ScopeConfig → QNScope
   | .surface => .forallNeg
   | .inverse => .negForall
+
+-- ============================================================================
+-- Connection to ScopeTheory Interface
+-- ============================================================================
+
+/-- Convert ScopeConfig to abstract ScopeReading for binary scope -/
+def ScopeConfig.toScopeReading (s : ScopeConfig) (op1 op2 : String) : ScopeReading :=
+  match s with
+  | .surface => ScopeReading.surface [op1, op2]
+  | .inverse => ScopeReading.inverse [op1, op2]
+
+/-- Convert list of ScopeConfigs to AvailableScopes (defaults to binary if empty) -/
+def toAvailableScopes (configs : List ScopeConfig) (op1 op2 : String) : AvailableScopes :=
+  let readings := configs.map (·.toScopeReading op1 op2)
+  if h : readings = [] then
+    -- Fallback: if empty, provide both readings
+    AvailableScopes.binary (ScopeReading.surface [op1, op2]) (ScopeReading.inverse [op1, op2])
+  else
+    ⟨readings, h⟩
 
 -- ============================================================================
 -- Scope Derivation Structure
@@ -98,6 +120,21 @@ structure WorldParametricScopeDerivation (World : Type) where
   availableScopes : List ScopeConfig := [.surface, .inverse]
   /-- Enumeration of possible worlds -/
   worlds : List World
+  /-- Scope-taker identifiers for interface connection -/
+  scopeTaker1 : String := "op1"
+  scopeTaker2 : String := "op2"
+
+/-- Get available scopes as abstract ScopeReadings -/
+def WorldParametricScopeDerivation.toAvailableScopes {World : Type}
+    (d : WorldParametricScopeDerivation World) : AvailableScopes :=
+  Montague.Scope.toAvailableScopes d.availableScopes d.scopeTaker1 d.scopeTaker2
+
+/-- Marker type for Montague scope theory -/
+def MontagueScopeTheory : Type := Unit
+
+/-- Montague implements HasAvailableScopes for WorldParametricScopeDerivation -/
+instance {World : Type} : HasAvailableScopes MontagueScopeTheory (WorldParametricScopeDerivation World) where
+  availableScopes d := d.toAvailableScopes
 
 -- ============================================================================
 -- Scope Enumeration Utilities
@@ -127,6 +164,13 @@ def scopeYieldsTrue {m : Model}
 - `ScopeDerivation`: Derivation with scope-parameterized meaning (fixed model)
 - `WorldParametricScopeDerivation`: Derivation parameterized by scope AND world
 
+### Interface Implementation
+
+Implements `ScopeTheory.HasAvailableScopes` typeclass:
+- `MontagueScopeTheory`: Marker type for the instance
+- `ScopeConfig.toScopeReading`: Convert to abstract ScopeReading
+- `toAvailableScopes`: Convert ScopeConfig list to AvailableScopes
+
 ### Key Functions
 - `toQNScope`: Convert general config to QN-specific
 - `ScopeDerivation.allMeanings`: Get all scope readings
@@ -137,8 +181,7 @@ This module provides the **Interp** dimension for lifted-variable RSA:
 - RSA.Interp = ScopeConfig or QNScope
 - RSA.meaning i u w = derivation.meaningAt i w
 
-See `Phenomena/ScontrasPearl2021/Data.lean` for a concrete example
-(`everyHorseDidntJump_parametric`) that uses this infrastructure.
+See `RSA/ScontrasPearl2021.lean` for the full pipeline.
 -/
 
 end Montague.Scope
