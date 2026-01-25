@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.6.2] - 2025-01-25
+
+### Added
+- **Phenomena/Gapping/Data.lean**: Gapping and word order typology (Steedman 2000 Ch. 7)
+  - `WordOrder`: SOV, SVO, VSO, VOS, OVS, OSV
+  - `WordOrderProfile`: main vs subordinate clause orders
+  - `GappingDirection`: forward vs backward
+  - `GappingPattern`: which directions a language allows
+  - `rossOriginal`, `rossRevised`: Ross's generalization (original and Steedman's revision)
+  - Examples: Japanese (SOV), Irish (VSO), English (SVO), Dutch (mixed)
+  - `EllipsisType`: gapping, stripping, VP ellipsis, sluicing
+  - Key theorems: `sov_backward_only`, `vso_forward_only`, `svo_forward_only`, `mixed_allows_both`
+
+- **Theories/CCG/Gapping.lean**: CCG analysis of gapping (Steedman 2000 Ch. 7)
+  - `GappedTV`: S\((S/NP)/NP) - gapped transitive category
+  - `GappedSubj`: S\(S/NP) - stripping category
+  - `BackwardRaisedNP`, `ForwardRaisedNP`: type-raised NP categories
+  - `hasBackwardRaising`, `hasForwardRaising`: what type-raising a word order allows
+  - `predictedGappingPattern`: CCG prediction from word order
+  - Key theorems:
+    - `ross_from_ccg_principles`: Ross's generalization emerges from CCG
+    - `svo_patterns_with_vso`: SVO patterns with VSO (forward gapping)
+    - `no_backward_gapping_in_english`: Why *SO and SVO fails
+    - `gapped_tv_is_leftward`: Gapped category direction determines pattern
+    - `dutch_allows_both_gapping`: Mixed-order languages allow both
+
+### Key Insight
+Gapping is NOT ellipsis - it's ordinary constituent coordination! The "gapped" right conjunct (e.g., "Warren, potatoes") IS a CCG constituent with category S\((S/NP)/NP). Ross's generalization about gapping direction emerges from the Principles of Consistency and Inheritance: gapped constituents inherit directionality from verb categories, so SVO patterns with VSO (forward gapping) rather than SOV (backward gapping).
+
+### References
+- Steedman (2000) "The Syntactic Process" Chapter 7
+- Ross (1970) "Gapping and the order of constituents"
+- Maling (1972) "On 'Gapping and the order of constituents'"
+
 ## [0.6.1] - 2025-01-25
 
 ### Added

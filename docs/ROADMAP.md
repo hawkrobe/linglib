@@ -229,3 +229,44 @@ Theories/Pragmatics/
 - [x] Coreference theory interface (`Core/Interfaces/CoreferenceTheory.lean`)
 - [x] Pipeline architecture (`Core/Pipeline.lean`)
 - [x] RSA scope ambiguity model (`RSA/ScontrasPearl2021.lean`)
+- [x] Gapping word order typology (`Phenomena/Gapping/Data.lean`, `CCG/Gapping.lean`)
+
+---
+
+## Future Work
+
+### 12. CCG Gapping Derivations & Category Decomposition
+
+**Current state**: `CCG/Gapping.lean` defines gapped constituent categories and proves Ross's generalization emerges from CCG, but doesn't implement full derivations.
+
+**Problem**: To actually build "Warren, potatoes" as `S\((S/NP)/NP)`, we need:
+1. **Generalized backward composition for type-raised categories**:
+   ```
+   T\(T/NP₁)  T\(T/NP₂)  →  T\((T/NP₂)/NP₁)
+   ```
+   Standard backward composition (Y\Z X\Y → X\Z) doesn't directly give this.
+
+2. **Category decomposition rule** (§7.3.3): Reveals "virtual constituents" from the left conjunct using parametric neutrality of combinatory rules.
+
+3. **θ" anaphor**: Recovers gap interpretation from Information Structure (theme of left conjunct).
+
+**Solution**:
+```
+Theories/CCG/Gapping.lean (extend)
+  - GeneralizedBackwardComp: for type-raised categories
+  - Full derivation: warren_potatoes builds S\((S/NP)/NP)
+  - Theorem: derivation produces correct category
+
+Theories/CCG/CategoryDecomposition.lean (new)
+  - VirtualConjunctRule: X:left ⟹ Y:θ"left  X\Y:λy.left
+  - Parametric neutrality: any two categories determine the third
+  - Integration with Information Structure (Chapter 5)
+```
+
+**Key insight**: Category decomposition uses the grammar's own rules "in reverse" to reveal virtual constituents, preserving the Principles of Adjacency, Consistency, and Inheritance.
+
+**References**:
+- Steedman (2000) "The Syntactic Process" §7.3.3
+- Pareschi & Steedman (1987) on parametric neutrality
+
+**Files affected**: `CCG/Gapping.lean`, new `CCG/CategoryDecomposition.lean`
