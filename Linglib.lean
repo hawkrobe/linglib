@@ -52,6 +52,9 @@ import Linglib.Core.SemanticBackend
 import Linglib.Core.Frac
 import Linglib.Core.RSA
 
+-- Theory interfaces (Mathlib pattern)
+import Linglib.Core.Interfaces.CoreferenceTheory
+
 -- Phenomena (empirical data)
 import Linglib.Phenomena.Basic
 import Linglib.Phenomena.EmpiricalData
@@ -75,6 +78,7 @@ import Linglib.Phenomena.BasicPhenomena.Proofs
 import Linglib.Theories.HPSG.Basic
 import Linglib.Theories.HPSG.Features
 import Linglib.Theories.HPSG.Inversion
+import Linglib.Theories.HPSG.Coreference
 
 import Linglib.Theories.Minimalism.Basic
 import Linglib.Theories.Minimalism.Structure
@@ -89,12 +93,14 @@ import Linglib.Theories.Minimalism.Constraints.HMC
 import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Minimalism.Agree
+import Linglib.Theories.Minimalism.Coreference
 
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Theories.DependencyGrammar.LexicalRules
 import Linglib.Theories.DependencyGrammar.Inversion
 import Linglib.Theories.DependencyGrammar.Coordination
 import Linglib.Theories.DependencyGrammar.LongDistance
+import Linglib.Theories.DependencyGrammar.Coreference
 
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
@@ -127,7 +133,15 @@ import Linglib.Theories.RSA.ScalarImplicatures
 
 import Linglib.Theories.PragmaticComparison
 
+-- Cross-theoretic comparisons
+import Linglib.Theories.Comparisons.Coreference
+import Linglib.Theories.Comparisons.ScalarImplicature
+import Linglib.Theories.Comparisons.CommandRelations
+
 import Linglib.Theories.Surface.Basic
+
+-- Coreference patterns
+import Linglib.Phenomena.Coreference.Data
 
 -- Pragmatic phenomena (theory-neutral examples)
 import Linglib.Phenomena.ScalarImplicatures.Data
