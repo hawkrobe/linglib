@@ -147,7 +147,7 @@ def connectiveStrengthUE (c1 c2 : String) : Bool :=
   | _, _ => false
 
 def connectiveChecker : EntailmentChecker String :=
-  { isStronger := fun pol c1 c2 =>
+  { isStronger := λ pol c1 c2 =>
       match pol with
       | .upward => connectiveStrengthUE c1 c2
       | .downward => c1 == "or" && c2 == "and"  -- reversed
@@ -215,8 +215,8 @@ structure LongDisjunction where
 Generate all binary conjunctions from a list.
 -/
 def binaryConjunctions (terms : List String) : List String :=
-  terms.flatMap fun t1 =>
-    terms.filterMap fun t2 =>
+  terms.flatMap λ t1 =>
+    terms.filterMap λ t2 =>
       if t1 < t2 then some s!"{t1}∧{t2}" else none
 
 /--
@@ -368,7 +368,7 @@ def deriveScalarImplicatures
   , hornSet := hornSet
   , context := context
   , strongerAlts := alts
-  , implicatures := alts.map fun a => s!"not({a})"
+  , implicatures := alts.map λ a => s!"not({a})"
   }
 
 /--
@@ -451,7 +451,7 @@ that implements the SemDeriv interface.
 -/
 def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
     : List ScalarImplicatureResult :=
-  d.scalarItems.filterMap fun occ =>
+  d.scalarItems.filterMap λ occ =>
     match occ.entry.scaleMembership with
     | none => none
     | some sm =>
@@ -463,7 +463,7 @@ def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
 Check if any implicature in the results negates a given alternative.
 -/
 def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Bool :=
-  results.any fun r => r.implicatures.contains s!"not({alt})"
+  results.any λ r => r.implicatures.contains s!"not({alt})"
 
 /--
 **Example: "some students sleep" via CCG**
@@ -616,10 +616,10 @@ The theory correctly predicts which embeddings show elevated rates.
 -/
 theorem gricean_predicts_embedding_pattern :
     -- Simple: Gricean predicts high rate, data shows 93%
-    (griceanEmbeddingPredictions.find? (fun p => p.embedding == .simple)).isSome ∧
+    (griceanEmbeddingPredictions.find? (λ p => p.embedding == .simple)).isSome ∧
     simpleRate > 90 ∧
     -- Think: Gricean predicts elevated rate (competence), data shows 57%
-    (griceanEmbeddingPredictions.find? (fun p => p.embedding == .think)).isSome ∧
+    (griceanEmbeddingPredictions.find? (λ p => p.embedding == .think)).isSome ∧
     thinkRate > 50 ∧
     -- Must: Gricean predicts NO local SI, data shows only 3%
     mustRate < 5 := by

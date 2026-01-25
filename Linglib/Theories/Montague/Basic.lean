@@ -103,13 +103,13 @@ def mary_sem : toyModel.interpTy .e := ToyEntity.mary
 
 -- Intransitive verbs denote properties (e → t)
 def sleeps_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .john => true
     | .mary => false
     | _ => false
 
 def laughs_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .john => true
     | .mary => true
     | _ => false
@@ -117,31 +117,31 @@ def laughs_sem : toyModel.interpTy (.e ⇒ .t) :=
 -- Transitive verbs denote relations (e → e → t)
 -- "sees" takes object first, then subject: λy.λx. x sees y
 def sees_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun obj => fun subj => match subj, obj with
+  λ obj => λ subj => match subj, obj with
     | .john, .mary => true
     | .mary, .john => true
     | _, _ => false
 
 def eats_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun obj => fun subj => match subj, obj with
+  λ obj => λ subj => match subj, obj with
     | .john, .pizza => true
     | .mary, .pizza => true
     | _, _ => false
 
 def reads_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun obj => fun subj => match subj, obj with
+  λ obj => λ subj => match subj, obj with
     | .john, .book => true
     | .mary, .book => true
     | _, _ => false
 
 -- Common nouns denote properties
 def pizza_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .pizza => true
     | _ => false
 
 def book_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .book => true
     | _ => false
 
@@ -226,7 +226,7 @@ def predicateToSet {m : Model} (p : m.interpTy (.e ⇒ .t)) : Set m.Entity :=
 /-- Convert a Set to a predicate (characteristic function) -/
 noncomputable def setToPredicate {m : Model} (s : Set m.Entity) [DecidablePred (· ∈ s)]
     : m.interpTy (.e ⇒ .t) :=
-  fun x => if x ∈ s then true else false
+  λ x => if x ∈ s then true else false
 
 /-- Check if an entity is in the extension of a predicate -/
 def inExtension {m : Model} (p : m.interpTy (.e ⇒ .t)) (x : m.Entity) : Bool := p x
@@ -271,11 +271,11 @@ In Lean, all functions are already curried. This section makes the correspondenc
 
 /-- Uncurry a binary predicate to a relation on pairs -/
 def uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) : m.Entity × m.Entity → Bool :=
-  fun (x, y) => f y x  -- Note: object first, then subject (linguistic convention)
+  λ (x, y) => f y x  -- Note: object first, then subject (linguistic convention)
 
 /-- Curry a relation on pairs to a binary predicate -/
 def curry {m : Model} (r : m.Entity × m.Entity → Bool) : m.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun y x => r (x, y)
+  λ y x => r (x, y)
 
 /-- Curry and uncurry are inverses -/
 theorem curry_uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) :

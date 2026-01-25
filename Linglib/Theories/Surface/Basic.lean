@@ -53,7 +53,7 @@ def findObject (ws : List Word) : Option Word :=
   match verbIdx with
   | some idx =>
     let afterVerb := ws.drop (idx + 1)
-    afterVerb.find? fun w => w.cat == Cat.D || w.cat == Cat.N
+    afterVerb.find? λ w => w.cat == Cat.D || w.cat == Cat.N
   | none => none
 
 /-- Count direct objects after the verb (excluding those in by-phrases) -/
@@ -63,11 +63,11 @@ def countObjects (ws : List Word) : Nat :=
   | some idx =>
     let afterVerb := ws.drop (idx + 1)
     -- Exclude elements in by-phrases (for passive)
-    let byIdx := afterVerb.findIdx? fun w => w.cat == Cat.P && w.form == "by"
+    let byIdx := afterVerb.findIdx? λ w => w.cat == Cat.P && w.form == "by"
     let relevantPart := match byIdx with
       | some bIdx => afterVerb.take bIdx
       | none => afterVerb
-    relevantPart.filter (fun w => w.cat == Cat.D || w.cat == Cat.N) |>.length
+    relevantPart.filter (λ w => w.cat == Cat.D || w.cat == Cat.N) |>.length
   | none => 0
 
 /-- Check if there's a preposition after the verb -/
@@ -93,19 +93,19 @@ def findDetNounPairs (ws : List Word) : List (Word × Word) :=
 
 /-- Check if a passive auxiliary (was/were) is present -/
 def hasPassiveAux (ws : List Word) : Bool :=
-  ws.any fun w => w.cat == Cat.Aux && (w.form == "was" || w.form == "were")
+  ws.any λ w => w.cat == Cat.Aux && (w.form == "was" || w.form == "were")
 
 /-- Check if verb is a passive participle -/
 def hasPassiveParticiple (ws : List Word) : Bool :=
-  ws.any fun w => w.cat == Cat.V && w.features.vform == some VForm.pastParticiple
+  ws.any λ w => w.cat == Cat.V && w.features.vform == some VForm.pastParticiple
 
 /-- Find the by-phrase agent (if any) -/
 def findByAgent (ws : List Word) : Option Word :=
-  let byIdx := ws.findIdx? fun w => w.cat == Cat.P && w.form == "by"
+  let byIdx := ws.findIdx? λ w => w.cat == Cat.P && w.form == "by"
   match byIdx with
   | some idx =>
     let afterBy := ws.drop (idx + 1)
-    afterBy.find? fun w => w.cat == Cat.D || w.cat == Cat.N
+    afterBy.find? λ w => w.cat == Cat.D || w.cat == Cat.N
   | none => none
 
 -- ============================================================================
@@ -135,7 +135,7 @@ def countObjectsBeforePrep (ws : List Word) : Nat :=
     let beforePrep := match prepIdx with
       | some pIdx => afterVerb.take pIdx
       | none => afterVerb
-    beforePrep.filter (fun w => w.cat == Cat.D || w.cat == Cat.N) |>.length
+    beforePrep.filter (λ w => w.cat == Cat.D || w.cat == Cat.N) |>.length
   | none => 0
 
 /-- Check if verb has the right number of arguments -/
@@ -214,7 +214,7 @@ def caseOk (ws : List Word) : Bool :=
 /-- Check if determiner and noun agree in number -/
 def detNounAgrOk (ws : List Word) : Bool :=
   let pairs := findDetNounPairs ws
-  pairs.all fun (det, noun) =>
+  pairs.all λ (det, noun) =>
     match det.features.number, noun.features.number with
     | some dn, some nn => dn == nn
     | _, _ => true  -- if either is underspecified, allow
@@ -238,15 +238,15 @@ def passiveOk (ws : List Word) : Bool :=
     | some vIdx =>
       let afterVerb := ws.drop (vIdx + 1)
       -- Count DPs/Ns that are NOT in a by-phrase
-      let byIdx := afterVerb.findIdx? fun w => w.cat == Cat.P && w.form == "by"
+      let byIdx := afterVerb.findIdx? λ w => w.cat == Cat.P && w.form == "by"
       match byIdx with
       | some bIdx =>
         -- Only count objects before "by"
         let beforeBy := afterVerb.take bIdx
-        (beforeBy.filter (fun w => w.cat == Cat.D || w.cat == Cat.N)).length == 0
+        (beforeBy.filter (λ w => w.cat == Cat.D || w.cat == Cat.N)).length == 0
       | none =>
         -- No by-phrase, just check no objects
-        (afterVerb.filter (fun w => w.cat == Cat.D || w.cat == Cat.N)).length == 0
+        (afterVerb.filter (λ w => w.cat == Cat.D || w.cat == Cat.N)).length == 0
     | none => true
   else
     true  -- not a passive, vacuously ok

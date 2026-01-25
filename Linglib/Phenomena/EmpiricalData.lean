@@ -180,7 +180,7 @@ class ProcessingLinking (G : Type) where
 -- ============================================================================
 
 /-- Simple complexity measure: depth of derivation tree -/
-def treeDepth : Nat → Float := fun n => n.toFloat
+def treeDepth : Nat → Float := λ n => n.toFloat
 
 /-- Sprouse-style z-score acceptability -/
 structure ZScoreRating where

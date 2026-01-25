@@ -41,7 +41,7 @@ def hasFeature (fb : FeatureBundle) (f : Feature) : Bool :=
 
 /-- Check if bundle has [+Q] -/
 def hasQ (fb : FeatureBundle) : Bool :=
-  fb.any fun f => match f with | .q true => true | _ => false
+  fb.any λ f => match f with | .q true => true | _ => false
 
 -- ============================================================================
 -- Syntactic Objects
@@ -107,7 +107,7 @@ structure Derivation where
 
 /-- Check if a derivation involves T-to-C movement -/
 def Derivation.hasTToC (d : Derivation) : Bool :=
-  d.steps.any fun s => match s with
+  d.steps.any λ s => match s with
     | .headMove _ c => hasQ c.label
     | _ => false
 
@@ -143,7 +143,7 @@ inductive Phase where
 
 /-- Check if a syntactic object is a phase -/
 def isPhase (so : SynObj) : Bool :=
-  match so.label.find? (fun f => match f with | .cat _ => true | _ => false) with
+  match so.label.find? (λ f => match f with | .cat _ => true | _ => false) with
   | some (.cat .C) => true
   | some (.cat .V) => true
   | _ => false

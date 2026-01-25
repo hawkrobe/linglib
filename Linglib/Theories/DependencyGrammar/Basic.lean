@@ -113,17 +113,17 @@ structure ArgStructure where
 def hasUniqueHeads (t : DepTree) : Bool :=
   let n := t.words.length
   -- Count incoming edges for each word
-  let inCounts := List.range n |>.map fun i =>
+  let inCounts := List.range n |>.map λ i =>
     t.deps.filter (·.depIdx == i) |>.length
   -- Root should have 0 incoming, others should have exactly 1
-  (List.range inCounts.length).zip inCounts |>.all fun (i, count) =>
+  (List.range inCounts.length).zip inCounts |>.all λ (i, count) =>
     if i == t.rootIdx then count == 0 else count == 1
 
 /-- Check for cycles (simple version: no word is its own ancestor) -/
 def isAcyclic (t : DepTree) : Bool :=
   -- For each word, follow head pointers; should never return to start
   let n := t.words.length
-  List.range n |>.all fun start =>
+  List.range n |>.all λ start =>
     let rec follow (current : Nat) (visited : List Nat) (fuel : Nat) : Bool :=
       match fuel with
       | 0 => true  -- ran out of fuel, assume ok
@@ -137,8 +137,8 @@ def isAcyclic (t : DepTree) : Bool :=
 
 /-- Check projectivity: no crossing dependencies -/
 def isProjective (t : DepTree) : Bool :=
-  t.deps.all fun d1 =>
-    t.deps.all fun d2 =>
+  t.deps.all λ d1 =>
+    t.deps.all λ d2 =>
       if d1 == d2 then true
       else
         -- Dependencies from the same head never cross each other
@@ -160,7 +160,7 @@ def isProjective (t : DepTree) : Bool :=
 
 /-- Check subject-verb number agreement -/
 def checkSubjVerbAgr (t : DepTree) : Bool :=
-  t.deps.all fun d =>
+  t.deps.all λ d =>
     if d.depType == .subj then
       match t.words[d.depIdx]?, t.words[d.headIdx]? with
       | some subj, some verb =>
@@ -172,7 +172,7 @@ def checkSubjVerbAgr (t : DepTree) : Bool :=
 
 /-- Check determiner-noun number agreement -/
 def checkDetNounAgr (t : DepTree) : Bool :=
-  t.deps.all fun d =>
+  t.deps.all λ d =>
     if d.depType == .det then
       match t.words[d.depIdx]?, t.words[d.headIdx]? with
       | some det, some noun =>
@@ -188,11 +188,11 @@ def checkDetNounAgr (t : DepTree) : Bool :=
 
 /-- Count dependents of a given type for a head -/
 def countDepsOfType (t : DepTree) (headIdx : Nat) (dtype : DepType) : Nat :=
-  t.deps.filter (fun d => d.headIdx == headIdx && d.depType == dtype) |>.length
+  t.deps.filter (λ d => d.headIdx == headIdx && d.depType == dtype) |>.length
 
 /-- Check if verb has correct argument structure -/
 def checkVerbSubcat (t : DepTree) : Bool :=
-  List.range t.words.length |>.all fun i =>
+  List.range t.words.length |>.all λ i =>
     match t.words[i]? with
     | some w =>
       if w.cat == Cat.V then

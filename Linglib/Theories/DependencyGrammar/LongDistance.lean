@@ -71,13 +71,13 @@ inductive IslandType where
 
 /-- Check if a position is inside an island (simplified) -/
 def isInsideIsland (t : LDTree) (gapIdx : Nat) : Bool :=
-  t.deps.any fun d =>
+  t.deps.any λ d =>
     (d.depType == .nmod || d.depType == .conj) &&
     d.depIdx == gapIdx
 
 /-- Validate that extraction doesn't violate island constraints -/
 def checkNoIslandViolation (t : LDTree) : Bool :=
-  t.fillerGaps.all fun fg =>
+  t.fillerGaps.all λ fg =>
     !isInsideIsland t fg.gapHostIdx
 
 -- ============================================================================
@@ -86,7 +86,7 @@ def checkNoIslandViolation (t : LDTree) : Bool :=
 
 /-- Get SLASH feature at a node -/
 def getSLASH (t : LDTree) (nodeIdx : Nat) : SLASH :=
-  match t.fillerGaps.find? fun fg => fg.gapHostIdx == nodeIdx with
+  match t.fillerGaps.find? λ fg => fg.gapHostIdx == nodeIdx with
   | some fg => { gapType := some fg.gapType }
   | none => {}
 
@@ -102,7 +102,7 @@ def isLDWellFormed (t : LDTree) : Bool :=
   let basic : DepTree := { words := t.words, deps := t.deps, rootIdx := t.rootIdx }
   isWellFormed basic &&
   checkNoIslandViolation t &&
-  t.fillerGaps.all fun fg =>
+  t.fillerGaps.all λ fg =>
     match t.words[fg.fillerIdx]? with
     | some w => w.features.wh || fg.fillerIdx < t.rootIdx
     | none => false

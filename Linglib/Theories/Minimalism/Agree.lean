@@ -114,15 +114,15 @@ abbrev FeatureBundle := List GramFeature
 
 /-- Does the bundle have an unvalued feature of a given type? -/
 def hasUnvaluedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any fun f => f.isUnvalued && (f.featureType == ftype)
+  fb.any λ f => f.isUnvalued && (f.featureType == ftype)
 
 /-- Does the bundle have a valued feature of a given type? -/
 def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any fun f => f.isValued && (f.featureType == ftype)
+  fb.any λ f => f.isValued && (f.featureType == ftype)
 
 /-- Get the valued feature of a given type (if present) -/
 def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
-  fb.find? fun f => f.isValued && (f.featureType == ftype)
+  fb.find? λ f => f.isValued && (f.featureType == ftype)
 
 -- ============================================================================
 -- Part 3: Extended Lexical Items with Features
@@ -217,7 +217,7 @@ def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
   match getValuedFeature goalFeats ftype with
   | none => none
   | some goalFeat =>
-    some (probeFeats.map fun f =>
+    some (probeFeats.map λ f =>
       if f.isUnvalued && (f.featureType == ftype) then
         match valueFeature f goalFeat with
         | some v => v
@@ -265,7 +265,7 @@ structure CAgree where
     When a head has [EPP], Agree is not enough - the goal must MOVE
     to the specifier position of the agreeing head. -/
 def hasEPP (fb : FeatureBundle) : Bool :=
-  fb.any fun f => match f with
+  fb.any λ f => match f with
     | .valued (.epp true) => true
     | .unvalued (.epp true) => true
     | _ => false

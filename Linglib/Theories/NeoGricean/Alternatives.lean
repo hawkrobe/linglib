@@ -171,7 +171,7 @@ def generateAlternatives {α : Type} [BEq α]
     (checker : EntailmentChecker α)
     (context : SentenceContext)
     (term : α) : List (Alternative α) :=
-  hornSet.otherMembers term |>.map fun alt =>
+  hornSet.otherMembers term |>.map λ alt =>
     { term := alt
     , isStrongerInContext := checker.isStronger context.polarity alt term
     }
@@ -222,7 +222,7 @@ def quantifierStrengthDE (q1 q2 : String) : Bool :=
 Entailment checker for quantifiers.
 -/
 def quantifierChecker : EntailmentChecker String :=
-  { isStronger := fun pol q1 q2 =>
+  { isStronger := λ pol q1 q2 =>
       match pol with
       | .upward => quantifierStrengthUE q1 q2
       | .downward => quantifierStrengthDE q1 q2

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.2] - 2025-01-24
+
+### Changed
+- Use λ instead of fun for lambda expressions throughout codebase
+
 ## [0.4.1] - 2025-01-24
 
 ### Changed

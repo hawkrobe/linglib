@@ -85,7 +85,7 @@ theorem licenses_matrix_aux_first (ws : List Word)
     (h : auxPrecedesSubject ws = true) :
     licenses ws .matrixQuestion := by
   refine ⟨.plus, ⟨?_, ?_⟩, ?_, ?_⟩
-  · exact fun _ => h
+  · exact λ _ => h
   · intro hinv; cases hinv
   · intro _; rfl
   · intro hct; cases hct
@@ -107,7 +107,7 @@ theorem licenses_embedded_subject_first (ws : List Word)
     licenses ws .embeddedQuestion := by
   refine ⟨.minus, ⟨?_, ?_⟩, ?_, ?_⟩
   · intro hinv; cases hinv
-  · exact fun _ => h
+  · exact λ _ => h
   · intro hct; cases hct
   · intro _; rfl
 

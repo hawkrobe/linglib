@@ -39,7 +39,7 @@ instance decImmediatelyContains (x y : SyntacticObject) :
     Decidable (immediatelyContains x y) := by
   unfold immediatelyContains
   cases x with
-  | leaf _ => exact isFalse (fun h => h)
+  | leaf _ => exact isFalse (λ h => h)
   | node a b =>
     cases h1 : decide (y = a) with
     | true =>
@@ -53,7 +53,7 @@ instance decImmediatelyContains (x y : SyntacticObject) :
         exact isTrue (Or.inr h2)
       | false =>
         simp at h2
-        exact isFalse (fun h => h.elim h1 h2)
+        exact isFalse (λ h => h.elim h1 h2)
 
 -- ============================================================================
 -- Part 2: Containment / Dominance (Definition 14)

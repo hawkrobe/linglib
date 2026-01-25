@@ -55,7 +55,7 @@ instance decEq (x y : Frac) : Decidable (eq x y) :=
   inferInstanceAs (Decidable (x.num * y.den = y.num * x.den))
 
 /-- BEq instance -/
-instance : BEq Frac := ⟨fun x y => x.num * y.den == y.num * x.den⟩
+instance : BEq Frac := ⟨λ x y => x.num * y.den == y.num * x.den⟩
 
 -- ============================================================================
 -- Arithmetic

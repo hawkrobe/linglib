@@ -105,14 +105,14 @@ Get the forms of scalar alternatives (for display/debugging).
 -/
 def alternativeForms {m : Model} (d : Derivation m) (ctx : ContextPolarity)
     : List (List String) :=
-  d.scalarItems.flatMap fun occ =>
+  d.scalarItems.flatMap λ occ =>
     let alts := match ctx with
       | .upward => occ.entry.strongerAlternatives
       | .downward =>
         -- For DE, we'd use weakerAlternatives
         -- For now, just return empty since we don't have that function yet
         []
-    alts.map fun altForm =>
+    alts.map λ altForm =>
       d.surface.set occ.position altForm
 
 -- ============================================================================

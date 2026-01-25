@@ -135,8 +135,8 @@ def bestWorlds (f : ModalBase) (g : OrderingSource) (w : World) : List World :=
     accessible
   else
     -- Keep worlds that are at least as good as all others
-    accessible.filter fun w' =>
-      accessible.all fun w'' => atLeastAsGood g w w' w''
+    accessible.filter λ w' =>
+      accessible.all λ w'' => atLeastAsGood g w w' w''
 
 -- ============================================================================
 -- PART 5: Modal Operators
@@ -185,21 +185,21 @@ structure ModalFlavor where
   ordering : OrderingSource
 
 -- Example propositions for building conversational backgrounds
-def itIsRaining : Proposition := fun w => w == .w0 || w == .w1
-def johnIsHome : Proposition := fun w => w == .w0 || w == .w2
-def maryIsHome : Proposition := fun w => w == .w1 || w == .w2
-def theGroundIsWet : Proposition := fun w => w == .w0 || w == .w1 || w == .w3
+def itIsRaining : Proposition := λ w => w == .w0 || w == .w1
+def johnIsHome : Proposition := λ w => w == .w0 || w == .w2
+def maryIsHome : Proposition := λ w => w == .w1 || w == .w2
+def theGroundIsWet : Proposition := λ w => w == .w0 || w == .w1 || w == .w3
 
 /--
 Epistemic modal base: what is known (by the speaker).
 Here: we know the ground is wet.
 -/
-def epistemicBase : ModalBase := fun _ => [theGroundIsWet]
+def epistemicBase : ModalBase := λ _ => [theGroundIsWet]
 
 /--
 Empty ordering source (for pure epistemic modals).
 -/
-def emptyOrdering : OrderingSource := fun _ => []
+def emptyOrdering : OrderingSource := λ _ => []
 
 /--
 Epistemic flavor: "It must be raining" (given we know the ground is wet)
@@ -214,14 +214,14 @@ def epistemicFlavor : ModalFlavor :=
 Circumstantial modal base: the relevant circumstances.
 Here: John is home.
 -/
-def circumstantialBase : ModalBase := fun w =>
+def circumstantialBase : ModalBase := λ w =>
   if johnIsHome w then [johnIsHome] else []
 
 /--
 Deontic ordering source: what the rules require.
 Here: people should stay home when it rains.
 -/
-def deonticOrdering : OrderingSource := fun _ => [johnIsHome, maryIsHome]
+def deonticOrdering : OrderingSource := λ _ => [johnIsHome, maryIsHome]
 
 /--
 Deontic flavor: "John must stay home" (given the rules)
@@ -259,7 +259,7 @@ def epistemicCanRaining : Bool :=
 /--
 If we know MORE (restrict the modal base), necessity becomes easier to satisfy.
 -/
-def strongerEpistemicBase : ModalBase := fun _ => [theGroundIsWet, itIsRaining]
+def strongerEpistemicBase : ModalBase := λ _ => [theGroundIsWet, itIsRaining]
 
 def epistemicMustRainingStrong : Bool :=
   must strongerEpistemicBase emptyOrdering itIsRaining .w0
@@ -289,7 +289,7 @@ Belief as epistemic modality.
 "John believes P" = P is necessary given John's doxastic state.
 The modal base is: what John believes.
 -/
-def johnBelievesBase : ModalBase := fun w =>
+def johnBelievesBase : ModalBase := λ w =>
   -- What John believes varies by world
   match w with
   | .w0 => [johnIsHome]  -- In w0, John believes he's home
@@ -310,11 +310,11 @@ Want as bouletic modality.
 "John wants P" = P is necessary given John's desires.
 Modal base: circumstances, Ordering: John's desires.
 -/
-def johnsDesiresOrdering : OrderingSource := fun _ => [johnIsHome, maryIsHome]
+def johnsDesiresOrdering : OrderingSource := λ _ => [johnIsHome, maryIsHome]
 
 def johnWantsEveryoneHome : Bool :=
   -- Best worlds according to John's desires are those where everyone is home
-  must (fun _ => []) johnsDesiresOrdering (fun w => johnIsHome w && maryIsHome w) .w0
+  must (λ _ => []) johnsDesiresOrdering (λ w => johnIsHome w && maryIsHome w) .w0
 
 #eval johnWantsEveryoneHome  -- depends on which worlds maximize desires
 
@@ -330,10 +330,10 @@ The simple belief from Attitudes.lean is a special case:
 This shows how Kratzer generalizes Montague's treatment.
 -/
 def simpleBeliefAsModal (agent : ToyIEntity) (p : Proposition) : Bool :=
-  let beliefBase : ModalBase := fun w =>
+  let beliefBase : ModalBase := λ w =>
     -- Convert the accessibility relation to a modal base
-    allWorlds.filter (believes_access agent w) |>.map fun w' =>
-      (fun w'' => w'' == w' : Proposition)
+    allWorlds.filter (believes_access agent w) |>.map λ w' =>
+      (λ w'' => w'' == w' : Proposition)
   must beliefBase emptyOrdering p .w0
 
 /--
@@ -344,10 +344,10 @@ we get the same truth conditions.
 -/
 theorem attitudes_belief_is_modal_belief :
     -- John believes John sleeps (from Attitudes.lean style)
-    (allWorlds.filter (believes_access .john .w0)).all (fun w => sleeps w .john)
+    (allWorlds.filter (believes_access .john .w0)).all (λ w => sleeps w .john)
     =
     -- John believes John sleeps (modal style)
-    simpleBeliefAsModal .john (fun w => sleeps w .john) := by
+    simpleBeliefAsModal .john (λ w => sleeps w .john) := by
   native_decide
 
 -- ============================================================================
@@ -369,7 +369,7 @@ def moreNecessary (f : ModalBase) (g : OrderingSource)
 /--
 Comparative possibility: "It's more likely to be raining than snowing"
 -/
-def itIsSnowing : Proposition := fun w => w == .w3
+def itIsSnowing : Proposition := λ w => w == .w3
 
 def rainingMoreLikelyThanSnowing : Bool :=
   moreNecessary epistemicBase emptyOrdering itIsRaining itIsSnowing .w0

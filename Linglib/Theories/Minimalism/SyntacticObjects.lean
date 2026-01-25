@@ -69,7 +69,7 @@ structure LexicalItem where
   deriving Repr
 
 /-- Decidable equality for LexicalItem based on features -/
-instance : DecidableEq LexicalItem := fun a b =>
+instance : DecidableEq LexicalItem := λ a b =>
   if h : a.features = b.features then
     isTrue (by cases a; cases b; simp at h; simp [h])
   else
@@ -115,7 +115,7 @@ structure LIToken where
   deriving Repr
 
 /-- Decidable equality for LIToken based on id and item -/
-instance : DecidableEq LIToken := fun a b =>
+instance : DecidableEq LIToken := λ a b =>
   if hid : a.id = b.id then
     if hitem : a.item = b.item then
       isTrue (by cases a; cases b; simp at hid hitem; simp [hid, hitem])

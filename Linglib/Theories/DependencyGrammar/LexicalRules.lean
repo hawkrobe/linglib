@@ -112,10 +112,10 @@ structure LexRule where
     The subject moves from left to right position -/
 def auxInversionRule : LexRule :=
   { name := "Auxiliary Inversion"
-    applies := fun e =>
+    applies := λ e =>
       e.cat == .Aux && !e.features.inv
-    transform := fun e =>
-      let newSlots := e.argStr.slots.map fun slot =>
+    transform := λ e =>
+      let newSlots := e.argStr.slots.map λ slot =>
         if slot.depType == .subj then
           { slot with dir := .right }  -- subject now goes to the right
         else slot
@@ -127,10 +127,10 @@ def auxInversionRule : LexRule :=
     Object is removed (promoted to subject), by-phrase added as optional -/
 def passiveRule : LexRule :=
   { name := "Passive"
-    applies := fun e =>
+    applies := λ e =>
       e.cat == .V && !e.features.passive &&
       e.argStr.slots.any (·.depType == .obj)
-    transform := fun e =>
+    transform := λ e =>
       let newSlots := e.argStr.slots.filter (·.depType != .obj)
       let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .P⟩]
       { e with
@@ -209,10 +209,10 @@ def lex_kicked_passive : LexEntry :=
 
 /-- Check if a dependency tree satisfies an argument structure -/
 def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
-  argStr.slots.all fun slot =>
+  argStr.slots.all λ slot =>
     if slot.required then
       -- Required slot: must have a matching dependency
-      t.deps.any fun d =>
+      t.deps.any λ d =>
         d.headIdx == headIdx &&
         d.depType == slot.depType &&
         -- Check direction
@@ -221,7 +221,7 @@ def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
          | .right => d.depIdx > headIdx)
     else
       -- Optional slot: if present, must be in correct direction
-      t.deps.all fun d =>
+      t.deps.all λ d =>
         if d.headIdx == headIdx && d.depType == slot.depType then
           match slot.dir with
           | .left => d.depIdx < headIdx

@@ -123,7 +123,7 @@ theorem rsa_some_not_all_explicit :
 Check if a derivation contains a "some" scalar item.
 -/
 def hasSomeQuantifier {m : Model} (d : Derivation m) : Bool :=
-  d.scalarItems.any fun occ =>
+  d.scalarItems.any λ occ =>
     match occ.entry.scaleMembership with
     | some (.quantifier .some_) => true
     | _ => false
@@ -132,7 +132,7 @@ def hasSomeQuantifier {m : Model} (d : Derivation m) : Bool :=
 Check if a derivation contains an "all/every" scalar item.
 -/
 def hasAllQuantifier {m : Model} (d : Derivation m) : Bool :=
-  d.scalarItems.any fun occ =>
+  d.scalarItems.any λ occ =>
     match occ.entry.scaleMembership with
     | some (.quantifier .all) => true
     | _ => false

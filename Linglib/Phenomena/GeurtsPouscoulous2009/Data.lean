@@ -290,8 +290,8 @@ def exp3Results : List Exp3Result :=
 100% "true" means 0% local SI (since local SI would make it false).
 -/
 theorem verification_no_local_SI_in_UE :
-    exp3Results.filter (fun r => quantifierMonotonicity r.quantifier == .upwardEntailing)
-      |>.all (fun r => r.verificationTrueRate == 100) := by
+    exp3Results.filter (λ r => quantifierMonotonicity r.quantifier == .upwardEntailing)
+      |>.all (λ r => r.verificationTrueRate == 100) := by
   native_decide
 
 /--
@@ -300,9 +300,9 @@ theorem verification_no_local_SI_in_UE :
 This is an artifact of the inference paradigm, not genuine local SIs.
 -/
 theorem inference_around_chance :
-    let ueResults := exp3Results.filter (fun r => quantifierMonotonicity r.quantifier == .upwardEntailing)
-    let rates := ueResults.map (fun r => r.inferenceRate)
-    rates.all (fun r => r > 40) ∧ rates.all (fun r => r < 70) := by
+    let ueResults := exp3Results.filter (λ r => quantifierMonotonicity r.quantifier == .upwardEntailing)
+    let rates := ueResults.map (λ r => r.inferenceRate)
+    rates.all (λ r => r > 40) ∧ rates.all (λ r => r < 70) := by
   native_decide
 
 /--

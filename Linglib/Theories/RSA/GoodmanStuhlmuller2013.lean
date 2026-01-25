@@ -156,7 +156,7 @@ def obsProb (o : Observation) (a : Access) (s : WorldState) : Frac :=
 def sumFracs (xs : List Frac) : Frac :=
   let dens := xs.map (·.den)
   let commonDen := dens.foldl (· * ·) 1
-  let sumNum := xs.foldl (fun acc x => acc + x.num * (commonDen / x.den)) 0
+  let sumNum := xs.foldl (λ acc x => acc + x.num * (commonDen / x.den)) 0
   if h : commonDen > 0 then ⟨sumNum, commonDen, h⟩ else Frac.zero
 
 -- Speaker's belief state given observation
@@ -181,7 +181,7 @@ def L0 (u : Utterance) (s : WorldState) : Frac :=
 
 -- S1 with observation
 def expectedL0 (o : Observation) (u : Utterance) : Frac :=
-  let scores := allWorldStates.map fun s =>
+  let scores := allWorldStates.map λ s =>
     Frac.mul (speakerBelief o s) (L0 u s)
   sumFracs scores
 
@@ -197,16 +197,16 @@ def S1_givenObs (o : Observation) (u : Utterance) : Frac :=
 -- S1 marginalized over observations: P(u | s, a) [Eq. 4 from paper]
 def S1_marginal (u : Utterance) (s : WorldState) (a : Access) : Frac :=
   let obs := observationsFor a
-  let scores := obs.map fun o =>
+  let scores := obs.map λ o =>
     Frac.mul (S1_givenObs o u) (obsProb o a s)
   sumFracs scores
 
 -- L1: Pragmatic listener given access
 def L1_scores (u : Utterance) (a : Access) : List (WorldState × Frac) :=
-  allWorldStates.map fun s => (s, S1_marginal u s a)
+  allWorldStates.map λ s => (s, S1_marginal u s a)
 
 def getScore (dist : List (WorldState × Frac)) (s : WorldState) : Frac :=
-  match dist.find? fun (s', _) => s' == s with
+  match dist.find? λ (s', _) => s' == s with
   | some (_, p) => p
   | none => Frac.zero
 
@@ -339,7 +339,7 @@ def L0_param (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
 
 def expectedL0_param (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
     (o : KnowledgeState.Observation) (u : NumUtterance) : Frac :=
-  let scores := KnowledgeState.allWorldStates.map fun s =>
+  let scores := KnowledgeState.allWorldStates.map λ s =>
     Frac.mul (KnowledgeState.speakerBelief o s) (L0_param meaning u s)
   KnowledgeState.sumFracs scores
 
@@ -356,16 +356,16 @@ def S1_param_givenObs (meaning : NumUtterance → KnowledgeState.WorldState → 
 def S1_param_marginal (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
     (u : NumUtterance) (s : KnowledgeState.WorldState) (a : KnowledgeState.Access) : Frac :=
   let obs := KnowledgeState.observationsFor a
-  let scores := obs.map fun o =>
+  let scores := obs.map λ o =>
     Frac.mul (S1_param_givenObs meaning o u) (KnowledgeState.obsProb o a s)
   KnowledgeState.sumFracs scores
 
 def L1_param_scores (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
     (u : NumUtterance) (a : KnowledgeState.Access) : List (KnowledgeState.WorldState × Frac) :=
-  KnowledgeState.allWorldStates.map fun s => (s, S1_param_marginal meaning u s a)
+  KnowledgeState.allWorldStates.map λ s => (s, S1_param_marginal meaning u s a)
 
 def getNumScore (dist : List (KnowledgeState.WorldState × Frac)) (s : KnowledgeState.WorldState) : Frac :=
-  match dist.find? fun (s', _) => s' == s with
+  match dist.find? λ (s', _) => s' == s with
   | some (_, p) => p
   | none => Frac.zero
 

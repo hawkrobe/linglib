@@ -112,7 +112,7 @@ every world to x.
 In Montague's notation: ^α is the intension of α
 -/
 def up {m : IModel} {τ : ITy} (x : m.interpTy τ) : m.interpTy (^τ) :=
-  fun _ => x
+  λ _ => x
 
 /--
 The "down" operator (ˇ): evaluate intension at a world
@@ -151,7 +151,7 @@ def toyIModel : IModel := {
 Different individuals sleep in different worlds.
 -/
 def sleeps : toyIModel.interpTy (^(.e ⇒ .t)) :=
-  fun w x => match w, x with
+  λ w x => match w, x with
     | .w0, .john => true
     | .w0, .mary => false
     | .w1, .john => false
@@ -166,7 +166,7 @@ def sleeps : toyIModel.interpTy (^(.e ⇒ .t)) :=
 "is happy" as a world-dependent property.
 -/
 def happy : toyIModel.interpTy (^(.e ⇒ .t)) :=
-  fun w x => match w, x with
+  λ w x => match w, x with
     | .w0, .john => true
     | .w0, .mary => true
     | .w1, .john => false
@@ -186,7 +186,7 @@ def happy : toyIModel.interpTy (^(.e ⇒ .t)) :=
 that picks out potentially different individuals in different worlds.
 -/
 def morningStar : toyIModel.interpTy ITy.indConcept :=
-  fun w => match w with
+  λ w => match w with
     | .w0 => .hesperus
     | .w1 => .hesperus
     | .w2 => .phosphorus  -- different in w2!
@@ -196,7 +196,7 @@ def morningStar : toyIModel.interpTy ITy.indConcept :=
 "the evening star" - another individual concept
 -/
 def eveningStar : toyIModel.interpTy ITy.indConcept :=
-  fun w => match w with
+  λ w => match w with
     | .w0 => .hesperus
     | .w1 => .phosphorus  -- different in w1!
     | .w2 => .hesperus
@@ -248,16 +248,16 @@ compatible with what a believes in w.
 ⟦believe⟧(a)(p)(w) = ∀w'. R(a,w,w') → p(w')
 -/
 def believe : toyIModel.interpTy (.e ⇒ ITy.prop ⇒ .t) :=
-  fun agent prop =>
-    allWorlds.all fun w' =>
+  λ agent prop =>
+    allWorlds.all λ w' =>
       !believes_access agent .w0 w' || prop w'
 
 /--
 Extended believe that's world-dependent.
 -/
 def believeAt : World → toyIModel.interpTy (.e ⇒ ITy.prop ⇒ .t) :=
-  fun evalWorld agent prop =>
-    allWorlds.all fun w' =>
+  λ evalWorld agent prop =>
+    allWorlds.all λ w' =>
       !believes_access agent evalWorld w' || prop w'
 
 -- ============================================================================
@@ -274,7 +274,7 @@ not the actual world.
 -/
 def johnBelievesMary_deDicto : toyIModel.interpTy .t :=
   -- The proposition "Mary sleeps" as an intension
-  let marySleeps : toyIModel.interpTy ITy.prop := fun w => sleeps w .mary
+  let marySleeps : toyIModel.interpTy ITy.prop := λ w => sleeps w .mary
   believe .john marySleeps
 
 -- At w0: John's belief-accessible worlds are {w0, w2}
@@ -292,7 +292,7 @@ John sleeps at w2? true
 So "John believes John sleeps" is true at w0
 -/
 def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
-  let johnSleeps : toyIModel.interpTy ITy.prop := fun w => sleeps w .john
+  let johnSleeps : toyIModel.interpTy ITy.prop := λ w => sleeps w .john
   believe .john johnSleeps
 
 #eval johnBelievesJohnSleeps  -- true
@@ -334,13 +334,13 @@ This connects to the GeurtsPouscoulous2009 data:
 Proposition: "John ate some cookies" (simplified)
 -/
 def someCookies : toyIModel.interpTy ITy.prop :=
-  fun _ => true  -- simplified: always true for demo
+  λ _ => true  -- simplified: always true for demo
 
 /--
 Proposition: "John ate all cookies" (simplified)
 -/
 def allCookies : toyIModel.interpTy ITy.prop :=
-  fun w => w == .w0 || w == .w1  -- true in some worlds
+  λ w => w == .w0 || w == .w1  -- true in some worlds
 
 /--
 "Mary believes John ate some cookies"

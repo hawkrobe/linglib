@@ -106,9 +106,9 @@ class CapturesCoordination (G : Type) [Grammar G] where
 
 /-- Find conjunction positions in a word list -/
 def findConjunctions (ws : List Word) : List Nat :=
-  (List.range ws.length).zip ws |>.filterMap fun (i, w) =>
+  (List.range ws.length).zip ws |>.filterMap λ (i, w) =>
     if w.form == "and" || w.form == "or" || w.form == "but" then some i else none
 
 /-- Check if a word list has coordination -/
 def hasCoordination (ws : List Word) : Bool :=
-  ws.any fun w => w.form == "and" || w.form == "or" || w.form == "but"
+  ws.any λ w => w.form == "and" || w.form == "or" || w.form == "but"

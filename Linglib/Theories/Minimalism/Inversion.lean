@@ -60,7 +60,7 @@ def findAuxInWords (ws : List Word) : Option Nat :=
 
 /-- Find subject position in word list -/
 def findSubjectInWords (ws : List Word) : Option Nat :=
-  ws.findIdx? fun w => w.cat == Cat.D && !w.features.wh
+  ws.findIdx? λ w => w.cat == Cat.D && !w.features.wh
 
 /-- Word list has T-before-subject order -/
 def wordsHaveTBeforeSubject (ws : List Word) : Bool :=
@@ -109,7 +109,7 @@ theorem licenses_matrix_t_first (ws : List Word)
     licenses ws .matrixQuestion := by
   refine ⟨.inC, ⟨?_, ?_⟩, ?_, ?_⟩
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
-    exact fun _ => h
+    exact λ _ => h
   · simp only [subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
     intro hf; cases hf
   · intro _; rfl
@@ -136,7 +136,7 @@ theorem licenses_embedded_subject_first (ws : List Word)
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
     intro hf; cases hf
   · simp only [subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
-    exact fun _ => h
+    exact λ _ => h
   · intro hct; cases hct
   · intro _; rfl
 

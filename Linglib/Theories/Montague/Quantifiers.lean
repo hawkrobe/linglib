@@ -51,30 +51,30 @@ class FiniteModel (m : Model) where
 Universal quantifier: λR.λS. ∀x. R(x) → S(x)
 -/
 def every_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  fun restrictor => fun scope =>
-    FiniteModel.elements.all (fun x => !restrictor x || scope x)
+  λ restrictor => λ scope =>
+    FiniteModel.elements.all (λ x => !restrictor x || scope x)
 
 /--
 Existential quantifier: λR.λS. ∃x. R(x) ∧ S(x)
 -/
 def some_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  fun restrictor => fun scope =>
-    FiniteModel.elements.any (fun x => restrictor x && scope x)
+  λ restrictor => λ scope =>
+    FiniteModel.elements.any (λ x => restrictor x && scope x)
 
 /--
 Negative quantifier: λR.λS. ¬∃x. R(x) ∧ S(x)
 -/
 def no_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  fun restrictor => fun scope =>
-    FiniteModel.elements.all (fun x => !restrictor x || !scope x)
+  λ restrictor => λ scope =>
+    FiniteModel.elements.all (λ x => !restrictor x || !scope x)
 
 /--
 Most quantifier: λR.λS. |R ∩ S| > |R - S|
 -/
 def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  fun restrictor => fun scope =>
-    let inBoth := FiniteModel.elements.filter (fun x => restrictor x && scope x)
-    let inROnly := FiniteModel.elements.filter (fun x => restrictor x && !scope x)
+  λ restrictor => λ scope =>
+    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x)
+    let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
     decide (inBoth.length > inROnly.length)
 
 -- ============================================================================
@@ -83,7 +83,7 @@ def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
 
 instance : FiniteModel toyModel where
   elements := [.john, .mary, .pizza, .book]
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 -- ============================================================================
 -- Extended Toy Lexicon
@@ -91,21 +91,21 @@ instance : FiniteModel toyModel where
 
 /-- "student" property (John and Mary are students) -/
 def student_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .john => true
     | .mary => true
     | _ => false
 
 /-- "person" property (John and Mary are people) -/
 def person_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .john => true
     | .mary => true
     | _ => false
 
 /-- "thing" property (everything) -/
 def thing_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun _ => true
+  λ _ => true
 
 -- ============================================================================
 -- Example Derivations

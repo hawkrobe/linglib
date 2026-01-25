@@ -56,7 +56,7 @@ def findAuxPosition (ws : List Word) : Option Nat :=
 
 /-- Find the position of the first subject (non-wh DP) -/
 def findSubjectPosition (ws : List Word) : Option Nat :=
-  ws.findIdx? fun w => w.cat == Cat.D && !w.features.wh
+  ws.findIdx? λ w => w.cat == Cat.D && !w.features.wh
 
 /-- Auxiliary precedes subject -/
 def auxPrecedesSubject (ws : List Word) : Bool :=

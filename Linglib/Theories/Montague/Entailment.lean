@@ -41,7 +41,7 @@ abbrev Prop' := World → Bool
 
 /-- Semantic entailment: p entails q iff q is true whenever p is true -/
 def entails (p q : Prop') : Bool :=
-  allWorlds.all fun w => !p w || q w
+  allWorlds.all λ w => !p w || q w
 
 -- ============================================================================
 -- PART 3: Monotonicity (Decidable Versions)
@@ -49,38 +49,38 @@ def entails (p q : Prop') : Bool :=
 
 /-- Check if f is upward entailing on given test cases -/
 def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all fun (p, q) => !entails p q || entails (f p) (f q)
+  tests.all λ (p, q) => !entails p q || entails (f p) (f q)
 
 /-- Check if f is downward entailing on given test cases -/
 def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all fun (p, q) => !entails p q || entails (f q) (f p)
+  tests.all λ (p, q) => !entails p q || entails (f q) (f p)
 
 -- ============================================================================
 -- PART 4: Propositional Operations
 -- ============================================================================
 
-def pnot (p : Prop') : Prop' := fun w => !p w
-def pand (p q : Prop') : Prop' := fun w => p w && q w
-def por (p q : Prop') : Prop' := fun w => p w || q w
+def pnot (p : Prop') : Prop' := λ w => !p w
+def pand (p q : Prop') : Prop' := λ w => p w && q w
+def por (p q : Prop') : Prop' := λ w => p w || q w
 
 -- ============================================================================
 -- PART 5: Concrete Test Propositions
 -- ============================================================================
 
 /-- Proposition true only in w0 -/
-def p0 : Prop' := fun w => w == .w0
+def p0 : Prop' := λ w => w == .w0
 
 /-- Proposition true in w0 and w1 -/
-def p01 : Prop' := fun w => w == .w0 || w == .w1
+def p01 : Prop' := λ w => w == .w0 || w == .w1
 
 /-- Proposition true in w0, w1, w2 -/
-def p012 : Prop' := fun w => w == .w0 || w == .w1 || w == .w2
+def p012 : Prop' := λ w => w == .w0 || w == .w1 || w == .w2
 
 /-- Proposition true everywhere -/
-def pAll : Prop' := fun _ => true
+def pAll : Prop' := λ _ => true
 
 /-- Proposition false everywhere -/
-def pNone : Prop' := fun _ => false
+def pNone : Prop' := λ _ => false
 
 -- Entailment chain: p0 ⊨ p01 ⊨ p012 ⊨ pAll
 -- (smaller sets entail larger sets)
@@ -142,30 +142,30 @@ theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := 
 
 /-- "Every A is B" = ∀x. A(x) → B(x) -/
 def every (a b : World → Bool) : Bool :=
-  allWorlds.all fun x => !a x || b x
+  allWorlds.all λ x => !a x || b x
 
 /-- "Some A is B" = ∃x. A(x) ∧ B(x) -/
 def some' (a b : World → Bool) : Bool :=
-  allWorlds.any fun x => a x && b x
+  allWorlds.any λ x => a x && b x
 
 /-- "No A is B" = ∀x. A(x) → ¬B(x) -/
 def no (a b : World → Bool) : Bool :=
-  allWorlds.all fun x => !a x || !b x
+  allWorlds.all λ x => !a x || !b x
 
 -- Fixed restrictor for testing
 def fixedRestr : Prop' := p01  -- "students" = {w0, w1}
 
 /-- "Every student" as a function of scope -/
 def every_scope : Prop' → Prop' :=
-  fun scope => fun _ => every fixedRestr scope
+  λ scope => λ _ => every fixedRestr scope
 
 /-- "Some student" as a function of scope -/
 def some_scope : Prop' → Prop' :=
-  fun scope => fun _ => some' fixedRestr scope
+  λ scope => λ _ => some' fixedRestr scope
 
 /-- "No student" as a function of scope -/
 def no_scope : Prop' → Prop' :=
-  fun scope => fun _ => no fixedRestr scope
+  λ scope => λ _ => no fixedRestr scope
 
 /--
 **Theorem: "Every" is UE in scope**
@@ -202,7 +202,7 @@ def fixedScope : Prop' := p012  -- "smokes" = {w0, w1, w2}
 
 /-- "Every ___ smokes" as a function of restrictor -/
 def every_restr : Prop' → Prop' :=
-  fun restr => fun _ => every restr fixedScope
+  λ restr => λ _ => every restr fixedScope
 
 /--
 **Theorem: "Every" is DE in restrictor**

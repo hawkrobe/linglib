@@ -180,7 +180,7 @@ def students_entry : SemLexEntry toyModel :=
 def SemLexicon (m : Model) := String → Option (SemLexEntry m)
 
 /-- The toy model lexicon -/
-def toyLexicon : SemLexicon toyModel := fun form =>
+def toyLexicon : SemLexicon toyModel := λ form =>
   match form with
   | "some" => some some_entry
   | "every" => some every_entry
@@ -200,7 +200,7 @@ def lookupAlternatives {m : Model} (lex : SemLexicon m) (form : String) : List (
   match lex form with
   | none => []
   | some entry =>
-    entry.strongerAlternatives.filterMap fun altForm => lex altForm
+    entry.strongerAlternatives.filterMap λ altForm => lex altForm
 
 -- ============================================================================
 -- Theorems

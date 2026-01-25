@@ -46,10 +46,10 @@ structure CoordTree where
 
 /-- Conjuncts must have matching categories -/
 def checkCatMatch (t : CoordTree) : Bool :=
-  t.coordinations.all fun coord =>
+  t.coordinations.all λ coord =>
     match t.words[coord.firstConjunct]? with
     | some firstWord =>
-      coord.otherConjuncts.all fun idx =>
+      coord.otherConjuncts.all λ idx =>
         match t.words[idx]? with
         | some w => w.cat == firstWord.cat
         | none => false
@@ -57,11 +57,11 @@ def checkCatMatch (t : CoordTree) : Bool :=
 
 /-- For verb coordination, argument structures must match -/
 def checkArgStrMatch (t : CoordTree) : Bool :=
-  t.coordinations.all fun coord =>
+  t.coordinations.all λ coord =>
     match t.words[coord.firstConjunct]? with
     | some firstWord =>
       if firstWord.cat == Cat.V then
-        coord.otherConjuncts.all fun idx =>
+        coord.otherConjuncts.all λ idx =>
           match t.words[idx]? with
           | some w => firstWord.features.valence == w.features.valence
           | none => false
