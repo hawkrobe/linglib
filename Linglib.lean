@@ -136,6 +136,7 @@ import Linglib.Theories.Montague.Lexicon
 import Linglib.Theories.Montague.SemDerivation
 import Linglib.Theories.Montague.Scope
 import Linglib.Theories.Montague.Conjunction
+import Linglib.Theories.Montague.Intensional
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence

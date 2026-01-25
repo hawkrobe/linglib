@@ -1,41 +1,72 @@
 # Linglib Roadmap
 
-This document tracks architectural improvements and technical debt to address in future work.
-
-## High Priority
-
-### 1. Intensional Montague Semantics
-
-**Current state**: Montague meanings are extensional - evaluated in a fixed model, producing values like `Bool`.
-
-**Problem**: RSA needs `meaning : World → Bool` to compute L0. Currently the RSA bridge is shallow - it pattern-matches on scalar items and returns pre-computed results rather than actually evaluating Montague meanings in RSA worlds.
-
-**Solution**: Add an intensional layer where meanings are functions from worlds to extensions:
-
-```lean
--- Current (extensional)
-meaning : m.interpTy .t  -- just Bool
-
--- Desired (intensional)
-meaning : World → Bool   -- varies with world
-```
-
-**Implementation path**:
-1. Add `Montague/Intensional.lean` with world-parameterized types
-2. Phenomena scenarios provide world structure + lexical interpretations
-3. RSA's L0 evaluates the intensional meaning: `L0(u, w) = ⟦u⟧(w)`
-
-**Files affected**: `Montague/Basic.lean`, `Montague/SemDerivation.lean`, `RSA/*.lean`
+This document tracks architectural improvements organized by priority phase.
 
 ---
 
-### 2. Type-Safe Scale Positions
+## Phase 1: Intensional Grounding (Highest Priority)
+
+**Goal**: Make RSA's L0 actually evaluate compositional Montague semantics.
+
+Currently RSA pattern-matches on scalar items and returns pre-computed results.
+The intensional layer enables: `L0(u, w) ∝ δ⟦u⟧(w) · P(w)`
+
+### 1.1 Intensional Montague Semantics ✓ DONE
+
+**Status**: Implemented in `Montague/Intensional.lean`
+
+Provides:
+- `IntensionalModel`: Model with explicit World type
+- `Intension m τ`: World → Extension(τ)
+- `Proposition m`: World → Bool
+- `IntensionalDerivation`: Derivation with world-parameterized meaning
+- `phi`: RSA's literal semantics function
+- Example: `someStudentsSleep_intensional` with proven truth conditions at each world
+
+### 1.2 Refactor RSA to Use Intensional Meanings
+
+**Current state**: `RSA/ScalarImplicatures.lean` pattern-matches on "some"/"all" strings.
+
+**Problem**: The meaning function is stipulated, not derived from compositional semantics.
+
+**Solution**: Replace `rsaFromDerivation` with version that uses `IntensionalDerivation`:
+
+```lean
+-- Current (stipulated)
+def rsaFromDerivation d :=
+  if hasSomeQuantifier d then rsaSomeResult  -- pre-computed
+
+-- Desired (compositional)
+def rsaFromDerivation (d : IntensionalDerivation m) (prior : m.World → Frac) :=
+  L0_normalize (fun w => if d.evalAt w then prior w else 0)
+```
+
+**Files affected**: `RSA/ScalarImplicatures.lean`, `RSA/Basic.lean`
+
+### 1.3 Grounding Theorem: RSA Uses Montague
+
+**Goal**: Prove that RSA's L0 distribution comes from evaluating compositional meanings.
+
+```lean
+theorem rsa_l0_from_montague (d : IntensionalDerivation m) (prior : Distribution m.World) :
+    L0 d prior w = normalize (fun w' => δ(d.evalAt w') * prior w') w
+```
+
+This formalizes that RSA doesn't stipulate meanings—it uses compositional semantics.
+
+**Files affected**: `RSA/ScalarImplicatures.lean` or new `RSA/Grounding.lean`
+
+---
+
+## Phase 2: Type Safety & Robustness
+
+### 2.1 Type-Safe Scale Positions
 
 **Current state**: Implicatures use string matching: `hasImplicature results "all"`
 
-**Problem**: Fragile - renaming breaks silently, no compile-time checking.
+**Problem**: Fragile—renaming breaks silently, no compile-time checking.
 
-**Solution**: Use the `QuantExpr` / `ConnExpr` types from `Montague/Scales.lean`:
+**Solution**: Use `QuantExpr` / `ConnExpr` types from `Montague/Scales.lean`:
 
 ```lean
 -- Current
@@ -47,13 +78,39 @@ hasImplicature results .all  -- type-checked!
 
 **Files affected**: `NeoGricean/ScalarImplicatures.lean`, `RSA/ScalarImplicatures.lean`
 
+### 2.2 NeoGricean Entailment → Montague Model
+
+**Current state**: `NeoGricean/ScalarImplicatures.lean` has hardcoded entailment checker.
+
+**Problem**: Not proven to match Montague's model-theoretic entailment.
+
+**Solution**: Either:
+- Prove equivalence: `neoGriceanEntails ↔ montagueEntails`
+- Or replace hardcoded checker with Montague evaluation
+
+**Files affected**: `NeoGricean/ScalarImplicatures.lean`, `Montague/Entailment.lean`
+
+### 2.3 RSA DE Context Handling
+
+**Current state**: NeoGricean handles DE blocking; RSA doesn't.
+
+**Problem**: RSA model incomplete—can't represent embedded contexts.
+
+**Solution**: Either:
+- Extend RSA with compositional alternative generation
+- Or document why RSA's treatment differs (QUD-based blocking)
+
+**Files affected**: `RSA/ScalarImplicatures.lean`
+
 ---
 
-### 3. Parameterized Lexicon for Competing Analyses
+## Phase 3: Competing Analyses Infrastructure
 
-**Current state**: `Montague/Numbers.lean` has lower-bound semantics. Exact semantics proofs are scattered.
+### 3.1 Parameterized Lexicon Structure
 
-**Problem**: No clean way to compare competing semantic proposals (lower-bound vs exact numerals, Kratzer vs simple modals).
+**Current state**: `Montague/Numbers.lean` has lower-bound semantics only.
+
+**Problem**: No clean way to compare competing semantic proposals.
 
 **Solution**: Parameterized lexicon structure:
 
@@ -73,111 +130,38 @@ Each variant defines:
 - Empirical predictions
 - Which phenomena it handles/fails
 
-**Files affected**: Create new `Lexicon/` structure, refactor `Numbers.lean`
+### 3.2 Embedded Implicatures
+
+**Current state**: Only simple sentences handled.
+
+**Problem**: "John believes some students passed" has complex implicature patterns.
+
+**Solution**: Extend derivation structure to track embedding depth; implement Geurts' globalist vs localist analysis.
 
 ---
 
-## Medium Priority
+## Phase 4: Syntax Expansion
 
-### 4. Formal Language Theory & CCG Generative Capacity
+### 4.1 Formal Language Theory & CCG Generative Capacity
 
-**Current state**: `ccg_is_mildly_context_sensitive` is just an assertion (`rfl`), not a real proof.
+**Current state**: `ccg_is_mildly_context_sensitive` is just an assertion.
 
-**Problem**: Steedman's Chapter 6 makes substantive claims:
-1. Cross-serial dependencies correspond to `{aⁿbⁿcⁿdⁿ}`
-2. Pumping lemma proves this is not context-free
-3. CCG with generalized composition can generate it
-4. Therefore CCG is strictly more powerful than CFG
+**Problem**: Steedman claims CCG > CFG, but we don't prove it rigorously.
 
-We assert (4) but don't prove (1)-(3).
-
-**Solution**: Formalize the Chomsky hierarchy and prove CCG's position:
+**Solution**: Formalize Chomsky hierarchy and prove CCG's position:
 
 ```
 Core/FormalLanguageTheory.lean
-  - FormalLanguage: Type → Type (sets of strings)
-  - ContextFreeLanguage: recognized by CFG
-  - MildlyContextSensitive: polynomial parsing, limited cross-serial
+  - FormalLanguage, ContextFreeLanguage, MildlyContextSensitive
   - Pumping lemma for CFLs
   - Theorem: {aⁿbⁿcⁿdⁿ} is not context-free
 
 Theories/CCG/GenerativeCapacity.lean
-  - CCGLanguage: language generated by CCG grammar
   - Theorem: CCG generates {aⁿbⁿcⁿdⁿ} (via B² composition)
   - Theorem: CCG ⊃ CFL (strictly)
-  - Theorem: CCG parsing is polynomial (sketch/cite)
 ```
 
-**Key insight to formalize**: Forward crossed composition `X/Y (Y\Z)$ ⇒ (X\Z)$` allows verbs to "thread" arguments, producing crossed dependencies that pumping lemma rules out for CFG.
-
-**References**:
-- Steedman (2000) "The Syntactic Process" Ch. 6
-- Vijay-Shanker & Weir (1994) "The equivalence of four extensions of CFGs"
-- Joshi (1985) "Tree adjoining grammars" (defines mild context-sensitivity)
-
-**Files affected**: New `Core/FormalLanguageTheory.lean`, new `Theories/CCG/GenerativeCapacity.lean`
-
----
-
-### 5. Unify Example Derivations
-
-**Current state**: Example derivations (`someStudentsSleep`, etc.) live in `SemDerivation.lean`.
-
-**Problem**: These are used by both NeoGricean and RSA - awkward location.
-
-**Solution**: Create `Examples/ScalarImplicature.lean` or similar with shared test cases.
-
----
-
-### 6. CCG-Montague Homomorphism
-
-**Current state**: `CCG/Semantics.lean` has `catToTy` mapping and trivial type preservation theorems. `CCG/TruthConditions.lean` has working pipeline.
-
-**Problem**: The homomorphism property (syntactic composition → semantic application) is not formally proven.
-
-**Solution**: Prove the fundamental theorem of compositional semantics:
-```lean
-theorem fapp_homomorphism :
-    (DerivStep.fapp d₁ d₂).eval m lex = apply (d₁.eval m lex) (d₂.eval m lex)
-```
-
-See `docs/plans/wise-wiggling-parrot.md` for full plan.
-
-**Files affected**: `CCG/Homomorphism.lean` (new), `CCG/Combinators.lean` (new)
-
----
-
-### 7. RSA DE Context Handling
-
-**Current state**: NeoGricean handles DE blocking; RSA doesn't.
-
-**Problem**: The RSA bridge ignores context polarity.
-
-**Solution**: Extend `rsaFromDerivation` to handle DE contexts, or document why RSA's treatment differs.
-
----
-
-## Lower Priority
-
-### 8. Reorganize Pragmatic Theories
-
-**Current state**: `NeoGricean/` and `RSA/` are top-level under `Theories/`.
-
-**Problem**: Inconsistent with the syntax/semantics/pragmatics layering. Both are pragmatic theories.
-
-**Solution**: Move under `Theories/Pragmatics/`:
-```
-Theories/Pragmatics/
-├── NeoGricean/
-├── RSA/
-└── Comparison.lean  (currently PragmaticComparison.lean)
-```
-
-**Files affected**: All imports of `NeoGricean.*` and `RSA.*` (~20 files)
-
----
-
-### 9. HPSG/Minimalism → SemDerivation
+### 4.2 HPSG/Minimalism → SemDerivation
 
 **Current state**: Only CCG implements the syntax→semantics interface.
 
@@ -185,25 +169,49 @@ Theories/Pragmatics/
 
 **Solution**: Implement `toDerivation` for HPSG and Minimalism.
 
+### 4.3 CCG-Montague Homomorphism
+
+**Current state**: `CCG/Semantics.lean` has `catToTy` and trivial preservation theorems.
+
+**Problem**: The homomorphism property (syntax composition → semantic application) not proven.
+
+**Solution**: Prove fundamental theorem of compositional semantics:
+
+```lean
+theorem fapp_homomorphism :
+    (DerivStep.fapp d₁ d₂).eval m lex = apply (d₁.eval m lex) (d₂.eval m lex)
+```
+
+See `docs/plans/wise-wiggling-parrot.md` for full plan.
+
 ---
 
-### 10. Embedded Implicatures
+## Lower Priority / Future Work
 
-**Current state**: Only simple sentences handled.
+### Reorganize Pragmatic Theories
 
-**Problem**: "John believes some students passed" has complex implicature patterns.
+Move `NeoGricean/` and `RSA/` under `Theories/Pragmatics/` for consistency.
 
-**Solution**: Extend derivation structure to track embedding; implement Geurts' analysis.
+### RSA α Parameter
 
----
+Parameterize RSA by rationality α; relate to NeoGricean competence assumption.
 
-### 11. RSA α Parameter
+### B² Cross-Serial Derivations for 3+ Verbs
 
-**Current state**: RSA uses fixed rationality.
+`CCG/CrossSerial.lean` has 2-verb derivations but simplified 3-verb case.
+Full solution requires B² (generalized composition) to thread multiple argument slots.
 
-**Problem**: Can't model gradient speaker optimality / competence.
+### Compute NP-V Bindings from Derivation Structure
 
-**Solution**: Parameterize RSA by α; relate to NeoGricean competence assumption.
+Extract which NP binds to which verb from CCG derivation tree, proving bindings emerge from structure.
+
+### CCG Gapping Derivations & Category Decomposition
+
+Implement generalized backward composition for type-raised categories and category decomposition rule (§7.3.3).
+
+### Sentence Processing & Incremental Interpretation
+
+Formalize CCG's left-prefix constituency and connect to processing data.
 
 ---
 
@@ -213,12 +221,13 @@ Theories/Pragmatics/
 2. **Phenomena-driven**: Empirical data in `Phenomena/`, theory coverage tracked
 3. **Competing analyses explicit**: Different semantic proposals in separate files with empirical predictions
 4. **Proofs over examples**: Prefer theorems to `#eval` demonstrations
+5. **Grounding over stipulation**: RSA should use compositional semantics, not pattern-match
 
 ---
 
 ## Completed
 
-- [x] Consolidate `ContextPolarity` (was duplicated in SemDeriv and Alternatives)
+- [x] Consolidate `ContextPolarity` (was duplicated)
 - [x] Move `Comparison.lean` to `Theories/Pragmatics/`
 - [x] End-to-end scalar implicature pipeline (CCG → Montague → NeoGricean/RSA)
 - [x] Agreement theorem: both theories derive "not all" from "some"
@@ -230,156 +239,7 @@ Theories/Pragmatics/
 - [x] Pipeline architecture (`Core/Pipeline.lean`)
 - [x] RSA scope ambiguity model (`RSA/ScontrasPearl2021.lean`)
 - [x] Gapping word order typology (`Phenomena/Gapping/Data.lean`, `CCG/Gapping.lean`)
-
----
-
-## Future Work
-
-### 12. B² Cross-Serial Derivations for 3+ Verbs
-
-**Current state**: `CCG/CrossSerial.lean` has complete 2-verb derivations but simplified 3-verb derivations.
-
-**Problem**: The 2-verb case works with standard composition (B):
-```
-zag >B zwemmen = (S\NP)/NP
-```
-But 3+ verbs require B² (generalized composition) to thread TWO extra argument slots:
-```
-"Jan Piet Marie zag helpen zwemmen"
-- Jan → zag, Piet → helpen, Marie → zwemmen (cross-serial!)
-```
-
-Standard B only adds ONE slot; we need TWO for the third NP.
-
-**Solution**:
-1. Implement proper B² derivations with carefully chosen categories
-2. Type-raise each NP into its respective verb's domain
-3. Use B² to compose while preserving multiple argument slots
-
-```lean
--- B² rule (already defined): X/Y (Y/Z)/W → (X/Z)/W
--- Need categories like:
--- helpen: ((S\NP)/NP)/VP  -- passes through NP slot
--- Result after B²: ((S\NP)/NP)/NP  -- needs 2 NPs
-```
-
-**Key insight**: Each additional verb in the cross-serial chain requires one more B^n composition to thread an additional argument slot.
-
-**Files affected**: `CCG/CrossSerial.lean`
-
----
-
-### 13. Compute NP-V Bindings from Derivation Structure
-
-**Current state**: `AnnotatedDerivation` has manually annotated `bindings` field.
-
-**Problem**: The bindings should be **computed** from the derivation tree structure, not manually annotated. The whole point of CCG's cross-serial analysis is that the derivational structure naturally yields cross-serial dependencies.
-
-**Solution**:
-```lean
-/-- Extract which NP binds to which verb from derivation structure -/
-def ExtDerivStep.extractBindings : ExtDerivStep → List Dependency
-  | .fapp d1 d2 => ...  -- NP argument combines here
-  | .fcomp d1 d2 => ... -- Composition threads argument
-  | .fcomp2 d1 d2 => ... -- B² threads two arguments
-  ...
-
-theorem bindings_from_structure :
-    dutch_jan_piet_zag_zwemmen.deriv.extractBindings = crossSerialDeps 2
-```
-
-This would prove that CCG derivations **necessarily** produce cross-serial bindings for Dutch, not just that we can annotate them that way.
-
-**Files affected**: `CCG/CrossSerial.lean`
-
----
-
-### 14. CCG Gapping Derivations & Category Decomposition
-
-**Current state**: `CCG/Gapping.lean` defines gapped constituent categories and proves Ross's generalization emerges from CCG, but doesn't implement full derivations.
-
-**Problem**: To actually build "Warren, potatoes" as `S\((S/NP)/NP)`, we need:
-1. **Generalized backward composition for type-raised categories**:
-   ```
-   T\(T/NP₁)  T\(T/NP₂)  →  T\((T/NP₂)/NP₁)
-   ```
-   Standard backward composition (Y\Z X\Y → X\Z) doesn't directly give this.
-
-2. **Category decomposition rule** (§7.3.3): Reveals "virtual constituents" from the left conjunct using parametric neutrality of combinatory rules.
-
-3. **θ" anaphor**: Recovers gap interpretation from Information Structure (theme of left conjunct).
-
-**Solution**:
-```
-Theories/CCG/Gapping.lean (extend)
-  - GeneralizedBackwardComp: for type-raised categories
-  - Full derivation: warren_potatoes builds S\((S/NP)/NP)
-  - Theorem: derivation produces correct category
-
-Theories/CCG/CategoryDecomposition.lean (new)
-  - VirtualConjunctRule: X:left ⟹ Y:θ"left  X\Y:λy.left
-  - Parametric neutrality: any two categories determine the third
-  - Integration with Information Structure (Chapter 5)
-```
-
-**Key insight**: Category decomposition uses the grammar's own rules "in reverse" to reveal virtual constituents, preserving the Principles of Adjacency, Consistency, and Inheritance.
-
-**References**:
-- Steedman (2000) "The Syntactic Process" §7.3.3
-- Pareschi & Steedman (1987) on parametric neutrality
-
-**Files affected**: `CCG/Gapping.lean`, new `CCG/CategoryDecomposition.lean`
-
----
-
-### 15. Sentence Processing & Incremental Interpretation
-
-**Current state**: No processing formalization.
-
-**Problem**: Steedman (2000, Chapter 9) argues that CCG is uniquely suited to incremental, word-by-word interpretation because:
-1. Type-raising + composition make left prefixes into constituents
-2. These constituents have interpretations that can guide disambiguation
-3. This satisfies the "Strict Competence Hypothesis" (processor only uses grammar constituents)
-
-However, we need to separate:
-- **CCG-general facts**: Spurious ambiguity (equivalence classes of derivations), more left prefixes are constituents
-- **Steedman's processing argument**: Using the above to argue for CCG over other grammars
-- **Empirical phenomena**: Garden paths, reading times, context effects on disambiguation
-
-**Open questions**:
-1. What does processing data look like in `Phenomena/`?
-   - Garden path sentences (e.g., "The horse raced past the barn fell")
-   - Reading time studies (Crain & Steedman 1985, Altmann & Steedman 1988)
-   - Context manipulation experiments
-2. Where do processing models go?
-   - Chart parsing algorithms (CKY, shift-reduce) - general or theory-specific?
-   - Oracle / disambiguation mechanisms (Principle of Parsimony)
-3. Is the Strict Competence Hypothesis a theorem about CCG or a meta-theoretical claim?
-
-**Possible structure**:
-```
-Phenomena/Processing/
-├── GardenPaths.lean        -- Empirical data on garden path sentences
-├── ContextEffects.lean     -- Disambiguation studies
-└── ReadingTimes.lean       -- Psycholinguistic measures (?)
-
-Theories/CCG/
-├── Equivalence.lean        -- Spurious ambiguity, equivalence classes
-└── IncrementalInterp.lean  -- Left prefixes are constituents (theorem)
-
-Core/Processing/            -- Or leave out entirely?
-├── Chart.lean              -- Chart data structures
-└── Algorithms.lean         -- CKY, shift-reduce (theory-neutral)
-```
-
-**Key theorems (if we proceed)**:
-- `left_prefix_is_constituent`: Every left prefix of a grammatical CCG sentence has a derivation
-- `equivalence_class_same_meaning`: Derivations related by associativity yield identical interpretations
-- `spurious_ambiguity_polynomial`: Equivalence classes can be collapsed in polynomial time
-
-**References**:
-- Steedman (2000) "The Syntactic Process" Chapter 9
-- Crain & Steedman (1985) "On not being led up the garden path"
-- Vijay-Shanker & Weir (1994) on CCG parsing complexity
-
-**Status**: Deferred until processing phenomena data structure is clearer
+- [x] Generalized conjunction (`Montague/Conjunction.lean`)
+- [x] Real cross-serial derivations for 2-verb case (`CCG/CrossSerial.lean`)
+- [x] Catalan bracketing proofs (`CCG/Equivalence.lean`)
+- [x] **Intensional Montague Semantics** (`Montague/Intensional.lean`)

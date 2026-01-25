@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.6.4] - 2025-01-25
+
+### Added
+- **Theories/Montague/Intensional.lean**: World-parameterized meanings for RSA integration
+  - `IntensionalModel`: Model with explicit World type
+  - `Intension m τ`: World → Extension(τ) type family
+  - `Proposition m`: World → Bool (propositions as intensions of type t)
+  - `IntensionalDerivation`: Derivation with world-varying meaning
+  - `someIntensional`, `everyIntensional`: Quantifiers over intensional properties
+  - `phi`: RSA's literal semantics function (φ(u, w) = ⟦u⟧(w))
+  - Example: `someStudentsSleep_intensional` with proven truth conditions per world
+  - Key theorems: `some_false_at_none`, `some_true_at_someNotAll`, `every_true_at_all`, etc.
+
+### Changed
+- **docs/ROADMAP.md**: Reorganized with phased priority structure
+  - Phase 1: Intensional Grounding (highest priority)
+  - Phase 2: Type Safety & Robustness
+  - Phase 3: Competing Analyses Infrastructure
+  - Phase 4: Syntax Expansion
+
+### Key Insight
+The intensional layer enables RSA's L0 to evaluate compositional Montague semantics directly:
+`L0(w | u) ∝ δ⟦u⟧(w) · P(w)` where ⟦u⟧(w) comes from the derivation, not stipulation.
+This replaces the pattern-matching approach with genuine compositional semantics.
+
+### References
+- Montague (1973) "The Proper Treatment of Quantification in Ordinary English"
+- Gallin (1975) "Intensional and Higher-Order Modal Logic"
+- Goodman & Frank (2016) "Pragmatic Language Interpretation as Probabilistic Inference"
+
 ## [0.6.3] - 2025-01-25
 
 ### Added
