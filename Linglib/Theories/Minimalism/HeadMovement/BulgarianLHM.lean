@@ -1,228 +1,234 @@
 /-
-# Bulgarian Long Head Movement
+# Bulgarian Long Head Movement: A Formal Analysis
 
-Proof that Bulgarian Long Head Movement violates HMC, as an instance
-of the universal theorem `head_to_spec_violates_hmc`.
+This file proves that Bulgarian Long Head Movement (LHM) violates the
+Head Movement Constraint (HMC), formalizing the argument in Harizanov (2019).
 
-## Bulgarian Example (Harizanov p.11)
+## The Empirical Pattern
+
+Bulgarian yes/no questions show verb-initial order:
 
     Prodade  li  Ivan  kolata?
     sold     Q   Ivan  car.the
     "Did Ivan sell the car?"
 
-In Bulgarian yes/no questions, the verb moves to Spec-CP (above the Q particle).
-This is HEAD-TO-SPECIFIER movement: the verb becomes a maximal projection
-in its derived position.
+The verb "prodade" appears BEFORE the Q-particle "li", suggesting it has
+moved to a position above C (the Q-particle's head).
 
-## Architecture
+## The Theoretical Claim
 
-- Theories/Minimalism/Constraints/HMC.lean: Universal HMC violation theorem
-- **This file**: Proof that Bulgarian LHM instantiates head-to-spec movement
+Harizanov argues this is HEAD-TO-SPECIFIER movement:
+- The verb moves from its base position (in VP) to Spec-CP
+- At Spec-CP, the verb becomes a MAXIMAL PROJECTION (a phrase)
+- This contrasts with head-to-head movement where the verb stays minimal
 
-## Formalization Note
+## What We Prove
 
-We construct separate "before movement" and "after movement" structures.
-The key insight from Harizanov: in HEAD-TO-SPECIFIER movement, the verb
-BECOMES maximal at its derived position (it stops projecting).
+1. The verb is maximal at its derived position (Spec-CP)
+2. Bulgarian LHM instantiates head-to-specifier movement
+3. All head-to-specifier movement violates the HMC
+4. Therefore: Bulgarian LHM violates the HMC
 
-## Position-Specific Maximality (Collins & Stabler 2016)
+## How to Read This File
 
-Following Harizanov footnote 11 (p.9), we evaluate maximality at a POSITION
-(path from root), not globally. In multidominant structures:
-- At Spec-CP (derived position): verb is maximal (doesn't project there)
-- At VP (base position): verb projects (not maximal there)
-
-The `HeadToSpecMovementPositional` structure captures this distinction.
+- `def` introduces a definition (a named object)
+- `theorem` states a claim that Lean has verified
+- `by ...` is a proof; the details can be skipped
+- `/-- ... -/` are documentation comments explaining what follows
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement", Section 3.1
+- Harizanov, B. "Syntactic Head Movement: Elements in Generative Syntax"
+  - Bulgarian data: Section 4.1.1, pp.19-21, examples (47)-(52)
+  - Maximality claim: Section 4.2, p.29
+  - HMC violation: Section 3.1, p.12; Section 4.2, p.29
 - Collins, C. & E. Stabler (2016). "A Formalization of Minimalist Syntax"
+  - Position-indexed maximality: Section 3.4
 -/
 
 import Linglib.Theories.Minimalism.Constraints.HMC
 
-namespace Minimalism.Harizanov.BulgarianLHM
+namespace Minimalism.BulgarianLHM
 
--- ============================================================================
--- Part 1: Bulgarian Lexical Items
--- ============================================================================
+/-! ## Part 1: The Lexicon
 
-/-- Bulgarian verb "prodade" (sold) - transitive, selects D -/
+We define the lexical items for the Bulgarian sentence.
+Each item has a category (V, N, D, C, T) and selectional requirements.
+-/
+
+/-- The verb "prodade" (sold): category V, selects a D (object) -/
 def verbProdade : LIToken := ⟨.simple .V [.D], 201⟩
 
-/-- Bulgarian noun "Ivan" -/
-def nounIvan : LIToken := ⟨.simple .N [], 202⟩
-
-/-- Bulgarian noun "kolata" (the car) -/
-def nounKolata : LIToken := ⟨.simple .N [], 203⟩
-
-/-- Determiner -/
-def detBg : LIToken := ⟨.simple .D [.N], 204⟩
-
-/-- Q particle "li" - a C head that selects T -/
+/-- The Q-particle "li": category C, selects T -/
 def compLi : LIToken := ⟨.simple .C [.T], 205⟩
 
-/-- Tense head -/
+/-- Tense head: category T, selects V -/
 def tenseBg : LIToken := ⟨.simple .T [.V], 206⟩
 
--- ============================================================================
--- Part 2: Structure BEFORE Movement
--- ============================================================================
+/-- Determiner: category D, selects N -/
+def detBg : LIToken := ⟨.simple .D [.N], 204⟩
 
-/-- The verb leaf -/
+/-- "Ivan": category N -/
+def nounIvan : LIToken := ⟨.simple .N [], 202⟩
+
+/-- "kolata" (the car): category N -/
+def nounKolata : LIToken := ⟨.simple .N [], 203⟩
+
+/-! ## Part 2: Syntactic Structure BEFORE Movement
+
+We build the clause structure with the verb in its base position.
+
+```
+        C'
+       /  \
+      li   TP
+          /  \
+       Ivan   T'
+             /  \
+            T    VP
+                /  \
+           prodade  kolata
+```
+-/
+
+/-- The verb as a syntactic object -/
 def theVerb : SyntacticObject := .leaf verbProdade
 
-/-- DP: "kolata" (the car) -/
-def dpKolata : SyntacticObject :=
-  .node (.leaf detBg) (.leaf nounKolata)
+/-- DP "kolata" = {D, N} -/
+def dpKolata : SyntacticObject := .node (.leaf detBg) (.leaf nounKolata)
 
-/-- DP: "Ivan" -/
-def dpIvan : SyntacticObject :=
-  .node (.leaf detBg) (.leaf nounIvan)
+/-- DP "Ivan" = {D, N} -/
+def dpIvan : SyntacticObject := .node (.leaf detBg) (.leaf nounIvan)
 
-/-- VP BEFORE movement: {prodade, kolata} -/
-def vpBefore : SyntacticObject :=
-  .node theVerb dpKolata
+/-- VP = {V, DP_object} — the verb's base position -/
+def vpBefore : SyntacticObject := .node theVerb dpKolata
 
-/-- T' BEFORE movement -/
-def tBarBefore : SyntacticObject :=
-  .node (.leaf tenseBg) vpBefore
+/-- T' = {T, VP} -/
+def tBarBefore : SyntacticObject := .node (.leaf tenseBg) vpBefore
 
-/-- TP BEFORE movement -/
-def tpBefore : SyntacticObject :=
-  .node dpIvan tBarBefore
+/-- TP = {DP_subject, T'} -/
+def tpBefore : SyntacticObject := .node dpIvan tBarBefore
 
-/-- C' BEFORE movement (target): {li, TP}
+/-- C' = {C, TP} — the target for movement -/
+def cBarBefore : SyntacticObject := .node (.leaf compLi) tpBefore
 
-    This is the target for Internal Merge - the verb will move out of here -/
-def cBarBefore : SyntacticObject :=
-  .node (.leaf compLi) tpBefore
+/-! ## Part 3: Syntactic Structure AFTER Movement
 
--- ============================================================================
--- Part 3: Structure AFTER Movement
--- ============================================================================
+The verb moves to Spec-CP, yielding verb-initial order:
 
-/-- CP AFTER movement: {prodade, C'}
-
-    Structure for "Prodade li Ivan kolata?"
-
+```
         CP
        /  \
-    prodade  C'
-            /  \
-           li   TP
-               /  \
-            Ivan   T'
-                  /  \
-                 T    VP
-                     /  \
-                   V    kolata
+   prodade  C'
+           /  \
+          li   TP
+              /  \
+           Ivan   T'
+                 /  \
+                T    VP
+                    /  \
+                  (V)   kolata
+```
 
-    Note: In the "after" structure, the verb appears at BOTH positions
-    (Spec-CP and in VP). This is multidominance / copy theory. -/
-def cpAfterLHM : SyntacticObject :=
-  .node theVerb cBarBefore
+The verb now appears at the LEFT edge (specifier position).
+Under copy theory, a copy remains in VP.
+-/
 
--- ============================================================================
--- Part 4: Movement Structure
--- ============================================================================
+/-- CP after movement = {verb, C'} -/
+def cpAfterLHM : SyntacticObject := .node theVerb cBarBefore
 
-/-- The verb is contained in cBarBefore -/
+/-! ## Part 4: The Movement Operation
+
+We package the movement as a `Movement` structure, which records:
+- What moved (the verb)
+- Where it moved from (contained in C')
+- The result (CP with verb in Spec)
+-/
+
+/-- The verb is contained within C' (it's deeply embedded in VP) -/
 theorem verb_in_target : contains cBarBefore theVerb := by
-  apply contains.trans _ _ tpBefore
-  · exact Or.inr rfl
-  apply contains.trans _ _ tBarBefore
-  · exact Or.inr rfl
-  apply contains.trans _ _ vpBefore
-  · exact Or.inr rfl
-  apply contains.imm
-  exact Or.inl rfl
+  -- Trace the path: C' contains TP contains T' contains VP contains V
+  apply contains.trans _ _ tpBefore; exact Or.inr rfl
+  apply contains.trans _ _ tBarBefore; exact Or.inr rfl
+  apply contains.trans _ _ vpBefore; exact Or.inr rfl
+  apply contains.imm; exact Or.inl rfl
 
 /-- Bulgarian LHM as a Movement structure -/
 def bulgarianLHM : Movement where
-  mover := theVerb
-  target := cBarBefore
-  result := cpAfterLHM
+  mover := theVerb           -- what moves
+  target := cBarBefore       -- where it moves from (Internal Merge)
+  result := cpAfterLHM       -- the resulting structure
   mover_in_target := verb_in_target
-  is_merge := rfl
+  is_merge := rfl            -- result = merge(mover, target)
 
--- ============================================================================
--- Part 5: Position-Specific Maximality (Core Innovation)
--- ============================================================================
+/-! ## Part 5: The Key Property — Maximality at Derived Position
 
-/-- The derived position is Spec-CP: left daughter of the root -/
-def verbDerivedPosition : TreePos := derivedSpecPosition  -- = .left .here
+The crucial claim: the verb is MAXIMAL at Spec-CP.
 
-/-- V is at the derived position (Spec-CP) in cpAfterLHM -/
+Being "maximal" means: NOT PROJECTING (not passing its label upward).
+At Spec-CP, the verb doesn't project because C' projects instead.
+
+We formalize this using POSITION-SPECIFIC maximality (Collins & Stabler 2016):
+- A position is a path from the root (here: "go left" = Spec)
+- We check projection only at THAT position
+- This handles copy theory correctly (verb projects in VP but not at Spec-CP)
+-/
+
+/-- The derived position: Spec = left daughter of root -/
+def verbDerivedPosition : TreePos := derivedSpecPosition
+
+/-- VERIFIED: The verb is located at Spec-CP -/
 theorem verb_at_derived_position :
     atPosition cpAfterLHM verbDerivedPosition = some theVerb := by
   simp [verbDerivedPosition, derivedSpecPosition, atPosition, cpAfterLHM]
 
-/-- The parent of the derived position is the root (cpAfterLHM) -/
-theorem derived_position_parent :
-    parentSO cpAfterLHM verbDerivedPosition = some cpAfterLHM := by
-  simp [parentSO, parentPos, verbDerivedPosition, derivedSpecPosition, atPosition]
+/-- VERIFIED: The verb does NOT project at Spec-CP
 
-/-- V does NOT project at its derived position.
-
-    Proof: The parent at derived position is cpAfterLHM, which has label C
-    (because cBarBefore projects). V has label V. Since V ≠ C, the verb
-    doesn't project at this position.
-
-    This is the KEY insight: maximality is position-specific! -/
+    Why? The parent (CP) has label C, but the verb has label V.
+    Since C ≠ V, the verb doesn't project. -/
 theorem verb_does_not_project_at_derived :
     ¬projectsAtPosition theVerb cpAfterLHM verbDerivedPosition := by
   unfold projectsAtPosition
   intro ⟨_, hProj⟩
-  -- hProj says: if parent exists, sameLabel theVerb parent
-  -- parent = cpAfterLHM (by derived_position_parent)
-  have hParent : parentSO cpAfterLHM verbDerivedPosition = some cpAfterLHM := derived_position_parent
+  have hParent : parentSO cpAfterLHM verbDerivedPosition = some cpAfterLHM :=
+    by simp [parentSO, parentPos, verbDerivedPosition, derivedSpecPosition, atPosition]
   simp only [hParent] at hProj
-  -- Now hProj : sameLabel theVerb cpAfterLHM
-  -- But V's label ≠ C's label, so this is False
+  -- hProj claims: label(verb) = label(CP). But V ≠ C.
   unfold sameLabel at hProj
   obtain ⟨hEq, _⟩ := hProj
-  -- hEq : label theVerb = label cpAfterLHM
-  -- We need to derive False from this
-  -- label theVerb = V's LI features
-  -- label cpAfterLHM = C's LI features (C projects because it selects T)
-  -- These are different, so we get False
   have h1 : label theVerb = some verbProdade.item := rfl
   have h2 : label cpAfterLHM = some compLi.item := by native_decide
   rw [h1, h2] at hEq
-  -- Now hEq : some verbProdade.item = some compLi.item
   simp only [Option.some.injEq] at hEq
-  -- hEq : verbProdade.item = compLi.item
-  -- These have different features, so we derive False
-  have hFeatures : verbProdade.item.features ≠ compLi.item.features := by native_decide
-  exact hFeatures (congrArg LexicalItem.features hEq)
+  have : verbProdade.item.features ≠ compLi.item.features := by native_decide
+  exact this (congrArg LexicalItem.features hEq)
 
-/-- V is maximal AT ITS DERIVED POSITION in cpAfterLHM
+/-- VERIFIED: The verb is maximal at its derived position -/
+theorem verb_maximal_at_derived :
+    isMaximalAtPosition theVerb cpAfterLHM verbDerivedPosition :=
+  ⟨verb_at_derived_position, verb_does_not_project_at_derived⟩
 
-    This is the position-specific version that Harizanov describes (p.29):
-    "The head X is therefore a maximal projection in its derived position"
+/-! ## Part 6: Verifying Head-to-Specifier Movement
 
-    We prove this WITHOUT requiring global maximality. -/
-theorem verb_maximal_at_derived_position_positional :
-    isMaximalAtPosition theVerb cpAfterLHM verbDerivedPosition := by
-  unfold isMaximalAtPosition
-  constructor
-  · exact verb_at_derived_position
-  · exact verb_does_not_project_at_derived
+We now verify all the conditions for head-to-specifier movement:
 
--- ============================================================================
--- Part 6: Proving HeadToSpecMovement properties
--- ============================================================================
+1. **Mover was a head**: V projected in VP (it was -maximal there)
+2. **Mover is now maximal**: V doesn't project at Spec-CP
+3. **Target projects**: C' determines the label of CP
+-/
 
-/-- V was a head in C' (before movement): it projected in VP -/
+/-- VERIFIED: The verb was a HEAD in the source structure
+
+    In VP, the verb PROJECTS (V selects D, so V's label becomes VP's label).
+    Projecting means -maximal, i.e., being a head. -/
 theorem verb_was_head_in_target : isHeadIn theVerb cBarBefore := by
   unfold isHeadIn isMinimalIn
   constructor
-  · constructor
+  · -- V is minimal (it's a leaf) and is a term of C'
+    constructor
     · unfold isTermOf; exact Or.inr verb_in_target
-    · simp only [theVerb]  -- theVerb is a leaf
-  · -- ¬isMaximalIn: V projects in vpBefore
+    · simp only [theVerb]
+  · -- V is NOT maximal in C' (because V projects in VP)
     unfold isMaximalIn
     intro ⟨_, hNoProj⟩
     apply hNoProj
@@ -232,98 +238,52 @@ theorem verb_was_head_in_target : isHeadIn theVerb cBarBefore := by
       apply contains.trans _ _ tpBefore; exact Or.inr rfl
       apply contains.trans _ _ tBarBefore; exact Or.inr rfl
       apply contains.imm; exact Or.inr rfl
-    · -- V projects in VP (V selects D, D is the label of dpKolata)
+    · -- V projects in VP: V is daughter of VP and label(V) = label(VP)
       unfold projectsIn immediatelyContains sameLabel
       constructor
       · exact Or.inl rfl
       · constructor <;> native_decide
 
-/-- C' projects in cpAfterLHM -/
+/-- VERIFIED: C' projects in the result (C' is the "head" of CP) -/
 theorem cbar_projects_in_result : projectsIn cBarBefore cpAfterLHM := by
   unfold projectsIn immediatelyContains sameLabel
   constructor
   · exact Or.inr rfl
   · constructor <;> native_decide
 
--- ============================================================================
--- Part 7: Bulgarian LHM as HeadToSpecMovementPositional
--- ============================================================================
+/-! ## Part 7: Main Results
 
-/-- Bulgarian LHM as HeadToSpecMovementPositional
+We can now state and prove the main theorems.
+-/
 
-    This is the PREFERRED formalization: it uses position-specific maximality
-    which correctly handles multidominance. -/
+/-- Bulgarian LHM is head-to-specifier movement (all conditions verified) -/
 def bulgarianLHM_h2s_positional : HeadToSpecMovementPositional where
   toMovement := bulgarianLHM
   mover_was_head := verb_was_head_in_target
-  mover_maximal_at_derived := verb_maximal_at_derived_position_positional
+  mover_maximal_at_derived := verb_maximal_at_derived
   target_projects := cbar_projects_in_result
 
--- ============================================================================
--- Part 8: Main Results (Position-Aware, No Axioms)
--- ============================================================================
+/-- **MAIN THEOREM 1**: The verb is maximal at Spec-CP
 
-/-- **Main Result 1**: Bulgarian LHM is head-to-specifier movement
+    This formalizes Harizanov's claim (Section 4.2, p.29):
+    "The head X is therefore a maximal projection in its derived position—
+    though it is of course also minimal, as it is a lexical item"
 
-    The verb is maximal AT ITS DERIVED POSITION (Spec-CP).
-    This is the correct characterization per Harizanov (p.29):
-    "The head X is therefore a maximal projection in its derived position" -/
+    The Bulgarian example structure is given as (52) on p.21. -/
 theorem bulgarian_lhm_is_head_to_spec :
     isMaximalAtPosition bulgarianLHM.mover bulgarianLHM.result derivedSpecPosition :=
-  verb_maximal_at_derived_position_positional
+  verb_maximal_at_derived
 
-/-- **Main Result 2**: Bulgarian LHM violates HMC (Position-Aware)
+/-- **MAIN THEOREM 2**: Bulgarian LHM violates the Head Movement Constraint
 
-    "Prodade li Ivan kolata?" (Did Ivan sell the car?)
+    This formalizes the claim (Section 3.1, p.12; Section 4.2, p.29):
+    "head-to-specifier movement violates the Head Movement Constraint"
 
-    The verb "prodade" moves from VP to Spec-CP, becoming a maximal
-    projection at its derived position. This is HEAD-TO-SPECIFIER movement,
-    and by the position-aware theorem `head_to_spec_violates_hmc_positional`,
-    it violates HMC.
-
-    This proof uses NO AXIOMS - it relies entirely on the position-specific
-    maximality property, which correctly handles multidominance. -/
+    The verb moves from VP to Spec-CP, becoming maximal at its derived position.
+    By the universal theorem that head-to-specifier movement violates HMC,
+    Bulgarian LHM violates HMC. ∎ -/
 theorem bulgarian_lhm_violates_hmc_positional :
     violatesHMC_positional bulgarianLHM cpAfterLHM derivedSpecPosition :=
   head_to_spec_violates_hmc_positional bulgarianLHM_h2s_positional
 
--- ============================================================================
--- Part 9: Backward Compatibility (with axiom)
--- ============================================================================
-
-/-
-## Note on Global vs Position-Specific Maximality
-
-The position-aware proof above (`bulgarian_lhm_violates_hmc_positional`) is
-the CORRECT formalization that handles multidominance properly.
-
-For backward compatibility with the original `head_to_spec_violates_hmc`
-theorem (which uses global `isMaximalIn`), we provide an axiom below.
-This axiom is UNSOUND for true multidominant structures, but allows
-interoperability with code that hasn't been updated to use positional maximality.
-
-In a true multidominant structure:
-- V appears at Spec-CP (maximal there) AND inside VP (projects there)
-- Global `isMaximalIn` checks ALL positions → FAILS (V projects in VP)
-- Position-specific `isMaximalAtPosition` checks ONE position → SUCCEEDS
-
-The axiom papers over this by asserting global maximality anyway.
-Prefer `bulgarian_lhm_violates_hmc_positional` for new code.
--/
-
-/-- Axiom for backward compatibility with global maximality -/
-axiom verb_maximal_global_compat : isMaximalIn theVerb cpAfterLHM
-
-/-- Bulgarian LHM as HeadToSpecMovement (backward compatibility)
-    Uses global maximality axiom. Prefer `bulgarianLHM_h2s_positional`. -/
-def bulgarianLHM_h2s : HeadToSpecMovement where
-  toMovement := bulgarianLHM
-  mover_was_head := verb_was_head_in_target
-  mover_is_maximal := verb_maximal_global_compat
-  target_projects := cbar_projects_in_result
-
-/-- Bulgarian LHM violates HMC (backward compatible, uses axiom) -/
-theorem bulgarian_lhm_violates_hmc : violatesHMC bulgarianLHM cpAfterLHM :=
-  head_to_spec_violates_hmc bulgarianLHM_h2s
-
-end Minimalism.Harizanov.BulgarianLHM
+end Minimalism.BulgarianLHM

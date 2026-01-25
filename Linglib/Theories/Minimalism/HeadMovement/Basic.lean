@@ -1,11 +1,11 @@
 /-
-# Head Movement Types (Harizanov)
+# Head Movement Types
 
-Formalization of the two types of syntactic head movement.
+Formalization of head movement following Harizanov's (2019) typology.
 
-## The Core Distinction
+## The Core Distinction (Harizanov 2019)
 
-Harizanov argues for two distinct types of head movement:
+Two distinct types of syntactic head movement:
 
 1. **Head-to-Specifier**: Moved head becomes MAXIMAL in derived position
    - Example: Bulgarian Long Head Movement
@@ -20,12 +20,14 @@ Amalgamation (a post-syntactic PF operation that respects HMC).
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement", Sections 3-4
+- Harizanov, B. (2019). "Head Movement and Morphological Realization"
+- Travis, L. (1984). "Parameters and Effects of Word Order Variation"
+- Chomsky, N. (2001). "Derivation by Phase"
 -/
 
 import Linglib.Theories.Minimalism.Labeling
 
-namespace Minimalism.Harizanov
+namespace Minimalism
 
 -- ============================================================================
 -- Part 1: Movement as Internal Merge
@@ -298,4 +300,4 @@ def positionalToGlobal (m : HeadToSpecMovementPositional)
     · exact h
   target_projects := m.target_projects
 
-end Minimalism.Harizanov
+end Minimalism

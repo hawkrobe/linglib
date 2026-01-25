@@ -24,7 +24,7 @@ a post-syntactic (PF) operation that respects the HMC.
 
 import Linglib.Theories.Minimalism.HeadMovement.Basic
 
-namespace Minimalism.Harizanov
+namespace Minimalism
 
 -- ============================================================================
 -- Part 1: Immediate C-Command for Heads
@@ -61,46 +61,7 @@ def violatesHMC (m : Movement) (root : SyntacticObject) : Prop :=
   ¬respectsHMC m root
 
 -- ============================================================================
--- Part 3: Intervening Heads
--- ============================================================================
-
-/-- An intervening head: a head between X and Y in the c-command path -/
-def interveningHead (x y intervener root : SyntacticObject) : Prop :=
-  isHeadIn intervener root ∧
-  intervener ≠ x ∧
-  intervener ≠ y ∧
-  cCommands y intervener ∧
-  cCommands intervener x
-
-/-- Movement skips a head if there's an intervening head -/
-def skipsHead (m : Movement) (root : SyntacticObject) : Prop :=
-  ∃ intervener, interveningHead m.mover m.target intervener root
-
-/-- Skipping a head violates HMC
-
-    Proof sketch: If there's an intervening head Z between X (mover) and Y (target),
-    then for any potential landing site L:
-    - Either L doesn't immediately c-command X (because Z is between)
-    - Or L = Z (but then L doesn't satisfy HMC's "immediate" requirement
-      since there may be further interveners)
-
-    The key is that immediatelyCCommands requires NO element between L and X,
-    but interveningHead provides exactly such an element. -/
-theorem skipping_violates_hmc (m : Movement) (root : SyntacticObject)
-    (h : skipsHead m root) : violatesHMC m root := by
-  -- The existence of an intervening head contradicts the
-  -- "immediate c-command" requirement of HMC
-  --
-  -- h says: ∃ intervener, isHeadIn intervener ∧ intervener between target and mover
-  -- respectsHMC requires: ∃ landingSite, immediatelyCCommands landingSite mover
-  -- But the intervener breaks "immediate" - there's always something in between
-  --
-  -- Full proof requires showing that any landingSite satisfying c-command
-  -- must have the intervener between it and the mover.
-  sorry  -- Requires formalizing tree geometry of c-command paths
-
--- ============================================================================
--- Part 4: Both Syntactic Head Movement Types Violate HMC
+-- Part 3: Head-to-Specifier Violates HMC
 -- ============================================================================
 
 /-
@@ -201,34 +162,6 @@ theorem head_to_spec_violates_hmc_positional (m : HeadToSpecMovementPositional) 
   -- But m.mover_maximal_at_derived : isMaximalAtPosition m.mover m.result derivedSpecPosition
   exact hNotMax m.mover_maximal_at_derived
 
-/-- Head-to-head movement can violate HMC (when there are intervening heads)
-
-    Unlike head-to-spec (which violates HMC by definition), head-to-head
-    violations depend on the STRUCTURE of the target: specifically, whether
-    there are intervening heads between mover and landing site.
-
-    From Harizanov (p.36): "verb raises directly to its final landing site,
-    moving across any and all intervening functional heads"
-
-    The key difference from head-to-spec:
-    - Head-to-spec: Mover becomes +max, so `isHeadIn mover result` fails
-    - Head-to-head: Mover stays a head, but `immediatelyCCommands` fails
-      due to intervening heads
-
-    This is an EXISTENTIAL claim because not all head-to-head movements
-    necessarily have intervening heads (though empirically attested cases do). -/
-theorem head_to_head_can_violate_hmc :
-    ∃ (m : HeadToHeadMovement) (root : SyntacticObject),
-      violatesHMC m.toMovement root := by
-  -- This requires constructing a specific structure with intervening heads
-  -- (e.g., V-to-C with T intervening)
-  sorry
-
-/-- If a head-to-head movement skips a head, it violates HMC -/
-theorem head_to_head_with_intervener_violates_hmc (m : HeadToHeadMovement)
-    (h : skipsHead m.toMovement m.result) : violatesHMC m.toMovement m.result :=
-  skipping_violates_hmc m.toMovement m.result h
-
 -- ============================================================================
 -- Part 5: Amalgamation Respects HMC
 -- ============================================================================
@@ -308,4 +241,4 @@ def compatibleWithAmalgamation (m : Movement) (root : SyntacticObject) : Prop :=
 - Respects HMC: the amalgamation is local
 -/
 
-end Minimalism.Harizanov
+end Minimalism

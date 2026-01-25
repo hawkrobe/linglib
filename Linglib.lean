@@ -80,13 +80,15 @@ import Linglib.Theories.Minimalism.Basic
 import Linglib.Theories.Minimalism.Structure
 import Linglib.Theories.Minimalism.Inversion
 
--- Harizanov's Head Movement Theory
+-- Minimalist Syntax (Chomsky 1995+)
 import Linglib.Theories.Minimalism.SyntacticObjects
 import Linglib.Theories.Minimalism.Containment
 import Linglib.Theories.Minimalism.Labeling
 import Linglib.Theories.Minimalism.HeadMovement.Basic
 import Linglib.Theories.Minimalism.Constraints.HMC
 import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
+import Linglib.Theories.Minimalism.HeadMovement.GermanicV2
+import Linglib.Theories.Minimalism.Agree
 
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Theories.DependencyGrammar.LexicalRules

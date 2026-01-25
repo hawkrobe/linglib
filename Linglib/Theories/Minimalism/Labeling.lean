@@ -1,29 +1,31 @@
 /-
-# Labeling and Projection (Harizanov)
+# Labeling and Projection
 
 Formalization of labeling, projection, and the head/phrase distinction.
 
 ## Key Definitions
 
-- **Label**: The categorial identity of an SO (Definition 16-17)
-- **Projection**: When an LI's label becomes the label of containing SOs (Definition 20)
-- **Maximality/Minimality**: Relational properties determined by projection (Definition 21)
-- **Head vs Phrase**: Defined by maximality/minimality (Definition 22)
+- **Label**: The categorial identity of an SO (determined by projection)
+- **Projection**: When an LI's features become the label of containing SOs
+- **Maximality/Minimality**: Relational properties determined by projection
+- **Head vs Phrase**: Defined by maximality/minimality
 
 ## The Core Insight
 
-Harizanov's key observation is that maximality and minimality are RELATIONAL,
-not intrinsic. An LI can be minimal in one structure but maximal in another.
-This enables head movement to change an element's status.
+Maximality and minimality are RELATIONAL, not intrinsic properties.
+An element can be minimal in one structure but maximal in another.
+This enables movement to change an element's syntactic status.
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement", Definitions 16-22
+- Chomsky, N. (2013). "Problems of Projection"
+- Chomsky, N. (2015). "Problems of Projection: Extensions"
+- Collins, C. & E. Stabler (2016). "A Formalization of Minimalist Syntax"
 -/
 
 import Linglib.Theories.Minimalism.Containment
 
-namespace Minimalism.Harizanov
+namespace Minimalism
 
 -- ============================================================================
 -- Part 1: Getting Categories from SOs
@@ -464,4 +466,4 @@ def findPositions (x root : SyntacticObject) : List TreePos :=
     In {X, Y} where Y is the target (projects), X is at the LEFT (Spec) position -/
 def derivedSpecPosition : TreePos := .left .here
 
-end Minimalism.Harizanov
+end Minimalism

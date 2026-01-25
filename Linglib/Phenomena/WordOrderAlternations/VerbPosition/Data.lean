@@ -11,14 +11,15 @@ Concrete syntactic structures demonstrating verb position patterns.
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement"
+- Carnie, A. (2021). "Syntax: A Generative Introduction", 4th ed., Chapter 14 (V2)
+- Adger, D. (2003). "Core Syntax", Chapters 5-6 (Verb Movement)
 -/
 
 import Linglib.Theories.Minimalism.Labeling
 
 namespace Phenomena.WordOrderAlternations.VerbPosition
 
-open Minimalism.Harizanov
+open Minimalism
 
 -- ============================================================================
 -- Part 1: Lexical Items

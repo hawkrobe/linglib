@@ -1,31 +1,34 @@
 /-
-# Syntactic Objects (Harizanov)
+# Syntactic Objects
 
-Formalization of syntactic objects following Harizanov's "Syntactic Head Movement".
+Formalization of syntactic objects following Chomsky's Minimalist Program.
 
 ## Key Definitions
 
-- **Lexical Item (LI)**: Ordered pair ⟨CAT, SEL⟩ where CAT is a categorial feature
-  and SEL is a selectional stack (Definition 10, 88)
-- **Complex LI**: List of ⟨CAT, SEL⟩ pairs - enables head-to-head movement
-- **Syntactic Object (SO)**: Either an LI token or a set of two SOs (Definition 11)
-- **Merge**: Combines two distinct SOs into a set (Definition 12)
+- **Lexical Item (LI)**: Bundle of features including category and selectional requirements
+- **Complex LI**: List of feature bundles - enables head movement (Chomsky 1995)
+- **Syntactic Object (SO)**: Either an LI token or a set of two SOs
+- **Merge**: The fundamental structure-building operation
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement"
+- Chomsky, N. (1995). "The Minimalist Program"
 - Chomsky, N. (2013). "Problems of Projection"
+- Adger, D. (2003). "Core Syntax", Chapters 2-3
 -/
 
 import Mathlib.Data.Set.Basic
 
-namespace Minimalism.Harizanov
+namespace Minimalism
 
 -- ============================================================================
 -- Part 1: Categorial Features
 -- ============================================================================
 
-/-- Categorial features (Definition 10) -/
+/-- Categorial features (Definition 10)
+
+    These are Minimalism-specific categories following Harizanov's notation.
+    Note: `v` is light verb, `A` is adjective (Minimalist notation). -/
 inductive Cat where
   | V     -- verb
   | N     -- noun
@@ -230,4 +233,4 @@ theorem leaf_node_relation (so : SyntacticObject) :
     simp [SyntacticObject.leafCount, SyntacticObject.nodeCount]
     omega
 
-end Minimalism.Harizanov
+end Minimalism

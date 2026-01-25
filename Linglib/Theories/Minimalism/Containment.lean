@@ -1,23 +1,23 @@
 /-
-# Containment Relations (Harizanov)
+# Containment Relations
 
-Formalization of containment/dominance relations following Harizanov's paper.
+Formalization of containment/dominance relations in Minimalist syntax.
 
 ## Key Definitions
 
 - **Immediate Containment**: X immediately contains Y iff Y is a member of X
-  (Definition 13)
 - **Containment (Dominance)**: Transitive closure of immediate containment
-  (Definition 14)
+- **C-command**: Standard asymmetric relation for binding and locality
 
 ## References
 
-- Harizanov, B. "Syntactic Head Movement", Definitions 13-14
+- Chomsky, N. (1995). "The Minimalist Program"
+- Adger, D. (2003). "Core Syntax", Chapter 3
 -/
 
 import Linglib.Theories.Minimalism.SyntacticObjects
 
-namespace Minimalism.Harizanov
+namespace Minimalism
 
 -- ============================================================================
 -- Part 1: Immediate Containment (Definition 13)
@@ -178,4 +178,4 @@ theorem ccommand_sister {x y : SyntacticObject} (h : areSisters x y) :
 -- This is expected: in {X, {Y, Z}}, X c-commands Y and Z,
 -- but Y only c-commands Z (not X)
 
-end Minimalism.Harizanov
+end Minimalism
