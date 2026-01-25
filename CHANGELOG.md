@@ -19,6 +19,20 @@
   - Prosodic combination rules with feature unification
   - Implements `HasInfoStructure` typeclass
 
+- **Core/Interfaces/ScopeTheory.lean**: Abstract interface for scope availability (Steedman 2000 Ch. 6)
+  - `ScopeReading`: Ordering of scope-taking elements
+  - `AvailableScopes`: Set of available readings for a form
+  - `ScopePreference`: Ranked preferences (connects to RSA)
+  - Typeclasses: `HasAvailableScopes`, `HasScopePreference`, `HasBinaryScope`
+  - `toScopeConfigs`: Bridge to RSA's `ScopeConfig`
+
+- **Phenomena/ScopeWordOrder/Data.lean**: Dutch/German scope-word order interactions
+  - `VerbOrder`: verbRaising vs verbProjectionRaising
+  - German examples (Bayer 1990, 1996; Kayne 1998)
+  - West Flemish examples (Haegeman & van Riemsdijk 1986)
+  - Dutch examples (Steedman 2000 §6.8)
+  - Theorems proving word order predicts scope availability
+
 ### Architecture
 - Information Structure connects to Scope via QUD:
   - QUD influences scope preferences

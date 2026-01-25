@@ -57,6 +57,7 @@ import Linglib.Core.InformationStructure
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Core.Interfaces.ScopeTheory
 
 -- Phenomena (empirical data)
 import Linglib.Phenomena.Basic
@@ -163,6 +164,9 @@ import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 
 -- Quantifier scope ambiguity (Scontras & Pearl 2021)
 import Linglib.Phenomena.ScontrasPearl2021.Data
+
+-- Scope-word order interactions (Dutch/German)
+import Linglib.Phenomena.ScopeWordOrder.Data
 
 -- Semantic phenomena
 import Linglib.Phenomena.Semantics.Entailments
