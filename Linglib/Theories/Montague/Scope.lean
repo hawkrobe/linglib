@@ -98,43 +98,39 @@ def ScopeDerivation.allMeanings {m : Model} {τ : Ty}
   d.availableScopes.map λ s => (s, d.meaningAt s)
 
 -- ============================================================================
--- World-Parametric Scope Derivation (for RSA integration)
+-- Scoped Form (for HasAvailableScopes interface)
 -- ============================================================================
 
 /--
-A scope derivation where meaning is parameterized by both scope AND world.
+A form (utterance) with scope ambiguity.
 
-This is the key structure for RSA integration: rather than evaluating
-at a fixed model, we get truth conditions as a function of world state.
+This is the Montague-side representation of scope:
+- What scope readings are available
+- Identifiers for the scope-takers
 
-`World` is the type of possible world states (e.g., how many horses jumped).
-`meaningAt scope world` returns whether the sentence is true under that
-scope reading in that world.
+Note: World-parametric meaning (for RSA) is handled separately in RSA/.
 -/
-structure WorldParametricScopeDerivation (World : Type) where
-  /-- Surface form -/
+structure ScopedForm where
+  /-- Surface form (string representation) -/
   surface : String
-  /-- Truth conditions parameterized by scope and world -/
-  meaningAt : ScopeConfig → World → Bool
   /-- Available scope readings -/
   availableScopes : List ScopeConfig := [.surface, .inverse]
-  /-- Enumeration of possible worlds -/
-  worlds : List World
-  /-- Scope-taker identifiers for interface connection -/
+  /-- First scope-taker identifier -/
   scopeTaker1 : String := "op1"
+  /-- Second scope-taker identifier -/
   scopeTaker2 : String := "op2"
+  deriving Repr
 
 /-- Get available scopes as abstract ScopeReadings -/
-def WorldParametricScopeDerivation.toAvailableScopes {World : Type}
-    (d : WorldParametricScopeDerivation World) : AvailableScopes :=
-  Montague.Scope.toAvailableScopes d.availableScopes d.scopeTaker1 d.scopeTaker2
+def ScopedForm.toAvailableScopes (f : ScopedForm) : AvailableScopes :=
+  Montague.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
 
 /-- Marker type for Montague scope theory -/
 def MontagueScopeTheory : Type := Unit
 
-/-- Montague implements HasAvailableScopes for WorldParametricScopeDerivation -/
-instance {World : Type} : HasAvailableScopes MontagueScopeTheory (WorldParametricScopeDerivation World) where
-  availableScopes d := d.toAvailableScopes
+/-- Montague implements HasAvailableScopes for ScopedForm -/
+instance : HasAvailableScopes MontagueScopeTheory ScopedForm where
+  availableScopes := ScopedForm.toAvailableScopes
 
 -- ============================================================================
 -- Scope Enumeration Utilities
@@ -162,26 +158,26 @@ def scopeYieldsTrue {m : Model}
 - `ScopeConfig`: General binary scope (surface/inverse)
 - `QNScope`: Quantifier-negation specific (∀>¬ vs ¬>∀)
 - `ScopeDerivation`: Derivation with scope-parameterized meaning (fixed model)
-- `WorldParametricScopeDerivation`: Derivation parameterized by scope AND world
+- `ScopedForm`: Form with available scope readings (for interface)
 
 ### Interface Implementation
 
 Implements `ScopeTheory.HasAvailableScopes` typeclass:
 - `MontagueScopeTheory`: Marker type for the instance
+- `ScopedForm.toAvailableScopes`: Get abstract scope readings
 - `ScopeConfig.toScopeReading`: Convert to abstract ScopeReading
-- `toAvailableScopes`: Convert ScopeConfig list to AvailableScopes
 
 ### Key Functions
 - `toQNScope`: Convert general config to QN-specific
 - `ScopeDerivation.allMeanings`: Get all scope readings
 
-### Integration with RSA
+### Architecture
 
-This module provides the **Interp** dimension for lifted-variable RSA:
-- RSA.Interp = ScopeConfig or QNScope
-- RSA.meaning i u w = derivation.meaningAt i w
+This module handles **scope availability** only:
+- What readings are possible for a form
 
-See `RSA/ScontrasPearl2021.lean` for the full pipeline.
+World-parametric meaning (truth conditions as function of world state)
+is handled in `RSA/` where it's used for pragmatic inference.
 -/
 
 end Montague.Scope

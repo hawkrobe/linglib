@@ -46,6 +46,28 @@ open ScontrasPearl2021
 open Montague.Scope
 
 -- ============================================================================
+-- World-Parametric Meaning (RSA-specific)
+-- ============================================================================
+
+/--
+Truth conditions parameterized by interpretation and world.
+
+This is RSA's view of meaning: given an interpretation (e.g., scope reading)
+and a world state, is the utterance true?
+
+Separated from `ScopedForm` (which just tracks scope availability) because:
+- Scope availability is determined by grammar (Montague/CCG)
+- World-parametric truth conditions are used by RSA for inference
+-/
+structure WorldMeaning (Interp World : Type) where
+  /-- Truth conditions: is the utterance true under this interpretation in this world? -/
+  meaningAt : Interp → World → Bool
+  /-- Available interpretations -/
+  interps : List Interp
+  /-- Enumeration of possible worlds -/
+  worlds : List World
+
+-- ============================================================================
 -- Utterances
 -- ============================================================================
 
@@ -60,7 +82,7 @@ inductive ScopeUtterance where
 -- ============================================================================
 
 /--
-"Every horse didn't jump" as a world-parametric Montague derivation.
+"Every horse didn't jump" - world-parametric truth conditions.
 
 World state (Nat) encodes how many horses jumped (0, 1, or 2).
 
@@ -68,22 +90,30 @@ Truth conditions by scope:
 - Surface (∀>¬): True iff ∀h. ¬jump(h) = "no horse jumped" = w == 0
 - Inverse (¬>∀): True iff ¬∀h. jump(h) = "not all jumped" = w < 2
 -/
-def everyHorseDidntJump_parametric : WorldParametricScopeDerivation Nat :=
-  { surface := "Every horse didn't jump"
-  , meaningAt := λ scope w =>
+def everyHorseDidntJump_meaning : WorldMeaning ScopeConfig Nat :=
+  { meaningAt := λ scope w =>
       match scope with
       | .surface => w == 0      -- ∀>¬: true iff no horse jumped
       | .inverse => w < 2       -- ¬>∀: true iff not all jumped
+  , interps := [.surface, .inverse]
   , worlds := [0, 1, 2]         -- 0, 1, or 2 horses jumped
   }
 
-/-- Verify the derivation matches the expected truth table -/
+/-- The scoped form (just scope availability, no world semantics) -/
+def everyHorseDidntJump_form : ScopedForm :=
+  { surface := "Every horse didn't jump"
+  , availableScopes := [.surface, .inverse]
+  , scopeTaker1 := "every"
+  , scopeTaker2 := "not"
+  }
+
+/-- Verify the meaning matches the expected truth table -/
 theorem parametric_matches_truth :
-    everyHorseDidntJump_parametric.meaningAt .surface 0 = true ∧
-    everyHorseDidntJump_parametric.meaningAt .surface 1 = false ∧
-    everyHorseDidntJump_parametric.meaningAt .inverse 0 = true ∧
-    everyHorseDidntJump_parametric.meaningAt .inverse 1 = true ∧
-    everyHorseDidntJump_parametric.meaningAt .inverse 2 = false := by
+    everyHorseDidntJump_meaning.meaningAt .surface 0 = true ∧
+    everyHorseDidntJump_meaning.meaningAt .surface 1 = false ∧
+    everyHorseDidntJump_meaning.meaningAt .inverse 0 = true ∧
+    everyHorseDidntJump_meaning.meaningAt .inverse 1 = true ∧
+    everyHorseDidntJump_meaning.meaningAt .inverse 2 = false := by
   native_decide
 
 -- ============================================================================
@@ -91,36 +121,36 @@ theorem parametric_matches_truth :
 -- ============================================================================
 
 /--
-Build RSA meaning function from a Montague world-parametric derivation.
+Build RSA meaning function from world-parametric meaning.
 
 This is the key bridge: RSA's meaning function is DERIVED from the
 formal semantic derivation, not stipulated separately.
 
 The null utterance is always true (uninformative baseline).
-Other utterances get their meaning from the Montague derivation.
+Other utterances get their meaning from the WorldMeaning structure.
 -/
-def meaningFromDerivation
-    (deriv : WorldParametricScopeDerivation Nat)
+def meaningFromWorldMeaning
+    (wm : WorldMeaning ScopeConfig Nat)
     (scope : ScopeConfig) (utt : ScopeUtterance) (world : Nat) : Bool :=
   match utt with
   | .null => true  -- Null utterance always true
-  | .everyHorseNotJump => deriv.meaningAt scope world
+  | .everyHorseNotJump => wm.meaningAt scope world
 
 /-- The meaning function derived from the Montague semantics -/
 def scopeMeaning : ScopeConfig → ScopeUtterance → Nat → Bool :=
-  meaningFromDerivation everyHorseDidntJump_parametric
+  meaningFromWorldMeaning everyHorseDidntJump_meaning
 
 /--
-**Key theorem**: RSA meaning agrees with Montague derivation.
+**Key theorem**: RSA meaning agrees with world-parametric meaning.
 
 This proves the connection is faithful - we're not stipulating
 separate truth conditions, we're using the semantic derivation.
 -/
 theorem rsa_meaning_from_montague :
     scopeMeaning .surface .everyHorseNotJump 0 =
-      everyHorseDidntJump_parametric.meaningAt .surface 0 ∧
+      everyHorseDidntJump_meaning.meaningAt .surface 0 ∧
     scopeMeaning .inverse .everyHorseNotJump 1 =
-      everyHorseDidntJump_parametric.meaningAt .inverse 1 := by
+      everyHorseDidntJump_meaning.meaningAt .inverse 1 := by
   native_decide
 
 -- ============================================================================
@@ -134,19 +164,19 @@ def ScopeDomain : Type := Unit
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
 
 /--
-Build ParametricSemanticBackend from a Montague derivation.
+Build ParametricSemanticBackend from WorldMeaning.
 
-The worlds and interpretations come from the derivation itself,
+The worlds and interpretations come from the meaning structure,
 ensuring consistency between semantics and pragmatics.
 -/
 instance : ParametricSemanticBackend ScopeDomain where
   Utterance := ScopeUtterance
-  World := Nat  -- From Montague derivation
-  Interp := ScopeConfig  -- From Montague scope infrastructure
+  World := Nat
+  Interp := ScopeConfig
   utterances := allScopeUtterances
-  worlds := everyHorseDidntJump_parametric.worlds  -- [0, 1, 2] from derivation
-  interps := everyHorseDidntJump_parametric.availableScopes  -- from derivation
-  meaning := scopeMeaning  -- Derived from Montague, not stipulated
+  worlds := everyHorseDidntJump_meaning.worlds  -- [0, 1, 2]
+  interps := everyHorseDidntJump_meaning.interps  -- [surface, inverse]
+  meaning := scopeMeaning  -- Derived from meaning, not stipulated
   utteranceBEq := inferInstance
   worldBEq := inferInstance
   interpBEq := inferInstance
@@ -388,24 +418,27 @@ theorem complete_analysis_via_interface :
 /-
 ## What This Module Provides
 
-### Architecture: RSA ← Montague Connection
+### Architecture: Separation of Concerns
 
 ```
-Montague/Scope.lean                    RSA/ScontrasPearl2021.lean
-────────────────────                   ─────────────────────────
-WorldParametricScopeDerivation    →    ParametricSemanticBackend
-  meaningAt : Scope → World → Bool        meaning := meaningFromDerivation
-  worlds := [0, 1, 2]                      worlds := deriv.worlds
-  availableScopes := [surface, inverse]   interps := deriv.availableScopes
+Montague/Scope.lean               RSA/ScontrasPearl2021.lean
+───────────────────               ─────────────────────────
+ScopedForm                        WorldMeaning
+  availableScopes                   meaningAt : Interp → World → Bool
+  scopeTakers                       worlds, interps
+
+HasAvailableScopes                ParametricSemanticBackend
+  (grammar determines scope)        (RSA uses for inference)
 ```
 
-**Key insight**: RSA's meaning function is DERIVED from the formal
-semantic derivation, not stipulated separately. This ensures:
-- Truth conditions come from compositional semantics
-- No duplication of semantic content
-- Changes to semantics automatically propagate to pragmatics
+**Key insight**: Scope availability (grammar) is separated from
+world-parametric meaning (RSA). This ensures:
+- Montague/CCG focus on what readings are available
+- RSA handles truth conditions and probabilistic inference
+- Clean parallel structure between theories
 
 ### Types
+- `WorldMeaning`: Truth conditions parameterized by (Interp, World)
 - `ScopeUtterance`: Utterances (null, everyHorseNotJump)
 - `ScopeDomain`: Marker type for ParametricSemanticBackend
 
@@ -440,17 +473,22 @@ The model captures Scontras & Pearl (2021)'s key findings:
 This module demonstrates the **first complete pipeline analysis** in Linglib:
 
 ```
-Montague.Scope.everyHorseDidntJump_parametric
-    ↓ provides: meaning function (scope × world → Bool)
+everyHorseDidntJump_form : ScopedForm
+    ↓ provides: available scope readings
+
+everyHorseDidntJump_meaning : WorldMeaning
+    ↓ provides: truth conditions (scope × world → Bool)
+
 RSA.ScontrasPearl2021 (ParametricSemanticBackend instance)
     ↓ provides: probability distribution
+
 complete_analysis_scontras_pearl
     ↓ proves: RSA ordering = empirical ordering
 ```
 
 The pipeline is "complete" because:
-1. Montague semantics has no external requirements (bottoms out)
-2. RSA's meaning function is derived from Montague, not stipulated
+1. Scope availability comes from grammar (ScopedForm)
+2. Truth conditions are explicitly defined (WorldMeaning)
 3. Predictions match empirical data
 
 ### Model Limitations

@@ -26,8 +26,13 @@
   - Typeclasses: `HasAvailableScopes`, `HasScopePreference`, `HasBinaryScope`
 
 - **Theories/Montague/Scope.lean**: Implements `HasAvailableScopes` interface
+  - `ScopedForm`: Form with available scopes (no world semantics)
   - `ScopeConfig.toScopeReading`: Convert binary scope to abstract reading
   - `MontagueScopeTheory`: Marker type for instance
+
+- **Theories/RSA/ScontrasPearl2021.lean**: Separated world-parametric meaning
+  - `WorldMeaning`: Truth conditions parameterized by (Interp, World)
+  - Clean separation: grammar determines scope, RSA handles worlds
 
 - **Theories/CCG/Scope.lean**: CCG implementation of scope availability
   - `DerivationType`: directApp, typeRaised, composed
