@@ -21,6 +21,7 @@ import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
 import Linglib.Theories.Montague.SemDerivation
 import Linglib.Core.Frac
+import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 
@@ -286,3 +287,210 @@ RSAScalarResult (probabilistic implicature)
 -/
 
 end RSA.ScalarImplicatures
+
+-- ============================================================================
+-- PART 7: ImplicatureTheory Instance
+-- ============================================================================
+
+/-
+# RSA ImplicatureTheory Instance
+
+Implements the ImplicatureTheory interface for the RSA (Rational Speech Acts)
+framework (Goodman & Frank 2016).
+
+## Current Coverage
+
+The RSA model currently handles:
+- Simple sentences with scalar quantifiers ("some students sleep")
+- Probabilistic implicature derivation: P(some_not_all) > P(all)
+
+## Model Limitations (Incomplete, Not Wrong)
+
+The current RSA formalization is **incomplete** - it cannot represent:
+
+1. **Embedded contexts**: The model uses a toy `CookieWorld` with 4 states.
+   There's no way to represent "No one ate some cookies" or other embeddings.
+
+2. **DE blocking**: Without compositional semantics over sentence structure,
+   context polarity (upward/downward entailing) cannot be modeled.
+
+3. **Task effects**: The model has no notion of QUD (Question Under Discussion)
+   or attention-based mechanisms that could explain task effects.
+
+**Important**: The `predictsDEBlocking := false` flag means "model incomplete"
+not "RSA predicts no blocking". A full RSA model with compositional semantics
+could potentially derive DE blocking through:
+- Context-sensitive QUDs
+- Compositional alternative generation
+- Recursive pragmatic reasoning in embedded contexts
+
+## What Would a Complete RSA Model Need?
+
+1. **Compositional RSA**: RSA over sentence meanings, not just world labels
+2. **Structured utterance space**: Sentences with operators, not just "some"/"all"
+3. **Context-sensitive literal semantics**: L0 changes based on embedding
+4. **QUD manipulation**: Different QUDs for different tasks
+
+See: Bergen et al. (2016), Potts et al. (2016) for RSA extensions.
+
+## References
+
+- Goodman & Frank (2016). Pragmatic Language Interpretation as Probabilistic Inference.
+- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
+- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
+-/
+
+namespace RSA
+
+open Interfaces
+open RSA.ScalarImplicatures
+open Frac
+
+/-- Marker type for the RSA theory -/
+structure RSATheory
+
+/-- RSA's internal representation for implicature analysis.
+
+    Wraps RSAScalarResult with position information. -/
+structure RSAStructure where
+  /-- The RSA scalar result (probabilities, implicature status) -/
+  result : RSAScalarResult
+  /-- Position of the scalar item (if any) -/
+  scalarPosition : Option Nat
+  deriving Repr
+
+-- ============================================================================
+-- Parsing
+-- ============================================================================
+
+/-- Check if a word is a scalar quantifier -/
+def isScalarQuantifier (w : Word) : Bool :=
+  w.form == "some" || w.form == "every" || w.form == "all" || w.form == "most"
+
+/-- Find the position of a scalar item in a word list -/
+def findScalarPosition (ws : List Word) : Option Nat :=
+  ws.findIdx? isScalarQuantifier
+
+/-- Parse words into RSA structure.
+
+    For now, uses the pre-computed RSA results:
+    - "some" → rsaSomeResult (implicature holds)
+    - "all"/"every" → no implicature (top of scale) -/
+def parseToRSA (ws : List Word) : Option RSAStructure :=
+  let scalarPos := findScalarPosition ws
+  match scalarPos with
+  | none => some { result := { utterance := ""
+                             , probSomeNotAll := Frac.zero
+                             , probAll := Frac.zero
+                             , implicatureHolds := false }
+                 , scalarPosition := none }
+  | some pos =>
+    match ws[pos]? with
+    | some w =>
+      if Word.form w == "some" then
+        some { result := rsaSomeResult
+             , scalarPosition := some pos }
+      else if Word.form w == "every" || Word.form w == "all" then
+        -- Top of scale, no implicature
+        some { result := { utterance := "all"
+                         , probSomeNotAll := Frac.zero
+                         , probAll := Frac.mk 1 1  -- High probability
+                         , implicatureHolds := false }
+             , scalarPosition := some pos }
+      else
+        -- Other scalar items (most, etc.) - simplified
+        some { result := { utterance := Word.form w
+                         , probSomeNotAll := Frac.zero
+                         , probAll := Frac.zero
+                         , implicatureHolds := false }
+             , scalarPosition := some pos }
+    | none => none
+
+-- ============================================================================
+-- ImplicatureTheory Instance
+-- ============================================================================
+
+instance : ImplicatureTheory RSATheory where
+  Structure := RSAStructure
+
+  parse := parseToRSA
+
+  implicatureStatus := λ s pos =>
+    -- Check if this position has the scalar item
+    if s.scalarPosition != some pos then .absent
+    else
+      -- RSA: implicature holds if P(some_not_all) > P(all)
+      if s.result.implicatureHolds then .triggered
+      else .absent
+
+  implicatureStrength := λ s pos =>
+    -- Convert RSA probabilities to percentage (0-100)
+    if s.scalarPosition != some pos then none
+    else if s.result.implicatureHolds then
+      -- RSA gives ~50% for "some but not all" interpretation
+      -- (P(w1) + P(w2) combined)
+      some 50
+    else
+      none
+
+  -- NOTE: These flags reflect MODEL INCOMPLETENESS, not theoretical predictions.
+  -- A complete RSA model with compositional semantics could potentially
+  -- derive DE blocking and task effects. See header comment for details.
+
+  predictsDEBlocking := false  -- Model incomplete: can't represent embedded contexts
+
+  predictsTaskEffect := false  -- Model incomplete: no QUD/attention mechanism
+
+  predictedBaselineRate := 50  -- RSA predicts ~50% for "some but not all"
+
+-- ============================================================================
+-- Theorems (Reflecting Model Incompleteness)
+-- ============================================================================
+
+/-- Current RSA model doesn't handle DE contexts (model incomplete, not wrong) -/
+theorem rsa_de_not_modeled :
+    ImplicatureTheory.predictsDEBlocking (T := RSATheory) = false := rfl
+
+/-- Current RSA model doesn't handle task effects (model incomplete) -/
+theorem rsa_task_effect_not_modeled :
+    ImplicatureTheory.predictsTaskEffect (T := RSATheory) = false := rfl
+
+/-- RSA baseline rate is 50% -/
+theorem rsa_baseline_rate :
+    ImplicatureTheory.predictedBaselineRate (T := RSATheory) = 50 := rfl
+
+-- ============================================================================
+-- Example Derivations
+-- ============================================================================
+
+/-- Example: "some" via RSA -/
+def someRSA : RSAStructure :=
+  { result := rsaSomeResult
+  , scalarPosition := some 0
+  }
+
+/-- Example: "all" via RSA -/
+def allRSA : RSAStructure :=
+  { result := { utterance := "all"
+              , probSomeNotAll := Frac.zero
+              , probAll := Frac.mk 1 1
+              , implicatureHolds := false }
+  , scalarPosition := some 0
+  }
+
+/-- RSA triggers implicature for "some" -/
+theorem rsa_some_triggers :
+    ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 0 =
+    .triggered := rfl
+
+/-- RSA doesn't trigger implicature for "all" (top of scale) -/
+theorem rsa_all_no_implicature :
+    ImplicatureTheory.implicatureStatus (T := RSATheory) allRSA 0 =
+    .absent := rfl
+
+/-- Wrong position returns absent -/
+theorem rsa_wrong_position_absent :
+    ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 1 =
+    .absent := rfl
+
+end RSA

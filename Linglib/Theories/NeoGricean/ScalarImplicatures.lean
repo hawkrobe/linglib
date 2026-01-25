@@ -26,6 +26,7 @@ import Linglib.Theories.NeoGricean.Alternatives
 import Linglib.Theories.Montague.Entailment
 import Linglib.Theories.Montague.SemDerivation
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
+import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace NeoGricean.ScalarImplicatures
 
@@ -819,3 +820,158 @@ theorem data_supports_contextualism_over_defaultism :
 -/
 
 end NeoGricean.ScalarImplicatures
+
+-- ============================================================================
+-- PART 10: ImplicatureTheory Instance
+-- ============================================================================
+
+namespace NeoGricean
+
+open Interfaces
+open NeoGricean.Alternatives
+open Montague.SemDeriv (ContextPolarity)
+
+/-- Marker type for the NeoGricean theory -/
+structure NeoGriceanTheory
+
+/-- NeoGricean's internal representation for implicature analysis.
+
+    Bundles the Standard Recipe result with context information. -/
+structure NeoGriceanStructure where
+  /-- The Standard Recipe result (weak/strong implicature, competence) -/
+  result : StandardRecipeResult
+  /-- Context polarity (upward vs downward entailing) -/
+  polarity : ContextPolarity
+  /-- Position of the scalar item (if any) -/
+  scalarPosition : Option Nat
+  /-- Which variant of NeoGricean (for baseline rate) -/
+  params : NeoGriceanParams := geurtsParams
+  deriving Repr
+
+-- ============================================================================
+-- Parsing
+-- ============================================================================
+
+/-- Check if a word is a scalar quantifier -/
+def isScalarQuantifierWord (w : Word) : Bool :=
+  w.form == "some" || w.form == "every" || w.form == "all" || w.form == "most"
+
+/-- Find the position of a scalar item in a word list -/
+def findScalarPositionInWords (ws : List Word) : Option Nat :=
+  ws.findIdx? isScalarQuantifierWord
+
+/-- Determine context polarity from words.
+    Simplified: checks for negation markers. -/
+def determinePolarityFromWords (ws : List Word) : ContextPolarity :=
+  if ws.any (λ w => w.form == "no" || w.form == "not" || w.form == "never")
+  then .downward
+  else .upward
+
+/-- Parse words into NeoGricean structure.
+
+    For now, uses a simplified analysis:
+    - Finds scalar item position
+    - Determines polarity from negation markers
+    - Assumes competence holds and derives strong implicature in UE -/
+def parseToNeoGricean (ws : List Word) : Option NeoGriceanStructure :=
+  let scalarPos := findScalarPositionInWords ws
+  let polarity := determinePolarityFromWords ws
+  -- Determine belief state based on polarity
+  let beliefState : BeliefState :=
+    match scalarPos, polarity with
+    | some _, .upward => .disbelief  -- Strong implicature in UE
+    | some _, .downward => .noOpinion  -- Blocked in DE
+    | none, _ => .belief  -- No scalar item
+  let result := applyStandardRecipe beliefState
+  some { result := result
+       , polarity := polarity
+       , scalarPosition := scalarPos
+       , params := geurtsParams
+       }
+
+-- ============================================================================
+-- ImplicatureTheory Instance
+-- ============================================================================
+
+instance : ImplicatureTheory NeoGriceanTheory where
+  Structure := NeoGriceanStructure
+
+  parse := parseToNeoGricean
+
+  implicatureStatus := λ s pos =>
+    -- Check if this position has the scalar item
+    if s.scalarPosition != some pos then .absent
+    else
+      -- Check polarity
+      match s.polarity with
+      | .downward => .blocked  -- DE blocks implicature
+      | .upward =>
+        -- Check result
+        if s.result.strongImplicature then .triggered
+        else if s.result.weakImplicature then .possible
+        else .absent
+
+  implicatureStrength := λ s pos =>
+    -- Return baseline rate if implicature is triggered
+    if s.scalarPosition == some pos && s.result.strongImplicature
+    then some s.params.predictedNeutralRate
+    else none
+
+  predictsDEBlocking := true  -- NeoGricean explicitly models DE blocking
+
+  predictsTaskEffect := true  -- Contextualism (geurtsParams) predicts task effect
+
+  predictedBaselineRate := geurtsParams.predictedNeutralRate  -- 35%
+
+-- ============================================================================
+-- Theorems (Interface Properties)
+-- ============================================================================
+
+/-- NeoGricean predicts DE blocking -/
+theorem neogricean_predicts_de_blocking :
+    ImplicatureTheory.predictsDEBlocking (T := NeoGriceanTheory) = true := rfl
+
+/-- NeoGricean predicts task effect (under contextualism) -/
+theorem neogricean_predicts_task_effect :
+    ImplicatureTheory.predictsTaskEffect (T := NeoGriceanTheory) = true := rfl
+
+/-- NeoGricean baseline rate is 35% (Geurts contextualism) -/
+theorem neogricean_baseline_rate :
+    ImplicatureTheory.predictedBaselineRate (T := NeoGriceanTheory) = 35 := rfl
+
+-- ============================================================================
+-- Example Derivations (via Interface)
+-- ============================================================================
+
+/-- Example: "some students sleep" in UE context -/
+def someStudentsSleepNG : NeoGriceanStructure :=
+  { result := applyStandardRecipe .disbelief
+  , polarity := .upward
+  , scalarPosition := some 0
+  , params := geurtsParams
+  }
+
+/-- Example: "some students sleep" in DE context (under negation) -/
+def someStudentsSleepDE : NeoGriceanStructure :=
+  { result := applyStandardRecipe .noOpinion
+  , polarity := .downward
+  , scalarPosition := some 0
+  , params := geurtsParams
+  }
+
+/-- In UE, implicature is triggered -/
+theorem ue_triggers_implicature :
+    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepNG 0 =
+    .triggered := rfl
+
+/-- In DE, implicature is blocked -/
+theorem de_blocks_implicature :
+    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepDE 0 =
+    .blocked := rfl
+
+/-- Wrong position returns absent -/
+theorem wrong_position_absent :
+    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepNG 1 =
+    .absent := rfl
+
+end NeoGricean

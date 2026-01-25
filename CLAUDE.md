@@ -15,61 +15,97 @@ Linglib is a Lean 4 library for formalizing syntactic theories from theoretical 
 
 ## Architecture
 
-### Core/ - Shared Types and Interfaces
+### Pipeline: Dependency-Based Theory Composition
 
-Minimal, theory-neutral definitions that all frameworks can extend:
+The core architectural principle is that **theories are composable components with explicit dependencies**. A theory declares what it provides and what it requires. An analysis is complete when all requirements bottom out.
+
+```
+Core/Pipeline.lean
+├── TheoryComponent: { provides: [...], requires: [...] }
+├── GroundedTheory: components where all requires are satisfied
+└── CompleteAnalysis: grounded theory + predictions match data
+```
+
+**Key insight**: We don't assume fixed levels (syntax → semantics → pragmatics). Some theories cross boundaries (CCG couples syntax-semantics, DRT couples semantics-discourse). The architecture only requires that the dependency graph bottoms out.
+
+Example:
+```
+RSA                          Montague.Scope
+├─ requires: meaning         ├─ requires: {}  ← bottoms out
+├─ provides: probDist        └─ provides: meaning
+└────────────────────────────────────┘
+         requirement satisfied!
+```
+
+### Core/ - Shared Types and Interfaces
 
 - `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
 - `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
 - `SemanticTypes.lean`: Basic semantic types
-- `SemanticBackend.lean`: Interface RSA needs from syntax (Utterance, World, φ function)
+- `SemanticBackend.lean`: Interface pragmatics needs from semantics (Utterance, World, φ function)
+- `RSA.lean`: RSA infrastructure (`FiniteSemanticBackend`, `ParametricSemanticBackend`)
+- `Pipeline.lean`: Theory composition architecture (provides/requires model)
+- `Frac.lean`: Exact rational arithmetic for RSA probabilities
 
 ### Theories/ - Theoretical Frameworks
 
-All syntactic/semantic frameworks live here. Theories can extend Core types and implement interfaces:
+All syntactic/semantic/pragmatic frameworks. Each theory should declare what it provides and requires:
 
-- `CCG/`: Combinatory Categorial Grammar
-- `HPSG/`: Head-Driven Phrase Structure Grammar (constraint-based, feature structures)
-- `Minimalism/`: Minimalist Program (derivational, Merge + Move operations)
-- `DependencyGrammar/`: Word Grammar (Hudson 1984, 1990) - dependency-based
-- `Montague/`: Montague-style compositional semantics
-- `NeoGricean/`: Neo-Gricean pragmatics (Geurts 2010) - scalar implicatures, competence, defaultism vs contextualism
-- `RSA/`: Rational Speech Acts (computational pragmatics, scalar implicature)
-- `Surface/`: Simple constraint-checking grammar for basic phenomena
+| Theory | Provides | Requires | Status |
+|--------|----------|----------|--------|
+| `CCG/` | Derivations, categories | Lexicon | Partial |
+| `HPSG/` | Feature structures | - | Partial |
+| `Minimalism/` | SynObj trees, Merge/Move | - | Partial |
+| `DependencyGrammar/` | Dependency structures | - | Partial |
+| `Montague/` | Truth conditions, φ function | Derivations | Working |
+| `NeoGricean/` | Implicatures, SI derivation | SemDeriv, Entailment | Working (toy) |
+| `RSA/` | Probability distributions | SemanticBackend | Working (toy) |
 
 Each theory directory contains:
 - `Basic.lean`: Core machinery for that framework
-- `{Phenomenon}.lean`: Theory's coverage of specific phenomena (e.g., `Coordination.lean`, `Inversion.lean`)
+- `{Phenomenon}.lean`: Theory's coverage of specific phenomena
 
 ### Phenomena/ - Empirical Data (Theory-Independent)
 
-Pure empirical facts with citations, no theoretical commitments:
+**Pure empirical facts only** - no semantic content, no theoretical commitments:
 
-- `Basic.lean`: `MinimalPair`, `PhenomenonData` - data structures for empirical generalizations
-- `EmpiricalData.lean`: Data types, linking functions
-- `SubjectAuxInversion/Data.lean`: Inversion minimal pairs
-- `Coordination/Data.lean`: Coordination minimal pairs
-- `LongDistanceDependencies/Data.lean`: Wh-questions, relative clauses
-- `ScalarImplicature/Data.lean`: Scalar implicature data (some/all, or/and scales)
-- `BasicPhenomena/`: Agreement, case, subcategorization, word order, etc.
+- `Basic.lean`: `MinimalPair`, `PhenomenonData` data structures
+- `{Study}/Data.lean`: Experimental results (percentages, judgments)
+- `ScalarImplicatures/Data.lean`: SI patterns and examples
+- `GeurtsPouscoulous2009/Data.lean`: Task effect experimental data
+- `ScontrasPearl2021/Data.lean`: Scope ambiguity truth-value judgments
 
-### Key Abstractions
+**Anti-pattern**: Don't put semantic content (truth conditions, entailment) in Phenomena/. That belongs in Theories/Montague/.
 
-- **Grammar typeclass**: Defines `Derivation`, `realizes`, and `derives` - any syntactic framework must implement this
-- **SemanticBackend typeclass**: What pragmatics needs from syntax - utterances, worlds, and agreement function φ
-- **Captures* typeclasses**: Framework-neutral specs that a grammar correctly handles a phenomenon
+### Key Interfaces
 
-### Design Pattern
+| Interface | Purpose | Implemented By |
+|-----------|---------|----------------|
+| `Grammar` | Derivation, realizes, derives | CCG, HPSG, Minimalism, DG |
+| `SemanticBackend` | Utterance, World, φ | Montague |
+| `ParametricSemanticBackend` | + Interp parameter for ambiguity | RSA.ScopeAmbiguity |
+| `ImplicatureTheory` | SI derivation, comparison | NeoGricean, RSA |
+| `CoreferenceTheory` | Binding, command relations | HPSG, Minimalism, DG |
 
-- **Phenomena/X/Data.lean** = empirical facts + citations (theory-neutral)
-- **Theories/Y/X.lean** = theory Y's coverage of phenomenon X
-- Missing `Theories/Y/X.lean` = conjecture (theory hasn't proven it handles X)
+### Grounding: RSA ← Montague Connection
 
-Multiple frameworks can implement analyses for the same empirical data. This enables comparing frameworks on identical data.
+RSA's meaning function should be **derived from compositional semantics**, not stipulated:
+
+```lean
+-- In Montague/Scope.lean
+def everyHorseDidntJump_parametric : WorldParametricScopeDerivation Nat :=
+  { meaningAt := λ scope w => ...  -- compositional semantics
+  , worlds := [0, 1, 2] }
+
+-- In RSA/ScopeAmbiguity.lean
+def scopeMeaning := meaningFromDerivation everyHorseDidntJump_parametric
+-- RSA uses Montague's meaning, doesn't stipulate its own
+
+theorem rsa_meaning_from_montague :
+    scopeMeaning = everyHorseDidntJump_parametric.meaningAt := ...
+```
 
 ### Theory-Phenomena Architecture
-
-**Key principle**: Theories make claims about phenomena by importing the data and proving their predictions match. Phenomena files stay theory-neutral.
 
 ```
 Phenomena/Study/Data.lean          -- Pure empirical data (numbers, observations)
@@ -79,67 +115,36 @@ Theories/Framework/Predictions.lean -- Derives predictions, proves they match da
 
 **Phenomena files contain:**
 - Raw experimental results (percentages, counts)
-- Data structures for organizing observations
-- Theorems about the data itself (e.g., "rate A > rate B")
-- NO theory-specific predictions
+- Data structures for observations
+- Theorems about the data itself
+- NO theory-specific predictions or semantic content
 
 **Theory files contain:**
-- Parameters that characterize theory variants (e.g., `levinsonParams`, `geurtsParams`)
-- Functions that derive predictions from parameters
-- Theorems proving predictions match empirical data
-- Theorems showing where theory variants make different predictions
+- Parameters characterizing theory variants
+- Functions deriving predictions
+- Theorems proving predictions match data
+- Grounding proofs (e.g., meaning comes from compositional semantics)
 
-**Example** (NeoGricean vs Geurts & Pouscoulous 2009):
-```lean
--- In Phenomena/GeurtsPouscoulous2009/Data.lean (just data)
-def mainFinding : TaskEffectDatum :=
-  { inferenceTaskRate := 62, verificationTaskRate := 34, ... }
+### Known Architectural Issues (v0.5)
 
--- In Theories/NeoGricean/Basic.lean (theory parameters)
-def levinsonParams : NeoGriceanParams :=
-  { trigger := .default, predictedNeutralRate := 90, ... }
-def geurtsParams : NeoGriceanParams :=
-  { trigger := .contextual, predictedNeutralRate := 35, ... }
-
--- In Theories/NeoGricean/ScalarImplicatures.lean (derived + compared)
-theorem data_supports_contextualism_over_defaultism :
-    predictsTaskEffect geurtsParams = true ∧
-    (geurtsParams.predictedNeutralRate - mainFinding.verificationTaskRate) < 5 ∧
-    levinsonParams.predictedNeutralRate - mainFinding.verificationTaskRate > 50 := by
-  native_decide
-```
-
-This architecture ensures:
-1. **Dependencies are explicit** - theory claims are derived from parameters
-2. **Inconsistencies are caught** - predictions must actually match data
-3. **Theories are comparable** - same data, different predictions
-4. **Phenomena are reusable** - multiple theories can import the same data
-
-### Coverage Matrix
-
-```
-                    Coordination  Inversion  LongDistance  ScalarImplicature
-CCG                      ✓            -           -              -
-HPSG                     -            ✓           -              -
-Minimalism               -            ✓           -              -
-DependencyGrammar        ✓            ✓           ✓              -
-Montague                 -            -           -              -
-NeoGricean               -            -           -              ✓
-RSA                      -            -           -              ✓
-```
+1. **Syntax → Semantics gap**: No syntax theory implements `MontagueSyntax` interface yet
+2. **Entailment ungrounded**: NeoGricean's entailment checker is hardcoded, not proven to match Montague
+3. **RSA incomplete**: Missing full L₁ computation and prior P(w)
+4. **Toy models only**: Most theories work on small fixed domains, not general English
 
 ## Lean Conventions
 
 - `autoImplicit` is disabled (explicit type parameters required)
 - `pp.unicode.fun` is enabled for pretty printing
-- No external dependencies beyond Lean 4 standard library
+- No external dependencies beyond Lean 4 standard library + Mathlib
 - `Core/Frac.lean`: Minimal exact rational arithmetic (cross-multiply for comparison)
 
 ## References
 
-- Gibson (2025) "Syntax", MIT Press. https://mitpress.mit.edu/9780262553575/syntax/
+- Gibson (2025) "Syntax", MIT Press
 - Hudson (1984, 1990) "Word Grammar" / "English Word Grammar"
 - Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
 - Chomsky (1995) "The Minimalist Program"
 - Frank & Goodman (2012) "Predicting Pragmatic Reasoning in Language Games"
 - Goodman & Frank (2016) "Pragmatic Language Interpretation as Probabilistic Inference"
+- Scontras & Pearl (2021) "When pragmatics matters more for truth-value judgments"

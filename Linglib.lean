@@ -51,9 +51,11 @@ import Linglib.Core.SemanticTypes
 import Linglib.Core.SemanticBackend
 import Linglib.Core.Frac
 import Linglib.Core.RSA
+import Linglib.Core.Pipeline
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.ImplicatureTheory
 
 -- Phenomena (empirical data)
 import Linglib.Phenomena.Basic
@@ -120,6 +122,7 @@ import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Entailment
 import Linglib.Theories.Montague.Lexicon
 import Linglib.Theories.Montague.SemDerivation
+import Linglib.Theories.Montague.Scope
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence
@@ -130,6 +133,7 @@ import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
 import Linglib.Theories.RSA.FrankGoodman2012
 import Linglib.Theories.RSA.ScalarImplicatures
+import Linglib.Theories.RSA.ScopeAmbiguity
 
 import Linglib.Theories.PragmaticComparison
 
@@ -137,6 +141,7 @@ import Linglib.Theories.PragmaticComparison
 import Linglib.Theories.Comparisons.Coreference
 import Linglib.Theories.Comparisons.ScalarImplicature
 import Linglib.Theories.Comparisons.CommandRelations
+import Linglib.Theories.Comparisons.Implicature
 
 import Linglib.Theories.Surface.Basic
 
@@ -150,6 +155,9 @@ import Linglib.Phenomena.DisjunctionIgnorance.Data
 
 -- Experimental studies on scalar implicatures
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
+
+-- Quantifier scope ambiguity (Scontras & Pearl 2021)
+import Linglib.Phenomena.ScontrasPearl2021.Data
 
 -- Semantic phenomena
 import Linglib.Phenomena.Semantics.Entailments
