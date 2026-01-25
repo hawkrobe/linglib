@@ -27,11 +27,10 @@ import Linglib.Phenomena.Basic
 open Lexicon
 
 -- ============================================================================
--- Coordination Lexicon
+-- Coordination Lexicon (extends core Lexicon)
 -- ============================================================================
 
-def and_ : Word := ⟨"and", Cat.C, {}⟩
-def or_ : Word := ⟨"or", Cat.C, {}⟩
+-- Note: and_, or_ are defined in Core/Basic.lean Lexicon
 def but_ : Word := ⟨"but", Cat.C, {}⟩
 
 -- ============================================================================

@@ -342,4 +342,283 @@ def vAssignsAccusative : FeatureBundle :=
 def dpNeedsCase : FeatureBundle :=
   [.unvalued (.case .obl)]  -- unvalued, will be valued by T or v
 
+-- ============================================================================
+-- Part 11: Activity Condition
+-- ============================================================================
+
+/-
+## The Activity Condition (Chomsky 2000, 2001)
+
+A goal is only "visible" to a probe if it is ACTIVE, i.e., if it has at least
+one unvalued feature. Once all of a goal's features are valued, it becomes
+inactive and is no longer accessible for further Agree operations.
+
+This explains:
+1. Why subjects don't undergo further agreement after Case is valued
+2. Why moved elements "freeze in place" once their features are satisfied
+3. Defective intervention effects
+-/
+
+/-- Is a feature bundle active? (has at least one unvalued feature)
+
+    An element is active iff it has at least one unvalued feature.
+    Typically, DPs are active when they have unvalued Case. -/
+def isActive (fb : FeatureBundle) : Bool :=
+  fb.any GramFeature.isUnvalued
+
+/-- An element needs Case (has unvalued Case feature) -/
+def needsCase (fb : FeatureBundle) : Bool :=
+  fb.any λ f => f.isUnvalued && match f.featureType with
+    | .case _ => true
+    | _ => false
+
+/-- An element has valued Case -/
+def hasCase (fb : FeatureBundle) : Bool :=
+  fb.any λ f => f.isValued && match f.featureType with
+    | .case _ => true
+    | _ => false
+
+/-- Activity is typically determined by Case:
+    A DP is active iff it lacks Case
+
+    When a feature bundle contains only Case features, the bundle is active
+    (has unvalued features) iff it needs Case (has unvalued Case). -/
+theorem activity_via_case (fb : FeatureBundle)
+    (h : fb.all λ f => match f.featureType with | .case _ => true | _ => false) :
+    isActive fb ↔ needsCase fb := by
+  -- When all features are Case features, isActive ↔ needsCase
+  constructor
+  · -- isActive → needsCase
+    intro hActive
+    simp only [isActive, List.any_eq_true] at hActive
+    simp only [needsCase, List.any_eq_true]
+    obtain ⟨f, hfMem, hfUnval⟩ := hActive
+    use f, hfMem
+    simp only [Bool.and_eq_true]
+    constructor
+    · exact hfUnval
+    · simp only [List.all_eq_true] at h
+      exact h f hfMem
+  · -- needsCase → isActive
+    intro hNeeds
+    simp only [needsCase, List.any_eq_true] at hNeeds
+    simp only [isActive, List.any_eq_true]
+    obtain ⟨f, hfMem, hfCond⟩ := hNeeds
+    simp only [Bool.and_eq_true] at hfCond
+    exact ⟨f, hfMem, hfCond.1⟩
+
+-- ============================================================================
+-- Part 12: Active Goal (for Agree with Activity)
+-- ============================================================================
+
+/-- A goal that satisfies the Activity Condition -/
+structure ActiveGoal where
+  goal : SyntacticObject
+  goalFeatures : FeatureBundle
+  isActive : isActive goalFeatures = true
+  deriving Repr
+
+/-- Create an ActiveGoal if the features are indeed active -/
+def mkActiveGoal (goal : SyntacticObject) (feats : FeatureBundle) : Option ActiveGoal :=
+  if h : isActive feats then some ⟨goal, feats, h⟩
+  else none
+
+/-- Valid Agree with Activity Condition
+
+    Agree requires:
+    1. Probe c-commands goal
+    2. Probe has unvalued feature
+    3. Goal has matching valued feature
+    4. Goal is ACTIVE (has some unvalued feature) -/
+def validAgreeWithActivity (a : AgreeRelation) : Prop :=
+  validAgree a ∧
+  isActive a.goalFeatures = true
+
+-- ============================================================================
+-- Part 13: Multiple Agree
+-- ============================================================================
+
+/-
+## Multiple Agree (Hiraiwa 2001, 2005)
+
+In some languages/constructions, a single probe can agree with multiple goals
+simultaneously. This is called "Multiple Agree."
+
+Examples:
+- Japanese honorification (verb agrees with subject AND object)
+- Multiple wh-fronting in Slavic languages
+- Long-distance agreement in Icelandic
+
+The key constraint: all goals must be in the probe's c-command domain,
+and there's no intervener with the relevant feature.
+-/
+
+/-- Multiple Agree: a probe agreeing with a list of goals -/
+structure MultipleAgree where
+  probe : SyntacticObject
+  probeFeatures : FeatureBundle
+  goals : List (SyntacticObject × FeatureBundle)
+  feature : FeatureVal
+  -- All goals must have the relevant valued feature
+  goalsHaveFeature : goals.all (λ ⟨_, gf⟩ => hasValuedFeature gf feature)
+  deriving Repr
+
+/-- Is Multiple Agree valid? Each goal must be c-commanded by probe -/
+def MultipleAgree.isValid (ma : MultipleAgree) : Prop :=
+  hasUnvaluedFeature ma.probeFeatures ma.feature = true ∧
+  ∀ (g : SyntacticObject × FeatureBundle), g ∈ ma.goals →
+    cCommands ma.probe g.1
+
+/-- Apply Multiple Agree: value probe's feature, mark all goals -/
+def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
+  -- Get the valued feature from the first goal
+  match ma.goals.head? with
+  | none => none
+  | some (_, gf) =>
+    match getValuedFeature gf ma.feature with
+    | none => none
+    | some goalFeat =>
+      some (ma.probeFeatures.map λ f =>
+        if f.isUnvalued && (f.featureType == ma.feature) then
+          match valueFeature f goalFeat with
+          | some v => v
+          | none => f
+        else f)
+
+-- ============================================================================
+-- Part 14: Case Filter
+-- ============================================================================
+
+/-
+## The Case Filter
+
+Every DP must receive Case. In Minimalist terms:
+- Every DP has [uCase] (unvalued Case feature)
+- [uCase] must be valued by Agree with a Case-assigning head
+- Failure to value [uCase] causes the derivation to crash
+
+Case assigners:
+- T assigns nominative to its specifier (subject)
+- v assigns accusative to its complement (object)
+- P assigns oblique to its complement
+-/
+
+/-- A DP's features (with unvalued Case) -/
+structure DPFeatures where
+  phi : List PhiFeature      -- Person, number, gender
+  caseFeature : GramFeature  -- The Case feature (valued or unvalued)
+  deriving Repr
+
+/-- Create DP features with unvalued Case -/
+def DPFeatures.withUnvaluedCase (phi : List PhiFeature) : DPFeatures :=
+  ⟨phi, .unvalued (.case .obl)⟩
+
+/-- Create DP features with valued Case -/
+def DPFeatures.withCase (phi : List PhiFeature) (c : CaseVal) : DPFeatures :=
+  ⟨phi, .valued (.case c)⟩
+
+/-- Does a DP satisfy the Case Filter? (has valued Case) -/
+def satisfiesCaseFilter (dp : DPFeatures) : Bool :=
+  dp.caseFeature.isValued
+
+/-- Convert DPFeatures to a FeatureBundle -/
+def DPFeatures.toBundle (dp : DPFeatures) : FeatureBundle :=
+  dp.phi.map (λ p => .valued (.phi p)) ++ [dp.caseFeature]
+
+/-- The Case Filter: a derivation converges only if all DPs have valued Case
+
+    This is stated as: for all DPs in the structure, their Case feature
+    must be valued. -/
+def caseFilterHolds (dps : List DPFeatures) : Bool :=
+  dps.all satisfiesCaseFilter
+
+/-- If Case Filter fails, there exists a DP without Case -/
+theorem case_filter_necessary (dps : List DPFeatures) :
+    caseFilterHolds dps = false → ∃ dp ∈ dps, satisfiesCaseFilter dp = false := by
+  intro h
+  induction dps with
+  | nil => simp [caseFilterHolds] at h
+  | cons hd tl ih =>
+    simp only [caseFilterHolds, List.all_cons, Bool.and_eq_false_iff] at h
+    cases h with
+    | inl hHd =>
+      use hd
+      simp only [List.mem_cons, true_or, true_and]
+      exact hHd
+    | inr hTl =>
+      obtain ⟨dp, hdp, hsat⟩ := ih hTl
+      use dp
+      simp only [List.mem_cons]
+      exact ⟨Or.inr hdp, hsat⟩
+
+/-- A well-formed derivation satisfies the Case Filter -/
+theorem case_filter_at_interfaces (dps : List DPFeatures)
+    (hWF : caseFilterHolds dps = true) :
+    ∀ dp ∈ dps, satisfiesCaseFilter dp = true := by
+  intro dp hdp
+  induction dps with
+  | nil => simp at hdp
+  | cons hd tl ih =>
+    simp only [caseFilterHolds, List.all_cons, Bool.and_eq_true] at hWF
+    rcases List.mem_cons.mp hdp with heq | hmem
+    · rw [heq]; exact hWF.1
+    · exact ih hWF.2 hmem
+
+-- ============================================================================
+-- Part 15: Defective Intervention
+-- ============================================================================
+
+/-
+## Defective Intervention (Chomsky 2000)
+
+An element X is a DEFECTIVE INTERVENER if:
+1. It has some features that match the probe
+2. But it's INACTIVE (all features valued)
+
+Defective interveners block Agree even though they can't participate in it.
+
+Example: In raising constructions, PRO is a defective intervener:
+  "John seems [PRO to be happy]"
+  - T probes for φ-features
+  - PRO has φ but is inactive (no Case)
+  - But PRO is DEFECTIVE, so it doesn't block Agree with "John"
+
+Wait, this is backwards. Let me reconsider:
+Actually, defective intervention is when an INACTIVE element still blocks:
+  "*There seems a man to be here"
+  - "a man" intervenes between T and "there" for EPP
+  - But "a man" has unvalued Case, so it SHOULD be active
+
+The real defective intervention is:
+  - An element that MATCHES but can't be the goal
+  - e.g., expletive "there" matches for φ but doesn't have full φ-features
+-/
+
+/-- A defective element: has some matching features but incomplete set -/
+structure DefectiveElement where
+  so : SyntacticObject
+  features : FeatureBundle
+  -- Has at least one phi feature
+  hasPartialPhi : (features.any λ f => match f.featureType with
+    | .phi _ => true
+    | _ => false) = true
+  -- But not a complete phi set (deficient)
+  isDeficient : Bool  -- Simplified: mark as deficient
+  deriving Repr
+
+/-- Does X defectively intervene between probe and goal?
+
+    X defectively intervenes if:
+    - X is between probe and goal (c-command wise)
+    - X has matching features
+    - X is defective (can't be a full goal) -/
+def defectivelyIntervenes (probe x goal : SyntacticObject)
+    (xDef : DefectiveElement) (ftype : FeatureVal) : Prop :=
+  cCommands probe x ∧
+  cCommands x goal ∧
+  xDef.so = x ∧
+  xDef.isDeficient = true ∧
+  -- X has a matching feature
+  (xDef.features.any λ f => featuresMatch f (.unvalued ftype)) = true
+
 end Minimalism

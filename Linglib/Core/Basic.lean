@@ -317,4 +317,44 @@ def smart : Word := ⟨"smart", Cat.Adj, {}⟩
 def that : Word := ⟨"that", Cat.C, {}⟩
 def if_ : Word := ⟨"if", Cat.C, {}⟩
 
+-- ============================================================================
+-- Reflexive Pronouns (Binding Theory)
+-- ============================================================================
+
+def himself : Word := ⟨"himself", Cat.D, { number := some .sg, person := some .third, case_ := some .acc }⟩
+def herself : Word := ⟨"herself", Cat.D, { number := some .sg, person := some .third, case_ := some .acc }⟩
+def themselves : Word := ⟨"themselves", Cat.D, { number := some .pl, person := some .third, case_ := some .acc }⟩
+def myself : Word := ⟨"myself", Cat.D, { number := some .sg, person := some .first, case_ := some .acc }⟩
+def yourself : Word := ⟨"yourself", Cat.D, { number := some .sg, person := some .second, case_ := some .acc }⟩
+def ourselves : Word := ⟨"ourselves", Cat.D, { number := some .pl, person := some .first, case_ := some .acc }⟩
+
+-- ============================================================================
+-- Island Vocabulary
+-- ============================================================================
+
+-- Temporal/causal subordinators (adjunct islands)
+def before : Word := ⟨"before", Cat.P, {}⟩
+def after : Word := ⟨"after", Cat.P, {}⟩
+def because : Word := ⟨"because", Cat.C, {}⟩
+def although : Word := ⟨"although", Cat.C, {}⟩
+
+-- Relative clause words
+def man : Word := ⟨"man", Cat.N, { number := some .sg, countable := some true }⟩
+def woman : Word := ⟨"woman", Cat.N, { number := some .sg, countable := some true }⟩
+def person : Word := ⟨"person", Cat.N, { number := some .sg, countable := some true }⟩
+
+-- More verbs for island examples
+def met : Word := ⟨"met", Cat.V, { valence := some .transitive }⟩
+def saw : Word := ⟨"saw", Cat.V, { valence := some .transitive }⟩
+def bought : Word := ⟨"bought", Cat.V, { valence := some .transitive }⟩
+def sold : Word := ⟨"sold", Cat.V, { valence := some .transitive }⟩
+def left : Word := ⟨"left", Cat.V, { valence := some .intransitive }⟩
+def buy : Word := ⟨"buy", Cat.V, { valence := some .transitive }⟩
+def sell : Word := ⟨"sell", Cat.V, { valence := some .transitive }⟩
+def leave : Word := ⟨"leave", Cat.V, { valence := some .intransitive }⟩
+
+-- Coordination
+def and_ : Word := ⟨"and", Cat.C, {}⟩
+def or_ : Word := ⟨"or", Cat.C, {}⟩
+
 end Lexicon
