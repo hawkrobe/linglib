@@ -1,5 +1,81 @@
 # Changelog
 
+## [0.7.0] - 2025-01-25
+
+### Added
+- **Core/RSA.lean**: `RSAScore` typeclass for score types
+  - Provides arithmetic operations: `zero`, `one`, `add`, `mul`, `div`, `lt`
+  - Instance `RSAScore Frac`: Exact rational arithmetic for proofs
+  - Instance `RSAScore Float`: Floating-point for empirical work
+
+- **Core/RSA.lean**: Unified `RSAScenario Score` structure
+  - Replaces `FiniteSemanticBackend` (Boolean) and `SemanticBackend` class (Float)
+  - `φ : Utterance → World → Score` (generalized from Boolean)
+  - `prior : World → Score` (P(w) distribution)
+  - `α : Score` (rationality parameter)
+  - `RSAScenario.ofBool`: Helper to build from Boolean satisfaction relation
+
+- **Core/RSA.lean**: Unified `ParametricRSAScenario Score` structure
+  - `Interp` type for scope/interpretation ambiguity
+  - `interpPrior : Interp → Score` for P(i) distribution
+  - `L1_joint`, `L1_world`, `L1_interp` for joint/marginal inference
+
+- **Type aliases**: `ExactRSAScenario` (Frac) and `SoftRSAScenario` (Float)
+
+- **Theories/RSA/GradedSemantics.lean**: New module demonstrating non-Boolean φ
+  - Vague adjectives example: "tall"/"short" with degrees in [0,1]
+  - `tallDegree : Height → Frac` (e.g., 190cm → 9/10, 170cm → 5/10)
+  - Shows RSA naturally handles vagueness without hard thresholds
+  - References: Lassiter & Goodman (2017), Qing & Franke (2014)
+
+- **Core/Frac.lean**: Added helper operations
+  - `Frac.sub`: Subtraction (saturating at zero)
+  - `Frac.toFloat`: Conversion to Float
+
+### Changed
+- **Core/SemanticBackend.lean**: Gutted to minimal re-exports
+  - Now just re-exports RSA types for backward compatibility
+  - `LiteralBackend` = `ExactRSAScenario`, `GradedBackend` = `SoftRSAScenario`
+
+- **Theories/RSA/Basic.lean**: Migrated to `RSAScenario.ofBool`
+  - `scalarScenario` replaces old `scalarBackend`
+  - Legacy alias preserved for compatibility
+
+- **Theories/RSA/FrankGoodman2012.lean**: Migrated to new API
+  - `refGameScenario` with `RSAScenario.ofBool`
+
+- **Theories/RSA/ScalarImplicatures.lean**: Updated imports
+  - Uses `RSA.L0`, `RSA.L1` with explicit scenario
+
+- **Theories/RSA/GoodmanStuhlmuller2013.lean**: Updated references
+  - `scalarBackend` → `scalarScenario`
+
+- **Theories/RSA/ScontrasPearl2021.lean**: Migrated to `ParametricRSAScenario`
+  - `scopeScenario` via `ParametricRSAScenario.ofBool`
+  - Grounding theorem preserved: `rsa_meaning_from_montague`
+
+- **Theories/Montague/Numbers.lean**: Migrated both backends
+  - `LowerBound.scenario`, `Exact.scenario` via `RSAScenario.ofBool`
+
+### Why This Matters
+This unification enables:
+1. **Graded semantics**: φ ∈ [0,1] for vagueness, not just Boolean
+2. **Single interface**: One structure for exact proofs AND empirical work
+3. **Priors and rationality**: P(w), P(i), and α built into the structure
+4. **Cleaner architecture**: No more parallel SemanticBackend class hierarchy
+
+### Key Insight
+RSA's meaning function should be *flexible* in score type:
+- `Frac` for proofs with `native_decide`
+- `Float` for fitting empirical data
+- Non-Boolean for graded phenomena (vagueness, gradable adjectives)
+
+The same `RSAScenario` interface works for all.
+
+### References
+- Lassiter & Goodman (2017) "Adjectival vagueness in a Bayesian model"
+- Qing & Franke (2014) "Gradable adjectives, vagueness, and optimal language use"
+
 ## [0.6.5] - 2025-01-25
 
 ### Changed

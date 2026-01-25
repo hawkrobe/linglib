@@ -5,7 +5,7 @@ Two competing semantic backends for number words:
 1. **Lower-bound semantics** (Horn 1972): "two" means ≥2
 2. **Exact semantics**: "two" means exactly 2
 
-Both implement `FiniteSemanticBackend` so they can be used with RSA.
+Both implement `RSAScenario` so they can be used with RSA.
 
 The empirical data from Goodman & Stuhlmüller (2013) Experiment 2
 shows that lower-bound semantics is correct: interpretation varies
@@ -50,16 +50,12 @@ def meaning : NumUtterance → NumWorld → Bool
   | .three, .n3 => true  -- ≥3 (only n3)
   | .three, _ => false
 
-/-- Lower-bound semantics as a FiniteSemanticBackend -/
-def backend : RSA.FiniteSemanticBackend := {
-  Utterance := NumUtterance
-  World := NumWorld
-  utterances := allNumUtterances
-  worlds := allNumWorlds
-  satisfies := fun w u => meaning u w
-  utteranceBEq := inferInstance
-  worldBEq := inferInstance
-}
+/-- Lower-bound semantics as an RSAScenario -/
+def scenario : ExactRSAScenario :=
+  RSAScenario.ofBool allNumUtterances allNumWorlds (fun w u => meaning u w)
+
+/-- Legacy alias -/
+abbrev backend := scenario
 
 -- Key property: "two" is compatible with multiple worlds
 theorem two_ambiguous :
@@ -87,16 +83,12 @@ def meaning : NumUtterance → NumWorld → Bool
   | .three, .n3 => true
   | .three, _ => false   -- exactly 3
 
-/-- Exact semantics as a FiniteSemanticBackend -/
-def backend : RSA.FiniteSemanticBackend := {
-  Utterance := NumUtterance
-  World := NumWorld
-  utterances := allNumUtterances
-  worlds := allNumWorlds
-  satisfies := fun w u => meaning u w
-  utteranceBEq := inferInstance
-  worldBEq := inferInstance
-}
+/-- Exact semantics as an RSAScenario -/
+def scenario : ExactRSAScenario :=
+  RSAScenario.ofBool allNumUtterances allNumWorlds (fun w u => meaning u w)
+
+/-- Legacy alias -/
+abbrev backend := scenario
 
 -- Key property: "two" is compatible with only ONE world
 theorem two_unambiguous :

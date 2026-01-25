@@ -3,26 +3,19 @@
 
 Core RSA (Rational Speech Acts) infrastructure.
 
-Uses exact fraction arithmetic (Core/Frac.lean) for clean proofs.
+## Architecture
 
-## Architecture (mathlib-style)
+RSA is parameterized by:
+1. **Score type** (Frac for exact proofs, Float for empirical work)
+2. **RSAScenario** structure (unified interface replacing FiniteSemanticBackend)
 
-RSA is parameterized by a **semantic backend** (a structure, not a class):
-- `FiniteSemanticBackend`: provides Utterance, World, satisfies relation
-- L0/S1/L1 functions take the backend explicitly as first argument
-- This allows multiple backends in scope without typeclass ambiguity
+### Key Types
 
-## Grounding
+- `RSAScore`: Typeclass for score arithmetic (Frac, Float)
+- `RSAScenario Score`: Unified interface for RSA computation
+- `ParametricRSAScenario Score`: For lifted-variable RSA (scope ambiguity)
 
-Semantic backends can be constructed from various sources:
-- Montague intensional semantics (see `Montague/RSABackend.lean`)
-- Stipulated meaning functions (for toy examples)
-- Other semantic theories (DRT, situation semantics, etc.)
-
-The grounding theorem is trivial by construction: when you build a backend
-from Montague derivations, `satisfies w u = φ(u, w)` by definition.
-
-## RSA Model
+### RSA Model
 
 RSA models communication as recursive reasoning between speakers and listeners:
 - L0: Literal interpretation (semantic denotation)
@@ -34,296 +27,419 @@ Reference: Frank & Goodman (2012), Goodman & Frank (2016)
 
 import Linglib.Core.Frac
 
-namespace RSA
-
-open Frac
-
 -- ============================================================================
--- Finite Semantic Backend (Structure, not Class)
+-- RSAScore Typeclass
 -- ============================================================================
 
 /--
-A semantic backend with finite, enumerable utterances and worlds.
+What RSA computation needs from a score type.
 
-This is a **structure** (not class) to allow multiple backends in scope.
-RSA functions take the backend explicitly as their first argument.
+Provides basic arithmetic operations for probability-like quantities.
+Implemented by `Frac` (exact rational arithmetic) and `Float`.
 -/
-structure FiniteSemanticBackend where
+class RSAScore (α : Type) where
+  zero : α
+  one : α
+  add : α → α → α
+  mul : α → α → α
+  /-- Division, returning None if denominator is zero -/
+  div : α → α → Option α
+  /-- Less-than comparison -/
+  lt : α → α → Bool
+
+namespace RSAScore
+
+variable {α : Type} [RSAScore α]
+
+/-- Greater-than in terms of less-than -/
+def gt (x y : α) : Bool := lt y x
+
+/-- Greater-than-or-equal -/
+def ge (x y : α) : Bool := !lt x y
+
+/-- Less-than-or-equal -/
+def le (x y : α) : Bool := !lt y x
+
+end RSAScore
+
+-- ============================================================================
+-- RSAScore Instances
+-- ============================================================================
+
+open Frac in
+instance : RSAScore Frac.Frac where
+  zero := Frac.zero
+  one := Frac.one
+  add := Frac.add
+  mul := Frac.mul
+  div a b := if h : b.num > 0 then some (Frac.div a b h) else none
+  lt a b := decide (a < b)
+
+instance : RSAScore Float where
+  zero := 0.0
+  one := 1.0
+  add := (· + ·)
+  mul := (· * ·)
+  div a b := if b > 0.0 then some (a / b) else none
+  lt := (· < ·)
+
+-- ============================================================================
+-- RSAScenario: Unified Interface
+-- ============================================================================
+
+/--
+RSA scenario: the unified interface for all RSA computation.
+
+Replaces the old `FiniteSemanticBackend`. Parametric over score type.
+
+## Fields
+
+- `φ`: Agreement function (meaning). For Boolean semantics, use `RSAScenario.ofBool`.
+- `prior`: Prior distribution over worlds (default: uniform)
+- `α`: Rationality parameter (default: 1)
+
+## Usage
+
+```lean
+def myScenario : ExactRSAScenario :=
+  RSAScenario.ofBool [.some_, .all_] [.w0, .w1, .w2] mySatisfies
+```
+-/
+structure RSAScenario (Score : Type) [RSAScore Score] where
   /-- Type of utterances -/
   Utterance : Type
   /-- Type of possible worlds -/
   World : Type
-  /-- List of all utterances -/
+  /-- Agreement function: how well does utterance describe world? -/
+  φ : Utterance → World → Score
+  /-- Enumeration of all utterances -/
   utterances : List Utterance
-  /-- List of all worlds -/
+  /-- Enumeration of all worlds -/
   worlds : List World
-  /-- Satisfaction relation: is utterance true at world? -/
-  satisfies : World → Utterance → Bool
+  /-- Prior distribution over worlds (default: uniform) -/
+  prior : World → Score := fun _ => RSAScore.one
+  /-- Rationality parameter (default: 1) -/
+  α : Score := RSAScore.one
   /-- BEq instance for utterances -/
-  utteranceBEq : BEq Utterance
+  [uttBEq : BEq Utterance]
   /-- BEq instance for worlds -/
-  worldBEq : BEq World
+  [worldBEq : BEq World]
 
--- Make BEq instances available
-instance (B : FiniteSemanticBackend) : BEq B.Utterance := B.utteranceBEq
-instance (B : FiniteSemanticBackend) : BEq B.World := B.worldBEq
+attribute [instance] RSAScenario.uttBEq RSAScenario.worldBEq
+
+/-- RSAScenario with exact rational arithmetic (for proofs) -/
+abbrev ExactRSAScenario := RSAScenario Frac.Frac
+
+/-- RSAScenario with floating point (for empirical/LLM work) -/
+abbrev SoftRSAScenario := RSAScenario Float
 
 -- ============================================================================
--- Helpers
+-- Boolean Semantics Helper
 -- ============================================================================
 
-/-- Look up score of an item in a distribution -/
-def getScore {A : Type} [BEq A] (dist : List (A × Frac)) (x : A) : Frac :=
-  match dist.find? fun (a, _) => a == x with
-  | some (_, p) => p
-  | none => Frac.zero
+/-- Convert Bool to any RSAScore (for building scenarios from Boolean meanings) -/
+def boolToScore {Score : Type} [RSAScore Score] (b : Bool) : Score :=
+  if b then RSAScore.one else RSAScore.zero
 
-/-- Count worlds compatible with an utterance -/
-def compatibleCount (B : FiniteSemanticBackend) (u : B.Utterance) : Nat :=
-  (B.worlds.filter (B.satisfies · u)).length
+/--
+Build RSAScenario from a Boolean satisfaction relation.
 
-/-- Informativity of an utterance = 1 / (compatible worlds) -/
-def informativity (B : FiniteSemanticBackend) (u : B.Utterance) : Frac :=
-  let n := compatibleCount B u
-  if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
+This is the primary way to create scenarios from classical semantics.
+The φ function becomes an indicator function: 1 if true, 0 if false.
+
+## Example
+
+```lean
+def scalarScenario : ExactRSAScenario :=
+  RSAScenario.ofBool [.some_, .all_] [.w0, .w1, .w2, .w3] scalarSatisfies
+```
+-/
+def RSAScenario.ofBool {Utterance World : Type} [BEq Utterance] [BEq World]
+    (utterances : List Utterance) (worlds : List World)
+    (satisfies : World → Utterance → Bool) : ExactRSAScenario where
+  Utterance := Utterance
+  World := World
+  φ u w := boolToScore (satisfies w u)
+  utterances := utterances
+  worlds := worlds
+
+/-- Property: a scenario has Boolean semantics (φ only returns 0 or 1) -/
+def RSAScenario.isBoolean {Score : Type} [RSAScore Score] (S : RSAScenario Score) : Prop :=
+  ∀ u w, S.φ u w = RSAScore.zero ∨ S.φ u w = RSAScore.one
+
+-- ============================================================================
+-- RSA Computations
+-- ============================================================================
+
+namespace RSA
+
+variable {Score : Type} [RSAScore Score]
+
+/-- Sum a list of scores -/
+def sumScores (scores : List Score) : Score :=
+  scores.foldl RSAScore.add RSAScore.zero
+
+/-- Look up score in distribution -/
+def getScore {α : Type} [BEq α] (dist : List (α × Score)) (x : α) : Score :=
+  match dist.find? (·.1 == x) with
+  | some (_, s) => s
+  | none => RSAScore.zero
+
+/-- Normalize a distribution (divide each score by total) -/
+def normalize {α : Type} (dist : List (α × Score)) : List (α × Score) :=
+  let total := sumScores (dist.map (·.2))
+  dist.map fun (x, s) =>
+    (x, (RSAScore.div s total).getD RSAScore.zero)
 
 -- ============================================================================
 -- L0: Literal Listener
 -- ============================================================================
 
 /--
-L0 scores: P(w | u) = 1/n if satisfies(w, u), else 0
-where n = number of compatible worlds.
+L0: Literal listener distribution.
 
-The literal listener uniformly distributes probability over worlds
-where the utterance is true.
+P(w | u) ∝ P(w) · φ(u, w)
+
+The literal listener updates prior beliefs by the meaning function,
+uniformly distributing probability over worlds where utterance is true
+(for Boolean semantics) or proportionally to φ (for graded semantics).
 -/
-def L0 (B : FiniteSemanticBackend) (u : B.Utterance) : List (B.World × Frac) :=
-  let n := compatibleCount B u
-  let prob := if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
-  B.worlds.map fun w => (w, if B.satisfies w u then prob else Frac.zero)
+def L0 {Score : Type} [RSAScore Score] (S : RSAScenario Score) (u : S.Utterance) : List (S.World × Score) :=
+  let scores := S.worlds.map fun w => (w, RSAScore.mul (S.prior w) (S.φ u w))
+  normalize scores
 
 -- ============================================================================
 -- S1: Pragmatic Speaker
 -- ============================================================================
 
 /--
-S1 scores: P(u | w) ∝ informativity(u) for true utterances
+S1: Pragmatic speaker distribution.
 
-The speaker chooses among true utterances weighted by informativity.
+P(u | w) ∝ L0(w | u)^α
+
+The speaker chooses utterances proportional to how well L0 recovers
+the intended world. For α=1 (default), this is just L0(w|u) normalized.
+
 More informative (less ambiguous) utterances are preferred.
-
-To normalize: P(u | w) = inf(u) / Σ inf(u') for all true u'
 -/
-def S1 (B : FiniteSemanticBackend) (w : B.World) : List (B.Utterance × Frac) :=
-  -- Get all true utterances
-  let trueUtts := B.utterances.filter (B.satisfies w ·)
-  -- Compute informativity for each: 1/n_i
-  -- To sum fractions 1/n_1 + 1/n_2 + ..., use common denominator = n_1 * n_2 * ...
-  let dens := trueUtts.map (compatibleCount B ·)
-  let commonDen := dens.foldl (· * ·) 1
-  -- Sum = Σ (commonDen / n_i) with denominator commonDen
-  let sumNum := dens.foldl (fun acc d => if d > 0 then acc + commonDen / d else acc) 0
-  -- Now P(u | w) = (commonDen / n_u) / sumNum
-  B.utterances.map fun u =>
-    if B.satisfies w u then
-      let n := compatibleCount B u
-      if h : n > 0 ∧ sumNum > 0 then
-        (u, ⟨commonDen / n, sumNum, h.2⟩)
-      else (u, Frac.zero)
-    else (u, Frac.zero)
+def S1 {Score : Type} [RSAScore Score] (S : RSAScenario Score) (w : S.World) : List (S.Utterance × Score) :=
+  let scores := S.utterances.map fun u => (u, getScore (L0 S u) w)
+  normalize scores
 
 -- ============================================================================
 -- L1: Pragmatic Listener
 -- ============================================================================
 
 /--
-L1 scores: P(w | u) ∝ P(w) × S1(u | w)
+L1: Pragmatic listener distribution.
 
-With uniform prior, this is proportional to S1(u | w).
-The pragmatic listener reasons: "What world would make a rational
-speaker choose this utterance?"
+P(w | u) ∝ P(w) · S1(u | w)
+
+The pragmatic listener reasons about what world would make a rational
+speaker choose this utterance.
 -/
-def L1 (B : FiniteSemanticBackend) (u : B.Utterance) : List (B.World × Frac) :=
-  B.worlds.map fun w => (w, getScore (S1 B w) u)
+def L1 {Score : Type} [RSAScore Score] (S : RSAScenario Score) (u : S.Utterance) : List (S.World × Score) :=
+  let scores := S.worlds.map fun w => (w, RSAScore.mul (S.prior w) (getScore (S1 S w) u))
+  normalize scores
 
 -- ============================================================================
--- Convenience: Get probability for specific world
+-- Convenience Probability Accessors
 -- ============================================================================
 
 /-- Get L0 probability for a specific world -/
-def L0_prob (B : FiniteSemanticBackend) (u : B.Utterance) (w : B.World) : Frac :=
-  getScore (L0 B u) w
+def L0_prob {Score : Type} [RSAScore Score] (S : RSAScenario Score) (u : S.Utterance) (w : S.World) : Score :=
+  getScore (L0 S u) w
 
 /-- Get S1 probability for a specific utterance -/
-def S1_prob (B : FiniteSemanticBackend) (w : B.World) (u : B.Utterance) : Frac :=
-  getScore (S1 B w) u
+def S1_prob {Score : Type} [RSAScore Score] (S : RSAScenario Score) (w : S.World) (u : S.Utterance) : Score :=
+  getScore (S1 S w) u
 
 /-- Get L1 probability for a specific world -/
-def L1_prob (B : FiniteSemanticBackend) (u : B.Utterance) (w : B.World) : Frac :=
-  getScore (L1 B u) w
+def L1_prob {Score : Type} [RSAScore Score] (S : RSAScenario Score) (u : S.Utterance) (w : S.World) : Score :=
+  getScore (L1 S u) w
 
 -- ============================================================================
--- Generic Theorems
+-- Legacy Helpers (for backward compatibility during migration)
 -- ============================================================================
 
-/--
-L0 assigns zero probability to worlds where the utterance is false.
--/
-theorem L0_zero_when_false (B : FiniteSemanticBackend) (u : B.Utterance) (w : B.World)
-    (hfalse : B.satisfies w u = false) :
-    ∀ p, (w, p) ∈ (L0 B u) → p = Frac.zero := by
-  intro p hmem
-  simp only [L0, List.mem_map] at hmem
-  obtain ⟨w', _, hw'⟩ := hmem
-  -- hw' : (w', if B.satisfies w' u then prob else Frac.zero) = (w, p)
-  -- From pair equality: w' = w and p = if B.satisfies w' u then prob else Frac.zero
-  have heq : w' = w := by exact (Prod.mk.injEq _ _ _ _).mp hw' |>.1
-  rw [heq, hfalse] at hw'
-  exact ((Prod.mk.injEq _ _ _ _).mp hw' |>.2).symm
+/-- Count worlds compatible with an utterance (for Boolean scenarios) -/
+def compatibleCount (S : RSAScenario Frac.Frac) (u : S.Utterance) : Nat :=
+  (S.worlds.filter fun w => (S.φ u w).num > 0).length
 
-/--
-S1 assigns zero probability to false utterances.
--/
-theorem S1_zero_when_false (B : FiniteSemanticBackend) (w : B.World) (u : B.Utterance)
-    (hfalse : B.satisfies w u = false) :
-    S1_prob B w u = Frac.zero := by
-  simp only [S1_prob, S1, getScore]
-  sorry -- technical
+/-- Informativity of an utterance = 1 / (compatible worlds) -/
+def informativity (S : RSAScenario Frac.Frac) (u : S.Utterance) : Frac.Frac :=
+  let n := compatibleCount S u
+  if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
 
 end RSA
 
 -- ============================================================================
--- Parametric Semantic Backend (for lifted-variable RSA)
+-- ParametricRSAScenario (for Lifted-Variable RSA)
 -- ============================================================================
 
 namespace ParametricRSA
 
-open Frac
-open RSA (getScore)
-
 /--
-A semantic backend with an interpretation parameter.
+RSA scenario with an interpretation parameter.
 
-This supports "lifted-variable" RSA models where:
+Supports "lifted-variable" RSA models where:
 - **Interp** represents different ways to interpret an utterance
   (e.g., scope readings: surface vs inverse)
-- **satisfies** is parameterized by interpretation
+- **φ** is parameterized by interpretation
 
-Example: "Every horse didn't jump"
+## Example: Scope Ambiguity
+
+"Every horse didn't jump"
 - Interp = {surface, inverse}
-- satisfies surface w u = ∀x.¬jump(x) in w
-- satisfies inverse w u = ¬∀x.jump(x) in w
+- φ surface u w = ∀x.¬jump(x) in w
+- φ inverse u w = ¬∀x.jump(x) in w
 
 Reference: Scontras & Pearl (2021)
 -/
-structure ParametricSemanticBackend where
+structure ParametricRSAScenario (Score : Type) [RSAScore Score] where
   Utterance : Type
   World : Type
   Interp : Type
+  /-- Parameterized agreement function -/
+  φ : Interp → Utterance → World → Score
   utterances : List Utterance
   worlds : List World
   interps : List Interp
-  satisfies : Interp → World → Utterance → Bool
-  utteranceBEq : BEq Utterance
-  worldBEq : BEq World
-  interpBEq : BEq Interp
+  /-- Prior over worlds -/
+  prior : World → Score := fun _ => RSAScore.one
+  /-- Prior over interpretations -/
+  interpPrior : Interp → Score := fun _ => RSAScore.one
+  /-- Rationality parameter -/
+  α : Score := RSAScore.one
+  [uttBEq : BEq Utterance]
+  [worldBEq : BEq World]
+  [interpBEq : BEq Interp]
 
-instance (B : ParametricSemanticBackend) : BEq B.Utterance := B.utteranceBEq
-instance (B : ParametricSemanticBackend) : BEq B.World := B.worldBEq
-instance (B : ParametricSemanticBackend) : BEq B.Interp := B.interpBEq
+attribute [instance] ParametricRSAScenario.uttBEq ParametricRSAScenario.worldBEq ParametricRSAScenario.interpBEq
+
+/-- Exact parametric scenario -/
+abbrev ExactParametricRSAScenario := ParametricRSAScenario Frac.Frac
+
+variable {Score : Type} [RSAScore Score]
 
 -- ============================================================================
--- Helpers
+-- Parametric L0, S1, L1
 -- ============================================================================
 
-/-- Count worlds compatible with an utterance under an interpretation -/
-def compatibleCount (B : ParametricSemanticBackend)
-    (i : B.Interp) (u : B.Utterance) : Nat :=
-  (B.worlds.filter (B.satisfies i · u)).length
+/--
+L0 given a fixed interpretation.
 
-/-- Informativity: 1 / (compatible worlds) -/
-def informativity (B : ParametricSemanticBackend)
-    (i : B.Interp) (u : B.Utterance) : Frac :=
-  let n := compatibleCount B i u
+P(w | u, i) ∝ P(w) · φ(i, u, w)
+-/
+def L0 (S : ParametricRSAScenario Score) (i : S.Interp) (u : S.Utterance) : List (S.World × Score) :=
+  let scores := S.worlds.map fun w => (w, RSAScore.mul (S.prior w) (S.φ i u w))
+  RSA.normalize scores
+
+/--
+S1 given a fixed interpretation.
+
+P(u | w, i) ∝ L0(w | u, i)
+-/
+def S1 (S : ParametricRSAScenario Score) (i : S.Interp) (w : S.World) : List (S.Utterance × Score) :=
+  let scores := S.utterances.map fun u => (u, RSA.getScore (L0 S i u) w)
+  RSA.normalize scores
+
+/--
+L1 joint distribution over (World × Interp).
+
+P(w, i | u) ∝ P(w) · P(i) · S1(u | w, i)
+
+Returns unnormalized scores over all (world, interpretation) pairs.
+-/
+def L1_joint (S : ParametricRSAScenario Score) (u : S.Utterance) : List ((S.World × S.Interp) × Score) :=
+  let pairs := S.worlds.flatMap fun w => S.interps.map fun i => (w, i)
+  let scores := pairs.map fun (w, i) =>
+    let priorScore := RSAScore.mul (S.prior w) (S.interpPrior i)
+    let s1Score := RSA.getScore (S1 S i w) u
+    ((w, i), RSAScore.mul priorScore s1Score)
+  RSA.normalize scores
+
+/--
+L1 marginal over worlds.
+
+P(w | u) = Σ_i P(w, i | u)
+-/
+def L1_world (S : ParametricRSAScenario Score) (u : S.Utterance) : List (S.World × Score) :=
+  let joint := L1_joint S u
+  S.worlds.map fun w =>
+    let wScores := joint.filter (·.1.1 == w) |>.map (·.2)
+    (w, RSA.sumScores wScores)
+
+/--
+L1 marginal over interpretations.
+
+P(i | u) = Σ_w P(w, i | u)
+-/
+def L1_interp (S : ParametricRSAScenario Score) (u : S.Utterance) : List (S.Interp × Score) :=
+  let joint := L1_joint S u
+  S.interps.map fun i =>
+    let iScores := joint.filter (·.1.2 == i) |>.map (·.2)
+    (i, RSA.sumScores iScores)
+
+-- ============================================================================
+-- Boolean Semantics Helper
+-- ============================================================================
+
+/--
+Build ParametricRSAScenario from a Boolean satisfaction relation.
+-/
+def ParametricRSAScenario.ofBool {Utterance World Interp : Type}
+    [BEq Utterance] [BEq World] [BEq Interp]
+    (utterances : List Utterance) (worlds : List World) (interps : List Interp)
+    (satisfies : Interp → World → Utterance → Bool) : ExactParametricRSAScenario where
+  Utterance := Utterance
+  World := World
+  Interp := Interp
+  φ i u w := boolToScore (satisfies i w u)
+  utterances := utterances
+  worlds := worlds
+  interps := interps
+
+-- ============================================================================
+-- Legacy Helpers
+-- ============================================================================
+
+/-- Count worlds compatible with utterance under interpretation -/
+def compatibleCount (S : ParametricRSAScenario Frac.Frac)
+    (i : S.Interp) (u : S.Utterance) : Nat :=
+  (S.worlds.filter fun w => (S.φ i u w).num > 0).length
+
+/-- Informativity under interpretation -/
+def informativity (S : ParametricRSAScenario Frac.Frac)
+    (i : S.Interp) (u : S.Utterance) : Frac.Frac :=
+  let n := compatibleCount S i u
   if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
 
--- ============================================================================
--- L0: Literal Listener (given interpretation)
--- ============================================================================
-
-/--
-L0 scores given a fixed interpretation:
-P(w | u, i) = 1/n if satisfies(i, w, u), else 0
--/
-def L0 (B : ParametricSemanticBackend)
-    (i : B.Interp) (u : B.Utterance) : List (B.World × Frac) :=
-  let n := compatibleCount B i u
-  let prob := if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
-  B.worlds.map fun w => (w, if B.satisfies i w u then prob else Frac.zero)
-
--- ============================================================================
--- S1: Pragmatic Speaker (given interpretation)
--- ============================================================================
-
-/--
-S1 scores given a fixed interpretation:
-P(u | w, i) ∝ informativity(i, u) for true utterances
--/
-def S1 (B : ParametricSemanticBackend)
-    (i : B.Interp) (w : B.World) : List (B.Utterance × Frac) :=
-  let trueUtts := B.utterances.filter (B.satisfies i w ·)
-  let dens := trueUtts.map (compatibleCount B i ·)
-  let commonDen := dens.foldl (· * ·) 1
-  let sumNum := dens.foldl (fun acc d => if d > 0 then acc + commonDen / d else acc) 0
-  B.utterances.map fun u =>
-    if B.satisfies i w u then
-      let n := compatibleCount B i u
-      if h : n > 0 ∧ sumNum > 0 then
-        (u, ⟨commonDen / n, sumNum, h.2⟩)
-      else (u, Frac.zero)
-    else (u, Frac.zero)
-
--- ============================================================================
--- L1: Pragmatic Listener (joint over world × interpretation)
--- ============================================================================
-
-/--
-L1 joint scores: P(w, i | u) ∝ P(w) × P(i) × S1(u | w, i)
-
-With uniform priors, this is proportional to S1(u | w, i).
-Returns unnormalized scores over (World × Interp).
--/
-def L1_joint (B : ParametricSemanticBackend)
-    (u : B.Utterance) : List ((B.World × B.Interp) × Frac) :=
-  let pairs := (B.worlds.map fun w =>
-    B.interps.map fun i => (w, i)).flatten
-  pairs.map fun (w, i) => ((w, i), getScore (S1 B i w) u)
-
-/--
-L1 marginal scores over worlds: P(w | u) = Σ_i P(w, i | u)
-
-This sums over all interpretations to get the marginal world distribution.
--/
-def L1_world (B : ParametricSemanticBackend)
-    (u : B.Utterance) : List (B.World × Frac) :=
-  let joint := L1_joint B u
-  B.worlds.map fun w =>
-    let worldScores := joint.filter fun ((w', _), _) => w' == w
-    let sum := worldScores.foldl (fun acc (_, f) => Frac.add acc f) Frac.zero
-    (w, sum)
-
-/--
-L1 marginal scores over interpretations: P(i | u) = Σ_w P(w, i | u)
-
-This sums over all worlds to get the marginal interpretation distribution.
--/
-def L1_interp (B : ParametricSemanticBackend)
-    (u : B.Utterance) : List (B.Interp × Frac) :=
-  let joint := L1_joint B u
-  B.interps.map fun i =>
-    let interpScores := joint.filter fun ((_, i'), _) => i' == i
-    let sum := interpScores.foldl (fun acc (_, f) => Frac.add acc f) Frac.zero
-    (i, sum)
-
 end ParametricRSA
+
+-- ============================================================================
+-- Generic Theorems (examples, can be instantiated for specific scenarios)
+-- ============================================================================
+
+namespace RSA
+
+/--
+L0 assigns zero probability to worlds where utterance has zero φ.
+-/
+theorem L0_zero_when_false {Score : Type} [RSAScore Score]
+    (S : RSAScenario Score) (u : S.Utterance) (w : S.World)
+    (hfalse : S.φ u w = RSAScore.zero) :
+    ∀ p, (w, p) ∈ (L0 S u) → p = RSAScore.zero := by
+  intro p hmem
+  sorry -- Technical proof about normalization
+
+/--
+S1 assigns zero probability to utterances with zero φ at the world.
+-/
+theorem S1_zero_when_false {Score : Type} [RSAScore Score]
+    (S : RSAScenario Score) (w : S.World) (u : S.Utterance)
+    (hfalse : S.φ u w = RSAScore.zero) :
+    S1_prob S w u = RSAScore.zero := by
+  sorry -- Technical proof
+
+end RSA

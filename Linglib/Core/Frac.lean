@@ -84,6 +84,19 @@ instance : Mul Frac := ⟨mul⟩
 def zero : Frac := ⟨0, 1, by decide⟩
 def one : Frac := ⟨1, 1, by decide⟩
 
+/-- Subtraction: a/b - c/d = (ad - cb) / bd (requires a/b ≥ c/d) -/
+def sub (x y : Frac) : Frac :=
+  let numX := x.num * y.den
+  let numY := y.num * x.den
+  if h : numX ≥ numY then
+    ⟨numX - numY, x.den * y.den, Nat.mul_pos x.den_pos y.den_pos⟩
+  else
+    zero  -- Return 0 if result would be negative
+
+/-- Convert to Float for display purposes -/
+def toFloat (x : Frac) : Float :=
+  x.num.toFloat / x.den.toFloat
+
 /-- Check if fraction is zero -/
 def isZero (x : Frac) : Bool := x.num == 0
 

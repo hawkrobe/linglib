@@ -161,23 +161,20 @@ theorem rsa_meaning_from_montague :
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
 
 /--
-Build ParametricSemanticBackend from WorldMeaning.
+Build ParametricRSAScenario from WorldMeaning.
 
 The worlds and interpretations come from the meaning structure,
 ensuring consistency between semantics and pragmatics.
 -/
-def scopeBackend : ParametricRSA.ParametricSemanticBackend := {
-  Utterance := ScopeUtterance
-  World := Nat
-  Interp := ScopeConfig
-  utterances := allScopeUtterances
-  worlds := everyHorseDidntJump_meaning.worlds  -- [0, 1, 2]
-  interps := everyHorseDidntJump_meaning.interps  -- [surface, inverse]
-  satisfies := fun scope world utt => scopeMeaning scope utt world
-  utteranceBEq := inferInstance
-  worldBEq := inferInstance
-  interpBEq := inferInstance
-}
+def scopeScenario : ParametricRSA.ExactParametricRSAScenario :=
+  ParametricRSA.ParametricRSAScenario.ofBool
+    allScopeUtterances
+    everyHorseDidntJump_meaning.worlds   -- [0, 1, 2]
+    everyHorseDidntJump_meaning.interps  -- [surface, inverse]
+    (fun scope world utt => scopeMeaning scope utt world)
+
+/-- Legacy alias -/
+abbrev scopeBackend := scopeScenario
 
 -- ============================================================================
 -- RSA Computations

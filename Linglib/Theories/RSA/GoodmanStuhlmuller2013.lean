@@ -35,19 +35,19 @@ open RSA RSA.Scalar Frac
 namespace BasicImplicature
 
 /-- L0 scores for "some" -/
-def l0_some : List (CookieWorld × Frac) := RSA.L0 scalarBackend .some_
+def l0_some : List (CookieWorld × Frac) := RSA.L0 scalarScenario .some_
 
 /-- L0 scores for "all" -/
-def l0_all : List (CookieWorld × Frac) := RSA.L0 scalarBackend .all
+def l0_all : List (CookieWorld × Frac) := RSA.L0 scalarScenario .all
 
 /-- S1 scores in w3 (all ate) -/
-def s1_w3 : List (ScalarUtterance × Frac) := RSA.S1 scalarBackend .w3
+def s1_w3 : List (ScalarUtterance × Frac) := RSA.S1 scalarScenario .w3
 
 /-- S1 scores in w1 (1 ate) -/
-def s1_w1 : List (ScalarUtterance × Frac) := RSA.S1 scalarBackend .w1
+def s1_w1 : List (ScalarUtterance × Frac) := RSA.S1 scalarScenario .w1
 
 /-- L1 scores for "some" -/
-def l1_some : List (CookieWorld × Frac) := RSA.L1 scalarBackend .some_
+def l1_some : List (CookieWorld × Frac) := RSA.L1 scalarScenario .some_
 
 #eval l0_some   -- L0("some"): uniform 1/3 over {w1, w2, w3}
 #eval l0_all    -- L0("all"): 1 for w3, 0 elsewhere
@@ -258,8 +258,8 @@ Both models produce the same qualitative result for full-knowledge speakers:
 Basic RSA is a consistent specialization of Knowledge-State RSA.
 -/
 theorem models_consistent_on_implicature :
-    (RSA.getScore (RSA.L1 scalarBackend .some_) .w1 >
-     RSA.getScore (RSA.L1 scalarBackend .some_) .w3)
+    (RSA.getScore (RSA.L1 scalarScenario .some_) .w1 >
+     RSA.getScore (RSA.L1 scalarScenario .some_) .w3)
     ↔
     (KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s1 >
      KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s3) := by
