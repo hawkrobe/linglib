@@ -65,6 +65,7 @@ import Linglib.Phenomena.EmpiricalData
 import Linglib.Phenomena.SubjectAuxInversion.Data
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.LongDistanceDependencies.Data
+import Linglib.Phenomena.CrossSerialDependencies.Data
 import Linglib.Phenomena.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.FrankGoodman2012.Data
 
@@ -115,6 +116,7 @@ import Linglib.Theories.CCG.Homomorphism
 import Linglib.Theories.CCG.Combinators
 import Linglib.Theories.CCG.Intonation
 import Linglib.Theories.CCG.Scope
+import Linglib.Theories.CCG.CrossSerial
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers

@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.6.1] - 2025-01-25
+
+### Added
+- **Phenomena/CrossSerialDependencies/Data.lean**: Dutch cross-serial dependency data (Steedman 2000 Ch. 6)
+  - `Dependency`: NP-verb pairings (which NP binds to which verb)
+  - `DependencyPattern`: crossSerial (Dutch) vs nested (German)
+  - `DutchExample`/`GermanExample`: Empirical data structures
+  - `crossSerialDeps`, `nestedDeps`: Generate dependency patterns
+  - Examples: 2, 3, 4 NP-V clusters with cross-serial bindings
+  - `FormalLanguageType`: contextFree vs mildlyContextSensitive
+
+- **Theories/CCG/CrossSerial.lean**: CCG analysis of cross-serial dependencies
+  - `forwardComp2` (B²): X/Y (Y/Z)/W → (X/Z)/W
+  - `forwardComp3` (B³): X/Y ((Y/Z)/W)/V → ((X/Z)/W)/V
+  - Dutch lexicon: perception verbs (zag), control verbs (helpen, laten)
+  - `AnnotatedDerivation`: Derivation with NP-V binding annotations
+  - Key theorems:
+    - `ccg_produces_crossSerial_2`: 2-NP case matches Dutch data
+    - `ccg_produces_crossSerial_3`: 3-NP case matches Dutch data
+    - `ccg_is_mildly_context_sensitive`: CCG > CFG
+    - `ccg_handles_both_patterns`: CCG handles Dutch AND German
+
+### Key Insight
+CCG's generalized composition allows arguments to be "threaded through" multiple verbs, naturally producing cross-serial dependencies. This is the "right" level of power for natural language: more than CFG (handles Dutch), less than full CSG (polynomial parsing).
+
+### References
+- Steedman (2000) "The Syntactic Process" Chapter 6
+- Bresnan et al. (1982) "Cross-serial dependencies in Dutch"
+- Shieber (1985) "Evidence against the context-freeness of natural language"
+
 ## [0.6.0] - 2025-01-24
 
 ### Added
@@ -57,7 +87,7 @@
   - `InformationStructure` (abstract) ← `CCG.Intonation` (implements interface)
 
 ### References
-- Steedman (2000) "The Syntactic Process" Chapter 5
+- Steedman (2000) "The Syntactic Process" Chapters 5-6
 - Rooth (1992) "A theory of focus interpretation"
 - Roberts (1996/2012) "Information structure in discourse"
 
