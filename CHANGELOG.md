@@ -29,6 +29,13 @@
   - `ScopeConfig.toScopeReading`: Convert binary scope to abstract reading
   - `MontagueScopeTheory`: Marker type for instance
 
+- **Theories/CCG/Scope.lean**: CCG implementation of scope availability
+  - `DerivationType`: directApp, typeRaised, composed
+  - `analyzeDerivation`: Classify derivation by structure
+  - `ScopedDerivation`: Derivation annotated with scope-takers
+  - `CCGScopeTheory`: Implements `HasAvailableScopes`
+  - Key insight: Derivational structure determines scope possibilities
+
 - **Phenomena/ScopeWordOrder/Data.lean**: Dutch/German scope-word order interactions
   - `VerbOrder`: verbRaising vs verbProjectionRaising
   - German examples (Bayer 1990, 1996; Kayne 1998)

@@ -114,6 +114,7 @@ import Linglib.Theories.CCG.TruthConditions
 import Linglib.Theories.CCG.Homomorphism
 import Linglib.Theories.CCG.Combinators
 import Linglib.Theories.CCG.Intonation
+import Linglib.Theories.CCG.Scope
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
