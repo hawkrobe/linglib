@@ -52,6 +52,7 @@ import Linglib.Core.SemanticBackend
 import Linglib.Core.Frac
 import Linglib.Core.RSA
 import Linglib.Core.Pipeline
+import Linglib.Core.InformationStructure
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -109,6 +110,9 @@ import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.CCG.Coordination
 import Linglib.Theories.CCG.Interpret
 import Linglib.Theories.CCG.TruthConditions
+import Linglib.Theories.CCG.Homomorphism
+import Linglib.Theories.CCG.Combinators
+import Linglib.Theories.CCG.Intonation
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers

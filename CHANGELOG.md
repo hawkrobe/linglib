@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.6.0] - 2025-01-24
+
+### Added
+- **Core/InformationStructure.lean**: Abstract interface for Information Structure
+  - `Alternatives`: Focus semantic values (actual + alternatives, Rooth-style)
+  - `QUD`: Question Under Discussion as partition of context set
+  - `Theme`/`Rheme`: Topic-comment partition
+  - `Focus`/`Background`: Contrast structure
+  - `InfoStructure`: Complete IS analysis
+  - Typeclasses: `HasInfoStructure`, `HasAlternatives`, `QUDSemantics`
+
+- **Theories/CCG/Intonation.lean**: CCG implementation of Information Structure (Steedman 2000 Ch. 5)
+  - `PitchAccent`: H* (rheme), L+H* (theme), null (background)
+  - `BoundaryTone`: L, LH% (continuation), LL% (finality)
+  - `InfoFeature`: θ (theme), ρ (rheme), φ (unmarked)
+  - `ProsodicCat`: CCG categories with INFORMATION feature
+  - Prosodic combination rules with feature unification
+  - Implements `HasInfoStructure` typeclass
+
+### Architecture
+- Information Structure connects to Scope via QUD:
+  - QUD influences scope preferences
+  - `QUDSemantics.informativity` provides what RSA needs for scope disambiguation
+- Two-level design: Core interface + CCG implementation
+
+### References
+- Steedman (2000) "The Syntactic Process" Chapter 5
+- Rooth (1992) "A theory of focus interpretation"
+- Roberts (1996/2012) "Information structure in discourse"
+
 ## [0.5.2] - 2025-01-24
 
 ### Added
