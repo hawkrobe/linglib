@@ -157,9 +157,6 @@ theorem rsa_meaning_from_montague :
 -- ParametricSemanticBackend Instance (derived from Montague)
 -- ============================================================================
 
-/-- Marker type for the scope ambiguity domain -/
-def ScopeDomain : Type := Unit
-
 /-- All utterances -/
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
 
@@ -169,17 +166,18 @@ Build ParametricSemanticBackend from WorldMeaning.
 The worlds and interpretations come from the meaning structure,
 ensuring consistency between semantics and pragmatics.
 -/
-instance : ParametricSemanticBackend ScopeDomain where
+def scopeBackend : ParametricRSA.ParametricSemanticBackend := {
   Utterance := ScopeUtterance
   World := Nat
   Interp := ScopeConfig
   utterances := allScopeUtterances
   worlds := everyHorseDidntJump_meaning.worlds  -- [0, 1, 2]
   interps := everyHorseDidntJump_meaning.interps  -- [surface, inverse]
-  meaning := scopeMeaning  -- Derived from meaning, not stipulated
+  satisfies := fun scope world utt => scopeMeaning scope utt world
   utteranceBEq := inferInstance
   worldBEq := inferInstance
   interpBEq := inferInstance
+}
 
 -- ============================================================================
 -- RSA Computations
@@ -187,25 +185,25 @@ instance : ParametricSemanticBackend ScopeDomain where
 
 /-- L1 joint scores over (world × scope) -/
 def l1JointScores : List ((Nat × ScopeConfig) × Frac.Frac) :=
-  ParametricRSA.L1_joint_scores ScopeDomain .everyHorseNotJump
+  ParametricRSA.L1_joint scopeBackend .everyHorseNotJump
 
 /-- L1 marginal scores over worlds -/
 def l1WorldScores : List (Nat × Frac.Frac) :=
-  ParametricRSA.L1_world_scores ScopeDomain .everyHorseNotJump
+  ParametricRSA.L1_world scopeBackend .everyHorseNotJump
 
 /-- L1 marginal scores over scope interpretations -/
 def l1ScopeScores : List (ScopeConfig × Frac.Frac) :=
-  ParametricRSA.L1_interp_scores ScopeDomain .everyHorseNotJump
+  ParametricRSA.L1_interp scopeBackend .everyHorseNotJump
 
 -- ============================================================================
 -- Helper: Get score from distribution
 -- ============================================================================
 
 def getWorldScore (w : Nat) : Frac.Frac :=
-  ParametricRSA.getScore l1WorldScores w
+  RSA.getScore l1WorldScores w
 
 def getScopeScore (s : ScopeConfig) : Frac.Frac :=
-  ParametricRSA.getScore l1ScopeScores s
+  RSA.getScore l1ScopeScores s
 
 -- ============================================================================
 -- Verification: Check RSA predictions

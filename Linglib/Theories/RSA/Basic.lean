@@ -50,22 +50,22 @@ def meaning : ScalarUtterance → CookieWorld → Bool
   | .all, _ => false
 
 -- ============================================================================
--- FiniteSemanticBackend Instance
+-- FiniteSemanticBackend Instance (structure-based)
 -- ============================================================================
-
-def ScalarDomain : Type := Unit
 
 def allUtterances : List ScalarUtterance := [.none_, .some_, .all]
 def allWorlds : List CookieWorld := [.w0, .w1, .w2, .w3]
 
-instance : RSA.FiniteSemanticBackend ScalarDomain where
+/-- The scalar RSA backend for cookie domain -/
+def scalarBackend : RSA.FiniteSemanticBackend := {
   Utterance := ScalarUtterance
   World := CookieWorld
   utterances := allUtterances
   worlds := allWorlds
-  meaning := meaning
+  satisfies := fun w u => meaning u w
   utteranceBEq := inferInstance
   worldBEq := inferInstance
+}
 
 -- ============================================================================
 -- Key Property: "some" is compatible with "all"

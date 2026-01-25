@@ -51,16 +51,15 @@ def meaning : NumUtterance → NumWorld → Bool
   | .three, _ => false
 
 /-- Lower-bound semantics as a FiniteSemanticBackend -/
-def Backend : Type := Unit
-
-instance : RSA.FiniteSemanticBackend Backend where
+def backend : RSA.FiniteSemanticBackend := {
   Utterance := NumUtterance
   World := NumWorld
   utterances := allNumUtterances
   worlds := allNumWorlds
-  meaning := meaning
+  satisfies := fun w u => meaning u w
   utteranceBEq := inferInstance
   worldBEq := inferInstance
+}
 
 -- Key property: "two" is compatible with multiple worlds
 theorem two_ambiguous :
@@ -89,16 +88,15 @@ def meaning : NumUtterance → NumWorld → Bool
   | .three, _ => false   -- exactly 3
 
 /-- Exact semantics as a FiniteSemanticBackend -/
-def Backend : Type := Unit
-
-instance : RSA.FiniteSemanticBackend Backend where
+def backend : RSA.FiniteSemanticBackend := {
   Utterance := NumUtterance
   World := NumWorld
   utterances := allNumUtterances
   worlds := allNumWorlds
-  meaning := meaning
+  satisfies := fun w u => meaning u w
   utteranceBEq := inferInstance
   worldBEq := inferInstance
+}
 
 -- Key property: "two" is compatible with only ONE world
 theorem two_unambiguous :

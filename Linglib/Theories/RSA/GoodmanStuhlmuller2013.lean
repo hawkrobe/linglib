@@ -35,19 +35,19 @@ open RSA RSA.Scalar Frac
 namespace BasicImplicature
 
 /-- L0 scores for "some" -/
-def l0_some : List (CookieWorld × Frac) := L0_scores ScalarDomain .some_
+def l0_some : List (CookieWorld × Frac) := RSA.L0 scalarBackend .some_
 
 /-- L0 scores for "all" -/
-def l0_all : List (CookieWorld × Frac) := L0_scores ScalarDomain .all
+def l0_all : List (CookieWorld × Frac) := RSA.L0 scalarBackend .all
 
 /-- S1 scores in w3 (all ate) -/
-def s1_w3 : List (ScalarUtterance × Frac) := S1_scores ScalarDomain .w3
+def s1_w3 : List (ScalarUtterance × Frac) := RSA.S1 scalarBackend .w3
 
 /-- S1 scores in w1 (1 ate) -/
-def s1_w1 : List (ScalarUtterance × Frac) := S1_scores ScalarDomain .w1
+def s1_w1 : List (ScalarUtterance × Frac) := RSA.S1 scalarBackend .w1
 
 /-- L1 scores for "some" -/
-def l1_some : List (CookieWorld × Frac) := L1_scores ScalarDomain .some_
+def l1_some : List (CookieWorld × Frac) := RSA.L1 scalarBackend .some_
 
 #eval l0_some   -- L0("some"): uniform 1/3 over {w1, w2, w3}
 #eval l0_all    -- L0("all"): 1 for w3, 0 elsewhere
@@ -61,27 +61,27 @@ def l1_some : List (CookieWorld × Frac) := L1_scores ScalarDomain .some_
 L1("some") assigns higher probability to w1 (some but not all) than to w3 (all).
 -/
 theorem scalar_implicature :
-    getScore l1_some .w1 > getScore l1_some .w3 := by
+    RSA.getScore l1_some .w1 > RSA.getScore l1_some .w3 := by
   native_decide
 
 /-- L1 also prefers w2 over w3 -/
 theorem scalar_implicature_w2 :
-    getScore l1_some .w2 > getScore l1_some .w3 := by
+    RSA.getScore l1_some .w2 > RSA.getScore l1_some .w3 := by
   native_decide
 
 /-- In L0, w1 and w3 have equal probability (no implicature at literal level) -/
 theorem l0_no_implicature :
-    Frac.eq (getScore l0_some .w1) (getScore l0_some .w3) := by
+    Frac.eq (RSA.getScore l0_some .w1) (RSA.getScore l0_some .w3) := by
   native_decide
 
 /-- In w3, speaker prefers "all" over "some" -/
 theorem s1_prefers_all_in_w3 :
-    getScore s1_w3 .all > getScore s1_w3 .some_ := by
+    RSA.getScore s1_w3 .all > RSA.getScore s1_w3 .some_ := by
   native_decide
 
 /-- In w1, speaker uses "some" (positive probability) and not "all" (zero) -/
 theorem s1_uses_some_in_w1 :
-    (getScore s1_w1 .some_).num > 0 ∧ (getScore s1_w1 .all).num = 0 := by
+    (RSA.getScore s1_w1 .some_).num > 0 ∧ (RSA.getScore s1_w1 .all).num = 0 := by
   native_decide
 
 end BasicImplicature
@@ -258,8 +258,8 @@ Both models produce the same qualitative result for full-knowledge speakers:
 Basic RSA is a consistent specialization of Knowledge-State RSA.
 -/
 theorem models_consistent_on_implicature :
-    (getScore (L1_scores ScalarDomain .some_) .w1 >
-     getScore (L1_scores ScalarDomain .some_) .w3)
+    (RSA.getScore (RSA.L1 scalarBackend .some_) .w1 >
+     RSA.getScore (RSA.L1 scalarBackend .some_) .w3)
     ↔
     (KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s1 >
      KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s3) := by

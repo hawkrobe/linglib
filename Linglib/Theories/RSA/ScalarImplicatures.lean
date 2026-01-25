@@ -86,13 +86,13 @@ Compute RSA result for "some" utterance.
 Uses the L1 scores from RSA.Basic to get the distribution over worlds.
 -/
 def rsaSomeResult : RSAScalarResult :=
-  let l1_scores := L1_scores ScalarDomain .some_
+  let l1_scores := RSA.L1 scalarBackend .some_
   -- P(some_not_all) = P(w1) + P(w2)
-  let p_w1 := getScore l1_scores .w1
-  let p_w2 := getScore l1_scores .w2
+  let p_w1 := RSA.getScore l1_scores .w1
+  let p_w2 := RSA.getScore l1_scores .w2
   let p_some_not_all := Frac.add p_w1 p_w2
   -- P(all) = P(w3)
-  let p_all := getScore l1_scores .w3
+  let p_all := RSA.getScore l1_scores .w3
   { utterance := "some"
   , probSomeNotAll := p_some_not_all
   , probAll := p_all
@@ -152,8 +152,8 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
     some rsaSomeResult
   else if hasAllQuantifier d then
     -- "all" doesn't generate an implicature (top of scale)
-    let l1_scores := L1_scores ScalarDomain .all
-    let p_all := getScore l1_scores .w3
+    let l1_scores := RSA.L1 scalarBackend .all
+    let p_all := RSA.getScore l1_scores .w3
     some { utterance := "all"
          , probSomeNotAll := Frac.zero
          , probAll := p_all
@@ -214,10 +214,10 @@ theorem rsa_every_no_implicature :
 Get L1 probability for a specific world.
 -/
 def l1ProbForWorld (w : CookieWorld) : Frac :=
-  getScore (L1_scores ScalarDomain .some_) w
+  RSA.getScore (RSA.L1 scalarBackend .some_) w
 
 -- L1 scores for "some" (for reference).
-#eval L1_scores ScalarDomain .some_
+#eval RSA.L1 scalarBackend .some_
 
 /--
 **Theorem: w1 > w3 (one vs all)**

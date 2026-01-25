@@ -67,43 +67,44 @@ def meaning : Utterance → Object → Bool
   | .circle, .green_square => false
 
 -- ============================================================================
--- Semantic Backend Instance
+-- Semantic Backend (structure-based)
 -- ============================================================================
 
-/-- Marker type for reference game domain -/
-def RefGameDomain : Type := Unit
-
-instance : FiniteSemanticBackend RefGameDomain where
+/-- Reference game RSA backend -/
+def refGameBackend : FiniteSemanticBackend := {
   Utterance := Utterance
   World := Object
   utterances := [.blue, .green, .square, .circle]
   worlds := [.blue_square, .blue_circle, .green_square]
-  meaning := meaning
+  satisfies := fun obj utt => meaning utt obj
+  utteranceBEq := inferInstance
+  worldBEq := inferInstance
+}
 
 -- ============================================================================
 -- Compute RSA Distributions
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × Frac) := L0_scores RefGameDomain .blue
+def l0_blue : List (Object × Frac) := RSA.L0 refGameBackend .blue
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × Frac) := L0_scores RefGameDomain .green
+def l0_green : List (Object × Frac) := RSA.L0 refGameBackend .green
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × Frac) := L0_scores RefGameDomain .square
+def l0_square : List (Object × Frac) := RSA.L0 refGameBackend .square
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × Frac) := S1_scores RefGameDomain .blue_square
+def s1_blue_square : List (Utterance × Frac) := RSA.S1 refGameBackend .blue_square
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × Frac) := S1_scores RefGameDomain .green_square
+def s1_green_square : List (Utterance × Frac) := RSA.S1 refGameBackend .green_square
 
 /-- L1 for "square" - the key pragmatic inference -/
-def l1_square : List (Object × Frac) := L1_scores RefGameDomain .square
+def l1_square : List (Object × Frac) := RSA.L1 refGameBackend .square
 
 /-- L1 for "blue" -/
-def l1_blue : List (Object × Frac) := L1_scores RefGameDomain .blue
+def l1_blue : List (Object × Frac) := RSA.L1 refGameBackend .blue
 
 -- ============================================================================
 -- Evaluate
@@ -133,22 +134,22 @@ they would have said "green" (uniquely identifying). Saying "square"
 signals they probably mean blue_square.
 -/
 theorem reference_game_inference :
-    getScore l1_square .blue_square > getScore l1_square .green_square := by
+    RSA.getScore l1_square .blue_square > RSA.getScore l1_square .green_square := by
   native_decide
 
 /-- At literal level L0, squares are equally likely -/
 theorem l0_squares_equal :
-    Frac.eq (getScore l0_square .blue_square) (getScore l0_square .green_square) := by
+    Frac.eq (RSA.getScore l0_square .blue_square) (RSA.getScore l0_square .green_square) := by
   native_decide
 
 /-- Speaker in green_square world prefers "green" over "square" -/
 theorem s1_green_prefers_green :
-    getScore s1_green_square .green > getScore s1_green_square .square := by
+    RSA.getScore s1_green_square .green > RSA.getScore s1_green_square .square := by
   native_decide
 
 /-- Speaker in blue_square world: "blue" and "square" are equally informative -/
 theorem s1_blue_square_equal :
-    Frac.eq (getScore s1_blue_square .blue) (getScore s1_blue_square .square) := by
+    Frac.eq (RSA.getScore s1_blue_square .blue) (RSA.getScore s1_blue_square .square) := by
   native_decide
 
 -- ============================================================================
@@ -157,15 +158,15 @@ theorem s1_blue_square_equal :
 
 /-- "green" uniquely identifies green_square at L0 -/
 theorem green_unique :
-    (getScore l0_green .green_square).num > 0 ∧
-    (getScore l0_green .blue_square).num = 0 ∧
-    (getScore l0_green .blue_circle).num = 0 := by
+    (RSA.getScore l0_green .green_square).num > 0 ∧
+    (RSA.getScore l0_green .blue_square).num = 0 ∧
+    (RSA.getScore l0_green .blue_circle).num = 0 := by
   native_decide
 
 /-- "circle" uniquely identifies blue_circle at L0 -/
 theorem circle_unique :
-    (getScore (L0_scores RefGameDomain .circle) .blue_circle).num > 0 ∧
-    (getScore (L0_scores RefGameDomain .circle) .blue_square).num = 0 := by
+    (RSA.getScore (RSA.L0 refGameBackend .circle) .blue_circle).num > 0 ∧
+    (RSA.getScore (RSA.L0 refGameBackend .circle) .blue_square).num = 0 := by
   native_decide
 
 -- ============================================================================

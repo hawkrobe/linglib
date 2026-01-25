@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.6.5] - 2025-01-25
+
+### Changed
+- **Core/RSA.lean**: Refactored to mathlib-style architecture
+  - Changed `FiniteSemanticBackend` from class to structure for explicit parameterization
+  - Renamed `meaning` field to `satisfies` for clarity (satisfies relation: World → Utterance → Bool)
+  - Renamed `L0_scores`/`S1_scores`/`L1_scores` to `L0`/`S1`/`L1`
+  - All RSA functions now take the backend as explicit first argument
+  - Added `L0_prob`, `S1_prob`, `L1_prob` convenience functions
+  - Proved `L0_zero_when_false` theorem (L0 assigns zero to false worlds)
+
+- **Core/RSA.lean** (`ParametricRSA` namespace): Same refactoring
+  - `ParametricSemanticBackend` is now a structure
+  - Renamed `L1_joint_scores`/`L1_world_scores`/`L1_interp_scores` to `L1_joint`/`L1_world`/`L1_interp`
+
+- **Theories/RSA/*.lean**: Updated all RSA modules to use new structure-based API
+  - `Basic.lean`: `scalarBackend` replaces instance
+  - `FrankGoodman2012.lean`: `refGameBackend` replaces instance
+  - `ScalarImplicatures.lean`: Updated to use `RSA.L0`/`RSA.L1`
+  - `ScontrasPearl2021.lean`: `scopeBackend` replaces instance
+
+- **Theories/Montague/Numbers.lean**: Updated semantic backends
+  - `LowerBound.backend` and `Exact.backend` replace instances
+
+### Why This Matters
+The mathlib-style architecture (structures over classes, explicit parameters) enables:
+1. Multiple backends in the same scope without ambiguity
+2. Grounding by construction: building the backend IS the proof
+3. Cleaner dependency tracking between semantics and pragmatics
+
 ## [0.6.4] - 2025-01-25
 
 ### Added
