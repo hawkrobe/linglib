@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.5.0] - 2025-01-24
+
+### Added
+- **Core/Pipeline.lean**: Dependency-based theory composition architecture
+  - `TheoryComponent`: declares what a theory provides and requires
+  - `GroundedTheory`: components where all requirements are satisfied
+  - `CompleteAnalysis`: grounded theory + predictions match empirical data
+  - Key insight: no fixed syntax→semantics→pragmatics levels; just require dependency graph bottoms out
+
+- **Core/RSA.lean**: `ParametricSemanticBackend` for lifted-variable RSA
+  - Meaning function parameterized by interpretation (e.g., scope reading)
+  - `L1_joint_scores`, `L1_world_scores`, `L1_interp_scores` for joint inference
+
+- **Theories/Montague/Scope.lean**: Scope ambiguity infrastructure
+  - `ScopeConfig`, `QNScope`: scope reading enumeration
+  - `WorldParametricScopeDerivation`: meaning parameterized by scope AND world
+  - `everyHorseDidntJump_parametric`: compositional truth conditions
+
+- **Theories/RSA/ScopeAmbiguity.lean**: RSA model grounded in Montague
+  - `meaningFromDerivation`: RSA meaning derived from Montague, not stipulated
+  - `rsa_meaning_from_montague`: theorem proving connection
+  - `rsa_prefers_inverse_scope`, `rsa_partial_world_possible`: key predictions
+
+- **Phenomena/ScontrasPearl2021/Data.lean**: Empirical data (Scontras & Pearl 2021)
+  - `JumpOutcome`, `ScopeReading`, `scopeTruth`
+  - Experiment 1 results: 92%, 59%, 18% for 0/1/2 horses jumped
+
+- **Core/Interfaces/ImplicatureTheory.lean**: Interface for comparing implicature theories
+- **Theories/Comparisons/Implicature.lean**: NeoGricean vs RSA comparison
+
+### Architecture
+- RSA meaning functions should be **derived from compositional semantics**, not stipulated
+- Pipeline ensures pragmatic predictions are grounded (no floating stipulations)
+- Theories can cross traditional levels (CCG couples syntax-semantics, etc.)
+
 ## [0.4.6] - 2025-01-24
 
 ### Added
