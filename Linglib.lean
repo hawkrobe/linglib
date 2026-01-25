@@ -108,6 +108,7 @@ import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.CCG.Coordination
 import Linglib.Theories.CCG.Interpret
+import Linglib.Theories.CCG.TruthConditions
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers

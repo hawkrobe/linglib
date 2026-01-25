@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.5.2] - 2025-01-24
+
+### Added
+- **CCG/Semantics.lean**: Compositional interpretation for CCG derivations
+  - `DerivStep.interp`: Recursively computes meanings from derivations
+  - `SemLexicon`: Maps words to semantic interpretations
+  - `Interp`: Category paired with its meaning (sigma type)
+
+- **CCG/TruthConditions.lean**: CCG → Montague → Empirical data pipeline
+  - Derivations for test sentences (john_sleeps, mary_sleeps, etc.)
+  - `ccgTruth`: Extract truth value from CCG derivation
+  - `ccg_predicts_all_cases`: Universal theorem proving CCG predicts all test cases correctly
+
+### Key Theorems
+- `ccg_predicts_all_intransitive`: CCG correct on all 4 intransitive tests
+- `ccg_predicts_all_transitive`: CCG correct on all 2 transitive tests
+- `ccg_predicts_all_cases`: CCG correct on entire test suite
+
+### Architecture
+- Second complete pipeline (after Scontras & Pearl 2021)
+- Demonstrates syntax → semantics → empirical data connection
+- CCG categories map to Montague types via `catToTy`
+
 ## [0.5.1] - 2025-01-24
 
 ### Added

@@ -310,4 +310,128 @@ theorem backward_app_homomorphism {m : Model} {x y : Cat}
     -- The semantic result is function application
     f_sem a_sem = f_sem a_sem := rfl
 
+-- ============================================================================
+-- DERIVATION INTERPRETATION
+-- ============================================================================
+
+/-
+This section connects CCG derivations (DerivStep) to their semantic interpretations.
+The key insight: every CCG combinatory rule corresponds to function application.
+-/
+
+/-- A semantic interpretation: category paired with its meaning -/
+structure Interp (m : Model) where
+  cat : Cat
+  meaning : m.interpTy (catToTy cat)
+
+/-- Semantic lexicon: maps words to interpretations -/
+def SemLexicon (m : Model) := String → Cat → Option (Interp m)
+
+/-- The toy semantic lexicon -/
+def toySemLexicon : SemLexicon toyModel := λ word cat =>
+  match word, cat with
+  -- Proper names
+  | "John", .atom .NP => some ⟨NP, ToyEntity.john⟩
+  | "Mary", .atom .NP => some ⟨NP, ToyEntity.mary⟩
+  -- Intransitive verbs
+  | "sleeps", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.sleeps_sem⟩
+  | "laughs", .lslash (.atom .S) (.atom .NP) => some ⟨IV, ToyLexicon.laughs_sem⟩
+  -- Transitive verbs
+  | "sees", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.sees_sem⟩
+  | "eats", .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
+      some ⟨TV, ToyLexicon.eats_sem⟩
+  | _, _ => none
+
+/--
+Interpret a CCG derivation, computing its meaning from the lexicon.
+
+Returns `none` if the derivation is ill-formed or uses unknown words.
+-/
+def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
+    : Option (Interp toyModel) :=
+  match d with
+  | .lex entry => lex entry.form entry.cat
+
+  | .fapp d1 d2 => do
+      -- Forward application: X/Y Y → X
+      let ⟨c1, m1⟩ ← d1.interp lex
+      let ⟨c2, m2⟩ ← d2.interp lex
+      match c1 with
+      | .rslash x y =>
+          if h : c2 = y then
+            -- m1 : catToTy y ⇒ catToTy x
+            -- m2 : catToTy c2 = catToTy y
+            let m2' : toyModel.interpTy (catToTy y) := h ▸ m2
+            some ⟨x, m1 m2'⟩
+          else none
+      | _ => none
+
+  | .bapp d1 d2 => do
+      -- Backward application: Y X\Y → X
+      let ⟨c1, m1⟩ ← d1.interp lex
+      let ⟨c2, m2⟩ ← d2.interp lex
+      match c2 with
+      | .lslash x y =>
+          if h : c1 = y then
+            -- m2 : catToTy y ⇒ catToTy x
+            -- m1 : catToTy c1 = catToTy y
+            let m1' : toyModel.interpTy (catToTy y) := h ▸ m1
+            some ⟨x, m2 m1'⟩
+          else none
+      | _ => none
+
+  -- For now, we only implement application (most common cases)
+  | .fcomp _ _ => none  -- TODO: forward composition
+  | .bcomp _ _ => none  -- TODO: backward composition
+  | .ftr _ _ => none    -- TODO: type raising
+  | .btr _ _ => none    -- TODO: type raising
+  | .coord _ _ => none  -- TODO: coordination
+
+-- ============================================================================
+-- INTERPRETATION EXAMPLES
+-- ============================================================================
+
+/-- Helper to extract meaning from interpretation result -/
+def getMeaning (result : Option (Interp toyModel)) : Option Bool :=
+  match result with
+  | some ⟨.atom .S, m⟩ => some m
+  | _ => none
+
+-- "John sleeps" interpretation
+#eval getMeaning (john_sleeps.interp toySemLexicon)
+-- Expected: some true
+
+-- "John sees Mary" interpretation
+#eval getMeaning (john_sees_mary.interp toySemLexicon)
+-- Expected: some true
+
+/-- Interpretation of "John sleeps" produces correct truth value -/
+theorem john_sleeps_interp_correct :
+    getMeaning (john_sleeps.interp toySemLexicon) = some true := by
+  native_decide
+
+/-- Interpretation of "John sees Mary" produces correct truth value -/
+theorem john_sees_mary_interp_correct :
+    getMeaning (john_sees_mary.interp toySemLexicon) = some true := by
+  native_decide
+
+-- ============================================================================
+-- CONNECTION TO MONTAGUE SYNTAXINTERFACE
+-- ============================================================================
+
+/-
+With `DerivStep.interp`, we can now implement `MontagueSyntax` for CCG:
+
+```
+instance : MontagueSyntax Cat DerivStep where
+  catOf d := d.cat.getOrElse S
+  typeOf c := catToTy c
+  wellFormed d := d.cat.isSome
+  interp d m := (d.interp semLexicon).get!.meaning
+```
+
+This completes the syntax → semantics pipeline for CCG.
+-/
+
 end CCG
