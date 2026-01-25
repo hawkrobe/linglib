@@ -16,11 +16,11 @@ head-to-head movement CAN violate the HMC.
 
 ## The Empirical Pattern
 
-German root clauses show V2 order:
+German root clauses show V2 order (Vikner 1995:32, (11d)):
 
     Diesen Film haben die Kinder gesehen.
     this   film have  the children seen
-    "The children have seen this film."
+    'The children have seen this film.'
 
 The finite verb "haben" occupies C, preceding the subject.
 
@@ -34,56 +34,80 @@ From Harizanov (Section 5.1.2, p.35-36):
 ## References
 
 - Harizanov, B. "Syntactic Head Movement"
-  - V2 data: Section 5.1.1, pp.31-35
+  - V2 data: Section 5.1.1, pp.31-35, example (35)
   - HMC violation: Section 5.1.2, pp.35-36
   - Complex LIs: Section 5.2, pp.37-41
-- den Besten (1977/1983), Vikner (1995)
+- Vikner (1995:32, (11d)): Original German data
+- den Besten (1977/1983)
 -/
 
 import Linglib.Theories.Minimalism.Constraints.HMC
 
 namespace Minimalism.GermanicV2
 
-/-! ## Part 1: The Lexicon -/
+/-! ## Part 1: The Lexicon
 
-/-- Simple verb: category V, selects D -/
-def verbSehen : LIToken := ⟨.simple .V [.D], 301⟩
+We define the lexical items for the German sentence from Harizanov (2019).
 
-/-- Tense head: category T, selects V -/
-def tenseGer : LIToken := ⟨.simple .T [.V], 306⟩
+    Diesen Film haben die Kinder gesehen.
+    this   film have  the children seen
+-/
 
-/-- The COMPLEX finite verb "haben": both V and C features
+/-- The COMPLEX finite verb "haben" (have): both V and C features
 
     Following Harizanov (Section 5.2), V2 verbs are categorially complex:
     - V-component projects in base position
     - C-component projects in derived position -/
-def verbHabenComplex : LIToken :=
+def verbHaben : LIToken :=
   ⟨(LexicalItem.simple .V [.D]).combine (LexicalItem.simple .C [.T]), 307⟩
 
-/-- Complementizer "dass": category C, selects T -/
+/-- Tense head: category T, selects V -/
+def tenseHead : LIToken := ⟨.simple .T [.V], 306⟩
+
+/-- Complementizer "dass" (that): category C, selects T -/
 def compDass : LIToken := ⟨.simple .C [.T], 308⟩
 
-/-- Determiner: category D, selects N -/
+/-- Determiner "die/diesen": category D, selects N -/
 def detGer : LIToken := ⟨.simple .D [.N], 304⟩
 
-/-- Noun: category N -/
-def nounGer : LIToken := ⟨.simple .N [], 302⟩
+/-- "Kinder" (children): category N -/
+def nounKinder : LIToken := ⟨.simple .N [], 302⟩
 
-/-! ## Part 2: Structure -/
+/-- "Film" (film): category N -/
+def nounFilm : LIToken := ⟨.simple .N [], 303⟩
 
-def theFiniteVerb : SyntacticObject := .leaf verbHabenComplex
-def tenseHead : SyntacticObject := .leaf tenseGer
-def dpObject : SyntacticObject := .node (.leaf detGer) (.leaf nounGer)
-def dpSubject : SyntacticObject := .node (.leaf detGer) (.leaf nounGer)
+/-! ## Part 2: Structure
+
+```
+        CP
+       /  \
+    haben  TP
+          /  \
+    die Kinder  T'
+               /  \
+              T    VP
+                  /  \
+              haben  diesen Film
+```
+-/
+
+def theFiniteVerb : SyntacticObject := .leaf verbHaben
+def theT : SyntacticObject := .leaf tenseHead
+
+/-- DP "diesen Film" (this film) = {D, N} -/
+def dpDiesenFilm : SyntacticObject := .node (.leaf detGer) (.leaf nounFilm)
+
+/-- DP "die Kinder" (the children) = {D, N} -/
+def dpDieKinder : SyntacticObject := .node (.leaf detGer) (.leaf nounKinder)
 
 /-- VP = {V, DP_object} -/
-def vpV2 : SyntacticObject := .node theFiniteVerb dpObject
+def vpV2 : SyntacticObject := .node theFiniteVerb dpDiesenFilm
 
 /-- T' = {T, VP} -/
-def tBarV2 : SyntacticObject := .node tenseHead vpV2
+def tBarV2 : SyntacticObject := .node theT vpV2
 
 /-- TP = {DP_subject, T'} -/
-def tpV2 : SyntacticObject := .node dpSubject tBarV2
+def tpV2 : SyntacticObject := .node dpDieKinder tBarV2
 
 /-- CP after V2 = {V, TP} — verb reprojects its C-features -/
 def cpV2 : SyntacticObject := .node theFiniteVerb tpV2
@@ -141,7 +165,7 @@ so V2 violates the HMC.
 -/
 
 /-- T is a head in the result structure -/
-theorem t_is_head_in_result : isHeadIn tenseHead cpV2 := by
+theorem t_is_head_in_result : isHeadIn theT cpV2 := by
   unfold isHeadIn isMinimalIn isTermOf
   constructor
   · constructor
@@ -149,7 +173,7 @@ theorem t_is_head_in_result : isHeadIn tenseHead cpV2 := by
       apply contains.trans _ _ tpV2; exact Or.inr rfl
       apply contains.trans _ _ tBarV2; exact Or.inr rfl
       exact contains.imm _ _ (Or.inl rfl)
-    · simp only [tenseHead]
+    · simp only [theT]
   · -- Not maximal: projects in T'
     unfold isMaximalIn
     intro ⟨_, hNoProj⟩
@@ -165,10 +189,10 @@ theorem t_is_head_in_result : isHeadIn tenseHead cpV2 := by
       · constructor <;> native_decide
 
 /-- T ≠ V (they have different LI tokens) -/
-theorem t_neq_v : tenseHead ≠ theFiniteVerb := by native_decide
+theorem t_neq_v : theT ≠ theFiniteVerb := by native_decide
 
 /-- T ≠ TP (T is a leaf, TP is a node) -/
-theorem t_neq_tp : tenseHead ≠ tpV2 := by native_decide
+theorem t_neq_tp : theT ≠ tpV2 := by native_decide
 
 /-! ## Part 6: Main Results -/
 
@@ -180,10 +204,10 @@ theorem t_neq_tp : tenseHead ≠ tpV2 := by native_decide
     From Harizanov (p.35-36): "verb raises directly to its final
     landing site, moving across any and all intervening functional heads" -/
 theorem t_intervenes_in_v2 :
-    isHeadIn tenseHead cpV2 ∧
-    tenseHead ≠ theFiniteVerb ∧
-    tenseHead ≠ tpV2 ∧
-    contains tpV2 tenseHead ∧
+    isHeadIn theT cpV2 ∧
+    theT ≠ theFiniteVerb ∧
+    theT ≠ tpV2 ∧
+    contains tpV2 theT ∧
     contains tBarV2 theFiniteVerb :=
   ⟨t_is_head_in_result, t_neq_v, t_neq_tp,
    contains.trans _ _ tBarV2 (Or.inr rfl) (contains.imm _ _ (Or.inl rfl)),
