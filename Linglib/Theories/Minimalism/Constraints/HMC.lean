@@ -170,25 +170,72 @@ theorem head_to_spec_violates_hmc_positional (m : HeadToSpecMovementPositional) 
 
     Unlike syntactic head movement, Amalgamation:
     1. Happens at PF, not in narrow syntax
-    2. Respects the HMC
+    2. Respects the HMC (is strictly local)
     3. Results in phonological fusion without syntactic effects
 
-    Example: Predicate fronting in English
-    "Happy though John is" - the predicate fronts, then amalgamates with C -/
+    From Harizanov (Section 3.3): Amalgamation "trades" the syntactic relation
+    between a head X and the head Y of its complement for a PF relation of
+    affixation. Since affixation requires adjacency, Amalgamation is strictly
+    local and cannot skip intervening heads.
+
+    Example: French V-to-T
+    "Jean ne parlait pas français" - V amalgamates with T at PF -/
 structure Amalgamation where
-  /-- The element that amalgamates -/
+  /-- The element that amalgamates (the "target") -/
   target : SyntacticObject
   /-- The host (what it amalgamates to) -/
   host : SyntacticObject
-  /-- Amalgamation is local: host immediately c-commands target -/
+  /-- Amalgamation is LOCAL: host immediately c-commands target.
+      This is the defining property that distinguishes Amalgamation
+      from syntactic head movement. -/
   is_local : ∀ root, immediatelyCCommands host target root
 
-/-- Key distinction: Amalgamation respects HMC -/
-theorem amalgamation_respects_hmc (a : Amalgamation) (_root : SyntacticObject) :
-    ∀ (m : Movement),
-      m.mover = a.target →
-      ¬violatesHMC m _root → True := by
-  intros; trivial
+/-- **KEY THEOREM**: Amalgamation cannot skip intervening elements
+
+    This formalizes Harizanov's claim (Section 3.3, p.15):
+    "Amalgamation-based displacement obeys the Head Movement Constraint"
+
+    The proof is immediate from the definition: Amalgamation requires
+    `immediatelyCCommands host target root`, which by definition means
+    there is NO z such that host c-commands z and z c-commands target.
+
+    This is what distinguishes Amalgamation from syntactic head movement,
+    which CAN skip intervening heads (as shown by Bulgarian LHM and V2). -/
+theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
+    ¬∃ z, z ≠ a.host ∧ z ≠ a.target ∧ cCommands a.host z ∧ cCommands z a.target := by
+  have h := a.is_local root
+  unfold immediatelyCCommands at h
+  exact h.2
+
+/-- If there's an intervening element, the displacement cannot be Amalgamation
+
+    This provides a DIAGNOSTIC: if we observe a head displacement that
+    skips an intervening head, we know it must be syntactic movement,
+    not Amalgamation.
+
+    From Harizanov (Section 3.3): The properties of Amalgamation-based
+    displacement "differ substantially from those of Internal Merge." -/
+theorem intervener_rules_out_amalgamation
+    (host target intervener root : SyntacticObject)
+    (h_neq_host : intervener ≠ host)
+    (h_neq_target : intervener ≠ target)
+    (h_host_cmd : cCommands host intervener)
+    (h_int_cmd : cCommands intervener target) :
+    ¬∃ (a : Amalgamation), a.host = host ∧ a.target = target := by
+  intro ⟨a, hHost, hTarget⟩
+  have hLocal := a.is_local root
+  unfold immediatelyCCommands at hLocal
+  apply hLocal.2
+  use intervener
+  subst hHost hTarget
+  exact ⟨h_neq_host, h_neq_target, h_host_cmd, h_int_cmd⟩
+
+/-- Amalgamation respects locality (the host c-commands the target) -/
+theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticObject) :
+    cCommands a.host a.target := by
+  have h := a.is_local root
+  unfold immediatelyCCommands at h
+  exact h.1
 
 -- ============================================================================
 -- Part 6: Diagnostic: HMC Violation
