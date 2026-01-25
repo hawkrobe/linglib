@@ -29,13 +29,6 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 3. All head-to-specifier movement violates the HMC
 4. Therefore: Bulgarian LHM violates the HMC
 
-## How to Read This File
-
-- `def` introduces a definition (a named object)
-- `theorem` states a claim that Lean has verified
-- `by ...` is a proof; the details can be skipped
-- `/-- ... -/` are documentation comments explaining what follows
-
 ## References
 
 - Harizanov, B. "Syntactic Head Movement: Elements in Generative Syntax"
