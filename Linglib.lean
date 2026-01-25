@@ -148,6 +148,7 @@ import Linglib.Theories.RSA.GoodmanStuhlmuller2013
 import Linglib.Theories.RSA.FrankGoodman2012
 import Linglib.Theories.RSA.ScalarImplicatures
 import Linglib.Theories.RSA.ScontrasPearl2021
+import Linglib.Theories.RSA.Intensional
 
 import Linglib.Theories.PragmaticComparison
 

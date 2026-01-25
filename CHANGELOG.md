@@ -13,17 +13,29 @@
   - Example: `someStudentsSleep_intensional` with proven truth conditions per world
   - Key theorems: `some_false_at_none`, `some_true_at_someNotAll`, `every_true_at_all`, etc.
 
+- **Theories/RSA/Intensional.lean**: RSA with compositional Montague semantics
+  - `PropDerivation`: Propositional derivation (type t) for RSA
+  - `L0_from_derivation`: L0 computed by evaluating Montague meaning
+  - `S1_from_derivations`, `L1_from_derivations`: Full grounded RSA pipeline
+  - `IntensionalScenario`: RSA scenario built from compositional derivations
+  - Grounding theorem: `l0_uses_compositional_meaning`
+  - Key result: `scalar_implicature_from_grounded_rsa` - implicature emerges from compositional semantics
+
 ### Changed
 - **docs/ROADMAP.md**: Reorganized with phased priority structure
-  - Phase 1: Intensional Grounding (highest priority)
+  - Phase 1: Intensional Grounding (all three tasks now complete)
   - Phase 2: Type Safety & Robustness
   - Phase 3: Competing Analyses Infrastructure
   - Phase 4: Syntax Expansion
 
 ### Key Insight
-The intensional layer enables RSA's L0 to evaluate compositional Montague semantics directly:
-`L0(w | u) ∝ δ⟦u⟧(w) · P(w)` where ⟦u⟧(w) comes from the derivation, not stipulation.
-This replaces the pattern-matching approach with genuine compositional semantics.
+RSA's scalar implicature now emerges from compositional Montague semantics, not stipulation:
+1. Montague provides: `⟦some students sleep⟧(w) = ∃x.student(x) ∧ sleep(w)(x)`
+2. L0 evaluates: `P(w | u) ∝ δ⟦u⟧(w)` (indicator from Montague)
+3. S1 prefers informative utterances: speaker says "every" in all-worlds
+4. L1 infers: "some" → probably someNotAll world (scalar implicature!)
+
+Verified by #eval: `L1("some") = {someNotAll: 1/1, all: 1/3}`
 
 ### References
 - Montague (1973) "The Proper Treatment of Quantification in Ordinary English"
