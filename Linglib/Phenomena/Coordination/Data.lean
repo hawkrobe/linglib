@@ -111,3 +111,90 @@ def findConjunctions (ws : List Word) : List Nat :=
 /-- Check if a word list has coordination -/
 def hasCoordination (ws : List Word) : Bool :=
   ws.any λ w => w.form == "and" || w.form == "or" || w.form == "but"
+
+-- ============================================================================
+-- Non-Constituent Coordination: The Semantic Fact
+-- ============================================================================
+
+/-
+## Non-Constituent Coordination
+
+"John likes and Mary hates beans" is grammatical and has a conjunctive interpretation.
+
+**The empirical observation** (theory-neutral):
+- The sentence means: John likes beans AND Mary hates beans
+- Symbolically: likes(beans, john) ∧ hates(beans, mary)
+
+**Why this is surprising**:
+In traditional phrase structure, "John likes" is NOT a constituent:
+    [S [NP John] [VP likes [NP ___]]]
+
+Yet it behaves as a unit for coordination purposes.
+
+**What any theory must explain**:
+1. The sentence is grammatical
+2. The interpretation is the conjunction of two predications
+3. Each predication shares the same object ("beans")
+
+References:
+- Steedman (2000) "The Syntactic Process" Ch. 3
+- Dowty (1988) "Type raising, functional composition, and non-constituent conjunction"
+-/
+
+/--
+**Theory-Neutral Semantic Data for Non-Constituent Coordination**
+
+The core empirical observation is a **semantic equivalence**:
+
+  "John likes and Mary hates beans" ≡ "John likes beans and Mary hates beans"
+
+This is theory-neutral: we don't presuppose any logical formalism, just that
+native speakers judge these sentences to have the same meaning (same truth
+conditions, same entailments, intersubstitutable in any context).
+-/
+structure SemanticEquivalence where
+  /-- The non-constituent coordination sentence -/
+  sentence : List String
+  /-- The semantically equivalent spelled-out version -/
+  equivalentTo : List String
+  /-- Both are grammatical -/
+  bothGrammatical : Bool := true
+  deriving Repr
+
+/-- "John likes and Mary hates beans" ≡ "John likes beans and Mary hates beans" -/
+def johnLikesAndMaryHatesBeans : SemanticEquivalence := {
+  sentence := ["John", "likes", "and", "Mary", "hates", "beans"]
+  equivalentTo := ["John", "likes", "beans", "and", "Mary", "hates", "beans"]
+}
+
+/-- "Warren cooked and Betsy ate the potatoes" ≡ "Warren cooked the potatoes and Betsy ate the potatoes" -/
+def warrenCookedAndBetsyAte : SemanticEquivalence := {
+  sentence := ["Warren", "cooked", "and", "Betsy", "ate", "the", "potatoes"]
+  equivalentTo := ["Warren", "cooked", "the", "potatoes", "and", "Betsy", "ate", "the", "potatoes"]
+}
+
+/-- "I met and you saw John" ≡ "I met John and you saw John" -/
+def iMetAndYouSaw : SemanticEquivalence := {
+  sentence := ["I", "met", "and", "you", "saw", "John"]
+  equivalentTo := ["I", "met", "John", "and", "you", "saw", "John"]
+}
+
+/-
+## The Core Empirical Fact
+
+Native speakers judge these sentence pairs **semantically equivalent**:
+- Same truth conditions
+- Same entailments
+- Intersubstitutable in any context
+
+This is the raw data. Any theory of coordination semantics must predict
+that the two sentences in each pair receive equivalent interpretations.
+-/
+
+/-- A theory captures non-constituent coordination if it derives equivalent
+    meanings for both sentences in a SemanticEquivalence pair. -/
+class CapturesNonConstituentCoord (G : Type) where
+  /-- Both sentences derive -/
+  bothDerive : G → SemanticEquivalence → Bool
+  /-- The derived meanings are equivalent -/
+  meaningsEquivalent : G → SemanticEquivalence → Bool

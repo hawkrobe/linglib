@@ -26,11 +26,13 @@ making the homomorphism particularly transparent.
 
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
+import Linglib.Theories.CCG.Combinators
 import Linglib.Theories.Montague.Basic
 
 namespace CCG.Homomorphism
 
 open CCG
+open CCG.Combinators
 open Montague
 
 -- ============================================================================
@@ -138,19 +140,7 @@ theorem bapp_types_align (x y : Cat) :
 -- Composition Semantics (B Combinator)
 -- ============================================================================
 
-/--
-The B combinator: B f g x = f (g x)
-
-This is the semantic counterpart of CCG forward composition.
--/
-def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
-  fun x => f (g x)
-
-/--
-B is function composition.
--/
-theorem B_eq_comp {α β γ : Type} (f : β → γ) (g : α → β) :
-    B f g = f ∘ g := rfl
+-- B combinator imported from CCG.Combinators
 
 /--
 **Forward Composition Homomorphism**
@@ -186,14 +176,7 @@ def fcompSem {m : Model} {x y z : Cat}
 -- Type-Raising Semantics (T Combinator)
 -- ============================================================================
 
-/--
-The T combinator: T x = λf. f x
-
-This is the semantic counterpart of CCG type-raising.
-A simple entity becomes a "generalized quantifier" that applies predicates to itself.
--/
-def T {α β : Type} (x : α) : (α → β) → β :=
-  fun f => f x
+-- T combinator imported from CCG.Combinators
 
 /--
 **Forward Type-Raising Homomorphism**

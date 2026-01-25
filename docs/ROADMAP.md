@@ -235,7 +235,66 @@ Theories/Pragmatics/
 
 ## Future Work
 
-### 12. CCG Gapping Derivations & Category Decomposition
+### 12. B² Cross-Serial Derivations for 3+ Verbs
+
+**Current state**: `CCG/CrossSerial.lean` has complete 2-verb derivations but simplified 3-verb derivations.
+
+**Problem**: The 2-verb case works with standard composition (B):
+```
+zag >B zwemmen = (S\NP)/NP
+```
+But 3+ verbs require B² (generalized composition) to thread TWO extra argument slots:
+```
+"Jan Piet Marie zag helpen zwemmen"
+- Jan → zag, Piet → helpen, Marie → zwemmen (cross-serial!)
+```
+
+Standard B only adds ONE slot; we need TWO for the third NP.
+
+**Solution**:
+1. Implement proper B² derivations with carefully chosen categories
+2. Type-raise each NP into its respective verb's domain
+3. Use B² to compose while preserving multiple argument slots
+
+```lean
+-- B² rule (already defined): X/Y (Y/Z)/W → (X/Z)/W
+-- Need categories like:
+-- helpen: ((S\NP)/NP)/VP  -- passes through NP slot
+-- Result after B²: ((S\NP)/NP)/NP  -- needs 2 NPs
+```
+
+**Key insight**: Each additional verb in the cross-serial chain requires one more B^n composition to thread an additional argument slot.
+
+**Files affected**: `CCG/CrossSerial.lean`
+
+---
+
+### 13. Compute NP-V Bindings from Derivation Structure
+
+**Current state**: `AnnotatedDerivation` has manually annotated `bindings` field.
+
+**Problem**: The bindings should be **computed** from the derivation tree structure, not manually annotated. The whole point of CCG's cross-serial analysis is that the derivational structure naturally yields cross-serial dependencies.
+
+**Solution**:
+```lean
+/-- Extract which NP binds to which verb from derivation structure -/
+def ExtDerivStep.extractBindings : ExtDerivStep → List Dependency
+  | .fapp d1 d2 => ...  -- NP argument combines here
+  | .fcomp d1 d2 => ... -- Composition threads argument
+  | .fcomp2 d1 d2 => ... -- B² threads two arguments
+  ...
+
+theorem bindings_from_structure :
+    dutch_jan_piet_zag_zwemmen.deriv.extractBindings = crossSerialDeps 2
+```
+
+This would prove that CCG derivations **necessarily** produce cross-serial bindings for Dutch, not just that we can annotate them that way.
+
+**Files affected**: `CCG/CrossSerial.lean`
+
+---
+
+### 14. CCG Gapping Derivations & Category Decomposition
 
 **Current state**: `CCG/Gapping.lean` defines gapped constituent categories and proves Ross's generalization emerges from CCG, but doesn't implement full derivations.
 
@@ -270,3 +329,57 @@ Theories/CCG/CategoryDecomposition.lean (new)
 - Pareschi & Steedman (1987) on parametric neutrality
 
 **Files affected**: `CCG/Gapping.lean`, new `CCG/CategoryDecomposition.lean`
+
+---
+
+### 15. Sentence Processing & Incremental Interpretation
+
+**Current state**: No processing formalization.
+
+**Problem**: Steedman (2000, Chapter 9) argues that CCG is uniquely suited to incremental, word-by-word interpretation because:
+1. Type-raising + composition make left prefixes into constituents
+2. These constituents have interpretations that can guide disambiguation
+3. This satisfies the "Strict Competence Hypothesis" (processor only uses grammar constituents)
+
+However, we need to separate:
+- **CCG-general facts**: Spurious ambiguity (equivalence classes of derivations), more left prefixes are constituents
+- **Steedman's processing argument**: Using the above to argue for CCG over other grammars
+- **Empirical phenomena**: Garden paths, reading times, context effects on disambiguation
+
+**Open questions**:
+1. What does processing data look like in `Phenomena/`?
+   - Garden path sentences (e.g., "The horse raced past the barn fell")
+   - Reading time studies (Crain & Steedman 1985, Altmann & Steedman 1988)
+   - Context manipulation experiments
+2. Where do processing models go?
+   - Chart parsing algorithms (CKY, shift-reduce) - general or theory-specific?
+   - Oracle / disambiguation mechanisms (Principle of Parsimony)
+3. Is the Strict Competence Hypothesis a theorem about CCG or a meta-theoretical claim?
+
+**Possible structure**:
+```
+Phenomena/Processing/
+├── GardenPaths.lean        -- Empirical data on garden path sentences
+├── ContextEffects.lean     -- Disambiguation studies
+└── ReadingTimes.lean       -- Psycholinguistic measures (?)
+
+Theories/CCG/
+├── Equivalence.lean        -- Spurious ambiguity, equivalence classes
+└── IncrementalInterp.lean  -- Left prefixes are constituents (theorem)
+
+Core/Processing/            -- Or leave out entirely?
+├── Chart.lean              -- Chart data structures
+└── Algorithms.lean         -- CKY, shift-reduce (theory-neutral)
+```
+
+**Key theorems (if we proceed)**:
+- `left_prefix_is_constituent`: Every left prefix of a grammatical CCG sentence has a derivation
+- `equivalence_class_same_meaning`: Derivations related by associativity yield identical interpretations
+- `spurious_ambiguity_polynomial`: Equivalence classes can be collapsed in polynomial time
+
+**References**:
+- Steedman (2000) "The Syntactic Process" Chapter 9
+- Crain & Steedman (1985) "On not being led up the garden path"
+- Vijay-Shanker & Weir (1994) on CCG parsing complexity
+
+**Status**: Deferred until processing phenomena data structure is clearer

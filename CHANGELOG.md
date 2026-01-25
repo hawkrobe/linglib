@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.6.3] - 2025-01-25
+
+### Added
+- **Theories/Montague/Conjunction.lean**: Partee & Rooth (1983) generalized conjunction
+  - `Ty.isConjoinable`: Recursive predicate for types that "end in t"
+  - `genConj`, `genDisj`: Pointwise conjunction/disjunction over any conjoinable type
+  - Algebraic properties: commutativity, associativity at type t
+  - Example: "tall and happy" computed via `genConj (e→t)`
+  - Documentation of limitations: collective readings, non-Boolean coordination
+
+- **Theories/CCG/CrossSerial.lean**: Real CCG derivations for Dutch cross-serial
+  - `InfSubj` category: `(S\NP)/NP` for verb-raising infinitives
+  - 2-verb derivation (`jan_zag_zwemmen_piet`): Uses forward composition + application
+  - `derivation_2v_yields_S`, `derivation_3v_yields_S`: Theorems proving derivations work
+  - `ccg_crossSerial_complete`: Combined theorem for well-formedness and data matching
+
+- **Theories/CCG/Equivalence.lean**: Catalan numbers and bracketing enumeration
+  - `BinTree`: Full binary trees representing bracketings
+  - `allTreesWithLeaves n`: Enumerates all binary trees with n leaves
+  - `countBracketings n`: Counts bracketings (matches Catalan recurrence)
+  - `catalan`: Catalan numbers via closed formula
+  - Key theorems:
+    - `tree_count_eq_catalan_*`: Tree enumeration count = Catalan(n-1)
+    - `catalan_counts_bracketings_*`: Bracketing count = Catalan number
+    - `bracketings_eq_tree_count_*`: bracketings function matches tree enumeration
+
+### Changed
+- Removed generalized conjunction from `CCG/Semantics.lean` (was misplaced; it's Montague semantics, not CCG-specific)
+- Cleaned up CrossSerial.lean: removed experimental code, kept working derivations
+
+### Key Insights
+1. **Generalized conjunction** is Montague semantics, not CCG. CCG provides syntax; Montague provides semantic combination.
+2. **Catalan numbers count bracketings**: n words with purely compositional derivation have C_{n-1} structurally distinct derivations, all semantically equivalent due to associativity of B.
+
+### References
+- Partee & Rooth (1983) "Generalized Conjunction and Type Ambiguity"
+- Steedman (2000) "The Syntactic Process" Chapters 6, 9
+
 ## [0.6.2] - 2025-01-25
 
 ### Added

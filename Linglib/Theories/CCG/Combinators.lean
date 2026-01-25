@@ -1,14 +1,17 @@
 /-
-# CCG Combinators: B, T, S
+# CCG Combinators: B, T, S, C
 
 Steedman's key insight: CCG combinatory rules correspond to combinators
 from combinatory logic. This module formalizes that correspondence.
 
-## Combinators
+## Combinators (Steedman 2000, Chapter 8)
 
-- **B** (composition): B f g x = f (g x)
-- **T** (flip/type-raising): T x f = f x
-- **S** (substitution): S f g x = f x (g x)
+- **B** (Bluebird/composition): B f g x = f (g x)
+- **T** (Thrush/type-raising): T x f = f x
+- **S** (Starling/substitution): S f g x = f x (g x)
+- **C** (Cardinal/commutation): C f x y = f y x
+- **I** (Identity): I x = x
+- **K** (Kestrel/constant): K x y = x
 
 ## CCG Rules ↔ Combinators
 
@@ -20,10 +23,17 @@ from combinatory logic. This module formalizes that correspondence.
 | Backward type-raise| T          | X → T\(T/X)                      |
 | Forward crossing   | S          | (X/Y)/Z + Y/Z → X/Z              |
 
+## Key Results from Chapter 8
+
+- **T = CI**: Type-raising equals C applied to Identity
+- **C from B and T**: The Cardinal is definable from Bluebird and Thrush
+- **BTS ≈ λI-calculus**: CCG's combinators are essentially complete
+
 ## References
 
 - Curry & Feys (1958). Combinatory Logic.
-- Steedman (2000). The Syntactic Process, Chapter 3.
+- Steedman (2000). The Syntactic Process, Chapters 3 & 8.
+- Smullyan (1985). To Mock a Mockingbird.
 - Steedman & Baldridge (2011). Combinatory Categorial Grammar.
 -/
 
@@ -92,6 +102,105 @@ Not directly used in standard CCG, but completes the SK basis.
 -/
 def K {α β : Type} (x : α) : β → α :=
   fun _ => x
+
+/--
+**The C Combinator (Commutation/Cardinal)**
+
+C f x y = f y x
+
+Swaps the arguments of a binary function.
+In Smullyan's fable, this is the Cardinal.
+
+From Steedman (2000, p. 205):
+"The 'commuting' combinator C, which has not been encountered in natural
+syntax before, but whose definition is as follows: C f x y = f y x"
+-/
+def C {α β γ : Type} (f : α → β → γ) (x : β) (y : α) : γ :=
+  f y x
+
+-- ============================================================================
+-- Key Theorems from Chapter 8: T = CI and C from T and B
+-- ============================================================================
+
+/-
+## The BTS System (Steedman 2000, Chapter 8)
+
+Steedman (p. 206-207):
+"What then can we say concerning the nature and raison d'être of the
+combinatory system BTS that we have observed in natural language syntax?"
+
+Key results:
+1. T = CI (type-raising is C applied to I)
+2. C is definable from T and B
+3. BTS is essentially equivalent to λI-calculus
+-/
+
+/--
+**T = CI (Steedman p. 206-207)**
+
+The type-raising combinator T is equivalent to C applied to I.
+
+T x = λf. f x
+C I x = λf. I f x = λf. f x  (since I f = f)
+
+Therefore T = C I.
+
+From Steedman: "Since the type-raising combinator T is equivalent to the
+combinatory expression CI..."
+-/
+theorem T_eq_CI {α β : Type} (x : α) :
+    @T α β x = @C (α → β) α β (@I (α → β)) x := by
+  ext f
+  -- T x f = f x
+  -- C I x f = I f x = f x
+  rfl
+
+/--
+The C combinator applied to identity gives type-raising.
+-/
+theorem CI_is_T {α β : Type} :
+    (fun x => @C (α → β) α β (@I (α → β)) x) = @T α β := by
+  ext x f
+  rfl
+
+/--
+**C is definable from T and B (Church's result)**
+
+From Steedman (p. 207):
+"C is definable in terms of T and B, as shown by Church (see Smullyan 1985, 113)"
+
+C f x y = f y x
+
+We show pointwise: C f x y = B (T x) f y
+  B (T x) f y = (T x) (f y) = f y x  ✓
+
+Here T x : (β → γ) → γ takes a function and applies it to x.
+-/
+theorem C_eq_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
+    C f x y = B (T x) f y := rfl
+
+/--
+C is expressible pointwise using B and T.
+This is Church's result cited by Steedman.
+-/
+theorem C_from_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
+    let Tx : (β → γ) → γ := T x
+    let fy : β → γ := f y
+    C f x y = Tx fy := rfl
+
+/-
+**The λI-calculus connection (Steedman p. 205-206)**
+
+The set BCSI is complete with respect to the λI-calculus
+(λ-calculus without vacuous abstraction).
+
+From Steedman: "The most interesting of these is the set BCSI. This set is
+complete with respect to the λ-calculus with the single exception that K
+itself is not definable."
+
+K is the combinator for vacuous abstraction (λx.y where x not free in y).
+Natural languages don't seem to need K in syntax.
+-/
 
 -- ============================================================================
 -- Combinator Laws

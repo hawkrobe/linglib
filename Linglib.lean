@@ -119,6 +119,7 @@ import Linglib.Theories.CCG.Intonation
 import Linglib.Theories.CCG.Scope
 import Linglib.Theories.CCG.CrossSerial
 import Linglib.Theories.CCG.Gapping
+import Linglib.Theories.CCG.Equivalence
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
@@ -134,6 +135,7 @@ import Linglib.Theories.Montague.Entailment
 import Linglib.Theories.Montague.Lexicon
 import Linglib.Theories.Montague.SemDerivation
 import Linglib.Theories.Montague.Scope
+import Linglib.Theories.Montague.Conjunction
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence
