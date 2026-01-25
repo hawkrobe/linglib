@@ -221,11 +221,12 @@ def applyInternalMerge (w : Workspace) (op : InternalMergeOp) : Option Workspace
   if !w.objects.contains op.target then none
   -- Mover must be contained in target
   else if !moverInTarget op then none
+  -- Mover must be different from target (proper containment)
+  else if op.target == op.mover then none
   else
     let objects' := w.objects.filter (· != op.target)
-    let merged := internalMerge op.target op.mover (by
-      -- The mover is a subpart of target, so they're different
-      sorry)
+    -- Use merge directly (internal merge places mover at edge of target)
+    let merged := merge op.mover op.target
     some ⟨merged :: objects', w.nextId⟩
 
 -- ============================================================================

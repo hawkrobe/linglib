@@ -284,7 +284,7 @@ structure ScontrasPearl2021Analysis where
   semantics := Montague.Scope.everyHorseDidntJump_parametric
 
   -- Pragmatics: RSA with lifted interpretation variable
-  pragmatics := RSA.ScopeAmbiguity
+  pragmatics := RSA.ScontrasPearl2021
 
   -- Grounding proof: RSA meaning comes from Montague
   grounded := rsa_meaning_from_montague
@@ -293,7 +293,7 @@ structure ScontrasPearl2021Analysis where
   correct := rsa_and_empirical_agree
 ```
 
-See: Theories/RSA/ScopeAmbiguity.lean for the actual implementation.
+See: Theories/RSA/ScontrasPearl2021.lean for the actual implementation.
 -/
 
 -- ============================================================================

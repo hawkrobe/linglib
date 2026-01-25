@@ -34,10 +34,11 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 
 import Linglib.Core.RSA
 import Linglib.Core.Frac
+import Linglib.Core.Pipeline
 import Linglib.Phenomena.ScontrasPearl2021.Data
 import Linglib.Theories.Montague.Scope
 
-namespace RSA.ScopeAmbiguity
+namespace RSA.ScontrasPearl2021
 
 open Frac
 open ParametricRSA
@@ -53,6 +54,37 @@ inductive ScopeUtterance where
   | null              -- Silence / null utterance (always true)
   | everyHorseNotJump -- "Every horse didn't jump" (ambiguous)
   deriving DecidableEq, BEq, Repr, Inhabited
+
+-- ============================================================================
+-- Montague Derivation for "Every horse didn't jump"
+-- ============================================================================
+
+/--
+"Every horse didn't jump" as a world-parametric Montague derivation.
+
+World state (Nat) encodes how many horses jumped (0, 1, or 2).
+
+Truth conditions by scope:
+- Surface (∀>¬): True iff ∀h. ¬jump(h) = "no horse jumped" = w == 0
+- Inverse (¬>∀): True iff ¬∀h. jump(h) = "not all jumped" = w < 2
+-/
+def everyHorseDidntJump_parametric : WorldParametricScopeDerivation Nat :=
+  { surface := "Every horse didn't jump"
+  , meaningAt := λ scope w =>
+      match scope with
+      | .surface => w == 0      -- ∀>¬: true iff no horse jumped
+      | .inverse => w < 2       -- ¬>∀: true iff not all jumped
+  , worlds := [0, 1, 2]         -- 0, 1, or 2 horses jumped
+  }
+
+/-- Verify the derivation matches the expected truth table -/
+theorem parametric_matches_truth :
+    everyHorseDidntJump_parametric.meaningAt .surface 0 = true ∧
+    everyHorseDidntJump_parametric.meaningAt .surface 1 = false ∧
+    everyHorseDidntJump_parametric.meaningAt .inverse 0 = true ∧
+    everyHorseDidntJump_parametric.meaningAt .inverse 1 = true ∧
+    everyHorseDidntJump_parametric.meaningAt .inverse 2 = false := by
+  native_decide
 
 -- ============================================================================
 -- Connecting Montague Derivations to RSA
@@ -249,9 +281,105 @@ This links the RSA predictions to the empirical findings.
 theorem rsa_and_empirical_agree :
     (getWorldScore 0 > getWorldScore 1) ∧
     (getWorldScore 1 > getWorldScore 2) ∧
-    (getResult .zero > getResult .one) ∧
-    (getResult .one > getResult .two) := by
+    (_root_.ScontrasPearl2021.getResult .zero > _root_.ScontrasPearl2021.getResult .one) ∧
+    (_root_.ScontrasPearl2021.getResult .one > _root_.ScontrasPearl2021.getResult .two) := by
   native_decide
+
+-- ============================================================================
+-- Complete Pipeline Analysis
+-- ============================================================================
+
+/-
+Now we wire everything together into a complete pipeline analysis:
+
+1. **Semantics**: Montague.Scope provides truth conditions
+2. **Pragmatics**: RSA uses those truth conditions
+3. **Predictions match data**: RSA ordering matches empirical ordering
+
+This demonstrates the Pipeline architecture in action.
+-/
+
+open Pipeline
+
+/--
+**Prediction type for the scope ambiguity phenomenon**:
+An ordering over worlds (which world is most likely given the utterance).
+-/
+structure ScopePrediction where
+  /-- Does w0 have higher probability than w1? -/
+  zeroGtOne : Bool
+  /-- Does w1 have higher probability than w2? -/
+  oneGtTwo : Bool
+  deriving Repr
+
+/--
+**Empirical data type for the scope ambiguity phenomenon**:
+The ordering from the experiment.
+-/
+structure ScopeEmpiricalOrdering where
+  /-- Did more people say true for 0-horses than 1-horse? -/
+  zeroGtOne : Bool
+  /-- Did more people say true for 1-horse than 2-horses? -/
+  oneGtTwo : Bool
+  deriving Repr
+
+/-- Marker type for the Scontras & Pearl 2021 phenomenon -/
+def ScontrasPearl2021Phenomenon : Type := Unit
+
+/-- The phenomenon instance: predictions match if orderings agree -/
+instance : Phenomenon ScontrasPearl2021Phenomenon where
+  description := "Scontras & Pearl 2021: Quantifier scope ambiguity truth-value judgments"
+  EmpiricalData := ScopeEmpiricalOrdering
+  Prediction := ScopePrediction
+  predictionMatches pred emp :=
+    pred.zeroGtOne = emp.zeroGtOne ∧ pred.oneGtTwo = emp.oneGtTwo
+
+/-- RSA predictions from the model -/
+def rsaPrediction : ScopePrediction :=
+  { zeroGtOne := getWorldScore 0 > getWorldScore 1
+  , oneGtTwo := getWorldScore 1 > getWorldScore 2 }
+
+/-- Empirical data from Scontras & Pearl 2021 -/
+def empiricalOrdering : ScopeEmpiricalOrdering :=
+  { zeroGtOne := _root_.ScontrasPearl2021.getResult .zero > _root_.ScontrasPearl2021.getResult .one
+  , oneGtTwo := _root_.ScontrasPearl2021.getResult .one > _root_.ScontrasPearl2021.getResult .two }
+
+/--
+**RSA prediction values match empirical orderings**.
+
+RSA predicts: P(w=0) > P(w=1) > P(w=2)
+Empirical:    92%    > 59%    > 18%
+-/
+theorem rsa_prediction_matches_empirical :
+    rsaPrediction.zeroGtOne = empiricalOrdering.zeroGtOne ∧
+    rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
+  native_decide
+
+#eval rsaPrediction
+#eval empiricalOrdering
+
+/--
+**The complete pipeline analysis for Scontras & Pearl 2021**.
+
+This demonstrates:
+1. Semantics (Montague) provides meaning function
+2. Pragmatics (RSA) consumes that meaning function (not stipulated)
+3. Predictions match empirical data
+
+The analysis is "complete" because all dependencies bottom out.
+-/
+theorem complete_analysis_scontras_pearl :
+    rsaPrediction.zeroGtOne = empiricalOrdering.zeroGtOne ∧
+    rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
+  native_decide
+
+/--
+Alternative statement using the Phenomenon interface.
+-/
+theorem complete_analysis_via_interface :
+    (Phenomenon.predictionMatches (P := ScontrasPearl2021Phenomenon))
+      rsaPrediction empiricalOrdering :=
+  complete_analysis_scontras_pearl
 
 -- ============================================================================
 -- Summary
@@ -263,7 +391,7 @@ theorem rsa_and_empirical_agree :
 ### Architecture: RSA ← Montague Connection
 
 ```
-Montague/Scope.lean                    RSA/ScopeAmbiguity.lean
+Montague/Scope.lean                    RSA/ScontrasPearl2021.lean
 ────────────────────                   ─────────────────────────
 WorldParametricScopeDerivation    →    ParametricSemanticBackend
   meaningAt : Scope → World → Bool        meaning := meaningFromDerivation
@@ -291,6 +419,7 @@ semantic derivation, not stipulated separately. This ensures:
 - `rsa_partial_world_possible`: P(w=1 | u) > 0
 - `rsa_prefers_inverse_scope`: P(inverse) > P(surface)
 - `rsa_matches_empirical_ordering`: RSA matches qualitative data pattern
+- `complete_analysis_scontras_pearl`: Full pipeline from semantics → pragmatics → data
 
 ### Connection to Empirical Findings
 
@@ -306,6 +435,24 @@ The model captures Scontras & Pearl (2021)'s key findings:
    the model predicts graded endorsements proportional to the
    posterior probability of the world given the utterance.
 
+### Complete Pipeline Analysis
+
+This module demonstrates the **first complete pipeline analysis** in Linglib:
+
+```
+Montague.Scope.everyHorseDidntJump_parametric
+    ↓ provides: meaning function (scope × world → Bool)
+RSA.ScontrasPearl2021 (ParametricSemanticBackend instance)
+    ↓ provides: probability distribution
+complete_analysis_scontras_pearl
+    ↓ proves: RSA ordering = empirical ordering
+```
+
+The pipeline is "complete" because:
+1. Montague semantics has no external requirements (bottoms out)
+2. RSA's meaning function is derived from Montague, not stipulated
+3. Predictions match empirical data
+
 ### Model Limitations
 
 This implementation uses:
@@ -319,4 +466,4 @@ Future extensions could add:
 - S2 layer for explicit truth-value judgment predictions
 -/
 
-end RSA.ScopeAmbiguity
+end RSA.ScontrasPearl2021

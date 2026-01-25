@@ -83,7 +83,7 @@ Each theory directory contains:
 |-----------|---------|----------------|
 | `Grammar` | Derivation, realizes, derives | CCG, HPSG, Minimalism, DG |
 | `SemanticBackend` | Utterance, World, φ | Montague |
-| `ParametricSemanticBackend` | + Interp parameter for ambiguity | RSA.ScopeAmbiguity |
+| `ParametricSemanticBackend` | + Interp parameter for ambiguity | RSA.ScontrasPearl2021 |
 | `ImplicatureTheory` | SI derivation, comparison | NeoGricean, RSA |
 | `CoreferenceTheory` | Binding, command relations | HPSG, Minimalism, DG |
 
@@ -92,14 +92,13 @@ Each theory directory contains:
 RSA's meaning function should be **derived from compositional semantics**, not stipulated:
 
 ```lean
--- In Montague/Scope.lean
+-- In RSA/ScontrasPearl2021.lean
 def everyHorseDidntJump_parametric : WorldParametricScopeDerivation Nat :=
   { meaningAt := λ scope w => ...  -- compositional semantics
   , worlds := [0, 1, 2] }
 
--- In RSA/ScopeAmbiguity.lean
 def scopeMeaning := meaningFromDerivation everyHorseDidntJump_parametric
--- RSA uses Montague's meaning, doesn't stipulate its own
+-- RSA uses compositional meaning, doesn't stipulate its own
 
 theorem rsa_meaning_from_montague :
     scopeMeaning = everyHorseDidntJump_parametric.meaningAt := ...

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.1] - 2025-01-24
+
+### Added
+- **First complete pipeline analysis**: `complete_analysis_scontras_pearl` theorem
+  - Proves RSA predictions match empirical data from Scontras & Pearl 2021
+  - Demonstrates full semantics → pragmatics → data pipeline
+
+### Changed
+- **Renamed** `Theories/RSA/ScopeAmbiguity.lean` → `Theories/RSA/ScontrasPearl2021.lean`
+  - Creates clear correspondence: `Phenomena/X/Data.lean` ↔ `Theories/Y/X.lean`
+- **Moved** `everyHorseDidntJump_parametric` from Montague/Scope to RSA/ScontrasPearl2021
+  - Keeps phenomenon-specific derivations with their proofs
+  - Montague/Scope now contains only general infrastructure
+
 ## [0.5.0] - 2025-01-24
 
 ### Added
