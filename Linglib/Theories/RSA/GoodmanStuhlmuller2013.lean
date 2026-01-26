@@ -21,7 +21,6 @@ knowledge state affects interpretation.
 -/
 
 import Linglib.Theories.RSA.Basic
-import Linglib.Theories.Montague.Numbers
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.GoodmanStuhlmuller2013
@@ -482,9 +481,10 @@ theorem exact_semantics_incompatible_with_cancellation :
 /-
 ## Proper Semantic Backends
 
-See `Linglib/Theories/Semantics/Numbers.lean` for the full backend implementations:
-- `Semantics.Numbers.LowerBound.Backend`: implements `FiniteSemanticBackend`
-- `Semantics.Numbers.Exact.Backend`: implements `FiniteSemanticBackend`
+See `Linglib/Theories/Montague/Lexicon/Numerals/` for the full implementations:
+- `Numerals.LowerBound`: Lower-bound (≥n) numeral theory
+- `Numerals.Exact`: Exact (=n) numeral theory
+- `Numerals.Compare`: Comparison theorems
 
 Both can be used with the Core RSA machinery. The proofs here and there show:
 1. Backends differ on whether "two" is ambiguous

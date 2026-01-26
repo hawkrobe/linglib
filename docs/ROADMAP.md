@@ -112,29 +112,26 @@ This would give compile-time guarantees that RSA outputs are valid distributions
 
 ## Phase 3: Competing Analyses Infrastructure
 
-### 3.1 Parameterized Lexicon Structure
+### 3.1 Parameterized Lexicon Structure ✓ DONE
 
-**Current state**: `Montague/Numbers.lean` has lower-bound semantics only.
-
-**Problem**: No clean way to compare competing semantic proposals.
-
-**Solution**: Parameterized lexicon structure:
+**Status**: Implemented in `Montague/Lexicon/Numerals/`
 
 ```
-Montague/Lexicon/
-├── Numerals/
-│   ├── LowerBound.lean   -- "two" means ≥2
-│   └── Exact.lean        -- "two" means =2
-├── Modals/
-│   ├── Kratzer.lean      -- ordering source + modal base
-│   └── Simple.lean       -- accessible worlds
-└── Quantifiers/...
+Montague/Lexicon/Numerals/
+├── Theory.lean      -- NumeralTheory structure
+├── LowerBound.lean  -- "two" means ≥2 (Horn 1972)
+├── Exact.lean       -- "two" means =2
+└── Compare.lean     -- Comparison theorems
 ```
 
-Each variant defines:
-- Denotations
-- Empirical predictions
-- Which phenomena it handles/fails
+Provides:
+- `NumeralTheory` structure with meaning function, derived RSA scenario
+- `LowerBound`, `Exact` as concrete theory instances
+- Comparison functions: `theoriesAgreeOn`, `divergingWorlds`
+- Key theorems: `lowerBound_exact_differ_on_two`, `ambiguity_presence_differs`
+- Connection to G&S 2013 empirical adjudication (ambiguity required for cancellation)
+
+**Next**: Apply same pattern to Modals (Kratzer vs Simple)
 
 ### 3.2 Embedded Implicatures
 
@@ -254,3 +251,4 @@ Formalize CCG's left-prefix constituency and connect to processing data.
 - [x] **Simplify RSA to ℚ-only** (removed `RSAScore` typeclass)
 - [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
 - [x] **Unified entailment** (NeoGricean uses Montague semantics)
+- [x] **Parameterized Lexicon: Numerals** (`Montague/Lexicon/Numerals/` - LowerBound, Exact, Compare)

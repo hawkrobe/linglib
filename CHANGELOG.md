@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.9.0] - 2025-01-25
+
+### Added
+- **Montague/Lexicon/Numerals/**: Parameterized lexicon infrastructure
+  - `Theory.lean`: `NumeralTheory` structure for competing semantic analyses
+  - `LowerBound.lean`: Lower-bound semantics ("two" = ≥2, Horn 1972)
+  - `Exact.lean`: Exact semantics ("two" = =2)
+  - `Compare.lean`: Comparison infrastructure and key theorems
+  - Each theory produces an `RSAScenario` for pragmatic reasoning
+  - Theorems proving theories diverge: `lowerBound_exact_differ_on_two`
+  - Ambiguity analysis: Lower-bound has it, Exact doesn't
+
+### Removed
+- **Montague/Numbers.lean**: Replaced by `Montague/Lexicon/Numerals/`
+
+### Architecture
+- Competing semantic analyses as explicit structures, not typeclasses
+- Each analysis derives `toScenario : RSAScenario` for RSA integration
+- Pattern ready to extend to Modals (Kratzer vs Simple)
+
 ## [0.8.0] - 2025-01-25
 
 ### Changed
