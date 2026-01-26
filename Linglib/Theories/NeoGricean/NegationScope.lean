@@ -31,7 +31,7 @@ With exact semantics, the asymmetry is unexplained:
 -/
 
 import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Exact
+import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
 
 open Montague.Lexicon.Numerals
 
@@ -134,11 +134,11 @@ theorem negation_asymmetry_at_four :
   native_decide
 
 -- ============================================================================
--- Exact Semantics Cannot Explain the Asymmetry
+-- DeFregean Semantics Cannot Explain the Asymmetry
 -- ============================================================================
 
 /--
-**Problem for Exact semantics: No internal/external distinction**
+**Problem for DeFregean semantics: No internal/external distinction**
 
 If "three" literally means =3, then negation gives ≠3.
 There's no "weaker" lower-bound assertion to negate.
@@ -147,16 +147,16 @@ Both scopes collapse to the same meaning.
 -/
 theorem exact_no_distinction :
     -- In exact semantics, internal = external (both negate =n)
-    (negatedMeaning Exact .three .internal 0 = negatedMeaning Exact .three .external 0) ∧
-    (negatedMeaning Exact .three .internal 2 = negatedMeaning Exact .three .external 2) ∧
-    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
+    (negatedMeaning DeFregean .three .internal 0 = negatedMeaning DeFregean .three .external 0) ∧
+    (negatedMeaning DeFregean .three .internal 2 = negatedMeaning DeFregean .three .external 2) ∧
+    (negatedMeaning DeFregean .three .internal 4 = negatedMeaning DeFregean .three .external 4) := by
   native_decide
 
 /--
 **The key divergence: world 4**
 
 Lower-bound: internal at 4 = false, external at 4 = true (DIFFERENT)
-Exact: internal at 4 = true, external at 4 = true (SAME)
+DeFregean: internal at 4 = true, external at 4 = true (SAME)
 
 Empirically, "John doesn't have 3 children" (unstressed) suggests <3, not ≠3.
 This requires the internal/external distinction that only lower-bound provides.
@@ -165,8 +165,8 @@ theorem divergence_at_world_4 :
     -- Lower-bound distinguishes scopes at world 4
     (negatedMeaning LowerBound .three .internal 4 ≠ negatedMeaning LowerBound .three .external 4)
     ∧
-    -- Exact collapses them
-    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
+    -- DeFregean collapses them
+    (negatedMeaning DeFregean .three .internal 4 = negatedMeaning DeFregean .three .external 4) := by
   native_decide
 
 -- ============================================================================
@@ -274,8 +274,8 @@ theorem negation_summary :
      negatedMeaning LowerBound .three .external 4 = true)
     ∧
     -- They collapse in exact
-    (negatedMeaning Exact .three .internal 4 = true ∧
-     negatedMeaning Exact .three .external 4 = true)
+    (negatedMeaning DeFregean .three .internal 4 = true ∧
+     negatedMeaning DeFregean .three .external 4 = true)
     ∧
     -- Extended worlds show the full pattern
     (compatibleExtended .three .internal = [0, 1, 2] ∧

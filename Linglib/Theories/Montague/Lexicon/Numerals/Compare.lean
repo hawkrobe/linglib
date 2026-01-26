@@ -3,12 +3,17 @@
 
 Infrastructure and theorems for comparing competing numeral semantics.
 
+## The Two Real Competitors
+
+1. **LowerBound** (Horn 1972): "two" means ≥2, RSA derives exact reading
+2. **Bilateral** (Kennedy 2015): "two" means =2 (via maximality), no RSA strengthening
+
 ## Key Comparisons
 
-1. **Ambiguity**: Lower-bound has it, Exact doesn't
-2. **Monotonicity**: Lower-bound is monotonic, Exact isn't
-3. **Implicature potential**: Only Lower-bound can derive "exactly n"
-4. **Empirical fit**: Lower-bound matches G&S 2013 data
+1. **Ambiguity**: LowerBound has it, Bilateral doesn't
+2. **Monotonicity**: LowerBound is monotonic, Bilateral isn't
+3. **Implicature potential**: Only LowerBound can derive "exactly n"
+4. **Empirical fit**: LowerBound matches G&S 2013 knowledge-sensitivity data
 
 ## The Decisive Test
 
@@ -18,16 +23,17 @@ with speaker knowledge. This is only possible if:
 - The strong interpretation is derived (via implicature)
 - The implicature can be canceled (with partial knowledge)
 
-Lower-bound meets all three conditions. Exact meets none.
+LowerBound meets all three conditions. Bilateral meets none.
 
 ## References
 
+- Horn (1972). On the Semantic Properties of Logical Operators in English.
+- Kennedy (2015). A "de-Fregean" semantics for modified and unmodified numerals.
 - Goodman & Stuhlmüller (2013). Knowledge and Implicature.
-- See RSA/GoodmanStuhlmuller2013.lean for full empirical modeling.
 -/
 
 import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Exact
+import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
 
 namespace Montague.Lexicon.Numerals
 
@@ -73,31 +79,31 @@ def hasMoreAmbiguity (T₁ T₂ : NumeralTheory) (w : NumWord) : Bool :=
 **Theories differ on "two"**
 
 Lower-bound: "two" is true at n=2 AND n=3
-Exact: "two" is true only at n=2
+DeFregean: "two" is true only at n=2
 -/
 theorem lowerBound_exact_differ_on_two :
-    LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false := by
+    LowerBound.meaning .two 3 = true ∧ DeFregean.meaning .two 3 = false := by
   native_decide
 
 /--
 The theories diverge at world 3 for "two".
 -/
 theorem divergence_at_three :
-    divergingWorlds LowerBound Exact .two = [3] := by
+    divergingWorlds LowerBound DeFregean .two = [3] := by
   native_decide
 
 /--
 The theories agree on "two" at world 2.
 -/
 theorem agreement_at_two :
-    theoriesAgreeAt LowerBound Exact .two 2 = true := by
+    theoriesAgreeAt LowerBound DeFregean .two 2 = true := by
   native_decide
 
 /--
 The theories are NOT equivalent overall.
 -/
 theorem theories_not_equivalent :
-    theoriesEquivalent LowerBound Exact = false := by
+    theoriesEquivalent LowerBound DeFregean = false := by
   native_decide
 
 -- ============================================================================
@@ -105,24 +111,24 @@ theorem theories_not_equivalent :
 -- ============================================================================
 
 /--
-Lower-bound has more ambiguity than Exact for "two".
+Lower-bound has more ambiguity than DeFregean for "two".
 -/
 theorem lowerBound_more_ambiguous_two :
-    hasMoreAmbiguity LowerBound Exact .two = true := by
+    hasMoreAmbiguity LowerBound DeFregean .two = true := by
   native_decide
 
 /--
 Ambiguity counts differ for "two": 2 vs 1.
 -/
 theorem ambiguity_count_differs :
-    LowerBound.compatibleCount .two = 2 ∧ Exact.compatibleCount .two = 1 := by
+    LowerBound.compatibleCount .two = 2 ∧ DeFregean.compatibleCount .two = 1 := by
   native_decide
 
 /--
-Lower-bound has ambiguity, Exact doesn't.
+Lower-bound has ambiguity, DeFregean doesn't.
 -/
 theorem ambiguity_presence_differs :
-    LowerBound.hasAmbiguity .two = true ∧ Exact.hasAmbiguity .two = false := by
+    LowerBound.hasAmbiguity .two = true ∧ DeFregean.hasAmbiguity .two = false := by
   native_decide
 
 -- ============================================================================
@@ -130,10 +136,10 @@ theorem ambiguity_presence_differs :
 -- ============================================================================
 
 /--
-Lower-bound is monotonic, Exact is not.
+Lower-bound is monotonic, DeFregean is not.
 -/
 theorem monotonicity_differs :
-    LowerBound.checkMonotonic = true ∧ Exact.checkMonotonic = false := by
+    LowerBound.checkMonotonic = true ∧ DeFregean.checkMonotonic = false := by
   native_decide
 
 -- ============================================================================
@@ -148,14 +154,14 @@ For scalar implicature to arise, we need:
 2. A stronger alternative exists on the scale
 
 Lower-bound: "two" compatible with {2, 3}, "three" is stronger → implicature possible
-Exact: "two" compatible with {2} only → no ambiguity → no implicature
+DeFregean: "two" compatible with {2} only → no ambiguity → no implicature
 -/
 theorem only_lowerBound_supports_implicature :
     -- Lower-bound has ambiguity AND a stronger alternative
     (LowerBound.compatibleCount .two > 1 ∧ LowerBound.isStrongerThan .three .two)
     ∧
-    -- Exact has no ambiguity (so implicature impossible regardless of alternatives)
-    (Exact.compatibleCount .two = 1) := by
+    -- DeFregean has no ambiguity (so implicature impossible regardless of alternatives)
+    (DeFregean.compatibleCount .two = 1) := by
   native_decide
 
 -- ============================================================================
@@ -177,7 +183,7 @@ the exact interpretation (=2).
 - With full knowledge: RSA derives "exactly 2" as implicature
 - With partial knowledge: implicature canceled, reverts to ≥2
 
-**Exact explanation**: ???
+**DeFregean explanation**: ???
 - Literal meaning: =2 (strong, unambiguous)
 - There IS no implicature to cancel
 - Interpretation should NOT vary with knowledge
@@ -190,20 +196,20 @@ See RSA/GoodmanStuhlmuller2013.lean for the full formalization.
 **Lower-bound is consistent with knowledge-sensitive interpretation.**
 
 Ambiguity is NECESSARY for implicature cancellation.
-Lower-bound has ambiguity; Exact doesn't.
+Lower-bound has ambiguity; DeFregean doesn't.
 -/
 theorem lowerBound_consistent_with_cancellation :
     LowerBound.hasAmbiguity .two = true := by
   native_decide
 
 /--
-**Exact is INCONSISTENT with knowledge-sensitive interpretation.**
+**DeFregean is INCONSISTENT with knowledge-sensitive interpretation.**
 
 No ambiguity → no implicature → nothing to cancel → no knowledge sensitivity.
 But knowledge sensitivity IS observed empirically.
 -/
 theorem exact_inconsistent_with_cancellation :
-    Exact.hasAmbiguity .two = false := by
+    DeFregean.hasAmbiguity .two = false := by
   native_decide
 
 -- ============================================================================
@@ -213,7 +219,7 @@ theorem exact_inconsistent_with_cancellation :
 /--
 **Summary Theorem: The theories make different empirical predictions.**
 
-| Property            | Lower-bound | Exact   |
+| Property            | Lower-bound | DeFregean   |
 |---------------------|-------------|---------|
 | "two" ambiguous?    | Yes (2,3)   | No (2)  |
 | Implicature?        | Yes         | No      |
@@ -222,13 +228,13 @@ theorem exact_inconsistent_with_cancellation :
 -/
 theorem summary_comparison :
     -- Ambiguity
-    (LowerBound.compatibleCount .two = 2 ∧ Exact.compatibleCount .two = 1)
+    (LowerBound.compatibleCount .two = 2 ∧ DeFregean.compatibleCount .two = 1)
     ∧
     -- Monotonicity (required for scalar implicature)
-    (LowerBound.checkMonotonic = true ∧ Exact.checkMonotonic = false)
+    (LowerBound.checkMonotonic = true ∧ DeFregean.checkMonotonic = false)
     ∧
     -- Divergence point
-    (LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false) := by
+    (LowerBound.meaning .two 3 = true ∧ DeFregean.meaning .two 3 = false) := by
   native_decide
 
 -- ============================================================================
@@ -246,7 +252,7 @@ theorem lowerBound_matches_gs2013_data :
     sorry
 
 theorem exact_fails_gs2013_data :
-    -- RSA with Exact cannot model knowledge-sensitive interpretation
+    -- RSA with DeFregean cannot model knowledge-sensitive interpretation
     sorry
 ```
 
@@ -254,7 +260,7 @@ This requires importing the RSA module and showing that:
 1. LowerBound.scenario plugged into the knowledge-state RSA model
    produces the observed pattern (implicature with full access,
    cancellation with partial access)
-2. Exact.scenario cannot produce this pattern (no ambiguity to resolve)
+2. DeFregean.scenario cannot produce this pattern (no ambiguity to resolve)
 -/
 
 end Montague.Lexicon.Numerals

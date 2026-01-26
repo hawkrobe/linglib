@@ -30,7 +30,7 @@ This asymmetry is diagnostic: it shows the upper bound is implicated, not assert
 ## Predictions for Numeral Theories
 
 Lower-bound theory: All three operations valid (there IS an implicature to operate on)
-Exact theory: Operations are anomalous (no implicature exists)
+DeFregean theory: Operations are anomalous (no implicature exists)
 
 ## References
 
@@ -38,7 +38,7 @@ Exact theory: Operations are anomalous (no implicature exists)
 -/
 
 import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Exact
+import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
 
 open Montague.Lexicon.Numerals
 
@@ -83,7 +83,7 @@ For numerals, this means:
 - There must be a stronger alternative on the scale
 
 Lower-bound semantics: Operations are felicitous (ambiguity exists)
-Exact semantics: Operations are infelicitous (no ambiguity)
+DeFregean semantics: Operations are infelicitous (no ambiguity)
 -/
 def operationFelicitous (T : NumeralTheory) (w : NumWord) (_op : ImplicatureOperation) : Bool :=
   -- Need ambiguity (multiple compatible worlds)
@@ -157,15 +157,15 @@ theorem lowerBound_operations_felicitous :
   native_decide
 
 /--
-**Exact predicts infelicitous operations**
+**DeFregean predicts infelicitous operations**
 
 Since "two" means =2, it's only compatible with world 2.
 No ambiguity → no implicature → nothing to operate on.
 -/
 theorem exact_operations_infelicitous :
-    operationFelicitous Exact .two .assert = false ∧
-    operationFelicitous Exact .two .contradict = false ∧
-    operationFelicitous Exact .two .suspend = false := by
+    operationFelicitous DeFregean .two .assert = false ∧
+    operationFelicitous DeFregean .two .contradict = false ∧
+    operationFelicitous DeFregean .two .suspend = false := by
   native_decide
 
 /--
@@ -178,7 +178,7 @@ Empirically, these ARE felicitous → supports Lower-bound.
 -/
 theorem operation_felicity_differs :
     hasImplicatureTarget LowerBound .two = true ∧
-    hasImplicatureTarget Exact .two = false := by
+    hasImplicatureTarget DeFregean .two = false := by
   native_decide
 
 -- ============================================================================
@@ -203,7 +203,7 @@ theorem lowerBound_suspension_nonRedundant :
   native_decide
 
 theorem exact_suspension_redundant :
-    suspensionNonRedundant Exact .two = false := by
+    suspensionNonRedundant DeFregean .two = false := by
   native_decide
 
 -- ============================================================================
@@ -229,7 +229,7 @@ theorem lowerBound_reinforcement_nonRedundant :
   native_decide
 
 theorem exact_reinforcement_redundant :
-    reinforcementNonRedundant Exact .two = false := by
+    reinforcementNonRedundant DeFregean .two = false := by
   native_decide
 
 -- ============================================================================
@@ -305,7 +305,7 @@ theorem operations_support_rsa_with_lowerBound :
     -- Operations targeting the implicature are felicitous
     operationFelicitous LowerBound .two .suspend = true ∧
     -- This pattern is impossible with exact semantics
-    (Exact.hasAmbiguity .two = false ∧ operationFelicitous Exact .two .suspend = false) := by
+    (DeFregean.hasAmbiguity .two = false ∧ operationFelicitous DeFregean .two .suspend = false) := by
   native_decide
 
 -- ============================================================================
@@ -315,7 +315,7 @@ theorem operations_support_rsa_with_lowerBound :
 /--
 **Summary: Implicature Operations Distinguish the Theories**
 
-| Operation  | Lower-bound | Exact      |
+| Operation  | Lower-bound | DeFregean      |
 |------------|-------------|------------|
 | Assert     | Felicitous  | Anomalous  |
 | Contradict | Felicitous  | Anomalous  |
@@ -330,10 +330,10 @@ theorem operations_summary :
      operationFelicitous LowerBound .two .contradict = true ∧
      operationFelicitous LowerBound .two .suspend = true)
     ∧
-    -- No operations felicitous for Exact
-    (operationFelicitous Exact .two .assert = false ∧
-     operationFelicitous Exact .two .contradict = false ∧
-     operationFelicitous Exact .two .suspend = false) := by
+    -- No operations felicitous for DeFregean
+    (operationFelicitous DeFregean .two .assert = false ∧
+     operationFelicitous DeFregean .two .contradict = false ∧
+     operationFelicitous DeFregean .two .suspend = false) := by
   native_decide
 
 end NeoGricean

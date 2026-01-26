@@ -120,16 +120,17 @@ This would give compile-time guarantees that RSA outputs are valid distributions
 Montague/Lexicon/Numerals/
 ├── Theory.lean      -- NumeralTheory structure
 ├── LowerBound.lean  -- "two" means ≥2 (Horn 1972)
-├── Exact.lean       -- "two" means =2
+├── Bilateral.lean   -- "two" means =2 via maximality (Kennedy 2015)
 └── Compare.lean     -- Comparison theorems
 ```
 
 Provides:
 - `NumeralTheory` structure with meaning function, derived RSA scenario
-- `LowerBound`, `Exact` as concrete theory instances
+- `LowerBound`, `Bilateral` as concrete theory instances
 - Comparison functions: `theoriesAgreeOn`, `divergingWorlds`
-- Key theorems: `lowerBound_exact_differ_on_two`, `ambiguity_presence_differs`
+- Key theorems: `lowerBound_bilateral_differ_on_two`, `ambiguity_presence_differs`
 - Connection to G&S 2013 empirical adjudication (ambiguity required for cancellation)
+- Bilateral.lean documents Kennedy's maximality derivation for degree modifier support
 
 **Next**: Apply same pattern to Modals (Kratzer vs Simple)
 
