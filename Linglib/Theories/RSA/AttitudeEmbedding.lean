@@ -38,8 +38,11 @@ With attitude verbs:
 -/
 
 import Linglib.Core.RSA
+import Linglib.Theories.Montague.Attitudes
 
 namespace RSA.AttitudeEmbedding
+
+open Montague.Attitudes
 
 -- ============================================================================
 -- World Structure for Belief Contexts
@@ -280,6 +283,105 @@ theorem global_not_entails_local :
   decide
 
 -- ============================================================================
+-- Semantic Grounding
+-- ============================================================================
+
+/-
+## Grounding: Connection to Montague Attitude Semantics
+
+The stipulated meanings in `believesSomeMeaning` should correspond to
+compositional evaluation using Hintikka/Montague belief semantics:
+
+⟦John believes φ⟧(w) = ∀w' ∈ Dox(John, w). ⟦φ⟧(w') = true
+
+Where Dox(John, w) is the set of worlds compatible with John's beliefs at w.
+
+Our BeliefWorld structure encodes John's doxastic state directly:
+- `johnBelieves : StudentOutcome` specifies what John's belief worlds look like
+- This determines which embedded propositions John believes
+-/
+
+/--
+Semantic grounding for "some students passed" as a proposition.
+
+At a world, "some students passed" is true iff ≥1 student passed.
+We model this with StudentOutcome:
+- `.noneO` → false
+- `.someO` → true (some but not all)
+- `.allO` → true (all, which entails some)
+-/
+def somePassedProp (outcome : StudentOutcome) : Bool :=
+  outcome == .someO || outcome == .allO
+
+/--
+Semantic grounding for "some-but-not-all students passed".
+-/
+def someNotAllPassedProp (outcome : StudentOutcome) : Bool :=
+  outcome == .someO
+
+/--
+Semantic grounding for "all students passed".
+-/
+def allPassedProp (outcome : StudentOutcome) : Bool :=
+  outcome == .allO
+
+/--
+**Grounding Theorem 1**: The global meaning corresponds to Montague semantics.
+
+Global interpretation: "John believes some passed"
+= John's belief state satisfies "some passed"
+= somePassedProp(johnBelieves) = true
+
+This theorem proves the stipulated `johnBelievesSome` equals the
+compositional evaluation `somePassedProp`.
+-/
+theorem global_grounded :
+    ∀ w : BeliefWorld, believesSomeMeaning .global w = somePassedProp w.johnBelieves := by
+  intro ⟨_, johnBelieves⟩
+  cases johnBelieves <;> rfl
+
+/--
+**Grounding Theorem 2**: The local meaning corresponds to Montague semantics.
+
+Local interpretation: "John believes some-but-not-all passed"
+= John's belief state satisfies "some-but-not-all passed"
+= someNotAllPassedProp(johnBelieves) = true
+-/
+theorem local_grounded :
+    ∀ w : BeliefWorld, believesSomeMeaning .local_ w = someNotAllPassedProp w.johnBelieves := by
+  intro ⟨_, johnBelieves⟩
+  cases johnBelieves <;> rfl
+
+/--
+**Grounding Theorem 3**: The unambiguous "believes all" is grounded.
+-/
+theorem believes_all_grounded :
+    ∀ w : BeliefWorld, believesAllMeaning w = allPassedProp w.johnBelieves := by
+  intro ⟨_, johnBelieves⟩
+  cases johnBelieves <;> rfl
+
+/--
+**Semantic entailment grounding**: "some-not-all" entails "some" at the propositional level.
+
+This explains why local_entails_global holds: it follows from the semantics.
+-/
+theorem prop_entailment :
+    ∀ o : StudentOutcome, someNotAllPassedProp o = true → somePassedProp o = true := by
+  intro o h
+  cases o <;> simp_all [someNotAllPassedProp, somePassedProp]
+
+/--
+The local→global entailment is grounded in propositional semantics.
+-/
+theorem local_entails_global_grounded :
+    ∀ w : BeliefWorld, believesSomeMeaning .local_ w = true →
+      believesSomeMeaning .global w = true := by
+  intro w h
+  rw [local_grounded] at h
+  rw [global_grounded]
+  exact prop_entailment w.johnBelieves h
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -298,6 +400,13 @@ theorem global_not_entails_local :
 
 4. **This differs from DE contexts** where global is strictly more informative
    and thus preferred by RSA.
+
+## Grounding
+
+The stipulated meanings are now proven equivalent to compositional semantics:
+- `global_grounded`: global = somePassedProp(johnBelieves)
+- `local_grounded`: local = someNotAllPassedProp(johnBelieves)
+- `local_entails_global_grounded`: entailment follows from semantics
 
 ## Connection to Full RSA Model
 

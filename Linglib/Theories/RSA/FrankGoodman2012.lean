@@ -71,7 +71,7 @@ def meaning : Utterance → Object → Bool
 -- ============================================================================
 
 /-- Reference game RSA scenario -/
-def refGameScenario : ExactRSAScenario :=
+def refGameScenario : RSAScenario Utterance Object :=
   RSAScenario.ofBool
     [.blue, .green, .square, .circle]
     [.blue_square, .blue_circle, .green_square]
@@ -172,28 +172,29 @@ theorem circle_unique :
 -- Typed Distributions (Phase 2.4)
 -- ============================================================================
 
-/--
-Reference game scenario as TypedRSAScenario.
+/-- Non-negativity proof for reference game prior -/
+theorem refGame_prior_nonneg : ∀ w, 0 ≤ refGameScenario.prior w := fun _ => le_of_lt one_pos
 
-This version provides compile-time guarantees that distributions sum to 1.
--/
-def refGameTyped : RSA.TypedRSAScenario :=
-  RSA.TypedRSAScenario.ofBool
-    [.blue, .green, .square, .circle]
-    [.blue_square, .blue_circle, .green_square]
-    (fun obj utt => meaning utt obj)
+/-- Non-negativity proof for reference game φ -/
+theorem refGame_φ_nonneg : ∀ u w, 0 ≤ refGameScenario.φ u w := fun _ _ => by
+  simp only [refGameScenario, RSAScenario.ofBool, boolToRat]
+  split <;> decide
 
 /-- L0 for "square" as a typed distribution -/
-def l0_square_typed : Option (ExactDist Object) := RSA.L0_dist refGameTyped .square
+def l0_square_typed : Option (ExactDist Object) :=
+  RSA.L0_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .square
 
 /-- L0 for "green" as a typed distribution -/
-def l0_green_typed : Option (ExactDist Object) := RSA.L0_dist refGameTyped .green
+def l0_green_typed : Option (ExactDist Object) :=
+  RSA.L0_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .green
 
 /-- S1 for blue_square as a typed distribution -/
-def s1_blue_square_typed : Option (ExactDist Utterance) := RSA.S1_dist refGameTyped .blue_square
+def s1_blue_square_typed : Option (ExactDist Utterance) :=
+  RSA.S1_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .blue_square
 
 /-- L1 for "square" as a typed distribution -/
-def l1_square_typed : Option (ExactDist Object) := RSA.L1_dist refGameTyped .square
+def l1_square_typed : Option (ExactDist Object) :=
+  RSA.L1_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .square
 
 -- Evaluate typed distributions
 #eval l0_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square))

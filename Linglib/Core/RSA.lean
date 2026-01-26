@@ -33,6 +33,9 @@ import Linglib.Core.Distribution
 /--
 RSA scenario: specifies utterances, worlds, and how they relate.
 
+The type parameters `U` (utterance) and `W` (world) are explicit, preserving
+type information throughout RSA computation. This enables type-safe proofs.
+
 ## Fields
 
 - `φ`: Agreement function (meaning). Values in [0,1] where 1 = fully true.
@@ -42,31 +45,23 @@ RSA scenario: specifies utterances, worlds, and how they relate.
 ## Usage
 
 ```lean
-def myScenario : RSAScenario :=
-  RSAScenario.ofBool [.some_, .all_] [.w0, .w1, .w2] mySatisfies
+def myScenario : RSAScenario MyUtt MyWorld :=
+  { φ := myMeaning
+  , utterances := [.some_, .all_]
+  , worlds := [.w0, .w1, .w2] }
 ```
 -/
-structure RSAScenario where
-  /-- Type of utterances -/
-  Utterance : Type
-  /-- Type of possible worlds -/
-  World : Type
+structure RSAScenario (U : Type) (W : Type) [BEq U] [BEq W] where
   /-- Agreement function: how well does utterance describe world? -/
-  φ : Utterance → World → ℚ
+  φ : U → W → ℚ
   /-- Enumeration of all utterances -/
-  utterances : List Utterance
+  utterances : List U
   /-- Enumeration of all worlds -/
-  worlds : List World
+  worlds : List W
   /-- Prior distribution over worlds (default: uniform) -/
-  prior : World → ℚ := fun _ => 1
+  prior : W → ℚ := fun _ => 1
   /-- Rationality parameter (default: 1). Higher values = more informative speaker. -/
   α : ℕ := 1
-  /-- BEq instance for utterances -/
-  [uttBEq : BEq Utterance]
-  /-- BEq instance for worlds -/
-  [worldBEq : BEq World]
-
-attribute [instance] RSAScenario.uttBEq RSAScenario.worldBEq
 
 -- ============================================================================
 -- Boolean Semantics Helper
@@ -81,17 +76,15 @@ Build RSAScenario from a Boolean satisfaction relation.
 This is the primary way to create scenarios from classical semantics.
 The φ function becomes an indicator function: 1 if true, 0 if false.
 -/
-def RSAScenario.ofBool {Utterance World : Type} [BEq Utterance] [BEq World]
-    (utterances : List Utterance) (worlds : List World)
-    (satisfies : World → Utterance → Bool) : RSAScenario where
-  Utterance := Utterance
-  World := World
+def RSAScenario.ofBool {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (satisfies : W → U → Bool) : RSAScenario U W where
   φ u w := boolToRat (satisfies w u)
   utterances := utterances
   worlds := worlds
 
 /-- Property: a scenario has Boolean semantics (φ only returns 0 or 1) -/
-def RSAScenario.isBoolean (S : RSAScenario) : Prop :=
+def RSAScenario.isBoolean {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) : Prop :=
   ∀ u w, S.φ u w = 0 ∨ S.φ u w = 1
 
 -- ============================================================================
@@ -171,7 +164,7 @@ The literal listener updates prior beliefs by the meaning function,
 uniformly distributing probability over worlds where utterance is true
 (for Boolean semantics) or proportionally to φ (for graded semantics).
 -/
-def L0 (S : RSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
+def L0 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : List (W × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.prior w * S.φ u w)
   normalize scores
 
@@ -190,7 +183,7 @@ the intended world. For α=1 (default), this is just L0(w|u) normalized.
 More informative (less ambiguous) utterances are preferred.
 Higher α values make the speaker more "rational" (preferring informative utterances more strongly).
 -/
-def S1 (S : RSAScenario) (w : S.World) : List (S.Utterance × ℚ) :=
+def S1 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (w : W) : List (U × ℚ) :=
   let scores := S.utterances.map fun u => (u, (getScore (L0 S u) w) ^ S.α)
   normalize scores
 
@@ -206,7 +199,7 @@ P(w | u) ∝ P(w) · S1(u | w)
 The pragmatic listener reasons about what world would make a rational
 speaker choose this utterance.
 -/
-def L1 (S : RSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
+def L1 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : List (W × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.prior w * getScore (S1 S w) u)
   normalize scores
 
@@ -215,15 +208,15 @@ def L1 (S : RSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
 -- ============================================================================
 
 /-- Get L0 probability for a specific world -/
-def L0_prob (S : RSAScenario) (u : S.Utterance) (w : S.World) : ℚ :=
+def L0_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) (w : W) : ℚ :=
   getScore (L0 S u) w
 
 /-- Get S1 probability for a specific utterance -/
-def S1_prob (S : RSAScenario) (w : S.World) (u : S.Utterance) : ℚ :=
+def S1_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (w : W) (u : U) : ℚ :=
   getScore (S1 S w) u
 
 /-- Get L1 probability for a specific world -/
-def L1_prob (S : RSAScenario) (u : S.Utterance) (w : S.World) : ℚ :=
+def L1_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) (w : W) : ℚ :=
   getScore (L1 S u) w
 
 -- ============================================================================
@@ -231,11 +224,11 @@ def L1_prob (S : RSAScenario) (u : S.Utterance) (w : S.World) : ℚ :=
 -- ============================================================================
 
 /-- Count worlds compatible with an utterance -/
-def compatibleCount (S : RSAScenario) (u : S.Utterance) : Nat :=
+def compatibleCount {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : Nat :=
   (S.worlds.filter fun w => S.φ u w > 0).length
 
 /-- Informativity of an utterance = 1 / (compatible worlds) -/
-def informativity (S : RSAScenario) (u : S.Utterance) : ℚ :=
+def informativity {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : ℚ :=
   let n := compatibleCount S u
   if n > 0 then 1 / n else 0
 
@@ -250,7 +243,8 @@ When φ(u,w) = 0:
 1. Pre-normalization score is `prior(w) * 0 = 0`
 2. After normalization, `0 / total = 0`
 -/
-theorem L0_zero_when_false (S : RSAScenario) (u : S.Utterance) (w : S.World)
+theorem L0_zero_when_false {U W : Type} [BEq U] [BEq W]
+    (S : RSAScenario U W) (u : U) (w : W)
     (hfalse : S.φ u w = 0) :
     ∀ p, (w, p) ∈ (L0 S u) → p = 0 := by
   intro p hmem
@@ -273,9 +267,8 @@ returns false (φ = 0), the literal listener assigns zero probability.
 
 Requires LawfulBEq to convert `w' == w = true` to `w' = w`.
 -/
-theorem L0_prob_zero_when_false (S : RSAScenario)
-    [LawfulBEq S.World]
-    (u : S.Utterance) (w : S.World)
+theorem L0_prob_zero_when_false {U W : Type} [BEq U] [BEq W] [LawfulBEq W]
+    (S : RSAScenario U W) (u : U) (w : W)
     (hfalse : S.φ u w = 0) :
     L0_prob S u w = 0 := by
   unfold L0_prob L0 getScore normalize
@@ -310,9 +303,8 @@ For scenarios with decidable equality (most practical cases), this holds automat
 Since S1 uses L0(w|u)^α, we need 0^α = 0. This holds for α > 0.
 For α = 0, 0^0 = 1, so this theorem requires α > 0.
 -/
-theorem S1_zero_when_false (S : RSAScenario)
-    [LawfulBEq S.World] [LawfulBEq S.Utterance]
-    (w : S.World) (u : S.Utterance)
+theorem S1_zero_when_false {U W : Type} [BEq U] [BEq W] [LawfulBEq W] [LawfulBEq U]
+    (S : RSAScenario U W) (w : W) (u : U)
     (hfalse : S.φ u w = 0)
     (hα_pos : S.α > 0 := by decide) :
     S1_prob S w u = 0 := by
@@ -355,63 +347,34 @@ theorem S1_zero_when_false (S : RSAScenario)
 -- ============================================================================
 
 /--
-Typed RSA scenario with Fintype instances and non-negativity proofs.
-
-This extends RSAScenario with:
-- Compile-time guarantees about the finiteness of utterance and world types
-- Proofs that prior and φ are non-negative
--/
-structure TypedRSAScenario extends RSAScenario where
-  [uttFintype : Fintype Utterance]
-  [worldFintype : Fintype World]
-  /-- Prior probabilities are non-negative -/
-  prior_nonneg : ∀ w, 0 ≤ prior w
-  /-- Agreement function is non-negative -/
-  φ_nonneg : ∀ u w, 0 ≤ φ u w
-
-attribute [instance] TypedRSAScenario.uttFintype TypedRSAScenario.worldFintype
-
-/--
-Build a TypedRSAScenario from Boolean semantics.
-
-Since boolToRat returns 0 or 1, and prior defaults to 1,
-non-negativity is automatic.
--/
-def TypedRSAScenario.ofBool {Utterance World : Type}
-    [inst1 : Fintype Utterance] [inst2 : Fintype World] [BEq Utterance] [BEq World]
-    (utterances : List Utterance) (worlds : List World)
-    (satisfies : World → Utterance → Bool) : TypedRSAScenario where
-  Utterance := Utterance
-  World := World
-  φ u w := boolToRat (satisfies w u)
-  utterances := utterances
-  worlds := worlds
-  uttFintype := inst1
-  worldFintype := inst2
-  prior_nonneg := fun _ => le_of_lt one_pos
-  φ_nonneg := fun _ _ => by
-    simp only [boolToRat]
-    split <;> decide
-
-/--
 L0 as a typed distribution with sum-to-1 guarantee.
 
 Returns `none` if the utterance is incompatible with all worlds
 (i.e., φ(u, w) = 0 for all w).
+
+Requires Fintype instances and proofs that prior and φ are non-negative.
 -/
-def L0_dist (S : TypedRSAScenario) (u : S.Utterance) : Option (ExactDist S.World) :=
-  let scores : S.World → ℚ := fun w => S.prior w * S.φ u w
-  ExactDist.tryNormalize scores (fun w => mul_nonneg (S.prior_nonneg w) (S.φ_nonneg u w))
+def L0_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
+    (S : RSAScenario U W)
+    (prior_nonneg : ∀ w, 0 ≤ S.prior w)
+    (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
+    (u : U) : Option (ExactDist W) :=
+  let scores : W → ℚ := fun w => S.prior w * S.φ u w
+  ExactDist.tryNormalize scores (fun w => mul_nonneg (prior_nonneg w) (φ_nonneg u w))
 
 /--
 S1 as a typed distribution with sum-to-1 guarantee.
 
 Returns `none` if no utterance is informative for this world.
 -/
-def S1_dist (S : TypedRSAScenario) (w : S.World) : Option (ExactDist S.Utterance) :=
+def S1_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
+    (S : RSAScenario U W)
+    (prior_nonneg : ∀ w, 0 ≤ S.prior w)
+    (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
+    (w : W) : Option (ExactDist U) :=
   -- First compute L0 for each utterance
-  let l0Scores : S.Utterance → ℚ := fun u =>
-    match L0_dist S u with
+  let l0Scores : U → ℚ := fun u =>
+    match L0_dist S prior_nonneg φ_nonneg u with
     | some d => d.mass w
     | none => 0
   ExactDist.tryNormalize l0Scores (fun u => by
@@ -425,18 +388,37 @@ L1 as a typed distribution with sum-to-1 guarantee.
 
 Returns `none` if no world makes the speaker choose this utterance.
 -/
-def L1_dist (S : TypedRSAScenario) (u : S.Utterance) : Option (ExactDist S.World) :=
-  let scores : S.World → ℚ := fun w =>
-    let s1 := S1_dist S w
+def L1_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
+    (S : RSAScenario U W)
+    (prior_nonneg : ∀ w, 0 ≤ S.prior w)
+    (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
+    (u : U) : Option (ExactDist W) :=
+  let scores : W → ℚ := fun w =>
+    let s1 := S1_dist S prior_nonneg φ_nonneg w
     let s1Score := match s1 with
       | some d => d.mass u
       | none => 0
     S.prior w * s1Score
   ExactDist.tryNormalize scores (fun w => by
-    apply mul_nonneg (S.prior_nonneg w)
+    apply mul_nonneg (prior_nonneg w)
     split
     · exact (ExactDist.nonneg _ _)
     · exact le_refl 0)
+
+/--
+Helper: Non-negativity proofs for Boolean scenarios (prior = 1, φ ∈ {0,1}).
+-/
+theorem RSAScenario.ofBool_prior_nonneg {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W) (satisfies : W → U → Bool) :
+    let S := RSAScenario.ofBool utterances worlds satisfies
+    ∀ w, 0 ≤ S.prior w := fun _ => le_of_lt one_pos
+
+theorem RSAScenario.ofBool_φ_nonneg {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W) (satisfies : W → U → Bool) :
+    let S := RSAScenario.ofBool utterances worlds satisfies
+    ∀ u w, 0 ≤ S.φ u w := fun _ _ => by
+  simp only [RSAScenario.ofBool, boolToRat]
+  split <;> decide
 
 end RSA
 

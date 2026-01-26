@@ -174,6 +174,7 @@ import Linglib.Theories.RSA.EmbeddedScalars
 import Linglib.Theories.RSA.PottsLU
 import Linglib.Theories.RSA.AttitudeEmbedding
 import Linglib.Theories.RSA.ConditionalEmbedding
+import Linglib.Theories.RSA.QuestionEmbedding
 
 import Linglib.Theories.PragmaticComparison
 
@@ -182,6 +183,7 @@ import Linglib.Theories.Comparisons.Coreference
 import Linglib.Theories.Comparisons.ScalarImplicature
 import Linglib.Theories.Comparisons.CommandRelations
 import Linglib.Theories.Comparisons.Implicature
+import Linglib.Theories.Comparisons.RSANeoGricean
 
 import Linglib.Theories.Surface.Basic
 

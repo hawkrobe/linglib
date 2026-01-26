@@ -1049,10 +1049,8 @@ RSA scenario using graded semantics directly (no threshold variable).
 This uses the graded degree as the φ function, without any
 threshold inference.
 -/
-def gradedScenario : RSAScenario :=
-  { Utterance := Utterance
-  , World := Height
-  , φ := fun u h => match u with
+def gradedScenario : RSAScenario Utterance Height :=
+  { φ := fun u h => match u with
       | .tall => gradedTallness h
       | .short => 1 - gradedTallness h  -- complement
       | .silent => 1

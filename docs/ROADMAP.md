@@ -59,6 +59,54 @@ Also provides:
 
 ---
 
+## Phase 1b: Grounding Expansion (Priority)
+
+**Goal**: Prove that more RSA models derive their meanings from compositional semantics.
+
+Currently only 2/9 RSA models have grounding proofs:
+- ✓ `RSA/Intensional.lean` - builds scenarios from Montague derivations
+- ✓ `RSA/ScontrasPearl2021.lean` - proves meaning matches WorldMeaning
+
+Models needing grounding:
+- `RSA/PottsLU.lean` - stipulates `utteranceTruth`
+- `RSA/EmbeddedScalars.lean` - stipulates lexicon meanings
+- `RSA/AttitudeEmbedding.lean` - stipulates `believesSomeMeaning`
+- `RSA/ConditionalEmbedding.lean` - stipulates `conditionalMeaning`
+- `RSA/QuestionEmbedding.lean` - stipulates `questionPartition`
+- `RSA/GoodmanStuhlmuller2013.lean` - stipulates `literalMeaning`
+- `RSA/ScalarImplicatures.lean` - basic toy model
+
+### Strategy Options
+
+**Option A: Post-hoc grounding theorems**
+Add theorems proving the stipulated meanings match compositional evaluation:
+```lean
+theorem potts_meaning_grounded :
+    utteranceTruth params u w = Montague.eval (derivationFor u) params w
+```
+Requires: Montague derivations for each utterance type.
+
+**Option B: Refactor to use IntensionalScenario**
+Rewrite models to build scenarios from derivations (like Intensional.lean).
+More invasive but ensures grounding by construction.
+
+**Option C: Semantic correspondence lemmas**
+Prove correspondence at the semantic level without full derivations:
+```lean
+theorem some_means_exists :
+    somePassed w = ∃ x, student x ∧ passed x
+```
+Lighter-weight but still connects to semantics.
+
+### Priority Order
+
+1. **AttitudeEmbedding** - simplest structure, good test case
+2. **ConditionalEmbedding** - similar structure
+3. **QuestionEmbedding** - similar structure
+4. **PottsLU** - most complex, highest impact
+
+---
+
 ## Phase 2: Type Safety & Robustness
 
 ### 2.1 Type-Safe Scale Positions ✓ DONE
@@ -149,7 +197,7 @@ Provides:
 
 ### 3.2 Embedded Implicatures (Partial)
 
-**Status**: DE contexts and attitude verbs implemented
+**Status**: DE contexts, attitude verbs, conditionals, and questions implemented
 
 Completed:
 - Embedded scalars under "no" (DE blocking) - `RSA/PottsLU.lean`
@@ -163,9 +211,13 @@ Completed:
   - `global_entails_local`: Global entails local (DE-like)
   - `conditional_antecedent_is_DE`: Proves the DE property
   - RSA predicts global preferred (same as under "no")
+- Question embedding ("Did some students pass?") - `RSA/QuestionEmbedding.lean`
+  - `local_partition_disjunctive`: Local gives odd "no" answer (none OR all)
+  - `questionIsUnique`: Questions aren't DE-like or attitude-like
+  - RSA predicts global preferred (partition quality argument)
+  - Connection to exhaustive interpretation (van Rooij & Schulz 2004)
 
 Remaining:
-- Questions
 - Geurts' globalist vs localist analysis for complex embeddings
 
 ---
@@ -234,9 +286,17 @@ Theories/CCG/GenerativeCapacity.lean
 
 Move `NeoGricean/` and `RSA/` under `Theories/Pragmatics/` for consistency.
 
-### RSA α Parameter
+### RSA α Parameter ✓ PARTIAL
 
-Parameterize RSA by rationality α; relate to NeoGricean competence assumption.
+**Status**: Limit conjecture documented in `Comparisons/RSANeoGricean.lean`
+
+Documents the limit theorem conjecture: lim_{α→∞} RSA = NeoGricean. Provides:
+- `RationalityParameter` structure with α ≥ 0 constraint
+- `LimitAgreement` structure for stating when theories agree
+- `EquivalenceConditions`: uniform priors, zero costs, high α, matching alternatives
+- Proven agreement on: directional predictions, ordinal rankings, DE blocking
+
+**Remaining**: Formalize the actual limit as α → ∞ (requires analysis).
 
 ### B² Cross-Serial Derivations for 3+ Verbs
 
@@ -308,3 +368,5 @@ Additional formalizations from Horn's dissertation:
 - [x] **Formal Language Theory** (`Core/FormalLanguageTheory.lean` - infrastructure for {aⁿbⁿcⁿdⁿ})
 - [x] **CCG Generative Capacity** (`CCG/GenerativeCapacity.lean` - connects CCG to formal language theory)
 - [x] **CCG-Montague Homomorphism** (`CCG/Homomorphism.lean` - rule-to-rule correspondence)
+- [x] **RSA-NeoGricean Comparison** (`Comparisons/RSANeoGricean.lean` - directional/ordinal agreement, limit conjecture)
+- [x] **Question Embedding** (`RSA/QuestionEmbedding.lean` - partition quality, exhaustive interpretation)

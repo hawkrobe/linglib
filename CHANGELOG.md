@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.13.0] - 2025-01-26
+
+### Changed
+- **Core/RSA.lean**: Made `RSAScenario` typed with explicit type parameters
+  - Old: `RSAScenario` with `Utterance : Type` and `World : Type` as fields
+  - New: `RSAScenario (U : Type) (W : Type)` with type parameters
+  - Removes `TypedRSAScenario` structure (now redundant)
+  - `L0_dist`, `S1_dist`, `L1_dist` take non-negativity proofs as explicit parameters
+  - Added helper theorems `ofBool_prior_nonneg`, `ofBool_φ_nonneg`
+
+### Added
+- **Theories/RSA/AttitudeEmbedding.lean**: Semantic grounding proofs
+  - `somePassedProp`, `someNotAllPassedProp`, `allPassedProp`: Compositional semantics
+  - `global_grounded`, `local_grounded`, `believes_all_grounded`: Grounding theorems
+  - `local_entails_global_grounded`: Entailment derived from semantics
+- **Theories/RSA/QuestionEmbedding.lean**: Scalar implicatures in yes/no questions
+- **Theories/Comparisons/RSANeoGricean.lean**: RSA vs NeoGricean comparison
+
+### Fixed
+- Updated all RSA models to use typed `RSAScenario (U W : Type)` syntax
+
 ## [0.12.0] - 2025-01-26
 
 ### Added
