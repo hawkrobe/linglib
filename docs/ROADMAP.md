@@ -149,15 +149,18 @@ Provides:
 
 ### 3.2 Embedded Implicatures (Partial)
 
-**Status**: DE contexts handled in `RSA/PottsLU.lean`
+**Status**: DE contexts and attitude verbs implemented
 
 Completed:
-- Embedded scalars under "no" (DE blocking)
+- Embedded scalars under "no" (DE blocking) - `RSA/PottsLU.lean`
 - Full Potts et al. (2016) model with proven theorems
 - Regression tests showing simplified models fail
+- Attitude verb embedding ("John believes some students passed") - `RSA/AttitudeEmbedding.lean`
+  - `local_entails_global`: Local interpretation entails global
+  - `global_not_entails_local`: But not vice versa (unlike DE)
+  - Explains why both interpretations are available
 
 Remaining:
-- Attitude verb embedding ("John believes some students passed")
 - Conditional antecedents
 - Questions
 - Geurts' globalist vs localist analysis for complex embeddings
