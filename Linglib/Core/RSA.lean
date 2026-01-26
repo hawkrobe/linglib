@@ -59,8 +59,8 @@ structure RSAScenario where
   worlds : List World
   /-- Prior distribution over worlds (default: uniform) -/
   prior : World → ℚ := fun _ => 1
-  /-- Rationality parameter (default: 1) -/
-  α : ℚ := 1
+  /-- Rationality parameter (default: 1). Higher values = more informative speaker. -/
+  α : ℕ := 1
   /-- BEq instance for utterances -/
   [uttBEq : BEq Utterance]
   /-- BEq instance for worlds -/
@@ -188,9 +188,10 @@ The speaker chooses utterances proportional to how well L0 recovers
 the intended world. For α=1 (default), this is just L0(w|u) normalized.
 
 More informative (less ambiguous) utterances are preferred.
+Higher α values make the speaker more "rational" (preferring informative utterances more strongly).
 -/
 def S1 (S : RSAScenario) (w : S.World) : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u => (u, getScore (L0 S u) w)
+  let scores := S.utterances.map fun u => (u, (getScore (L0 S u) w) ^ S.α)
   normalize scores
 
 -- ============================================================================
@@ -305,23 +306,26 @@ S1 assigns zero probability to utterances with zero φ at the world.
 
 Note: This theorem requires LawfulBEq to convert BEq equality to Prop equality.
 For scenarios with decidable equality (most practical cases), this holds automatically.
+
+Since S1 uses L0(w|u)^α, we need 0^α = 0. This holds for α > 0.
+For α = 0, 0^0 = 1, so this theorem requires α > 0.
 -/
 theorem S1_zero_when_false (S : RSAScenario)
     [LawfulBEq S.World] [LawfulBEq S.Utterance]
     (w : S.World) (u : S.Utterance)
-    (hfalse : S.φ u w = 0) :
+    (hfalse : S.φ u w = 0)
+    (hα_pos : S.α > 0 := by decide) :
     S1_prob S w u = 0 := by
   -- First establish that L0_prob S u w = 0
   have hL0 : L0_prob S u w = 0 := L0_prob_zero_when_false S u w hfalse
   -- Unfold S1_prob and S1
   unfold S1_prob S1
-  -- S1 = normalize (map (..., getScore (L0 S u) w) S.utterances)
+  -- S1 = normalize (map (..., (getScore (L0 S u) w)^α) S.utterances)
   -- We need: getScore (normalize ...) u = 0
-  -- The pre-normalized list has (u, getScore (L0 S u) w) = (u, 0) by hL0
+  -- The pre-normalized list has (u, (getScore (L0 S u) w)^α) = (u, 0^α) = (u, 0) by hL0 and hα_pos
   -- By getScore_normalize_zero, after normalization it's still 0
   apply getScore_normalize_zero
   -- Show the pre-normalized score is 0
-  -- Goal: getScore (map (fun u => (u, getScore (L0 S u) w)) S.utterances) u = 0
   unfold getScore
   simp only [List.find?_map, Function.comp_def]
   split
@@ -332,13 +336,17 @@ theorem S1_zero_when_false (S : RSAScenario)
     have hu'_beq := List.find?_some hfind
     rw [beq_iff_eq] at hu'_beq
     simp only [Prod.mk.injEq] at heq'
-    obtain ⟨_, hp⟩ := heq'
-    -- u' = u, and the score is getScore (L0 S u') w = getScore (L0 S u) w = 0
-    rw [← hp, hu'_beq]
-    -- Goal: getScore (L0 S u) w = 0
-    -- This is exactly L0_prob S u w = 0, which is hL0
-    unfold L0_prob at hL0
-    exact hL0
+    obtain ⟨_, hscore⟩ := heq'
+    -- hscore : (getScore (L0 S u') w)^α = s✝
+    -- Goal: s✝ = 0
+    rw [← hscore]
+    -- Goal: (getScore (L0 S u') w)^α = 0
+    -- Since u' = u, the L0 scores are the same
+    rw [hu'_beq]
+    -- Now goal is (getScore (L0 S u) w)^α = 0
+    unfold L0_prob getScore at hL0
+    rw [hL0]
+    exact zero_pow (Nat.ne_of_gt hα_pos)
   · -- none case: u not found
     rfl
 
@@ -468,8 +476,8 @@ structure ParametricRSAScenario where
   prior : World → ℚ := fun _ => 1
   /-- Prior over interpretations -/
   interpPrior : Interp → ℚ := fun _ => 1
-  /-- Rationality parameter -/
-  α : ℚ := 1
+  /-- Rationality parameter. Higher values = more informative speaker. -/
+  α : ℕ := 1
   [uttBEq : BEq Utterance]
   [worldBEq : BEq World]
   [interpBEq : BEq Interp]
@@ -492,10 +500,12 @@ def L0 (S : ParametricRSAScenario) (i : S.Interp) (u : S.Utterance) : List (S.Wo
 /--
 S1 given a fixed interpretation.
 
-P(u | w, i) ∝ L0(w | u, i)
+P(u | w, i) ∝ L0(w | u, i)^α
+
+Higher α values make the speaker more "rational" (preferring informative utterances).
 -/
 def S1 (S : ParametricRSAScenario) (i : S.Interp) (w : S.World) : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u => (u, RSA.getScore (L0 S i u) w)
+  let scores := S.utterances.map fun u => (u, (RSA.getScore (L0 S i u) w) ^ S.α)
   RSA.normalize scores
 
 /--
@@ -568,6 +578,140 @@ def informativity (S : ParametricRSAScenario)
     (i : S.Interp) (u : S.Utterance) : ℚ :=
   let n := compatibleCount S i u
   if n > 0 then 1 / n else 0
+
+-- ============================================================================
+-- Typed Parametric Distributions (with Fintype)
+-- ============================================================================
+
+/--
+Typed parametric RSA scenario with Fintype instances and non-negativity proofs.
+
+This extends ParametricRSAScenario with:
+- Compile-time guarantees about finiteness of all types
+- Proofs that prior and φ are non-negative
+-/
+structure TypedParametricRSAScenario extends ParametricRSAScenario where
+  [uttFintype : Fintype Utterance]
+  [worldFintype : Fintype World]
+  [interpFintype : Fintype Interp]
+  /-- Prior over worlds is non-negative -/
+  prior_nonneg : ∀ w, 0 ≤ prior w
+  /-- Prior over interpretations is non-negative -/
+  interpPrior_nonneg : ∀ i, 0 ≤ interpPrior i
+  /-- Agreement function is non-negative -/
+  φ_nonneg : ∀ i u w, 0 ≤ φ i u w
+
+attribute [instance] TypedParametricRSAScenario.uttFintype
+  TypedParametricRSAScenario.worldFintype TypedParametricRSAScenario.interpFintype
+
+/--
+Build a TypedParametricRSAScenario from Boolean semantics.
+
+Since boolToRat returns 0 or 1, and priors default to 1,
+non-negativity is automatic.
+-/
+def TypedParametricRSAScenario.ofBool {Utterance World Interp : Type}
+    [inst1 : Fintype Utterance] [inst2 : Fintype World] [inst3 : Fintype Interp]
+    [BEq Utterance] [BEq World] [BEq Interp]
+    (utterances : List Utterance) (worlds : List World) (interps : List Interp)
+    (satisfies : Interp → World → Utterance → Bool) : TypedParametricRSAScenario where
+  Utterance := Utterance
+  World := World
+  Interp := Interp
+  φ i u w := boolToRat (satisfies i w u)
+  utterances := utterances
+  worlds := worlds
+  interps := interps
+  uttFintype := inst1
+  worldFintype := inst2
+  interpFintype := inst3
+  prior_nonneg := fun _ => le_of_lt one_pos
+  interpPrior_nonneg := fun _ => le_of_lt one_pos
+  φ_nonneg := fun _ _ _ => by
+    simp only [boolToRat]
+    split <;> decide
+
+/--
+L0 for parametric RSA as typed distribution (given interpretation).
+
+Returns `none` if utterance incompatible with all worlds under this interpretation.
+-/
+def L0_param_dist (S : TypedParametricRSAScenario) (i : S.Interp) (u : S.Utterance)
+    : Option (ExactDist S.World) :=
+  let scores : S.World → ℚ := fun w => S.prior w * S.φ i u w
+  ExactDist.tryNormalize scores
+    (fun w => mul_nonneg (S.prior_nonneg w) (S.φ_nonneg i u w))
+
+/--
+S1 for parametric RSA as typed distribution (given interpretation and world).
+
+Returns `none` if no utterance is informative for this world under this interpretation.
+-/
+def S1_param_dist (S : TypedParametricRSAScenario) (i : S.Interp) (w : S.World)
+    : Option (ExactDist S.Utterance) :=
+  let l0Scores : S.Utterance → ℚ := fun u =>
+    match L0_param_dist S i u with
+    | some d => d.mass w
+    | none => 0
+  ExactDist.tryNormalize l0Scores (fun u => by
+    simp only [l0Scores]
+    split
+    · exact (ExactDist.nonneg _ _)
+    · exact le_refl 0)
+
+/--
+Joint (World × Interp) distribution for L1 in parametric RSA.
+
+The listener jointly infers world AND interpretation.
+Returns `none` if no (world, interp) pair makes sense for this utterance.
+-/
+def L1_joint_dist (S : TypedParametricRSAScenario) (u : S.Utterance)
+    : Option (ExactDist (S.World × S.Interp)) :=
+  let scores : (S.World × S.Interp) → ℚ := fun ⟨w, i⟩ =>
+    let s1Score := match S1_param_dist S i w with
+      | some d => d.mass u
+      | none => 0
+    S.prior w * S.interpPrior i * s1Score
+  ExactDist.tryNormalize scores (fun ⟨w, i⟩ => by
+    apply mul_nonneg
+    · apply mul_nonneg (S.prior_nonneg w) (S.interpPrior_nonneg i)
+    · split
+      · exact (ExactDist.nonneg _ _)
+      · exact le_refl 0)
+
+/--
+Marginal world distribution for L1 in parametric RSA.
+
+Marginalizes the joint distribution over interpretations.
+-/
+def L1_world_dist (S : TypedParametricRSAScenario) (u : S.Utterance)
+    : Option (ExactDist S.World) :=
+  match L1_joint_dist S u with
+  | none => none
+  | some joint =>
+    let worldScores : S.World → ℚ := fun w =>
+      ∑ i : S.Interp, joint.mass (w, i)
+    ExactDist.tryNormalize worldScores (fun w => by
+      apply Finset.sum_nonneg
+      intro i _
+      exact joint.nonneg (w, i))
+
+/--
+Marginal interpretation distribution for L1 in parametric RSA.
+
+Marginalizes the joint distribution over worlds.
+-/
+def L1_interp_dist (S : TypedParametricRSAScenario) (u : S.Utterance)
+    : Option (ExactDist S.Interp) :=
+  match L1_joint_dist S u with
+  | none => none
+  | some joint =>
+    let interpScores : S.Interp → ℚ := fun i =>
+      ∑ w : S.World, joint.mass (w, i)
+    ExactDist.tryNormalize interpScores (fun i => by
+      apply Finset.sum_nonneg
+      intro w _
+      exact joint.nonneg (w, i))
 
 end ParametricRSA
 

@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.12.0] - 2025-01-26
+
+### Added
+- **Core/FormalLanguageTheory.lean**: Chomsky hierarchy infrastructure
+  - `FourSymbol` alphabet for cross-serial patterns (a, b, c, d)
+  - `isInLanguage_anbncndn`: Membership predicate for {aⁿbⁿcⁿdⁿ}
+  - `makeString_anbncndn`: Generator function
+  - Pumping lemma (axiom) and `anbncndn_not_context_free` theorem
+  - `MildlyContextSensitive` structure with `CCG_MCS`, `TAG_MCS` instances
+
+- **Theories/CCG/GenerativeCapacity.lean**: CCG vs CFG expressiveness
+  - `ccg_strictly_more_expressive_than_cfg`: Main theorem (infrastructure)
+  - `cross_serial_requires_mcs`: Proven by rfl
+  - Connects CCG cross-serial derivations to formal language theory
+
+- **Theories/RSA/PottsLU.lean**: Full Potts et al. (2016) Lexical Uncertainty model
+  - 10 world classes (3 players × 3 outcomes)
+  - 4 lexica (2 refinable items: quantifier + predicate)
+  - 11 utterances (quantifier × predicate combinations)
+  - `potts_model_derives_de_blocking`: Global > Local in DE contexts
+  - `potts_model_derives_ue_implicature`: Local > Global in UE contexts
+  - Regression tests: `simplified_model_fails`, `world_space_is_critical`
+
+- **Theories/RSA/EmbeddedScalars.lean**: Simplified model documentation
+  - Documents why reduced 3-world model gives inverted predictions
+  - Points to PottsLU.lean for full model
+
+- **Core/LexicalUncertainty.lean**: LU infrastructure for RSA
+- **Core/CompositionalLU.lean**: Compositional LU integration
+- **Phenomena/Imprecision/Basic.lean**: Haslinger (2024) imprecision data
+
+### References
+- Potts, Lassiter, Levy & Frank (2016) "Embedded implicatures as pragmatic inferences under compositional lexical uncertainty"
+- Steedman (2000) "The Syntactic Process" Ch. 2 & 6
+- Joshi (1985) "Tree Adjoining Grammars"
+
 ## [0.11.0] - 2025-01-26
 
 ### Added

@@ -78,35 +78,31 @@ Unified entailment checking via Montague semantics.
 - `L0_zero_when_false` theorem proven using `Rat.mul_zero`, `Rat.div_def`
 - Enables Mathlib lemmas directly on RSA computations
 
-### 2.4 Distribution Type (TODO)
+### 2.4 Distribution Type ✓ DONE
 
-**Goal**: Make L0/S1/L1 return typed probability distributions with proofs.
+**Status**: Implemented in `Core/Distribution.lean`
 
-```lean
-structure Distribution (X : Type) where
-  scores : List (X × ℚ)
-  nonneg : ∀ p ∈ scores.map (·.2), p ≥ 0
-  sums_to_one : sumScores (scores.map (·.2)) = 1
+Provides:
+- `ExactDist α`: Typed distribution with `mass : α → ℚ`, `nonneg`, `sum_one` proofs
+- `ExactDist.normalize`: Constructor from unnormalized scores with proofs
+- `ExactDist.uniform`, `ExactDist.pure`: Standard distributions
+- `support_nonempty`, `mass_le_one`: Key theorems
+- `toPMF`: Bridge to Mathlib's PMF for measure-theoretic properties
 
-theorem normalize_valid :
-    (∀ p ∈ dist.map (·.2), p ≥ 0) →
-    sumScores (dist.map (·.2)) > 0 →
-    Distribution.mk (normalize dist) ...
-```
+### 2.5 RSA DE Context Handling ✓ DONE
 
-This would give compile-time guarantees that RSA outputs are valid distributions.
+**Status**: Implemented in `RSA/PottsLU.lean`
 
-### 2.5 RSA DE Context Handling
+Implements the full Potts et al. (2016) Lexical Uncertainty model:
+- 10 world classes (3 players × 3 outcomes)
+- 4 lexica (2 refinable items: quantifier + predicate)
+- 11 utterances (quantifier × predicate combinations)
 
-**Current state**: NeoGricean handles DE blocking; RSA doesn't.
-
-**Problem**: RSA model incomplete—can't represent embedded contexts.
-
-**Solution**: Either:
-- Extend RSA with compositional alternative generation
-- Or document why RSA's treatment differs (QUD-based blocking)
-
-**Files affected**: `RSA/ScalarImplicatures.lean`
+Key theorems:
+- `potts_model_derives_de_blocking`: Global > Local in DE contexts
+- `potts_model_derives_ue_implicature`: Local > Global in UE contexts
+- `simplified_model_fails`: Regression test showing 3-world model fails
+- `world_space_is_critical`: Rich world space is necessary for correct predictions
 
 ---
 
@@ -132,37 +128,71 @@ Provides:
 - Connection to G&S 2013 empirical adjudication (ambiguity required for cancellation)
 - Bilateral.lean documents Kennedy's maximality derivation for degree modifier support
 
-**Next**: Apply same pattern to Modals (Kratzer vs Simple)
+### 3.1b Parameterized Lexicon: Modals ✓ DONE
 
-### 3.2 Embedded Implicatures
+**Status**: Implemented in `Montague/Lexicon/Modals/`
 
-**Current state**: Only simple sentences handled.
+```
+Montague/Lexicon/Modals/
+├── Theory.lean    -- ModalTheory structure
+├── Simple.lean    -- Kripke-style accessibility relations
+├── Kratzer.lean   -- Conversational backgrounds (modal base + ordering)
+└── Compare.lean   -- Comparison theorems
+```
 
-**Problem**: "John believes some students passed" has complex implicature patterns.
+Provides:
+- `ModalTheory` structure with eval function, duality property
+- `Simple R`, `Kratzer params` as concrete theory instances
+- `theoriesAgreeOn`, `divergingWorlds` comparison functions
+- Key theorems: `minimal_kratzer_equals_universal_simple_necessity`, `epistemic_vs_minimal_differ`
+- Kratzer context-dependence: same modal verb, different backgrounds → different truth values
 
-**Solution**: Extend derivation structure to track embedding depth; implement Geurts' globalist vs localist analysis.
+### 3.2 Embedded Implicatures (Partial)
+
+**Status**: DE contexts handled in `RSA/PottsLU.lean`
+
+Completed:
+- Embedded scalars under "no" (DE blocking)
+- Full Potts et al. (2016) model with proven theorems
+- Regression tests showing simplified models fail
+
+Remaining:
+- Attitude verb embedding ("John believes some students passed")
+- Conditional antecedents
+- Questions
+- Geurts' globalist vs localist analysis for complex embeddings
 
 ---
 
 ## Phase 4: Syntax Expansion
 
-### 4.1 Formal Language Theory & CCG Generative Capacity
+### 4.1 Formal Language Theory & CCG Generative Capacity (Partial)
 
-**Current state**: `ccg_is_mildly_context_sensitive` is just an assertion.
+**Status**: Infrastructure implemented, proofs sketched with `sorry`
 
-**Problem**: Steedman claims CCG > CFG, but we don't prove it rigorously.
+**Current state**:
+- `Core/FormalLanguageTheory.lean`: Defines {aⁿbⁿcⁿdⁿ}, pumping lemma (axiom), `anbncndn_not_context_free` theorem (sorry)
+- `Theories/CCG/GenerativeCapacity.lean`: Connects to CCG, `ccg_strictly_more_expressive_than_cfg` (sorry)
 
-**Solution**: Formalize Chomsky hierarchy and prove CCG's position:
+**Remaining work**:
+- Fill in pumping lemma proof details (case analysis on decomposition)
+- Prove `makeString_anbncndn n` satisfies the membership predicate for all n
+- Complete the connection between CCG derivations and the formal language
 
 ```
 Core/FormalLanguageTheory.lean
-  - FormalLanguage, ContextFreeLanguage, MildlyContextSensitive
-  - Pumping lemma for CFLs
-  - Theorem: {aⁿbⁿcⁿdⁿ} is not context-free
+  - FourSymbol/ThreeSymbol alphabets ✓
+  - isInLanguage_anbncndn membership predicate ✓
+  - makeString_anbncndn generator ✓
+  - Pumping lemma (axiom) ✓
+  - anbncndn_not_context_free (sorry)
+  - MildlyContextSensitive structure ✓
 
 Theories/CCG/GenerativeCapacity.lean
-  - Theorem: CCG generates {aⁿbⁿcⁿdⁿ} (via B² composition)
-  - Theorem: CCG ⊃ CFL (strictly)
+  - Imports FormalLanguageTheory + CrossSerial ✓
+  - ccg_strictly_more_expressive_than_cfg (sorry)
+  - cross_serial_requires_mcs ✓ (proven by rfl)
+  - ccg_is_mildly_context_sensitive ✓ (proven by rfl)
 ```
 
 ### 4.2 HPSG/Minimalism → SemDerivation
@@ -173,20 +203,22 @@ Theories/CCG/GenerativeCapacity.lean
 
 **Solution**: Implement `toDerivation` for HPSG and Minimalism.
 
-### 4.3 CCG-Montague Homomorphism
+### 4.3 CCG-Montague Homomorphism ✓ DONE
 
-**Current state**: `CCG/Semantics.lean` has `catToTy` and trivial preservation theorems.
+**Status**: Implemented in `CCG/Homomorphism.lean` and `CCG/Semantics.lean`
 
-**Problem**: The homomorphism property (syntax composition → semantic application) not proven.
-
-**Solution**: Prove fundamental theorem of compositional semantics:
-
-```lean
-theorem fapp_homomorphism :
-    (DerivStep.fapp d₁ d₂).eval m lex = apply (d₁.eval m lex) (d₂.eval m lex)
-```
-
-See `docs/plans/wise-wiggling-parrot.md` for full plan.
+**Implementation**:
+- `DerivStep.interp` in Semantics.lean directly implements the homomorphism:
+  - Forward application → function application (`m1 m2'`)
+  - Backward application → function application (`m2 m1'`)
+  - Forward composition → B combinator (`B m1 m2'`)
+  - Type-raising → T combinator (`T m`)
+- `Homomorphism.lean` proves structural properties:
+  - `fapp_sem`, `bapp_sem`: Application = function application
+  - `fcomp_sem`: Composition = B combinator
+  - `ftr_sem`: Type-raising = T combinator
+  - `ccgHomomorphism`: All properties hold together
+  - `ccgRuleToRule`: Steedman's rule-to-rule relation
 
 ---
 
@@ -262,5 +294,11 @@ Additional formalizations from Horn's dissertation:
 - [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
 - [x] **Unified entailment** (NeoGricean uses Montague semantics)
 - [x] **Parameterized Lexicon: Numerals** (`Montague/Lexicon/Numerals/` - LowerBound, Exact, Compare)
+- [x] **Parameterized Lexicon: Modals** (`Montague/Lexicon/Modals/` - Simple, Kratzer, Compare)
 - [x] **Implicature Operations** (`NeoGricean/Operations.lean` - assert/contradict/suspend from Horn 1972 §1.22)
 - [x] **Negation Scope Asymmetry** (`NeoGricean/NegationScope.lean` - internal vs external negation from Horn 1972)
+- [x] **RSA DE Context Handling** (`RSA/PottsLU.lean` - full Potts et al. 2016 Lexical Uncertainty model)
+- [x] **Distribution Type** (`Core/Distribution.lean` - ExactDist with proofs)
+- [x] **Formal Language Theory** (`Core/FormalLanguageTheory.lean` - infrastructure for {aⁿbⁿcⁿdⁿ})
+- [x] **CCG Generative Capacity** (`CCG/GenerativeCapacity.lean` - connects CCG to formal language theory)
+- [x] **CCG-Montague Homomorphism** (`CCG/Homomorphism.lean` - rule-to-rule correspondence)

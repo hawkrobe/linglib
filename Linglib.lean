@@ -52,6 +52,9 @@ import Linglib.Core.SemanticBackend
 import Linglib.Core.RSA
 import Linglib.Core.Pipeline
 import Linglib.Core.InformationStructure
+import Linglib.Core.LexicalUncertainty
+import Linglib.Core.CompositionalLU
+import Linglib.Core.FormalLanguageTheory
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -117,6 +120,7 @@ import Linglib.Theories.CCG.Combinators
 import Linglib.Theories.CCG.Intonation
 import Linglib.Theories.CCG.Scope
 import Linglib.Theories.CCG.CrossSerial
+import Linglib.Theories.CCG.GenerativeCapacity
 import Linglib.Theories.CCG.Gapping
 import Linglib.Theories.CCG.Equivalence
 
@@ -166,6 +170,8 @@ import Linglib.Theories.RSA.FrankGoodman2012
 import Linglib.Theories.RSA.ScalarImplicatures
 import Linglib.Theories.RSA.ScontrasPearl2021
 import Linglib.Theories.RSA.Intensional
+import Linglib.Theories.RSA.EmbeddedScalars
+import Linglib.Theories.RSA.PottsLU
 
 import Linglib.Theories.PragmaticComparison
 
@@ -198,6 +204,9 @@ import Linglib.Phenomena.ScopeWordOrder.Data
 import Linglib.Phenomena.Semantics.Entailments
 import Linglib.Phenomena.Semantics.Monotonicity
 import Linglib.Phenomena.Semantics.TruthConditions
+
+-- Imprecision and homogeneity (Haslinger 2024)
+import Linglib.Phenomena.Imprecision.Basic
 
 -- Word order alternations (verb position, etc.)
 import Linglib.Phenomena.WordOrderAlternations.VerbPosition.Data
