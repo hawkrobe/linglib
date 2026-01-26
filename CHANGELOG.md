@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.2] - 2025-01-25
+
+### Added
+- **Montague/Lexicon/Numerals/DeFregean.lean**: Kennedy (2015) de-Fregean semantics
+  - Bare numerals mean =n (like Exact), but derived via maximality operator
+  - Key insight: DeFregean = Exact for bare numerals; difference is with modifiers
+  - RSA role shifts: derives ignorance implicatures for Class B modifiers, not exact readings
+  - Placeholder for Degree/ module which will handle Class A/B modifier distinction
+
+### Architecture
+- Numeral theories (LowerBound, Exact, DeFregean) stay in `Numerals/`
+- Degree expressions ("more than", "at least") will go in `Degree/` (not numeral-specific)
+
 ## [0.9.1] - 2025-01-25
 
 ### Added

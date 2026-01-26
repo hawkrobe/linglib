@@ -187,6 +187,12 @@ abbrev DeFregean := Bilateral
 /-- Alias for backward compatibility -/
 abbrev deFregeanMeaning := bilateralMeaning
 
+/-- Alias for backward compatibility with code using Exact -/
+abbrev Exact := Bilateral
+
+/-- Alias for backward compatibility -/
+abbrev exactMeaning := bilateralMeaning
+
 -- ============================================================================
 -- Summary
 -- ============================================================================
