@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.8.0] - 2025-01-25
+
+### Changed
+- **Core/RSA.lean**: Simplified to direct ℚ arithmetic
+  - Removed `RSAScore` typeclass - all computation now uses Mathlib's `ℚ` directly
+  - Enables direct use of Mathlib lemmas (`Rat.mul_zero`, `Rat.div_def`, etc.)
+  - Added `getScore_normalize_zero` helper lemma for proof composition
+
+### Added
+- **Core/RSA.lean**: Grounding theorems fully proven
+  - `L0_prob_zero_when_false`: L0 assigns zero probability when φ = 0
+  - `S1_zero_when_false`: S1 assigns zero probability when φ = 0
+  - Both use `LawfulBEq` constraint to convert `==` to `=`
+
+- **RSA/Intensional.lean**: Fixed grounding proofs
+  - `l0_uses_compositional_meaning`: L0 nonzero → Montague meaning true
+  - `l0_zero_when_false`: False meaning → zero probability
+  - Uses `Option.map_eq_some_iff` + `List.find?_some` pattern from Mathlib
+
+### Architecture
+- RSA now uses exact rational arithmetic throughout
+- Boolean semantics: φ ∈ {0, 1} via `boolToRat`
+- Graded semantics: φ ∈ [0, 1] ⊂ ℚ (constraint as Prop, not enforced by type)
+- Distribution type planned for Phase 2.4 to add compile-time probability guarantees
+
 ## [0.7.0] - 2025-01-25
 
 ### Added

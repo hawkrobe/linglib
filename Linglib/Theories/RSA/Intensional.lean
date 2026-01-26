@@ -27,6 +27,7 @@ This module provides:
 
 import Linglib.Core.RSA
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Option.Basic
 import Linglib.Theories.Montague.Intensional
 
 namespace RSA.Intensional
@@ -148,10 +149,23 @@ theorem l0_uses_compositional_meaning {m : IntensionalModel}
   intro h
   by_contra hfalse
   simp only [Bool.not_eq_true] at hfalse
-  -- Key insight: L0_from_derivation maps w to (w, if d.eval w then prob else zero)
-  -- When d.eval w = false, this is (w, zero), so L0_prob returns zero
-  -- Technical proof requires lemmas about List.map and List.find? interaction
-  sorry
+  apply h; clear h
+  -- When d.eval w = false, show L0_prob d worlds w = 0
+  unfold L0_prob L0_from_derivation
+  simp only [List.find?_map, Function.comp_def]
+  split
+  · -- some case
+    rename_i fst p heq
+    rw [Option.map_eq_some_iff] at heq
+    obtain ⟨w'', hfind, heq'⟩ := heq
+    have hw''_beq := List.find?_some hfind
+    simp only [beq_iff_eq] at hw''_beq
+    simp only [Prod.mk.injEq] at heq'
+    obtain ⟨rfl, hp⟩ := heq'
+    rw [← hp, hw''_beq]
+    simp only [hfalse, Bool.false_eq_true, ite_false]
+  · -- none case
+    rfl
 
 /--
 **Grounding Theorem (Contrapositive)**: false meaning → zero probability.
@@ -164,9 +178,22 @@ theorem l0_zero_when_false {m : IntensionalModel}
     (d : PropDerivation m) (worlds : List m.World) (w : m.World)
     (hfalse : d.eval w = false) :
     L0_prob d worlds w = 0 ∨ w ∉ worlds := by
-  -- When d.eval w = false, L0_from_derivation maps w to (w, 0)
-  -- Technical proof about List.find? interaction with map
-  sorry
+  left
+  unfold L0_prob L0_from_derivation
+  simp only [List.find?_map, Function.comp_def]
+  split
+  · -- some case
+    rename_i fst p heq
+    rw [Option.map_eq_some_iff] at heq
+    obtain ⟨w'', hfind, heq'⟩ := heq
+    have hw''_beq := List.find?_some hfind
+    simp only [beq_iff_eq] at hw''_beq
+    simp only [Prod.mk.injEq] at heq'
+    obtain ⟨rfl, hp⟩ := heq'
+    rw [← hp, hw''_beq]
+    simp only [hfalse, Bool.false_eq_true, ite_false]
+  · -- none case
+    rfl
 
 -- ============================================================================
 -- Example: Scalar Implicature Scenario

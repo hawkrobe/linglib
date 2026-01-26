@@ -40,55 +40,63 @@ Key results verified by #eval:
 
 ### 1.3 Grounding Theorem ✓ DONE
 
-**Status**: Theorem stated in `RSA/Intensional.lean`
+**Status**: Fully proven in `RSA/Intensional.lean`
 
 ```lean
 theorem l0_uses_compositional_meaning :
-    (L0_prob d worlds w ≠ Frac.zero) → d.eval w = true
+    (L0_prob d worlds w ≠ 0) → d.eval w = true
+
+theorem l0_zero_when_false :
+    d.eval w = false → L0_prob d worlds w = 0 ∨ w ∉ worlds
 ```
 
-Proves that L0 only assigns positive probability to worlds where the compositional meaning is true. Technical details about `List.find?` left as `sorry` but the key insight is formalized.
+Proves that L0 only assigns positive probability to worlds where the compositional meaning is true. Uses Mathlib lemmas: `List.find?_map`, `Option.map_eq_some_iff`, `List.find?_some`.
 
 Also provides:
 - `l0_some_zero_at_none`: "some" has zero prob at "none" world (proven by rfl)
 - `l0_every_zero_at_someNotAll`: "every" has zero prob at "someNotAll" (proven by rfl)
-- `scalar_implicature_from_grounded_rsa`: L1 prefers someNotAll over all (verified by #eval)
+- `scalar_implicature_from_grounded_rsa`: L1 prefers someNotAll over all (native_decide)
 
 ---
 
 ## Phase 2: Type Safety & Robustness
 
-### 2.1 Type-Safe Scale Positions
+### 2.1 Type-Safe Scale Positions ✓ DONE
 
-**Current state**: Implicatures use string matching: `hasImplicature results "all"`
+Replaced string matching with typed `QuantExpr`/`ConnExpr` in scale operations.
 
-**Problem**: Fragile—renaming breaks silently, no compile-time checking.
+### 2.2 NeoGricean Entailment → Montague Model ✓ DONE
 
-**Solution**: Use `QuantExpr` / `ConnExpr` types from `Montague/Scales.lean`:
+Unified entailment checking via Montague semantics.
+
+### 2.3 RSA Simplified to ℚ ✓ DONE
+
+**Status**: `Core/RSA.lean` now uses ℚ directly instead of `RSAScore` typeclass.
+
+- Removed `RSAScore` typeclass overhead
+- All RSA computation uses exact rational arithmetic
+- `L0_zero_when_false` theorem proven using `Rat.mul_zero`, `Rat.div_def`
+- Enables Mathlib lemmas directly on RSA computations
+
+### 2.4 Distribution Type (TODO)
+
+**Goal**: Make L0/S1/L1 return typed probability distributions with proofs.
 
 ```lean
--- Current
-hasImplicature results "all"
+structure Distribution (X : Type) where
+  scores : List (X × ℚ)
+  nonneg : ∀ p ∈ scores.map (·.2), p ≥ 0
+  sums_to_one : sumScores (scores.map (·.2)) = 1
 
--- Desired
-hasImplicature results .all  -- type-checked!
+theorem normalize_valid :
+    (∀ p ∈ dist.map (·.2), p ≥ 0) →
+    sumScores (dist.map (·.2)) > 0 →
+    Distribution.mk (normalize dist) ...
 ```
 
-**Files affected**: `NeoGricean/ScalarImplicatures.lean`, `RSA/ScalarImplicatures.lean`
+This would give compile-time guarantees that RSA outputs are valid distributions.
 
-### 2.2 NeoGricean Entailment → Montague Model
-
-**Current state**: `NeoGricean/ScalarImplicatures.lean` has hardcoded entailment checker.
-
-**Problem**: Not proven to match Montague's model-theoretic entailment.
-
-**Solution**: Either:
-- Prove equivalence: `neoGriceanEntails ↔ montagueEntails`
-- Or replace hardcoded checker with Montague evaluation
-
-**Files affected**: `NeoGricean/ScalarImplicatures.lean`, `Montague/Entailment.lean`
-
-### 2.3 RSA DE Context Handling
+### 2.5 RSA DE Context Handling
 
 **Current state**: NeoGricean handles DE blocking; RSA doesn't.
 
@@ -241,3 +249,8 @@ Formalize CCG's left-prefix constituency and connect to processing data.
 - [x] Real cross-serial derivations for 2-verb case (`CCG/CrossSerial.lean`)
 - [x] Catalan bracketing proofs (`CCG/Equivalence.lean`)
 - [x] **Intensional Montague Semantics** (`Montague/Intensional.lean`)
+- [x] **Grounding theorems fully proven** (`RSA/Intensional.lean` - no sorries)
+- [x] **Migrate to Mathlib ℚ** (removed custom `Frac` type)
+- [x] **Simplify RSA to ℚ-only** (removed `RSAScore` typeclass)
+- [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
+- [x] **Unified entailment** (NeoGricean uses Montague semantics)

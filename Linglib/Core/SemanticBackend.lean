@@ -19,9 +19,9 @@ import Linglib.Core.RSA
 namespace SemanticBackend
 
 /-- Deprecated: use RSAScenario.ofBool instead -/
-abbrev LiteralBackend := ExactRSAScenario
+abbrev LiteralBackend := RSAScenario
 
-/-- Deprecated: use RSAScenario Score directly -/
-abbrev GradedBackend := SoftRSAScenario
+/-- Deprecated: use RSAScenario directly -/
+abbrev GradedBackend := RSAScenario
 
 end SemanticBackend
