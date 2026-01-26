@@ -33,7 +33,9 @@ With exact semantics, the asymmetry is unexplained:
 import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
 import Linglib.Theories.Montague.Lexicon.Numerals.Exact
 
-namespace Montague.Lexicon.Numerals
+open Montague.Lexicon.Numerals
+
+namespace NeoGricean
 
 -- ============================================================================
 -- Negation Scope Types
@@ -280,4 +282,4 @@ theorem negation_summary :
      compatibleExtended .three .external = [0, 1, 2, 4, 5]) := by
   native_decide
 
-end Montague.Lexicon.Numerals
+end NeoGricean

@@ -3,15 +3,20 @@
 ## [0.9.1] - 2025-01-25
 
 ### Added
-- **Montague/Lexicon/Numerals/Operations.lean**: Horn (1972) §1.22 implicature operations
+- **NeoGricean/Operations.lean**: Horn (1972) §1.22 implicature operations
   - `ImplicatureOperation` type: assert, contradict, suspend
   - Felicity conditions based on ambiguity (operations require implicature to target)
   - Proves lower-bound predicts felicitous operations, exact predicts infelicitous
 
-- **Montague/Lexicon/Numerals/Negation.lean**: Negation scope asymmetry (Jespersen/Horn)
+- **NeoGricean/NegationScope.lean**: Negation scope asymmetry (Jespersen/Horn)
   - `NegationScope` type: internal (targets lower bound) vs external (targets exact)
   - "doesn't have 3" (internal) = <3 vs "doesn't have THREE" (external) = ≠3
   - Proves asymmetry predicted by lower-bound, collapses in exact semantics
+
+### Architecture
+- Operations and NegationScope are NeoGricean theory-internal concepts
+- They're currently applied to numerals but could generalize to any scalar items
+- Kept in `NeoGricean/` namespace, import numeral theories for concrete examples
 
 ### Key Insight
 These patterns provide empirical evidence for lower-bound semantics:

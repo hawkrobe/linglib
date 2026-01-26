@@ -261,5 +261,5 @@ Additional formalizations from Horn's dissertation:
 - [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
 - [x] **Unified entailment** (NeoGricean uses Montague semantics)
 - [x] **Parameterized Lexicon: Numerals** (`Montague/Lexicon/Numerals/` - LowerBound, Exact, Compare)
-- [x] **Implicature Operations** (`Montague/Lexicon/Numerals/Operations.lean` - assert/contradict/suspend from Horn 1972 §1.22)
-- [x] **Negation Scope Asymmetry** (`Montague/Lexicon/Numerals/Negation.lean` - internal vs external negation from Horn 1972)
+- [x] **Implicature Operations** (`NeoGricean/Operations.lean` - assert/contradict/suspend from Horn 1972 §1.22)
+- [x] **Negation Scope Asymmetry** (`NeoGricean/NegationScope.lean` - internal vs external negation from Horn 1972)

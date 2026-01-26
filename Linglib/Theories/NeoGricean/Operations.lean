@@ -40,7 +40,9 @@ Exact theory: Operations are anomalous (no implicature exists)
 import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
 import Linglib.Theories.Montague.Lexicon.Numerals.Exact
 
-namespace Montague.Lexicon.Numerals
+open Montague.Lexicon.Numerals
+
+namespace NeoGricean
 
 -- ============================================================================
 -- Implicature Operations (Horn 1972, §1.22)
@@ -334,4 +336,4 @@ theorem operations_summary :
      operationFelicitous Exact .two .suspend = false) := by
   native_decide
 
-end Montague.Lexicon.Numerals
+end NeoGricean
