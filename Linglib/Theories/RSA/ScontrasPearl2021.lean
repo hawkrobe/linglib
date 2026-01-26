@@ -33,14 +33,13 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 -/
 
 import Linglib.Core.RSA
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 import Linglib.Core.Pipeline
 import Linglib.Phenomena.ScontrasPearl2021.Data
 import Linglib.Theories.Montague.Scope
 
 namespace RSA.ScontrasPearl2021
 
-open Frac
 open ParametricRSA
 open ScontrasPearl2021
 open Montague.Scope
@@ -181,25 +180,25 @@ abbrev scopeBackend := scopeScenario
 -- ============================================================================
 
 /-- L1 joint scores over (world × scope) -/
-def l1JointScores : List ((Nat × ScopeConfig) × Frac.Frac) :=
+def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
   ParametricRSA.L1_joint scopeBackend .everyHorseNotJump
 
 /-- L1 marginal scores over worlds -/
-def l1WorldScores : List (Nat × Frac.Frac) :=
+def l1WorldScores : List (Nat × ℚ) :=
   ParametricRSA.L1_world scopeBackend .everyHorseNotJump
 
 /-- L1 marginal scores over scope interpretations -/
-def l1ScopeScores : List (ScopeConfig × Frac.Frac) :=
+def l1ScopeScores : List (ScopeConfig × ℚ) :=
   ParametricRSA.L1_interp scopeBackend .everyHorseNotJump
 
 -- ============================================================================
 -- Helper: Get score from distribution
 -- ============================================================================
 
-def getWorldScore (w : Nat) : Frac.Frac :=
+def getWorldScore (w : Nat) : ℚ :=
   RSA.getScore l1WorldScores w
 
-def getScopeScore (s : ScopeConfig) : Frac.Frac :=
+def getScopeScore (s : ScopeConfig) : ℚ :=
   RSA.getScore l1ScopeScores s
 
 -- ============================================================================
@@ -222,7 +221,7 @@ Unlike pure scope theories, RSA doesn't categorically rule out
 the partial world. This matches the empirical 59% rate.
 -/
 theorem rsa_partial_world_possible :
-    Frac.isPos (getWorldScore 1) = true := by
+    getWorldScore 1 > 0 := by
   native_decide
 
 /--
@@ -233,8 +232,7 @@ is true in these worlds under at least one scope reading.
 Two has zero probability because the utterance is false there under both scopes.
 -/
 theorem rsa_compatible_worlds_positive :
-    Frac.isPos (getWorldScore 0) = true ∧
-    Frac.isPos (getWorldScore 1) = true := by
+    getWorldScore 0 > 0 ∧ getWorldScore 1 > 0 := by
   native_decide
 
 /--
@@ -244,7 +242,7 @@ When all horses jumped, "Every horse didn't jump" is false under both
 scope readings, so L1 assigns probability 0 to this world.
 -/
 theorem rsa_two_world_zero :
-    Frac.isZero (getWorldScore 2) = true := by
+    getWorldScore 2 = 0 := by
   native_decide
 
 /--

@@ -75,13 +75,13 @@ def deriveImplicature
 **Example: "some" → "not all" in UE context**
 -/
 def someNotAll_UE : ImplicatureDerivation :=
-  deriveImplicature "some" "all" simpleAssertion quantifierChecker
+  deriveImplicature "some" "all" simpleAssertion quantifierCheckerString
 
 /--
 **Example: "some" → "not all" BLOCKED in DE context**
 -/
 def someNotAll_DE : ImplicatureDerivation :=
-  deriveImplicature "some" "all" underNegation quantifierChecker
+  deriveImplicature "some" "all" underNegation quantifierCheckerString
 
 /--
 **Theorem: DE Blocks "Some → Not All"**
@@ -100,7 +100,7 @@ theorem de_blocks_some_not_all :
 In DE context, "all" can implicate "not some" (reversed!).
 -/
 def allNotSome_DE : ImplicatureDerivation :=
-  deriveImplicature "all" "some" underNegation quantifierChecker
+  deriveImplicature "all" "some" underNegation quantifierCheckerString
 
 theorem de_all_has_implicature :
     allNotSome_DE.implicatureArises = true := by
@@ -138,21 +138,8 @@ structure DisjunctionAnalysis where
   compatible : Bool
   deriving Repr
 
-/--
-Connective entailment checker.
-"and" is stronger than "or" in UE contexts.
--/
-def connectiveStrengthUE (c1 c2 : String) : Bool :=
-  match c1, c2 with
-  | "and", "or" => true
-  | _, _ => false
-
-def connectiveChecker : EntailmentChecker String :=
-  { isStronger := λ pol c1 c2 =>
-      match pol with
-      | .upward => connectiveStrengthUE c1 c2
-      | .downward => c1 == "or" && c2 == "and"  -- reversed
-  }
+-- Note: connectiveCheckerString is defined in Alternatives.lean
+-- It's grounded in Montague.Scales.Connectives.entails
 
 /--
 Analyze a simple disjunction in UE context.
@@ -160,7 +147,7 @@ Analyze a simple disjunction in UE context.
 Both exclusivity AND ignorance can arise together.
 -/
 def analyzeDisjunction (ctx : SentenceContext) : DisjunctionAnalysis :=
-  let exclusivity := connectiveChecker.isStronger ctx.polarity "and" "or"
+  let exclusivity := connectiveCheckerString.isStronger ctx.polarity "and" "or"
   -- Ignorance arises when competence is not assumed (for disjuncts)
   -- In standard disjunction contexts, ignorance typically arises
   { statement := "A or B"
@@ -376,7 +363,7 @@ def deriveScalarImplicatures
 **Example: Complete derivation for "some" in UE context**
 -/
 def someUE : ScalarImplicatureResult :=
-  deriveScalarImplicatures "some" quantifierSet quantifierChecker simpleAssertion
+  deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString simpleAssertion
 
 /--
 **Theorem: "some" in UE derives "not(most)" and "not(all)"**
@@ -389,7 +376,7 @@ theorem some_ue_implicatures :
 **Example: Complete derivation for "some" in DE context**
 -/
 def someDE : ScalarImplicatureResult :=
-  deriveScalarImplicatures "some" quantifierSet quantifierChecker underNegation
+  deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString underNegation
 
 /--
 **Theorem: "some" in DE derives NO implicatures**
@@ -420,13 +407,16 @@ open Montague.Lexicon
 
 /--
 Map scale membership to the appropriate HornSet and EntailmentChecker.
+
+Uses string-based versions for interface with SemDeriv, but these
+are backed by type-safe implementations grounded in Montague.Scales.
 -/
 def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
   match sm with
-  | .quantifier _ => (quantifierSet, quantifierChecker)
-  | .connective _ => (connectiveSet, connectiveChecker)
-  | .modal _ => (connectiveSet, connectiveChecker)  -- simplified for now
-  | .numeral _ => (quantifierSet, quantifierChecker)  -- simplified for now
+  | .quantifier _ => (quantifierSetString, quantifierCheckerString)
+  | .connective _ => (connectiveSetString, connectiveCheckerString)
+  | .modal _ => (connectiveSetString, connectiveCheckerString)  -- simplified for now
+  | .numeral _ => (quantifierSetString, quantifierCheckerString)  -- simplified for now
 
 /--
 Create a SentenceContext from a ContextPolarity.

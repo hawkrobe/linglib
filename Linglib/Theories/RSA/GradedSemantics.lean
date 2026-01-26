@@ -27,11 +27,9 @@ Reference: Lassiter & Goodman (2017), "Adjectival vagueness in a Bayesian model"
 -/
 
 import Linglib.Core.RSA
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 
 namespace RSA.GradedSemantics
-
-open Frac
 
 -- ============================================================================
 -- Domain: Heights
@@ -63,23 +61,23 @@ These are scaled as fractions out of 10:
 - 180cm → 7/10
 - 190cm → 9/10 (very tall)
 -/
-def tallDegree : Height → Frac
-  | .h150 => ⟨1, 10, by omega⟩
-  | .h160 => ⟨3, 10, by omega⟩
-  | .h170 => ⟨5, 10, by omega⟩
-  | .h180 => ⟨7, 10, by omega⟩
-  | .h190 => ⟨9, 10, by omega⟩
+def tallDegree : Height → ℚ
+  | .h150 => 1 / 10
+  | .h160 => 3 / 10
+  | .h170 => 5 / 10
+  | .h180 => 7 / 10
+  | .h190 => 9 / 10
 
 /--
 Short degree: inverse of tall degree.
 Computed as (10 - tallNum) / 10.
 -/
-def shortDegree : Height → Frac
-  | .h150 => ⟨9, 10, by omega⟩   -- 1 - 1/10 = 9/10
-  | .h160 => ⟨7, 10, by omega⟩   -- 1 - 3/10 = 7/10
-  | .h170 => ⟨5, 10, by omega⟩   -- 1 - 5/10 = 5/10
-  | .h180 => ⟨3, 10, by omega⟩   -- 1 - 7/10 = 3/10
-  | .h190 => ⟨1, 10, by omega⟩   -- 1 - 9/10 = 1/10
+def shortDegree : Height → ℚ
+  | .h150 => 9 / 10   -- 1 - 1/10 = 9/10
+  | .h160 => 7 / 10   -- 1 - 3/10 = 7/10
+  | .h170 => 5 / 10   -- 1 - 5/10 = 5/10
+  | .h180 => 3 / 10   -- 1 - 7/10 = 3/10
+  | .h190 => 1 / 10   -- 1 - 9/10 = 1/10
 
 /--
 The graded φ function for height utterances.
@@ -89,10 +87,10 @@ Unlike Boolean semantics, this returns degrees in [0,1]:
 - "tall" at 150cm → 0.1 (barely applicable)
 - "silence" → 1 (always applicable, uninformative)
 -/
-def φ : Utterance → Height → Frac
+def φ : Utterance → Height → ℚ
   | .tall, h => tallDegree h
   | .short, h => shortDegree h
-  | .silence, _ => Frac.one  -- Null utterance always "true"
+  | .silence, _ => 1  -- Null utterance always "true"
 
 -- ============================================================================
 -- RSAScenario with Graded φ
@@ -116,25 +114,25 @@ def heightScenario : ExactRSAScenario where
 -- ============================================================================
 
 /-- L0 for "tall" -/
-def l0_tall : List (Height × Frac) := RSA.L0 heightScenario .tall
+def l0_tall : List (Height × ℚ) := RSA.L0 heightScenario .tall
 
 /-- L0 for "short" -/
-def l0_short : List (Height × Frac) := RSA.L0 heightScenario .short
+def l0_short : List (Height × ℚ) := RSA.L0 heightScenario .short
 
 /-- S1 for height 190 (very tall person) -/
-def s1_h190 : List (Utterance × Frac) := RSA.S1 heightScenario .h190
+def s1_h190 : List (Utterance × ℚ) := RSA.S1 heightScenario .h190
 
 /-- S1 for height 150 (short person) -/
-def s1_h150 : List (Utterance × Frac) := RSA.S1 heightScenario .h150
+def s1_h150 : List (Utterance × ℚ) := RSA.S1 heightScenario .h150
 
 /-- S1 for height 170 (borderline) -/
-def s1_h170 : List (Utterance × Frac) := RSA.S1 heightScenario .h170
+def s1_h170 : List (Utterance × ℚ) := RSA.S1 heightScenario .h170
 
 /-- L1 for "tall" -/
-def l1_tall : List (Height × Frac) := RSA.L1 heightScenario .tall
+def l1_tall : List (Height × ℚ) := RSA.L1 heightScenario .tall
 
 /-- L1 for "short" -/
-def l1_short : List (Height × Frac) := RSA.L1 heightScenario .short
+def l1_short : List (Height × ℚ) := RSA.L1 heightScenario .short
 
 -- ============================================================================
 -- Evaluate

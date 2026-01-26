@@ -29,12 +29,11 @@ Griceans claim SIs are global pragmatic inferences, not local.
 - Data strongly favor Gricean over conventionalist accounts
 -/
 
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 import Linglib.Phenomena.EmpiricalData
 
 namespace GeurtsPouscoulous2009
 
-open Frac
 open Phenomena
 
 -- ============================================================================

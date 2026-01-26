@@ -20,7 +20,7 @@ The scale ordering determines scalar implicatures:
 Reference: Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
 -/
 
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 
 namespace Montague.Scales
 
@@ -76,7 +76,25 @@ namespace Quantifiers
 
 inductive QuantExpr where
   | none_ | some_ | most | all
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Convert string to QuantExpr -/
+def QuantExpr.ofString? : String → Option QuantExpr
+  | "none" => some .none_
+  | "some" => some .some_
+  | "most" => some .most
+  | "all" => some .all
+  | "every" => some .all  -- "every" is equivalent to "all"
+  | _ => none
+
+/-- Convert QuantExpr to string -/
+def QuantExpr.toString : QuantExpr → String
+  | .none_ => "none"
+  | .some_ => "some"
+  | .most => "most"
+  | .all => "all"
+
+instance : ToString QuantExpr := ⟨QuantExpr.toString⟩
 
 /-- The standard quantifier scale ⟨none, some, most, all⟩ -/
 def quantScale : HornScale QuantExpr :=
@@ -128,7 +146,20 @@ namespace Connectives
 
 inductive ConnExpr where
   | or_ | and_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Convert string to ConnExpr -/
+def ConnExpr.ofString? : String → Option ConnExpr
+  | "or" => some .or_
+  | "and" => some .and_
+  | _ => none
+
+/-- Convert ConnExpr to string -/
+def ConnExpr.toString : ConnExpr → String
+  | .or_ => "or"
+  | .and_ => "and"
+
+instance : ToString ConnExpr := ⟨ConnExpr.toString⟩
 
 /-- The connective scale ⟨or, and⟩ -/
 def connScale : HornScale ConnExpr :=
@@ -170,7 +201,23 @@ namespace Modals
 
 inductive ModalExpr where
   | possible | necessary
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Convert string to ModalExpr -/
+def ModalExpr.ofString? : String → Option ModalExpr
+  | "possible" => some .possible
+  | "might" => some .possible
+  | "may" => some .possible
+  | "necessary" => some .necessary
+  | "must" => some .necessary
+  | _ => none
+
+/-- Convert ModalExpr to string -/
+def ModalExpr.toString : ModalExpr → String
+  | .possible => "possible"
+  | .necessary => "necessary"
+
+instance : ToString ModalExpr := ⟨ModalExpr.toString⟩
 
 /-- The modal scale ⟨possible, necessary⟩ -/
 def modalScale : HornScale ModalExpr :=

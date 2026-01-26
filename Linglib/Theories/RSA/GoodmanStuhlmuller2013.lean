@@ -22,11 +22,11 @@ knowledge state affects interpretation.
 
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.Montague.Numbers
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 
 namespace RSA.GoodmanStuhlmuller2013
 
-open RSA RSA.Scalar Frac
+open RSA RSA.Scalar
 
 -- ============================================================================
 -- PART 1: Basic Scalar Implicature (Full Knowledge)
@@ -35,19 +35,19 @@ open RSA RSA.Scalar Frac
 namespace BasicImplicature
 
 /-- L0 scores for "some" -/
-def l0_some : List (CookieWorld × Frac) := RSA.L0 scalarScenario .some_
+def l0_some : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .some_
 
 /-- L0 scores for "all" -/
-def l0_all : List (CookieWorld × Frac) := RSA.L0 scalarScenario .all
+def l0_all : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .all
 
 /-- S1 scores in w3 (all ate) -/
-def s1_w3 : List (ScalarUtterance × Frac) := RSA.S1 scalarScenario .w3
+def s1_w3 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w3
 
 /-- S1 scores in w1 (1 ate) -/
-def s1_w1 : List (ScalarUtterance × Frac) := RSA.S1 scalarScenario .w1
+def s1_w1 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w1
 
 /-- L1 scores for "some" -/
-def l1_some : List (CookieWorld × Frac) := RSA.L1 scalarScenario .some_
+def l1_some : List (CookieWorld × ℚ) := RSA.L1 scalarScenario .some_
 
 #eval l0_some   -- L0("some"): uniform 1/3 over {w1, w2, w3}
 #eval l0_all    -- L0("all"): 1 for w3, 0 elsewhere
@@ -71,7 +71,7 @@ theorem scalar_implicature_w2 :
 
 /-- In L0, w1 and w3 have equal probability (no implicature at literal level) -/
 theorem l0_no_implicature :
-    Frac.eq (RSA.getScore l0_some .w1) (RSA.getScore l0_some .w3) := by
+    RSA.getScore l0_some .w1 = RSA.getScore l0_some .w3 := by
   native_decide
 
 /-- In w3, speaker prefers "all" over "some" -/
@@ -81,7 +81,7 @@ theorem s1_prefers_all_in_w3 :
 
 /-- In w1, speaker uses "some" (positive probability) and not "all" (zero) -/
 theorem s1_uses_some_in_w1 :
-    (RSA.getScore s1_w1 .some_).num > 0 ∧ (RSA.getScore s1_w1 .all).num = 0 := by
+    RSA.getScore s1_w1 .some_ > 0 ∧ RSA.getScore s1_w1 .all = 0 := by
   native_decide
 
 end BasicImplicature
@@ -144,76 +144,65 @@ def choose : Nat → Nat → Nat
   | n + 1, k + 1 => choose n k + choose n (k + 1)
 
 -- Hypergeometric probability
-def hypergeomFrac (totalN totalK sampleN observedK : Nat) : Frac :=
+def hypergeomℚ (totalN totalK sampleN observedK : Nat) : ℚ :=
   let num := choose totalK observedK * choose (totalN - totalK) (sampleN - observedK)
   let den := choose totalN sampleN
-  if h : den > 0 then ⟨num, den, h⟩ else Frac.zero
+  if den > 0 then (num : ℚ) / (den : ℚ) else 0
 
-def obsProb (o : Observation) (a : Access) (s : WorldState) : Frac :=
-  hypergeomFrac 3 s.toNat a.toNat o.seen
+def obsProb (o : Observation) (a : Access) (s : WorldState) : ℚ :=
+  hypergeomℚ 3 s.toNat a.toNat o.seen
 
--- Helper for summing fractions
-def sumFracs (xs : List Frac) : Frac :=
-  let dens := xs.map (·.den)
-  let commonDen := dens.foldl (· * ·) 1
-  let sumNum := xs.foldl (λ acc x => acc + x.num * (commonDen / x.den)) 0
-  if h : commonDen > 0 then ⟨sumNum, commonDen, h⟩ else Frac.zero
+-- Helper for summing fractions (ℚ has native addition)
+def sumℚs (xs : List ℚ) : ℚ :=
+  xs.foldl (· + ·) 0
 
 -- Speaker's belief state given observation
-def speakerBelief (o : Observation) (s : WorldState) : Frac :=
+def speakerBelief (o : Observation) (s : WorldState) : ℚ :=
   let numerator := obsProb o o.access s
-  let totalScore := sumFracs (allWorldStates.map (obsProb o o.access))
-  if totalScore.num > 0 then
-    let numCross := numerator.num * totalScore.den
-    let denCross := numerator.den * totalScore.num
-    if h2 : denCross > 0 then ⟨numCross, denCross, h2⟩ else Frac.zero
-  else Frac.zero
+  let totalScore := sumℚs (allWorldStates.map (obsProb o o.access))
+  if totalScore > 0 then numerator / totalScore else 0
 
 -- L0: Literal Listener
 def compatibleStates (u : Utterance) : List WorldState :=
   allWorldStates.filter (literalMeaning u)
 
-def L0 (u : Utterance) (s : WorldState) : Frac :=
+def L0 (u : Utterance) (s : WorldState) : ℚ :=
   let compat := compatibleStates u
-  if h : compat.length > 0 ∧ literalMeaning u s then
-    ⟨1, compat.length, h.1⟩
-  else Frac.zero
+  if compat.length > 0 ∧ literalMeaning u s then
+    1 / compat.length
+  else 0
 
 -- S1 with observation
-def expectedL0 (o : Observation) (u : Utterance) : Frac :=
+def expectedL0 (o : Observation) (u : Utterance) : ℚ :=
   let scores := allWorldStates.map λ s =>
-    Frac.mul (speakerBelief o s) (L0 u s)
-  sumFracs scores
+    speakerBelief o s * L0 u s
+  sumℚs scores
 
-def S1_givenObs (o : Observation) (u : Utterance) : Frac :=
+def S1_givenObs (o : Observation) (u : Utterance) : ℚ :=
   let score := expectedL0 o u
-  let total := sumFracs (allUtterances.map (expectedL0 o))
-  if total.num > 0 then
-    let numCross := score.num * total.den
-    let denCross := score.den * total.num
-    if h2 : denCross > 0 then ⟨numCross, denCross, h2⟩ else Frac.zero
-  else Frac.zero
+  let total := sumℚs (allUtterances.map (expectedL0 o))
+  if total > 0 then score / total else 0
 
 -- S1 marginalized over observations: P(u | s, a) [Eq. 4 from paper]
-def S1_marginal (u : Utterance) (s : WorldState) (a : Access) : Frac :=
+def S1_marginal (u : Utterance) (s : WorldState) (a : Access) : ℚ :=
   let obs := observationsFor a
   let scores := obs.map λ o =>
-    Frac.mul (S1_givenObs o u) (obsProb o a s)
-  sumFracs scores
+    S1_givenObs o u * obsProb o a s
+  sumℚs scores
 
 -- L1: Pragmatic listener given access
-def L1_scores (u : Utterance) (a : Access) : List (WorldState × Frac) :=
+def L1_scores (u : Utterance) (a : Access) : List (WorldState × ℚ) :=
   allWorldStates.map λ s => (s, S1_marginal u s a)
 
-def getScore (dist : List (WorldState × Frac)) (s : WorldState) : Frac :=
+def getScore (dist : List (WorldState × ℚ)) (s : WorldState) : ℚ :=
   match dist.find? λ (s', _) => s' == s with
   | some (_, p) => p
-  | none => Frac.zero
+  | none => 0
 
 -- Key computations
-def l1_some_fullAccess : List (WorldState × Frac) := L1_scores .some_ .a3
-def l1_some_access2 : List (WorldState × Frac) := L1_scores .some_ .a2
-def l1_some_access1 : List (WorldState × Frac) := L1_scores .some_ .a1
+def l1_some_fullAccess : List (WorldState × ℚ) := L1_scores .some_ .a3
+def l1_some_access2 : List (WorldState × ℚ) := L1_scores .some_ .a2
+def l1_some_access1 : List (WorldState × ℚ) := L1_scores .some_ .a1
 
 #eval l1_some_fullAccess  -- Full access: implicature holds
 #eval l1_some_access1     -- Partial access: implicature canceled
@@ -331,43 +320,39 @@ def exactMeaning : NumUtterance → KnowledgeState.WorldState → Bool
 
 /-- L0 parameterized by meaning function -/
 def L0_param (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
-    (u : NumUtterance) (s : KnowledgeState.WorldState) : Frac :=
+    (u : NumUtterance) (s : KnowledgeState.WorldState) : ℚ :=
   let compat := KnowledgeState.allWorldStates.filter (meaning u)
-  if h : compat.length > 0 ∧ meaning u s then
-    ⟨1, compat.length, h.1⟩
-  else Frac.zero
+  if compat.length > 0 ∧ meaning u s then
+    1 / compat.length
+  else 0
 
 def expectedL0_param (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
-    (o : KnowledgeState.Observation) (u : NumUtterance) : Frac :=
+    (o : KnowledgeState.Observation) (u : NumUtterance) : ℚ :=
   let scores := KnowledgeState.allWorldStates.map λ s =>
-    Frac.mul (KnowledgeState.speakerBelief o s) (L0_param meaning u s)
-  KnowledgeState.sumFracs scores
+    KnowledgeState.speakerBelief o s * L0_param meaning u s
+  KnowledgeState.sumℚs scores
 
 def S1_param_givenObs (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
-    (o : KnowledgeState.Observation) (u : NumUtterance) : Frac :=
+    (o : KnowledgeState.Observation) (u : NumUtterance) : ℚ :=
   let score := expectedL0_param meaning o u
-  let total := KnowledgeState.sumFracs (allNumUtterances.map (expectedL0_param meaning o))
-  if total.num > 0 then
-    let numCross := score.num * total.den
-    let denCross := score.den * total.num
-    if h2 : denCross > 0 then ⟨numCross, denCross, h2⟩ else Frac.zero
-  else Frac.zero
+  let total := KnowledgeState.sumℚs (allNumUtterances.map (expectedL0_param meaning o))
+  if total > 0 then score / total else 0
 
 def S1_param_marginal (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
-    (u : NumUtterance) (s : KnowledgeState.WorldState) (a : KnowledgeState.Access) : Frac :=
+    (u : NumUtterance) (s : KnowledgeState.WorldState) (a : KnowledgeState.Access) : ℚ :=
   let obs := KnowledgeState.observationsFor a
   let scores := obs.map λ o =>
-    Frac.mul (S1_param_givenObs meaning o u) (KnowledgeState.obsProb o a s)
-  KnowledgeState.sumFracs scores
+    S1_param_givenObs meaning o u * KnowledgeState.obsProb o a s
+  KnowledgeState.sumℚs scores
 
 def L1_param_scores (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
-    (u : NumUtterance) (a : KnowledgeState.Access) : List (KnowledgeState.WorldState × Frac) :=
+    (u : NumUtterance) (a : KnowledgeState.Access) : List (KnowledgeState.WorldState × ℚ) :=
   KnowledgeState.allWorldStates.map λ s => (s, S1_param_marginal meaning u s a)
 
-def getNumScore (dist : List (KnowledgeState.WorldState × Frac)) (s : KnowledgeState.WorldState) : Frac :=
+def getNumScore (dist : List (KnowledgeState.WorldState × ℚ)) (s : KnowledgeState.WorldState) : ℚ :=
   match dist.find? λ (s', _) => s' == s with
   | some (_, p) => p
-  | none => Frac.zero
+  | none => 0
 
 -- ============================================================================
 -- Instantiate with Lower-Bound Backend

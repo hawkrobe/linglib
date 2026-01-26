@@ -6,12 +6,12 @@ Core RSA (Rational Speech Acts) infrastructure.
 ## Architecture
 
 RSA is parameterized by:
-1. **Score type** (Frac for exact proofs, Float for empirical work)
+1. **Score type** (ℚ for exact proofs, Float for empirical work)
 2. **RSAScenario** structure (unified interface replacing FiniteSemanticBackend)
 
 ### Key Types
 
-- `RSAScore`: Typeclass for score arithmetic (Frac, Float)
+- `RSAScore`: Typeclass for score arithmetic (ℚ, Float)
 - `RSAScenario Score`: Unified interface for RSA computation
 - `ParametricRSAScenario Score`: For lifted-variable RSA (scope ambiguity)
 
@@ -25,7 +25,7 @@ RSA models communication as recursive reasoning between speakers and listeners:
 Reference: Frank & Goodman (2012), Goodman & Frank (2016)
 -/
 
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 
 -- ============================================================================
 -- RSAScore Typeclass
@@ -35,7 +35,7 @@ import Linglib.Core.Frac
 What RSA computation needs from a score type.
 
 Provides basic arithmetic operations for probability-like quantities.
-Implemented by `Frac` (exact rational arithmetic) and `Float`.
+Implemented by `ℚ` (exact rational arithmetic) and `Float`.
 -/
 class RSAScore (α : Type) where
   zero : α
@@ -66,13 +66,13 @@ end RSAScore
 -- RSAScore Instances
 -- ============================================================================
 
-open Frac in
-instance : RSAScore Frac.Frac where
-  zero := Frac.zero
-  one := Frac.one
-  add := Frac.add
-  mul := Frac.mul
-  div a b := if h : b.num > 0 then some (Frac.div a b h) else none
+/-- RSAScore instance for ℚ (exact rational arithmetic) -/
+instance : RSAScore ℚ where
+  zero := 0
+  one := 1
+  add := (· + ·)
+  mul := (· * ·)
+  div a b := if b ≠ 0 then some (a / b) else none
   lt a b := decide (a < b)
 
 instance : RSAScore Float where
@@ -128,7 +128,7 @@ structure RSAScenario (Score : Type) [RSAScore Score] where
 attribute [instance] RSAScenario.uttBEq RSAScenario.worldBEq
 
 /-- RSAScenario with exact rational arithmetic (for proofs) -/
-abbrev ExactRSAScenario := RSAScenario Frac.Frac
+abbrev ExactRSAScenario := RSAScenario ℚ
 
 /-- RSAScenario with floating point (for empirical/LLM work) -/
 abbrev SoftRSAScenario := RSAScenario Float
@@ -263,13 +263,13 @@ def L1_prob {Score : Type} [RSAScore Score] (S : RSAScenario Score) (u : S.Utter
 -- ============================================================================
 
 /-- Count worlds compatible with an utterance (for Boolean scenarios) -/
-def compatibleCount (S : RSAScenario Frac.Frac) (u : S.Utterance) : Nat :=
-  (S.worlds.filter fun w => (S.φ u w).num > 0).length
+def compatibleCount (S : RSAScenario ℚ) (u : S.Utterance) : Nat :=
+  (S.worlds.filter fun w => S.φ u w > 0).length
 
 /-- Informativity of an utterance = 1 / (compatible worlds) -/
-def informativity (S : RSAScenario Frac.Frac) (u : S.Utterance) : Frac.Frac :=
+def informativity (S : RSAScenario ℚ) (u : S.Utterance) : ℚ :=
   let n := compatibleCount S u
-  if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
+  if n > 0 then 1 / n else 0
 
 end RSA
 
@@ -318,7 +318,7 @@ structure ParametricRSAScenario (Score : Type) [RSAScore Score] where
 attribute [instance] ParametricRSAScenario.uttBEq ParametricRSAScenario.worldBEq ParametricRSAScenario.interpBEq
 
 /-- Exact parametric scenario -/
-abbrev ExactParametricRSAScenario := ParametricRSAScenario Frac.Frac
+abbrev ExactParametricRSAScenario := ParametricRSAScenario ℚ
 
 variable {Score : Type} [RSAScore Score]
 
@@ -405,15 +405,15 @@ def ParametricRSAScenario.ofBool {Utterance World Interp : Type}
 -- ============================================================================
 
 /-- Count worlds compatible with utterance under interpretation -/
-def compatibleCount (S : ParametricRSAScenario Frac.Frac)
+def compatibleCount (S : ParametricRSAScenario ℚ)
     (i : S.Interp) (u : S.Utterance) : Nat :=
-  (S.worlds.filter fun w => (S.φ i u w).num > 0).length
+  (S.worlds.filter fun w => S.φ i u w > 0).length
 
 /-- Informativity under interpretation -/
-def informativity (S : ParametricRSAScenario Frac.Frac)
-    (i : S.Interp) (u : S.Utterance) : Frac.Frac :=
+def informativity (S : ParametricRSAScenario ℚ)
+    (i : S.Interp) (u : S.Utterance) : ℚ :=
   let n := compatibleCount S i u
-  if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
+  if n > 0 then 1 / n else 0
 
 end ParametricRSA
 

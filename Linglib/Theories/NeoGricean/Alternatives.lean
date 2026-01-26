@@ -65,32 +65,38 @@ def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List �
   h.members.filter (· != x)
 
 -- ============================================================================
--- PART 2: Standard Horn Sets
+-- PART 2: Type-Safe Horn Sets (using Montague.Scales expressions)
 -- ============================================================================
+
+open Montague.Scales.Quantifiers (QuantExpr)
+open Montague.Scales.Connectives (ConnExpr)
+open Montague.Scales.Modals (ModalExpr)
 
 /--
 The quantifier Horn set: {some, most, all}
 
+Uses type-safe `QuantExpr` from Montague.Scales.
 Note: This is a SET, not an ordered scale. The ordering comes from
 sentence-level semantics, not from this data structure.
 -/
-def quantifierSet : HornSet String :=
-  ⟨["some", "most", "all"]⟩
+def quantifierSet : HornSet QuantExpr :=
+  ⟨[.some_, .most, .all]⟩
 
 /--
 The connective Horn set: {or, and}
 -/
-def connectiveSet : HornSet String :=
-  ⟨["or", "and"]⟩
+def connectiveSet : HornSet ConnExpr :=
+  ⟨[.or_, .and_]⟩
 
 /--
 The modal Horn set: {possible, necessary}
 -/
-def modalSet : HornSet String :=
-  ⟨["possible", "necessary"]⟩
+def modalSet : HornSet ModalExpr :=
+  ⟨[.possible, .necessary]⟩
 
 /--
 The numeral Horn set: {one, two, three, ...}
+Uses strings for now (numerals are more complex).
 -/
 def numeralSet : HornSet String :=
   ⟨["one", "two", "three", "four", "five"]⟩
@@ -187,22 +193,19 @@ def strongerAlternatives {α : Type} [BEq α]
   (generateAlternatives hornSet checker context term).filter (·.isStrongerInContext) |>.map (·.term)
 
 -- ============================================================================
--- PART 5: Quantifier Entailment (Concrete Example)
+-- PART 5: Quantifier Entailment (Type-Safe)
 -- ============================================================================
 
 /--
 Standard quantifier strength ordering (for UE contexts).
 
-all > most > some (in terms of logical strength)
-"all" entails "some", so "all" is stronger.
+Uses `QuantExpr.entails` from Montague.Scales:
+- all > most > some (in terms of logical strength)
+- "all" entails "some", so "all" is stronger
 -/
-def quantifierStrengthUE (q1 q2 : String) : Bool :=
-  -- q1 is stronger than q2 in UE context
-  match q1, q2 with
-  | "all", "most" => true
-  | "all", "some" => true
-  | "most", "some" => true
-  | _, _ => false
+def quantifierStrengthUE (q1 q2 : QuantExpr) : Bool :=
+  -- q1 is stronger than q2 iff q1 entails q2 (and they're different)
+  Montague.Scales.Quantifiers.entails q1 q2 && q1 != q2
 
 /--
 Reversed quantifier strength (for DE contexts).
@@ -210,18 +213,16 @@ Reversed quantifier strength (for DE contexts).
 In DE context, "some" is stronger than "all" at sentence level.
 "No one ate some" entails "No one ate all".
 -/
-def quantifierStrengthDE (q1 q2 : String) : Bool :=
-  -- q1 is stronger than q2 in DE context (REVERSED)
-  match q1, q2 with
-  | "some", "most" => true
-  | "some", "all" => true
-  | "most", "all" => true
-  | _, _ => false
+def quantifierStrengthDE (q1 q2 : QuantExpr) : Bool :=
+  -- In DE, entailment reverses: q1 stronger iff q2 entails q1
+  Montague.Scales.Quantifiers.entails q2 q1 && q1 != q2
 
 /--
-Entailment checker for quantifiers.
+Entailment checker for quantifiers (type-safe).
+
+Grounded in Montague.Scales.Quantifiers.entails.
 -/
-def quantifierChecker : EntailmentChecker String :=
+def quantifierChecker : EntailmentChecker QuantExpr :=
   { isStronger := λ pol q1 q2 =>
       match pol with
       | .upward => quantifierStrengthUE q1 q2
@@ -229,7 +230,34 @@ def quantifierChecker : EntailmentChecker String :=
   }
 
 -- ============================================================================
--- PART 6: Key Theorems
+-- PART 5b: Connective Entailment (Type-Safe)
+-- ============================================================================
+
+/--
+Connective strength in UE context.
+"and" is stronger than "or".
+-/
+def connectiveStrengthUE (c1 c2 : ConnExpr) : Bool :=
+  Montague.Scales.Connectives.entails c1 c2 && c1 != c2
+
+/--
+Connective strength in DE context (reversed).
+-/
+def connectiveStrengthDE (c1 c2 : ConnExpr) : Bool :=
+  Montague.Scales.Connectives.entails c2 c1 && c1 != c2
+
+/--
+Entailment checker for connectives (type-safe).
+-/
+def connectiveChecker : EntailmentChecker ConnExpr :=
+  { isStronger := λ pol c1 c2 =>
+      match pol with
+      | .upward => connectiveStrengthUE c1 c2
+      | .downward => connectiveStrengthDE c1 c2
+  }
+
+-- ============================================================================
+-- PART 6: Key Theorems (Type-Safe)
 -- ============================================================================
 
 /--
@@ -238,7 +266,7 @@ def quantifierChecker : EntailmentChecker String :=
 In UE context, "all" and "most" are stronger than "some".
 -/
 theorem some_alternatives_ue :
-    strongerAlternatives quantifierSet quantifierChecker simpleAssertion "some" = ["most", "all"] := by
+    strongerAlternatives quantifierSet quantifierChecker simpleAssertion .some_ = [.most, .all] := by
   native_decide
 
 /--
@@ -248,7 +276,7 @@ In DE context, "some" is already the strongest term!
 This explains why "not all" implicature is blocked in DE contexts.
 -/
 theorem some_no_alternatives_de :
-    strongerAlternatives quantifierSet quantifierChecker underNegation "some" = ([] : List String) := by
+    strongerAlternatives quantifierSet quantifierChecker underNegation .some_ = ([] : List QuantExpr) := by
   native_decide
 
 /--
@@ -257,7 +285,7 @@ theorem some_no_alternatives_de :
 In DE context, "some" is stronger than "all" at sentence level.
 -/
 theorem all_alternatives_de :
-    strongerAlternatives quantifierSet quantifierChecker underNegation "all" = ["some", "most"] := by
+    strongerAlternatives quantifierSet quantifierChecker underNegation .all = [.some_, .most] := by
   native_decide
 
 /--
@@ -266,12 +294,12 @@ theorem all_alternatives_de :
 The same Horn set produces different alternatives depending on context.
 -/
 theorem context_determines_alternatives :
-    strongerAlternatives quantifierSet quantifierChecker simpleAssertion "some" ≠
-    strongerAlternatives quantifierSet quantifierChecker underNegation "some" := by
+    strongerAlternatives quantifierSet quantifierChecker simpleAssertion .some_ ≠
+    strongerAlternatives quantifierSet quantifierChecker underNegation .some_ := by
   native_decide
 
 -- ============================================================================
--- PART 7: Connection to Montague.Scales
+-- PART 7: String Interface (for syntax-semantics connection)
 -- ============================================================================
 
 /--
@@ -283,14 +311,39 @@ as unordered sets. The ordering comes from the SentenceContext.
 def fromHornScale {α : Type} (scale : Montague.Scales.HornScale α) : HornSet α :=
   ⟨scale.members⟩
 
--- Import the scales and convert to sets
-open Montague.Scales in
-def quantifierSetFromScale : HornSet Quantifiers.QuantExpr :=
-  fromHornScale Quantifiers.quantScale
+/--
+String-based quantifier checker for interface with syntax.
 
-open Montague.Scales in
-def connectiveSetFromScale : HornSet Connectives.ConnExpr :=
-  fromHornScale Connectives.connScale
+Converts strings to QuantExpr, then uses the type-safe checker.
+-/
+def quantifierCheckerString : EntailmentChecker String :=
+  { isStronger := λ pol s1 s2 =>
+      match QuantExpr.ofString? s1, QuantExpr.ofString? s2 with
+      | some q1, some q2 => quantifierChecker.isStronger pol q1 q2
+      | _, _ => false
+  }
+
+/--
+String-based connective checker for interface with syntax.
+-/
+def connectiveCheckerString : EntailmentChecker String :=
+  { isStronger := λ pol s1 s2 =>
+      match ConnExpr.ofString? s1, ConnExpr.ofString? s2 with
+      | some c1, some c2 => connectiveChecker.isStronger pol c1 c2
+      | _, _ => false
+  }
+
+/--
+String-based quantifier set for interface with syntax.
+-/
+def quantifierSetString : HornSet String :=
+  ⟨["some", "most", "all"]⟩
+
+/--
+String-based connective set for interface with syntax.
+-/
+def connectiveSetString : HornSet String :=
+  ⟨["or", "and"]⟩
 
 -- ============================================================================
 -- PART 8: Summary
@@ -306,28 +359,35 @@ def connectiveSetFromScale : HornSet Connectives.ConnExpr :=
 - `Alternative`: An alternative with strength information
 - `EntailmentChecker`: Abstract entailment checking
 
-### Horn Sets
-- `quantifierSet`: {some, most, all}
-- `connectiveSet`: {or, and}
-- `modalSet`: {possible, necessary}
-- `numeralSet`: {one, two, ...}
+### Type-Safe Horn Sets (primary)
+- `quantifierSet`: HornSet QuantExpr — {.some_, .most, .all}
+- `connectiveSet`: HornSet ConnExpr — {.or_, .and_}
+- `modalSet`: HornSet ModalExpr — {.possible, .necessary}
+
+### Type-Safe Entailment Checkers
+- `quantifierChecker`: Grounded in Montague.Scales.Quantifiers.entails
+- `connectiveChecker`: Grounded in Montague.Scales.Connectives.entails
+
+### String Interface (for syntax connection)
+- `quantifierSetString`: HornSet String — for SemDeriv interface
+- `quantifierCheckerString`: Converts strings, delegates to typed checker
 
 ### Functions
 - `generateAlternatives`: Get all alternatives with strength info
 - `strongerAlternatives`: Get only stronger alternatives
 - `fromHornScale`: Convert Scales to Sets
 
-### Key Theorems
-- `some_alternatives_ue`: "some" → [most, all] in UE
-- `some_no_alternatives_de`: "some" → [] in DE (blocked!)
-- `all_alternatives_de`: "all" → [some, most] in DE (reversed)
+### Key Theorems (Type-Safe)
+- `some_alternatives_ue`: .some_ → [.most, .all] in UE
+- `some_no_alternatives_de`: .some_ → [] in DE (blocked!)
+- `all_alternatives_de`: .all → [.some_, .most] in DE (reversed)
 - `context_determines_alternatives`: Context matters
 
-### Design Philosophy (Geurts p.58)
-1. Use SETS not SCALES for Horn sets
-2. Determine strength at SENTENCE level
-3. Context polarity determines which alternatives are "stronger"
-4. This correctly handles DE blocking without "scale reversal" fiction
+### Design Philosophy
+1. **Type-safe scales**: Use QuantExpr/ConnExpr, not strings
+2. **Grounded entailment**: Entailment comes from Montague.Scales
+3. **Geurts p.58**: Use SETS not SCALES; determine strength at SENTENCE level
+4. **String interface**: For backward compatibility with syntax-semantics layer
 -/
 
 end NeoGricean.Alternatives

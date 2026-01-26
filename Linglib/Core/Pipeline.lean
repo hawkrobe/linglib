@@ -68,7 +68,7 @@ A **capability** is something a theory can provide or require.
 Examples:
 - `meaning : Interp → World → Bool` (truth conditions)
 - `derivations : List Derivation` (parse trees)
-- `probDist : World → Frac` (probability distribution)
+- `probDist : World → ℚ` (probability distribution)
 
 This is intentionally abstract - concrete capabilities are defined
 by specific theory interfaces below.

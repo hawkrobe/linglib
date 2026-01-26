@@ -20,12 +20,12 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
 import Linglib.Theories.Montague.SemDerivation
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 
-open RSA RSA.Scalar Frac
+open RSA RSA.Scalar
 open Montague
 open Montague.SemDeriv
 open Montague.Lexicon
@@ -73,9 +73,9 @@ structure RSAScalarResult where
   /-- The utterance analyzed -/
   utterance : String
   /-- L1 probability mass on "some but not all" worlds -/
-  probSomeNotAll : Frac
+  probSomeNotAll : ℚ
   /-- L1 probability mass on "all" world -/
-  probAll : Frac
+  probAll : ℚ
   /-- Does the implicature hold? (probSomeNotAll > probAll) -/
   implicatureHolds : Bool
   deriving Repr
@@ -90,7 +90,7 @@ def rsaSomeResult : RSAScalarResult :=
   -- P(some_not_all) = P(w1) + P(w2)
   let p_w1 := RSA.getScore l1_scores .w1
   let p_w2 := RSA.getScore l1_scores .w2
-  let p_some_not_all := Frac.add p_w1 p_w2
+  let p_some_not_all := p_w1 + p_w2
   -- P(all) = P(w3)
   let p_all := RSA.getScore l1_scores .w3
   { utterance := "some"
@@ -155,7 +155,7 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
     let l1_scores := RSA.L1 scalarScenario .all
     let p_all := RSA.getScore l1_scores .w3
     some { utterance := "all"
-         , probSomeNotAll := Frac.zero
+         , probSomeNotAll := 0
          , probAll := p_all
          , implicatureHolds := false
          }
@@ -213,7 +213,7 @@ theorem rsa_every_no_implicature :
 /--
 Get L1 probability for a specific world.
 -/
-def l1ProbForWorld (w : CookieWorld) : Frac :=
+def l1ProbForWorld (w : CookieWorld) : ℚ :=
   RSA.getScore (RSA.L1 scalarScenario .some_) w
 
 -- L1 scores for "some" (for reference).
@@ -234,7 +234,7 @@ theorem l1_w2_gt_w3 : l1ProbForWorld .w2 > l1ProbForWorld .w3 := by
 /--
 **Theorem: w1 = w2 (symmetry among "some but not all" worlds)**
 -/
-theorem l1_w1_eq_w2 : Frac.eq (l1ProbForWorld .w1) (l1ProbForWorld .w2) := by
+theorem l1_w1_eq_w2 : l1ProbForWorld .w1 = l1ProbForWorld .w2 := by
   native_decide
 
 -- ============================================================================
@@ -344,7 +344,6 @@ namespace RSA
 
 open Interfaces
 open RSA.ScalarImplicatures
-open Frac
 
 /-- Marker type for the RSA theory -/
 structure RSATheory
@@ -380,8 +379,8 @@ def parseToRSA (ws : List Word) : Option RSAStructure :=
   let scalarPos := findScalarPosition ws
   match scalarPos with
   | none => some { result := { utterance := ""
-                             , probSomeNotAll := Frac.zero
-                             , probAll := Frac.zero
+                             , probSomeNotAll := 0
+                             , probAll := 0
                              , implicatureHolds := false }
                  , scalarPosition := none }
   | some pos =>
@@ -393,15 +392,15 @@ def parseToRSA (ws : List Word) : Option RSAStructure :=
       else if Word.form w == "every" || Word.form w == "all" then
         -- Top of scale, no implicature
         some { result := { utterance := "all"
-                         , probSomeNotAll := Frac.zero
-                         , probAll := Frac.mk 1 1  -- High probability
+                         , probSomeNotAll := 0
+                         , probAll := 1  -- High probability
                          , implicatureHolds := false }
              , scalarPosition := some pos }
       else
         -- Other scalar items (most, etc.) - simplified
         some { result := { utterance := Word.form w
-                         , probSomeNotAll := Frac.zero
-                         , probAll := Frac.zero
+                         , probSomeNotAll := 0
+                         , probAll := 0
                          , implicatureHolds := false }
              , scalarPosition := some pos }
     | none => none
@@ -472,8 +471,8 @@ def someRSA : RSAStructure :=
 /-- Example: "all" via RSA -/
 def allRSA : RSAStructure :=
   { result := { utterance := "all"
-              , probSomeNotAll := Frac.zero
-              , probAll := Frac.mk 1 1
+              , probSomeNotAll := 0
+              , probAll := 1
               , implicatureHolds := false }
   , scalarPosition := some 0
   }
@@ -481,16 +480,16 @@ def allRSA : RSAStructure :=
 /-- RSA triggers implicature for "some" -/
 theorem rsa_some_triggers :
     ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 0 =
-    .triggered := rfl
+    .triggered := by native_decide
 
 /-- RSA doesn't trigger implicature for "all" (top of scale) -/
 theorem rsa_all_no_implicature :
     ImplicatureTheory.implicatureStatus (T := RSATheory) allRSA 0 =
-    .absent := rfl
+    .absent := by native_decide
 
 /-- Wrong position returns absent -/
 theorem rsa_wrong_position_absent :
     ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 1 =
-    .absent := rfl
+    .absent := by native_decide
 
 end RSA

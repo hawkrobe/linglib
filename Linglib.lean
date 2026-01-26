@@ -49,7 +49,6 @@ import Linglib.Core.Basic
 import Linglib.Core.Grammar
 import Linglib.Core.SemanticTypes
 import Linglib.Core.SemanticBackend
-import Linglib.Core.Frac
 import Linglib.Core.RSA
 import Linglib.Core.Pipeline
 import Linglib.Core.InformationStructure

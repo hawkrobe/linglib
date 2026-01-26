@@ -22,11 +22,11 @@ Saying "square" signals they probably mean blue_square.
 -/
 
 import Linglib.Core.RSA
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
 
-open RSA Frac
+open RSA
 
 -- ============================================================================
 -- Domain: Objects and Utterances
@@ -85,25 +85,25 @@ abbrev refGameBackend := refGameScenario
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × Frac) := RSA.L0 refGameScenario .blue
+def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario .blue
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × Frac) := RSA.L0 refGameScenario .green
+def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario .green
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × Frac) := RSA.L0 refGameScenario .square
+def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario .square
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × Frac) := RSA.S1 refGameScenario .blue_square
+def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario .blue_square
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × Frac) := RSA.S1 refGameScenario .green_square
+def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario .green_square
 
 /-- L1 for "square" - the key pragmatic inference -/
-def l1_square : List (Object × Frac) := RSA.L1 refGameScenario .square
+def l1_square : List (Object × ℚ) := RSA.L1 refGameScenario .square
 
 /-- L1 for "blue" -/
-def l1_blue : List (Object × Frac) := RSA.L1 refGameScenario .blue
+def l1_blue : List (Object × ℚ) := RSA.L1 refGameScenario .blue
 
 -- ============================================================================
 -- Evaluate
@@ -138,7 +138,7 @@ theorem reference_game_inference :
 
 /-- At literal level L0, squares are equally likely -/
 theorem l0_squares_equal :
-    Frac.eq (RSA.getScore l0_square .blue_square) (RSA.getScore l0_square .green_square) := by
+    RSA.getScore l0_square .blue_square = RSA.getScore l0_square .green_square := by
   native_decide
 
 /-- Speaker in green_square world prefers "green" over "square" -/
@@ -148,7 +148,7 @@ theorem s1_green_prefers_green :
 
 /-- Speaker in blue_square world: "blue" and "square" are equally informative -/
 theorem s1_blue_square_equal :
-    Frac.eq (RSA.getScore s1_blue_square .blue) (RSA.getScore s1_blue_square .square) := by
+    RSA.getScore s1_blue_square .blue = RSA.getScore s1_blue_square .square := by
   native_decide
 
 -- ============================================================================

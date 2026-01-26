@@ -26,12 +26,11 @@ This module provides:
 -/
 
 import Linglib.Core.RSA
-import Linglib.Core.Frac
+import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Montague.Intensional
 
 namespace RSA.Intensional
 
-open Frac
 open Montague.Intensional
 
 -- ============================================================================
@@ -107,10 +106,10 @@ This is the grounded L0: it evaluates the compositional meaning.
 -/
 def L0_from_derivation {m : IntensionalModel}
     (d : PropDerivation m) (worlds : List m.World)
-    : List (m.World × Frac) :=
+    : List (m.World × ℚ) :=
   let n := compatibleWorldCount d worlds
-  let prob := if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
-  worlds.map fun w => (w, if d.eval w then prob else Frac.zero)
+  let prob : ℚ := if n > 0 then 1 / n else 0
+  worlds.map fun w => (w, if d.eval w then prob else 0)
 
 /--
 L0 probability mass function.
@@ -118,11 +117,11 @@ L0 probability mass function.
 Returns P(w | u) for a specific world.
 -/
 def L0_prob {m : IntensionalModel}
-    (d : PropDerivation m) (worlds : List m.World) (w : m.World) : Frac :=
+    (d : PropDerivation m) (worlds : List m.World) (w : m.World) : ℚ :=
   let scores := L0_from_derivation d worlds
   match scores.find? (fun (w', _) => w' == w) with
   | some (_, p) => p
-  | none => Frac.zero
+  | none => 0
 
 -- ============================================================================
 -- Grounding Theorem
@@ -143,14 +142,16 @@ The key insight is structural: L0_from_derivation explicitly
 checks `d.eval w` and assigns zero when false.
 -/
 theorem l0_uses_compositional_meaning {m : IntensionalModel}
+    [DecidableEq m.World]
     (d : PropDerivation m) (worlds : List m.World) (w : m.World) :
-    (L0_prob d worlds w ≠ Frac.zero) → d.eval w = true := by
+    (L0_prob d worlds w ≠ 0) → d.eval w = true := by
   intro h
   by_contra hfalse
   simp only [Bool.not_eq_true] at hfalse
-  -- When d.eval w = false, L0_from_derivation maps w to (w, Frac.zero)
-  -- So L0_prob returns Frac.zero, contradicting h
-  sorry -- technical List.find? details
+  -- Key insight: L0_from_derivation maps w to (w, if d.eval w then prob else zero)
+  -- When d.eval w = false, this is (w, zero), so L0_prob returns zero
+  -- Technical proof requires lemmas about List.map and List.find? interaction
+  sorry
 
 /--
 **Grounding Theorem (Contrapositive)**: false meaning → zero probability.
@@ -159,15 +160,13 @@ When the compositional meaning is false at a world, L0 assigns
 zero probability to that world.
 -/
 theorem l0_zero_when_false {m : IntensionalModel}
+    [DecidableEq m.World]
     (d : PropDerivation m) (worlds : List m.World) (w : m.World)
     (hfalse : d.eval w = false) :
-    L0_prob d worlds w = Frac.zero ∨ w ∉ worlds := by
-  by_cases hw : w ∈ worlds
-  · left
-    -- When d.eval w = false, the conditional in L0_from_derivation
-    -- produces (w, Frac.zero), so L0_prob returns zero
-    sorry -- technical List.find? details
-  · right; exact hw
+    L0_prob d worlds w = 0 ∨ w ∉ worlds := by
+  -- When d.eval w = false, L0_from_derivation maps w to (w, 0)
+  -- Technical proof about List.find? interaction with map
+  sorry
 
 -- ============================================================================
 -- Example: Scalar Implicature Scenario
@@ -209,11 +208,11 @@ def scalarScenario : IntensionalScenario scalarModel := {
 -- ============================================================================
 
 /-- L0 for "some students sleep" -/
-def l0_some : List (ScalarWorld × Frac) :=
+def l0_some : List (ScalarWorld × ℚ) :=
   L0_from_derivation someProp [.none, .someNotAll, .all]
 
 /-- L0 for "every student sleeps" -/
-def l0_every : List (ScalarWorld × Frac) :=
+def l0_every : List (ScalarWorld × ℚ) :=
   L0_from_derivation everyProp [.none, .someNotAll, .all]
 
 -- Evaluate to see the distributions
@@ -222,28 +221,23 @@ def l0_every : List (ScalarWorld × Frac) :=
 
 /-- "Some" has zero probability at world "none" (verified by #eval above) -/
 theorem l0_some_zero_at_none :
-    L0_prob someProp [.none, .someNotAll, .all] .none = Frac.zero := by
+    L0_prob someProp [.none, .someNotAll, .all] .none = 0 := by
   rfl
 
 /-- "Some" has positive probability at world "someNotAll" (verified by #eval: 1/2) -/
 theorem l0_some_positive_at_someNotAll :
-    L0_prob someProp [.none, .someNotAll, .all] .someNotAll ≠ Frac.zero := by
-  -- #eval shows this is 1/2, not zero
-  intro h
-  -- L0_prob returns 1/2 which is not equal to zero
-  sorry -- decidability issue with Frac inequality
+    L0_prob someProp [.none, .someNotAll, .all] .someNotAll ≠ 0 := by
+  native_decide
 
 /-- "Every" has zero probability at world "someNotAll" -/
 theorem l0_every_zero_at_someNotAll :
-    L0_prob everyProp [.none, .someNotAll, .all] .someNotAll = Frac.zero := by
+    L0_prob everyProp [.none, .someNotAll, .all] .someNotAll = 0 := by
   rfl
 
 /-- "Every" has positive probability at world "all" (verified by #eval: 1/1) -/
 theorem l0_every_positive_at_all :
-    L0_prob everyProp [.none, .someNotAll, .all] .all ≠ Frac.zero := by
-  -- #eval shows this is 1/1, not zero
-  intro h
-  sorry -- decidability issue with Frac inequality
+    L0_prob everyProp [.none, .someNotAll, .all] .all ≠ 0 := by
+  native_decide
 
 -- ============================================================================
 -- S1: Pragmatic Speaker from Intensional Semantics
@@ -253,9 +247,9 @@ theorem l0_every_positive_at_all :
 Informativity of an utterance = 1 / (number of compatible worlds)
 -/
 def informativity {m : IntensionalModel}
-    (d : PropDerivation m) (worlds : List m.World) : Frac :=
+    (d : PropDerivation m) (worlds : List m.World) : ℚ :=
   let n := compatibleWorldCount d worlds
-  if h : n > 0 then ⟨1, n, h⟩ else Frac.zero
+  if n > 0 then 1 / n else 0
 
 /--
 S1 scores: P(u | w) ∝ informativity(u) if ⟦u⟧(w) = true
@@ -265,21 +259,18 @@ The speaker chooses among true utterances weighted by informativity.
 def S1_from_derivations {m : IntensionalModel}
     (utterances : List (PropDerivation m))
     (worlds : List m.World)
-    (w : m.World) : List (PropDerivation m × Frac) :=
+    (w : m.World) : List (PropDerivation m × ℚ) :=
   -- Get all utterances true at this world
   let trueUtts := utterances.filter (fun d => d.eval w)
-  -- Compute informativity for each
-  let dens := trueUtts.map (fun d => compatibleWorldCount d worlds)
-  let commonDen := dens.foldl (· * ·) 1
-  let sumNum := dens.foldl (fun acc d => if d > 0 then acc + commonDen / d else acc) 0
-  -- Normalize
+  -- Compute informativity for each (as rationals)
+  let infos : List ℚ := trueUtts.map (fun d => informativity d worlds)
+  let total := infos.foldl (· + ·) 0
+  -- Normalize: P(u | w) = informativity(u) / sum_u' informativity(u')
   utterances.map fun d =>
     if d.eval w then
-      let n := compatibleWorldCount d worlds
-      if h : n > 0 ∧ sumNum > 0 then
-        (d, ⟨commonDen / n, sumNum, h.2⟩)
-      else (d, Frac.zero)
-    else (d, Frac.zero)
+      let info := informativity d worlds
+      if total > 0 then (d, info / total) else (d, 0)
+    else (d, 0)
 
 -- ============================================================================
 -- L1: Pragmatic Listener from Intensional Semantics
@@ -293,12 +284,12 @@ With uniform prior, proportional to S1(u | w).
 def L1_from_derivations {m : IntensionalModel}
     (utterances : List (PropDerivation m))
     (worlds : List m.World)
-    (u : PropDerivation m) : List (m.World × Frac) :=
+    (u : PropDerivation m) : List (m.World × ℚ) :=
   worlds.map fun w =>
     let s1 := S1_from_derivations utterances worlds w
     let score := match s1.find? (fun (d, _) => d.surface == u.surface) with
       | some (_, p) => p
-      | none => Frac.zero
+      | none => 0
     (w, score)
 
 -- ============================================================================
@@ -306,11 +297,11 @@ def L1_from_derivations {m : IntensionalModel}
 -- ============================================================================
 
 /-- S1 scores at world "all" -/
-def s1_at_all : List (PropDerivation scalarModel × Frac) :=
+def s1_at_all : List (PropDerivation scalarModel × ℚ) :=
   S1_from_derivations [someProp, everyProp] [.none, .someNotAll, .all] .all
 
 /-- S1 scores at world "someNotAll" -/
-def s1_at_someNotAll : List (PropDerivation scalarModel × Frac) :=
+def s1_at_someNotAll : List (PropDerivation scalarModel × ℚ) :=
   S1_from_derivations [someProp, everyProp] [.none, .someNotAll, .all] .someNotAll
 
 -- Evaluate S1 to see speaker preferences
@@ -318,7 +309,7 @@ def s1_at_someNotAll : List (PropDerivation scalarModel × Frac) :=
 #eval s1_at_someNotAll.map (fun (d, f) => (d.surface, f))
 
 /-- L1 scores for "some students sleep" -/
-def l1_some_grounded : List (ScalarWorld × Frac) :=
+def l1_some_grounded : List (ScalarWorld × ℚ) :=
   L1_from_derivations [someProp, everyProp] [.none, .someNotAll, .all] someProp
 
 #eval l1_some_grounded  -- Should prefer someNotAll over all (scalar implicature!)
@@ -339,9 +330,9 @@ This emerges from compositional semantics + RSA, not stipulation.
 theorem scalar_implicature_from_grounded_rsa :
     let l1 := l1_some_grounded
     let p_someNotAll := match l1.find? (fun (w, _) => w == .someNotAll) with
-      | some (_, p) => p | none => Frac.zero
+      | some (_, p) => p | none => 0
     let p_all := match l1.find? (fun (w, _) => w == .all) with
-      | some (_, p) => p | none => Frac.zero
+      | some (_, p) => p | none => 0
     p_someNotAll > p_all := by
   native_decide
 
