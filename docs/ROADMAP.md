@@ -216,6 +216,15 @@ Implement generalized backward composition for type-raised categories and catego
 
 Formalize CCG's left-prefix constituency and connect to processing data.
 
+### Horn (1972) Further Extensions
+
+Additional formalizations from Horn's dissertation:
+
+- **Scale Reversal**: Golf scores, rankings, budgets (descending scales)
+- **Forced vs Invited Inference**: Endpoint vs non-endpoint implicatures (§2.15)
+- **Ordinal-as-Rank**: "finished third" implicates "not second" (reversed direction)
+- **Presupposition-Implicature Distinction**: Conjunction redundancy test
+
 ---
 
 ## Architectural Principles
@@ -252,3 +261,5 @@ Formalize CCG's left-prefix constituency and connect to processing data.
 - [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
 - [x] **Unified entailment** (NeoGricean uses Montague semantics)
 - [x] **Parameterized Lexicon: Numerals** (`Montague/Lexicon/Numerals/` - LowerBound, Exact, Compare)
+- [x] **Implicature Operations** (`Montague/Lexicon/Numerals/Operations.lean` - assert/contradict/suspend from Horn 1972 §1.22)
+- [x] **Negation Scope Asymmetry** (`Montague/Lexicon/Numerals/Negation.lean` - internal vs external negation from Horn 1972)

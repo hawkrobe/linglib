@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.9.1] - 2025-01-25
+
+### Added
+- **Montague/Lexicon/Numerals/Operations.lean**: Horn (1972) §1.22 implicature operations
+  - `ImplicatureOperation` type: assert, contradict, suspend
+  - Felicity conditions based on ambiguity (operations require implicature to target)
+  - Proves lower-bound predicts felicitous operations, exact predicts infelicitous
+
+- **Montague/Lexicon/Numerals/Negation.lean**: Negation scope asymmetry (Jespersen/Horn)
+  - `NegationScope` type: internal (targets lower bound) vs external (targets exact)
+  - "doesn't have 3" (internal) = <3 vs "doesn't have THREE" (external) = ≠3
+  - Proves asymmetry predicted by lower-bound, collapses in exact semantics
+
+### Key Insight
+These patterns provide empirical evidence for lower-bound semantics:
+- Operations (assert/contradict/suspend) require an implicature to operate on
+- Negation scope distinction requires a lower bound to negate internally
+
 ## [0.9.0] - 2025-01-25
 
 ### Added
