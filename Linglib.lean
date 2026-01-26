@@ -173,6 +173,7 @@ import Linglib.Theories.RSA.Intensional
 import Linglib.Theories.RSA.EmbeddedScalars
 import Linglib.Theories.RSA.PottsLU
 import Linglib.Theories.RSA.AttitudeEmbedding
+import Linglib.Theories.RSA.ConditionalEmbedding
 
 import Linglib.Theories.PragmaticComparison
 

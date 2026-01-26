@@ -159,9 +159,12 @@ Completed:
   - `local_entails_global`: Local interpretation entails global
   - `global_not_entails_local`: But not vice versa (unlike DE)
   - Explains why both interpretations are available
+- Conditional antecedent embedding - `RSA/ConditionalEmbedding.lean`
+  - `global_entails_local`: Global entails local (DE-like)
+  - `conditional_antecedent_is_DE`: Proves the DE property
+  - RSA predicts global preferred (same as under "no")
 
 Remaining:
-- Conditional antecedents
 - Questions
 - Geurts' globalist vs localist analysis for complex embeddings
 
