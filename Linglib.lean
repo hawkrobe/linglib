@@ -124,18 +124,36 @@ import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Attitudes
 import Linglib.Theories.Montague.Modality
-import Linglib.Theories.Montague.Derivations
-import Linglib.Theories.Montague.SemanticBackendInstance
-import Linglib.Theories.Montague.SyntaxInterface
-
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales
-import Linglib.Theories.Montague.Entailment
-import Linglib.Theories.Montague.Lexicon
-import Linglib.Theories.Montague.SemDerivation
-import Linglib.Theories.Montague.Scope
 import Linglib.Theories.Montague.Conjunction
-import Linglib.Theories.Montague.Intensional
+
+-- Montague Lexicon
+import Linglib.Theories.Montague.Lexicon.Basic
+
+-- Montague Derivations
+import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Derivation.TruthConditions
+import Linglib.Theories.Montague.Derivation.Scope
+
+-- Montague Intensional
+import Linglib.Theories.Montague.Intensional.Basic
+
+-- Montague Entailment
+import Linglib.Theories.Montague.Entailment.Basic
+import Linglib.Theories.Montague.Entailment.Monotonicity
+import Linglib.Theories.Montague.Entailment.ScaleInteraction
+
+-- Montague Interfaces
+import Linglib.Theories.Montague.Interface.SemanticBackend
+import Linglib.Theories.Montague.Interface.SyntaxInterface
+
+
+-- Modal theories (Kratzer vs Simple/Kripke)
+import Linglib.Theories.Montague.Lexicon.Modals.Theory
+import Linglib.Theories.Montague.Lexicon.Modals.Kratzer
+import Linglib.Theories.Montague.Lexicon.Modals.Simple
+import Linglib.Theories.Montague.Lexicon.Modals.Compare
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence

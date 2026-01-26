@@ -19,7 +19,7 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
-import Linglib.Theories.Montague.SemDerivation
+import Linglib.Theories.Montague.Derivation.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Interfaces.ImplicatureTheory
 

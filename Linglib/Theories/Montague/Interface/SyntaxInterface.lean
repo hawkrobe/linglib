@@ -18,7 +18,9 @@ This is the ONLY requirement Montague places on syntax.
 
 import Linglib.Theories.Montague.Basic
 
-namespace Montague.SyntaxInterface
+namespace Montague.Interface.SyntaxInterface
+
+open Montague
 
 -- ============================================================================
 -- WHAT MONTAGUE REQUIRES FROM SYNTAX
@@ -230,4 +232,9 @@ Any syntax providing `MontagueSyntax` gets compositional semantics.
 This is demonstrated concretely in CCG/Semantics.lean.
 -/
 
+end Montague.Interface.SyntaxInterface
+
+-- Backward compatibility alias
+namespace Montague.SyntaxInterface
+  export Montague.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
 end Montague.SyntaxInterface

@@ -23,7 +23,7 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 
 import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.Montague.Scales
-import Linglib.Theories.Montague.SemDerivation
+import Linglib.Theories.Montague.Derivation.Basic
 
 namespace NeoGricean.Alternatives
 

@@ -27,7 +27,7 @@ import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Core.Interfaces.ScopeTheory
 
-namespace Montague.Scope
+namespace Montague.Derivation.Scope
 
 open ScopeTheory
 
@@ -123,7 +123,7 @@ structure ScopedForm where
 
 /-- Get available scopes as abstract ScopeReadings -/
 def ScopedForm.toAvailableScopes (f : ScopedForm) : AvailableScopes :=
-  Montague.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
+  Montague.Derivation.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
 
 /-- Marker type for Montague scope theory -/
 def MontagueScopeTheory : Type := Unit
@@ -180,4 +180,10 @@ World-parametric meaning (truth conditions as function of world state)
 is handled in `RSA/` where it's used for pragmatic inference.
 -/
 
+end Montague.Derivation.Scope
+
+-- Backward compatibility aliases
+namespace Montague.Scope
+  export Montague.Derivation.Scope (ScopeConfig QNScope toQNScope ScopeDerivation
+    ScopedForm MontagueScopeTheory allScopeConfigs allQNScopes scopeYieldsTrue)
 end Montague.Scope

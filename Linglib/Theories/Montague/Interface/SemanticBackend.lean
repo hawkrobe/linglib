@@ -16,7 +16,9 @@ semantics layer for RSA pragmatic reasoning.
 import Linglib.Core.SemanticBackend
 import Linglib.Theories.Montague.Basic
 
-namespace Montague
+namespace Montague.Interface.SemanticBackend
+
+open Montague
 
 -- ============================================================================
 -- Utterances as Typed Meanings
@@ -129,4 +131,10 @@ The structure above demonstrates the conceptual connection;
 see Core/SemanticBackend.lean for the full interface.
 -/
 
+end Montague.Interface.SemanticBackend
+
+-- Backward compatibility (original namespace was just Montague)
+namespace Montague
+  export Montague.Interface.SemanticBackend (MontagueSentence ToyWorld evaluate montaguePhi
+    johnSleepsSent marySleepsSent johnSeesMary)
 end Montague

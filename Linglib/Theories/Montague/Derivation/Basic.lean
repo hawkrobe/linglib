@@ -18,11 +18,11 @@ Syntax Theory → Derivation → Pragmatics (NeoGricean, RSA)
 -/
 
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Lexicon
+import Linglib.Theories.Montague.Lexicon.Basic
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Scales
 
-namespace Montague.SemDeriv
+namespace Montague.Derivation
 
 open Montague
 open Montague.Lexicon
@@ -50,7 +50,7 @@ A semantic derivation: what pragmatics needs from syntax.
 This is the output of any compositional semantic interpretation,
 regardless of which syntax theory produced it.
 -/
-structure Derivation (m : Model) where
+structure SemDeriv (m : Model) where
   /-- The surface form (list of words) -/
   surface : List String
   /-- The result semantic type -/
@@ -60,12 +60,15 @@ structure Derivation (m : Model) where
   /-- Positions of scalar items (for alternative generation) -/
   scalarItems : List (ScalarOccurrence m) := []
 
+/-- Alias for backward compatibility -/
+abbrev Derivation := SemDeriv
+
 /-- Get the sentence as a string -/
-def Derivation.sentence {m : Model} (d : Derivation m) : String :=
+def SemDeriv.sentence {m : Model} (d : SemDeriv m) : String :=
   " ".intercalate d.surface
 
 /-- Check if derivation contains scalar items -/
-def Derivation.hasScalarItems {m : Model} (d : Derivation m) : Bool :=
+def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
   !d.scalarItems.isEmpty
 
 -- ============================================================================
@@ -90,7 +93,7 @@ stronger/weaker alternatives' meanings. A full implementation
 would reconstruct the entire derivation with the substituted item.
 -/
 def alternativeMeanings {m : Model} [Quantifiers.FiniteModel m]
-    (d : Derivation m)
+    (d : SemDeriv m)
     (_ctx : ContextPolarity)
     : List (m.interpTy d.ty) :=
   -- For a proper implementation, we'd need to:
@@ -103,7 +106,7 @@ def alternativeMeanings {m : Model} [Quantifiers.FiniteModel m]
 /--
 Get the forms of scalar alternatives (for display/debugging).
 -/
-def alternativeForms {m : Model} (d : Derivation m) (ctx : ContextPolarity)
+def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
     : List (List String) :=
   d.scalarItems.flatMap λ occ =>
     let alts := match ctx with
@@ -123,7 +126,7 @@ open ToyLexicon
 open Quantifiers
 
 /-- "John sleeps" -/
-def johnSleeps : Derivation toyModel :=
+def johnSleeps : SemDeriv toyModel :=
   { surface := ["John", "sleeps"]
   , ty := .t
   , meaning := sleeps_sem john_sem
@@ -131,7 +134,7 @@ def johnSleeps : Derivation toyModel :=
   }
 
 /-- "Some students sleep" (with scalar item) -/
-def someStudentsSleep : Derivation toyModel :=
+def someStudentsSleep : SemDeriv toyModel :=
   { surface := ["some", "students", "sleep"]
   , ty := .t
   , meaning := some_sem toyModel student_sem sleeps_sem
@@ -139,7 +142,7 @@ def someStudentsSleep : Derivation toyModel :=
   }
 
 /-- "Every student sleeps" (with scalar item) -/
-def everyStudentSleeps : Derivation toyModel :=
+def everyStudentSleeps : SemDeriv toyModel :=
   { surface := ["every", "student", "sleeps"]
   , ty := .t
   , meaning := every_sem toyModel student_sem sleeps_sem
@@ -147,7 +150,7 @@ def everyStudentSleeps : Derivation toyModel :=
   }
 
 /-- "Some students laugh" -/
-def someStudentsLaugh : Derivation toyModel :=
+def someStudentsLaugh : SemDeriv toyModel :=
   { surface := ["some", "students", "laugh"]
   , ty := .t
   , meaning := some_sem toyModel student_sem laughs_sem
@@ -155,7 +158,7 @@ def someStudentsLaugh : Derivation toyModel :=
   }
 
 /-- "Every student laughs" -/
-def everyStudentLaughs : Derivation toyModel :=
+def everyStudentLaughs : SemDeriv toyModel :=
   { surface := ["every", "student", "laughs"]
   , ty := .t
   , meaning := every_sem toyModel student_sem laughs_sem
@@ -197,7 +200,7 @@ Any theory implementing this can feed into pragmatics.
 -/
 class SemanticsProducer (SynDeriv : Type) (m : Model) where
   /-- Convert a syntactic derivation to a semantic derivation -/
-  toDerivation : SynDeriv → Derivation m
+  toDerivation : SynDeriv → SemDeriv m
 
 /-
 ## Usage
@@ -213,4 +216,11 @@ To make a syntax theory work with pragmatics:
 3. Pragmatics can then work with any syntax theory uniformly
 -/
 
+end Montague.Derivation
+
+-- Backward compatibility aliases
+namespace Montague.SemDeriv
+  export Montague.Derivation (ScalarOccurrence SemDeriv Derivation ContextPolarity
+    alternativeMeanings alternativeForms SemanticsProducer
+    johnSleeps someStudentsSleep everyStudentSleeps someStudentsLaugh everyStudentLaughs)
 end Montague.SemDeriv

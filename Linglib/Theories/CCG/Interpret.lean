@@ -13,8 +13,8 @@ This allows CCG derivations to feed into pragmatics (NeoGricean, RSA).
 
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
-import Linglib.Theories.Montague.SemDerivation
-import Linglib.Theories.Montague.Lexicon
+import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Lexicon.Basic
 
 namespace CCG.Interpret
 

@@ -23,7 +23,7 @@ higher verb combines first (verb projection raising), inverse scope is blocked.
 - Kayne (1983, 1998) on scope and word order
 -/
 
-import Linglib.Theories.Montague.Scope
+import Linglib.Theories.Montague.Derivation.Scope
 
 namespace Phenomena.ScopeWordOrder
 

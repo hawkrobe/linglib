@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.10.0] - 2025-01-25
+
+### Added
+- **Montague/Lexicon/Modals/**: Modal theory infrastructure (Kratzer vs Simple/Kripke)
+  - `Theory.lean`: `ModalTheory` structure for competing modal analyses
+  - `Kratzer.lean`: Conversational backgrounds (modal base + ordering source)
+  - `Simple.lean`: Primitive accessibility relations (Kripke semantics)
+  - `Compare.lean`: Theory comparison and divergence theorems
+
+### Changed
+- **Montague directory restructure**: Organized into subdirectories
+  - `Derivation/`: Basic.lean, Scope.lean, TruthConditions.lean
+  - `Entailment/`: Basic.lean, Monotonicity.lean, ScaleInteraction.lean
+  - `Intensional/`: Basic.lean
+  - `Interface/`: SemanticBackend.lean, SyntaxInterface.lean
+  - `Lexicon/`: Basic.lean, Modals/, Numerals/
+
+### Removed
+- Old flat Montague files (replaced by new directory structure)
+
 ## [0.9.2] - 2025-01-25
 
 ### Added

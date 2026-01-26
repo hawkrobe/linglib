@@ -17,7 +17,7 @@ empirical data in `Phenomena/Semantics/TruthConditions.lean`.
 import Linglib.Theories.Montague.Basic
 import Linglib.Phenomena.Semantics.TruthConditions
 
-namespace Montague.Derivations
+namespace Montague.Derivation.TruthConditions
 
 open Montague
 open ToyLexicon
@@ -142,15 +142,6 @@ theorem john_sees_mary_isTrue : isTrue toyModel (interpSVO toyModel john_sem see
 theorem john_eats_pizza_isTrue : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
 
 -- ============================================================================
--- Counter-examples (these would NOT be provable)
--- ============================================================================
-
--- The following would fail to compile, demonstrating the theory
--- correctly predicts falsity:
--- theorem mary_sleeps_isTrue : isTrue toyModel (interpSV toyModel mary_sem sleeps_sem) := rfl
--- theorem john_sees_john_isTrue : isTrue toyModel (interpSVO toyModel john_sem sees_sem john_sem) := rfl
-
--- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -177,4 +168,12 @@ Function application (⟦α β⟧ = ⟦α⟧(⟦β⟧)) correctly derives
 sentence meanings from word meanings.
 -/
 
+end Montague.Derivation.TruthConditions
+
+-- Backward compatibility alias
+namespace Montague.Derivations
+  export Montague.Derivation.TruthConditions (john_sleeps mary_not_sleeps john_laughs mary_laughs
+    john_sees_mary mary_sees_john john_not_sees_john john_eats_pizza john_not_eats_mary
+    mary_eats_pizza john_reads_book captures_john_sleeps captures_mary_sleeps
+    captures_intransitive_contrast captures_transitive_seeing)
 end Montague.Derivations

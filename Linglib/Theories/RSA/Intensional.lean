@@ -28,7 +28,7 @@ This module provides:
 import Linglib.Core.RSA
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Option.Basic
-import Linglib.Theories.Montague.Intensional
+import Linglib.Theories.Montague.Intensional.Basic
 
 namespace RSA.Intensional
 
