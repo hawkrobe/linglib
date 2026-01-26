@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.11.0] - 2025-01-26
+
+### Added
+- **Core/Distribution.lean**: Typed probability distributions with compile-time guarantees
+  - `ExactDist α`: Structure with `mass : α → ℚ`, `nonneg`, `sum_one` fields
+  - `ExactDist.normalize`: Build distribution from unnormalized scores
+  - `ExactDist.tryNormalize`: Returns `Option` for degenerate cases
+  - `ExactDist.uniform`: Uniform distribution over finite type
+  - `ExactDist.pure`: Point mass distribution
+  - `ExactDist.toPMF`: Noncomputable bridge to Mathlib's PMF
+  - `support_nonempty`, `mass_le_one`: Derived theorems
+
+- **Core/RSA.lean**: Typed distribution API
+  - `TypedRSAScenario`: RSAScenario with Fintype instances and non-negativity proofs
+  - `TypedRSAScenario.ofBool`: Constructor for Boolean semantics
+  - `L0_dist`, `S1_dist`, `L1_dist`: Return `Option (ExactDist _)` with sum-to-1 guarantee
+
+- **Theories/RSA/FrankGoodman2012.lean**: Migrated to typed distributions
+  - `refGameTyped`: TypedRSAScenario version of reference game
+  - `l0_square_typed`, `l1_square_typed`, etc.: Typed distribution examples
+  - `typed_reference_game_inference`: Theorem with `native_decide` proof
+
+### Architecture
+- **Dual-representation design**: Keep exact ℚ for computation (`native_decide`), bridge to Mathlib PMF for measure-theoretic theorems
+- Distributions carry compile-time proof that `∑ x, mass x = 1`
+- Legacy `List (α × ℚ)` API preserved for backward compatibility
+
+### References
+- Frank & Goodman (2012) "Predicting Pragmatic Reasoning in Language Games"
+- Goodman & Frank (2016) "Pragmatic Language Interpretation as Probabilistic Inference"
+
 ## [0.10.0] - 2025-01-25
 
 ### Added

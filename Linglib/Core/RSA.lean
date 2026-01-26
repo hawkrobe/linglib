@@ -24,6 +24,7 @@ Reference: Frank & Goodman (2012), Goodman & Frank (2016)
 -/
 
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Distribution
 
 -- ============================================================================
 -- RSAScenario: Core Interface
@@ -340,6 +341,94 @@ theorem S1_zero_when_false (S : RSAScenario)
     exact hL0
   · -- none case: u not found
     rfl
+
+-- ============================================================================
+-- Typed Distributions (with Fintype)
+-- ============================================================================
+
+/--
+Typed RSA scenario with Fintype instances and non-negativity proofs.
+
+This extends RSAScenario with:
+- Compile-time guarantees about the finiteness of utterance and world types
+- Proofs that prior and φ are non-negative
+-/
+structure TypedRSAScenario extends RSAScenario where
+  [uttFintype : Fintype Utterance]
+  [worldFintype : Fintype World]
+  /-- Prior probabilities are non-negative -/
+  prior_nonneg : ∀ w, 0 ≤ prior w
+  /-- Agreement function is non-negative -/
+  φ_nonneg : ∀ u w, 0 ≤ φ u w
+
+attribute [instance] TypedRSAScenario.uttFintype TypedRSAScenario.worldFintype
+
+/--
+Build a TypedRSAScenario from Boolean semantics.
+
+Since boolToRat returns 0 or 1, and prior defaults to 1,
+non-negativity is automatic.
+-/
+def TypedRSAScenario.ofBool {Utterance World : Type}
+    [inst1 : Fintype Utterance] [inst2 : Fintype World] [BEq Utterance] [BEq World]
+    (utterances : List Utterance) (worlds : List World)
+    (satisfies : World → Utterance → Bool) : TypedRSAScenario where
+  Utterance := Utterance
+  World := World
+  φ u w := boolToRat (satisfies w u)
+  utterances := utterances
+  worlds := worlds
+  uttFintype := inst1
+  worldFintype := inst2
+  prior_nonneg := fun _ => le_of_lt one_pos
+  φ_nonneg := fun _ _ => by
+    simp only [boolToRat]
+    split <;> decide
+
+/--
+L0 as a typed distribution with sum-to-1 guarantee.
+
+Returns `none` if the utterance is incompatible with all worlds
+(i.e., φ(u, w) = 0 for all w).
+-/
+def L0_dist (S : TypedRSAScenario) (u : S.Utterance) : Option (ExactDist S.World) :=
+  let scores : S.World → ℚ := fun w => S.prior w * S.φ u w
+  ExactDist.tryNormalize scores (fun w => mul_nonneg (S.prior_nonneg w) (S.φ_nonneg u w))
+
+/--
+S1 as a typed distribution with sum-to-1 guarantee.
+
+Returns `none` if no utterance is informative for this world.
+-/
+def S1_dist (S : TypedRSAScenario) (w : S.World) : Option (ExactDist S.Utterance) :=
+  -- First compute L0 for each utterance
+  let l0Scores : S.Utterance → ℚ := fun u =>
+    match L0_dist S u with
+    | some d => d.mass w
+    | none => 0
+  ExactDist.tryNormalize l0Scores (fun u => by
+    simp only [l0Scores]
+    split
+    · exact (ExactDist.nonneg _ _)
+    · exact le_refl 0)
+
+/--
+L1 as a typed distribution with sum-to-1 guarantee.
+
+Returns `none` if no world makes the speaker choose this utterance.
+-/
+def L1_dist (S : TypedRSAScenario) (u : S.Utterance) : Option (ExactDist S.World) :=
+  let scores : S.World → ℚ := fun w =>
+    let s1 := S1_dist S w
+    let s1Score := match s1 with
+      | some d => d.mass u
+      | none => 0
+    S.prior w * s1Score
+  ExactDist.tryNormalize scores (fun w => by
+    apply mul_nonneg (S.prior_nonneg w)
+    split
+    · exact (ExactDist.nonneg _ _)
+    · exact le_refl 0)
 
 end RSA
 

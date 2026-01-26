@@ -37,7 +37,7 @@ inductive Object where
   | blue_square
   | blue_circle
   | green_square
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq, BEq, Fintype
 
 /-- Utterances (feature words) -/
 inductive Utterance where
@@ -45,7 +45,7 @@ inductive Utterance where
   | green
   | square
   | circle
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq, BEq, Fintype
 
 -- ============================================================================
 -- Literal Semantics
@@ -169,6 +169,71 @@ theorem circle_unique :
   native_decide
 
 -- ============================================================================
+-- Typed Distributions (Phase 2.4)
+-- ============================================================================
+
+/--
+Reference game scenario as TypedRSAScenario.
+
+This version provides compile-time guarantees that distributions sum to 1.
+-/
+def refGameTyped : RSA.TypedRSAScenario :=
+  RSA.TypedRSAScenario.ofBool
+    [.blue, .green, .square, .circle]
+    [.blue_square, .blue_circle, .green_square]
+    (fun obj utt => meaning utt obj)
+
+/-- L0 for "square" as a typed distribution -/
+def l0_square_typed : Option (ExactDist Object) := RSA.L0_dist refGameTyped .square
+
+/-- L0 for "green" as a typed distribution -/
+def l0_green_typed : Option (ExactDist Object) := RSA.L0_dist refGameTyped .green
+
+/-- S1 for blue_square as a typed distribution -/
+def s1_blue_square_typed : Option (ExactDist Utterance) := RSA.S1_dist refGameTyped .blue_square
+
+/-- L1 for "square" as a typed distribution -/
+def l1_square_typed : Option (ExactDist Object) := RSA.L1_dist refGameTyped .square
+
+-- Evaluate typed distributions
+#eval l0_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square))
+-- Expected: some (1/2, 1/2)
+
+#eval l0_green_typed.map (fun d => (d.mass .green_square, d.mass .blue_square))
+-- Expected: some (1, 0)
+
+#eval s1_blue_square_typed.map (fun d => (d.mass .blue, d.mass .square, d.mass .green))
+-- Expected: some (1/2, 1/2, 0)
+
+#eval l1_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square))
+-- Expected: some (x, y) where x > y (the pragmatic inference!)
+
+/--
+**Typed Distribution Theorem**
+
+When using typed distributions, we get compile-time guarantees
+that probabilities sum to 1.
+-/
+theorem l0_square_typed_sums_to_one :
+    l0_square_typed.isSome →
+    ∀ d, l0_square_typed = some d → ∑ w : Object, d.mass w = 1 := by
+  intro _hsome d heq
+  exact d.sum_one
+
+/--
+The key inference still holds with typed distributions.
+
+L1("square") assigns higher probability to blue_square than green_square.
+-/
+theorem typed_reference_game_inference :
+    l1_square_typed.isSome ∧
+    (l1_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square)) = some (3/5, 2/5)) := by
+  native_decide
+
+/-- The probabilities satisfy the expected inequality -/
+theorem typed_inference_inequality : (3 : ℚ) / 5 > (2 : ℚ) / 5 := by native_decide
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -191,6 +256,16 @@ theorem circle_unique :
 
 This is the core RSA insight: pragmatic listeners infer meaning by
 reasoning about rational speaker behavior.
+
+## Typed Distributions (Phase 2.4)
+
+The new `ExactDist` type provides compile-time guarantees:
+- `d.sum_one : ∑ x, d.mass x = 1` — probabilities sum to 1
+- `d.nonneg : ∀ x, 0 ≤ d.mass x` — all probabilities non-negative
+- `d.mass_le_one : ∀ x, d.mass x ≤ 1` — each probability bounded by 1
+- `d.support_nonempty` — support is nonempty
+
+The `toPMF` bridge connects to Mathlib's PMF for access to measure-theoretic theorems.
 -/
 
 end RSA.FrankGoodman2012
