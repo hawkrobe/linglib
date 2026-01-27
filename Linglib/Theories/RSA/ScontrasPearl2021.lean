@@ -40,9 +40,9 @@ import Linglib.Theories.Montague.Derivation.Scope
 
 namespace RSA.ScontrasPearl2021
 
-open ParametricRSA
 open ScontrasPearl2021
 open Montague.Scope
+open Montague.Derivation.Scope (ScopeConfig)
 
 -- ============================================================================
 -- World-Parametric Meaning (RSA-specific)
@@ -153,20 +153,20 @@ theorem rsa_meaning_from_montague :
   native_decide
 
 -- ============================================================================
--- ParametricSemanticBackend Instance (derived from Montague)
+-- RSAScenario using unified API
 -- ============================================================================
 
 /-- All utterances -/
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
 
 /--
-Build ParametricRSAScenario from WorldMeaning.
+Build RSAScenario from WorldMeaning using the unified API.
 
 The worlds and interpretations come from the meaning structure,
 ensuring consistency between semantics and pragmatics.
 -/
-def scopeScenario : ParametricRSA.ExactParametricRSAScenario :=
-  ParametricRSA.ParametricRSAScenario.ofBool
+def scopeScenario : RSAScenario :=
+  RSAScenario.ambiguousBool
     allScopeUtterances
     everyHorseDidntJump_meaning.worlds   -- [0, 1, 2]
     everyHorseDidntJump_meaning.interps  -- [surface, inverse]
@@ -176,23 +176,25 @@ def scopeScenario : ParametricRSA.ExactParametricRSAScenario :=
 abbrev scopeBackend := scopeScenario
 
 -- ============================================================================
--- RSA Computations (Legacy List-based)
+-- RSA Computations
 -- ============================================================================
 
 /-- L1 joint scores over (world × scope) -/
 def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
-  ParametricRSA.L1_joint scopeBackend .everyHorseNotJump
+  let joint := RSA.L1_joint scopeScenario .everyHorseNotJump
+  -- Convert from (W × I × Unit) to (W × I)
+  joint.map fun ((w, i, _), p) => ((w, i), p)
 
 /-- L1 marginal scores over worlds -/
 def l1WorldScores : List (Nat × ℚ) :=
-  ParametricRSA.L1_world scopeBackend .everyHorseNotJump
+  RSA.L1_world scopeScenario .everyHorseNotJump
 
 /-- L1 marginal scores over scope interpretations -/
 def l1ScopeScores : List (ScopeConfig × ℚ) :=
-  ParametricRSA.L1_interp scopeBackend .everyHorseNotJump
+  RSA.L1_interp scopeScenario .everyHorseNotJump
 
 -- ============================================================================
--- Typed Distributions (Phase 2.4)
+-- Typed Distributions (using JumpOutcome)
 -- ============================================================================
 
 -- Fintype instances for our domain types
@@ -218,72 +220,48 @@ def scopeMeaningTyped : ScopeConfig → ScopeUtterance → _root_.ScontrasPearl2
   | .inverse, .everyHorseNotJump, w => w != .two       -- ¬>∀: true iff not all jumped
 
 /--
-Typed RSA scenario for scope ambiguity.
+Typed RSA scenario for scope ambiguity using unified API.
 
 Uses JumpOutcome instead of Nat for proper Fintype instance.
 -/
-def scopeScenarioTyped : ParametricRSA.TypedParametricRSAScenario :=
-  ParametricRSA.TypedParametricRSAScenario.ofBool
-    [.null, .everyHorseNotJump]
-    [.zero, .one, .two]
-    [.surface, .inverse]
+def scopeScenarioTyped : RSAScenario :=
+  RSAScenario.ambiguousBool
+    [ScopeUtterance.null, .everyHorseNotJump]
+    [_root_.ScontrasPearl2021.JumpOutcome.zero, .one, .two]
+    [ScopeConfig.surface, ScopeConfig.inverse]
     (fun scope world utt => scopeMeaningTyped scope utt world)
 
-/-- L1 joint distribution as typed ExactDist -/
-def l1JointTyped : Option (ExactDist (_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig)) :=
-  ParametricRSA.L1_joint_dist scopeScenarioTyped .everyHorseNotJump
+/-- L1 joint distribution as list -/
+def l1JointTyped : List ((_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
+  let joint := RSA.L1_joint scopeScenarioTyped ScopeUtterance.everyHorseNotJump
+  joint.map fun ((w, i, _), p) => ((w, i), p)
 
-/-- L1 marginal world distribution as typed ExactDist -/
-def l1WorldTyped : Option (ExactDist _root_.ScontrasPearl2021.JumpOutcome) :=
-  ParametricRSA.L1_world_dist scopeScenarioTyped .everyHorseNotJump
+/-- L1 marginal world distribution -/
+def l1WorldTyped : List (_root_.ScontrasPearl2021.JumpOutcome × ℚ) :=
+  RSA.L1_world scopeScenarioTyped ScopeUtterance.everyHorseNotJump
 
-/-- L1 marginal scope distribution as typed ExactDist -/
-def l1ScopeTyped : Option (ExactDist ScopeConfig) :=
-  ParametricRSA.L1_interp_dist scopeScenarioTyped .everyHorseNotJump
+/-- L1 marginal scope distribution -/
+def l1ScopeTyped : List (ScopeConfig × ℚ) :=
+  RSA.L1_interp scopeScenarioTyped ScopeUtterance.everyHorseNotJump
 
 -- Evaluate typed distributions
-#eval l1JointTyped.map (fun d =>
-  [("(zero,surface)", d.mass (.zero, .surface)),
-   ("(zero,inverse)", d.mass (.zero, .inverse)),
-   ("(one,surface)", d.mass (.one, .surface)),
-   ("(one,inverse)", d.mass (.one, .inverse)),
-   ("(two,surface)", d.mass (.two, .surface)),
-   ("(two,inverse)", d.mass (.two, .inverse))])
+#eval l1JointTyped
 
-#eval l1WorldTyped.map (fun d => [("zero", d.mass .zero), ("one", d.mass .one), ("two", d.mass .two)])
+#eval l1WorldTyped
 
-#eval l1ScopeTyped.map (fun d => [("surface", d.mass .surface), ("inverse", d.mass .inverse)])
+#eval l1ScopeTyped
 
 -- ============================================================================
--- Typed Distribution Theorems (Phase 2.4)
+-- Typed Distribution Theorems
 -- ============================================================================
 
-/--
-**Typed distributions exist** (non-degenerate case).
+/-- Get score from typed world distribution -/
+def getTypedWorldScore (w : _root_.ScontrasPearl2021.JumpOutcome) : ℚ :=
+  RSA.getScore l1WorldTyped w
 
-The scenario produces valid distributions for "Every horse didn't jump".
--/
-theorem typed_distributions_exist :
-    l1JointTyped.isSome ∧ l1WorldTyped.isSome ∧ l1ScopeTyped.isSome := by
-  native_decide
-
-/--
-**Typed world distribution sums to 1** (by construction).
--/
-theorem typed_world_sums_to_one :
-    l1WorldTyped.isSome →
-    ∀ d, l1WorldTyped = some d → ∑ w : _root_.ScontrasPearl2021.JumpOutcome, d.mass w = 1 := by
-  intro _ d _
-  exact d.sum_one
-
-/--
-**Typed scope distribution sums to 1** (by construction).
--/
-theorem typed_scope_sums_to_one :
-    l1ScopeTyped.isSome →
-    ∀ d, l1ScopeTyped = some d → ∑ s : ScopeConfig, d.mass s = 1 := by
-  intro _ d _
-  exact d.sum_one
+/-- Get score from typed scope distribution -/
+def getTypedScopeScore (s : ScopeConfig) : ℚ :=
+  RSA.getScore l1ScopeTyped s
 
 /--
 **Typed distributions: exact values for world marginal**.
@@ -291,8 +269,8 @@ theorem typed_scope_sums_to_one :
 P(zero) = 9/13, P(one) = 4/13, P(two) = 0
 -/
 theorem typed_world_exact_values :
-    l1WorldTyped.map (fun d => (d.mass .zero, d.mass .one, d.mass .two)) =
-      some (9/13, 4/13, 0) := by
+    (getTypedWorldScore .zero, getTypedWorldScore .one, getTypedWorldScore .two) =
+      (9/13, 4/13, 0) := by
   native_decide
 
 /--
@@ -301,8 +279,8 @@ theorem typed_world_exact_values :
 P(surface) = 5/13, P(inverse) = 8/13
 -/
 theorem typed_scope_exact_values :
-    l1ScopeTyped.map (fun d => (d.mass .surface, d.mass .inverse)) =
-      some (5/13, 8/13) := by
+    (getTypedScopeScore .surface, getTypedScopeScore .inverse) =
+      (5/13, 8/13) := by
   native_decide
 
 /--
@@ -553,7 +531,7 @@ ScopedForm                        WorldMeaning
   availableScopes                   meaningAt : Interp → World → Bool
   scopeTakers                       worlds, interps
 
-HasAvailableScopes                ParametricSemanticBackend
+HasAvailableScopes                RSAScenario.ambiguous
   (grammar determines scope)        (RSA uses for inference)
 ```
 
@@ -566,7 +544,6 @@ world-parametric meaning (RSA). This ensures:
 ### Types
 - `WorldMeaning`: Truth conditions parameterized by (Interp, World)
 - `ScopeUtterance`: Utterances (null, everyHorseNotJump)
-- `ScopeDomain`: Marker type for ParametricSemanticBackend
 
 ### RSA Computations
 - `l1JointScores`: P(w, i | u) distribution
@@ -596,7 +573,7 @@ The model captures Scontras & Pearl (2021)'s key findings:
 
 ### Complete Pipeline Analysis
 
-This module demonstrates the **first complete pipeline analysis** in Linglib:
+This module demonstrates a complete pipeline analysis in Linglib:
 
 ```
 everyHorseDidntJump_form : ScopedForm
@@ -605,7 +582,7 @@ everyHorseDidntJump_form : ScopedForm
 everyHorseDidntJump_meaning : WorldMeaning
     ↓ provides: truth conditions (scope × world → Bool)
 
-RSA.ScontrasPearl2021 (ParametricSemanticBackend instance)
+RSAScenario.ambiguous (unified API)
     ↓ provides: probability distribution
 
 complete_analysis_scontras_pearl
@@ -736,7 +713,7 @@ theorem full_scope_integration :
   native_decide
 
 -- ============================================================================
--- Summary: HasAvailableScopes Integration
+-- Summary: Integration Architecture
 -- ============================================================================
 
 /-
@@ -753,9 +730,9 @@ WorldMeaning                  (grammar determines what's possible)
     │ meaningAt : ScopeConfig → World → Bool
     │
     ▼
-TypedParametricRSAScenario
+RSAScenario.ambiguous
     │
-    │ L1_interp_dist : ExactDist ScopeConfig
+    │ RSA.L1_interp : List (ScopeConfig × ℚ)
     │
     ▼
 HasScopePreference            (RSA determines what's preferred)

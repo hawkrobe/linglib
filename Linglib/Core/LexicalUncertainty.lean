@@ -54,9 +54,9 @@ variable {U W : Type}
 def ofBool (satisfies : U → W → Bool) : Lexicon U W where
   meaning u w := boolToRat (satisfies u w)
 
-/-- Create a lexicon from an RSAScenario's φ function -/
-def ofRSA {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) : Lexicon U W where
-  meaning := S.φ
+/-- Create a lexicon from an RSAScenario's meaning function -/
+def ofScenario {U W : Type} (utts : List U) (worlds : List W) (φ : U → W → ℚ) : Lexicon U W where
+  meaning := φ
 
 /-- Two lexica are equivalent if they assign the same meanings -/
 def equiv (L₁ L₂ : Lexicon U W) : Prop :=
@@ -278,32 +278,30 @@ end LURSA
 -- ============================================================================
 
 /--
-Create an LUScenario from an RSAScenario with a single lexicon.
+Create an LUScenario from basic components with a single lexicon.
 
 This is the degenerate case: no lexical uncertainty, equivalent to standard RSA.
 -/
-def LUScenario.ofRSA {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) : LUScenario where
+def LUScenario.ofBasic {U W : Type} [BEq U] [BEq W]
+    (utts : List U) (worlds : List W)
+    (φ : U → W → ℚ) (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) : LUScenario where
   Utterance := U
   World := W
-  baseLexicon := Lexicon.ofRSA S
-  lexica := [Lexicon.ofRSA S]
+  baseLexicon := Lexicon.ofScenario utts worlds φ
+  lexica := [Lexicon.ofScenario utts worlds φ]
   lexPrior := fun _ => 1
-  worldPrior := S.prior
-  utterances := S.utterances
-  worlds := S.worlds
-  α := S.α
+  worldPrior := prior
+  utterances := utts
+  worlds := worlds
+  α := α
 
 /--
 Project an LUScenario to an RSAScenario using the base lexicon.
 
 Useful for comparing LU-RSA predictions to standard RSA.
 -/
-def LUScenario.toRSA (S : LUScenario) : SimpleRSAScenario S.Utterance S.World where
-  φ := S.baseLexicon.meaning
-  utterances := S.utterances
-  worlds := S.worlds
-  prior := S.worldPrior
-  α := S.α
+def LUScenario.toRSAScenario (S : LUScenario) [DecidableEq S.World] : RSAScenario :=
+  RSAScenario.basic S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α
 
 -- ============================================================================
 -- M-Implicature Scenario Builder
@@ -433,9 +431,12 @@ With a single lexicon, LU-RSA reduces to standard RSA.
 
 When |Λ| = 1, the marginalization is trivial and L₁_LU = L₁_standard.
 -/
-theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) :
-    let LU := LUScenario.ofRSA S
-    ∀ u w, LURSA.L1_prob LU u w = RSA.L1_prob S u w := by
+theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] [DecidableEq W]
+    (utts : List U) (worlds : List W) (φ : U → W → ℚ)
+    (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) :
+    let LU := LUScenario.ofBasic utts worlds φ prior α
+    let S := RSAScenario.basic utts worlds φ prior α
+    ∀ u w, LURSA.L1_prob LU u w = RSA.getScore (RSA.L1_world S u) w := by
   intro u w
   -- The proof requires showing that with single lexicon,
   -- the marginalization is trivial

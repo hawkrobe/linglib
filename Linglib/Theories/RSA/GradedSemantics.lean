@@ -102,35 +102,33 @@ Graded height scenario.
 This demonstrates RSAScenario with non-Boolean φ.
 The meaning function returns degrees, not indicators.
 -/
-def heightScenario : SimpleRSAScenario Utterance Height where
-  φ := φ
-  utterances := [.tall, .short, .silence]
-  worlds := [.h150, .h160, .h170, .h180, .h190]
+def heightScenario : RSAScenario :=
+  RSAScenario.basic [Utterance.tall, .short, .silence] [Height.h150, .h160, .h170, .h180, .h190] φ
 
 -- ============================================================================
 -- RSA Computations
 -- ============================================================================
 
 /-- L0 for "tall" -/
-def l0_tall : List (Height × ℚ) := RSA.L0 heightScenario .tall
+def l0_tall : List (Height × ℚ) := RSA.L0 heightScenario Utterance.tall ()
 
 /-- L0 for "short" -/
-def l0_short : List (Height × ℚ) := RSA.L0 heightScenario .short
+def l0_short : List (Height × ℚ) := RSA.L0 heightScenario Utterance.short ()
 
 /-- S1 for height 190 (very tall person) -/
-def s1_h190 : List (Utterance × ℚ) := RSA.S1 heightScenario .h190
+def s1_h190 : List (Utterance × ℚ) := RSA.S1 heightScenario Height.h190 () ()
 
 /-- S1 for height 150 (short person) -/
-def s1_h150 : List (Utterance × ℚ) := RSA.S1 heightScenario .h150
+def s1_h150 : List (Utterance × ℚ) := RSA.S1 heightScenario Height.h150 () ()
 
 /-- S1 for height 170 (borderline) -/
-def s1_h170 : List (Utterance × ℚ) := RSA.S1 heightScenario .h170
+def s1_h170 : List (Utterance × ℚ) := RSA.S1 heightScenario Height.h170 () ()
 
 /-- L1 for "tall" -/
-def l1_tall : List (Height × ℚ) := RSA.L1 heightScenario .tall
+def l1_tall : List (Height × ℚ) := RSA.L1_world heightScenario Utterance.tall
 
 /-- L1 for "short" -/
-def l1_short : List (Height × ℚ) := RSA.L1 heightScenario .short
+def l1_short : List (Height × ℚ) := RSA.L1_world heightScenario Utterance.short
 
 -- ============================================================================
 -- Evaluate

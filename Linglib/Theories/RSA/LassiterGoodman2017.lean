@@ -202,12 +202,13 @@ This implements the lifted-variable RSA from Section 4.2:
 - Interp = Threshold (the free semantic variable)
 - φ(θ, u, h) = meaning(u, θ, h)
 -/
-def vagueAdjectiveScenario : ParametricRSA.ParametricRSAScenario :=
-  ParametricRSA.ParametricRSAScenario.ofBool
-    [.tall, .short, .silent]
-    [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-    [.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9]
+def vagueAdjectiveScenario : RSAScenario :=
+  RSAScenario.ambiguousBool
+    [Utterance.tall, .short, .silent]
+    [Height.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
+    [Threshold.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9]
     (fun θ h u => meaning u θ h)
+    -- Use uniform priors (default) to match original ParametricRSAScenario.ofBool behavior
 
 -- ============================================================================
 -- Cost-Sensitive RSA (Full Paper Model)
@@ -225,11 +226,11 @@ where discountFactor controls how much cost affects speaker choice.
 This linear approximation captures the key insight: costly utterances
 are dispreferred unless they're highly informative.
 -/
-def S1_withCost (S : ParametricRSA.ParametricRSAScenario)
+def S1_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
     (i : S.Interp) (w : S.World) : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
-    let l0Score := RSA.getScore (ParametricRSA.L0 S i u) w
+    let l0Score := RSA.getScore (RSA.L0 S u i) w
     let costPenalty := max 0 (1 - cost u * discountFactor)  -- never negative
     (u, l0Score * costPenalty)
   RSA.normalize scores
@@ -239,18 +240,18 @@ L1 joint with cost-sensitive speaker.
 
 P(w, θ | u) ∝ P(w) × P(θ) × S1_cost(u | w, θ)
 -/
-def L1_joint_withCost (S : ParametricRSA.ParametricRSAScenario)
+def L1_joint_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
     (u : S.Utterance) : List ((S.World × S.Interp) × ℚ) :=
   let pairs := S.worlds.flatMap fun w => S.interps.map fun i => (w, i)
   let scores := pairs.map fun (w, i) =>
-    let priorScore := S.prior w * S.interpPrior i
+    let priorScore := S.worldPrior w * S.interpPrior i
     let s1Score := RSA.getScore (S1_withCost S cost discountFactor i w) u
     ((w, i), priorScore * s1Score)
   RSA.normalize scores
 
 /-- L1 marginal over worlds with cost-sensitive speaker -/
-def L1_world_withCost (S : ParametricRSA.ParametricRSAScenario)
+def L1_world_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
     (u : S.Utterance) : List (S.World × ℚ) :=
   let joint := L1_joint_withCost S cost discountFactor u
@@ -259,7 +260,7 @@ def L1_world_withCost (S : ParametricRSA.ParametricRSAScenario)
     (w, RSA.sumScores wScores)
 
 /-- L1 marginal over thresholds with cost-sensitive speaker -/
-def L1_interp_withCost (S : ParametricRSA.ParametricRSAScenario)
+def L1_interp_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
     (u : S.Utterance) : List (S.Interp × ℚ) :=
   let joint := L1_joint_withCost S cost discountFactor u
@@ -273,35 +274,36 @@ def L1_interp_withCost (S : ParametricRSA.ParametricRSAScenario)
 
 /-- L0 for "tall" at threshold t5 (middle threshold) -/
 def l0_tall_t5 : List (Height × ℚ) :=
-  ParametricRSA.L0 vagueAdjectiveScenario .t5 .tall
+  RSA.L0 vagueAdjectiveScenario Utterance.tall Threshold.t5
 
 /-- L0 for "short" at threshold t5 -/
 def l0_short_t5 : List (Height × ℚ) :=
-  ParametricRSA.L0 vagueAdjectiveScenario .t5 .short
+  RSA.L0 vagueAdjectiveScenario Utterance.short Threshold.t5
 
 /-- S1 for height h8 (tall person) at threshold t5 -/
 def s1_h8_t5 : List (Utterance × ℚ) :=
-  ParametricRSA.S1 vagueAdjectiveScenario .t5 .h8
+  RSA.S1 vagueAdjectiveScenario Height.h8 Threshold.t5 ()
 
 /-- S1 for height h2 (short person) at threshold t5 -/
 def s1_h2_t5 : List (Utterance × ℚ) :=
-  ParametricRSA.S1 vagueAdjectiveScenario .t5 .h2
+  RSA.S1 vagueAdjectiveScenario Height.h2 Threshold.t5 ()
 
 /-- S1 for height h5 (borderline) at threshold t5 -/
 def s1_h5_t5 : List (Utterance × ℚ) :=
-  ParametricRSA.S1 vagueAdjectiveScenario .t5 .h5
+  RSA.S1 vagueAdjectiveScenario Height.h5 Threshold.t5 ()
 
 /-- L1 joint distribution over (height, threshold) given "tall" -/
 def l1_joint_tall : List ((Height × Threshold) × ℚ) :=
-  ParametricRSA.L1_joint vagueAdjectiveScenario .tall
+  let joint := RSA.L1_joint vagueAdjectiveScenario Utterance.tall
+  joint.map fun ((w, i, _), p) => ((w, i), p)
 
 /-- L1 marginal over heights given "tall" -/
 def l1_height_tall : List (Height × ℚ) :=
-  ParametricRSA.L1_world vagueAdjectiveScenario .tall
+  RSA.L1_world vagueAdjectiveScenario Utterance.tall
 
 /-- L1 marginal over thresholds given "tall" -/
 def l1_threshold_tall : List (Threshold × ℚ) :=
-  ParametricRSA.L1_interp vagueAdjectiveScenario .tall
+  RSA.L1_interp vagueAdjectiveScenario Utterance.tall
 
 -- ============================================================================
 -- Compute RSA Distributions (Full Paper Model - With Costs)
@@ -391,8 +393,8 @@ intermediate probability of being "tall".
 This captures the existence of borderline cases (Section 4.4).
 -/
 theorem borderline_has_intermediate_prob :
-    RSA.getScore l1_height_tall .h5 > 0 ∧
-    RSA.getScore l1_height_tall .h5 < RSA.getScore l1_height_tall .h8 := by
+    RSA.getScore l1_height_tall Height.h5 > 0 ∧
+    RSA.getScore l1_height_tall Height.h5 < RSA.getScore l1_height_tall Height.h8 := by
   native_decide
 
 /--
@@ -779,24 +781,22 @@ def basketballPrior : Height → ℚ
 RSA scenario for basketball players (shifted prior).
 Same semantics, different prior.
 -/
-def basketballScenario : ParametricRSA.ParametricRSAScenario where
-  Utterance := Utterance
-  World := Height
-  Interp := Threshold
-  φ := fun θ u h => boolToRat (meaning u θ h)
-  utterances := [.tall, .short, .silent]
-  worlds := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  interps := [.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9]
-  prior := basketballPrior  -- Different prior!
-  interpPrior := fun _ => 1
+def basketballScenario : RSAScenario :=
+  RSAScenario.ambiguousBool
+    [Utterance.tall, .short, .silent]
+    [Height.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
+    [Threshold.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9]
+    (fun θ h u => meaning u θ h)
+    basketballPrior  -- Different prior!
+    thresholdPrior
 
 /-- L1 threshold distribution for "tall" with basketball prior -/
 def l1_threshold_tall_basketball : List (Threshold × ℚ) :=
-  ParametricRSA.L1_interp basketballScenario .tall
+  RSA.L1_interp basketballScenario Utterance.tall
 
 /-- L1 height distribution for "tall" with basketball prior -/
 def l1_height_tall_basketball : List (Height × ℚ) :=
-  ParametricRSA.L1_world basketballScenario .tall
+  RSA.L1_world basketballScenario Utterance.tall
 
 #eval l1_threshold_tall_basketball  -- Should be shifted right!
 #eval l1_height_tall_basketball
@@ -1049,19 +1049,19 @@ RSA scenario using graded semantics directly (no threshold variable).
 This uses the graded degree as the φ function, without any
 threshold inference.
 -/
-def gradedScenario : SimpleRSAScenario Utterance Height :=
-  { φ := fun u h => match u with
+def gradedScenario : RSAScenario :=
+  RSAScenario.basic
+    [Utterance.tall, .short, .silent]
+    [Height.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
+    (fun u h => match u with
       | .tall => gradedTallness h
       | .short => 1 - gradedTallness h  -- complement
-      | .silent => 1
-  , utterances := [.tall, .short, .silent]
-  , worlds := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  , prior := heightPrior
-  }
+      | .silent => 1)
+    heightPrior
 
 /-- L1 for "tall" under graded semantics -/
 def l1_height_tall_graded : List (Height × ℚ) :=
-  RSA.L1 gradedScenario .tall
+  RSA.L1_world gradedScenario .tall
 
 #eval l1_height_tall_graded
 

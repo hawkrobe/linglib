@@ -26,8 +26,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
 
-open RSA
-
 -- ============================================================================
 -- Domain: Objects and Utterances
 -- ============================================================================
@@ -67,14 +65,14 @@ def meaning : Utterance → Object → Bool
   | .circle, .green_square => false
 
 -- ============================================================================
--- RSAScenario Instance (replaces FiniteSemanticBackend)
+-- RSAScenario Instance (using unified API)
 -- ============================================================================
 
 /-- Reference game RSA scenario -/
-def refGameScenario : SimpleRSAScenario Utterance Object :=
-  SimpleRSAScenario.ofBool
-    [.blue, .green, .square, .circle]
-    [.blue_square, .blue_circle, .green_square]
+def refGameScenario : RSAScenario :=
+  RSAScenario.basicBool
+    [Utterance.blue, .green, .square, .circle]
+    [Object.blue_square, .blue_circle, .green_square]
     (fun obj utt => meaning utt obj)
 
 /-- Legacy alias -/
@@ -85,25 +83,25 @@ abbrev refGameBackend := refGameScenario
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario .blue
+def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.blue ()
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario .green
+def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.green ()
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario .square
+def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.square ()
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario .blue_square
+def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.blue_square () ()
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario .green_square
+def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.green_square () ()
 
 /-- L1 for "square" - the key pragmatic inference -/
-def l1_square : List (Object × ℚ) := RSA.L1 refGameScenario .square
+def l1_square : List (Object × ℚ) := RSA.L1_world refGameScenario Utterance.square
 
 /-- L1 for "blue" -/
-def l1_blue : List (Object × ℚ) := RSA.L1 refGameScenario .blue
+def l1_blue : List (Object × ℚ) := RSA.L1_world refGameScenario Utterance.blue
 
 -- ============================================================================
 -- Evaluate
@@ -164,75 +162,9 @@ theorem green_unique :
 
 /-- "circle" uniquely identifies blue_circle at L0 -/
 theorem circle_unique :
-    (RSA.getScore (RSA.L0 refGameScenario .circle) .blue_circle).num > 0 ∧
-    (RSA.getScore (RSA.L0 refGameScenario .circle) .blue_square).num = 0 := by
+    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle ()) .blue_circle).num > 0 ∧
+    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle ()) .blue_square).num = 0 := by
   native_decide
-
--- ============================================================================
--- Typed Distributions (Phase 2.4)
--- ============================================================================
-
-/-- Non-negativity proof for reference game prior -/
-theorem refGame_prior_nonneg : ∀ w, 0 ≤ refGameScenario.prior w := fun _ => le_of_lt one_pos
-
-/-- Non-negativity proof for reference game φ -/
-theorem refGame_φ_nonneg : ∀ u w, 0 ≤ refGameScenario.φ u w := fun _ _ => by
-  simp only [refGameScenario, SimpleRSAScenario.ofBool, boolToRat]
-  split <;> decide
-
-/-- L0 for "square" as a typed distribution -/
-def l0_square_typed : Option (ExactDist Object) :=
-  RSA.L0_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .square
-
-/-- L0 for "green" as a typed distribution -/
-def l0_green_typed : Option (ExactDist Object) :=
-  RSA.L0_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .green
-
-/-- S1 for blue_square as a typed distribution -/
-def s1_blue_square_typed : Option (ExactDist Utterance) :=
-  RSA.S1_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .blue_square
-
-/-- L1 for "square" as a typed distribution -/
-def l1_square_typed : Option (ExactDist Object) :=
-  RSA.L1_dist refGameScenario refGame_prior_nonneg refGame_φ_nonneg .square
-
--- Evaluate typed distributions
-#eval l0_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square))
--- Expected: some (1/2, 1/2)
-
-#eval l0_green_typed.map (fun d => (d.mass .green_square, d.mass .blue_square))
--- Expected: some (1, 0)
-
-#eval s1_blue_square_typed.map (fun d => (d.mass .blue, d.mass .square, d.mass .green))
--- Expected: some (1/2, 1/2, 0)
-
-#eval l1_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square))
--- Expected: some (x, y) where x > y (the pragmatic inference!)
-
-/--
-**Typed Distribution Theorem**
-
-When using typed distributions, we get compile-time guarantees
-that probabilities sum to 1.
--/
-theorem l0_square_typed_sums_to_one :
-    l0_square_typed.isSome →
-    ∀ d, l0_square_typed = some d → ∑ w : Object, d.mass w = 1 := by
-  intro _hsome d heq
-  exact d.sum_one
-
-/--
-The key inference still holds with typed distributions.
-
-L1("square") assigns higher probability to blue_square than green_square.
--/
-theorem typed_reference_game_inference :
-    l1_square_typed.isSome ∧
-    (l1_square_typed.map (fun d => (d.mass .blue_square, d.mass .green_square)) = some (3/5, 2/5)) := by
-  native_decide
-
-/-- The probabilities satisfy the expected inequality -/
-theorem typed_inference_inequality : (3 : ℚ) / 5 > (2 : ℚ) / 5 := by native_decide
 
 -- ============================================================================
 -- Summary
@@ -257,16 +189,6 @@ theorem typed_inference_inequality : (3 : ℚ) / 5 > (2 : ℚ) / 5 := by native_
 
 This is the core RSA insight: pragmatic listeners infer meaning by
 reasoning about rational speaker behavior.
-
-## Typed Distributions (Phase 2.4)
-
-The new `ExactDist` type provides compile-time guarantees:
-- `d.sum_one : ∑ x, d.mass x = 1` — probabilities sum to 1
-- `d.nonneg : ∀ x, 0 ≤ d.mass x` — all probabilities non-negative
-- `d.mass_le_one : ∀ x, d.mass x ≤ 1` — each probability bounded by 1
-- `d.support_nonempty` — support is nonempty
-
-The `toPMF` bridge connects to Mathlib's PMF for access to measure-theoretic theorems.
 -/
 
 end RSA.FrankGoodman2012

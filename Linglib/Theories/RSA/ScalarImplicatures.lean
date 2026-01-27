@@ -86,7 +86,7 @@ Compute RSA result for "some" utterance.
 Uses the L1 scores from RSA.Basic to get the distribution over worlds.
 -/
 def rsaSomeResult : RSAScalarResult :=
-  let l1_scores := RSA.L1 scalarScenario .some_
+  let l1_scores := RSA.L1_world scalarScenario .some_
   -- P(some_not_all) = P(w1) + P(w2)
   let p_w1 := RSA.getScore l1_scores .w1
   let p_w2 := RSA.getScore l1_scores .w2
@@ -152,7 +152,7 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
     some rsaSomeResult
   else if hasAllQuantifier d then
     -- "all" doesn't generate an implicature (top of scale)
-    let l1_scores := RSA.L1 scalarScenario .all
+    let l1_scores := RSA.L1_world scalarScenario .all
     let p_all := RSA.getScore l1_scores .w3
     some { utterance := "all"
          , probSomeNotAll := 0
@@ -214,10 +214,10 @@ theorem rsa_every_no_implicature :
 Get L1 probability for a specific world.
 -/
 def l1ProbForWorld (w : CookieWorld) : ℚ :=
-  RSA.getScore (RSA.L1 scalarScenario .some_) w
+  RSA.getScore (RSA.L1_world scalarScenario .some_) w
 
 -- L1 scores for "some" (for reference).
-#eval RSA.L1 scalarScenario .some_
+#eval RSA.L1_world scalarScenario .some_
 
 /--
 **Theorem: w1 > w3 (one vs all)**

@@ -57,8 +57,8 @@ def allUtterances : List ScalarUtterance := [.none_, .some_, .all]
 def allWorlds : List CookieWorld := [.w0, .w1, .w2, .w3]
 
 /-- The scalar RSA scenario for cookie domain -/
-def scalarScenario : SimpleRSAScenario ScalarUtterance CookieWorld :=
-  SimpleRSAScenario.ofBool allUtterances allWorlds (fun w u => meaning u w)
+def scalarScenario : RSAScenario :=
+  RSAScenario.basicBool allUtterances allWorlds (fun w u => meaning u w)
 
 /-- Legacy alias for backward compatibility -/
 abbrev scalarBackend := scalarScenario

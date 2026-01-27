@@ -66,8 +66,8 @@ def Context.satisfies (ctx : Context) (obj : String) (utt : String) : Bool :=
   ctx.hasProperty obj utt
 
 /-- Build RSAScenario from context -/
-def Context.toScenario (ctx : Context) : SimpleRSAScenario String String :=
-  SimpleRSAScenario.ofBool ctx.properties ctx.objects ctx.satisfies
+def Context.toScenario (ctx : Context) : RSAScenario :=
+  RSAScenario.basicBool ctx.properties ctx.objects ctx.satisfies
 
 -- ============================================================================
 -- Standard Reference Game: Objects with Color × Shape
@@ -121,8 +121,8 @@ def TypedContext.fromObjects (objs : List Object) : TypedContext :=
   }
 
 /-- Build RSAScenario from typed context -/
-def TypedContext.toScenario (ctx : TypedContext) : SimpleRSAScenario Feature Object :=
-  SimpleRSAScenario.ofBool ctx.features ctx.objects (fun obj feat => feat.appliesTo obj)
+def TypedContext.toScenario (ctx : TypedContext) : RSAScenario :=
+  RSAScenario.basicBool ctx.features ctx.objects (fun obj feat => feat.appliesTo obj)
 
 -- ============================================================================
 -- Convenience: Quick Context Builders
@@ -146,15 +146,15 @@ def fromPairs (pairs : List (Color × Shape)) : TypedContext :=
 
 /-- L0 distribution for a feature in a typed context -/
 def l0 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
-  RSA.L0 ctx.toScenario f
+  RSA.L0 ctx.toScenario f ()
 
 /-- S1 distribution for an object in a typed context -/
 def s1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
-  RSA.S1 ctx.toScenario obj
+  RSA.S1 ctx.toScenario obj () ()
 
 /-- L1 distribution for a feature in a typed context -/
 def l1 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
-  RSA.L1 ctx.toScenario f
+  RSA.L1_world ctx.toScenario f
 
 -- ============================================================================
 -- Example Usage

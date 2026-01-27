@@ -42,7 +42,7 @@ import Linglib.Core.RSA
 
 namespace RSA.KaoEtAl2014
 
-open RSA UnifiedRSA
+open RSA
 
 -- ============================================================================
 -- Domain: Prices and Affects
@@ -221,24 +221,24 @@ def strictScenario : RSAScenario :=
 -- ============================================================================
 
 /-- L0 for "fifty dollars" -/
-def l0_fifty : List (Meaning × ℚ) := UnifiedRSA.L0 hyperboleScenario Utterance.fifty ()
+def l0_fifty : List (Meaning × ℚ) := RSA.L0 hyperboleScenario Utterance.fifty ()
 
 /-- L0 for "million dollars" -/
-def l0_million : List (Meaning × ℚ) := UnifiedRSA.L0 hyperboleScenario Utterance.million ()
+def l0_million : List (Meaning × ℚ) := RSA.L0 hyperboleScenario Utterance.million ()
 
 /-- S1 with meaning (p500, annoyed) and QUD "affect" -/
 def s1_p500_annoyed_affect : List (Utterance × ℚ) :=
-  UnifiedRSA.S1 hyperboleScenario (Price.p500, Affect.annoyed) () Goal.affect
+  RSA.S1 hyperboleScenario (Price.p500, Affect.annoyed) () Goal.affect
 
 /-- S1 with meaning (p500, annoyed) and QUD "price" -/
 def s1_p500_annoyed_price : List (Utterance × ℚ) :=
-  UnifiedRSA.S1 hyperboleScenario (Price.p500, Affect.annoyed) () Goal.price
+  RSA.S1 hyperboleScenario (Price.p500, Affect.annoyed) () Goal.price
 
 /-- L1 for "million dollars" -/
-def l1_million : List (Meaning × ℚ) := UnifiedRSA.L1_world hyperboleScenario Utterance.million
+def l1_million : List (Meaning × ℚ) := RSA.L1_world hyperboleScenario Utterance.million
 
 /-- L1 goal distribution for "million dollars" -/
-def l1_goal_million : List (Goal × ℚ) := UnifiedRSA.L1_qud hyperboleScenario Utterance.million
+def l1_goal_million : List (Goal × ℚ) := RSA.L1_qud hyperboleScenario Utterance.million
 
 -- ============================================================================
 -- Evaluate
@@ -331,14 +331,14 @@ def l1_infers_affect_qud : Bool :=
 -- ============================================================================
 
 /-- Under strict semantics, "million" gets zero probability -/
-def l0_million_strict : List (Meaning × ℚ) := UnifiedRSA.L0 strictScenario Utterance.million ()
+def l0_million_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance.million ()
 
 #eval l0_million_strict
 -- All zeros (million is literally false for all meanings)
 
 /-- S1 under strict semantics can't use hyperbole -/
 def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
-  UnifiedRSA.S1 strictScenario (Price.p500, Affect.annoyed) () Goal.affect
+  RSA.S1 strictScenario (Price.p500, Affect.annoyed) () Goal.affect
 
 #eval s1_strict_p500_annoyed_affect
 -- "million" should have probability 0

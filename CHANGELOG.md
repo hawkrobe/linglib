@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.16.0] - 2025-01-27
+
+### Changed
+- **Core/RSA.lean**: Unified RSA API - renamed `UnifiedRSA` namespace to `RSA`, consolidated all RSA computations
+  - Smart constructors: `RSAScenario.basic`, `basicBool`, `ambiguous`, `ambiguousBool`, `qud`, `qudBool`
+  - Updated signatures: `RSA.L0 S u i`, `RSA.S1 S w i q`, `RSA.L1_world`, `RSA.L1_interp`, `RSA.L1_qud`
+  - Legacy `SimpleRSAScenario` and `ParametricRSAScenario` kept for backward compatibility
+
+- **Core/Fragments/Quantities.lean**, **ReferenceGames.lean**: Migrated to unified RSA API
+
+- **Theories/RSA/**: All paper replications migrated to unified API
+  - `Basic.lean`: `SimpleRSAScenario.ofBool` → `RSAScenario.basicBool`
+  - `FrankGoodman2012.lean`, `GoodmanStuhlmuller2013.lean`, `ScalarImplicatures.lean`: `RSA.L1` → `RSA.L1_world`
+  - `GradedSemantics.lean`: Updated to `RSAScenario.basic`
+  - `LassiterGoodman2017.lean`, `ScontrasPearl2021.lean`: `ParametricRSA` → `RSAScenario.ambiguousBool`
+  - `KaoEtAl2014.lean`, `KaoMetaphor.lean`: `UnifiedRSA` → `RSA`
+
+- **Core/LexicalUncertainty.lean**: Updated `Lexicon.ofRSA` → `Lexicon.ofScenario`, `LUScenario.toRSA` → `LUScenario.toRSAScenario`
+
 ## [0.15.0] - 2025-01-26
 
 ### Added

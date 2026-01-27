@@ -71,12 +71,8 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
   List.finRange (n + 1)
 
 /-- Build RSA scenario from domain -/
-def Domain.toScenario {n : Nat} (d : Domain n) : SimpleRSAScenario Utterance (Fin (n + 1)) :=
-  { φ := fun u w => boolToRat (meaning n u w)
-  , prior := d.prior
-  , utterances := allUtterances
-  , worlds := allWorlds n
-  }
+def Domain.toScenario {n : Nat} (d : Domain n) : RSAScenario :=
+  RSAScenario.basicBool allUtterances (allWorlds n) (fun w u => meaning n u w) d.prior
 
 -- ============================================================================
 -- Convenience Constructors
@@ -94,15 +90,15 @@ def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) : Domain n := { prior := p }
 
 /-- L0 distribution -/
 def l0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
-  RSA.L0 d.toScenario u
+  RSA.L0 d.toScenario u ()
 
 /-- S1 distribution -/
 def s1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
-  RSA.S1 d.toScenario w
+  RSA.S1 d.toScenario w () ()
 
 /-- L1 distribution -/
 def l1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
-  RSA.L1 d.toScenario u
+  RSA.L1_world d.toScenario u
 
 -- ============================================================================
 -- Named World Accessors (for readability)
@@ -147,12 +143,8 @@ structure ExtDomain (n : Nat) where
   prior : Fin (n + 1) → ℚ := fun _ => 1
 
 /-- Build RSA scenario from extended domain -/
-def ExtDomain.toScenario {n : Nat} (d : ExtDomain n) : SimpleRSAScenario ExtUtterance (Fin (n + 1)) :=
-  { φ := fun u w => boolToRat (extMeaning n u w)
-  , prior := d.prior
-  , utterances := allExtUtterances
-  , worlds := allWorlds n
-  }
+def ExtDomain.toScenario {n : Nat} (d : ExtDomain n) : RSAScenario :=
+  RSAScenario.basicBool allExtUtterances (allWorlds n) (fun w u => extMeaning n u w) d.prior
 
 /-- Standard extended domain -/
 def extStandard (n : Nat) : ExtDomain n := {}
@@ -175,6 +167,6 @@ private def threePerson : Domain 3 := standard 3
 #eval l1 (standard 5) .some_
 
 -- Extended with "most"
-#eval RSA.L1 (extStandard 5).toScenario ExtUtterance.most
+#eval RSA.L1_world (extStandard 5).toScenario ExtUtterance.most
 
 end Quantity
