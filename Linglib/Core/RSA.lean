@@ -10,9 +10,9 @@ This enables mathematical proofs about pragmatic reasoning.
 
 ### Key Types
 
-- `RSAScenario U W`: Simple scenario with type parameters (Frank & Goodman 2012)
+- `SimpleRSAScenario U W`: Simple scenario with type parameters (Frank & Goodman 2012)
 - `ParametricRSAScenario`: For lifted-variable RSA (scope ambiguity)
-- `UnifiedRSAScenario`: Unified type supporting all RSA variants (new)
+- `RSAScenario`: Unified type supporting all RSA variants (new)
 
 ### RSA Model
 
@@ -23,9 +23,9 @@ RSA models communication as recursive reasoning between speakers and listeners:
 
 ### Smart Constructors (New Unified API)
 
-- `UnifiedRSAScenario.basic`: Simple Frank & Goodman models (no interp, no QUD)
-- `UnifiedRSAScenario.ambiguous`: Scope/interpretation ambiguity (Scontras & Pearl)
-- `UnifiedRSAScenario.qud`: QUD-sensitive reasoning (Kao et al.)
+- `RSAScenario.basic`: Simple Frank & Goodman models (no interp, no QUD)
+- `RSAScenario.ambiguous`: Scope/interpretation ambiguity (Scontras & Pearl)
+- `RSAScenario.qud`: QUD-sensitive reasoning (Kao et al.)
 
 Reference: Frank & Goodman (2012), Goodman & Frank (2016)
 -/
@@ -34,14 +34,16 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Distribution
 
 -- ============================================================================
--- RSAScenario: Core Interface (Original API)
+-- SimpleRSAScenario: Typed Simple Scenarios (Original API)
 -- ============================================================================
 
 /--
-RSA scenario: specifies utterances, worlds, and how they relate.
+Simple RSA scenario with explicit type parameters.
 
 The type parameters `U` (utterance) and `W` (world) are explicit, preserving
 type information throughout RSA computation. This enables type-safe proofs.
+
+For new code, prefer `RSAScenario.basic` which uses the unified type.
 
 ## Fields
 
@@ -52,13 +54,13 @@ type information throughout RSA computation. This enables type-safe proofs.
 ## Usage
 
 ```lean
-def myScenario : RSAScenario MyUtt MyWorld :=
+def myScenario : SimpleRSAScenario MyUtt MyWorld :=
   { φ := myMeaning
   , utterances := [.some_, .all_]
   , worlds := [.w0, .w1, .w2] }
 ```
 -/
-structure RSAScenario (U : Type) (W : Type) [BEq U] [BEq W] where
+structure SimpleRSAScenario (U : Type) (W : Type) [BEq U] [BEq W] where
   /-- Agreement function: how well does utterance describe world? -/
   φ : U → W → ℚ
   /-- Enumeration of all utterances -/
@@ -83,15 +85,15 @@ Build RSAScenario from a Boolean satisfaction relation.
 This is the primary way to create scenarios from classical semantics.
 The φ function becomes an indicator function: 1 if true, 0 if false.
 -/
-def RSAScenario.ofBool {U W : Type} [BEq U] [BEq W]
+def SimpleRSAScenario.ofBool {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
-    (satisfies : W → U → Bool) : RSAScenario U W where
+    (satisfies : W → U → Bool) : SimpleRSAScenario U W where
   φ u w := boolToRat (satisfies w u)
   utterances := utterances
   worlds := worlds
 
 /-- Property: a scenario has Boolean semantics (φ only returns 0 or 1) -/
-def RSAScenario.isBoolean {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) : Prop :=
+def SimpleRSAScenario.isBoolean {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) : Prop :=
   ∀ u w, S.φ u w = 0 ∨ S.φ u w = 1
 
 -- ============================================================================
@@ -171,7 +173,7 @@ The literal listener updates prior beliefs by the meaning function,
 uniformly distributing probability over worlds where utterance is true
 (for Boolean semantics) or proportionally to φ (for graded semantics).
 -/
-def L0 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : List (W × ℚ) :=
+def L0 {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) : List (W × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.prior w * S.φ u w)
   normalize scores
 
@@ -190,7 +192,7 @@ the intended world. For α=1 (default), this is just L0(w|u) normalized.
 More informative (less ambiguous) utterances are preferred.
 Higher α values make the speaker more "rational" (preferring informative utterances more strongly).
 -/
-def S1 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (w : W) : List (U × ℚ) :=
+def S1 {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (w : W) : List (U × ℚ) :=
   let scores := S.utterances.map fun u => (u, (getScore (L0 S u) w) ^ S.α)
   normalize scores
 
@@ -206,7 +208,7 @@ P(w | u) ∝ P(w) · S1(u | w)
 The pragmatic listener reasons about what world would make a rational
 speaker choose this utterance.
 -/
-def L1 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : List (W × ℚ) :=
+def L1 {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) : List (W × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.prior w * getScore (S1 S w) u)
   normalize scores
 
@@ -215,15 +217,15 @@ def L1 {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : List (W × �
 -- ============================================================================
 
 /-- Get L0 probability for a specific world -/
-def L0_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) (w : W) : ℚ :=
+def L0_prob {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) (w : W) : ℚ :=
   getScore (L0 S u) w
 
 /-- Get S1 probability for a specific utterance -/
-def S1_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (w : W) (u : U) : ℚ :=
+def S1_prob {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (w : W) (u : U) : ℚ :=
   getScore (S1 S w) u
 
 /-- Get L1 probability for a specific world -/
-def L1_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) (w : W) : ℚ :=
+def L1_prob {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) (w : W) : ℚ :=
   getScore (L1 S u) w
 
 -- ============================================================================
@@ -231,11 +233,11 @@ def L1_prob {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) (w : W) :
 -- ============================================================================
 
 /-- Count worlds compatible with an utterance -/
-def compatibleCount {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : Nat :=
+def compatibleCount {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) : Nat :=
   (S.worlds.filter fun w => S.φ u w > 0).length
 
 /-- Informativity of an utterance = 1 / (compatible worlds) -/
-def informativity {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) (u : U) : ℚ :=
+def informativity {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) (u : U) : ℚ :=
   let n := compatibleCount S u
   if n > 0 then 1 / n else 0
 
@@ -251,7 +253,7 @@ When φ(u,w) = 0:
 2. After normalization, `0 / total = 0`
 -/
 theorem L0_zero_when_false {U W : Type} [BEq U] [BEq W]
-    (S : RSAScenario U W) (u : U) (w : W)
+    (S : SimpleRSAScenario U W) (u : U) (w : W)
     (hfalse : S.φ u w = 0) :
     ∀ p, (w, p) ∈ (L0 S u) → p = 0 := by
   intro p hmem
@@ -275,7 +277,7 @@ returns false (φ = 0), the literal listener assigns zero probability.
 Requires LawfulBEq to convert `w' == w = true` to `w' = w`.
 -/
 theorem L0_prob_zero_when_false {U W : Type} [BEq U] [BEq W] [LawfulBEq W]
-    (S : RSAScenario U W) (u : U) (w : W)
+    (S : SimpleRSAScenario U W) (u : U) (w : W)
     (hfalse : S.φ u w = 0) :
     L0_prob S u w = 0 := by
   unfold L0_prob L0 getScore normalize
@@ -311,7 +313,7 @@ Since S1 uses L0(w|u)^α, we need 0^α = 0. This holds for α > 0.
 For α = 0, 0^0 = 1, so this theorem requires α > 0.
 -/
 theorem S1_zero_when_false {U W : Type} [BEq U] [BEq W] [LawfulBEq W] [LawfulBEq U]
-    (S : RSAScenario U W) (w : W) (u : U)
+    (S : SimpleRSAScenario U W) (w : W) (u : U)
     (hfalse : S.φ u w = 0)
     (hα_pos : S.α > 0 := by decide) :
     S1_prob S w u = 0 := by
@@ -362,7 +364,7 @@ Returns `none` if the utterance is incompatible with all worlds
 Requires Fintype instances and proofs that prior and φ are non-negative.
 -/
 def L0_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
-    (S : RSAScenario U W)
+    (S : SimpleRSAScenario U W)
     (prior_nonneg : ∀ w, 0 ≤ S.prior w)
     (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
     (u : U) : Option (ExactDist W) :=
@@ -375,7 +377,7 @@ S1 as a typed distribution with sum-to-1 guarantee.
 Returns `none` if no utterance is informative for this world.
 -/
 def S1_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
-    (S : RSAScenario U W)
+    (S : SimpleRSAScenario U W)
     (prior_nonneg : ∀ w, 0 ≤ S.prior w)
     (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
     (w : W) : Option (ExactDist U) :=
@@ -396,7 +398,7 @@ L1 as a typed distribution with sum-to-1 guarantee.
 Returns `none` if no world makes the speaker choose this utterance.
 -/
 def L1_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
-    (S : RSAScenario U W)
+    (S : SimpleRSAScenario U W)
     (prior_nonneg : ∀ w, 0 ≤ S.prior w)
     (φ_nonneg : ∀ u w, 0 ≤ S.φ u w)
     (u : U) : Option (ExactDist W) :=
@@ -415,16 +417,16 @@ def L1_dist {U W : Type} [BEq U] [BEq W] [Fintype U] [Fintype W]
 /--
 Helper: Non-negativity proofs for Boolean scenarios (prior = 1, φ ∈ {0,1}).
 -/
-theorem RSAScenario.ofBool_prior_nonneg {U W : Type} [BEq U] [BEq W]
+theorem SimpleRSAScenario.ofBool_prior_nonneg {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W) (satisfies : W → U → Bool) :
-    let S := RSAScenario.ofBool utterances worlds satisfies
+    let S := SimpleRSAScenario.ofBool utterances worlds satisfies
     ∀ w, 0 ≤ S.prior w := fun _ => le_of_lt one_pos
 
-theorem RSAScenario.ofBool_φ_nonneg {U W : Type} [BEq U] [BEq W]
+theorem SimpleRSAScenario.ofBool_φ_nonneg {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W) (satisfies : W → U → Bool) :
-    let S := RSAScenario.ofBool utterances worlds satisfies
+    let S := SimpleRSAScenario.ofBool utterances worlds satisfies
     ∀ u w, 0 ≤ S.φ u w := fun _ _ => by
-  simp only [RSAScenario.ofBool, boolToRat]
+  simp only [SimpleRSAScenario.ofBool, boolToRat]
   split <;> decide
 
 end RSA
@@ -705,7 +707,7 @@ def L1_interp_dist (S : TypedParametricRSAScenario) (u : S.Utterance)
 end ParametricRSA
 
 -- ============================================================================
--- UnifiedRSAScenario: New Unified Type (supports all RSA variants)
+-- RSAScenario: New Unified Type (supports all RSA variants)
 -- ============================================================================
 
 /--
@@ -728,11 +730,11 @@ This is the new unified type supporting:
 ## Smart Constructors
 
 Use the smart constructors for common patterns:
-- `UnifiedRSAScenario.basic`: Simple reference games
-- `UnifiedRSAScenario.ambiguous`: Scope ambiguity
-- `UnifiedRSAScenario.qud`: QUD-sensitive models (hyperbole, metaphor)
+- `RSAScenario.basic`: Simple reference games
+- `RSAScenario.ambiguous`: Scope ambiguity
+- `RSAScenario.qud`: QUD-sensitive models (hyperbole, metaphor)
 -/
-structure UnifiedRSAScenario where
+structure RSAScenario where
   /-- Type of utterances -/
   Utterance : Type
   /-- Type of world states -/
@@ -770,11 +772,11 @@ structure UnifiedRSAScenario where
   /-- BEq instance for QUDs -/
   [qudBEq : BEq QUD]
 
-attribute [instance] UnifiedRSAScenario.uttBEq UnifiedRSAScenario.worldBEq
-  UnifiedRSAScenario.interpBEq UnifiedRSAScenario.qudBEq
+attribute [instance] RSAScenario.uttBEq RSAScenario.worldBEq
+  RSAScenario.interpBEq RSAScenario.qudBEq
 
 -- ============================================================================
--- Smart Constructors for UnifiedRSAScenario
+-- Smart Constructors for RSAScenario
 -- ============================================================================
 
 /--
@@ -785,15 +787,15 @@ This is for simple reference games like Frank & Goodman (2012).
 ## Example
 
 ```lean
-def myScenario : UnifiedRSAScenario :=
-  UnifiedRSAScenario.basic [.blue, .square] [.obj1, .obj2] myMeaning
+def myScenario : RSAScenario :=
+  RSAScenario.basic [.blue, .square] [.obj1, .obj2] myMeaning
 ```
 -/
-def UnifiedRSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
+def RSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
     (prior : W → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario where
+    (α : ℕ := 1) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -812,12 +814,12 @@ def UnifiedRSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
 /--
 Build a basic RSA scenario from Boolean semantics.
 -/
-def UnifiedRSAScenario.basicBool {U W : Type} [BEq U] [BEq W] [DecidableEq W]
+def RSAScenario.basicBool {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (satisfies : W → U → Bool)
     (prior : W → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario :=
-  UnifiedRSAScenario.basic utterances worlds (fun u w => boolToRat (satisfies w u)) prior α
+    (α : ℕ := 1) : RSAScenario :=
+  RSAScenario.basic utterances worlds (fun u w => boolToRat (satisfies w u)) prior α
 
 /--
 Build a scenario with interpretation ambiguity (e.g., scope readings).
@@ -827,20 +829,20 @@ This is for lifted-variable RSA like Scontras & Pearl (2021).
 ## Example
 
 ```lean
-def scopeScenario : UnifiedRSAScenario :=
-  UnifiedRSAScenario.ambiguous
+def scopeScenario : RSAScenario :=
+  RSAScenario.ambiguous
     [.everyHorseNotJump]
     [0, 1, 2]  -- worlds
     [.surface, .inverse]  -- interpretations
     scopeMeaning
 ```
 -/
-def UnifiedRSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
+def RSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario where
+    (α : ℕ := 1) : RSAScenario where
   Utterance := U
   World := W
   Interp := I
@@ -859,13 +861,13 @@ def UnifiedRSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [Decidab
 /--
 Build a scenario with interpretation ambiguity from Boolean semantics.
 -/
-def UnifiedRSAScenario.ambiguousBool {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
+def RSAScenario.ambiguousBool {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
     (utterances : List U) (worlds : List W) (interps : List I)
     (satisfies : I → W → U → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario :=
-  UnifiedRSAScenario.ambiguous utterances worlds interps
+    (α : ℕ := 1) : RSAScenario :=
+  RSAScenario.ambiguous utterances worlds interps
     (fun i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α
 
 /--
@@ -876,8 +878,8 @@ This is for QUD-RSA like Kao et al. (2014).
 ## Example
 
 ```lean
-def hyperboleScenario : UnifiedRSAScenario :=
-  UnifiedRSAScenario.qud
+def hyperboleScenario : RSAScenario :=
+  RSAScenario.qud
     allUtterances allMeanings allGoals
     extendedSemantics
     qudEquiv
@@ -885,13 +887,13 @@ def hyperboleScenario : UnifiedRSAScenario :=
     goalPrior
 ```
 -/
-def UnifiedRSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
+def RSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (utterances : List U) (worlds : List W) (quds : List Q)
     (φ : U → W → ℚ)
     (qudProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (qudPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario where
+    (α : ℕ := 1) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -910,18 +912,18 @@ def UnifiedRSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
 /--
 Build a QUD-sensitive scenario from Boolean semantics.
 -/
-def UnifiedRSAScenario.qudBool {U W Q : Type} [BEq U] [BEq W] [BEq Q]
+def RSAScenario.qudBool {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (utterances : List U) (worlds : List W) (quds : List Q)
     (satisfies : W → U → Bool)
     (qudProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (qudPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : UnifiedRSAScenario :=
-  UnifiedRSAScenario.qud utterances worlds quds
+    (α : ℕ := 1) : RSAScenario :=
+  RSAScenario.qud utterances worlds quds
     (fun u w => boolToRat (satisfies w u)) qudProject worldPrior qudPrior α
 
 -- ============================================================================
--- Unified RSA Computations (for UnifiedRSAScenario)
+-- Unified RSA Computations (for RSAScenario)
 -- ============================================================================
 
 namespace UnifiedRSA
@@ -933,7 +935,7 @@ P(w | u, i) ∝ P(w) · φ(i, u, w)
 
 For basic scenarios (Interp = Unit), pass `()` for interpretation.
 -/
-def L0 (S : UnifiedRSAScenario) (u : S.Utterance) (i : S.Interp) : List (S.World × ℚ) :=
+def L0 (S : RSAScenario) (u : S.Utterance) (i : S.Interp) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.worldPrior w * S.φ i u w)
   RSA.normalize scores
 
@@ -944,7 +946,7 @@ P_q(w | u, i) ∝ Σ_{w' ~ w under q} P(w') · φ(i, u, w')
 
 Returns the summed probability mass of the equivalence class containing w.
 -/
-def L0_projected (S : UnifiedRSAScenario) (u : S.Utterance) (i : S.Interp) (q : S.QUD)
+def L0_projected (S : RSAScenario) (u : S.Utterance) (i : S.Interp) (q : S.QUD)
     : List (S.World × ℚ) :=
   let l0 := L0 S u i
   S.worlds.map fun w =>
@@ -960,7 +962,7 @@ P(u | w, i, q) ∝ L0_q(w | u, i)^α
 For basic scenarios, pass `()` for interpretation and QUD.
 For QUD models, the speaker optimizes informativity w.r.t. the projected meaning.
 -/
-def S1 (S : UnifiedRSAScenario) (w : S.World) (i : S.Interp) (q : S.QUD)
+def S1 (S : RSAScenario) (w : S.World) (i : S.Interp) (q : S.QUD)
     : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
     let l0Score := RSA.getScore (L0_projected S u i q) w
@@ -972,7 +974,7 @@ L1 joint distribution over (World × Interp × QUD).
 
 P(w, i, q | u) ∝ P(w) · P(i) · P(q) · S1(u | w, i, q)
 -/
-def L1_joint (S : UnifiedRSAScenario) (u : S.Utterance)
+def L1_joint (S : RSAScenario) (u : S.Utterance)
     : List ((S.World × S.Interp × S.QUD) × ℚ) :=
   let triples := S.worlds.flatMap fun w =>
     S.interps.flatMap fun i =>
@@ -988,7 +990,7 @@ L1 marginal over worlds.
 
 P(w | u) = Σ_{i,q} P(w, i, q | u)
 -/
-def L1_world (S : UnifiedRSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
+def L1_world (S : RSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
   let joint := L1_joint S u
   S.worlds.map fun w =>
     let wScores := joint.filter (fun ((w', _, _), _) => w' == w) |>.map (·.2)
@@ -999,7 +1001,7 @@ L1 marginal over interpretations.
 
 P(i | u) = Σ_{w,q} P(w, i, q | u)
 -/
-def L1_interp (S : UnifiedRSAScenario) (u : S.Utterance) : List (S.Interp × ℚ) :=
+def L1_interp (S : RSAScenario) (u : S.Utterance) : List (S.Interp × ℚ) :=
   let joint := L1_joint S u
   S.interps.map fun i =>
     let iScores := joint.filter (fun ((_, i', _), _) => i' == i) |>.map (·.2)
@@ -1010,7 +1012,7 @@ L1 marginal over QUDs.
 
 P(q | u) = Σ_{w,i} P(w, i, q | u)
 -/
-def L1_qud (S : UnifiedRSAScenario) (u : S.Utterance) : List (S.QUD × ℚ) :=
+def L1_qud (S : RSAScenario) (u : S.Utterance) : List (S.QUD × ℚ) :=
   let joint := L1_joint S u
   S.quds.map fun q =>
     let qScores := joint.filter (fun ((_, _, q'), _) => q' == q) |>.map (·.2)
@@ -1023,7 +1025,7 @@ P(u | w) ∝ L1_world(w | u)^α
 
 This can be used for modeling truth-value judgments (endorsement).
 -/
-def S2 (S : UnifiedRSAScenario) (w : S.World) : List (S.Utterance × ℚ) :=
+def S2 (S : RSAScenario) (w : S.World) : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
     let l1Score := RSA.getScore (L1_world S u) w
     (u, l1Score ^ S.α)

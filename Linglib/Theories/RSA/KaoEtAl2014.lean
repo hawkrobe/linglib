@@ -192,8 +192,8 @@ Hyperbole scenario with extended semantics.
 Uses soft extended semantics that allows some compatibility between
 hyperbolic utterances and high-affect meanings.
 -/
-def hyperboleScenario : UnifiedRSAScenario :=
-  UnifiedRSAScenario.qud
+def hyperboleScenario : RSAScenario :=
+  RSAScenario.qud
     allUtterances allMeanings allGoals
     extendedSemantics
     qudEquiv
@@ -209,8 +209,8 @@ Strict scenario with Boolean semantics.
 Only literally true utterances are valid.
 This shows the contrast - without soft semantics, hyperbole can't work.
 -/
-def strictScenario : UnifiedRSAScenario :=
-  UnifiedRSAScenario.qud
+def strictScenario : RSAScenario :=
+  RSAScenario.qud
     allUtterances allMeanings allGoals
     (fun u m => boolToRat (meaningSemantics u m))
     qudEquiv

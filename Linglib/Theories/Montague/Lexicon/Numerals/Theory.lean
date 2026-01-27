@@ -98,8 +98,8 @@ Build an RSAScenario from a NumeralTheory.
 
 This is the key connection: any numeral theory can be used with RSA.
 -/
-def NumeralTheory.toScenario (T : NumeralTheory) : RSAScenario NumWord Nat :=
-  RSAScenario.ofBool T.utterances T.worlds (fun n w => T.meaning w n)
+def NumeralTheory.toScenario (T : NumeralTheory) : SimpleRSAScenario NumWord Nat :=
+  SimpleRSAScenario.ofBool T.utterances T.worlds (fun n w => T.meaning w n)
 
 /--
 Strength ordering: `w₁` is stronger than `w₂` if `w₁` entails `w₂`.

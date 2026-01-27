@@ -3,10 +3,10 @@
 
 **DEPRECATED**: This module is replaced by `Core/RSA.lean`.
 
-The semantic interface is now unified under `RSAScenario Score`.
+The semantic interface is now unified under `SimpleRSAScenario`.
 
-- For Boolean semantics: use `RSAScenario.ofBool`
-- For graded semantics: use `RSAScenario Score` directly with custom φ
+- For Boolean semantics: use `SimpleRSAScenario.ofBool`
+- For graded semantics: use `SimpleRSAScenario` directly with custom φ
 
 See `Core/RSA.lean` for the new interface.
 -/
@@ -18,10 +18,10 @@ import Linglib.Core.RSA
 
 namespace SemanticBackend
 
-/-- Deprecated: use RSAScenario.ofBool instead -/
-abbrev LiteralBackend (U W : Type) [BEq U] [BEq W] := RSAScenario U W
+/-- Deprecated: use SimpleRSAScenario.ofBool instead -/
+abbrev LiteralBackend (U W : Type) [BEq U] [BEq W] := SimpleRSAScenario U W
 
 /-- Deprecated: use RSAScenario directly -/
-abbrev GradedBackend (U W : Type) [BEq U] [BEq W] := RSAScenario U W
+abbrev GradedBackend (U W : Type) [BEq U] [BEq W] := SimpleRSAScenario U W
 
 end SemanticBackend

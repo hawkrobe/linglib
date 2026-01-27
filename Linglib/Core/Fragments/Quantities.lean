@@ -71,7 +71,7 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
   List.finRange (n + 1)
 
 /-- Build RSA scenario from domain -/
-def Domain.toScenario {n : Nat} (d : Domain n) : RSAScenario Utterance (Fin (n + 1)) :=
+def Domain.toScenario {n : Nat} (d : Domain n) : SimpleRSAScenario Utterance (Fin (n + 1)) :=
   { φ := fun u w => boolToRat (meaning n u w)
   , prior := d.prior
   , utterances := allUtterances
@@ -147,7 +147,7 @@ structure ExtDomain (n : Nat) where
   prior : Fin (n + 1) → ℚ := fun _ => 1
 
 /-- Build RSA scenario from extended domain -/
-def ExtDomain.toScenario {n : Nat} (d : ExtDomain n) : RSAScenario ExtUtterance (Fin (n + 1)) :=
+def ExtDomain.toScenario {n : Nat} (d : ExtDomain n) : SimpleRSAScenario ExtUtterance (Fin (n + 1)) :=
   { φ := fun u w => boolToRat (extMeaning n u w)
   , prior := d.prior
   , utterances := allExtUtterances

@@ -102,7 +102,7 @@ Graded height scenario.
 This demonstrates RSAScenario with non-Boolean φ.
 The meaning function returns degrees, not indicators.
 -/
-def heightScenario : RSAScenario Utterance Height where
+def heightScenario : SimpleRSAScenario Utterance Height where
   φ := φ
   utterances := [.tall, .short, .silence]
   worlds := [.h150, .h160, .h170, .h180, .h190]

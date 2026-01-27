@@ -66,8 +66,8 @@ def Context.satisfies (ctx : Context) (obj : String) (utt : String) : Bool :=
   ctx.hasProperty obj utt
 
 /-- Build RSAScenario from context -/
-def Context.toScenario (ctx : Context) : RSAScenario String String :=
-  RSAScenario.ofBool ctx.properties ctx.objects ctx.satisfies
+def Context.toScenario (ctx : Context) : SimpleRSAScenario String String :=
+  SimpleRSAScenario.ofBool ctx.properties ctx.objects ctx.satisfies
 
 -- ============================================================================
 -- Standard Reference Game: Objects with Color × Shape
@@ -121,8 +121,8 @@ def TypedContext.fromObjects (objs : List Object) : TypedContext :=
   }
 
 /-- Build RSAScenario from typed context -/
-def TypedContext.toScenario (ctx : TypedContext) : RSAScenario Feature Object :=
-  RSAScenario.ofBool ctx.features ctx.objects (fun obj feat => feat.appliesTo obj)
+def TypedContext.toScenario (ctx : TypedContext) : SimpleRSAScenario Feature Object :=
+  SimpleRSAScenario.ofBool ctx.features ctx.objects (fun obj feat => feat.appliesTo obj)
 
 -- ============================================================================
 -- Convenience: Quick Context Builders

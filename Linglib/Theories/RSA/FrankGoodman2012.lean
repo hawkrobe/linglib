@@ -71,8 +71,8 @@ def meaning : Utterance → Object → Bool
 -- ============================================================================
 
 /-- Reference game RSA scenario -/
-def refGameScenario : RSAScenario Utterance Object :=
-  RSAScenario.ofBool
+def refGameScenario : SimpleRSAScenario Utterance Object :=
+  SimpleRSAScenario.ofBool
     [.blue, .green, .square, .circle]
     [.blue_square, .blue_circle, .green_square]
     (fun obj utt => meaning utt obj)
@@ -177,7 +177,7 @@ theorem refGame_prior_nonneg : ∀ w, 0 ≤ refGameScenario.prior w := fun _ => 
 
 /-- Non-negativity proof for reference game φ -/
 theorem refGame_φ_nonneg : ∀ u w, 0 ≤ refGameScenario.φ u w := fun _ _ => by
-  simp only [refGameScenario, RSAScenario.ofBool, boolToRat]
+  simp only [refGameScenario, SimpleRSAScenario.ofBool, boolToRat]
   split <;> decide
 
 /-- L0 for "square" as a typed distribution -/

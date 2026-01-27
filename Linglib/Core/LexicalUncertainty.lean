@@ -55,7 +55,7 @@ def ofBool (satisfies : U → W → Bool) : Lexicon U W where
   meaning u w := boolToRat (satisfies u w)
 
 /-- Create a lexicon from an RSAScenario's φ function -/
-def ofRSA {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) : Lexicon U W where
+def ofRSA {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) : Lexicon U W where
   meaning := S.φ
 
 /-- Two lexica are equivalent if they assign the same meanings -/
@@ -282,7 +282,7 @@ Create an LUScenario from an RSAScenario with a single lexicon.
 
 This is the degenerate case: no lexical uncertainty, equivalent to standard RSA.
 -/
-def LUScenario.ofRSA {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) : LUScenario where
+def LUScenario.ofRSA {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) : LUScenario where
   Utterance := U
   World := W
   baseLexicon := Lexicon.ofRSA S
@@ -298,7 +298,7 @@ Project an LUScenario to an RSAScenario using the base lexicon.
 
 Useful for comparing LU-RSA predictions to standard RSA.
 -/
-def LUScenario.toRSA (S : LUScenario) : RSAScenario S.Utterance S.World where
+def LUScenario.toRSA (S : LUScenario) : SimpleRSAScenario S.Utterance S.World where
   φ := S.baseLexicon.meaning
   utterances := S.utterances
   worlds := S.worlds
@@ -433,7 +433,7 @@ With a single lexicon, LU-RSA reduces to standard RSA.
 
 When |Λ| = 1, the marginalization is trivial and L₁_LU = L₁_standard.
 -/
-theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] (S : RSAScenario U W) :
+theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] (S : SimpleRSAScenario U W) :
     let LU := LUScenario.ofRSA S
     ∀ u w, LURSA.L1_prob LU u w = RSA.L1_prob S u w := by
   intro u w

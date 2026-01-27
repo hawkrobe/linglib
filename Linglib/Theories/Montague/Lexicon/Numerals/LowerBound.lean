@@ -109,7 +109,7 @@ theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by
 -- ============================================================================
 
 /-- The RSA scenario derived from lower-bound semantics -/
-def LowerBound.scenario : RSAScenario NumWord Nat := LowerBound.toScenario
+def LowerBound.scenario : SimpleRSAScenario NumWord Nat := LowerBound.toScenario
 
 -- Verify it works
 #eval LowerBound.scenario.worlds  -- [0, 1, 2, 3]
