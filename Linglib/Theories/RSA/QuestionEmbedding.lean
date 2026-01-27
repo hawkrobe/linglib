@@ -46,7 +46,7 @@ makes one answer pragmatically odd.
 - Guerzoni (2004). Even-NPIs in yes/no questions.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 
 namespace RSA.QuestionEmbedding
 

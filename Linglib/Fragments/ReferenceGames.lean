@@ -15,7 +15,7 @@ Building blocks for RSA reference games.
 
 ```lean
 -- In your paper replication file:
-import Linglib.Core.Fragments.ReferenceGames
+import Linglib.Fragments.ReferenceGames
 
 def myContext := ReferenceGame.fromPairs
   [(.blue, .square), (.blue, .circle), (.green, .square)]
@@ -29,7 +29,7 @@ def myContext := ReferenceGame.fromPairs
   language games. Science 336(6084): 998.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 import Mathlib.Data.Rat.Defs
 
 namespace ReferenceGame

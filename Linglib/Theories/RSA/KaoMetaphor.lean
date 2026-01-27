@@ -39,7 +39,7 @@ L1 marginalizes over QUDs, recovering that the speaker was probably:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 
 namespace RSA.KaoMetaphor
 

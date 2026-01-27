@@ -15,7 +15,7 @@ Building blocks for RSA quantity/scalar domains.
 
 ```lean
 -- In your paper replication file:
-import Linglib.Core.Fragments.Quantities
+import Linglib.Fragments.Quantities
 
 def myDomain := Quantity.standard 3
 
@@ -29,7 +29,7 @@ def myDomain := Quantity.standard 3
   Topics in Cognitive Science 5(1): 173-184.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 import Mathlib.Data.Rat.Defs
 
 namespace Quantity

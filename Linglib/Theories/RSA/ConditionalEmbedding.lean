@@ -35,7 +35,7 @@ RSA should prefer the more informative global interpretation.
 - von Fintel (1999). NPI licensing, Strawson-entailment, and context dependency.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 
 namespace RSA.ConditionalEmbedding
 

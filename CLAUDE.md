@@ -37,15 +37,33 @@ RSA                          Montague.Scope
          requirement satisfied!
 ```
 
-### Core/ - Shared Types and Interfaces
+### Core/ - Framework-Agnostic Infrastructure
 
+**Shared primitives:**
 - `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
 - `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
 - `SemanticTypes.lean`: Basic semantic types
-- `SemanticBackend.lean`: Interface pragmatics needs from semantics (Utterance, World, φ function)
-- `RSA.lean`: RSA infrastructure (`FiniteSemanticBackend`, `ParametricSemanticBackend`)
+
+**Utilities:**
+- `Distribution.lean`: Typed probability distributions
+- `QUD.lean`: Question Under Discussion (partition abstraction)
+- `InformationStructure.lean`: Information structure interface
+
+**Architecture:**
 - `Pipeline.lean`: Theory composition architecture (provides/requires model)
-- `Frac.lean`: Exact rational arithmetic for RSA probabilities
+- `SemanticBackend.lean`: Interface pragmatics needs from semantics
+- `FormalLanguageTheory.lean`: Chomsky hierarchy for generative capacity proofs
+
+**Note**: RSA computational machinery lives in `Theories/RSA/Core.lean`, not here.
+Core/ contains only framework-agnostic infrastructure.
+
+### Fragments/ - Standard Experimental Domains
+
+Reusable building blocks for experimental domains that any theory can use:
+
+- `Scales.lean`: Horn scales with ordering (`⟨some, most, all⟩`, `⟨or, and⟩`, etc.)
+- `Quantities.lean`: Quantity domains for scalar implicature experiments
+- `ReferenceGames.lean`: Reference game domains (Frank & Goodman 2012 style)
 
 ### Theories/ - Theoretical Frameworks
 
@@ -65,6 +83,19 @@ Each theory directory contains:
 - `Basic.lean`: Core machinery for that framework
 - `{Phenomenon}.lean`: Theory's coverage of specific phenomena
 
+**RSA directory structure:**
+```
+Theories/RSA/
+├── Core.lean               # RSAScenario, L0, S1, L1 computations
+├── LexicalUncertainty/
+│   ├── Basic.lean          # Bergen et al. 2016 LU extension
+│   └── Compositional.lean  # Compositional LU for embedded SIs
+├── Basic.lean              # Cookie domain example
+├── FrankGoodman2012.lean   # Reference games paper
+├── KaoEtAl2014.lean        # Hyperbole/metaphor
+└── ...                     # Other paper replications
+```
+
 ### Phenomena/ - Empirical Data (Theory-Independent)
 
 **Pure empirical facts only** - no semantic content, no theoretical commitments:
@@ -82,8 +113,7 @@ Each theory directory contains:
 | Interface | Purpose | Implemented By |
 |-----------|---------|----------------|
 | `Grammar` | Derivation, realizes, derives | CCG, HPSG, Minimalism, DG |
-| `SemanticBackend` | Utterance, World, φ | Montague |
-| `ParametricSemanticBackend` | + Interp parameter for ambiguity | RSA.ScontrasPearl2021 |
+| `RSAScenario` | Unified RSA API (worlds, utterances, meanings) | All RSA models |
 | `ImplicatureTheory` | SI derivation, comparison | NeoGricean, RSA |
 | `CoreferenceTheory` | Binding, command relations | HPSG, Minimalism, DG |
 

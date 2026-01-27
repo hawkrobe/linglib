@@ -37,7 +37,7 @@ With attitude verbs:
 - Chierchia, Fox & Spector (2012). Scalar implicature as a grammatical phenomenon.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 import Linglib.Theories.Montague.Attitudes
 
 namespace RSA.AttitudeEmbedding

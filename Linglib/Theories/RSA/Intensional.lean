@@ -25,7 +25,7 @@ This module provides:
 - Montague (1973) "The Proper Treatment of Quantification in Ordinary English"
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Option.Basic
 import Linglib.Theories.Montague.Intensional.Basic

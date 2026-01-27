@@ -11,7 +11,7 @@ The semantic interface is now unified under `SimpleRSAScenario`.
 See `Core/RSA.lean` for the new interface.
 -/
 
-import Linglib.Core.RSA
+import Linglib.Theories.RSA.Core
 
 -- Re-export new types for backward compatibility during migration
 -- Users should migrate to RSAScenario directly

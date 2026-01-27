@@ -33,8 +33,8 @@ Reference: Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic i
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.RSA
-import Linglib.Core.LexicalUncertainty
+import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.LexicalUncertainty.Basic
 
 -- ============================================================================
 -- Compositional Utterance Structure
