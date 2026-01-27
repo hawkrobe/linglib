@@ -22,6 +22,7 @@ Saying "square" signals they probably mean blue_square.
 -/
 
 import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Model
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
@@ -189,6 +190,57 @@ theorem circle_unique :
 
 This is the core RSA insight: pragmatic listeners infer meaning by
 reasoning about rational speaker behavior.
+-/
+
+-- ============================================================================
+-- RSAModel Instance: Convergence Guarantees
+-- ============================================================================
+
+/-!
+## Zaslavsky et al. (2020) Convergence Guarantees
+
+By converting `refGameScenario` to an `RSAModel` instance, we automatically
+inherit the convergence and monotonicity theorems from Zaslavsky et al. (2020).
+
+This demonstrates the architecture: prove theorems once for the abstract
+`RSAModel` interface, then any concrete scenario gets them for free.
+-/
+
+/--
+RSAModel instance for the Frank & Goodman reference game.
+
+This enables:
+- `G_α_monotone_generic`: G_α is monotonically non-decreasing
+- `RSA_converges_generic`: RSA dynamics converge to a fixed point
+- `eventually_εConverged_generic`: Can stop RSA recursion at finite depth
+
+Note: We use the concrete Utterance type here since refGameScenario.Utterance
+is definitionally equal to Utterance (from RSAScenario.basicBool).
+-/
+noncomputable instance refGameModel : RSA.RSAModel Utterance :=
+  @RSAScenario.toModel refGameScenario
+    (inferInstance : Fintype Utterance)  -- Utterance has Fintype
+    (inferInstance : Fintype Object)      -- World = Object has Fintype
+    ()
+
+/-!
+With this instance, the following theorems apply automatically:
+
+```lean
+-- G_α monotonicity for Frank & Goodman scenario
+#check @RSA.G_α_monotone_generic Utterance refGameModel
+
+-- RSA convergence for Frank & Goodman scenario
+#check @RSA.RSA_converges_generic Utterance refGameModel
+```
+
+These theorems say:
+1. **Monotonicity**: Each RSA iteration improves the objective G_α
+2. **Convergence**: The RSA dynamics converge to a fixed point
+3. **ε-Convergence**: We can stop at finite depth with bounded error
+
+This justifies using L1 or S1 approximations instead of computing
+the full infinite recursion L∞ / S∞.
 -/
 
 end RSA.FrankGoodman2012
