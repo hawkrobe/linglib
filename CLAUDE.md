@@ -42,7 +42,6 @@ RSA                          Montague.Scope
 **Shared primitives:**
 - `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
 - `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
-- `SemanticTypes.lean`: Basic semantic types
 
 **Utilities:**
 - `Distribution.lean`: Typed probability distributions
@@ -51,7 +50,6 @@ RSA                          Montague.Scope
 
 **Architecture:**
 - `Pipeline.lean`: Theory composition architecture (provides/requires model)
-- `SemanticBackend.lean`: Interface pragmatics needs from semantics
 - `FormalLanguageTheory.lean`: Chomsky hierarchy for generative capacity proofs
 
 **Note**: RSA computational machinery lives in `Theories/RSA/Core.lean`, not here.
@@ -77,7 +75,7 @@ All syntactic/semantic/pragmatic frameworks. Each theory should declare what it 
 | `DependencyGrammar/` | Dependency structures | - | Partial |
 | `Montague/` | Truth conditions, φ function | Derivations | Working |
 | `NeoGricean/` | Implicatures, SI derivation | SemDeriv, Entailment | Working (toy) |
-| `RSA/` | Probability distributions | SemanticBackend | Working (toy) |
+| `RSA/` | Probability distributions | Meaning function φ | Working (toy) |
 
 Each theory directory contains:
 - `Basic.lean`: Core machinery for that framework
