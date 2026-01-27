@@ -424,27 +424,94 @@ Singh's Asymmetry follows from economy:
 -/
 
 /--
-**Theorem (Singh from Economy)**: In "weak or strong" configuration,
-exh can be embedded in the weak disjunct because it's strengthening.
+**Theorem (Singh: exh on weak is non-vacuous)**: When:
+1. exh(weak) doesn't entail strong (h_breaks)
+2. There exists a world where weak holds but neither exh(weak) nor strong holds (h_excludes)
+
+Then exh on weak is NOT incrementally vacuous in the disjunction context.
+
+The second condition captures that exh actually excludes something from weak.
+For concrete scales like {or, and}, this holds: there are worlds where
+inclusive-or holds but exclusive-or doesn't (the "both" worlds), and in
+a non-trivial scale, some of these are also not-strong worlds.
 -/
-theorem singh_weak_first_licensed (ALT : Set (Prop' World))
+theorem singh_weak_exh_nonvacuous (ALT : Set (Prop' World))
     (weak strong : Prop' World)
+    (_h_breaks : ¬(exhIE ALT weak ⊆ₚ strong))  -- implied by h_excludes, kept for documentation
+    (h_excludes : ∃ w, weak w ∧ ¬exhIE ALT weak w ∧ ¬strong w)
+    : ¬isIncrementallyVacuous ALT weak {disjCont strong} := by
+  intro hvacuous
+  -- hvacuous says: ∀ C ∈ {disjCont strong}, ∀ w, C(exh(weak)) w ↔ C(weak) w
+  -- i.e., (strong ∨ exh(weak)) ↔ (strong ∨ weak) at all worlds
+  have heq := hvacuous (disjCont strong) (Set.mem_singleton _)
+  -- h_excludes gives us a world where weak but not exh(weak) and not strong
+  obtain ⟨w, hweak, hnexh, hnstrong⟩ := h_excludes
+  -- At w: weak holds, so (strong ∨ weak) w = true
+  have hright : disjCont strong weak w := Or.inr hweak
+  -- By heq: (strong ∨ weak) w ↔ (strong ∨ exh(weak)) w
+  have hleft : disjCont strong (exhIE ALT weak) w := (heq w).mpr hright
+  -- So (strong ∨ exh(weak)) w, meaning strong w ∨ exh(weak) w
+  rcases hleft with hstrong | hexh
+  · exact hnstrong hstrong
+  · exact hnexh hexh
+
+/--
+**Theorem (Singh: exh on strong is vacuous)**: When strong ⊆ weak and
+ALT = {weak, strong}, exh on strong is vacuous because there's nothing to exclude.
+
+In "strong or weak", exh(strong) = strong (no alternatives can be innocently excluded
+without making strong inconsistent).
+-/
+theorem singh_strong_exh_vacuous (weak strong : Prop' World)
     (h_entails : strong ⊆ₚ weak)
-    (h_breaks : ¬(exhIE ALT weak ⊆ₚ strong))
-    : ¬isIncrementallyWeakening ALT weak {disjCont strong} := by
-  intro hweakening
-  -- If exh is weakening, then strong ∨ weak ⊆ strong ∨ exh(weak)
-  -- But we claim exh(weak) ⊄ strong, so this should give us strong ∨ weak ⊆ strong
-  -- Let's unpack the weakening condition
-  have := hweakening (disjCont strong) (Set.mem_singleton _)
-  -- This says: (strong ∨ weak) ⊆ₚ (strong ∨ exh(weak))
-  -- We need to derive a contradiction from h_breaks
-  -- The issue is that weakening doesn't directly contradict h_breaks
-  -- Let's think more carefully...
-  -- Actually, the point is that exh(weak) DOES break the entailment
-  -- So the disjunction (strong ∨ exh(weak)) is NOT equivalent to (strong ∨ weak)
-  -- when exh(weak) contains worlds where ¬strong
-  sorry -- Proof requires more detailed analysis of the alternatives
+    : exhIE {weak, strong} strong ≡ₚ strong := by
+  constructor
+  · -- exhIE ⊆ strong: follows from exhIE entailing the base
+    intro w hexh
+    have hstrong_in_IE : strong ∈ IE {weak, strong} strong := fun E hE_mc => hE_mc.1.1
+    exact hexh strong hstrong_in_IE
+  · -- strong ⊆ exhIE: show strong(w) → all IE members hold at w
+    intro w hstrong_w ψ hψ_IE
+    -- Key insight: when strong ⊆ weak, the only MC-set is {strong}
+    -- because both ¬weak and ¬strong are inconsistent with strong
+    -- So IE = {strong}, meaning ψ = strong, and we use hstrong_w
+    --
+    -- To prove this formally, we construct the unique MC-set {strong}:
+    have hE₀_compat : isCompatible {weak, strong} strong {strong} := by
+      refine ⟨Set.mem_singleton _, ?_, ?_⟩
+      · intro ψ' hψ'
+        left
+        exact Set.mem_singleton_iff.mp hψ'
+      · -- Consistency: any world with strong satisfies {strong}
+        exact ⟨w, fun ψ' hψ' => Set.mem_singleton_iff.mp hψ' ▸ hstrong_w⟩
+    have hE₀_maximal : isMCSet {weak, strong} strong {strong} := by
+      refine ⟨hE₀_compat, ?_⟩
+      -- Maximality: any compatible extension E' must equal {strong}
+      intro E' hE'_compat hE₀_sub_E' ψ' hψ'_E'
+      -- ψ' ∈ E' means ψ' = strong or ψ' = ∼a for some a ∈ {weak, strong}
+      rcases hE'_compat.2.1 ψ' hψ'_E' with hψ'_eq | ⟨a, ha_ALT, hψ'_neg⟩
+      · -- ψ' = strong ∈ {strong}
+        exact Set.mem_singleton_iff.mpr hψ'_eq
+      · -- ψ' = ∼a for a ∈ {weak, strong} - this contradicts consistency
+        exfalso
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
+        obtain ⟨u, hu⟩ := hE'_compat.2.2
+        have hstrong_u : strong u := hu strong hE'_compat.1
+        rcases ha_ALT with ha_weak | ha_strong
+        · -- a = weak: ψ' = ∼weak, but strong u → weak u, so ¬∼weak u
+          rw [ha_weak] at hψ'_neg
+          have hneg_weak_u := hu ψ' hψ'_E'
+          rw [hψ'_neg] at hneg_weak_u
+          exact hneg_weak_u (h_entails u hstrong_u)
+        · -- a = strong: ψ' = ∼strong, but strong u, so ¬∼strong u
+          rw [ha_strong] at hψ'_neg
+          have hneg_strong_u := hu ψ' hψ'_E'
+          rw [hψ'_neg] at hneg_strong_u
+          exact hneg_strong_u hstrong_u
+    -- Now: ψ ∈ IE means ψ ∈ {strong} (since {strong} is the unique MC-set)
+    have hψ_in_E₀ : ψ ∈ ({strong} : Set (Prop' World)) := hψ_IE {strong} hE₀_maximal
+    rw [Set.mem_singleton_iff.mp hψ_in_E₀]
+    exact hstrong_w
 
 -- ============================================================================
 -- SECTION 6: RELATIONSHIP TO FOCUS

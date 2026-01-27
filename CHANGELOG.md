@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.15.0] - 2025-01-26
+
+### Added
+- **Theories/NeoGricean/MontagueExhaustivity.lean**: Bridge connecting Montague compositional semantics to exhaustivity operators
+  - World-indexed Montague models with `Student` entities
+  - `somePassedMontague`, `allPassedMontague`: Compositionally computed via `some_sem`/`every_sem`
+  - `somePassed_eq_handcrafted`, `allPassed_eq_handcrafted`: Grounding theorems
+  - `exhMW_somePassed_at_w1`, `exhIE_somePassed_at_w1`: Exhaustivity on compositional meanings
+  - Closes CLAUDE.md gap: "Entailment ungrounded" → now grounded in Montague
+
+- **Theories/NeoGricean/ScaleSemantics.lean**: Semantic structures for scalar implicature phenomena
+  - `HornScale World`: Scale with semantic content and entailment proofs
+  - `HurfordSemantic`, `SinghSemantic`: Structures for disjunction phenomena
+  - Concrete scales: `someAllScale`, `orAndScale`, `possibleNecessaryScale`
+  - World types: `QuantWorld`, `ConnWorld`, `ModalWorld`
+
+- **Theories/NeoGricean/Spector2007.lean**: Formalization of Spector (2007) "Scalar implicatures: exhaustivity and Gricean reasoning"
+  - Valuations as Finsets of true atoms
+  - Propositions as sets of valuations
+  - Literal favoring and positive propositions
+  - Exhaustification via minimal valuations
+  - Main result: For positive P, Max(P) = {Exhaust(P)}
+
+- **Phenomena/ScalarImplicatures/**: Theory-neutral empirical data
+  - `Scales.lean`: Horn scale examples (some/all, or/and, possible/necessary)
+  - `Hurford.lean`: Hurford's constraint data (rescued vs unrescued violations)
+  - `Singh.lean`: Singh's asymmetry data (weak-first vs strong-first)
+
+### Changed
+- **Theories/NeoGricean/Exhaustivity.lean**: Completed Theorem 9 proofs
+  - `someAll_exhMW_iff_exhIE`: Full proof that exhMW ≡ exhIE for some/all scale
+  - `orAnd_exhMW_iff_exhIE`: Full proof for or/and scale
+  - Added Section 6: Worked examples with `w1`, `w3`, `wSang`, `wBoth`
+  - Key lemmas proving `¬stronger ∈ IE` via MC-set maximality
+
+- **Theories/NeoGricean/FoxSpector2018.lean**: Completed Singh asymmetry proofs
+  - `singh_weak_exh_nonvacuous`: Proves exh on weak is non-vacuous when it excludes
+  - `singh_strong_exh_vacuous`: Proves exh on strong is vacuous when strong ⊆ weak
+  - Full proofs via MC-set analysis (no `sorry`s)
+
+### References
+- Spector (2007) "Scalar implicatures: exhaustivity and Gricean reasoning"
+- Spector (2016) "Comparing exhaustivity operators"
+- Fox & Spector (2018) "Economy and embedded exhaustification"
+
 ## [0.14.0] - 2025-01-26
 
 ### Added
