@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.17.0] - 2025-01-27
+
+### Added
+- **Theories/RSA/InformationTheory/**: Zaslavsky et al. (2020) rate-distortion formalization
+  - `Basic.lean`: G_α objective, H_S entropy, E[V_L] utility, RSA dynamics with rational α
+  - `UtilityNonMonotonicity.lean`: Prop 2 counterexample with graded lexicon (α < 1)
+  - `PhaseTransition.lean`: Prop 3 critical point at α = 1
+
+- **Theories/RSA/CoreQ.lean**: RSAScenarioQ with rational α parameter
+  - `S1Q`, `L0Q`, `L1Q` using `powApprox` for x^α
+  - Smart constructors: `RSAScenarioQ.basic`, `basicBool`
+
+- **Core/RationalPower.lean**: Newton-Raphson n-th root approximation
+  - `nthRootApprox`: Computes x^(1/n) via iteration
+  - `powApprox`: Computes x^(p/q) for rational exponents
+
+### Changed
+- **Theories/Comparisons/RSANeoGricean.lean**: Added information-theoretic perspective on NeoGricean limit
+
 ## [0.16.0] - 2025-01-27
 
 ### Changed
