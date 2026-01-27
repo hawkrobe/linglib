@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.18.0] - 2025-01-27
+
+### Added
+- **Theories/Montague/Variables.lean**: Heim & Kratzer Ch. 5 assignment function infrastructure
+  - `Assignment m`: Structure mapping variable indices to entities
+  - `Assignment.update` (notation: `g[n ↦ x]`): Modified assignment
+  - `DenotG m ty`: Assignment-relative denotations
+  - `interpPronoun`, `lambdaAbsG`: Pronoun interpretation and λ-abstraction
+  - Key lemmas: `update_same`, `update_other`, `update_update_comm`, `update_self`
+
+- **Theories/Montague/Modification.lean**: Heim & Kratzer Ch. 4 Predicate Modification
+  - `predicateModification` (notation: `⊓ₚ`): Intersect two ⟨e,t⟩ predicates
+  - Algebraic properties: commutativity, associativity, idempotence, identity, annihilator
+  - `predicateModification_extension`: PM = set intersection
+
+- **Theories/Minimalism/Semantics/Interface.lean**: Trace interpretation for movement
+  - `interpTrace n`: Traces as variables (H&K insight: traces = pronouns semantically)
+  - `predicateAbstraction n body`: λ-binding at movement landing sites
+  - `relativePM`: Combines predicate abstraction with Predicate Modification
+
+- **Theories/Minimalism/Semantics/RelativeClauses.lean**: Full worked example
+  - "the book that John read _" derivation
+  - `the_book_correct`: Proves ιx[book(x) ∧ read(j,x)] = book1
+  - `np_assignment_independent`: Bound variables don't leak
+
+### References
+- Heim & Kratzer (1998) "Semantics in Generative Grammar", Chapters 4, 5, 7
+
 ## [0.17.0] - 2025-01-27
 
 ### Added
