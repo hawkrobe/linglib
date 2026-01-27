@@ -1,372 +1,342 @@
 # Linglib Roadmap
 
-This document tracks architectural improvements organized by priority phase.
+This document tracks architectural improvements organized by release tiers.
 
 ---
 
-## Phase 1: Intensional Grounding (Highest Priority)
+## Strategic Decisions
 
-**Goal**: Make RSA's L0 actually evaluate compositional Montague semantics.
+### Target User
+**Primary**: Pragmatics researchers wanting to test RSA model variants against empirical data.
 
-Currently RSA pattern-matches on scalar items and returns pre-computed results.
-The intensional layer enables: `L0(u, w) ∝ δ⟦u⟧(w) · P(w)`
+**Secondary**: Formal semanticists wanting compositional analyses with proven properties.
 
-### 1.1 Intensional Montague Semantics ✓ DONE
+**Deferred**: Syntacticians comparing CCG/HPSG/Minimalism (syntax theories remain as infrastructure, not primary focus).
 
-**Status**: Implemented in `Montague/Intensional.lean`
+### Depth vs Breadth
+**Choice**: Depth first. We aim for 3-4 phenomena with fully competing analyses from multiple theories, rather than 10 phenomena with single pipelines. This demonstrates the comparison value proposition—the system's core contribution.
 
-Provides:
-- `IntensionalModel`: Model with explicit World type
-- `Intension m τ`: World → Extension(τ)
-- `Proposition m`: World → Bool
-- `IntensionalDerivation`: Derivation with world-parameterized meaning
-- `phi`: RSA's literal semantics function
-- Example: `someStudentsSleep_intensional` with proven truth conditions at each world
+### Syntax Story
+**Choice**: CCG as the primary syntax-semantics interface. HPSG/Minimalism remain as documented infrastructure but aren't prioritized for Montague integration. Pragmatics research doesn't typically need multiple syntax frameworks—it needs correct compositional meanings.
 
-### 1.2 RSA with Intensional Meanings ✓ DONE
+### Publication Path
+A SALT/ESSLLI paper on architecture + 2-3 deep case studies (scalar implicatures, numerals, scope) could establish credibility. The system should be able to replicate key RSA papers (Frank & Goodman 2012, Goodman & Stuhlmüller 2013, Scontras & Pearl 2021, Kao et al. 2014) in minimal code.
 
-**Status**: Implemented in `RSA/Intensional.lean`
+---
 
-Provides:
-- `PropDerivation`: Propositional derivation (type t) for RSA
-- `L0_from_derivation`: L0 computed by evaluating Montague meaning
-- `S1_from_derivations`, `L1_from_derivations`: Full RSA pipeline
-- `IntensionalScenario`: RSA scenario from compositional derivations
+## Current State Assessment
 
-Key results verified by #eval:
-- L0 for "some": `someNotAll=1/2, all=1/2` (weak "some")
-- S1 at "all" world: speaker prefers "every" (2/3) over "some" (1/3)
-- L1 for "some": `someNotAll=1/1, all=1/3` → scalar implicature emerges!
+### Working End-to-End Pipelines
+- CCG → Montague → RSA/NeoGricean (scalar implicatures)
+- Montague → RSA (scope ambiguity, reference games, hyperbole)
+- Theory comparison: Numerals (LowerBound vs Bilateral)
+- Theory comparison: RSA vs NeoGricean (agreement proofs)
 
-### 1.3 Grounding Theorem ✓ DONE
+### Selective Depth
+| Area | Status |
+|------|--------|
+| Numerals | Full comparison infrastructure |
+| Modals | Kratzer/Simple comparison exists but not RSA-integrated |
+| Scalar implicatures | Works for simple cases |
+| Embedded implicatures | DE blocking via Potts LU model, attitudes/conditionals/questions |
+| Exhaustivity operators | Spector (2016) exhMW/exhIE equivalence, Fox & Spector (2018) economy |
+| Context polarity | Grounded UE/DE with compositional tracking |
+| Reference games | Frank & Goodman 2012 working |
+| Scope ambiguity | Scontras & Pearl 2021 working |
+| Hyperbole | Kao et al. 2014 working |
 
-**Status**: Fully proven in `RSA/Intensional.lean`
+### Known Gaps (from review)
+1. Fragment library problem—too much boilerplate to build scenarios
+2. No automatic divergence detection across theories
+3. Documentation is code-oriented, not researcher-oriented
+4. Only CCG → semantics; HPSG/Minimalism stubs
+5. Some proofs use `sorry` or `native_decide` instead of full proof terms
+
+---
+
+## Tier 1: Researchers Can Use It (MVP)
+
+**Goal**: A pragmatics researcher can replicate a paper's RSA model in ~20 lines.
+
+### 1.1 Fragment Library ✗ TODO
+
+**Problem**: Building an RSA scenario requires ~100 lines of boilerplate (domain types, semantics, priors, enumerations).
+
+**Solution**: Pre-built fragments that compose.
+
+```
+Core/Fragments/
+├── ReferenceGames.lean     -- Objects, colors, shapes, utterances
+├── ScalarContexts.lean     -- Some/all, or/and, might/must scales
+├── ScopeScenarios.lean     -- QNP scope ambiguity setups
+├── NumberDomains.lean      -- Discrete quantities (0-10 typical)
+└── Combinators.lean        -- Compose fragments, add priors
+```
+
+**Test**: Can we express Frank & Goodman 2012 as:
+```lean
+def refGame := ReferenceGame.withContext
+  [.blue_square, .blue_circle, .green_square]
+  [.blue, .green, .square, .circle]
+
+#eval RSA.L1 refGame.scenario .square
+```
+
+### 1.2 Scale Library ✗ TODO
+
+**Problem**: Scales are hardcoded per phenomenon.
+
+**Solution**: Reusable scale definitions.
 
 ```lean
-theorem l0_uses_compositional_meaning :
-    (L0_prob d worlds w ≠ 0) → d.eval w = true
-
-theorem l0_zero_when_false :
-    d.eval w = false → L0_prob d worlds w = 0 ∨ w ∉ worlds
+-- In Core/Scales.lean
+def hornQuantifiers : Scale QuantExpr := ⟨[.some, .most, .all], ...⟩
+def fauconnierConnectives : Scale ConnExpr := ⟨[.or, .and], ...⟩
+def degreeModifiers : Scale DegreeExpr := ⟨[.warm, .hot], ...⟩
 ```
 
-Proves that L0 only assigns positive probability to worlds where the compositional meaning is true. Uses Mathlib lemmas: `List.find?_map`, `Option.map_eq_some_iff`, `List.find?_some`.
+### 1.3 Scenario Combinators ✗ TODO
 
-Also provides:
-- `l0_some_zero_at_none`: "some" has zero prob at "none" world (proven by rfl)
-- `l0_every_zero_at_someNotAll`: "every" has zero prob at "someNotAll" (proven by rfl)
-- `scalar_implicature_from_grounded_rsa`: L1 prefers someNotAll over all (native_decide)
+**Problem**: Extending a scenario (add utterance, change prior) requires rebuilding from scratch.
 
----
+**Solution**: Combinator functions.
 
-## Phase 1b: Grounding Expansion (Priority)
-
-**Goal**: Prove that more RSA models derive their meanings from compositional semantics.
-
-Currently only 2/9 RSA models have grounding proofs:
-- ✓ `RSA/Intensional.lean` - builds scenarios from Montague derivations
-- ✓ `RSA/ScontrasPearl2021.lean` - proves meaning matches WorldMeaning
-
-Models needing grounding:
-- `RSA/PottsLU.lean` - stipulates `utteranceTruth`
-- `RSA/EmbeddedScalars.lean` - stipulates lexicon meanings
-- `RSA/AttitudeEmbedding.lean` - stipulates `believesSomeMeaning`
-- `RSA/ConditionalEmbedding.lean` - stipulates `conditionalMeaning`
-- `RSA/QuestionEmbedding.lean` - stipulates `questionPartition`
-- `RSA/GoodmanStuhlmuller2013.lean` - stipulates `literalMeaning`
-- `RSA/ScalarImplicatures.lean` - basic toy model
-
-### Strategy Options
-
-**Option A: Post-hoc grounding theorems**
-Add theorems proving the stipulated meanings match compositional evaluation:
 ```lean
-theorem potts_meaning_grounded :
-    utteranceTruth params u w = Montague.eval (derivationFor u) params w
+def RSAScenario.withUtterances (s : RSAScenario U W) (us : List U') : RSAScenario (U ⊕ U') W
+def RSAScenario.withPrior (s : RSAScenario U W) (p : W → ℚ) : RSAScenario U W
+def RSAScenario.restrictWorlds (s : RSAScenario U W) (ws : List W) : RSAScenario U W
 ```
-Requires: Montague derivations for each utterance type.
 
-**Option B: Refactor to use IntensionalScenario**
-Rewrite models to build scenarios from derivations (like Intensional.lean).
-More invasive but ensures grounding by construction.
+### 1.4 Documentation ✗ TODO
 
-**Option C: Semantic correspondence lemmas**
-Prove correspondence at the semantic level without full derivations:
+**Needs**:
+1. **Tutorial**: Walk through building an analysis from scratch (30-60 min)
+2. **Paper replications**: Worked examples mapping to real papers
+   - Frank & Goodman 2012 (reference game)
+   - Goodman & Stuhlmüller 2013 (simple/complex)
+   - Scontras & Pearl 2021 (scope)
+   - Kao et al. 2014 (hyperbole)
+3. **Coverage statement**: Clear table of what's implemented vs. promissory
+
+```
+docs/
+├── tutorial/
+│   ├── 01-first-rsa-model.md
+│   ├── 02-scalar-implicatures.md
+│   └── 03-competing-analyses.md
+├── replications/
+│   ├── FrankGoodman2012.md
+│   ├── GoodmanStuhlmuller2013.md
+│   └── ScontrasPearl2021.md
+└── coverage.md
+```
+
+### 1.5 Fill Critical Phenomenon Gaps ✗ PARTIAL
+
+**Needed for credibility**:
+
+| Gap | Current | Target |
+|-----|---------|--------|
+| Embedded implicatures (globalist/localist) | DE via Potts LU | Add Geurts' globalist analysis |
+| Modal semantics → RSA | Kratzer/Simple exist separately | Integrate with RSA scenarios |
+| HPSG/Minimalism → SemDerivation | Stubs only | Keep as stubs (defer) |
+
+**Decision**: Focus on DE blocking and modal RSA integration. Defer HPSG/Minimalism.
+
+---
+
+## Tier 2: Comparison Infrastructure Works
+
+**Goal**: `#eval findDivergences NeoGricean RSA scalarImplicatureData` returns something useful.
+
+### 2.1 Automatic Divergence Detection ✗ TODO
+
 ```lean
-theorem some_means_exists :
-    somePassed w = ∃ x, student x ∧ passed x
+-- In Core/Comparison.lean
+structure TheoryDivergence where
+  theory1 : String
+  theory2 : String
+  phenomenon : String
+  divergingCases : List (String × (ℚ × ℚ))  -- case name, predictions
+
+def findDivergences (t1 t2 : ImplicatureTheory) (data : PhenomenonData)
+    : List TheoryDivergence
 ```
-Lighter-weight but still connects to semantics.
 
-### Priority Order
+### 2.2 Three Deep Comparison Phenomena ✗ PARTIAL
 
-1. **AttitudeEmbedding** - simplest structure, good test case
-2. **ConditionalEmbedding** - similar structure
-3. **QuestionEmbedding** - similar structure
-4. **PottsLU** - most complex, highest impact
+**Need 3 phenomena with multiple theories fully implemented**:
+
+| Phenomenon | Theories | Status |
+|------------|----------|--------|
+| **Numerals** | LowerBound, Bilateral | ✓ Comparison infrastructure done |
+| **Scalar implicatures** | RSA, NeoGricean | ✓ Agreement proofs, need divergence cases |
+| **Scope ambiguity** | Lifted-variable RSA, world-sensitive RSA | ✗ Need second approach |
+
+**Alternative third phenomenon**: Hyperbole (literal vs QUD-sensitive RSA).
+
+### 2.3 Empirical Adjudication Connections ✗ PARTIAL
+
+**Current**: Geurts & Pouscoulous 2009 data exists but isn't wired to theory comparison.
+
+**Target**:
+```lean
+-- Connect predictions to empirical rates
+theorem rsa_matches_gp2009_verification :
+    RSA.predictedRate verificationTask someAllPattern
+    ≈ GeurtsPouscoulous2009.observedRate verificationTask someAllPattern
+```
+
+### 2.4 Coverage Matrix Automation ✗ TODO
+
+The coverage matrix in CLAUDE.md is manually maintained. Auto-generate from:
+```lean
+#eval generateCoverageMatrix
+-- Outputs markdown table of which theories prove which phenomena
+```
 
 ---
 
-## Phase 2: Type Safety & Robustness
+## Tier 3: Proofs Are Meaningful
 
-### 2.1 Type-Safe Scale Positions ✓ DONE
+**Goal**: Proofs give the formalization credibility as formal linguistics.
 
-Replaced string matching with typed `QuantExpr`/`ConnExpr` in scale operations.
+### 3.1 Distribution Type Guarantees ✓ DONE
 
-### 2.2 NeoGricean Entailment → Montague Model ✓ DONE
+`Core/Distribution.lean` provides `ExactDist` with compile-time proofs:
+- `sum_one : ∑ x, d.mass x = 1`
+- `nonneg : ∀ x, 0 ≤ d.mass x`
+- `toPMF`: Bridge to Mathlib's PMF
 
-Unified entailment checking via Montague semantics.
+### 3.2 CCG Generative Capacity Proofs ✗ PARTIAL
 
-### 2.3 RSA Simplified to ℚ ✓ DONE
+**Current**: `ccg_strictly_more_expressive_than_cfg` uses `sorry`.
 
-**Status**: `Core/RSA.lean` now uses ℚ directly instead of `RSAScore` typeclass.
+**Target**: Full proof that CCG generates {aⁿbⁿcⁿdⁿ} via pumping lemma argument.
 
-- Removed `RSAScore` typeclass overhead
-- All RSA computation uses exact rational arithmetic
-- `L0_zero_when_false` theorem proven using `Rat.mul_zero`, `Rat.div_def`
-- Enables Mathlib lemmas directly on RSA computations
+**Priority**: Medium. The infrastructure is there; filling proofs is incremental.
 
-### 2.4 Distribution Type ✓ DONE
+### 3.3 CCG-Montague Homomorphism ✓ DONE
 
-**Status**: Implemented in `Core/Distribution.lean`
+`CCG/Homomorphism.lean` proves:
+- `fapp_sem`, `bapp_sem`: Application = function application
+- `fcomp_sem`: Composition = B combinator
+- `ccgHomomorphism`: All properties hold together
 
-Provides:
-- `ExactDist α`: Typed distribution with `mass : α → ℚ`, `nonneg`, `sum_one` proofs
-- `ExactDist.normalize`: Constructor from unnormalized scores with proofs
-- `ExactDist.uniform`, `ExactDist.pure`: Standard distributions
-- `support_nonempty`, `mass_le_one`: Key theorems
-- `toPMF`: Bridge to Mathlib's PMF for measure-theoretic properties
+### 3.4 Grounding Theorems ✓ PARTIAL
 
-### 2.5 RSA DE Context Handling ✓ DONE
+**Done**:
+- `RSA/Intensional.lean`: L0 uses compositional meaning
+- `RSA/ScontrasPearl2021.lean`: Meaning matches WorldMeaning
 
-**Status**: Implemented in `RSA/PottsLU.lean`
-
-Implements the full Potts et al. (2016) Lexical Uncertainty model:
-- 10 world classes (3 players × 3 outcomes)
-- 4 lexica (2 refinable items: quantifier + predicate)
-- 11 utterances (quantifier × predicate combinations)
-
-Key theorems:
-- `potts_model_derives_de_blocking`: Global > Local in DE contexts
-- `potts_model_derives_ue_implicature`: Local > Global in UE contexts
-- `simplified_model_fails`: Regression test showing 3-world model fails
-- `world_space_is_critical`: Rich world space is necessary for correct predictions
+**Remaining**: Grounding proofs for other RSA models (PottsLU, AttitudeEmbedding, etc.)
 
 ---
 
-## Phase 3: Competing Analyses Infrastructure
+## Tier 4: Maintainable and Extensible
 
-### 3.1 Parameterized Lexicon Structure ✓ DONE
+**Goal**: System scales with contributors and catches regressions.
 
-**Status**: Implemented in `Montague/Lexicon/Numerals/`
+### 4.1 Mathlib Integration ✓ PARTIAL
 
+Using: `ℚ`, `Finset`, `Fintype`, basic algebra
+
+Could use more: `PMF`, measure theory, topology (for limits)
+
+### 4.2 Clear Extension Patterns ✗ TODO
+
+**Need documentation**:
+- How to add a new syntactic theory
+- How to add a new semantic analysis
+- How to add a new RSA model variant
+- How to add empirical data and connect to predictions
+
+### 4.3 CI for Cross-Theory Regressions ✗ TODO
+
+The whole point is catching when adding phenomenon X breaks theory Y.
+
+```yaml
+# .github/workflows/test.yml
+- name: Build all theories
+- name: Run theory comparison tests
+- name: Check coverage matrix didn't shrink
 ```
-Montague/Lexicon/Numerals/
-├── Theory.lean      -- NumeralTheory structure
-├── LowerBound.lean  -- "two" means ≥2 (Horn 1972)
-├── Bilateral.lean   -- "two" means =2 via maximality (Kennedy 2015)
-└── Compare.lean     -- Comparison theorems
-```
-
-Provides:
-- `NumeralTheory` structure with meaning function, derived RSA scenario
-- `LowerBound`, `Bilateral` as concrete theory instances
-- Comparison functions: `theoriesAgreeOn`, `divergingWorlds`
-- Key theorems: `lowerBound_bilateral_differ_on_two`, `ambiguity_presence_differs`
-- Connection to G&S 2013 empirical adjudication (ambiguity required for cancellation)
-- Bilateral.lean documents Kennedy's maximality derivation for degree modifier support
-
-### 3.1b Parameterized Lexicon: Modals ✓ DONE
-
-**Status**: Implemented in `Montague/Lexicon/Modals/`
-
-```
-Montague/Lexicon/Modals/
-├── Theory.lean    -- ModalTheory structure
-├── Simple.lean    -- Kripke-style accessibility relations
-├── Kratzer.lean   -- Conversational backgrounds (modal base + ordering)
-└── Compare.lean   -- Comparison theorems
-```
-
-Provides:
-- `ModalTheory` structure with eval function, duality property
-- `Simple R`, `Kratzer params` as concrete theory instances
-- `theoriesAgreeOn`, `divergingWorlds` comparison functions
-- Key theorems: `minimal_kratzer_equals_universal_simple_necessity`, `epistemic_vs_minimal_differ`
-- Kratzer context-dependence: same modal verb, different backgrounds → different truth values
-
-### 3.2 Embedded Implicatures (Partial)
-
-**Status**: DE contexts, attitude verbs, conditionals, and questions implemented
-
-Completed:
-- Embedded scalars under "no" (DE blocking) - `RSA/PottsLU.lean`
-- Full Potts et al. (2016) model with proven theorems
-- Regression tests showing simplified models fail
-- Attitude verb embedding ("John believes some students passed") - `RSA/AttitudeEmbedding.lean`
-  - `local_entails_global`: Local interpretation entails global
-  - `global_not_entails_local`: But not vice versa (unlike DE)
-  - Explains why both interpretations are available
-- Conditional antecedent embedding - `RSA/ConditionalEmbedding.lean`
-  - `global_entails_local`: Global entails local (DE-like)
-  - `conditional_antecedent_is_DE`: Proves the DE property
-  - RSA predicts global preferred (same as under "no")
-- Question embedding ("Did some students pass?") - `RSA/QuestionEmbedding.lean`
-  - `local_partition_disjunctive`: Local gives odd "no" answer (none OR all)
-  - `questionIsUnique`: Questions aren't DE-like or attitude-like
-  - RSA predicts global preferred (partition quality argument)
-  - Connection to exhaustive interpretation (van Rooij & Schulz 2004)
-
-Remaining:
-- Geurts' globalist vs localist analysis for complex embeddings
 
 ---
 
-## Phase 4: Syntax Expansion
+## Phase Mapping (Review Tiers → Work Items)
 
-### 4.1 Formal Language Theory & CCG Generative Capacity (Partial)
+### Immediate (Tier 1 MVP) — ~4-6 weeks
+1. Fragment library (Core/Fragments/)
+2. Scale library (Core/Scales.lean)
+3. Tutorial documentation (docs/tutorial/)
+4. Paper replication docs (docs/replications/)
 
-**Status**: Infrastructure implemented, proofs sketched with `sorry`
+### Near-term (Tier 2 Comparison) — ~4-6 weeks after MVP
+1. `findDivergences` function
+2. Third deep comparison phenomenon
+3. Wire Geurts & Pouscoulous data to comparison
+4. Auto-generate coverage matrix
 
-**Current state**:
-- `Core/FormalLanguageTheory.lean`: Defines {aⁿbⁿcⁿdⁿ}, pumping lemma (axiom), `anbncndn_not_context_free` theorem (sorry)
-- `Theories/CCG/GenerativeCapacity.lean`: Connects to CCG, `ccg_strictly_more_expressive_than_cfg` (sorry)
+### Medium-term (Tier 3 Proofs) — Ongoing
+1. Fill CCG generative capacity proofs
+2. Add grounding proofs to remaining RSA models
+3. Replace `native_decide` with full proofs where meaningful
 
-**Remaining work**:
-- Fill in pumping lemma proof details (case analysis on decomposition)
-- Prove `makeString_anbncndn n` satisfies the membership predicate for all n
-- Complete the connection between CCG derivations and the formal language
-
-```
-Core/FormalLanguageTheory.lean
-  - FourSymbol/ThreeSymbol alphabets ✓
-  - isInLanguage_anbncndn membership predicate ✓
-  - makeString_anbncndn generator ✓
-  - Pumping lemma (axiom) ✓
-  - anbncndn_not_context_free (sorry)
-  - MildlyContextSensitive structure ✓
-
-Theories/CCG/GenerativeCapacity.lean
-  - Imports FormalLanguageTheory + CrossSerial ✓
-  - ccg_strictly_more_expressive_than_cfg (sorry)
-  - cross_serial_requires_mcs ✓ (proven by rfl)
-  - ccg_is_mildly_context_sensitive ✓ (proven by rfl)
-```
-
-### 4.2 HPSG/Minimalism → SemDerivation
-
-**Current state**: Only CCG implements the syntax→semantics interface.
-
-**Problem**: Other theories can't feed into pragmatics.
-
-**Solution**: Implement `toDerivation` for HPSG and Minimalism.
-
-### 4.3 CCG-Montague Homomorphism ✓ DONE
-
-**Status**: Implemented in `CCG/Homomorphism.lean` and `CCG/Semantics.lean`
-
-**Implementation**:
-- `DerivStep.interp` in Semantics.lean directly implements the homomorphism:
-  - Forward application → function application (`m1 m2'`)
-  - Backward application → function application (`m2 m1'`)
-  - Forward composition → B combinator (`B m1 m2'`)
-  - Type-raising → T combinator (`T m`)
-- `Homomorphism.lean` proves structural properties:
-  - `fapp_sem`, `bapp_sem`: Application = function application
-  - `fcomp_sem`: Composition = B combinator
-  - `ftr_sem`: Type-raising = T combinator
-  - `ccgHomomorphism`: All properties hold together
-  - `ccgRuleToRule`: Steedman's rule-to-rule relation
-
----
-
-## Lower Priority / Future Work
-
-### Reorganize Pragmatic Theories
-
-Move `NeoGricean/` and `RSA/` under `Theories/Pragmatics/` for consistency.
-
-### RSA α Parameter ✓ PARTIAL
-
-**Status**: Limit conjecture documented in `Comparisons/RSANeoGricean.lean`
-
-Documents the limit theorem conjecture: lim_{α→∞} RSA = NeoGricean. Provides:
-- `RationalityParameter` structure with α ≥ 0 constraint
-- `LimitAgreement` structure for stating when theories agree
-- `EquivalenceConditions`: uniform priors, zero costs, high α, matching alternatives
-- Proven agreement on: directional predictions, ordinal rankings, DE blocking
-
-**Remaining**: Formalize the actual limit as α → ∞ (requires analysis).
-
-### B² Cross-Serial Derivations for 3+ Verbs
-
-`CCG/CrossSerial.lean` has 2-verb derivations but simplified 3-verb case.
-Full solution requires B² (generalized composition) to thread multiple argument slots.
-
-### Compute NP-V Bindings from Derivation Structure
-
-Extract which NP binds to which verb from CCG derivation tree, proving bindings emerge from structure.
-
-### CCG Gapping Derivations & Category Decomposition
-
-Implement generalized backward composition for type-raised categories and category decomposition rule (§7.3.3).
-
-### Sentence Processing & Incremental Interpretation
-
-Formalize CCG's left-prefix constituency and connect to processing data.
-
-### Horn (1972) Further Extensions
-
-Additional formalizations from Horn's dissertation:
-
-- **Scale Reversal**: Golf scores, rankings, budgets (descending scales)
-- **Forced vs Invited Inference**: Endpoint vs non-endpoint implicatures (§2.15)
-- **Ordinal-as-Rank**: "finished third" implicates "not second" (reversed direction)
-- **Presupposition-Implicature Distinction**: Conjunction redundancy test
-
----
-
-## Architectural Principles
-
-1. **Syntax-agnostic pragmatics**: Pragmatics imports `SemDerivation`, not specific syntax theories
-2. **Phenomena-driven**: Empirical data in `Phenomena/`, theory coverage tracked
-3. **Competing analyses explicit**: Different semantic proposals in separate files with empirical predictions
-4. **Proofs over examples**: Prefer theorems to `#eval` demonstrations
-5. **Grounding over stipulation**: RSA should use compositional semantics, not pattern-match
+### Ongoing (Tier 4 Maintenance)
+1. Extension pattern documentation
+2. CI setup
+3. Mathlib integration as needed
 
 ---
 
 ## Completed
 
-- [x] Consolidate `ContextPolarity` (was duplicated)
-- [x] Move `Comparison.lean` to `Theories/Pragmatics/`
-- [x] End-to-end scalar implicature pipeline (CCG → Montague → NeoGricean/RSA)
-- [x] Agreement theorem: both theories derive "not all" from "some"
-- [x] CCG Compositional Semantics (`CCG/Semantics.lean`, `CCG/TruthConditions.lean`)
-- [x] Scope interfaces (`Core/Interfaces/ScopeTheory.lean`, `Montague/Scope.lean`, `CCG/Scope.lean`)
-- [x] Information Structure (`Core/InformationStructure.lean`, `CCG/Intonation.lean`)
-- [x] Cross-serial dependencies (`Phenomena/CrossSerialDependencies/Data.lean`, `CCG/CrossSerial.lean`)
-- [x] Coreference theory interface (`Core/Interfaces/CoreferenceTheory.lean`)
-- [x] Pipeline architecture (`Core/Pipeline.lean`)
-- [x] RSA scope ambiguity model (`RSA/ScontrasPearl2021.lean`)
-- [x] Gapping word order typology (`Phenomena/Gapping/Data.lean`, `CCG/Gapping.lean`)
-- [x] Generalized conjunction (`Montague/Conjunction.lean`)
-- [x] Real cross-serial derivations for 2-verb case (`CCG/CrossSerial.lean`)
-- [x] Catalan bracketing proofs (`CCG/Equivalence.lean`)
-- [x] **Intensional Montague Semantics** (`Montague/Intensional.lean`)
-- [x] **Grounding theorems fully proven** (`RSA/Intensional.lean` - no sorries)
-- [x] **Migrate to Mathlib ℚ** (removed custom `Frac` type)
-- [x] **Simplify RSA to ℚ-only** (removed `RSAScore` typeclass)
-- [x] **Type-safe scales** (`QuantExpr`/`ConnExpr` in scale operations)
-- [x] **Unified entailment** (NeoGricean uses Montague semantics)
-- [x] **Parameterized Lexicon: Numerals** (`Montague/Lexicon/Numerals/` - LowerBound, Exact, Compare)
-- [x] **Parameterized Lexicon: Modals** (`Montague/Lexicon/Modals/` - Simple, Kratzer, Compare)
-- [x] **Implicature Operations** (`NeoGricean/Operations.lean` - assert/contradict/suspend from Horn 1972 §1.22)
-- [x] **Negation Scope Asymmetry** (`NeoGricean/NegationScope.lean` - internal vs external negation from Horn 1972)
-- [x] **RSA DE Context Handling** (`RSA/PottsLU.lean` - full Potts et al. 2016 Lexical Uncertainty model)
-- [x] **Distribution Type** (`Core/Distribution.lean` - ExactDist with proofs)
-- [x] **Formal Language Theory** (`Core/FormalLanguageTheory.lean` - infrastructure for {aⁿbⁿcⁿdⁿ})
-- [x] **CCG Generative Capacity** (`CCG/GenerativeCapacity.lean` - connects CCG to formal language theory)
-- [x] **CCG-Montague Homomorphism** (`CCG/Homomorphism.lean` - rule-to-rule correspondence)
-- [x] **RSA-NeoGricean Comparison** (`Comparisons/RSANeoGricean.lean` - directional/ordinal agreement, limit conjecture)
-- [x] **Question Embedding** (`RSA/QuestionEmbedding.lean` - partition quality, exhaustive interpretation)
+- [x] Intensional Montague Semantics (`Montague/Intensional.lean`)
+- [x] RSA with compositional meanings (`RSA/Intensional.lean`)
+- [x] Grounding theorems for L0 (`RSA/Intensional.lean`)
+- [x] Distribution type with proofs (`Core/Distribution.lean`)
+- [x] RSA DE context handling (`RSA/PottsLU.lean`)
+- [x] QUD infrastructure (`Core/QUD.lean`)
+- [x] Hyperbole model (`RSA/KaoEtAl2014.lean`)
+- [x] Parameterized Lexicon: Numerals (`Montague/Lexicon/Numerals/`)
+- [x] Parameterized Lexicon: Modals (`Montague/Lexicon/Modals/`)
+- [x] CCG-Montague Homomorphism (`CCG/Homomorphism.lean`)
+- [x] RSA-NeoGricean Comparison (`Comparisons/RSANeoGricean.lean`)
+- [x] Scope ambiguity RSA (`RSA/ScontrasPearl2021.lean`)
+- [x] Reference game RSA (`RSA/FrankGoodman2012.lean`)
+- [x] Cross-serial dependencies (`CCG/CrossSerial.lean`)
+- [x] Formal language theory infrastructure (`Core/FormalLanguageTheory.lean`)
+- [x] Type-safe scales (`QuantExpr`/`ConnExpr`)
+- [x] Embedded implicatures: DE, attitudes, conditionals, questions
+
+---
+
+## Deferred
+
+These are valuable but not on the critical path to researcher usability:
+
+- **HPSG/Minimalism → SemDerivation**: Syntax expansion beyond CCG
+- **Sentence processing**: Incremental interpretation
+- **B² generalized composition**: 3+ verb cross-serial
+- **Full Horn (1972)**: Scale reversal, forced vs invited inference
+- **RSA α → ∞ limit proof**: Requires analysis
+- **Scope-word order interactions**: Dutch/German data
+- **Imprecision/homogeneity**: Haslinger 2024 integration
+
+---
+
+## Success Criteria
+
+### For v1.0 Release
+1. **Fragment test**: Frank & Goodman 2012 in ≤30 lines
+2. **Comparison test**: `findDivergences RSA NeoGricean data` works
+3. **Documentation test**: New user can build first model in <1 hour with tutorial
+4. **Proof test**: No `sorry` in core theory files
+5. **Replication test**: 4 papers fully replicated with verified predictions
+
+### For Publication
+1. Architecture description with formal properties
+2. 2-3 deep case studies showing comparison value
+3. Comparison with existing tools (webppl-rsa, rational-speech-acts)
+4. Clear statement of limitations and future work

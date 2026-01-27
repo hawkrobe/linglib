@@ -55,6 +55,12 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.LexicalUncertainty
 import Linglib.Core.CompositionalLU
 import Linglib.Core.FormalLanguageTheory
+import Linglib.Core.QUD
+
+-- Fragments (pre-built RSA components)
+import Linglib.Core.Fragments.ReferenceGames
+import Linglib.Core.Fragments.Quantities
+import Linglib.Core.Fragments.Scales
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -147,6 +153,7 @@ import Linglib.Theories.Montague.Intensional.Basic
 import Linglib.Theories.Montague.Entailment.Basic
 import Linglib.Theories.Montague.Entailment.Monotonicity
 import Linglib.Theories.Montague.Entailment.ScaleInteraction
+import Linglib.Theories.Montague.Entailment.Polarity
 
 -- Montague Interfaces
 import Linglib.Theories.Montague.Interface.SemanticBackend
@@ -163,6 +170,9 @@ import Linglib.Theories.NeoGricean.Basic
 import Linglib.Theories.NeoGricean.Competence
 import Linglib.Theories.NeoGricean.Alternatives
 import Linglib.Theories.NeoGricean.ScalarImplicatures
+import Linglib.Theories.NeoGricean.Exhaustivity
+import Linglib.Theories.NeoGricean.Spector2007
+import Linglib.Theories.NeoGricean.FoxSpector2018
 
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
@@ -175,6 +185,7 @@ import Linglib.Theories.RSA.PottsLU
 import Linglib.Theories.RSA.AttitudeEmbedding
 import Linglib.Theories.RSA.ConditionalEmbedding
 import Linglib.Theories.RSA.QuestionEmbedding
+import Linglib.Theories.RSA.KaoEtAl2014
 
 import Linglib.Theories.PragmaticComparison
 
