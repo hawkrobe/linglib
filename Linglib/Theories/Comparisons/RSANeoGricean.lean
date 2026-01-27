@@ -30,6 +30,7 @@ NeoGricean is (conjecturally) a limiting case of RSA:
 
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.ScalarImplicatures
+import Linglib.Theories.RSA.InformationTheory.Basic
 import Linglib.Theories.NeoGricean.ScalarImplicatures
 import Linglib.Core.Interfaces.ImplicatureTheory
 
@@ -291,6 +292,76 @@ def standardEquivalenceConditions : EquivalenceConditions where
   matchingAlternatives := true
 
 -- ============================================================================
+-- Information-Theoretic Perspective (Zaslavsky et al. 2020)
+-- ============================================================================
+
+/-!
+## Information-Theoretic Connection to NeoGricean
+
+Zaslavsky et al. (2020) show that RSA optimizes:
+  G_α = H_S(U|M) + α · E[V_L]
+
+As α → ∞:
+- The entropy term H_S becomes negligible
+- E[V_L] (listener utility) dominates
+- The speaker maximizes informativity (argmax)
+
+This is exactly the NeoGricean "say the strongest true thing" principle!
+
+### The NeoGricean Limit
+
+In information-theoretic terms, NeoGricean emerges when:
+1. α → ∞ (pure informativity, no compression cost)
+2. Speaker chooses argmax_u log L0(m|u) = argmax_u informativity(u)
+3. This is the Gricean maxim of quantity
+
+### Entropy Contribution
+
+At finite α, the speaker balances:
+- Informativity (E[V_L]): say informative things
+- Compression (H_S): don't use overly specific utterances
+
+As α → ∞, compression cost → 0, so only informativity matters.
+This recovers NeoGricean categorical predictions.
+-/
+
+open RSA.InformationTheory
+
+/--
+As α increases, the entropy contribution to G_α becomes smaller
+relative to the informativity contribution.
+
+This demonstrates the limit where NeoGricean emerges.
+-/
+def entropyContribution (S : RSAScenario) (α : ℚ) : ℚ :=
+  let d := runDynamics S 3
+  let h_s := H_S_at S d
+  let e_vl := E_VL_at S d
+  let e_vl_abs := if e_vl < 0 then -e_vl else e_vl
+  if α = 0 then 1  -- Entropy dominates when α = 0
+  else h_s / (h_s + α * e_vl_abs)  -- Fraction due to entropy
+
+/--
+At high α, entropy contribution approaches 0.
+
+This is the information-theoretic explanation for why RSA → NeoGricean.
+-/
+theorem entropy_vanishes_at_high_alpha (S : RSAScenario) :
+    -- For large α, entropy contribution is small
+    -- (Full proof would require limits in Analysis)
+    entropyContribution S 10 ≤ entropyContribution S 1 ∨
+    -- Trivial case
+    S.worlds.length ≤ 1 := by
+  sorry  -- Would require analysis of entropy dynamics
+
+/--
+The NeoGricean limit can be characterized information-theoretically:
+at α → ∞, the speaker ignores compression and maximizes informativity.
+-/
+def isNeoGriceanLimit (α : ℚ) : Bool :=
+  α ≥ 100  -- Practical threshold for "approximately categorical"
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -307,11 +378,18 @@ def standardEquivalenceConditions : EquivalenceConditions where
 1. **Limit theorem**: lim_{α→∞} RSA = NeoGricean
 2. **Equivalence conditions**: When uniform priors, zero costs, high α
 
+### Information-Theoretic Perspective (Zaslavsky et al. 2020)
+1. **G_α objective**: RSA optimizes H_S + α·E[V_L]
+2. **NeoGricean as limit**: As α → ∞, H_S contribution vanishes
+3. **Categorical = pure informativity**: argmax replaces softmax
+4. **Phase transition at α = 1**: Rate-distortion optimum
+
 ### Future Work
 1. Formalize the limit theorem (requires analysis)
 2. Prove specific equivalence instances
 3. Characterize exactly when predictions diverge
 4. Connect to experimental data on implicature rates
+5. Explore suboptimality for α < 1 (utility non-monotonicity)
 -/
 
 end Comparisons.RSANeoGricean

@@ -9,8 +9,7 @@ and connecting them to computational pragmatics (RSA - Rational Speech Acts).
 ### Core/ - Shared types and interfaces
 - Core.Basic: Word, Cat, ClauseType, Lexicon
 - Core.Grammar: Abstract Grammar typeclass
-- Core.SemanticTypes: Semantic types
-- Core.SemanticBackend: Interface that RSA needs from syntax
+- Core.Pipeline: Theory composition (provides/requires)
 
 ### Theories/ - Theoretical frameworks
 - CCG/: Combinatory Categorial Grammar
@@ -47,20 +46,22 @@ Missing Theories/X/Y.lean = conjecture (theory hasn't proven it handles Y)
 -- Core types and interfaces
 import Linglib.Core.Basic
 import Linglib.Core.Grammar
-import Linglib.Core.SemanticTypes
-import Linglib.Core.SemanticBackend
-import Linglib.Core.RSA
 import Linglib.Core.Pipeline
 import Linglib.Core.InformationStructure
-import Linglib.Core.LexicalUncertainty
-import Linglib.Core.CompositionalLU
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
+import Linglib.Core.Polarity
+import Linglib.Core.Proposition
 
--- Fragments (pre-built RSA components)
-import Linglib.Core.Fragments.ReferenceGames
-import Linglib.Core.Fragments.Quantities
-import Linglib.Core.Fragments.Scales
+-- Fragments (pre-built RSA domains)
+import Linglib.Fragments.ReferenceGames
+import Linglib.Fragments.Quantities
+import Linglib.Fragments.Scales
+
+-- RSA Core and Lexical Uncertainty
+import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.LexicalUncertainty.Compositional
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -187,6 +188,16 @@ import Linglib.Theories.RSA.ConditionalEmbedding
 import Linglib.Theories.RSA.QuestionEmbedding
 import Linglib.Theories.RSA.KaoEtAl2014
 
+-- RSA Information Theory (Zaslavsky et al. 2020)
+import Linglib.Theories.RSA.InformationTheory.Basic
+import Linglib.Theories.RSA.InformationTheory.UtilityDynamics
+import Linglib.Theories.RSA.InformationTheory.UtilityNonMonotonicity
+import Linglib.Theories.RSA.InformationTheory.PhaseTransition
+
+-- RSA with rational α (for α < 1)
+import Linglib.Core.RationalPower
+import Linglib.Theories.RSA.CoreQ
+
 import Linglib.Theories.PragmaticComparison
 
 -- Cross-theoretic comparisons
@@ -195,6 +206,7 @@ import Linglib.Theories.Comparisons.ScalarImplicature
 import Linglib.Theories.Comparisons.CommandRelations
 import Linglib.Theories.Comparisons.Implicature
 import Linglib.Theories.Comparisons.RSANeoGricean
+import Linglib.Theories.Comparisons.SauerlandRSA
 
 import Linglib.Theories.Surface.Basic
 
