@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.14.0] - 2025-01-26
+
+### Added
+- **Theories/NeoGricean/Exhaustivity.lean**: Formalization of Spector (2016) "Comparing exhaustivity operators"
+  - Core definitions: `exhMW` (minimal worlds), `exhIE` (innocent exclusion)
+  - `≤_ALT` preorder on worlds, MC-sets, innocent excludability
+  - Lemmas 1-3: Connection between minimal worlds and MC-sets
+  - Propositions 6-7, Corollary 8: Relationships between operators
+  - **Theorem 9**: When ALT closed under ∧, exh_mw ≡ exh_ie
+  - Theorem 10: Disjunction closure vacuous for exh_ie
+  - Corollary 11: If ALT∨ closed under ∧, then exh_mw ≡ exh_ie
+
+- **Core/QUD.lean**: QUD (Question Under Discussion) infrastructure for RSA
+  - `QUD` structure: Represents communicative goals via meaning equivalence
+  - `QUDRSAScenario`: RSA scenario with multiple possible QUDs
+  - `QUDRSA.L0`: Literal listener (QUD-unaware)
+  - `QUDRSA.L0_projected`: L0 probability projected onto QUD equivalence classes
+  - `QUDRSA.S1`: QUD-sensitive speaker (optimizes w.r.t. projected meaning)
+  - `QUDRSA.L1`: QUD-marginalizing listener
+  - `QUDRSA.L1_joint`: Joint distribution over (Meaning × Goal)
+  - `QUDRSA.L1_goal`: Marginal goal distribution
+  - `ProductQUD`: Common patterns for product meaning spaces (fst, snd, both)
+  - `PrecisionProjection`: Approximate vs exact communication patterns
+
+- **Theories/RSA/KaoEtAl2014.lean**: Hyperbole model (Kao et al. 2014)
+  - Models "Nonliteral understanding of number words" (PNAS 111(33))
+  - Multi-dimensional meaning space: Price × Affect
+  - QUDs: "price", "affect", "both"
+  - Extended semantics with utterance arousal
+  - Key predictions verified:
+    - S1 prefers hyperbole under "affect" QUD
+    - S1 prefers literal under "price" QUD
+    - L1 infers high affect from hyperbolic utterances
+    - L1 infers "affect" QUD from hyperbole
+
+- **Core/Fragments/**: Building blocks for RSA scenarios
+  - `ReferenceGames.lean`: Reference game components
+    - `Color`, `Shape`, `Object`, `Feature`: Standard types
+    - `TypedContext`: Objects with features
+    - `fromPairs`, `colorsOnly`, `shapesOnly`: Context builders
+    - `l0`, `s1`, `l1`: Convenience wrappers
+  - `Quantities.lean`: Quantity/scalar domain components
+    - `Domain n`: Parameterized by size (n+1 worlds)
+    - `Utterance`: none/some/all
+    - `ExtUtterance`: Adds "most"
+    - `standard n`, `withPrior`: Domain builders
+  - `Scales.lean`: Reusable scale definitions
+    - `Scale α`: Ordered alternatives from weak to strong
+    - Horn scales: `someAll`, `someMostAll`, `orAnd`
+    - Modal scales: `mightMust`, `possibleNecessary`
+    - Degree scales: `warmHot`, `goodExcellent`
+    - `numerals n`: Build numeral scale 1..n
+
 ## [0.13.0] - 2025-01-26
 
 ### Changed
