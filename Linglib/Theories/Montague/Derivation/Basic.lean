@@ -17,6 +17,7 @@ Syntax Theory → Derivation → Pragmatics (NeoGricean, RSA)
 ```
 -/
 
+import Linglib.Core.Polarity
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Lexicon.Basic
 import Linglib.Theories.Montague.Quantifiers
@@ -75,14 +76,8 @@ def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
 -- Alternative Generation
 -- ============================================================================
 
-/--
-Context polarity for alternative computation.
-In downward-entailing contexts, scales reverse.
--/
-inductive ContextPolarity where
-  | upward    -- Standard: stronger alternatives
-  | downward  -- DE: weaker alternatives (scale reversal)
-  deriving DecidableEq, Repr
+-- Re-export ContextPolarity from Core for backward compatibility
+export Core.Polarity (ContextPolarity)
 
 /--
 Generate a sentential alternative by replacing a scalar item.

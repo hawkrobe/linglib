@@ -28,6 +28,8 @@ propositions wherever classical ones are expected.
 -/
 
 import Mathlib.Data.Set.Basic
+import Mathlib.Order.BooleanAlgebra.Basic
+import Mathlib.Order.Monotone.Basic
 
 namespace Core.Proposition
 
@@ -113,6 +115,39 @@ theorem equiv_symm (W : Type*) (p q : Prop' W) (h : equiv W p q) : equiv W q p :
 theorem pnot_pnot (W : Type*) (p : Prop' W) : entails W p (pnot W (pnot W p)) :=
   λ_ hp hnp => hnp hp
 
+-- ============================================================================
+-- BooleanAlgebra Correspondence
+-- ============================================================================
+
+/-
+Prop' W = W → Prop inherits BooleanAlgebra from Mathlib's Pi instance:
+  Pi.instBooleanAlgebra + Prop.instBooleanAlgebraProp
+
+Our operations correspond exactly to the algebraic operations:
+  pand  ↔  ⊓ (inf)
+  por   ↔  ⊔ (sup)
+  pnot  ↔  ᶜ (compl)
+  entails ↔ ≤
+-/
+
+/-- Conjunction equals infimum in the lattice -/
+theorem pand_eq_inf (W : Type*) (p q : Prop' W) : pand W p q = p ⊓ q := rfl
+
+/-- Disjunction equals supremum in the lattice -/
+theorem por_eq_sup (W : Type*) (p q : Prop' W) : por W p q = p ⊔ q := rfl
+
+/-- Negation equals complement in the Boolean algebra -/
+theorem pnot_eq_compl (W : Type*) (p : Prop' W) : pnot W p = pᶜ := rfl
+
+/-- Entailment equals the lattice ordering -/
+theorem entails_eq_le (W : Type*) (p q : Prop' W) : entails W p q ↔ p ≤ q := Iff.rfl
+
+/-- Top equals lattice top -/
+theorem top_eq_latticeTop (W : Type*) : top W = (⊤ : Prop' W) := rfl
+
+/-- Bot equals lattice bot -/
+theorem bot_eq_latticeBot (W : Type*) : bot W = (⊥ : Prop' W) := rfl
+
 end Classical
 
 -- ============================================================================
@@ -155,6 +190,30 @@ def count (W : Type*) (worlds : List W) (p : BProp W) : Nat :=
 /-- Get all worlds satisfying a proposition -/
 def filter (W : Type*) (worlds : List W) (p : BProp W) : List W :=
   worlds.filter p
+
+-- ============================================================================
+-- BooleanAlgebra Correspondence for Bool
+-- ============================================================================
+
+/-
+BProp W = W → Bool also inherits BooleanAlgebra from:
+  Pi.instBooleanAlgebra + Bool.instBooleanAlgebraBool
+-/
+
+/-- Conjunction equals infimum in the Bool lattice -/
+theorem pand_eq_inf (W : Type*) (p q : BProp W) : pand W p q = p ⊓ q := rfl
+
+/-- Disjunction equals supremum in the Bool lattice -/
+theorem por_eq_sup (W : Type*) (p q : BProp W) : por W p q = p ⊔ q := rfl
+
+/-- Negation equals complement in the Bool Boolean algebra -/
+theorem pnot_eq_compl (W : Type*) (p : BProp W) : pnot W p = pᶜ := rfl
+
+/-- Top equals lattice top -/
+theorem top_eq_latticeTop (W : Type*) : top W = (⊤ : BProp W) := rfl
+
+/-- Bot equals lattice bot -/
+theorem bot_eq_latticeBot (W : Type*) : bot W = (⊥ : BProp W) := rfl
 
 end Decidable
 

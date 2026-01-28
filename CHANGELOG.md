@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.20.0] - 2025-01-27
+
+### Changed
+- **Core/Proposition.lean**: Integrate Mathlib BooleanAlgebra infrastructure
+  - Added imports: `Mathlib.Order.BooleanAlgebra.Basic`, `Mathlib.Order.Monotone.Basic`
+  - Correspondence theorems: `pand_eq_inf`, `por_eq_sup`, `pnot_eq_compl`, `entails_eq_le`
+  - Documents that `Prop' W` and `BProp W` inherit `BooleanAlgebra` from Mathlib's Pi instance
+
+- **Montague/Entailment/Polarity.lean**: Use Mathlib Monotone/Antitone for polarity
+  - `IsUpwardEntailing` is now abbreviation for `Monotone`
+  - `IsDownwardEntailing` is now abbreviation for `Antitone`
+  - Composition rules now come from Mathlib for free:
+    - `Monotone.comp`: UE ∘ UE = UE
+    - `Antitone.comp`: DE ∘ DE = UE (double negation rule)
+    - `Monotone.comp_antitone`: UE ∘ DE = DE
+    - `Antitone.comp_monotone`: DE ∘ UE = DE
+
+- **Montague/Derivation/Basic.lean**: Consolidate ContextPolarity
+  - Now imports and re-exports `ContextPolarity` from `Core.Polarity`
+  - Removes duplicate definition (was defined in both Core and Derivation)
+
+### References
+- Mathlib `Order.Monotone.Defs` for Monotone/Antitone composition lemmas
+
 ## [0.19.0] - 2025-01-27
 
 ### Added
