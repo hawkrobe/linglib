@@ -243,6 +243,9 @@ import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 -- Factive predicates empirical data
 import Linglib.Phenomena.Factives.DegenTonhauser2021
 
+-- Projection empirical data
+import Linglib.Phenomena.Projection.ScontrasTonhauser2025
+
 -- Quantifier scope ambiguity (Scontras & Pearl 2021)
 import Linglib.Phenomena.ScontrasPearl2021.Data
 
