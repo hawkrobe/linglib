@@ -13,7 +13,6 @@ This demonstrates that compositional semantics can provide the literal
 semantics layer for RSA pragmatic reasoning.
 -/
 
-import Linglib.Core.SemanticBackend
 import Linglib.Theories.Montague.Basic
 
 namespace Montague.Interface.SemanticBackend

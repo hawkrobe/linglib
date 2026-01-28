@@ -2,8 +2,7 @@
 # Montague Semantics: Variable Binding and Assignment Functions
 
 General infrastructure for interpreting expressions with free variables.
-This is framework-neutral — pronouns and variable binding exist in every
-syntactic theory, not just Minimalism.
+This is framework-neutral — any syntactic theory with binding can use it.
 
 ## Key Concepts
 
@@ -11,14 +10,19 @@ Following Heim & Kratzer (1998) Ch. 5:
 
 - **Assignment functions** map variable indices to entities
 - **Modified assignments** g[n↦x] update a single index
-- **Pronouns** are interpreted relative to an assignment
+- **Pronouns/variables** are interpreted relative to an assignment
 
 ## Usage
 
 This module provides the foundation for:
-- Pronoun interpretation in any framework
+- Pronoun interpretation (he₁, she₂, etc.)
 - Lambda abstraction in compositional semantics
-- Trace interpretation (in Minimalism/Semantics/Interface.lean)
+- Bound variable readings in quantification
+
+Syntactic theories hook into this differently:
+- Minimalism: traces as variables (see Minimalism/Semantics/)
+- HPSG: index features on NPs
+- CCG: hypothetical reasoning
 
 ## References
 
@@ -165,7 +169,7 @@ This creates a function that binds variable n. When applied to an
 argument x, the body α is evaluated with n bound to x.
 
 This is the key rule for interpreting structures where a binder
-(quantifier, λ-operator, relative pronoun) binds a variable/trace.
+(quantifier, λ-operator, relative pronoun) binds a variable.
 -/
 def lambdaAbsG {m : Model} {τ : Ty} (n : ℕ) (body : DenotG m τ)
     : DenotG m (.e ⇒ τ) :=
@@ -249,10 +253,10 @@ The assignment function machinery is framework-neutral. It provides the
 semantic foundation for:
 - Pronouns ("he₁ saw her₂")
 - Bound variables in quantification ("every x ... x ...")
-- Traces in movement (see Minimalism/Semantics/Interface.lean)
 
 The specific syntactic mechanism that creates binding configurations
-varies by theory, but the semantic interpretation is uniform.
+varies by theory (movement in Minimalism, indices in HPSG, hypotheticals
+in CCG), but the semantic interpretation is uniform.
 -/
 
 end Montague.Variables

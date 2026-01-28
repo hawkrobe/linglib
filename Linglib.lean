@@ -67,6 +67,7 @@ import Linglib.Theories.RSA.LexicalUncertainty.Compositional
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interfaces.SemanticStructure
 
 -- Phenomena (empirical data)
 import Linglib.Phenomena.Basic
@@ -109,6 +110,8 @@ import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Minimalism.Agree
 import Linglib.Theories.Minimalism.Coreference
+import Linglib.Theories.Minimalism.Semantics.Interface
+import Linglib.Theories.Minimalism.Semantics.RelativeClauses
 
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Theories.DependencyGrammar.LexicalRules
@@ -132,6 +135,9 @@ import Linglib.Theories.CCG.Gapping
 import Linglib.Theories.CCG.Equivalence
 
 import Linglib.Theories.Montague.Basic
+import Linglib.Theories.Montague.Variables
+import Linglib.Theories.Montague.Modification
+import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Attitudes
 import Linglib.Theories.Montague.Modality
@@ -231,6 +237,9 @@ import Linglib.Phenomena.ScopeWordOrder.Data
 import Linglib.Phenomena.Semantics.Entailments
 import Linglib.Phenomena.Semantics.Monotonicity
 import Linglib.Phenomena.Semantics.TruthConditions
+
+-- Adjective semantics (Kamp 1975, Partee 1995, 2001)
+import Linglib.Phenomena.Adjectives.Data
 
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic

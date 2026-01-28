@@ -55,8 +55,11 @@ This is a placeholder/roadmap. Full implementation would require:
 -/
 
 import Linglib.Core.Basic
+import Linglib.Core.Interfaces.SemanticStructure
 
 namespace Pipeline
+
+open Core.Interfaces
 
 -- ============================================================================
 -- General Dependency Architecture
@@ -141,6 +144,28 @@ class SyntaxTheory (T : Type) where
   surface : Derivation → List String
   /-- Well-formedness predicate -/
   wellFormed : Derivation → Prop
+
+/--
+A syntax theory that provides semantic structure interfaces.
+
+This extends `SyntaxTheory` with the granular capabilities that
+compositional semantics needs. A theory can provide some but not all.
+-/
+class SyntaxForSemantics (T : Type) extends SyntaxTheory T where
+  /-- Instance: derivations support binary composition -/
+  hasBinary : HasBinaryComposition Derivation
+  /-- Instance: derivations have terminals -/
+  hasTerminals : HasTerminals Derivation
+
+/--
+A syntax theory that additionally supports binding.
+
+Needed for quantifier scope, relative clauses, etc.
+Not all syntax theories may provide this.
+-/
+class SyntaxWithBinding (T : Type) extends SyntaxForSemantics T where
+  /-- Instance: derivations support binding sites -/
+  hasBinding : HasBinding Derivation
 
 -- ============================================================================
 -- Level 2: Semantics Interface
