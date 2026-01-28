@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.19.0] - 2025-01-27
+
+### Added
+- **Theories/Comparisons/CommandRelations.lean**: Complete B&P Theorem 9 (Union Theorem)
+  - `nonminimal_in_maximalGenerator`: Non-minimal upper bounds are in maximal generators
+  - `relation_union_theorem_reverse`: C_{R̂∩Ŝ} ⊆ C_R ∪ C_S (uses CAC)
+  - Both directions of Union Theorem now fully proved
+
+### Changed
+- Updated documentation to reflect completed theorems and remaining sorries
+
 ## [0.18.0] - 2025-01-27
 
 ### Added
