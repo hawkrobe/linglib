@@ -80,18 +80,20 @@ attribute [instance] RSAScenarioR.finU RSAScenarioR.finW
 Convert a computational RSAScenario to RSAScenarioR for proofs.
 
 This lifts ℚ → ℝ and ℕ → ℝ, enabling real analysis.
+
+Note: This uses specified default values for Interp and Lexicon parameters.
 -/
 def RSAScenario.toReal (S : RSAScenario)
     [Fintype S.Utterance] [Fintype S.World]
-    (defaultInterp : S.Interp) : RSAScenarioR where
+    (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAScenarioR where
   Utterance := S.Utterance
   World := S.World
-  lexicon u w := (S.φ defaultInterp u w : ℝ)
+  lexicon u w := (S.φ defaultInterp defaultLexicon u w : ℝ)
   prior w := (S.worldPrior w : ℝ)
   α := (S.α : ℝ)
   α_nonneg := Nat.cast_nonneg S.α
-  lexicon_nonneg := fun _ _ => by simp only [Rat.cast_nonneg]; sorry
-  prior_nonneg := fun _ => by simp only [Rat.cast_nonneg]; sorry
+  lexicon_nonneg := fun _ _ => by sorry  -- Would need to show ℚ values are non-negative
+  prior_nonneg := fun _ => by sorry
   prior_pos := by sorry
 
 -- ============================================================================
@@ -139,8 +141,8 @@ def RSAScenarioR.toModel (S : RSAScenarioR) : RSAModel S.Utterance where
 /-- Convert RSAScenario directly to RSAModel (convenience). -/
 def RSAScenario.toModel (S : RSAScenario)
     [Fintype S.Utterance] [Fintype S.World]
-    (defaultInterp : S.Interp) : RSAModel S.Utterance :=
-  (RSAScenario.toReal S defaultInterp).toModel
+    (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAModel S.Utterance :=
+  (RSAScenario.toReal S defaultInterp defaultLexicon).toModel
 
 -- ============================================================================
 -- PART 4: RSA Dynamics (Generic)

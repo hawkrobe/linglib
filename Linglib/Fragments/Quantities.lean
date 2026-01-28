@@ -90,11 +90,11 @@ def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) : Domain n := { prior := p }
 
 /-- L0 distribution -/
 def l0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
-  RSA.L0 d.toScenario u ()
+  RSA.L0 d.toScenario u () () () ()
 
 /-- S1 distribution -/
 def s1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
-  RSA.S1 d.toScenario w () ()
+  RSA.S1 d.toScenario w () () () ()
 
 /-- L1 distribution -/
 def l1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=

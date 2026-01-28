@@ -202,9 +202,8 @@ import Linglib.Theories.RSA.QuestionEmbedding
 import Linglib.Theories.RSA.KaoEtAl2014_Hyperbole
 import Linglib.Theories.RSA.KaoEtAl2014_Metaphor
 
--- RSA BToM (Bayesian Theory of Mind) framework
-import Linglib.Theories.RSA.BToM.Core
-import Linglib.Theories.RSA.BToM.ScontrasTonhauser2025
+-- RSA Projection (mental state inference)
+import Linglib.Theories.RSA.ScontrasTonhauser2025
 
 -- RSA Information Theory (Zaslavsky et al. 2020)
 import Linglib.Theories.RSA.InformationTheory.Basic

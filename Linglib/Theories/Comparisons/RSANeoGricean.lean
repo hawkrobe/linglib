@@ -119,7 +119,7 @@ not yet as a proven theorem.
 -/
 structure LimitAgreement (U W : Type) [BEq U] [BEq W] where
   /-- RSA scenario -/
-  rsaScenario : SimpleRSAScenario U W
+  rsaScenario : RSAScenario
   /-- NeoGricean analysis -/
   neoAnalysis : StandardRecipeResult
   /-- The utterance being analyzed -/

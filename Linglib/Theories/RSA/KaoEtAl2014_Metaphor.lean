@@ -289,29 +289,29 @@ def comfortingPerson : Meaning :=
   { category := .person, dangerous := false, unpredictable := false, comforting := true }
 
 /-- L0 for "shark" -/
-def l0_shark : List (Meaning × ℚ) := RSA.L0 metaphorScenario Utterance.shark ()
+def l0_shark : List (Meaning × ℚ) := RSA.L0 metaphorScenario Utterance.shark () () () Goal.dangerous
 
 /-- S1 with dangerous person and QUD "dangerous" -/
 def s1_dangerous_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario dangerousPerson () Goal.dangerous
+  RSA.S1 metaphorScenario dangerousPerson () () () Goal.dangerous
 
 /-- S1 with dangerous person and QUD "category" -/
 def s1_category_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario dangerousPerson () Goal.category
+  RSA.S1 metaphorScenario dangerousPerson () () () Goal.category
 
 /-- S1 with volatile person and QUD "dangerous" -/
 def s1_volatile_dangerous : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario volatilePerson () Goal.dangerous
+  RSA.S1 metaphorScenario volatilePerson () () () Goal.dangerous
 
 /-- S1 with comforting person and QUD "comforting" -/
 def s1_comforting_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario comfortingPerson () Goal.comforting
+  RSA.S1 metaphorScenario comfortingPerson () () () Goal.comforting
 
 /-- L1 for "shark" -/
 def l1_shark : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utterance.shark
 
 /-- L1 goal distribution for "shark" -/
-def l1_goal_shark : List (Goal × ℚ) := RSA.L1_qud metaphorScenario Utterance.shark
+def l1_goal_shark : List (Goal × ℚ) := RSA.L1_goal metaphorScenario Utterance.shark
 
 /-- L1 for "fire" -/
 def l1_fire : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utterance.fire
@@ -437,14 +437,14 @@ def fire_more_unpredictable_than_shark : Bool :=
 -- ============================================================================
 
 /-- Under strict semantics, metaphor gets zero compatibility -/
-def l0_shark_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance.shark ()
+def l0_shark_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance.shark () () () Goal.dangerous
 
 #eval l0_shark_strict
 -- All zeros for person meanings (shark is literally false)
 
 /-- S1 under strict semantics can't use metaphor -/
 def s1_strict_dangerous : List (Utterance × ℚ) :=
-  RSA.S1 strictScenario dangerousPerson () Goal.dangerous
+  RSA.S1 strictScenario dangerousPerson () () () Goal.dangerous
 
 #eval s1_strict_dangerous
 -- "shark" should have probability 0 (can only use "person")

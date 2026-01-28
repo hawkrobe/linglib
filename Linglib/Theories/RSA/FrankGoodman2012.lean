@@ -84,19 +84,19 @@ abbrev refGameBackend := refGameScenario
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.blue ()
+def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.blue () () () ()
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.green ()
+def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.green () () () ()
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.square ()
+def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.square () () () ()
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.blue_square () ()
+def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.blue_square () () () ()
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.green_square () ()
+def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.green_square () () () ()
 
 /-- L1 for "square" - the key pragmatic inference -/
 def l1_square : List (Object × ℚ) := RSA.L1_world refGameScenario Utterance.square
@@ -163,8 +163,8 @@ theorem green_unique :
 
 /-- "circle" uniquely identifies blue_circle at L0 -/
 theorem circle_unique :
-    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle ()) .blue_circle).num > 0 ∧
-    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle ()) .blue_square).num = 0 := by
+    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle () () () ()) .blue_circle).num > 0 ∧
+    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle () () () ()) .blue_square).num = 0 := by
   native_decide
 
 -- ============================================================================
@@ -221,7 +221,8 @@ noncomputable instance refGameModel : RSA.RSAModel Utterance :=
   @RSAScenario.toModel refGameScenario
     (inferInstance : Fintype Utterance)  -- Utterance has Fintype
     (inferInstance : Fintype Object)      -- World = Object has Fintype
-    ()
+    ()  -- default Interp
+    ()  -- default Lexicon
 
 /-!
 With this instance, the following theorems apply automatically:

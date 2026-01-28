@@ -172,7 +172,7 @@ theorem bilateral_three_not_stronger :
 -- ============================================================================
 
 /-- The RSA scenario derived from Bilateral semantics -/
-def Bilateral.scenario : SimpleRSAScenario NumWord Nat := Bilateral.toScenario
+def Bilateral.scenario : RSAScenario := Bilateral.toScenario
 
 #eval Bilateral.scenario.worlds       -- [0, 1, 2, 3]
 #eval Bilateral.scenario.utterances   -- [one, two, three]

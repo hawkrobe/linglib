@@ -34,16 +34,16 @@ open RSA RSA.Scalar
 namespace BasicImplicature
 
 /-- L0 scores for "some" -/
-def l0_some : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .some_ ()
+def l0_some : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .some_ () () () ()
 
 /-- L0 scores for "all" -/
-def l0_all : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .all ()
+def l0_all : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .all () () () ()
 
 /-- S1 scores in w3 (all ate) -/
-def s1_w3 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w3 () ()
+def s1_w3 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w3 () () () ()
 
 /-- S1 scores in w1 (1 ate) -/
-def s1_w1 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w1 () ()
+def s1_w1 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w1 () () () ()
 
 /-- L1 scores for "some" -/
 def l1_some : List (CookieWorld × ℚ) := RSA.L1_world scalarScenario .some_

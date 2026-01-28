@@ -49,18 +49,31 @@ def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 /--
 Unified RSA scenario supporting all RSA model variants.
 
-This is the unified type supporting:
-- Basic models (Interp = Unit, QUD = Unit)
-- Scope ambiguity models (QUD = Unit)
-- QUD-sensitive models (Interp = Unit)
-- Full models (with both Interp and QUD)
+This is the unified type with 5 latent variable categories:
+- **World**: What's actually true (epistemic)
+- **BeliefState**: Speaker's private assumptions - what the listener reasons the
+  speaker takes for granted (epistemic-private, reasoned about by listener)
+- **Goal**: Communicative intention/QUD (telic)
+- **Interp**: Compositional meaning choice (convention)
+- **Lexicon**: Word meaning uncertainty (convention)
+
+This supports:
+- Basic models (all latent types = Unit)
+- Scope ambiguity models (Interp varies)
+- QUD-sensitive models (Goal varies)
+- Mental state models (BeliefState + Goal vary) - Scontras & Tonhauser 2025
+- Lexical uncertainty models (Lexicon varies) - Bergen et al. 2016
+- Full BToM models (all 5 latent types vary)
 
 ## Fields
 
-- `Utterance`, `World`, `Interp`, `QUD`: Domain types
-- `φ`: Agreement function parameterized by interpretation
-- `qudProject`: QUD equivalence relation on worlds
-- `worldPrior`, `interpPrior`, `qudPrior`: Prior distributions
+- `Utterance`, `World`: Core domain types
+- `Interp`, `Lexicon`: Convention types (shared)
+- `BeliefState`, `Goal`: Mental state types (inferred by listener)
+- `φ`: Agreement function parameterized by interpretation and lexicon
+- `goalProject`: Goal equivalence relation on worlds
+- `inBeliefState`: Belief state membership predicate
+- Priors: `worldPrior`, `interpPrior`, `lexiconPrior`, `beliefStatePrior`, `goalPrior`
 - `α`: Rationality parameter
 
 ## Smart Constructors
@@ -69,6 +82,16 @@ Use the smart constructors for common patterns:
 - `RSAScenario.basic`: Simple reference games
 - `RSAScenario.ambiguous`: Scope ambiguity
 - `RSAScenario.qud`: QUD-sensitive models (hyperbole, metaphor)
+- `RSAScenario.mentalState`: BToM projection models
+- `RSAScenario.lexicalUncertainty`: LU models
+
+## References
+
+- Frank & Goodman (2012): Basic RSA
+- Scontras & Pearl (2021): Scope ambiguity
+- Kao et al. (2014): QUD-sensitive models
+- Bergen et al. (2016): Lexical uncertainty
+- Scontras & Tonhauser (2025): BToM projection
 -/
 structure RSAScenario where
   /-- Type of utterances -/
@@ -77,39 +100,84 @@ structure RSAScenario where
   World : Type
   /-- Type of interpretations (e.g., scope readings). Use Unit for basic models. -/
   Interp : Type := Unit
-  /-- Type of QUDs. Use Unit for non-QUD models. -/
-  QUD : Type := Unit
-  /-- Agreement function: φ(interp, utterance, world) ∈ [0,1] -/
-  φ : Interp → Utterance → World → ℚ
-  /-- QUD projection: are two worlds equivalent under this QUD? -/
-  qudProject : QUD → World → World → Bool
+  /-- Type of lexica (for lexical uncertainty). Use Unit for fixed lexicon. -/
+  Lexicon : Type := Unit
+  /-- Type of speaker's belief states (what the speaker privately assumes).
+      The listener reasons about this - it represents the speaker's/partner's
+      private epistemic state, not the listener's own beliefs. Use Unit if not modeling. -/
+  BeliefState : Type := Unit
+  /-- Type of communicative goals/QUDs. Use Unit for non-QUD models. -/
+  Goal : Type := Unit
+
+  /-- Agreement function: φ(interp, lexicon, utterance, world) ∈ [0,1] -/
+  φ : Interp → Lexicon → Utterance → World → ℚ
+  /-- Goal projection: are two worlds equivalent under this goal/QUD? -/
+  goalProject : Goal → World → World → Bool
+  /-- Belief state membership: is world in speaker's belief state? -/
+  inBeliefState : BeliefState → World → Bool := fun _ _ => true
+
   /-- Enumeration of utterances -/
   utterances : List Utterance
   /-- Enumeration of worlds -/
   worlds : List World
   /-- Enumeration of interpretations -/
   interps : List Interp
-  /-- Enumeration of QUDs -/
-  quds : List QUD
+  /-- Enumeration of lexica -/
+  lexica : List Lexicon
+  /-- Enumeration of belief states -/
+  beliefStates : List BeliefState
+  /-- Enumeration of goals/QUDs -/
+  goals : List Goal
+
   /-- Prior over worlds -/
   worldPrior : World → ℚ := fun _ => 1
   /-- Prior over interpretations -/
   interpPrior : Interp → ℚ := fun _ => 1
-  /-- Prior over QUDs -/
-  qudPrior : QUD → ℚ := fun _ => 1
+  /-- Prior over lexica -/
+  lexiconPrior : Lexicon → ℚ := fun _ => 1
+  /-- Prior over belief states -/
+  beliefStatePrior : BeliefState → ℚ := fun _ => 1
+  /-- Prior over goals/QUDs -/
+  goalPrior : Goal → ℚ := fun _ => 1
+
   /-- Rationality parameter. Higher = more informative speaker. -/
   α : ℕ := 1
+
   /-- BEq instance for utterances -/
   [uttBEq : BEq Utterance]
   /-- BEq instance for worlds -/
   [worldBEq : BEq World]
   /-- BEq instance for interpretations -/
   [interpBEq : BEq Interp]
-  /-- BEq instance for QUDs -/
-  [qudBEq : BEq QUD]
+  /-- BEq instance for lexica -/
+  [lexiconBEq : BEq Lexicon]
+  /-- BEq instance for belief states -/
+  [beliefStateBEq : BEq BeliefState]
+  /-- BEq instance for goals/QUDs -/
+  [goalBEq : BEq Goal]
 
 attribute [instance] RSAScenario.uttBEq RSAScenario.worldBEq
-  RSAScenario.interpBEq RSAScenario.qudBEq
+  RSAScenario.interpBEq RSAScenario.lexiconBEq
+  RSAScenario.beliefStateBEq RSAScenario.goalBEq
+
+-- ============================================================================
+-- Backward Compatibility Aliases (QUD → Goal)
+-- ============================================================================
+
+/-- Backward compatibility: QUD is an alias for Goal -/
+abbrev RSAScenario.QUD (S : RSAScenario) := S.Goal
+
+/-- Backward compatibility: quds is an alias for goals -/
+def RSAScenario.quds (S : RSAScenario) := S.goals
+
+/-- Backward compatibility: qudPrior is an alias for goalPrior -/
+def RSAScenario.qudPrior (S : RSAScenario) := S.goalPrior
+
+/-- Backward compatibility: qudProject is an alias for goalProject -/
+def RSAScenario.qudProject (S : RSAScenario) := S.goalProject
+
+/-- Backward compatibility: qudBEq is an alias for goalBEq -/
+def RSAScenario.qudBEq (S : RSAScenario) := S.goalBEq
 
 -- ============================================================================
 -- Smart Constructors for RSAScenario
@@ -135,16 +203,23 @@ def RSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
   Utterance := U
   World := W
   Interp := Unit
-  QUD := Unit
-  φ _ u w := φ u w
-  qudProject _ w w' := w == w'
+  Lexicon := Unit
+  BeliefState := Unit
+  Goal := Unit
+  φ _ _ u w := φ u w
+  goalProject _ w w' := w == w'
+  inBeliefState _ _ := true
   utterances := utterances
   worlds := worlds
   interps := [()]
-  quds := [()]
+  lexica := [()]
+  beliefStates := [()]
+  goals := [()]
   worldPrior := prior
   interpPrior := fun _ => 1
-  qudPrior := fun _ => 1
+  lexiconPrior := fun _ => 1
+  beliefStatePrior := fun _ => 1
+  goalPrior := fun _ => 1
   α := α
 
 /--
@@ -182,16 +257,23 @@ def RSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
   Utterance := U
   World := W
   Interp := I
-  QUD := Unit
-  φ i u w := φ i u w
-  qudProject _ w w' := w == w'
+  Lexicon := Unit
+  BeliefState := Unit
+  Goal := Unit
+  φ i _ u w := φ i u w
+  goalProject _ w w' := w == w'
+  inBeliefState _ _ := true
   utterances := utterances
   worlds := worlds
   interps := interps
-  quds := [()]
+  lexica := [()]
+  beliefStates := [()]
+  goals := [()]
   worldPrior := worldPrior
   interpPrior := interpPrior
-  qudPrior := fun _ => 1
+  lexiconPrior := fun _ => 1
+  beliefStatePrior := fun _ => 1
+  goalPrior := fun _ => 1
   α := α
 
 /--
@@ -233,16 +315,23 @@ def RSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
   Utterance := U
   World := W
   Interp := Unit
-  QUD := Q
-  φ _ u w := φ u w
-  qudProject := qudProject
+  Lexicon := Unit
+  BeliefState := Unit
+  Goal := Q
+  φ _ _ u w := φ u w
+  goalProject := qudProject
+  inBeliefState _ _ := true
   utterances := utterances
   worlds := worlds
   interps := [()]
-  quds := quds
+  lexica := [()]
+  beliefStates := [()]
+  goals := quds
   worldPrior := worldPrior
   interpPrior := fun _ => 1
-  qudPrior := qudPrior
+  lexiconPrior := fun _ => 1
+  beliefStatePrior := fun _ => 1
+  goalPrior := qudPrior
   α := α
 
 /--
@@ -257,6 +346,128 @@ def RSAScenario.qudBool {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (α : ℕ := 1) : RSAScenario :=
   RSAScenario.qud utterances worlds quds
     (fun u w => boolToRat (satisfies w u)) qudProject worldPrior qudPrior α
+
+/--
+Build a scenario with mental state inference (beliefs + goals).
+
+This is for BToM-style projection models like Scontras & Tonhauser (2025).
+
+## Example
+
+```lean
+def projectionScenario : RSAScenario :=
+  RSAScenario.mentalState
+    allUtterances allWorlds allBeliefStates allGoals
+    literalMeaning inBeliefState goalProject
+```
+-/
+def RSAScenario.mentalState {U W A Q : Type}
+    [BEq U] [BEq W] [BEq A] [BEq Q] [DecidableEq W]
+    (utterances : List U) (worlds : List W)
+    (beliefStates : List A) (goals : List Q)
+    (φ : U → W → ℚ)
+    (inBeliefState : A → W → Bool)
+    (goalProject : Q → W → W → Bool)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (beliefStatePrior : A → ℚ := fun _ => 1)
+    (goalPrior : Q → ℚ := fun _ => 1)
+    (α : ℕ := 1) : RSAScenario where
+  Utterance := U
+  World := W
+  Interp := Unit
+  Lexicon := Unit
+  BeliefState := A
+  Goal := Q
+  φ _ _ := φ
+  goalProject := goalProject
+  inBeliefState := inBeliefState
+  utterances := utterances
+  worlds := worlds
+  interps := [()]
+  lexica := [()]
+  beliefStates := beliefStates
+  goals := goals
+  worldPrior := worldPrior
+  interpPrior := fun _ => 1
+  lexiconPrior := fun _ => 1
+  beliefStatePrior := beliefStatePrior
+  goalPrior := goalPrior
+  α := α
+
+/--
+Build a scenario with mental state inference from Boolean semantics.
+-/
+def RSAScenario.mentalStateBool {U W A Q : Type}
+    [BEq U] [BEq W] [BEq A] [BEq Q] [DecidableEq W]
+    (utterances : List U) (worlds : List W)
+    (beliefStates : List A) (goals : List Q)
+    (satisfies : W → U → Bool)
+    (inBeliefState : A → W → Bool)
+    (goalProject : Q → W → W → Bool)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (beliefStatePrior : A → ℚ := fun _ => 1)
+    (goalPrior : Q → ℚ := fun _ => 1)
+    (α : ℕ := 1) : RSAScenario :=
+  RSAScenario.mentalState utterances worlds beliefStates goals
+    (fun u w => boolToRat (satisfies w u)) inBeliefState goalProject
+    worldPrior beliefStatePrior goalPrior α
+
+/--
+Build a scenario with lexical uncertainty.
+
+This is for LU models like Bergen et al. (2016).
+
+## Example
+
+```lean
+def luScenario : RSAScenario :=
+  RSAScenario.lexicalUncertainty
+    allUtterances allWorlds allLexica
+    lexiconMeaning
+    worldPrior lexiconPrior
+```
+-/
+def RSAScenario.lexicalUncertainty {U W L : Type}
+    [BEq U] [BEq W] [BEq L] [DecidableEq W]
+    (utterances : List U) (worlds : List W) (lexica : List L)
+    (φ : L → U → W → ℚ)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (lexiconPrior : L → ℚ := fun _ => 1)
+    (α : ℕ := 1) : RSAScenario where
+  Utterance := U
+  World := W
+  Interp := Unit
+  Lexicon := L
+  BeliefState := Unit
+  Goal := Unit
+  φ _ l u w := φ l u w
+  goalProject _ w w' := w == w'
+  inBeliefState _ _ := true
+  utterances := utterances
+  worlds := worlds
+  interps := [()]
+  lexica := lexica
+  beliefStates := [()]
+  goals := [()]
+  worldPrior := worldPrior
+  interpPrior := fun _ => 1
+  lexiconPrior := lexiconPrior
+  beliefStatePrior := fun _ => 1
+  goalPrior := fun _ => 1
+  α := α
+
+/--
+Build a scenario with lexical uncertainty from Boolean semantics.
+-/
+def RSAScenario.lexicalUncertaintyBool {U W L : Type}
+    [BEq U] [BEq W] [BEq L] [DecidableEq W]
+    (utterances : List U) (worlds : List W) (lexica : List L)
+    (satisfies : L → W → U → Bool)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (lexiconPrior : L → ℚ := fun _ => 1)
+    (α : ℕ := 1) : RSAScenario :=
+  RSAScenario.lexicalUncertainty utterances worlds lexica
+    (fun l u w => boolToRat (satisfies l w u)) worldPrior lexiconPrior α
 
 -- ============================================================================
 -- RSA Computations
@@ -285,29 +496,36 @@ def normalize {α : Type} (dist : List (α × ℚ)) : List (α × ℚ) :=
 -- ============================================================================
 
 /--
-L0: Literal listener distribution.
+L0: Literal listener distribution given full context.
 
-P(w | u, i) ∝ P(w) · φ(i, u, w)
+P(w | u, i, l, a) ∝ P(w) · φ(i, l, u, w) · [w ∈ a]
 
-For basic scenarios (Interp = Unit), pass `()` for interpretation.
+For basic scenarios, pass `()` for interpretation, lexicon, and belief state.
+Standard RSA: L0 uses world prior (matches papers).
 -/
-def L0 (S : RSAScenario) (u : S.Utterance) (i : S.Interp) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w => (w, S.worldPrior w * S.φ i u w)
+def L0 (S : RSAScenario) (u : S.Utterance)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (_q : S.Goal)
+    : List (S.World × ℚ) :=
+  let scores := S.worlds.map fun w =>
+    let semantic := S.φ i l u w
+    let inBelief := if S.inBeliefState a w then 1 else 0
+    (w, S.worldPrior w * semantic * inBelief)
   normalize scores
 
 /--
-L0 projected by QUD.
+L0 projected by Goal/QUD.
 
-P_q(w | u, i) ∝ Σ_{w' ~ w under q} P(w') · φ(i, u, w')
+P_q(w | u, i, l, a) ∝ Σ_{w' ~ w under q} P(w') · φ(i, l, u, w') · [w' ∈ a]
 
 Returns the summed probability mass of the equivalence class containing w.
 -/
-def L0_projected (S : RSAScenario) (u : S.Utterance) (i : S.Interp) (q : S.QUD)
+def L0_projected (S : RSAScenario) (u : S.Utterance)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
     : List (S.World × ℚ) :=
-  let l0 := L0 S u i
+  let l0 := L0 S u i l a q
   S.worlds.map fun w =>
-    -- Sum over all worlds equivalent to w under this QUD
-    let eqClassScore := l0.filter (fun (w', _) => S.qudProject q w w') |>.map (·.2) |> sumScores
+    -- Sum over all worlds equivalent to w under this goal/QUD
+    let eqClassScore := l0.filter (fun (w', _) => S.goalProject q w w') |>.map (·.2) |> sumScores
     (w, eqClassScore)
 
 -- ============================================================================
@@ -317,16 +535,20 @@ def L0_projected (S : RSAScenario) (u : S.Utterance) (i : S.Interp) (q : S.QUD)
 /--
 S1: Pragmatic speaker distribution.
 
-P(u | w, i, q) ∝ L0_q(w | u, i)^α
+P(u | w, i, l, a, q) ∝ [u true in w] · L0_q(w | u, i, l, a)^α
 
-For basic scenarios, pass `()` for interpretation and QUD.
+For basic scenarios, pass `()` for all latent variables except world.
 For QUD models, the speaker optimizes informativity w.r.t. the projected meaning.
+The speaker only produces utterances that are TRUE in the actual world w.
 -/
-def S1 (S : RSAScenario) (w : S.World) (i : S.Interp) (q : S.QUD)
+def S1 (S : RSAScenario) (w : S.World)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
     : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
-    let l0Score := getScore (L0_projected S u i q) w
-    (u, l0Score ^ S.α)
+    -- Speaker only produces true utterances
+    let truthful := S.φ i l u w
+    let l0Score := getScore (L0_projected S u i l a q) w
+    (u, truthful * l0Score ^ S.α)
   normalize scores
 
 -- ============================================================================
@@ -334,53 +556,154 @@ def S1 (S : RSAScenario) (w : S.World) (i : S.Interp) (q : S.QUD)
 -- ============================================================================
 
 /--
-L1 joint distribution over (World × Interp × QUD).
+L1 joint distribution over all 5 latent variables.
 
-P(w, i, q | u) ∝ P(w) · P(i) · P(q) · S1(u | w, i, q)
+P(w, i, l, a, q | u) ∝ P(w) · P(i) · P(l) · P(a) · P(q) · S1(u | w, i, l, a, q)
+
+This is the full BToM inference: reasoning about conventions AND mental state.
 -/
 def L1_joint (S : RSAScenario) (u : S.Utterance)
-    : List ((S.World × S.Interp × S.QUD) × ℚ) :=
-  let triples := S.worlds.flatMap fun w =>
+    : List ((S.World × S.Interp × S.Lexicon × S.BeliefState × S.Goal) × ℚ) :=
+  let tuples := S.worlds.flatMap fun w =>
     S.interps.flatMap fun i =>
-      S.quds.map fun q => (w, i, q)
-  let scores := triples.map fun (w, i, q) =>
-    let priorScore := S.worldPrior w * S.interpPrior i * S.qudPrior q
-    let s1Score := getScore (S1 S w i q) u
-    ((w, i, q), priorScore * s1Score)
+      S.lexica.flatMap fun l =>
+        S.beliefStates.flatMap fun a =>
+          S.goals.map fun q => (w, i, l, a, q)
+  let scores := tuples.map fun (w, i, l, a, q) =>
+    let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
+                      S.beliefStatePrior a * S.goalPrior q
+    let s1Score := getScore (S1 S w i l a q) u
+    ((w, i, l, a, q), priorScore * s1Score)
   normalize scores
 
 /--
 L1 marginal over worlds.
 
-P(w | u) = Σ_{i,q} P(w, i, q | u)
+P(w | u) = Σ_{i,l,a,q} P(w, i, l, a, q | u)
 -/
 def L1_world (S : RSAScenario) (u : S.Utterance) : List (S.World × ℚ) :=
   let joint := L1_joint S u
   S.worlds.map fun w =>
-    let wScores := joint.filter (fun ((w', _, _), _) => w' == w) |>.map (·.2)
+    let wScores := joint.filter (fun ((w', _, _, _, _), _) => w' == w) |>.map (·.2)
     (w, sumScores wScores)
 
 /--
 L1 marginal over interpretations.
 
-P(i | u) = Σ_{w,q} P(w, i, q | u)
+P(i | u) = Σ_{w,l,a,q} P(w, i, l, a, q | u)
 -/
 def L1_interp (S : RSAScenario) (u : S.Utterance) : List (S.Interp × ℚ) :=
   let joint := L1_joint S u
   S.interps.map fun i =>
-    let iScores := joint.filter (fun ((_, i', _), _) => i' == i) |>.map (·.2)
+    let iScores := joint.filter (fun ((_, i', _, _, _), _) => i' == i) |>.map (·.2)
     (i, sumScores iScores)
 
 /--
-L1 marginal over QUDs.
+L1 marginal over lexica.
 
-P(q | u) = Σ_{w,i} P(w, i, q | u)
+P(l | u) = Σ_{w,i,a,q} P(w, i, l, a, q | u)
 -/
-def L1_qud (S : RSAScenario) (u : S.Utterance) : List (S.QUD × ℚ) :=
+def L1_lexicon (S : RSAScenario) (u : S.Utterance) : List (S.Lexicon × ℚ) :=
   let joint := L1_joint S u
-  S.quds.map fun q =>
-    let qScores := joint.filter (fun ((_, _, q'), _) => q' == q) |>.map (·.2)
+  S.lexica.map fun l =>
+    let lScores := joint.filter (fun ((_, _, l', _, _), _) => l' == l) |>.map (·.2)
+    (l, sumScores lScores)
+
+/--
+L1 marginal over belief states.
+
+P(a | u) = Σ_{w,i,l,q} P(w, i, l, a, q | u)
+
+What private assumptions does the listener infer the speaker has?
+-/
+def L1_beliefState (S : RSAScenario) (u : S.Utterance) : List (S.BeliefState × ℚ) :=
+  let joint := L1_joint S u
+  S.beliefStates.map fun a =>
+    let aScores := joint.filter (fun ((_, _, _, a', _), _) => a' == a) |>.map (·.2)
+    (a, sumScores aScores)
+
+/--
+L1 marginal over goals/QUDs.
+
+P(q | u) = Σ_{w,i,l,a} P(w, i, l, a, q | u)
+-/
+def L1_goal (S : RSAScenario) (u : S.Utterance) : List (S.Goal × ℚ) :=
+  let joint := L1_joint S u
+  S.goals.map fun q =>
+    let qScores := joint.filter (fun ((_, _, _, _, q'), _) => q' == q) |>.map (·.2)
     (q, sumScores qScores)
+
+/-- Backward compatibility alias -/
+def L1_qud (S : RSAScenario) (u : S.Utterance) : List (S.Goal × ℚ) :=
+  L1_goal S u
+
+-- ============================================================================
+-- L1 Given Goal: For models where goal/QUD is observed
+-- ============================================================================
+
+/--
+L1 joint over (World × BeliefState) given a FIXED Goal.
+
+P(w, A | u, Q) ∝ P(w) · P(A) · [w ∈ A] · S1(u | w, A, Q)
+
+This is equation (7) from Scontras & Tonhauser (2025), where QUD is observed.
+Marginalizes over interpretations and lexica (convention uncertainty).
+
+IMPORTANT: We add constraint [w ∈ A] because the speaker can only have
+assumptions A that include the true world w. Otherwise A contradicts reality.
+-/
+def L1_joint_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
+    : List ((S.World × S.BeliefState) × ℚ) :=
+  -- Build all (w, i, l, a) tuples
+  let tuples := S.worlds.flatMap fun w =>
+    S.interps.flatMap fun i =>
+      S.lexica.flatMap fun l =>
+        S.beliefStates.map fun a => (w, i, l, a)
+  -- Score each tuple with S1 (Goal is fixed)
+  -- Constraint: w must be in A (speaker can't have contradictory assumptions)
+  let scores := tuples.map fun (w, i, l, a) =>
+    let wInA := if S.inBeliefState a w then 1 else 0
+    let prior := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
+                 S.beliefStatePrior a
+    let s1Score := getScore (S1 S w i l a q) u
+    ((w, i, l, a), prior * wInA * s1Score)
+  -- Normalize to get joint
+  let normalized := normalize scores
+  -- Marginalize over i, l to get P(w, a | u, q)
+  let pairs := S.worlds.flatMap fun w =>
+    S.beliefStates.map fun a => (w, a)
+  pairs.map fun (w, a) =>
+    let matching := normalized.filter (fun ((w', _, _, a'), _) => w' == w && a' == a)
+      |>.map (·.2)
+    ((w, a), sumScores matching)
+
+/--
+L1 marginal over belief states given a FIXED Goal.
+
+P(A | u, Q) = Σ_w P(w, A | u, Q)
+
+This is what we need for computing projection strength.
+-/
+def L1_beliefState_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
+    : List (S.BeliefState × ℚ) :=
+  let joint := L1_joint_givenGoal S u q
+  S.beliefStates.map fun a =>
+    let aScores := joint.filter (fun ((_, a'), _) => a' == a)
+      |>.map (·.2)
+    (a, sumScores aScores)
+
+/--
+L1 marginal over worlds given a FIXED Goal.
+
+P(w | u, Q) = Σ_A P(w, A | u, Q)
+-/
+def L1_world_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
+    : List (S.World × ℚ) :=
+  let joint := L1_joint_givenGoal S u q
+  S.worlds.map fun w =>
+    let wScores := joint.filter (fun ((w', _), _) => w' == w)
+      |>.map (·.2)
+    (w, sumScores wScores)
 
 -- ============================================================================
 -- S2: Second-Level Pragmatic Speaker
@@ -403,143 +726,43 @@ def S2 (S : RSAScenario) (w : S.World) : List (S.Utterance × ℚ) :=
 -- Helpers
 -- ============================================================================
 
-/-- Count worlds compatible with an utterance under interpretation -/
-def compatibleCount (S : RSAScenario) (u : S.Utterance) (i : S.Interp) : Nat :=
-  (S.worlds.filter fun w => S.φ i u w > 0).length
+/-- Count worlds compatible with an utterance under interpretation and lexicon -/
+def compatibleCount (S : RSAScenario) (u : S.Utterance) (i : S.Interp) (l : S.Lexicon) : Nat :=
+  (S.worlds.filter fun w => S.φ i l u w > 0).length
 
-/-- Informativity under interpretation -/
-def informativity (S : RSAScenario) (u : S.Utterance) (i : S.Interp) : ℚ :=
-  let n := compatibleCount S u i
+/-- Informativity under interpretation and lexicon -/
+def informativity (S : RSAScenario) (u : S.Utterance) (i : S.Interp) (l : S.Lexicon) : ℚ :=
+  let n := compatibleCount S u i l
   if n > 0 then 1 / n else 0
 
-end RSA
-
 -- ============================================================================
--- Legacy Aliases (for backward compatibility during migration)
+-- Projection as Mental State Inference
 -- ============================================================================
 
-/-- Deprecated: use RSAScenario.basicBool instead -/
-structure SimpleRSAScenario (U : Type) (W : Type) [BEq U] [BEq W] where
-  φ : U → W → ℚ
-  utterances : List U
-  worlds : List W
-  prior : W → ℚ := fun _ => 1
-  α : ℕ := 1
+/--
+Projection strength: listener's inference about what the speaker privately assumes.
 
-/-- Deprecated: use RSAScenario.basicBool instead -/
-def SimpleRSAScenario.ofBool {U W : Type} [BEq U] [BEq W]
-    (utterances : List U) (worlds : List W)
-    (satisfies : W → U → Bool) : SimpleRSAScenario U W where
-  φ u w := boolToRat (satisfies w u)
-  utterances := utterances
-  worlds := worlds
+P(C | u) = Σ_A P(A | u) · [C holds in A]
 
--- Deprecated RSA namespace for SimpleRSAScenario - maps to unified API
-namespace RSA
+If L1 infers high probability for belief states A where C is true,
+then C "projects" (listener concludes C is likely true).
+-/
+def projectionStrength (S : RSAScenario) (u : S.Utterance)
+    (contentHoldsIn : S.BeliefState → Bool) : ℚ :=
+  let beliefDist := L1_beliefState S u
+  beliefDist.foldl (fun acc (a, p) =>
+    if contentHoldsIn a then acc + p else acc) 0
 
-/-- Deprecated: use RSA.L0 with RSAScenario instead -/
-def L0_legacy {U W : Type} [BEq U] [BEq W] [DecidableEq W]
-    (S : SimpleRSAScenario U W) (u : U) : List (W × ℚ) :=
-  let scenario := RSAScenario.basic S.utterances S.worlds S.φ S.prior S.α
-  RSA.L0 scenario u ()
+/--
+Projection strength given a fixed Goal/QUD.
 
-/-- Deprecated: use RSA.S1 with RSAScenario instead -/
-def S1_legacy {U W : Type} [BEq U] [BEq W] [DecidableEq W]
-    (S : SimpleRSAScenario U W) (w : W) : List (U × ℚ) :=
-  let scenario := RSAScenario.basic S.utterances S.worlds S.φ S.prior S.α
-  RSA.S1 scenario w () ()
-
-/-- Deprecated: use RSA.L1_world with RSAScenario instead -/
-def L1_legacy {U W : Type} [BEq U] [BEq W] [DecidableEq W]
-    (S : SimpleRSAScenario U W) (u : U) : List (W × ℚ) :=
-  let scenario := RSAScenario.basic S.utterances S.worlds S.φ S.prior S.α
-  RSA.L1_world scenario u
+P(C | u, Q) = Σ_A P(A | u, Q) · [C holds in A]
+-/
+def projectionStrength_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
+    (contentHoldsIn : S.BeliefState → Bool) : ℚ :=
+  let beliefDist := L1_beliefState_givenGoal S u q
+  beliefDist.foldl (fun acc (a, p) =>
+    if contentHoldsIn a then acc + p else acc) 0
 
 end RSA
 
--- ============================================================================
--- ParametricRSA Legacy Namespace
--- ============================================================================
-
-namespace ParametricRSA
-
-/-- Deprecated: use RSAScenario.ambiguousBool instead -/
-structure ParametricRSAScenario where
-  Utterance : Type
-  World : Type
-  Interp : Type
-  φ : Interp → Utterance → World → ℚ
-  utterances : List Utterance
-  worlds : List World
-  interps : List Interp
-  prior : World → ℚ := fun _ => 1
-  interpPrior : Interp → ℚ := fun _ => 1
-  α : ℕ := 1
-  [uttBEq : BEq Utterance]
-  [worldBEq : BEq World]
-  [interpBEq : BEq Interp]
-
-attribute [instance] ParametricRSAScenario.uttBEq ParametricRSAScenario.worldBEq
-  ParametricRSAScenario.interpBEq
-
-/-- Deprecated: use RSAScenario.ambiguousBool instead -/
-def ParametricRSAScenario.ofBool {Utterance World Interp : Type}
-    [BEq Utterance] [DecidableEq World] [BEq World] [BEq Interp]
-    (utterances : List Utterance) (worlds : List World) (interps : List Interp)
-    (satisfies : Interp → World → Utterance → Bool) : ParametricRSAScenario where
-  Utterance := Utterance
-  World := World
-  Interp := Interp
-  φ i u w := boolToRat (satisfies i w u)
-  utterances := utterances
-  worlds := worlds
-  interps := interps
-
-/-- Deprecated: use RSA.L0 with RSAScenario instead -/
-def L0 (S : ParametricRSAScenario) [DecidableEq S.World]
-    (i : S.Interp) (u : S.Utterance) : List (S.World × ℚ) :=
-  let scenario := RSAScenario.ambiguous S.utterances S.worlds S.interps S.φ S.prior S.interpPrior S.α
-  RSA.L0 scenario u i
-
-/-- Deprecated: use RSA.S1 with RSAScenario instead -/
-def S1 (S : ParametricRSAScenario) [DecidableEq S.World]
-    (i : S.Interp) (w : S.World) : List (S.Utterance × ℚ) :=
-  let scenario := RSAScenario.ambiguous S.utterances S.worlds S.interps S.φ S.prior S.interpPrior S.α
-  RSA.S1 scenario w i ()
-
-/-- Deprecated: use RSA.L1_joint with RSAScenario instead -/
-def L1_joint (S : ParametricRSAScenario) [DecidableEq S.World]
-    (u : S.Utterance) : List ((S.World × S.Interp) × ℚ) :=
-  let scenario := RSAScenario.ambiguous S.utterances S.worlds S.interps S.φ S.prior S.interpPrior S.α
-  let joint := RSA.L1_joint scenario u
-  -- Convert from (W × I × Unit) to (W × I)
-  joint.map fun ((w, i, _), p) => ((w, i), p)
-
-/-- Deprecated: use RSA.L1_world with RSAScenario instead -/
-def L1_world (S : ParametricRSAScenario) [DecidableEq S.World]
-    (u : S.Utterance) : List (S.World × ℚ) :=
-  let scenario := RSAScenario.ambiguous S.utterances S.worlds S.interps S.φ S.prior S.interpPrior S.α
-  RSA.L1_world scenario u
-
-/-- Deprecated: use RSA.L1_interp with RSAScenario instead -/
-def L1_interp (S : ParametricRSAScenario) [DecidableEq S.World]
-    (u : S.Utterance) : List (S.Interp × ℚ) :=
-  let scenario := RSAScenario.ambiguous S.utterances S.worlds S.interps S.φ S.prior S.interpPrior S.α
-  RSA.L1_interp scenario u
-
-end ParametricRSA
-
--- ============================================================================
--- Additional Legacy Aliases
--- ============================================================================
-
-/-- RSAScenario with exact rational arithmetic (deprecated alias) -/
-abbrev ExactRSAScenario := RSAScenario
-
-/-- Parametric RSA scenario with exact rational arithmetic (deprecated alias) -/
-abbrev ExactParametricRSAScenario := ParametricRSA.ParametricRSAScenario
-
-namespace ParametricRSA
-/-- Alias within namespace for backward compatibility -/
-abbrev ExactParametricRSAScenario := ParametricRSAScenario
-end ParametricRSA

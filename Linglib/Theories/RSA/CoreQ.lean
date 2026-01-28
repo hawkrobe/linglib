@@ -272,21 +272,24 @@ end Q
 
 /--
 Convert RSAScenario (natural α) to RSAScenarioQ (rational α).
+
+Note: This conversion requires specifying a default lexicon value.
+RSAScenarioQ uses a simpler structure without Lexicon/BeliefState fields.
 -/
-def RSAScenario.toQ (S : RSAScenario) : RSAScenarioQ where
+def RSAScenario.toQ (S : RSAScenario) (defaultLexicon : S.Lexicon) : RSAScenarioQ where
   Utterance := S.Utterance
   World := S.World
   Interp := S.Interp
-  QUD := S.QUD
-  φ := S.φ
-  qudProject := S.qudProject
+  QUD := S.Goal  -- Map Goal -> QUD
+  φ i u w := S.φ i defaultLexicon u w  -- Use the provided default lexicon
+  qudProject := S.goalProject  -- Use goalProject
   utterances := S.utterances
   worlds := S.worlds
   interps := S.interps
-  quds := S.quds
+  quds := S.goals  -- Use goals
   worldPrior := S.worldPrior
   interpPrior := S.interpPrior
-  qudPrior := S.qudPrior
+  qudPrior := S.goalPrior  -- Use goalPrior
   α := S.α
   α_nonneg := by simp
   precision := 10
@@ -300,16 +303,23 @@ def RSAScenarioQ.toNat (S : RSAScenarioQ) : RSAScenario where
   Utterance := S.Utterance
   World := S.World
   Interp := S.Interp
-  QUD := S.QUD
-  φ := S.φ
-  qudProject := S.qudProject
+  Lexicon := Unit  -- RSAScenarioQ doesn't have Lexicon
+  BeliefState := Unit  -- RSAScenarioQ doesn't have BeliefState
+  Goal := S.QUD  -- Map QUD -> Goal
+  φ i _ u w := S.φ i u w  -- Add ignored Lexicon parameter
+  goalProject := S.qudProject  -- Map qudProject -> goalProject
+  inBeliefState _ _ := true  -- Default belief state membership
   utterances := S.utterances
   worlds := S.worlds
   interps := S.interps
-  quds := S.quds
+  lexica := [()]  -- Single Unit lexicon
+  beliefStates := [()]  -- Single Unit belief state
+  goals := S.quds  -- Map quds -> goals
   worldPrior := S.worldPrior
   interpPrior := S.interpPrior
-  qudPrior := S.qudPrior
+  lexiconPrior := fun _ => 1  -- Uniform lexicon prior
+  beliefStatePrior := fun _ => 1  -- Uniform belief state prior
+  goalPrior := S.qudPrior  -- Map qudPrior -> goalPrior
   α := S.α.floor.toNat  -- Truncate to natural number
 
 -- ============================================================================
@@ -320,11 +330,14 @@ def RSAScenarioQ.toNat (S : RSAScenarioQ) : RSAScenario where
 For integer α, RSAScenarioQ computations match RSAScenario computations.
 
 This ensures backward compatibility: when α ∈ ℕ, both APIs give identical results.
+
+Note: This comparison requires specifying a default lexicon value.
 -/
 theorem integerAlpha_consistent (S : RSAScenario)
-    (u : S.Utterance) (w : S.World) (i : S.Interp) (q : S.QUD) :
+    (u : S.Utterance) (_w : S.World) (i : S.Interp) (_q : S.Goal)
+    (l : S.Lexicon) (a : S.BeliefState) (g : S.Goal) :
     -- L0 is identical (doesn't use α)
-    Q.L0Q (RSAScenario.toQ S) u i = RSA.L0 S u i := by
+    Q.L0Q (RSAScenario.toQ S l) u i = RSA.L0 S u i l a g := by
   -- The L0 computation is identical since it doesn't depend on α
   sorry
 

@@ -146,11 +146,11 @@ def fromPairs (pairs : List (Color × Shape)) : TypedContext :=
 
 /-- L0 distribution for a feature in a typed context -/
 def l0 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
-  RSA.L0 ctx.toScenario f ()
+  RSA.L0 ctx.toScenario f () () () ()
 
 /-- S1 distribution for an object in a typed context -/
 def s1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
-  RSA.S1 ctx.toScenario obj () ()
+  RSA.S1 ctx.toScenario obj () () () ()
 
 /-- L1 distribution for a feature in a typed context -/
 def l1 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=

@@ -206,9 +206,13 @@ def worldPriorDist (S : RSAScenario) : List (S.World × ℚ) :=
 G_α using the S1 speaker and L1 listener from an RSAScenario.
 
 This extracts the implicit G_α value that the standard RSA dynamics optimize.
+
+Note: This uses default () values for Lexicon and BeliefState parameters.
+For scenarios that actually use these, a custom G_alpha computation would be needed.
 -/
-def G_alpha_RSA (S : RSAScenario) (α : ℚ) : ℚ :=
-  let speaker := fun w i q => RSA.S1 S w i q
+def G_alpha_RSA (S : RSAScenario)
+    (α : ℚ) (defaultLex : S.Lexicon) (defaultBelief : S.BeliefState) : ℚ :=
+  let speaker := fun w i q => RSA.S1 S w i defaultLex defaultBelief q
   let listener := fun u => RSA.L1_world S u
   let prior := worldPriorDist S
   G_alpha S α speaker listener prior
@@ -252,14 +256,16 @@ Initialize RSA dynamics at iteration 0.
 
 L_0 = literal listener (from semantics)
 S_0 = uniform speaker (or literal speaker)
+
+Note: Uses first available interpretation, lexicon, belief state, and goal.
 -/
 def initDynamics (S : RSAScenario) : RSADynamics S where
   iteration := 0
   speaker := fun _ => normalize (S.utterances.map fun u => (u, 1))
   listener := fun u =>
-    match S.interps with
-    | i :: _ => RSA.L0 S u i
-    | [] => normalize (S.worlds.map fun w => (w, 1))  -- Uniform fallback
+    match S.interps, S.lexica, S.beliefStates, S.goals with
+    | i :: _, l :: _, a :: _, q :: _ => RSA.L0 S u i l a q
+    | _, _, _, _ => normalize (S.worlds.map fun w => (w, 1))  -- Uniform fallback
 
 /--
 One step of RSA dynamics.

@@ -228,9 +228,10 @@ are dispreferred unless they're highly informative.
 -/
 def S1_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
-    (i : S.Interp) (w : S.World) : List (S.Utterance × ℚ) :=
+    (i : S.Interp) (w : S.World)
+    (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal) : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
-    let l0Score := RSA.getScore (RSA.L0 S u i) w
+    let l0Score := RSA.getScore (RSA.L0 S u i l a q) w
     let costPenalty := max 0 (1 - cost u * discountFactor)  -- never negative
     (u, l0Score * costPenalty)
   RSA.normalize scores
@@ -239,22 +240,26 @@ def S1_withCost (S : RSAScenario)
 L1 joint with cost-sensitive speaker.
 
 P(w, θ | u) ∝ P(w) × P(θ) × S1_cost(u | w, θ)
+
+Note: This function is specialized for scenarios where Lexicon, BeliefState, and Goal are Unit.
 -/
 def L1_joint_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
-    (u : S.Utterance) : List ((S.World × S.Interp) × ℚ) :=
+    (u : S.Utterance)
+    (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal) : List ((S.World × S.Interp) × ℚ) :=
   let pairs := S.worlds.flatMap fun w => S.interps.map fun i => (w, i)
   let scores := pairs.map fun (w, i) =>
     let priorScore := S.worldPrior w * S.interpPrior i
-    let s1Score := RSA.getScore (S1_withCost S cost discountFactor i w) u
+    let s1Score := RSA.getScore (S1_withCost S cost discountFactor i w l a q) u
     ((w, i), priorScore * s1Score)
   RSA.normalize scores
 
 /-- L1 marginal over worlds with cost-sensitive speaker -/
 def L1_world_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
-    (u : S.Utterance) : List (S.World × ℚ) :=
-  let joint := L1_joint_withCost S cost discountFactor u
+    (u : S.Utterance)
+    (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal) : List (S.World × ℚ) :=
+  let joint := L1_joint_withCost S cost discountFactor u l a q
   S.worlds.map fun w =>
     let wScores := joint.filter (·.1.1 == w) |>.map (·.2)
     (w, RSA.sumScores wScores)
@@ -262,8 +267,9 @@ def L1_world_withCost (S : RSAScenario)
 /-- L1 marginal over thresholds with cost-sensitive speaker -/
 def L1_interp_withCost (S : RSAScenario)
     (cost : S.Utterance → ℚ) (discountFactor : ℚ)
-    (u : S.Utterance) : List (S.Interp × ℚ) :=
-  let joint := L1_joint_withCost S cost discountFactor u
+    (u : S.Utterance)
+    (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal) : List (S.Interp × ℚ) :=
+  let joint := L1_joint_withCost S cost discountFactor u l a q
   S.interps.map fun i =>
     let iScores := joint.filter (·.1.2 == i) |>.map (·.2)
     (i, RSA.sumScores iScores)
@@ -274,28 +280,28 @@ def L1_interp_withCost (S : RSAScenario)
 
 /-- L0 for "tall" at threshold t5 (middle threshold) -/
 def l0_tall_t5 : List (Height × ℚ) :=
-  RSA.L0 vagueAdjectiveScenario Utterance.tall Threshold.t5
+  RSA.L0 vagueAdjectiveScenario Utterance.tall Threshold.t5 () () ()
 
 /-- L0 for "short" at threshold t5 -/
 def l0_short_t5 : List (Height × ℚ) :=
-  RSA.L0 vagueAdjectiveScenario Utterance.short Threshold.t5
+  RSA.L0 vagueAdjectiveScenario Utterance.short Threshold.t5 () () ()
 
 /-- S1 for height h8 (tall person) at threshold t5 -/
 def s1_h8_t5 : List (Utterance × ℚ) :=
-  RSA.S1 vagueAdjectiveScenario Height.h8 Threshold.t5 ()
+  RSA.S1 vagueAdjectiveScenario Height.h8 Threshold.t5 () () ()
 
 /-- S1 for height h2 (short person) at threshold t5 -/
 def s1_h2_t5 : List (Utterance × ℚ) :=
-  RSA.S1 vagueAdjectiveScenario Height.h2 Threshold.t5 ()
+  RSA.S1 vagueAdjectiveScenario Height.h2 Threshold.t5 () () ()
 
 /-- S1 for height h5 (borderline) at threshold t5 -/
 def s1_h5_t5 : List (Utterance × ℚ) :=
-  RSA.S1 vagueAdjectiveScenario Height.h5 Threshold.t5 ()
+  RSA.S1 vagueAdjectiveScenario Height.h5 Threshold.t5 () () ()
 
 /-- L1 joint distribution over (height, threshold) given "tall" -/
 def l1_joint_tall : List ((Height × Threshold) × ℚ) :=
   let joint := RSA.L1_joint vagueAdjectiveScenario Utterance.tall
-  joint.map fun ((w, i, _), p) => ((w, i), p)
+  joint.map fun ((w, i, _, _, _), p) => ((w, i), p)
 
 /-- L1 marginal over heights given "tall" -/
 def l1_height_tall : List (Height × ℚ) :=
@@ -317,19 +323,19 @@ def costDiscount : ℚ := 7/10
 
 /-- S1 with costs for height h8 (tall person) at threshold t5 -/
 def s1_cost_h8_t5 : List (Utterance × ℚ) :=
-  S1_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .t5 .h8
+  S1_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .t5 .h8 () () ()
 
 /-- S1 with costs for height h5 (borderline) at threshold t5 -/
 def s1_cost_h5_t5 : List (Utterance × ℚ) :=
-  S1_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .t5 .h5
+  S1_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .t5 .h5 () () ()
 
 /-- L1 marginal over heights given "tall" (with costs) -/
 def l1_height_tall_cost : List (Height × ℚ) :=
-  L1_world_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .tall
+  L1_world_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .tall () () ()
 
 /-- L1 marginal over thresholds given "tall" (with costs) -/
 def l1_threshold_tall_cost : List (Threshold × ℚ) :=
-  L1_interp_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .tall
+  L1_interp_withCost vagueAdjectiveScenario vagueAdjectiveCost costDiscount .tall () () ()
 
 -- ============================================================================
 -- Evaluate

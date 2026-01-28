@@ -58,11 +58,9 @@ Despite simplifications, all three qualitative predictions are verified.
 - WebPPL model: https://github.com/judith-tonhauser/SuB29-Scontras-Tonhauser
 -/
 
-import Linglib.Theories.RSA.BToM.Core
+import Linglib.Theories.RSA.Core
 
-namespace RSA.BToM.ScontrasTonhauser2025
-
-open RSA.BToM
+namespace RSA.ScontrasTonhauser2025
 
 -- ============================================================================
 -- PART 1: World States
@@ -210,7 +208,7 @@ def assumesC : BeliefState → Bool
   | _ => false
 
 -- ============================================================================
--- PART 6: BToM Scenario
+-- PART 6: RSA Scenario
 -- ============================================================================
 
 /--
@@ -243,8 +241,8 @@ def beliefStatePrior : BeliefState → ℚ
 /--
 Build the projection scenario with α=10 (Section 3) or α=4 (Section 4).
 -/
-def projectionScenario (pC : ℚ := 1/2) (alpha : ℕ := 10) : BToMScenario :=
-  let base := BToMScenario.mentalState
+def projectionScenario (pC : ℚ := 1/2) (alpha : ℕ := 10) : RSAScenario :=
+  let base := RSAScenario.mentalState
     allUtterances
     allWorlds
     allBeliefStates
@@ -270,7 +268,7 @@ probability of w, specifically, those w in which C is true."
 def projectionOfC_world (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
   let S := projectionScenario pC alpha
   -- Get L1 distribution over worlds GIVEN the QUD
-  let worldDist := BToMRSA.L1_world_givenQUD S u q
+  let worldDist := RSA.L1_world_givenGoal S u q
   -- Sum probability of worlds where C is true
   worldDist.foldl (fun acc (w, p) =>
     if w.c then acc + p else acc) 0
@@ -284,7 +282,7 @@ the marginal posterior probability of A, specifically those A that entail C."
 def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
   let S := projectionScenario pC alpha
   -- Get L1 distribution over belief states GIVEN the QUD
-  let beliefDist := BToMRSA.L1_beliefState_givenQUD S u q
+  let beliefDist := RSA.L1_beliefState_givenGoal S u q
   -- Sum probability of states that assume C
   beliefDist.foldl (fun acc (a, p) =>
     if assumesC a then acc + p else acc) 0
@@ -387,7 +385,7 @@ def prediction_qud_effect (pC : ℚ) (u : Utterance) : Bool :=
 - `think_not_entails_c`: Proof of non-factivity
 
 ### RSA Model
-- `projectionScenario`: Full BToM scenario
+- `projectionScenario`: Full mental state scenario
 - `projectionOfC`: Compute projection strength
 - `prediction_*`: Testable predictions
 
@@ -404,4 +402,4 @@ def prediction_qud_effect (pC : ℚ) (u : Utterance) : Bool :=
 - Extend to attitude embedding (OLE effects)
 -/
 
-end RSA.BToM.ScontrasTonhauser2025
+end RSA.ScontrasTonhauser2025

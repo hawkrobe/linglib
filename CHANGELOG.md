@@ -1,14 +1,32 @@
 # Changelog
 
+## [0.22.0] - 2025-01-28
+
+### Changed
+- **Theories/RSA/Core.lean**: Unified RSAScenario to support 5 latent variable categories
+  - World (epistemic), BeliefState (speaker's private assumptions), Goal (QUD), Interp (scope), Lexicon (LU)
+  - `φ` now takes 4 args: `φ : Interp → Lexicon → Utterance → World → ℚ`
+  - Renamed `QUD` → `Goal` with backward compatibility aliases
+  - New smart constructors: `mentalState`, `mentalStateBool`, `lexicalUncertainty`
+  - L0, S1, L1 now take all 5 latent parameters (use `()` for unused dimensions)
+
+- All RSA models updated to unified API:
+  - FrankGoodman2012, GoodmanStuhlmuller2013, GradedSemantics
+  - KaoEtAl2014_Hyperbole, KaoEtAl2014_Metaphor, LassiterGoodman2017
+  - InformationTheory/Basic, Fragments/Quantities, Fragments/ReferenceGames
+
+### Removed
+- **Theories/RSA/BToM/**: Removed deprecated compatibility layer
+  - BToM functionality integrated into unified RSAScenario
+  - `ScontrasTonhauser2025.lean` moved to `Theories/RSA/`
+
+### References
+- Unifies: Frank & Goodman (2012), Scontras & Pearl (2021), Kao et al. (2014), Bergen et al. (2016), Scontras & Tonhauser (2025)
+
 ## [0.21.0] - 2025-01-28
 
 ### Added
-- **Theories/RSA/BToM/Core.lean**: BToM (Bayesian Theory of Mind) RSA framework
-  - `BToMScenario` structure separating Convention (Interp, Lexicon) from Mental State (BeliefState, Goal)
-  - L0, L0_projected, S1, L1 computations with QUD-conditioned variants
-  - Speaker truthfulness constraint and w∈A consistency constraint
-
-- **Theories/RSA/BToM/ScontrasTonhauser2025.lean**: Scontras & Tonhauser (2025) projection model
+- **Theories/RSA/ScontrasTonhauser2025.lean**: Scontras & Tonhauser (2025) projection model
   - Formalizes "Projection without lexically-specified presupposition: A model for know"
   - Verifies all three empirical predictions:
     - (a) know > think in projection strength
