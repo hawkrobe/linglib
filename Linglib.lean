@@ -108,6 +108,8 @@ import Linglib.Theories.Minimalism.Containment
 import Linglib.Theories.Minimalism.Labeling
 import Linglib.Theories.Minimalism.HeadMovement.Basic
 import Linglib.Theories.Minimalism.Constraints.HMC
+import Linglib.Theories.Minimalism.Amalgamation
+import Linglib.Theories.Minimalism.MergeUnification
 import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Minimalism.Agree

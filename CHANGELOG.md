@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.25.0] - 2025-01-28
+
+### Added
+- **Theories/Minimalism/MergeUnification.lean**: Formalization of Internal/External Merge unification
+  - `ExternalMerge`, `InternalMerge`, `GeneralMerge` structures with containment preconditions
+  - `harizanov_unification`: Both merge types satisfy same three properties (operation, labeling, projection)
+  - `complete_harizanov_unification`: Main theorem connecting to HeadMovement types
+  - Proves head-to-spec and head-to-head are both instances of InternalMerge
+
+### References
+- Chomsky (2004). "Beyond Explanatory Adequacy"
+- Harizanov (2019). "Head movement and morphological realization"
+
 ## [0.24.0] - 2025-01-28
 
 ### Changed
