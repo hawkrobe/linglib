@@ -21,7 +21,7 @@ This grounds the NeoGricean analysis in compositional semantics.
 -/
 
 import Linglib.Theories.Montague.Quantifiers
-import Linglib.Theories.NeoGricean.Exhaustivity
+import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Mathlib.Tactic.FinCases
 
 namespace NeoGricean.MontagueExhaustivity

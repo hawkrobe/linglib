@@ -31,7 +31,7 @@ NeoGricean is (conjecturally) a limiting case of RSA:
 import Linglib.Theories.RSA.Core.Examples
 import Linglib.Theories.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.NeoGricean.ScalarImplicatures
+import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace Comparisons.RSANeoGricean

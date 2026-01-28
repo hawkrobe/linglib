@@ -179,13 +179,26 @@ import Linglib.Theories.Montague.Lexicon.Modals.Kratzer
 import Linglib.Theories.Montague.Lexicon.Modals.Simple
 import Linglib.Theories.Montague.Lexicon.Modals.Compare
 
-import Linglib.Theories.NeoGricean.Basic
-import Linglib.Theories.NeoGricean.Competence
-import Linglib.Theories.NeoGricean.Alternatives
-import Linglib.Theories.NeoGricean.ScalarImplicatures
-import Linglib.Theories.NeoGricean.Exhaustivity
-import Linglib.Theories.NeoGricean.Spector2007
-import Linglib.Theories.NeoGricean.FoxSpector2018
+-- NeoGricean Core
+import Linglib.Theories.NeoGricean.Core.Basic
+import Linglib.Theories.NeoGricean.Core.Competence
+import Linglib.Theories.NeoGricean.Core.Alternatives
+import Linglib.Theories.NeoGricean.Core.AlternativeGeneration
+
+-- NeoGricean Exhaustivity
+import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+
+-- NeoGricean Scalar Implicatures
+import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.NeoGricean.ScalarImplicatures.Operations
+
+-- NeoGricean Implementations
+import Linglib.Theories.NeoGricean.Implementations.Spector2007
+import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
+import Linglib.Theories.NeoGricean.Implementations.MontagueExhaustivity
+
+-- NeoGricean other
+import Linglib.Theories.NeoGricean.NegationScope
 import Linglib.Theories.NeoGricean.Presuppositions
 
 -- RSA Core

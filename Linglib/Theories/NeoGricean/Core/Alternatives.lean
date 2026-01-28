@@ -21,7 +21,7 @@ Formalization of Horn sets and alternative generation from Geurts (2010) Ch. 3.1
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.NeoGricean.Basic
+import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Derivation.Basic
 

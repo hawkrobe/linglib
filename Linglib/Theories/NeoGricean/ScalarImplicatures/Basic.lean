@@ -31,9 +31,9 @@ plus scale semantics and predictions.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.NeoGricean.Alternatives
-import Linglib.Theories.NeoGricean.Exhaustivity
-import Linglib.Theories.NeoGricean.FoxSpector2018
+import Linglib.Theories.NeoGricean.Core.Alternatives
+import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Montague.Entailment.Basic
 import Linglib.Theories.Montague.Entailment.Monotonicity
 import Linglib.Theories.Montague.Derivation.Basic

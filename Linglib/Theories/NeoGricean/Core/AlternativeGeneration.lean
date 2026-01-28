@@ -43,8 +43,8 @@ Future extensions could handle:
 
 import Linglib.Theories.Montague.Lexicon.Basic
 import Linglib.Theories.Montague.Derivation.Basic
-import Linglib.Theories.NeoGricean.Exhaustivity
-import Linglib.Theories.NeoGricean.Alternatives
+import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.NeoGricean.Core.Alternatives
 import Mathlib.Data.Set.Basic
 
 namespace NeoGricean.AlternativeGeneration

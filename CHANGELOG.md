@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.24.0] - 2025-01-28
+
+### Changed
+- **Theories/NeoGricean/**: Restructured from flat to organized hierarchy
+  - `Core/`: Basic.lean, Alternatives.lean, AlternativeGeneration.lean, Competence.lean
+  - `Exhaustivity/`: Basic.lean
+  - `ScalarImplicatures/`: Basic.lean, Operations.lean
+  - `Implementations/`: Spector2007.lean, FoxSpector2018.lean, MontagueExhaustivity.lean
+  - Top-level: NegationScope.lean, Presuppositions.lean
+
 ## [0.23.0] - 2025-01-28
 
 ### Changed

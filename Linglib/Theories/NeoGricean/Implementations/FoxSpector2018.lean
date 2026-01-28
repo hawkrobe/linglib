@@ -52,8 +52,8 @@ Natural Language Semantics 26:1–50.
 - Spector (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
 -/
 
-import Linglib.Theories.NeoGricean.Exhaustivity
-import Linglib.Theories.NeoGricean.Alternatives
+import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Theories.Montague.Derivation.Basic
 
 namespace NeoGricean.FoxSpector2018

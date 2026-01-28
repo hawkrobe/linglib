@@ -22,7 +22,7 @@ Detailed competence analysis from Geurts (2010) Chapter 2.3.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.NeoGricean.Basic
+import Linglib.Theories.NeoGricean.Core.Basic
 
 namespace NeoGricean.Competence
 
