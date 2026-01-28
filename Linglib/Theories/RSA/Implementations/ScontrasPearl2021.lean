@@ -35,6 +35,7 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Pipeline
+import Linglib.Core.Parse
 import Linglib.Phenomena.ScontrasPearl2021.Data
 import Linglib.Theories.Montague.Derivation.Scope
 
@@ -750,5 +751,63 @@ Predictions match empirical data
 - `rsa_grounded_in_scopedform`: RSA interpretations = ScopedForm scopes
 - `full_scope_integration`: Complete integration proof
 -/
+
+-- ============================================================================
+-- Using Core.Parse (NOT Exhaustifiable)
+-- ============================================================================
+
+/-
+## Scope Ambiguity Uses Core.Parse Directly
+
+**Important**: Scope ambiguity is NOT exhaustification!
+
+- Scope ambiguity: different quantifier raising configurations (surface/inverse)
+- EXH placement: where exhaustification operator inserts (M/O/I)
+
+We use `Core.Parse` and `Core.scopeParses` directly here, NOT the
+`Exhaustifiable` typeclass (which is for EXH-specific phenomena like
+Franke & Bergen 2020).
+
+This demonstrates the clean separation:
+- `Core.Parse`: general grammatical ambiguity (used here)
+- `Core.scopeParses`: [surface, inverse] scope parses
+- `Exhaustifiable`: only for actual exhaustification
+-/
+
+open Core
+
+/-- Map ScopeConfig to Core.Parse -/
+def scopeConfigToParse : ScopeConfig → Parse
+  | .surface => Parse.surface
+  | .inverse => Parse.inverse
+
+/-- Core.scopeParses matches our ScopeConfig -/
+theorem scope_parses_match :
+    scopeParses.length = 2 ∧
+    scopeParses.map Parse.id = ["surface", "inverse"] := by
+  native_decide
+
+/-- RSA scenario using Core.Parse directly.
+
+    This demonstrates the proper pattern for scope ambiguity:
+    use Core.scopeParses, NOT Exhaustifiable. -/
+def scopeScenarioWithParse : RSAScenario :=
+  RSAScenario.ambiguousBool
+    [ScopeUtterance.null, .everyHorseNotJump]
+    [_root_.ScontrasPearl2021.JumpOutcome.zero, .one, .two]
+    scopeParses  -- Core.scopeParses, not exhParses!
+    (fun parse world utt =>
+      let scope := if parse.id == "surface" then ScopeConfig.surface else ScopeConfig.inverse
+      scopeMeaningTyped scope utt world)
+
+/-- Parse-based scenario matches typed scenario -/
+theorem parse_scenario_dimensions_match :
+    scopeScenarioWithParse.interps.length = scopeScenarioTyped.interps.length := by
+  native_decide
+
+/-- Verify we're using scope parses (2), not EXH parses (8) -/
+theorem uses_scope_not_exh_parses :
+    scopeScenarioWithParse.interps.length = 2 := by
+  native_decide
 
 end RSA.ScontrasPearl2021

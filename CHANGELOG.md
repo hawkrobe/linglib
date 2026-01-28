@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.26.0] - 2025-01-28
+
+### Added
+- **NeoGricean/Exhaustivity/Unified.lean**: Unified exhaustification interface
+  - `ExhOperator` enum (.IE, .MW) for selecting exhaustification strategy
+  - `applyExh`: Single entry point for applying EXH operators
+  - `applyExhAtParse`: Parse-guided EXH application (I → O → M order)
+  - `Exhaustifiable` typeclass with position-dependent alternatives
+  - Connects Spector 2007 (Gricean derivation), Spector 2016 (operators), and parse positions
+
+### Changed
+- **Core/Parse.lean**: Now contains `exhParses` and `scopeParses` as special cases of `Parse`
+- **NeoGricean/Exhaustivity/Interface.lean**: Re-exports from Unified.lean
+- **RSA/Implementations/FrankeBergen2020.lean**: Uses unified `Exhaustifiable` interface with position-dependent alternatives
+
+### Architecture
+- Any theory invoking EXH in a parse now uses the same machinery
+- Clear separation: scope ambiguity uses `scopeParses` directly; EXH phenomena use `Exhaustifiable`
+
 ## [0.25.0] - 2025-01-28
 
 ### Added
