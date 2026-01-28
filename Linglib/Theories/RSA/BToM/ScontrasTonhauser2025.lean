@@ -301,9 +301,12 @@ def projectionOfC (pC : ℚ) (u : Utterance) (q : QUD) : ℚ :=
 **Prediction (a)**: "know" projects more strongly than "think".
 
 The entailment in "know" biases L1 toward belief states where C is true.
+
+NOTE: The paper measures projection for NEGATED utterances ("doesn't know C",
+"doesn't think C") because negation tests whether the complement projects.
 -/
 def prediction_know_gt_think (pC : ℚ) (q : QUD) : Bool :=
-  projectionOfC pC .knowPos q > projectionOfC pC .thinkPos q
+  projectionOfC pC .knowNeg q > projectionOfC pC .thinkNeg q
 
 /--
 **Prediction (b)**: Higher prior → stronger projection.

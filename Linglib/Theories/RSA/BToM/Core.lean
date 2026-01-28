@@ -228,18 +228,19 @@ namespace BToMRSA
 /--
 L0: Literal listener given full context (convention + mental state).
 
-P(w | u, i, l, a, q) ∝ P(w) · φ(i,l,u,w) · [w ∈ a] · [q-projected]
+P(w | u, i, l, a) ∝ φ(i,l,u,w) · [w ∈ a]
 
-For Scontras & Tonhauser, L0 returns the QUD-partition cell probability.
+From WebPPL model: literalListener uses `uniformDraw(worldState)`.
+The world prior (statePrior) is only used in pragmaticListener (L1).
 -/
 def L0 (S : BToMScenario) (u : S.Utterance)
-    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (_q : S.Goal)
     : List (S.World × ℚ) :=
-  -- First compute unnormalized scores
+  -- UNIFORM prior over worlds (matches WebPPL literalListener)
   let scores := S.worlds.map fun w =>
     let semantic := S.φ i l u w
     let inBelief := if S.inBeliefState a w then 1 else 0
-    (w, S.worldPrior w * semantic * inBelief)
+    (w, semantic * inBelief)
   RSA.normalize scores
 
 /--
