@@ -24,13 +24,13 @@ which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Core.Parse
-import Linglib.Theories.NeoGricean.Exhaustivity.Unified
+import Linglib.Theories.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.FrankeBergen2020.Data
 
 namespace RSA.Implementations.FrankeBergen2020
 
 open Core
-open NeoGricean.Exhaustivity.Unified
+open NeoGricean.Exhaustivity.Interface
 open NeoGricean.Exhaustivity (Prop')
 open _root_.FrankeBergen2020
 

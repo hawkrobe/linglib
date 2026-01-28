@@ -98,6 +98,38 @@ theorem leaf_contains_nothing (tok : LIToken) (y : SyntacticObject) :
     simp [immediatelyContains] at himm
 
 -- ============================================================================
+-- Part 3b: Well-Foundedness via nodeCount
+-- ============================================================================
+
+/-- Immediate containment strictly decreases nodeCount -/
+theorem immediatelyContains_lt_nodeCount {x y : SyntacticObject}
+    (h : immediatelyContains x y) : y.nodeCount < x.nodeCount := by
+  cases x with
+  | leaf _ => simp [immediatelyContains] at h
+  | node a b =>
+    simp only [immediatelyContains] at h
+    simp only [SyntacticObject.nodeCount]
+    rcases h with rfl | rfl
+    · omega
+    · omega
+
+/-- Containment strictly decreases nodeCount -/
+theorem contains_lt_nodeCount {x y : SyntacticObject}
+    (h : contains x y) : y.nodeCount < x.nodeCount := by
+  induction h with
+  | imm x y himm =>
+    exact immediatelyContains_lt_nodeCount himm
+  | trans x y z himm _ ih =>
+    have h1 := immediatelyContains_lt_nodeCount himm
+    omega
+
+/-- No element contains itself (containment is irreflexive) -/
+theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
+  intro h
+  have hlt := contains_lt_nodeCount h
+  exact Nat.lt_irrefl _ hlt
+
+-- ============================================================================
 -- Part 4: Membership in Derivation
 -- ============================================================================
 

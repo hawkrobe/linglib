@@ -161,6 +161,120 @@ theorem label_of_merge_when_selects (α β : SyntacticObject)
   simp only [selects] at h
   simp only [h, ↓reduceIte]
 
+/-- When β selects α (and α doesn't select β), the label of {α, β} equals the label of β -/
+theorem label_of_merge_when_right_selects (α β : SyntacticObject)
+    (h : selects β α) (hna : ¬selects α β) : label (merge α β) = label β := by
+  simp only [merge, label]
+  simp only [selects] at h hna
+  simp only [hna, h, ↓reduceIte]
+  rfl
+
+-- ============================================================================
+-- Labeling Symmetry and the Necessity of No Mutual Selection
+-- ============================================================================
+
+/-
+## Why NoMutualSelection is Algebraically Required
+
+Merge creates an UNORDERED set {α, β}. For labeling to be well-defined on sets
+(rather than ordered pairs), we need: label (merge α β) = label (merge β α).
+
+The `label` function checks `selectsB α β` before `selectsB β α`, creating
+apparent order-dependence. We prove this is only a problem when BOTH select
+each other with distinct labels - precisely the case NoMutualSelection excludes.
+
+This reframes NoMutualSelection from "empirical generalization" to
+"algebraic requirement for labeling coherence on unordered sets."
+-/
+
+/-- Mutual selection with distinct labels breaks labeling symmetry.
+
+    This is the key theorem: if both α and β select each other, and they
+    have different labels, then label (merge α β) ≠ label (merge β α).
+    This violates the set-theoretic nature of Merge, where {α,β} = {β,α}. -/
+theorem mutual_selection_breaks_symmetry (α β : SyntacticObject)
+    (hαβ : selects α β) (hβα : selects β α) (hdistinct : label α ≠ label β) :
+    label (merge α β) ≠ label (merge β α) := by
+  -- label (merge α β) = label α (α selects β, first branch fires)
+  have h1 : label (merge α β) = label α := label_of_merge_when_selects α β hαβ
+  -- label (merge β α) = label β (β selects α, first branch fires)
+  have h2 : label (merge β α) = label β := label_of_merge_when_selects β α hβα
+  rw [h1, h2]
+  exact hdistinct
+
+/-- No mutual selection (with some selection) preserves labeling symmetry.
+
+    When at least one element selects the other, but not mutually,
+    labeling is symmetric: label (merge α β) = label (merge β α). -/
+theorem no_mutual_preserves_symmetry (α β : SyntacticObject)
+    (h_no_mutual : ¬(selects α β ∧ selects β α))
+    (h_some : selects α β ∨ selects β α) :
+    label (merge α β) = label (merge β α) := by
+  cases h_some with
+  | inl hαβ =>
+    -- α selects β, so β doesn't select α (by no mutual)
+    have hβα : ¬selects β α := fun h => h_no_mutual ⟨hαβ, h⟩
+    -- Both merges have label α
+    have h1 : label (merge α β) = label α := label_of_merge_when_selects α β hαβ
+    have h2 : label (merge β α) = label α := label_of_merge_when_right_selects β α hαβ hβα
+    rw [h1, h2]
+  | inr hβα =>
+    -- β selects α, so α doesn't select β (by no mutual)
+    have hαβ : ¬selects α β := fun h => h_no_mutual ⟨h, hβα⟩
+    -- Both merges have label β
+    have h1 : label (merge α β) = label β := label_of_merge_when_right_selects α β hβα hαβ
+    have h2 : label (merge β α) = label β := label_of_merge_when_selects β α hβα
+    rw [h1, h2]
+
+/-- **MAIN THEOREM**: Labeling symmetry characterization.
+
+    When at least one element selects the other, labeling is symmetric
+    if and only if there's no mutual selection OR the labels are equal.
+
+    This shows NoMutualSelection is NECESSARY (not just empirically observed)
+    for labeling to be well-defined on unordered sets {α, β}. -/
+theorem labeling_symmetric_iff (α β : SyntacticObject)
+    (h_some : selects α β ∨ selects β α) :
+    label (merge α β) = label (merge β α) ↔
+    ¬(selects α β ∧ selects β α) ∨ label α = label β := by
+  constructor
+  · -- Forward: symmetry implies no mutual selection or same labels
+    intro h_sym
+    by_cases h_mutual : selects α β ∧ selects β α
+    · -- If mutual selection, must have same labels (else symmetry breaks)
+      right
+      by_contra h_diff
+      exact mutual_selection_breaks_symmetry α β h_mutual.1 h_mutual.2 h_diff h_sym
+    · -- No mutual selection
+      left; exact h_mutual
+  · -- Backward: no mutual selection or same labels implies symmetry
+    intro h
+    cases h with
+    | inl h_no_mutual => exact no_mutual_preserves_symmetry α β h_no_mutual h_some
+    | inr h_same =>
+      -- If labels are equal, symmetry is trivial
+      cases h_some with
+      | inl hαβ =>
+        rw [label_of_merge_when_selects α β hαβ]
+        by_cases hβα : selects β α
+        · rw [label_of_merge_when_selects β α hβα, h_same]
+        · rw [label_of_merge_when_right_selects β α hαβ hβα, h_same]
+      | inr hβα =>
+        by_cases hαβ : selects α β
+        · rw [label_of_merge_when_selects α β hαβ,
+              label_of_merge_when_selects β α hβα, h_same]
+        · rw [label_of_merge_when_right_selects α β hβα hαβ,
+              label_of_merge_when_selects β α hβα]
+
+/-- No mutual selection: at most one of α, β can select the other.
+
+    Within the Minimalist formalism, this is algebraically required:
+    `labeling_symmetric_iff` shows that without it (and with distinct labels),
+    label (merge α β) ≠ label (merge β α), violating the set-theoretic
+    nature of Merge where {α, β} = {β, α}. -/
+def NoMutualSelection (α β : SyntacticObject) : Prop :=
+  ¬(selects α β ∧ selects β α)
+
 /-- When α selects β, α and {α,β} have the same label -/
 theorem sameLabel_when_selects (α β : SyntacticObject)
     (h : selects α β) (hne : label α ≠ none) : sameLabel α (merge α β) := by
@@ -169,31 +283,81 @@ theorem sameLabel_when_selects (α β : SyntacticObject)
   · exact (label_of_merge_when_selects α β h).symm
   · exact hne
 
-/-- If α selects β, then α has a label (not none) -/
+/-- Helper: label of a leaf is always some -/
+theorem label_leaf_is_some (tok : LIToken) : label (.leaf tok) = some tok.item := rfl
+
+/-- Helper lemma: label of a leaf is never none -/
+theorem label_leaf_ne_none (tok : LIToken) : label (.leaf tok) ≠ none := by
+  simp only [label]; intro h; cases h
+
+/-- Corollary: if label α ≠ none, then label returns some LI -/
+theorem label_ne_none_is_some (α : SyntacticObject) (h : label α ≠ none) :
+    ∃ li, label α = some li := by
+  cases hlbl : label α with
+  | none => exact absurd hlbl h
+  | some li => exact ⟨li, rfl⟩
+
+/-- For any SO, label never returns none.
+    This follows from the structure: every SO contains a leaf,
+    and label always finds it. -/
+theorem label_always_some (α : SyntacticObject) : label α ≠ none := by
+  induction α with
+  | leaf tok =>
+    -- Leaf: label always returns some
+    simp only [label]; intro h; cases h
+  | node a b ih_a ih_b =>
+    simp only [label]
+    split_ifs with hab hba
+    · -- selectsB a b = true: label = label a
+      exact ih_a
+    · -- selectsB b a = true: label = label b
+      exact ih_b
+    · -- Neither selectsB: case split on getLIToken
+      match ha : a.getLIToken, hb : b.getLIToken with
+      | some _, some _ =>
+        -- Both leaves: always returns some
+        simp only [label, ha, hb]; split_ifs <;> (intro h; cases h)
+      | some _, none =>
+        -- a is leaf, b is phrase: returns label b
+        simp only [label, ha, hb]; exact ih_b
+      | none, some _ =>
+        -- a is phrase, b is leaf: returns label a
+        simp only [label, ha, hb]; exact ih_a
+      | none, none =>
+        -- Both phrases: depends on label a, label b
+        simp only [label, ha, hb]
+        match hla : label a, hlb : label b with
+        | some _, some _ => simp only [hla, hlb]; split_ifs <;> (intro h; cases h)
+        | some _, none => exact absurd hlb ih_b
+        | none, some _ => exact absurd hla ih_a
+        | none, none => exact absurd hla ih_a
+
+/-- Corollary: getProjectingLI returning some implies label is not none -/
+theorem getProjectingLI_some_implies_label_some (α : SyntacticObject) :
+    ∀ li, getProjectingLI α = some li → label α ≠ none := by
+  intro _ _
+  exact label_always_some α
+
+/-- If α selects β, then α has a label (not none). -/
 theorem selects_implies_has_label (α β : SyntacticObject)
     (h : selects α β) : label α ≠ none := by
-  -- If α selects β, it has selectional features, so it has a projecting LI
   simp only [selects, selectsB] at h
-  -- Case split on α's structure first
   cases α with
-  | leaf tok =>
-    -- α is a leaf, so it has a label
-    simp only [label]
-    intro hcontra
-    cases hcontra
+  | leaf tok => exact label_leaf_ne_none tok
   | node a b =>
-    -- α is a node, so getLIToken = none
     simp only [SyntacticObject.getLIToken] at h
     cases hli : getProjectingLI (SyntacticObject.node a b) with
+    | none => simp only [hli] at h; cases h
     | some li =>
-      simp only [hli] at h
-      -- getProjectingLI returns some, so label returns some
-      sorry  -- Need: getProjectingLI α = some li → label α ≠ none
-    | none =>
-      -- getProjectingLI is none, so selectsB is false
-      simp only [hli] at h
-      -- h is now false = true, a contradiction
-      cases h
+      exact getProjectingLI_some_implies_label_some (.node a b) li hli
+
+/-- When β selects α and α doesn't select β, β and {α,β} have the same label -/
+theorem sameLabel_when_right_selects (α β : SyntacticObject)
+    (h : selects β α) (hna : ¬selects α β) : sameLabel β (merge α β) := by
+  unfold sameLabel
+  constructor
+  · exact (label_of_merge_when_right_selects α β h hna).symm
+  · exact selects_implies_has_label β α h
 
 /-- **THEOREM 3 (Labeling Uniformity)**:
     The labeling algorithm works identically for External and Internal Merge.
@@ -280,8 +444,12 @@ theorem internal_merge_labeling (im : InternalMerge)
     (h : selects im.mover im.target) : projectsIn im.mover im.result :=
   labeling_uniform_internal im h
 
-/-- **Property 3 for External Merge**: Either element can project -/
-theorem external_merge_either_projects (em : ExternalMerge) :
+/-- **Property 3 for External Merge**: Either element can project.
+
+    Requires `NoMutualSelection`: selection on categories must be acyclic,
+    so at most one of α, β can select the other. -/
+theorem external_merge_either_projects (em : ExternalMerge)
+    (h_acyclic : NoMutualSelection em.α em.β) :
     (selects em.α em.β → projectsIn em.α em.result) ∧
     (selects em.β em.α → projectsIn em.β em.result) := by
   constructor
@@ -293,14 +461,15 @@ theorem external_merge_either_projects (em : ExternalMerge) :
       simp only [merge, immediatelyContains]
       right; trivial
     · rw [em.is_merge]
-      -- β selects α, so β projects
-      have hlabel := label_of_merge_when_selects em.β em.α h
-      -- But merge em.α em.β ≠ merge em.β em.α in general
-      -- We need a different approach: when β selects α in {α, β}, β projects
-      sorry  -- Requires: label of {α, β} when β selects α
+      -- β selects α. By acyclicity, α cannot also select β.
+      have hαβ : ¬selects em.α em.β := fun hαβ => h_acyclic ⟨hαβ, h⟩
+      exact sameLabel_when_right_selects em.α em.β h hαβ
 
-/-- **Property 3 for Internal Merge**: Either element can project -/
-theorem internal_merge_either_projects (im : InternalMerge) :
+/-- **Property 3 for Internal Merge**: Either element can project.
+
+    Requires `NoMutualSelection`: selection on categories must be acyclic. -/
+theorem internal_merge_either_projects (im : InternalMerge)
+    (h_acyclic : NoMutualSelection im.mover im.target) :
     (selects im.mover im.target → projectsIn im.mover im.result) ∧
     (selects im.target im.mover → projectsIn im.target im.result) := by
   constructor
@@ -313,11 +482,14 @@ theorem internal_merge_either_projects (im : InternalMerge) :
     · rw [im.is_merge]
       simp only [merge, immediatelyContains]
       right; trivial
-    · unfold sameLabel
-      rw [im.is_merge]
-      sorry  -- Same issue: need label agreement when target selects
+    · rw [im.is_merge]
+      -- target selects mover. By acyclicity, mover cannot also select target.
+      have hmov : ¬selects im.mover im.target := fun hmov => h_acyclic ⟨hmov, h⟩
+      exact sameLabel_when_right_selects im.mover im.target h hmov
 
-/-- **THEOREM (Harizanov Unification)**: Both merge types satisfy all three properties -/
+/-- **THEOREM (Harizanov Unification)**: Both merge types satisfy all three properties.
+
+    Property 3 requires `NoMutualSelection` (acyclicity of selection on categories). -/
 theorem harizanov_unification :
     -- Property 1: Same operation
     (∀ em : ExternalMerge, em.result = merge em.α em.β) ∧
@@ -325,11 +497,11 @@ theorem harizanov_unification :
     -- Property 2: Labeling by selection
     (∀ em : ExternalMerge, selects em.α em.β → projectsIn em.α em.result) ∧
     (∀ im : InternalMerge, selects im.mover im.target → projectsIn im.mover im.result) ∧
-    -- Property 3: Either can project
-    (∀ em : ExternalMerge,
+    -- Property 3: Either can project (given acyclic selection)
+    (∀ em : ExternalMerge, NoMutualSelection em.α em.β →
       (selects em.α em.β → projectsIn em.α em.result) ∧
       (selects em.β em.α → projectsIn em.β em.result)) ∧
-    (∀ im : InternalMerge,
+    (∀ im : InternalMerge, NoMutualSelection im.mover im.target →
       (selects im.mover im.target → projectsIn im.mover im.result) ∧
       (selects im.target im.mover → projectsIn im.target im.result)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -385,9 +557,12 @@ theorem mover_can_project (im : InternalMerge)
   -- When mover selects target, mover projects (this is reprojection)
   exact labeling_uniform_internal im h_mover_selects
 
-/-- Target can also project (standard case) -/
+/-- Target can also project (standard case).
+
+    Requires `NoMutualSelection`: selection on categories must be acyclic. -/
 theorem target_can_project (im : InternalMerge)
-    (h_target_selects : selects im.target im.mover) :
+    (h_target_selects : selects im.target im.mover)
+    (h_acyclic : NoMutualSelection im.mover im.target) :
     projectsIn im.target im.result := by
   unfold projectsIn
   constructor
@@ -396,17 +571,21 @@ theorem target_can_project (im : InternalMerge)
     simp only [merge, immediatelyContains]
     right; trivial
   · -- target has the same label as result
-    unfold sameLabel
     rw [im.is_merge]
-    sorry
+    -- target selects mover. By acyclicity, mover cannot also select target.
+    have hmov : ¬selects im.mover im.target := fun hmov => h_acyclic ⟨hmov, h_target_selects⟩
+    exact sameLabel_when_right_selects im.mover im.target h_target_selects hmov
 
-/-- The dichotomy: either mover or target projects (one must) -/
+/-- The dichotomy: either mover or target projects (one must).
+
+    Requires `NoMutualSelection`: selection on categories must be acyclic. -/
 theorem projection_dichotomy (im : InternalMerge)
-    (h_one_selects : selects im.mover im.target ∨ selects im.target im.mover) :
+    (h_one_selects : selects im.mover im.target ∨ selects im.target im.mover)
+    (h_acyclic : NoMutualSelection im.mover im.target) :
     projectsIn im.mover im.result ∨ projectsIn im.target im.result := by
   cases h_one_selects with
   | inl h => exact Or.inl (mover_can_project im h)
-  | inr h => exact Or.inr (target_can_project im h)
+  | inr h => exact Or.inr (target_can_project im h h_acyclic)
 
 -- ============================================================================
 -- Part 6: The Core Equivalence
@@ -461,8 +640,11 @@ theorem head_phrasal_same_merge (im₁ im₂ : InternalMerge)
     im₂.result = merge im₂.mover im₂.target := by
   exact ⟨im₁.is_merge, im₂.is_merge⟩
 
-/-- The difference is in what projects, not in the operation -/
-theorem head_vs_phrasal_projection (im : InternalMerge) :
+/-- The difference is in what projects, not in the operation.
+
+    Requires `NoMutualSelection`: selection on categories must be acyclic. -/
+theorem head_vs_phrasal_projection (im : InternalMerge)
+    (h_acyclic : NoMutualSelection im.mover im.target) :
     -- If mover is a head that selects target: mover projects (head-to-head)
     -- If target selects mover: target projects (head-to-spec or phrasal)
     (isHeadMovement im ∧ selects im.mover im.target → projectsIn im.mover im.result) ∧
@@ -471,7 +653,7 @@ theorem head_vs_phrasal_projection (im : InternalMerge) :
   · intro ⟨_, h_sel⟩
     exact mover_can_project im h_sel
   · intro h_sel
-    exact target_can_project im h_sel
+    exact target_can_project im h_sel h_acyclic
 
 -- ============================================================================
 -- Part 8: The Algebraic Foundation (Why This Isn't a Choice)
@@ -508,9 +690,8 @@ structure StrictPartialOrder (α : Type*) (R : α → α → Prop) : Prop where
   trans : ∀ x y z, R x y → R y z → R x z
 
 /-- No element contains itself (well-foundedness of trees) -/
-theorem contains_irrefl' (x : SyntacticObject) : ¬contains x x := by
-  -- Containment strictly decreases tree size, so self-containment is impossible
-  sorry
+theorem contains_irrefl' (x : SyntacticObject) : ¬contains x x :=
+  contains_irrefl x
 
 /-- Containment on syntactic objects forms a strict partial order -/
 theorem contains_is_strict_partial_order : StrictPartialOrder SyntacticObject contains where
@@ -713,15 +894,7 @@ This establishes:
 - HeadToHeadMovement IS InternalMerge (with mover projecting)
 -/
 
-/-- No element contains itself (containment is irreflexive).
-    This follows from the well-foundedness of the tree structure. -/
-theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
-  intro h
-  -- Containment strictly decreases nodeCount, so self-containment is impossible
-  -- The full proof requires showing containment decreases a well-founded measure
-  sorry
-
-/-- Containment implies distinctness -/
+/-- Containment implies distinctness (uses contains_irrefl from Containment.lean) -/
 theorem contains_implies_ne {x y : SyntacticObject} (h : contains x y) : x ≠ y := by
   intro heq
   cases heq

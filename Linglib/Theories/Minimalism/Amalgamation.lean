@@ -64,8 +64,10 @@ theorem covers_asymm {x y root : SyntacticObject}
   -- But containment on trees is a strict partial order (acyclic)
   obtain ⟨hxy_cont, _⟩ := hxy
   obtain ⟨hyx_cont, _⟩ := hyx
-  -- x contains y and y contains x is impossible in a well-founded tree
-  sorry  -- Requires well-foundedness of containment
+  -- x contains y and y contains x implies x contains x (by transitivity)
+  have hxx := contains_trans hxy_cont hyx_cont
+  -- But no element contains itself (well-foundedness via nodeCount)
+  exact contains_irrefl x hxx
 
 -- ============================================================================
 -- Part 2: Restriction to Heads
@@ -110,100 +112,125 @@ The `is_local` constraint IS the covering constraint!
 "Immediately c-commands" means no intervening head.
 -/
 
-/-- Immediate c-command among heads is equivalent to covering.
-
-    This is the key lattice-theoretic insight: the HMC locality constraint
-    (immediate c-command) is exactly the covering relation. -/
-theorem immediate_ccommand_iff_covers (host target root : SyntacticObject)
-    (hhost : isHeadIn host root) (htarget : isHeadIn target root) :
-    immediatelyCCommands host target root ↔
-    (coversAmongHeads root host target ∨ coversAmongHeads root target host) := by
-  -- Immediate c-command: host c-commands target with no intervening c-commander
-  -- Covering: one contains the other with no intervening element
-  -- In a tree, these are equivalent for heads
-  sorry
-
-/-- **THEOREM (Covering Characterization of Amalgamation)**
-
-    The Amalgamation structure's `is_local` constraint is exactly
-    the covering relation among heads.
-
-    This shows HMC locality is not an arbitrary stipulation but
-    follows from the lattice-theoretic structure of trees. -/
-theorem amalgamation_locality_is_covering (a : Amalgamation) (root : SyntacticObject)
-    (hhost : isHeadIn a.host root) (htarget : isHeadIn a.target root) :
-    coversAmongHeads root a.host a.target ∨ coversAmongHeads root a.target a.host := by
-  have h := a.is_local root
-  exact (immediate_ccommand_iff_covers a.host a.target root hhost htarget).mp h
-
 -- ============================================================================
--- Part 4: HMC = Covering
+-- Part 3: Maximal Projections
 -- ============================================================================
 
-/-- The HMC is exactly the covering requirement among heads.
+/-
+## The Correct Formulation
 
-    HMC (Travis 1984): A head X can only move to the head Y that
-    properly governs it (= immediately c-commands it).
+The covering relation should be on PROJECTIONS, not heads directly.
+Heads are leaves and can't contain anything. But their projections can.
 
-    "Immediately c-commands" among heads = covering in dominance. -/
-theorem hmc_is_covering (m : Movement) (root : SyntacticObject)
-    (hmover : isHeadIn m.mover root) :
-    respectsHMC m root ↔
-    ∃ landingSite, isHeadIn landingSite root ∧
-        (coversAmongHeads root landingSite m.mover ∨
-         coversAmongHeads root m.mover landingSite) := by
-  unfold respectsHMC
-  constructor
-  · intro ⟨ls, himm, hmhead, hlshead⟩
-    use ls
-    constructor
-    · exact hlshead
-    · exact (immediate_ccommand_iff_covers ls m.mover root hlshead hmhead).mp himm
-  · intro ⟨ls, hlshead, hcov⟩
-    use ls
-    constructor
-    · exact (immediate_ccommand_iff_covers ls m.mover root hlshead hmover).mpr hcov
-    · exact ⟨hmover, hlshead⟩
+Example:
+```
+      TP        <- T's maximal projection
+     /  \
+    T    vP     <- v's maximal projection
+        /  \
+       v    VP  <- V's maximal projection
+           /  \
+          V   DP
+```
 
-/-- HMC violation = not in covering relation -/
-theorem hmc_violation_iff_not_covering (m : Movement) (root : SyntacticObject)
-    (hmover : isHeadIn m.mover root) :
-    violatesHMC m root ↔
-    ∀ landingSite, isHeadIn landingSite root →
-        ¬(coversAmongHeads root landingSite m.mover ∨
-          coversAmongHeads root m.mover landingSite) := by
-  unfold violatesHMC
-  rw [hmc_is_covering m root hmover]
-  push_neg
-  rfl
+T immediately c-commands v ↔ TP covers vP (TP contains vP, no intervening head projection)
+-/
 
--- ============================================================================
--- Part 5: Syntactic Movement Can Violate Covering
--- ============================================================================
+/-- X is the maximal projection of head H in root iff:
+    1. X contains H (or X = H)
+    2. X has the same label as H
+    3. X doesn't project further (is maximal) -/
+def isMaximalProjectionOf (x h root : SyntacticObject) : Prop :=
+  containsOrEq x h ∧
+  sameLabel h x ∧
+  isMaximalIn x root
 
-/-- Syntactic head movement is NOT restricted to covering.
+/-- For any head H in a well-formed tree, there exists a unique maximal projection -/
+def hasMaximalProjection (h root : SyntacticObject) : Prop :=
+  ∃! x, isMaximalProjectionOf x h root
 
-    This is the key distinction from amalgamation: syntactic movement
-    (Internal Merge) can target positions that skip intervening heads. -/
-theorem syntactic_movement_can_skip_heads :
-    ∃ (m : HeadToSpecMovement),
-      ¬(coversAmongHeads m.result m.target m.mover ∨
-        coversAmongHeads m.result m.mover m.target) := by
-  -- Bulgarian LHM: V moves to Spec-CP, skipping T
-  -- V and the landing site are not in covering relation
-  sorry  -- Constructive proof using Bulgarian LHM
+/-- Covering relation on projections.
 
-/-- The key distinction: amalgamation respects covering, syntactic doesn't -/
-theorem amalgamation_vs_syntactic_locality :
-    (∀ (a : Amalgamation) (root : SyntacticObject)
-        (hh : isHeadIn a.host root) (ht : isHeadIn a.target root),
-        coversAmongHeads root a.host a.target ∨ coversAmongHeads root a.target a.host) ∧
-    (∃ (m : HeadToSpecMovement),
-        ¬(coversAmongHeads m.result m.target m.mover ∨
-          coversAmongHeads m.result m.mover m.target)) := by
-  constructor
-  · exact amalgamation_locality_is_covering
-  · exact syntactic_movement_can_skip_heads
+    X's projection covers Y's projection iff:
+    - X's maximal projection properly contains Y's maximal projection
+    - No intervening head's projection between them -/
+def coversProjection (root x y : SyntacticObject) : Prop :=
+  ∃ xProj yProj,
+    isMaximalProjectionOf xProj x root ∧
+    isMaximalProjectionOf yProj y root ∧
+    contains xProj yProj ∧
+    -- No intervening head's projection
+    ¬∃ z zProj,
+      isHeadIn z root ∧
+      z ≠ x ∧ z ≠ y ∧
+      isMaximalProjectionOf zProj z root ∧
+      contains xProj zProj ∧ contains zProj yProj
+
+/-- **CONJECTURE (Covering ↔ Immediate C-Command)**
+
+    For heads X and Y in a well-formed tree:
+    X immediately c-commands Y ↔ X's projection covers Y's projection
+
+    This is the corrected lattice-theoretic characterization of HMC locality.
+
+    ## Proof Sketch
+
+    **Forward direction** (immediate c-command ⟹ covering):
+    1. x c-commands y means x's sister S contains y
+    2. x's maximal projection xProj contains both x and S (since x projects)
+    3. Therefore xProj contains y, hence contains y's maximal projection yProj
+    4. "Immediate" (no intervening c-commander) translates to "no intervening head projection"
+       because intervening heads would create intervening c-commanders
+
+    **Backward direction** (covering ⟹ immediate c-command):
+    1. xProj contains yProj means y is in x's "projection domain"
+    2. Since x is the head of xProj, x c-commands everything in xProj except x itself
+    3. In particular, x c-commands y
+    4. No intervening projection means no intervening head, hence immediate
+
+    ## Missing Infrastructure
+
+    A complete proof requires lemmas connecting projections to tree structure:
+    - `maximal_projection_contains_sister`: If x projects to xProj, then xProj contains x's sister
+    - `ccommand_domain_equals_sister`: x c-commands exactly the elements in x's sister's domain
+    - `projection_chain_lemma`: How intermediate projections relate to the maximal one
+
+    These foundational lemmas would formalize the relationship between the sister-based
+    definition of c-command and the containment-based definition of covering.
+-/
+theorem immediate_ccommand_iff_covers_projection
+    (x y root : SyntacticObject)
+    (hx : isHeadIn x root) (hy : isHeadIn y root)
+    (hx_proj : hasMaximalProjection x root)
+    (hy_proj : hasMaximalProjection y root) :
+    immediatelyCCommands x y root ↔ coversProjection root x y := by
+  sorry -- See proof sketch above; requires additional infrastructure
+
+/-
+## Covering Characterization - DEFERRED
+
+The following theorems were intended to show:
+- Amalgamation locality = covering among heads
+- HMC = covering requirement
+- Syntactic movement can violate covering
+
+However, `coversAmongHeads` as defined requires `contains x y` where x, y are heads.
+Since heads are LEAVES (by `isMinimalIn`), they cannot contain anything!
+
+The correct formulation requires:
+1. Define `maximalProjectionOf : head → root → SyntacticObject`
+2. Define covering on PROJECTIONS, not heads
+3. Prove: immediate c-command ↔ projection covering
+
+See the NOTE above for details. These theorems are deferred until
+the projection machinery is properly defined.
+-/
+
+-- TODO: amalgamation_locality_is_covering (requires projection-based covering)
+-- TODO: hmc_is_covering (requires projection-based covering)
+-- TODO: hmc_violation_iff_not_covering (depends on hmc_is_covering)
+-- TODO: syntactic_movement_can_skip_heads (requires projection-based covering)
+-- TODO: amalgamation_vs_syntactic_locality (depends on above)
 
 -- ============================================================================
 -- Part 6: The Exhaustivity Theorem
