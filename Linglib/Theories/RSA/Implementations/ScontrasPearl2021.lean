@@ -32,7 +32,7 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
   as probabilistic inference."
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Pipeline
 import Linglib.Phenomena.ScontrasPearl2021.Data

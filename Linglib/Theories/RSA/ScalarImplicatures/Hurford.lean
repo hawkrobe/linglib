@@ -33,7 +33,7 @@ S1 probability reflects speaker rationality:
 - Singh (2008). On the interpretation of disjunction.
 -/
 
-import Linglib.Theories.RSA.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Phenomena.ScalarImplicatures.Data
 
 namespace RSA.Hurford

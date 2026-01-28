@@ -26,7 +26,7 @@ lossy compression.
 - Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 -/
 
-import Linglib.Theories.RSA.InformationTheory.Basic
+import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 

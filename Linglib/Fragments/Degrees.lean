@@ -38,7 +38,7 @@ def scenario := Degrees.tallShort 10
 - Kennedy (2007). Vagueness and grammar.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace Degrees

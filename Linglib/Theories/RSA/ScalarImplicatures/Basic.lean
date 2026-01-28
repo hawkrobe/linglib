@@ -17,8 +17,8 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 - `rsa_derives_not_all`: Using derivation interface, RSA prefers non-all worlds
 -/
 
-import Linglib.Theories.RSA.Basic
-import Linglib.Theories.RSA.GoodmanStuhlmuller2013
+import Linglib.Theories.RSA.Core.Examples
+import Linglib.Theories.RSA.Implementations.GoodmanStuhlmuller2013
 import Linglib.Theories.Montague.Derivation.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Interfaces.ImplicatureTheory

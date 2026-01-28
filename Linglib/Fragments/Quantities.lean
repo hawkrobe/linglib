@@ -29,7 +29,7 @@ def myDomain := Quantity.standard 3
   Topics in Cognitive Science 5(1): 173-184.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace Quantity

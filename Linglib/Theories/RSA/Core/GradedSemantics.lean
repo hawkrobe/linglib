@@ -26,7 +26,7 @@ This naturally captures vagueness without a hard threshold.
 Reference: Lassiter & Goodman (2017), "Adjectival vagueness in a Bayesian model"
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.GradedSemantics

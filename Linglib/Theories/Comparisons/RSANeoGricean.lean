@@ -28,9 +28,9 @@ NeoGricean is (conjecturally) a limiting case of RSA:
 - Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
 -/
 
-import Linglib.Theories.RSA.Basic
-import Linglib.Theories.RSA.ScalarImplicatures
-import Linglib.Theories.RSA.InformationTheory.Basic
+import Linglib.Theories.RSA.Core.Examples
+import Linglib.Theories.RSA.ScalarImplicatures.Basic
+import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.NeoGricean.ScalarImplicatures
 import Linglib.Core.Interfaces.ImplicatureTheory
 

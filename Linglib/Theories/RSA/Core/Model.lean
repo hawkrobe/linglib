@@ -28,7 +28,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Topology.Order.Basic
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA
 

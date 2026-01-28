@@ -60,10 +60,10 @@ import Linglib.Fragments.ReferenceGames
 import Linglib.Fragments.Quantities
 import Linglib.Fragments.Scales
 
--- RSA Core and Lexical Uncertainty
-import Linglib.Theories.RSA.Core
-import Linglib.Theories.RSA.LexicalUncertainty.Basic
-import Linglib.Theories.RSA.LexicalUncertainty.Compositional
+-- RSA Core and Extensions
+import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Compositional
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -188,32 +188,41 @@ import Linglib.Theories.NeoGricean.Spector2007
 import Linglib.Theories.NeoGricean.FoxSpector2018
 import Linglib.Theories.NeoGricean.Presuppositions
 
-import Linglib.Theories.RSA.Basic
-import Linglib.Theories.RSA.GoodmanStuhlmuller2013
-import Linglib.Theories.RSA.FrankGoodman2012
-import Linglib.Theories.RSA.ScalarImplicatures
-import Linglib.Theories.RSA.ScontrasPearl2021
-import Linglib.Theories.RSA.Intensional
-import Linglib.Theories.RSA.EmbeddedScalars
-import Linglib.Theories.RSA.PottsLU
-import Linglib.Theories.RSA.AttitudeEmbedding
-import Linglib.Theories.RSA.ConditionalEmbedding
-import Linglib.Theories.RSA.QuestionEmbedding
-import Linglib.Theories.RSA.KaoEtAl2014_Hyperbole
-import Linglib.Theories.RSA.KaoEtAl2014_Metaphor
+-- RSA Core
+import Linglib.Theories.RSA.Core.Examples
+import Linglib.Theories.RSA.Core.BasicQ
+import Linglib.Theories.RSA.Core.Intensional
+import Linglib.Theories.RSA.Core.Model
+import Linglib.Theories.RSA.Core.GradedSemantics
 
--- RSA Projection (mental state inference)
-import Linglib.Theories.RSA.ScontrasTonhauser2025
+-- RSA Scalar Implicatures
+import Linglib.Theories.RSA.ScalarImplicatures.Basic
+import Linglib.Theories.RSA.ScalarImplicatures.Hurford
+import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Basic
+import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Attitudes
+import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Conditionals
+import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Questions
 
--- RSA Information Theory (Zaslavsky et al. 2020)
-import Linglib.Theories.RSA.InformationTheory.Basic
-import Linglib.Theories.RSA.InformationTheory.UtilityDynamics
-import Linglib.Theories.RSA.InformationTheory.UtilityNonMonotonicity
-import Linglib.Theories.RSA.InformationTheory.PhaseTransition
+-- RSA Implementations (paper replications)
+import Linglib.Theories.RSA.Implementations.FrankGoodman2012
+import Linglib.Theories.RSA.Implementations.GoodmanStuhlmuller2013
+import Linglib.Theories.RSA.Implementations.ScontrasPearl2021
+import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Hyperbole
+import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Metaphor
+import Linglib.Theories.RSA.Implementations.PottsEtAl2016
+import Linglib.Theories.RSA.Implementations.ScontrasTonhauser2025
+import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
+import Linglib.Theories.RSA.Implementations.TesslerGoodman2022
+
+-- RSA Extensions: Information Theory (Zaslavsky et al. 2020)
+import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
+import Linglib.Theories.RSA.Extensions.InformationTheory.UtilityDynamics
+import Linglib.Theories.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
+import Linglib.Theories.RSA.Extensions.InformationTheory.PhaseTransition
+import Linglib.Theories.RSA.Extensions.InformationTheory.RateDistortion
 
 -- RSA with rational α (for α < 1)
 import Linglib.Core.RationalPower
-import Linglib.Theories.RSA.CoreQ
 
 import Linglib.Theories.PragmaticComparison
 

@@ -14,7 +14,7 @@ Literal semantics (weak "some"):
 Reference: Goodman & Frank (2016)
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA.Scalar
 

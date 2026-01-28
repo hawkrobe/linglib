@@ -40,7 +40,7 @@ def scenario := QUD.priceAffect
 - Kao & Goodman (2015). Metaphor and hyperbole chapter.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace QUD

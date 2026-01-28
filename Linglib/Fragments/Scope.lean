@@ -39,7 +39,7 @@ def scenario := Scope.everyNotScenario 3
 - May, R. (1985). Logical Form: Its Structure and Derivation.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.Montague.Derivation.Scope
 import Mathlib.Data.Rat.Defs
 

@@ -39,7 +39,7 @@ See docs/ROADMAP.md for future work on this.
 -/
 
 import Linglib.Theories.NeoGricean.ScalarImplicatures
-import Linglib.Theories.RSA.ScalarImplicatures
+import Linglib.Theories.RSA.ScalarImplicatures.Basic
 
 namespace Comparisons.ScalarImplicature
 

@@ -21,8 +21,8 @@ Why? A speaker wanting green_square would say "green" (uniquely identifying).
 Saying "square" signals they probably mean blue_square.
 -/
 
-import Linglib.Theories.RSA.Core
-import Linglib.Theories.RSA.Model
+import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Model
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012

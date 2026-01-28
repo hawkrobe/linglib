@@ -20,7 +20,7 @@ knowledge state affects interpretation.
    - Partial access: implicature canceled
 -/
 
-import Linglib.Theories.RSA.Basic
+import Linglib.Theories.RSA.Core.Examples
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.GoodmanStuhlmuller2013

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.23.0] - 2025-01-28
+
+### Changed
+- **Theories/RSA/**: Restructured from flat to phenomenon-first organization
+  - `Core/`: Basic.lean, BasicQ.lean, Examples.lean, Intensional.lean, Model.lean, GradedSemantics.lean, Convergence.lean
+  - `ScalarImplicatures/`: Basic.lean, Hurford.lean, Embedded/{Basic,Attitudes,Conditionals,Questions}.lean
+  - `Extensions/`: LexicalUncertainty/{Basic,Compositional}.lean, InformationTheory/{Basic,UtilityDynamics,UtilityNonMonotonicity,PhaseTransition,RateDistortion}.lean
+  - `Implementations/`: Paper replications (FrankGoodman2012, GoodmanStuhlmuller2013, ScontrasPearl2021, KaoEtAl2014_{Hyperbole,Metaphor}, PottsEtAl2016, ScontrasTonhauser2025, LassiterGoodman2017, TesslerGoodman2022)
+  - Updated all imports throughout codebase
+
 ## [0.22.0] - 2025-01-28
 
 ### Changed

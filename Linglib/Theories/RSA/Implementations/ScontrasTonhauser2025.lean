@@ -58,7 +58,7 @@ Despite simplifications, all three qualitative predictions are verified.
 - WebPPL model: https://github.com/judith-tonhauser/SuB29-Scontras-Tonhauser
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA.ScontrasTonhauser2025
 

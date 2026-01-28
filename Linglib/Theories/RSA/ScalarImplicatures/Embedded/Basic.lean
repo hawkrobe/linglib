@@ -24,8 +24,8 @@ predictions, motivating the richer structure in the full model.
 - Geurts, B. (2010). Quantity Implicatures.
 -/
 
-import Linglib.Theories.RSA.Core
-import Linglib.Theories.RSA.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Phenomena.ScalarImplicatures.Data
 
 namespace RSA.EmbeddedScalars

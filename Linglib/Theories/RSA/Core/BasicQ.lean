@@ -24,7 +24,7 @@ RSAScenarioQ uses α : ℚ with Newton-Raphson approximation for x^α.
   human pragmatic reasoning. arXiv:2005.06641.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Linglib.Core.RationalPower
 import Mathlib.Data.Rat.Defs
 

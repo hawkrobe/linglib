@@ -36,7 +36,7 @@ maximization of a concave objective.
 - Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 -/
 
-import Linglib.Theories.RSA.Convergence
+import Linglib.Theories.RSA.Core.Convergence
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 namespace RSA.RateDistortion

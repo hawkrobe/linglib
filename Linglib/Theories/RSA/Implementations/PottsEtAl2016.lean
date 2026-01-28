@@ -45,10 +45,10 @@ Utterances crossing quantifiers × predicates:
 - Flat priors over worlds and lexica
 -/
 
-import Linglib.Theories.RSA.Core
-import Linglib.Theories.RSA.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Phenomena.ScalarImplicatures.Data
-import Linglib.Theories.RSA.EmbeddedScalars
+import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Basic
 
 namespace RSA.PottsLU
 

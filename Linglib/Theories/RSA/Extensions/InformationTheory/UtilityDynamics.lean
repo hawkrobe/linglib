@@ -29,7 +29,7 @@ causing temporary decreases in expected listener utility.
 - Zaslavsky et al. (2020), Proposition 2 and Figure 2
 -/
 
-import Linglib.Theories.RSA.InformationTheory.Basic
+import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 

@@ -44,7 +44,7 @@ Three conditions are necessary for utility non-monotonicity:
   pragmatic reasoning. arXiv:2005.06641, Proposition 2 and Figure 3.
 -/
 
-import Linglib.Theories.RSA.InformationTheory.Basic
+import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 

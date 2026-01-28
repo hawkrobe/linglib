@@ -36,8 +36,8 @@ This connects pragmatic reasoning to optimal lossy compression.
 - Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 -/
 
-import Linglib.Theories.RSA.Core
-import Linglib.Theories.RSA.CoreQ
+import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.BasicQ
 import Linglib.Core.RationalPower
 import Mathlib.Data.Rat.Defs
 

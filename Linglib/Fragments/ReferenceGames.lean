@@ -29,7 +29,7 @@ def myContext := ReferenceGame.fromPairs
   language games. Science 336(6084): 998.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace ReferenceGame

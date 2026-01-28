@@ -32,7 +32,7 @@ needs an `RSAScenario`. Comparison theorems live in `Compare.lean`.
 - Goodman, N. & Stuhlmüller, A. (2013). Knowledge and Implicature.
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 
 namespace Montague.Lexicon.Numerals
 

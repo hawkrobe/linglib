@@ -30,7 +30,7 @@ Scalar adjectives have a free threshold variable:
 3. The sorites paradox is explained probabilistically
 -/
 
-import Linglib.Theories.RSA.Core
+import Linglib.Theories.RSA.Core.Basic
 import Linglib.Core.Distribution
 import Mathlib.Data.Rat.Defs
 
