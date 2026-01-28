@@ -40,7 +40,7 @@ L1 marginalizes over QUDs, recovering that the speaker was probably:
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core
 
-namespace RSA.KaoEtAl2014
+namespace RSA.KaoEtAl2014_Hyperbole
 
 open RSA
 
@@ -384,4 +384,4 @@ def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
 - Kao & Goodman (2015). Let's talk (ironically) about the weather.
 -/
 
-end RSA.KaoEtAl2014
+end RSA.KaoEtAl2014_Hyperbole

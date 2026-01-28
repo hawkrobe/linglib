@@ -41,7 +41,7 @@ L1 marginalizes over QUDs, recovering that the speaker was probably:
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core
 
-namespace RSA.KaoMetaphor
+namespace RSA.KaoEtAl2014_Metaphor
 
 open RSA RSA
 
@@ -526,4 +526,4 @@ The Core/QUD.lean infrastructure supports all these applications.
 - Roberts (2012). Information structure in discourse.
 -/
 
-end RSA.KaoMetaphor
+end RSA.KaoEtAl2014_Metaphor

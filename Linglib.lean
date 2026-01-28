@@ -199,7 +199,8 @@ import Linglib.Theories.RSA.PottsLU
 import Linglib.Theories.RSA.AttitudeEmbedding
 import Linglib.Theories.RSA.ConditionalEmbedding
 import Linglib.Theories.RSA.QuestionEmbedding
-import Linglib.Theories.RSA.KaoEtAl2014
+import Linglib.Theories.RSA.KaoEtAl2014_Hyperbole
+import Linglib.Theories.RSA.KaoEtAl2014_Metaphor
 
 -- RSA BToM (Bayesian Theory of Mind) framework
 import Linglib.Theories.RSA.BToM.Core
