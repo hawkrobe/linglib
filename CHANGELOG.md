@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.27.0] - 2025-01-28
+
+### Added
+- **Theories/RSA/DegenEtAl2020.lean**: Continuous semantics RSA (cs-RSA) for referring expressions
+  - Color/size asymmetry via semantic noise parameters (color ≈ 0.99, size ≈ 0.8)
+  - Typicality effects (blue banana vs yellow banana)
+  - Scene variation effects on redundant modifier use
+  - Uses `ReferenceGame.Color` from Fragments library
+- **Theories/RSA/Implementations/HeKaiserIskarous2025.lean**: Sentence polarity asymmetry models
+  - Standard RSA, fuzzyRSA, wonkyRSA, funkyRSA variants
+  - `toContextPolarity`: Maps sentence polarity → `Core.Polarity.ContextPolarity`
+  - Proves cost asymmetry reflects UE/DE distinction
+- **Phenomena/HeKaiserIskarous2025/Data.lean**: Domain types for polarity experiments
+
+### Changed
+- **Theories/RSA/Core/GradedSemantics.lean**: Removed (merged into LassiterGoodman2017.lean)
+- LassiterGoodman2017.lean already contains graded semantics + threshold inference equivalence
+
+### References
+- Degen et al. (2020). "When redundancy is useful: A Bayesian approach to 'overinformative' referring expressions"
+- He, Kaiser & Iskarous (2025). "Modeling sentence polarity asymmetries"
+
 ## [0.26.0] - 2025-01-28
 
 ### Added

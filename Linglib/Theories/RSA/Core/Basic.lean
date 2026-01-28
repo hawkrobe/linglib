@@ -143,6 +143,16 @@ structure RSAScenario where
   /-- Rationality parameter. Higher = more informative speaker. -/
   α : ℕ := 1
 
+  /-- Utterance cost function. Higher cost → less likely to be produced.
+
+      Standard RSA uses: S1(u|w) ∝ exp(α * (ln L0 - cost))
+
+      Since we use rationals, we approximate with:
+      S1(u|w) ∝ L0^α / (1 + cost)^α
+
+      Default: zero cost for all utterances. -/
+  cost : Utterance → ℚ := fun _ => 0
+
   /-- BEq instance for utterances -/
   [uttBEq : BEq Utterance]
   /-- BEq instance for worlds -/
@@ -199,7 +209,8 @@ def RSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
     (prior : W → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario where
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -221,6 +232,7 @@ def RSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
   beliefStatePrior := fun _ => 1
   goalPrior := fun _ => 1
   α := α
+  cost := cost
 
 /--
 Build a basic RSA scenario from Boolean semantics.
@@ -229,8 +241,9 @@ def RSAScenario.basicBool {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (satisfies : W → U → Bool)
     (prior : W → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario :=
-  RSAScenario.basic utterances worlds (fun u w => boolToRat (satisfies w u)) prior α
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario :=
+  RSAScenario.basic utterances worlds (fun u w => boolToRat (satisfies w u)) prior α cost
 
 /--
 Build a scenario with interpretation ambiguity (e.g., scope readings).
@@ -253,7 +266,8 @@ def RSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
     (φ : I → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario where
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario where
   Utterance := U
   World := W
   Interp := I
@@ -275,6 +289,7 @@ def RSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
   beliefStatePrior := fun _ => 1
   goalPrior := fun _ => 1
   α := α
+  cost := cost
 
 /--
 Build a scenario with interpretation ambiguity from Boolean semantics.
@@ -284,9 +299,10 @@ def RSAScenario.ambiguousBool {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableE
     (satisfies : I → W → U → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario :=
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario :=
   RSAScenario.ambiguous utterances worlds interps
-    (fun i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α
+    (fun i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α cost
 
 /--
 Build a QUD-sensitive scenario (e.g., hyperbole, metaphor).
@@ -311,7 +327,8 @@ def RSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (qudProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (qudPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario where
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -333,6 +350,7 @@ def RSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
   beliefStatePrior := fun _ => 1
   goalPrior := qudPrior
   α := α
+  cost := cost
 
 /--
 Build a QUD-sensitive scenario from Boolean semantics.
@@ -343,9 +361,10 @@ def RSAScenario.qudBool {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (qudProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (qudPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario :=
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario :=
   RSAScenario.qud utterances worlds quds
-    (fun u w => boolToRat (satisfies w u)) qudProject worldPrior qudPrior α
+    (fun u w => boolToRat (satisfies w u)) qudProject worldPrior qudPrior α cost
 
 /--
 Build a scenario with mental state inference (beliefs + goals).
@@ -371,7 +390,8 @@ def RSAScenario.mentalState {U W A Q : Type}
     (worldPrior : W → ℚ := fun _ => 1)
     (beliefStatePrior : A → ℚ := fun _ => 1)
     (goalPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario where
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -393,6 +413,7 @@ def RSAScenario.mentalState {U W A Q : Type}
   beliefStatePrior := beliefStatePrior
   goalPrior := goalPrior
   α := α
+  cost := cost
 
 /--
 Build a scenario with mental state inference from Boolean semantics.
@@ -407,10 +428,11 @@ def RSAScenario.mentalStateBool {U W A Q : Type}
     (worldPrior : W → ℚ := fun _ => 1)
     (beliefStatePrior : A → ℚ := fun _ => 1)
     (goalPrior : Q → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario :=
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario :=
   RSAScenario.mentalState utterances worlds beliefStates goals
     (fun u w => boolToRat (satisfies w u)) inBeliefState goalProject
-    worldPrior beliefStatePrior goalPrior α
+    worldPrior beliefStatePrior goalPrior α cost
 
 /--
 Build a scenario with lexical uncertainty.
@@ -433,7 +455,8 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
     (φ : L → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (lexiconPrior : L → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario where
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -455,6 +478,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   beliefStatePrior := fun _ => 1
   goalPrior := fun _ => 1
   α := α
+  cost := cost
 
 /--
 Build a scenario with lexical uncertainty from Boolean semantics.
@@ -465,9 +489,10 @@ def RSAScenario.lexicalUncertaintyBool {U W L : Type}
     (satisfies : L → W → U → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (lexiconPrior : L → ℚ := fun _ => 1)
-    (α : ℕ := 1) : RSAScenario :=
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0) : RSAScenario :=
   RSAScenario.lexicalUncertainty utterances worlds lexica
-    (fun l u w => boolToRat (satisfies l w u)) worldPrior lexiconPrior α
+    (fun l u w => boolToRat (satisfies l w u)) worldPrior lexiconPrior α cost
 
 -- ============================================================================
 -- RSA Computations
@@ -548,7 +573,10 @@ def S1 (S : RSAScenario) (w : S.World)
     -- Speaker only produces true utterances
     let truthful := S.φ i l u w
     let l0Score := getScore (L0_projected S u i l a q) w
-    (u, truthful * l0Score ^ S.α)
+    -- Cost discount: higher cost → lower probability
+    -- Approximates exp(-α * cost) with 1/(1 + cost)^α
+    let costDiscount := 1 / ((1 + S.cost u) ^ S.α)
+    (u, truthful * l0Score ^ S.α * costDiscount)
   normalize scores
 
 -- ============================================================================

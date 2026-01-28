@@ -208,8 +208,6 @@ import Linglib.Theories.RSA.Core.Examples
 import Linglib.Theories.RSA.Core.BasicQ
 import Linglib.Theories.RSA.Core.Intensional
 import Linglib.Theories.RSA.Core.Model
-import Linglib.Theories.RSA.Core.GradedSemantics
-
 -- RSA Scalar Implicatures
 import Linglib.Theories.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.RSA.ScalarImplicatures.Hurford
@@ -226,8 +224,9 @@ import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Theories.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.RSA.Implementations.TesslerGoodman2022
+import Linglib.Theories.RSA.Implementations.HeKaiserIskarous2025
+import Linglib.Theories.RSA.DegenEtAl2020
 
 -- RSA Extensions: Information Theory (Zaslavsky et al. 2020)
 import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
@@ -272,6 +271,7 @@ import Linglib.Phenomena.Projection.ScontrasTonhauser2025
 
 -- Quantifier scope ambiguity (Scontras & Pearl 2021)
 import Linglib.Phenomena.ScontrasPearl2021.Data
+import Linglib.Phenomena.HeKaiserIskarous2025.Data
 
 -- Scope-word order interactions (Dutch/German)
 import Linglib.Phenomena.ScopeWordOrder.Data
