@@ -52,6 +52,8 @@ import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
 import Linglib.Core.Polarity
 import Linglib.Core.Proposition
+import Linglib.Core.Presupposition
+import Linglib.Core.CommonGround
 
 -- Fragments (pre-built RSA domains)
 import Linglib.Fragments.ReferenceGames
@@ -161,6 +163,10 @@ import Linglib.Theories.Montague.Entailment.Basic
 import Linglib.Theories.Montague.Entailment.Monotonicity
 import Linglib.Theories.Montague.Entailment.ScaleInteraction
 import Linglib.Theories.Montague.Entailment.Polarity
+import Linglib.Theories.Montague.Entailment.PresuppositionPolarity
+import Linglib.Theories.Montague.Projection.LocalContext
+import Linglib.Theories.Montague.Projection.BeliefEmbedding
+import Linglib.Theories.Montague.Projection.TonhauserDerivation
 
 -- Montague Interfaces
 import Linglib.Theories.Montague.Interface.SemanticBackend
@@ -180,6 +186,7 @@ import Linglib.Theories.NeoGricean.ScalarImplicatures
 import Linglib.Theories.NeoGricean.Exhaustivity
 import Linglib.Theories.NeoGricean.Spector2007
 import Linglib.Theories.NeoGricean.FoxSpector2018
+import Linglib.Theories.NeoGricean.Presuppositions
 
 import Linglib.Theories.RSA.Basic
 import Linglib.Theories.RSA.GoodmanStuhlmuller2013
@@ -193,6 +200,10 @@ import Linglib.Theories.RSA.AttitudeEmbedding
 import Linglib.Theories.RSA.ConditionalEmbedding
 import Linglib.Theories.RSA.QuestionEmbedding
 import Linglib.Theories.RSA.KaoEtAl2014
+
+-- RSA BToM (Bayesian Theory of Mind) framework
+import Linglib.Theories.RSA.BToM.Core
+import Linglib.Theories.RSA.BToM.ScontrasTonhauser2025
 
 -- RSA Information Theory (Zaslavsky et al. 2020)
 import Linglib.Theories.RSA.InformationTheory.Basic
@@ -223,9 +234,14 @@ import Linglib.Phenomena.Coreference.Data
 import Linglib.Phenomena.ScalarImplicatures.Data
 import Linglib.Phenomena.FreeChoice.Data
 import Linglib.Phenomena.DisjunctionIgnorance.Data
+import Linglib.Phenomena.Presuppositions.Data
+import Linglib.Phenomena.Presuppositions.ProjectiveContent
 
 -- Experimental studies on scalar implicatures
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
+
+-- Factive predicates empirical data
+import Linglib.Phenomena.Factives.DegenTonhauser2021
 
 -- Quantifier scope ambiguity (Scontras & Pearl 2021)
 import Linglib.Phenomena.ScontrasPearl2021.Data

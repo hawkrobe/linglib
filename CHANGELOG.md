@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.21.0] - 2025-01-28
+
+### Added
+- **Theories/RSA/BToM/Core.lean**: BToM (Bayesian Theory of Mind) RSA framework
+  - `BToMScenario` structure separating Convention (Interp, Lexicon) from Mental State (BeliefState, Goal)
+  - L0, L0_projected, S1, L1 computations with QUD-conditioned variants
+  - Speaker truthfulness constraint and w∈A consistency constraint
+
+- **Theories/RSA/BToM/ScontrasTonhauser2025.lean**: Scontras & Tonhauser (2025) projection model
+  - Formalizes "Projection without lexically-specified presupposition: A model for know"
+  - Verifies all three empirical predictions:
+    - (a) know > think in projection strength
+    - (b) Higher prior P(C) → stronger projection
+    - (c) BEL? QUD → stronger projection than C? QUD
+
+- **Phenomena/Factives/DegenTonhauser2021.lean**: Empirical data on factive predicates
+
+### References
+- Scontras, G. & Tonhauser, J. (2025). Projection without lexically-specified presupposition
+- WebPPL model: https://github.com/judith-tonhauser/SuB29-Scontras-Tonhauser
+
 ## [0.20.0] - 2025-01-27
 
 ### Changed
