@@ -215,7 +215,98 @@ theorem top_eq_latticeTop (W : Type*) : top W = (⊤ : BProp W) := rfl
 /-- Bot equals lattice bot -/
 theorem bot_eq_latticeBot (W : Type*) : bot W = (⊥ : BProp W) := rfl
 
+-- ============================================================================
+-- Downward Entailing Property of Negation
+-- ============================================================================
+
+/--
+**Negation reverses entailment (DE property)**.
+
+If P entails Q at all worlds (∀w, P w → Q w), then ¬Q entails ¬P.
+This is the defining property of Downward Entailing operators.
+
+This theorem is used by:
+- RSA models (HeKaiserIskarous2025) for polarity asymmetries
+- NeoGricean implicature computation for DE context detection
+- Montague entailment checking
+-/
+theorem pnot_reverses_entailment {W : Type*} (p q : BProp W)
+    (h : ∀ w, p w = true → q w = true) :
+    ∀ w, pnot W q w = true → pnot W p w = true := by
+  intro w hnq
+  simp only [pnot] at *
+  cases hp : p w with
+  | false => simp
+  | true =>
+    have hq := h w hp
+    simp [hq] at hnq
+
+/-- Double negation elimination for decidable propositions -/
+theorem pnot_pnot {W : Type*} (p : BProp W) : pnot W (pnot W p) = p := by
+  funext w
+  simp [pnot, Bool.not_not]
+
+/-- Negation is antitone (DE): if p ≤ q pointwise, then ¬q ≤ ¬p pointwise -/
+theorem pnot_antitone {W : Type*} : Antitone (pnot W) := by
+  intro p q hpq w
+  simp only [pnot]
+  -- Goal: !q w ≤ !p w (in Bool ordering: false ≤ true)
+  -- hpq : p ≤ q means ∀w, p w ≤ q w
+  have hpq_w := hpq w
+  -- In Bool, x ≤ y means x = false ∨ y = true
+  cases hp : p w <;> cases hq : q w <;> simp_all
+
 end Decidable
+
+-- ============================================================================
+-- Correspondence: Decidable ↔ Classical
+-- ============================================================================
+
+/-
+The coercion `BProp W → Prop' W` (via `p w = true`) preserves operations.
+This means properties proven for `Decidable.pnot` transfer to `Classical.pnot`.
+-/
+
+/-- Decidable negation corresponds to Classical negation under coercion.
+
+    (pnot_dec p : BProp W) coerces to (pnot_classical (p : Prop' W))
+-/
+theorem decidable_pnot_eq_classical {W : Type*} (p : BProp W) :
+    (↑(Decidable.pnot W p) : Prop' W) = Classical.pnot W (↑p : Prop' W) := by
+  funext w
+  simp only [Decidable.pnot, Classical.pnot]
+  -- Goal: (!p w = true) = ¬(p w = true)
+  cases hp : p w <;> simp [hp]
+
+/-- Decidable conjunction corresponds to Classical conjunction under coercion. -/
+theorem decidable_pand_eq_classical {W : Type*} (p q : BProp W) :
+    (↑(Decidable.pand W p q) : Prop' W) = Classical.pand W (↑p) (↑q) := by
+  funext w
+  simp only [Decidable.pand, Classical.pand]
+  -- Goal: (p w && q w = true) = (p w = true ∧ q w = true)
+  cases hp : p w <;> cases hq : q w <;> simp [hp, hq]
+
+/-- Decidable disjunction corresponds to Classical disjunction under coercion. -/
+theorem decidable_por_eq_classical {W : Type*} (p q : BProp W) :
+    (↑(Decidable.por W p q) : Prop' W) = Classical.por W (↑p) (↑q) := by
+  funext w
+  simp only [Decidable.por, Classical.por]
+  -- Goal: (p w || q w = true) = (p w = true ∨ q w = true)
+  cases hp : p w <;> cases hq : q w <;> simp [hp, hq]
+
+/--
+**Transfer theorem**: DE property of `Decidable.pnot` implies DE for `Classical.pnot`.
+
+If negation reverses entailment for decidable propositions,
+it also reverses entailment for classical propositions (under the coercion).
+-/
+theorem classical_pnot_is_de {W : Type*} :
+    ∀ (p q : BProp W), (∀ w, (↑p : Prop' W) w → (↑q : Prop' W) w) →
+      ∀ w, Classical.pnot W (↑q) w → Classical.pnot W (↑p) w := by
+  intro p q hpq w hnq hp
+  simp only [Classical.pnot] at *
+  have hpq_w := hpq w hp
+  exact hnq hpq_w
 
 -- ============================================================================
 -- Notation

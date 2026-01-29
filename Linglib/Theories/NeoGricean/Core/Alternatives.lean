@@ -1,34 +1,94 @@
 /-
 # Neo-Gricean Pragmatics: Alternative Generation
 
-Formalization of Horn sets and alternative generation from Geurts (2010) Ch. 3.1-3.2.
+Formalization of Horn sets and alternative generation from Geurts (2010) Ch. 3.1-3.2,
+extended with M-alternatives for manner implicatures (Horn 1984, Rett 2015).
 
-## Key Insights from Geurts
+## Two Types of Pragmatic Alternatives
 
-1. **Horn Sets, Not Scales** (p.58)
-   Geurts argues that scales should be replaced with SETS.
-   The ordering is derivable from semantics at the sentence level.
+### Q-Alternatives (Quantity/Informativity)
+From Geurts (2010):
+- Differ in INFORMATIVITY (logical strength)
+- Example: "some" vs "all" — different truth conditions
+- Generate Q-implicatures via Quantity maxim
+- Context-sensitive: strength depends on polarity (UE vs DE)
 
-2. **Sentence-Level Strength**
-   Alternatives are stronger SENTENCES, not stronger WORDS.
-   This correctly handles DE environments without "scale reversal".
+### M-Alternatives (Manner/Form Cost)
+From Horn (1984), Rett (2015):
+- Differ in FORM COST (markedness)
+- Example: "as tall as" vs "as short as" — same truth conditions in equatives
+- Generate R-implicatures via Manner maxim (Division of Pragmatic Labor)
+- Construction-sensitive: only in polar-invariant constructions
 
-3. **Amended Alternative Generation** (p.58)
-   φ[β] is an alternative to φ[α] iff:
-   - α and β share a Horn set
-   - φ[β] is stronger than φ[α] (at sentence level)
+## Key Insights
 
-Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
+1. **Horn Sets, Not Scales** (Geurts p.58)
+   Use SETS not ordered SCALES. Ordering comes from sentence-level semantics.
+
+2. **Q vs M Distinction** (Horn 1984)
+   Q-alternatives compete on informativity; M-alternatives compete on form cost.
+   These are orthogonal dimensions of pragmatic competition.
+
+3. **Polar Variance** (Rett 2015)
+   M-alternatives only exist in polar-INVARIANT constructions where
+   antonyms have the same truth conditions.
+
+## References
+
+- Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
+- Horn, L. (1984). Toward a new taxonomy for pragmatic inference.
+- Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
 import Linglib.Theories.NeoGricean.Core.Basic
+import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Phenomena.Semantics.Evaluativity
+import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
 
 -- Use shared ContextPolarity from SemDerivation
 open Montague.SemDeriv (ContextPolarity)
+open NeoGricean.Markedness
+open Phenomena.Semantics.Evaluativity
+
+-- ============================================================================
+-- PART 0: Alternative Types (Q vs M)
+-- ============================================================================
+
+/--
+Types of pragmatic alternatives.
+
+Following Horn (1984) and Levinson (2000):
+- **Q-alternatives**: Compete on informativity (Quantity principle)
+- **M-alternatives**: Compete on form cost (Manner principle)
+
+These generate different types of implicatures via different mechanisms.
+-/
+inductive AlternativeType where
+  | quantity  -- Q-alternatives: differ in informativity
+  | manner    -- M-alternatives: differ in form cost
+  deriving Repr, DecidableEq, BEq
+
+/--
+A unified pragmatic alternative.
+
+Captures both Q-alternatives and M-alternatives with their relevant properties.
+-/
+structure PragmaticAlternative where
+  /-- Type of alternative (Q vs M) -/
+  altType : AlternativeType
+  /-- The alternative form -/
+  form : String
+  /-- The original form being compared to -/
+  originalForm : String
+  /-- Is this alternative "better" (stronger for Q, cheaper for M)? -/
+  isBetter : Bool
+  /-- Explanation of the comparison -/
+  explanation : String
+  deriving Repr
 
 -- ============================================================================
 -- PART 1: Horn Sets (Not Scales)
@@ -346,48 +406,261 @@ def connectiveSetString : HornSet String :=
   ⟨["or", "and"]⟩
 
 -- ============================================================================
--- PART 8: Summary
+-- PART 8: M-Alternatives (Manner/Form Cost)
+-- ============================================================================
+
+/--
+Polar variance: do antonyms have the same truth conditions in this construction?
+
+This determines whether M-alternatives exist:
+- Polar-VARIANT: "taller than" ≠ "shorter than" → no M-alternatives
+- Polar-INVARIANT: "as tall as" = "as short as" → M-alternatives exist
+
+From Rett (2015) Chapter 5.
+-/
+inductive PolarVariance where
+  | variant    -- Different truth conditions (comparatives, positives)
+  | invariant  -- Same truth conditions (equatives, questions)
+  deriving Repr, DecidableEq, BEq
+
+/--
+Polar variance by adjectival construction type.
+-/
+def polarVariance : AdjectivalConstruction → PolarVariance
+  | .positive => .variant
+  | .comparative => .variant
+  | .equative => .invariant
+  | .degreeQuestion => .invariant
+  | .measurePhrase => .variant
+
+/--
+An M-alternative set: forms differing in cost but not truth conditions.
+
+Unlike Q-alternatives (which differ in informativity), M-alternatives are
+EQUIVALENT in meaning but differ in production cost.
+-/
+structure MAlternativeSet where
+  /-- The marked (costlier) form -/
+  marked : String
+  /-- The unmarked (cheaper) form -/
+  unmarked : String
+  /-- The dimension they share (e.g., "height") -/
+  dimension : String
+  /-- The cost difference between forms -/
+  costDifference : ℚ
+  /-- Construction where they're equivalent -/
+  construction : AdjectivalConstruction
+  deriving Repr
+
+instance : BEq MAlternativeSet where
+  beq s1 s2 := s1.marked == s2.marked && s1.unmarked == s2.unmarked &&
+               s1.dimension == s2.dimension && s1.construction == s2.construction
+
+/--
+Generate M-alternatives from an antonym pair.
+
+M-alternatives are generated when:
+1. The construction is polar-invariant (antonyms semantically equivalent)
+2. Markedness can be determined for the pair
+
+Returns `none` if no M-alternatives exist.
+-/
+def generateMAlternatives {max : Nat}
+    (adj1 adj2 : GradableAdjWithMorphology max)
+    (construction : AdjectivalConstruction) : Option MAlternativeSet :=
+  -- Only generate M-alternatives for polar-invariant constructions
+  if polarVariance construction != .invariant then
+    none
+  else
+    -- Compute which form is marked
+    match computeMarked adj1 adj2 with
+    | none => none  -- Cannot determine markedness
+    | some markedForm =>
+      let unmarkedForm := if markedForm == adj1.form then adj2.form else adj1.form
+      some {
+        marked := markedForm
+        unmarked := unmarkedForm
+        dimension := adj1.dimension
+        costDifference := Markedness.costDifference
+        construction := construction
+      }
+
+/--
+Check if a form is the marked member of an M-alternative pair.
+-/
+def isMarkedInMAlternatives {max : Nat}
+    (form : String)
+    (adj1 adj2 : GradableAdjWithMorphology max)
+    (construction : AdjectivalConstruction) : Bool :=
+  match generateMAlternatives adj1 adj2 construction with
+  | none => false
+  | some mAlt => mAlt.marked == form
+
+/--
+Get the M-alternative for a form (if any).
+-/
+def getMAlternative {max : Nat}
+    (form : String)
+    (adj1 adj2 : GradableAdjWithMorphology max)
+    (construction : AdjectivalConstruction) : Option String :=
+  match generateMAlternatives adj1 adj2 construction with
+  | none => none
+  | some mAlt =>
+    if mAlt.marked == form then some mAlt.unmarked
+    else if mAlt.unmarked == form then some mAlt.marked
+    else none
+
+-- ============================================================================
+-- PART 9: M-Alternative Theorems
+-- ============================================================================
+
+/--
+M-alternatives exist in equative constructions.
+-/
+theorem equative_has_m_alternatives :
+    (generateMAlternatives tall_with_morphology short_with_morphology .equative).isSome = true := by
+  native_decide
+
+/--
+M-alternatives exist in degree question constructions.
+-/
+theorem question_has_m_alternatives :
+    (generateMAlternatives tall_with_morphology short_with_morphology .degreeQuestion).isSome = true := by
+  native_decide
+
+/--
+M-alternatives do NOT exist in comparative constructions.
+-/
+theorem comparative_no_m_alternatives :
+    (generateMAlternatives tall_with_morphology short_with_morphology .comparative).isNone = true := by
+  native_decide
+
+/--
+M-alternatives do NOT exist in positive constructions.
+-/
+theorem positive_no_m_alternatives :
+    (generateMAlternatives tall_with_morphology short_with_morphology .positive).isNone = true := by
+  native_decide
+
+/--
+"short" is the marked member in equative M-alternatives.
+-/
+theorem short_is_marked_in_equative :
+    isMarkedInMAlternatives "short" tall_with_morphology short_with_morphology .equative = true := by
+  native_decide
+
+/--
+"tall" is NOT the marked member in equative M-alternatives.
+-/
+theorem tall_is_not_marked_in_equative :
+    isMarkedInMAlternatives "tall" tall_with_morphology short_with_morphology .equative = false := by
+  native_decide
+
+-- ============================================================================
+-- PART 10: Unified Alternative Generation
+-- ============================================================================
+
+/--
+Generate all pragmatic alternatives (both Q and M) for a form.
+
+This is the unified entry point for alternative generation.
+-/
+def generateAllAlternatives {max : Nat}
+    (form : String)
+    (adj1 adj2 : GradableAdjWithMorphology max)
+    (construction : AdjectivalConstruction)
+    (context : SentenceContext) : List PragmaticAlternative :=
+  let mAlts := match getMAlternative form adj1 adj2 construction with
+    | some alt =>
+      let isMarked := isMarkedInMAlternatives form adj1 adj2 construction
+      [{ altType := .manner
+       , form := alt
+       , originalForm := form
+       , isBetter := isMarked  -- If original is marked, alternative is better (cheaper)
+       , explanation := if isMarked then
+           s!"M-alternative: '{alt}' is cheaper than '{form}'"
+         else
+           s!"M-alternative: '{alt}' is costlier than '{form}'"
+       }]
+    | none => []
+  -- Q-alternatives would be added here based on Horn sets
+  -- For now, just return M-alternatives
+  mAlts
+
+-- ============================================================================
+-- PART 11: Q vs M Comparison
+-- ============================================================================
+
+/--
+Key distinction between Q-alternatives and M-alternatives.
+-/
+def alternativeComparison : String :=
+"
+| Property          | Q-Alternatives           | M-Alternatives              |
+|-------------------|--------------------------|------------------------------|
+| Compete on        | Informativity            | Form cost (markedness)       |
+| Truth conditions  | Different                | Same (in construction)       |
+| Maxim             | Quantity (say enough)    | Manner (be brief)            |
+| Implicature       | Scalar implicature       | Manner implicature           |
+| Context-sensitive | Yes (UE vs DE polarity)  | Yes (polar-invariant only)   |
+| Example           | some/all                 | as tall as/as short as       |
+
+Q-alternatives generate 'not all' from 'some' (informativity competition).
+M-alternatives generate evaluativity from marked forms (cost competition).
+"
+
+-- ============================================================================
+-- PART 12: Summary
 -- ============================================================================
 
 /-
 ## What This Module Provides
 
-### Types
+### Alternative Types
+- `AlternativeType`: Q (quantity) vs M (manner)
+- `PragmaticAlternative`: Unified alternative with type and properties
+
+### Q-Alternative Infrastructure
 - `HornSet`: Unordered set of comparable expressions
 - `ContextPolarity`: UE vs DE
-- `SentenceContext`: Context with polarity and description
-- `Alternative`: An alternative with strength information
+- `SentenceContext`: Context with polarity
+- `Alternative`: Q-alternative with strength info
 - `EntailmentChecker`: Abstract entailment checking
+- `generateAlternatives`: Generate Q-alternatives
+- `strongerAlternatives`: Get stronger Q-alternatives
 
-### Type-Safe Horn Sets (primary)
-- `quantifierSet`: HornSet QuantExpr — {.some_, .most, .all}
-- `connectiveSet`: HornSet ConnExpr — {.or_, .and_}
-- `modalSet`: HornSet ModalExpr — {.possible, .necessary}
+### M-Alternative Infrastructure
+- `PolarVariance`: variant vs invariant constructions
+- `MAlternativeSet`: Forms differing in cost, not meaning
+- `generateMAlternatives`: Generate M-alternatives for a construction
+- `isMarkedInMAlternatives`: Check if form is marked
+- `getMAlternative`: Get the alternative to a form
 
-### Type-Safe Entailment Checkers
-- `quantifierChecker`: Grounded in Montague.Scales.Quantifiers.entails
-- `connectiveChecker`: Grounded in Montague.Scales.Connectives.entails
+### Type-Safe Horn Sets
+- `quantifierSet`: {.some_, .most, .all}
+- `connectiveSet`: {.or_, .and_}
+- `modalSet`: {.possible, .necessary}
 
-### String Interface (for syntax connection)
-- `quantifierSetString`: HornSet String — for SemDeriv interface
-- `quantifierCheckerString`: Converts strings, delegates to typed checker
+### Key Theorems
 
-### Functions
-- `generateAlternatives`: Get all alternatives with strength info
-- `strongerAlternatives`: Get only stronger alternatives
-- `fromHornScale`: Convert Scales to Sets
-
-### Key Theorems (Type-Safe)
-- `some_alternatives_ue`: .some_ → [.most, .all] in UE
-- `some_no_alternatives_de`: .some_ → [] in DE (blocked!)
-- `all_alternatives_de`: .all → [.some_, .most] in DE (reversed)
+**Q-Alternative Theorems:**
+- `some_alternatives_ue`: some → [most, all] in UE
+- `some_no_alternatives_de`: some → [] in DE (blocked!)
+- `all_alternatives_de`: all → [some, most] in DE (reversed)
 - `context_determines_alternatives`: Context matters
 
+**M-Alternative Theorems:**
+- `equative_has_m_alternatives`: Equatives license M-competition
+- `question_has_m_alternatives`: Questions license M-competition
+- `comparative_no_m_alternatives`: Comparatives don't
+- `positive_no_m_alternatives`: Positives don't
+- `short_is_marked_in_equative`: "short" is marked in equatives
+
 ### Design Philosophy
-1. **Type-safe scales**: Use QuantExpr/ConnExpr, not strings
-2. **Grounded entailment**: Entailment comes from Montague.Scales
-3. **Geurts p.58**: Use SETS not SCALES; determine strength at SENTENCE level
-4. **String interface**: For backward compatibility with syntax-semantics layer
+1. **Unified framework**: Both Q and M are pragmatic alternatives
+2. **Orthogonal dimensions**: Q competes on informativity, M on cost
+3. **Context-sensitive**: Both depend on context (polarity for Q, construction for M)
+4. **Grounded**: Q in Montague.Scales, M in Markedness
 -/
 
 end NeoGricean.Alternatives

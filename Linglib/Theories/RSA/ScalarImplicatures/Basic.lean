@@ -17,15 +17,14 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 - `rsa_derives_not_all`: Using derivation interface, RSA prefers non-all worlds
 -/
 
-import Linglib.Theories.RSA.Core.Examples
-import Linglib.Theories.RSA.Implementations.GoodmanStuhlmuller2013
+import Linglib.Fragments.Quantities
 import Linglib.Theories.Montague.Derivation.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 
-open RSA RSA.Scalar
+open RSA Quantity
 open Montague
 open Montague.SemDeriv
 open Montague.Lexicon
@@ -45,19 +44,24 @@ For scalar implicatures with quantifiers, the relevant distinction is:
 RSA reasons about these worlds probabilistically.
 -/
 
-/-- World states for scalar implicature reasoning -/
+-- Use the standard 3-person domain from Fragments
+def threePerson : Domain 3 := standard 3
+def scalarScenario : RSAScenario := threePerson.toScenario
+
+/-- World states for scalar implicature reasoning (coarser partition) -/
 inductive ScalarWorld where
   | none  -- No one (0)
   | some  -- Some but not all (1 or 2 out of 3)
   | all   -- All (3 out of 3)
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- Convert RSA CookieWorld to ScalarWorld (coarser partition) -/
-def cookieToScalar : CookieWorld → ScalarWorld
-  | .w0 => .none
-  | .w1 => .some
-  | .w2 => .some
-  | .w3 => .all
+/-- Convert Quantity world to ScalarWorld (coarser partition) -/
+def quantityToScalar : Fin 4 → ScalarWorld
+  | ⟨0, _⟩ => .none
+  | ⟨1, _⟩ => .some
+  | ⟨2, _⟩ => .some
+  | ⟨3, _⟩ => .all
+  | ⟨n+4, h⟩ => absurd h (by omega)
 
 -- ============================================================================
 -- PART 2: RSA Result Structure
@@ -83,16 +87,16 @@ structure RSAScalarResult where
 /--
 Compute RSA result for "some" utterance.
 
-Uses the L1 scores from RSA.Basic to get the distribution over worlds.
+Uses the L1 scores from Quantity.l1 to get the distribution over worlds.
 -/
 def rsaSomeResult : RSAScalarResult :=
-  let l1_scores := RSA.L1_world scalarScenario .some_
+  let l1_scores := l1 threePerson .some_
   -- P(some_not_all) = P(w1) + P(w2)
-  let p_w1 := RSA.getScore l1_scores .w1
-  let p_w2 := RSA.getScore l1_scores .w2
+  let p_w1 := RSA.getScore l1_scores (w1 (n := 3))
+  let p_w2 := RSA.getScore l1_scores (w2 (n := 3))
   let p_some_not_all := p_w1 + p_w2
   -- P(all) = P(w3)
-  let p_all := RSA.getScore l1_scores .w3
+  let p_all := RSA.getScore l1_scores (wAll (n := 3))
   { utterance := "some"
   , probSomeNotAll := p_some_not_all
   , probAll := p_all
@@ -152,8 +156,8 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
     some rsaSomeResult
   else if hasAllQuantifier d then
     -- "all" doesn't generate an implicature (top of scale)
-    let l1_scores := RSA.L1_world scalarScenario .all
-    let p_all := RSA.getScore l1_scores .w3
+    let l1_scores := l1 threePerson .all
+    let p_all := RSA.getScore l1_scores (wAll (n := 3))
     some { utterance := "all"
          , probSomeNotAll := 0
          , probAll := p_all
@@ -213,28 +217,28 @@ theorem rsa_every_no_implicature :
 /--
 Get L1 probability for a specific world.
 -/
-def l1ProbForWorld (w : CookieWorld) : ℚ :=
-  RSA.getScore (RSA.L1_world scalarScenario .some_) w
+def l1ProbForWorld (w : Fin 4) : ℚ :=
+  RSA.getScore (l1 threePerson .some_) w
 
 -- L1 scores for "some" (for reference).
-#eval RSA.L1_world scalarScenario .some_
+#eval l1 threePerson .some_
 
 /--
 **Theorem: w1 > w3 (one vs all)**
 -/
-theorem l1_w1_gt_w3 : l1ProbForWorld .w1 > l1ProbForWorld .w3 := by
+theorem l1_w1_gt_w3 : l1ProbForWorld (w1 (n := 3)) > l1ProbForWorld (wAll (n := 3)) := by
   native_decide
 
 /--
 **Theorem: w2 > w3 (two vs all)**
 -/
-theorem l1_w2_gt_w3 : l1ProbForWorld .w2 > l1ProbForWorld .w3 := by
+theorem l1_w2_gt_w3 : l1ProbForWorld (w2 (n := 3)) > l1ProbForWorld (wAll (n := 3)) := by
   native_decide
 
 /--
 **Theorem: w1 = w2 (symmetry among "some but not all" worlds)**
 -/
-theorem l1_w1_eq_w2 : l1ProbForWorld .w1 = l1ProbForWorld .w2 := by
+theorem l1_w1_eq_w2 : l1ProbForWorld (w1 (n := 3)) = l1ProbForWorld (w2 (n := 3)) := by
   native_decide
 
 -- ============================================================================
@@ -308,7 +312,7 @@ The RSA model currently handles:
 
 The current RSA formalization is **incomplete** - it cannot represent:
 
-1. **Embedded contexts**: The model uses a toy `CookieWorld` with 4 states.
+1. **Embedded contexts**: The model uses a toy domain with 4 world states.
    There's no way to represent "No one ate some cookies" or other embeddings.
 
 2. **DE blocking**: Without compositional semantics over sentence structure,

@@ -20,33 +20,37 @@ knowledge state affects interpretation.
    - Partial access: implicature canceled
 -/
 
-import Linglib.Theories.RSA.Core.Examples
+import Linglib.Fragments.Quantities
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.GoodmanStuhlmuller2013
 
-open RSA RSA.Scalar
+open RSA Quantity
 
 -- ============================================================================
 -- PART 1: Basic Scalar Implicature (Full Knowledge)
 -- ============================================================================
 
+-- Use the 3-person quantity domain from Fragments
+def threePerson : Domain 3 := standard 3
+def scalarScenario : RSAScenario := threePerson.toScenario
+
 namespace BasicImplicature
 
 /-- L0 scores for "some" -/
-def l0_some : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .some_ () () () ()
+def l0_some : List (Fin 4 × ℚ) := l0 threePerson .some_
 
 /-- L0 scores for "all" -/
-def l0_all : List (CookieWorld × ℚ) := RSA.L0 scalarScenario .all () () () ()
+def l0_all : List (Fin 4 × ℚ) := l0 threePerson .all
 
 /-- S1 scores in w3 (all ate) -/
-def s1_w3 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w3 () () () ()
+def s1_w3 : List (Utterance × ℚ) := s1 threePerson (wAll (n := 3))
 
 /-- S1 scores in w1 (1 ate) -/
-def s1_w1 : List (ScalarUtterance × ℚ) := RSA.S1 scalarScenario .w1 () () () ()
+def s1_w1 : List (Utterance × ℚ) := s1 threePerson (w1 (n := 3))
 
 /-- L1 scores for "some" -/
-def l1_some : List (CookieWorld × ℚ) := RSA.L1_world scalarScenario .some_
+def l1_some : List (Fin 4 × ℚ) := l1 threePerson .some_
 
 #eval l0_some   -- L0("some"): uniform 1/3 over {w1, w2, w3}
 #eval l0_all    -- L0("all"): 1 for w3, 0 elsewhere
@@ -60,17 +64,17 @@ def l1_some : List (CookieWorld × ℚ) := RSA.L1_world scalarScenario .some_
 L1("some") assigns higher probability to w1 (some but not all) than to w3 (all).
 -/
 theorem scalar_implicature :
-    RSA.getScore l1_some .w1 > RSA.getScore l1_some .w3 := by
+    RSA.getScore l1_some (w1 (n := 3)) > RSA.getScore l1_some (wAll (n := 3)) := by
   native_decide
 
 /-- L1 also prefers w2 over w3 -/
 theorem scalar_implicature_w2 :
-    RSA.getScore l1_some .w2 > RSA.getScore l1_some .w3 := by
+    RSA.getScore l1_some (w2 (n := 3)) > RSA.getScore l1_some (wAll (n := 3)) := by
   native_decide
 
 /-- In L0, w1 and w3 have equal probability (no implicature at literal level) -/
 theorem l0_no_implicature :
-    RSA.getScore l0_some .w1 = RSA.getScore l0_some .w3 := by
+    RSA.getScore l0_some (w1 (n := 3)) = RSA.getScore l0_some (wAll (n := 3)) := by
   native_decide
 
 /-- In w3, speaker prefers "all" over "some" -/
@@ -224,18 +228,19 @@ end KnowledgeState
 
 namespace Consistency
 
-/-- Map basic CookieWorld to knowledge-state WorldState -/
-def cookieToWorld : CookieWorld → KnowledgeState.WorldState
-  | .w0 => .s0 | .w1 => .s1 | .w2 => .s2 | .w3 => .s3
+/-- Map Quantity world to knowledge-state WorldState -/
+def quantityToWorld : Fin 4 → KnowledgeState.WorldState
+  | ⟨0, _⟩ => .s0 | ⟨1, _⟩ => .s1 | ⟨2, _⟩ => .s2 | ⟨3, _⟩ => .s3
+  | ⟨n+4, h⟩ => absurd h (by omega)
 
-/-- Map basic ScalarUtterance to knowledge-state Utterance -/
-def scalarToUtt : ScalarUtterance → KnowledgeState.Utterance
+/-- Map Quantity Utterance to knowledge-state Utterance -/
+def quantityToUtt : Utterance → KnowledgeState.Utterance
   | .none_ => .none_ | .some_ => .some_ | .all => .all
 
 /-- L0 semantics agree -/
-theorem l0_meaning_consistent (u : ScalarUtterance) (w : CookieWorld) :
-    meaning u w = KnowledgeState.literalMeaning (scalarToUtt u) (cookieToWorld w) := by
-  cases u <;> cases w <;> rfl
+theorem l0_meaning_consistent (u : Utterance) (w : Fin 4) :
+    meaning 3 u w = KnowledgeState.literalMeaning (quantityToUtt u) (quantityToWorld w) := by
+  cases u <;> fin_cases w <;> rfl
 
 /--
 **Consistency Theorem**
@@ -246,8 +251,8 @@ Both models produce the same qualitative result for full-knowledge speakers:
 Basic RSA is a consistent specialization of Knowledge-State RSA.
 -/
 theorem models_consistent_on_implicature :
-    (RSA.getScore (RSA.L1_world scalarScenario .some_) .w1 >
-     RSA.getScore (RSA.L1_world scalarScenario .some_) .w3)
+    (RSA.getScore (l1 threePerson .some_) (w1 (n := 3)) >
+     RSA.getScore (l1 threePerson .some_) (wAll (n := 3)))
     ↔
     (KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s1 >
      KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s3) := by

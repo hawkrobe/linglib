@@ -153,6 +153,7 @@ import Linglib.Theories.Montague.Conjunction
 -- Montague Lexicon
 import Linglib.Theories.Montague.Lexicon.Basic
 import Linglib.Theories.Montague.Lexicon.Features
+import Linglib.Theories.Montague.Lexicon.Degrees
 
 -- Montague Derivations
 import Linglib.Theories.Montague.Derivation.Basic

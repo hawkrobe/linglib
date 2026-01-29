@@ -79,10 +79,12 @@ theorem id_isUpwardEntailing : IsUpwardEntailing (id : Prop' → Prop') :=
 
 /--
 **Negation is DE**: If P ⊆ Q, then ¬Q ⊆ ¬P.
+
+Uses `Core.Proposition.Decidable.pnot_antitone` for the proof.
 -/
 theorem pnot_isDownwardEntailing : IsDownwardEntailing pnot := by
   intro p q hpq w
-  simp only [pnot]
+  simp only [pnot, Core.Proposition.Decidable.pnot]
   -- For Bool, p ≤ q at w means: if p w = true then q w = true
   -- We need: !q w ≤ !p w, i.e., if q w = false then p w = false
   have hpq_w := hpq w

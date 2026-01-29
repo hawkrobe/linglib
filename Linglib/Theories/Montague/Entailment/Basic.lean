@@ -10,6 +10,8 @@ This module provides the core definitions for entailment over a finite world sem
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981)
 -/
 
+import Linglib.Core.Proposition
+
 namespace Montague.Entailment
 
 -- ============================================================================
@@ -23,8 +25,9 @@ inductive World where
 
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
 
-/-- A proposition is a function from worlds to truth values -/
-abbrev Prop' := World → Bool
+/-- A proposition is a function from worlds to truth values.
+    This is `Core.Proposition.BProp World` specialized to our 4-world type. -/
+abbrev Prop' := Core.Proposition.BProp World
 
 -- ============================================================================
 -- Entailment (Decidable Version)
@@ -32,15 +35,27 @@ abbrev Prop' := World → Bool
 
 /-- Semantic entailment: p entails q iff q is true whenever p is true -/
 def entails (p q : Prop') : Bool :=
-  allWorlds.all λ w => !p w || q w
+  Core.Proposition.Decidable.entails World allWorlds p q
 
 -- ============================================================================
--- Propositional Operations
+-- Propositional Operations (inherit from Core.Proposition.Decidable)
 -- ============================================================================
 
-def pnot (p : Prop') : Prop' := λ w => !p w
-def pand (p q : Prop') : Prop' := λ w => p w && q w
-def por (p q : Prop') : Prop' := λ w => p w || q w
+/-- Negation: ¬p w = !p w. Inherits DE property from Core.Proposition. -/
+def pnot (p : Prop') : Prop' := Core.Proposition.Decidable.pnot World p
+
+/-- Conjunction: (p ∧ q) w = p w && q w -/
+def pand (p q : Prop') : Prop' := Core.Proposition.Decidable.pand World p q
+
+/-- Disjunction: (p ∨ q) w = p w || q w -/
+def por (p q : Prop') : Prop' := Core.Proposition.Decidable.por World p q
+
+/-- The DE property of negation, specialized to our World type.
+    Inherited from `Core.Proposition.Decidable.pnot_reverses_entailment`. -/
+theorem pnot_reverses_entailment (p q : Prop')
+    (h : ∀ w, p w = true → q w = true) :
+    ∀ w, pnot q w = true → pnot p w = true :=
+  Core.Proposition.Decidable.pnot_reverses_entailment p q h
 
 -- ============================================================================
 -- Concrete Test Propositions

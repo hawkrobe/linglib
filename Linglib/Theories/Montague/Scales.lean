@@ -136,6 +136,90 @@ theorem some_has_stronger_alternatives :
     strongerAlternatives quantScale .some_ = [.most, .all] := by
   native_decide
 
+-- ============================================================================
+-- World Semantics (Intensional)
+-- ============================================================================
+
+/-!
+## Intensional Semantics
+
+Following Montague's IL, meanings are functions from possible worlds to extensions.
+For quantifiers over a finite domain of size `maxN`:
+- A world is characterized by how many entities satisfy the predicate
+- The meaning of a quantifier is a function from worlds to truth values
+-/
+
+/--
+A quantifier world for a domain of size `maxN`.
+
+In Montague's terms, this is an index (world) at which we evaluate the intension.
+The world is characterized by how many of the `maxN` entities have the property.
+-/
+structure QuantWorld (maxN : Nat) where
+  /-- How many entities satisfy the predicate (0 to maxN) -/
+  count : Fin (maxN + 1)
+  deriving DecidableEq, BEq, Repr
+
+/--
+Intensional meaning of quantifiers: World → Bool.
+
+This is the core of Montague semantics - the meaning of a quantifier
+is its intension, a function from possible worlds to truth values.
+
+- `none`: true iff no entities have the property
+- `some`: true iff at least one entity has the property (lower-bounded)
+- `most`: true iff more than half have the property
+- `all`: true iff all entities have the property
+-/
+def worldMeaning (maxN : Nat) : QuantExpr → QuantWorld maxN → Bool
+  | .none_, w => w.count.val == 0
+  | .some_, w => w.count.val ≥ 1
+  | .most, w => w.count.val > maxN / 2
+  | .all, w => w.count.val == maxN
+
+/-- Enumerate all possible worlds for a domain -/
+def allWorlds (maxN : Nat) : List (QuantWorld maxN) :=
+  (List.range (maxN + 1)).filterMap fun n =>
+    if h : n < maxN + 1 then some ⟨⟨n, h⟩⟩ else none
+
+-- Convenience: 3-entity domain (cookie scenario)
+/-- World where 0 entities satisfy the predicate -/
+def w0 : QuantWorld 3 := ⟨⟨0, by omega⟩⟩
+/-- World where 1 entity satisfies the predicate -/
+def w1 : QuantWorld 3 := ⟨⟨1, by omega⟩⟩
+/-- World where 2 entities satisfy the predicate -/
+def w2 : QuantWorld 3 := ⟨⟨2, by omega⟩⟩
+/-- World where 3 entities satisfy the predicate (all) -/
+def w3 : QuantWorld 3 := ⟨⟨3, by omega⟩⟩
+
+/--
+**Theorem: Entailment preserved in world semantics**
+
+If q1 entails q2, then q1 true → q2 true in any world.
+This connects the extensional entailment to intensional semantics.
+-/
+theorem entailment_preserved_all_some :
+    (worldMeaning 3 .all w0 = true → worldMeaning 3 .some_ w0 = true) ∧
+    (worldMeaning 3 .all w1 = true → worldMeaning 3 .some_ w1 = true) ∧
+    (worldMeaning 3 .all w2 = true → worldMeaning 3 .some_ w2 = true) ∧
+    (worldMeaning 3 .all w3 = true → worldMeaning 3 .some_ w3 = true) := by
+  native_decide
+
+/--
+**Theorem: "some" has lower-bounded semantics**
+
+"some" is true in worlds where at least one entity has the property,
+INCLUDING the world where ALL have the property. This is key for SI.
+-/
+theorem some_lower_bounded :
+    worldMeaning 3 .some_ w0 = false ∧
+    worldMeaning 3 .some_ w1 = true ∧
+    worldMeaning 3 .some_ w2 = true ∧
+    worldMeaning 3 .some_ w3 = true := by native_decide
+
+/-- "some" compatible with "all" world - the key for scalar implicature -/
+theorem some_compatible_with_all : worldMeaning 3 .some_ w3 = true := by native_decide
+
 end Quantifiers
 
 -- ============================================================================

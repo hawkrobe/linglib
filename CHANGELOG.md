@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.29.0] - 2025-01-29
+
+### Added
+- **Theories/Montague/Lexicon/Degrees.lean**: Refactored from Fragments, now canonical location for degree semantics
+  - `Degree`, `Threshold`, `NegationType`, `ThresholdPair`: Core types
+  - `HasDegree` typeclass: measure functions μ : Entity → ℚ
+  - Threshold semantics: `positiveMeaning`, `negativeMeaning`, `contraryNeg`, `contradictoryNeg`
+  - Rounding/precision semantics (Lasersohn 1999 pragmatic halo):
+    - `roundToNearest`: Round value to nearest multiple of base
+    - `PrecisionMode`: exact vs approximate interpretation
+    - `numeralWithPrecision`: Numeral meaning under precision mode
+  - Compositional sentence semantics:
+    - `MeasurePredicate`: Measure verbs like "cost"
+    - `DegreePhrase`: Semantic value of "u dollars"
+    - `measureSentence`: Full sentence "The X cost u dollars"
+- **Theories/NeoGricean/Core/Markedness.lean**: Markedness computation from objective properties
+- **Theories/RSA/Implementations/TesslerFranke2020.lean**: "Not unreasonable" flexible negation model
+
+### Changed
+- **Fragments/Degrees.lean**: Now imports from Montague, keeps RSA-specific domains (Price, Height, Temperature)
+- **RSA/Implementations/KaoEtAl2014_Hyperbole.lean**: Full 5-QUD model matching paper
+  - Goals: price, valence, priceValence, approxPrice, approxPriceValence
+  - Item-specific priors (electricKettle, laptop, watch)
+  - Grounding via `MeasurePredicate` and `measureSentence`
+  - QUD equivalence with rounding for approximate goals
+- **Montague/Lexicon/Adjectives/Theory.lean**: Updated imports to use Montague.Lexicon.Degrees
+
+### Architecture
+- Degree primitives now live in Montague (semantic theory), RSA domains in Fragments (experimental building blocks)
+- Rounding semantics grounded in formal semantic theory (pragmatic halo, precision modes)
+
 ## [0.28.0] - 2025-01-29
 
 ### Added

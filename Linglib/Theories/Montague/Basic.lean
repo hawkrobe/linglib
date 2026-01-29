@@ -182,6 +182,40 @@ def interpSVO (m : Model)
   apply (apply verb obj) subj
 
 -- ============================================================================
+-- Sentence-Level Logical Operators
+-- ============================================================================
+
+/-- Sentence negation: ¬p
+    Type: t → t
+    "John doesn't sleep" = neg(sleep(john))
+
+    This is the model-theoretic version (operates on a single Bool).
+    For the world-indexed version with proven DE property, see
+    `Core.Proposition.Decidable.pnot`.
+
+    Connection: `pnot W p w = neg (p w)` -/
+def neg {m : Model} (p : m.interpTy .t) : m.interpTy .t := !p
+
+/-- Sentence conjunction: p ∧ q -/
+def conj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p && q
+
+/-- Sentence disjunction: p ∨ q -/
+def disj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p || q
+
+/-- Interpret a negated SV sentence: "John doesn't sleep" -/
+def interpNegSV (m : Model)
+    (subj : m.interpTy .e)
+    (verb : m.interpTy (.e ⇒ .t)) : m.interpTy .t :=
+  neg (interpSV m subj verb)
+
+/-- Interpret a negated SVO sentence: "John doesn't eat pizza" -/
+def interpNegSVO (m : Model)
+    (subj : m.interpTy .e)
+    (verb : m.interpTy (.e ⇒ .e ⇒ .t))
+    (obj : m.interpTy .e) : m.interpTy .t :=
+  neg (interpSVO m subj verb obj)
+
+-- ============================================================================
 -- Truth Conditions
 -- ============================================================================
 
@@ -192,6 +226,17 @@ def isTrue (m : Model) (meaning : m.interpTy .t) : Prop :=
 -- Examples
 example : isTrue toyModel (interpSV toyModel john_sem sleeps_sem) := rfl
 example : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
+
+-- Negation examples
+/-- "Mary doesn't sleep" is true (because Mary doesn't sleep) -/
+example : isTrue toyModel (interpNegSV toyModel mary_sem sleeps_sem) := rfl
+
+/-- "John doesn't sleep" is false (because John does sleep) -/
+example : interpNegSV toyModel john_sem sleeps_sem = false := rfl
+
+/-- Double negation: neg(neg(p)) = p -/
+theorem double_negation {m : Model} (p : m.interpTy .t) : neg (neg p) = p := by
+  simp only [neg, Bool.not_not]
 
 -- Counter-examples (these would NOT be provable)
 -- example : isTrue toyModel (interpSV toyModel mary_sem sleeps_sem) := rfl  -- would fail
