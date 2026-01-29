@@ -164,6 +164,71 @@ def likeLove : Scale DegreeExpr :=
   }
 
 -- ============================================================================
+-- Evaluative Scales (for politeness, reviews, etc.)
+-- ============================================================================
+
+/--
+Evaluative adjective expressions for quality judgments.
+
+This scale is used in:
+- Yoon et al. (2020) politeness model
+- Review/feedback contexts
+
+The scale goes from strongly negative to strongly positive:
+⟨terrible, bad, good, amazing⟩
+-/
+inductive EvalExpr where
+  | terrible | bad | good | amazing
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+/-- The ⟨terrible, bad, good, amazing⟩ evaluative scale -/
+def terribleAmazing : Scale EvalExpr :=
+  { items := [.terrible, .bad, .good, .amazing]
+  , name := "⟨terrible, bad, good, amazing⟩"
+  }
+
+/-- Negated evaluative: "not terrible", "not amazing", etc. -/
+inductive NegatedEvalExpr where
+  | notTerrible | notBad | notGood | notAmazing
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+/-- Convert evaluative to negated form -/
+def EvalExpr.negate : EvalExpr → NegatedEvalExpr
+  | .terrible => .notTerrible
+  | .bad => .notBad
+  | .good => .notGood
+  | .amazing => .notAmazing
+
+/-- Get the base (unnegated) form -/
+def NegatedEvalExpr.base : NegatedEvalExpr → EvalExpr
+  | .notTerrible => .terrible
+  | .notBad => .bad
+  | .notGood => .good
+  | .notAmazing => .amazing
+
+/--
+Combined evaluative utterance type (positive + negated).
+
+This is the full utterance set for politeness scenarios:
+8 utterances = 4 positive + 4 negated.
+-/
+inductive EvalUtterance where
+  | pos : EvalExpr → EvalUtterance
+  | neg : NegatedEvalExpr → EvalUtterance
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+/-- All evaluative utterances (positive and negated) -/
+def allEvalUtterances : List EvalUtterance := [
+  .pos .terrible, .pos .bad, .pos .good, .pos .amazing,
+  .neg .notTerrible, .neg .notBad, .neg .notGood, .neg .notAmazing
+]
+
+/-- Is this a negated utterance? -/
+def EvalUtterance.isNegated : EvalUtterance → Bool
+  | .pos _ => false
+  | .neg _ => true
+
+-- ============================================================================
 -- Numeral Scales
 -- ============================================================================
 

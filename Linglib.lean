@@ -238,6 +238,7 @@ import Linglib.Theories.RSA.Implementations.TesslerFranke2020
 import Linglib.Theories.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
+import Linglib.Theories.RSA.Implementations.YoonEtAl2020
 import Linglib.Theories.RSA.DegenEtAl2020
 
 -- RSA Extensions: Information Theory (Zaslavsky et al. 2020)
@@ -284,6 +285,7 @@ import Linglib.Phenomena.Projection.ScontrasTonhauser2025
 -- Quantifier scope ambiguity (Scontras & Pearl 2021)
 import Linglib.Phenomena.ScontrasPearl2021.Data
 import Linglib.Phenomena.HeKaiserIskarous2025.Data
+import Linglib.Phenomena.YoonEtAl2020.Data
 
 -- Scope-word order interactions (Dutch/German)
 import Linglib.Phenomena.ScopeWordOrder.Data

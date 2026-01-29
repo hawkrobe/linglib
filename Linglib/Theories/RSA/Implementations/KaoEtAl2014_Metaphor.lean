@@ -477,6 +477,159 @@ Both emerge from the same pragmatic mechanism: QUD-sensitive optimization.
 -/
 
 -- ============================================================================
+-- PART: Compositional Grounding in Montague Semantics
+-- ============================================================================
+
+/-!
+## Features as Adjective Denotations
+
+The features in metaphor (dangerous, unpredictable, comforting) are **adjective predicates**.
+In Montague semantics, adjectives denote properties:
+
+  ⟦dangerous⟧ = λx. dangerous(x) : Entity → Prop
+
+The sentence "John is dangerous" involves **predication**:
+
+  ⟦John is dangerous⟧ = dangerous(john)
+
+For metaphor "John is a shark":
+- Literal: ⟦John is a shark⟧ = shark(john) — FALSE for a person
+- Metaphorical: via P(dangerous | shark), the listener infers dangerous(john)
+
+The feature priors P(f|c) are **soft meaning postulates** connecting
+category predicates to feature predicates. In classical semantics:
+
+  shark(x) → dangerous(x)  (meaning postulate)
+
+In the probabilistic RSA setting:
+
+  P(dangerous | shark) ≈ 0.9  (soft meaning postulate)
+-/
+
+/--
+**Feature as Montague property.**
+
+A feature predicate is a function from entities (Meanings) to truth values.
+This is the type `Entity → Prop` in Montague's IL, here instantiated
+for our Meaning type.
+-/
+abbrev FeaturePred := Meaning → Bool
+
+/--
+**Compositionally derived feature predicates.**
+
+Each `Feature` corresponds to a Montague adjective denotation:
+- ⟦dangerous⟧ = λm. m.dangerous
+- ⟦unpredictable⟧ = λm. m.unpredictable
+- ⟦comforting⟧ = λm. m.comforting
+-/
+def featureDenotation : Feature → FeaturePred
+  | .dangerous => fun m => m.dangerous
+  | .unpredictable => fun m => m.unpredictable
+  | .comforting => fun m => m.comforting
+
+/--
+**Category as Montague common noun.**
+
+A category predicate is a function from entities to truth values.
+⟦shark⟧ = λx. shark(x)
+-/
+abbrev CategoryPred := Meaning → Bool
+
+/--
+**Compositionally derived category predicates.**
+
+Each `Category` corresponds to a Montague common noun denotation.
+-/
+def categoryDenotation : Category → CategoryPred
+  | .person => fun m => m.category == .person
+  | .shark => fun m => m.category == .shark
+  | .fire => fun m => m.category == .fire
+  | .blanket => fun m => m.category == .blanket
+
+/--
+**Literal semantics IS category predication.**
+
+The literal meaning of "X is a Y" is just applying the category predicate:
+  ⟦John is a shark⟧ = shark(john)
+
+This demonstrates the compositional structure: `meaningSemantics` applies
+the appropriate `categoryDenotation` based on the utterance.
+-/
+def utteranceCategory : Utterance → Category
+  | .person => .person
+  | .shark => .shark
+  | .fire => .fire
+  | .blanket => .blanket
+
+/-- Literal semantics matches category predication for specific cases -/
+example : meaningSemantics .shark ⟨.person, true, false, false⟩ = categoryDenotation .shark ⟨.person, true, false, false⟩ := rfl
+example : meaningSemantics .shark ⟨.shark, true, false, false⟩ = categoryDenotation .shark ⟨.shark, true, false, false⟩ := rfl
+
+/--
+**Soft meaning postulate: P(feature | category).**
+
+This function extracts the prototypical feature value for a category,
+implementing the soft meaning postulate that connects categories to features.
+
+Classical: shark(x) → dangerous(x)
+Soft: P(dangerous(x) | shark(x)) = 1 (for prototypical shark)
+-/
+def softMeaningPostulate (c : Category) (f : Feature) : Bool :=
+  let proto := prototypicalMeaning c
+  featureDenotation f proto
+
+/--
+**Feature match uses compositional predicates.**
+
+The featureMatch function that drives metaphor interpretation
+is grounded in applying feature predicates to meanings.
+The match count compares feature predicate values between
+the evoked prototype and the target meaning.
+-/
+def featureMatchCompositional (u : Utterance) (m : Meaning) : ℚ :=
+  let evoked := prototypicalMeaning (match u with
+    | .person => .person | .shark => .shark | .fire => .fire | .blanket => .blanket)
+  let matchCount : ℕ :=
+    (if featureDenotation .dangerous evoked == featureDenotation .dangerous m then 1 else 0) +
+    (if featureDenotation .unpredictable evoked == featureDenotation .unpredictable m then 1 else 0) +
+    (if featureDenotation .comforting evoked == featureDenotation .comforting m then 1 else 0)
+  (matchCount : ℚ) / 3
+
+/--
+**QUD as focus on a feature predicate.**
+
+The QUD/Goal selects which feature predicate to focus on.
+This is the compositional connection: QUD projects to a property type.
+
+- Goal.dangerous → focus on ⟦dangerous⟧
+- Goal.unpredictable → focus on ⟦unpredictable⟧
+- Goal.comforting → focus on ⟦comforting⟧
+-/
+def goalToFeature : Goal → Option Feature
+  | .category => none  -- Category QUD doesn't project to a feature
+  | .dangerous => some .dangerous
+  | .unpredictable => some .unpredictable
+  | .comforting => some .comforting
+
+/--
+**QUD equivalence as feature predicate agreement.**
+
+Two meanings are QUD-equivalent iff the focused feature predicate
+returns the same value for both. This shows QUD projection
+is selecting a property dimension.
+-/
+def qudEquivCompositional (g : Goal) (m1 m2 : Meaning) : Bool :=
+  match goalToFeature g with
+  | some f => featureDenotation f m1 == featureDenotation f m2
+  | none => m1.category == m2.category
+
+/-- QUD equivalence matches the compositional definition -/
+theorem qudEquiv_eq_compositional (g : Goal) (m1 m2 : Meaning) :
+    qudEquiv g m1 m2 = qudEquivCompositional g m1 m2 := by
+  cases g <;> simp [qudEquiv, qudEquivCompositional, goalToFeature, featureDenotation]
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
