@@ -59,6 +59,7 @@ import Linglib.Core.CommonGround
 import Linglib.Fragments.ReferenceGames
 import Linglib.Fragments.Quantities
 import Linglib.Fragments.Scales
+import Linglib.Fragments.Degrees
 
 -- RSA Core and Extensions
 import Linglib.Theories.RSA.Core.Basic

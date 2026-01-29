@@ -6,6 +6,10 @@
 - **Montague/Lexicon/Features.lean**: `HasColor`, `HasShape` typeclasses for generic feature predicates
   - Enables selectional restriction modeling (entities must implement typeclass to receive predicate)
   - Generic `featureMeaning {E} [HasColor E] [HasShape E]` works for any entity type
+- **Fragments/Degrees.lean**: `HasDegree` typeclass for entities with numerical magnitudes
+  - `numeralExact`, `numeralAtLeast`, `numeralApprox` for numeral expression semantics
+  - Domain types: `Price.World`, `Height.World`, `Temperature.World`
+  - Grounding for Kao et al. (2014) hyperbole model
 - **docs/ROADMAP.md**: Note on selectional restrictions / category mistakes as future phenomenon
 
 ### Changed
@@ -14,10 +18,15 @@
   - `featureMeaning` and `Feature.appliesTo` derived from generic Montague definitions
 - **RSA/Implementations/FrankGoodman2012.lean**: Uses Montague-grounded reference game infrastructure
   - Grounding theorem: `meaning_from_compositional` shows RSA φ derives from Montague
+- **RSA/Implementations/KaoEtAl2014_Hyperbole.lean**: Uses `HasDegree` from Degrees.lean
+  - `Price` implements `HasDegree` via `Price.value`
+  - `literal` uses `numeralExact` for grounded semantics
+  - Grounding theorem: `literal_uses_degree`
 
 ### Architecture
-- Feature predicates now have clean theory-neutral vocabulary (Montague) vs domain-specific entities (Fragments)
-- Path to modeling "green ideas" style category mistakes via typeclass constraints
+- Feature predicates: theory-neutral vocabulary (Montague) vs domain-specific entities (Fragments)
+- Degree/magnitude semantics: `HasDegree` typeclass unifies prices, heights, temperatures
+- "John is tall" and "John is 6 feet" use the same underlying degree scale
 
 ## [0.27.0] - 2025-01-28
 

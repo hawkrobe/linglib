@@ -31,6 +31,11 @@ L1 marginalizes over QUDs, recovering that the speaker was probably:
 - Talking about something expensive (true affect)
 - NOT meaning the literal price (unlikely QUD was "price")
 
+## Grounding
+
+Price semantics is grounded in the `HasDegree` typeclass from `Fragments/Degrees.lean`.
+The literal meaning of "fifty dollars" is `numeralExact 50 price` - the price equals $50.
+
 ## References
 
 - Kao, Justine T., Jean Y. Wu, Leon Bergen, and Noah D. Goodman. (2014).
@@ -39,10 +44,11 @@ L1 marginalizes over QUDs, recovering that the speaker was probably:
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Fragments.Degrees
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA
+open RSA Degrees
 
 -- ============================================================================
 -- Domain: Prices and Affects
@@ -54,6 +60,16 @@ inductive Price where
   | p500     -- $500 (medium)
   | p10000   -- $10,000 (high)
   deriving Repr, DecidableEq, BEq
+
+/-- Map Price to its numerical value -/
+def Price.value : Price → ℚ
+  | .p50 => 50
+  | .p500 => 500
+  | .p10000 => 10000
+
+/-- Price implements HasDegree (grounding in Degrees.lean) -/
+instance : HasDegree Price where
+  degree := Price.value
 
 /-- Affect states -/
 inductive Affect where
@@ -75,6 +91,13 @@ inductive Utterance where
   | million     -- "a million dollars" (hyperbolic)
   deriving Repr, DecidableEq, BEq
 
+/-- Map Utterance to its stated value -/
+def Utterance.value : Utterance → ℚ
+  | .fifty => 50
+  | .fiveHundred => 500
+  | .tenThousand => 10000
+  | .million => 1000000
+
 /-- QUD / Communicative goal -/
 inductive Goal where
   | price   -- care about exact price
@@ -83,24 +106,25 @@ inductive Goal where
   deriving Repr, DecidableEq, BEq
 
 -- ============================================================================
--- Literal Semantics
+-- Literal Semantics (grounded in HasDegree)
 -- ============================================================================
 
 /--
 Literal semantics: does utterance literally describe price?
 
+Grounded via `numeralExact` from Degrees.lean:
+  literal u p = (HasDegree.degree p == u.value)
+
 Note: "million" is literally false for all actual prices in our domain.
 This is key to hyperbole - L0 gives it probability 0, but S1 under QUD
 "affect" can still choose it.
 -/
-def literal : Utterance → Price → Bool
-  | .fifty, .p50 => true
-  | .fifty, _ => false
-  | .fiveHundred, .p500 => true
-  | .fiveHundred, _ => false
-  | .tenThousand, .p10000 => true
-  | .tenThousand, _ => false
-  | .million, _ => false  -- Never literally true!
+def literal (u : Utterance) (p : Price) : Bool :=
+  numeralExact u.value p
+
+/-- Grounding theorem: literal uses HasDegree -/
+theorem literal_uses_degree (u : Utterance) (p : Price) :
+    literal u p = (HasDegree.degree p == u.value) := rfl
 
 /--
 Full meaning semantics: utterance is true if it matches the price component.
