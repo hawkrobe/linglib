@@ -918,6 +918,148 @@ The whole point is catching when adding phenomenon X breaks theory Y.
 
 ---
 
+## RSA Model Replications
+
+This section tracks implementation of published RSA models from the literature.
+Based on Degen (2023) review and systematic literature search (2012–2025).
+
+### Core/Foundational (Reference Games)
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Frank & Goodman (2012)** | ✅ Done | `FrankGoodman2012.lean` | Original RSA; reference game |
+| **Degen et al. (2020)** Overinformative REs | ✗ TODO | — | Extended utility for redundancy |
+| **Hawkins et al. (2021)** Perspective-taking | ✗ TODO | — | Asymmetric common ground |
+
+### Scalar Implicature
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Goodman & Stuhlmüller (2013)** | ✅ Done | `GoodmanStuhlmuller2013.lean` | Knowledge states; hypergeometric derivation |
+| **Bergen et al. (2016)** Lexical Uncertainty | ✅ Done | `Extensions/LexicalUncertainty/` | Reasoning about meanings |
+| **Potts et al. (2016)** Embedded SI | ✅ Done | `PottsEtAl2016.lean` | Compositional LU |
+| **Cremers, Wilcox & Spector (2023)** | ✗ TODO | — | Exhaustivity vs anti-exhaustivity; model comparison |
+| **Franke & Bergen (2020)** Lexical Intentions | ✗ TODO | — | Grammar-pragmatics synthesis |
+| **Asherov, Fox & Katzir (2024)** | ✗ TODO | — | Strengthening vs exhaustification |
+
+### Vagueness & Gradable Adjectives
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Lassiter & Goodman (2013, 2017)** | ✅ Done | `LassiterGoodman2017.lean` | Threshold uncertainty |
+| **Tessler & Franke (2020)** | ✅ Done | `TesslerFranke2020.lean` | Adjective vagueness |
+| **Tessler & Goodman (2022)** | ✅ Done | `TesslerGoodman2022.lean` | Comparison class inference |
+| **Egré et al. (2023)** "Around" | ✗ TODO | — | Vagueness as communicative resource |
+| **Qing & Franke (2014)** Speaker-oriented | ✗ TODO | — | Speaker-oriented adjective model |
+
+### Figurative Language
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Kao et al. (2014b)** Hyperbole | ✅ Done | `KaoEtAl2014_Hyperbole.lean` | QUD-sensitive; "waited 1000 hours" |
+| **Kao et al. (2014a)** Metaphor | ✗ TODO | — | Metaphor comprehension |
+| **Kao & Goodman (2015)** Irony | ✗ TODO | — | Verbal irony; affective QUDs |
+| **Spinoso-Di Piano et al. (2024)** | ✗ TODO | — | Scalable metaphor model |
+| **(RSA)² (2025)** | ✗ TODO | — | Rhetorical strategy awareness |
+
+### Politeness & Social Meaning
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Yoon et al. (2016, 2017, 2020)** Politeness | ✗ TODO | — | Three-goal utility: informational, prosocial, presentational |
+| **Burnett (2017, 2019)** Sociolinguistic | ✗ TODO | — | Style as signaling |
+| **Cohn-Gordon & Qing (2019)** Use-conditional | ✗ TODO | — | Expressive/slur meanings |
+| **Henderson & McCready (2020)** Dogwhistles | ✗ TODO | — | Coded communication |
+
+### Scope & Ambiguity
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Scontras & Pearl (2021)** | ✅ Done | `ScontrasPearl2021.lean` | Interpretation-level uncertainty |
+| **Scontras & Goodman (2017)** Plurals | ✗ TODO | — | Distributive/collective ambiguity |
+| **Champollion et al. (2019)** Free Choice | ✗ TODO | — | RSA for free choice disjunction |
+| **Alsop (2024)** Free Choice *any* | ✗ TODO | — | Universal FCI |
+
+### Presupposition & Projection
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Qing et al. (2016)** | ✗ TODO | — | RSA for presupposition projection |
+| **Stevens et al. (2017)** | ✗ TODO | — | Prosody and projection |
+| **Scontras & Tonhauser (2025)** | ✅ Done | `ScontrasTonhauser2025.lean` | BToM projection model |
+
+### Questions & QUDs
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Hawkins et al. (2015)** | ✗ TODO | — | Question asking; informative questions |
+
+### Generics & Quantification
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Tessler & Goodman (2019)** Generics | ✗ TODO | — | QUD-sensitive generics |
+| **Franke (2014)** Quantifier typicality | ✗ TODO | — | Quantifier interpretation |
+
+### Adaptation & Convention
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Hawkins et al. (2020)** Continual adaptation | ✗ TODO | — | Hierarchical RSA |
+| **Hawkins et al. (2022)** Convention formation | ✗ TODO | — | Population-level conventions |
+| **Schuster & Degen (2020)** Listener adaptation | ✗ TODO | — | Uncertainty expressions |
+
+### Language Acquisition
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Bohn et al. (2021)** Word learning | ✗ TODO | — | Children's information integration |
+| **Frank & Goodman (2014)** Word meanings | ✗ TODO | — | Word learning as pragmatic inference |
+| **Stiller et al. (2015)** Child SI | ✗ TODO | — | Ad-hoc implicature in preschoolers |
+
+### Reasoning & Inference
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Tessler et al. (2022)** Syllogisms | ✗ TODO | — | Syllogistic conclusion selection |
+
+### Homogeneity & Plural Predication
+
+| Paper | Status | File | Notes |
+|-------|--------|------|-------|
+| **Spector (2017)** | ✗ TODO | — | Homogeneity in RSA |
+| **Križ & Spector (2020)** | ✗ TODO | — | Non-maximality |
+
+### Other RSA Files (Implemented)
+
+| File | Paper/Model | Notes |
+|------|-------------|-------|
+| `FrankeBergen2020.lean` | Franke & Bergen (2020) | LU comparison |
+| `DegenEtAl2020.lean` | Degen et al. (2020) | RSA fragments |
+| `HeKaiserIskarous2025.lean` | He, Kaiser & Iskarous (2025) | Politeness negation |
+| `CremersWilcoxSpector2023.lean` | Cremers et al. (2023) | Exhaustivity LU |
+
+### Implementation Priority
+
+**High Priority** (foundational for comparison work):
+1. Cremers, Wilcox & Spector (2023) — Defines RSA variant comparison criteria
+2. Franke & Bergen (2020) Lexical Intentions — Grammar-pragmatics interface
+3. Yoon et al. (2020) Politeness — Multi-goal utility extension
+4. Champollion et al. (2019) Free Choice — Connects to exhaustification
+
+**Medium Priority** (extends coverage):
+5. Kao et al. (2014a) Metaphor — Figurative language
+6. Tessler & Goodman (2019) Generics — New domain
+7. Hawkins et al. (2022) Conventions — Adaptation dynamics
+8. Egré et al. (2023) Vagueness — Novel predictions
+
+**Lower Priority** (specialized domains):
+9. Acquisition models (Bohn, Frank, Stiller)
+10. Social meaning (Burnett, dogwhistles)
+11. Multi-turn dialog (CRSA 2025)
+
+---
+
 ## Completed
 
 - [x] Intensional Montague Semantics (`Montague/Intensional.lean`)

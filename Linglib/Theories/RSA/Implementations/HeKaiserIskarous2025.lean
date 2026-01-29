@@ -225,7 +225,7 @@ def wonkyScenario (cfg : HKIConfig) : RSAScenario where
   Goal := WorldType
   φ := fun _ _ u s => boolToQ (literalTruth s u)
   goalProject := wonkyGoalProject
-  inBeliefState := fun _ _ => true
+  speakerCredence := fun _ _ => 1
   utterances := allUtterances
   worlds := allStates
   interps := [()]
@@ -282,7 +282,7 @@ def funkyScenario (cfg : HKIConfig) : RSAScenario where
   Goal := WorldType
   φ := fun _ _ u s => fuzzyMeaning cfg u s
   goalProject := wonkyGoalProject
-  inBeliefState := fun _ _ => true
+  speakerCredence := fun _ _ => 1
   utterances := allUtterances
   worlds := allStates
   interps := [()]

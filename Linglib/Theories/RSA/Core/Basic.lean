@@ -72,7 +72,7 @@ This supports:
 - `BeliefState`, `Goal`: Mental state types (inferred by listener)
 - `φ`: Agreement function parameterized by interpretation and lexicon
 - `goalProject`: Goal equivalence relation on worlds
-- `inBeliefState`: Belief state membership predicate
+- `speakerCredence`: Belief state membership predicate
 - Priors: `worldPrior`, `interpPrior`, `lexiconPrior`, `beliefStatePrior`, `goalPrior`
 - `α`: Rationality parameter
 
@@ -113,15 +113,16 @@ structure RSAScenario where
   φ : Interp → Lexicon → Utterance → World → ℚ
   /-- Goal projection: are two worlds equivalent under this goal/QUD? -/
   goalProject : Goal → World → World → Bool
-  /-- Belief state membership: is world in speaker's belief state?
+  /-- Speaker's credence: P_speaker(w | a).
 
-      Returns true if world w is consistent with belief state a.
-      This is used to constrain the speaker's reasoning to worlds
-      they consider possible.
+      The speaker's subjective probability for world w given epistemic state a.
 
-      Default: all worlds are in all belief states (no constraints).
+      - Value 0: world w is impossible given state a
+      - Value > 0: relative weight/probability for world w
+
+      Default: uniform (all worlds equally weighted).
   -/
-  inBeliefState : BeliefState → World → Bool := fun _ _ => true
+  speakerCredence : BeliefState → World → ℚ := fun _ _ => 1
 
   /-- Enumeration of utterances -/
   utterances : List Utterance
@@ -226,7 +227,7 @@ def RSAScenario.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
   Goal := Unit
   φ _ _ u w := φ u w
   goalProject _ w w' := w == w'
-  inBeliefState _ _ := true
+  speakerCredence _ _ := 1
   utterances := utterances
   worlds := worlds
   interps := [()]
@@ -283,7 +284,7 @@ def RSAScenario.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
   Goal := Unit
   φ i _ u w := φ i u w
   goalProject _ w w' := w == w'
-  inBeliefState _ _ := true
+  speakerCredence _ _ := 1
   utterances := utterances
   worlds := worlds
   interps := interps
@@ -344,7 +345,7 @@ def RSAScenario.qud {U W Q : Type} [BEq U] [BEq W] [BEq Q]
   Goal := Q
   φ _ _ u w := φ u w
   goalProject := qudProject
-  inBeliefState _ _ := true
+  speakerCredence _ _ := 1
   utterances := utterances
   worlds := worlds
   interps := [()]
@@ -384,7 +385,7 @@ This is for BToM-style projection models like Scontras & Tonhauser (2025).
 def projectionScenario : RSAScenario :=
   RSAScenario.mentalState
     allUtterances allWorlds allBeliefStates allGoals
-    literalMeaning inBeliefState goalProject
+    literalMeaning speakerCredence goalProject
 ```
 -/
 def RSAScenario.mentalState {U W A Q : Type}
@@ -392,7 +393,7 @@ def RSAScenario.mentalState {U W A Q : Type}
     (utterances : List U) (worlds : List W)
     (beliefStates : List A) (goals : List Q)
     (φ : U → W → ℚ)
-    (inBeliefState : A → W → Bool)
+    (speakerCredence : A → W → ℚ)
     (goalProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (beliefStatePrior : A → ℚ := fun _ => 1)
@@ -407,7 +408,7 @@ def RSAScenario.mentalState {U W A Q : Type}
   Goal := Q
   φ _ _ := φ
   goalProject := goalProject
-  inBeliefState := inBeliefState
+  speakerCredence := speakerCredence
   utterances := utterances
   worlds := worlds
   interps := [()]
@@ -430,7 +431,7 @@ def RSAScenario.mentalStateBool {U W A Q : Type}
     (utterances : List U) (worlds : List W)
     (beliefStates : List A) (goals : List Q)
     (satisfies : W → U → Bool)
-    (inBeliefState : A → W → Bool)
+    (speakerCredence : A → W → Bool)
     (goalProject : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (beliefStatePrior : A → ℚ := fun _ => 1)
@@ -438,8 +439,9 @@ def RSAScenario.mentalStateBool {U W A Q : Type}
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0) : RSAScenario :=
   RSAScenario.mentalState utterances worlds beliefStates goals
-    (fun u w => boolToRat (satisfies w u)) inBeliefState goalProject
-    worldPrior beliefStatePrior goalPrior α cost
+    (fun u w => boolToRat (satisfies w u))
+    (fun a w => boolToRat (speakerCredence a w))
+    goalProject worldPrior beliefStatePrior goalPrior α cost
 
 /--
 Build a scenario with lexical uncertainty.
@@ -472,7 +474,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   Goal := Unit
   φ _ l u w := φ l u w
   goalProject _ w w' := w == w'
-  inBeliefState _ _ := true
+  speakerCredence _ _ := 1
   utterances := utterances
   worlds := worlds
   interps := [()]
@@ -540,8 +542,8 @@ def L0 (S : RSAScenario) (u : S.Utterance)
     : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w =>
     let semantic := S.φ i l u w
-    let inBelief := if S.inBeliefState a w then 1 else 0
-    (w, S.worldPrior w * semantic * inBelief)
+    let credence := S.speakerCredence a w
+    (w, S.worldPrior w * semantic * credence)
   normalize scores
 
 /--
@@ -679,13 +681,13 @@ def L1_qud (S : RSAScenario) (u : S.Utterance) : List (S.Goal × ℚ) :=
 /--
 L1 joint over (World × BeliefState) given a FIXED Goal.
 
-P(w, A | u, Q) ∝ P(w) · P(A) · [w ∈ A] · S1(u | w, A, Q)
+P(w, A | u, Q) ∝ P(w) · P(A) · P_speaker(w | A) · S1(u | w, A, Q)
 
 This is equation (7) from Scontras & Tonhauser (2025), where QUD is observed.
 Marginalizes over interpretations and lexica (convention uncertainty).
 
-IMPORTANT: We add constraint [w ∈ A] because the speaker can only have
-assumptions A that include the true world w. Otherwise A contradicts reality.
+The speakerCredence term P_speaker(w | A) weights how probable world w is
+from the speaker's perspective given their epistemic state A.
 -/
 def L1_joint_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
     : List ((S.World × S.BeliefState) × ℚ) :=
@@ -695,13 +697,13 @@ def L1_joint_givenGoal (S : RSAScenario) (u : S.Utterance) (q : S.Goal)
       S.lexica.flatMap fun l =>
         S.beliefStates.map fun a => (w, i, l, a)
   -- Score each tuple with S1 (Goal is fixed)
-  -- Constraint: w must be in A (speaker can't have contradictory assumptions)
+  -- Weight by speaker's credence P_speaker(w | A)
   let scores := tuples.map fun (w, i, l, a) =>
-    let wInA := if S.inBeliefState a w then 1 else 0
+    let credence := S.speakerCredence a w
     let prior := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
                  S.beliefStatePrior a
     let s1Score := getScore (S1 S w i l a q) u
-    ((w, i, l, a), prior * wInA * s1Score)
+    ((w, i, l, a), prior * credence * s1Score)
   -- Normalize to get joint
   let normalized := normalize scores
   -- Marginalize over i, l to get P(w, a | u, q)

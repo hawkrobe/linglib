@@ -175,7 +175,7 @@ def exhLUScenario (cfg : CWSConfig) : RSAScenario where
   Goal := Unit
   φ := exhLUMeaning
   goalProject := fun _ w w' => w == w'
-  inBeliefState := fun _ _ => true
+  speakerCredence := fun _ _ => 1
   utterances := allUtterances
   worlds := allWorlds
   interps := allParses

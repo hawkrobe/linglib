@@ -308,7 +308,7 @@ def RSAScenarioQ.toNat (S : RSAScenarioQ) : RSAScenario where
   Goal := S.QUD  -- Map QUD -> Goal
   φ i _ u w := S.φ i u w  -- Add ignored Lexicon parameter
   goalProject := S.qudProject  -- Map qudProject -> goalProject
-  inBeliefState _ _ := true  -- Default belief state membership
+  speakerCredence _ _ := 1  -- Default belief state membership
   utterances := S.utterances
   worlds := S.worlds
   interps := S.interps

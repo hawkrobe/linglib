@@ -184,9 +184,9 @@ def allBeliefStates : List BeliefState := [
 ]
 
 /--
-Membership in belief state.
+Membership in belief state (as credence).
 -/
-def inBeliefState : BeliefState → WorldState → Bool
+def speakerCredenceBool : BeliefState → WorldState → Bool
   | .all, _ => true
   | .cTrue, w => w.c
   | .cFalse, w => !w.c
@@ -196,6 +196,9 @@ def inBeliefState : BeliefState → WorldState → Bool
   | .cTrueBelFalse, w => w.c && !w.bel
   | .cFalseBelTrue, w => !w.c && w.bel
   | .cFalseBelFalse, w => !w.c && !w.bel
+
+def speakerCredence : BeliefState → WorldState → ℚ :=
+  fun a w => boolToRat (speakerCredenceBool a w)
 
 /--
 Whether C is true in all worlds of the belief state.
@@ -248,7 +251,7 @@ def projectionScenario (pC : ℚ := 1/2) (alpha : ℕ := 10) : RSAScenario :=
     allBeliefStates
     allQUDs
     (fun u w => if literalMeaning u w then 1 else 0)
-    inBeliefState
+    speakerCredence
     qudProject
     (worldPrior pC)
     beliefStatePrior
