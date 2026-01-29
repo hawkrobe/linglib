@@ -1,18 +1,28 @@
 /-
-# Kao et al. (2014)
+# Kao, Bergen & Goodman (2014)
 
-"A computational model of linguistic humor in puns"
-CogSci 2014 Proceedings
+"Formalizing the Pragmatics of Metaphor Understanding"
+Proceedings of the Annual Meeting of the Cognitive Science Society, 36
 
-This paper models metaphor using QUD-sensitive RSA. The key insight is that
-metaphorical utterances communicate *features* associated with categories,
-even when the category itself is literally false.
+## Key Predictions (from paper)
+
+1. **Nonliteral interpretation**: P(person | "shark") ≈ 1
+   - Listener infers the referent is a person, not literally a shark
+
+2. **Multiple feature elevation**: Metaphor raises P(f1), P(f2), P(f3) above prior
+   - Unlike literal "He is scary" which only raises P(scary)
+
+3. **Context sensitivity**: Specific QUD raises target feature probability
+   - "Is he scary?" + "He is a shark" → higher P(scary) than vague "What is he like?"
+
+4. **Metaphor richer than literal**: Metaphor elevates secondary features more
+   - "He is a shark" raises P(dangerous), P(mean) more than "He is scary"
 
 ## The Model
 
 Meaning space: Category × Features
-- Category: the referent (e.g., person, fire, weapon)
-- Features: properties (e.g., dangerous, unpredictable, powerful)
+- Category: the referent (person, shark, fire, blanket)
+- Features: properties (dangerous, unpredictable, comforting)
 
 QUDs (communicative goals):
 - "category": speaker wants listener to infer the literal category
@@ -21,21 +31,11 @@ QUDs (communicative goals):
 The QUD-sensitive speaker (S1) optimizes informativity w.r.t. the *projected* meaning.
 When QUD = "feature", a literally false category can be optimal if it evokes the feature.
 
-## Example: "John is a shark"
+## Reference
 
-If John is a person but dangerous:
-- Under QUD "category": this utterance is bad (John is not literally a shark)
-- Under QUD "dangerous": this utterance is good (sharks are prototypically dangerous)
-
-L1 marginalizes over QUDs, recovering that the speaker was probably:
-- Talking about John being dangerous (feature)
-- NOT meaning John is literally a shark (unlikely QUD was "category")
-
-## References
-
-- Kao, Justine T., Roger Levy, and Noah D. Goodman. (2014).
-  "A computational model of linguistic humor in puns." CogSci 2014.
-- Kao et al. (2014). "Nonliteral understanding of number words." PNAS.
+Kao, J. T., Bergen, L., & Goodman, N. D. (2014). Formalizing the Pragmatics of
+Metaphor Understanding. Proceedings of the Annual Meeting of the Cognitive
+Science Society, 36, 719-724.
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -358,8 +358,37 @@ def l1_blanket : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utteranc
 def getProb {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
   RSA.getScore dist x
 
+-- ============================================================================
+-- Key Prediction 1: Nonliteral Interpretation
+-- ============================================================================
+
 /--
-**Metaphor Prediction 1**: Under QUD "dangerous", S1 prefers "shark".
+**Paper Prediction 1**: Nonliteral interpretation - P(person | "shark") >> P(shark | "shark")
+
+The listener correctly infers the referent is a person, not literally a shark.
+From paper: "Marginalized over values of f, the probability of the person category
+given the utterance is close to one (P(cp|u) = 0.994)"
+-/
+def l1_infers_person_not_shark : Bool :=
+  let dist := l1_shark
+  let pPerson := allMeanings.filter (·.category == .person) |>.foldl
+    (fun acc m => acc + getProb dist m) 0
+  let pShark := allMeanings.filter (·.category == .shark) |>.foldl
+    (fun acc m => acc + getProb dist m) 0
+  pPerson > pShark * 10  -- Person should be ~99%, shark ~1%
+
+#eval l1_infers_person_not_shark
+-- Expected: true
+
+/-- **Theorem (Paper Key Result)**: Listener interprets metaphor nonliterally -/
+theorem nonliteral_interpretation : l1_infers_person_not_shark = true := by native_decide
+
+-- ============================================================================
+-- Key Prediction 2: Speaker Behavior (Metaphor Emergence)
+-- ============================================================================
+
+/--
+**Paper Prediction 2**: Under QUD "dangerous", S1 prefers "shark".
 
 When the speaker cares about conveying danger (not category),
 metaphorical utterances become optimal.

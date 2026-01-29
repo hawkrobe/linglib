@@ -82,6 +82,7 @@ import Linglib.Phenomena.CrossSerialDependencies.Data
 import Linglib.Phenomena.Gapping.Data
 import Linglib.Phenomena.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.FrankGoodman2012.Data
+import Linglib.Phenomena.KaoBergenGoodman2014.Data
 
 -- BasicPhenomena
 import Linglib.Phenomena.BasicPhenomena.Agreement
