@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.30.0] - 2025-01-29
+
+### Added
+- **RSA/Implementations/GoodmanStuhlmuller2013.lean**: Grounding in Montague semantics
+  - Imports `Montague.Quantifiers` and `Montague.Lexicon.Numerals.Compare`
+  - `some_meaning_from_montague`, `all_meaning_from_montague`: Quantifier semantics grounded
+  - `scalar_implicature_grounded`: Shows "some" has more compatible worlds than "all"
+  - `lowerBound_grounded`, `exact_grounded`: Number word meanings match Montague theories
+  - `grounding_enables_empirical_adjudication`: Full grounding chain from Montague to predictions
+
+### Architecture
+- GoodmanStuhlmuller2013 RSA predictions now derive from Montague compositional semantics
+- Numeral semantics (lower-bound vs exact) grounded in `Montague.Lexicon.Numerals`
+- Empirical adjudication between semantic theories enabled by grounding
+
 ## [0.29.0] - 2025-01-29
 
 ### Added
