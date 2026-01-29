@@ -1,163 +1,184 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Build Commands
 
 ```bash
 lake build          # Build the entire project
-lake build Linglib # Build just the main library
+lake build Linglib  # Build just the main library
 ```
 
 ## Project Overview
 
-Linglib is a Lean 4 library for formalizing syntactic theories from theoretical linguistics and connecting them to computational pragmatics (RSA - Rational Speech Acts).
+Linglib is a Lean 4 library for formalizing linguistic theories and connecting them to computational pragmatics (RSA - Rational Speech Acts). The library emphasizes **grounding**: RSA models derive their meaning functions from Montague compositional semantics rather than stipulating them.
 
 ## Architecture
 
-### Pipeline: Dependency-Based Theory Composition
+### Core Principle: Compositional Grounding
 
-The core architectural principle is that **theories are composable components with explicit dependencies**. A theory declares what it provides and what it requires. An analysis is complete when all requirements bottom out.
+RSA implementations should derive meaning from Montague semantics:
 
 ```
-Core/Pipeline.lean
-├── TheoryComponent: { provides: [...], requires: [...] }
-├── GroundedTheory: components where all requires are satisfied
-└── CompleteAnalysis: grounded theory + predictions match data
+Montague/Lexicon/         →  Adjective/Numeral/Modal semantics
+    ↓
+Montague/Quantifiers      →  ⟦some⟧, ⟦all⟧, ⟦most⟧
+    ↓
+Fragments/                →  Reusable RSA domains (Quantities, Scales, Degrees)
+    ↓
+RSA/Implementations/      →  Paper replications with grounding theorems
 ```
 
-**Key insight**: We don't assume fixed levels (syntax → semantics → pragmatics). Some theories cross boundaries (CCG couples syntax-semantics, DRT couples semantics-discourse). The architecture only requires that the dependency graph bottoms out.
-
-Example:
-```
-RSA                          Montague.Scope
-├─ requires: meaning         ├─ requires: {}  ← bottoms out
-├─ provides: probDist        └─ provides: meaning
-└────────────────────────────────────┘
-         requirement satisfied!
-```
-
-### Core/ - Framework-Agnostic Infrastructure
-
-**Shared primitives:**
-- `Basic.lean`: Shared types (`Cat`, `ClauseType`, `Word`, `Lexicon`)
-- `Grammar.lean`: Abstract `Grammar` typeclass that all frameworks implement
-
-**Utilities:**
-- `Distribution.lean`: Typed probability distributions
-- `QUD.lean`: Question Under Discussion (partition abstraction)
-- `InformationStructure.lean`: Information structure interface
-
-**Architecture:**
-- `Pipeline.lean`: Theory composition architecture (provides/requires model)
-- `FormalLanguageTheory.lean`: Chomsky hierarchy for generative capacity proofs
-
-**Note**: RSA computational machinery lives in `Theories/RSA/Core.lean`, not here.
-Core/ contains only framework-agnostic infrastructure.
-
-### Fragments/ - Standard Experimental Domains
-
-Reusable building blocks for experimental domains that any theory can use:
-
-- `Scales.lean`: Horn scales with ordering (`⟨some, most, all⟩`, `⟨or, and⟩`, etc.)
-- `Quantities.lean`: Quantity domains for scalar implicature experiments
-- `ReferenceGames.lean`: Reference game domains (Frank & Goodman 2012 style)
-
-### Theories/ - Theoretical Frameworks
-
-All syntactic/semantic/pragmatic frameworks. Each theory should declare what it provides and requires:
-
-| Theory | Provides | Requires | Status |
-|--------|----------|----------|--------|
-| `CCG/` | Derivations, categories | Lexicon | Partial |
-| `HPSG/` | Feature structures | - | Partial |
-| `Minimalism/` | SynObj trees, Merge/Move | - | Partial |
-| `DependencyGrammar/` | Dependency structures | - | Partial |
-| `Montague/` | Truth conditions, φ function | Derivations | Working |
-| `NeoGricean/` | Implicatures, SI derivation | SemDeriv, Entailment | Working (toy) |
-| `RSA/` | Probability distributions | Meaning function φ | Working (toy) |
-
-Each theory directory contains:
-- `Basic.lean`: Core machinery for that framework
-- `{Phenomenon}.lean`: Theory's coverage of specific phenomena
-
-**RSA directory structure:**
-```
-Theories/RSA/
-├── Core.lean               # RSAScenario, L0, S1, L1 computations
-├── LexicalUncertainty/
-│   ├── Basic.lean          # Bergen et al. 2016 LU extension
-│   └── Compositional.lean  # Compositional LU for embedded SIs
-├── Basic.lean              # Cookie domain example
-├── FrankGoodman2012.lean   # Reference games paper
-├── KaoEtAl2014.lean        # Hyperbole/metaphor
-└── ...                     # Other paper replications
-```
-
-### Phenomena/ - Empirical Data (Theory-Independent)
-
-**Pure empirical facts only** - no semantic content, no theoretical commitments:
-
-- `Basic.lean`: `MinimalPair`, `PhenomenonData` data structures
-- `{Study}/Data.lean`: Experimental results (percentages, judgments)
-- `ScalarImplicatures/Data.lean`: SI patterns and examples
-- `GeurtsPouscoulous2009/Data.lean`: Task effect experimental data
-- `ScontrasPearl2021/Data.lean`: Scope ambiguity truth-value judgments
-
-**Anti-pattern**: Don't put semantic content (truth conditions, entailment) in Phenomena/. That belongs in Theories/Montague/.
-
-### Key Interfaces
-
-| Interface | Purpose | Implemented By |
-|-----------|---------|----------------|
-| `Grammar` | Derivation, realizes, derives | CCG, HPSG, Minimalism, DG |
-| `RSAScenario` | Unified RSA API (worlds, utterances, meanings) | All RSA models |
-| `ImplicatureTheory` | SI derivation, comparison | NeoGricean, RSA |
-| `CoreferenceTheory` | Binding, command relations | HPSG, Minimalism, DG |
-
-### Grounding: RSA ← Montague Connection
-
-RSA's meaning function should be **derived from compositional semantics**, not stipulated:
-
+Example grounding pattern:
 ```lean
--- In RSA/ScontrasPearl2021.lean
-def everyHorseDidntJump_parametric : WorldParametricScopeDerivation Nat :=
-  { meaningAt := λ scope w => ...  -- compositional semantics
-  , worlds := [0, 1, 2] }
-
-def scopeMeaning := meaningFromDerivation everyHorseDidntJump_parametric
--- RSA uses compositional meaning, doesn't stipulate its own
-
-theorem rsa_meaning_from_montague :
-    scopeMeaning = everyHorseDidntJump_parametric.meaningAt := ...
+-- In RSA/Implementations/GoodmanStuhlmuller2013.lean
+-- RSA uses Montague quantifier semantics, doesn't stipulate its own
+theorem rsa_some_meaning_from_montague :
+    quantityMeaning .some_ = Montague.Quantifiers.existsSome := ...
 ```
 
-### Theory-Phenomena Architecture
+### Directory Structure
 
 ```
-Phenomena/Study/Data.lean          -- Pure empirical data (numbers, observations)
-    ↑ imports
-Theories/Framework/Predictions.lean -- Derives predictions, proves they match data
+Linglib/
+├── Core/                    # Framework-agnostic infrastructure
+│   ├── Basic.lean           # Shared types (Cat, Word, Lexicon)
+│   ├── Grammar.lean         # Abstract Grammar typeclass
+│   ├── Distribution.lean    # Probability distributions
+│   ├── QUD.lean             # Question Under Discussion
+│   ├── Polarity.lean        # Upward/downward entailing contexts
+│   ├── Proposition.lean     # Prop' = World → Bool
+│   └── Interfaces/          # Theory comparison interfaces
+│
+├── Fragments/               # Reusable RSA domains
+│   ├── Quantities.lean      # Scalar quantity domain (some/all)
+│   ├── Scales.lean          # Horn scales (⟨some, all⟩, ⟨good, amazing⟩)
+│   ├── Degrees.lean         # Gradable adjective domains
+│   ├── ReferenceGames.lean  # Reference game infrastructure
+│   └── QUD.lean             # QUD partitions
+│
+├── Theories/
+│   ├── Montague/            # Compositional semantics (see below)
+│   ├── RSA/                 # Rational Speech Acts (see below)
+│   ├── NeoGricean/          # Categorical implicature theory
+│   ├── CCG/                 # Combinatory Categorial Grammar
+│   ├── HPSG/                # Head-Driven Phrase Structure Grammar
+│   ├── Minimalism/          # Minimalist Program
+│   ├── DependencyGrammar/   # Word Grammar
+│   └── Comparisons/         # Cross-theory comparisons
+│
+└── Phenomena/               # Empirical data (50+ files)
+    ├── {Study}/Data.lean    # Experimental results
+    └── Semantics/           # Truth condition judgments
 ```
 
-**Phenomena files contain:**
-- Raw experimental results (percentages, counts)
-- Data structures for observations
-- Theorems about the data itself
-- NO theory-specific predictions or semantic content
+### Theories/Montague/ - Compositional Semantics
 
-**Theory files contain:**
-- Parameters characterizing theory variants
-- Functions deriving predictions
-- Theorems proving predictions match data
-- Grounding proofs (e.g., meaning comes from compositional semantics)
+The semantic foundation for RSA grounding:
 
-### Known Architectural Issues (v0.5)
+```
+Montague/
+├── Basic.lean               # Prop' = World → Bool, pnot, pand, por
+├── Quantifiers.lean         # ⟦some⟧, ⟦all⟧, ⟦most⟧
+├── Lexicon/
+│   ├── Degrees.lean         # Degree, Threshold, HasDegree typeclass
+│   ├── Adjectives/Theory.lean  # Gradable adjective semantics
+│   ├── Modals/              # Kratzer vs Simple modal semantics
+│   └── Numerals/            # Lower-bound vs bilateral numeral semantics
+├── Entailment/
+│   ├── Basic.lean           # Entailment relation
+│   ├── Monotonicity.lean    # Upward/downward monotonicity
+│   └── Polarity.lean        # Polarity item licensing
+└── Projection/              # Presupposition projection
+```
 
-1. **Syntax → Semantics gap**: No syntax theory implements `MontagueSyntax` interface yet
-2. **Entailment ungrounded**: NeoGricean's entailment checker is hardcoded, not proven to match Montague
-3. **RSA incomplete**: Missing full L₁ computation and prior P(w)
-4. **Toy models only**: Most theories work on small fixed domains, not general English
+### Theories/RSA/ - Rational Speech Acts
+
+14 paper implementations with grounding:
+
+```
+RSA/
+├── Core/
+│   ├── Basic.lean           # RSAScenario (ℚ), L0, S1, L1
+│   ├── Model.lean           # RSAScenarioR (ℝ) for proofs
+│   └── Intensional.lean     # Belief states, speakerCredence
+├── Extensions/
+│   ├── LexicalUncertainty/  # Bergen et al. 2016
+│   └── InformationTheory/   # Zaslavsky et al. rate-distortion
+├── ScalarImplicatures/      # Embedded SI handling
+└── Implementations/         # Paper replications
+    ├── FrankGoodman2012.lean        # Reference games
+    ├── GoodmanStuhlmuller2013.lean  # Scalar implicature + knowledge
+    ├── KaoEtAl2014_Hyperbole.lean   # QUD-sensitive hyperbole
+    ├── KaoEtAl2014_Metaphor.lean    # Feature-based metaphor
+    ├── YoonEtAl2020.lean            # Politeness (compositional negation)
+    ├── ScontrasPearl2021.lean       # Scope ambiguity
+    ├── ScontrasTonhauser2025.lean   # BToM projection
+    ├── TesslerFranke2020.lean       # Flexible negation
+    ├── LassiterGoodman2017.lean     # Gradable adjectives
+    └── ...                          # 14 total implementations
+```
+
+### RSAScenario: Unified Type
+
+The `RSAScenario` structure supports all RSA variants via 5 latent variable categories:
+
+| Latent Type | Purpose | Example Paper |
+|-------------|---------|---------------|
+| `World` | What's actually true | All papers |
+| `BeliefState` | Speaker's private assumptions | Scontras & Tonhauser 2025 |
+| `Goal` | QUD / communicative intention | Kao et al. 2014 |
+| `Interp` | Compositional meaning choice | Scontras & Pearl 2021 |
+| `Lexicon` | Word meaning uncertainty | Bergen et al. 2016 |
+
+Smart constructors: `RSAScenario.basic`, `.ambiguous`, `.qud`, `.mentalState`, `.lexicalUncertainty`
+
+### Phenomena/ - Empirical Data
+
+**Pure empirical facts only** - no theoretical commitments:
+
+```
+Phenomena/
+├── GoodmanStuhlmuller2013/Data.lean   # Scalar implicature rates
+├── YoonEtAl2020/Data.lean             # Politeness experiment
+├── ScontrasPearl2021/Data.lean        # Scope TVJ data
+├── GeurtsPouscoulous2009/Data.lean    # Task effects on SI
+├── ScalarImplicatures/Data.lean       # SI patterns
+└── Semantics/                         # Truth condition judgments
+```
+
+**Anti-pattern**: Don't put semantic content in Phenomena/. That belongs in Theories/Montague/.
+
+### Key Patterns
+
+**1. Compositional Negation** (YoonEtAl2020)
+```lean
+-- Soft negation operator mirrors Montague's pnot
+def softNot (p : SoftProp) : SoftProp := fun s => 1 - p s
+
+-- Utterance semantics compositionally derived
+def utteranceSemantics : Utterance → SoftProp
+  | .notTerrible => softNot (adjMeaning .terrible)  -- compositional!
+```
+
+**2. Feature Predicates** (KaoEtAl2014_Metaphor)
+```lean
+-- Features as Montague adjective denotations (Entity → Bool)
+def featureDenotation : Feature → FeaturePred
+  | .dangerous => fun m => m.dangerous
+
+-- QUD projection selects feature predicate
+def qudEquivCompositional (g : Goal) (m1 m2 : Meaning) : Bool :=
+  match goalToFeature g with
+  | some f => featureDenotation f m1 == featureDenotation f m2
+```
+
+**3. Grounding Theorems**
+```lean
+-- Prove RSA meaning matches compositional derivation
+theorem meaning_from_montague :
+    rsaMeaning = compositionalDerivation.meaning := ...
+```
 
 ## Git Conventions
 
@@ -168,15 +189,28 @@ Theories/Framework/Predictions.lean -- Derives predictions, proves they match da
 
 - `autoImplicit` is disabled (explicit type parameters required)
 - `pp.unicode.fun` is enabled for pretty printing
-- No external dependencies beyond Lean 4 standard library + Mathlib
-- `Core/Frac.lean`: Minimal exact rational arithmetic (cross-multiply for comparison)
+- Exact rational arithmetic (ℚ) for RSA computations
+- Real numbers (ℝ) only for mathematical proofs (Zaslavsky et al.)
 
 ## References
 
-- Gibson (2025) "Syntax", MIT Press
-- Hudson (1984, 1990) "Word Grammar" / "English Word Grammar"
-- Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
-- Chomsky (1995) "The Minimalist Program"
-- Frank & Goodman (2012) "Predicting Pragmatic Reasoning in Language Games"
-- Goodman & Frank (2016) "Pragmatic Language Interpretation as Probabilistic Inference"
-- Scontras & Pearl (2021) "When pragmatics matters more for truth-value judgments"
+### RSA Papers (Implemented)
+- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
+- Goodman & Stuhlmüller (2013). Knowledge and Implicature.
+- Kao et al. (2014). Nonliteral Understanding of Number Words.
+- Bergen et al. (2016). Pragmatic Reasoning through Semantic Inference.
+- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
+- Yoon et al. (2020). Polite Speech Emerges From Competing Social Goals.
+- Scontras & Pearl (2021). When pragmatics matters more for truth-value judgments.
+- Tessler & Franke (2020). Not unreasonable: Carving vague negation.
+- Scontras & Tonhauser (2025). The Semantics and Pragmatics of Gradable Predicates.
+
+### Semantics
+- Montague (1973). The Proper Treatment of Quantification.
+- Kratzer (1991). Modality / Conditionals.
+- Kennedy (2007). Vagueness and Grammar.
+
+### Syntax
+- Steedman (2000). The Syntactic Process (CCG).
+- Pollard & Sag (1994). Head-Driven Phrase Structure Grammar.
+- Chomsky (1995). The Minimalist Program.
