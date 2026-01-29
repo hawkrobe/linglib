@@ -19,62 +19,76 @@ L1("square") assigns higher probability to blue_square than green_square.
 
 Why? A speaker wanting green_square would say "green" (uniquely identifying).
 Saying "square" signals they probably mean blue_square.
+
+## Montague Grounding
+
+This implementation derives its meaning function from Montague compositional
+semantics via `Montague.Lexicon.Features`. Feature predicates like "blue" and
+"square" have type `e → t` in Montague's type system, where:
+
+- ⟦blue⟧ = λx. color(x) = blue
+- ⟦square⟧ = λx. shape(x) = square
+
+The RSA meaning function φ is derived from these Montague meanings, not stipulated.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Model
+import Linglib.Fragments.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
 
--- ============================================================================
--- Domain: Objects and Utterances
--- ============================================================================
-
-/-- Objects in the reference game context -/
-inductive Object where
-  | blue_square
-  | blue_circle
-  | green_square
-  deriving Repr, DecidableEq, BEq, Fintype
-
-/-- Utterances (feature words) -/
-inductive Utterance where
-  | blue
-  | green
-  | square
-  | circle
-  deriving Repr, DecidableEq, BEq, Fintype
+open ReferenceGame
 
 -- ============================================================================
--- Literal Semantics
+-- Domain: Objects and Utterances (from Montague-grounded infrastructure)
 -- ============================================================================
 
-/-- Literal meaning: does utterance apply to object? -/
-def meaning : Utterance → Object → Bool
-  | .blue, .blue_square => true
-  | .blue, .blue_circle => true
-  | .blue, .green_square => false
-  | .green, .blue_square => false
-  | .green, .blue_circle => false
-  | .green, .green_square => true
-  | .square, .blue_square => true
-  | .square, .blue_circle => false
-  | .square, .green_square => true
-  | .circle, .blue_square => false
-  | .circle, .blue_circle => true
-  | .circle, .green_square => false
+/-- Objects in the reference game context (Color × Shape pairs) -/
+abbrev Object := ReferenceGame.Object
+
+/-- The three objects in the classic Frank & Goodman context -/
+def blue_square : Object := ⟨.blue, .square⟩
+def blue_circle : Object := ⟨.blue, .circle⟩
+def green_square : Object := ⟨.green, .square⟩
+
+/-- Utterances are feature predicates (from Montague) -/
+abbrev Utterance := ReferenceGame.Feature
+
+/-- The four utterances in the classic context -/
+def utt_blue : Utterance := .color .blue
+def utt_green : Utterance := .color .green
+def utt_square : Utterance := .shape .square
+def utt_circle : Utterance := .shape .circle
+
+-- ============================================================================
+-- Literal Semantics (derived from Montague)
+-- ============================================================================
+
+/--
+Literal meaning: does utterance apply to object?
+
+This is derived from Montague's compositional semantics via `featureMeaning`,
+not stipulated directly.
+-/
+def meaning (u : Utterance) (o : Object) : Bool :=
+  u.appliesTo o
+
+/-- Grounding theorem: meaning is derived from compositional semantics -/
+theorem meaning_from_compositional (u : Utterance) (o : Object) :
+    meaning u o = ReferenceGame.featureMeaning u o := rfl
 
 -- ============================================================================
 -- RSAScenario Instance (using unified API)
 -- ============================================================================
 
-/-- Reference game RSA scenario -/
-def refGameScenario : RSAScenario :=
-  RSAScenario.basicBool
-    [Utterance.blue, .green, .square, .circle]
-    [Object.blue_square, .blue_circle, .green_square]
-    (fun obj utt => meaning utt obj)
+/-- The classic Frank & Goodman context as a TypedContext -/
+def classicContext : TypedContext :=
+  fromPairs [(.blue, .square), (.blue, .circle), (.green, .square)]
+
+/-- Reference game RSA scenario (derived from Montague-grounded context) -/
+def refGameScenario : RSAScenario := classicContext.toScenario
 
 /-- Legacy alias -/
 abbrev refGameBackend := refGameScenario
@@ -84,25 +98,25 @@ abbrev refGameBackend := refGameScenario
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.blue () () () ()
+def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario utt_blue () () () ()
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.green () () () ()
+def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario utt_green () () () ()
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario Utterance.square () () () ()
+def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario utt_square () () () ()
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.blue_square () () () ()
+def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario blue_square () () () ()
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario Object.green_square () () () ()
+def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario green_square () () () ()
 
 /-- L1 for "square" - the key pragmatic inference -/
-def l1_square : List (Object × ℚ) := RSA.L1_world refGameScenario Utterance.square
+def l1_square : List (Object × ℚ) := RSA.L1_world refGameScenario utt_square
 
 /-- L1 for "blue" -/
-def l1_blue : List (Object × ℚ) := RSA.L1_world refGameScenario Utterance.blue
+def l1_blue : List (Object × ℚ) := RSA.L1_world refGameScenario utt_blue
 
 -- ============================================================================
 -- Evaluate
@@ -132,22 +146,22 @@ they would have said "green" (uniquely identifying). Saying "square"
 signals they probably mean blue_square.
 -/
 theorem reference_game_inference :
-    RSA.getScore l1_square .blue_square > RSA.getScore l1_square .green_square := by
+    RSA.getScore l1_square blue_square > RSA.getScore l1_square green_square := by
   native_decide
 
 /-- At literal level L0, squares are equally likely -/
 theorem l0_squares_equal :
-    RSA.getScore l0_square .blue_square = RSA.getScore l0_square .green_square := by
+    RSA.getScore l0_square blue_square = RSA.getScore l0_square green_square := by
   native_decide
 
 /-- Speaker in green_square world prefers "green" over "square" -/
 theorem s1_green_prefers_green :
-    RSA.getScore s1_green_square .green > RSA.getScore s1_green_square .square := by
+    RSA.getScore s1_green_square utt_green > RSA.getScore s1_green_square utt_square := by
   native_decide
 
 /-- Speaker in blue_square world: "blue" and "square" are equally informative -/
 theorem s1_blue_square_equal :
-    RSA.getScore s1_blue_square .blue = RSA.getScore s1_blue_square .square := by
+    RSA.getScore s1_blue_square utt_blue = RSA.getScore s1_blue_square utt_square := by
   native_decide
 
 -- ============================================================================
@@ -156,15 +170,15 @@ theorem s1_blue_square_equal :
 
 /-- "green" uniquely identifies green_square at L0 -/
 theorem green_unique :
-    (RSA.getScore l0_green .green_square).num > 0 ∧
-    (RSA.getScore l0_green .blue_square).num = 0 ∧
-    (RSA.getScore l0_green .blue_circle).num = 0 := by
+    (RSA.getScore l0_green green_square).num > 0 ∧
+    (RSA.getScore l0_green blue_square).num = 0 ∧
+    (RSA.getScore l0_green blue_circle).num = 0 := by
   native_decide
 
 /-- "circle" uniquely identifies blue_circle at L0 -/
 theorem circle_unique :
-    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle () () () ()) .blue_circle).num > 0 ∧
-    (RSA.getScore (RSA.L0 refGameScenario Utterance.circle () () () ()) .blue_square).num = 0 := by
+    (RSA.getScore (RSA.L0 refGameScenario utt_circle () () () ()) blue_circle).num > 0 ∧
+    (RSA.getScore (RSA.L0 refGameScenario utt_circle () () () ()) blue_square).num = 0 := by
   native_decide
 
 -- ============================================================================

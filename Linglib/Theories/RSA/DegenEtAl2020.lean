@@ -108,21 +108,21 @@ How typical is a color for a given object type?
 -/
 def typicality : ObjType → Color → ℚ
   -- Bananas: typically yellow
-  | .banana, ReferenceGame.Color.yellow => 9/10
-  | .banana, ReferenceGame.Color.green => 1/20    -- unripe
-  | .banana, ReferenceGame.Color.blue => 1/100    -- very atypical
+  | .banana, .yellow => 9/10
+  | .banana, .green => 1/20    -- unripe
+  | .banana, .blue => 1/100    -- very atypical
   | .banana, _ => 1/100
   -- Apples: red or green
-  | .apple, ReferenceGame.Color.red => 45/100
-  | .apple, ReferenceGame.Color.green => 45/100
-  | .apple, ReferenceGame.Color.yellow => 8/100
+  | .apple, .red => 45/100
+  | .apple, .green => 45/100
+  | .apple, .yellow => 8/100
   | .apple, _ => 1/100
   -- Carrots: typically orange
-  | .carrot, ReferenceGame.Color.orange => 85/100
+  | .carrot, .orange => 85/100
   | .carrot, _ => 3/100
   -- Tomatoes: typically red
-  | .tomato, ReferenceGame.Color.red => 9/10
-  | .tomato, ReferenceGame.Color.green => 8/100   -- unripe
+  | .tomato, .red => 9/10
+  | .tomato, .green => 8/100   -- unripe
   | .tomato, _ => 1/100
   -- Pins & balls: uniform
   | .pin, _ => 1/5

@@ -953,6 +953,31 @@ These are valuable but not on the critical path to researcher usability:
 - **Scope-word order interactions**: Dutch/German data
 - **Imprecision/homogeneity**: Haslinger 2024 integration
 
+### Selectional Restrictions / Category Mistakes (potential future phenomenon)
+
+The `HasColor`/`HasShape` typeclasses in `Montague/Lexicon/Features.lean` suggest a type-theoretic approach to **selectional restrictions** and **category mistakes** (Chomsky's "colorless green ideas"):
+
+**Core insight**: Only entities implementing `HasColor` can have color predicates meaningfully applied:
+```lean
+-- Ideas don't implement HasColor, so this fails to typecheck:
+-- Feature.appliesTo (.color .green) someIdea  -- Error: no HasColor Idea instance
+```
+
+**Connections**:
+- **Ryle's category mistakes**: "The number 7 is green" is infelicitous, not false
+- **Sortal restrictions**: Predicates select for arguments of appropriate semantic types
+- **Pustejovsky's Generative Lexicon**: Typed feature structures encode selectional restrictions
+
+**Potential extensions**:
+```lean
+class HasMood (E : Type) where mood : E → Mood       -- Only sentient beings
+class HasTemperature (E : Type) where temp : E → Temp -- Only physical objects
+```
+
+This would make "angry rock" or "cold number" fail to typecheck, capturing that they're infelicitous rather than false.
+
+**Research question**: Can typeclass constraints model the full range of selectional restriction phenomena? How does this interact with coercion ("the ham sandwich wants his check")?
+
 ### Hot Topics (potential future North Stars)
 
 These are active research areas (2020-2025) that could become targets once core infrastructure is in place:

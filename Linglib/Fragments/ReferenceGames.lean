@@ -3,18 +3,22 @@
 
 Building blocks for RSA reference games.
 
+## Grounding in Montague Semantics
+
+Feature predicates are type `e → t` in Montague's type system:
+- Objects are entities (type `e`) defined as Color × Shape pairs
+- Features are predicates: ⟦blue⟧ = λx. color(x) = blue
+
 ## Components
 
-- `Color`, `Shape`: Standard property types
-- `Object`: Color × Shape pairs
-- `Feature`: Feature utterances (colors and shapes)
+- `Color`, `Shape`, `Feature`: Re-exported from Montague.Lexicon.Features
+- `Object`: Color × Shape pairs (reference game entities)
+- `featureMeaning`: The Montague `e → t` meaning function
 - `TypedContext`: A set of objects with their available features
-- `fromPairs`: Build context from (Color × Shape) list
 
 ## Usage
 
 ```lean
--- In your paper replication file:
 import Linglib.Fragments.ReferenceGames
 
 def myContext := ReferenceGame.fromPairs
@@ -27,15 +31,104 @@ def myContext := ReferenceGame.fromPairs
 
 - Frank, M. C. & Goodman, N. D. (2012). Predicting pragmatic reasoning in
   language games. Science 336(6084): 998.
+- Montague, R. (1973). The Proper Treatment of Quantification.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.Montague.Lexicon.Features
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Prod
 
 namespace ReferenceGame
 
+open Montague.Lexicon.Features
+
 -- ============================================================================
--- Generic Reference Game Context
+-- Re-export Montague Feature Infrastructure
+-- ============================================================================
+
+-- Types from Montague.Lexicon.Features
+abbrev Color := Montague.Lexicon.Features.Color
+abbrev Shape := Montague.Lexicon.Features.Shape
+abbrev Feature := Montague.Lexicon.Features.Feature
+
+-- ============================================================================
+-- Reference Game Entity Type
+-- ============================================================================
+
+/--
+An object is a color-shape pair.
+
+This is the entity type `e` for reference games. Objects are characterized
+by their color and shape attributes.
+-/
+structure Object where
+  color : Color
+  shape : Shape
+  deriving Repr, DecidableEq, BEq
+
+instance : Inhabited Object := ⟨⟨.blue, .square⟩⟩
+
+/-- Object is finite (Color × Shape) -/
+instance : Fintype Object :=
+  Fintype.ofEquiv (Color × Shape) {
+    toFun := fun (c, s) => ⟨c, s⟩
+    invFun := fun e => (e.color, e.shape)
+    left_inv := fun _ => rfl
+    right_inv := fun _ => rfl
+  }
+
+-- ============================================================================
+-- HasColor / HasShape Instances
+-- ============================================================================
+
+instance : Montague.Lexicon.Features.HasColor Object where
+  color := Object.color
+
+instance : Montague.Lexicon.Features.HasShape Object where
+  shape := Object.shape
+
+-- ============================================================================
+-- Feature Meaning (via Montague generic)
+-- ============================================================================
+
+/-- Re-export featureMeaning specialized to Object -/
+abbrev featureMeaning : Feature → Object → Bool :=
+  Montague.Lexicon.Features.featureMeaning
+
+/-- Re-export appliesTo specialized to Object -/
+abbrev Feature.appliesTo (f : Feature) (obj : Object) : Bool :=
+  Montague.Lexicon.Features.Feature.appliesTo f obj
+
+-- ============================================================================
+-- Theorems: Compositional Meaning
+-- ============================================================================
+
+/-- Blue applies to blue objects -/
+theorem blue_applies_to_blue :
+    Feature.appliesTo (.color .blue) ⟨.blue, .square⟩ = true := by native_decide
+
+/-- Blue doesn't apply to green objects -/
+theorem blue_not_green :
+    Feature.appliesTo (.color .blue) ⟨.green, .square⟩ = false := by native_decide
+
+/-- Square applies to square objects -/
+theorem square_applies_to_square :
+    Feature.appliesTo (.shape .square) ⟨.blue, .square⟩ = true := by native_decide
+
+/-- Features are characteristic functions -/
+theorem feature_is_characteristic (f : Feature) (obj : Object) :
+    Feature.appliesTo f obj = true ↔
+    (match f with
+     | .color c => obj.color == c
+     | .shape s => obj.shape == s) := by
+  cases f <;> simp [Feature.appliesTo, Montague.Lexicon.Features.Feature.appliesTo,
+                    Montague.Lexicon.Features.featureMeaning,
+                    Montague.Lexicon.Features.HasColor.color,
+                    Montague.Lexicon.Features.HasShape.shape]
+
+-- ============================================================================
+-- Generic Reference Game Context (String-based, for flexibility)
 -- ============================================================================
 
 /--
@@ -68,39 +161,6 @@ def Context.satisfies (ctx : Context) (obj : String) (utt : String) : Bool :=
 /-- Build RSAScenario from context -/
 def Context.toScenario (ctx : Context) : RSAScenario :=
   RSAScenario.basicBool ctx.properties ctx.objects ctx.satisfies
-
--- ============================================================================
--- Standard Reference Game: Objects with Color × Shape
--- ============================================================================
-
-/-- Colors for reference games -/
-inductive Color where
-  | blue | green | red | yellow | purple | orange
-  deriving Repr, DecidableEq, BEq, Inhabited
-
-/-- Shapes for reference games -/
-inductive Shape where
-  | square | circle | triangle | star
-  deriving Repr, DecidableEq, BEq, Inhabited
-
-/-- An object is a color-shape pair -/
-structure Object where
-  color : Color
-  shape : Shape
-  deriving Repr, DecidableEq, BEq
-
-instance : Inhabited Object := ⟨⟨.blue, .square⟩⟩
-
-/-- Feature utterances (colors and shapes) -/
-inductive Feature where
-  | color (c : Color)
-  | shape (s : Shape)
-  deriving Repr, DecidableEq, BEq
-
-/-- Does a feature apply to an object? -/
-def Feature.appliesTo : Feature → Object → Bool
-  | .color c, obj => obj.color == c
-  | .shape s, obj => obj.shape == s
 
 /--
 A typed reference game context with Color × Shape objects.
@@ -169,5 +229,13 @@ private def exampleCtx : TypedContext :=
 
 #eval s1 exampleCtx ⟨.green, .square⟩
 -- green preferred (uniquely identifies)
+
+-- ============================================================================
+-- Grounding Verification
+-- ============================================================================
+
+/-- The RSA meaning function φ uses the compositional semantics -/
+theorem rsa_uses_compositional_semantics (ctx : TypedContext) (f : Feature) (obj : Object) :
+    ctx.toScenario.φ () () f obj = if f.appliesTo obj then 1 else 0 := rfl
 
 end ReferenceGame

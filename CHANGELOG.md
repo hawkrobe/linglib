@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.28.0] - 2025-01-29
+
+### Added
+- **Montague/Lexicon/Features.lean**: `HasColor`, `HasShape` typeclasses for generic feature predicates
+  - Enables selectional restriction modeling (entities must implement typeclass to receive predicate)
+  - Generic `featureMeaning {E} [HasColor E] [HasShape E]` works for any entity type
+- **docs/ROADMAP.md**: Note on selectional restrictions / category mistakes as future phenomenon
+
+### Changed
+- **Fragments/ReferenceGames.lean**: Now defines `Object` locally with `HasColor`/`HasShape` instances
+  - Cleaner separation: Montague provides vocabulary, Fragment provides domain entity type
+  - `featureMeaning` and `Feature.appliesTo` derived from generic Montague definitions
+- **RSA/Implementations/FrankGoodman2012.lean**: Uses Montague-grounded reference game infrastructure
+  - Grounding theorem: `meaning_from_compositional` shows RSA φ derives from Montague
+
+### Architecture
+- Feature predicates now have clean theory-neutral vocabulary (Montague) vs domain-specific entities (Fragments)
+- Path to modeling "green ideas" style category mistakes via typeclass constraints
+
 ## [0.27.0] - 2025-01-28
 
 ### Added

@@ -151,6 +151,7 @@ import Linglib.Theories.Montague.Conjunction
 
 -- Montague Lexicon
 import Linglib.Theories.Montague.Lexicon.Basic
+import Linglib.Theories.Montague.Lexicon.Features
 
 -- Montague Derivations
 import Linglib.Theories.Montague.Derivation.Basic
@@ -163,6 +164,7 @@ import Linglib.Theories.Montague.Intensional.Basic
 -- Montague Entailment
 import Linglib.Theories.Montague.Entailment.Basic
 import Linglib.Theories.Montague.Entailment.Monotonicity
+import Linglib.Theories.Montague.Entailment.NegationTests
 import Linglib.Theories.Montague.Entailment.ScaleInteraction
 import Linglib.Theories.Montague.Entailment.Polarity
 import Linglib.Theories.Montague.Entailment.PresuppositionPolarity
@@ -175,6 +177,9 @@ import Linglib.Theories.Montague.Interface.SemanticBackend
 import Linglib.Theories.Montague.Interface.SyntaxInterface
 
 
+-- Gradable adjective theories (threshold semantics, contrary antonyms)
+import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+
 -- Modal theories (Kratzer vs Simple/Kripke)
 import Linglib.Theories.Montague.Lexicon.Modals.Theory
 import Linglib.Theories.Montague.Lexicon.Modals.Kratzer
@@ -186,6 +191,7 @@ import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Competence
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Theories.NeoGricean.Core.AlternativeGeneration
+import Linglib.Theories.NeoGricean.Core.Markedness
 
 -- NeoGricean Exhaustivity
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
@@ -202,9 +208,9 @@ import Linglib.Theories.NeoGricean.Implementations.MontagueExhaustivity
 -- NeoGricean other
 import Linglib.Theories.NeoGricean.NegationScope
 import Linglib.Theories.NeoGricean.Presuppositions
+import Linglib.Theories.NeoGricean.Evaluativity
 
 -- RSA Core
-import Linglib.Theories.RSA.Core.Examples
 import Linglib.Theories.RSA.Core.BasicQ
 import Linglib.Theories.RSA.Core.Intensional
 import Linglib.Theories.RSA.Core.Model
@@ -226,6 +232,10 @@ import Linglib.Theories.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.RSA.Implementations.HeKaiserIskarous2025
+import Linglib.Theories.RSA.Implementations.TesslerFranke2020
+import Linglib.Theories.RSA.Implementations.CremersWilcoxSpector2023
+import Linglib.Theories.RSA.Implementations.FrankeBergen2020
+import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.RSA.DegenEtAl2020
 
 -- RSA Extensions: Information Theory (Zaslavsky et al. 2020)
@@ -278,8 +288,13 @@ import Linglib.Phenomena.ScopeWordOrder.Data
 
 -- Semantic phenomena
 import Linglib.Phenomena.Semantics.Entailments
+import Linglib.Phenomena.Semantics.Evaluativity
 import Linglib.Phenomena.Semantics.Monotonicity
+import Linglib.Phenomena.Semantics.Negation
 import Linglib.Phenomena.Semantics.TruthConditions
+
+-- Flexible negation (Tessler & Franke 2020)
+import Linglib.Phenomena.FlexibleNegation.Data
 
 -- Adjective semantics (Kamp 1975, Partee 1995, 2001)
 import Linglib.Phenomena.Adjectives.Data
