@@ -159,6 +159,11 @@ Theories/Framework/Predictions.lean -- Derives predictions, proves they match da
 3. **RSA incomplete**: Missing full L₁ computation and prior P(w)
 4. **Toy models only**: Most theories work on small fixed domains, not general English
 
+## Git Conventions
+
+- Use one-line commit messages (no multi-line body)
+- No co-author tags or Claude branding in commits
+
 ## Lean Conventions
 
 - `autoImplicit` is disabled (explicit type parameters required)
