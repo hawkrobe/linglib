@@ -321,9 +321,11 @@ def observationPrior : Observation → ℚ
   | ⟨_, .a3⟩ => 1
 
 /--
-Build unified RSAScenario using mentalState smart constructor.
+Build unified RSAScenario using mentalStateBool.
 
-This is the BOOLEAN APPROXIMATION of the knowledge-state model.
+This is a BOOLEAN APPROXIMATION of the knowledge-state model.
+The custom implementation in Part 2 is more accurate because it uses
+graded hypergeometric probabilities for belief state compatibility.
 -/
 def knowledgeStateUnified : RSAScenario :=
   RSAScenario.mentalStateBool
@@ -371,8 +373,10 @@ The unified API version (this section) is a Boolean approximation:
 2. Loses the gradation that makes partial knowledge interesting
 3. Demonstrates the PATTERN but not the full model
 
-Future work: Add `gradedInBeliefState : BeliefState → World → ℚ` to RSAScenario
-to support this model class properly.
+The G&S 2013 model is a good example of where the unified API's Boolean
+`inBeliefState` is insufficient. A future enhancement could add support
+for graded speaker credences, but this requires careful thought about
+the right abstraction.
 -/
 
 end UnifiedAPIVersion

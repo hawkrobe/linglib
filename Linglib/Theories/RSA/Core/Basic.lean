@@ -113,7 +113,14 @@ structure RSAScenario where
   φ : Interp → Lexicon → Utterance → World → ℚ
   /-- Goal projection: are two worlds equivalent under this goal/QUD? -/
   goalProject : Goal → World → World → Bool
-  /-- Belief state membership: is world in speaker's belief state? -/
+  /-- Belief state membership: is world in speaker's belief state?
+
+      Returns true if world w is consistent with belief state a.
+      This is used to constrain the speaker's reasoning to worlds
+      they consider possible.
+
+      Default: all worlds are in all belief states (no constraints).
+  -/
   inBeliefState : BeliefState → World → Bool := fun _ _ => true
 
   /-- Enumeration of utterances -/

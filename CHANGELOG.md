@@ -18,8 +18,9 @@
 - GoodmanStuhlmuller2013 RSA predictions now derive from Montague compositional semantics
 - Numeral semantics (lower-bound vs exact) grounded in `Montague.Lexicon.Numerals`
 - Empirical adjudication between semantic theories enabled by grounding
-- Knowledge-state model documented with connection to unified mental state API
-- Future work: Add `gradedInBeliefState : BeliefState → World → ℚ` to RSAScenario
+- Knowledge-state model: custom implementation preserves graded hypergeometric probabilities
+  - The unified `mentalStateBool` API provides a Boolean approximation
+  - G&S's model-specific hypergeometric remains in the custom implementation
 
 ## [0.29.0] - 2025-01-29
 

@@ -422,8 +422,10 @@ def hyperboleScenario : RSAScenario :=
     priceAffectPrior
     (fun
       | .price => 1
-      | .affect => 3  -- Bias toward affect QUD (common in conversation)
-      | .both => 1)
+      | .valence => 3           -- Bias toward valence QUD (common in conversation)
+      | .priceValence => 1
+      | .approxPrice => 2       -- Approximate price QUD fairly common
+      | .approxPriceValence => 2)
 
 /--
 Strict scenario with Boolean semantics.
@@ -453,7 +455,7 @@ def l0_million : List (Meaning × ℚ) := RSA.L0 hyperboleScenario Utterance.mil
 
 /-- S1 with meaning (kettle at $500, annoyed) and QUD "affect" -/
 def s1_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.S1 hyperboleScenario (kettle .p500, Affect.annoyed) () () () Goal.affect
+  RSA.S1 hyperboleScenario (kettle .p500, Affect.annoyed) () () () Goal.valence
 
 /-- S1 with meaning (kettle at $500, annoyed) and QUD "price" -/
 def s1_p500_annoyed_price : List (Utterance × ℚ) :=
@@ -546,7 +548,7 @@ trying to communicate affect, not exact price.
 -/
 def l1_infers_affect_qud : Bool :=
   let dist := l1_goal_million
-  getProb dist Goal.affect > getProb dist Goal.price
+  getProb dist Goal.valence > getProb dist Goal.price
 
 #eval l1_infers_affect_qud
 -- Expected: true
@@ -563,7 +565,7 @@ def l0_million_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance
 
 /-- S1 under strict semantics can't use hyperbole -/
 def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.S1 strictScenario (kettle .p500, Affect.annoyed) () () () Goal.affect
+  RSA.S1 strictScenario (kettle .p500, Affect.annoyed) () () () Goal.valence
 
 #eval s1_strict_p500_annoyed_affect
 -- "million" should have probability 0
