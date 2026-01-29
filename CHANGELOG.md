@@ -9,11 +9,17 @@
   - `scalar_implicature_grounded`: Shows "some" has more compatible worlds than "all"
   - `lowerBound_grounded`, `exact_grounded`: Number word meanings match Montague theories
   - `grounding_enables_empirical_adjudication`: Full grounding chain from Montague to predictions
+  - **UnifiedAPIVersion**: Demonstration using `RSAScenario.mentalStateBool`
+    - `knowledgeStateUnified`: Boolean approximation of knowledge-state model
+    - Documents connection to unified mental state API (BeliefState = Observation)
+    - Notes limitation: unified API uses Boolean membership, G&S needs graded hypergeometric
 
 ### Architecture
 - GoodmanStuhlmuller2013 RSA predictions now derive from Montague compositional semantics
 - Numeral semantics (lower-bound vs exact) grounded in `Montague.Lexicon.Numerals`
 - Empirical adjudication between semantic theories enabled by grounding
+- Knowledge-state model documented with connection to unified mental state API
+- Future work: Add `gradedInBeliefState : BeliefState → World → ℚ` to RSAScenario
 
 ## [0.29.0] - 2025-01-29
 

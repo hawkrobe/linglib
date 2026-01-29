@@ -95,6 +95,49 @@ end BasicImplicature
 -- PART 2: Knowledge State RSA (Partial Knowledge)
 -- ============================================================================
 
+/-
+## Connection to Unified Mental State API
+
+The knowledge state model implements the mental state inference pattern from
+RSA.Core.Basic, but with GRADED belief states rather than Boolean membership.
+
+### Unified API Pattern (from RSA.Core.Basic)
+```
+RSAScenario.mentalState
+  beliefStates : List BeliefState
+  inBeliefState : BeliefState → World → Bool  -- Boolean!
+  beliefStatePrior : BeliefState → ℚ
+```
+
+### G&S 2013 Pattern (more expressive)
+```
+Observation       -- what speaker saw (the "belief state")
+Access            -- how much speaker could see (affects belief formation)
+speakerBelief     -- P(world | observation) via hypergeometric  -- GRADED!
+```
+
+The key difference: G&S uses hypergeometric probability P(w ∈ belief state | obs),
+not Boolean membership. This captures that observations provide partial evidence
+about world states, not certain knowledge.
+
+### Architectural Note
+
+The custom implementation here is MORE expressive than `mentalState` because:
+1. Belief state compatibility is graded (hypergeometric), not Boolean
+2. The model captures how observations arise from world states
+3. Access level affects the informativeness of observations
+
+A future enhancement to RSAScenario could add:
+```lean
+gradedInBeliefState : BeliefState → World → ℚ  -- returns 0 to 1
+```
+
+For now, this file demonstrates the pattern manually.
+
+### Reference: WebPPL Implementation
+https://social-interaction-lab.org/problang-v2/chapters/02-pragmatics.html
+-/
+
 namespace KnowledgeState
 
 -- World States: How many (of 3) have the property
@@ -223,6 +266,116 @@ theorem implicature_canceled_access1 :
   native_decide
 
 end KnowledgeState
+
+-- ============================================================================
+-- PART 2b: Unified API Version (Approximation)
+-- ============================================================================
+
+namespace UnifiedAPIVersion
+
+/-
+## Approximation Using Unified Mental State API
+
+This section shows how the knowledge-state model COULD be expressed using
+the unified `RSAScenario.mentalState` API, with Boolean belief state membership.
+
+Limitation: This loses the graded hypergeometric compatibility, replacing it
+with Boolean "observation is compatible with world state."
+-/
+
+open KnowledgeState
+
+/--
+Observation as belief state: what the speaker saw.
+
+In the unified API, BeliefState = Observation.
+-/
+abbrev BeliefState := Observation
+
+/--
+Boolean approximation: is world state compatible with observation?
+
+True iff the observation could plausibly arise from this world state.
+This is a coarse approximation of the hypergeometric probability.
+-/
+def inBeliefState (o : Observation) (s : WorldState) : Bool :=
+  -- Observation of k red out of a samples is compatible with world state s
+  -- iff k ≤ s.toNat (can't see more red than exist)
+  -- AND a - k ≤ 3 - s.toNat (can't see more non-red than exist)
+  o.seen ≤ s.toNat && (o.access.toNat - o.seen ≤ 3 - s.toNat)
+
+/--
+All possible observations (for any access level).
+-/
+def allObservations : List Observation :=
+  observationsFor .a1 ++ observationsFor .a2 ++ observationsFor .a3
+
+/--
+Prior over observations: uniform given access, weighted by access prior.
+
+In the full model, access level has a prior (e.g., uniform over a1, a2, a3).
+-/
+def observationPrior : Observation → ℚ
+  | ⟨_, .a1⟩ => 1  -- Equal weight per access level
+  | ⟨_, .a2⟩ => 1
+  | ⟨_, .a3⟩ => 1
+
+/--
+Build unified RSAScenario using mentalState smart constructor.
+
+This is the BOOLEAN APPROXIMATION of the knowledge-state model.
+-/
+def knowledgeStateUnified : RSAScenario :=
+  RSAScenario.mentalStateBool
+    KnowledgeState.allUtterances
+    allWorldStates
+    allObservations
+    [()]  -- No goal variation in this model
+    (fun s u => literalMeaning u s)
+    inBeliefState
+    (fun _ s1 s2 => s1 == s2)  -- No QUD projection
+    (fun _ => 1)  -- Uniform world prior
+    observationPrior
+    (fun _ => 1)  -- Uniform goal prior
+
+/--
+Compute L1 using unified API.
+
+Note: This gives different results than the custom implementation because
+it uses Boolean belief state membership instead of graded hypergeometric.
+-/
+def l1_unified (u : KnowledgeState.Utterance) : List (WorldState × ℚ) :=
+  RSA.L1_world knowledgeStateUnified u
+
+#eval l1_unified .some_
+
+/--
+The unified API version exists and computes.
+
+This demonstrates that the knowledge-state model CAN be expressed with the
+unified API, though with reduced expressiveness (Boolean vs graded beliefs).
+-/
+theorem unified_version_computes :
+    (l1_unified .some_).length > 0 := by native_decide
+
+/-
+## Comparison: Custom vs Unified
+
+The custom implementation (Part 2) gives more accurate results because:
+1. It uses graded P(obs | world, access) via hypergeometric
+2. The speaker marginalizes over their beliefs with proper weighting
+3. Access level affects how informative observations are
+
+The unified API version (this section) is a Boolean approximation:
+1. Observation is "compatible" or "not compatible" with world state
+2. Loses the gradation that makes partial knowledge interesting
+3. Demonstrates the PATTERN but not the full model
+
+Future work: Add `gradedInBeliefState : BeliefState → World → ℚ` to RSAScenario
+to support this model class properly.
+-/
+
+end UnifiedAPIVersion
 
 -- ============================================================================
 -- PART 3: Consistency Between Models
