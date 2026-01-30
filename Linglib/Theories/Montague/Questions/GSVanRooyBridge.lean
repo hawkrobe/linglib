@@ -301,8 +301,8 @@ theorem mentionSomeDP_not_exhaustive {W : Type*} [DecidableEq W]
     let dp := canonicalMentionSomeDP satisfies
     let q : Question W := [satisfies, fun w => !satisfies w]
     requiresExhaustive dp worlds [true, false] q = false := by
-  -- The positive cell (satisfies) resolves the DP
-  -- Proof: In worlds where satisfies holds, action true dominates
+  -- The satisfies cell resolves the DP (true dominates false in satisfying worlds)
+  -- so not all cells fail to resolve, hence requiresExhaustive = false
   sorry
 
 /-- Exhaustivity is monotone in refinement.
@@ -422,13 +422,26 @@ implies dominance on any subset S' ⊆ S. -/
 theorem resolves_subset {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (c c' : W -> Bool)
-    (_hSubset : ∀ w, c' w = true → c w = true)
-    (_hResolves : resolves dp worlds actions c = true) :
+    (hSubset : ∀ w, c' w = true → c w = true)
+    (hResolves : resolves dp worlds actions c = true) :
     resolves dp worlds actions c' = true := by
-  -- The proof: if action a dominates b in all worlds of c,
-  -- then a dominates b in all worlds of c' ⊆ c (since it's a subset).
-  -- This follows from: ∀w∈S, P(w) → ∀w∈S'⊆S, P(w)
-  sorry
+  unfold resolves at *
+  cases actions with
+  | nil => rfl
+  | cons a rest =>
+    -- Need to show: rest.all (fun b => (worlds.filter c').all (fun w => ...))
+    simp only [List.all_eq_true] at *
+    intro b hb w hw
+    -- w ∈ worlds.filter c' means w ∈ worlds ∧ c' w = true
+    simp only [List.mem_filter] at hw
+    -- Since c' w = true and hSubset, we have c w = true
+    have hcw : c w = true := hSubset w hw.2
+    -- So w ∈ worlds.filter c
+    have hw_in_c : w ∈ worlds.filter c := by
+      simp only [List.mem_filter]
+      exact ⟨hw.1, hcw⟩
+    -- Apply hResolves
+    exact hResolves b hb w hw_in_c
 
 /-- Refinement preserves resolution.
 
@@ -450,10 +463,13 @@ If the trivial question (one cell) resolves DP, the DP is trivial
 (one action dominates regardless of world). -/
 theorem trivial_resolves_only_trivial {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
-    (hResolves : questionResolves dp worlds actions [fun _ => true] = true) :
+    (_hResolves : questionResolves dp worlds actions [fun _ => true] = true) :
     -- One action dominates unconditionally
     ∃ a ∈ actions, actions.all fun b =>
       worlds.all fun w => dp.utility w a >= dp.utility w b := by
+  -- The trivial cell (fun _ => true) covers all worlds.
+  -- If it resolves, the first action dominates all others unconditionally.
+  -- This follows from: worlds.filter (fun _ => true) = worlds
   sorry
 
 /-- The exact question resolves all DPs.
