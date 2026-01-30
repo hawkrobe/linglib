@@ -258,4 +258,58 @@ This justifies using L1 or S1 approximations instead of computing
 the full infinite recursion L∞ / S∞.
 -/
 
+-- ============================================================================
+-- Fintype-Based API (RSAScenarioF / RSAF)
+-- ============================================================================
+
+/-!
+## Fintype-Based RSA
+
+The following demonstrates the new `RSAScenarioF` / `RSAF` API which provides:
+- Compile-time type safety via Fintype constraints
+- Direct use of ExactDist for proper probability distributions
+- No explicit List enumerations (derived from Fintype instances)
+-/
+
+/-- Reference game scenario using Fintype-based API -/
+def refGameScenarioF : RSAScenarioF :=
+  RSAScenarioF.basicBool
+    (U := Feature)  -- Utterances are features
+    (W := Object)   -- Worlds are objects
+    (fun o u => u.appliesTo o)  -- Satisfies relation from Montague
+
+-- Compute distributions using RSAF
+
+/-- L0 for "square" using Fintype API -/
+def l0_square_F : Option (ExactDist Object) :=
+  RSAF.L0 refGameScenarioF utt_square () () () ()
+
+/-- S1 in blue_square world using Fintype API -/
+def s1_blue_square_F : Option (ExactDist Feature) :=
+  RSAF.S1 refGameScenarioF blue_square () () () ()
+
+/-- L1 for "square" using Fintype API -/
+def l1_square_F : Option (ExactDist Object) :=
+  RSAF.L1_world refGameScenarioF utt_square
+
+-- Evaluate (compare with List-based versions above)
+-- Note: Currently disabled due to sorry axioms in RSAF non-negativity proofs
+
+-- #eval l0_square_F.map (fun d => (d.mass blue_square, d.mass green_square))
+-- Should be (1/2, 1/2) - uniform over squares
+
+-- #eval l1_square_F.map (fun d => (d.mass blue_square, d.mass green_square))
+-- Should show blue_square > green_square (the pragmatic inference!)
+
+/--
+**Reference Game Theorem (Fintype version)**
+
+Using ExactDist, we can directly compare probabilities.
+-/
+theorem reference_game_inference_F :
+    ∀ d, l1_square_F = some d →
+    d.mass blue_square > d.mass green_square := by
+  intro d hd
+  sorry  -- TODO: prove once sorries in RSAF are filled
+
 end RSA.FrankGoodman2012
