@@ -317,6 +317,9 @@ import Linglib.Phenomena.Questions.Exhaustivity
 import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PragmaticAnswerhood
+import Linglib.Phenomena.Questions.ScopeReadings
+import Linglib.Phenomena.Questions.Coordination
+import Linglib.Phenomena.Questions.MentionSome
 
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic

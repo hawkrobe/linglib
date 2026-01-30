@@ -1,0 +1,449 @@
+import Linglib.Theories.Montague.Questions.Coordination
+import Linglib.Theories.Montague.Questions.MentionSome
+
+/-!
+# Questions/ScopeReadings.lean
+
+Pair-List, Choice, and Mention-Some Readings (G&S 1984, Chapter VI, Sections 2-5).
+
+## The Phenomenon
+
+Embedded questions exhibit scope interactions with quantifiers:
+
+**Pair-List Readings** (Section 2.1):
+"Which student was recommended by each professor?"
+→ For each professor, which student they recommended (list of pairs)
+
+Here the universal quantifier takes WIDE scope over the wh-phrase.
+The answer is a functional relation: professor → student.
+
+**Choice Readings** (Section 2.2):
+"John knows whom Mary or Sue invited"
+→ John knows the answer, where the answer depends on whether
+   Mary or Sue is the one asking
+
+The disjunction/existential takes WIDE scope over the wh-phrase.
+Different individuals can give different complete answers.
+
+## Semantic Analysis
+
+**Pair-List**: ∀y. ?x. R(y,x)
+- The question is parameterized by the universal
+- Answer must resolve the question for each y
+
+**Choice**: ∃y. ?x. R(y,x) (or ∨)
+- The question is parameterized by which y is relevant
+- Answer resolves the question for SOME y (the one that matters)
+
+## References
+
+- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Sections 2.1-2.2.
+- Szabolcsi (1997). Quantifiers in Pair-List Readings.
+- Dayal (2016). Questions. MIT Press.
+-/
+
+namespace Montague.Questions.ScopeReadings
+
+open Montague.Questions
+open Montague.Questions.Coordination
+open Montague.Questions.MentionSome
+open scoped GSQuestion  -- For ⊑ notation
+
+-- ============================================================================
+-- PART 1: Pair-List Readings
+-- ============================================================================
+
+/-!
+## Pair-List Readings
+
+"Which student was recommended by each professor?"
+
+**Standard Reading**: ?x. ∀y. Prof(y) → Recommended(y, x)
+- One student recommended by ALL professors
+- Very restrictive; often no such student exists
+
+**Pair-List Reading**: ∀y. Prof(y) → ?x. Recommended(y, x)
+- For each professor, which student they recommended
+- Answer is a FUNCTION from professors to students
+
+The pair-list reading arises when:
+1. The universal takes wide scope over the wh-phrase
+2. The answer is a function/relation
+-/
+
+/-- A pair-list question: for each element of a domain, ask a wh-question.
+
+"Which X did each Y verb?" becomes:
+∀y∈Y. ?x. R(y, x) -/
+structure PairListQuestion (W E : Type*) where
+  /-- The domain of the universal ("each professor") -/
+  universalDomain : List E
+  /-- The wh-domain ("which student") -/
+  whDomain : List E
+  /-- The relation being asked about -/
+  relation : W -> E -> E -> Bool
+  /-- Name of the universal NP -/
+  universalNP : String
+  /-- Name of the wh-phrase -/
+  whPhrase : String
+
+/-- A pair-list answer: a function from the universal domain to wh-answers. -/
+structure PairListAnswer (E : Type*) where
+  /-- The function mapping each universal element to its answer -/
+  pairs : E -> Option E
+
+/-- Convert a pair-list question to a GSQuestion.
+
+The partition groups worlds by the ENTIRE function from Y to X:
+Two worlds are equivalent iff they have the same pair-list. -/
+def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
+    (plq : PairListQuestion W E) : GSQuestion W where
+  equiv w v :=
+    -- Same iff for all y∈Y, the unique x with R(y,x) is the same
+    plq.universalDomain.all fun y =>
+      plq.whDomain.all fun x =>
+        plq.relation w y x == plq.relation v y x
+  refl w := by
+    simp only [List.all_eq_true]
+    intro y _ x _
+    exact beq_self_eq_true _
+  symm w v := by
+    congr 1
+    funext y
+    congr 1
+    funext x
+    cases plq.relation w y x <;> cases plq.relation v y x <;> rfl
+
+/-- A pair-list question is equivalent to a conjunction of individual questions.
+
+∀y. ?x. R(y,x) = ∧_{y∈Y} ?x. R(y,x)
+
+Note: The formal statement requires universe matching; see pairListAsConjunction. -/
+theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [DecidableEq (List E)]
+    (plq : PairListQuestion W E) :
+    let individual := fun y => GSQuestion.ofProject (fun w =>
+      plq.whDomain.filter (fun x => plq.relation w y x))
+    plq.toGSQuestion = pairListAsConjunction plq.universalDomain individual := by
+  sorry -- The partition induced by pair-list = conjunction of individual questions
+
+/-- Number of cells in pair-list: can be up to |X|^|Y| (exponential).
+
+If each professor can recommend any student, and there are n professors
+and m students, the pair-list question has up to m^n cells. -/
+def PairListQuestion.maxCells {W E : Type*}
+    (plq : PairListQuestion W E) : Nat :=
+  plq.whDomain.length ^ plq.universalDomain.length
+
+-- ============================================================================
+-- PART 2: Choice Readings
+-- ============================================================================
+
+/-!
+## Choice Readings
+
+"John knows whom Mary or Sue invited"
+
+**Non-Choice Reading**: John knows: ?x. (Mary-invited(x) ∨ Sue-invited(x))
+- John knows who was invited by at least one of them
+
+**Choice Reading**: John knows: Mary-invited(?x) ∨ Sue-invited(?x)
+- Depending on whether Mary or Sue is relevant, John knows that answer
+- This is a de re reading of the disjunction
+
+The choice reading arises when:
+1. A disjunctive/existential NP takes wide scope over the wh-phrase
+2. The embedded question is "parameterized" by which disjunct is true
+
+"Whom does John or Mary love?" can be answered:
+- "If John: Bill. If Mary: Sue."
+This gives DIFFERENT answers depending on who is the lover.
+-/
+
+/-- A choice question: question parameterized by a disjunction.
+
+"Whom does Y₁ or Y₂ verb?" -/
+structure ChoiceQuestion (W E : Type*) where
+  /-- The disjuncts -/
+  disjuncts : List E
+  /-- The wh-domain -/
+  whDomain : List E
+  /-- The relation -/
+  relation : W -> E -> E -> Bool
+  /-- Description of the disjunction -/
+  disjunctionNP : String
+  /-- The wh-phrase -/
+  whPhrase : String
+
+/-- A choice answer: potentially different answer for each disjunct. -/
+structure ChoiceAnswer (E : Type*) where
+  /-- Which disjunct is "active" -/
+  activeDisjunct : E
+  /-- The answer for that disjunct -/
+  answer : E
+  deriving Repr
+
+/-- Under choice reading, different disjuncts can give different answers.
+
+"Whom does John or Mary love?"
+- Answer: "John loves Bill; Mary loves Sue"
+- This is the CONDITIONAL ANSWER: for each disjunct, the answer. -/
+def ChoiceQuestion.conditionalAnswer {W E : Type*} [DecidableEq E]
+    (cq : ChoiceQuestion W E) (w : W) : List (E × List E) :=
+  cq.disjuncts.map fun d =>
+    (d, cq.whDomain.filter (cq.relation w d))
+
+/-- Convert choice question to GSQuestion under choice reading.
+
+Two worlds are equivalent iff for SOME disjunct, they give the same answer.
+(This is a coarser partition than requiring ALL disjuncts to match.) -/
+def ChoiceQuestion.toGSQuestion_choice {W E : Type*} [DecidableEq E]
+    (cq : ChoiceQuestion W E) : GSQuestion W where
+  equiv w v :=
+    -- Same iff exists some d where answers match
+    cq.disjuncts.any fun d =>
+      cq.whDomain.all fun x =>
+        cq.relation w d x == cq.relation v d x
+  refl w := by
+    -- At least one disjunct must have matching answers (reflexively true)
+    sorry
+  symm w v := by
+    -- Symmetry of component-wise equality
+    sorry
+
+/-- Under NON-choice reading, worlds match iff ALL disjunct-answers match. -/
+def ChoiceQuestion.toGSQuestion_nonchoice {W E : Type*} [DecidableEq E]
+    (cq : ChoiceQuestion W E) : GSQuestion W where
+  equiv w v :=
+    -- Same iff all disjuncts give same answer
+    cq.disjuncts.all fun d =>
+      cq.whDomain.all fun x =>
+        cq.relation w d x == cq.relation v d x
+  refl w := by
+    simp only [List.all_eq_true]
+    intro _ _ _ _
+    exact beq_self_eq_true _
+  symm w v := by
+    -- Symmetry of component-wise equality
+    sorry
+
+/-- Choice reading gives COARSER partition than non-choice. -/
+theorem choice_coarser_than_nonchoice {W E : Type*} [DecidableEq E]
+    (cq : ChoiceQuestion W E) :
+    cq.toGSQuestion_nonchoice ⊑ cq.toGSQuestion_choice := by
+  sorry -- Follows from: if all disjuncts match, then some disjunct matches
+
+-- ============================================================================
+-- PART 3: Existential Wide Scope
+-- ============================================================================
+
+/-!
+## Existential Wide Scope
+
+"Which student does some professor recommend?"
+
+Similar to choice readings, but with existential quantifier:
+
+**Narrow Scope**: ?x. ∃y. Prof(y) ∧ Recommends(y,x)
+- Which student is recommended by at least one professor?
+
+**Wide Scope**: ∃y. Prof(y) ∧ ?x. Recommends(y,x)
+- There is some professor; which student do they recommend?
+
+The wide scope reading is a "functional" or "choice" reading where
+the existential picks out a specific professor.
+-/
+
+/-- An existential-over-wh question. -/
+structure ExistentialQuestion (W E : Type*) where
+  /-- The existential domain -/
+  existentialDomain : List E
+  /-- The wh-domain -/
+  whDomain : List E
+  /-- The relation -/
+  relation : W -> E -> E -> Bool
+
+/-- Narrow scope: ∃y. ?x. R(y,x) collapses to ?x. ∃y. R(y,x) -/
+def ExistentialQuestion.narrowScope {W E : Type} [DecidableEq E] [DecidableEq (List E)]
+    (eq : ExistentialQuestion W E) : GSQuestion W :=
+  GSQuestion.ofProject fun w =>
+    eq.whDomain.filter fun x =>
+      eq.existentialDomain.any fun y => eq.relation w y x
+
+/-- Wide scope: for the "relevant" y, what's the answer?
+
+This is similar to choice reading - the answer can vary based on
+which existential witness is considered. -/
+def ExistentialQuestion.wideScope {W E : Type*} [DecidableEq E]
+    (eq : ExistentialQuestion W E) : GSQuestion W where
+  equiv w v :=
+    -- Same iff some y gives same answer in both worlds
+    eq.existentialDomain.any fun y =>
+      eq.whDomain.all fun x =>
+        eq.relation w y x == eq.relation v y x
+  refl w := sorry -- At least one existential witness gives matching answers
+  symm w v := sorry -- Symmetry of component-wise equality
+
+-- ============================================================================
+-- PART 4: Functional Readings
+-- ============================================================================
+
+/-!
+## Functional Readings
+
+When the wh-answer is FUNCTIONALLY DEPENDENT on a wide-scope quantifier,
+we get readings where the answer is a function.
+
+"Which of his teachers does every student admire?"
+→ Answer: "John admires Smith, Mary admires Jones, ..."
+→ A function from students to teachers
+
+The function IS the complete answer under the pair-list reading.
+-/
+
+/-- A functional answer: maps each element of one domain to another. -/
+def FunctionalAnswer (D R : Type*) := D -> Option R
+
+/-- The number of possible functional answers. -/
+def numFunctionalAnswers (domainSize rangeSize : Nat) : Nat :=
+  (rangeSize + 1) ^ domainSize  -- +1 for "no answer" option
+
+/-- A question has a functional reading if the answer is a function.
+
+This happens when:
+1. There's a pair-list configuration (universal over wh)
+2. For each domain element, there's a unique wh-answer -/
+def hasFunctionalReading {W E : Type*} [DecidableEq E]
+    (plq : PairListQuestion W E) (worlds : List W) : Bool :=
+  -- In each world, each y has at most one x with R(y,x)
+  worlds.all fun w =>
+    plq.universalDomain.all fun y =>
+      let answers := plq.whDomain.filter (plq.relation w y)
+      answers.length <= 1
+
+-- ============================================================================
+-- PART 5: Mention-Some and Wide Scope
+-- ============================================================================
+
+/-!
+## Mention-Some and Scope
+
+"Where can I buy an Italian newspaper?"
+
+This has a mention-some reading: ONE place suffices.
+
+The existential "an Italian newspaper" can take wide scope:
+∃x. Paper(x) ∧ ?place. Sells(place, x)
+
+But this doesn't fully explain mention-some, which is about
+the QUESTIONER'S GOAL, not scope.
+
+However, wide scope CAN interact with mention-some:
+- "Which student does some professor recommend?" (choice + mention-some)
+- "Who speaks some Scandinavian language?" (existential + mention-some)
+
+See MentionSome.lean for full G&S Section 5 treatment:
+- I-MS rule (formal semantic operation)
+- P-ANS analysis and its problems
+- Embedded mention-some under "know"/"wonder"
+- Verb licensing (why "depends" blocks mention-some)
+-/
+
+/-- A question has mention-some reading when partial answers suffice. -/
+structure MentionSomeQuestion (W : Type*) where
+  /-- The underlying question -/
+  question : GSQuestion W
+  /-- Is mention-some licensed? -/
+  mentionSome : Bool
+  /-- Why mention-some is licensed -/
+  explanation : String
+
+/-- Wide scope existential can create mention-some-like readings.
+
+If the question is parameterized by an existential, answering for
+ANY witness can suffice, mimicking mention-some. -/
+def existentialCreatesMentionSome {W E : Type*} [DecidableEq E]
+    (eq : ExistentialQuestion W E) : MentionSomeQuestion W :=
+  { question := eq.wideScope
+  , mentionSome := true
+  , explanation := "Wide-scope existential: answer for any witness suffices"
+  }
+
+/-- Convert an ExistentialQuestion to a MentionSomeInterrogative.
+
+This connects the scope-based existential question to the G&S Section 5
+formal treatment of mention-some. -/
+def ExistentialQuestion.toMentionSomeInterrogative {W E : Type*}
+    (eq : ExistentialQuestion W E) : MentionSomeInterrogative W E :=
+  { whDomain := eq.whDomain
+  , abstract := fun w x => eq.existentialDomain.any fun y => eq.relation w y x
+  }
+
+/-- Wide-scope existential implies mention-some is licensed.
+
+G&S 1984, Section 5: When an existential takes wide scope over the wh-phrase,
+the question receives a mention-some interpretation because any witness
+for the existential provides a sufficient answer. -/
+theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]
+    (eq : ExistentialQuestion W E) (w : W)
+    (_hExists : eq.existentialDomain.any fun y =>
+      eq.whDomain.any fun x => eq.relation w y x) :
+    (eq.toMentionSomeInterrogative).whDomain.any fun x =>
+      (eq.toMentionSomeInterrogative).abstract w x := by
+  sorry
+
+-- ============================================================================
+-- PART 6: Licensing Conditions
+-- ============================================================================
+
+/-!
+## When Do These Readings Arise?
+
+**Pair-List Licensing**:
+1. Universal quantifier c-commands wh-phrase
+2. The question has a "natural functional interpretation"
+3. The answer can be presented as a list
+
+"Which student did each professor recommend?" ✓
+"Each professor recommended which student?"  (marked)
+
+**Choice Licensing**:
+1. Disjunction/existential c-commands wh-phrase
+2. The different disjuncts/witnesses are contextually salient
+3. Conditional answers are felicitous
+
+"Whom does John or Mary love?" ✓ (if both John and Mary are salient)
+
+**Factors**:
+- Attitude verbs: "know" licenses pair-list more than "wonder"
+- Definiteness: definite subjects are harder for pair-list
+- Information structure: contrastive focus on universal
+-/
+
+/-- Factors affecting pair-list availability. -/
+structure PairListFactors where
+  /-- The attitude verb (if embedded) -/
+  attitudeVerb : Option String
+  /-- Is the universal definite? -/
+  universalDefinite : Bool
+  /-- Does the universal have contrastive focus? -/
+  contrastiveFocus : Bool
+  /-- Is the question matrix or embedded? -/
+  isMatrix : Bool
+
+/-- Predict pair-list availability from factors. -/
+def predictPairList (factors : PairListFactors) : Bool :=
+  -- Pair-list more likely with:
+  -- - "know" than "wonder"
+  -- - indefinite universals
+  -- - contrastive focus
+  -- - embedded questions
+  let verbOK := match factors.attitudeVerb with
+    | some "know" => true
+    | some "wonder" => false
+    | some "ask" => false
+    | _ => true  -- matrix questions
+  let defOK := !factors.universalDefinite
+  let focusOK := factors.contrastiveFocus
+  verbOK && (defOK || focusOK)
+
+end Montague.Questions.ScopeReadings
