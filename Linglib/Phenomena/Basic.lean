@@ -6,6 +6,9 @@ Core types for specifying linguistic phenomena.
 
 import Linglib.Core.Basic
 import Linglib.Core.Grammar
+import Linglib.Phenomena.Lexicon
+
+open Lexicon
 
 -- ============================================================================
 -- Minimal Pairs

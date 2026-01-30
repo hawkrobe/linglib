@@ -28,7 +28,14 @@ namespace Montague.Lexicon
 open Montague
 open Montague.Quantifiers
 open Montague.Scales
-open Lexicon  -- Core lexicon (Word definitions)
+
+-- Local word definitions for toy model (main lexicon is in Fragments/)
+private def word_some : Word := ⟨"some", Cat.D, {}⟩
+private def word_every : Word := ⟨"every", Cat.D, { number := some .sg }⟩
+private def word_john : Word := ⟨"John", Cat.D, { number := some .sg, person := some .third }⟩
+private def word_mary : Word := ⟨"Mary", Cat.D, { number := some .sg, person := some .third }⟩
+private def word_sleeps : Word := ⟨"sleeps", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def word_laughs : Word := ⟨"laughs", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
 -- ============================================================================
 -- Semantic Lexical Entries
@@ -99,7 +106,7 @@ open ToyLexicon
 
 /-- "some" as determiner: λP.λQ. ∃x. P(x) ∧ Q(x) -/
 def some_entry : SemLexEntry toyModel :=
-  { word := Lexicon.some_
+  { word := word_some
   , ty := Ty.det
   , denot := some_sem toyModel
   , scaleMembership := some (.quantifier .some_)
@@ -107,7 +114,7 @@ def some_entry : SemLexEntry toyModel :=
 
 /-- "every" / "all" as determiner: λP.λQ. ∀x. P(x) → Q(x) -/
 def every_entry : SemLexEntry toyModel :=
-  { word := Lexicon.every
+  { word := word_every
   , ty := Ty.det
   , denot := every_sem toyModel
   , scaleMembership := some (.quantifier .all)
@@ -131,7 +138,7 @@ def no_entry : SemLexEntry toyModel :=
 
 /-- "John" as proper name -/
 def john_entry : SemLexEntry toyModel :=
-  { word := Lexicon.john
+  { word := word_john
   , ty := .e
   , denot := ToyEntity.john
   -- scaleMembership defaults to none (proper names aren't scalar)
@@ -139,21 +146,21 @@ def john_entry : SemLexEntry toyModel :=
 
 /-- "Mary" as proper name -/
 def mary_entry : SemLexEntry toyModel :=
-  { word := Lexicon.mary
+  { word := word_mary
   , ty := .e
   , denot := ToyEntity.mary
   }
 
 /-- "sleeps" as intransitive verb -/
 def sleeps_entry : SemLexEntry toyModel :=
-  { word := Lexicon.sleeps
+  { word := word_sleeps
   , ty := .e ⇒ .t
   , denot := ToyLexicon.sleeps_sem
   }
 
 /-- "laughs" as intransitive verb -/
 def laughs_entry : SemLexEntry toyModel :=
-  { word := Lexicon.laughs
+  { word := word_laughs
   , ty := .e ⇒ .t
   , denot := ToyLexicon.laughs_sem
   }
