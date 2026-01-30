@@ -68,6 +68,50 @@ namespace Montague.Modification
 open Montague
 
 -- ============================================================================
+-- Generic Predicate Modification (for any entity type)
+-- ============================================================================
+
+/-!
+## Generic Predicate Modification
+
+These definitions work for any entity type `E`, making them usable in
+RSA implementations without requiring full Montague model infrastructure.
+
+**Key function**: `predMod` implements the H&K predicate modification rule:
+  ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
+-/
+
+/-- Predicate modification for arbitrary entity types.
+
+Implements H&K Ch. 4 predicate modification:
+  ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
+
+This is the semantic operation underlying intersective adjective composition.
+-/
+def predMod {E : Type*} (p q : E → Bool) : E → Bool :=
+  fun x => p x && q x
+
+/-- The tautological predicate (λx. true) is the identity for predMod -/
+def truePred {E : Type*} : E → Bool := fun _ => true
+
+/-- Predicate modification is commutative -/
+theorem predMod_comm {E : Type*} (p q : E → Bool) : predMod p q = predMod q p := by
+  funext x; simp only [predMod, Bool.and_comm]
+
+/-- Predicate modification is associative -/
+theorem predMod_assoc {E : Type*} (p q r : E → Bool) :
+    predMod (predMod p q) r = predMod p (predMod q r) := by
+  funext x; simp only [predMod, Bool.and_assoc]
+
+/-- The tautological predicate is a right identity -/
+theorem predMod_true_right {E : Type*} (p : E → Bool) : predMod p truePred = p := by
+  funext x; simp only [predMod, truePred, Bool.and_true]
+
+/-- The tautological predicate is a left identity -/
+theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePred p = p := by
+  funext x; simp only [predMod, truePred, Bool.true_and]
+
+-- ============================================================================
 -- General Adjective Semantics (Kamp 1975, Parsons 1970)
 -- ============================================================================
 

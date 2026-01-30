@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.31.0] - 2025-01-29
+
+### Added
+- **Theories/Montague/Questions/**: G&S 1984 partition semantics for questions
+  - `Basic.lean`: Core types (Question, Answer, Cell as W → Bool)
+  - `Partition.lean`: GSQuestion structure with equivalence relation, refinement ⊑
+  - `PragmaticAnswerhood.lean`: G&S Ch. IV pragmatic answerhood (information sets J)
+    - `InfoSet`: Questioner's factual knowledge J ⊆ I
+    - `isPragmaticAnswer`, `givesPragmaticAnswer`: Two notions of answerhood
+    - Pragmatic term properties: `pragmaticallyRigid`, `pragmaticallyDefinite`, `pragmaticallyExhaustive`
+    - Key theorems: `semantic_is_pragmatic_limit`, `exhaustive_rigid_gives_complete_answer`
+  - `DecisionTheory.lean`: Van Rooy 2003 decision-theoretic semantics
+  - `SignalingGames.lean`: Credibility and strategic communication (RSA bridge)
+  - `Polarity.lean`: Van Rooy & Šafářová 2003 polar question pragmatics (PPQ/NPQ/Alt)
+
+- **Phenomena/Questions/**: Empirical data for question-answer phenomena
+  - `Basic.lean`: Core question data types
+  - `WhComplement.lean`: Wh-complement clause data
+  - `FocusAnswer.lean`: Focus-sensitive answer patterns
+  - `Exhaustivity.lean`: Exhaustive interpretation data
+  - `MultipleWh.lean`: Multiple wh-question data
+  - `PolarAnswers.lean`: Yes/no answer patterns, conditional→biconditional, disjunction→exclusive
+  - `PragmaticAnswerhood.lean`: G&S pragmatic rigidity/definiteness examples
+
+- **Montague/Modification.lean**: Generic `predMod` for arbitrary entity types
+  - Enables RSA implementations to use H&K predicate modification without full Montague infrastructure
+
+- **RSA/Implementations/HawkinsGweonGoodman2021.lean**: Pedagogy RSA model
+- **Phenomena/HawkinsGweonGoodman2021/Data.lean**: Pedagogy experiment data
+
+### Architecture
+- Question semantics connects to RSA via SignalingGames (speaker-listener recursion)
+- Pragmatic answerhood relativizes semantic answerhood to information sets J
+- When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhood
+
+### References
+- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
+- Van Rooy (2003). Questioning to Resolve Decision Problems.
+- Van Rooy & Šafářová (2003). On Polar Questions.
+- Hawkins, Gweon & Goodman (2021). Pedagogy and the pragmatics of examples.
+
 ## [0.30.0] - 2025-01-29
 
 ### Added

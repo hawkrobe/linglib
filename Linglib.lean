@@ -83,6 +83,7 @@ import Linglib.Phenomena.Gapping.Data
 import Linglib.Phenomena.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.FrankGoodman2012.Data
 import Linglib.Phenomena.KaoBergenGoodman2014.Data
+import Linglib.Phenomena.HawkinsGweonGoodman2021.Data
 
 -- BasicPhenomena
 import Linglib.Phenomena.BasicPhenomena.Agreement
@@ -164,6 +165,9 @@ import Linglib.Theories.Montague.Derivation.Scope
 -- Montague Intensional
 import Linglib.Theories.Montague.Intensional.Basic
 
+-- Montague Questions (G&S partition semantics)
+import Linglib.Theories.Montague.Questions
+
 -- Montague Entailment
 import Linglib.Theories.Montague.Entailment.Basic
 import Linglib.Theories.Montague.Entailment.Monotonicity
@@ -240,6 +244,7 @@ import Linglib.Theories.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.RSA.Implementations.YoonEtAl2020
+import Linglib.Theories.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Theories.RSA.DegenEtAl2020
 
 -- RSA Extensions: Information Theory (Zaslavsky et al. 2020)
@@ -303,6 +308,15 @@ import Linglib.Phenomena.FlexibleNegation.Data
 
 -- Adjective semantics (Kamp 1975, Partee 1995, 2001)
 import Linglib.Phenomena.Adjectives.Data
+
+-- Question-answer phenomena (G&S 1984, Van Rooy 2003)
+import Linglib.Phenomena.Questions.Basic
+import Linglib.Phenomena.Questions.WhComplement
+import Linglib.Phenomena.Questions.FocusAnswer
+import Linglib.Phenomena.Questions.Exhaustivity
+import Linglib.Phenomena.Questions.MultipleWh
+import Linglib.Phenomena.Questions.PolarAnswers
+import Linglib.Phenomena.Questions.PragmaticAnswerhood
 
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic
