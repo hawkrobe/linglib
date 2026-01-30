@@ -342,11 +342,6 @@ def S1_marginal (u : Utterance) (s : WorldState) (a : Access) : ℚ :=
 def L1_scores (u : Utterance) (a : Access) : List (WorldState × ℚ) :=
   allWorldStates.map λ s => (s, S1_marginal u s a)
 
-def getScore (dist : List (WorldState × ℚ)) (s : WorldState) : ℚ :=
-  match dist.find? λ (s', _) => s' == s with
-  | some (_, p) => p
-  | none => 0
-
 -- Key computations
 def l1_some_fullAccess : List (WorldState × ℚ) := L1_scores .some_ .a3
 def l1_some_access2 : List (WorldState × ℚ) := L1_scores .some_ .a2
@@ -527,8 +522,8 @@ theorem models_consistent_on_implicature :
     (RSA.Eval.getScore (l1 threePerson .some_) (w1 (n := 3)) >
      RSA.Eval.getScore (l1 threePerson .some_) (wAll (n := 3)))
     ↔
-    (KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s1 >
-     KnowledgeState.getScore (KnowledgeState.L1_scores .some_ .a3) .s3) := by
+    (getScore (KnowledgeState.L1_scores .some_ .a3) .s1 >
+     getScore (KnowledgeState.L1_scores .some_ .a3) .s3) := by
   constructor <;> intro _ <;> native_decide
 
 end Consistency

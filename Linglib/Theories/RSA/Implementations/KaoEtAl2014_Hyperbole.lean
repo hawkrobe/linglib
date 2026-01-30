@@ -494,9 +494,6 @@ def l1_goal_million : List (Goal × ℚ) := qudL1_goal Utterance.million
 -- Key Predictions
 -- ============================================================================
 
-/-- Get probability from a distribution -/
-def getProb {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
-  RSA.Eval.getScore dist x
 
 /--
 **Hyperbole Prediction 1**: Under QUD "affect", S1 prefers hyperbole.
@@ -507,7 +504,7 @@ hyperbolic utterances become optimal.
 def s1_hyperbole_optimal : Bool :=
   -- For (p500, annoyed), S1 under "affect" QUD prefers "million" over literal "fiveHundred"
   let dist := s1_p500_annoyed_affect
-  getProb dist Utterance.million > getProb dist Utterance.fiveHundred
+  getScore dist Utterance.million > getScore dist Utterance.fiveHundred
 
 #eval s1_hyperbole_optimal
 -- Expected: true (hyperbole emerges)
@@ -519,7 +516,7 @@ When the speaker cares about exact price, they use the literal utterance.
 -/
 def s1_literal_under_price : Bool :=
   let dist := s1_p500_annoyed_price
-  getProb dist Utterance.fiveHundred > getProb dist Utterance.million
+  getScore dist Utterance.fiveHundred > getScore dist Utterance.million
 
 #eval s1_literal_under_price
 -- Expected: true
@@ -533,9 +530,9 @@ correctly infers the speaker meant to convey strong affect.
 def l1_infers_affect : Bool :=
   let dist := l1_million
   -- P(annoyed | million) + P(amazed | million) > P(neutral | million)
-  let pAnnoyed := allPrices.foldl (fun acc p => acc + getProb dist (p, Affect.annoyed)) 0
-  let pAmazed := allPrices.foldl (fun acc p => acc + getProb dist (p, Affect.amazed)) 0
-  let pNeutral := allPrices.foldl (fun acc p => acc + getProb dist (p, Affect.neutral)) 0
+  let pAnnoyed := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.annoyed)) 0
+  let pAmazed := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.amazed)) 0
+  let pNeutral := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.neutral)) 0
   pAnnoyed + pAmazed > pNeutral
 
 #eval l1_infers_affect
@@ -549,7 +546,7 @@ trying to communicate affect, not exact price.
 -/
 def l1_infers_affect_qud : Bool :=
   let dist := l1_goal_million
-  getProb dist Goal.valence > getProb dist Goal.price
+  getScore dist Goal.valence > getScore dist Goal.price
 
 #eval l1_infers_affect_qud
 -- Expected: true

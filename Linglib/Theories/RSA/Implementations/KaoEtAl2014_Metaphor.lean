@@ -378,9 +378,6 @@ def l1_blanket : List (Meaning × ℚ) := runL1_world .blanket
 -- Key Predictions
 -- ============================================================================
 
-/-- Get probability from a distribution -/
-def getProb {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
-  RSA.Eval.getScore dist x
 
 -- ============================================================================
 -- Key Prediction 1: Nonliteral Interpretation
@@ -396,9 +393,9 @@ given the utterance is close to one (P(cp|u) = 0.994)"
 def l1_infers_person_not_shark : Bool :=
   let dist := l1_shark
   let pPerson := allMeanings.filter (·.category == .person) |>.foldl
-    (fun acc m => acc + getProb dist m) 0
+    (fun acc m => acc + getScore dist m) 0
   let pShark := allMeanings.filter (·.category == .shark) |>.foldl
-    (fun acc m => acc + getProb dist m) 0
+    (fun acc m => acc + getScore dist m) 0
   pPerson > pShark * 10  -- Person should be ~99%, shark ~1%
 
 #eval l1_infers_person_not_shark
@@ -419,7 +416,7 @@ metaphorical utterances become optimal.
 -/
 def s1_shark_preferred_for_danger : Bool :=
   let dist := s1_dangerous_goal
-  getProb dist Utterance.shark > getProb dist Utterance.person
+  getScore dist Utterance.shark > getScore dist Utterance.person
 
 #eval s1_shark_preferred_for_danger
 -- Expected: true (metaphor emerges)
@@ -435,7 +432,7 @@ When the speaker cares about literal category, literal utterances are at least a
 -/
 def s1_person_at_least_shark : Bool :=
   let dist := s1_category_goal
-  getProb dist Utterance.person >= getProb dist Utterance.shark
+  getScore dist Utterance.person >= getScore dist Utterance.shark
 
 #eval s1_person_at_least_shark
 -- Expected: true (they tie at 1/3 each)
@@ -453,9 +450,9 @@ def l1_shark_infers_dangerous : Bool :=
   let dist := l1_shark
   -- P(dangerous=true | shark) > P(dangerous=false | shark)
   let pDangerous := allMeanings.filter (·.dangerous) |>.foldl
-    (fun acc m => acc + getProb dist m) 0
+    (fun acc m => acc + getScore dist m) 0
   let pNotDangerous := allMeanings.filter (! ·.dangerous) |>.foldl
-    (fun acc m => acc + getProb dist m) 0
+    (fun acc m => acc + getScore dist m) 0
   pDangerous > pNotDangerous
 
 #eval l1_shark_infers_dangerous
@@ -472,9 +469,9 @@ trying to communicate a feature, not literal category.
 -/
 def l1_infers_feature_qud : Bool :=
   let dist := l1_goal_shark
-  let pFeature := getProb dist Goal.dangerous + getProb dist Goal.unpredictable +
-                  getProb dist Goal.comforting
-  let pCategory := getProb dist Goal.category
+  let pFeature := getScore dist Goal.dangerous + getScore dist Goal.unpredictable +
+                  getScore dist Goal.comforting
+  let pCategory := getScore dist Goal.category
   pFeature > pCategory
 
 #eval l1_infers_feature_qud
@@ -490,9 +487,9 @@ theorem listener_infers_feature_qud : l1_infers_feature_qud = true := by native_
 -/
 def fire_more_unpredictable_than_shark : Bool :=
   let fireUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (fun acc m => acc + getProb l1_fire m) 0
+    (fun acc m => acc + getScore l1_fire m) 0
   let sharkUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (fun acc m => acc + getProb l1_shark m) 0
+    (fun acc m => acc + getScore l1_shark m) 0
   fireUnpred > sharkUnpred
 
 #eval fire_more_unpredictable_than_shark
