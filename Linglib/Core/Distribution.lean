@@ -211,6 +211,53 @@ def ExactDist.tryNormalize {α : Type*} [Fintype α]
     none
 
 -- ============================================================================
+-- Bridge to List Representation
+-- ============================================================================
+
+/--
+Convert ExactDist to List representation (noncomputable).
+
+This bridges the typed ExactDist to the list-based format used by RSA.Eval.
+Use this for proofs; for #eval, use the list-based RSA.Eval API directly.
+-/
+noncomputable def ExactDist.toList {α : Type*} [Fintype α] (d : ExactDist α) : List (α × ℚ) :=
+  (Finset.univ : Finset α).toList.map fun x => (x, d.mass x)
+
+/--
+Convert ExactDist to List using an explicit enumeration.
+
+This is computable and suitable for #eval when you provide the element list.
+-/
+def ExactDist.toListWith {α : Type*} [Fintype α]
+    (d : ExactDist α) (elements : List α) : List (α × ℚ) :=
+  elements.map fun x => (x, d.mass x)
+
+/--
+Attempt to construct ExactDist from a list distribution.
+
+Returns `none` if:
+- Probabilities don't sum to a positive value
+- Any probability is negative (determined at runtime)
+
+For well-formed lists from RSA.Eval, use this to convert back to typed form.
+Note: The list should contain all elements for correct semantics.
+-/
+def ExactDist.tryFromList {α : Type*} [Fintype α] [DecidableEq α] [BEq α]
+    (dist : List (α × ℚ)) : Option (ExactDist α) :=
+  -- Build a function from the list
+  let massOf (x : α) : ℚ := dist.find? (·.1 == x) |>.map (·.2) |>.getD 0
+  -- Check all values are non-negative (using decidability)
+  if hnonneg : ∀ x, 0 ≤ massOf x then
+    let total := ∑ x : α, massOf x
+    -- Check sum is positive (allows normalization)
+    if hpos : 0 < total then
+      some (ExactDist.normalize massOf hnonneg hpos)
+    else
+      none
+  else
+    none
+
+-- ============================================================================
 -- Coercion and Notation
 -- ============================================================================
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.33.1] - 2025-01-30
+
+### Changed
+- **RSA.Eval cleanup**: Removed duplicate utility functions across implementations
+  - SumersEtAl2023, YoonEtAl2020 now delegate to RSA.Eval
+  - Removed unnecessary `[DecidableEq W]` constraints from simplified APIs
+- **Float-based softmax**: RSA.Eval.softmax now uses real `Float.exp` for accurate computation
+- **Distribution bridges**: Added `ExactDist.toList` and `ExactDist.toListWith` for representation conversion
+
 ## [0.33.0] - 2025-01-30
 
 ### Changed

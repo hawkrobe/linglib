@@ -164,7 +164,7 @@ def basicL0 {U W : Type} [BEq W]
 /--
 Basic S1 for simple scenarios.
 -/
-def basicS1 {U W : Type} [BEq U] [BEq W] [DecidableEq W]
+def basicS1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
@@ -178,7 +178,7 @@ def basicS1 {U W : Type} [BEq U] [BEq W] [DecidableEq W]
 /--
 Basic L1 for simple scenarios.
 -/
-def basicL1 {U W : Type} [BEq U] [BEq W] [DecidableEq W]
+def basicL1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
@@ -396,8 +396,7 @@ def L1_beliefState_givenGoal {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L
 L1 joint for ambiguous scenarios (interp varies, others fixed).
 Returns distribution over (W × I).
 -/
-def ambiguousL1_joint {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (interps : List I)
+def ambiguousL1_joint {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
@@ -414,8 +413,7 @@ def ambiguousL1_joint {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
 /--
 L1 world marginal for ambiguous scenarios.
 -/
-def ambiguousL1_world {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (interps : List I)
+def ambiguousL1_world {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
@@ -429,8 +427,7 @@ def ambiguousL1_world {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
 /--
 L1 interp marginal for ambiguous scenarios.
 -/
-def ambiguousL1_interp {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (interps : List I)
+def ambiguousL1_interp {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (interpPrior : I → ℚ := fun _ => 1)
@@ -444,8 +441,7 @@ def ambiguousL1_interp {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
 /--
 L1 for QUD/goal scenarios (goal varies, others fixed).
 -/
-def qudL1_world {U W Q : Type} [BEq U] [BEq W] [BEq Q] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (goals : List Q)
+def qudL1_world {U W Q : Type} [BEq U] [BEq W] [BEq Q]     (utterances : List U) (worlds : List W) (goals : List Q)
     (φ : U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (goalPrior : Q → ℚ := fun _ => 1)
@@ -461,8 +457,7 @@ def qudL1_world {U W Q : Type} [BEq U] [BEq W] [BEq Q] [DecidableEq W]
 /--
 L1 for mental state scenarios (belief states vary).
 -/
-def mentalStateL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q] [DecidableEq W]
-    (utterances : List U) (worlds : List W)
+def mentalStateL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q]     (utterances : List U) (worlds : List W)
     (beliefStates : List A) (goals : List Q)
     (φ : U → W → ℚ)
     (worldPrior : W → ℚ)
@@ -481,8 +476,7 @@ def mentalStateL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q] [Decida
 /--
 L1 for lexical uncertainty scenarios (lexicon varies).
 -/
-def lexUncertaintyL1_world {U W L : Type} [BEq U] [BEq W] [BEq L] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (lexica : List L)
+def lexUncertaintyL1_world {U W L : Type} [BEq U] [BEq W] [BEq L]     (utterances : List U) (worlds : List W) (lexica : List L)
     (φ : L → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (lexiconPrior : L → ℚ := fun _ => 1)
@@ -497,8 +491,7 @@ def lexUncertaintyL1_world {U W L : Type} [BEq U] [BEq W] [BEq L] [DecidableEq W
 /--
 L1 lexicon marginal for lexical uncertainty scenarios.
 -/
-def lexUncertaintyL1_lexicon {U W L : Type} [BEq U] [BEq W] [BEq L] [DecidableEq W]
-    (utterances : List U) (worlds : List W) (lexica : List L)
+def lexUncertaintyL1_lexicon {U W L : Type} [BEq U] [BEq W] [BEq L]     (utterances : List U) (worlds : List W) (lexica : List L)
     (φ : L → U → W → ℚ)
     (worldPrior : W → ℚ := fun _ => 1)
     (lexiconPrior : L → ℚ := fun _ => 1)
@@ -519,12 +512,34 @@ def normalizeScores (scores : List ℚ) : List ℚ :=
   let total := sumScores scores
   if total > 0 then scores.map (· / total) else scores.map (fun _ => 0)
 
-/-- Simple softmax approximation using power function -/
-def softmax (β : ℚ) (utilities : List ℚ) : List ℚ :=
-  -- Since we can't compute exact exp, use power as proxy
-  let shifted := utilities.map fun u => if u > 0 then u else 1/1000
-  let exps := shifted.map (· ^ 3)  -- Fixed exponent
-  let _ := β  -- Mark as used
-  normalizeScores exps
+/-- Rational power function (kept for backward compatibility) -/
+def powRat (base : ℚ) (exp : ℕ) : ℚ :=
+  if exp = 0 then 1
+  else base * powRat base (exp - 1)
+
+/-- Convert Int to Float -/
+def intToFloat (i : Int) : Float :=
+  if i >= 0 then i.toNat.toFloat else -(-i).toNat.toFloat
+
+/-- Convert ℚ to Float -/
+def ratToFloat (q : ℚ) : Float :=
+  intToFloat q.num / q.den.toFloat
+
+/-- Convert Float to ℚ (approximate, with 6 decimal places precision) -/
+def floatToRat (f : Float) : ℚ :=
+  let scaled := (f * 1000000).round
+  let intPart : Int := if scaled >= 0 then scaled.toUInt64.toNat else -(-scaled).toUInt64.toNat
+  intPart / 1000000
+
+/-- True softmax using Float exponentials.
+    P(i) = exp(α · u_i) / Σ_j exp(α · u_j) -/
+def softmax (α : ℚ) (utilities : List ℚ) : List ℚ :=
+  let αF := ratToFloat α
+  let exps := utilities.map fun u => Float.exp (αF * ratToFloat u)
+  let total := exps.foldl (· + ·) 0.0
+  if total > 0 then
+    exps.map fun e => floatToRat (e / total)
+  else
+    utilities.map fun _ => 0
 
 end RSA.Eval

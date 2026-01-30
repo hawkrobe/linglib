@@ -41,29 +41,11 @@ import Linglib.Core.Proposition
 namespace RSA.Implementations.YoonEtAl2020
 
 open _root_.YoonEtAl2020
-open RSA
+open RSA RSA.Eval
 
 -- ============================================================================
 -- PART 1: Helper Functions
 -- ============================================================================
-
-/-- Normalize a distribution -/
-def normalizeList {α : Type} (xs : List (α × ℚ)) : List (α × ℚ) :=
-  let total := xs.foldl (fun acc (_, p) => acc + p) 0
-  if total > 0 then xs.map (fun (a, p) => (a, p / total))
-  else xs.map (fun (a, _) => (a, 0))
-
-/-- Get score from distribution -/
-def getScoreList {α : Type} [BEq α] (dist : List (α × ℚ)) (a : α) : ℚ :=
-  dist.find? (fun (x, _) => x == a) |>.map (·.2) |>.getD 0
-
-/-- Sum scores -/
-def sumScoresList (xs : List ℚ) : ℚ := xs.foldl (· + ·) 0
-
-/-- Rational power approximation (for softmax) -/
-def powRat (base : ℚ) (exp : ℕ) : ℚ :=
-  if exp = 0 then 1
-  else base * powRat base (exp - 1)
 
 /-- Expected value under a distribution -/
 def expectedValue (dist : List (HeartState × ℚ)) (f : HeartState → ℚ) : ℚ :=
@@ -86,11 +68,11 @@ def L0 (w : Utterance) : List (HeartState × ℚ) :=
     let sem := utteranceSemantics w s
     let prior := 1  -- Uniform prior
     (s, sem * prior)
-  normalizeList scores
+  normalize scores
 
 /-- L0 probability of state s given utterance w -/
 def L0_prob (w : Utterance) (s : HeartState) : ℚ :=
-  getScoreList (L0 w) s
+  getScore (L0 w) s
 
 -- ============================================================================
 -- PART 3: S1 - First-Order Speaker
@@ -132,11 +114,11 @@ def S1 (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) : List (Utterance �
     -- Softmax: exp(α · U) approximated by score^α for positive scores
     let softmaxScore := if combinedScore > 0 then powRat combinedScore cfg.alpha else 0
     (w, softmaxScore)
-  normalizeList scores
+  normalize scores
 
 /-- S1 probability of utterance w given state s and goal weight φ -/
 def S1_prob (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) (w : Utterance) : ℚ :=
-  getScoreList (S1 cfg s phi) w
+  getScore (S1 cfg s phi) w
 
 -- ============================================================================
 -- PART 4: L1 - Pragmatic Listener
@@ -168,14 +150,14 @@ def L1_joint (cfg : PolitenessConfig) (w : Utterance) : List ((HeartState × ℚ
     let statePrior := 1  -- Uniform
     let phiPrior := 1    -- Uniform
     ((s, phi), s1Score * statePrior * phiPrior)
-  normalizeList scores
+  normalize scores
 
 /-- L1 marginal distribution over states -/
 def L1_state (cfg : PolitenessConfig) (w : Utterance) : List (HeartState × ℚ) :=
   let joint := L1_joint cfg w
   allHeartStates.map fun s =>
     let prob := joint.filter (fun ((s', _), _) => s' == s)
-      |>.map (·.2) |> sumScoresList
+      |>.map (·.2) |> sumScores
     (s, prob)
 
 /-- L1 marginal distribution over goal weights φ -/
@@ -184,16 +166,16 @@ def L1_phi (cfg : PolitenessConfig) (w : Utterance) : List (ℚ × ℚ) :=
   let phis := discretePhis cfg.phiSteps
   phis.map fun phi =>
     let prob := joint.filter (fun ((_, phi'), _) => phi' == phi)
-      |>.map (·.2) |> sumScoresList
+      |>.map (·.2) |> sumScores
     (phi, prob)
 
 /-- L1 probability of state s given utterance w -/
 def L1_state_prob (cfg : PolitenessConfig) (w : Utterance) (s : HeartState) : ℚ :=
-  getScoreList (L1_state cfg w) s
+  getScore (L1_state cfg w) s
 
 /-- L1 probability of goal weight φ given utterance w -/
 def L1_phi_prob (cfg : PolitenessConfig) (w : Utterance) (phi : ℚ) : ℚ :=
-  getScoreList (L1_phi cfg w) phi
+  getScore (L1_phi cfg w) phi
 
 -- ============================================================================
 -- PART 5: S2 - Second-Order Speaker (Three Utilities)
@@ -262,12 +244,12 @@ def S2 (cfg : PolitenessConfig) (s : HeartState) (weights : InferredWeights)
     -- Softmax approximation
     let softmaxScore := if util > 0 then powRat util cfg.alpha else 1/1000
     (w, softmaxScore)
-  normalizeList scores
+  normalize scores
 
 /-- S2 probability of utterance w given state s and goal condition -/
 def S2_prob (cfg : PolitenessConfig) (s : HeartState) (goal : GoalCondition)
     (w : Utterance) : ℚ :=
-  getScoreList (S2 cfg s (getWeights goal)) w
+  getScore (S2 cfg s (getWeights goal)) w
 
 -- ============================================================================
 -- PART 6: Key Predictions
