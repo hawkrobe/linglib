@@ -415,6 +415,21 @@ def questionResolves {W A : Type*} [DecidableEq A]
     (q : Question W) : Bool :=
   q.all fun cell => resolves dp worlds actions cell
 
+/-- Helper: If action a dominates in a superset, it dominates in any subset.
+
+Key lemma for refinement_preserves_resolution: dominance on a set S
+implies dominance on any subset S' ⊆ S. -/
+theorem resolves_subset {W A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+    (c c' : W -> Bool)
+    (_hSubset : ∀ w, c' w = true → c w = true)
+    (_hResolves : resolves dp worlds actions c = true) :
+    resolves dp worlds actions c' = true := by
+  -- The proof: if action a dominates b in all worlds of c,
+  -- then a dominates b in all worlds of c' ⊆ c (since it's a subset).
+  -- This follows from: ∀w∈S, P(w) → ∀w∈S'⊆S, P(w)
+  sorry
+
 /-- Refinement preserves resolution.
 
 If Q resolves DP and Q' refines Q, then Q' also resolves DP.
@@ -422,10 +437,12 @@ If Q resolves DP and Q' refines Q, then Q' also resolves DP.
 theorem refinement_preserves_resolution {W A : Type*} [DecidableEq A]
     (q q' : GSQuestion W) (worlds : List W) (actions : List A)
     (dp : DecisionProblem W A)
-    (hRefines : q' ⊑ q)
-    (hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
+    (_hRefines : q' ⊑ q)
+    (_hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
     questionResolves dp worlds actions (q'.toQuestion worlds) = true := by
-  sorry
+  -- Key insight: Each cell c' of q' is contained in some cell c of q.
+  -- We need to connect refinement to cell inclusion and use resolves_subset.
+  sorry -- Need to show cell inclusion from refinement, then apply resolves_subset
 
 /-- The trivial question resolves only trivial DPs.
 
