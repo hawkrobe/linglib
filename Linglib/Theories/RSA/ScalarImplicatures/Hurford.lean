@@ -34,11 +34,12 @@ S1 probability reflects speaker rationality:
 -/
 
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.ScalarImplicatures.Data
 
 namespace RSA.Hurford
 
-open LURSA Phenomena.ScalarImplicatures
+open LURSA Phenomena.ScalarImplicatures RSA.Eval
 
 -- ============================================================================
 -- PART 1: World States
@@ -192,7 +193,7 @@ This measures: Would a rational speaker say "some or all" in the someNotAll worl
 if they believed the listener uses the base (weak "some") lexicon?
 -/
 def s1SomeOrAll_base_someNotAll : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexBase .someNotAll) .someOrAll
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .someNotAll) .someOrAll
 
 /--
 S1 probability for "some" alone given world = someNotAll, under base lexicon.
@@ -200,7 +201,7 @@ S1 probability for "some" alone given world = someNotAll, under base lexicon.
 Compare with s1SomeOrAll_base_someNotAll to see if disjunction is dispreferred.
 -/
 def s1Some_base_someNotAll : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexBase .someNotAll) .some_
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .someNotAll) .some_
 
 #eval s1SomeOrAll_base_someNotAll
 #eval s1Some_base_someNotAll
@@ -210,13 +211,13 @@ def s1Some_base_someNotAll : ℚ :=
 S1 probability for "someOrAll" given world = someNotAll, under REFINED lexicon.
 -/
 def s1SomeOrAll_refined_someNotAll : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .someOrAll
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .someOrAll
 
 /--
 S1 probability for "some" alone given world = someNotAll, under REFINED lexicon.
 -/
 def s1Some_refined_someNotAll : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .some_
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .some_
 
 #eval s1SomeOrAll_refined_someNotAll
 #eval s1Some_refined_someNotAll
@@ -258,13 +259,13 @@ theorem refined_some_sufficient :
 S1 probability for "someOrAll" in the ALL world, base lexicon.
 -/
 def s1SomeOrAll_base_all : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .someOrAll
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .someOrAll
 
 /--
 S1 probability for "all" alone in the ALL world, base lexicon.
 -/
 def s1All_base_all : ℚ :=
-  RSA.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .all_
+  RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .all_
 
 #eval s1SomeOrAll_base_all
 #eval s1All_base_all

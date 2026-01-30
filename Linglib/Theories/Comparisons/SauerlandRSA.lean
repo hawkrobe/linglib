@@ -45,6 +45,7 @@ probability to ψ-worlds (due to interaction with other alternatives).
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Proposition
 import Mathlib.Data.Rat.Defs
 
@@ -258,17 +259,18 @@ def disjMeaning : DisjUtterance → DisjWorld → Bool
   | .AandB, _ => false
 
 /--
-Build RSA scenario for disjunction.
-Worlds: onlyA, onlyB, both (where A∨B is true)
+L1 world distribution for disjunction with given α (using RSA.Eval).
 -/
-def disjunctionRSA : RSAScenario :=
-  RSAScenario.basicBool
-    [AorB, A, B, AandB]
-    [onlyA, onlyB, both]
-    (fun w u => disjMeaning u w)
+def disjL1 (α : ℕ := 1) (u : DisjUtterance) : List (DisjWorld × ℚ) :=
+  let utts := [AorB, A, B, AandB]
+  let worlds := [onlyA, onlyB, both]
+  let φ := fun (u : DisjUtterance) (w : DisjWorld) => boolToRat (disjMeaning u w)
+  RSA.Eval.L1_world utts worlds [()] [()] [()] [()]
+    (fun _ _ => φ) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) α u
 
 -- Inspect L1 probabilities:
--- #eval RSA.L1_world disjunctionRSA AorB
+-- #eval disjL1 1 AorB
 -- Result: [(onlyA, 14/33), (onlyB, 14/33), (both, 5/33)]
 
 /--
@@ -279,9 +281,9 @@ L1("A or B") assigns:
 - Lower probability to inclusive world (both)
 -/
 theorem rsa_disjunction_graded_exclusivity :
-    let l1 := RSA.L1_world disjunctionRSA AorB
-    RSA.getScore l1 onlyA = RSA.getScore l1 onlyB ∧
-    RSA.getScore l1 both < RSA.getScore l1 onlyA := by
+    let l1 := disjL1 1 AorB
+    RSA.Eval.getScore l1 onlyA = RSA.Eval.getScore l1 onlyB ∧
+    RSA.Eval.getScore l1 both < RSA.Eval.getScore l1 onlyA := by
   native_decide
 
 /--
@@ -289,26 +291,16 @@ RSA assigns positive (but lower) probability to "both" world.
 This is the key difference from Sauerland's categorical K¬(A∧B).
 -/
 theorem rsa_both_has_positive_probability :
-    RSA.getScore (RSA.L1_world disjunctionRSA AorB) both > 0 := by
+    RSA.Eval.getScore (disjL1 1 AorB) both > 0 := by
   native_decide
-
-/--
-RSA scenario with α = 3 (higher rationality).
--/
-def disjunctionRSA_alpha3 : RSAScenario :=
-  RSAScenario.basicBool
-    [AorB, A, B, AandB]
-    [onlyA, onlyB, both]
-    (fun w u => disjMeaning u w)
-    (α := 3)
 
 /--
 With higher α, the exclusivity effect is stronger.
 -/
 theorem higher_alpha_stronger_exclusivity :
-    let l1_α1 := RSA.L1_world disjunctionRSA AorB
-    let l1_α3 := RSA.L1_world disjunctionRSA_alpha3 AorB
-    RSA.getScore l1_α3 both < RSA.getScore l1_α1 both := by
+    let l1_α1 := disjL1 1 AorB
+    let l1_α3 := disjL1 3 AorB
+    RSA.Eval.getScore l1_α3 both < RSA.Eval.getScore l1_α1 both := by
   native_decide
 
 -- ============================================================================
@@ -316,17 +308,10 @@ theorem higher_alpha_stronger_exclusivity :
 -- ============================================================================
 
 /--
-Helper: build disjunction RSA scenario with given α.
--/
-def mkDisjScenario (α : ℕ) : RSAScenario :=
-  RSAScenario.basicBool [AorB, A, B, AandB] [onlyA, onlyB, both]
-    (fun w u => disjMeaning u w) (α := α)
-
-/--
 P(both | "A or B") for given rationality parameter α.
 -/
 def p_both (α : ℕ) : ℚ :=
-  RSA.getScore (RSA.L1_world (mkDisjScenario α) AorB) both
+  RSA.Eval.getScore (disjL1 α AorB) both
 
 /--
 **Theorem: As α increases, P(both) decreases.**

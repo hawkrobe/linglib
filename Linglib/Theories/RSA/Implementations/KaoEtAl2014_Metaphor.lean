@@ -40,10 +40,11 @@ Science Society, 36, 719-724.
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 
 namespace RSA.KaoEtAl2014_Metaphor
 
-open RSA RSA
+open RSA.Eval
 
 -- ============================================================================
 -- Domain: Categories and Features
@@ -245,32 +246,59 @@ def goalPrior : Goal → ℚ
 -- RSA Scenario
 -- ============================================================================
 
-/--
-Metaphor scenario with extended semantics.
+/-- Run L0 for metaphor scenario with extended semantics -/
+def runL0 (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
+  RSA.Eval.basicL0 allUtterances allMeanings
+    (fun utt m => extendedSemantics utt m) meaningPrior u
 
-Uses soft extended semantics that allows some compatibility between
-metaphorical utterances and feature-matching meanings.
--/
-def metaphorScenario : RSAScenario :=
-  RSAScenario.qud
-    allUtterances allMeanings allGoals
-    extendedSemantics
-    qudEquiv
-    meaningPrior
-    goalPrior
+/-- Run S1 for metaphor scenario -/
+def runS1 (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
+  -- S1 with QUD projection
+  let l0_projected := allUtterances.map fun u =>
+    let l0 := runL0 u g
+    let projected := allMeanings.map fun m' =>
+      if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
+    (u, RSA.Eval.sumScores projected)
+  let normalized := RSA.Eval.normalize l0_projected
+  let scores := allUtterances.map fun u =>
+    let l0Score := RSA.Eval.getScore normalized u
+    (u, l0Score)
+  RSA.Eval.normalize scores
 
-/--
-Strict scenario with Boolean semantics.
+/-- Run L1 joint for metaphor scenario -/
+def runL1_joint (u : Utterance) : List ((Meaning × Goal) × ℚ) :=
+  let jointWorlds := allMeanings.flatMap fun m => allGoals.map fun g => (m, g)
+  let scores := jointWorlds.map fun (m, g) =>
+    let priorScore := meaningPrior m * goalPrior g
+    let s1Score := RSA.Eval.getScore (runS1 m g) u
+    ((m, g), priorScore * s1Score)
+  RSA.Eval.normalize scores
 
-Only literally true utterances are valid.
-This shows the contrast - without soft semantics, metaphor can't work.
--/
-def strictScenario : RSAScenario :=
-  RSAScenario.qud
-    allUtterances allMeanings allGoals
-    (fun u m => boolToRat (meaningSemantics u m))
-    qudEquiv
-    meaningPrior
+/-- Run L1 marginal over meanings -/
+def runL1_world (u : Utterance) : List (Meaning × ℚ) :=
+  RSA.Eval.marginalize (runL1_joint u) Prod.fst
+
+/-- Run L1 marginal over goals -/
+def runL1_goal (u : Utterance) : List (Goal × ℚ) :=
+  RSA.Eval.marginalize (runL1_joint u) Prod.snd
+
+/-- Run L0 for strict scenario (Boolean semantics) -/
+def runL0_strict (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
+  RSA.Eval.basicL0 allUtterances allMeanings
+    (fun utt m => boolToRat (meaningSemantics utt m)) meaningPrior u
+
+/-- Run S1 for strict scenario -/
+def runS1_strict (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
+  let l0_projected := allUtterances.map fun u =>
+    let l0 := runL0_strict u g
+    let projected := allMeanings.map fun m' =>
+      if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
+    (u, RSA.Eval.sumScores projected)
+  let normalized := RSA.Eval.normalize l0_projected
+  let scores := allUtterances.map fun u =>
+    let l0Score := RSA.Eval.getScore normalized u
+    (u, l0Score)
+  RSA.Eval.normalize scores
 
 -- ============================================================================
 -- Compute Distributions
@@ -289,35 +317,31 @@ def comfortingPerson : Meaning :=
   { category := .person, dangerous := false, unpredictable := false, comforting := true }
 
 /-- L0 for "shark" -/
-def l0_shark : List (Meaning × ℚ) := RSA.L0 metaphorScenario Utterance.shark () () () Goal.dangerous
+def l0_shark : List (Meaning × ℚ) := runL0 .shark .dangerous
 
 /-- S1 with dangerous person and QUD "dangerous" -/
-def s1_dangerous_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario dangerousPerson () () () Goal.dangerous
+def s1_dangerous_goal : List (Utterance × ℚ) := runS1 dangerousPerson .dangerous
 
 /-- S1 with dangerous person and QUD "category" -/
-def s1_category_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario dangerousPerson () () () Goal.category
+def s1_category_goal : List (Utterance × ℚ) := runS1 dangerousPerson .category
 
 /-- S1 with volatile person and QUD "dangerous" -/
-def s1_volatile_dangerous : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario volatilePerson () () () Goal.dangerous
+def s1_volatile_dangerous : List (Utterance × ℚ) := runS1 volatilePerson .dangerous
 
 /-- S1 with comforting person and QUD "comforting" -/
-def s1_comforting_goal : List (Utterance × ℚ) :=
-  RSA.S1 metaphorScenario comfortingPerson () () () Goal.comforting
+def s1_comforting_goal : List (Utterance × ℚ) := runS1 comfortingPerson .comforting
 
 /-- L1 for "shark" -/
-def l1_shark : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utterance.shark
+def l1_shark : List (Meaning × ℚ) := runL1_world .shark
 
 /-- L1 goal distribution for "shark" -/
-def l1_goal_shark : List (Goal × ℚ) := RSA.L1_goal metaphorScenario Utterance.shark
+def l1_goal_shark : List (Goal × ℚ) := runL1_goal .shark
 
 /-- L1 for "fire" -/
-def l1_fire : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utterance.fire
+def l1_fire : List (Meaning × ℚ) := runL1_world .fire
 
 /-- L1 for "blanket" -/
-def l1_blanket : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utterance.blanket
+def l1_blanket : List (Meaning × ℚ) := runL1_world .blanket
 
 -- ============================================================================
 -- Evaluate
@@ -356,7 +380,7 @@ def l1_blanket : List (Meaning × ℚ) := RSA.L1_world metaphorScenario Utteranc
 
 /-- Get probability from a distribution -/
 def getProb {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
-  RSA.getScore dist x
+  RSA.Eval.getScore dist x
 
 -- ============================================================================
 -- Key Prediction 1: Nonliteral Interpretation
@@ -482,14 +506,13 @@ theorem fire_evokes_unpredictability : fire_more_unpredictable_than_shark = true
 -- ============================================================================
 
 /-- Under strict semantics, metaphor gets zero compatibility -/
-def l0_shark_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance.shark () () () Goal.dangerous
+def l0_shark_strict : List (Meaning × ℚ) := runL0_strict .shark .dangerous
 
 #eval l0_shark_strict
 -- All zeros for person meanings (shark is literally false)
 
 /-- S1 under strict semantics can't use metaphor -/
-def s1_strict_dangerous : List (Utterance × ℚ) :=
-  RSA.S1 strictScenario dangerousPerson () () () Goal.dangerous
+def s1_strict_dangerous : List (Utterance × ℚ) := runS1_strict dangerousPerson .dangerous
 
 #eval s1_strict_dangerous
 -- "shark" should have probability 0 (can only use "person")

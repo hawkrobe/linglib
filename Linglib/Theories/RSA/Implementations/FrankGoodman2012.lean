@@ -34,12 +34,13 @@ The RSA meaning function φ is derived from these Montague meanings, not stipula
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Model
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Fragments.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
 
-open ReferenceGame
+open ReferenceGame RSA.Eval
 
 -- ============================================================================
 -- Domain: Objects and Utterances (from Montague-grounded infrastructure)
@@ -87,36 +88,42 @@ theorem meaning_from_compositional (u : Utterance) (o : Object) :
 def classicContext : TypedContext :=
   fromPairs [(.blue, .square), (.blue, .circle), (.green, .square)]
 
-/-- Reference game RSA scenario (derived from Montague-grounded context) -/
-def refGameScenario : RSAScenario := classicContext.toScenario
+/-- Run L0 for the classic reference game -/
+def runL0 (u : Utterance) : List (Object × ℚ) :=
+  classicContext.runL0 u
 
-/-- Legacy alias -/
-abbrev refGameBackend := refGameScenario
+/-- Run S1 for the classic reference game -/
+def runS1 (o : Object) : List (Utterance × ℚ) :=
+  classicContext.runS1 o
+
+/-- Run L1 for the classic reference game -/
+def runL1 (u : Utterance) : List (Object × ℚ) :=
+  classicContext.runL1 u
 
 -- ============================================================================
 -- Compute RSA Distributions
 -- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
-def l0_blue : List (Object × ℚ) := RSA.L0 refGameScenario utt_blue () () () ()
+def l0_blue : List (Object × ℚ) := runL0 utt_blue
 
 /-- L0 for "green" - only green_square -/
-def l0_green : List (Object × ℚ) := RSA.L0 refGameScenario utt_green () () () ()
+def l0_green : List (Object × ℚ) := runL0 utt_green
 
 /-- L0 for "square" - uniform over squares -/
-def l0_square : List (Object × ℚ) := RSA.L0 refGameScenario utt_square () () () ()
+def l0_square : List (Object × ℚ) := runL0 utt_square
 
 /-- S1 in blue_square world -/
-def s1_blue_square : List (Utterance × ℚ) := RSA.S1 refGameScenario blue_square () () () ()
+def s1_blue_square : List (Utterance × ℚ) := runS1 blue_square
 
 /-- S1 in green_square world -/
-def s1_green_square : List (Utterance × ℚ) := RSA.S1 refGameScenario green_square () () () ()
+def s1_green_square : List (Utterance × ℚ) := runS1 green_square
 
 /-- L1 for "square" - the key pragmatic inference -/
-def l1_square : List (Object × ℚ) := RSA.L1_world refGameScenario utt_square
+def l1_square : List (Object × ℚ) := runL1 utt_square
 
 /-- L1 for "blue" -/
-def l1_blue : List (Object × ℚ) := RSA.L1_world refGameScenario utt_blue
+def l1_blue : List (Object × ℚ) := runL1 utt_blue
 
 -- ============================================================================
 -- Evaluate
@@ -146,22 +153,22 @@ they would have said "green" (uniquely identifying). Saying "square"
 signals they probably mean blue_square.
 -/
 theorem reference_game_inference :
-    RSA.getScore l1_square blue_square > RSA.getScore l1_square green_square := by
+    RSA.Eval.getScore l1_square blue_square > RSA.Eval.getScore l1_square green_square := by
   native_decide
 
 /-- At literal level L0, squares are equally likely -/
 theorem l0_squares_equal :
-    RSA.getScore l0_square blue_square = RSA.getScore l0_square green_square := by
+    RSA.Eval.getScore l0_square blue_square = RSA.Eval.getScore l0_square green_square := by
   native_decide
 
 /-- Speaker in green_square world prefers "green" over "square" -/
 theorem s1_green_prefers_green :
-    RSA.getScore s1_green_square utt_green > RSA.getScore s1_green_square utt_square := by
+    RSA.Eval.getScore s1_green_square utt_green > RSA.Eval.getScore s1_green_square utt_square := by
   native_decide
 
 /-- Speaker in blue_square world: "blue" and "square" are equally informative -/
 theorem s1_blue_square_equal :
-    RSA.getScore s1_blue_square utt_blue = RSA.getScore s1_blue_square utt_square := by
+    RSA.Eval.getScore s1_blue_square utt_blue = RSA.Eval.getScore s1_blue_square utt_square := by
   native_decide
 
 -- ============================================================================
@@ -170,15 +177,15 @@ theorem s1_blue_square_equal :
 
 /-- "green" uniquely identifies green_square at L0 -/
 theorem green_unique :
-    (RSA.getScore l0_green green_square).num > 0 ∧
-    (RSA.getScore l0_green blue_square).num = 0 ∧
-    (RSA.getScore l0_green blue_circle).num = 0 := by
+    (RSA.Eval.getScore l0_green green_square).num > 0 ∧
+    (RSA.Eval.getScore l0_green blue_square).num = 0 ∧
+    (RSA.Eval.getScore l0_green blue_circle).num = 0 := by
   native_decide
 
 /-- "circle" uniquely identifies blue_circle at L0 -/
 theorem circle_unique :
-    (RSA.getScore (RSA.L0 refGameScenario utt_circle () () () ()) blue_circle).num > 0 ∧
-    (RSA.getScore (RSA.L0 refGameScenario utt_circle () () () ()) blue_square).num = 0 := by
+    (RSA.Eval.getScore (runL0 utt_circle) blue_circle).num > 0 ∧
+    (RSA.Eval.getScore (runL0 utt_circle) blue_square).num = 0 := by
   native_decide
 
 -- ============================================================================
@@ -207,13 +214,37 @@ reasoning about rational speaker behavior.
 -/
 
 -- ============================================================================
+-- Fintype-Based API (RSAScenario / RSA)
+-- ============================================================================
+
+/-!
+## Fintype-Based RSA
+
+The following demonstrates the new `RSAScenario` / `RSA` API which provides:
+- Compile-time type safety via Fintype constraints
+- Direct use of ExactDist for proper probability distributions
+- No explicit List enumerations (derived from Fintype instances)
+-/
+
+/-- Reference game scenario using Fintype-based API -/
+def refGameScenarioF : RSAScenario :=
+  RSAScenario.basicBool
+    (U := Feature)  -- Utterances are features
+    (W := Object)   -- Worlds are objects
+    (satisfies := fun o u => u.appliesTo o)  -- Satisfies relation from Montague
+    (prior := fun _ => 1)
+    (prior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
+    (cost := fun _ => 0)
+    (cost_nonneg := fun _ => le_refl 0)
+
+-- ============================================================================
 -- RSAModel Instance: Convergence Guarantees
 -- ============================================================================
 
 /-!
 ## Zaslavsky et al. (2020) Convergence Guarantees
 
-By converting `refGameScenario` to an `RSAModel` instance, we automatically
+By converting `refGameScenarioF` to an `RSAModel` instance, we automatically
 inherit the convergence and monotonicity theorems from Zaslavsky et al. (2020).
 
 This demonstrates the architecture: prove theorems once for the abstract
@@ -228,12 +259,12 @@ This enables:
 - `RSA_converges_generic`: RSA dynamics converge to a fixed point
 - `eventually_εConverged_generic`: Can stop RSA recursion at finite depth
 
-Note: We use the concrete Utterance type here since refGameScenario.Utterance
-is definitionally equal to Utterance (from RSAScenario.basicBool).
+Note: We use the concrete Utterance type here since refGameScenarioF.Utterance
+is definitionally equal to Feature (from RSAScenario.basicBool).
 -/
-noncomputable instance refGameModel : RSA.RSAModel Utterance :=
-  @RSAScenario.toModel refGameScenario
-    (inferInstance : Fintype Utterance)  -- Utterance has Fintype
+noncomputable instance refGameModel : RSAModel Feature :=
+  @RSAScenario.toModel refGameScenarioF
+    (inferInstance : Fintype Feature)  -- Feature has Fintype
     (inferInstance : Fintype Object)      -- World = Object has Fintype
     ()  -- default Interp
     ()  -- default Lexicon
@@ -243,10 +274,10 @@ With this instance, the following theorems apply automatically:
 
 ```lean
 -- G_α monotonicity for Frank & Goodman scenario
-#check @RSA.G_α_monotone_generic Utterance refGameModel
+#check @G_α_monotone_generic Feature refGameModel
 
 -- RSA convergence for Frank & Goodman scenario
-#check @RSA.RSA_converges_generic Utterance refGameModel
+#check @RSA_converges_generic Feature refGameModel
 ```
 
 These theorems say:
@@ -258,39 +289,19 @@ This justifies using L1 or S1 approximations instead of computing
 the full infinite recursion L∞ / S∞.
 -/
 
--- ============================================================================
--- Fintype-Based API (RSAScenarioF / RSAF)
--- ============================================================================
-
-/-!
-## Fintype-Based RSA
-
-The following demonstrates the new `RSAScenarioF` / `RSAF` API which provides:
-- Compile-time type safety via Fintype constraints
-- Direct use of ExactDist for proper probability distributions
-- No explicit List enumerations (derived from Fintype instances)
--/
-
-/-- Reference game scenario using Fintype-based API -/
-def refGameScenarioF : RSAScenarioF :=
-  RSAScenarioF.basicBool
-    (U := Feature)  -- Utterances are features
-    (W := Object)   -- Worlds are objects
-    (fun o u => u.appliesTo o)  -- Satisfies relation from Montague
-
 -- Compute distributions using RSAF
 
 /-- L0 for "square" using Fintype API -/
 def l0_square_F : Option (ExactDist Object) :=
-  RSAF.L0 refGameScenarioF utt_square () () () ()
+  RSA.L0 refGameScenarioF utt_square () () () ()
 
 /-- S1 in blue_square world using Fintype API -/
 def s1_blue_square_F : Option (ExactDist Feature) :=
-  RSAF.S1 refGameScenarioF blue_square () () () ()
+  RSA.S1 refGameScenarioF blue_square () () () ()
 
 /-- L1 for "square" using Fintype API -/
 def l1_square_F : Option (ExactDist Object) :=
-  RSAF.L1_world refGameScenarioF utt_square
+  RSA.L1_world refGameScenarioF utt_square
 
 -- Evaluate (compare with List-based versions above)
 -- Note: Currently disabled due to sorry axioms in RSAF non-negativity proofs

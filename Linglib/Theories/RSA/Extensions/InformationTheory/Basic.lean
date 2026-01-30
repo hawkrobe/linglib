@@ -38,12 +38,13 @@ This connects pragmatic reasoning to optimal lossy compression.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.BasicQ
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.RationalPower
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.InformationTheory
 
-open RSA
+open RSA.Eval
 open RationalPower
 
 -- ============================================================================
@@ -127,7 +128,7 @@ Speaker entropy: H_S(U|M).
 This measures the "cost" or "compressibility" of the speaker's lexicon.
 Lower entropy = more deterministic (less costly) utterance choice.
 -/
-def speakerEntropy (S : RSAScenario)
+def speakerEntropy (S : RSA.RSAScenarioQ)
     (speaker : S.World → S.Interp → S.QUD → List (S.Utterance × ℚ))
     (worldPrior : List (S.World × ℚ)) : ℚ :=
   -- H_S(U|M) = Σ_m P(m) H(U|M=m)
@@ -145,7 +146,7 @@ Listener utility: V_L(u, m) = log L(m|u).
 
 This is the listener's "value" of correctly inferring meaning m from utterance u.
 -/
-def listenerUtility (S : RSAScenario)
+def listenerUtility (S : RSA.RSAScenarioQ)
     (listener : S.Utterance → List (S.World × ℚ))
     (u : S.Utterance) (m : S.World) : ℚ :=
   let pm := getScore (listener u) m
@@ -158,7 +159,7 @@ Expected listener utility: E_S[V_L].
 E_S[V_L] = Σ_{m,u} P(m) S(u|m) V_L(u, m)
          = Σ_{m,u} P(m) S(u|m) log L(m|u)
 -/
-def expectedListenerUtility (S : RSAScenario)
+def expectedListenerUtility (S : RSA.RSAScenarioQ)
     (speaker : S.World → S.Interp → S.QUD → List (S.Utterance × ℚ))
     (listener : S.Utterance → List (S.World × ℚ))
     (worldPrior : List (S.World × ℚ)) : ℚ :=
@@ -187,7 +188,7 @@ This is the quantity that RSA implicitly maximizes through alternating updates.
 - α = 1: Rate-distortion optimum (balance cost and informativity)
 - α → ∞: Maximum informativity (NeoGricean limit)
 -/
-def G_alpha (S : RSAScenario) (α : ℚ)
+def G_alpha (S : RSA.RSAScenarioQ) (α : ℚ)
     (speaker : S.World → S.Interp → S.QUD → List (S.Utterance × ℚ))
     (listener : S.Utterance → List (S.World × ℚ))
     (worldPrior : List (S.World × ℚ)) : ℚ :=
@@ -198,22 +199,18 @@ def G_alpha (S : RSAScenario) (α : ℚ)
 /--
 Build the world prior distribution from an RSAScenario.
 -/
-def worldPriorDist (S : RSAScenario) : List (S.World × ℚ) :=
+def worldPriorDist (S : RSA.RSAScenarioQ) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.worldPrior w)
   normalize scores
 
 /--
-G_α using the S1 speaker and L1 listener from an RSAScenario.
+G_α using the S1 speaker and L1 listener from an RSAScenarioQ.
 
 This extracts the implicit G_α value that the standard RSA dynamics optimize.
-
-Note: This uses default () values for Lexicon and BeliefState parameters.
-For scenarios that actually use these, a custom G_alpha computation would be needed.
 -/
-def G_alpha_RSA (S : RSAScenario)
-    (α : ℚ) (defaultLex : S.Lexicon) (defaultBelief : S.BeliefState) : ℚ :=
-  let speaker := fun w i q => RSA.S1 S w i defaultLex defaultBelief q
-  let listener := fun u => RSA.L1_world S u
+def G_alpha_RSA (S : RSA.RSAScenarioQ) (α : ℚ) : ℚ :=
+  let speaker := fun w i q => RSA.Q.S1Q S w i q
+  let listener := fun u => RSA.Q.L1Q_world S u
   let prior := worldPriorDist S
   G_alpha S α speaker listener prior
 
@@ -243,7 +240,7 @@ At each iteration t:
 - L_t(m|u) ∝ P(m) S_{t-1}(u|m)
 - S_t(u|m) ∝ L_t(m|u)^α
 -/
-structure RSADynamics (S : RSAScenario) where
+structure RSADynamics (S : RSA.RSAScenarioQ) where
   /-- Iteration count -/
   iteration : Nat
   /-- Current speaker distribution S_t(u|m) -/
@@ -257,15 +254,15 @@ Initialize RSA dynamics at iteration 0.
 L_0 = literal listener (from semantics)
 S_0 = uniform speaker (or literal speaker)
 
-Note: Uses first available interpretation, lexicon, belief state, and goal.
+Note: Uses first available interpretation and QUD.
 -/
-def initDynamics (S : RSAScenario) : RSADynamics S where
+def initDynamics (S : RSA.RSAScenarioQ) : RSADynamics S where
   iteration := 0
   speaker := fun _ => normalize (S.utterances.map fun u => (u, 1))
   listener := fun u =>
-    match S.interps, S.lexica, S.beliefStates, S.goals with
-    | i :: _, l :: _, a :: _, q :: _ => RSA.L0 S u i l a q
-    | _, _, _, _ => normalize (S.worlds.map fun w => (w, 1))  -- Uniform fallback
+    match S.interps with
+    | i :: _ => RSA.Q.L0Q S u i
+    | [] => normalize (S.worlds.map fun w => (w, 1))  -- Uniform fallback
 
 /--
 One step of RSA dynamics.
@@ -273,7 +270,7 @@ One step of RSA dynamics.
 L_{t+1}(m|u) ∝ P(m) S_t(u|m)
 S_{t+1}(u|m) ∝ L_{t+1}(m|u)^α
 -/
-def stepDynamics (S : RSAScenario) (d : RSADynamics S) : RSADynamics S :=
+def stepDynamics (S : RSA.RSAScenarioQ) (d : RSADynamics S) : RSADynamics S :=
   -- New listener: L_{t+1}(m|u) ∝ P(m) S_t(u|m)
   let newListener := fun u =>
     let scores := S.worlds.map fun m =>
@@ -285,7 +282,7 @@ def stepDynamics (S : RSAScenario) (d : RSADynamics S) : RSADynamics S :=
   let newSpeaker := fun m =>
     let scores := S.utterances.map fun u =>
       let lm := getScore (newListener u) m
-      (u, lm ^ S.α)
+      (u, RationalPower.powApprox lm S.α S.precision)
     normalize scores
   { iteration := d.iteration + 1
     speaker := newSpeaker
@@ -294,13 +291,13 @@ def stepDynamics (S : RSAScenario) (d : RSADynamics S) : RSADynamics S :=
 /--
 Run RSA dynamics for n iterations.
 -/
-def runDynamics (S : RSAScenario) (n : Nat) : RSADynamics S :=
+def runDynamics (S : RSA.RSAScenarioQ) (n : Nat) : RSADynamics S :=
   (List.range n).foldl (fun d _ => stepDynamics S d) (initDynamics S)
 
 /--
 G_α value at a given dynamics state.
 -/
-def G_alpha_at (S : RSAScenario) (α : ℚ) (d : RSADynamics S) : ℚ :=
+def G_alpha_at (S : RSA.RSAScenarioQ) (α : ℚ) (d : RSADynamics S) : ℚ :=
   let speaker := fun w _ _ => d.speaker w
   let prior := worldPriorDist S
   G_alpha S α speaker d.listener prior
@@ -312,7 +309,7 @@ def G_alpha_at (S : RSAScenario) (α : ℚ) (d : RSADynamics S) : ℚ :=
 /--
 Expected listener utility at a given dynamics state.
 -/
-def E_VL_at (S : RSAScenario) (d : RSADynamics S) : ℚ :=
+def E_VL_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
   let speaker := fun w _ _ => d.speaker w
   let prior := worldPriorDist S
   expectedListenerUtility S speaker d.listener prior
@@ -320,7 +317,7 @@ def E_VL_at (S : RSAScenario) (d : RSADynamics S) : ℚ :=
 /--
 Speaker entropy at a given dynamics state.
 -/
-def H_S_at (S : RSAScenario) (d : RSADynamics S) : ℚ :=
+def H_S_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
   let speaker := fun w _ _ => d.speaker w
   let prior := worldPriorDist S
   speakerEntropy S speaker prior
@@ -332,7 +329,7 @@ def H_S_at (S : RSAScenario) (d : RSADynamics S) : ℚ :=
 /--
 Trace G_α over iterations.
 -/
-def traceG_alpha (S : RSAScenario) (α : ℚ) (maxIter : Nat) : List (Nat × ℚ) :=
+def traceG_alpha (S : RSA.RSAScenarioQ) (α : ℚ) (maxIter : Nat) : List (Nat × ℚ) :=
   (List.range (maxIter + 1)).map fun n =>
     let d := runDynamics S n
     (n, G_alpha_at S α d)
@@ -340,7 +337,7 @@ def traceG_alpha (S : RSAScenario) (α : ℚ) (maxIter : Nat) : List (Nat × ℚ
 /--
 Trace E[V_L] over iterations.
 -/
-def traceE_VL (S : RSAScenario) (maxIter : Nat) : List (Nat × ℚ) :=
+def traceE_VL (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
   (List.range (maxIter + 1)).map fun n =>
     let d := runDynamics S n
     (n, E_VL_at S d)
@@ -348,7 +345,7 @@ def traceE_VL (S : RSAScenario) (maxIter : Nat) : List (Nat × ℚ) :=
 /--
 Check if G_α is monotonically increasing over iterations.
 -/
-def isMonotoneG_alpha (S : RSAScenario) (α : ℚ) (maxIter : Nat) : Bool :=
+def isMonotoneG_alpha (S : RSA.RSAScenarioQ) (α : ℚ) (maxIter : Nat) : Bool :=
   let trace := traceG_alpha S α maxIter
   let pairs := trace.zip trace.tail
   pairs.all fun ((_, g1), (_, g2)) => g1 ≤ g2
@@ -356,7 +353,7 @@ def isMonotoneG_alpha (S : RSAScenario) (α : ℚ) (maxIter : Nat) : Bool :=
 /--
 Check if E[V_L] is monotonically increasing over iterations.
 -/
-def isMonotoneE_VL (S : RSAScenario) (maxIter : Nat) : Bool :=
+def isMonotoneE_VL (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceE_VL S maxIter
   let pairs := trace.zip trace.tail
   pairs.all fun ((_, v1), (_, v2)) => v1 ≤ v2

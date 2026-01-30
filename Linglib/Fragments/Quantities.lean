@@ -30,6 +30,7 @@ def myDomain := Quantity.standard 3
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
 namespace Quantity
@@ -49,6 +50,8 @@ Standard scalar semantics:
 structure Domain (n : Nat) where
   /-- Prior over worlds (defaults to uniform) -/
   prior : Fin (n + 1) → ℚ := fun _ => 1
+  /-- Prior is non-negative -/
+  prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide
 
 /-- Scalar utterances for quantity domains -/
 inductive Utterance where
@@ -74,9 +77,20 @@ def allUtterances : List Utterance := [.none_, .some_, .all]
 def allWorlds (n : Nat) : List (Fin (n + 1)) :=
   List.finRange (n + 1)
 
-/-- Build RSA scenario from domain -/
-def Domain.toScenario {n : Nat} (d : Domain n) : RSAScenario :=
-  RSAScenario.basicBool allUtterances (allWorlds n) (fun w u => meaning n u w) d.prior
+/-- Run L0 for domain using RSA.Eval -/
+def Domain.runL0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
+  RSA.Eval.basicL0 allUtterances (allWorlds n)
+    (fun u w => boolToRat (meaning n u w)) d.prior u
+
+/-- Run S1 for domain using RSA.Eval -/
+def Domain.runS1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
+  RSA.Eval.basicS1 allUtterances (allWorlds n)
+    (fun u w => boolToRat (meaning n u w)) d.prior 1 (fun _ => 0) w
+
+/-- Run L1 for domain using RSA.Eval -/
+def Domain.runL1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
+  RSA.Eval.basicL1 allUtterances (allWorlds n)
+    (fun u w => boolToRat (meaning n u w)) d.prior 1 (fun _ => 0) u
 
 -- ============================================================================
 -- Convenience Constructors
@@ -86,7 +100,8 @@ def Domain.toScenario {n : Nat} (d : Domain n) : RSAScenario :=
 def standard (n : Nat) : Domain n := {}
 
 /-- Domain with custom prior -/
-def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) : Domain n := { prior := p }
+def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) (hp : ∀ w, 0 ≤ p w := by intros; decide) : Domain n :=
+  { prior := p, prior_nonneg := hp }
 
 -- ============================================================================
 -- RSA Computations
@@ -94,15 +109,15 @@ def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) : Domain n := { prior := p }
 
 /-- L0 distribution -/
 def l0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
-  RSA.L0 d.toScenario u () () () ()
+  d.runL0 u
 
 /-- S1 distribution -/
 def s1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
-  RSA.S1 d.toScenario w () () () ()
+  d.runS1 w
 
 /-- L1 distribution -/
 def l1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
-  RSA.L1_world d.toScenario u
+  d.runL1 u
 
 -- ============================================================================
 -- Named World Accessors (for readability)
@@ -149,10 +164,12 @@ def allExtUtterances : List ExtUtterance := [.none_, .some_, .most, .all]
 /-- Extended domain with "most" -/
 structure ExtDomain (n : Nat) where
   prior : Fin (n + 1) → ℚ := fun _ => 1
+  prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide
 
-/-- Build RSA scenario from extended domain -/
-def ExtDomain.toScenario {n : Nat} (d : ExtDomain n) : RSAScenario :=
-  RSAScenario.basicBool allExtUtterances (allWorlds n) (fun w u => extMeaning n u w) d.prior
+/-- Run L1 for extended domain using RSA.Eval -/
+def ExtDomain.runL1 {n : Nat} (d : ExtDomain n) (u : ExtUtterance) : List (Fin (n + 1) × ℚ) :=
+  RSA.Eval.basicL1 allExtUtterances (allWorlds n)
+    (fun u w => boolToRat (extMeaning n u w)) d.prior 1 (fun _ => 0) u
 
 /-- Standard extended domain -/
 def extStandard (n : Nat) : ExtDomain n := {}
@@ -175,38 +192,44 @@ private def threePerson : Domain 3 := standard 3
 #eval l1 (standard 5) .some_
 
 -- Extended with "most"
-#eval RSA.L1_world (extStandard 5).toScenario ExtUtterance.most
+#eval (extStandard 5).runL1 ExtUtterance.most
 
 -- ============================================================================
--- Fintype-Based API (RSAScenarioF / RSAF)
+-- Fintype-Based API (RSAScenario / RSA)
 -- ============================================================================
 
 /-- Build Fintype-based RSA scenario from domain -/
-def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenarioF :=
-  RSAScenarioF.basicBool
+def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenario :=
+  RSAScenario.basicBool
     (U := Utterance)
     (W := Fin (n + 1))
-    (fun w u => meaning n u w)
-    d.prior
+    (satisfies := fun w u => meaning n u w)
+    (prior := d.prior)
+    (prior_nonneg := d.prior_nonneg)
+    (cost := fun _ => 0)
+    (cost_nonneg := fun _ => le_refl 0)
 
 /-- Build Fintype-based RSA scenario from extended domain -/
-def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenarioF :=
-  RSAScenarioF.basicBool
+def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenario :=
+  RSAScenario.basicBool
     (U := ExtUtterance)
     (W := Fin (n + 1))
-    (fun w u => extMeaning n u w)
-    d.prior
+    (satisfies := fun w u => extMeaning n u w)
+    (prior := d.prior)
+    (prior_nonneg := d.prior_nonneg)
+    (cost := fun _ => 0)
+    (cost_nonneg := fun _ => le_refl 0)
 
 /-- L0 distribution (Fintype) -/
 def l0F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
-  RSAF.L0 d.toScenarioF u () () () ()
+  RSA.L0 d.toScenarioF u () () () ()
 
 /-- S1 distribution (Fintype) -/
 def s1F {n : Nat} (d : Domain n) (w : Fin (n + 1)) : Option (ExactDist Utterance) :=
-  RSAF.S1 d.toScenarioF w () () () ()
+  RSA.S1 d.toScenarioF w () () () ()
 
 /-- L1 distribution (Fintype) -/
 def l1F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
-  RSAF.L1_world d.toScenarioF u
+  RSA.L1_world d.toScenarioF u
 
 end Quantity

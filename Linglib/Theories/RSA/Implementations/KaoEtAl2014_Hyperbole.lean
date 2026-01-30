@@ -44,11 +44,12 @@ The literal meaning of "fifty dollars" is `numeralExact 50 price` - the price eq
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Fragments.Degrees
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA Degrees Montague.Lexicon.Degrees
+open RSA.Eval Degrees Montague.Lexicon.Degrees
 
 -- ============================================================================
 -- Domain: Items, Prices, and Affects
@@ -408,37 +409,16 @@ def allMeanings : List Meaning := allMeaningsForItem .electricKettle
 -- RSA Scenario
 -- ============================================================================
 
-/--
-Hyperbole scenario with extended semantics.
+/-- Goal prior for hyperbole scenario -/
+def goalPrior : Goal → ℚ
+  | .price => 1
+  | .valence => 3           -- Bias toward valence QUD (common in conversation)
+  | .priceValence => 1
+  | .approxPrice => 2       -- Approximate price QUD fairly common
+  | .approxPriceValence => 2
 
-Uses soft extended semantics that allows some compatibility between
-hyperbolic utterances and high-affect meanings.
--/
-def hyperboleScenario : RSAScenario :=
-  RSAScenario.qud
-    allUtterances allMeanings allGoals
-    extendedSemantics
-    qudEquiv
-    priceAffectPrior
-    (fun
-      | .price => 1
-      | .valence => 3           -- Bias toward valence QUD (common in conversation)
-      | .priceValence => 1
-      | .approxPrice => 2       -- Approximate price QUD fairly common
-      | .approxPriceValence => 2)
-
-/--
-Strict scenario with Boolean semantics.
-
-Only literally true utterances are valid.
-This shows the contrast - without soft semantics, hyperbole can't work.
--/
-def strictScenario : RSAScenario :=
-  RSAScenario.qud
-    allUtterances allMeanings allGoals
-    (fun u m => boolToRat (meaningSemantics u m))
-    qudEquiv
-    priceAffectPrior
+/-- Uniform goal prior for strict scenario -/
+def uniformGoalPrior : Goal → ℚ := fun _ => 1
 
 -- ============================================================================
 -- Compute Distributions
@@ -447,25 +427,46 @@ def strictScenario : RSAScenario :=
 -- Helper: construct a kettle at a given price
 def kettle (p : PriceLevel) : Price := { item := .electricKettle, price := p }
 
+/-- L0 for a QUD scenario -/
+def qudL0 (u : Utterance) (q : Goal) : List (Meaning × ℚ) :=
+  RSA.Eval.L0 allUtterances allMeanings (fun _ _ => extendedSemantics)
+    priceAffectPrior (fun _ _ => 1) u () () () q
+
+/-- S1 for a QUD scenario -/
+def qudS1 (m : Meaning) (q : Goal) : List (Utterance × ℚ) :=
+  RSA.Eval.S1 allUtterances allMeanings (fun _ _ => extendedSemantics)
+    priceAffectPrior (fun _ _ => 1) qudEquiv (fun _ => 0) 1 m () () () q
+
+/-- L1 world distribution for QUD scenario -/
+def qudL1_world (u : Utterance) : List (Meaning × ℚ) :=
+  RSA.Eval.qudL1_world allUtterances allMeanings allGoals
+    extendedSemantics priceAffectPrior goalPrior qudEquiv 1 (fun _ => 0) u
+
+/-- L1 goal distribution for QUD scenario -/
+def qudL1_goal (u : Utterance) : List (Goal × ℚ) :=
+  RSA.Eval.L1_goal allUtterances allMeanings [()] [()] [()] allGoals
+    (fun _ _ => extendedSemantics) priceAffectPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) goalPrior
+    (fun _ _ => 1) qudEquiv (fun _ => 0) 1 u
+
 /-- L0 for "fifty dollars" -/
-def l0_fifty : List (Meaning × ℚ) := RSA.L0 hyperboleScenario Utterance.fifty () () () Goal.price
+def l0_fifty : List (Meaning × ℚ) := qudL0 Utterance.fifty Goal.price
 
 /-- L0 for "million dollars" -/
-def l0_million : List (Meaning × ℚ) := RSA.L0 hyperboleScenario Utterance.million () () () Goal.price
+def l0_million : List (Meaning × ℚ) := qudL0 Utterance.million Goal.price
 
 /-- S1 with meaning (kettle at $500, annoyed) and QUD "affect" -/
 def s1_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.S1 hyperboleScenario (kettle .p500, Affect.annoyed) () () () Goal.valence
+  qudS1 (kettle .p500, Affect.annoyed) Goal.valence
 
 /-- S1 with meaning (kettle at $500, annoyed) and QUD "price" -/
 def s1_p500_annoyed_price : List (Utterance × ℚ) :=
-  RSA.S1 hyperboleScenario (kettle .p500, Affect.annoyed) () () () Goal.price
+  qudS1 (kettle .p500, Affect.annoyed) Goal.price
 
 /-- L1 for "million dollars" -/
-def l1_million : List (Meaning × ℚ) := RSA.L1_world hyperboleScenario Utterance.million
+def l1_million : List (Meaning × ℚ) := qudL1_world Utterance.million
 
 /-- L1 goal distribution for "million dollars" -/
-def l1_goal_million : List (Goal × ℚ) := RSA.L1_goal hyperboleScenario Utterance.million
+def l1_goal_million : List (Goal × ℚ) := qudL1_goal Utterance.million
 
 -- ============================================================================
 -- Evaluate
@@ -495,7 +496,7 @@ def l1_goal_million : List (Goal × ℚ) := RSA.L1_goal hyperboleScenario Uttera
 
 /-- Get probability from a distribution -/
 def getProb {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
-  RSA.getScore dist x
+  RSA.Eval.getScore dist x
 
 /--
 **Hyperbole Prediction 1**: Under QUD "affect", S1 prefers hyperbole.
@@ -557,15 +558,23 @@ def l1_infers_affect_qud : Bool :=
 -- Contrast with Strict Semantics
 -- ============================================================================
 
+/-- Strict (Boolean) semantics -/
+def strictSemantics (u : Utterance) (m : Meaning) : ℚ :=
+  boolToRat (meaningSemantics u m)
+
 /-- Under strict semantics, "million" gets zero probability -/
-def l0_million_strict : List (Meaning × ℚ) := RSA.L0 strictScenario Utterance.million () () () Goal.price
+def l0_million_strict : List (Meaning × ℚ) :=
+  RSA.Eval.L0 allUtterances allMeanings (fun _ _ => strictSemantics)
+    priceAffectPrior (fun _ _ => 1) Utterance.million () () () Goal.price
 
 #eval l0_million_strict
 -- All zeros (million is literally false for all meanings)
 
 /-- S1 under strict semantics can't use hyperbole -/
 def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.S1 strictScenario (kettle .p500, Affect.annoyed) () () () Goal.valence
+  RSA.Eval.S1 allUtterances allMeanings (fun _ _ => strictSemantics)
+    priceAffectPrior (fun _ _ => 1) qudEquiv (fun _ => 0) 1
+    (kettle .p500, Affect.annoyed) () () () Goal.valence
 
 #eval s1_strict_p500_annoyed_affect
 -- "million" should have probability 0

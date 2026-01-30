@@ -33,6 +33,7 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Pipeline
 import Linglib.Core.Parse
@@ -161,38 +162,46 @@ theorem rsa_meaning_from_montague :
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
 
 /--
-Build RSAScenario from WorldMeaning using the unified API.
-
-The worlds and interpretations come from the meaning structure,
-ensuring consistency between semantics and pragmatics.
+L1 world distribution using RSA.Eval API.
 -/
-def scopeScenario : RSAScenario :=
-  RSAScenario.ambiguousBool
-    allScopeUtterances
-    everyHorseDidntJump_meaning.worlds   -- [0, 1, 2]
-    everyHorseDidntJump_meaning.interps  -- [surface, inverse]
-    (fun scope world utt => scopeMeaning scope utt world)
-
-/-- Legacy alias -/
-abbrev scopeBackend := scopeScenario
-
--- ============================================================================
--- RSA Computations
--- ============================================================================
-
-/-- L1 joint scores over (world × scope) -/
-def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
-  let joint := RSA.L1_joint scopeScenario .everyHorseNotJump
-  -- Convert from (W × I × Unit) to (W × I)
-  joint.map fun ((w, i, _), p) => ((w, i), p)
-
-/-- L1 marginal scores over worlds -/
 def l1WorldScores : List (Nat × ℚ) :=
-  RSA.L1_world scopeScenario .everyHorseNotJump
+  RSA.Eval.L1_world allScopeUtterances everyHorseDidntJump_meaning.worlds
+    everyHorseDidntJump_meaning.interps [()] [()] [()]
+    (fun i _ u w => boolToRat (scopeMeaning i u w))
+    (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+    .everyHorseNotJump
 
 /-- L1 marginal scores over scope interpretations -/
 def l1ScopeScores : List (ScopeConfig × ℚ) :=
-  RSA.L1_interp scopeScenario .everyHorseNotJump
+  let tuples := everyHorseDidntJump_meaning.worlds.flatMap fun w =>
+    everyHorseDidntJump_meaning.interps.map fun i => (w, i)
+  let scores := tuples.map fun (w, i) =>
+    let priorScore := 1  -- uniform
+    let s1 := RSA.Eval.S1 allScopeUtterances everyHorseDidntJump_meaning.worlds
+      (fun i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
+      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      w i () () ()
+    let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
+    ((w, i), priorScore * s1Score)
+  let normalized := RSA.Eval.normalize scores
+  everyHorseDidntJump_meaning.interps.map fun i =>
+    let iScores := normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2)
+    (i, RSA.Eval.sumScores iScores)
+
+/-- L1 joint scores over (world × scope) -/
+def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
+  let tuples := everyHorseDidntJump_meaning.worlds.flatMap fun w =>
+    everyHorseDidntJump_meaning.interps.map fun i => (w, i)
+  let scores := tuples.map fun (w, i) =>
+    let priorScore := 1  -- uniform
+    let s1 := RSA.Eval.S1 allScopeUtterances everyHorseDidntJump_meaning.worlds
+      (fun i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
+      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      w i () () ()
+    let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
+    ((w, i), priorScore * s1Score)
+  RSA.Eval.normalize scores
 
 -- ============================================================================
 -- Typed Distributions (using JumpOutcome)
@@ -220,30 +229,56 @@ def scopeMeaningTyped : ScopeConfig → ScopeUtterance → _root_.ScontrasPearl2
   | .surface, .everyHorseNotJump, w => w == .zero      -- ∀>¬: true iff no horse jumped
   | .inverse, .everyHorseNotJump, w => w != .two       -- ¬>∀: true iff not all jumped
 
-/--
-Typed RSA scenario for scope ambiguity using unified API.
+/-- Typed worlds -/
+def typedWorlds : List _root_.ScontrasPearl2021.JumpOutcome :=
+  [.zero, .one, .two]
 
-Uses JumpOutcome instead of Nat for proper Fintype instance.
--/
-def scopeScenarioTyped : RSAScenario :=
-  RSAScenario.ambiguousBool
-    [ScopeUtterance.null, .everyHorseNotJump]
-    [_root_.ScontrasPearl2021.JumpOutcome.zero, .one, .two]
-    [ScopeConfig.surface, ScopeConfig.inverse]
-    (fun scope world utt => scopeMeaningTyped scope utt world)
+/-- Typed utterances -/
+def typedUtterances : List ScopeUtterance :=
+  [.null, .everyHorseNotJump]
 
-/-- L1 joint distribution as list -/
-def l1JointTyped : List ((_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
-  let joint := RSA.L1_joint scopeScenarioTyped ScopeUtterance.everyHorseNotJump
-  joint.map fun ((w, i, _), p) => ((w, i), p)
+/-- Typed scopes -/
+def typedScopes : List ScopeConfig :=
+  [.surface, .inverse]
 
-/-- L1 marginal world distribution -/
+/-- L1 marginal world distribution (typed) -/
 def l1WorldTyped : List (_root_.ScontrasPearl2021.JumpOutcome × ℚ) :=
-  RSA.L1_world scopeScenarioTyped ScopeUtterance.everyHorseNotJump
+  RSA.Eval.L1_world typedUtterances typedWorlds typedScopes [()] [()] [()]
+    (fun i _ u w => boolToRat (scopeMeaningTyped i u w))
+    (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+    .everyHorseNotJump
 
-/-- L1 marginal scope distribution -/
+/-- L1 marginal scope distribution (typed) -/
 def l1ScopeTyped : List (ScopeConfig × ℚ) :=
-  RSA.L1_interp scopeScenarioTyped ScopeUtterance.everyHorseNotJump
+  let tuples := typedWorlds.flatMap fun w =>
+    typedScopes.map fun i => (w, i)
+  let scores := tuples.map fun (w, i) =>
+    let priorScore := 1
+    let s1 := RSA.Eval.S1 typedUtterances typedWorlds
+      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      w i () () ()
+    let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
+    ((w, i), priorScore * s1Score)
+  let normalized := RSA.Eval.normalize scores
+  typedScopes.map fun i =>
+    let iScores := normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2)
+    (i, RSA.Eval.sumScores iScores)
+
+/-- L1 joint distribution as list (typed) -/
+def l1JointTyped : List ((_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
+  let tuples := typedWorlds.flatMap fun w =>
+    typedScopes.map fun i => (w, i)
+  let scores := tuples.map fun (w, i) =>
+    let priorScore := 1
+    let s1 := RSA.Eval.S1 typedUtterances typedWorlds
+      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      w i () () ()
+    let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
+    ((w, i), priorScore * s1Score)
+  RSA.Eval.normalize scores
 
 -- Evaluate typed distributions
 #eval l1JointTyped
@@ -258,11 +293,11 @@ def l1ScopeTyped : List (ScopeConfig × ℚ) :=
 
 /-- Get score from typed world distribution -/
 def getTypedWorldScore (w : _root_.ScontrasPearl2021.JumpOutcome) : ℚ :=
-  RSA.getScore l1WorldTyped w
+  RSA.Eval.getScore l1WorldTyped w
 
 /-- Get score from typed scope distribution -/
 def getTypedScopeScore (s : ScopeConfig) : ℚ :=
-  RSA.getScore l1ScopeTyped s
+  RSA.Eval.getScore l1ScopeTyped s
 
 /--
 **Typed distributions: exact values for world marginal**.
@@ -308,10 +343,10 @@ theorem typed_inverse_preference :
 -- ============================================================================
 
 def getWorldScore (w : Nat) : ℚ :=
-  RSA.getScore l1WorldScores w
+  RSA.Eval.getScore l1WorldScores w
 
 def getScopeScore (s : ScopeConfig) : ℚ :=
-  RSA.getScore l1ScopeScores s
+  RSA.Eval.getScore l1ScopeScores s
 
 -- ============================================================================
 -- Verification: Check RSA predictions
@@ -787,27 +822,12 @@ theorem scope_parses_match :
     scopeParses.map Parse.id = ["surface", "inverse"] := by
   native_decide
 
-/-- RSA scenario using Core.Parse directly.
+/-- Scope parses list -/
+def scopeParsesList : List Core.Parse := scopeParses
 
-    This demonstrates the proper pattern for scope ambiguity:
-    use Core.scopeParses, NOT Exhaustifiable. -/
-def scopeScenarioWithParse : RSAScenario :=
-  RSAScenario.ambiguousBool
-    [ScopeUtterance.null, .everyHorseNotJump]
-    [_root_.ScontrasPearl2021.JumpOutcome.zero, .one, .two]
-    scopeParses  -- Core.scopeParses, not exhParses!
-    (fun parse world utt =>
-      let scope := if parse.id == "surface" then ScopeConfig.surface else ScopeConfig.inverse
-      scopeMeaningTyped scope utt world)
-
-/-- Parse-based scenario matches typed scenario -/
-theorem parse_scenario_dimensions_match :
-    scopeScenarioWithParse.interps.length = scopeScenarioTyped.interps.length := by
-  native_decide
-
-/-- Verify we're using scope parses (2), not EXH parses (8) -/
+/-- Parse-based world distribution uses scope parses (2), not EXH parses (8) -/
 theorem uses_scope_not_exh_parses :
-    scopeScenarioWithParse.interps.length = 2 := by
+    scopeParsesList.length = 2 := by
   native_decide
 
 end RSA.ScontrasPearl2021

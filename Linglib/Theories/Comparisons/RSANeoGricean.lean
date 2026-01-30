@@ -32,10 +32,11 @@ import Linglib.Theories.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Theories.RSA.Core.Eval
 
 namespace Comparisons.RSANeoGricean
 
-open RSA NeoGricean
+open RSA NeoGricean RSA.Eval
 
 -- ============================================================================
 -- Directional Agreement: Both Favor "Not All" for "Some"
@@ -326,32 +327,7 @@ This recovers NeoGricean categorical predictions.
 
 open RSA.InformationTheory
 
-/--
-As α increases, the entropy contribution to G_α becomes smaller
-relative to the informativity contribution.
-
-This demonstrates the limit where NeoGricean emerges.
--/
-def entropyContribution (S : RSAScenario) (α : ℚ) : ℚ :=
-  let d := runDynamics S 3
-  let h_s := H_S_at S d
-  let e_vl := E_VL_at S d
-  let e_vl_abs := if e_vl < 0 then -e_vl else e_vl
-  if α = 0 then 1  -- Entropy dominates when α = 0
-  else h_s / (h_s + α * e_vl_abs)  -- Fraction due to entropy
-
-/--
-At high α, entropy contribution approaches 0.
-
-This is the information-theoretic explanation for why RSA → NeoGricean.
--/
-theorem entropy_vanishes_at_high_alpha (S : RSAScenario) :
-    -- For large α, entropy contribution is small
-    -- (Full proof would require limits in Analysis)
-    entropyContribution S 10 ≤ entropyContribution S 1 ∨
-    -- Trivial case
-    S.worlds.length ≤ 1 := by
-  sorry  -- Would require analysis of entropy dynamics
+-- Entropy contribution analysis removed pending RSA.InformationTheory migration
 
 /--
 The NeoGricean limit can be characterized information-theoretically:
@@ -359,6 +335,9 @@ at α → ∞, the speaker ignores compression and maximizes informativity.
 -/
 def isNeoGriceanLimit (α : ℚ) : Bool :=
   α ≥ 100  -- Practical threshold for "approximately categorical"
+
+-- Note: Full entropy contribution analysis requires RSA.InformationTheory
+-- which depends on RSAScenarioL. See InformationTheory/Basic.lean for details.
 
 -- ============================================================================
 -- Summary

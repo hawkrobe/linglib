@@ -29,6 +29,7 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.HeKaiserIskarous2025.Data
 import Linglib.Core.Polarity
 import Linglib.Core.Proposition
@@ -38,7 +39,7 @@ import Linglib.Theories.Montague.Entailment.Polarity
 namespace RSA.Implementations.HeKaiserIskarous2025
 
 open _root_.HeKaiserIskarous2025
-open RSA
+open RSA.Eval
 
 -- ============================================================================
 -- PART 1: Helper Functions
@@ -74,27 +75,30 @@ def sigmoidApprox (x : ℚ) (L k x0 c : ℚ) : ℚ :=
 -- PART 2: Standard RSA (Baseline)
 -- ============================================================================
 
-/-- Standard RSA scenario with Boolean semantics and costs.
+/-- Run L1 for standard RSA scenario with Boolean semantics and costs.
 
     This is the baseline model from equations (1)-(4) in the paper.
     Uses literal truth and utterance costs (0, 1, 2 for null, pos, neg). -/
-def standardScenario (cfg : HKIConfig) : RSAScenario :=
-  RSAScenario.basic
+def standardL1 (cfg : HKIConfig) (u : HKIUtterance) : List (HKIState × ℚ) :=
+  RSA.Eval.basicL1
     allUtterances
     allStates
-    (fun u s => boolToQ (literalTruth s u))
+    (fun utt s => boolToQ (literalTruth s utt))
     cfg.prior.prob
     cfg.alpha
-    utteranceCost  -- Cost: null=0, pos=1, neg=2
+    utteranceCost
+    u
 
-/-- Standard RSA with uniform prior -/
-def standardUniform : RSAScenario := standardScenario defaultConfig
-
-/-- Standard RSA with high prior -/
-def standardHighPrior : RSAScenario := standardScenario highPriorConfig
-
-/-- Standard RSA with low prior -/
-def standardLowPrior : RSAScenario := standardScenario lowPriorConfig
+/-- Run S1 for standard RSA scenario -/
+def standardS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
+  RSA.Eval.basicS1
+    allUtterances
+    allStates
+    (fun utt st => boolToQ (literalTruth st utt))
+    cfg.prior.prob
+    cfg.alpha
+    utteranceCost
+    s
 
 -- ============================================================================
 -- PART 3: fuzzyRSA - Soft Semantics
@@ -153,28 +157,31 @@ def fuzzyMeaning (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
   | .uPos => fuzzyPosInterpretation cfg.prior.p_pos cfg.fuzzyParams s
   | .uNull => fuzzyNullInterpretation s
 
-/-- fuzzyRSA scenario with soft semantics.
+/-- Run L1 for fuzzyRSA scenario with soft semantics.
 
     This captures the utterance likelihood asymmetry (Experiment 1):
     - Both polarities show decreasing likelihood with increasing prior
     - Negative polarity shows steeper decrease -/
-def fuzzyScenario (cfg : HKIConfig) : RSAScenario :=
-  RSAScenario.basic
+def fuzzyL1 (cfg : HKIConfig) (u : HKIUtterance) : List (HKIState × ℚ) :=
+  RSA.Eval.basicL1
     allUtterances
     allStates
-    (fun u s => fuzzyMeaning cfg u s)
+    (fun utt s => fuzzyMeaning cfg utt s)
     cfg.prior.prob
     cfg.alpha
     utteranceCost
+    u
 
-/-- fuzzyRSA with uniform prior -/
-def fuzzyUniform : RSAScenario := fuzzyScenario defaultConfig
-
-/-- fuzzyRSA with high prior -/
-def fuzzyHighPrior : RSAScenario := fuzzyScenario highPriorConfig
-
-/-- fuzzyRSA with low prior -/
-def fuzzyLowPrior : RSAScenario := fuzzyScenario lowPriorConfig
+/-- Run S1 for fuzzyRSA scenario -/
+def fuzzyS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
+  RSA.Eval.basicS1
+    allUtterances
+    allStates
+    (fun utt st => fuzzyMeaning cfg utt st)
+    cfg.prior.prob
+    cfg.alpha
+    utteranceCost
+    s
 
 -- ============================================================================
 -- PART 4: wonkyRSA - Complex Prior for Common Ground Update
@@ -211,49 +218,30 @@ def worldConditionedPrior (cfg : HKIConfig) : WorldType → HKIState → ℚ
 def wonkyGoalProject : WorldType → HKIState → HKIState → Bool
   | _, s1, s2 => s1 == s2
 
-/-- wonkyRSA scenario using world type as a latent variable.
+/-- Run L1 for wonkyRSA scenario using world type as a latent variable.
 
     The listener reasons about whether the speaker is in a "wonky" context
     where normal priors don't apply. This allows common ground update:
     low-utility utterances → infer wonky world → adjust typicality. -/
-def wonkyScenario (cfg : HKIConfig) : RSAScenario where
-  Utterance := HKIUtterance
-  World := HKIState
-  Interp := Unit
-  Lexicon := Unit
-  BeliefState := Unit
-  Goal := WorldType
-  φ := fun _ _ u s => boolToQ (literalTruth s u)
-  goalProject := wonkyGoalProject
-  speakerCredence := fun _ _ => 1
-  utterances := allUtterances
-  worlds := allStates
-  interps := [()]
-  lexica := [()]
-  beliefStates := [()]
-  goals := allWorldTypes
-  worldPrior := cfg.prior.prob  -- P(s|normal) per Cremers et al. correction
-  interpPrior := fun _ => 1
-  lexiconPrior := fun _ => 1
-  beliefStatePrior := fun _ => 1
-  goalPrior := fun w => match w with
+def wonkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType) × ℚ) :=
+  let jointWorlds := allStates.flatMap fun s => allWorldTypes.map fun w => (s, w)
+  let goalPrior : WorldType → ℚ := fun w => match w with
     | .wonky => cfg.p_wonky
     | .normal => 1 - cfg.p_wonky
-  α := cfg.alpha
-  cost := utteranceCost
-
-/-- wonkyRSA with uniform prior, 50% wonky -/
-def wonkyUniform : RSAScenario := wonkyScenario defaultConfig
-
-/-- wonkyRSA with high prior -/
-def wonkyHighPrior : RSAScenario := wonkyScenario highPriorConfig
-
-/-- wonkyRSA with low prior -/
-def wonkyLowPrior : RSAScenario := wonkyScenario lowPriorConfig
+  RSA.Eval.basicL1
+    allUtterances
+    jointWorlds
+    (fun utt (s, _) => boolToQ (literalTruth s utt))
+    (fun (s, w) => cfg.prior.prob s * goalPrior w)
+    cfg.alpha
+    utteranceCost
+    u
 
 /-- Get inferred wonkiness P(wonky | u) -/
 def inferredWonkiness (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
-  RSA.getScore (RSA.L1_goal (wonkyScenario cfg) u) WorldType.wonky
+  let joint := wonkyL1 cfg u
+  let wonkyScores := joint.filter (fun ((_, w), _) => w == .wonky) |>.map (·.2)
+  RSA.Eval.sumScores wonkyScores
 
 -- ============================================================================
 -- PART 5: funkyRSA - Combined Model
@@ -269,73 +257,39 @@ This attempts to capture both:
 2. Typicality inference asymmetry (via wonky world update)
 -/
 
-/-- funkyRSA scenario combining fuzzy semantics and wonky world.
+/-- Run L1 for funkyRSA scenario combining fuzzy semantics and wonky world.
 
     This is the most complex model, attempting to capture both
     polarity asymmetries in a unified framework. -/
-def funkyScenario (cfg : HKIConfig) : RSAScenario where
-  Utterance := HKIUtterance
-  World := HKIState
-  Interp := Unit
-  Lexicon := Unit
-  BeliefState := Unit
-  Goal := WorldType
-  φ := fun _ _ u s => fuzzyMeaning cfg u s
-  goalProject := wonkyGoalProject
-  speakerCredence := fun _ _ => 1
-  utterances := allUtterances
-  worlds := allStates
-  interps := [()]
-  lexica := [()]
-  beliefStates := [()]
-  goals := allWorldTypes
-  worldPrior := cfg.prior.prob
-  interpPrior := fun _ => 1
-  lexiconPrior := fun _ => 1
-  beliefStatePrior := fun _ => 1
-  goalPrior := fun w => match w with
+def funkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType) × ℚ) :=
+  let jointWorlds := allStates.flatMap fun s => allWorldTypes.map fun w => (s, w)
+  let goalPrior : WorldType → ℚ := fun w => match w with
     | .wonky => cfg.p_wonky
     | .normal => 1 - cfg.p_wonky
-  α := cfg.alpha
-  cost := utteranceCost
-
-/-- funkyRSA with uniform prior -/
-def funkyUniform : RSAScenario := funkyScenario defaultConfig
-
-/-- funkyRSA with high prior -/
-def funkyHighPrior : RSAScenario := funkyScenario highPriorConfig
-
-/-- funkyRSA with low prior -/
-def funkyLowPrior : RSAScenario := funkyScenario lowPriorConfig
+  RSA.Eval.basicL1
+    allUtterances
+    jointWorlds
+    (fun utt (s, _) => fuzzyMeaning cfg utt s)
+    (fun (s, w) => cfg.prior.prob s * goalPrior w)
+    cfg.alpha
+    utteranceCost
+    u
 
 -- ============================================================================
 -- PART 6: Analysis Functions
 -- ============================================================================
 
-/-- Compute S1 distribution for standard/fuzzy scenarios (utterance likelihood given state) -/
-def utteranceLikelihood_basic (scenario : RSAScenario)
-    (s : scenario.World)
-    (i : scenario.Interp) (l : scenario.Lexicon)
-    (a : scenario.BeliefState) (g : scenario.Goal) :
-    List (scenario.Utterance × ℚ) :=
-  RSA.S1 scenario s i l a g
-
-/-- Compute L1 distribution (state inference given utterance) -/
-def stateInference (scenario : RSAScenario) (u : scenario.Utterance) :
-    List (scenario.World × ℚ) :=
-  RSA.L1_world scenario u
-
 /-- Get S1 probability for standard scenario -/
 def standardS1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
-  RSA.getScore (RSA.S1 (standardScenario cfg) s () () () ()) u
+  RSA.Eval.getScore (standardS1 cfg s) u
 
 /-- Get S1 probability for fuzzy scenario -/
 def fuzzyS1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
-  RSA.getScore (RSA.S1 (fuzzyScenario cfg) s () () () ()) u
+  RSA.Eval.getScore (fuzzyS1 cfg s) u
 
 /-- Get L1 state probability for standard scenario -/
 def standardL1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
-  RSA.getScore (RSA.L1_world (standardScenario cfg) u) s
+  RSA.Eval.getScore (standardL1 cfg u) s
 
 /-- Expected typicality after utterance (for wonkyRSA).
 
@@ -343,11 +297,11 @@ def standardL1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
 
     This is equation (17) in the paper. -/
 def expectedTypicality (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
-  let scenario := wonkyScenario cfg
-  let goalDist := RSA.L1_goal scenario u
+  let joint := wonkyL1 cfg u
+  let goalDist := RSA.Eval.marginalize joint Prod.snd
   -- Sum over world types, weighting by P(s_pos|world) * P(world|u)
   allWorldTypes.foldl (fun acc w =>
-    let p_world := RSA.getScore goalDist w
+    let p_world := RSA.Eval.getScore goalDist w
     let p_pos_given_world := worldConditionedPrior cfg w .pos
     acc + p_world * p_pos_given_world) 0
 
@@ -357,13 +311,13 @@ def expectedTypicality (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
 
 /-- Standard scenario has correct dimensions -/
 theorem standard_dimensions :
-    standardUniform.utterances.length = 3 ∧
-    standardUniform.worlds.length = 2 := by
+    allUtterances.length = 3 ∧
+    allStates.length = 2 := by
   constructor <;> native_decide
 
 /-- wonkyRSA has 2 goals (normal, wonky) -/
 theorem wonky_dimensions :
-    wonkyUniform.goals.length = 2 := by
+    allWorldTypes.length = 2 := by
   native_decide
 
 /-- Negative utterances have higher cost in our model -/
@@ -387,19 +341,20 @@ Standard RSA + cost predicts:
 This section demonstrates these MISMATCHES.
 -/
 
-/-- Scenario WITHOUT cost (for comparison) -/
-def noCostScenario (cfg : HKIConfig) : RSAScenario :=
-  RSAScenario.basic
+/-- S1 without cost (for comparison) -/
+def noCostS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
+  RSA.Eval.basicS1
     allUtterances
     allStates
-    (fun u s => boolToQ (literalTruth s u))
+    (fun utt st => boolToQ (literalTruth st utt))
     cfg.prior.prob
     cfg.alpha
     (fun _ => 0)  -- No cost
+    s
 
 /-- S1 probability without cost -/
 def noCostS1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
-  RSA.getScore (RSA.S1 (noCostScenario cfg) s () () () ()) u
+  RSA.Eval.getScore (noCostS1 cfg s) u
 
 /-- Without cost, positive and negative are symmetric. -/
 theorem no_cost_symmetric :

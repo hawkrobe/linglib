@@ -28,7 +28,7 @@ import Linglib.Fragments.Scope
 -- "Every X didn't VP" with 3 entities
 def scenario := Scope.everyNotScenario 3
 
-#eval RSA.L1_world scenario .everyNot
+#eval RSAL.L1_world scenario .everyNot
 -- Infers both world and interpretation
 ```
 
@@ -39,7 +39,7 @@ def scenario := Scope.everyNotScenario 3
 - May, R. (1985). Logical Form: Its Structure and Derivation.
 -/
 
-import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Derivation.Scope
 import Mathlib.Data.Rat.Defs
 
@@ -135,41 +135,46 @@ def scopeMeaning (n : Nat) (reading : Reading) (w : Outcome n) : ScopeUtt → Bo
 -- ============================================================================
 
 /--
-Build RSA scenario for "Every X didn't VP" with n entities.
+Run L1 inference for "Every X didn't VP" with n entities.
 
-Uses `RSAScenario.ambiguousBool` since meaning varies by interpretation.
+Returns joint distribution over (Outcome, Reading) pairs.
 -/
-def everyNotScenario (n : Nat) : RSAScenario :=
-  RSAScenario.ambiguousBool
+def everyNotL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
+  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  RSA.Eval.basicL1
     [ScopeUtt.everyNot, .null]
-    (allOutcomes n)
-    allReadings
-    (fun reading w utt => scopeMeaning n reading w utt)
+    jointWorlds
+    (fun utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
+    (fun _ => 1) 1 (fun _ => 0) u
 
 /--
-Build RSA scenario with both "every...not" and "some...not".
+Run L1 inference for full scope scenario with both "every...not" and "some...not".
 -/
-def fullScenario (n : Nat) : RSAScenario :=
-  RSAScenario.ambiguousBool
+def fullL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
+  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  RSA.Eval.basicL1
     [ScopeUtt.everyNot, .someNot, .null]
-    (allOutcomes n)
-    allReadings
-    (fun reading w utt => scopeMeaning n reading w utt)
+    jointWorlds
+    (fun utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
+    (fun _ => 1) 1 (fun _ => 0) u
 
 /--
-Generic scope scenario builder.
+Generic scope scenario runner.
 
 Takes a custom meaning function for flexibility.
 -/
-def scenario {U : Type} [BEq U] [DecidableEq U]
+def runL1 {U : Type} [BEq U] [DecidableEq U]
     (utterances : List U)
     (n : Nat)
     (meaning : Reading → Outcome n → U → Bool)
     (worldPrior : Outcome n → ℚ := fun _ => 1)
     (readingPrior : Reading → ℚ := fun _ => 1)
-    : RSAScenario :=
-  RSAScenario.ambiguousBool utterances (allOutcomes n) allReadings
-    (fun r w u => meaning r w u) worldPrior readingPrior
+    (u : U)
+    : List ((Outcome n × Reading) × ℚ) :=
+  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  RSA.Eval.basicL1 utterances jointWorlds
+    (fun utt (w, reading) => boolToRat (meaning reading w utt))
+    (fun (w, r) => worldPrior w * readingPrior r) 1 (fun _ => 0) u
 
 -- ============================================================================
 -- Convenience: RSA Computations
@@ -177,11 +182,13 @@ def scenario {U : Type} [BEq U] [DecidableEq U]
 
 /-- L1 marginal over worlds -/
 def l1_world (n : Nat) (u : ScopeUtt) : List (Outcome n × ℚ) :=
-  RSA.L1_world (everyNotScenario n) u
+  let joint := everyNotL1 n u
+  RSA.Eval.marginalize joint Prod.fst
 
 /-- L1 marginal over interpretations -/
 def l1_interp (n : Nat) (u : ScopeUtt) : List (Reading × ℚ) :=
-  RSA.L1_interp (everyNotScenario n) u
+  let joint := everyNotL1 n u
+  RSA.Eval.marginalize joint Prod.snd
 
 -- ============================================================================
 -- Examples

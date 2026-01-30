@@ -105,14 +105,14 @@ theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by
   native_decide
 
 -- ============================================================================
--- RSA Scenario
+-- RSA with Lower-Bound Semantics
 -- ============================================================================
 
-/-- The RSA scenario derived from lower-bound semantics -/
-def LowerBound.scenario : RSAScenario := LowerBound.toScenario
+-- Note: For RSA computations with lower-bound semantics, use:
+-- NumeralTheory.runL1 from Theory.lean
 
 -- Verify it works
-#eval LowerBound.scenario.worlds  -- [0, 1, 2, 3]
-#eval LowerBound.scenario.utterances  -- [one, two, three]
+#eval LowerBound.utterances  -- [one, two, three]
+#eval LowerBound.worlds  -- [0, 1, 2, 3]
 
 end Montague.Lexicon.Numerals

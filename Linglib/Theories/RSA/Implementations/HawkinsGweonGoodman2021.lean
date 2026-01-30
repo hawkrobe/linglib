@@ -30,6 +30,7 @@ Extends RSA with **resource-rational perspective-taking**:
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Modification
 
 namespace HawkinsGweonGoodman2021
@@ -483,26 +484,23 @@ def worldMeaning (u : Utterance) (world : WorldState) : ℚ :=
   -- Returns 1 if utterance uniquely picks out target, scaled by 1/|extension|
   literalListenerProb u world.target.features world.target allObjects
 
-/-- Build unified RSAScenario for asymmetric perspective-taking (w_S = 1) -/
-def asymmetricScenario (visible : List Object) (target : Object) : RSAScenario :=
-  RSAScenario.mentalState
-    allUtterances
-    (allWorldStates visible target)
-    [⟨visible, target⟩]  -- Single visual access state
-    [()]                   -- No QUD variation
-    worldMeaning
-    visualAccessCredence
-    (fun _ _ _ => true)    -- No goal projection
-    (fun _ => 1)           -- Uniform world prior
-    (fun _ => 1)           -- Uniform access prior
-    (fun _ => 1)           -- Uniform goal prior
-    1                      -- α = 1
-    (fun u => (utteranceCost u : ℚ) / 10)  -- Cost
-
-/-- L1 from unified API for asymmetric case -/
+/-- L1 from RSA.Eval API for asymmetric perspective-taking case -/
 def l1_asymmetric_unified (visible : List Object) (target : Object) (u : Utterance)
     : List (WorldState × ℚ) :=
-  RSA.L1_world (asymmetricScenario visible target) u
+  let worlds := allWorldStates visible target
+  let accessStates := [⟨visible, target⟩]
+  RSA.Eval.L1_world allUtterances worlds [()] [()] accessStates [()]
+    (fun _ _ u' w => worldMeaning u' w)
+    (fun _ => 1)  -- world prior
+    (fun _ => 1)  -- interp prior
+    (fun _ => 1)  -- lexicon prior
+    (fun _ => 1)  -- belief state prior
+    (fun _ => 1)  -- goal prior
+    visualAccessCredence
+    (fun _ w1 w2 => w1 == w2)  -- identity goal projection
+    (fun u' => (utteranceCost u' : ℚ) / 10)
+    1  -- α = 1
+    u
 
 /-- Verify unified API computes -/
 theorem unified_asymmetric_computes :

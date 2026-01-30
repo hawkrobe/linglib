@@ -28,6 +28,7 @@ Reference: Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic i
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Distribution
 
 -- ============================================================================
@@ -108,8 +109,9 @@ structure LUScenario where
   nullCost : ℚ := 10
   [uttBEq : BEq Utterance]
   [worldBEq : BEq World]
+  [worldDecEq : DecidableEq World]
 
-attribute [instance] LUScenario.uttBEq LUScenario.worldBEq
+attribute [instance] LUScenario.uttBEq LUScenario.worldBEq LUScenario.worldDecEq
 
 -- ============================================================================
 -- Lexical Refinement: Generating Λ from base semantics
@@ -191,7 +193,7 @@ This is the standard literal listener, but parameterized by lexicon L.
 def L0_given (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (u : S.Utterance) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.worldPrior w * L.meaning u w)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 S₁ given a specific lexicon.
@@ -202,8 +204,8 @@ The speaker believes the literal listener is using lexicon L.
 -/
 def S1_given (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (w : S.World) : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u => (u, (RSA.getScore (L0_given S L u) w) ^ S.α)
-  RSA.normalize scores
+  let scores := S.utterances.map fun u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
+  RSA.Eval.normalize scores
 
 /--
 L₁ with lexical uncertainty: THE KEY INNOVATION.
@@ -221,9 +223,9 @@ def L1 (S : LUScenario) (u : S.Utterance) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w =>
     -- Sum over lexica: Σ_L P(L) · S1(u | w, L)
     let lexSum := S.lexica.foldl (init := (0 : ℚ)) fun acc L =>
-      acc + S.lexPrior L * RSA.getScore (S1_given S L w) u
+      acc + S.lexPrior L * RSA.Eval.getScore (S1_given S L w) u
     (w, S.worldPrior w * lexSum)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 Joint distribution over (World × Lexicon) given utterance.
@@ -237,9 +239,9 @@ def L1_joint (S : LUScenario) (u : S.Utterance)
   let pairs := S.worlds.flatMap fun w => S.lexica.map fun L => (w, L)
   let scores := pairs.map fun (w, L) =>
     let priorScore := S.worldPrior w * S.lexPrior L
-    let s1Score := RSA.getScore (S1_given S L w) u
+    let s1Score := RSA.Eval.getScore (S1_given S L w) u
     ((w, L), priorScore * s1Score)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 Marginal over lexica: P(L | u) = Σ_w P(w, L | u)
@@ -251,7 +253,7 @@ def L1_lexicon (S : LUScenario) [BEq (Lexicon S.Utterance S.World)]
   let joint := L1_joint S u
   S.lexica.map fun L =>
     let lScores := joint.filter (·.1.2 == L) |>.map (·.2)
-    (L, RSA.sumScores lScores)
+    (L, RSA.Eval.sumScores lScores)
 
 -- ============================================================================
 -- Convenience accessors
@@ -260,16 +262,16 @@ def L1_lexicon (S : LUScenario) [BEq (Lexicon S.Utterance S.World)]
 /-- Get L₀ probability for a specific world given a lexicon -/
 def L0_prob (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (u : S.Utterance) (w : S.World) : ℚ :=
-  RSA.getScore (L0_given S L u) w
+  RSA.Eval.getScore (L0_given S L u) w
 
 /-- Get S₁ probability for a specific utterance given a lexicon -/
 def S1_prob (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (w : S.World) (u : S.Utterance) : ℚ :=
-  RSA.getScore (S1_given S L w) u
+  RSA.Eval.getScore (S1_given S L w) u
 
 /-- Get L₁ probability for a specific world (with lexical uncertainty) -/
 def L1_prob (S : LUScenario) (u : S.Utterance) (w : S.World) : ℚ :=
-  RSA.getScore (L1 S u) w
+  RSA.Eval.getScore (L1 S u) w
 
 end LURSA
 
@@ -282,7 +284,7 @@ Create an LUScenario from basic components with a single lexicon.
 
 This is the degenerate case: no lexical uncertainty, equivalent to standard RSA.
 -/
-def LUScenario.ofBasic {U W : Type} [BEq U] [BEq W]
+def LUScenario.ofBasic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utts : List U) (worlds : List W)
     (φ : U → W → ℚ) (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) : LUScenario where
   Utterance := U
@@ -296,12 +298,12 @@ def LUScenario.ofBasic {U W : Type} [BEq U] [BEq W]
   α := α
 
 /--
-Project an LUScenario to an RSAScenario using the base lexicon.
+Run L1 for an LUScenario using RSA.Eval (standard RSA, not LU).
 
 Useful for comparing LU-RSA predictions to standard RSA.
 -/
-def LUScenario.toRSAScenario (S : LUScenario) [DecidableEq S.World] : RSAScenario :=
-  RSAScenario.basic S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α
+def LUScenario.runStandardL1 (S : LUScenario) (u : S.Utterance) : List (S.World × ℚ) :=
+  RSA.Eval.basicL1 S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α (fun _ => 0) u
 
 -- ============================================================================
 -- M-Implicature Scenario Builder
@@ -317,7 +319,7 @@ Given:
 
 Lexical uncertainty predicts: SHORT → FREQ, long → rare
 -/
-def mkMImplicatureScenario {U W : Type} [BEq U] [BEq W]
+def mkMImplicatureScenario {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (SHORT long : U) (FREQ rare : W)
     (freqPrior : ℚ := 2/3) : LUScenario where
   Utterance := U
@@ -435,8 +437,8 @@ theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] [DecidableEq 
     (utts : List U) (worlds : List W) (φ : U → W → ℚ)
     (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) :
     let LU := LUScenario.ofBasic utts worlds φ prior α
-    let S := RSAScenario.basic utts worlds φ prior α
-    ∀ u w, LURSA.L1_prob LU u w = RSA.getScore (RSA.L1_world S u) w := by
+    let stdL1 := RSA.Eval.basicL1 utts worlds φ prior α (fun _ => 0)
+    ∀ u w, LURSA.L1_prob LU u w = RSA.Eval.getScore (stdL1 u) w := by
   intro u w
   -- The proof requires showing that with single lexicon,
   -- the marginalization is trivial

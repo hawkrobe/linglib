@@ -5,12 +5,12 @@ Implementation of RSA models for exhaustivity and anti-exhaustivity.
 
 ## Models Implemented
 
-| # | Model | Smart Constructor | Description |
-|---|-------|-------------------|-------------|
-| 1 | Baseline RSA | `RSAScenario.basic` | Standard RSA with costs |
-| 4 | svRSA | `RSAScenario.qud` | QUD with supervaluationist semantics |
-| 5 | FREE-LU | `RSAScenario.lexicalUncertainty` | Lexical uncertainty (4 lexica) |
-| 6 | EXH-LU | Full `RSAScenario` | Key stress test: Interp=Parse, Lexicon=LU |
+| # | Model | Description |
+|---|-------|-------------|
+| 1 | Baseline RSA | Standard RSA with costs |
+| 4 | svRSA | QUD with supervaluationist semantics |
+| 5 | FREE-LU | Lexical uncertainty (4 lexica) |
+| 6 | EXH-LU | Key stress test: Interp=Parse, Lexicon=LU |
 
 ## Key Result
 
@@ -24,12 +24,12 @@ in the RSA Framework". Semantics & Pragmatics.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.CremersWilcoxSpector2023.Data
 
 namespace RSA.Implementations.CremersWilcoxSpector2023
 
 open _root_.CremersWilcoxSpector2023
-open RSA
 
 -- ============================================================================
 -- PART 1: Baseline RSA (Model 1)
@@ -38,24 +38,11 @@ open RSA
 /-- Convert Bool meaning to ℚ (for RSA φ function) -/
 def boolToQ (b : Bool) : ℚ := if b then 1 else 0
 
-/-- Baseline RSA scenario for the CWS domain.
-
-    This is standard RSA with literal semantics and costs.
-    Under biased priors, this can produce anti-exhaustive interpretations
-    where L1(w_ab | A) > P(w_ab). -/
-def baselineScenario (cfg : CWSConfig) : RSAScenario :=
-  RSAScenario.basic
-    allUtterances
-    allWorlds
+/-- Compute L1 for baseline RSA using RSA.Eval -/
+def baselineL1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.basicL1 allUtterances allWorlds
     (fun u w => boolToQ (literalTruth w u))
-    cfg.prior.prob
-    cfg.alpha
-
-/-- Baseline with uniform prior -/
-def baselineUniform : RSAScenario := baselineScenario defaultConfig
-
-/-- Baseline with biased prior (triggers anti-exhaustivity) -/
-def baselineBiased : RSAScenario := baselineScenario antiExhConfig
+    cfg.prior.prob cfg.alpha (fun _ => 0) u
 
 -- ============================================================================
 -- PART 2: Exhaustified RSA (Simple EXH model)
@@ -69,25 +56,12 @@ def parseMeaning : CWSParse → CWSWorld → CWSUtterance → Bool
   | .literal, w, u => literalTruth w u
   | .exh, w, u => exhMeaning w u
 
-/-- RSA scenario with EXH ambiguity (parse as Interp).
-
-    Listener reasons about whether speaker used literal or EXH parse.
-    This is a simplified version of EXH-LU with fixed lexicon. -/
-def exhScenario (cfg : CWSConfig) : RSAScenario :=
-  RSAScenario.ambiguousBool
-    allUtterances
-    allWorlds
-    allParses
-    (fun p w u => parseMeaning p w u)
-    cfg.prior.prob
-    (fun _ => 1)  -- Uniform prior over parses
-    cfg.alpha
-
-/-- EXH scenario with uniform prior -/
-def exhUniform : RSAScenario := exhScenario defaultConfig
-
-/-- EXH scenario with biased prior -/
-def exhBiased : RSAScenario := exhScenario antiExhConfig
+/-- Compute L1 for EXH model (with parse ambiguity) using RSA.Eval -/
+def exhL1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds allParses [()] [()] [()]
+    (fun p _ u w => boolToQ (parseMeaning p w u))
+    cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
 -- ============================================================================
 -- PART 3: FREE-LU (Model 5) - Lexical Uncertainty
@@ -97,50 +71,23 @@ def exhBiased : RSAScenario := exhScenario antiExhConfig
 def lexiconMeaningQ (l : CWSLexicon) (u : CWSUtterance) (w : CWSWorld) : ℚ :=
   boolToQ (lexiconMeaning l w u)
 
-/-- FREE-LU scenario: lexical uncertainty without EXH parses.
-
-    Listener doesn't know which lexicon the speaker is using.
-    This models uncertainty about whether "A" means A or A∧¬B. -/
-def freeLUScenario (cfg : CWSConfig) : RSAScenario :=
-  RSAScenario.lexicalUncertainty
-    allUtterances
-    allWorlds
-    allLexica
-    lexiconMeaningQ
-    cfg.prior.prob
-    (fun _ => 1)  -- Uniform prior over lexica
-    cfg.alpha
-
-/-- FREE-LU with uniform prior -/
-def freeLUUniform : RSAScenario := freeLUScenario defaultConfig
-
-/-- FREE-LU with biased prior -/
-def freeLUBiased : RSAScenario := freeLUScenario antiExhConfig
+/-- Compute L1 for FREE-LU using RSA.Eval -/
+def freeLU_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds [()] allLexica [()] [()]
+    (fun _ l u w => lexiconMeaningQ l u w)
+    cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
 -- ============================================================================
 -- PART 4: svRSA (Model 4) - Supervaluationist QUD
 -- ============================================================================
 
-/-- svRSA scenario: QUD-sensitive with supervaluationist semantics.
-
-    When QUD is coarse (only asking about A), the speaker doesn't need
-    to distinguish w_a from w_ab, reducing anti-exhaustivity pressure. -/
-def svRSAScenario (cfg : CWSConfig) : RSAScenario :=
-  RSAScenario.qud
-    allUtterances
-    allWorlds
-    [CWSQUD.full, CWSQUD.coarse]
-    (fun u w => boolToQ (literalTruth w u))
-    qudEquiv
-    cfg.prior.prob
-    (fun _ => 1)  -- Uniform prior over QUDs
-    cfg.alpha
-
-/-- svRSA with uniform prior -/
-def svRSAUniform : RSAScenario := svRSAScenario defaultConfig
-
-/-- svRSA with biased prior -/
-def svRSABiased : RSAScenario := svRSAScenario antiExhConfig
+/-- Compute L1 for svRSA using RSA.Eval -/
+def svRSA_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds [()] [()] [()] [CWSQUD.full, CWSQUD.coarse]
+    (fun _ _ u w => boolToQ (literalTruth w u))
+    cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun q w w' => qudEquiv q w w') (fun _ => 0) cfg.alpha u
 
 -- ============================================================================
 -- PART 5: EXH-LU (Model 6) - Full Integration
@@ -161,39 +108,12 @@ def exhLUMeaning (p : CWSParse) (l : CWSLexicon) (u : CWSUtterance) (w : CWSWorl
     | .A => boolToQ (literalTruth w .AandNotB)
     | _ => boolToQ (lexiconMeaning l w u)
 
-/-- EXH-LU scenario: Full model with both parse and lexicon uncertainty.
-
-    This is the key test from Cremers et al. (2023):
-    - Listener reasons about BOTH parse and lexicon
-    - When EXH parse is inferred, anti-exhaustivity is blocked -/
-def exhLUScenario (cfg : CWSConfig) : RSAScenario where
-  Utterance := CWSUtterance
-  World := CWSWorld
-  Interp := CWSParse
-  Lexicon := CWSLexicon
-  BeliefState := Unit
-  Goal := Unit
-  φ := exhLUMeaning
-  goalProject := fun _ w w' => w == w'
-  speakerCredence := fun _ _ => 1
-  utterances := allUtterances
-  worlds := allWorlds
-  interps := allParses
-  lexica := allLexica
-  beliefStates := [()]
-  goals := [()]
-  worldPrior := cfg.prior.prob
-  interpPrior := fun _ => 1  -- Uniform over parses
-  lexiconPrior := fun _ => 1  -- Uniform over lexica
-  beliefStatePrior := fun _ => 1
-  goalPrior := fun _ => 1
-  α := cfg.alpha
-
-/-- EXH-LU with uniform prior -/
-def exhLUUniform : RSAScenario := exhLUScenario defaultConfig
-
-/-- EXH-LU with biased prior -/
-def exhLUBiased : RSAScenario := exhLUScenario antiExhConfig
+/-- Compute L1 for EXH-LU using RSA.Eval -/
+def exhLU_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds allParses allLexica [()] [()]
+    (fun p l u w => exhLUMeaning p l u w)
+    cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
 -- ============================================================================
 -- PART 6: wRSA (Model 2) - Non-Bayesian Wonky Mixture
@@ -210,20 +130,20 @@ def exhLUBiased : RSAScenario := exhLUScenario antiExhConfig
 
     This reduces anti-exhaustivity because the wonky component pulls toward prior. -/
 def wRSA_L1 (cfg : CWSConfig) (w_wonk : ℚ) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
-  let baseline := baselineScenario cfg
+  let baseL1 := baselineL1 cfg u
   -- For each world, compute mixture of prior and S1-derived posterior
   let scores := allWorlds.map fun w =>
     let priorW := cfg.prior.prob w
     -- Get baseline L1 (standard RSA posterior)
-    let baselineL1 := RSA.getScore (RSA.L1_world baseline u) w
+    let baselineL1w := RSA.Eval.getScore baseL1 w
     -- Mixture: wonky component uses prior, non-wonky uses baseline L1
-    let score := w_wonk * priorW + (1 - w_wonk) * baselineL1
+    let score := w_wonk * priorW + (1 - w_wonk) * baselineL1w
     (w, score)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /-- wRSA L1(w_ab | A) with given wonkiness parameter -/
 def wRSA_L1_wab_given_A (cfg : CWSConfig) (w_wonk : ℚ) : ℚ :=
-  RSA.getScore (wRSA_L1 cfg w_wonk .A) .w_ab
+  RSA.Eval.getScore (wRSA_L1 cfg w_wonk .A) .w_ab
 
 -- ============================================================================
 -- PART 7: BwRSA (Model 3) - Bayesian Wonky Inference
@@ -237,34 +157,17 @@ def wonkyGoalProject : WonkyGoal → CWSWorld → CWSWorld → Bool
   | .informative, w1, w2 => w1 == w2  -- Standard: distinguish worlds
   | .wonky, _, _ => true              -- Wonky: all worlds equivalent
 
-/-- BwRSA scenario: Bayesian reasoning about wonky vs informative goals.
-
-    Unlike wRSA, this is proper Bayesian RSA where the listener infers
-    which goal the speaker has. When goal = wonky, the speaker doesn't
-    try to distinguish worlds, so "A" is equally likely in both worlds.
-
-    This is mathematically equivalent to a QUD-sensitive model where one
-    QUD is trivial (coarse). -/
-def bwRSAScenario (cfg : CWSConfig) (p_wonk : ℚ) : RSAScenario :=
-  RSAScenario.qud
-    allUtterances
-    allWorlds
-    allWonkyGoals
-    (fun u w => boolToQ (literalTruth w u))
-    wonkyGoalProject
-    cfg.prior.prob
+/-- Compute L1 for BwRSA using RSA.Eval -/
+def bwRSA_L1 (cfg : CWSConfig) (p_wonk : ℚ) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds [()] [()] [()] allWonkyGoals
+    (fun _ _ u w => boolToQ (literalTruth w u))
+    cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun g => match g with | .wonky => p_wonk | .informative => 1 - p_wonk)
-    cfg.alpha
-
-/-- BwRSA with uniform prior, 50% wonky -/
-def bwRSAUniform : RSAScenario := bwRSAScenario defaultConfig (1/2)
-
-/-- BwRSA with biased prior, 50% wonky -/
-def bwRSABiased : RSAScenario := bwRSAScenario antiExhConfig (1/2)
+    (fun _ _ => 1) wonkyGoalProject (fun _ => 0) cfg.alpha u
 
 /-- BwRSA L1(w_ab | A) -/
 def bwRSA_L1_wab_given_A (cfg : CWSConfig) (p_wonk : ℚ) : ℚ :=
-  RSA.getScore (RSA.L1_world (bwRSAScenario cfg p_wonk) .A) .w_ab
+  RSA.Eval.getScore (bwRSA_L1 cfg p_wonk .A) .w_ab
 
 -- ============================================================================
 -- PART 8: RSA-LI (Models 7-8) - Lexical Intentions
@@ -287,90 +190,47 @@ Models 7 (uniform lexicon prior) and 8 (biased lexicon prior) differ only
 in the lexiconPrior parameter.
 -/
 
-/-- RSA-LI scenario with uniform lexicon prior (Model 7).
+/-- Compute L1 for RSA-LI with uniform lexicon prior (Model 7) -/
+def rsaLI_uniform_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  freeLU_L1 cfg u  -- Computationally equivalent to FREE-LU
 
-    Uniform prior over all 4 lexica. -/
-def rsaLI_uniform_Scenario (cfg : CWSConfig) : RSAScenario :=
-  freeLUScenario cfg  -- Computationally equivalent to FREE-LU
-
-/-- RSA-LI scenario with biased lexicon prior (Model 8).
-
-    Biases toward the "weak" (literal) lexicon. This models the assumption
-    that speakers default to literal meanings unless there's reason not to. -/
-def rsaLI_biased_Scenario (cfg : CWSConfig) (p_weak : ℚ) : RSAScenario :=
-  RSAScenario.lexicalUncertainty
-    allUtterances
-    allWorlds
-    allLexica
-    lexiconMeaningQ
-    cfg.prior.prob
+/-- Compute L1 for RSA-LI with biased lexicon prior (Model 8) -/
+def rsaLI_biased_L1 (cfg : CWSConfig) (p_weak : ℚ) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
+  RSA.Eval.L1_world allUtterances allWorlds [()] allLexica [()] [()]
+    (fun _ l u w => lexiconMeaningQ l u w)
+    cfg.prior.prob (fun _ => 1)
     (fun l => match l with
       | .weak => p_weak
       | _ => (1 - p_weak) / 3)  -- Split remaining probability equally
-    cfg.alpha
-
-/-- RSA-LI (uniform) with biased world prior -/
-def rsaLI_uniform_Biased : RSAScenario := rsaLI_uniform_Scenario antiExhConfig
-
-/-- RSA-LI (biased toward weak) with biased world prior, 50% weak -/
-def rsaLI_biased_Biased : RSAScenario := rsaLI_biased_Scenario antiExhConfig (1/2)
+    (fun _ => 1) (fun _ => 1)
+    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
 /-- RSA-LI L1(w_ab | A) with uniform lexicon prior -/
 def rsaLI_uniform_L1_wab_given_A (cfg : CWSConfig) : ℚ :=
-  RSA.getScore (RSA.L1_world (rsaLI_uniform_Scenario cfg) .A) .w_ab
+  RSA.Eval.getScore (rsaLI_uniform_L1 cfg .A) .w_ab
 
 /-- RSA-LI L1(w_ab | A) with biased lexicon prior -/
 def rsaLI_biased_L1_wab_given_A (cfg : CWSConfig) (p_weak : ℚ) : ℚ :=
-  RSA.getScore (RSA.L1_world (rsaLI_biased_Scenario cfg p_weak) .A) .w_ab
-
-/-- Get L1 distribution over lexica (for RSA-LI interpretation).
-
-    This shows which lexicon the listener infers the speaker intended. -/
-def rsaLI_L1_lexicon (cfg : CWSConfig) (u : CWSUtterance) : List (CWSLexicon × ℚ) :=
-  RSA.L1_lexicon (rsaLI_uniform_Scenario cfg) u
+  RSA.Eval.getScore (rsaLI_biased_L1 cfg p_weak .A) .w_ab
 
 -- ============================================================================
 -- PART 9: Verification - Dimensions
 -- ============================================================================
 
-/-- Baseline scenario has correct dimensions: 3 utterances × 2 worlds -/
-theorem baseline_dimensions :
-    baselineUniform.utterances.length = 3 ∧
-    baselineUniform.worlds.length = 2 := by
-  constructor <;> native_decide
+/-- Verify utterance count -/
+theorem utterance_count : allUtterances.length = 3 := by native_decide
 
-/-- EXH scenario has correct dimensions: 3 utterances × 2 worlds × 2 parses -/
-theorem exh_dimensions :
-    exhUniform.utterances.length = 3 ∧
-    exhUniform.worlds.length = 2 ∧
-    exhUniform.interps.length = 2 := by
-  constructor
-  · native_decide
-  · constructor <;> native_decide
+/-- Verify world count -/
+theorem world_count : allWorlds.length = 2 := by native_decide
 
-/-- FREE-LU has 4 lexica -/
-theorem freeLU_dimensions :
-    freeLUUniform.lexica.length = 4 := by
-  native_decide
+/-- Verify parse count -/
+theorem parse_count : allParses.length = 2 := by native_decide
 
-/-- EXH-LU has correct full dimensions: 3 × 2 × 2 × 4 -/
-theorem exhLU_dimensions :
-    exhLUUniform.utterances.length = 3 ∧
-    exhLUUniform.worlds.length = 2 ∧
-    exhLUUniform.interps.length = 2 ∧
-    exhLUUniform.lexica.length = 4 := by
-  constructor
-  · native_decide
-  constructor
-  · native_decide
-  constructor
-  · native_decide
-  · native_decide
+/-- Verify lexica count -/
+theorem lexica_count : allLexica.length = 4 := by native_decide
 
-/-- BwRSA has 2 goals (informative, wonky) -/
-theorem bwRSA_dimensions :
-    bwRSAUniform.goals.length = 2 := by
-  native_decide
+/-- Verify wonky goals count -/
+theorem wonky_goals_count : allWonkyGoals.length = 2 := by native_decide
 
 -- ============================================================================
 -- PART 10: Anti-Exhaustivity Analysis
@@ -378,15 +238,15 @@ theorem bwRSA_dimensions :
 
 /-- Compute L1 distribution over worlds for baseline RSA -/
 def baselineL1_world (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
-  L1_world (baselineScenario cfg) u
+  baselineL1 cfg u
 
 /-- Compute L1 distribution over worlds for EXH-LU -/
 def exhLU_L1_world (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
-  L1_world (exhLUScenario cfg) u
+  exhLU_L1 cfg u
 
 /-- Get L1 probability of a specific world -/
 def getL1Prob (dist : List (CWSWorld × ℚ)) (w : CWSWorld) : ℚ :=
-  RSA.getScore dist w
+  RSA.Eval.getScore dist w
 
 /-- Helper: baseline L1(w_ab | A) -/
 def baselineL1_wab_given_A (cfg : CWSConfig) : ℚ :=
@@ -455,7 +315,7 @@ theorem bwRSA_reduces_antiexh :
     when extracting world predictions (marginalized over lexica). -/
 theorem rsaLI_matches_freeLU_L1_world :
     rsaLI_uniform_L1_wab_given_A antiExhConfig =
-    RSA.getScore (L1_world (freeLUScenario antiExhConfig) .A) .w_ab := by
+    RSA.Eval.getScore (freeLU_L1 antiExhConfig .A) .w_ab := by
   native_decide
 
 /-- FREE-LU reduces anti-exhaustivity compared to baseline.
@@ -463,7 +323,7 @@ theorem rsaLI_matches_freeLU_L1_world :
     Lexical uncertainty allows the listener to infer strengthened meanings,
     reducing anti-exhaustive interpretations. -/
 theorem freeLU_reduces_antiexh :
-    RSA.getScore (L1_world (freeLUScenario antiExhConfig) .A) .w_ab ≤
+    RSA.Eval.getScore (freeLU_L1 antiExhConfig .A) .w_ab ≤
     baselineL1_wab_given_A antiExhConfig := by
   native_decide
 
@@ -474,25 +334,24 @@ theorem freeLU_reduces_antiexh :
 /-
 ## What This Module Provides
 
-### RSA Scenarios (All 9 Models from CWS 2023)
+### RSA Computations (All 9 Models from CWS 2023)
 
-| # | Model | Constructor | Status |
-|---|-------|-------------|--------|
-| 1 | Baseline RSA | `baselineScenario` | ✓ |
+| # | Model | Function | Status |
+|---|-------|----------|--------|
+| 1 | Baseline RSA | `baselineL1` | ✓ |
 | 2 | wRSA | `wRSA_L1` (custom L1) | ✓ |
-| 3 | BwRSA | `bwRSAScenario` | ✓ |
-| 4 | svRSA | `svRSAScenario` | ✓ |
-| 5 | FREE-LU | `freeLUScenario` | ✓ |
-| 6 | EXH-LU | `exhLUScenario` | ✓ |
-| 7 | RSA-LI (uniform) | `rsaLI_uniform_Scenario` | ✓ |
-| 8 | RSA-LI (biased) | `rsaLI_biased_Scenario` | ✓ |
+| 3 | BwRSA | `bwRSA_L1` | ✓ |
+| 4 | svRSA | `svRSA_L1` | ✓ |
+| 5 | FREE-LU | `freeLU_L1` | ✓ |
+| 6 | EXH-LU | `exhLU_L1` | ✓ |
+| 7 | RSA-LI (uniform) | `rsaLI_uniform_L1` | ✓ |
+| 8 | RSA-LI (biased) | `rsaLI_biased_L1` | ✓ |
 
 ### Analysis Functions
 - `baselineL1_world`: Compute L1 for baseline
 - `exhLU_L1_world`: Compute L1 for EXH-LU
 - `wRSA_L1`: Non-Bayesian wonky mixture L1
 - `bwRSA_L1_wab_given_A`: BwRSA posterior on w_ab
-- `rsaLI_L1_lexicon`: Inferred lexicon distribution (for RSA-LI)
 - `getL1Prob`: Extract probability for a world
 
 ### Key Theorems
@@ -513,20 +372,20 @@ theorem freeLU_reduces_antiexh :
 
 ## Architecture Validation
 
-This module validates that the RSAScenario architecture can:
-1. Support BOTH Interp AND Lexicon latent variables simultaneously
-2. Compute correct L1 distributions with the full 5-latent-variable model
+This module validates that the RSA.Eval architecture can:
+1. Support multiple latent variable dimensions via L1_world
+2. Compute correct L1 distributions with full marginalization
 3. Handle non-standard models (wRSA mixture) via custom L1 functions
-4. Model goal/QUD reasoning (BwRSA, svRSA) with the Goal type
+4. Model goal/QUD reasoning (BwRSA, svRSA) with the Goal parameter
 5. Demonstrate all theoretically predicted effects (anti-exhaustivity reduction)
 
 ## Model Insights
 
 The 9 models collapse into 5 computational patterns:
-1. **Standard RSA**: `RSAScenario.basic` (Model 1)
-2. **QUD/Goal RSA**: `RSAScenario.qud` or Goal dimension (Models 3, 4)
-3. **Lexical Uncertainty RSA**: `RSAScenario.lexicalUncertainty` (Models 5, 7, 8)
-4. **Full multi-latent RSA**: Full RSAScenario (Model 6)
+1. **Standard RSA**: `RSA.Eval.basicL1` (Model 1)
+2. **QUD/Goal RSA**: `RSA.Eval.L1_world` with Goal dimension (Models 3, 4)
+3. **Lexical Uncertainty RSA**: `RSA.Eval.L1_world` with Lexicon dimension (Models 5, 7, 8)
+4. **Full multi-latent RSA**: `RSA.Eval.L1_world` with all dimensions (Model 6)
 5. **Non-Bayesian mixture**: Custom function (Model 2)
 -/
 

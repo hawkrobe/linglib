@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.33.0] - 2025-01-30
+
+### Changed
+- **RSA API Migration**: Fintype-based RSA is now the primary API
+  - `RSAScenarioF` → `RSAScenario` (Fintype-based with compile-time guarantees)
+  - `RSAF` namespace → `RSA` namespace (returns `Option (ExactDist α)`)
+  - Removed list-based `RSAScenarioL`/`RSAL` from core `Basic.lean`
+  - Added non-negativity proof fields to `RSAScenario` for `ExactDist` construction
+
+- **New RSA.Eval module**: List-based helpers for `#eval` demonstrations
+  - `Linglib/Theories/RSA/Core/Eval.lean`: Provides `basicL0`, `basicS1`, `L1_world`, etc.
+  - All downstream files (~35) migrated to use `RSA.Eval.*` for kernel reduction
+  - Maintains backward compatibility: same computational results, different API
+
+- **Updated implementations**: All RSA paper replications migrated
+  - FrankGoodman2012, GoodmanStuhlmuller2013, LassiterGoodman2017
+  - KaoEtAl2014_Hyperbole, KaoEtAl2014_Metaphor, PottsEtAl2016
+  - ScontrasPearl2021, ScontrasTonhauser2025, TesslerGoodman2022
+  - YoonEtAl2020, TesslerFranke2020, DegenEtAl2020, and others
+
+### Architecture
+- **Dual-representation design** now fully realized:
+  - `RSAScenario` + `RSA.L0/S1/L1` → `ExactDist` with sum-to-1 proofs (for theorems)
+  - `RSA.Eval.*` → `List (α × ℚ)` (for `#eval` and `native_decide`)
+  - `ExactDist.toPMF` bridges to Mathlib's PMF for measure-theoretic guarantees
+
+### References
+- Frank & Goodman (2012), Goodman & Frank (2016) for RSA foundations
+- Mathlib PMF for probability distribution guarantees
+
 ## [0.32.0] - 2025-01-29
 
 ### Added

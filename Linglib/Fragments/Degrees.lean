@@ -36,7 +36,7 @@ import Linglib.Fragments.Degrees
 -- Height domain with 11 degrees (0..10)
 def scenario := Degrees.tallShort 10
 
-#eval RSA.L1_world scenario .tall
+#eval RSAL.L1_world scenario .tall
 -- Infers both height and threshold jointly
 ```
 
@@ -49,7 +49,7 @@ def scenario := Degrees.tallShort 10
 - Horn (1989). A Natural History of Negation.
 -/
 
-import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Lexicon.Degrees
 import Mathlib.Data.Rat.Defs
 
@@ -105,11 +105,12 @@ The listener jointly infers:
 - The degree (how tall is the person?)
 - The threshold (what counts as "tall" in this context?)
 -/
-def tallShort (max : Nat) (h : 0 < max := by omega) : RSAScenario :=
-  RSAScenario.basicBool
+def tallShort (max : Nat) (h : 0 < max := by omega) (u : AdjUtt) : List (DegreeWorld max × ℚ) :=
+  RSA.Eval.basicL1
     [AdjUtt.positive, .negative, .silent]
     (allDegreeWorlds max h)
-    (fun (d, t) u => adjMeaning u d t)
+    (fun utt (d, t) => boolToRat (adjMeaning utt d t))
+    (fun _ => 1) 1 (fun _ => 0) u
 
 /--
 Scenario with custom prior over degrees.
@@ -119,13 +120,14 @@ Often degrees have a prior (e.g., height is roughly normal).
 def withDegreePrior (max : Nat) (h : 0 < max := by omega)
     (degreePrior : Degree max → ℚ)
     (thresholdPrior : Threshold max → ℚ := fun _ => 1)
-    : RSAScenario :=
+    (u : AdjUtt)
+    : List (DegreeWorld max × ℚ) :=
   let worldPrior : DegreeWorld max → ℚ := fun (d, t) => degreePrior d * thresholdPrior t
-  RSAScenario.basicBool
+  RSA.Eval.basicL1
     [AdjUtt.positive, .negative, .silent]
     (allDegreeWorlds max h)
-    (fun (d, t) u => adjMeaning u d t)
-    worldPrior
+    (fun utt (d, t) => boolToRat (adjMeaning utt d t))
+    worldPrior 1 (fun _ => 0) u
 
 -- ============================================================================
 -- Graded (Non-Boolean) Semantics
@@ -176,7 +178,7 @@ structure ComparisonClass (max : Nat) where
 -- ============================================================================
 
 -- Height domain 0..10
-#eval RSA.L1_world (tallShort 10) .positive
+#eval tallShort 10 (by omega) .positive
 -- Infers high degree values more likely
 
 -- Check semantics
@@ -223,8 +225,10 @@ def meaning (u : Utterance) (w : World) : Bool :=
 def standardWorlds : List World := [low, medium, high]
 def standardUtterances : List Utterance := [.fifty, .fiveHundred, .tenThousand, .million]
 
-def toScenario : RSAScenario :=
-  RSAScenario.basicBool standardUtterances standardWorlds (fun w u => meaning u w)
+/-- Run L1 inference for a price utterance -/
+def runL1 (u : Utterance) : List (World × ℚ) :=
+  RSA.Eval.basicL1 standardUtterances standardWorlds
+    (fun utt w => boolToRat (meaning utt w)) (fun _ => 1) 1 (fun _ => 0) u
 
 end Price
 
@@ -297,13 +301,15 @@ theorem million_never_literal :
 -- ============================================================================
 
 def Price.l0 (u : Price.Utterance) : List (Price.World × ℚ) :=
-  RSA.L0 Price.toScenario u () () () ()
+  RSA.Eval.basicL0 Price.standardUtterances Price.standardWorlds
+    (fun utt w => boolToRat (Price.meaning utt w)) (fun _ => 1) u
 
 def Price.s1 (w : Price.World) : List (Price.Utterance × ℚ) :=
-  RSA.S1 Price.toScenario w () () () ()
+  RSA.Eval.basicS1 Price.standardUtterances Price.standardWorlds
+    (fun utt world => boolToRat (Price.meaning utt world)) (fun _ => 1) 1 (fun _ => 0) w
 
 def Price.l1 (u : Price.Utterance) : List (Price.World × ℚ) :=
-  RSA.L1_world Price.toScenario u
+  Price.runL1 u
 
 #eval Price.l0 .fifty        -- Only low price matches
 #eval Price.l0 .million      -- Empty (never literally true)

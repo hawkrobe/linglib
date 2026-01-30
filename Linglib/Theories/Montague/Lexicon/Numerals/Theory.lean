@@ -33,6 +33,7 @@ needs an `RSAScenario`. Comparison theorems live in `Compare.lean`.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 
 namespace Montague.Lexicon.Numerals
 
@@ -94,12 +95,13 @@ structure NumeralTheory where
 -- ============================================================================
 
 /--
-Build an RSAScenario from a NumeralTheory.
+Run L1 for a numeral theory using RSA.Eval (for #eval demonstrations).
 
 This is the key connection: any numeral theory can be used with RSA.
 -/
-def NumeralTheory.toScenario (T : NumeralTheory) : RSAScenario :=
-  RSAScenario.basicBool T.utterances T.worlds (fun n w => T.meaning w n)
+def NumeralTheory.runL1 (T : NumeralTheory) (w : NumWord) : List (Nat × ℚ) :=
+  RSA.Eval.basicL1 T.utterances T.worlds
+    (fun u n => boolToRat (T.meaning u n)) (fun _ => 1) 1 (fun _ => 0) w
 
 /--
 Strength ordering: `w₁` is stronger than `w₂` if `w₁` entails `w₂`.

@@ -30,7 +30,7 @@ import Linglib.Fragments.QUD
 -- Price × Affect meaning space
 def scenario := QUD.priceAffect
 
-#eval RSA.L1_qud scenario .million
+#eval RSAL.L1_qud scenario .million
 -- Infers QUD was probably "affect" (hyperbole interpretation)
 ```
 
@@ -41,6 +41,7 @@ def scenario := QUD.priceAffect
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
 namespace QUD
@@ -155,17 +156,75 @@ def uttArousal (u : PriceUtt) : Affect :=
 -- ============================================================================
 
 /--
+A list-based QUD scenario for #eval demonstrations.
+-/
+structure QUDScenario where
+  /-- Utterance type -/
+  Utterance : Type
+  /-- World type -/
+  World : Type
+  /-- QUD type -/
+  QUD : Type
+  /-- Utterances list -/
+  utterances : List Utterance
+  /-- Worlds list -/
+  worlds : List World
+  /-- QUDs list -/
+  quds : List QUD
+  /-- Meaning function -/
+  meaning : World → Utterance → Bool
+  /-- QUD projection -/
+  project : QUD → World → World → Bool
+  /-- World prior -/
+  worldPrior : World → ℚ := fun _ => 1
+  /-- QUD prior -/
+  qudPrior : QUD → ℚ := fun _ => 1
+  /-- BEq instances -/
+  [uttBEq : BEq Utterance]
+  [worldBEq : BEq World]
+  [qudBEq : BEq QUD]
+
+attribute [instance] QUDScenario.uttBEq QUDScenario.worldBEq QUDScenario.qudBEq
+
+/-- L1 world distribution for QUD scenario -/
+def QUDScenario.L1_world (S : QUDScenario) (u : S.Utterance) : List (S.World × ℚ) :=
+  let φ := fun _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
+  RSA.Eval.L1_world S.utterances S.worlds [()] [()] [()] S.quds
+    φ S.worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) S.qudPrior
+    (fun _ _ => 1) (fun q w w' => S.project q w w') (fun _ => 0) 1 u
+
+/-- L1 QUD distribution for QUD scenario -/
+def QUDScenario.L1_qud (S : QUDScenario) (u : S.Utterance) : List (S.QUD × ℚ) :=
+  let φ := fun _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
+  -- Full joint computation, then marginalize
+  let tuples := S.worlds.flatMap fun w =>
+    S.quds.map fun q => (w, q)
+  let scores := tuples.map fun (w, q) =>
+    let prior := S.worldPrior w * S.qudPrior q
+    let s1 := RSA.Eval.S1 S.utterances S.worlds φ S.worldPrior
+      (fun _ _ => 1) (fun q' w1 w2 => S.project q' w1 w2) (fun _ => 0) 1 w () () () q
+    let s1Score := RSA.Eval.getScore s1 u
+    ((w, q), prior * s1Score)
+  let normalized := RSA.Eval.normalize scores
+  -- Marginalize over worlds
+  S.quds.map fun q =>
+    let qScores := normalized.filter (fun ((_, q'), _) => q' == q) |>.map (·.2)
+    (q, RSA.Eval.sumScores qScores)
+
+/--
 Price × Affect scenario with QUDs.
 
-Uses `RSAScenario.qudBool` for QUD-sensitive speaker.
+Uses list-based API for #eval demonstrations.
 -/
-def priceAffect : RSAScenario :=
-  RSAScenario.qudBool
-    [PriceUtt.low, .medium, .high, .million, .silent]
-    allPriceAffect
-    [PriceAffectQUD.price, .affect, .both]
-    priceAffectMeaning
-    priceAffectProject
+def priceAffect : QUDScenario where
+  Utterance := PriceUtt
+  World := PriceAffect
+  QUD := PriceAffectQUD
+  utterances := [PriceUtt.low, .medium, .high, .million, .silent]
+  worlds := allPriceAffect
+  quds := [PriceAffectQUD.price, .affect, .both]
+  meaning := priceAffectMeaning
+  project := priceAffectProject
 
 /--
 Generic QUD scenario builder.
@@ -180,8 +239,17 @@ def scenario {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (project : Q → W → W → Bool)
     (worldPrior : W → ℚ := fun _ => 1)
     (qudPrior : Q → ℚ := fun _ => 1)
-    : RSAScenario :=
-  RSAScenario.qudBool utterances worlds quds meaning project worldPrior qudPrior
+    : QUDScenario where
+  Utterance := U
+  World := W
+  QUD := Q
+  utterances := utterances
+  worlds := worlds
+  quds := quds
+  meaning := meaning
+  project := project
+  worldPrior := worldPrior
+  qudPrior := qudPrior
 
 -- ============================================================================
 -- Binary Dimension Pattern
@@ -222,14 +290,14 @@ def BinaryDomain.allWorlds {D1 D2 : Type} (d : BinaryDomain D1 D2) : List (D1 ×
 -- ============================================================================
 
 -- Hyperbole scenario
-#eval RSA.L1_world priceAffect .million
+#eval priceAffect.L1_world .million
 -- "million" → probably high affect world
 
-#eval RSA.L1_qud priceAffect .million
+#eval priceAffect.L1_qud .million
 -- "million" → probably QUD was "affect" (hyperbole interpretation)
 
 -- Compare to literal utterance
-#eval RSA.L1_qud priceAffect .medium
+#eval priceAffect.L1_qud .medium
 -- "medium" → probably QUD was "price" (literal interpretation)
 
 end QUD

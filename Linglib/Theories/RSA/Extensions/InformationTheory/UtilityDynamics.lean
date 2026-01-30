@@ -77,8 +77,8 @@ def utilSemantics : UtilUtterance → UtilWorld → Bool
 /--
 The counterexample RSA scenario.
 -/
-def utilityCounterexample : RSAScenario :=
-  RSAScenario.basicBool
+def utilityCounterexample : RSA.RSAScenarioQ :=
+  RSA.RSAScenarioQ.basicBool
     [u1, u2]
     [m1, m2, m3]
     (fun w u => utilSemantics u w)
@@ -87,8 +87,8 @@ def utilityCounterexample : RSAScenario :=
 /--
 Lower rationality version for comparison.
 -/
-def utilityCounterexample_α1 : RSAScenario :=
-  RSAScenario.basicBool
+def utilityCounterexample_α1 : RSA.RSAScenarioQ :=
+  RSA.RSAScenarioQ.basicBool
     [u1, u2]
     [m1, m2, m3]
     (fun w u => utilSemantics u w)
@@ -143,8 +143,8 @@ def simpleSemantics : SimpleUtterance → SimpleWorld → Bool
   | .b, .both => true
   | .b, _ => false
 
-def simpleCounterexample : RSAScenario :=
-  RSAScenario.basicBool
+def simpleCounterexample : RSA.RSAScenarioQ :=
+  RSA.RSAScenarioQ.basicBool
     [aOrB, a, b]
     [onlyA, onlyB, both]
     (fun w u => simpleSemantics u w)

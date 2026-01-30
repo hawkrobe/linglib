@@ -35,12 +35,13 @@ This asymmetry emerges from pragmatic inference, not stipulation.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Distribution
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.TesslerGoodman2022
 
-open RSA
+open RSA.Eval
 
 -- ============================================================================
 -- Domain: Heights (reuse from LassiterGoodman2017)
@@ -295,7 +296,7 @@ def L0 (k : Kind) (c : ComparisonClass) (u : Utterance) : List (Height × ℚ) :
     let sem := if meaning u c k h then (1 : ℚ) else 0
     let prior := heightPriorGivenKind k h
     (h, sem * prior)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 S1: Pragmatic speaker distribution over utterances.
@@ -308,9 +309,9 @@ given the comparison class they have in mind.
 def S1 (k : Kind) (c : ComparisonClass) (h : Height) : List (Utterance × ℚ) :=
   let utterances : List Utterance := [.tall, .short, .silent]
   let scores := utterances.map fun u =>
-    let l0Score := RSA.getScore (L0 k c u) h
+    let l0Score := RSA.Eval.getScore (L0 k c u) h
     (u, l0Score)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 L1 joint: Pragmatic listener distribution over (height, comparison class).
@@ -330,9 +331,9 @@ def L1_joint (k : Kind) (u : Utterance) : List (JointState × ℚ) :=
   let scores := pairs.map fun (h, c) =>
     let heightPrior := heightPriorGivenKind k h
     let classPrior := comparisonClassPrior k c
-    let s1Score := RSA.getScore (S1 k c h) u
+    let s1Score := RSA.Eval.getScore (S1 k c h) u
     ((h, c), heightPrior * classPrior * s1Score)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 L1 marginal over heights: P_L1(h | u, k) = Σ_c P_L1(h, c | u, k)
@@ -342,7 +343,7 @@ def L1_height (k : Kind) (u : Utterance) : List (Height × ℚ) :=
   let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
   heights.map fun h =>
     let hScores := joint.filter (·.1.1 == h) |>.map (·.2)
-    (h, RSA.sumScores hScores)
+    (h, RSA.Eval.sumScores hScores)
 
 /--
 L1 marginal over comparison classes: P_L1(c | u, k) = Σ_h P_L1(h, c | u, k)
@@ -352,7 +353,7 @@ def L1_class (k : Kind) (u : Utterance) : List (ComparisonClass × ℚ) :=
   let classes : List ComparisonClass := [.subordinate, .superordinate]
   classes.map fun c =>
     let cScores := joint.filter (·.1.2 == c) |>.map (·.2)
-    (c, RSA.sumScores cScores)
+    (c, RSA.Eval.sumScores cScores)
 
 -- ============================================================================
 -- Compute Distributions
@@ -397,8 +398,8 @@ the speaker must mean tall for a PERSON - which is noteworthy for a basketball p
 This is the key polarity × expectations interaction.
 -/
 theorem tall_basketball_prefers_superordinate :
-    RSA.getScore (L1_class .basketballPlayer .tall) .superordinate >
-    RSA.getScore (L1_class .basketballPlayer .tall) .subordinate := by
+    RSA.Eval.getScore (L1_class .basketballPlayer .tall) .superordinate >
+    RSA.Eval.getScore (L1_class .basketballPlayer .tall) .subordinate := by
   native_decide
 
 /--
@@ -414,8 +415,8 @@ is rationalized by the subordinate comparison class.
 This is the other half of the polarity × expectations interaction.
 -/
 theorem short_basketball_prefers_subordinate :
-    RSA.getScore (L1_class .basketballPlayer .short) .subordinate >
-    RSA.getScore (L1_class .basketballPlayer .short) .superordinate := by
+    RSA.Eval.getScore (L1_class .basketballPlayer .short) .subordinate >
+    RSA.Eval.getScore (L1_class .basketballPlayer .short) .superordinate := by
   native_decide
 
 /--
@@ -429,10 +430,10 @@ class inferences:
 This asymmetry is the paper's main empirical prediction.
 -/
 theorem basketball_polarity_reversal :
-    (RSA.getScore (L1_class .basketballPlayer .tall) .superordinate >
-     RSA.getScore (L1_class .basketballPlayer .tall) .subordinate) ∧
-    (RSA.getScore (L1_class .basketballPlayer .short) .subordinate >
-     RSA.getScore (L1_class .basketballPlayer .short) .superordinate) := by
+    (RSA.Eval.getScore (L1_class .basketballPlayer .tall) .superordinate >
+     RSA.Eval.getScore (L1_class .basketballPlayer .tall) .subordinate) ∧
+    (RSA.Eval.getScore (L1_class .basketballPlayer .short) .subordinate >
+     RSA.Eval.getScore (L1_class .basketballPlayer .short) .superordinate) := by
   native_decide
 
 -- ============================================================================
@@ -449,8 +450,8 @@ For jockeys (expected to be SHORT), the pattern REVERSES:
 This demonstrates that the effect depends on KIND EXPECTATIONS, not polarity alone.
 -/
 theorem short_jockey_prefers_superordinate :
-    RSA.getScore (L1_class .jockey .short) .superordinate >
-    RSA.getScore (L1_class .jockey .short) .subordinate := by
+    RSA.Eval.getScore (L1_class .jockey .short) .superordinate >
+    RSA.Eval.getScore (L1_class .jockey .short) .subordinate := by
   native_decide
 
 /--
@@ -460,8 +461,8 @@ theorem short_jockey_prefers_superordinate :
 The listener infers subordinate comparison class to rationalize this.
 -/
 theorem tall_jockey_prefers_subordinate :
-    RSA.getScore (L1_class .jockey .tall) .subordinate >
-    RSA.getScore (L1_class .jockey .tall) .superordinate := by
+    RSA.Eval.getScore (L1_class .jockey .tall) .subordinate >
+    RSA.Eval.getScore (L1_class .jockey .tall) .superordinate := by
   native_decide
 
 /--
@@ -472,10 +473,10 @@ For jockeys, the pattern is REVERSED compared to basketball players:
 - "short jockey" → superordinate (opposite of "short basketball player")
 -/
 theorem jockey_polarity_reversal :
-    (RSA.getScore (L1_class .jockey .tall) .subordinate >
-     RSA.getScore (L1_class .jockey .tall) .superordinate) ∧
-    (RSA.getScore (L1_class .jockey .short) .superordinate >
-     RSA.getScore (L1_class .jockey .short) .subordinate) := by
+    (RSA.Eval.getScore (L1_class .jockey .tall) .subordinate >
+     RSA.Eval.getScore (L1_class .jockey .tall) .superordinate) ∧
+    (RSA.Eval.getScore (L1_class .jockey .short) .superordinate >
+     RSA.Eval.getScore (L1_class .jockey .short) .subordinate) := by
   native_decide
 
 -- ============================================================================
@@ -501,15 +502,15 @@ This pattern emerges from RSA reasoning about informativity.
 -/
 theorem expected_leads_to_superordinate :
     -- Expected adjectives lead to superordinate comparison
-    (RSA.getScore (L1_class .basketballPlayer .tall) .superordinate >
-     RSA.getScore (L1_class .basketballPlayer .tall) .subordinate) ∧
-    (RSA.getScore (L1_class .jockey .short) .superordinate >
-     RSA.getScore (L1_class .jockey .short) .subordinate) ∧
+    (RSA.Eval.getScore (L1_class .basketballPlayer .tall) .superordinate >
+     RSA.Eval.getScore (L1_class .basketballPlayer .tall) .subordinate) ∧
+    (RSA.Eval.getScore (L1_class .jockey .short) .superordinate >
+     RSA.Eval.getScore (L1_class .jockey .short) .subordinate) ∧
     -- Unexpected adjectives lead to subordinate comparison
-    (RSA.getScore (L1_class .basketballPlayer .short) .subordinate >
-     RSA.getScore (L1_class .basketballPlayer .short) .superordinate) ∧
-    (RSA.getScore (L1_class .jockey .tall) .subordinate >
-     RSA.getScore (L1_class .jockey .tall) .superordinate) := by
+    (RSA.Eval.getScore (L1_class .basketballPlayer .short) .subordinate >
+     RSA.Eval.getScore (L1_class .basketballPlayer .short) .superordinate) ∧
+    (RSA.Eval.getScore (L1_class .jockey .tall) .subordinate >
+     RSA.Eval.getScore (L1_class .jockey .tall) .superordinate) := by
   native_decide
 
 -- ============================================================================
@@ -523,8 +524,8 @@ Even though we're inferring superordinate comparison, hearing "tall"
 still shifts the height inference upward.
 -/
 theorem tall_basketball_height_shift :
-    RSA.getScore (L1_height .basketballPlayer .tall) .h8 >
-    RSA.getScore (L1_height .basketballPlayer .tall) .h3 := by
+    RSA.Eval.getScore (L1_height .basketballPlayer .tall) .h8 >
+    RSA.Eval.getScore (L1_height .basketballPlayer .tall) .h3 := by
   native_decide
 
 /--
@@ -533,8 +534,8 @@ theorem tall_basketball_height_shift :
 Hearing "short" shifts the height inference downward.
 -/
 theorem short_basketball_height_shift :
-    RSA.getScore (L1_height .basketballPlayer .short) .h3 >
-    RSA.getScore (L1_height .basketballPlayer .short) .h8 := by
+    RSA.Eval.getScore (L1_height .basketballPlayer .short) .h3 >
+    RSA.Eval.getScore (L1_height .basketballPlayer .short) .h8 := by
   native_decide
 
 -- ============================================================================
@@ -552,8 +553,8 @@ scores should be equal (or close, depending on implementation).
 -/
 theorem person_no_asymmetry :
     -- For person, tall and short should not strongly prefer either class
-    RSA.getScore (L1_class .person .tall) .subordinate =
-    RSA.getScore (L1_class .person .tall) .superordinate := by
+    RSA.Eval.getScore (L1_class .person .tall) .subordinate =
+    RSA.Eval.getScore (L1_class .person .tall) .superordinate := by
   native_decide
 
 -- ============================================================================
@@ -611,8 +612,8 @@ This is because with subordinate comparison, h7 is NOT tall (threshold is 7),
 but with superordinate comparison, h7 IS tall (threshold is 5).
 -/
 theorem tall_more_informative_superordinate :
-    RSA.getScore (S1 .basketballPlayer .superordinate .h7) .tall >
-    RSA.getScore (S1 .basketballPlayer .subordinate .h7) .tall := by
+    RSA.Eval.getScore (S1 .basketballPlayer .superordinate .h7) .tall >
+    RSA.Eval.getScore (S1 .basketballPlayer .subordinate .h7) .tall := by
   native_decide
 
 /--
@@ -625,8 +626,8 @@ With subordinate: h5 < 7, so "short" applies
 With superordinate: h5 = 5, so "short" doesn't apply (h5 ≮ 5)
 -/
 theorem short_more_informative_subordinate :
-    RSA.getScore (S1 .basketballPlayer .subordinate .h5) .short >
-    RSA.getScore (S1 .basketballPlayer .superordinate .h5) .short := by
+    RSA.Eval.getScore (S1 .basketballPlayer .subordinate .h5) .short >
+    RSA.Eval.getScore (S1 .basketballPlayer .superordinate .h5) .short := by
   native_decide
 
 -- ============================================================================

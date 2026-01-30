@@ -171,11 +171,8 @@ theorem bilateral_three_not_stronger :
 -- RSA Scenario
 -- ============================================================================
 
-/-- The RSA scenario derived from Bilateral semantics -/
-def Bilateral.scenario : RSAScenario := Bilateral.toScenario
-
-#eval Bilateral.scenario.worlds       -- [0, 1, 2, 3]
-#eval Bilateral.scenario.utterances   -- [one, two, three]
+-- Run L1 inference for Bilateral numerals (using NumeralTheory.runL1)
+#eval NumeralTheory.runL1 Bilateral .two  -- Should show exact match
 
 -- ============================================================================
 -- Backward Compatibility

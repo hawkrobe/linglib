@@ -35,6 +35,7 @@ def myContext := ReferenceGame.fromPairs
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Lexicon.Features
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
@@ -158,9 +159,10 @@ def context (pairs : List (String × List String)) (_h : pairs ≠ [] := by deci
 def Context.satisfies (ctx : Context) (obj : String) (utt : String) : Bool :=
   ctx.hasProperty obj utt
 
-/-- Build RSAScenario from context -/
-def Context.toScenario (ctx : Context) : RSAScenario :=
-  RSAScenario.basicBool ctx.properties ctx.objects ctx.satisfies
+/-- Run L1 for a context using RSA.Eval -/
+def Context.runL1 (ctx : Context) (utt : String) : List (String × ℚ) :=
+  RSA.Eval.basicL1 ctx.properties ctx.objects
+    (fun u w => boolToRat (ctx.satisfies w u)) (fun _ => 1) 1 (fun _ => 0) utt
 
 /--
 A typed reference game context with Color × Shape objects.
@@ -180,9 +182,20 @@ def TypedContext.fromObjects (objs : List Object) : TypedContext :=
   , features := features
   }
 
-/-- Build RSAScenario from typed context -/
-def TypedContext.toScenario (ctx : TypedContext) : RSAScenario :=
-  RSAScenario.basicBool ctx.features ctx.objects (fun obj feat => feat.appliesTo obj)
+/-- Run L1 for a typed context using RSA.Eval -/
+def TypedContext.runL1 (ctx : TypedContext) (feat : Feature) : List (Object × ℚ) :=
+  RSA.Eval.basicL1 ctx.features ctx.objects
+    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) 1 (fun _ => 0) feat
+
+/-- Run S1 for a typed context using RSA.Eval -/
+def TypedContext.runS1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
+  RSA.Eval.basicS1 ctx.features ctx.objects
+    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) 1 (fun _ => 0) obj
+
+/-- Run L0 for a typed context using RSA.Eval -/
+def TypedContext.runL0 (ctx : TypedContext) (feat : Feature) : List (Object × ℚ) :=
+  RSA.Eval.basicL0 ctx.features ctx.objects
+    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) feat
 
 -- ============================================================================
 -- Convenience: Quick Context Builders
@@ -206,15 +219,15 @@ def fromPairs (pairs : List (Color × Shape)) : TypedContext :=
 
 /-- L0 distribution for a feature in a typed context -/
 def l0 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
-  RSA.L0 ctx.toScenario f () () () ()
+  ctx.runL0 f
 
 /-- S1 distribution for an object in a typed context -/
 def s1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
-  RSA.S1 ctx.toScenario obj () () () ()
+  ctx.runS1 obj
 
 /-- L1 distribution for a feature in a typed context -/
 def l1 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
-  RSA.L1_world ctx.toScenario f
+  ctx.runL1 f
 
 -- ============================================================================
 -- Example Usage
@@ -234,8 +247,8 @@ private def exampleCtx : TypedContext :=
 -- Grounding Verification
 -- ============================================================================
 
-/-- The RSA meaning function φ uses the compositional semantics -/
-theorem rsa_uses_compositional_semantics (ctx : TypedContext) (f : Feature) (obj : Object) :
-    ctx.toScenario.φ () () f obj = if f.appliesTo obj then 1 else 0 := rfl
+/-- The RSA.Eval meaning function uses the compositional semantics -/
+theorem rsa_eval_uses_compositional_semantics (f : Feature) (obj : Object) :
+    boolToRat (f.appliesTo obj) = if f.appliesTo obj then 1 else 0 := rfl
 
 end ReferenceGame

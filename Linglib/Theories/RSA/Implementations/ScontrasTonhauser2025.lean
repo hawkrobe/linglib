@@ -59,6 +59,7 @@ Despite simplifications, all three qualitative predictions are verified.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 
 namespace RSA.ScontrasTonhauser2025
 
@@ -241,22 +242,6 @@ def beliefStatePrior : BeliefState → ℚ
   | .belFalse => 1        -- Knowledge of BEL: 1 (base)
   | _ => 1/2              -- Singletons: 0.5 (half of knowledge of BEL)
 
-/--
-Build the projection scenario with α=10 (Section 3) or α=4 (Section 4).
--/
-def projectionScenario (pC : ℚ := 1/2) (alpha : ℕ := 10) : RSAScenario :=
-  let base := RSAScenario.mentalState
-    allUtterances
-    allWorlds
-    allBeliefStates
-    allQUDs
-    (fun u w => if literalMeaning u w then 1 else 0)
-    speakerCredence
-    qudProject
-    (worldPrior pC)
-    beliefStatePrior
-  { base with α := alpha }
-
 -- ============================================================================
 -- PART 7: Projection Computation
 -- ============================================================================
@@ -269,9 +254,12 @@ This is the PRIMARY measure used in the paper (Section 3.1, footnote 11):
 probability of w, specifically, those w in which C is true."
 -/
 def projectionOfC_world (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
-  let S := projectionScenario pC alpha
   -- Get L1 distribution over worlds GIVEN the QUD
-  let worldDist := RSA.L1_world_givenGoal S u q
+  let worldDist := RSA.Eval.L1_world_givenGoal
+    allUtterances allWorlds [()] [()] allBeliefStates allQUDs
+    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
+    (worldPrior pC) (fun _ => 1) (fun _ => 1) beliefStatePrior (fun _ => 1)
+    speakerCredence qudProject (fun _ => 0) alpha u q
   -- Sum probability of worlds where C is true
   worldDist.foldl (fun acc (w, p) =>
     if w.c then acc + p else acc) 0
@@ -283,9 +271,12 @@ Alternative measure (footnote 11): "if we evaluated its predictions based on
 the marginal posterior probability of A, specifically those A that entail C."
 -/
 def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
-  let S := projectionScenario pC alpha
   -- Get L1 distribution over belief states GIVEN the QUD
-  let beliefDist := RSA.L1_beliefState_givenGoal S u q
+  let beliefDist := RSA.Eval.L1_beliefState_givenGoal
+    allUtterances allWorlds [()] [()] allBeliefStates allQUDs
+    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
+    (worldPrior pC) (fun _ => 1) (fun _ => 1) beliefStatePrior (fun _ => 1)
+    speakerCredence qudProject (fun _ => 0) alpha u q
   -- Sum probability of states that assume C
   beliefDist.foldl (fun acc (a, p) =>
     if assumesC a then acc + p else acc) 0

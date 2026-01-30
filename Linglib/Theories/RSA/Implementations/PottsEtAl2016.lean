@@ -46,13 +46,14 @@ Utterances crossing quantifiers × predicates:
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Phenomena.ScalarImplicatures.Data
 import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Basic
 
 namespace RSA.PottsLU
 
-open RSA LURSA
+open RSA.Eval LURSA
 open Phenomena.ScalarImplicatures
 
 -- ============================================================================
@@ -598,12 +599,12 @@ def reducedLexiconScenario : LUScenario where
 def l1NoScoredReduced : List (WorldClass × ℚ) :=
   LURSA.L1 reducedLexiconScenario noScored
 
-def pGlobalDE_reduced : ℚ := RSA.getScore l1NoScoredReduced .NN
+def pGlobalDE_reduced : ℚ := getScore l1NoScoredReduced .NN
 
 def pLocalOnlyDE_reduced : ℚ :=
-  RSA.getScore l1NoScoredReduced .NA +
-  RSA.getScore l1NoScoredReduced .AA +
-  RSA.getScore l1NoScoredReduced .AAA
+  getScore l1NoScoredReduced .NA +
+  getScore l1NoScoredReduced .AA +
+  getScore l1NoScoredReduced .AAA
 
 #eval (pGlobalDE_reduced, pLocalOnlyDE_reduced)
 #eval decide (pGlobalDE_reduced > pLocalOnlyDE_reduced)
@@ -625,13 +626,13 @@ def l1SomeScoredReduced : List (WorldClass × ℚ) :=
   LURSA.L1 reducedLexiconScenario someScored
 
 def pLocalUE_reduced : ℚ :=
-  RSA.getScore l1SomeScoredReduced .NS + RSA.getScore l1SomeScoredReduced .SS +
-  RSA.getScore l1SomeScoredReduced .SA + RSA.getScore l1SomeScoredReduced .SSS +
-  RSA.getScore l1SomeScoredReduced .SSA + RSA.getScore l1SomeScoredReduced .SAA
+  getScore l1SomeScoredReduced .NS + getScore l1SomeScoredReduced .SS +
+  getScore l1SomeScoredReduced .SA + getScore l1SomeScoredReduced .SSS +
+  getScore l1SomeScoredReduced .SSA + getScore l1SomeScoredReduced .SAA
 
 def pGlobalOnlyUE_reduced : ℚ :=
-  RSA.getScore l1SomeScoredReduced .NA + RSA.getScore l1SomeScoredReduced .AA +
-  RSA.getScore l1SomeScoredReduced .AAA
+  getScore l1SomeScoredReduced .NA + getScore l1SomeScoredReduced .AA +
+  getScore l1SomeScoredReduced .AAA
 
 #eval (pLocalUE_reduced, pGlobalOnlyUE_reduced)
 #eval decide (pLocalUE_reduced > pGlobalOnlyUE_reduced)

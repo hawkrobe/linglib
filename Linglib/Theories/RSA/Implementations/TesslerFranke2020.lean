@@ -32,12 +32,13 @@ We use 5 degrees with fixed thresholds:
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Fragments.Degrees
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.TesslerFranke2020
 
-open RSA
+open RSA.Eval
 open Degrees
 open Montague.Lexicon.Degrees
 
@@ -134,32 +135,62 @@ def degreePrior : HappinessDegree → ℚ
   | ⟨⟨n + 5, h⟩⟩ => absurd h (by omega)
 
 -- ============================================================================
--- RSA Scenario with Lexical Uncertainty
+-- RSA Computations with Lexical Uncertainty
 -- ============================================================================
 
-def flexibleNegationScenario : RSAScenario :=
-  RSAScenario.lexicalUncertainty
-    allUtterances
-    allHappinessDegrees
-    allLexica
-    (fun L u d => boolToRat (meaning L u d))
+/--
+L1 marginal over worlds with lexical uncertainty.
+
+This computes the pragmatic listener's posterior over degrees,
+marginalizing over the two possible lexica for "un-".
+-/
+def l1_world_lexicalUncertainty (u : Utterance) : List (HappinessDegree × ℚ) :=
+  RSA.Eval.L1_world allUtterances allHappinessDegrees [()] allLexica
+    [()] [()]
+    (fun _ l u' d => boolToRat (meaning l u' d))
     degreePrior
+    (fun _ => 1)  -- interp prior
     lexiconPrior
+    (fun _ => 1)  -- belief state prior
+    (fun _ => 1)  -- goal prior
+    (fun _ _ => 1)  -- speaker credence
+    (fun _ d1 d2 => d1 == d2)  -- identity goal projection
+    (fun _ => 0)  -- no cost
+    1  -- α = 1
+    u
+
+/--
+L1 marginal over lexica.
+
+This computes the listener's posterior over lexica,
+useful for seeing which interpretation is preferred.
+-/
+def l1_lexicon (u : Utterance) : List (UnLexicon × ℚ) :=
+  let tuples := allHappinessDegrees.flatMap fun d =>
+    allLexica.map fun l => (d, l)
+  let scores := tuples.map fun (d, l) =>
+    let priorScore := degreePrior d * lexiconPrior l
+    let s1 := basicS1 allUtterances allHappinessDegrees
+      (fun u' d' => boolToRat (meaning l u' d')) degreePrior 1 (fun _ => 0) d
+    let s1Score := getScore s1 u
+    ((d, l), priorScore * s1Score)
+  let normalized := normalize scores
+  -- Marginalize over degrees
+  allLexica.map fun l =>
+    let lScores := normalized.filter (fun ((_, l'), _) => l' == l) |>.map (·.2)
+    (l, sumScores lScores)
 
 -- ============================================================================
 -- Computations
 -- ============================================================================
 
-def l1_happy : List (HappinessDegree × ℚ) := RSA.L1_world flexibleNegationScenario .happy
-def l1_unhappy : List (HappinessDegree × ℚ) := RSA.L1_world flexibleNegationScenario .unhappy
-def l1_notHappy : List (HappinessDegree × ℚ) := RSA.L1_world flexibleNegationScenario .notHappy
-def l1_notUnhappy : List (HappinessDegree × ℚ) := RSA.L1_world flexibleNegationScenario .notUnhappy
+def l1_happy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .happy
+def l1_unhappy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .unhappy
+def l1_notHappy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .notHappy
+def l1_notUnhappy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .notUnhappy
 
-def l1_lexicon_unhappy : List (UnLexicon × ℚ) :=
-  RSA.L1_lexicon flexibleNegationScenario .unhappy
-
-def l1_lexicon_notUnhappy : List (UnLexicon × ℚ) :=
-  RSA.L1_lexicon flexibleNegationScenario .notUnhappy
+def l1_lexicon_unhappy : List (UnLexicon × ℚ) := l1_lexicon .unhappy
+def l1_lexicon_notUnhappy : List (UnLexicon × ℚ) := l1_lexicon .notUnhappy
 
 -- ============================================================================
 -- Evaluate
@@ -193,8 +224,8 @@ def gapProb_notUnhappy : ℚ := gapProb l1_notUnhappy
 
 /-- "unhappy" prefers contrary lexicon (polar opposite) -/
 theorem unhappy_prefers_contrary :
-    RSA.getScore l1_lexicon_unhappy .contrary >
-    RSA.getScore l1_lexicon_unhappy .contradictory := by
+    getScore l1_lexicon_unhappy .contrary >
+    getScore l1_lexicon_unhappy .contradictory := by
   native_decide
 
 /-- "happy" assigns zero probability to gap region -/
@@ -209,8 +240,8 @@ theorem not_unhappy_differs_from_happy :
 
 /-- "happy" → high degree, "unhappy" → low degree -/
 theorem opposite_poles :
-    RSA.getScore l1_happy ⟨⟨4, by omega⟩⟩ > RSA.getScore l1_happy ⟨⟨0, by omega⟩⟩ ∧
-    RSA.getScore l1_unhappy ⟨⟨0, by omega⟩⟩ > RSA.getScore l1_unhappy ⟨⟨4, by omega⟩⟩ := by
+    getScore l1_happy ⟨⟨4, by omega⟩⟩ > getScore l1_happy ⟨⟨0, by omega⟩⟩ ∧
+    getScore l1_unhappy ⟨⟨0, by omega⟩⟩ > getScore l1_unhappy ⟨⟨4, by omega⟩⟩ := by
   native_decide
 
 -- ============================================================================

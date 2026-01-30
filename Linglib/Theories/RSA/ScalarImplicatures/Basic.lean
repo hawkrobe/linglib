@@ -18,6 +18,7 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 -/
 
 import Linglib.Fragments.Quantities
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Derivation.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Interfaces.ImplicatureTheory
@@ -46,7 +47,7 @@ RSA reasons about these worlds probabilistically.
 
 -- Use the standard 3-person domain from Fragments
 def threePerson : Domain 3 := standard 3
-def scalarScenario : RSAScenario := threePerson.toScenario
+-- Note: For #eval demonstrations, use threePerson.runL1 etc.
 
 /-- World states for scalar implicature reasoning (coarser partition) -/
 inductive ScalarWorld where
@@ -92,11 +93,11 @@ Uses the L1 scores from Quantity.l1 to get the distribution over worlds.
 def rsaSomeResult : RSAScalarResult :=
   let l1_scores := l1 threePerson .some_
   -- P(some_not_all) = P(w1) + P(w2)
-  let p_w1 := RSA.getScore l1_scores (w1 (n := 3))
-  let p_w2 := RSA.getScore l1_scores (w2 (n := 3))
+  let p_w1 := RSA.Eval.getScore l1_scores (w1 (n := 3))
+  let p_w2 := RSA.Eval.getScore l1_scores (w2 (n := 3))
   let p_some_not_all := p_w1 + p_w2
   -- P(all) = P(w3)
-  let p_all := RSA.getScore l1_scores (wAll (n := 3))
+  let p_all := RSA.Eval.getScore l1_scores (wAll (n := 3))
   { utterance := "some"
   , probSomeNotAll := p_some_not_all
   , probAll := p_all
@@ -157,7 +158,7 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
   else if hasAllQuantifier d then
     -- "all" doesn't generate an implicature (top of scale)
     let l1_scores := l1 threePerson .all
-    let p_all := RSA.getScore l1_scores (wAll (n := 3))
+    let p_all := RSA.Eval.getScore l1_scores (wAll (n := 3))
     some { utterance := "all"
          , probSomeNotAll := 0
          , probAll := p_all
@@ -218,7 +219,7 @@ theorem rsa_every_no_implicature :
 Get L1 probability for a specific world.
 -/
 def l1ProbForWorld (w : Fin 4) : ℚ :=
-  RSA.getScore (l1 threePerson .some_) w
+  RSA.Eval.getScore (l1 threePerson .some_) w
 
 -- L1 scores for "some" (for reference).
 #eval l1 threePerson .some_

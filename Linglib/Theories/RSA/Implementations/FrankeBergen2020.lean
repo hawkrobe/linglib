@@ -23,6 +23,7 @@ which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.FrankeBergen2020.Data
@@ -135,16 +136,24 @@ instance : Exhaustifiable NestedAristotelian AlienWorld where
 -- PART 5: RSA Model
 -- ============================================================================
 
-/-- The GI model: RSAScenario.ambiguous with Interp := Parse (EXH positions).
+/-- GI model meaning function. -/
+def giMeaning (p : Core.Parse) (s : NestedAristotelian) (w : AlienWorld) : ℚ :=
+  boolToRat (Exhaustifiable.meaningAtParseBool p s w)
 
-    Uses the unified Exhaustifiable interface, which internally calls
-    `applyExhAtParse` from NeoGricean.Exhaustivity.Unified. -/
-def giScenario : RSAScenario :=
-  RSAScenario.ambiguousBool
-    allSentences
-    alienWorlds
-    exhParses
-    (fun p w s => Exhaustifiable.meaningAtParseBool p s w)
+/-- L1 computation using RSA.Eval for the GI model -/
+def giL1_world (s : NestedAristotelian) : List (AlienWorld × ℚ) :=
+  RSA.Eval.L1_world allSentences alienWorlds exhParses [()] [()] [()]
+    (fun p _ s' w => giMeaning p s' w)
+    (fun _ => 1)  -- world prior
+    (fun _ => 1)  -- interp prior
+    (fun _ => 1)  -- lexicon prior
+    (fun _ => 1)  -- belief state prior
+    (fun _ => 1)  -- goal prior
+    (fun _ _ => 1)  -- speaker credence
+    (fun _ w1 w2 => w1 == w2)  -- identity goal projection
+    (fun _ => 0)  -- no cost
+    1  -- α = 1
+    s
 
 -- ============================================================================
 -- PART 6: Verification
@@ -152,15 +161,10 @@ def giScenario : RSAScenario :=
 
 /-- Correct dimensions: 9 sentences × 8 parses × 12 worlds -/
 theorem gi_dimensions :
-    giScenario.utterances.length = 9 ∧
-    giScenario.interps.length = 8 ∧
-    giScenario.worlds.length = 12 := by
-  simp only [giScenario, RSAScenario.ambiguousBool, RSAScenario.ambiguous]
-  constructor
-  · native_decide
-  constructor
-  · native_decide
-  · native_decide
+    allSentences.length = 9 ∧
+    exhParses.length = 8 ∧
+    alienWorlds.length = 12 := by
+  native_decide
 
 /-- "Some some" (SS) is true at world (1,1) -/
 theorem ss_true_at_1_1 :

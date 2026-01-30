@@ -32,6 +32,7 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.YoonEtAl2020.Data
 import Linglib.Theories.Montague.Lexicon.Degrees
 import Linglib.Theories.Montague.Entailment.Polarity
@@ -301,34 +302,20 @@ def predictNegationForKindGoal (cfg : PolitenessConfig) (s : HeartState) : ℚ :
 -- ============================================================================
 
 /--
-Build an RSAScenario for the S1 level (for comparison with standard RSA).
+L1 computation for the S1 level (for comparison with standard RSA).
 
 Note: This captures S1 only. The full politeness model requires
 the custom S2 computation above because of the presentational utility.
+
+Uses RSA.Eval for list-based computations suitable for #eval.
 -/
-def s1Scenario (cfg : PolitenessConfig) (_phi : ℚ) : RSAScenario where
-  Utterance := Utterance
-  World := HeartState
-  Interp := Unit
-  Lexicon := Unit
-  BeliefState := Unit
-  Goal := Unit
-  φ := fun _ _ w s => utteranceSemantics w s
-  goalProject := fun _ s1 s2 => s1 == s2
-  speakerCredence := fun _ _ => 1
-  utterances := allUtterances
-  worlds := allHeartStates
-  interps := [()]
-  lexica := [()]
-  beliefStates := [()]
-  goals := [()]
-  worldPrior := fun _ => 1  -- Uniform
-  interpPrior := fun _ => 1
-  lexiconPrior := fun _ => 1
-  beliefStatePrior := fun _ => 1
-  goalPrior := fun _ => 1
-  α := cfg.alpha
-  cost := fun w => utteranceCost w
+def s1_L1 (cfg : PolitenessConfig) (u : Utterance) : List (HeartState × ℚ) :=
+  RSA.Eval.basicL1 allUtterances allHeartStates
+    (fun u' s => utteranceSemantics u' s)
+    (fun _ => 1)  -- Uniform prior
+    cfg.alpha
+    (fun w => utteranceCost w)
+    u
 
 -- ============================================================================
 -- PART 8: Verification

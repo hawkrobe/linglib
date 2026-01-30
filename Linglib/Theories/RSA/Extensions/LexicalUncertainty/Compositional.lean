@@ -34,6 +34,7 @@ Reference: Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic i
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 
 -- ============================================================================
@@ -165,7 +166,7 @@ def L0_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
     (u : CompUtt S.Atom) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w =>
     (w, S.worldPrior w * boolToRat (L.interpret u w))
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 S₁ given a specific atomic lexicon.
@@ -174,8 +175,8 @@ P(u | w, L) ∝ L₀(w | u, L)
 -/
 def S1_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
     (w : S.World) : List (CompUtt S.Atom × ℚ) :=
-  let scores := S.utterances.map fun u => (u, (RSA.getScore (L0_given S L u) w) ^ S.α)
-  RSA.normalize scores
+  let scores := S.utterances.map fun u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
+  RSA.Eval.normalize scores
 
 /--
 L₁ with compositional lexical uncertainty.
@@ -187,13 +188,13 @@ The listener marginalizes over refined ATOMIC lexica.
 def L1 (S : CompLUScenario) (u : CompUtt S.Atom) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w =>
     let lexSum := S.lexica.foldl (init := (0 : ℚ)) fun acc L =>
-      acc + S.lexPrior L * RSA.getScore (S1_given S L w) u
+      acc + S.lexPrior L * RSA.Eval.getScore (S1_given S L w) u
     (w, S.worldPrior w * lexSum)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /-- Get L₁ probability for a specific world -/
 def L1_prob (S : CompLUScenario) (u : CompUtt S.Atom) (w : S.World) : ℚ :=
-  RSA.getScore (L1 S u) w
+  RSA.Eval.getScore (L1 S u) w
 
 end CompLURSA
 

@@ -39,6 +39,7 @@ referring expressions. Psychological Review, 127(4), 591-621.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Fragments.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
@@ -212,7 +213,17 @@ def utteranceCost (u : ReferringExpression) : ℚ :=
 -- ============================================================================
 
 /--
-Build a cs-RSA scenario for a reference game.
+Parameters for a cs-RSA scenario.
+-/
+structure CSRSAParams where
+  utterances : List ReferringExpression
+  objects : List Object
+  params : SemanticParams := defaultParams
+  α : ℕ := 1
+  costWeight : ℚ := 1/10
+
+/--
+Build cs-RSA parameters for a reference game.
 
 This uses continuous semantics where φ returns values in [0, 1]
 rather than Boolean {0, 1}.
@@ -222,14 +233,19 @@ def csRSAScenario
     (objects : List Object)
     (params : SemanticParams := defaultParams)
     (α : ℕ := 1)
-    (costWeight : ℚ := 1/10) : RSAScenario :=
-  RSAScenario.basic
-    utterances
-    objects
-    (φ params)
+    (costWeight : ℚ := 1/10) : CSRSAParams :=
+  { utterances, objects, params, α, costWeight }
+
+/-- Compute S1 distribution for a cs-RSA scenario -/
+def csRSA_S1 (scenario : CSRSAParams) (target : Object) : List (ReferringExpression × ℚ) :=
+  RSA.Eval.basicS1
+    scenario.utterances
+    scenario.objects
+    (fun u w => φ scenario.params u w)
     (fun _ => 1)  -- Uniform object prior
-    α
-    (fun u => costWeight * utteranceCost u)
+    scenario.α
+    (fun u => scenario.costWeight * utteranceCost u)
+    target
 
 -- ============================================================================
 -- Example Scenes
@@ -304,14 +320,14 @@ def target1 : Object := ⟨.pin, .blue, .small⟩
 
 /-- S1 distribution for target in Scene 1 -/
 def s1_scene1 : List (ReferringExpression × ℚ) :=
-  RSA.S1 csScenario1 target1 () () () ()
+  csRSA_S1 csScenario1 target1
 
 -- Scene 2: Size-sufficient (small pin among small & large pins)
 def target2 : Object := ⟨.pin, .blue, .small⟩
 
 /-- S1 distribution for target in Scene 2 -/
 def s1_scene2 : List (ReferringExpression × ℚ) :=
-  RSA.S1 csScenario2 target2 () () () ()
+  csRSA_S1 csScenario2 target2
 
 -- Scene 4: Typicality (typical yellow vs atypical blue)
 def target4_typical : Object := ⟨.banana, .yellow, .medium⟩
@@ -319,11 +335,11 @@ def target4_atypical : Object := ⟨.banana, .blue, .medium⟩
 
 /-- S1 for typical banana -/
 def s1_typical_banana : List (ReferringExpression × ℚ) :=
-  RSA.S1 csScenario4 target4_typical () () () ()
+  csRSA_S1 csScenario4 target4_typical
 
 /-- S1 for atypical banana -/
 def s1_atypical_banana : List (ReferringExpression × ℚ) :=
-  RSA.S1 csScenario4 target4_atypical () () () ()
+  csRSA_S1 csScenario4 target4_atypical
 
 -- ============================================================================
 -- Evaluate Results
@@ -377,18 +393,18 @@ See Degen et al. (2020) for detailed model fits.
 
 /-- In Scene 1 (color-sufficient), "blue pin" has nonzero S1 probability -/
 theorem scene1_blue_pin_nonzero :
-    RSA.getScore s1_scene1 (RE.withColor .pin .blue) > 0 := by
+    RSA.Eval.getScore s1_scene1 (RE.withColor .pin .blue) > 0 := by
   native_decide
 
 /-- In Scene 2 (size-sufficient), "small pin" has nonzero S1 probability -/
 theorem scene2_small_pin_nonzero :
-    RSA.getScore s1_scene2 (RE.withSize .pin .small) > 0 := by
+    RSA.Eval.getScore s1_scene2 (RE.withSize .pin .small) > 0 := by
   native_decide
 
 /-- For atypical banana, color mention gets higher probability than bare nominal -/
 theorem atypical_banana_prefers_color :
-    RSA.getScore s1_atypical_banana (RE.withColor .banana .blue) >
-    RSA.getScore s1_atypical_banana (RE.bare .banana) := by
+    RSA.Eval.getScore s1_atypical_banana (RE.withColor .banana .blue) >
+    RSA.Eval.getScore s1_atypical_banana (RE.bare .banana) := by
   native_decide
 
 -- ============================================================================
@@ -418,11 +434,11 @@ def boolScenario2 := csRSAScenario pinUtterances scene2_objects booleanParams
 
 /-- S1 with Boolean semantics for Scene 1 -/
 def s1_bool_scene1 : List (ReferringExpression × ℚ) :=
-  RSA.S1 boolScenario1 target1 () () () ()
+  csRSA_S1 boolScenario1 target1
 
 /-- S1 with Boolean semantics for Scene 2 -/
 def s1_bool_scene2 : List (ReferringExpression × ℚ) :=
-  RSA.S1 boolScenario2 target2 () () () ()
+  csRSA_S1 boolScenario2 target2
 
 #eval s1_bool_scene1  -- Boolean Scene 1
 #eval s1_bool_scene2  -- Boolean Scene 2
@@ -493,7 +509,7 @@ def scene_high_variation : List Object := [
 def csScenario_high_var := csRSAScenario pinUtterances scene_high_variation
 
 def s1_high_var : List (ReferringExpression × ℚ) :=
-  RSA.S1 csScenario_high_var ⟨.pin, .blue, .small⟩ () () () ()
+  csRSA_S1 csScenario_high_var ⟨.pin, .blue, .small⟩
 
 #eval s1_high_var
 #eval colorOvermodificationRate s1_high_var  -- Should be higher than s1_scene2

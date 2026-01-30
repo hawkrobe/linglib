@@ -25,6 +25,7 @@ RSAScenarioQ uses α : ℚ with Newton-Raphson approximation for x^α.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
+import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.RationalPower
 import Mathlib.Data.Rat.Defs
 
@@ -192,7 +193,7 @@ P(w | u, i) ∝ P(w) · φ(i, u, w)
 -/
 def L0Q (S : RSAScenarioQ) (u : S.Utterance) (i : S.Interp) : List (S.World × ℚ) :=
   let scores := S.worlds.map fun w => (w, S.worldPrior w * S.φ i u w)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 L0Q projected by QUD.
@@ -202,7 +203,7 @@ def L0Q_projected (S : RSAScenarioQ) (u : S.Utterance) (i : S.Interp) (q : S.QUD
   let l0 := L0Q S u i
   S.worlds.map fun w =>
     let eqClassScore := l0.filter (fun (w', _) => S.qudProject q w w')
-      |>.map (·.2) |> RSA.sumScores
+      |>.map (·.2) |> RSA.Eval.sumScores
     (w, eqClassScore)
 
 /--
@@ -215,9 +216,9 @@ Uses powApprox for rational exponentiation.
 def S1Q (S : RSAScenarioQ) (w : S.World) (i : S.Interp) (q : S.QUD)
     : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
-    let l0Score := RSA.getScore (L0Q_projected S u i q) w
+    let l0Score := RSA.Eval.getScore (L0Q_projected S u i q) w
     (u, powApprox l0Score S.α S.precision)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 L1Q joint distribution over (World × Interp × QUD).
@@ -231,9 +232,9 @@ def L1Q_joint (S : RSAScenarioQ) (u : S.Utterance)
       S.quds.map fun q => (w, i, q)
   let scores := triples.map fun (w, i, q) =>
     let priorScore := S.worldPrior w * S.interpPrior i * S.qudPrior q
-    let s1Score := RSA.getScore (S1Q S w i q) u
+    let s1Score := RSA.Eval.getScore (S1Q S w i q) u
     ((w, i, q), priorScore * s1Score)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 /--
 L1Q marginal over worlds.
@@ -242,7 +243,7 @@ def L1Q_world (S : RSAScenarioQ) (u : S.Utterance) : List (S.World × ℚ) :=
   let joint := L1Q_joint S u
   S.worlds.map fun w =>
     let wScores := joint.filter (fun ((w', _, _), _) => w' == w) |>.map (·.2)
-    (w, RSA.sumScores wScores)
+    (w, RSA.Eval.sumScores wScores)
 
 /--
 L1Q marginal over interpretations.
@@ -251,7 +252,7 @@ def L1Q_interp (S : RSAScenarioQ) (u : S.Utterance) : List (S.Interp × ℚ) :=
   let joint := L1Q_joint S u
   S.interps.map fun i =>
     let iScores := joint.filter (fun ((_, i', _), _) => i' == i) |>.map (·.2)
-    (i, RSA.sumScores iScores)
+    (i, RSA.Eval.sumScores iScores)
 
 /--
 S2Q: Second-level pragmatic speaker with rational α.
@@ -260,88 +261,18 @@ P(u | w) ∝ L1Q_world(w | u)^α
 -/
 def S2Q (S : RSAScenarioQ) (w : S.World) : List (S.Utterance × ℚ) :=
   let scores := S.utterances.map fun u =>
-    let l1Score := RSA.getScore (L1Q_world S u) w
+    let l1Score := RSA.Eval.getScore (L1Q_world S u) w
     (u, powApprox l1Score S.α S.precision)
-  RSA.normalize scores
+  RSA.Eval.normalize scores
 
 end Q
 
 -- ============================================================================
--- PART 4: Conversion Between RSAScenario and RSAScenarioQ
+-- PART 4: RSAScenarioQ is standalone for rational alpha scenarios
 -- ============================================================================
 
-/--
-Convert RSAScenario (natural α) to RSAScenarioQ (rational α).
-
-Note: This conversion requires specifying a default lexicon value.
-RSAScenarioQ uses a simpler structure without Lexicon/BeliefState fields.
--/
-def RSAScenario.toQ (S : RSAScenario) (defaultLexicon : S.Lexicon) : RSAScenarioQ where
-  Utterance := S.Utterance
-  World := S.World
-  Interp := S.Interp
-  QUD := S.Goal  -- Map Goal -> QUD
-  φ i u w := S.φ i defaultLexicon u w  -- Use the provided default lexicon
-  qudProject := S.goalProject  -- Use goalProject
-  utterances := S.utterances
-  worlds := S.worlds
-  interps := S.interps
-  quds := S.goals  -- Use goals
-  worldPrior := S.worldPrior
-  interpPrior := S.interpPrior
-  qudPrior := S.goalPrior  -- Use goalPrior
-  α := S.α
-  α_nonneg := by simp
-  precision := 10
-
-/--
-Convert RSAScenarioQ to RSAScenario (truncates α to natural number).
-
-Warning: This loses precision for non-integer α.
--/
-def RSAScenarioQ.toNat (S : RSAScenarioQ) : RSAScenario where
-  Utterance := S.Utterance
-  World := S.World
-  Interp := S.Interp
-  Lexicon := Unit  -- RSAScenarioQ doesn't have Lexicon
-  BeliefState := Unit  -- RSAScenarioQ doesn't have BeliefState
-  Goal := S.QUD  -- Map QUD -> Goal
-  φ i _ u w := S.φ i u w  -- Add ignored Lexicon parameter
-  goalProject := S.qudProject  -- Map qudProject -> goalProject
-  speakerCredence _ _ := 1  -- Default belief state membership
-  utterances := S.utterances
-  worlds := S.worlds
-  interps := S.interps
-  lexica := [()]  -- Single Unit lexicon
-  beliefStates := [()]  -- Single Unit belief state
-  goals := S.quds  -- Map quds -> goals
-  worldPrior := S.worldPrior
-  interpPrior := S.interpPrior
-  lexiconPrior := fun _ => 1  -- Uniform lexicon prior
-  beliefStatePrior := fun _ => 1  -- Uniform belief state prior
-  goalPrior := S.qudPrior  -- Map qudPrior -> goalPrior
-  α := S.α.floor.toNat  -- Truncate to natural number
-
--- ============================================================================
--- PART 5: Consistency Theorem
--- ============================================================================
-
-/--
-For integer α, RSAScenarioQ computations match RSAScenario computations.
-
-This ensures backward compatibility: when α ∈ ℕ, both APIs give identical results.
-
-Note: This comparison requires specifying a default lexicon value.
--/
-theorem integerAlpha_consistent (S : RSAScenario)
-    (u : S.Utterance) (_w : S.World) (i : S.Interp) (_q : S.Goal)
-    (l : S.Lexicon) (a : S.BeliefState) (g : S.Goal) :
-    -- L0 is identical (doesn't use α)
-    Q.L0Q (RSAScenario.toQ S l) u i = RSA.L0 S u i l a g := by
-  -- The L0 computation is identical since it doesn't depend on α
-  sorry
-
--- Additional consistency theorems would require more detailed proofs
--- about powApprox matching integer exponentiation for integer inputs.
+-- Note: RSAScenarioQ provides a list-based API for scenarios requiring
+-- rational alpha values. For Fintype-based scenarios with natural alpha,
+-- use RSAScenario from Basic.lean.
 
 end RSA
