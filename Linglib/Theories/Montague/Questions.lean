@@ -8,6 +8,7 @@ import Linglib.Theories.Montague.Questions.ConjoinableTypes
 import Linglib.Theories.Montague.Questions.Coordination
 import Linglib.Theories.Montague.Questions.MentionSome
 import Linglib.Theories.Montague.Questions.ScopeReadings
+import Linglib.Theories.Montague.Questions.GSVanRooyBridge
 
 /-!
 # Montague/Questions.lean
@@ -26,6 +27,7 @@ This module re-exports all question semantics components:
 8. **Coordination**: G&S Ch.VI interrogative coordination (Q₁ ∧ Q₂, Q₁ ∨ Q₂)
 9. **MentionSome**: G&S Ch.VI Section 5 mention-some interpretations (I-MS rule)
 10. **ScopeReadings**: G&S Ch.VI pair-list and choice readings (Sections 2-5)
+11. **GSVanRooyBridge**: Cross-theory theorems (Blackwell, mention-some characterization)
 
 ## Theoretical Approaches
 
