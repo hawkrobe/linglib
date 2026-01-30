@@ -68,6 +68,7 @@ import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Compositional
 
 -- Theory interfaces (Mathlib pattern)
 import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.BindingSemantics
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.SemanticStructure
@@ -143,6 +144,7 @@ import Linglib.Theories.CCG.Equivalence
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Variables
+import Linglib.Theories.Montague.Anaphora
 import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Quantifiers
@@ -271,6 +273,9 @@ import Linglib.Theories.Surface.Basic
 
 -- Coreference patterns
 import Linglib.Phenomena.Coreference.Data
+
+-- Anaphora patterns (donkey anaphora, etc.)
+import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 -- Pragmatic phenomena (theory-neutral examples)
 import Linglib.Phenomena.ScalarImplicatures.Data

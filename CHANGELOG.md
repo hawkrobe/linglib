@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.32.0] - 2025-01-29
+
+### Added
+- **Theories/Montague/Anaphora.lean**: Binding semantics with categorical foundations
+  - H&K assignment-based interpretation via `HasBindingConfig` interface
+  - B&S continuation-based interpretation via W combinator
+  - **Categorical connection**: Reader ↔ Continuation adjunction
+    - `cpsTransform`: CPS transform between frameworks
+    - `binding_is_contraction`: W = diagonal/contraction morphism
+  - VPE strict/sloppy ambiguity
+
+- **Core/Interfaces/BindingSemantics.lean**: Abstract interface for binding
+  - `HasBindingConfig`: What syntax theories must provide for semantic binding
+  - `BindingConfig`: Binder-bindee relations with variable indices
+  - Theory-neutral: Minimalism, HPSG, CCG each satisfy differently
+
+- **Phenomena/Anaphora/DonkeyAnaphora.lean**: Donkey anaphora data
+  - Classic examples: Geach donkey, conditional donkey, bathroom sentences
+  - Weak vs strong readings, proportion problem, paycheck pronouns
+
+- **Theories/Montague/Questions/LiftedTypes.lean**: B&S tower notation documentation
+  - Continuation monad laws, tower semantics for scope-taking
+
+### Architecture
+- Binding semantics separates syntax (what binds what) from semantics (how to interpret)
+- Categorical perspective shows H&K assignments and B&S continuations are related via CPS
+- Both reduce to "contraction" — using one entity in multiple positions
+
+### References
+- Heim & Kratzer (1998). Semantics in Generative Grammar. Ch. 5.
+- Barker & Shan (2014). Continuations and Natural Language. Ch. 15.
+- Geach (1962). Reference and Generality.
+
 ## [0.31.0] - 2025-01-29
 
 ### Added
