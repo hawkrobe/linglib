@@ -57,6 +57,10 @@ inductive Utterance where
   | all    -- "all of them"
   deriving Repr, DecidableEq, BEq, Inhabited
 
+instance : Fintype Utterance where
+  elems := {.none_, .some_, .all}
+  complete := fun x => by cases x <;> simp
+
 /-- Literal semantics (weak "some") -/
 def meaning (n : Nat) : Utterance → Fin (n + 1) → Bool
   | .none_, w => w.val == 0
@@ -128,6 +132,10 @@ inductive ExtUtterance where
   | all    -- "all of them"
   deriving Repr, DecidableEq, BEq, Inhabited
 
+instance : Fintype ExtUtterance where
+  elems := {.none_, .some_, .most, .all}
+  complete := fun x => by cases x <;> simp
+
 /-- Extended semantics with "most" -/
 def extMeaning (n : Nat) : ExtUtterance → Fin (n + 1) → Bool
   | .none_, w => w.val == 0
@@ -168,5 +176,37 @@ private def threePerson : Domain 3 := standard 3
 
 -- Extended with "most"
 #eval RSA.L1_world (extStandard 5).toScenario ExtUtterance.most
+
+-- ============================================================================
+-- Fintype-Based API (RSAScenarioF / RSAF)
+-- ============================================================================
+
+/-- Build Fintype-based RSA scenario from domain -/
+def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenarioF :=
+  RSAScenarioF.basicBool
+    (U := Utterance)
+    (W := Fin (n + 1))
+    (fun w u => meaning n u w)
+    d.prior
+
+/-- Build Fintype-based RSA scenario from extended domain -/
+def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenarioF :=
+  RSAScenarioF.basicBool
+    (U := ExtUtterance)
+    (W := Fin (n + 1))
+    (fun w u => extMeaning n u w)
+    d.prior
+
+/-- L0 distribution (Fintype) -/
+def l0F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
+  RSAF.L0 d.toScenarioF u () () () ()
+
+/-- S1 distribution (Fintype) -/
+def s1F {n : Nat} (d : Domain n) (w : Fin (n + 1)) : Option (ExactDist Utterance) :=
+  RSAF.S1 d.toScenarioF w () () () ()
+
+/-- L1 distribution (Fintype) -/
+def l1F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
+  RSAF.L1_world d.toScenarioF u
 
 end Quantity

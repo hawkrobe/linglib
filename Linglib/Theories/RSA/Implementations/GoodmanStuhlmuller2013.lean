@@ -1085,4 +1085,34 @@ KnowledgeState.RSA (general model)
 ```
 -/
 
+-- ============================================================================
+-- Fintype-Based API Demonstration
+-- ============================================================================
+
+/-!
+## Fintype-Based RSA
+
+The Fintype-based API provides compile-time type safety and uses ExactDist
+for proper probability distributions.
+-/
+
+namespace FintypeDemo
+
+/-- Scalar scenario using Fintype API -/
+def scalarScenarioF : RSAScenarioF := threePerson.toScenarioF
+
+/-- L1 for "some" using Fintype API -/
+def l1_some_F : Option (ExactDist (Fin 4)) :=
+  RSAF.L1_world scalarScenarioF .some_
+
+/-- S1 in w3 using Fintype API -/
+def s1_w3_F : Option (ExactDist Utterance) :=
+  RSAF.S1 scalarScenarioF (wAll (n := 3)) () () () ()
+
+-- Note: #eval disabled due to sorry in RSAF non-negativity proofs
+-- Once those are filled, can evaluate:
+-- #eval l1_some_F.map (fun d => (d.mass (w1 (n := 3)), d.mass (wAll (n := 3))))
+
+end FintypeDemo
+
 end RSA.GoodmanStuhlmuller2013
