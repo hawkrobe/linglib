@@ -1093,6 +1093,8 @@ All three use the `BeliefState` slot in RSAScenario.
 - [x] Degen & Tonhauser (2021) empirical data on factive predicates
 - [x] Farkas & Bruce (2010) discourse state types (`Core/DiscourseState.lean`, `RSA/Core/DiscourseIntegration.lean`)
 - [x] RSA discourse constructors (`RSA/Core/Discourse.lean`): `DiscourseConfig`, `QUDConfig`, `RSAScenario.discourse`
+- [x] Ronai (2024) embedded scalar diversity data (`Phenomena/Ronai2024/Data.lean`): 42 scales with semantic distance, boundedness, embedded SI rates
+- [x] Van Tiel et al. (2016) scalar diversity data (`Phenomena/VanTielEtAl2016/Data.lean`): 43 scales with SI rates, semantic distance, boundedness, cloze scores, LSA values - foundational study showing SI rates vary 4%-100%
 
 ---
 
