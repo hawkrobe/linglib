@@ -1,5 +1,4 @@
 import Linglib.Theories.Montague.Questions.Partition
-import Linglib.Theories.Montague.Questions.ConjoinableTypes
 import Linglib.Theories.Montague.Questions.LiftedTypes
 
 /-!

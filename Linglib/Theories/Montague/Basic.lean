@@ -28,10 +28,18 @@ namespace Montague
 -- Semantic Types
 -- ============================================================================
 
-/-- Semantic types -/
+/-- Semantic types (Montague's type theory)
+
+The basic types are:
+- `e`: entities (individuals)
+- `t`: truth values
+- `s`: possible worlds (for intensional semantics)
+
+Complex types are built with `fn` (function types). -/
 inductive Ty where
   | e    -- entities
   | t    -- truth values
+  | s    -- possible worlds (for intensional semantics)
   | fn : Ty → Ty → Ty  -- function types
   deriving Repr, DecidableEq
 
@@ -41,15 +49,25 @@ infixr:25 " ⇒ " => Ty.fn
 def Ty.et : Ty := .e ⇒ .t           -- properties
 def Ty.eet : Ty := .e ⇒ .e ⇒ .t     -- relations
 def Ty.ett : Ty := (.e ⇒ .t) ⇒ .t   -- generalized quantifiers
+def Ty.st : Ty := .s ⇒ .t           -- propositions (intensions of t)
+def Ty.se : Ty := .s ⇒ .e           -- individual concepts (intensions of e)
 
 -- ============================================================================
 -- Models
 -- ============================================================================
 
-/-- A model provides a domain and interpretations -/
+/-- A model provides a domain of entities and possible worlds.
+
+For intensional semantics, we need both:
+- Entity: the domain of individuals
+- World: the set of possible worlds
+
+Intensions are functions from worlds to extensions. -/
 structure Model where
   /-- The domain of entities -/
   Entity : Type
+  /-- The set of possible worlds -/
+  World : Type := Unit  -- Default to trivial (extensional) semantics
   /-- Decidable equality on entities -/
   decEq : DecidableEq Entity
 
@@ -57,6 +75,7 @@ structure Model where
 def Model.interpTy (m : Model) : Ty → Type
   | .e => m.Entity
   | .t => Bool
+  | .s => m.World
   | .fn σ τ => m.interpTy σ → m.interpTy τ
 
 -- ============================================================================

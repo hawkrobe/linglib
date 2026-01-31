@@ -4,7 +4,7 @@ import Linglib.Theories.Montague.Questions.PragmaticAnswerhood
 import Linglib.Theories.Montague.Questions.DecisionTheory
 import Linglib.Theories.Montague.Questions.SignalingGames
 import Linglib.Theories.Montague.Questions.Polarity
-import Linglib.Theories.Montague.Questions.ConjoinableTypes
+import Linglib.Theories.Montague.Questions.Hamblin
 import Linglib.Theories.Montague.Questions.Coordination
 import Linglib.Theories.Montague.Questions.MentionSome
 import Linglib.Theories.Montague.Questions.ScopeReadings
@@ -23,7 +23,7 @@ This module re-exports all question semantics components:
 4. **DecisionTheory**: Van Rooy's decision-theoretic semantics (Blackwell)
 5. **SignalingGames**: Credibility and strategic communication (RSA bridge)
 6. **Polarity**: Van Rooy & Šafářová on polar question pragmatics (PPQ/NPQ/Alt)
-7. **ConjoinableTypes**: G&S Ch.VI conjoinable types and CONJ/DISJ schemata
+7. **Hamblin**: Hamblin semantics (questions as sets of propositions)
 8. **Coordination**: G&S Ch.VI interrogative coordination (Q₁ ∧ Q₂, Q₁ ∨ Q₂)
 9. **MentionSome**: G&S Ch.VI Section 5 mention-some interpretations (I-MS rule)
 10. **ScopeReadings**: G&S Ch.VI pair-list and choice readings (Sections 2-5)
