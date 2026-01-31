@@ -1,0 +1,338 @@
+/-
+# Bayesian Semantics: Graded Truth from Parameter Uncertainty
+
+This module explores approaches where graded truth values **emerge** from
+uncertainty over predicate parameters, rather than being stipulated directly.
+
+## Background
+
+Three approaches to probabilistic/graded semantics:
+
+### 1. Stipulated Graded Values (our `GradedProposition.lean`)
+- Define `P : Entity → ℚ` directly
+- Compose using probabilistic operations (×, +−pq)
+- Simple but ad hoc
+
+### 2. Marginalize over Parameters (Bernardy et al. 2018)
+- Define Boolean semantics `P_θ : Entity → Bool`
+- Put a prior over θ
+- Graded truth = E_θ[P_θ(x)]
+- More principled but still separate from composition
+
+### 3. Probability Monad (Grove's PDS)
+- Standard compositional semantics (CCG + λ-calculus)
+- Probability as a monadic effect: `P α`
+- Compiles to probabilistic programs (Stan)
+- Most principled: separates semantics from inference
+
+## This Module
+
+We implement approach #2 as a stepping stone. It shows that graded values
+can emerge from Boolean semantics + uncertainty, connecting to Lassiter &
+Goodman's result: "threshold semantics + uncertainty = graded semantics".
+
+## References
+
+- Bernardy et al. (2018). A Compositional Bayesian Semantics for Natural Language.
+- Grove & White. Probabilistic Dynamic Semantics.
+- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
+-/
+
+import Linglib.Core.Proposition
+import Linglib.Core.GradedProposition
+import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Algebra.BigOperators.Ring
+
+namespace Core.BayesianSemantics
+
+open Core.Proposition
+open Core.GradedProposition
+
+-- ============================================================================
+-- Finite PMF (Simple Version)
+-- ============================================================================
+
+/--
+A finite probability mass function over type Θ.
+
+This is a simplified PMF for finite types using rationals.
+Values are non-negative and sum to 1.
+
+For full Mathlib PMF integration with ℝ≥0∞, see:
+`Mathlib.Probability.ProbabilityMassFunction.Basic`
+-/
+structure FinitePMF (Θ : Type*) [Fintype Θ] where
+  /-- Probability mass function -/
+  mass : Θ → ℚ
+  /-- All masses are non-negative -/
+  mass_nonneg : ∀ θ, 0 ≤ mass θ := by intros; decide
+  /-- Masses sum to 1 -/
+  mass_sum_one : Finset.sum Finset.univ mass = 1 := by native_decide
+
+namespace FinitePMF
+
+variable {Θ : Type*} [Fintype Θ] [DecidableEq Θ]
+
+/-- Point mass at a single value -/
+def pure (θ₀ : Θ) : FinitePMF Θ where
+  mass := fun θ => if θ = θ₀ then 1 else 0
+  mass_nonneg := fun θ => by split_ifs <;> decide
+  mass_sum_one := by
+    rw [Finset.sum_eq_single θ₀]
+    · simp
+    · intro b _ hb; simp [hb]
+    · intro h; exact (h (Finset.mem_univ _)).elim
+
+/-- Expected value of a function under this distribution -/
+def expect (pmf : FinitePMF Θ) (f : Θ → ℚ) : ℚ :=
+  Finset.sum Finset.univ fun θ => pmf.mass θ * f θ
+
+/-- Expected value of an indicator (probability of event) -/
+def prob (pmf : FinitePMF Θ) (event : Θ → Bool) : ℚ :=
+  pmf.expect fun θ => if event θ then 1 else 0
+
+/-- Expected value of pure distribution is the value at that point -/
+theorem expect_pure (θ₀ : Θ) (f : Θ → ℚ) :
+    (pure θ₀).expect f = f θ₀ := by
+  simp only [expect, pure]
+  rw [Finset.sum_eq_single θ₀]
+  · simp
+  · intro b _ hb; simp [hb]
+  · intro h; exact (h (Finset.mem_univ _)).elim
+
+end FinitePMF
+
+-- ============================================================================
+-- Parameterized Predicates
+-- ============================================================================
+
+/--
+A parameterized predicate has:
+- A parameter space Θ
+- For each θ, a Boolean predicate on entities
+
+The graded truth value emerges from marginalizing over Θ.
+-/
+structure ParamPred (E Θ : Type*) [Fintype Θ] where
+  /-- Boolean semantics given a parameter value -/
+  semantics : Θ → E → Bool
+  /-- Prior distribution over parameters -/
+  prior : FinitePMF Θ
+
+namespace ParamPred
+
+variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ]
+
+/--
+Graded truth value: expected value of the Boolean predicate.
+
+This is the key operation: `P(x) = E_θ[P_θ(x)]`
+-/
+def gradedTruth (pred : ParamPred E Θ) (x : E) : ℚ :=
+  pred.prior.prob fun θ => pred.semantics θ x
+
+/--
+Convert a parameterized predicate to a graded predicate.
+
+This is how graded truth values *emerge* from Boolean semantics
++ parameter uncertainty.
+-/
+def toGPred (pred : ParamPred E Θ) : GPred E :=
+  pred.gradedTruth
+
+/--
+For a point mass prior (no uncertainty), graded truth = Boolean truth.
+-/
+theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
+    (ParamPred.mk sem (FinitePMF.pure θ₀)).gradedTruth x =
+    if sem θ₀ x then 1 else 0 := by
+  simp only [gradedTruth, FinitePMF.prob, FinitePMF.expect_pure]
+
+end ParamPred
+
+-- ============================================================================
+-- Example: Threshold Predicates (Lassiter & Goodman Style)
+-- ============================================================================
+
+/--
+A threshold predicate: "x has property P iff measure(x) > θ"
+
+This models gradable adjectives like "tall", "expensive", etc.
+-/
+structure ThresholdPred (E : Type*) (Θ : Type*) [Fintype Θ] [Preorder Θ] where
+  /-- The measure function (e.g., height, price) -/
+  measure : E → Θ
+  /-- Prior over thresholds -/
+  thresholdPrior : FinitePMF Θ
+
+namespace ThresholdPred
+
+variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ] [Preorder Θ]
+variable [DecidableRel (· < · : Θ → Θ → Prop)]
+
+/-- Convert to a parameterized predicate -/
+def toParamPred (pred : ThresholdPred E Θ) : ParamPred E Θ where
+  semantics := fun θ x => pred.measure x > θ
+  prior := pred.thresholdPrior
+
+/-- Graded truth for threshold predicates -/
+def gradedTruth (pred : ThresholdPred E Θ) (x : E) : ℚ :=
+  pred.toParamPred.gradedTruth x
+
+/--
+Graded truth equals probability that measure > threshold.
+
+For "tall(John)": P(height(John) > θ) under the threshold prior.
+-/
+theorem gradedTruth_eq_prob (pred : ThresholdPred E Θ) (x : E) :
+    pred.gradedTruth x = pred.thresholdPrior.prob (fun θ => pred.measure x > θ) := rfl
+
+end ThresholdPred
+
+-- ============================================================================
+-- Feature-Based Predicates (Bernardy Style)
+-- ============================================================================
+
+/--
+A feature-based predicate where entities are characterized by features
+and the predicate is a linear classifier.
+
+Entity satisfaction: `bias + Σᵢ weight_i · feature_i(x) > 0`
+
+This models the Bernardy et al. approach where predicates are hyperplanes.
+-/
+structure FeaturePred (E : Type*) (n : ℕ) where
+  /-- Extract feature vector from entity -/
+  features : E → Fin n → ℚ
+  /-- Predicate parameters: bias and weights -/
+  params : Type*
+  /-- Fintype instance for params -/
+  [paramsFintype : Fintype params]
+  [paramsDecEq : DecidableEq params]
+  /-- Bias for each parameter setting -/
+  bias : params → ℚ
+  /-- Weights for each parameter setting -/
+  weights : params → Fin n → ℚ
+  /-- Prior over parameters -/
+  prior : FinitePMF params
+
+attribute [instance] FeaturePred.paramsFintype FeaturePred.paramsDecEq
+
+namespace FeaturePred
+
+variable {E : Type*} {n : ℕ}
+
+/-- Dot product of weight vector and feature vector -/
+def dotProduct (w f : Fin n → ℚ) : ℚ :=
+  Finset.sum Finset.univ fun i => w i * f i
+
+/-- Boolean semantics for a specific parameter setting -/
+def satisfies (pred : FeaturePred E n) (p : pred.params) (x : E) : Bool :=
+  pred.bias p + dotProduct (pred.weights p) (pred.features x) > 0
+
+/-- Convert to parameterized predicate -/
+def toParamPred (pred : FeaturePred E n) : ParamPred E pred.params where
+  semantics := pred.satisfies
+  prior := pred.prior
+
+/-- Graded truth emerges from parameter uncertainty -/
+def gradedTruth (pred : FeaturePred E n) (x : E) : ℚ :=
+  pred.toParamPred.gradedTruth x
+
+end FeaturePred
+
+-- ============================================================================
+-- Composition
+-- ============================================================================
+
+/-!
+## Compositional Structure
+
+### Two Strategies
+
+1. **Marginalize early** (`GradedProposition.lean`):
+   - Convert to graded values immediately
+   - Compose using probabilistic operations (×, +−pq)
+   - Algebraic structure (De Morgan, etc.)
+
+2. **Marginalize late** (this module):
+   - Keep Boolean semantics during composition
+   - Parameter uncertainty tracked but not resolved
+   - Graded values emerge only when needed
+
+3. **Probability monad** (Grove's PDS):
+   - Standard compositional semantics
+   - Probability as monadic effect
+   - Compiles to probabilistic programs
+
+Strategy #3 is most principled but requires more infrastructure.
+This module implements #2 as an intermediate step.
+-/
+
+/--
+Compose two parameterized predicates via conjunction.
+
+The result has uncertainty over both parameters (product space).
+Under independence, the joint prior is the product of individual priors.
+-/
+def ParamPred.conj {E Θ₁ Θ₂ : Type*}
+    [Fintype Θ₁] [Fintype Θ₂] [DecidableEq Θ₁] [DecidableEq Θ₂]
+    (p : ParamPred E Θ₁) (q : ParamPred E Θ₂) : ParamPred E (Θ₁ × Θ₂) where
+  semantics := fun ⟨θ₁, θ₂⟩ x => p.semantics θ₁ x && q.semantics θ₂ x
+  prior := {
+    mass := fun ⟨θ₁, θ₂⟩ => p.prior.mass θ₁ * q.prior.mass θ₂
+    mass_nonneg := fun ⟨θ₁, θ₂⟩ => mul_nonneg (p.prior.mass_nonneg θ₁) (q.prior.mass_nonneg θ₂)
+    mass_sum_one := by
+      simp only [Fintype.sum_prod_type]
+      calc Finset.sum Finset.univ (fun a =>
+             Finset.sum Finset.univ (fun b => p.prior.mass a * q.prior.mass b))
+          = Finset.sum Finset.univ (fun a =>
+              p.prior.mass a * Finset.sum Finset.univ q.prior.mass) := by
+            congr 1; ext a; rw [← Finset.sum_mul]; ring_nf
+        _ = Finset.sum Finset.univ (fun a => p.prior.mass a * 1) := by
+            rw [q.prior.mass_sum_one]
+        _ = 1 := by simp [p.prior.mass_sum_one]
+  }
+
+-- ============================================================================
+-- Summary
+-- ============================================================================
+
+/-!
+## What This Module Provides
+
+### Types
+- `FinitePMF Θ`: Simple finite PMF with rational values
+- `ParamPred E Θ`: Predicate with parameter uncertainty
+- `ThresholdPred E Θ`: Lassiter & Goodman-style threshold predicate
+- `FeaturePred E n`: Bernardy-style linear classifier predicate
+
+### Key Operations
+- `ParamPred.gradedTruth`: Extract graded value by marginalization
+- `ParamPred.toGPred`: Convert to `GPred` for use with `GradedProposition`
+- `ParamPred.conj`: Compose predicates with independent parameters
+
+### Key Theorem
+- `gradedTruth_pure`: No uncertainty → Boolean semantics
+
+### Philosophy
+
+This module implements the "marginalize over parameters" strategy:
+- Boolean semantics at each parameter setting
+- Graded truth emerges from expectation over parameter prior
+
+This is a stepping stone toward the more principled probability monad
+approach (Grove's PDS), which keeps composition standard and handles
+probability as a separate effect.
+
+## Future Directions
+
+1. **Probability Monad**: Implement `P α` monad following Grove
+2. **State + Probability**: Parameterized monad for discourse state
+3. **Compilation**: Target Mathlib measures or external PPLs
+-/
+
+end Core.BayesianSemantics
