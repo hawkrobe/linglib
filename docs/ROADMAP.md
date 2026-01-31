@@ -982,11 +982,21 @@ Based on Degen (2023) review and systematic literature search (2012–2025).
 
 ### Presupposition & Projection
 
+**Unified Framework Discovery**: Qing et al. (2016), Scontras & Tonhauser (2025), and Warstadt (2022) are **mathematically identical models** applied to different domains. See `Comparisons/PresuppositionProjection.lean` for the formal equivalence proof.
+
 | Paper | Status | File | Notes |
 |-------|--------|------|-------|
-| **Qing et al. (2016)** | ✗ TODO | — | RSA for presupposition projection |
+| **Qing et al. (2016)** | ✅ Done | `QingEtAl2016.lean` | Original framework; change-of-state verbs |
+| **Scontras & Tonhauser (2025)** | ✅ Done | `ScontrasTonhauser2025.lean` | Instance of Qing framework; factives (know/think) |
+| **Warstadt (2022)** | ✅ Done | `Warstadt2022.lean` | Instance of Qing framework; possessive presuppositions |
 | **Stevens et al. (2017)** | ✗ TODO | — | Prosody and projection |
-| **Scontras & Tonhauser (2025)** | ✅ Done | `ScontrasTonhauser2025.lean` | BToM projection model |
+
+The shared model: L1 jointly infers (world, latent-state) where the latent state filters worlds.
+- Qing calls it "context set" (CG interpretation)
+- S&T call it "private assumptions" (speaker belief interpretation)
+- Warstadt calls it "context" (CG interpretation)
+
+All three use the `BeliefState` slot in RSAScenario.
 
 ### Questions & QUDs
 
@@ -1081,6 +1091,8 @@ Based on Degen (2023) review and systematic literature search (2012–2025).
 - [x] Embedded implicatures: DE, attitudes, conditionals, questions
 - [x] Presupposition projection infrastructure (Schlenker local contexts, Tonhauser taxonomy)
 - [x] Degen & Tonhauser (2021) empirical data on factive predicates
+- [x] Farkas & Bruce (2010) discourse state types (`Core/DiscourseState.lean`, `RSA/Core/DiscourseIntegration.lean`)
+- [x] RSA discourse constructors (`RSA/Core/Discourse.lean`): `DiscourseConfig`, `QUDConfig`, `RSAScenario.discourse`
 
 ---
 
@@ -1094,6 +1106,7 @@ These are valuable but not on the critical path to researcher usability:
 - **Full Horn (1972)**: Scale reversal, forced vs invited inference
 - **Scope-word order interactions**: Dutch/German data
 - **Imprecision/homogeneity**: Haslinger 2024 integration
+- **Neo-Davidsonian event semantics**: Event arguments, thematic roles (Parsons 1990, Kratzer 1996)
 
 ### Selectional Restrictions / Category Mistakes (potential future phenomenon)
 

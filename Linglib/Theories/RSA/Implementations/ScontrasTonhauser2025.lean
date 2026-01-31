@@ -3,6 +3,24 @@
 
 "Projection without lexically-specified presupposition: A model for know"
 
+## Farkas & Bruce (2010) Connection
+
+In F&B terms, this model has L1 infer the **speaker's discourse commitments (dcS)**.
+
+The `BeliefState` type represents different possible dcS values—what the speaker
+privately takes for granted. This may extend beyond the common ground (cg).
+
+| F&B Component | This Implementation |
+|---------------|---------------------|
+| dcS | `BeliefState` (latent variable) |
+| dcL | Fixed (= baseCG) |
+| cg | Fixed (= baseCG) |
+| table | Not modeled (stable state) |
+
+The `speakerCredence` function returns 1 for worlds compatible with dcS.
+This captures the key insight that the speaker may assume things not yet
+mutually accepted.
+
 ## Key Insight
 
 Projection is NOT a lexical property of predicates. Instead, it emerges from:
