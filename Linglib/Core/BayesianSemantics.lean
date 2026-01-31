@@ -44,7 +44,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring.Finset
 
 namespace Core.BayesianSemantics
 
@@ -291,7 +291,7 @@ def ParamPred.conj {E Θ₁ Θ₂ : Type*}
              Finset.sum Finset.univ (fun b => p.prior.mass a * q.prior.mass b))
           = Finset.sum Finset.univ (fun a =>
               p.prior.mass a * Finset.sum Finset.univ q.prior.mass) := by
-            congr 1; ext a; rw [← Finset.sum_mul]; ring_nf
+            congr 1; ext a; rw [← Finset.mul_sum]
         _ = Finset.sum Finset.univ (fun a => p.prior.mass a * 1) := by
             rw [q.prior.mass_sum_one]
         _ = 1 := by simp [p.prior.mass_sum_one]
