@@ -29,12 +29,14 @@ The key point: these are objective, measurable properties. Different theories
 -/
 
 import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Markedness
 
 open Montague.Lexicon.Adjectives
 open Montague.Lexicon.Degrees
+open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 -- ============================================================================
 -- PART 1: Morphological Structure
@@ -246,7 +248,7 @@ def costDifference : ℚ := 1
 "tall" with morphology: simple, positive pole
 -/
 def tall_with_morphology : GradableAdjWithMorphology 10 where
-  toGradableAdjEntry := tall_entry
+  toGradableAdjEntry := tall
   morphology := simpleMorphology "tall"
   isPositivePole := true
 
@@ -254,7 +256,7 @@ def tall_with_morphology : GradableAdjWithMorphology 10 where
 "short" with morphology: simple, negative pole
 -/
 def short_with_morphology : GradableAdjWithMorphology 10 where
-  toGradableAdjEntry := short_entry
+  toGradableAdjEntry := short
   morphology := simpleMorphology "short"
   isPositivePole := false
 
@@ -262,7 +264,7 @@ def short_with_morphology : GradableAdjWithMorphology 10 where
 "happy" with morphology: simple, positive pole
 -/
 def happy_with_morphology : GradableAdjWithMorphology 10 where
-  toGradableAdjEntry := happy_entry
+  toGradableAdjEntry := happy
   morphology := simpleMorphology "happy"
   isPositivePole := true
 
@@ -270,7 +272,7 @@ def happy_with_morphology : GradableAdjWithMorphology 10 where
 "unhappy" with morphology: prefixed, negative pole
 -/
 def unhappy_with_morphology : GradableAdjWithMorphology 10 where
-  toGradableAdjEntry := unhappy_entry
+  toGradableAdjEntry := unhappy
   morphology := prefixedMorphology "unhappy"
   isPositivePole := false
 

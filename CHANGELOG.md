@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.38.0] - 2025-01-31
+
+### Added
+- **Theories/Montague/Lexicon/Attitudes/Preferential.lean**: Veridical preferential predicates
+  - `mkVeridicalPreferential`: Constructor for veridical predicates (be happy, be surprised)
+  - `beHappy`, `beSurprised`, `beGlad`, `beSad`: Veridical predicate instances
+  - `veridical_breaks_triviality`: Core U&S (2019) theorem - veridicality breaks triviality
+  - `veridicalPreferential_isCDistributiveAt`: C-distributivity for world-sensitive semantics
+
+- **Fragments/English/Predicates/Adjectival.lean**: Adjectival predicate entries (Kennedy & McNally 2005)
+  - `tall`, `short`, `happy`, `unhappy`, `full`, `empty`, etc.
+  - Moved from Theories to Fragments (separation of theory from lexicon)
+
+### Changed
+- **Fragments reorganization**: `Verbs.lean` → `Predicates/Verbal.lean` + `Predicates/Adjectival.lean`
+  - Verbal predicates: know, believe, hope, fear, run, kick...
+  - Adjectival predicates: tall, happy, full... (1-place gradable adjectives)
+  - Organizes by grammatical function, not semantic mechanism
+
+### Architecture
+- **Veridical breaks triviality**: Non-veridicality is NECESSARY for anti-rogativity
+  - C-dist + positive + TSP → trivial ONLY IF non-veridical
+  - Veridical predicates (be happy) can take questions despite C-dist + positive
+
 ## [0.37.0] - 2025-01-31
 
 ### Added

@@ -25,7 +25,7 @@ def runMileProfile := runProfile.telicize
 ## Connection to Other Modules
 
 - `OntologicalPreconditions.lean`: Uses `Telicity` for CoS verbs
-- `Fragments/Verbs.lean`: `VerbEntry` can include aspectual profile
+- `Fragments/Predicates.lean`: `VerbEntry` can include aspectual profile
 - `Phenomena/Aspect/Diagnostics.lean`: Empirical tests for classification
 -/
 

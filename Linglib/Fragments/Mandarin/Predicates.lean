@@ -1,7 +1,7 @@
 /-
-# Mandarin Verb Lexicon Fragment
+# Mandarin Predicate Lexicon Fragment
 
-Lexical entries for Mandarin Chinese verbs, with particular focus on
+Lexical entries for Mandarin Chinese predicates, with particular focus on
 preferential attitude predicates relevant to Qing et al. (2025).
 
 ## Key Predicates
@@ -27,11 +27,11 @@ entries in the Montague semantics via proved theorems.
 - Qing et al. (2025). When can NVPs take questions?
 -/
 
-import Linglib.Fragments.English.Verbs
+import Linglib.Fragments.English.Predicates.Verbal
 
-namespace Fragments.Mandarin.Verbs
+namespace Fragments.Mandarin.Predicates
 
-open Fragments.English.Verbs (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
 open Montague.Lexicon.Attitudes.Doxastic (Veridicality)
 open Montague.Lexicon.Attitudes.Preferential (AttitudeValence NVPClass)
 
@@ -163,4 +163,4 @@ def allVerbs : List VerbEntry := [
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Mandarin.Verbs
+end Fragments.Mandarin.Predicates

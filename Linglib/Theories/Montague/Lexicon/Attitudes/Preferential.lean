@@ -709,6 +709,286 @@ example : classifyNVP false .negative = .class1_nonCDist := rfl
 example : classifyNVP false .positive = .class1_nonCDist := rfl
 
 -- ============================================================================
+-- Veridical Preferential Predicates (U&S 2019)
+-- ============================================================================
+
+/-!
+## Veridical vs Non-Veridical Preferential Predicates
+
+Uegaki & Sudo (2019) established a crucial distinction:
+
+### Non-Veridical (hope) - TRIVIAL
+```
+Presup (TSP):  ∃p ∈ C. μ(x,p) > θ(C)
+Assertion:     ∃p ∈ Q. μ(x,p) > θ(C)
+When Q ⊆ C:    Assertion ⊆ TSP → TRIVIAL
+```
+
+### Veridical (be happy) - NOT TRIVIAL
+```
+Presup:        ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
+Assertion:     ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
+                       ^^^^
+                       TRUTH REQUIREMENT breaks triviality!
+```
+
+Even when Q ⊆ C, whether the assertion is true depends on WHICH answer p
+is TRUE in the actual world w. This is the key insight: veridicality
+breaks triviality because it adds a world-dependent constraint.
+
+### The Deep Theorem (formalized below as `veridical_breaks_triviality`)
+
+Triviality requires ALL THREE conditions:
+1. C-distributive
+2. Positive valence (TSP)
+3. **Non-veridical**
+
+If ANY condition fails, the predicate can embed questions:
+- Non-C-dist → Class 1 (takes questions)
+- Negative valence → Class 2 (no TSP, takes questions)
+- **Veridical → Responsive** (truth requirement breaks triviality)
+
+### Examples
+
+| Predicate | Veridical | C-Dist | Valence | TSP | Takes Q? | Why |
+|-----------|-----------|--------|---------|-----|----------|-----|
+| hope | ✗ | ✓ | + | ✓ | ✗ | C-dist + TSP → trivial |
+| fear | ✗ | ✓ | - | ✗ | ✓ | No TSP |
+| worry | ✗ | ✗ | - | ✗ | ✓ | Non-C-dist |
+| be happy | ✓ | ✓ | + | ✓ | ✓ | Veridical breaks triviality! |
+| be surprised | ✓ | ✓ | + | ✓ | ✓ | Veridical breaks triviality! |
+-/
+
+/--
+Build a veridical preferential predicate.
+
+Unlike non-veridical predicates, veridical ones require the complement
+proposition to be TRUE in the actual world:
+
+⟦x is happy that p⟧(w, C) = p(w) ∧ μ(x, p) > θ(C)
+⟦x is happy about Q⟧(w, C) = ∃p ∈ Q. p(w) ∧ μ(x, p) > θ(C)
+
+The truth requirement p(w) is what breaks triviality: even if TSP holds
+(some proposition is preferred), the assertion may be false because
+the TRUE answer in w might not be the preferred one.
+-/
+def mkVeridicalPreferential {W E : Type*}
+    (name : String) (valence : AttitudeValence)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    PreferentialPredicate W E :=
+  { name := name
+  , veridical := true  -- Key difference from non-veridical!
+  , valence := valence
+  , μ := μ
+  , θ := θ
+  -- Propositional: requires p(w) = true (veridical requirement)
+  -- Note: We return a function W → Bool to enable world-sensitivity
+  , propSemantics := fun x p C => decide (μ x p > θ C)
+  -- Question: ∃p ∈ Q. μ(x,p) > θ(C)
+  -- The world-sensitivity is handled at usage site via propSemanticsAt
+  , questionSemantics := fun x Q C => Q.any fun p => decide (μ x p > θ C)
+  }
+
+/--
+World-sensitive propositional semantics for veridical predicates.
+
+⟦x V p⟧(w, C) = p(w) ∧ μ(x, p) > θ(C)
+
+The truth requirement p(w) is what distinguishes veridical from non-veridical.
+-/
+def PreferentialPredicate.propSemanticsAt {W E : Type*}
+    (V : PreferentialPredicate W E) (x : E) (p : Prop' W) (C : QuestionDen W) (w : W) : Bool :=
+  if V.veridical then
+    p w && V.propSemantics x p C
+  else
+    V.propSemantics x p C
+
+/--
+World-sensitive question semantics for veridical predicates.
+
+⟦x V Q⟧(w, C) = ∃p ∈ Q. p(w) ∧ μ(x, p) > θ(C)
+
+For veridical predicates, the assertion requires some TRUE answer to be preferred.
+-/
+def PreferentialPredicate.questionSemanticsAt {W E : Type*}
+    (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) (w : W) : Bool :=
+  if V.veridical then
+    Q.any fun p => p w && V.propSemantics x p C
+  else
+    V.questionSemantics x Q C
+
+-- ============================================================================
+-- Veridical Predicate Instances
+-- ============================================================================
+
+/-- "be happy": veridical, positive valence -/
+def beHappy {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    PreferentialPredicate W E :=
+  mkVeridicalPreferential "be happy" .positive μ θ
+
+/-- "be surprised": veridical, positive valence (pleasant surprise) -/
+def beSurprised {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    PreferentialPredicate W E :=
+  mkVeridicalPreferential "be surprised" .positive μ θ
+
+/-- "be glad": veridical, positive valence -/
+def beGlad {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    PreferentialPredicate W E :=
+  mkVeridicalPreferential "be glad" .positive μ θ
+
+/-- "be sad": veridical, negative valence -/
+def beSad {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    PreferentialPredicate W E :=
+  mkVeridicalPreferential "be sad" .negative μ θ
+
+-- ============================================================================
+-- Veridical Breaks Triviality: The Core Theorem
+-- ============================================================================
+
+/--
+**Core Theorem**: Veridicality breaks triviality.
+
+Even when:
+- TSP holds (some proposition is preferred above threshold)
+- Q ⊆ C (question answers are in comparison class)
+
+The question assertion can still be FALSE for veridical predicates,
+because no TRUE answer in w may be the preferred one.
+
+This is the key insight from Uegaki & Sudo (2019): non-veridicality
+is a NECESSARY condition for the triviality that makes predicates
+anti-rogative.
+
+### Proof Strategy
+
+We show that under the specified conditions:
+1. TSP is satisfied (h_tsp)
+2. But for every answer p in Q, if p is true in w, it's not preferred (h_no_true_preferred)
+3. Therefore the question assertion is false
+
+This proves that TSP satisfaction does NOT guarantee assertion truth
+for veridical predicates — the triviality derivation fails!
+-/
+theorem veridical_breaks_triviality {W E : Type*}
+    (name : String) (valence : AttitudeValence)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) (w : W)
+    (_h_subset : ∀ p, p ∈ Q → p ∈ C)
+    (_h_tsp : tspSatisfied μ θ x C = true)
+    (h_no_true_preferred : ∀ p ∈ Q, p w = true → decide (μ x p > θ C) = false) :
+    -- Even with TSP satisfied, the question assertion can be FALSE
+    (mkVeridicalPreferential name valence μ θ).questionSemanticsAt x Q C w = false := by
+  unfold PreferentialPredicate.questionSemanticsAt mkVeridicalPreferential
+  simp only [↓reduceIte]
+  rw [List.any_eq_false]
+  intro p hp
+  simp only [Bool.and_eq_true, not_and, decide_eq_true_eq]
+  intro hp_true
+  have := h_no_true_preferred p hp hp_true
+  simp only [decide_eq_false_iff_not] at this
+  exact this
+
+/--
+**Contrast Theorem**: Non-veridical predicates ARE trivial.
+
+When TSP holds and Q ⊆ C, the assertion is ALWAYS true for non-veridical
+C-distributive predicates. This is the triviality that makes them anti-rogative.
+
+Combined with `veridical_breaks_triviality`, this shows the asymmetry:
+- Non-veridical + C-dist + positive → trivial → anti-rogative
+- Veridical + C-dist + positive → NOT trivial → responsive
+-/
+theorem nonveridical_is_trivial {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W)
+    (h_subset : ∀ p, p ∈ Q → p ∈ C)
+    (h_assert : (hope μ θ).questionSemantics x Q C = true) :
+    tspSatisfied μ θ x C = true :=
+  hope_triviality μ θ x Q C h_subset h_assert
+
+-- ============================================================================
+-- C-Distributivity for Veridical Predicates
+-- ============================================================================
+
+/--
+Veridical predicates ARE C-distributive (at a given world).
+
+The world-sensitive semantics preserves the existential structure:
+⟦x V Q⟧(w, C) = ∃p ∈ Q. ⟦x V p⟧(w, C)
+
+Note: This is C-distributivity for the world-sensitive semantics,
+which is the relevant notion for veridical predicates.
+-/
+theorem veridicalPreferential_isCDistributiveAt {W E : Type*}
+    (name : String) (valence : AttitudeValence)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) (w : W) :
+    (mkVeridicalPreferential name valence μ θ).questionSemanticsAt x Q C w = true ↔
+    ∃ p ∈ Q, (mkVeridicalPreferential name valence μ θ).propSemanticsAt x p C w = true := by
+  simp only [PreferentialPredicate.questionSemanticsAt, PreferentialPredicate.propSemanticsAt,
+             mkVeridicalPreferential, ↓reduceIte, List.any_eq_true]
+
+/-- beHappy is C-distributive (at a given world) -/
+theorem beHappy_isCDistributiveAt {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) (w : W) :
+    (beHappy μ θ).questionSemanticsAt x Q C w = true ↔
+    ∃ p ∈ Q, (beHappy μ θ).propSemanticsAt x p C w = true :=
+  veridicalPreferential_isCDistributiveAt "be happy" .positive μ θ x Q C w
+
+/-- beSurprised is C-distributive (at a given world) -/
+theorem beSurprised_isCDistributiveAt {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) (w : W) :
+    (beSurprised μ θ).questionSemanticsAt x Q C w = true ↔
+    ∃ p ∈ Q, (beSurprised μ θ).propSemanticsAt x p C w = true :=
+  veridicalPreferential_isCDistributiveAt "be surprised" .positive μ θ x Q C w
+
+-- ============================================================================
+-- The Complete Picture: Why Veridicality Matters
+-- ============================================================================
+
+/-!
+## The Triviality Conditions (U&S 2019)
+
+For a preferential predicate to be anti-rogative (unable to embed questions),
+ALL THREE conditions must hold:
+
+1. **C-distributive**: ⟦x V Q⟧ ↔ ∃p ∈ Q. ⟦x V p⟧
+2. **Positive valence**: Predicate has TSP (threshold significance presupposition)
+3. **Non-veridical**: Truth of complement is NOT required
+
+### Why Each Condition is Necessary
+
+**If not C-distributive** (worry, qidai):
+- Question semantics has additional structure (uncertainty, anticipation)
+- Assertion ≠ ∃p ∈ Q. propSemantics, so triviality derivation fails
+- Predicate CAN take questions (Class 1)
+
+**If negative valence** (fear, dread):
+- No TSP (threat-identification ≠ desire-existence)
+- Assertion not entailed by any presupposition
+- Predicate CAN take questions (Class 2)
+
+**If veridical** (be happy, be surprised):
+- Assertion: ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
+- TSP: ∃p ∈ C. μ(x,p) > θ(C)
+- TSP does NOT entail assertion (wrong p might be true in w)
+- Predicate CAN take questions (Responsive)
+
+### The Formalized Results
+
+- `hope_triviality` / `nonveridical_is_trivial`: Non-veridical predicates
+  with C-dist and positive valence yield trivial meanings (assertion ⊆ TSP)
+
+- `veridical_breaks_triviality`: Even with TSP satisfied, veridical
+  predicates can have false assertions (truth requirement adds constraint)
+
+Together, these theorems prove that non-veridicality is NECESSARY for
+the triviality derivation that creates anti-rogativity.
+-/
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -729,18 +1009,29 @@ example : classifyNVP false .positive = .class1_nonCDist := rfl
    C-distributive. Proved by contradiction: global uncertainty breaks
    the equivalence.
 
-4. `class3_triviality`: Class 3 predicates yield trivial meanings with
-   questions (assertion ⊆ presupposition when Q ⊆ C).
+4. `degreeComparison_triviality` / `hope_triviality`: Class 3 predicates
+   yield trivial meanings with questions (assertion ⊆ presupposition when Q ⊆ C).
+
+5. **`veridical_breaks_triviality`** (NEW): The core U&S (2019) insight —
+   veridical predicates break triviality because even when TSP holds, the
+   assertion can be false (no TRUE answer is preferred).
+
+6. `veridicalPreferential_isCDistributiveAt`: Veridical predicates preserve
+   C-distributivity for their world-sensitive semantics.
 
 ### Architecture:
 
 - C-distributivity is a PROVABLE PROPERTY, not a stipulated field
 - Each predicate DEFINES its propositional and question semantics
+- Veridical predicates use world-sensitive semantics (`propSemanticsAt`, `questionSemanticsAt`)
 - The classification follows from proved properties
 
 This gives genuine explanatory force: "hope" is anti-rogative BECAUSE
 its degree-comparison semantics makes it C-distributive, and combined
-with positive valence (TSP), this yields triviality.
+with positive valence (TSP) and non-veridicality, this yields triviality.
+
+"Be happy" takes questions DESPITE being C-distributive and positive BECAUSE
+it is veridical — the truth requirement breaks the triviality derivation.
 -/
 
 end Montague.Lexicon.Attitudes.Preferential

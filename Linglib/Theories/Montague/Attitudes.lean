@@ -6,6 +6,15 @@ Extension of Montague semantics with possible worlds for handling:
 2. Belief verbs and propositional attitudes
 3. De dicto vs de re readings
 
+## Architecture Note
+
+This file provides worked examples of intensional semantics with a toy model.
+For the modular, reusable theory of attitude verbs, see:
+
+- `Montague/Lexicon/Attitudes/Doxastic.lean` — Theory for doxastic attitudes (believe, know)
+- `Montague/Lexicon/Attitudes/Preferential.lean` — Theory for preferential attitudes (hope, fear, be happy)
+- `Fragments/Predicates.lean` — Concrete lexical entries inheriting from these theories
+
 ## Key Concepts
 
 Following Montague (1973) "The Proper Treatment of Quantification":
@@ -22,10 +31,18 @@ Following Montague (1973) "The Proper Treatment of Quantification":
 - De dicto: "John believes someone is a spy" (existential under belief)
 - De re: "There is someone John believes is a spy" (existential over belief)
 
+## Note on Types
+
+This module uses the canonical `Montague.Ty` type system. Intensions are
+represented as `s ⇒ τ` (using the `.s` base type for worlds).
+
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
 import Linglib.Theories.Montague.Basic
+-- Re-export modular attitude theories
+import Linglib.Theories.Montague.Lexicon.Attitudes.Doxastic
+import Linglib.Theories.Montague.Lexicon.Attitudes.Preferential
 
 namespace Montague.Attitudes
 
@@ -43,47 +60,36 @@ inductive World where
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
 
 -- ============================================================================
--- PART 2: Intensional Types
+-- PART 2: Intensional Types (using canonical Montague.Ty)
 -- ============================================================================
 
-/--
-Extended type system with possible worlds.
+/-!
+We use the canonical `Montague.Ty` type system:
+- `.e` : entities
+- `.t` : truth values
+- `.s` : possible worlds
+- `⇒` : function types
 
-In Montague's full IL (Intensional Logic):
-- `s` : the type of possible world indices
-- `⟨s, τ⟩` : intensions (functions from worlds to extensions of type τ)
-
-We extend our existing Ty with:
-- `s` : worlds
-- `intens τ` : intensional type (world → τ)
+Intensions `⟨s, τ⟩` are represented as `.s ⇒ τ`.
 -/
-inductive ITy where
-  | e     -- entities
-  | t     -- truth values
-  | s     -- worlds
-  | fn : ITy → ITy → ITy     -- function types
-  | intens : ITy → ITy       -- intensional types ⟨s, τ⟩
-  deriving Repr, DecidableEq
 
-infixr:25 " ⇒ " => ITy.fn
+/-- Shorthand for intension type (s ⇒ τ) -/
+abbrev Ty.intens (τ : Ty) : Ty := .s ⇒ τ
 
-/-- Shorthand for intension type -/
-prefix:30 "^" => ITy.intens
+/-- Proposition type: intension of truth values -/
+abbrev Ty.prop : Ty := Ty.intens .t  -- s ⇒ t
 
--- Common intensional types
-def ITy.prop : ITy := ^.t              -- propositions (intensions of t)
-def ITy.indConcept : ITy := ^.e        -- individual concepts (intensions of e)
+/-- Individual concept: intension of entities -/
+abbrev Ty.indConcept : Ty := Ty.intens .e  -- s ⇒ e
 
 -- ============================================================================
 -- PART 3: Intensional Model
 -- ============================================================================
 
 /--
-An intensional model extends the basic model with possible worlds.
+An intensional model for attitudes uses a specific World type.
 
-Following Montague's possible worlds semantics:
-- Each world is an assignment of extensions to expressions
-- Intensions are functions from worlds to extensions
+We create a model with our finite World type for decidable reasoning.
 -/
 structure IModel where
   /-- The domain of entities -/
@@ -91,13 +97,12 @@ structure IModel where
   /-- Decidable equality on entities -/
   decEq : DecidableEq Entity
 
-/-- Interpretation of intensional types in a model -/
-def IModel.interpTy (m : IModel) : ITy → Type
+/-- Interpretation of types in an intensional model -/
+def IModel.interpTy (m : IModel) : Ty → Type
   | .e => m.Entity
   | .t => Bool
   | .s => World
   | .fn σ τ => m.interpTy σ → m.interpTy τ
-  | .intens τ => World → m.interpTy τ
 
 -- ============================================================================
 -- PART 4: Intensional Operators
@@ -111,7 +116,7 @@ every world to x.
 
 In Montague's notation: ^α is the intension of α
 -/
-def up {m : IModel} {τ : ITy} (x : m.interpTy τ) : m.interpTy (^τ) :=
+def up {m : IModel} {τ : Ty} (x : m.interpTy τ) : m.interpTy (Ty.intens τ) :=
   λ _ => x
 
 /--
@@ -122,7 +127,7 @@ then ˇf at w gives the extension of type τ.
 
 In Montague's notation: ˇα is the extension of α at the evaluation world
 -/
-def down {m : IModel} {τ : ITy} (f : m.interpTy (^τ)) (w : World) : m.interpTy τ :=
+def down {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) : m.interpTy τ :=
   f w
 
 -- ============================================================================
@@ -150,7 +155,7 @@ def toyIModel : IModel := {
 "sleeps" as a world-dependent property.
 Different individuals sleep in different worlds.
 -/
-def sleeps : toyIModel.interpTy (^(.e ⇒ .t)) :=
+def sleeps : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
     | .w0, .john => true
     | .w0, .mary => false
@@ -165,7 +170,7 @@ def sleeps : toyIModel.interpTy (^(.e ⇒ .t)) :=
 /--
 "is happy" as a world-dependent property.
 -/
-def happy : toyIModel.interpTy (^(.e ⇒ .t)) :=
+def happy : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
     | .w0, .john => true
     | .w0, .mary => true
@@ -185,7 +190,7 @@ def happy : toyIModel.interpTy (^(.e ⇒ .t)) :=
 "the morning star" - an individual concept (intension of type e)
 that picks out potentially different individuals in different worlds.
 -/
-def morningStar : toyIModel.interpTy ITy.indConcept :=
+def morningStar : toyIModel.interpTy Ty.indConcept :=
   λ w => match w with
     | .w0 => .hesperus
     | .w1 => .hesperus
@@ -195,7 +200,7 @@ def morningStar : toyIModel.interpTy ITy.indConcept :=
 /--
 "the evening star" - another individual concept
 -/
-def eveningStar : toyIModel.interpTy ITy.indConcept :=
+def eveningStar : toyIModel.interpTy Ty.indConcept :=
   λ w => match w with
     | .w0 => .hesperus
     | .w1 => .phosphorus  -- different in w1!
@@ -247,7 +252,7 @@ compatible with what a believes in w.
 
 ⟦believe⟧(a)(p)(w) = ∀w'. R(a,w,w') → p(w')
 -/
-def believe : toyIModel.interpTy (.e ⇒ ITy.prop ⇒ .t) :=
+def believe : toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
   λ agent prop =>
     allWorlds.all λ w' =>
       !believes_access agent .w0 w' || prop w'
@@ -255,7 +260,7 @@ def believe : toyIModel.interpTy (.e ⇒ ITy.prop ⇒ .t) :=
 /--
 Extended believe that's world-dependent.
 -/
-def believeAt : World → toyIModel.interpTy (.e ⇒ ITy.prop ⇒ .t) :=
+def believeAt : World → toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
   λ evalWorld agent prop =>
     allWorlds.all λ w' =>
       !believes_access agent evalWorld w' || prop w'
@@ -274,7 +279,7 @@ not the actual world.
 -/
 def johnBelievesMary_deDicto : toyIModel.interpTy .t :=
   -- The proposition "Mary sleeps" as an intension
-  let marySleeps : toyIModel.interpTy ITy.prop := λ w => sleeps w .mary
+  let marySleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .mary
   believe .john marySleeps
 
 -- At w0: John's belief-accessible worlds are {w0, w2}
@@ -292,7 +297,7 @@ John sleeps at w2? true
 So "John believes John sleeps" is true at w0
 -/
 def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
-  let johnSleeps : toyIModel.interpTy ITy.prop := λ w => sleeps w .john
+  let johnSleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .john
   believe .john johnSleeps
 
 #eval johnBelievesJohnSleeps  -- true
@@ -333,14 +338,16 @@ This connects to the GeurtsPouscoulous2009 data:
 /--
 Proposition: "John ate some cookies" (simplified)
 -/
-def someCookies : toyIModel.interpTy ITy.prop :=
+def someCookies : toyIModel.interpTy Ty.prop :=
   λ _ => true  -- simplified: always true for demo
 
 /--
 Proposition: "John ate all cookies" (simplified)
 -/
-def allCookies : toyIModel.interpTy ITy.prop :=
-  λ w => w == .w0 || w == .w1  -- true in some worlds
+def allCookies : toyIModel.interpTy Ty.prop :=
+  λ w => match w with
+    | .w0 | .w1 => true
+    | .w2 | .w3 => false  -- true in some worlds
 
 /--
 "Mary believes John ate some cookies"
@@ -385,7 +392,7 @@ theorem belief_intensional :
 
 Applying down after up at any world returns the original value.
 -/
-theorem up_down_identity {m : IModel} {τ : ITy} (x : m.interpTy τ) (w : World) :
+theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) :
     down (up x) w = x := rfl
 
 -- ============================================================================
@@ -395,9 +402,13 @@ theorem up_down_identity {m : IModel} {τ : ITy} (x : m.interpTy τ) (w : World)
 /-
 ## What This Module Provides
 
-### Types
+### Types (using canonical Montague.Ty)
+- `Ty.intens τ` = `s ⇒ τ` : intension of type τ
+- `Ty.prop` = `s ⇒ t` : propositions
+- `Ty.indConcept` = `s ⇒ e` : individual concepts
+
+### Model
 - `World`: Finite set of possible worlds
-- `ITy`: Intensional type system (e, t, s, →, ^)
 - `IModel`: Intensional model with entities
 
 ### Operators

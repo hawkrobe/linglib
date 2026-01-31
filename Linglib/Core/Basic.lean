@@ -124,9 +124,9 @@ def wordsToString (ws : List Word) : String :=
 -- ============================================================================
 
 -- The lexicon of words has been moved to the Fragments/ directory:
--- - Fragments/Verbs.lean: Verb entries with argument structure and semantics
+-- - Fragments/Predicates.lean: Predicate entries (verbs, adjectival predicates) with argument structure and semantics
 -- - Fragments/Nouns.lean: Noun entries
 -- - Fragments/Determiners.lean: Determiner entries
 -- - Fragments/Pronouns.lean: Pronoun entries
--- - Fragments/Adjectives.lean: Adjective entries
+-- - Fragments/Modifiers.lean: Modifier entries (adjectives, adverbs)
 -- - Fragments/FunctionWords.lean: Prepositions, complementizers, auxiliaries

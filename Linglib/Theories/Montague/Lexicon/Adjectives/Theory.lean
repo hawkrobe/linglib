@@ -232,56 +232,13 @@ def AdjectiveTheory.negatedAntonym {max : Nat} (T : AdjectiveTheory max)
     T.positiveMeaning d tp.pos  -- Collapses to positive
 
 -- ============================================================================
--- Sample Lexical Entries
+-- Lexical Entries
 -- ============================================================================
 
-/-- "tall" — open scale, contrary to "short" -/
-def tall_entry : GradableAdjEntry 10 where
-  form := "tall"
-  scaleType := .open_
-  dimension := "height"
-  antonymForm := some "short"
-  antonymRelation := some .contrary
-
-/-- "short" — open scale, contrary to "tall" -/
-def short_entry : GradableAdjEntry 10 where
-  form := "short"
-  scaleType := .open_
-  dimension := "height"
-  antonymForm := some "tall"
-  antonymRelation := some .contrary
-
-/-- "happy" — open scale, contrary to "unhappy" -/
-def happy_entry : GradableAdjEntry 10 where
-  form := "happy"
-  scaleType := .open_
-  dimension := "happiness"
-  antonymForm := some "unhappy"
-  antonymRelation := some .contrary
-
-/-- "unhappy" — open scale, contrary to "happy" -/
-def unhappy_entry : GradableAdjEntry 10 where
-  form := "unhappy"
-  scaleType := .open_
-  dimension := "happiness"
-  antonymForm := some "happy"
-  antonymRelation := some .contrary
-
-/-- "full" — closed scale, contradictory to "empty" -/
-def full_entry : GradableAdjEntry 10 where
-  form := "full"
-  scaleType := .closed
-  dimension := "fullness"
-  antonymForm := some "empty"
-  antonymRelation := some .contradictory  -- Closed scales often contradictory
-
-/-- "empty" — closed scale, contradictory to "full" -/
-def empty_entry : GradableAdjEntry 10 where
-  form := "empty"
-  scaleType := .closed
-  dimension := "fullness"
-  antonymForm := some "full"
-  antonymRelation := some .contradictory
+-- Concrete lexical entries (tall, short, happy, etc.) are defined in:
+-- `Fragments/English/Predicates/Adjectival.lean`
+--
+-- This module provides only the theoretical infrastructure.
 
 -- ============================================================================
 -- Theorems

@@ -1,38 +1,38 @@
 /-
-# Verb Lexicon Fragment
+# Verbal Predicate Lexicon Fragment
 
-Unified lexical entries for verbs, bundling everything needed to work with
+Lexical entries for verbal predicates, bundling everything needed to work with
 a verb in semantic/pragmatic analysis:
-- Surface form(s)
+- Surface form(s) and morphology
 - Syntactic category/valence
-- Semantic type
+- Argument structure (theta roles, control)
 - Presupposition structure (if any)
-- Denotation function
+- Link to compositional semantics
 
 ## Design
 
-Each `VerbEntry` provides the complete specification for a verb lexeme.
+Each `VerbalPredicateEntry` provides the complete specification for a verbal predicate.
 Downstream applications (RSA, NeoGricean, parsers) import this module
 and get all the semantic machinery they need.
 
-## Verb Classes
+## Predicate Classes
 
-1. **Simple verbs** (sleep, run): No presupposition, standard denotation
-2. **Factive verbs** (know, regret): Presuppose complement truth
-3. **Change-of-state verbs** (stop, start): Presuppose prior state
-4. **Implicative verbs** (manage, fail): Entailment patterns
-5. **Attitude verbs** (believe, think): No presupposition, opaque contexts
+1. **Simple** (sleep, run): No presupposition, standard denotation
+2. **Factive** (know, regret): Presuppose complement truth
+3. **Change-of-state** (stop, start): Presuppose prior state
+4. **Implicative** (manage, fail): Entailment patterns
+5. **Attitude** (believe, think, hope): Opaque contexts, preferential/doxastic semantics
 
 ## Usage
 
 ```lean
-import Linglib.Fragments.Verbs
+import Linglib.Fragments.English.Predicates.Verbal
 
 -- Get the lexical entry for "stop"
-#check Verbs.stop
--- VerbEntry with:
+#check Predicates.Verbal.stop
+-- VerbalPredicateEntry with:
 --   form = "stop"
---   verbClass = .changeOfState
+--   predicateClass = .changeOfState
 --   presupType = some .softTrigger
 --   cosType = some .cessation
 ```
@@ -44,7 +44,7 @@ import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
 import Linglib.Theories.Montague.Lexicon.Attitudes.Doxastic
 import Linglib.Theories.Montague.Lexicon.Attitudes.Preferential
 
-namespace Fragments.English.Verbs
+namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
 open Montague.Lexicon.ChangeOfState
@@ -1071,4 +1071,4 @@ def toWordBase (v : VerbEntry) : Word :=
 **Question-embedding**: wonder, ask
 -/
 
-end Fragments.English.Verbs
+end Fragments.English.Predicates.Verbal

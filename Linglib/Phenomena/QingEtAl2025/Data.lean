@@ -29,10 +29,10 @@ The paper identifies three classes of NVPs based on:
   When can non-veridical preferential attitude predicates take questions?
 -/
 
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Fragments.Japanese.Verbs
-import Linglib.Fragments.Turkish.Verbs
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Turkish.Predicates
 
 namespace Phenomena.QingEtAl2025
 
@@ -160,8 +160,8 @@ The verb entries in `Fragments/` contain the semantic properties.
 We can verify that predictions match observations:
 
 ```lean
--- From Fragments/English/Verbs.lean:
-Fragments.English.Verbs.hope.nvpClass = some .class3_cDist_positive
+-- From Fragments/English/Predicates/Verbal.lean:
+Fragments.English.Predicates.Verbal.hope.nvpClass = some .class3_cDist_positive
 -- This predicts: canTakeQuestion = false
 
 -- From Phenomena/QingEtAl2025/Data.lean:
