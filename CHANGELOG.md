@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.34.0] - 2025-01-30
+
+### Added
+- **Core/ProbabilisticDynamics.lean**: Grove & White PDS monad infrastructure
+  - `ProbMonad`: Abstract probability monad with monad laws
+  - `PState`: Parameterized state monad for discourse dynamics
+  - `CondProbMonad`: Conditioning via `observe` and `fail`
+  - `ChoiceProbMonad`: Softmax choice for speaker models
+  - `probProp`: Probability of Boolean property under distribution
+  - Threshold semantics showing graded = Boolean + uncertainty
+
+- **Theories/Comparisons/RSAandPDS.lean**: RSA as special case of PDS
+  - `BooleanRSA`: Boolean literal semantics structure
+  - `MonadicRSA`: RSA with explicit monadic operations
+  - `ThresholdAdjective`: Lassiter & Goodman threshold semantics
+  - Theorems: L0 = observe, S1 = choose, L1 = marginalize
+
+### References
+- Grove & White. Probabilistic Dynamic Semantics.
+- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
+
 ## [0.33.1] - 2025-01-30
 
 ### Changed
