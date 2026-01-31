@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.39.0] - 2025-01-31
+
+### Added
+- **Theories/Montague/Basic.lean**: Type `s` for possible worlds, intensional Model
+- **Theories/Montague/Conjunction.lean**: Partee & Rooth (1983) key theorems
+  - `genConj_pointwise`, `genConj_distributes_over_app`, `genConj_lambda_distribution`
+- **Theories/Montague/Frames/Basic.lean**: Frame semantics infrastructure
+- **Core/ProductOfExperts.lean**: Multiplicative probability combination
+- **Theories/RSA/Core/Noise.lean**: Unified noise channel theory
+- **Phenomena/Degrees.lean**: Degree phenomena (split from Vagueness)
+- **Phenomena/KursatDegen2021/Data.lean**: Perceptual difficulty data
+- **Phenomena/Generics/Data.lean**: Generic sentence phenomena
+- **Phenomena/Ellipsis/FragmentAnswers.lean**: Fragment answer data
+- **Phenomena/Focus/ProsodicExhaustivity.lean**: Prosodic exhaustivity phenomena
+- **Theories/Comparisons/SDSandRSA.lean**: SDS ↔ LU-RSA correspondence
+- **Theories/Comparisons/ThresholdSemantics.lean**: Threshold semantics comparison
+- **Theories/RSA/Implementations/BergenGoodman2015.lean**: Pragmatic reasoning via semantic inference
+- **Theories/RSA/Implementations/TesslerGoodman2019.lean**: Flexible negation RSA
+- **Fragments/LexicalAmbiguity.lean**: Lexical ambiguity infrastructure
+- **Theories/Montague/Lexicon/GradableNouns.lean**: Gradable noun semantics
+- **Theories/Montague/Lexicon/SelectionalPreferences.lean**: Selectional restriction semantics
+- **Conjectures.lean**: Open conjectures and work-in-progress
+
+### Changed
+- **Theories/RSA/DegenEtAl2020.lean**: Product of Experts semantics, noise decomposition theorems
+- **Phenomena/Vagueness/Data.lean**: Trimmed to vagueness-only (degrees moved out)
+- **Questions/ConjoinableTypes.lean** → **Questions/Hamblin.lean**: Renamed
+
 ## [0.38.0] - 2025-01-31
 
 ### Added
