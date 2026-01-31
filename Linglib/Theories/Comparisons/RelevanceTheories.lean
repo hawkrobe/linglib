@@ -281,16 +281,22 @@ If U(w, a) depends only on which cell w is in, the DP is QUD-equivalent.
 def dpToQUD {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (actions : List A) : GSQuestion W where
   -- Two worlds are equivalent iff they have the same utility profile
-  equiv w v := actions.all fun a => dp.utility w a == dp.utility v a
+  sameAnswer w v := actions.all fun a => dp.utility w a == dp.utility v a
   refl w := by
     simp only [List.all_eq_true]
     intro a _
     exact beq_self_eq_true (dp.utility w a)
   symm w v := by
-    -- Need to show: (all a. U(w,a) == U(v,a)) = (all a. U(v,a) == U(w,a))
     congr 1
     funext a
     simp only [BEq.comm]
+  trans w v x hwv hvx := by
+    simp only [List.all_eq_true] at *
+    intro a ha
+    have h1 := hwv a ha
+    have h2 := hvx a ha
+    rw [beq_iff_eq] at *
+    exact h1.trans h2
 
 -- ============================================================================
 -- PART 5: Theorem 3 - DT Strictly More Expressive than QUD

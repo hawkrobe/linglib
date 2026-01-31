@@ -1,5 +1,6 @@
 import Linglib.Theories.Montague.Questions.Partition
 import Linglib.Theories.Montague.Questions.ConjoinableTypes
+import Linglib.Theories.Montague.Questions.LiftedTypes
 
 /-!
 # Questions/Coordination.lean
@@ -81,20 +82,21 @@ theorem conjGSQuestion_refines_right {W : Type*} (q1 q2 : GSQuestion W) :
 
 /-- Conjunction is commutative (up to equivalence). -/
 theorem conjGSQuestion_comm {W : Type*} (q1 q2 : GSQuestion W) (w v : W) :
-    (q1 + q2).equiv w v = (q2 + q1).equiv w v := by
+    (q1 + q2).sameAnswer w v = (q2 + q1).sameAnswer w v := by
   simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose]
   exact Bool.and_comm _ _
 
 /-- Conjunction is associative. -/
 theorem conjGSQuestion_assoc {W : Type*} (q1 q2 q3 : GSQuestion W) (w v : W) :
-    ((q1 + q2) + q3).equiv w v = (q1 + (q2 + q3)).equiv w v := by
+    ((q1 + q2) + q3).sameAnswer w v = (q1 + (q2 + q3)).sameAnswer w v := by
   simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose]
   exact Bool.and_assoc _ _ _
 
 /-- The trivial question is the unit for conjunction. -/
-theorem conjGSQuestion_trivial_left {W : Type*} (q : GSQuestion W) (w v : W) :
-    (GSQuestion.trivial + q).equiv w v = q.equiv w v := by
-  simp [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose, GSQuestion.trivial]
+theorem conjGSQuestion_trivial_left {W : Type*} [BEq W] (q : GSQuestion W) (w v : W) :
+    (GSQuestion.trivial + q).sameAnswer w v = q.sameAnswer w v := by
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose, GSQuestion.trivial,
+             QUD.trivial, QUD.compose, Bool.true_and]
 
 -- ============================================================================
 -- Disjunctive Interrogatives
@@ -119,28 +121,36 @@ For the partition semantics, we focus on the MEET interpretation
 where both questions contribute to the answer.
 -/
 
-/-- Disjunction of GSQuestions as join (finest common coarsening).
+/-!
+### Disjunction of Questions
 
-Two worlds are equivalent under (Q₁ ∨ Q₂) iff they are equivalent
-under Q₁ OR equivalent under Q₂.
+**IMPORTANT**: Disjunction of equivalence relations is NOT an equivalence relation!
+Transitivity fails: w ~₁ v and v ~₂ u does NOT imply w ~₁ u or w ~₂ u.
 
-Note: This is NOT the standard lattice join for partitions. G&S use
-a different notion where disjunction yields a COARSER partition. -/
-def disjGSQuestion {W : Type*} (q1 q2 : GSQuestion W) : GSQuestion W where
-  equiv w v := q1.equiv w v || q2.equiv w v
-  refl w := by simp [q1.refl, q2.refl]
-  symm w v := by simp [q1.symm, q2.symm, Bool.or_comm]
+The correct approach is to use LIFTED TYPES (see LiftedTypes.lean):
+- `LiftedQuestion.disj` works correctly at the lifted level
+- Use `LiftedQuestion.disjCore q1 q2` for disjunction of core questions
+
+Note: `disjGSQuestion` was removed from this file because it's semantically invalid.
+-/
 
 /-- Alternative question from a list of alternatives.
 
 "Did P₁ or P₂ or ... or Pₙ?" partitions by which Pᵢ is true. -/
 def alternativeQuestion {W : Type*} (alts : List (W -> Bool)) : GSQuestion W where
-  equiv w v := alts.all fun p => p w == p v
+  sameAnswer w v := alts.all fun p => p w == p v
   refl w := List.all_eq_true.mpr fun _ _ => beq_self_eq_true _
   symm w v := by
     congr 1
     funext p
     cases p w <;> cases p v <;> rfl
+  trans w v x hwv hvx := by
+    simp only [List.all_eq_true] at *
+    intro p hp
+    have h1 := hwv p hp
+    have h2 := hvx p hp
+    rw [beq_iff_eq] at *
+    exact h1.trans h2
 
 /-- A polar question about a disjunction.
 
@@ -182,7 +192,7 @@ theorem conj_is_meet {W : Type*} (q1 q2 q : GSQuestion W)
     q ⊑ (q1 + q2) := by
   intro w v hq
   simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose,
-             Bool.and_eq_true]
+             QUD.compose, Bool.and_eq_true]
   exact ⟨h1 w v hq, h2 w v hq⟩
 
 /-- Conjunction preserves refinement in both arguments. -/
@@ -191,7 +201,7 @@ theorem conj_monotone_left {W : Type*} (q1 q1' q2 : GSQuestion W)
     (q1 + q2) ⊑ (q1' + q2) := by
   intro w v heq
   simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose,
-             Bool.and_eq_true] at *
+             QUD.compose, Bool.and_eq_true] at *
   exact ⟨h w v heq.1, heq.2⟩
 
 -- ============================================================================
@@ -218,15 +228,34 @@ structure EmbeddedCoordination (W : Type*) where
   /-- Coordination type -/
   coordType : Bool  -- true = conjunction, false = disjunction
 
-/-- Compute the coordinated question meaning. -/
-def EmbeddedCoordination.meaning {W : Type*} (ec : EmbeddedCoordination W) : GSQuestion W :=
+/-- Compute the coordinated question meaning (conjunction only).
+
+For conjunction, we can stay at the partition level since conjunction
+of equivalence relations IS an equivalence relation.
+
+For disjunction, use `meaningLifted` instead. -/
+def EmbeddedCoordination.meaningConj {W : Type*} [BEq W] (ec : EmbeddedCoordination W)
+    (hConj : ec.coordType = true) : GSQuestion W :=
   match ec.questions with
   | [] => GSQuestion.trivial
+  | q :: qs => qs.foldl (· + ·) q
+
+/-- Compute the coordinated question meaning (general case, returns lifted type).
+
+This handles both conjunction and disjunction correctly by working at the
+lifted type level where disjunction is well-defined. -/
+def EmbeddedCoordination.meaningLifted {W : Type*} [BEq W] (ec : EmbeddedCoordination W)
+    : LiftedTypes.LiftedQuestion W :=
+  match ec.questions with
+  | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
   | q :: qs =>
+    let liftedQ := LiftedTypes.LiftedQuestion.lift q
     if ec.coordType then
-      qs.foldl (· + ·) q  -- Conjunction
+      -- Conjunction: lift each and conjoin
+      qs.foldl (fun acc q' => LiftedTypes.LiftedQuestion.conj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
     else
-      qs.foldl disjGSQuestion q  -- Disjunction
+      -- Disjunction: lift each and disjoin (this is the key fix!)
+      qs.foldl (fun acc q' => LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
 
 -- ============================================================================
 -- Sluicing and Coordinated Antecedents
@@ -278,7 +307,7 @@ def functionallyDependent {W : Type*} (q1 q2 : GSQuestion W) (worlds : List W) :
   -- Check if there exist w, v in same q1-cell but different q2-cells
   worlds.any fun w =>
     worlds.any fun v =>
-      q1.equiv w v && !q2.equiv w v
+      q1.sameAnswer w v && !q2.sameAnswer w v
 
 /-- When Q₂ is functionally dependent on Q₁, conjunction gives pair-list readings. -/
 theorem functional_dep_gives_pairlist {W : Type*}
@@ -309,7 +338,7 @@ a conjunction of questions, one per professor.
 /-- A quantified question with universal over wh-phrase.
 
 "Which X did every Y verb?" can be analyzed as ∧_{y∈Y} "Which X did y verb?" -/
-def pairListAsConjunction {W E : Type*}
+def pairListAsConjunction {W E : Type*} [BEq W]
     (quantDomain : List E)  -- The universally quantified domain (professors)
     (questionFor : E -> GSQuestion W)  -- Question for each element
     : GSQuestion W :=
@@ -318,7 +347,7 @@ def pairListAsConjunction {W E : Type*}
   | e :: es => es.foldl (fun acc e' => acc + questionFor e') (questionFor e)
 
 /-- The pair-list reading refines any individual question. -/
-theorem pairList_refines_individual {W E : Type*}
+theorem pairList_refines_individual {W E : Type*} [BEq W]
     (quantDomain : List E) (questionFor : E -> GSQuestion W) (e : E)
     (hIn : e ∈ quantDomain) :
     (pairListAsConjunction quantDomain questionFor) ⊑ (questionFor e) := by

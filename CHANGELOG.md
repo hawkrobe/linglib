@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.35.0] - 2025-01-31
+
+### Changed
+- **Unified QUD and GSQuestion**: `GSQuestion` is now an abbreviation for `QUD`
+  - Single source of truth for partition/equivalence semantics in `Core/QUD.lean`
+  - Added `trans` field to `QUD` to enforce full equivalence relation (reflexive, symmetric, transitive)
+  - All theorems proven for QUD now apply to GSQuestion automatically
+
+- **Removed invalid `disjGSQuestion`**: Disjunction of equivalence relations violates transitivity
+  - Proper solution uses lifted types (continuation monad): `LiftedQuestion W = (GSQuestion W → Prop) → Prop`
+  - `LiftedTypes.LiftedQuestion.disj` correctly handles question disjunction
+  - Updated `Coordination.lean` and `ScopeReadings.lean` to use lifted types for disjunctive readings
+
+### Architecture
+- **Deep integration**: QUD = Partition = Decision Problem theorem chain now unified
+- **Barker & Shan connection**: Lifted question types form continuation monad with proper monad laws
+
+### References
+- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
+- Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
+- Barker & Shan (2014). Continuations and Natural Language.
+
 ## [0.34.0] - 2025-01-30
 
 ### Added

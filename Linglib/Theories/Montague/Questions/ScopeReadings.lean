@@ -98,7 +98,7 @@ The partition groups worlds by the ENTIRE function from Y to X:
 Two worlds are equivalent iff they have the same pair-list. -/
 def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
     (plq : PairListQuestion W E) : GSQuestion W where
-  equiv w v :=
+  sameAnswer w v :=
     -- Same iff for all y∈Y, the unique x with R(y,x) is the same
     plq.universalDomain.all fun y =>
       plq.whDomain.all fun x =>
@@ -113,17 +113,34 @@ def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
     congr 1
     funext x
     cases plq.relation w y x <;> cases plq.relation v y x <;> rfl
+  trans w v x hwv hvx := by
+    simp only [List.all_eq_true] at *
+    intro y hy z hz
+    have h1 := hwv y hy z hz
+    have h2 := hvx y hy z hz
+    rw [beq_iff_eq] at *
+    exact h1.trans h2
+
+/-- Build individual question for a specific universal element. -/
+def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E] [DecidableEq (List E)]
+    (plq : PairListQuestion W E) (y : E) : GSQuestion W where
+  sameAnswer w v :=
+    decide (plq.whDomain.filter (fun x => plq.relation w y x) =
+            plq.whDomain.filter (fun x => plq.relation v y x))
+  refl w := by simp [decide_eq_true_iff]
+  symm w v := by simp [decide_eq_decide]; exact eq_comm
+  trans w v x hwv hvx := by
+    simp only [decide_eq_true_iff] at *
+    exact hvx ▸ hwv
 
 /-- A pair-list question is equivalent to a conjunction of individual questions.
 
 ∀y. ?x. R(y,x) = ∧_{y∈Y} ?x. R(y,x)
 
 Note: The formal statement requires universe matching; see pairListAsConjunction. -/
-theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [DecidableEq (List E)]
+theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [DecidableEq (List E)] [BEq W]
     (plq : PairListQuestion W E) :
-    let individual := fun y => GSQuestion.ofProject (fun w =>
-      plq.whDomain.filter (fun x => plq.relation w y x))
-    plq.toGSQuestion = pairListAsConjunction plq.universalDomain individual := by
+    plq.toGSQuestion = pairListAsConjunction plq.universalDomain plq.individualQuestion := by
   sorry -- The partition induced by pair-list = conjunction of individual questions
 
 /-- Number of cells in pair-list: can be up to |X|^|Y| (exponential).
@@ -192,28 +209,39 @@ def ChoiceQuestion.conditionalAnswer {W E : Type*} [DecidableEq E]
   cq.disjuncts.map fun d =>
     (d, cq.whDomain.filter (cq.relation w d))
 
-/-- Convert choice question to GSQuestion under choice reading.
+/-- Convert choice question to LiftedQuestion under choice reading.
 
-Two worlds are equivalent iff for SOME disjunct, they give the same answer.
-(This is a coarser partition than requiring ALL disjuncts to match.) -/
-def ChoiceQuestion.toGSQuestion_choice {W E : Type*} [DecidableEq E]
-    (cq : ChoiceQuestion W E) : GSQuestion W where
-  equiv w v :=
-    -- Same iff exists some d where answers match
-    cq.disjuncts.any fun d =>
-      cq.whDomain.all fun x =>
-        cq.relation w d x == cq.relation v d x
-  refl w := by
-    -- At least one disjunct must have matching answers (reflexively true)
-    sorry
-  symm w v := by
-    -- Symmetry of component-wise equality
-    sorry
+The choice reading involves existential quantification over disjuncts,
+which is like disjunction. Since disjunction of equivalence relations
+is NOT an equivalence relation, we must use the lifted type.
+
+Two worlds are equivalent iff for SOME disjunct, they give the same answer. -/
+def ChoiceQuestion.toLiftedQuestion_choice {W E : Type*} [BEq W] [DecidableEq E]
+    (cq : ChoiceQuestion W E) : LiftedTypes.LiftedQuestion W :=
+  -- The choice reading is a disjunction over the per-disjunct questions
+  -- We build each question directly to avoid LawfulBEq constraint on List E
+  let mkQuestion (d : E) : GSQuestion W := {
+    sameAnswer := fun w v =>
+      decide (cq.whDomain.filter (fun x => cq.relation w d x) =
+              cq.whDomain.filter (fun x => cq.relation v d x))
+    refl := fun w => by simp [decide_eq_true_iff]
+    symm := fun w v => by simp [decide_eq_decide]; exact eq_comm
+    trans := fun w v x hwv hvx => by
+      simp only [decide_eq_true_iff] at *
+      exact hvx ▸ hwv
+  }
+  let perDisjunct := cq.disjuncts.map mkQuestion
+  match perDisjunct with
+  | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
+  | q :: qs =>
+    qs.foldl (fun acc q' =>
+      LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q'))
+      (LiftedTypes.LiftedQuestion.lift q)
 
 /-- Under NON-choice reading, worlds match iff ALL disjunct-answers match. -/
 def ChoiceQuestion.toGSQuestion_nonchoice {W E : Type*} [DecidableEq E]
     (cq : ChoiceQuestion W E) : GSQuestion W where
-  equiv w v :=
+  sameAnswer w v :=
     -- Same iff all disjuncts give same answer
     cq.disjuncts.all fun d =>
       cq.whDomain.all fun x =>
@@ -225,12 +253,26 @@ def ChoiceQuestion.toGSQuestion_nonchoice {W E : Type*} [DecidableEq E]
   symm w v := by
     -- Symmetry of component-wise equality
     sorry
+  trans w v x hwv hvx := by
+    simp only [List.all_eq_true] at *
+    intro d hd e he
+    have h1 := hwv d hd e he
+    have h2 := hvx d hd e he
+    rw [beq_iff_eq] at *
+    exact h1.trans h2
 
-/-- Choice reading gives COARSER partition than non-choice. -/
-theorem choice_coarser_than_nonchoice {W E : Type*} [DecidableEq E]
-    (cq : ChoiceQuestion W E) :
-    cq.toGSQuestion_nonchoice ⊑ cq.toGSQuestion_choice := by
-  sorry -- Follows from: if all disjuncts match, then some disjunct matches
+/-!
+### Relationship between choice and non-choice readings
+
+The choice reading (existential/disjunctive) is semantically COARSER than
+the non-choice reading (universal/conjunctive). However, since they now
+have different types (LiftedQuestion vs GSQuestion), direct comparison
+via refinement (⊑) is not available.
+
+To compare them, lift the non-choice reading and show that the lifted
+non-choice "entails" the choice reading in the sense that any property
+holding of all disjunct-questions holds of at least one.
+-/
 
 -- ============================================================================
 -- PART 3: Existential Wide Scope
@@ -264,24 +306,45 @@ structure ExistentialQuestion (W E : Type*) where
 
 /-- Narrow scope: ∃y. ?x. R(y,x) collapses to ?x. ∃y. R(y,x) -/
 def ExistentialQuestion.narrowScope {W E : Type} [DecidableEq E] [DecidableEq (List E)]
-    (eq : ExistentialQuestion W E) : GSQuestion W :=
-  GSQuestion.ofProject fun w =>
-    eq.whDomain.filter fun x =>
-      eq.existentialDomain.any fun y => eq.relation w y x
+    (eq : ExistentialQuestion W E) : GSQuestion W where
+  sameAnswer w v :=
+    let answersW := eq.whDomain.filter fun x => eq.existentialDomain.any fun y => eq.relation w y x
+    let answersV := eq.whDomain.filter fun x => eq.existentialDomain.any fun y => eq.relation v y x
+    decide (answersW = answersV)
+  refl w := by simp [decide_eq_true_iff]
+  symm w v := by simp [decide_eq_decide]; exact eq_comm
+  trans w v x hwv hvx := by
+    simp only [decide_eq_true_iff] at *
+    exact hvx ▸ hwv
 
 /-- Wide scope: for the "relevant" y, what's the answer?
 
 This is similar to choice reading - the answer can vary based on
-which existential witness is considered. -/
-def ExistentialQuestion.wideScope {W E : Type*} [DecidableEq E]
-    (eq : ExistentialQuestion W E) : GSQuestion W where
-  equiv w v :=
-    -- Same iff some y gives same answer in both worlds
-    eq.existentialDomain.any fun y =>
-      eq.whDomain.all fun x =>
-        eq.relation w y x == eq.relation v y x
-  refl w := sorry -- At least one existential witness gives matching answers
-  symm w v := sorry -- Symmetry of component-wise equality
+which existential witness is considered.
+
+Since this involves existential quantification (which is like disjunction),
+we must use the lifted type to avoid the transitivity problem. -/
+def ExistentialQuestion.wideScope {W E : Type*} [BEq W] [DecidableEq E]
+    (eq : ExistentialQuestion W E) : LiftedTypes.LiftedQuestion W :=
+  -- Wide scope is a disjunction over the per-witness questions
+  -- Build each question directly to avoid LawfulBEq constraint on List E
+  let mkQuestion (y : E) : GSQuestion W := {
+    sameAnswer := fun w v =>
+      decide (eq.whDomain.filter (fun x => eq.relation w y x) =
+              eq.whDomain.filter (fun x => eq.relation v y x))
+    refl := fun w => by simp [decide_eq_true_iff]
+    symm := fun w v => by simp [decide_eq_decide]; exact eq_comm
+    trans := fun w v x hwv hvx => by
+      simp only [decide_eq_true_iff] at *
+      exact hvx ▸ hwv
+  }
+  let perWitness := eq.existentialDomain.map mkQuestion
+  match perWitness with
+  | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
+  | q :: qs =>
+    qs.foldl (fun acc q' =>
+      LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q'))
+      (LiftedTypes.LiftedQuestion.lift q)
 
 -- ============================================================================
 -- PART 4: Functional Readings
@@ -360,10 +423,15 @@ structure MentionSomeQuestion (W : Type*) where
 /-- Wide scope existential can create mention-some-like readings.
 
 If the question is parameterized by an existential, answering for
-ANY witness can suffice, mimicking mention-some. -/
-def existentialCreatesMentionSome {W E : Type*} [DecidableEq E]
+ANY witness can suffice, mimicking mention-some.
+
+Note: We use the narrow scope GSQuestion here for compatibility with
+MentionSomeQuestion, but the semantics is that mention-some is licensed
+due to the wide-scope existential interpretation. For the true wide-scope
+semantics as a LiftedQuestion, use `eq.wideScope` directly. -/
+def existentialCreatesMentionSome {W E : Type} [DecidableEq E] [DecidableEq (List E)]
     (eq : ExistentialQuestion W E) : MentionSomeQuestion W :=
-  { question := eq.wideScope
+  { question := eq.narrowScope
   , mentionSome := true
   , explanation := "Wide-scope existential: answer for any witness suffices"
   }
