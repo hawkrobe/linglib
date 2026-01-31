@@ -10,19 +10,26 @@
   - `veridicalPreferential_isCDistributiveAt`: C-distributivity for world-sensitive semantics
 
 - **Fragments/English/Predicates/Adjectival.lean**: Adjectival predicate entries (Kennedy & McNally 2005)
-  - `tall`, `short`, `happy`, `unhappy`, `full`, `empty`, etc.
-  - Moved from Theories to Fragments (separation of theory from lexicon)
+  - Predicative uses: "John is tall", "John is happy"
+  - Scale types, antonym relations (contrary/contradictory)
+
+- **Fragments/English/Modifiers/Adjectives.lean**: Adjective modifier entries
+  - Attributive uses: "a tall man", "the taller candidate"
+  - Morphology: comparative (taller), superlative (tallest)
+  - Antonym forms and relations
 
 ### Changed
 - **Fragments reorganization**: `Verbs.lean` → `Predicates/Verbal.lean` + `Predicates/Adjectival.lean`
   - Verbal predicates: know, believe, hope, fear, run, kick...
-  - Adjectival predicates: tall, happy, full... (1-place gradable adjectives)
+  - Adjectival predicates: tall, happy, full... (predicative 1-place)
+  - Adjective modifiers: tall, happy, full... (attributive with morphology)
   - Organizes by grammatical function, not semantic mechanism
 
 ### Architecture
 - **Veridical breaks triviality**: Non-veridicality is NECESSARY for anti-rogativity
   - C-dist + positive + TSP → trivial ONLY IF non-veridical
   - Veridical predicates (be happy) can take questions despite C-dist + positive
+- **Predicates vs Modifiers**: Separate entries for predicative vs attributive adjective uses
 
 ## [0.37.0] - 2025-01-31
 
