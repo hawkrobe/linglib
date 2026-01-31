@@ -40,6 +40,8 @@ referring expressions. Psychological Review, 127(4), 591-621.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
+import Linglib.Theories.RSA.Core.Noise
+import Linglib.Core.ProductOfExperts
 import Linglib.Fragments.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
@@ -165,6 +167,38 @@ def defaultParams : SemanticParams := {}
 def highNoiseSizeParams : SemanticParams :=
   { sizeMatch := 7/10, sizeMismatch := 3/10 }
 
+/-!
+## Perceptual Difficulty Interpretation (Kursat & Degen 2021)
+
+The noise parameters reflect **perceptual difficulty** of property verification:
+- Color: easy to perceive → high match (0.99), low mismatch (0.01)
+- Size: harder to perceive → lower match (0.80), higher mismatch (0.20)
+- Material: hardest to perceive → even lower discrimination
+
+See: `Phenomena/KursatDegen2021/Data.lean`
+-/
+
+/-- Hypothetical material parameters based on Kursat & Degen (2021).
+
+Material is perceptually harder than size:
+- Higher error rates in property verification
+- Longer response times
+- Less redundant use in production
+
+Therefore we expect lower discrimination than size.
+-/
+def materialParams : SemanticParams :=
+  { colorMatch := 99/100
+  , colorMismatch := 1/100
+  , sizeMatch := 8/10
+  , sizeMismatch := 2/10
+  -- Material would need to be added to SemanticParams to use directly
+  -- For now, we note the hypothetical values:
+  -- materialMatch := 7/10
+  -- materialMismatch := 3/10
+  -- Discrimination = 0.40 (lower than size's 0.60)
+  }
+
 -- ============================================================================
 -- Continuous Semantics φ
 -- ============================================================================
@@ -175,7 +209,25 @@ Continuous semantic value: φ(utterance, object) ∈ [0, 1]
 Unlike Boolean semantics where φ ∈ {0, 1}, this returns
 graded values reflecting semantic reliability/noise.
 
-The total semantic value is the product of component values.
+## Product of Experts Semantics
+
+The total semantic value is the **product** of component values:
+```
+φ(u, o) = φ_type(u, o) × φ_color(u, o) × φ_size(u, o)
+```
+
+This is the **Product of Experts** pattern (see `Core.ProductOfExperts`):
+- Each feature (type, color, size) acts as an "expert"
+- All experts must agree for high probability
+- One low value (e.g., type mismatch = 0) kills the product
+
+This multiplicative combination is the same pattern as:
+- SDS (Erk & Herbelot 2024): selectional × scenario
+- Adjective composition: P(big red dog) ∝ P(big) × P(red) × P(dog)
+
+The key difference from additive combination (CombinedUtility):
+- Additive: trading off competing objectives
+- Multiplicative: combining constraints that must ALL hold
 -/
 def φ (params : SemanticParams) (u : ReferringExpression) (o : Object) : ℚ :=
   let typeVal := match u.nominal with
@@ -188,6 +240,28 @@ def φ (params : SemanticParams) (u : ReferringExpression) (o : Object) : ℚ :=
     | none => 1  -- No size constraint
     | some s => if s == o.size then params.sizeMatch else params.sizeMismatch
   typeVal * colorVal * sizeVal
+
+/--
+φ expressed using the unnormalized Product of Experts pattern.
+
+This shows that φ is exactly the unnormalized PoE of three feature experts.
+(Normalization isn't needed here because we're computing semantic values,
+not probability distributions over objects.)
+-/
+theorem φ_is_product_of_experts (params : SemanticParams)
+    (u : ReferringExpression) (o : Object) :
+    φ params u o = Core.ProductOfExperts.unnormalizedProduct
+      [fun _ => match u.nominal with
+         | none => 1
+         | some t => if t == o.objType then params.typeMatch else params.typeMismatch,
+       fun _ => match u.colorAdj with
+         | none => 1
+         | some c => if c == o.color then params.colorMatch else params.colorMismatch,
+       fun _ => match u.sizeAdj with
+         | none => 1
+         | some s => if s == o.size then params.sizeMatch else params.sizeMismatch]
+      () := by
+  simp only [φ, Core.ProductOfExperts.unnormalizedProduct, List.foldl, one_mul]
 
 -- ============================================================================
 -- Utterance Cost
@@ -513,6 +587,148 @@ def s1_high_var : List (ReferringExpression × ℚ) :=
 
 #eval s1_high_var
 #eval colorOvermodificationRate s1_high_var  -- Should be higher than s1_scene2
+
+-- ============================================================================
+-- Theoretical Results: Degen = Boolean × Noise
+-- ============================================================================
+
+/-!
+## Key Theoretical Result
+
+The continuous semantics of Degen et al. can be decomposed as:
+**Boolean semantics passed through independent noise channels**.
+
+This formalizes the intuition that "graded semantics = Boolean + noise".
+-/
+
+-- Use noiseChannel from the unified noise module
+def noiseChannel := RSA.Noise.noiseChannel
+
+/--
+The Boolean meaning for type features (1 if matches or unspecified, 0 otherwise).
+-/
+def booleanTypeVal (u : ReferringExpression) (o : Object) : ℚ :=
+  match u.nominal with
+  | none => 1
+  | some t => if t == o.objType then 1 else 0
+
+/--
+The Boolean meaning for color features.
+-/
+def booleanColorVal (u : ReferringExpression) (o : Object) : ℚ :=
+  match u.colorAdj with
+  | none => 1
+  | some c => if c == o.color then 1 else 0
+
+/--
+The Boolean meaning for size features.
+-/
+def booleanSizeVal (u : ReferringExpression) (o : Object) : ℚ :=
+  match u.sizeAdj with
+  | none => 1
+  | some s => if s == o.size then 1 else 0
+
+-- Use theorems from RSA.Noise
+#check RSA.Noise.noiseChannel_one
+#check RSA.Noise.noiseChannel_zero
+
+/--
+Helper: a value in {0,1} multiplied by a value in {0,1} is in {0,1}.
+-/
+theorem mul_mem_zero_one {a b : ℚ} (ha : a ∈ ({0, 1} : Set ℚ)) (hb : b ∈ ({0, 1} : Set ℚ)) :
+    a * b ∈ ({0, 1} : Set ℚ) := by
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at *
+  rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;> simp
+
+/--
+Each feature channel is a noisy Boolean.
+
+A "noisy Boolean" maps `true → p_match` and `false → p_mismatch`,
+which is exactly `p_match * b + p_mismatch * (1-b)` for b ∈ {0,1}.
+-/
+theorem feature_channel_is_noisy_boolean
+    (onMatch onMismatch : ℚ) (isMatch : Bool) :
+    (if isMatch then onMatch else onMismatch) =
+    onMatch * (if isMatch then 1 else 0) +
+    onMismatch * (if isMatch then 0 else 1) := by
+  cases isMatch <;> simp
+
+/--
+**Boolean semantics is the zero-noise limit.**
+
+When match = 1, mismatch = 0, we recover Boolean semantics.
+-/
+theorem boolean_is_zero_noise_limit (u : ReferringExpression) (o : Object) :
+    φ booleanParams u o ∈ ({0, 1} : Set ℚ) := by
+  simp only [φ, booleanParams]
+  apply mul_mem_zero_one
+  · apply mul_mem_zero_one
+    · cases u.nominal with
+      | none => simp [Set.mem_insert_iff]
+      | some t => simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; split_ifs <;> simp
+    · cases u.colorAdj with
+      | none => simp [Set.mem_insert_iff]
+      | some c => simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; split_ifs <;> simp
+  · cases u.sizeAdj with
+    | none => simp [Set.mem_insert_iff]
+    | some s => simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; split_ifs <;> simp
+
+/--
+**THEOREM (Degen Decomposition v1)**: When ALL features are SPECIFIED,
+continuous semantics decomposes as Boolean × Noise.
+
+This version requires all features to be specified to avoid the
+"unspecified gives 1" edge case.
+-/
+theorem degen_is_boolean_times_noise_specified
+    (params : SemanticParams)
+    (u : ReferringExpression) (o : Object)
+    (h_type : u.nominal.isSome)
+    (h_color : u.colorAdj.isSome)
+    (h_size : u.sizeAdj.isSome) :
+    φ params u o =
+    noiseChannel params.typeMatch params.typeMismatch (booleanTypeVal u o) *
+    noiseChannel params.colorMatch params.colorMismatch (booleanColorVal u o) *
+    noiseChannel params.sizeMatch params.sizeMismatch (booleanSizeVal u o) := by
+  unfold φ booleanTypeVal booleanColorVal booleanSizeVal noiseChannel RSA.Noise.noiseChannel
+  obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp h_type
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.mp h_color
+  obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp h_size
+  simp only [ht, hc, hs]
+  split_ifs <;> ring
+
+/--
+**THEOREM (Degen Decomposition v2 - Full)**: φ decomposes as product of
+feature contributions, where each contribution is:
+- 1 when the feature is unspecified
+- noiseChannel(match, mismatch, bool) when specified
+
+This is the correct general statement of "Degen = Boolean + Noise".
+-/
+theorem degen_is_boolean_times_noise_full
+    (params : SemanticParams)
+    (u : ReferringExpression) (o : Object) :
+    φ params u o =
+    (match u.nominal with
+     | none => 1
+     | some _ => noiseChannel params.typeMatch params.typeMismatch (booleanTypeVal u o)) *
+    (match u.colorAdj with
+     | none => 1
+     | some _ => noiseChannel params.colorMatch params.colorMismatch (booleanColorVal u o)) *
+    (match u.sizeAdj with
+     | none => 1
+     | some _ => noiseChannel params.sizeMatch params.sizeMismatch (booleanSizeVal u o)) := by
+  unfold φ booleanTypeVal booleanColorVal booleanSizeVal noiseChannel RSA.Noise.noiseChannel
+  cases u.nominal <;> cases u.colorAdj <;> cases u.sizeAdj <;>
+    simp only [] <;> (try split_ifs) <;> ring
+
+/--
+With Boolean parameters, the noise channels are identity (on {0,1}).
+-/
+theorem noise_channel_boolean (b : ℚ) (hb : b ∈ ({0, 1} : Set ℚ)) :
+    noiseChannel 1 0 b = b := by
+  simp only [noiseChannel, RSA.Noise.noiseChannel]
+  rcases hb with rfl | rfl <;> ring
 
 -- ============================================================================
 -- Summary
