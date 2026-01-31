@@ -13,6 +13,7 @@ Combinatory rules correspond to function application/composition.
 
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.Montague.Basic
+import Linglib.Theories.Montague.Conjunction
 
 namespace CCG
 
@@ -455,24 +456,17 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
   | .coord d1 d2 => do
       -- Coordination: X and X → X
       -- Semantic rule: generalized conjunction (Partee & Rooth 1983)
+      -- Uses Montague.Conjunction.genConj for uniform type-driven coordination
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
-      -- Match on specific categories to handle generalized conjunction
-      match c1, c2 with
-      -- Base case: S and S → S (truth values are conjoined)
-      | .atom .S, .atom .S =>
-          some ⟨S, m1 && m2⟩
-      -- S/NP and S/NP → S/NP (pointwise conjunction of predicates)
-      | .rslash (.atom .S) (.atom .NP), .rslash (.atom .S) (.atom .NP) =>
-          some ⟨S / NP, fun x => m1 x && m2 x⟩
-      -- S\NP and S\NP → S\NP (pointwise conjunction of VP meanings)
-      | .lslash (.atom .S) (.atom .NP), .lslash (.atom .S) (.atom .NP) =>
-          some ⟨IV, fun x => m1 x && m2 x⟩
-      -- (S\NP)/NP and (S\NP)/NP → (S\NP)/NP (transitive verbs)
-      | .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP),
-        .rslash (.lslash (.atom .S) (.atom .NP)) (.atom .NP) =>
-          some ⟨TV, fun x y => m1 x y && m2 x y⟩
-      | _, _ => none
+      if h : c1 = c2 then
+        let ty := catToTy c1
+        -- Only conjoinable types can be coordinated
+        if ty.isConjoinable then
+          let m2' : toyModel.interpTy (catToTy c1) := h ▸ m2
+          some ⟨c1, Conjunction.genConj ty toyModel m1 m2'⟩
+        else none
+      else none
 
 -- ============================================================================
 -- INTERPRETATION EXAMPLES

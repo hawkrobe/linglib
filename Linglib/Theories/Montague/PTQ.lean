@@ -6,10 +6,15 @@ the homomorphism between natural language syntax and model-theoretic semantics.
 
 ## Key Innovations
 
-1. **Intensions**: Type `s` for possible worlds, `⟨s,a⟩` for intensions of type `a`
+1. **Intensions**: Type `s` for possible worlds, `s ⇒ a` for intensions of type `a`
 2. **Category-Type Correspondence**: Syntactic categories map to semantic types
 3. **Quantifying-In (S14/T14)**: Derives scope ambiguity compositionally
 4. **The Homomorphism**: Syntax-semantics mapping is structure-preserving
+
+## Note on Types
+
+This module uses the canonical `Montague.Ty` type system. Intensions are
+represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 ## References
 
@@ -17,15 +22,18 @@ the homomorphism between natural language syntax and model-theoretic semantics.
   In Hintikka, Moravcsik & Suppes (eds.), Approaches to Natural Language.
 -/
 
+import Linglib.Theories.Montague.Basic
 import Mathlib.Data.Set.Basic
 
 namespace Montague.PTQ
+
+open Montague
 
 -- ============================================================================
 -- Section 1: Types (IL - Intensional Logic)
 -- ============================================================================
 
-/--
+/-!
 **Types of Intensional Logic (Definition 1)**
 
 The set of types is the smallest set Y such that:
@@ -34,25 +42,31 @@ The set of types is the smallest set Y such that:
 - If a, b ∈ Y then ⟨a, b⟩ ∈ Y (functions)
 - If a ∈ Y then ⟨s, a⟩ ∈ Y (intensions)
 
-Note: `s` is not itself a type - it's only used in intension types ⟨s,a⟩.
--/
-inductive Ty where
-  | e : Ty                      -- Entities
-  | t : Ty                      -- Truth values
-  | fn : Ty → Ty → Ty           -- ⟨a, b⟩: functions from a to b
-  | intens : Ty → Ty            -- ⟨s, a⟩: intensions (functions from worlds to a)
-  deriving DecidableEq, Repr
+We use the canonical `Montague.Ty` which has:
+- `.e` : entities
+- `.t` : truth values
+- `.s` : possible worlds
+- `.fn` / `⇒` : function types
 
+Intensions `⟨s, a⟩` are represented as `.s ⇒ a`.
+-/
+
+-- Notation for PTQ-style types
 notation "𝐞" => Ty.e
 notation "𝐭" => Ty.t
+notation "𝐬" => Ty.s
 notation "⦃" a ", " b "⦄" => Ty.fn a b  -- ⟨a, b⟩
+
+/-- Intension type: ⟨s, a⟩ -/
+abbrev Ty.intens (a : Ty) : Ty := .s ⇒ a
+
 notation "⦃𝐬, " a "⦄" => Ty.intens a   -- ⟨s, a⟩
 
 /-- Common derived types -/
-abbrev Ty.et := ⦃𝐞, 𝐭⦄                    -- Properties: e → t
-abbrev Ty.eet := ⦃𝐞, ⦃𝐞, 𝐭⦄⦄              -- Relations: e → e → t
-abbrev Ty.ett := ⦃⦃𝐞, 𝐭⦄, 𝐭⦄              -- Generalized quantifiers: (e → t) → t
-abbrev Ty.setIntens := ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄  -- Sets of property intensions
+abbrev Ty.ptq_et := ⦃𝐞, 𝐭⦄                    -- Properties: e → t
+abbrev Ty.ptq_eet := ⦃𝐞, ⦃𝐞, 𝐭⦄⦄              -- Relations: e → e → t
+abbrev Ty.ptq_ett := ⦃⦃𝐞, 𝐭⦄, 𝐭⦄              -- Generalized quantifiers: (e → t) → t
+abbrev Ty.setIntens := ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄       -- Sets of property intensions
 
 -- ============================================================================
 -- Section 2: Syntactic Categories (Definition 3)
@@ -104,7 +118,7 @@ def catToTy : Cat → Ty
   | .t => 𝐭
   | .CN => ⦃𝐬, ⦃𝐞, 𝐭⦄⦄           -- Property intensions
   | .IV => ⦃𝐬, ⦃𝐞, 𝐭⦄⦄           -- Same as CN (intransitive VPs)
-  | .TV => ⦃⦃𝐬, Ty.ett⦄, ⦃𝐬, ⦃𝐞, 𝐭⦄⦄⦄  -- Takes term intension, returns IV
+  | .TV => ⦃⦃𝐬, Ty.ptq_ett⦄, ⦃𝐬, ⦃𝐞, 𝐭⦄⦄⦄  -- Takes term intension, returns IV
   | .T => ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄       -- Generalized quantifiers
   | .rslash a b => ⦃⦃𝐬, catToTy b⦄, catToTy a⦄
   | .lslash a b => ⦃⦃𝐬, catToTy b⦄, catToTy a⦄
@@ -125,26 +139,17 @@ theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭�
 /--
 **Intensional Model**
 
-A model for PTQ with:
-- A set of possible worlds (indices)
-- A domain of entities
-- Denotation function for each type at each world
+A PTQ model uses the canonical `Montague.Model` which includes:
+- `Entity` : domain of entities
+- `World` : possible worlds (indices)
 -/
-structure PTQModel where
-  World : Type                  -- Possible worlds (indices)
-  Entity : Type                 -- Domain of entities
-  [worldDec : DecidableEq World]
-  [entityDec : DecidableEq Entity]
+abbrev PTQModel := Model
 
-/-- Denotation of a type in a model -/
-def PTQModel.Den (m : PTQModel) : Ty → Type
-  | .e => m.Entity
-  | .t => Bool
-  | .fn a b => m.Den a → m.Den b
-  | .intens a => m.World → m.Den a
+/-- Denotation of a type in a model (uses canonical interpTy) -/
+abbrev PTQModel.Den (m : PTQModel) (τ : Ty) := m.interpTy τ
 
 /-- Intension: function from worlds to extensions -/
-abbrev PTQModel.Intens (m : PTQModel) (a : Ty) := m.World → m.Den a
+abbrev PTQModel.Intens (m : PTQModel) (a : Ty) := m.World → m.interpTy a
 
 -- ============================================================================
 -- Section 5: Lexical Entries and Translations
@@ -161,8 +166,7 @@ Each word has:
 structure LexEntry (m : PTQModel) where
   form : String
   cat : Cat
-  -- The translation would be a term of type m.Den (catToTy cat)
-  -- For now we use a simplified representation
+  -- The translation would be a term of type m.interpTy (catToTy cat)
 
 /-
 **Basic Expressions (BₐC for each category C)**
@@ -309,8 +313,9 @@ inductive ToyEntity where
   deriving DecidableEq, Repr, BEq
 
 def toyPTQModel : PTQModel where
-  World := Unit  -- Single world for simplicity
   Entity := ToyEntity
+  World := Unit  -- Single world for simplicity
+  decEq := inferInstance
 
 /-- Predicate: is a man -/
 def isMan : ToyEntity → Bool
@@ -481,9 +486,9 @@ def Derivation.cat : Derivation → Cat
 ### From Montague (1973)
 
 1. **Intensional Logic Types** (Definition 1)
-   - Basic types e, t
-   - Function types ⟨a, b⟩
-   - Intension types ⟨s, a⟩
+   - Basic types e, t, s (using canonical Montague.Ty)
+   - Function types `a ⇒ b`
+   - Intension types `s ⇒ a`
 
 2. **Syntactic Categories** (Definition 3)
    - Basic: e, t, CN, IV, TV, T
@@ -491,9 +496,9 @@ def Derivation.cat : Derivation → Cat
 
 3. **Category-Type Correspondence** (Definition 4)
    - f(e) = e, f(t) = t
-   - f(CN) = f(IV) = ⟨s, ⟨e, t⟩⟩
-   - f(T) = ⟨⟨s, ⟨e, t⟩⟩, t⟩
-   - f(A/B) = ⟨⟨s, f(B)⟩, f(A)⟩
+   - f(CN) = f(IV) = s ⇒ (e ⇒ t)
+   - f(T) = (s ⇒ (e ⇒ t)) ⇒ t
+   - f(A/B) = (s ⇒ f(B)) ⇒ f(A)
 
 4. **Quantifying-In (S14/T14)**
    - Syntactic rule substituting term for pronoun
