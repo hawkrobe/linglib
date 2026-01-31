@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.36.0] - 2025-01-31
+
+### Added
+- **Theories/Comparisons/SDS/**: Unified SDS (Situation Description Systems) framework
+  - `Core.lean`: `SDSConstraintSystem` typeclass for factored constraint combination
+    - Product of Experts: `unnormalizedPosterior(θ) = selectionalFactor(θ) × scenarioFactor(θ)`
+    - `normalizedPosterior`, `expectation`, `softTruth` via marginalization
+    - `hasConflict`, `conflictDegree`: detect when factors disagree (predicts ambiguity)
+  - `ThresholdInstances.lean`: Threshold semantics as SDS instances
+    - Gradable adjectives, generics, gradable nouns all satisfy SDSConstraintSystem
+  - `Marginalization.lean`: Equivalence theorems between threshold semantics and SDS
+  - `Examples.lean`: Worked examples (gradable adjectives, concept disambiguation)
+  - `MeasureTheory.lean`: Placeholder for continuous SDS with Mathlib measures
+  - `Humor.lean`: Connection to Kao, Levy & Goodman (2016) pun humor model
+    - SDS conflict ≈ Kao's distinctiveness (different evidence → different interpretations)
+    - `posteriorUncertainty`: Gini impurity as log-free entropy proxy
+    - TODO for full KL divergence formalization
+
+- **Phenomena/Humor/KaoEtAl2016/Data.lean**: Empirical data from Kao et al. (2016)
+  - `PhoneticPun`, `NonPunSentence` structures with funniness/ambiguity/distinctiveness
+  - Example puns: "magician hare", "dentist tooth"
+  - Regression coefficients and key statistical results
+
+- **Core/ProductOfExperts.lean**: Standalone PoE combinators
+
+### Architecture
+- SDS unifies: gradable adjectives (Lassiter & Goodman), generics (Tessler et al.), concept disambiguation (Erk & Herbelot), LU-RSA (Bergen et al.)
+- Key insight: **Boolean semantics + parameter uncertainty = soft/graded meanings**
+
+### References
+- Erk & Herbelot (2024). How to Marry a Star. Journal of Semantics.
+- Kao, Levy & Goodman (2016). A Computational Model of Linguistic Humor in Puns.
+- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
+
 ## [0.35.0] - 2025-01-31
 
 ### Changed
