@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.37.0] - 2025-01-31
+
+### Added
+- **Theories/Montague/Lexicon/Attitudes/CDistributivity.lean**: C-distributivity as derived property
+  - `IsCDistributive`: Definition of C-distributivity for predicates
+  - `degreeComparison_isCDistributive`: Proof that degree-comparison semantics yields C-distributivity
+  - Instantiations: `hope_isCDistributive`, `fear_isCDistributive`, etc.
+  - `exists_nonCDistributive_worry`: Axiom for uncertainty-based non-C-distributivity
+
+- **Theories/Montague/Lexicon/Attitudes/Preferential.lean**: TSP derived from degree semantics
+  - `SignificanceContent`: Distinguishes positive (desiredExists = TSP) vs negative (threatIdentified)
+  - `significanceFromValence`: Derives significance type from valence
+  - `positive_hasTSP`, `negative_lacks_TSP`: TSP distribution as theorems, not stipulation
+  - `toHamblin`, `fromHamblin`: Conversions between List and Hamblin question representations
+  - `roundtrip_preserves_membership`, `triviality_representation_independent`: Equivalence theorems
+
+- **Fragments/{English,Japanese,Mandarin,Turkish}/Verbs.lean**: PreferentialBuilder architecture
+  - `PreferentialBuilder`: Links Fragment entries to Montague predicate constructors
+  - `PreferentialBuilder.isCDistributive`: Derived from semantic structure (proved in Montague)
+  - `VerbEntry.nvpClass`, `VerbEntry.cDistributive`: Derived properties, not stipulated fields
+  - Cross-linguistic coverage: hope/fear/worry (English), qidai/xiwang (Mandarin), tanosimi/kitai (Japanese), kork-/um- (Turkish)
+
+- **Phenomena/QingEtAl2025/Data.lean**: Empirical data from Qing et al. (2025)
+  - NVP observations across 4 languages with question-taking judgments
+  - Links to Fragment verb entries for verification
+
+### Architecture
+- **Grounding principle**: C-distributivity and TSP are DERIVED from semantic structure, not stipulated
+- **Derivation chain**: Degree semantics (Villalta) → Significance presup (Kennedy) → TSP (U&S) → Triviality → Anti-rogativity
+- **Hamblin connection**: Documents link between List representation and full intensional Hamblin semantics
+- **Promissory note**: Full Rooth focus semantics integration planned for future work
+
+### References
+- Qing, Özyıldız, Roelofsen, Romero, Uegaki (2025). When can NVPs take questions?
+- Uegaki & Sudo (2019). The *hope-wh puzzle. Natural Language Semantics.
+- Kennedy (2007). Vagueness and grammar. Linguistics & Philosophy.
+- Villalta (2008). Mood and gradability. Linguistics & Philosophy.
+
 ## [0.36.0] - 2025-01-31
 
 ### Added
