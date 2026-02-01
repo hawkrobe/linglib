@@ -236,6 +236,8 @@ def refGameScenarioF : RSAScenario :=
     (prior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
     (cost := fun _ => 0)
     (cost_nonneg := fun _ => le_refl 0)
+    (utterancePrior := fun _ => 1)
+    (utterancePrior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
 
 -- ============================================================================
 -- RSAModel Instance: Convergence Guarantees

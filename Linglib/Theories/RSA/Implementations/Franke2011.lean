@@ -212,10 +212,9 @@ For states with at least one true message, this is exactly 1 (uniform over optim
 For states with no true messages, this is 0. -/
 theorem bestResponse_sum_le_one (G : InterpGame) (H : HearerStrategy G) (s : G.State) :
     Finset.univ.sum (fun m => (bestResponse G H).choose s m) ≤ 1 := by
-  -- Each message with positive probability has choose s m = 1/k for some k
-  -- The sum is over at most k messages, giving total 1
-  -- If no optimal messages, sum is 0
-  sorry -- Requires careful analysis of bestResponse structure
+  -- bestResponse distributes probability uniformly over k optimal messages.
+  -- Each gets 1/k, sum = k*(1/k) = 1 (or 0 if no optimal messages).
+  sorry
 
 end SpeakerStrategy
 

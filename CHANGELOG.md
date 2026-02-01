@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.46.0] - 2025-02-01
+
+### Added
+- **RSA/Core/ChainComparison.lean**: Chain comparison infrastructure
+  - `RSA.ChainVariant`: `.L0Based` (standard) vs `.S0Based` (literal speaker base)
+  - `RSA.ChainComparison`: Compare distributions from both chains
+  - `RSA.totalVariation`: Measure divergence between chains
+  - `RSA.analyzeDivergence`: Find max divergent element
+
+- **RSA/Core/Basic.lean**: Unified chain API
+  - `RSA.speaker`: Pragmatic speaker with chain selection (default `.L0Based`)
+  - `RSA.listener`: Pragmatic listener with chain selection
+  - `utterancePrior` field in RSAScenario for S0 salience
+
+- **RSA/Core/Eval.lean**: List-based chain API
+  - `RSA.Eval.runS1`: S1 with ChainVariant parameter
+  - `RSA.Eval.runL1`: L1 with ChainVariant parameter
+
+- **RSA/Implementations/VanTielEtAl2021.lean**: van Tiel et al. (2021) replication
+  - GQT vs PT semantics for quantity words
+  - S0-based chain for production modeling
+  - Chain comparison theorems (convergence at extremes, PT diverges more)
+
+- **Fragments/Quantities.lean**: VanTielQuantity domain
+  - 6-word scale: none, few, some, half, most, all
+  - `gqtMeaning`: Binary threshold semantics
+  - `ptMeaning`: Gradient Gaussian semantics
+  - `Domain.runS1`/`runL1` with ChainVariant
+  - `Domain.compareS1`/`compareL1` for chain comparison
+
 ## [0.45.0] - 2025-02-01
 
 ### Added

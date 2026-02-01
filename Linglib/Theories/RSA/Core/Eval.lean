@@ -91,6 +91,41 @@ def L0_projected {U W I L A Q : Type} [BEq W]
     (w, eqClassScore)
 
 /--
+S0: Literal speaker distribution (list-based).
+
+P(m | w) ∝ utterancePrior(m) · φ(i, l, m, w)
+
+This is the "production-first" alternative to L0.
+-/
+def S0 {U W I L A Q : Type} [BEq U]
+    (utterances : List U) (_worlds : List W)
+    (φ : I → L → U → W → ℚ)
+    (utterancePrior : U → ℚ)
+    (w : W) (i : I) (l : L) (_a : A) (_q : Q)
+    : List (U × ℚ) :=
+  let scores := utterances.map fun u =>
+    (u, utterancePrior u * φ i l u w)
+  normalize scores
+
+/--
+L1 from S0: Pragmatic listener reasoning about a literal speaker (list-based).
+
+P(w | m) ∝ Prior(w) · P_S0(m | w)
+-/
+def L1_fromS0 {U W I L A Q : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : I → L → U → W → ℚ)
+    (worldPrior : W → ℚ)
+    (utterancePrior : U → ℚ)
+    (u : U) (i : I) (l : L) (a : A) (q : Q)
+    : List (W × ℚ) :=
+  let scores := worlds.map fun w =>
+    let s0Dist := S0 utterances worlds φ utterancePrior w i l a q
+    let s0Score := getScore s0Dist u
+    (w, worldPrior w * s0Score)
+  normalize scores
+
+/--
 S1: Pragmatic speaker distribution (list-based).
 -/
 def S1 {U W I L A Q : Type} [BEq U] [BEq W]
@@ -162,6 +197,33 @@ def basicL0 {U W : Type} [BEq W]
   L0 utterances worlds (fun _ _ => φ) worldPrior (fun _ _ => 1) u () () () ()
 
 /--
+Basic S0 for simple scenarios (literal speaker).
+
+P(m | w) ∝ utterancePrior(m) · φ(m, w)
+-/
+def basicS0 {U W : Type} [BEq U]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (w : W)
+    : List (U × ℚ) :=
+  S0 utterances worlds (fun _ _ => φ) utterancePrior w () () () ()
+
+/--
+Basic L1 from S0 for simple scenarios.
+
+P(w | m) ∝ Prior(w) · P_S0(m | w)
+-/
+def basicL1_fromS0 {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (u : U)
+    : List (W × ℚ) :=
+  L1_fromS0 utterances worlds (fun _ _ => φ) worldPrior utterancePrior u () () () ()
+
+/--
 Basic S1 for simple scenarios.
 -/
 def basicS1 {U W : Type} [BEq U] [BEq W]
@@ -174,6 +236,27 @@ def basicS1 {U W : Type} [BEq U] [BEq W]
     : List (U × ℚ) :=
   S1 utterances worlds (fun _ _ => φ) worldPrior (fun _ _ => 1)
      (fun _ w w' => w == w') cost α w () () () ()
+
+/--
+Basic S1 via production-first chain (S0 → L1_fromS0 → S1_fromL1S0).
+
+P(m | w) ∝ utterancePrior(m) · P_L1_fromS0(w | m)^α · costDiscount(m)
+-/
+def basicS1_fromL1S0 {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0)
+    (w : W)
+    : List (U × ℚ) :=
+  let scores := utterances.map fun u =>
+    let l1Dist := basicL1_fromS0 utterances worlds φ worldPrior utterancePrior u
+    let l1Score := getScore l1Dist w
+    let costDiscount := 1 / ((1 + cost u) ^ α)
+    (u, utterancePrior u * l1Score ^ α * costDiscount)
+  normalize scores
 
 /--
 Basic L1 for simple scenarios.
@@ -189,6 +272,50 @@ def basicL1 {U W : Type} [BEq U] [BEq W]
   L1_world utterances worlds [()] [()] [()] [()]
     (fun _ _ => φ) worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') cost α u
+
+-- ============================================================================
+-- Unified API with ChainVariant
+-- ============================================================================
+
+/--
+Run S1 (pragmatic speaker) with chain selection.
+
+- `.L0Based` (default): Standard S1 reasoning about L0
+- `.S0Based`: S1 reasoning about L1 who reasons about S0
+-/
+def runS1 {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0)
+    (chain : RSA.ChainVariant := .L0Based)
+    (w : W)
+    : List (U × ℚ) :=
+  match chain with
+  | .L0Based => basicS1 utterances worlds φ worldPrior α cost w
+  | .S0Based => basicS1_fromL1S0 utterances worlds φ worldPrior utterancePrior α cost w
+
+/--
+Run L1 (pragmatic listener) with chain selection.
+
+- `.L0Based` (default): Standard L1 reasoning about S1
+- `.S0Based`: L1 reasoning about S0
+-/
+def runL1 {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ := fun _ => 1)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (α : ℕ := 1)
+    (cost : U → ℚ := fun _ => 0)
+    (chain : RSA.ChainVariant := .L0Based)
+    (u : U)
+    : List (W × ℚ) :=
+  match chain with
+  | .L0Based => basicL1 utterances worlds φ worldPrior α cost u
+  | .S0Based => basicL1_fromS0 utterances worlds φ worldPrior utterancePrior u
 
 -- ============================================================================
 -- Full Joint and Marginal Distributions

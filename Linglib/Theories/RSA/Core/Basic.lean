@@ -33,6 +33,29 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Distribution
 
 -- ============================================================================
+-- Chain Variant
+-- ============================================================================
+
+/--
+RSA chain variant: which literal agent is the base of the recursion.
+
+- `L0Based`: L0 → S1 → L1 → S2 → ... (standard RSA, literal listener base)
+- `S0Based`: S0 → L1 → S1 → L2 → ... (literal speaker base)
+
+The standard RSA chain is L0-based.
+S0-based chains are used when modeling speaker production data (e.g., van Tiel et al. 2021).
+-/
+inductive RSA.ChainVariant
+  | L0Based  -- L0 → S1 → L1 (literal listener base, standard)
+  | S0Based  -- S0 → L1 → S1 (literal speaker base)
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+instance : ToString RSA.ChainVariant where
+  toString
+    | .L0Based => "L0-based (L0→S1→L1)"
+    | .S0Based => "S0-based (S0→L1→S1)"
+
+-- ============================================================================
 -- Utility Functions
 -- ============================================================================
 
@@ -105,6 +128,9 @@ structure RSAScenario where
   /-- Utterance cost function. -/
   cost : Utterance → ℚ := fun _ => 0
 
+  /-- Prior over utterances (salience/accessibility). Used by S0 literal speaker. -/
+  utterancePrior : Utterance → ℚ := fun _ => 1
+
   /-- Non-negativity constraints for probability functions -/
   φ_nonneg : ∀ i l u w, 0 ≤ φ i l u w := by intros; decide
   worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w := by intros; decide
@@ -114,6 +140,7 @@ structure RSAScenario where
   goalPrior_nonneg : ∀ q, 0 ≤ goalPrior q := by intros; decide
   speakerCredence_nonneg : ∀ a w, 0 ≤ speakerCredence a w := by intros; decide
   cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide
+  utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide
 
   /-- Fintype instances -/
   [uttFintype : Fintype Utterance]
@@ -153,7 +180,10 @@ def RSAScenario.basic {U W : Type}
     (prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario where
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -170,6 +200,7 @@ def RSAScenario.basic {U W : Type}
   goalPrior := fun _ => 1
   α := α
   cost := cost
+  utterancePrior := utterancePrior
   φ_nonneg := fun _ _ u w => φ_nonneg u w
   worldPrior_nonneg := prior_nonneg
   interpPrior_nonneg := fun _ => le_refl 0 |> fun _ => by decide
@@ -178,6 +209,7 @@ def RSAScenario.basic {U W : Type}
   goalPrior_nonneg := fun _ => le_refl 0 |> fun _ => by decide
   speakerCredence_nonneg := fun _ _ => le_refl 0 |> fun _ => by decide
   cost_nonneg := cost_nonneg
+  utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
 Build a basic Fintype RSA scenario from Boolean semantics.
@@ -189,10 +221,13 @@ def RSAScenario.basicBool {U W : Type}
     (prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario :=
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario :=
   RSAScenario.basic (fun u w => boolToRat (satisfies w u))
     (fun _ _ => by simp only [boolToRat]; split_ifs <;> decide)
-    prior prior_nonneg α cost cost_nonneg
+    prior prior_nonneg α cost cost_nonneg utterancePrior utterancePrior_nonneg
 
 /--
 Build a Fintype scenario with interpretation ambiguity (e.g., scope readings).
@@ -208,7 +243,10 @@ def RSAScenario.ambiguous {U W I : Type}
     (interpPrior_nonneg : ∀ i, 0 ≤ interpPrior i := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario where
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario where
   Utterance := U
   World := W
   Interp := I
@@ -225,6 +263,7 @@ def RSAScenario.ambiguous {U W I : Type}
   goalPrior := fun _ => 1
   α := α
   cost := cost
+  utterancePrior := utterancePrior
   φ_nonneg := fun i _ u w => φ_nonneg i u w
   worldPrior_nonneg := worldPrior_nonneg
   interpPrior_nonneg := interpPrior_nonneg
@@ -233,6 +272,7 @@ def RSAScenario.ambiguous {U W I : Type}
   goalPrior_nonneg := fun _ => by decide
   speakerCredence_nonneg := fun _ _ => by decide
   cost_nonneg := cost_nonneg
+  utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
 Build a Fintype scenario with interpretation ambiguity from Boolean semantics.
@@ -247,10 +287,14 @@ def RSAScenario.ambiguousBool {U W I : Type}
     (interpPrior_nonneg : ∀ i, 0 ≤ interpPrior i := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario :=
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario :=
   RSAScenario.ambiguous (fun i u w => boolToRat (satisfies i w u))
     (fun _ _ _ => by simp only [boolToRat]; split_ifs <;> decide)
     worldPrior worldPrior_nonneg interpPrior interpPrior_nonneg α cost cost_nonneg
+    utterancePrior utterancePrior_nonneg
 
 /--
 Build a Fintype QUD-sensitive scenario.
@@ -267,7 +311,10 @@ def RSAScenario.qud {U W Q : Type}
     (qudPrior_nonneg : ∀ q, 0 ≤ qudPrior q := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario where
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -284,6 +331,7 @@ def RSAScenario.qud {U W Q : Type}
   goalPrior := qudPrior
   α := α
   cost := cost
+  utterancePrior := utterancePrior
   φ_nonneg := fun _ _ u w => φ_nonneg u w
   worldPrior_nonneg := worldPrior_nonneg
   interpPrior_nonneg := fun _ => by decide
@@ -292,6 +340,7 @@ def RSAScenario.qud {U W Q : Type}
   goalPrior_nonneg := qudPrior_nonneg
   speakerCredence_nonneg := fun _ _ => by decide
   cost_nonneg := cost_nonneg
+  utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
 Build a Fintype QUD-sensitive scenario from Boolean semantics.
@@ -307,10 +356,14 @@ def RSAScenario.qudBool {U W Q : Type}
     (qudPrior_nonneg : ∀ q, 0 ≤ qudPrior q := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario :=
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario :=
   RSAScenario.qud (fun u w => boolToRat (satisfies w u))
     (fun _ _ => by simp only [boolToRat]; split_ifs <;> decide)
     qudProject worldPrior worldPrior_nonneg qudPrior qudPrior_nonneg α cost cost_nonneg
+    utterancePrior utterancePrior_nonneg
 
 /--
 Build a Fintype scenario with mental state inference.
@@ -331,7 +384,10 @@ def RSAScenario.mentalState {U W A Q : Type}
     (goalPrior_nonneg : ∀ q, 0 ≤ goalPrior q := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario where
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -348,6 +404,7 @@ def RSAScenario.mentalState {U W A Q : Type}
   goalPrior := goalPrior
   α := α
   cost := cost
+  utterancePrior := utterancePrior
   φ_nonneg := fun _ _ u w => φ_nonneg u w
   worldPrior_nonneg := worldPrior_nonneg
   interpPrior_nonneg := fun _ => by decide
@@ -356,6 +413,7 @@ def RSAScenario.mentalState {U W A Q : Type}
   goalPrior_nonneg := goalPrior_nonneg
   speakerCredence_nonneg := speakerCredence_nonneg
   cost_nonneg := cost_nonneg
+  utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
 Build a Fintype scenario with lexical uncertainty.
@@ -371,7 +429,10 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
     (lexiconPrior_nonneg : ∀ l, 0 ≤ lexiconPrior l := by intros; decide)
     (α : ℕ := 1)
     (cost : U → ℚ := fun _ => 0)
-    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide) : RSAScenario where
+    (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
+    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
+    : RSAScenario where
   Utterance := U
   World := W
   Interp := Unit
@@ -388,6 +449,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   goalPrior := fun _ => 1
   α := α
   cost := cost
+  utterancePrior := utterancePrior
   φ_nonneg := fun _ l u w => φ_nonneg l u w
   worldPrior_nonneg := worldPrior_nonneg
   interpPrior_nonneg := fun _ => by decide
@@ -396,6 +458,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   goalPrior_nonneg := fun _ => by decide
   speakerCredence_nonneg := fun _ _ => by decide
   cost_nonneg := cost_nonneg
+  utterancePrior_nonneg := utterancePrior_nonneg
 
 -- ============================================================================
 -- RSAF: Fintype-Based RSA Computations
@@ -449,6 +512,53 @@ def L0_projected (u : S.Utterance)
       · exact l0.nonneg w'
       · exact le_refl 0
     tryNormalize scores hnonneg
+
+-- ============================================================================
+-- S0: Literal Speaker
+-- ============================================================================
+
+/--
+S0: Literal speaker distribution given full context.
+
+P(m | w) ∝ utterancePrior(m) · φ(i, l, m, w)
+
+This is the "production-first" alternative to L0 (which is "comprehension-first").
+- L0: Given utterance m, infer world w. P(w | m) ∝ Prior(w) · φ(m, w)
+- S0: Given world w, choose utterance m. P(m | w) ∝ Salience(m) · φ(m, w)
+
+Returns None if no utterance is true in this world.
+-/
+def S0 (w : S.World)
+    (i : S.Interp) (l : S.Lexicon) (_a : S.BeliefState) (_q : S.Goal)
+    : Option (ExactDist S.Utterance) :=
+  let scores := fun u => S.utterancePrior u * S.φ i l u w
+  let hnonneg : ∀ u, 0 ≤ scores u := fun u =>
+    mul_nonneg (S.utterancePrior_nonneg u) (S.φ_nonneg i l u w)
+  tryNormalize scores hnonneg
+
+/--
+L1 from S0: Pragmatic listener reasoning about a literal speaker.
+
+This is an alternative to the standard L1 which reasons about S1.
+Use this for production-based models like van Tiel et al. (2021).
+
+P(w | m) ∝ Prior(w) · P_S0(m | w)
+-/
+def L1_fromS0 (u : S.Utterance)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist S.World) :=
+  let scores := fun w =>
+    let s0Score := match S0 S w i l a q with
+      | some d => d.mass u
+      | none => 0
+    S.worldPrior w * s0Score
+  let hnonneg : ∀ w, 0 ≤ scores w := fun w => by
+    apply mul_nonneg
+    · exact S.worldPrior_nonneg w
+    · cases h : S0 S w i l a q with
+      | none => simp
+      | some d => exact d.nonneg u
+  tryNormalize scores hnonneg
 
 -- ============================================================================
 -- S1: Pragmatic Speaker
@@ -704,6 +814,81 @@ def S2 (w : S.World) : Option (ExactDist S.Utterance) :=
     | none => simp
     | some d => exact d.nonneg w
   tryNormalize scores hnonneg
+
+-- ============================================================================
+-- S1 from L1_fromS0: Pragmatic Speaker via Production-First Chain
+-- ============================================================================
+
+/--
+S1 based on L1_fromS0: Pragmatic speaker reasoning about a listener who
+reasons about a literal speaker.
+
+This completes the production-first chain: S0 → L1_fromS0 → S1_fromL1S0.
+Compare with the standard chain: L0 → S1 → L1.
+
+P(m | w) ∝ utterancePrior(m) · P_L1_fromS0(w | m)^α · costDiscount(m)
+-/
+def S1_fromL1S0 (w : S.World)
+    (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist S.Utterance) :=
+  let scores := fun u =>
+    let l1Score : ℚ := match L1_fromS0 S u i l a q with
+      | some d => d.mass w
+      | none => 0
+    let costDiscount : ℚ := 1 / ((1 + S.cost u) ^ S.α)
+    S.utterancePrior u * (l1Score ^ S.α : ℚ) * costDiscount
+  let hnonneg : ∀ u, 0 ≤ scores u := fun u => by
+    apply mul_nonneg
+    apply mul_nonneg
+    · exact S.utterancePrior_nonneg u
+    · apply pow_nonneg
+      cases h : L1_fromS0 S u i l a q with
+      | none => simp
+      | some d => exact d.nonneg w
+    · apply div_nonneg (by norm_num : (0 : ℚ) ≤ 1)
+      apply pow_nonneg
+      have := S.cost_nonneg u
+      linarith
+  tryNormalize scores hnonneg
+
+-- ============================================================================
+-- Unified API with ChainVariant (Primary Interface)
+-- ============================================================================
+
+/-!
+## Unified Chain API
+
+These functions provide a cleaner interface using `ChainVariant` to select
+between production-first and comprehension-first chains.
+
+Default is `.comprehension` (standard RSA: L0 → S1 → L1).
+-/
+
+/--
+Pragmatic speaker distribution with chain selection.
+
+- `.L0Based` (default): Standard S1 reasoning about L0
+- `.S0Based`: S1 reasoning about L1 who reasons about S0
+-/
+def speaker (chain : ChainVariant := .L0Based)
+    (w : S.World) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist S.Utterance) :=
+  match chain with
+  | .L0Based => S1 S w i l a q
+  | .S0Based => S1_fromL1S0 S w i l a q
+
+/--
+Pragmatic listener distribution over worlds with chain selection.
+
+- `.L0Based` (default): Standard L1 marginalizing over all latent variables
+- `.S0Based`: L1 reasoning about S0 with specified latent variables
+-/
+def listener (chain : ChainVariant := .L0Based)
+    (u : S.Utterance) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist S.World) :=
+  match chain with
+  | .L0Based => L1_world S u  -- marginalizes over latent variables
+  | .S0Based => L1_fromS0 S u i l a q
 
 end RSA
 
