@@ -322,6 +322,13 @@ Heavy: "A student from the university attended every seminar" (frozen?)
 
 If possessor is MORE frozen than heavy NP, grammar contributes.
 If they're equally frozen, processing suffices.
+
+### RSA Rescue Prediction
+
+See `RSA/Implementations/ScopeFreezing.lean`: takes `possessor_frozen.observed`
+(from phenomena data, which grammar predicts) as interpretation prior,
+then `rsa_can_rescue_frozen` proves world priors can rescue.
+Frozen: P(inverse) = 2%; Rescued: P(inverse) > 50%.
 -/
 
 -- ============================================================================

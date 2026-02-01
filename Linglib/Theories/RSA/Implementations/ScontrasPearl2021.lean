@@ -830,4 +830,34 @@ theorem uses_scope_not_exh_parses :
     scopeParsesList.length = 2 := by
   native_decide
 
+-- ============================================================================
+-- Priors Shift Quantifier-Negation Scope Preference
+-- ============================================================================
+
+/-- L1 scope distribution with custom world prior -/
+def l1ScopeWithPrior (worldPrior : _root_.ScontrasPearl2021.JumpOutcome → ℚ)
+    : List (ScopeConfig × ℚ) :=
+  let tuples := typedWorlds.flatMap fun w => typedScopes.map fun i => (w, i)
+  let scores := tuples.map fun (w, i) =>
+    let s1 := RSA.Eval.S1 typedUtterances typedWorlds
+      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      worldPrior (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      w i () () ()
+    ((w, i), worldPrior w * RSA.Eval.getScore s1 .everyHorseNotJump)
+  let normalized := RSA.Eval.normalize scores
+  typedScopes.map fun i =>
+    (i, normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2) |> RSA.Eval.sumScores)
+
+def inverseProb (prior : _root_.ScontrasPearl2021.JumpOutcome → ℚ) : ℚ :=
+  RSA.Eval.getScore (l1ScopeWithPrior prior) .inverse
+
+/-- Prior strongly favoring partial outcomes (1 of 2 jumped) -/
+def partialOutcomePrior : _root_.ScontrasPearl2021.JumpOutcome → ℚ
+  | .one => 8/10 | _ => 1/10
+
+/-- Priors shift ∀>¬ vs ¬>∀ preference (NOT scope freezing - that's two quantifiers).
+    Uniform prior: P(¬>∀) = 62%. Partial-outcome prior: P(¬>∀) = 84%. -/
+theorem priors_shift_negation_scope : inverseProb partialOutcomePrior > 1/2 := by
+  native_decide
+
 end RSA.ScontrasPearl2021

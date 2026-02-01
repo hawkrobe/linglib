@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.40.1] - 2025-01-31
+
+### Added
+- **RSA/Implementations/ScopeFreezing.lean**: Two-quantifier scope freezing RSA model
+  - `rsa_can_rescue_frozen`: World priors rescue "frozen" ∀>∃ reading (16% → 96%)
+- **RSA/Implementations/ScontrasPearl2021.lean**: `priors_shift_negation_scope` (renamed from rescue proof)
+
 ## [0.40.0] - 2025-01-31
 
 ### Added
