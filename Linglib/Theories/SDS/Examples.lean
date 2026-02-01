@@ -23,12 +23,12 @@ The key insight: constraints from MULTIPLE sources combine via Product of Expert
 The relative strengths determine interpretation.
 -/
 
-import Linglib.Theories.Comparisons.SDS.Core
-import Linglib.Theories.Comparisons.SDS.ThresholdInstances
+import Linglib.Theories.SDS.Core
+import Linglib.Theories.SDS.ThresholdInstances
 
-namespace Comparisons.SDS.Examples
+namespace SDS.Examples
 
-open Comparisons.SDS.Core
+open SDS.Core
 
 -- ============================================================================
 -- Shared Types for Disambiguation Examples
@@ -585,4 +585,4 @@ Where:
 - The product is normalized over all concepts
 -/
 
-end Comparisons.SDS.Examples
+end SDS.Examples

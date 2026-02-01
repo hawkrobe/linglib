@@ -40,15 +40,15 @@ This factorization enables:
 - Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
 -/
 
-import Linglib.Theories.Comparisons.SDS.Core
-import Linglib.Theories.Comparisons.SDS.ThresholdInstances
+import Linglib.Theories.SDS.Core
+import Linglib.Theories.SDS.ThresholdInstances
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Core.BayesianSemantics
 
-namespace Comparisons.SDS.Marginalization
+namespace SDS.Marginalization
 
-open Comparisons.SDS.Core
-open Comparisons.SDS.ThresholdInstances
+open SDS.Core
+open SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
 open Core.BayesianSemantics
 
@@ -437,4 +437,4 @@ SDS extends LU-RSA with **factored priors**:
 - `SDSandRSA`: This module extends that correspondence formally
 -/
 
-end Comparisons.SDS.Marginalization
+end SDS.Marginalization

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.40.0] - 2025-01-31
+
+### Added
+- **Phenomena/ScopeFreezing/Data.lean**: Scope freezing phenomena (15 examples, 6 contexts)
+- **Theories/Minimalism/Scope.lean**: QR + Scope Economy + Locality constraints
+- **Theories/Comparisons/ScopeFreezing.lean**: Three-way theory comparison (Minimalism vs CCG vs Processing)
+
+### Changed
+- **Theories/SDS/**: Moved from Comparisons/SDS/ to top-level theory
+  - SDS is now a peer of RSA at Theories/SDS/
+
 ## [0.39.0] - 2025-01-31
 
 ### Added

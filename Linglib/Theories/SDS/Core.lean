@@ -37,7 +37,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Mathlib.Tactic.Ring
 
-namespace Comparisons.SDS.Core
+namespace SDS.Core
 
 -- ============================================================================
 -- Core Typeclass: SDSConstraintSystem
@@ -311,4 +311,4 @@ SDS unifies many linguistic phenomena under a common computational pattern:
 All share: **Boolean semantics + parameter uncertainty = soft/graded meanings**
 -/
 
-end Comparisons.SDS.Core
+end SDS.Core

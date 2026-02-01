@@ -34,13 +34,13 @@ The difference is in how the threshold is determined:
 - Morzycki (2009). Degree modification of gradable nouns.
 -/
 
-import Linglib.Theories.Comparisons.SDS.Core
+import Linglib.Theories.SDS.Core
 import Linglib.Theories.Comparisons.ThresholdSemantics
 
-namespace Comparisons.SDS.ThresholdInstances
+namespace SDS.ThresholdInstances
 
 open Comparisons.ThresholdSemantics
-open Comparisons.SDS.Core
+open SDS.Core
 
 -- ============================================================================
 -- Threshold Support: Discretized [0,1]
@@ -268,4 +268,4 @@ Alternative: Have `selectionalFactor : α → Entity → Θ → ℚ`
 We chose currying to keep the typeclass simpler.
 -/
 
-end Comparisons.SDS.ThresholdInstances
+end SDS.ThresholdInstances

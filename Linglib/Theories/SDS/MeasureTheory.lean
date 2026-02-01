@@ -36,9 +36,9 @@ SDSConstraintSystem (discrete, ℚ)     SDSMeasureSystem (continuous, ℝ)
 - Lassiter & Goodman (2017) use continuous threshold distributions
 -/
 
-import Linglib.Theories.Comparisons.SDS.Core
+import Linglib.Theories.SDS.Core
 
-namespace Comparisons.SDS.MeasureTheory
+namespace SDS.MeasureTheory
 
 -- ============================================================================
 -- Continuous SDS: Measure-Theoretic Version (Placeholder)
@@ -270,4 +270,4 @@ This is a **placeholder module**. Full implementation requires:
 4. Numerical computation via Mathlib's analysis
 -/
 
-end Comparisons.SDS.MeasureTheory
+end SDS.MeasureTheory

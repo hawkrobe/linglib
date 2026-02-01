@@ -31,14 +31,14 @@ These are equivalent when we identify:
 - Erk & Herbelot (2024). How to Marry a Star.
 -/
 
-import Linglib.Theories.Comparisons.SDS.Core
-import Linglib.Theories.Comparisons.SDS.Examples
+import Linglib.Theories.SDS.Core
+import Linglib.Theories.SDS.Examples
 import Linglib.Phenomena.Humor.KaoEtAl2016.Data
 
-namespace Comparisons.SDS.Humor
+namespace SDS.Humor
 
-open Comparisons.SDS.Core
-open Comparisons.SDS.Examples
+open SDS.Core
+open SDS.Examples
 open Phenomena.Humor.KaoEtAl2016
 
 -- ============================================================================
@@ -69,10 +69,10 @@ Given ambiguous word in context:
 | Kao | SDS |
 |-----|-----|
 | m_a, m_b | c_1, c_2 |
-| P(m\|w) | normalizedPosterior |
+| P(m|w) | normalizedPosterior |
 | words relevant to m_a | words contributing to selectional |
 | words relevant to m_b | words contributing to scenario |
-| Amb(M) = H[P(m\|w)] | entropy of posterior |
+| Amb(M) = H[P(m|w)] | entropy of posterior |
 | Dist(F_a, F_b) | conflictDegree |
 -/
 
@@ -557,7 +557,7 @@ both measure whether different evidence sources prefer different interpretations
 | Concept | Kao et al. | SDS |
 |---------|------------|-----|
 | Latent variable | Meaning m | Concept c |
-| Evidence integration | P(m\|w) via Bayes | Product of Experts |
+| Evidence integration | P(m|w) via Bayes | Product of Experts |
 | Uncertainty | Ambiguity (entropy) | Posterior uncertainty |
 | Distinct support | Distinctiveness (KL div) | Conflict (argmax difference) |
 | Humor prediction | Amb ↑ AND Dist ↑ | Uncertainty ↑ AND Conflict |
@@ -589,4 +589,4 @@ Both frameworks formalize the same intuition:
 - Raskin (1985). Semantic mechanisms of humor. (Script opposition theory)
 -/
 
-end Comparisons.SDS.Humor
+end SDS.Humor
