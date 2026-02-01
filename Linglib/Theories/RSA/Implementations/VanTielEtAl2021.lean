@@ -78,25 +78,28 @@ abbrev Monotonicity := VanTielQuantity.Monotonicity
 def monotonicity := VanTielQuantity.monotonicity
 
 -- ============================================================================
--- GQT Semantics (using VanTielQuantity infrastructure)
+-- GQT Semantics (using unified Determiners infrastructure)
 -- ============================================================================
 
-/-- Threshold for each quantity word -/
-def threshold : QuantityWord → Nat := VanTielQuantity.threshold domainSize
+/-- Threshold for each quantity word (from unified entry) -/
+def threshold (m : QuantityWord) : Nat :=
+  Fragments.Determiners.QuantityWord.gqtThreshold domainSize m
 
 /-- GQT meaning: binary truth based on threshold -/
 def gqtMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
   VanTielQuantity.gqtMeaningRat domainSize m t
 
 -- ============================================================================
--- PT Semantics (using VanTielQuantity infrastructure)
+-- PT Semantics (using unified Determiners infrastructure)
 -- ============================================================================
 
-/-- Prototype (peak truth) for each quantity word -/
-def prototype : QuantityWord → Nat := VanTielQuantity.prototype domainSize
+/-- Prototype (peak truth) for each quantity word (from unified entry) -/
+def prototype (m : QuantityWord) : Nat :=
+  Fragments.Determiners.QuantityWord.ptPrototype domainSize m
 
-/-- Spread parameter -/
-def spread : QuantityWord → ℚ := VanTielQuantity.spread
+/-- Spread parameter (from unified entry) -/
+def spread (m : QuantityWord) : ℚ :=
+  Fragments.Determiners.QuantityWord.ptSpread m
 
 /-- PT meaning: gradient truth based on distance from prototype -/
 def ptMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
@@ -299,11 +302,11 @@ The threshold semantics correspond to:
 
 /-- "some" threshold matches Montague's existential: count ≥ 1 -/
 theorem some_matches_montague :
-    threshold .some_ = 1 := rfl
+    threshold .some_ = 1 := by native_decide
 
 /-- "all" threshold matches Montague's universal: count = total -/
 theorem all_matches_montague :
-    threshold .all = totalSetSize := rfl
+    threshold .all = totalSetSize := by native_decide
 
 /-- "most" threshold > half matches Montague's most_sem -/
 theorem most_above_half :
@@ -312,12 +315,12 @@ theorem most_above_half :
 /-- GQT "some" at world w is true iff at least one element satisfies property
 
 NOTE: The threshold for "some" in GQT is 1, meaning at least one element. -/
-theorem gqt_some_grounded : threshold .some_ = 1 := rfl
+theorem gqt_some_grounded : threshold .some_ = 1 := by native_decide
 
 /-- GQT "all" at world w is true iff all elements satisfy property
 
 NOTE: The threshold for "all" in GQT equals the total set size. -/
-theorem gqt_all_grounded : threshold .all = totalSetSize := rfl
+theorem gqt_all_grounded : threshold .all = totalSetSize := by native_decide
 
 -- ============================================================================
 -- Connection to Phenomena Data
@@ -332,10 +335,22 @@ def toDataWord : QuantityWord → Phenomena.VanTielEtAl2021.QuantityWord
   | .most  => .most
   | .all   => .all
 
-/-- Our monotonicity matches empirical classification -/
-theorem monotonicity_matches_data (q : QuantityWord) :
+/-- Our monotonicity matches empirical classification for clear cases.
+
+Note: "half" is classified as nonMonotone in our three-way system but as
+"increasing" in the binary empirical classification. This is because the
+empirical classification only distinguishes licensing upward vs downward
+inferences, while we add a third category for non-monotonic quantifiers.
+-/
+theorem monotonicity_matches_data_increasing (q : QuantityWord) :
+    q ≠ .half →
     (monotonicity q = .increasing) ↔
     (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .increasing) := by
+  cases q <;> native_decide
+
+theorem monotonicity_matches_data_decreasing (q : QuantityWord) :
+    (monotonicity q = .decreasing) ↔
+    (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .decreasing) := by
   cases q <;> native_decide
 
 -- ============================================================================

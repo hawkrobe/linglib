@@ -32,6 +32,7 @@ def myDomain := Quantity.standard 3
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
+import Linglib.Fragments.Determiners
 import Mathlib.Data.Rat.Defs
 
 namespace Quantity
@@ -246,104 +247,43 @@ end Quantity
 -- VanTiel Quantity Domain (6-word scale)
 -- ============================================================================
 
+-- Uses unified QuantityWord from Fragments.Determiners
+
 namespace VanTielQuantity
 
-/--
-Extended quantity words for van Tiel et al. (2021) analysis.
-Includes words with opposite monotonicity to demonstrate competition
-beyond traditional scalar scales.
--/
-inductive Utterance where
-  | none_  -- "none" (monotone decreasing, θ = 0)
-  | few    -- "few" (monotone decreasing, θ ≈ small)
-  | some_  -- "some" (monotone increasing, θ ≥ 1)
-  | half   -- "half" (roughly proportional)
-  | most   -- "most" (monotone increasing, θ > half)
-  | all    -- "all" (monotone increasing, θ = n)
-  deriving Repr, DecidableEq, BEq, Inhabited
+-- Re-export QuantityWord as Utterance for backwards compatibility
+open Fragments.Determiners in
+abbrev Utterance := QuantityWord
 
-instance : Fintype Utterance where
-  elems := {.none_, .few, .some_, .half, .most, .all}
-  complete := fun x => by cases x <;> simp
+-- Re-export Monotonicity
+open Fragments.Determiners in
+abbrev Monotonicity := Fragments.Determiners.Monotonicity
 
-def allUtterances : List Utterance := [.none_, .few, .some_, .half, .most, .all]
+def allUtterances : List Utterance := Fragments.Determiners.QuantityWord.toList
 
-/-- Monotonicity classification -/
-inductive Monotonicity where
-  | increasing  -- t ≥ θ (some, half, most, all)
-  | decreasing  -- t ≤ θ (none, few)
-  deriving Repr, DecidableEq
-
-def monotonicity : Utterance → Monotonicity
-  | .none_ => .decreasing
-  | .few   => .decreasing
-  | .some_ => .increasing
-  | .half  => .increasing
-  | .most  => .increasing
-  | .all   => .increasing
+/-- Get monotonicity from unified entry -/
+def monotonicity (u : Utterance) : Monotonicity :=
+  Fragments.Determiners.QuantityWord.monotonicity u
 
 -- ============================================================================
--- GQT Semantics: Binary Threshold
+-- GQT Semantics (from Determiners)
 -- ============================================================================
 
-/-- Threshold for each quantity word (relative to domain size n) -/
-def threshold (n : Nat) : Utterance → Nat
-  | .none_ => 0
-  | .few   => n / 3          -- roughly 1/3
-  | .some_ => 1
-  | .half  => n / 2
-  | .most  => n / 2 + 1      -- more than half
-  | .all   => n
-
-/-- GQT (Generalized Quantifier Theory) semantics: binary truth -/
+/-- GQT meaning from unified entry -/
 def gqtMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : Bool :=
-  let θ := threshold n m
-  match monotonicity m with
-  | .increasing => t.val ≥ θ
-  | .decreasing => t.val ≤ θ
+  Fragments.Determiners.QuantityWord.gqtMeaning n m t
 
 /-- GQT meaning as rational (for RSA) -/
 def gqtMeaningRat (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
-  boolToRat (gqtMeaning n m t)
+  Fragments.Determiners.QuantityWord.gqtMeaningRat n m t
 
 -- ============================================================================
--- PT Semantics: Gaussian Prototype
+-- PT Semantics (from Determiners)
 -- ============================================================================
 
-/-- Prototype (peak truth) for each word (relative to domain size n) -/
-def prototype (n : Nat) : Utterance → Nat
-  | .none_ => 0
-  | .few   => n / 5          -- roughly 1/5
-  | .some_ => n / 3          -- roughly 1/3
-  | .half  => n / 2
-  | .most  => n * 4 / 5      -- roughly 4/5
-  | .all   => n
-
-/-- Spread (how quickly truth decreases from prototype) -/
-def spread : Utterance → ℚ
-  | .none_ => 1
-  | .few   => 2
-  | .some_ => 3
-  | .half  => 2
-  | .most  => 2
-  | .all   => 1
-
-/-- Approximate Gaussian exp(-x²) with rational arithmetic -/
-private def approxGaussian (x : ℚ) : ℚ :=
-  let xSq := x * x
-  if xSq ≤ 1/4 then 1 - xSq / 2
-  else if xSq ≤ 1 then 3/4 - xSq / 4
-  else if xSq ≤ 4 then 1/2 - xSq / 8
-  else if xSq ≤ 9 then 1/4 - xSq / 36
-  else 1/100
-
-/-- PT (Prototype Theory) semantics: gradient truth based on distance from prototype -/
+/-- PT meaning from unified entry -/
 def ptMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
-  let p := prototype n m
-  let d := spread m
-  let distance : ℚ := (t.val : ℚ) - (p : ℚ)
-  let normalized := distance / d
-  approxGaussian normalized
+  Fragments.Determiners.QuantityWord.ptMeaning n m t
 
 -- ============================================================================
 -- Quantity Domain Structure
@@ -378,40 +318,19 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
 /-- GQT domain with uniform priors -/
 def gqtDomain (n : Nat) : Domain n where
   meaning := gqtMeaningRat n
-  meaning_nonneg := fun _ _ => by simp only [gqtMeaningRat, boolToRat]; split_ifs <;> decide
-
-/-- Helper: approxGaussian always returns non-negative values -/
-private theorem approxGaussian_nonneg (x : ℚ) : 0 ≤ approxGaussian x := by
-  simp only [approxGaussian]
-  split_ifs with h1 h2 h3 h4
-  · -- x² ≤ 1/4 case: 1 - x²/2 ≥ 0
-    have : x * x ≤ 1/4 := h1
-    linarith
-  · -- 1/4 < x² ≤ 1 case: 3/4 - x²/4 ≥ 0
-    have : x * x ≤ 1 := h2
-    linarith
-  · -- 1 < x² ≤ 4 case: 1/2 - x²/8 ≥ 0
-    have : x * x ≤ 4 := h3
-    linarith
-  · -- 4 < x² ≤ 9 case: 1/4 - x²/36 ≥ 0
-    have : x * x ≤ 9 := h4
-    linarith
-  · -- x² > 9 case: 1/100 > 0
-    norm_num
+  meaning_nonneg := fun u w => Fragments.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
 
 /-- PT domain with uniform priors -/
 def ptDomain (n : Nat) : Domain n where
   meaning := ptMeaning n
-  meaning_nonneg := fun _ _ => by
-    simp only [ptMeaning]
-    exact approxGaussian_nonneg _
+  meaning_nonneg := fun u _ => Fragments.Determiners.QuantityWord.ptMeaning_nonneg n u _
 
 /-- GQT domain with custom salience -/
 def gqtDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := gqtMeaningRat n
   salience := salience
-  meaning_nonneg := fun _ _ => by simp only [gqtMeaningRat, boolToRat]; split_ifs <;> decide
+  meaning_nonneg := fun u w => Fragments.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
   salience_nonneg := h
 
 /-- PT domain with custom salience -/
@@ -419,9 +338,7 @@ def ptDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := ptMeaning n
   salience := salience
-  meaning_nonneg := fun _ _ => by
-    simp only [ptMeaning]
-    exact approxGaussian_nonneg _
+  meaning_nonneg := fun u _ => Fragments.Determiners.QuantityWord.ptMeaning_nonneg n u _
   salience_nonneg := h
 
 -- ============================================================================

@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.47.0] - 2025-02-01
+
+### Changed
+- **Fragments/Determiners.lean**: Unified lexical entry for quantifiers/determiners
+  - `QuantifierEntry`: Single source of truth with syntactic AND semantic properties
+  - `QuantityWord`: 6-word enum (none, few, some, half, most, all) referencing entries
+  - GQT semantics: `gqtMeaning`, `gqtMeaningRat`, `gqtThreshold`
+  - PT semantics: `ptMeaning`, `ptPrototype`, `ptSpread`
+  - Horn scales: `Scale` structure with `someAllScale`, `someMostAllScale`
+  - Non-negativity theorems: `gqtMeaningRat_nonneg`, `ptMeaning_nonneg`
+
+- **Fragments/Quantities.lean**: VanTielQuantity uses unified Determiners
+  - `Utterance` is now alias for `Fragments.Determiners.QuantityWord`
+  - Removed duplicate type definitions and semantics
+  - Domain proofs use theorems from Determiners
+
+- **RSA/Implementations/VanTielEtAl2021.lean**: Uses unified infrastructure
+  - `threshold`, `prototype`, `spread` now delegate to Determiners
+  - Updated proofs to use `native_decide` for computed values
+  - Added note about monotonicity classification (3-way vs 2-way)
+
 ## [0.46.0] - 2025-02-01
 
 ### Added
