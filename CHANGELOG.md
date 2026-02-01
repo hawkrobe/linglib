@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.44.0] - 2025-02-01
+
+### Added
+- **Core/Softmax/Basic.lean**: Softmax function with key properties (Franke & Degen tutorial)
+  - Definition: softmax(s, α)ᵢ = exp(α·sᵢ) / Σⱼ exp(α·sⱼ)
+  - Fact 1: Valid probability distribution (sum to 1, positive)
+  - Fact 2: Odds from differences: pᵢ/pⱼ = exp(α(sᵢ - sⱼ)) - THE key property
+  - Fact 3: Binary case = logistic function
+  - Fact 6: Translation invariance
+  - Fact 8: Scale trading
+  - Monotonicity properties
+- **Core/Softmax/Limits.lean**: Limit behavior as α varies (proofs use Mathlib analysis)
+  - `tendsto_softmax_zero`: α → 0 gives uniform distribution
+  - `softmax_ratio_tendsto_zero`: ratio → 0 as α → ∞ (via `tendsto_exp_atBot`)
+  - `tendsto_softmax_infty_unique_max`: concentration on unique max as α → ∞
+  - `tendsto_softmax_neg_infty_unique_min`: concentration on min as α → -∞
+  - `softmax_tendsto_hardmax`: softmax → hardmax (RSA → IBR limit)
+  - Entropy bounds (placeholder)
+- **Core/Softmax/MaxEntropy.lean**: Entropy-regularized optimization
+  - Fact 5: Softmax = max entropy distribution subject to expected score
+  - Entropy-regularized objective: argmax_p [⟨s, p⟩ + (1/α) H(p)]
+  - Free energy / Boltzmann interpretation
+  - Exponential family characterization
+  - KL divergence connections
+- **RSA/Core/Convergence.lean**: Integrated softmax into RSA
+  - `speakerSoftmax`: RSA speaker defined as softmax(utility, α)
+  - Properties inherited directly: sum to 1, positivity, odds, monotonicity
+  - `speakerSoftmax_zero`: α = 0 gives uniform distribution
+  - Uses existing `utility` function - no fragmentation
+
+## [0.43.0] - 2025-01-31
+
+### Added
+- **RSA/Implementations/Franke2011.lean**: Iterated Best Response (IBR) model (S&P 4(1):1-82)
+  - Game-theoretic foundation for quantity implicatures
+  - IBR algorithm: L₀ → S₁ → L₂ → ... converging to fixed point
+  - **Key theorem**: IBR fixed point = exhMW (exhaustive interpretation)
+  - Connection to Spector's Theorem 9: under closure, IBR = exhIE
+  - RSA → IBR as α → ∞ (softmax → argmax limit)
+  - Working examples: scalar implicature game, free choice game
+
+## [0.42.0] - 2025-01-31
+
+### Added
+- **RSA/Implementations/WaldonDegen2021.lean**: Continuous-Incremental RSA (CI-RSA) for cross-linguistic referring expressions (SCiL 2021)
+  - Synthesizes incremental RSA (Cohn-Gordon et al. 2018) with continuous semantics (Degen et al. 2020)
+  - Predicts color/size asymmetry in redundant modification
+  - Models cross-linguistic word order variation (English prenominal vs Spanish postnominal)
+  - Grounding theorem connecting to unified noise theory (`lexContinuous_as_noiseChannel`)
+
 ## [0.41.0] - 2025-01-31
 
 ### Added

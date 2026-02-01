@@ -55,6 +55,11 @@ import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 
+-- Softmax infrastructure (Franke & Degen)
+import Linglib.Core.Softmax.Basic
+import Linglib.Core.Softmax.Limits
+import Linglib.Core.Softmax.MaxEntropy
+
 -- Fragments (pre-built RSA domains)
 import Linglib.Fragments.ReferenceGames
 import Linglib.Fragments.Quantities
@@ -247,6 +252,8 @@ import Linglib.Theories.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.RSA.Implementations.YoonEtAl2020
 import Linglib.Theories.RSA.Implementations.HawkinsGweonGoodman2021
+import Linglib.Theories.RSA.Implementations.WaldonDegen2021
+import Linglib.Theories.RSA.Implementations.Franke2011
 import Linglib.Theories.RSA.DegenEtAl2020
 
 -- RSA Extensions: Information Theory (Zaslavsky et al. 2020)

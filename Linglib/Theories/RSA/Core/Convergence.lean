@@ -31,6 +31,7 @@ import Mathlib.Analysis.Convex.Function
 import Mathlib.Topology.Order.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Field
+import Linglib.Core.Softmax.Basic
 
 namespace RSA.Convergence
 
@@ -95,6 +96,58 @@ noncomputable def utility {S : RSAScenarioR} (L : S.U → S.M → ℝ) (m : S.M)
 noncomputable def speakerScore (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (m : S.M) (u : S.U) : ℝ :=
   if L u m ≤ 0 then 0 else (L u m).rpow S.α
+
+-- ============================================================================
+-- Softmax-based speaker (inherits all softmax properties)
+-- ============================================================================
+
+/-- **Pragmatic speaker as softmax** (normalized distribution).
+
+  S(u|m) = softmax(utility(·, m), α)(u)
+
+By defining RSA speaker via softmax, all softmax properties
+(sum to 1, positivity, odds, limits) transfer directly.
+
+The `utility` function is defined above as `log L(m|u)` when `L > 0`.
+For full RSA with cost, use `utility - cost` as the score function.
+-/
+noncomputable def speakerSoftmax (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) : S.U → ℝ :=
+  Softmax.softmax (fun u => utility L m u) S.α
+
+/-- Speaker softmax sums to 1 (valid probability distribution). -/
+theorem speakerSoftmax_sum_one (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M) :
+    ∑ u, speakerSoftmax S L m u = 1 :=
+  Softmax.softmax_sum_eq_one _ S.α
+
+/-- Speaker softmax is positive. -/
+theorem speakerSoftmax_pos (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M) (u : S.U) :
+    0 < speakerSoftmax S L m u :=
+  Softmax.softmax_pos _ S.α u
+
+/-- Speaker softmax probability ratio from utility differences.
+
+  S(u₁|m) / S(u₂|m) = exp(α · (utility(u₁, m) - utility(u₂, m)))
+
+This is Fact 2 from Franke & Degen: odds determined by score differences.
+-/
+theorem speakerSoftmax_odds (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M) (u₁ u₂ : S.U) :
+    speakerSoftmax S L m u₁ / speakerSoftmax S L m u₂ =
+    Real.exp (S.α * (utility L m u₁ - utility L m u₂)) :=
+  Softmax.softmax_odds _ S.α u₁ u₂
+
+/-- At α = 0, speaker is uniform (ignores utility entirely). -/
+theorem speakerSoftmax_zero (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M)
+    (hα : S.α = 0) :
+    speakerSoftmax S L m = fun _ => 1 / (Fintype.card S.U : ℝ) := by
+  simp only [speakerSoftmax, hα]
+  exact Softmax.softmax_zero _
+
+/-- Higher utility → higher speaker probability (for α > 0). -/
+theorem speakerSoftmax_mono (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ)
+    (hα : 0 < S.α) (m : S.M) (u₁ u₂ : S.U)
+    (h : utility L m u₁ ≤ utility L m u₂) :
+    speakerSoftmax S L m u₁ ≤ speakerSoftmax S L m u₂ :=
+  Softmax.softmax_mono _ hα u₁ u₂ h
 
 /-- Pragmatic listener: L(m|u) ∝ P(m) · S(u|m) -/
 noncomputable def listenerScore (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)

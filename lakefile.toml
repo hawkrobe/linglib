@@ -1,5 +1,5 @@
 name = "linglib"
-version = "0.41.0"
+version = "0.44.0"
 defaultTargets = ["Linglib"]
 
 [leanOptions]
