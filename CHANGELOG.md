@@ -30,6 +30,12 @@
   - `speakerSoftmax_zero`: α = 0 gives uniform distribution
   - Uses existing `utility` function - no fragmentation
 
+### Changed
+- **RSA/Implementations/Franke2011.lean**: Fully proved `rsa_to_ibr_limit` theorem
+  - Connects softmax limits to IBR via `tendsto_softmax_infty_at_max`
+  - Uses principled floor score `falseMessageScore` based on state space size
+  - Complete proof that RSA S1 → IBR S1 as α → ∞
+
 ## [0.43.0] - 2025-01-31
 
 ### Added

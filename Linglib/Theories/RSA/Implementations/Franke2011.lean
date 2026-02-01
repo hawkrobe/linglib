@@ -50,6 +50,8 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+import Linglib.Core.Softmax.Basic
+import Linglib.Core.Softmax.Limits
 
 namespace RSA.IBR
 
@@ -337,7 +339,7 @@ def toRSAScenario (G : InterpGame) (α : ℕ)
   φ_nonneg := fun _ _ _ _ => by split <;> decide
   worldPrior_nonneg := hPrior
 
-/-- RSA S1 probability for message given state -/
+/-- RSA S1 probability for message given state (rational version) -/
 def rsaS1Prob (G : InterpGame) (α : ℕ) (s : G.State) (m : G.Message) : ℚ :=
   -- Simplified: (L0(s|m))^α normalized
   let l0 := if G.meaning m s then (G.informativity m) else 0
@@ -347,16 +349,109 @@ def rsaS1Prob (G : InterpGame) (α : ℕ) (s : G.State) (m : G.Message) : ℚ :=
     l0' ^ α
   if total == 0 then 0 else score / total
 
-/-- As α → ∞, RSA S1 concentrates on optimal messages (IBR S1)
+/-- Floor score for false messages. Uses -log(|State|) - 1, which is always
+    below the minimum possible log-informativity for any true message. -/
+noncomputable def falseMessageScore (G : InterpGame) : ℝ :=
+  - Real.log (Fintype.card G.State : ℝ) - 1
 
-This is the key limiting theorem connecting RSA to IBR.
-For large α, softmax approaches argmax.
+/-- RSA S1 probability (real version for limit theorems).
+
+RSA S1 is exactly softmax over log-informativity scores:
+  rsaS1(m | s) = exp(α · log(inf(m))) / Σ exp(α · log(inf(m')))
+              = inf(m)^α / Σ inf(m')^α
+              = softmax(log ∘ inf, α)(m)
 -/
-theorem rsa_to_ibr_limit (G : InterpGame) (s : G.State) (m : G.Message)
-    (hOpt : ∀ m', G.meaning m' s = true → G.informativity m ≥ G.informativity m')
-    (hTrue : G.meaning m s = true) :
-    ∀ ε > 0, ∃ α₀, ∀ α > α₀, rsaS1Prob G α s m > 1 - ε := by
-  sorry -- Proof: standard softmax concentration result
+noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
+  -- Score = log(informativity) for true messages, floor for false
+  let score := fun m =>
+    if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
+  Softmax.softmax score α
+
+/-- RSA S1 equals softmax over log-informativity.
+
+This is the key observation: RSA speaker choice is softmax with
+scores = log(informativity of message).
+-/
+theorem rsaS1_eq_softmax (G : InterpGame) [Nonempty G.Message] (α : ℝ) (s : G.State) :
+    rsaS1Real G α s = Softmax.softmax
+      (fun m => if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G) α := rfl
+
+/-- As α → ∞, RSA S1 concentrates on optimal messages (IBR S1).
+
+This follows directly from `softmax_tendsto_hardmax`:
+- RSA S1 = softmax(log-informativity, α)
+- As α → ∞, softmax → argmax
+- argmax(log-informativity) = argmax(informativity) = IBR S1
+
+The proof uses `tendsto_softmax_infty_at_max` from Limits.lean.
+-/
+theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m : G.Message)
+    (hTrue : G.meaning m s = true)
+    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
+    (hInfPos : 0 < G.informativity m) :
+    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
+  -- RSA S1 = softmax over log-informativity
+  -- The optimal message m has highest log-informativity among true messages
+  -- By softmax_tendsto_hardmax, softmax concentrates on the maximum
+  let score := fun m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
+  -- m is the unique maximum of score (log is monotone, so max inf = max log inf)
+  have hmax : ∀ m', m' ≠ m → score m' < score m := by
+    intro m' hne
+    simp only [score, hTrue, ↓reduceIte]
+    split_ifs with hm'
+    · -- Both true: log is strictly monotone, so inf m > inf m' implies log(inf m) > log(inf m')
+      have hm'_pos : 0 < G.informativity m' := by
+        simp only [InterpGame.informativity]
+        split_ifs with hcard
+        · -- card = 0 case: informativity = 0, but this means message is never true
+          -- which contradicts hm' : meaning m' s = true
+          exfalso
+          have hempty : G.trueStates m' = ∅ := Finset.card_eq_zero.mp hcard
+          have hs_mem : s ∈ G.trueStates m' := by
+            simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and, hm']
+          simp only [hempty, Finset.notMem_empty] at hs_mem
+        · exact one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hcard))
+      exact Real.log_lt_log (Rat.cast_pos.mpr hm'_pos) (Rat.cast_lt.mpr (hUnique m' hne hm'))
+    · -- m true, m' false: falseMessageScore < log(inf m)
+      -- falseMessageScore = -log(|State|) - 1
+      -- log(inf m) ≥ -log(|State|) since inf m ≥ 1/|State|
+      -- So log(inf m) > -log(|State|) - 1 = falseMessageScore
+      simp only [falseMessageScore]
+      -- We need: -log(|State|) - 1 < log(inf m)
+      -- Equivalently: log(inf m) > -log(|State|) - 1
+      haveI : Nonempty G.State := ⟨s⟩
+      have hcard_pos : 0 < Fintype.card G.State := Fintype.card_pos
+      have hs_in_true : s ∈ G.trueStates m := by
+        simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and, hTrue]
+      have htrue_card_pos : 0 < (G.trueStates m).card :=
+        Finset.card_pos.mpr ⟨s, hs_in_true⟩
+      have htrue_card_le : (G.trueStates m).card ≤ Fintype.card G.State :=
+        Finset.card_le_card (Finset.subset_univ _)
+      -- informativity m = 1 / (trueStates m).card
+      have hinf_eq : G.informativity m = 1 / (G.trueStates m).card := by
+        simp only [InterpGame.informativity]
+        split_ifs with hcard
+        · exact absurd hcard (Nat.pos_iff_ne_zero.mp htrue_card_pos)
+        · rfl
+      -- log(inf m) = log(1/card) = -log(card)
+      have hinf_cast_pos : 0 < (G.informativity m : ℝ) := Rat.cast_pos.mpr hInfPos
+      have hlog_eq : Real.log (G.informativity m : ℝ) = -Real.log ((G.trueStates m).card : ℝ) := by
+        rw [hinf_eq]
+        simp only [Rat.cast_div, Rat.cast_one, Rat.cast_natCast]
+        rw [Real.log_div (by norm_num : (1 : ℝ) ≠ 0)
+            (Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp htrue_card_pos)),
+            Real.log_one]
+        ring
+      rw [hlog_eq]
+      -- Need: -log(|State|) - 1 < -log(card(trueStates m))
+      -- i.e., log(card(trueStates m)) < log(|State|) + 1
+      -- Since card(trueStates m) ≤ |State|, we have log(card) ≤ log(|State|)
+      -- So log(card) < log(|State|) + 1
+      have hlog_le : Real.log ((G.trueStates m).card : ℝ) ≤ Real.log (Fintype.card G.State : ℝ) :=
+        Real.log_le_log (Nat.cast_pos.mpr htrue_card_pos) (Nat.cast_le.mpr htrue_card_le)
+      linarith
+  -- Apply the softmax limit theorem
+  exact Softmax.tendsto_softmax_infty_at_max score m hmax
 
 -- ============================================================================
 -- SECTION 7: Examples from the Paper
