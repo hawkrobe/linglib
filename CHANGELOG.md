@@ -3,6 +3,15 @@
 ## [0.45.0] - 2025-02-01
 
 ### Added
+- **Comparisons/RSAExhExpressivity.lean**: Formalizes expressivity gap between standard RSA and EXH
+  - Standard RSA is scope-blind: treats utterances atomically, gives ONE distribution
+  - EXH is scope-sensitive: different scope positions yield different meanings
+  - `expressivity_gap`: Standard RSA cannot express local EXH (embedded implicatures)
+  - `ibr_is_global_not_local`: IBR (α→∞ limit) implements GLOBAL EXH only
+  - `hierarchy_is_strict`: Compositional RSA (scope as latent variable) is strictly more expressive
+  - Classic example: "Every student read some book" - global vs local SI
+  - Motivates compositional/lexical RSA approaches (ScontrasPearl2021, LexicalUncertainty)
+
 - **RSA/Implementations/Franke2011.lean**: Expected gain framework (Franke Appendix B.4)
   - `expectedGain`: EG(S, H) = Σ_t prior(t) × Σ_m S(t,m) × H(m,t)
   - `eg_speaker_improvement`, `eg_hearer_improvement`: Monotonicity lemmas (stubs)
