@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.45.0] - 2025-02-01
+
+### Added
+- **RSA/Implementations/Franke2011.lean**: Franke Fact 1 formalization (R₁ ⊆ ExhMW)
+  - `r1_subset_exhMW`: States with minimum alternative count are in ExhMW (proved)
+  - `altOrderingTotalOnMessage`: Condition for when <_ALT is total on m-worlds
+  - `exhMW_subset_r1_under_totality`: Converse direction under totality (proved)
+  - `r1_eq_exhMW_under_totality`: Full equivalence R₁ = ExhMW under totality (proved)
+  - Helper lemmas: `ltALT_implies_trueMessages_ssubset`, `trueMessages_ssubset_implies_ltALT`
+  - Characterizes exactly when Franke's containment becomes equality
+
 ## [0.44.0] - 2025-02-01
 
 ### Added
