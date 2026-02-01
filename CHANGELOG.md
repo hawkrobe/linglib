@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.41.0] - 2025-01-31
+
+### Added
+- **RSA/Implementations/ChampollionAlsopGrosu2019.lean**: Free choice disjunction as RSA (SALT 29)
+- **RSA/Implementations/Alsop2024.lean**: Free choice *any* with Global Intentions model
+- **NeoGricean/Implementations/BarLevFox2020.lean**: Innocent Inclusion (II) for free choice (NLS)
+- **Comparisons/FreeChoice.lean**: Theory comparison for free choice phenomena
+- **Phenomena/FreeChoice/Data.lean**: Free choice *any* (universal FCI) empirical data
+
 ## [0.40.1] - 2025-01-31
 
 ### Added

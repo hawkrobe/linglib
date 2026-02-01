@@ -247,6 +247,156 @@ def cancellationExamples : List FCCancellationDatum :=
   [explicitCancellation, contextualCancellation]
 
 -- ============================================================================
+-- PART 5: Free Choice *Any* (Universal FCI)
+-- ============================================================================
+
+/-!
+## Free Choice *Any*
+
+Universal free choice items (FCIs) like *any* exhibit similar inference patterns
+to disjunctive free choice but involve universal quantification.
+
+"You may take any class" pragmatically implies:
+- You may take Syntax (specifically)
+- You may take Phonology (specifically)
+- You may take Semantics (specifically)
+- ... (for all classes)
+
+This is the **exclusiveness inference**: permission applies to EACH individual
+alternative, not just to "some class or other".
+
+Key difference from disjunction:
+- Disjunction: ◇(a ∨ b) → ◇a ∧ ◇b
+- Universal FCI: ◇(∃x.class(x)) → ∀x.class(x) → ◇take(x)
+
+## References
+
+- Kadmon, N. & Landman, F. (1993). Any. Linguistics and Philosophy 16:353-422.
+- Dayal, V. (1998). Any as Inherently Modal. Linguistics and Philosophy 21:433-476.
+- Szabolcsi, A. (2004). Positive polarity - negative polarity. NLLT 22:409-452.
+- Alsop, S. (2024). The pragmatics of free choice any.
+-/
+
+/--
+Empirical pattern: Free choice *any* (universal FCI).
+
+"You may take any class" pragmatically implies permission for each specific class.
+This is the **exclusiveness inference** - distinct from simple existential permission.
+-/
+structure FCIAnyDatum where
+  /-- The sentence with *any* -/
+  sentence : String
+  /-- The domain of quantification -/
+  domain : String
+  /-- Example domain elements -/
+  domainElements : List String
+  /-- The inferred reading -/
+  inference : String
+  /-- Does exclusiveness inference arise? -/
+  exclusivenessArises : Bool
+  /-- Is this inference robust to prior manipulation? -/
+  robustToPriors : Bool
+  deriving Repr
+
+/--
+Free choice *any* with classes.
+Source: Alsop (2024)
+-/
+def anyClass : FCIAnyDatum :=
+  { sentence := "You may take any class"
+  , domain := "classes"
+  , domainElements := ["Syntax", "Phonology", "Semantics"]
+  , inference := "You may take Syntax AND Phonology AND Semantics (each specifically)"
+  , exclusivenessArises := true
+  , robustToPriors := true
+  }
+
+/--
+Free choice *any* with fruits (simplified domain).
+Source: Based on Kadmon & Landman (1993)
+-/
+def anyFruit : FCIAnyDatum :=
+  { sentence := "You may take any fruit"
+  , domain := "fruits"
+  , domainElements := ["apple", "pear"]
+  , inference := "You may take the apple AND you may take the pear (each specifically)"
+  , exclusivenessArises := true
+  , robustToPriors := true
+  }
+
+/--
+Free choice *any* with locations.
+-/
+def anyRoom : FCIAnyDatum :=
+  { sentence := "You may enter any room"
+  , domain := "rooms"
+  , domainElements := ["office", "lab", "lounge"]
+  , inference := "You may enter the office AND the lab AND the lounge (each specifically)"
+  , exclusivenessArises := true
+  , robustToPriors := true
+  }
+
+/--
+All FCI *any* examples.
+-/
+def fciAnyExamples : List FCIAnyDatum :=
+  [anyClass, anyFruit, anyRoom]
+
+-- ============================================================================
+-- PART 6: Comparing Disjunction FC and Universal FC
+-- ============================================================================
+
+/--
+Comparison between disjunctive FC and universal *any* FC.
+-/
+structure FCComparisonDatum where
+  /-- Description of the contrast -/
+  aspect : String
+  /-- Disjunctive FC behavior -/
+  disjunctionFC : String
+  /-- Universal *any* FC behavior -/
+  universalFC : String
+  /-- Are they analogous? -/
+  analogous : Bool
+  deriving Repr
+
+/--
+Both derive free choice/exclusiveness inferences.
+-/
+def bothDeriveFC : FCComparisonDatum :=
+  { aspect := "Core inference"
+  , disjunctionFC := "◇(a ∨ b) → ◇a ∧ ◇b"
+  , universalFC := "◇(∃x.P(x)) → ∀x.P(x) → ◇x"
+  , analogous := true
+  }
+
+/--
+Both are robust to prior manipulation.
+-/
+def bothRobust : FCComparisonDatum :=
+  { aspect := "Robustness to priors"
+  , disjunctionFC := "FCI robust, EI prior-sensitive"
+  , universalFC := "Exclusiveness robust, not-every prior-sensitive"
+  , analogous := true
+  }
+
+/--
+Different quantificational structure.
+-/
+def differentStructure : FCComparisonDatum :=
+  { aspect := "Quantificational structure"
+  , disjunctionFC := "Disjunction of two fixed alternatives"
+  , universalFC := "Universal quantification over domain"
+  , analogous := false
+  }
+
+/--
+All FC comparison data.
+-/
+def fcComparisonData : List FCComparisonDatum :=
+  [bothDeriveFC, bothRobust, differentStructure]
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
