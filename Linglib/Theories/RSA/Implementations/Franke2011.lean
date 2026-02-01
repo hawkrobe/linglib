@@ -180,6 +180,43 @@ def bestResponse (G : InterpGame) (H : HearerStrategy G) : SpeakerStrategy G whe
       if optimalCount.card = 0 then 0 else 1 / optimalCount.card
     else 0
 
+/-- Best response speaker always gives non-negative probabilities. -/
+theorem bestResponse_nonneg (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message) :
+    0 ≤ (bestResponse G H).choose s m := by
+  simp only [bestResponse]
+  split_ifs with hcond hzero
+  · -- Branch: hcond true, hzero (optimalCount.card = 0) true → value is 0
+    exact le_refl 0
+  · -- Branch: hcond true, hzero false → value is 1 / optimalCount.card
+    apply one_div_nonneg.mpr
+    exact Nat.cast_nonneg _
+  · -- Branch: hcond false → value is 0
+    exact le_refl 0
+
+/-- Best response speaker gives zero probability to false messages. -/
+theorem bestResponse_false_zero (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message)
+    (hFalse : G.meaning m s = false) :
+    (bestResponse G H).choose s m = 0 := by
+  simp only [bestResponse]
+  split_ifs with hcond hzero
+  · -- hcond says meaning m s = true, but hFalse says it's false, contradiction
+    exact absurd hcond.1 (by simp [hFalse])
+  · -- Same contradiction
+    exact absurd hcond.1 (by simp [hFalse])
+  · -- hcond false → value is 0
+    rfl
+
+/-- Best response speaker probabilities sum to at most 1 at any state.
+
+For states with at least one true message, this is exactly 1 (uniform over optimal).
+For states with no true messages, this is 0. -/
+theorem bestResponse_sum_le_one (G : InterpGame) (H : HearerStrategy G) (s : G.State) :
+    Finset.univ.sum (fun m => (bestResponse G H).choose s m) ≤ 1 := by
+  -- Each message with positive probability has choose s m = 1/k for some k
+  -- The sum is over at most k messages, giving total 1
+  -- If no optimal messages, sum is 0
+  sorry -- Requires careful analysis of bestResponse structure
+
 end SpeakerStrategy
 
 -- ============================================================================
@@ -255,10 +292,217 @@ The fixed point hearer strategy is the "pragmatic interpretation."
 def isIBRFixedPoint (G : InterpGame) (H : HearerStrategy G) : Prop :=
   ∀ m s, H.respond m s = (ibrStep G H).respond m s
 
+/-- At a fixed point with non-negative priors, H.respond is non-negative.
+
+This follows from the fact that H = ibrStep G H, and ibrStep uses
+hearerUpdate which gives non-negative values when priors are non-negative. -/
+theorem fp_respond_nonneg (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H) (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (m : G.Message) (s : G.State) :
+    H.respond m s ≥ 0 := by
+  rw [hFP m s]
+  simp only [ibrStep, hearerUpdate]
+  split_ifs with hdenom
+  · exact le_refl 0
+  · -- numerator / denominator where numerator ≥ 0 and denominator ≥ 0
+    apply div_nonneg
+    · -- Numerator: S(m|s) * prior(s) ≥ 0
+      apply mul_nonneg
+      · exact SpeakerStrategy.bestResponse_nonneg G H s m
+      · exact hPriorNonneg s
+    · -- Denominator: Σ S(m|s') * prior(s') ≥ 0
+      apply Finset.sum_nonneg
+      intro s' _
+      apply mul_nonneg
+      · exact SpeakerStrategy.bestResponse_nonneg G H s' m
+      · exact hPriorNonneg s'
+
 /-- The pragmatic interpretation: support of the IBR fixed point listener -/
 def pragmaticSupport (G : InterpGame) (H : HearerStrategy G) (m : G.Message) :
     Finset G.State :=
   H.support m
+
+-- ============================================================================
+-- SECTION 4.1: Expected Gain and IBR Convergence (Franke Appendix B.4)
+-- ============================================================================
+
+/-!
+## Expected Gain Framework
+
+Franke proves IBR convergence via monotonicity of expected gain.
+This is the key to establishing both:
+1. IBR always reaches a fixed point (Theorem 3)
+2. The fixed point equals exhMW (via the characterization)
+
+### Definition (Expected Gain)
+
+For interpretation games with aligned utilities U_S = U_R = U:
+
+  EG(σ, ρ) = Σ_t Pr(t) × Σ_m σ(t,m) × Σ_a ρ(m,a) × U(t,m,a)
+
+For interpretation games where A = T and U(t,m,a) = 1 if t = a, else 0:
+
+  EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t)
+
+This measures the expected success rate of communication.
+
+### Lemma 3 (Monotonicity)
+
+In signaling games of pure cooperation, EG is monotonically increasing:
+- EG(S_i, R_{i+1}) ≤ EG(S_{i+2}, R_{i+1})
+- EG(S_{i+1}, R_i) ≤ EG(S_{i+1}, R_{i+2})
+
+### Theorem 3 (Convergence)
+
+For finite games of pure cooperation, IBR always reaches a fixed point.
+Proof: EG is monotonically increasing and bounded, so must stabilize.
+
+### Key Insight (Equation 131)
+
+At each IBR step, the receiver prefers states where the speaker had fewer options:
+
+  μ_{k+1}(t₁|m) > μ_{k+1}(t₂|m)  iff  |S_k(t₁)| < |S_k(t₂)|
+
+This means: receiver selects states with **minimum true alternatives** = minimal in <_ALT!
+-/
+
+/-- Expected gain of a speaker-hearer strategy pair.
+
+For interpretation games: EG measures expected communication success.
+EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t)
+
+This equals the probability of successful state recovery. -/
+noncomputable def expectedGain (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G) : ℚ :=
+  Finset.univ.sum fun t =>
+    G.prior t * Finset.univ.sum fun m =>
+      S.choose t m * H.respond m t
+
+/-- **Lemma 3a**: Speaker improvement increases expected gain.
+
+If S_{i+2} is a best response to R_{i+1}, then EG(S_i, R_{i+1}) ≤ EG(S_{i+2}, R_{i+1}).
+
+Proof: By definition of best response, S_{i+2}(t) maximizes expected utility for each t. -/
+theorem eg_speaker_improvement (G : InterpGame)
+    (S_old S_new : SpeakerStrategy G) (H : HearerStrategy G)
+    (hBR : S_new = SpeakerStrategy.bestResponse G H) :
+    expectedGain G S_old H ≤ expectedGain G S_new H := by
+  sorry -- Requires showing best response improves expected utility at each state
+
+/-- **Lemma 3b**: Hearer improvement increases expected gain.
+
+If R_{i+2} is a best response to S_{i+1}, then EG(S_{i+1}, R_i) ≤ EG(S_{i+1}, R_{i+2}).
+
+Proof: By Bayesian update, R_{i+2} maximizes posterior probability of correct state. -/
+theorem eg_hearer_improvement (G : InterpGame)
+    (S : SpeakerStrategy G) (H_old H_new : HearerStrategy G)
+    (hBR : H_new = hearerUpdate G S) :
+    expectedGain G S H_old ≤ expectedGain G S H_new := by
+  sorry -- Requires showing Bayesian update improves expected accuracy
+
+/-- Expected gain is bounded above by 1 (probability of perfect communication). -/
+theorem eg_bounded (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G)
+    (hPriorSum : Finset.univ.sum G.prior = 1)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0) :
+    expectedGain G S H ≤ 1 := by
+  sorry -- Requires showing it's a probability
+
+/-- **Theorem 3**: IBR always reaches a fixed point for finite interpretation games.
+
+Proof: By Lemma 3, expected gain EG is monotonically increasing along the IBR sequence.
+Since EG is bounded above and there are only finitely many possible strategy profiles,
+the sequence must reach a fixed point where EG stabilizes.
+
+More precisely:
+1. EG(S_k, R_{k+1}) ≤ EG(S_{k+2}, R_{k+1}) by speaker improvement
+2. EG(S_{k+1}, R_k) ≤ EG(S_{k+1}, R_{k+2}) by hearer improvement
+3. EG ≤ 1 (bounded)
+4. Finitely many strategies ⟹ sequence stabilizes ⟹ fixed point
+-/
+theorem ibr_reaches_fixed_point (G : InterpGame) :
+    ∃ n : ℕ, isIBRFixedPoint G (ibrN G n) := by
+  sorry -- Requires formalizing the monotonicity + finiteness argument
+
+-- ============================================================================
+-- SECTION 4.2: Fixed Point Characterization via Minimum Alternatives
+-- ============================================================================
+
+/-!
+## Fixed Point = Minimum Alternatives = ExhMW
+
+The key insight from Franke's "light system" (Appendix B.2, eq. 131):
+
+At each IBR iteration, the receiver updates beliefs via Bayes' rule:
+  μ_{k+1}(t|m) = Pr(t) × S_k(t,m) / Σ_{t'} Pr(t') × S_k(t',m)
+
+With flat priors (C3), comparing two states t₁, t₂:
+  μ_{k+1}(t₁|m) > μ_{k+1}(t₂|m)
+  iff S_k(t₁,m) > S_k(t₂,m)
+  iff |S_k(t₁)| < |S_k(t₂)|  (fewer speaker options = higher speaker prob for m)
+
+This means: **receiver prefers states where fewer messages are true**.
+
+At the fixed point:
+- R_∞(m) selects states t where |{m' : m'(t)}| is minimum among m-worlds
+- This is exactly `isMinimalByAltCount`
+- Which equals `exhMW` (proved as `r1_subset_exhMW`)
+
+### The Light System (Equations 123-124)
+
+With flat priors, IBR simplifies to:
+  S_{k+1}(t) = argmin_{m ∈ R_k^{-1}(t)} |R_k(m)|
+  R_{k+1}(m) = argmin_{t ∈ S_k^{-1}(m)} |S_k(t)|
+
+Both select elements with minimum "competitor count" - exactly minimal worlds!
+-/
+
+/-- Number of messages the speaker uses at state t (|S(t)|). -/
+def speakerOptionCount (G : InterpGame) (S : SpeakerStrategy G) (t : G.State) : ℕ :=
+  (Finset.univ.filter fun m => S.choose t m > 0).card
+
+/-- At the fixed point, receiver prefers states with fewer speaker options.
+
+This is the key lemma connecting IBR to alternative minimization.
+If S = bestResponse to H, and H = hearerUpdate of S (fixed point),
+then H.respond m t₁ > H.respond m t₂ iff speakerOptionCount G S t₁ < speakerOptionCount G S t₂
+(among states where m is true and has positive prior). -/
+theorem fp_prefers_fewer_options (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hFlatPrior : ∀ t₁ t₂, G.prior t₁ = G.prior t₂)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (m : G.Message) (t₁ t₂ : G.State)
+    (ht₁ : G.meaning m t₁ = true) (ht₂ : G.meaning m t₂ = true) :
+    let S := speakerUpdate G H
+    H.respond m t₁ > H.respond m t₂ ↔
+      speakerOptionCount G S t₁ < speakerOptionCount G S t₂ := by
+  sorry -- Follows from Bayes' rule with flat priors (eq. 131)
+
+/-- Speaker option count is bounded by the number of true messages.
+
+When S = bestResponse to some H, the speaker uses a subset of true messages
+(specifically, the optimal ones). So speakerOptionCount ≤ |trueMessages|.
+
+Note: alternativeCount is defined later in Section 5.1 as the count of true messages. -/
+theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
+    (t : G.State) :
+    let S := speakerUpdate G H
+    speakerOptionCount G S t ≤ (G.trueMessages t).card := by
+  -- speakerOptionCount counts messages with S.choose t m > 0
+  -- bestResponse only assigns positive probability to true messages
+  simp only [speakerOptionCount, speakerUpdate]
+  apply Finset.card_le_card
+  intro m hm
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hm
+  -- hm says S.choose t m > 0
+  -- We need to show m ∈ G.trueMessages t, i.e., G.meaning m t = true
+  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
+  simp only [SpeakerStrategy.bestResponse] at hm
+  split_ifs at hm with hcond hzero
+  · -- hcond true, hzero true → S.choose = 0, contradicts hm
+    exact absurd (le_refl 0) (not_le.mpr hm)
+  · -- hcond true, hzero false → meaning is true (from hcond)
+    exact hcond.1
+  · -- hcond false → S.choose = 0, contradicts hm
+    exact absurd (le_refl 0) (not_le.mpr hm)
 
 -- ============================================================================
 -- SECTION 5: Connection to Exhaustive Interpretation (Franke Section 10)
@@ -653,7 +897,57 @@ This is exactly exhMW(ALT, m).
 theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H) (m : G.Message) :
     (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) := by
-  sorry -- Full proof requires induction on IBR iterations + convergence
+  intro s
+  constructor
+  · -- Forward: H.respond m s > 0 → exhMW s
+    intro hPos
+    -- At a fixed point, H.respond m s = (hearerUpdate G (speakerUpdate G H)).respond m s
+    -- If H.respond m s > 0, then the numerator S(m|s) * prior(s) > 0
+    -- This means S(m|s) > 0, i.e., m is an optimal message at s for speaker
+    -- S(m|s) > 0 means m maximizes H.respond m' s among true messages at s
+    -- Since H.respond m s > 0, s must be in the support
+    -- For s to be in support, m must be true at s (prejacent)
+    -- And no strictly more informative message should dominate
+    constructor
+    · -- prejacent: m is true at s
+      -- If m were false at s, then S(m|s) = 0 (speaker only uses true messages)
+      -- So numerator = 0, and H.respond m s = 0, contradicting hPos
+      by_contra hNotTrue
+      -- Convert ¬(meaning m s = true) to meaning m s = false
+      simp only [prejacent] at hNotTrue
+      have hFalse : G.meaning m s = false := by
+        cases hm : G.meaning m s
+        · rfl
+        · exact absurd hm hNotTrue
+      -- At the fixed point, H.respond m s = hearerUpdate formula
+      have hFPms := hFP m s
+      simp only [ibrStep, hearerUpdate, speakerUpdate] at hFPms
+      -- The speaker gives 0 probability to false messages
+      have hSzero := SpeakerStrategy.bestResponse_false_zero G H s m hFalse
+      -- Rewrite hPos using fixed point
+      rw [hFPms] at hPos
+      -- The numerator is S.choose s m * prior s = 0 * prior s = 0
+      split_ifs at hPos with hdenom
+      · -- denominator = 0, so result is 0, contradicting hPos
+        exact absurd (le_refl 0) (not_le.mpr hPos)
+      · -- numerator / denominator where numerator = 0
+        simp only [hSzero, zero_mul, zero_div] at hPos
+        exact absurd (le_refl 0) (not_le.mpr hPos)
+    · -- minimality: no s' <_ALT s with m true at s'
+      intro ⟨s', hs'_true, hs'_lt⟩
+      -- If there were such s', then at s', a more informative message m' is available
+      -- (by definition of <_ALT, there's an alternative true at s' but not s)
+      -- The speaker at s' would prefer m' over m
+      -- This would reduce H.respond m s through the Bayes update
+      -- At a fixed point, this propagates to eliminate s from support
+      sorry
+  · -- Backward: exhMW s → H.respond m s > 0
+    intro ⟨hs_true, hs_min⟩
+    -- s is minimal among m-worlds
+    -- At a fixed point, minimal states are preserved
+    -- The speaker uses m at s (it's among the best options)
+    -- The Bayes update maintains positive probability
+    sorry
 
 /-- At the fixed point, IBR excludes non-minimal states.
 
@@ -662,12 +956,22 @@ L2 alone doesn't necessarily exclude all non-minimal states; the full
 elimination happens through iteration to the fixed point.
 -/
 theorem ibr_fp_excludes_nonminimal (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (m : G.Message) (s : G.State)
-    (hs : G.meaning m s = true)
+    (hFP : isIBRFixedPoint G H) (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (m : G.Message) (s : G.State)
+    (_hs : G.meaning m s = true)
     (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     H.respond m s = 0 := by
-  -- This follows from ibr_equals_exhMW: non-minimal states are not in exhMW
-  sorry
+  -- s is not in exhMW because it's non-minimal
+  have hNotExh : ¬exhMW (toAlternatives G) (prejacent G m) s := fun hexh => hexh.2 hNonMin
+  -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
+  -- Since ¬exhMW s, we have ¬(H.respond m s > 0)
+  have hNotPos : ¬(H.respond m s > 0) :=
+    fun hpos => hNotExh ((ibr_equals_exhMW G H hFP m s).mp hpos)
+  -- At a fixed point with non-negative priors, H.respond ≥ 0
+  have hNonneg := fp_respond_nonneg G H hFP hPriorNonneg m s
+  -- ¬(x > 0) ∧ x ≥ 0 → x = 0
+  simp only [not_lt] at hNotPos
+  linarith
 
 /-- At the fixed point, IBR keeps minimal states.
 
@@ -678,9 +982,12 @@ theorem ibr_fp_keeps_minimal (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H) (m : G.Message) (s : G.State)
     (hs : G.meaning m s = true)
     (hMin : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s)
-    (hPriorPos : G.prior s > 0) :
+    (_hPriorPos : G.prior s > 0) :
     H.respond m s > 0 := by
-  sorry
+  -- s is in exhMW because it's minimal
+  have hExh : exhMW (toAlternatives G) (prejacent G m) s := ⟨hs, hMin⟩
+  -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
+  exact (ibr_equals_exhMW G H hFP m s).mpr hExh
 
 -- ============================================================================
 -- SECTION 6: RSA as "Soft" IBR

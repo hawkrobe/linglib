@@ -3,6 +3,27 @@
 ## [0.45.0] - 2025-02-01
 
 ### Added
+- **RSA/Implementations/Franke2011.lean**: Expected gain framework (Franke Appendix B.4)
+  - `expectedGain`: EG(S, H) = Σ_t prior(t) × Σ_m S(t,m) × H(m,t)
+  - `eg_speaker_improvement`, `eg_hearer_improvement`: Monotonicity lemmas (stubs)
+  - `eg_bounded`: EG ≤ 1 (stub)
+  - `ibr_reaches_fixed_point`: Theorem 3 - IBR converges (stub)
+  - `speakerOptionCount`: |S(t)| = number of messages speaker uses at state t
+  - `fp_prefers_fewer_options`: Key lemma connecting IBR to alternative minimization (eq. 131)
+  - Documentation of proof strategy from Franke's light system (equations 123-131)
+
+- **RSA/Implementations/Franke2011.lean**: Speaker strategy helper lemmas (proved)
+  - `bestResponse_nonneg`: Best response gives non-negative probabilities
+  - `bestResponse_false_zero`: Best response gives 0 to false messages
+  - `bestResponse_sum_le_one`: Best response sums to ≤ 1 (stub)
+  - `speaker_options_le_true_messages`: Speaker options bounded by true messages
+
+- **RSA/Implementations/Franke2011.lean**: Fixed point lemmas (partial)
+  - `fp_respond_nonneg`: Fixed point listener responses are non-negative (proved)
+  - `ibr_equals_exhMW`: Main theorem structure with prejacent direction proved
+  - Forward direction (prejacent): If H.respond m s > 0 then m is true at s (proved)
+  - Minimality and backward directions remain as stubs
+
 - **RSA/Implementations/Franke2011.lean**: Franke Fact 1 formalization (R₁ ⊆ ExhMW)
   - `r1_subset_exhMW`: States with minimum alternative count are in ExhMW (proved)
   - `altOrderingTotalOnMessage`: Condition for when <_ALT is total on m-worlds
