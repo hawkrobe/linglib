@@ -99,4 +99,87 @@ def allNouns : List NounEntry := [
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? fun n => n.formSg == form || n.formPl == some form
 
+-- ============================================================================
+-- NP Structure (with bare plural tracking)
+-- ============================================================================
+
+/-- Number marking on an NP -/
+inductive NPNumber where
+  | sg    -- Singular
+  | pl    -- Plural
+  | mass  -- Mass (no number distinction)
+  deriving DecidableEq, Repr, BEq
+
+/--
+A noun phrase, tracking whether it's bare (no determiner).
+
+Bare plurals and bare mass nouns are kind-denoting (Chierchia 1998).
+Non-bare NPs are either definite or indefinite GQs.
+-/
+structure NP where
+  /-- The underlying noun -/
+  noun : NounEntry
+  /-- Number marking -/
+  number : NPNumber
+  /-- Is this a bare NP (no determiner)? -/
+  isBare : Bool
+  /-- The determiner (if not bare) -/
+  determiner : Option String := none
+  deriving Repr, BEq
+
+/-- Is this NP a bare plural? (kind-denoting via ∩) -/
+def NP.isBarePlural (np : NP) : Bool :=
+  np.isBare && np.number == .pl
+
+/-- Is this NP a bare mass noun? (kind-denoting via ∩) -/
+def NP.isBareMass (np : NP) : Bool :=
+  np.isBare && np.number == .mass
+
+/-- Is this NP kind-denoting? (bare plural or bare mass) -/
+def NP.isKindDenoting (np : NP) : Bool :=
+  np.isBarePlural || np.isBareMass
+
+/-- Is this a bare singular? (ungrammatical in English) -/
+def NP.isBareSingular (np : NP) : Bool :=
+  np.isBare && np.number == .sg && np.noun.countable
+
+-- ============================================================================
+-- NP Constructors
+-- ============================================================================
+
+/-- Create a bare plural NP -/
+def barePlural (n : NounEntry) : NP :=
+  { noun := n, number := .pl, isBare := true }
+
+/-- Create a bare mass NP -/
+def bareMass (n : NounEntry) : NP :=
+  { noun := n, number := .mass, isBare := true }
+
+/-- Create a definite singular NP -/
+def theNP (n : NounEntry) : NP :=
+  { noun := n, number := .sg, isBare := false, determiner := some "the" }
+
+/-- Create an indefinite singular NP -/
+def aNP (n : NounEntry) : NP :=
+  { noun := n, number := .sg, isBare := false, determiner := some "a" }
+
+-- ============================================================================
+-- Examples
+-- ============================================================================
+
+/-- "dogs" (bare plural) is kind-denoting -/
+example : (barePlural dog).isKindDenoting = true := rfl
+
+/-- "water" (bare mass) is kind-denoting -/
+example : (bareMass water).isKindDenoting = true := rfl
+
+/-- "the dog" is NOT kind-denoting -/
+example : (theNP dog).isKindDenoting = false := rfl
+
+/-- "a dog" is NOT kind-denoting -/
+example : (aNP dog).isKindDenoting = false := rfl
+
+/-- Bare singular would be ungrammatical -/
+example : ({ noun := dog, number := .sg, isBare := true } : NP).isBareSingular = true := rfl
+
 end Fragments.Nouns

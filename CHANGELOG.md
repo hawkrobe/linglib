@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.48.0] - 2025-02-01
+
+### Added
+- **Theories/Montague/Lexicon/Kinds.lean**: Chierchia (1998) kind-level semantics
+  - Nominal Mapping Parameter: [+arg,±pred] determines bare argument distribution
+  - Domain structure: Link's semilattice with atoms and pluralities
+  - ∩ (down): Property → Kind nominalization
+  - ∪ (up): Kind → Property predicativization
+  - DKP (Derived Kind Predication): existential coercion for object-level predicates
+  - Blocking Principle: Type shifting as last resort (articles block covert shifts)
+  - Mass/count distinction: why bare singulars are out but bare plurals are in
+  - Scopelessness: DKP introduces local existentials that cannot scope out
+  - Connection to I-level/S-level predicates and generic interpretation
+
+- **Fragments/Nouns.lean**: NP structure with bare plural tracking
+  - `NP` structure: noun + number + isBare + optional determiner
+  - `NP.isBarePlural`, `NP.isBareMass`, `NP.isKindDenoting`
+  - `NP.isBareSingular` for detecting ungrammatical bare singulars
+  - Constructors: `barePlural`, `bareMass`, `theNP`, `aNP`
+
 ## [0.47.0] - 2025-02-01
 
 ### Added
