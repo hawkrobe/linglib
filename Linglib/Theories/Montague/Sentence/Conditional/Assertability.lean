@@ -237,4 +237,108 @@ theorem assertable_implies_antecedent_possible (ws : WorldState) (θ : ℚ)
   simp [assertable] at h
   exact h.1
 
+/--
+**Assertability is monotone in threshold** (lower threshold → more assertable).
+
+If a conditional is assertable at threshold θ₂, it is also assertable at any lower threshold θ₁ ≤ θ₂.
+-/
+theorem assertability_monotone (ws : WorldState) (θ₁ θ₂ : ℚ) :
+    θ₁ ≤ θ₂ → assertable ws θ₂ = true → assertable ws θ₁ = true := by
+  intro h_le h_assert
+  simp only [assertable, Bool.and_eq_true, decide_eq_true_eq] at *
+  constructor
+  · exact h_assert.1
+  · calc conditionalProbability ws > θ₂ := h_assert.2
+         _ ≥ θ₁ := h_le
+
+/--
+**Assertability score is bounded** in [0, 1].
+
+The assertability score (conditional probability when defined) is always between 0 and 1.
+-/
+theorem assertability_score_bounded (ws : WorldState) (h : ws.IsValid) :
+    0 ≤ assertabilityScore ws ∧ assertabilityScore ws ≤ 1 := by
+  simp only [assertabilityScore]
+  split
+  · -- Case: ws.pA > 0
+    have hA : 0 < ws.pA := by assumption
+    simp only [conditionalProbability]
+    exact WorldState.valid_implies_pCGivenA_bounded ws h hA
+  · -- Case: ws.pA ≤ 0
+    exact ⟨le_refl 0, zero_le_one⟩
+
+/--
+**Conditional probability is bounded** when the antecedent is possible.
+-/
+theorem conditional_probability_bounded (ws : WorldState) (h : ws.IsValid) (hA : 0 < ws.pA) :
+    0 ≤ conditionalProbability ws ∧ conditionalProbability ws ≤ 1 := by
+  simp only [conditionalProbability]
+  exact WorldState.valid_implies_pCGivenA_bounded ws h hA
+
+-- ============================================================================
+-- Missing-Link Characterization
+-- ============================================================================
+
+/--
+**Missing-link iff weak correlation**.
+
+A conditional has a missing link iff the correlation strength is within ε of 0.
+This is a bidirectional characterization when P(A) > 0.
+-/
+theorem missing_link_iff_weak_correlation (ws : WorldState) (ε : ℚ) (hA : 0 < ws.pA) :
+    hasMissingLink ws ε = true ↔ -ε < correlationStrength ws ∧ correlationStrength ws < ε := by
+  simp only [hasMissingLink, correlationStrength, hA, ↓reduceIte,
+             conditionalProbability, Bool.and_eq_true, decide_eq_true_eq]
+
+/--
+**Independence implies missing link**.
+
+If A and C are probabilistically independent (P(A∧C) = P(A)·P(C)),
+then the conditional has a missing link (for any positive ε).
+-/
+theorem independent_implies_missing_link (ws : WorldState) (ε : ℚ) (hε : 0 < ε)
+    (hA : 0 < ws.pA) (h_indep : ws.pAC = ws.pA * ws.pC) :
+    hasMissingLink ws ε = true := by
+  rw [missing_link_iff_weak_correlation ws ε hA]
+  simp only [correlationStrength, hA, ↓reduceIte, conditionalProbability, WorldState.pCGivenA]
+  -- P(C|A) - P(C) = P(AC)/P(A) - P(C) = (P(A)·P(C))/P(A) - P(C) = P(C) - P(C) = 0
+  have hA_ne : ws.pA ≠ 0 := ne_of_gt hA
+  have h_eq : ws.pAC / ws.pA - ws.pC = 0 := by
+    rw [h_indep, mul_comm, mul_div_assoc, div_self hA_ne, mul_one, sub_self]
+  rw [h_eq]
+  exact ⟨by linarith, by linarith⟩
+
+/--
+**Missing link means no correlation boost**.
+
+If there's a missing link, then P(C|A) ≈ P(C), meaning knowing A doesn't
+significantly change the probability of C.
+-/
+theorem missing_link_no_boost (ws : WorldState) (ε : ℚ) (hA : 0 < ws.pA) :
+    hasMissingLink ws ε = true →
+    conditionalProbability ws - ε < ws.pC ∧ ws.pC < conditionalProbability ws + ε := by
+  rw [missing_link_iff_weak_correlation ws ε hA]
+  simp only [correlationStrength, hA, ↓reduceIte, conditionalProbability]
+  intro ⟨h1, h2⟩
+  exact ⟨by linarith, by linarith⟩
+
+/--
+**Correlation strength is zero iff independence**.
+
+When P(A) > 0, correlation strength is exactly 0 iff A and C are independent.
+-/
+theorem correlation_strength_zero_iff_independent (ws : WorldState) (hA : 0 < ws.pA) :
+    correlationStrength ws = 0 ↔ ws.pAC = ws.pA * ws.pC := by
+  simp only [correlationStrength, hA, ↓reduceIte, conditionalProbability,
+             WorldState.pCGivenA, sub_eq_zero]
+  have hA_ne : ws.pA ≠ 0 := ne_of_gt hA
+  constructor
+  · intro h
+    -- h : ws.pAC / ws.pA = ws.pC
+    rw [div_eq_iff hA_ne] at h
+    linarith
+  · intro h
+    -- h : ws.pAC = ws.pA * ws.pC
+    rw [h, mul_comm, mul_div_assoc, div_self hA_ne, mul_one]
+
 end Montague.Sentence.Conditional.Assertability

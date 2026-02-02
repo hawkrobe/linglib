@@ -1,5 +1,5 @@
 /-
-# Bilateral Update Semantics (Elliott & Sudo 2025)
+# Bilateral Update Semantics (Elliott 2023; Elliott & Sudo 2025)
 
 Bilateral Update Semantics (BUS) is a dynamic semantic framework where
 sentences have TWO update dimensions:
@@ -11,14 +11,24 @@ sentences have TWO update dimensions:
 Standard dynamic semantics struggles with:
 1. Double Negation Elimination (DNE): ¬¬φ should entail φ
 2. Cross-disjunct anaphora in Free Choice contexts
+3. Donkey disjunctions: "Either there's no bathroom, or it's upstairs"
 
 BUS solves these by tracking positive and negative updates separately.
 
 ## Key Properties
 
 - **DNE**: ¬¬φ ⊨ φ (negation swaps positive and negative)
+- **de Morgan**: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
 - **Egli's theorem**: ∃xφ ∧ ψ ⊨ ∃x[φ ∧ ψ]
+- **LNC failure**: φ ∧ ¬φ can be satisfiable (mixed scenarios)
 - **Modified FC**: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
+
+## Logical Foundation
+
+The connectives are derived from Strong Kleene three-valued logic:
+- Positive update = union of verification paths (+ cells)
+- Negative update = union of falsification paths (- cells)
+- Presupposition failure = neither verified nor falsified (? cells)
 
 ## Architecture
 
@@ -27,12 +37,15 @@ derive Free Choice inferences with anaphora.
 
 ## References
 
+- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33: 666-685.
 - Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. Semantics & Pragmatics 18.
-- Krahmer, E. & Muskens, R. (1995). Negation and disjunction in discourse representation theory.
+- Krahmer, E. & Muskens, R. (1995). Negation and disjunction in DRT.
+- Champollion, L., Bumford, D. & Henderson, R. (2019). Donkeys under discussion. S&P 12.
 -/
 
 import Linglib.Core.HeimState
 import Mathlib.Data.Set.Basic
+import Mathlib.Algebra.Group.Defs
 
 namespace Theories.BilateralUpdateSemantics
 
@@ -260,6 +273,36 @@ theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : HeimStat
   -- These are definitionally equal due to how conj and exists_ are defined
   exact hp
 
+-- Note on Egli's theorem: it's a SET INCLUSION, not bilateral entailment.
+-- The bilateral entailment definition evaluates the conclusion at the OUTPUT
+-- of the premise, which doesn't match Egli's scope-restructuring pattern.
+-- For the semantic significance: this shows that information introduced by
+-- an existential is available in subsequent conjuncts (cross-sentential anaphora).
+
+/--
+DNE as update equality: ¬¬φ and φ have identical update behavior.
+
+This is actually STRONGER than bilateral entailment: the two sentences
+are semantically indistinguishable (same positive AND negative updates).
+
+The `neg_neg` theorem gives us `~~φ = φ`, which implies both directions
+of entailment in any well-defined context.
+
+E&S (2025) emphasize that DNE holding as EQUALITY (not just entailment)
+is the key innovation: standard dynamic semantics fails DNE because
+negation "pushes in" and changes update structure.
+-/
+theorem dne_update_eq (φ : BilateralDen W E) (s : HeimState W E) :
+    (φ.neg.neg).positive s = φ.positive s ∧ (φ.neg.neg).negative s = φ.negative s := by
+  simp only [neg_neg, and_self]
+
+/--
+DNE preserves consistency: ¬¬φ is consistent iff φ is consistent.
+-/
+theorem dne_consistent_iff (φ : BilateralDen W E) (s : HeimState W E) :
+    ((φ.neg.neg).positive s).consistent ↔ (φ.positive s).consistent := by
+  simp only [neg_neg]
+
 -- ============================================================================
 -- PART 10: Notations and Smart Constructors
 -- ============================================================================
@@ -282,6 +325,113 @@ def pred1 (p : E → W → Bool) (t : Nat) : BilateralDen W E :=
 def pred2 (p : E → E → W → Bool) (t₁ t₂ : Nat) : BilateralDen W E :=
   { positive := fun s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
   , negative := fun s => { poss ∈ s | !p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
+
+end BilateralDen
+
+-- ============================================================================
+-- PART 11: Algebraic Structure
+-- ============================================================================
+
+namespace BilateralDen
+
+variable {W E : Type*}
+
+/-- Negation is involutive: ~~φ = φ. -/
+theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → BilateralDen W E) :=
+  fun φ => neg_neg φ
+
+-- De Morgan laws
+theorem neg_conj_positive (φ ψ : BilateralDen W E) (s : HeimState W E) :
+    (~(φ.conj ψ)).positive s = (φ.conj ψ).negative s := rfl
+
+theorem neg_disj_positive (φ ψ : BilateralDen W E) (s : HeimState W E) :
+    (~(φ.disj ψ)).positive s = (φ.disj ψ).negative s := rfl
+
+theorem disj_negative_eq_inter (φ ψ : BilateralDen W E) (s : HeimState W E) :
+    (φ.disj ψ).negative s = φ.negative s ∩ ψ.negative s := rfl
+
+theorem disj_positive_eq_union (φ ψ : BilateralDen W E) (s : HeimState W E) :
+    (φ.disj ψ).positive s = φ.positive s ∪ ψ.positive s := rfl
+
+-- ============================================================================
+-- Boolean Algebra Connection
+-- ============================================================================
+
+/-- For atoms, positive and negative are disjoint. -/
+theorem atom_disjoint' (pred : W → Bool) (s : HeimState W E) :
+    (atom pred).positive s ∩ (atom pred).negative s = ∅ := by
+  ext p
+  constructor
+  · intro ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩
+    simp only [atom, HeimState.update, Set.mem_setOf_eq, Bool.not_eq_true] at hp hnp
+    simp_all
+  · intro h; exact h.elim
+
+/-- Negation swaps positive and negative. -/
+theorem neg_positive_eq_negative (φ : BilateralDen W E) (s : HeimState W E) :
+    (~φ).positive s = φ.negative s := rfl
+
+theorem neg_negative_eq_positive (φ : BilateralDen W E) (s : HeimState W E) :
+    (~φ).negative s = φ.positive s := rfl
+
+-- ============================================================================
+-- Pair Isomorphism: Bilateral ≃ Unilateral × Unilateral
+-- ============================================================================
+
+/-- Unilateral denotation: single update function. -/
+def UnilateralDen (W : Type*) (E : Type*) := HeimState W E → HeimState W E
+
+/-- View bilateral as pair of updates. -/
+def toPair (φ : BilateralDen W E) : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E) :=
+  (φ.positive, φ.negative)
+
+/-- Construct bilateral from pair. -/
+def ofPair (p : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E)) : BilateralDen W E :=
+  { positive := p.1, negative := p.2 }
+
+theorem toPair_ofPair (p : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E)) :
+    toPair (ofPair p) = p := rfl
+
+theorem ofPair_toPair (φ : BilateralDen W E) : ofPair (toPair φ) = φ := rfl
+
+/-- Negation = swap on pairs. -/
+theorem neg_eq_swap (φ : BilateralDen W E) :
+    toPair (~φ) = Prod.swap (toPair φ) := rfl
+
+/-- DNE follows from swap ∘ swap = id. -/
+theorem dne_from_swap (φ : BilateralDen W E) :
+    toPair (~~φ) = toPair φ := by simp [neg_eq_swap, Prod.swap_swap]
+
+/-- Unilateral negation via set difference (NOT involutive). -/
+def unilateralNeg (φ : UnilateralDen W E) : UnilateralDen W E :=
+  fun s => s.diff (φ s)
+
+/-- Projection: bilateral → unilateral (forgets negative). -/
+def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive
+
+-- ============================================================================
+-- ℤ/2ℤ Symmetry
+-- ============================================================================
+
+/-- Negation generates ℤ/2ℤ action: neg² = id. -/
+theorem neg_generates_z2 (φ : BilateralDen W E) :
+    neg (neg φ) = (id ∘ id) φ := by simp [neg_neg]
+
+/-- Bilateral = twisted product: swap relates positive to negative. -/
+theorem bilateral_symmetry (φ : BilateralDen W E) :
+    toPair (~φ) = (φ.negative, φ.positive) ∧
+    toPair (~~φ) = (φ.positive, φ.negative) := by
+  constructor
+  · rfl
+  · simp [toPair, neg_neg]
+
+-- ============================================================================
+-- Mathlib Connection
+-- ============================================================================
+
+instance : InvolutiveNeg (BilateralDen W E) where
+  neg := neg
+  neg_neg := neg_neg
 
 end BilateralDen
 

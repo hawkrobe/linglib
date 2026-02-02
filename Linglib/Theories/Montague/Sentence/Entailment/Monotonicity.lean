@@ -163,4 +163,67 @@ theorem de_reverses_strength :
     entails (pnot p01) (pnot p0) = true := by
   native_decide
 
+-- ============================================================================
+-- Conditional Antecedent is DE
+-- ============================================================================
+
+/-- Material conditional with fixed consequent: "If _, then c" -/
+def materialCond (c : Prop') : Prop' → Prop' :=
+  fun p => fun w => !p w || c w
+
+/--
+**Conditional antecedent is Downward Entailing**.
+
+If P ⊨ Q, then "If Q, C" ⊨ "If P, C"
+
+This is the core DE property of conditional antecedents: strengthening the
+antecedent weakens the conditional (via contraposition).
+
+Example: "dogs" ⊨ "animals", so "If it's an animal, it barks" ⊨ "If it's a dog, it barks"
+-/
+theorem conditional_antecedent_DE :
+    isDownwardEntailing (materialCond fixedScope) testCases = true := by
+  native_decide
+
+/--
+**Conditional antecedent DE property (explicit for test cases)**.
+
+This verifies the DE property holds for all test case pairs.
+
+For any propositions p, q: if p ⊨ q, then (p → c) ⊨ (q → c) (i.e., weakening
+antecedent strengthens the conditional).
+-/
+theorem conditional_antecedent_DE_test_cases :
+    -- Check all test case pairs satisfy the DE property
+    testCases.all (fun (p, q) =>
+      !entails p q || entails (materialCond fixedScope q) (materialCond fixedScope p)) = true := by
+  native_decide
+
+/--
+**Implication second argument is UE**.
+
+If P ⊨ Q, then (A → P) ⊨ (A → Q)
+
+The consequent position of a conditional is upward entailing.
+-/
+theorem implication_consequent_UE : isUpwardEntailing (fun c => materialCond c fixedRestr) testCases = true := by
+  native_decide
+
+/--
+**Summary: Conditional positions and monotonicity**
+
+- Antecedent position: DE (strengthening weakens the conditional)
+- Consequent position: UE (strengthening strengthens the conditional)
+
+This explains scalar implicature patterns:
+- "If some passed, happy" - antecedent is DE, so SI blocked (global preferred)
+- "If passed, happy about some" - consequent is UE, so SI computed (local available)
+-/
+theorem conditional_monotonicity_summary :
+    isDownwardEntailing (materialCond fixedScope) testCases = true ∧
+    isUpwardEntailing (fun c => materialCond c fixedRestr) testCases = true := by
+  constructor
+  · exact conditional_antecedent_DE
+  · exact implication_consequent_UE
+
 end Montague.Sentence.Entailment.Monotonicity

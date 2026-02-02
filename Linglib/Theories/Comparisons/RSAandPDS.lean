@@ -249,9 +249,7 @@ Convert Boolean RSA to standard RSA scenario.
 
 The graded φ is derived from Boolean L0: φ(u, w) = 1 if L0(u,w), else 0.
 -/
-def BooleanRSA.toRSAScenario (rsa : BooleanRSA) : RSAScenario where
-  Utterance := rsa.Utterance
-  World := rsa.World
+def BooleanRSA.toRSAScenario (rsa : BooleanRSA) : RSAScenario rsa.Utterance rsa.World where
   -- Boolean semantics: φ returns 1 for true, 0 for false
   φ := fun _ _ u w => if rsa.L0 u w then 1 else 0
   goalProject := fun _ _ _ => true

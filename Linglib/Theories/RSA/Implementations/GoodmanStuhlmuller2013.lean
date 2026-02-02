@@ -1088,11 +1088,11 @@ for proper probability distributions.
 namespace FintypeDemo
 
 /-- Scalar scenario using Fintype API -/
-def scalarScenarioF : RSAScenario := threePerson.toScenarioF
+def scalarScenarioF : RSAScenario Utterance (Fin 4) := threePerson.toScenarioF
 
 /-- L1 for "some" using Fintype API -/
 def l1_some_F : Option (ExactDist (Fin 4)) :=
-  RSA.L1_world scalarScenarioF .some_
+  RSA.L1_world scalarScenarioF Utterance.some_
 
 /-- S1 in w3 using Fintype API -/
 def s1_w3_F : Option (ExactDist Utterance) :=

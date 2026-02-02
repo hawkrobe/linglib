@@ -227,10 +227,8 @@ The following demonstrates the new `RSAScenario` / `RSA` API which provides:
 -/
 
 /-- Reference game scenario using Fintype-based API -/
-def refGameScenarioF : RSAScenario :=
+def refGameScenarioF : RSAScenario Feature Object :=
   RSAScenario.basicBool
-    (U := Feature)  -- Utterances are features
-    (W := Object)   -- Worlds are objects
     (satisfies := fun o u => u.appliesTo o)  -- Satisfies relation from Montague
     (prior := fun _ => 1)
     (prior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
@@ -265,11 +263,7 @@ Note: We use the concrete Utterance type here since refGameScenarioF.Utterance
 is definitionally equal to Feature (from RSAScenario.basicBool).
 -/
 noncomputable instance refGameModel : RSAModel Feature :=
-  @RSAScenario.toModel refGameScenarioF
-    (inferInstance : Fintype Feature)  -- Feature has Fintype
-    (inferInstance : Fintype Object)      -- World = Object has Fintype
-    ()  -- default Interp
-    ()  -- default Lexicon
+  RSAScenario.toModel refGameScenarioF ()  ()  -- default Interp, Lexicon
 
 /-!
 With this instance, the following theorems apply automatically:

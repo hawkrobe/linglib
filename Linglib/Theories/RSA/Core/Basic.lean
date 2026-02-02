@@ -30,6 +30,7 @@ Reference: Frank & Goodman (2012), Goodman & Frank (2016)
 -/
 
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.FinEnum
 import Linglib.Core.Distribution
 
 -- ============================================================================
@@ -67,34 +68,28 @@ def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 -- ============================================================================
 
 /--
-Fintype-based RSA scenario for compile-time guarantees.
+Parametric RSA scenario for compile-time type safety and clean inference.
 
-This is the type-safe version of RSAScenario that uses Fintype constraints
-instead of explicit List enumerations. It enables:
-- Compile-time completeness proofs
+U (Utterance) and W (World) are explicit type parameters, enabling:
+- Clean type inference without explicit type witnesses
+- Simpler eval methods: `scenario.evalL1 .myUtterance`
+- Compile-time completeness proofs via Fintype constraints
 - Type-safe distribution operations via ExactDist
-- Better integration with Mathlib's measure theory
 
-All fields are the same as RSAScenario except:
-- No List enumerations (derived from Fintype instances)
-- Returns ExactDist instead of List (α × ℚ)
-- Includes non-negativity proofs for all weight functions
+Latent types (Interp, Lexicon, BeliefState, Goal) remain as fields with
+Unit defaults, since most scenarios don't use them.
 
 ## Example
 
 ```lean
-def myScenario : RSAScenario where
-  Utterance := MyUtterance
-  World := MyWorld
-  φ := fun _ _ u w => if myMeaning u w then 1 else 0
-  goalProject := fun _ w w' => w == w'
+def scenario : RSAScenario CausalExpression CausalWorld :=
+  RSAScenario.basicBool (satisfies := fun w u => expressionMeaning w u)
+
+-- Clean eval without type annotations
+#eval scenario.evalL1 .caused
 ```
 -/
-structure RSAScenario where
-  /-- Type of utterances -/
-  Utterance : Type
-  /-- Type of world states -/
-  World : Type
+structure RSAScenario (U W : Type) [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W] where
   /-- Type of interpretations (e.g., scope readings). Use Unit for basic models. -/
   Interp : Type := Unit
   /-- Type of lexica (for lexical uncertainty). Use Unit for fixed lexicon. -/
@@ -105,14 +100,14 @@ structure RSAScenario where
   Goal : Type := Unit
 
   /-- Agreement function: φ(interp, lexicon, utterance, world) ∈ [0,1] -/
-  φ : Interp → Lexicon → Utterance → World → ℚ
+  φ : Interp → Lexicon → U → W → ℚ
   /-- Goal projection: are two worlds equivalent under this goal/QUD? -/
-  goalProject : Goal → World → World → Bool
+  goalProject : Goal → W → W → Bool
   /-- Speaker's credence: P_speaker(w | a). -/
-  speakerCredence : BeliefState → World → ℚ := fun _ _ => 1
+  speakerCredence : BeliefState → W → ℚ := fun _ _ => 1
 
   /-- Prior over worlds -/
-  worldPrior : World → ℚ := fun _ => 1
+  worldPrior : W → ℚ := fun _ => 1
   /-- Prior over interpretations -/
   interpPrior : Interp → ℚ := fun _ => 1
   /-- Prior over lexica -/
@@ -126,10 +121,10 @@ structure RSAScenario where
   α : ℕ := 1
 
   /-- Utterance cost function. -/
-  cost : Utterance → ℚ := fun _ => 0
+  cost : U → ℚ := fun _ => 0
 
   /-- Prior over utterances (salience/accessibility). Used by S0 literal speaker. -/
-  utterancePrior : Utterance → ℚ := fun _ => 1
+  utterancePrior : U → ℚ := fun _ => 1
 
   /-- Non-negativity constraints for probability functions -/
   φ_nonneg : ∀ i l u w, 0 ≤ φ i l u w := by intros; decide
@@ -142,26 +137,20 @@ structure RSAScenario where
   cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide
   utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide
 
-  /-- Fintype instances -/
-  [uttFintype : Fintype Utterance]
-  [worldFintype : Fintype World]
+  /-- Fintype instances for latent types -/
   [interpFintype : Fintype Interp]
   [lexiconFintype : Fintype Lexicon]
   [beliefStateFintype : Fintype BeliefState]
   [goalFintype : Fintype Goal]
 
-  /-- DecidableEq instances -/
-  [uttDecEq : DecidableEq Utterance]
-  [worldDecEq : DecidableEq World]
+  /-- DecidableEq instances for latent types -/
   [interpDecEq : DecidableEq Interp]
   [lexiconDecEq : DecidableEq Lexicon]
   [beliefStateDecEq : DecidableEq BeliefState]
   [goalDecEq : DecidableEq Goal]
 
-attribute [instance] RSAScenario.uttFintype RSAScenario.worldFintype
-  RSAScenario.interpFintype RSAScenario.lexiconFintype
+attribute [instance] RSAScenario.interpFintype RSAScenario.lexiconFintype
   RSAScenario.beliefStateFintype RSAScenario.goalFintype
-  RSAScenario.uttDecEq RSAScenario.worldDecEq
   RSAScenario.interpDecEq RSAScenario.lexiconDecEq
   RSAScenario.beliefStateDecEq RSAScenario.goalDecEq
 
@@ -170,7 +159,7 @@ attribute [instance] RSAScenario.uttFintype RSAScenario.worldFintype
 -- ============================================================================
 
 /--
-Build a basic Fintype RSA scenario (no interpretation ambiguity, no QUD).
+Build a basic RSA scenario (no interpretation ambiguity, no QUD).
 -/
 def RSAScenario.basic {U W : Type}
     [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
@@ -183,9 +172,7 @@ def RSAScenario.basic {U W : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   Interp := Unit
   Lexicon := Unit
   BeliefState := Unit
@@ -212,7 +199,7 @@ def RSAScenario.basic {U W : Type}
   utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
-Build a basic Fintype RSA scenario from Boolean semantics.
+Build a basic RSA scenario from Boolean semantics.
 -/
 def RSAScenario.basicBool {U W : Type}
     [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
@@ -224,13 +211,13 @@ def RSAScenario.basicBool {U W : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario :=
+    : RSAScenario U W :=
   RSAScenario.basic (fun u w => boolToRat (satisfies w u))
     (fun _ _ => by simp only [boolToRat]; split_ifs <;> decide)
     prior prior_nonneg α cost cost_nonneg utterancePrior utterancePrior_nonneg
 
 /--
-Build a Fintype scenario with interpretation ambiguity (e.g., scope readings).
+Build a scenario with interpretation ambiguity (e.g., scope readings).
 -/
 def RSAScenario.ambiguous {U W I : Type}
     [Fintype U] [Fintype W] [Fintype I]
@@ -246,9 +233,7 @@ def RSAScenario.ambiguous {U W I : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   Interp := I
   Lexicon := Unit
   BeliefState := Unit
@@ -275,7 +260,7 @@ def RSAScenario.ambiguous {U W I : Type}
   utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
-Build a Fintype scenario with interpretation ambiguity from Boolean semantics.
+Build a scenario with interpretation ambiguity from Boolean semantics.
 -/
 def RSAScenario.ambiguousBool {U W I : Type}
     [Fintype U] [Fintype W] [Fintype I]
@@ -290,14 +275,14 @@ def RSAScenario.ambiguousBool {U W I : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario :=
+    : RSAScenario U W :=
   RSAScenario.ambiguous (fun i u w => boolToRat (satisfies i w u))
     (fun _ _ _ => by simp only [boolToRat]; split_ifs <;> decide)
     worldPrior worldPrior_nonneg interpPrior interpPrior_nonneg α cost cost_nonneg
     utterancePrior utterancePrior_nonneg
 
 /--
-Build a Fintype QUD-sensitive scenario.
+Build a QUD-sensitive scenario.
 -/
 def RSAScenario.qud {U W Q : Type}
     [Fintype U] [Fintype W] [Fintype Q]
@@ -314,9 +299,7 @@ def RSAScenario.qud {U W Q : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   Interp := Unit
   Lexicon := Unit
   BeliefState := Unit
@@ -343,7 +326,7 @@ def RSAScenario.qud {U W Q : Type}
   utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
-Build a Fintype QUD-sensitive scenario from Boolean semantics.
+Build a QUD-sensitive scenario from Boolean semantics.
 -/
 def RSAScenario.qudBool {U W Q : Type}
     [Fintype U] [Fintype W] [Fintype Q]
@@ -359,14 +342,14 @@ def RSAScenario.qudBool {U W Q : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario :=
+    : RSAScenario U W :=
   RSAScenario.qud (fun u w => boolToRat (satisfies w u))
     (fun _ _ => by simp only [boolToRat]; split_ifs <;> decide)
     qudProject worldPrior worldPrior_nonneg qudPrior qudPrior_nonneg α cost cost_nonneg
     utterancePrior utterancePrior_nonneg
 
 /--
-Build a Fintype scenario with mental state inference.
+Build a scenario with mental state inference.
 -/
 def RSAScenario.mentalState {U W A Q : Type}
     [Fintype U] [Fintype W] [Fintype A] [Fintype Q]
@@ -387,9 +370,7 @@ def RSAScenario.mentalState {U W A Q : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   Interp := Unit
   Lexicon := Unit
   BeliefState := A
@@ -416,7 +397,7 @@ def RSAScenario.mentalState {U W A Q : Type}
   utterancePrior_nonneg := utterancePrior_nonneg
 
 /--
-Build a Fintype scenario with lexical uncertainty.
+Build a scenario with lexical uncertainty.
 -/
 def RSAScenario.lexicalUncertainty {U W L : Type}
     [Fintype U] [Fintype W] [Fintype L]
@@ -432,9 +413,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     (utterancePrior : U → ℚ := fun _ => 1)
     (utterancePrior_nonneg : ∀ u, 0 ≤ utterancePrior u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   Interp := Unit
   Lexicon := L
   BeliefState := Unit
@@ -461,16 +440,17 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   utterancePrior_nonneg := utterancePrior_nonneg
 
 -- ============================================================================
--- RSAF: Fintype-Based RSA Computations
+-- RSA: Fintype-Based RSA Computations
 -- ============================================================================
 
 namespace RSA
 
-variable (S : RSAScenario)
+variable {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+variable (S : RSAScenario U W)
 
 /-- Helper: sum scores over Fintype -/
-private def sumScores (scores : S.World → ℚ) : ℚ :=
-  ∑ w : S.World, scores w
+private def sumScores (scores : W → ℚ) : ℚ :=
+  ∑ w : W, scores w
 
 /-- Helper: try to normalize scores to ExactDist -/
 private def tryNormalize {α : Type*} [Fintype α]
@@ -486,9 +466,9 @@ L0: Literal listener distribution given full context.
 
 Returns None if no world is compatible with the utterance.
 -/
-def L0 (u : S.Utterance)
+def L0 (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (_q : S.Goal)
-    : Option (ExactDist S.World) :=
+    : Option (ExactDist W) :=
   let scores := fun w => S.worldPrior w * S.φ i l u w * S.speakerCredence a w
   let hnonneg : ∀ w, 0 ≤ scores w := fun w =>
     mul_nonneg (mul_nonneg (S.worldPrior_nonneg w) (S.φ_nonneg i l u w)) (S.speakerCredence_nonneg a w)
@@ -497,14 +477,14 @@ def L0 (u : S.Utterance)
 /--
 L0 projected by Goal/QUD.
 -/
-def L0_projected (u : S.Utterance)
+def L0_projected (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.World) :=
+    : Option (ExactDist W) :=
   match L0 S u i l a q with
   | none => none
   | some l0 =>
     let scores := fun w =>
-      ∑ w' : S.World, if S.goalProject q w w' then l0.mass w' else 0
+      ∑ w' : W, if S.goalProject q w w' then l0.mass w' else 0
     let hnonneg : ∀ w, 0 ≤ scores w := fun _ => by
       apply Finset.sum_nonneg
       intro w' _
@@ -528,9 +508,9 @@ This is the "production-first" alternative to L0 (which is "comprehension-first"
 
 Returns None if no utterance is true in this world.
 -/
-def S0 (w : S.World)
+def S0 (w : W)
     (i : S.Interp) (l : S.Lexicon) (_a : S.BeliefState) (_q : S.Goal)
-    : Option (ExactDist S.Utterance) :=
+    : Option (ExactDist U) :=
   let scores := fun u => S.utterancePrior u * S.φ i l u w
   let hnonneg : ∀ u, 0 ≤ scores u := fun u =>
     mul_nonneg (S.utterancePrior_nonneg u) (S.φ_nonneg i l u w)
@@ -544,9 +524,9 @@ Use this for production-based models like van Tiel et al. (2021).
 
 P(w | m) ∝ Prior(w) · P_S0(m | w)
 -/
-def L1_fromS0 (u : S.Utterance)
+def L1_fromS0 (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.World) :=
+    : Option (ExactDist W) :=
   let scores := fun w =>
     let s0Score := match S0 S w i l a q with
       | some d => d.mass u
@@ -569,9 +549,9 @@ S1: Pragmatic speaker distribution.
 
 Returns None if no utterance is available.
 -/
-def S1 (w : S.World)
+def S1 (w : W)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.Utterance) :=
+    : Option (ExactDist U) :=
   let scores := fun u =>
     let truthful := S.φ i l u w
     let l0Score : ℚ := match L0_projected S u i l a q with
@@ -600,7 +580,7 @@ def S1 (w : S.World)
 /--
 L1 marginal over worlds.
 -/
-def L1_world (u : S.Utterance) : Option (ExactDist S.World) :=
+def L1_world (u : U) : Option (ExactDist W) :=
   let scores := fun w =>
     ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
       let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
@@ -632,9 +612,9 @@ def L1_world (u : S.Utterance) : Option (ExactDist S.World) :=
 /--
 L1 marginal over interpretations.
 -/
-def L1_interp (u : S.Utterance) : Option (ExactDist S.Interp) :=
+def L1_interp (u : U) : Option (ExactDist S.Interp) :=
   let scores := fun i =>
-    ∑ w : S.World, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
+    ∑ w : W, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
       let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
                         S.beliefStatePrior a * S.goalPrior q
       let s1Score := match S1 S w i l a q with
@@ -664,9 +644,9 @@ def L1_interp (u : S.Utterance) : Option (ExactDist S.Interp) :=
 /--
 L1 marginal over belief states.
 -/
-def L1_beliefState (u : S.Utterance) : Option (ExactDist S.BeliefState) :=
+def L1_beliefState (u : U) : Option (ExactDist S.BeliefState) :=
   let scores := fun a =>
-    ∑ w : S.World, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ q : S.Goal,
+    ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ q : S.Goal,
       let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
                         S.beliefStatePrior a * S.goalPrior q
       let s1Score := match S1 S w i l a q with
@@ -696,9 +676,9 @@ def L1_beliefState (u : S.Utterance) : Option (ExactDist S.BeliefState) :=
 /--
 L1 marginal over goals/QUDs.
 -/
-def L1_goal (u : S.Utterance) : Option (ExactDist S.Goal) :=
+def L1_goal (u : U) : Option (ExactDist S.Goal) :=
   let scores := fun q =>
-    ∑ w : S.World, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
+    ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
       let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
                         S.beliefStatePrior a * S.goalPrior q
       let s1Score := match S1 S w i l a q with
@@ -732,8 +712,8 @@ def L1_goal (u : S.Utterance) : Option (ExactDist S.Goal) :=
 /--
 L1 marginal over worlds given a FIXED Goal.
 -/
-def L1_world_givenGoal (u : S.Utterance) (q : S.Goal)
-    : Option (ExactDist S.World) :=
+def L1_world_givenGoal (u : U) (q : S.Goal)
+    : Option (ExactDist W) :=
   let scores := fun w =>
     ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
       let credence := S.speakerCredence a w
@@ -765,10 +745,10 @@ def L1_world_givenGoal (u : S.Utterance) (q : S.Goal)
 /--
 L1 marginal over belief states given a FIXED Goal.
 -/
-def L1_beliefState_givenGoal (u : S.Utterance) (q : S.Goal)
+def L1_beliefState_givenGoal (u : U) (q : S.Goal)
     : Option (ExactDist S.BeliefState) :=
   let scores := fun a =>
-    ∑ w : S.World, ∑ i : S.Interp, ∑ l : S.Lexicon,
+    ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon,
       let credence := S.speakerCredence a w
       let prior := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
                    S.beliefStatePrior a
@@ -802,7 +782,7 @@ def L1_beliefState_givenGoal (u : S.Utterance) (q : S.Goal)
 /--
 S2: Second-level pragmatic speaker.
 -/
-def S2 (w : S.World) : Option (ExactDist S.Utterance) :=
+def S2 (w : W) : Option (ExactDist U) :=
   let scores := fun u =>
     let l1Score : ℚ := match L1_world S u with
       | some d => d.mass w
@@ -828,9 +808,9 @@ Compare with the standard chain: L0 → S1 → L1.
 
 P(m | w) ∝ utterancePrior(m) · P_L1_fromS0(w | m)^α · costDiscount(m)
 -/
-def S1_fromL1S0 (w : S.World)
+def S1_fromL1S0 (w : W)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.Utterance) :=
+    : Option (ExactDist U) :=
   let scores := fun u =>
     let l1Score : ℚ := match L1_fromS0 S u i l a q with
       | some d => d.mass w
@@ -871,8 +851,8 @@ Pragmatic speaker distribution with chain selection.
 - `.S0Based`: S1 reasoning about L1 who reasons about S0
 -/
 def speaker (chain : ChainVariant := .L0Based)
-    (w : S.World) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.Utterance) :=
+    (w : W) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist U) :=
   match chain with
   | .L0Based => S1 S w i l a q
   | .S0Based => S1_fromL1S0 S w i l a q
@@ -884,11 +864,280 @@ Pragmatic listener distribution over worlds with chain selection.
 - `.S0Based`: L1 reasoning about S0 with specified latent variables
 -/
 def listener (chain : ChainVariant := .L0Based)
-    (u : S.Utterance) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
-    : Option (ExactDist S.World) :=
+    (u : U) (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
+    : Option (ExactDist W) :=
   match chain with
   | .L0Based => L1_world S u  -- marginalizes over latent variables
   | .S0Based => L1_fromS0 S u i l a q
+
+end RSA
+
+-- ============================================================================
+-- FinEnum-Based Eval Bridge (for #eval with RSAScenario)
+-- ============================================================================
+
+/-!
+## FinEnum-Based Evaluation
+
+These functions provide computable evaluation for RSAScenario when types have
+FinEnum instances. This bridges the gap between:
+- `RSAScenario` with Fintype (for proofs via ExactDist)
+- `RSA.Eval.*` with explicit lists (for `#eval` demonstrations)
+
+### Usage
+
+Add FinEnum instances to your types:
+```lean
+instance : FinEnum MyUtterance :=
+  FinEnum.ofList [.u1, .u2, .u3] (by decide)
+
+instance : FinEnum MyWorld :=
+  FinEnum.ofList [.w1, .w2] (by decide)
+```
+
+Then use the eval methods directly on your scenario:
+```lean
+#eval myScenario.evalL1 .u1
+```
+
+This eliminates the need to define separate `allUtterances`/`allWorlds` lists
+and call `RSA.Eval.basicL1` manually.
+-/
+
+namespace RSAScenario
+
+variable {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+
+/-- Get list of all utterances via FinEnum -/
+def allUtterances (s : RSAScenario U W) [FinEnum U] : List U :=
+  FinEnum.toList U
+
+/-- Get list of all worlds via FinEnum -/
+def allWorlds (s : RSAScenario U W) [FinEnum W] : List W :=
+  FinEnum.toList W
+
+/-- Get list of all interpretations via FinEnum -/
+def allInterps (s : RSAScenario U W) [FinEnum s.Interp] : List s.Interp :=
+  FinEnum.toList s.Interp
+
+/-- Get list of all lexica via FinEnum -/
+def allLexica (s : RSAScenario U W) [FinEnum s.Lexicon] : List s.Lexicon :=
+  FinEnum.toList s.Lexicon
+
+/-- Get list of all belief states via FinEnum -/
+def allBeliefStates (s : RSAScenario U W) [FinEnum s.BeliefState] : List s.BeliefState :=
+  FinEnum.toList s.BeliefState
+
+/-- Get list of all goals via FinEnum -/
+def allGoals (s : RSAScenario U W) [FinEnum s.Goal] : List s.Goal :=
+  FinEnum.toList s.Goal
+
+-- ============================================================================
+-- List-based helpers (inlined to avoid circular import with RSA.Eval)
+-- ============================================================================
+
+private def sumScores (scores : List ℚ) : ℚ :=
+  scores.foldl (· + ·) 0
+
+private def getScore {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
+  match dist.find? (·.1 == x) with
+  | some (_, s) => s
+  | none => 0
+
+private def normalize {α : Type} (dist : List (α × ℚ)) : List (α × ℚ) :=
+  let total := sumScores (dist.map (·.2))
+  dist.map fun (x, s) =>
+    (x, if total ≠ 0 then s / total else 0)
+
+private def L0_projected' {U W : Type} [BEq W]
+    (_utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ)
+    (u : U)
+    : List (W × ℚ) :=
+  let scores := worlds.map fun w => (w, worldPrior w * φ u w)
+  normalize scores
+
+private def S1' {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ)
+    (cost : U → ℚ)
+    (α : ℕ)
+    (w : W)
+    : List (U × ℚ) :=
+  let scores := utterances.map fun u =>
+    let truthful := φ u w
+    let l0Score := getScore (L0_projected' utterances worlds φ worldPrior u) w
+    let costDiscount := 1 / ((1 + cost u) ^ α)
+    (u, truthful * l0Score ^ α * costDiscount)
+  normalize scores
+
+private def L1_world' {U W : Type} [BEq U] [BEq W]
+    (utterances : List U) (worlds : List W)
+    (φ : U → W → ℚ)
+    (worldPrior : W → ℚ)
+    (cost : U → ℚ)
+    (α : ℕ)
+    (u : U)
+    : List (W × ℚ) :=
+  let scores := worlds.map fun w =>
+    let s1 := S1' utterances worlds φ worldPrior cost α w
+    let s1Score := getScore s1 u
+    (w, worldPrior w * s1Score)
+  normalize scores
+
+-- ============================================================================
+-- Eval Methods for RSAScenario (Basic: Interp/Lexicon/BeliefState/Goal = Unit)
+-- ============================================================================
+
+/--
+Run L0 (literal listener) and return as list.
+
+For basic scenarios where Interp, Lexicon, BeliefState, and Goal are all Unit.
+Requires FinEnum instances for U and W.
+
+## Example
+```lean
+#eval scenario.evalL0 .caused
+```
+-/
+def evalL0 (s : RSAScenario U W)
+    [FinEnum U] [FinEnum W]
+    [BEq W]
+    (u : U)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (_ha : s.BeliefState = Unit := by rfl)
+    (_hg : s.Goal = Unit := by rfl)
+    : List (W × ℚ) :=
+  let φ := fun u w => s.φ (hi ▸ ()) (hl ▸ ()) u w
+  L0_projected' s.allUtterances s.allWorlds φ s.worldPrior u
+
+/--
+Run S1 (pragmatic speaker) and return as list.
+
+For basic scenarios where Interp, Lexicon, BeliefState, and Goal are all Unit.
+Requires FinEnum instances for U and W.
+
+## Example
+```lean
+#eval scenario.evalS1 world_full
+```
+-/
+def evalS1 (s : RSAScenario U W)
+    [FinEnum U] [FinEnum W]
+    [BEq U] [BEq W]
+    (w : W)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (_ha : s.BeliefState = Unit := by rfl)
+    (_hg : s.Goal = Unit := by rfl)
+    : List (U × ℚ) :=
+  let φ := fun u w => s.φ (hi ▸ ()) (hl ▸ ()) u w
+  S1' s.allUtterances s.allWorlds φ s.worldPrior s.cost s.α w
+
+/--
+Run L1 (pragmatic listener) and return as list.
+
+For basic scenarios where Interp, Lexicon, BeliefState, and Goal are all Unit.
+Requires FinEnum instances for U and W.
+
+## Example
+```lean
+#eval scenario.evalL1 .caused
+```
+-/
+def evalL1 (s : RSAScenario U W)
+    [FinEnum U] [FinEnum W]
+    [BEq U] [BEq W]
+    (u : U)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (_ha : s.BeliefState = Unit := by rfl)
+    (_hg : s.Goal = Unit := by rfl)
+    : List (W × ℚ) :=
+  let φ := fun u w => s.φ (hi ▸ ()) (hl ▸ ()) u w
+  L1_world' s.allUtterances s.allWorlds φ s.worldPrior s.cost s.α u
+
+end RSAScenario
+
+-- ============================================================================
+-- Top-level FinEnum Eval Functions (simpler API)
+-- ============================================================================
+
+/-!
+## Top-level Eval Functions
+
+These functions provide an additional API for basic RSA scenarios.
+With the new parametric RSAScenario, the cleanest approach is to use
+the scenario methods directly: `scenario.evalL1 .myUtterance`.
+
+These top-level functions are kept for backward compatibility but
+are rarely needed with the new parametric design.
+-/
+
+namespace RSA
+
+/--
+Run L0 for a basic scenario.
+
+## Example
+```lean
+def runL0 (u : MyUtt) := RSA.evalL0 scenario u
+```
+-/
+def evalL0 {U W : Type}
+    [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+    [FinEnum U] [FinEnum W] [BEq W]
+    (s : RSAScenario U W)
+    (u : U)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (ha : s.BeliefState = Unit := by rfl)
+    (hg : s.Goal = Unit := by rfl)
+    : List (W × ℚ) :=
+  s.evalL0 u hi hl ha hg
+
+/--
+Run S1 for a basic scenario.
+
+## Example
+```lean
+def runS1 (w : MyWorld) := RSA.evalS1 scenario w
+```
+-/
+def evalS1 {U W : Type}
+    [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+    [FinEnum U] [FinEnum W] [BEq U] [BEq W]
+    (s : RSAScenario U W)
+    (w : W)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (ha : s.BeliefState = Unit := by rfl)
+    (hg : s.Goal = Unit := by rfl)
+    : List (U × ℚ) :=
+  s.evalS1 w hi hl ha hg
+
+/--
+Run L1 for a basic scenario.
+
+## Example
+```lean
+def runL1 (u : MyUtt) := RSA.evalL1 scenario u
+```
+-/
+def evalL1 {U W : Type}
+    [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+    [FinEnum U] [FinEnum W] [BEq U] [BEq W]
+    (s : RSAScenario U W)
+    (u : U)
+    (hi : s.Interp = Unit := by rfl)
+    (hl : s.Lexicon = Unit := by rfl)
+    (ha : s.BeliefState = Unit := by rfl)
+    (hg : s.Goal = Unit := by rfl)
+    : List (W × ℚ) :=
+  s.evalL1 u hi hl ha hg
 
 end RSA
 

@@ -184,4 +184,222 @@ theorem simple_universal_consistent_triviallyTrue :
   intro w
   cases w <;> native_decide
 
+-- ============================================================================
+-- PART: Connecting to isNormal (Completing the Derivation Chain)
+-- ============================================================================
+
+/-!
+## Normality: Simple Theories are Normal Modal Logics
+
+A modal theory is **normal** if duality holds universally:
+  ∀p w, □p(w) ↔ ¬◇¬p(w)
+
+We've proven `simple_duality` for each (p, w). Now we lift this to `isNormal`.
+-/
+
+/-- All Simple theories are normal modal logics.
+
+This completes the derivation chain:
+  simple_duality (per p, w) → simple_isNormal (universal property)
+-/
+theorem simple_isNormal (R : World → World → Bool) : (Simple R).isNormal :=
+  fun p w => simple_duality R p w
+
+/-- Corollary: SimpleUniversal is normal. -/
+theorem simpleUniversal_isNormal : SimpleUniversal.isNormal :=
+  simple_isNormal universalR
+
+/-- Corollary: SimpleReflexive is normal. -/
+theorem simpleReflexive_isNormal : SimpleReflexive.isNormal :=
+  simple_isNormal reflexiveR
+
+-- ============================================================================
+-- PART: Kripke Correspondence Theory (Kripke 1963)
+-- ============================================================================
+
+/-!
+## Kripke Correspondence: R Properties ↔ Modal Axioms
+
+The fundamental insight of Kripke (1963) is that properties of the accessibility
+relation R correspond to modal axioms:
+
+| R Property    | Modal Axiom | Name |
+|---------------|-------------|------|
+| Reflexive     | □p → p      | T    |
+| Serial        | □p → ◇p     | D    |
+| Transitive    | □p → □□p    | 4    |
+| Symmetric     | p → □◇p     | B    |
+| Euclidean     | ◇p → □◇p    | 5    |
+
+These are **derivations from first principles**: the axioms FOLLOW from R properties.
+-/
+
+-- ----------------------------------------------------------------------------
+-- T Axiom: □p → p (Reflexivity)
+-- ----------------------------------------------------------------------------
+
+/-- Reflexivity of R: every world accesses itself. -/
+def isReflexive (R : World → World → Bool) : Prop :=
+  ∀ w : World, R w w = true
+
+/-- T Axiom: If □p at w, then p at w.
+
+**Derivation**: If R is reflexive, then w ∈ accessible(w).
+Since □p means p holds at ALL accessible worlds, p holds at w.
+-/
+theorem T_axiom_from_reflexivity (R : World → World → Bool) (hRefl : isReflexive R)
+    (p : Proposition) (w : World)
+    (hNec : (Simple R).eval .necessity p w = true) : p w = true := by
+  -- □p means: (accessible worlds).all p = true
+  -- Since R is reflexive, w is in accessible worlds
+  -- Therefore p w = true
+  unfold Simple at hNec
+  simp only at hNec
+  have hWIn : R w w = true := hRefl w
+  have hWFiltered : w ∈ allWorlds'.filter (R w) := by
+    simp only [List.mem_filter, allWorlds']
+    constructor
+    · -- w ∈ allWorlds
+      cases w <;> simp [allWorlds]
+    · exact hWIn
+  exact List.all_eq_true.mp hNec w hWFiltered
+
+/-- Reflexive accessibility gives T axiom: □p → p -/
+theorem reflexive_implies_T (R : World → World → Bool) (hRefl : isReflexive R) :
+    ∀ (p : Proposition) (w : World),
+    (Simple R).eval .necessity p w = true → p w = true :=
+  fun p w => T_axiom_from_reflexivity R hRefl p w
+
+-- ----------------------------------------------------------------------------
+-- D Axiom: □p → ◇p (Seriality)
+-- ----------------------------------------------------------------------------
+
+/-- Seriality of R: every world accesses at least one world. -/
+def isSerial (R : World → World → Bool) : Prop :=
+  ∀ w : World, ∃ w' : World, R w w' = true
+
+/-- D Axiom: If □p at w, then ◇p at w.
+
+**Derivation**: If R is serial, accessible(w) is non-empty.
+□p means p holds at ALL accessible worlds.
+◇p means p holds at SOME accessible world.
+If all satisfy p and there exists at least one, then some satisfies p.
+-/
+theorem D_axiom_from_seriality (R : World → World → Bool) (hSerial : isSerial R)
+    (p : Proposition) (w : World)
+    (hNec : (Simple R).eval .necessity p w = true) :
+    (Simple R).eval .possibility p w = true := by
+  unfold Simple at hNec ⊢
+  simp only at hNec ⊢
+  -- Get a witness from seriality
+  obtain ⟨w', hW'Acc⟩ := hSerial w
+  -- w' is in the filtered list
+  have hW'In : w' ∈ allWorlds'.filter (R w) := by
+    simp only [List.mem_filter, allWorlds']
+    constructor
+    · cases w' <;> simp [allWorlds]
+    · exact hW'Acc
+  -- Since all accessible worlds satisfy p, w' satisfies p
+  have hPw' : p w' = true := List.all_eq_true.mp hNec w' hW'In
+  -- Therefore some accessible world satisfies p
+  exact List.any_eq_true.mpr ⟨w', hW'In, hPw'⟩
+
+/-- Serial accessibility gives D axiom: □p → ◇p -/
+theorem serial_implies_D (R : World → World → Bool) (hSerial : isSerial R) :
+    ∀ (p : Proposition) (w : World),
+    (Simple R).eval .necessity p w = true → (Simple R).eval .possibility p w = true :=
+  fun p w => D_axiom_from_seriality R hSerial p w
+
+-- ----------------------------------------------------------------------------
+-- Consistency as Corollary of D
+-- ----------------------------------------------------------------------------
+
+/-- Universal R is serial (trivially: all worlds accessible). -/
+theorem universalR_isSerial : isSerial universalR := fun w => ⟨w, rfl⟩
+
+/-- Reflexive R is serial (every world accesses itself). -/
+theorem reflexiveR_isSerial : isSerial reflexiveR := fun w => ⟨w, by
+  unfold reflexiveR
+  cases w <;> rfl⟩
+
+/-- Universal accessibility gives consistency (D axiom). -/
+theorem simple_universal_isConsistent_from_D :
+    ∀ (p : Proposition) (w : World),
+    SimpleUniversal.necessityEntailsPossibility p w = true := by
+  intro p w
+  unfold ModalTheory.necessityEntailsPossibility ModalTheory.necessity ModalTheory.possibility
+  -- Either □p is false (LHS of implication), or □p → ◇p by D axiom
+  cases hNec : SimpleUniversal.eval .necessity p w with
+  | false =>
+      -- If necessity is false, the implication !false || _ = true
+      simp only [SimpleUniversal, Simple, Bool.not_false, Bool.true_or]
+  | true =>
+      simp only [Bool.not_true, Bool.false_or]
+      exact D_axiom_from_seriality universalR universalR_isSerial p w hNec
+
+-- ----------------------------------------------------------------------------
+-- K Axiom: □(p → q) → (□p → □q) (Distribution)
+-- ----------------------------------------------------------------------------
+
+/-- Material implication as a proposition. -/
+def pImpl (p q : Proposition) : Proposition := fun w => !p w || q w
+
+/-- K Axiom: Necessity distributes over implication.
+
+**Derivation**: □(p → q) means (p → q) holds at all accessible worlds.
+□p means p holds at all accessible worlds.
+Combined: q holds at all accessible worlds = □q.
+
+This is the fundamental axiom of normal modal logic - it holds for ANY R.
+-/
+theorem K_axiom (R : World → World → Bool) (p q : Proposition) (w : World)
+    (hImpl : (Simple R).eval .necessity (pImpl p q) w = true)
+    (hP : (Simple R).eval .necessity p w = true) :
+    (Simple R).eval .necessity q w = true := by
+  unfold Simple at hImpl hP ⊢
+  simp only at hImpl hP ⊢
+  -- Need to show: all accessible worlds satisfy q
+  apply List.all_eq_true.mpr
+  intro w' hW'Acc
+  -- w' is accessible, so p → q holds at w' and p holds at w'
+  have hImplW' : pImpl p q w' = true := List.all_eq_true.mp hImpl w' hW'Acc
+  have hPW' : p w' = true := List.all_eq_true.mp hP w' hW'Acc
+  -- Therefore q holds at w'
+  unfold pImpl at hImplW'
+  cases hp : p w' with
+  | false => simp [hp] at hPW'
+  | true => simp [hp] at hImplW'; exact hImplW'
+
+/-- K axiom holds for all Simple theories (no conditions on R needed). -/
+theorem simple_K_axiom (R : World → World → Bool) :
+    ∀ (p q : Proposition) (w : World),
+    (Simple R).eval .necessity (pImpl p q) w = true →
+    (Simple R).eval .necessity p w = true →
+    (Simple R).eval .necessity q w = true :=
+  fun p q w => K_axiom R p q w
+
+-- ============================================================================
+-- Summary: What We've Derived
+-- ============================================================================
+
+/-!
+## Summary: Kripke Correspondence Theorems
+
+We have now DERIVED the following from first principles:
+
+### Unconditional (hold for any R)
+- `simple_duality`: □p ↔ ¬◇¬p (duality)
+- `simple_isNormal`: Simple theories are normal
+- `simple_K_axiom`: □(p → q) → (□p → □q) (K axiom / distribution)
+
+### Conditional on R Properties
+- `reflexive_implies_T`: Reflexive R → (□p → p)
+- `serial_implies_D`: Serial R → (□p → ◇p)
+
+### Derived Properties
+- `simple_universal_isConsistent_from_D`: Universal R is consistent (via seriality)
+
+These are the core results of Kripke (1963), proven constructively.
+-/
+
 end Montague.Modal

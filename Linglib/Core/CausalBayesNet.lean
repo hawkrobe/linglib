@@ -22,7 +22,10 @@ about causal/correlational relationships in the world. The listener must infer:
 - Pearl (2009). Causality.
 -/
 
-import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 namespace Core.CausalBayesNet
 
@@ -250,6 +253,111 @@ def highConditional : WorldState :=
 /-- Low conditional probability: P(C|A) = 0.2 -/
 def lowConditional : WorldState :=
   { pA := 1/2, pC := 1/2, pAC := 1/10 }  -- P(C|A) = (1/10)/(1/2) = 0.2
+
+-- ============================================================================
+-- Validity Theorems
+-- ============================================================================
+
+/--
+A propositional version of isValid for theorem proving.
+-/
+def IsValid (w : WorldState) : Prop :=
+  0 ≤ w.pA ∧ w.pA ≤ 1 ∧
+  0 ≤ w.pC ∧ w.pC ≤ 1 ∧
+  0 ≤ w.pAC ∧ w.pAC ≤ min w.pA w.pC ∧
+  w.pA + w.pC - w.pAC ≤ 1
+
+/--
+Validity implies P(A) is in [0,1].
+-/
+theorem valid_implies_pA_bounded (w : WorldState) (h : w.IsValid) :
+    0 ≤ w.pA ∧ w.pA ≤ 1 := ⟨h.1, h.2.1⟩
+
+/--
+Validity implies P(C) is in [0,1].
+-/
+theorem valid_implies_pC_bounded (w : WorldState) (h : w.IsValid) :
+    0 ≤ w.pC ∧ w.pC ≤ 1 := ⟨h.2.2.1, h.2.2.2.1⟩
+
+/--
+Validity implies P(A ∧ C) is in [0, min(P(A), P(C))].
+-/
+theorem valid_implies_pAC_bounded (w : WorldState) (h : w.IsValid) :
+    0 ≤ w.pAC ∧ w.pAC ≤ min w.pA w.pC := ⟨h.2.2.2.2.1, h.2.2.2.2.2.1⟩
+
+/--
+**Validity implies P(C|A) is bounded** (when P(A) > 0).
+
+If the world state is valid and P(A) > 0, then 0 ≤ P(C|A) ≤ 1.
+-/
+theorem valid_implies_pCGivenA_bounded (w : WorldState) (h : w.IsValid) (hA : 0 < w.pA) :
+    0 ≤ w.pCGivenA ∧ w.pCGivenA ≤ 1 := by
+  simp only [pCGivenA, gt_iff_lt, hA, ↓reduceIte]
+  constructor
+  · apply div_nonneg h.2.2.2.2.1 (le_of_lt hA)
+  · have hAC_le : w.pAC ≤ w.pA := le_trans h.2.2.2.2.2.1 (min_le_left w.pA w.pC)
+    have hA_ne : w.pA ≠ 0 := ne_of_gt hA
+    calc w.pAC / w.pA ≤ w.pA / w.pA := by
+             apply div_le_div_of_nonneg_right hAC_le (le_of_lt hA)
+         _ = 1 := div_self hA_ne
+
+/--
+**Validity implies P(C|¬A) is bounded** (when P(A) < 1).
+
+If the world state is valid and P(A) < 1, then 0 ≤ P(C|¬A) ≤ 1.
+-/
+theorem valid_implies_pCGivenNotA_bounded (w : WorldState) (h : w.IsValid) (hA : w.pA < 1) :
+    0 ≤ w.pCGivenNotA ∧ w.pCGivenNotA ≤ 1 := by
+  simp only [pCGivenNotA, pNotAC]
+  have hNotA_pos : 0 < 1 - w.pA := by linarith
+  simp only [gt_iff_lt, hNotA_pos, ↓reduceIte]
+  constructor
+  · apply div_nonneg
+    · -- P(¬A ∧ C) = P(C) - P(A ∧ C) ≥ 0
+      have : w.pAC ≤ w.pC := le_trans h.2.2.2.2.2.1 (min_le_right w.pA w.pC)
+      linarith
+    · exact le_of_lt hNotA_pos
+  · -- P(C|¬A) = P(¬A ∧ C) / P(¬A) ≤ 1, i.e., P(¬A ∧ C) ≤ P(¬A)
+    have hNotAC_le : w.pC - w.pAC ≤ 1 - w.pA := by linarith [h.2.2.2.2.2.2]
+    have hNotA_ne : 1 - w.pA ≠ 0 := ne_of_gt hNotA_pos
+    calc (w.pC - w.pAC) / (1 - w.pA) ≤ (1 - w.pA) / (1 - w.pA) := by
+             apply div_le_div_of_nonneg_right hNotAC_le (le_of_lt hNotA_pos)
+         _ = 1 := div_self hNotA_ne
+
+/--
+**Law of Total Probability**.
+
+For a valid world state: P(C) = P(C|A) · P(A) + P(C|¬A) · P(¬A)
+
+This requires P(A) ∈ (0, 1) for both conditional probabilities to be defined.
+-/
+theorem law_of_total_probability (w : WorldState) (_h : w.IsValid)
+    (hA_pos : 0 < w.pA) (hA_lt_one : w.pA < 1) :
+    w.pC = w.pCGivenA * w.pA + w.pCGivenNotA * (1 - w.pA) := by
+  simp only [pCGivenA, pCGivenNotA, pNotAC]
+  have hNotA_pos : 0 < 1 - w.pA := by linarith
+  simp only [gt_iff_lt, hA_pos, hNotA_pos, ↓reduceIte]
+  have hA_ne : w.pA ≠ 0 := ne_of_gt hA_pos
+  have hNotA_ne : 1 - w.pA ≠ 0 := ne_of_gt hNotA_pos
+  field_simp
+  ring
+
+/--
+**Bayes' Theorem**.
+
+P(A|C) = P(C|A) · P(A) / P(C)
+
+This requires P(A) > 0 and P(C) > 0.
+-/
+theorem bayes_theorem (w : WorldState) (hA : 0 < w.pA) (hC : 0 < w.pC) :
+    w.pAGivenC = w.pCGivenA * w.pA / w.pC := by
+  simp only [pAGivenC, pCGivenA]
+  simp only [gt_iff_lt, hA, hC, ↓reduceIte]
+  have hA_ne : w.pA ≠ 0 := ne_of_gt hA
+  -- P(A|C) = P(AC)/P(C) = (P(AC)/P(A)) * P(A) / P(C)
+  rw [div_mul_eq_mul_div]
+  congr 1
+  rw [mul_div_assoc, div_self hA_ne, mul_one]
 
 end WorldState
 

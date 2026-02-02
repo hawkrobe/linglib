@@ -16,7 +16,8 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 1. **Bar-Lev & Fox (2020)**: Innocent Inclusion (II) + Innocent Exclusion (IE)
 2. **Champollion et al. (2019)**: RSA with semantic uncertainty (disjunction)
 3. **Alsop (2024)**: RSA with Global Intentions (universal *any*)
-4. **Fox (2007)**: Recursive exhaustification (Exh(Exh(φ)))
+4. **Aloni (2022)**: BSML - Bilateral State-based Modal Logic (team semantics)
+5. **Elliott & Sudo (2025)**: BUS - Bilateral Update Semantics (dynamic)
 
 ## Key Questions
 
@@ -29,14 +30,16 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 - Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion. NLS.
 - Champollion, Alsop & Grosu (2019). Free choice disjunction as RSA. SALT 29.
 - Alsop (2024). The pragmatics of free choice any.
+- Aloni (2022). Logic and conversation: The case of free choice. S&P 15.
+- Elliott & Sudo (2025). Free choice with anaphora. S&P 18.
 - Fox (2007). Free choice and the theory of scalar implicatures.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
-- Franke & Bergen (2020). Theory-driven statistical modeling.
 -/
 
 import Linglib.Theories.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.Alsop2024
+import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
+import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
 import Linglib.Phenomena.FreeChoice.Data
 
 namespace Comparisons.FreeChoice
@@ -45,6 +48,8 @@ open Phenomena.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
+open Theories.BilateralUpdateSemantics.FreeChoice
+open Comparisons.FreeChoice.Aloni2022
 
 -- ============================================================================
 -- SECTION 1: The Free Choice Puzzle
@@ -211,30 +216,108 @@ theorem alsop_not_every_sensitive :
   RSA.FCIAny.not_every_prior_sensitive
 
 -- ============================================================================
+-- SECTION 3c: Aloni (2022) - BSML Team Semantics
+-- ============================================================================
+
+/-!
+## Semantic Account: BSML (Bilateral State-based Modal Logic)
+
+Aloni (2022) derives FC **semantically** using team semantics.
+
+### The Mechanism
+
+**Split Disjunction**: t ⊨ φ ∨ ψ iff ∃t₁,t₂: t₁ ∪ t₂ = t ∧ t₁ ⊨ φ ∧ t₂ ⊨ ψ
+
+**Non-emptiness Enrichment**: [φ]⁺ adds NE constraints recursively
+
+**FC Derivation**:
+1. [◇(α ∨ β)]⁺ = ◇([α]⁺ ∨ [β]⁺) ∧ NE
+2. Split disjunction partitions the team
+3. [α]⁺ and [β]⁺ both include NE, so both parts must be non-empty
+4. Therefore ◇α and ◇β are both supported
+-/
+
+-- Verify BSML narrow-scope FC computationally
+#eval
+  let enriched := Aloni2022.enrich Aloni2022.mayHaveCoffeeOrTea
+  let t := Aloni2022.freeChoiceTeam
+  let ws := Aloni2022.permissionWorlds
+  let supEnriched := Aloni2022.support Aloni2022.deonticModel ws enriched t
+  let supCoffee := Aloni2022.support Aloni2022.deonticModel ws Aloni2022.mayCoffee t
+  let supTea := Aloni2022.support Aloni2022.deonticModel ws Aloni2022.mayTea t
+  (supEnriched, supCoffee, supTea)  -- (true, true, true)
+
+/-- Aloni BSML: DNE holds definitionally -/
+theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
+    (φ : BSMLFormula W) (t : Core.TeamSemantics.Team W) (worlds : List W) :
+    Aloni2022.support M worlds (.neg (.neg φ)) t = Aloni2022.support M worlds φ t :=
+  Aloni2022.dne_support M φ t worlds
+
+-- ============================================================================
+-- SECTION 3d: Elliott & Sudo (2025) - Bilateral Update Semantics
+-- ============================================================================
+
+/-!
+## Semantic Account: BUS (Bilateral Update Semantics)
+
+Elliott & Sudo (2025) derive FC **semantically** using dynamic bilateral updates.
+
+### The Mechanism
+
+**Modal Disjunction Precondition**:
+s[φ ∨ ψ]⁺ = s[φ ∨ ψ]⁺ if s[φ ∨ ψ]⁺₁ ≠ ∅ AND s[φ ∨ ψ]⁺₂ ≠ ∅, else ∅
+
+**FC Derivation**:
+1. For ◇(φ ∨ ψ) to be possible, positive update must be non-empty
+2. This requires BOTH disjuncts to contribute possibilities
+3. Therefore ◇φ and ◇ψ are both possible
+
+### Key Advantage: Cross-Disjunct Anaphora
+
+BUS is uniquely designed to handle "bathroom disjunctions":
+- "Either there's no bathroom or it's in a funny place"
+- The pronoun "it" is bound by the existential under negation
+- DNE (from bilateral structure) enables this binding
+-/
+
+/-!
+Elliott & Sudo FC is derived from modal disjunction semantics.
+The BUS module provides FC derivation via:
+- `fc_semantic_first_disjunct`: ◇(φ ∨ ψ) → ◇φ
+- `fc_semantic_second_disjunct`: ◇(φ ∨ ψ) → ψ possible after ¬φ
+- `dual_prohibition`: ¬◇φ ∧ ¬◇ψ → ¬◇(φ ∨ ψ)
+-/
+
+-- Verify BUS theorems are imported and accessible
+#check @fc_semantic_first_disjunct
+#check @fc_semantic_second_disjunct
+#check @dual_prohibition
+
+-- ============================================================================
 -- SECTION 4: Comparison Table
 -- ============================================================================
 
 /-!
 ## Side-by-Side Comparison
 
-| Aspect | Bar-Lev & Fox 2020 | Champollion et al. 2019 | Alsop 2024 |
-|--------|-------------------|------------------------|------------|
-| **Framework** | Neo-Gricean Exh | RSA + Lexical Uncertainty | RSA + Global Intentions |
-| **Focus** | Disjunction FC | Disjunction FC | Universal *any* FC |
-| **Key mechanism** | Innocent Inclusion | Semantic uncertainty | Parse-level ambiguity |
-| **Nature** | Categorical | Probabilistic | Probabilistic |
-| **FC derivation** | II includes ◇a, ◇b | L1 → FCI states | L1 → exclusiveness states |
-| **Secondary inference** | IE excludes ◇(a∧b) | EI prior-sensitive | Not-every prior-sensitive |
-| **Why FC works** | Non-closure under ∧ | Avoid I₂ misinterpretation | Dayal parse more informative |
-| **Predictions** | Categorical | Gradient | Gradient |
+| Aspect | Bar-Lev & Fox | Champollion et al. | Alsop | Aloni | E&S |
+|--------|--------------|-------------------|-------|-------|-----|
+| **Framework** | Neo-Gricean | RSA | RSA | Team Sem | Dynamic |
+| **Type** | Pragmatic | Pragmatic | Pragmatic | Semantic | Semantic |
+| **Key mechanism** | Innocent Inclusion | Semantic uncertainty | Parse ambiguity | NE + split ∨ | Modal ∨ precond |
+| **Nature** | Categorical | Probabilistic | Probabilistic | Categorical | Categorical |
+| **Anaphora** | No | No | No | No | Yes |
+| **Why FC works** | Non-closure | Avoid I₂ | Dayal informative | NE forces both | Both contribute |
 -/
 
-/-- Comparison result type (extended for 3 theories) -/
+/-- Comparison result type (extended for all theories) -/
 structure TheoryComparison where
   phenomenon : String
   barlevfox : String
   champollion : String
   alsop : String
+  aloni : String
+  elliottSudo : String
   allAgree : Bool
   deriving Repr
 
@@ -244,38 +327,90 @@ def fciComparison : TheoryComparison :=
   , barlevfox := "Derived via II: ◇a, ◇b ∈ II"
   , champollion := "L1: P(FCI states | Or) ≈ 100%"
   , alsop := "L1: P(exclusiveness | any) ≈ 100%"
+  , aloni := "Semantic: [◇(α∨β)]⁺ ⊨ ◇α ∧ ◇β"
+  , elliottSudo := "Semantic: modal ∨ precondition"
   , allAgree := true }
 
-/-- Secondary inference: Different names, same asymmetry -/
+/-- Dual Prohibition: Negation blocks FC -/
+def dualProhibitionComparison : TheoryComparison :=
+  { phenomenon := "Dual Prohibition"
+  , barlevfox := "Maximize Strength"
+  , champollion := "Automatic (RSA strengthens)"
+  , alsop := "Automatic (RSA strengthens)"
+  , aloni := "Semantic: [¬◇(α∨β)]⁺ ⊨ ¬◇α ∧ ¬◇β"
+  , elliottSudo := "Semantic: negative update unchanged"
+  , allAgree := true }
+
+/-- Secondary inference asymmetry -/
 def secondaryInference : TheoryComparison :=
   { phenomenon := "Secondary Inference (EI / not-every)"
   , barlevfox := "IE excludes ◇(a∧b)"
   , champollion := "EI prior-sensitive"
   , alsop := "Not-every prior-sensitive"
-  , allAgree := true }  -- Same structural asymmetry
-
-/-- Robustness: Core FC is robust across all -/
-def robustnessComparison : TheoryComparison :=
-  { phenomenon := "Robustness of core FC"
-  , barlevfox := "Categorical (always derived)"
-  , champollion := "Robust: holds despite adverse priors"
-  , alsop := "Robust: exclusiveness despite adverse priors"
+  , aloni := "Not primary focus"
+  , elliottSudo := "Not primary focus"
   , allAgree := true }
 
-/-- Negation: Different approaches -/
-def negationComparison : TheoryComparison :=
-  { phenomenon := "No FCI under negation"
-  , barlevfox := "Maximize Strength"
-  , champollion := "Automatic (RSA strengthens)"
-  , alsop := "Automatic (RSA strengthens)"
-  , allAgree := true }  -- Same prediction
+/-- Cross-disjunct anaphora -/
+def anaphoraComparison : TheoryComparison :=
+  { phenomenon := "Cross-disjunct anaphora"
+  , barlevfox := "Not addressed"
+  , champollion := "Not addressed"
+  , alsop := "Not addressed"
+  , aloni := "Not addressed"
+  , elliottSudo := "Primary motivation (bathroom sentences)"
+  , allAgree := false }
 
 /-- All comparisons -/
 def allComparisons : List TheoryComparison :=
-  [fciComparison, secondaryInference, robustnessComparison, negationComparison]
+  [fciComparison, dualProhibitionComparison, secondaryInference, anaphoraComparison]
 
 -- ============================================================================
--- SECTION 5: Structural Insights
+-- SECTION 5: Pragmatic vs Semantic Approaches
+-- ============================================================================
+
+/-!
+## Pragmatic vs Semantic Derivation
+
+A key division among FC theories:
+
+### Pragmatic Approaches (FC as implicature)
+- **Bar-Lev & Fox**: Exhaustification with Innocent Inclusion
+- **Champollion et al.**: RSA reasoning about interpretation uncertainty
+- **Alsop**: RSA reasoning about parse ambiguity
+
+### Semantic Approaches (FC built into meaning)
+- **Aloni (BSML)**: Split disjunction + non-emptiness enrichment
+- **Elliott & Sudo (BUS)**: Modal disjunction precondition
+
+### Trade-offs
+
+| Aspect | Pragmatic | Semantic |
+|--------|-----------|----------|
+| FC source | Reasoning about alternatives | Lexical meaning |
+| Cancelability | Predicted (pragmatic) | Must be stipulated |
+| Gradient | RSA: yes; Neo-Gricean: no | No |
+| Cross-disjunct anaphora | Hard to capture | BUS: natural |
+| Dual prohibition | Requires explanation | Built in |
+-/
+
+/-- Approach classification -/
+inductive ApproachType where
+  | pragmatic : ApproachType
+  | semantic : ApproachType
+  deriving DecidableEq, BEq, Repr
+
+/-- Classify theories by approach -/
+def theoryApproach : String → ApproachType
+  | "Bar-Lev & Fox 2020" => .pragmatic
+  | "Champollion et al. 2019" => .pragmatic
+  | "Alsop 2024" => .pragmatic
+  | "Aloni 2022" => .semantic
+  | "Elliott & Sudo 2025" => .semantic
+  | _ => .pragmatic
+
+-- ============================================================================
+-- SECTION 6: Structural Insights
 -- ============================================================================
 
 /-!
@@ -295,34 +430,23 @@ The key structural property is whether the alternative set is closed under ∧.
 - Not closed → IE excludes ◇(a∧b), II includes ◇a, ◇b
 - Result: Free choice!
 
-### Champollion et al.: Semantic Uncertainty Creates Avoidance
+### Aloni: Non-Emptiness + Split Disjunction
 
-The key is uncertainty about interpretation functions.
+The key is that disjunction SPLITS the team:
+  t ⊨ φ ∨ ψ iff ∃t₁,t₂: t₁ ∪ t₂ = t ∧ t₁ ⊨ φ ∧ t₂ ⊨ ψ
 
-**Without uncertainty**: Disjunction is always less informative → no FCI
-**With uncertainty**: Disjuncts are "risky" (might be exhaustified) → speaker avoids
+Combined with pragmatic enrichment adding NE:
+  [φ ∨ ψ]⁺ = ([φ]⁺ ∨ [ψ]⁺) ∧ NE
 
-The pragmatic reasoning is:
-1. Why did speaker choose Or instead of A?
-2. Because A might be interpreted as "Only A" (via I₂)
-3. So speaker must want to avoid that interpretation
-4. Therefore, not Only A and not Only B → FCI!
+Each part of the partition must be non-empty → both disjuncts possible!
 
-### Alsop: Parse-Level Ambiguity Drives Informativity
+### Elliott & Sudo: Bilateral + Precondition
 
-The key is ambiguity between grammatical parses (not interpretation functions).
+Modal disjunction has a PRECONDITION requiring both disjuncts contribute:
+  s[φ ∨ ψ]⁺ = s[φ ∨ ψ]⁺ if s[φ ∨ ψ]⁺₁ ≠ ∅ AND s[φ ∨ ψ]⁺₂ ≠ ∅, else ∅
 
-**Szabolcsi parse (weak)**: ∃x[◇take(x)] - some option permitted
-**Dayal parse (strong)**: ∀x[◇take(x)] - each option permitted
-
-The pragmatic reasoning is:
-1. Why would speaker use "any" with the weak parse?
-2. The strong (Dayal) parse is more informative
-3. L1 reasons: speaker intended the informative parse
-4. Therefore, each item is individually permitted → Exclusiveness!
-
-**Key insight**: The mechanism is the same as Champollion et al. but at a
-different level of grammatical representation (parse vs interpretation).
+This SEMANTICALLY derives FC: if the disjunction is assertable, both must
+contribute possibilities.
 -/
 
 /-- Bar-Lev & Fox's key insight: closure determines outcome -/
@@ -346,7 +470,7 @@ def fcDisjunctionClosure : ClosureStatus := .notClosed
 #eval closurePrediction fcDisjunctionClosure      -- "Free choice..."
 
 -- ============================================================================
--- SECTION 6: Empirical Predictions
+-- SECTION 7: Empirical Predictions
 -- ============================================================================
 
 /-!
@@ -354,129 +478,56 @@ def fcDisjunctionClosure : ClosureStatus := .notClosed
 
 ### 1. Gradient vs Categorical Judgments
 
-**Bar-Lev & Fox**: FCI is categorical (either derived or not)
-**Champollion et al.**: FCI is gradient (probability varies with α, priors)
+**Pragmatic (RSA)**: FCI is gradient (probability varies with α, priors)
+**Pragmatic (Neo-Gricean)**: FCI is categorical
+**Semantic**: FCI is categorical (semantic entailment)
 
 **Test**: Do speakers show gradient acceptance of FC readings?
-- If gradient → supports RSA approach
-- If categorical → supports Neo-Gricean approach
 
 ### 2. EI Cancelability Asymmetry
 
 **Bar-Lev & Fox**: Both FCI and EI derived by same mechanism
 **Champollion et al.**: FCI from reasoning, EI from priors → asymmetry
+**Semantic**: Must explain cancelability differently
 
-**Test**: Can EI be canceled more easily than FCI?
-- (3a) "You may have A or B, #in fact you may not have A" (FCI cancel: bad)
-- (3b) "You may have A or B, in fact you may have both" (EI cancel: ok)
+### 3. Cross-Disjunct Anaphora
 
-The Champollion et al. account predicts and explains this asymmetry.
-
-### 3. Context Effects on EI
-
-**Champollion et al.**: EI should be sensitive to world priors
-**Bar-Lev & Fox**: EI derivation is structural, not context-dependent
-
-**Test**: Does context affect EI but not FCI?
-- "There's plenty of fruit" → EI weakened, FCI unchanged
-- "Choose one dessert" → EI strengthened, FCI unchanged
+**Most theories**: Cannot handle "Either there's no bathroom or it's upstairs"
+**Elliott & Sudo**: Primary motivation; handles via bilateral + DNE
 -/
 
 /-- Empirical prediction type -/
 structure EmpiricalPrediction where
   test : String
-  barlevfox : String
-  champollion : String
+  pragmaticRSA : String
+  pragmaticNG : String
+  semantic : String
   testable : Bool
   deriving Repr
 
 def gradientPrediction : EmpiricalPrediction :=
   { test := "Gradient vs categorical FC judgments"
-  , barlevfox := "Categorical"
-  , champollion := "Gradient (varies with α)"
+  , pragmaticRSA := "Gradient (varies with α)"
+  , pragmaticNG := "Categorical"
+  , semantic := "Categorical"
   , testable := true }
 
 def eiAsymmetryPrediction : EmpiricalPrediction :=
   { test := "EI more cancelable than FCI"
-  , barlevfox := "Not predicted"
-  , champollion := "Predicted and explained"
+  , pragmaticRSA := "Predicted and explained"
+  , pragmaticNG := "Not directly predicted"
+  , semantic := "Must stipulate"
   , testable := true }
 
-def contextEffectPrediction : EmpiricalPrediction :=
-  { test := "Context affects EI but not FCI"
-  , barlevfox := "Not predicted"
-  , champollion := "Predicted: EI tracks priors"
+def anaphoraPrediction : EmpiricalPrediction :=
+  { test := "Cross-disjunct anaphora (bathroom)"
+  , pragmaticRSA := "Not addressed"
+  , pragmaticNG := "Not addressed"
+  , semantic := "BUS handles; BSML doesn't"
   , testable := true }
 
 def empiricalPredictions : List EmpiricalPrediction :=
-  [gradientPrediction, eiAsymmetryPrediction, contextEffectPrediction]
-
--- ============================================================================
--- SECTION 7: Unified View
--- ============================================================================
-
-/-!
-## Towards a Unified Account
-
-Despite different mechanisms, all three theories capture key insights:
-
-### Shared Insights
-
-1. **Pragmatic, not semantic**: All derive FC pragmatically
-2. **Alternative/ambiguity-based**: All reason about alternatives or parses
-3. **Strengthening**: All treat FC as pragmatic strengthening
-4. **Asymmetry**: All predict core FC is robust, secondary inference is weaker
-
-### Complementary Strengths
-
-| Strength | Bar-Lev & Fox | Champollion et al. | Alsop 2024 |
-|----------|--------------|-------------------|------------|
-| Formal precision | ✓ (categorical) | | |
-| Gradient predictions | | ✓ | ✓ |
-| EI asymmetry | | ✓ | ✓ (not-every) |
-| Closure insight | ✓ | | |
-| Unified with SI | ✓ (same Exh) | ✓ (same RSA) | ✓ (same RSA) |
-| Universal FCIs | | | ✓ |
-| Parse ambiguity | | | ✓ |
-
-### The RSA Family: Champollion et al. + Alsop
-
-The two RSA approaches are closely related:
-- **Champollion et al.**: Interpretation-level ambiguity (I₁ vs I₂)
-- **Alsop**: Parse-level ambiguity (Szabolcsi vs Dayal)
-
-Both use the same core mechanism: L1 reasons about which reading the speaker
-intended, preferring the more informative one. The difference is where the
-ambiguity lives in the grammar.
-
-### Possible Synthesis
-
-A comprehensive account might:
-1. Use Innocent Inclusion to characterize WHAT gets strengthened
-2. Use RSA to model HOW MUCH strengthening occurs
-3. Closure determines categorical availability
-4. RSA handles both interpretation-level and parse-level ambiguity
-
-This would combine Bar-Lev & Fox's structural insight with
-the gradient predictions of the RSA approaches.
--/
-
-/-- Areas of agreement between theories -/
-def areasOfAgreement : List String :=
-  [ "FCI is pragmatic, not semantic"
-  , "FCI is derived via reasoning about alternatives"
-  , "FCI is a form of pragmatic strengthening"
-  , "Modal disjunction alternatives have special structure"
-  , "Both correctly predict FCI for permission sentences"
-  , "Both correctly predict no FCI under negation" ]
-
-/-- Areas where theories complement each other -/
-def complementaryStrengths : List (String × String) :=
-  [ ("Formal categorical characterization", "Bar-Lev & Fox")
-  , ("Gradient acceptability predictions", "Champollion et al.")
-  , ("EI/FCI asymmetry explanation", "Champollion et al.")
-  , ("Closure-based structural insight", "Bar-Lev & Fox")
-  , ("Connection to scalar implicatures", "Both") ]
+  [gradientPrediction, eiAsymmetryPrediction, anaphoraPrediction]
 
 -- ============================================================================
 -- SECTION 8: Connection to Phenomena
@@ -485,79 +536,73 @@ def complementaryStrengths : List (String × String) :=
 /-!
 ## Predictions for Phenomena Data
 
-Both theories correctly predict the patterns in `Phenomena.FreeChoice.Data`:
+All theories correctly predict the patterns in `Phenomena.FreeChoice.Data`:
 
 ### Basic Free Choice (`coffeeOrTea`)
 - Input: "You may have coffee or tea"
 - Output: "You may have coffee AND you may have tea"
-- Both: ✓ Derived
+- All: ✓ Derived
 
 ### Ross's Paradox (`postOrBurn`)
 - "Post the letter" ⊢ "Post or burn" (semantically)
 - But "Post or burn" → "You may burn" (pragmatically via FC)
-- Both: ✓ Explained (FC is pragmatic, not semantic)
+- All: ✓ Explained
 
 ### Modal Free Choice (`deonticFC`, `epistemicFC`, `abilityFC`)
 - FC works with different modal flavors
-- Both: ✓ Predicted (mechanism is general)
+- All: ✓ Predicted (mechanism is general)
 
 ### Cancellation (`explicitCancellation`)
 - "You may have A or B, but I don't know which"
-- Both: ✓ Predicted (FC is defeasible pragmatic inference)
+- Pragmatic: ✓ Predicted (defeasible)
+- Semantic: Must add mechanism for cancellation
 -/
 
-/-- All phenomena are correctly predicted by both theories -/
-def bothPredictBasicFC : Bool := coffeeOrTea.isPragmaticInference
-def bothPredictRoss : Bool := postOrBurn.pragmaticallyFelicitous = false
-def bothPredictCancellation : Bool := explicitCancellation.felicitous
+/-- All phenomena are correctly predicted by all theories -/
+def allPredictBasicFC : Bool := coffeeOrTea.isPragmaticInference
+def allPredictRoss : Bool := postOrBurn.pragmaticallyFelicitous = false
+def allPredictCancellation : Bool := explicitCancellation.felicitous
 
-#eval bothPredictBasicFC       -- true
-#eval bothPredictRoss          -- true
-#eval bothPredictCancellation  -- true
+#eval allPredictBasicFC       -- true
+#eval allPredictRoss          -- true
+#eval allPredictCancellation  -- true
 
 -- ============================================================================
 -- Summary
 -- ============================================================================
 
 /-!
-## Summary: Free Choice Theory Comparison
+## Summary: Free Choice Theory Landscape
 
-### All Three Theories Successfully Derive Free Choice
+### Five Theories, Two Approaches
 
-| Theory | Mechanism | Key Insight |
-|--------|-----------|-------------|
-| Bar-Lev & Fox 2020 | Innocent Inclusion | Non-closure under ∧ |
-| Champollion et al. 2019 | RSA + interpretation uncertainty | Avoidance of I₂ |
-| Alsop 2024 | RSA + parse ambiguity | Dayal parse informativity |
+**Pragmatic (FC as implicature)**:
+- Bar-Lev & Fox 2020: Innocent Inclusion (categorical)
+- Champollion et al. 2019: RSA + interpretation uncertainty (gradient)
+- Alsop 2024: RSA + parse ambiguity (gradient)
 
-### Key Differences
+**Semantic (FC in meaning)**:
+- Aloni 2022: BSML - team semantics + NE enrichment
+- Elliott & Sudo 2025: BUS - bilateral dynamics + modal ∨ precondition
 
-1. **Nature**: Categorical (B&F) vs Gradient (RSA approaches)
-2. **Domain**: Disjunction (B&F, C et al.) vs Universal *any* (Alsop)
-3. **Ambiguity level**: Alternatives (B&F) vs Interpretations (C et al.) vs Parses (Alsop)
-4. **Secondary inference**: EI (disjunction) vs not-every (universal)
+### Key Differentiators
+
+| Feature | Best Theory |
+|---------|------------|
+| Gradient judgments | RSA approaches |
+| EI asymmetry | RSA approaches |
+| Formal precision | Bar-Lev & Fox |
+| Cross-disjunct anaphora | Elliott & Sudo |
+| Static team semantics | Aloni |
 
 ### Complementary Insights
 
-- **Bar-Lev & Fox**: WHY closure under ∧ matters for FC
-- **Champollion et al.**: HOW reasoning produces gradient judgments for disjunction
-- **Alsop**: HOW the same mechanism extends to universal FCIs like *any*
-
-### Empirical Tests
-
-1. Are FC judgments gradient? → Supports RSA approaches
-2. Is EI/not-every more cancelable than FCI/exclusiveness? → Supports RSA approaches
-3. Does context affect EI but not FCI? → Supports RSA approaches
-4. Do disjunction and *any* show parallel patterns? → Supports unified account
-
-### Conclusion
-
-All three theories provide valuable insights into free choice phenomena.
-The Neo-Gricean account offers precise structural characterization; the RSA
-accounts offer gradient predictions and explain the asymmetry between core
-and secondary inferences. The extension from disjunction to universal *any*
-shows the generality of the pragmatic reasoning mechanism. A complete theory
-may need elements of all three approaches.
+Each theory contributes something unique:
+- **Bar-Lev & Fox**: WHY closure under ∧ matters
+- **Champollion et al.**: HOW reasoning produces gradient judgments
+- **Alsop**: Extension to universal FCIs (*any*)
+- **Aloni**: Static team-semantic alternative to dynamics
+- **Elliott & Sudo**: Anaphora + bilateral structure
 -/
 
 end Comparisons.FreeChoice

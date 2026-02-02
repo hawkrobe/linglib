@@ -171,9 +171,9 @@ Agreement between RSA (in the limit) and NeoGricean.
 
 Now grounded in the proved limit theorem rather than being conjectural.
 -/
-structure LimitAgreement (U W : Type) [BEq U] [BEq W] where
+structure LimitAgreement (U W : Type) [BEq U] [BEq W] [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W] where
   /-- RSA scenario -/
-  rsaScenario : RSAScenario
+  rsaScenario : RSAScenario U W
   /-- NeoGricean analysis -/
   neoAnalysis : StandardRecipeResult
   /-- The utterance being analyzed -/

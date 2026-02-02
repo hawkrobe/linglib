@@ -83,11 +83,11 @@ This lifts ℚ → ℝ and ℕ → ℝ, enabling real analysis.
 
 Note: This uses specified default values for Interp and Lexicon parameters.
 -/
-def RSAScenario.toReal (S : RSAScenario)
-    [Fintype S.Utterance] [Fintype S.World]
+def RSAScenario.toReal {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+    (S : RSAScenario U W)
     (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAScenarioR where
-  Utterance := S.Utterance
-  World := S.World
+  Utterance := U
+  World := W
   lexicon u w := (S.φ defaultInterp defaultLexicon u w : ℝ)
   prior w := (S.worldPrior w : ℝ)
   α := (S.α : ℝ)
@@ -139,9 +139,9 @@ def RSAScenarioR.toModel (S : RSAScenarioR) : RSAModel S.Utterance where
   prior_pos := S.prior_pos
 
 /-- Convert RSAScenario directly to RSAModel (convenience). -/
-def RSAScenario.toModel (S : RSAScenario)
-    [Fintype S.Utterance] [Fintype S.World]
-    (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAModel S.Utterance :=
+def RSAScenario.toModel {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
+    (S : RSAScenario U W)
+    (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAModel U :=
   (RSAScenario.toReal S defaultInterp defaultLexicon).toModel
 
 -- ============================================================================

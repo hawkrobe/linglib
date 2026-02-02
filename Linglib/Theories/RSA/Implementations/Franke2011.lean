@@ -1006,9 +1006,7 @@ This connects the probabilistic RSA model to the deterministic IBR model.
 /-- Convert interpretation game to RSA scenario.
     Note: This assumes the game has non-negative priors. -/
 def toRSAScenario (G : InterpGame) (α : ℕ)
-    (hPrior : ∀ s, 0 ≤ G.prior s) : RSAScenario where
-  Utterance := G.Message
-  World := G.State
+    (hPrior : ∀ s, 0 ≤ G.prior s) : RSAScenario G.Message G.State where
   φ := fun _ _ m s => if G.meaning m s then 1 else 0
   goalProject := fun _ s s' => s == s'
   worldPrior := G.prior

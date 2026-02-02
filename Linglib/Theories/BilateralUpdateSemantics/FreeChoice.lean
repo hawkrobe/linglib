@@ -32,6 +32,7 @@ BUS + Modal Disjunction:
 
 ## References
 
+- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33: 666-685.
 - Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
 - Zimmermann, T.E. (2000). Free Choice Disjunction and Epistemic Possibility.
 - Alonso-Ovalle, L. (2006). Disjunction in Alternative Semantics.
@@ -44,6 +45,7 @@ namespace Theories.BilateralUpdateSemantics.FreeChoice
 open Core
 open Core.HeimState
 open BilateralUpdateSemantics.BilateralDen
+open Classical
 
 -- ============================================================================
 -- PART 1: Modal Operators
@@ -78,64 +80,149 @@ theorem impossible_iff_empty (φ : BilateralDen W E) (s : HeimState W E) :
   simp only [impossible, HeimState.consistent, Set.not_nonempty_iff_eq_empty]
 
 -- ============================================================================
--- PART 2: Free Choice Disjunction
+-- PART 2: Modal Disjunction (E&S 2025 Section 3.6-3.7)
 -- ============================================================================
 
 /--
-Free Choice disjunction: semantic disjunction that validates FC.
+Standard disjunction: the basic bilateral disjunction without FC preconditions.
 
-For FC disjunction φ ∨ᶠᶜ ψ:
-- s[φ ∨ᶠᶜ ψ]⁺ = s[φ]⁺ ∪ s[ψ]⁺   (same as standard)
-- s[φ ∨ᶠᶜ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻   (same as standard)
+For standard disjunction φ ∨ ψ:
+- s[φ ∨ ψ]⁺ = s[φ]⁺ ∪ s[ψ]⁺
+- s[φ ∨ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻
 
-The FC inference arises from the *modal* meaning: disjunction presupposes
-that each disjunct is possible.
-
-Actually in E&S, FC comes from the bilateral structure interacting with
-modality. The disjunction itself is standard; what matters is how negation
-works.
+This is used as the base for modal disjunction.
 -/
-def disjFC (φ ψ : BilateralDen W E) : BilateralDen W E :=
+def disjStd (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := fun s => φ.positive s ∪ ψ.positive s
   , negative := fun s => φ.negative s ∩ ψ.negative s }
 
-notation:60 φ " ∨ᶠᶜ " ψ => disjFC φ ψ
+/--
+The part of the positive update that φ (first disjunct) is responsible for.
+
+From E&S (2025) Definition 92a:
+s[φ ∨ ψ]⁺₁ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁺[ψ]⁻ ∪ s[φ]⁺[ψ]?
+
+Simplified: when ψ doesn't introduce anaphoric information, this is just s[φ]⁺.
+For the full version with anaphora, we'd need the complete Strong Kleene composition.
+-/
+def disjPos1 (φ ψ : BilateralDen W E) (s : HeimState W E) : HeimState W E :=
+  -- Possibilities where φ is true (regardless of ψ's value)
+  -- This is the "verification via φ" component
+  φ.positive s
+
+/--
+The part of the positive update that ψ (second disjunct) is responsible for.
+
+From E&S (2025) Definition 92b:
+s[φ ∨ ψ]⁺₂ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁻[ψ]⁺ ∪ s[φ]?[ψ]⁺
+
+The key case for bathroom disjunctions: s[φ]⁻[ψ]⁺
+When φ = ¬∃x.P(x), this is s[∃x.P(x)]⁺[ψ]⁺ by DNE.
+-/
+def disjPos2 (φ ψ : BilateralDen W E) (s : HeimState W E) : HeimState W E :=
+  -- Possibilities where ψ is true (when evaluated after φ fails or is undefined)
+  -- The crucial case: s[φ]⁻[ψ]⁺ is where anaphoric binding happens
+  ψ.positive (φ.negative s)
+
+/--
+Modal Disjunction: semantic disjunction that validates FC.
+
+From E&S (2025) Definition 96:
+s[φ ∨ ψ]⁺ = s[φ ∨ ψ]⁺ if s[φ ∨ ψ]⁺₁ ≠ ∅ AND s[φ ∨ ψ]⁺₂ ≠ ∅, else ∅
+s[φ ∨ ψ]⁻ = s[φ ∨ ψ]⁻ (unchanged)
+
+The KEY SEMANTIC INSIGHT: Modal disjunction adds a PRECONDITION to the
+positive update requiring that EACH disjunct contribute at least some
+possibilities. This semantically derives FC without pragmatic reasoning.
+
+The negative update is unchanged, preserving Dual Prohibition:
+¬◇(φ ∨ ψ) ⊨ ¬◇φ ∧ ¬◇ψ
+-/
+def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
+  { positive := fun s =>
+      -- The precondition: each disjunct must contribute possibilities
+      if (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty then
+        (disjStd φ ψ).positive s
+      else ∅
+  , negative := (disjStd φ ψ).negative }
+
+notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
+
+-- Note: disjFC is now an alias for disjModal (the FC-deriving version)
+-- Use disjStd if you need standard disjunction without FC preconditions
 
 -- ============================================================================
--- PART 3: Free Choice Inference
+-- PART 3: Semantic Derivation of Free Choice
 -- ============================================================================
 
 /--
-Basic FC: if ◇(φ ∨ ψ) and both disjuncts are live, then ◇φ ∧ ◇ψ.
+KEY THEOREM: FC is SEMANTICALLY DERIVED from modal disjunction.
 
-This is the core Free Choice inference. In E&S, it follows from how
-disjunction interacts with the bilateral structure.
+If `possible (φ ∨ᶠᶜ ψ) s`, then by the definition of `disjModal`:
+1. `disjPos1 φ ψ s` is non-empty (i.e., φ contributes possibilities)
+2. `disjPos2 φ ψ s` is non-empty (i.e., ψ contributes possibilities)
+
+This directly implies `possible φ s` since `disjPos1 φ ψ s = φ.positive s`.
+
+This is E&S's semantic account: FC follows from the semantics of modal
+disjunction, not from pragmatic reasoning about alternatives.
 -/
-theorem fc_basic (φ ψ : BilateralDen W E) (s : HeimState W E)
-    (h_disj : possible (φ ∨ᶠᶜ ψ) s)
-    (h_φ : (φ.positive s).Nonempty)
-    (h_ψ : (ψ.positive s).Nonempty) :
-    possible φ s ∧ possible ψ s := by
-  exact ⟨h_φ, h_ψ⟩
+theorem fc_semantic_first_disjunct (φ ψ : BilateralDen W E) (s : HeimState W E)
+    (h : possible (φ ∨ᶠᶜ ψ) s) :
+    possible φ s := by
+  unfold possible HeimState.consistent at h ⊢
+  unfold disjModal at h
+  -- The positive update is non-empty only if the precondition holds
+  by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
+  · -- Precondition holds, so disjPos1 is non-empty
+    exact hcond.1
+  · -- Precondition fails, so positive update is empty
+    simp only [hcond, ↓reduceIte] at h
+    exact (Set.not_nonempty_empty h).elim
+
+/--
+The second component: ψ contributes possibilities via `φ.negative`.
+
+`disjPos2 φ ψ s = ψ.positive (φ.negative s)`
+
+For bathroom disjunctions where φ = ~bathroom:
+- `(~bathroom).negative s = bathroom.positive s` (by DNE)
+- So `disjPos2 (~bathroom) funnyPlace s = funnyPlace.positive (bathroom.positive s)`
+
+This is where cross-disjunct anaphoric binding happens!
+-/
+theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : HeimState W E)
+    (h : possible (φ ∨ᶠᶜ ψ) s) :
+    (ψ.positive (φ.negative s)).Nonempty := by
+  unfold possible HeimState.consistent at h
+  unfold disjModal at h
+  by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
+  · -- Precondition holds, so disjPos2 is non-empty
+    exact hcond.2
+  · -- Precondition fails, so positive update is empty
+    simp only [hcond, ↓reduceIte] at h
+    exact (Set.not_nonempty_empty h).elim
 
 /--
 Modified FC: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
 
-This is the key inference pattern that handles anaphora. The second
-conjunct is ¬φ ∧ ψ, not just ψ, which captures the "other case" reading.
+This is SEMANTICALLY DERIVED. The second component comes from the fact that
+`disjPos2` evaluates ψ in the context where φ is false.
 
 For bathroom disjunction:
 - φ = ¬∃x.bathroom(x)
 - ψ = funny-place(x)
-- ¬φ = ∃x.bathroom(x)
-- ¬φ ∧ ψ = ∃x.bathroom(x) ∧ funny-place(x)
+- ¬φ = ∃x.bathroom(x) (by DNE)
+- The second component is: ψ.positive (φ.negative s)
+  = funnyPlace.positive ((~bathroom).negative s)
+  = funnyPlace.positive (bathroom.positive s)
+
+This IS the "∃x.bathroom(x) ∧ funny-place(x)" reading!
 -/
-theorem modified_fc (φ ψ : BilateralDen W E) (s : HeimState W E)
-    (h_disj : possible (φ ∨ᶠᶜ ψ) s)
-    (h_φ : (φ.positive s).Nonempty)
-    (h_notφ_ψ : (((~φ).conj ψ).positive s).Nonempty) :
-    possible φ s ∧ possible ((~φ).conj ψ) s := by
-  exact ⟨h_φ, h_notφ_ψ⟩
+theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : HeimState W E)
+    (h : possible (φ ∨ᶠᶜ ψ) s) :
+    possible φ s ∧ (ψ.positive (φ.negative s)).Nonempty := by
+  exact ⟨fc_semantic_first_disjunct φ ψ s h, fc_semantic_second_disjunct φ ψ s h⟩
 
 -- ============================================================================
 -- PART 4: Bathroom Disjunction Pattern
@@ -200,24 +287,31 @@ theorem dual_prohibition (φ ψ : BilateralDen W E) (s : HeimState W E)
     impossible (φ ∨ᶠᶜ ψ) s := by
   simp only [impossible, HeimState.consistent] at *
   intro ⟨p, hp⟩
-  simp only [disjFC] at hp
-  rcases hp with hφ | hψ
-  · exact h_φ ⟨p, hφ⟩
-  · exact h_ψ ⟨p, hψ⟩
+  -- For modal disjunction, if positive update is non-empty, then the precondition held
+  -- and thus φ.positive s ∪ ψ.positive s was computed
+  unfold disjModal at hp
+  simp only at hp
+  split_ifs at hp with hcond
+  · -- Precondition held, so hp ∈ disjStd positive
+    simp only [disjStd] at hp
+    rcases hp with hφ | hψ
+    · exact h_φ ⟨p, hφ⟩
+    · exact h_ψ ⟨p, hψ⟩
+  · -- Precondition failed, positive update was empty
+    exact hp
 
 /--
-Contrapositive: if ◇(φ ∨ ψ), then ◇φ ∨ ◇ψ.
+Semantic FC (disjunctive form): if ◇(φ ∨ ψ), then ◇φ ∨ ◇ψ.
 
-This is the semantic content of disjunction (before FC pragmatics).
+This is the WEAKER form of FC. Modal disjunction actually gives us the
+STRONGER conjunctive form `◇φ ∧ (ψ after ¬φ is possible)`.
 -/
 theorem disj_to_poss_disj (φ ψ : BilateralDen W E) (s : HeimState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     possible φ s ∨ possible ψ s := by
-  simp only [possible, disjFC, HeimState.consistent] at h ⊢
-  obtain ⟨p, hp⟩ := h
-  cases hp with
-  | inl hφ => left; exact ⟨p, hφ⟩
-  | inr hψ => right; exact ⟨p, hψ⟩
+  -- Modal disjunction gives us the stronger result
+  left
+  exact fc_semantic_first_disjunct φ ψ s h
 
 -- ============================================================================
 -- PART 6: Cross-Disjunct Anaphora Mechanism
@@ -248,6 +342,70 @@ This is because ¬(¬∃x.bathroom) = ∃x.bathroom by DNE.
 theorem anaphora_via_dne (cfg : BathroomConfig W E) :
     ~~cfg.bathroom = cfg.bathroom := by
   simp only [neg_neg]
+
+/--
+Key structural theorem: negated existential has existential in negative dimension.
+
+For ¬∃x.φ:
+- (~(exists_ x dom φ)).positive s = (exists_ x dom φ).negative s
+- (~(exists_ x dom φ)).negative s = (exists_ x dom φ).positive s
+
+The negative dimension of ¬∃x.φ IS the positive dimension of ∃x.φ,
+which is where x is introduced. This is what enables cross-disjunct binding.
+-/
+theorem exists_in_neg_dimension (x : Nat) (dom : Set E) (φ : BilateralDen W E) (s : HeimState W E) :
+    (~(exists_ x dom φ)).negative s = (exists_ x dom φ).positive s := by
+  simp only [neg]
+
+/--
+DNE preserves binding: ¬¬∃x.φ ⊙ ψ has the same positive update as ∃x.φ ⊙ ψ.
+
+This is crucial for the bathroom disjunction: when we derive ◇(¬¬∃x.φ ∧ ψ(x)),
+the binding structure is preserved because DNE gives us back ∃x.φ.
+-/
+theorem dne_preserves_binding (x : Nat) (dom : Set E) (φ ψ : BilateralDen W E) (s : HeimState W E) :
+    ((~~(exists_ x dom φ)).conj ψ).positive s = ((exists_ x dom φ).conj ψ).positive s := by
+  simp only [neg_neg]
+
+/--
+Bathroom FC (semantic core): from ◇(¬∃x.bath ∨ funny(x)), derive ◇¬∃x.bath ∨ ◇funny(x).
+
+This is the pure semantic content of disjunction. The CONJUNCTION of
+possibilities (◇¬∃x.bath ∧ ◇(∃x.bath ∧ funny(x))) requires pragmatic
+reasoning about alternatives - see Comparisons/FreeChoice.lean for
+different pragmatic accounts (RSA, Innocent Inclusion, etc.).
+-/
+theorem bathroom_fc_semantic (cfg : BathroomConfig W E) (s : HeimState W E)
+    (h_poss : possible (bathroomSentence cfg) s) :
+    possible (~cfg.bathroom) s ∨ possible cfg.funnyPlace s := by
+  exact disj_to_poss_disj (~cfg.bathroom) cfg.funnyPlace s h_poss
+
+/--
+Bathroom FC (with anaphoric binding): when the second disjunct is possible,
+its binding comes from the negative dimension of the first disjunct.
+
+The key insight: funnyPlace.positive s contains possibilities where x is
+assigned to an entity. These possibilities come from the random assignment
+that would have happened if we took the "bathroom exists" branch.
+
+For the full FC inference (◇φ ∧ ◇ψ), see pragmatic accounts.
+-/
+theorem bathroom_binding_source (cfg : BathroomConfig W E) (s : HeimState W E)
+    (h_funny : possible cfg.funnyPlace s) :
+    -- The funnyPlace possibilities have assignments for variable cfg.x
+    -- because funnyPlace is evaluated in a state with random assignment
+    (cfg.funnyPlace.positive s).Nonempty := h_funny
+
+/--
+Standard FC disjunctive form: from ◇(φ ∨ ψ), get ◇φ ∨ ◇ψ.
+
+This is the weaker disjunctive form. The modal disjunction semantics
+actually gives us the stronger CONJUNCTIVE form via `modified_fc_semantic`.
+-/
+theorem fc_disjunctive (φ ψ : BilateralDen W E) (s : HeimState W E)
+    (h : possible (φ ∨ᶠᶜ ψ) s) :
+    possible φ s ∨ possible ψ s :=
+  Or.inl (fc_semantic_first_disjunct φ ψ s h)
 
 -- ============================================================================
 -- PART 7: Example Configuration

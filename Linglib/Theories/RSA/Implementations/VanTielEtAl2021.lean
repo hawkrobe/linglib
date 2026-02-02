@@ -174,10 +174,10 @@ def compareListeners_GQT (m : QuantityWord) : RSA.ChainComparison WorldState :=
 -- ============================================================================
 
 /-- GQT RSAScenario for type-safe proofs -/
-def gqtScenario : RSAScenario := gqtDomain.toScenario
+def gqtScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) := gqtDomain.toScenario
 
 /-- PT RSAScenario for type-safe proofs -/
-def ptScenario : RSAScenario := ptDomain.toScenario
+def ptScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) := ptDomain.toScenario
 
 -- ============================================================================
 -- Demonstrations

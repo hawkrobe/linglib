@@ -202,10 +202,8 @@ private def threePerson : Domain 3 := standard 3
 private theorem one_nonneg : (0 : ℚ) ≤ 1 := by decide
 
 /-- Build Fintype-based RSA scenario from domain -/
-def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenario :=
+def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenario Utterance (Fin (n + 1)) :=
   RSAScenario.basicBool
-    (U := Utterance)
-    (W := Fin (n + 1))
     (satisfies := fun w u => meaning n u w)
     (prior := d.prior)
     (prior_nonneg := d.prior_nonneg)
@@ -215,10 +213,8 @@ def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenario :=
     (utterancePrior_nonneg := fun _ => one_nonneg)
 
 /-- Build Fintype-based RSA scenario from extended domain -/
-def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenario :=
+def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenario ExtUtterance (Fin (n + 1)) :=
   RSAScenario.basicBool
-    (U := ExtUtterance)
-    (W := Fin (n + 1))
     (satisfies := fun w u => extMeaning n u w)
     (prior := d.prior)
     (prior_nonneg := d.prior_nonneg)
@@ -421,10 +417,8 @@ def Domain.runS1_fromL1S0 {n : Nat} (d : Domain n) (w : Fin (n + 1))
 -- ============================================================================
 
 /-- Build RSAScenario from Domain (includes salience as utterancePrior) -/
-def Domain.toScenario {n : Nat} (d : Domain n) (α : ℕ := 1) : RSAScenario :=
+def Domain.toScenario {n : Nat} (d : Domain n) (α : ℕ := 1) : RSAScenario Utterance (Fin (n + 1)) :=
   RSAScenario.basic
-    (U := Utterance)
-    (W := Fin (n + 1))
     (φ := d.meaning)
     (φ_nonneg := d.meaning_nonneg)
     (prior := d.worldPrior)

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.54.0] - 2025-02-02
+
+### Changed
+- **Theories/RSA/Core/Basic.lean**: Make RSAScenario parametric on U (Utterance) and W (World)
+  - `RSAScenario U W` instead of opaque `Utterance : Type` / `World : Type` fields
+  - Enables clean API: `scenario.evalL1 u` instead of `RSA.evalL1 (U := ...) (W := ...) scenario rfl rfl rfl rfl u`
+  - Updated all smart constructors, eval methods, and ~10 implementation files
+
 ## [0.53.0] - 2025-02-02
 
 ### Added

@@ -106,9 +106,7 @@ def discourse {U W : Type}
     (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w := by intros; decide)
     (φ_nonneg : ∀ u w, 0 ≤ φ u w := by intros; decide)
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   BeliefState := discourse.D
   φ := fun _ _ u w => φ u w
   goalProject := fun _ _ _ => true
@@ -159,9 +157,7 @@ def discourseWithQUD {U W : Type}
     (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w := by intros; decide)
     (φ_nonneg : ∀ u w, 0 ≤ φ u w := by intros; decide)
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
-    : RSAScenario where
-  Utterance := U
-  World := W
+    : RSAScenario U W where
   BeliefState := discourse.D
   Goal := qud.G
   φ := fun _ _ u w => φ u w
