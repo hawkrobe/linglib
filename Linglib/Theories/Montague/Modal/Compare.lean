@@ -28,13 +28,13 @@ The theories diverge when:
 - Portner, P. (2009). Modality. Oxford University Press.
 -/
 
-import Linglib.Theories.Montague.Modal.Kratzer
+import Linglib.Theories.Montague.Modal.Kratzer1981
 import Linglib.Theories.Montague.Modal.Simple
 
 namespace Montague.Modal
 
 open Montague.Verb.Attitude.Examples
-open Montague.Modal.ConversationalBackground
+open Montague.Modal.Kratzer1981
 
 -- ============================================================================
 -- Comparison Functions

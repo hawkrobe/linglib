@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.52.0] - 2025-02-02
+
+### Changed
+- **Montague/Modal/Kratzer1981.lean**: Complete rewrite with full derivations from Kratzer (1981)
+  - Correct subset-based ordering relation (was counting-based)
+  - `ordering_reflexive`, `ordering_transitive`: Preorder properties PROVEN
+  - `totally_realistic_gives_T`: T axiom derived from realistic modal base
+  - `K_axiom`: Distribution axiom □(p → q) → (□p → □q)
+  - `duality`: Modal duality □p ↔ ¬◇¬p
+  - `comparative_poss_reflexive`: Comparative possibility reflexivity
+  - Modal flavors as structures: `EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`
+  - Conditionals as modal base restrictors (Kratzer p. 64-66)
+
+### Removed
+- **Montague/Modal/Kratzer.lean**: Replaced by Kratzer1981.lean (had flawed cardinality-based ordering)
+
 ## [0.51.0] - 2025-02-02
 
 ### Added

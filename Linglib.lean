@@ -58,6 +58,9 @@ import Linglib.Core.CommonGround
 -- Heimian states (dynamic semantics infrastructure)
 import Linglib.Core.HeimState
 
+-- Team semantics (Aloni, Inquisitive Semantics infrastructure)
+import Linglib.Core.TeamSemantics
+
 -- Softmax infrastructure (Franke & Degen)
 import Linglib.Core.Softmax.Basic
 import Linglib.Core.Softmax.Limits
@@ -221,7 +224,7 @@ import Linglib.Theories.Montague.Adjective.Theory
 
 -- Modal theories (Kratzer vs Simple/Kripke)
 import Linglib.Theories.Montague.Modal.Basic
-import Linglib.Theories.Montague.Modal.Kratzer
+import Linglib.Theories.Montague.Modal.Kratzer1981
 import Linglib.Theories.Montague.Modal.Simple
 import Linglib.Theories.Montague.Modal.Compare
 
@@ -304,6 +307,8 @@ import Linglib.Theories.Comparisons.CommandRelations
 import Linglib.Theories.Comparisons.Implicature
 import Linglib.Theories.Comparisons.RSANeoGricean
 import Linglib.Theories.Comparisons.SauerlandRSA
+import Linglib.Theories.Comparisons.FreeChoice.Compare
+import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
 
 import Linglib.Theories.Surface.Basic
 
