@@ -397,6 +397,162 @@ def fcComparisonData : List FCComparisonDatum :=
   [bothDeriveFC, bothRobust, differentStructure]
 
 -- ============================================================================
+-- PART 7: Bathroom Disjunctions (Elliott & Sudo 2025)
+-- ============================================================================
+
+/-!
+## FC with Anaphora: Bathroom Disjunctions
+
+Elliott & Sudo (2025) identify a novel FC pattern where cross-disjunct
+anaphora interacts with Free Choice:
+
+"Either there's no bathroom or it's in a funny place"
+
+Inference:
+1. ◇(there's no bathroom)
+2. ◇(there's a bathroom ∧ it's in a funny place)
+
+The pronoun "it" in the second disjunct is bound by the existential
+in the NEGATED first disjunct. This is puzzling because negation should
+block binding, yet the inference requires x to be accessible.
+
+## References
+
+- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
+-/
+
+/--
+Bathroom disjunction: FC with cross-disjunct anaphora.
+-/
+structure BathroomDisjunctionDatum where
+  /-- The sentence -/
+  sentence : String
+  /-- First disjunct (typically negated existential) -/
+  disjunct1 : String
+  /-- Second disjunct (with anaphoric element) -/
+  disjunct2 : String
+  /-- The anaphoric element -/
+  anaphor : String
+  /-- The antecedent (under negation) -/
+  antecedent : String
+  /-- First FC inference -/
+  inference1 : String
+  /-- Second FC inference (with anaphora resolved) -/
+  inference2 : String
+  /-- Does cross-disjunct anaphora occur? -/
+  hasCrossDisjunctAnaphora : Bool
+  /-- Source -/
+  source : String := "Elliott & Sudo (2025)"
+  deriving Repr
+
+/--
+Classic bathroom disjunction.
+Source: Elliott & Sudo (2025)
+-/
+def bathroomClassic : BathroomDisjunctionDatum :=
+  { sentence := "Either there's no bathroom or it's in a funny place"
+  , disjunct1 := "there's no bathroom"
+  , disjunct2 := "it's in a funny place"
+  , anaphor := "it"
+  , antecedent := "there's a bathroom"
+  , inference1 := "It's possible there's no bathroom"
+  , inference2 := "It's possible there's a bathroom and it's in a funny place"
+  , hasCrossDisjunctAnaphora := true
+  }
+
+/--
+Bathroom variant with "the bathroom".
+-/
+def bathroomDefinite : BathroomDisjunctionDatum :=
+  { sentence := "Either there's no bathroom or the bathroom is upstairs"
+  , disjunct1 := "there's no bathroom"
+  , disjunct2 := "the bathroom is upstairs"
+  , anaphor := "the bathroom"
+  , antecedent := "there's a bathroom"
+  , inference1 := "It's possible there's no bathroom"
+  , inference2 := "It's possible there's a bathroom and it's upstairs"
+  , hasCrossDisjunctAnaphora := true
+  }
+
+/--
+Similar pattern with different content.
+-/
+def keyExample : BathroomDisjunctionDatum :=
+  { sentence := "Either I lost my key or it's in my other bag"
+  , disjunct1 := "I lost my key"
+  , disjunct2 := "it's in my other bag"
+  , anaphor := "it"
+  , antecedent := "my key exists and I have it"
+  , inference1 := "It's possible I lost my key"
+  , inference2 := "It's possible my key is in my other bag"
+  , hasCrossDisjunctAnaphora := true
+  }
+
+/--
+Negated universal variant.
+-/
+def nobodyExample : BathroomDisjunctionDatum :=
+  { sentence := "Either nobody came or they left early"
+  , disjunct1 := "nobody came"
+  , disjunct2 := "they left early"
+  , anaphor := "they"
+  , antecedent := "somebody came"
+  , inference1 := "It's possible nobody came"
+  , inference2 := "It's possible somebody came and they left early"
+  , hasCrossDisjunctAnaphora := true
+  }
+
+/--
+All bathroom disjunction examples.
+-/
+def bathroomDisjunctionExamples : List BathroomDisjunctionDatum :=
+  [bathroomClassic, bathroomDefinite, keyExample, nobodyExample]
+
+-- ============================================================================
+-- PART 8: FC Without Anaphora (Contrast Cases)
+-- ============================================================================
+
+/--
+Standard FC without cross-disjunct anaphora (for comparison).
+-/
+structure StandardFCDatum where
+  /-- The sentence -/
+  sentence : String
+  /-- The disjuncts -/
+  disjuncts : List String
+  /-- FC inferences -/
+  inferences : List String
+  /-- Any anaphora? -/
+  hasAnaphora : Bool
+  deriving Repr
+
+/--
+Standard FC: no anaphora.
+-/
+def coffeeTeaStandard : StandardFCDatum :=
+  { sentence := "You may have coffee or tea"
+  , disjuncts := ["have coffee", "have tea"]
+  , inferences := ["You may have coffee", "You may have tea"]
+  , hasAnaphora := false
+  }
+
+/--
+Standard FC with independent disjuncts.
+-/
+def parisLondonStandard : StandardFCDatum :=
+  { sentence := "John might be in Paris or London"
+  , disjuncts := ["John is in Paris", "John is in London"]
+  , inferences := ["John might be in Paris", "John might be in London"]
+  , hasAnaphora := false
+  }
+
+/--
+All standard FC examples (contrast with bathroom).
+-/
+def standardFCExamples : List StandardFCDatum :=
+  [coffeeTeaStandard, parisLondonStandard]
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -408,18 +564,24 @@ def fcComparisonData : List FCComparisonDatum :=
 - `RossParadoxDatum`: Ross's paradox examples
 - `ModalFreeChoiceDatum`: Free choice across modal types
 - `FCCancellationDatum`: Cancellation evidence
+- `FCIAnyDatum`: Universal free choice items
+- `BathroomDisjunctionDatum`: FC with cross-disjunct anaphora
 
 ### Example Collections
 - `freeChoiceExamples`: 3 basic examples
 - `rossParadoxExamples`: 2 paradox examples
 - `modalFreeChoiceExamples`: 3 modal types
 - `cancellationExamples`: 2 cancellation examples
+- `fciAnyExamples`: 3 universal FCI examples
+- `bathroomDisjunctionExamples`: 4 bathroom-type examples
 
 ### Key References
 - Ross (1944): Original paradox
 - Kamp (1973): Free choice permission
 - Zimmermann (2000): Epistemic possibility
 - Geurts (2010): Modern pragmatic analysis
+- Kadmon & Landman (1993): Free choice *any*
+- Elliott & Sudo (2025): FC with anaphora
 -/
 
 end Phenomena.FreeChoice

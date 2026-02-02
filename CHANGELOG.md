@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.51.0] - 2025-02-02
+
+### Added
+- **Core/HeimState.lean**: Heimian information states for dynamic semantics
+  - `Possibility W E`: (world, assignment) pairs
+  - `HeimState W E`: Sets of possibilities (Heim's "file cards")
+  - Operations: `update`, `randomAssign`, `randomAssignFull`
+  - `subsistsIn`: State subsistence relation (s ⪯ s')
+  - `definedAt`, `novelAt`: Variable familiarity tracking
+  - `supports`, `dynamicEntails`: Dynamic truth and entailment
+
+- **Theories/BilateralUpdateSemantics/Basic.lean**: Elliott & Sudo (2025) BUS framework
+  - `BilateralDen W E`: Bilateral denotations with positive/negative updates
+  - Logical operations: `neg` (~), `conj` (⊙), `disj` (⊕), `exists_`, `forall_`
+  - `neg_neg`: Double Negation Elimination (¬¬φ = φ)
+  - `egli`: Egli's theorem (∃xφ ∧ ψ ⊨ ∃x[φ ∧ ψ])
+  - Predicate constructors: `atom`, `pred1`, `pred2`
+
+- **Theories/BilateralUpdateSemantics/FreeChoice.lean**: Free Choice derivations
+  - Modal operators: `possible`, `necessary`, `impossible`
+  - `disjFC` (∨ᶠᶜ): Free Choice disjunction
+  - `BathroomConfig`: Cross-disjunct anaphora configuration
+  - `fc_basic`: ◇(φ ∨ ψ) → ◇φ ∧ ◇ψ
+  - `modified_fc`: ◇(φ ∨ ψ) → ◇φ ∧ ◇(¬φ ∧ ψ)
+  - `fc_with_anaphora`: Bathroom disjunction pattern
+  - `dual_prohibition`: ¬◇φ ∧ ¬◇ψ → ¬◇(φ ∨ ψ)
+
 ## [0.50.0] - 2025-02-01
 
 ### Added

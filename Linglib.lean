@@ -55,6 +55,9 @@ import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 
+-- Heimian states (dynamic semantics infrastructure)
+import Linglib.Core.HeimState
+
 -- Softmax infrastructure (Franke & Degen)
 import Linglib.Core.Softmax.Basic
 import Linglib.Core.Softmax.Limits
@@ -180,11 +183,13 @@ import Linglib.Theories.Montague.Derivation.Scope
 -- Montague Intensional
 import Linglib.Theories.Montague.Intensional.Basic
 
--- Montague Questions (G&S partition semantics)
+-- Montague Questions (G&S partition semantics, Inquisitive Semantics)
 import Linglib.Theories.Montague.Question.Basic
 import Linglib.Theories.Montague.Question.Partition
 import Linglib.Theories.Montague.Question.Hamblin
 import Linglib.Theories.Montague.Question.DecisionTheory
+import Linglib.Theories.Montague.Question.Inquisitive
+import Linglib.Theories.Montague.Question.ProbabilisticAnswerhood
 
 -- Montague Entailment
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
@@ -196,6 +201,15 @@ import Linglib.Theories.Montague.Sentence.Entailment.PresuppositionPolarity
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
 import Linglib.Theories.Montague.Sentence.Presupposition.TonhauserDerivation
+
+-- Montague Conditionals
+import Linglib.Theories.Montague.Sentence.Conditional.Basic
+import Linglib.Theories.Montague.Sentence.Conditional.Assertability
+import Linglib.Theories.Montague.Sentence.Conditional.ConditionalType
+import Linglib.Theories.Montague.Sentence.Conditional.LeftNested
+
+-- Montague Particles (Additive: too, also, either)
+import Linglib.Theories.Montague.Particle.Additive
 
 -- Montague Interfaces
 import Linglib.Theories.Montague.Interface.SemanticBackend
@@ -279,6 +293,10 @@ import Linglib.Core.RationalPower
 
 import Linglib.Theories.PragmaticComparison
 
+-- Bilateral Update Semantics (Elliott & Sudo 2025)
+import Linglib.Theories.BilateralUpdateSemantics.Basic
+import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
+
 -- Cross-theoretic comparisons
 import Linglib.Theories.Comparisons.Coreference
 import Linglib.Theories.Comparisons.ScalarImplicature
@@ -349,3 +367,10 @@ import Linglib.Phenomena.Imprecision.Basic
 
 -- Word order alternations (verb position, etc.)
 import Linglib.Phenomena.WordOrderAlternations.VerbPosition.Data
+
+-- Conditional phenomena
+import Linglib.Phenomena.Conditionals.Data
+import Linglib.Phenomena.Conditionals.LeftNested
+
+-- Additive particles (too, also, either) - Thomas (2026)
+import Linglib.Phenomena.AdditiveParticles.Data
