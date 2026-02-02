@@ -421,6 +421,91 @@ theorem empty_base_universal_access (w : World) :
   simp only [List.not_mem_nil] at hp
 
 -- ============================================================================
+-- PART 8: Frame Correspondence Theorems
+-- ============================================================================
+
+/-!
+## Frame Correspondence (Kripke 1963)
+
+Modal axioms correspond to properties of the accessibility relation.
+With Kratzer semantics, these properties apply to the DERIVED accessibility
+from the modal base.
+
+| Axiom | Name | Property | Condition |
+|-------|------|----------|-----------|
+| T | □p → p | Reflexivity | Realistic base |
+| D | □p → ◇p | Seriality | Non-empty best worlds |
+| 4 | □p → □□p | Transitivity | Transitive accessibility |
+| B | p → □◇p | Symmetry | Symmetric accessibility |
+| 5 | ◇p → □◇p | Euclidean | Euclidean accessibility |
+
+T is already proven above (`totally_realistic_gives_T`). Here we prove D.
+-/
+
+/--
+**D Axiom (Seriality)**: □p → ◇p
+
+If necessity holds and the best worlds are non-empty, then possibility holds.
+
+This is the consistency axiom: what is necessary is possible.
+Seriality means: ∀w. ∃w'. w' is accessible from w.
+
+Proof: If p holds at ALL best worlds, and there's at least one best world,
+then p holds at SOME best world. ∎
+-/
+theorem D_axiom (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World)
+    (hSerial : (bestWorlds f g w).length > 0)
+    (hNec : necessity f g p w = true) :
+    possibility f g p w = true := by
+  unfold necessity possibility at *
+  -- hNec: bestWorlds.all p = true
+  -- Need: bestWorlds.any p = true
+  -- Since bestWorlds is non-empty and all satisfy p, some satisfies p
+  have hAll : (bestWorlds f g w).all p = true := hNec
+  match hBest : bestWorlds f g w with
+  | [] =>
+    -- Contradiction: list is empty but length > 0
+    simp only [hBest, List.length_nil, gt_iff_lt, Nat.lt_irrefl] at hSerial
+  | w' :: ws =>
+    -- w' is in bestWorlds and satisfies p
+    simp only [List.any_cons]
+    have hPw' : p w' = true := by
+      simp only [hBest, List.all_cons, Bool.and_eq_true] at hAll
+      exact hAll.1
+    simp only [hPw', Bool.true_or]
+
+/--
+**Seriality of realistic bases.**
+
+If the modal base is realistic, then accessible worlds is non-empty
+(contains at least the evaluation world).
+-/
+theorem realistic_is_serial (f : ModalBase) (hReal : isRealistic f) (w : World) :
+    (accessibleWorlds f w).length > 0 := by
+  have hw_acc := realistic_gives_reflexive_access f hReal w
+  exact List.length_pos_of_mem hw_acc
+
+/--
+**D axiom for realistic bases.**
+
+Realistic modal bases satisfy the D axiom (with empty ordering).
+-/
+theorem D_axiom_realistic (f : ModalBase) (hReal : isRealistic f)
+    (p : Prop') (w : World)
+    (hNec : necessity f emptyBackground p w = true) :
+    possibility f emptyBackground p w = true := by
+  -- With empty ordering, bestWorlds = accessibleWorlds
+  have hSimple := empty_ordering_simple f w
+  -- Accessible worlds is non-empty (contains w)
+  have hSerial := realistic_is_serial f hReal w
+  -- Apply D axiom: use the general theorem
+  have hBestSerial : (bestWorlds f emptyBackground w).length > 0 := by
+    unfold emptyBackground at hSimple ⊢
+    rw [hSimple]
+    exact hSerial
+  exact D_axiom f emptyBackground p w hBestSerial hNec
+
+-- ============================================================================
 -- PART 9: Comparative Possibility (Kratzer p. 41)
 -- ============================================================================
 

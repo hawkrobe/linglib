@@ -150,9 +150,108 @@ theorem contraposition {W : Type*} (p q : Prop' W) :
   have h_q := h_imp h_p
   exact h_nq h_q
 
+/--
+**Conditional perfection is NOT semantically entailed**.
+
+There exists a world where (p → q) is true but (¬p → ¬q) is false.
+This shows that "perfection" (the biconditional reading) is a pragmatic inference,
+not a semantic entailment.
+
+Counterexample: World where p is false, q is true.
+Then (p → q) is vacuously true, but (¬p → ¬q) = (true → false) = false.
+-/
+theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
+    materialImp p q w ∧ ¬(conditionalPerfection p q w) := by
+  -- Use a simple 2-world type
+  use Bool
+  -- p = (w = true), q = constantly true
+  use (fun w => w = true)
+  use (fun _ => True)
+  use false
+  constructor
+  · -- (p → q)(false) = (false = true → True) = True (vacuously)
+    intro h
+    -- h : false = true, which is absurd
+    cases h
+  · -- ¬(¬p → ¬q)(false) = ¬(¬(false = true) → ¬True)
+    simp only [conditionalPerfection, materialImp, Classical.pimp, Classical.pnot]
+    intro h
+    -- h : ¬(false = true) → ¬True, i.e., True → False
+    have hnot_false_eq_true : ¬(false = true) := Bool.false_ne_true
+    exact h hnot_false_eq_true trivial
+
+/--
+**Strict conditional implies material conditional**.
+
+If w is accessible from itself (reflexive accessibility), then □(p → q) at w implies (p → q) at w.
+-/
+theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Prop' W) (w : W) :
+    w ∈ R w → strictImp R p q w → materialImp p q w := by
+  intro h_refl h_strict h_p
+  exact h_strict w h_refl h_p
+
+/--
+A centered similarity ordering: the actual world is always strictly closest to itself.
+
+This is the "strong centering" axiom: w is strictly closer to itself than any other world.
+-/
+def SimilarityOrdering.isCentered {W : Type*} (sim : SimilarityOrdering W) : Prop :=
+  ∀ w w' : W, w ≠ w' → sim.closer w w w' ∧ ¬sim.closer w w' w
+
+/--
+**Variably strict conditional implies material conditional** (with centered similarity).
+
+If there is a p-world, the similarity ordering is centered, and the variably strict
+conditional holds, then the material conditional holds at the actual world.
+
+The centering axiom ensures that if p holds at w, then w is the unique closest p-world
+to itself, so q must hold at w.
+-/
+theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W)
+    (domain : Set W) (p q : Prop' W) (w : W) (hw : w ∈ domain) (hp : p w)
+    (h_centered : sim.isCentered) :
+    variablyStrictImp sim domain p q w → materialImp p q w := by
+  intro h_variably _h_p'
+  simp only [variablyStrictImp] at h_variably
+  cases h_variably with
+  | inl h_empty =>
+    -- p-worlds empty, but we have p w, contradiction
+    have hw_in_pWorlds : w ∈ { w' ∈ domain | p w' } := Set.mem_sep hw hp
+    rw [h_empty] at hw_in_pWorlds
+    simp at hw_in_pWorlds
+  | inr h_exists =>
+    -- There's a closest p-world w' such that all equally close p-worlds satisfy q
+    obtain ⟨w', hw'_in, h_q_close⟩ := h_exists
+    -- w is also a p-world
+    have hw_in_pWorlds : w ∈ { w' ∈ domain | p w' } := Set.mem_sep hw hp
+    -- By centering, w is closer to itself than w' (if w ≠ w')
+    -- So sim.closer w w w' holds
+    by_cases h_eq : w = w'
+    · -- w = w', so we need to show q w = q w'
+      subst h_eq
+      -- Apply h_q_close to w itself
+      exact h_q_close w hw_in_pWorlds (sim.refl w)
+    · -- w ≠ w', so by centering, w is strictly closer to itself
+      have ⟨h_closer, _⟩ := h_centered w w' h_eq
+      exact h_q_close w hw_in_pWorlds h_closer
+
 -- ============================================================================
 -- Kratzer-Style Conditionals (Modal Base + Ordering Source)
 -- ============================================================================
+
+/-!
+## Kratzer Conditionals
+
+This section provides a **polymorphic, Set-based** version of Kratzer's
+conditional semantics for use in mathematical proofs.
+
+For the **computable, List-based** version with concrete examples and
+proven properties (preorder, duality, K axiom, etc.), see:
+  `Linglib.Theories.Montague.Modal.Kratzer1981`
+
+Both use the same CORRECT subset-based ordering from Kratzer (1981, p. 39):
+  w₁ ≤_A w₂  iff  {p ∈ A : w₂ ∈ p} ⊆ {p ∈ A : w₁ ∈ p}
+-/
 
 /--
 Kratzer's semantics for conditionals uses:
@@ -169,10 +268,15 @@ structure KratzerContext (W : Type*) where
   orderingSource : W → Set (Prop' W)
 
 /--
-"Best" worlds according to an ordering source.
+Kratzer's ordering relation (Set-based version for proofs).
 
-A world w₁ is at least as good as w₂ if w₁ satisfies at least as many
-ordering source propositions as w₂.
+w₁ is at least as good as w₂ according to ordering source `os` iff
+every proposition in `os` satisfied by w₂ is also satisfied by w₁.
+
+This is the **correct** subset-based ordering from Kratzer (1981, p. 39).
+Equivalent to `atLeastAsGoodAs` in `Kratzer1981.lean` (which uses Lists for computation).
+
+**NOT** a counting-based ordering (which would be incorrect).
 -/
 def kratzerBetter {W : Type*} (os : Set (Prop' W)) (w₁ w₂ : W) : Prop :=
   { p ∈ os | p w₂ } ⊆ { p ∈ os | p w₁ }
@@ -182,6 +286,9 @@ Kratzer-style conditional semantics.
 
 "If p, then q" is true at w iff at the best p-worlds (in the modal base,
 according to the ordering source), q holds.
+
+Best worlds are those maximal under `kratzerBetter`: w' is best if
+for all w'' in pWorlds, if w' ≤ w'' then w'' ≤ w' (i.e., they're equivalent).
 -/
 def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Prop' W :=
   fun w =>
@@ -190,6 +297,47 @@ def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Pr
     let os := ctx.orderingSource w
     -- All p-worlds that are "best" according to the ordering source satisfy q
     ∀ w' ∈ pWorlds, (∀ w'' ∈ pWorlds, kratzerBetter os w' w'' → kratzerBetter os w'' w' → q w'')
+
+-- ============================================================================
+-- Indicative vs Subjunctive Conditionals
+-- ============================================================================
+
+/--
+**Indicative conditional** (epistemic, open).
+
+"If A, then C" in the indicative mood - the standard conditional for
+reasoning about what we expect to be true if A turns out to be true.
+
+This is just the material conditional: ¬A ∨ C.
+-/
+def indicativeConditional {W : Type*} (p q : Prop' W) : Prop' W :=
+  materialImp p q
+
+/--
+**Subjunctive conditional** (counterfactual).
+
+"If A were the case, then C would be the case" - the conditional for
+reasoning about non-actual possibilities.
+
+This uses the variably strict semantics: at the closest A-worlds, C holds.
+-/
+def subjunctiveConditional {W : Type*} (sim : SimilarityOrdering W)
+    (domain : Set W) (p q : Prop' W) : Prop' W :=
+  variablyStrictImp sim domain p q
+
+/--
+**Subjunctive implies indicative** (when the antecedent holds at the actual world).
+
+If "if p were, then q would" is true at w, and p holds at w, then q holds at w.
+This shows that subjunctive conditionals are stronger than indicatives in this sense.
+
+Requires a centered similarity ordering (the actual world is closest to itself).
+-/
+theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
+    (domain : Set W) (p q : Prop' W) (w : W) (hw : w ∈ domain) (hp : p w)
+    (h_centered : sim.isCentered) :
+    subjunctiveConditional sim domain p q w → indicativeConditional p q w := by
+  exact variably_strict_implies_material sim domain p q w hw hp h_centered
 
 -- ============================================================================
 -- Connection to Assertability

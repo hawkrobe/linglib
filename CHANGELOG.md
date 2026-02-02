@@ -7,11 +7,17 @@
   - Correct subset-based ordering relation (was counting-based)
   - `ordering_reflexive`, `ordering_transitive`: Preorder properties PROVEN
   - `totally_realistic_gives_T`: T axiom derived from realistic modal base
+  - `D_axiom`: Seriality axiom □p → ◇p (non-empty best worlds)
+  - `D_axiom_realistic`: D axiom for realistic bases
   - `K_axiom`: Distribution axiom □(p → q) → (□p → □q)
   - `duality`: Modal duality □p ↔ ¬◇¬p
   - `comparative_poss_reflexive`: Comparative possibility reflexivity
   - Modal flavors as structures: `EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`
   - Conditionals as modal base restrictors (Kratzer p. 64-66)
+
+- **Montague/Sentence/Conditional/Basic.lean**: Unified with Kratzer1981
+  - Updated `kratzerBetter` docstring to reference Kratzer1981's `atLeastAsGoodAs`
+  - Both use correct subset-based ordering (Sets vs Lists for different use cases)
 
 ### Removed
 - **Montague/Modal/Kratzer.lean**: Replaced by Kratzer1981.lean (had flawed cardinality-based ordering)
