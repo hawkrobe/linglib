@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.DecisionTheory
+import Linglib.Theories.Montague.Question.DecisionTheory
 import Linglib.Core.Polarity
 
 /-!
@@ -47,9 +47,9 @@ Two sources of utility:
 - Büring & Gunlogson (2000). Aren't positive and negative polar questions the same?
 -/
 
-namespace Montague.Questions.Polarity
+namespace Montague.Question.Polarity
 
-open Montague.Questions
+open Montague.Question
 
 -- ============================================================================
 -- Polar Question Types
@@ -455,4 +455,4 @@ If accepting q causes large belief revision, double-checking has high utility. -
 def groundingUtility {W : Type*} (gq : GroundingQuestion W) : ℚ :=
   gq.posteriorProb - gq.priorProb
 
-end Montague.Questions.Polarity
+end Montague.Question.Polarity

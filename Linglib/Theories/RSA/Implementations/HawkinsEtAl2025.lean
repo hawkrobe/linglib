@@ -37,14 +37,14 @@ Hawkins et al. (2025):  Decision Problem ← Inferred from Question
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Linglib.Theories.RSA.Core.Basic
-import Linglib.Theories.Montague.Questions
+import Linglib.Theories.Montague.Question.DecisionTheory
 import Linglib.Phenomena.HawkinsEtAl2025.Data
 
 namespace RSA.PriorPQ
 
 -- Import response types from empirical data and decision theory foundation
 open HawkinsEtAl2025
-open Montague.Questions (DecisionProblem expectedUtility)
+open Montague.Question (DecisionProblem expectedUtility)
 
 -- ============================================================================
 -- PART 1: Domain Types

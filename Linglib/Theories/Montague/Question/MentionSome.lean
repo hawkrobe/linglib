@@ -1,5 +1,5 @@
-import Linglib.Theories.Montague.Questions.Partition
-import Linglib.Theories.Montague.Questions.PragmaticAnswerhood
+import Linglib.Theories.Montague.Question.Partition
+import Linglib.Theories.Montague.Question.PragmaticAnswerhood
 
 /-!
 # Questions/MentionSome.lean
@@ -61,9 +61,9 @@ Mention-some is licensed by:
 - Belnap (1982). Questions and Answers in Montague Grammar.
 -/
 
-namespace Montague.Questions.MentionSome
+namespace Montague.Question.MentionSome
 
-open Montague.Questions
+open Montague.Question
 
 -- ============================================================================
 -- PART 1: Partial Answerhood (Section 5.2)
@@ -466,4 +466,4 @@ def mentionSomeUsesMontagueExistential : Bool := true
 -- and proving that the ∃ in MentionSomeInterrogative.applyToProperty
 -- matches Montague.Quantifiers.existsSome
 
-end Montague.Questions.MentionSome
+end Montague.Question.MentionSome

@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.Partition
+import Linglib.Theories.Montague.Question.Partition
 
 /-!
 # Questions/LiftedTypes.lean
@@ -87,9 +87,9 @@ enabling non-local effects while maintaining compositional, left-to-right evalua
 - Barker & Shan (2014). Continuations and Natural Language. OUP.
 -/
 
-namespace Montague.Questions.LiftedTypes
+namespace Montague.Question.LiftedTypes
 
-open Montague.Questions
+open Montague.Question
 open scoped GSQuestion  -- For ⊑ notation
 
 -- ============================================================================
@@ -441,4 +441,4 @@ end LiftedQuestion
 scoped infixl:65 " ⊔ " => LiftedQuestion.disj
 scoped infixl:70 " ⊓ " => LiftedQuestion.conj
 
-end Montague.Questions.LiftedTypes
+end Montague.Question.LiftedTypes

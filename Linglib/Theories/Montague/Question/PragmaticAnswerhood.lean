@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.Partition
+import Linglib.Theories.Montague.Question.Partition
 
 /-!
 # Questions/PragmaticAnswerhood.lean
@@ -34,7 +34,7 @@ Then:
 - Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. IV.
 -/
 
-namespace Montague.Questions
+namespace Montague.Question
 
 -- ============================================================================
 -- Information Sets
@@ -320,4 +320,4 @@ theorem diverse_audience_prefers_semantic {W E : Type*} [DecidableEq E]
 
 -- Note: W is implicit in TermDenotation, InfoSet, etc.
 
-end Montague.Questions
+end Montague.Question

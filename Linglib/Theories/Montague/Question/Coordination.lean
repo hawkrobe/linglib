@@ -1,5 +1,5 @@
-import Linglib.Theories.Montague.Questions.Partition
-import Linglib.Theories.Montague.Questions.LiftedTypes
+import Linglib.Theories.Montague.Question.Partition
+import Linglib.Theories.Montague.Question.LiftedTypes
 
 /-!
 # Questions/Coordination.lean
@@ -39,9 +39,9 @@ For G&S partition semantics:
 - Szabolcsi (1997). Ways of Scope Taking.
 -/
 
-namespace Montague.Questions.Coordination
+namespace Montague.Question.Coordination
 
-open Montague.Questions
+open Montague.Question
 open scoped GSQuestion  -- For ⊑ notation
 
 -- ============================================================================
@@ -375,4 +375,4 @@ def inheritsMentionSome {W : Type*}
     (q1IsMentionSome q2IsMentionSome : Bool) : Bool :=
   q1IsMentionSome || q2IsMentionSome
 
-end Montague.Questions.Coordination
+end Montague.Question.Coordination

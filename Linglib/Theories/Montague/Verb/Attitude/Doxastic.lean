@@ -28,7 +28,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 -/
 
 import Linglib.Core.Proposition
-import Linglib.Theories.Montague.Questions.Hamblin
+import Linglib.Theories.Montague.Question.Hamblin
 
 namespace Montague.Verb.Attitude.Doxastic
 

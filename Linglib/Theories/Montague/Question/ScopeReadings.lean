@@ -1,5 +1,5 @@
-import Linglib.Theories.Montague.Questions.Coordination
-import Linglib.Theories.Montague.Questions.MentionSome
+import Linglib.Theories.Montague.Question.Coordination
+import Linglib.Theories.Montague.Question.MentionSome
 
 /-!
 # Questions/ScopeReadings.lean
@@ -42,11 +42,11 @@ Different individuals can give different complete answers.
 - Dayal (2016). Questions. MIT Press.
 -/
 
-namespace Montague.Questions.ScopeReadings
+namespace Montague.Question.ScopeReadings
 
-open Montague.Questions
-open Montague.Questions.Coordination
-open Montague.Questions.MentionSome
+open Montague.Question
+open Montague.Question.Coordination
+open Montague.Question.MentionSome
 open scoped GSQuestion  -- For ⊑ notation
 
 -- ============================================================================
@@ -514,4 +514,4 @@ def predictPairList (factors : PairListFactors) : Bool :=
   let focusOK := factors.contrastiveFocus
   verbOK && (defOK || focusOK)
 
-end Montague.Questions.ScopeReadings
+end Montague.Question.ScopeReadings

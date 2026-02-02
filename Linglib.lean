@@ -181,7 +181,10 @@ import Linglib.Theories.Montague.Derivation.Scope
 import Linglib.Theories.Montague.Intensional.Basic
 
 -- Montague Questions (G&S partition semantics)
-import Linglib.Theories.Montague.Questions
+import Linglib.Theories.Montague.Question.Basic
+import Linglib.Theories.Montague.Question.Partition
+import Linglib.Theories.Montague.Question.Hamblin
+import Linglib.Theories.Montague.Question.DecisionTheory
 
 -- Montague Entailment
 import Linglib.Theories.Montague.Entailment.Basic

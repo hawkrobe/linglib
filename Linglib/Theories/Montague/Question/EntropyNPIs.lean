@@ -1,5 +1,5 @@
-import Linglib.Theories.Montague.Questions.DecisionTheory
-import Linglib.Theories.Montague.Questions.Partition
+import Linglib.Theories.Montague.Question.DecisionTheory
+import Linglib.Theories.Montague.Question.Partition
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -53,9 +53,9 @@ Strong NPIs (lift a finger, bat an eye) share presupposition with EVEN:
 - Borkin (1971). Polarity items in questions.
 -/
 
-namespace Montague.Questions.EntropyNPIs
+namespace Montague.Question.EntropyNPIs
 
-open Montague.Questions
+open Montague.Question
 
 -- ============================================================================
 -- PART 1: Entropy (Shannon/Bar-Hillel & Carnap)
@@ -474,4 +474,4 @@ theorem npi_licensed_wh_subject {W Entity : Type*}
     -- This is standard DE licensing
     True := trivial
 
-end Montague.Questions.EntropyNPIs
+end Montague.Question.EntropyNPIs

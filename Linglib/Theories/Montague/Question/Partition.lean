@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.Basic
+import Linglib.Theories.Montague.Question.Basic
 import Linglib.Core.QUD
 
 /-!
@@ -35,7 +35,7 @@ Equivalently: Q's cells are subsets of Q''s cells.
 - Groenendijk & Stokhof (1997). Questions. Handbook of Logic and Language.
 -/
 
-namespace Montague.Questions
+namespace Montague.Question
 
 -- ============================================================================
 -- GSQuestion = QUD (Unified)
@@ -240,4 +240,4 @@ theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
     (polarQuestion p).numCells [w] <= 2 := by
   sorry -- At most 2 cells
 
-end Montague.Questions
+end Montague.Question

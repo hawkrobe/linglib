@@ -50,7 +50,7 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
-import Linglib.Theories.Montague.Questions.Hamblin
+import Linglib.Theories.Montague.Question.Hamblin
 
 namespace Montague.Verb.Attitude.Preferential
 
@@ -92,7 +92,7 @@ abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 ## Grounding in Hamblin Semantics
 
 Questions are **alternative sets** (Hamblin 1973). Our `QuestionDen W` is the
-extensional representation of `Montague.Questions.Hamblin.QuestionDen W`.
+extensional representation of `Montague.Question.Hamblin.QuestionDen W`.
 
 ### Why This Matters for TSP
 
@@ -136,7 +136,7 @@ Convert our extensional question representation to Hamblin's intensional one.
 Note: Equality of propositions is checked extensionally over a finite world list.
 -/
 def toHamblin {W : Type*} [BEq W] (Q : QuestionDen W) (worlds : List W) :
-    Montague.Questions.Hamblin.QuestionDen W :=
+    Montague.Question.Hamblin.QuestionDen W :=
   fun p => Q.any fun q => worlds.all fun w => p w == q w
 
 /--
@@ -145,7 +145,7 @@ Convert Hamblin's intensional representation to our extensional one.
 Given a Hamblin question and a list of candidate propositions, returns
 those propositions that are answers to the question.
 -/
-def fromHamblin {W : Type*} (hamblinQ : Montague.Questions.Hamblin.QuestionDen W)
+def fromHamblin {W : Type*} (hamblinQ : Montague.Question.Hamblin.QuestionDen W)
     (candidates : List (Prop' W)) : QuestionDen W :=
   candidates.filter hamblinQ
 

@@ -1,7 +1,7 @@
-import Linglib.Theories.Montague.Questions.DecisionTheory
-import Linglib.Theories.Montague.Questions.PragmaticAnswerhood
-import Linglib.Theories.Montague.Questions.MentionSome
-import Linglib.Theories.Montague.Questions.Polarity
+import Linglib.Theories.Montague.Question.DecisionTheory
+import Linglib.Theories.Montague.Question.PragmaticAnswerhood
+import Linglib.Theories.Montague.Question.MentionSome
+import Linglib.Theories.Montague.Question.Polarity
 
 /-!
 # Questions/GSVanRooyBridge.lean
@@ -33,11 +33,11 @@ This file establishes the formal connections between these approaches.
 - Blackwell (1953). Equivalent Comparisons of Experiments.
 -/
 
-namespace Montague.Questions.Bridge
+namespace Montague.Question.Bridge
 
-open Montague.Questions
-open Montague.Questions.MentionSome
-open Montague.Questions.Polarity
+open Montague.Question
+open Montague.Question.MentionSome
+open Montague.Question.Polarity
 open scoped GSQuestion  -- For ⊑ notation
 
 -- ============================================================================
@@ -482,4 +482,4 @@ theorem exact_resolves_all {W : Type*} [DecidableEq W]
     questionResolves dp worlds worlds (exactQuestion worlds) = true := by
   sorry
 
-end Montague.Questions.Bridge
+end Montague.Question.Bridge

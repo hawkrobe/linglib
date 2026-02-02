@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.DecisionTheory
+import Linglib.Theories.Montague.Question.DecisionTheory
 
 /-!
 # Questions/SignalingGames.lean
@@ -45,7 +45,7 @@ The QUD determines which partition equilibrium is played.
 - Van Rooy (2003). Quality and Quantity of Information Exchange.
 -/
 
-namespace Montague.Questions
+namespace Montague.Question
 
 -- ============================================================================
 -- Signaling Game Structure
@@ -378,4 +378,4 @@ theorem rsa_separating_is_unambiguous {T M : Type*} [DecidableEq T] [DecidableEq
     True := by -- Different types have different messages
   trivial
 
-end Montague.Questions
+end Montague.Question

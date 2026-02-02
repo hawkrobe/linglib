@@ -30,11 +30,11 @@ PRIOR-PQ builds on this by adding Theory of Mind:
 -/
 
 import Linglib.Theories.RSA.Questions.Basic
-import Linglib.Theories.Montague.Questions.DecisionTheory
+import Linglib.Theories.Montague.Question.DecisionTheory
 
 namespace RSA.Questions
 
-open Montague.Questions (DecisionProblem)
+open Montague.Question (DecisionProblem)
 
 -- ============================================================================
 -- PART 1: Domain Types

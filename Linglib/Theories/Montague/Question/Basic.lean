@@ -13,7 +13,7 @@ Core types for question semantics, shared across different theoretical approache
 - Basic operations on questions and answers
 -/
 
-namespace Montague.Questions
+namespace Montague.Question
 
 -- ============================================================================
 -- Core Types
@@ -118,4 +118,4 @@ def pimplies {W : Type*} (p q : W -> Bool) : W -> Bool := fun w => !p w || q w
 def entails {W : Type*} (p q : W -> Bool) (worlds : List W) : Bool :=
   worlds.all fun w => !p w || q w
 
-end Montague.Questions
+end Montague.Question

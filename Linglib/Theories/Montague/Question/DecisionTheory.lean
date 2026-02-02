@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.Partition
+import Linglib.Theories.Montague.Question.Partition
 
 /-!
 # Questions/DecisionTheory.lean
@@ -41,7 +41,7 @@ This holds for ALL reasonable decision criteria!
 - Savage (1954). The Foundations of Statistics.
 -/
 
-namespace Montague.Questions
+namespace Montague.Question
 
 -- ============================================================================
 -- Decision Problems
@@ -385,4 +385,4 @@ def mentionSomeDP {W : Type*} (satisfies : W -> Bool) : DecisionProblem W Bool w
   utility w a := if a && satisfies w then 1 else 0
   prior _ := 1
 
-end Montague.Questions
+end Montague.Question

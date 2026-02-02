@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Questions.Basic
+import Linglib.Theories.Montague.Question.Basic
 
 /-!
 # Questions/Hamblin.lean
@@ -31,7 +31,7 @@ generalized conjunction:
 - Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
 -/
 
-namespace Montague.Questions.Hamblin
+namespace Montague.Question.Hamblin
 
 -- ============================================================================
 -- Hamblin Question Denotations
@@ -131,4 +131,4 @@ the characteristic functions of its cells.
 See `Partition.lean` for the G&S partition semantics.
 -/
 
-end Montague.Questions.Hamblin
+end Montague.Question.Hamblin

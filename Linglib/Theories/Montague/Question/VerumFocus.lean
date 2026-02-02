@@ -35,12 +35,12 @@ In short: "It is for sure that we should add p to the CG."
   Negative Questions and Tag Questions.
 -/
 
-import Linglib.Theories.Montague.Questions.Basic
+import Linglib.Theories.Montague.Question.Basic
 import Linglib.Core.CommonGround
 
-namespace Montague.Questions.VerumFocus
+namespace Montague.Question.VerumFocus
 
-open Montague.Questions
+open Montague.Question
 
 -- ============================================================================
 -- Part 1: Epistemic and Conversational States
@@ -399,4 +399,4 @@ Questions.lean hub                   ← G&S partition semantics
 - van Rooy & Šafářová (2003): Decision-theoretic complement
 -/
 
-end Montague.Questions.VerumFocus
+end Montague.Question.VerumFocus
