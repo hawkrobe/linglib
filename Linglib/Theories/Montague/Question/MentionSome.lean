@@ -462,7 +462,7 @@ ensuring the analysis is grounded rather than stipulated. -/
 def mentionSomeUsesMontagueExistential : Bool := true
 
 -- Note: Full compositional grounding would require:
--- import Linglib.Theories.Montague.Quantifiers
+-- import Linglib.Theories.Montague.Determiner.Quantifier
 -- and proving that the ∃ in MentionSomeInterrogative.applyToProperty
 -- matches Montague.Quantifiers.existsSome
 

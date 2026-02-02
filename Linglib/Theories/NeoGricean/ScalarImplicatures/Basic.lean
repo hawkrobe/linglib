@@ -36,7 +36,7 @@ import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
 import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Phenomena.GeurtsPouscoulous2009.Data
 import Linglib.Phenomena.ScalarImplicatures.Data
 import Linglib.Core.Interfaces.ImplicatureTheory

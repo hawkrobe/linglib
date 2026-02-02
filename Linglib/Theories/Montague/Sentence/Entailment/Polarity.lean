@@ -28,12 +28,12 @@ Mathlib provides composition lemmas for free:
 
 import Mathlib.Order.Monotone.Defs
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 
 namespace Montague.Sentence.Entailment.Polarity
 
 open Montague.Sentence.Entailment
-open Montague.Derivation (ContextPolarity)
+open Montague.Core.Derivation (ContextPolarity)
 
 -- ============================================================================
 -- PART 1: Monotonicity via Mathlib

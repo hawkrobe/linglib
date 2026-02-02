@@ -21,7 +21,7 @@ knowledge state affects interpretation.
 -/
 
 import Linglib.Theories.RSA.Domains.Quantities
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Theories.Montague.Determiner.Numeral.Compare
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
@@ -850,7 +850,7 @@ end NumberWords
 namespace MontaguGrounding
 
 open Montague.Determiner.Numeral
-open Montague.Quantifiers
+open Montague.Determiner.Quantifier
 open Montague
 
 /-

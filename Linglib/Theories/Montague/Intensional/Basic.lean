@@ -41,13 +41,13 @@ L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
 -/
 
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Derivation.Basic
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Theories.Montague.Determiner.Quantifier
 
 namespace Montague.Intensional
 
 open Montague
-open Montague.Derivation
+open Montague.Core.Derivation
 open Montague.Core
 
 -- ============================================================================
@@ -181,7 +181,7 @@ def varying {m : IntensionalModel} {τ : Ty}
 -- Intensional Semantics for Quantifiers
 -- ============================================================================
 
-open Quantifiers in
+open Determiner.Quantifier in
 /--
 "Some" with world-varying property: ∃x. P(w)(x) ∧ Q(w)(x)
 -/
@@ -189,7 +189,7 @@ def someIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
   fun w => FiniteModel.elements.any fun x => P w x && Q w x
 
-open Quantifiers in
+open Determiner.Quantifier in
 /--
 "Every" with world-varying property: ∀x. P(w)(x) → Q(w)(x)
 -/
@@ -197,7 +197,7 @@ def everyIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
   fun w => FiniteModel.elements.all fun x => !P w x || Q w x
 
-open Quantifiers in
+open Determiner.Quantifier in
 /--
 "No" with world-varying property: ¬∃x. P(w)(x) ∧ Q(w)(x)
 -/
@@ -234,7 +234,7 @@ def scalarModel : IntensionalModel := {
 }
 
 /-- FiniteModel instance for scalarModel.base -/
-instance scalarModelFinite : Quantifiers.FiniteModel scalarModel.base where
+instance scalarModelFinite : Determiner.Quantifier.FiniteModel scalarModel.base where
   elements := [.john, .mary, .pizza, .book]
   complete := fun x => by cases x <;> simp
 
@@ -243,7 +243,7 @@ instance scalarModelFinite : Quantifiers.FiniteModel scalarModel.base where
 In the toy model, John and Mary are students.
 -/
 def students_rigid : PropertyIntension scalarModel :=
-  fun _ => Quantifiers.student_sem
+  fun _ => Determiner.Quantifier.student_sem
 
 /--
 "Sleep" varies by world:

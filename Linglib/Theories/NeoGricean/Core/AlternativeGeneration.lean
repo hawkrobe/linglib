@@ -42,7 +42,7 @@ Future extensions could handle:
 -/
 
 import Linglib.Theories.Montague.Core.Lexicon
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Mathlib.Data.Set.Basic
@@ -51,8 +51,8 @@ namespace NeoGricean.AlternativeGeneration
 
 open Montague
 open Montague.Core
-open Montague.Derivation
-open Montague.Quantifiers
+open Montague.Core.Derivation
+open Montague.Determiner.Quantifier
 open Montague.Scales
 open NeoGricean.Exhaustivity
 

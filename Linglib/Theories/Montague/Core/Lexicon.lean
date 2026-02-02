@@ -20,13 +20,13 @@ when it needs meanings.
 
 import Linglib.Core.Basic
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Theories.Montague.Scales
 
 namespace Montague.Core
 
 open Montague
-open Montague.Quantifiers
+open Montague.Determiner.Quantifier
 open Montague.Scales
 
 -- Local word definitions for toy model (main lexicon is in Fragments/)

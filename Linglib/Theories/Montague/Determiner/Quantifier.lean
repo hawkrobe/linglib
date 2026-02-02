@@ -24,7 +24,7 @@ Examples:
 
 import Linglib.Theories.Montague.Basic
 
-namespace Montague.Quantifiers
+namespace Montague.Determiner.Quantifier
 
 open Montague
 
@@ -189,4 +189,4 @@ for quantifier evaluation.
 - Monotonicity: UE/DE patterns (demonstrated)
 -/
 
-end Montague.Quantifiers
+end Montague.Determiner.Quantifier

@@ -20,10 +20,10 @@ Syntax Theory → Derivation → Pragmatics (NeoGricean, RSA)
 import Linglib.Core.Polarity
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Core.Lexicon
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Theories.Montague.Scales
 
-namespace Montague.Derivation
+namespace Montague.Core.Derivation
 
 open Montague
 open Montague.Core
@@ -87,7 +87,7 @@ For now, this is a simplified version that just returns the
 stronger/weaker alternatives' meanings. A full implementation
 would reconstruct the entire derivation with the substituted item.
 -/
-def alternativeMeanings {m : Model} [Quantifiers.FiniteModel m]
+def alternativeMeanings {m : Model} [Determiner.Quantifier.FiniteModel m]
     (d : SemDeriv m)
     (_ctx : ContextPolarity)
     : List (m.interpTy d.ty) :=
@@ -118,7 +118,7 @@ def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
 -- ============================================================================
 
 open ToyLexicon
-open Quantifiers
+open Determiner.Quantifier
 
 /-- "John sleeps" -/
 def johnSleeps : SemDeriv toyModel :=
@@ -211,11 +211,11 @@ To make a syntax theory work with pragmatics:
 3. Pragmatics can then work with any syntax theory uniformly
 -/
 
-end Montague.Derivation
+end Montague.Core.Derivation
 
 -- Backward compatibility aliases
 namespace Montague.SemDeriv
-  export Montague.Derivation (ScalarOccurrence SemDeriv Derivation ContextPolarity
+  export Montague.Core.Derivation (ScalarOccurrence SemDeriv Derivation ContextPolarity
     alternativeMeanings alternativeForms SemanticsProducer
     johnSleeps someStudentsSleep everyStudentSleeps someStudentsLaugh everyStudentLaughs)
 end Montague.SemDeriv

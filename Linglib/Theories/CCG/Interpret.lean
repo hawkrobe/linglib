@@ -13,7 +13,7 @@ This allows CCG derivations to feed into pragmatics (NeoGricean, RSA).
 
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Theories.Montague.Core.Lexicon
 
 namespace CCG.Interpret
@@ -106,7 +106,7 @@ def some_student_sleeps_sem : Derivation toyModel :=
   toDerivation
     ccg_some_student_sleeps
     .t
-    (Quantifiers.some_sem toyModel Quantifiers.student_sem ToyLexicon.sleeps_sem)
+    (Determiner.Quantifier.some_sem toyModel Determiner.Quantifier.student_sem ToyLexicon.sleeps_sem)
 
 -- ============================================================================
 -- Verification

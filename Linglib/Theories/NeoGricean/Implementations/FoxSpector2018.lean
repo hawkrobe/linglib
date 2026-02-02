@@ -54,7 +54,7 @@ Natural Language Semantics 26:1–50.
 
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 
 namespace NeoGricean.FoxSpector2018
 

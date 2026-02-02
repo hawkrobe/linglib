@@ -37,7 +37,7 @@ Connects to `Montague.Quantifiers` for threshold semantics.
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
 import Linglib.Theories.RSA.Domains.Quantities
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Phenomena.VanTielEtAl2021.Data
 import Mathlib.Data.Rat.Defs
 

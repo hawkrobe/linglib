@@ -43,7 +43,7 @@ From Horn (1984), Rett (2015):
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.Montague.Scales
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Phenomena.Semantics.Evaluativity
 import Mathlib.Data.Rat.Defs
 

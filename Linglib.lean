@@ -152,7 +152,7 @@ import Linglib.Theories.Montague.Variables
 import Linglib.Theories.Montague.Anaphora
 import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Composition
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
@@ -173,7 +173,7 @@ import Linglib.Theories.Montague.Noun.Kind.Generics
 import Linglib.Theories.Montague.Noun.Kind.Carlson1977
 
 -- Montague Derivations
-import Linglib.Theories.Montague.Derivation.Basic
+import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Theories.Montague.Derivation.TruthConditions
 import Linglib.Theories.Montague.Derivation.Scope
 

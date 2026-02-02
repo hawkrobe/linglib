@@ -30,7 +30,7 @@ This correspondence is developed in Part 3.
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Variables
-import Linglib.Theories.Montague.Quantifiers
+import Linglib.Theories.Montague.Determiner.Quantifier
 import Linglib.Core.Interfaces.BindingSemantics
 
 namespace Montague.Anaphora
