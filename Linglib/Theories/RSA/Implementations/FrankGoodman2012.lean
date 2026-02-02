@@ -23,7 +23,7 @@ Saying "square" signals they probably mean blue_square.
 ## Montague Grounding
 
 This implementation derives its meaning function from Montague compositional
-semantics via `Montague.Lexicon.Features`. Feature predicates like "blue" and
+semantics via `Montague.Core.Features`. Feature predicates like "blue" and
 "square" have type `e → t` in Montague's type system, where:
 
 - ⟦blue⟧ = λx. color(x) = blue

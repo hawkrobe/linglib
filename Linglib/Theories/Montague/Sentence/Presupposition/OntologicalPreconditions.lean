@@ -40,14 +40,14 @@ and thus can't be "allowed for" independently.
 -/
 
 import Linglib.Core.Presupposition
-import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
+import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Aspect
 import Linglib.Phenomena.Presuppositions.Diagnostics
 
 namespace Montague.Sentence.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
-open Montague.Lexicon.ChangeOfState
+open Montague.Verb.ChangeOfState
 open Montague.Verb.Aspect
 open Phenomena.Presuppositions.Diagnostics
 
@@ -592,7 +592,7 @@ Negation changes the claim but not the reference.
 ### Telicity (Integrated with Aspect Module)
 - `EventPhase.isTelic`, `EventPhase.isAtelic`: Telicity properties
 - `stopTelicity`, `startTelicity`, `continueTelicity`: Telicity values
-- Uses `Telicity` type from `Montague.Lexicon.Aspect`
+- Uses `Telicity` type from `Montague.Verb.Aspect`
 
 ### Connection to Vendler Classes
 - `cosTypeToVendlerClass`: Maps CoS types to Vendler classes

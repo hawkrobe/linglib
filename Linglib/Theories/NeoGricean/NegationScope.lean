@@ -30,10 +30,10 @@ With exact semantics, the asymmetry is unexplained:
 - Jespersen, O. (1917). Negation in English and Other Languages.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
+import Linglib.Theories.Montague.Determiner.Numeral.LowerBound
+import Linglib.Theories.Montague.Determiner.Numeral.Bilateral
 
-open Montague.Lexicon.Numerals
+open Montague.Determiner.Numeral
 
 namespace NeoGricean
 

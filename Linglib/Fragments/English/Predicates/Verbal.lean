@@ -40,14 +40,14 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
-import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
+import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
 
 namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
-open Montague.Lexicon.ChangeOfState
+open Montague.Verb.ChangeOfState
 open Montague.Verb.Attitude.Doxastic (Veridicality)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 
@@ -59,7 +59,7 @@ open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass PreferentialP
 Which Montague predicate builder this verb uses.
 
 This links the Fragment entry to the compositional semantics in
-`Montague.Lexicon.Attitudes.Preferential`. Properties like C-distributivity
+`Montague.Verb.Attitude.Preferential`. Properties like C-distributivity
 are DERIVED from the builder via theorems, not stipulated.
 
 - `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive (PROVED)

@@ -50,12 +50,12 @@ def scenario := Degrees.tallShort 10
 -/
 
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Lexicon.Degrees
+import Linglib.Theories.Montague.Domain.Degree
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Degrees
 
-open Montague.Lexicon.Degrees
+open Montague.Domain.Degrees
 
 -- ============================================================================
 -- Utterances

@@ -41,7 +41,7 @@ Future extensions could handle:
 - Connectives (or/and scales)
 -/
 
-import Linglib.Theories.Montague.Lexicon.Basic
+import Linglib.Theories.Montague.Core.Lexicon
 import Linglib.Theories.Montague.Derivation.Basic
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
@@ -50,7 +50,7 @@ import Mathlib.Data.Set.Basic
 namespace NeoGricean.AlternativeGeneration
 
 open Montague
-open Montague.Lexicon
+open Montague.Core
 open Montague.Derivation
 open Montague.Quantifiers
 open Montague.Scales

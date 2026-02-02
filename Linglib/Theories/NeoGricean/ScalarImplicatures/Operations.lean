@@ -37,10 +37,10 @@ DeFregean theory: Operations are anomalous (no implicature exists)
 - Horn, L. (1972). On the Semantic Properties of Logical Operators in English. §1.22, §1.73.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
+import Linglib.Theories.Montague.Determiner.Numeral.LowerBound
+import Linglib.Theories.Montague.Determiner.Numeral.Bilateral
 
-open Montague.Lexicon.Numerals
+open Montague.Determiner.Numeral
 
 namespace NeoGricean
 

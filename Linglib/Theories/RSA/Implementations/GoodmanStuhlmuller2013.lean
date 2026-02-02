@@ -22,7 +22,7 @@ knowledge state affects interpretation.
 
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.Montague.Quantifiers
-import Linglib.Theories.Montague.Lexicon.Numerals.Compare
+import Linglib.Theories.Montague.Determiner.Numeral.Compare
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
@@ -849,7 +849,7 @@ end NumberWords
 
 namespace MontaguGrounding
 
-open Montague.Lexicon.Numerals
+open Montague.Determiner.Numeral
 open Montague.Quantifiers
 open Montague
 
@@ -931,7 +931,7 @@ theorem scalar_implicature_grounded :
 ## Grounding Number Word Semantics
 
 The ad-hoc definitions in NumberWords are grounded in the Montague
-infrastructure from `Montague.Lexicon.Numerals`.
+infrastructure from `Montague.Determiner.Numeral`.
 
 We show:
 1. `lowerBoundMeaning` = `LowerBound.meaning`
@@ -956,7 +956,7 @@ def stateToNat : KnowledgeState.WorldState → Nat
 **Grounding: Lower-bound meaning matches Montague LowerBound theory**
 
 The ad-hoc `lowerBoundMeaning` in NumberWords is exactly the same as
-`LowerBound.meaning` from Montague.Lexicon.Numerals.
+`LowerBound.meaning` from Montague.Determiner.Numeral.
 -/
 theorem lowerBound_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.lowerBoundMeaning u s = LowerBound.meaning (uttToNumWord u) (stateToNat s) := by
@@ -966,7 +966,7 @@ theorem lowerBound_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.W
 **Grounding: Exact meaning matches Montague DeFregean (bilateral) theory**
 
 The ad-hoc `exactMeaning` in NumberWords is exactly the same as
-`DeFregean.meaning` from Montague.Lexicon.Numerals.
+`DeFregean.meaning` from Montague.Determiner.Numeral.
 -/
 theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.exactMeaning u s = DeFregean.meaning (uttToNumWord u) (stateToNat s) := by
@@ -979,7 +979,7 @@ theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldS
 /--
 **Montague theory comparison applies to this empirical phenomenon**
 
-The key result from Montague.Lexicon.Numerals.Compare:
+The key result from Montague.Determiner.Numeral.Compare:
 - LowerBound has ambiguity (can support implicature cancellation)
 - DeFregean has no ambiguity (cannot support implicature cancellation)
 

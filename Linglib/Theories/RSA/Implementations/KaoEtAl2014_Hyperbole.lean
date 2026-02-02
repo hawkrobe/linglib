@@ -49,7 +49,7 @@ import Linglib.Theories.RSA.Domains.Degrees
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA.Eval RSA.Domains.Degrees Montague.Lexicon.Degrees
+open RSA.Eval RSA.Domains.Degrees Montague.Domain.Degrees
 
 -- ============================================================================
 -- Domain: Items, Prices, and Affects
@@ -198,7 +198,7 @@ We derive this compositionally:
 The world prior P_S(X) gives the probability of different price states
 for different items, which is crucial for hyperbole interpretation.
 
-This is grounded in Montague.Lexicon.Degrees infrastructure.
+This is grounded in Montague.Domain.Degrees infrastructure.
 -/
 
 /--

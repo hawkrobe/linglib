@@ -19,14 +19,14 @@ Syntax Theory → Derivation → Pragmatics (NeoGricean, RSA)
 
 import Linglib.Core.Polarity
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Lexicon.Basic
+import Linglib.Theories.Montague.Core.Lexicon
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Scales
 
 namespace Montague.Derivation
 
 open Montague
-open Montague.Lexicon
+open Montague.Core
 open Montague.Scales
 
 -- ============================================================================

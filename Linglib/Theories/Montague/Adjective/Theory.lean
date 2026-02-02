@@ -42,12 +42,12 @@ The theory structure wraps these in Montague's framework:
 - Cruse, D. A. (1986). Lexical Semantics.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Degrees
+import Linglib.Theories.Montague.Domain.Degree
 import Linglib.Theories.Montague.Basic
 
-namespace Montague.Lexicon.Adjectives
+namespace Montague.Adjective
 
-open Montague.Lexicon.Degrees
+open Montague.Domain.Degrees
 
 -- ============================================================================
 -- Adjective Scale Types
@@ -312,4 +312,4 @@ Models importing gradable adjectives should:
 3. Get grounded semantics from the theory's meaning functions
 -/
 
-end Montague.Lexicon.Adjectives
+end Montague.Adjective

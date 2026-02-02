@@ -32,10 +32,10 @@ LowerBound meets all three conditions. Bilateral meets none.
 - Goodman & Stuhlmüller (2013). Knowledge and Implicature.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
-import Linglib.Theories.Montague.Lexicon.Numerals.Bilateral
+import Linglib.Theories.Montague.Determiner.Numeral.LowerBound
+import Linglib.Theories.Montague.Determiner.Numeral.Bilateral
 
-namespace Montague.Lexicon.Numerals
+namespace Montague.Determiner.Numeral
 
 -- ============================================================================
 -- Comparison Functions
@@ -263,4 +263,4 @@ This requires importing the RSA module and showing that:
 2. DeFregean.scenario cannot produce this pattern (no ambiguity to resolve)
 -/
 
-end Montague.Lexicon.Numerals
+end Montague.Determiner.Numeral

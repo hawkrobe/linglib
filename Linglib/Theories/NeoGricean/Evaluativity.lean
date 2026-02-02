@@ -53,7 +53,7 @@ open NeoGricean.Markedness
 open NeoGricean.Alternatives
 open Phenomena.Semantics.Evaluativity
 open RSA.Domains.Degrees
-open Montague.Lexicon.Adjectives
+open Montague.Adjective
 
 -- ============================================================================
 -- PART 1: Polarity (Markedness)

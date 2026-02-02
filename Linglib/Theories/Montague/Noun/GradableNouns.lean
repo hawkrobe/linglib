@@ -45,7 +45,7 @@ The Bigness Generalization follows from scale structure:
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 
-namespace Montague.Lexicon.GradableNouns
+namespace Montague.Noun.GradableNouns
 
 -- ============================================================================
 -- PART 1: Degrees and Scales
@@ -333,4 +333,4 @@ theorem bigIdiot_is_threshold_example :
     bigIdiot exampleIdiot .floyd = (bigIdiotAsThreshold idiocyMeasure).apply .floyd := by
   constructor <;> [native_decide; constructor <;> native_decide]
 
-end Montague.Lexicon.GradableNouns
+end Montague.Noun.GradableNouns

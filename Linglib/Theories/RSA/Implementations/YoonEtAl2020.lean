@@ -34,7 +34,7 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.YoonEtAl2020.Data
-import Linglib.Theories.Montague.Lexicon.Degrees
+import Linglib.Theories.Montague.Domain.Degree
 import Linglib.Theories.Montague.Sentence.Entailment.Polarity
 import Linglib.Core.Proposition
 

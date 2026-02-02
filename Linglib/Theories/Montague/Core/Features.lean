@@ -28,7 +28,7 @@ The reference game entity type and meaning functions are in `Fragments/Reference
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Sum
 
-namespace Montague.Lexicon.Features
+namespace Montague.Core.Features
 
 -- ============================================================================
 -- Feature Types (Color, Shape)
@@ -144,4 +144,4 @@ def featureLexicon : String → Option Feature
   | "star" => some (.shape .star)
   | _ => none
 
-end Montague.Lexicon.Features
+end Montague.Core.Features

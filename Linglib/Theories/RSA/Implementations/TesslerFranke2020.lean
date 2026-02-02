@@ -40,7 +40,7 @@ namespace RSA.TesslerFranke2020
 
 open RSA.Eval
 open RSA.Domains.Degrees
-open Montague.Lexicon.Degrees
+open Montague.Domain.Degrees
 
 -- ============================================================================
 -- Domain: 5-point Happiness Scale

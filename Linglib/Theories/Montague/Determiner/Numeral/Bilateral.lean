@@ -63,10 +63,10 @@ degree modifier predictions that connect to RSA.
   Non-definiteness and Plurality, 311-329.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Numerals.Theory
-import Linglib.Theories.Montague.Lexicon.Numerals.LowerBound
+import Linglib.Theories.Montague.Determiner.Numeral.Theory
+import Linglib.Theories.Montague.Determiner.Numeral.LowerBound
 
-namespace Montague.Lexicon.Numerals
+namespace Montague.Determiner.Numeral
 
 -- ============================================================================
 -- Bilateral Meaning Function
@@ -219,4 +219,4 @@ theorem bare_numeral_summary :
     (LowerBound.compatibleCount .two = 2) := by
   native_decide
 
-end Montague.Lexicon.Numerals
+end Montague.Determiner.Numeral

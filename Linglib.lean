@@ -163,9 +163,9 @@ import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Conjunction
 
 -- Montague Lexicon
-import Linglib.Theories.Montague.Lexicon.Basic
-import Linglib.Theories.Montague.Lexicon.Features
-import Linglib.Theories.Montague.Lexicon.Degrees
+import Linglib.Theories.Montague.Core.Lexicon
+import Linglib.Theories.Montague.Core.Features
+import Linglib.Theories.Montague.Domain.Degree
 import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 import Linglib.Theories.Montague.Noun.Kind.Krifka2004
 import Linglib.Theories.Montague.Noun.Kind.Dayal2004
@@ -203,7 +203,7 @@ import Linglib.Theories.Montague.Interface.SyntaxInterface
 
 
 -- Gradable adjective theories (threshold semantics, contrary antonyms)
-import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+import Linglib.Theories.Montague.Adjective.Theory
 
 -- Modal theories (Kratzer vs Simple/Kripke)
 import Linglib.Theories.Montague.Modal.Basic

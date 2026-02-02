@@ -14,14 +14,15 @@ This allows CCG derivations to feed into pragmatics (NeoGricean, RSA).
 import Linglib.Theories.CCG.Basic
 import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.Montague.Derivation.Basic
-import Linglib.Theories.Montague.Lexicon.Basic
+import Linglib.Theories.Montague.Core.Lexicon
 
 namespace CCG.Interpret
 
 open CCG
 open Montague
 open Montague.SemDeriv
--- Note: Don't open Montague.Lexicon to avoid SemLexEntry name conflict with CCG.Semantics
+-- Note: Don't open Montague.Core to avoid SemLexEntry name conflict with CCG.Semantics
+-- We use qualified names: Montague.Core.SemLexEntry, Montague.Core.toyLexicon
 
 -- ============================================================================
 -- Extract Words from Derivation
@@ -43,8 +44,8 @@ def getWords : DerivStep → List String
 -- ============================================================================
 
 /-- Check if a word form is a scalar item and return its lexical entry -/
-def getScalarEntry (form : String) : Option (Lexicon.SemLexEntry toyModel) :=
-  match Lexicon.toyLexicon form with
+def getScalarEntry (form : String) : Option (Montague.Core.SemLexEntry toyModel) :=
+  match Montague.Core.toyLexicon form with
   | some entry => if entry.isScalar then Option.some entry else none
   | none => none
 

@@ -11,7 +11,7 @@ Feature predicates are type `e → t` in Montague's type system:
 
 ## Components
 
-- `Color`, `Shape`, `Feature`: Re-exported from Montague.Lexicon.Features
+- `Color`, `Shape`, `Feature`: Re-exported from Montague.Core.Features
 - `Object`: Color × Shape pairs (reference game entities)
 - `featureMeaning`: The Montague `e → t` meaning function
 - `TypedContext`: A set of objects with their available features
@@ -36,22 +36,22 @@ def myContext := RSA.Domains.ReferenceGame.fromPairs
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Lexicon.Features
+import Linglib.Theories.Montague.Core.Features
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 
 namespace RSA.Domains.ReferenceGame
 
-open Montague.Lexicon.Features
+open Montague.Core.Features
 
 -- ============================================================================
 -- Re-export Montague Feature Infrastructure
 -- ============================================================================
 
--- Types from Montague.Lexicon.Features
-abbrev Color := Montague.Lexicon.Features.Color
-abbrev Shape := Montague.Lexicon.Features.Shape
-abbrev Feature := Montague.Lexicon.Features.Feature
+-- Types from Montague.Core.Features
+abbrev Color := Montague.Core.Features.Color
+abbrev Shape := Montague.Core.Features.Shape
+abbrev Feature := Montague.Core.Features.Feature
 
 -- ============================================================================
 -- Reference Game Entity Type
@@ -83,10 +83,10 @@ instance : Fintype Object :=
 -- HasColor / HasShape Instances
 -- ============================================================================
 
-instance : Montague.Lexicon.Features.HasColor Object where
+instance : Montague.Core.Features.HasColor Object where
   color := Object.color
 
-instance : Montague.Lexicon.Features.HasShape Object where
+instance : Montague.Core.Features.HasShape Object where
   shape := Object.shape
 
 -- ============================================================================
@@ -95,11 +95,11 @@ instance : Montague.Lexicon.Features.HasShape Object where
 
 /-- Re-export featureMeaning specialized to Object -/
 abbrev featureMeaning : Feature → Object → Bool :=
-  Montague.Lexicon.Features.featureMeaning
+  Montague.Core.Features.featureMeaning
 
 /-- Re-export appliesTo specialized to Object -/
 abbrev Feature.appliesTo (f : Feature) (obj : Object) : Bool :=
-  Montague.Lexicon.Features.Feature.appliesTo f obj
+  Montague.Core.Features.Feature.appliesTo f obj
 
 -- ============================================================================
 -- Theorems: Compositional Meaning
@@ -123,10 +123,10 @@ theorem feature_is_characteristic (f : Feature) (obj : Object) :
     (match f with
      | .color c => obj.color == c
      | .shape s => obj.shape == s) := by
-  cases f <;> simp [Feature.appliesTo, Montague.Lexicon.Features.Feature.appliesTo,
-                    Montague.Lexicon.Features.featureMeaning,
-                    Montague.Lexicon.Features.HasColor.color,
-                    Montague.Lexicon.Features.HasShape.shape]
+  cases f <;> simp [Feature.appliesTo, Montague.Core.Features.Feature.appliesTo,
+                    Montague.Core.Features.featureMeaning,
+                    Montague.Core.Features.HasColor.color,
+                    Montague.Core.Features.HasShape.shape]
 
 -- ============================================================================
 -- Generic Reference Game Context (String-based, for flexibility)

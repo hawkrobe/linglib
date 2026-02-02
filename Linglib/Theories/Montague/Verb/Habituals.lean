@@ -41,7 +41,7 @@ This eliminates HAB as a covert operator in favor of:
 
 import Mathlib.Data.Rat.Defs
 
-namespace Montague.Lexicon.Habituals
+namespace Montague.Verb.Habituals
 
 -- ============================================================================
 -- Core Types
@@ -279,4 +279,4 @@ The frequency threshold varies by aspectual class:
 - Accomplishments: higher threshold (building one house isn't "builds houses")
 -/
 
-end Montague.Lexicon.Habituals
+end Montague.Verb.Habituals

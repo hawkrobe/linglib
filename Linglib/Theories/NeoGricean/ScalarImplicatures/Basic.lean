@@ -418,7 +418,7 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarI
 
 open Montague
 open Montague.SemDeriv
-open Montague.Lexicon
+open Montague.Core
 
 /--
 Map scale membership to the appropriate HornSet and EntailmentChecker.

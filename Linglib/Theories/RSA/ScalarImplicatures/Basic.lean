@@ -28,7 +28,7 @@ namespace RSA.ScalarImplicatures
 open RSA RSA.Domains.Quantity
 open Montague
 open Montague.SemDeriv
-open Montague.Lexicon
+open Montague.Core
 
 -- ============================================================================
 -- PART 1: World Type for Scalar Implicature

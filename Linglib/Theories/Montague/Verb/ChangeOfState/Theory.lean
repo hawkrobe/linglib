@@ -37,7 +37,7 @@ This maps directly to `PrProp` from `Core.Presupposition`:
 
 import Linglib.Core.Presupposition
 
-namespace Montague.Lexicon.ChangeOfState
+namespace Montague.Verb.ChangeOfState
 
 open Core.Presupposition
 
@@ -319,4 +319,4 @@ compositional semantics. The `cosSemantics` function provides the
 grounding for downstream pragmatic reasoning.
 -/
 
-end Montague.Lexicon.ChangeOfState
+end Montague.Verb.ChangeOfState

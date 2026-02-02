@@ -38,7 +38,7 @@ Selectional preferences can be encoded as:
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.ProductOfExperts
 
-namespace Montague.Lexicon.SelectionalPreferences
+namespace Montague.Verb.SelectionalPreferences
 
 open Core.ProductOfExperts
 
@@ -473,4 +473,4 @@ def sleepSoftened : SemClass → ℚ := softenConstraint sleepHard
 example : sleepSoftened .artifact = selectionalEpsilon := rfl
 example : sleepSoftened .human = 1 := rfl
 
-end Montague.Lexicon.SelectionalPreferences
+end Montague.Verb.SelectionalPreferences

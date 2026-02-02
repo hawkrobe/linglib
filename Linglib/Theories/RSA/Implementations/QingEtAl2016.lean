@@ -52,12 +52,12 @@ Context sets:
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Lexicon.ChangeOfState
+import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 
 namespace RSA.QingEtAl2016
 
 open RSA.Eval
-open Montague.Lexicon.ChangeOfState
+open Montague.Verb.ChangeOfState
 
 -- ============================================================================
 -- PART 1: World States

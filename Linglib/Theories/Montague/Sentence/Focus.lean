@@ -40,7 +40,7 @@ See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
 
 import Mathlib.Data.Set.Basic
 
-namespace Montague.Lexicon.FocusParticles
+namespace Montague.Sentence.FocusParticles
 
 variable {World Entity : Type}
 
@@ -260,4 +260,4 @@ The "least likely" intuition becomes:
 making them more informative, hence preferred."
 -/
 
-end Montague.Lexicon.FocusParticles
+end Montague.Sentence.FocusParticles

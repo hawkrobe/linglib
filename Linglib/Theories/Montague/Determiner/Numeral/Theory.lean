@@ -35,7 +35,7 @@ needs an `RSAScenario`. Comparison theorems live in `Compare.lean`.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 
-namespace Montague.Lexicon.Numerals
+namespace Montague.Determiner.Numeral
 
 -- ============================================================================
 -- Core Types
@@ -167,4 +167,4 @@ def NumeralTheory.isScalar (T : NumeralTheory) : Prop :=
   T.isMonotonic ∧
   ∀ w₁ w₂ : NumWord, T.strongerThan w₁ w₂ → T.strongerThan w₂ w₁ → w₁ = w₂
 
-end Montague.Lexicon.Numerals
+end Montague.Determiner.Numeral

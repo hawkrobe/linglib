@@ -36,12 +36,12 @@ import Linglib.Fragments.English.Predicates.Adjectival
 - Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+import Linglib.Theories.Montague.Adjective.Theory
 
 namespace Fragments.English.Predicates.Adjectival
 
-open Montague.Lexicon.Adjectives (ScaleType AntonymRelation GradableAdjEntry)
-open Montague.Lexicon.Degrees (NegationType)
+open Montague.Adjective (ScaleType AntonymRelation GradableAdjEntry)
+open Montague.Domain.Degrees (NegationType)
 
 -- ============================================================================
 -- Entry Structure

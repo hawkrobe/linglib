@@ -27,9 +27,9 @@ with speaker knowledge — only possible if there's an implicature to cancel.
 - Goodman & Stuhlmüller (2013). Knowledge and Implicature.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Numerals.Theory
+import Linglib.Theories.Montague.Determiner.Numeral.Theory
 
-namespace Montague.Lexicon.Numerals
+namespace Montague.Determiner.Numeral
 
 -- ============================================================================
 -- Lower-Bound Meaning Function
@@ -115,4 +115,4 @@ theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by
 #eval LowerBound.utterances  -- [one, two, three]
 #eval LowerBound.worlds  -- [0, 1, 2, 3]
 
-end Montague.Lexicon.Numerals
+end Montague.Determiner.Numeral

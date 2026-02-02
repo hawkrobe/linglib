@@ -28,14 +28,14 @@ The key point: these are objective, measurable properties. Different theories
 - Cruse, D. A. (1986). Lexical Semantics.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+import Linglib.Theories.Montague.Adjective.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Markedness
 
-open Montague.Lexicon.Adjectives
-open Montague.Lexicon.Degrees
+open Montague.Adjective
+open Montague.Domain.Degrees
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 -- ============================================================================

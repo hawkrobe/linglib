@@ -48,7 +48,7 @@ namespace Montague.Intensional
 
 open Montague
 open Montague.Derivation
-open Montague.Lexicon
+open Montague.Core
 
 -- ============================================================================
 -- Intensional Models

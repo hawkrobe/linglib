@@ -23,7 +23,7 @@ import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Scales
 
-namespace Montague.Lexicon
+namespace Montague.Core
 
 open Montague
 open Montague.Quantifiers
@@ -228,4 +228,4 @@ theorem john_not_scalar :
 -- Note: Full evaluation of strongerAlternatives depends on Scales functions
 -- which use native_decide. For demonstration, we verify structure is correct.
 
-end Montague.Lexicon
+end Montague.Core

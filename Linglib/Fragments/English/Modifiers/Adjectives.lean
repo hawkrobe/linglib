@@ -23,12 +23,12 @@ Both share scale type and antonym information, but serve different grammatical f
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
+import Linglib.Theories.Montague.Adjective.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
 
-open Montague.Lexicon.Adjectives (ScaleType AntonymRelation)
-open Montague.Lexicon.Degrees (NegationType)
+open Montague.Adjective (ScaleType AntonymRelation)
+open Montague.Domain.Degrees (NegationType)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure

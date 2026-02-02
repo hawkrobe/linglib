@@ -57,7 +57,7 @@ This distinction explains why "not unhappy" != "happy":
 
 import Mathlib.Data.Rat.Defs
 
-namespace Montague.Lexicon.Degrees
+namespace Montague.Domain.Degrees
 
 -- ============================================================================
 -- Degree Values
@@ -506,4 +506,4 @@ theorem measureSentence_fromHasDegree {E : Type} [HasDegree E]
     measureSentence (MeasurePredicate.fromHasDegree E dim) entity deg =
     numeralExact deg.value entity := rfl
 
-end Montague.Lexicon.Degrees
+end Montague.Domain.Degrees
