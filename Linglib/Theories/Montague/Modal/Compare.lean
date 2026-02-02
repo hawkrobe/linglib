@@ -33,7 +33,7 @@ import Linglib.Theories.Montague.Modal.Simple
 
 namespace Montague.Modal
 
-open Montague.Attitudes
+open Montague.Verb.Attitude.Examples
 open Montague.Modal.ConversationalBackground
 
 -- ============================================================================

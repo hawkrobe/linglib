@@ -41,10 +41,10 @@ Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordina
 
 import Linglib.Theories.Montague.Basic
 -- Re-export modular attitude theories
-import Linglib.Theories.Montague.Lexicon.Attitudes.Doxastic
-import Linglib.Theories.Montague.Lexicon.Attitudes.Preferential
+import Linglib.Theories.Montague.Verb.Attitude.Doxastic
+import Linglib.Theories.Montague.Verb.Attitude.Preferential
 
-namespace Montague.Attitudes
+namespace Montague.Verb.Attitude.Examples
 
 open Montague
 
@@ -438,4 +438,4 @@ Following Montague (1973), intensions are necessary for:
 - Distinguishing necessarily equivalent but intensionally distinct meanings
 -/
 
-end Montague.Attitudes
+end Montague.Verb.Attitude.Examples

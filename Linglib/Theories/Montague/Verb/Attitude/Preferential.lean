@@ -49,13 +49,13 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
-import Linglib.Theories.Montague.Lexicon.Attitudes.CDistributivity
+import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
 import Linglib.Theories.Montague.Questions.Hamblin
 
-namespace Montague.Lexicon.Attitudes.Preferential
+namespace Montague.Verb.Attitude.Preferential
 
 open Core.Proposition
-open CDistributivity (IsCDistributive degreeComparison_isCDistributive
+open Montague.Verb.Attitude.CDistributivity (IsCDistributive degreeComparison_isCDistributive
                       degreeComparisonProp degreeComparisonQuestion)
 -- ============================================================================
 -- Basic Types
@@ -1034,4 +1034,4 @@ with positive valence (TSP) and non-veridicality, this yields triviality.
 it is veridical — the truth requirement breaks the triviality derivation.
 -/
 
-end Montague.Lexicon.Attitudes.Preferential
+end Montague.Verb.Attitude.Preferential

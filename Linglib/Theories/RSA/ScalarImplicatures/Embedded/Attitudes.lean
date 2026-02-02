@@ -38,11 +38,11 @@ With attitude verbs:
 -/
 
 import Linglib.Theories.RSA.Core.Basic
-import Linglib.Theories.Montague.Attitudes
+import Linglib.Theories.Montague.Verb.Attitude.Examples
 
 namespace RSA.AttitudeEmbedding
 
-open Montague.Attitudes
+open Montague.Verb.Attitude.Examples
 
 -- ============================================================================
 -- World Structure for Belief Contexts

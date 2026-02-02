@@ -41,15 +41,15 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
-import Linglib.Theories.Montague.Lexicon.Attitudes.Doxastic
-import Linglib.Theories.Montague.Lexicon.Attitudes.Preferential
+import Linglib.Theories.Montague.Verb.Attitude.Doxastic
+import Linglib.Theories.Montague.Verb.Attitude.Preferential
 
 namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
 open Montague.Lexicon.ChangeOfState
-open Montague.Lexicon.Attitudes.Doxastic (Veridicality)
-open Montague.Lexicon.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+open Montague.Verb.Attitude.Doxastic (Veridicality)
+open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 
 -- ============================================================================
 -- Preferential Semantic Builders (Links to Montague)

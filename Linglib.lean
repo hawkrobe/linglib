@@ -153,7 +153,10 @@ import Linglib.Theories.Montague.Anaphora
 import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Quantifiers
-import Linglib.Theories.Montague.Attitudes
+import Linglib.Theories.Montague.Verb.Attitude.Examples
+import Linglib.Theories.Montague.Verb.Attitude.Doxastic
+import Linglib.Theories.Montague.Verb.Attitude.Preferential
+import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
 import Linglib.Theories.Montague.Modal.ConversationalBackground
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales

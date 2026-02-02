@@ -32,11 +32,11 @@ Each analysis is a `ModalTheory` instance containing:
 - Kripke, S. (1963). Semantical Considerations on Modal Logic.
 -/
 
-import Linglib.Theories.Montague.Attitudes
+import Linglib.Theories.Montague.Verb.Attitude.Examples
 
 namespace Montague.Modal
 
-open Montague.Attitudes
+open Montague.Verb.Attitude.Examples
 
 -- ============================================================================
 -- Core Types

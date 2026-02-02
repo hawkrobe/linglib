@@ -30,7 +30,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Questions.Hamblin
 
-namespace Montague.Lexicon.Attitudes.Doxastic
+namespace Montague.Verb.Attitude.Doxastic
 
 open Core.Proposition
 
@@ -296,4 +296,4 @@ pragmatic inference about speaker knowledge, not true local computation.
 See `RSA/Implementations/GoodmanStuhlmuller2013.lean` for the RSA treatment.
 -/
 
-end Montague.Lexicon.Attitudes.Doxastic
+end Montague.Verb.Attitude.Doxastic

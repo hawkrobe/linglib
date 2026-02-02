@@ -36,11 +36,11 @@ References:
 - Heim, I. & Kratzer, A. (1998). Semantics in Generative Grammar.
 -/
 
-import Linglib.Theories.Montague.Attitudes
+import Linglib.Theories.Montague.Verb.Attitude.Examples
 
 namespace Montague.Modal.ConversationalBackground
 
-open Montague.Attitudes
+open Montague.Verb.Attitude.Examples
 
 -- ============================================================================
 -- PART 1: Propositions as Sets of Worlds

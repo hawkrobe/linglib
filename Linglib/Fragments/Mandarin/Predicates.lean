@@ -32,8 +32,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 namespace Fragments.Mandarin.Predicates
 
 open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
-open Montague.Lexicon.Attitudes.Doxastic (Veridicality)
-open Montague.Lexicon.Attitudes.Preferential (AttitudeValence NVPClass)
+open Montague.Verb.Attitude.Doxastic (Veridicality)
+open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 
 -- ============================================================================
 -- Mandarin Preferential Attitude Verbs

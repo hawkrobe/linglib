@@ -36,7 +36,7 @@ This is NOT C-distributive because worry-about-Q involves global uncertainty.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Montague.Lexicon.Attitudes.CDistributivity
+namespace Montague.Verb.Attitude.CDistributivity
 
 -- ============================================================================
 -- Basic Types
@@ -317,4 +317,4 @@ This transforms the Qing et al. (2025) analysis from an encoding to a derivation
 - The classification into NVP classes has genuine explanatory force
 -/
 
-end Montague.Lexicon.Attitudes.CDistributivity
+end Montague.Verb.Attitude.CDistributivity

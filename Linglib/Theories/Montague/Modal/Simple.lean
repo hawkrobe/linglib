@@ -35,7 +35,7 @@ import Linglib.Theories.Montague.Modal.Basic
 
 namespace Montague.Modal
 
-open Montague.Attitudes
+open Montague.Verb.Attitude.Examples
 
 -- ============================================================================
 -- The Simple Theory Constructor
