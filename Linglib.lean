@@ -299,6 +299,10 @@ import Linglib.Theories.PragmaticComparison
 import Linglib.Theories.BilateralUpdateSemantics.Basic
 import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
 
+-- Causative Verbs (Nadathur & Lauer 2020)
+import Linglib.Core.CausalModel
+import Linglib.Theories.NadathurLauer2020.Basic
+
 -- Cross-theoretic comparisons
 import Linglib.Theories.Comparisons.Coreference
 import Linglib.Theories.Comparisons.ScalarImplicature

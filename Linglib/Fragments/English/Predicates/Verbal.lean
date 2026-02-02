@@ -43,6 +43,7 @@ import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
+import Linglib.Theories.NadathurLauer2020.Basic
 
 namespace Fragments.English.Predicates.Verbal
 
@@ -121,6 +122,7 @@ This classification determines what semantic machinery is needed:
 - Factives need presupposition projection
 - CoS verbs need temporal/change structure
 - Attitudes need intensional semantics
+- Causatives need causal model semantics (Nadathur & Lauer 2020)
 -/
 inductive VerbClass where
   | simple          -- sleep, run, eat
@@ -131,6 +133,7 @@ inductive VerbClass where
   | attitude        -- believe, think, want
   | perception      -- see, hear (ambiguous: factive or not)
   | communication   -- say, tell, claim
+  | causative       -- cause, make (Nadathur & Lauer 2020)
   deriving DecidableEq, Repr, BEq
 
 /--
@@ -142,6 +145,32 @@ Presupposition trigger type (Tonhauser et al. 2013 classification).
 inductive PresupTriggerType where
   | hardTrigger     -- Projective in all contexts
   | softTrigger     -- Can be locally accommodated
+  deriving DecidableEq, Repr, BEq
+
+/--
+**Causative Type** (Nadathur & Lauer 2020)
+
+Distinguishes causative verbs by their core semantic contribution:
+- **Sufficiency**: "make" — cause was sufficient for effect (adding C guarantees E)
+- **Necessity**: "cause" — cause was necessary for effect (counterfactual dependence)
+- **Both**: "cause" with single cause — sufficient AND necessary
+
+See `Theories.NadathurLauer2020` for the formal semantics.
+
+| Type | Verb | Semantic Test |
+|------|------|---------------|
+| Sufficiency | make | Adding C to background → E happens |
+| Necessity | cause | Removing C from background → E doesn't happen |
+
+In overdetermination cases (multiple sufficient causes), "make" can be true
+while "cause" is false (the cause wasn't necessary since another would have
+produced the effect).
+-/
+inductive CausativeType where
+  /-- Sufficiency semantics: cause guaranteed the effect (Definition 23) -/
+  | sufficiency
+  /-- Necessity semantics: effect depended on cause (Definition 24) -/
+  | necessity
   deriving DecidableEq, Repr, BEq
 
 /--
@@ -245,6 +274,8 @@ structure VerbEntry where
   factivePresup : Bool := false
   /-- For implicative verbs: does success of main verb entail complement? -/
   implicativeEntailment : Option Bool := none
+  /-- For causative verbs: sufficiency (make) or necessity (cause)? -/
+  causativeType : Option CausativeType := none
 
   -- === Intensionality ===
   /-- Does the verb create an opaque context for its complement? -/
@@ -821,6 +852,118 @@ def seem : VerbEntry where
   verbClass := .simple
 
 -- ============================================================================
+-- Causative Verbs (Nadathur & Lauer 2020)
+-- ============================================================================
+
+/-
+Causative verbs assert causal relations between events:
+- "cause" asserts **necessity**: the effect counterfactually depended on the cause
+- "make" asserts **sufficiency**: the cause guaranteed the effect
+
+See `Theories.NadathurLauer2020` for the formal semantics.
+
+Key distinctions:
+1. Overdetermination: "make" can be true while "cause" is false
+   - "The lightning made the fire start" ✓ (sufficient)
+   - "The lightning caused the fire" ✗ (not necessary; arsonist would have too)
+
+2. Coercive implication: "make" + volitional action → coercion
+   - "Kim made Sandy leave" implies Sandy didn't freely choose to leave
+-/
+
+/-- "cause" — necessity semantics (counterfactual dependence) -/
+def cause : VerbEntry where
+  form := "cause"
+  form3sg := "causes"
+  formPast := "caused"
+  formPastPart := "caused"
+  formPresPart := "causing"
+  complementType := .infinitival  -- "X caused Y to VP"
+  subjectTheta := some .agent     -- Causer (can also be event/stimulus)
+  objectTheta := some .patient    -- Causee
+  controlType := .objectControl   -- Y = agent of VP
+  verbClass := .causative
+  causativeType := some .necessity
+  -- Semantics: NadathurLauer2020.Necessity.causeSem
+
+/-- "make" — sufficiency semantics (cause guaranteed effect) -/
+def make : VerbEntry where
+  form := "make"
+  form3sg := "makes"
+  formPast := "made"
+  formPastPart := "made"
+  formPresPart := "making"
+  complementType := .smallClause  -- "X made Y VP" (bare infinitive)
+  subjectTheta := some .agent     -- Causer
+  objectTheta := some .patient    -- Causee
+  controlType := .objectControl   -- Y = agent of VP
+  verbClass := .causative
+  causativeType := some .sufficiency
+  -- Semantics: NadathurLauer2020.Sufficiency.makeSem
+  -- Coercive implication when VP is volitional
+
+/-- "let" — permissive causative (related to "make" but weaker) -/
+def let_ : VerbEntry where
+  form := "let"
+  form3sg := "lets"
+  formPast := "let"
+  formPastPart := "let"
+  formPresPart := "letting"
+  complementType := .smallClause  -- "X let Y VP"
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeType := some .sufficiency  -- Permissive = removing barrier (sufficiency)
+  -- Note: "let" is an ENABLING causative, not FORCING
+  -- See Wolff (2003) for force-dynamic analysis
+
+/-- "have" — causative use (directive causation) -/
+def have_causative : VerbEntry where
+  form := "have"
+  form3sg := "has"
+  formPast := "had"
+  formPastPart := "had"
+  formPresPart := "having"
+  complementType := .smallClause  -- "X had Y VP"
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeType := some .sufficiency
+  -- "Have" implies social/authority-based causation
+
+/-- "get" — causative use (persuasive causation) -/
+def get_causative : VerbEntry where
+  form := "get"
+  form3sg := "gets"
+  formPast := "got"
+  formPastPart := "gotten"
+  formPresPart := "getting"
+  complementType := .infinitival  -- "X got Y to VP"
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeType := some .sufficiency
+  -- "Get" implies persuasive/indirect causation
+
+/-- "force" — coercive causative -/
+def force : VerbEntry where
+  form := "force"
+  form3sg := "forces"
+  formPast := "forced"
+  formPastPart := "forced"
+  formPresPart := "forcing"
+  complementType := .infinitival  -- "X forced Y to VP"
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeType := some .sufficiency
+  -- "Force" lexically encodes coercion (unlike pragmatic "make")
+
+-- ============================================================================
 -- Communication Verbs
 -- ============================================================================
 
@@ -907,6 +1050,28 @@ Is this verb a presupposition trigger?
 def isPresupTrigger (v : VerbEntry) : Bool :=
   v.presupType.isSome
 
+/--
+Is this verb a causative?
+-/
+def isCausative (v : VerbEntry) : Bool :=
+  v.verbClass == .causative
+
+/--
+Does this causative verb assert sufficiency (like "make")?
+
+Returns true for verbs where the cause guaranteed the effect.
+-/
+def assertsSufficiency (v : VerbEntry) : Bool :=
+  v.causativeType == some .sufficiency
+
+/--
+Does this causative verb assert necessity (like "cause")?
+
+Returns true for verbs where the effect counterfactually depended on the cause.
+-/
+def assertsNecessity (v : VerbEntry) : Bool :=
+  v.causativeType == some .necessity
+
 -- ============================================================================
 -- NVP Properties (Qing et al. 2025)
 -- ============================================================================
@@ -963,6 +1128,10 @@ def allVerbs : List VerbEntry := [
   worry,                         -- Class 1: takes questions (non-C-distributive)
   -- Raising
   seem,
+  -- Causative (Nadathur & Lauer 2020)
+  cause,                         -- Necessity semantics
+  make,                          -- Sufficiency semantics
+  let_, have_causative, get_causative, force,  -- Other causatives
   -- Communication
   say, tell, claim,
   -- Question-embedding
@@ -1032,7 +1201,7 @@ def toWordBase (v : VerbEntry) : Word :=
 
 ### VerbEntry Fields
 - `form`, `form3sg`, `formPast`, `formPastPart`, `formPresPart`: Morphological forms
-- `verbClass`: Semantic classification (simple, factive, CoS, implicative, attitude)
+- `verbClass`: Semantic classification (simple, factive, CoS, implicative, attitude, causative)
 - `complementType`: What complement the verb selects
 - `presupType`: Presupposition trigger classification
 - `cosType`: For CoS verbs, the change type (cessation/inception/continuation)
@@ -1040,12 +1209,19 @@ def toWordBase (v : VerbEntry) : Word :=
 - `implicativeEntailment`: For implicatives, what is entailed
 - `opaqueContext`: Whether the verb creates an opaque context
 - `takesQuestion`: Whether the verb can embed questions
+- `causativeType`: For causatives, sufficiency (make) or necessity (cause)
 
 ### Attitude-Specific Fields (Qing et al. 2025)
 - `attitudeVeridicality`: Veridical (know) vs. non-veridical (believe)
 - `preferentialValence`: Positive (hope) vs. negative (fear)
 - `cDistributive`: Whether `x V Q` ⟺ `∃p ∈ Q. x V p`
 - `nvpClass`: NVP classification (class1/class2/class3)
+
+### Causative-Specific Fields (Nadathur & Lauer 2020)
+- `causativeType`: `.sufficiency` (make) or `.necessity` (cause)
+  - Sufficiency: adding cause guarantees effect
+  - Necessity: removing cause blocks effect (counterfactual dependence)
+  - In overdetermination, sufficiency ≠ necessity
 
 ### Key Functions
 - `getCoSSemantics`: Get PrProp for CoS verbs
@@ -1054,6 +1230,9 @@ def toWordBase (v : VerbEntry) : Word :=
 - `isPreferentialAttitude`: Check if verb is preferential
 - `isAntiRogative`: Check if verb is anti-rogative (Class 3)
 - `canEmbedQuestion`: Check if verb can embed questions
+- `isCausative`: Check if verb is a causative
+- `assertsSufficiency`: Check if causative asserts sufficiency
+- `assertsNecessity`: Check if causative asserts necessity
 - `lookup`: Find verb by citation form
 - `toWord3sg`, `toWordBase`: Convert to syntactic Word
 
@@ -1067,8 +1246,22 @@ def toWordBase (v : VerbEntry) : Word :=
 **Preferential Attitude (Class 2 - takes questions)**: fear, dread
 **Preferential Attitude (Class 1 - non-C-dist)**: worry
 **Raising**: seem
+**Causative (Nadathur & Lauer 2020)**:
+  - Necessity: cause
+  - Sufficiency: make, let, have, get, force
 **Communication**: say, tell, claim
 **Question-embedding**: wonder, ask
+
+### Causative Semantics (Nadathur & Lauer 2020)
+
+The formal semantics for causatives are in `Theories.NadathurLauer2020`:
+- `Sufficiency.makeSem`: ⟦X make Y⟧ = causallySufficient(dynamics, background, X, Y)
+- `Necessity.causeSem`: ⟦X cause Y⟧ = causallyNecessary(dynamics, background, X, Y)
+
+Key results:
+1. Sufficiency ⇏ Necessity (overdetermination)
+2. Necessity ⇏ Sufficiency (conjunctive causation)
+3. "make" + volitional action → coercive implication
 -/
 
 end Fragments.English.Predicates.Verbal

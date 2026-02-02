@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.53.0] - 2025-02-02
+
+### Added
+- **Theories/NadathurLauer2020/**: Causative verb semantics from Nadathur & Lauer (2020)
+  - **Basic.lean**: Re-exports, summary theorem `make_cause_truth_conditionally_distinct`
+  - **Sufficiency.lean**: Causal sufficiency (Definition 23), `makeSem` for "make"
+  - **Necessity.lean**: Causal necessity (Definition 24), `causeSem` for "cause"
+  - **Examples.lean**: Fire overdetermination, circuit, causal chain scenarios
+  - **CoerciveImplication.lean**: Volitional actions and coercion inference
+  - **Integration.lean**: Bridge to Grusdt et al. (2022) probabilistic model
+    - `situationToWorldState`: Converts structural situations to WorldState
+    - Grounding theorems for structural → probabilistic causation
+
+- **Core/CausalModel.lean**: Pearl-style structural causal models
+  - `Variable`, `Situation`: Partial valuations
+  - `CausalLaw`: Precondition → effect structural equations
+  - `CausalDynamics`: Collections of causal laws
+  - `normalDevelopment`: Forward propagation to fixpoint
+  - Helper constructors: `disjunctiveCausation`, `conjunctiveCausation`, `causalChain`
+
+- **Fragments/English/Predicates/Verbal.lean**: Causative verb lexical entries
+  - `VerbClass.causative`: New verb class
+  - `CausativeType`: `.sufficiency` (make) vs `.necessity` (cause)
+  - Entries: `cause`, `make`, `let_`, `have_causative`, `get_causative`, `force`
+  - Helper functions: `isCausative`, `assertsSufficiency`, `assertsNecessity`
+
+### Key Results
+- Sufficiency ⇏ Necessity (overdetermination: `main_sufficiency_not_necessity`)
+- Necessity ⇏ Sufficiency (conjunctive causation: `main_necessity_not_sufficiency_empty`)
+- "make" and "cause" are truth-conditionally distinct (`make_cause_distinct`)
+
 ## [0.52.0] - 2025-02-02
 
 ### Added
