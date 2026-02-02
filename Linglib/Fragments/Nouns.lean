@@ -182,4 +182,81 @@ example : (aNP dog).isKindDenoting = false := rfl
 /-- Bare singular would be ungrammatical -/
 example : ({ noun := dog, number := .sg, isBare := true } : NP).isBareSingular = true := rfl
 
+-- ============================================================================
+-- Sentence-Level Properties (relevant for NP interpretation)
+-- ============================================================================
+
+/--
+Sentence aspect: episodic vs generic/habitual.
+Affects how bare plurals are interpreted.
+-/
+inductive Aspect where
+  | episodic  -- "Dogs are barking in the yard"
+  | generic   -- "Dogs bark"
+  deriving DecidableEq, Repr, BEq
+
+/--
+Possible readings for a bare plural in a sentence.
+Which readings are available depends on the theory.
+-/
+inductive BarePluralReading where
+  | existential  -- ∃x[P(x) ∧ Q(x)]
+  | universal    -- ∀x[P(x) → Q(x)] (modulo normalcy)
+  | kind         -- Direct kind predication: rare(dogs)
+  deriving DecidableEq, Repr, BEq
+
+-- ============================================================================
+-- Mass/Count and Bare Arguments
+-- ============================================================================
+
+/--
+Whether a noun can appear bare as an argument.
+
+In English (Germanic, [+arg,+pred]):
+- Mass nouns: always OK bare (kind-denoting via ∩)
+- Count nouns: only plural OK bare (∩ undefined for singulars)
+
+In French (Romance, [-arg,+pred]):
+- Neither mass nor count can appear bare (D must be projected)
+-/
+def NounEntry.canAppearBare (n : NounEntry) (num : NPNumber) : Bool :=
+  match n.countable, num with
+  | false, _ => true        -- Mass nouns always OK
+  | true, .pl => true       -- Count plurals OK
+  | true, .mass => false    -- Count nouns aren't mass
+  | true, .sg => false      -- *Bare singular count noun
+
+/-- Mass nouns can appear bare -/
+example : water.canAppearBare .mass = true := rfl
+
+/-- Plural count nouns can appear bare -/
+example : dog.canAppearBare .pl = true := rfl
+
+/-- Singular count nouns cannot appear bare -/
+example : dog.canAppearBare .sg = false := rfl
+
+-- ============================================================================
+-- Grammaticality Check
+-- ============================================================================
+
+/--
+Is this NP grammatical in English?
+
+Bare singulars are out; everything else is fine.
+-/
+def NP.isGrammatical (np : NP) : Bool :=
+  !np.isBareSingular
+
+/-- "dogs" (bare plural) is grammatical -/
+example : (barePlural dog).isGrammatical = true := rfl
+
+/-- "water" (bare mass) is grammatical -/
+example : (bareMass water).isGrammatical = true := rfl
+
+/-- "the dog" is grammatical -/
+example : (theNP dog).isGrammatical = true := rfl
+
+/-- "*dog" (bare singular) is ungrammatical -/
+example : ({ noun := dog, number := .sg, isBare := true } : NP).isGrammatical = false := rfl
+
 end Fragments.Nouns
