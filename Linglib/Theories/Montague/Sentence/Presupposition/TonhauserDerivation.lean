@@ -89,17 +89,17 @@ information structure (see Core.QUD, Core.InformationStructure).
 
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
-import Linglib.Theories.Montague.Projection.LocalContext
-import Linglib.Theories.Montague.Projection.BeliefEmbedding
+import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
+import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
 import Linglib.Phenomena.Presuppositions.ProjectiveContent
 
-namespace Montague.Projection.TonhauserDerivation
+namespace Montague.Sentence.Presupposition.TonhauserDerivation
 
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
-open Montague.Projection.LocalContext
-open Montague.Projection.BeliefEmbedding
+open Montague.Sentence.Presupposition.LocalContext
+open Montague.Sentence.Presupposition.BeliefEmbedding
 open Phenomena.Presuppositions.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
@@ -543,4 +543,4 @@ But the *trigger-specific* SCF and OLE values are currently stipulated in
 derivation would require formalizing accommodation and discourse structure.
 -/
 
-end Montague.Projection.TonhauserDerivation
+end Montague.Sentence.Presupposition.TonhauserDerivation

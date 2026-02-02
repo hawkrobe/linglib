@@ -21,15 +21,15 @@ This file                       -- Verification that predictions match data
 ```
 -/
 
-import Linglib.Theories.Montague.Entailment.Basic
-import Linglib.Theories.Montague.Entailment.Polarity
+import Linglib.Theories.Montague.Sentence.Entailment.Basic
+import Linglib.Theories.Montague.Sentence.Entailment.Polarity
 import Linglib.Core.Proposition
 import Linglib.Phenomena.Semantics.Negation
 
-namespace Montague.Entailment.NegationTests
+namespace Montague.Sentence.Entailment.NegationTests
 
-open Montague.Entailment
-open Montague.Entailment.Polarity
+open Montague.Sentence.Entailment
+open Montague.Sentence.Entailment.Polarity
 open Phenomena.Semantics.Negation
 open Core.Proposition
 
@@ -128,4 +128,4 @@ theorem all_predictions_match :
     double_negation_ue.judgedValid = true := by
   exact ⟨rfl, rfl, rfl⟩
 
-end Montague.Entailment.NegationTests
+end Montague.Sentence.Entailment.NegationTests

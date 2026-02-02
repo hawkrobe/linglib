@@ -52,15 +52,15 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
-import Linglib.Theories.Montague.Projection.LocalContext
+import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Phenomena.Presuppositions.ProjectiveContent
 
-namespace Montague.Projection.BeliefEmbedding
+namespace Montague.Sentence.Presupposition.BeliefEmbedding
 
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
-open Montague.Projection.LocalContext
+open Montague.Sentence.Presupposition.LocalContext
 open Phenomena.Presuppositions.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
@@ -418,4 +418,4 @@ This module (BeliefEmbedding.lean) handles attribution under belief.
 Together they derive the full Tonhauser taxonomy.
 -/
 
-end Montague.Projection.BeliefEmbedding
+end Montague.Sentence.Presupposition.BeliefEmbedding

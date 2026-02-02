@@ -29,14 +29,14 @@ Local context theory unifies presupposition projection and implicature:
 
 import Linglib.Core.Presupposition
 import Linglib.Core.Proposition
-import Linglib.Theories.Montague.Entailment.Polarity
+import Linglib.Theories.Montague.Sentence.Entailment.Polarity
 
-namespace Montague.Entailment.PresuppositionPolarity
+namespace Montague.Sentence.Entailment.PresuppositionPolarity
 
 open Core.Presupposition
 open Core.Polarity
 open Core.Proposition (BProp)
-open Montague.Entailment.Polarity
+open Montague.Sentence.Entailment.Polarity
 
 variable {W : Type*}
 
@@ -189,4 +189,4 @@ inductive QuantifierProjection where
 - Parallels `GroundedPolarity` for presupposition contexts
 -/
 
-end Montague.Entailment.PresuppositionPolarity
+end Montague.Sentence.Entailment.PresuppositionPolarity

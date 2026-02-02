@@ -20,13 +20,13 @@ In **DE contexts** (negation, "no", restrictor of "every"):
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981)
 -/
 
-import Linglib.Theories.Montague.Entailment.Monotonicity
+import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
 import Linglib.Theories.Montague.Scales
 
-namespace Montague.Entailment.ScaleInteraction
+namespace Montague.Sentence.Entailment.ScaleInteraction
 
-open Montague.Entailment
-open Montague.Entailment.Monotonicity
+open Montague.Sentence.Entailment
+open Montague.Sentence.Entailment.Monotonicity
 open Montague.Scales
 
 /-
@@ -101,4 +101,4 @@ theorem de_blocks_scalar_implicature :
 - `de_blocks_scalar_implicature`: Explains why "not all" blocked in DE
 -/
 
-end Montague.Entailment.ScaleInteraction
+end Montague.Sentence.Entailment.ScaleInteraction

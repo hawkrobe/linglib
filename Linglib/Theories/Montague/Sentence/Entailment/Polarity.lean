@@ -27,12 +27,12 @@ Mathlib provides composition lemmas for free:
 -/
 
 import Mathlib.Order.Monotone.Defs
-import Linglib.Theories.Montague.Entailment.Basic
+import Linglib.Theories.Montague.Sentence.Entailment.Basic
 import Linglib.Theories.Montague.Derivation.Basic
 
-namespace Montague.Entailment.Polarity
+namespace Montague.Sentence.Entailment.Polarity
 
-open Montague.Entailment
+open Montague.Sentence.Entailment
 open Montague.Derivation (ContextPolarity)
 
 -- ============================================================================
@@ -349,4 +349,4 @@ This module bridges:
 Now `ContextPolarity` can be DERIVED from Mathlib's Monotone/Antitone proofs!
 -/
 
-end Montague.Entailment.Polarity
+end Montague.Sentence.Entailment.Polarity

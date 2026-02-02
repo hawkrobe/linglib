@@ -12,7 +12,7 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981)
 
 import Linglib.Core.Proposition
 
-namespace Montague.Entailment
+namespace Montague.Sentence.Entailment
 
 -- ============================================================================
 -- Finite World Semantics
@@ -93,4 +93,4 @@ theorem p0_entails_p01 : entails p0 p01 = true := by native_decide
 /-- p01 entails p012 -/
 theorem p01_entails_p012 : entails p01 p012 = true := by native_decide
 
-end Montague.Entailment
+end Montague.Sentence.Entailment

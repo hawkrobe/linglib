@@ -13,11 +13,11 @@ monotonicity properties of various operators.
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981)
 -/
 
-import Linglib.Theories.Montague.Entailment.Basic
+import Linglib.Theories.Montague.Sentence.Entailment.Basic
 
-namespace Montague.Entailment.Monotonicity
+namespace Montague.Sentence.Entailment.Monotonicity
 
-open Montague.Entailment
+open Montague.Sentence.Entailment
 
 -- ============================================================================
 -- Monotonicity (Decidable Versions)
@@ -163,4 +163,4 @@ theorem de_reverses_strength :
     entails (pnot p01) (pnot p0) = true := by
   native_decide
 
-end Montague.Entailment.Monotonicity
+end Montague.Sentence.Entailment.Monotonicity

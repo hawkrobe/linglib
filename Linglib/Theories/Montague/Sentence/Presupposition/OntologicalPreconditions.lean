@@ -44,7 +44,7 @@ import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Aspect
 import Linglib.Phenomena.Presuppositions.Diagnostics
 
-namespace Montague.Projection.OntologicalPreconditions
+namespace Montague.Sentence.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
 open Montague.Lexicon.ChangeOfState
@@ -618,4 +618,4 @@ The **aboutness view** explains projection because:
 - Negation affects the claim, not the reference
 -/
 
-end Montague.Projection.OntologicalPreconditions
+end Montague.Sentence.Presupposition.OntologicalPreconditions

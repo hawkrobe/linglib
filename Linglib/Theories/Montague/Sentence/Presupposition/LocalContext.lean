@@ -41,7 +41,7 @@ For a sentence S with embedded clause φ at position i:
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
 
-namespace Montague.Projection.LocalContext
+namespace Montague.Sentence.Presupposition.LocalContext
 
 open Core.Presupposition
 open Core.Proposition
@@ -305,4 +305,4 @@ The next step (BeliefEmbedding.lean) handles OLE — whether content
 projects to speaker or attitude holder under belief embedding.
 -/
 
-end Montague.Projection.LocalContext
+end Montague.Sentence.Presupposition.LocalContext

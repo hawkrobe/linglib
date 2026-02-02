@@ -34,7 +34,7 @@ import Linglib.Phenomena.HeKaiserIskarous2025.Data
 import Linglib.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Entailment.Polarity
+import Linglib.Theories.Montague.Sentence.Entailment.Polarity
 
 namespace RSA.Implementations.HeKaiserIskarous2025
 
@@ -548,7 +548,7 @@ theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
 -- Connecting to Polarity Machinery (with proven DE property)
 -- ============================================================================
 
-open Montague.Entailment.Polarity
+open Montague.Sentence.Entailment.Polarity
 open Core.Proposition
 
 /--

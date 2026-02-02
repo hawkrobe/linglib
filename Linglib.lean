@@ -187,15 +187,15 @@ import Linglib.Theories.Montague.Question.Hamblin
 import Linglib.Theories.Montague.Question.DecisionTheory
 
 -- Montague Entailment
-import Linglib.Theories.Montague.Entailment.Basic
-import Linglib.Theories.Montague.Entailment.Monotonicity
-import Linglib.Theories.Montague.Entailment.NegationTests
-import Linglib.Theories.Montague.Entailment.ScaleInteraction
-import Linglib.Theories.Montague.Entailment.Polarity
-import Linglib.Theories.Montague.Entailment.PresuppositionPolarity
-import Linglib.Theories.Montague.Projection.LocalContext
-import Linglib.Theories.Montague.Projection.BeliefEmbedding
-import Linglib.Theories.Montague.Projection.TonhauserDerivation
+import Linglib.Theories.Montague.Sentence.Entailment.Basic
+import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
+import Linglib.Theories.Montague.Sentence.Entailment.NegationTests
+import Linglib.Theories.Montague.Sentence.Entailment.ScaleInteraction
+import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Sentence.Entailment.PresuppositionPolarity
+import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
+import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
+import Linglib.Theories.Montague.Sentence.Presupposition.TonhauserDerivation
 
 -- Montague Interfaces
 import Linglib.Theories.Montague.Interface.SemanticBackend
