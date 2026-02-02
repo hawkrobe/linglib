@@ -2,6 +2,15 @@
 
 ## [0.47.0] - 2025-02-01
 
+### Added
+- **Theories/Montague/Questions/EntropyNPIs.lean**: Van Rooy (2003) NPI analysis
+  - Shannon entropy for questions: E(Q) = Σ P(q) × inf(q)
+  - NPI licensing via entropy increase (Krifka's bias reduction formalized)
+  - Rhetorical questions via strong NPIs + EVEN presupposition
+  - K&L strengthening: Q' strengthens Q iff Q settled but Q' open
+  - Unified principle: assertions use informativity, questions use entropy
+  - Connection to decision theory (entropy = expected utility for epistemic DPs)
+
 ### Changed
 - **Fragments/Determiners.lean**: Unified lexical entry for quantifiers/determiners
   - `QuantifierEntry`: Single source of truth with syntactic AND semantic properties
