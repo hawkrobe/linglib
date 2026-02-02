@@ -409,4 +409,213 @@ instance : FiniteWorlds World2 where
   worlds := [.wT, .wF]
   complete := λ w => by cases w <;> simp
 
+-- ============================================================================
+-- Galois Connection: Proposition-World Semantic Duality
+-- ============================================================================
+
+/-!
+## Galois Connection: Semantic Duality
+
+The relationship between propositions and worlds exhibits a fundamental
+**Galois connection** structure, which is the mathematical foundation of
+possible worlds semantics.
+
+Given:
+- A set of propositions (ordered by reverse inclusion ⊇)
+- A set of worlds (ordered by inclusion ⊆)
+
+We have two antitone functions:
+- **Extension**: ext(A) = ∩A = {w : ∀p ∈ A. p(w)} — worlds satisfying all props
+- **Intension**: int(W) = {p : ∀w ∈ W. p(w)} — props true at all worlds
+
+These form a Galois connection:
+  ext(A) ⊆ W  ↔  A ⊇ int(W)
+
+This duality underlies:
+- Modal accessibility (Kratzer's modal base)
+- Semantic entailment
+- The □/◇ duality in modal logic
+
+### References
+- Birkhoff (1967). Lattice Theory.
+- Ganter & Wille (1999). Formal Concept Analysis.
+- Kratzer (1981). The Notional Category of Modality.
+-/
+
+namespace GaloisConnection
+
+/-! ### Set-Based Version (for proofs) -/
+
+/--
+**Extension** (Set-based): Given propositions, compute the worlds where all hold.
+
+ext(A) = {w : ∀p ∈ A. p(w)}
+
+This is the "downward" direction of the Galois connection.
+Adding more propositions shrinks the extension.
+-/
+def extension {W : Type*} (props : Set (Prop' W)) : Set W :=
+  { w | ∀ p ∈ props, p w }
+
+/--
+**Intension** (Set-based): Given worlds, compute propositions true at all of them.
+
+int(W) = {p : ∀w ∈ W. p(w)}
+
+This is the "upward" direction of the Galois connection.
+Fewer worlds means more propositions in the intension.
+-/
+def intension {W : Type*} (worlds : Set W) : Set (Prop' W) :=
+  { p | ∀ w ∈ worlds, p w }
+
+/--
+**Extension is antitone**: More propositions → fewer worlds.
+
+If A ⊆ B, then ext(B) ⊆ ext(A).
+-/
+theorem extension_antitone {W : Type*} :
+    Antitone (extension (W := W)) := by
+  intro A B hAB w hw p hpA
+  exact hw p (hAB hpA)
+
+/--
+**Intension is antitone**: Fewer worlds → more propositions.
+
+If W ⊆ V, then int(V) ⊆ int(W).
+-/
+theorem intension_antitone {W : Type*} :
+    Antitone (intension (W := W)) := by
+  intro V W hVW p hp w hw
+  exact hp w (hVW hw)
+
+/--
+**Galois connection**: W ⊆ ext(A) ↔ A ⊆ int(W).
+
+This is the fundamental adjunction of possible worlds semantics:
+- If every world in W satisfies all propositions in A, then W ⊆ ext(A)
+- If W ⊆ ext(A), then every proposition in A is true at every world in W
+
+The two directions are `galois_right` and `galois_left` below.
+-/
+theorem galois_connection {W : Type*} (A : Set (Prop' W)) (Ws : Set W) :
+    Ws ⊆ extension A ↔ A ⊆ intension Ws := by
+  constructor
+  · -- (→) If W ⊆ ext(A), then A ⊆ int(W)
+    intro hWext p hpA w hwW
+    exact hWext hwW p hpA
+  · -- (←) If A ⊆ int(W), then W ⊆ ext(A)
+    intro hAint w hwW p hpA
+    exact hAint hpA w hwW
+
+/--
+**Galois connection (← direction)**: A ⊆ int(W) implies W ⊆ ext(A).
+-/
+theorem galois_right {W : Type*} (A : Set (Prop' W)) (Ws : Set W)
+    (h : A ⊆ intension Ws) :
+    Ws ⊆ extension A :=
+  galois_connection A Ws |>.mpr h
+
+/--
+**Galois connection (→ direction)**: W ⊆ ext(A) implies A ⊆ int(W).
+-/
+theorem galois_left {W : Type*} (A : Set (Prop' W)) (Ws : Set W)
+    (h : Ws ⊆ extension A) :
+    A ⊆ intension Ws :=
+  galois_connection A Ws |>.mp h
+
+/--
+**Closure property**: ext ∘ int is a closure operator.
+
+ext(int(W)) ⊇ W — applying extension after intension expands the set.
+-/
+theorem closure_expanding {W : Type*} (Ws : Set W) :
+    Ws ⊆ extension (intension Ws) := by
+  intro w hw p hp
+  exact hp w hw
+
+/--
+**Closure property**: int ∘ ext is a closure operator.
+
+int(ext(A)) ⊇ A — applying intension after extension expands the set.
+-/
+theorem closure_expanding' {W : Type*} (A : Set (Prop' W)) :
+    A ⊆ intension (extension A) := by
+  intro p hp w hw
+  exact hw p hp
+
+/-! ### List-Based Version (for computation) -/
+
+/--
+**Extension** (List-based): Given propositions, compute worlds where all hold.
+
+For decidable propositions with finite world enumeration.
+-/
+def extensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List W :=
+  worlds.filter fun w => props.all fun p => p w
+
+/--
+**Intension** (List-based): Given worlds, filter propositions true at all of them.
+
+Takes a universe of propositions to filter from.
+-/
+def intensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List (BProp W) :=
+  props.filter fun p => worlds.all p
+
+/--
+**Extension is antitone** (List version): More propositions → fewer worlds.
+-/
+theorem extensionL_antitone {W : Type*} (worlds : List W)
+    (A B : List (BProp W)) (w : W)
+    (hSub : ∀ p, p ∈ A → p ∈ B)
+    (hw : w ∈ extensionL worlds B) :
+    w ∈ extensionL worlds A := by
+  simp only [extensionL, List.mem_filter, List.all_eq_true] at *
+  constructor
+  · exact hw.1
+  · intro p hp
+    exact hw.2 p (hSub p hp)
+
+/--
+**Intension is antitone** (List version): Fewer worlds → more propositions.
+-/
+theorem intensionL_antitone {W : Type*} (props : List (BProp W))
+    (W1 W2 : List W) (p : BProp W)
+    (hSub : ∀ w, w ∈ W1 → w ∈ W2)
+    (hp : p ∈ intensionL W2 props) :
+    p ∈ intensionL W1 props := by
+  simp only [intensionL, List.mem_filter, List.all_eq_true] at *
+  constructor
+  · exact hp.1
+  · intro w hw
+    exact hp.2 w (hSub w hw)
+
+/--
+**Closure expanding** (List version): W ⊆ ext(int(W, props), props).
+
+Every world in W is in the extension of its intension.
+-/
+theorem closureL_expanding {W : Type*} (allWorlds : List W) (props : List (BProp W))
+    (Ws : List W) (hWs : ∀ w ∈ Ws, w ∈ allWorlds)
+    (w : W) (hw : w ∈ Ws) :
+    w ∈ extensionL allWorlds (intensionL Ws props) := by
+  simp only [extensionL, intensionL, List.mem_filter, List.all_eq_true]
+  constructor
+  · exact hWs w hw
+  · intro p ⟨_, hp_all⟩
+    exact hp_all w hw
+
+/--
+**FiniteWorlds version of extension**.
+-/
+def extensionFW (W : Type*) [FiniteWorlds W] (props : List (BProp W)) : List W :=
+  extensionL FiniteWorlds.worlds props
+
+/--
+**FiniteWorlds version of intension**.
+-/
+def intensionFW (W : Type*) [FiniteWorlds W] (worlds : List W) (props : List (BProp W)) : List (BProp W) :=
+  intensionL worlds props
+
+end GaloisConnection
+
 end Core.Proposition

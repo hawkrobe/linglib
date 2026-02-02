@@ -53,6 +53,7 @@ This avoids the Limit Assumption!
 
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Modal.Basic
+import Linglib.Core.Proposition
 import Mathlib.Order.Basic
 
 namespace Montague.Modal.Kratzer1981
@@ -369,127 +370,75 @@ theorem empty_ordering_universal_equiv (w z : World) :
 /-!
 ## Galois Connection: Semantic Duality
 
-The relationship between propositions and worlds exhibits a **Galois connection**
-structure, which is fundamental to possible worlds semantics.
+Kratzer's modal semantics is grounded in the **Galois connection** between
+propositions and worlds, formalized in `Core.Proposition.GaloisConnection`.
 
-Given:
-- A set of propositions A (ordered by reverse inclusion ⊇)
-- A set of worlds W (ordered by inclusion ⊆)
+The general theory provides:
+- `extension`: props → worlds (Set-based and List-based versions)
+- `intension`: worlds → props
+- `galois_connection`: W ⊆ ext(A) ↔ A ⊆ int(W)
+- Antitonicity theorems for both directions
 
-We have two functions:
-- **Extension**: ext(A) = ∩A = {w : ∀p ∈ A. p(w)} — worlds satisfying all props
-- **Intension**: int(W) = {p : ∀w ∈ W. p(w)} — props true at all worlds
-
-These form a Galois connection:
-  ext(A) ⊆ W  ↔  A ⊇ int(W)
+Here we connect Kratzer's `propIntersection` (used in `accessibleWorlds`)
+to the general Galois framework.
 
 In Kratzer's framework:
-- The modal base f(w) determines accessible worlds via extension: ∩f(w)
-- The ordering source g(w) refines these via the preorder
-- Necessity (□) and possibility (◇) are adjoint operators
-
-This duality underlies:
-- The entailment relation between propositions
-- The accessibility relation between worlds
-- Modal duality: □p ↔ ¬◇¬p
+- The modal base f(w) is a set of propositions
+- Accessible worlds = ext(f(w)) = {w' : ∀p ∈ f(w). p(w')}
+- The ordering source g(w) refines these via the preorder ≤_{g(w)}
 -/
 
+open Core.Proposition.GaloisConnection
+
 /--
-**Extension**: Given propositions, compute the worlds where all hold.
+**Kratzer's extension**: List-based version for the finite World type.
 
-ext(A) = {w : ∀p ∈ A. p(w)}
-
-This is the "downward" direction of the Galois connection.
+This is `propIntersection` renamed for clarity. It computes:
+  ext(A) = {w ∈ allWorlds : ∀p ∈ A. p(w)}
 -/
 def extension (props : List Prop') : List World :=
   propIntersection props
 
 /--
-**Intension**: Given worlds, compute propositions true at all of them.
+**Kratzer's intension**: Filter propositions true at all given worlds.
 
-int(W) = {p : ∀w ∈ W. p(w)}
-
-This is the "upward" direction of the Galois connection.
-For finite worlds and decidable propositions, we compute this relative to
-a given universe of propositions.
+  int(W, A) = {p ∈ A : ∀w ∈ W. p(w)}
 -/
 def intension (worlds : List World) (props : List Prop') : List Prop' :=
-  props.filter fun p => worlds.all p
+  intensionL worlds props
 
 /--
-**Galois connection property (one direction):**
+**Kratzer extension is Core extensionL**.
 
-If ext(A) ⊆ W, then int(W) ⊆ A (for props in A).
-
-More precisely: if all worlds satisfying A are in W, then every proposition
-true at all of W is a consequence of A.
+Shows that Kratzer's `extension` is an instance of the general Galois extension.
 -/
-theorem galois_ext_to_int (A : List Prop') (W : List World)
-    (hExt : ∀ w, w ∈ extension A → w ∈ W)
-    (p : Prop') (hp : p ∈ intension W A) :
-    ∀ w, w ∈ extension A → p w = true := by
-  intro w hw
-  -- w ∈ extension A means w satisfies all of A
-  -- p ∈ intension W A means p is true at all of W
-  -- Since w ∈ extension A → w ∈ W, we have w ∈ W
-  have hwW : w ∈ W := hExt w hw
-  -- intension means p is true at all worlds in W
-  unfold intension at hp
-  simp only [List.mem_filter, List.all_eq_true] at hp
-  exact hp.2 w hwW
+theorem extension_eq_core (props : List Prop') :
+    extension props = extensionL allWorlds props := by
+  unfold extension propIntersection extensionL
+  rfl
 
 /--
-**Galois connection property (other direction):**
+**Antitonicity of extension**: More propositions → fewer worlds.
 
-If int(W) ⊇ A (all of A is true at all of W), then ext(A) ⊇ W.
-
-More precisely: if all propositions in A are true at all worlds in W,
-then W ⊆ ext(A).
--/
-theorem galois_int_to_ext (A : List Prop') (W : List World)
-    (hInt : ∀ p, p ∈ A → ∀ w, w ∈ W → p w = true)
-    (w : World) (hw : w ∈ W) :
-    w ∈ extension A := by
-  unfold extension propIntersection
-  simp only [List.mem_filter, List.all_eq_true]
-  constructor
-  · cases w <;> simp [allWorlds]
-  · intro p hp
-    exact hInt p hp w hw
-
-/--
-**Monotonicity of extension**: More propositions → fewer worlds.
-
-If A ⊆ B (as sets), then ext(B) ⊆ ext(A).
-This is the antitonicity in the Galois connection.
+This is a direct application of `Core.Proposition.GaloisConnection.extensionL_antitone`.
 -/
 theorem extension_antitone (A B : List Prop') (w : World)
     (hSub : ∀ p, p ∈ A → p ∈ B)
     (hw : w ∈ extension B) :
     w ∈ extension A := by
-  unfold extension propIntersection at *
-  simp only [List.mem_filter, List.all_eq_true] at *
-  constructor
-  · exact hw.1
-  · intro p hp
-    exact hw.2 p (hSub p hp)
+  rw [extension_eq_core] at hw ⊢
+  exact extensionL_antitone allWorlds A B w hSub hw
 
 /--
-**Monotonicity of intension**: Fewer worlds → more propositions.
+**Antitonicity of intension**: Fewer worlds → more propositions.
 
-If W ⊆ V (W has fewer worlds), then int(V) ⊆ int(W).
-Propositions true at all of V are also true at all of W (since W ⊆ V).
+This is a direct application of `Core.Proposition.GaloisConnection.intensionL_antitone`.
 -/
 theorem intension_antitone (W V : List World) (A : List Prop') (p : Prop')
     (hSub : ∀ w, w ∈ W → w ∈ V)
     (hp : p ∈ intension V A) :
-    p ∈ intension W A := by
-  unfold intension at *
-  simp only [List.mem_filter, List.all_eq_true] at *
-  constructor
-  · exact hp.1
-  · intro w hw
-    exact hp.2 w (hSub w hw)
+    p ∈ intension W A :=
+  intensionL_antitone A W V p hSub hp
 
 -- ============================================================================
 -- PART 5: Accessible Worlds and Best Worlds

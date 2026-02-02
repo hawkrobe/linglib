@@ -2,6 +2,15 @@
 
 ## [0.52.0] - 2025-02-02
 
+### Added
+- **Core/Proposition.lean**: Galois connection for proposition-world duality
+  - `GaloisConnection.extension`: Set-based ext(A) = {w : ∀p ∈ A. p(w)}
+  - `GaloisConnection.intension`: Set-based int(W) = {p : ∀w ∈ W. p(w)}
+  - `galois_connection`: W ⊆ ext(A) ↔ A ⊆ int(W) (fundamental adjunction)
+  - `extension_antitone`, `intension_antitone`: Antitonicity theorems
+  - `extensionL`, `intensionL`: List-based versions for computation
+  - `closure_expanding`, `closure_expanding'`: Closure operator properties
+
 ### Changed
 - **Montague/Modal/Kratzer1981.lean**: Complete rewrite with full derivations from Kratzer (1981)
   - Correct subset-based ordering relation (was counting-based)
@@ -20,11 +29,8 @@
     - `euclidean_reflexive_implies_symmetric`: T + 5 → B
     - `euclidean_reflexive_implies_transitive`: T + 5 → 4
     - `S5_satisfies_all`: S5 bases satisfy T, D, 4, B, 5
-  - Galois connection (semantic duality):
-    - `extension`: ext(A) = worlds satisfying all props in A
-    - `intension`: int(W) = props true at all worlds in W
-    - `galois_ext_to_int`, `galois_int_to_ext`: Adjunction properties
-    - `extension_antitone`, `intension_antitone`: Monotonicity
+  - Galois connection now uses `Core.Proposition.GaloisConnection`
+    - `extension_eq_core`: Kratzer extension = Core extensionL
     - `accessible_is_extension`: Accessibility as Galois extension
   - `comparative_poss_reflexive`: Comparative possibility reflexivity
   - Modal flavors as structures: `EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`
