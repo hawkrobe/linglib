@@ -250,6 +250,14 @@ def accessibleWorlds (f : ModalBase) (w : World) : List World :=
   propIntersection (f w)
 
 /--
+**Accessibility predicate**: w' is accessible from w iff w' ∈ ∩f(w).
+
+This is the 2-argument predicate version of `accessibleWorlds`.
+-/
+def accessibleFrom (f : ModalBase) (w w' : World) : Bool :=
+  (f w).all (fun p => p w')
+
+/--
 The **best** worlds among accessible worlds, according to ordering source g.
 
 These are the accessible worlds that are maximal under ≤_{g(w)}:

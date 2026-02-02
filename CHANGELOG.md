@@ -13,13 +13,11 @@
   - Modal flavors as structures: `EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`
   - Conditionals as modal base restrictors (Kratzer p. 64-66)
 
-- **Montague/Modal/ConversationalBackground.lean**: Removed flawed `idealScore` counting approach
-  - Kept: Type definitions, accessibility derivation, simple modals (no ordering)
-  - Removed: `idealScore`, `atLeastAsGood`, `bestWorlds`, `must`, `can` (used wrong ordering)
-  - Points to Kratzer1981.lean for correct full semantics
-
 ### Removed
 - **Montague/Modal/Kratzer.lean**: Replaced by Kratzer1981.lean (had flawed cardinality-based ordering)
+- **Montague/Modal/ConversationalBackground.lean**: Fully superseded by Kratzer1981.lean
+  - `accessibleFrom` predicate moved to Kratzer1981.lean
+  - All other content was redundant or used flawed `idealScore` counting
 
 ## [0.51.0] - 2025-02-02
 

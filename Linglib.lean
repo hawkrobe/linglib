@@ -163,7 +163,6 @@ import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
 import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
-import Linglib.Theories.Montague.Modal.ConversationalBackground
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Conjunction
