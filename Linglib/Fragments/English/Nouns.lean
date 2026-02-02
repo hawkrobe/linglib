@@ -21,11 +21,11 @@ The restriction follows from:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Lexicon.Kinds
+import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 
 namespace Fragments.English.Nouns
 
-open Montague.Lexicon.Kinds (BlockingPrinciple)
+open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 -- ============================================================================
 -- English NP Structure

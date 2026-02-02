@@ -26,11 +26,11 @@ Bare plurals are licensed mainly in:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Lexicon.Kinds
+import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 
 namespace Fragments.French.Nouns
 
-open Montague.Lexicon.Kinds (BlockingPrinciple NominalMapping)
+open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 -- ============================================================================
 -- French NP Structure

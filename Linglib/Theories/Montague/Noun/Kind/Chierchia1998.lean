@@ -38,7 +38,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 
-namespace Montague.Lexicon.Kinds
+namespace Montague.Noun.Kind.Chierchia1998
 
 -- ============================================================================
 -- Domain Structure (Link's Semilattice)
@@ -365,127 +365,144 @@ theorem bare_plural_ok_bare_singular_not (bp : BlockingPrinciple)
   simp [hIota, hExists, downDefinedFor]
 
 -- ============================================================================
--- Scopelessness of Bare Plurals
+-- Scopelessness (Theoretical Basis)
 -- ============================================================================
 
 /--
-Bare plurals are scopeless because they are names of kinds.
+Bare plurals are scopeless because DKP introduces a LOCAL existential.
 
-Like proper names, kind-denoting expressions don't interact scopally
-with other operators. The existential reading comes from DKP, which
-introduces a LOCAL existential - it cannot scope out.
+The existential reading from DKP cannot scope out because the coercion
+applies inside the predicate abstract.
 
-"I didn't see dogs" only means: ¬∃x[dog(x) ∧ saw(I,x)]
-NOT: ∃x[dog(x) ∧ ¬saw(I,x)]
-
-This follows from DKP being a type-coercion that applies locally.
+See `Phenomena/KindReference/Data.lean` for empirical scope data.
 -/
-structure Scopelessness where
-  /-- The source of existential force -/
-  existentialSource : String := "DKP (local type coercion)"
-  /-- Whether the existential can scope out -/
-  canScopeOut : Bool := false
-  /-- Explanation -/
-  explanation : String :=
-    "DKP introduces ∃ inside the predicate abstract, so scope-shifting " ++
-    "operations cannot give ∃ wider scope than the predicate"
-
--- ============================================================================
--- Suspension of Scopelessness
--- ============================================================================
+def dkpIsLocal : Bool := true
 
 /--
 When ∩ is undefined (NP doesn't denote a kind), we fall back to ∃.
 
-For non-kind-denoting NPs like "boys sitting here" or "parts of that machine":
+For non-kind-denoting NPs like "parts of that machine":
 - ∩ is undefined (no corresponding natural kind)
-- ι is blocked by "the"
 - ∃ is available (not blocked for plurals)
-
-Result: these NPs behave like regular existential GQs, with normal scope.
-
-"I didn't see parts of that machine" IS ambiguous:
-- ¬∃x[part(x) ∧ saw(I,x)]
-- ∃x[part(x) ∧ ¬saw(I,x)]
+- Result: these NPs behave like regular existential GQs
 -/
 def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
   !isKindDenoting ∧ !bp.existsBlocked
 
 -- ============================================================================
--- Generic Interpretation
+-- DKP Derivation Machinery (for Scrambling Comparison)
 -- ============================================================================
+
+/-!
+## Compositional DKP
+
+For comparing with Krifka (2004) on scrambling, we need an explicit
+derivation function showing how DKP introduces existential quantification.
+
+The key property: DKP is **position-invariant**. The ∃ is introduced when
+the kind combines with the predicate, regardless of surface position.
+This predicts narrow scope always — problematic for scrambled bare plurals.
+
+See `Theories/Comparisons/KindReference.lean` for the formal comparison.
+-/
+
+variable {Entity World : Type}
+
+/-- A kind's extension at each world (the instances) -/
+abbrev KindExtension (Entity World : Type) := World → List Entity
+
+/-- A VP meaning (intensional) -/
+abbrev ChierchiaVP (Entity World : Type) := Entity → World → Bool
+
+/-- A sentence meaning (proposition) -/
+abbrev ChierchiaSent (World : Type) := World → Bool
 
 /--
-The Generic operator Gn: a modalized universal quantifier.
+**DKP (Derived Kind Predication)**: Coerce a kind to work with object-level predicates.
 
-Gn quantifies over situations/instances. When a kind-denoting expression
-is in the restriction of Gn, variables over instances get accommodated.
+Given a kind (represented by its extension at each world) and an object-level VP,
+DKP introduces existential quantification:
 
-"Dogs bark" →
-  Gn x,s [dog(x) ∧ C(x,s)] [bark(x,s)]
+  DKP(VP)(k) = λw. ∃x ∈ k(w). VP(x)(w)
 
-This derives the universal reading of bare plurals in generic contexts.
+**Key property**: The ∃ is introduced HERE, at the point of composition,
+not at a syntactic position. This makes DKP position-invariant.
 -/
-structure GenericOperator where
-  /-- The restrictor (what we're generalizing about) -/
-  restrictor : String
-  /-- The nuclear scope (what we're claiming) -/
-  scope : String
-  /-- Contextual restriction (characteristic situations) -/
-  contextRestriction : String := "C(x,s)"
+def dkpApply
+    (kind : KindExtension Entity World)
+    (vp : ChierchiaVP Entity World)
+    : ChierchiaSent World :=
+  fun w => (kind w).any (fun x => vp x w)
 
-/-- Interpretation of bare plural in generic context -/
-def genericInterpretation (kind : String) (predicate : String) : GenericOperator :=
-  { restrictor := s!"{kind}(x) ∧ C(x,s)"
-  , scope := s!"{predicate}(x,s)" }
+/--
+Chierchia's derivation for "[niet [BP V]]" (unscrambled).
+
+1. BP = kind k
+2. VP = λx.V(x)
+3. DKP: ∃x[k(x) ∧ V(x)]
+4. Negation: ¬∃x[k(x) ∧ V(x)]
+-/
+def chierchiaDerivUnscrambled
+    (kind : KindExtension Entity World)
+    (vp : ChierchiaVP Entity World)
+    : ChierchiaSent World :=
+  fun w => !(dkpApply kind vp w)
+
+/--
+Chierchia's derivation for "[BP [niet V]]" (scrambled).
+
+In Chierchia's system, scrambling doesn't change the derivation.
+DKP still applies when the kind meets the predicate, and the ∃
+is introduced at that point (the trace position in LF).
+
+Result: Same as unscrambled — ¬∃x[k(x) ∧ V(x)]
+-/
+def chierchiaDerivScrambled
+    (kind : KindExtension Entity World)
+    (vp : ChierchiaVP Entity World)
+    : ChierchiaSent World :=
+  -- Scrambling is invisible to DKP — same derivation
+  fun w => !(dkpApply kind vp w)
+
+/--
+**Key theorem**: Chierchia's DKP is position-invariant.
+
+Scrambled and unscrambled derivations yield the same meaning.
+This is the source of Chierchia's incorrect prediction for Dutch scrambling.
+-/
+theorem chierchia_position_invariant
+    (kind : KindExtension Entity World)
+    (vp : ChierchiaVP Entity World)
+    : chierchiaDerivScrambled kind vp = chierchiaDerivUnscrambled kind vp := rfl
 
 -- ============================================================================
--- Examples
+-- Theory Verification
 -- ============================================================================
 
-/-- "Dogs bark" - generic reading -/
-example : genericInterpretation "dog" "bark" =
-  { restrictor := "dog(x) ∧ C(x,s)", scope := "bark(x,s)", contextRestriction := "C(x,s)" } := rfl
-
-/-- Why bare plurals are grammatical in English -/
+/-- ∩ is defined for plural count nouns -/
 example : downDefinedFor .count true = true := rfl
 
-/-- Why bare singulars are ungrammatical in English -/
+/-- ∩ is undefined for singular count nouns -/
 example : downDefinedFor .count false = false := rfl
 
-/-- Why mass nouns are always OK as bare arguments -/
+/-- ∩ is always defined for mass nouns -/
 example : downDefinedFor .mass true = true := rfl
 example : downDefinedFor .mass false = true := rfl
 
--- ============================================================================
--- Connection to I-Level vs S-Level Predicates
--- ============================================================================
+/-!
+## Related Theory
 
-/--
-I-level (individual-level) predicates are inherently generic.
+- `Theories/Montague/Lexicon/Krifka2004.lean` - **Alternative**: Bare NPs as properties
+- `Theories/Montague/Lexicon/Dayal2004.lean` - Meaning Preservation, singular kinds
+- `Theories/Montague/Lexicon/Generics.lean` - GEN operator for generic readings
 
-They require Gn in their immediate scope, which means:
-- Subject must be in restriction of Gn → universal reading
-- Object can stay in VP → existential reading (via DKP)
+## Empirical Data
 
-This interacts with bare argument licensing in interesting ways.
-See Phenomena/BarePlurals/Data.lean for the empirical patterns.
+For empirical patterns (cross-linguistic data, scope judgments, predicate
+class effects), see:
+- `Phenomena/KindReference/Data.lean` - unified kind reference phenomena
+- `Phenomena/BarePlurals/Data.lean` - generic vs existential readings
+- `Phenomena/Generics/Data.lean` - generic sentence patterns
 -/
-inductive PredicateLevel where
-  | individual  -- Permanent properties: know, hate, be intelligent
-  | stage       -- Temporary properties: be hungry, be present
-  deriving DecidableEq, Repr
 
-/--
-I-level predicates with bare plural objects have complex licensing.
-
-"John hates cats" requires the object to scope with Gn (universal).
-But "John owns horses" allows object to stay in VP (existential).
-
-The difference: "own" allows existential objects, "hate" doesn't.
--/
-def allowsExistentialObject : PredicateLevel → Bool
-  | .individual => false  -- I-level typically requires universal object
-  | .stage => true        -- S-level allows existential object
-
-end Montague.Lexicon.Kinds
+end Montague.Noun.Kind.Chierchia1998

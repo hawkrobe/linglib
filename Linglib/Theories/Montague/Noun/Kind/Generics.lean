@@ -46,7 +46,7 @@ and `Theories/Comparisons/GenericSemantics.lean` for the formal comparison.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Montague.Lexicon.Generics
+namespace Montague.Noun.Kind.Generics
 
 -- ============================================================================
 -- Core Types
@@ -271,31 +271,12 @@ def thresholdGeneric
     : Bool :=
   prevalence situations restrictor scope > threshold
 
-/--
-**Key Result**: GEN is eliminable because "normalcy" reduces to prevalence.
+/-!
+**Key Result**: GEN is eliminable via threshold semantics.
 
-For any traditional GEN setup with a normalcy predicate,
-there exists a threshold such that the threshold-based generic
-gives the same truth value.
-
-Traditional: GEN[K][P] where "normal" is stipulated per-property
-T&G + RSA:   prevalence(P,K) > θ where θ is inferred pragmatically
-
-Proof sketch: Set θ = (proportion of normal restrictor-sits with scope) - ε
+The theorem `gen_eliminable` proving this is in `Theories/Comparisons/GenericSemantics.lean`,
+which connects traditional GEN to Tessler & Goodman's (2019) RSA approach.
 -/
-theorem gen_reduces_to_threshold
-    (situations : List Situation)
-    (normal : NormalcyPredicate)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    (_hNonEmpty : (situations.filter restrictor).length > 0)
-    : ∃ θ : ℚ, traditionalGEN situations normal restrictor scope =
-               thresholdGeneric situations restrictor scope θ := by
-  -- The idea: for any truth value of GEN, we can find a matching threshold.
-  -- If GEN = true, pick θ < prevalence (so threshold generic is also true)
-  -- If GEN = false, pick θ ≥ prevalence (so threshold generic is also false)
-  -- This shows GEN is eliminable - threshold semantics can match any GEN configuration.
-  sorry  -- Full proof requires careful handling of ℚ arithmetic
 
 -- ============================================================================
 -- Example: Dogs Bark
@@ -335,4 +316,16 @@ def normalDogSituation : NormalcyPredicate := fun s =>
 #eval thresholdGeneric dogSituations isDogSituation dogBarks (1/2)
 -- true
 
-end Montague.Lexicon.Generics
+/-!
+## Related Theory
+
+- `Theories/Montague/Lexicon/Kinds.lean` - Kind reference, bare plurals, DKP
+- `Theories/RSA/Implementations/TesslerGoodman2019.lean` - RSA treatment of generics
+
+## Empirical Data
+
+- `Phenomena/Generics/Data.lean` - prevalence asymmetries, rare property generics
+- `Phenomena/KindReference/Data.lean` - kind-level predicates, cross-linguistic patterns
+-/
+
+end Montague.Noun.Kind.Generics

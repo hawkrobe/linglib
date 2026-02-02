@@ -3,6 +3,11 @@
 
 Theory-neutral data about when bare plurals receive generic vs existential readings.
 
+This file focuses on **information structure effects** (Cohen & Erteschik-Shir 2002).
+For related phenomena, see:
+- `Phenomena/KindReference/Data.lean` - cross-linguistic kind reference, scopelessness,
+  kind-level predicates, singular kinds
+
 ## Key Phenomena (Cohen & Erteschik-Shir 2002)
 
 1. **Topic/Focus effect**: Topic BPs → generic, Focused BPs → existential

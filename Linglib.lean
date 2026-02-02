@@ -163,6 +163,11 @@ import Linglib.Theories.Montague.Conjunction
 import Linglib.Theories.Montague.Lexicon.Basic
 import Linglib.Theories.Montague.Lexicon.Features
 import Linglib.Theories.Montague.Lexicon.Degrees
+import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.Montague.Noun.Kind.Krifka2004
+import Linglib.Theories.Montague.Noun.Kind.Dayal2004
+import Linglib.Theories.Montague.Noun.Kind.Generics
+import Linglib.Theories.Montague.Noun.Kind.Carlson1977
 
 -- Montague Derivations
 import Linglib.Theories.Montague.Derivation.Basic

@@ -26,11 +26,11 @@ The interpretation is determined by context, not by overt morphology.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Lexicon.Kinds
+import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 
 namespace Fragments.Mandarin.Nouns
 
-open Montague.Lexicon.Kinds (BlockingPrinciple NominalMapping)
+open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 -- ============================================================================
 -- Mandarin NP Structure

@@ -30,11 +30,11 @@ Japanese is a [+arg, -pred] language (like Mandarin):
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Lexicon.Kinds
+import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 
 namespace Fragments.Japanese.Nouns
 
-open Montague.Lexicon.Kinds (BlockingPrinciple NominalMapping)
+open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 -- ============================================================================
 -- Japanese NP Structure

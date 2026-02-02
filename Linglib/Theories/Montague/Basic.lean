@@ -361,4 +361,41 @@ theorem sees_uncurry_matches :
   intro ⟨x, y⟩
   cases x <;> cases y <;> rfl
 
+-- ============================================================================
+-- Intensional Types (World-Indexed Semantics)
+-- ============================================================================
+
+/-!
+## Intensional Semantics
+
+For theories involving possible worlds (Chierchia's kinds, Krifka's properties,
+modal semantics, etc.), we need world-indexed types.
+-/
+
+/-- An intensional property: at each world, a characteristic function on entities -/
+abbrev IntensionalProp (Entity World : Type) := World → Entity → Bool
+
+/-- An intensional proposition (sentence meaning) -/
+abbrev Proposition (World : Type) := World → Bool
+
+/-- An intensional VP: takes an entity, returns a proposition -/
+abbrev IntensionalVP (Entity World : Type) := Entity → Proposition World
+
+/-- Negate a proposition -/
+def Proposition.neg {World : Type} (p : Proposition World) : Proposition World :=
+  fun w => !p w
+
+/-- Negate a VP (pointwise) -/
+def IntensionalVP.neg {Entity World : Type} (vp : IntensionalVP Entity World)
+    : IntensionalVP Entity World :=
+  fun x w => !vp x w
+
+/-- Existential quantification over a finite domain -/
+def IntensionalProp.exists {Entity World : Type}
+    (domain : List Entity)
+    (prop : IntensionalProp Entity World)
+    (vp : IntensionalVP Entity World)
+    : Proposition World :=
+  fun w => domain.any (fun x => prop w x && vp x w)
+
 end Montague
