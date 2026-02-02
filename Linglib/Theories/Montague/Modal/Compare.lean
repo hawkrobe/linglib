@@ -28,13 +28,13 @@ The theories diverge when:
 - Portner, P. (2009). Modality. Oxford University Press.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Modals.Kratzer
-import Linglib.Theories.Montague.Lexicon.Modals.Simple
+import Linglib.Theories.Montague.Modal.Kratzer
+import Linglib.Theories.Montague.Modal.Simple
 
-namespace Montague.Lexicon.Modals
+namespace Montague.Modal
 
 open Montague.Attitudes
-open Montague.Modality
+open Montague.Modal.ConversationalBackground
 
 -- ============================================================================
 -- Comparison Functions
@@ -188,4 +188,4 @@ This justifies using Kratzer as the default for linguistic semantics,
 while Simple remains useful for logical foundations.
 -/
 
-end Montague.Lexicon.Modals
+end Montague.Modal

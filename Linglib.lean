@@ -154,7 +154,7 @@ import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Attitudes
-import Linglib.Theories.Montague.Modality
+import Linglib.Theories.Montague.Modal.ConversationalBackground
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Conjunction
@@ -200,10 +200,10 @@ import Linglib.Theories.Montague.Interface.SyntaxInterface
 import Linglib.Theories.Montague.Lexicon.Adjectives.Theory
 
 -- Modal theories (Kratzer vs Simple/Kripke)
-import Linglib.Theories.Montague.Lexicon.Modals.Theory
-import Linglib.Theories.Montague.Lexicon.Modals.Kratzer
-import Linglib.Theories.Montague.Lexicon.Modals.Simple
-import Linglib.Theories.Montague.Lexicon.Modals.Compare
+import Linglib.Theories.Montague.Modal.Basic
+import Linglib.Theories.Montague.Modal.Kratzer
+import Linglib.Theories.Montague.Modal.Simple
+import Linglib.Theories.Montague.Modal.Compare
 
 -- NeoGricean Core
 import Linglib.Theories.NeoGricean.Core.Basic

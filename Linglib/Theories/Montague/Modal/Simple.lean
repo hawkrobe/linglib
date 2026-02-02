@@ -31,9 +31,9 @@ Simple semantics is adequate when:
 - Hughes, G.E. & Cresswell, M.J. (1996). A New Introduction to Modal Logic.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Modals.Theory
+import Linglib.Theories.Montague.Modal.Basic
 
-namespace Montague.Lexicon.Modals
+namespace Montague.Modal
 
 open Montague.Attitudes
 
@@ -184,4 +184,4 @@ theorem simple_universal_consistent_triviallyTrue :
   intro w
   cases w <;> native_decide
 
-end Montague.Lexicon.Modals
+end Montague.Modal

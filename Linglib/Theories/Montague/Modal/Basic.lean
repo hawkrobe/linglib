@@ -34,7 +34,7 @@ Each analysis is a `ModalTheory` instance containing:
 
 import Linglib.Theories.Montague.Attitudes
 
-namespace Montague.Lexicon.Modals
+namespace Montague.Modal
 
 open Montague.Attitudes
 
@@ -195,4 +195,4 @@ def triviallyTrue : Proposition := fun _ => true
 /-- A trivially false proposition (false at all worlds) -/
 def triviallyFalse : Proposition := fun _ => false
 
-end Montague.Lexicon.Modals
+end Montague.Modal

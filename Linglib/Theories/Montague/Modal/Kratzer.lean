@@ -33,13 +33,13 @@ conversational backgrounds — no lexical ambiguity needed.
 - Kratzer, A. (1991). Modality. In Semantics: An International Handbook.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Modals.Theory
-import Linglib.Theories.Montague.Modality
+import Linglib.Theories.Montague.Modal.Basic
+import Linglib.Theories.Montague.Modal.ConversationalBackground
 
-namespace Montague.Lexicon.Modals
+namespace Montague.Modal
 
 open Montague.Attitudes
-open Montague.Modality
+open Montague.Modal.ConversationalBackground
 
 -- ============================================================================
 -- Kratzer Parameters
@@ -207,4 +207,4 @@ theorem minimal_vs_epistemic_differ :
     KratzerEpistemic.eval .possibility triviallyFalse .w0 := by
   native_decide
 
-end Montague.Lexicon.Modals
+end Montague.Modal

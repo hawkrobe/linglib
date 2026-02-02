@@ -38,7 +38,7 @@ References:
 
 import Linglib.Theories.Montague.Attitudes
 
-namespace Montague.Modality
+namespace Montague.Modal.ConversationalBackground
 
 open Montague.Attitudes
 
@@ -420,4 +420,4 @@ This module EXTENDS Attitudes.lean:
 - Shows: Simple attitudes are a special case of Kratzer modality
 -/
 
-end Montague.Modality
+end Montague.Modal.ConversationalBackground
