@@ -45,11 +45,11 @@ The classic tests from Vendler (1957) and Dowty (1979):
 - Rothstein, S. (2004). Structuring Events.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Aspect
+import Linglib.Theories.Montague.Verb.Aspect
 
 namespace Phenomena.Aspect.Diagnostics
 
-open Montague.Lexicon.Aspect
+open Montague.Verb.Aspect
 
 -- ============================================================================
 -- Diagnostic Results

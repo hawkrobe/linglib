@@ -41,14 +41,14 @@ and thus can't be "allowed for" independently.
 
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Lexicon.ChangeOfState.Theory
-import Linglib.Theories.Montague.Lexicon.Aspect
+import Linglib.Theories.Montague.Verb.Aspect
 import Linglib.Phenomena.Presuppositions.Diagnostics
 
 namespace Montague.Projection.OntologicalPreconditions
 
 open Core.Presupposition
 open Montague.Lexicon.ChangeOfState
-open Montague.Lexicon.Aspect
+open Montague.Verb.Aspect
 open Phenomena.Presuppositions.Diagnostics
 
 -- ============================================================================
