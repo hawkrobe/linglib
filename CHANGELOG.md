@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.50.0] - 2025-02-01
+
+### Added
+- **Core/CausalBayesNet.lean**: Causal Bayes net infrastructure
+  - `CausalRelation`: ACausesC, CCausesA, Independent
+  - `NoisyOR`: Background rate and causal power parameterization
+  - `WorldState`: Probability distributions over atomic propositions A and C
+
+- **Montague/Sentence/Conditional/Basic.lean**: Compositional conditional semantics
+  - Material, strict, and variably strict conditionals
+  - Kratzer-style conditionals with modal base and ordering source
+
+- **Montague/Sentence/Conditional/Assertability.lean**: Probabilistic assertability
+  - `conditionalProbability`: P(C|A) computation
+  - `assertable`: Threshold-based assertability (default θ = 0.9)
+  - Missing-link detection and causal inference
+
+- **RSA/Implementations/GrusdtLassiterFranke2022.lean**: Conditional RSA model
+  - Utterances: literals, conjunction, conditional, likely-literals
+  - L0: Samples worlds where conditional is assertable
+  - L1: Infers both WorldState AND CausalRelation from utterances
+  - Grounding theorem: RSA derives meaning from Montague assertability
+
+- **Phenomena/Conditionals/Data.lean**: Theory-neutral conditional phenomena
+  - Conditional perfection (Geis & Zwicky 1971)
+  - Missing-link infelicity
+  - Douven's puzzle data
+  - Indicative/subjunctive split, biscuit conditionals
+
+- **Phenomena/GrusdtLassiterFranke2022/Data.lean**: Paper experimental data
+  - Experiment 1: Causal structure inference from conditionals
+  - Experiment 2: Conditional perfection rates
+  - Experiment 3: Assertability threshold (θ ≈ 0.9)
+  - Model fit statistics (r = 0.89-0.94)
+
 ## [0.49.0] - 2025-02-01
 
 ### Changed
