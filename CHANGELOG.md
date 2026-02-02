@@ -6,11 +6,26 @@
 - **Montague/Modal/Kratzer1981.lean**: Complete rewrite with full derivations from Kratzer (1981)
   - Correct subset-based ordering relation (was counting-based)
   - `ordering_reflexive`, `ordering_transitive`: Preorder properties PROVEN
+  - `kratzerPreorder`: **Mathlib Preorder instance** for ≤_A relation
+  - `ordering_transitive'`, `orderingEquiv_trans`: Use mathlib's `le_trans`
   - `totally_realistic_gives_T`: T axiom derived from realistic modal base
   - `D_axiom`: Seriality axiom □p → ◇p (non-empty best worlds)
   - `D_axiom_realistic`: D axiom for realistic bases
   - `K_axiom`: Distribution axiom □(p → q) → (□p → □q)
   - `duality`: Modal duality □p ↔ ¬◇¬p
+  - Frame correspondence theorems:
+    - `four_axiom`: □p → □□p (transitivity)
+    - `B_axiom`: p → □◇p (symmetry)
+    - `five_axiom`: ◇p → □◇p (Euclidean)
+    - `euclidean_reflexive_implies_symmetric`: T + 5 → B
+    - `euclidean_reflexive_implies_transitive`: T + 5 → 4
+    - `S5_satisfies_all`: S5 bases satisfy T, D, 4, B, 5
+  - Galois connection (semantic duality):
+    - `extension`: ext(A) = worlds satisfying all props in A
+    - `intension`: int(W) = props true at all worlds in W
+    - `galois_ext_to_int`, `galois_int_to_ext`: Adjunction properties
+    - `extension_antitone`, `intension_antitone`: Monotonicity
+    - `accessible_is_extension`: Accessibility as Galois extension
   - `comparative_poss_reflexive`: Comparative possibility reflexivity
   - Modal flavors as structures: `EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`
   - Conditionals as modal base restrictors (Kratzer p. 64-66)

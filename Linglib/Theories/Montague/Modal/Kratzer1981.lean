@@ -53,6 +53,7 @@ This avoids the Limit Assumption!
 
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Modal.Basic
+import Mathlib.Order.Basic
 
 namespace Montague.Modal.Kratzer1981
 
@@ -225,6 +226,114 @@ theorem ordering_is_preorder (A : List Prop') :
               atLeastAsGoodAs A u w = true) :=
   ⟨ordering_reflexive A, ordering_transitive A⟩
 
+-- ============================================================================
+-- PART 4b: Mathlib Preorder Instance
+-- ============================================================================
+
+/-!
+## Mathlib Preorder Instance
+
+We can formalize Kratzer's ordering as a proper mathlib `Preorder` instance.
+This gives us access to mathlib's extensive library of order-theoretic lemmas.
+
+Since the ordering depends on a parameter `A : List Prop'`, we define a function
+that produces a `Preorder World` for each choice of ordering source.
+-/
+
+/-- Convert Boolean ordering to Prop for mathlib compatibility. -/
+def atLeastAsGoodAs' (A : List Prop') (w z : World) : Prop :=
+  atLeastAsGoodAs A w z = true
+
+/-- Convert Boolean strict ordering to Prop. -/
+def strictlyBetter' (A : List Prop') (w z : World) : Prop :=
+  atLeastAsGoodAs A w z = true ∧ atLeastAsGoodAs A z w = false
+
+/--
+**Kratzer's ordering as a mathlib Preorder.**
+
+Given an ordering source A, this produces a `Preorder World` instance where:
+- `w ≤ z` means w is at least as good as z (w satisfies all A-props that z does)
+- `w < z` means w is strictly better (derived: w ≤ z ∧ ¬z ≤ w)
+
+This allows using mathlib's preorder lemmas (transitivity, antisymmetry of <, etc.)
+-/
+def kratzerPreorder (A : List Prop') : Preorder World where
+  le := atLeastAsGoodAs' A
+  le_refl w := ordering_reflexive A w
+  le_trans u v w huv hvw := ordering_transitive A u v w huv hvw
+
+/--
+**Using the Preorder: reflexivity via mathlib.**
+
+With the Preorder instance, we get `le_refl` from mathlib.
+-/
+theorem ordering_reflexive' (A : List Prop') (w : World) :
+    (kratzerPreorder A).le w w :=
+  (kratzerPreorder A).le_refl w
+
+/--
+**Using the Preorder: transitivity via mathlib.**
+
+With the Preorder instance and `letI`, we can use mathlib's `le_trans`.
+-/
+theorem ordering_transitive' (A : List Prop') (u v w : World)
+    (huv : (kratzerPreorder A).le u v)
+    (hvw : (kratzerPreorder A).le v w) :
+    (kratzerPreorder A).le u w := by
+  letI := kratzerPreorder A
+  exact le_trans huv hvw
+
+/--
+**Equivalence class under the ordering.**
+
+Two worlds are equivalent under ≤_A if they satisfy the same A-propositions.
+This is an equivalence relation (reflexive, symmetric, transitive).
+-/
+def orderingEquiv (A : List Prop') (w z : World) : Prop :=
+  (kratzerPreorder A).le w z ∧ (kratzerPreorder A).le z w
+
+/--
+**Ordering equivalence is an equivalence relation.**
+-/
+theorem orderingEquiv_refl (A : List Prop') (w : World) :
+    orderingEquiv A w w :=
+  ⟨(kratzerPreorder A).le_refl w, (kratzerPreorder A).le_refl w⟩
+
+theorem orderingEquiv_symm (A : List Prop') (w z : World)
+    (h : orderingEquiv A w z) : orderingEquiv A z w :=
+  ⟨h.2, h.1⟩
+
+theorem orderingEquiv_trans (A : List Prop') (u v w : World)
+    (huv : orderingEquiv A u v) (hvw : orderingEquiv A v w) :
+    orderingEquiv A u w := by
+  letI := kratzerPreorder A
+  exact ⟨le_trans huv.1 hvw.1, le_trans hvw.2 huv.2⟩
+
+-- ============================================================================
+-- PART 4c: Monotonicity with Mathlib
+-- ============================================================================
+
+/-!
+## Monotonicity Properties
+
+With the Preorder instance, we can state monotonicity properties using
+mathlib's `Monotone` and `Antitone` typeclasses.
+-/
+
+/--
+**Proposition satisfaction is antitone in worlds.**
+
+If w ≤_A z (w is at least as good as z), then every A-proposition
+satisfied by z is also satisfied by w. This is essentially the
+definition restated in terms of the preorder.
+-/
+theorem satisfaction_antitone (A : List Prop') (p : Prop') (hp : p ∈ A)
+    (w z : World) (h : (kratzerPreorder A).le w z) (hpz : p z = true) :
+    p w = true := by
+  unfold kratzerPreorder atLeastAsGoodAs' atLeastAsGoodAs satisfiedPropositions at h
+  simp only [List.all_eq_true, List.mem_filter] at h
+  exact h p ⟨hp, hpz⟩
+
 /--
 **Theorem 2: Empty ordering makes all worlds equivalent.**
 
@@ -237,6 +346,151 @@ theorem empty_ordering_all_equivalent (w z : World) :
     atLeastAsGoodAs [] w z = true ∧ atLeastAsGoodAs [] z w = true := by
   constructor <;> (unfold atLeastAsGoodAs satisfiedPropositions; simp)
 
+/--
+**Empty ordering: all worlds equivalent (preorder version).**
+
+When A = [], the preorder becomes trivial (all pairs related).
+-/
+theorem empty_ordering_trivial (w z : World) :
+    (kratzerPreorder []).le w z :=
+  (empty_ordering_all_equivalent w z).1
+
+/--
+**Empty ordering gives universal equivalence.**
+-/
+theorem empty_ordering_universal_equiv (w z : World) :
+    orderingEquiv [] w z :=
+  ⟨(empty_ordering_all_equivalent w z).1, (empty_ordering_all_equivalent w z).2⟩
+
+-- ============================================================================
+-- PART 4d: Galois Connection (Proposition-World Duality)
+-- ============================================================================
+
+/-!
+## Galois Connection: Semantic Duality
+
+The relationship between propositions and worlds exhibits a **Galois connection**
+structure, which is fundamental to possible worlds semantics.
+
+Given:
+- A set of propositions A (ordered by reverse inclusion ⊇)
+- A set of worlds W (ordered by inclusion ⊆)
+
+We have two functions:
+- **Extension**: ext(A) = ∩A = {w : ∀p ∈ A. p(w)} — worlds satisfying all props
+- **Intension**: int(W) = {p : ∀w ∈ W. p(w)} — props true at all worlds
+
+These form a Galois connection:
+  ext(A) ⊆ W  ↔  A ⊇ int(W)
+
+In Kratzer's framework:
+- The modal base f(w) determines accessible worlds via extension: ∩f(w)
+- The ordering source g(w) refines these via the preorder
+- Necessity (□) and possibility (◇) are adjoint operators
+
+This duality underlies:
+- The entailment relation between propositions
+- The accessibility relation between worlds
+- Modal duality: □p ↔ ¬◇¬p
+-/
+
+/--
+**Extension**: Given propositions, compute the worlds where all hold.
+
+ext(A) = {w : ∀p ∈ A. p(w)}
+
+This is the "downward" direction of the Galois connection.
+-/
+def extension (props : List Prop') : List World :=
+  propIntersection props
+
+/--
+**Intension**: Given worlds, compute propositions true at all of them.
+
+int(W) = {p : ∀w ∈ W. p(w)}
+
+This is the "upward" direction of the Galois connection.
+For finite worlds and decidable propositions, we compute this relative to
+a given universe of propositions.
+-/
+def intension (worlds : List World) (props : List Prop') : List Prop' :=
+  props.filter fun p => worlds.all p
+
+/--
+**Galois connection property (one direction):**
+
+If ext(A) ⊆ W, then int(W) ⊆ A (for props in A).
+
+More precisely: if all worlds satisfying A are in W, then every proposition
+true at all of W is a consequence of A.
+-/
+theorem galois_ext_to_int (A : List Prop') (W : List World)
+    (hExt : ∀ w, w ∈ extension A → w ∈ W)
+    (p : Prop') (hp : p ∈ intension W A) :
+    ∀ w, w ∈ extension A → p w = true := by
+  intro w hw
+  -- w ∈ extension A means w satisfies all of A
+  -- p ∈ intension W A means p is true at all of W
+  -- Since w ∈ extension A → w ∈ W, we have w ∈ W
+  have hwW : w ∈ W := hExt w hw
+  -- intension means p is true at all worlds in W
+  unfold intension at hp
+  simp only [List.mem_filter, List.all_eq_true] at hp
+  exact hp.2 w hwW
+
+/--
+**Galois connection property (other direction):**
+
+If int(W) ⊇ A (all of A is true at all of W), then ext(A) ⊇ W.
+
+More precisely: if all propositions in A are true at all worlds in W,
+then W ⊆ ext(A).
+-/
+theorem galois_int_to_ext (A : List Prop') (W : List World)
+    (hInt : ∀ p, p ∈ A → ∀ w, w ∈ W → p w = true)
+    (w : World) (hw : w ∈ W) :
+    w ∈ extension A := by
+  unfold extension propIntersection
+  simp only [List.mem_filter, List.all_eq_true]
+  constructor
+  · cases w <;> simp [allWorlds]
+  · intro p hp
+    exact hInt p hp w hw
+
+/--
+**Monotonicity of extension**: More propositions → fewer worlds.
+
+If A ⊆ B (as sets), then ext(B) ⊆ ext(A).
+This is the antitonicity in the Galois connection.
+-/
+theorem extension_antitone (A B : List Prop') (w : World)
+    (hSub : ∀ p, p ∈ A → p ∈ B)
+    (hw : w ∈ extension B) :
+    w ∈ extension A := by
+  unfold extension propIntersection at *
+  simp only [List.mem_filter, List.all_eq_true] at *
+  constructor
+  · exact hw.1
+  · intro p hp
+    exact hw.2 p (hSub p hp)
+
+/--
+**Monotonicity of intension**: Fewer worlds → more propositions.
+
+If W ⊆ V (W has fewer worlds), then int(V) ⊆ int(W).
+Propositions true at all of V are also true at all of W (since W ⊆ V).
+-/
+theorem intension_antitone (W V : List World) (A : List Prop') (p : Prop')
+    (hSub : ∀ w, w ∈ W → w ∈ V)
+    (hp : p ∈ intension V A) :
+    p ∈ intension W A := by
+  unfold intension at *
+  simp only [List.mem_filter, List.all_eq_true] at *
+  constructor
+  · exact hp.1
+  · intro w hw
+    exact hp.2 w (hSub w hw)
+
 -- ============================================================================
 -- PART 5: Accessible Worlds and Best Worlds
 -- ============================================================================
@@ -248,6 +502,15 @@ These are exactly the worlds in ∩f(w) - worlds compatible with all facts in f(
 -/
 def accessibleWorlds (f : ModalBase) (w : World) : List World :=
   propIntersection (f w)
+
+/--
+**Accessible worlds as Galois extension.**
+
+The accessible worlds from w are exactly the extension of the modal base f(w).
+This connects Kratzer's accessibility to the Galois connection framework.
+-/
+theorem accessible_is_extension (f : ModalBase) (w : World) :
+    accessibleWorlds f w = extension (f w) := rfl
 
 /--
 **Accessibility predicate**: w' is accessible from w iff w' ∈ ∩f(w).
@@ -506,6 +769,227 @@ theorem D_axiom_realistic (f : ModalBase) (hReal : isRealistic f)
   exact D_axiom f emptyBackground p w hBestSerial hNec
 
 -- ============================================================================
+-- PART 8b: Additional Frame Correspondence (4, B, 5 Axioms)
+-- ============================================================================
+
+/-!
+## Additional Frame Correspondence Theorems
+
+The remaining axioms of modal logic correspond to additional properties
+of the accessibility relation. With Kratzer semantics using empty ordering,
+accessibility is determined by the modal base: w' accessible from w iff w' ∈ ∩f(w).
+
+| Axiom | Formula | Property | Condition on f |
+|-------|---------|----------|----------------|
+| 4 | □p → □□p | Transitivity | ∩f(w') ⊆ ∩f(w) for w' ∈ ∩f(w) |
+| B | p → □◇p | Symmetry | w ∈ ∩f(w') for w' ∈ ∩f(w) |
+| 5 | ◇p → □◇p | Euclidean | ∩f(w') = ∩f(w'') for w',w'' ∈ ∩f(w) |
+-/
+
+/--
+**Transitive accessibility**: if w' is accessible from w, then all worlds
+accessible from w' are also accessible from w.
+
+∀w,w',w''. w' ∈ ∩f(w) ∧ w'' ∈ ∩f(w') → w'' ∈ ∩f(w)
+
+Equivalently: ∩f(w') ⊆ ∩f(w) for all w' ∈ ∩f(w).
+-/
+def isTransitiveAccess (f : ModalBase) : Prop :=
+  ∀ w w' w'' : World,
+    w' ∈ accessibleWorlds f w →
+    w'' ∈ accessibleWorlds f w' →
+    w'' ∈ accessibleWorlds f w
+
+/--
+**Symmetric accessibility**: if w' is accessible from w, then w is accessible from w'.
+
+∀w,w'. w' ∈ ∩f(w) → w ∈ ∩f(w')
+-/
+def isSymmetricAccess (f : ModalBase) : Prop :=
+  ∀ w w' : World,
+    w' ∈ accessibleWorlds f w →
+    w ∈ accessibleWorlds f w'
+
+/--
+**Euclidean accessibility**: if w' and w'' are both accessible from w,
+then w'' is accessible from w' (and vice versa).
+
+∀w,w',w''. w' ∈ ∩f(w) ∧ w'' ∈ ∩f(w) → w'' ∈ ∩f(w')
+
+This means all accessible worlds have the same "view" of accessibility.
+-/
+def isEuclideanAccess (f : ModalBase) : Prop :=
+  ∀ w w' w'' : World,
+    w' ∈ accessibleWorlds f w →
+    w'' ∈ accessibleWorlds f w →
+    w'' ∈ accessibleWorlds f w'
+
+/--
+**4 Axiom (Transitivity)**: □p → □□p
+
+If p is necessary at w, then "p is necessary" is necessary at w.
+
+Proof: Assume □p at w and transitive accessibility. For any accessible w',
+we need □p at w'. For any w'' accessible from w', by transitivity w'' is
+accessible from w. Since □p at w, p holds at w''. Thus p holds at all
+worlds accessible from w', so □p at w'. ∎
+-/
+theorem four_axiom (f : ModalBase) (p : Prop') (w : World)
+    (hTrans : isTransitiveAccess f)
+    (hNec : necessity f emptyBackground p w = true) :
+    necessity f emptyBackground (necessity f emptyBackground p) w = true := by
+  -- With empty ordering, bestWorlds = accessibleWorlds
+  have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
+    fun v => empty_ordering_simple f v
+  -- Unfold the goal
+  unfold necessity
+  rw [hSimple w]
+  apply List.all_eq_true.mpr
+  intro w' hw'Acc
+  -- Need to show: necessity f emptyBackground p w' = true
+  -- Goal is now (bestWorlds f emptyBackground w').all p = true
+  -- Rewrite using hSimple w'
+  show (bestWorlds f emptyBackground w').all p = true
+  rw [hSimple w']
+  apply List.all_eq_true.mpr
+  intro w'' hw''Acc
+  -- w'' is accessible from w' which is accessible from w
+  -- By transitivity, w'' is accessible from w
+  have hw''AccW : w'' ∈ accessibleWorlds f w := hTrans w w' w'' hw'Acc hw''Acc
+  -- Since □p at w, p holds at all worlds accessible from w
+  unfold necessity at hNec
+  rw [hSimple w] at hNec
+  exact List.all_eq_true.mp hNec w'' hw''AccW
+
+/--
+**B Axiom (Symmetry)**: p → □◇p
+
+If p holds at w, then "p is possible" is necessary at w.
+
+Proof: Assume p at w and symmetric accessibility. For any accessible w',
+we need ◇p at w'. By symmetry, w is accessible from w'. Since p holds at w,
+there exists an accessible world from w' (namely w) where p holds. Thus ◇p at w'. ∎
+-/
+theorem B_axiom (f : ModalBase) (p : Prop') (w : World)
+    (hSym : isSymmetricAccess f)
+    (hP : p w = true) :
+    necessity f emptyBackground (possibility f emptyBackground p) w = true := by
+  -- With empty ordering, bestWorlds = accessibleWorlds
+  have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
+    fun v => empty_ordering_simple f v
+  -- Unfold the goal
+  unfold necessity
+  rw [hSimple w]
+  apply List.all_eq_true.mpr
+  intro w' hw'Acc
+  -- Need to show: possibility f emptyBackground p w' = true
+  unfold possibility
+  rw [hSimple w']
+  apply List.any_eq_true.mpr
+  -- w is accessible from w' by symmetry
+  have hwAccW' : w ∈ accessibleWorlds f w' := hSym w w' hw'Acc
+  -- p holds at w
+  exact ⟨w, hwAccW', hP⟩
+
+/--
+**5 Axiom (Euclidean)**: ◇p → □◇p
+
+If p is possible at w, then "p is possible" is necessary at w.
+
+Proof: Assume ◇p at w and Euclidean accessibility. There exists w'' accessible
+from w where p holds. For any accessible w', we need ◇p at w'. By Euclidean
+property, w'' is accessible from w' (since both w' and w'' are accessible from w).
+Since p holds at w'', ◇p holds at w'. ∎
+-/
+theorem five_axiom (f : ModalBase) (p : Prop') (w : World)
+    (hEuc : isEuclideanAccess f)
+    (hPoss : possibility f emptyBackground p w = true) :
+    necessity f emptyBackground (possibility f emptyBackground p) w = true := by
+  -- With empty ordering, bestWorlds = accessibleWorlds
+  have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
+    fun v => empty_ordering_simple f v
+  -- From ◇p at w, get a witness w'' where p holds
+  unfold possibility at hPoss
+  rw [hSimple w] at hPoss
+  obtain ⟨w'', hw''Acc, hPw''⟩ := List.any_eq_true.mp hPoss
+  -- Unfold the goal
+  unfold necessity
+  rw [hSimple w]
+  apply List.all_eq_true.mpr
+  intro w' hw'Acc
+  -- Need to show: possibility f emptyBackground p w' = true
+  unfold possibility
+  rw [hSimple w']
+  apply List.any_eq_true.mpr
+  -- w'' is accessible from w' by Euclidean property
+  have hw''AccW' : w'' ∈ accessibleWorlds f w' := hEuc w w' w'' hw'Acc hw''Acc
+  exact ⟨w'', hw''AccW', hPw''⟩
+
+/--
+**S4 = K + T + 4**: Reflexive and transitive accessibility.
+
+A modal base gives S4 if it is realistic (T) and has transitive accessibility (4).
+-/
+def isS4Base (f : ModalBase) : Prop :=
+  isRealistic f ∧ isTransitiveAccess f
+
+/--
+**S5 = K + T + 5**: Reflexive and Euclidean accessibility.
+
+A modal base gives S5 if it is realistic (T) and has Euclidean accessibility (5).
+
+Note: Reflexive + Euclidean implies Symmetric and Transitive.
+-/
+def isS5Base (f : ModalBase) : Prop :=
+  isRealistic f ∧ isEuclideanAccess f
+
+/--
+**Euclidean + Reflexive implies Symmetric.**
+
+Proof: Assume w' ∈ ∩f(w). By reflexivity, w ∈ ∩f(w). By Euclidean (w,w',w),
+we get w ∈ ∩f(w'). ∎
+-/
+theorem euclidean_reflexive_implies_symmetric (f : ModalBase)
+    (hReal : isRealistic f) (hEuc : isEuclideanAccess f) :
+    isSymmetricAccess f := by
+  intro w w' hw'Acc
+  -- w is accessible from w (reflexivity)
+  have hwAcc : w ∈ accessibleWorlds f w := realistic_gives_reflexive_access f hReal w
+  -- By Euclidean: w' ∈ ∩f(w) and w ∈ ∩f(w) implies w ∈ ∩f(w')
+  exact hEuc w w' w hw'Acc hwAcc
+
+/--
+**Euclidean + Reflexive implies Transitive.**
+
+Proof: Assume w' ∈ ∩f(w) and w'' ∈ ∩f(w'). By reflexivity, w' ∈ ∩f(w').
+By Euclidean (w', w', w''), we get w'' ∈ ∩f(w'). But we already have that.
+Actually, we need a different approach:
+By symmetry (derived above), w ∈ ∩f(w'). By Euclidean (w', w, w''),
+we get w'' ∈ ∩f(w). ∎
+-/
+theorem euclidean_reflexive_implies_transitive (f : ModalBase)
+    (hReal : isRealistic f) (hEuc : isEuclideanAccess f) :
+    isTransitiveAccess f := by
+  intro w w' w'' hw'Acc hw''AccW'
+  -- By symmetry (derived from Euclidean + reflexive), w ∈ ∩f(w')
+  have hSym := euclidean_reflexive_implies_symmetric f hReal hEuc
+  have hwAccW' : w ∈ accessibleWorlds f w' := hSym w w' hw'Acc
+  -- By Euclidean at w': w ∈ ∩f(w') and w'' ∈ ∩f(w') implies w'' ∈ ∩f(w)
+  -- hEuc w' w w'' : w ∈ acc(w') → w'' ∈ acc(w') → w'' ∈ acc(w)
+  exact hEuc w' w w'' hwAccW' hw''AccW'
+
+/--
+**S5 bases satisfy all axioms: T, D, 4, B, 5.**
+-/
+theorem S5_satisfies_all (f : ModalBase) (hS5 : isS5Base f) :
+    isRealistic f ∧ isSymmetricAccess f ∧ isTransitiveAccess f ∧ isEuclideanAccess f := by
+  obtain ⟨hReal, hEuc⟩ := hS5
+  exact ⟨hReal,
+         euclidean_reflexive_implies_symmetric f hReal hEuc,
+         euclidean_reflexive_implies_transitive f hReal hEuc,
+         hEuc⟩
+
+-- ============================================================================
 -- PART 9: Comparative Possibility (Kratzer p. 41)
 -- ============================================================================
 
@@ -677,6 +1161,22 @@ def strictImplication (p q : Prop') : Bool :=
 - `ordering_reflexive`: ∀A,w. w ≤_A w
 - `ordering_transitive`: ∀A,u,v,w. u ≤_A v → v ≤_A w → u ≤_A w
 - `ordering_is_preorder`: Combines the above
+- `kratzerPreorder`: **Mathlib Preorder instance** for ≤_A
+
+### Mathlib Integration
+- `kratzerPreorder`: Proper `Preorder World` instance parameterized by A
+- `ordering_transitive'`: Uses mathlib's `le_trans`
+- `orderingEquiv_trans`: Uses mathlib's transitivity lemmas
+- `satisfaction_antitone`: Antitonicity of proposition satisfaction
+
+### Galois Connection (Semantic Duality)
+- `extension`: ext(A) = {w : ∀p ∈ A. p(w)} — worlds satisfying all props
+- `intension`: int(W) = {p : ∀w ∈ W. p(w)} — props true at all worlds
+- `galois_ext_to_int`: ext(A) ⊆ W → int(W) ⊆ A (for A-props)
+- `galois_int_to_ext`: A ⊆ int(W) → W ⊆ ext(A)
+- `extension_antitone`: More props → fewer worlds
+- `intension_antitone`: Fewer worlds → more props
+- `accessible_is_extension`: Accessibility = Galois extension
 
 ### Empty Ordering (Theorems 2-3)
 - `empty_ordering_all_equivalent`: A=∅ implies all worlds equivalent
@@ -691,6 +1191,15 @@ def strictImplication (p q : Prop') : Bool :=
 - `duality`: □p ↔ ¬◇¬p
 - `K_axiom`: □(p → q) → (□p → □q)
 
+### Frame Correspondence Theorems
+- `D_axiom`: □p → ◇p (seriality)
+- `four_axiom`: □p → □□p (transitivity)
+- `B_axiom`: p → □◇p (symmetry)
+- `five_axiom`: ◇p → □◇p (Euclidean)
+- `euclidean_reflexive_implies_symmetric`: T + 5 → B
+- `euclidean_reflexive_implies_transitive`: T + 5 → 4
+- `S5_satisfies_all`: S5 bases satisfy T, D, 4, B, 5
+
 ### Comparative Possibility (Theorem 7)
 - `comparative_poss_reflexive`: p is at least as good a possibility as p
 
@@ -699,16 +1208,20 @@ def strictImplication (p q : Prop') : Bool :=
 |---------|---------|--------|
 | 2.3 | Basic logical notions | ✓ Defined |
 | 2.3 | Conversational backgrounds | ✓ Defined |
-| 2.4 | Ordering relation | ✓ Defined + Preorder PROVEN |
+| 2.4 | Ordering relation | ✓ Defined + Mathlib Preorder |
 | 2.4 | Necessity/Possibility | ✓ Defined + Duality PROVEN |
 | 2.4 | Comparative possibility | ✓ Defined + Reflexivity PROVEN |
 | 2.5-2.7 | Modal flavors | ✓ Structured |
 | 2.9 | Conditionals | ✓ Defined |
+| Frame | T, D, K axioms | ✓ PROVEN |
+| Frame | 4, B, 5 axioms | ✓ PROVEN |
+| Galois | Extension/Intension | ✓ PROVEN |
 
-This formalization differs from the earlier files by:
-1. Using Kratzer's CORRECT subset-based ordering (not counting)
-2. PROVING the preorder properties (not just computing)
-3. DERIVING the correspondence theorems (not just checking)
+This formalization:
+1. Uses Kratzer's CORRECT subset-based ordering (not counting)
+2. PROVES preorder properties via **mathlib Preorder instance**
+3. DERIVES frame correspondence theorems with full argumentation
+4. Establishes **Galois connection** for semantic duality
 -/
 
 -- ============================================================================
