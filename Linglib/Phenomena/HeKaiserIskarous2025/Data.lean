@@ -35,6 +35,8 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.FinEnum
 
 namespace HeKaiserIskarous2025
 
@@ -50,6 +52,13 @@ inductive HKIState where
   | pos : HKIState  -- A has B
   | neg : HKIState  -- A doesn't have B
   deriving DecidableEq, BEq, Repr, Inhabited
+
+instance : Fintype HKIState where
+  elems := {.pos, .neg}
+  complete := fun x => by cases x <;> simp
+
+instance : FinEnum HKIState :=
+  FinEnum.ofList [.pos, .neg] (fun x => by cases x <;> simp)
 
 /-- All states -/
 def allStates : List HKIState := [.pos, .neg]
@@ -70,6 +79,13 @@ inductive HKIUtterance where
   | uNeg : HKIUtterance   -- "A doesn't have B"
   | uNull : HKIUtterance  -- Say nothing
   deriving DecidableEq, BEq, Repr, Inhabited
+
+instance : Fintype HKIUtterance where
+  elems := {.uPos, .uNeg, .uNull}
+  complete := fun x => by cases x <;> simp
+
+instance : FinEnum HKIUtterance :=
+  FinEnum.ofList [.uPos, .uNeg, .uNull] (fun x => by cases x <;> simp)
 
 /-- All utterances -/
 def allUtterances : List HKIUtterance := [.uPos, .uNeg, .uNull]

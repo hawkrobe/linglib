@@ -1,22 +1,78 @@
 /-
 # RSA Eval Helpers
 
-List-based computation helpers for #eval demonstrations.
+List-based computation helpers for RSA implementations.
 
-This module provides functions that work with explicit List enumerations,
-enabling `#eval` to display RSA computation results.
+## When to Use This Module vs RSAScenario
 
-## Usage
+### Use `RSAScenario` + `scenario.evalL0/S1/L1` when:
 
+- You have a **fixed scenario** with static semantics and priors
+- All latent types are `Unit` (basic RSA with just utterances and worlds)
+- You want the cleanest API: `scenario.evalL1 u`
+
+Example:
 ```lean
-import Linglib.Theories.RSA.Core.Eval
+def scenario : RSAScenario MyUtterance MyWorld := RSAScenario.basicBool
+  (satisfies := fun w u => mySemantics u w)
+  (prior := fun _ => 1)
+  ...
 
--- Define your types with Fintype instances
--- Use RSA.Eval.* functions for #eval demonstrations
+#eval scenario.evalL1 .someUtterance  -- Clean!
 ```
 
-Note: For core logic and proofs, use the Fintype-based `RSA.*` functions
-from `Linglib.Theories.RSA.Core.Basic`.
+### Use `RSA.Eval.*` functions when:
+
+- You have **runtime parameters** (varying priors, alphas, configs)
+- You need **latent dimensions** (Interp, Lexicon, BeliefState, Goal)
+- You need specialized computations (L1_world, L1_interp, L1_goal, etc.)
+
+Example:
+```lean
+def runL1 (cfg : MyConfig) (u : Utterance) :=
+  RSA.Eval.basicL1 allUtterances allWorlds
+    mySemantics cfg.prior cfg.alpha cfg.cost u
+```
+
+## Future API Vision
+
+The long-term goal is to extend `RSAScenario` methods to handle latent dimensions:
+
+```lean
+-- Current (requires Unit latent types):
+scenario.evalL1 u
+
+-- Future (marginalize over latent dimensions):
+scenario.evalL1_world u        -- marginalize to World
+scenario.evalL1_interp u       -- marginalize to Interp
+scenario.evalL1_goal u         -- marginalize to Goal
+scenario.evalL1_joint u        -- full joint distribution
+```
+
+This would allow scenarios with non-Unit latent types to use the clean API:
+```lean
+def ambiguousScenario : RSAScenario Utterance World := RSAScenario.ambiguous
+  (I := ScopeConfig)
+  (φ := scopeSemantics)
+  ...
+
+#eval ambiguousScenario.evalL1_world .someUtterance   -- Future!
+#eval ambiguousScenario.evalL1_interp .someUtterance  -- Future!
+```
+
+## Current Functions
+
+### Basic RSA (no latent dimensions)
+- `basicL0`, `basicS0`, `basicS1`, `basicL1` - pass lists, priors, semantics directly
+
+### Full RSA (with latent dimensions)
+- `L0`, `S1`, `L1_world`, `L1_interp`, `L1_goal` - explicit enumeration of all dimensions
+
+### QUD-Sensitive RSA
+- `qudL1_world` - specialized for Goal/QUD inference
+
+### Utilities
+- `normalize`, `marginalize`, `getScore`, `sumScores`
 -/
 
 import Linglib.Theories.RSA.Core.Basic
