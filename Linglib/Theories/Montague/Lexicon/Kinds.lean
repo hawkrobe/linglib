@@ -311,13 +311,6 @@ structure BlockingPrinciple where
   /-- Whether ∩ (kind formation) is blocked -/
   downBlocked : Bool := False  -- Never blocked in natural languages
 
-/-- English blocking configuration -/
-def englishBlocking : BlockingPrinciple :=
-  { determiners := ["the", "a", "some", "every", "no"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
-
 /-- Bare argument is licensed iff the required type shift is not blocked -/
 def bareArgumentLicensed (bp : BlockingPrinciple) (nounType : NounType) : Bool :=
   match nounType with
@@ -348,14 +341,28 @@ def downDefinedFor (nounType : NounType) (isPlural : Bool) : Bool :=
   | .mass => true           -- Mass nouns can always use ∩
   | .count => isPlural      -- Count nouns can use ∩ only if plural
 
-/-- Why "Dogs bark" is grammatical but "*Dog barks" is not -/
+/--
+Why bare plurals are OK but bare singulars are not (in languages with articles).
+
+Given a language where:
+- ι is blocked (has "the")
+- ∃ is blocked for singulars (has "a")
+- ∩ is not blocked
+
+Then:
+- Bare plurals OK: ∩ is defined and not blocked
+- Bare singulars OUT: ∩ is undefined, and ι/∃ are blocked
+
+Language-specific configurations live in Fragments/{Language}/Nouns.lean.
+-/
 theorem bare_plural_ok_bare_singular_not (bp : BlockingPrinciple)
-    (hEnglish : bp = englishBlocking) :
+    (hIota : bp.iotaBlocked = true)
+    (hExists : bp.existsBlocked = true) :
     downDefinedFor .count true = true ∧
     downDefinedFor .count false = false ∧
     bp.iotaBlocked = true ∧
     bp.existsBlocked = true := by
-  simp [hEnglish, englishBlocking, downDefinedFor]
+  simp [hIota, hExists, downDefinedFor]
 
 -- ============================================================================
 -- Scopelessness of Bare Plurals

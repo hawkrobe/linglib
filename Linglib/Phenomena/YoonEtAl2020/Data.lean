@@ -5,7 +5,7 @@ Empirical data structures for "Polite Speech Emerges From Competing Social Goals
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Fragments.Scales
+import Linglib.Fragments.English.Scales
 
 /-!
 
@@ -107,29 +107,29 @@ The evaluative adjectives used here form a Horn scale.
 
 ⟨terrible, bad, good, amazing⟩
 
-This connects to `Scales.terribleAmazing` in Fragments/Scales.lean.
+This connects to `Fragments.English.Scales.terribleAmazing` in Fragments/Fragments.English.Scales.lean.
 The scale structure is important for:
 1. Scalar implicatures ("good" implicates "not amazing")
 2. Negation semantics ("not terrible" → could be bad, good, or amazing)
 -/
-def evalScale : Scales.Scale Scales.EvalExpr := Scales.terribleAmazing
+def evalScale : Fragments.English.Scales.Scale Fragments.English.Scales.EvalExpr := Fragments.English.Scales.terribleAmazing
 
 /-- Convert local Adjective to fragment EvalExpr -/
-def Adjective.toEvalExpr : Adjective → Scales.EvalExpr
+def Adjective.toEvalExpr : Adjective → Fragments.English.Scales.EvalExpr
   | .terrible => .terrible
   | .bad => .bad
   | .good => .good
   | .amazing => .amazing
 
 /-- Convert fragment EvalExpr to local Adjective -/
-def Adjective.fromEvalExpr : Scales.EvalExpr → Adjective
+def Adjective.fromEvalExpr : Fragments.English.Scales.EvalExpr → Adjective
   | .terrible => .terrible
   | .bad => .bad
   | .good => .good
   | .amazing => .amazing
 
 /-- Convert local Utterance to fragment EvalUtterance -/
-def Utterance.toEvalUtterance : Utterance → Scales.EvalUtterance
+def Utterance.toEvalUtterance : Utterance → Fragments.English.Scales.EvalUtterance
   | .terrible => .pos .terrible
   | .bad => .pos .bad
   | .good => .pos .good
@@ -141,7 +141,7 @@ def Utterance.toEvalUtterance : Utterance → Scales.EvalUtterance
 
 /-- Verify our utterances match the fragment utterances -/
 theorem utterances_match_fragments :
-    allUtterances.length = Scales.allEvalUtterances.length := by native_decide
+    allUtterances.length = Fragments.English.Scales.allEvalUtterances.length := by native_decide
 
 /-- The scale has 4 levels (terrible < bad < good < amazing) -/
 theorem evalScale_has_4_levels :

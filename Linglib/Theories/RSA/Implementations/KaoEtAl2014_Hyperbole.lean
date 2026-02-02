@@ -45,11 +45,11 @@ The literal meaning of "fifty dollars" is `numeralExact 50 price` - the price eq
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Fragments.Degrees
+import Linglib.Theories.RSA.Domains.Degrees
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA.Eval Degrees Montague.Lexicon.Degrees
+open RSA.Eval RSA.Domains.Degrees Montague.Lexicon.Degrees
 
 -- ============================================================================
 -- Domain: Items, Prices, and Affects

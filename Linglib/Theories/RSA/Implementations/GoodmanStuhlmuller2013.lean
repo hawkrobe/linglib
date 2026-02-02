@@ -20,7 +20,7 @@ knowledge state affects interpretation.
    - Partial access: implicature canceled
 -/
 
-import Linglib.Fragments.Quantities
+import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Theories.Montague.Lexicon.Numerals.Compare
 import Linglib.Theories.RSA.Core.Eval
@@ -28,7 +28,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.GoodmanStuhlmuller2013
 
-open RSA Quantity RSA.Eval
+open RSA RSA.Domains.Quantity RSA.Eval
 
 -- ============================================================================
 -- PART 1: Basic Scalar Implicature (Full Knowledge)
@@ -893,8 +893,8 @@ This is true iff at least one entity satisfies both P and VP.
 In our simplified model: true when count ≥ 1.
 -/
 theorem some_meaning_from_montague (n : Nat) (w : Fin (n + 1)) :
-    Quantity.meaning n .some_ w ↔ w.val ≥ 1 := by
-  simp [Quantity.meaning]
+    RSA.Domains.Quantity.meaning n .some_ w ↔ w.val ≥ 1 := by
+  simp [RSA.Domains.Quantity.meaning]
 
 /--
 The meaning of "all P VP" = ∀x. P(x) → VP(x)
@@ -902,8 +902,8 @@ In a model where all P-things are VP-things, this is true.
 In our simplified model: true when count = n (all have the property).
 -/
 theorem all_meaning_from_montague (n : Nat) (w : Fin (n + 1)) :
-    Quantity.meaning n .all w ↔ w.val = n := by
-  simp [Quantity.meaning, beq_iff_eq]
+    RSA.Domains.Quantity.meaning n .all w ↔ w.val = n := by
+  simp [RSA.Domains.Quantity.meaning, beq_iff_eq]
 
 /--
 The scalar implicature emerges because:
@@ -917,9 +917,9 @@ from the compositional Montague semantics of quantifiers.
 -/
 theorem scalar_implicature_grounded :
     -- "some" is true in more worlds than "all"
-    (Quantity.allWorlds 3).filter (Quantity.meaning 3 .some_) =
+    (RSA.Domains.Quantity.allWorlds 3).filter (RSA.Domains.Quantity.meaning 3 .some_) =
     [⟨1, by omega⟩, ⟨2, by omega⟩, ⟨3, by omega⟩] ∧
-    (Quantity.allWorlds 3).filter (Quantity.meaning 3 .all) =
+    (RSA.Domains.Quantity.allWorlds 3).filter (RSA.Domains.Quantity.meaning 3 .all) =
     [⟨3, by omega⟩] := by
   native_decide
 

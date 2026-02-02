@@ -60,7 +60,7 @@ This implementation connects to the broader RSA ecosystem:
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Noise
-import Linglib.Fragments.ReferenceGames
+import Linglib.Theories.RSA.Domains.ReferenceGames
 
 namespace RSA.Implementations.WaldonDegen2021
 

@@ -61,10 +61,10 @@ import Linglib.Core.Softmax.Limits
 import Linglib.Core.Softmax.MaxEntropy
 
 -- Fragments (pre-built RSA domains)
-import Linglib.Fragments.ReferenceGames
-import Linglib.Fragments.Quantities
-import Linglib.Fragments.Scales
-import Linglib.Fragments.Degrees
+import Linglib.Theories.RSA.Domains.ReferenceGames
+import Linglib.Theories.RSA.Domains.Quantities
+import Linglib.Fragments.English.Scales
+import Linglib.Theories.RSA.Domains.Degrees
 
 -- RSA Core and Extensions
 import Linglib.Theories.RSA.Core.Basic

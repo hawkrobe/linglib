@@ -23,7 +23,7 @@ Example: "Every horse didn't jump"
 ## Usage
 
 ```lean
-import Linglib.Fragments.Scope
+import Linglib.Theories.RSA.Domains.Scope
 
 -- "Every X didn't VP" with 3 entities
 def scenario := Scope.everyNotScenario 3
@@ -43,7 +43,7 @@ import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Derivation.Scope
 import Mathlib.Data.Rat.Defs
 
-namespace Scope
+namespace RSA.Domains.Scope
 
 open Montague.Derivation.Scope (ScopeConfig)
 
@@ -206,4 +206,4 @@ def l1_interp (n : Nat) (u : ScopeUtt) : List (Reading × ℚ) :=
 #eval everyNotMeaning 3 .surface (Outcome.some 3 1)  -- false
 #eval everyNotMeaning 3 .inverse (Outcome.some 3 1)  -- true
 
-end Scope
+end RSA.Domains.Scope

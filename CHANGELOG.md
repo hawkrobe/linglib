@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.49.0] - 2025-02-01
+
+### Changed
+- **Fragments reorganization**: Language-specific content only
+  - Moved `Fragments/Determiners.lean` → `Fragments/English/Determiners.lean`
+  - Moved `Fragments/Scales.lean` → `Fragments/English/Scales.lean`
+  - Moved `Fragments/Pronouns.lean` → `Fragments/English/Pronouns.lean`
+  - Moved `Fragments/FunctionWords.lean` → `Fragments/English/FunctionWords.lean`
+  - Deleted generic `Fragments/Nouns.lean` (each language has its own)
+
+- **RSA Domains**: Moved RSA-specific infrastructure to `Theories/RSA/Domains/`
+  - Moved `Fragments/Quantities.lean` → `Theories/RSA/Domains/Quantities.lean`
+  - Moved `Fragments/ReferenceGames.lean` → `Theories/RSA/Domains/ReferenceGames.lean`
+  - Moved `Fragments/QUD.lean` → `Theories/RSA/Domains/QUD.lean`
+  - Moved `Fragments/Scope.lean` → `Theories/RSA/Domains/Scope.lean`
+  - Moved `Fragments/Degrees.lean` → `Theories/RSA/Domains/Degrees.lean`
+  - Moved `Fragments/LexicalAmbiguity.lean` → `Theories/RSA/Domains/LexicalAmbiguity.lean`
+
+### Added
+- **Fragments/English/Nouns.lean**: English-specific NP with blocking configuration
+- **Fragments/Mandarin/Nouns.lean**: Mandarin NP with classifiers, no number
+- **Fragments/Japanese/Nouns.lean**: Japanese NP with case particles
+- **Fragments/French/Nouns.lean**: French NP with gender and partitive determiners
+
 ## [0.48.0] - 2025-02-01
 
 ### Added
@@ -16,9 +40,9 @@
 
 - **Fragments/Nouns.lean**: NP structure with bare plural tracking
   - `NP` structure: noun + number + isBare + optional determiner
-  - `NP.isBarePlural`, `NP.isBareMass`, `NP.isKindDenoting`
-  - `NP.isBareSingular` for detecting ungrammatical bare singulars
-  - Constructors: `barePlural`, `bareMass`, `theNP`, `aNP`
+  - `NP.isBarePlural`, `NP.isBareMass` predicates
+  - Constructors: `barePlural`, `bareMass`, `theNP`, `aNP`, `withDet`
+  - Theory-neutral: no grammaticality judgments (those belong in Phenomena/Theories)
 
 ## [0.47.0] - 2025-02-01
 

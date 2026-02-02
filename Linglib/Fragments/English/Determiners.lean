@@ -1,7 +1,7 @@
 /-
-# Determiner and Quantifier Lexicon
+# English Determiner and Quantifier Lexicon
 
-Single source of truth for determiners and quantifiers with:
+Single source of truth for English determiners and quantifiers with:
 - Syntactic properties (qforce, number, mass compatibility)
 - Semantic properties (monotonicity, GQT threshold, PT prototype)
 - Scale membership
@@ -18,7 +18,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
-namespace Fragments.Determiners
+namespace Fragments.English.Determiners
 
 -- ============================================================================
 -- Basic Types
@@ -235,12 +235,12 @@ instance : Fintype QuantityWord where
 
 /-- Get the lexical entry for a quantity word -/
 def QuantityWord.entry : QuantityWord → QuantifierEntry
-  | .none_ => Fragments.Determiners.none_
-  | .few => Fragments.Determiners.few
-  | .some_ => Fragments.Determiners.some_
-  | .half => Fragments.Determiners.half
-  | .most => Fragments.Determiners.most
-  | .all => Fragments.Determiners.all
+  | .none_ => Fragments.English.Determiners.none_
+  | .few => Fragments.English.Determiners.few
+  | .some_ => Fragments.English.Determiners.some_
+  | .half => Fragments.English.Determiners.half
+  | .most => Fragments.English.Determiners.most
+  | .all => Fragments.English.Determiners.all
 
 /-- Get monotonicity from the entry -/
 def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
@@ -385,4 +385,4 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
 #eval someAllScale.alternatives .some_  -- [all]
 #eval someMostAllScale.alternatives .some_  -- [most, all]
 
-end Fragments.Determiners
+end Fragments.English.Determiners

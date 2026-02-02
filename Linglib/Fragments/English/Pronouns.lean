@@ -1,12 +1,12 @@
 /-
-# Pronoun Lexicon Fragment
+# English Pronoun Lexicon Fragment
 
-Lexical entries for pronouns (personal, reflexive, wh-).
+Lexical entries for English pronouns (personal, reflexive, wh-).
 -/
 
 import Linglib.Core.Basic
 
-namespace Fragments.Pronouns
+namespace Fragments.English.Pronouns
 
 -- ============================================================================
 -- Pronoun Entry Structure
@@ -119,4 +119,4 @@ def allPronouns : List PronounEntry := [
 def lookup (form : String) : Option PronounEntry :=
   allPronouns.find? fun p => p.form == form
 
-end Fragments.Pronouns
+end Fragments.English.Pronouns

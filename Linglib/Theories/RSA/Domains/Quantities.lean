@@ -1,5 +1,5 @@
 /-
-# Quantity Domain Fragments
+# RSA Quantity Domains
 
 Building blocks for RSA quantity/scalar domains.
 
@@ -14,13 +14,11 @@ Building blocks for RSA quantity/scalar domains.
 ## Usage
 
 ```lean
--- In your paper replication file:
-import Linglib.Fragments.Quantities
+import Linglib.Theories.RSA.Domains.Quantities
 
-def myDomain := Quantity.standard 3
+def myDomain := RSA.Domains.Quantity.standard 3
 
-#eval Quantity.l1 myDomain .some_
--- w1, w2 > w3 (scalar implicature)
+#eval RSA.Domains.Quantity.l1 myDomain .some_
 ```
 
 ## References
@@ -32,10 +30,10 @@ def myDomain := Quantity.standard 3
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
-import Linglib.Fragments.Determiners
+import Linglib.Fragments.English.Determiners
 import Mathlib.Data.Rat.Defs
 
-namespace Quantity
+namespace RSA.Domains.Quantity
 
 -- ============================================================================
 -- Generic Quantity Domain (Parameterized by size)
@@ -241,29 +239,29 @@ def s1F {n : Nat} (d : Domain n) (w : Fin (n + 1)) : Option (ExactDist Utterance
 def l1F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
   RSA.L1_world d.toScenarioF u
 
-end Quantity
+end RSA.Domains.Quantity
 
 -- ============================================================================
 -- VanTiel Quantity Domain (6-word scale)
 -- ============================================================================
 
--- Uses unified QuantityWord from Fragments.Determiners
+-- Uses unified QuantityWord from Fragments.English.Determiners
 
 namespace VanTielQuantity
 
 -- Re-export QuantityWord as Utterance for backwards compatibility
-open Fragments.Determiners in
+open Fragments.English.Determiners in
 abbrev Utterance := QuantityWord
 
 -- Re-export Monotonicity
-open Fragments.Determiners in
-abbrev Monotonicity := Fragments.Determiners.Monotonicity
+open Fragments.English.Determiners in
+abbrev Monotonicity := Fragments.English.Determiners.Monotonicity
 
-def allUtterances : List Utterance := Fragments.Determiners.QuantityWord.toList
+def allUtterances : List Utterance := Fragments.English.Determiners.QuantityWord.toList
 
 /-- Get monotonicity from unified entry -/
 def monotonicity (u : Utterance) : Monotonicity :=
-  Fragments.Determiners.QuantityWord.monotonicity u
+  Fragments.English.Determiners.QuantityWord.monotonicity u
 
 -- ============================================================================
 -- GQT Semantics (from Determiners)
@@ -271,11 +269,11 @@ def monotonicity (u : Utterance) : Monotonicity :=
 
 /-- GQT meaning from unified entry -/
 def gqtMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : Bool :=
-  Fragments.Determiners.QuantityWord.gqtMeaning n m t
+  Fragments.English.Determiners.QuantityWord.gqtMeaning n m t
 
 /-- GQT meaning as rational (for RSA) -/
 def gqtMeaningRat (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
-  Fragments.Determiners.QuantityWord.gqtMeaningRat n m t
+  Fragments.English.Determiners.QuantityWord.gqtMeaningRat n m t
 
 -- ============================================================================
 -- PT Semantics (from Determiners)
@@ -283,7 +281,7 @@ def gqtMeaningRat (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
 
 /-- PT meaning from unified entry -/
 def ptMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
-  Fragments.Determiners.QuantityWord.ptMeaning n m t
+  Fragments.English.Determiners.QuantityWord.ptMeaning n m t
 
 -- ============================================================================
 -- Quantity Domain Structure
@@ -318,19 +316,19 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
 /-- GQT domain with uniform priors -/
 def gqtDomain (n : Nat) : Domain n where
   meaning := gqtMeaningRat n
-  meaning_nonneg := fun u w => Fragments.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
+  meaning_nonneg := fun u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
 
 /-- PT domain with uniform priors -/
 def ptDomain (n : Nat) : Domain n where
   meaning := ptMeaning n
-  meaning_nonneg := fun u _ => Fragments.Determiners.QuantityWord.ptMeaning_nonneg n u _
+  meaning_nonneg := fun u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
 
 /-- GQT domain with custom salience -/
 def gqtDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := gqtMeaningRat n
   salience := salience
-  meaning_nonneg := fun u w => Fragments.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
+  meaning_nonneg := fun u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
   salience_nonneg := h
 
 /-- PT domain with custom salience -/
@@ -338,7 +336,7 @@ def ptDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := ptMeaning n
   salience := salience
-  meaning_nonneg := fun u _ => Fragments.Determiners.QuantityWord.ptMeaning_nonneg n u _
+  meaning_nonneg := fun u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
   salience_nonneg := h
 
 -- ============================================================================

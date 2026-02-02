@@ -17,7 +17,7 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 - `rsa_derives_not_all`: Using derivation interface, RSA prefers non-all worlds
 -/
 
-import Linglib.Fragments.Quantities
+import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Derivation.Basic
 import Mathlib.Data.Rat.Defs
@@ -25,7 +25,7 @@ import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 
-open RSA Quantity
+open RSA RSA.Domains.Quantity
 open Montague
 open Montague.SemDeriv
 open Montague.Lexicon
@@ -88,7 +88,7 @@ structure RSAScalarResult where
 /--
 Compute RSA result for "some" utterance.
 
-Uses the L1 scores from Quantity.l1 to get the distribution over worlds.
+Uses the L1 scores from RSA.Domains.Quantity.l1 to get the distribution over worlds.
 -/
 def rsaSomeResult : RSAScalarResult :=
   let l1_scores := l1 threePerson .some_

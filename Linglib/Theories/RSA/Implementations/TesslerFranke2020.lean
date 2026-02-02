@@ -33,13 +33,13 @@ We use 5 degrees with fixed thresholds:
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Fragments.Degrees
+import Linglib.Theories.RSA.Domains.Degrees
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.TesslerFranke2020
 
 open RSA.Eval
-open Degrees
+open RSA.Domains.Degrees
 open Montague.Lexicon.Degrees
 
 -- ============================================================================

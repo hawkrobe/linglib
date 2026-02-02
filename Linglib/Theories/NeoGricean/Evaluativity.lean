@@ -43,7 +43,7 @@ import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Phenomena.Semantics.Evaluativity
-import Linglib.Fragments.Degrees
+import Linglib.Theories.RSA.Domains.Degrees
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Evaluativity
@@ -52,7 +52,7 @@ open NeoGricean
 open NeoGricean.Markedness
 open NeoGricean.Alternatives
 open Phenomena.Semantics.Evaluativity
-open Degrees
+open RSA.Domains.Degrees
 open Montague.Lexicon.Adjectives
 
 -- ============================================================================

@@ -31,7 +31,7 @@ This explains context-sensitivity and borderline cases.
 ## Usage
 
 ```lean
-import Linglib.Fragments.Degrees
+import Linglib.Theories.RSA.Domains.Degrees
 
 -- Height domain with 11 degrees (0..10)
 def scenario := Degrees.tallShort 10
@@ -53,7 +53,7 @@ import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Lexicon.Degrees
 import Mathlib.Data.Rat.Defs
 
-namespace Degrees
+namespace RSA.Domains.Degrees
 
 open Montague.Lexicon.Degrees
 
@@ -315,4 +315,4 @@ def Price.l1 (u : Price.Utterance) : List (Price.World × ℚ) :=
 #eval Price.l0 .million      -- Empty (never literally true)
 #eval Price.s1 Price.high    -- Prefers "ten thousand"
 
-end Degrees
+end RSA.Domains.Degrees

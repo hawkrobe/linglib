@@ -35,19 +35,19 @@ The RSA meaning function φ is derived from these Montague meanings, not stipula
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Model
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Fragments.ReferenceGames
+import Linglib.Theories.RSA.Domains.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.FrankGoodman2012
 
-open ReferenceGame RSA.Eval
+open RSA.Domains.ReferenceGame RSA.Eval
 
 -- ============================================================================
 -- Domain: Objects and Utterances (from Montague-grounded infrastructure)
 -- ============================================================================
 
 /-- Objects in the reference game context (Color × Shape pairs) -/
-abbrev Object := ReferenceGame.Object
+abbrev Object := RSA.Domains.ReferenceGame.Object
 
 /-- The three objects in the classic Frank & Goodman context -/
 def blue_square : Object := ⟨.blue, .square⟩
@@ -55,7 +55,7 @@ def blue_circle : Object := ⟨.blue, .circle⟩
 def green_square : Object := ⟨.green, .square⟩
 
 /-- Utterances are feature predicates (from Montague) -/
-abbrev Utterance := ReferenceGame.Feature
+abbrev Utterance := RSA.Domains.ReferenceGame.Feature
 
 /-- The four utterances in the classic context -/
 def utt_blue : Utterance := .color .blue
@@ -78,7 +78,7 @@ def meaning (u : Utterance) (o : Object) : Bool :=
 
 /-- Grounding theorem: meaning is derived from compositional semantics -/
 theorem meaning_from_compositional (u : Utterance) (o : Object) :
-    meaning u o = ReferenceGame.featureMeaning u o := rfl
+    meaning u o = RSA.Domains.ReferenceGame.featureMeaning u o := rfl
 
 -- ============================================================================
 -- RSAScenario Instance (using unified API)

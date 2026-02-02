@@ -25,7 +25,7 @@ Example: Hyperbole ("It cost a million dollars")
 ## Usage
 
 ```lean
-import Linglib.Fragments.QUD
+import Linglib.Theories.RSA.Domains.QUD
 
 -- Price × Affect meaning space
 def scenario := QUD.priceAffect
@@ -44,7 +44,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
-namespace QUD
+namespace RSA.Domains.QUD
 
 -- ============================================================================
 -- Generic Multi-Dimensional Meanings
@@ -300,4 +300,4 @@ def BinaryDomain.allWorlds {D1 D2 : Type} (d : BinaryDomain D1 D2) : List (D1 ×
 #eval priceAffect.L1_qud .medium
 -- "medium" → probably QUD was "price" (literal interpretation)
 
-end QUD
+end RSA.Domains.QUD

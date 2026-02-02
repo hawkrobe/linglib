@@ -36,7 +36,7 @@ Connects to `Montague.Quantifiers` for threshold semantics.
 
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
-import Linglib.Fragments.Quantities
+import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.Montague.Quantifiers
 import Linglib.Phenomena.VanTielEtAl2021.Data
 import Mathlib.Data.Rat.Defs
@@ -83,7 +83,7 @@ def monotonicity := VanTielQuantity.monotonicity
 
 /-- Threshold for each quantity word (from unified entry) -/
 def threshold (m : QuantityWord) : Nat :=
-  Fragments.Determiners.QuantityWord.gqtThreshold domainSize m
+  Fragments.English.Determiners.QuantityWord.gqtThreshold domainSize m
 
 /-- GQT meaning: binary truth based on threshold -/
 def gqtMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
@@ -95,11 +95,11 @@ def gqtMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
 
 /-- Prototype (peak truth) for each quantity word (from unified entry) -/
 def prototype (m : QuantityWord) : Nat :=
-  Fragments.Determiners.QuantityWord.ptPrototype domainSize m
+  Fragments.English.Determiners.QuantityWord.ptPrototype domainSize m
 
 /-- Spread parameter (from unified entry) -/
 def spread (m : QuantityWord) : ℚ :=
-  Fragments.Determiners.QuantityWord.ptSpread m
+  Fragments.English.Determiners.QuantityWord.ptSpread m
 
 /-- PT meaning: gradient truth based on distance from prototype -/
 def ptMeaning (m : QuantityWord) (t : WorldState) : ℚ :=

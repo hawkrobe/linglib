@@ -42,7 +42,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Noise
 import Linglib.Core.ProductOfExperts
-import Linglib.Fragments.ReferenceGames
+import Linglib.Theories.RSA.Domains.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ContinuousSemantics
@@ -52,7 +52,7 @@ namespace RSA.ContinuousSemantics
 -- ============================================================================
 
 /-- Reuse colors from Fragment library -/
-abbrev Color := ReferenceGame.Color
+abbrev Color := RSA.Domains.ReferenceGame.Color
 
 /-- Size categories -/
 inductive Size where

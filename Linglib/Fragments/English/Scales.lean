@@ -1,7 +1,7 @@
 /-
-# Scale Library
+# English Scale Library
 
-Reusable scale definitions for RSA and NeoGricean models.
+English Horn scales for RSA and NeoGricean models.
 
 ## Scales Included
 
@@ -30,7 +30,7 @@ Reusable scale definitions for RSA and NeoGricean models.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Scales
+namespace Fragments.English.Scales
 
 -- ============================================================================
 -- Scale Structure
@@ -262,4 +262,4 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 #eval numerals 5
 -- Expected: Scale with items [1, 2, 3, 4, 5]
 
-end Scales
+end Fragments.English.Scales

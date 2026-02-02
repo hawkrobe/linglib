@@ -46,7 +46,7 @@ import Linglib.Core.ProductOfExperts
 import Linglib.Theories.Montague.Lexicon.SelectionalPreferences
 import Linglib.Theories.Montague.Frames.Basic
 
-namespace Fragments.LexicalAmbiguity
+namespace RSA.Domains.LexicalAmbiguity
 
 open Core.ProductOfExperts
 open Montague.Lexicon.SelectionalPreferences
@@ -607,4 +607,4 @@ Q: "How do constraints relate to constituents?"
 A: Selectional from predicate-argument, scenario from discourse
 -/
 
-end Fragments.LexicalAmbiguity
+end RSA.Domains.LexicalAmbiguity

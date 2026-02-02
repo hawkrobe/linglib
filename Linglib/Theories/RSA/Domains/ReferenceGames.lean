@@ -1,5 +1,5 @@
 /-
-# Reference Game Fragments
+# RSA Reference Game Domains
 
 Building blocks for RSA reference games.
 
@@ -19,12 +19,12 @@ Feature predicates are type `e → t` in Montague's type system:
 ## Usage
 
 ```lean
-import Linglib.Fragments.ReferenceGames
+import Linglib.Theories.RSA.Domains.ReferenceGames
 
-def myContext := ReferenceGame.fromPairs
+def myContext := RSA.Domains.ReferenceGame.fromPairs
   [(.blue, .square), (.blue, .circle), (.green, .square)]
 
-#eval ReferenceGame.l1 myContext (.shape .square)
+#eval RSA.Domains.ReferenceGame.l1 myContext (.shape .square)
 ```
 
 ## References
@@ -40,7 +40,7 @@ import Linglib.Theories.Montague.Lexicon.Features
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 
-namespace ReferenceGame
+namespace RSA.Domains.ReferenceGame
 
 open Montague.Lexicon.Features
 
@@ -251,4 +251,4 @@ private def exampleCtx : TypedContext :=
 theorem rsa_eval_uses_compositional_semantics (f : Feature) (obj : Object) :
     boolToRat (f.appliesTo obj) = if f.appliesTo obj then 1 else 0 := rfl
 
-end ReferenceGame
+end RSA.Domains.ReferenceGame

@@ -1,7 +1,7 @@
 /-
-# Function Words Lexicon Fragment
+# English Function Words Lexicon Fragment
 
-Lexical entries for closed-class function words:
+Lexical entries for English closed-class function words:
 - Prepositions
 - Complementizers
 - Auxiliaries
@@ -10,7 +10,7 @@ Lexical entries for closed-class function words:
 
 import Linglib.Core.Basic
 
-namespace Fragments.FunctionWords
+namespace Fragments.English.FunctionWords
 
 -- ============================================================================
 -- Prepositions
@@ -150,4 +150,4 @@ def allConjunctions : List ConjEntry := [and_, or_, but, nor]
 def ConjEntry.toWord (c : ConjEntry) : Word :=
   { form := c.form, cat := .C, features := {} }
 
-end Fragments.FunctionWords
+end Fragments.English.FunctionWords
