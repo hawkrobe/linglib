@@ -28,13 +28,13 @@ The theories diverge when:
 - Portner, P. (2009). Modality. Oxford University Press.
 -/
 
-import Linglib.Theories.Montague.Modal.Kratzer1981
+import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Modal.Simple
 
 namespace Montague.Modal
 
 open Montague.Verb.Attitude.Examples
-open Montague.Modal.Kratzer1981
+open Montague.Modal.Kratzer
 
 -- ============================================================================
 -- Comparison Functions
@@ -125,7 +125,7 @@ theorem both_satisfy_duality
     (R : World → World → Bool)
     (p : Proposition)
     (w : World) :
-    (Kratzer params).dualityHolds p w = true ∧
+    (KratzerTheory params).dualityHolds p w = true ∧
     (Simple R).dualityHolds p w = true := by
   constructor
   · exact kratzer_duality params p w

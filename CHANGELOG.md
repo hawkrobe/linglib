@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.58.0] - 2025-02-03
+
+### Added
+- **Core/Ordering.lean**: Generic SatisfactionOrdering framework with mathlib Preorder integration
+- **Theories/Montague/Modal/Kratzer.lean**: Refactored from Kratzer1981.lean, uses Core.Ordering
+- **Theories/Montague/Modal/PhillipsBrown.lean**: Question-based desire semantics (Phillips-Brown 2025), extends BouleticFlavor
+
+### Changed
+- Modal semantics now derive preorder properties from generic Core.Ordering framework
+- Removed Kratzer1981.lean (split into Kratzer.lean + PhillipsBrown.lean)
+
 ## [0.57.0] - 2025-02-02
 
 ### Added

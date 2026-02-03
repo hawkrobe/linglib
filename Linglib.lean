@@ -51,6 +51,7 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
 import Linglib.Core.Proposition
+import Linglib.Core.Ordering
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Core.Analyticity
@@ -225,7 +226,8 @@ import Linglib.Theories.Montague.Adjective.Theory
 
 -- Modal theories (Kratzer vs Simple/Kripke)
 import Linglib.Theories.Montague.Modal.Basic
-import Linglib.Theories.Montague.Modal.Kratzer1981
+import Linglib.Theories.Montague.Modal.Kratzer
+import Linglib.Theories.Montague.Modal.PhillipsBrown
 import Linglib.Theories.Montague.Modal.Simple
 import Linglib.Theories.Montague.Modal.Compare
 
