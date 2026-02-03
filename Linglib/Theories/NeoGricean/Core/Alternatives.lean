@@ -44,7 +44,7 @@ import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Core.Derivation
-import Linglib.Phenomena.Semantics.Evaluativity
+import Linglib.Phenomena.Gradability.Evaluativity
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
@@ -52,7 +52,7 @@ namespace NeoGricean.Alternatives
 -- Use shared ContextPolarity from Montague.Core.Polarity
 open Montague.Core.Polarity (ContextPolarity)
 open NeoGricean.Markedness
-open Phenomena.Semantics.Evaluativity
+open Phenomena.Gradability.Evaluativity
 
 -- ============================================================================
 -- PART 0: Alternative Types (Q vs M)

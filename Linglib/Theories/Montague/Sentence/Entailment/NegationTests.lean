@@ -24,13 +24,13 @@ This file                       -- Verification that predictions match data
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
 import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Core.Proposition
-import Linglib.Phenomena.Semantics.Negation
+import Linglib.Phenomena.Negation.Basic
 
 namespace Montague.Sentence.Entailment.NegationTests
 
 open Montague.Sentence.Entailment
 open Montague.Core.Polarity
-open Phenomena.Semantics.Negation
+open Phenomena.Negation
 open Core.Proposition
 
 -- ============================================================================

@@ -15,13 +15,13 @@ empirical data in `Phenomena/Semantics/TruthConditions.lean`.
 -/
 
 import Linglib.Theories.Montague.Basic
-import Linglib.Phenomena.Semantics.TruthConditions
+import Linglib.Phenomena.Entailment.Basic
 
 namespace Montague.Derivation.TruthConditions
 
 open Montague
 open ToyLexicon
-open Phenomena.Semantics.TruthConditions
+open Phenomena.Entailment
 
 -- ============================================================================
 -- Intransitive Verb Derivations

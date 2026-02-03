@@ -20,13 +20,13 @@ TruthConditions.TruthJudgment
 -/
 
 import Linglib.Theories.CCG.Semantics
-import Linglib.Phenomena.Semantics.TruthConditions
+import Linglib.Phenomena.Entailment.Basic
 
 namespace CCG.TruthConditions
 
 open CCG
 open Montague
-open Phenomena.Semantics.TruthConditions
+open Phenomena.Entailment
 
 -- ============================================================================
 -- CCG Derivations for Test Sentences
