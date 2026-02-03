@@ -26,7 +26,7 @@ Adjectives differ in their entailment patterns. A semantic theory must predict:
 - Partee (2001) "Privative Adjectives: Subsective plus Coercion"
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Gradability.Adjectives
 

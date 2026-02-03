@@ -18,7 +18,7 @@ embedded questions do not.
   (3b) *I wonder what can John eat.     ✗
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 

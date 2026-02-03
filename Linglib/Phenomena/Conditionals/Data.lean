@@ -21,7 +21,7 @@ or pragmatic theory.
 - von Fintel (2011). Conditionals.
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Conditionals

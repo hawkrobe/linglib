@@ -21,7 +21,7 @@ Given: dogs ⊆ animals
 - Barwise & Cooper (1981) on generalized quantifiers
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Semantics.Monotonicity
 

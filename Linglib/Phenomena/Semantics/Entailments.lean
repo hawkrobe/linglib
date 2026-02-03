@@ -14,7 +14,7 @@ Standard textbook examples from formal semantics literature:
 - van Benthem (1986)
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Semantics.Entailments
 

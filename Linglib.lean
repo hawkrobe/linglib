@@ -90,8 +90,6 @@ import Linglib.Core.Interfaces.SemanticStructure
 -- Phenomena (empirical data)
 -- Core infrastructure
 import Linglib.Phenomena.Core
-import Linglib.Phenomena.Basic  -- backwards-compat re-export
-import Linglib.Phenomena.EmpiricalData  -- backwards-compat re-export
 
 -- Agreement phenomena
 import Linglib.Phenomena.Agreement.Basic

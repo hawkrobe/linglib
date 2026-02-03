@@ -28,7 +28,7 @@ the Common Ground.
 - Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Focus.VerumFocus
 

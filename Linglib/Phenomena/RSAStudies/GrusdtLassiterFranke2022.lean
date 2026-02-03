@@ -29,7 +29,7 @@ The paper presents three experiments testing the RSA model of conditionals.
   communication with conditionals. PLoS ONE.
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 import Linglib.Core.CausalBayesNet
 
 namespace Phenomena.RSAStudies.GrusdtLassiterFranke2022

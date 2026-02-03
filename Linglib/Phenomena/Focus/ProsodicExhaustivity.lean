@@ -38,7 +38,7 @@ This phenomenon relates to mention-all vs mention-some:
 - Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1(1): 75-116.
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 /-!
 ## Connection to RSA Theory

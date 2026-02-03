@@ -27,7 +27,7 @@ from its canonical position, leaving a "gap":
 Reference: Gibson (2025) "Syntax", MIT Press, Section 3.9
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Dependencies.LongDistance
 

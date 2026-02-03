@@ -22,7 +22,7 @@ Key constraints:
 Reference: Gibson (2025) "Syntax", MIT Press, Section 3.8
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 

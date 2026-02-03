@@ -15,7 +15,7 @@ Standard textbook examples testing basic predication, transitive verbs,
 and their interactions.
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Semantics.TruthConditions
 

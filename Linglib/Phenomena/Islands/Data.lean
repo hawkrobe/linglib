@@ -41,7 +41,7 @@ observed across diverse theoretical frameworks.
 - Szabolcsi, A. (2006). "Strong vs. Weak Islands" in The Blackwell Companion to Syntax.
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 

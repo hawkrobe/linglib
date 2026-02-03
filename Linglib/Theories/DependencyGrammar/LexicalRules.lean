@@ -15,7 +15,7 @@ References:
 -/
 
 import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Phenomena.Lexicon
+import Linglib.Phenomena.Core.Lexicon
 
 namespace DepGrammar
 

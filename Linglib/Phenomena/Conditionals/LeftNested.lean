@@ -26,7 +26,7 @@ This file documents:
 - Haegeman (2003). Conditional clauses: External and internal syntax.
 -/
 
-import Linglib.Phenomena.EmpiricalData
+import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Conditionals.LeftNested
 

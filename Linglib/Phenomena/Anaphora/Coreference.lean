@@ -55,7 +55,7 @@ vice versa.
 - König, E. & P. Siemund (2000). "Intensifiers and Reflexives" in Haspelmath et al.
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 

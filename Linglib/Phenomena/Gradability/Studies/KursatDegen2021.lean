@@ -38,7 +38,7 @@ asymmetry in redundant modification with color and material adjectives.
 Proc Ling Soc Amer 6(1). 676-688.
 -/
 
-import Linglib.Phenomena.Basic
+import Linglib.Phenomena.Core.Basic
 import Linglib.Theories.RSA.Core.Noise
 
 namespace Phenomena.KursatDegen2021
