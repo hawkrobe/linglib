@@ -22,14 +22,14 @@ This file                       -- Verification that predictions match data
 -/
 
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
-import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Phenomena.Semantics.Negation
 
 namespace Montague.Sentence.Entailment.NegationTests
 
 open Montague.Sentence.Entailment
-open Montague.Sentence.Entailment.Polarity
+open Montague.Core.Polarity
 open Phenomena.Semantics.Negation
 open Core.Proposition
 

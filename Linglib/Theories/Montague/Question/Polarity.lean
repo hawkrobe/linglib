@@ -1,5 +1,5 @@
 import Linglib.Theories.Montague.Question.DecisionTheory
-import Linglib.Core.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 
 /-!
 # Questions/Polarity.lean
@@ -378,7 +378,7 @@ In an upward-entailing context, stronger propositions are preferred.
 PPQ prefers the positive answer when it's more useful/informative.
 
 This connects question pragmatics to scalar implicature contexts. -/
-def questionPolarity (qtype : PolarQuestionType) : Option Core.Polarity.ContextPolarity :=
+def questionPolarity (qtype : PolarQuestionType) : Option Montague.Core.Polarity.ContextPolarity :=
   match qtype with
   | .positive => some .upward    -- Positive proposition is "marked"
   | .negative => some .downward  -- Negative proposition is "marked"

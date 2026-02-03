@@ -36,14 +36,14 @@ This module provides NeoGricean-specific infrastructure:
 -/
 
 import Linglib.Core.Presupposition
-import Linglib.Core.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Phenomena.Presuppositions.Data
 
 namespace NeoGricean.Presuppositions
 
 open Core.Presupposition
-open Core.Polarity
+open Montague.Core.Polarity
 open NeoGricean
 open Phenomena.Presuppositions
 

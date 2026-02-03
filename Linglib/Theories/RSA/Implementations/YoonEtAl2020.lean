@@ -35,7 +35,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.YoonEtAl2020.Data
 import Linglib.Theories.Montague.Domain.Degree
-import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Core.Proposition
 
 namespace RSA.Implementations.YoonEtAl2020
@@ -391,7 +391,7 @@ theorem negation_is_compositional :
 -- PART 9b: Connection to Montague's pnot
 -- ============================================================================
 
-open Montague.Sentence.Entailment.Polarity in
+open Montague.Core.Polarity in
 /--
 **softNot mirrors pnot structure.**
 

@@ -17,7 +17,7 @@ Syntax Theory → Derivation → Pragmatics (NeoGricean, RSA)
 ```
 -/
 
-import Linglib.Core.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Core.Lexicon
 import Linglib.Theories.Montague.Determiner.Quantifier
@@ -76,8 +76,8 @@ def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
 -- Alternative Generation
 -- ============================================================================
 
--- Re-export ContextPolarity from Core for backward compatibility
-export Core.Polarity (ContextPolarity)
+-- Use ContextPolarity from the sibling Polarity module
+open Montague.Core.Polarity (ContextPolarity)
 
 /--
 Generate a sentential alternative by replacing a scalar item.
@@ -109,6 +109,9 @@ def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
       | .downward =>
         -- For DE, we'd use weakerAlternatives
         -- For now, just return empty since we don't have that function yet
+        []
+      | .nonMonotonic =>
+        -- Non-monotonic contexts don't trigger scalar alternatives
         []
     alts.map λ altForm =>
       d.surface.set occ.position altForm
@@ -213,9 +216,9 @@ To make a syntax theory work with pragmatics:
 
 end Montague.Core.Derivation
 
--- Backward compatibility aliases
+-- Backward compatibility aliases (excluding ContextPolarity which is now in Polarity.lean)
 namespace Montague.SemDeriv
-  export Montague.Core.Derivation (ScalarOccurrence SemDeriv Derivation ContextPolarity
+  export Montague.Core.Derivation (ScalarOccurrence SemDeriv Derivation
     alternativeMeanings alternativeForms SemanticsProducer
     johnSleeps someStudentsSleep everyStudentSleeps someStudentsLaugh everyStudentLaughs)
 end Montague.SemDeriv

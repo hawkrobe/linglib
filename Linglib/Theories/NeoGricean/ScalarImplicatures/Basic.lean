@@ -46,7 +46,7 @@ namespace NeoGricean.ScalarImplicatures
 open NeoGricean.Alternatives
 open NeoGricean
 open NeoGricean.Exhaustivity
-open Montague.SemDeriv (ContextPolarity)
+open Montague.Core.Polarity (ContextPolarity)
 open Phenomena.ScalarImplicatures
 
 -- ============================================================================
@@ -441,6 +441,7 @@ def toSentenceContext (ctx : ContextPolarity) : SentenceContext :=
   , description := match ctx with
     | .upward => "Upward-entailing context"
     | .downward => "Downward-entailing context"
+    | .nonMonotonic => "Non-monotonic context"
   }
 
 /--
@@ -1567,7 +1568,7 @@ namespace NeoGricean
 
 open Interfaces
 open NeoGricean.Alternatives
-open Montague.SemDeriv (ContextPolarity)
+open Montague.Core.Polarity (ContextPolarity)
 
 /-- Marker type for the NeoGricean theory -/
 structure NeoGriceanTheory
@@ -1619,6 +1620,7 @@ def parseToNeoGricean (ws : List Word) : Option NeoGriceanStructure :=
     match scalarPos, polarity with
     | some _, .upward => .disbelief  -- Strong implicature in UE
     | some _, .downward => .noOpinion  -- Blocked in DE
+    | some _, .nonMonotonic => .noOpinion  -- Blocked in NM
     | none, _ => .belief  -- No scalar item
   let result := applyStandardRecipe beliefState
   some { result := result
@@ -1643,6 +1645,7 @@ instance : ImplicatureTheory NeoGriceanTheory where
       -- Check polarity
       match s.polarity with
       | .downward => .blocked  -- DE blocks implicature
+      | .nonMonotonic => .blocked  -- NM blocks implicature
       | .upward =>
         -- Check result
         if s.result.strongImplicature then .triggered

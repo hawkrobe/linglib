@@ -35,13 +35,13 @@ This explains why PCs block NPIs despite being semantically DE!
 
 import Linglib.Core.DiscourseState
 import Linglib.Core.Proposition
-import Linglib.Core.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Theories.Montague.Sentence.Conditional.Basic
 
 namespace Montague.Sentence.Conditional
 
 open Core.Proposition
-open Core.Polarity
+open Montague.Core.Polarity
 open Core.DiscourseState
 
 -- ============================================================================

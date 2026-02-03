@@ -11,7 +11,7 @@ Feature predicates are type `e → t` in Montague's type system:
 
 ## Components
 
-- `Color`, `Shape`, `Feature`: Re-exported from Montague.Core.Features
+- `Color`, `Shape`, `Feature`: Feature vocabulary
 - `Object`: Color × Shape pairs (reference game entities)
 - `featureMeaning`: The Montague `e → t` meaning function
 - `TypedContext`: A set of objects with their available features
@@ -36,22 +36,126 @@ def myContext := RSA.Domains.ReferenceGame.fromPairs
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Core.Features
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Sum
 import Mathlib.Data.Fintype.Prod
 
 namespace RSA.Domains.ReferenceGame
 
-open Montague.Core.Features
-
 -- ============================================================================
--- Re-export Montague Feature Infrastructure
+-- Feature Types (Color, Shape)
 -- ============================================================================
 
--- Types from Montague.Core.Features
-abbrev Color := Montague.Core.Features.Color
-abbrev Shape := Montague.Core.Features.Shape
-abbrev Feature := Montague.Core.Features.Feature
+/-- Colors for reference game objects -/
+inductive Color where
+  | blue | green | red | yellow | purple | orange
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+instance : Fintype Color where
+  elems := {.blue, .green, .red, .yellow, .purple, .orange}
+  complete := fun c => by cases c <;> decide
+
+instance : ToString Color where
+  toString
+    | .blue => "blue"
+    | .green => "green"
+    | .red => "red"
+    | .yellow => "yellow"
+    | .purple => "purple"
+    | .orange => "orange"
+
+/-- Shapes for reference game objects -/
+inductive Shape where
+  | square | circle | triangle | star
+  deriving Repr, DecidableEq, BEq, Inhabited
+
+instance : Fintype Shape where
+  elems := {.square, .circle, .triangle, .star}
+  complete := fun s => by cases s <;> decide
+
+instance : ToString Shape where
+  toString
+    | .square => "square"
+    | .circle => "circle"
+    | .triangle => "triangle"
+    | .star => "star"
+
+-- ============================================================================
+-- Entity Interfaces
+-- ============================================================================
+
+/-- Typeclass for entities that have a color attribute -/
+class HasColor (E : Type) where
+  color : E → Color
+
+/-- Typeclass for entities that have a shape attribute -/
+class HasShape (E : Type) where
+  shape : E → Shape
+
+-- ============================================================================
+-- Feature Predicates
+-- ============================================================================
+
+/--
+A feature is either a color or a shape predicate.
+
+In Montague's terms, features have type `e → t` (predicates over entities).
+-/
+inductive Feature where
+  | color (c : Color)
+  | shape (s : Shape)
+  deriving Repr, DecidableEq, BEq
+
+instance : Inhabited Feature := ⟨.color .blue⟩
+
+/-- Feature is finite (Color + Shape) -/
+instance : Fintype Feature :=
+  Fintype.ofEquiv (Color ⊕ Shape) {
+    toFun := fun | .inl c => .color c | .inr s => .shape s
+    invFun := fun | .color c => .inl c | .shape s => .inr s
+    left_inv := fun | .inl _ => rfl | .inr _ => rfl
+    right_inv := fun | .color _ => rfl | .shape _ => rfl
+  }
+
+-- ============================================================================
+-- Feature Meaning (Generic)
+-- ============================================================================
+
+/--
+The Montague meaning of a feature predicate.
+
+This is generic over any entity type with color and shape attributes.
+Each feature denotes a characteristic function from entities to truth values:
+
+- ⟦color c⟧ = λx. color(x) = c
+- ⟦shape s⟧ = λx. shape(x) = s
+-/
+def featureMeaning {E : Type} [HasColor E] [HasShape E] : Feature → E → Bool
+  | .color c, obj => HasColor.color obj == c
+  | .shape s, obj => HasShape.shape obj == s
+
+/-- Apply a feature predicate to an entity -/
+def Feature.appliesTo {E : Type} [HasColor E] [HasShape E] (f : Feature) (obj : E) : Bool :=
+  featureMeaning f obj
+
+-- ============================================================================
+-- Feature Lexicon
+-- ============================================================================
+
+/-- Lookup a feature by name -/
+def featureLexicon : String → Option Feature
+  | "blue" => some (.color .blue)
+  | "green" => some (.color .green)
+  | "red" => some (.color .red)
+  | "yellow" => some (.color .yellow)
+  | "purple" => some (.color .purple)
+  | "orange" => some (.color .orange)
+  | "square" => some (.shape .square)
+  | "circle" => some (.shape .circle)
+  | "triangle" => some (.shape .triangle)
+  | "star" => some (.shape .star)
+  | _ => none
 
 -- ============================================================================
 -- Reference Game Entity Type
@@ -83,23 +187,11 @@ instance : Fintype Object :=
 -- HasColor / HasShape Instances
 -- ============================================================================
 
-instance : Montague.Core.Features.HasColor Object where
+instance : HasColor Object where
   color := Object.color
 
-instance : Montague.Core.Features.HasShape Object where
+instance : HasShape Object where
   shape := Object.shape
-
--- ============================================================================
--- Feature Meaning (via Montague generic)
--- ============================================================================
-
-/-- Re-export featureMeaning specialized to Object -/
-abbrev featureMeaning : Feature → Object → Bool :=
-  Montague.Core.Features.featureMeaning
-
-/-- Re-export appliesTo specialized to Object -/
-abbrev Feature.appliesTo (f : Feature) (obj : Object) : Bool :=
-  Montague.Core.Features.Feature.appliesTo f obj
 
 -- ============================================================================
 -- Theorems: Compositional Meaning
@@ -107,15 +199,15 @@ abbrev Feature.appliesTo (f : Feature) (obj : Object) : Bool :=
 
 /-- Blue applies to blue objects -/
 theorem blue_applies_to_blue :
-    Feature.appliesTo (.color .blue) ⟨.blue, .square⟩ = true := by native_decide
+    Feature.appliesTo (.color .blue) (⟨.blue, .square⟩ : Object) = true := by native_decide
 
 /-- Blue doesn't apply to green objects -/
 theorem blue_not_green :
-    Feature.appliesTo (.color .blue) ⟨.green, .square⟩ = false := by native_decide
+    Feature.appliesTo (.color .blue) (⟨.green, .square⟩ : Object) = false := by native_decide
 
 /-- Square applies to square objects -/
 theorem square_applies_to_square :
-    Feature.appliesTo (.shape .square) ⟨.blue, .square⟩ = true := by native_decide
+    Feature.appliesTo (.shape .square) (⟨.blue, .square⟩ : Object) = true := by native_decide
 
 /-- Features are characteristic functions -/
 theorem feature_is_characteristic (f : Feature) (obj : Object) :
@@ -123,10 +215,7 @@ theorem feature_is_characteristic (f : Feature) (obj : Object) :
     (match f with
      | .color c => obj.color == c
      | .shape s => obj.shape == s) := by
-  cases f <;> simp [Feature.appliesTo, Montague.Core.Features.Feature.appliesTo,
-                    Montague.Core.Features.featureMeaning,
-                    Montague.Core.Features.HasColor.color,
-                    Montague.Core.Features.HasShape.shape]
+  cases f <;> simp [Feature.appliesTo, featureMeaning, HasColor.color, HasShape.shape]
 
 -- ============================================================================
 -- Generic Reference Game Context (String-based, for flexibility)

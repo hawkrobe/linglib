@@ -52,6 +52,7 @@ namespace NeoGricean.AlternativeGeneration
 open Montague
 open Montague.Core
 open Montague.Core.Derivation
+open Montague.Core.Polarity (ContextPolarity)
 open Montague.Determiner.Quantifier
 open Montague.Scales
 open NeoGricean.Exhaustivity
@@ -155,6 +156,9 @@ def alternativeFrames {m : Model} (f : SentenceFrame m)
   | .downward =>
     -- For DE contexts, we'd need weaker alternatives
     -- Not implemented yet - would need weakerAlternatives in lexicon
+    []
+  | .nonMonotonic =>
+    -- Non-monotonic contexts don't generate scalar alternatives
     []
 
 /--

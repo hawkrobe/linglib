@@ -35,7 +35,7 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 -/
 
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
-import Linglib.Core.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 

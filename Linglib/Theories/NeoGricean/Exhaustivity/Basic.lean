@@ -40,8 +40,12 @@ import Mathlib.Order.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Powerset
+import Linglib.Theories.Montague.Core.Polarity
 
 namespace NeoGricean.Exhaustivity
+
+-- Re-export ContextPolarity from the consolidated polarity module
+open Montague.Core.Polarity (ContextPolarity)
 
 -- ============================================================================
 -- SECTION 2.1: Definitions (Spector p.6-8)
@@ -1780,14 +1784,8 @@ This principle unifies several phenomena:
 -- 7.1: Context Polarity
 -- ----------------------------------------------------------------------------
 
-/--
-A context is characterized by its polarity for entailment purposes.
--/
-inductive ContextPolarity where
-  | upward   : ContextPolarity  -- Preserves entailment direction
-  | downward : ContextPolarity  -- Reverses entailment direction
-  | nonMonotonic : ContextPolarity  -- Neither
-  deriving DecidableEq, Repr
+-- ContextPolarity is imported from Montague.Sentence.Entailment.Polarity
+-- with constructors: .upward, .downward, .nonMonotonic
 
 /--
 A context is a function that embeds a proposition into a larger structure.

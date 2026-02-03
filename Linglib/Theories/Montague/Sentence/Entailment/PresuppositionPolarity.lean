@@ -29,14 +29,14 @@ Local context theory unifies presupposition projection and implicature:
 
 import Linglib.Core.Presupposition
 import Linglib.Core.Proposition
-import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 
 namespace Montague.Sentence.Entailment.PresuppositionPolarity
 
 open Core.Presupposition
-open Core.Polarity
+open Montague.Core.Polarity
 open Core.Proposition (BProp)
-open Montague.Sentence.Entailment.Polarity
+open Montague.Core.Polarity
 
 variable {W : Type*}
 
@@ -122,6 +122,8 @@ def composePresupContext (outer inner : PresupContext W) : PresupContext W :=
       | .upward, .downward => .downward
       | .downward, .upward => .downward
       | .downward, .downward => .upward  -- Key: DE ∘ DE = UE!
+      | .nonMonotonic, _ => .nonMonotonic
+      | _, .nonMonotonic => .nonMonotonic
   , accumulatedPresup := fun w => outer.accumulatedPresup w && inner.accumulatedPresup w
   }
 

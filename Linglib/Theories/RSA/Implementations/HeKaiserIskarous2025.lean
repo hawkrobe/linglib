@@ -31,10 +31,9 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.HeKaiserIskarous2025.Data
-import Linglib.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Core.Polarity
 
 namespace RSA.Implementations.HeKaiserIskarous2025
 
@@ -466,7 +465,7 @@ This bridges the two notions:
 
 Negative sentences contain negation → DE context.
 -/
-def toContextPolarity : Polarity → Core.Polarity.ContextPolarity
+def toContextPolarity : Polarity → Montague.Core.Polarity.ContextPolarity
   | .positive => .upward
   | .negative => .downward
   | .null => .upward
@@ -548,7 +547,7 @@ theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
 -- Connecting to Polarity Machinery (with proven DE property)
 -- ============================================================================
 
-open Montague.Sentence.Entailment.Polarity
+open Montague.Core.Polarity
 open Core.Proposition
 
 /--

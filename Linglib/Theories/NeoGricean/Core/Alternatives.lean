@@ -49,8 +49,8 @@ import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
 
--- Use shared ContextPolarity from SemDerivation
-open Montague.SemDeriv (ContextPolarity)
+-- Use shared ContextPolarity from Montague.Core.Polarity
+open Montague.Core.Polarity (ContextPolarity)
 open NeoGricean.Markedness
 open Phenomena.Semantics.Evaluativity
 
@@ -287,6 +287,7 @@ def quantifierChecker : EntailmentChecker QuantExpr :=
       match pol with
       | .upward => quantifierStrengthUE q1 q2
       | .downward => quantifierStrengthDE q1 q2
+      | .nonMonotonic => false  -- No scalar alternatives in NM contexts
   }
 
 -- ============================================================================
@@ -314,6 +315,7 @@ def connectiveChecker : EntailmentChecker ConnExpr :=
       match pol with
       | .upward => connectiveStrengthUE c1 c2
       | .downward => connectiveStrengthDE c1 c2
+      | .nonMonotonic => false  -- No scalar alternatives in NM contexts
   }
 
 -- ============================================================================

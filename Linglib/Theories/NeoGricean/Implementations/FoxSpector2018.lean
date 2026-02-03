@@ -59,7 +59,7 @@ import Linglib.Theories.Montague.Core.Derivation
 namespace NeoGricean.FoxSpector2018
 
 open NeoGricean.Exhaustivity
-open Montague.SemDeriv (ContextPolarity)
+open Montague.Core.Polarity (ContextPolarity)
 
 -- ============================================================================
 -- SECTION 2: HURFORD'S CONSTRAINT
@@ -208,6 +208,7 @@ def satisfiesIFG (pol : ContextPolarity) (focused : Bool) : Prop :=
   match pol with
   | .upward => true  -- No restriction in UE
   | .downward => focused  -- Requires focus in DE
+  | .nonMonotonic => focused  -- Similar to DE
 
 -- ============================================================================
 -- SECTION 4: SINGH'S ASYMMETRY
@@ -644,6 +645,7 @@ def embeddedImplicatureAvailable (pol : ContextPolarity) : Prop :=
   match pol with
   | .upward => true   -- UE: implicature available
   | .downward => false  -- DE: implicature blocked
+  | .nonMonotonic => false  -- NM: implicature blocked
 
 /--
 **Fox & Spector (2018) Prediction**: Economy condition determines availability.
@@ -655,6 +657,7 @@ def foxSpectorPrediction (pol : ContextPolarity) : Bool :=
   match pol with
   | .upward => true   -- exh strengthens → licensed
   | .downward => false  -- exh weakens → blocked
+  | .nonMonotonic => false  -- NM: blocked
 
 /--
 **Potts et al. (2016) Prediction**: Lexical uncertainty determines reading.
@@ -666,6 +669,7 @@ def pottsPrediction (pol : ContextPolarity) : Bool :=
   match pol with
   | .upward => true   -- local reading
   | .downward => false  -- global reading
+  | .nonMonotonic => false  -- NM: global reading
 
 /--
 **THEOREM: Fox & Spector (2018) and Potts et al. (2016) Agree**
@@ -694,6 +698,7 @@ theorem ifg_matches_de_blocking :
   intro pol h
   cases pol
   · rfl
+  · simp [foxSpectorPrediction] at h
   · simp [foxSpectorPrediction] at h
 
 -- ============================================================================

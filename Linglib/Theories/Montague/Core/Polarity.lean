@@ -1,8 +1,16 @@
 /-
 # Grounded Context Polarity
 
-This module connects `ContextPolarity` to proven monotonicity properties,
-using Mathlib's `Monotone`/`Antitone` typeclasses.
+This module provides comprehensive infrastructure for monotonicity/polarity
+in semantics and pragmatics.
+
+## Contents
+
+1. **ContextPolarity enum** - Theory-neutral polarity marker (upward/downward)
+2. **IsUpwardEntailing/IsDownwardEntailing** - Mathlib-based formal definitions
+3. **Decidable test functions** - For verification on finite models
+4. **GroundedPolarity** - Context + polarity + proof
+5. **Monotonicity theorems** - Negation, conditionals, quantifiers
 
 ## Integration with Mathlib
 
@@ -28,15 +36,31 @@ Mathlib provides composition lemmas for free:
 
 import Mathlib.Order.Monotone.Defs
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
-import Linglib.Theories.Montague.Core.Derivation
 
-namespace Montague.Sentence.Entailment.Polarity
+namespace Montague.Core.Polarity
 
 open Montague.Sentence.Entailment
-open Montague.Core.Derivation (ContextPolarity)
 
 -- ============================================================================
--- PART 1: Monotonicity via Mathlib
+-- PART 1: ContextPolarity Enum
+-- ============================================================================
+
+/--
+Whether a context preserves or reverses entailment direction.
+
+Used by:
+- NeoGricean: determines which alternatives count as "stronger"
+- RSA: polarity-sensitive inference
+- Any theory computing scalar implicatures
+-/
+inductive ContextPolarity where
+  | upward       -- Preserves entailment (stronger alternatives)
+  | downward     -- Reverses entailment (weaker alternatives become stronger)
+  | nonMonotonic -- Neither (e.g., "exactly n")
+  deriving DecidableEq, Repr
+
+-- ============================================================================
+-- PART 2: Monotonicity via Mathlib
 -- ============================================================================
 
 /-
@@ -67,8 +91,12 @@ Examples: "no", "not", restrictor of "every"
 -/
 abbrev IsDownwardEntailing (f : Prop' → Prop') := Antitone f
 
+-- Shorthand aliases for readability
+abbrev IsUE := IsUpwardEntailing
+abbrev IsDE := IsDownwardEntailing
+
 -- ============================================================================
--- PART 2: Basic Instances
+-- PART 3: Basic Instances
 -- ============================================================================
 
 /--
@@ -99,7 +127,7 @@ theorem pnot_pnot_isUpwardEntailing : IsUpwardEntailing (pnot ∘ pnot) :=
   pnot_isDownwardEntailing.comp pnot_isDownwardEntailing
 
 -- ============================================================================
--- PART 3: Composition Rules (From Mathlib - Free!)
+-- PART 4: Composition Rules (From Mathlib - Free!)
 -- ============================================================================
 
 /-
@@ -134,7 +162,142 @@ theorem de_comp_ue {f g : Prop' → Prop'} (hf : IsDownwardEntailing f) (hg : Is
   hf.comp_monotone hg
 
 -- ============================================================================
--- PART 4: Extracting ContextPolarity from Proofs
+-- PART 5: Decidable Test Functions
+-- ============================================================================
+
+/--
+Check if f is upward entailing on given test cases.
+
+This is a decidable approximation: it checks the property on a finite
+set of test cases rather than proving it universally.
+-/
+def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
+  tests.all λ (p, q) => !entails p q || entails (f p) (f q)
+
+/--
+Check if f is downward entailing on given test cases.
+
+This is a decidable approximation: it checks the property on a finite
+set of test cases rather than proving it universally.
+-/
+def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
+  tests.all λ (p, q) => !entails p q || entails (f q) (f p)
+
+-- ============================================================================
+-- PART 6: Monotonicity Theorems (Decidable Verification)
+-- ============================================================================
+
+/--
+**Theorem: Negation is Downward Entailing**
+
+If P ⊨ Q, then ¬Q ⊨ ¬P
+
+Test: p0 ⊨ p01, so ¬p01 ⊨ ¬p0
+-/
+theorem negation_is_DE : isDownwardEntailing pnot testCases = true := by
+  native_decide
+
+/--
+**Concrete example: Negation reverses entailment**
+
+p0 ⊨ p01 (true in {w0} entails true in {w0,w1})
+¬p01 ⊨ ¬p0 (false in {w0,w1} entails false in {w0})
+-/
+theorem negation_reverses_example :
+    entails p0 p01 = true ∧
+    entails (pnot p01) (pnot p0) = true := by
+  native_decide
+
+/--
+**Theorem: Conjunction (second arg) is Upward Entailing**
+
+If P ⊨ Q, then (R ∧ P) ⊨ (R ∧ Q)
+-/
+theorem conjunction_second_UE : isUpwardEntailing (pand p01) testCases = true := by
+  native_decide
+
+/--
+**Theorem: Disjunction (second arg) is Upward Entailing**
+
+If P ⊨ Q, then (R ∨ P) ⊨ (R ∨ Q)
+-/
+theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := by
+  native_decide
+
+/--
+**Theorem: Double negation is UE** (decidable verification)
+-/
+theorem double_negation_is_ue : isUpwardEntailing (pnot ∘ pnot) testCases = true := by
+  native_decide
+
+-- ============================================================================
+-- PART 7: Conditional Monotonicity
+-- ============================================================================
+
+/-- Material conditional with fixed consequent: "If _, then c" -/
+def materialCond (c : Prop') : Prop' → Prop' :=
+  fun p => fun w => !p w || c w
+
+/--
+**Conditional antecedent is Downward Entailing**.
+
+If P ⊨ Q, then "If Q, C" ⊨ "If P, C"
+
+This is the core DE property of conditional antecedents: strengthening the
+antecedent weakens the conditional (via contraposition).
+
+Example: "dogs" ⊨ "animals", so "If it's an animal, it barks" ⊨ "If it's a dog, it barks"
+-/
+theorem conditional_antecedent_DE :
+    isDownwardEntailing (materialCond p012) testCases = true := by
+  native_decide
+
+/--
+**Implication second argument is UE**.
+
+If P ⊨ Q, then (A → P) ⊨ (A → Q)
+
+The consequent position of a conditional is upward entailing.
+-/
+theorem implication_consequent_UE : isUpwardEntailing (fun c => materialCond c p01) testCases = true := by
+  native_decide
+
+/--
+**Summary: Conditional positions and monotonicity**
+
+- Antecedent position: DE (strengthening weakens the conditional)
+- Consequent position: UE (strengthening strengthens the conditional)
+
+This explains scalar implicature patterns:
+- "If some passed, happy" - antecedent is DE, so SI blocked (global preferred)
+- "If passed, happy about some" - consequent is UE, so SI computed (local available)
+-/
+theorem conditional_monotonicity_summary :
+    isDownwardEntailing (materialCond p012) testCases = true ∧
+    isUpwardEntailing (fun c => materialCond c p01) testCases = true := by
+  constructor
+  · exact conditional_antecedent_DE
+  · exact implication_consequent_UE
+
+-- ============================================================================
+-- PART 8: DE Reverses Scalar Strength
+-- ============================================================================
+
+/--
+**Key Insight: DE contexts reverse scalar strength**
+
+In UE: all ⊢ some (all is stronger, "some" implicates "not all")
+In DE: some ⊢ all (some is stronger, no "not all" implicature)
+-/
+theorem de_reverses_strength :
+    -- In UE context (identity), p0 ⊢ p01 means p0 is stronger
+    entails p0 p01 = true ∧
+    -- Under negation (DE), the relationship reverses
+    entails (pnot p01) (pnot p0) = true := by
+  native_decide
+
+-- ============================================================================
+-- PART 9: Grounded Polarity Structures
 -- ============================================================================
 
 /--
@@ -192,7 +355,7 @@ Negation is grounded DE.
 def negationPolarity : GroundedPolarity := mkDownward pnot pnot_isDownwardEntailing
 
 -- ============================================================================
--- PART 5: Compositional Polarity Computation
+-- PART 10: Compositional Polarity Computation
 -- ============================================================================
 
 /--
@@ -217,7 +380,7 @@ def composePolarity (outer inner : GroundedPolarity) : GroundedPolarity :=
     .ue ⟨f ∘ g, de_comp_de hf hg⟩
 
 -- ============================================================================
--- PART 6: Polarity Composition Table (Verified)
+-- PART 11: Polarity Composition Table (Verified)
 -- ============================================================================
 
 /--
@@ -246,12 +409,12 @@ theorem polarity_composition_table :
 This captures the linguistic insight: "It's not the case that no one..."
 creates a UE context for the embedded scalar item.
 -/
-theorem double_de_is_ue (f g : Prop' → Prop') (hf : Antitone f) (hg : Antitone g) :
+theorem double_de_is_ue_grounded (f g : Prop' → Prop') (hf : Antitone f) (hg : Antitone g) :
     (composePolarity (mkDownward f hf) (mkDownward g hg)).toContextPolarity = .upward := by
   simp only [composePolarity, mkDownward, GroundedPolarity.toContextPolarity]
 
 -- ============================================================================
--- PART 7: Connection to Implicature Derivation
+-- PART 12: Connection to Implicature Derivation
 -- ============================================================================
 
 /--
@@ -287,35 +450,24 @@ theorem implicature_allowed_double_negation :
         GroundedPolarity.toContextPolarity]
 
 -- ============================================================================
--- PART 8: Decidable Checking (for compatibility)
--- ============================================================================
-
-/--
-Decidable check for upward entailment on test cases.
-
-This is used by Monotonicity.lean for decidable checking.
--/
-def checkUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all λ (p, q) => !entails p q || entails (f p) (f q)
-
-/--
-Decidable check for downward entailment on test cases.
-
-This is used by Monotonicity.lean for decidable checking.
--/
-def checkDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all λ (p, q) => !entails p q || entails (f q) (f p)
-
--- ============================================================================
 -- SUMMARY
 -- ============================================================================
 
-/-
+/-!
 ## What This Module Provides
+
+### ContextPolarity Enum
+- `ContextPolarity.upward` : Preserves entailment
+- `ContextPolarity.downward` : Reverses entailment
 
 ### Using Mathlib's Monotone/Antitone
 - `IsUpwardEntailing f` := `Monotone f` (preserves ordering)
 - `IsDownwardEntailing f` := `Antitone f` (reverses ordering)
+- `IsUE`, `IsDE` : Shorthand aliases
+
+### Decidable Test Functions
+- `isUpwardEntailing f tests` : Check UE on test cases
+- `isDownwardEntailing f tests` : Check DE on test cases
 
 ### Basic Proofs
 - `id_isUpwardEntailing` : Identity is monotone
@@ -328,6 +480,13 @@ def checkDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop'))
 - `ue_comp_de` : UE ∘ DE = DE (`Monotone.comp_antitone`)
 - `de_comp_ue` : DE ∘ UE = DE (`Antitone.comp`)
 
+### Monotonicity Theorems (Decidable)
+- `negation_is_DE` : Negation reverses entailment
+- `conjunction_second_UE` : (R ∧ _) is UE
+- `disjunction_second_UE` : (R ∨ _) is UE
+- `conditional_antecedent_DE` : (If _, C) is DE
+- `implication_consequent_UE` : (If A, _) is UE
+
 ### Grounded Polarity
 - `GroundedPolarity`: Context + polarity + proof
 - `composePolarity`: Compositional polarity with proof
@@ -335,13 +494,13 @@ def checkDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop'))
 
 ### Verified Properties
 - `polarity_composition_table`: The 2×2 table is correct
-- `double_de_is_ue`: Double negation gives UE
+- `double_de_is_ue_grounded`: Double negation gives UE
 - `implicature_allowed_double_negation`: SI under ¬¬ is OK
 
 ## Connection to Other Modules
 
 This module bridges:
-- `Monotonicity.lean`: Uses decidable checking for test-based verification
+- `AntiAdditivity.lean`: Uses IsDownwardEntailing for DE < AA < AM hierarchy
 - `ContextPolarity`: The enum used throughout NeoGricean/
 - `FoxSpector2018.lean`: Economy condition uses polarity
 - `PottsLU.lean`: LU model's DE/UE predictions
@@ -349,4 +508,4 @@ This module bridges:
 Now `ContextPolarity` can be DERIVED from Mathlib's Monotone/Antitone proofs!
 -/
 
-end Montague.Sentence.Entailment.Polarity
+end Montague.Core.Polarity

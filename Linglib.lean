@@ -50,7 +50,6 @@ import Linglib.Core.Pipeline
 import Linglib.Core.InformationStructure
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
-import Linglib.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
@@ -171,7 +170,6 @@ import Linglib.Theories.Montague.Conjunction
 
 -- Montague Lexicon
 import Linglib.Theories.Montague.Core.Lexicon
-import Linglib.Theories.Montague.Core.Features
 import Linglib.Theories.Montague.Domain.Degree
 import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 import Linglib.Theories.Montague.Noun.Kind.Krifka2004
@@ -200,7 +198,8 @@ import Linglib.Theories.Montague.Sentence.Entailment.Basic
 import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
 import Linglib.Theories.Montague.Sentence.Entailment.NegationTests
 import Linglib.Theories.Montague.Sentence.Entailment.ScaleInteraction
-import Linglib.Theories.Montague.Sentence.Entailment.Polarity
+import Linglib.Theories.Montague.Core.Polarity
+import Linglib.Theories.Montague.Sentence.Entailment.AntiAdditivity
 import Linglib.Theories.Montague.Sentence.Entailment.PresuppositionPolarity
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
