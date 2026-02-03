@@ -25,7 +25,7 @@ and connecting them to computational pragmatics (RSA - Rational Speech Acts).
 - EmpiricalData: Data types, linking functions
 - SubjectAuxInversion/, Coordination/, LongDistanceDependencies/
 - ScalarImplicatures/, FreeChoice/, DisjunctionIgnorance/
-- WordOrderAlternations/VerbPosition/ (V2, verb raising, long head movement)
+- WordOrder/ (SVO, inversion, V2, verb raising)
 - GoodmanStuhlmuller2013/, FrankGoodman2012/ (RSA reference game experiments)
 - GeurtsPouscoulous2009/ (scalar implicature rates: defaultism vs contextualism)
 
@@ -97,7 +97,6 @@ import Linglib.Phenomena.Core.Lexicon
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.Case
 import Linglib.Phenomena.Agreement.DetNoun
-import Linglib.Phenomena.BasicPhenomena.Proofs
 
 -- Word order phenomena
 import Linglib.Phenomena.WordOrder.Basic
@@ -424,7 +423,7 @@ import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
 
 -- Word order alternations (verb position, etc.)
-import Linglib.Phenomena.WordOrderAlternations.VerbPosition.Data
+import Linglib.Phenomena.WordOrder.VerbPosition
 
 -- Conditional phenomena
 import Linglib.Phenomena.Conditionals.Data
@@ -433,7 +432,7 @@ import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 
 -- Additive particles (too, also, either) - Thomas (2026)
-import Linglib.Phenomena.Additives.Data
+import Linglib.Phenomena.AdditiveParticles.Data
 
 -- Generics (bare plurals, kind reference)
 import Linglib.Phenomena.Generics.Data
