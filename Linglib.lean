@@ -114,14 +114,14 @@ import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 
 -- RSA Studies (general RSA methodology papers)
-import Linglib.Phenomena.RSAStudies.FrankGoodman2012
-import Linglib.Phenomena.RSAStudies.KaoBergenGoodman2014
-import Linglib.Phenomena.RSAStudies.ScontrasPearl2021
-import Linglib.Phenomena.RSAStudies.HawkinsEtAl2025
-import Linglib.Phenomena.RSAStudies.HawkinsGweonGoodman2021
-import Linglib.Phenomena.RSAStudies.FrankeBergen2020
-import Linglib.Phenomena.RSAStudies.GrusdtLassiterFranke2022
-import Linglib.Phenomena.RSAStudies.SumersEtAl2023
+import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
+import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
+import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
+import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
+import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
+import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
+import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 
 -- Theories
 import Linglib.Theories.HPSG.Basic

@@ -26,14 +26,14 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface
-import Linglib.Phenomena.RSAStudies.FrankeBergen2020
+import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 
 namespace RSA.Implementations.FrankeBergen2020
 
 open Core
 open NeoGricean.Exhaustivity.Interface
 open NeoGricean.Exhaustivity (Prop')
-open Phenomena.RSAStudies.FrankeBergen2020
+open Phenomena.Quantification.Studies.FrankeBergen2020
 
 -- ============================================================================
 -- PART 1: World Model (Alien/Water Domain)

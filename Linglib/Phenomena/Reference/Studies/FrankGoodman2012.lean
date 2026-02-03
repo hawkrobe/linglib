@@ -12,7 +12,7 @@ Empirical data for simple reference games:
 
 import Linglib.Phenomena.Core.EmpiricalData
 
-namespace Phenomena.RSAStudies.FrankGoodman2012
+namespace Phenomena.Reference.Studies.FrankGoodman2012
 
 open Phenomena
 
@@ -101,4 +101,4 @@ chose particular words, not just what words literally mean.
 def phenomenonDescription : String :=
   "Reference games demonstrate pragmatic disambiguation via speaker rationality"
 
-end Phenomena.RSAStudies.FrankGoodman2012
+end Phenomena.Reference.Studies.FrankGoodman2012

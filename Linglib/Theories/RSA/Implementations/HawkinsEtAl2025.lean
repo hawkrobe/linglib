@@ -38,12 +38,12 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.Montague.Question.DecisionTheory
-import Linglib.Phenomena.RSAStudies.HawkinsEtAl2025
+import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 
 namespace RSA.PriorPQ
 
 -- Import response types from empirical data and decision theory foundation
-open Phenomena.RSAStudies.HawkinsEtAl2025
+open Phenomena.Questions.Studies.HawkinsEtAl2025
 open Montague.Question (DecisionProblem expectedUtility)
 
 -- ============================================================================

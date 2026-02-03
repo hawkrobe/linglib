@@ -26,7 +26,7 @@ Human speakers trade off truthfulness and relevance:
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.RSAStudies.SumersEtAl2023
+namespace Phenomena.Imperatives.Studies.SumersEtAl2023
 
 -- ============================================================================
 -- PART 1: Experimental Domain

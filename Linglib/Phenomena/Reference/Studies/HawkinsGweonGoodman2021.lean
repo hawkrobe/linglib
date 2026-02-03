@@ -65,7 +65,7 @@ Communication: Speakers Help Listeners Account for Asymmetries in Visual
 Perspective. Cognitive Science, 45, e12926.
 -/
 
-namespace Phenomena.RSAStudies.HawkinsGweonGoodman2021
+namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 
 -- ============================================================================
 -- PART 1: Task Structure

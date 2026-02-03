@@ -51,7 +51,7 @@ Metaphor Understanding. Proceedings of the Annual Meeting of the Cognitive
 Science Society, 36, 719-724.
 -/
 
-namespace Phenomena.RSAStudies.KaoBergenGoodman2014
+namespace Phenomena.Metaphor.Studies.KaoBergenGoodman2014
 
 -- ============================================================================
 -- Experimental Categories and Features (Table 1 from paper)
@@ -128,4 +128,4 @@ def keyPredictions : List KeyPrediction := [
   .contextSensitivity
 ]
 
-end Phenomena.RSAStudies.KaoBergenGoodman2014
+end Phenomena.Metaphor.Studies.KaoBergenGoodman2014

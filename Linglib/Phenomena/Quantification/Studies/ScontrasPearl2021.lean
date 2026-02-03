@@ -26,7 +26,7 @@ Scontras, G. & Pearl, L. (2021). "When pragmatics matters more for truth-value
 judgments: An investigation of quantifier scope ambiguity."
 -/
 
-namespace Phenomena.RSAStudies.ScontrasPearl2021
+namespace Phenomena.Quantification.Studies.ScontrasPearl2021
 
 -- ============================================================================
 -- World States
@@ -195,4 +195,4 @@ This motivates the lifted-variable RSA model where interpretation
 is a random variable jointly inferred with world state.
 -/
 
-end Phenomena.RSAStudies.ScontrasPearl2021
+end Phenomena.Quantification.Studies.ScontrasPearl2021

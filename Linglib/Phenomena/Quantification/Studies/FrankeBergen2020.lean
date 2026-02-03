@@ -26,7 +26,7 @@ Franke, M. & Bergen, L. (2020). "Theory-driven statistical modeling for
 semantics and pragmatics". Annual Review of Linguistics, Vol. 6, pp. 533–562.
 -/
 
-namespace Phenomena.RSAStudies.FrankeBergen2020
+namespace Phenomena.Quantification.Studies.FrankeBergen2020
 
 -- ============================================================================
 -- Sentence Types: Nested Aristotelians

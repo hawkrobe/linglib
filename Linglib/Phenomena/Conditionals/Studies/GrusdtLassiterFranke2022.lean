@@ -32,7 +32,7 @@ The paper presents three experiments testing the RSA model of conditionals.
 import Linglib.Phenomena.Core.EmpiricalData
 import Linglib.Core.CausalBayesNet
 
-namespace Phenomena.RSAStudies.GrusdtLassiterFranke2022
+namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 
 open Phenomena
 open Core.CausalBayesNet

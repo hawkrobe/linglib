@@ -18,7 +18,7 @@ A respondent can infer likely decision problems from the question asked.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.RSAStudies.HawkinsEtAl2025
+namespace Phenomena.Questions.Studies.HawkinsEtAl2025
 
 -- ============================================================================
 -- PART 1: Theoretical Framework
@@ -242,4 +242,4 @@ def keyPredictions : List KeyPrediction :=
   , .tomResolvesCircularity
   ]
 
-end Phenomena.RSAStudies.HawkinsEtAl2025
+end Phenomena.Questions.Studies.HawkinsEtAl2025
