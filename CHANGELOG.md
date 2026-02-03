@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.55.0] - 2025-02-02
+
+### Added
+- **Theories/NeoGricean/Exhaustivity/EFCI.lean**: Existential Free Choice Items (Alonso-Ovalle & Moghiseh 2025)
+  - Pre-exhaustified domain alternatives: `preExhaustify D d P = P(d) ∧ ∀y≠d. ¬P(y)`
+  - EFCI rescue typology: `EFCIRescue` (none/modalInsertion/partialExh/both)
+  - Context-dependent readings: `efciReading` maps context → reading
+  - Key theorems: `yeki_root_uniqueness`, `deontic_freeChoice`, `epistemic_modalVariation`
+
+- **Theories/NeoGricean/Exhaustivity/EFCIClosure.lean**: Root explanation for EFCI
+  - `preExh_pairwise_inconsistent`: Pre-exhaustified alternatives are mutually exclusive
+  - `efci_not_closed_witness`: EFCI alternatives fail closure under conjunction
+  - `unique_witness_falsifies_allNotPreExh`: Why IE can't negate all domain alts
+  - Connection to Spector's Theorem 9 (non-closure explains exh_mw ≠ exh_ie)
+
+- **Phenomena/FreeChoice/FarsiYekI/Data.lean**: Empirical data for Farsi *yek-i*
+  - `YekIDatum`: Context-reading pairs (root→uniqueness, deontic→FC, etc.)
+  - `EFCITypologyDatum`: Cross-linguistic EFCI comparison (yek-i, irgendein, vreun)
+
+- **Fragments/Farsi/Determiners.lean**: Farsi indefinite lexicon
+  - `yeki`: *yek-i* lexical entry with EFCI properties
+  - `getReading`: Compute reading from entry and context
+  - Cross-linguistic entries: `irgendein_de`, `vreun_ro`
+
 ## [0.54.0] - 2025-02-02
 
 ### Changed
