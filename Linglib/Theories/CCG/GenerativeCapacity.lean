@@ -38,7 +38,7 @@ import Linglib.Theories.CCG.Basic
 namespace CCG.GenerativeCapacity
 
 open FourSymbol
-open Phenomena.Dependencies.CrossSerial
+open Phenomena.FillerGap.CrossSerial
 
 -- ============================================================================
 -- CCG Generates {aⁿbⁿcⁿdⁿ}

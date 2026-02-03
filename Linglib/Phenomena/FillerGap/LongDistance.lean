@@ -29,7 +29,7 @@ Reference: Gibson (2025) "Syntax", MIT Press, Section 3.9
 
 import Linglib.Phenomena.Core.Basic
 
-namespace Phenomena.Dependencies.LongDistance
+namespace Phenomena.FillerGap.LongDistance
 
 open Lexicon
 
@@ -137,4 +137,4 @@ def isWhFronted (ws : List Word) : Bool :=
   | some _ => false
   | none => false
 
-end Phenomena.Dependencies.LongDistance
+end Phenomena.FillerGap.LongDistance

@@ -10,12 +10,12 @@ This module covers syntactic dependency phenomena:
 - Related to Ellipsis/: Sluicing as island repair
 -/
 
-import Linglib.Phenomena.Dependencies.LongDistance
-import Linglib.Phenomena.Dependencies.CrossSerial
+import Linglib.Phenomena.FillerGap.LongDistance
+import Linglib.Phenomena.FillerGap.CrossSerial
 
-namespace Phenomena.Dependencies
+namespace Phenomena.FillerGap
 
 export LongDistance (longDistanceData)
 export CrossSerial (Dependency DependencyPattern DutchExample)
 
-end Phenomena.Dependencies
+end Phenomena.FillerGap

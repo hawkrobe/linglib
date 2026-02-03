@@ -104,9 +104,9 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.Coordination.Data
 
 -- Dependencies phenomena
-import Linglib.Phenomena.Dependencies.Basic
-import Linglib.Phenomena.Dependencies.LongDistance
-import Linglib.Phenomena.Dependencies.CrossSerial
+import Linglib.Phenomena.FillerGap.Basic
+import Linglib.Phenomena.FillerGap.LongDistance
+import Linglib.Phenomena.FillerGap.CrossSerial
 
 -- Argument structure phenomena
 import Linglib.Phenomena.ArgumentStructure.Subcategorization

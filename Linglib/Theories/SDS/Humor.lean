@@ -33,13 +33,13 @@ These are equivalent when we identify:
 
 import Linglib.Theories.SDS.Core
 import Linglib.Theories.SDS.Examples
-import Linglib.Phenomena.Humor.KaoEtAl2016.Data
+import Linglib.Phenomena.Humor.Studies.KaoEtAl2016
 
 namespace SDS.Humor
 
 open SDS.Core
 open SDS.Examples
-open Phenomena.Humor.KaoEtAl2016
+open Phenomena.Humor.Studies.KaoEtAl2016
 
 -- ============================================================================
 -- Structural Correspondence

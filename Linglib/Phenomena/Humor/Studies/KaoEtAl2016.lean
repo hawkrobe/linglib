@@ -33,7 +33,7 @@ Funniness rated on 1-7 scale, z-scored across participants.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.Humor.KaoEtAl2016
+namespace Phenomena.Humor.Studies.KaoEtAl2016
 
 -- ============================================================================
 -- Pun Structure
@@ -283,4 +283,4 @@ In SDS: selectional vs scenario → different concepts
 See `Theories.Comparisons.SDS.Humor` for formal correspondence.
 -/
 
-end Phenomena.Humor.KaoEtAl2016
+end Phenomena.Humor.Studies.KaoEtAl2016

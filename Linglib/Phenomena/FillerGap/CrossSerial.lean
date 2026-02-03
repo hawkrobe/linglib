@@ -36,7 +36,7 @@ German has NESTED dependencies (can be handled by CFG):
 - Shieber (1985) "Evidence against the context-freeness of natural language"
 -/
 
-namespace Phenomena.Dependencies.CrossSerial
+namespace Phenomena.FillerGap.CrossSerial
 
 -- ============================================================================
 -- NP-Verb Pairing Types
@@ -244,4 +244,4 @@ theorem german_3_is_nested :
 - Proof that CCG generates cross-serial pattern
 -/
 
-end Phenomena.Dependencies.CrossSerial
+end Phenomena.FillerGap.CrossSerial
