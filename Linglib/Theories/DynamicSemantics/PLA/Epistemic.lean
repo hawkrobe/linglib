@@ -311,7 +311,7 @@ def Concept.fromPron (i : PronIdx) : Concept E := fun p => p.2 i
 ## Relationship to Kratzer (1981) Modal Semantics
 
 PLA's epistemic operators share deep structure with Kratzer's modal semantics
-from `Montague.Modal.Kratzer1981`. Both frameworks implement:
+from `Montague.Modal.Kratzer`. Both frameworks implement:
 
 ### Common Pattern: Necessity as Universal Quantification
 
@@ -354,7 +354,7 @@ The relationship can be made precise: if we "freeze" the assignment and
 witness sequence, PLA's support relation reduces to Kratzer-style necessity
 over the remaining possibilities.
 
-See `Montague.Modal.Kratzer1981` for the full Kratzer framework with:
+See `Montague.Modal.Kratzer` for the full Kratzer framework with:
 - Modal base and ordering source
 - Preorder on worlds (`kratzerPreorder`)
 - Frame correspondence theorems (T, D, 4, B, 5 axioms)
@@ -407,7 +407,7 @@ PLA epistemic operators parallel Kratzer's (1981) modal semantics:
 - `s ⊫[M] φ` ≈ Kratzer's necessity over accessible worlds
 
 The key innovation of PLA is adding the **dynamic dimension**: state transformation
-rather than pure truth conditions. See `Montague.Modal.Kratzer1981` for the
+rather than pure truth conditions. See `Montague.Modal.Kratzer` for the
 full Kratzer framework.
 -/
 

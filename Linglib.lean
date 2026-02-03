@@ -51,7 +51,7 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
 import Linglib.Core.Proposition
-import Linglib.Core.Ordering
+import Linglib.Core.SatisfactionOrdering
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Core.Analyticity

@@ -247,7 +247,7 @@ conditional semantics for use in mathematical proofs.
 
 For the **computable, List-based** version with concrete examples and
 proven properties (preorder, duality, K axiom, etc.), see:
-  `Linglib.Theories.Montague.Modal.Kratzer1981`
+  `Linglib.Theories.Montague.Modal.Kratzer`
 
 Both use the same CORRECT subset-based ordering from Kratzer (1981, p. 39):
   w₁ ≤_A w₂  iff  {p ∈ A : w₂ ∈ p} ⊆ {p ∈ A : w₁ ∈ p}
@@ -274,7 +274,7 @@ w₁ is at least as good as w₂ according to ordering source `os` iff
 every proposition in `os` satisfied by w₂ is also satisfied by w₁.
 
 This is the **correct** subset-based ordering from Kratzer (1981, p. 39).
-Equivalent to `atLeastAsGoodAs` in `Kratzer1981.lean` (which uses Lists for computation).
+Equivalent to `atLeastAsGoodAs` in `Kratzer.lean` (which uses Lists for computation).
 
 **NOT** a counting-based ordering (which would be incorrect).
 -/

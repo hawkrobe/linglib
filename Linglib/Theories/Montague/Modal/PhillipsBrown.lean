@@ -8,7 +8,7 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 
 import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Question.Hamblin
-import Linglib.Core.Ordering
+import Linglib.Core.SatisfactionOrdering
 
 namespace Montague.Modal.PhillipsBrown
 
@@ -17,9 +17,9 @@ open Montague.Modal.Kratzer
 open Montague.Question.Hamblin
 
 /-- p entails q iff every p-world is a q-world.
-    Uses Core.Ordering.propEntails with global allWorlds. -/
+    Uses Core.SatisfactionOrdering.propEntails with global allWorlds. -/
 def propEntails (p q : Prop') : Bool :=
-  Core.Ordering.propEntails allWorlds p q
+  Core.SatisfactionOrdering.propEntails allWorlds p q
 
 /-- Propositions overlap iff they share at least one world. -/
 def propOverlap (p q : Prop') : Bool :=
@@ -182,10 +182,10 @@ def isCDistributive (semantics : List Prop' → Prop' → Bool)
   wholeQ == existsSingle
 
 -- ============================================================================
--- Connection to Core.Ordering Framework
+-- Connection to Core.SatisfactionOrdering Framework
 -- ============================================================================
 
-open Core.Ordering
+open Core.SatisfactionOrdering
 
 /-- Proposition ordering: a satisfies p iff a entails p. -/
 def propositionOrdering (GS : List Prop') : SatisfactionOrdering Prop' Prop' where
@@ -223,7 +223,7 @@ def evalWant (self : BouleticFlavor) (w : World)
 
 /-- Preference ordering on propositions at world w. -/
 def preferenceOrdering (self : BouleticFlavor) (w : World) :
-    Core.Ordering.SatisfactionOrdering Prop' Prop' :=
+    Core.SatisfactionOrdering.SatisfactionOrdering Prop' Prop' :=
   propositionOrdering (self.desires w)
 
 /-- Best answers according to S's desires at world w. -/

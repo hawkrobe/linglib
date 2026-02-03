@@ -44,7 +44,7 @@ This avoids the Limit Assumption!
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Modal.Basic
 import Linglib.Core.Proposition
-import Linglib.Core.Ordering
+import Linglib.Core.SatisfactionOrdering
 import Mathlib.Order.Basic
 
 namespace Montague.Modal.Kratzer
@@ -169,10 +169,10 @@ def strictlyBetter (A : List Prop') (w z : World) : Bool :=
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
 -- ============================================================================
--- PART 4: Generic Ordering via Core.Ordering
+-- PART 4: Generic Ordering via Core.SatisfactionOrdering
 -- ============================================================================
 
-open Core.Ordering
+open Core.SatisfactionOrdering
 
 /--
 Kratzer's world ordering as a `SatisfactionOrdering`.

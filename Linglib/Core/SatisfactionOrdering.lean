@@ -29,7 +29,7 @@ making the parallel explicit.
 
 import Mathlib.Data.Set.Basic
 
-namespace Core.Ordering
+namespace Core.SatisfactionOrdering
 
 -- ============================================================================
 -- Generic Kratzer-Style Ordering
@@ -251,4 +251,4 @@ let bestAnswers := pbOrd.best liveAnswers
 ```
 -/
 
-end Core.Ordering
+end Core.SatisfactionOrdering
