@@ -89,7 +89,9 @@ import Linglib.Core.Interfaces.SemanticStructure
 
 -- Phenomena (empirical data)
 -- Core infrastructure
-import Linglib.Phenomena.Core
+import Linglib.Phenomena.Core.Basic
+import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Phenomena.Core.Lexicon
 
 -- Agreement phenomena
 import Linglib.Phenomena.Agreement.Basic
