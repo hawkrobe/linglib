@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.57.0] - 2025-02-02
+
+### Added
+- **Theories/Montague/Lexicon/Expressives/Basic.lean**: Potts (2005) two-dimensional semantics
+  - `TwoDimProp W`: At-issue + CI content structure
+  - CI projection theorems: `ci_projects_through_neg`, `ci_projects_from_antecedent`
+  - `CIExprType`: Taxonomy (epithet, honorific, appositive, etc.)
+  - `comma`: Type-shift for appositives, `supplementaryAdverb`: Adverb application
+  - `ciStrongerThan`: CI informativeness ordering for MCIs!
+
+- **Theories/NeoGricean/ConventionalImplicatures.lean**: Lo Guercio (2025) ACIs
+  - `CIAlternativePair`, `MCIsResult`: Alternative pair and MCIs! result types
+  - `applyMCIs`: Derive ACIs from CI alternative pairs
+  - Key examples: `example_outOfBlue_noACI`, `example_priorMention_ACI`
+  - Property theorems: `aci_independent_of_assertion`, `aci_polarity_insensitive`
+  - `ScalarInferenceComparison`: Compare SI/antipresup/ACI properties
+
+- **Phenomena/LoGuercio2025/Data.lean**: Empirical ACI judgments
+  - Epithet data (ex18-21), honorific data (ex22-23), appositive data (ex31-32)
+  - Property tests: ex50 (assertion independence), ex52 (cancellable), ex61 (DE-insensitive), ex63 (reinforceable)
+  - `InferenceTypeComparison`: SI vs antipresupposition vs ACI table
+
 ## [0.56.0] - 2025-02-02
 
 ### Added
