@@ -27,7 +27,7 @@ predictions, motivating the richer structure in the full model.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.ScalarImplicatures.Data
+import Linglib.Phenomena.ScalarImplicatures.Basic
 
 namespace RSA.EmbeddedScalars
 

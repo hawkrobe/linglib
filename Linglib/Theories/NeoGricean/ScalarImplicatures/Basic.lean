@@ -37,8 +37,8 @@ import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Montague.Sentence.Entailment.Basic
 import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
 import Linglib.Theories.Montague.Core.Derivation
-import Linglib.Phenomena.GeurtsPouscoulous2009.Data
-import Linglib.Phenomena.ScalarImplicatures.Data
+import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace NeoGricean.ScalarImplicatures
@@ -544,7 +544,7 @@ The NeoGricean theory makes specific predictions that should match
 the experimental findings from Geurts & Pouscoulous (2009).
 -/
 
-open GeurtsPouscoulous2009
+open Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
 /--
 **Gricean prediction for embedding types**

@@ -30,14 +30,14 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Phenomena.HeKaiserIskarous2025.Data
+import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Core.Polarity
 
 namespace RSA.Implementations.HeKaiserIskarous2025
 
-open _root_.HeKaiserIskarous2025
+open Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 open RSA.Eval
 
 -- ============================================================================

@@ -41,7 +41,7 @@ Comparisons/CoreferenceComparison.lean
 -/
 
 import Linglib.Core.Basic
-import Linglib.Phenomena.Coreference.Data
+import Linglib.Phenomena.Anaphora.Coreference
 
 namespace Interfaces
 

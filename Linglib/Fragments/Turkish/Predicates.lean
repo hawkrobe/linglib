@@ -21,7 +21,7 @@ questions via adjunction rather than canonical complementation.
 ## Architecture Note
 
 Properties like C-distributivity and NVP class are DERIVED from the
-`preferentialBuilder` field, not stipulated. This grounds the Fragment
+`attitudeBuilder` field, not stipulated. This grounds the Fragment
 entries in the Montague semantics via proved theorems.
 
 ## References
@@ -34,8 +34,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 namespace Fragments.Turkish.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
-open Montague.Verb.Attitude.Doxastic (Veridicality)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 
 -- ============================================================================
@@ -70,9 +69,8 @@ def kork : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .negative → C-distributive (PROVED) → Class 2 (takes questions)
-  preferentialBuilder := some (.degreeComparison .negative)
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 /--
 "um-" — hope (Class 3: anti-rogative canonically)
@@ -102,9 +100,8 @@ def um : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .positive → C-distributive (PROVED) → Class 3 (anti-rogative)
-  preferentialBuilder := some (.degreeComparison .positive)
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /--
 "merak et-" — wonder/be curious (takes questions)
@@ -147,9 +144,8 @@ def endiselen : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- uncertaintyBased → NOT C-distributive (PROVED) → Class 1 (takes questions)
-  preferentialBuilder := some .uncertaintyBased
+  attitudeBuilder := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
 -- All Turkish Verbs

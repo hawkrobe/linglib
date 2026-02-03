@@ -192,6 +192,21 @@ theorem meaning_from_montague :
 - Exact rational arithmetic (ℚ) for RSA computations
 - Real numbers (ℝ) only for mathematical proofs (Zaslavsky et al.)
 
+## Formalization Conventions
+
+**Prefer `sorry` over weakening theorem statements.** When a proof is difficult:
+- State the full theorem as intended
+- Use `sorry` to mark it incomplete
+- Add a `TODO:` comment explaining the proof approach or what's blocking
+- Include a proof sketch in the docstring when possible
+
+This is preferable to "backing away" from the full statement by:
+- Weakening hypotheses
+- Strengthening conclusions
+- Simplifying the formalization to make proofs easier
+
+Rationale: It's hard to remember which formalizations are incomplete when they compile without warnings. A `sorry` warning explicitly marks incomplete work for later, while a weakened-but-proved theorem may be forgotten as not fully capturing the intended claim.
+
 ## References
 
 ### RSA Papers (Implemented)

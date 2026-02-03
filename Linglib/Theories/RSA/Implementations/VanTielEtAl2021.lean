@@ -38,7 +38,7 @@ import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.Montague.Determiner.Quantifier
-import Linglib.Phenomena.VanTielEtAl2021.Data
+import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.VanTielEtAl2021

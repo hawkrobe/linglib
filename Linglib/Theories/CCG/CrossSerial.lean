@@ -39,12 +39,12 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 -/
 
 import Linglib.Theories.CCG.Basic
-import Linglib.Phenomena.CrossSerialDependencies.Data
+import Linglib.Phenomena.Dependencies.CrossSerial
 
 namespace CCG.CrossSerial
 
 open CCG
-open Phenomena.CrossSerialDependencies
+open Phenomena.Dependencies.CrossSerial
 
 -- ============================================================================
 -- Additional Categories for Dutch

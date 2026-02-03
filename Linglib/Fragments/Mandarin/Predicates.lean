@@ -19,7 +19,7 @@ Mandarin "qidai" is crucial evidence for Qing et al.'s theory because:
 ## Architecture Note
 
 Properties like C-distributivity and NVP class are DERIVED from the
-`preferentialBuilder` field, not stipulated. This grounds the Fragment
+`attitudeBuilder` field, not stipulated. This grounds the Fragment
 entries in the Montague semantics via proved theorems.
 
 ## References
@@ -31,8 +31,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 namespace Fragments.Mandarin.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
-open Montague.Verb.Attitude.Doxastic (Veridicality)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 
 -- ============================================================================
@@ -66,9 +65,8 @@ def qidai : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- relevanceBased .positive → NOT C-distributive → Class 1 (takes questions!)
-  preferentialBuilder := some (.relevanceBased .positive)
+  attitudeBuilder := some (.preferential (.relevanceBased .positive))
 
 /--
 担心 "danxin" — worry (Class 1: non-C-distributive negative)
@@ -96,9 +94,8 @@ def danxin : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- uncertaintyBased → NOT C-distributive (PROVED) → Class 1 (takes questions)
-  preferentialBuilder := some .uncertaintyBased
+  attitudeBuilder := some (.preferential .uncertaintyBased)
 
 /--
 希望 "xiwang" — hope (Class 3: anti-rogative, like English "hope")
@@ -122,9 +119,8 @@ def xiwang : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .positive → C-distributive (PROVED) → Class 3 (anti-rogative)
-  preferentialBuilder := some (.degreeComparison .positive)
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /--
 害怕 "haipa" — fear (Class 2: takes questions)
@@ -148,9 +144,8 @@ def haipa : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .negative → C-distributive (PROVED) → Class 2 (takes questions)
-  preferentialBuilder := some (.degreeComparison .negative)
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 -- ============================================================================
 -- All Mandarin Verbs

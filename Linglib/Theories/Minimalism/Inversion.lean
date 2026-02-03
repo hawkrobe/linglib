@@ -16,7 +16,7 @@ This derives the word order asymmetry:
 -/
 
 import Linglib.Theories.Minimalism.Structure
-import Linglib.Phenomena.SubjectAuxInversion.Data
+import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 namespace Minimalism
 

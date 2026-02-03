@@ -7,7 +7,7 @@ Reference: Hudson (1990), Gibson (2025) Section 3.9
 -/
 
 import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Phenomena.LongDistanceDependencies.Data
+import Linglib.Phenomena.Dependencies.LongDistance
 
 namespace LongDistanceDependencies.WordGrammarAnalysis
 

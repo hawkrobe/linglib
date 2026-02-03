@@ -35,7 +35,7 @@ S1 probability reflects speaker rationality:
 
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Phenomena.ScalarImplicatures.Data
+import Linglib.Phenomena.ScalarImplicatures.Basic
 
 namespace RSA.Hurford
 

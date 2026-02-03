@@ -48,7 +48,7 @@ Utterances crossing quantifiers × predicates:
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.ScalarImplicatures.Data
+import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Theories.RSA.ScalarImplicatures.Embedded.Basic
 
 namespace RSA.PottsLU

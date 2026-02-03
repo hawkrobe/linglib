@@ -33,14 +33,14 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Phenomena.YoonEtAl2020.Data
+import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Theories.Montague.Domain.Degree
 import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Core.Proposition
 
 namespace RSA.Implementations.YoonEtAl2020
 
-open _root_.YoonEtAl2020
+open Phenomena.Politeness.Studies.YoonEtAl2020
 open RSA RSA.Eval
 
 -- ============================================================================

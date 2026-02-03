@@ -59,7 +59,7 @@ import Linglib.Theories.Montague.Noun.Kind.Carlson1977
 import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
 import Linglib.Theories.Montague.Noun.Kind.Dayal2004
 import Linglib.Theories.Montague.Noun.Kind.Krifka2004
-import Linglib.Phenomena.KindReference.Data
+import Linglib.Phenomena.Generics.KindReference
 
 namespace Theories.Comparisons.KindReference
 
@@ -67,7 +67,7 @@ open Montague.Noun.Kind.Carlson1977
 open Montague.Noun.Kind.Chierchia1998
 open Montague.Noun.Kind.Dayal2004
 open Montague.Noun.Kind.Krifka2004
-open Phenomena.KindReference
+open Phenomena.Generics.KindReference
 
 -- ============================================================================
 -- Carlson 1977: The Foundation

@@ -40,11 +40,11 @@ import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.Alsop2024
 import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
 import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
-import Linglib.Phenomena.FreeChoice.Data
+import Linglib.Phenomena.Modality.FreeChoice
 
 namespace Comparisons.FreeChoice
 
-open Phenomena.FreeChoice
+open Phenomena.Modality.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny

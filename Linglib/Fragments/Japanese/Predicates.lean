@@ -20,7 +20,7 @@ Japanese provides evidence for all three NVP classes:
 ## Architecture Note
 
 Properties like C-distributivity and NVP class are DERIVED from the
-`preferentialBuilder` field, not stipulated. This grounds the Fragment
+`attitudeBuilder` field, not stipulated. This grounds the Fragment
 entries in the Montague semantics via proved theorems.
 
 ## References
@@ -32,8 +32,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 namespace Fragments.Japanese.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder)
-open Montague.Verb.Attitude.Doxastic (Veridicality)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 
 -- ============================================================================
@@ -65,9 +64,8 @@ def tanosimi : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- relevanceBased .positive → NOT C-distributive → Class 1 (takes questions)
-  preferentialBuilder := some (.relevanceBased .positive)
+  attitudeBuilder := some (.preferential (.relevanceBased .positive))
 
 /--
 恐れ "osore" — fear (Class 2: C-distributive negative)
@@ -92,9 +90,8 @@ def osore : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .negative → C-distributive (PROVED) → Class 2 (takes questions)
-  preferentialBuilder := some (.degreeComparison .negative)
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 /--
 期待 "kitai" — expect/hope (Class 3: anti-rogative)
@@ -119,9 +116,8 @@ def kitai : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- degreeComparison .positive → C-distributive (PROVED) → Class 3 (anti-rogative)
-  preferentialBuilder := some (.degreeComparison .positive)
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /--
 心配 "shinpai" — worry (Class 1: non-C-distributive)
@@ -145,9 +141,8 @@ def shinpai : VerbEntry where
   verbClass := .attitude
   opaqueContext := true
   -- Preferential properties: linked to Montague via builder
-  attitudeVeridicality := some .nonVeridical
   -- uncertaintyBased → NOT C-distributive (PROVED) → Class 1 (takes questions)
-  preferentialBuilder := some .uncertaintyBased
+  attitudeBuilder := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
 -- All Japanese Verbs

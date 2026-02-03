@@ -43,7 +43,7 @@ For simple transitives, predictions are identical. Differences emerge with:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Phenomena.Coreference.Data
+import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Core.Interfaces.CoreferenceTheory
 
 namespace DepGrammar.CRDC

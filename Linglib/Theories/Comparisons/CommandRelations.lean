@@ -39,7 +39,7 @@ the theories make identical predictions on simple transitive clauses.
 - Hale (1983). Warlpiri and the grammar of non-configurational languages.
 -/
 
-import Linglib.Phenomena.Coreference.Data
+import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.Minimalism.Coreference
 import Linglib.Theories.HPSG.Coreference
 import Linglib.Theories.DependencyGrammar.Coreference

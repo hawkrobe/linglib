@@ -29,7 +29,7 @@ that IE cannot assign FALSE to.
 -/
 
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
-import Linglib.Phenomena.FreeChoice.Data
+import Linglib.Phenomena.Modality.FreeChoice
 
 namespace NeoGricean.FreeChoice
 
@@ -448,10 +448,10 @@ theorem predicts_free_choice_permission :
   free_choice
 
 /-- The inference is pragmatic (not a semantic entailment) -/
-theorem fc_is_pragmatic : Phenomena.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
+theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
 
 /-- The inference is captured by our pragmatic theory -/
-theorem fc_captured_pragmatically : Phenomena.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
+theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
 -- ============================================================================
 -- Summary

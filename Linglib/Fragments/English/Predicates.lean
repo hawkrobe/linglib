@@ -29,14 +29,16 @@ import Linglib.Fragments.English.Predicates.Adjectival
 namespace Fragments.English.Predicates
 
 -- Re-export for convenience
+-- Note: isAntiRogative, canEmbedQuestion, antiRogativeVerbs, questionEmbeddingVerbs
+-- are derived properties now in Theories/Montague/Verb/Attitude/BuilderProperties.lean
 export Verbal (
   -- Types
   VerbClass PresupTriggerType ComplementType ThetaRole ControlType VerbEntry
   PreferentialBuilder
   -- Functions
   getCoSSemantics presupposesComplement isPresupTrigger
-  isPreferentialAttitude isAntiRogative canEmbedQuestion
-  allVerbs antiRogativeVerbs questionEmbeddingVerbs
+  isPreferentialAttitude
+  allVerbs
   toWord3sg toWordBase
 )
 

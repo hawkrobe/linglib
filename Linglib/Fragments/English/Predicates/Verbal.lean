@@ -82,33 +82,61 @@ inductive PreferentialBuilder where
   | relevanceBased (valence : AttitudeValence)
   deriving DecidableEq, Repr, BEq
 
-/--
-C-distributivity is DERIVED from the semantic builder.
-
-This is grounded in the Montague theorems:
-- `degreeComparisonPredicate_isCDistributive` proves degree-comparison → C-dist
-- `worry_not_cDistributive` proves uncertainty-based → NOT C-dist
--/
-def PreferentialBuilder.isCDistributive : PreferentialBuilder → Bool
-  | .degreeComparison _ => true   -- By degreeComparisonPredicate_isCDistributive
-  | .uncertaintyBased => false    -- By worry_not_cDistributive
-  | .relevanceBased _ => false    -- By analogous theorem
-
 /-- Get the valence from the builder -/
 def PreferentialBuilder.valence : PreferentialBuilder → AttitudeValence
   | .degreeComparison v => v
   | .uncertaintyBased => .negative  -- worry is negative
   | .relevanceBased v => v
 
-/--
-NVP class is DERIVED from C-distributivity and valence.
+-- ============================================================================
+-- Unified Attitude Builder (Doxastic + Preferential)
+-- ============================================================================
 
-This matches `Preferential.classifyNVP` but computed from the builder.
+/--
+Unified builder for all attitude verbs, covering both doxastic (believe, know)
+and preferential (hope, fear) attitudes.
+
+This is the **minimal basis** from which theoretical properties are derived:
+1. **Doxastic attitudes**: Use accessibility relations (Hintikka semantics)
+2. **Preferential attitudes**: Use degree/uncertainty semantics (Villalta)
+
+Derived properties (in Theory layer):
+- C-distributivity: from PreferentialBuilder structure (Qing et al. 2025)
+- NVP class: from C-distributivity + valence
+- Parasitic on belief: from being preferential (Maier 2015)
+- Presupposition projection: from veridicality + attitude type (Heim 1992)
 -/
-def PreferentialBuilder.nvpClass (b : PreferentialBuilder) : NVPClass :=
-  if !b.isCDistributive then .class1_nonCDist
-  else if b.valence == .negative then .class2_cDist_negative
-  else .class3_cDist_positive
+inductive AttitudeBuilder where
+  /-- Doxastic attitude (believe, know, think) with accessibility semantics -/
+  | doxastic (veridicality : Veridicality)
+  /-- Preferential attitude (hope, fear, worry) with degree/uncertainty semantics -/
+  | preferential (builder : PreferentialBuilder)
+  deriving DecidableEq, Repr, BEq
+
+/-- Get veridicality from an attitude builder -/
+def AttitudeBuilder.veridicality : AttitudeBuilder → Veridicality
+  | .doxastic v => v
+  | .preferential _ => .nonVeridical  -- Preferential attitudes are non-veridical
+
+/-- Is this a doxastic attitude? -/
+def AttitudeBuilder.isDoxastic : AttitudeBuilder → Bool
+  | .doxastic _ => true
+  | .preferential _ => false
+
+/-- Is this a preferential attitude? -/
+def AttitudeBuilder.isPreferential : AttitudeBuilder → Bool
+  | .doxastic _ => false
+  | .preferential _ => true
+
+/-- Get the preferential builder if this is a preferential attitude -/
+def AttitudeBuilder.getPreferentialBuilder : AttitudeBuilder → Option PreferentialBuilder
+  | .doxastic _ => none
+  | .preferential b => some b
+
+/-- Get valence for preferential attitudes -/
+def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
+  | .doxastic _ => none
+  | .preferential b => some b.valence
 
 -- ============================================================================
 -- Verb Classification
@@ -282,10 +310,9 @@ structure VerbEntry where
   opaqueContext : Bool := false
 
   -- === Attitude-Specific Properties ===
-  /-- For attitude verbs: veridicality (veridical = factive) -/
-  attitudeVeridicality : Option Veridicality := none
-  /-- Link to Montague preferential semantics (determines C-distributivity, NVP class) -/
-  preferentialBuilder : Option PreferentialBuilder := none
+  /-- Unified attitude builder covering doxastic and preferential attitudes.
+      Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
+  attitudeBuilder : Option AttitudeBuilder := none
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
 
@@ -295,30 +322,24 @@ structure VerbEntry where
 -- Derived Properties (from Montague Semantics)
 -- ============================================================================
 
-/-- Valence is DERIVED from the preferential builder -/
+/-- Veridicality is DERIVED from the attitude builder -/
+def VerbEntry.veridicality (v : VerbEntry) : Option Veridicality :=
+  v.attitudeBuilder.map (·.veridicality)
+
+/-- Is this verb a doxastic attitude? -/
+def VerbEntry.isDoxastic (v : VerbEntry) : Bool :=
+  v.attitudeBuilder.map (·.isDoxastic) |>.getD false
+
+/-- Is this verb a preferential attitude? -/
+def VerbEntry.isPreferential (v : VerbEntry) : Bool :=
+  v.attitudeBuilder.map (·.isPreferential) |>.getD false
+
+/-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def VerbEntry.preferentialValence (v : VerbEntry) : Option AttitudeValence :=
-  v.preferentialBuilder.map (·.valence)
+  v.attitudeBuilder.bind (·.valence)
 
-/-- C-distributivity is DERIVED from the preferential builder -/
-def VerbEntry.cDistributive (v : VerbEntry) : Option Bool :=
-  v.preferentialBuilder.map (·.isCDistributive)
-
-/-- NVP class is DERIVED from the preferential builder -/
-def VerbEntry.nvpClass (v : VerbEntry) : Option NVPClass :=
-  v.preferentialBuilder.map (·.nvpClass)
-
-/--
-Can take questions: DERIVED for preferential verbs, base field for others.
-
-For preferential verbs: determined by NVP class (Class 1, 2 can; Class 3 cannot)
-For non-preferential verbs: uses `takesQuestionBase` field
--/
-def VerbEntry.takesQuestion (v : VerbEntry) : Bool :=
-  match v.nvpClass with
-  | some .class1_nonCDist => true
-  | some .class2_cDist_negative => true
-  | some .class3_cDist_positive => false
-  | none => v.takesQuestionBase
+-- Note: VerbEntry.cDistributive, VerbEntry.nvpClass, and VerbEntry.takesQuestion
+-- are derived properties defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
 
 -- ============================================================================
 -- Simple Verbs (No Presupposition)
@@ -710,8 +731,8 @@ def believe : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Doxastic properties (from Attitudes.Doxastic)
-  attitudeVeridicality := some .nonVeridical
+  -- Doxastic: accessibility-based semantics, non-veridical
+  attitudeBuilder := some (.doxastic .nonVeridical)
 
 /-- "think" — doxastic attitude verb -/
 def think : VerbEntry where
@@ -725,8 +746,8 @@ def think : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Doxastic properties
-  attitudeVeridicality := some .nonVeridical
+  -- Doxastic: accessibility-based semantics, non-veridical
+  attitudeBuilder := some (.doxastic .nonVeridical)
 
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : VerbEntry where
@@ -741,9 +762,8 @@ def want : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  -- Link to Montague: degree-comparison positive → Class 3 (anti-rogative)
-  preferentialBuilder := some (.degreeComparison .positive)
+  -- Preferential: degree-comparison positive → Class 3 (anti-rogative)
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative) -/
 def hope : VerbEntry where
@@ -757,9 +777,8 @@ def hope : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  -- Link to Montague: degree-comparison positive → C-distributive (PROVED) → Class 3
-  preferentialBuilder := some (.degreeComparison .positive)
+  -- Preferential: degree-comparison positive → C-distributive (PROVED) → Class 3
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
 def expect : VerbEntry where
@@ -773,8 +792,8 @@ def expect : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  preferentialBuilder := some (.degreeComparison .positive)
+  -- Preferential: degree-comparison positive → Class 3
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "wish" — preferential attitude verb (Class 3: anti-rogative) -/
 def wish : VerbEntry where
@@ -788,8 +807,8 @@ def wish : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  preferentialBuilder := some (.degreeComparison .positive)
+  -- Preferential: degree-comparison positive → Class 3
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
 def fear : VerbEntry where
@@ -803,9 +822,8 @@ def fear : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  -- Link to Montague: degree-comparison negative → C-distributive (PROVED) → Class 2
-  preferentialBuilder := some (.degreeComparison .negative)
+  -- Preferential: degree-comparison negative → C-distributive (PROVED) → Class 2
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
 def dread : VerbEntry where
@@ -819,8 +837,8 @@ def dread : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  preferentialBuilder := some (.degreeComparison .negative)
+  -- Preferential: degree-comparison negative → Class 2
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 /-- "worry" — preferential attitude verb (Class 1: takes questions, non-C-distributive) -/
 def worry : VerbEntry where
@@ -834,9 +852,8 @@ def worry : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeVeridicality := some .nonVeridical
-  -- Link to Montague: uncertainty-based → NOT C-distributive (PROVED) → Class 1
-  preferentialBuilder := some .uncertaintyBased
+  -- Preferential: uncertainty-based → NOT C-distributive (PROVED) → Class 1
+  attitudeBuilder := some (.preferential .uncertaintyBased)
 
 /-- "seem" — raising verb (no theta role for subject) -/
 def seem : VerbEntry where
@@ -1082,31 +1099,8 @@ Is this verb a preferential attitude predicate?
 def isPreferentialAttitude (v : VerbEntry) : Bool :=
   v.preferentialValence.isSome
 
-/--
-Is this verb anti-rogative (cannot take question complements canonically)?
-
-Anti-rogative predicates are Class 3 NVPs: C-distributive + positive + TSP.
--/
-def isAntiRogative (v : VerbEntry) : Bool :=
-  match v.nvpClass with
-  | some .class3_cDist_positive => true
-  | _ => false
-
-/--
-Can this verb canonically embed a question?
-
-Based on Qing et al. (2025) classification:
-- Class 1 (non-C-distributive): Yes
-- Class 2 (C-dist + negative): Yes
-- Class 3 (C-dist + positive): No (anti-rogative)
-- Non-preferential attitudes with takesQuestion: Yes
--/
-def canEmbedQuestion (v : VerbEntry) : Bool :=
-  match v.nvpClass with
-  | some .class1_nonCDist => true
-  | some .class2_cDist_negative => true
-  | some .class3_cDist_positive => false
-  | none => v.takesQuestion
+-- Note: isAntiRogative and canEmbedQuestion are derived properties
+-- defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
 
 /--
 Get all verb entries as a list (for enumeration).
@@ -1138,17 +1132,8 @@ def allVerbs : List VerbEntry := [
   wonder, ask
 ]
 
-/--
-Get all anti-rogative verbs (Class 3 NVPs).
--/
-def antiRogativeVerbs : List VerbEntry :=
-  allVerbs.filter isAntiRogative
-
-/--
-Get all question-embedding verbs.
--/
-def questionEmbeddingVerbs : List VerbEntry :=
-  allVerbs.filter canEmbedQuestion
+-- Note: antiRogativeVerbs and questionEmbeddingVerbs are defined in
+-- Theories/Montague/Verb/Attitude/BuilderProperties.lean (require derived properties)
 
 /--
 Look up a verb entry by citation form.
@@ -1211,11 +1196,11 @@ def toWordBase (v : VerbEntry) : Word :=
 - `takesQuestion`: Whether the verb can embed questions
 - `causativeType`: For causatives, sufficiency (make) or necessity (cause)
 
-### Attitude-Specific Fields (Qing et al. 2025)
-- `attitudeVeridicality`: Veridical (know) vs. non-veridical (believe)
-- `preferentialValence`: Positive (hope) vs. negative (fear)
-- `cDistributive`: Whether `x V Q` ⟺ `∃p ∈ Q. x V p`
-- `nvpClass`: NVP classification (class1/class2/class3)
+### Attitude-Specific Fields (Minimal Basis)
+- `attitudeBuilder`: Unified doxastic/preferential builder
+  - Doxastic (believe, know): accessibility-based semantics + veridicality
+  - Preferential (hope, fear): degree-comparison or uncertainty semantics
+- Derived in Theory layer: `cDistributive`, `nvpClass`, parasitic (Maier 2015)
 
 ### Causative-Specific Fields (Nadathur & Lauer 2020)
 - `causativeType`: `.sufficiency` (make) or `.necessity` (cause)

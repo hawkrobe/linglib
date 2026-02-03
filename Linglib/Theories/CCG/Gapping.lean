@@ -33,12 +33,12 @@ Hence: forward gapping in SVO/VSO, backward gapping in SOV.
 -/
 
 import Linglib.Theories.CCG.Basic
-import Linglib.Phenomena.Gapping.Data
+import Linglib.Phenomena.Ellipsis.Gapping
 
 namespace CCG.Gapping
 
 open CCG
-open Phenomena.Gapping
+open Phenomena.Ellipsis.Gapping
 
 -- ============================================================================
 -- Gapped Conjunct Categories

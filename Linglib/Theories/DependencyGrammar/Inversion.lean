@@ -11,7 +11,7 @@ Reference: Hudson (1990), Gibson (2025) Section 3.5-3.6
 -/
 
 import Linglib.Theories.DependencyGrammar.LexicalRules
-import Linglib.Phenomena.SubjectAuxInversion.Data
+import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 open DepGrammar Lexicon
 

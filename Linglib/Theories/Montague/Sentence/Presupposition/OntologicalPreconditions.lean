@@ -25,7 +25,7 @@ that the event was POSSIBLE — and possibility requires the precondition.
 
 ## Connection to Diagnostics
 
-The empirical diagnostics in `Phenomena.Presuppositions.Diagnostics`:
+The empirical diagnostics in `Phenomena.Presupposition.Diagnostics`:
 - "allows for" test → identifies preconditions
 - "results in" test → identifies consequences
 
@@ -42,14 +42,14 @@ and thus can't be "allowed for" independently.
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Aspect
-import Linglib.Phenomena.Presuppositions.Diagnostics
+import Linglib.Phenomena.Presupposition.Diagnostics
 
 namespace Montague.Sentence.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
 open Montague.Verb.ChangeOfState
 open Montague.Verb.Aspect
-open Phenomena.Presuppositions.Diagnostics
+open Phenomena.Presupposition.Diagnostics
 
 -- ============================================================================
 -- PART 1: Event Phase Structure
@@ -421,7 +421,7 @@ The "results in" test works because:
 - Preconditions: pass "allows for", fail "results in", PROJECT
 - Consequences: pass "results in", fail "allows for", DON'T PROJECT
 
-This is exactly the pattern in `Phenomena.Presuppositions.Diagnostics`.
+This is exactly the pattern in `Phenomena.Presupposition.Diagnostics`.
 -/
 
 /--
@@ -601,7 +601,7 @@ Negation changes the claim but not the reference.
 
 ### Connection to Phenomena
 This theory explains the empirical patterns in:
-- `Phenomena.Presuppositions.Diagnostics`: "allows for" / "results in" tests
+- `Phenomena.Presupposition.Diagnostics`: "allows for" / "results in" tests
 - `Phenomena.Presuppositions.Data`: Projection through negation
 - `Phenomena.Aspect.Diagnostics`: Aspectual classification tests
 

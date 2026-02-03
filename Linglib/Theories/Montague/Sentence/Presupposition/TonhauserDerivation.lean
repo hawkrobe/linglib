@@ -91,7 +91,7 @@ import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
-import Linglib.Phenomena.Presuppositions.ProjectiveContent
+import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 namespace Montague.Sentence.Presupposition.TonhauserDerivation
 
@@ -100,7 +100,7 @@ open Core.Proposition
 open Core.CommonGround
 open Montague.Sentence.Presupposition.LocalContext
 open Montague.Sentence.Presupposition.BeliefEmbedding
-open Phenomena.Presuppositions.ProjectiveContent
+open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 

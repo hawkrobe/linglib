@@ -25,12 +25,12 @@ Inverse scope is unavailable when:
 -/
 
 import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Phenomena.ScopeFreezing.Data
+import Linglib.Phenomena.Quantification.ScopeFreezing
 
 namespace Minimalism.Scope
 
 open ScopeTheory
-open Phenomena.ScopeFreezing
+open Phenomena.Quantification.ScopeFreezing
 
 -- ============================================================================
 -- Structural Positions

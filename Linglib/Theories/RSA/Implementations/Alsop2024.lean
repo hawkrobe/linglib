@@ -42,7 +42,7 @@ Following Szabolcsi (2004) and Dayal (1998):
 
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Phenomena.FreeChoice.Data
+import Linglib.Phenomena.Modality.FreeChoice
 
 namespace RSA.FCIAny
 
@@ -608,7 +608,7 @@ theorem both_derive_free_choice :
 /-!
 ## Connection to Phenomena
 
-The model predicts the patterns in `Phenomena.FreeChoice.Data`:
+The model predicts the patterns in `Phenomena.Modality.FreeChoice.Data`:
 
 1. **FCI Any** (`anyClass`, `anyFruit`):
    - "You may take any class" → permission for each class specifically
@@ -625,11 +625,11 @@ The model predicts the patterns in `Phenomena.FreeChoice.Data`:
 
 /-- Free choice *any* is predicted for permission sentences -/
 theorem predicts_fci_any :
-    Phenomena.FreeChoice.anyClass.exclusivenessArises = true := rfl
+    Phenomena.Modality.FreeChoice.anyClass.exclusivenessArises = true := rfl
 
 /-- Exclusiveness is robust to priors (as recorded in the data) -/
 theorem predicts_robustness :
-    Phenomena.FreeChoice.anyClass.robustToPriors = true := rfl
+    Phenomena.Modality.FreeChoice.anyClass.robustToPriors = true := rfl
 
 -- ============================================================================
 -- SECTION 10: Additional Predictions

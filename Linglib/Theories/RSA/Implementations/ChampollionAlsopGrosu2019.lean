@@ -39,7 +39,7 @@ The two interpretation functions represent optional exhaustification (Fox 2007):
 -/
 
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.FreeChoice.Data
+import Linglib.Phenomena.Modality.FreeChoice
 
 namespace RSA.FreeChoice
 
@@ -383,11 +383,11 @@ The model predicts the patterns in `Phenomena.FreeChoice.Data`:
 
 /-- Free choice is predicted -/
 theorem predicts_free_choice :
-    Phenomena.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
+    Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
 /-- The inference is not semantic -/
 theorem fc_not_semantic :
-    Phenomena.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
+    Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
 
 -- ============================================================================
 -- SECTION 10: Comparison with Other Approaches

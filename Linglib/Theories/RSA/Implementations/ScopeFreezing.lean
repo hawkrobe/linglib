@@ -20,13 +20,13 @@ that strong world priors can override it.
 
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Derivation.Scope
-import Linglib.Phenomena.ScopeFreezing.Data
+import Linglib.Phenomena.Quantification.ScopeFreezing
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
 
 open Montague.Derivation.Scope (ScopeConfig)
-open Phenomena.ScopeFreezing
+open Phenomena.Quantification.ScopeFreezing
 
 -- ============================================================================
 -- Interpretation Prior from Grammar Parse

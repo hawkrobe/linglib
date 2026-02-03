@@ -25,11 +25,11 @@ in the RSA Framework". Semantics & Pragmatics.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Phenomena.CremersWilcoxSpector2023.Data
+import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
 namespace RSA.Implementations.CremersWilcoxSpector2023
 
-open _root_.CremersWilcoxSpector2023
+open Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
 -- ============================================================================
 -- PART 1: Baseline RSA (Model 1)

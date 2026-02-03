@@ -53,7 +53,7 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
-import Linglib.Phenomena.Presuppositions.ProjectiveContent
+import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 namespace Montague.Sentence.Presupposition.BeliefEmbedding
 
@@ -61,7 +61,7 @@ open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
 open Montague.Sentence.Presupposition.LocalContext
-open Phenomena.Presuppositions.ProjectiveContent
+open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 

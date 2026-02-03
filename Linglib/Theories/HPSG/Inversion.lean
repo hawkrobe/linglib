@@ -15,7 +15,7 @@ This derives the word order asymmetry between matrix and embedded questions.
 -/
 
 import Linglib.Theories.HPSG.Features
-import Linglib.Phenomena.SubjectAuxInversion.Data
+import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 namespace HPSG
 

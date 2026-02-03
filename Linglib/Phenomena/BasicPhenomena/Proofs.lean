@@ -6,13 +6,13 @@ grammatical from ungrammatical sentences for each phenomenon.
 -/
 
 import Linglib.Theories.Surface.Basic
-import Linglib.Phenomena.BasicPhenomena.Agreement
-import Linglib.Phenomena.BasicPhenomena.Subcategorization
-import Linglib.Phenomena.BasicPhenomena.WordOrder
-import Linglib.Phenomena.BasicPhenomena.Case
-import Linglib.Phenomena.BasicPhenomena.DetNounAgreement
-import Linglib.Phenomena.BasicPhenomena.DativeAlternation
-import Linglib.Phenomena.BasicPhenomena.Passive
+import Linglib.Phenomena.Agreement.Basic
+import Linglib.Phenomena.ArgumentStructure.Subcategorization
+import Linglib.Phenomena.WordOrder.Basic
+import Linglib.Phenomena.Agreement.Case
+import Linglib.Phenomena.Agreement.DetNoun
+import Linglib.Phenomena.ArgumentStructure.DativeAlternation
+import Linglib.Phenomena.ArgumentStructure.Passive
 
 open Lexicon Surface
 

@@ -88,27 +88,41 @@ import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.SemanticStructure
 
 -- Phenomena (empirical data)
-import Linglib.Phenomena.Basic
-import Linglib.Phenomena.EmpiricalData
-import Linglib.Phenomena.SubjectAuxInversion.Data
-import Linglib.Phenomena.Coordination.Data
-import Linglib.Phenomena.LongDistanceDependencies.Data
-import Linglib.Phenomena.CrossSerialDependencies.Data
-import Linglib.Phenomena.Gapping.Data
-import Linglib.Phenomena.GoodmanStuhlmuller2013.Data
-import Linglib.Phenomena.FrankGoodman2012.Data
-import Linglib.Phenomena.KaoBergenGoodman2014.Data
-import Linglib.Phenomena.HawkinsGweonGoodman2021.Data
+-- Core infrastructure
+import Linglib.Phenomena.Core
+import Linglib.Phenomena.Basic  -- backwards-compat re-export
+import Linglib.Phenomena.EmpiricalData  -- backwards-compat re-export
 
--- BasicPhenomena
-import Linglib.Phenomena.BasicPhenomena.Agreement
-import Linglib.Phenomena.BasicPhenomena.Case
-import Linglib.Phenomena.BasicPhenomena.DativeAlternation
-import Linglib.Phenomena.BasicPhenomena.DetNounAgreement
-import Linglib.Phenomena.BasicPhenomena.Passive
-import Linglib.Phenomena.BasicPhenomena.Subcategorization
-import Linglib.Phenomena.BasicPhenomena.WordOrder
+-- Agreement phenomena
+import Linglib.Phenomena.Agreement.Basic
+import Linglib.Phenomena.Agreement.Case
+import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.BasicPhenomena.Proofs
+
+-- Word order phenomena
+import Linglib.Phenomena.WordOrder.Basic
+import Linglib.Phenomena.WordOrder.SubjectAuxInversion
+import Linglib.Phenomena.Coordination.Data
+
+-- Dependencies phenomena
+import Linglib.Phenomena.Dependencies.Basic
+import Linglib.Phenomena.Dependencies.LongDistance
+import Linglib.Phenomena.Dependencies.CrossSerial
+
+-- Argument structure phenomena
+import Linglib.Phenomena.ArgumentStructure.Subcategorization
+import Linglib.Phenomena.ArgumentStructure.DativeAlternation
+import Linglib.Phenomena.ArgumentStructure.Passive
+
+-- RSA Studies (general RSA methodology papers)
+import Linglib.Phenomena.RSAStudies.FrankGoodman2012
+import Linglib.Phenomena.RSAStudies.KaoBergenGoodman2014
+import Linglib.Phenomena.RSAStudies.ScontrasPearl2021
+import Linglib.Phenomena.RSAStudies.HawkinsEtAl2025
+import Linglib.Phenomena.RSAStudies.HawkinsGweonGoodman2021
+import Linglib.Phenomena.RSAStudies.FrankeBergen2020
+import Linglib.Phenomena.RSAStudies.GrusdtLassiterFranke2022
+import Linglib.Phenomena.RSAStudies.SumersEtAl2023
 
 -- Theories
 import Linglib.Theories.HPSG.Basic
@@ -166,6 +180,8 @@ import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
 import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
+import Linglib.Theories.Montague.Verb.Attitude.Parasitic
+import Linglib.Theories.Montague.Verb.Attitude.BuilderProperties
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Scales
 import Linglib.Theories.Montague.Conjunction
@@ -230,6 +246,9 @@ import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Modal.PhillipsBrown
 import Linglib.Theories.Montague.Modal.Simple
 import Linglib.Theories.Montague.Modal.Compare
+
+-- Plural semantics (distributivity, non-maximality)
+import Linglib.Theories.Montague.Plural.Distributivity
 
 -- NeoGricean Core
 import Linglib.Theories.NeoGricean.Core.Basic
@@ -319,48 +338,71 @@ import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
 
 import Linglib.Theories.Surface.Basic
 
--- Coreference patterns
-import Linglib.Phenomena.Coreference.Data
-
--- Anaphora patterns (donkey anaphora, etc.)
+-- Anaphora patterns
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
+import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Phenomena.Anaphora.CrossSentential
+import Linglib.Phenomena.Anaphora.ModalSubordination
+import Linglib.Phenomena.Anaphora.BathroomSentences
 
--- Pragmatic phenomena (theory-neutral examples)
-import Linglib.Phenomena.ScalarImplicatures.Data
-import Linglib.Phenomena.FreeChoice.Data
-import Linglib.Phenomena.DisjunctionIgnorance.Data
-import Linglib.Phenomena.Presuppositions.Data
-import Linglib.Phenomena.Presuppositions.ProjectiveContent
+-- Scalar Implicatures
+import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
+import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
+import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
+import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
+import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
--- Experimental studies on scalar implicatures
-import Linglib.Phenomena.GeurtsPouscoulous2009.Data
+-- Modality (free choice)
+import Linglib.Phenomena.Modality.Basic
+import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 
--- Factive predicates empirical data
-import Linglib.Phenomena.Factives.DegenTonhauser2021
+-- Polarity (NPIs, disjunction ignorance, exceptives)
+import Linglib.Phenomena.Polarity.Basic
+import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Polarity.DisjunctionIgnorance
+import Linglib.Phenomena.Polarity.Exceptives
 
--- Projection empirical data
-import Linglib.Phenomena.Projection.ScontrasTonhauser2025
+-- Presupposition
+import Linglib.Phenomena.Presupposition.Basic
+import Linglib.Phenomena.Presupposition.Diagnostics
+import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
+import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 
--- Quantifier scope ambiguity (Scontras & Pearl 2021)
-import Linglib.Phenomena.ScontrasPearl2021.Data
-import Linglib.Phenomena.HeKaiserIskarous2025.Data
-import Linglib.Phenomena.YoonEtAl2020.Data
+-- Parasitic attitudes → Anaphora
+import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 
--- Scope-word order interactions (Dutch/German)
-import Linglib.Phenomena.ScopeWordOrder.Data
+-- Politeness
+import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 
--- Semantic phenomena
-import Linglib.Phenomena.Semantics.Entailments
-import Linglib.Phenomena.Semantics.Evaluativity
-import Linglib.Phenomena.Semantics.Monotonicity
-import Linglib.Phenomena.Semantics.Negation
-import Linglib.Phenomena.Semantics.TruthConditions
+-- Additional presupposition studies
+import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
+import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 
--- Flexible negation (Tessler & Franke 2020)
-import Linglib.Phenomena.FlexibleNegation.Data
+-- Quantification (scope freezing, numerals)
+import Linglib.Phenomena.Quantification.Basic
+import Linglib.Phenomena.Quantification.ScopeFreezing
+import Linglib.Phenomena.Quantification.ScopeWordOrder
+import Linglib.Phenomena.Quantification.Numerals
 
--- Adjective semantics (Kamp 1975, Partee 1995, 2001)
-import Linglib.Phenomena.Adjectives.Data
+-- Entailment
+import Linglib.Phenomena.Entailment.Basic
+import Linglib.Phenomena.Entailment.Monotonicity
+
+-- Negation
+import Linglib.Phenomena.Negation.Basic
+import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Phenomena.Negation.DoubleNegation
+
+-- Gradability (adjectives, vagueness, degrees)
+import Linglib.Phenomena.Gradability.Basic
+import Linglib.Phenomena.Gradability.Vagueness
+import Linglib.Phenomena.Gradability.Adjectives
+import Linglib.Phenomena.Gradability.ComparisonClass
+import Linglib.Phenomena.Gradability.Evaluativity
 
 -- Question-answer phenomena (G&S 1984, Van Rooy 2003)
 import Linglib.Phenomena.Questions.Basic
@@ -377,15 +419,34 @@ import Linglib.Phenomena.Questions.MentionSome
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic
 
+-- Plurals (distributivity, non-maximality)
+import Linglib.Phenomena.Plurals.Basic
+import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
+
 -- Word order alternations (verb position, etc.)
 import Linglib.Phenomena.WordOrderAlternations.VerbPosition.Data
 
 -- Conditional phenomena
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested
+import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
+import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 
 -- Additive particles (too, also, either) - Thomas (2026)
-import Linglib.Phenomena.AdditiveParticles.Data
+import Linglib.Phenomena.Additives.Data
 
--- Exceptive constructions (but, except) - von Fintel (1993)
-import Linglib.Phenomena.Exceptives.Data
+-- Generics (bare plurals, kind reference)
+import Linglib.Phenomena.Generics.Data
+import Linglib.Phenomena.Generics.BarePlurals
+import Linglib.Phenomena.Generics.KindReference
+
+-- Ellipsis (sluicing, gapping, fragments)
+import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Phenomena.Ellipsis.Gapping
+import Linglib.Phenomena.Ellipsis.FragmentAnswers
+
+-- Plurals studies
+import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
+
+-- Gradability studies
+import Linglib.Phenomena.Gradability.Studies.KursatDegen2021

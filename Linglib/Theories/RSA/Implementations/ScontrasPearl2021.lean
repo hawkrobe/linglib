@@ -37,7 +37,7 @@ import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Pipeline
 import Linglib.Core.Parse
-import Linglib.Phenomena.ScontrasPearl2021.Data
+import Linglib.Phenomena.RSAStudies.ScontrasPearl2021
 import Linglib.Theories.Montague.Derivation.Scope
 
 namespace RSA.ScontrasPearl2021
@@ -217,20 +217,20 @@ instance scopeConfigFintype : Fintype ScopeConfig where
   complete := fun x => by cases x <;> simp
 
 -- Use JumpOutcome from the data module (already has DecidableEq, BEq)
-instance jumpOutcomeFintype : Fintype _root_.ScontrasPearl2021.JumpOutcome where
+instance jumpOutcomeFintype : Fintype Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome where
   elems := {.zero, .one, .two}
   complete := fun x => by cases x <;> simp
 
 /--
 Truth conditions using JumpOutcome (typed version).
 -/
-def scopeMeaningTyped : ScopeConfig → ScopeUtterance → _root_.ScontrasPearl2021.JumpOutcome → Bool
+def scopeMeaningTyped : ScopeConfig → ScopeUtterance → Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome → Bool
   | _, .null, _ => true  -- null utterance always true
   | .surface, .everyHorseNotJump, w => w == .zero      -- ∀>¬: true iff no horse jumped
   | .inverse, .everyHorseNotJump, w => w != .two       -- ¬>∀: true iff not all jumped
 
 /-- Typed worlds -/
-def typedWorlds : List _root_.ScontrasPearl2021.JumpOutcome :=
+def typedWorlds : List Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome :=
   [.zero, .one, .two]
 
 /-- Typed utterances -/
@@ -242,7 +242,7 @@ def typedScopes : List ScopeConfig :=
   [.surface, .inverse]
 
 /-- L1 marginal world distribution (typed) -/
-def l1WorldTyped : List (_root_.ScontrasPearl2021.JumpOutcome × ℚ) :=
+def l1WorldTyped : List (Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome × ℚ) :=
   RSA.Eval.L1_world typedUtterances typedWorlds typedScopes [()] [()] [()]
     (fun i _ u w => boolToRat (scopeMeaningTyped i u w))
     (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
@@ -267,7 +267,7 @@ def l1ScopeTyped : List (ScopeConfig × ℚ) :=
     (i, RSA.Eval.sumScores iScores)
 
 /-- L1 joint distribution as list (typed) -/
-def l1JointTyped : List ((_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
+def l1JointTyped : List ((Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
   let tuples := typedWorlds.flatMap fun w =>
     typedScopes.map fun i => (w, i)
   let scores := tuples.map fun (w, i) =>
@@ -292,7 +292,7 @@ def l1JointTyped : List ((_root_.ScontrasPearl2021.JumpOutcome × ScopeConfig) �
 -- ============================================================================
 
 /-- Get score from typed world distribution -/
-def getTypedWorldScore (w : _root_.ScontrasPearl2021.JumpOutcome) : ℚ :=
+def getTypedWorldScore (w : Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome) : ℚ :=
   RSA.Eval.getScore l1WorldTyped w
 
 /-- Get score from typed scope distribution -/
@@ -451,8 +451,8 @@ This links the RSA predictions to the empirical findings.
 theorem rsa_and_empirical_agree :
     (getWorldScore 0 > getWorldScore 1) ∧
     (getWorldScore 1 > getWorldScore 2) ∧
-    (_root_.ScontrasPearl2021.getResult .zero > _root_.ScontrasPearl2021.getResult .one) ∧
-    (_root_.ScontrasPearl2021.getResult .one > _root_.ScontrasPearl2021.getResult .two) := by
+    (Phenomena.RSAStudies.ScontrasPearl2021.getResult .zero > Phenomena.RSAStudies.ScontrasPearl2021.getResult .one) ∧
+    (Phenomena.RSAStudies.ScontrasPearl2021.getResult .one > Phenomena.RSAStudies.ScontrasPearl2021.getResult .two) := by
   native_decide
 
 -- ============================================================================
@@ -511,8 +511,8 @@ def rsaPrediction : ScopePrediction :=
 
 /-- Empirical data from Scontras & Pearl 2021 -/
 def empiricalOrdering : ScopeEmpiricalOrdering :=
-  { zeroGtOne := _root_.ScontrasPearl2021.getResult .zero > _root_.ScontrasPearl2021.getResult .one
-  , oneGtTwo := _root_.ScontrasPearl2021.getResult .one > _root_.ScontrasPearl2021.getResult .two }
+  { zeroGtOne := Phenomena.RSAStudies.ScontrasPearl2021.getResult .zero > Phenomena.RSAStudies.ScontrasPearl2021.getResult .one
+  , oneGtTwo := Phenomena.RSAStudies.ScontrasPearl2021.getResult .one > Phenomena.RSAStudies.ScontrasPearl2021.getResult .two }
 
 /--
 **RSA prediction values match empirical orderings**.
@@ -835,7 +835,7 @@ theorem uses_scope_not_exh_parses :
 -- ============================================================================
 
 /-- L1 scope distribution with custom world prior -/
-def l1ScopeWithPrior (worldPrior : _root_.ScontrasPearl2021.JumpOutcome → ℚ)
+def l1ScopeWithPrior (worldPrior : Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome → ℚ)
     : List (ScopeConfig × ℚ) :=
   let tuples := typedWorlds.flatMap fun w => typedScopes.map fun i => (w, i)
   let scores := tuples.map fun (w, i) =>
@@ -848,11 +848,11 @@ def l1ScopeWithPrior (worldPrior : _root_.ScontrasPearl2021.JumpOutcome → ℚ)
   typedScopes.map fun i =>
     (i, normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2) |> RSA.Eval.sumScores)
 
-def inverseProb (prior : _root_.ScontrasPearl2021.JumpOutcome → ℚ) : ℚ :=
+def inverseProb (prior : Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome → ℚ) : ℚ :=
   RSA.Eval.getScore (l1ScopeWithPrior prior) .inverse
 
 /-- Prior strongly favoring partial outcomes (1 of 2 jumped) -/
-def partialOutcomePrior : _root_.ScontrasPearl2021.JumpOutcome → ℚ
+def partialOutcomePrior : Phenomena.RSAStudies.ScontrasPearl2021.JumpOutcome → ℚ
   | .one => 8/10 | _ => 1/10
 
 /-- Priors shift ∀>¬ vs ¬>∀ preference (NOT scope freezing - that's two quantifiers).
