@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.59.0] - 2025-02-03
+
+### Changed
+- **Phenomena/ directory reorganization**: Theory-neutral naming and cleaner structure
+  - Renamed `Dependencies/` → `FillerGap/` (theory-neutral: no movement implication)
+  - Renamed `Additives/` → `AdditiveParticles/` (more informative)
+  - Dissolved `RSAStudies/` - files moved to phenomenon-specific `Studies/` subdirectories
+  - Dissolved `Semantics/` - files were duplicates of content in specific phenomena
+  - Deleted backwards-compatibility re-export files (`Basic.lean`, `EmpiricalData.lean`, `Lexicon.lean`, `Core.lean`, `Degrees.lean`)
+  - Merged `WordOrderAlternations/` into `WordOrder/`
+  - Added `Studies/` subdirectories to `Reference/`, `Metaphor/`, `Imperatives/`, `Questions/`, `Quantification/`, `Conditionals/`, `Humor/`
+
+### Removed
+- `Phenomena/BasicPhenomena/Proofs.lean` (unit tests, not linguistic content)
+- ~1400 lines of duplicate code in `Phenomena/Semantics/`
+
 ## [0.58.0] - 2025-02-03
 
 ### Added
