@@ -262,4 +262,209 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 #eval numerals 5
 -- Expected: Scale with items [1, 2, 3, 4, 5]
 
+-- ============================================================================
+-- Scale Closure Properties (Chierchia 2013, Spector 2016)
+-- ============================================================================
+
+/-!
+## Closure Under Conjunction
+
+A crucial property for exhaustification: whether the alternative set is
+CLOSED UNDER CONJUNCTION.
+
+### Spector (2016) Theorem 9
+
+When alternatives are closed under ∧, the two exhaustivity operators
+exh_mw and exh_ie are EQUIVALENT.
+
+### Chierchia (2013) EFCI Analysis
+
+The puzzle of Free Choice Items depends on alternatives NOT being closed:
+- Standard scalar alternatives ⟨some, all⟩: closed under ∧
+- Domain alternatives {P(d) | d ∈ D}: NOT closed under ∧
+
+When domain alternatives are NOT closed, exhaustification can lead to
+contradiction (the EFCI puzzle), which is then resolved by rescue mechanisms.
+
+### Key Insight
+
+| Alternative Type | Closed? | Exhaustification Result |
+|-----------------|---------|-------------------------|
+| Scalar ⟨some, all⟩ | ✓ | Clean SI: "some but not all" |
+| Domain {P(d)} | ✗ | Contradiction (needs rescue) |
+
+### References
+
+- Spector (2016). Comparing exhaustivity operators. S&P 9(11). Theorem 9.
+- Chierchia (2013). Logic in Grammar. Ch.1, EFCI discussion.
+- Fox (2007). Free choice and the theory of scalar implicatures.
+-/
+
+/--
+Conjunction operation on propositions (semantic level).
+-/
+def PropConj (α : Type) := α → α → α
+
+/--
+A set of alternatives is closed under conjunction if conjoining any two
+members yields another member (or a stronger proposition in the set).
+
+For semantic alternatives as propositions, this means:
+∀ p q ∈ ALT, p ∧ q ∈ ALT (or is entailed by something in ALT)
+-/
+structure ClosedUnderConj (α : Type) where
+  /-- The set of alternatives -/
+  alts : List α
+  /-- The conjunction operation -/
+  conj : α → α → α
+  /-- Is it closed? -/
+  isClosed : Bool
+  /-- Witness to non-closure (if not closed) -/
+  nonClosureWitness : Option (α × α × String)
+
+/--
+Standard scalar alternatives are closed under conjunction.
+
+For ⟨some, all⟩:
+- some ∧ some = some ✓
+- some ∧ all = all ✓ (entailed by all)
+- all ∧ all = all ✓
+-/
+def quantifierScaleClosed : ClosedUnderConj QuantExpr :=
+  { alts := [.some_, .all]
+  , conj := fun x y =>
+      match x, y with
+      | .all, _ => .all
+      | _, .all => .all
+      | _, _ => .some_
+  , isClosed := true
+  , nonClosureWitness := none
+  }
+
+/--
+Connective alternatives are closed.
+
+For ⟨or, and⟩:
+- or ∧ or = or ✓
+- or ∧ and = and ✓
+- and ∧ and = and ✓
+-/
+def connScaleClosed : ClosedUnderConj ConnExpr :=
+  { alts := [.or_, .and_]
+  , conj := fun x y =>
+      match x, y with
+      | .and_, _ => .and_
+      | _, .and_ => .and_
+      | _, _ => .or_
+  , isClosed := true
+  , nonClosureWitness := none
+  }
+
+/--
+Domain alternatives (singleton domains) are NOT closed under conjunction.
+
+For domain D = {a, b, c} with predicate P:
+- Alternatives: {P(a), P(b), P(c)}
+- P(a) ∧ P(b) = "exactly a and b" is NOT in the set
+- This non-closure causes the EFCI puzzle
+
+Represented symbolically: conjoining "exactly a" with "exactly b"
+gives a proposition NOT in the original alternative set.
+-/
+structure DomainAlternatives (Entity : Type) where
+  /-- The domain -/
+  domain : List Entity
+  /-- Is it closed under conjunction? -/
+  isClosed : Bool := false
+  /-- Why not closed? -/
+  explanation : String := "P(a) ∧ P(b) ∉ {P(d) | d ∈ D}"
+
+/--
+Example: three-element domain shows non-closure.
+-/
+def threeDomain : DomainAlternatives Nat :=
+  { domain := [1, 2, 3]
+  , isClosed := false
+  , explanation := "P(1) ∧ P(2) = 'exactly 1 and 2' ∉ singleton alternatives"
+  }
+
+/--
+Closure status affects exhaustification behavior.
+-/
+inductive ClosureEffect where
+  | cleanSI         -- Closed: clean scalar implicature
+  | contradiction   -- Not closed: potential contradiction
+  | needsRescue     -- Not closed: requires modal/pruning rescue
+  deriving DecidableEq, BEq, Repr
+
+/--
+Predict exhaustification effect from closure status.
+-/
+def predictExhEffect (isClosed : Bool) : ClosureEffect :=
+  if isClosed then .cleanSI else .needsRescue
+
+-- Verify: scalar scales are closed
+#guard quantifierScaleClosed.isClosed
+#guard connScaleClosed.isClosed
+
+-- Verify: domain alternatives are not closed
+#guard !threeDomain.isClosed
+
+-- ============================================================================
+-- Connection to Spector (2016)
+-- ============================================================================
+
+/-!
+## Spector's Theorem 9
+
+**Theorem 9** (Spector 2016, p.25):
+When ALT is closed under conjunction, exh_mw = exh_ie.
+
+This is proven in `Theories/NeoGricean/Exhaustivity/Basic.lean`.
+
+The closure property ensures that the different ways of computing
+"what to exclude" all converge to the same result.
+
+### Practical Implication
+
+For standard scalar alternatives (which ARE closed):
+- We can use either exh_mw or exh_ie
+- They give identical results
+- Simple "negate the stronger alternatives" suffices
+
+For EFCI alternatives (which are NOT closed):
+- exh_mw ≠ exh_ie in general
+- Innocent exclusion (exh_ie) is preferred
+- But even exh_ie can lead to contradiction without rescue
+-/
+
+/--
+Summary of closure and its effects.
+-/
+structure ClosureSummary where
+  /-- Alternative type -/
+  altType : String
+  /-- Is it closed? -/
+  isClosed : Bool
+  /-- Effect on exhaustification -/
+  effect : String
+  /-- Relevant theory reference -/
+  reference : String
+  deriving Repr
+
+def scalarClosureSummary : ClosureSummary :=
+  { altType := "Scalar ⟨some, all⟩"
+  , isClosed := true
+  , effect := "exh_mw = exh_ie; clean SI"
+  , reference := "Spector (2016) Theorem 9" }
+
+def domainClosureSummary : ClosureSummary :=
+  { altType := "Domain {P(d) | d ∈ D}"
+  , isClosed := false
+  , effect := "exh can contradict; needs rescue"
+  , reference := "Chierchia (2013) EFCI" }
+
+def closureSummaries : List ClosureSummary :=
+  [scalarClosureSummary, domainClosureSummary]
+
 end Fragments.English.Scales

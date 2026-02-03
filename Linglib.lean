@@ -54,6 +54,7 @@ import Linglib.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
+import Linglib.Core.Analyticity
 
 -- Heimian states (dynamic semantics infrastructure)
 import Linglib.Core.HeimState
@@ -70,6 +71,7 @@ import Linglib.Core.Softmax.MaxEntropy
 import Linglib.Theories.RSA.Domains.ReferenceGames
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Fragments.English.Scales
+import Linglib.Fragments.English.PolarityItems
 import Linglib.Theories.RSA.Domains.Degrees
 
 -- RSA Core and Extensions
@@ -382,3 +384,6 @@ import Linglib.Phenomena.Conditionals.LeftNested
 
 -- Additive particles (too, also, either) - Thomas (2026)
 import Linglib.Phenomena.AdditiveParticles.Data
+
+-- Exceptive constructions (but, except) - von Fintel (1993)
+import Linglib.Phenomena.Exceptives.Data

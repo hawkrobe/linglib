@@ -292,6 +292,250 @@ def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
   [universalScopeDisj, disjScopeUniversal]
 
 -- ============================================================================
+-- PART 6: Exclusive vs Inclusive Readings (Chierchia 2013)
+-- ============================================================================
+
+/-!
+## Positional Asymmetry in Disjunction Interpretation
+
+Chierchia (2013) "Logic in Grammar" Ch.1 observes that the SAME lexical
+material yields different PREFERRED readings based on structural position:
+
+| Position | Polarity | Preferred Reading |
+|----------|----------|-------------------|
+| Consequent of conditional | UE | Exclusive |
+| Antecedent of conditional | DE | Inclusive |
+| Scope of "every" | UE | Exclusive |
+| Restrictor of "every" | DE | Inclusive |
+| Positive sentence | UE | Exclusive |
+| Negative sentence | DE | Inclusive |
+
+### The Core Pattern
+
+**UE contexts**: Exclusive reading preferred
+- "If everything goes well, we'll hire Mary or Sue"
+- Default: we'll hire exactly one of them
+
+**DE contexts**: Inclusive reading preferred
+- "If we hire Mary or Sue, everything will go well"
+- Default: hiring either or both leads to success
+
+### Explanation via Maximize Strength
+
+The asymmetry follows from the Maximize Strength principle:
+- In UE: Adding "not both" STRENGTHENS → compute SI
+- In DE: Adding "not both" would WEAKEN → don't compute SI
+
+When the exclusive SI is not computed, the inclusive reading emerges.
+
+### References
+
+- Chierchia (2013). Logic in Grammar. Cambridge. Ch.1.
+- See also: Theories/NeoGricean/Exhaustivity/Basic.lean (Maximize Strength)
+-/
+
+/--
+Type of disjunction interpretation.
+-/
+inductive DisjunctionReading where
+  | inclusive   -- p ∨ q (possibly both)
+  | exclusive   -- (p ∨ q) ∧ ¬(p ∧ q) (not both)
+  deriving DecidableEq, BEq, Repr
+
+/--
+Structural position of the disjunction.
+-/
+inductive DisjunctionPosition where
+  | matrix            -- Main clause
+  | conditional_cons  -- Consequent of conditional (UE)
+  | conditional_ant   -- Antecedent of conditional (DE)
+  | every_scope       -- Scope of "every" (UE)
+  | every_restrictor  -- Restrictor of "every" (DE)
+  | negation_scope    -- Under negation (DE)
+  deriving DecidableEq, BEq, Repr
+
+/--
+Context polarity: upward-entailing or downward-entailing.
+-/
+inductive ContextPolarity' where
+  | upward    -- ∀: if φ ⊆ ψ then C(φ) ⊆ C(ψ)
+  | downward  -- ∀: if φ ⊆ ψ then C(ψ) ⊆ C(φ)
+  deriving DecidableEq, BEq, Repr
+
+/--
+Determine context polarity from position.
+-/
+def positionPolarity : DisjunctionPosition → ContextPolarity'
+  | .matrix => .upward
+  | .conditional_cons => .upward
+  | .conditional_ant => .downward
+  | .every_scope => .upward
+  | .every_restrictor => .downward
+  | .negation_scope => .downward
+
+/--
+Predict preferred reading from polarity.
+UE → exclusive (SI computed), DE → inclusive (SI not computed).
+-/
+def predictReading : ContextPolarity' → DisjunctionReading
+  | .upward => .exclusive
+  | .downward => .inclusive
+
+/--
+Example showing exclusive/inclusive asymmetry.
+-/
+structure ExclusiveInclusiveExample where
+  /-- The sentence -/
+  sentence : String
+  /-- Position of disjunction -/
+  position : DisjunctionPosition
+  /-- Polarity of that position -/
+  polarity : ContextPolarity'
+  /-- Preferred reading -/
+  preferredReading : DisjunctionReading
+  /-- Can the other reading be forced with context? -/
+  canForceOther : Bool
+  /-- Source -/
+  source : String
+  deriving Repr
+
+-- Chierchia (2013) examples (1a,b)
+def hiring_consequent : ExclusiveInclusiveExample :=
+  { sentence := "If everything goes well, we'll hire Mary or Sue"
+  , position := .conditional_cons
+  , polarity := .upward
+  , preferredReading := .exclusive
+  , canForceOther := true
+  , source := "Chierchia (2013) p.2 (1a)"
+  }
+
+def hiring_antecedent : ExclusiveInclusiveExample :=
+  { sentence := "If we hire Mary or Sue, everything will go well"
+  , position := .conditional_ant
+  , polarity := .downward
+  , preferredReading := .inclusive
+  , canForceOther := true
+  , source := "Chierchia (2013) p.2 (1b)"
+  }
+
+-- Matrix clause example
+def matrix_exclusive : ExclusiveInclusiveExample :=
+  { sentence := "We'll hire Mary or Sue"
+  , position := .matrix
+  , polarity := .upward
+  , preferredReading := .exclusive
+  , canForceOther := true
+  , source := "Standard observation"
+  }
+
+-- Universal restrictor vs scope
+def every_scope : ExclusiveInclusiveExample :=
+  { sentence := "Everyone likes Mary or Sue"
+  , position := .every_scope
+  , polarity := .upward
+  , preferredReading := .exclusive
+  , canForceOther := true
+  , source := "Chierchia (2013) discussion"
+  }
+
+def every_restrictor : ExclusiveInclusiveExample :=
+  { sentence := "Everyone who likes Mary or Sue will be happy"
+  , position := .every_restrictor
+  , polarity := .downward
+  , preferredReading := .inclusive
+  , canForceOther := true
+  , source := "Chierchia (2013) discussion"
+  }
+
+-- Negation scope
+def negation_scope : ExclusiveInclusiveExample :=
+  { sentence := "We won't hire Mary or Sue"
+  , position := .negation_scope
+  , polarity := .downward
+  , preferredReading := .inclusive
+  , canForceOther := true
+  , source := "De Morgan reading: ¬M ∧ ¬S"
+  }
+
+/--
+All exclusive/inclusive examples.
+-/
+def exclusiveInclusiveExamples : List ExclusiveInclusiveExample :=
+  [ hiring_consequent, hiring_antecedent
+  , matrix_exclusive
+  , every_scope, every_restrictor
+  , negation_scope
+  ]
+
+-- Verify predictions match data
+#guard exclusiveInclusiveExamples.all (fun ex =>
+  predictReading ex.polarity == ex.preferredReading)
+
+-- ============================================================================
+-- PART 7: Forcing Non-Preferred Readings
+-- ============================================================================
+
+/-!
+## Forcing Non-Preferred Readings
+
+While polarity determines the DEFAULT reading, context can FORCE the
+non-preferred interpretation:
+
+### Forcing Inclusive in UE (harder)
+"If everything goes well, we'll hire Mary or Sue, or both."
+- Explicit "or both" forces inclusive
+
+### Forcing Exclusive in DE (harder)
+"If we hire Mary or Sue but not both, everything will go well."
+- Explicit "but not both" forces exclusive
+
+The key observation: forcing requires EXPLICIT marking.
+The unmarked reading follows from Maximize Strength.
+-/
+
+/--
+Example of forcing a non-preferred reading.
+-/
+structure ForcedReadingExample where
+  /-- The base sentence -/
+  baseSentence : String
+  /-- Position (determines default) -/
+  position : DisjunctionPosition
+  /-- Default reading -/
+  defaultReading : DisjunctionReading
+  /-- Forcing phrase -/
+  forcingPhrase : String
+  /-- Resulting reading -/
+  forcedReading : DisjunctionReading
+  /-- Notes -/
+  notes : String
+  deriving Repr
+
+def force_inclusive_ue : ForcedReadingExample :=
+  { baseSentence := "If everything goes well, we'll hire Mary or Sue"
+  , position := .conditional_cons
+  , defaultReading := .exclusive
+  , forcingPhrase := "or both"
+  , forcedReading := .inclusive
+  , notes := "Adding 'or both' explicitly licenses inclusive reading"
+  }
+
+def force_exclusive_de : ForcedReadingExample :=
+  { baseSentence := "If we hire Mary or Sue, everything will go well"
+  , position := .conditional_ant
+  , defaultReading := .inclusive
+  , forcingPhrase := "but not both"
+  , forcedReading := .exclusive
+  , notes := "Adding 'but not both' explicitly restricts to exclusive"
+  }
+
+/--
+All forced reading examples.
+-/
+def forcedReadingExamples : List ForcedReadingExample :=
+  [force_inclusive_ue, force_exclusive_de]
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -311,11 +555,26 @@ def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
 - `longDisjunctionExamples`: 2 long disjunction examples
 - `blockingExamples`: 3 blocking contexts
 - `quantifiedIgnoranceExamples`: 2 quantifier interactions
+- `exclusiveInclusiveExamples`: 6 polarity-dependent reading examples
+- `forcedReadingExamples`: 2 context-forcing examples
+
+### Exclusive/Inclusive Asymmetry (Chierchia 2013)
+- `DisjunctionReading`: inclusive vs exclusive
+- `DisjunctionPosition`: structural position types
+- `positionPolarity`: map position to polarity
+- `predictReading`: predict reading from polarity
+- `ExclusiveInclusiveExample`: empirical data structure
+
+### Key Predictions
+- UE contexts → exclusive (SI computed)
+- DE contexts → inclusive (SI not computed)
+- Non-preferred readings require explicit marking
 
 ### Key References
 - Gazdar (1979): Original observation
 - Sauerland (2004): Compositional analysis
 - Geurts (2010): Modern synthesis
+- Chierchia (2013): Exclusive/inclusive asymmetry
 -/
 
 end Phenomena.DisjunctionIgnorance

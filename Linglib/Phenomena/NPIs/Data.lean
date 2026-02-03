@@ -760,4 +760,279 @@ Local RSA derives NPI effects from polarity-sensitive informativity:
 #guard strongNPIData.filter (fun d => d.context == some .withoutClause)
       |>.all (fun d => d.grammatical)
 
+-- ============================================================================
+-- PART 9: N-words and Scale-Minimality (Chierchia 2013)
+-- ============================================================================
+
+/-!
+## N-words and Scale-Minimality
+
+Chierchia (2013) "Logic in Grammar" observes that N-WORDS (negative indefinites
+that participate in Negative Concord) are constrained to SCALE-MINIMAL elements.
+
+### What are N-words?
+
+N-words are negative indefinites in Romance/Slavic languages that:
+1. Can appear in Negative Concord (NC) constructions
+2. Have negative force when appearing alone
+3. Lose negative force under c-commanding negation (NC)
+
+Examples: Italian "nessuno" (no-one), "niente" (nothing), "neanche" (not even)
+
+### The Scale-Minimality Constraint
+
+N-words are formed ONLY from scale-minimal quantifiers:
+
+| Base | Scale Position | N-word? | Example |
+|------|---------------|---------|---------|
+| uno (one) | minimal | ✓ | nessuno |
+| due (two) | non-minimal | ✗ | *nessdue |
+| most | non-minimal | ✗ | *nessmost |
+| every | maximal | ✗ | *nessevery |
+
+### Why This Constraint?
+
+Chierchia's explanation via scalar implicature:
+
+N-words require PURELY downward-entailing environments. But NON-MINIMAL
+scale positions generate POSITIVE implicatures:
+
+- "No more than ten" implicates "at least some" (positive component!)
+- This positive implicature DISRUPTS the DE environment
+- Only scale-MINIMAL elements avoid this problem
+
+### The "neanche" Test (Chierchia p.6-7)
+
+Italian "neanche" (roughly "not even N") shows this pattern clearly:
+
+✓ "Non ho visto neanche un professore"
+   (I didn't see even one professor)
+
+✗ "*Non ho visto neanche due professori"
+   (I didn't see even two professors)
+
+BUT: "neanche due" becomes acceptable when "two" is contextually
+construed as MINIMAL on a relevant scale:
+
+✓ "Quel problema non lo risolverebbero neanche due professori"
+   (That problem wouldn't be solved by even two professors)
+   [Context: two is the minimum expected number to solve it]
+
+### References
+
+- Chierchia (2013). Logic in Grammar. Cambridge. Ch.1, p.5-8.
+- Zanuttini (1991). Syntactic Properties of Sentential Negation.
+- Ladusaw (1992). Expressing Negation.
+-/
+
+/--
+Scale position of a quantifier/numeral.
+-/
+inductive ScalePosition where
+  | minimal       -- Bottom of scale: one, a, some
+  | intermediate  -- Middle: two, three, most, many
+  | maximal       -- Top: every, all
+  deriving DecidableEq, BEq, Repr
+
+/--
+An N-word (negative indefinite in NC language).
+-/
+structure NWord where
+  /-- Surface form -/
+  form : String
+  /-- Language -/
+  language : String
+  /-- Decomposition: NEG + base -/
+  decomposition : String
+  /-- Scale position of the base -/
+  baseScalePosition : ScalePosition
+  /-- Is it a real N-word? -/
+  isRealNWord : Bool
+  /-- Notes -/
+  notes : String
+  deriving Repr
+
+/-- Italian N-words -/
+def nessuno : NWord :=
+  { form := "nessuno"
+  , language := "Italian"
+  , decomposition := "NEG + uno (one)"
+  , baseScalePosition := .minimal
+  , isRealNWord := true
+  , notes := "Standard N-word: no-one" }
+
+def niente : NWord :=
+  { form := "niente"
+  , language := "Italian"
+  , decomposition := "NEG + ente (thing)"
+  , baseScalePosition := .minimal
+  , isRealNWord := true
+  , notes := "Standard N-word: nothing" }
+
+def nessdue_hypothetical : NWord :=
+  { form := "*nessdue"
+  , language := "Italian (hypothetical)"
+  , decomposition := "NEG + due (two)"
+  , baseScalePosition := .intermediate
+  , isRealNWord := false
+  , notes := "Predicted non-existent: non-minimal base" }
+
+def nessmost_hypothetical : NWord :=
+  { form := "*nessmost"
+  , language := "Italian (hypothetical)"
+  , decomposition := "NEG + most"
+  , baseScalePosition := .intermediate
+  , isRealNWord := false
+  , notes := "Predicted non-existent: non-minimal base" }
+
+/-- Spanish N-words -/
+def nadie : NWord :=
+  { form := "nadie"
+  , language := "Spanish"
+  , decomposition := "NEG + base"
+  , baseScalePosition := .minimal
+  , isRealNWord := true
+  , notes := "Standard N-word: no-one" }
+
+def nada : NWord :=
+  { form := "nada"
+  , language := "Spanish"
+  , decomposition := "NEG + base"
+  , baseScalePosition := .minimal
+  , isRealNWord := true
+  , notes := "Standard N-word: nothing" }
+
+/--
+All N-word examples.
+-/
+def nwordExamples : List NWord :=
+  [nessuno, niente, nessdue_hypothetical, nessmost_hypothetical, nadie, nada]
+
+-- Scale-minimality predicts N-word existence
+#guard nwordExamples.all (fun nw =>
+  (nw.baseScalePosition == .minimal) == nw.isRealNWord)
+
+-- ----------------------------------------------------------------------------
+-- 9.1: "neanche" Examples (Chierchia p.6-7)
+-- ----------------------------------------------------------------------------
+
+/--
+"neanche" (not even) example with scale interaction.
+-/
+structure NeancheExample where
+  /-- Italian sentence -/
+  italian : String
+  /-- English translation -/
+  english : String
+  /-- Numeral used -/
+  numeral : Nat
+  /-- Is it grammatical? -/
+  grammatical : Bool
+  /-- Context makes numeral scale-minimal? -/
+  contextuallyMinimal : Bool
+  /-- Explanation -/
+  explanation : String
+  deriving Repr
+
+def neanche_uno : NeancheExample :=
+  { italian := "Non ho visto neanche un professore"
+  , english := "I didn't see even one professor"
+  , numeral := 1
+  , grammatical := true
+  , contextuallyMinimal := true
+  , explanation := "One is inherently scale-minimal: always OK" }
+
+def neanche_due_bad : NeancheExample :=
+  { italian := "*Non ho visto neanche due professori"
+  , english := "I didn't see even two professors"
+  , numeral := 2
+  , grammatical := false
+  , contextuallyMinimal := false
+  , explanation := "Two is non-minimal on default numeral scale: blocked" }
+
+def neanche_due_ok : NeancheExample :=
+  { italian := "Quel problema non lo risolverebbero neanche due professori"
+  , english := "That problem wouldn't be solved by even two professors"
+  , numeral := 2
+  , grammatical := true
+  , contextuallyMinimal := true
+  , explanation := "Context: two is minimal expected number to solve it" }
+
+def neanche_dieci_bad : NeancheExample :=
+  { italian := "*Non ho visto neanche dieci professori"
+  , english := "I didn't see even ten professors"
+  , numeral := 10
+  , grammatical := false
+  , contextuallyMinimal := false
+  , explanation := "Ten is highly non-minimal on default scale" }
+
+def neanche_dieci_ok : NeancheExample :=
+  { italian := "Per risolvere quel problema, neanche dieci professori basterebbero"
+  , english := "To solve that problem, even ten professors wouldn't suffice"
+  , numeral := 10
+  , grammatical := true
+  , contextuallyMinimal := true
+  , explanation := "Context: ten is minimal expected number for the task" }
+
+/--
+All neanche examples.
+-/
+def neancheExamples : List NeancheExample :=
+  [neanche_uno, neanche_due_bad, neanche_due_ok, neanche_dieci_bad, neanche_dieci_ok]
+
+-- Grammaticality tracks contextual minimality
+#guard neancheExamples.all (fun ex =>
+  ex.grammatical == ex.contextuallyMinimal)
+
+-- ----------------------------------------------------------------------------
+-- 9.2: Theoretical Explanation
+-- ----------------------------------------------------------------------------
+
+/-!
+### Why Scale-Minimality Matters
+
+The key insight: intermediate scale positions generate POSITIVE scalar implicatures.
+
+Consider "no more than ten students came":
+- Literal: ≤10 students came
+- Scalar implicature: at least some came (not zero!)
+
+This positive implicature component DISRUPTS the purely DE environment
+that N-words require.
+
+Only scale-MINIMAL elements avoid generating positive implicatures:
+- "No one came" → no positive component
+- "Nothing happened" → no positive component
+
+### Connection to NPI Licensing
+
+This explains why N-words behave like STRONG NPIs:
+- Strong NPIs require ANTI-ADDITIVE contexts (not just DE)
+- The positive implicature from non-minimal bases disrupts anti-additivity
+- Scale-minimal bases preserve the pure negativity needed
+
+### Predictions
+
+1. Cross-linguistically, N-words should be based on minimal scale elements
+2. N-words should fail in contexts where their base triggers positive implicatures
+3. Contextual manipulation of scale-minimality should affect N-word acceptability
+-/
+
+/--
+Summary of scale-minimality constraint.
+-/
+structure ScaleMinimalityPrediction where
+  /-- The constraint -/
+  constraint : String
+  /-- Explanation -/
+  explanation : String
+  /-- Empirical support -/
+  evidence : String
+  deriving Repr
+
+def scaleMinimalityConstraint : ScaleMinimalityPrediction :=
+  { constraint := "N-words are formed only from scale-minimal elements"
+  , explanation := "Non-minimal elements generate positive implicatures that disrupt DE"
+  , evidence := "Cross-linguistic: nessuno, nadie, etc. based on 'one'; *nessdue impossible" }
+
 end Phenomena.NPIs

@@ -1731,4 +1731,240 @@ theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
 - `exhMW_or_not_wBoth`: both-world excluded by exh(or)
 -/
 
+-- ============================================================================
+-- SECTION 7: MAXIMIZE STRENGTH PRINCIPLE (Chierchia 2013)
+-- ============================================================================
+
+/-!
+## Maximize Strength
+
+Chierchia (2013) "Logic in Grammar" proposes that scalar implicature computation
+follows the **Maximize Strength** principle:
+
+> "Don't add an implicature if it leads to weakening, unless you have to"
+
+This explains the distribution of scalar implicatures across contexts:
+
+| Context | Polarity | Effect of SI | SI computed? |
+|---------|----------|--------------|--------------|
+| Upward Entailing | UE | Strengthens | ✓ Yes |
+| Downward Entailing | DE | Weakens | ✗ No |
+
+### Examples
+
+**UE Context** (positive sentence):
+- "John saw some students" → "John saw some but not all students"
+- SI strengthens: original entails exhaustified
+
+**DE Context** (antecedent of conditional):
+- "If John saw some students, he's happy" → No SI
+- SI would weaken: exhaustified entails original
+- Adding "not all" to antecedent makes the conditional weaker
+
+### Connection to Exhaustification
+
+Maximize Strength captures when `exh` is applied:
+- In UE contexts: `exh(φ) ⊆ₚ φ` (strengthening) → apply exh
+- In DE contexts: `φ ⊆ₚ exh(φ)` (weakening in overall sentence) → don't apply exh
+
+### Theoretical Significance
+
+This principle unifies several phenomena:
+1. Why SIs are optional in positive contexts (strengthening available)
+2. Why SIs disappear in DE contexts (would weaken)
+3. Why NPIs need DE contexts (exhaustification contradicts in UE)
+4. Why FCIs have complex distribution (modal rescue)
+-/
+
+-- ----------------------------------------------------------------------------
+-- 7.1: Context Polarity
+-- ----------------------------------------------------------------------------
+
+/--
+A context is characterized by its polarity for entailment purposes.
+-/
+inductive ContextPolarity where
+  | upward   : ContextPolarity  -- Preserves entailment direction
+  | downward : ContextPolarity  -- Reverses entailment direction
+  | nonMonotonic : ContextPolarity  -- Neither
+  deriving DecidableEq, Repr
+
+/--
+A context is a function that embeds a proposition into a larger structure.
+-/
+def Context (World : Type*) := Prop' World → Prop' World
+
+/--
+A context is upward entailing (monotone) if φ ⊆ ψ implies C(φ) ⊆ C(ψ).
+-/
+def IsUpwardEntailing (C : Context World) : Prop :=
+  ∀ φ ψ : Prop' World, (φ ⊆ₚ ψ) → (C φ ⊆ₚ C ψ)
+
+/--
+A context is downward entailing (antitone) if φ ⊆ ψ implies C(ψ) ⊆ C(φ).
+-/
+def IsDownwardEntailing (C : Context World) : Prop :=
+  ∀ φ ψ : Prop' World, (φ ⊆ₚ ψ) → (C ψ ⊆ₚ C φ)
+
+-- ----------------------------------------------------------------------------
+-- 7.2: Maximize Strength Theorems
+-- ----------------------------------------------------------------------------
+
+/--
+In a UE context, exhaustification STRENGTHENS the embedded proposition.
+That is: C(exh(φ)) ⊆ C(φ) when C is UE and exh(φ) ⊆ φ.
+-/
+theorem exh_in_ue_strengthens (C : Context World) (hUE : IsUpwardEntailing C)
+    (φ : Prop' World) (exhφ : Prop' World) (hExhStronger : exhφ ⊆ₚ φ) :
+    C exhφ ⊆ₚ C φ :=
+  hUE exhφ φ hExhStronger
+
+/--
+In a DE context, exhaustification WEAKENS the overall sentence.
+That is: C(φ) ⊆ C(exh(φ)) when C is DE and exh(φ) ⊆ φ.
+-/
+theorem exh_in_de_weakens (C : Context World) (hDE : IsDownwardEntailing C)
+    (φ : Prop' World) (exhφ : Prop' World) (hExhStronger : exhφ ⊆ₚ φ) :
+    C φ ⊆ₚ C exhφ :=
+  hDE exhφ φ hExhStronger
+
+/--
+The identity context is upward entailing.
+-/
+theorem id_context_is_UE : IsUpwardEntailing (id : Context World) := by
+  intro φ ψ h
+  exact h
+
+/--
+Negation context is downward entailing.
+-/
+theorem neg_context_is_DE : IsDownwardEntailing (pneg : Context World) := by
+  intro φ ψ h w hNotψ hφ
+  exact hNotψ (h w hφ)
+
+-- ----------------------------------------------------------------------------
+-- 7.3: Maximize Strength Decision Procedure
+-- ----------------------------------------------------------------------------
+
+/--
+Maximize Strength: compute SI iff context is UE (strengthening).
+
+This is the core principle: only apply exhaustification when it results
+in strengthening of the overall assertion.
+-/
+def maximizeStrength (φ : Prop' World) (exhφ : Prop' World)
+    (polarity : ContextPolarity) : Prop' World :=
+  match polarity with
+  | .upward => exhφ        -- Exhaustify: strengthens
+  | .downward => φ         -- Don't exhaustify: would weaken
+  | .nonMonotonic => φ     -- Conservative: don't exhaustify
+
+/--
+Maximize Strength with explicit context.
+-/
+def maximizeStrengthCtx (C : Context World) (φ : Prop' World) (exhφ : Prop' World)
+    (hUE : Bool) : Prop' World :=
+  if hUE then C exhφ else C φ
+
+-- ----------------------------------------------------------------------------
+-- 7.4: Connection to exh_mw
+-- ----------------------------------------------------------------------------
+
+/--
+exh_mw strengthens the proposition by conjoining negations of excludable alternatives.
+-/
+theorem exhMW_strengthens (ALT : Set (Prop' World)) (φ : Prop' World) :
+    exhMW ALT φ ⊆ₚ φ := by
+  intro w ⟨hφ, _⟩
+  exact hφ
+
+/--
+In a UE context, exh_mw results in a stronger overall sentence.
+-/
+theorem exhMW_strengthens_in_UE (C : Context World) (hUE : IsUpwardEntailing C)
+    (ALT : Set (Prop' World)) (φ : Prop' World) :
+    C (exhMW ALT φ) ⊆ₚ C φ :=
+  exh_in_ue_strengthens C hUE φ (exhMW ALT φ) (exhMW_strengthens ALT φ)
+
+/--
+In a DE context, applying exh_mw WEAKENS the overall sentence.
+Hence, Maximize Strength predicts NO scalar implicature in DE contexts.
+-/
+theorem exhMW_weakens_in_DE (C : Context World) (hDE : IsDownwardEntailing C)
+    (ALT : Set (Prop' World)) (φ : Prop' World) :
+    C φ ⊆ₚ C (exhMW ALT φ) :=
+  exh_in_de_weakens C hDE φ (exhMW ALT φ) (exhMW_strengthens ALT φ)
+
+-- ----------------------------------------------------------------------------
+-- 7.5: Examples
+-- ----------------------------------------------------------------------------
+
+/-!
+### Example: "Some students passed" in UE context
+
+Positive sentence: C = id (identity context)
+- φ = "some students passed"
+- exh(φ) = "some but not all students passed"
+- C(exh(φ)) ⊆ C(φ) ✓ Strengthens
+- **Prediction**: SI computed → "not all"
+
+### Example: "If some students passed, ..." (antecedent)
+
+Conditional antecedent: C = (λp. p → q) is DE
+- φ = "some students passed"
+- exh(φ) = "some but not all students passed"
+- C(φ) ⊆ C(exh(φ)) - SI would weaken the conditional
+- **Prediction**: NO SI in antecedent
+
+This matches empirical observations:
+- "If some students passed, the teacher is happy" does NOT implicate
+  "If some but not all students passed..."
+-/
+
+-- Summary table for documentation
+/--
+Maximize Strength predictions summary:
+
+| Context Type | SI Effect | Prediction | Example |
+|--------------|-----------|------------|---------|
+| Matrix clause (UE) | Strengthens | Compute SI | "some → not all" |
+| Negation scope (DE) | Weakens | No SI | "not some → some or none" |
+| Conditional antecedent (DE) | Weakens | No SI | "if some, then..." |
+| Universal restrictor (DE) | Weakens | No SI | "every... who saw some..." |
+| Question nucleus (NM) | Neither | No SI | "Did some...?" |
+-/
+structure MaximizeStrengthExample where
+  description : String
+  contextType : ContextPolarity
+  siComputed : Bool
+  explanation : String
+  deriving Repr
+
+def ms_matrix_clause : MaximizeStrengthExample :=
+  { description := "John saw some students"
+  , contextType := .upward
+  , siComputed := true
+  , explanation := "UE context: SI strengthens assertion" }
+
+def ms_negation : MaximizeStrengthExample :=
+  { description := "John didn't see some students"
+  , contextType := .downward
+  , siComputed := false
+  , explanation := "DE context: SI would weaken to 'saw none or not all'" }
+
+def ms_antecedent : MaximizeStrengthExample :=
+  { description := "If John saw some students, he's happy"
+  , contextType := .downward
+  , siComputed := false
+  , explanation := "Conditional antecedent is DE: SI would weaken" }
+
+def ms_universal_restrictor : MaximizeStrengthExample :=
+  { description := "Everyone who saw some students is happy"
+  , contextType := .downward
+  , siComputed := false
+  , explanation := "Universal restrictor is DE: SI would weaken" }
+
+def maximizeStrengthExamples : List MaximizeStrengthExample :=
+  [ms_matrix_clause, ms_negation, ms_antecedent, ms_universal_restrictor]
+
 end NeoGricean.Exhaustivity
