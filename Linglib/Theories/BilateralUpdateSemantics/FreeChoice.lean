@@ -42,8 +42,8 @@ import Linglib.Theories.BilateralUpdateSemantics.Basic
 
 namespace Theories.BilateralUpdateSemantics.FreeChoice
 
-open Core
-open Core.HeimState
+open Theories.DynamicSemantics.Core
+open Theories.DynamicSemantics.Core.InfoState
 open BilateralUpdateSemantics.BilateralDen
 open Classical
 
@@ -58,7 +58,7 @@ Possibility: state s makes ◇φ true iff s[φ]⁺ is consistent.
 
 In BUS, possibility checks whether the positive update yields a non-empty state.
 -/
-def possible (φ : BilateralDen W E) (s : HeimState W E) : Prop :=
+def possible (φ : BilateralDen W E) (s : InfoState W E) : Prop :=
   (φ.positive s).consistent
 
 /--
@@ -66,18 +66,19 @@ Necessity: state s makes □φ true iff s subsists in s[φ]⁺.
 
 Every possibility in s has a descendant that survives the positive update.
 -/
-def necessary (φ : BilateralDen W E) (s : HeimState W E) : Prop :=
-  s ⪯ φ.positive s
+def necessary (φ : BilateralDen W E) (s : InfoState W E) : Prop :=
+  InfoState.subsistsIn s (φ.positive s)
 
 /--
 Impossibility: ¬◇φ iff s[φ]⁺ is empty.
 -/
-def impossible (φ : BilateralDen W E) (s : HeimState W E) : Prop :=
+def impossible (φ : BilateralDen W E) (s : InfoState W E) : Prop :=
   ¬(φ.positive s).consistent
 
-theorem impossible_iff_empty (φ : BilateralDen W E) (s : HeimState W E) :
+theorem impossible_iff_empty (φ : BilateralDen W E) (s : InfoState W E) :
     impossible φ s ↔ φ.positive s = ∅ := by
-  simp only [impossible, HeimState.consistent, Set.not_nonempty_iff_eq_empty]
+  simp only [impossible, InfoState.consistent, Theories.DynamicSemantics.Core.InfoState.consistent,
+             Set.not_nonempty_iff_eq_empty]
 
 -- ============================================================================
 -- PART 2: Modal Disjunction (E&S 2025 Section 3.6-3.7)
@@ -105,7 +106,7 @@ s[φ ∨ ψ]⁺₁ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁺[ψ]⁻ ∪ s[φ]⁺[ψ]?
 Simplified: when ψ doesn't introduce anaphoric information, this is just s[φ]⁺.
 For the full version with anaphora, we'd need the complete Strong Kleene composition.
 -/
-def disjPos1 (φ ψ : BilateralDen W E) (s : HeimState W E) : HeimState W E :=
+def disjPos1 (φ ψ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
   -- Possibilities where φ is true (regardless of ψ's value)
   -- This is the "verification via φ" component
   φ.positive s
@@ -119,7 +120,7 @@ s[φ ∨ ψ]⁺₂ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁻[ψ]⁺ ∪ s[φ]?[ψ]⁺
 The key case for bathroom disjunctions: s[φ]⁻[ψ]⁺
 When φ = ¬∃x.P(x), this is s[∃x.P(x)]⁺[ψ]⁺ by DNE.
 -/
-def disjPos2 (φ ψ : BilateralDen W E) (s : HeimState W E) : HeimState W E :=
+def disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
   -- Possibilities where ψ is true (when evaluated after φ fails or is undefined)
   -- The crucial case: s[φ]⁻[ψ]⁺ is where anaphoric binding happens
   ψ.positive (φ.negative s)
@@ -167,10 +168,10 @@ This directly implies `possible φ s` since `disjPos1 φ ψ s = φ.positive s`.
 This is E&S's semantic account: FC follows from the semantics of modal
 disjunction, not from pragmatic reasoning about alternatives.
 -/
-theorem fc_semantic_first_disjunct (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem fc_semantic_first_disjunct (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     possible φ s := by
-  unfold possible HeimState.consistent at h ⊢
+  unfold possible InfoState.consistent at h ⊢
   unfold disjModal at h
   -- The positive update is non-empty only if the precondition holds
   by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
@@ -191,10 +192,10 @@ For bathroom disjunctions where φ = ~bathroom:
 
 This is where cross-disjunct anaphoric binding happens!
 -/
-theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     (ψ.positive (φ.negative s)).Nonempty := by
-  unfold possible HeimState.consistent at h
+  unfold possible InfoState.consistent at h
   unfold disjModal at h
   by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
   · -- Precondition holds, so disjPos2 is non-empty
@@ -219,7 +220,7 @@ For bathroom disjunction:
 
 This IS the "∃x.bathroom(x) ∧ funny-place(x)" reading!
 -/
-theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     possible φ s ∧ (ψ.positive (φ.negative s)).Nonempty := by
   exact ⟨fc_semantic_first_disjunct φ ψ s h, fc_semantic_second_disjunct φ ψ s h⟩
@@ -261,7 +262,7 @@ The crucial point: the second conjunct has the POSITIVE existential
 (∃x.bathroom(x)) conjoined with funny-place(x), allowing the pronoun
 to be bound.
 -/
-theorem fc_with_anaphora (cfg : BathroomConfig W E) (s : HeimState W E)
+theorem fc_with_anaphora (cfg : BathroomConfig W E) (s : InfoState W E)
     (h_poss : possible (bathroomSentence cfg) s)
     (h_no_bath : ((~cfg.bathroom).positive s).Nonempty)
     (h_bath_funny : ((cfg.bathroom.conj cfg.funnyPlace).positive s).Nonempty) :
@@ -281,11 +282,11 @@ This is the "converse" of FC and must be preserved.
 E&S ensure this by keeping standard truth-conditions for disjunction;
 FC arises from pragmatics/alternatives, not from changing the semantics.
 -/
-theorem dual_prohibition (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem dual_prohibition (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h_φ : impossible φ s)
     (h_ψ : impossible ψ s) :
     impossible (φ ∨ᶠᶜ ψ) s := by
-  simp only [impossible, HeimState.consistent] at *
+  simp only [impossible, InfoState.consistent] at *
   intro ⟨p, hp⟩
   -- For modal disjunction, if positive update is non-empty, then the precondition held
   -- and thus φ.positive s ∪ ψ.positive s was computed
@@ -306,7 +307,7 @@ Semantic FC (disjunctive form): if ◇(φ ∨ ψ), then ◇φ ∨ ◇ψ.
 This is the WEAKER form of FC. Modal disjunction actually gives us the
 STRONGER conjunctive form `◇φ ∧ (ψ after ¬φ is possible)`.
 -/
-theorem disj_to_poss_disj (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem disj_to_poss_disj (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     possible φ s ∨ possible ψ s := by
   -- Modal disjunction gives us the stronger result
@@ -327,7 +328,7 @@ For ¬∃x.φ:
 When we have ¬∃x.φ ∨ ψ(x), the negative dimension of ¬∃x.φ
 (= positive of ∃x.φ) introduces x, making it available for ψ(x).
 -/
-theorem negation_swaps_dims (φ : BilateralDen W E) (s : HeimState W E) :
+theorem negation_swaps_dims (φ : BilateralDen W E) (s : InfoState W E) :
     (~φ).positive s = φ.negative s ∧ (~φ).negative s = φ.positive s := by
   simp only [neg, and_self]
 
@@ -353,7 +354,7 @@ For ¬∃x.φ:
 The negative dimension of ¬∃x.φ IS the positive dimension of ∃x.φ,
 which is where x is introduced. This is what enables cross-disjunct binding.
 -/
-theorem exists_in_neg_dimension (x : Nat) (dom : Set E) (φ : BilateralDen W E) (s : HeimState W E) :
+theorem exists_in_neg_dimension (x : Nat) (dom : Set E) (φ : BilateralDen W E) (s : InfoState W E) :
     (~(exists_ x dom φ)).negative s = (exists_ x dom φ).positive s := by
   simp only [neg]
 
@@ -363,7 +364,7 @@ DNE preserves binding: ¬¬∃x.φ ⊙ ψ has the same positive update as ∃x.�
 This is crucial for the bathroom disjunction: when we derive ◇(¬¬∃x.φ ∧ ψ(x)),
 the binding structure is preserved because DNE gives us back ∃x.φ.
 -/
-theorem dne_preserves_binding (x : Nat) (dom : Set E) (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_preserves_binding (x : Nat) (dom : Set E) (φ ψ : BilateralDen W E) (s : InfoState W E) :
     ((~~(exists_ x dom φ)).conj ψ).positive s = ((exists_ x dom φ).conj ψ).positive s := by
   simp only [neg_neg]
 
@@ -375,7 +376,7 @@ possibilities (◇¬∃x.bath ∧ ◇(∃x.bath ∧ funny(x))) requires pragmati
 reasoning about alternatives - see Comparisons/FreeChoice.lean for
 different pragmatic accounts (RSA, Innocent Inclusion, etc.).
 -/
-theorem bathroom_fc_semantic (cfg : BathroomConfig W E) (s : HeimState W E)
+theorem bathroom_fc_semantic (cfg : BathroomConfig W E) (s : InfoState W E)
     (h_poss : possible (bathroomSentence cfg) s) :
     possible (~cfg.bathroom) s ∨ possible cfg.funnyPlace s := by
   exact disj_to_poss_disj (~cfg.bathroom) cfg.funnyPlace s h_poss
@@ -390,7 +391,7 @@ that would have happened if we took the "bathroom exists" branch.
 
 For the full FC inference (◇φ ∧ ◇ψ), see pragmatic accounts.
 -/
-theorem bathroom_binding_source (cfg : BathroomConfig W E) (s : HeimState W E)
+theorem bathroom_binding_source (cfg : BathroomConfig W E) (s : InfoState W E)
     (h_funny : possible cfg.funnyPlace s) :
     -- The funnyPlace possibilities have assignments for variable cfg.x
     -- because funnyPlace is evaluated in a state with random assignment
@@ -402,7 +403,7 @@ Standard FC disjunctive form: from ◇(φ ∨ ψ), get ◇φ ∨ ◇ψ.
 This is the weaker disjunctive form. The modal disjunction semantics
 actually gives us the stronger CONJUNCTIVE form via `modified_fc_semantic`.
 -/
-theorem fc_disjunctive (φ ψ : BilateralDen W E) (s : HeimState W E)
+theorem fc_disjunctive (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
     possible φ s ∨ possible ψ s :=
   Or.inl (fc_semantic_first_disjunct φ ψ s h)

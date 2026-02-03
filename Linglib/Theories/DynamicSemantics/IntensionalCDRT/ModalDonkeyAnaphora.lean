@@ -44,6 +44,7 @@ open Montague.Core.Time
 open Montague.Sentence.Mood
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
+open Theories.DynamicSemantics.Core
 
 -- ============================================================================
 -- PART 1: Donkey Binding Relations
@@ -177,6 +178,9 @@ def subjIndChain {W Time E : Type*} [LE Time]
 
 The consequent is evaluated at a world that agrees with the antecedent
 world up to the introduction time.
+
+Note: Requires that Q is a filter (preserves subset membership and assignments).
+Linguistically, predicates filter contexts without modifying assignments.
 -/
 theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -184,15 +188,17 @@ theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
     (P Q : SitContext W Time E → SitContext W Time E)
     (c : SitContext W Time E)
     (gs : SitAssignment W Time E × Situation W Time)
-    (h : gs ∈ subjIndChain history v P Q c) :
+    (h : gs ∈ subjIndChain history v P Q c)
+    -- Q is a filter: it only selects subsets, preserving the IND property
+    (hQ_filter : Q (dynIND v (P (dynSUBJ history v c))) ⊆ dynIND v (P (dynSUBJ history v c))) :
     -- The consequent situation shares its world with the bound situation
     gs.2.world = (gs.1.sit v).world := by
   unfold subjIndChain at h
-  -- Q preserves membership property from dynIND
-  -- The key is that dynIND enforces the same-world constraint
-  -- We need to track through the chain
-  -- After dynIND, any surviving (g, s) satisfies s.world = g.sit(v).world
-  sorry  -- Requires tracking through Q's monotonicity
+  -- Q is applied to dynIND result, and filters preserve membership
+  have h_in_ind : gs ∈ dynIND v (P (dynSUBJ history v c)) := hQ_filter h
+  -- dynIND enforces the same-world constraint
+  unfold dynIND at h_in_ind
+  exact h_in_ind.2
 
 -- ============================================================================
 -- PART 4: Parallel with Classic Donkey Anaphora

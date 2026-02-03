@@ -48,6 +48,7 @@ namespace Theories.DynamicSemantics.IntensionalCDRT.Situations
 open Montague.Core.Time
 open Montague.Sentence.Mood
 open Theories.DynamicSemantics.IntensionalCDRT
+open Theories.DynamicSemantics.Core
 
 -- ============================================================================
 -- PART 1: Situation Variables and Drefs
@@ -488,6 +489,9 @@ def everyWithSFRestrictor {W Time E : Type*} [LE Time] [LT Time]
 **Theorem: SF in restrictor enables future reference for strong quantifiers**
 
 With SF in the relative clause, "every" can quantify over future entities.
+
+Note: Requires that restrictor and nuclear are filters (preserve subset membership).
+Linguistically, predicates filter contexts without modifying assignments.
 -/
 theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
     (history : WorldHistory W Time)
@@ -495,13 +499,18 @@ theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
     (restrictor nuclear : SitContext W Time E → SitContext W Time E)
     (c : SitContext W Time E)
     (gs : SitAssignment W Time E × Situation W Time)
-    (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c) :
+    (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
+    -- Restrictor and nuclear are filters (preserve membership from SF)
+    (hRN_filter : nuclear (restrictor (subordinateFuture history rcVar speechVar c))
+                  ⊆ subordinateFuture history rcVar speechVar c) :
     -- The restrictor situation can be future relative to speech time
     (gs.1.sit rcVar).time > (gs.1.sit speechVar).time := by
-  -- The SF component guarantees the future ordering
+  -- Track through the filter chain
   unfold everyWithSFRestrictor at h
-  -- Need to track through restrictor and nuclear applications
-  sorry -- Requires monotonicity assumptions on restrictor and nuclear
+  have h_sf : gs ∈ subordinateFuture history rcVar speechVar c := hRN_filter h
+  -- subordinateFuture guarantees the future ordering via dynFUT
+  unfold subordinateFuture dynFUT at h_sf
+  exact h_sf.2
 
 -- ============================================================================
 -- PART 10: Complete CDRT Derivation (Paper §4.3.1, formulas 54-63)
@@ -569,7 +578,12 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
     (s₁ s₀ : SVar)
     (c : SitContext W Time E)
     (gs : SitAssignment W Time E × Situation W Time)
-    (h : gs ∈ exampleDerivation history maria atHome answer s₁ s₀ c) :
+    (h : gs ∈ exampleDerivation history maria atHome answer s₁ s₀ c)
+    -- s₀ and s₁ are distinct variables (required for proper tracking)
+    (h_distinct : s₁ ≠ s₀)
+    -- Speech time variable s₀ is properly initialized in the context:
+    -- all context entries have s₀ bound to their current situation
+    (h_init : ∀ g' s', (g', s') ∈ c → g'.sit s₀ = s') :
     -- The output satisfies:
     -- 1. s₁ is in the historical alternatives of s₀
     (gs.1.sit s₁) ∈ historicalBase history (gs.1.sit s₀) ∧
@@ -579,8 +593,48 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
     (atHome maria (gs.1.sit s₁) → answer maria (gs.1.sit s₁)) := by
   unfold exampleDerivation at h
   unfold conditionalWithSF at h
-  -- Track through the derivation
-  sorry -- Full proof requires tracking through all steps
+  simp only [Set.mem_setOf_eq] at h
+  obtain ⟨⟨h_ant, _⟩, h_ans⟩ := h
+  -- Track through subordinateFuture
+  unfold subordinateFuture at h_ant
+  unfold dynFUT at h_ant
+  obtain ⟨h_subj, h_gt⟩ := h_ant
+  unfold dynSUBJ at h_subj
+  obtain ⟨g, s₀', sit₁, hc, h_hist, h_upd, h_eq⟩ := h_subj
+  -- Helper: gs.1.sit s₁ = sit₁
+  have h_s₁ : gs.1.sit s₁ = sit₁ := by
+    rw [h_upd]
+    unfold SitAssignment.updateSit
+    simp only [show (s₁ == s₁) = true from by
+      unfold instBEqSVar BEq.beq; exact decide_eq_true rfl, ite_true]
+  -- Helper: gs.1.sit s₀ = g.sit s₀ (unchanged by update to s₁)
+  have h_s₀ : gs.1.sit s₀ = g.sit s₀ := by
+    rw [h_upd]
+    unfold SitAssignment.updateSit
+    -- s₀ ≠ s₁, so the if-then-else chooses the else branch
+    have h_ne : (s₀ == s₁) = false := by
+      unfold instBEqSVar BEq.beq
+      have h_idx_ne : s₀.idx ≠ s₁.idx := by
+        intro heq
+        apply h_distinct
+        cases s₀; cases s₁
+        simp only at heq
+        subst heq
+        rfl
+      exact decide_eq_false h_idx_ne
+    simp only [h_ne]
+    rfl
+  -- From initialization: g.sit s₀ = s₀'
+  have h_g_s₀ : g.sit s₀ = s₀' := h_init g s₀' hc
+  refine ⟨?_, ?_, ?_⟩
+  -- 1. s₁ ∈ historicalBase history (gs.1.sit s₀)
+  · rw [h_s₁, h_s₀, h_g_s₀]
+    exact h_hist
+  -- 2. τ(s₁) > τ(s₀)
+  · exact h_gt
+  -- 3. Conditional semantics
+  · intro _
+    exact h_ans
 
 -- ============================================================================
 -- Summary

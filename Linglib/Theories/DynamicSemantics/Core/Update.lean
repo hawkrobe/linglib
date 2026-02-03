@@ -138,6 +138,30 @@ theorem update_supports (s : InfoState W E) (φ : W → Bool) : s⟦φ⟧ ⊫ φ
   intro p ⟨_, hφ⟩
   exact hφ
 
+/--
+Dynamic entailment for propositions: φ entails ψ iff for all states s,
+if s is consistent after updating with φ, then s[φ] supports ψ.
+
+This is the dynamic notion of logical consequence for propositions.
+-/
+def dynamicEntails (φ ψ : W → Bool) : Prop :=
+  ∀ s : InfoState W E, (s⟦φ⟧).consistent → s⟦φ⟧ ⊫ ψ
+
+/-- Any proposition dynamically entails itself -/
+theorem dynamicEntails_refl (φ : W → Bool) : dynamicEntails (W := W) (E := E) φ φ := by
+  intro s _
+  exact update_supports s φ
+
+/-- φ dynamically entails φ ∧ ψ when φ entails ψ -/
+theorem dynamicEntails_conj (φ ψ : W → Bool)
+    (h : dynamicEntails (W := W) (E := E) φ ψ) :
+    dynamicEntails (W := W) (E := E) φ (fun w => φ w && ψ w) := by
+  intro s hcons p hp
+  simp only [Bool.and_eq_true]
+  constructor
+  · exact update_supports s φ p hp
+  · exact h s hcons p hp
+
 end InfoState
 
 -- ============================================================================

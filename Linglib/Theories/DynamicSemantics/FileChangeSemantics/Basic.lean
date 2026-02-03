@@ -169,18 +169,18 @@ def requiresFamiliarity {W E : Type*} (f : File W E) (x : Nat) : Prop :=
   f.familiar x
 
 -- ============================================================================
--- Connection to HeimState
+-- Connection to InfoState
 -- ============================================================================
 
 /-!
-## Relation to Core.HeimState
+## Relation to DynamicSemantics.Core.Basic
 
-The existing `Core.HeimState` module provides the same infrastructure
-under the name HeimState. This module provides FCS-specific vocabulary:
+The `Theories.DynamicSemantics.Core.Basic` module provides the canonical infrastructure.
+This module provides FCS-specific vocabulary as aliases:
 
-| This Module | Core.HeimState |
-|-------------|----------------|
-| File | HeimState |
+| This Module | DynamicSemantics.Core |
+|-------------|----------------------|
+| File | InfoState |
 | FileCard | Possibility |
 | novel | novelAt |
 | familiar | definedAt |

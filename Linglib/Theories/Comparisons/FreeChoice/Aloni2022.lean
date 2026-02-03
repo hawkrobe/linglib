@@ -21,7 +21,7 @@ BSML derives free choice inferences SEMANTICALLY via:
 | Aspect | BSML (Aloni) | BUS (Elliott & Sudo) |
 |--------|-------------|---------------------|
 | Semantics | Static (support) | Dynamic (updates) |
-| State | Team = Set World | HeimState (world, assignment) |
+| State | Team = Set World | InfoState (world, assignment) |
 | Bilateral | Support/anti-support | Positive/negative updates |
 | DNE | Swap support | Swap updates |
 | FC mechanism | Split ∨ + NE | Modal ∨ precondition |
@@ -798,7 +798,7 @@ but they differ in key ways:
 | Aspect | BSML | BUS |
 |--------|------|-----|
 | **Semantics** | Static (support relation) | Dynamic (update functions) |
-| **State** | Team = Set World | HeimState = Set (World × Assignment) |
+| **State** | Team = Set World | InfoState = Set (World × Assignment) |
 | **Disjunction** | Split (partition team) | Union (combine updates) |
 | **FC source** | NE forces both parts non-empty | Precondition forces both contribute |
 | **Anaphora** | Not addressed | Primary motivation |
@@ -823,7 +823,7 @@ def comparisonTable : List BSMLvsBUS :=
     , bus := "Dynamic (update functions)" }
   , { aspect := "State representation"
     , bsml := "Team = Set World"
-    , bus := "HeimState = Set (World × Assignment)" }
+    , bus := "InfoState = Set (World × Assignment)" }
   , { aspect := "Bilateral structure"
     , bsml := "Support / anti-support"
     , bus := "Positive / negative updates" }

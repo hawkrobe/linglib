@@ -37,6 +37,8 @@ import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
 
 namespace Theories.DynamicSemantics.IntensionalCDRT
 
+open Theories.DynamicSemantics.Core
+
 -- ============================================================================
 -- PART 1: Negation (DNE Validated)
 -- ============================================================================
@@ -143,12 +145,30 @@ infixr:55 " ⟹ " => impl
 Material conditional equivalence: φ → ψ ≡ ¬φ ∨ ψ
 
 Using bathroom disjunction, this gives anaphora from antecedent to consequent.
+
+Note: This equivalence requires that ψ's positive update is a subsetting operation
+(i.e., ψ.positive c' ⊆ c' for any context c'). This is standard in dynamic semantics
+where updates can only eliminate possibilities, not add them.
 -/
-theorem impl_as_disj (φ ψ : BilateralICDRT W E) (c : IContext W E) :
+theorem impl_as_disj (φ ψ : BilateralICDRT W E) (c : IContext W E)
+    -- Updates are "subsetting": output is a subset of input
+    (hψ_subsetting : ψ.positive (φ.positive c) ⊆ φ.positive c) :
     (impl φ ψ).positive c = (disjBathroom φ.neg ψ).positive c := by
-  simp [impl, disjBathroom, neg]
-  -- TODO: Complete this proof
-  sorry
+  -- LHS: φ.negative c ∪ (φ.positive c ∩ ψ.positive (φ.positive c))
+  -- RHS: φ.negative c ∪ ψ.positive (φ.positive c)
+  -- With hψ_subsetting, the intersection is redundant
+  apply Set.ext
+  intro gw
+  simp only [impl, disjBathroom, neg, Set.mem_union, Set.mem_inter_iff]
+  constructor
+  · intro h
+    cases h with
+    | inl h_neg => left; exact h_neg
+    | inr h_pos => right; exact h_pos.2
+  · intro h
+    cases h with
+    | inl h_neg => left; exact h_neg
+    | inr h_psi => right; exact ⟨hψ_subsetting h_psi, h_psi⟩
 
 -- ============================================================================
 -- PART 5: De Morgan Laws

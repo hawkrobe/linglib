@@ -14,10 +14,10 @@ the foundational structures that all dynamic semantic theories build on.
 
 ## Architecture
 
-This module is in Theories/DynamicSemantics/Core/ because:
-- It provides shared infrastructure for dynamic semantic theories
-- Specific theories (BUS, DPL, ICDRT, etc.) extend these types
-- Core.HeimState remains for backward compatibility
+This module provides the canonical infrastructure for dynamic semantic theories:
+- `Possibility W E`: (world, assignment) pairs
+- `InfoState W E`: sets of possibilities
+- State relations: `subsistsIn`, `supports`
 
 Specific theories in Theories/DynamicSemantics/ build on this:
 - BUS: Elliott & Sudo 2025

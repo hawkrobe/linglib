@@ -354,11 +354,12 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
     (s₀ : Situation W Time)
     -- Global accommodation: existence everywhere
     (h_global : ∀ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁)
+    -- Need at least one situation in the historical base
+    (h_nonempty : ∃ s, s ∈ historicalBase history s₀)
     -- Implies local existence (trivially)
     : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by
-  -- historicalBase is non-empty if history is reflexive (includes s₀)
-  -- We need at least one situation in the base
-  sorry -- Requires non-emptiness assumption on historicalBase
+  obtain ⟨s₁, h_s₁⟩ := h_nonempty
+  exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
 -- ============================================================================
 -- Summary

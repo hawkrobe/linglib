@@ -303,9 +303,33 @@ theorem derivation_in_historical_base
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
           (gs.1.sit sfVar) ∈ historicalBase history s₀ := by
-  -- The derivation tracks through multiple operations
-  -- A full proof would unfold all definitions and track the situation variable
-  sorry
+  -- Unfold the derivation structure
+  unfold deriveFullSentence lexIf at h
+  -- h : gs ∈ deriveConsequent maria answerRel sfVar (deriveAntecedent history maria atHomeRel sfVar speechVar c)
+  unfold deriveConsequent lexAnswer at h
+  simp only [Set.mem_setOf_eq] at h
+  obtain ⟨h_ind, _⟩ := h
+  unfold dynIND at h_ind
+  obtain ⟨h_ant, _⟩ := h_ind
+  unfold deriveAntecedent lexAtHome at h_ant
+  simp only [Set.mem_setOf_eq] at h_ant
+  obtain ⟨h_sf, _⟩ := h_ant
+  -- Now h_sf : gs ∈ lexSF history sfVar speechVar c = subordinateFuture history sfVar speechVar c
+  unfold lexSF subordinateFuture dynFUT at h_sf
+  obtain ⟨h_subj, _⟩ := h_sf
+  unfold dynSUBJ at h_subj
+  obtain ⟨g, s₀, s₁, hc, h_hist, h_upd, _⟩ := h_subj
+  use s₀
+  constructor
+  · exact ⟨g, hc⟩
+  · -- Show gs.1.sit sfVar = s₁
+    have h_sit : gs.1.sit sfVar = s₁ := by
+      rw [h_upd]
+      unfold SitAssignment.updateSit
+      simp only [show (sfVar == sfVar) = true from by
+        unfold instBEqSVar BEq.beq; exact decide_eq_true rfl, ite_true]
+    rw [h_sit]
+    exact h_hist
 
 /--
 **Theorem: Derivation enforces future ordering**
@@ -320,8 +344,19 @@ theorem derivation_future_ordering
     (gs : SitAssignment W Time E × Situation W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     (gs.1.sit sfVar).time > (gs.1.sit speechVar).time := by
-  -- Similar tracking through the derivation
-  sorry
+  -- Track through the derivation to reach subordinateFuture
+  unfold deriveFullSentence lexIf at h
+  unfold deriveConsequent lexAnswer at h
+  simp only [Set.mem_setOf_eq] at h
+  obtain ⟨h_ind, _⟩ := h
+  unfold dynIND at h_ind
+  obtain ⟨h_ant, _⟩ := h_ind
+  unfold deriveAntecedent lexAtHome at h_ant
+  simp only [Set.mem_setOf_eq] at h_ant
+  obtain ⟨h_sf, _⟩ := h_ant
+  -- subordinateFuture guarantees the future ordering via dynFUT
+  unfold lexSF subordinateFuture dynFUT at h_sf
+  exact h_sf.2
 
 /--
 **Theorem: Derivation enforces conditional semantics**
@@ -337,10 +372,12 @@ theorem derivation_conditional_holds
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     atHomeRel maria (gs.1.sit sfVar) → answerRel maria (gs.1.sit sfVar) := by
   intro _
-  -- The consequent filter in lexAnswer ensures answerRel holds
-  -- for any (gs) that survives the full derivation
-  -- The derivation structure ensures the conditional semantics
-  sorry
+  -- Track through to find the lexAnswer filter
+  unfold deriveFullSentence lexIf at h
+  unfold deriveConsequent lexAnswer at h
+  simp only [Set.mem_setOf_eq] at h
+  -- h = ⟨h_ind, h_answer⟩ where h_answer : answerRel maria (gs.1.sit sfVar)
+  exact h.2
 
 -- ============================================================================
 -- PART 6: Table 3 Patterns (Temporal Reference Summary)

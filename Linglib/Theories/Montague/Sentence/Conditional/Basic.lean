@@ -340,6 +340,98 @@ theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
   exact variably_strict_implies_material sim domain p q w hw hp h_centered
 
 -- ============================================================================
+-- Selection Functions (Stalnaker 1968, Ramotowska et al. 2025)
+-- ============================================================================
+
+/-!
+## Selection Functions
+
+Stalnaker's selection function approach to counterfactuals:
+- A selection function `s : W × 𝒫(W) → W` selects THE closest antecedent-world
+- "If A were, C would be" is true iff C holds at s(w, ⦃A⦄)
+
+Key distinction from Lewis:
+- Lewis: Universal quantification over all closest A-worlds
+- Stalnaker: Selection of a single A-world (with supervaluation for ties)
+
+This is formalized for use in Ramotowska et al. (2025) analysis of
+counterfactual force under quantifiers.
+-/
+
+/--
+A **selection function** picks the unique closest antecedent-world.
+
+`s w A` returns the closest A-world to w, or w itself if no A-worlds exist.
+
+Constraints (from Stalnaker 1968):
+1. Success: If A is non-empty, s(w, A) ∈ A
+2. Strong Centering: If w ∈ A, then s(w, A) = w
+-/
+structure SelectionFunction (W : Type*) where
+  /-- The selection function -/
+  select : W → Set W → W
+  /-- Success: selected world is in the antecedent (if nonempty) -/
+  success : ∀ w A, A.Nonempty → select w A ∈ A
+  /-- Strong centering: if actual world satisfies antecedent, select it -/
+  centering : ∀ w A, w ∈ A → select w A = w
+
+/--
+**Candidate selection functions** induced by a comparative similarity ordering.
+
+Given an ordering, a selection function is "legitimate" iff it always
+selects a world that is closest (minimal w.r.t. the ordering).
+
+This is the connection between Lewis/Kratzer orderings and Stalnaker selection.
+-/
+def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
+    (domain : Set W) (w : W) (A : Set W) : Set W :=
+  let pWorlds := A ∩ domain
+  { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
+
+/--
+**Counterfactual via selection function** (Stalnaker semantics).
+
+"If A were, C would be" is true at w iff C holds at the selected A-world.
+-/
+def selectionalCounterfactual {W : Type*} (s : SelectionFunction W)
+    (allWorlds : Set W) (p q : Prop' W) : Prop' W :=
+  fun w =>
+    let pWorlds := { w' ∈ allWorlds | p w' }
+    pWorlds = ∅ ∨ q (s.select w pWorlds)
+
+/--
+**Comparative closeness** relation derived from a similarity ordering.
+
+`w₁ ≤_w₀ w₂` means w₁ is at least as similar to w₀ as w₂ is.
+This is the Lewis notation.
+-/
+def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
+    (w₀ w₁ w₂ : W) : Prop :=
+  sim.closer w₀ w₁ w₂
+
+notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ => comparativeCloseness sim w₀ w₁ w₂
+
+-- ============================================================================
+-- Connection to Causal Models
+-- ============================================================================
+
+/-!
+## Selection via Intervention
+
+A key insight: selection functions can be grounded in causal models.
+
+Given a causal model, `s(w, A)` = the world resulting from intervening
+to make A true at w (Pearl's do(A)).
+
+This connects:
+- Stalnaker selection → Causal intervention
+- "If A were" → do(A)
+- Counterfactual dependence → Causal necessity (Nadathur & Lauer 2020)
+
+See `Theories/NadathurLauer2020/` for the causal model infrastructure.
+-/
+
+-- ============================================================================
 -- Connection to Assertability
 -- ============================================================================
 

@@ -55,8 +55,9 @@ import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Core.Analyticity
 
--- Heimian states (dynamic semantics infrastructure)
-import Linglib.Core.HeimState
+-- Dynamic semantics core (InfoState, CCP, update operations)
+import Linglib.Theories.DynamicSemantics.Core.Basic
+import Linglib.Theories.DynamicSemantics.Core.Update
 
 -- Team semantics (Aloni, Inquisitive Semantics infrastructure)
 import Linglib.Core.TeamSemantics

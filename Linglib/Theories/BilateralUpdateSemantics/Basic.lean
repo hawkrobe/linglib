@@ -1,19 +1,23 @@
 /-
 # Bilateral Update Semantics (Elliott 2023; Elliott & Sudo 2025)
 
-**DEPRECATED**: This module is being reorganized into
-`Theories.DynamicSemantics.BUS`. Import from there for new code.
+Bilateral update semantics with positive and negative update dimensions.
+This enables DNE validation and proper treatment of cross-disjunct anaphora.
 
-This file provides backward compatibility by re-exporting the BUS types.
+## References
+
+- Elliott, P. (2023). Towards a dynamics of ellipsis identity.
+- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
 -/
 
-import Linglib.Core.HeimState
+import Linglib.Theories.DynamicSemantics.Core.Basic
+import Linglib.Theories.DynamicSemantics.Core.Update
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
 
 namespace Theories.BilateralUpdateSemantics
 
-open Core
+open Theories.DynamicSemantics.Core
 
 -- ============================================================================
 -- PART 1: Bilateral Denotations
@@ -31,9 +35,9 @@ is what enables DNE and proper treatment of cross-disjunct anaphora.
 -/
 structure BilateralDen (W : Type*) (E : Type*) where
   /-- Positive update: result of asserting the sentence -/
-  positive : HeimState W E → HeimState W E
+  positive : InfoState W E → InfoState W E
   /-- Negative update: result of denying the sentence -/
-  negative : HeimState W E → HeimState W E
+  negative : InfoState W E → InfoState W E
 
 @[ext]
 theorem BilateralDen.ext {W E : Type*} {φ ψ : BilateralDen W E}
@@ -62,10 +66,10 @@ def atom (pred : W → Bool) : BilateralDen W E :=
   , negative := fun s => s.update (fun w => !pred w) }
 
 /-- Atomic positive and negative are complementary -/
-theorem atom_complementary (pred : W → Bool) (s : HeimState W E) :
+theorem atom_complementary (pred : W → Bool) (s : InfoState W E) :
     (atom pred).positive s ∪ (atom pred).negative s = s := by
   ext p
-  simp only [atom, HeimState.update, Set.mem_union, Set.mem_setOf_eq]
+  simp only [atom, InfoState.update, Set.mem_union, Set.mem_setOf_eq]
   constructor
   · rintro (⟨h, _⟩ | ⟨h, _⟩) <;> exact h
   · intro h
@@ -95,11 +99,11 @@ def neg (φ : BilateralDen W E) : BilateralDen W E :=
 theorem neg_neg (φ : BilateralDen W E) : φ.neg.neg = φ := rfl
 
 /-- DNE for positive updates -/
-theorem dne_positive (φ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_positive (φ : BilateralDen W E) (s : InfoState W E) :
     φ.neg.neg.positive s = φ.positive s := rfl
 
 /-- DNE for negative updates -/
-theorem dne_negative (φ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_negative (φ : BilateralDen W E) (s : InfoState W E) :
     φ.neg.neg.negative s = φ.negative s := rfl
 
 -- ============================================================================
@@ -121,7 +125,7 @@ def conj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   , negative := fun s => φ.negative s ∪ (φ.positive s ∩ ψ.negative (φ.positive s)) }
 
 /-- Conjunction associates (for positive updates) -/
-theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : HeimState W E) :
+theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : InfoState W E) :
     ((φ.conj ψ).conj χ).positive s = (φ.conj (ψ.conj χ)).positive s := by
   simp only [conj]
 
@@ -143,7 +147,7 @@ def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   , negative := fun s => φ.negative s ∩ ψ.negative s }
 
 /-- De Morgan: negated disjunction swaps to intersection -/
-theorem disj_neg_positive (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem disj_neg_positive (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (φ.disj ψ).neg.positive s = φ.negative s ∩ ψ.negative s := by
   simp only [neg, disj]
 
@@ -196,21 +200,21 @@ def forall_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W 
 Bilateral support: state s supports φ iff positive update is non-empty
 and s subsists in s[φ]⁺.
 -/
-def supports (s : HeimState W E) (φ : BilateralDen W E) : Prop :=
-  (φ.positive s).consistent ∧ s ⪯ φ.positive s
+def supports (s : InfoState W E) (φ : BilateralDen W E) : Prop :=
+  InfoState.consistent (φ.positive s) ∧ InfoState.subsistsIn s (φ.positive s)
 
 /--
 Bilateral entailment: φ entails ψ iff for all consistent states s,
 s[φ]⁺ supports ψ.
 -/
 def entails (φ ψ : BilateralDen W E) : Prop :=
-  ∀ s : HeimState W E, (φ.positive s).consistent →
+  ∀ s : InfoState W E, InfoState.consistent (φ.positive s) →
     supports (φ.positive s) ψ
 
 notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
 
 /-- DNE for positive updates: ¬¬φ and φ have the same positive update -/
-theorem dne_positive_eq (φ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_positive_eq (φ : BilateralDen W E) (s : InfoState W E) :
     φ.neg.neg.positive s = φ.positive s := by
   simp only [neg]
 
@@ -228,7 +232,7 @@ for cross-sentential anaphora.
 In BUS, this follows from the sequencing of updates: the random assignment
 happens first, making x available throughout.
 -/
-theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : InfoState W E) :
     ((exists_ x domain φ).conj ψ).positive s ⊆
     (exists_ x domain (φ.conj ψ)).positive s := by
   intro p hp
@@ -256,14 +260,14 @@ E&S (2025) emphasize that DNE holding as EQUALITY (not just entailment)
 is the key innovation: standard dynamic semantics fails DNE because
 negation "pushes in" and changes update structure.
 -/
-theorem dne_update_eq (φ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_update_eq (φ : BilateralDen W E) (s : InfoState W E) :
     (φ.neg.neg).positive s = φ.positive s ∧ (φ.neg.neg).negative s = φ.negative s := by
   simp only [neg_neg, and_self]
 
 /--
 DNE preserves consistency: ¬¬φ is consistent iff φ is consistent.
 -/
-theorem dne_consistent_iff (φ : BilateralDen W E) (s : HeimState W E) :
+theorem dne_consistent_iff (φ : BilateralDen W E) (s : InfoState W E) :
     ((φ.neg.neg).positive s).consistent ↔ (φ.positive s).consistent := by
   simp only [neg_neg]
 
@@ -305,16 +309,16 @@ theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → Bilater
   fun φ => neg_neg φ
 
 -- De Morgan laws
-theorem neg_conj_positive (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem neg_conj_positive (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (~(φ.conj ψ)).positive s = (φ.conj ψ).negative s := rfl
 
-theorem neg_disj_positive (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem neg_disj_positive (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (~(φ.disj ψ)).positive s = (φ.disj ψ).negative s := rfl
 
-theorem disj_negative_eq_inter (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem disj_negative_eq_inter (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (φ.disj ψ).negative s = φ.negative s ∩ ψ.negative s := rfl
 
-theorem disj_positive_eq_union (φ ψ : BilateralDen W E) (s : HeimState W E) :
+theorem disj_positive_eq_union (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (φ.disj ψ).positive s = φ.positive s ∪ ψ.positive s := rfl
 
 -- ============================================================================
@@ -322,20 +326,20 @@ theorem disj_positive_eq_union (φ ψ : BilateralDen W E) (s : HeimState W E) :
 -- ============================================================================
 
 /-- For atoms, positive and negative are disjoint. -/
-theorem atom_disjoint' (pred : W → Bool) (s : HeimState W E) :
+theorem atom_disjoint' (pred : W → Bool) (s : InfoState W E) :
     (atom pred).positive s ∩ (atom pred).negative s = ∅ := by
   ext p
   constructor
   · intro ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩
-    simp only [atom, HeimState.update, Set.mem_setOf_eq, Bool.not_eq_true] at hp hnp
+    simp only [atom, InfoState.update, Set.mem_setOf_eq, Bool.not_eq_true] at hp hnp
     simp_all
   · intro h; exact h.elim
 
 /-- Negation swaps positive and negative. -/
-theorem neg_positive_eq_negative (φ : BilateralDen W E) (s : HeimState W E) :
+theorem neg_positive_eq_negative (φ : BilateralDen W E) (s : InfoState W E) :
     (~φ).positive s = φ.negative s := rfl
 
-theorem neg_negative_eq_positive (φ : BilateralDen W E) (s : HeimState W E) :
+theorem neg_negative_eq_positive (φ : BilateralDen W E) (s : InfoState W E) :
     (~φ).negative s = φ.positive s := rfl
 
 -- ============================================================================
@@ -343,17 +347,17 @@ theorem neg_negative_eq_positive (φ : BilateralDen W E) (s : HeimState W E) :
 -- ============================================================================
 
 /-- Unilateral denotation: single update function. -/
-def UnilateralDen (W : Type*) (E : Type*) := HeimState W E → HeimState W E
+def UnilateralDen (W : Type*) (E : Type*) := InfoState W E → InfoState W E
 
 /-- View bilateral as pair of updates. -/
-def toPair (φ : BilateralDen W E) : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E) :=
+def toPair (φ : BilateralDen W E) : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E) :=
   (φ.positive, φ.negative)
 
 /-- Construct bilateral from pair. -/
-def ofPair (p : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E)) : BilateralDen W E :=
+def ofPair (p : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E)) : BilateralDen W E :=
   { positive := p.1, negative := p.2 }
 
-theorem toPair_ofPair (p : (HeimState W E → HeimState W E) × (HeimState W E → HeimState W E)) :
+theorem toPair_ofPair (p : (InfoState W E → InfoState W E) × (InfoState W E → InfoState W E)) :
     toPair (ofPair p) = p := rfl
 
 theorem ofPair_toPair (φ : BilateralDen W E) : ofPair (toPair φ) = φ := rfl
