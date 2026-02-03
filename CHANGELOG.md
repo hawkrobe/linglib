@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.56.0] - 2025-02-02
+
+### Added
+- **Theories/DynamicSemantics/**: New unified dynamic semantics infrastructure
+  - **Core/**: Shared types (`Possibility`, `InfoState`, `Context`), CCP, bilateral updates, discourse refs
+  - **BUS/**: Bilateral Update Semantics (Elliott & Sudo 2025) - reorganized from BilateralUpdateSemantics/
+  - **CDRT/**: Compositional DRT with DynamicTy2 integration
+  - **DPL/**: Dynamic Predicate Logic (Groenendijk & Stokhof 1991)
+  - **DRT/**: Discourse Representation Theory (Kamp 1981)
+  - **PLA/**: Probabilistic Language of Attitudes with belief/epistemic operators
+  - **IntensionalCDRT/**: Intensional CDRT (Hofmann 2025)
+  - **FileChangeSemantics/**: Heim's file change semantics
+  - **Comparisons/PLA_BUS.lean**: PLA vs BUS comparison
+
+- **Phenomena/DynamicSemantics/**: Dynamic semantics test cases
+  - CrossSententialAnaphora, BathroomSentences, DoubleNegation, ModalSubordination
+
+### Changed
+- **Theories/BilateralUpdateSemantics/Basic.lean**: Deprecated, redirects to DynamicSemantics/BUS/
+
 ## [0.55.0] - 2025-02-02
 
 ### Added
