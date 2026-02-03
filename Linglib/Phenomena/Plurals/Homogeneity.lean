@@ -27,7 +27,7 @@ Homogeneity is characterized by non-complementary truth conditions:
 - Bar-Lev (2021a): Exhaustification approach
 -/
 
-namespace Phenomena.Imprecision.Homogeneity
+namespace Phenomena.Plurals.Homogeneity
 
 -- ============================================================================
 -- PART 1: Basic Homogeneity Pattern
@@ -429,4 +429,4 @@ def removalExamples : List HomogeneityRemovalDatum :=
 - Križ & Spector (2021), Bar-Lev (2021a)
 -/
 
-end Phenomena.Imprecision.Homogeneity
+end Phenomena.Plurals.Homogeneity

@@ -418,8 +418,10 @@ import Linglib.Phenomena.Questions.MentionSome
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic
 
--- Plurals (distributivity, non-maximality)
+-- Plurals (distributivity, homogeneity, non-maximality)
 import Linglib.Phenomena.Plurals.Basic
+import Linglib.Phenomena.Plurals.Homogeneity
+import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
 
 -- Word order alternations (verb position, etc.)

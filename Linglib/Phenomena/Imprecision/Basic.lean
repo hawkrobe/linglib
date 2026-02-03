@@ -25,8 +25,6 @@ phenomena, which makes formalization possible.
 
 ## Module Structure
 
-- `Homogeneity.lean`: Truth-value gaps in plural definites, conjunctions, etc.
-- `NonMaximality.lean`: Context-dependent weakening of plural sentences
 - `Numerals.lean`: Round vs non-round numeral imprecision
 - `FormMeaning.lean`: Complexity-precision correspondences
 - `Projection.lean`: How homogeneity/imprecision projects under quantifiers
@@ -96,8 +94,8 @@ See `ROADMAP.md` for the formalization plan.
   *Linguistics and Philosophy* 30.
 -/
 
-import Linglib.Phenomena.Imprecision.Homogeneity
-import Linglib.Phenomena.Imprecision.NonMaximality
+import Linglib.Phenomena.Plurals.Homogeneity
+import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Imprecision.Numerals
 import Linglib.Phenomena.Imprecision.FormMeaning
 import Linglib.Phenomena.Imprecision.Projection
@@ -109,8 +107,8 @@ namespace Phenomena.Imprecision
 -- Re-exports for convenient access
 -- ============================================================================
 
--- From Homogeneity
-export Homogeneity (
+-- From Plurals.Homogeneity
+export Phenomena.Plurals.Homogeneity (
   HomogeneityDatum
   HomogeneityJudgment
   HomogeneityRemover
@@ -121,8 +119,8 @@ export Homogeneity (
   conjunctionExample
 )
 
--- From NonMaximality
-export NonMaximality (
+-- From Plurals.NonMaximality
+export Phenomena.Plurals.NonMaximality (
   NonMaximalityDatum
   ContextualIssue
   BankRobberyDatum

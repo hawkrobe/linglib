@@ -25,7 +25,7 @@ is irrelevant for the conversational goals. The perceived truth conditions are
 - Križ & Spector (2021): Supervaluationist approach
 -/
 
-namespace Phenomena.Imprecision.NonMaximality
+namespace Phenomena.Plurals.NonMaximality
 
 -- ============================================================================
 -- PART 1: Issue-Sensitivity Structure
@@ -444,4 +444,4 @@ def strongRelevanceExamples : List StrongRelevanceDatum :=
 - Križ (2015, 2016), Križ & Spector (2021)
 -/
 
-end Phenomena.Imprecision.NonMaximality
+end Phenomena.Plurals.NonMaximality
