@@ -179,6 +179,27 @@ def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Truth
   else if noneSatisfy P x w then .false
   else .gap
 
+/-- pluralTruthValue is .true iff allSatisfy holds -/
+@[simp]
+theorem pluralTruthValue_eq_true_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .true ↔ allSatisfy P x w = true := by
+  simp only [pluralTruthValue]
+  split_ifs with h <;> simp_all
+
+/-- pluralTruthValue is .false iff noneSatisfy holds (and not allSatisfy) -/
+@[simp]
+theorem pluralTruthValue_eq_false_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .false ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = true := by
+  simp only [pluralTruthValue]
+  split_ifs with h1 h2 <;> simp_all
+
+/-- pluralTruthValue is .gap iff neither all nor none satisfy -/
+@[simp]
+theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .gap ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = false := by
+  simp only [pluralTruthValue]
+  split_ifs with h1 h2 <;> simp_all
+
 -- Part 3: The Homogeneity Theorem
 
 /-- The gap condition: some but not all atoms satisfy P -/
@@ -206,20 +227,29 @@ theorem homogeneity_gap_symmetric (P : Atom → W → Bool) (x : Finset Atom) (w
 
 /--
 **COROLLARY**: pluralTruthValue is gap iff negated version is gap.
-
-TODO: Complete proof (follows from homogeneity_gap_symmetric)
 -/
 theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Bool) (x : Finset Atom) (w : W)
-    (hne : x.Nonempty) :
+    (_hne : x.Nonempty) :
     pluralTruthValue P x w = .gap ↔ pluralTruthValue (fun a w => !P a w) x w = .gap := by
-  sorry
+  unfold pluralTruthValue allSatisfy noneSatisfy
+  simp only [decide_eq_true_eq, Bool.not_eq_true', Bool.not_eq_false', Bool.not_not]
+  constructor <;> (intro h; split_ifs at h ⊢ <;> first | rfl | contradiction | omega)
 
 /--
 **HOMOGENEITY POLARITY THEOREM**: Truth and falsity swap under negation.
 
 If "the Xs are P" is TRUE, then "the Xs are ¬P" is FALSE, and vice versa.
 
-TODO: Complete proof
+**Proof sketch**: After unfolding, both sides are nested if-then-else on:
+- LHS: `allSatisfy ¬P`, then `noneSatisfy ¬P`
+- RHS: `allSatisfy P`, then `noneSatisfy P`
+
+The key facts:
+- `(∀ a, P a = true) → (∀ a, ¬P a = false)` so `allSatisfy P → noneSatisfy ¬P`
+- `(∀ a, P a = false) → (∀ a, ¬P a = true)` so `noneSatisfy P → allSatisfy ¬P`
+- Gap case: `¬allSatisfy P ∧ ¬noneSatisfy P ↔ ¬allSatisfy ¬P ∧ ¬noneSatisfy ¬P`
+
+The proof requires careful case analysis on the 8 combinations of conditions.
 -/
 theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     pluralTruthValue (fun a w => !P a w) x w =
