@@ -1,35 +1,15 @@
-/-
-# English Noun Lexicon Fragment
-
-English-specific noun entries and NP structure.
-
-## Bare Argument Licensing in English
-
-English is a [+arg, +pred] language (Chierchia 1998):
-- Bare plurals OK: "Dogs bark", "I saw dogs"
-- Bare mass nouns OK: "Water is wet", "I drank water"
-- Bare singulars OUT: *"Dog barks", *"I saw dog"
-
-The restriction follows from:
-1. ∩ (kind formation) is only defined for plurals and mass nouns
-2. ι (definite) is blocked by "the"
-3. ∃ (indefinite singular) is blocked by "a"
-
-## References
-
-- Chierchia (1998). Reference to Kinds Across Languages.
--/
-
 import Linglib.Core.Basic
 import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+
+/-! # English Noun Lexicon Fragment
+
+English NP structure. Bare plurals/mass nouns OK, bare singulars blocked (Chierchia 1998).
+-/
 
 namespace Fragments.English.Nouns
 
 open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
--- ============================================================================
--- English NP Structure
--- ============================================================================
 
 /-- A lexical entry for an English noun. -/
 structure NounEntry where
@@ -74,9 +54,6 @@ def NP.isBareMass (np : NP) : Bool :=
 def NP.isBareSingular (np : NP) : Bool :=
   np.isBare && np.number == .sg
 
--- ============================================================================
--- NP Constructors
--- ============================================================================
 
 /-- Create a bare plural NP -/
 def barePlural (n : NounEntry) : NP :=
@@ -102,9 +79,6 @@ def aNP (n : NounEntry) : NP :=
 def withDet (n : NounEntry) (det : String) (num : NPNumber := .sg) : NP :=
   { noun := n, number := num, isBare := false, determiner := some det }
 
--- ============================================================================
--- English Blocking Configuration
--- ============================================================================
 
 /--
 English has articles that block covert type shifts:
@@ -120,9 +94,6 @@ def englishBlocking : BlockingPrinciple :=
   , existsBlocked := true
   , downBlocked := false }
 
--- ============================================================================
--- Common Nouns
--- ============================================================================
 
 def pizza : NounEntry := { formSg := "pizza", formPl := "pizzas" }
 def book : NounEntry := { formSg := "book", formPl := "books" }
@@ -144,7 +115,6 @@ def fireman : NounEntry := { formSg := "fireman", formPl := "firemen" }
 def soldier : NounEntry := { formSg := "soldier", formPl := "soldiers" }
 def horse : NounEntry := { formSg := "horse", formPl := "horses" }
 
--- Mass nouns
 def water : NounEntry := { formSg := "water", formPl := none, countable := false }
 def sand : NounEntry := { formSg := "sand", formPl := none, countable := false }
 def furniture : NounEntry := { formSg := "furniture", formPl := none, countable := false }
@@ -152,18 +122,12 @@ def rice : NounEntry := { formSg := "rice", formPl := none, countable := false }
 def gold : NounEntry := { formSg := "gold", formPl := none, countable := false }
 def air : NounEntry := { formSg := "air", formPl := none, countable := false }
 
--- ============================================================================
--- Proper Names
--- ============================================================================
 
 def john : NounEntry := { formSg := "John", formPl := none, proper := true }
 def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true }
 def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true }
 def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true }
 
--- ============================================================================
--- Lookup
--- ============================================================================
 
 def allNouns : List NounEntry := [
   pizza, book, cat, dog, girl, boy, ball, table, squirrel,
@@ -175,9 +139,6 @@ def allNouns : List NounEntry := [
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? fun n => n.formSg == form || n.formPl == some form
 
--- ============================================================================
--- Bare Argument Licensing
--- ============================================================================
 
 /-- In English, bare plurals are licensed -/
 def barePluralLicensed : Bool := !englishBlocking.downBlocked
@@ -194,9 +155,6 @@ example : barePluralLicensed = true := rfl
 example : bareMassLicensed = true := rfl
 example : bareSingularLicensed = false := rfl
 
--- ============================================================================
--- Example NPs
--- ============================================================================
 
 /-- "dogs" as bare plural -/
 def dogs : NP := barePlural dog

@@ -1,51 +1,15 @@
-/-
-# Adjectival Predicate Lexicon Fragment
-
-Lexical entries for adjectival predicates (gradable adjectives used predicatively),
-following Kennedy (2007) and Kennedy & McNally (2005).
-
-## Examples
-
-- "Michael Jordan is tall" — `tall` as 1-place predicate
-- "The glass is full" — `full` as 1-place predicate
-- "John is happy" — `happy` as 1-place predicate (distinct from "be happy that p")
-
-## Design
-
-Each entry specifies:
-- Surface form
-- Scale type (open, closed, etc.)
-- Dimension (what's being measured)
-- Antonym information
-
-The actual semantics (threshold comparison, gap regions) comes from
-`Theories/Montague/Lexicon/Adjectives/Theory.lean`.
-
-## Usage
-
-```lean
-import Linglib.Fragments.English.Predicates.Adjectival
-
-#check Predicates.Adjectival.tall
--- AdjectivalPredicateEntry with scale, dimension, antonym info
-```
-
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
--/
-
 import Linglib.Theories.Montague.Adjective.Theory
+
+/-! # Adjectival Predicate Lexicon Fragment
+
+Gradable adjective entries following Kennedy (2007). Scale type, dimension, antonyms.
+-/
 
 namespace Fragments.English.Predicates.Adjectival
 
 open Montague.Adjective (ScaleType AntonymRelation GradableAdjEntry)
 open Montague.Domain.Degrees (NegationType)
 
--- ============================================================================
--- Entry Structure
--- ============================================================================
 
 /--
 An adjectival predicate entry.
@@ -57,9 +21,6 @@ The `max` parameter is the scale maximum (for finite degree representations).
 -/
 abbrev AdjectivalPredicateEntry := GradableAdjEntry
 
--- ============================================================================
--- Height Scale: tall, short
--- ============================================================================
 
 /-- "tall" — open scale, contrary to "short" -/
 def tall : AdjectivalPredicateEntry 10 where
@@ -77,9 +38,6 @@ def short : AdjectivalPredicateEntry 10 where
   antonymForm := some "tall"
   antonymRelation := some .contrary
 
--- ============================================================================
--- Happiness Scale: happy, unhappy
--- ============================================================================
 
 /--
 "happy" — open scale, contrary to "unhappy"
@@ -111,9 +69,6 @@ def sad : AdjectivalPredicateEntry 10 where
   antonymForm := some "happy"
   antonymRelation := some .contrary
 
--- ============================================================================
--- Fullness Scale: full, empty
--- ============================================================================
 
 /-- "full" — closed scale, contradictory to "empty" -/
 def full : AdjectivalPredicateEntry 10 where
@@ -131,9 +86,6 @@ def empty : AdjectivalPredicateEntry 10 where
   antonymForm := some "full"
   antonymRelation := some .contradictory
 
--- ============================================================================
--- Temperature Scale: hot, cold, warm, cool
--- ============================================================================
 
 /-- "hot" — open scale, contrary to "cold" -/
 def hot : AdjectivalPredicateEntry 10 where
@@ -151,9 +103,6 @@ def cold : AdjectivalPredicateEntry 10 where
   antonymForm := some "hot"
   antonymRelation := some .contrary
 
--- ============================================================================
--- Other Common Adjectives
--- ============================================================================
 
 /-- "expensive" — open scale, contrary to "cheap" -/
 def expensive : AdjectivalPredicateEntry 10 where
@@ -187,9 +136,6 @@ def dry : AdjectivalPredicateEntry 10 where
   antonymForm := some "wet"
   antonymRelation := some .contradictory
 
--- ============================================================================
--- Lookup Functions
--- ============================================================================
 
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry 10) := [

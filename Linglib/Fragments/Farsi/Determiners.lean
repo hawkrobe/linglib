@@ -1,32 +1,14 @@
-/-
-# Farsi Determiner and Indefinite Lexicon
-
-Lexical entries for Farsi determiners, focusing on *yek-i* DPs as
-Existential Free Choice Items (EFCIs).
-
-## The Key Item: *yek-i*
-
-*yek-i* literally means "one" (numeral) + indefiniteness marker.
-As a DP, *yek-i az NP* ("one of the NPs") behaves as an EFCI:
-- Plain existential in DE contexts
-- Free choice under deontic modals
-- Modal variation under epistemic modals
-- Uniqueness in root contexts
-
-## References
-
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items. S&P 18.
-- Jasbi (2016). Three types of indefinites in Persian.
--/
-
 import Linglib.Core.Basic
 import Mathlib.Data.Rat.Defs
 
+/-! # Farsi Determiner and Indefinite Lexicon
+
+*yek-i* as EFCI: uniqueness in root, free choice under deontic, modal variation
+under epistemic (Alonso-Ovalle & Moghiseh 2025).
+-/
+
 namespace Fragments.Farsi.Determiners
 
--- ============================================================================
--- PART 1: EFCI Properties
--- ============================================================================
 
 /--
 EFCI rescue mechanism type.
@@ -59,9 +41,6 @@ inductive EFCIReading where
   | epistemicIgnorance
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- PART 2: Indefinite Entry
--- ============================================================================
 
 /--
 A Farsi indefinite DP entry.
@@ -89,9 +68,6 @@ structure IndefiniteEntry where
   uniqueness : Bool := false
   deriving Repr, BEq
 
--- ============================================================================
--- PART 3: Yek-i Entry
--- ============================================================================
 
 /--
 *yek-i*: Farsi existential free choice item.
@@ -144,9 +120,6 @@ def indef_i : IndefiniteEntry :=
   , allowsMass := true
   }
 
--- ============================================================================
--- PART 4: Context-Dependent Reading
--- ============================================================================
 
 /--
 Modal flavor type for context specification.
@@ -212,9 +185,6 @@ def getReading (entry : IndefiniteEntry) (ctx : EFCIContext) : Option EFCIReadin
       | some .none => none  -- Ungrammatical
       | none => some .plainExistential  -- Not EFCI
 
--- ============================================================================
--- PART 5: Yek-i Readings
--- ============================================================================
 
 /-- Yek-i in root context yields uniqueness -/
 theorem yeki_root : getReading yeki rootContext = some .uniqueness := rfl
@@ -228,9 +198,6 @@ theorem yeki_epistemic : getReading yeki epistemicContext = some .modalVariation
 /-- Yek-i in DE context yields plain existential -/
 theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
 
--- ============================================================================
--- PART 6: Cross-Linguistic EFCI Comparison
--- ============================================================================
 
 /--
 German *irgendein*: EFCI with modal insertion available.
@@ -268,9 +235,6 @@ Vreun in root is ungrammatical (no rescue).
 -/
 theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
 
--- ============================================================================
--- PART 7: The Lexicon
--- ============================================================================
 
 /-- All Farsi indefinite entries -/
 def allIndefinites : List IndefiniteEntry :=
@@ -280,9 +244,6 @@ def allIndefinites : List IndefiniteEntry :=
 def lookup (romanization : String) : Option IndefiniteEntry :=
   allIndefinites.find? fun e => e.romanization == romanization
 
--- ============================================================================
--- PART 8: Semantic Properties
--- ============================================================================
 
 /--
 The uniqueness component of yek-i.
@@ -312,48 +273,5 @@ Under ◇_epi, yek-i conveys: |{x : ◇_epi[P(x) ∧ ∀y≠x. ¬P(y)]}| ≥ 2
 def modalVariationSemantics : String :=
   "|{x ∈ D : ◇_epi[P(x) ∧ ∀y ∈ D. y ≠ x → ¬P(y)]}| ≥ 2"
 
--- ============================================================================
--- Summary
--- ============================================================================
-
-/-!
-## What This Module Provides
-
-### Types
-- `EFCIRescue`: Rescue mechanism types (none, modalInsertion, partialExhaustification, both)
-- `EFCIReading`: Reading types (plainExistential, uniqueness, freeChoice, modalVariation, epistemicIgnorance)
-- `IndefiniteEntry`: Lexical entry for Farsi indefinites
-- `EFCIContext`: Context specification for reading determination
-
-### Key Lexical Entries
-- `yeki`: Farsi *yek-i* (EFCI with partial exhaustification)
-- `yek`: Farsi *yek* (plain numeral, not EFCI)
-- `irgendein_de`: German *irgendein* (EFCI with both mechanisms)
-- `vreun_ro`: Romanian *vreun* (EFCI with no rescue)
-
-### Functions
-- `getReading`: Determine EFCI reading from entry and context
-
-### Key Theorems
-- `yeki_root`: Root → uniqueness
-- `yeki_deontic`: Deontic → free choice
-- `yeki_epistemic`: Epistemic → modal variation
-- `yeki_de`: DE → plain existential
-- `vreun_root_ungrammatical`: Vreun root → ungrammatical
-
-### The Yek-i Pattern
-
-| Context | Reading | Semantics |
-|---------|---------|-----------|
-| Root | Uniqueness | ∃!x. P(x) |
-| Deontic | Free choice | ∀x. ◇[P(x) ∧ only x] |
-| Epistemic | Modal variation | ≥2 epistemic possibilities |
-| DE | Plain existential | ∃x. P(x) |
-
-### References
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items. S&P 18.
-- Kratzer & Shimoyama (2002). Indeterminate pronouns.
-- Fălăuș (2014). (Non)exhaustivity in unconditionals.
--/
 
 end Fragments.Farsi.Determiners

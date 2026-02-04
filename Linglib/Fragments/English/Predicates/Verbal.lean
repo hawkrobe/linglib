@@ -1,43 +1,3 @@
-/-
-# Verbal Predicate Lexicon Fragment
-
-Lexical entries for verbal predicates, bundling everything needed to work with
-a verb in semantic/pragmatic analysis:
-- Surface form(s) and morphology
-- Syntactic category/valence
-- Argument structure (theta roles, control)
-- Presupposition structure (if any)
-- Link to compositional semantics
-
-## Design
-
-Each `VerbalPredicateEntry` provides the complete specification for a verbal predicate.
-Downstream applications (RSA, NeoGricean, parsers) import this module
-and get all the semantic machinery they need.
-
-## Predicate Classes
-
-1. **Simple** (sleep, run): No presupposition, standard denotation
-2. **Factive** (know, regret): Presuppose complement truth
-3. **Change-of-state** (stop, start): Presuppose prior state
-4. **Implicative** (manage, fail): Entailment patterns
-5. **Attitude** (believe, think, hope): Opaque contexts, preferential/doxastic semantics
-
-## Usage
-
-```lean
-import Linglib.Fragments.English.Predicates.Verbal
-
--- Get the lexical entry for "stop"
-#check Predicates.Verbal.stop
--- VerbalPredicateEntry with:
---   form = "stop"
---   predicateClass = .changeOfState
---   presupType = some .softTrigger
---   cosType = some .cessation
-```
--/
-
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
@@ -45,16 +5,18 @@ import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
 import Linglib.Theories.Montague.Verb.Causative.Basic
 
+/-! # Verbal Predicate Lexicon Fragment
+
+Verb lexical entries with morphology, argument structure, semantic class,
+and links to compositional semantics (CoS, attitudes, causatives).
+-/
+
 namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
 open Montague.Verb.ChangeOfState
 open Montague.Verb.Attitude.Doxastic (Veridicality)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
-
--- ============================================================================
--- Preferential Semantic Builders (Links to Montague)
--- ============================================================================
 
 /--
 Which Montague predicate builder this verb uses.
@@ -87,10 +49,6 @@ def PreferentialBuilder.valence : PreferentialBuilder → AttitudeValence
   | .degreeComparison v => v
   | .uncertaintyBased => .negative  -- worry is negative
   | .relevanceBased v => v
-
--- ============================================================================
--- Unified Attitude Builder (Doxastic + Preferential)
--- ============================================================================
 
 /--
 Unified builder for all attitude verbs, covering both doxastic (believe, know)
@@ -137,10 +95,6 @@ def AttitudeBuilder.getPreferentialBuilder : AttitudeBuilder → Option Preferen
 def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
   | .doxastic _ => none
   | .preferential b => some b.valence
-
--- ============================================================================
--- Verb Classification
--- ============================================================================
 
 /--
 Semantic class of verb.
@@ -246,10 +200,6 @@ inductive ControlType where
   | none            -- Not applicable
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
--- Verb Entry Structure
--- ============================================================================
-
 /--
 A complete lexical entry for a verb.
 
@@ -318,10 +268,6 @@ structure VerbEntry where
 
   deriving Repr, BEq
 
--- ============================================================================
--- Derived Properties (from Montague Semantics)
--- ============================================================================
-
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbEntry.veridicality (v : VerbEntry) : Option Veridicality :=
   v.attitudeBuilder.map (·.veridicality)
@@ -340,10 +286,6 @@ def VerbEntry.preferentialValence (v : VerbEntry) : Option AttitudeValence :=
 
 -- Note: VerbEntry.cDistributive, VerbEntry.nvpClass, and VerbEntry.takesQuestion
 -- are derived properties defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
-
--- ============================================================================
--- Simple Verbs (No Presupposition)
--- ============================================================================
 
 /-- "sleep" — intransitive, no presupposition -/
 def sleep : VerbEntry where
@@ -444,10 +386,6 @@ def see : VerbEntry where
   verbClass := .perception
   factivePresup := true  -- "see that p" presupposes p
 
--- ============================================================================
--- Factive Verbs (Presuppose Complement Truth)
--- ============================================================================
-
 /-- "know" — factive, presupposes complement is true -/
 def know : VerbEntry where
   form := "know"
@@ -519,10 +457,6 @@ def notice : VerbEntry where
   verbClass := .semifactive
   presupType := some .softTrigger
   factivePresup := true
-
--- ============================================================================
--- Change-of-State Verbs (Presuppose Prior State)
--- ============================================================================
 
 /-- "stop" — CoS cessation, presupposes activity was happening -/
 def stop : VerbEntry where
@@ -613,10 +547,6 @@ def keep : VerbEntry where
   verbClass := .changeOfState
   presupType := some .softTrigger
   cosType := some .continuation
-
--- ============================================================================
--- Implicative Verbs (Entailment Patterns)
--- ============================================================================
 
 /-- "manage" — positive implicative: "managed to VP" entails "VP" -/
 def manage : VerbEntry where
@@ -714,10 +644,6 @@ def forget : VerbEntry where
   verbClass := .implicative
   implicativeEntailment := some false
   -- Note: "forget that p" is factive
-
--- ============================================================================
--- Attitude Verbs (Opaque Contexts, No Factivity)
--- ============================================================================
 
 /-- "believe" — doxastic attitude verb, creates opaque context -/
 def believe : VerbEntry where
@@ -868,26 +794,6 @@ def seem : VerbEntry where
   passivizable := false
   verbClass := .simple
 
--- ============================================================================
--- Causative Verbs (Nadathur & Lauer 2020)
--- ============================================================================
-
-/-
-Causative verbs assert causal relations between events:
-- "cause" asserts **necessity**: the effect counterfactually depended on the cause
-- "make" asserts **sufficiency**: the cause guaranteed the effect
-
-See `Theories.NadathurLauer2020` for the formal semantics.
-
-Key distinctions:
-1. Overdetermination: "make" can be true while "cause" is false
-   - "The lightning made the fire start" ✓ (sufficient)
-   - "The lightning caused the fire" ✗ (not necessary; arsonist would have too)
-
-2. Coercive implication: "make" + volitional action → coercion
-   - "Kim made Sandy leave" implies Sandy didn't freely choose to leave
--/
-
 /-- "cause" — necessity semantics (counterfactual dependence) -/
 def cause : VerbEntry where
   form := "cause"
@@ -980,10 +886,6 @@ def force : VerbEntry where
   causativeType := some .sufficiency
   -- "Force" lexically encodes coercion (unlike pragmatic "make")
 
--- ============================================================================
--- Communication Verbs
--- ============================================================================
-
 /-- "say" — communication verb, not factive -/
 def say : VerbEntry where
   form := "say"
@@ -1014,10 +916,6 @@ def claim : VerbEntry where
   verbClass := .communication
   complementType := .finiteClause
 
--- ============================================================================
--- Question-Embedding Verbs
--- ============================================================================
-
 /-- "wonder" — embeds questions only -/
 def wonder : VerbEntry where
   form := "wonder"
@@ -1040,10 +938,6 @@ def ask : VerbEntry where
   verbClass := .communication
   complementType := .question
   takesQuestionBase := true
-
--- ============================================================================
--- Semantic Functions
--- ============================================================================
 
 /--
 Get the CoS semantics for a verb (if it's a CoS verb).
@@ -1088,10 +982,6 @@ Returns true for verbs where the effect counterfactually depended on the cause.
 -/
 def assertsNecessity (v : VerbEntry) : Bool :=
   v.causativeType == some .necessity
-
--- ============================================================================
--- NVP Properties (Qing et al. 2025)
--- ============================================================================
 
 /--
 Is this verb a preferential attitude predicate?
@@ -1141,10 +1031,6 @@ Look up a verb entry by citation form.
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (fun v => v.form == form)
 
--- ============================================================================
--- Derived Syntactic Words
--- ============================================================================
-
 /--
 Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form.
 -/
@@ -1176,77 +1062,5 @@ def toWordBase (v : VerbEntry) : Word :=
       , vform := some .infinitive
     }
   }
-
--- ============================================================================
--- Summary
--- ============================================================================
-
-/-
-## Summary: Verb Lexicon Fragment
-
-### VerbEntry Fields
-- `form`, `form3sg`, `formPast`, `formPastPart`, `formPresPart`: Morphological forms
-- `verbClass`: Semantic classification (simple, factive, CoS, implicative, attitude, causative)
-- `complementType`: What complement the verb selects
-- `presupType`: Presupposition trigger classification
-- `cosType`: For CoS verbs, the change type (cessation/inception/continuation)
-- `factivePresup`: Whether complement truth is presupposed
-- `implicativeEntailment`: For implicatives, what is entailed
-- `opaqueContext`: Whether the verb creates an opaque context
-- `takesQuestion`: Whether the verb can embed questions
-- `causativeType`: For causatives, sufficiency (make) or necessity (cause)
-
-### Attitude-Specific Fields (Minimal Basis)
-- `attitudeBuilder`: Unified doxastic/preferential builder
-  - Doxastic (believe, know): accessibility-based semantics + veridicality
-  - Preferential (hope, fear): degree-comparison or uncertainty semantics
-- Derived in Theory layer: `cDistributive`, `nvpClass`, parasitic (Maier 2015)
-
-### Causative-Specific Fields (Nadathur & Lauer 2020)
-- `causativeType`: `.sufficiency` (make) or `.necessity` (cause)
-  - Sufficiency: adding cause guarantees effect
-  - Necessity: removing cause blocks effect (counterfactual dependence)
-  - In overdetermination, sufficiency ≠ necessity
-
-### Key Functions
-- `getCoSSemantics`: Get PrProp for CoS verbs
-- `presupposesComplement`: Check if verb presupposes complement
-- `isPresupTrigger`: Check if verb is a presupposition trigger
-- `isPreferentialAttitude`: Check if verb is preferential
-- `isAntiRogative`: Check if verb is anti-rogative (Class 3)
-- `canEmbedQuestion`: Check if verb can embed questions
-- `isCausative`: Check if verb is a causative
-- `assertsSufficiency`: Check if causative asserts sufficiency
-- `assertsNecessity`: Check if causative asserts necessity
-- `lookup`: Find verb by citation form
-- `toWord3sg`, `toWordBase`: Convert to syntactic Word
-
-### Verb Inventory
-**Simple**: sleep, run, eat, kick, give, put
-**Factive**: know, regret, realize, discover, notice
-**CoS**: stop, quit, start, begin, continue, keep
-**Implicative**: manage, fail, remember, forget
-**Doxastic Attitude**: believe, think
-**Preferential Attitude (Class 3 - anti-rogative)**: want, hope, expect, wish
-**Preferential Attitude (Class 2 - takes questions)**: fear, dread
-**Preferential Attitude (Class 1 - non-C-dist)**: worry
-**Raising**: seem
-**Causative (Nadathur & Lauer 2020)**:
-  - Necessity: cause
-  - Sufficiency: make, let, have, get, force
-**Communication**: say, tell, claim
-**Question-embedding**: wonder, ask
-
-### Causative Semantics (Nadathur & Lauer 2020)
-
-The formal semantics for causatives are in `Theories.NadathurLauer2020`:
-- `Sufficiency.makeSem`: ⟦X make Y⟧ = causallySufficient(dynamics, background, X, Y)
-- `Necessity.causeSem`: ⟦X cause Y⟧ = causallyNecessary(dynamics, background, X, Y)
-
-Key results:
-1. Sufficiency ⇏ Necessity (overdetermination)
-2. Necessity ⇏ Sufficiency (conjunctive causation)
-3. "make" + volitional action → coercive implication
--/
 
 end Fragments.English.Predicates.Verbal
