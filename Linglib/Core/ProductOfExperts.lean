@@ -1,123 +1,49 @@
-/-
-# Product of Experts
-
-Multiplicative combination of probability distributions.
-
-## Overview
-
-Product of Experts (PoE) combines multiple "expert" distributions by
-multiplying them pointwise and renormalizing:
-
-```
-P_combined(x) ∝ Π_i P_i(x)
-```
-
-This contrasts with **mixture models** (linear combination):
-```
-P_mixture(x) = Σ_i w_i · P_i(x)
-```
-
-## Use Cases
-
-| Combination | Method | Example |
-|-------------|--------|---------|
-| Multiple evidence sources | Product of Experts | SDS selectional + scenario |
-| Competing objectives | Linear (CombinedUtility) | Informativity vs politeness |
-| Hard constraints (AND) | Product (zeros propagate) | Selectional filtering |
-| Soft tradeoffs | Linear | RSA relevance weighting |
-
-## Connection to SDS (Erk & Herbelot 2024)
-
-SDS uses PoE to combine selectional preferences with scenario constraints:
-```
-P(concept | context) ∝ P_selectional(concept) × P_scenario(concept)
-```
-
-Both constraints must be satisfied for high probability.
-
-## References
-
-- Hinton, G.E. (2002). Training products of experts by minimizing contrastive divergence.
-- Erk, K. & Herbelot, A. (2024). How to Marry a Star. Journal of Semantics.
--/
-
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 
+/-!
+# Product of Experts
+
+Multiplicative combination of probability distributions.
+-/
+
 namespace Core.ProductOfExperts
 
--- ============================================================================
--- PART 1: Product of Experts Combinator
--- ============================================================================
-
-/--
-Product of Experts: combine distributions multiplicatively.
-
-Given a list of probability functions (experts) over the same support,
-returns their normalized product.
-
-```
-PoE(x) = (Π_i p_i(x)) / Z  where Z = Σ_x (Π_i p_i(x))
-```
--/
+/-- Product of Experts: combine distributions multiplicatively. -/
 def productOfExperts {α : Type} (ps : List (α → ℚ)) (support : List α) : α → ℚ :=
   let unnorm a := ps.foldl (fun acc p => acc * p a) 1
   let Z := support.foldl (fun acc a => acc + unnorm a) 0
   fun a => if Z = 0 then 0 else unnorm a / Z
 
-/--
-Product of two experts (common case).
--/
+/-- Product of two experts. -/
 def poe2 {α : Type} (p₁ p₂ : α → ℚ) (support : List α) : α → ℚ :=
   productOfExperts [p₁, p₂] support
 
-/--
-Product of three experts.
--/
+/-- Product of three experts. -/
 def poe3 {α : Type} (p₁ p₂ p₃ : α → ℚ) (support : List α) : α → ℚ :=
   productOfExperts [p₁, p₂, p₃] support
 
--- ============================================================================
--- PART 2: Unnormalized Product (for chaining)
--- ============================================================================
-
-/--
-Unnormalized product: multiply expert scores without normalizing.
-
-Useful when you want to combine multiple constraints, then normalize once.
--/
+/-- Unnormalized product: multiply expert scores without normalizing. -/
 def unnormalizedProduct {α : Type} (ps : List (α → ℚ)) : α → ℚ :=
   fun a => ps.foldl (fun acc p => acc * p a) 1
 
-/--
-Normalize a scoring function over a finite support.
--/
+/-- Normalize a scoring function over a finite support. -/
 def normalizeOver {α : Type} (f : α → ℚ) (support : List α) : α → ℚ :=
   let Z := support.foldl (fun acc a => acc + f a) 0
   fun a => if Z = 0 then 0 else f a / Z
 
-/--
-PoE equals unnormalized product followed by normalization.
--/
+/-- PoE equals unnormalized product followed by normalization. -/
 theorem poe_eq_unnorm_then_norm {α : Type} (ps : List (α → ℚ)) (support : List α) :
     productOfExperts ps support = normalizeOver (unnormalizedProduct ps) support := by
   rfl
 
--- ============================================================================
--- PART 3: Properties
--- ============================================================================
-
-/--
-PoE with single expert returns normalized version of that expert.
--/
+/-- PoE with single expert returns normalized version of that expert. -/
 theorem poe_single {α : Type} (p : α → ℚ) (support : List α) :
     productOfExperts [p] support = normalizeOver p support := by
   simp only [productOfExperts, normalizeOver, unnormalizedProduct, List.foldl, one_mul]
 
-/--
-PoE is zero-absorbing: if any expert gives zero, product is zero.
--/
+/-- PoE is zero-absorbing: if any expert gives zero, product is zero. -/
 theorem poe_zero_absorbing {α : Type} (ps : List (α → ℚ)) (support : List α) (a : α)
     (hp : ∃ p ∈ ps, p a = 0) : productOfExperts ps support a = 0 ∨
                                ∃ a' ∈ support, productOfExperts ps support a' > 0 := by
@@ -134,9 +60,7 @@ theorem poe_zero_absorbing {α : Type} (ps : List (α → ℚ)) (support : List 
     -- The fold multiplies by p a = 0 at some point
     sorry -- Requires induction on list position
 
-/--
-PoE with empty expert list gives uniform (all 1s before normalization).
--/
+/-- PoE with empty expert list gives uniform. -/
 theorem poe_empty {α : Type} (support : List α) (a : α) :
     productOfExperts ([] : List (α → ℚ)) support a =
     if support.length = 0 then 0 else 1 / support.length := by

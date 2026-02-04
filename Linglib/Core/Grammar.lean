@@ -1,20 +1,12 @@
-/-
-# Linglib.Core.Grammar
+import Linglib.Core.Basic
+
+/-!
+# Grammar
 
 Abstract grammar interface that all syntactic frameworks implement.
 -/
 
-import Linglib.Core.Basic
-
--- ============================================================================
--- Grammar Typeclass
--- ============================================================================
-
-/--
-A Grammar assigns derivations to strings.
-Different frameworks implement this differently.
-The key is that derivations are *proof objects*, not just yes/no.
--/
+/-- A Grammar assigns derivations to strings. Derivations are proof objects. -/
 class Grammar (G : Type) where
   /-- The type of derivations/analyses this grammar produces -/
   Derivation : Type
@@ -23,14 +15,7 @@ class Grammar (G : Type) where
   /-- Whether the grammar can produce *some* derivation for a string -/
   derives : G → List Word → ClauseType → Prop
 
--- ============================================================================
--- Framework-Neutral Theorems
--- ============================================================================
-
-/--
-If two grammars both derive the same string, they agree on that string.
-(Trivial, but illustrates the kind of metatheorem we want.)
--/
+/-- If two grammars both derive the same string, they agree on that string. -/
 theorem derives_agreement
     {G₁ G₂ : Type} [Grammar G₁] [Grammar G₂]
     (g₁ : G₁) (g₂ : G₂) (ws : List Word) (ct : ClauseType)

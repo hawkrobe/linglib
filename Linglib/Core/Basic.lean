@@ -1,14 +1,10 @@
-/-
-# Linglib.Core.Basic
+/-!
+# Basic
 
 Core types shared across all theoretical frameworks.
 -/
 
--- ============================================================================
--- Syntactic Categories
--- ============================================================================
-
-/-- Syntactic categories (coarse-grained, refined per framework) -/
+/-- Syntactic categories (coarse-grained, refined per framework). -/
 inductive Cat where
   | D      -- Determiner / DP
   | N      -- Noun
@@ -21,31 +17,27 @@ inductive Cat where
   | Adj    -- Adjective
   deriving Repr, DecidableEq, Inhabited
 
--- ============================================================================
--- Grammatical Features
--- ============================================================================
-
-/-- Grammatical number -/
+/-- Grammatical number. -/
 inductive Number where
   | sg  -- singular
   | pl  -- plural
   deriving Repr, DecidableEq, Inhabited
 
-/-- Grammatical person -/
+/-- Grammatical person. -/
 inductive Person where
   | first
   | second
   | third
   deriving Repr, DecidableEq, Inhabited
 
-/-- Grammatical case -/
+/-- Grammatical case. -/
 inductive Case where
   | nom  -- nominative (subject): I, he, she, we, they
   | acc  -- accusative (object): me, him, her, us, them
   | gen  -- genitive (possessive): my, his, her, our, their
   deriving Repr, DecidableEq, Inhabited
 
-/-- Transitivity / argument structure -/
+/-- Transitivity / argument structure. -/
 inductive Valence where
   | intransitive  -- sleep, arrive
   | transitive    -- see, eat
@@ -55,13 +47,13 @@ inductive Valence where
   | copular       -- be (takes predicate)
   deriving Repr, DecidableEq, Inhabited
 
-/-- Voice: active vs passive -/
+/-- Voice: active vs passive. -/
 inductive Voice where
   | active
   | passive
   deriving Repr, DecidableEq, Inhabited
 
-/-- Verb form -/
+/-- Verb form. -/
 inductive VForm where
   | finite
   | infinitive
@@ -69,11 +61,7 @@ inductive VForm where
   | presParticiple  -- eating, giving (for progressive)
   deriving Repr, DecidableEq, Inhabited
 
--- ============================================================================
--- Clause Types
--- ============================================================================
-
-/-- Clause types - determines constraints on word order -/
+/-- Clause types - determines constraints on word order. -/
 inductive ClauseType where
   | declarative
   | matrixQuestion      -- requires inversion in English
@@ -81,11 +69,7 @@ inductive ClauseType where
   | echo                -- no inversion even in matrix position
   deriving Repr, DecidableEq
 
--- ============================================================================
--- Features
--- ============================================================================
-
-/-- Feature bundle for words -/
+/-- Feature bundle for words. -/
 structure Features where
   wh : Bool := false
   finite : Bool := true
@@ -98,11 +82,7 @@ structure Features where
   countable : Option Bool := none  -- for count vs mass nouns
   deriving Repr, DecidableEq
 
--- ============================================================================
--- Words
--- ============================================================================
-
-/-- A word: form + category + features -/
+/-- A word: form + category + features. -/
 structure Word where
   form : String
   cat : Cat
@@ -115,18 +95,7 @@ instance : BEq Word where
 instance : ToString Word where
   toString w := w.form
 
-/-- Convert a word list to a readable string -/
+/-- Convert a word list to a readable string. -/
 def wordsToString (ws : List Word) : String :=
   " ".intercalate (ws.map (·.form))
 
--- ============================================================================
--- Lexicon (moved to Fragments/)
--- ============================================================================
-
--- The lexicon of words has been moved to the Fragments/ directory:
--- - Fragments/Predicates.lean: Predicate entries (verbs, adjectival predicates) with argument structure and semantics
--- - Fragments/Nouns.lean: Noun entries
--- - Fragments/Determiners.lean: Determiner entries
--- - Fragments/Pronouns.lean: Pronoun entries
--- - Fragments/Modifiers.lean: Modifier entries (adjectives, adverbs)
--- - Fragments/FunctionWords.lean: Prepositions, complementizers, auxiliaries

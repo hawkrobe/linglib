@@ -1,35 +1,13 @@
-/-
-# Parse: Grammatical Ambiguity Representation
+/-!
+# Parse
 
-A `Parse` represents a grammatical reading - one of potentially many ways
-the grammar can analyze a sentence.
-
-## Examples of Parse Ambiguity
-
-1. **Scope ambiguity**: surface vs inverse quantifier scope
-2. **EXH placement**: where exhaustification operator inserts
-3. **Attachment ambiguity**: PP attachment sites
-4. **Ellipsis resolution**: different antecedents
-
-## Design
-
-`Parse` is a GENERAL type for any grammatical ambiguity. Specific phenomena
-build on this:
-
-- `Exhaustifiable` (NeoGricean): for EXH insertion sites
-- Scope readings (Montague): for quantifier scope
-- etc.
-
-RSA models use `Parse` as their `Interp` type parameter, regardless of
-what kind of grammatical ambiguity it represents.
+Grammatical ambiguity representation. A `Parse` represents one reading among
+potentially many (scope, EXH placement, attachment, etc.).
 -/
 
 namespace Core
 
-/-- A grammatical parse represents one reading among potentially many.
-
-    This is a general type - it doesn't imply anything about what KIND
-    of ambiguity (scope, EXH, attachment, etc.). -/
+/-- A grammatical parse represents one reading among potentially many. -/
 structure Parse where
   /-- Unique identifier for this parse -/
   id : String
@@ -42,10 +20,6 @@ instance : ToString Parse := ⟨Parse.id⟩
 /-- The literal/default parse -/
 def Parse.literal : Parse := ⟨"lit", "Literal/default reading"⟩
 
--- ============================================================================
--- Scope Parses (for quantifier scope ambiguity)
--- ============================================================================
-
 /-- Surface scope parse -/
 def Parse.surface : Parse := ⟨"surface", "Surface scope (first QP scopes over second)"⟩
 
@@ -55,16 +29,7 @@ def Parse.inverse : Parse := ⟨"inverse", "Inverse scope (second QP scopes over
 /-- Standard scope parses for doubly-quantified sentences -/
 def scopeParses : List Parse := [Parse.surface, Parse.inverse]
 
--- ============================================================================
--- EXH Position Parses (for exhaustification)
--- ============================================================================
-
-/-- Positions where EXH can occur in a doubly-quantified sentence.
-
-    For "Q₁ of the Xs V'd Q₂ of the Ys":
-    - M (matrix): applies to whole sentence
-    - O (outer): applies to outer quantifier Q₁
-    - I (inner): applies to inner quantifier Q₂ -/
+/-- Positions where EXH can occur in a doubly-quantified sentence. -/
 inductive ExhPosition where
   | M : ExhPosition  -- Matrix (whole sentence)
   | O : ExhPosition  -- Outer quantifier
@@ -96,10 +61,6 @@ def exhParses : List Parse :=
 def Parse.hasExhAt (p : Parse) (pos : ExhPosition) : Bool :=
   let char := match pos with | .M => 'M' | .O => 'O' | .I => 'I'
   p.id.any (· == char)
-
--- ============================================================================
--- Verification
--- ============================================================================
 
 theorem scope_parses_count : scopeParses.length = 2 := rfl
 theorem exh_parses_count : exhParses.length = 8 := rfl
