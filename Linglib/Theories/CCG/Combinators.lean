@@ -46,9 +46,7 @@ namespace CCG.Combinators
 open CCG
 open Montague
 
--- ============================================================================
 -- The Combinators
--- ============================================================================
 
 /--
 **The B Combinator (Composition)**
@@ -118,9 +116,7 @@ syntax before, but whose definition is as follows: C f x y = f y x"
 def C {α β γ : Type} (f : α → β → γ) (x : β) (y : α) : γ :=
   f y x
 
--- ============================================================================
 -- Key Theorems from Chapter 8: T = CI and C from T and B
--- ============================================================================
 
 /-
 ## The BTS System (Steedman 2000, Chapter 8)
@@ -202,9 +198,7 @@ K is the combinator for vacuous abstraction (λx.y where x not free in y).
 Natural languages don't seem to need K in syntax.
 -/
 
--- ============================================================================
 -- Combinator Laws
--- ============================================================================
 
 /-- B is associative function composition -/
 theorem B_comp {α β γ : Type} (f : β → γ) (g : α → β) :
@@ -230,9 +224,7 @@ theorem I_apply {α : Type} (x : α) :
 theorem K_apply {α β : Type} (x : α) (y : β) :
     K x y = x := rfl
 
--- ============================================================================
 -- SKI Basis Reductions
--- ============================================================================
 
 /-- I can be expressed as S K K -/
 theorem I_eq_SKK {α : Type} :
@@ -246,9 +238,7 @@ theorem B_eq_S_KS_K {α β γ : Type} (f : β → γ) (g : α → β) :
   ext x
   rfl
 
--- ============================================================================
 -- Forward Composition Corresponds to B
--- ============================================================================
 
 /--
 **Forward Composition = B Combinator**
@@ -276,9 +266,7 @@ X/Z has type ⟦Z⟧→⟦X⟧ = B (⟦Y⟧→⟦X⟧) (⟦Z⟧→⟦Y⟧)
 theorem fcomp_type_is_B (x _y z : Cat) :
     catToTy (x.rslash z) = (catToTy z ⇒ catToTy x) := rfl
 
--- ============================================================================
 -- Backward Composition Corresponds to B
--- ============================================================================
 
 /--
 **Backward Composition = B Combinator**
@@ -294,9 +282,7 @@ theorem bcomp_is_B {m : Model} {x y z : Cat}
     (f_sem : m.interpTy (catToTy (x.lslash y))) :
     (fun arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
--- ============================================================================
 -- Type-Raising Corresponds to T
--- ============================================================================
 
 /--
 **Forward Type-Raising = T Combinator**
@@ -334,9 +320,7 @@ Semantics: α becomes (α→β)→β (same as forward)
 theorem btr_type_is_T (x t : Cat) :
     catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
--- ============================================================================
 -- Crossed Composition and the S Combinator
--- ============================================================================
 
 /--
 **Crossed Composition = S Combinator**
@@ -355,9 +339,7 @@ theorem crossed_comp_is_S {m : Model} {x y z : Cat}
     (g_sem : m.interpTy (catToTy (y.rslash z))) :
     (fun arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
 
--- ============================================================================
 -- Application as a Degenerate Case
--- ============================================================================
 
 /--
 Forward application can be viewed as B with the identity.
@@ -379,9 +361,7 @@ theorem fapp_is_apply {m : Model} {x y : Cat}
     (a_sem : m.interpTy (catToTy y)) :
     f_sem a_sem = apply' f_sem a_sem := rfl
 
--- ============================================================================
 -- The Non-Constituent Coordination Example Revisited
--- ============================================================================
 
 /-
 "John likes and Mary hates beans"
@@ -425,9 +405,7 @@ theorem subject_verb_composition {m : Model}
     (obj : m.interpTy (catToTy NP)) :
     B (T subj_sem) verb_sem obj = verb_sem obj subj_sem := rfl
 
--- ============================================================================
 -- Summary: The Combinator Correspondence
--- ============================================================================
 
 /-
 ## Summary
@@ -475,9 +453,7 @@ def ccgCombinatorCorrespondence : CombinatorCorrespondence where
   ftr_T := fun _ _ => rfl
   xcomp_S := fun _ _ _ => rfl
 
--- ============================================================================
 -- Steedman's Formal CCG Rules (The Syntactic Process, Chapter 3)
--- ============================================================================
 
 /-
 ## The Formal Rule System
@@ -665,9 +641,7 @@ def ruleToSemantics : CCGRule → String
   | .bxs => "S combinator: λx.fx(gx)"
   | .coord => "coordination: λ...b(f...)(g...)"
 
--- ============================================================================
 -- Steedman's Key Principles (The Syntactic Process, Chapters 2-3)
--- ============================================================================
 
 /-
 ## The Principle of Lexical Head Government (Steedman p. 32)
@@ -736,9 +710,7 @@ respectively, are x, y, and y → x, then the term fa is the only normalized
 combinatory rules we will consider."
 -/
 
--- ============================================================================
 -- Steedman's Key Insights (The Syntactic Process, Chapter 2)
--- ============================================================================
 
 /-
 ## The Constituent Condition on Rules
@@ -894,9 +866,7 @@ or traces corresponding to syntactically realized bound variables."
 This is the core insight: CCG = Combinatory Logic + Directionality
 -/
 
--- ============================================================================
 -- Chapter 4: Constraints on Natural Grammar
--- ============================================================================
 
 /-
 ## The Three Principles Limiting Combinatory Rules (Steedman p. 54)

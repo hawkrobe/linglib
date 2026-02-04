@@ -42,9 +42,7 @@ namespace SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
 open SDS.Core
 
--- ============================================================================
 -- Threshold Support: Discretized [0,1]
--- ============================================================================
 
 /--
 Discretized threshold range: [0, 1/10, 2/10, ..., 1]
@@ -54,9 +52,7 @@ This provides finite support for marginalization over threshold values.
 def thresholdRange : List ℚ :=
   [0, 1/10, 2/10, 3/10, 4/10, 5/10, 6/10, 7/10, 8/10, 9/10, 1]
 
--- ============================================================================
 -- Instance 1: Gradable Adjectives
--- ============================================================================
 
 /-!
 ## Gradable Adjectives as SDS
@@ -94,9 +90,7 @@ instance {E : Type} : SDSConstraintSystem (AdjWithEntity E) ℚ where
 def adjToSDS {E : Type} (adj : GradableAdjective E) (x : E) : AdjWithEntity E :=
   { adj := adj, entity := x }
 
--- ============================================================================
 -- Instance 2: Generics
--- ============================================================================
 
 /-!
 ## Generics as SDS
@@ -118,9 +112,7 @@ instance : SDSConstraintSystem GenericPredicate ℚ where
     -- Scenario: property-specific prior over prevalence thresholds
     gen.prevalencePrior θ
 
--- ============================================================================
 -- Instance 3: Gradable Nouns
--- ============================================================================
 
 /-!
 ## Gradable Nouns as SDS (Degenerate Case)
@@ -154,9 +146,7 @@ theorem gradable_noun_uniform_scenario {E : Type} (gn : GradableNounWithSize E) 
   simp only [trivialScenario, decide_eq_true_eq]
   rfl
 
--- ============================================================================
 -- Soft Meaning Computation
--- ============================================================================
 
 /--
 Compute soft meaning for an adjective via SDS marginalization.
@@ -184,9 +174,7 @@ def gnHoldsSDS {E : Type} (gn : GradableNounWithSize E) (x : E) : Bool :=
   let θ := max gn.sizeThreshold gn.nounStandard
   gn.nounMeasure x ≥ θ
 
--- ============================================================================
 -- Scale Structure via SDS
--- ============================================================================
 
 /-!
 ## The Bigness Generalization
@@ -219,9 +207,7 @@ theorem positive_adj_substantive_threshold {E : Type} (gn : GradableNounWithSize
     max gn.sizeThreshold gn.nounStandard > 0 := by
   exact lt_of_lt_of_le hthresh (le_max_left _ _)
 
--- ============================================================================
 -- Summary: All Three Domains are SDS
--- ============================================================================
 
 /--
 All three threshold semantics domains satisfy SDSConstraintSystem.
@@ -235,9 +221,7 @@ example {E : Type} : SDSConstraintSystem (AdjWithEntity E) ℚ := inferInstance
 example : SDSConstraintSystem GenericPredicate ℚ := inferInstance
 example {E : Type} : SDSConstraintSystem (GradableNounWithSize E) ℚ := inferInstance
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

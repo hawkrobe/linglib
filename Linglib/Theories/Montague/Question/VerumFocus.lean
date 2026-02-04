@@ -42,9 +42,7 @@ namespace Montague.Question.VerumFocus
 
 open Montague.Question
 
--- ============================================================================
 -- Part 1: Epistemic and Conversational States
--- ============================================================================
 
 /-- A world type with Common Ground -/
 structure CGWorld (W : Type*) where
@@ -70,9 +68,7 @@ structure VerumFrame (W : Type*) where
   /-- Common Ground function: for each world, what's in the CG -/
   commonGround : W → List (W → Bool)
 
--- ============================================================================
 -- Part 2: The VERUM Operator
--- ============================================================================
 
 /-- **FOR-SURE-CG**: The VERUM operator (Romero & Han 2004)
 
@@ -104,9 +100,7 @@ def verum {W : Type*} [DecidableEq W]
     (convWorlds w').all fun w'' =>
       cgMembership w'' p
 
--- ============================================================================
 -- Part 3: Unbalanced Partitions
--- ============================================================================
 
 /-- A polar question partition -/
 structure QuestionPartition (W : Type*) where
@@ -142,9 +136,7 @@ def verumQuestion {W : Type*} [DecidableEq W]
     else fun w => verum cgMembership epiWorlds convWorlds w p   -- NI: FOR-SURE-CG(p)
 }
 
--- ============================================================================
 -- Part 4: Ladd's Ambiguity (PI vs NI)
--- ============================================================================
 
 /-- Reading type for negative polar questions -/
 inductive NegQuestionReading where
@@ -188,9 +180,7 @@ def interpretNegQuestion {W : Type*} [DecidableEq W]
     let notP : W → Bool := fun w => !p w
     verumQuestion cgMembership epiWorlds convWorlds notP false
 
--- ============================================================================
 -- Part 5: Epistemic Implicature
--- ============================================================================
 
 /-- Speaker's prior epistemic state -/
 structure SpeakerEpistemicState (W : Type*) where
@@ -219,9 +209,7 @@ def implicaturePolarity (reading : NegQuestionReading) : String :=
   | .PI => "positive"
   | .NI => "negative"
 
--- ============================================================================
 -- Part 6: Polarity Item Licensing
--- ============================================================================
 
 /-- Polarity item type -/
 inductive PolarityItem where
@@ -258,9 +246,7 @@ theorem ppi_implies_pi (item : PolarityItem) (reading : NegQuestionReading) :
   intro h
   cases item <;> cases reading <;> simp [isLicensed] at h ⊢
 
--- ============================================================================
 -- Part 7: VERUM Sources
--- ============================================================================
 
 /-- Sources that contribute VERUM to the LF -/
 inductive VerumSource where
@@ -285,9 +271,7 @@ def necessarilyTriggersVerum : VerumSource → Bool
 theorem preposed_negation_forces_verum :
     necessarilyTriggersVerum .preposedNegation = true := rfl
 
--- ============================================================================
 -- Part 8: Connection to Decision Theory (van Rooy & Šafářová)
--- ============================================================================
 
 /-!
 ## Relationship to Polarity.lean
@@ -315,9 +299,7 @@ structure IntegrationWithPolarity where
   /-- R&H explains structural source of bias -/
   verumSourceOfBias : Bool := true
 
--- ============================================================================
 -- Part 9: Examples
--- ============================================================================
 
 /-- Example: "Doesn't John drink?" (PI reading)
 
@@ -337,9 +319,7 @@ Implicature: Speaker believes John doesn't drink
 -/
 def exampleNI : NegQuestionLF Unit := .niLF (fun () => true)
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

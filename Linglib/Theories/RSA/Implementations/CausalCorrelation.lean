@@ -35,9 +35,7 @@ namespace RSA.CausalCorrelation
 
 open RSA.Eval
 
--- ============================================================================
 -- Domain: Causal Directions
--- ============================================================================
 
 /-- The causal relationship between A and B -/
 inductive CausalDir where
@@ -47,9 +45,7 @@ inductive CausalDir where
 
 def CausalDir.all : List CausalDir := [.AtoB, .BtoA]
 
--- ============================================================================
 -- Predicates and Their Properties
--- ============================================================================
 
 /-- Correlational predicates tested in experiments -/
 inductive Predicate where
@@ -79,9 +75,7 @@ def Predicate.hasActiveForm : Predicate → Bool
 def Predicate.all : List Predicate :=
   [.correlate, .associate, .link, .tie, .relate, .connect]
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Grammatical voice -/
 inductive Voice where
@@ -118,9 +112,7 @@ def Utterance.all : List Utterance := [
   ⟨.B, .correlational, .passive⟩ -- "B is associated with A"
 ]
 
--- ============================================================================
 -- Utterance Semantics
--- ============================================================================
 
 /--
 What causal direction does this utterance denote?
@@ -152,9 +144,7 @@ def Utterance.availableFor (u : Utterance) (p : Predicate) : Bool :=
   | .correlational, .passive => true  -- passive correlational always OK
   | .correlational, .active => p.hasActiveForm  -- active only for "correlate"
 
--- ============================================================================
 -- Cost Function
--- ============================================================================
 
 /--
 Utterance cost based on:
@@ -169,9 +159,7 @@ def utteranceCost (passivePenalty : ℚ) (lexicalPenalty : ℚ)
   let lexicalCost : ℚ := if u.predType == .causal then lexicalPenalty else 0
   voiceCost + lexicalCost
 
--- ============================================================================
 -- RSA Model (List-Based, following RSA.Eval style)
--- ============================================================================
 
 /--
 Literal listener: uniform over causal directions consistent with utterance.
@@ -226,9 +214,7 @@ def L1 (α : ℕ) (passivePenalty lexicalPenalty : ℚ) (p : Predicate)
   if total == 0 then []
   else scores.map fun (c, s) => (c, s / total)
 
--- ============================================================================
 -- Predictions
--- ============================================================================
 
 /--
 Get L1 probability for B→A (subject-as-effect) interpretation.
@@ -242,9 +228,7 @@ def subjectAsEffectProb (α : ℕ) (passivePenalty lexicalPenalty : ℚ)
   let dist := L1 α passivePenalty lexicalPenalty p u
   dist.find? (·.1 == .BtoA) |>.map (·.2) |>.getD 0
 
--- ============================================================================
 -- Test Predictions
--- ============================================================================
 
 section Tests
 
@@ -301,9 +285,7 @@ def predictFor (p : Predicate) : String :=
 
 end Tests
 
--- ============================================================================
 -- Formal Verification: Proof-Checked Theorems
--- ============================================================================
 
 section Proofs
 
@@ -411,9 +393,7 @@ theorem l1_sums_to_one_concrete :
 
 end Proofs
 
--- ============================================================================
 -- Theorems (Informal)
--- ============================================================================
 
 /-!
 ## Key Theoretical Predictions
@@ -446,9 +426,7 @@ This explains why Lassiter & Franke's (2024) topicality manipulation
 failed to reverse the effect.
 -/
 
--- ============================================================================
 -- Grounding: Connection to BECAUSE Corpus
--- ============================================================================
 
 /-!
 ## Empirical Grounding

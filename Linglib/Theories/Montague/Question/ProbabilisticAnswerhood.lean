@@ -46,9 +46,7 @@ namespace Montague.Question.ProbabilisticAnswerhood
 open Montague.Question
 open Montague.Question.Inquisitive
 
--- ============================================================================
 -- Conditional Probability Infrastructure
--- ============================================================================
 
 /-- Compute P(φ) - probability that φ is true.
 
@@ -76,9 +74,7 @@ def probOfState {W : Type*} [Fintype W]
     (prior : ExactDist W) (σ : InfoState W) : ℚ :=
   probOfProp prior σ
 
--- ============================================================================
 -- Definition 61: Relevance
--- ============================================================================
 
 /-- Relevance: P changes the probability of some alternative in Q.
 
@@ -101,9 +97,7 @@ def irrelevant {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : Bool :=
   !relevant p q prior
 
--- ============================================================================
 -- Definition 62: Probabilistic Answerhood
--- ============================================================================
 
 /-- Probabilistic answerhood: P raises the probability of some alternative.
 
@@ -150,9 +144,7 @@ def maxSupportedAlternative {W : Type*} [Fintype W]
       if current.2 > bestInc then some current else best
   ) none
 
--- ============================================================================
 -- Definition 63: Evidences More Strongly
--- ============================================================================
 
 /-- Informational content of a resolving state.
 
@@ -190,9 +182,7 @@ def evidencesMoreStronglyProp {W : Type*} [Fintype W]
   let probGivenEvidence' := conditionalProb prior evidence' conclusion
   probGivenEvidence > probGivenEvidence'
 
--- ============================================================================
 -- Strength of Evidence
--- ============================================================================
 
 /-- Compute how much evidence raises the probability of a conclusion.
 
@@ -216,9 +206,7 @@ def isNegativeEvidence {W : Type*} [Fintype W]
     (prior : ExactDist W) : Bool :=
   evidentialBoost evidence conclusion prior < 0
 
--- ============================================================================
 -- Connection to Standard Answerhood
--- ============================================================================
 
 /-- Check if a prior is uniform over a world list.
 
@@ -248,9 +236,7 @@ theorem probAnswers_when_consistent {W : Type*} [Fintype W] [DecidableEq W]
     relevant p q prior = true := by
   sorry
 
--- ============================================================================
 -- Combined Evidence (for Additive Particles)
--- ============================================================================
 
 /-- Check if conjunction of two propositions provides stronger evidence
 than the first proposition alone.
@@ -276,9 +262,7 @@ def someResolutionStrengthened {W : Type*} [Fintype W]
     (prior : ExactDist W) : Bool :=
   (strengthenedResolutions p1 p2 q prior).length > 0
 
--- ============================================================================
 -- Probabilistic Mention-Some
--- ============================================================================
 
 /-- Probabilistic mention-some: P gives a "partial" probabilistic answer.
 
@@ -303,9 +287,7 @@ def isProbMentionAllAnswer {W : Type*} [Fintype W]
     conditionalProb prior p alt == 1
   certainAlts.length == 1
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /-- Probabilistic answerhood implies relevance.
 

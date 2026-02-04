@@ -32,9 +32,6 @@ namespace Theories.DynamicSemantics.PLA
 
 open Classical
 
--- ============================================================================
--- PART 1: Information States
--- ============================================================================
 
 /--
 An information state is a set of (assignment, witness) pairs.
@@ -65,9 +62,6 @@ def restrict [Nonempty E] (s : InfoState E) (M : Model E) (φ : Formula) : InfoS
 
 end InfoState
 
--- ============================================================================
--- PART 2: The Contents View (Dekker §3.1)
--- ============================================================================
 
 /--
 The **content** of a formula: set of (g, ê) pairs where φ is satisfied.
@@ -95,9 +89,6 @@ theorem Formula.content_conj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : For
   ext ⟨g, ê⟩
   simp [content, sat]
 
--- ============================================================================
--- PART 3: PLA Possibility Type and Core Infrastructure
--- ============================================================================
 
 /--
 PLA Possibility type: (assignment, witness sequence) pairs.
@@ -123,9 +114,6 @@ def Formula.satPoss {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) :
     Poss E → Prop :=
   fun p => satisfiesPLA M p φ
 
--- ============================================================================
--- PART 4: The Updates View (Dekker §3.2) - Using Core.CCP
--- ============================================================================
 
 /--
 An **update** is a Context Change Potential over PLA possibilities.
@@ -169,9 +157,6 @@ theorem Formula.mem_update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (g, ê) ∈ φ.update M s ↔ (g, ê) ∈ s ∧ φ.sat M g ê := by
   simp [update, InfoState.restrict]
 
--- ============================================================================
--- PART 4: Contents-Updates Equivalence (Dekker Theorem 3.1)
--- ============================================================================
 
 /--
 **Theorem 3.1 (Contents-Updates Equivalence)**
@@ -188,9 +173,6 @@ theorem contents_updates_equiv {E : Type*} [Nonempty E]
   ext ⟨g, ê⟩
   simp [Formula.update, Formula.content, InfoState.restrict]
 
--- ============================================================================
--- PART 5: The Support View (Dekker §3.3)
--- ============================================================================
 
 /--
 A state **supports** a formula iff the formula is satisfied throughout the state.
@@ -228,9 +210,6 @@ theorem InfoState.supports_conj {E : Type*} [Nonempty E] (s : InfoState E) (M : 
   · intro ⟨hφ, hψ⟩ p hp
     exact ⟨hφ p hp, hψ p hp⟩
 
--- ============================================================================
--- PART 6: Updates-Support Equivalence (Dekker Theorem 3.2)
--- ============================================================================
 
 /--
 **Theorem 3.2 (Updates-Support Equivalence)**
@@ -255,9 +234,6 @@ theorem updates_support_equiv {E : Type*} [Nonempty E]
     simp [Formula.update, InfoState.restrict] at this
     exact this.2
 
--- ============================================================================
--- PART 7: Dynamic Conjunction (Dekker §3.4)
--- ============================================================================
 
 /--
 **Dynamic conjunction** (Observation 4): sequential update, φ then ψ.
@@ -291,9 +267,6 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
   simp only [Formula.dynConj, Core.CCP.seq, Formula.mem_update, Formula.sat]
   tauto
 
--- ============================================================================
--- PART 8: Observation 5 - Non-Idempotence (Dekker §3.4)
--- ============================================================================
 
 /--
 **Observation 5**: Existentials are NOT idempotent.
@@ -322,9 +295,6 @@ theorem obs6_dne_syntactic (φ : Formula) :
 -- - ⟦¬¬∃x.φ⟧(s) only checks that ⟦∃x.φ⟧(s) ≠ ∅, introducing nothing
 -- This is formalized in DeepTheorems.lean
 
--- ============================================================================
--- PART 9: Elimination and Identity Laws
--- ============================================================================
 
 /-- Updating with a tautology leaves state unchanged -/
 theorem update_taut {E : Type*} [Nonempty E] (M : Model E) (s : InfoState E)
@@ -346,9 +316,6 @@ theorem update_elim {E : Type*} [Nonempty E] (M : Model E) (s : InfoState E)
     φ.update M s = s :=
   (updates_support_equiv M φ s).mp h
 
--- ============================================================================
--- PART 10: Fundamental Properties
--- ============================================================================
 
 /--
 PLA formula update equals Core.updateFromSat via satPoss.
@@ -441,9 +408,6 @@ theorem dynConj_subset_inter {E : Type*} [Nonempty E] (M : Model E)
   rw [Formula.mem_update, Formula.mem_update]
   exact ⟨⟨hp.1, hp.2.1⟩, ⟨hp.1, hp.2.2⟩⟩
 
--- ============================================================================
--- PART 11: CCP Reducibility
--- ============================================================================
 
 /-- CCP Reducibility: updates = intersection with content. -/
 theorem ccp_reducibility {E : Type*} [Nonempty E] (M : Model E)
@@ -508,9 +472,6 @@ theorem dekker_minimalism {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
   ext p
   simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
 
--- ============================================================================
--- PART 12: Dynamic Entailment
--- ============================================================================
 
 /--
 **Dynamic Entailment**: φ dynamically entails ψ if updating with φ always
@@ -569,9 +530,7 @@ theorem dynamicEntails_weakening {E : Type*} [Nonempty E] (M : Model E)
     (φ.update M s) ⊫[M] ψ :=
   hent s
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Summary

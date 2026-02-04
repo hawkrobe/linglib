@@ -19,9 +19,7 @@ import Linglib.Core.Grammar
 
 namespace Minimalism
 
--- ============================================================================
 -- Syntactic Features (Minimalist Style)
--- ============================================================================
 
 /-- Features that drive syntactic operations -/
 inductive Feature where
@@ -43,9 +41,7 @@ def hasFeature (fb : FeatureBundle) (f : Feature) : Bool :=
 def hasQ (fb : FeatureBundle) : Bool :=
   fb.any λ f => match f with | .q true => true | _ => false
 
--- ============================================================================
 -- Syntactic Objects
--- ============================================================================
 
 /-- A syntactic object: either a lexical item or a derived structure -/
 inductive SynObj where
@@ -66,9 +62,7 @@ partial def SynObj.yield : SynObj → List Word
   | .set α β _ => α.yield ++ β.yield
   | .trace _ => []
 
--- ============================================================================
 -- Minimalist Operations
--- ============================================================================
 
 /-- External Merge: combine two separate objects -/
 def externalMerge (α β : SynObj) (label : FeatureBundle) : SynObj :=
@@ -89,9 +83,7 @@ def tToCMovement (c : SynObj) (t : SynObj) : Option SynObj :=
   else
     none
 
--- ============================================================================
 -- Derivations
--- ============================================================================
 
 /-- A derivation step -/
 inductive DerivStep where
@@ -111,9 +103,7 @@ def Derivation.hasTToC (d : Derivation) : Bool :=
     | .headMove _ c => hasQ c.label
     | _ => false
 
--- ============================================================================
 -- Minimalist Grammar
--- ============================================================================
 
 /-- A Minimalist grammar specifies the lexicon and derivational constraints -/
 structure MinimalistGrammar where
@@ -132,9 +122,7 @@ instance : Grammar MinimalistGrammar where
   realizes d ws ct := d.2.deriv.result.yield = ws ∧ d.2.clauseType = ct
   derives g ws ct := ∃ d : MinDerivation g, d.deriv.result.yield = ws ∧ d.clauseType = ct
 
--- ============================================================================
 -- Phase Theory (Sketch)
--- ============================================================================
 
 /-- Phases are derivational cycles (CP, v*P). -/
 inductive Phase where

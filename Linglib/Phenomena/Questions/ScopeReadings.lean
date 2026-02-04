@@ -31,9 +31,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.ScopeReadings
 
--- ============================================================================
--- PART 1: Pair-List Reading Data
--- ============================================================================
 
 /-- A pair-list reading datum: universal quantifier over wh-phrase. -/
 structure PairListDatum where
@@ -144,9 +141,6 @@ def pairListExamples : List PairListDatum :=
   , wonderPairList
   ]
 
--- ============================================================================
--- PART 2: Choice Reading Data
--- ============================================================================
 
 /-- A choice reading datum: disjunction/existential over wh-phrase. -/
 structure ChoiceDatum where
@@ -223,9 +217,6 @@ def choiceExamples : List ChoiceDatum :=
   , whoSpeaksScandinavian
   ]
 
--- ============================================================================
--- PART 3: Scope Interaction Minimal Pairs
--- ============================================================================
 
 /-- Minimal pairs showing scope effects. -/
 structure ScopeMinimalPair where
@@ -266,9 +257,6 @@ def subjectObjectScope : ScopeMinimalPair :=
 def scopeMinimalPairs : List ScopeMinimalPair :=
   [eachEveryScope, subjectObjectScope]
 
--- ============================================================================
--- PART 4: Licensing Conditions Data
--- ============================================================================
 
 /-- Data on factors affecting pair-list availability. -/
 structure LicensingDatum where
@@ -329,9 +317,6 @@ def matrixPairList : LicensingDatum :=
 def licensingExamples : List LicensingDatum :=
   [knowLicenses, wonderDislikes, askDislikes, matrixPairList]
 
--- ============================================================================
--- PART 5: Answer Types
--- ============================================================================
 
 /-- Classification of answer types for scope readings. -/
 inductive ScopeAnswerType where
@@ -352,9 +337,6 @@ def expectedAnswerType (quantifier : String) (isDisjunction : Bool) : ScopeAnswe
   else if quantifier == "some" || quantifier == "a" then .witnessDependent
   else .single
 
--- ============================================================================
--- PART 6: Functional Questions
--- ============================================================================
 
 /-- Data on functional (f-) questions: wh-phrase with bound variable. -/
 structure FunctionalQuestionDatum where
@@ -395,9 +377,6 @@ def whichOfHerChildren : FunctionalQuestionDatum :=
 def functionalQuestionExamples : List FunctionalQuestionDatum :=
   [whichOfHisTeachers, whichOfHerChildren]
 
--- ============================================================================
--- PART 7: Cross-Linguistic Data
--- ============================================================================
 
 /-- Data on pair-list readings across languages. -/
 structure CrossLinguisticDatum where
@@ -438,9 +417,7 @@ def japanesePairList : CrossLinguisticDatum :=
 def crossLinguisticExamples : List CrossLinguisticDatum :=
   [hungarianPairList, japanesePairList]
 
--- ============================================================================
 -- Summary: Key Principles
--- ============================================================================
 
 /-- G&S key principles for scope readings -/
 def scopeReadingPrinciples : List String :=

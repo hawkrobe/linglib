@@ -22,9 +22,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.FocusAnswer
 
--- ============================================================================
--- PART 1: Focus-Answer Data
--- ============================================================================
 
 /-- A focus-answer datum: shows how focus placement determines question fit.
 -/
@@ -88,9 +85,6 @@ def focusAnswerExamples : List FocusAnswerDatum :=
   , johnCalledMary_incongruent
   ]
 
--- ============================================================================
--- PART 2: Multiple Questions, Same Sentence
--- ============================================================================
 
 /-- Shows how the same sentence answers multiple questions via focus shift.
 -/
@@ -117,9 +111,6 @@ def maryBoughtBook : MultipleFocusDatum :=
 def multipleQuestionExamples : List MultipleFocusDatum :=
   [maryBoughtBook]
 
--- ============================================================================
--- PART 3: Exhaustive Focus Interpretation
--- ============================================================================
 
 /-- Focus triggers exhaustification relative to the question.
 
@@ -159,9 +150,6 @@ def johnAndMary_exh : ExhaustiveFocusDatum :=
 def exhaustiveFocusExamples : List ExhaustiveFocusDatum :=
   [johnCalled_exh, johnAndMary_exh]
 
--- ============================================================================
--- PART 4: Focus-Question Mismatch Effects
--- ============================================================================
 
 /-- When focus doesn't match the question, the result is infelicitous.
 -/
@@ -193,9 +181,6 @@ def mismatch2 : FocusMismatchDatum :=
 def focusMismatchExamples : List FocusMismatchDatum :=
   [mismatch1, mismatch2]
 
--- ============================================================================
--- PART 5: Congruence Condition
--- ============================================================================
 
 /-- The formal congruence condition (Rooth 1992, building on G&S):
 

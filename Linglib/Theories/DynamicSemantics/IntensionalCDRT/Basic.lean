@@ -39,9 +39,7 @@ namespace Theories.DynamicSemantics.IntensionalCDRT
 
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
 -- ICDRT-specific Notation
--- ============================================================================
 
 namespace ICDRTAssignment
 
@@ -55,9 +53,7 @@ notation g "⟦" p "⟧ₚ" => ICDRTAssignment.prop g p
 
 end ICDRTAssignment
 
--- ============================================================================
 -- ICDRT Contexts (Information States)
--- ============================================================================
 
 /--
 An ICDRT context: a set of assignment-world pairs.
@@ -106,9 +102,7 @@ notation:max c "⟦" p "⟧" => IContext.update c p
 
 end IContext
 
--- ============================================================================
 -- Dynamic Propositions
--- ============================================================================
 
 /--
 A dynamic proposition in ICDRT.
@@ -136,9 +130,7 @@ def ofProp (p : W → Prop) : DynProp W E := fun c => c.update p
 
 end DynProp
 
--- ============================================================================
 -- Commitment Sets
--- ============================================================================
 
 /--
 The commitment set DC_S: worlds the speaker is publicly committed to.
@@ -169,9 +161,7 @@ def initial [Nonempty W] : CommitmentSet W E where
 
 end CommitmentSet
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

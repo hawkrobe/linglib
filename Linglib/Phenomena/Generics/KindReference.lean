@@ -42,9 +42,7 @@ namespace Phenomena.Generics.KindReference
 def containsSubstr (s : String) (sub : String) : Bool :=
   (s.splitOn sub).length > 1
 
--- ============================================================================
 -- Cross-Linguistic Bare Nominal Patterns
--- ============================================================================
 
 /-- Language typology for bare nominal licensing -/
 inductive BareNominalType where
@@ -182,9 +180,7 @@ def mandarinKind : CrossLingDatum :=
   , notes := "Classifier language; bare noun is kind-denoting"
   }
 
--- ============================================================================
 -- Bare Singular Restriction (English)
--- ============================================================================
 
 /-- Bare singular grammaticality datum -/
 structure BareSingularDatum where
@@ -234,9 +230,7 @@ def barePlObject : BareSingularDatum :=
   , notes := "Bare plural OK as object"
   }
 
--- ============================================================================
 -- Scopelessness
--- ============================================================================
 
 /-- Scope ambiguity datum -/
 structure ScopeDatum where
@@ -280,9 +274,7 @@ def universalSomeBooks : ScopeDatum :=
   , notes := "'Some books' can scope over 'every student'"
   }
 
--- ============================================================================
 -- Scrambling and Scope (Le Bruyn & de Swart 2022)
--- ============================================================================
 
 /-!
 ## Scrambling Creates Wide Scope for Bare Plurals
@@ -431,9 +423,7 @@ def scramblingData : List ScramblingScopeDatum :=
   , germanScrambledKomponenten, germanScrambledMenschen
   , modifiedBPwideScope ]
 
--- ============================================================================
 -- Kind-Level vs Object-Level Predicates
--- ============================================================================
 
 /-- Predicate type for kind application -/
 inductive PredLevel where
@@ -512,9 +502,7 @@ def beInGarden : PredicateDatum :=
   , notes := "Location predicate; existential reading"
   }
 
--- ============================================================================
 -- Singular Kind Reference
--- ============================================================================
 
 /-- Type of singular kind licensing -/
 inductive SingularKindLicense where
@@ -576,9 +564,7 @@ def tallLionOdd : SingularKindDatum :=
   , notes := "Modification blocks kind reading"
   }
 
--- ============================================================================
 -- Taxonomic vs Individual Readings
--- ============================================================================
 
 /-- Taxonomic reading datum -/
 structure TaxonomicDatum where
@@ -610,9 +596,7 @@ def dogMammal : TaxonomicDatum :=
   , notes := "Ambiguous: kind or individual"
   }
 
--- ============================================================================
 -- Generic vs Existential (with Bare Plurals)
--- ============================================================================
 
 /-- Predicate class affecting BP interpretation -/
 inductive PredicateClass where
@@ -666,9 +650,7 @@ def firemenAvailable : BPInterpDatum :=
   , notes := "Implicit locative argument"
   }
 
--- ============================================================================
 -- Aggregate Data
--- ============================================================================
 
 def crossLingData : List CrossLingDatum :=
   [englishBarePlural, englishDefiniteSingularKind, englishMassNoun,
@@ -691,9 +673,7 @@ def singularKindData : List SingularKindDatum :=
 def bpInterpData : List BPInterpDatum :=
   [boysAreBrave, boysArePresent, boysAreHungry, firemenAvailable]
 
--- ============================================================================
 -- Empirical Generalizations
--- ============================================================================
 
 -- Bare plurals are scopeless
 #guard scopeData.filter (fun d => d.sentence.startsWith "I didn't see dogs" ||

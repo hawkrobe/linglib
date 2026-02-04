@@ -52,9 +52,7 @@ open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity
 open Montague.Sentence.Conditional.Assertability
 
--- ============================================================================
 -- Bridge: Structural Model → Probabilistic Model
--- ============================================================================
 
 /--
 **Deterministic Model Parameters**
@@ -109,9 +107,7 @@ def extractParams (dyn : CausalDynamics) (background : Situation)
   , alternativeCause := !causallyNecessary dyn background cause effect
   }
 
--- ============================================================================
 -- WorldState from Structural Model
--- ============================================================================
 
 /--
 **Situation to WorldState**: Convert a structural situation to a probabilistic
@@ -147,9 +143,7 @@ def situationToWorldStateUniform (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : WorldState :=
   situationToWorldState dyn background cause effect (1/2)
 
--- ============================================================================
 -- Grounding Theorems: Structural → Probabilistic
--- ============================================================================
 
 /--
 **Sufficiency implies high P(C|A)**.
@@ -183,9 +177,7 @@ theorem necessity_implies_pCGivenNotA_zero (dyn : CausalDynamics) (background : 
   -- When cause is necessary, P(C|¬A) = 0 because effect can't occur without cause
   sorry
 
--- ============================================================================
 -- Causal Inference Connection
--- ============================================================================
 
 /--
 **Structural causation grounds pragmatic inference**.
@@ -221,9 +213,7 @@ theorem structural_ac_implies_inferred_ac (dyn : CausalDynamics) (background : S
     norm_num
     linarith [hθ.2]
 
--- ============================================================================
 -- Connecting to CausalRelation Enum
--- ============================================================================
 
 /--
 **Map structural causation to CausalRelation**.
@@ -251,9 +241,7 @@ def inferStructuralCausalRelation (dyn : CausalDynamics) (background : Situation
   let params := extractParams dyn background cause effect
   structuralToCausalRelation params
 
--- ============================================================================
 -- The Full Grounding Chain
--- ============================================================================
 
 /--
 **The Grounding Chain**
@@ -284,9 +272,7 @@ theorem grounding_chain_consistent (dyn : CausalDynamics) (background : Situatio
   simp only [inferStructuralCausalRelation, extractParams, structuralToCausalRelation,
              h_suff, h_nec, Bool.and_true, ↓reduceIte]
 
--- ============================================================================
 -- Overdetermination: Structural vs Probabilistic
--- ============================================================================
 
 /--
 **Overdetermination creates a disconnect**.
@@ -307,9 +293,7 @@ theorem overdetermination_not_ac (dyn : CausalDynamics) (background : Situation)
              h_suff, h_not_nec, Bool.and_false, Bool.and_true, Bool.not_false]
   rfl
 
--- ============================================================================
 -- Causal Perfection
--- ============================================================================
 
 /--
 **Causal Perfection**: The pragmatic inference from sufficiency to necessity.

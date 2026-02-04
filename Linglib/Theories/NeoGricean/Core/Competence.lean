@@ -28,9 +28,6 @@ namespace NeoGricean.Competence
 
 open NeoGricean
 
--- ============================================================================
--- PART 1: Competence+ (Soames 1982)
--- ============================================================================
 
 /--
 Competence+ (Soames 1982): Speaker's belief matches truth.
@@ -69,9 +66,6 @@ theorem basic_not_implies_plus :
   -- Speaker believes ψ when ψ is actually false
   exact ⟨false, .belief, by native_decide⟩
 
--- ============================================================================
--- PART 2: Disjunction and Competence
--- ============================================================================
 
 /--
 Represents a disjunction "A or B" with speaker's epistemic state.
@@ -147,9 +141,6 @@ theorem disjunction_implies_partial_ignorance :
     simp [qualityConsistent] at hqual <;>
     simp_all
 
--- ============================================================================
--- PART 3: Three-Way Outcome in Detail
--- ============================================================================
 
 /--
 Detailed outcome of implicature processing, including the reason.
@@ -210,9 +201,6 @@ theorem outcome_iii_incompetent :
     p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
   native_decide
 
--- ============================================================================
--- PART 4: Competence in Context
--- ============================================================================
 
 /--
 Factors that affect whether competence is assumed.
@@ -250,9 +238,6 @@ theorem disjunction_context_weak_only :
     shouldAssumeCompetence .disjunction = false := by
   rfl
 
--- ============================================================================
--- PART 5: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

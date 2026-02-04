@@ -40,9 +40,7 @@ namespace CCG.Gapping
 open CCG
 open Phenomena.Ellipsis.Gapping
 
--- ============================================================================
 -- Gapped Conjunct Categories
--- ============================================================================
 
 /--
 Category for a gapped subject+object cluster (e.g., "Warren, potatoes").
@@ -60,9 +58,7 @@ Category for a gapped subject alone (stripping: "and Warren (too)").
 -/
 def GappedSubj : Cat := S \ (S / NP)
 
--- ============================================================================
 -- Type-Raised Argument Categories
--- ============================================================================
 
 /--
 Backward type-raised NP (for SVO/VSO gapping).
@@ -76,9 +72,7 @@ T/(T\NP) - combines with verbs to the RIGHT.
 -/
 def ForwardRaisedNP : Cat := S / (S \ NP)
 
--- ============================================================================
 -- Word Order and Gapping Direction
--- ============================================================================
 
 /--
 Can arguments type-raise to backward categories (T\(T/NP))?
@@ -114,9 +108,7 @@ Backward gapping: gapped conjunct is RIGHTWARD-looking (needs verb to RIGHT)
 def predictedGappingPattern (order : WordOrder) : GappingPattern :=
   ⟨hasBackwardRaising order, hasForwardRaising order⟩
 
--- ============================================================================
 -- Ross's Generalization from CCG Principles
--- ============================================================================
 
 /--
 Ross's generalization EMERGES from CCG's Principles of Consistency and Inheritance.
@@ -155,9 +147,7 @@ Hence it can only combine with a verb to its LEFT.
 theorem inheritance_determines_gapping :
     GappedTV = S \ ((S / NP) / NP) := rfl
 
--- ============================================================================
 -- Why Backward Gapping Fails in English
--- ============================================================================
 
 /--
 English has no SOV verb category, so forward type-raising is not available.
@@ -175,9 +165,7 @@ English doesn't license T/(T\NP) categories.
 -/
 def BackwardGappedTV : Cat := S / ((S \ NP) / NP)
 
--- ============================================================================
 -- The Key Insight: Gapped Conjunct Directionality
--- ============================================================================
 
 /--
 The gapped conjunct S\((S/NP)/NP) is LEFTWARD-looking.
@@ -202,9 +190,7 @@ theorem backward_gapped_tv_is_rightward :
     | .rslash _ _ => true
     | _ => false := rfl
 
--- ============================================================================
 -- Dutch: Both Directions
--- ============================================================================
 
 /--
 Dutch has BOTH VSO main verbs AND SOV subordinate verbs.
@@ -220,9 +206,7 @@ theorem dutch_allows_both_gapping :
     (rossRevised dutchProfile).allowsBackward = true := by
   constructor <;> rfl
 
--- ============================================================================
 -- Stripping as Special Case
--- ============================================================================
 
 /--
 Stripping is gapping with a single remnant.
@@ -244,9 +228,7 @@ This is because both use the same type-raised categories.
 theorem stripping_same_constraints_as_gapping :
     GappedSubj = BackwardRaisedNP := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

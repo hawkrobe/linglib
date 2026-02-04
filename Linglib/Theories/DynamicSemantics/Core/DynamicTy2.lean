@@ -39,9 +39,6 @@ import Mathlib.Data.Set.Basic
 
 namespace Theories.DynamicSemantics.Core.DynamicTy2
 
--- ============================================================================
--- PART 1: The Type System
--- ============================================================================
 
 /-!
 Dynamic Ty2 is parameterized by:
@@ -61,9 +58,6 @@ abbrev DRS (S : Type*) := S → S → Prop
 /-- Condition: type `st` - property of assignments -/
 abbrev Condition (S : Type*) := S → Prop
 
--- ============================================================================
--- PART 2: Core Abbreviations (Brasoveanu §5)
--- ============================================================================
 
 section Abbreviations
 
@@ -103,9 +97,6 @@ notation "!" D => closure D
 
 end Abbreviations
 
--- ============================================================================
--- PART 3: Random Assignment (Existential Introduction)
--- ============================================================================
 
 /--
 Random assignment axiom structure.
@@ -149,9 +140,6 @@ notation "∀'" u "(" D ")" => dforall u D
 
 end AssignmentStructure
 
--- ============================================================================
--- PART 4: Atomic Conditions
--- ============================================================================
 
 section Atomic
 
@@ -173,9 +161,6 @@ def eq' (u v : Dref S E) : Condition S :=
 
 end Atomic
 
--- ============================================================================
--- PART 5: DPL Translation (Brasoveanu §3)
--- ============================================================================
 
 /-!
 ## Translating DPL into Dynamic Ty2
@@ -195,9 +180,6 @@ become "flipped" to drefs u : S → E, where S plays the role
 of the assignment itself.
 -/
 
--- ============================================================================
--- PART 6: Specific vs Unspecific Drefs (Proper Names)
--- ============================================================================
 
 section ProperNames
 
@@ -224,9 +206,6 @@ def properName [AssignmentStructure S E] (u : S → E) (e : E) : DRS S :=
 
 end ProperNames
 
--- ============================================================================
--- PART 7: Truth and Entailment
--- ============================================================================
 
 section Truth
 
@@ -246,9 +225,6 @@ notation D₁ " ⊨ " D₂ => entails D₁ D₂
 
 end Truth
 
--- ============================================================================
--- PART 8: Key Theorems
--- ============================================================================
 
 section Theorems
 
@@ -322,9 +298,7 @@ theorem dseq_closure (D₁ D₂ : DRS S) :
 
 end Theorems
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -40,9 +40,6 @@ import Linglib.Core.Presupposition
 
 namespace Phenomena.Presupposition.Diagnostics
 
--- ============================================================================
--- PART 1: Judgment Types
--- ============================================================================
 
 /--
 Acceptability judgment for a diagnostic sentence.
@@ -71,9 +68,6 @@ structure DiagnosticResult where
   interpretation : String
   deriving Repr
 
--- ============================================================================
--- PART 2: "Allows For" Diagnostic (Preconditions)
--- ============================================================================
 
 /--
 The "allows for" test identifies PRECONDITIONS.
@@ -131,9 +125,6 @@ def allowsFor_stop_consequence : DiagnosticResult :=
   , judgment := .unacceptable
   , interpretation := "Consequence doesn't 'allow for' — it's entailed" }
 
--- ============================================================================
--- PART 3: "Results In" Diagnostic (Consequences)
--- ============================================================================
 
 /--
 The "results in" test identifies CONSEQUENCES.
@@ -190,9 +181,6 @@ def resultsIn_start_priorState : DiagnosticResult :=
   , judgment := .unacceptable
   , interpretation := "Precondition doesn't 'result from' — it's presupposed" }
 
--- ============================================================================
--- PART 4: Empirical Generalization
--- ============================================================================
 
 /--
 The precondition/consequence diagnostic pattern.
@@ -255,9 +243,6 @@ def patternIsUniform : Bool :=
   stopPattern.resultPassesResultsIn == startPattern.resultPassesResultsIn &&
   stopPattern.resultPassesResultsIn == winPattern.resultPassesResultsIn
 
--- ============================================================================
--- PART 5: Connection to Projection
--- ============================================================================
 
 /--
 Key empirical finding: Content that passes "allows for" projects.
@@ -293,9 +278,6 @@ def resultStateProjection : ProjectionPrediction :=
   , passesAllowsFor := false
   , projectsThroughNegation := false }
 
--- ============================================================================
--- PART 6: Standard Presupposition Diagnostics
--- ============================================================================
 
 /--
 The negation test for presupposition.
@@ -352,9 +334,6 @@ def conditionalTest_stop_filter : DiagnosticResult :=
   , judgment := .acceptable
   , interpretation := "No global presupposition → filtered by antecedent" }
 
--- ============================================================================
--- PART 7: Summary of Diagnostic Tests
--- ============================================================================
 
 /--
 Summary: The key diagnostic tests and what they reveal.
@@ -389,9 +368,7 @@ def diagnosticTests : List DiagnosticSummary := [
   , positiveIndicates := "Content is not at-issue (backgrounded)" }
 ]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

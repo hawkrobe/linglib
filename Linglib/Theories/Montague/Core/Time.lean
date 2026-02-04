@@ -34,9 +34,6 @@ import Mathlib.Data.Set.Basic
 
 namespace Montague.Core.Time
 
--- ============================================================================
--- PART 1: Time Type
--- ============================================================================
 
 /--
 Abstract time type.
@@ -96,9 +93,6 @@ def meets (i₁ i₂ : Interval Time) : Prop :=
 
 end Interval
 
--- ============================================================================
--- PART 2: Situations (Kratzer 1989, 2021)
--- ============================================================================
 
 /--
 A situation is a part of a world at a time.
@@ -155,9 +149,6 @@ def contemporaneous (s₁ s₂ : Situation W Time) : Prop :=
 
 end Situation
 
--- ============================================================================
--- PART 3: Reichenbach's Three Times
--- ============================================================================
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis.
@@ -208,9 +199,6 @@ def isProspective (f : ReichenbachFrame Time) : Prop :=
 
 end ReichenbachFrame
 
--- ============================================================================
--- PART 4: Historical Modal Base (Thomason 1984)
--- ============================================================================
 
 /--
 World history function: given a world and time, returns worlds that
@@ -266,9 +254,6 @@ structure HistoricalProperties {W Time : Type*} [LE Time]
   /-- Agreement is preserved for earlier times -/
   backwards : h.backwardsClosed
 
--- ============================================================================
--- PART 5: Temporal Propositions
--- ============================================================================
 
 /--
 A temporal proposition: true or false at each situation.
@@ -297,9 +282,6 @@ A proposition holds at time t in world w.
 def holdsAt {W Time : Type*} (p : TProp W Time) (w : W) (t : Time) : Prop :=
   p ⟨w, t⟩
 
--- ============================================================================
--- PART 6: Temporal Relations as Propositions
--- ============================================================================
 
 /--
 Temporal relation type for tense operators.
@@ -337,9 +319,6 @@ def evalB {Time : Type*} [LinearOrder Time] [DecidableEq Time]
 
 end TemporalRelation
 
--- ============================================================================
--- PART 7: Concrete Time Instance (ℤ for examples)
--- ============================================================================
 
 /--
 Integer times for concrete examples.
@@ -361,9 +340,7 @@ def todayZ : ℤ := 0
 /-- Example: tomorrow (t = 1) -/
 def tomorrowZ : ℤ := 1
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -40,9 +40,7 @@ import Linglib.Theories.SDS.Core
 
 namespace SDS.MeasureTheory
 
--- ============================================================================
 -- Continuous SDS: Measure-Theoretic Version (Placeholder)
--- ============================================================================
 
 /-!
 ## SDSMeasureSystem Design
@@ -79,9 +77,7 @@ class SDSMeasureSystem (α : Type*) (Θ : Type*) [MeasurableSpace Θ] where
 ```
 -/
 
--- ============================================================================
 -- Connection: Discrete SDS embeds into Measure SDS
--- ============================================================================
 
 /-!
 ## Embedding Discrete into Continuous
@@ -110,9 +106,7 @@ theorem discrete_integral_eq_sum [SDSConstraintSystem α Θ] (sys : α) (f : Θ 
 ```
 -/
 
--- ============================================================================
 -- Continuous Threshold Semantics
--- ============================================================================
 
 /-!
 ## Continuous Gradable Adjectives
@@ -165,9 +159,7 @@ def ContinuousAdjective.softMeaning {E : Type*}
   -- Simplified: return measure value (assumes uniform prior)
   adj.measure x
 
--- ============================================================================
 -- Connection to Mathlib PMF
--- ============================================================================
 
 /-!
 ## Bridge to Mathlib's PMF
@@ -194,9 +186,7 @@ theorem pmf_expect_eq_sds [SDSConstraintSystem α Θ]
 ```
 -/
 
--- ============================================================================
 -- Future Work: Rate-Distortion and Information Theory
--- ============================================================================
 
 /-!
 ## Information-Theoretic Extensions
@@ -226,9 +216,7 @@ These connect to:
 See `RSA.Extensions.InformationTheory` for discrete versions.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Measure-Theoretic SDS

@@ -37,9 +37,7 @@ import Linglib.Theories.Minimalism.Labeling
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Bar Levels
--- ============================================================================
 
 /-- Bar level in X-Bar theory
     - zero: X (head, minimal projection)
@@ -59,9 +57,7 @@ def BarLevel.toString : BarLevel → String
 
 instance : ToString BarLevel := ⟨BarLevel.toString⟩
 
--- ============================================================================
 -- Part 2: X-Bar Phrase Structure
--- ============================================================================
 
 /-- An X-Bar phrase with explicit Spec-Head-Complement structure
 
@@ -91,9 +87,7 @@ def XBarPhrase.addComplement (xp : XBarPhrase) (comp : SyntacticObject) : XBarPh
 def XBarPhrase.addSpecifier (xp : XBarPhrase) (spec : SyntacticObject) : XBarPhrase :=
   { xp with specifier := some spec }
 
--- ============================================================================
 -- Part 3: Computing Bar Level
--- ============================================================================
 
 /-- Compute the bar level of a syntactic object relative to a root
 
@@ -135,9 +129,7 @@ def barLevelSimple (so : SyntacticObject) : BarLevel :=
     | false, true => .max  -- Phrase + leaf = likely XP
     | false, false => .max -- Two phrases = XP level
 
--- ============================================================================
 -- Part 4: Extracting Structure
--- ============================================================================
 
 /-- Get the specifier of a node (the non-projecting daughter)
 
@@ -181,9 +173,7 @@ def getHead (so : SyntacticObject) : Option SyntacticObject :=
     else if sameLabelB b so then getHead b
     else none
 
--- ============================================================================
 -- Part 5: X-Bar Well-Formedness
--- ============================================================================
 
 /-- An X-Bar phrase is well-formed if:
     1. The head has the appropriate category
@@ -202,9 +192,7 @@ def XBarPhrase.isWellFormed (xp : XBarPhrase) : Bool :=
     | some comp => selectsB xp.head comp
   headCatOk && compOk
 
--- ============================================================================
 -- Part 6: Converting to/from SyntacticObjects
--- ============================================================================
 
 /-- Build a SyntacticObject from an XBarPhrase
 
@@ -238,9 +226,7 @@ def analyzeAsXBar (so : SyntacticObject) : Option XBarPhrase :=
         specifier := spec
       }
 
--- ============================================================================
 -- Part 7: Theorems
--- ============================================================================
 
 /-- Selection determines complement position -/
 theorem selection_gives_complement (h c : SyntacticObject)
@@ -264,9 +250,7 @@ theorem spec_xbar_is_maximal (spec xbar : SyntacticObject)
     simp only [barLevelSimple, merge, SyntacticObject.isLeaf]
     cases xbar <;> rfl
 
--- ============================================================================
 -- Part 8: Examples
--- ============================================================================
 
 /-- Example: Building "the cat" as a DP
 

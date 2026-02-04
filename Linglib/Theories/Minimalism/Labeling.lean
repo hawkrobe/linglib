@@ -27,9 +27,7 @@ import Linglib.Theories.Minimalism.Containment
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Getting Categories from SOs
--- ============================================================================
 
 /-- Helper: does sel stack contain category? -/
 def selContains (sel : SelStack) (c : Cat) : Bool :=
@@ -111,9 +109,7 @@ partial def getProjectingLI (so : SyntacticObject) : Option LexicalItem :=
         | some li => some li
         | none => getProjectingLI a
 
--- ============================================================================
 -- Part 2: Selection (Decidable)
--- ============================================================================
 
 /-- X selects Y iff X's selectional requirements include Y's category
 
@@ -141,9 +137,7 @@ def selects (selector selected : SyntacticObject) : Prop :=
 instance (x y : SyntacticObject) : Decidable (selects x y) :=
   inferInstanceAs (Decidable (selectsB x y = true))
 
--- ============================================================================
 -- Part 3: Labels (Definition 16-17) - Selection-Based
--- ============================================================================
 
 /-- The label of an SO - determined by which element projects
 
@@ -201,9 +195,7 @@ def sameLabelB (x y : SyntacticObject) : Bool :=
 instance (x y : SyntacticObject) : Decidable (sameLabel x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
--- ============================================================================
 -- Part 4: Projection (Definition 20)
--- ============================================================================
 
 /-- X projects in Y iff X's label = Y's label and X is immediately contained in Y -/
 def projectsIn (x y : SyntacticObject) : Prop :=
@@ -221,9 +213,7 @@ instance (x y : SyntacticObject) : Decidable (projectsIn x y) :=
 def projects (x root : SyntacticObject) : Prop :=
   ∃ y, containsOrEq root y ∧ projectsIn x y
 
--- ============================================================================
 -- Part 5: Maximality and Minimality (Definition 21)
--- ============================================================================
 
 /-- X is minimal in Y iff X is a term of Y and X doesn't contain anything
 
@@ -245,9 +235,7 @@ def isMinimalIn (x y : SyntacticObject) : Prop :=
 def isMaximalIn (x y : SyntacticObject) : Prop :=
   isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn x z
 
--- ============================================================================
 -- Part 6: Heads and Phrases (Definition 22)
--- ============================================================================
 
 /-- A head in Y: +minimal AND -maximal
 
@@ -275,9 +263,7 @@ def isPhraseIn (x y : SyntacticObject) : Prop :=
 def isNonProjectingLI (x y : SyntacticObject) : Prop :=
   isMinimalIn x y ∧ isMaximalIn x y
 
--- ============================================================================
 -- Part 7: Concrete Examples for Testing
--- ============================================================================
 
 /-- A verb "eat" that selects D (needs an object) -/
 def verbEat : LIToken := ⟨.simple .V [.D], 1⟩
@@ -300,9 +286,7 @@ def eatPizzaVP : SyntacticObject := .node (.leaf verbEat) theDP
 #eval selectsB (.leaf verbEat) theDP  -- true: V selects D
 #eval labelCat eatPizzaVP  -- some .V (the verb projects)
 
--- ============================================================================
 -- Part 8: Understanding Min/Max with Examples
--- ============================================================================
 
 /-
 ## How Minimality and Maximality Work (Corrected)
@@ -358,9 +342,7 @@ The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection
 #eval projectsInB (.leaf verbEat) eatPizzaVP  -- true: V projects in VP
 #eval projectsInB theDP eatPizzaVP            -- false: DP doesn't project in VP
 
--- ============================================================================
 -- Part 9: Position-Indexed Maximality (Collins & Stabler 2016)
--- ============================================================================
 
 /-
 ## Position vs Occurrence (Harizanov footnote 11, p.9)

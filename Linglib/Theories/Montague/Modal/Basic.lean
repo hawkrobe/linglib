@@ -38,9 +38,7 @@ namespace Montague.Modal
 
 open Montague.Verb.Attitude.Examples
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /-- Modal force: necessity (□) or possibility (◇) -/
 inductive ModalForce where
@@ -59,9 +57,7 @@ abbrev Proposition := World → Bool
 /-- The set of all worlds (from Attitudes.lean) -/
 def allWorlds' : List World := allWorlds
 
--- ============================================================================
 -- ModalTheory Structure
--- ============================================================================
 
 /--
 A semantic theory for modal auxiliaries.
@@ -92,9 +88,7 @@ structure ModalTheory where
   /-- Core evaluation function: is modal force applied to proposition p true at world w? -/
   eval : ModalForce → Proposition → World → Bool
 
--- ============================================================================
 -- Derived Notions
--- ============================================================================
 
 /--
 Necessity operator: □p is true at w.
@@ -141,9 +135,7 @@ Check consistency across all worlds for a proposition.
 def ModalTheory.checkConsistency (T : ModalTheory) (p : Proposition) : Bool :=
   allWorlds'.all fun w => T.necessityEntailsPossibility p w
 
--- ============================================================================
 -- Properties
--- ============================================================================
 
 /--
 A theory is normal if duality holds universally.
@@ -161,9 +153,7 @@ This corresponds to the D axiom (seriality): □p → ◇p
 def ModalTheory.isConsistent (T : ModalTheory) : Prop :=
   ∀ (p : Proposition) (w : World), T.necessityEntailsPossibility p w = true
 
--- ============================================================================
 -- Standard Test Propositions
--- ============================================================================
 
 /-- Proposition: it is raining -/
 def raining : Proposition := fun w =>

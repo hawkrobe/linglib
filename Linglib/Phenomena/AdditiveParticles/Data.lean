@@ -32,9 +32,7 @@ This file contains theory-neutral empirical data on:
 
 namespace Phenomena.AdditiveParticles
 
--- ============================================================================
 -- Basic Data Structures
--- ============================================================================
 
 /-- Felicity judgment for an additive particle example. -/
 inductive FelicityJudgment where
@@ -73,9 +71,7 @@ structure AdditiveParticleDatum where
   source : String := "Thomas (2026)"
   deriving Repr
 
--- ============================================================================
 -- Classic Standard Examples
--- ============================================================================
 
 /-- Classic "too" with focus alternatives. -/
 def johnCameMaryToo : AdditiveParticleDatum :=
@@ -120,9 +116,7 @@ def classicExamples : List AdditiveParticleDatum :=
   , johnSingsJohnDancesToo
   ]
 
--- ============================================================================
 -- Infelicitous Cases
--- ============================================================================
 
 /-- Missing antecedent - classic infelicity. -/
 def missingAntecedent : AdditiveParticleDatum :=
@@ -167,9 +161,7 @@ def infelicitousExamples : List AdditiveParticleDatum :=
   , contextMismatch
   ]
 
--- ============================================================================
 -- Polarity-Sensitive: "Either"
--- ============================================================================
 
 /-- "Either" in negative context - felicitous. -/
 def eitherNegative : AdditiveParticleDatum :=
@@ -214,9 +206,7 @@ def eitherExamples : List AdditiveParticleDatum :=
   , eitherWontCome
   ]
 
--- ============================================================================
 -- Scalar/Emphatic Uses
--- ============================================================================
 
 /-- Scalar "too" - emphatic reading. -/
 def tooExpensive : AdditiveParticleDatum :=
@@ -235,9 +225,7 @@ def scalarExamples : List AdditiveParticleDatum :=
   [ tooExpensive
   ]
 
--- ============================================================================
 -- Cross-Linguistic Notes
--- ============================================================================
 
 /-- A structure for cross-linguistic comparison data. -/
 structure CrossLinguisticDatum where
@@ -286,9 +274,7 @@ def crossLinguisticData : List CrossLinguisticDatum :=
   , frenchAussi
   ]
 
--- ============================================================================
 -- Rooth (1992) Examples: Focus and "Too"
--- ============================================================================
 
 /-!
 ## Rooth's Focus-Based Analysis
@@ -348,9 +334,7 @@ def roothExamples : List AdditiveParticleDatum :=
   , roothTooMary
   ]
 
--- ============================================================================
 -- Ahn (2015) Examples: "Either" Analysis
--- ============================================================================
 
 /-!
 ## Ahn's Analysis of "Either"
@@ -499,9 +483,7 @@ def ahnExamples : List AdditiveParticleDatum :=
   , ahnEitherVerb
   ]
 
--- ============================================================================
 -- Summary Statistics
--- ============================================================================
 
 /-- All additive particle examples in this file.
     Note: Argument-building examples are in Studies/Thomas2026.lean -/

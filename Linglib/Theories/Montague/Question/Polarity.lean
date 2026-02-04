@@ -51,9 +51,7 @@ namespace Montague.Question.Polarity
 
 open Montague.Question
 
--- ============================================================================
 -- Polar Question Types
--- ============================================================================
 
 /-- The three types of polar questions (semantically equivalent, pragmatically distinct). -/
 inductive PolarQuestionType where
@@ -87,9 +85,7 @@ theorem all_types_same_semantics (p : W -> Bool) :
 
 end PolarQuestion
 
--- ============================================================================
 -- Utility of Answers
--- ============================================================================
 
 /-- Utility value of learning proposition p is true.
 
@@ -112,9 +108,7 @@ def compareUtility {W A : Type*} [DecidableEq A]
   else if uvPos < uvNeg then .lt
   else .eq
 
--- ============================================================================
 -- Optimal Question Type Selection
--- ============================================================================
 
 /-- The Van Rooy & Šafářová criterion: choose question type based on answer utilities.
 
@@ -140,9 +134,7 @@ def optimalQuestionTypeWithThreshold {W A : Type*} [DecidableEq A]
   else if diff < -threshold then .negative
   else .alternative
 
--- ============================================================================
 -- Special Cases: Goal-Based Utility
--- ============================================================================
 
 /-- A decision problem where the agent has a single goal proposition.
 
@@ -183,9 +175,7 @@ theorem request_forces_ppq {W : Type*}
     goalProbAdvantage p prior worlds p >= 0 := by
   sorry -- P(p|p) = 1 >= P(p|¬p) = 0
 
--- ============================================================================
 -- Special Cases: Informativity-Based Utility
--- ============================================================================
 
 /-- Surprisal (negative log probability) of a proposition.
 
@@ -219,9 +209,7 @@ def positiveIsLessLikely {W : Type*} (prior : W -> ℚ) (worlds : List W)
   let notPProb := worlds.foldl (fun acc w => acc + if !p w then prior w else 0) 0
   pProb < notPProb
 
--- ============================================================================
 -- Question Uses (Van Rooy & Šafářová Classification)
--- ============================================================================
 
 /-- Classification of polar question uses based on utility source. -/
 inductive QuestionUse where
@@ -257,9 +245,7 @@ theorem request_disprefers_alt (use : QuestionUse) :
   intro h
   simp [h, expectedTypeForUse]
 
--- ============================================================================
 -- Negative Polar Questions
--- ============================================================================
 
 /-- When is a negative polar question appropriate?
 
@@ -292,9 +278,7 @@ def tagQuestionInformativity {W : Type*} (prior : W -> ℚ) (worlds : List W)
     informativenessAdvantage prior worlds tag > 0 := by
   sorry -- If tag is less likely, it's more informative
 
--- ============================================================================
 -- Alternative Questions
--- ============================================================================
 
 /-- Alternative questions are appropriate when utilities are balanced.
 
@@ -333,9 +317,7 @@ inductive AltInsistence where
   | fronted     -- "Did you or did you not"
   deriving DecidableEq, Repr, Inhabited
 
--- ============================================================================
 -- Ladd's Inner/Outer Negation (Rejected)
--- ============================================================================
 
 /-!
 ## On Ladd's INPQ/ONPQ Distinction
@@ -368,9 +350,7 @@ structure NPQAnalysis (W : Type*) where
 def npqSemantics {W : Type*} (analysis : NPQAnalysis W) : GSQuestion W :=
   polarQuestion analysis.prop
 
--- ============================================================================
 -- Connection to Core Polarity
--- ============================================================================
 
 /-- Question polarity (positive/negative) connects to entailment polarity.
 
@@ -384,9 +364,7 @@ def questionPolarity (qtype : PolarQuestionType) : Option Montague.Core.Polarity
   | .negative => some .downward  -- Negative proposition is "marked"
   | .alternative => none         -- No polarity preference
 
--- ============================================================================
 -- Rhetorical Questions
--- ============================================================================
 
 /-- A rhetorical question is one where the speaker presupposes an answer
 but uses question form for pragmatic effect.
@@ -422,9 +400,7 @@ def rhetoricalUsePPQ {W : Type*}
     informativenessAdvantage prior worlds p > 0 := by
   sorry -- If p is less likely, learning p is more informative
 
--- ============================================================================
 -- Grounding Questions
--- ============================================================================
 
 /-- A grounding question checks whether surprising new information should be accepted.
 

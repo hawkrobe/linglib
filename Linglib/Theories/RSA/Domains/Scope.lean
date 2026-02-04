@@ -47,9 +47,7 @@ namespace RSA.Domains.Scope
 
 open Montague.Derivation.Scope (ScopeConfig)
 
--- ============================================================================
 -- Outcome Worlds
--- ============================================================================
 
 /--
 Outcome world: n out of total entities satisfy the predicate.
@@ -75,9 +73,7 @@ def Outcome.none (n : Nat) : Outcome n := ⟨0, Nat.zero_lt_succ n⟩
 def Outcome.all (n : Nat) : Outcome n := ⟨n, Nat.lt_succ_self n⟩
 def Outcome.some (n : Nat) (k : Nat) (h : k < n + 1 := by omega) : Outcome n := ⟨⟨k, h⟩⟩
 
--- ============================================================================
 -- Scope Readings (re-export from Montague)
--- ============================================================================
 
 /-- Scope reading: surface or inverse -/
 abbrev Reading := ScopeConfig
@@ -87,9 +83,7 @@ def inverse : Reading := .inverse
 
 def allReadings : List Reading := [.surface, .inverse]
 
--- ============================================================================
 -- Quantifier-Negation Scope Semantics
--- ============================================================================
 
 /--
 Truth conditions for "Every X didn't VP" under different scope readings.
@@ -113,9 +107,7 @@ def someNotMeaning (n : Nat) (reading : Reading) (w : Outcome n) : Bool :=
   | .surface => w.count.val < n         -- ∃>¬: some didn't
   | .inverse => w.count.val == 0        -- ¬>∃: none VP'd
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Standard scope-ambiguous utterances -/
 inductive ScopeUtt where
@@ -130,9 +122,7 @@ def scopeMeaning (n : Nat) (reading : Reading) (w : Outcome n) : ScopeUtt → Bo
   | .someNot => someNotMeaning n reading w
   | .null => true
 
--- ============================================================================
 -- Scenario Builders
--- ============================================================================
 
 /--
 Run L1 inference for "Every X didn't VP" with n entities.
@@ -176,9 +166,7 @@ def runL1 {U : Type} [BEq U] [DecidableEq U]
     (fun utt (w, reading) => boolToRat (meaning reading w utt))
     (fun (w, r) => worldPrior w * readingPrior r) 1 (fun _ => 0) u
 
--- ============================================================================
 -- Convenience: RSA Computations
--- ============================================================================
 
 /-- L1 marginal over worlds -/
 def l1_world (n : Nat) (u : ScopeUtt) : List (Outcome n × ℚ) :=
@@ -190,9 +178,7 @@ def l1_interp (n : Nat) (u : ScopeUtt) : List (Reading × ℚ) :=
   let joint := everyNotL1 n u
   RSA.Eval.marginalize joint Prod.snd
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- "Every horse didn't jump" with 3 horses
 #eval l1_world 3 .everyNot

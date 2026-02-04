@@ -31,9 +31,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Determiner-noun agreement data -/
 def detNounAgrData : PhenomenonData := {
@@ -74,9 +72,7 @@ def detNounAgrData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval Surface.detNounAgrOk [a, girl]       -- true
 #eval Surface.detNounAgrOk [a, girls]      -- false

@@ -28,9 +28,7 @@ namespace Montague.Sentence.Conditional.Assertability
 
 open Theories.Montague.Conditional.CausalBayesNet
 
--- ============================================================================
 -- Conditional Probability
--- ============================================================================
 
 /--
 Conditional probability P(C|A) = P(A ∧ C) / P(A).
@@ -48,9 +46,7 @@ Returns 0 if P(C) = 0 (undefined case).
 def reversedConditionalProbability (ws : WorldState) : ℚ :=
   ws.pAGivenC
 
--- ============================================================================
 -- Assertability Threshold
--- ============================================================================
 
 /--
 The default assertability threshold θ.
@@ -87,9 +83,7 @@ Returns 1 if assertable, 0 otherwise.
 def assertabilityBool (ws : WorldState) (θ : ℚ := defaultThreshold) : ℚ :=
   if assertable ws θ then 1 else 0
 
--- ============================================================================
 -- Contrapositive Assertability
--- ============================================================================
 
 /--
 Assertability of the contrapositive: "if ¬C then ¬A".
@@ -106,9 +100,7 @@ Check if the contrapositive "if ¬C then ¬A" is assertable.
 def contrapositiveAssertable (ws : WorldState) (θ : ℚ := defaultThreshold) : Bool :=
   ws.pC < 1 && contrapositiveProbability ws > θ
 
--- ============================================================================
 -- Reverse Conditional Assertability
--- ============================================================================
 
 /--
 Assertability of the reverse conditional: "if C then A".
@@ -122,9 +114,7 @@ This is relevant for inferring causal direction:
 def reverseAssertable (ws : WorldState) (θ : ℚ := defaultThreshold) : Bool :=
   ws.pC > 0 && reversedConditionalProbability ws > θ
 
--- ============================================================================
 -- Biconditional Assertability
--- ============================================================================
 
 /--
 A biconditional "A iff C" is assertable when both directions are.
@@ -134,9 +124,7 @@ This corresponds to strong correlation or deterministic causation.
 def biconditionalAssertable (ws : WorldState) (θ : ℚ := defaultThreshold) : Bool :=
   assertable ws θ && reverseAssertable ws θ
 
--- ============================================================================
 -- Missing-Link Detection
--- ============================================================================
 
 /--
 Detect "missing-link" cases where the conditional seems odd.
@@ -163,9 +151,7 @@ Values near 0 indicate independence (missing link).
 def correlationStrength (ws : WorldState) : ℚ :=
   if ws.pA > 0 then conditionalProbability ws - ws.pC else 0
 
--- ============================================================================
 -- Causal Inference from Assertability
--- ============================================================================
 
 /--
 Asymmetry score: how much more assertable is "if A then C" than "if C then A"?
@@ -193,9 +179,7 @@ def inferCausalRelation (ws : WorldState) (θ : ℚ := defaultThreshold)
   else if !fwdAssert && bwdAssert then .CCausesA
   else .Independent
 
--- ============================================================================
 -- Connection to RSA
--- ============================================================================
 
 /--
 The key connection to RSA: the literal listener L0 interprets a conditional
@@ -218,9 +202,7 @@ This allows the RSA model to reason about degrees of assertability.
 def softConditionalSemantics (ws : WorldState) : ℚ :=
   assertabilityScore ws
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /--
 If P(A) = 0, the conditional is not assertable (antecedent impossible).
@@ -275,9 +257,7 @@ theorem conditional_probability_bounded (ws : WorldState) (h : ws.IsValid) (hA :
   simp only [conditionalProbability]
   exact WorldState.valid_implies_pCGivenA_bounded ws h hA
 
--- ============================================================================
 -- Missing-Link Characterization
--- ============================================================================
 
 /--
 **Missing-link iff weak correlation**.

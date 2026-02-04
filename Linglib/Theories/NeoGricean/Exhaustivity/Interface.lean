@@ -47,9 +47,6 @@ namespace NeoGricean.Exhaustivity.Interface
 open Core
 open NeoGricean.Exhaustivity
 
--- ============================================================================
--- PART 1: Exhaustification Operators
--- ============================================================================
 
 /-- Different exhaustification strategies from the literature.
 
@@ -85,9 +82,6 @@ theorem ie_eq_mw_when_closed {World : Type*} (ALT : Set (Prop' World)) (φ : Pro
   -- For now, we state it as the connection point
   sorry -- TODO: Connect to theorem9_main
 
--- ============================================================================
--- PART 2: Parse-Guided Exhaustification
--- ============================================================================
 
 /-- Alternatives can vary by EXH position.
 
@@ -155,9 +149,6 @@ theorem single_position_exh {World : Type*} (op : ExhOperator) (pos : ExhPositio
   · simp only [applyExhAtParse, single_pos_has_I, single_I_not_M, single_I_not_O,
                Bool.false_eq_true, ↓reduceIte]
 
--- ============================================================================
--- PART 3: Exhaustifiable Typeclass (Unified Interface)
--- ============================================================================
 
 /-- Typeclass for sentence types where EXH can insert at parse positions.
 
@@ -210,9 +201,6 @@ theorem Exhaustifiable.literal_is_literal {S W : Type} [inst : Exhaustifiable S 
   simp only [meaningAtParse]
   rw [literal_parse_is_identity]
 
--- ============================================================================
--- PART 4: Connection to Spector 2007
--- ============================================================================
 
 /-
 Spector (2007) defines exhaustification for propositional logic:
@@ -248,9 +236,6 @@ def griceanJustification : String :=
   "propositions P, the maximally informative Gricean interpretation is exactly " ++
   "Exhaust(P). This provides theoretical grounding for the EXH operators."
 
--- ============================================================================
--- PART 5: RSA Integration Helpers
--- ============================================================================
 
 /-- Get parses for RSAScenario.ambiguous -/
 def getParses (S W : Type) [Exhaustifiable S W] : List Parse :=
@@ -261,9 +246,7 @@ def toRSAMeaning {S W : Type} [Exhaustifiable S W]
     (p : Parse) (w : W) (s : S) : Bool :=
   Exhaustifiable.meaningAtParseBool p s w
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

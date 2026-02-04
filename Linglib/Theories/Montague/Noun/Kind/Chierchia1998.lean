@@ -40,9 +40,7 @@ import Mathlib.Order.UpperLower.Basic
 
 namespace Montague.Noun.Kind.Chierchia1998
 
--- ============================================================================
 -- Domain Structure (Link's Semilattice)
--- ============================================================================
 
 /--
 The domain of individuals forms a complete atomic join semilattice.
@@ -85,9 +83,7 @@ def Individual.join {Atom : Type} : Individual Atom → Individual Atom → Indi
   | .plural s, .atom a => .plural (s ∪ {a})
   | .plural s, .plural t => .plural (s ∪ t)
 
--- ============================================================================
 -- Kinds as Individual Concepts
--- ============================================================================
 
 variable (World Atom : Type)
 
@@ -115,9 +111,7 @@ structure Kind where
   /-- Marker that this is a "natural" kind (placeholder for regularity condition) -/
   isNatural : Prop := True
 
--- ============================================================================
 -- The Down Operator: ∩ (Property → Kind)
--- ============================================================================
 
 /--
 The "down" operator ∩ (cap): nominalize a property to a kind.
@@ -146,9 +140,7 @@ noncomputable def down (P : Property World Atom) : Option (Kind World Atom) :=
     isNatural := True
   }
 
--- ============================================================================
 -- The Up Operator: ∪ (Kind → Property)
--- ============================================================================
 
 /--
 The "up" operator ∪ (cup): predicativize a kind to a property.
@@ -182,9 +174,7 @@ theorem down_up_id (k : Kind World Atom) :
     down World Atom (up World Atom k) = some k := by
   sorry
 
--- ============================================================================
 -- Derived Kind Predication (DKP)
--- ============================================================================
 
 /--
 Derived Kind Predication: coerce object-level predicates to accept kinds.
@@ -212,9 +202,7 @@ Takes an object-level predicate and returns a kind-level predicate.
 def liftToKind (P : Individual Atom → Bool) : Kind World Atom → World → Prop :=
   fun k w => DKP World Atom P k w
 
--- ============================================================================
 -- The Nominal Mapping Parameter
--- ============================================================================
 
 /--
 The Nominal Mapping Parameter (Chierchia 1998).
@@ -250,9 +238,7 @@ def languageFamily : NominalMapping → String
   | .argAndPred => "English, German, Slavic (bare argument languages)"
   | .predOnly => "French, Italian, Spanish (Romance languages)"
 
--- ============================================================================
 -- Mass/Count Distinction
--- ============================================================================
 
 /--
 The mass/count distinction in [+pred] languages.
@@ -283,9 +269,7 @@ pluralities of pieces, without distinction.
 def massExtension {Atom : Type} (atoms : Set Atom) : Set (Individual Atom) :=
   { x | ∃ a ∈ atoms, x = .atom a } ∪ { x | ∃ s : Set Atom, s ⊆ atoms ∧ s.Nonempty ∧ x = .plural s }
 
--- ============================================================================
 -- Type Shifting as Last Resort (Blocking Principle)
--- ============================================================================
 
 /--
 The Blocking Principle: covert type shifting is blocked when an
@@ -317,9 +301,7 @@ def bareArgumentLicensed (bp : BlockingPrinciple) (nounType : NounType) : Bool :
   | .mass => !bp.downBlocked  -- Mass nouns use ∩, which is not blocked
   | .count => !bp.downBlocked  -- But only plurals can use ∩ (see below)
 
--- ============================================================================
 -- Why Bare Singulars Are Out
--- ============================================================================
 
 /--
 The key insight: ∩ is undefined for singular count nouns.
@@ -364,9 +346,7 @@ theorem bare_plural_ok_bare_singular_not (bp : BlockingPrinciple)
     bp.existsBlocked = true := by
   simp [hIota, hExists, downDefinedFor]
 
--- ============================================================================
 -- Scopelessness (Theoretical Basis)
--- ============================================================================
 
 /--
 Bare plurals are scopeless because DKP introduces a LOCAL existential.
@@ -389,9 +369,7 @@ For non-kind-denoting NPs like "parts of that machine":
 def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
   !isKindDenoting ∧ !bp.existsBlocked
 
--- ============================================================================
 -- DKP Derivation Machinery (for Scrambling Comparison)
--- ============================================================================
 
 /-!
 ## Compositional DKP
@@ -475,9 +453,7 @@ theorem chierchia_position_invariant
     (vp : ChierchiaVP Entity World)
     : chierchiaDerivScrambled kind vp = chierchiaDerivUnscrambled kind vp := rfl
 
--- ============================================================================
 -- Theory Verification
--- ============================================================================
 
 /-- ∩ is defined for plural count nouns -/
 example : downDefinedFor .count true = true := rfl

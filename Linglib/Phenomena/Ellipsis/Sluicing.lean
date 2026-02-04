@@ -56,9 +56,7 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Ellipsis.Sluicing
 
--- ============================================================================
 -- Part 1: Basic Sluicing Data
--- ============================================================================
 
 /-- A sluicing datum records a sentence with its ellipsis site -/
 structure SluicingDatum where
@@ -113,9 +111,7 @@ def embeddedSluice : SluicingDatum := {
   source := "Merchant (2001)"
 }
 
--- ============================================================================
 -- Part 2: Case Matching Data
--- ============================================================================
 
 /-- Case matching in sluicing -/
 structure CaseMatchingDatum where
@@ -161,9 +157,7 @@ def englishCaseWeak : CaseMatchingDatum := {
   source := "Merchant (2001)"
 }
 
--- ============================================================================
 -- Part 3: Sprouting Data
--- ============================================================================
 
 /-- Sprouting: sluicing without overt correlate -/
 structure SproutingDatum where
@@ -219,9 +213,7 @@ def failedSprouting : SproutingDatum := {
   source := "Merchant (2001)"
 }
 
--- ============================================================================
 -- Part 4: Scope Constraint Data
--- ============================================================================
 
 /-- Scope constraint: inner antecedent must scope over rest -/
 structure ScopeConstraintDatum where
@@ -264,9 +256,7 @@ def wideScopeAvailable : ScopeConstraintDatum := {
   source := "B&S (2014)"
 }
 
--- ============================================================================
 -- Part 5: Andrews Amalgams
--- ============================================================================
 
 /-- Andrews Amalgam: recursive embedding of interrogative -/
 structure AndrewsAmalgamDatum where
@@ -298,9 +288,7 @@ def whClauseAmalgam : AndrewsAmalgamDatum := {
   source := "Lakoff (1974)"
 }
 
--- ============================================================================
 -- Part 6: Answer Ban Data
--- ============================================================================
 
 /-- Answer Ban: antecedent must not resolve the sluiced question -/
 structure AnswerBanDatum where
@@ -339,9 +327,7 @@ def definiteViolatesAnswerBan : AnswerBanDatum := {
   source := "Merchant (2001)"
 }
 
--- ============================================================================
 -- Part 7: Collected Data
--- ============================================================================
 
 /-- All basic sluicing data -/
 def basicSluicingData : List SluicingDatum := [
@@ -385,9 +371,7 @@ def answerBanData : List AnswerBanDatum := [
   definiteViolatesAnswerBan
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

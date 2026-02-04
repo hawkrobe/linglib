@@ -35,9 +35,7 @@ namespace Montague.Sentence.Conditional
 
 open Core.Proposition
 
--- ============================================================================
 -- Material Conditional
--- ============================================================================
 
 /--
 Material conditional: p → q ≡ ¬p ∨ q
@@ -55,9 +53,7 @@ def materialImp {W : Type*} (p q : Prop' W) : Prop' W :=
 def materialImpB {W : Type*} (p q : BProp W) : BProp W :=
   fun w => !p w || q w
 
--- ============================================================================
 -- Strict Conditional
--- ============================================================================
 
 /--
 Strict conditional: true at w iff the material conditional holds at all
@@ -80,9 +76,7 @@ def strictImp {W : Type*} (access : W → Set W) (p q : Prop' W) : Prop' W :=
 def strictImpFinite {W : Type*} (access : W → List W) (p q : BProp W) : BProp W :=
   fun w => (access w).all fun w' => !p w' || q w'
 
--- ============================================================================
 -- Variably Strict Conditional (Stalnaker-Lewis)
--- ============================================================================
 
 /--
 A similarity ordering on worlds.
@@ -119,9 +113,7 @@ def variablyStrictImp {W : Type*} (sim : SimilarityOrdering W)
     -- Otherwise: some closest p-world makes q true
     ∃ w' ∈ pWorlds, ∀ w'' ∈ pWorlds, sim.closer w w'' w' → q w''
 
--- ============================================================================
 -- Conditional Entailment
--- ============================================================================
 
 /--
 Conditional perfection: the inference from "if A then C" to "if not A then not C".
@@ -235,9 +227,7 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
       have ⟨h_closer, _⟩ := h_centered w w' h_eq
       exact h_q_close w hw_in_pWorlds h_closer
 
--- ============================================================================
 -- Kratzer-Style Conditionals (Modal Base + Ordering Source)
--- ============================================================================
 
 /-!
 ## Kratzer Conditionals
@@ -298,9 +288,7 @@ def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Pr
     -- All p-worlds that are "best" according to the ordering source satisfy q
     ∀ w' ∈ pWorlds, (∀ w'' ∈ pWorlds, kratzerBetter os w' w'' → kratzerBetter os w'' w' → q w'')
 
--- ============================================================================
 -- Indicative vs Subjunctive Conditionals
--- ============================================================================
 
 /--
 **Indicative conditional** (epistemic, open).
@@ -339,9 +327,7 @@ theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
     subjunctiveConditional sim domain p q w → indicativeConditional p q w := by
   exact variably_strict_implies_material sim domain p q w hw hp h_centered
 
--- ============================================================================
 -- Selection Functions (Stalnaker 1968, Ramotowska et al. 2025)
--- ============================================================================
 
 /-!
 ## Selection Functions
@@ -411,9 +397,7 @@ def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
 
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ => comparativeCloseness sim w₀ w₁ w₂
 
--- ============================================================================
 -- Connection to Causal Models
--- ============================================================================
 
 /-!
 ## Selection via Intervention
@@ -431,9 +415,7 @@ This connects:
 See `Theories/NadathurLauer2020/` for the causal model infrastructure.
 -/
 
--- ============================================================================
 -- Connection to Assertability
--- ============================================================================
 
 /-!
 ## Assertability vs Truth

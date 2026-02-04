@@ -44,9 +44,7 @@ namespace Montague.Verb.Attitude.BuilderProperties
 open Fragments.English.Predicates.Verbal (PreferentialBuilder AttitudeBuilder)
 open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 
--- ============================================================================
 -- C-Distributivity from Semantic Builder
--- ============================================================================
 
 /--
 C-distributivity is DERIVED from the semantic builder structure.
@@ -66,9 +64,7 @@ def PreferentialBuilder.isCDistributive : PreferentialBuilder → Bool
   | .uncertaintyBased => false    -- By worry_not_cDistributive
   | .relevanceBased _ => false    -- By analogous theorem for relevance semantics
 
--- ============================================================================
 -- NVP Classification from C-Distributivity + Valence
--- ============================================================================
 
 /--
 NVP class is DERIVED from C-distributivity and valence.
@@ -88,9 +84,7 @@ def PreferentialBuilder.nvpClass (b : PreferentialBuilder) : NVPClass :=
   else if b.valence == .negative then .class2_cDist_negative
   else .class3_cDist_positive
 
--- ============================================================================
 -- AttitudeBuilder Derived Properties
--- ============================================================================
 
 /--
 Get C-distributivity for preferential attitudes.
@@ -108,9 +102,7 @@ def AttitudeBuilder.nvpClass : AttitudeBuilder → Option NVPClass
   | .doxastic _ => none
   | .preferential b => some (PreferentialBuilder.nvpClass b)
 
--- ============================================================================
 -- VerbEntry Derived Properties
--- ============================================================================
 
 open Fragments.English.Predicates.Verbal (VerbEntry)
 
@@ -161,9 +153,7 @@ def VerbEntry.canEmbedQuestion (v : VerbEntry) : Bool :=
   | some .class3_cDist_positive => false
   | none => VerbEntry.takesQuestion v
 
--- ============================================================================
 -- Filtered Verb Lists (Derived)
--- ============================================================================
 
 open Fragments.English.Predicates.Verbal (allVerbs)
 
@@ -179,9 +169,7 @@ Get all question-embedding verbs.
 def questionEmbeddingVerbs : List VerbEntry :=
   allVerbs.filter VerbEntry.canEmbedQuestion
 
--- ============================================================================
 -- Verification Theorems
--- ============================================================================
 
 /-- Hope (degree-comparison positive) is C-distributive -/
 theorem hope_builder_cDistributive :
@@ -219,9 +207,7 @@ theorem qidai_builder_class1 :
     PreferentialBuilder.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
   native_decide
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

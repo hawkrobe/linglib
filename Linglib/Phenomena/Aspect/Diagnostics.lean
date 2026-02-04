@@ -51,9 +51,7 @@ namespace Phenomena.Aspect.Diagnostics
 
 open Montague.Verb.Aspect
 
--- ============================================================================
 -- Diagnostic Results
--- ============================================================================
 
 /--
 Result of applying a diagnostic test.
@@ -77,9 +75,7 @@ def DiagnosticResult.fromBool : Bool → DiagnosticResult
   | true => .accept
   | false => .reject
 
--- ============================================================================
 -- "For X" Adverbial Test
--- ============================================================================
 
 /--
 Prediction for "for X" adverbial compatibility.
@@ -109,9 +105,7 @@ theorem forX_identifies_atelic (c : VendlerClass) :
     forXPrediction c = .accept ↔ c.telicity = .atelic := by
   cases c <;> simp [forXPrediction, VendlerClass.telicity]
 
--- ============================================================================
 -- "In X" Adverbial Test
--- ============================================================================
 
 /--
 Prediction for "in X" adverbial compatibility.
@@ -139,9 +133,7 @@ theorem inX_identifies_telic (c : VendlerClass) :
     inXPrediction c = .accept ↔ c.telicity = .telic := by
   cases c <;> simp [inXPrediction, VendlerClass.telicity]
 
--- ============================================================================
 -- Progressive Test
--- ============================================================================
 
 /--
 Prediction for progressive compatibility.
@@ -172,9 +164,7 @@ theorem progressive_accepts_durative_dynamic (c : VendlerClass) :
     (c.duration = .durative ∧ c.dynamicity = .dynamic) := by
   cases c <;> simp [progressivePrediction, VendlerClass.duration, VendlerClass.dynamicity]
 
--- ============================================================================
 -- "Stop V-ing" Test
--- ============================================================================
 
 /--
 Prediction for "stop V-ing" compatibility.
@@ -193,9 +183,7 @@ def stopVingPrediction : VendlerClass → DiagnosticResult
   | .achievement => .coerced  -- "stopped coughing" = stopped iterative coughing
   | .accomplishment => .accept
 
--- ============================================================================
 -- Imperative Test
--- ============================================================================
 
 /--
 Prediction for imperative compatibility.
@@ -212,9 +200,7 @@ def imperativePrediction : VendlerClass → DiagnosticResult
   | .achievement => .marginal  -- Some achievements are controllable
   | .accomplishment => .accept
 
--- ============================================================================
 -- Full Diagnostic Battery
--- ============================================================================
 
 /--
 Result of running all diagnostic tests on a Vendler class.
@@ -288,9 +274,7 @@ theorem diagnostics_correct (c : VendlerClass) :
       | .accomplishment => accomplishmentDiagnostics := by
   cases c <;> rfl
 
--- ============================================================================
 -- Example Verb Data
--- ============================================================================
 
 /--
 Attested aspectual data for sample verbs.
@@ -359,9 +343,7 @@ def writeData : VerbAspectData :=
 def allVerbData : List VerbAspectData :=
   [runData, knowData, buildData, arriveData, recognizeData, loveData, writeData]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Aspectual Diagnostics

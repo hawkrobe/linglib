@@ -63,9 +63,7 @@ namespace Comparisons.RSAExhExpressivity
 open NeoGricean.Exhaustivity
 open RSA.IBR
 
--- ============================================================================
 -- SECTION 1: The Embedded SI Scenario
--- ============================================================================
 
 /-!
 ## The "Every Student Read Some Book" Scenario
@@ -108,9 +106,7 @@ def embeddedMeaning : EmbeddedSIMessage → EmbeddedSIWorld → Bool
   | .everyAll, .AA => true     -- "all" true only when both read all
   | .everyAll, _ => false
 
--- ============================================================================
 -- SECTION 2: EXH at Different Scope Positions
--- ============================================================================
 
 /-!
 ## EXH Scope Positions
@@ -158,9 +154,7 @@ def exhScopedMeaning (scope : ExhScope) : EmbeddedSIWorld → Bool :=
   | .global => globalExhMeaning
   | .local_ => localExhMeaning
 
--- ============================================================================
 -- SECTION 3: Standard RSA (Scope-Blind)
--- ============================================================================
 
 /-!
 ## Standard RSA: No Scope Distinction
@@ -181,9 +175,7 @@ def standardRSAGame : InterpGame where
   meaning := embeddedMeaning
   prior := fun _ => 1 / 4  -- Uniform prior
 
--- ============================================================================
 -- SECTION 4: The Expressivity Gap
--- ============================================================================
 
 /-!
 ## The Expressivity Gap: Formal Statement
@@ -231,9 +223,7 @@ theorem expressivity_gap :
       embeddedMeaning .everySome w = true :=
   ⟨.SA, rfl, rfl, rfl⟩
 
--- ============================================================================
 -- SECTION 5: Compositional RSA Closes the Gap
--- ============================================================================
 
 /-!
 ## How Compositional RSA Resolves This
@@ -269,9 +259,7 @@ theorem compositionalRSA_local_excludes_SA :
 theorem compositionalRSA_global_allows_SA :
     compositionalMeaning ⟨.SA, .global⟩ = true := rfl
 
--- ============================================================================
 -- SECTION 6: Connection to Franke 2011 and IBR
--- ============================================================================
 
 /-!
 ## The IBR Perspective
@@ -313,9 +301,7 @@ theorem ibr_is_global_not_local :
     (localExhMeaning .SA = false) :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
 -- SECTION 7: Summary
--- ============================================================================
 
 /-!
 ## Summary: The Expressivity Hierarchy

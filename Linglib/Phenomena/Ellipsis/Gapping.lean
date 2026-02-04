@@ -43,9 +43,7 @@ Languages with BOTH verb orders (Dutch, Zapotec) allow BOTH gapping patterns.
 
 namespace Phenomena.Ellipsis.Gapping
 
--- ============================================================================
 -- Word Order Typology
--- ============================================================================
 
 /--
 Basic word order types for transitive clauses.
@@ -67,9 +65,7 @@ structure WordOrderProfile where
   subClause : WordOrder
   deriving Repr
 
--- ============================================================================
 -- Gapping Direction
--- ============================================================================
 
 /--
 Direction of gapping in coordinate structures.
@@ -100,9 +96,7 @@ def GappingPattern.backwardOnly : GappingPattern := ⟨false, true⟩
 def GappingPattern.both : GappingPattern := ⟨true, true⟩
 def GappingPattern.neither : GappingPattern := ⟨false, false⟩
 
--- ============================================================================
 -- Ross's Generalization
--- ============================================================================
 
 /--
 Ross's original generalization about gapping and word order.
@@ -141,9 +135,7 @@ def rossRevised (profile : WordOrderProfile) : GappingPattern :=
                      hasLeftwardVerbs profile.subClause
   ⟨hasRightward, hasLeftward⟩
 
--- ============================================================================
 -- Language Examples
--- ============================================================================
 
 /-- Japanese: pure SOV, backward gapping only -/
 def japanese : WordOrderProfile := ⟨.SOV, .SOV⟩
@@ -163,9 +155,7 @@ def german : WordOrderProfile := ⟨.SVO, .SOV⟩
 /-- Zapotec: VSO subordinate, but allows SOV main clause - BOTH directions -/
 def zapotec : WordOrderProfile := ⟨.VSO, .VSO⟩  -- But allows SOV main
 
--- ============================================================================
 -- Gapping Examples
--- ============================================================================
 
 /--
 A gapping example in a specific language.
@@ -255,9 +245,7 @@ def dutch_sub_backward : GappingExample :=
   , isGrammatical := true
   }
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 def allGappingExamples : List GappingExample :=
   [ japanese_backward, japanese_forward_bad
@@ -272,9 +260,7 @@ def grammaticalExamples : List GappingExample :=
 def ungrammaticalExamples : List GappingExample :=
   allGappingExamples.filter (!·.isGrammatical)
 
--- ============================================================================
 -- Gapping vs Other Ellipsis
--- ============================================================================
 
 /--
 Types of elliptical constructions (Steedman's taxonomy).
@@ -303,9 +289,7 @@ def hasWordOrderConstraints : EllipsisType → Bool
   | .vpEllipsis => false  -- Same pattern in all languages
   | .sluicing => false    -- Same pattern in all languages
 
--- ============================================================================
 -- Verification: Ross's Predictions
--- ============================================================================
 
 /-- Pure SOV language has backward gapping only -/
 theorem sov_backward_only :
@@ -331,9 +315,7 @@ theorem mixed_allows_both :
     (rossRevised dutch).allowsBackward = true := by
   constructor <;> rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

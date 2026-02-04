@@ -36,9 +36,6 @@ namespace Theories.DynamicSemantics.Core
 open InfoState
 open Classical
 
--- ============================================================================
--- PART 1: Context Change Potentials
--- ============================================================================
 
 /--
 A Context Change Potential (CCP): the basic semantic type for sentences
@@ -82,9 +79,6 @@ theorem seq_id (φ : CCP W E) : φ ;; id = φ := rfl
 
 end CCP
 
--- ============================================================================
--- PART 2: Basic Updates
--- ============================================================================
 
 /--
 Update a state with a proposition: keep only possibilities where φ holds.
@@ -164,9 +158,6 @@ theorem dynamicEntails_conj (φ ψ : W → Bool)
 
 end InfoState
 
--- ============================================================================
--- PART 3: Random Assignment (Existential Introduction)
--- ============================================================================
 
 /--
 Random assignment: introduce a new discourse referent at variable x.
@@ -215,9 +206,6 @@ theorem randomAssign_preserves_defined (s : InfoState W E) (x y : Nat) (domain :
 
 end InfoState
 
--- ============================================================================
--- PART 4: Existential CCP
--- ============================================================================
 
 /--
 Existential CCP: ∃x.φ as a context change potential.
@@ -231,9 +219,6 @@ def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E) (φ : CCP W E) : CCP W 
 def CCP.existsFull {W E : Type*} (x : Nat) (φ : CCP W E) : CCP W E :=
   fun s => φ (s.randomAssignFull x)
 
--- ============================================================================
--- PART 5: Dynamic Connectives
--- ============================================================================
 
 /--
 Dynamic conjunction via sequencing.
@@ -261,9 +246,6 @@ Dynamic implication.
 def CCP.impl {W E : Type*} (φ ψ : CCP W E) : CCP W E :=
   fun s => if φ s ⊆ ψ (φ s) then s else ∅
 
--- ============================================================================
--- PART 6: Entailment
--- ============================================================================
 
 /--
 Dynamic entailment: φ entails ψ iff for all consistent states s,
@@ -280,9 +262,6 @@ theorem CCP.entails_id {W E : Type*} (φ : CCP W E) : CCP.entails φ CCP.id := b
   intro s _
   rfl
 
--- ============================================================================
--- PART 7: Dynamic Proposition Lifting
--- ============================================================================
 
 /--
 Lift a classical proposition to a CCP.
@@ -302,9 +281,7 @@ Lift a binary predicate.
 def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP W E :=
   fun s => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

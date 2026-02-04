@@ -28,9 +28,6 @@ The reverse pattern (adding complexity to ADD imprecision) is unattested.
 
 namespace Phenomena.Imprecision.FormMeaning
 
--- ============================================================================
--- PART 1: Complexity Ordering
--- ============================================================================
 
 /--
 Relative complexity judgment between two expressions.
@@ -52,9 +49,6 @@ inductive PrecisionRelation where
   | incomparable   -- not comparable
   deriving Repr, DecidableEq
 
--- ============================================================================
--- PART 2: Attested Complexity-Precision Pairs
--- ============================================================================
 
 /--
 A pair of expressions showing the complexity-precision tradeoff.
@@ -136,9 +130,6 @@ def blueCompletely : ComplexityPrecisionPair :=
   , constructionType := "Summative predicates"
   }
 
--- ============================================================================
--- PART 3: Unattested Patterns
--- ============================================================================
 
 /--
 Hypothetical pattern that would violate NO NEEDLESS MANNER VIOLATIONS.
@@ -184,9 +175,6 @@ def approxNonRound : UnattestedPattern :=
   , attestedAnalogue := some "'approximately 100' (but 100 is already imprecise)"
   }
 
--- ============================================================================
--- PART 4: Apparent Counterexamples
--- ============================================================================
 
 /--
 Apparent counterexample that actually isn't.
@@ -226,9 +214,6 @@ def approximatelyExample : ApparentCounterexample :=
   , resolution := "'100' is already imprecise - 'approximately' makes the imprecision explicit/obligatory rather than adding new imprecision. The pair isn't truth-conditionally equivalent: bare '100' CAN be exact in some contexts, 'approximately 100' cannot."
   }
 
--- ============================================================================
--- PART 5: Cross-Linguistic Patterns
--- ============================================================================
 
 /--
 Cross-linguistic data point for complexity-precision correlation.
@@ -254,9 +239,6 @@ def germanDoorsExample : CrossLinguisticDatum :=
   , patternHolds := true  -- same pattern as English
   }
 
--- ============================================================================
--- PART 6: Morphosyntactic Markedness
--- ============================================================================
 
 /--
 Markedness relation between forms.
@@ -298,9 +280,6 @@ def bareNumeralMarkedness : MarkednessData :=
   , markedMorePrecise := true
   }
 
--- ============================================================================
--- PART 7: Predictions
--- ============================================================================
 
 /--
 The NO NEEDLESS MANNER VIOLATIONS principle makes predictions.
@@ -332,9 +311,6 @@ def prediction3 : MannerPrediction :=
   , evidence := "Pattern holds for all/the, both/and, exactly/bare numerals"
   }
 
--- ============================================================================
--- PART 8: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about form/meaning correspondences.
@@ -360,9 +336,7 @@ def mainGeneralizations : FormMeaningGeneralizations :=
   , crossConstructional := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def attestedPairs : List ComplexityPrecisionPair :=
   [doorsAllDoors, andBoth, numeralExactly, blueCompletely]
@@ -376,9 +350,7 @@ def apparentCounterexamples : List ApparentCounterexample :=
 def predictions : List MannerPrediction :=
   [prediction1, prediction2, prediction3]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

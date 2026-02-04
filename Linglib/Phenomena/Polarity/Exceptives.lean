@@ -37,9 +37,6 @@ See:
 
 namespace Phenomena.Polarity.Exceptives
 
--- ============================================================================
--- PART 1: Quantifier Compatibility
--- ============================================================================
 
 /--
 Type of quantifier for exceptive compatibility.
@@ -185,9 +182,6 @@ def butExceptiveExamples : List ButExceptiveExample :=
   ex.quantifierType != .universalPositive && ex.quantifierType != .universalNegative)
   |>.all (fun ex => !ex.grammatical)
 
--- ============================================================================
--- PART 2: Semantic Properties
--- ============================================================================
 
 /--
 Predict grammaticality from quantifier type.
@@ -207,9 +201,6 @@ def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
 #guard butExceptiveExamples.all (fun ex =>
   predictExceptiveGrammaticality ex.quantifierType == ex.grammatical)
 
--- ============================================================================
--- PART 3: Exception Uniqueness
--- ============================================================================
 
 /-!
 ## Exception Uniqueness
@@ -260,9 +251,6 @@ All exception cardinality examples.
 def exceptionCardinalityExamples : List ExceptionCardinalityExample :=
   [single_exception, two_exceptions, three_exceptions]
 
--- ============================================================================
--- PART 4: Cross-linguistic Data
--- ============================================================================
 
 /--
 Cross-linguistic but-exceptive data.
@@ -317,9 +305,6 @@ def crossLinguisticExamples : List CrossLinguisticExceptive :=
 -- Universal constraint appears cross-linguistically
 #guard crossLinguisticExamples.all (fun ex => ex.universalConstraint)
 
--- ============================================================================
--- PART 5: Related Constructions
--- ============================================================================
 
 /--
 Related exceptive-like constructions.
@@ -375,9 +360,7 @@ All exceptive construction examples.
 def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
   [but_construction, except_construction, other_than_construction, besides_construction]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

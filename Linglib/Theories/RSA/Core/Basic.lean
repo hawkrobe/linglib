@@ -33,9 +33,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.FinEnum
 import Linglib.Core.Distribution
 
--- ============================================================================
 -- Chain Variant
--- ============================================================================
 
 /--
 RSA chain variant: which literal agent is the base of the recursion.
@@ -56,16 +54,12 @@ instance : ToString RSA.ChainVariant where
     | .L0Based => "L0-based (L0→S1→L1)"
     | .S0Based => "S0-based (S0→L1→S1)"
 
--- ============================================================================
 -- Utility Functions
--- ============================================================================
 
 /-- Convert Bool to ℚ (1 if true, 0 if false) -/
 def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
--- ============================================================================
 -- RSAScenario: Fintype-Based Unified Type (Primary API)
--- ============================================================================
 
 /--
 Parametric RSA scenario for compile-time type safety and clean inference.
@@ -154,9 +148,7 @@ attribute [instance] RSAScenario.interpFintype RSAScenario.lexiconFintype
   RSAScenario.interpDecEq RSAScenario.lexiconDecEq
   RSAScenario.beliefStateDecEq RSAScenario.goalDecEq
 
--- ============================================================================
 -- Smart Constructors for RSAScenario
--- ============================================================================
 
 /--
 Build a basic RSA scenario (no interpretation ambiguity, no QUD).
@@ -439,9 +431,7 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   cost_nonneg := cost_nonneg
   utterancePrior_nonneg := utterancePrior_nonneg
 
--- ============================================================================
 -- RSA: Fintype-Based RSA Computations
--- ============================================================================
 
 namespace RSA
 
@@ -457,9 +447,7 @@ private def tryNormalize {α : Type*} [Fintype α]
     (scores : α → ℚ) (hnonneg : ∀ x, 0 ≤ scores x) : Option (ExactDist α) :=
   ExactDist.tryNormalize scores hnonneg
 
--- ============================================================================
 -- L0: Literal Listener
--- ============================================================================
 
 /--
 L0: Literal listener distribution given full context.
@@ -493,9 +481,7 @@ def L0_projected (u : U)
       · exact le_refl 0
     tryNormalize scores hnonneg
 
--- ============================================================================
 -- S0: Literal Speaker
--- ============================================================================
 
 /--
 S0: Literal speaker distribution given full context.
@@ -540,9 +526,7 @@ def L1_fromS0 (u : U)
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- S1: Pragmatic Speaker
--- ============================================================================
 
 /--
 S1: Pragmatic speaker distribution.
@@ -573,9 +557,7 @@ def S1 (w : W)
       linarith
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- L1: Pragmatic Listener
--- ============================================================================
 
 /--
 L1 marginal over worlds.
@@ -705,9 +687,7 @@ def L1_goal (u : U) : Option (ExactDist S.Goal) :=
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- L1 Given Goal (for BToM models)
--- ============================================================================
 
 /--
 L1 marginal over worlds given a FIXED Goal.
@@ -775,9 +755,7 @@ def L1_beliefState_givenGoal (u : U) (q : S.Goal)
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- S2: Second-Level Pragmatic Speaker
--- ============================================================================
 
 /--
 S2: Second-level pragmatic speaker.
@@ -795,9 +773,7 @@ def S2 (w : W) : Option (ExactDist U) :=
     | some d => exact d.nonneg w
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- S1 from L1_fromS0: Pragmatic Speaker via Production-First Chain
--- ============================================================================
 
 /--
 S1 based on L1_fromS0: Pragmatic speaker reasoning about a listener who
@@ -831,9 +807,7 @@ def S1_fromL1S0 (w : W)
       linarith
   tryNormalize scores hnonneg
 
--- ============================================================================
 -- Unified API with ChainVariant (Primary Interface)
--- ============================================================================
 
 /-!
 ## Unified Chain API
@@ -872,9 +846,7 @@ def listener (chain : ChainVariant := .L0Based)
 
 end RSA
 
--- ============================================================================
 -- FinEnum-Based Eval Bridge (for #eval with RSAScenario)
--- ============================================================================
 
 /-!
 ## FinEnum-Based Evaluation
@@ -932,9 +904,7 @@ def allBeliefStates (s : RSAScenario U W) [FinEnum s.BeliefState] : List s.Belie
 def allGoals (s : RSAScenario U W) [FinEnum s.Goal] : List s.Goal :=
   FinEnum.toList s.Goal
 
--- ============================================================================
 -- List-based helpers (inlined to avoid circular import with RSA.Eval)
--- ============================================================================
 
 private def sumScores (scores : List ℚ) : ℚ :=
   scores.foldl (· + ·) 0
@@ -987,9 +957,7 @@ private def L1_world' {U W : Type} [BEq U] [BEq W]
     (w, worldPrior w * s1Score)
   normalize scores
 
--- ============================================================================
 -- Eval Methods for RSAScenario (Basic: Interp/Lexicon/BeliefState/Goal = Unit)
--- ============================================================================
 
 /--
 Run L0 (literal listener) and return as list.
@@ -1062,9 +1030,7 @@ def evalL1 (s : RSAScenario U W)
 
 end RSAScenario
 
--- ============================================================================
 -- Top-level FinEnum Eval Functions (simpler API)
--- ============================================================================
 
 /-!
 ## Top-level Eval Functions

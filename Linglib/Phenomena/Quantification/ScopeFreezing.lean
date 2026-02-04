@@ -54,9 +54,7 @@ This is an empirical gap — a direct comparison study would be valuable.
 
 namespace Phenomena.Quantification.ScopeFreezing
 
--- ============================================================================
 -- Scope Availability
--- ============================================================================
 
 /-- Available scope readings for a sentence -/
 inductive Availability where
@@ -79,9 +77,7 @@ inductive DataSource where
   | corpus          -- Corpus-based evidence
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- ============================================================================
 -- Freezing Context Types
--- ============================================================================
 
 /-- Types of configurations that induce scope freezing -/
 inductive FreezingContext where
@@ -95,9 +91,7 @@ inductive FreezingContext where
   | attitude          -- Attitude verb complements
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- ============================================================================
 -- Scope Freezing Example Structure
--- ============================================================================
 
 /-- A scope freezing example with empirical judgment -/
 structure Example where
@@ -125,9 +119,6 @@ structure Example where
   notes : String := ""
   deriving Repr
 
--- ============================================================================
--- PART 1: Possessor Freezing (Classic paradigm)
--- ============================================================================
 
 /-!
 ## Possessor Freezing
@@ -182,9 +173,6 @@ def possessor_variant2 : Example :=
   , confidence := .gradient
   , notes := "Possessor blocks inverse; sentence is odd" }
 
--- ============================================================================
--- PART 2: Double Object Construction
--- ============================================================================
 
 /-!
 ## Double Object Freezing
@@ -229,9 +217,6 @@ def dative_variant : Example :=
   , confidence := .clear
   , notes := "Double object freezes subject-IO scope" }
 
--- ============================================================================
--- PART 3: Passive Freezing
--- ============================================================================
 
 /-!
 ## Passive Freezing
@@ -274,9 +259,6 @@ def passive_variant : Example :=
   , confidence := .gradient
   , notes := "by-phrase scope is limited" }
 
--- ============================================================================
--- PART 4: Heavy NP / Complexity Effects
--- ============================================================================
 
 /-!
 ## Heavy NP Effects
@@ -305,9 +287,6 @@ def heavy_frozen : Example :=
   , confidence := .gradient
   , notes := "Heavy subject: inverse scope degraded" }
 
--- ============================================================================
--- PART 5: Weak Crossover Effects
--- ============================================================================
 
 /-!
 ## Weak Crossover and Scope
@@ -338,9 +317,6 @@ def crossover_frozen : Example :=
   , inverseGloss := "*For every city_i, someone from it_i loves it_i"
   , notes := "Bound pronoun blocks QR (weak crossover)" }
 
--- ============================================================================
--- PART 6: Attitude Verbs
--- ============================================================================
 
 /-!
 ## Attitude Verb Scope
@@ -360,9 +336,7 @@ def attitude_frozen : Example :=
   , inverseGloss := "?For every student, someone believes they passed"
   , notes := "Embedded universal can't easily scope over matrix" }
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 def possessorExamples : List Example :=
   [possessor_baseline, possessor_frozen, possessor_variant1, possessor_variant2]
@@ -386,9 +360,7 @@ def allExamples : List Example :=
   possessorExamples ++ doubleObjectExamples ++ passiveExamples ++
   heavyNPExamples ++ crossoverExamples ++ attitudeExamples
 
--- ============================================================================
 -- Key Empirical Generalizations
--- ============================================================================
 
 /-- Possessor freezing is robust (clear judgments) -/
 def possessorFreezingIsClear : Bool :=
@@ -413,9 +385,7 @@ def ambiguousCount : Nat :=
 #eval frozenCount      -- 9
 #eval ambiguousCount   -- 6
 
--- ============================================================================
 -- Theoretical Predictions (to be tested in Theories/Comparisons/)
--- ============================================================================
 
 /-!
 ## What Theories Predict
@@ -449,9 +419,7 @@ def ambiguousCount : Nat :=
 3. Do all freezing contexts behave identically? (Syntax: possibly not; Processing: graded by complexity)
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

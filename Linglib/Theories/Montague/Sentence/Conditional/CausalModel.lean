@@ -37,9 +37,7 @@ import Mathlib.Tactic.Linarith
 
 namespace Theories.Montague.Conditional.CausalModel
 
--- ============================================================================
 -- Variables
--- ============================================================================
 
 /--
 A variable in a causal model.
@@ -57,9 +55,7 @@ instance : ToString Variable where
 /-- Create a variable from a string literal -/
 def mkVar (name : String) : Variable := ⟨name⟩
 
--- ============================================================================
 -- Situations (Def 9)
--- ============================================================================
 
 /--
 **Situation** (Definition 9 from Nadathur & Lauer 2020)
@@ -123,9 +119,7 @@ instance : Inhabited Situation := ⟨Situation.empty⟩
 
 end Situation
 
--- ============================================================================
 -- Causal Laws (Def 10)
--- ============================================================================
 
 /--
 **Causal Law** (Definition 10 from Nadathur & Lauer 2020)
@@ -170,9 +164,7 @@ def conjunctive (cause1 cause2 effect : Variable) : CausalLaw :=
 
 end CausalLaw
 
--- ============================================================================
 -- Causal Dynamics
--- ============================================================================
 
 /--
 **Causal Dynamics**: A collection of causal laws.
@@ -203,9 +195,7 @@ def lawsFor (dyn : CausalDynamics) (v : Variable) : List CausalLaw :=
 
 end CausalDynamics
 
--- ============================================================================
 -- Normal Causal Development (Def 15)
--- ============================================================================
 
 /--
 Apply all laws once to a situation.
@@ -246,9 +236,7 @@ def normalDevelopment (dyn : CausalDynamics) (s : Situation)
     if isFixpoint dyn s' then s'
     else normalDevelopment dyn s' n
 
--- ============================================================================
 -- Fixpoint Theorems
--- ============================================================================
 
 /--
 Empty dynamics has trivial fixpoint: any situation is a fixpoint.
@@ -298,9 +286,7 @@ theorem fixpoint_unchanged (dyn : CausalDynamics) (s : Situation) (fuel : Nat)
         sorry  -- Complex: need to track through foldl
     sorry  -- Full proof requires more machinery
 
--- ============================================================================
 -- Convenience Functions
--- ============================================================================
 
 /--
 Get the value of a variable after normal development.
@@ -328,9 +314,7 @@ def effectOccurs (dyn : CausalDynamics) (background : Situation)
   let withCause := background.extend cause true
   developsToTrue dyn withCause effect
 
--- ============================================================================
 -- Common Causal Structures
--- ============================================================================
 
 namespace CausalDynamics
 

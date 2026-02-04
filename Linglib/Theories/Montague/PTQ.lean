@@ -29,9 +29,7 @@ namespace Montague.PTQ
 
 open Montague
 
--- ============================================================================
 -- Section 1: Types (IL - Intensional Logic)
--- ============================================================================
 
 /-!
 **Types of Intensional Logic (Definition 1)**
@@ -68,9 +66,7 @@ abbrev Ty.ptq_eet := ⦃𝐞, ⦃𝐞, 𝐭⦄⦄              -- Relations: e �
 abbrev Ty.ptq_ett := ⦃⦃𝐞, 𝐭⦄, 𝐭⦄              -- Generalized quantifiers: (e → t) → t
 abbrev Ty.setIntens := ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄       -- Sets of property intensions
 
--- ============================================================================
 -- Section 2: Syntactic Categories (Definition 3)
--- ============================================================================
 
 /--
 **Syntactic Categories**
@@ -96,9 +92,7 @@ notation A " /' " B => Cat.rslash A B
 notation A " \\' " B => Cat.lslash A B
 notation A " //' " B => Cat.rslashI A B
 
--- ============================================================================
 -- Section 3: Category-Type Correspondence (Definition 4)
--- ============================================================================
 
 /--
 **The function f from categories to types**
@@ -132,9 +126,7 @@ a property (intension) and returns true iff every man has that property.
 -/
 theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄ := rfl
 
--- ============================================================================
 -- Section 4: Model Structure
--- ============================================================================
 
 /--
 **Intensional Model**
@@ -151,9 +143,7 @@ abbrev PTQModel.Den (m : PTQModel) (τ : Ty) := m.interpTy τ
 /-- Intension: function from worlds to extensions -/
 abbrev PTQModel.Intens (m : PTQModel) (a : Ty) := m.World → m.interpTy a
 
--- ============================================================================
 -- Section 5: Lexical Entries and Translations
--- ============================================================================
 
 /--
 **Lexical Entry Structure**
@@ -178,9 +168,7 @@ Examples from PTQ:
 - BₐTV = {love, find, seek, ...} (transitive verbs)
 -/
 
--- ============================================================================
 -- Section 6: Syntactic Rules (S1-S17)
--- ============================================================================
 
 /--
 **Syntactic Rule**
@@ -220,9 +208,7 @@ Example: "Every man loves a woman"
 - Or with "a woman" quantified in first (∃ > ∀)
 -/
 
--- ============================================================================
 -- Section 7: Translation Rules (T1-T17) - The Homomorphism
--- ============================================================================
 
 /--
 **Translation Rule**
@@ -272,9 +258,7 @@ This abstracts over the position of heₙ in φ and applies α' to
 the resulting property intension.
 -/
 
--- ============================================================================
 -- Section 8: Scope Ambiguity via Quantifying-In
--- ============================================================================
 
 /--
 **Scope Reading**
@@ -368,9 +352,7 @@ def inverseScopeTrue (love : ToyEntity → ToyEntity → Bool) : Bool :=
   allEntities.filter isWoman |>.any λ y =>
     allEntities.filter isMan |>.all λ x => love x y
 
--- ============================================================================
 -- Section 9: Key Theorems
--- ============================================================================
 
 /--
 **Surface scope is true in surface scenario**
@@ -427,9 +409,7 @@ theorem inverse_entails_surface (love : ToyEntity → ToyEntity → Bool) :
   obtain ⟨y, ⟨hy, hall⟩⟩ := h
   exact ⟨y, hy, hall x hx⟩
 
--- ============================================================================
 -- Section 10: The Homomorphism Property
--- ============================================================================
 
 /-
 **The Fundamental Insight of PTQ**
@@ -476,9 +456,7 @@ def Derivation.cat : Derivation → Cat
       | _ => .t  -- simplified
   | .quantIn _ _ _ => .t
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Formalizes

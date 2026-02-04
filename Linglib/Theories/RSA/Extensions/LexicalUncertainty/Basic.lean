@@ -31,9 +31,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Core.Distribution
 
--- ============================================================================
 -- Lexicon: A mapping from utterances to truth functions
--- ============================================================================
 
 /--
 A lexicon maps each utterance to a truth function over worlds.
@@ -72,9 +70,7 @@ notation:50 L' " ≤ₗ " L => refines L' L
 
 end Lexicon
 
--- ============================================================================
 -- LexicalUncertaintyScenario: RSA with multiple possible lexica
--- ============================================================================
 
 /--
 Lexical Uncertainty RSA Scenario.
@@ -113,9 +109,7 @@ structure LUScenario where
 
 attribute [instance] LUScenario.uttBEq LUScenario.worldBEq LUScenario.worldDecEq
 
--- ============================================================================
 -- Lexical Refinement: Generating Λ from base semantics
--- ============================================================================
 
 namespace LexicalRefinement
 
@@ -177,9 +171,7 @@ def generateLexica {U W : Type} [DecidableEq W] [DecidableEq U]
 
 end LexicalRefinement
 
--- ============================================================================
 -- LU-RSA Computations
--- ============================================================================
 
 namespace LURSA
 
@@ -255,9 +247,7 @@ def L1_lexicon (S : LUScenario) [BEq (Lexicon S.Utterance S.World)]
     let lScores := joint.filter (·.1.2 == L) |>.map (·.2)
     (L, RSA.Eval.sumScores lScores)
 
--- ============================================================================
 -- Convenience accessors
--- ============================================================================
 
 /-- Get L₀ probability for a specific world given a lexicon -/
 def L0_prob (S : LUScenario) (L : Lexicon S.Utterance S.World)
@@ -275,9 +265,7 @@ def L1_prob (S : LUScenario) (u : S.Utterance) (w : S.World) : ℚ :=
 
 end LURSA
 
--- ============================================================================
 -- Converting between LUScenario and RSAScenario
--- ============================================================================
 
 /--
 Create an LUScenario from basic components with a single lexicon.
@@ -305,9 +293,7 @@ Useful for comparing LU-RSA predictions to standard RSA.
 def LUScenario.runStandardL1 (S : LUScenario) (u : S.Utterance) : List (S.World × ℚ) :=
   RSA.Eval.basicL1 S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α (fun _ => 0) u
 
--- ============================================================================
 -- M-Implicature Scenario Builder
--- ============================================================================
 
 /--
 Build a scenario for M-implicatures (Horn 1984 / Division of Pragmatic Labor).
@@ -343,9 +329,7 @@ def mkMImplicatureScenario {U W : Type} [BEq U] [BEq W] [DecidableEq W]
   utterances := [SHORT, long]
   worlds := [FREQ, rare]
 
--- ============================================================================
 -- Some-or-All Ignorance Implicature
--- ============================================================================
 
 /--
 Observation states for ignorance implicatures.
@@ -422,9 +406,7 @@ def mkSomeOrAllScenario : LUScenario where
   utterances := [.all_, .some_, .someOrAll]
   worlds := [.knowAll, .knowSomeNot, .ignorant]
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 namespace LUTheorems
 

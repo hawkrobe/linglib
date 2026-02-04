@@ -30,9 +30,6 @@ namespace Theories.DynamicSemantics.PLA
 
 open Classical
 
--- ============================================================================
--- PART 1: Semantic Ingredients
--- ============================================================================
 
 /-- An assignment maps variable indices to entities -/
 abbrev Assignment (E : Type*) := VarIdx → E
@@ -59,9 +56,6 @@ structure Model (E : Type*) where
   /-- Interpretation: predicate name → argument tuple → truth value -/
   interp : String → List E → Bool
 
--- ============================================================================
--- PART 2: Term Evaluation
--- ============================================================================
 
 /--
 Evaluate a term given assignment g and witness sequence ê.
@@ -83,9 +77,6 @@ theorem Term.eval_var {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : Va
 theorem Term.eval_pron {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : PronIdx) :
     (Term.pron i).eval g ê = ê i := rfl
 
--- ============================================================================
--- PART 3: Satisfaction (Dekker Definition 3)
--- ============================================================================
 
 /--
 PLA Satisfaction: M, g, ê ⊨ φ
@@ -108,9 +99,6 @@ def Formula.sat {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E) (ê : 
 def Formula.trueIn {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) : Prop :=
   ∀ g : Assignment E, ∃ ê : WitnessSeq E, φ.sat M g ê
 
--- ============================================================================
--- PART 4: Basic Satisfaction Properties
--- ============================================================================
 
 /-- Double negation elimination -/
 theorem Formula.sat_neg_neg {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
@@ -140,9 +128,6 @@ theorem Formula.sat_exists_intro {E : Type*} [Nonempty E] (M : Model E) (g : Ass
     φ.sat M (g[i ↦ e]) ê → (Formula.exists_ i φ).sat M g ê :=
   fun h => ⟨e, h⟩
 
--- ============================================================================
--- PART 5: Resolution Correctness
--- ============================================================================
 
 /--
 Term evaluation under resolution: when ê(i) = g(ρ(i)), evaluation is preserved.
@@ -241,9 +226,6 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
         exact fun hc => this (Finset.mem_insert_of_mem hc)
       rwa [ih (g[j ↦ e]) ê hcompat' hnoCapture']
 
--- ============================================================================
--- PART 6: Examples
--- ============================================================================
 
 section Examples
 
@@ -261,9 +243,7 @@ example : (exManWalkedIn.resolve exResolution).range = ∅ :=
 
 end Examples
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

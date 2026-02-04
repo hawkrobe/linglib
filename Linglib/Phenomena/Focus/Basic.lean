@@ -31,9 +31,7 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Focus.Basic
 
--- ============================================================================
 -- Focus Data Structure
--- ============================================================================
 
 /-- FIP application type (Rooth 1992 §2) -/
 inductive FIPApplication where
@@ -65,9 +63,7 @@ structure FocusDatum where
   source : String := ""
   deriving Repr
 
--- ============================================================================
 -- Part 1: Association with Focus (Rooth 1992 §2.1)
--- ============================================================================
 
 /-!
 ## "Only" Associates with Focus
@@ -115,9 +111,7 @@ def evenExample : FocusDatum := {
 def focusingAdverbExamples : List FocusDatum :=
   [roothOnlyBill, roothOnlySue, evenExample]
 
--- ============================================================================
 -- Part 2: Contrast and Parallelism (Rooth 1992 §3)
--- ============================================================================
 
 /-!
 ## Contrast in Discourse
@@ -164,9 +158,7 @@ def vpContrast : FocusDatum := {
 def contrastExamples : List FocusDatum :=
   [roothContrast, contrastiveTopic, vpContrast]
 
--- ============================================================================
 -- Part 3: Scalar Effects
--- ============================================================================
 
 /-!
 ## Focus and Scalar Implicature
@@ -203,9 +195,7 @@ def quantifierFocus : FocusDatum := {
 def scalarExamples : List FocusDatum :=
   [scalarFocusStrong, quantifierFocus]
 
--- ============================================================================
 -- Part 4: Q-A Congruence
--- ============================================================================
 
 /-!
 ## Question-Answer Congruence
@@ -242,17 +232,13 @@ def qaIncongruent : FocusDatum := {
 def qaExamples : List FocusDatum :=
   [qaCongruent, qaIncongruent]
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 /-- All focus examples -/
 def allFocusData : List FocusDatum :=
   focusingAdverbExamples ++ contrastExamples ++ scalarExamples ++ qaExamples
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

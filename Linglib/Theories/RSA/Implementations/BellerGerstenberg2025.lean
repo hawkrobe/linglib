@@ -50,9 +50,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.BellerGerstenberg2025
 
--- ============================================================================
--- PART 1: Types
--- ============================================================================
 
 /--
 Causal expressions in English for describing causation.
@@ -139,9 +136,6 @@ instance : FinEnum CausalWorld :=
     simp only [allCausalWorlds, List.mem_cons, CausalWorld.mk.injEq]
     cases w <;> cases h <;> cases s <;> simp)
 
--- ============================================================================
--- PART 2: Expression Semantics
--- ============================================================================
 
 /--
 Semantics of causal expressions in terms of causal aspects.
@@ -162,9 +156,6 @@ def expressionMeaning (cw : CausalWorld) : CausalExpression → Bool
 def expressionMeaningRat (cw : CausalWorld) (u : CausalExpression) : ℚ :=
   boolToRat (expressionMeaning cw u)
 
--- ============================================================================
--- PART 3: RSAScenario Construction
--- ============================================================================
 
 /--
 RSA scenario for causal expression choice.
@@ -185,9 +176,6 @@ def scenario : RSAScenario CausalExpression CausalWorld :=
 /-- Default scenario with uniform prior over causal worlds -/
 def defaultScenario : RSAScenario CausalExpression CausalWorld := scenario
 
--- ============================================================================
--- PART 4: RSA Evaluation via FinEnum Bridge
--- ============================================================================
 
 /-!
 ## FinEnum-Based Evaluation
@@ -209,9 +197,6 @@ def runS1 (cw : CausalWorld) : List (CausalExpression × ℚ) :=
 def runL1 (u : CausalExpression) : List (CausalWorld × ℚ) :=
   scenario.evalL1 u
 
--- ============================================================================
--- PART 5: Scalar Hierarchy Theorems
--- ============================================================================
 
 /--
 "caused" implies "enabled": if H ∧ (W ∨ S) then W ∨ S.
@@ -249,9 +234,6 @@ theorem madeNoDifference_iff_not_affected (cw : CausalWorld) :
   simp only [expressionMeaning]
   cases cw.whether <;> cases cw.how <;> cases cw.sufficient <;> decide
 
--- ============================================================================
--- PART 6: Characteristic Worlds
--- ============================================================================
 
 /-- World where cause was only necessary (W only) -/
 def world_W_only : CausalWorld := ⟨true, false, false⟩
@@ -271,9 +253,6 @@ def world_none : CausalWorld := ⟨false, false, false⟩
 /-- World where "caused" applies (H and W) -/
 def world_caused : CausalWorld := ⟨true, true, false⟩
 
--- ============================================================================
--- PART 7: Example Predictions
--- ============================================================================
 
 /-- In W-only world, "enabled" is true but "caused" is false -/
 theorem W_only_enabled_not_caused :
@@ -308,9 +287,6 @@ theorem none_world_only_negative :
   simp only [expressionMeaning, world_none]
   decide
 
--- ============================================================================
--- PART 8: Evaluate RSA
--- ============================================================================
 
 #eval runL0 .caused   -- Worlds where "caused" is literally true
 #eval runL0 .enabled  -- Worlds where "enabled" is literally true
@@ -322,9 +298,7 @@ theorem none_world_only_negative :
 #eval runL1 .caused   -- Listener inference from "caused"
 #eval runL1 .enabled  -- Listener inference from "enabled"
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## How RSA Derives Causal Expression Pragmatics

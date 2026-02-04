@@ -25,9 +25,6 @@ namespace Theories.DynamicSemantics.Comparisons
 
 open Theories.DynamicSemantics.PLA
 
--- ============================================================================
--- PART 1: The DNE Gap in PLA
--- ============================================================================
 
 /--
 In PLA, ¬¬φ has the same domain as φ syntactically,
@@ -55,9 +52,6 @@ theorem pla_dne_has_domain {E : Type*} [Nonempty E] (x : VarIdx) (φ : Formula) 
   simp only [Formula.domain]
   exact Finset.mem_insert_self x _
 
--- ============================================================================
--- PART 2: BUS Has DNE (Stated Abstractly)
--- ============================================================================
 
 /-!
 ## BUS Structure (from Core.Bilateral)
@@ -92,9 +86,6 @@ Swapping twice gives identity.
 theorem bus_dne_principle : True := trivial
 -- The actual theorem is `BilateralDen.neg_neg` in Core.Bilateral
 
--- ============================================================================
--- PART 3: Bathroom Sentence Bridge
--- ============================================================================
 
 /--
 **PLA Problem**: The bathroom sentence has an unbound pronoun.
@@ -136,9 +127,6 @@ available in the negative dimension of ¬∃x.bathroom.
 See `Linglib.Theories.DynamicSemantics.BUS.FreeChoice` for the full derivation.
 -/
 
--- ============================================================================
--- PART 4: The Structural Comparison
--- ============================================================================
 
 /-!
 ## Summary: PLA vs BUS
@@ -169,9 +157,7 @@ The structural difference in negation is the key:
 - BUS preserves them in the other dimension (structural swap)
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Bridge Theorems in This Module

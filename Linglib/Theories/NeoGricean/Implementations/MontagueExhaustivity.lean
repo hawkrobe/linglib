@@ -29,9 +29,6 @@ namespace NeoGricean.MontagueExhaustivity
 open Montague Montague.Determiner.Quantifier
 open NeoGricean.Exhaustivity
 
--- ============================================================================
--- PART 1: World-Indexed Models
--- ============================================================================
 
 /-
 ## World-Indexed Montague Models
@@ -78,9 +75,6 @@ def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := fun s =>
   | 3, _ => true
   | _, _ => false  -- shouldn't happen for Fin 4
 
--- ============================================================================
--- PART 2: Compositional Truth Conditions
--- ============================================================================
 
 /-
 ## Deriving Truth Conditions Compositionally
@@ -117,9 +111,6 @@ example : allPassedMontague ⟨1, by omega⟩ = false := rfl
 example : allPassedMontague ⟨2, by omega⟩ = false := rfl
 example : allPassedMontague ⟨3, by omega⟩ = true := rfl
 
--- ============================================================================
--- PART 3: Converting to Prop' for Exhaustivity
--- ============================================================================
 
 /-- Convert Bool to Prop -/
 def boolToProp (b : Bool) : Prop := b = true
@@ -133,9 +124,6 @@ def allPassed_Prop : Prop' (Fin 4) := fun w => boolToProp (allPassedMontague w)
 /-- Alternative set for exhaustivity -/
 def someAllALT_Montague : Set (Prop' (Fin 4)) := {somePassed_Prop, allPassed_Prop}
 
--- ============================================================================
--- PART 4: Equivalence with Hand-Crafted Definitions
--- ============================================================================
 
 /-
 ## Grounding: Montague = Hand-Crafted
@@ -164,9 +152,6 @@ theorem allPassed_eq_handcrafted :
   simp only [allPassed_Prop, allStudents_handcrafted, boolToProp]
   fin_cases w <;> simp [allPassedMontague, every_sem, isStudent, passedAt, FiniteModel.elements]
 
--- ============================================================================
--- PART 5: Exhaustivity on Compositional Meanings
--- ============================================================================
 
 /-
 ## Applying Exhaustivity to Montague Meanings
@@ -246,9 +231,6 @@ theorem exhMW_somePassed_not_w3 :
         hle allPassed_Prop (by simp [someAllALT_Montague]) w3_both.2
       exact w1_not_allPassed this
 
--- ============================================================================
--- PART 6: Theorem 9 Application (exhMW ≡ exhIE)
--- ============================================================================
 
 /-
 ## Theorem 9: exhMW ≡ exhIE for Compositional Meanings
@@ -271,9 +253,7 @@ theorem exhIE_somePassed_at_w1 :
     exhIE someAllALT_Montague somePassed_Prop w1_montague :=
   montague_exhMW_entails_exhIE w1_montague exhMW_somePassed_at_w1
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Demonstrates

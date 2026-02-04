@@ -20,9 +20,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 namespace Minimalism
 
--- ============================================================================
 -- Clause Type Triggers (Inversion-Specific)
--- ============================================================================
 
 /-- Matrix questions trigger T-to-C movement (to check [+Q] on C) -/
 def matrixTriggersTToC (ct : ClauseType) (tPos : TPosition) : Prop :=
@@ -32,9 +30,7 @@ def matrixTriggersTToC (ct : ClauseType) (tPos : TPosition) : Prop :=
 def embeddedNoTToC (ct : ClauseType) (tPos : TPosition) : Prop :=
   ct = .embeddedQuestion → tPos = .inT
 
--- ============================================================================
 -- Derived Word Order Predictions
--- ============================================================================
 
 /-- Matrix questions have T before subject (via T-to-C) -/
 theorem matrix_has_t_before_subject (tPos : TPosition)
@@ -50,9 +46,7 @@ theorem embedded_has_subject_before_t (tPos : TPosition)
   have : tPos = .inT := h rfl
   simp [this, subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
 
--- ============================================================================
 -- Connecting to Word Lists
--- ============================================================================
 
 /-- Find auxiliary (T) position in word list -/
 def findAuxInWords (ws : List Word) : Option Nat :=
@@ -74,9 +68,7 @@ def wordsHaveSubjectBeforeT (ws : List Word) : Bool :=
   | some t, some s => s < t
   | _, _ => false
 
--- ============================================================================
 -- Licensing
--- ============================================================================
 
 /-- A clause: words + structural info -/
 structure Clause where
@@ -99,9 +91,7 @@ def wellFormed (c : Clause) : Prop :=
 def licenses (ws : List Word) (ct : ClauseType) : Prop :=
   ∃ tPos : TPosition, wellFormed ⟨ws, tPos, ct⟩
 
--- ============================================================================
 -- Licensing Theorems
--- ============================================================================
 
 /-- Matrix questions with T-first word order are licensed -/
 theorem licenses_matrix_t_first (ws : List Word)
@@ -153,9 +143,7 @@ theorem not_licenses_embedded_t_first (ws : List Word)
   rw [h] at hws
   cases hws
 
--- ============================================================================
 -- Verification
--- ============================================================================
 
 open Lexicon
 
@@ -176,9 +164,7 @@ example : licenses [john, can, eat] .embeddedQuestion :=
 example : ¬ licenses [can, john, eat] .embeddedQuestion :=
   not_licenses_embedded_t_first _ rfl
 
--- ============================================================================
 -- Comparison: HPSG vs Minimalism
--- ============================================================================
 
 /-
 Both frameworks predict the same surface patterns:

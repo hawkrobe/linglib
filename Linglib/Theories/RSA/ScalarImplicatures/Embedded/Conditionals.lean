@@ -39,9 +39,7 @@ import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA.ConditionalEmbedding
 
--- ============================================================================
 -- World Structure for Conditionals
--- ============================================================================
 
 /--
 Student outcome for conditional scenario.
@@ -70,9 +68,7 @@ structure CondWorld where
   professor : ProfState
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
 -- Truth Conditions for Conditionals
--- ============================================================================
 
 /--
 "Some students passed" - weak (existential) reading.
@@ -104,9 +100,7 @@ def nonePassed (w : CondWorld) : Bool :=
 def profHappy (w : CondWorld) : Bool :=
   w.professor == .happy
 
--- ============================================================================
 -- Conditional Interpretations
--- ============================================================================
 
 /--
 Interpretations of "If some students passed, the professor will be happy":
@@ -130,9 +124,7 @@ def conditionalMeaning (interp : CondInterpretation) (w : CondWorld) : Bool :=
   | .global => !somePassed w || profHappy w      -- ¬(≥1 passed) ∨ happy
   | .local_ => !someNotAllPassed w || profHappy w -- ¬(some-not-all) ∨ happy
 
--- ============================================================================
 -- World Space
--- ============================================================================
 
 /--
 Relevant worlds for the conditional scenario.
@@ -166,9 +158,7 @@ instance : Fintype CondWorld :=
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
 
--- ============================================================================
 -- Key Predictions: DE-like Behavior
--- ============================================================================
 
 /--
 Global interpretation: "If some passed, happy"
@@ -192,9 +182,7 @@ theorem local_false_when_someNotAll_unhappy :
 theorem local_true_when_all_passed :
     conditionalMeaning .local_ ⟨.allP, .unhappy⟩ = true := rfl
 
--- ============================================================================
 -- DE Property: Global is Stronger
--- ============================================================================
 
 /--
 The key DE property: Global ENTAILS Local.
@@ -262,9 +250,7 @@ theorem conditional_antecedent_is_DE :
   case allP.unhappy => exact absurd h (by native_decide)
   case allP.happy => native_decide
 
--- ============================================================================
 -- RSA Prediction
--- ============================================================================
 
 /-
 ## RSA Analysis
@@ -307,9 +293,7 @@ theorem conditional_like_de_context :
   · use ⟨.allP, .unhappy⟩
     decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Key Results

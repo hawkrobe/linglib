@@ -34,9 +34,6 @@ namespace RSA.EmbeddedScalars
 open RSA.Eval LURSA
 open Phenomena.ScalarImplicatures
 
--- ============================================================================
--- PART 1: World States
--- ============================================================================
 
 /--
 World states for embedded scalar scenarios.
@@ -51,9 +48,6 @@ inductive EmbeddedWorld where
   | someAll     -- Someone solved all problems
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
--- PART 2: Utterances for DE Context
--- ============================================================================
 
 /--
 Utterances for DE context: "No one solved {some/all} problems"
@@ -66,9 +60,6 @@ inductive DEUtterance where
   | null    -- Null/baseline utterance
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
--- PART 3: Lexica for "some" (The Actual Potts Model)
--- ============================================================================
 
 /-
 ## The Lexical Uncertainty Model
@@ -121,9 +112,6 @@ def lexRefined : Lexicon DEUtterance EmbeddedWorld where
     -- Null utterance: true everywhere
     | .null, _ => true
 
--- ============================================================================
--- PART 4: LU Scenario for DE Context
--- ============================================================================
 
 /--
 Lexical Uncertainty scenario for DE context.
@@ -144,9 +132,6 @@ def noSomeLUScenario : LUScenario where
   worlds := [.none, .someNotAll, .someAll]
   α := 1  -- Potts uses λ=0.1, we analyze the α→0 limit separately
 
--- ============================================================================
--- PART 5: RSA Computations for DE (Using LURSA)
--- ============================================================================
 
 /-- L₁ distribution over worlds for "noSome" utterance -/
 def l1WorldsDE : List (EmbeddedWorld × ℚ) :=
@@ -159,9 +144,6 @@ def l1JointDE : List ((EmbeddedWorld × Lexicon DEUtterance EmbeddedWorld) × �
 #eval l1WorldsDE
 #eval l1JointDE.length  -- Should be 6 (3 worlds × 2 lexica)
 
--- ============================================================================
--- PART 6: Lexicon Marginals
--- ============================================================================
 
 /-
 ## Key Insight: Lexicon Inference Reveals Global/Local Preference
@@ -200,9 +182,6 @@ def pLexRefined : ℚ :=
 #eval pLexRefined
 #eval (pLexBase, pLexRefined, decide (pLexBase > pLexRefined))
 
--- ============================================================================
--- PART 7: UE Context ("Someone solved some problems")
--- ============================================================================
 
 /-- Utterances for UE context -/
 inductive UEUtterance where
@@ -265,9 +244,6 @@ def pLexRefinedUE : ℚ :=
 #eval pLexRefinedUE
 #eval (pLexBaseUE, pLexRefinedUE, decide (pLexRefinedUE > pLexBaseUE))
 
--- ============================================================================
--- PART 8: Analysis - Why Simple LU Doesn't Work
--- ============================================================================
 
 /-
 ## Analysis of Results
@@ -333,9 +309,6 @@ theorem simple_lu_model_limitation :
     pLexBaseUE > pLexRefinedUE := by
   native_decide
 
--- ============================================================================
--- PART 9: What Would Make It Work
--- ============================================================================
 
 /-
 ## Requirements for Correct Predictions
@@ -373,9 +346,6 @@ the full empirical pattern. The existence proof is in Potts et al. (2016)
 with their richer model structure.
 -/
 
--- ============================================================================
--- PART 10: Connection to Phenomena Data
--- ============================================================================
 
 /--
 **Connection to empirical pattern**.
@@ -393,9 +363,6 @@ theorem empirical_pattern_documented :
     someAllBlocking.implicatureInUE = true := by
   native_decide
 
--- ============================================================================
--- PART 11: Summary
--- ============================================================================
 
 /-
 ## Summary: The Actual Potts et al. (2016) Model

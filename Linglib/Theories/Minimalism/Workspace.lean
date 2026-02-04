@@ -30,9 +30,7 @@ import Linglib.Theories.Minimalism.Agree
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Numeration
--- ============================================================================
 
 /-- A numeration entry: a lexical item with a count (how many times it can be used)
 
@@ -68,9 +66,7 @@ def Numeration.contains (n : Numeration) (li : ExtendedLI) : Bool :=
 def Numeration.totalCount (n : Numeration) : Nat :=
   n.entries.foldl (λ acc e => acc + e.count) 0
 
--- ============================================================================
 -- Part 2: Workspace
--- ============================================================================
 
 /-- The workspace contains the active syntactic objects being combined
 
@@ -97,9 +93,7 @@ def Workspace.getResult (w : Workspace) : Option SyntacticObject :=
   | [so] => some so
   | _ => none
 
--- ============================================================================
 -- Part 3: Select Operation
--- ============================================================================
 
 /-- Result of a select operation -/
 structure SelectResult where
@@ -143,9 +137,7 @@ def select (n : Numeration) (w : Workspace) (li : ExtendedLI) : Option SelectRes
       selected := so
     }
 
--- ============================================================================
 -- Part 4: Merge Triggers
--- ============================================================================
 
 /-- What triggers Merge? In Minimalism, uninterpretable features drive operations -/
 inductive MergeTrigger where
@@ -162,9 +154,7 @@ def needsMerge (li : ExtendedLI) : Bool :=
 def getSelectionalTarget (li : ExtendedLI) : Option Cat :=
   li.base.outerSel.head?
 
--- ============================================================================
 -- Part 5: External Merge Operation
--- ============================================================================
 
 /-- External Merge: combine two separate SOs from the workspace
 
@@ -192,9 +182,7 @@ def applyExternalMerge (w : Workspace) (op : ExternalMergeOp) : Option Workspace
 def validExternalMerge (op : ExternalMergeOp) : Bool :=
   selectsB op.selector op.selected
 
--- ============================================================================
 -- Part 6: Internal Merge Operation
--- ============================================================================
 
 /-- Internal Merge: re-merge an SO already in the structure (movement)
 
@@ -229,9 +217,7 @@ def applyInternalMerge (w : Workspace) (op : InternalMergeOp) : Option Workspace
     let merged := merge op.mover op.target
     some ⟨merged :: objects', w.nextId⟩
 
--- ============================================================================
 -- Part 7: Derivation State
--- ============================================================================
 
 /-- A derivation state captures everything needed to continue a derivation -/
 structure DerivationState where
@@ -256,9 +242,7 @@ def DerivationState.getResult (s : DerivationState) : Option SyntacticObject :=
   if s.isComplete then s.workspace.getResult
   else none
 
--- ============================================================================
 -- Part 8: Derivation Steps
--- ============================================================================
 
 /-- A single step in a derivation -/
 inductive DerivationStep where
@@ -283,9 +267,7 @@ def applyStep (s : DerivationState) (step : DerivationStep) : Option DerivationS
     | none => none
     | some w' => some ⟨s.numeration, w'⟩
 
--- ============================================================================
 -- Part 9: Full Derivation
--- ============================================================================
 
 /-- A derivation is a sequence of steps from initial state to completion -/
 structure FullDerivation where
@@ -299,9 +281,7 @@ structure FullDerivation where
 def executeSteps (n : Numeration) (steps : List DerivationStep) : Option DerivationState :=
   steps.foldlM (λ s step => applyStep s step) (DerivationState.init n)
 
--- ============================================================================
 -- Part 10: Example: Building "the cat"
--- ============================================================================
 
 /-- Example: Numeration for "the cat" -/
 def theCatNumeration : Numeration :=

@@ -39,9 +39,7 @@ namespace RSA.LassiterGoodman2017
 
 open RSA.Eval
 
--- ============================================================================
 -- Domain: Heights and Thresholds (Discretized)
--- ============================================================================
 
 /--
 Discretized height values (in inches, scaled).
@@ -72,9 +70,7 @@ def Threshold.toNat : Threshold → Nat
   | .t0 => 0 | .t1 => 1 | .t2 => 2 | .t3 => 3 | .t4 => 4
   | .t5 => 5 | .t6 => 6 | .t7 => 7 | .t8 => 8 | .t9 => 9
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Utterances about height -/
 inductive Utterance where
@@ -83,9 +79,7 @@ inductive Utterance where
   | silent  -- say nothing
   deriving Repr, DecidableEq, BEq, Fintype
 
--- ============================================================================
 -- Semantics with Free Threshold Variable
--- ============================================================================
 
 /--
 Literal meaning of "tall" given a threshold.
@@ -114,9 +108,7 @@ def meaning (u : Utterance) (θ : Threshold) (h : Height) : Bool :=
   | .short => shortMeaning θ h
   | .silent => true  -- Silent is always "true" (vacuously)
 
--- ============================================================================
 -- Joint State: (Height, Threshold)
--- ============================================================================
 
 /--
 Joint state space: pairs of (Height, Threshold).
@@ -129,9 +121,7 @@ instance : Fintype JointState := inferInstance
 instance : DecidableEq JointState := inferInstance
 instance : BEq JointState := inferInstance
 
--- ============================================================================
 -- Priors
--- ============================================================================
 
 /--
 Height prior: approximates a normal distribution centered at h5.
@@ -167,9 +157,7 @@ The paper assumes independence (equation 29, footnote 10).
 def jointPrior (state : JointState) : ℚ :=
   heightPrior state.1 * thresholdPrior state.2
 
--- ============================================================================
 -- Utterance Costs (Full Paper Model)
--- ============================================================================
 
 /--
 Utterance costs from the full paper model.
@@ -191,9 +179,7 @@ def utteranceCost (costWord : ℚ) : Utterance → ℚ
 /-- Default word cost (calibrated to approximate exp(-α×C) behavior) -/
 def defaultWordCost : ℚ := 1
 
--- ============================================================================
 -- RSA Model with Threshold Inference
--- ============================================================================
 
 /-- List of all utterances -/
 def allUtterances : List Utterance := [.tall, .short, .silent]
@@ -229,9 +215,7 @@ def runL1_world (u : Utterance) : List (Height × ℚ) :=
 def runL1_interp (u : Utterance) : List (Threshold × ℚ) :=
   RSA.Eval.marginalize (runL1_joint u) Prod.snd
 
--- ============================================================================
 -- Cost-Sensitive RSA (Full Paper Model)
--- ============================================================================
 
 /--
 Cost-sensitive S1: Full paper model with utterance costs.
@@ -271,9 +255,7 @@ def L1_interp_withCost (cost : Utterance → ℚ) (discountFactor : ℚ)
     (u : Utterance) : List (Threshold × ℚ) :=
   RSA.Eval.marginalize (L1_joint_withCost cost discountFactor u) Prod.snd
 
--- ============================================================================
 -- Compute RSA Distributions (Basic Model - No Costs)
--- ============================================================================
 
 /-- L0 for "tall" at threshold t5 (middle threshold) -/
 def l0_tall_t5 : List (Height × ℚ) := runL0 .tall .t5
@@ -299,9 +281,7 @@ def l1_height_tall : List (Height × ℚ) := runL1_world .tall
 /-- L1 marginal over thresholds given "tall" -/
 def l1_threshold_tall : List (Threshold × ℚ) := runL1_interp .tall
 
--- ============================================================================
 -- Compute RSA Distributions (Full Paper Model - With Costs)
--- ============================================================================
 
 /-- Cost function for vague adjectives -/
 def vagueAdjectiveCost : Utterance → ℚ := utteranceCost defaultWordCost
@@ -325,9 +305,7 @@ def l1_height_tall_cost : List (Height × ℚ) :=
 def l1_threshold_tall_cost : List (Threshold × ℚ) :=
   L1_interp_withCost vagueAdjectiveCost costDiscount .tall
 
--- ============================================================================
 -- Evaluate
--- ============================================================================
 
 -- L0: Literal listener at fixed threshold
 #eval l0_tall_t5   -- Heights > 5 get probability
@@ -350,9 +328,7 @@ def l1_threshold_tall_cost : List (Threshold × ℚ) :=
 #eval l1_height_tall_cost     -- Height posterior with costs
 #eval l1_threshold_tall_cost  -- Threshold posterior - should show sweet spot
 
--- ============================================================================
 -- Main Theorems (Basic Model - No Costs)
--- ============================================================================
 
 /--
 **Height Inference Theorem**
@@ -437,9 +413,7 @@ theorem extreme_thresholds_lower_than_middle :
     RSA.Eval.getScore l1_threshold_tall .t9 < RSA.Eval.getScore l1_threshold_tall .t5 := by
   native_decide
 
--- ============================================================================
 -- Main Theorems (Full Paper Model - With Costs)
--- ============================================================================
 
 /--
 **Height Inference with Costs**
@@ -503,9 +477,7 @@ theorem borderline_has_intermediate_prob_cost :
     RSA.Eval.getScore l1_height_tall_cost .h5 < RSA.Eval.getScore l1_height_tall_cost .h8 := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
--- ============================================================================
 -- Sweet Spot Characterization (Section 4.3)
--- ============================================================================
 
 /-!
 ## Analytical Conditions for the Pragmatic Sweet Spot
@@ -605,9 +577,7 @@ theorem costs_compress_threshold_distribution :
     (RSA.Eval.getScore l1_threshold_tall_cost .t0 - RSA.Eval.getScore l1_threshold_tall_cost .t5) := by
   native_decide
 
--- ============================================================================
 -- Sweet Spot Existence Structure
--- ============================================================================
 
 /--
 Conditions under which the pragmatic sweet spot exists.
@@ -668,9 +638,7 @@ theorem sweet_spot_bounded_away_from_extremes :
     RSA.Eval.getScore l1_threshold_tall .t5 / RSA.Eval.getScore l1_threshold_tall .t0 := by
   native_decide
 
--- ============================================================================
 -- Sweet Spot: What We Proved vs. Conjectured
--- ============================================================================
 
 /-!
 ## Summary: Sweet Spot Characterization
@@ -729,9 +697,7 @@ def sweetSpotLocationConjecture : Prop :=
   -- (Requires defining "optimal" as argmax of posterior)
   True  -- Placeholder
 
--- ============================================================================
 -- Context-Sensitivity: The Deep Theorem
--- ============================================================================
 
 /-!
 ## The Core Theoretical Contribution
@@ -789,9 +755,7 @@ def l1_height_tall_basketball : List (Height × ℚ) :=
 #eval l1_threshold_tall_basketball  -- Should be shifted right!
 #eval l1_height_tall_basketball
 
--- ============================================================================
 -- The Context-Sensitivity Theorem
--- ============================================================================
 
 /--
 **Context-Sensitivity Theorem (Main Result)**
@@ -848,9 +812,7 @@ theorem same_semantics_different_interpretation :
     RSA.Eval.getScore l1_height_tall_basketball .h5 < RSA.Eval.getScore l1_height_tall .h5 := by
   native_decide
 
--- ============================================================================
 -- Sorites Tolerance (Section 5)
--- ============================================================================
 
 /-!
 ## The Sorites Paradox and Tolerance
@@ -920,9 +882,7 @@ theorem sorites_clear_endpoints :
     RSA.Eval.getScore l1_height_tall .h1 < 1/20 := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
--- ============================================================================
 -- Threshold vs Graded Semantics: Equivalence Conditions
--- ============================================================================
 
 /-!
 ## Threshold Semantics vs Graded Semantics
@@ -1014,9 +974,7 @@ theorem graded_no_sharp_boundary :
     gradedTallness .h9 < 1 := by
   native_decide
 
--- ============================================================================
 -- When Threshold and Graded Semantics Diverge
--- ============================================================================
 
 /-!
 ## When Do They Diverge?
@@ -1072,9 +1030,7 @@ theorem threshold_graded_agree_extremes :
     RSA.Eval.getScore l1_height_tall_graded .h10 > RSA.Eval.getScore l1_height_tall_graded .h1 := by
   native_decide
 
--- ============================================================================
 -- Threshold vs Graded: Summary
--- ============================================================================
 
 /-!
 ## Summary: Threshold ↔ Graded Equivalence
@@ -1137,90 +1093,5 @@ This is the paper's main theoretical advantage over graded semantics.
 def thresholdAdvantageExplanation : String :=
   "Threshold semantics + inference > Graded semantics because " ++
   "context-sensitivity is derived, not stipulated."
-
--- ============================================================================
--- Summary
--- ============================================================================
-
-/-
-## Lassiter & Goodman 2017: Key Insights Formalized
-
-### 1. Free Threshold Variable
-
-Scalar adjectives like "tall" have semantics: λθ.λx. height(x) > θ
-The threshold θ is inferred pragmatically, not fixed.
-
-### 2. Joint Inference (Equation 29)
-
-P_L1(height, θ | "tall") ∝ P_S1("tall" | height, θ) × P(height) × P(θ)
-
-The listener jointly infers:
-- What height the speaker is describing
-- What threshold makes the utterance informative and true
-
-### 3. Basic vs Full Paper Model
-
-**Basic Model** (no costs):
-- S1(u|w,θ) ∝ L0(w|u,θ)
-- Result: Lower thresholds monotonically preferred (t0 > t5 > t9)
-- Problem: Doesn't capture the pragmatic sweet spot
-
-**Full Paper Model** (with costs):
-- S1(u|w,θ) ∝ exp(α × [ln(L0(w|u,θ)) - C(u)])
-- Result: Middle thresholds preferred (sweet spot around t4-t5)
-- Cost function: C(tall) = C(short) = 1, C(silent) = 0
-
-### 4. Pragmatic Sweet Spot (Characterized, Not Assumed)
-
-The sweet spot (where middle thresholds are preferred) emerges when
-costs are sufficient to overcome the basic model's low-threshold preference.
-
-We prove three key facts about the sweet spot:
-
-1. **Direction**: Costs shift probability toward middle thresholds
-   (`costs_favor_middle_over_low_threshold`)
-
-2. **Gap reduction**: Costs compress the distribution, reducing the
-   advantage of low thresholds (`costs_reduce_low_middle_gap`)
-
-3. **Baseline**: Without costs, low thresholds dominate
-   (`basic_model_low_beats_middle`)
-
-The full sweet spot (P(t_mid) > P(t_low)) requires sufficiently high
-costs to reverse the basic ordering. Our linear cost model shows
-the effect direction but not full reversal - the paper's exponential
-model with calibrated parameters achieves this.
-
-### 5. Context-Sensitivity
-
-The interpretation adapts to the reference class prior.
-"Tall for a jockey" ≠ "tall for a basketball player"
-(See `basketballPrior` for a shifted height distribution)
-
-### 6. Borderline Cases
-
-Individuals near the inferred threshold have intermediate
-probability of satisfying the predicate.
-(See `borderline_has_intermediate_prob` and `borderline_has_intermediate_prob_cost`)
-
-### 7. Sorites Resistance
-
-Each step in a sorites has high but not certain probability.
-Over many steps, uncertainty accumulates → paradox dissolves.
-
-## Connection to Phenomena/Vagueness/Data.lean
-
-The empirical patterns formalized in Phenomena/Vagueness/Data.lean are:
-- **ContextShiftDatum**: Context-sensitivity (captured by prior changes)
-- **BorderlineDatum**: Intermediate judgments (captured by posterior probabilities)
-- **SoritesDatum**: Sorites paradox (captured by probabilistic uncertainty)
-- **AntonymDatum**: Antonym behavior (captured by tall/short semantics)
-
-## Connection to ExactDist
-
-Our `ExactDist` type provides compile-time guarantees that the
-probability distributions in this model sum to 1. The joint
-distribution over (Height × Threshold) × ℚ is well-formed.
--/
 
 end RSA.LassiterGoodman2017

@@ -47,9 +47,6 @@ import Mathlib.Tactic.Linarith
 
 namespace Montague.Noun.GradableNouns
 
--- ============================================================================
--- PART 1: Degrees and Scales
--- ============================================================================
 
 /-- A degree on a scale (discretized) -/
 inductive Degree where
@@ -78,9 +75,6 @@ def allDegrees : List Degree := [.d0, .d1, .d2, .d3, .d4, .d5, .d6, .d7, .d8, .d
 theorem d0_is_minimum : ∀ d : Degree, Degree.d0 ≤ d := by
   intro d; cases d <;> decide
 
--- ============================================================================
--- PART 2: Gradable Nouns as Measure Functions
--- ============================================================================
 
 /-- A gradable noun maps individuals to degrees.
     ⟦idiot⟧ = λx.ιd[x is d-idiotic] -/
@@ -95,9 +89,6 @@ structure GradableNoun (Entity : Type) where
 def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=
   fun x => n.standard ≤ n.measure x
 
--- ============================================================================
--- PART 3: Size Adjectives
--- ============================================================================
 
 /-- Size adjectives measure "size" of objects including degrees.
     They're characterized by their polarity (big vs small). -/
@@ -126,9 +117,6 @@ def smallStandard : Degree := .d5
 def posBig (d : Degree) : Bool := bigStandard ≤ bigness d
 def posSmall (d : Degree) : Bool := smallStandard ≤ smallness d
 
--- ============================================================================
--- PART 4: The MEASN Morpheme
--- ============================================================================
 
 /-!
 ## MEASN: The Key to Degree Readings
@@ -159,9 +147,6 @@ def measN {E : Type}
         -- AND x must meet the noun's standard
         minD ≤ noun.measure x ∧ noun.standard ≤ noun.measure x
 
--- ============================================================================
--- PART 5: Computing "big idiot" and "small idiot"
--- ============================================================================
 
 /-- Example: an "idiot" gradable noun with standard at d3 -/
 def idiotNoun {E : Type} (measure : E → Degree) : GradableNoun E :=
@@ -178,9 +163,6 @@ def bigIdiot {E : Type} (noun : GradableNoun E) : E → Bool :=
 def smallIdiot {E : Type} (noun : GradableNoun E) : E → Bool :=
   measN noun posSmall
 
--- ============================================================================
--- PART 6: The Bigness Generalization - Key Theorems
--- ============================================================================
 
 /-- Minimum degree satisfying "big" is d5 (the bigness standard) -/
 theorem min_big_is_d5 : minDegree posBig = some .d5 := by native_decide
@@ -229,9 +211,6 @@ theorem big_idiot_restrictive {E : Type} (noun : GradableNoun E)
   simp only [decide_eq_true_eq] at *
   exact hbig.2
 
--- ============================================================================
--- PART 7: Worked Example
--- ============================================================================
 
 /-- A simple entity type for examples -/
 inductive Person where
@@ -281,9 +260,6 @@ theorem small_idiot_same_as_idiot :
   · rw [small_idiot_vacuous]
   · rw [small_idiot_vacuous]
 
--- ============================================================================
--- PART 8: Connection to Threshold Semantics
--- ============================================================================
 
 /-!
 ## Unified Threshold Pattern

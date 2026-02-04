@@ -48,9 +48,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Montague.Noun.Kind.Generics
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /-- A situation/case — the entities GEN quantifies over.
 
@@ -77,9 +75,7 @@ abbrev Scope := Situation → Bool
 /-- A normalcy predicate picks out "normal" or "characteristic" situations -/
 abbrev NormalcyPredicate := Situation → Bool
 
--- ============================================================================
 -- The Traditional GEN Operator
--- ============================================================================
 
 /--
 Traditional GEN as a quantifier over situations.
@@ -145,9 +141,7 @@ theorem gen_formulations_equiv
     -- Show: ¬(¬(n∧r)∨s) = n∧r∧¬s for head element
     cases normal s <;> cases restrictor s <;> cases scope s <;> rfl
 
--- ============================================================================
 -- The GenericTheory Structure (parallel to ModalTheory)
--- ============================================================================
 
 /--
 A semantic theory for generics.
@@ -182,9 +176,7 @@ def GenericTheory.eval
     : Bool :=
   traditionalGEN situations (T.normalcyFunction situations) restrictor scope
 
--- ============================================================================
 -- Standard Theories
--- ============================================================================
 
 /-- Strict universal GEN: all situations are "normal" -/
 def strictUniversal : GenericTheory :=
@@ -203,9 +195,7 @@ def majorityBased (restrictor : Restrictor) : GenericTheory :=
       fun s => restrictor s && count > 0
   , allowsExceptions := true }
 
--- ============================================================================
 -- The Circularity Problem
--- ============================================================================
 
 /--
 **The Problem with Traditional GEN**:
@@ -238,9 +228,7 @@ structure CircularityProblem where
   /-- The normalcy is chosen to fit judgments, not independently motivated -/
   normalcyNotIndependent : Prop := True
 
--- ============================================================================
 -- Prevalence-Based Alternative (interface to T&G)
--- ============================================================================
 
 /--
 Prevalence of a property within restrictor situations.
@@ -278,9 +266,7 @@ The theorem `gen_eliminable` proving this is in `Theories/Comparisons/GenericSem
 which connects traditional GEN to Tessler & Goodman's (2019) RSA approach.
 -/
 
--- ============================================================================
 -- Example: Dogs Bark
--- ============================================================================
 
 /-- Example situations for "Dogs bark" -/
 def dogSituations : List Situation := [

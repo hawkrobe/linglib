@@ -29,9 +29,7 @@ open Montague
 open Montague.Core
 open Montague.Scales
 
--- ============================================================================
 -- Scalar Item Position
--- ============================================================================
 
 /--
 A scalar item occurrence in a derivation.
@@ -41,9 +39,7 @@ structure ScalarOccurrence (m : Model) where
   position : Nat              -- word index in the sentence
   entry : SemLexEntry m       -- the lexical entry (has scale info)
 
--- ============================================================================
 -- Semantic Derivation
--- ============================================================================
 
 /--
 A semantic derivation: what pragmatics needs from syntax.
@@ -72,9 +68,7 @@ def SemDeriv.sentence {m : Model} (d : SemDeriv m) : String :=
 def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
   !d.scalarItems.isEmpty
 
--- ============================================================================
 -- Alternative Generation
--- ============================================================================
 
 -- Use ContextPolarity from the sibling Polarity module
 open Montague.Core.Polarity (ContextPolarity)
@@ -116,9 +110,7 @@ def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
     alts.map λ altForm =>
       d.surface.set occ.position altForm
 
--- ============================================================================
 -- Toy Model Examples
--- ============================================================================
 
 open ToyLexicon
 open Determiner.Quantifier
@@ -163,9 +155,7 @@ def everyStudentLaughs : SemDeriv toyModel :=
   , scalarItems := [⟨0, every_entry⟩]
   }
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /-- "John sleeps" has no scalar items -/
 theorem johnSleeps_no_scalars :
@@ -187,9 +177,7 @@ theorem everyStudentSleeps_false :
 theorem everyStudentLaughs_true :
     everyStudentLaughs.meaning = true := rfl
 
--- ============================================================================
 -- Interface for Syntax Theories
--- ============================================================================
 
 /--
 A syntax theory that can produce semantic derivations.

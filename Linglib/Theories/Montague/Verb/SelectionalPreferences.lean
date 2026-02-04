@@ -42,9 +42,6 @@ namespace Montague.Verb.SelectionalPreferences
 
 open Core.ProductOfExperts
 
--- ============================================================================
--- PART 1: Semantic Classes
--- ============================================================================
 
 /-!
 ## Semantic Classes (Sorts)
@@ -93,9 +90,6 @@ def isA : SemClass → SemClass → Bool
     [SemClass.animate, .inanimate, .human, .animal, .plant, .artifact].any
       fun c => subclassOf c₁ c && subclassOf c c₂
 
--- ============================================================================
--- PART 2: Semantic Roles
--- ============================================================================
 
 /-!
 ## Semantic Roles
@@ -134,9 +128,6 @@ structure RoleWithConstraint (Concept : Type) where
   /-- Prior probability of each concept filling this role -/
   selectionalPref : Concept → ℚ
 
--- ============================================================================
--- PART 3: Verb Frames
--- ============================================================================
 
 /-!
 ## Verb Frames
@@ -161,9 +152,6 @@ Look up the selectional preference for a given role in a frame.
 def Frame.selectionalFor {Concept : Type} (f : Frame Concept) (r : SemRole) : Option (Concept → ℚ) :=
   f.arguments.find? (·.role == r) |>.map (·.selectionalPref)
 
--- ============================================================================
--- PART 4: Example Frames
--- ============================================================================
 
 /-!
 ## Example: SLEEP Frame
@@ -292,9 +280,6 @@ def drawWeaponFrame : Frame SemClass :=
     ]
   }
 
--- ============================================================================
--- PART 5: Concept Disambiguation
--- ============================================================================
 
 /-!
 ## Concept Disambiguation via Selectional Preferences
@@ -340,9 +325,6 @@ def disambiguateBySelection
   let Z := senses.foldl (fun acc s => acc + unnorm s) 0
   fun s => if Z = 0 then 0 else unnorm s / Z
 
--- ============================================================================
--- PART 6: Integration with SDS
--- ============================================================================
 
 /-!
 ## SDS-Style Factored Disambiguation
@@ -367,9 +349,6 @@ def sdsDisambiguate
   let scenExpert s := scenarioPref (senseToClass s)
   poe2 selExpert scenExpert senses
 
--- ============================================================================
--- PART 7: Example: "She drew a blade"
--- ============================================================================
 
 /-!
 ## Example: "She drew a blade"
@@ -415,9 +394,6 @@ def combatScenario : BladeSense → ℚ
 def bladeDisambiguated : BladeSense → ℚ :=
   poe2 bladeSelectional combatScenario [.weapon, .grass, .propeller]
 
--- ============================================================================
--- PART 8: Soft vs Hard Selectional Constraints
--- ============================================================================
 
 /-!
 ## Soft vs Hard Constraints

@@ -37,9 +37,6 @@ namespace Comparisons.RSAandPDS
 
 open Theories.DynamicSemantics.Probabilistic
 
--- ============================================================================
--- PART 1: RSA's φ as probProp
--- ============================================================================
 
 /-!
 ## RSA's Graded φ = Probability of Boolean Property
@@ -105,9 +102,6 @@ theorem graded_is_prob_of_boolean (u : rsa.Utterance) :
 
 end BooleanRSA
 
--- ============================================================================
--- PART 2: L0 as Observe
--- ============================================================================
 
 /-!
 ## L0 = Observe
@@ -151,9 +145,6 @@ theorem l0_preserves_prior (rsa : BooleanRSA) (u : rsa.Utterance) (w : rsa.World
   intro h
   simp only [l0Posterior, h, ↓reduceIte, mul_one]
 
--- ============================================================================
--- PART 3: Threshold Semantics → Graded Semantics
--- ============================================================================
 
 /-!
 ## Threshold Uncertainty = Graded Truth (Lassiter & Goodman)
@@ -233,9 +224,6 @@ theorem graded_eq_boolean_certain (θ₀ : adj.Threshold) (x : adj.Entity)
 
 end ThresholdAdjective
 
--- ============================================================================
--- PART 4: RSAScenario from Boolean + Marginalization
--- ============================================================================
 
 /-!
 ## Constructing RSAScenario from Boolean Semantics
@@ -266,9 +254,6 @@ def BooleanRSA.toRSAScenario (rsa : BooleanRSA) : RSAScenario rsa.Utterance rsa.
   φ_nonneg := fun _ _ _ _ => by split_ifs <;> decide
   cost_nonneg := fun _ => by decide
 
--- ============================================================================
--- PART 5: RSA Recursion as Monadic Program
--- ============================================================================
 
 /-!
 ## RSA as Monadic Program
@@ -432,9 +417,6 @@ theorem speaker_chooses_listener_conditions :
 
 end MonadicRSA
 
--- ============================================================================
--- PART 6: Equivalence with Existing RSA Infrastructure
--- ============================================================================
 
 /-!
 ## Structural Correspondence: RSAScenario ↔ Monadic RSA
@@ -549,9 +531,6 @@ theorem L1_is_marginalization :
     -- This is E_latents[S1(u | latents)] = marginalization
     True := trivial  -- Structural observation
 
--- ============================================================================
--- PART 7: What the Monadic View Buys Us
--- ============================================================================
 
 /-!
 ## Benefits of the Monadic RSA View
@@ -607,9 +586,7 @@ The monadic RSA programs can compile to probabilistic programming languages:
 The monad laws ensure the compilation preserves semantics.
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Shows

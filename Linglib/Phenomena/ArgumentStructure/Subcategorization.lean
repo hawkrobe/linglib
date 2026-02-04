@@ -26,9 +26,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Subcategorization data -/
 def subcatData : PhenomenonData := {
@@ -65,9 +63,7 @@ def subcatData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval Surface.subcatOk [john, sleeps]           -- true (intrans, 0 obj)
 #eval Surface.subcatOk [john, sleeps, book]     -- false (intrans, 1 obj)

@@ -35,9 +35,6 @@ import Linglib.Theories.Montague.Modification
 
 namespace HawkinsGweonGoodman2021
 
--- ============================================================================
--- PART 1: Domain Types (Director-Matcher Task)
--- ============================================================================
 
 /-- Object features in the simplified task (Experiment 1) -/
 structure ObjectFeatures where
@@ -83,9 +80,6 @@ structure Context where
   distractors : List Object
   deriving Repr
 
--- ============================================================================
--- PART 2: Literal Semantics
--- ============================================================================
 
 /-- Does utterance literally apply to object? -/
 def utteranceApplies (u : Utterance) (targetFeatures : ObjectFeatures) (o : Object) : Bool :=
@@ -109,9 +103,6 @@ def moreSpecific (u0 u1 : Utterance) : Bool :=
    u0.mentionColor && !u1.mentionColor ||
    u0.mentionTexture && !u1.mentionTexture)
 
--- ============================================================================
--- PART 3: Literal Listener
--- ============================================================================
 
 /-- Literal listener probability: P(o | u, C) ∝ L(u, o) -/
 def literalListenerProb (u : Utterance) (targetFeatures : ObjectFeatures)
@@ -123,9 +114,6 @@ def literalListenerProb (u : Utterance) (targetFeatures : ObjectFeatures)
   else
     0
 
--- ============================================================================
--- PART 4: Egocentric Speaker Utility
--- ============================================================================
 
 /-- Egocentric informativity: listener success rate in visible context only -/
 def egocentricInformativity (u : Utterance) (target : Object) (visibleObjects : List Object) : ℚ :=
@@ -139,9 +127,6 @@ def egocentricUtility (u : Utterance) (target : Object) (visibleObjects : List O
   if prob == 0 then -1000  -- Log of 0
   else prob - costWeight * (utteranceCost u : ℚ)
 
--- ============================================================================
--- PART 5: Asymmetric Speaker Utility (Key Innovation)
--- ============================================================================
 
 /-- Possible hidden objects: all feature combinations -/
 def possibleHiddenObjects : List ObjectFeatures := Id.run do
@@ -178,9 +163,6 @@ def asymmetricUtility (u : Utterance) (target : Object)
     (visibleObjects : List Object) (hiddenPrior : ObjectFeatures → ℚ) (costWeight : ℚ := 1/10) : ℚ :=
   asymmetricInformativity u target visibleObjects hiddenPrior - costWeight * (utteranceCost u : ℚ)
 
--- ============================================================================
--- PART 6: Mixture Model (Probabilistic Weighting)
--- ============================================================================
 
 /-- Perspective-taking weight: 0 = egocentric, 1 = full perspective-taking -/
 abbrev PerspectiveWeight := ℚ
@@ -205,9 +187,6 @@ def mixtureUtility (u : Utterance) (target : Object) (visibleObjects : List Obje
     (hiddenPrior : ObjectFeatures → ℚ) (wS : PerspectiveWeight) (costWeight : ℚ := 1/10) : ℚ :=
   mixtureInformativity u target visibleObjects hiddenPrior wS - costWeight * (utteranceCost u : ℚ)
 
--- ============================================================================
--- PART 7: Pragmatic Speaker
--- ============================================================================
 
 /-- Speaker probability: P(u | o, C, w_S) ∝ exp(α · U_mix) -/
 def speakerScore (u : Utterance) (target : Object) (visibleObjects : List Object)
@@ -226,9 +205,6 @@ def speakerDist (target : Object) (visibleObjects : List Object)
   if total == 0 then scores
   else scores.map fun (u, s) => (u, s / total)
 
--- ============================================================================
--- PART 8: Resource-Rational Analysis
--- ============================================================================
 
 /--
 Expected communicative accuracy at weight w_S.
@@ -254,9 +230,6 @@ def resourceRationalUtility (target : Object) (visibleObjects : List Object)
   let accuracy := expectedAccuracy target visibleObjects hiddenPrior wS alpha
   accuracy - beta * wS
 
--- ============================================================================
--- PART 9: Key Theorems
--- ============================================================================
 
 /-- Example context: target is unique in shape -/
 def exampleTarget : Object :=
@@ -332,9 +305,6 @@ def shapeOnlySufficient_wS0 : Bool :=
 theorem shape_only_sufficient_at_wS0 : shapeOnlySufficient_wS0 = true := by
   native_decide
 
--- ============================================================================
--- PART 10: Grounding in Montague Compositional Semantics
--- ============================================================================
 
 /-!
 ## Compositional Grounding
@@ -433,9 +403,7 @@ theorem semantics_grounded :
   intro u target o
   simp [utteranceApplies, utteranceDenotation, MontaguGrounding.directDenotation]
 
--- ============================================================================
 -- PART 10b: Asymmetric Case via Unified API (speakerCredence)
--- ============================================================================
 
 /-!
 ## Asymmetric Case via Unified API
@@ -540,9 +508,6 @@ The unified API handles the asymmetric case directly; the mixture
 and meta-cognitive choice of w* sit outside the core RSA loop.
 -/
 
--- ============================================================================
--- PART 11: Listener Adaptation (Appendix B Formalization)
--- ============================================================================
 
 /-- Listener's belief about speaker's weight after observing utterances -/
 structure ListenerBeliefs where
@@ -586,9 +551,6 @@ theorem listener_compensates_for_low_speaker_effort :
     optimalListenerWeight (3/10) (2/10) > optimalListenerWeight (7/10) (2/10) := by
   native_decide
 
--- ============================================================================
--- PART 12: Verification Against Paper Predictions
--- ============================================================================
 
 /-!
 ## Key Predictions from Paper (Section 2.4.1)
@@ -688,9 +650,6 @@ theorem paper_prediction_4_intermediate_weights_optimal :
     rrUtility (1/4) (1/2) > rrUtility_at_1 := by
   native_decide
 
--- ============================================================================
--- PART 13: Empirical Data Verification
--- ============================================================================
 
 /-!
 ## Empirical Findings from Paper
@@ -730,9 +689,6 @@ theorem model_direction_matches_correlation :
     asymmetricInformativity shapeOnly exampleTarget exampleVisible uniformHiddenPrior := by
   native_decide
 
--- ============================================================================
--- PART 14: Model Summary
--- ============================================================================
 
 /-!
 ## Model Summary

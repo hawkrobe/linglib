@@ -40,9 +40,7 @@ namespace CCG.GenerativeCapacity
 open FourSymbol
 open Phenomena.FillerGap.CrossSerial
 
--- ============================================================================
 -- CCG Generates {aⁿbⁿcⁿdⁿ}
--- ============================================================================
 
 /--
 Mapping from CCG categories to abstract symbols.
@@ -96,9 +94,7 @@ theorem ccg_generates_cross_serial_language :
       sorry  -- Needs case analysis
   · rfl
 
--- ============================================================================
 -- CCG ⊃ CFG (Strictly)
--- ============================================================================
 
 /--
 **Main Theorem: CCG is strictly more expressive than CFG**
@@ -130,9 +126,7 @@ theorem ccg_strictly_more_expressive_than_cfg :
   · -- The language is not context-free
     exact anbncndn_not_context_free
 
--- ============================================================================
 -- Connection to Existing CCG Infrastructure
--- ============================================================================
 
 /--
 The existing crossSerialRequires classification is now justified:
@@ -153,9 +147,7 @@ theorem ccg_is_mildly_context_sensitive :
     CCG_MCS.generates_anbncndn = true := by
   rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Proves

@@ -49,9 +49,6 @@ open Core.CommonGround
 
 variable {W : Type*}
 
--- ============================================================================
--- PART 1: Local Context Structure
--- ============================================================================
 
 /--
 A local context at a position in a sentence.
@@ -75,9 +72,6 @@ Initial local context: the global context at position 0.
 def initialLocalCtx (c : ContextSet W) : LocalCtx W :=
   { worlds := c, position := 0, depth := 0 }
 
--- ============================================================================
--- PART 2: Local Context Computation for Connectives
--- ============================================================================
 
 /--
 Local context for the consequent of a conditional.
@@ -123,9 +117,6 @@ def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
   , position := c.position + 1
   , depth := c.depth }
 
--- ============================================================================
--- PART 3: Projection at Local Context
--- ============================================================================
 
 /--
 A presupposition projects at a local context if it's NOT entailed.
@@ -148,9 +139,6 @@ Projection and filtering are complementary.
 theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PrProp W) :
     presupProjects lc p ↔ ¬ presupFiltered lc p := Iff.rfl
 
--- ============================================================================
--- PART 4: Projection Through Connectives
--- ============================================================================
 
 /--
 Presupposition of consequent is filtered when antecedent assertion
@@ -184,9 +172,6 @@ theorem negation_preserves_projection (c : LocalCtx W) (p : PrProp W) :
     presupProjects c p ↔ presupProjects (localCtxNegation c) p := by
   simp [presupProjects, localCtxNegation]
 
--- ============================================================================
--- PART 5: The King Example
--- ============================================================================
 
 /--
 Formalization of "If the king exists, the king is bald".
@@ -233,9 +218,6 @@ theorem king_conditional_filters (c : ContextSet KingWorld')
   | kingExists => rfl
   | noKing => simp [kingExists'] at hw_assert
 
--- ============================================================================
--- PART 6: Comparison with Core.Presupposition Filtering
--- ============================================================================
 
 /--
 The local context theory derives the same result as the filtering
@@ -268,9 +250,7 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     · simp
     · simp [himp ha]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

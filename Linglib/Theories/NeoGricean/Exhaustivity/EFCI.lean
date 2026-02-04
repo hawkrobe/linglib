@@ -43,9 +43,6 @@ namespace NeoGricean.Exhaustivity.EFCI
 
 open NeoGricean.Exhaustivity
 
--- ============================================================================
--- PART 1: Alternative Types
--- ============================================================================
 
 /--
 Types of alternatives for EFCIs (Chierchia 2013).
@@ -71,9 +68,6 @@ structure EFCIAlternative (World : Type*) where
   /-- Is this a pre-exhaustified domain alternative? -/
   isPreExhaustified : Bool
 
--- ============================================================================
--- PART 2: Domain Alternatives (Subdomain Alternatives)
--- ============================================================================
 
 /-!
 ## Domain Alternatives
@@ -115,9 +109,6 @@ A singleton domain alternative.
 def singletonAlt (d : Entity) (P : Entity → Prop' World) : Prop' World :=
   P d
 
--- ============================================================================
--- PART 3: Pre-Exhaustified Domain Alternatives
--- ============================================================================
 
 /-!
 ## Pre-Exhaustified Domain Alternatives
@@ -147,9 +138,6 @@ The set of pre-exhaustified domain alternatives.
 def preExhDomainAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
   { φ | ∃ d ∈ D, φ = preExhaustify D d P }
 
--- ============================================================================
--- PART 4: Scalar Alternatives
--- ============================================================================
 
 /-!
 ## Scalar Alternatives
@@ -172,9 +160,6 @@ The scalar alternative set for an existential.
 def scalarAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
   { universalAlt D P }
 
--- ============================================================================
--- PART 5: Combined Alternative Set
--- ============================================================================
 
 /--
 The full EFCI alternative set combines:
@@ -199,9 +184,6 @@ Used when partial exhaustification prunes scalar alternatives.
 def domainOnlyAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
   {existsInDomain D P} ∪ preExhDomainAlts D P
 
--- ============================================================================
--- PART 6: Exhaustification
--- ============================================================================
 
 /-!
 ## Exhaustification Operator
@@ -223,9 +205,6 @@ This is a simplified version; full IE requires MC-set computation.
 def simpleExh (ALT : Set (Prop' World)) (φ : Prop' World) : Prop' World :=
   fun w => φ w ∧ ∀ ψ ∈ ALT, (∀ v, φ v → ψ v) → ψ ≠ φ → ¬(ψ w)
 
--- ============================================================================
--- PART 7: The EFCI Contradiction
--- ============================================================================
 
 /-!
 ## The Problem: Exhaustifying Both Types Causes Contradiction
@@ -258,9 +237,6 @@ Check if an alternative set leads to contradiction when exhaustified.
 def isContradictory (ALT : Set (Prop' World)) (φ : Prop' World) : Prop :=
   ∀ w, ¬(simpleExh ALT φ w)
 
--- ============================================================================
--- PART 8: Rescue Mechanisms
--- ============================================================================
 
 /-!
 ## Rescue Mechanism 1: Modal Insertion (Irgendein-type)
@@ -320,9 +296,6 @@ Only scalar alternatives are exhaustified.
 def partialExhScalarOnly (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
   simpleExh (scalarOnlyAlts D P) (existsInDomain D P)
 
--- ============================================================================
--- PART 9: EFCI Typology
--- ============================================================================
 
 /--
 EFCI types based on available rescue mechanisms.
@@ -364,9 +337,6 @@ Only partial exhaustification available.
 -/
 def yekiType : EFCIRescue := .partialExh
 
--- ============================================================================
--- PART 10: Modal Contexts (Deontic vs Epistemic)
--- ============================================================================
 
 /-!
 ## Modal Contexts
@@ -427,9 +397,6 @@ def efciReading (rescue : EFCIRescue) (isDE : Bool) (modal : Option ModalFlavor)
         | .partialExh => some .uniqueness
         | .both => some .uniqueness  -- Default to uniqueness; context can shift
 
--- ============================================================================
--- PART 11: Key Theorems
--- ============================================================================
 
 /-!
 ## Theoretical Predictions
@@ -460,9 +427,6 @@ theorem epistemic_modalVariation (rescue : EFCIRescue) :
 theorem de_plainExistential (rescue : EFCIRescue) (modal : Option ModalFlavor) :
     efciReading rescue true modal = some .plainExistential := rfl
 
--- ============================================================================
--- PART 7: Universal FCIs (Chierchia 2013)
--- ============================================================================
 
 /-!
 ## Universal Free Choice Items
@@ -743,9 +707,7 @@ def anyExamples : List AnyExample :=
 -- Verify all grammaticality predictions match
 #guard anyExamples.all (fun ex => ex.grammatical == ufciGrammatical ex.context)
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

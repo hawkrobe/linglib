@@ -59,9 +59,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Montague.Domain.Degrees
 
--- ============================================================================
 -- Degree Values
--- ============================================================================
 
 /--
 A degree on a scale from 0 to max.
@@ -85,9 +83,7 @@ def Degree.ofNat (max : Nat) (n : Nat) : Degree max :=
 /-- Get numeric value -/
 def Degree.toNat {max : Nat} (d : Degree max) : Nat := d.value.val
 
--- ============================================================================
 -- Thresholds
--- ============================================================================
 
 /--
 A threshold for a gradable adjective.
@@ -107,9 +103,7 @@ def allThresholds (max : Nat) (h : 0 < max := by omega) : List (Threshold max) :
 /-- Get numeric value -/
 def Threshold.toNat {max : Nat} (t : Threshold max) : Nat := t.value.val
 
--- ============================================================================
 -- Negation Types: Contradictory vs. Contrary
--- ============================================================================
 
 /--
 Types of negation for gradable adjectives.
@@ -141,9 +135,7 @@ inductive NegationType where
   | contrary
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- Two-Threshold Model for Contrary Antonyms
--- ============================================================================
 
 /--
 A threshold pair for contrary antonyms.
@@ -178,9 +170,7 @@ instance {n : Nat} : DecidableEq (ThresholdPair n) :=
     else
       isFalse (by intro heq; cases heq; simp_all)
 
--- ============================================================================
 -- Negation Semantics
--- ============================================================================
 
 /--
 Contradictory negation: the logical complement.
@@ -237,9 +227,7 @@ This is why "not unhappy" != "happy":
 def notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
   d.toNat ≥ tp.neg.toNat
 
--- ============================================================================
 -- Gradable Adjective Semantics (Single Threshold)
--- ============================================================================
 
 /-- Positive form: degree > threshold -/
 def positiveMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
@@ -253,9 +241,7 @@ def negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
 def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
   d.toNat ≤ t.toNat
 
--- ============================================================================
 -- HasDegree Typeclass (for Measure Functions)
--- ============================================================================
 
 /--
 Typeclass for entities that have a degree/magnitude on some scale.
@@ -271,9 +257,7 @@ Examples:
 class HasDegree (E : Type) where
   degree : E → ℚ
 
--- ============================================================================
 -- Numeral Expression Semantics
--- ============================================================================
 
 /--
 Literal/exact semantics for numeral expressions.
@@ -298,9 +282,7 @@ def numeralApprox {E : Type} [HasDegree E] (stated : ℚ) (tolerance : ℚ) (ent
   let actual := HasDegree.degree entity
   (stated - tolerance ≤ actual) && (actual ≤ stated + tolerance)
 
--- ============================================================================
 -- Pragmatic Halo: Rounding Semantics (Lasersohn 1999, Krifka 2007)
--- ============================================================================
 
 /-!
 ## Pragmatic Halo and Round Number Interpretation
@@ -393,9 +375,7 @@ def numeralWithPrecision {E : Type} [HasDegree E]
     (stated : ℚ) (entity : E) (mode : PrecisionMode) (base : ℚ := 10) : Bool :=
   matchesPrecision mode stated (HasDegree.degree entity) base
 
--- ============================================================================
 -- Measure Predicates (Compositional Sentence Semantics)
--- ============================================================================
 
 /-!
 ## Compositional Semantics for Measure Sentences
@@ -478,9 +458,7 @@ This is a convenience that avoids constructing MeasurePredicate explicitly.
 def measureSentence' {E : Type} [HasDegree E] (entity : E) (deg : DegreePhrase) : Bool :=
   HasDegree.degree entity == deg.value
 
--- ============================================================================
 -- Grounding Theorems
--- ============================================================================
 
 /--
 The compositional measure sentence semantics equals the simple numeral check.

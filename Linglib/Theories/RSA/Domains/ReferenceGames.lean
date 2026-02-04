@@ -43,9 +43,7 @@ import Mathlib.Data.Fintype.Prod
 
 namespace RSA.Domains.ReferenceGame
 
--- ============================================================================
 -- Feature Types (Color, Shape)
--- ============================================================================
 
 /-- Colors for reference game objects -/
 inductive Color where
@@ -81,9 +79,7 @@ instance : ToString Shape where
     | .triangle => "triangle"
     | .star => "star"
 
--- ============================================================================
 -- Entity Interfaces
--- ============================================================================
 
 /-- Typeclass for entities that have a color attribute -/
 class HasColor (E : Type) where
@@ -93,9 +89,7 @@ class HasColor (E : Type) where
 class HasShape (E : Type) where
   shape : E → Shape
 
--- ============================================================================
 -- Feature Predicates
--- ============================================================================
 
 /--
 A feature is either a color or a shape predicate.
@@ -118,9 +112,7 @@ instance : Fintype Feature :=
     right_inv := fun | .color _ => rfl | .shape _ => rfl
   }
 
--- ============================================================================
 -- Feature Meaning (Generic)
--- ============================================================================
 
 /--
 The Montague meaning of a feature predicate.
@@ -139,9 +131,7 @@ def featureMeaning {E : Type} [HasColor E] [HasShape E] : Feature → E → Bool
 def Feature.appliesTo {E : Type} [HasColor E] [HasShape E] (f : Feature) (obj : E) : Bool :=
   featureMeaning f obj
 
--- ============================================================================
 -- Feature Lexicon
--- ============================================================================
 
 /-- Lookup a feature by name -/
 def featureLexicon : String → Option Feature
@@ -157,9 +147,7 @@ def featureLexicon : String → Option Feature
   | "star" => some (.shape .star)
   | _ => none
 
--- ============================================================================
 -- Reference Game Entity Type
--- ============================================================================
 
 /--
 An object is a color-shape pair.
@@ -183,9 +171,7 @@ instance : Fintype Object :=
     right_inv := fun _ => rfl
   }
 
--- ============================================================================
 -- HasColor / HasShape Instances
--- ============================================================================
 
 instance : HasColor Object where
   color := Object.color
@@ -193,9 +179,7 @@ instance : HasColor Object where
 instance : HasShape Object where
   shape := Object.shape
 
--- ============================================================================
 -- Theorems: Compositional Meaning
--- ============================================================================
 
 /-- Blue applies to blue objects -/
 theorem blue_applies_to_blue :
@@ -217,9 +201,7 @@ theorem feature_is_characteristic (f : Feature) (obj : Object) :
      | .shape s => obj.shape == s) := by
   cases f <;> simp [Feature.appliesTo, featureMeaning, HasColor.color, HasShape.shape]
 
--- ============================================================================
 -- Generic Reference Game Context (String-based, for flexibility)
--- ============================================================================
 
 /--
 A reference game context: objects with their properties.
@@ -286,9 +268,7 @@ def TypedContext.runL0 (ctx : TypedContext) (feat : Feature) : List (Object × �
   RSA.Eval.basicL0 ctx.features ctx.objects
     (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) feat
 
--- ============================================================================
 -- Convenience: Quick Context Builders
--- ============================================================================
 
 /-- Build context with just colors (single shape) -/
 def colorsOnly (colors : List Color) (shape : Shape := .square) : TypedContext :=
@@ -302,9 +282,7 @@ def shapesOnly (shapes : List Shape) (color : Color := .blue) : TypedContext :=
 def fromPairs (pairs : List (Color × Shape)) : TypedContext :=
   TypedContext.fromObjects (pairs.map fun (c, s) => ⟨c, s⟩)
 
--- ============================================================================
 -- RSA Computations (Convenience wrappers)
--- ============================================================================
 
 /-- L0 distribution for a feature in a typed context -/
 def l0 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
@@ -318,9 +296,7 @@ def s1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
 def l1 (ctx : TypedContext) (f : Feature) : List (Object × ℚ) :=
   ctx.runL1 f
 
--- ============================================================================
 -- Example Usage
--- ============================================================================
 
 -- Build a simple context
 private def exampleCtx : TypedContext :=
@@ -332,9 +308,7 @@ private def exampleCtx : TypedContext :=
 #eval s1 exampleCtx ⟨.green, .square⟩
 -- green preferred (uniquely identifies)
 
--- ============================================================================
 -- Grounding Verification
--- ============================================================================
 
 /-- The RSA.Eval meaning function uses the compositional semantics -/
 theorem rsa_eval_uses_compositional_semantics (f : Feature) (obj : Object) :

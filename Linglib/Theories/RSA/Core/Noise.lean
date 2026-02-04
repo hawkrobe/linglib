@@ -72,9 +72,7 @@ import Mathlib.Tactic.Ring
 
 namespace RSA.Noise
 
--- ============================================================================
 -- The Unified Noise Channel
--- ============================================================================
 
 /--
 The fundamental noise channel operation.
@@ -89,9 +87,7 @@ The noise gap measures discrimination power.
 -/
 def noiseGap (onMatch onMismatch : ℚ) : ℚ := onMatch - onMismatch
 
--- ============================================================================
 -- Basic Properties
--- ============================================================================
 
 @[simp]
 theorem noiseChannel_one (onMatch onMismatch : ℚ) :
@@ -108,9 +104,7 @@ theorem noiseChannel_discrimination (onMatch onMismatch : ℚ) :
     noiseGap onMatch onMismatch := by
   simp [noiseGap]
 
--- ============================================================================
 -- Standard Noise Parameters
--- ============================================================================
 
 /-- Color parameters from Degen et al. (2020): low noise -/
 def colorMatch : ℚ := 99/100
@@ -127,9 +121,7 @@ def materialMatch : ℚ := 7/10
 def materialMismatch : ℚ := 3/10
 def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40
 
--- ============================================================================
 -- Discrimination Ordering
--- ============================================================================
 
 /-- Color has higher discrimination than size -/
 theorem color_gt_size : colorDiscrimination > sizeDiscrimination := by
@@ -145,9 +137,7 @@ theorem discrimination_ordering :
     sizeDiscrimination > materialDiscrimination :=
   ⟨color_gt_size, size_gt_material⟩
 
--- ============================================================================
 -- Perceptual Difficulty Connection
--- ============================================================================
 
 /-- Perceptual difficulty levels -/
 inductive PerceptualDifficulty where

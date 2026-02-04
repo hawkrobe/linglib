@@ -58,9 +58,6 @@ open Montague.Question.Polarity
 open Montague.Question.VerumFocus
 open RSA.Questions
 
--- ============================================================================
--- PART 1: Three Frameworks United
--- ============================================================================
 
 /-!
 ## Three Complementary Frameworks
@@ -95,9 +92,6 @@ structure IntegratedPolarQuestionTheory where
 /-- The fully integrated model includes all three components -/
 def fullyIntegrated : IntegratedPolarQuestionTheory := {}
 
--- ============================================================================
--- PART 2: vR&Š ↔ PRIOR-PQ Connection
--- ============================================================================
 
 /-!
 ## Connection: vR&Š Question Choice → PRIOR-PQ ToM
@@ -148,9 +142,6 @@ theorem vrs_grounds_tom_inference :
     -- PRIOR-PQ's exploitation: invert to infer goals from questions
     True := trivial
 
--- ============================================================================
--- PART 3: R&H ↔ PRIOR-PQ Connection
--- ============================================================================
 
 /-!
 ## Connection: R&H VERUM → PRIOR-PQ Goal Inference
@@ -189,9 +180,6 @@ theorem rh_priorpq_complementary :
     -- PRIOR-PQ: pragmatic exploitation of bias
     True := trivial
 
--- ============================================================================
--- PART 4: vR&Š ↔ R&H Connection
--- ============================================================================
 
 /-!
 ## Connection: vR&Š Utility → R&H VERUM
@@ -228,9 +216,6 @@ theorem vrs_grounds_rh_bias :
     -- Both predict: speaker expects/prefers certain answers
     True := trivial
 
--- ============================================================================
--- PART 5: Polar Question Type Predictions
--- ============================================================================
 
 /-!
 ## Cross-Theory Predictions
@@ -283,9 +268,6 @@ theorem grounding_overinformative :
     -- Because respondent infers high-stakes decision problem
     True := trivial
 
--- ============================================================================
--- PART 6: Polar Question Type Selection
--- ============================================================================
 
 /-!
 ## Optimal Polar Question Type
@@ -333,9 +315,6 @@ theorem polar_type_maximizes_UV (uvPos uvNeg : ℚ) :
     simp only [beq_iff_eq]
     exact le_antisymm h1 h2
 
--- ============================================================================
--- PART 7: ToM Inversion Properties
--- ============================================================================
 
 /-!
 ## ToM Inference Properties
@@ -366,9 +345,6 @@ theorem tom_consistency :
     -- inferredDP recovers the true DP
     True := trivial
 
--- ============================================================================
--- PART 8: Integrated Model Predictions
--- ============================================================================
 
 /-!
 ## Integrated Model
@@ -416,9 +392,6 @@ theorem balanced_leads_to_hedged_responses (model : IntegratedModel) :
   intro _
   trivial
 
--- ============================================================================
--- PART 9: Summary
--- ============================================================================
 
 /-!
 ## Summary: Unified Theory of Polar Questions

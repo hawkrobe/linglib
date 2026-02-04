@@ -57,9 +57,7 @@ namespace RSA.IBR
 
 open NeoGricean.Exhaustivity
 
--- ============================================================================
 -- SECTION 1: Interpretation Games (Franke Section 6)
--- ============================================================================
 
 /-!
 ## Interpretation Games
@@ -116,9 +114,7 @@ def informativity (m : G.Message) : ℚ :=
 
 end InterpGame
 
--- ============================================================================
 -- SECTION 2: IBR Strategies (Franke Section 8)
--- ============================================================================
 
 /-!
 ## IBR Strategies
@@ -218,9 +214,7 @@ theorem bestResponse_sum_le_one (G : InterpGame) (H : HearerStrategy G) (s : G.S
 
 end SpeakerStrategy
 
--- ============================================================================
 -- SECTION 3: IBR Iteration (Franke Section 8.2)
--- ============================================================================
 
 /-!
 ## IBR Iteration
@@ -276,9 +270,7 @@ def S1 (G : InterpGame) : SpeakerStrategy G :=
 def L2 (G : InterpGame) : HearerStrategy G :=
   hearerUpdate G (S1 G)
 
--- ============================================================================
 -- SECTION 4: IBR Fixed Point (Franke Section 8.3)
--- ============================================================================
 
 /-!
 ## IBR Fixed Point
@@ -321,9 +313,7 @@ def pragmaticSupport (G : InterpGame) (H : HearerStrategy G) (m : G.Message) :
     Finset G.State :=
   H.support m
 
--- ============================================================================
 -- SECTION 4.1: Expected Gain and IBR Convergence (Franke Appendix B.4)
--- ============================================================================
 
 /-!
 ## Expected Gain Framework
@@ -421,9 +411,7 @@ theorem ibr_reaches_fixed_point (G : InterpGame) :
     ∃ n : ℕ, isIBRFixedPoint G (ibrN G n) := by
   sorry -- Requires formalizing the monotonicity + finiteness argument
 
--- ============================================================================
 -- SECTION 4.2: Fixed Point Characterization via Minimum Alternatives
--- ============================================================================
 
 /-!
 ## Fixed Point = Minimum Alternatives = ExhMW
@@ -503,9 +491,7 @@ theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
   · -- hcond false → S.choose = 0, contradicts hm
     exact absurd (le_refl 0) (not_le.mpr hm)
 
--- ============================================================================
 -- SECTION 5: Connection to Exhaustive Interpretation (Franke Section 10)
--- ============================================================================
 
 /-!
 ## IBR = EXH (Franke Main Result)
@@ -988,9 +974,7 @@ theorem ibr_fp_keeps_minimal (G : InterpGame) (H : HearerStrategy G)
   -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
   exact (ibr_equals_exhMW G H hFP m s).mpr hExh
 
--- ============================================================================
 -- SECTION 6: RSA as "Soft" IBR
--- ============================================================================
 
 /-!
 ## RSA → IBR as α → ∞
@@ -1128,9 +1112,7 @@ theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m 
   -- Apply the softmax limit theorem
   exact Softmax.tendsto_softmax_infty_at_max score m hmax
 
--- ============================================================================
 -- SECTION 7: Examples from the Paper
--- ============================================================================
 
 /-!
 ## Scalar Implicature Example (Franke Section 3.1)
@@ -1222,9 +1204,7 @@ def freeChoiceGame : InterpGame where
     | _, _ => false
   prior := fun _ => 1 / 4  -- Uniform prior
 
--- ============================================================================
 -- SECTION 8: The Complete Chain: RSA → IBR → ExhMW → ExhIE
--- ============================================================================
 
 /-!
 ## The Complete Chain
@@ -1374,9 +1354,7 @@ theorem rsa_to_exhIE_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message)
   -- Then apply the RSA → IBR limit (which is RSA → exhMW under homogeneity)
   exact rsa_to_ibr_limit G s m hTrue hUnique hInfPos
 
--- ============================================================================
 -- SECTION 10: Epistemic Implicatures (Franke Section 3.2)
--- ============================================================================
 
 /-!
 ## Epistemic Readings (Franke Section 3.2)

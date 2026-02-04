@@ -62,9 +62,7 @@ import Mathlib.Data.Fintype.Basic
 
 namespace Montague.Noun.Kind.Carlson1977
 
--- ============================================================================
 -- Ontology: Individuals, Kinds, Stages
--- ============================================================================
 
 variable (Entity World : Type)
 
@@ -110,9 +108,7 @@ structure IsOrdinaryIndividual (R : RealizationRel Entity) (i : Entity) : Prop w
   /-- Ordinary individuals are spatially bounded at each time -/
   spatiallyBounded : True  -- Simplified; would need temporal logic
 
--- ============================================================================
 -- Bare Plurals as Proper Names of Kinds
--- ============================================================================
 
 /--
 **Core claim**: Bare plurals denote kinds, which are INDIVIDUALS (type e).
@@ -141,9 +137,7 @@ structure BarePluralEntry where
   /-- Evidence that it's a kind (spatially unbounded) -/
   isKind : Bool := true
 
--- ============================================================================
 -- Stage-Level vs Individual-Level Predicates
--- ============================================================================
 
 /--
 **Predicate classification** (Milsark 1974, Siegel 1976):
@@ -200,9 +194,7 @@ structure PredicateEntry where
   form : String
   level : PredicateLevel
 
--- ============================================================================
 -- Semantic Composition: The Key Insight
--- ============================================================================
 
 /--
 **Individual-level predicate semantics**: Direct predication of the kind.
@@ -242,9 +234,7 @@ This is why:
 def progressive (R : RealizationRel Entity) (P : Entity → Bool) : Entity → Prop :=
   stageLevelPred Entity R P
 
--- ============================================================================
 -- Derivations: Generic vs Existential
--- ============================================================================
 
 variable {Entity World : Type}
 
@@ -283,9 +273,7 @@ def existentialDerivation
     : Prop :=
   stageLevelPred Entity R stagePred kind
 
--- ============================================================================
 -- Key Theorem: One Meaning, Two Readings
--- ============================================================================
 
 /--
 **Carlson's central claim**: The bare plural is NEVER ambiguous.
@@ -308,9 +296,7 @@ theorem bare_plural_not_ambiguous
   · rfl
   · rfl
 
--- ============================================================================
 -- Narrow Scope: Proper Names Don't Scope
--- ============================================================================
 
 /-!
 **Why bare plurals show narrow scope**: They're proper names.
@@ -352,9 +338,7 @@ theorem bare_plural_rigid_designator
     (P : Entity → Bool)
     : barePluralTranslation k P = P k := rfl
 
--- ============================================================================
 -- Differentiated Scope: Narrower Than Indefinites
--- ============================================================================
 
 /-!
 **Differentiated scope**: Bare plurals can scope NARROWER than "a N".
@@ -399,9 +383,7 @@ theorem kind_allows_differentiated_scope
     : beEverywhere R places atPred k =
       (∀ p ∈ places, ∃ y, R y k ∧ atPred y p = true) := rfl
 
--- ============================================================================
 -- Opacity: Kinds Are Rigid, Stages Are Not
--- ============================================================================
 
 /-!
 **Opacity facts explained**:
@@ -449,9 +431,7 @@ theorem bare_plural_opaque_only
     : existentialDerivation R kind stagePred =
       (∃ y, R y kind ∧ stagePred y = true) := rfl
 
--- ============================================================================
 -- Connection to Subsequent Work
--- ============================================================================
 
 /-!
 ## Theoretical Legacy
@@ -491,9 +471,7 @@ Carlson's analysis suggests that:
 See `Theories/Comparisons/GenericSemantics.lean` for the connection.
 -/
 
--- ============================================================================
 -- Verifications
--- ============================================================================
 
 /-- Stage-level predicates introduce existential -/
 example (R : RealizationRel Entity) (k : Entity) (P : Entity → Bool) :
@@ -511,9 +489,7 @@ example (R : RealizationRel Entity) (P : Entity → Bool) :
 example (k : Entity) (P : Entity → Bool) :
     barePluralTranslation k P = P k := rfl
 
--- ============================================================================
 -- Examples from the Paper
--- ============================================================================
 
 /-!
 ## Key Examples from Carlson 1977

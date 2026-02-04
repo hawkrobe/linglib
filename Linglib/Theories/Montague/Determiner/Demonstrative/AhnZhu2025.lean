@@ -38,9 +38,6 @@ is not just notational — it's the structural basis for bridging.
 
 namespace Montague.Determiner.Demonstrative.AhnZhu2025
 
--- ============================================================================
--- PART 1: Semantic Types with Tracked Arity
--- ============================================================================
 
 /--
 The arity of a predicate — how many entity arguments it takes.
@@ -74,9 +71,6 @@ def Pred.toPred1 {E S : Type} : Pred E S .one → (E → S → Bool)
 def Pred.toPred2 {E S : Type} : Pred E S .two → (E → E → S → Bool)
   | .pred2 f => f
 
--- ============================================================================
--- PART 2: The Relationalizer π — A Type-Changing Operation
--- ============================================================================
 
 /--
 **Barker's Relationalizer π**
@@ -100,9 +94,6 @@ def relationalizer {E S : Type}
 /-- Notation: π(P, R) -/
 scoped notation "π(" P ", " R ")" => relationalizer P R
 
--- ============================================================================
--- PART 3: Relatum Accommodation — Defined Structurally
--- ============================================================================
 
 /--
 **Relatum Accommodation**: Can this arity accommodate a relatum argument?
@@ -124,9 +115,6 @@ This just reads off the arity from the type.
 def Pred.canAccommodateRelatum {E S : Type} {a : Arity} (_ : Pred E S a) : Bool :=
   a.canAccommodateRelatum
 
--- ============================================================================
--- PART 4: The Key Theorems — DERIVED, Not Stipulated
--- ============================================================================
 
 /--
 **Theorem 1**: π enables relatum accommodation.
@@ -157,9 +145,6 @@ Follows from having arity two.
 theorem pred2_can_accommodate_relatum {E S : Type} (P : Pred E S .two) :
     P.canAccommodateRelatum = true := rfl
 
--- ============================================================================
--- PART 5: Noun Classification — Lexical Arity
--- ============================================================================
 
 /--
 A noun's lexical entry specifies its inherent arity.
@@ -185,9 +170,6 @@ def Noun.sortal {E S : Type} (form : String) (P : E → S → Bool) : Noun E S :
 def Noun.relational {E S : Type} (form : String) (P : E → E → S → Bool) : Noun E S :=
   { form := form, arity := .two, denotation := .pred2 P }
 
--- ============================================================================
--- PART 6: Mandarin Definite Formation — The Compositional Analysis
--- ============================================================================
 
 /--
 The semantic contribution of a Mandarin definite expression.
@@ -238,9 +220,6 @@ def naSemantics {E S : Type} (n : Noun E S) (R : E → E → S → Bool)
     , pred := p
     , externalRelatumIntroduced := true }
 
--- ============================================================================
--- PART 7: Bridging — Derived from Compositional Structure
--- ============================================================================
 
 /--
 **Relational bridging** requires accommodating an antecedent as relatum.
@@ -300,9 +279,6 @@ theorem bridging_asymmetry_is_structural {E S : Type}
   have ⟨hBare, hNa⟩ := ahn_zhu_derived n R hSortal
   simp [hBare, hNa]
 
--- ============================================================================
--- PART 8: Why This Is Explanatory
--- ============================================================================
 
 /-!
 **The Explanatory Chain**:
@@ -335,9 +311,6 @@ theorem relatum_slot_is_second_argument {E S : Type}
     -- After π, the predicate takes z as first argument (the relatum)
     (π(P, R)).toPred2 z x s = (P.toPred1 x s && R z x s) := rfl
 
--- ============================================================================
--- PART 9: Connection to Phenomena
--- ============================================================================
 
 /-!
 This analysis explains the empirical patterns in `Phenomena/Anaphora/Bridging.lean`:
@@ -384,9 +357,7 @@ theorem complete_bridging_pattern {E S : Type}
       subst h
       simp only [Arity.canAccommodateRelatum]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What Makes This Explanatory
@@ -429,9 +400,6 @@ that wasn't there before. The formalization makes this structural change
 visible and proves bridging licensing as a consequence.
 -/
 
--- ============================================================================
--- PART 10: Integration with Barker (2011)
--- ============================================================================
 
 /-!
 ## Cumulative Integration with Barker (2011)

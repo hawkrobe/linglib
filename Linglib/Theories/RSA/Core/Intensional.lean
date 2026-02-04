@@ -34,9 +34,7 @@ namespace RSA.Intensional
 
 open Montague.Intensional
 
--- ============================================================================
 -- Propositional Derivations (type t only)
--- ============================================================================
 
 /--
 A propositional derivation: an intensional derivation of type t.
@@ -57,9 +55,7 @@ def PropDerivation.eval {m : IntensionalModel} (d : PropDerivation m) (w : m.Wor
 def PropDerivation.surface {m : IntensionalModel} (d : PropDerivation m) : List String :=
   d.deriv.surface
 
--- ============================================================================
 -- Intensional RSA Backend
--- ============================================================================
 
 /--
 An RSA scenario built from propositional derivations.
@@ -86,9 +82,7 @@ def intensionalMeaning {m : IntensionalModel}
     (u : PropDerivation m) (w : m.World) : Bool :=
   u.eval w
 
--- ============================================================================
 -- L0: Literal Listener from Intensional Semantics
--- ============================================================================
 
 /--
 Count worlds where the derivation is true.
@@ -124,9 +118,7 @@ def L0_prob {m : IntensionalModel}
   | some (_, p) => p
   | none => 0
 
--- ============================================================================
 -- Grounding Theorem
--- ============================================================================
 
 /--
 **Grounding Theorem**: L0 uses the compositional meaning.
@@ -195,9 +187,7 @@ theorem l0_zero_when_false {m : IntensionalModel}
   · -- none case
     rfl
 
--- ============================================================================
 -- Example: Scalar Implicature Scenario
--- ============================================================================
 
 /-- "Some students sleep" as a propositional derivation -/
 def someProp : PropDerivation scalarModel := {
@@ -230,9 +220,7 @@ def scalarScenario : IntensionalScenario scalarModel := {
   worldsNonempty := by simp
 }
 
--- ============================================================================
 -- Theorems: L0 for Scalar Scenario
--- ============================================================================
 
 /-- L0 for "some students sleep" -/
 def l0_some : List (ScalarWorld × ℚ) :=
@@ -266,9 +254,7 @@ theorem l0_every_positive_at_all :
     L0_prob everyProp [.none, .someNotAll, .all] .all ≠ 0 := by
   native_decide
 
--- ============================================================================
 -- S1: Pragmatic Speaker from Intensional Semantics
--- ============================================================================
 
 /--
 Informativity of an utterance = 1 / (number of compatible worlds)
@@ -299,9 +285,7 @@ def S1_from_derivations {m : IntensionalModel}
       if total > 0 then (d, info / total) else (d, 0)
     else (d, 0)
 
--- ============================================================================
 -- L1: Pragmatic Listener from Intensional Semantics
--- ============================================================================
 
 /--
 L1 scores: P(w | u) ∝ P(w) × S1(u | w)
@@ -319,9 +303,7 @@ def L1_from_derivations {m : IntensionalModel}
       | none => 0
     (w, score)
 
--- ============================================================================
 -- Scalar Implicature via Grounded RSA
--- ============================================================================
 
 /-- S1 scores at world "all" -/
 def s1_at_all : List (PropDerivation scalarModel × ℚ) :=
@@ -341,9 +323,7 @@ def l1_some_grounded : List (ScalarWorld × ℚ) :=
 
 #eval l1_some_grounded  -- Should prefer someNotAll over all (scalar implicature!)
 
--- ============================================================================
 -- Key Result: Scalar Implicature Emerges
--- ============================================================================
 
 /--
 **Scalar Implicature Theorem**: L1 prefers "some but not all" for "some".
@@ -363,9 +343,7 @@ theorem scalar_implicature_from_grounded_rsa :
     p_someNotAll > p_all := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -31,9 +31,7 @@ negated in the first disjunct. This is surprising because:
 
 namespace Phenomena.Anaphora.BathroomSentences
 
--- ============================================================================
 -- Part 1: Classic Bathroom Sentences
--- ============================================================================
 
 /--
 A bathroom sentence datum.
@@ -98,9 +96,7 @@ def bathroomDefinite : BathroomDatum := {
   source := "Elliott & Sudo (2025)"
 }
 
--- ============================================================================
 -- Part 2: Variants and Extensions
--- ============================================================================
 
 /-- Lost key example -/
 def lostKey : BathroomDatum := {
@@ -141,9 +137,7 @@ def neverBathroom : BathroomDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 3: Conditional Variants
--- ============================================================================
 
 /-- If-then version (same pattern) -/
 def conditionalVersion : BathroomDatum := {
@@ -171,9 +165,7 @@ def unlessVersion : BathroomDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 4: Infelicitous Contrasts
--- ============================================================================
 
 /-- Standard negation blocks (not bathroom pattern) -/
 def standardNegation : BathroomDatum := {
@@ -214,9 +206,7 @@ def wrongOrder : BathroomDatum := {
   source := "Contrast case"
 }
 
--- ============================================================================
 -- Part 5: Modal Subordination Connection
--- ============================================================================
 
 /--
 Connection to modal subordination.
@@ -252,9 +242,7 @@ def burglarExample : ModalSubordinationDatum := {
   source := "Roberts (1989)"
 }
 
--- ============================================================================
 -- Part 6: Double Negation Pattern
--- ============================================================================
 
 /--
 Double negation enables anaphora.
@@ -293,9 +281,7 @@ def doubleNegNobody : DoubleNegationDatum := {
   source := "Elliott & Sudo (2025)"
 }
 
--- ============================================================================
 -- Part 7: Collected Data
--- ============================================================================
 
 /-- All bathroom sentence examples -/
 def bathroomData : List BathroomDatum := [
@@ -332,9 +318,7 @@ def doubleNegationData : List DoubleNegationDatum := [
   doubleNegNobody
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

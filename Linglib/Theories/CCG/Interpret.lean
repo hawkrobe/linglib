@@ -24,9 +24,7 @@ open Montague.SemDeriv
 -- Note: Don't open Montague.Core to avoid SemLexEntry name conflict with CCG.Semantics
 -- We use qualified names: Montague.Core.SemLexEntry, Montague.Core.toyLexicon
 
--- ============================================================================
 -- Extract Words from Derivation
--- ============================================================================
 
 /-- Get all words (surface forms) from a derivation, left to right -/
 def getWords : DerivStep → List String
@@ -39,9 +37,7 @@ def getWords : DerivStep → List String
   | .btr d _ => getWords d
   | .coord d1 d2 => getWords d1 ++ ["and"] ++ getWords d2
 
--- ============================================================================
 -- Identify Scalar Items
--- ============================================================================
 
 /-- Check if a word form is a scalar item and return its lexical entry -/
 def getScalarEntry (form : String) : Option (Montague.Core.SemLexEntry toyModel) :=
@@ -63,9 +59,7 @@ def findScalarsHelper (words : List String) (pos : Nat)
 def findScalarItems (d : DerivStep) : List (SemDeriv.ScalarOccurrence toyModel) :=
   findScalarsHelper (getWords d) 0
 
--- ============================================================================
 -- Convert to Semantic Derivation
--- ============================================================================
 
 /--
 Convert a CCG derivation to a Montague semantic derivation.
@@ -82,9 +76,7 @@ def toDerivation (d : DerivStep) (ty : Ty) (meaning : toyModel.interpTy ty)
   , scalarItems := findScalarItems d
   }
 
--- ============================================================================
 -- Example Derivations
--- ============================================================================
 
 /-- CCG derivation for "John sleeps" -/
 def ccg_john_sleeps : DerivStep :=
@@ -108,9 +100,7 @@ def some_student_sleeps_sem : Derivation toyModel :=
     .t
     (Determiner.Quantifier.some_sem toyModel Determiner.Quantifier.student_sem ToyLexicon.sleeps_sem)
 
--- ============================================================================
 -- Verification
--- ============================================================================
 
 -- Verify the derivations via #eval
 #eval getWords ccg_john_sleeps           -- ["John", "sleeps"]
@@ -119,9 +109,7 @@ def some_student_sleeps_sem : Derivation toyModel :=
 #eval john_sleeps_sem.surface            -- ["John", "sleeps"]
 #eval some_student_sleeps_sem.surface    -- ["some", "student", "sleeps"]
 
--- ============================================================================
 -- Notes
--- ============================================================================
 
 /-
 A full SemanticsProducer instance would require computing meanings compositionally.

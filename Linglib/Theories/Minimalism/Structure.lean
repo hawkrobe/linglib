@@ -26,9 +26,7 @@ import Linglib.Core.Basic
 
 namespace Minimalism
 
--- ============================================================================
 -- Structural Positions
--- ============================================================================
 
 /-- Positions in the clause structure -/
 inductive Position where
@@ -41,9 +39,7 @@ inductive Position where
   | headV    -- Head of VP (lexical verb)
   deriving Repr, DecidableEq
 
--- ============================================================================
 -- Dominance
--- ============================================================================
 
 /-- CP dominates TP dominates vP dominates VP -/
 def dominates : Position → Position → Bool
@@ -55,9 +51,7 @@ def dominates : Position → Position → Bool
   | .headv, .headV => true
   | _, _ => false
 
--- ============================================================================
 -- Linearization (English)
--- ============================================================================
 
 /--
 Structural precedence in the base structure (no movement).
@@ -90,9 +84,7 @@ def structurallyPrecedes : Position → Position → Bool
   | .headv, .headV => true
   | _, _ => false
 
--- ============================================================================
 -- Basic Linearization Theorems
--- ============================================================================
 
 /-- Subject (Spec,TP) precedes T in base position -/
 theorem subject_precedes_t_base :
@@ -112,9 +104,7 @@ theorem spec_cp_is_first :
     structurallyPrecedes .specCP .specTP = true ∧
     structurallyPrecedes .specCP .headT = true := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
 -- Head Movement
--- ============================================================================
 
 /-- Possible positions for a head after movement -/
 inductive HeadPosition where
@@ -134,9 +124,7 @@ def tPronouncedAt (tPos : TPosition) : Position :=
   | .inT => .headT
   | .inC => .headC
 
--- ============================================================================
 -- Movement Effects on Linearization
--- ============================================================================
 
 /-- T-to-C places T in C position, which precedes Spec,TP -/
 theorem t_to_c_precedes_subject :
@@ -153,9 +141,7 @@ theorem t_to_c_reverses_order :
     -- After T-to-C: T (in C) < subject
     structurallyPrecedes .headC .specTP = true := ⟨rfl, rfl⟩
 
--- ============================================================================
 -- Linear Precedence Predicates
--- ============================================================================
 
 /-- Does T precede the subject given its position? -/
 def tPrecedesSubject (tPos : TPosition) : Bool :=

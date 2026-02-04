@@ -50,9 +50,7 @@ import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA.QuestionEmbedding
 
--- ============================================================================
 -- World Structure for Questions
--- ============================================================================
 
 /--
 Student outcome for question scenario.
@@ -72,9 +70,7 @@ Worlds represent the actual state of affairs.
 -/
 def questionWorlds : List StudentResult := [.noneP, .someP, .allP]
 
--- ============================================================================
 -- Question Semantics
--- ============================================================================
 
 /--
 A yes/no question partitions the world into "yes" and "no" answers.
@@ -117,9 +113,7 @@ def questionPartition (interp : QuestionInterpretation) : YesNoPartition :=
       noWorlds := [.noneP, .allP]     -- Disjunctive! None OR all.
     }
 
--- ============================================================================
 -- Key Predictions
--- ============================================================================
 
 /--
 Global interpretation gives a natural partition:
@@ -160,9 +154,7 @@ theorem global_no_contiguous :
 theorem local_no_not_contiguous :
     isContiguous (questionPartition .local_).noWorlds = false := rfl
 
--- ============================================================================
 -- Exhaustive Interpretation
--- ============================================================================
 
 /-
 ## Exhaustive Interpretation
@@ -221,9 +213,7 @@ theorem global_answers_natural :
     exhaustiveAnswer .global .allP = "Yes, all passed" := by
   refine ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
 -- RSA Analysis
--- ============================================================================
 
 /-
 ## RSA Prediction
@@ -266,9 +256,7 @@ theorem question_prefers_global :
     isContiguous (questionPartition .global).noWorlds = true := by
   constructor <;> rfl
 
--- ============================================================================
 -- Comparison with Other Embeddings
--- ============================================================================
 
 /-
 ## Comparison Table
@@ -306,9 +294,7 @@ def questionIsUnique : QuestionUniqueness where
   not_de_like := ⟨.allP, by native_decide, by native_decide⟩
   not_attitude_like := ⟨.someP, by native_decide, by native_decide⟩
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Key Results

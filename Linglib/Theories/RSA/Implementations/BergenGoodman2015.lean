@@ -44,9 +44,6 @@ namespace RSA.BergenGoodman2015
 
 open RSA.Eval
 
--- ============================================================================
--- PART 1: Noisy Channel Infrastructure
--- ============================================================================
 
 /-!
 ## Noisy Channel Model
@@ -94,9 +91,6 @@ def symmetric (allU : List U) (ε : ℚ) (hε : 0 ≤ ε ∧ ε ≤ 1) : NoisyCh
 
 end NoisyChannel
 
--- ============================================================================
--- PART 2: Ellipsis Model
--- ============================================================================
 
 /-!
 ## Ellipsis: Sentence Fragments
@@ -199,9 +193,7 @@ def cost : Utterance → ℚ
   | .nobody => 1
   | .wentToMovies => 4
 
--- ============================================================================
 -- RSA with Noisy Channel
--- ============================================================================
 
 /-- L0: Literal listener with noise inference (Eq. 6 from paper)
 
@@ -250,9 +242,7 @@ def L1_noisy (δ : ℚ) (u_perceived : Utterance) : List (Meaning × ℚ) :=
     (m, score)
   normalize scores
 
--- ============================================================================
 -- Results: Ellipsis
--- ============================================================================
 
 /-- Noise rate for experiments -/
 def δ_default : ℚ := 1/100  -- 1% per-word deletion rate
@@ -290,9 +280,6 @@ theorem l0_fragment_works :
 
 end Ellipsis
 
--- ============================================================================
--- PART 3: Prosody Model
--- ============================================================================
 
 /-!
 ## Prosody: Strategic Noise Reduction
@@ -396,9 +383,7 @@ def speakerBelief (k : Knowledge) (m : Meaning) : ℚ :=
     | .both => 1/2
     | .onlyAlice => 0
 
--- ============================================================================
 -- Simplified L0/S1/L1 for Prosody
--- ============================================================================
 
 /-- L0 with noise -/
 def L0 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
@@ -433,9 +418,7 @@ def L1 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
     (m, score)
   normalize scores
 
--- ============================================================================
 -- Results: Prosody
--- ============================================================================
 
 def ε_default : ℚ := 1/100  -- 1% base noise rate
 
@@ -462,9 +445,6 @@ theorem both_compatible :
 
 end Prosody
 
--- ============================================================================
--- PART 4: Theoretical Connections
--- ============================================================================
 
 /-!
 ## Connection to Other Noise Models
@@ -534,9 +514,7 @@ theorem noise_reduces_capacity (ε₁ ε₂ : ℚ) (h : ε₁ < ε₂) (hε₂ :
 
 end TheoreticalConnections
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

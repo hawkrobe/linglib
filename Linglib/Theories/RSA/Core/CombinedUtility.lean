@@ -33,9 +33,6 @@ import Mathlib.Tactic.Linarith
 
 namespace RSA.CombinedUtility
 
--- ============================================================================
--- PART 1: Basic Combined Utility
--- ============================================================================
 
 /-- Combined utility: weighted interpolation of two utility components.
 
@@ -53,9 +50,6 @@ def combined (lam : ℚ) (utilA utilB : ℚ) (cost : ℚ := 0) : ℚ :=
 def combinedWeighted (wA wB : ℚ) (utilA utilB : ℚ) (cost : ℚ := 0) : ℚ :=
   wA * utilA + wB * utilB - cost
 
--- ============================================================================
--- PART 2: Endpoint Theorems
--- ============================================================================
 
 /-- Combined utility equals U_A when λ = 0 -/
 theorem combined_at_zero (utilA utilB : ℚ) :
@@ -84,9 +78,6 @@ theorem combined_cost_additive (lam : ℚ) (utilA utilB cost : ℚ) :
   unfold combined
   ring
 
--- ============================================================================
--- PART 3: Monotonicity Properties
--- ============================================================================
 
 /-- Combined utility increases with U_A when λ < 1 -/
 theorem combined_mono_A (lam : ℚ) (hlam : lam < 1) (utilA utilA' utilB : ℚ)
@@ -105,9 +96,6 @@ theorem combined_mono_B (lam : ℚ) (hlam : 0 < lam) (utilA utilB utilB' : ℚ)
   have : lam * utilB < lam * utilB' := mul_lt_mul_of_pos_left h hlam
   linarith
 
--- ============================================================================
--- PART 4: Interpolation Properties
--- ============================================================================
 
 /-- Combined utility is a convex combination when λ ∈ [0,1] -/
 theorem combined_convex (lam : ℚ) (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1)
@@ -122,9 +110,6 @@ theorem combined_midpoint (utilA utilB : ℚ) :
   unfold combined
   ring
 
--- ============================================================================
--- PART 5: Comparison Theorems
--- ============================================================================
 
 /-- When U_A > U_B, lower λ gives higher combined utility -/
 theorem lower_lambda_when_A_dominates (lam1 lam2 : ℚ)
@@ -146,9 +131,6 @@ theorem higher_lambda_when_B_dominates (lam1 lam2 : ℚ)
     mul_lt_mul_of_pos_right h hdiff
   linarith
 
--- ============================================================================
--- PART 6: MLE Interpretation
--- ============================================================================
 
 /-- Structure for MLE-fitted λ parameters -/
 structure MLEFit where
@@ -167,9 +149,6 @@ def moreRelevanceOriented (fit1 fit2 : MLEFit) : Bool :=
 def moreTruthOriented (fit1 fit2 : MLEFit) : Bool :=
   fit1.lam < fit2.lam
 
--- ============================================================================
--- PART 7: Three-Component Combined Utility
--- ============================================================================
 
 /-- Combined utility with three components (for richer models).
 

@@ -30,9 +30,7 @@ import Linglib.Phenomena.Core.EmpiricalData
 
 namespace Phenomena.Conditionals.LeftNested
 
--- ============================================================================
 -- Data Structure
--- ============================================================================
 
 /--
 Left-nested conditional empirical datum.
@@ -58,9 +56,7 @@ structure LNCDatum where
   notes : String
   deriving Repr
 
--- ============================================================================
 -- Gibbard's Example
--- ============================================================================
 
 /-!
 ## Gibbard's Example (1981)
@@ -93,9 +89,7 @@ def gibbardWithContext : LNCDatum :=
     notes := "Acceptable when inner conditional echoes prior discourse."
   }
 
--- ============================================================================
 -- Discourse Contextualization (Examples 11-14)
--- ============================================================================
 
 /-!
 ## Discourse Effects
@@ -152,9 +146,7 @@ def ex14_givenThat : LNCDatum :=
     notes := "Example 14. 'Given that' paraphrase confirms PC reading."
   }
 
--- ============================================================================
 -- Cross-Linguistic: Japanese (Examples 15-19)
--- ============================================================================
 
 /-!
 ## Japanese Conditional Markers
@@ -202,9 +194,7 @@ def ex17_naraEcho : LNCDatum :=
     notes := "Example 17. 'Sou nara' = 'if so' echoes A's conditional."
   }
 
--- ============================================================================
 -- Cross-Linguistic: German (Examples 20-24)
--- ============================================================================
 
 /-!
 ## German Conditional Markers
@@ -252,9 +242,7 @@ def ex22_fallsModal : LNCDatum :=
     notes := "Example 22. Modal content allows falls in LNC."
   }
 
--- ============================================================================
 -- NPI/PPI Licensing (Examples 29-32)
--- ============================================================================
 
 /-!
 ## Polarity Patterns
@@ -312,9 +300,7 @@ def ex32_npiAnyone : LNCDatum :=
     notes := "Example 32. NPI 'anyone' blocked in embedded consequent."
   }
 
--- ============================================================================
 -- Coordination Constraints (Examples 33-35)
--- ============================================================================
 
 /-!
 ## Coordination Constraints
@@ -359,9 +345,7 @@ def ex35_coordinationDiagnostic : LNCDatum :=
     notes := "Example 35. Coordination constraint even with discourse support."
   }
 
--- ============================================================================
 -- Only + Inversion (Examples 36-39)
--- ============================================================================
 
 /-!
 ## *Only* + Inversion
@@ -406,9 +390,7 @@ def ex38_noInversion : LNCDatum :=
     notes := "Example 38. LNC ok without inversion."
   }
 
--- ============================================================================
 -- Modal/Generic Exceptions (Examples 40-43)
--- ============================================================================
 
 /-!
 ## Modal and Generic Exceptions
@@ -465,9 +447,7 @@ def ex43_habitual : LNCDatum :=
     notes := "Example 43. Habitual reading allows HC."
   }
 
--- ============================================================================
 -- Aggregate Data
--- ============================================================================
 
 /-- All Gibbard-related examples -/
 def gibbardData : List LNCDatum :=
@@ -506,9 +486,7 @@ def allData : List LNCDatum :=
   gibbardData ++ discourseData ++ japaneseData ++ germanData ++
   polarityData ++ coordinationData ++ onlyInversionData ++ exceptionData
 
--- ============================================================================
 -- Empirical Generalizations
--- ============================================================================
 
 /-!
 ## Core Empirical Generalizations
@@ -541,9 +519,7 @@ CAN be HCs, because these provide "object-level" content that can be
 genuinely supposed without prior discourse.
 -/
 
--- ============================================================================
 -- Guards for Data Consistency
--- ============================================================================
 
 -- Bare LNCs without context are odd
 #guard gibbardOutOfBlue.acceptability == "odd"

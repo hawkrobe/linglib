@@ -38,9 +38,7 @@ namespace Theories.NadathurLauer2020.Sufficiency
 
 open Theories.Montague.Conditional.CausalModel
 
--- ============================================================================
 -- Causal Sufficiency (Definition 23)
--- ============================================================================
 
 /--
 **Causal Sufficiency** (Definition 23)
@@ -65,9 +63,7 @@ def sufficientIn (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : Bool :=
   causallySufficient dyn background cause effect
 
--- ============================================================================
 -- Semantics for "make"
--- ============================================================================
 
 /--
 **Semantics of "make"** (causative verb asserting sufficiency)
@@ -95,9 +91,7 @@ def makeExtended (dyn : CausalDynamics) (actual background : Situation)
   actual.hasValue causeEvent true &&
   causallySufficient dyn background causeEvent effectEvent
 
--- ============================================================================
 -- Properties of Sufficiency
--- ============================================================================
 
 /-
 Sufficiency is preserved under weaker backgrounds.
@@ -127,9 +121,7 @@ If nothing is sufficient for E in empty background, E cannot be caused.
 def uncausable (dyn : CausalDynamics) (effect : Variable) : Prop :=
   ∀ cause, causallySufficient dyn Situation.empty cause effect = false
 
--- ============================================================================
 -- Sufficiency and Effect Occurrence
--- ============================================================================
 
 /--
 Sufficiency implies effect occurrence (after cause).
@@ -151,9 +143,7 @@ C can be sufficient for E even if:
 - E has already occurred (from another cause)
 -/
 
--- ============================================================================
 -- Weak vs Strong Sufficiency
--- ============================================================================
 
 /--
 **Weak sufficiency**: C is sufficient for E in *some* compatible background.
@@ -181,9 +171,7 @@ theorem strong_implies_weak (dyn : CausalDynamics) (cause effect : Variable)
   simp only [weaklySufficient]
   exact h Situation.empty
 
--- ============================================================================
 -- Sufficiency in Different Causal Structures
--- ============================================================================
 
 /--
 In disjunctive causation (A ∨ B → C), each disjunct is sufficient.

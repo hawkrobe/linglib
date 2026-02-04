@@ -54,9 +54,6 @@ open Montague.Core.Polarity (ContextPolarity)
 open NeoGricean.Markedness
 open Phenomena.Gradability.Evaluativity
 
--- ============================================================================
--- PART 0: Alternative Types (Q vs M)
--- ============================================================================
 
 /--
 Types of pragmatic alternatives.
@@ -90,9 +87,6 @@ structure PragmaticAlternative where
   explanation : String
   deriving Repr
 
--- ============================================================================
--- PART 1: Horn Sets (Not Scales)
--- ============================================================================
 
 /--
 A Horn Set is an unordered collection of expressions.
@@ -124,9 +118,6 @@ Get all other members of a Horn set (potential alternatives).
 def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List α :=
   h.members.filter (· != x)
 
--- ============================================================================
--- PART 2: Type-Safe Horn Sets (using Montague.Scales expressions)
--- ============================================================================
 
 open Montague.Scales.Quantifiers (QuantExpr)
 open Montague.Scales.Connectives (ConnExpr)
@@ -161,9 +152,6 @@ Uses strings for now (numerals are more complex).
 def numeralSet : HornSet String :=
   ⟨["one", "two", "three", "four", "five"]⟩
 
--- ============================================================================
--- PART 3: Sentence Context
--- ============================================================================
 
 -- Note: ContextPolarity is imported from Montague.SemDeriv
 -- with constructors .upward and .downward
@@ -205,9 +193,6 @@ def universalRestrictor : SentenceContext :=
   , description := "Restrictor of 'every' (e.g., 'Every student who ate ___')"
   }
 
--- ============================================================================
--- PART 4: Abstract Alternative Generation
--- ============================================================================
 
 /--
 An alternative utterance with its source term and context.
@@ -252,9 +237,6 @@ def strongerAlternatives {α : Type} [BEq α]
     (term : α) : List α :=
   (generateAlternatives hornSet checker context term).filter (·.isStrongerInContext) |>.map (·.term)
 
--- ============================================================================
--- PART 5: Quantifier Entailment (Type-Safe)
--- ============================================================================
 
 /--
 Standard quantifier strength ordering (for UE contexts).
@@ -290,9 +272,7 @@ def quantifierChecker : EntailmentChecker QuantExpr :=
       | .nonMonotonic => false  -- No scalar alternatives in NM contexts
   }
 
--- ============================================================================
 -- PART 5b: Connective Entailment (Type-Safe)
--- ============================================================================
 
 /--
 Connective strength in UE context.
@@ -318,9 +298,6 @@ def connectiveChecker : EntailmentChecker ConnExpr :=
       | .nonMonotonic => false  -- No scalar alternatives in NM contexts
   }
 
--- ============================================================================
--- PART 6: Key Theorems (Type-Safe)
--- ============================================================================
 
 /--
 **Theorem: "some" has stronger alternatives in UE context**
@@ -360,9 +337,6 @@ theorem context_determines_alternatives :
     strongerAlternatives quantifierSet quantifierChecker underNegation .some_ := by
   native_decide
 
--- ============================================================================
--- PART 7: String Interface (for syntax-semantics connection)
--- ============================================================================
 
 /--
 Convert a HornScale (from Montague.Scales) to a HornSet.
@@ -407,9 +381,6 @@ String-based connective set for interface with syntax.
 def connectiveSetString : HornSet String :=
   ⟨["or", "and"]⟩
 
--- ============================================================================
--- PART 8: M-Alternatives (Manner/Form Cost)
--- ============================================================================
 
 /--
 Polar variance: do antonyms have the same truth conditions in this construction?
@@ -512,9 +483,6 @@ def getMAlternative {max : Nat}
     else if mAlt.unmarked == form then some mAlt.marked
     else none
 
--- ============================================================================
--- PART 9: M-Alternative Theorems
--- ============================================================================
 
 /--
 M-alternatives exist in equative constructions.
@@ -558,9 +526,6 @@ theorem tall_is_not_marked_in_equative :
     isMarkedInMAlternatives "tall" tall_with_morphology short_with_morphology .equative = false := by
   native_decide
 
--- ============================================================================
--- PART 10: Unified Alternative Generation
--- ============================================================================
 
 /--
 Generate all pragmatic alternatives (both Q and M) for a form.
@@ -589,9 +554,6 @@ def generateAllAlternatives {max : Nat}
   -- For now, just return M-alternatives
   mAlts
 
--- ============================================================================
--- PART 11: Q vs M Comparison
--- ============================================================================
 
 /--
 Key distinction between Q-alternatives and M-alternatives.
@@ -611,9 +573,6 @@ Q-alternatives generate 'not all' from 'some' (informativity competition).
 M-alternatives generate evaluativity from marked forms (cost competition).
 "
 
--- ============================================================================
--- PART 12: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -36,9 +36,7 @@ namespace Theories.DynamicSemantics.DPL
 
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
 -- Placeholder: Full implementation TODO
--- ============================================================================
 
 /--
 DPL semantic type: relation between assignments.
@@ -80,9 +78,7 @@ Note: This does NOT validate DNE!
 def DPLRel.neg {E : Type*} (φ : DPLRel E) : DPLRel E :=
   fun g h => g = h ∧ ¬∃ k, φ g k
 
--- ============================================================================
 -- Key Theorems (TODO: Prove)
--- ============================================================================
 
 /--
 DPL does NOT validate DNE for anaphora.
@@ -96,9 +92,7 @@ Scope extension theorem: ∃x(φ ∧ ψ) ≡ (∃xφ) ∧ ψ when x not free in 
 -/
 theorem scope_extension : True := trivial  -- TODO: Formalize
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Will Provide

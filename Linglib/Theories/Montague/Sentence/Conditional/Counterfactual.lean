@@ -50,9 +50,6 @@ namespace Montague.Sentence.Conditional.Counterfactual
 open Montague.Sentence.Conditional
 open Theories.Montague.Conditional.CausalModel
 
--- ============================================================================
--- PART 1: Common Infrastructure
--- ============================================================================
 
 /--
 The set of closest A-worlds to w according to a similarity ordering.
@@ -71,9 +68,6 @@ def closestWorldsB {W : Type*} [DecidableEq W]
   pWorlds.filter fun w' =>
     pWorlds.all fun w'' => closer w w' w'' || !closer w w'' w'
 
--- ============================================================================
--- PART 2: Universal Theory (Lewis/Kratzer)
--- ============================================================================
 
 /-!
 ## Universal Theory
@@ -106,9 +100,6 @@ def universalCounterfactualB {W : Type*} [DecidableEq W]
     let closest := closestWorldsB closer domain w (domain.filter A)
     closest.isEmpty || closest.all B
 
--- ============================================================================
--- PART 3: Selectional Theory (Stalnaker + Supervaluation)
--- ============================================================================
 
 /-!
 ## Selectional Theory
@@ -204,9 +195,6 @@ theorem cem_selectional {W : Type*} [DecidableEq W]
     -- After all splits, we get contradictions from assuming both are .false
     all_goals (first | exact h | exact h.1 | exact h.2 | contradiction)
 
--- ============================================================================
--- PART 4: Homogeneity Theory (von Fintel/Križ)
--- ============================================================================
 
 /-!
 ## Homogeneity Theory
@@ -294,9 +282,6 @@ theorem negation_swap_homogeneity_nonvacuous {W : Type*} [DecidableEq W]
     -- Split on the if conditions in both the original and negated formulas
     split_ifs at h_presup ⊢ <;> simp_all [Bool.not_not]
 
--- ============================================================================
--- PART 5: Projection Duality (The Deep Structure)
--- ============================================================================
 
 /-!
 ## Projection Duality: Why Strength Matters
@@ -411,9 +396,7 @@ theorem disjunctive_robust (results : List TruthValue)
   unfold projectTruthValues
   simp [h]
 
--- ============================================================================
 -- PART 5b: Galois Connection (The Categorical Foundation)
--- ============================================================================
 
 /-!
 ## Galois Connection: Why Duality?
@@ -504,9 +487,7 @@ example : TruthValue.meet .true .indeterminate = .indeterminate := rfl
 example : TruthValue.join .false .true = .true := rfl
 example : TruthValue.join .false .indeterminate = .indeterminate := rfl
 
--- ============================================================================
 -- PART 5c: Connection to Core.Duality
--- ============================================================================
 
 /-!
 ## Duality Infrastructure
@@ -540,9 +521,6 @@ def TruthValue.fromDuality : Core.Duality.Truth3 → TruthValue
   | .false => .false
   | .indet => .indeterminate
 
--- ============================================================================
--- PART 6: Quantifier Embedding (The Empirical Test)
--- ============================================================================
 
 /-!
 ## Quantifier Embedding
@@ -669,9 +647,6 @@ theorem strength_determines_pattern (results : List TruthValue)
       | indeterminate => exact absurd hx_eq (by decide)
     · rfl
 
--- ============================================================================
--- PART 6: Connection to Causal Models
--- ============================================================================
 
 /-!
 ## Grounding Selection Functions in Causal Models

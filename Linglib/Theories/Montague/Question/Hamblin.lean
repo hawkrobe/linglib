@@ -33,9 +33,7 @@ generalized conjunction:
 
 namespace Montague.Question.Hamblin
 
--- ============================================================================
 -- Hamblin Question Denotations
--- ============================================================================
 
 /-- Hamblin question denotation: a set of propositions (possible answers).
 
@@ -56,9 +54,7 @@ def polar {W : Type*} [BEq W] (p : W → Bool) (worlds : List W) : QuestionDen W
 def which {W E : Type*} [BEq W] (domain : List E) (pred : E → W → Bool) (worlds : List W) : QuestionDen W :=
   fun ans => domain.any fun e => worlds.all fun w => ans w == pred e w
 
--- ============================================================================
 -- Coordination (Partee & Rooth style)
--- ============================================================================
 
 /-- Conjoin two question denotations.
     (Q₁ ∧ Q₂)(P) = Q₁(P) ∧ Q₂(P)
@@ -77,9 +73,7 @@ def disj {W : Type*} (q1 q2 : QuestionDen W) : QuestionDen W :=
 instance {W : Type*} : Add (QuestionDen W) where add := conj
 instance {W : Type*} : HAdd (QuestionDen W) (QuestionDen W) (QuestionDen W) where hAdd := conj
 
--- ============================================================================
 -- Algebraic Properties
--- ============================================================================
 
 /-- Conjunction of questions is commutative. -/
 theorem conj_comm {W : Type*} (q1 q2 : QuestionDen W) (p : W → Bool) :
@@ -98,9 +92,7 @@ theorem disj_assoc {W : Type*} (q1 q2 q3 : QuestionDen W) (p : W → Bool) :
     disj (disj q1 q2) q3 p = disj q1 (disj q2 q3) p := Bool.or_assoc _ _ _
 
 
--- ============================================================================
 -- Answerhood
--- ============================================================================
 
 /-- A proposition p is a complete answer to Q if Q(p) = true. -/
 def isAnswer {W : Type*} (q : QuestionDen W) (p : W → Bool) : Bool := q p
@@ -111,9 +103,7 @@ def tautology {W : Type*} : W → Bool := fun _ => true
 /-- The contradiction answers no question. -/
 def contradiction {W : Type*} : W → Bool := fun _ => false
 
--- ============================================================================
 -- Connection to Partition Semantics
--- ============================================================================
 
 /-!
 ## Hamblin vs Partition Semantics

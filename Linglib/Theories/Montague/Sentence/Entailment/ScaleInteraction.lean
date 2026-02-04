@@ -65,9 +65,7 @@ theorem de_blocks_scalar_implicature :
     scalarAlternativesInContext Quantifiers.quantScale .some_ .downward = [.none_] := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary Table

@@ -92,9 +92,7 @@ namespace Montague.Question.LiftedTypes
 open Montague.Question
 open scoped GSQuestion  -- For ⊑ notation
 
--- ============================================================================
 -- Core Definitions
--- ============================================================================
 
 /-- A property of questions: something that can be true or false of a GSQuestion.
 
@@ -120,9 +118,7 @@ namespace LiftedQuestion
 
 variable {W : Type*}
 
--- ============================================================================
 -- Lifting Operation
--- ============================================================================
 
 /-- Lift a core question to the lifted type.
 
@@ -136,9 +132,7 @@ def lift (q : GSQuestion W) : LiftedQuestion W :=
 def isPrincipal (lq : LiftedQuestion W) : Prop :=
   ∃ q : GSQuestion W, lq = lift q
 
--- ============================================================================
 -- Continuation Monad Structure (Barker & Shan 2014)
--- ============================================================================
 
 /-!
 ### The Continuation Monad
@@ -200,9 +194,7 @@ def run (lq : LiftedQuestion W) : Prop :=
 -- Notation for bind
 scoped infixl:55 " >>= " => bind
 
--- ============================================================================
 -- Monad Laws
--- ============================================================================
 
 /-- Left identity: pure q >>= f = f q -/
 theorem bind_left_id (q : GSQuestion W) (f : GSQuestion W → LiftedQuestion W) :
@@ -238,9 +230,7 @@ theorem map_via_bind (f : GSQuestion W → GSQuestion W) (lq : LiftedQuestion W)
 theorem run_principal (q : GSQuestion W) : run (lift q) = True := by
   simp only [run, lift]
 
--- ============================================================================
 -- Coordination (the whole point!)
--- ============================================================================
 
 /-- Disjunction of lifted questions.
 
@@ -266,9 +256,7 @@ def disjCore (q1 q2 : GSQuestion W) : LiftedQuestion W :=
 def conjCore (q1 q2 : GSQuestion W) : LiftedQuestion W :=
   conj (lift q1) (lift q2)
 
--- ============================================================================
 -- Coordination and the Monad
--- ============================================================================
 
 /-- Disjunction distributes over bind from the left.
 
@@ -305,9 +293,7 @@ theorem map_conj (f : GSQuestion W → GSQuestion W) (lq1 lq2 : LiftedQuestion W
   funext P
   simp only [map, conj]
 
--- ============================================================================
 -- Lowering (when possible)
--- ============================================================================
 
 /-- Lower a lifted question back to core type, if it's principal.
 
@@ -322,9 +308,7 @@ def lower? (_lq : LiftedQuestion W) : Option (GSQuestion W) :=
 def isLowerable (lq : LiftedQuestion W) : Prop :=
   ∃ q : GSQuestion W, ∀ P, lq P ↔ P q
 
--- ============================================================================
 -- Properties and Theorems
--- ============================================================================
 
 /-- Lifting preserves identity: lift is injective on extensionally equal questions. -/
 theorem lift_injective (q1 q2 : GSQuestion W)
@@ -393,9 +377,7 @@ theorem lift_conj_refinement (q1 q2 : GSQuestion W) :
   -- So if P holds of both and P is monotone, P holds of q1 * q2
   sorry  -- Requires showing q12 ⊑ q1 and using monotonicity
 
--- ============================================================================
 -- Connection to Core Questions
--- ============================================================================
 
 /-- The refinement property, lifted to LiftedQuestion.
 
@@ -415,9 +397,7 @@ theorem lift_preserves_refinement (q q' : GSQuestion W) (h : q ⊑ q') :
   -- This is not automatic; it depends on P being "semantic"
   sorry
 
--- ============================================================================
 -- Answerhood in Lifted Types
--- ============================================================================
 
 /-- An answer to a lifted question: a proposition that resolves some underlying question.
 
@@ -434,9 +414,7 @@ def partiallyAnswers (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) 
 
 end LiftedQuestion
 
--- ============================================================================
 -- Notation
--- ============================================================================
 
 scoped infixl:65 " ⊔ " => LiftedQuestion.disj
 scoped infixl:70 " ⊓ " => LiftedQuestion.conj

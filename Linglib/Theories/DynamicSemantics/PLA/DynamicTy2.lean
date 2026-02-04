@@ -26,9 +26,6 @@ namespace Theories.DynamicSemantics.PLA
 open Theories.DynamicSemantics.Core
 open Theories.DynamicSemantics.Core.DynamicTy2
 
--- ============================================================================
--- PART 1: Assignment Type (Sum Type)
--- ============================================================================
 
 /--
 PLA assignment merges variable and pronoun assignments via sum type.
@@ -43,9 +40,6 @@ def varDref {E : Type*} (i : VarIdx) : Dref (MergedAssignment E) E := fun g => g
 /-- Pronoun dref: projection at .inr i -/
 def pronDref {E : Type*} (i : PronIdx) : Dref (MergedAssignment E) E := fun g => g (.inr i)
 
--- ============================================================================
--- PART 2: Term Interpretation
--- ============================================================================
 
 /--
 Interpret a PLA term as a Dynamic Ty2 dref.
@@ -54,9 +48,6 @@ def termToDref {E : Type*} : Term → Dref (MergedAssignment E) E
   | .var i => varDref i
   | .pron i => pronDref i
 
--- ============================================================================
--- PART 3: Bridge to PLAPoss
--- ============================================================================
 
 /--
 Convert PLAPoss to merged assignment.
@@ -81,9 +72,6 @@ theorem merged_roundtrip {E : Type*} (g : MergedAssignment E) :
   funext x
   cases x <;> rfl
 
--- ============================================================================
--- PART 4: Formula Translation
--- ============================================================================
 
 variable {E : Type*} [Nonempty E]
 
@@ -120,9 +108,6 @@ This means every PLA formula translates to a TEST in Dynamic Ty2.
 def formulaToDRS (M : Model E) (φ : Formula) : DRS (MergedAssignment E) :=
   test (formulaToCondition M φ)
 
--- ============================================================================
--- PART 5: Preservation Theorems
--- ============================================================================
 
 /-- Atom translation: predicate applied to evaluated terms -/
 theorem formulaToDRS_atom (M : Model E) (name : String) (ts : List Term) :
@@ -140,9 +125,6 @@ theorem formulaToDRS_conj (M : Model E) (φ ψ : Formula) :
 theorem formulaToDRS_exists (M : Model E) (x : VarIdx) (φ : Formula) :
     formulaToDRS M (.exists_ x φ) = test (fun g => ∃ e : E, formulaToCondition M φ (extend g x e)) := rfl
 
--- ============================================================================
--- PART 6: Semantic Correspondence
--- ============================================================================
 
 /-- Split a merged assignment into variable and witness components -/
 def splitAssignment (g : MergedAssignment E) : Assignment E × WitnessSeq E :=
@@ -215,9 +197,7 @@ theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignmen
     subst heq
     exact ⟨rfl, (formulaToCondition_eq_sat M φ g).mpr hsat⟩
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## PLA ↪ Dynamic Ty2 Embedding

@@ -54,9 +54,7 @@ Connection to unified noise theory: `Theories/RSA/Core/Noise.lean`
 
 namespace Phenomena.Focus.ProsodicExhaustivity
 
--- ============================================================================
 -- Part 1: Basic Prosodic Exhaustivity Data
--- ============================================================================
 
 /-- Stress pattern -/
 inductive StressPattern where
@@ -91,9 +89,7 @@ structure ProsodyDatum where
   source : String := ""
   deriving Repr
 
--- ============================================================================
 -- Part 2: Subject Focus Data
--- ============================================================================
 
 /-- Stressed subject → exhaustive -/
 def stressedSubject : ProsodyDatum := {
@@ -120,9 +116,7 @@ def unstressedSubject : ProsodyDatum := {
 /-- Contrast: stressed vs unstressed -/
 def stressContrast : List ProsodyDatum := [stressedSubject, unstressedSubject]
 
--- ============================================================================
 -- Part 3: Selective/Dimensional Focus
--- ============================================================================
 
 /-!
 ## Selective Focus
@@ -158,9 +152,7 @@ def selectiveFocusBill : ProsodyDatum := {
 
 def selectiveFocusData : List ProsodyDatum := [selectiveFocusMary, selectiveFocusBill]
 
--- ============================================================================
 -- Part 4: Scalar Item Focus
--- ============================================================================
 
 /-!
 ## Scalar Focus
@@ -195,16 +187,12 @@ def scalarUnstressed : ProsodyDatum := {
 
 def scalarFocusData : List ProsodyDatum := [scalarStressed, scalarUnstressed]
 
--- ============================================================================
 -- Part 5: Collected Data
--- ============================================================================
 
 def allProsodyData : List ProsodyDatum :=
   stressContrast ++ selectiveFocusData ++ scalarFocusData
 
--- ============================================================================
 -- Part 6: Theoretical Connections
--- ============================================================================
 
 /-!
 ## Noisy Channel Account (Bergen & Goodman 2015)

@@ -23,9 +23,7 @@ namespace Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 
 open Phenomena
 
--- ============================================================================
 -- Study Metadata
--- ============================================================================
 
 /-- Citation for this study -/
 def citation : String := "Goodman, N.D. & Stuhlmüller, A. (2013). Knowledge and Implicature: Modeling Language Understanding as Social Cognition. Topics in Cognitive Science 5(1): 173-184."
@@ -34,9 +32,7 @@ def citation : String := "Goodman, N.D. & Stuhlmüller, A. (2013). Knowledge and
 def interpretationMeasure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
 
--- ============================================================================
 -- Scalar Implicature Data
--- ============================================================================
 
 /-- A Horn scale: ordered alternatives from weak to strong -/
 structure HornScale where
@@ -68,9 +64,7 @@ def someNotAll : ScalarImplicatureDatum := {
   implicatedMeaning := "Some but not all students passed"
 }
 
--- ============================================================================
 -- Knowledge State Data (Experiment 1 from the paper)
--- ============================================================================
 
 /-- Speaker's perceptual access level -/
 structure AccessCondition where
@@ -107,9 +101,7 @@ def partialAccess1Result : KnowledgeImplicatureDatum := {
   empiricalNote := "Bets on 2 did not exceed bets on 3 (p = .78)"
 }
 
--- ============================================================================
 -- The Core Empirical Phenomenon (Experiment 2: Number Words)
--- ============================================================================
 
 /--
 **The Empirical Phenomenon**
@@ -135,9 +127,7 @@ def numberWordCancellation : ImplicatureCancellationPhenomenon := {
   citation := "Goodman & Stuhlmüller (2013), Experiment 2, p. 180"
 }
 
--- ============================================================================
 -- What This Phenomenon Requires of Semantic Theories
--- ============================================================================
 
 /--
 **Semantic Constraint from Empirical Data**

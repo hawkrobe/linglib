@@ -29,9 +29,6 @@ Homogeneity is characterized by non-complementary truth conditions:
 
 namespace Phenomena.Plurals.Homogeneity
 
--- ============================================================================
--- PART 1: Basic Homogeneity Pattern
--- ============================================================================
 
 /--
 Polarity of a sentence (for homogeneity asymmetry).
@@ -76,9 +73,6 @@ structure HomogeneityDatum where
   negativeInGap : HomogeneityJudgment
   deriving Repr
 
--- ============================================================================
--- PART 2: Plural Definites
--- ============================================================================
 
 /--
 The canonical example: "The switches are on."
@@ -123,9 +117,6 @@ def booksExample : HomogeneityDatum :=
   , negativeInGap := .neitherTrueNorFalse
   }
 
--- ============================================================================
--- PART 3: Conjunctions
--- ============================================================================
 
 /--
 Conjunctions exhibit homogeneity but resist non-maximal readings.
@@ -175,9 +166,6 @@ def coworkersExample : ConjunctionVsPluralDatum :=
   , pluralPermitsNonMax := true        -- acceptable
   }
 
--- ============================================================================
--- PART 4: Summative Predicates
--- ============================================================================
 
 /--
 Summative predicates: apply to parts of a singular entity.
@@ -200,9 +188,6 @@ def summativeExample : HomogeneityDatum :=
   , negativeInGap := .neitherTrueNorFalse
   }
 
--- ============================================================================
--- PART 5: Conditionals
--- ============================================================================
 
 /--
 Bare conditionals exhibit homogeneity over situations.
@@ -223,9 +208,6 @@ def conditionalExample : HomogeneityDatum :=
   , negativeInGap := .neitherTrueNorFalse
   }
 
--- ============================================================================
--- PART 6: Collective Predicates
--- ============================================================================
 
 /--
 Collective predicates: "The teachers met."
@@ -272,9 +254,6 @@ def hamletExample : UpwardHomogeneityDatum :=
   , judgment := .neitherTrueNorFalse
   }
 
--- ============================================================================
--- PART 7: Homogeneity Removal
--- ============================================================================
 
 /--
 Elements that remove homogeneity gaps.
@@ -332,9 +311,6 @@ def completelyRemovesHomogeneity : HomogeneityRemovalDatum :=
   , preciseJudgment := .clearlyFalse
   }
 
--- ============================================================================
--- PART 8: Question-Answer Diagnostic
--- ============================================================================
 
 /--
 Responses to questions in gap scenarios.
@@ -364,9 +340,6 @@ def booksQuestionExample : QuestionAnswerDatum :=
   , betterResponse := "Well, I liked some of them..."
   }
 
--- ============================================================================
--- PART 9: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about homogeneity.
@@ -392,9 +365,7 @@ def mainGeneralizations : HomogeneityGeneralizations :=
   , conjunctionsResistNonMax := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def pluralDefiniteExamples : List HomogeneityDatum :=
   [switchesExample, booksExample]
@@ -405,9 +376,7 @@ def otherHomogeneityExamples : List HomogeneityDatum :=
 def removalExamples : List HomogeneityRemovalDatum :=
   [allRemovesHomogeneity, bothRemovesHomogeneity, completelyRemovesHomogeneity]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

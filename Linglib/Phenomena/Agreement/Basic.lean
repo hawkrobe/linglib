@@ -25,9 +25,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Subject-verb agreement data -/
 def agreementData : PhenomenonData := {
@@ -58,9 +56,7 @@ def agreementData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval Surface.agreementOk [he, sleeps]      -- true
 #eval Surface.agreementOk [he, sleep]       -- false

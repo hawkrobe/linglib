@@ -28,9 +28,7 @@ open CCG
 open Montague
 open Phenomena.Entailment
 
--- ============================================================================
 -- CCG Derivations for Test Sentences
--- ============================================================================
 
 /-- "John sleeps" - backward application -/
 def ccg_john_sleeps : DerivStep :=
@@ -60,9 +58,7 @@ def ccg_mary_sees_john : DerivStep :=
 def ccg_john_eats_pizza : DerivStep :=
   .bapp (.lex ⟨"John", NP⟩) (.fapp (.lex ⟨"eats", TV⟩) (.lex ⟨"pizza", NP⟩))
 
--- ============================================================================
 -- Extended Semantic Lexicon (matching the toy model)
--- ============================================================================
 
 /-- Extended lexicon with all entities and predicates -/
 def extendedLexicon : SemLexicon toyModel := λ word cat =>
@@ -84,9 +80,7 @@ def extendedLexicon : SemLexicon toyModel := λ word cat =>
       some ⟨TV, ToyLexicon.reads_sem⟩
   | _, _ => none
 
--- ============================================================================
 -- CCG Predictions
--- ============================================================================
 
 /-- Get truth value from CCG derivation -/
 def ccgTruth (d : DerivStep) : Option Bool :=
@@ -103,9 +97,7 @@ def ccgTruth (d : DerivStep) : Option Bool :=
 #eval ccgTruth ccg_john_sees_mary   -- some true
 #eval ccgTruth ccg_mary_sees_john   -- some true
 
--- ============================================================================
 -- Pipeline Theorems: CCG Matches Empirical Truth Judgments
--- ============================================================================
 
 /-- CCG correctly predicts "John sleeps" is true -/
 theorem ccg_predicts_john_sleeps :
@@ -137,9 +129,7 @@ theorem ccg_predicts_mary_sees_john :
     ccgTruth ccg_mary_sees_john = some marySeesJohnTrue.judgedTrue := by
   native_decide
 
--- ============================================================================
 -- Universal Coverage Theorem
--- ============================================================================
 
 /-- A test case: derivation paired with expected judgment -/
 structure TestCase where
@@ -191,9 +181,7 @@ theorem ccg_predicts_all_cases :
     (intransitiveTestCases ++ transitiveTestCases).all ccgPredictsCorrectly = true := by
   native_decide
 
--- ============================================================================
 -- Summary: Complete Pipeline
--- ============================================================================
 
 /-
 ## What This Module Demonstrates

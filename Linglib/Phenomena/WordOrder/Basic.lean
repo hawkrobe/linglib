@@ -21,9 +21,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Basic word order data -/
 def wordOrderData : PhenomenonData := {
@@ -52,9 +50,7 @@ def wordOrderData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval Surface.wordOrderOk [john, sees, mary] .declarative  -- true (SVO)
 #eval Surface.wordOrderOk [john, mary, sees] .declarative  -- true (verb still after subj)

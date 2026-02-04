@@ -48,9 +48,6 @@ namespace Montague.Verb.Attitude.Examples
 
 open Montague
 
--- ============================================================================
--- PART 1: Possible Worlds
--- ============================================================================
 
 /-- A finite set of possible worlds for decidable reasoning -/
 inductive World where
@@ -59,9 +56,6 @@ inductive World where
 
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
 
--- ============================================================================
--- PART 2: Intensional Types (using canonical Montague.Ty)
--- ============================================================================
 
 /-!
 We use the canonical `Montague.Ty` type system:
@@ -82,9 +76,6 @@ abbrev Ty.prop : Ty := Ty.intens .t  -- s ⇒ t
 /-- Individual concept: intension of entities -/
 abbrev Ty.indConcept : Ty := Ty.intens .e  -- s ⇒ e
 
--- ============================================================================
--- PART 3: Intensional Model
--- ============================================================================
 
 /--
 An intensional model for attitudes uses a specific World type.
@@ -104,9 +95,6 @@ def IModel.interpTy (m : IModel) : Ty → Type
   | .s => World
   | .fn σ τ => m.interpTy σ → m.interpTy τ
 
--- ============================================================================
--- PART 4: Intensional Operators
--- ============================================================================
 
 /--
 The "up" operator (^): convert extension to intension (constant function)
@@ -130,9 +118,6 @@ In Montague's notation: ˇα is the extension of α at the evaluation world
 def down {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) : m.interpTy τ :=
   f w
 
--- ============================================================================
--- PART 5: Toy Intensional Model
--- ============================================================================
 
 /-- A small domain for examples -/
 inductive ToyIEntity where
@@ -147,9 +132,6 @@ def toyIModel : IModel := {
   decEq := inferInstance
 }
 
--- ============================================================================
--- PART 6: World-Dependent Extensions
--- ============================================================================
 
 /--
 "sleeps" as a world-dependent property.
@@ -182,9 +164,6 @@ def happy : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
     | .w3, .mary => false
     | _, _ => false
 
--- ============================================================================
--- PART 7: The Morning Star / Evening Star Problem
--- ============================================================================
 
 /--
 "the morning star" - an individual concept (intension of type e)
@@ -221,9 +200,6 @@ theorem intensions_differ :
   simp only [morningStar, eveningStar] at this
   cases this
 
--- ============================================================================
--- PART 8: Belief Verb Semantics
--- ============================================================================
 
 /--
 Doxastic accessibility relation: which worlds are compatible with
@@ -265,9 +241,6 @@ def believeAt : World → toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
     allWorlds.all λ w' =>
       !believes_access agent evalWorld w' || prop w'
 
--- ============================================================================
--- PART 9: De Dicto vs De Re
--- ============================================================================
 
 /--
 "John believes Mary sleeps" (de dicto)
@@ -312,9 +285,6 @@ Even if "the morning star" = "the evening star" at the actual world,
 Because belief operates on INTENSIONS, not extensions.
 -/
 
--- ============================================================================
--- PART 10: Connection to Scalar Implicature Context
--- ============================================================================
 
 /-
 **Why this matters for scalar implicatures**
@@ -364,9 +334,6 @@ def maryBelievesAll : toyIModel.interpTy .t :=
 #eval maryBelievesSome  -- true (trivially, since someCookies always true)
 #eval maryBelievesAll   -- depends on Mary's accessible worlds
 
--- ============================================================================
--- PART 11: Intensionality Tests
--- ============================================================================
 
 /--
 **Theorem: Belief is intensional**
@@ -395,9 +362,6 @@ Applying down after up at any world returns the original value.
 theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) :
     down (up x) w = x := rfl
 
--- ============================================================================
--- PART 12: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

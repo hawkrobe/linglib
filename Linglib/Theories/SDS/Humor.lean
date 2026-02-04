@@ -41,9 +41,7 @@ open SDS.Core
 open SDS.Examples
 open Phenomena.Humor.Studies.KaoEtAl2016
 
--- ============================================================================
 -- Structural Correspondence
--- ============================================================================
 
 /-!
 ## Structural Correspondence
@@ -76,9 +74,7 @@ Given ambiguous word in context:
 | Dist(F_a, F_b) | conflictDegree |
 -/
 
--- ============================================================================
 -- Formalizing the Measures
--- ============================================================================
 
 /--
 Posterior uncertainty: entropy of the normalized posterior distribution.
@@ -110,9 +106,7 @@ def isTied {α Θ : Type*} [SDSConstraintSystem α Θ]
   let p2 := SDSConstraintSystem.normalizedPosterior sys c2
   |p1 - p2| ≤ tolerance
 
--- ============================================================================
 -- Conflict as Distinctiveness
--- ============================================================================
 
 /-!
 ## Conflict ≈ Distinctiveness
@@ -181,9 +175,7 @@ prefer CELEBRITY. Low distinctiveness → not a pun.
 -/
 example : hasConflict coachToldStar = false := by native_decide
 
--- ============================================================================
 -- Punniness Prediction
--- ============================================================================
 
 /--
 A sentence is predicted to be a pun when:
@@ -211,9 +203,7 @@ def predictedFunniness {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ]
   else
     0
 
--- ============================================================================
 -- Worked Example: Mapping Kao's Pun to SDS
--- ============================================================================
 
 /-!
 ## Worked Example: "The magician got so mad he pulled his hare out"
@@ -282,9 +272,7 @@ example : SDSConstraintSystem.normalizedPosterior magicianHareSDS .hare > 1/4 :=
 example : SDSConstraintSystem.normalizedPosterior magicianHareSDS .hair > 1/4 := by
   native_decide
 
--- ============================================================================
 -- Theoretical Equivalence
--- ============================================================================
 
 /-!
 ## Theoretical Equivalence
@@ -348,9 +336,7 @@ theorem sds_conflict_iff_different_argmax
   -- The proof requires careful case analysis on the Option types
   sorry
 
--- ============================================================================
 -- Proof Sketch: What Would a Full Formalization Require?
--- ============================================================================
 
 /-!
 ## Proof Sketch: Full Formalization
@@ -545,9 +531,7 @@ The key insight is already captured: **SDS conflict ≈ Kao's distinctiveness** 
 both measure whether different evidence sources prefer different interpretations.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: SDS and Humor

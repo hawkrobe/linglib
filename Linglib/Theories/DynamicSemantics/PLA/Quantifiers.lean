@@ -43,9 +43,6 @@ namespace Theories.DynamicSemantics.PLA
 
 open Classical
 
--- ============================================================================
--- PART 1: Generalized Quantifier Relations
--- ============================================================================
 
 /--
 A **Generalized Quantifier** relation: determines truth based on two sets.
@@ -84,9 +81,6 @@ def atLeast (n : ℕ) : GQRel α := fun A B =>
 def exactly [Fintype α] (n : ℕ) : GQRel α := fun A B =>
   (A ∩ B).toFinite.toFinset.card = n
 
--- ============================================================================
--- PART 2: Conservativity
--- ============================================================================
 
 /--
 A quantifier is **conservative** if `D(A)(B) ↔ D(A)(A ∩ B)`.
@@ -130,9 +124,6 @@ theorem no_conservative : IsConservative (no : GQRel α) := by
     rw [h] at this
     exact this
 
--- ============================================================================
--- PART 3: Monotonicity Properties
--- ============================================================================
 
 /--
 A quantifier is **upward monotone in the second argument** if
@@ -164,9 +155,6 @@ theorem no_downward_mono : IsDownwardMono (no : GQRel α) := by
   rw [hAB] at this
   exact this
 
--- ============================================================================
--- PART 4: Truthfulness (Existential Import)
--- ============================================================================
 
 /--
 A quantifier is **truthful** (has existential import) if
@@ -194,9 +182,6 @@ theorem every_not_truthful : ¬IsTruthful (every : GQRel α) := by
 
 end GQRel
 
--- ============================================================================
--- PART 5: Witness Functions for Donkey Anaphora
--- ============================================================================
 
 /--
 A **witness function** selects, for each entity in the restrictor satisfying
@@ -232,9 +217,6 @@ theorem truthful_has_witness {α : Type*} [Nonempty α]
   let ⟨x, hx⟩ := hT A B h
   ⟨x, hx, trivial⟩
 
--- ============================================================================
--- PART 6: Dynamic Generalized Quantifiers
--- ============================================================================
 
 variable {E : Type*} [Nonempty E]
 
@@ -271,9 +253,6 @@ def Formula.forallGQ (M : Model E) (x : VarIdx) (φ : Formula) :
     Update E :=
   Formula.gqUpdate M GQRel.every x (Formula.atom "⊤" []) φ
 
--- ============================================================================
--- PART 7: Donkey Sentences
--- ============================================================================
 
 /--
 **Donkey Update**: For "Every farmer who owns a donkey beats it".
@@ -309,9 +288,6 @@ def etypeApproach (M : Model E) (farmer donkey : String) (owns beats : String) :
     (∃ d : E, M.interp donkey [d] ∧ M.interp owns [f, d]) →
     ∀ d : E, M.interp donkey [d] → M.interp owns [f, d] → M.interp beats [f, d]
 
--- ============================================================================
--- PART 8: Properties of Dynamic Quantifiers
--- ============================================================================
 
 /--
 **GQ updates are eliminative**: They never add possibilities.
@@ -345,9 +321,6 @@ theorem gqUpdate_conservative (M : Model E) (D : GQRel E) (hC : GQRel.IsConserva
     simp only [Set.inter_def, Set.mem_setOf_eq]
     exact hD
 
--- ============================================================================
--- PART 9: Scope and Binding
--- ============================================================================
 
 /--
 **Indefinites take wide scope** (in dynamic semantics).
@@ -377,9 +350,7 @@ theorem universal_no_export (M : Model E) (x : VarIdx) (φ : Formula)
     Formula.forallGQ M x φ s ⊆ s :=
   gqUpdate_eliminative M GQRel.every x (Formula.atom "⊤" []) φ s
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

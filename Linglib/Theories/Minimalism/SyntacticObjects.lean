@@ -21,9 +21,7 @@ import Mathlib.Data.Set.Basic
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Categorial Features
--- ============================================================================
 
 /-- Categorial features (Definition 10)
 
@@ -44,9 +42,7 @@ inductive Cat where
     The stack is consumed as selection proceeds -/
 abbrev SelStack := List Cat
 
--- ============================================================================
 -- Part 2: Lexical Items
--- ============================================================================
 
 /-- A simple LI is a ⟨CAT, SEL⟩ pair (Definition 10)
     - `cat`: The categorial feature (what this LI IS)
@@ -103,9 +99,7 @@ def LexicalItem.combine (target mover : LexicalItem) : LexicalItem :=
     | nil => exact absurd htf target.nonempty
     | cons hd tl => simp⟩
 
--- ============================================================================
 -- Part 3: LI Tokens
--- ============================================================================
 
 /-- An LI token is a specific instance of an LI in a derivation
     Different tokens of the same LI are distinct objects -/
@@ -124,9 +118,7 @@ instance : DecidableEq LIToken := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact hid rfl)
 
--- ============================================================================
 -- Part 4: Syntactic Objects
--- ============================================================================
 
 /-- A syntactic object is either:
     1. An LI token (leaf/terminal)
@@ -164,9 +156,7 @@ def getConstituents : SyntacticObject → Option (SyntacticObject × SyntacticOb
 
 end SyntacticObject
 
--- ============================================================================
 -- Part 5: Merge
--- ============================================================================
 
 /-- Merge: the structure-building operation (Definition 12)
 
@@ -193,9 +183,7 @@ def externalMerge (x y : SyntacticObject) (_h : x ≠ y) : SyntacticObject :=
 def internalMerge (target mover : SyntacticObject) (_h : target ≠ mover) : SyntacticObject :=
   merge mover target
 
--- ============================================================================
 -- Part 6: Example Constructions
--- ============================================================================
 
 /-- Create a simple leaf SO from category and selection -/
 def mkLeaf (cat : Cat) (sel : SelStack) (id : Nat) : SyntacticObject :=
@@ -210,9 +198,7 @@ def exampleNoun : SyntacticObject := mkLeaf .N [] 2
 /-- Example: A determiner "the" - D that selects N -/
 def exampleDet : SyntacticObject := mkLeaf .D [.N] 3
 
--- ============================================================================
 -- Part 7: Basic Properties
--- ============================================================================
 
 /-- Count the number of nodes (Merge operations) in an SO -/
 def SyntacticObject.nodeCount : SyntacticObject → Nat

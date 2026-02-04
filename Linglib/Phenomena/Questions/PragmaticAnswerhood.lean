@@ -29,9 +29,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.PragmaticAnswerhood
 
--- ============================================================================
--- PART 1: Pragmatic Rigidity Examples
--- ============================================================================
 
 /-- G&S p. 359: Terms can be pragmatically rigid without being semantically rigid.
     "Your father" is not semantically rigid, but pragmatically rigid for anyone
@@ -81,9 +78,6 @@ def tourDeFrance1980 : PragmaticRigidityDatum :=
 def pragmaticRigidityExamples : List PragmaticRigidityDatum :=
   [yourFather, tourDeFrance1980]
 
--- ============================================================================
--- PART 2: True Pragmatic Answers (including false propositions)
--- ============================================================================
 
 /-- G&S p. 360: A FALSE proposition can give a TRUE pragmatic answer.
     This happens when the questioner has false beliefs that nevertheless
@@ -123,9 +117,6 @@ def zoetemelkWinner : FalseTrueDatum :=
 def falseTrueExamples : List FalseTrueDatum :=
   [zoetemelkWinner]
 
--- ============================================================================
--- PART 3: Pragmatic Definiteness
--- ============================================================================
 
 /-- G&S p. 360-361: Indefinite terms can be pragmatically definite
     when the questioner's information uniquely identifies the referent.
@@ -162,9 +153,6 @@ def elderlyLady : PragmaticDefinitenesssDatum :=
 def pragmaticDefinitenessExamples : List PragmaticDefinitenesssDatum :=
   [elderlyLady]
 
--- ============================================================================
--- PART 4: Non-Exhaustive Answers
--- ============================================================================
 
 /-- G&S p. 361-362: Non-exhaustive answers can pragmatically imply
     exhaustive information through background knowledge.
@@ -209,9 +197,6 @@ def profAAcceptance : NonExhaustiveImplicationDatum :=
 def nonExhaustiveExamples : List NonExhaustiveImplicationDatum :=
   [profAContribution, profAAcceptance]
 
--- ============================================================================
--- PART 5: Semantic vs Pragmatic Answerhood
--- ============================================================================
 
 /-- G&S p. 355: Semantic answerhood is a limit case of pragmatic answerhood.
     When J = I (no factual information), pragmatic = semantic.
@@ -245,9 +230,6 @@ def definitePragmatic : AnswerhoodComparisonDatum :=
 def answerhoodComparisonExamples : List AnswerhoodComparisonDatum :=
   [definitePragmatic]
 
--- ============================================================================
--- PART 6: Disharmonious Information
--- ============================================================================
 
 /-- G&S p. 361: Indefinite terms are appropriate when speech participants
     have disharmonious information but must achieve information exchange.
@@ -284,9 +266,6 @@ def bootShop : DisharmoniousInfoDatum :=
 def disharmoniousExamples : List DisharmoniousInfoDatum :=
   [bootShop]
 
--- ============================================================================
--- PART 7: Institutional vs Ordinary Question-Answering
--- ============================================================================
 
 /-- G&S p. 363, 390: In highly institutionalized settings (courts, etc.),
     semantic answers are required because information sets vary widely.
@@ -321,9 +300,6 @@ def courtTestimony : InstitutionalAnswerDatum :=
 def institutionalExamples : List InstitutionalAnswerDatum :=
   [courtTestimony]
 
--- ============================================================================
--- PART 8: Key Theoretical Principles
--- ============================================================================
 
 /-- G&S p. 355: Semantic answerhood as limit of pragmatic answerhood -/
 def semanticAsLimit : String :=

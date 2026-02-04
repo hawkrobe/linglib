@@ -43,9 +43,6 @@ import Linglib.Core.ProductOfExperts
 
 namespace Montague.Frames
 
--- ============================================================================
--- PART 1: Basic Frame Structure
--- ============================================================================
 
 /-!
 ## Frames as Distributions over Concepts
@@ -76,9 +73,6 @@ structure ScenarioMix (Scenario : Type) where
   /-- Distribution over scenarios: P(scenario) -/
   dist : Scenario → ℚ
 
--- ============================================================================
--- PART 2: Frame Elements
--- ============================================================================
 
 /-!
 ## Frame Elements
@@ -113,9 +107,6 @@ structure FrameDef (Concept : Type) where
   /-- Overall scenario distribution (for concepts not tied to specific elements) -/
   scenarioBase : Concept → ℚ
 
--- ============================================================================
--- PART 3: Example Scenarios
--- ============================================================================
 
 /-!
 ## Example Scenarios for the "bat" and "star" examples
@@ -165,9 +156,6 @@ def entertainmentScenario : Scenario StarConcept :=
       | .celebrity => 90/100
   }
 
--- ============================================================================
--- PART 4: Scenario Induction
--- ============================================================================
 
 /-!
 ## Scenario Induction from Context
@@ -203,9 +191,6 @@ def inferScenario {S : Type} [BEq S]
   let Z := scenarios.foldl (fun acc s => acc + unnorm s) 0
   fun s => if Z = 0 then 0 else unnorm s / Z
 
--- ============================================================================
--- PART 5: Example: "A player was holding a bat"
--- ============================================================================
 
 /-!
 ## Worked Example: Player + Bat
@@ -263,9 +248,6 @@ def batConceptDist (cues : List (ContextCue BatScenario)) : BatConcept → ℚ :
   fun c => [BatScenario.sports, .wildlife].foldl
     (fun acc s => acc + scenPost s * scenarioConceptDist s c) 0
 
--- ============================================================================
--- PART 6: Frame Evocation
--- ============================================================================
 
 /-!
 ## Frame Evocation
@@ -293,9 +275,6 @@ def frameExpectations {Concept : Type}
     (filledElements : List String) : List (FrameElement Concept) :=
   frame.elements.filter fun el => !filledElements.contains el.name
 
--- ============================================================================
--- PART 7: Integration with Product of Experts
--- ============================================================================
 
 /-!
 ## Full SDS-Style Disambiguation
@@ -333,9 +312,6 @@ def sdsDisambiguateWithUncertainty {Concept Scenario : Type}
   -- Then combine with selectional via PoE
   poe2 selectional marginalScenario concepts
 
--- ============================================================================
--- PART 8: Connection to RSA
--- ============================================================================
 
 /-!
 ## Scenarios as RSA Goals/QUDs

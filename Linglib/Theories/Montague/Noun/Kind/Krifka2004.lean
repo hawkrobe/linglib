@@ -58,9 +58,7 @@ import Mathlib.Data.Fintype.Basic
 
 namespace Montague.Noun.Kind.Krifka2004
 
--- ============================================================================
 -- Type System: Properties with Number Arguments
--- ============================================================================
 
 variable (World : Type) (Atom : Type)
 
@@ -106,9 +104,7 @@ This is the BASIC type for bare NPs in Krifka's system.
 -/
 abbrev Property := World → Individual Atom → Bool
 
--- ============================================================================
 -- Number Morphology and Semantic Pluralization
--- ============================================================================
 
 /--
 Singular morpheme: binds number argument to 1.
@@ -147,9 +143,7 @@ theorem plural_is_local (P : CountNounDen World Atom) :
     -- because it binds a parameter, not an argument position
     pluralize World Atom P = fun w x => P w .two x || P w .many x := rfl
 
--- ============================================================================
 -- Why Bare Singulars Are Out
--- ============================================================================
 
 /--
 **Krifka's explanation for bare singular restriction**:
@@ -180,9 +174,7 @@ theorem bare_singular_blocked (restriction : BareSingularRestriction)
     restriction.hasNumberParam = true ∧ restriction.bareUnfilled = true := by
   exact ⟨h, hBare⟩
 
--- ============================================================================
 -- Type Shifting Operations
--- ============================================================================
 
 /--
 **Key property**: ∃-shift is position-sensitive.
@@ -254,9 +246,7 @@ def downShift (P : Property World Atom) : World → Individual Atom :=
     -- Simplified: return a placeholder
     .plural { a : Atom | P w (.atom a) }
 
--- ============================================================================
 -- Information Structure: Kind Readings Require Topic
--- ============================================================================
 
 /--
 Information structure position of an NP.
@@ -299,9 +289,7 @@ theorem kind_requires_topic :
     availableInterpretations .focus = [.exists_, .down] := by
   simp [availableInterpretations]
 
--- ============================================================================
 -- Blocking Principle (shared with Chierchia)
--- ============================================================================
 
 /--
 The Blocking Principle: overt determiners block covert type shifts.
@@ -326,9 +314,7 @@ structure BlockingPrinciple where
   /-- ∩ not blocked (no overt kind article) -/
   downBlocked : Bool := false
 
--- ============================================================================
 -- Generic Sentences: GEN + Topic
--- ============================================================================
 
 /--
 Generic sentences in Krifka's system:
@@ -367,9 +353,7 @@ def dogsBarking : GenericSentence :=
   , npPosition := .focus
   , isGeneric := false }
 
--- ============================================================================
 -- Predictions Comparison
--- ============================================================================
 
 /--
 Krifka and Chierchia make the SAME predictions for:
@@ -402,9 +386,7 @@ def chierchiaPredictions : TheoryComparison :=
 def krifkaPredictions : TheoryComparison :=
   { kindReadingSource := "Pragmatic: topic position triggers ∩ shift" }
 
--- ============================================================================
 -- Key Arguments for Krifka's View
--- ============================================================================
 
 /--
 **Argument 1: "Parts of that machine"**
@@ -447,9 +429,7 @@ which posits different LEXICAL types for nominals across languages.
 -/
 def simpleTypeShiftVariation : Bool := true
 
--- ============================================================================
 -- ∃-Shift Derivation Machinery (for Scrambling Comparison)
--- ============================================================================
 
 /-!
 ## Position-Sensitive ∃-Shift

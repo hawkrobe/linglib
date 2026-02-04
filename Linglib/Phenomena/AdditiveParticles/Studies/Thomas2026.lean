@@ -42,9 +42,7 @@ namespace Phenomena.AdditiveParticles.Studies.Thomas2026
 
 open Phenomena.AdditiveParticles
 
--- ============================================================================
 -- Argument-Building Examples
--- ============================================================================
 
 /-- The flagship argument-building example from Thomas (2026). -/
 def sueCooksFreetime : AdditiveParticleDatum :=
@@ -120,9 +118,7 @@ def argumentBuildingExamples : List AdditiveParticleDatum :=
   , quietAffordable
   ]
 
--- ============================================================================
 -- Infelicitous Argument-Building Cases
--- ============================================================================
 
 /-- Prejacent trivially entails conclusion - fails additivity. -/
 def trivialPrejacent : AdditiveParticleDatum :=
@@ -142,17 +138,13 @@ def infelicitousExamples : List AdditiveParticleDatum :=
   [ trivialPrejacent
   ]
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 /-- All Thomas (2026) examples. -/
 def allExamples : List AdditiveParticleDatum :=
   argumentBuildingExamples ++ infelicitousExamples
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

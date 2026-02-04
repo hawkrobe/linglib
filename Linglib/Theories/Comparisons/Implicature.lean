@@ -45,9 +45,7 @@ namespace Comparisons.Implicature
 
 open Interfaces
 
--- ============================================================================
 -- Part 1: Where Theories Agree
--- ============================================================================
 
 /-- Both theories derive some implicatures (baseline > 0) -/
 theorem both_derive_implicatures :
@@ -75,9 +73,7 @@ theorem both_no_implicature_all :
       RSA.allRSA 0 = .absent := by
   native_decide
 
--- ============================================================================
 -- Part 2: Where Theories Diverge
--- ============================================================================
 
 /-- NeoGricean predicts DE blocking, RSA doesn't -/
 theorem neogricean_predicts_de_blocking :
@@ -117,9 +113,7 @@ theorem different_baseline_rates :
     ImplicatureTheory.predictedBaselineRate (T := RSA.RSATheory) := by
   native_decide
 
--- ============================================================================
 -- Part 3: Empirical Comparison: Geurts & Pouscoulous 2009
--- ============================================================================
 
 /-- Observed verification task rate from Geurts & Pouscoulous 2009 -/
 def geurtsPouscolousVerificationRate : Nat := 34
@@ -152,9 +146,7 @@ theorem neogricean_closer_to_geurts_data :
     ng_diff < rsa_diff := by
   native_decide
 
--- ============================================================================
 -- Part 4: Using Interface Functions
--- ============================================================================
 
 /-- Agreement check using interface function -/
 theorem theories_disagree_on_de :
@@ -194,13 +186,9 @@ theorem neogricean_closer :
       geurtsPouscolousVerificationRate = true := by
   native_decide
 
--- ============================================================================
 -- Part 5: Summary
--- ============================================================================
 
--- ============================================================================
 -- Part 6: Full Coverage Reports (distinguishes incomplete vs out-of-scope)
--- ============================================================================
 
 /-- NeoGricean full coverage report -/
 def neogriceanFullCoverage : TheoryCoverage :=
@@ -287,9 +275,7 @@ theorem rsa_covers_reference_games :
 theorem neogricean_reference_games_out_of_scope :
     neogriceanFullCoverage.statusFor .referenceGames = some .outOfScope := by native_decide
 
--- ============================================================================
 -- Part 6b: Legacy Coverage Summary (backwards compatibility)
--- ============================================================================
 
 /-- NeoGricean coverage summary (legacy) -/
 def neogriceanCoverage : CoverageSummary :=
@@ -302,9 +288,7 @@ def rsaCoverage : CoverageSummary :=
 #eval neogriceanCoverage
 #eval rsaCoverage
 
--- ============================================================================
 -- Part 7: Linking to Empirical Data Types
--- ============================================================================
 
 /-- Geurts & Pouscoulous 2009 task effect data as a test case -/
 def geurtsPouscolousTaskEffect : TaskEffectTestCase :=
@@ -322,9 +306,7 @@ def someAllDEBlocking : DEBlockingTestCase :=
   , expectedDE := false
   }
 
--- ============================================================================
 -- Part 7: Testing Theories Against Empirical Data
--- ============================================================================
 
 /-- Test NeoGricean against DE blocking data -/
 theorem neogricean_captures_de_blocking :
@@ -360,9 +342,7 @@ theorem neogricean_closer_using_linking :
     ng_result = true := by
   native_decide
 
--- ============================================================================
 -- Part 8: CapturesTaskEffectData Instances
--- ============================================================================
 
 /-- NeoGricean captures the Geurts & Pouscoulous task effect data -/
 instance : CapturesTaskEffectData NeoGricean.NeoGriceanTheory where
@@ -376,9 +356,7 @@ instance : CapturesDEBlockingPattern NeoGricean.NeoGriceanTheory where
   testCase := someAllDEBlocking
   theoryMatchesData := by native_decide
 
--- ============================================================================
 -- Part 9: Summary
--- ============================================================================
 
 /-
 ## Summary of Theory Comparison

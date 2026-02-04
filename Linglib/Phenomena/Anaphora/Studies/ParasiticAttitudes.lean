@@ -40,9 +40,6 @@ namespace Phenomena.ParasiticAttitudes.Karttunen1973
 
 open Core.Presupposition
 
--- ============================================================================
--- PART 1: World Types for the Bill/Fred Scenario
--- ============================================================================
 
 /--
 World type for Bill/Fred wife-beating scenario.
@@ -58,9 +55,6 @@ inductive BeatingWorld where
   | fredNeverBeat                 -- Fred never beat his wife
   deriving DecidableEq, Repr, Inhabited
 
--- ============================================================================
--- PART 2: Empirical Judgment Structure
--- ============================================================================
 
 /--
 Empirical judgment about attitude sequence and presupposition projection.
@@ -82,9 +76,6 @@ structure AttitudeSequenceJudgment where
   acceptable : Bool
   deriving Repr
 
--- ============================================================================
--- PART 3: Core Karttunen Puzzle Data
--- ============================================================================
 
 /--
 **Core Puzzle**: Believe-hope sequences FILTER presuppositions.
@@ -130,9 +121,6 @@ theorem asymmetry_data :
     hopeBelieverNoFiltering.presupProjectsToSpeaker = true := by
   constructor <;> rfl
 
--- ============================================================================
--- PART 4: Extended Data (Maier Section 5.4)
--- ============================================================================
 
 /--
 Believe-imagine also filters (imagination is parasitic on belief).
@@ -170,9 +158,6 @@ def imagineBelieverNoFiltering : AttitudeSequenceJudgment :=
   , presupProjectsToHolder := false
   , acceptable := false }
 
--- ============================================================================
--- PART 5: World Model for Semantic Analysis
--- ============================================================================
 
 /--
 "Fred stopped beating his wife" as a presuppositional proposition.
@@ -213,9 +198,6 @@ theorem assertion_entails_presup :
   intro w h
   cases w <;> simp_all [fredWasBeating, fredStopped]
 
--- ============================================================================
--- PART 6: Parasitic Attitude Classification
--- ============================================================================
 
 /--
 Classification of attitudes by their parasitic status.
@@ -257,9 +239,6 @@ theorem doxastic_then_parasitic_can_filter :
 theorem parasitic_then_doxastic_cannot_filter :
     canFilter .parasitic .doxastic = false := rfl
 
--- ============================================================================
--- PART 7: Summary Data
--- ============================================================================
 
 /--
 All empirical judgments collected in this module.
@@ -286,9 +265,7 @@ def nonFilteringCases : List AttitudeSequenceJudgment :=
   [ hopeBelieverNoFiltering
   , imagineBelieverNoFiltering ]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

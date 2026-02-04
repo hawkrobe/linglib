@@ -35,9 +35,7 @@ Core types for aspectual classification following Vendler (1957) and subsequent 
 
 namespace Montague.Verb.Aspect
 
--- ============================================================================
 -- Core Aspectual Features
--- ============================================================================
 
 /--
 Telicity: whether an event has a natural endpoint.
@@ -83,9 +81,7 @@ inductive Dynamicity where
   | stative  -- no change (know, love, own)
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
 -- Vendler Classification
--- ============================================================================
 
 /--
 Vendler's four-way classification of eventualities.
@@ -104,9 +100,7 @@ inductive VendlerClass where
   | accomplishment -- [+dynamic, +durative, +telic]  build, write
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
 -- Feature Extraction from Vendler Class
--- ============================================================================
 
 /--
 Get the telicity of a Vendler class.
@@ -138,9 +132,7 @@ def VendlerClass.dynamicity : VendlerClass → Dynamicity
   | .achievement => .dynamic
   | .accomplishment => .dynamic
 
--- ============================================================================
 -- Theorems: Feature-Class Correspondence
--- ============================================================================
 
 /-- States are stative (by definition). -/
 theorem state_is_stative : VendlerClass.state.dynamicity = .stative := rfl
@@ -182,9 +174,7 @@ theorem telic_classes (c : VendlerClass) :
     c.telicity = .telic ↔ (c = .achievement ∨ c = .accomplishment) := by
   cases c <;> simp [VendlerClass.telicity]
 
--- ============================================================================
 -- Aspectual Profile and Classification Theory
--- ============================================================================
 
 /-!
 ## Aspectual Profile
@@ -219,9 +209,7 @@ structure AspectualProfile where
   dynamicity : Dynamicity
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
 -- Profile ↔ Vendler Class Mapping
--- ============================================================================
 
 /--
 Convert an aspectual profile to a Vendler class.
@@ -256,9 +244,7 @@ def VendlerClass.toProfile (c : VendlerClass) : AspectualProfile :=
   , duration := c.duration
   , dynamicity := c.dynamicity }
 
--- ============================================================================
 -- Canonical Profiles
--- ============================================================================
 
 /-- Canonical profile for states -/
 def stateProfile : AspectualProfile :=
@@ -276,9 +262,7 @@ def achievementProfile : AspectualProfile :=
 def accomplishmentProfile : AspectualProfile :=
   { telicity := .telic, duration := .durative, dynamicity := .dynamic }
 
--- ============================================================================
 -- Roundtrip Theorems
--- ============================================================================
 
 /--
 Converting a Vendler class to a profile and back is identity.
@@ -307,9 +291,7 @@ The canonical accomplishment profile maps to the accomplishment class.
 -/
 theorem accomplishmentProfile_toClass : accomplishmentProfile.toVendlerClass = .accomplishment := rfl
 
--- ============================================================================
 -- Aspectual Shifts (Coercion)
--- ============================================================================
 
 /--
 Telicize: Add a natural endpoint to an atelic predicate.
@@ -349,9 +331,7 @@ Example: "The road winds through the hills" (stative use of motion verb)
 def AspectualProfile.statify (p : AspectualProfile) : AspectualProfile :=
   { p with dynamicity := .stative }
 
--- ============================================================================
 -- Shift Theorems
--- ============================================================================
 
 /--
 Telicizing an activity yields an accomplishment.
@@ -383,9 +363,7 @@ Atelicize is idempotent.
 theorem atelicize_idempotent (p : AspectualProfile) :
     p.atelicize.atelicize = p.atelicize := rfl
 
--- ============================================================================
 -- Homogeneity (Subinterval Property)
--- ============================================================================
 
 /--
 Whether a predicate is homogeneous (has the subinterval property).
@@ -433,9 +411,7 @@ theorem homogeneous_iff_atelic (p : AspectualProfile) :
   simp only [AspectualProfile.isHomogeneous]
   cases h : p.toVendlerClass <;> simp [VendlerClass.telicity]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Aspectual Profile and Theory

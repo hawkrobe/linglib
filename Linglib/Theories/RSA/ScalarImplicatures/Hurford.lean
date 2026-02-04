@@ -41,9 +41,6 @@ namespace RSA.Hurford
 
 open LURSA Phenomena.ScalarImplicatures RSA.Eval
 
--- ============================================================================
--- PART 1: World States
--- ============================================================================
 
 /--
 World states for Hurford scenarios.
@@ -59,9 +56,6 @@ inductive HWorld where
   | all_       -- Someone read all books
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
--- PART 2: Utterances
--- ============================================================================
 
 /--
 Utterances for Hurford disjunction scenarios.
@@ -79,9 +73,6 @@ inductive HUtterance where
   | null      -- null/baseline
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
--- PART 3: Lexica
--- ============================================================================
 
 /--
 Base lexicon: "some" = at-least-one (weak reading).
@@ -135,9 +126,6 @@ def lexRefined : Lexicon HUtterance HWorld where
     -- null
     | .null, _ => true
 
--- ============================================================================
--- PART 4: Hurford LU Scenario
--- ============================================================================
 
 /--
 Hurford LU Scenario.
@@ -162,9 +150,6 @@ def hurfordScenario : LUScenario where
   worlds := [.none, .someNotAll, .all_]
   α := 1
 
--- ============================================================================
--- PART 5: RSA Computations
--- ============================================================================
 
 /-- L1 distribution over worlds for "someOrAll" utterance -/
 def l1SomeOrAll : List (HWorld × ℚ) :=
@@ -182,9 +167,6 @@ def l1All : List (HWorld × ℚ) :=
 #eval l1Some
 #eval l1All
 
--- ============================================================================
--- PART 6: Speaker Probabilities (Felicity Measure)
--- ============================================================================
 
 /--
 S1 probability for "someOrAll" given world = someNotAll, under base lexicon.
@@ -222,9 +204,6 @@ def s1Some_refined_someNotAll : ℚ :=
 #eval s1SomeOrAll_refined_someNotAll
 #eval s1Some_refined_someNotAll
 
--- ============================================================================
--- PART 7: Hurford Predictions
--- ============================================================================
 
 /--
 **Hurford Violation under Base Lexicon**
@@ -251,9 +230,6 @@ theorem refined_some_sufficient :
     s1Some_refined_someNotAll ≥ s1SomeOrAll_refined_someNotAll := by
   native_decide
 
--- ============================================================================
--- PART 8: Key Insight - When Disjunction IS Needed
--- ============================================================================
 
 /--
 S1 probability for "someOrAll" in the ALL world, base lexicon.
@@ -279,9 +255,6 @@ theorem all_world_prefers_all :
     s1All_base_all > s1SomeOrAll_base_all := by
   native_decide
 
--- ============================================================================
--- PART 9: Informativity Analysis
--- ============================================================================
 
 /-
 Key quantity: How informative is "some or all" under each lexicon?
@@ -328,9 +301,6 @@ theorem refined_disjunction_informative :
     someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length := by
   native_decide
 
--- ============================================================================
--- PART 10: Connection to Phenomena Data
--- ============================================================================
 
 /--
 **Connection to empirical Hurford data**
@@ -374,9 +344,6 @@ theorem rsa_matches_data_someOrAll :
     rsaPredictsFelicitous_someOrAll = someOrAll.felicitous := by
   native_decide
 
--- ============================================================================
--- PART 11: True Hurford Violation (No Rescue Possible)
--- ============================================================================
 
 /-
 For "American or Californian", there's no exhaustification that breaks the
@@ -467,9 +434,6 @@ theorem rsa_matches_data_americanCalifornian :
     rsaPredictsFelicitous_americanCalifornian = americanCalifornian.felicitous := by
   native_decide
 
--- ============================================================================
--- PART 12: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

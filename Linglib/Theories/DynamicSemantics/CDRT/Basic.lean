@@ -39,9 +39,7 @@ import Linglib.Theories.DynamicSemantics.Core.Basic
 
 namespace Theories.DynamicSemantics.CDRT
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /--
 CDRT state: a register/assignment function.
@@ -62,9 +60,7 @@ Static proposition (for embedding classical logic).
 -/
 def SProp (E : Type*) := Register E → Prop
 
--- ============================================================================
 -- Basic Constructions
--- ============================================================================
 
 /--
 Embed a static proposition as a dynamic one (test).
@@ -108,9 +104,7 @@ Dynamic implication: if φ succeeds, ψ must succeed.
 def DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E :=
   fun i o => i = o ∧ ∀ k, φ i k → ∃ m, ψ k m
 
--- ============================================================================
 -- Compositional Semantics
--- ============================================================================
 
 /--
 Entity type: individuals.
@@ -140,9 +134,7 @@ Pronoun: lookup register value.
 def pronoun {E : Type*} (n : Nat) : Register E → E :=
   fun r => r n
 
--- ============================================================================
 -- Truth and Entailment
--- ============================================================================
 
 /--
 A dynamic proposition is TRUE at state i if it can transition somewhere.
@@ -156,9 +148,7 @@ Dynamic entailment: φ entails ψ if ψ is true after φ.
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
   ∀ i o, φ i o → ψ.true_at o
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Will Provide

@@ -34,9 +34,6 @@ This file captures the empirical patterns around flexible negation, where:
 
 namespace Phenomena.Negation.FlexibleNegation
 
--- ============================================================================
--- PART 1: Negation Types
--- ============================================================================
 
 /--
 Types of negation based on their logical relationship.
@@ -72,9 +69,6 @@ inductive NegationMarker where
   | morphological  -- "un-", "-less", "in-", etc.
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
--- PART 2: Flexible Negation Judgments
--- ============================================================================
 
 /--
 A judgment about the interpretation of a negated form.
@@ -99,9 +93,6 @@ structure FlexibleNegationDatum where
   notes : String := ""
   deriving Repr
 
--- ============================================================================
--- PART 3: Core Empirical Data
--- ============================================================================
 
 /--
 "unhappy" strongly prefers contrary interpretation.
@@ -185,9 +176,6 @@ All flexible negation examples.
 def flexibleNegationExamples : List FlexibleNegationDatum :=
   [unhappy_contrary, not_happy_ambiguous, not_unhappy_not_happy, sad_contrary]
 
--- ============================================================================
--- PART 4: Non-Equivalence Data
--- ============================================================================
 
 /--
 Data capturing the non-equivalence pattern: "not un-X" ≠ "X".
@@ -246,9 +234,6 @@ def safe_double_neg : DoubleNegationDatum :=
 def doubleNegationExamples : List DoubleNegationDatum :=
   [happy_double_neg, safe_double_neg]
 
--- ============================================================================
--- PART 5: Cost and Length Effects
--- ============================================================================
 
 /--
 Cost asymmetry between negation forms.
@@ -293,9 +278,6 @@ def unhappy_vs_not_happy : CostAsymmetryDatum :=
 def costAsymmetryExamples : List CostAsymmetryDatum :=
   [unhappy_vs_not_happy]
 
--- ============================================================================
--- PART 6: Two-Threshold Structure
--- ============================================================================
 
 /--
 The two-threshold model for contrary antonyms.
@@ -343,9 +325,6 @@ def happyUnhappyThresholds : TwoThresholdModel :=
 def twoThresholdExamples : List TwoThresholdModel :=
   [happyUnhappyThresholds]
 
--- ============================================================================
--- PART 7: Formal Predictions
--- ============================================================================
 
 /--
 Predictions that a theory of flexible negation should satisfy.
@@ -391,9 +370,7 @@ def predictions : List FlexibleNegationPrediction :=
   [prediction_unhappy_contrary, prediction_not_happy_flexible,
    prediction_double_neg_gap, prediction_cost_effect]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Flexible Negation Empirical Data

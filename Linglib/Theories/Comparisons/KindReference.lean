@@ -69,9 +69,7 @@ open Montague.Noun.Kind.Dayal2004
 open Montague.Noun.Kind.Krifka2004
 open Phenomena.Generics.KindReference
 
--- ============================================================================
 -- Carlson 1977: The Foundation
--- ============================================================================
 
 /-!
 ## Carlson's Foundational Insights
@@ -202,9 +200,7 @@ theorem carlson_unified_analysis :
   · intro Entity k P; rfl
   · intro Entity R k P; rfl
 
--- ============================================================================
 -- Cross-Linguistic Predictions
--- ============================================================================
 
 /--
 **Theorem**: English parameters predict bare plural licensing.
@@ -252,9 +248,7 @@ theorem hindi_bare_nominals :
     hindiKind.bareKindOK = true := by
   simp [determinerlessKindRef, hindiKind]
 
--- ============================================================================
 -- Scopelessness Verification
--- ============================================================================
 
 /--
 The phenomena data confirms bare plurals are scopeless.
@@ -284,9 +278,7 @@ theorem dkp_locality_predicts_scopelessness :
   intro _
   simp [negationBarePlural, universalBarePlural]
 
--- ============================================================================
 -- Predicate Classification Verification
--- ============================================================================
 
 /--
 Kind-level predicates apply directly to kinds (no DKP needed).
@@ -316,9 +308,7 @@ theorem predicate_classification_complete :
       |>.all (fun p => !p.directKindApplication)) := by
   native_decide
 
--- ============================================================================
 -- Singular Kind Verification
--- ============================================================================
 
 /--
 Singular kinds are licensed by specific conditions (extinct, invention, taxonomic).
@@ -336,9 +326,7 @@ theorem modification_blocks_singular_kind :
     tallLionOdd.grammatical = false := by
   simp [tallLionOdd]
 
--- ============================================================================
 -- Summary: Theory-Phenomena Alignment
--- ============================================================================
 
 /--
 **Main Result**: The Chierchia/Dayal theoretical framework correctly predicts
@@ -367,9 +355,7 @@ theorem theory_phenomena_alignment :
         determinerlessKindRef, hindiKind, negationBarePlural, negationSomeDogs,
         beExtinct, beBarkingInYard]
 
--- ============================================================================
 -- Chierchia vs Krifka: Theory Comparison
--- ============================================================================
 
 /-!
 ## Alternative Theories: Same Predictions, Different Mechanisms
@@ -479,9 +465,7 @@ The theories make different predictions for:
    requires cumulativity.
 -/
 
--- ============================================================================
 -- Scrambling: Where Chierchia and Krifka Diverge (Le Bruyn & de Swart 2022)
--- ============================================================================
 
 /-!
 ## The Scrambling Test Case
@@ -582,9 +566,7 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
   simp [dutchScrambledBoeken, dutchScrambledMensen,
         existentialShiftPositionSensitive, dkpIsLocal]
 
--- ============================================================================
 -- Formal Derivations (Le Bruyn & de Swart 2022)
--- ============================================================================
 
 /-!
 ## Compositional Derivations

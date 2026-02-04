@@ -50,9 +50,7 @@ open Montague
 open Montague.Core.Derivation
 open Montague.Core
 
--- ============================================================================
 -- Intensional Models
--- ============================================================================
 
 /--
 An intensional model extends a Montague model with possible worlds.
@@ -71,9 +69,7 @@ structure IntensionalModel where
 /-- Make World decidable -/
 instance (m : IntensionalModel) : DecidableEq m.World := m.worldDecEq
 
--- ============================================================================
 -- Intensions
--- ============================================================================
 
 /--
 An intension is a function from possible worlds to extensions.
@@ -94,9 +90,7 @@ def PropertyIntension (m : IntensionalModel) : Type :=
 def RelationIntension (m : IntensionalModel) : Type :=
   m.World → (m.base.Entity → m.base.Entity → Bool)
 
--- ============================================================================
 -- Intensional Interpretation of Types
--- ============================================================================
 
 /--
 Full intensional type interpretation (Gallin's IL).
@@ -112,9 +106,7 @@ at each world, following standard practice for RSA applications.
 def IntensionalModel.interpTyIntensional (m : IntensionalModel) (τ : Ty) : Type :=
   m.World → m.base.interpTy τ
 
--- ============================================================================
 -- Evaluation
--- ============================================================================
 
 /-- Evaluate an intension at a world to get its extension -/
 def evalAt {m : IntensionalModel} {τ : Ty} (meaning : Intension m τ) (w : m.World)
@@ -129,9 +121,7 @@ def Proposition.evalAt {m : IntensionalModel} (p : Proposition m) (w : m.World) 
 def Proposition.trueAt {m : IntensionalModel} (p : Proposition m) (w : m.World) : Prop :=
   p w = true
 
--- ============================================================================
 -- Intensional Derivations
--- ============================================================================
 
 /--
 An intensional semantic derivation.
@@ -159,9 +149,7 @@ def IntensionalDerivation.trueAt {m : IntensionalModel}
     (d : IntensionalDerivation m) (h : d.ty = .t) (w : m.World) : Bool :=
   cast (by rw [h]; rfl) (d.meaning w)
 
--- ============================================================================
 -- Lifting Extensional to Intensional
--- ============================================================================
 
 /--
 Lift a constant extension to an intension (rigid designator).
@@ -177,9 +165,7 @@ Create a world-varying intension from a function.
 def varying {m : IntensionalModel} {τ : Ty}
     (f : m.World → m.base.interpTy τ) : Intension m τ := f
 
--- ============================================================================
 -- Intensional Semantics for Quantifiers
--- ============================================================================
 
 open Determiner.Quantifier in
 /--
@@ -205,9 +191,7 @@ def noIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
   fun w => !FiniteModel.elements.any fun x => P w x && Q w x
 
--- ============================================================================
 -- Example: Scalar Implicature Scenario
--- ============================================================================
 
 /--
 Worlds for scalar implicature reasoning.
@@ -292,9 +276,7 @@ def everyStudentsSleep_intensional : IntensionalDerivation scalarModel := {
   scalarItems := [⟨0, every_entry⟩]
 }
 
--- ============================================================================
 -- Key Theorems: Truth Conditions Vary by World
--- ============================================================================
 
 /-- Helper: directly evaluate "some students sleep" at a world -/
 def someStudentsSleep_at (w : ScalarWorld) : Bool :=
@@ -328,9 +310,7 @@ theorem every_false_at_someNotAll :
 theorem every_true_at_all :
     everyStudentsSleep_at .all = true := by native_decide
 
--- ============================================================================
 -- RSA Integration: The φ Function
--- ============================================================================
 
 /--
 The literal semantics function φ for RSA.
@@ -356,9 +336,7 @@ theorem phi_def {m : IntensionalModel} (d : IntensionalDerivation m)
     (h : d.ty = .t) (w : m.World) :
     phi d h w = d.trueAt h w := rfl
 
--- ============================================================================
 -- Summary: What This Module Provides
--- ============================================================================
 
 /-
 ## Types

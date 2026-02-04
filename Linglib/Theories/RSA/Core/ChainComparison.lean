@@ -41,9 +41,7 @@ namespace RSA
 
 -- ChainVariant is defined in RSA.Core.Basic and re-exported here
 
--- ============================================================================
 -- Chain Comparison Results
--- ============================================================================
 
 /--
 Result of comparing two RSA chains on the same input.
@@ -83,9 +81,7 @@ Check if two chain results are exactly equal.
 def ChainComparison.exactEqual {α : Type} [BEq α] (c : ChainComparison α) : Bool :=
   totalVariation c == 0
 
--- ============================================================================
 -- Divergence Analysis
--- ============================================================================
 
 /--
 Information about where two chains diverge most.
@@ -118,9 +114,7 @@ def analyzeDivergence {α : Type} [BEq α] (c : ChainComparison α) : Divergence
     maxDivergence := maxPair.map (·.2) |>.getD 0
     totalVariation := totalVariation c }
 
--- ============================================================================
 -- Convergence Conditions (Theoretical)
--- ============================================================================
 
 /-!
 ## Convergence Theorems
@@ -168,9 +162,7 @@ Check if convergence conditions are satisfied.
 def ConvergenceCondition.satisfied (c : ConvergenceCondition) : Bool :=
   c.uniformWorldPrior && c.uniformUtterancePrior && c.binarySemantics && c.zeroCost
 
--- ============================================================================
 -- Examples and Demonstrations
--- ============================================================================
 
 #check ChainVariant.S0Based
 #check ChainVariant.L0Based

@@ -31,9 +31,7 @@ import Linglib.Theories.Montague.Determiner.Numeral.Theory
 
 namespace Montague.Determiner.Numeral
 
--- ============================================================================
 -- Lower-Bound Meaning Function
--- ============================================================================
 
 /--
 Lower-bound meaning: numeral `w` is true of cardinality `n` iff `n ≥ w.toNat`.
@@ -45,9 +43,7 @@ Examples:
 def lowerBoundMeaning (w : NumWord) (n : Nat) : Bool :=
   n ≥ w.toNat
 
--- ============================================================================
 -- The Theory
--- ============================================================================
 
 /--
 Lower-bound numeral theory.
@@ -59,9 +55,7 @@ def LowerBound : NumeralTheory where
   citation := "Horn 1972"
   meaning := lowerBoundMeaning
 
--- ============================================================================
 -- Key Properties
--- ============================================================================
 
 /-- "two" is compatible with both 2 and 3 (ambiguity exists) -/
 theorem lowerBound_two_ambiguous :
@@ -88,9 +82,7 @@ theorem lowerBound_is_monotonic :
     LowerBound.checkMonotonic = true := by
   native_decide
 
--- ============================================================================
 -- Compatibility Counts
--- ============================================================================
 
 /-- "one" is compatible with 3 worlds (1, 2, 3) -/
 theorem lowerBound_one_count : LowerBound.compatibleCount .one = 3 := by
@@ -104,9 +96,7 @@ theorem lowerBound_two_count : LowerBound.compatibleCount .two = 2 := by
 theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by
   native_decide
 
--- ============================================================================
 -- RSA with Lower-Bound Semantics
--- ============================================================================
 
 -- Note: For RSA computations with lower-bound semantics, use:
 -- NumeralTheory.runL1 from Theory.lean

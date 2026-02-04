@@ -18,9 +18,6 @@ namespace Theories.DynamicSemantics.DPL
 
 open Theories.DynamicSemantics.Core.DynamicTy2
 
--- ============================================================================
--- PART 1: Type Identification
--- ============================================================================
 
 /-- DPL assignment type = Dynamic Ty2 S parameter -/
 abbrev Assignment (E : Type*) := Nat → E
@@ -38,9 +35,6 @@ theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
 theorem extend_other {E : Type*} (g : Assignment E) (n m : Nat) (e : E) (h : n ≠ m) :
     dref m (extend g n e) = dref m g := by simp [dref, extend, h.symm]
 
--- ============================================================================
--- PART 2: Embedding (Identity!)
--- ============================================================================
 
 /-- DPL relation IS a DRS -/
 def toDRS {E : Type*} (φ : DPLRel E) : DRS (Assignment E) := φ
@@ -51,9 +45,6 @@ def ofDRS {E : Type*} (D : DRS (Assignment E)) : DPLRel E := D
 @[simp] theorem toDRS_ofDRS {E : Type*} (φ : DPLRel E) : ofDRS (toDRS φ) = φ := rfl
 @[simp] theorem ofDRS_toDRS {E : Type*} (D : DRS (Assignment E)) : toDRS (ofDRS D) = D := rfl
 
--- ============================================================================
--- PART 3: Connective Preservation
--- ============================================================================
 
 theorem atom_eq_test {E : Type*} (p : Assignment E → Prop) :
     toDRS (DPLRel.atom p) = test (fun g => p g) := by
@@ -81,9 +72,7 @@ theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
   -- The definitions are definitionally equal (just variable renaming)
   rfl
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## DPL ↪ Dynamic Ty2 Embedding

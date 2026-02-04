@@ -28,9 +28,7 @@ semantics and pragmatics". Annual Review of Linguistics, Vol. 6, pp. 533–562.
 
 namespace Phenomena.Quantification.Studies.FrankeBergen2020
 
--- ============================================================================
 -- Sentence Types: Nested Aristotelians
--- ============================================================================
 
 /-- Aristotelian quantifiers -/
 inductive AristQuant where
@@ -60,9 +58,7 @@ def allSentences : List NestedAristotelian :=
    ⟨.some, .none⟩, ⟨.some, .some⟩, ⟨.some, .all⟩,
    ⟨.all, .none⟩, ⟨.all, .some⟩, ⟨.all, .all⟩]
 
--- ============================================================================
 -- Model Types
--- ============================================================================
 
 /-- RSA model variants compared in the paper -/
 inductive RSAModel where
@@ -79,9 +75,7 @@ def RSAModel.description : RSAModel → String
   | .lexicalIntentions => "LI: lexicon as output, speaker chooses"
   | .globalIntentions => "GI: parse as output, speaker chooses (u,g) pairs"
 
--- ============================================================================
 -- Model Comparison Data (Table 2)
--- ============================================================================
 
 /-- Posterior probability for each model -/
 structure ModelResult where
@@ -103,9 +97,7 @@ def getPosterior (m : RSAModel) : Nat :=
   | some r => r.posteriorProb
   | none => 0
 
--- ============================================================================
 -- Key Empirical Facts
--- ============================================================================
 
 /-- GI achieves highest posterior -/
 theorem gi_best : getPosterior .globalIntentions = 956 := rfl
@@ -123,9 +115,7 @@ theorem gi_dominates :
     getPosterior .vanilla + getPosterior .lexicalUncertainty + getPosterior .lexicalIntentions := by
   native_decide
 
--- ============================================================================
 -- Parse Types (for GI model)
--- ============================================================================
 
 /-- EXH positions in doubly-quantified sentences -/
 inductive ExhPosition where
@@ -144,17 +134,13 @@ def allParses : List GrammaticalParse :=
 /-- Number of parses -/
 theorem parse_count : allParses.length = 8 := rfl
 
--- ============================================================================
 -- Dimension Facts
--- ============================================================================
 
 /-- Total cells in the model: 9 sentences × 8 parses = 72 -/
 theorem model_dimensions :
     allSentences.length * allParses.length = 72 := by native_decide
 
--- ============================================================================
 -- Theoretical Predictions
--- ============================================================================
 
 /-- Key theoretical claim: GI succeeds because parse is speaker's OUTPUT.
 
@@ -170,9 +156,7 @@ def giKeyInsight : String :=
   "The speaker jointly optimizes (utterance, parse) pairs, allowing pragmatic " ++
   "pressure to select parses with embedded exhaustification."
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -61,9 +61,7 @@ namespace NeoGricean.FoxSpector2018
 open NeoGricean.Exhaustivity
 open Montague.Core.Polarity (ContextPolarity)
 
--- ============================================================================
 -- SECTION 2: HURFORD'S CONSTRAINT
--- ============================================================================
 
 /-
 "A disjunction of the form 'A or B' sounds redundant and is odd when one
@@ -113,9 +111,7 @@ structure HurfordDisjunction (World : Type*) where
   /-- The entailment relation (left entails right or vice versa) -/
   entailment : hurfordViolation left right
 
--- ============================================================================
 -- SECTION 2.1: Rescuing Hurford Disjunctions with exh
--- ============================================================================
 
 /-
 Key insight from Fox & Spector: Some Hurford disjunctions are acceptable
@@ -150,9 +146,7 @@ theorem hurford_rescue {ALT : Set (Prop' World)} {A B : Prop' World}
     ¬(exhIE ALT A ⊆ₚ B) :=
   hrescue
 
--- ============================================================================
 -- SECTION 2.2: Hurford's Constraint Under Negation
--- ============================================================================
 
 /-
 Fox & Spector's key observation: Hurford's Constraint extends to DE contexts.
@@ -175,9 +169,7 @@ def deHurfordViolation (A B : Prop' World) : Prop :=
   -- So "A or B" under negation is a Hurford violation if B ⊆ A
   (B ⊆ₚ A) ∨ (A ⊆ₚ B)
 
--- ============================================================================
 -- SECTION 3: IMPLICATURE FOCUS GENERALIZATION (IFG)
--- ============================================================================
 
 /-
 "Embedded exhaustification under DE operators is possible only if the scalar
@@ -210,9 +202,7 @@ def satisfiesIFG (pol : ContextPolarity) (focused : Bool) : Prop :=
   | .downward => focused  -- Requires focus in DE
   | .nonMonotonic => focused  -- Similar to DE
 
--- ============================================================================
 -- SECTION 4: SINGH'S ASYMMETRY
--- ============================================================================
 
 /-
 Singh (2008) observed an asymmetry:
@@ -253,9 +243,7 @@ Singh's Asymmetry holds when weaker-first is acceptable but stronger-first is no
 def singhAsymmetryHolds (d : SinghDisjunction World) : Prop :=
   d.weakerFirst -- Only acceptable when weaker is first
 
--- ============================================================================
 -- SECTION 5: ECONOMY CONDITION ON EXHAUSTIFICATION
--- ============================================================================
 
 /-
 The core contribution of Fox & Spector: the economy condition that restricts
@@ -266,9 +254,7 @@ where exh can be inserted.
 This is computed based on ALL possible continuations at the insertion point.
 -/
 
--- ============================================================================
 -- SECTION 5.1: Parse Trees and Continuations
--- ============================================================================
 
 /--
 A continuation context represents "the rest of the sentence" after a parse point.
@@ -299,9 +285,7 @@ structure ParsePoint (World : Type*) where
   /-- Set of possible continuations from this point -/
   continuations : Set (Continuation World)
 
--- ============================================================================
 -- SECTION 5.2: Incremental Vacuity and Weakening
--- ============================================================================
 
 /--
 **Incremental Vacuity**: exh is incrementally vacuous at a parse point if
@@ -335,9 +319,7 @@ def isIncrementallyStrengthening (ALT : Set (Prop' World)) (φ : Prop' World)
     (conts : Set (Continuation World)) : Prop :=
   ∀ C ∈ conts, C (exhIE ALT φ) ⊆ₚ C φ
 
--- ============================================================================
 -- SECTION 5.3: The Economy Condition
--- ============================================================================
 
 /--
 **Economy Condition on Exhaustification (ECE)**:
@@ -360,9 +342,7 @@ structure LicensedExh (World : Type*) where
   /-- Economy condition is met -/
   economyMet : economyConditionMet point.alts point.prop point.continuations
 
--- ============================================================================
 -- SECTION 5.4: Deriving Hurford's Constraint
--- ============================================================================
 
 /-
 Fox & Spector show that economy derives Hurford's Constraint.
@@ -405,9 +385,7 @@ theorem hurford_from_economy (ALT : Set (Prop' World)) (A B : Prop' World)
     left
     exact hBA w hBw
 
--- ============================================================================
 -- SECTION 5.5: Deriving Singh's Asymmetry
--- ============================================================================
 
 /-
 Singh's Asymmetry follows from economy:
@@ -514,9 +492,7 @@ theorem singh_strong_exh_vacuous (weak strong : Prop' World)
     rw [Set.mem_singleton_iff.mp hψ_in_E₀]
     exact hstrong_w
 
--- ============================================================================
 -- SECTION 6: RELATIONSHIP TO FOCUS
--- ============================================================================
 
 /-
 Fox & Spector connect their economy condition to focus theory.
@@ -567,9 +543,7 @@ def minimizeFocus {α : Type*} (parses : List (Focused α × Prop' World))
   | [], q :: _ => some q
   | [], [] => none
 
--- ============================================================================
 -- SECTION 7: DISTANT ENTAILING DISJUNCTIONS (DEDs)
--- ============================================================================
 
 /-
 Fox & Spector (p.17-18) discuss Distant Entailing Disjunctions:
@@ -612,9 +586,7 @@ def dedIsAcceptable (d : DED) : Prop :=
   -- There exist intermediate alternatives that can be excluded
   d.stronger.index > d.weaker.index + 1
 
--- ============================================================================
 -- SECTION 8: CONNECTION TO POTTS ET AL. (2016)
--- ============================================================================
 
 /-
 Fox & Spector (2018) and Potts et al. (2016) make the same core predictions
@@ -701,9 +673,7 @@ theorem ifg_matches_de_blocking :
   · simp [foxSpectorPrediction] at h
   · simp [foxSpectorPrediction] at h
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

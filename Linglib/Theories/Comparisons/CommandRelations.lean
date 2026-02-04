@@ -56,13 +56,9 @@ namespace Comparisons.CommandRelations
 open Lexicon
 open Set
 
--- ============================================================================
 -- PART A: BARKER & PULLUM (1990) ABSTRACT FRAMEWORK
--- ============================================================================
 
--- ============================================================================
 -- A.1: Abstract Tree Structure
--- ============================================================================
 
 /-- Abstract tree with dominance relation (B&P Definition 1)
 
@@ -88,9 +84,7 @@ structure AbstractTree (Node : Type) where
 def AbstractTree.properDom {Node : Type} (T : AbstractTree Node) (a b : Node) : Prop :=
   T.dom a b ∧ a ≠ b
 
--- ============================================================================
 -- A.2: The Central Definitions
--- ============================================================================
 
 /-- **Upper bounds** of a node with respect to property P (B&P Definition 2).
     UB(a, P) = {b | b properly dominates a ∧ b ∈ P} -/
@@ -104,9 +98,7 @@ def upperBounds {Node : Type} (T : AbstractTree Node) (a : Node) (P : Set Node) 
 def commandRelation {Node : Type} (T : AbstractTree Node) (P : Set Node) : Set (Node × Node) :=
   {ab | ∀ x ∈ upperBounds T ab.1 P, T.dom x ab.2}
 
--- ============================================================================
 -- A.3: The Intersection Theorem
--- ============================================================================
 
 /-- **Theorem 1 (Intersection Theorem)**: C_P ∩ C_Q = C_{P∪Q}
 
@@ -131,9 +123,7 @@ theorem command_antitone {Node : Type} (T : AbstractTree Node) (P Q : Set Node) 
   intro ⟨a, b⟩ hQ x ⟨hdom, hp⟩
   exact hQ x ⟨hdom, hPQ hp⟩
 
--- ============================================================================
 -- A.4: Extremal Command Relations
--- ============================================================================
 
 /-- Maximal property: all nodes -/
 def maximalProperty {Node : Type} (T : AbstractTree Node) : Set Node := T.nodes
@@ -160,9 +150,7 @@ theorem universal_is_top {Node : Type} (T : AbstractTree Node) (P : Set Node) :
   intro ⟨_, _⟩ _ _ ⟨_, hempty⟩
   simp only [emptyProperty, mem_empty_iff_false] at hempty
 
--- ============================================================================
 -- A.5: Properties of Command Relations
--- ============================================================================
 
 /-- All command relations are reflexive -/
 theorem command_reflexive {Node : Type} (T : AbstractTree Node) (P : Set Node) :
@@ -176,9 +164,7 @@ theorem command_descent {Node : Type} (T : AbstractTree Node) (P : Set Node) :
   intro a b c hab hbc x hx
   exact T.dom_trans x b c (hab x hx) hbc
 
--- ============================================================================
 -- A.6: The Configurational Equivalence Corollary
--- ============================================================================
 
 /-- **Configurational Equivalence Corollary**:
     If the upper bounds of node a are the same for properties P and Q,
@@ -250,13 +236,9 @@ The theories differ in WHAT they consider the generating property P,
 but for standard structures, they agree on whether the critical node x ∈ P.
 -/
 
--- ============================================================================
 -- PART B: CONCRETE COMMAND RELATIONS
--- ============================================================================
 
--- ============================================================================
 -- B.1: Tree Structure and C-Command
--- ============================================================================
 
 /-- A minimal binary tree for phrase structure -/
 inductive PTree (α : Type) where
@@ -300,9 +282,7 @@ def cCommand (addrA addrB : Address) : Bool :=
   | none => false
   | some sis => dominates sis addrB || sis == addrB
 
--- ============================================================================
 -- B.2: Argument Structure and O-Command
--- ============================================================================
 
 /-- Argument structure: ordered list by obliqueness (less oblique first) -/
 structure ArgSt (α : Type) where
@@ -326,9 +306,7 @@ def oCommand {α : Type} [DecidableEq α] (argSt : ArgSt α) (a b : α) : Bool :
   | some ia, some ib => ia < ib
   | _, _ => false
 
--- ============================================================================
 -- B.3: Dependency Graph and D-Command
--- ============================================================================
 
 /-- A labeled dependency edge -/
 structure DepEdge (α : Type) where
@@ -359,13 +337,9 @@ def dCommand {α : Type} [DecidableEq α] (g : DepGraph α) (a b : α) : Bool :=
     edgeA.label == "subj" &&
     g.hasDep b edgeA.head)
 
--- ============================================================================
 -- PART C: CONFIGURATIONAL EQUIVALENCE (CONCRETE)
--- ============================================================================
 
--- ============================================================================
 -- C.1: The Configurational Assumption
--- ============================================================================
 
 /-- A **configurational transitive clause** bundles aligned representations.
 
@@ -415,9 +389,7 @@ structure ConfigurationalClause where
   -- Subject has "subj" label
   dep_subj_label : depGraph.labelOf subj verb = some "subj" := by rfl
 
--- ============================================================================
 -- C.2: The Configurational Equivalence Theorem (Concrete)
--- ============================================================================
 
 /-- Helper: c-command holds for standard configurational addresses -/
 theorem cCommand_configurational :
@@ -437,9 +409,7 @@ theorem oCommand_john_himself :
 theorem configurational_command_equivalence_addresses :
     cCommand [Dir.L] [Dir.R, Dir.R] = true := by native_decide
 
--- ============================================================================
 -- C.3: Concrete Example
--- ============================================================================
 
 /-- "John sees himself" as a configurational clause -/
 def johnSeesHimself : ConfigurationalClause where
@@ -473,9 +443,7 @@ theorem johnSeesHimself_commands :
 #eval oCommand johnSeesHimself.argSt "John" "himself"            -- true
 #eval dCommand johnSeesHimself.depGraph "John" "himself"         -- true
 
--- ============================================================================
 -- C.4: Connection to B&P Framework
--- ============================================================================
 
 /-
 ## Why the Binding Theories Agree: The B&P Explanation
@@ -496,13 +464,9 @@ these P's have the same upper bounds for subject position, so by B&P
 the command relations must agree.
 -/
 
--- ============================================================================
 -- PART D: EMPIRICAL VERIFICATION
--- ============================================================================
 
--- ============================================================================
 -- D.1: Theory Agreement Theorems
--- ============================================================================
 
 /--
 **Main Agreement Theorem: Reflexive Coreference**
@@ -554,9 +518,7 @@ theorem all_theories_capture_pronominal_disjoint_reference :
   · exact DepGrammar.Coreference.captures_pronominal_disjoint_reference
   · exact DepGrammar.CRDC.captures_pronominal_disjoint_reference
 
--- ============================================================================
 -- D.2: Interface-Based Comparison
--- ============================================================================
 
 open Interfaces
 
@@ -606,9 +568,7 @@ def totalPairsTested : Nat :=
 
 #eval totalPairsTested  -- 9 pairs
 
--- ============================================================================
 -- PART E: SPECIFIC COMMAND RELATIONS (B&P INSTANTIATIONS)
--- ============================================================================
 
 /-- Category labels for labeled trees -/
 inductive Category where
@@ -650,9 +610,7 @@ def kCommand {Node : Type} (T : AbstractTree Node) := commandRelation T (branchi
 /-- **MAX-command** (approximates Chomsky's c-command) -/
 def maxCommand {Node : Type} (T : LabeledTree Node) := commandRelation T.toAbstractTree (maximalProjections T)
 
--- ============================================================================
 -- E.1: Relationship Theorems
--- ============================================================================
 
 /-- S-command ∩ NP-command = command by {S} ∪ {NP} -/
 theorem sCommand_inter_npCommand {Node : Type} (T : LabeledTree Node) :
@@ -665,9 +623,7 @@ theorem maxCommand_subset_sCommand {Node : Type} (T : LabeledTree Node)
     maxCommand T ⊆ sCommand T :=
   command_antitone T.toAbstractTree (sNodes T) (maximalProjections T) h
 
--- ============================================================================
 -- PART F: WHERE THEORIES MIGHT DIVERGE
--- ============================================================================
 
 /-
 ## Potential Divergence Points
@@ -714,13 +670,9 @@ This is the scientific contribution: turning vague intuitions about
 "different frameworks saying the same thing" into precise theorems.
 -/
 
--- ============================================================================
 -- PART G: LATTICE STRUCTURE (Mathlib Formalization)
--- ============================================================================
 
--- ============================================================================
 -- G.1: Command Relations Form a Complete Lattice
--- ============================================================================
 
 /-- The set of command relations on a tree -/
 def CommandRels {Node : Type} (T : AbstractTree Node) : Set (Set (Node × Node)) :=
@@ -749,9 +701,7 @@ theorem command_sInter {Node : Type} (T : AbstractTree Node) (S : Set (Set Node)
     have := h (commandRelation T P) ⟨P, hPS, rfl⟩
     exact this x ⟨hdom, hxP⟩
 
--- ============================================================================
 -- G.2: The Antitone Galois Connection
--- ============================================================================
 
 /-- OrderDual for the powerset ordered by superset -/
 def commandMap {Node : Type} (T : AbstractTree Node) : Set Node →o (Set (Node × Node))ᵒᵈ :=
@@ -765,9 +715,7 @@ theorem command_order_reversing {Node : Type} (T : AbstractTree Node) :
     ∀ P Q : Set Node, P ⊆ Q → commandRelation T Q ⊆ commandRelation T P :=
   fun P Q => command_antitone T P Q
 
--- ============================================================================
 -- G.3: Ambidextrousness (B&P Theorem 3)
--- ============================================================================
 
 /-- A command relation C_P is **ambidextrous** iff for all a:
     either ∃x. x ∈ UB(a,P) or (a,b) ∈ C_P for all b.
@@ -782,9 +730,7 @@ theorem command_ambidextrous {Node : Type} (T : AbstractTree Node) (P : Set Node
     push_neg at h
     exact absurd hx (h x)
 
--- ============================================================================
 -- G.4: Boundedness (B&P Theorem 4)
--- ============================================================================
 
 /-- **Boundedness** (B&P Theorem 4): Adding a root node to the generating property
     does not alter the command relation.
@@ -839,9 +785,7 @@ theorem command_bounded_witness {Node : Type} (T : AbstractTree Node) (P : Set N
   obtain ⟨x, hx⟩ := hub
   exact ⟨x, hx, h x hx⟩
 
--- ============================================================================
 -- G.5: Fairness (B&P Theorem 6)
--- ============================================================================
 
 /-- **Fairness witness**: ¬(a C_P c) implies ∃x ∈ UB(a,P). ¬(x dom c).
 
@@ -889,9 +833,7 @@ theorem command_fair {Node : Type} (T : AbstractTree Node) (P : Set Node)
     -- Contradiction with hxnc
     exact absurd hxc hxnc
 
--- ============================================================================
 -- G.6: Mate Relations (B&P Section 3)
--- ============================================================================
 
 /-- **Mate relation**: M_P = C_P ∩ (C_P)⁻¹
 
@@ -927,9 +869,7 @@ theorem mate_intersection {Node : Type} (T : AbstractTree Node) (P Q : Set Node)
              mem_inter_iff, mem_setOf_eq]
   tauto
 
--- ============================================================================
 -- G.7: Constituency/Descent (B&P Theorem 7)
--- ============================================================================
 
 /-- **Constituency/Descent** (stronger form): If a commands b and b dominates c,
     then a commands c.
@@ -942,9 +882,7 @@ theorem command_constituency {Node : Type} (T : AbstractTree Node) (P : Set Node
     ∀ a b c, (a, b) ∈ commandRelation T P → T.dom b c → (a, c) ∈ commandRelation T P :=
   command_descent T P
 
--- ============================================================================
 -- G.8: Embeddability (B&P Theorem 8)
--- ============================================================================
 
 /-- **Embeddability** (B&P Theorem 8): Command relations are preserved under graph embedding.
 
@@ -981,9 +919,7 @@ theorem command_embeddable_cac {Node : Type} (T : AbstractTree Node) (P : Set No
     exact hac x ⟨hxpropa, hxUB.2⟩
   · exact hxc
 
--- ============================================================================
 -- G.9: Union Theorem (B&P Theorem 9) - Relation-Generated Commands
--- ============================================================================
 
 /-- A command relation generated by a binary relation R rather than a property.
 
@@ -1000,9 +936,7 @@ theorem command_as_relation {Node : Type} (T : AbstractTree Node) (P : Set Node)
   ext ⟨a, b⟩
   simp only [commandRelation, commandByRelation, upperBounds, mem_setOf_eq]
 
--- ============================================================================
 -- G.9.1: Command Equivalence and Maximal Generators (B&P Definitions 20-21)
--- ============================================================================
 
 /-- **Command equivalence** (B&P Definition 20): R ~ S iff C_R = C_S -/
 def commandEquivalent {Node : Type} (T : AbstractTree Node)
@@ -1202,9 +1136,7 @@ theorem relation_union_theorem_reverse {Node : Type} (T : AbstractTree Node)
     have hdb : T.dom d b := hInt d ⟨hdInRhat, hdInShat⟩
     exact hdnb hdb
 
--- ============================================================================
 -- PART H: ADVANCED LATTICE THEORY
--- ============================================================================
 
 /-- The image of the command map: all command relations -/
 def commandImage {Node : Type} (T : AbstractTree Node) : Set (Set (Node × Node)) :=
@@ -1240,9 +1172,7 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
     ⋂₀ S ∈ commandImage T :=
   fun S hS hne => commandImage_closed_under_sInter T S hS hne
 
--- ============================================================================
 -- PART I: B&P COVERAGE SUMMARY
--- ============================================================================
 
 /-!
 ## Barker & Pullum (1990) Formalization Coverage
@@ -1311,9 +1241,7 @@ are unified through B&P's algebraic framework. When the structural assumptions a
 (configurational languages), the theories necessarily agree by the Intersection Theorem.
 -/
 
--- ============================================================================
 -- PART J: KRACHT (1993) - DISTRIBUTOID STRUCTURE
--- ============================================================================
 
 /-!
 ## Kracht (1993) "Mathematical Aspects of Command Relations"
@@ -1347,9 +1275,7 @@ This reversal is because command relations are "upper-bound based" - the
 generator x dominates the commanded element b.
 -/
 
--- ============================================================================
 -- J.1: Associated Functions (Kracht Definition 1)
--- ============================================================================
 
 /-- **Associated function** for a command relation.
 
@@ -1391,9 +1317,7 @@ structure TightAssociatedFunction {Node : Type} (T : AbstractTree Node)
   /-- Tightness (Condition 5) -/
   is_tight : toAssociatedFunction.tight
 
--- ============================================================================
 -- J.2: Command Relation from Associated Function
--- ============================================================================
 
 /-- The command relation determined by an associated function.
 
@@ -1420,9 +1344,7 @@ theorem commandFromFunction_descent {Node : Type} (T : AbstractTree Node)
   intro a b c hab hbc
   exact T.dom_trans (af.f a) b c hab hbc
 
--- ============================================================================
 -- J.3: Composition of Command Relations (Kracht Section 3)
--- ============================================================================
 
 /-- **Relational composition** of command relations.
 
@@ -1466,9 +1388,7 @@ theorem compose_associated_functions {Node : Type} (T : AbstractTree Node)
   have h1 : T.dom (ag.f (af.f a)) (ag.f b) := ag.monotone (af.f a) b hab
   exact T.dom_trans (ag.f (af.f a)) (ag.f b) c h1 hbc
 
--- ============================================================================
 -- J.4: Distributoid Structure (Kracht Definition 2, Theorem 8)
--- ============================================================================
 
 /-- A **Distributoid** is an algebraic structure (D, ∩, ∪, ∘) where:
     - (D, ∩, ∪) is a distributive lattice
@@ -1555,9 +1475,7 @@ theorem command_comp_inter_left_rev {Node : Type} (T : AbstractTree Node) (P Q R
       -- This needs the full associated function machinery
       sorry
 
--- ============================================================================
 -- J.5: Fair = Tight (Kracht Theorem 2)
--- ============================================================================
 
 /-- A relation R is **fair** in B&P's sense if it satisfies:
     (a R b) ∧ (b R c) ∧ ¬(a R c) → ∀d. (a R d) → (b dom d)
@@ -1621,9 +1539,7 @@ theorem fair_implies_tight_exists {Node : Type} (T : AbstractTree Node)
   -- This requires choice and well-foundedness of the dominance order
   sorry
 
--- ============================================================================
 -- J.6: Union Elimination (Kracht Lemma 10-11)
--- ============================================================================
 
 /-- The **antecedent intersection** of two relations:
     R • S = {(a,c) | ∃b. (a,b) ∈ R ∧ (a,b) ∈ S ∧ (b dom c)}
@@ -1701,9 +1617,7 @@ theorem union_elimination_reverse {Node : Type} (T : AbstractTree Node) (P Q : S
   left
   exact command_descent T P a b'' c hab''P hb''c
 
--- ============================================================================
 -- J.7: Heyting Algebra Structure (Kracht Theorem 10)
--- ============================================================================
 
 /-!
 ### Heyting Algebra via Mathlib
@@ -1785,9 +1699,7 @@ theorem command_rels_complete_heyting {Node : Type} (_T : AbstractTree Node) :
     ∀ C D : Set (Node × Node), (C ⇨ D) ∩ C ⊆ D :=
   fun _ _ => himp_inf_le
 
--- ============================================================================
 -- J.7.1: Consequences of Heyting Algebra Structure
--- ============================================================================
 
 /-- **Distributive lattice**: Heyting algebras are distributive.
     This gives us: C ∩ (D ∪ E) = (C ∩ D) ∪ (C ∩ E) -/
@@ -1846,9 +1758,7 @@ theorem command_compl_anti {Node : Type} (_T : AbstractTree Node)
     Bᶜ ⊆ Aᶜ :=
   compl_le_compl h
 
--- ============================================================================
 -- J.8: Normal Forms (Kracht Theorem 9)
--- ============================================================================
 
 /-- A command relation expression in **normal form** uses only:
     - Base relations C_P (for properties P)
@@ -1879,9 +1789,7 @@ theorem normalForm_meet_is_union {Node : Type} (T : AbstractTree Node) (P Q : Se
   simp only [NormalForm.eval]
   exact intersection_theorem T P Q
 
--- ============================================================================
 -- J.9: Summary - Kracht's Algebraic Theory
--- ============================================================================
 
 /-!
 ### Kracht (1993) Coverage Summary

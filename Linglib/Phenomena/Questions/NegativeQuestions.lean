@@ -43,9 +43,7 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Questions.NegativeQuestions
 
--- ============================================================================
 -- Part 1: Negative Question Data
--- ============================================================================
 
 /-- A negative question datum records epistemic bias -/
 structure NegativeQuestionDatum where
@@ -88,9 +86,7 @@ def reallyBias : NegativeQuestionDatum := {
   source := "Romero & Han (2004)"
 }
 
--- ============================================================================
 -- Part 2: Ladd's PI/NI Ambiguity
--- ============================================================================
 
 /-- Ladd's (1981) ambiguity: same form, opposite implicatures -/
 structure LaddAmbiguityDatum where
@@ -143,9 +139,7 @@ def laddAlreadyYet : LaddAmbiguityDatum := {
   source := "Romero & Han (2004)"
 }
 
--- ============================================================================
 -- Part 3: Cross-linguistic Data
--- ============================================================================
 
 /-- Cross-linguistic negative question data -/
 structure CrossLinguisticDatum where
@@ -220,9 +214,7 @@ def greekNegQ : CrossLinguisticDatum := {
   source := "Romero & Han (2004)"
 }
 
--- ============================================================================
 -- Part 4: Question Partition Data
--- ============================================================================
 
 /-- Data on balanced vs unbalanced question partitions -/
 structure PartitionDatum where
@@ -265,9 +257,7 @@ def niUnbalancedPartition : PartitionDatum := {
   source := "Romero & Han (2004)"
 }
 
--- ============================================================================
 -- Part 5: Generalizations
--- ============================================================================
 
 /-- Romero & Han's Generalization 1 -/
 def generalization1 : String :=
@@ -280,9 +270,7 @@ def generalization2 : String :=
   "Preposed negation yes/no questions are potentially ambiguous between two readings: " ++
   "PI-reading (double-check p, licenses PPIs) and NI-reading (double-check ¬p, licenses NPIs)."
 
--- ============================================================================
 -- Part 6: Collected Data
--- ============================================================================
 
 /-- All basic negative question data -/
 def negativeQuestionData : List NegativeQuestionDatum := [
@@ -314,9 +302,7 @@ def partitionData : List PartitionDatum := [
   niUnbalancedPartition
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -33,9 +33,7 @@ open Montague.Core.Polarity
 open Phenomena.Negation
 open Core.Proposition
 
--- ============================================================================
 -- Test Domain: Animals
--- ============================================================================
 
 /-- A simple domain with dogs and cats (both animals) -/
 inductive Animal where
@@ -56,9 +54,7 @@ def isAnimal : BProp Animal := fun _ => true
 theorem dogs_subset_animals : ∀ x, isDog x = true → isAnimal x = true := by
   intro x _; rfl
 
--- ============================================================================
 -- DE Property Verification
--- ============================================================================
 
 /--
 **Test 1**: Negation is DE.
@@ -96,9 +92,7 @@ example : ∃ x, Decidable.pnot Animal isDog x = true ∧
 theorem not_ue_prediction_matches_data :
     negation_not_ue.judgedValid = false := rfl
 
--- ============================================================================
 -- Double Negation Verification
--- ============================================================================
 
 /--
 **Test 3**: Double negation is UE (DE ∘ DE = UE).
@@ -112,9 +106,7 @@ theorem double_negation_is_ue : IsUpwardEntailing (pnot ∘ pnot) :=
 theorem double_neg_prediction_matches_data :
     double_negation_ue.judgedValid = true := rfl
 
--- ============================================================================
 -- Summary: All Predictions Match
--- ============================================================================
 
 /--
 **Main Theorem**: All negation predictions from formal semantics match

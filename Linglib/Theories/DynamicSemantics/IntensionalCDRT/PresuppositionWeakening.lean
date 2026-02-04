@@ -42,9 +42,6 @@ open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
 open Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
 
--- ============================================================================
--- PART 1: Presupposition Types
--- ============================================================================
 
 /--
 A presupposition: a condition that must be satisfied for an expression
@@ -83,9 +80,6 @@ def hasExistentialPresup : QuantifierStrength → Bool
   | .strong => true
   | .weak => false
 
--- ============================================================================
--- PART 2: Mood in Restrictors
--- ============================================================================
 
 /--
 **Indicative restrictor**: Evaluates the restrictor at the actual world.
@@ -111,9 +105,6 @@ def sfRestrictor {W Time E : Type*} [LE Time]
     (s₀ : Situation W Time) : E → Prop :=
   fun x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
 
--- ============================================================================
--- PART 3: Presupposition Satisfaction
--- ============================================================================
 
 /--
 A context **satisfies** a presupposition if the presupposition holds
@@ -146,9 +137,6 @@ def weakenedPresup {W : Type*}
     (condition : W → Prop) : Presupposition W :=
   fun w => condition w → p w
 
--- ============================================================================
--- PART 4: The Weakening Effect of SF
--- ============================================================================
 
 /--
 **Theorem: Indicative preserves existential presupposition**
@@ -217,9 +205,6 @@ theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
     exact ⟨s₁, h_s₁, hx⟩
   · exact h_uncertainty.2
 
--- ============================================================================
--- PART 5: Relative Clauses with SF
--- ============================================================================
 
 /--
 **Relative clause with indicative**
@@ -272,9 +257,6 @@ theorem relClause_sf_weakens_quantifier {W Time E : Type*} [LE Time]
   unfold relClauseSF
   exact ⟨s₁, h_s₁, hx⟩
 
--- ============================================================================
--- PART 6: The Modal Displacement Analysis
--- ============================================================================
 
 /--
 **Modal displacement**: SF introduces quantification over situations,
@@ -318,9 +300,6 @@ theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
   · intro h s₁ hs₁ _ x hx
     exact h s₁ hs₁ x hx
 
--- ============================================================================
--- PART 7: Comparison with Other Weakening Mechanisms
--- ============================================================================
 
 /--
 **Accommodation** vs **Modal displacement**
@@ -361,9 +340,7 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -36,9 +36,7 @@ Then:
 
 namespace Montague.Question
 
--- ============================================================================
 -- Information Sets
--- ============================================================================
 
 /-- An information set J ⊆ I represents what the questioner knows.
 J is the set of indices compatible with the questioner's factual knowledge.
@@ -58,9 +56,7 @@ def InfoSet.contains {W : Type*} (j : InfoSet W) (w : W) : Bool := j w
 def InfoSet.intersect {W : Type*} (j : InfoSet W) (p : W -> Bool) : W -> Bool :=
   fun w => j w && p w
 
--- ============================================================================
 -- Restricted Partition (J/Q)
--- ============================================================================
 
 /-- Two worlds are J/Q-equivalent: both in J and Q-equivalent.
 
@@ -92,9 +88,7 @@ def GSQuestion.isQuestionIn {W : Type*} (q : GSQuestion W) (j : InfoSet W)
     (worlds : List W) : Bool :=
   (q.restrictedCells j worlds).length >= 2
 
--- ============================================================================
 -- Pragmatic Answerhood
--- ============================================================================
 
 /-- P **is** a pragmatic answer to Q in J iff P ∩ J is exactly a cell of J/Q.
 
@@ -135,9 +129,7 @@ theorem isPragmaticAnswer_implies_gives {W : Type*}
     givesPragmaticAnswer p q j worlds = true := by
   sorry
 
--- ============================================================================
 -- Semantic ↔ Pragmatic Connection
--- ============================================================================
 
 /-- Semantic answerhood is a special case of pragmatic answerhood when J = I.
 
@@ -164,9 +156,7 @@ theorem pragmaticAnswer_monotone_down {W : Type*}
     givesPragmaticAnswer p q j' worlds = true := by
   sorry
 
--- ============================================================================
 -- Pragmatic Term Properties
--- ============================================================================
 
 /-- A term denotation function: maps indices to individuals. -/
 abbrev TermDenotation (W E : Type*) := W -> E
@@ -215,9 +205,7 @@ theorem semanticallyRigid_implies_pragmaticallyRigid {W E : Type*} [DecidableEq 
     pragmaticallyRigid t j worlds = true := by
   sorry
 
--- ============================================================================
 -- Pragmatic Exhaustiveness
--- ============================================================================
 
 /-- A term is pragmatically exhaustive for a question Q in J if it picks out
 all and only the individuals satisfying the question's predicate in J.
@@ -232,9 +220,7 @@ def pragmaticallyExhaustive {W E : Type*} [DecidableEq E]
     let e := t w
     predicate w e == jWorlds.all fun v => predicate v e
 
--- ============================================================================
 -- Key G&S Theorems: Term Properties → Answerhood
--- ============================================================================
 
 /-- G&S Theorem (12): If a term t is exhaustive and rigid, then t(a) is a
 complete answer to "?x.P(x)" in any information set J.
@@ -265,9 +251,7 @@ theorem nonExhaustive_incomplete_answer {W E : Type} [DecidableEq E]
     isPragmaticAnswer answerProp q j worlds = false := by
   sorry
 
--- ============================================================================
 -- False Propositions, True Pragmatic Answers
--- ============================================================================
 
 /-- G&S 1984, p. 360: A FALSE proposition can give a TRUE pragmatic answer.
 
@@ -291,9 +275,7 @@ theorem false_proposition_true_pragmatic_answer {W : Type*}
     -- (there exist such p, q, j where this holds)
     True := fun _ => trivial
 
--- ============================================================================
 -- Institutional vs Ordinary Question-Answering
--- ============================================================================
 
 /-- G&S 1984, p. 363, 390: In highly institutionalized settings (courts, etc.),
 semantic answers are required because information sets vary widely.

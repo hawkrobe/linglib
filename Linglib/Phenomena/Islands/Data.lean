@@ -45,9 +45,7 @@ import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 
--- ============================================================================
 -- Embedded Question Constraint (Wh-Islands)
--- ============================================================================
 
 /-- Embedded question constraint: wh-dependencies blocked across intervening wh-phrase -/
 def embeddedQuestionConstraint : PhenomenonData := {
@@ -67,9 +65,7 @@ def embeddedQuestionConstraint : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Complex NP Constraint (CNPC)
--- ============================================================================
 
 /-- CNPC: wh-dependencies blocked into relative clauses and noun complements -/
 def complexNPConstraint : PhenomenonData := {
@@ -84,9 +80,7 @@ def complexNPConstraint : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Adjunct Clause Constraint
--- ============================================================================
 
 /-- Adjunct constraint: wh-dependencies blocked into adjunct clauses -/
 def adjunctClauseConstraint : PhenomenonData := {
@@ -106,9 +100,7 @@ def adjunctClauseConstraint : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Coordinate Structure Constraint (CSC)
--- ============================================================================
 
 /-- CSC: asymmetric wh-dependencies blocked in coordination -/
 def coordinateStructureConstraint : PhenomenonData := {
@@ -129,9 +121,7 @@ def coordinateStructureConstraint : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Subject Constraint
--- ============================================================================
 
 /-- Subject constraint: wh-dependencies into subjects degraded -/
 def subjectConstraint : PhenomenonData := {
@@ -146,9 +136,7 @@ def subjectConstraint : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Combined Island Data
--- ============================================================================
 
 /-- All island constraint data -/
 def islandData : List PhenomenonData := [
@@ -159,9 +147,7 @@ def islandData : List PhenomenonData := [
   subjectConstraint
 ]
 
--- ============================================================================
 -- Constraint Types (for categorization)
--- ============================================================================
 
 /-- Types of island constraints (descriptive labels) -/
 inductive ConstraintType where
@@ -188,9 +174,7 @@ def constraintStrength : ConstraintType → ConstraintStrength
   | .subject => .weak               -- Varies cross-linguistically
   | .sententialSubject => .strong
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval wordsToString [what, did, john, buy]                    -- "what did John buy"
 #eval wordsToString [what, do_, you, wonder, who, bought]    -- "*what do you wonder who bought"

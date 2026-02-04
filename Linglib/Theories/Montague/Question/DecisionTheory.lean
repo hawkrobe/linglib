@@ -43,9 +43,7 @@ This holds for ALL reasonable decision criteria!
 
 namespace Montague.Question
 
--- ============================================================================
 -- Decision Problems
--- ============================================================================
 
 /-- A decision problem with explicit world and action types.
 
@@ -74,9 +72,7 @@ def withUniformPrior [BEq W] (utility : W -> A -> ℚ) (worlds : List W) : Decis
 
 end DecisionProblem
 
--- ============================================================================
 -- Expected Utility (Standard Decision Criterion)
--- ============================================================================
 
 /-- Expected utility of action a given beliefs -/
 def expectedUtility {W A : Type*} (dp : DecisionProblem W A)
@@ -100,9 +96,7 @@ def dpValue {W A : Type*} [DecidableEq A]
   | some a => expectedUtility dp worlds a
   | none => 0
 
--- ============================================================================
 -- Conditional Information Value
--- ============================================================================
 
 /-- Conditional expected utility of action a given proposition C is true -/
 def conditionalEU {W A : Type*} (dp : DecisionProblem W A)
@@ -137,9 +131,7 @@ def cellProbability {W A : Type*} (dp : DecisionProblem W A)
   let cellWorlds := worlds.filter cell
   cellWorlds.foldl (fun acc w => acc + dp.prior w) 0
 
--- ============================================================================
 -- Question Utility (Expected Utility Criterion)
--- ============================================================================
 
 /-- Expected utility value of question Q:
 EUV(Q) = Σ_{q∈Q} P(q) × UV(q)
@@ -164,9 +156,7 @@ theorem questionUtility_nonneg {W A : Type*} [DecidableEq A]
     questionUtility dp worlds actions q >= 0 := by
   sorry -- Requires showing EU with more info >= EU with less info
 
--- ============================================================================
 -- Maximin Criterion (Pessimistic)
--- ============================================================================
 
 /-- Security level of action a: utility under worst-case world.
 S(a) = min_{w} U(w, a) -/
@@ -226,9 +216,7 @@ theorem maximinUtilityValue_nonneg {W A : Type*} [DecidableEq A]
     maximinUtilityValue dp worlds actions c >= 0 := by
   sorry -- min over subset >= min over superset
 
--- ============================================================================
 -- Blackwell's Theorem
--- ============================================================================
 
 /-!
 ## Blackwell's Theorem
@@ -325,9 +313,7 @@ theorem blackwell_maximin {W A : Type*} [DecidableEq A] [DecidableEq W]
       questionMaximin dp worlds actions (q'.toQuestion worlds) := by
   sorry -- Similar proof structure to blackwell_theorem
 
--- ============================================================================
 -- Mention-Some vs Mention-All
--- ============================================================================
 
 /-- C resolves decision problem if one action dominates after learning C -/
 def resolves {W A : Type*} [DecidableEq A]
@@ -364,9 +350,7 @@ def isMentionAll {W A : Type*} [DecidableEq A]
     (q : Question W) : Bool :=
   !isMentionSome dp worlds actions q
 
--- ============================================================================
 -- Special Decision Problems
--- ============================================================================
 
 /-- An epistemic DP where the agent wants to know the exact world state. -/
 def epistemicDP {W A : Type*} [DecidableEq W] (target : W) : DecisionProblem W A where

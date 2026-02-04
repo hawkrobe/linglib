@@ -48,9 +48,7 @@ namespace RSA.FCIAny
 
 open RSA.Eval
 
--- ============================================================================
 -- SECTION 0: Compositional Semantics (Montague Grounding)
--- ============================================================================
 
 /-!
 ## Compositional Semantics for *Any*
@@ -92,9 +90,7 @@ inductive Item where
 /-- All items -/
 def allItems : List Item := [.S, .P]
 
--- ============================================================================
 -- SECTION 1: States (7 states for the 2-item fruit domain)
--- ============================================================================
 
 /-!
 ## State Space
@@ -153,9 +149,7 @@ def hasNotEvery : FCIState → Bool
 def allStates : List FCIState :=
   [.onlyS, .onlyP, .only1, .anyNum, .only2, .sOrBoth, .pOrBoth]
 
--- ============================================================================
 -- SECTION 1b: Compositional Permission Predicates
--- ============================================================================
 
 /-!
 ## Permission Predicates (Montague Modality)
@@ -214,9 +208,7 @@ def perm_liberal : Item → FCIState → Bool
   | .S => permS_liberal
   | .P => permP_liberal
 
--- ============================================================================
 -- SECTION 1c: Compositional Meaning Derivations
--- ============================================================================
 
 /-!
 ## Deriving Meanings Compositionally
@@ -257,9 +249,7 @@ def compSzabolcsi (w : FCIState) : Bool :=
 def compDayal (w : FCIState) : Bool :=
   forallItem (fun x => perm x w)
 
--- ============================================================================
 -- SECTION 2: Utterances
--- ============================================================================
 
 /-- The 4 utterances in the free choice any domain -/
 inductive Utterance where
@@ -272,9 +262,7 @@ inductive Utterance where
 /-- All utterances -/
 def allUtterances : List Utterance := [.mayS, .mayP, .mayAny, .mayEvery]
 
--- ============================================================================
 -- SECTION 3: Parses (Szabolcsi vs Dayal)
--- ============================================================================
 
 /-!
 ## Parse-Level Ambiguity
@@ -302,9 +290,7 @@ inductive AnyParse where
 /-- All parses -/
 def allParses : List AnyParse := [.szabolcsi, .dayal]
 
--- ============================================================================
 -- SECTION 4: Meaning Functions
--- ============================================================================
 
 /-!
 ## Meaning Functions by Parse
@@ -363,9 +349,7 @@ def meaningAtParse : AnyParse → Utterance → FCIState → ℚ
   | .szabolcsi, u, w => boolToRat (szabolcsiMeaning u w)
   | .dayal, u, w => boolToRat (dayalMeaning u w)
 
--- ============================================================================
 -- SECTION 4b: Grounding Theorems (RSA ↔ Compositional Semantics)
--- ============================================================================
 
 /-!
 ## Grounding: RSA Meanings = Compositional Derivations
@@ -421,9 +405,7 @@ theorem grounding_spot_check :
     dayalMeaning .mayAny .only2 = false := by  -- NOT exclusiveness
   decide
 
--- ============================================================================
 -- SECTION 5: RSA Computations (Global Intentions Model)
--- ============================================================================
 
 /-!
 ## Global Intentions L1
@@ -459,9 +441,7 @@ def giL1_joint (α : ℕ) (prior : FCIState → ℚ) (u : Utterance)
   ambiguousL1_joint allUtterances allStates allParses
     meaningAtParse prior uniformParsePrior α (fun _ => 0) u
 
--- ============================================================================
 -- SECTION 6: Key Predictions
--- ============================================================================
 
 /-!
 ## Key Predictions
@@ -502,9 +482,7 @@ def nonExclusivenessProb (α : ℕ) (prior : FCIState → ℚ) (u : Utterance) :
 #eval giL1_parse 100 uniformPrior .mayAny
 #eval exclusivenessProb 100 uniformPrior .mayAny
 
--- ============================================================================
 -- SECTION 7: Key Theorems
--- ============================================================================
 
 /--
 **Exclusiveness is derived**: L1 assigns high probability to exclusiveness
@@ -566,9 +544,7 @@ theorem not_every_prior_sensitive :
     notEveryUniform > notEveryAnyNum := by
   native_decide
 
--- ============================================================================
 -- SECTION 8: Connection to Champollion et al. (2019)
--- ============================================================================
 
 /-!
 ## Connection to Champollion et al. (2019)
@@ -601,9 +577,7 @@ theorem both_derive_free_choice :
   · exact RSA.FreeChoice.fci_derived
   · exact exclusiveness_derived
 
--- ============================================================================
 -- SECTION 9: Connection to Phenomena Data
--- ============================================================================
 
 /-!
 ## Connection to Phenomena
@@ -631,9 +605,7 @@ theorem predicts_fci_any :
 theorem predicts_robustness :
     Phenomena.Modality.FreeChoice.anyClass.robustToPriors = true := rfl
 
--- ============================================================================
 -- SECTION 10: Additional Predictions
--- ============================================================================
 
 /-- L1 prefers the Dayal (strong) parse for "may any" -/
 def dayalPreferred : Bool :=
@@ -656,9 +628,7 @@ theorem singular_parses_equivalent :
   intro w
   cases w <;> simp [szabolcsiMeaning, dayalMeaning]
 
--- ============================================================================
 -- SECTION 11: Limit Theorems (α → ∞)
--- ============================================================================
 
 /-!
 ## The Neo-Gricean Limit: α → ∞
@@ -818,9 +788,7 @@ theorem categorical_limit_verified :
     dayalProbAtAlpha 100 > 99/100 := by
   constructor <;> native_decide
 
--- ============================================================================
 -- SECTION 12: Equivalence to Neo-Gricean Exhaustification
--- ============================================================================
 
 /-!
 ## Equivalence: RSA ↔ Exhaustification (at α → ∞)
@@ -916,9 +884,7 @@ theorem rsa_neoGricean_equivalence :
   · intro w hExcl
     cases w <;> simp_all [hasExclusiveness, permS, permP]
 
--- ============================================================================
 -- SECTION 13: EXH Falls Out of RSA
--- ============================================================================
 
 /-!
 ## Exhaustification Emerges from RSA Principles
@@ -1069,9 +1035,7 @@ theorem exh_falls_out_of_rsa :
   refine ⟨?_, rsa_exh_implies_dayal, dayal_equals_exclusiveness⟩
   native_decide
 
--- ============================================================================
 -- SECTION 14: The General Principle
--- ============================================================================
 
 /-!
 ## The General Principle: Informativity → Exhaustification
@@ -1148,9 +1112,7 @@ theorem exhaustification_principle :
   · simp [szabolcsiMeaning, dayalMeaning]
   · native_decide
 
--- ============================================================================
 -- SECTION 15: Deeper Mathematical Properties
--- ============================================================================
 
 /-!
 ## Mathematical Properties of the Model
@@ -1208,9 +1170,7 @@ theorem dayal_more_informative :
     dayalTrueCount < szabTrueCount := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

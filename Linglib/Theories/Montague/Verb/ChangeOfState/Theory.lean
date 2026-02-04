@@ -41,9 +41,7 @@ namespace Montague.Verb.ChangeOfState
 
 open Core.Presupposition
 
--- ============================================================================
 -- Change-of-State Verb Classification
--- ============================================================================
 
 /--
 Classification of change-of-state verbs by the direction of state change.
@@ -69,9 +67,7 @@ inductive CoSType where
   | continuation -- continue, keep: P → P
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
 -- Lexical Entry Structure
--- ============================================================================
 
 /--
 A lexical entry for a change-of-state verb.
@@ -92,9 +88,7 @@ structure CoSEntry where
   reversible : Bool := true
   deriving Repr, BEq
 
--- ============================================================================
 -- Core Lexical Entries
--- ============================================================================
 
 /-- "stop" — cessation verb -/
 def stop : CoSEntry := { form := "stop", cosType := .cessation }
@@ -126,9 +120,7 @@ def keep : CoSEntry := { form := "keep", cosType := .continuation }
 /-- "remain" — continuation verb -/
 def remain : CoSEntry := { form := "remain", cosType := .continuation }
 
--- ============================================================================
 -- Semantic Functions
--- ============================================================================
 
 variable {W : Type*}
 
@@ -178,9 +170,7 @@ Semantics for a lexical entry applied to an activity predicate.
 def entrySemantics (e : CoSEntry) (P : W → Bool) : PrProp W :=
   cosSemantics e.cosType P
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /--
 Negation preserves presupposition (hole property).
@@ -246,9 +236,7 @@ No change occurs; the predicate reports persistence.
 theorem continuation_assertion_equals_presup (P : W → Bool) :
     resultStateAssertion .continuation P = priorStatePresup .continuation P := rfl
 
--- ============================================================================
 -- Class C Property
--- ============================================================================
 
 /--
 All CoS predicates shift under belief (Tonhauser et al. 2013: Class C).
@@ -288,9 +276,7 @@ This distinguishes soft triggers from hard triggers like "too".
 -/
 def hasSCF (_e : CoSEntry) : Bool := false
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Change-of-State Predicate Semantics

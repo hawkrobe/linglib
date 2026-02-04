@@ -35,9 +35,6 @@ import Mathlib.Data.Set.Finite.Basic
 
 namespace NeoGricean.Spector2007
 
--- ============================================================================
--- PART 1: Propositional Framework (Appendix, Section 1)
--- ============================================================================
 
 /-
 "A valuation is uniquely defined by the values it assigns to the positive literals.
@@ -96,9 +93,6 @@ def satisfies (L : Literal α) (V : Finset α) : Bool :=
 
 end Literal
 
--- ============================================================================
--- PART 2: Favoring and Polarity (Appendix, Section 2)
--- ============================================================================
 
 /-
 "Def 2 (favoring): Let F be a formula and L be a literal distinct from ⊥, ⊤.
@@ -145,9 +139,6 @@ positive literal.
 def isNegative (P : Proposition Atom) : Prop :=
   (∃ a : Atom, favors Atom P (.neg a)) ∧ (∀ a : Atom, ¬favors Atom P (.pos a))
 
--- ============================================================================
--- PART 3: Exhaustification (Section 3.3.2, Appendix)
--- ============================================================================
 
 /-
 "Exhaustification:
@@ -303,9 +294,6 @@ theorem Pos_Exhaust_eq_Pos (P : Proposition Atom) :
     -- V'' ⊆ V' ⊆ V, so V ∈ Pos(Exhaust(P))
     exact ⟨V'', hV''_exh, hV''_sub_V'.trans hV'_sub⟩
 
--- ============================================================================
--- PART 4: Gricean Information States (Section 2)
--- ============================================================================
 
 /-
 "Def 3: I(S, α, Q) = {i | i/Q ⊆ α and ∀α' (α' ∈ S and i/Q ⊆ α') → ¬(α' ⊂ α)}"
@@ -345,9 +333,6 @@ In our setting: Max(P) = {i ∈ I(P) | ∀i' ∈ I(P), ¬(i' ⊂ i)}
 def Max (P : Proposition Atom) : Set (InfoState Atom) :=
   {i | i ∈ I Atom P ∧ ∀ i' ∈ I Atom P, ¬(i' ⊂ i)}
 
--- ============================================================================
--- PART 5: Main Theorem (Section 3.3.2)
--- ============================================================================
 
 /-
 "Theorem: if P is a positive proposition, then Max(P) = {Exhaust(P)}, and
@@ -445,9 +430,6 @@ theorem main_theorem (P : Proposition Atom) (hpos : isPositive Atom P) :
       have h := Exhaust_entails_I Atom P hpos i' hi'
       exact hsub.2 h
 
--- ============================================================================
--- PART 6: Connection to Scalar Implicatures
--- ============================================================================
 
 /-
 The main theorem shows that for positive propositions (like "A or B"), the
@@ -533,9 +515,7 @@ theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
         | inl hA' => exact Finset.notMem_empty A hA'
         | inr hB' => exact Finset.notMem_empty B hB'
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -30,9 +30,6 @@ import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 
--- ============================================================================
--- PART 1: Rate-Distortion Interpretation
--- ============================================================================
 
 /--
 At α = 1, G_α equals the negative rate-distortion functional.
@@ -58,9 +55,6 @@ theorem alpha_one_is_rate_distortion (S : RSA.RSAScenarioQ) (h : S.α = 1) :
   simp only [G_alpha_at_Q, H_S_at_Q, E_VL_at_Q, h]
   ring
 
--- ============================================================================
--- PART 2: Phase Transition Behavior
--- ============================================================================
 
 /--
 Create a test scenario for phase transition analysis.
@@ -86,9 +80,6 @@ def phaseAnalysis (α : ℚ) (α_nonneg : 0 ≤ α := by norm_num) (maxIter : Na
   let e_trace := traceE_VL_Q S maxIter
   s!"α = {α}: G_monotone = {g_monotone}, E_monotone = {e_monotone}"
 
--- ============================================================================
--- PART 3: Alternating Maximization
--- ============================================================================
 
 /-!
 ## Alternating Maximization (Proposition 1)
@@ -139,9 +130,6 @@ theorem speaker_update_optimal (S : RSA.RSAScenarioQ) (d : RSADynamicsQ S) :
     True := by
   trivial  -- Placeholder - would need extensive analysis
 
--- ============================================================================
--- PART 4: Suboptimality Below Critical α
--- ============================================================================
 
 /--
 For α < 1, communication is suboptimal (worse than rate-distortion bound).
@@ -165,9 +153,6 @@ def qualityIncreasesWithAlpha : Prop :=
   -- Quality increases (typically)
   communicationQuality S₁ 5 ≤ communicationQuality S₂ 5
 
--- ============================================================================
--- PART 5: Convergence Properties
--- ============================================================================
 
 /--
 RSA dynamics converge to a fixed point.
@@ -194,9 +179,6 @@ def convergenceIterations (S : RSA.RSAScenarioQ) (ε : ℚ) (maxIter : Nat) : Na
   | some n => n
   | none => maxIter  -- Didn't converge in maxIter steps
 
--- ============================================================================
--- PART 6: Summary Theorems
--- ============================================================================
 
 /--
 G_α monotonicity holds for all α ≥ 0.

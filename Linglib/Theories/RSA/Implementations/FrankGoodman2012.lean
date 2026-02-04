@@ -42,9 +42,7 @@ namespace RSA.FrankGoodman2012
 
 open RSA.Domains.ReferenceGame RSA.Eval
 
--- ============================================================================
 -- Domain: Objects and Utterances (from Montague-grounded infrastructure)
--- ============================================================================
 
 /-- Objects in the reference game context (Color × Shape pairs) -/
 abbrev Object := RSA.Domains.ReferenceGame.Object
@@ -63,9 +61,7 @@ def utt_green : Utterance := .color .green
 def utt_square : Utterance := .shape .square
 def utt_circle : Utterance := .shape .circle
 
--- ============================================================================
 -- Literal Semantics (derived from Montague)
--- ============================================================================
 
 /--
 Literal meaning: does utterance apply to object?
@@ -80,9 +76,7 @@ def meaning (u : Utterance) (o : Object) : Bool :=
 theorem meaning_from_compositional (u : Utterance) (o : Object) :
     meaning u o = RSA.Domains.ReferenceGame.featureMeaning u o := rfl
 
--- ============================================================================
 -- RSAScenario Instance (using unified API)
--- ============================================================================
 
 /-- The classic Frank & Goodman context as a TypedContext -/
 def classicContext : TypedContext :=
@@ -100,9 +94,7 @@ def runS1 (o : Object) : List (Utterance × ℚ) :=
 def runL1 (u : Utterance) : List (Object × ℚ) :=
   classicContext.runL1 u
 
--- ============================================================================
 -- Compute RSA Distributions
--- ============================================================================
 
 /-- L0 for "blue" - uniform over blue objects -/
 def l0_blue : List (Object × ℚ) := runL0 utt_blue
@@ -125,9 +117,7 @@ def l1_square : List (Object × ℚ) := runL1 utt_square
 /-- L1 for "blue" -/
 def l1_blue : List (Object × ℚ) := runL1 utt_blue
 
--- ============================================================================
 -- Evaluate
--- ============================================================================
 
 #eval l0_blue      -- L0("blue"): 1/2 each for blue_square, blue_circle
 #eval l0_green     -- L0("green"): 1 for green_square
@@ -139,9 +129,7 @@ def l1_blue : List (Object × ℚ) := runL1 utt_blue
 #eval l1_square    -- L1("square"): blue_square > green_square (the inference!)
 #eval l1_blue      -- L1("blue"): should be roughly uniform over blue objects
 
--- ============================================================================
 -- Main Theorems
--- ============================================================================
 
 /--
 **Reference Game Theorem**
@@ -171,9 +159,7 @@ theorem s1_blue_square_equal :
     RSA.Eval.getScore s1_blue_square utt_blue = RSA.Eval.getScore s1_blue_square utt_square := by
   native_decide
 
--- ============================================================================
 -- Additional: Unique Reference
--- ============================================================================
 
 /-- "green" uniquely identifies green_square at L0 -/
 theorem green_unique :
@@ -188,9 +174,7 @@ theorem circle_unique :
     (RSA.Eval.getScore (runL0 utt_circle) blue_square).num = 0 := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## How RSA Derives the Reference Game Inference
@@ -213,9 +197,7 @@ This is the core RSA insight: pragmatic listeners infer meaning by
 reasoning about rational speaker behavior.
 -/
 
--- ============================================================================
 -- Fintype-Based API (RSAScenario / RSA)
--- ============================================================================
 
 /-!
 ## Fintype-Based RSA
@@ -237,9 +219,7 @@ def refGameScenarioF : RSAScenario Feature Object :=
     (utterancePrior := fun _ => 1)
     (utterancePrior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
 
--- ============================================================================
 -- RSAModel Instance: Convergence Guarantees
--- ============================================================================
 
 /-!
 ## Zaslavsky et al. (2020) Convergence Guarantees

@@ -44,9 +44,7 @@ namespace RSA.AttitudeEmbedding
 
 open Montague.Verb.Attitude.Examples
 
--- ============================================================================
 -- World Structure for Belief Contexts
--- ============================================================================
 
 /--
 Student outcomes in the actual world and John's beliefs.
@@ -87,9 +85,7 @@ def BeliefWorld.johnBelievesSome (w : BeliefWorld) : Bool :=
 def BeliefWorld.johnBelievesAll (w : BeliefWorld) : Bool := w.johnBelieves == .allO
 def BeliefWorld.johnBelievesSomeNotAll (w : BeliefWorld) : Bool := w.johnBelieves == .someO
 
--- ============================================================================
 -- Interpretations of Embedded Scalars
--- ============================================================================
 
 /--
 Two possible interpretations of "John believes some students passed":
@@ -107,9 +103,7 @@ inductive AttitudeInterpretation where
   | local_  -- "some" is strong (some-but-not-all) inside belief
   deriving DecidableEq, Repr, BEq, Inhabited, Fintype
 
--- ============================================================================
 -- Truth Conditions
--- ============================================================================
 
 /--
 Truth conditions for "John believes some students passed".
@@ -135,9 +129,7 @@ For comparison: "John believes no students passed" (unambiguous).
 -/
 def believesNoneMeaning (w : BeliefWorld) : Bool := w.johnBelievesNone
 
--- ============================================================================
 -- World Space
--- ============================================================================
 
 /--
 Relevant worlds for the attitude embedding scenario.
@@ -171,9 +163,7 @@ instance : Fintype BeliefWorld :=
       left_inv := fun _ => rfl
       right_inv := fun _ => rfl }
 
--- ============================================================================
 -- RSA Model
--- ============================================================================
 
 /--
 Utterances for the attitude scenario.
@@ -194,9 +184,7 @@ def utteranceMeaning (u : AttitudeUtterance) (interp : AttitudeInterpretation)
   | .believesAll => believesAllMeaning w
   | .believesNone => believesNoneMeaning w
 
--- ============================================================================
 -- Key Predictions
--- ============================================================================
 
 /--
 Under **global** interpretation:
@@ -221,9 +209,7 @@ theorem global_local_differ_at_all_belief :
     believesSomeMeaning .global ⟨.allO, .allO⟩ ≠
     believesSomeMeaning .local_ ⟨.allO, .allO⟩ := by decide
 
--- ============================================================================
 -- Contrast with DE Contexts
--- ============================================================================
 
 /-
 ## Why Attitude Verbs Differ from DE Contexts
@@ -282,9 +268,7 @@ theorem global_not_entails_local :
   use ⟨.allO, .allO⟩
   decide
 
--- ============================================================================
 -- Semantic Grounding
--- ============================================================================
 
 /-
 ## Grounding: Connection to Montague Attitude Semantics
@@ -381,9 +365,7 @@ theorem local_entails_global_grounded :
   rw [global_grounded]
   exact prop_entailment w.johnBelieves h
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Key Results

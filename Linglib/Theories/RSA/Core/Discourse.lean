@@ -26,9 +26,7 @@ namespace RSA
 
 open Theories.DynamicSemantics.State
 
--- ============================================================================
 -- QUD Configuration
--- ============================================================================
 
 /--
 Configuration for QUD/Goal-based RSA models.
@@ -65,9 +63,7 @@ def trivial : QUDConfig W where
 
 end QUDConfig
 
--- ============================================================================
 -- RSAScenario Discourse Constructors
--- ============================================================================
 
 namespace RSAScenario
 

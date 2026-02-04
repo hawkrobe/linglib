@@ -40,9 +40,6 @@ namespace RSA.Implementations.HeKaiserIskarous2025
 open Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 open RSA.Eval
 
--- ============================================================================
--- PART 1: Helper Functions
--- ============================================================================
 
 /-- Convert Bool to ℚ -/
 def boolToQ (b : Bool) : ℚ := if b then 1 else 0
@@ -70,9 +67,6 @@ def sigmoidApprox (x : ℚ) (L k x0 c : ℚ) : ℚ :=
     let midpoint := c + L / 2
     midpoint + slope * (x - x0)
 
--- ============================================================================
--- PART 2: Standard RSA (Baseline)
--- ============================================================================
 
 /-- Run L1 for standard RSA scenario with Boolean semantics and costs.
 
@@ -99,9 +93,6 @@ def standardS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
     utteranceCost
     s
 
--- ============================================================================
--- PART 3: fuzzyRSA - Soft Semantics
--- ============================================================================
 
 /-
 fuzzyRSA uses different interpretation functions for each polarity:
@@ -182,9 +173,6 @@ def fuzzyS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
     utteranceCost
     s
 
--- ============================================================================
--- PART 4: wonkyRSA - Complex Prior for Common Ground Update
--- ============================================================================
 
 /-
 wonkyRSA introduces a complex prior to model common ground update:
@@ -242,9 +230,6 @@ def inferredWonkiness (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
   let wonkyScores := joint.filter (fun ((_, w), _) => w == .wonky) |>.map (·.2)
   RSA.Eval.sumScores wonkyScores
 
--- ============================================================================
--- PART 5: funkyRSA - Combined Model
--- ============================================================================
 
 /-
 funkyRSA combines fuzzy interpretation with wonky world:
@@ -274,9 +259,6 @@ def funkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType)
     utteranceCost
     u
 
--- ============================================================================
--- PART 6: Analysis Functions
--- ============================================================================
 
 /-- Get S1 probability for standard scenario -/
 def standardS1Prob (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
@@ -304,9 +286,6 @@ def expectedTypicality (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
     let p_pos_given_world := worldConditionedPrior cfg w .pos
     acc + p_world * p_pos_given_world) 0
 
--- ============================================================================
--- PART 7: Verification
--- ============================================================================
 
 /-- Standard scenario has correct dimensions -/
 theorem standard_dimensions :
@@ -324,9 +303,6 @@ theorem neg_higher_cost :
     utteranceCost .uNeg > utteranceCost .uPos := by
   native_decide
 
--- ============================================================================
--- PART 8: Standard RSA Limitations
--- ============================================================================
 
 /-
 He et al. Experiment 1 found:
@@ -404,9 +380,7 @@ theorem neg_interpretation_constant :
     fuzzyMeaning highPriorConfig .uNeg .neg := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides
@@ -452,9 +426,6 @@ positive vs negative polarity:
 - Positive: prior-dependent sigmoid (low-prior states less reliable)
 -/
 
--- ============================================================================
--- PART 9: Integration with Compositional Polarity (Core.Polarity)
--- ============================================================================
 
 /--
 Map He et al.'s sentence polarity to compositional context polarity.
@@ -474,9 +445,6 @@ def toContextPolarity : Polarity → Montague.Core.Polarity.ContextPolarity
 theorem cost_reflects_polarity :
     utteranceCost .uPos < utteranceCost .uNeg := by native_decide
 
--- ============================================================================
--- PART 10: Compositional Grounding via Montague Semantics
--- ============================================================================
 
 /-
 ## Compositional Analysis of He et al. Sentences
@@ -543,9 +511,7 @@ theorem house_doesnt_have_bathroom : negMeaning .house .bathroom = false := rfl
 /-- "The classroom doesn't have a stove" is true -/
 theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
 
--- ============================================================================
 -- Connecting to Polarity Machinery (with proven DE property)
--- ============================================================================
 
 open Montague.Core.Polarity
 open Core.Proposition
@@ -592,9 +558,7 @@ theorem neg_sentence_is_de :
 theorem pos_sentence_is_ue :
     identityPolarity.toContextPolarity = .upward := rfl
 
--- ============================================================================
 -- Deriving Cost from Structural Complexity
--- ============================================================================
 
 /--
 Structural complexity: count of functional heads in the derivation.

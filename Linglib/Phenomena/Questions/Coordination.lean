@@ -31,9 +31,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.Coordination
 
--- ============================================================================
--- PART 1: Conjunctive Interrogatives
--- ============================================================================
 
 /-- A conjunctive interrogative datum. -/
 structure ConjunctiveInterrogativeDatum where
@@ -116,9 +113,6 @@ def conjunctiveInterrogativeExamples : List ConjunctiveInterrogativeDatum :=
   , whichPassedFailed
   ]
 
--- ============================================================================
--- PART 2: Disjunctive Interrogatives
--- ============================================================================
 
 /-- A disjunctive interrogative datum. -/
 structure DisjunctiveInterrogativeDatum where
@@ -195,9 +189,6 @@ def disjunctiveInterrogativeExamples : List DisjunctiveInterrogativeDatum :=
   , marryMeOrNot
   ]
 
--- ============================================================================
--- PART 3: Alternative Questions
--- ============================================================================
 
 /-- Alternative question data: exclusive choice among options. -/
 structure AlternativeQuestionDatum where
@@ -248,9 +239,6 @@ def johnMaryBill : AlternativeQuestionDatum :=
 def alternativeQuestionExamples : List AlternativeQuestionDatum :=
   [teaOrCoffee, oddOrEven, johnMaryBill]
 
--- ============================================================================
--- PART 4: Embedded Coordinated Questions
--- ============================================================================
 
 /-- Data on coordination under attitude verbs. -/
 structure EmbeddedCoordinationDatum where
@@ -301,9 +289,6 @@ def dontKnowDisj : EmbeddedCoordinationDatum :=
 def embeddedCoordinationExamples : List EmbeddedCoordinationDatum :=
   [knowWhoWhatConj, wonderWhetherDisj, dontKnowDisj]
 
--- ============================================================================
--- PART 5: Sluicing with Coordinated Antecedents
--- ============================================================================
 
 /-- Sluicing examples with coordinated antecedents. -/
 structure SluicingCoordinationDatum where
@@ -344,9 +329,6 @@ def bothInvitedSomeone : SluicingCoordinationDatum :=
 def sluicingCoordinationExamples : List SluicingCoordinationDatum :=
   [talkedSomeone, bothInvitedSomeone]
 
--- ============================================================================
--- PART 6: Multiple Coordination
--- ============================================================================
 
 /-- Data on questions with more than two conjuncts/disjuncts. -/
 structure MultipleCoordinationDatum where
@@ -387,9 +369,6 @@ def fourDisjuncts : MultipleCoordinationDatum :=
 def multipleCoordinationExamples : List MultipleCoordinationDatum :=
   [threeConjuncts, fourDisjuncts]
 
--- ============================================================================
--- PART 7: Conjunction vs Alternative
--- ============================================================================
 
 /-- Minimal pairs: conjunction vs alternative interpretation. -/
 structure ConjAltMinimalPair where
@@ -417,9 +396,7 @@ def johnOrMaryMinimal : ConjAltMinimalPair :=
 def conjAltMinimalPairs : List ConjAltMinimalPair :=
   [johnOrMaryMinimal]
 
--- ============================================================================
 -- Summary: Key Principles
--- ============================================================================
 
 /-- G&S key principles for interrogative coordination -/
 def coordinationPrinciples : List String :=

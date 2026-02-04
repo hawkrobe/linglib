@@ -28,9 +28,7 @@ judgments: An investigation of quantifier scope ambiguity."
 
 namespace Phenomena.Quantification.Studies.ScontrasPearl2021
 
--- ============================================================================
 -- World States
--- ============================================================================
 
 /-- How many horses jumped (out of 2) -/
 inductive JumpOutcome where
@@ -39,9 +37,7 @@ inductive JumpOutcome where
   | two    -- 2 horses jumped (all)
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- ============================================================================
 -- Scope Readings
--- ============================================================================
 
 /-- Scope configuration for "every...not" -/
 inductive ScopeReading where
@@ -49,9 +45,7 @@ inductive ScopeReading where
   | inverse  -- ¬>∀: "Not every horse jumped"
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- ============================================================================
 -- Truth Conditions by Scope
--- ============================================================================
 
 /--
 Truth conditions for "Every horse didn't jump" under each scope reading.
@@ -67,9 +61,7 @@ def scopeTruth : ScopeReading → JumpOutcome → Bool
   | .inverse, .one  => true   -- ¬∀x.jump(x): one jumped, not all
   | .inverse, .two  => false  -- ¬∀x.jump(x): all jumped, so false
 
--- ============================================================================
 -- Experimental Data (Scontras & Pearl 2021, Experiment 1)
--- ============================================================================
 
 /-- Experimental result: percentage judged true for each world -/
 structure ExperimentalResult where
@@ -90,9 +82,7 @@ def getResult (w : JumpOutcome) : Nat :=
   | some r => r.percentTrue
   | none => 0
 
--- ============================================================================
 -- Key Empirical Facts
--- ============================================================================
 
 /-- Zero-horse world: 92% true -/
 theorem zero_result : getResult .zero = 92 := rfl
@@ -103,9 +93,7 @@ theorem one_result : getResult .one = 59 := rfl
 /-- Two-horse world: 18% true -/
 theorem two_result : getResult .two = 18 := rfl
 
--- ============================================================================
 -- Theorems About the Data
--- ============================================================================
 
 /--
 **Key finding**: Mixed judgments exist for partial worlds.
@@ -163,9 +151,7 @@ theorem inverse_scope_truth :
     scopeTruth .inverse .two = false := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -46,9 +46,7 @@ namespace RSA.FreeChoice
 open RSA.Eval
 open LURSA
 
--- ============================================================================
 -- SECTION 1: States (Table 2 in the paper)
--- ============================================================================
 
 /-!
 ## State Space
@@ -95,9 +93,7 @@ def hasEI : FCState → Bool
 def allStates : List FCState :=
   [.onlyA, .onlyB, .onlyOne, .anyNumber, .onlyBoth]
 
--- ============================================================================
 -- SECTION 2: Utterances
--- ============================================================================
 
 /-- The four utterances from the paper (5) -/
 inductive Utterance where
@@ -110,9 +106,7 @@ inductive Utterance where
 /-- All utterances -/
 def allUtterances : List Utterance := [.a, .b, .or_, .and_]
 
--- ============================================================================
 -- SECTION 3: Interpretation Functions (6) and (7)
--- ============================================================================
 
 /-!
 ## Two Interpretation Functions
@@ -172,9 +166,7 @@ instance : BEq (Lexicon Utterance FCState) where
   beq l1 l2 := allUtterances.all fun u =>
     allStates.all fun w => l1.meaning u w == l2.meaning u w
 
--- ============================================================================
 -- SECTION 4: RSA Scenario
--- ============================================================================
 
 /-- Uniform prior over states -/
 def uniformPrior : FCState → ℚ := fun _ => 1
@@ -191,9 +183,7 @@ def fcScenario (α : ℕ := 100) (worldPrior : FCState → ℚ := uniformPrior) 
   worlds := allStates
   α := α
 
--- ============================================================================
 -- SECTION 5: Model Predictions (Tables 3-6)
--- ============================================================================
 
 /-!
 ## L0 Behavior (Tables 3 and 4)
@@ -242,9 +232,7 @@ The Or row shows **free choice**: all probability goes to FCI states!
 #eval L1 (fcScenario) .a
 #eval L1 (fcScenario) .and_
 
--- ============================================================================
 -- SECTION 6: Free Choice Derivation
--- ============================================================================
 
 /-- Get L1 probability for a state given an utterance -/
 def l1Prob (u : Utterance) (w : FCState) (α : ℕ := 100) : ℚ :=
@@ -267,9 +255,7 @@ theorem fci_derived : l1FCIProb .or_ 100 > 99/100 := by native_decide
 /-- Non-FCI states get essentially no probability for Or -/
 theorem non_fci_suppressed : l1NonFCIProb .or_ 100 < 1/100 := by native_decide
 
--- ============================================================================
 -- SECTION 7: EI is Prior-Sensitive (Table 6)
--- ============================================================================
 
 /-!
 ## Exclusivity Inference Depends on Priors
@@ -315,9 +301,7 @@ def l1FCIProb_anyNumber : ℚ :=
 
 theorem fci_robust_to_prior : l1FCIProb_anyNumber > 99/100 := by native_decide
 
--- ============================================================================
 -- SECTION 8: Explanation of the Mechanism
--- ============================================================================
 
 /-!
 ## Why Free Choice Emerges
@@ -358,9 +342,7 @@ The semantic uncertainty (I₁ vs I₂) creates an **avoidance pattern**:
 This asymmetry drives the free choice inference.
 -/
 
--- ============================================================================
 -- SECTION 9: Connection to Phenomena Data
--- ============================================================================
 
 /-!
 ## Connection to Empirical Data
@@ -389,9 +371,7 @@ theorem predicts_free_choice :
 theorem fc_not_semantic :
     Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
 
--- ============================================================================
 -- SECTION 10: Comparison with Other Approaches
--- ============================================================================
 
 /-!
 ## Comparison: Three Approaches to Free Choice
@@ -413,9 +393,7 @@ theorem fc_not_semantic :
 4. **Unified mechanism**: Same framework handles scalar implicatures
 -/
 
--- ============================================================================
 -- SECTION 11: Without Conjunction Alternative
--- ============================================================================
 
 /-!
 ## Robustness: Model Without "And" (Tables 7-8)
@@ -498,9 +476,7 @@ def l1OnlyBoth_null : ℚ :=
 
 #eval l1OnlyBoth_null  -- Should be 1.0
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

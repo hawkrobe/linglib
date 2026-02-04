@@ -53,9 +53,7 @@ namespace Comparisons.RSANeoGricean
 
 open RSA NeoGricean RSA.Eval
 
--- ============================================================================
 -- Directional Agreement: Both Favor "Not All" for "Some"
--- ============================================================================
 
 /--
 NeoGricean prediction: "some" implicates "not all".
@@ -83,9 +81,7 @@ theorem directional_agreement_some :
     rsa_some_favors_not_all = true := by
   constructor <;> rfl
 
--- ============================================================================
 -- The Limit Theorem (Proved)
--- ============================================================================
 
 /-!
 ## The RSA → IBR → EXH Limit
@@ -185,9 +181,7 @@ structure LimitAgreement (U W : Type) [BEq U] [BEq W] [Fintype U] [Fintype W] [D
   /-- Agreement property: RSA's favored world matches NeoGricean's prediction -/
   agreement : neoGriceanPrediction.length > 0
 
--- ============================================================================
 -- Ordinal Agreement: Ranking Worlds
--- ============================================================================
 
 /--
 Both theories induce an ordering on interpretations.
@@ -220,9 +214,7 @@ def some_ordinal_agreement : OrdinalAgreement where
   rsa_prefers_1 := true         -- Higher L1 probability
   agreement := rfl
 
--- ============================================================================
 -- DE Context Agreement
--- ============================================================================
 
 /--
 Both theories predict reduced implicatures in DE contexts.
@@ -253,9 +245,7 @@ def some_de_agreement : DEContextAgreement where
   rsa_prefers_global := true -- From RSA.PottsLU
   agreement := fun _ => rfl
 
--- ============================================================================
 -- Structural Comparison
--- ============================================================================
 
 /--
 Comparison of what each theory requires as input.
@@ -296,9 +286,7 @@ theorem rsa_more_expressive :
     rsaRequirements.categoricalOutput = false := by
   refine ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
 -- The Key Question: When Are They Equivalent?
--- ============================================================================
 
 /-
 ## Conditions for Equivalence
@@ -345,9 +333,7 @@ def standardEquivalenceConditions : EquivalenceConditions where
   highRationality := true
   matchingAlternatives := true
 
--- ============================================================================
 -- Information-Theoretic Perspective (Zaslavsky et al. 2020)
--- ============================================================================
 
 /-!
 ## Information-Theoretic Connection to NeoGricean
@@ -393,9 +379,7 @@ def isNeoGriceanLimit (α : ℚ) : Bool :=
 -- Note: Full entropy contribution analysis requires RSA.InformationTheory
 -- which depends on RSAScenarioL. See InformationTheory/Basic.lean for details.
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Establishes

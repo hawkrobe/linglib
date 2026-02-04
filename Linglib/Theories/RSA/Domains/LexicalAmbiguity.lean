@@ -52,9 +52,7 @@ open Core.ProductOfExperts
 open Montague.Verb.SelectionalPreferences
 open Montague.Frames
 
--- ============================================================================
 -- Helper Functions
--- ============================================================================
 
 /--
 Find the element with maximum value according to a scoring function.
@@ -66,9 +64,6 @@ def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
     | some best => if f x > f best then some x else some best
   ) none
 
--- ============================================================================
--- PART 1: Ambiguous Lexical Items
--- ============================================================================
 
 /-!
 ## Ambiguous Words
@@ -124,9 +119,6 @@ def AmbiguousWord.basePrior (w : AmbiguousWord) : String → ℚ :=
     | some s => if total = 0 then 0 else s.frequency / total
     | none => 0
 
--- ============================================================================
--- PART 2: Example Words
--- ============================================================================
 
 /-!
 ## "bat": animal vs sports equipment
@@ -231,9 +223,6 @@ def crane : AmbiguousWord :=
     ]
   }
 
--- ============================================================================
--- PART 3: Disambiguation Contexts
--- ============================================================================
 
 /-!
 ## Disambiguation Context
@@ -277,9 +266,6 @@ def disambiguateWithPrior (w : AmbiguousWord) (ctx : DisambiguationContext) : St
   let scenExpert id := ctx.scenario (senseToClass id)
   productOfExperts [baseExpert, selExpert, scenExpert] w.senseIds
 
--- ============================================================================
--- PART 4: Example Contexts
--- ============================================================================
 
 /-!
 ## Context 1: "A bat was sleeping"
@@ -343,9 +329,6 @@ def drewBladeContext : DisambiguationContext :=
       | _ => 3/100
   }
 
--- ============================================================================
--- PART 5: Running Examples
--- ============================================================================
 
 /--
 Example 1: "A bat was sleeping"
@@ -371,9 +354,6 @@ Expected: strongly prefers WEAPON sense
 -/
 def bladeDrawResult : String → ℚ := disambiguate blade drewBladeContext
 
--- ============================================================================
--- PART 6: Conflict Detection
--- ============================================================================
 
 /-!
 ## Detecting Meaning Conflicts
@@ -416,9 +396,6 @@ def conflictDegree (w : AmbiguousWord) (ctx : DisambiguationContext) : ℚ :=
 -- The astronomer/star example should show high conflict
 example : hasConflict star astronomerMarriedContext = true := by native_decide
 
--- ============================================================================
--- PART 7: Connection to Meaning Hypotheses
--- ============================================================================
 
 /-!
 ## Meaning Hypotheses
@@ -470,9 +447,6 @@ def significantHypotheses (w : AmbiguousWord) (ctx : DisambiguationContext)
     (threshold : ℚ := 1/10) : List MeaningHypothesis :=
   (meaningHypotheses w ctx).filter (·.probability > threshold)
 
--- ============================================================================
--- PART 8: Predicting All Interpretations
--- ============================================================================
 
 /-!
 ## Predicting Multiple Interpretations
@@ -525,9 +499,6 @@ def isAmbiguous (w : AmbiguousWord) (ctx : DisambiguationContext)
 -- Example: "bat sleeping" should NOT be ambiguous (strongly prefers animal)
 -- (depends on exact threshold)
 
--- ============================================================================
--- PART 9: Compositional Constraints
--- ============================================================================
 
 /-!
 ## How Constraints Relate to Sentence Constituents
@@ -573,9 +544,7 @@ def contextFromComposition
   { selectional := predicateConstraint.constraint
   , scenario := discourseConstraint.constraint }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Summary

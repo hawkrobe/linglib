@@ -23,9 +23,6 @@ This is NOT a semantic entailment - it's a pragmatic inference.
 
 namespace Phenomena.Modality.FreeChoice
 
--- ============================================================================
--- PART 1: Basic Free Choice Data
--- ============================================================================
 
 /--
 Empirical pattern: Free choice permission.
@@ -95,9 +92,6 @@ All basic free choice examples.
 def freeChoiceExamples : List FreeChoiceDatum :=
   [coffeeOrTea, readOrSleep, parkOrBeach]
 
--- ============================================================================
--- PART 2: Ross's Paradox
--- ============================================================================
 
 /--
 Ross's Paradox: The puzzle that motivated free choice research.
@@ -146,9 +140,6 @@ All Ross's paradox examples.
 def rossParadoxExamples : List RossParadoxDatum :=
   [postOrBurn, mayPostOrBurn]
 
--- ============================================================================
--- PART 3: Free Choice with Different Modals
--- ============================================================================
 
 /--
 Free choice occurs with various modal flavors.
@@ -202,9 +193,6 @@ All modal free choice examples.
 def modalFreeChoiceExamples : List ModalFreeChoiceDatum :=
   [deonticFC, epistemicFC, abilityFC]
 
--- ============================================================================
--- PART 4: Free Choice Cancellation
--- ============================================================================
 
 /--
 Free choice can be cancelled, showing it's pragmatic not semantic.
@@ -246,9 +234,6 @@ All cancellation examples.
 def cancellationExamples : List FCCancellationDatum :=
   [explicitCancellation, contextualCancellation]
 
--- ============================================================================
--- PART 5: Free Choice *Any* (Universal FCI)
--- ============================================================================
 
 /-!
 ## Free Choice *Any*
@@ -342,9 +327,6 @@ All FCI *any* examples.
 def fciAnyExamples : List FCIAnyDatum :=
   [anyClass, anyFruit, anyRoom]
 
--- ============================================================================
--- PART 6: Comparing Disjunction FC and Universal FC
--- ============================================================================
 
 /--
 Comparison between disjunctive FC and universal *any* FC.
@@ -396,9 +378,6 @@ All FC comparison data.
 def fcComparisonData : List FCComparisonDatum :=
   [bothDeriveFC, bothRobust, differentStructure]
 
--- ============================================================================
--- PART 7: Bathroom Disjunctions (Elliott & Sudo 2025)
--- ============================================================================
 
 /-!
 ## FC with Anaphora: Bathroom Disjunctions
@@ -508,9 +487,6 @@ All bathroom disjunction examples.
 def bathroomDisjunctionExamples : List BathroomDisjunctionDatum :=
   [bathroomClassic, bathroomDefinite, keyExample, nobodyExample]
 
--- ============================================================================
--- PART 8: FC Without Anaphora (Contrast Cases)
--- ============================================================================
 
 /--
 Standard FC without cross-disjunct anaphora (for comparison).
@@ -552,9 +528,7 @@ All standard FC examples (contrast with bathroom).
 def standardFCExamples : List StandardFCDatum :=
   [coffeeTeaStandard, parisLondonStandard]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -19,9 +19,7 @@ namespace Montague.Interface.SemanticBackend
 
 open Montague
 
--- ============================================================================
 -- Utterances as Typed Meanings
--- ============================================================================
 
 /--
 An utterance in Montague semantics is a sentence with its denotation.
@@ -33,18 +31,14 @@ structure MontagueSentence where
   /-- The semantic interpretation (a proposition) -/
   meaning : toyModel.interpTy .t
 
--- ============================================================================
 -- Worlds as Model States
--- ============================================================================
 
 /-- A world state (for now, just a placeholder) -/
 inductive ToyWorld where
   | actual  -- The actual world as defined by toyModel
   deriving DecidableEq, Repr
 
--- ============================================================================
 -- The Agreement Function φ
--- ============================================================================
 
 /-- Evaluate a sentence's truth in a world -/
 def evaluate (s : MontagueSentence) (w : ToyWorld) : Bool :=
@@ -55,9 +49,7 @@ def evaluate (s : MontagueSentence) (w : ToyWorld) : Bool :=
 def montaguePhi (s : MontagueSentence) (w : ToyWorld) : Float :=
   if evaluate s w then 1.0 else 0.0
 
--- ============================================================================
 -- Example Sentences
--- ============================================================================
 
 open ToyLexicon in
 /-- "John sleeps" as a MontagueSentence -/
@@ -80,9 +72,7 @@ def johnSeesMary : MontagueSentence :=
   , meaning := apply (apply sees_sem mary_sem) john_sem
   }
 
--- ============================================================================
 -- Verify Agreement Function Behavior
--- ============================================================================
 
 /-- "John sleeps" has φ = 1 in the actual world -/
 theorem john_sleeps_phi : montaguePhi johnSleepsSent .actual = 1.0 := rfl
@@ -93,9 +83,7 @@ theorem mary_sleeps_phi : montaguePhi marySleepsSent .actual = 0.0 := rfl
 /-- "John sees Mary" has φ = 1 in the actual world -/
 theorem john_sees_mary_phi : montaguePhi johnSeesMary .actual = 1.0 := rfl
 
--- ============================================================================
 -- Summary: The Montague-RSA Connection
--- ============================================================================
 
 /-
 ## The Interface

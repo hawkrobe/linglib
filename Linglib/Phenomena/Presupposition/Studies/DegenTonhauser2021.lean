@@ -58,9 +58,6 @@ import Linglib.Core.Presupposition
 
 namespace Phenomena.Presupposition.Studies.DegenTonhauser2021
 
--- ============================================================================
--- PART 1: Predicate Classification (Traditional)
--- ============================================================================
 
 /--
 Traditional classification of clause-embedding predicates.
@@ -132,9 +129,6 @@ def traditionalClass : Predicate → TraditionalClass
   | .inform => .optionallyFactive
   | .prove => .optionallyFactive
 
--- ============================================================================
--- PART 2: Experiment 1 Data (Projection)
--- ============================================================================
 
 /--
 Mean certainty ratings from Experiment 1a (gradient scale 0-1).
@@ -195,9 +189,6 @@ def projectionRating_Exp1b : Predicate → Float
   | .think => 0.24
   | .beRight => 0.18
 
--- ============================================================================
--- PART 3: Experiment 2 Data (Entailment - Inference Diagnostic)
--- ============================================================================
 
 /--
 Mean inference ratings from Experiment 2a (gradient scale 0-1).
@@ -227,9 +218,6 @@ def inferenceRating_Exp2a : Predicate → Float
   | .think => 0.30
   | .pretend => 0.15
 
--- ============================================================================
--- PART 4: Key Empirical Findings
--- ============================================================================
 
 /--
 **KEY FINDING 1**: Optionally factive predicates can be as projective as
@@ -270,9 +258,6 @@ theorem high_entailment_low_projection :
     projectionRating_Exp1a .beRight < projectionRating_Exp1a .know :=
   ⟨by native_decide, by native_decide⟩
 
--- ============================================================================
--- PART 5: Implications for Tonhauser Taxonomy
--- ============================================================================
 
 /--
 The Degen & Tonhauser findings suggest that rather than a binary
@@ -316,9 +301,6 @@ def projectionStrength : Predicate → ProjectionStrength
   | .beRight => .veryLow
   | .pretend => .veryLow
 
--- ============================================================================
--- PART 6: Connection to Local Context Theory
--- ============================================================================
 
 /--
 The empirical findings challenge simple local context theories:
@@ -355,9 +337,7 @@ def predictedProjection (p : Predicate) (factors : ProjectionFactors) : Float :=
   0.3 * factors.priorBelief +
   0.2 * (1.0 - factors.atIssueness)
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

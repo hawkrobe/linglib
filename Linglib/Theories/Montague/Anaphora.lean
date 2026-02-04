@@ -39,9 +39,6 @@ open Montague
 open Montague.Variables
 open Interfaces.BindingSemantics
 
--- ============================================================================
--- PART 1: INTERPRETING BINDING CONFIGURATIONS
--- ============================================================================
 
 /-!
 ## From Syntax to Semantics
@@ -81,9 +78,6 @@ def interpretBinder {m : Model} {τ : Ty}
     (state : InterpState m) : m.interpTy (.e ⇒ τ) :=
   fun x => body { state with assignment := state.assignment[varIdx ↦ x] }
 
--- ============================================================================
--- PART 2: BINDING CONDITIONS (SEMANTIC)
--- ============================================================================
 
 /-!
 ## Semantic Binding Conditions
@@ -113,9 +107,6 @@ def interpretBindingConfig {m : Model}
   -- All bindings must have consistent indices
   bc.wellFormed
 
--- ============================================================================
--- PART 3: MATHEMATICAL PERSPECTIVE - CONTINUATIONS
--- ============================================================================
 
 /-!
 ## Continuations as Mathematical Abstraction
@@ -208,9 +199,7 @@ theorem hk_bs_reflexive_equiv {m : Model} (n : Nat)
     W body binder := by
   simp only [W, update_same]
 
--- ============================================================================
 -- PART 3b: CATEGORICAL PERSPECTIVE
--- ============================================================================
 
 /-!
 ## Categorical Relationship: Reader ↔ Continuation
@@ -315,9 +304,6 @@ theorem binding_is_contraction {A : Type} (rel : A → A → Bool) (x : A) :
     -- Cont-style: use W to duplicate
     W rel x := rfl
 
--- ============================================================================
--- PART 4: EVALUATION ORDER
--- ============================================================================
 
 /-!
 ## Evaluation Order and Binding Constraints
@@ -351,9 +337,6 @@ def canBind {Entity : Type} [DecidableEq Entity]
 def crossover (pronounPos binderPos : Nat) : Bool :=
   pronounPos < binderPos
 
--- ============================================================================
--- PART 5: VPE AND STRICT/SLOPPY AMBIGUITY
--- ============================================================================
 
 /-!
 ## VP Ellipsis
@@ -396,9 +379,7 @@ def VPEAmbiguity.strictValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
 def VPEAmbiguity.sloppyValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
   sloppyReading a.vp a.ellipsisSite
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

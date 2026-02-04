@@ -36,9 +36,7 @@ namespace Montague.Modal
 open Montague.Verb.Attitude.Examples
 open Montague.Modal.Kratzer
 
--- ============================================================================
 -- Comparison Functions
--- ============================================================================
 
 /-- Do two theories agree on modal force `f` for proposition `p` at world `w`? -/
 def theoriesAgreeAt (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition) (w : World) : Bool :=
@@ -56,9 +54,7 @@ def divergingWorlds (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition)
 def theoriesAgreeOnProposition (T₁ T₂ : ModalTheory) (p : Proposition) : Bool :=
   theoriesAgreeOn T₁ T₂ .necessity p && theoriesAgreeOn T₁ T₂ .possibility p
 
--- ============================================================================
 -- Core Equivalence: Minimal Kratzer = Universal Simple
--- ============================================================================
 
 /--
 **Theorem: Minimal Kratzer = Universal Simple**
@@ -86,9 +82,7 @@ theorem agree_on_trivially_false :
     theoriesAgreeOnProposition KratzerMinimal SimpleUniversal triviallyFalse = true := by
   native_decide
 
--- ============================================================================
 -- Divergence Theorems
--- ============================================================================
 
 /--
 **Theorem: Different Kratzer parameters give different results**
@@ -115,9 +109,7 @@ theorem kratzer_context_dependence :
     KratzerMinimal.eval .necessity groundWet .w0 = false := by
   native_decide
 
--- ============================================================================
 -- Duality Comparison
--- ============================================================================
 
 /-- Both Kratzer and Simple satisfy duality. -/
 theorem both_satisfy_duality
@@ -131,9 +123,7 @@ theorem both_satisfy_duality
   · exact kratzer_duality params p w
   · exact simple_duality R p w
 
--- ============================================================================
 -- Specific Examples
--- ============================================================================
 
 /-- Agreement: Minimal Kratzer and Universal Simple agree on necessity for trivially true. -/
 theorem agree_on_trivially_true_necessity :
@@ -150,9 +140,7 @@ theorem agree_on_trivially_false_necessity :
     theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyFalse = true := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Kratzer vs Simple

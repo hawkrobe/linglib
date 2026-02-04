@@ -42,9 +42,7 @@ open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity
 
--- ============================================================================
 -- Fire Scenario: Overdetermination
--- ============================================================================
 
 section FireScenario
 
@@ -83,9 +81,7 @@ Background where both causes are present (overdetermination).
 def bothCausesBackground : Situation :=
   Situation.empty.extend lightning true |>.extend arsonist true
 
--- ============================================================================
 -- Fire Scenario: Sufficiency Results
--- ============================================================================
 
 /--
 **Lightning is sufficient for fire** (in empty background).
@@ -118,9 +114,7 @@ theorem lightning_sufficient_overdetermination :
              CausalDynamics.disjunctiveCausation]
   native_decide
 
--- ============================================================================
 -- Fire Scenario: Necessity Results
--- ============================================================================
 
 /--
 **Lightning is necessary for fire** (when it's the only cause).
@@ -153,9 +147,7 @@ theorem arsonist_not_necessary_overdetermination :
     causallyNecessary fireDynamics bothCausesBackground arsonist fire = false := by
   native_decide
 
--- ============================================================================
 -- Fire Scenario: Cause vs Make
--- ============================================================================
 
 /--
 **Overdetermination: "make" but NOT "cause"**
@@ -187,9 +179,7 @@ theorem solo_make_and_cause :
 
 end FireScenario
 
--- ============================================================================
 -- Circuit Scenario: Simple Causation
--- ============================================================================
 
 section CircuitScenario
 
@@ -237,9 +227,7 @@ theorem circuit_both_verbs :
 
 end CircuitScenario
 
--- ============================================================================
 -- Causal Chain Example
--- ============================================================================
 
 section ChainScenario
 
@@ -299,9 +287,7 @@ theorem chain_intermediate_result :
 
 end ChainScenario
 
--- ============================================================================
 -- Conjunctive Causation Example
--- ============================================================================
 
 section ConjunctiveScenario
 
@@ -362,9 +348,7 @@ theorem oxygen_necessary_with_match :
 
 end ConjunctiveScenario
 
--- ============================================================================
 -- Summary Theorems
--- ============================================================================
 
 /--
 **Main result 1**: Sufficiency does not entail necessity.

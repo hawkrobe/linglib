@@ -45,9 +45,7 @@ open ScontrasPearl2021
 open Montague.Scope
 open Montague.Derivation.Scope (ScopeConfig)
 
--- ============================================================================
 -- World-Parametric Meaning (RSA-specific)
--- ============================================================================
 
 /--
 Truth conditions parameterized by interpretation and world.
@@ -67,9 +65,7 @@ structure WorldMeaning (Interp World : Type) where
   /-- Enumeration of possible worlds -/
   worlds : List World
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Utterances in the scope ambiguity domain -/
 inductive ScopeUtterance where
@@ -77,9 +73,7 @@ inductive ScopeUtterance where
   | everyHorseNotJump -- "Every horse didn't jump" (ambiguous)
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- ============================================================================
 -- Montague Derivation for "Every horse didn't jump"
--- ============================================================================
 
 /--
 "Every horse didn't jump" - world-parametric truth conditions.
@@ -116,9 +110,7 @@ theorem parametric_matches_truth :
     everyHorseDidntJump_meaning.meaningAt .inverse 2 = false := by
   native_decide
 
--- ============================================================================
 -- Connecting Montague Derivations to RSA
--- ============================================================================
 
 /--
 Build RSA meaning function from world-parametric meaning.
@@ -153,9 +145,7 @@ theorem rsa_meaning_from_montague :
       everyHorseDidntJump_meaning.meaningAt .inverse 1 := by
   native_decide
 
--- ============================================================================
 -- RSAScenario using unified API
--- ============================================================================
 
 /-- All utterances -/
 def allScopeUtterances : List ScopeUtterance := [.null, .everyHorseNotJump]
@@ -202,9 +192,7 @@ def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
     ((w, i), priorScore * s1Score)
   RSA.Eval.normalize scores
 
--- ============================================================================
 -- Typed Distributions (using JumpOutcome)
--- ============================================================================
 
 -- Fintype instances for our domain types
 instance : Fintype ScopeUtterance where
@@ -286,9 +274,7 @@ def l1JointTyped : List ((Phenomena.Quantification.Studies.ScontrasPearl2021.Jum
 
 #eval l1ScopeTyped
 
--- ============================================================================
 -- Typed Distribution Theorems
--- ============================================================================
 
 /-- Get score from typed world distribution -/
 def getTypedWorldScore (w : Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome) : ℚ :=
@@ -337,9 +323,7 @@ theorem typed_inverse_preference :
     (8 : ℚ)/13 > (5 : ℚ)/13 := by
   native_decide
 
--- ============================================================================
 -- Helper: Get score from distribution
--- ============================================================================
 
 def getWorldScore (w : Nat) : ℚ :=
   RSA.Eval.getScore l1WorldScores w
@@ -347,18 +331,14 @@ def getWorldScore (w : Nat) : ℚ :=
 def getScopeScore (s : ScopeConfig) : ℚ :=
   RSA.Eval.getScore l1ScopeScores s
 
--- ============================================================================
 -- Verification: Check RSA predictions
--- ============================================================================
 
 -- Display scores for inspection
 #eval l1JointScores
 #eval l1WorldScores
 #eval l1ScopeScores
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /--
 **RSA assigns positive probability to partial world (w=1)**.
@@ -425,9 +405,7 @@ theorem rsa_one_greater_than_two :
     getWorldScore 1 > getWorldScore 2 := by
   native_decide
 
--- ============================================================================
 -- Connection to Empirical Data
--- ============================================================================
 
 /--
 **RSA ordering matches empirical ordering**.
@@ -454,9 +432,7 @@ theorem rsa_and_empirical_agree :
     (Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .two) := by
   native_decide
 
--- ============================================================================
 -- Predictions vs Empirical Data
--- ============================================================================
 
 /--
 **Prediction type for the scope ambiguity phenomenon**:
@@ -519,9 +495,7 @@ theorem complete_analysis_scontras_pearl :
     rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides
@@ -611,9 +585,7 @@ Future extensions could add:
 - S2 layer for explicit truth-value judgment predictions
 -/
 
--- ============================================================================
 -- Integration with HasAvailableScopes / HasScopePreference
--- ============================================================================
 
 open ScopeTheory
 
@@ -716,9 +688,7 @@ theorem full_scope_integration :
     getScopeScore .inverse > getScopeScore .surface := by
   native_decide
 
--- ============================================================================
 -- Summary: Integration Architecture
--- ============================================================================
 
 /-
 ## Integration Architecture
@@ -755,9 +725,7 @@ Predictions match empirical data
 - `full_scope_integration`: Complete integration proof
 -/
 
--- ============================================================================
 -- Using Core.Parse (NOT Exhaustifiable)
--- ============================================================================
 
 /-
 ## Scope Ambiguity Uses Core.Parse Directly
@@ -798,9 +766,7 @@ theorem uses_scope_not_exh_parses :
     scopeParsesList.length = 2 := by
   native_decide
 
--- ============================================================================
 -- Priors Shift Quantifier-Negation Scope Preference
--- ============================================================================
 
 /-- L1 scope distribution with custom world prior -/
 def l1ScopeWithPrior (worldPrior : Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome → ℚ)

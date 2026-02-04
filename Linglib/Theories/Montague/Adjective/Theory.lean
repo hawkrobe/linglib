@@ -49,9 +49,7 @@ namespace Montague.Adjective
 
 open Montague.Domain.Degrees
 
--- ============================================================================
 -- Adjective Scale Types
--- ============================================================================
 
 /--
 Scale type for a gradable adjective.
@@ -73,9 +71,7 @@ inductive ScaleType where
   | closed       -- full, empty (both bounds)
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- Antonym Relations
--- ============================================================================
 
 /--
 The relation between a positive form and its antonym.
@@ -93,9 +89,7 @@ This matters because "not short" ≠ "tall" when the relation is contrary.
 -/
 abbrev AntonymRelation := NegationType
 
--- ============================================================================
 -- Adjective Lexical Entry
--- ============================================================================
 
 /--
 A gradable adjective lexical entry.
@@ -121,9 +115,7 @@ structure GradableAdjEntry (max : Nat) where
   antonymRelation : Option AntonymRelation := none
   deriving Repr
 
--- ============================================================================
 -- Adjective Theory
--- ============================================================================
 
 /--
 A semantic theory for gradable adjectives.
@@ -158,9 +150,7 @@ structure AdjectiveTheory (max : Nat) where
   /-- Contrary antonym meaning (if supported) — uses ThresholdPair -/
   contraryAntonym : Degree max → ThresholdPair max → Bool := fun _ _ => false
 
--- ============================================================================
 -- Standard Theory: Single Threshold
--- ============================================================================
 
 /--
 Standard threshold semantics (Kennedy 2007, Lassiter & Goodman 2017).
@@ -179,9 +169,7 @@ def standardTheory (max : Nat) : AdjectiveTheory max where
   positiveMeaning := fun d θ => d.toNat > θ.toNat
   contradictoryAntonym := fun d θ => d.toNat ≤ θ.toNat
 
--- ============================================================================
 -- Contrary Theory: Two Thresholds
--- ============================================================================
 
 /--
 Contrary antonym semantics (Tessler & Franke 2020).
@@ -200,9 +188,7 @@ def contraryTheory (max : Nat) : AdjectiveTheory max where
   contradictoryAntonym := fun d θ => d.toNat ≤ θ.toNat
   contraryAntonym := fun d tp => d.toNat < tp.neg.toNat
 
--- ============================================================================
 -- Derived Operations
--- ============================================================================
 
 /--
 Check if a degree is in the gap region (for contrary theories).
@@ -231,18 +217,14 @@ def AdjectiveTheory.negatedAntonym {max : Nat} (T : AdjectiveTheory max)
   else
     T.positiveMeaning d tp.pos  -- Collapses to positive
 
--- ============================================================================
 -- Lexical Entries
--- ============================================================================
 
 -- Concrete lexical entries (tall, short, happy, etc.) are defined in:
 -- `Fragments/English/Predicates/Adjectival.lean`
 --
 -- This module provides only the theoretical infrastructure.
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /--
 Standard theory has no gap (by definition, supportsContrary = false).
@@ -282,9 +264,7 @@ theorem contrary_double_neg_differs :
     (contraryTheory 4).positiveMeaning exampleDegree exampleThresholds.pos = false := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Summary: Gradable Adjective Semantics

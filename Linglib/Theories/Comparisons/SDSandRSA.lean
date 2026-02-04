@@ -74,9 +74,6 @@ import Linglib.Core.Distribution
 
 namespace Comparisons.SDSandRSA
 
--- ============================================================================
--- PART 1: The Core Correspondence
--- ============================================================================
 
 /-!
 ## SDS Concepts ≈ LU-RSA Lexica
@@ -124,9 +121,6 @@ theorem concept_lexicon_structural_equivalence :
     -- These have the same shape: Word/Utterance → Domain → Value
     True := trivial
 
--- ============================================================================
--- PART 2: Constraint Combination
--- ============================================================================
 
 /-!
 ## Linear vs Multiplicative Combination
@@ -191,9 +185,6 @@ theorem poe_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List 
   simp only [productOfExperts, h, zero_mul]
   split_ifs <;> simp
 
--- ============================================================================
--- PART 3: Selectional Preferences as Lexicon Priors
--- ============================================================================
 
 /-!
 ## Selectional Preferences → Structured Lexicon Priors
@@ -246,9 +237,6 @@ theorem selectional_as_lexicon_prior (C : Type) (P_sel : C → ℚ) :
     -- equals the induced lexicon prior
     True := trivial  -- structural correspondence
 
--- ============================================================================
--- PART 4: Scenarios as Background Knowledge
--- ============================================================================
 
 /-!
 ## Scenario Constraints as World Priors / Background
@@ -300,9 +288,6 @@ theorem scenario_as_qud_prior (C : Type) (scen : Scenario C) :
     -- a QUD that partitions worlds by which concept is active
     True := trivial  -- structural correspondence
 
--- ============================================================================
--- PART 5: The Full SDS ↔ LU-RSA Correspondence
--- ============================================================================
 
 /-!
 ## Complete Correspondence
@@ -355,9 +340,6 @@ theorem sds_subsumes_by_lursa :
     -- and priors encode selectional/scenario constraints
     True := trivial  -- The correspondence is structural
 
--- ============================================================================
--- PART 6: Example: "The astronomer married the star"
--- ============================================================================
 
 /-!
 ## Worked Example: Conflicting Constraints
@@ -425,9 +407,6 @@ theorem pun_emerges_from_tie :
     marrySelectional .celebrity * astronomyScenario .celebrity := by
   native_decide
 
--- ============================================================================
--- PART 7: What SDS Adds Beyond LU-RSA
--- ============================================================================
 
 /-!
 ## Beyond the Correspondence: What's New in SDS?
@@ -501,9 +480,7 @@ def hasConflict {C : Type} [BEq C] (sel scen : C → ℚ) (support : List C) : B
 /-- The star example has conflicting constraints -/
 example : hasConflict marrySelectional astronomyScenario [.celestial, .celebrity] = true := by native_decide
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Summary: SDS ⊆ LU-RSA

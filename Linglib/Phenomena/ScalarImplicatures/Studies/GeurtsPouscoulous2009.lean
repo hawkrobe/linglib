@@ -36,9 +36,6 @@ namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
 open Phenomena
 
--- ============================================================================
--- PART 1: Study Metadata
--- ============================================================================
 
 /-- Citation for this study -/
 def citation : String := "Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?! Semantics and Pragmatics, 2(4), 1-34."
@@ -52,9 +49,6 @@ def verificationMeasure : MeasureSpec :=
   { scale := .proportion, task := .truthValueJudgment, unit := "percentage 0-100" }
 
 
--- ============================================================================
--- PART 2: Experimental Design
--- ============================================================================
 
 /--
 The two experimental tasks used to probe scalar inferences.
@@ -85,9 +79,6 @@ def criticalStimulus : Stimulus :=
   , visualDescription := some "All B's in left box, all A's in middle, all C's in right"
   }
 
--- ============================================================================
--- PART 2: Embedding Types (Experiment 1a-b)
--- ============================================================================
 
 /--
 Types of embedding contexts tested in Experiment 1a-b.
@@ -189,9 +180,6 @@ that SIs occur "systematically and freely" in embedded positions.
 -/
 theorem embedding_variation : simpleRate - mustRate > 85 := by native_decide
 
--- ============================================================================
--- PART 3: Experiment 2 Results (Inference vs Verification)
--- ============================================================================
 
 /--
 Result from a single experimental condition.
@@ -232,9 +220,6 @@ This rules out a general "yes" bias.
 -/
 def controlAccuracy : Nat := 97
 
--- ============================================================================
--- PART 4: Experiment 3 (Monotonicity Effects)
--- ============================================================================
 
 /--
 Quantifier types tested in Experiment 3.
@@ -320,9 +305,6 @@ shows the inference task creates spurious "local SIs".
 theorem task_effect_in_UE : allInferenceRate - (100 - allVerificationRate) > 40 := by
   native_decide
 
--- ============================================================================
--- PART 5: Experiment 4 (Ambiguity Detection)
--- ============================================================================
 
 /--
 Experiment 4 tested whether people can detect the "ambiguity"
@@ -386,9 +368,6 @@ theorem minimal_conventionalist_support :
     totalConventionalistConsistent ≤ 10 := by
   native_decide
 
--- ============================================================================
--- PART 6: Summary of Task Effect (Experiment 2 Core Result)
--- ============================================================================
 
 /--
 **Theorem: Think embedding shows elevated rate vs other embeddings**
@@ -451,9 +430,6 @@ theorem task_effect_substantial :
     mainFinding.inferenceTaskRate > mainFinding.verificationTaskRate + 20 := by
   native_decide
 
--- ============================================================================
--- PART 7: Comparison with Other Studies
--- ============================================================================
 
 /--
 Data point from the experimental literature on scalar inference.
@@ -502,9 +478,7 @@ theorem max_rate_below_seventy :
     literatureData.all (·.upperBoundRate < 70) := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

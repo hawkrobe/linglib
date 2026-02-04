@@ -34,9 +34,7 @@ The existential reading of a BP requires:
 
 namespace Phenomena.BarePlurals
 
--- ============================================================================
 -- Predicate Classification
--- ============================================================================
 
 /-- Classification of predicates by Carlson's stage/individual level distinction -/
 inductive PredicateLevel where
@@ -57,9 +55,7 @@ inductive Presuppositionality where
   | nonPresuppositional  -- know, own, see (compatible with first introduction)
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- Basic Data Structure
--- ============================================================================
 
 /-- A bare plural interpretation datum -/
 structure BarePluralDatum where
@@ -74,9 +70,7 @@ structure BarePluralDatum where
   /-- Source and notes -/
   notes : String
 
--- ============================================================================
 -- I-Level Predicates (§2.1)
--- ============================================================================
 
 /-!
 ## Individual-Level Predicates
@@ -115,9 +109,7 @@ def lawyersIntelligent : BarePluralDatum :=
   , notes := "I-level predicate forces generic"
   }
 
--- ============================================================================
 -- S-Level Predicates with Locative Arguments (§2.2)
--- ============================================================================
 
 /-!
 ## S-Level Predicates with Locative Arguments
@@ -167,9 +159,7 @@ def soldiersArrived : SLevelDatum :=
   , locativeStatus := .argument
   }
 
--- ============================================================================
 -- S-Level Predicates with Locative Adjuncts (§2.3)
--- ============================================================================
 
 /-!
 ## S-Level Predicates WITHOUT Locative Arguments
@@ -214,9 +204,7 @@ def studentsAreTired : SLevelDatum :=
   , locativeStatus := .adjunct
   }
 
--- ============================================================================
 -- Presuppositional Verbs (§3)
--- ============================================================================
 
 /-!
 ## Presuppositional Verbs Block Existential Readings
@@ -284,9 +272,7 @@ def johnOwnsHorses : PresuppositionalDatum :=
   , notes := "Non-presuppositional - allows first introduction"
   }
 
--- ============================================================================
 -- Topic-Focus Effects (§4)
--- ============================================================================
 
 /-!
 ## Topic vs Focus Determines Interpretation
@@ -333,9 +319,7 @@ def lawyersDefaultSubject : TopicFocusDatum :=
   , notes := "Unmarked subject = topic = generic"
   }
 
--- ============================================================================
 -- Semantic Incorporation (§5)
--- ============================================================================
 
 /-!
 ## Semantic Incorporation
@@ -389,9 +373,7 @@ def dogsKindAnaphora : IncorporationDatum :=
   , notes := "Kind-referring BP can antecede kind-level pronoun"
   }
 
--- ============================================================================
 -- Summary: The Core Generalization
--- ============================================================================
 
 /-!
 ## Cohen & Erteschik-Shir's Core Generalization
@@ -439,9 +421,7 @@ Together: Local RSA selects between readings based on:
 The prior P(generic | predicate_class, info_structure) captures these effects.
 -/
 
--- ============================================================================
 -- Aggregate Data for Testing
--- ============================================================================
 
 /-- All I-level predicate examples -/
 def iLevelData : List BarePluralDatum :=
@@ -460,9 +440,7 @@ def presuppositionalData : List PresuppositionalDatum :=
   [johnHatesLawyers, johnRecognizesLawyers, johnNoticedLawyers,
    johnKnowsLawyers, johnOwnsHorses]
 
--- ============================================================================
 -- Empirical Tests
--- ============================================================================
 
 -- All I-level predicates should block existential
 #guard iLevelData.all (fun d => !d.existentialOK)

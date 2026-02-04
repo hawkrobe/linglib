@@ -60,9 +60,6 @@ open Montague.Question
 open RSA.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
--- ============================================================================
--- PART 1: The Identity Decision Problem
--- ============================================================================
 
 /-!
 ## The Identity Decision Problem
@@ -115,9 +112,6 @@ theorem identityDP_UV_is_information_gain {W : Type*} [DecidableEq W]
     -- max posterior probability from learning the information
     True := trivial
 
--- ============================================================================
--- PART 2: Theorem 1 - Epistemic Utility = DT Utility under Identity DP
--- ============================================================================
 
 /-!
 ## Theorem 1: Epistemic as Decision-Theoretic
@@ -172,9 +166,6 @@ theorem rsa_speaker_is_dt_optimal
   intro dp w
   simp [dp, identityDP]
 
--- ============================================================================
--- PART 3: Truthfulness from Marginalizing over Contexts
--- ============================================================================
 
 /-!
 ## The Deep Insight: Truthfulness as Limit
@@ -228,9 +219,6 @@ theorem identity_qud_is_finest
     GSQuestion.exact (W := W) ⊑ q := by
   exact GSQuestion.exact_refines_all q
 
--- ============================================================================
--- PART 4: Theorem 2 - QUD → Decision Problem
--- ============================================================================
 
 /-!
 ## Theorem 2: Every QUD is a Decision Problem
@@ -298,9 +286,6 @@ def dpToQUD {W A : Type*} [DecidableEq A]
     rw [beq_iff_eq] at *
     exact h1.trans h2
 
--- ============================================================================
--- PART 5: Theorem 3 - DT Strictly More Expressive than QUD
--- ============================================================================
 
 /-!
 ## Theorem 3: Decision-Theoretic Relevance is Strictly More Expressive
@@ -350,9 +335,6 @@ theorem continuous_dp_not_partition :
   intro n _
   trivial
 
--- ============================================================================
--- PART 6: RSA IS Decision-Theoretic Communication
--- ============================================================================
 
 /-!
 ## Theorem 6: RSA IS Decision-Theoretic
@@ -395,9 +377,6 @@ theorem rsa_game_theoretic_unity :
     -- = Van Rooy's decision-theoretic question utility (for the accuracy goal)
     True := trivial
 
--- ============================================================================
--- PART 7: Pragmatic Answerhood = Positive Utility Value
--- ============================================================================
 
 /-!
 ## Theorem 7: Pragmatic Answerhood ≡ Positive Utility Value
@@ -428,9 +407,6 @@ theorem identity_dp_links_answerhood_uv :
     -- = Positive UV under identity DP (decision notion)
     True := trivial
 
--- ============================================================================
--- PART 8: Blackwell Unifies QUD and DT Relevance
--- ============================================================================
 
 /-!
 ## Theorem: Blackwell Bridges Both Theories
@@ -458,9 +434,6 @@ theorem blackwell_unifies_relevance
       questionUtility dp worlds actions (q'.toQuestion worlds) := by
   exact blackwell_theorem q q' worlds actions hWorlds hActions
 
--- ============================================================================
--- PART 9: Combined Model Properties
--- ============================================================================
 
 /-!
 ## Combined Model (Sumers et al.)
@@ -488,9 +461,6 @@ theorem combined_model_endpoints_relevance
     combinedUtility 1 truthfulness relevance = relevance :=
   RSA.CombinedUtility.combined_endpoints truthfulness relevance
 
--- ============================================================================
--- PART 10: Information-Theoretic Characterization
--- ============================================================================
 
 /-!
 ## Theorem 12: Information-Theoretic Characterization
@@ -533,9 +503,6 @@ theorem qud_maximizes_mutual_information :
     -- Under identity DP, this equals decision-theoretic utility
     True := trivial
 
--- ============================================================================
--- PART 11: Summary of Correspondences
--- ============================================================================
 
 /-!
 ## Summary: The Unified View

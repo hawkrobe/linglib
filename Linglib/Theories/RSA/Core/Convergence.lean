@@ -37,9 +37,6 @@ namespace RSA.Convergence
 
 open Real Classical
 
--- ============================================================================
--- PART 1: RSA Scenario (Real-valued for proofs)
--- ============================================================================
 
 /--
 RSA scenario with real-valued α for convergence proofs.
@@ -68,9 +65,6 @@ structure RSAScenarioR where
 
 attribute [instance] RSAScenarioR.finM RSAScenarioR.finU
 
--- ============================================================================
--- PART 2: Basic Definitions
--- ============================================================================
 
 /-- Normalization constant (partition function). -/
 noncomputable def Z {α : Type*} [Fintype α] (f : α → ℝ) : ℝ :=
@@ -97,9 +91,7 @@ noncomputable def speakerScore (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (m : S.M) (u : S.U) : ℝ :=
   if L u m ≤ 0 then 0 else (L u m).rpow S.α
 
--- ============================================================================
 -- Softmax-based speaker (inherits all softmax properties)
--- ============================================================================
 
 /-- **Pragmatic speaker as softmax** (normalized distribution).
 
@@ -154,9 +146,6 @@ noncomputable def listenerScore (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (u : S.U) (m : S.M) : ℝ :=
   S.prior m * Spk m u
 
--- ============================================================================
--- PART 3: The G_α Objective
--- ============================================================================
 
 /-!
 ## The RSA Objective Function G_α
@@ -224,9 +213,6 @@ noncomputable def G_α (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (L : S.U → S.M → ℝ) : ℝ :=
   H_S S Spk + S.α * E_VL S Spk L
 
--- ============================================================================
--- PART 4: RSA Dynamics
--- ============================================================================
 
 /-- One step of RSA dynamics: given listener L, compute optimal speaker. -/
 noncomputable def speakerUpdate (S : RSAScenarioR) (L : S.U → S.M → ℝ)
@@ -257,9 +243,6 @@ noncomputable def stepRSA (S : RSAScenarioR) (state : RSAState S) : RSAState S w
 noncomputable def iterateRSA (S : RSAScenarioR) (n : ℕ) : RSAState S :=
   (stepRSA S)^[n] (initRSA S)
 
--- ============================================================================
--- PART 5: Concavity Foundations
--- ============================================================================
 
 /-!
 ## Key Insight: G_α Concavity
@@ -371,9 +354,6 @@ theorem weighted_sum_concave {α : Type*} [Fintype α] {E : Type*}
   rw [heq]
   exact h
 
--- ============================================================================
--- PART 6: G_α Concavity
--- ============================================================================
 
 /--
 **Proposition 1, Part 1 (Zaslavsky et al.)**: G_α is concave in S for fixed L.
@@ -622,9 +602,6 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     hE_concave.smul hα_nonneg
   exact hH_concave.add hαE_concave
 
--- ============================================================================
--- PART 7: Alternating Maximization via Calculus
--- ============================================================================
 
 /-!
 ## Proof Strategy: KKT Conditions
@@ -893,9 +870,6 @@ theorem listener_update_maximizes_G (S : RSAScenarioR) (Spk : S.M → S.U → �
   intro L' hL'_sum hL'_pos
   exact rsa_listener_maximizes_G_α S Spk hSpk L' hL'_sum hL'_pos
 
--- ============================================================================
--- PART 8: Main Convergence Results
--- ============================================================================
 
 /--
 **MAIN THEOREM: G_α Monotonicity** (Zaslavsky et al. Proposition 1, Eq. 9)
@@ -982,9 +956,6 @@ theorem RSA_converges (S : RSAScenarioR) [Nonempty S.U]
   -- This follows from G_α_monotone but requires careful bookkeeping
   sorry
 
--- ============================================================================
--- PART 9: Stopping Criteria
--- ============================================================================
 
 /--
 G_α is bounded above.

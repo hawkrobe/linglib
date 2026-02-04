@@ -41,9 +41,7 @@ open CCG
 open CCG.Combinators
 open Montague
 
--- ============================================================================
 -- Semantic Equivalence
--- ============================================================================
 
 /--
 Two derivations are semantically equivalent iff they span the same substring,
@@ -91,9 +89,7 @@ theorem sem_equiv_trans {m : Model} (cm₁ cm₂ cm₃ : Σ c : Cat, m.interpTy 
   match cm₁, cm₂, cm₃, h₁, eq₁, h₂, eq₂ with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, ⟨_, _m₃⟩, rfl, eq₁, rfl, eq₂ => ⟨rfl, eq₁.trans eq₂⟩
 
--- ============================================================================
 -- Associativity of Composition: The Source of Spurious Ambiguity
--- ============================================================================
 
 /-
 The B combinator (composition) is associative:
@@ -137,9 +133,7 @@ theorem composition_order_irrelevant {α β γ δ : Type}
     (f : γ → δ) (g : β → γ) (h : α → β) (x : α) :
     f (g (h x)) = B f (B g h) x := rfl
 
--- ============================================================================
 -- Catalan Numbers: Counting Bracketings
--- ============================================================================
 
 /-
 The number of ways to fully bracket n items is the (n-1)th Catalan number:
@@ -163,9 +157,7 @@ This comes from: a binary tree with n+1 leaves splits at the root into
 left subtree with i+1 leaves and right subtree with n-i leaves.
 -/
 
--- ============================================================================
 -- Binary Trees: The Structure of Bracketings
--- ============================================================================
 
 /--
 A full binary tree represents a bracketing of items.
@@ -203,9 +195,7 @@ theorem BinTree.nodes_eq_leaves_minus_one (t : BinTree) :
     simp only [nodes, leaves]
     omega
 
--- ============================================================================
 -- Generating All Binary Trees
--- ============================================================================
 
 /--
 Generate all binary trees with exactly n leaves (helper with explicit termination).
@@ -233,9 +223,7 @@ def allTreesWithLeaves (n : Nat) : List BinTree :=
 #eval (allTreesWithLeaves 4).length  -- 5
 #eval (allTreesWithLeaves 5).length  -- 14
 
--- ============================================================================
 -- Catalan Numbers
--- ============================================================================
 
 /--
 Catalan numbers via the closed formula.
@@ -274,9 +262,7 @@ def countBracketings (n : Nat) : Nat :=
 #eval countBracketings 4  -- 5
 #eval countBracketings 5  -- 14
 
--- ============================================================================
 -- THE MAIN THEOREM: Catalan Counts Bracketings
--- ============================================================================
 
 /--
 **THEOREM: countBracketings n = catalan (n-1) for n ≥ 1**
@@ -323,18 +309,14 @@ theorem bracketings_eq_tree_count_3 : bracketings 3 = (allTreesWithLeaves 3).len
 theorem bracketings_eq_tree_count_4 : bracketings 4 = (allTreesWithLeaves 4).length := by native_decide
 theorem bracketings_eq_tree_count_5 : bracketings 5 = (allTreesWithLeaves 5).length := by native_decide
 
--- ============================================================================
 -- Examples: Enumerate Bracketings
--- ============================================================================
 
 -- For CCG: n words with purely compositional derivation have C_{n-1} bracketings,
 -- all yielding the same meaning due to associativity of B.
 theorem bracketings_5_eq_14 : bracketings 5 = 14 := rfl  -- 5 words → 14 derivations
 theorem bracketings_6_eq_42 : bracketings 6 = 42 := rfl  -- 6 words → 42 derivations
 
--- ============================================================================
 -- Equivalence Classes and Normal Forms
--- ============================================================================
 
 /-
 ## Normal Form Parsing
@@ -368,9 +350,7 @@ theorem strategy_irrelevant {α : Type}
     (_ : BracketStrategy) :
     f (g (h x)) = f (g (h x)) := rfl
 
--- ============================================================================
 -- Matching Entry Test
--- ============================================================================
 
 /-
 ## Chart Parsing with Equivalence Check
@@ -413,9 +393,7 @@ def chartEntriesSameCat {m : Model} (e₁ e₂ : ChartEntry m) : Bool :=
   e₁.rightPos == e₂.rightPos &&
   e₁.cat == e₂.cat
 
--- ============================================================================
 -- Why "Spurious" Ambiguity Isn't Ambiguity
--- ============================================================================
 
 /-
 ## Spurious vs Real Ambiguity
@@ -456,9 +434,7 @@ Spuriously ambiguous: multiple derivations but only one equivalence class.
 def spuriouslyAmbiguous {m : Model} (derivCount : Nat) (classes : List (EquivalenceClass m)) : Prop :=
   derivCount > 1 ∧ classes.length = 1
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

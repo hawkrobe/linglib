@@ -29,9 +29,7 @@ under "might" in the first sentence. This is surprising because:
 
 namespace Phenomena.Anaphora.ModalSubordination
 
--- ============================================================================
 -- Part 1: Basic Modal Subordination
--- ============================================================================
 
 /--
 A modal subordination datum.
@@ -96,9 +94,7 @@ def burglarMightWould : ModalSubDatum := {
   source := "Roberts (1989)"
 }
 
--- ============================================================================
 -- Part 2: Infelicitous Contrasts
--- ============================================================================
 
 /-- Indicative blocks -/
 def wolfMightIndicative : ModalSubDatum := {
@@ -139,9 +135,7 @@ def wolfMightMust : ModalSubDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 3: Different Introducing Modals
--- ============================================================================
 
 /-- Could...would -/
 def wolfCouldWould : ModalSubDatum := {
@@ -182,9 +176,7 @@ def wolfProbablyWould : ModalSubDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 4: Counterfactual Connection
--- ============================================================================
 
 /--
 Modal subordination connects to counterfactual conditionals.
@@ -226,9 +218,7 @@ def counterfactualIndicative : CounterfactualDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 5: Three-way Classification (Hofmann 2025)
--- ============================================================================
 
 /--
 Hofmann (2025) distinguishes three accessibility classes:
@@ -270,9 +260,7 @@ def counterfactualAccess : AccessibilityDatum := {
   source := "Hofmann (2025)"
 }
 
--- ============================================================================
 -- Part 6: Collected Data
--- ============================================================================
 
 /-- All modal subordination examples -/
 def modalSubData : List ModalSubDatum := [
@@ -308,9 +296,7 @@ def accessibilityData : List AccessibilityDatum := [
   counterfactualAccess
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

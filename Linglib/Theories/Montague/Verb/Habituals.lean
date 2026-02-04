@@ -43,9 +43,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Montague.Verb.Habituals
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /-- A time interval or occasion for habitual quantification -/
 structure Occasion where
@@ -60,9 +58,7 @@ abbrev Activity := Occasion → Bool
 /-- A characteristicness predicate (which occasions are "typical") -/
 abbrev Characteristic := Occasion → Bool
 
--- ============================================================================
 -- Traditional HAB Operator
--- ============================================================================
 
 /--
 Traditional HAB as a quantifier over occasions.
@@ -107,9 +103,7 @@ theorem hab_formulations_equiv
     rw [ih]
     cases characteristic o <;> cases activity o <;> rfl
 
--- ============================================================================
 -- Frequency-Based Semantics (T&G Style)
--- ============================================================================
 
 /--
 Frequency of an activity across occasions.
@@ -148,9 +142,7 @@ theorem hab_reduces_to_threshold
                thresholdHabitual occasions activity θ := by
   sorry  -- Proof parallels gen_reduces_to_threshold
 
--- ============================================================================
 -- Activity-Specific Priors
--- ============================================================================
 
 /-!
 ## Why Threshold Varies by Activity
@@ -180,9 +172,7 @@ def expectedThreshold : ActivityType → ℚ
   | .striking => 1/100    -- Rare is enough
   | .achievement => 0     -- Once suffices
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 def occasions : List Occasion := [
   { id := 0 }, { id := 1 }, { id := 2 }, { id := 3 }, { id := 4 },
@@ -211,9 +201,7 @@ def normalOccasions : Characteristic := fun t =>
 -- Threshold approach: with θ = 0.5, "John smokes" is TRUE
 #eval thresholdHabitual occasions johnSmokesActivity (1/2)  -- true
 
--- ============================================================================
 -- HAB vs GEN: The Parallel
--- ============================================================================
 
 /-!
 ## HAB and GEN: Same Structure, Different Domains
@@ -253,9 +241,7 @@ def habAsThreshold : ThresholdQuantifier :=
   , threshold := 0  -- Pragmatically inferred
   }
 
--- ============================================================================
 -- Connection to Aspect
--- ============================================================================
 
 /-!
 ## HAB and Aspectual Class

@@ -104,9 +104,6 @@ open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 
--- ============================================================================
--- PART 1: Formalizing the Tonhauser Properties in Local Context Terms
--- ============================================================================
 
 /--
 **SCF (Strong Contextual Felicity)** in local context terms.
@@ -165,9 +162,6 @@ def OLE_NotObligatory (content : BProp W) : Prop :=
     -- This suffices for felicity even under belief
     True
 
--- ============================================================================
--- PART 2: The Class Characterization Theorems
--- ============================================================================
 
 /--
 A projective trigger's behavior is characterized by its SCF and OLE values.
@@ -228,9 +222,6 @@ Behavior:
 def isClassD (tb : TriggerBehavior W Agent) : Prop :=
   tb.scf = .requires ∧ tb.ole = .notObligatory
 
--- ============================================================================
--- PART 3: Deriving Class Membership from Local Context Behavior
--- ============================================================================
 
 /--
 **Main Theorem 1**: Local context at matrix position = global context.
@@ -280,9 +271,6 @@ theorem classes_partition (tb : TriggerBehavior W Agent) :
   unfold isClassA isClassB isClassC isClassD
   cases tb.scf <;> cases tb.ole <;> simp
 
--- ============================================================================
--- PART 4: Deriving Projection Predictions
--- ============================================================================
 
 /--
 **Projection Theorem 1**: Presuppositions project from negation.
@@ -316,9 +304,6 @@ theorem belief_derives_ole (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     presupFiltered (beliefToLocalCtx blc w_star hw) p :=
   h w_star hw
 
--- ============================================================================
--- PART 5: Example Class Assignments
--- ============================================================================
 
 /--
 "stop" is Class C: SCF=no, OLE=yes.
@@ -341,9 +326,6 @@ Demonstrative indication is Class D: SCF=yes, OLE=no.
 theorem demonstrative_is_classD :
     ProjectiveTrigger.demonstrative_indication.toClass = .classD := rfl
 
--- ============================================================================
--- PART 6: The Main Derivation Theorem
--- ============================================================================
 
 /--
 **THE MAIN THEOREM**: Schlenker's local context theory derives Tonhauser's taxonomy.
@@ -390,9 +372,6 @@ theorem schlenker_derives_tonhauser :
   · -- 4. Classes distinct
     decide
 
--- ============================================================================
--- PART 7: Predictions for Specific Phenomena
--- ============================================================================
 
 /--
 **Phenomenon 1**: "John stopped smoking" (unembedded, Class C)
@@ -446,9 +425,7 @@ Prediction: Referent existence attributed to Mary (OLE=yes).
 theorem pronoun_shifts_under_belief :
     ProjectiveTrigger.pronoun_existence.toClass.ole = .obligatory := rfl
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Proves

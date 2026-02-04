@@ -55,9 +55,6 @@ open Phenomena.Gradability.Evaluativity
 open RSA.Domains.Degrees
 open Montague.Adjective
 
--- ============================================================================
--- PART 1: Polarity (Markedness)
--- ============================================================================
 
 /--
 Polarity of an adjective: positive (unmarked) vs negative (marked).
@@ -95,9 +92,6 @@ def Polarity.cost : Polarity → ℚ
   | .positive => 1  -- baseline
   | .negative => 2  -- marked form is costlier
 
--- ============================================================================
--- PART 2: Polar Variance
--- ============================================================================
 
 /--
 Polar variance: do the two antonyms have different truth conditions
@@ -143,9 +137,6 @@ Manner implicature requires polar INVARIANCE:
 def mannerImplicatureApplies : AdjectivalConstruction → Bool
   | c => polarVariance c == .invariant
 
--- ============================================================================
--- PART 3: Implicature Types for Evaluativity
--- ============================================================================
 
 /--
 Types of implicature that can derive evaluativity.
@@ -203,9 +194,6 @@ def evaluativitySource (c : AdjectivalConstruction) (p : Polarity) : Evaluativit
     -- Negative: ungrammatical (*"4ft short")
     .none
 
--- ============================================================================
--- PART 4: Evaluativity Derivation
--- ============================================================================
 
 /--
 Derivation of evaluativity for a construction + polarity combination.
@@ -240,9 +228,6 @@ def deriveEvaluativity (c : AdjectivalConstruction) (p : Polarity) : Evaluativit
   , mechanism := mechanism
   }
 
--- ============================================================================
--- PART 5: Predictions vs Empirical Data
--- ============================================================================
 
 /--
 Convert our derivation's evaluativity prediction to the phenomena format.
@@ -261,9 +246,6 @@ def predictionMatches (d : EvaluativityDerivation) (datum : EvaluativityDatum) :
   | .evaluative => d.isEvaluative
   | .nonEvaluative => !d.isEvaluative
 
--- ============================================================================
--- PART 6: Systematic Predictions
--- ============================================================================
 
 /--
 All predictions for positive-polar adjectives.
@@ -297,9 +279,6 @@ def evaluativityPredictionTable : String :=
     if d.isEvaluative then "evaluative" else "non-eval"
   s!"Positive-polar: {posResults}\nNegative-polar: {negResults}"
 
--- ============================================================================
--- PART 7: Key Theorems
--- ============================================================================
 
 /--
 **Theorem: Positive constructions are evaluative for both polarities**
@@ -379,9 +358,6 @@ theorem manner_requires_marked_and_invariant :
   intro c p h
   cases c <;> cases p <;> simp [evaluativitySource, polarVariance] at h ⊢
 
--- ============================================================================
--- PART 8: Connection to Empirical Data
--- ============================================================================
 
 /--
 **Theorem: Predictions match positive_tall datum**
@@ -425,9 +401,6 @@ theorem matches_question_short :
     predictionMatches (deriveEvaluativity .degreeQuestion .negative) question_short = true := by
   native_decide
 
--- ============================================================================
--- PART 9: Q vs R Implicature Mechanisms
--- ============================================================================
 
 /--
 Q-implicature derivation for positive constructions.
@@ -503,9 +476,6 @@ def deriveRImplicature (c : AdjectivalConstruction) (p : Polarity) : RImplicatur
   , evaluativityLicensed := isPolarInvariant && isMarked
   }
 
--- ============================================================================
--- PART 10: Comparison with RSA
--- ============================================================================
 
 /--
 How this Neo-Gricean account relates to RSA.
@@ -545,9 +515,6 @@ Both correctly predict:
 - Equative/question asymmetry: marked forms evaluative
 "
 
--- ============================================================================
--- PART 11: Marked Meaning Principle (MMP)
--- ============================================================================
 
 /--
 The Marked Meaning Principle (MMP) derivation record.
@@ -617,9 +584,6 @@ def applyMMP {max : Nat}
   , explanation := expl
   }
 
--- ============================================================================
--- PART 12: Lexicon-Grounded Evaluativity Derivation
--- ============================================================================
 
 /--
 Extended evaluativity derivation with lexicon grounding.
@@ -694,9 +658,6 @@ def deriveEvaluativityWithLexicon {max : Nat}
   , source := source
   }
 
--- ============================================================================
--- PART 13: Degree Tautology Analysis
--- ============================================================================
 
 /--
 Degree tautology analysis for positive constructions.
@@ -764,9 +725,6 @@ def analyzeDegreeTautology (c : AdjectivalConstruction) : DegreeTautologyAnalysi
                      "No tautology, no evaluativity."
     }
 
--- ============================================================================
--- PART 14: Additional Theorems
--- ============================================================================
 
 /--
 MMP only applies in polar-invariant constructions (equative case).
@@ -832,9 +790,6 @@ theorem grounded_matches_simple_short_equative :
     (deriveEvaluativity .equative .negative).isEvaluative := by
   rfl
 
--- ============================================================================
--- PART 15: Comprehensive Rett (2015) Theorems
--- ============================================================================
 
 /-!
 ## Rett (2015) Core Predictions
@@ -847,9 +802,7 @@ These theorems formalize the key empirical predictions from Rett's account:
 4. **Morphological grounding**: How does markedness determine asymmetry?
 -/
 
--- ============================================================================
 -- Theorem Group 1: Evaluativity Distribution
--- ============================================================================
 
 /--
 **Rett Prediction 1**: Positive constructions require evaluativity.
@@ -909,9 +862,7 @@ theorem rett_question_asymmetry :
     (deriveEvaluativity .degreeQuestion .negative).implicatureType = .manner := by
   native_decide
 
--- ============================================================================
 -- Theorem Group 2: Polar Variance and Asymmetry
--- ============================================================================
 
 /--
 **Core Insight**: Asymmetry requires polar invariance.
@@ -946,9 +897,7 @@ theorem polar_invariance_enables_m_alternatives :
     polarVariance .positive = .variant := by
   native_decide
 
--- ============================================================================
 -- Theorem Group 3: Mechanism Attribution (Q vs MMP)
--- ============================================================================
 
 /--
 **Q-implicature mechanism**: Positive constructions use Quantity.
@@ -979,9 +928,7 @@ theorem no_mechanism_for_comparative :
     evaluativitySource .comparative .positive = .none ∧
     evaluativitySource .comparative .negative = .none := by native_decide
 
--- ============================================================================
 -- Theorem Group 4: Markedness and Cost
--- ============================================================================
 
 /--
 **Markedness determines asymmetry direction**.
@@ -1011,9 +958,7 @@ theorem morphological_markedness :
     isMarkedForm "happy" happy_with_morphology unhappy_with_morphology = false := by
   native_decide
 
--- ============================================================================
 -- Theorem Group 5: Full Derivation Chain
--- ============================================================================
 
 /--
 **Complete derivation for "as short as"**: From morphology to evaluativity.
@@ -1064,9 +1009,6 @@ theorem complete_derivation_as_tall_as :
       tall_with_morphology short_with_morphology).isEvaluative = false := by
   native_decide
 
--- ============================================================================
--- PART 16: Summary
--- ============================================================================
 
 /-
 ## Summary: Neo-Gricean Evaluativity (Rett 2015 Chs. 3-6)

@@ -34,9 +34,6 @@ Scales (⟨warm, hot⟩, ⟨some, all⟩) are grounded in degree semantics:
 
 namespace Phenomena.Gradability
 
--- ============================================================================
--- PART 1: Context-Sensitivity (Threshold Shifting)
--- ============================================================================
 
 /--
 Empirical pattern: Scalar adjective thresholds shift with comparison class.
@@ -104,9 +101,6 @@ def microbePlanet : ContextShiftDatum :=
 def contextShiftExamples : List ContextShiftDatum :=
   [jockeyBasketball, atlantaSanFrancisco, microbePlanet]
 
--- ============================================================================
--- PART 2: Antonym Behavior
--- ============================================================================
 
 /--
 Empirical pattern: Antonym pairs share a scale with reversed polarity.
@@ -157,9 +151,6 @@ def expensiveCheapAntonym : AntonymDatum :=
 def antonymExamples : List AntonymDatum :=
   [tallShortAntonym, expensiveCheapAntonym]
 
--- ============================================================================
--- PART 3: Kennedy (2007) Adjective Typology
--- ============================================================================
 
 /--
 Kennedy's adjective classification based on scale structure and standard type.
@@ -296,9 +287,6 @@ def rgaVsAgaPrediction : RGAvsAGAPrediction :=
   , agaNonShiftExample := "A damp cloth is wet whether comparing to deserts or rainforests"
   }
 
--- ============================================================================
--- PART 4: Degree Modifiers
--- ============================================================================
 
 /--
 Degree modifiers and their interactions with adjective types.
@@ -411,9 +399,6 @@ def closurePuzzle : ScaleClosurePuzzle :=
   , worksWithOpen := false
   }
 
--- ============================================================================
--- PART 5: Nominal Gradability - The Bigness Generalization
--- ============================================================================
 
 /-- Size adjective polarity for degree readings -/
 inductive SizePolarity where
@@ -488,9 +473,6 @@ def slightExaggeration : BignessGeneralizationDatum :=
 def bignessExamples : List BignessGeneralizationDatum :=
   [bigIdiot, hugeFan, enormousSmoker, smallIdiot, tinyFan, littleSmoker, slightExaggeration]
 
--- ============================================================================
--- PART 6: Position Generalization
--- ============================================================================
 
 /-- Position generalization datum: attributive vs predicative -/
 structure PositionGeneralizationDatum where
@@ -522,9 +504,6 @@ def bigIdiotPredicative : PositionGeneralizationDatum :=
 def positionExamples : List PositionGeneralizationDatum :=
   [bigIdiotAttributive, bigIdiotPredicative]
 
--- ============================================================================
--- PART 7: Gradable Noun Scale Types
--- ============================================================================
 
 /-- Types of nominal scales (de Vries 2010) -/
 inductive NominalScaleType where
@@ -577,9 +556,6 @@ def liarExample : GradableNounExample :=
 def gradableNounExamples : List GradableNounExample :=
   [idiotExample, fanExample, smokerExample, liarExample]
 
--- ============================================================================
--- PART 8: Nominal Comparison
--- ============================================================================
 
 /-- Nouns can be compared like adjectives when gradable -/
 structure NominalComparisonDatum where
@@ -608,9 +584,6 @@ def biggerIdiotComparison : NominalComparisonDatum :=
 def nominalComparisonExamples : List NominalComparisonDatum :=
   [moreOfAnIdiot, biggerIdiotComparison]
 
--- ============================================================================
--- PART 9: Cross-linguistic Evidence
--- ============================================================================
 
 /-- The Bigness Generalization holds cross-linguistically -/
 structure CrossLinguisticDatum where
@@ -642,9 +615,7 @@ def germanKleinIdiot : CrossLinguisticDatum :=
 def crossLinguisticExamples : List CrossLinguisticDatum :=
   [germanGrossIdiot, germanKleinIdiot]
 
--- ============================================================================
 -- Theory Desiderata
--- ============================================================================
 
 /-!
 ## What a Theory of Degree Semantics Must Explain

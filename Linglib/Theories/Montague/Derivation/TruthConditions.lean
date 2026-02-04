@@ -23,9 +23,7 @@ open Montague
 open ToyLexicon
 open Phenomena.Entailment
 
--- ============================================================================
 -- Intransitive Verb Derivations
--- ============================================================================
 
 /-
 These theorems prove that ⟦V⟧(⟦NP⟧) yields the truth value that
@@ -44,9 +42,7 @@ theorem john_laughs : apply laughs_sem john_sem = true := rfl
 /-- "Mary laughs" is true (matches maryLaughsTrue) -/
 theorem mary_laughs : apply laughs_sem mary_sem = true := rfl
 
--- ============================================================================
 -- Transitive Verb Derivations
--- ============================================================================
 
 /-
 For transitive verbs, we compute ⟦V⟧(⟦OBJ⟧)(⟦SUBJ⟧).
@@ -74,9 +70,7 @@ theorem mary_eats_pizza : apply (apply eats_sem ToyEntity.pizza) mary_sem = true
 /-- "John reads book" is true (matches johnReadsBookTrue) -/
 theorem john_reads_book : apply (apply reads_sem ToyEntity.book) john_sem = true := rfl
 
--- ============================================================================
 -- Formal Correspondence to Phenomena
--- ============================================================================
 
 /-
 These theorems establish exact correspondence between the theory's
@@ -105,9 +99,7 @@ theorem captures_transitive_seeing :
     apply (apply sees_sem john_sem) john_sem = johnSeesJohnFalse.judgedTrue := by
   constructor <;> rfl
 
--- ============================================================================
 -- Composition via interpSV and interpSVO
--- ============================================================================
 
 /-
 These examples show the same derivations using the composition helpers.
@@ -128,9 +120,7 @@ example : interpSVO toyModel john_sem sees_sem john_sem = false := rfl
 /-- "John eats pizza" via interpSVO -/
 example : interpSVO toyModel john_sem eats_sem ToyEntity.pizza = true := rfl
 
--- ============================================================================
 -- Truth via isTrue predicate
--- ============================================================================
 
 /-- "John sleeps" is true in our model -/
 theorem john_sleeps_isTrue : isTrue toyModel (interpSV toyModel john_sem sleeps_sem) := rfl
@@ -141,9 +131,7 @@ theorem john_sees_mary_isTrue : isTrue toyModel (interpSVO toyModel john_sem see
 /-- "John eats pizza" is true in our model -/
 theorem john_eats_pizza_isTrue : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Coverage

@@ -38,9 +38,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Dative alternation data -/
 def dativeAlternationData : PhenomenonData := {
@@ -72,9 +70,7 @@ def dativeAlternationData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 -- Double object frame
 #eval Surface.subcatOk [john, gives, mary, book]    -- true (ditrans, 2 obj)

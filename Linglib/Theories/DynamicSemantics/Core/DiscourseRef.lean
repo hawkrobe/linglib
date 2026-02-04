@@ -40,9 +40,6 @@ import Mathlib.Data.Fintype.Basic
 
 namespace Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Entity Domain with Universal Falsifier
--- ============================================================================
 
 /--
 Entities extended with the universal falsifier ⋆.
@@ -98,9 +95,6 @@ instance [Fintype E] : Fintype (Entity E) where
 
 end Entity
 
--- ============================================================================
--- PART 2: Variables
--- ============================================================================
 
 /--
 Variable indices for discourse referents.
@@ -126,9 +120,6 @@ structure IVar where
   idx : Nat
   deriving DecidableEq, BEq, Repr, Hashable
 
--- ============================================================================
--- PART 3: Assignments (for ICDRT)
--- ============================================================================
 
 /--
 An ICDRT assignment maps variables to values.
@@ -164,9 +155,6 @@ def updateProp (g : ICDRTAssignment W E) (p : PVar) (s : Set W) : ICDRTAssignmen
 
 end ICDRTAssignment
 
--- ============================================================================
--- PART 4: Propositional Discourse Referents
--- ============================================================================
 
 /--
 A propositional discourse referent: s(wt) in Hofmann's notation.
@@ -207,9 +195,6 @@ def union (φ ψ : PDref W E) : PDref W E := fun g => φ g ∪ ψ g
 
 end PDref
 
--- ============================================================================
--- PART 5: Individual Discourse Referents
--- ============================================================================
 
 /--
 An individual discourse referent: s(we) in Hofmann's notation.
@@ -244,9 +229,6 @@ def satisfies (d : IDref W E) (p : E → W → Bool) : ICDRTAssignment W E → W
 
 end IDref
 
--- ============================================================================
--- PART 6: Local Contexts
--- ============================================================================
 
 /--
 A local context is a propositional dref that tracks WHERE an
@@ -281,9 +263,6 @@ def dynamicPredication {W E : Type*}
       | .some e => R e w'
       | .star => False  -- ⋆ never satisfies predicates
 
--- ============================================================================
--- PART 7: Entity Domain for Local Contexts
--- ============================================================================
 
 /--
 The entity domain in a local context.
@@ -302,9 +281,7 @@ An entity is accessible in a local context if it exists throughout.
 def accessibleIn {W E : Type*} (e : E) (p : Set W) (dref : W → Entity E) : Prop :=
   ∀ w ∈ p, dref w = .some e
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

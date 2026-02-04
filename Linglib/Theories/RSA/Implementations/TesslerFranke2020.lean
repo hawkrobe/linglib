@@ -42,9 +42,7 @@ open RSA.Eval
 open RSA.Domains.Degrees
 open Montague.Domain.Degrees
 
--- ============================================================================
 -- Domain: 5-point Happiness Scale
--- ============================================================================
 
 /--
 Simplified happiness scale: 0 (miserable) to 4 (ecstatic).
@@ -65,9 +63,7 @@ def happinessThresholds : ThresholdPair 4 :=
   , gap_exists := by decide
   }
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 inductive Utterance where
   | happy       -- "is happy"
@@ -80,9 +76,7 @@ inductive Utterance where
 def allUtterances : List Utterance :=
   [.happy, .notHappy, .unhappy, .notUnhappy, .silent]
 
--- ============================================================================
 -- Lexica: How is "un-" interpreted?
--- ============================================================================
 
 /--
 Two interpretations of morphological negation ("un-"):
@@ -102,9 +96,7 @@ def lexiconPrior : UnLexicon → ℚ
   | .contrary => 3       -- Default for "un-"
   | .contradictory => 1  -- Marked interpretation
 
--- ============================================================================
 -- Semantics (using Fragments.Degrees infrastructure)
--- ============================================================================
 
 /-- Meaning given lexicon for "un-" interpretation -/
 def meaning (L : UnLexicon) (u : Utterance) (d : HappinessDegree) : Bool :=
@@ -122,9 +114,7 @@ def meaning (L : UnLexicon) (u : Utterance) (d : HappinessDegree) : Bool :=
     | .contrary => notContraryNegMeaning d tp  -- includes gap!
     | .contradictory => positiveMeaning' d tp  -- collapses to "happy"
 
--- ============================================================================
 -- World Prior
--- ============================================================================
 
 def degreePrior : HappinessDegree → ℚ
   | ⟨⟨0, _⟩⟩ => 1
@@ -134,9 +124,7 @@ def degreePrior : HappinessDegree → ℚ
   | ⟨⟨4, _⟩⟩ => 1
   | ⟨⟨n + 5, h⟩⟩ => absurd h (by omega)
 
--- ============================================================================
 -- RSA Computations with Lexical Uncertainty
--- ============================================================================
 
 /--
 L1 marginal over worlds with lexical uncertainty.
@@ -180,9 +168,7 @@ def l1_lexicon (u : Utterance) : List (UnLexicon × ℚ) :=
     let lScores := normalized.filter (fun ((_, l'), _) => l' == l) |>.map (·.2)
     (l, sumScores lScores)
 
--- ============================================================================
 -- Computations
--- ============================================================================
 
 def l1_happy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .happy
 def l1_unhappy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty .unhappy
@@ -192,9 +178,7 @@ def l1_notUnhappy : List (HappinessDegree × ℚ) := l1_world_lexicalUncertainty
 def l1_lexicon_unhappy : List (UnLexicon × ℚ) := l1_lexicon .unhappy
 def l1_lexicon_notUnhappy : List (UnLexicon × ℚ) := l1_lexicon .notUnhappy
 
--- ============================================================================
 -- Evaluate
--- ============================================================================
 
 #eval l1_happy       -- Should concentrate on degree 4
 #eval l1_unhappy     -- Should concentrate on degrees 0, 1
@@ -204,9 +188,7 @@ def l1_lexicon_notUnhappy : List (UnLexicon × ℚ) := l1_lexicon .notUnhappy
 #eval l1_lexicon_unhappy     -- Should prefer contrary
 #eval l1_lexicon_notUnhappy  -- Lexicon inference for double negation
 
--- ============================================================================
 -- Gap Analysis (using Fragments.Degrees infrastructure)
--- ============================================================================
 
 def gapProb (dist : List (HappinessDegree × ℚ)) : ℚ :=
   dist.foldl (fun acc (d, p) =>
@@ -218,9 +200,7 @@ def gapProb_notUnhappy : ℚ := gapProb l1_notUnhappy
 #eval gapProb_happy      -- Should be 0
 #eval gapProb_notUnhappy -- Should be positive
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /-- "unhappy" prefers contrary lexicon (polar opposite) -/
 theorem unhappy_prefers_contrary :
@@ -244,9 +224,7 @@ theorem opposite_poles :
     getScore l1_unhappy ⟨⟨0, by omega⟩⟩ > getScore l1_unhappy ⟨⟨4, by omega⟩⟩ := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Tessler & Franke (2020): Not unreasonable

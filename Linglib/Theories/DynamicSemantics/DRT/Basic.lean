@@ -34,9 +34,7 @@ import Linglib.Theories.DynamicSemantics.Core.Basic
 
 namespace Theories.DynamicSemantics.DRT
 
--- ============================================================================
 -- Placeholder: Full implementation TODO
--- ============================================================================
 
 /--
 A Discourse Representation Structure (DRS).
@@ -84,9 +82,7 @@ This simplified version just checks if x is in the drefs.
 def DRS.accessible {E : Type*} (k : DRS E) (x : Nat) : Prop :=
   x ∈ k.drefs
 
--- ============================================================================
 -- Embedding and Truth
--- ============================================================================
 
 /--
 An embedding function maps discourse referents to entities.
@@ -107,9 +103,7 @@ Simplified version checking conditions hold.
 def DRS.satisfies {E : Type*} (k : DRS E) (f : Embedding E) : Prop :=
   ∀ cond ∈ k.conditions, cond f
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Will Provide

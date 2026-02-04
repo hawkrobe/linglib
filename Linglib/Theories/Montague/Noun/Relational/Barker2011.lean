@@ -40,9 +40,6 @@ in Ahn & Zhu (2025): *na* applies π, creating the slot; bare nouns don't.
 
 namespace Montague.Noun.Relational.Barker2011
 
--- ============================================================================
--- PART 1: Semantic Types
--- ============================================================================
 
 /-- One-place predicates: E → S → Bool -/
 abbrev Pred1 (E S : Type) := E → S → Bool
@@ -62,9 +59,6 @@ inductive SemType where
   | entity -- Individual: E
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
--- PART 2: The π Type-Shifter (Relationalizer)
--- ============================================================================
 
 /--
 **Barker's π (Relationalizer)**
@@ -96,9 +90,6 @@ theorem π_changes_type {E S : Type} (P : Pred1 E S) (R : Pred2 E S) :
     -- This is witnessed by the type of π itself
     True := trivial
 
--- ============================================================================
--- PART 3: The Ex Type-Shifter (Detransitivizer)
--- ============================================================================
 
 /--
 **The Ex Type-Shifter (Existential Closure) — Propositional Version**
@@ -136,9 +127,6 @@ theorem Ex_changes_type {E S : Type} (R : Pred2 E S) :
     -- ExProp(R) removes an argument position
     True := trivial
 
--- ============================================================================
--- PART 4: Possessive Semantics
--- ============================================================================
 
 /--
 The semantic structure of a possessive phrase.
@@ -194,9 +182,6 @@ theorem possessive_sortal_is_pi {E S : Type}
     (possessor : E) (P : Pred1 E S) (R : Pred2 E S) (y : E) (s : S) :
     possessiveSortal possessor P R y s = (π P R) possessor y s := rfl
 
--- ============================================================================
--- PART 5: The Composition with Iota (Definiteness)
--- ============================================================================
 
 /--
 **Iota presupposition**: Uniqueness of the described entity.
@@ -221,9 +206,6 @@ structure DefinitePossessive (E S : Type) where
   predicate : Pred1 E S
   presupposition : ∀ s : S, iotaPresupposition predicate s
 
--- ============================================================================
--- PART 6: Connection to Ahn & Zhu (2025)
--- ============================================================================
 
 /-!
 **The Ahn & Zhu Connection**
@@ -271,9 +253,6 @@ theorem bare_has_no_relatum_slot {E S : Type}
     -- bareSemantics creates a predicate with no relatum dependency
     bareSemantics P x s = P x s := rfl
 
--- ============================================================================
--- PART 7: Bridging Licensing — The Deep Theorem
--- ============================================================================
 
 /-!
 **Bridging requires a relatum slot**.
@@ -324,9 +303,6 @@ theorem bridging_from_pi {E S : Type}
     canFillRelatum .lexicalRelation = true := by
   exact ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- PART 8: The Vikner & Jensen Possession Relation Taxonomy
--- ============================================================================
 
 /--
 Vikner & Jensen's taxonomy of possession relations (from Barker p9).
@@ -355,9 +331,6 @@ This corresponds exactly to relational vs sortal nouns.
 def relationSource (isNounRelational : Bool) : String :=
   if isNounRelational then "lexical" else "pragmatic (from π)"
 
--- ============================================================================
--- PART 9: Compositional Derivations
--- ============================================================================
 
 /--
 **Full derivation: "John's brother"**
@@ -427,9 +400,6 @@ def derivation_bare_seat {E S : Type}
     (seat : Pred1 E S) : Pred1 E S :=
   bareSemantics seat
 
--- ============================================================================
--- PART 10: The Deep Unifying Theorem
--- ============================================================================
 
 /-!
 ## The Algebraic Structure of Type-Shifting
@@ -546,9 +516,7 @@ theorem structural_explanation (t : NominalInterpType) :
     t.canBridge = true ↔ t.hasRelatumSlot = true := by
   cases t <;> simp [NominalInterpType.canBridge, NominalInterpType.hasRelatumSlot]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

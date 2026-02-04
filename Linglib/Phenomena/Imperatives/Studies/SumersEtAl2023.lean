@@ -28,9 +28,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Imperatives.Studies.SumersEtAl2023
 
--- ============================================================================
--- PART 1: Experimental Domain
--- ============================================================================
 
 /-!
 ## Mushroom Foraging Cover Story
@@ -61,9 +58,6 @@ def RewardValue.toInt : RewardValue → Int
   | .plusOne => 1
   | .plusTwo => 2
 
--- ============================================================================
--- PART 2: Experiment 1 - Context Manipulation
--- ============================================================================
 
 /-!
 ## Experiment 1: 1DP vs 2DP Contexts
@@ -144,9 +138,6 @@ theorem exp1_context_effect :
     exp1Results.relevanceRate1DP > exp1Results.relevanceRate2DP := by
   native_decide
 
--- ============================================================================
--- PART 3: Experiment 2 - Instruction Manipulation
--- ============================================================================
 
 /-!
 ## Experiment 2: Instruction Manipulation
@@ -234,9 +225,6 @@ theorem exp2_instruction_ordering :
     exp2Results.relevanceRateUnbiased > exp2Results.relevanceRateTruthBiased := by
   native_decide
 
--- ============================================================================
--- PART 4: Model Comparison
--- ============================================================================
 
 /-!
 ## Model Comparison
@@ -297,9 +285,6 @@ theorem lambda_ordering_matches_instructions :
     mleParams.lamUnbiased > mleParams.lamTruthBiased := by
   native_decide
 
--- ============================================================================
--- PART 5: Key Empirical Patterns
--- ============================================================================
 
 /-!
 ## Summary of Key Patterns
@@ -326,9 +311,6 @@ theorem pattern_instructions :
     mleParams.lamRelevanceBiased > mleParams.lamTruthBiased := by
   native_decide
 
--- ============================================================================
--- PART 6: Item Examples
--- ============================================================================
 
 /-!
 ## Example Trial

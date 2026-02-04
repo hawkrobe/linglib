@@ -38,9 +38,7 @@ German has NESTED dependencies (can be handled by CFG):
 
 namespace Phenomena.FillerGap.CrossSerial
 
--- ============================================================================
 -- NP-Verb Pairing Types
--- ============================================================================
 
 /--
 A dependency pairing: which NP goes with which verb.
@@ -70,9 +68,7 @@ def crossSerialDeps (n : Nat) : List Dependency :=
 def nestedDeps (n : Nat) : List Dependency :=
   List.range n |>.map (fun i => ⟨i + 1, n - i⟩)
 
--- ============================================================================
 -- Dutch Examples (Steedman 2000)
--- ============================================================================
 
 /--
 Dutch cross-serial dependency example.
@@ -133,9 +129,7 @@ def dutch_4np_4v : DutchExample :=
   , dependencies := crossSerialDeps 4
   }
 
--- ============================================================================
 -- German Contrast (Nested)
--- ============================================================================
 
 /--
 German nested dependency example.
@@ -163,9 +157,7 @@ def german_3np_3v : GermanExample :=
   , dependencies := nestedDeps 3
   }
 
--- ============================================================================
 -- The Formal Language Connection
--- ============================================================================
 
 /--
 Cross-serial dependencies correspond to the copy language {ww | w ∈ Σ*},
@@ -186,9 +178,7 @@ def crossSerialRequires : FormalLanguageType := .mildlyContextSensitive
 /-- Nested dependencies are context-free -/
 def nestedRequires : FormalLanguageType := .contextFree
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 def allDutchExamples : List DutchExample :=
   [dutch_2np_2v, dutch_3np_3v, dutch_4np_4v]
@@ -196,9 +186,7 @@ def allDutchExamples : List DutchExample :=
 def allGermanExamples : List GermanExample :=
   [german_3np_3v]
 
--- ============================================================================
 -- Verification
--- ============================================================================
 
 /-- Cross-serial has same number of dependencies as NPs -/
 theorem crossSerial_length (n : Nat) :
@@ -218,9 +206,7 @@ theorem dutch_3_is_crossSerial :
 theorem german_3_is_nested :
     german_3np_3v.pattern = .nested := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

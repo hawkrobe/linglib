@@ -23,9 +23,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.MultipleWh
 
--- ============================================================================
--- PART 1: Multiple Wh-Question Data
--- ============================================================================
 
 /-- A multiple wh-question with its answer patterns -/
 structure MultipleWhDatum where
@@ -86,9 +83,6 @@ def whichManWoman_quant : MultipleWhDatum :=
 def multipleWhExamples : List MultipleWhDatum :=
   [whichManWoman, whichManWoman_conj, whichManWoman_disj, whichManWoman_quant]
 
--- ============================================================================
--- PART 2: Answer Form Equivalence
--- ============================================================================
 
 /-- Constituent and sentential answers express the same proposition.
     G&S 1984: Both derived from the same abstract + term.
@@ -113,9 +107,6 @@ def johnSuzy_equiv : AnswerEquivalence :=
 def answerEquivalenceExamples : List AnswerEquivalence :=
   [johnSuzy_equiv]
 
--- ============================================================================
--- PART 3: Pair-List vs Single-Pair Readings
--- ============================================================================
 
 /-- Some multiple-wh questions have both pair-list and single-pair readings.
     G&S focus on exhaustive (pair-list) readings.
@@ -130,9 +121,6 @@ inductive MultiWhReading where
 -/
 def defaultReading : MultiWhReading := .pairList
 
--- ============================================================================
--- PART 4: n-Place Term Categories
--- ============================================================================
 
 /-- G&S define a hierarchy of term categories:
     T^0 = S/S (sentence adverbs: yes, no)

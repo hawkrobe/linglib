@@ -59,9 +59,7 @@ import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 
--- ============================================================================
 -- Reflexive Coreference
--- ============================================================================
 
 /-- Reflexives require a local antecedent for coreference -/
 def reflexiveCoreferenceData : PhenomenonData := {
@@ -98,9 +96,7 @@ def reflexiveCoreferenceData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Pronominal Disjoint Reference
--- ============================================================================
 
 /-- Pronouns resist coreference with local antecedents -/
 def pronominalDisjointReferenceData : PhenomenonData := {
@@ -121,9 +117,7 @@ def pronominalDisjointReferenceData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Referential Expression Freedom
--- ============================================================================
 
 /-- Full nominals resist coreference with c-commanding expressions -/
 def referentialExpressionFreedomData : PhenomenonData := {
@@ -138,9 +132,7 @@ def referentialExpressionFreedomData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Complementary Distribution
--- ============================================================================
 
 /-- Reflexives and pronouns are in complementary distribution for coreference -/
 def complementaryDistributionData : PhenomenonData := {
@@ -160,9 +152,7 @@ def complementaryDistributionData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Combined Coreference Data
--- ============================================================================
 
 /-- All coreference pattern data -/
 def coreferenceData : List PhenomenonData := [
@@ -172,9 +162,7 @@ def coreferenceData : List PhenomenonData := [
   complementaryDistributionData
 ]
 
--- ============================================================================
 -- Coreference Pattern Types
--- ============================================================================
 
 /-- Types of anaphoric expressions -/
 inductive AnaphorType where
@@ -220,9 +208,7 @@ def namePattern : CoreferencePattern := {
   antecedentDomain := none  -- cannot have c-commanding antecedent
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval wordsToString [john, sees, himself]   -- "John sees himself"
 #eval wordsToString [mary, sees, herself]   -- "Mary sees herself"

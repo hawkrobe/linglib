@@ -32,9 +32,6 @@ import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA
 
--- ============================================================================
--- PART 1: RSA Scenario with Real Numbers (for proofs)
--- ============================================================================
 
 /--
 RSA scenario using real numbers.
@@ -72,9 +69,6 @@ structure RSAScenarioR where
 
 attribute [instance] RSAScenarioR.finU RSAScenarioR.finW
 
--- ============================================================================
--- PART 2: Conversion from RSAScenario (ℚ) to RSAScenarioR (ℝ)
--- ============================================================================
 
 /--
 Convert a computational RSAScenario to RSAScenarioR for proofs.
@@ -96,9 +90,6 @@ def RSAScenario.toReal {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [Dec
   prior_nonneg := fun _ => by sorry
   prior_pos := by sorry
 
--- ============================================================================
--- PART 3: RSAModel typeclass (for generic theorems)
--- ============================================================================
 
 /--
 RSAModel typeclass - enables instance-based theorem application.
@@ -144,9 +135,6 @@ def RSAScenario.toModel {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [De
     (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAModel U :=
   (RSAScenario.toReal S defaultInterp defaultLexicon).toModel
 
--- ============================================================================
--- PART 4: RSA Dynamics (Generic)
--- ============================================================================
 
 variable {M : Type*} [I : RSAModel M]
 
@@ -172,9 +160,6 @@ noncomputable def Z_generic {α : Type*} [Fintype α] (f : α → ℝ) : ℝ :=
 noncomputable def normalize_generic {α : Type*} [Fintype α] (f : α → ℝ) (a : α) : ℝ :=
   if Z_generic f = 0 then 0 else f a / Z_generic f
 
--- ============================================================================
--- PART 5: Information-Theoretic Quantities
--- ============================================================================
 
 /-- Shannon entropy H(p) = -Σ p(x) log p(x) -/
 noncomputable def entropy_generic {α : Type*} [Fintype α] (p : α → ℝ) : ℝ :=
@@ -199,9 +184,6 @@ noncomputable def G_α_generic (Spk : I.World → I.Utterance → ℝ)
     (L : I.Utterance → I.World → ℝ) : ℝ :=
   H_S_generic Spk + I.α * E_VL_generic Spk L
 
--- ============================================================================
--- PART 6: RSA State and Dynamics
--- ============================================================================
 
 /-- RSA state: speaker-listener pair. -/
 structure RSAState_generic (I : RSAModel M) where
@@ -222,9 +204,6 @@ noncomputable def stepRSA_generic (state : RSAState_generic I) : RSAState_generi
 noncomputable def iterateRSA_generic (n : ℕ) : RSAState_generic I :=
   (stepRSA_generic)^[n] initRSA_generic
 
--- ============================================================================
--- PART 7: Zaslavsky Theorems
--- ============================================================================
 
 /--
 **Proposition 1 (Zaslavsky et al.)**: G_α is monotonically non-decreasing.
@@ -262,9 +241,6 @@ theorem alpha_one_critical_generic {M : Type*} [I : RSAModel M] (hα : I.α = 1)
   funext Spk L
   simp only [G_α_generic, hα, one_mul]
 
--- ============================================================================
--- PART 8: Convergence Criteria
--- ============================================================================
 
 /-- Check if RSA has converged within tolerance ε. -/
 def εConverged_generic {M : Type*} [I : RSAModel M] (t : ℕ) (ε : ℝ) : Prop :=

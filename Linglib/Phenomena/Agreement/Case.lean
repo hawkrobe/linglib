@@ -27,9 +27,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Case marking data -/
 def caseData : PhenomenonData := {
@@ -70,9 +68,7 @@ def caseData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 #eval Surface.caseOk [he, sees, her]   -- true (nom subj, acc obj)
 #eval Surface.caseOk [him, sees, her]  -- false (acc in subj position)

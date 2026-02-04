@@ -30,9 +30,6 @@ namespace RSA.GoodmanStuhlmuller2013
 
 open RSA RSA.Domains.Quantity RSA.Eval
 
--- ============================================================================
--- PART 1: Basic Scalar Implicature (Full Knowledge)
--- ============================================================================
 
 -- Use the 3-person quantity domain from Fragments
 def threePerson : Domain 3 := standard 3
@@ -91,9 +88,6 @@ theorem s1_uses_some_in_w1 :
 
 end BasicImplicature
 
--- ============================================================================
--- PART 2: Knowledge State RSA (Partial Knowledge)
--- ============================================================================
 
 /-
 ## Connection to Unified Mental State API
@@ -184,9 +178,7 @@ def choose : Nat → Nat → Nat
   | 0, _ + 1 => 0
   | n + 1, k + 1 => choose n k + choose n (k + 1)
 
--- ============================================================================
 -- DERIVATION: Hypergeometric from Individual Apple States
--- ============================================================================
 
 /-
 ## Deriving the Hypergeometric from Individual Facts
@@ -272,9 +264,7 @@ def obsProbDerived (o : Observation) (a : Access) (s : WorldState) : ℚ :=
     let totalCount := configs.length * samples.length
     if totalCount > 0 then (matchCount : ℚ) / (totalCount : ℚ) else 0
 
--- ============================================================================
 -- Closed-form Hypergeometric (equivalent, more efficient)
--- ============================================================================
 
 /-- Hypergeometric probability (closed form).
 
@@ -362,9 +352,7 @@ theorem implicature_canceled_access1 :
 
 end KnowledgeState
 
--- ============================================================================
 -- PART 2b: Unified API Version (Approximation)
--- ============================================================================
 
 namespace UnifiedAPIVersion
 
@@ -490,9 +478,6 @@ theorem unified_version_computes :
 
 end UnifiedAPIVersion
 
--- ============================================================================
--- PART 3: Consistency Between Models
--- ============================================================================
 
 namespace Consistency
 
@@ -528,9 +513,6 @@ theorem models_consistent_on_implicature :
 
 end Consistency
 
--- ============================================================================
--- PART 4: Number Words (Experiment 2)
--- ============================================================================
 
 namespace NumberWords
 
@@ -563,9 +545,7 @@ inductive NumUtterance where
 
 def allNumUtterances : List NumUtterance := [.one, .two, .three]
 
--- ============================================================================
 -- Two Semantic Backends (Meaning Functions)
--- ============================================================================
 
 /-- Lower-bound meaning: "n" means ≥n -/
 def lowerBoundMeaning : NumUtterance → KnowledgeState.WorldState → Bool
@@ -586,9 +566,7 @@ def exactMeaning : NumUtterance → KnowledgeState.WorldState → Bool
   | .three, .s3 => true
   | .three, _ => false   -- exactly 3
 
--- ============================================================================
 -- RSA Parameterized by Meaning Function
--- ============================================================================
 
 /-- L0 parameterized by meaning function -/
 def L0_param (meaning : NumUtterance → KnowledgeState.WorldState → Bool)
@@ -626,9 +604,7 @@ def getNumScore (dist : List (KnowledgeState.WorldState × ℚ)) (s : KnowledgeS
   | some (_, p) => p
   | none => 0
 
--- ============================================================================
 -- Instantiate with Lower-Bound Backend
--- ============================================================================
 
 def l1_lb_two_fullAccess := L1_param_scores lowerBoundMeaning .two .a3
 def l1_lb_two_access2 := L1_param_scores lowerBoundMeaning .two .a2
@@ -639,9 +615,7 @@ def l1_lb_one_access2 := L1_param_scores lowerBoundMeaning .one .a2
 #eval l1_lb_two_fullAccess  -- Lower-bound: full access
 #eval l1_lb_two_access2     -- Lower-bound: partial access
 
--- ============================================================================
 -- Instantiate with Exact Backend
--- ============================================================================
 
 def l1_ex_two_fullAccess := L1_param_scores exactMeaning .two .a3
 def l1_ex_two_access2 := L1_param_scores exactMeaning .two .a2
@@ -649,18 +623,14 @@ def l1_ex_two_access2 := L1_param_scores exactMeaning .two .a2
 #eval l1_ex_two_fullAccess  -- Exact: full access
 #eval l1_ex_two_access2     -- Exact: partial access
 
--- ============================================================================
 -- Theorems: What Each Backend Predicts
--- ============================================================================
 
 /-- Lower-bound + full access: exact interpretation emerges (s2 > s3) -/
 theorem lowerbound_full_access_implicature :
     getNumScore l1_lb_two_fullAccess .s2 > getNumScore l1_lb_two_fullAccess .s3 := by
   native_decide
 
--- ============================================================================
 -- The Core Argument: Exact Semantics Has No Implicature to Cancel
--- ============================================================================
 
 /-
 ## Why Exact Semantics Cannot Explain the Phenomenon
@@ -747,9 +717,7 @@ theorem exact_semantics_incompatible_with_cancellation :
 **Conclusion**: Exact semantics is inconsistent with the empirical phenomenon.
 -/
 
--- ============================================================================
 -- Connection to Semantic Backends
--- ============================================================================
 
 /-
 ## Proper Semantic Backends
@@ -766,9 +734,7 @@ Both can be used with the Core RSA machinery. The proofs here and there show:
 4. Therefore: exact semantics cannot model the empirical phenomenon
 -/
 
--- ============================================================================
 -- Formal Connection to Empirical Phenomenon
--- ============================================================================
 
 /-
 ## The Logical Chain
@@ -843,9 +809,6 @@ Exact lacks step 1 → cannot model phenomenon ✗
 
 end NumberWords
 
--- ============================================================================
--- PART 5: Grounding in Montague Semantics
--- ============================================================================
 
 namespace MontaguGrounding
 
@@ -868,9 +831,7 @@ The meaning functions for numerals match Montague's `LowerBound`
 and `DeFregean` numeral theories.
 -/
 
--- ============================================================================
 -- Part A: Grounding Scalar Implicature in Montague Quantifiers
--- ============================================================================
 
 /-
 ## Quantifier Semantics Grounding
@@ -923,9 +884,7 @@ theorem scalar_implicature_grounded :
     [⟨3, by omega⟩] := by
   native_decide
 
--- ============================================================================
 -- Part B: Grounding Number Word Semantics
--- ============================================================================
 
 /-
 ## Grounding Number Word Semantics
@@ -948,9 +907,7 @@ def uttToNumWord : NumberWords.NumUtterance → NumWord
 def stateToNat : KnowledgeState.WorldState → Nat
   | .s0 => 0 | .s1 => 1 | .s2 => 2 | .s3 => 3
 
--- ============================================================================
 -- Grounding Theorems
--- ============================================================================
 
 /--
 **Grounding: Lower-bound meaning matches Montague LowerBound theory**
@@ -972,9 +929,7 @@ theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldS
     NumberWords.exactMeaning u s = DeFregean.meaning (uttToNumWord u) (stateToNat s) := by
   cases u <;> cases s <;> native_decide
 
--- ============================================================================
 -- Connecting to Empirical Predictions
--- ============================================================================
 
 /--
 **Montague theory comparison applies to this empirical phenomenon**
@@ -1025,9 +980,7 @@ theorem grounding_enables_empirical_adjudication :
 
 end MontaguGrounding
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Formalizes
@@ -1074,9 +1027,7 @@ KnowledgeState.RSA (general model)
 ```
 -/
 
--- ============================================================================
 -- Fintype-Based API Demonstration
--- ============================================================================
 
 /-!
 ## Fintype-Based RSA

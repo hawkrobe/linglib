@@ -57,9 +57,6 @@ open Montague.Determiner.Quantifier
 open Montague.Scales
 open NeoGricean.Exhaustivity
 
--- ============================================================================
--- PART 1: Sentence Frames
--- ============================================================================
 
 /-
 ## Sentence Frames
@@ -115,9 +112,6 @@ def frameFromEntry {m : Model} (entry : SemLexEntry m)
   , scaleMembership := entry.scaleMembership
   }
 
--- ============================================================================
--- PART 2: Alternative Frame Generation
--- ============================================================================
 
 /-
 ## Alternative Frames
@@ -168,9 +162,6 @@ def allFrames {m : Model} (f : SentenceFrame m)
     (lex : SemLexicon m) (ctx : ContextPolarity) : List (SentenceFrame m) :=
   f :: alternativeFrames f lex ctx
 
--- ============================================================================
--- PART 3: Conversion to Prop' World
--- ============================================================================
 
 /-
 ## World-Indexed Propositions
@@ -206,9 +197,6 @@ def framesToProps {m : Model} {World : Type} (frames : List (SentenceFrame m))
     (vpAt : WorldIndexedVP m World) : List (Prop' World) :=
   frames.map (fun f => frameToProp f vpAt)
 
--- ============================================================================
--- PART 4: ALT Set Generation
--- ============================================================================
 
 /-
 ## The Main Function: altSet
@@ -248,9 +236,6 @@ def strictAltSet {m : Model} {World : Type} (f : SentenceFrame m)
   let props := framesToProps (alternativeFrames f lex ctx) vpAt
   { p | p ∈ props }
 
--- ============================================================================
--- PART 5: Integration with Exhaustivity
--- ============================================================================
 
 /-
 ## Connecting to exhMW and exhIE
@@ -280,9 +265,7 @@ def exhIE_frame {m : Model} {World : Type} (f : SentenceFrame m)
     (ctx : ContextPolarity := .upward) : Prop' World :=
   exhIE (altSet f vpAt lex ctx) (frameToProp f vpAt)
 
--- ============================================================================
 -- PART 5b: Bridge from SemDeriv to SentenceFrame
--- ============================================================================
 
 /-
 ## Extracting Frames from Derivations
@@ -360,9 +343,6 @@ def exhIE_derivation {m : Model} {World : Type} (d : SemDeriv m)
   (frameFromDerivation d noun).map fun frame =>
     exhIE_frame frame vpAt lex ctx
 
--- ============================================================================
--- PART 6: Example - "Some students passed"
--- ============================================================================
 
 /-
 ## Worked Example
@@ -451,9 +431,6 @@ def w1 : PassWorld := ⟨1, by omega⟩
 -- World w3: all students passed
 def w3 : PassWorld := ⟨3, by omega⟩
 
--- ============================================================================
--- PART 7: Verification Theorems
--- ============================================================================
 
 /-- somePassed holds at w1 -/
 theorem somePassed_at_w1 : somePassed w1 := by
@@ -492,9 +469,6 @@ theorem altSet_contains_base :
   left
   rfl
 
--- ============================================================================
--- PART 8: Main Result - Exhaustified Meaning
--- ============================================================================
 
 /-
 ## The Payoff: Automatic Exhaustification
@@ -553,9 +527,7 @@ theorem exh_some_at_w1 : exhSomePassed w1 := by
     -- Deferring to focus on infrastructure.
     sorry
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

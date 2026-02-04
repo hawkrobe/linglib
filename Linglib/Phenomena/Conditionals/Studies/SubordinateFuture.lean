@@ -38,9 +38,6 @@ include future times.
 
 namespace Phenomena.SubordinateFuture
 
--- ============================================================================
--- PART 1: Morphological Forms
--- ============================================================================
 
 /--
 Portuguese verbal forms relevant to SF analysis.
@@ -78,9 +75,6 @@ def mendesSFAnalysis : SFDecomposition :=
   , tense := "Present"
   , futureFromMood := true }
 
--- ============================================================================
--- PART 2: Core Examples from Mendes (2025)
--- ============================================================================
 
 /--
 An example with its interpretation and key properties.
@@ -174,9 +168,6 @@ def ex4_relativeClause : SFExample :=
   , isSubordinate := true
   , trigger := "Relative clause (que)" }
 
--- ============================================================================
--- PART 3: Modal Donkey Anaphora (Key Evidence)
--- ============================================================================
 
 /--
 Modal donkey anaphora data structure.
@@ -232,9 +223,6 @@ def ex6_temporalAnchoring : SFExample :=
   , isSubordinate := true
   , trigger := "Conditional with explicit time" }
 
--- ============================================================================
--- PART 4: Cross-Linguistic Parallels
--- ============================================================================
 
 /--
 Cross-linguistic data: Spanish parallel.
@@ -264,9 +252,6 @@ def italian_congiuntivo : CrossLinguisticExample :=
   , gloss := "If Maria be.SUBJ at home, she-will-answer"
   , isParallelToPortugueseSF := true }
 
--- ============================================================================
--- PART 5: Theoretical Predictions
--- ============================================================================
 
 /--
 Predictions of Mendes' analysis.
@@ -300,9 +285,6 @@ def prediction_indicativeContrast : MendesPrediction :=
   , confirmed := true
   , evidence := "Example 2 vs Example 1 contrast" }
 
--- ============================================================================
--- PART 6: Summary Data Collections
--- ============================================================================
 
 /-- All SF examples -/
 def sfExamples : List SFExample :=
@@ -328,9 +310,7 @@ def predictions : List MendesPrediction :=
   , prediction_donkeyAnaphora
   , prediction_indicativeContrast ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Provides

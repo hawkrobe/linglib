@@ -47,9 +47,7 @@ open Montague.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple Individu
 
 variable (World Atom : Type)
 
--- ============================================================================
 -- Type-Shifting Operations (with Ranking)
--- ============================================================================
 
 /--
 Type-shifting operations from Partee (1987) / Dayal (2004).
@@ -96,9 +94,7 @@ example : morePreferred .down .exists = true := rfl
 example : morePreferred .iota .exists = true := rfl
 example : equallyPreferred .down .iota = true := rfl
 
--- ============================================================================
 -- Instantiation Sets and Number
--- ============================================================================
 
 /--
 **Instantiation set** of a kind at a world.
@@ -139,9 +135,7 @@ def InstantiationSet.allowsSingular (is : InstantiationSet) : Bool :=
 def InstantiationSet.allowsPlural (is : InstantiationSet) : Bool :=
   is.accessible
 
--- ============================================================================
 -- Number Morphology
--- ============================================================================
 
 /--
 Number feature on nominals.
@@ -190,9 +184,7 @@ structure SingularKind where
   singularLicense : SingularLicense
   deriving Repr
 
--- ============================================================================
 -- Taxonomic Readings
--- ============================================================================
 
 /--
 **Taxonomic readings** (Dayal 2004: 426-433)
@@ -246,9 +238,7 @@ def dogTaxonomy : TaxonomicHierarchy :=
   { superKind := "dog"
   , subKinds := ["poodle", "labrador", "beagle", "collie"] }
 
--- ============================================================================
 -- Extended Type-Shifting with Dayal's Constraints
--- ============================================================================
 
 /--
 Type-shift availability given number and blocking.
@@ -305,9 +295,7 @@ Follows Meaning Preservation: choose highest-ranked available shift.
 def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
   (availableShifts ctx).head?
 
--- ============================================================================
 -- Cross-Linguistic Kind Reference Patterns
--- ============================================================================
 
 /--
 Language-specific parameters for kind reference (Dayal 2004: 433-445).
@@ -382,9 +370,7 @@ def germanKindRef : KindReferenceParams :=
   , definiteSingularKinds := true
   , definitePluralKinds := true }  -- Optional
 
--- ============================================================================
 -- Derived Kind Predication (DKP) - Extended
--- ============================================================================
 
 /--
 **DKP** (Derived Kind Predication) - Dayal's version.
@@ -423,9 +409,7 @@ def isKindLevelPredicate : String → Bool
   | "invented" | "discovered" => true
   | _ => false
 
--- ============================================================================
 -- Well-Established Kinds
--- ============================================================================
 
 /--
 **Well-established kinds** (Dayal 2004: 417-420)
@@ -466,9 +450,7 @@ def modificationBlocksKind : ModificationEffect :=
   , modifier := "tall"
   , stillKind := false }
 
--- ============================================================================
 -- Grounding Theorems
--- ============================================================================
 
 /-- Meaning preservation ranking is transitive -/
 theorem ranking_transitive (t1 t2 t3 : TypeShift)
@@ -504,9 +486,7 @@ theorem english_singular_kind_uses_iota :
     }
     selectShift ctx = some .iota := rfl
 
--- ============================================================================
 -- Dayal/Chierchia Integration
--- ============================================================================
 
 /--
 Convert Chierchia's BlockingPrinciple + noun info to Dayal's TypeShiftContext.
@@ -611,9 +591,7 @@ theorem meaning_preservation_derives_kind_preference :
     selectShift ctx = some .down  -- ∩ selected over ∃
     := rfl
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- "Dogs are mammals" - bare plural kind reference
 #check englishKindRef.bareKindsOK  -- true

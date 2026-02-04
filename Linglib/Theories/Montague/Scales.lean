@@ -24,9 +24,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Montague.Scales
 
--- ============================================================================
 -- General Scale Infrastructure
--- ============================================================================
 
 /--
 A Horn Scale is a list of expressions ordered by semantic strength.
@@ -68,9 +66,7 @@ def weakerAlternatives {α : Type} [BEq α] (s : HornScale α) (x : α) : List �
   | some px => s.members.take px
   | none => []
 
--- ============================================================================
 -- Quantifier Scales
--- ============================================================================
 
 namespace Quantifiers
 
@@ -136,9 +132,7 @@ theorem some_has_stronger_alternatives :
     strongerAlternatives quantScale .some_ = [.most, .all] := by
   native_decide
 
--- ============================================================================
 -- World Semantics (Intensional)
--- ============================================================================
 
 /-!
 ## Intensional Semantics
@@ -222,9 +216,7 @@ theorem some_compatible_with_all : worldMeaning 3 .some_ w3 = true := by native_
 
 end Quantifiers
 
--- ============================================================================
 -- Connective Scales
--- ============================================================================
 
 namespace Connectives
 
@@ -277,9 +269,7 @@ theorem or_alternative :
 
 end Connectives
 
--- ============================================================================
 -- Modal Scales
--- ============================================================================
 
 namespace Modals
 
@@ -325,9 +315,7 @@ theorem necessary_stronger_than_possible :
 
 end Modals
 
--- ============================================================================
 -- Numeral Scales
--- ============================================================================
 
 namespace Numerals
 
@@ -360,9 +348,7 @@ theorem two_alternatives :
 
 end Numerals
 
--- ============================================================================
 -- Scalar Implicature Derivation
--- ============================================================================
 
 /--
 **Standard Recipe for Scalar Implicature**
@@ -392,9 +378,7 @@ example : scalarImplicatures Quantifiers.quantScale .some_ = [.most, .all] := by
 example : scalarImplicatures Connectives.connScale .or_ = [.and_] := by
   native_decide
 
--- ============================================================================
 -- Monotonicity and Scale Reversal
--- ============================================================================
 
 /--
 ## Monotonicity Effects
@@ -444,9 +428,7 @@ theorem de_blocks_some_not_all :
     scalarAlternativesInContext Quantifiers.quantScale .all .downward = [.none_, .some_, .most] := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Provides

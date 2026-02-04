@@ -29,9 +29,7 @@ namespace Phenomena.Negation
 
 open Phenomena
 
--- ============================================================================
 -- Negation Inference Judgments
--- ============================================================================
 
 /--
 A negation inference test case.
@@ -51,9 +49,7 @@ structure NegationInference where
   notes : String := ""
   deriving Repr
 
--- ============================================================================
 -- DE Property of Negation
--- ============================================================================
 
 /--
 Negation is DE: "didn't see animal" → "didn't see dog" (downward valid).
@@ -99,9 +95,7 @@ def double_negation_ue : NegationInference :=
   , notes := "DE ∘ DE = UE: double negation restores upward inference"
   }
 
--- ============================================================================
 -- Scalar Implicature Interaction
--- ============================================================================
 
 /--
 DE blocks scalar implicature: "didn't eat some" ≠ "didn't eat some but not all".
@@ -138,9 +132,7 @@ def positive_derives_si : SIBlockingDatum :=
   , notes := "UE context: SI is derived"
   }
 
--- ============================================================================
 -- NPI Licensing
--- ============================================================================
 
 /--
 Negative Polarity Item licensing datum.
@@ -184,9 +176,7 @@ def no_licensor_ever : NPIDatum :=
   , licensor := "none"
   }
 
--- ============================================================================
 -- All Data
--- ============================================================================
 
 def allNegationInferences : List NegationInference :=
   [negation_de_valid, negation_not_ue, double_negation_ue]
@@ -198,9 +188,7 @@ def allNPIData : List NPIDatum :=
   [negation_licenses_anyone, no_licensor_anyone,
    negation_licenses_ever, no_licensor_ever]
 
--- ============================================================================
 -- Consistency Checks
--- ============================================================================
 
 /-- Negation should be DE but not UE -/
 theorem negation_is_de_not_ue :

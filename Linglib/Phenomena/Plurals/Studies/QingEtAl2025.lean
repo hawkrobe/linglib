@@ -37,9 +37,7 @@ import Linglib.Theories.Montague.Verb.Attitude.BuilderProperties
 
 namespace Phenomena.QingEtAl2025
 
--- ============================================================================
 -- Language Type
--- ============================================================================
 
 /-- Languages represented in the data -/
 inductive Language where
@@ -49,9 +47,7 @@ inductive Language where
   | turkish
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
 -- Empirical Observation Records
--- ============================================================================
 
 /--
 An empirical observation: predicate name, language, and acceptability.
@@ -74,9 +70,7 @@ structure Observation where
   notes : String := ""
   deriving Repr, BEq
 
--- ============================================================================
 -- English Observations
--- ============================================================================
 
 def hopeEn : Observation := ⟨"hope", .english, "", false, false,
   "Class 3: C-dist + positive + TSP → anti-rogative"⟩
@@ -95,9 +89,7 @@ def worryEn : Observation := ⟨"worry", .english, "", true, true,
 
 def englishObs : List Observation := [hopeEn, wishEn, expectEn, fearEn, dreadEn, worryEn]
 
--- ============================================================================
 -- Mandarin Observations
--- ============================================================================
 
 def qidaiZh : Observation := ⟨"qidai", .mandarin, "look forward to", true, true,
   "Class 1: positive but non-C-dist, so takes questions"⟩
@@ -111,9 +103,7 @@ def haipaZh : Observation := ⟨"haipa", .mandarin, "fear", true, true, ""⟩
 
 def mandarinObs : List Observation := [qidaiZh, danxinZh, xiwangZh, haipaZh]
 
--- ============================================================================
 -- Japanese Observations
--- ============================================================================
 
 def tanosimiJa : Observation := ⟨"tanosimi", .japanese, "looking forward to", true, true,
   "Class 1: positive but non-C-dist"⟩
@@ -127,9 +117,7 @@ def shinpaiJa : Observation := ⟨"shinpai", .japanese, "worry", true, true, ""�
 
 def japaneseObs : List Observation := [tanosimiJa, osoreJa, kitaiJa, shinpaiJa]
 
--- ============================================================================
 -- Turkish Observations
--- ============================================================================
 
 def korkTr : Observation := ⟨"kork-", .turkish, "fear", true, true,
   "Class 2: symmetric interpretation with questions"⟩
@@ -141,18 +129,14 @@ def endiselenTr : Observation := ⟨"endişelen-", .turkish, "worry", true, true
 
 def turkishObs : List Observation := [korkTr, umTr, endiselenTr]
 
--- ============================================================================
 -- All Observations
--- ============================================================================
 
 def allObservations : List Observation :=
   englishObs ++ mandarinObs ++ japaneseObs ++ turkishObs
 
 #eval allObservations.length  -- Expected: 17
 
--- ============================================================================
 -- Linking to Fragments (for verification)
--- ============================================================================
 
 /-!
 ## Verifying Predictions Against Observations
@@ -184,9 +168,7 @@ hopeEn.takesPolQ = false ∧ hopeEn.takesWhQ = false  ✓
 | Turkish | um- | 3 | ✗ questions | ✗ | ✓ |
 -/
 
--- ============================================================================
 -- Key Examples from the Paper
--- ============================================================================
 
 /-!
 ## Example: The hope-wh puzzle (Section 1)

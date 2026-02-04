@@ -34,9 +34,7 @@ namespace Montague.Verb.Attitude.Doxastic
 
 open Core.Proposition
 
--- ============================================================================
 -- Accessibility Relations
--- ============================================================================
 
 /--
 Doxastic accessibility relation type.
@@ -64,9 +62,7 @@ def diaAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
     (worlds : List W) (p : W → Bool) : Bool :=
   worlds.any fun w' => R agent w w' && p w'
 
--- ============================================================================
 -- Veridicality
--- ============================================================================
 
 /--
 A doxastic predicate is veridical if believing/knowing p entails p is true.
@@ -89,9 +85,7 @@ def veridicalityHolds {W : Type*} (v : Veridicality) (p : W → Bool) (w : W) : 
   | .veridical => p w  -- Must be true at evaluation world
   | .nonVeridical => true  -- No constraint
 
--- ============================================================================
 -- Doxastic Predicate Structure
--- ============================================================================
 
 /--
 A doxastic attitude predicate.
@@ -139,9 +133,7 @@ def DoxasticPredicate.holdsAtQuestion {W E : Type*}
      | .nonVeridical => true) &&  -- For believe: no truth requirement
     boxAt V.access agent w worlds p
 
--- ============================================================================
 -- Standard Doxastic Predicates (Abstract)
--- ============================================================================
 
 /--
 Abstract "believe" predicate template.
@@ -179,9 +171,7 @@ def thinkTemplate {W E : Type*} (R : AccessRel W E) : DoxasticPredicate W E :=
   , createsOpaqueContext := true
   }
 
--- ============================================================================
 -- Properties and Theorems
--- ============================================================================
 
 /--
 Veridical predicates entail their complement.
@@ -221,9 +211,7 @@ theorem doxastic_k_axiom {W E : Type*}
     boxAt V.access agent w worlds q = true :=
   sorry  -- K axiom proof: requires detailed case analysis
 
--- ============================================================================
 -- Substitution and Opacity
--- ============================================================================
 
 /-!
 ## Substitution and Opacity
@@ -250,9 +238,7 @@ def substitutionMayFail {W E : Type*} (V : DoxasticPredicate W E) : Prop :=
     p ≠ q ∧      -- Different intensions
     V.holdsAt agent p w worlds ≠ V.holdsAt agent q w worlds
 
--- ============================================================================
 -- De Dicto vs De Re
--- ============================================================================
 
 /--
 De dicto reading: quantifier under the attitude.
@@ -277,9 +263,7 @@ def deRe {W E D : Type*} (V : DoxasticPredicate W E)
     (w : W) (worlds : List W) : Bool :=
   domain.any fun x => V.holdsAt agent (predicate x) w worlds
 
--- ============================================================================
 -- Connection to Scalar Implicature
--- ============================================================================
 
 /-!
 ## Attitude Embedding and Scalar Implicature

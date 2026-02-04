@@ -40,9 +40,6 @@ namespace Montague.Lexicon.Expressives
 
 open Core.Proposition
 
--- ============================================================================
--- PART 1: Two-Dimensional Meanings
--- ============================================================================
 
 /--
 A two-dimensional meaning following Potts (2005).
@@ -67,9 +64,6 @@ namespace TwoDimProp
 
 variable {W : Type*}
 
--- ============================================================================
--- PART 2: CI Independence (Potts' Key Property)
--- ============================================================================
 
 /--
 Create a proposition with no CI content.
@@ -94,9 +88,6 @@ Combine at-issue content with CI content.
 def withCI (p : BProp W) (c : BProp W) : TwoDimProp W :=
   { atIssue := p, ci := c }
 
--- ============================================================================
--- PART 3: Connectives (At-Issue Composes, CI Projects)
--- ============================================================================
 
 /--
 Negation: negates at-issue, CI PROJECTS UNCHANGED.
@@ -142,9 +133,6 @@ def imp (p q : TwoDimProp W) : TwoDimProp W :=
   { atIssue := fun w => !p.atIssue w || q.atIssue w
   , ci := fun w => p.ci w && q.ci w }  -- Both CIs project
 
--- ============================================================================
--- PART 4: Universal Projection Theorems
--- ============================================================================
 
 /--
 **Theorem: CI Projects Through Negation**
@@ -190,9 +178,6 @@ theorem ci_independent_of_atIssue (p : TwoDimProp W) (w : W)
 
 end TwoDimProp
 
--- ============================================================================
--- PART 5: CI Expression Types
--- ============================================================================
 
 /--
 Types of CI-contributing expressions (Potts 2005, McCready 2010).
@@ -245,9 +230,6 @@ def appositiveProperties : CIExprProperties :=
   , immediate := true
   , independent := true }
 
--- ============================================================================
--- PART 6: The Comma Feature (Potts 2005 §4)
--- ============================================================================
 
 /--
 The comma feature type-shifts at-issue content to CI content.
@@ -276,9 +258,6 @@ def supplementaryAdverb {W : Type*}
   { atIssue := prop              -- Base proposition unchanged
   , ci := adverbMeaning prop }   -- Adverb meaning becomes CI
 
--- ============================================================================
--- PART 7: CI Informativeness (for Lo Guercio 2025)
--- ============================================================================
 
 /--
 CI informativeness ordering (Gutzmann 2015, Lo Guercio 2025).
@@ -310,9 +289,6 @@ CI weaker than: inverse of stronger.
 def ciWeakerThan {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
   ciStrongerThan ψ φ
 
--- ============================================================================
--- PART 8: Felicity as Context Restriction
--- ============================================================================
 
 /--
 A context for evaluating CI felicity (Gutzmann 2015).
@@ -341,9 +317,7 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
   | .emotiveMarker => ctx.emotionalValence.natAbs > 30  -- Strong emotion
   | _ => true  -- Other types: context-independent
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

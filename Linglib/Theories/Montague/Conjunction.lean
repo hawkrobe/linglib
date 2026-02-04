@@ -31,9 +31,7 @@ import Linglib.Theories.Montague.Basic
 
 namespace Montague
 
--- ============================================================================
 -- Conjoinable Types (in Montague namespace, extending Ty)
--- ============================================================================
 
 /--
 A semantic type is conjoinable if it "ends in t".
@@ -61,9 +59,7 @@ example : Ty.isConjoinable (.fn .s .t) = true := rfl    -- propositions (intensi
 
 namespace Conjunction
 
--- ============================================================================
 -- Generalized Conjunction
--- ============================================================================
 
 /--
 Generalized conjunction: recursively defined over conjoinable types.
@@ -91,9 +87,7 @@ def genDisj (τ : Ty) (m : Model) : m.interpTy τ → m.interpTy τ → m.interp
   | .s => fun x _ => x  -- Not conjoinable (worlds); return first argument
   | .fn _ τ' => fun f g => fun x => genDisj τ' m (f x) (g x)
 
--- ============================================================================
 -- Theorems: Type-Specific Behavior
--- ============================================================================
 
 /-- At type t, genConj is Boolean conjunction -/
 theorem genConj_at_t (m : Model) (p q : Bool) :
@@ -107,9 +101,7 @@ theorem genConj_at_et (m : Model) (f g : m.Entity → Bool) :
 theorem genConj_at_eet (m : Model) (f g : m.Entity → m.Entity → Bool) :
     genConj (.fn .e (.fn .e .t)) m f g = fun x y => f x y && g x y := rfl
 
--- ============================================================================
 -- Theorems: Algebraic Properties
--- ============================================================================
 
 /-- Generalized conjunction is commutative at type t -/
 theorem genConj_comm_t (m : Model) (p q : Bool) :
@@ -126,9 +118,7 @@ theorem genDisj_comm_t (m : Model) (p q : Bool) :
     genDisj .t m p q = genDisj .t m q p := by
   simp [genDisj, Bool.or_comm]
 
--- ============================================================================
 -- Theorems: P&R Key Facts
--- ============================================================================
 
 /-!
 ## Partee & Rooth (1983) Key Facts
@@ -180,9 +170,7 @@ theorem genDisj_lambda_distribution {m : Model} {σ τ : Ty}
     (f g : m.interpTy σ → m.interpTy τ) :
     genDisj (σ ⇒ τ) m f g = fun v => genDisj τ m (f v) (g v) := rfl
 
--- ============================================================================
 -- Type-Raising (for coordinating non-conjoinable types)
--- ============================================================================
 
 /-- Type-raise an entity to a generalized quantifier.
     e → <<e,t>,t>
@@ -206,9 +194,7 @@ theorem coordEntities_both_satisfy {m : Model} (e1 e2 : m.interpTy .e)
     (p : m.interpTy (.e ⇒ .t)) :
     coordEntities e1 e2 p = (p e1 && p e2) := rfl
 
--- ============================================================================
 -- Example: Conjoining Properties
--- ============================================================================
 
 /-
 "tall and happy" at type e→t:
@@ -247,9 +233,7 @@ def tall_and_happy : toyModel.interpTy (.fn .e .t) :=
 theorem tall_and_happy_is_pointwise :
     tall_and_happy = fun x => tall_sem x && happy_sem x := rfl
 
--- ============================================================================
 -- Limitations: Non-Boolean Coordination
--- ============================================================================
 
 /-
 ## What Generalized Conjunction Does NOT Handle
@@ -281,9 +265,7 @@ For now, we formalize the core distributive readings where pointwise
 conjunction applies straightforwardly.
 -/
 
--- ============================================================================
 -- Integration with CCG
--- ============================================================================
 
 /-
 ## How CCG Uses Generalized Conjunction
@@ -315,9 +297,7 @@ CCG's type-raising + composition creates the S/NP constituents.
 Montague's generalized conjunction provides their semantic combination.
 -/
 
--- ============================================================================
 -- Type-Polymorphic Schemata (Model-independent)
--- ============================================================================
 
 /-!
 ## Type-Polymorphic Coordination
@@ -347,9 +327,7 @@ theorem disjFunc_distributes {A B : Type*} (disjB : B → B → B)
     (f g : A → B) (x : A) :
     disjFunc disjB f g x = disjB (f x) (g x) := rfl
 
--- ============================================================================
 -- INCL Schema: Generalized Inclusion (G&S 1984)
--- ============================================================================
 
 /-!
 ## INCL Schema
@@ -374,9 +352,7 @@ def inclProperty {E : Type*} (p q : E → Bool) (entities : List E) : Bool :=
 def inclProposition {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
   inclFunc p q worlds
 
--- ============================================================================
 -- QUANT Schema: Generalized Quantification (G&S 1984)
--- ============================================================================
 
 /-!
 ## QUANT Schema

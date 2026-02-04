@@ -37,9 +37,7 @@ open Montague.Determiner.Numeral
 
 namespace NeoGricean
 
--- ============================================================================
 -- Negation Scope Types
--- ============================================================================
 
 /--
 Scope of negation with respect to numeral interpretation.
@@ -60,9 +58,7 @@ instance : ToString NegationScope where
     | .internal => "internal"
     | .external => "external"
 
--- ============================================================================
 -- Negated Meanings
--- ============================================================================
 
 /--
 Compute the negated meaning under a given scope.
@@ -87,9 +83,7 @@ External negation targets exact reading: "not =n" = "≠n"
 def external_neg (w : NumWord) (k : Nat) : Bool :=
   k != w.toNat
 
--- ============================================================================
 -- Theory Predictions
--- ============================================================================
 
 /--
 **Lower-bound internal negation gives <n**
@@ -133,9 +127,7 @@ theorem negation_asymmetry_at_four :
     negatedMeaning LowerBound .three .external 4 = true := by
   native_decide
 
--- ============================================================================
 -- DeFregean Semantics Cannot Explain the Asymmetry
--- ============================================================================
 
 /--
 **Problem for DeFregean semantics: No internal/external distinction**
@@ -169,9 +161,7 @@ theorem divergence_at_world_4 :
     (negatedMeaning DeFregean .three .internal 4 = negatedMeaning DeFregean .three .external 4) := by
   native_decide
 
--- ============================================================================
 -- Default vs Marked Readings
--- ============================================================================
 
 /--
 The default (unmarked) reading of negated numerals.
@@ -199,9 +189,7 @@ def markedNegation : NegationScope := .external
 def interpretNegatedNumeral (_T : NumeralTheory) (_w : NumWord) (stressed : Bool) : NegationScope :=
   if stressed then .external else .internal
 
--- ============================================================================
 -- Compatible Worlds Under Negation
--- ============================================================================
 
 /--
 Count worlds compatible with negated numeral under given scope.
@@ -223,9 +211,7 @@ theorem lowerBound_negation_worlds :
 -- Note: In standard worlds [0,1,2,3], both give same result.
 -- The difference appears at world 4+.
 
--- ============================================================================
 -- Extended World Analysis
--- ============================================================================
 
 /--
 Extended world set to show the full asymmetry.
@@ -250,9 +236,7 @@ theorem extended_negation_asymmetry :
     compatibleExtended .three .external = [0, 1, 2, 4, 5] := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /--
 **Summary: Negation Scope Supports Lower-Bound Semantics**

@@ -37,9 +37,6 @@ namespace Phenomena.Gradability.Vagueness
 -- Re-export degree types that are useful for vagueness discussions
 open Phenomena.Gradability (AdjectiveClass)
 
--- ============================================================================
--- PART 1: Borderline Cases Data
--- ============================================================================
 
 /--
 Empirical pattern: Borderline cases elicit hedging and uncertainty.
@@ -97,9 +94,6 @@ def tallPerson : BorderlineDatum :=
 def borderlineExamples : List BorderlineDatum :=
   [expensiveHouse, tallPerson]
 
--- ============================================================================
--- PART 2: Sorites Paradox Data
--- ============================================================================
 
 /--
 Empirical pattern: The sorites paradox.
@@ -176,9 +170,6 @@ def expensiveSorites : SoritesDatum :=
 def soritesExamples : List SoritesDatum :=
   [tallSorites, heapSorites, expensiveSorites]
 
--- ============================================================================
--- PART 3: Higher-Order Vagueness
--- ============================================================================
 
 /--
 The problem of higher-order vagueness.
@@ -245,9 +236,6 @@ def definitelyOperator : DefinitelyOperatorData :=
   , iterationHelps := false        -- problem just moves up
   }
 
--- ============================================================================
--- PART 4: Penumbral Connections
--- ============================================================================
 
 /--
 Penumbral connections: logical relationships that hold even in borderline cases.
@@ -312,9 +300,6 @@ def comparativeEntailment : PenumbralConnectionData :=
 def penumbralExamples : List PenumbralConnectionData :=
   [excludedMiddle, nonContradiction, sameHeightConnection, comparativeEntailment]
 
--- ============================================================================
--- PART 5: Tolerance Principle and Sorites
--- ============================================================================
 
 /--
 The tolerance principle: the key ingredient in sorites paradoxes.
@@ -400,9 +385,6 @@ def tallProbabilisticSorites : ProbabilisticSoritesData :=
 def probabilisticSoritesExamples : List ProbabilisticSoritesData :=
   [tallProbabilisticSorites]
 
--- ============================================================================
--- PART 6: Theoretical Positions
--- ============================================================================
 
 /--
 Major theoretical positions on vagueness.
@@ -480,9 +462,6 @@ def contextualismProfile : TheoryPredictionProfile :=
 def theoryProfiles : List TheoryPredictionProfile :=
   [epistemicismProfile, supervaluationismProfile, degreeTheoryProfile, contextualismProfile]
 
--- ============================================================================
--- PART 7: Formal Constraints Any Theory Must Satisfy
--- ============================================================================
 
 /--
 Formal constraints that any adequate theory of vagueness should satisfy.
@@ -538,9 +517,7 @@ def desiderata : List VaguenessDesideratum :=
   [borderlineCasesExist, toleranceIntuition, soritesParadoxicality,
    penumbralPreservation, higherOrderProblem]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -34,9 +34,7 @@ namespace CCG.Scope
 open CCG
 open ScopeTheory
 
--- ============================================================================
 -- Derivation Structure Analysis
--- ============================================================================
 
 /--
 A scope-taking element in a CCG derivation.
@@ -100,9 +98,7 @@ def analyzeDerivation : DerivStep → DerivationType
     | _, .composed => .composed
     | _, _ => .directApp
 
--- ============================================================================
 -- Scope Availability from Derivation
--- ============================================================================
 
 /--
 Determine scope availability from derivation type.
@@ -141,9 +137,7 @@ def ScopedDerivation.toAvailableScopes (sd : ScopedDerivation) : AvailableScopes
     (ids.head!)  -- First scope-taker
     (ids.tail.head!)  -- Second scope-taker
 
--- ============================================================================
 -- HasAvailableScopes Instance
--- ============================================================================
 
 /-- Marker type for CCG scope theory -/
 def CCGScopeTheory : Type := Unit
@@ -152,9 +146,7 @@ def CCGScopeTheory : Type := Unit
 instance : HasAvailableScopes CCGScopeTheory ScopedDerivation where
   availableScopes := ScopedDerivation.toAvailableScopes
 
--- ============================================================================
 -- Examples: Quantifier Scope
--- ============================================================================
 
 /-
 Example: "Every horse didn't jump"
@@ -184,9 +176,7 @@ def everyHorse_inverse : DerivStep :=
 #eval analyzeDerivation everyHorse_surface  -- directApp
 #eval analyzeDerivation everyHorse_inverse  -- composed (from fcomp)
 
--- ============================================================================
 -- Connection to Dutch/German Word Order
--- ============================================================================
 
 /-
 From Steedman (2000) §6.8 and Phenomena/ScopeWordOrder/Data.lean:
@@ -215,9 +205,7 @@ def verbRaisingToAvailability : VerbRaisingType → BinaryScopeAvailability
   | .verbRaising => .ambiguous
   | .verbProjectionRaising => .surfaceOnly
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

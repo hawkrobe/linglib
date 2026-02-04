@@ -40,9 +40,6 @@ open Montague.Question.MentionSome
 open Montague.Question.Polarity
 open scoped GSQuestion  -- For ⊑ notation
 
--- ============================================================================
--- PART 1: Blackwell's Theorem (Semantic <-> Pragmatic)
--- ============================================================================
 
 /-!
 ## Blackwell's Theorem
@@ -116,9 +113,6 @@ theorem blackwell_maximin {W A : Type*} [DecidableEq A] [DecidableEq W]
       questionMaximin dp worlds actions (q'.toQuestion worlds) := by
   sorry
 
--- ============================================================================
--- PART 2: Mention-Some Characterization
--- ============================================================================
 
 /-!
 ## Mention-Some: G&S <-> Van Rooy
@@ -190,9 +184,6 @@ theorem canonicalMentionSomeDP_has_structure {W : Type*} [DecidableEq W]
     hasMentionSomeStructure dp worlds [true, false] q = true := by
   sorry
 
--- ============================================================================
--- PART 3: Pragmatic Answerhood <-> Utility Value
--- ============================================================================
 
 /-!
 ## Pragmatic Answerhood and Utility
@@ -257,9 +248,6 @@ theorem pragmaticAnswer_iff_utility {W A : Type*} [DecidableEq A]
       utilityValue dp worlds actions p >= 0) := by
   sorry
 
--- ============================================================================
--- PART 4: Exhaustivity Characterization
--- ============================================================================
 
 /-!
 ## When is Exhaustive Information Required?
@@ -317,9 +305,6 @@ theorem exhaustive_monotone {W A : Type*} [DecidableEq A]
     requiresExhaustive dp worlds actions (q'.toQuestion worlds) = true := by
   sorry
 
--- ============================================================================
--- PART 5: Polar Question Optimality
--- ============================================================================
 
 /-!
 ## Polar Question Choice is Utility-Maximizing
@@ -396,9 +381,6 @@ theorem alt_optimal_when_balanced {W A : Type*} [DecidableEq A]
     optimalPolarType dp worlds actions p = .alternative := by
   simp [optimalPolarType, hNotPos, hNotNeg]
 
--- ============================================================================
--- PART 6: Refinement Preserves Resolution
--- ============================================================================
 
 /-!
 ## Refinement and Resolution

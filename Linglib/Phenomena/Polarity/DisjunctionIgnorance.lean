@@ -22,9 +22,6 @@ This is different from scalar implicature:
 
 namespace Phenomena.Polarity.DisjunctionIgnorance
 
--- ============================================================================
--- PART 1: Basic Ignorance Data
--- ============================================================================
 
 /--
 Empirical pattern: Disjunction and speaker ignorance.
@@ -88,9 +85,6 @@ All basic ignorance examples.
 def disjunctionIgnoranceExamples : List DisjunctionIgnoranceDatum :=
   [harryLocation, maryLocation, johnActivity]
 
--- ============================================================================
--- PART 2: Ignorance vs Scalar Implicature
--- ============================================================================
 
 /--
 Comparison between ignorance and scalar implicatures.
@@ -136,9 +130,6 @@ All comparison examples.
 def comparisonExamples : List IgnoranceVsScalarDatum :=
   [someScalar, orIgnorance]
 
--- ============================================================================
--- PART 3: Long Disjunction Ignorance
--- ============================================================================
 
 /--
 Ignorance extends to long disjunctions (n > 2).
@@ -193,9 +184,6 @@ All long disjunction examples.
 def longDisjunctionExamples : List LongDisjunctionIgnoranceDatum :=
   [threeWayLocation, fourWayActivity]
 
--- ============================================================================
--- PART 4: Ignorance Blocking
--- ============================================================================
 
 /--
 Cases where ignorance inference is blocked or cancelled.
@@ -247,9 +235,6 @@ All blocking examples.
 def blockingExamples : List IgnoranceBlockingDatum :=
   [explicitKnowledge, rhetoricalQuestion, embeddedBelief]
 
--- ============================================================================
--- PART 5: Ignorance with Quantifiers
--- ============================================================================
 
 /--
 Interaction between disjunction ignorance and quantifiers.
@@ -291,9 +276,6 @@ All quantified ignorance examples.
 def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
   [universalScopeDisj, disjScopeUniversal]
 
--- ============================================================================
--- PART 6: Exclusive vs Inclusive Readings (Chierchia 2013)
--- ============================================================================
 
 /-!
 ## Positional Asymmetry in Disjunction Interpretation
@@ -471,9 +453,6 @@ def exclusiveInclusiveExamples : List ExclusiveInclusiveExample :=
 #guard exclusiveInclusiveExamples.all (fun ex =>
   predictReading ex.polarity == ex.preferredReading)
 
--- ============================================================================
--- PART 7: Forcing Non-Preferred Readings
--- ============================================================================
 
 /-!
 ## Forcing Non-Preferred Readings
@@ -535,9 +514,7 @@ All forced reading examples.
 def forcedReadingExamples : List ForcedReadingExample :=
   [force_inclusive_ue, force_exclusive_de]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

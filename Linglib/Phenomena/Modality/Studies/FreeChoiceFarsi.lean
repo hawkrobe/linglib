@@ -19,9 +19,6 @@ The case of Farsi *yek-i* DPs. Semantics & Pragmatics 18.
 
 namespace Phenomena.FreeChoice.FarsiYekI
 
--- ============================================================================
--- PART 1: Basic Yek-i DP Data
--- ============================================================================
 
 /--
 A judgment about a Farsi *yek-i* DP sentence.
@@ -49,9 +46,6 @@ structure YekIDatum where
   exampleNum : String
   deriving Repr
 
--- ============================================================================
--- PART 2: Root Context (No Modal) - Uniqueness
--- ============================================================================
 
 /-!
 ## Root Contexts: Uniqueness
@@ -81,9 +75,6 @@ def rootUniqueness : YekIDatum :=
   , exampleNum := "15"
   }
 
--- ============================================================================
--- PART 3: Deontic Modals - Free Choice
--- ============================================================================
 
 /-!
 ## Deontic Modals: Free Choice Effect
@@ -123,9 +114,6 @@ def deonticBooks : YekIDatum :=
   , exampleNum := "—"
   }
 
--- ============================================================================
--- PART 4: Epistemic Modals - Modal Variation
--- ============================================================================
 
 /-!
 ## Epistemic Modals: Modal Variation Effect
@@ -168,9 +156,6 @@ def epistemicExplicit : YekIDatum :=
   , exampleNum := "—"
   }
 
--- ============================================================================
--- PART 5: DE Contexts - Plain Existential
--- ============================================================================
 
 /-!
 ## DE Contexts: Plain Existential
@@ -209,9 +194,6 @@ def deConditional : YekIDatum :=
   , exampleNum := "—"
   }
 
--- ============================================================================
--- PART 6: Yek-i vs Irgendein Contrast
--- ============================================================================
 
 /-!
 ## Cross-linguistic Contrast: Yek-i vs Irgendein
@@ -277,9 +259,6 @@ def vreunRoot : EFCIContrastDatum :=
   , source := "Fălăuș 2014"
   }
 
--- ============================================================================
--- PART 7: Embedded Uniqueness
--- ============================================================================
 
 /-!
 ## Embedded Uniqueness
@@ -307,9 +286,6 @@ def embeddedUniqueness : YekIDatum :=
   , exampleNum := "—"
   }
 
--- ============================================================================
--- PART 8: Summary Data Collections
--- ============================================================================
 
 /-- All yek-i examples -/
 def allYekIData : List YekIDatum :=
@@ -330,9 +306,6 @@ def efciContrastData : List EFCIContrastDatum :=
   , vreunRoot
   ]
 
--- ============================================================================
--- PART 9: EFCI Typology
--- ============================================================================
 
 /--
 EFCI rescue mechanism typology from Alonso-Ovalle & Moghiseh (2025).
@@ -404,9 +377,7 @@ def efciTypology : List EFCITypologyDatum :=
   , yekiTypology
   ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

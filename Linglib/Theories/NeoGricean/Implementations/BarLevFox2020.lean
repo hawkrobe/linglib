@@ -35,9 +35,7 @@ namespace NeoGricean.FreeChoice
 
 open NeoGricean.Exhaustivity
 
--- ============================================================================
 -- SECTION 1: Innocent Inclusion (II)
--- ============================================================================
 
 /-!
 ## Definition of Innocent Inclusion
@@ -90,9 +88,7 @@ if and only if a ∈ II(ALT, φ).
 def isInnocentlyIncludable (a : Prop' World) : Prop :=
   a ∈ II ALT φ
 
--- ============================================================================
 -- SECTION 2: Combined Exhaustivity Operator (Exh^{IE+II})
--- ============================================================================
 
 /--
 **Definition (Exh^{IE+II})**: The exhaustivity operator with both IE and II.
@@ -109,9 +105,7 @@ def exhIEII : Prop' World := fun w =>
   (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, isInnocentlyIncludable ALT φ r → r w)
 
--- ============================================================================
 -- SECTION 3: Free Choice Setup
--- ============================================================================
 
 /-!
 ## Free Choice Configuration
@@ -169,9 +163,7 @@ def fcALT : Set (Prop' FCWorld) :=
 /-- The prejacent: ◇(a ∨ b) -/
 def fcPrejacent : Prop' FCWorld := permAorB
 
--- ============================================================================
 -- SECTION 4: Non-Closure Under Conjunction
--- ============================================================================
 
 /-!
 ## The Key Structural Property
@@ -221,9 +213,7 @@ theorem fc_not_closed_general :
   -- which in general modal semantics differs from all members of fcALT
   sorry  -- This requires more sophisticated modal semantics
 
--- ============================================================================
 -- SECTION 5: IE Analysis for Free Choice
--- ============================================================================
 
 /-!
 ## IE Computation for Free Choice
@@ -259,9 +249,7 @@ theorem permB_not_excludable_witness :
   use FCWorld.onlyB
   simp [fcPrejacent, permAorB, permA, permB]
 
--- ============================================================================
 -- SECTION 6: II Analysis for Free Choice
--- ============================================================================
 
 /-!
 ## II Computation for Free Choice
@@ -296,9 +284,7 @@ theorem permB_includable_witness :
   use FCWorld.onlyB
   simp [fcPrejacent, permAorB, permAandB, permB]
 
--- ============================================================================
 -- SECTION 7: Free Choice Theorem
--- ============================================================================
 
 /-!
 ## Main Result: Free Choice Derivation
@@ -328,9 +314,7 @@ theorem free_choice :
   intro w hw
   exact ⟨fc_entails_permA w hw, fc_entails_permB w hw⟩
 
--- ============================================================================
 -- SECTION 8: Contrast with Simple Disjunction
--- ============================================================================
 
 /-!
 ## Why Simple Disjunction Doesn't Get Free Choice
@@ -419,9 +403,7 @@ theorem simple_exclusive_or :
   · -- both
     right; right; simp [propA, propB]
 
--- ============================================================================
 -- SECTION 9: Connection to Phenomena Data
--- ============================================================================
 
 /-!
 ## Connection to Empirical Data
@@ -453,9 +435,7 @@ theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEn
 /-- The inference is captured by our pragmatic theory -/
 theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

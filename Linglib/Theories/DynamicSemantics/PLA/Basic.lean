@@ -40,9 +40,6 @@ namespace Theories.DynamicSemantics.PLA
 
 open Classical
 
--- ============================================================================
--- PART 1: Indices
--- ============================================================================
 
 /-- Variable index: identifies a variable x_i -/
 abbrev VarIdx := Nat
@@ -50,9 +47,6 @@ abbrev VarIdx := Nat
 /-- Pronoun index: identifies a pronoun p_i -/
 abbrev PronIdx := Nat
 
--- ============================================================================
--- PART 2: Terms (Clean Definition)
--- ============================================================================
 
 /-- Term: either a variable or a pronoun -/
 inductive Term where
@@ -82,9 +76,6 @@ theorem pronouns_pron (i : PronIdx) : (Term.pron i).pronouns = {i} := rfl
 
 end Term
 
--- ============================================================================
--- PART 3: Term Lists with Clean Pronoun Collection
--- ============================================================================
 
 /-- Pronouns in a list of terms using biUnion (much cleaner than foldl!) -/
 def termsPronouns (ts : List Term) : Finset PronIdx :=
@@ -97,9 +88,6 @@ theorem mem_termsPronouns (ts : List Term) (i : PronIdx) :
 theorem termsPronouns_nil : termsPronouns [] = ∅ := by
   simp [termsPronouns]
 
--- ============================================================================
--- PART 4: Formulas (Clean Definition)
--- ============================================================================
 
 /-- PLA Formula -/
 inductive Formula where
@@ -123,9 +111,6 @@ infixr:25 " ⟶ " => impl
 
 def forall_ (i : VarIdx) (φ : Formula) : Formula := neg (exists_ i (neg φ))
 
--- ============================================================================
--- PART 5: Domain and Range (Clean Versions)
--- ============================================================================
 
 /-- Domain: existentially bound variables -/
 def domain : Formula → Finset VarIdx
@@ -148,9 +133,6 @@ def freeVars : Formula → Finset VarIdx
   | .conj φ ψ => φ.freeVars ∪ ψ.freeVars
   | .exists_ i φ => φ.freeVars.erase i
 
--- ============================================================================
--- PART 6: Clean Lemmas
--- ============================================================================
 
 theorem range_atom (name : String) (ts : List Term) :
     (atom name ts).range = termsPronouns ts := rfl
@@ -177,9 +159,6 @@ theorem range_conj_right (φ ψ : Formula) : ψ.range ⊆ (φ ⋀ ψ).range :=
 
 end Formula
 
--- ============================================================================
--- PART 7: Resolution (Clean Version)
--- ============================================================================
 
 /-- Resolution: maps pronouns to variables -/
 abbrev Resolution := PronIdx → VarIdx
@@ -219,9 +198,7 @@ theorem Formula.resolve_no_pronouns (φ : Formula) (ρ : Resolution) :
   | conj φ ψ ih1 ih2 => simp [Formula.resolve, Formula.range, ih1, ih2]
   | exists_ i φ ih => exact ih
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Advantages of This Approach

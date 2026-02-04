@@ -53,9 +53,6 @@ namespace SauerlandRSA
 
 open Core.Proposition
 
--- ============================================================================
--- PART 1: Sauerland's Epistemic Framework
--- ============================================================================
 
 /-- A proposition as a function from worlds to Bool (decidable version) -/
 abbrev Prop' (W : Type*) := BProp W
@@ -112,9 +109,6 @@ theorem duality {W : Type*} (e : EpistemicState W) (φ : Prop' W) :
     rw [hφ] at hneg
     contradiction
 
--- ============================================================================
--- PART 2: Primary and Secondary Implicatures
--- ============================================================================
 
 /--
 A scalar scenario specifies an assertion and its alternatives.
@@ -153,9 +147,6 @@ theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : P
   rw [hψ] at hneg
   contradiction
 
--- ============================================================================
--- PART 3: Disjunction Case Study
--- ============================================================================
 
 /--
 Worlds for the disjunction scenario: A∨B with 4 possible truth combinations.
@@ -189,9 +180,6 @@ def propAandB : Prop' DisjWorld
   | both => true
   | _ => false
 
--- ============================================================================
--- PART 4: The Main Correspondence Theorems
--- ============================================================================
 
 /--
 **Theorem (Primary-Possibility Correspondence)**:
@@ -231,9 +219,6 @@ theorem blocking_correspondence {W : Type*}
   rw [hsec] at this
   contradiction
 
--- ============================================================================
--- PART 5: RSA Disjunction Example
--- ============================================================================
 
 /-- Utterances for disjunction scenario -/
 inductive DisjUtterance where
@@ -303,9 +288,6 @@ theorem higher_alpha_stronger_exclusivity :
     RSA.Eval.getScore l1_α3 both < RSA.Eval.getScore l1_α1 both := by
   native_decide
 
--- ============================================================================
--- PART 6: Limit Theorem (α → ∞)
--- ============================================================================
 
 /--
 P(both | "A or B") for given rationality parameter α.
@@ -347,9 +329,6 @@ theorem sauerland_is_rsa_limit :
     p_both 3 < p_both 1 ∧ p_both 5 < p_both 3 ∧ p_both 10 < p_both 5 := by
   native_decide
 
--- ============================================================================
--- PART 7: Summary
--- ============================================================================
 
 /-
 ## Main Results

@@ -44,9 +44,7 @@ open Montague.Determiner.Numeral
 
 namespace NeoGricean
 
--- ============================================================================
 -- Implicature Operations (Horn 1972, §1.22)
--- ============================================================================
 
 /--
 Operations on scalar implicatures.
@@ -71,9 +69,7 @@ instance : ToString ImplicatureOperation where
     | .contradict => "contradict"
     | .suspend => "suspend"
 
--- ============================================================================
 -- Felicity Conditions
--- ============================================================================
 
 /--
 An implicature operation is felicitous iff there IS an implicature to operate on.
@@ -103,9 +99,7 @@ Simplified check: is there an implicature to operate on?
 def hasImplicatureTarget (T : NumeralTheory) (w : NumWord) : Bool :=
   T.hasAmbiguity w
 
--- ============================================================================
 -- Example Sentences (Horn 1972, §1.73)
--- ============================================================================
 
 /--
 Example sentences demonstrating the three operations on "two".
@@ -140,9 +134,7 @@ def twoExamples : OperationExamples where
     "I have two children, possibly three"
   ]
 
--- ============================================================================
 -- Theory Predictions
--- ============================================================================
 
 /--
 **Lower-bound predicts felicitous operations**
@@ -181,9 +173,7 @@ theorem operation_felicity_differs :
     hasImplicatureTarget DeFregean .two = false := by
   native_decide
 
--- ============================================================================
 -- Suspension Asymmetry
--- ============================================================================
 
 /--
 **Lower-bound suspension is non-redundant**
@@ -206,9 +196,7 @@ theorem exact_suspension_redundant :
     suspensionNonRedundant DeFregean .two = false := by
   native_decide
 
--- ============================================================================
 -- Reinforcement Analysis (Horn 1972, §1.22)
--- ============================================================================
 
 /--
 **Reinforcement is ALWAYS non-redundant**
@@ -232,9 +220,7 @@ theorem exact_reinforcement_redundant :
     reinforcementNonRedundant DeFregean .two = false := by
   native_decide
 
--- ============================================================================
 -- Conjunction Redundancy Test (Horn 1972)
--- ============================================================================
 
 /--
 **Conjunction Test for Implicature**
@@ -284,9 +270,7 @@ theorem lowerBound_continuation_asymmetry :
     downwardContinuation LowerBound .two .one = false := by
   native_decide
 
--- ============================================================================
 -- Connection to RSA
--- ============================================================================
 
 /--
 **Why Operations Matter for RSA**
@@ -308,9 +292,7 @@ theorem operations_support_rsa_with_lowerBound :
     (DeFregean.hasAmbiguity .two = false ∧ operationFelicitous DeFregean .two .suspend = false) := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /--
 **Summary: Implicature Operations Distinguish the Theories**

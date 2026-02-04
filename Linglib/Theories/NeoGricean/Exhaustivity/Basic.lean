@@ -47,9 +47,7 @@ namespace NeoGricean.Exhaustivity
 -- Re-export ContextPolarity from the consolidated polarity module
 open Montague.Core.Polarity (ContextPolarity)
 
--- ============================================================================
 -- SECTION 2.1: Definitions (Spector p.6-8)
--- ============================================================================
 
 /-
 "In the context of this paper, the notion of world is identical to that of model."
@@ -118,9 +116,7 @@ def bigDisj (X : Set (Prop' World)) : Prop' World :=
 
 notation "⋁" => bigDisj
 
--- ============================================================================
 -- DEFINITION 1: The preorder ≤_ALT (Spector p.7)
--- ============================================================================
 
 variable (ALT : Set (Prop' World))
 
@@ -159,9 +155,7 @@ theorem leALT_trans (u v w : World) (huv : u ≤[ALT] v) (hvw : v ≤[ALT] w) : 
   intro a ha hau
   exact hvw a ha (huv a ha hau)
 
--- ============================================================================
 -- DEFINITION 2: exh_mw (Spector p.7)
--- ============================================================================
 
 variable (φ : Prop' World)
 
@@ -189,9 +183,7 @@ def isMinimal (u : World) : Prop :=
 theorem exhMW_entails : exhMW ALT φ ⊆ₚ φ :=
   fun _ ⟨h, _⟩ => h
 
--- ============================================================================
 -- DEFINITIONS 3: Compatible sets and MC-sets (Spector p.7)
--- ============================================================================
 
 /--
 **Definition 3.1**: A set of propositions X is consistent if there exists
@@ -240,9 +232,7 @@ if and only if ¬a ∈ IE_(ALT,φ).
 def isInnocentlyExcludable (a : Prop' World) : Prop :=
   a ∈ ALT ∧ (∼a) ∈ IE ALT φ
 
--- ============================================================================
 -- DEFINITION 4: exh_ie (Spector p.8)
--- ============================================================================
 
 /--
 **Definition 4**: Exhaustivity operator based on innocent exclusion (exh_ie)
@@ -257,9 +247,7 @@ Equivalently: exh_ie(ALT, φ) = φ ∧ ⋀{¬a : a is a member of ALT that is
 def exhIE : Prop' World :=
   fun u => ∀ ψ ∈ IE ALT φ, ψ u
 
--- ============================================================================
 -- DEFINITION 5: Closure under conjunction/disjunction (Spector p.11)
--- ============================================================================
 
 /--
 A set ALT is closed under conjunction if for any subset X of ALT,
@@ -277,9 +265,7 @@ A set ALT is closed under disjunction if for any subset X of ALT,
 def closedUnderDisj : Prop :=
   ∀ X : Set (Prop' World), X ⊆ ALT → (⋁ X) ∈ ALT
 
--- ============================================================================
 -- MC-SET EXISTENCE (via Minimal Worlds - Spector's approach)
--- ============================================================================
 
 /-
 ## Spector's Approach to MC-set Existence
@@ -377,10 +363,8 @@ Note: MC-set existence theorems (`exists_MCset_of_minimal`, `exists_MCset`)
 and `IE_structure` are defined after Lemma 1 below, since they depend on it.
 -/
 
--- ============================================================================
 -- SECTION 5.3: KEY LEMMAS (Spector p.21-23)
 -- These lemmas are essential for proving Propositions 6 and 7
--- ============================================================================
 
 /--
 **Definition from Section 5.3**: X(u) = {φ} ∪ {¬a : a ∈ ALT ∧ a(u) = 0}
@@ -581,9 +565,7 @@ theorem lemma1_minimal_iff_MCset (u : World) (hu : φ u) :
       -- But we have ¬(X(v) ⊆ X(u)) - contradiction!
       exact hXv_not_sub_Xu hXv_sub_Xu
 
--- ============================================================================
 -- MC-SET EXISTENCE (consequences of Lemma 1)
--- ============================================================================
 
 /--
 **MC-set existence from minimal world existence** (Spector's approach):
@@ -620,7 +602,6 @@ theorem IE_structure (hfin : Set.Finite ALT) (ψ : Prop' World) (hψ : ψ ∈ IE
   -- By compatibility, elements of E are φ or ∼a
   exact hE_mc.1.2.1 ψ hψ_in_E
 
--- ============================================================================
 
 /--
 **Lemma 2** (Spector p.23, Core Lemma):
@@ -689,9 +670,7 @@ theorem lemma3_exhMW_eq_disj_MCsets :
   · intro u hex
     exact (lemma2_exhMW_iff_satisfies_MCset ALT φ u).mpr hex
 
--- ============================================================================
 -- SECTION 3.4: Relationship between exh_mw and exh_ie (Spector p.12)
--- ============================================================================
 
 /--
 **Proposition 6** (Spector p.12): For any proposition φ with alternatives ALT,
@@ -816,9 +795,7 @@ theorem corollary8 (hfin : Set.Finite ALT) :
       -- So (∼a) u holds
       exact hna_u
 
--- ============================================================================
 -- SECTION 3.5: THEOREM 9 - Main Result (Spector p.12-13)
--- ============================================================================
 
 /--
 **THEOREM 9** (Main Result, Spector p.12-13): For any φ and any ALT,
@@ -952,9 +929,7 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     simp only [pneg] at hneg_conjA_u
     exact hneg_conjA_u hconjA_u
 
--- ============================================================================
 -- SECTION 3.6: Consequences (Spector p.13)
--- ============================================================================
 
 -- Helper lemmas for Theorem 10
 
@@ -1179,9 +1154,7 @@ theorem corollary11 (hfin : Set.Finite ALT)
     have hmw' := h9.2 u hie'
     exact hmw_eq.2 u hmw'
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides
@@ -1239,10 +1212,8 @@ lemma1_minimal_iff_MCset ←─┬─→ lemma2_exhMW_iff_satisfies_MCset
 ```
 -/
 
--- ============================================================================
 -- SECTION 6: WORKED EXAMPLES
 -- Concrete derivations demonstrating exhaustivity on classic scales
--- ============================================================================
 
 /-
 ## Section 6: Worked Examples
@@ -1735,9 +1706,7 @@ theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
 - `exhMW_or_not_wBoth`: both-world excluded by exh(or)
 -/
 
--- ============================================================================
 -- SECTION 7: MAXIMIZE STRENGTH PRINCIPLE (Chierchia 2013)
--- ============================================================================
 
 /-!
 ## Maximize Strength

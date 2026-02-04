@@ -31,9 +31,6 @@ open NeoGricean.Exhaustivity.EFCI
 
 variable {World : Type*} {Entity : Type*}
 
--- ============================================================================
--- PART 1: Pre-Exhaustified Alternatives are Pairwise Inconsistent
--- ============================================================================
 
 /--
 The prejacent and scalar alternative set is "almost closed" under conjunction.
@@ -69,9 +66,6 @@ theorem preExh_all_inconsistent
   have h₂ : preExhaustify D d₂ P ∈ preExhDomainAlts D P := ⟨d₂, hd₂, rfl⟩
   exact preExh_pairwise_inconsistent D d₁ d₂ P hd₁ hd₂ hne w ⟨hall _ h₁, hall _ h₂⟩
 
--- ============================================================================
--- PART 2: Non-Closure Theorem
--- ============================================================================
 
 /--
 The EFCI alternative set fails closure under conjunction when |D| ≥ 2.
@@ -99,9 +93,6 @@ theorem efci_not_closed_witness
     have h₂ : preExhaustify D d₂ P w := hconj _ (Set.mem_insert_of_mem _ rfl)
     exact preExh_pairwise_inconsistent D d₁ d₂ P hd₁ hd₂ hne w ⟨h₁, h₂⟩
 
--- ============================================================================
--- PART 3: Connection to Spector's Theorem 9
--- ============================================================================
 
 /-!
 ## Connection to Spector's Theorem 9
@@ -146,9 +137,6 @@ theorem domain_only_still_not_closed
     have h₂ : preExhaustify D d₂ P w := hconj _ (Set.mem_insert_of_mem _ rfl)
     exact preExh_pairwise_inconsistent D d₁ d₂ P hd₁ hd₂ hne w ⟨h₁, h₂⟩
 
--- ============================================================================
--- PART 4: The Root Explanation
--- ============================================================================
 
 /-!
 ## The Root of the EFCI Explanation
@@ -232,9 +220,7 @@ theorem unique_witness_falsifies_allNotPreExh
   have hnotPreExh := hall d₀ hd₀
   exact hnotPreExh hpreExh
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

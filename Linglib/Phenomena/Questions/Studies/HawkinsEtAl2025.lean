@@ -20,9 +20,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Questions.Studies.HawkinsEtAl2025
 
--- ============================================================================
--- PART 1: Theoretical Framework
--- ============================================================================
 
 /-!
 ## Model Components
@@ -59,9 +56,6 @@ inductive ResponseType where
   | exhaustive     -- List all available options
   deriving DecidableEq, Repr
 
--- ============================================================================
--- PART 2: Case Study 1 - Credit Cards (Clark 1979 replication)
--- ============================================================================
 
 /-!
 ## Case Study 1: Credit Cards
@@ -95,9 +89,6 @@ theorem cs1_ordering :
     cs1_exhaustive_rate 2 > cs1_exhaustive_rate 0 := by
   native_decide
 
--- ============================================================================
--- PART 3: Case Study 2 - Iced Tea (Context-Insensitive)
--- ============================================================================
 
 /-!
 ## Case Study 2: Iced Tea
@@ -148,9 +139,6 @@ theorem cs2_competitor_highest :
     cs2_model_rates.sameCategory > cs2_model_rates.exhaustive := by
   native_decide
 
--- ============================================================================
--- PART 4: Case Study 3 - Context-Sensitivity
--- ============================================================================
 
 /-!
 ## Case Study 3: Context-Sensitivity
@@ -178,9 +166,6 @@ theorem cs3_context_sensitivity :
     cs3_context2_competitor_effect > 0 := by
   native_decide
 
--- ============================================================================
--- PART 5: LLM Comparison
--- ============================================================================
 
 /-!
 ## LLM Performance
@@ -207,9 +192,6 @@ theorem prior_pq_beats_zero_shot :
     cs2_jsd_prior_pq < cs2_jsd_llama_zero_shot := by
   native_decide
 
--- ============================================================================
--- PART 6: Model Parameters
--- ============================================================================
 
 /-- Best-fitting model parameters from paper -/
 structure ModelParams where
@@ -221,9 +203,6 @@ structure ModelParams where
 
 def defaultParams : ModelParams := {}
 
--- ============================================================================
--- PART 7: Key Predictions
--- ============================================================================
 
 /-- Key qualitative predictions from PRIOR-PQ -/
 inductive KeyPrediction where

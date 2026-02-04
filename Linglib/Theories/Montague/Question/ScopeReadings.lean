@@ -49,9 +49,6 @@ open Montague.Question.Coordination
 open Montague.Question.MentionSome
 open scoped GSQuestion  -- For ⊑ notation
 
--- ============================================================================
--- PART 1: Pair-List Readings
--- ============================================================================
 
 /-!
 ## Pair-List Readings
@@ -151,9 +148,6 @@ def PairListQuestion.maxCells {W E : Type*}
     (plq : PairListQuestion W E) : Nat :=
   plq.whDomain.length ^ plq.universalDomain.length
 
--- ============================================================================
--- PART 2: Choice Readings
--- ============================================================================
 
 /-!
 ## Choice Readings
@@ -274,9 +268,6 @@ non-choice "entails" the choice reading in the sense that any property
 holding of all disjunct-questions holds of at least one.
 -/
 
--- ============================================================================
--- PART 3: Existential Wide Scope
--- ============================================================================
 
 /-!
 ## Existential Wide Scope
@@ -346,9 +337,6 @@ def ExistentialQuestion.wideScope {W E : Type*} [BEq W] [DecidableEq E]
       LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q'))
       (LiftedTypes.LiftedQuestion.lift q)
 
--- ============================================================================
--- PART 4: Functional Readings
--- ============================================================================
 
 /-!
 ## Functional Readings
@@ -383,9 +371,6 @@ def hasFunctionalReading {W E : Type*} [DecidableEq E]
       let answers := plq.whDomain.filter (plq.relation w y)
       answers.length <= 1
 
--- ============================================================================
--- PART 5: Mention-Some and Wide Scope
--- ============================================================================
 
 /-!
 ## Mention-Some and Scope
@@ -459,9 +444,6 @@ theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]
       (eq.toMentionSomeInterrogative).abstract w x := by
   sorry
 
--- ============================================================================
--- PART 6: Licensing Conditions
--- ============================================================================
 
 /-!
 ## When Do These Readings Arise?

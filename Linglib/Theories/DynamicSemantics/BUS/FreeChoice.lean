@@ -45,9 +45,6 @@ namespace Theories.DynamicSemantics.BUS.FreeChoice
 open Theories.DynamicSemantics.Core
 open Classical
 
--- ============================================================================
--- PART 1: Modal Operators
--- ============================================================================
 
 variable {W E : Type*}
 
@@ -77,9 +74,6 @@ theorem impossible_iff_empty (φ : BilateralDen W E) (s : InfoState W E) :
     impossible φ s ↔ φ.positive s = ∅ := by
   simp only [impossible, InfoState.consistent, Set.not_nonempty_iff_eq_empty]
 
--- ============================================================================
--- PART 2: Modal Disjunction (E&S 2025 Section 3.6-3.7)
--- ============================================================================
 
 /--
 Standard disjunction: the basic bilateral disjunction without FC preconditions.
@@ -118,9 +112,6 @@ def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
 
 notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
 
--- ============================================================================
--- PART 3: Semantic Derivation of Free Choice
--- ============================================================================
 
 /--
 KEY THEOREM: FC is SEMANTICALLY DERIVED from modal disjunction.
@@ -164,9 +155,6 @@ theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : InfoState W E)
     possible φ s ∧ (ψ.positive (φ.negative s)).Nonempty := by
   exact ⟨fc_semantic_first_disjunct φ ψ s h, fc_semantic_second_disjunct φ ψ s h⟩
 
--- ============================================================================
--- PART 4: Bathroom Disjunction Pattern
--- ============================================================================
 
 /--
 The bathroom disjunction configuration.
@@ -198,9 +186,6 @@ theorem fc_with_anaphora (cfg : BathroomConfig W E) (s : InfoState W E)
     possible (BilateralDen.conj cfg.bathroom cfg.funnyPlace) s := by
   exact ⟨h_no_bath, h_bath_funny⟩
 
--- ============================================================================
--- PART 5: Dual Prohibition Preservation
--- ============================================================================
 
 /--
 Dual prohibition: ¬◇φ ∧ ¬◇ψ ⊨ ¬◇(φ ∨ ψ)
@@ -222,9 +207,6 @@ theorem dual_prohibition (φ ψ : BilateralDen W E) (s : InfoState W E)
     · exact h_ψ ⟨p, hψ⟩
   · exact hp
 
--- ============================================================================
--- PART 6: Cross-Disjunct Anaphora Mechanism
--- ============================================================================
 
 /--
 Key insight: In BUS, negation SWAPS positive and negative updates.
@@ -259,9 +241,6 @@ theorem dne_preserves_binding (x : Nat) (dom : Set E)
     (BilateralDen.conj (BilateralDen.exists_ x dom φ) ψ).positive s := by
   simp only [BilateralDen.neg_neg]
 
--- ============================================================================
--- PART 7: Example Configuration
--- ============================================================================
 
 /--
 A concrete example setup for testing.
@@ -289,9 +268,7 @@ def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
   , funnyPlace := BilateralDen.pred1 inFunnyPlace 0
   , x := 0 }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

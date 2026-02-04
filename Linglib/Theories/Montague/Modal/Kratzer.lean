@@ -52,9 +52,6 @@ namespace Montague.Modal.Kratzer
 open Montague.Verb.Attitude.Examples
 open Montague.Modal (ModalTheory ModalForce Proposition allWorlds')
 
--- ============================================================================
--- PART 1: Foundational Definitions (Kratzer p. 31)
--- ============================================================================
 
 /-- A proposition is a characteristic function on worlds. -/
 abbrev Prop' := World → Bool
@@ -81,9 +78,6 @@ def isConsistent (A : List Prop') : Bool :=
 def isCompatibleWith (p : Prop') (A : List Prop') : Bool :=
   isConsistent (p :: A)
 
--- ============================================================================
--- PART 2: Conversational Backgrounds (Kratzer p. 31-33)
--- ============================================================================
 
 /--
 A conversational background maps worlds to sets of propositions.
@@ -128,9 +122,6 @@ conversational backgrounds are also realistic."
 -/
 def emptyBackground : ConvBackground := fun _ => []
 
--- ============================================================================
--- PART 3: The Ordering Relation ≤_A (Kratzer p. 39)
--- ============================================================================
 
 /--
 The set of propositions from A that world w satisfies.
@@ -168,9 +159,6 @@ def strictlyBetter (A : List Prop') (w z : World) : Bool :=
 
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
--- ============================================================================
--- PART 4: Generic Ordering via Core.SatisfactionOrdering
--- ============================================================================
 
 open Core.SatisfactionOrdering
 
@@ -210,9 +198,7 @@ theorem ordering_transitive (A : List Prop') (u v w : World)
   rw [atLeastAsGoodAs_eq_generic] at *
   exact SatisfactionOrdering.atLeastAsGood_trans (worldOrdering A) u v w huv hvw
 
--- ============================================================================
 -- PART 4b: Mathlib Preorder Instance (via generic framework)
--- ============================================================================
 
 /--
 **Kratzer's ordering as a mathlib Preorder.**
@@ -258,9 +244,7 @@ theorem empty_ordering_universal_equiv (w z : World) :
     orderingEquiv [] w z :=
   ⟨(empty_ordering_all_equivalent w z).1, (empty_ordering_all_equivalent w z).2⟩
 
--- ============================================================================
 -- PART 4d: Galois Connection (Proposition-World Duality)
--- ============================================================================
 
 open Core.Proposition.GaloisConnection
 
@@ -296,9 +280,6 @@ theorem intension_antitone (W V : List World) (A : List Prop') (p : Prop')
     p ∈ intension W A :=
   intensionL_antitone A W V p hSub hp
 
--- ============================================================================
--- PART 5: Accessible Worlds and Best Worlds
--- ============================================================================
 
 /--
 The set of worlds **accessible** from w given modal base f.
@@ -345,9 +326,6 @@ theorem empty_ordering_simple (f : ModalBase) (w : World) :
   intro w'' _
   exact (empty_ordering_all_equivalent w' w'').1
 
--- ============================================================================
--- PART 6: Modal Operators
--- ============================================================================
 
 /--
 **Simple f-necessity** (Kratzer p. 32): p is true at ALL accessible worlds.
@@ -381,9 +359,6 @@ def necessity (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : Boo
 def possibility (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : Bool :=
   (bestWorlds f g w).any p
 
--- ============================================================================
--- PART 7: Duality
--- ============================================================================
 
 private theorem list_all_not_any_not (L : List World) (p : Prop') :
     (L.all p == !L.any fun w => !p w) = true := by
@@ -403,9 +378,6 @@ theorem duality (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) :
   unfold necessity possibility
   exact list_all_not_any_not (bestWorlds f g w) p
 
--- ============================================================================
--- PART 8: Background Type Theorems
--- ============================================================================
 
 /--
 **Theorem 4: Totally realistic base gives T axiom.**
@@ -453,9 +425,7 @@ theorem empty_base_universal_access (w : World) :
   intro _ _ p hp
   simp only [List.not_mem_nil] at hp
 
--- ============================================================================
 -- PART 8b: Frame Correspondence Theorems
--- ============================================================================
 
 def isTransitiveAccess (f : ModalBase) : Prop :=
   ∀ w w' w'' : World,
@@ -602,9 +572,6 @@ theorem S5_satisfies_all (f : ModalBase) (hS5 : isS5Base f) :
          euclidean_reflexive_implies_transitive f hReal hEuc,
          hEuc⟩
 
--- ============================================================================
--- PART 9: Comparative Possibility (Kratzer p. 41)
--- ============================================================================
 
 /--
 p is **at least as good a possibility as** q in w with respect to f and g.
@@ -627,9 +594,6 @@ theorem comparative_poss_reflexive (f : ModalBase) (g : OrderingSource)
   unfold atLeastAsGoodPossibility
   simp only [Bool.and_not_self, List.filter_false, List.all_nil]
 
--- ============================================================================
--- PART 10: Modal Flavors (Kratzer p. 37-55)
--- ============================================================================
 
 /--
 **Epistemic modality**: what is known/believed.
@@ -671,9 +635,6 @@ structure TeleologicalFlavor where
   circumstances : ModalBase
   goals : OrderingSource
 
--- ============================================================================
--- PART 11: K Axiom (Distribution)
--- ============================================================================
 
 def implies (p q : Prop') : Prop' := fun w => !p w || q w
 
@@ -696,9 +657,6 @@ theorem K_axiom (f : ModalBase) (g : OrderingSource) (p q : Prop') (w : World)
   | false => simp [hp] at hPW'
   | true => simp [hp] at hImplW'; exact hImplW'
 
--- ============================================================================
--- PART 12: Conditionals (Kratzer p. 64-66)
--- ============================================================================
 
 /--
 Conditionals as modal base restrictors.
@@ -714,9 +672,6 @@ def materialImplication (p q : Prop') (w : World) : Bool :=
 def strictImplication (p q : Prop') : Bool :=
   allWorlds.all fun w => !p w || q w
 
--- ============================================================================
--- PART 13: ModalTheory Interface
--- ============================================================================
 
 structure KratzerParams where
   base : ModalBase
@@ -767,9 +722,7 @@ def concreteDeonticParams : KratzerParams where
 
 def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
 
--- ============================================================================
 -- Duality for ModalTheory Interface
--- ============================================================================
 
 private theorem list_duality_helper (L : List World) (p : Proposition) :
     (L.all p == !L.any fun w' => !p w') = true := by

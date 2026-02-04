@@ -48,9 +48,6 @@ open Core.Proposition
 open Core.CommonGround
 
 
--- ============================================================================
--- PART 1: Participants and Sentence Forms
--- ============================================================================
 
 /--
 Conversational participants.
@@ -75,9 +72,6 @@ inductive SentenceForm where
   | interrogative
   deriving DecidableEq, Repr, BEq, Inhabited
 
--- ============================================================================
--- PART 2: Issues on the Table
--- ============================================================================
 
 /--
 An issue on the conversational table.
@@ -96,9 +90,6 @@ structure Issue (W : Type*) where
   /-- Who raised this issue -/
   source : Participant := .speaker
 
--- ============================================================================
--- PART 3: Discourse State
--- ============================================================================
 
 /--
 Discourse State following Farkas & Bruce (2010).
@@ -124,9 +115,6 @@ namespace DiscourseState
 
 variable {W : Type*}
 
--- ============================================================================
--- PART 4: Basic Operations
--- ============================================================================
 
 /--
 Empty/initial discourse state.
@@ -174,9 +162,6 @@ Check if a world is compatible with listener's commitments.
 def listenerCompatible (ds : DiscourseState W) (w : W) : Bool :=
   ds.dcL.all (fun p => p w)
 
--- ============================================================================
--- PART 5: Discourse Updates
--- ============================================================================
 
 /--
 Add a proposition to the common ground.
@@ -217,9 +202,6 @@ Pop an issue from the table (when resolved).
 def popIssue (ds : DiscourseState W) : DiscourseState W :=
   { ds with table := ds.table.tail }
 
--- ============================================================================
--- PART 6: Assertion and Question Effects
--- ============================================================================
 
 /--
 Effect of a declarative assertion.
@@ -267,9 +249,6 @@ def acceptTop (ds : DiscourseState W) : DiscourseState W :=
         dcL := p :: ds.dcL
         table := rest }
 
--- ============================================================================
--- PART 7: Connection to CommonGround.CG
--- ============================================================================
 
 /--
 Convert the common ground component to a `CG` structure.
@@ -288,9 +267,6 @@ def fromCG (cg : CG W) : DiscourseState W :=
     cg := cg.propositions
     table := [] }
 
--- ============================================================================
--- PART 8: RSA Connection Types
--- ============================================================================
 
 /-!
 ## Connection to RSA Presupposition Models
@@ -345,9 +321,6 @@ def forCGInference (cgOptions : List (BProp W)) : DiscourseState W :=
 
 end DiscourseState
 
--- ============================================================================
--- PART 9: RSA Discourse Configuration
--- ============================================================================
 
 /--
 Configuration for discourse-aware RSA models.
@@ -442,9 +415,7 @@ def forCG {D : Type} [Fintype D] [DecidableEq D]
 
 end DiscourseConfig
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

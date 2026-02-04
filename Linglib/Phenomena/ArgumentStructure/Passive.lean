@@ -41,9 +41,7 @@ import Linglib.Theories.Surface.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Passive construction data -/
 def passiveData : PhenomenonData := {
@@ -69,9 +67,7 @@ def passiveData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Tests
--- ============================================================================
 
 -- Well-formed passives
 #eval Surface.passiveOk [the, ball, was, kicked]              -- true

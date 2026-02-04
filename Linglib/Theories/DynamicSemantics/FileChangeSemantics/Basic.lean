@@ -41,9 +41,7 @@ namespace Theories.DynamicSemantics.FileChangeSemantics
 open Theories.DynamicSemantics.Core
 open Classical
 
--- ============================================================================
 -- File = InfoState
--- ============================================================================
 
 /--
 A File is an information state: set of (world, assignment) pairs.
@@ -57,9 +55,7 @@ A File Card is a single possibility: (world, assignment).
 -/
 abbrev FileCard (W : Type*) (E : Type*) := Possibility W E
 
--- ============================================================================
 -- Novelty and Familiarity
--- ============================================================================
 
 /--
 Variable x is NOVEL in file f iff f doesn't constrain x.
@@ -79,9 +75,7 @@ must have already established who "the X" refers to.
 def File.familiar {W E : Type*} (f : File W E) (x : Nat) : Prop :=
   f.definedAt x
 
--- ============================================================================
 -- File Updates
--- ============================================================================
 
 /--
 Update file with proposition: eliminate cards where φ fails.
@@ -100,9 +94,7 @@ Requires x to be NOVEL (precondition).
 def File.introduce {W E : Type*} (f : File W E) (x : Nat) (dom : Set E) : File W E :=
   f.randomAssign x dom
 
--- ============================================================================
 -- Context Change Potentials
--- ============================================================================
 
 /--
 File Change Potential (FCP): the semantic type for sentences in FCS.
@@ -149,9 +141,7 @@ Note: This does NOT validate DNE.
 def FCP.neg {W E : Type*} (φ : FCP W E) : FCP W E :=
   fun f => if (φ f).Nonempty then ∅ else f
 
--- ============================================================================
 -- Key Properties
--- ============================================================================
 
 /--
 Novelty precondition for indefinites.
@@ -168,9 +158,7 @@ Familiarity precondition for definites.
 def requiresFamiliarity {W E : Type*} (f : File W E) (x : Nat) : Prop :=
   f.familiar x
 
--- ============================================================================
 -- Connection to InfoState
--- ============================================================================
 
 /-!
 ## Relation to DynamicSemantics.Core.Basic
@@ -188,9 +176,7 @@ This module provides FCS-specific vocabulary as aliases:
 | updateProp | update |
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Will Provide

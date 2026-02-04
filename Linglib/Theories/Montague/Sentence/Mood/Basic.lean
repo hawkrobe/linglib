@@ -47,9 +47,6 @@ namespace Montague.Sentence.Mood
 
 open Montague.Core.Time
 
--- ============================================================================
--- PART 1: Mood Types
--- ============================================================================
 
 /--
 Grammatical mood categories.
@@ -81,9 +78,6 @@ inductive SubjunctiveType where
   | subordinateFuture  -- Mendes' SF (present morphology, future reference)
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
--- PART 2: Mood Operators (Mendes 2025)
--- ============================================================================
 
 /--
 Type of situation predicates: (situation, situation) → Prop
@@ -140,9 +134,6 @@ def INDsimple {W Time : Type*}
     (s : Situation W Time) : Prop :=
   P s
 
--- ============================================================================
--- PART 3: Dynamic Versions (CDRT-style)
--- ============================================================================
 
 /--
 A situation context: a list of available situation drefs.
@@ -189,9 +180,6 @@ def INDdyn {W Time : Type*}
   | [] => False  -- No situation to retrieve
   | s :: _ => c.current.world = s.world ∧ P c c
 
--- ============================================================================
--- PART 4: Mood Selection
--- ============================================================================
 
 /--
 Mood selection by embedding predicates.
@@ -215,9 +203,6 @@ def prefersSubjunctive : MoodSelector → Bool
   | .subjunctiveSelecting => true
   | .moodNeutral => false  -- default to indicative
 
--- ============================================================================
--- PART 5: Conditional Antecedents (Key Application)
--- ============================================================================
 
 /--
 **Conditional with SF antecedent** (Mendes' main application)
@@ -253,9 +238,6 @@ def conditionalIND {W Time : Type*}
     (s : Situation W Time) : Prop :=
   antecedent s → consequent s
 
--- ============================================================================
--- PART 6: Temporal Anchoring via Mood
--- ============================================================================
 
 /--
 **Key insight from Mendes (2025)**:
@@ -288,9 +270,6 @@ def futureShift {W Time : Type*} [LT Time] [LE Time]
     s₁.time > s₀.time ∧  -- Strictly future
     P s₁
 
--- ============================================================================
--- PART 7: Theorems
--- ============================================================================
 
 /--
 **SUBJ is existential**: It introduces a situation.
@@ -342,9 +321,6 @@ theorem subj_current_option {W Time : Type*} [Preorder Time]
   simp only [historicalBase, Set.mem_setOf_eq]
   exact ⟨h_refl s₀.world s₀.time, le_refl s₀.time⟩
 
--- ============================================================================
--- PART 8: Connection to Non-Veridicality
--- ============================================================================
 
 /--
 Non-veridicality (Giannakidou 1998):
@@ -378,9 +354,7 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
   -- ¬(s₀ = s₁)
   exact hne
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

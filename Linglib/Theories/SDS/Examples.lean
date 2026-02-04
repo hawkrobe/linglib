@@ -30,9 +30,7 @@ namespace SDS.Examples
 
 open SDS.Core
 
--- ============================================================================
 -- Shared Types for Disambiguation Examples
--- ============================================================================
 
 /-- Concepts for "bat" -/
 inductive BatConcept where
@@ -71,9 +69,7 @@ instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
   selectionalFactor s c := s.selectional c
   scenarioFactor s c := s.scenario c
 
--- ============================================================================
 -- Example 1: "A bat was sleeping" (Erk & Herbelot 2024)
--- ============================================================================
 
 /-!
 ## Example 1: "A bat was sleeping"
@@ -128,9 +124,7 @@ example : batSleepingPosterior .animal > batSleepingPosterior .equipment := by n
 -- No conflict: selectional clearly dominates
 example : hasConflict batSleeping = false := by native_decide
 
--- ============================================================================
 -- Example 2: "A player was holding a bat" (Erk & Herbelot 2024)
--- ============================================================================
 
 /-!
 ## Example 2: "A player was holding a bat"
@@ -191,9 +185,7 @@ example : playerBatPosterior .equipment > playerBatPosterior .animal := by nativ
 -- (Even though selectional is weak, it still has equipment as argmax)
 example : hasConflict playerHoldingBat = false := by native_decide
 
--- ============================================================================
 -- Example 3: "The astronomer married the star" (Erk & Herbelot 2024)
--- ============================================================================
 
 /-!
 ## Example 3: "The astronomer married the star"
@@ -257,9 +249,7 @@ example : astronomerStarPosterior .celebrity = astronomerStarPosterior .celestia
 -- Conflict detected
 example : hasConflict astronomerMarriedStar = true := by native_decide
 
--- ============================================================================
 -- Example 4: "The sailor liked the port" - Multiple Ambiguous Words
--- ============================================================================
 
 /-!
 ## Example 4: "The sailor liked the port"
@@ -326,9 +316,7 @@ def sailorPortPosterior : PortConcept → ℚ :=
 example : sailorPortPosterior .harbor > sailorPortPosterior .wine := by native_decide
 example : sailorPortPosterior .wine > sailorPortPosterior .computer := by native_decide
 
--- ============================================================================
 -- Example 5: "The coach told the star to play" - Chained Disambiguation
--- ============================================================================
 
 /-!
 ## Example 5: "The coach told the star to play"
@@ -391,9 +379,7 @@ example : coachStarPosterior .celebrity > coachStarPosterior .celestial := by na
 -- No conflict: both constraints prefer CELEBRITY
 example : hasConflict coachToldStar = false := by native_decide
 
--- ============================================================================
 -- Example 6: Constraint Strength Interaction
--- ============================================================================
 
 /-!
 ## Example 6: Varying Constraint Strengths
@@ -442,9 +428,7 @@ example : SDSConstraintSystem.normalizedPosterior (childSawBat (70/100)) .animal
           SDSConstraintSystem.normalizedPosterior (childSawBat (70/100)) .equipment := by
   native_decide
 
--- ============================================================================
 -- Example 7: The Full "How to Marry a Star" Analysis
--- ============================================================================
 
 /-!
 ## Example 7: Complete Analysis of "marry a star"
@@ -543,9 +527,7 @@ example : hasConflict astronomerMarriedStar = true := by native_decide  -- Equal
 example : hasConflict producerMarryStar = false := by native_decide   -- Both agree
 example : hasConflict alienMarryStar = true := by native_decide       -- Weak conflict
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Compositional Constraint Interaction

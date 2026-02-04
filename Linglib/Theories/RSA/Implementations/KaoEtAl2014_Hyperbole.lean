@@ -51,9 +51,7 @@ namespace RSA.KaoEtAl2014_Hyperbole
 
 open RSA.Eval RSA.Domains.Degrees Montague.Domain.Degrees
 
--- ============================================================================
 -- Domain: Items, Prices, and Affects
--- ============================================================================
 
 /--
 Item types from the paper.
@@ -148,9 +146,7 @@ inductive Goal where
   | approxPriceValence -- approximate price and valence
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- World Prior P_S (Item-Specific Price Distributions)
--- ============================================================================
 
 /--
 Price prior P_S from Experiment 3a.
@@ -178,9 +174,7 @@ def pricePrior (p : Price) : ℚ :=
   | .watch, .p500 => 4
   | .watch, .p10000 => 3
 
--- ============================================================================
 -- Compositional Literal Semantics
--- ============================================================================
 
 /-!
 ## Deriving "The X cost u dollars"
@@ -283,9 +277,7 @@ Full meaning semantics: utterance is true if it matches the price component.
 def meaningSemantics (u : Utterance) (m : Meaning) : Bool :=
   literal u m.1
 
--- ============================================================================
 -- Affect Prior P_A (Experiment 3b)
--- ============================================================================
 
 /--
 Affect prior P_A(a|s) from Experiment 3b.
@@ -346,9 +338,7 @@ def extendedSemantics (u : Utterance) (m : Meaning) : ℚ :=
     | .annoyed => utteranceArousal u / 20  -- Some compatibility
     | .amazed => utteranceArousal u / 20
 
--- ============================================================================
 -- QUD Projection and Equivalence
--- ============================================================================
 
 /--
 Round a price to the nearest base (default 10).
@@ -383,9 +373,7 @@ def qudEquiv : Goal → Meaning → Meaning → Bool
   | .approxPriceValence, m1, m2 =>                     -- Rounded price + affect
       priceRoundingEquiv m1.1 m2.1 && m1.2 == m2.2
 
--- ============================================================================
 -- Enumerations
--- ============================================================================
 
 def allUtterances : List Utterance := [.fifty, .fiveHundred, .tenThousand, .million]
 def allPriceLevels : List PriceLevel := [.p50, .p500, .p10000]
@@ -405,9 +393,7 @@ def allMeaningsForItem (item : Item) : List Meaning :=
 def allPrices : List Price := allPricesForItem .electricKettle
 def allMeanings : List Meaning := allMeaningsForItem .electricKettle
 
--- ============================================================================
 -- RSA Scenario
--- ============================================================================
 
 /-- Goal prior for hyperbole scenario -/
 def goalPrior : Goal → ℚ
@@ -420,9 +406,7 @@ def goalPrior : Goal → ℚ
 /-- Uniform goal prior for strict scenario -/
 def uniformGoalPrior : Goal → ℚ := fun _ => 1
 
--- ============================================================================
 -- Compute Distributions
--- ============================================================================
 
 -- Helper: construct a kettle at a given price
 def kettle (p : PriceLevel) : Price := { item := .electricKettle, price := p }
@@ -468,9 +452,7 @@ def l1_million : List (Meaning × ℚ) := qudL1_world Utterance.million
 /-- L1 goal distribution for "million dollars" -/
 def l1_goal_million : List (Goal × ℚ) := qudL1_goal Utterance.million
 
--- ============================================================================
 -- Evaluate
--- ============================================================================
 
 #eval l0_fifty
 -- L0("fifty"): should prefer (p50, *) meanings
@@ -490,9 +472,7 @@ def l1_goal_million : List (Goal × ℚ) := qudL1_goal Utterance.million
 #eval l1_goal_million
 -- L1_goal("million"): should infer QUD was probably "affect"
 
--- ============================================================================
 -- Key Predictions
--- ============================================================================
 
 
 /--
@@ -551,9 +531,7 @@ def l1_infers_affect_qud : Bool :=
 #eval l1_infers_affect_qud
 -- Expected: true
 
--- ============================================================================
 -- Contrast with Strict Semantics
--- ============================================================================
 
 /-- Strict (Boolean) semantics -/
 def strictSemantics (u : Utterance) (m : Meaning) : ℚ :=
@@ -576,9 +554,7 @@ def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
 #eval s1_strict_p500_annoyed_affect
 -- "million" should have probability 0
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## How QUD-RSA Derives Hyperbole

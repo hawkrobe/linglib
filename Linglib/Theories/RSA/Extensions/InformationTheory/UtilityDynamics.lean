@@ -33,9 +33,6 @@ import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 
--- ============================================================================
--- PART 1: The Counterexample Scenario
--- ============================================================================
 
 /--
 Worlds (meanings) for the utility counterexample.
@@ -94,9 +91,6 @@ def utilityCounterexample_α1 : RSA.RSAScenarioQ :=
     (fun w u => utilSemantics u w)
     (α := 1)
 
--- ============================================================================
--- PART 2: Tracing the Dynamics
--- ============================================================================
 
 /-- Run dynamics and get E[V_L] trace -/
 def utilityTrace (maxIter : Nat := 5) : List (Nat × ℚ) :=
@@ -110,9 +104,6 @@ def gAlphaTrace (maxIter : Nat := 5) : List (Nat × ℚ) :=
 -- #eval utilityTrace 5
 -- #eval gAlphaTrace 5
 
--- ============================================================================
--- PART 3: Alternative Counterexample (Simpler)
--- ============================================================================
 
 /--
 A simpler counterexample using the disjunction scenario.
@@ -150,9 +141,6 @@ def simpleCounterexample : RSA.RSAScenarioQ :=
     (fun w u => simpleSemantics u w)
     (α := 3)
 
--- ============================================================================
--- PART 4: Verification Theorems
--- ============================================================================
 
 /--
 G_α is monotonically increasing for the counterexample.
@@ -176,9 +164,6 @@ counterexample from the paper once we find a concrete case.
 --   native_decide
 -/
 
--- ============================================================================
--- PART 5: Intuition for Non-Monotonicity
--- ============================================================================
 
 /-
 ## Why Utility Can Decrease
@@ -218,9 +203,6 @@ moves toward lower free energy, even if individual components
 (energy, entropy) move in unexpected directions.
 -/
 
--- ============================================================================
--- PART 6: Comparison to NeoGricean
--- ============================================================================
 
 /-
 ## Connection to Categorical Implicatures

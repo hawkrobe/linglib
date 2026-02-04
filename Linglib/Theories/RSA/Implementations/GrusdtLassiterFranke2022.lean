@@ -59,9 +59,7 @@ open Theories.Montague.Conditional.CausalBayesNet
 open RSA.Eval
 open Montague.Sentence.Conditional.Assertability
 
--- ============================================================================
 -- Utterance Types
--- ============================================================================
 
 /--
 Literal propositions about A and C.
@@ -108,9 +106,7 @@ instance : ToString Utterance where
     | .likelyConditional => "likely (if A then C)"
     | .silence => "∅"
 
--- ============================================================================
 -- Assertability Thresholds
--- ============================================================================
 
 /--
 Threshold for conditional assertability.
@@ -126,9 +122,7 @@ P(X) must exceed this threshold.
 -/
 def likelyThreshold : ℚ := 7/10
 
--- ============================================================================
 -- Utterance Semantics
--- ============================================================================
 
 /--
 Literal semantics: when is a literal assertable?
@@ -222,9 +216,7 @@ def softUtteranceSemantics (u : Utterance) (ws : WorldState) : ℚ :=
   | .likelyConditional => conditionalSemanticsSoft ws
   | .silence => 1/2  -- Uninformative
 
--- ============================================================================
 -- World State Space (Discretized)
--- ============================================================================
 
 /--
 Discretized probability levels for computational tractability.
@@ -251,9 +243,7 @@ def allWorldStates : List WorldState :=
           some { pA := pA, pC := pC, pAC := pAC }
         else none
 
--- ============================================================================
 -- Causal Inference
--- ============================================================================
 
 /--
 The full meaning space: WorldState × CausalRelation
@@ -277,9 +267,7 @@ def allFullMeanings : List FullMeaning :=
   allWorldStates.flatMap fun ws =>
     allCausalRelations.map fun cr => (ws, cr)
 
--- ============================================================================
 -- Priors
--- ============================================================================
 
 /--
 Prior over world states.
@@ -301,9 +289,7 @@ Prior over full meanings.
 def fullMeaningPrior (m : FullMeaning) : ℚ :=
   worldStatePrior m.1 * causalRelationPrior m.2
 
--- ============================================================================
 -- Goal/QUD Projection
--- ============================================================================
 
 /--
 Goal type: what is the listener trying to infer?
@@ -330,9 +316,7 @@ def goalProject (g : Goal) (m1 m2 : FullMeaning) : Bool :=
   | .causalRelation => m1.2 == m2.2
   | .both => m1 == m2
 
--- ============================================================================
 -- Utterance Cost
--- ============================================================================
 
 /--
 Utterance cost (length-based).
@@ -347,9 +331,7 @@ def utteranceCost : Utterance → ℚ
   | .likelyConditional => 4
   | .silence => 0
 
--- ============================================================================
 -- RSA Computations
--- ============================================================================
 
 def allUtterances : List Utterance :=
   [.literal .A, .literal .C, .literal .notA, .literal .notC,
@@ -429,9 +411,7 @@ def L1_causalRelation (u : Utterance) (α : ℕ := 1) : List (CausalRelation × 
   let l1 := L1 u α
   marginalize l1 (·.2)
 
--- ============================================================================
 -- Grounding Theorem
--- ============================================================================
 
 /--
 **Grounding Theorem**: L0 conditional meaning equals Montague assertability.
@@ -452,9 +432,7 @@ theorem conditional_grounding_soft (ws : WorldState) :
     softUtteranceSemantics .conditional ws = softConditionalSemantics ws := by
   rfl
 
--- ============================================================================
 -- L0 Correctness Theorems
--- ============================================================================
 
 /--
 **L0_world is marginalization of L0**.
@@ -489,9 +467,7 @@ theorem L0_prior_factors (ws : WorldState) (cr : CausalRelation) :
     fullMeaningPrior (ws, cr) = worldStatePrior ws * causalRelationPrior cr := by
   rfl
 
--- ============================================================================
 -- Causal Inference Consistency
--- ============================================================================
 
 /--
 **Causal inference is asymmetric**.
@@ -537,9 +513,7 @@ theorem causal_inference_reverse (ws : WorldState) (θ : ℚ) :
       exact ⟨h_cond.1, h_cond.2⟩
     · cases h
 
--- ============================================================================
 -- Key Predictions (Computational Checks)
--- ============================================================================
 
 /--
 **Prediction 1**: Conditional perfection emerges pragmatically.
@@ -565,9 +539,7 @@ def missingLinkDispreferred : Bool :=
   -- Expect conditional to have low probability
   getScore s1 .conditional < getScore s1 .silence
 
--- ============================================================================
 -- Theorems: L0 Correctly Implements Assertability
--- ============================================================================
 
 /--
 **L0 assigns zero weight when not assertable**.
@@ -612,9 +584,7 @@ theorem L0_concentrates_on_assertable :
     (L0_world .conditional).all (fun (ws, p) => p = 0 ∨ assertable ws conditionalThreshold = true) := by
   native_decide
 
--- ============================================================================
 -- Theorems: Causal Inference Limitations
--- ============================================================================
 
 /--
 **Observation: L1 assigns equal probability to all causal relations**.
@@ -650,9 +620,7 @@ theorem semantics_causal_independent (u : Utterance) (ws : WorldState)
     utteranceSemantics u ws = utteranceSemantics u ws := by
   rfl
 
--- ============================================================================
 -- Theorems: Conditional Perfection is Pragmatic (Not Semantic)
--- ============================================================================
 
 /--
 **Conditional perfection is NOT semantically entailed**.
@@ -689,9 +657,7 @@ This is a design choice in the current implementation that prioritizes
 simplicity. The semantic result (`perfection_not_semantic`) still holds.
 -/
 
--- ============================================================================
 -- Theorems: Missing-Link Infelicity
--- ============================================================================
 
 /--
 **Missing-link conditionals have low S1 score**.
@@ -726,9 +692,7 @@ theorem independence_weakens_conditional (ws : WorldState) (ε : ℚ) (hε : 0 <
     hasMissingLink ws ε = true := by
   exact independent_implies_missing_link ws ε hε hA h_indep
 
--- ============================================================================
 -- Theorems: Causal Inference Correctness
--- ============================================================================
 
 /--
 **Causal asymmetry is correctly detected**.
@@ -762,9 +726,7 @@ theorem causal_world_asymmetric :
     reverseAssertable causalWorldState conditionalThreshold = false := by
   native_decide
 
--- ============================================================================
 -- Summary Theorem: What the Model Demonstrates
--- ============================================================================
 
 /--
 **Main Result: Assertability-based semantics with causal inference**.
@@ -799,9 +761,7 @@ theorem model_demonstrates :
     · exact causal_world_asymmetric
     · native_decide
 
--- ============================================================================
 -- Evaluation
--- ============================================================================
 
 #eval L0_world .conditional
 -- L0 given "if A then C": only assigns positive weight to high P(C|A) world states
@@ -812,9 +772,7 @@ theorem model_demonstrates :
 #eval conditionalPerfectionPrediction
 -- Returns false (conditional perfection doesn't emerge from this specification)
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## How the Model Works

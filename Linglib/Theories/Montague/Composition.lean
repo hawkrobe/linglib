@@ -41,9 +41,7 @@ namespace Montague.Composition
 
 open Montague Montague.Modification Core.Interfaces
 
--- ============================================================================
 -- Typed Denotations
--- ============================================================================
 
 /--
 A typed denotation pairs a semantic type with a value of that type.
@@ -64,9 +62,7 @@ def canApply (funTy argTy : Ty) : Option Ty :=
   | .fn σ τ => if σ = argTy then some τ else none
   | _ => none
 
--- ============================================================================
 -- The Composition Principles (Syntax-Agnostic)
--- ============================================================================
 
 /--
 Terminal Nodes (TN): If α is a terminal node, ⟦α⟧ is specified in the lexicon.
@@ -158,9 +154,7 @@ PM is added for modifier constructions (Ch. 4).
 def interpBinary {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
   tryFA d1 d2 <|> tryPM d1 d2
 
--- ============================================================================
 -- Generic Interpretation (Syntax-Agnostic)
--- ============================================================================
 
 /--
 Generic recursive interpretation for any syntax satisfying the interface.
@@ -191,9 +185,7 @@ def interpret {S : Type} [HasTerminals S] [HasBinaryComposition S] [HasUnaryProj
         interpBinary d1 d2
       | none => none
 
--- ============================================================================
 -- Syntax Trees (Concrete Example)
--- ============================================================================
 
 /--
 A simple phrase structure tree for semantic interpretation.
@@ -214,9 +206,7 @@ inductive SynTree where
   | binary : SynTree → SynTree → SynTree
   deriving Repr
 
--- ============================================================================
 -- SemanticStructure Instances for SynTree
--- ============================================================================
 
 /--
 SynTree provides terminal access: extract the word from terminal nodes.
@@ -261,9 +251,7 @@ SynTree satisfies the full SemanticStructure interface (via the above instances)
 -/
 instance : SemanticStructure SynTree where
 
--- ============================================================================
 -- SynTree-Specific Interpretation (Uses Generic Machinery)
--- ============================================================================
 
 /--
 Recursive tree interpretation for SynTree.
@@ -283,9 +271,7 @@ def interpTree (m : Model) (lex : Lexicon m) : SynTree → Option (TypedDenot m)
     let d2 ← interpTree m lex t2
     interpBinary d1 d2
 
--- ============================================================================
 -- Interpretability (H&K §3.3) - Generic
--- ============================================================================
 
 /--
 Generic interpretability check for any syntax.
@@ -306,9 +292,7 @@ of the interpretation function ⟦⟧."
 def satisfiesInterpretabilityWith {S : Type} {m : Model} (interp : S → Option (TypedDenot m)) (s : S) : Prop :=
   isInterpretableWith interp s = true
 
--- ============================================================================
 -- Interpretability (H&K §3.3) - SynTree Specific
--- ============================================================================
 
 /--
 A tree is interpretable if it receives a denotation.
@@ -322,9 +306,7 @@ Principle of Interpretability for SynTree.
 def satisfiesInterpretability (m : Model) (lex : Lexicon m) (t : SynTree) : Prop :=
   isInterpretable m lex t = true
 
--- ============================================================================
 -- Type Mismatch Examples (H&K §3.3)
--- ============================================================================
 
 /--
 "Ann laughed Jan" is uninterpretable due to type mismatch.
@@ -346,9 +328,7 @@ Neither can apply to the other.
 example : canApply (.fn .t .t) (.fn .e .t) = none := rfl
 example : canApply (.fn .e .t) (.fn .t .t) = none := rfl
 
--- ============================================================================
 -- Theorems about Type-Driven Interpretation
--- ============================================================================
 
 /-- NN is the identity on denotations -/
 theorem interpNonBranching_id {m : Model} (d : TypedDenot m) :
@@ -373,9 +353,7 @@ theorem tryPM_preserves_type {m : Model} (d1 d2 : TypedDenot m)
 theorem interpBinary_eq {m : Model} (d1 d2 : TypedDenot m) :
     interpBinary d1 d2 = (tryFA d1 d2).orElse (fun _ => tryPM d1 d2) := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

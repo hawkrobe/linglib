@@ -15,9 +15,7 @@ Core types for question semantics, shared across different theoretical approache
 
 namespace Montague.Question
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /-- A partition-based question: list of mutually exclusive propositions (cells).
 
@@ -31,9 +29,7 @@ abbrev Answer (W : Type*) := W -> Bool
 /-- A cell in a question partition -/
 abbrev Cell (W : Type*) := W -> Bool
 
--- ============================================================================
 -- Basic Operations
--- ============================================================================
 
 /-- The trivial question (one cell containing everything) -/
 def trivialQuestion {W : Type*} : Question W := [fun _ => true]
@@ -57,9 +53,7 @@ def cellOf {W : Type*} (q : Question W) (w : W) : Option (Cell W) :=
 def filterWorlds {W : Type*} (worlds : List W) (p : W -> Bool) : List W :=
   worlds.filter p
 
--- ============================================================================
 -- Question Composition
--- ============================================================================
 
 /-- Product of two questions: cells are intersections.
 The resulting question is at least as fine as both inputs. -/
@@ -80,9 +74,7 @@ def questionJoin {W : Type*} (q1 q2 : Question W) (worlds : List W) : Question W
     if acc.any fun r => equiv r w then acc else w :: acc) []
   reps.map fun rep => fun w => equiv rep w
 
--- ============================================================================
 -- Question Answerhood
--- ============================================================================
 
 /-- A proposition p answers question q if p is contained in some cell -/
 def answers {W : Type*} (p : Answer W) (q : Question W) (worlds : List W) : Bool :=
@@ -98,9 +90,7 @@ def completelyAnswers {W : Type*} (p : Answer W) (q : Question W) (worlds : List
   let overlapping := q.filter fun cell => worlds.any fun w => p w && cell w
   overlapping.length == 1
 
--- ============================================================================
 -- Propositional Operations
--- ============================================================================
 
 /-- Negation of a proposition -/
 def pnot {W : Type*} (p : W -> Bool) : W -> Bool := fun w => !p w

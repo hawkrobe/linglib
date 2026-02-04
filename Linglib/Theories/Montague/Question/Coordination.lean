@@ -44,9 +44,7 @@ namespace Montague.Question.Coordination
 open Montague.Question
 open scoped GSQuestion  -- For ⊑ notation
 
--- ============================================================================
 -- Conjunctive Interrogatives
--- ============================================================================
 
 /-!
 ## Conjunction of Questions
@@ -97,9 +95,7 @@ theorem conjGSQuestion_trivial_left {W : Type*} [BEq W] (q : GSQuestion W) (w v 
   simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose, GSQuestion.trivial,
              QUD.trivial, QUD.compose, Bool.true_and]
 
--- ============================================================================
 -- Disjunctive Interrogatives
--- ============================================================================
 
 /-!
 ## Disjunction of Questions
@@ -164,9 +160,7 @@ theorem alternative_vs_polar {W : Type*} (p1 p2 : W -> Bool) :
     True := by  -- Placeholder for the distinction
   trivial
 
--- ============================================================================
 -- Relation to Partition Lattice
--- ============================================================================
 
 /-!
 ## Lattice Structure of Questions
@@ -203,9 +197,7 @@ theorem conj_monotone_left {W : Type*} (q1 q1' q2 : GSQuestion W)
              QUD.compose, Bool.and_eq_true] at *
   exact ⟨h w v heq.1, heq.2⟩
 
--- ============================================================================
 -- Embedded Questions and Coordination
--- ============================================================================
 
 /-!
 ## Coordination under Embedding Verbs
@@ -256,9 +248,7 @@ def EmbeddedCoordination.meaningLifted {W : Type*} [BEq W] (ec : EmbeddedCoordin
       -- Disjunction: lift each and disjoin (this is the key fix!)
       qs.foldl (fun acc q' => LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
 
--- ============================================================================
 -- Sluicing and Coordinated Antecedents
--- ============================================================================
 
 /-!
 ## Sluicing with Coordinated Antecedents
@@ -281,9 +271,7 @@ structure Sluice (W E : Type*) where
   /-- The reconstructed question -/
   question : GSQuestion W
 
--- ============================================================================
 -- Multiple Interrogatives
--- ============================================================================
 
 /-!
 ## Multiple Wh-Questions via Coordination
@@ -315,9 +303,7 @@ theorem functional_dep_gives_pairlist {W : Type*}
     (q1 + q2).numCells worlds >= q1.numCells worlds := by
   sorry -- Conjunction can only increase cell count
 
--- ============================================================================
 -- Quantifiers and Coordination
--- ============================================================================
 
 /-!
 ## Interaction with Quantifiers
@@ -352,9 +338,7 @@ theorem pairList_refines_individual {W E : Type*} [BEq W]
     (pairListAsConjunction quantDomain questionFor) ⊑ (questionFor e) := by
   sorry -- Conjunction of all questions refines each individual
 
--- ============================================================================
 -- Uniqueness and Mention-Some
--- ============================================================================
 
 /-!
 ## How Many Answers?

@@ -22,9 +22,7 @@ namespace Montague.Interface.SyntaxInterface
 
 open Montague
 
--- ============================================================================
 -- WHAT MONTAGUE REQUIRES FROM SYNTAX
--- ============================================================================
 
 /-
 ## Required: Type Assignment
@@ -67,9 +65,7 @@ class CompositionalSemantics (SynCat : Type) (Deriv : Type) where
   /-- Semantic interpretation of a derivation -/
   interp : Deriv → (cat : SynCat) → model.interpTy (types.typeOf cat)
 
--- ============================================================================
 -- WHAT MONTAGUE IS AGNOSTIC TO
--- ============================================================================
 
 /-
 ## Agnostic: Choice of Syntactic Formalism
@@ -124,9 +120,7 @@ doesn't affect the semantic composition. These features may be:
 But the COMPOSITIONAL STRUCTURE is what matters.
 -/
 
--- ============================================================================
 -- WHAT MONTAGUE IS INCOMPATIBLE WITH
--- ============================================================================
 
 /-
 ## Incompatible: Non-Compositional Theories
@@ -167,9 +161,7 @@ Note: These aren't necessarily WRONG, just require
 extending beyond basic Montague.
 -/
 
--- ============================================================================
 -- THE INTERFACE IN CODE
--- ============================================================================
 
 /-
 ## Abstract Interface
@@ -206,9 +198,7 @@ structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat
   /-- Entailment between derivations -/
   entails : Deriv → Deriv → Model → Bool
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## Montague Requires

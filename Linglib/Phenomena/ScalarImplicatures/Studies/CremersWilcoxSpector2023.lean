@@ -45,9 +45,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
--- ============================================================================
 -- World Model
--- ============================================================================
 
 /-- Two-world model for exhaustivity.
 
@@ -66,9 +64,7 @@ def allWorlds : List CWSWorld := [.w_a, .w_ab]
 
 theorem allWorlds_length : allWorlds.length = 2 := rfl
 
--- ============================================================================
 -- Utterance Types
--- ============================================================================
 
 /-- Three utterances in the minimal exhaustivity domain.
 
@@ -94,9 +90,7 @@ def CWSUtterance.toString : CWSUtterance → String
 
 instance : ToString CWSUtterance := ⟨CWSUtterance.toString⟩
 
--- ============================================================================
 -- Literal Semantics
--- ============================================================================
 
 /-- Literal truth: which utterance is true in which world -/
 def literalTruth : CWSWorld → CWSUtterance → Bool
@@ -119,9 +113,7 @@ theorem AandB_only_in_wab : literalTruth .w_a .AandB = false ∧ literalTruth .w
 theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTruth .w_ab .AandNotB = false := by
   constructor <;> rfl
 
--- ============================================================================
 -- Cost Structure
--- ============================================================================
 
 /-- Cost parameters for utterances.
 
@@ -153,9 +145,7 @@ def defaultCosts : CWSCosts where
   hAB_pos := by decide
   hAnotB_pos := by decide
 
--- ============================================================================
 -- Prior Structure
--- ============================================================================
 
 /-- Prior probability over worlds.
 
@@ -186,9 +176,7 @@ def uniformPrior : CWSPrior where
   hwab_nonneg := by native_decide
   hsum := by native_decide
 
--- ============================================================================
 -- Anti-Exhaustivity Condition (Equation 6)
--- ============================================================================
 
 /-- The anti-exhaustivity condition from Cremers et al. (2023), Equation 6.
 
@@ -223,9 +211,7 @@ theorem strongly_biased_triggers_antiexh :
     antiExhaustivityHolds stronglyBiasedPrior defaultCosts = true := by
   native_decide
 
--- ============================================================================
 -- Exhaustified Semantics (for EXH-LU model)
--- ============================================================================
 
 /-- EXH positions for the CWS domain.
 
@@ -258,9 +244,7 @@ def exhMeaning : CWSWorld → CWSUtterance → Bool
 theorem exhA_only_in_wa : exhMeaning .w_a .A = true ∧ exhMeaning .w_ab .A = false := by
   constructor <;> rfl
 
--- ============================================================================
 -- Lexica for FREE-LU (Model 5)
--- ============================================================================
 
 /-- Four lexica for FREE-LU model.
 
@@ -290,9 +274,7 @@ def lexiconMeaning : CWSLexicon → CWSWorld → CWSUtterance → Bool
   | .strong_AB, w, u => literalTruth w u
   | .weak, w, u => literalTruth w u
 
--- ============================================================================
 -- QUDs for svRSA (Model 4)
--- ============================================================================
 
 /-- QUDs for supervaluationist RSA: full vs coarse resolution -/
 inductive CWSQUD
@@ -305,9 +287,7 @@ def qudEquiv : CWSQUD → CWSWorld → CWSWorld → Bool
   | .full, w1, w2 => w1 == w2
   | .coarse, _, _ => true
 
--- ============================================================================
 -- Wonky Goals for wRSA/BwRSA (Models 2-3)
--- ============================================================================
 
 /-- Speaker goal types for Bayesian wonky RSA (BwRSA, Model 3).
 
@@ -326,9 +306,7 @@ def allWonkyGoals : List WonkyGoal := [.informative, .wonky]
 
 theorem allWonkyGoals_length : allWonkyGoals.length = 2 := rfl
 
--- ============================================================================
 -- Model Parameters
--- ============================================================================
 
 /-- Configuration for a specific RSA model instance -/
 structure CWSConfig where
@@ -349,9 +327,7 @@ def antiExhConfig : CWSConfig where
   prior := stronglyBiasedPrior
   costs := defaultCosts
 
--- ============================================================================
 -- Key Theoretical Claims
--- ============================================================================
 
 /-- Central claim: Baseline RSA can be anti-exhaustive under biased priors.
 
@@ -369,9 +345,7 @@ def exhBlocksAntiExhaustivityClaim : String :=
   "Grammatical EXH strengthens 'A' to 'A ∧ ¬B', which is false in w_ab. " ++
   "This blocks anti-exhaustive interpretations regardless of prior bias."
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

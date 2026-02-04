@@ -29,9 +29,7 @@ import Mathlib.Tactic.Ring
 
 namespace Theories.Montague.Conditional.CausalBayesNet
 
--- ============================================================================
 -- Causal Relations
--- ============================================================================
 
 /--
 Causal relations between two binary variables A (antecedent) and C (consequent).
@@ -56,9 +54,7 @@ instance : ToString CausalRelation where
     | .CCausesA => "C→A"
     | .Independent => "A⊥C"
 
--- ============================================================================
 -- Noisy-OR Parameterization
--- ============================================================================
 
 /--
 Noisy-OR parameterization for a causal link (simplified, no proof fields).
@@ -110,9 +106,7 @@ def half : NoisyOR := { background := 0, power := 1/2 }
 
 end NoisyOR
 
--- ============================================================================
 -- World States as Probability Distributions
--- ============================================================================
 
 /--
 A world state representing a probability distribution over two binary variables.
@@ -150,9 +144,7 @@ structure WorldState where
 
 namespace WorldState
 
--- ============================================================================
 -- Validity Check
--- ============================================================================
 
 /-- Check if a WorldState represents a valid probability distribution -/
 def isValid (w : WorldState) : Bool :=
@@ -161,9 +153,7 @@ def isValid (w : WorldState) : Bool :=
   0 ≤ w.pAC && w.pAC ≤ min w.pA w.pC &&
   w.pA + w.pC - w.pAC ≤ 1
 
--- ============================================================================
 -- Derived Probabilities
--- ============================================================================
 
 /-- P(A ∧ ¬C) = P(A) - P(A ∧ C) -/
 def pANotC (w : WorldState) : ℚ := w.pA - w.pAC
@@ -180,9 +170,7 @@ def pNotA (w : WorldState) : ℚ := 1 - w.pA
 /-- P(¬C) = 1 - P(C) -/
 def pNotC (w : WorldState) : ℚ := 1 - w.pC
 
--- ============================================================================
 -- Conditional Probabilities
--- ============================================================================
 
 /-- P(C | A) = P(A ∧ C) / P(A), or 0 if P(A) = 0 -/
 def pCGivenA (w : WorldState) : ℚ :=
@@ -202,9 +190,7 @@ def pAGivenNotC (w : WorldState) : ℚ :=
   let pNotC := 1 - w.pC
   if pNotC > 0 then w.pANotC / pNotC else 0
 
--- ============================================================================
 -- Independence and Correlation
--- ============================================================================
 
 /-- Check if A and C are probabilistically independent: P(A ∧ C) = P(A) · P(C) -/
 def isIndependent (w : WorldState) : Bool :=
@@ -218,9 +204,7 @@ def isPositivelyCorrelated (w : WorldState) : Bool :=
 def isNegativelyCorrelated (w : WorldState) : Bool :=
   w.pAC < w.pA * w.pC
 
--- ============================================================================
 -- Constructors
--- ============================================================================
 
 /-- Create a WorldState from marginals assuming independence -/
 def independent (pA pC : ℚ) : WorldState :=
@@ -234,9 +218,7 @@ def perfectCorrelation (p : ℚ) : WorldState :=
 def mutuallyExclusive (pA pC : ℚ) : WorldState :=
   { pA := pA, pC := pC, pAC := 0 }
 
--- ============================================================================
 -- Example World States
--- ============================================================================
 
 /-- Deterministic: A always causes C, P(A) = P(C) = P(A∧C) = 1/2 -/
 def deterministicACausesC : WorldState :=
@@ -254,9 +236,7 @@ def highConditional : WorldState :=
 def lowConditional : WorldState :=
   { pA := 1/2, pC := 1/2, pAC := 1/10 }  -- P(C|A) = (1/10)/(1/2) = 0.2
 
--- ============================================================================
 -- Validity Theorems
--- ============================================================================
 
 /--
 A propositional version of isValid for theorem proving.
@@ -361,9 +341,7 @@ theorem bayes_theorem (w : WorldState) (hA : 0 < w.pA) (hC : 0 < w.pC) :
 
 end WorldState
 
--- ============================================================================
 -- Fintype for Discrete World States
--- ============================================================================
 
 /--
 For computational purposes, we often work with a finite set of discretized

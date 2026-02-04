@@ -19,9 +19,6 @@ namespace Theories.BilateralUpdateSemantics
 
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Bilateral Denotations
--- ============================================================================
 
 /--
 A bilateral denotation: positive and negative update functions.
@@ -50,9 +47,6 @@ namespace BilateralDen
 
 variable {W E : Type*}
 
--- ============================================================================
--- PART 2: Atomic Sentences
--- ============================================================================
 
 /--
 Atomic proposition: lift a classical proposition to bilateral form.
@@ -77,9 +71,6 @@ theorem atom_complementary (pred : W → Bool) (s : InfoState W E) :
     · right; exact ⟨h, by simp [hp]⟩
     · left; exact ⟨h, hp⟩
 
--- ============================================================================
--- PART 3: Negation
--- ============================================================================
 
 /--
 Negation: swap positive and negative updates.
@@ -106,9 +97,6 @@ theorem dne_positive (φ : BilateralDen W E) (s : InfoState W E) :
 theorem dne_negative (φ : BilateralDen W E) (s : InfoState W E) :
     φ.neg.neg.negative s = φ.negative s := rfl
 
--- ============================================================================
--- PART 4: Conjunction
--- ============================================================================
 
 /--
 Conjunction: sequence positive updates, combine negative updates.
@@ -129,9 +117,6 @@ theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : InfoState W E) :
     ((φ.conj ψ).conj χ).positive s = (φ.conj (ψ.conj χ)).positive s := by
   simp only [conj]
 
--- ============================================================================
--- PART 5: Disjunction (Standard)
--- ============================================================================
 
 /--
 Standard disjunction: choice between updates.
@@ -151,9 +136,6 @@ theorem disj_neg_positive (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (φ.disj ψ).neg.positive s = φ.negative s ∩ ψ.negative s := by
   simp only [neg, disj]
 
--- ============================================================================
--- PART 6: Existential Quantification
--- ============================================================================
 
 /--
 Existential quantification: introduce a discourse referent.
@@ -179,9 +161,6 @@ def existsFull (x : Nat) (φ : BilateralDen W E) : BilateralDen W E :=
   , negative := fun s =>
       { p ∈ s | ∀ e : E, (p.extend x e) ∉ φ.positive (s.randomAssignFull x) } }
 
--- ============================================================================
--- PART 7: Universal Quantification
--- ============================================================================
 
 /--
 Universal quantification: ∀x.φ = ¬∃x.¬φ
@@ -192,9 +171,6 @@ This ensures proper interaction with negation.
 def forall_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W E :=
   (exists_ x domain φ.neg).neg
 
--- ============================================================================
--- PART 8: Semantic Relations
--- ============================================================================
 
 /--
 Bilateral support: state s supports φ iff positive update is non-empty
@@ -218,9 +194,6 @@ theorem dne_positive_eq (φ : BilateralDen W E) (s : InfoState W E) :
     φ.neg.neg.positive s = φ.positive s := by
   simp only [neg]
 
--- ============================================================================
--- PART 9: Egli's Theorem
--- ============================================================================
 
 /--
 Egli's theorem: ∃x.φ ∧ ψ ⊨ ∃x[φ ∧ ψ]
@@ -271,9 +244,6 @@ theorem dne_consistent_iff (φ : BilateralDen W E) (s : InfoState W E) :
     ((φ.neg.neg).positive s).consistent ↔ (φ.positive s).consistent := by
   simp only [neg_neg]
 
--- ============================================================================
--- PART 10: Notations and Smart Constructors
--- ============================================================================
 
 /-- Notation for negation -/
 prefix:max "~" => neg
@@ -296,9 +266,6 @@ def pred2 (p : E → E → W → Bool) (t₁ t₂ : Nat) : BilateralDen W E :=
 
 end BilateralDen
 
--- ============================================================================
--- PART 11: Algebraic Structure
--- ============================================================================
 
 namespace BilateralDen
 
@@ -321,9 +288,7 @@ theorem disj_negative_eq_inter (φ ψ : BilateralDen W E) (s : InfoState W E) :
 theorem disj_positive_eq_union (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (φ.disj ψ).positive s = φ.positive s ∪ ψ.positive s := rfl
 
--- ============================================================================
 -- Boolean Algebra Connection
--- ============================================================================
 
 /-- For atoms, positive and negative are disjoint. -/
 theorem atom_disjoint' (pred : W → Bool) (s : InfoState W E) :
@@ -342,9 +307,7 @@ theorem neg_positive_eq_negative (φ : BilateralDen W E) (s : InfoState W E) :
 theorem neg_negative_eq_positive (φ : BilateralDen W E) (s : InfoState W E) :
     (~φ).negative s = φ.positive s := rfl
 
--- ============================================================================
 -- Pair Isomorphism: Bilateral ≃ Unilateral × Unilateral
--- ============================================================================
 
 /-- Unilateral denotation: single update function. -/
 def UnilateralDen (W : Type*) (E : Type*) := InfoState W E → InfoState W E
@@ -377,9 +340,7 @@ def unilateralNeg (φ : UnilateralDen W E) : UnilateralDen W E :=
 /-- Projection: bilateral → unilateral (forgets negative). -/
 def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive
 
--- ============================================================================
 -- ℤ/2ℤ Symmetry
--- ============================================================================
 
 /-- Negation generates ℤ/2ℤ action: neg² = id. -/
 theorem neg_generates_z2 (φ : BilateralDen W E) :
@@ -393,9 +354,7 @@ theorem bilateral_symmetry (φ : BilateralDen W E) :
   · rfl
   · simp [toPair, neg_neg]
 
--- ============================================================================
 -- Mathlib Connection
--- ============================================================================
 
 instance : InvolutiveNeg (BilateralDen W E) where
   neg := neg
@@ -403,9 +362,7 @@ instance : InvolutiveNeg (BilateralDen W E) where
 
 end BilateralDen
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

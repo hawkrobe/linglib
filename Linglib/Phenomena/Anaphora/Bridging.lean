@@ -40,9 +40,7 @@ Mandarin vs English contrast in bridging:
 
 namespace Phenomena.Anaphora.Bridging
 
--- ============================================================================
 -- Data Structure
--- ============================================================================
 
 /-- Felicity judgment for bridging examples -/
 inductive Felicity where
@@ -92,9 +90,7 @@ structure BridgingDatum where
   /-- Source -/
   source : String := ""
 
--- ============================================================================
 -- English Part-Whole Bridging
--- ============================================================================
 
 /-- English "the" in part-whole bridging: Good -/
 def englishPartWholeThe : BridgingDatum :=
@@ -120,9 +116,7 @@ def englishPartWholeThat : BridgingDatum :=
   , notes := "Demonstrative 'that' degraded in bridging - requires familiarity"
   , source := "Ahn & Zhu 2025" }
 
--- ============================================================================
 -- English Relational Bridging
--- ============================================================================
 
 /-- English "the" in relational bridging: Good -/
 def englishRelationalThe : BridgingDatum :=
@@ -148,9 +142,7 @@ def englishRelationalThat : BridgingDatum :=
   , notes := "Demonstrative 'that' degraded in bridging"
   , source := "Ahn & Zhu 2025" }
 
--- ============================================================================
 -- Mandarin Part-Whole Bridging
--- ============================================================================
 
 /-- Mandarin bare noun in part-whole bridging: Good -/
 def mandarinPartWholeBare : BridgingDatum :=
@@ -176,9 +168,7 @@ def mandarinPartWholeNa : BridgingDatum :=
   , notes := "na+CL also good in part-whole bridging"
   , source := "Ahn & Zhu 2025" }
 
--- ============================================================================
 -- Mandarin Relational Bridging
--- ============================================================================
 
 /-- Mandarin bare noun in relational bridging: Good -/
 def mandarinRelationalBare : BridgingDatum :=
@@ -204,9 +194,7 @@ def mandarinRelationalNa : BridgingDatum :=
   , notes := "na+CL as relationalizing operator (Ahn & Zhu analysis)"
   , source := "Ahn & Zhu 2025" }
 
--- ============================================================================
 -- Ahn & Zhu (2025) Experimental Items
--- ============================================================================
 
 /-- Ahn & Zhu Experiment 1: Part-whole condition -/
 def ahnZhuExp1PartWhole : BridgingDatum :=
@@ -232,9 +220,7 @@ def ahnZhuExp1Relational : BridgingDatum :=
   , notes := "Experiment 1: Relational bridging baseline"
   , source := "Ahn & Zhu 2025, Experiment 1" }
 
--- ============================================================================
 -- Uniqueness vs Familiarity Presupposition Types
--- ============================================================================
 
 /-- Presupposition type for definites (Ahn & Zhu's key distinction) -/
 inductive PresupType where
@@ -250,9 +236,7 @@ def partWholePresupType : PresupType := .uniqueness
 /-- Relational bridging is mediated by familiarity -/
 def relationalPresupType : PresupType := .familiarity
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 /-- English bridging examples -/
 def englishBridgingData : List BridgingDatum :=
@@ -274,9 +258,7 @@ def mandarinBridgingData : List BridgingDatum :=
 def allBridgingData : List BridgingDatum :=
   englishBridgingData ++ mandarinBridgingData
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

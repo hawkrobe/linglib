@@ -46,9 +46,7 @@ namespace RSA.KaoEtAl2014_Metaphor
 
 open RSA.Eval
 
--- ============================================================================
 -- Domain: Categories and Features
--- ============================================================================
 
 /-- Categories (referents in the domain) -/
 inductive Category where
@@ -89,9 +87,7 @@ inductive Goal where
   | comforting    -- care about comforting feature
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- Category-Feature Associations (from elicitation data)
--- ============================================================================
 
 /-
 These priors capture typical feature associations with categories.
@@ -116,9 +112,7 @@ def prototypicalMeaning (c : Category) : Meaning :=
   let (d, u, cf) := categoryFeatures c
   { category := c, dangerous := d, unpredictable := u, comforting := cf }
 
--- ============================================================================
 -- Literal Semantics
--- ============================================================================
 
 /--
 Literal semantics: does utterance literally describe the category?
@@ -140,9 +134,7 @@ Full meaning semantics: utterance is true if it matches the category component.
 def meaningSemantics (u : Utterance) (m : Meaning) : Bool :=
   literal u m.category
 
--- ============================================================================
 -- Extended Semantics (Soft Feature Match)
--- ============================================================================
 
 /--
 Feature-based compatibility score.
@@ -174,9 +166,7 @@ def extendedSemantics (u : Utterance) (m : Meaning) : ℚ :=
   if literal u m.category then 1
   else featureMatch u m
 
--- ============================================================================
 -- QUD Equivalence
--- ============================================================================
 
 /-- QUD equivalence: when are two meanings "the same" for a given goal? -/
 def qudEquiv : Goal → Meaning → Meaning → Bool
@@ -185,9 +175,7 @@ def qudEquiv : Goal → Meaning → Meaning → Bool
   | .unpredictable, m1, m2 => m1.unpredictable == m2.unpredictable
   | .comforting, m1, m2 => m1.comforting == m2.comforting
 
--- ============================================================================
 -- Meaning Space
--- ============================================================================
 
 /--
 Meanings in our domain: a person with various feature combinations.
@@ -214,9 +202,7 @@ def allUtterances : List Utterance := [.person, .shark, .fire, .blanket]
 /-- All goals -/
 def allGoals : List Goal := [.category, .dangerous, .unpredictable, .comforting]
 
--- ============================================================================
 -- Prior Over Meanings
--- ============================================================================
 
 /--
 Prior over meanings.
@@ -226,9 +212,7 @@ In a richer model, this would come from world knowledge.
 -/
 def meaningPrior : Meaning → ℚ := fun _ => 1
 
--- ============================================================================
 -- Prior Over Goals
--- ============================================================================
 
 /--
 Prior over QUDs/goals.
@@ -242,9 +226,7 @@ def goalPrior : Goal → ℚ
   | .unpredictable => 2 -- Sometimes unpredictability
   | .comforting => 2    -- Sometimes comfort
 
--- ============================================================================
 -- RSA Scenario
--- ============================================================================
 
 /-- Run L0 for metaphor scenario with extended semantics -/
 def runL0 (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
@@ -300,9 +282,7 @@ def runS1_strict (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
     (u, l0Score)
   RSA.Eval.normalize scores
 
--- ============================================================================
 -- Compute Distributions
--- ============================================================================
 
 /-- A dangerous person -/
 def dangerousPerson : Meaning :=
@@ -343,9 +323,7 @@ def l1_fire : List (Meaning × ℚ) := runL1_world .fire
 /-- L1 for "blanket" -/
 def l1_blanket : List (Meaning × ℚ) := runL1_world .blanket
 
--- ============================================================================
 -- Evaluate
--- ============================================================================
 
 #eval l0_shark
 -- L0("shark"): soft compatibility with dangerous meanings
@@ -374,14 +352,10 @@ def l1_blanket : List (Meaning × ℚ) := runL1_world .blanket
 #eval l1_blanket
 -- L1("blanket"): should infer comforting
 
--- ============================================================================
 -- Key Predictions
--- ============================================================================
 
 
--- ============================================================================
 -- Key Prediction 1: Nonliteral Interpretation
--- ============================================================================
 
 /--
 **Paper Prediction 1**: Nonliteral interpretation - P(person | "shark") >> P(shark | "shark")
@@ -404,9 +378,7 @@ def l1_infers_person_not_shark : Bool :=
 /-- **Theorem (Paper Key Result)**: Listener interprets metaphor nonliterally -/
 theorem nonliteral_interpretation : l1_infers_person_not_shark = true := by native_decide
 
--- ============================================================================
 -- Key Prediction 2: Speaker Behavior (Metaphor Emergence)
--- ============================================================================
 
 /--
 **Paper Prediction 2**: Under QUD "dangerous", S1 prefers "shark".
@@ -498,9 +470,7 @@ def fire_more_unpredictable_than_shark : Bool :=
 /-- **Theorem**: "Fire" evokes unpredictability more than "shark" -/
 theorem fire_evokes_unpredictability : fire_more_unpredictable_than_shark = true := by native_decide
 
--- ============================================================================
 -- Contrast with Strict Semantics
--- ============================================================================
 
 /-- Under strict semantics, metaphor gets zero compatibility -/
 def l0_shark_strict : List (Meaning × ℚ) := runL0_strict .shark .dangerous
@@ -514,9 +484,7 @@ def s1_strict_dangerous : List (Utterance × ℚ) := runS1_strict dangerousPerso
 #eval s1_strict_dangerous
 -- "shark" should have probability 0 (can only use "person")
 
--- ============================================================================
 -- Connection to Kao et al. (2014) Hyperbole
--- ============================================================================
 
 /-
 ## Structural Parallel: Metaphor vs Hyperbole
@@ -541,9 +509,7 @@ when optimizing for a QUD that projects away from the literally false dimension.
 Both emerge from the same pragmatic mechanism: QUD-sensitive optimization.
 -/
 
--- ============================================================================
 -- PART: Compositional Grounding in Montague Semantics
--- ============================================================================
 
 /-!
 ## Features as Adjective Denotations
@@ -694,9 +660,7 @@ theorem qudEquiv_eq_compositional (g : Goal) (m1 m2 : Meaning) :
     qudEquiv g m1 m2 = qudEquivCompositional g m1 m2 := by
   cases g <;> simp [qudEquiv, qudEquivCompositional, goalToFeature, featureDenotation]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## How QUD-RSA Derives Metaphor

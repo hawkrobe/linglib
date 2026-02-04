@@ -32,9 +32,6 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 
 namespace Phenomena.Politeness.Studies.YoonEtAl2020
 
--- ============================================================================
--- PART 1: Domain Types
--- ============================================================================
 
 /-- Heart state: 0-3 hearts representing true quality -/
 inductive HeartState where
@@ -98,9 +95,7 @@ inductive GoalCondition where
 /-- All goal conditions -/
 def allGoalConditions : List GoalCondition := [.informative, .kind, .both]
 
--- ============================================================================
 -- PART 1b: Connection to Fragment Scales
--- ============================================================================
 
 /--
 The evaluative adjectives used here form a Horn scale.
@@ -151,9 +146,6 @@ theorem evalScale_has_4_levels :
 theorem good_alt_amazing :
     evalScale.alternatives .good = [.amazing] := by native_decide
 
--- ============================================================================
--- PART 2: Soft Semantics (from literal meaning experiment)
--- ============================================================================
 
 /--
 Soft semantic meaning: P(state | adjective) from literal meaning norming.
@@ -186,9 +178,7 @@ def softSemantics : Adjective → HeartState → ℚ
   | .amazing, .h2 => 10/100
   | .amazing, .h3 => 90/100
 
--- ============================================================================
 -- PART 2b: Compositional Negation
--- ============================================================================
 
 /--
 Soft proposition: a function from states to degrees of truth in [0,1].
@@ -240,18 +230,12 @@ def utteranceSemantics : Utterance → SoftProp
 /-- Legacy helper for compatibility -/
 def negatedSemantics (adj : Adjective) : SoftProp := softNot (adjMeaning adj)
 
--- ============================================================================
--- PART 3: Utterance Cost
--- ============================================================================
 
 /-- Utterance cost: number of words -/
 def utteranceCost : Utterance → ℕ
   | .terrible | .bad | .good | .amazing => 2  -- "It was X"
   | .notTerrible | .notBad | .notGood | .notAmazing => 3  -- "It wasn't X"
 
--- ============================================================================
--- PART 4: Subjective Value Function
--- ============================================================================
 
 /--
 Subjective value V(s): linear mapping from states to values.
@@ -265,9 +249,6 @@ def subjectiveValue : HeartState → ℚ
   | .h2 => 2
   | .h3 => 3
 
--- ============================================================================
--- PART 5: Model Configuration
--- ============================================================================
 
 /-- Model configuration parameters -/
 structure PolitenessConfig where
@@ -282,9 +263,6 @@ structure PolitenessConfig where
 /-- Default configuration -/
 def defaultConfig : PolitenessConfig := {}
 
--- ============================================================================
--- PART 6: Experimental Data (Aggregated)
--- ============================================================================
 
 /--
 Aggregated experimental data: proportion choosing each utterance.
@@ -310,9 +288,6 @@ def negationIncreasesForBothGoal : Prop :=
   -- than speakers with only "informative" goal
   True  -- Placeholder for the behavioral finding
 
--- ============================================================================
--- PART 7: Inferred Goal Weights (from model fitting)
--- ============================================================================
 
 /--
 Inferred utility weights ω from model fitting (Table 2 in paper).
@@ -353,9 +328,6 @@ def getWeights : GoalCondition → InferredWeights
   | .kind => weightsKind
   | .both => weightsBoth
 
--- ============================================================================
--- PART 8: Model Comparison Results
--- ============================================================================
 
 /--
 Model comparison results (Table 1 in paper).

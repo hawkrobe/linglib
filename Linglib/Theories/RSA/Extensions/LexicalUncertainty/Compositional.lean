@@ -37,9 +37,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 
--- ============================================================================
 -- Compositional Utterance Structure
--- ============================================================================
 
 /--
 Compositional utterances built from atomic items and Boolean connectives.
@@ -84,9 +82,7 @@ def complexity {Atom : Type} : CompUtt Atom → Nat
 
 end CompUtt
 
--- ============================================================================
 -- Atomic Lexicon: Maps atoms to truth functions
--- ============================================================================
 
 /--
 An atomic lexicon maps atomic utterances to Boolean meanings.
@@ -114,9 +110,7 @@ def refines (L' L : AtomicLexicon A W) : Prop :=
 
 end AtomicLexicon
 
--- ============================================================================
 -- Compositional LU Scenario
--- ============================================================================
 
 /--
 Compositional Lexical Uncertainty Scenario.
@@ -149,9 +143,7 @@ structure CompLUScenario where
 
 attribute [instance] CompLUScenario.atomBEq CompLUScenario.worldBEq
 
--- ============================================================================
 -- Compositional LU-RSA Computations
--- ============================================================================
 
 namespace CompLURSA
 
@@ -198,9 +190,7 @@ def L1_prob (S : CompLUScenario) (u : CompUtt S.Atom) (w : S.World) : ℚ :=
 
 end CompLURSA
 
--- ============================================================================
 -- Non-Convex Disjunction Scenario Builder
--- ============================================================================
 
 /--
 Worlds for a 3-point scale (one, two, three).
@@ -289,9 +279,7 @@ def mkNonConvexDisjScenario : CompLUScenario where
   ]
   worlds := [.one, .two, .three]
 
--- ============================================================================
 -- Hurford Constraint and Embedded Implicatures
--- ============================================================================
 
 /--
 Check if one utterance semantically entails another under base semantics.
@@ -310,9 +298,7 @@ def violatesHurford (S : CompLUScenario) : CompUtt S.Atom → Bool
   | .disj u₁ u₂ => entails S u₁ u₂ || entails S u₂ u₁
   | _ => false
 
--- ============================================================================
 -- Connection to Potts et al. (2016)
--- ============================================================================
 
 /--
 Structure for tracking embedded implicature predictions.

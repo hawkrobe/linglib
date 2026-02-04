@@ -46,9 +46,7 @@ import Mathlib.Tactic.Linarith
 
 namespace Comparisons.ThresholdSemantics
 
--- ============================================================================
 -- Abstract Threshold Predicate
--- ============================================================================
 
 /-- The common structure across all three domains -/
 structure ThresholdPredicate (Entity Degree : Type) [LE Degree] where
@@ -64,9 +62,7 @@ def ThresholdPredicate.holds {E D : Type} [LE D] [DecidableRel (α := D) (· ≤
     (p : ThresholdPredicate E D) (x : E) : Bool :=
   p.threshold ≤ p.measure x
 
--- ============================================================================
 -- Domain 1: Gradable Adjectives (Lassiter & Goodman 2017)
--- ============================================================================
 
 /-!
 ## Gradable Adjectives
@@ -93,9 +89,7 @@ def GradableAdjective.meansAt {E : Type} (adj : GradableAdjective E) (θ : ℚ) 
 def GradableAdjective.softMeaning {E : Type} (adj : GradableAdjective E) (x : E) : ℚ :=
   adj.measure x  -- P(random θ < measure(x)) = measure(x) for uniform θ on [0,1]
 
--- ============================================================================
 -- Domain 2: Generics (Tessler & Goodman 2019)
--- ============================================================================
 
 /-!
 ## Generics
@@ -125,9 +119,7 @@ def GenericPredicate.trueAt (gen : GenericPredicate) (θ : ℚ) : Bool :=
 def GenericPredicate.softTruth (gen : GenericPredicate) : ℚ :=
   gen.prevalence
 
--- ============================================================================
 -- Domain 3: Gradable Nouns (Morzycki 2009)
--- ============================================================================
 
 /-!
 ## Gradable Nouns
@@ -154,9 +146,7 @@ structure GradableNounWithSize (Entity : Type) where
 def GradableNounWithSize.holds {E : Type} (gn : GradableNounWithSize E) (x : E) : Bool :=
   gn.sizeThreshold ≤ gn.nounMeasure x ∧ gn.nounStandard ≤ gn.nounMeasure x
 
--- ============================================================================
 -- The Unified View
--- ============================================================================
 
 /-!
 ## Mapping to the Abstract Pattern
@@ -197,9 +187,7 @@ def gnToThreshold {E : Type} (gn : GradableNounWithSize E) : ThresholdPredicate 
   , threshold := max gn.sizeThreshold gn.nounStandard
   }
 
--- ============================================================================
 -- Key Insight: Scale Structure Effects
--- ============================================================================
 
 /-!
 ## Why Polarity Matters
@@ -254,9 +242,7 @@ theorem min_negative (θ : ℚ) (hθ : 0 ≤ θ) :
   · intro d' hd' _
     exact hd'
 
--- ============================================================================
 -- Summary: The Three Instantiations
--- ============================================================================
 
 /-!
 ## Summary Table

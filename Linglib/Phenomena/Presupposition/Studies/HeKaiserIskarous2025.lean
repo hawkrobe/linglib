@@ -40,9 +40,7 @@ import Mathlib.Data.FinEnum
 
 namespace Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 
--- ============================================================================
 -- State Model
--- ============================================================================
 
 /-- Two states for part-whole relations.
 
@@ -65,9 +63,7 @@ def allStates : List HKIState := [.pos, .neg]
 
 theorem allStates_length : allStates.length = 2 := rfl
 
--- ============================================================================
 -- Utterance Types
--- ============================================================================
 
 /-- Three utterances for part-whole communication.
 
@@ -105,9 +101,7 @@ def HKIUtterance.polarity : HKIUtterance → Polarity
   | .uNeg => .negative
   | .uNull => .null
 
--- ============================================================================
 -- Cost Structure
--- ============================================================================
 
 /-- Utterance costs from the paper.
 
@@ -125,9 +119,7 @@ def utteranceCost : HKIUtterance → ℚ
 theorem neg_costs_more : utteranceCost .uNeg > utteranceCost .uPos := by
   native_decide
 
--- ============================================================================
 -- Literal Semantics (Boolean)
--- ============================================================================
 
 /-- Boolean literal semantics: which utterance is true in which state.
 
@@ -142,9 +134,7 @@ def literalTruth : HKIState → HKIUtterance → Bool
   | .neg, .uNeg => true
   | .neg, .uNull => true
 
--- ============================================================================
 -- Wonky World Types
--- ============================================================================
 
 /-- World types for wonkyRSA.
 
@@ -160,9 +150,7 @@ def allWorldTypes : List WorldType := [.normal, .wonky]
 
 theorem allWorldTypes_length : allWorldTypes.length = 2 := rfl
 
--- ============================================================================
 -- Prior Structure
--- ============================================================================
 
 /-- Prior probability over states.
 
@@ -203,9 +191,7 @@ def lowPrior : HKIPrior where
   h_pos_nonneg := by native_decide
   h_pos_le_one := by native_decide
 
--- ============================================================================
 -- Fuzzy Semantics Parameters
--- ============================================================================
 
 /-- Parameters for fuzzy interpretation functions.
 
@@ -236,9 +222,7 @@ def bestFitFuzzyParams : FuzzyParams where
   c := 3/10       -- 0.3
   h_n_valid := by constructor <;> native_decide
 
--- ============================================================================
 -- Model Configuration
--- ============================================================================
 
 /-- Configuration for RSA model instances -/
 structure HKIConfig where
@@ -263,9 +247,7 @@ def highPriorConfig : HKIConfig where
 def lowPriorConfig : HKIConfig where
   prior := lowPrior
 
--- ============================================================================
 -- Key Theoretical Claims
--- ============================================================================
 
 /-- Asymmetry Hypothesis 1: Negation has higher production cost.
 
@@ -283,9 +265,7 @@ def asymmetryHypothesis2 : String :=
   "Negation presupposes that its positive-polarity counterpart is " ++
   "relevant or prominent in the common ground, not the other way around."
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -27,9 +27,6 @@ import Mathlib.Algebra.Group.Defs
 
 namespace Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Information States
--- ============================================================================
 
 /--
 An **InfoState** is a set of possibilities.
@@ -44,9 +41,6 @@ abbrev InfoStateOf (P : Type*) := Set P
 -- InfoState is just Set, so we get:
 -- ⊤ = Set.univ, ⊥ = ∅, ⊔ = ∪, ⊓ = ∩
 
--- ============================================================================
--- PART 2: Context Change Potentials
--- ============================================================================
 
 /--
 A **Context Change Potential** (CCP) is a function from states to states.
@@ -88,9 +82,6 @@ theorem seq_absurd (u : CCP P) : u ;; absurd = absurd := rfl
 
 end CCP
 
--- ============================================================================
--- PART 3: Eliminative Updates
--- ============================================================================
 
 /--
 An update is **eliminative** if it never adds possibilities.
@@ -111,9 +102,6 @@ theorem eliminative_seq {P : Type*} (u v : CCP P)
     IsEliminative (u ;; v) := fun s _ hp =>
   hu s (hv (u s) hp)
 
--- ============================================================================
--- PART 4: Tests
--- ============================================================================
 
 /--
 A **test** is a CCP that either passes (returns input) or fails (returns ∅).
@@ -131,9 +119,6 @@ theorem test_eliminative {P : Type*} (u : CCP P) (h : IsTest u) :
   | inl heq => rw [heq] at hp; exact hp
   | inr hemp => rw [hemp] at hp; exact False.elim hp
 
--- ============================================================================
--- PART 5: Support and Content (Galois Connection)
--- ============================================================================
 
 section GaloisContent
 
@@ -189,9 +174,6 @@ theorem content_mono (sat : P → φ → Prop) (ψ₁ ψ₂ : φ)
 
 end GaloisContent
 
--- ============================================================================
--- PART 6: Update from Satisfaction
--- ============================================================================
 
 /--
 The standard update construction: filter by satisfaction.
@@ -233,9 +215,6 @@ theorem support_iff_update_eq {P φ : Type*} (sat : P → φ → Prop)
     have : p ∈ updateFromSat sat ψ s := by rw [h]; exact hp
     exact this.2
 
--- ============================================================================
--- PART 7: Dynamic Entailment
--- ============================================================================
 
 /--
 **Dynamic Entailment**: φ dynamically entails ψ if updating with φ
@@ -263,9 +242,6 @@ theorem dynamicEntails_trans {P φ : Type*} (sat : P → φ → Prop)
   -- By h2, updateFromSat sat ψ₂ s supports ψ₃
   exact h2 s p hp_in_2
 
--- ============================================================================
--- PART 8: Monotonicity
--- ============================================================================
 
 /--
 **Update is monotone**: larger input states yield larger output states.
@@ -276,9 +252,7 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
   intro p hp
   exact ⟨h hp.1, hp.2⟩
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

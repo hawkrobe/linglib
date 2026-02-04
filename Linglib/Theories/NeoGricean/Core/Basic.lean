@@ -26,9 +26,6 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 
 namespace NeoGricean
 
--- ============================================================================
--- PART 1: Belief States
--- ============================================================================
 
 /--
 Speaker's belief state about a proposition ψ.
@@ -44,9 +41,6 @@ inductive BeliefState where
   | noOpinion   -- ¬Bel_S(ψ) ∧ ¬Bel_S(¬ψ)
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- PART 2: Predicates on Belief States
--- ============================================================================
 
 /--
 Competence: speaker knows whether ψ.
@@ -81,9 +75,6 @@ def strongImpl : BeliefState → Bool
   | .disbelief => true
   | .noOpinion => false
 
--- ============================================================================
--- PART 3: Standard Recipe Result
--- ============================================================================
 
 /--
 The result of applying the Standard Recipe to an utterance.
@@ -109,9 +100,6 @@ def applyStandardRecipe (b : BeliefState) : StandardRecipeResult :=
   , strongImplicature := strongImpl b
   }
 
--- ============================================================================
--- PART 4: Core Theorems
--- ============================================================================
 
 /--
 **Theorem: Competence Strengthening**
@@ -183,9 +171,6 @@ theorem no_belief_weak :
   | disbelief => rfl
   | noOpinion => rfl
 
--- ============================================================================
--- PART 5: Three Outcomes (Geurts p.40)
--- ============================================================================
 
 /--
 Three possible outcomes for a hearer processing an implicature:
@@ -226,9 +211,6 @@ theorem outcomes_exhaustive :
   | disbelief => right; left; native_decide
   | noOpinion => right; right; native_decide
 
--- ============================================================================
--- PART 6: Theory Variants (Defaultism vs Contextualism)
--- ============================================================================
 
 /--
 When do scalar implicatures get triggered?
@@ -310,9 +292,6 @@ Does this theory variant predict high SI rates in neutral contexts?
 def predictsHighNeutralRate (p : NeoGriceanParams) : Bool :=
   p.predictedNeutralRate > 50
 
--- ============================================================================
--- PART 7: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

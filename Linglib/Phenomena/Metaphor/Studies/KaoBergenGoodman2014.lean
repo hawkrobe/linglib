@@ -53,9 +53,7 @@ Science Society, 36, 719-724.
 
 namespace Phenomena.Metaphor.Studies.KaoBergenGoodman2014
 
--- ============================================================================
 -- Experimental Categories and Features (Table 1 from paper)
--- ============================================================================
 
 /-- Animal categories used in the experiment -/
 inductive Animal where
@@ -85,9 +83,7 @@ def sampleFeatures : List AnimalFeatures := [
   ⟨.wolf, "scary", "mean", "angry"⟩
 ]
 
--- ============================================================================
 -- Key Quantitative Findings
--- ============================================================================
 
 /-- Model-human correlation (r = 0.6) -/
 def modelHumanCorrelation : ℚ := 60/100
@@ -101,9 +97,7 @@ def humanReliability : ℚ := 828/1000
 /-- Model's P(person | "shark") from paper -/
 def modelPPersonGivenShark : ℚ := 994/1000
 
--- ============================================================================
 -- Key Qualitative Predictions (Theory-Derived)
--- ============================================================================
 
 /--
 The paper identifies these key qualitative predictions:

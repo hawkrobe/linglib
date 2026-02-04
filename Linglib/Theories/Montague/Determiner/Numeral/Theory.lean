@@ -37,9 +37,7 @@ import Linglib.Theories.RSA.Core.Eval
 
 namespace Montague.Determiner.Numeral
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /-- Number word utterances -/
 inductive NumWord where
@@ -61,9 +59,7 @@ def standardNumWords : List NumWord := [.one, .two, .three]
 /-- Standard list of world states (cardinalities 0-3) -/
 def standardWorlds : List Nat := [0, 1, 2, 3]
 
--- ============================================================================
 -- NumeralTheory Structure
--- ============================================================================
 
 /--
 A semantic theory for number words.
@@ -90,9 +86,7 @@ structure NumeralTheory where
   /-- World states to consider (default: 0, 1, 2, 3) -/
   worlds : List Nat := standardWorlds
 
--- ============================================================================
 -- Derived Notions
--- ============================================================================
 
 /--
 Run L1 for a numeral theory using RSA.Eval (for #eval demonstrations).
@@ -141,9 +135,7 @@ This is necessary for implicature to arise.
 def NumeralTheory.hasAmbiguity (T : NumeralTheory) (w : NumWord) : Bool :=
   T.compatibleCount w > 1
 
--- ============================================================================
 -- Properties
--- ============================================================================
 
 /--
 A theory has monotonic numerals if larger numerals are stronger.

@@ -57,9 +57,6 @@ open Montague.Lexicon.Expressives
 open Montague.Core.Polarity (ContextPolarity)
 open NeoGricean (BeliefState)
 
--- ============================================================================
--- PART 1: CI Alternatives (Fox & Katzir Style)
--- ============================================================================
 
 /--
 Types of CI-bearing expressions that can form alternative sets.
@@ -121,9 +118,6 @@ def appositivePair (name property : String) (relevant : Bool) : CIAlternativePai
   , stronger := s!"{name}, {property}"
   , strongerIsRelevant := relevant }
 
--- ============================================================================
--- PART 2: MCIs! Principle
--- ============================================================================
 
 /--
 Result of applying MCIs! (Maximize Conventional Implicatures).
@@ -163,9 +157,6 @@ def applyMCIs (pair : CIAlternativePair) : MCIsResult :=
   , aciArises := aciArises
   , aciContent := if aciArises then some s!"¬(CI of {pair.stronger})" else none }
 
--- ============================================================================
--- PART 3: Key Examples from Lo Guercio
--- ============================================================================
 
 /--
 Example (18)-(19): Out of the blue, NO ACI arises.
@@ -212,9 +203,6 @@ Example (31)-(32): Appositive parallel.
 def example_appositive_ACI : MCIsResult :=
   applyMCIs (appositivePair "Diego" "a doctor" true)
 
--- ============================================================================
--- PART 4: Properties of ACIs (§4)
--- ============================================================================
 
 /--
 **Property 1: ACIs Don't Require Same Assertive Content**
@@ -287,9 +275,6 @@ def reinforceACI (result : MCIsResult) : MCIsResult :=
   -- Reinforcement doesn't change the ACI - it's still valid
   result
 
--- ============================================================================
--- PART 5: Comparison with SIs and Antipresuppositions
--- ============================================================================
 
 /--
 Summary of how ACIs differ from their "scalar cousins".
@@ -333,9 +318,6 @@ def aciProperties : ScalarInferenceComparison :=
   , cancellable := true
   , reinforceable := true }
 
--- ============================================================================
--- PART 6: Grounding in Compositional Semantics
--- ============================================================================
 
 /--
 **Grounding Theorem: ACI from MCIs! and Potts Semantics**
@@ -354,9 +336,7 @@ theorem aci_grounded_in_mcis {W : Type*}
     : -- Then ACI arises: speaker believes ¬(CI of ψ)
       True := trivial
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -42,9 +42,7 @@ namespace Phenomena.Coordination
 open CCG
 open Montague
 
--- ============================================================================
 -- Empirical Fact 1: Non-constituent coordination is GRAMMATICAL
--- ============================================================================
 
 -- CCG derives "John likes and Mary hates beans" with category S
 theorem nonConstituentCoord_is_grammatical :
@@ -54,9 +52,7 @@ theorem nonConstituentCoord_is_grammatical :
 theorem standardCoord_is_grammatical :
     john_sleeps.cat = some S := rfl
 
--- ============================================================================
 -- Empirical Fact 2: Non-constituent coordination is HARDER TO PROCESS
--- ============================================================================
 
 /-
 Processing difficulty correlates with the number of combinatory operations.
@@ -88,9 +84,7 @@ theorem standardCoord_harder_than_simple :
     john_sleeps.opCount < john_sleeps_and_mary_sleeps.opCount := by
   native_decide
 
--- ============================================================================
 -- Why This Matters
--- ============================================================================
 
 /-
 CCG makes two correct qualitative predictions:
@@ -107,9 +101,7 @@ The theorems above show that CCG's predictions MATCH the empirical facts.
 This is the syntax-to-processing linking function in action.
 -/
 
--- ============================================================================
 -- Empirical Fact 3: The SEMANTIC INTERPRETATION is Conjunctive
--- ============================================================================
 
 /-
 The empirical observation (from Phenomena/Coordination/Data.lean):
@@ -166,9 +158,7 @@ theorem ccg_coordination_semantics_correct :
   intro e
   cases e <;> native_decide
 
--- ============================================================================
 -- Summary: CCG Captures Non-Constituent Coordination
--- ============================================================================
 
 /-
 ## What CCG Explains

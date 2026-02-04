@@ -24,9 +24,6 @@ gradable adjectives.
 
 namespace Phenomena.Gradability.ComparisonClass
 
--- ============================================================================
--- PART 1: Polarity × Expectations Interaction (Tessler & Goodman 2022)
--- ============================================================================
 
 /--
 Empirical pattern: Polarity and prior expectations interact to determine
@@ -151,9 +148,6 @@ def tesslerGoodmanPattern : PolarityExpectationsPattern :=
   , negativePlusHighYieldsSubordinate := true
   }
 
--- ============================================================================
--- PART 2: RGA vs AGA Distinction (Weicker & Schulz 2024)
--- ============================================================================
 
 /--
 Adjective type: Relative Gradable (RGA) vs Absolute Gradable (AGA).
@@ -216,9 +210,6 @@ def wetAGA : AdjectiveTypeDatum :=
 def adjectiveTypeExamples : List AdjectiveTypeDatum :=
   [bigRGA, wetAGA]
 
--- ============================================================================
--- PART 3: Linguistic vs Visual Cues (Weicker & Schulz 2024)
--- ============================================================================
 
 /--
 Cue type for comparison class determination.
@@ -304,9 +295,6 @@ def bigMouseAnimals : LinguisticVsVisualDatum :=
 def linguisticVsVisualExamples : List LinguisticVsVisualDatum :=
   [bigAnimalMice, bigMouseAnimals]
 
--- ============================================================================
--- PART 4: Developmental Data (Weicker & Schulz 2024)
--- ============================================================================
 
 /--
 Empirical pattern: Children show same linguistic > visual preference as adults.
@@ -379,9 +367,6 @@ def childSuperordinate : DevelopmentalDatum :=
 def developmentalExamples : List DevelopmentalDatum :=
   [adultBasicLevel, adultSuperordinate, childBasicLevel, childSuperordinate]
 
--- ============================================================================
--- PART 5: Key Generalizations
--- ============================================================================
 
 /--
 Main empirical generalizations about comparison class inference.
@@ -412,9 +397,7 @@ def mainGeneralizations : ComparisonClassGeneralizations :=
   , rgaMoreContextSensitive := true
   }
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

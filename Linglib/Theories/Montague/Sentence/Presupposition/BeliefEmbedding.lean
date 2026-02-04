@@ -65,9 +65,6 @@ open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 
--- ============================================================================
--- PART 1: Doxastic Accessibility (Belief States)
--- ============================================================================
 
 /--
 Doxastic accessibility relation: the worlds compatible with what an agent
@@ -94,9 +91,6 @@ doxastically accessible worlds.
 def believes (Dox : DoxasticAccessibility W Agent) (agent : Agent) (p : BProp W) (w : W) : Prop :=
   ∀ w', Dox agent w w' → p w' = true
 
--- ============================================================================
--- PART 2: Local Context Under Belief (Schlenker's Analysis)
--- ============================================================================
 
 /--
 The local context of an embedded clause under a belief predicate.
@@ -142,9 +136,6 @@ attitude holder's beliefs.
 def presupAttributedToHolder (blc : BeliefLocalCtx W Agent) (p : PrProp W) : Prop :=
   ∀ w_star, blc.globalCtx w_star → ContextSet.entails (blc.atWorld w_star) p.presup
 
--- ============================================================================
--- PART 3: OLE Behavior by Trigger Class
--- ============================================================================
 
 /--
 Determines whether a projective trigger's content shifts to the attitude
@@ -166,9 +157,6 @@ theorem ole_matches_shift (c : ProjectiveClass) :
     shiftsUnderBelief c = true ↔ c.ole = .obligatory := by
   cases c <;> simp [shiftsUnderBelief, ProjectiveClass.ole]
 
--- ============================================================================
--- PART 4: Example: "John believes Mary stopped smoking"
--- ============================================================================
 
 /--
 World type for the smoking example:
@@ -268,9 +256,6 @@ theorem stop_ole_attribution :
   | maryNeverSmoked_johnBelieves_usedTo => simp at hw_dox
   | maryNeverSmoked_johnDoesntBelieve => simp at hw_dox
 
--- ============================================================================
--- PART 5: Formalizing the Non-Shifting Case (OLE = no)
--- ============================================================================
 
 /--
 For OLE=no triggers (Class B and D), the projective content is NOT computed
@@ -299,9 +284,6 @@ def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
   -- The content must be entailed by the global (speaker's) context
   ContextSet.entails globalCtx expressiverContent
 
--- ============================================================================
--- PART 6: Deriving Tonhauser et al. Predictions
--- ============================================================================
 
 /--
 **Main Theorem**: The Schlenker local context machinery derives the OLE
@@ -331,9 +313,6 @@ Class B triggers (expressives, appositives) have OLE=no.
 example : ProjectiveTrigger.expressive.toClass.ole = .notObligatory := rfl
 example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 
--- ============================================================================
--- PART 7: Integration with LocalContext.lean
--- ============================================================================
 
 /--
 Convert a belief local context to a standard local context.
@@ -357,9 +336,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     ContextSet.entails (blc.atWorld w_star) p.presup := by
   simp [presupFiltered, beliefToLocalCtx]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -37,9 +37,7 @@ import Linglib.Theories.Minimalism.HeadMovement.Basic
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: The Traditional Distinction (Formalized)
--- ============================================================================
 
 /-- External Merge: combining two SOs with no prior containment relation.
 
@@ -81,9 +79,7 @@ structure InternalMerge where
   /-- The result is formed by merge (mover goes to specifier position) -/
   is_merge : result = merge mover target
 
--- ============================================================================
 -- Part 2: The Unification Theorems
--- ============================================================================
 
 /-- **THEOREM 1 (Same Operation)**:
     Both External and Internal Merge use the same underlying `merge` function.
@@ -150,9 +146,7 @@ theorem merge_preconditions_partition (α β : SyntacticObject) :
     push_neg at h
     exact h
 
--- ============================================================================
 -- Part 3: Labeling Uniformity
--- ============================================================================
 
 /-- When α selects β, the label of {α, β} equals the label of α -/
 theorem label_of_merge_when_selects (α β : SyntacticObject)
@@ -169,9 +163,7 @@ theorem label_of_merge_when_right_selects (α β : SyntacticObject)
   simp only [hna, h, ↓reduceIte]
   rfl
 
--- ============================================================================
 -- Labeling Symmetry and the Necessity of No Mutual Selection
--- ============================================================================
 
 /-
 ## Why NoMutualSelection is Algebraically Required
@@ -408,9 +400,7 @@ theorem selection_determines_projection :
     exact sameLabel_when_selects gm.left gm.right h_sel
       (selects_implies_has_label gm.left gm.right h_sel)
 
--- ============================================================================
 -- Part 4: Parallel Properties for Both Merge Types
--- ============================================================================
 
 /-
 ## Harizanov's Three Unification Claims (Page 53)
@@ -512,9 +502,7 @@ theorem harizanov_unification :
   · exact external_merge_either_projects
   · exact internal_merge_either_projects
 
--- ============================================================================
 -- Part 5: Movement Uniformity (Harizanov's First Claim - Details)
--- ============================================================================
 
 /-- **THEOREM 4 (Movement Uniformity)**:
     "The properties of movement do not depend on the nature of the moving element"
@@ -541,9 +529,7 @@ theorem target_is_right_daughter (im : InternalMerge) :
   simp only [merge, immediatelyContains]
   right; trivial
 
--- ============================================================================
 -- Part 5: Projection After Movement (Harizanov's Second Claim)
--- ============================================================================
 
 /-- **THEOREM 5 (Mover Can Project)**:
     "A moved element can project after movement"
@@ -587,9 +573,7 @@ theorem projection_dichotomy (im : InternalMerge)
   | inl h => exact Or.inl (mover_can_project im h)
   | inr h => exact Or.inr (target_can_project im h h_acyclic)
 
--- ============================================================================
 -- Part 6: The Core Equivalence
--- ============================================================================
 
 /-- **MAIN THEOREM (Merge Unification)**:
     Internal and External Merge are the same operation under different preconditions.
@@ -620,9 +604,7 @@ theorem merge_unification :
     · push_neg at h
       exact Or.inl h
 
--- ============================================================================
 -- Part 7: Consequences for Head Movement
--- ============================================================================
 
 /-- Head movement is just Internal Merge where the mover is a head -/
 def isHeadMovement (im : InternalMerge) : Prop :=
@@ -655,9 +637,7 @@ theorem head_vs_phrasal_projection (im : InternalMerge)
   · intro h_sel
     exact target_can_project im h_sel h_acyclic
 
--- ============================================================================
 -- Part 8: The Algebraic Foundation (Why This Isn't a Choice)
--- ============================================================================
 
 /-
 ## Why the Partition is Algebraic, Not Stipulated
@@ -879,9 +859,7 @@ theorem standard_is_least_upper_bound (C : AccessCondition)
   | inl hext' => exact hext W A B hext'
   | inr hint' => exact hint W A B hint'
 
--- ============================================================================
 -- Part 9: Connecting to HeadMovement/Basic.lean
--- ============================================================================
 
 /-
 ## Connection to Head Movement Types
@@ -949,9 +927,7 @@ theorem all_movement_is_internal_merge :
   use m.toInternalMerge
   simp [Movement.toInternalMerge]
 
--- ============================================================================
 -- Part 9: The Complete Picture
--- ============================================================================
 
 /-- **MAIN THEOREM (Complete Harizanov Unification)**:
 

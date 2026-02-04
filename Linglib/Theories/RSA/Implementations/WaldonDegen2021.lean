@@ -64,9 +64,6 @@ import Linglib.Theories.RSA.Domains.ReferenceGames
 
 namespace RSA.Implementations.WaldonDegen2021
 
--- ============================================================================
--- PART 1: Reference Game Setup
--- ============================================================================
 
 /-- Features for reference game objects. -/
 inductive Feature where
@@ -90,9 +87,6 @@ def ssScene : List Referent := [bigBlue, bigRed, smallBlue]
 /-- Color-sufficient scene: {small_red, big_red, small_blue}, target = small_blue -/
 def csScene : List Referent := [smallRed, bigRed, smallBlue]
 
--- ============================================================================
--- PART 2: Lexical Items and Utterances
--- ============================================================================
 
 /-- Lexical items in referring expressions. -/
 inductive LexItem where
@@ -117,9 +111,6 @@ def itemTrueOf (i : LexItem) (r : Referent) : Bool :=
 def uttTrueOf (u : Utterance) (r : Referent) : Bool :=
   u.all (itemTrueOf · r)
 
--- ============================================================================
--- PART 3: Continuous Semantics (Degen et al. 2020)
--- ============================================================================
 
 /-- Semantic reliability values v^i for lexical items.
     Color adjectives are more reliable than size adjectives. -/
@@ -140,9 +131,7 @@ def lexContinuous (r : Referent) (i : LexItem) : ℚ :=
 def uttContinuous (r : Referent) (u : Utterance) : ℚ :=
   u.foldl (fun acc i => acc * lexContinuous r i) 1
 
--- ============================================================================
 -- Grounding: Connection to unified noise theory
--- ============================================================================
 
 /-- lexContinuous is an instance of the unified noise channel.
 
@@ -164,9 +153,6 @@ theorem lexContinuous_as_noiseChannel (r : Referent) (i : LexItem) :
   simp only [lexContinuous, RSA.Noise.noiseChannel, boolToRat]
   split <;> ring
 
--- ============================================================================
--- PART 4: Language-Specific Grammars
--- ============================================================================
 
 /-- Word order type for different languages. -/
 inductive WordOrder where
@@ -198,9 +184,6 @@ def grammaticalUtterances (order : WordOrder) (scene : List Referent)
   -- Filter to utterances true of target
   (singleAdj ++ doubleAdj).filter (uttTrueOf · target)
 
--- ============================================================================
--- PART 5: Incremental String Interpretation
--- ============================================================================
 
 /-- Get all grammatical continuations of a partial utterance. -/
 def continuations (partialUtt : Utterance) (order : WordOrder)
@@ -218,9 +201,6 @@ def stringInterpretation (context : Utterance) (nextWord : LexItem)
     let total := conts.foldl (fun acc u => acc + uttContinuous r u) 0
     total / conts.length
 
--- ============================================================================
--- PART 6: Incremental RSA (Cohn-Gordon et al. 2018)
--- ============================================================================
 
 /-- Incremental literal listener L0^INCR(r | c, i).
     Proportional to string meaning times prior. -/
@@ -264,9 +244,6 @@ def s1Incremental (context : Utterance) (target : Referent)
   if total == 0 then scores.map fun (w, _) => (w, 0)
   else scores.map fun (w, s) => (w, s / total)
 
--- ============================================================================
--- PART 7: Full Utterance Probability (Chain Rule)
--- ============================================================================
 
 /-- Full utterance probability via chain rule.
     S1(u | r) = ∏_j S1^INCR(i_j | [i_1...i_{j-1}], r) -/
@@ -284,9 +261,6 @@ def utteranceProb (u : Utterance) (target : Referent)
       go (context ++ [w]) ws (prob * wProb)
   go [] u 1
 
--- ============================================================================
--- PART 8: Model Predictions
--- ============================================================================
 
 /-- Default cost function: 0.1 per adjective. -/
 def defaultCost (i : LexItem) : ℚ :=
@@ -325,9 +299,6 @@ def spanishFlipPrediction (α : ℕ) : Bool :=
   let spanishSizeCS := redundantModProb .postnominal csScene smallBlue α
   spanishSizeCS > spanishColorSS
 
--- ============================================================================
--- PART 9: Evaluation
--- ============================================================================
 
 #eval grammaticalUtterances .prenominal ssScene smallBlue
 #eval grammaticalUtterances .postnominal ssScene smallBlue

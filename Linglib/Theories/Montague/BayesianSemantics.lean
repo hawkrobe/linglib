@@ -51,9 +51,7 @@ namespace Theories.Montague.BayesianSemantics
 open Core.Proposition
 open Core.GradedProposition
 
--- ============================================================================
 -- Finite PMF (Simple Version)
--- ============================================================================
 
 /--
 A finite probability mass function over type Θ.
@@ -105,9 +103,7 @@ theorem expect_pure (θ₀ : Θ) (f : Θ → ℚ) :
 
 end FinitePMF
 
--- ============================================================================
 -- Parameterized Predicates
--- ============================================================================
 
 /--
 A parameterized predicate has:
@@ -153,9 +149,7 @@ theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
 
 end ParamPred
 
--- ============================================================================
 -- Example: Threshold Predicates (Lassiter & Goodman Style)
--- ============================================================================
 
 /--
 A threshold predicate: "x has property P iff measure(x) > θ"
@@ -192,9 +186,7 @@ theorem gradedTruth_eq_prob (pred : ThresholdPred E Θ) (x : E) :
 
 end ThresholdPred
 
--- ============================================================================
 -- Feature-Based Predicates (Bernardy Style)
--- ============================================================================
 
 /--
 A feature-based predicate where entities are characterized by features
@@ -244,9 +236,7 @@ def gradedTruth (pred : FeaturePred E n) (x : E) : ℚ :=
 
 end FeaturePred
 
--- ============================================================================
 -- Composition
--- ============================================================================
 
 /-!
 ## Compositional Structure
@@ -297,9 +287,7 @@ def ParamPred.conj {E Θ₁ Θ₂ : Type*}
         _ = 1 := by simp [p.prior.mass_sum_one]
   }
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

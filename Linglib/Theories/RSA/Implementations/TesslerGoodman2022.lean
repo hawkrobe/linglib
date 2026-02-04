@@ -43,9 +43,7 @@ namespace RSA.TesslerGoodman2022
 
 open RSA.Eval
 
--- ============================================================================
 -- Domain: Heights (reuse from LassiterGoodman2017)
--- ============================================================================
 
 /--
 Discretized height values (in inches, scaled).
@@ -60,9 +58,7 @@ def Height.toNat : Height → Nat
   | .h0 => 0 | .h1 => 1 | .h2 => 2 | .h3 => 3 | .h4 => 4
   | .h5 => 5 | .h6 => 6 | .h7 => 7 | .h8 => 8 | .h9 => 9 | .h10 => 10
 
--- ============================================================================
 -- Domain: Comparison Classes
--- ============================================================================
 
 /--
 Comparison classes for scalar adjectives.
@@ -82,9 +78,7 @@ inductive ComparisonClass where
   | superordinate -- compare to the general category (people)
   deriving Repr, DecidableEq, BEq, Fintype
 
--- ============================================================================
 -- Domain: Kinds (Nominals)
--- ============================================================================
 
 /--
 Kinds (nominals) that can be modified by adjectives.
@@ -105,9 +99,7 @@ inductive Kind where
   | jockey            -- expected to be short
   deriving Repr, DecidableEq, BEq, Fintype
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Utterances about height -/
 inductive Utterance where
@@ -116,9 +108,7 @@ inductive Utterance where
   | silent  -- say nothing (baseline)
   deriving Repr, DecidableEq, BEq, Fintype
 
--- ============================================================================
 -- Priors: P(height | kind)
--- ============================================================================
 
 /--
 Height prior for generic people (baseline).
@@ -180,9 +170,7 @@ def heightPriorGivenKind (k : Kind) : Height → ℚ :=
   | .basketballPlayer => basketballHeightPrior
   | .jockey => jockeyHeightPrior
 
--- ============================================================================
 -- Priors: P(comparison class | kind)
--- ============================================================================
 
 /--
 Comparison class prior given kind: P(c | k).
@@ -211,9 +199,7 @@ def comparisonClassPrior (k : Kind) : ComparisonClass → ℚ :=
       | .subordinate => 3
       | .superordinate => 2
 
--- ============================================================================
 -- Semantics: Threshold depends on Comparison Class
--- ============================================================================
 
 /--
 The EFFECTIVE THRESHOLD for "tall" depends on the comparison class.
@@ -264,9 +250,7 @@ def meaning (u : Utterance) (c : ComparisonClass) (k : Kind) (h : Height) : Bool
   | .short => shortMeaning c k h
   | .silent => true  -- vacuously true
 
--- ============================================================================
 -- RSA Model with Comparison Class Inference
--- ============================================================================
 
 /--
 Joint state space: (Height, ComparisonClass).
@@ -355,9 +339,7 @@ def L1_class (k : Kind) (u : Utterance) : List (ComparisonClass × ℚ) :=
     let cScores := joint.filter (·.1.2 == c) |>.map (·.2)
     (c, RSA.Eval.sumScores cScores)
 
--- ============================================================================
 -- Compute Distributions
--- ============================================================================
 
 -- L0 distributions
 #eval L0 .basketballPlayer .subordinate .tall    -- tall for a basketball player
@@ -381,9 +363,7 @@ def L1_class (k : Kind) (u : Utterance) : List (ComparisonClass × ℚ) :=
 #eval L1_class .jockey .tall                     -- "tall jockey"
 #eval L1_class .jockey .short                    -- "short jockey"
 
--- ============================================================================
 -- Main Theorems: Polarity × Expectations Interaction
--- ============================================================================
 
 /--
 **Main Prediction: "tall basketball player" → superordinate comparison**
@@ -436,9 +416,7 @@ theorem basketball_polarity_reversal :
      RSA.Eval.getScore (L1_class .basketballPlayer .short) .superordinate) := by
   native_decide
 
--- ============================================================================
 -- Jockey Predictions: Opposite Pattern
--- ============================================================================
 
 /--
 **Jockey Prediction: "short jockey" → superordinate comparison**
@@ -479,9 +457,7 @@ theorem jockey_polarity_reversal :
      RSA.Eval.getScore (L1_class .jockey .short) .subordinate) := by
   native_decide
 
--- ============================================================================
 -- Cross-Kind Comparison: The General Pattern
--- ============================================================================
 
 /--
 **General Pattern Theorem**
@@ -513,9 +489,7 @@ theorem expected_leads_to_superordinate :
      RSA.Eval.getScore (L1_class .jockey .tall) .superordinate) := by
   native_decide
 
--- ============================================================================
 -- Height Inference: Secondary Predictions
--- ============================================================================
 
 /--
 **Height Inference: "tall basketball player" shifts height UP**
@@ -538,9 +512,7 @@ theorem short_basketball_height_shift :
     RSA.Eval.getScore (L1_height .basketballPlayer .short) .h8 := by
   native_decide
 
--- ============================================================================
 -- Baseline: Generic "person"
--- ============================================================================
 
 /--
 **Baseline: For "person", no comparison class asymmetry**
@@ -557,9 +529,7 @@ theorem person_no_asymmetry :
     RSA.Eval.getScore (L1_class .person .tall) .superordinate := by
   native_decide
 
--- ============================================================================
 -- Why This Works: Informativity Analysis
--- ============================================================================
 
 /-!
 ## Why the Polarity × Expectations Interaction Works
@@ -597,9 +567,7 @@ For "short basketball player" with SUPERORDINATE comparison:
 4. **Speaker wouldn't use this** → Listener infers subordinate
 -/
 
--- ============================================================================
 -- Informativity Verification
--- ============================================================================
 
 /--
 **Informativity: "tall" more informative with superordinate comparison**
@@ -630,9 +598,7 @@ theorem short_more_informative_subordinate :
     RSA.Eval.getScore (S1 .basketballPlayer .superordinate .h5) .short := by
   native_decide
 
--- ============================================================================
 -- Connection to Lassiter & Goodman (2017)
--- ============================================================================
 
 /-!
 ## Relation to Lassiter & Goodman (2017)
@@ -674,9 +640,7 @@ For simplicity, we assume the threshold is implicitly determined by
 the comparison class (θ = tallThreshold c k), avoiding the extra variable.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## Tessler & Goodman 2022: Key Results

@@ -28,16 +28,12 @@ namespace Montague.Determiner.Quantifier
 
 open Montague
 
--- ============================================================================
 -- Determiner Type
--- ============================================================================
 
 /-- Type of determiners: (e→t) → (e→t) → t -/
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
--- ============================================================================
 -- Finite Model Class (computable enumeration)
--- ============================================================================
 
 /--
 A model with a finite, enumerable domain.
@@ -77,17 +73,13 @@ def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
     let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
     decide (inBoth.length > inROnly.length)
 
--- ============================================================================
 -- Toy Model FiniteModel Instance
--- ============================================================================
 
 instance : FiniteModel toyModel where
   elements := [.john, .mary, .pizza, .book]
   complete := λ x => by cases x <;> simp
 
--- ============================================================================
 -- Extended Toy Lexicon
--- ============================================================================
 
 /-- "student" property (John and Mary are students) -/
 def student_sem : toyModel.interpTy (.e ⇒ .t) :=
@@ -107,9 +99,7 @@ def person_sem : toyModel.interpTy (.e ⇒ .t) :=
 def thing_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ _ => true
 
--- ============================================================================
 -- Example Derivations
--- ============================================================================
 
 open ToyLexicon
 
@@ -137,16 +127,12 @@ def everyStudentLaughs : toyModel.interpTy .t :=
 
 #eval everyStudentLaughs  -- true (both John and Mary laugh)
 
--- ============================================================================
 -- Computed Values
--- ============================================================================
 
 #eval everyStudentLaughs  -- true
 #eval some_sem toyModel student_sem laughs_sem  -- true
 
--- ============================================================================
 -- Monotonicity Demonstrations
--- ============================================================================
 
 /-- "Every person sleeps" -/
 def everyPersonSleeps : toyModel.interpTy .t :=
@@ -163,9 +149,7 @@ def somePersonSleeps : toyModel.interpTy .t :=
 -- The pattern: someStudentSleeps → somePersonSleeps (UE in restrictor)
 -- Both are true, consistent with the entailment
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

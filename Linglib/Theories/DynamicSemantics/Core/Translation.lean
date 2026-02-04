@@ -26,9 +26,6 @@ import Linglib.Theories.DynamicSemantics.Core.Update
 
 namespace Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: PLA-Compatible Types
--- ============================================================================
 
 /-- PLA-style possibility: assignment + witness sequence (no world) -/
 structure PLAPoss (E : Type*) where
@@ -38,9 +35,6 @@ structure PLAPoss (E : Type*) where
 /-- PLA-style information state -/
 def PLAInfoState (E : Type*) := Set (PLAPoss E)
 
--- ============================================================================
--- PART 2: Translation PLA → Core
--- ============================================================================
 
 /--
 Embed PLA possibility into Core possibility.
@@ -58,9 +52,6 @@ def PLAPoss.toCore {E : Type*} (p : PLAPoss E) : Possibility Unit E where
 def PLAInfoState.toCore {E : Type*} (s : PLAInfoState E) : InfoState Unit E :=
   PLAPoss.toCore '' s
 
--- ============================================================================
--- PART 3: Translation Core → PLA
--- ============================================================================
 
 /--
 Project Core possibility to PLA possibility.
@@ -75,9 +66,6 @@ def Possibility.toPLA {W E : Type*} (p : Possibility W E) : PLAPoss E where
 def InfoState.toPLA {W E : Type*} (s : InfoState W E) : PLAInfoState E :=
   Possibility.toPLA '' s
 
--- ============================================================================
--- PART 4: Round-Trip Properties
--- ============================================================================
 
 /-- PLA → Core → PLA is identity on the relevant components -/
 theorem pla_core_pla_assignment {E : Type*} (p : PLAPoss E) (n : Nat) (h : n < 1000) :
@@ -92,9 +80,6 @@ theorem pla_core_pla_witnesses {E : Type*} (p : PLAPoss E) (n : Nat) :
   have h : ¬(n + 1000 < 1000) := by omega
   simp [h]
 
--- ============================================================================
--- PART 5: Embedding Theorem
--- ============================================================================
 
 /--
 **Embedding Preservation**: The translation preserves state structure.
@@ -112,9 +97,6 @@ theorem embedding_preserves_agreement {E : Type*} (p q : PLAPoss E)
   · simp [h, hv n h]
   · simp [h, hw (n - 1000)]
 
--- ============================================================================
--- PART 6: Update Translation
--- ============================================================================
 
 /--
 PLA-style CCP: no world dependency.
@@ -133,9 +115,6 @@ Project Core CCP to PLA CCP (for Unit world).
 def CCP.toPLACCP {E : Type*} (φ : CCP Unit E) : PLACCP E :=
   fun s => InfoState.toPLA (φ s.toCore)
 
--- ============================================================================
--- PART 7: The Key Insight
--- ============================================================================
 
 /-!
 ## Why This Works
@@ -165,9 +144,7 @@ The bilateral structure is orthogonal to the PLA/Core distinction.
 Both PLA and Core can have bilateral variants.
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -41,9 +41,6 @@ namespace Theories.DynamicSemantics.IntensionalCDRT
 
 open Core
 
--- ============================================================================
--- PART 1: Relative Variable Update
--- ============================================================================
 
 /--
 Relative variable update: i[φ : v]j
@@ -103,9 +100,6 @@ def relativeVarUpdate' {W E : Type*}
     j.indiv v = .some e ∧
     ∀ u : IVar, u ≠ v → j.indiv u = i.indiv u)
 
--- ============================================================================
--- PART 2: Flat Update for Existentials
--- ============================================================================
 
 /--
 Flat existential update: ∃v.φ
@@ -151,9 +145,6 @@ def flatExistsExplicit {W E : Type*}
       -- (j, w) survives the body update
       jw ∈ body c }
 
--- ============================================================================
--- PART 3: Context Extension
--- ============================================================================
 
 /--
 Extend context with random assignment for variable v.
@@ -189,9 +180,6 @@ def extendContextWithLocal {W E : Type*}
       e ∈ domain ∧
       jw.1 = (i.updateIndiv v (.some e)).updateProp p localCtx }
 
--- ============================================================================
--- PART 4: Update with Propositional Content
--- ============================================================================
 
 /--
 Update context with proposition, yielding local context.
@@ -218,9 +206,6 @@ def updateInLocalContext {W E : Type*}
     : IContext W E :=
   { gw ∈ c | ∀ w' ∈ gw.1.prop p, prop gw.1 w' }
 
--- ============================================================================
--- PART 5: Propositional Dref Management
--- ============================================================================
 
 /--
 Initialize propositional dref to the current context's worlds.
@@ -248,9 +233,6 @@ def narrowPropDref {W E : Type*}
     : ICDRTAssignment W E :=
   g.updateProp p { w ∈ g.prop p | prop w }
 
--- ============================================================================
--- PART 6: Bilateral Update Structure
--- ============================================================================
 
 /--
 Bilateral ICDRT denotation: positive and negative updates.
@@ -296,9 +278,6 @@ infixl:65 " ⊗ " => conj
 
 end BilateralICDRT
 
--- ============================================================================
--- PART 7: Flat Existential in Bilateral System
--- ============================================================================
 
 /--
 Flat existential with bilateral structure.
@@ -326,9 +305,7 @@ def BilateralICDRT.exists_ {W E : Type*}
         let g' := gw.1.updateIndiv v (.some e)
         (g', gw.2) ∉ body.positive (extendContext c v domain) }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

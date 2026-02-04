@@ -49,9 +49,7 @@ Connection to unified noise theory: `Theories/RSA/Core/Noise.lean`
 
 namespace Phenomena.Ellipsis.FragmentAnswers
 
--- ============================================================================
 -- Part 1: Basic Fragment Answer Data
--- ============================================================================
 
 /-- A fragment answer datum -/
 structure FragmentDatum where
@@ -131,9 +129,7 @@ def fragmentPredicate : FragmentDatum := {
   source := "constructed"
 }
 
--- ============================================================================
 -- Part 2: Non-Question Contexts
--- ============================================================================
 
 /-- Fragment in non-question context (Stainton's examples) -/
 structure NonQuestionFragmentDatum where
@@ -176,9 +172,7 @@ def fragmentPointing : NonQuestionFragmentDatum := {
   source := "Stainton (2006)"
 }
 
--- ============================================================================
 -- Part 3: Constraints on Fragment Answers
--- ============================================================================
 
 /-- When fragments are NOT acceptable -/
 structure FragmentConstraintDatum where
@@ -221,9 +215,7 @@ def semanticMismatch : FragmentConstraintDatum := {
   source := "constructed"
 }
 
--- ============================================================================
 -- Part 4: Collected Data
--- ============================================================================
 
 def basicFragments : List FragmentDatum := [
   fragmentSubject, fragmentObject, fragmentNobody,
@@ -238,9 +230,7 @@ def fragmentConstraints : List FragmentConstraintDatum := [
   categoryMismatch, focusMismatch, semanticMismatch
 ]
 
--- ============================================================================
 -- Part 5: Connection to Noisy Channel Model
--- ============================================================================
 
 /-!
 ## Noisy Channel Account (Bergen & Goodman 2015)

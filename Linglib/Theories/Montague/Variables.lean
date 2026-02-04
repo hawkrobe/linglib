@@ -35,9 +35,7 @@ namespace Montague.Variables
 
 open Montague
 
--- ============================================================================
 -- Assignment Functions (H&K §5.1)
--- ============================================================================
 
 /--
 An assignment function maps variable indices to entities.
@@ -68,9 +66,7 @@ def Assignment.update {m : Model} (g : Assignment m) (n : ℕ) (x : m.Entity)
 /-- Notation for assignment modification: g[n ↦ x] -/
 notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
 
--- ============================================================================
 -- Assignment Update Lemmas
--- ============================================================================
 
 /-- Modified assignment maps the modified index to the new value -/
 @[simp]
@@ -112,9 +108,7 @@ theorem update_self {m : Model} (g : Assignment m) (n : ℕ)
   · simp only [h]
   · rfl
 
--- ============================================================================
 -- Assignment-Relative Denotations
--- ============================================================================
 
 /--
 A denotation that depends on an assignment function.
@@ -145,9 +139,7 @@ def constDenot {m : Model} {ty : Ty} (d : m.interpTy ty) : DenotG m ty :=
 theorem constDenot_independent {m : Model} {ty : Ty} (d : m.interpTy ty)
     (g₁ g₂ : Assignment m) : constDenot d g₁ = constDenot d g₂ := rfl
 
--- ============================================================================
 -- Composition with Assignments
--- ============================================================================
 
 /--
 Function application with assignments.
@@ -175,9 +167,7 @@ def lambdaAbsG {m : Model} {τ : Ty} (n : ℕ) (body : DenotG m τ)
     : DenotG m (.e ⇒ τ) :=
   fun g => fun x => body (g[n ↦ x])
 
--- ============================================================================
 -- Theorems about Lambda Abstraction
--- ============================================================================
 
 /-- Beta reduction: applying a lambda abstraction substitutes the argument -/
 theorem lambdaAbsG_apply {m : Model} {τ : Ty} (n : ℕ) (body : DenotG m τ)
@@ -193,9 +183,7 @@ theorem lambdaAbsG_alpha {m : Model} {τ : Ty} (n₁ n₂ : ℕ) (body : DenotG 
   funext x
   exact h_fresh g x
 
--- ============================================================================
 -- Examples with Toy Model
--- ============================================================================
 
 section Examples
 
@@ -226,9 +214,7 @@ theorem sleeps_lambda_eq : sleeps_lambda g₀ = sleeps_sem := by
 
 end Examples
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

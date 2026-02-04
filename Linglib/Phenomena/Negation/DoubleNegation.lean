@@ -29,9 +29,7 @@ The puzzle: semantically these should be equivalent, but anaphora differs.
 
 namespace Phenomena.Negation.DoubleNegation
 
--- ============================================================================
 -- Part 1: Basic DNE Data
--- ============================================================================
 
 /--
 A DNE datum comparing original and double-negated versions.
@@ -96,9 +94,7 @@ def complexDNE : DNEDatum := {
   source := "Novel example"
 }
 
--- ============================================================================
 -- Part 2: Standard DS Predictions (DNE Failure)
--- ============================================================================
 
 /--
 In standard dynamic semantics, DNE fails for anaphora.
@@ -126,9 +122,7 @@ def standardDSDoubleNeg : StandardDSPrediction := {
   notes := "Outer negation doesn't recover the inner dref"
 }
 
--- ============================================================================
 -- Part 3: BUS Predictions (DNE Success)
--- ============================================================================
 
 /--
 In bilateral semantics, negation SWAPS positive and negative.
@@ -159,9 +153,7 @@ def busDoubleNeg : BUSPrediction := {
   notes := "Double negation: swap twice = identity"
 }
 
--- ============================================================================
 -- Part 4: ICDRT Predictions (Flat Update)
--- ============================================================================
 
 /--
 In ICDRT, drefs are introduced GLOBALLY (flat), tracked by propositional drefs.
@@ -190,9 +182,7 @@ def icdrtDoubleNeg : ICDRTPrediction := {
   notes := "x accessible in worlds where inner negation fails"
 }
 
--- ============================================================================
 -- Part 5: Empirical Judgments
--- ============================================================================
 
 /--
 Empirical judgment on DNE felicity.
@@ -241,9 +231,7 @@ def naturalDoubleNeg : JudgmentDatum := {
   source := "Elliott & Sudo (2025)"
 }
 
--- ============================================================================
 -- Part 6: Triple Negation and Beyond
--- ============================================================================
 
 /--
 Triple negation: ¬¬¬φ = ¬φ
@@ -260,9 +248,7 @@ def tripleNegation : DNEDatum := {
   source := "Logical prediction"
 }
 
--- ============================================================================
 -- Part 7: Collected Data
--- ============================================================================
 
 /-- All DNE test cases -/
 def dneData : List DNEDatum := [
@@ -298,9 +284,7 @@ def judgments : List JudgmentDatum := [
   naturalDoubleNeg
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

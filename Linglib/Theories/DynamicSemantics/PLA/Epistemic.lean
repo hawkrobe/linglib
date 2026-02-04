@@ -32,9 +32,6 @@ namespace Theories.DynamicSemantics.PLA
 
 open Classical
 
--- ============================================================================
--- PART 1: Epistemic Operators (Dekker §4.1)
--- ============================================================================
 
 variable {E : Type*} [Nonempty E]
 
@@ -58,9 +55,6 @@ This is also a TEST: it passes only if φ is certain.
 def Formula.must (M : Model E) (φ : Formula) : Update E :=
   fun s => if s ⊫[M] φ then s else ∅
 
--- ============================================================================
--- PART 2: Basic Test Properties
--- ============================================================================
 
 /--
 **Might as Consistency Test**: might φ passes iff some possibility satisfies φ.
@@ -98,9 +92,6 @@ theorem must_iff_supports (M : Model E) (φ : Formula) (s : InfoState E) :
     | inl hsup => simp only [if_pos hsup]
     | inr hemp => simp only [hemp, InfoState.empty_supports, ↓reduceIte]
 
--- ============================================================================
--- PART 3: Tests Don't Add Information
--- ============================================================================
 
 /--
 Testing doesn't change information (when it passes).
@@ -132,9 +123,6 @@ theorem must_subset (M : Model E) (φ : Formula) (s : InfoState E) :
   · exact Set.Subset.rfl
   · exact Set.empty_subset s
 
--- ============================================================================
--- PART 4: Interaction with Updates
--- ============================================================================
 
 /--
 Asserting then testing: φ ; might ψ passes iff φ-update leaves room for ψ.
@@ -148,9 +136,6 @@ Asserting then requiring: φ ; must ψ passes iff φ-update supports ψ.
 theorem update_then_must (M : Model E) (φ ψ : Formula) (s : InfoState E) :
     (φ.update M ;; ψ.must M) s = ψ.must M (φ.update M s) := rfl
 
--- ============================================================================
--- PART 5: Idempotence
--- ============================================================================
 
 /--
 **Must Idempotence**: must (must φ) ≡ must φ
@@ -178,9 +163,6 @@ theorem might_idempotent (M : Model E) (φ : Formula) (s : InfoState E) :
     simp only [Formula.update, InfoState.restrict, Set.sep_empty, Set.not_nonempty_empty,
                ↓reduceIte]
 
--- ============================================================================
--- PART 6: Support and Might/Must
--- ============================================================================
 
 /--
 If s supports φ, then might φ passes.
@@ -204,9 +186,6 @@ theorem supports_implies_must (M : Model E) (φ : Formula) (s : InfoState E)
     φ.must M s = s := by
   simp only [Formula.must, if_pos hsup]
 
--- ============================================================================
--- PART 7: Might-Must Duality
--- ============================================================================
 
 /--
 **Key Theorem**: might φ ≈ ¬must ¬φ
@@ -262,9 +241,6 @@ theorem might_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
           exact this
         exact absurd this hnot
 
--- ============================================================================
--- PART 8: Conceptual Covers (Dekker §4.3) - Structures
--- ============================================================================
 
 /--
 A **concept** is a way of identifying entities across possibilities.
@@ -303,9 +279,6 @@ Pronoun concept: looks up a pronoun in the witness sequence.
 -/
 def Concept.fromPron (i : PronIdx) : Concept E := fun p => p.2 i
 
--- ============================================================================
--- PART 9: Connection to Kratzer Modal Semantics
--- ============================================================================
 
 /-!
 ## Relationship to Kratzer (1981) Modal Semantics
@@ -361,9 +334,7 @@ See `Montague.Modal.Kratzer` for the full Kratzer framework with:
 - Galois connection (extension/intension duality)
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

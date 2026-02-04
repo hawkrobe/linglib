@@ -47,9 +47,6 @@ open Montague.Core.Polarity
 open NeoGricean
 open Phenomena.Presupposition
 
--- ============================================================================
--- PART 1: Presupposition Triggers
--- ============================================================================
 
 /--
 Types of presupposition triggers in natural language.
@@ -85,9 +82,6 @@ structure TriggerOccurrence where
   trigger : PresupTrigger
   deriving Repr
 
--- ============================================================================
--- PART 2: Presuppositional Derivations
--- ============================================================================
 
 /--
 A derivation extended with presupposition tracking.
@@ -107,9 +101,6 @@ structure PresupDerivation (W : Type*) where
   /-- Surface form (optional, for display) -/
   surface : List String := []
 
--- ============================================================================
--- PART 3: Interaction with Scalar Implicatures
--- ============================================================================
 
 /--
 **Presupposition Failure Blocks SI Computation**
@@ -147,9 +138,6 @@ structure ExhWithPresup (W : Type*) where
   /-- The exhaustified meaning -/
   exhaustified : PrProp W
 
--- ============================================================================
--- PART 4: Connection to Phenomena Examples
--- ============================================================================
 
 /--
 Wrap the King example from Phenomena for NeoGricean use.
@@ -186,9 +174,6 @@ def johnKnowsRainingDerivation : PresupDerivation RainWorld :=
   , surface := ["John", "knows", "that", "it's", "raining"]
   }
 
--- ============================================================================
--- PART 5: SI-Presupposition Interaction Theorems
--- ============================================================================
 
 /--
 In a felicitous context, SI computation can proceed.
@@ -209,9 +194,7 @@ involving that trigger may behave differently.
 theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

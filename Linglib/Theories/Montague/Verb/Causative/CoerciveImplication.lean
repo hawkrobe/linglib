@@ -50,9 +50,7 @@ namespace Theories.NadathurLauer2020.CoerciveImplication
 open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 
--- ============================================================================
 -- Volitionality
--- ============================================================================
 
 /--
 **Action Type**: Classifies actions by their volitionality.
@@ -91,9 +89,7 @@ def isVolitional (te : TaggedEvent) : Bool :=
 
 end TaggedEvent
 
--- ============================================================================
 -- Coercive Implication
--- ============================================================================
 
 /--
 **Coercive Context**: A situation where "make" creates coercive implication.
@@ -152,9 +148,7 @@ def coercionStrength (ctx : CoerciveContext) : CoercionStrength :=
 
 end CoerciveContext
 
--- ============================================================================
 -- Make vs Cause with Volitionality
--- ============================================================================
 
 /--
 **Make with Volitional Effect**: The canonical coercive construction.
@@ -176,9 +170,7 @@ def causeVolitional (dyn : CausalDynamics) (background : Situation)
     (causer _causee : Variable) (effect : TaggedEvent) : Bool :=
   Necessity.causeSem dyn background causer effect.event
 
--- ============================================================================
 -- The Coercion Inference Chain
--- ============================================================================
 
 /--
 **Presupposition**: The causee had the capacity to do otherwise.
@@ -204,9 +196,7 @@ def inferOverriddenPreference (ctx : CoerciveContext) : Bool :=
   presupposeCapacity ctx.causeeAction &&
   ctx.hasCoerciveImplication
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 section Examples
 
@@ -296,9 +286,7 @@ theorem coercion_none_nonvolitional :
 
 end Examples
 
--- ============================================================================
 -- Connection to Causative Verb Choice
--- ============================================================================
 
 /--
 **Verb Choice and Coercion**: Why speakers choose "make" vs "cause".

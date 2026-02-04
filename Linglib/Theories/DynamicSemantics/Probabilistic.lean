@@ -31,9 +31,6 @@ import Mathlib.Data.Fintype.BigOperators
 
 namespace Theories.DynamicSemantics.Probabilistic
 
--- ============================================================================
--- PART 1: The Probability Monad (Abstract)
--- ============================================================================
 
 /-!
 ## The Probability Monad
@@ -102,9 +99,6 @@ theorem map_comp (f : α → β) (g : β → γ) (m : P α) :
 
 end ProbMonad
 
--- ============================================================================
--- PART 2: Parameterized State Monad (Discourse Dynamics)
--- ============================================================================
 
 /-!
 ## Parameterized State Monad
@@ -205,9 +199,6 @@ theorem bind_assoc (m : PState P σ σ' α)
 
 end PState
 
--- ============================================================================
--- PART 3: Conditioning (Observe)
--- ============================================================================
 
 /-!
 ## Conditioning
@@ -256,9 +247,6 @@ theorem observe_false_pure :
 
 end CondProbMonad
 
--- ============================================================================
--- PART 4: Choice and Softmax
--- ============================================================================
 
 /-!
 ## Choice Operations
@@ -312,9 +300,6 @@ def softmaxChoice (utility : α → ℚ) (temperature : ℚ) : P α :=
 
 end ChoiceProbMonad
 
--- ============================================================================
--- PART 5: Threshold Semantics and Graded Truth
--- ============================================================================
 
 /-!
 ## Threshold Semantics
@@ -369,9 +354,6 @@ theorem graded_eq_bool_of_point_mass {Θ : Type} [Fintype Θ] [DecidableEq Θ]
   · intro b _ hb; simp [hb]
   · intro h; exact (h (Finset.mem_univ _)).elim
 
--- ============================================================================
--- PART 5: Connection to RSA
--- ============================================================================
 
 /-!
 ## Connection to RSA
@@ -421,9 +403,7 @@ theorem probProp_false {ι : Type} [Fintype ι] (mass : ι → ℚ) :
   have h : ∀ i, mass i * (if false then 1 else 0) = 0 := fun i => by simp
   simp only [h, Finset.sum_const_zero]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

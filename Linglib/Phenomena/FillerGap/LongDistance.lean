@@ -33,9 +33,7 @@ namespace Phenomena.FillerGap.LongDistance
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- Long-distance dependency minimal pairs -/
 def longDistanceData : PhenomenonData := {
@@ -100,9 +98,7 @@ def complementClauseData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Specification Typeclass
--- ============================================================================
 
 /-- A grammar captures long-distance dependencies -/
 class CapturesLongDistance (G : Type) [Grammar G] where
@@ -111,9 +107,7 @@ class CapturesLongDistance (G : Type) [Grammar G] where
   capturesRelatives : Grammar.capturesPhenomenon G grammar relativeClauseData
   capturesComplements : Grammar.capturesPhenomenon G grammar complementClauseData
 
--- ============================================================================
 -- Helper Functions
--- ============================================================================
 
 /-- Check if a word list has a wh-word in initial position -/
 def hasInitialWh (ws : List Word) : Bool :=

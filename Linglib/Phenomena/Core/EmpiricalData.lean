@@ -25,9 +25,7 @@ import Linglib.Core.Basic
 
 namespace Phenomena
 
--- ============================================================================
 -- Empirical Measure Types
--- ============================================================================
 
 /-- Scale type: what kind of values are recorded -/
 inductive ScaleType where
@@ -68,9 +66,7 @@ inductive Measure where
   | probability : Float → Measure              -- proportion [0,1]
   deriving Repr
 
--- ============================================================================
 -- Data Points
--- ============================================================================
 
 /-- A single empirical observation -/
 structure DataPoint where
@@ -93,9 +89,7 @@ structure Dataset where
   /-- Source citation -/
   source : String
 
--- ============================================================================
 -- Graded Acceptability Data
--- ============================================================================
 
 /-- Acceptability judgment with mean and standard error -/
 structure AcceptabilityRating where
@@ -114,9 +108,7 @@ structure AcceptabilityStudy where
   source : String
   items : List AcceptabilityRating
 
--- ============================================================================
 -- Processing Data (Reading Times, etc.)
--- ============================================================================
 
 /-- A region in a self-paced reading or eye-tracking study -/
 structure Region where
@@ -141,9 +133,7 @@ structure ProcessingPrediction where
   predictedDifficulty : Float
   deriving Repr
 
--- ============================================================================
 -- Linking Functions (Theory → Data)
--- ============================================================================
 
 /-- A linking function maps theoretical objects to predicted measures -/
 class LinkingFunction (Theory : Type) (DataType : Type) where
@@ -175,9 +165,7 @@ class ProcessingLinking (G : Type) where
   predictRT (g : G) (ws : List Word) (pos : Nat) (baseline slope : Float) : Float :=
     baseline + slope * incrementalCost g ws pos
 
--- ============================================================================
 -- Example: Derivation Depth as Complexity
--- ============================================================================
 
 /-- Simple complexity measure: depth of derivation tree -/
 def treeDepth : Nat → Float := λ n => n.toFloat
@@ -189,9 +177,7 @@ structure ZScoreRating where
   zScore : Float          -- standardized rating
   deriving Repr
 
--- ============================================================================
 -- Connecting to Minimal Pairs
--- ============================================================================
 
 /-- Extended minimal pair with graded judgments -/
 structure GradedMinimalPair where
@@ -211,9 +197,7 @@ structure GradedMinimalPair where
 def GradedMinimalPair.correctDirection (gmp : GradedMinimalPair) : Bool :=
   gmp.betterRating > gmp.worseRating
 
--- ============================================================================
 -- Superadditivity (Sprouse Paradigm)
--- ============================================================================
 
 /-
 Sprouse et al.'s factorial design for island effects:
@@ -248,9 +232,7 @@ def FactorialDesign.interaction (fd : FactorialDesign) : Float :=
 def FactorialDesign.isSuperadditive (fd : FactorialDesign) : Bool :=
   fd.interaction > 0
 
--- ============================================================================
 -- Prediction Evaluation
--- ============================================================================
 
 /-- Correlation between predictions and observations -/
 structure PredictionEval where
@@ -273,9 +255,7 @@ class CapturesGradedData (G : Type) [GradedLinking G] where
   /-- The correlation exceeds threshold -/
   meetsThreshold : eval.r > threshold := by decide
 
--- ============================================================================
 -- Pragmatics Data Types
--- ============================================================================
 
 /-
 Pragmatic phenomena require data types that capture:
@@ -353,9 +333,7 @@ structure ReferenceResolution where
   distribution : List (String × Float)
   deriving Repr
 
--- ============================================================================
 -- Production vs Comprehension Data
--- ============================================================================
 
 /-- Production data: what speakers say -/
 structure ProductionData where
@@ -381,9 +359,7 @@ structure ComprehensionData where
   n : Nat
   deriving Repr
 
--- ============================================================================
 -- Connecting Theory to Data
--- ============================================================================
 
 /-
 The full pipeline:

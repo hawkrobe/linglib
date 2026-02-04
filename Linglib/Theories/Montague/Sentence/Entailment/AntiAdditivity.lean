@@ -44,9 +44,6 @@ open Montague.Core.Polarity
 open Fragments.English.PolarityItems (DEStrength)
 open List (Sublist)
 
--- ============================================================================
--- PART 1: Semantic Definitions
--- ============================================================================
 
 /-!
 ## Semantic Properties
@@ -94,9 +91,6 @@ def IsAntiMorphic (f : Prop' → Prop') : Prop :=
   IsAntiAdditive f ∧
   (∀ p q : Prop', (∀ w, f (pand p q) w = (f p w || f q w)))
 
--- ============================================================================
--- PART 2: Hierarchy Theorems
--- ============================================================================
 
 /--
 **Theorem: Anti-Additive implies DE.**
@@ -154,9 +148,6 @@ theorem antiMorphic_implies_de (f : Prop' → Prop') (hAM : IsAntiMorphic f) :
     IsDownwardEntailing f :=
   antiAdditive_implies_de f (antiMorphic_implies_antiAdditive f hAM)
 
--- ============================================================================
--- PART 3: Negation is Anti-Morphic
--- ============================================================================
 
 /--
 **Theorem: Negation is Anti-Additive.**
@@ -186,9 +177,6 @@ This is the strongest level in the hierarchy.
 theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
   ⟨pnot_isAntiAdditive, pnot_distributes_and⟩
 
--- ============================================================================
--- PART 4: "No" Quantifier is Anti-Additive
--- ============================================================================
 
 /--
 "No A is B" = ∀x. A(x) → ¬B(x)
@@ -248,9 +236,6 @@ Follows from anti-additivity.
 theorem no_isDE_scope : IsDE no_student :=
   antiAdditive_implies_de no_student no_isAntiAdditive_scope
 
--- ============================================================================
--- PART 5: "At most n" is DE but NOT Anti-Additive
--- ============================================================================
 
 /--
 "At most n A's are B" - true if |A ∩ B| ≤ n.
@@ -315,9 +300,6 @@ theorem atMost_not_antiAdditive :
     ¬IsAntiAdditive atMost2_student := by
   sorry
 
--- ============================================================================
--- PART 6: Connection to DEStrength
--- ============================================================================
 
 /-!
 **DEStrength** is imported from `Fragments.English.PolarityItems`.
@@ -328,9 +310,6 @@ The hierarchy corresponds to:
 - `.antiMorphic` = AA + De Morgan for ∧ (negation)
 -/
 
--- ============================================================================
--- PART 7: Licensing Conditions
--- ============================================================================
 
 /--
 **Weak NPI licensing**: Requires DE context.
@@ -357,9 +336,6 @@ example : licensesStrongNPI no_student := no_isAntiAdditive_scope
 -- Verify: "at most n" licenses weak
 example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
--- ============================================================================
--- PART 8: Connection to Polarity Items
--- ============================================================================
 
 /-!
 ## Connection to `Fragments.English.PolarityItems`
@@ -406,9 +382,7 @@ def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
 #guard strengthSufficient .weak .weak             -- "few" licenses weak NPIs
 #guard !strengthSufficient .weak .antiAdditive    -- "few" does NOT license strong NPIs
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

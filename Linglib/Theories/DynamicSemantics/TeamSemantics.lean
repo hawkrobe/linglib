@@ -38,9 +38,6 @@ import Mathlib.Data.Set.Basic
 
 namespace Theories.DynamicSemantics.TeamSemantics
 
--- ============================================================================
--- PART 1: Teams (Sets of Worlds)
--- ============================================================================
 
 /--
 A team is a set of worlds, represented as a characteristic function.
@@ -117,9 +114,6 @@ def Team.ofList {W : Type*} [DecidableEq W] (ws : List W) : Team W :=
 def Team.beq {W : Type*} (t t' : Team W) (worlds : List W) : Bool :=
   worlds.all fun w => t w == t' w
 
--- ============================================================================
--- PART 2: Support Relations
--- ============================================================================
 
 /--
 A proposition in team semantics: evaluated relative to teams.
@@ -172,9 +166,6 @@ The empty team anti-supports everything.
 def antiSupports {W : Type*} (t : Team W) (p : W -> Bool) (worlds : List W) : Bool :=
   t.all (fun w => !p w) worlds
 
--- ============================================================================
--- PART 3: Bilateral Support Structure
--- ============================================================================
 
 /--
 A bilateral formula has both support and anti-support conditions.
@@ -223,9 +214,6 @@ def BilateralFormula.NE {W : Type*} : BilateralFormula W where
   support := fun t worlds => t.isNonEmpty worlds
   antiSupport := fun t worlds => t.isEmpty worlds
 
--- ============================================================================
--- PART 4: Flatness and Persistence
--- ============================================================================
 
 /--
 A team proposition is flat (downward closed) if:
@@ -246,9 +234,6 @@ def BilateralFormula.isFlat {W : Type*} (φ : BilateralFormula W) (worlds : List
   (∀ t t' : Team W, t'.subset t worlds = true -> φ.antiSupport t worlds = true ->
     φ.antiSupport t' worlds = true)
 
--- ============================================================================
--- PART 5: Team Partitions (for Split Disjunction)
--- ============================================================================
 
 /--
 A partition of team t into t₁ and t₂ such that t₁ ∪ t₂ = t.
@@ -280,9 +265,6 @@ def TeamPartition.allPartitions {W : Type*} [DecidableEq W] (t : Team W)
     let rightTeam : Team W := fun w => t w && !leftTeam w
     { left := leftTeam, right := rightTeam }
 
--- ============================================================================
--- PART 6: Entailment
--- ============================================================================
 
 /--
 Propositional entailment (for proofs).
@@ -292,9 +274,7 @@ def Entails {W : Type*} (φ ψ : BilateralFormula W) (worlds : List W) : Prop :=
 
 notation:50 φ " ⊨ₜ " ψ => Entails φ ψ
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -29,9 +29,6 @@ This explains:
 
 namespace Phenomena.Imprecision.InferencePreservation
 
--- ============================================================================
--- PART 1: Alternative Sets
--- ============================================================================
 
 /--
 Type of alternative relationship.
@@ -52,9 +49,6 @@ inductive InferenceRelation where
   | independent     -- neither
   deriving Repr, DecidableEq
 
--- ============================================================================
--- PART 2: Numeral Alternatives and Blocking
--- ============================================================================
 
 /--
 Numeral alternative blocking datum.
@@ -131,9 +125,6 @@ def hundredNinetyNineAsymmetry : AlternativeSetAsymmetry :=
   , explanation := "100's alternatives are other round numbers (coarse scale). 99's alternatives include 100 (the nearest round number). This asymmetry in alternative sets explains why 99 must be exact."
   }
 
--- ============================================================================
--- PART 3: Conjunction Blocking
--- ============================================================================
 
 /--
 Conjunction blocking datum.
@@ -181,9 +172,6 @@ def threeStudentsConjunction : ConjunctionBlockingDatum :=
   , explanation := "Same pattern: explicit list of conjuncts creates entailments that non-maximal reading would violate."
   }
 
--- ============================================================================
--- PART 4: Numeral-Modified Definites
--- ============================================================================
 
 /--
 Numeral-modified definites: "the four doors"
@@ -217,9 +205,6 @@ def fourDoorsBlocking : NumeralDefiniteBlockingDatum :=
   , explanation := "'The four doors are open' with only 3 open would fail to entail 'The three doors are open' (which requires all 3 in a contextually salient group of 3 to be open). But wait - this is subtle. The blocking actually works through a different mechanism involving the numeral's own alternatives."
   }
 
--- ============================================================================
--- PART 5: Exceptions - Collective/Cumulative Predicates
--- ============================================================================
 
 /--
 Collective and cumulative predicates sometimes permit non-maximality
@@ -254,9 +239,6 @@ def cumulativeCarryException : CollectiveCumulativeException :=
   , explanation := "Cumulative readings involve a many-to-many relation. The inference pattern is more complex, potentially allowing non-max."
   }
 
--- ============================================================================
--- PART 6: The Blocking Constraint
--- ============================================================================
 
 /--
 INFERENCE PRESERVATION constraint (informal statement).
@@ -289,9 +271,6 @@ def inferencePreservation : InferencePreservationConstraint :=
   , appliesToAllAlternatives := true  -- but see exceptions
   }
 
--- ============================================================================
--- PART 7: Predictions
--- ============================================================================
 
 /--
 Predictions of INFERENCE PRESERVATION.
@@ -329,9 +308,6 @@ def prediction4 : InferencePreservationPrediction :=
   , confirmed := true  -- at least marginally
   }
 
--- ============================================================================
--- PART 8: Open Questions
--- ============================================================================
 
 /--
 Open questions for INFERENCE PRESERVATION.
@@ -358,9 +334,6 @@ def question3 : OpenQuestion :=
   , difficulty := "The constraint seems to apply regardless of QUD, but formalization unclear"
   }
 
--- ============================================================================
--- PART 9: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about inference preservation.
@@ -383,9 +356,7 @@ def mainGeneralizations : InferencePreservationGeneralizations :=
   , alternativesBased := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def numeralBlockingExamples : List NumeralBlockingDatum :=
   [ninetyNineBlocked, hundredNotBlocked]
@@ -402,9 +373,7 @@ def predictions : List InferencePreservationPrediction :=
 def openQuestions : List OpenQuestion :=
   [question1, question2, question3]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

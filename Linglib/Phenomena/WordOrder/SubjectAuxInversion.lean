@@ -22,9 +22,7 @@ import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- The core inversion data -/
 def inversionData : PhenomenonData := {
@@ -48,18 +46,14 @@ def inversionData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Specification Typeclass
--- ============================================================================
 
 /-- A grammar captures subject-aux inversion -/
 class CapturesInversion (G : Type) [Grammar G] where
   grammar : G
   captures : Grammar.capturesPhenomenon G grammar inversionData
 
--- ============================================================================
 -- Helper Functions
--- ============================================================================
 
 /-- Check if a word list has aux-before-subject order -/
 def hasAuxSubjectOrder (ws : List Word) : Option (Nat × Nat) :=
@@ -77,9 +71,7 @@ def hasSubjectAuxOrder (ws : List Word) : Option (Nat × Nat) :=
   | some a, some s => if s < a then some (s, a) else none
   | _, _ => none
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 #eval wordsToString (inversionData.pairs[0]?.map (·.grammatical) |>.getD [])
 #eval wordsToString (inversionData.pairs[0]?.map (·.ungrammatical) |>.getD [])

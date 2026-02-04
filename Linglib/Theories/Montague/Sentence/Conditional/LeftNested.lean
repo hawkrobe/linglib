@@ -44,9 +44,7 @@ namespace Montague.Sentence.Conditional
 open Core.Proposition
 open Theories.DynamicSemantics.State
 
--- ============================================================================
 -- Left-Nested Conditional Structure
--- ============================================================================
 
 /--
 Left-nested conditional structure: "If (B if A), C"
@@ -97,9 +95,7 @@ def kratzerSemantics (ctx : KratzerContext W) (lnc : LNC W) : Prop' W :=
 
 end LNC
 
--- ============================================================================
 -- Inner Conditional Content Type
--- ============================================================================
 
 /--
 Classification of the inner conditional's content.
@@ -136,9 +132,7 @@ def allowsHCReading : InnerConditionalContent → Bool
 
 end InnerConditionalContent
 
--- ============================================================================
 -- LNC Interpretation
--- ============================================================================
 
 /--
 Interpret an LNC given discourse context and content type.
@@ -167,9 +161,7 @@ def lncFelicitous {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
   | .hypothetical => hcFelicitous ds lnc.innerConditional worlds
   | .premise => pcFelicitous ds lnc.innerConditional worlds
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /--
 **Main result: Bare LNCs default to PC interpretation.**
@@ -216,9 +208,7 @@ theorem lnc_grounded {W : Type*} (ctx : KratzerContext W) (lnc : LNC W) :
     lnc.kratzerSemantics ctx =
     kratzerConditional ctx lnc.innerConditional lnc.outerConsequent := rfl
 
--- ============================================================================
 -- Extended LNC with Metadata
--- ============================================================================
 
 /--
 Left-nested conditional with metadata for analysis.
@@ -254,9 +244,7 @@ def innerAntecedentPolarity (alnc : AnnotatedLNC W) (ds : DiscourseState W)
 
 end AnnotatedLNC
 
--- ============================================================================
 -- Polarity Patterns in LNCs
--- ============================================================================
 
 /-!
 ## Polarity Patterns (Lassiter 2025, Section 4)
@@ -308,9 +296,7 @@ theorem bare_lnc_licenses_ppi_in_B :
 theorem bare_lnc_blocks_npi_in_B :
     (embeddedConsequentPolarity .premise).licensesNPI = false := rfl
 
--- ============================================================================
 -- Example Worlds for Testing
--- ============================================================================
 
 /--
 Simple world type for LNC examples.
@@ -358,9 +344,7 @@ def gibbardLNC : LNC PartyWorld :=
 
 end PartyWorld
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

@@ -36,9 +36,7 @@ import Linglib.Theories.Minimalism.Labeling
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Feature Types
--- ============================================================================
 
 /-- Phi-features (agreement features) -/
 inductive PhiFeature where
@@ -105,9 +103,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   | .tense _, .tense _ => true
   | _, _ => false
 
--- ============================================================================
 -- Part 2: Feature Bundles on Syntactic Objects
--- ============================================================================
 
 /-- A feature bundle: list of grammatical features -/
 abbrev FeatureBundle := List GramFeature
@@ -124,9 +120,7 @@ def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
 def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
   fb.find? λ f => f.isValued && (f.featureType == ftype)
 
--- ============================================================================
 -- Part 3: Extended Lexical Items with Features
--- ============================================================================
 
 /-- Extended LI with grammatical features
 
@@ -149,9 +143,7 @@ def ExtendedLI.isProbe (li : ExtendedLI) : Bool :=
 def ExtendedLI.isGoalFor (li : ExtendedLI) (ftype : FeatureVal) : Bool :=
   hasValuedFeature li.features ftype
 
--- ============================================================================
 -- Part 4: Agree Relation
--- ============================================================================
 
 /-- A probe-goal pair for Agree -/
 structure AgreeRelation where
@@ -179,9 +171,7 @@ def validAgree (a : AgreeRelation) : Prop :=
   a.probeNeedsFeature = true ∧
   a.goalHasFeature = true
 
--- ============================================================================
 -- Part 5: Locality (Closest Goal)
--- ============================================================================
 
 /-- X intervenes between probe and goal iff:
     - probe c-commands X
@@ -201,9 +191,7 @@ def closestGoal (a : AgreeRelation) (root : SyntacticObject) : Prop :=
     x ≠ a.goal ∧
     intervenes a.probe x a.goal xFeats a.feature
 
--- ============================================================================
 -- Part 6: Feature Valuation
--- ============================================================================
 
 /-- Value an unvalued feature by copying from a valued one -/
 def valueFeature (unvalued valued : GramFeature) : Option GramFeature :=
@@ -224,9 +212,7 @@ def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
         | none => f
       else f)
 
--- ============================================================================
 -- Part 7: Common Agree Configurations
--- ============================================================================
 
 /-- T-Agree: T probes for φ-features on subject DP
 
@@ -256,9 +242,7 @@ structure CAgree where
   -- Q-element has valued [+Q]
   q_has_q : hasValuedFeature qFeatures (.q true) = true
 
--- ============================================================================
 -- Part 8: Movement Triggered by Agree
--- ============================================================================
 
 /-- EPP triggers movement to specifier
 
@@ -283,9 +267,7 @@ def agreeTriggersMoveement (probeFeats : FeatureBundle) : Bool :=
 def tToCTriggered (cFeats : FeatureBundle) : Bool :=
   hasUnvaluedFeature cFeats (.q false) && hasEPP cFeats
 
--- ============================================================================
 -- Part 9: Worked Example - Subject-Auxiliary Inversion
--- ============================================================================
 
 /-
 ## Deriving Subject-Auxiliary Inversion
@@ -320,9 +302,7 @@ theorem matrix_triggers_t_to_c : tToCTriggered matrixCFeatures = true := rfl
 /-- Embedded C does not trigger T-to-C -/
 theorem embedded_no_t_to_c : tToCTriggered embeddedCFeatures = false := rfl
 
--- ============================================================================
 -- Part 10: Case Assignment via Agree
--- ============================================================================
 
 /-- Nominative Case is assigned by T
 
@@ -342,9 +322,7 @@ def vAssignsAccusative : FeatureBundle :=
 def dpNeedsCase : FeatureBundle :=
   [.unvalued (.case .obl)]  -- unvalued, will be valued by T or v
 
--- ============================================================================
 -- Part 11: Activity Condition
--- ============================================================================
 
 /-
 ## The Activity Condition (Chomsky 2000, 2001)
@@ -407,9 +385,7 @@ theorem activity_via_case (fb : FeatureBundle)
     simp only [Bool.and_eq_true] at hfCond
     exact ⟨f, hfMem, hfCond.1⟩
 
--- ============================================================================
 -- Part 12: Active Goal (for Agree with Activity)
--- ============================================================================
 
 /-- A goal that satisfies the Activity Condition -/
 structure ActiveGoal where
@@ -434,9 +410,7 @@ def validAgreeWithActivity (a : AgreeRelation) : Prop :=
   validAgree a ∧
   isActive a.goalFeatures = true
 
--- ============================================================================
 -- Part 13: Multiple Agree
--- ============================================================================
 
 /-
 ## Multiple Agree (Hiraiwa 2001, 2005)
@@ -485,9 +459,7 @@ def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
           | none => f
         else f)
 
--- ============================================================================
 -- Part 14: Case Filter
--- ============================================================================
 
 /-
 ## The Case Filter
@@ -564,9 +536,7 @@ theorem case_filter_at_interfaces (dps : List DPFeatures)
     · rw [heq]; exact hWF.1
     · exact ih hWF.2 hmem
 
--- ============================================================================
 -- Part 15: Defective Intervention
--- ============================================================================
 
 /-
 ## Defective Intervention (Chomsky 2000)

@@ -19,9 +19,7 @@ All three hypothesized effects were confirmed:
 
 namespace Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 
--- ============================================================================
 -- Regression Coefficients (Tables 1 & 2)
--- ============================================================================
 
 /-- Effect of utterance type: negated know vs negated think (Exp 1) -/
 structure UtteranceEffect where
@@ -51,9 +49,7 @@ def exp2_utteranceEffect : UtteranceEffect :=
 def exp2_qudEffect : UtteranceEffect :=
   { β := 0.14, se := 0.04, t := 3.6, p := 0.001 }
 
--- ============================================================================
 -- Summary: Empirical Hypotheses
--- ============================================================================
 
 /-- The three empirical hypotheses and their support -/
 inductive Hypothesis where

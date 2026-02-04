@@ -57,9 +57,6 @@ namespace Montague.Question.EntropyNPIs
 
 open Montague.Question
 
--- ============================================================================
--- PART 1: Entropy (Shannon/Bar-Hillel & Carnap)
--- ============================================================================
 
 /-!
 ## Shannon Entropy for Questions
@@ -117,9 +114,6 @@ theorem entropy_maximal_equiprobable {W : Type*} (prior : W → ℚ) (worlds : L
       questionEntropy prior worlds q ≥ questionEntropy prior worlds q' := by
   sorry
 
--- ============================================================================
--- PART 2: Bias and NPIs (Krifka's Analysis Formalized)
--- ============================================================================
 
 /-!
 ## Bias Reduction via NPIs
@@ -215,9 +209,6 @@ theorem ppi_increases_entropy_when_positively_biased {W : Type*}
     questionEntropy prior worlds e.questionWithoutNPI := by
   sorry
 
--- ============================================================================
--- PART 3: Entropy vs Decision-Theoretic Utility
--- ============================================================================
 
 /-!
 ## Connecting Entropy to Utility (Section 5.3)
@@ -254,9 +245,6 @@ theorem entropy_leq_expected_utility {W A : Type*} [DecidableEq A]
     questionEntropy prior worlds q ≤ questionUtility dp worlds actions q := by
   sorry
 
--- ============================================================================
--- PART 4: Rhetorical Questions (Section 4)
--- ============================================================================
 
 /-!
 ## Rhetorical Questions and Even-NPIs
@@ -314,9 +302,6 @@ theorem strong_npi_creates_rhetorical {W : Type*}
     isRhetorical prior worlds e.questionWithNPI := by
   sorry
 
--- ============================================================================
--- PART 5: Kadmon & Landman's Strengthening (Section 4.1)
--- ============================================================================
 
 /-!
 ## K&L's Question Strengthening
@@ -353,9 +338,6 @@ theorem stressed_any_achieves_kl_strengthening {W : Type*}
     klStrengthens prior worlds e.questionWithoutNPI e.questionWithNPI := by
   sorry
 
--- ============================================================================
--- PART 6: The Unified Principle
--- ============================================================================
 
 /-!
 ## Strength as Relevance: The Unification
@@ -428,9 +410,6 @@ theorem unified_npi_licensing {W : Type*}
     npiLicensed prior worlds act e hNegativePolarityOrBias := by
   sorry
 
--- ============================================================================
--- PART 7: Wh-Questions and Downward Entailment
--- ============================================================================
 
 /-!
 ## Wh-Questions (Section 3.1)

@@ -28,9 +28,7 @@ namespace RSA.ScopeFreezing
 open Montague.Derivation.Scope (ScopeConfig)
 open Phenomena.Quantification.ScopeFreezing
 
--- ============================================================================
 -- Interpretation Prior from Grammar Parse
--- ============================================================================
 
 /--
 Convert grammatical availability to interpretation prior.
@@ -60,9 +58,7 @@ def interpPriorFromAvailability (avail : Availability) (ε : ℚ := 1/100) : Sco
 def interpPriorFromExample (ex : Example) : ScopeConfig → ℚ :=
   interpPriorFromAvailability ex.observed
 
--- ============================================================================
 -- World Model
--- ============================================================================
 
 /-- World state for two-quantifier sentences.
     w0: neither scope true, w1: inverse-only true, w2: both true -/
@@ -85,9 +81,7 @@ def meaning (s : ScopeConfig) (w : World) : Bool :=
   | .surface => surfaceTrue w
   | .inverse => inverseTrue w
 
--- ============================================================================
 -- RSA
--- ============================================================================
 
 inductive Utterance where | target | null
   deriving DecidableEq, BEq, Repr, Inhabited
@@ -112,9 +106,7 @@ def l1Interp (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : 
 def getInverseProb (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : ℚ :=
   RSA.Eval.getScore (l1Interp worldPrior interpPrior) .inverse
 
--- ============================================================================
 -- Priors
--- ============================================================================
 
 def uniformWorldPrior : World → ℚ := fun _ => 1
 
@@ -122,9 +114,7 @@ def uniformWorldPrior : World → ℚ := fun _ => 1
 def rescueWorldPrior : World → ℚ
   | .w1 => 99/100 | _ => 1/200
 
--- ============================================================================
 -- Results with Canonical Examples
--- ============================================================================
 
 /-- Baseline example from phenomena data -/
 def baseline := possessor_baseline

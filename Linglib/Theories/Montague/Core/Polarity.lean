@@ -41,9 +41,6 @@ namespace Montague.Core.Polarity
 
 open Montague.Sentence.Entailment
 
--- ============================================================================
--- PART 1: ContextPolarity Enum
--- ============================================================================
 
 /--
 Whether a context preserves or reverses entailment direction.
@@ -59,9 +56,6 @@ inductive ContextPolarity where
   | nonMonotonic -- Neither (e.g., "exactly n")
   deriving DecidableEq, Repr
 
--- ============================================================================
--- PART 2: Monotonicity via Mathlib
--- ============================================================================
 
 /-
 For Prop' = World → Bool, we have:
@@ -95,9 +89,6 @@ abbrev IsDownwardEntailing (f : Prop' → Prop') := Antitone f
 abbrev IsUE := IsUpwardEntailing
 abbrev IsDE := IsDownwardEntailing
 
--- ============================================================================
--- PART 3: Basic Instances
--- ============================================================================
 
 /--
 **Identity is UE**: The trivial context preserves entailment.
@@ -126,9 +117,6 @@ This follows from Mathlib's `Antitone.comp` (DE ∘ DE = UE).
 theorem pnot_pnot_isUpwardEntailing : IsUpwardEntailing (pnot ∘ pnot) :=
   pnot_isDownwardEntailing.comp pnot_isDownwardEntailing
 
--- ============================================================================
--- PART 4: Composition Rules (From Mathlib - Free!)
--- ============================================================================
 
 /-
 Mathlib provides all the composition rules we need:
@@ -161,9 +149,6 @@ theorem de_comp_ue {f g : Prop' → Prop'} (hf : IsDownwardEntailing f) (hg : Is
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_monotone hg
 
--- ============================================================================
--- PART 5: Decidable Test Functions
--- ============================================================================
 
 /--
 Check if f is upward entailing on given test cases.
@@ -183,9 +168,6 @@ set of test cases rather than proving it universally.
 def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
   tests.all λ (p, q) => !entails p q || entails (f q) (f p)
 
--- ============================================================================
--- PART 6: Monotonicity Theorems (Decidable Verification)
--- ============================================================================
 
 /--
 **Theorem: Negation is Downward Entailing**
@@ -230,9 +212,6 @@ theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := 
 theorem double_negation_is_ue : isUpwardEntailing (pnot ∘ pnot) testCases = true := by
   native_decide
 
--- ============================================================================
--- PART 7: Conditional Monotonicity
--- ============================================================================
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
 def materialCond (c : Prop') : Prop' → Prop' :=
@@ -279,9 +258,6 @@ theorem conditional_monotonicity_summary :
   · exact conditional_antecedent_DE
   · exact implication_consequent_UE
 
--- ============================================================================
--- PART 8: DE Reverses Scalar Strength
--- ============================================================================
 
 /--
 **Key Insight: DE contexts reverse scalar strength**
@@ -296,9 +272,6 @@ theorem de_reverses_strength :
     entails (pnot p01) (pnot p0) = true := by
   native_decide
 
--- ============================================================================
--- PART 9: Grounded Polarity Structures
--- ============================================================================
 
 /--
 A **grounded UE polarity** carries proof that a context function is monotone.
@@ -354,9 +327,6 @@ Negation is grounded DE.
 -/
 def negationPolarity : GroundedPolarity := mkDownward pnot pnot_isDownwardEntailing
 
--- ============================================================================
--- PART 10: Compositional Polarity Computation
--- ============================================================================
 
 /--
 Compose two polarities, with proof that the composition has the right property.
@@ -379,9 +349,6 @@ def composePolarity (outer inner : GroundedPolarity) : GroundedPolarity :=
     -- DE ∘ DE = UE (double negation!)
     .ue ⟨f ∘ g, de_comp_de hf hg⟩
 
--- ============================================================================
--- PART 11: Polarity Composition Table (Verified)
--- ============================================================================
 
 /--
 **Theorem: Polarity composition table is correct.**
@@ -413,9 +380,6 @@ theorem double_de_is_ue_grounded (f g : Prop' → Prop') (hf : Antitone f) (hg :
     (composePolarity (mkDownward f hf) (mkDownward g hg)).toContextPolarity = .upward := by
   simp only [composePolarity, mkDownward, GroundedPolarity.toContextPolarity]
 
--- ============================================================================
--- PART 12: Connection to Implicature Derivation
--- ============================================================================
 
 /--
 **Key Insight**: Scalar implicatures require UE context.
@@ -449,9 +413,7 @@ theorem implicature_allowed_double_negation :
   simp [implicatureAllowed, composePolarity, negationPolarity, mkDownward,
         GroundedPolarity.toContextPolarity]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

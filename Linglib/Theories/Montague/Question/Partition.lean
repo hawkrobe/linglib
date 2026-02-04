@@ -37,9 +37,7 @@ Equivalently: Q's cells are subsets of Q''s cells.
 
 namespace Montague.Question
 
--- ============================================================================
 -- GSQuestion = QUD (Unified)
--- ============================================================================
 
 /-- A G&S-style question is exactly a QUD: an equivalence relation on worlds.
 
@@ -58,9 +56,7 @@ variable {W : Type*}
 /-- Compatibility accessor: `equiv` is the same as `sameAnswer` -/
 abbrev equiv (q : GSQuestion W) := q.sameAnswer
 
--- ============================================================================
 -- Basic Constructors (delegating to QUD)
--- ============================================================================
 
 /-- The finest possible partition (identity). Each world is its own equivalence class.
 This is the "maximally informative" question. -/
@@ -90,9 +86,7 @@ def compose (q1 q2 : GSQuestion W) : GSQuestion W :=
 instance [BEq W] : Mul (GSQuestion W) where
   mul := compose
 
--- ============================================================================
 -- Semantic Refinement
--- ============================================================================
 
 /-- Q refines Q' iff Q's equivalence classes are subsets of Q''s.
 
@@ -152,9 +146,7 @@ theorem compose_refines_right (q1 q2 : GSQuestion W) : (q1 * q2) ⊑ q2 := by
   simp only [HMul.hMul, Mul.mul, compose, QUD.compose] at h
   cases h1 : q1.sameAnswer w v <;> cases h2 : q2.sameAnswer w v <;> simp_all
 
--- ============================================================================
 -- Partition Cells (delegating to QUD.cell)
--- ============================================================================
 
 /-- Convert a question to its cells (equivalence classes as characteristic functions).
 Given a finite list of worlds, compute the partition cells. -/
@@ -177,9 +169,7 @@ theorem refines_numCells_ge (q q' : GSQuestion W) (worlds : List W) :
     q ⊑ q' → q.numCells worlds >= q'.numCells worlds := by
   sorry -- Requires showing refinement can only increase cell count
 
--- ============================================================================
 -- Connection to QUD (now trivial since GSQuestion = QUD)
--- ============================================================================
 
 /-- Convert to a Core.QUD (identity since GSQuestion = QUD) -/
 def toQUD (q : GSQuestion W) : QUD W := q
@@ -196,9 +186,7 @@ theorem ofQUD_toQUD_roundtrip (qud : QUD W) :
 
 end GSQuestion
 
--- ============================================================================
 -- Yes/No and Wh-Questions
--- ============================================================================
 
 /-- A yes/no (polar) question: partitions into {yes-worlds} and {no-worlds}.
 
@@ -224,9 +212,7 @@ def alternativeQuestion {W : Type*}
     (alts : List (W → Bool)) : GSQuestion W :=
   QUD.ofProject fun w => alts.map fun p => p w
 
--- ============================================================================
 -- Exhaustivity
--- ============================================================================
 
 /-- A question demands exhaustive answers if its semantics requires
 knowing exactly which cell the actual world is in.

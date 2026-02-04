@@ -35,9 +35,7 @@ namespace Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 
 open Phenomena
 
--- ============================================================================
 -- Experimental Design
--- ============================================================================
 
 /-- The three theories being tested. -/
 inductive Theory where
@@ -68,9 +66,7 @@ def Quantifier.isPositive : Quantifier → Bool
   | .no => false
   | .notEvery => false
 
--- ============================================================================
 -- Theoretical Predictions
--- ============================================================================
 
 /-- Predicted response for each theory under mixed scenarios. -/
 inductive PredictedResponse where
@@ -99,9 +95,7 @@ def theoreticalPrediction (t : Theory) (q : Quantifier) : PredictedResponse :=
   | .homogeneity, .no => .presupFailure
   | .homogeneity, .notEvery => .presupFailure
 
--- ============================================================================
 -- Experimental Results
--- ============================================================================
 
 /--
 Experimental datum: proportion of "true" responses for a condition.
@@ -161,9 +155,7 @@ def strengthEffect : Bool :=
 
 #eval strengthEffect  -- Should be true
 
--- ============================================================================
 -- Control Conditions
--- ============================================================================
 
 /--
 Control: Uniform TRUE scenario (all 4 individuals satisfy counterfactual).
@@ -205,9 +197,7 @@ def uniformFalseControl : List ExperimentalDatum :=
     , scenario := "None of 4 would stay dry with umbrella" }
   ]
 
--- ============================================================================
 -- Theory Comparison
--- ============================================================================
 
 /--
 Score a theory based on how well it predicts the experimental pattern.
@@ -268,9 +258,7 @@ theorem strength_effect_supports_selectional :
     (someRate.getD 0 > 1/2) := by
   native_decide
 
--- ============================================================================
 -- Stimulus Examples
--- ============================================================================
 
 /-- Example stimulus from the paper. -/
 structure Stimulus where
@@ -292,9 +280,7 @@ def someUmbrellaStimulus : Stimulus :=
   , quantifier := .some
   , expectedPattern := "Alice, Bob: TRUE; Carol, Dave: FALSE" }
 
--- ============================================================================
 -- Key Theoretical Claims
--- ============================================================================
 
 /--
 **Claim 1**: The experimental pattern rules out the Universal Theory.
@@ -350,9 +336,7 @@ def selectionalTheorySucceeds : Bool :=
 #eval homogeneityTheoryFails     -- true
 #eval selectionalTheorySucceeds  -- true
 
--- ============================================================================
 -- Connections to Other Phenomena
--- ============================================================================
 
 /-!
 ## Related Phenomena

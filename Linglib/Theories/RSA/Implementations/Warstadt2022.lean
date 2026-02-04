@@ -103,9 +103,6 @@ namespace RSA.Warstadt2022
 
 open RSA.Eval
 
--- ============================================================================
--- PART 1: World States
--- ============================================================================
 
 /--
 World state: tracks what's actually true.
@@ -127,9 +124,6 @@ def allWorlds : List WorldState := [
   ⟨false, false⟩   -- Mary doesn't have a dog
 ]
 
--- ============================================================================
--- PART 2: Context (Common Ground)
--- ============================================================================
 
 /--
 Context represents which presuppositions are established in the common ground.
@@ -151,9 +145,6 @@ inductive Context where
 /-- All contexts -/
 def allContexts : List Context := [.hasDogEstablished, .hasDogNotEstablished]
 
--- ============================================================================
--- PART 3: Context-World Compatibility (speakerCredence analog)
--- ============================================================================
 
 /--
 A world is **compatible** with a context iff all presuppositions
@@ -177,9 +168,6 @@ def compatibleBool (c : Context) (w : WorldState) : Bool :=
 def contextCredence (c : Context) (w : WorldState) : ℚ :=
   boolToRat (compatibleBool c w)
 
--- ============================================================================
--- PART 4: Utterances with Presuppositions
--- ============================================================================
 
 /--
 Utterances differing in presuppositional content.
@@ -196,9 +184,6 @@ inductive Utterance where
 
 def allUtterances : List Utterance := [.marysDogIsSick, .maryHasASickDog, .silence]
 
--- ============================================================================
--- PART 5: Literal Semantics
--- ============================================================================
 
 /--
 Truth conditions for each utterance.
@@ -225,9 +210,6 @@ theorem same_atissue_content :
     ∀ w, literalMeaning .marysDogIsSick w = literalMeaning .maryHasASickDog w := by
   intro w; simp [literalMeaning]
 
--- ============================================================================
--- PART 6: QUD (Communicative Goal)
--- ============================================================================
 
 /--
 For this model, we use a simple QUD that partitions by world state.
@@ -247,9 +229,6 @@ For the dogStatus QUD, we care about the full world state.
 def qudProject : QUD → WorldState → WorldState → Bool
   | .dogStatus, w1, w2 => w1.maryHasDog == w2.maryHasDog && w1.dogIsSick == w2.dogIsSick
 
--- ============================================================================
--- PART 7: RSA Model (Using Unified API)
--- ============================================================================
 
 /--
 World prior: uniform over all worlds.
@@ -264,9 +243,6 @@ This represents the listener's uncertainty about what's in the CG.
 -/
 def contextPrior (_c : Context) : ℚ := 1 / 2
 
--- ============================================================================
--- PART 8: RSA Computation (List-based for #eval)
--- ============================================================================
 
 /--
 Projection computation: P(C=hasDogEstablished | u)
@@ -307,9 +283,6 @@ def L1_world (u : Utterance) (α : ℕ := 10) : List (WorldState × ℚ) :=
     worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
     contextCredence qudProject (fun _ => 0) α u .dogStatus
 
--- ============================================================================
--- PART 9: Key Predictions
--- ============================================================================
 
 /--
 **Prediction 1**: Presuppositional utterance triggers accommodation.
@@ -340,9 +313,6 @@ def prediction_silence_uninformative (α : ℕ := 10) : Bool :=
   let strength := accommodationStrength .silence α
   strength > 1/4 && strength < 3/4
 
--- ============================================================================
--- PART 10: Evaluation
--- ============================================================================
 
 -- Uncomment to evaluate predictions:
 -- #eval accommodationStrength .marysDogIsSick
@@ -352,9 +322,6 @@ def prediction_silence_uninformative (α : ℕ := 10) : Bool :=
 -- #eval prediction_presup_triggers_accommodation
 -- #eval prediction_nonpresup_less_accommodation
 
--- ============================================================================
--- PART 11: Connection to Core.CommonGround
--- ============================================================================
 
 /-!
 ## Connection to Core.CommonGround
@@ -405,9 +372,6 @@ A deeper integration with `Core.CommonGround` would:
 3. Connect to Heim's satisfaction theory via local contexts
 -/
 
--- ============================================================================
--- PART 12: Comparison with Scontras & Tonhauser (2025)
--- ============================================================================
 
 /-!
 ## Structural Comparison
@@ -454,9 +418,6 @@ Both models can be seen as special cases of a more general theory:
 See `Comparisons.PresuppositionProjection` for formal comparison.
 -/
 
--- ============================================================================
--- PART 13: Unified Discourse Interface (New API)
--- ============================================================================
 
 /-!
 ## Migration to DiscourseConfig API
@@ -528,9 +489,7 @@ def scenario (α : ℕ := 10) : RSAScenario :=
 The explicit `accommodationStrength` function above shows the working pattern.
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

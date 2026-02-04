@@ -31,9 +31,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.Exhaustivity
 
--- ============================================================================
--- PART 1: Mention-Some Data
--- ============================================================================
 
 /-- A mention-some datum: questions where partial answers suffice.
 -/
@@ -80,9 +77,6 @@ def whoHasPen : MentionSomeDatum :=
 def mentionSomeExamples : List MentionSomeDatum :=
   [whereBuyCoffee, whereBuyNewspaper, whoHasPen]
 
--- ============================================================================
--- PART 2: Mention-All Data
--- ============================================================================
 
 /-- A mention-all datum: questions requiring exhaustive answers.
 -/
@@ -120,9 +114,6 @@ def whichStudentsPassed : MentionAllDatum :=
 def mentionAllExamples : List MentionAllDatum :=
   [whoCame, whichStudentsPassed]
 
--- ============================================================================
--- PART 3: Term Type Effects on Exhaustivity
--- ============================================================================
 
 /-- G&S 1984, pp. 296-298: Term type determines exhaustive interpretation.
 -/
@@ -191,9 +182,6 @@ theorem termType_exhaustivity_consistent (d : TermTypeExhDatum) :
     d.termType.exhaustive = true → d.exhaustive = true ∨ d.termType = .indefinite := by
   sorry
 
--- ============================================================================
--- PART 4: Non-Exhaustive Markers
--- ============================================================================
 
 /-- Some languages have overt markers for non-exhaustive answers.
 -/
@@ -245,9 +233,6 @@ def englishAmongOthers : NonExhMarkerDatum :=
 def nonExhMarkerExamples : List NonExhMarkerDatum :=
   [englishForExample, germanZumBeispiel, englishAmongOthers]
 
--- ============================================================================
--- PART 5: Decision-Theoretic Account
--- ============================================================================
 
 /-- Van Rooy (2003): Exhaustivity depends on the decision problem.
 

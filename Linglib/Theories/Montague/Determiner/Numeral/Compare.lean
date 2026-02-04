@@ -37,9 +37,7 @@ import Linglib.Theories.Montague.Determiner.Numeral.Bilateral
 
 namespace Montague.Determiner.Numeral
 
--- ============================================================================
 -- Comparison Functions
--- ============================================================================
 
 /--
 Do two theories agree on the truth value of utterance `w` in world `n`?
@@ -71,9 +69,7 @@ Ambiguity difference: does T₁ have more ambiguity than T₂ for utterance w?
 def hasMoreAmbiguity (T₁ T₂ : NumeralTheory) (w : NumWord) : Bool :=
   T₁.compatibleCount w > T₂.compatibleCount w
 
--- ============================================================================
 -- Key Divergence Theorems
--- ============================================================================
 
 /--
 **Theories differ on "two"**
@@ -106,9 +102,7 @@ theorem theories_not_equivalent :
     theoriesEquivalent LowerBound DeFregean = false := by
   native_decide
 
--- ============================================================================
 -- Ambiguity Comparison
--- ============================================================================
 
 /--
 Lower-bound has more ambiguity than DeFregean for "two".
@@ -131,9 +125,7 @@ theorem ambiguity_presence_differs :
     LowerBound.hasAmbiguity .two = true ∧ DeFregean.hasAmbiguity .two = false := by
   native_decide
 
--- ============================================================================
 -- Monotonicity Comparison
--- ============================================================================
 
 /--
 Lower-bound is monotonic, DeFregean is not.
@@ -142,9 +134,7 @@ theorem monotonicity_differs :
     LowerBound.checkMonotonic = true ∧ DeFregean.checkMonotonic = false := by
   native_decide
 
--- ============================================================================
 -- Implicature Potential
--- ============================================================================
 
 /--
 **Only Lower-Bound Can Support Implicature**
@@ -164,9 +154,7 @@ theorem only_lowerBound_supports_implicature :
     (DeFregean.compatibleCount .two = 1) := by
   native_decide
 
--- ============================================================================
 -- Empirical Adjudication
--- ============================================================================
 
 /-
 ## Connection to Empirical Data
@@ -212,9 +200,7 @@ theorem exact_inconsistent_with_cancellation :
     DeFregean.hasAmbiguity .two = false := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /--
 **Summary Theorem: The theories make different empirical predictions.**
@@ -237,9 +223,7 @@ theorem summary_comparison :
     (LowerBound.meaning .two 3 = true ∧ DeFregean.meaning .two 3 = false) := by
   native_decide
 
--- ============================================================================
 -- TODO: Full Connection to Empirical Data
--- ============================================================================
 
 /-
 ## Future Work

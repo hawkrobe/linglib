@@ -16,9 +16,6 @@ namespace Theories.DynamicSemantics.CDRT
 
 open Theories.DynamicSemantics.Core.DynamicTy2
 
--- ============================================================================
--- PART 1: Type Identification
--- ============================================================================
 
 /-- CDRT Register = Dynamic Ty2 Assignment -/
 theorem register_eq {E : Type*} : Register E = (Nat → E) := rfl
@@ -26,9 +23,6 @@ theorem register_eq {E : Type*} : Register E = (Nat → E) := rfl
 /-- CDRT dref: register lookup -/
 def dref {E : Type*} (n : Nat) : Dref (Register E) E := fun r => r n
 
--- ============================================================================
--- PART 2: Embedding (Identity!)
--- ============================================================================
 
 /-- CDRT DProp IS a DRS -/
 def toDRS {E : Type*} (φ : DProp E) : DRS (Register E) := φ
@@ -39,9 +33,6 @@ def ofDRS {E : Type*} (D : DRS (Register E)) : DProp E := D
 @[simp] theorem toDRS_ofDRS {E : Type*} (φ : DProp E) : ofDRS (toDRS φ) = φ := rfl
 @[simp] theorem ofDRS_toDRS {E : Type*} (D : DRS (Register E)) : toDRS (ofDRS D) = D := rfl
 
--- ============================================================================
--- PART 3: Connective Preservation
--- ============================================================================
 
 theorem ofStatic_eq_test {E : Type*} (p : SProp E) :
     toDRS (DProp.ofStatic p) = test p := by
@@ -76,9 +67,7 @@ theorem trueAt_eq_closure {E : Type*} (φ : DProp E) (i : Register E) :
     φ.true_at i ↔ closure (toDRS φ) i := by
   simp only [DProp.true_at, closure, toDRS]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## CDRT ≅ Dynamic Ty2 (Isomorphism)

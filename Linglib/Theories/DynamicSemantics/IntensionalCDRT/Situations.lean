@@ -50,9 +50,6 @@ open Montague.Sentence.Mood
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Situation Variables and Drefs
--- ============================================================================
 
 /--
 A situation variable (names a situation dref).
@@ -90,9 +87,6 @@ def time (d : SDref W Time E) : ICDRTAssignment W E → Time :=
 
 end SDref
 
--- ============================================================================
--- PART 2: Extended Assignment with Situations
--- ============================================================================
 
 /--
 Extended ICDRT assignment including situation variables.
@@ -127,9 +121,6 @@ def toBase (g : SitAssignment W Time E) : ICDRTAssignment W E := g.base
 
 end SitAssignment
 
--- ============================================================================
--- PART 3: Situation Contexts
--- ============================================================================
 
 /--
 Extended ICDRT context with situation tracking.
@@ -169,9 +160,6 @@ def currentSituations (c : SitContext W Time E) : Set (Situation W Time) :=
 
 end SitContext
 
--- ============================================================================
--- PART 4: Dynamic Mood Operators
--- ============================================================================
 
 /--
 Dynamic SUBJ: Introduces a situation dref.
@@ -218,9 +206,6 @@ def dynIND {W Time E : Type*}
     (c : SitContext W Time E) : SitContext W Time E :=
   { gs ∈ c | gs.2.world = (gs.1.sit v).world }
 
--- ============================================================================
--- PART 5: Temporal Operators in Dynamic Setting
--- ============================================================================
 
 /--
 Dynamic PAST: Constrains event time to precede reference time.
@@ -248,9 +233,6 @@ def dynFUT {W Time E : Type*} [LT Time]
     (c : SitContext W Time E) : SitContext W Time E :=
   { gs ∈ c | (gs.1.sit eventVar).time > (gs.1.sit refVar).time }
 
--- ============================================================================
--- PART 6: Subordinate Future Analysis (Mendes 2025)
--- ============================================================================
 
 /--
 **Subordinate Future (SF) analysis**
@@ -301,9 +283,6 @@ def conditionalWithSF {W Time E : Type*} [LE Time] [LT Time]
   -- Apply consequent (anchored to antecedentVar's time)
   consequent c₂
 
--- ============================================================================
--- PART 7: Theorems
--- ============================================================================
 
 /--
 **SF introduces a future situation**
@@ -353,9 +332,6 @@ theorem dynIND_same_world {W Time E : Type*}
   unfold dynIND at h
   exact h.2
 
--- ============================================================================
--- PART 8: Temporal Shift Parasitic on Modal Anaphora (Mendes §3.2)
--- ============================================================================
 
 /--
 **KEY THEOREM: Temporal shift is parasitic on modal donkey anaphora**
@@ -437,9 +413,6 @@ theorem no_modal_no_temporal_shift {W Time E : Type*} [Preorder Time]
     : gs.2.time = gs.2.time := by  -- Trivial: no shift occurs
   rfl
 
--- ============================================================================
--- PART 9: Relative Clause Integration
--- ============================================================================
 
 /--
 **Relative clause with SF in restrictor**
@@ -512,9 +485,6 @@ theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
   unfold subordinateFuture dynFUT at h_sf
   exact h_sf.2
 
--- ============================================================================
--- PART 10: Complete CDRT Derivation (Paper §4.3.1, formulas 54-63)
--- ============================================================================
 
 /--
 **Example sentence derivation** (Paper example 53)
@@ -636,9 +606,7 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
   · intro _
     exact h_ans
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

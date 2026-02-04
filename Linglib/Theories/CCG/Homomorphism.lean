@@ -35,9 +35,7 @@ open CCG
 open CCG.Combinators
 open Montague
 
--- ============================================================================
 -- Well-Typed Derivations
--- ============================================================================
 
 /--
 A well-typed CCG derivation: pairs a derivation step with its derived category
@@ -61,9 +59,7 @@ structure CatMeaning (m : Model) where
   cat : Cat
   meaning : m.interpTy (catToTy cat)
 
--- ============================================================================
 -- The Homomorphism Property: Forward Application
--- ============================================================================
 
 /--
 **Forward Application Homomorphism**
@@ -99,9 +95,7 @@ The semantic types are: (⟦Y⟧ → ⟦X⟧) and ⟦Y⟧ combine to produce ⟦
 theorem fapp_types_align (x y : Cat) :
     catToTy (x.rslash y) = (catToTy y ⇒ catToTy x) := rfl
 
--- ============================================================================
 -- The Homomorphism Property: Backward Application
--- ============================================================================
 
 /--
 **Backward Application Homomorphism**
@@ -136,9 +130,7 @@ The semantic types are: ⟦Y⟧ and (⟦Y⟧ → ⟦X⟧) combine to produce ⟦
 theorem bapp_types_align (x y : Cat) :
     catToTy (x.lslash y) = (catToTy y ⇒ catToTy x) := rfl
 
--- ============================================================================
 -- Composition Semantics (B Combinator)
--- ============================================================================
 
 -- B combinator imported from CCG.Combinators
 
@@ -172,9 +164,7 @@ def fcompSem {m : Model} {x y z : Cat}
     : m.interpTy (catToTy (x.rslash z)) :=
   B f_sem g_sem
 
--- ============================================================================
 -- Type-Raising Semantics (T Combinator)
--- ============================================================================
 
 -- T combinator imported from CCG.Combinators
 
@@ -212,9 +202,7 @@ def ftrSem {m : Model} {x t : Cat}
     : m.interpTy (catToTy (forwardTypeRaise x t)) :=
   fun f => f a_sem
 
--- ============================================================================
 -- Soundness: Well-Formed Derivations Have Meanings
--- ============================================================================
 
 /--
 A derivation is well-formed if it has a category.
@@ -242,9 +230,7 @@ theorem wellFormed_has_cat (d : DerivStep) (h : wellFormed d) :
   simp only [wellFormed] at h
   exact Option.isSome_iff_exists.mp h
 
--- ============================================================================
 -- Determinism: Meanings Are Unique
--- ============================================================================
 
 /--
 **Determinism Theorem**
@@ -263,9 +249,7 @@ theorem interp_deterministic (d : DerivStep) (lex : SemLexicon toyModel)
   rw [h1] at h2
   injection h2
 
--- ============================================================================
 -- The Fundamental Homomorphism: Interpretation Preserves Structure
--- ============================================================================
 
 /-
 **The Homomorphism Principle**
@@ -318,9 +302,7 @@ def ccgHomomorphism : HomomorphismProperty where
   fcomp := fun _ _ => rfl
   ftr := fun _ => rfl
 
--- ============================================================================
 -- Examples: The Homomorphism in Action
--- ============================================================================
 
 /-- "John sleeps" derivation has the correct semantic structure -/
 example :
@@ -343,9 +325,7 @@ example :
     let john_sees_mary := bappSem john_meaning sees_mary
     john_sees_mary = true := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Formalizes
@@ -380,9 +360,7 @@ X → T/(T\X)         T a = λf.f(a)     (type-raising)
 - `ccgHomomorphism`: All properties hold together
 -/
 
--- ============================================================================
 -- Steedman's Rule-to-Rule Hypothesis (The Syntactic Process, Chapter 2)
--- ============================================================================
 
 /-
 ## The Rule-to-Rule Relation

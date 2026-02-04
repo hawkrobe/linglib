@@ -43,9 +43,6 @@ namespace Phenomena.Presupposition
 open Core.Presupposition
 open Core.Proposition
 
--- ============================================================================
--- PART 1: The King Example (Karttunen 1974, Kracht 2003)
--- ============================================================================
 
 /--
 World type for the king example.
@@ -118,9 +115,6 @@ def kingNotBald : PrProp KingWorld := PrProp.neg kingBald
 theorem kingNotBald_presupposes_existence :
     kingNotBald.presup = kingBald.presup := PrProp.neg_presup kingBald
 
--- ============================================================================
--- PART 2: Factive Verbs Example
--- ============================================================================
 
 /--
 World type for factive verb examples.
@@ -174,9 +168,6 @@ theorem negation_preserves_factive :
     johnDoesntKnowRaining.presup = johnKnowsRaining.presup :=
   PrProp.neg_presup johnKnowsRaining
 
--- ============================================================================
--- PART 3: Change-of-State Example
--- ============================================================================
 
 /--
 World type for change-of-state examples.
@@ -219,9 +210,6 @@ theorem negation_preserves_change_of_state :
     johnDidntStopSmoking.presup = johnStoppedSmoking.presup :=
   PrProp.neg_presup johnStoppedSmoking
 
--- ============================================================================
--- PART 4: Conjunction Filtering Example
--- ============================================================================
 
 /--
 "John smokes and he stopped" — contradiction via filtering conjunction.
@@ -242,9 +230,6 @@ def johnSmokesAndStopped : PrProp SmokingWorld :=
     }
   PrProp.andFilter johnSmokes johnStoppedSmoking
 
--- ============================================================================
--- PART 5: Projection Pattern Summary
--- ============================================================================
 
 /--
 Summary of projection patterns across connectives.
@@ -283,9 +268,7 @@ def disjunctionPattern : ProjectionPattern :=
   , projects := false  -- filtered (symmetric)
   }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -30,9 +30,6 @@ open Montague
 open Montague.SemDeriv
 open Montague.Core
 
--- ============================================================================
--- PART 1: World Type for Scalar Implicature
--- ============================================================================
 
 /-
 ## Connecting Derivations to RSA Worlds
@@ -64,9 +61,6 @@ def quantityToScalar : Fin 4 → ScalarWorld
   | ⟨3, _⟩ => .all
   | ⟨n+4, h⟩ => absurd h (by omega)
 
--- ============================================================================
--- PART 2: RSA Result Structure
--- ============================================================================
 
 /--
 RSA scalar implicature result.
@@ -121,9 +115,6 @@ theorem rsa_some_not_all_explicit :
     rsaSomeResult.probSomeNotAll > rsaSomeResult.probAll := by
   native_decide
 
--- ============================================================================
--- PART 3: Bridge from SemDeriv.Derivation
--- ============================================================================
 
 /--
 Check if a derivation contains a "some" scalar item.
@@ -167,9 +158,6 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
   else
     none
 
--- ============================================================================
--- PART 4: Examples Using Derivations
--- ============================================================================
 
 /--
 **Example: "some students sleep" via RSA**
@@ -211,9 +199,6 @@ theorem rsa_every_no_implicature :
     (everyStudentSleeps_rsa.get everyStudentSleeps_rsa_isSome).implicatureHolds = false := by
   native_decide
 
--- ============================================================================
--- PART 5: Quantitative Comparison
--- ============================================================================
 
 /--
 Get L1 probability for a specific world.
@@ -242,9 +227,6 @@ theorem l1_w2_gt_w3 : l1ProbForWorld (w2 (n := 3)) > l1ProbForWorld (wAll (n := 
 theorem l1_w1_eq_w2 : l1ProbForWorld (w1 (n := 3)) = l1ProbForWorld (w2 (n := 3)) := by
   native_decide
 
--- ============================================================================
--- PART 6: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides
@@ -293,9 +275,6 @@ RSAScalarResult (probabilistic implicature)
 
 end RSA.ScalarImplicatures
 
--- ============================================================================
--- PART 7: ImplicatureTheory Instance
--- ============================================================================
 
 /-
 # RSA ImplicatureTheory Instance
@@ -363,9 +342,7 @@ structure RSAStructure where
   scalarPosition : Option Nat
   deriving Repr
 
--- ============================================================================
 -- Parsing
--- ============================================================================
 
 /-- Check if a word is a scalar quantifier -/
 def isScalarQuantifier (w : Word) : Bool :=
@@ -410,9 +387,7 @@ def parseToRSA (ws : List Word) : Option RSAStructure :=
              , scalarPosition := some pos }
     | none => none
 
--- ============================================================================
 -- ImplicatureTheory Instance
--- ============================================================================
 
 instance : ImplicatureTheory RSATheory where
   Structure := RSAStructure
@@ -447,9 +422,7 @@ instance : ImplicatureTheory RSATheory where
 
   predictedBaselineRate := 50  -- RSA predicts ~50% for "some but not all"
 
--- ============================================================================
 -- Theorems (Reflecting Model Incompleteness)
--- ============================================================================
 
 /-- Current RSA model doesn't handle DE contexts (model incomplete, not wrong) -/
 theorem rsa_de_not_modeled :
@@ -463,9 +436,7 @@ theorem rsa_task_effect_not_modeled :
 theorem rsa_baseline_rate :
     ImplicatureTheory.predictedBaselineRate (T := RSATheory) = 50 := rfl
 
--- ============================================================================
 -- Example Derivations
--- ============================================================================
 
 /-- Example: "some" via RSA -/
 def someRSA : RSAStructure :=

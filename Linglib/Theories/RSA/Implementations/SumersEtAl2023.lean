@@ -68,9 +68,6 @@ namespace RSA.SumersEtAl2023
 
 open RSA.CombinedUtility RSA.Eval
 
--- ============================================================================
--- PART 1: Signaling Bandits Domain
--- ============================================================================
 
 /-!
 ## Signaling Bandits
@@ -173,9 +170,6 @@ def allUtterances : List Utterance :=
 def utteranceTruth (u : Utterance) (w : WorldState) : Bool :=
   w.featureValue u.feature == u.value
 
--- ============================================================================
--- PART 2: Model Parameters
--- ============================================================================
 
 /-- Model parameters for Sumers et al. speaker model -/
 structure Params where
@@ -198,9 +192,6 @@ def truthBiasedParams : Params := { lam := 35/100 }
 /-- Relevance-biased parameters (Exp 1 MLE) -/
 def relevanceBiasedParams : Params := { lam := 85/100 }
 
--- ============================================================================
--- PART 3: Listener Model
--- ============================================================================
 
 /-!
 ## Listener Model
@@ -246,9 +237,6 @@ def listenerPolicy (params : Params) (ctx : Context) (u : Utterance)
   let probs := softmax params.βL utilities
   ctx.actions.zip probs
 
--- ============================================================================
--- PART 4: Speaker Utilities
--- ============================================================================
 
 /-!
 ## Speaker Utilities
@@ -312,9 +300,6 @@ def combinedUtility (params : Params) (u : Utterance) (w : WorldState)
   let cost := params.costWeight * utteranceCost u
   params.lam * uR + (1 - params.lam) * uT - cost
 
--- ============================================================================
--- PART 5: Speaker Model
--- ============================================================================
 
 /-!
 ## Speaker Model
@@ -352,9 +337,6 @@ def relevanceOnlySpeaker (params : Params) (w : WorldState) (ctx : Context)
   let probs := softmax params.βS utilities
   utterances.zip probs
 
--- ============================================================================
--- PART 6: Pragmatic Listener (L1)
--- ============================================================================
 
 /-!
 ## Pragmatic Listener
@@ -382,9 +364,6 @@ def pragmaticListener (params : Params) (u : Utterance) (ctx : Context)
   let probs := normalizeScores scores
   worlds.zip probs
 
--- ============================================================================
--- PART 7: Theoretical Results
--- ============================================================================
 
 /-!
 ## Key Theoretical Results
@@ -427,9 +406,6 @@ theorem truthfulness_relevance_independent :
     -- and utterances that are relevance-maximizing but false
     True := trivial
 
--- ============================================================================
--- PART 8: Mushroom Foraging Scenario
--- ============================================================================
 
 /-!
 ## Experimental Domain: Mushroom Foraging
@@ -482,9 +458,6 @@ def falseRelevantUtterance : Utterance := ⟨.spotted, .pos2⟩
 /-- True but irrelevant utterance (feature not in context) -/
 def trueIrrelevantUtterance : Utterance := ⟨.green, .pos2⟩
 
--- ============================================================================
--- PART 9: Empirical Predictions
--- ============================================================================
 
 /-!
 ## Empirical Predictions from Experiments
@@ -540,9 +513,6 @@ theorem manipulation_affects_lambda :
   simp only [exp1Results]
   native_decide
 
--- ============================================================================
--- PART 10: Connection to Other RSA Work
--- ============================================================================
 
 /-!
 ## Connections to Other Frameworks
@@ -580,9 +550,6 @@ theorem relevance_theory_challenged :
   simp only [exp1Results]
   native_decide
 
--- ============================================================================
--- PART 11: Summary
--- ============================================================================
 
 /-!
 ## Summary

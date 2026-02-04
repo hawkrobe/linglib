@@ -27,9 +27,6 @@ is irrelevant for the conversational goals. The perceived truth conditions are
 
 namespace Phenomena.Plurals.NonMaximality
 
--- ============================================================================
--- PART 1: Issue-Sensitivity Structure
--- ============================================================================
 
 /--
 A context that makes a particular issue salient.
@@ -61,9 +58,6 @@ structure NonMaximalityDatum where
   acceptableInNonMaximalContext : Bool
   deriving Repr
 
--- ============================================================================
--- PART 2: SWITCHES Scenarios (Canonical Example)
--- ============================================================================
 
 /--
 The SWITCHES scenario from Križ (2015, 2016).
@@ -123,9 +117,6 @@ def switchesAllBlocks : AllBlocksNonMaxDatum :=
   , allAcceptable := false  -- "all" forces maximal reading
   }
 
--- ============================================================================
--- PART 3: BANK ROBBERY Scenario (Fine-Grained Non-Maximality)
--- ============================================================================
 
 /--
 The BANK ROBBERY scenario from Krifka (1996).
@@ -208,9 +199,6 @@ def bankRobberyConfigB_Door4Closed : BankRobberyDatum :=
   , acceptable := false     -- maximal reading required by context
   }
 
--- ============================================================================
--- PART 4: Problem Sets Example (Structured Non-Maximality)
--- ============================================================================
 
 /--
 The problem sets example (Križ 2015, attributed to Spector).
@@ -250,9 +238,6 @@ def problemSetsExample : StructuredNonMaxDatum :=
   , explanation := "Non-maximal readings must be 'structured' - they can weaken plural predication but cannot add disjunctive conditions unrelated to the predicate."
   }
 
--- ============================================================================
--- PART 5: P-Truth vs Semantic Truth
--- ============================================================================
 
 /--
 Distinction between semantic truth and pragmatic truth (p-truth).
@@ -295,9 +280,6 @@ def switchesTruthDistinction_NonMax : TruthDistinctionDatum :=
   , issue := "Are any of the switches on?"
   }
 
--- ============================================================================
--- PART 6: Strong Relevance
--- ============================================================================
 
 /--
 Strong relevance: a proposition "perfectly fits" an issue.
@@ -339,9 +321,6 @@ def existentialStronglyRelevant : StrongRelevanceDatum :=
   , explanation := "Existential proposition corresponds to one cell of the bipartition"
   }
 
--- ============================================================================
--- PART 7: Developmental Stability
--- ============================================================================
 
 /--
 Non-maximality patterns are stable across development.
@@ -365,9 +344,6 @@ def tieuEtAlFinding : DevelopmentalDatum :=
   , finding := "Children often interpret existentially; adult-like homogeneous reading found but NOT non-homogeneous 'all' reading"
   }
 
--- ============================================================================
--- PART 8: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about non-maximality.
@@ -396,9 +372,7 @@ def mainGeneralizations : NonMaximalityGeneralizations :=
   , conjunctionsResist := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def canonicalExamples : List NonMaximalityDatum :=
   [switchesNonMaximality]
@@ -417,9 +391,7 @@ def truthDistinctionExamples : List TruthDistinctionDatum :=
 def strongRelevanceExamples : List StrongRelevanceDatum :=
   [stronglyRelevantExample, notStronglyRelevantExample, existentialStronglyRelevant]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

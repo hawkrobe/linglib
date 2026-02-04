@@ -43,17 +43,11 @@ namespace RSA.Implementations.YoonEtAl2020
 open Phenomena.Politeness.Studies.YoonEtAl2020
 open RSA RSA.Eval
 
--- ============================================================================
--- PART 1: Helper Functions
--- ============================================================================
 
 /-- Expected value under a distribution -/
 def expectedValue (dist : List (HeartState × ℚ)) (f : HeartState → ℚ) : ℚ :=
   dist.foldl (fun acc (s, p) => acc + p * f s) 0
 
--- ============================================================================
--- PART 2: L0 - Literal Listener
--- ============================================================================
 
 /--
 L0: Literal listener posterior over states given utterance.
@@ -74,9 +68,6 @@ def L0 (w : Utterance) : List (HeartState × ℚ) :=
 def L0_prob (w : Utterance) (s : HeartState) : ℚ :=
   getScore (L0 w) s
 
--- ============================================================================
--- PART 3: S1 - First-Order Speaker
--- ============================================================================
 
 /--
 S1 utility: weighted combination of informational and social utilities.
@@ -120,9 +111,6 @@ def S1 (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) : List (Utterance �
 def S1_prob (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) (w : Utterance) : ℚ :=
   getScore (S1 cfg s phi) w
 
--- ============================================================================
--- PART 4: L1 - Pragmatic Listener
--- ============================================================================
 
 /--
 Discretized goal weights φ for L1 to reason over.
@@ -177,9 +165,6 @@ def L1_state_prob (cfg : PolitenessConfig) (w : Utterance) (s : HeartState) : �
 def L1_phi_prob (cfg : PolitenessConfig) (w : Utterance) (phi : ℚ) : ℚ :=
   getScore (L1_phi cfg w) phi
 
--- ============================================================================
--- PART 5: S2 - Second-Order Speaker (Three Utilities)
--- ============================================================================
 
 /--
 S2 informational utility: how much L1 learns about the true state.
@@ -251,9 +236,6 @@ def S2_prob (cfg : PolitenessConfig) (s : HeartState) (goal : GoalCondition)
     (w : Utterance) : ℚ :=
   getScore (S2 cfg s (getWeights goal)) w
 
--- ============================================================================
--- PART 6: Key Predictions
--- ============================================================================
 
 /--
 Prediction: "Both" goal produces more negation for bad states.
@@ -279,9 +261,6 @@ def predictNegationForKindGoal (cfg : PolitenessConfig) (s : HeartState) : ℚ :
   dist.foldl (fun acc (w, p) =>
     if w.isNegated then acc + p else acc) 0
 
--- ============================================================================
--- PART 7: RSAScenario Integration
--- ============================================================================
 
 /--
 L1 computation for the S1 level (for comparison with standard RSA).
@@ -299,9 +278,6 @@ def s1_L1 (cfg : PolitenessConfig) (u : Utterance) : List (HeartState × ℚ) :=
     (fun w => utteranceCost w)
     u
 
--- ============================================================================
--- PART 8: Verification
--- ============================================================================
 
 /-- All utterances are covered -/
 theorem utterances_complete : allUtterances.length = 8 := by native_decide
@@ -321,9 +297,6 @@ theorem terrible_h0_compatible :
 theorem amazing_h3_compatible :
     softSemantics .amazing .h3 = 90/100 := rfl
 
--- ============================================================================
--- PART 9: Connection to Montague Semantics
--- ============================================================================
 
 /-
 ## Grounding in Compositional Semantics
@@ -347,9 +320,7 @@ The connection is:
 This soft semantics emerges from degree uncertainty + threshold uncertainty.
 -/
 
--- ============================================================================
 -- PART 9a: Compositional Negation Properties
--- ============================================================================
 
 /--
 **softNot is involutive (double negation cancels).**
@@ -387,9 +358,7 @@ theorem negation_is_compositional :
     (utteranceSemantics .notAmazing = softNot (utteranceSemantics .amazing)) := by
   simp only [utteranceSemantics, adjMeaning, and_self]
 
--- ============================================================================
 -- PART 9b: Connection to Montague's pnot
--- ============================================================================
 
 open Montague.Core.Polarity in
 /--
@@ -445,9 +414,7 @@ theorem double_negation_cancels :
   intro adj
   exact softNot_involutive (adjMeaning adj)
 
--- ============================================================================
 -- PART 9c: Qualitative Predictions from Compositionality
--- ============================================================================
 
 /--
 **Qualitative theorem: Negation makes bad states more acceptable.**
@@ -481,9 +448,7 @@ theorem negation_is_vague :
     softNot (adjMeaning .terrible) .h3 > 90/100 := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

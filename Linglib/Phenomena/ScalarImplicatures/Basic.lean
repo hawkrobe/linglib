@@ -23,9 +23,6 @@ Theory-neutral empirical patterns for scalar implicatures.
 
 namespace Phenomena.ScalarImplicatures
 
--- ============================================================================
--- PART 1: DE Blocking Data
--- ============================================================================
 
 /--
 Empirical pattern: Scalar implicatures in DE contexts.
@@ -110,9 +107,6 @@ All DE blocking examples.
 def deBlockingExamples : List DEBlockingDatum :=
   [someAllBlocking, orAndBlocking, possibleNecessaryBlocking, everyRestrictorDE]
 
--- ============================================================================
--- PART 2: Weak vs Strong Implicature Data
--- ============================================================================
 
 /--
 Empirical pattern: Weak vs strong implicatures.
@@ -185,9 +179,6 @@ All weak/strong examples.
 def weakStrongExamples : List WeakStrongDatum :=
   [someStudents, orWeakStrong, numeralWeakStrong]
 
--- ============================================================================
--- PART 3: Horn Scales Data
--- ============================================================================
 
 /--
 A Horn scale with its members and example implicatures.
@@ -254,9 +245,6 @@ All Horn scale examples.
 def hornScaleExamples : List HornScaleDatum :=
   [quantifierScale, connectiveScale, modalScale, numeralScale]
 
--- ============================================================================
--- PART 4: Scale Example Structure (from Scales.lean)
--- ============================================================================
 
 /--
 An example sentence demonstrating a scalar implicature.
@@ -340,9 +328,6 @@ def allScalePairs : List HornScaleDatumPair :=
 /-- All examples arise in UE contexts. -/
 theorem all_arise_in_UE : allScaleExamples.all (·.arisesInUE) := by native_decide
 
--- ============================================================================
--- PART 5: Hurford's Constraint Data
--- ============================================================================
 
 /--
 A potential Hurford violation: a disjunction "A or B" where
@@ -463,9 +448,6 @@ theorem hurford_rescued_felicitous : hurfordRescuedCases.all (·.felicitous == t
 theorem hurford_rescued_have_method : hurfordRescuedCases.all (·.rescueMethod.isSome) := by
   native_decide
 
--- ============================================================================
--- PART 6: Singh's Asymmetry Data
--- ============================================================================
 
 /--
 A Singh-style disjunction where one disjunct is stronger than the other.
@@ -587,9 +569,7 @@ theorem singh_asymmetry :
     allSinghData.all (fun d => d.felicitous == d.weakerFirst) := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

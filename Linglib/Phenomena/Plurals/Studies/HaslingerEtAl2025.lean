@@ -28,9 +28,7 @@ namespace Phenomena.Plurals.Studies.HaslingerEtAl2025
 
 open Montague.Plural.Distributivity (DistMaxClass)
 
--- ============================================================================
 -- German Distributive Lexical Items
--- ============================================================================
 
 /-- Syntactic distribution of a distributive element -/
 inductive SyntacticUse where
@@ -74,9 +72,7 @@ def definitePlural : LexicalItem :=
   , uses := [.dpInternal]
   , semanticClass := .nonDistNonMax }
 
--- ============================================================================
 -- Experimental Data (Section 3)
--- ============================================================================
 
 /-- Context for testing non-maximality (QUD makes exceptions irrelevant) -/
 structure NonMaxContext where
@@ -113,9 +109,7 @@ def jeweilsInNonMax : Observation :=
   , context := magnetsContext
   , acceptanceRate := 0.45 }
 
--- ============================================================================
 -- Key Empirical Generalizations
--- ============================================================================
 
 /-- Both jeder and jeweils are distributive -/
 def isDistributive : DistMaxClass → Bool

@@ -33,9 +33,7 @@ in the first sentence. This is surprising because:
 
 namespace Phenomena.Anaphora.CrossSententialAnaphora
 
--- ============================================================================
 -- Part 1: Basic Cross-Sentential Data
--- ============================================================================
 
 /--
 A cross-sentential anaphora datum records a discourse with felicity judgment.
@@ -95,9 +93,7 @@ def multipleDrefs : CrossSententialDatum := {
   source := "Heim (1982)"
 }
 
--- ============================================================================
 -- Part 2: Quantifier Effects
--- ============================================================================
 
 /-- Universal blocks cross-sentential anaphora -/
 def universalBlocks : CrossSententialDatum := {
@@ -135,9 +131,7 @@ def mostBlocks : CrossSententialDatum := {
   source := "Heim (1982)"
 }
 
--- ============================================================================
 -- Part 3: Scope and Embedding
--- ============================================================================
 
 /-- Indefinite in relative clause -/
 def relativeClauseScope : CrossSententialDatum := {
@@ -175,9 +169,7 @@ def conditionalConsequent : CrossSententialDatum := {
   source := "Heim (1982)"
 }
 
--- ============================================================================
 -- Part 4: Negation Effects (Standard vs. Bathroom)
--- ============================================================================
 
 /-- Standard negation blocks -/
 def standardNegationBlocks : CrossSententialDatum := {
@@ -203,9 +195,7 @@ def doubleNegation : CrossSententialDatum := {
   source := "Elliott & Sudo (2025)"
 }
 
--- ============================================================================
 -- Part 5: Definites vs. Indefinites
--- ============================================================================
 
 /-- Definite reference -/
 def definiteReference : CrossSententialDatum := {
@@ -243,9 +233,7 @@ def barePlural : CrossSententialDatum := {
   source := "Carlson (1977)"
 }
 
--- ============================================================================
 -- Part 6: Collected Data
--- ============================================================================
 
 /-- All cross-sentential anaphora examples -/
 def allData : List CrossSententialDatum := [
@@ -273,9 +261,7 @@ def felicitousExamples : List CrossSententialDatum :=
 def infelicitousExamples : List CrossSententialDatum :=
   allData.filter (!·.felicitous)
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

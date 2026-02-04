@@ -27,9 +27,6 @@ namespace Phenomena.Entailment
 
 open Phenomena
 
--- ============================================================================
--- PART 1: Truth Condition Judgments
--- ============================================================================
 
 /--
 A truth condition judgment: given a described situation, is the sentence true?
@@ -162,9 +159,6 @@ def transitiveJudgments : List TruthJudgment :=
 def allTruthJudgments : List TruthJudgment :=
   intransitiveJudgments ++ transitiveJudgments
 
--- ============================================================================
--- PART 2: Entailment Judgments
--- ============================================================================
 
 /--
 An entailment judgment: does sentence A entail sentence B?
@@ -279,9 +273,7 @@ def connectiveEntailments : List EntailmentJudgment :=
 def allEntailments : List EntailmentJudgment :=
   quantifierEntailments ++ connectiveEntailments
 
--- ============================================================================
 -- Theorems About the Data
--- ============================================================================
 
 /-- Predication distinguishes individuals in/out of extension -/
 theorem predication_discriminates :

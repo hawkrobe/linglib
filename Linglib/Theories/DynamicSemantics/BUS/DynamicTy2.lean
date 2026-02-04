@@ -27,9 +27,6 @@ namespace Theories.DynamicSemantics.BUS
 open Theories.DynamicSemantics.Core
 open Theories.DynamicSemantics.Core.DynamicTy2
 
--- ============================================================================
--- PART 1: Bilateral DRS (Dynamic Ty2 + bilaterality)
--- ============================================================================
 
 /--
 Bilateral DRS: positive and negative DRS meanings.
@@ -43,9 +40,6 @@ namespace BilateralDRS
 
 variable {S : Type*}
 
--- ============================================================================
--- PART 2: Core Operations
--- ============================================================================
 
 /-- Bilateral test -/
 def btest (C : Condition S) : BilateralDRS S :=
@@ -74,9 +68,6 @@ def bdisj (D₁ D₂ : BilateralDRS S) : BilateralDRS S :=
   { positive := fun i j => D₁.positive i j ∨ D₂.positive i j
   , negative := fun i j => D₁.negative i j ∧ D₂.negative i j }
 
--- ============================================================================
--- PART 3: Embedding from Unilateral
--- ============================================================================
 
 /--
 Lift unilateral DRS to bilateral with complement negation.
@@ -97,9 +88,6 @@ theorem ofDRS_negative (D : DRS S) : (ofDRS D).negative = test (dneg D) := by
   · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [← heq]; exact hnex⟩
   · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [heq]; exact hnex⟩
 
--- ============================================================================
--- PART 4: Connection to BilateralDen
--- ============================================================================
 
 /-!
 BilateralDen (from Core.Bilateral) uses InfoStates:
@@ -126,9 +114,6 @@ def toUpdatePair (D : BilateralDRS S) : (Set S → Set S) × (Set S → Set S) :
 
 end BilateralDRS
 
--- ============================================================================
--- PART 5: Key Properties
--- ============================================================================
 
 /--
 BUS negation preserves DNE at the DRS level.
@@ -148,9 +133,7 @@ theorem bseq_positive_assoc {S : Type*} (D₁ D₂ D₃ : BilateralDRS S) :
   · intro ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩; exact ⟨h', hD₁, h, hD₂, hD₃⟩
   · intro ⟨h', hD₁, h, hD₂, hD₃⟩; exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## BUS + Dynamic Ty2

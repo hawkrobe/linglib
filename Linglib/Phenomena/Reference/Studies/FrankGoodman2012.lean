@@ -16,9 +16,7 @@ namespace Phenomena.Reference.Studies.FrankGoodman2012
 
 open Phenomena
 
--- ============================================================================
 -- Study Metadata
--- ============================================================================
 
 /-- Citation for this study -/
 def citation : String := "Frank, M.C. & Goodman, N.D. (2012). Predicting Pragmatic Reasoning in Language Games. Science 336(6084): 998."
@@ -32,9 +30,7 @@ def listenerMeasure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
 
 
--- ============================================================================
 -- Data Structures
--- ============================================================================
 
 /-- A reference game datum with empirical measurements -/
 structure RefGameDatum where
@@ -46,9 +42,7 @@ structure RefGameDatum where
   humanListenerChoice : Option (String × Float) -- (object, probability given word)
   citation : Option String
 
--- ============================================================================
 -- Classic Examples from Frank & Goodman (2012)
--- ============================================================================
 
 /-- The classic blue/green square/circle example from Figure 1 -/
 def blueGreenContext : RefGameDatum := {
@@ -72,9 +66,7 @@ def squareImplicature : RefGameDatum := {
   citation := some "Frank & Goodman (2012)"
 }
 
--- ============================================================================
 -- Phenomenon Description
--- ============================================================================
 
 /--
 ## The Reference Game Phenomenon

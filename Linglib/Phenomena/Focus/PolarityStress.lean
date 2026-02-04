@@ -38,9 +38,7 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Focus.PolarityStress
 
--- ============================================================================
 -- Data Structure
--- ============================================================================
 
 /-- A polarity stress datum records prosodic prominence affecting polarity -/
 structure PolarityStressDatum where
@@ -58,9 +56,7 @@ structure PolarityStressDatum where
   source : String := ""
   deriving Repr
 
--- ============================================================================
 -- Auxiliary Stress (Declaratives)
--- ============================================================================
 
 /-- Emphatic DO in declaratives -/
 def emphaticDoDeclarative : PolarityStressDatum := {
@@ -92,9 +88,7 @@ def emphaticCanDeclarative : PolarityStressDatum := {
   source := "Höhle (1992)"
 }
 
--- ============================================================================
 -- Auxiliary Stress (Interrogatives)
--- ============================================================================
 
 /-- Stressed auxiliary in yes/no question -/
 def auxStressInterrogative : PolarityStressDatum := {
@@ -116,9 +110,7 @@ def notStressInterrogative : PolarityStressDatum := {
   source := "Romero & Han (2004)"
 }
 
--- ============================================================================
 -- Contrast with Content Focus
--- ============================================================================
 
 /-- Content focus for comparison -/
 def contentFocusSubject : PolarityStressDatum := {
@@ -140,9 +132,7 @@ def contentFocusObject : PolarityStressDatum := {
   source := "Rooth (1992)"
 }
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 /-- All polarity stress examples -/
 def polarityStressData : List PolarityStressDatum := [
@@ -163,9 +153,7 @@ def contentFocusData : List PolarityStressDatum := [
 def allData : List PolarityStressDatum :=
   polarityStressData ++ contentFocusData
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

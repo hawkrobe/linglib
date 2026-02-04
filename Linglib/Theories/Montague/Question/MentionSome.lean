@@ -65,9 +65,6 @@ namespace Montague.Question.MentionSome
 
 open Montague.Question
 
--- ============================================================================
--- PART 1: Partial Answerhood (Section 5.2)
--- ============================================================================
 
 /-!
 ## Partial Answerhood
@@ -119,9 +116,6 @@ theorem partialAnswer_includes_negative {W : Type*}
     -- This theorem merely states the fact that P-ANS is too permissive
     True := trivial
 
--- ============================================================================
--- PART 2: The I-MS Rule (Section 5.3)
--- ============================================================================
 
 /-!
 ## The I-MS Interrogative Formation Rule
@@ -172,9 +166,6 @@ def MentionSomeInterrogative.applyToProperty {W E : Type*} [DecidableEq E]
     msi.abstract w x &&  -- β'(x) holds at actual world
     Q (yesNoQuestionFor msi.abstract x)  -- Q applied to "does x satisfy β?"
 
--- ============================================================================
--- PART 3: Embedded Mention-Some Readings (Section 5.3)
--- ============================================================================
 
 /-!
 ## Embedded Mention-Some
@@ -237,9 +228,6 @@ def askMentionSome {W E : Type*} [DecidableEq E]
   asks w agent fun w' =>
     msi.whDomain.any fun x => msi.abstract w' x
 
--- ============================================================================
--- PART 4: Choice vs Mention-Some (Section 5.1-5.3)
--- ============================================================================
 
 /-!
 ## Distinguishing Choice from Mention-Some
@@ -276,9 +264,6 @@ structure MentionSomeQuestion' (W E : Type*) where
   /-- Natural language form -/
   naturalForm : String := ""
 
--- ============================================================================
--- PART 5: Implication Theorems (Section 5.3)
--- ============================================================================
 
 /-!
 ## Logical Relations Between Readings
@@ -325,9 +310,6 @@ theorem mentionAll_implies_mentionSome {W E : Type*}
     msi.whDomain.any fun x => msi.abstract w x := by
   sorry
 
--- ============================================================================
--- PART 6: Verb Licensing (Section 5.4)
--- ============================================================================
 
 /-!
 ## Verbs That Block Mention-Some
@@ -382,9 +364,6 @@ structure EmbeddedQuestionSentence (W E : Type*) where
   /-- Does the sentence have mention-some reading? -/
   mentionSomePossible : Bool := verbAllowsMentionSome verb
 
--- ============================================================================
--- PART 7: Mention-N and Cumulative Quantification (Section 5.3)
--- ============================================================================
 
 /-!
 ## Mention-Two / Mention-N
@@ -441,9 +420,6 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
     (mnq : MentionNQuestion W E) (places : List E) (w : W) : Bool :=
   collectivelyCovers mnq places w
 
--- ============================================================================
--- PART 8: Connection to Montague Quantifiers
--- ============================================================================
 
 /-!
 ## Grounding in Montague.Quantifiers

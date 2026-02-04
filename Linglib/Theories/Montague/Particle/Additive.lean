@@ -53,9 +53,7 @@ open Montague.Question
 open Montague.Question.Inquisitive
 open Montague.Question.ProbabilisticAnswerhood
 
--- ============================================================================
 -- Additive Particle Types
--- ============================================================================
 
 /-- Types of additive particles. -/
 inductive AdditiveParticle where
@@ -77,9 +75,7 @@ def AdditiveParticle.requiresPositive : AdditiveParticle → Bool
 def AdditiveParticle.isLicensed (p : AdditiveParticle) (positive : Bool) : Bool :=
   p.requiresPositive == positive
 
--- ============================================================================
 -- Discourse Context for Additive Particles
--- ============================================================================
 
 /-- Discourse context for evaluating additive particle felicity.
 
@@ -117,9 +113,7 @@ def fromAlternatives (alts : List (InfoState W)) (ant : W → Bool)
 
 end AdditiveContext
 
--- ============================================================================
 -- Felicity Conditions (Definition 64)
--- ============================================================================
 
 /-- Condition 1: Antecedent probabilistically answers RQ.
 
@@ -196,9 +190,7 @@ noncomputable def eitherFelicitous {W : Type*} [Fintype W]
     (inNegativeContext : Bool) : Bool :=
   inNegativeContext && tooFelicitous ctx prejacent
 
--- ============================================================================
 -- Additive Utterances
--- ============================================================================
 
 /-- An utterance with an additive particle. -/
 structure AdditiveUtterance (W : Type*) where
@@ -232,9 +224,7 @@ def presupposedContent (_utt : AdditiveUtterance W) (ctx : AdditiveContext W) :
 
 end AdditiveUtterance
 
--- ============================================================================
 -- Use Type Classification
--- ============================================================================
 
 /-- Types of additive particle uses. -/
 inductive AdditiveUseType where
@@ -281,9 +271,7 @@ noncomputable def classifyUse {W : Type*} [Fintype W]
   else
     .scalar
 
--- ============================================================================
 -- Core Theoretical Results (Thomas 2026)
--- ============================================================================
 
 /-!
 ## Central Theorems
@@ -301,9 +289,7 @@ These theorems capture the key linguistic insights of Thomas (2026):
    beyond ANT, "too" is infelicitous.
 -/
 
--- ============================================================================
 -- Result 1: Standard Use as Special Case
--- ============================================================================
 
 /-- A proposition "directly determines" an alternative if it entails that alternative.
 
@@ -415,9 +401,7 @@ theorem standard_use_conjunction_condition {W : Type*} [Fintype W]
   -- Non-empty list has positive length
   exact List.length_pos_of_mem hInFiltered
 
--- ============================================================================
 -- Result 2: Argument-Building Characterization
--- ============================================================================
 
 /-- **Theorem: Argument-Building Characterization**
 
@@ -461,9 +445,7 @@ theorem argumentBuilding_requires_implicit_qud {W : Type*} [Fintype W]
   -- Now hArgBuild should be: (a = false ∧ b = false) ∧ c = true
   exact hArgBuild.1
 
--- ============================================================================
 -- Result 3: Cumulative Evidence Necessity
--- ============================================================================
 
 /-- Two propositions are probabilistically independent given a third if
 P(A | B ∧ C) = P(A | B).
@@ -533,9 +515,7 @@ theorem irrelevant_prejacent_infelicitous {W : Type*} [Fintype W]
   have hConj := cumulative_evidence_necessary ctx prejacent hIrrelevant
   simp only [hConj, Bool.and_false, Bool.false_and]
 
--- ============================================================================
 -- Standard Theorems
--- ============================================================================
 
 /-- Standard use satisfies felicity when both ANT and π answer RQ.
 
@@ -572,9 +552,7 @@ theorem no_antecedent_infelicitous {W : Type*} [Fintype W]
     tooFelicitousWith ctx prejacent worlds = false := by
   simp only [tooFelicitousWith, hNoAnt, Bool.false_and]
 
--- ============================================================================
 -- Examples Infrastructure
--- ============================================================================
 
 /-- Structure for storing additive particle examples for testing. -/
 structure AdditiveExample (W : Type*) [Fintype W] where

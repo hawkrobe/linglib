@@ -30,9 +30,7 @@ This module defines the INTERFACE. Implementations include:
 
 namespace Theories.Montague.Sentence.InformationStructure
 
--- ============================================================================
 -- Alternative Sets (Rooth-style Focus Semantics)
--- ============================================================================
 
 /--
 An alternative set: a value together with its contextually relevant alternatives.
@@ -60,9 +58,7 @@ def Alternatives.singleton {α : Type} (x : α) : Alternatives α :=
 def Alternatives.mk' {α : Type} (actual : α) (others : List α) : Alternatives α :=
   ⟨actual, actual :: others, List.Mem.head _⟩
 
--- ============================================================================
 -- Question Under Discussion (QUD)
--- ============================================================================
 
 /--
 A Question Under Discussion, represented as a partition of the context set.
@@ -102,9 +98,7 @@ structure Answer (World : Type) where
   /-- The index is valid -/
   valid : cellIndex < qud.cells.length := by simp
 
--- ============================================================================
 -- Theme and Rheme
--- ============================================================================
 
 /--
 Theme: what the utterance is about (the "topic" or "given" part).
@@ -139,9 +133,7 @@ structure Rheme (P : Type) where
   /-- Whether the rheme is prosodically marked -/
   marked : Bool := true
 
--- ============================================================================
 -- Focus and Background
--- ============================================================================
 
 /--
 Focus: the contrasted element(s) within theme or rheme.
@@ -171,9 +163,7 @@ structure Background (α : Type) where
   /-- The background elements -/
   elements : List α
 
--- ============================================================================
 -- Information Structure Partition
--- ============================================================================
 
 /--
 A complete Information Structure analysis of an utterance.
@@ -192,9 +182,7 @@ structure InfoStructure (P : Type) where
   /-- Background elements (given) -/
   background : List P := []
 
--- ============================================================================
 -- Information Structure Interface (Typeclass)
--- ============================================================================
 
 /--
 Typeclass for theories that provide Information Structure.
@@ -220,9 +208,7 @@ class HasAlternatives (α : Type) where
   /-- Compute alternatives for a focused element -/
   alternatives : α → List α
 
--- ============================================================================
 -- QUD-Based Pragmatics Interface
--- ============================================================================
 
 /--
 Connection between Information Structure and pragmatics (RSA).
@@ -252,9 +238,7 @@ class QUDSemantics (S : Type) where
   /-- Felicity: theme must match QUD -/
   felicitous : InfoStructure P → QUD World → Bool
 
--- ============================================================================
 -- Congruence (Question-Answer Congruence)
--- ============================================================================
 
 /--
 Question-Answer Congruence: the focus of an answer must match the QUD.
@@ -270,9 +254,7 @@ def congruent {P World : Type} (info : InfoStructure P) (_qud : QUD World) : Boo
   -- Full version would check focus-QUD alignment via QUDSemantics
   true  -- TODO: implement properly
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

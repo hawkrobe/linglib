@@ -37,9 +37,7 @@ namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 open Phenomena
 open Theories.Montague.Conditional.CausalBayesNet
 
--- ============================================================================
 -- Study Metadata
--- ============================================================================
 
 /-- Citation for this study -/
 def citation : String :=
@@ -49,9 +47,7 @@ def citation : String :=
 def paradigm : String :=
   "Online experiments with forced-choice and rating tasks"
 
--- ============================================================================
 -- Experiment 1: Dependency Inference
--- ============================================================================
 
 /--
 Experiment 1: Causal Structure Inference from Conditionals
@@ -110,9 +106,7 @@ Key finding: Conditionals strongly indicate the direction of causation.
 def experiment1Finding : String :=
   "Conditional utterances strongly indicate the direction of causation: the antecedent is inferred to be the cause."
 
--- ============================================================================
 -- Experiment 2: Conditional Perfection
--- ============================================================================
 
 /--
 Experiment 2: Conditional Perfection Rates
@@ -162,9 +156,7 @@ about causal structure, not a semantic entailment.
 def experiment2Finding : String :=
   "Conditional perfection rates are high (85%) when A→C causation is established, but low (45%) for independent events."
 
--- ============================================================================
 -- Experiment 3: Assertability Thresholds (Douven's Puzzle)
--- ============================================================================
 
 /--
 Experiment 3: Assertability Judgments
@@ -228,9 +220,7 @@ def experiment3Finding : String :=
 /-- Estimated threshold from model fitting -/
 def fittedThreshold : ℚ := 88/100  -- θ = 0.88 from paper
 
--- ============================================================================
 -- Model Fits
--- ============================================================================
 
 /--
 Model fit statistics from the paper.
@@ -267,9 +257,7 @@ def experiment3Fit : ModelFit := {
   notes := "RSA model captures assertability thresholds"
 }
 
--- ============================================================================
 -- Key Theoretical Claims Supported by Data
--- ============================================================================
 
 /--
 Theoretical claims supported by the experimental evidence.
@@ -307,9 +295,7 @@ def claim4_MissingLinkInfelicity : TheoreticalClaim := {
   justification := "Only 10% infer A⊥C from conditionals, suggesting they're avoided"
 }
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /--
 Summary of empirical findings from Grusdt, Lassiter & Franke (2022).

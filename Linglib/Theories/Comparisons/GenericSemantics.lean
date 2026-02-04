@@ -28,9 +28,7 @@ namespace Theories.Comparisons.GenericSemantics
 
 open Montague.Noun.Kind.Generics
 
--- ============================================================================
 -- Helper Lemmas for Rational Arithmetic
--- ============================================================================
 
 /--
 Prevalence is always non-negative (it's a ratio of non-negative integers).
@@ -76,9 +74,7 @@ theorem prevalence_le_one
            · exact le_of_lt hDenom
      _ = 1 := div_self (ne_of_gt hDenom)
 
--- ============================================================================
 -- Main Theorem: GEN Reduces to Threshold
--- ============================================================================
 
 /--
 **Main Theorem**: Traditional GEN is eliminable via threshold semantics.
@@ -135,9 +131,7 @@ theorem gen_eliminable
     intro hContra
     linarith
 
--- ============================================================================
 -- Corollary: Matching Truth Values
--- ============================================================================
 
 /--
 For any GEN configuration that evaluates to `true`, threshold semantics
@@ -172,9 +166,7 @@ theorem gen_false_implies_threshold_false
   intro hContra
   linarith
 
--- ============================================================================
 -- Connection to Tessler & Goodman (2019)
--- ============================================================================
 
 /-!
 ## How RSA Explains Generic Judgments

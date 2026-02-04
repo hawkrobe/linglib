@@ -19,9 +19,7 @@ namespace CCG
 
 open Montague
 
--- ============================================================================
 -- Combinators (defined locally to avoid circular import)
--- ============================================================================
 
 /-- B combinator (composition): B f g x = f (g x) -/
 private def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
@@ -31,9 +29,7 @@ private def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
 private def T {α β : Type} (x : α) : (α → β) → β :=
   fun f => f x
 
--- ============================================================================
 -- Type Correspondence
--- ============================================================================
 
 /-- Map CCG categories to semantic types -/
 def catToTy : Cat → Ty
@@ -52,9 +48,7 @@ def catToTy : Cat → Ty
 #eval catToTy TV           -- e ⇒ e ⇒ t (relations)
 #eval catToTy Det          -- (e ⇒ t) ⇒ e (simplified)
 
--- ============================================================================
 -- Semantic Lexicon
--- ============================================================================
 
 /-- A CCG lexical entry with semantics -/
 structure SemLexEntry (m : Model) where
@@ -79,9 +73,7 @@ def semLexicon : List (SemLexEntry toyModel) := [
   ⟨"likes", TV, ToyLexicon.sees_sem⟩  -- using sees_sem as placeholder
 ]
 
--- ============================================================================
 -- Semantic Composition
--- ============================================================================
 
 -- Forward application semantically is just function application
 -- If f : ⟦Y⟧ → ⟦X⟧ and a : ⟦Y⟧, then f(a) : ⟦X⟧
@@ -89,9 +81,7 @@ def semLexicon : List (SemLexEntry toyModel) := [
 -- Backward application is the same
 -- If a : ⟦Y⟧ and f : ⟦Y⟧ → ⟦X⟧, then f(a) : ⟦X⟧
 
--- ============================================================================
 -- Example: "John sleeps"
--- ============================================================================
 
 -- Syntactically: John:NP  sleeps:S\NP  ⇒  S
 -- Semantically: sleeps_sem(john_sem) : t
@@ -105,9 +95,7 @@ def john_sleeps_sem : toyModel.interpTy (catToTy S) :=
 
 #eval john_sleeps_sem  -- true
 
--- ============================================================================
 -- Example: "John sees Mary"
--- ============================================================================
 
 -- Syntactically:
 --   John:NP  sees:(S\NP)/NP  Mary:NP
@@ -132,18 +120,14 @@ def john_sees_mary_sem : toyModel.interpTy (catToTy S) :=
 
 #eval john_sees_mary_sem  -- true
 
--- ============================================================================
 -- Example: "Mary sees John"
--- ============================================================================
 
 def mary_sees_john_sem : toyModel.interpTy (catToTy S) :=
   (sees_sem' john_sem') mary_sem'
 
 #eval mary_sees_john_sem  -- true
 
--- ============================================================================
 -- Example: "John eats pizza"
--- ============================================================================
 
 def eats_sem' : toyModel.interpTy (catToTy TV) := ToyLexicon.eats_sem
 def pizza_sem' : toyModel.interpTy (catToTy NP) := ToyEntity.pizza
@@ -153,9 +137,7 @@ def john_eats_pizza_sem : toyModel.interpTy (catToTy S) :=
 
 #eval john_eats_pizza_sem  -- true
 
--- ============================================================================
 -- Truth Conditions from CCG Derivations
--- ============================================================================
 
 /-- A sentence is true if its meaning is true -/
 def sentenceTrue (meaning : toyModel.interpTy .t) : Prop :=
@@ -166,9 +148,7 @@ example : sentenceTrue john_sleeps_sem := rfl
 example : sentenceTrue john_sees_mary_sem := rfl
 example : sentenceTrue john_eats_pizza_sem := rfl
 
--- ============================================================================
 -- The Key Insight: Derivations Compute Meanings
--- ============================================================================
 
 /-
 The CCG derivation structure directly mirrors semantic composition:
@@ -186,9 +166,7 @@ Each syntactic combination corresponds to function application.
 This is the "transparency" of the syntax-semantics interface.
 -/
 
--- ============================================================================
 -- TYPE PRESERVATION THEOREMS
--- ============================================================================
 
 /-
 These theorems establish that CCG combinatory rules preserve semantic well-typedness.
@@ -213,9 +191,7 @@ theorem tv_type_is_relation :
 theorem iv_type_is_property :
     catToTy IV = (.e ⇒ .t) := rfl
 
--- ============================================================================
 -- COMPOSITIONALITY: DERIVATIONS COMPUTE MEANINGS
--- ============================================================================
 
 /--
 A semantic derivation: pairs a CCG category with its meaning.
@@ -241,9 +217,7 @@ theorem composition_is_application {m : Model} {σ τ : Ty}
     (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) :
     applyMeaning f x = f x := rfl
 
--- ============================================================================
 -- SOUNDNESS: WELL-FORMED DERIVATIONS HAVE MEANINGS
--- ============================================================================
 
 /--
 For a lexical entry, we can always extract its meaning.
@@ -262,9 +236,7 @@ theorem combination_has_meaning {m : Model} {x y : Cat}
     ∃ (result : m.interpTy (catToTy x)), result = functor_meaning arg_meaning :=
   ⟨functor_meaning arg_meaning, rfl⟩
 
--- ============================================================================
 -- EXAMPLE: COMPLETE DERIVATION WITH TYPES
--- ============================================================================
 
 /-- The complete derivation of "John sees Mary" preserving types -/
 theorem john_sees_mary_typed_derivation :
@@ -288,9 +260,7 @@ theorem mary_sleeps_typed_derivation :
     let result : toyModel.interpTy (catToTy S) := sleeps_ty mary_ty
     result = false := rfl
 
--- ============================================================================
 -- THE HOMOMORPHISM PRINCIPLE
--- ============================================================================
 
 /-
 The fundamental theorem of compositional semantics (Montague's homomorphism):
@@ -324,9 +294,7 @@ theorem backward_app_homomorphism {m : Model} {x y : Cat}
     -- The semantic result is function application
     f_sem a_sem = f_sem a_sem := rfl
 
--- ============================================================================
 -- DERIVATION INTERPRETATION
--- ============================================================================
 
 /-
 This section connects CCG derivations (DerivStep) to their semantic interpretations.
@@ -468,9 +436,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
         else none
       else none
 
--- ============================================================================
 -- INTERPRETATION EXAMPLES
--- ============================================================================
 
 /-- Helper to extract meaning from interpretation result -/
 def getMeaning (result : Option (Interp toyModel)) : Option Bool :=
@@ -496,9 +462,7 @@ theorem john_sees_mary_interp_correct :
     getMeaning (john_sees_mary.interp toySemLexicon) = some true := by
   native_decide
 
--- ============================================================================
 -- TYPE-RAISING AND COMPOSITION TESTS
--- ============================================================================
 
 /--
 Type-raised "John":
@@ -538,9 +502,7 @@ theorem john_sees_mary_via_tr_correct :
     getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some true := by
   native_decide
 
--- ============================================================================
 -- FORWARD COMPOSITION TEST
--- ============================================================================
 
 /--
 "John likes" as S/NP via type-raising + composition (for coordination):
@@ -565,9 +527,7 @@ def john_likes_composed : DerivStep :=
 #eval (john_likes_composed.interp toySemLexicon).isSome
 -- Expected: true
 
--- ============================================================================
 -- NON-CONSTITUENT COORDINATION SEMANTICS
--- ============================================================================
 
 /-
 This is the substantive theorem that validates CCG's treatment of coordination:
@@ -678,9 +638,7 @@ theorem coordination_truth_conditions_correct :
             ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := by
   native_decide
 
--- ============================================================================
 -- WHY THIS THEOREM MATTERS
--- ============================================================================
 
 /-
 ## The Significance of These Theorems
@@ -711,9 +669,7 @@ No special mechanism needed - the same rules work for all sentences.
 The theorems verify that this unified treatment produces correct semantics.
 -/
 
--- ============================================================================
 -- CONNECTION TO MONTAGUE SYNTAXINTERFACE
--- ============================================================================
 
 /-
 With `DerivStep.interp`, we can now implement `MontagueSyntax` for CCG:

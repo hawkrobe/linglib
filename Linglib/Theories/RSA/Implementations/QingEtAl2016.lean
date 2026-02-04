@@ -59,9 +59,6 @@ namespace RSA.QingEtAl2016
 open RSA.Eval
 open Montague.Verb.ChangeOfState
 
--- ============================================================================
--- PART 1: World States
--- ============================================================================
 
 /--
 World state: John's smoking status at two time points.
@@ -83,9 +80,6 @@ def allWorlds : List WorldState := [
   ⟨false, false⟩  -- (F,F): never smoked
 ]
 
--- ============================================================================
--- PART 2: Context Sets (Common Ground States)
--- ============================================================================
 
 /--
 Context set: which facts are established in the common ground.
@@ -136,9 +130,6 @@ def compatibleBool (c : ContextSet) (w : WorldState) : Bool :=
 def contextCredence (c : ContextSet) (w : WorldState) : ℚ :=
   boolToRat (compatibleBool c w)
 
--- ============================================================================
--- PART 3: Utterances
--- ============================================================================
 
 /--
 Utterances about John's smoking, following Qing et al.'s example.
@@ -163,9 +154,6 @@ def allUtterances : List Utterance := [
   .silence
 ]
 
--- ============================================================================
--- PART 4: Literal Semantics (from Montague.ChangeOfState)
--- ============================================================================
 
 /--
 Activity predicate: "smokes" at the current time.
@@ -212,9 +200,6 @@ while our worlds have separate past/now fields. The correspondence is:
 theorem stopped_follows_cos_pattern (w : WorldState) :
     literalMeaning .stoppedSmoking w = (w.past && !w.now) := rfl
 
--- ============================================================================
--- PART 5: QUDs
--- ============================================================================
 
 /--
 Questions Under Discussion, following Qing et al.
@@ -237,9 +222,6 @@ def qudProject : QUD → WorldState → WorldState → Bool
   | .maxQ, w1, w2 => w1.past == w2.past && w1.now == w2.now
   | .changeQ, w1, w2 => (w1.past != w1.now) == (w2.past != w2.now)
 
--- ============================================================================
--- PART 6: Priors
--- ============================================================================
 
 /-- World prior: uniform -/
 def worldPrior (_w : WorldState) : ℚ := 1 / 4
@@ -261,9 +243,6 @@ def contextPrior : ContextSet → ℚ
   | .pastFalseNowFalse => 2
   | .universe => 1         -- No assumptions
 
--- ============================================================================
--- PART 7: RSA Computation
--- ============================================================================
 
 /--
 Projection strength: P(+past ∈ C | utterance, QUD)
@@ -301,9 +280,6 @@ def L1_world (u : Utterance) (q : QUD) (α : ℕ := 6) : List (WorldState × ℚ
     worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
     contextCredence qudProject (fun _ => 0) α u q
 
--- ============================================================================
--- PART 8: Key Predictions
--- ============================================================================
 
 /--
 **Prediction 1**: "John didn't stop smoking" projects "John smoked"
@@ -334,9 +310,6 @@ def prediction_presup_vs_nonpresup (α : ℕ := 6) : Bool :=
   projectionOfPast .notStoppedSmoking .nowQ α >
   projectionOfPast .doesntSmoke .nowQ α
 
--- ============================================================================
--- PART 9: Connection to Unified Framework
--- ============================================================================
 
 /-!
 ## Connection to S&T (2025) and Warstadt (2022)
@@ -368,9 +341,7 @@ Where:
 - Projection = marginal P(C | u) for contexts entailing the presupposition
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

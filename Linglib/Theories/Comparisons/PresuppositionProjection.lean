@@ -76,9 +76,6 @@ import Linglib.Theories.DynamicSemantics.State
 
 namespace Comparisons.PresuppositionProjection
 
--- ============================================================================
--- PART 0: Farkas & Bruce (2010) Framework
--- ============================================================================
 
 /-!
 ## Farkas & Bruce (2010) Framework
@@ -136,9 +133,6 @@ See `RSA.DiscourseIntegration` for credence functions that bridge these
 types to RSA computations.
 -/
 
--- ============================================================================
--- PART 1: Model Overview
--- ============================================================================
 
 /-!
 ## Unified Model Architecture
@@ -180,9 +174,6 @@ RSAScenario with:
 All three use the `BeliefState` slot in RSAScenario for their latent variable.
 -/
 
--- ============================================================================
--- PART 2: Structural Equivalence
--- ============================================================================
 
 /--
 All three models share the same computational structure.
@@ -224,9 +215,6 @@ def warstadt2022 : ModelApplication where
   domain := "Possessive presuppositions (Mary's dog)"
   exploresQUD := false  -- Single QUD in their examples
 
--- ============================================================================
--- PART 3: Qualitative Agreement
--- ============================================================================
 
 /-!
 ## Qualitative Agreement
@@ -259,9 +247,6 @@ structure QualitativeAgreement where
   /-- Both predictions are positive (increase from prior) -/
   both_positive : st_predicts_projection ∧ warstadt_predicts_accommodation
 
--- ============================================================================
--- PART 4: Interpretive Questions (Not Computational Divergence)
--- ============================================================================
 
 /-!
 ## Interpretive Questions
@@ -334,9 +319,6 @@ def howAccommodationWorks : InterpretiveQuestion where
   stAnswer := "Indirect: listener infers speaker assumes X, then accepts X"
   testable := false  -- Same computation, different gloss
 
--- ============================================================================
--- PART 5: The Shared Theoretical Framework
--- ============================================================================
 
 /-!
 ## The Qing-S&T-Warstadt Framework
@@ -399,9 +381,6 @@ def allPapersEquivalent : List ProjectionModel := [
   ⟨"Context", "Common ground (Warstadt 2022)", true⟩
 ]
 
--- ============================================================================
--- PART 6: Empirical Predictions
--- ============================================================================
 
 /-!
 ## Empirical Predictions
@@ -448,9 +427,6 @@ def allPapersEquivalent : List ProjectionModel := [
 - Warstadt prediction: Smaller accommodation when prior established
 -/
 
--- ============================================================================
--- PART 7: Connection to Presupposition Literature
--- ============================================================================
 
 /-!
 ## Connection to Presupposition Literature
@@ -501,9 +477,7 @@ is compatible with both models.
 - Warstadt: Would need to model via context prior differences
 -/
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Summary
@@ -554,9 +528,6 @@ All three domains from the literature are now implemented:
 5. Extend to other Class C triggers (only, almost, definites)
 -/
 
--- ============================================================================
--- PART 8: Three Domains, One Model
--- ============================================================================
 
 /-!
 ## Unified Model Across Three Phenomena
@@ -640,9 +611,6 @@ def projectionMeasure (u : Utterance) : ℚ :=
 The computation is **identical**; only the types differ.
 -/
 
--- ============================================================================
--- PART 9: Formal Equivalence
--- ============================================================================
 
 /-!
 ## Proof of Mathematical Equivalence

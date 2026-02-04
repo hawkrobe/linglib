@@ -38,9 +38,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Montague.Verb.Attitude.CDistributivity
 
--- ============================================================================
 -- Basic Types
--- ============================================================================
 
 /-- A proposition is a function from worlds to truth values -/
 abbrev Prop' (W : Type*) := W → Bool
@@ -54,9 +52,7 @@ abbrev DegreeFn (W E : Type*) := E → Prop' W → ℚ
 /-- Contextual threshold function -/
 abbrev ThresholdFn (W : Type*) := QuestionDen W → ℚ
 
--- ============================================================================
 -- C-Distributivity Definition
--- ============================================================================
 
 /--
 A predicate V is **C-distributive** iff its question semantics is equivalent
@@ -74,9 +70,7 @@ def IsCDistributive {W E : Type*}
   ∀ (x : E) (Q : QuestionDen W) (w : W),
     V_question x Q w = true ↔ ∃ p ∈ Q, V_prop x p w = true
 
--- ============================================================================
 -- Pattern 1: Degree-Comparison Semantics (C-Distributive)
--- ============================================================================
 
 /--
 Degree-comparison propositional semantics.
@@ -117,9 +111,7 @@ theorem degreeComparison_isCDistributive {W E : Type*}
   unfold degreeComparisonProp degreeComparisonQuestion
   simp only [List.any_eq_true, decide_eq_true_eq]
 
--- ============================================================================
 -- Instantiations for Specific Predicates
--- ============================================================================
 
 /--
 Instantiate for "hope": positive degree comparison.
@@ -166,9 +158,7 @@ theorem wish_isCDistributive {W E : Type*}
       (degreeComparisonQuestion μ_wish θ_wish C) :=
   degreeComparison_isCDistributive μ_wish θ_wish C
 
--- ============================================================================
 -- Pattern 2: Non-C-Distributive Semantics (Conceptual)
--- ============================================================================
 
 /-!
 ## Why Worry/Care are NOT C-Distributive
@@ -228,9 +218,7 @@ axiom exists_nonCDistributive_care :
                    (V_question : E → QuestionDen W → W → Bool),
     ¬IsCDistributive V_prop V_question
 
--- ============================================================================
 -- Connection to NVP Classification
--- ============================================================================
 
 /-!
 ## Semantic Structure → C-Distributivity → NVP Class
@@ -284,9 +272,7 @@ theorem degreeComparisonLike_implies_cDistributive {W E : Type*}
   rw [h]
   simp only [List.any_eq_true]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Main Results

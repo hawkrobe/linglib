@@ -24,9 +24,7 @@ import Mathlib.Data.Fintype.Basic
 
 namespace Montague
 
--- ============================================================================
 -- Semantic Types
--- ============================================================================
 
 /-- Semantic types (Montague's type theory)
 
@@ -52,9 +50,7 @@ def Ty.ett : Ty := (.e ⇒ .t) ⇒ .t   -- generalized quantifiers
 def Ty.st : Ty := .s ⇒ .t           -- propositions (intensions of t)
 def Ty.se : Ty := .s ⇒ .e           -- individual concepts (intensions of e)
 
--- ============================================================================
 -- Models
--- ============================================================================
 
 /-- A model provides a domain of entities and possible worlds.
 
@@ -78,9 +74,7 @@ def Model.interpTy (m : Model) : Ty → Type
   | .s => m.World
   | .fn σ τ => m.interpTy σ → m.interpTy τ
 
--- ============================================================================
 -- A Toy Model
--- ============================================================================
 
 /-- A small domain for examples -/
 inductive ToyEntity where
@@ -96,9 +90,7 @@ def toyModel : Model := {
   decEq := inferInstance
 }
 
--- ============================================================================
 -- Lexical Semantics
--- ============================================================================
 
 /-- Lexical entries map words to their denotations -/
 structure LexEntry (m : Model) where
@@ -108,9 +100,7 @@ structure LexEntry (m : Model) where
 /-- A lexicon is a partial function from word forms to entries -/
 def Lexicon (m : Model) := String → Option (LexEntry m)
 
--- ============================================================================
 -- Toy Lexicon
--- ============================================================================
 
 namespace ToyLexicon
 
@@ -166,18 +156,14 @@ def book_sem : toyModel.interpTy (.e ⇒ .t) :=
 
 end ToyLexicon
 
--- ============================================================================
 -- Composition
--- ============================================================================
 
 /-- Function application (the core composition rule) -/
 def apply {m : Model} {σ τ : Ty}
     (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) : m.interpTy τ :=
   f x
 
--- ============================================================================
 -- Connecting to Syntactic Derivations
--- ============================================================================
 
 open ToyLexicon
 
@@ -200,9 +186,7 @@ def interpSVO (m : Model)
     (obj : m.interpTy .e) : m.interpTy .t :=
   apply (apply verb obj) subj
 
--- ============================================================================
 -- Sentence-Level Logical Operators
--- ============================================================================
 
 /-- Sentence negation: ¬p
     Type: t → t
@@ -234,9 +218,7 @@ def interpNegSVO (m : Model)
     (obj : m.interpTy .e) : m.interpTy .t :=
   neg (interpSVO m subj verb obj)
 
--- ============================================================================
 -- Truth Conditions
--- ============================================================================
 
 /-- A sentence is true in a model if its denotation is true -/
 def isTrue (m : Model) (meaning : m.interpTy .t) : Prop :=
@@ -260,9 +242,7 @@ theorem double_negation {m : Model} (p : m.interpTy .t) : neg (neg p) = p := by
 -- Counter-examples (these would NOT be provable)
 -- example : isTrue toyModel (interpSV toyModel mary_sem sleeps_sem) := rfl  -- would fail
 
--- ============================================================================
 -- Connecting to the SemanticBackend Interface
--- ============================================================================
 
 /-
 A model-theoretic semantics provides a SemanticBackend.
@@ -270,9 +250,7 @@ The agreement function φ is 1 if true, 0 if false.
 (This would require importing SemanticBackend and more setup)
 -/
 
--- ============================================================================
 -- Characteristic Functions (Set ↔ Predicate Correspondence)
--- ============================================================================
 
 /-
 Following Heim & Kratzer (1998) §1.2.4:
@@ -320,9 +298,7 @@ theorem john_mary_in_laughs :
     inExtension laughs_sem ToyEntity.john = true ∧
     inExtension laughs_sem ToyEntity.mary = true := ⟨rfl, rfl⟩
 
--- ============================================================================
 -- Schönfinkelization / Currying
--- ============================================================================
 
 /-
 Following Heim & Kratzer (1998) §1.3.3:
@@ -361,9 +337,7 @@ theorem sees_uncurry_matches :
   intro ⟨x, y⟩
   cases x <;> cases y <;> rfl
 
--- ============================================================================
 -- Intensional Types (World-Indexed Semantics)
--- ============================================================================
 
 /-!
 ## Intensional Semantics

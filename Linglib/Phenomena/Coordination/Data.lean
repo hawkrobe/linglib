@@ -26,16 +26,12 @@ import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 
--- ============================================================================
 -- Coordination Lexicon (extends core Lexicon)
--- ============================================================================
 
 -- Note: and_, or_ are defined in Core/Basic.lean Lexicon
 def but_ : Word := ⟨"but", Cat.C, {}⟩
 
--- ============================================================================
 -- The Empirical Data
--- ============================================================================
 
 /-- NP coordination minimal pairs -/
 def npCoordinationData : PhenomenonData := {
@@ -88,9 +84,7 @@ def sCoordinationData : PhenomenonData := {
   ]
 }
 
--- ============================================================================
 -- Specification Typeclass
--- ============================================================================
 
 /-- A grammar captures coordination -/
 class CapturesCoordination (G : Type) [Grammar G] where
@@ -99,9 +93,7 @@ class CapturesCoordination (G : Type) [Grammar G] where
   capturesVPCoord : Grammar.capturesPhenomenon G grammar vpCoordinationData
   capturesSCoord : Grammar.capturesPhenomenon G grammar sCoordinationData
 
--- ============================================================================
 -- Helper Functions
--- ============================================================================
 
 /-- Find conjunction positions in a word list -/
 def findConjunctions (ws : List Word) : List Nat :=
@@ -112,9 +104,7 @@ def findConjunctions (ws : List Word) : List Nat :=
 def hasCoordination (ws : List Word) : Bool :=
   ws.any λ w => w.form == "and" || w.form == "or" || w.form == "but"
 
--- ============================================================================
 -- Non-Constituent Coordination: The Semantic Fact
--- ============================================================================
 
 /-
 ## Non-Constituent Coordination

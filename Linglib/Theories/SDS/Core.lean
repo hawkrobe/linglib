@@ -39,9 +39,7 @@ import Mathlib.Tactic.Ring
 
 namespace SDS.Core
 
--- ============================================================================
 -- Core Typeclass: SDSConstraintSystem
--- ============================================================================
 
 /--
 A constraint system in the style of Situation Description Systems (SDS).
@@ -82,9 +80,7 @@ namespace SDSConstraintSystem
 
 variable {α Θ : Type*} [SDSConstraintSystem α Θ]
 
--- ============================================================================
 -- Core Operations
--- ============================================================================
 
 /--
 Unnormalized posterior at a given parameter value.
@@ -130,9 +126,7 @@ Probability that a predicate holds under the posterior.
 def posteriorProb (sys : α) (pred : Θ → Bool) : ℚ :=
   expectation sys fun θ => if pred θ then 1 else 0
 
--- ============================================================================
 -- Properties
--- ============================================================================
 
 /--
 Product of Experts is commutative: order of factors doesn't matter.
@@ -155,9 +149,7 @@ theorem poe_zero_scenario (sys : α) (θ : Θ)
     unnormalizedPosterior sys θ = 0 := by
   simp only [unnormalizedPosterior, h, mul_zero]
 
--- ============================================================================
 -- Soft Meaning via Marginalization
--- ============================================================================
 
 /--
 Soft truth value: probability that a threshold-based predicate holds.
@@ -181,9 +173,7 @@ def marginal (sys : α) (project : Θ → ℚ) : ℚ :=
 
 end SDSConstraintSystem
 
--- ============================================================================
 -- Conflict Detection
--- ============================================================================
 
 /--
 Find the element with maximum value according to a scoring function.
@@ -229,9 +219,7 @@ def conflictDegree {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ]
       |sel θ₁ - scen θ₁| + |sel θ₂ - scen θ₂|
   | _, _ => 0
 
--- ============================================================================
 -- Degenerate Cases
--- ============================================================================
 
 /--
 A degenerate SDS where the scenario factor is uniform (no context dependence).
@@ -249,9 +237,7 @@ Check if all scenario factors are trivial (constant 1).
 def hasUniformScenario {α Θ : Type*} [SDSConstraintSystem α Θ] (sys : α) : Bool :=
   (SDSConstraintSystem.paramSupport sys).all (trivialScenario sys)
 
--- ============================================================================
 -- Connection to ProductOfExperts.FactoredDist
--- ============================================================================
 
 /-!
 ## Relationship to Core.ProductOfExperts
@@ -277,9 +263,7 @@ For types where both apply, the underlying computation is identical:
 See `Core.ProductOfExperts` for the standalone PoE combinators.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

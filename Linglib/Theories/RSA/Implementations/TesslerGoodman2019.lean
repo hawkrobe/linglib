@@ -38,9 +38,7 @@ namespace RSA.TesslerGoodman2019
 
 open RSA.Eval
 
--- ============================================================================
 -- Domain: Prevalence as Scale (parallel to LassiterGoodman2017's Height)
--- ============================================================================
 
 /-- Discretized prevalence: 0%, 10%, ..., 100% -/
 inductive Prevalence where
@@ -60,9 +58,7 @@ def Threshold.toRat : Threshold → ℚ
   | .t0 => 0 | .t1 => 1/10 | .t2 => 2/10 | .t3 => 3/10 | .t4 => 4/10
   | .t5 => 5/10 | .t6 => 6/10 | .t7 => 7/10 | .t8 => 8/10 | .t9 => 9/10
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Generic vs null utterance -/
 inductive Utterance where
@@ -70,9 +66,7 @@ inductive Utterance where
   | silent   -- say nothing
   deriving Repr, DecidableEq, BEq, Fintype
 
--- ============================================================================
 -- Semantics: Generic as Threshold Predicate over Prevalence
--- ============================================================================
 
 /-- ⟦generic⟧(p, θ) = 1 iff p > θ -/
 def genericMeaning (θ : Threshold) (p : Prevalence) : Bool :=
@@ -83,9 +77,7 @@ def meaning (u : Utterance) (θ : Threshold) (p : Prevalence) : Bool :=
   | .generic => genericMeaning θ p
   | .silent => true
 
--- ============================================================================
 -- Prevalence Priors: The Key to Generic Interpretation
--- ============================================================================
 
 /-- "Lays eggs" prior: bimodal (0 or ~50%) -/
 def laysEggsPrior : Prevalence → ℚ
@@ -105,9 +97,7 @@ def carriesMalariaPrior : Prevalence → ℚ
   | .p1 => 4
   | _ => 1/10
 
--- ============================================================================
 -- RSA Model
--- ============================================================================
 
 def allUtterances : List Utterance := [.generic, .silent]
 def allPrevalences : List Prevalence := [.p0, .p1, .p2, .p3, .p4, .p5, .p6, .p7, .p8, .p9, .p10]
@@ -124,9 +114,7 @@ def runL1_joint (prior : Prevalence → ℚ) (u : Utterance) : List ((Prevalence
 def runL1_prevalence (prior : Prevalence → ℚ) (u : Utterance) : List (Prevalence × ℚ) :=
   RSA.Eval.marginalize (runL1_joint prior u) Prod.fst
 
--- ============================================================================
 -- Soft Semantics: ∫δ_{p>θ}dθ = p
--- ============================================================================
 
 /-- Soft generic meaning: P(random θ < p) = p -/
 def softGenericMeaning (p : Prevalence) : ℚ := p.toRat
@@ -136,9 +124,7 @@ def softL0 (prior : Prevalence → ℚ) : List (Prevalence × ℚ) :=
   let scores := allPrevalences.map fun p => (p, softGenericMeaning p * prior p)
   RSA.Eval.normalize scores
 
--- ============================================================================
 -- Worked Examples
--- ============================================================================
 
 def l1_laysEggs : List (Prevalence × ℚ) := runL1_prevalence laysEggsPrior .generic
 def l1_isFemale : List (Prevalence × ℚ) := runL1_prevalence isFemalePrior .generic
@@ -151,9 +137,7 @@ def softL0_isFemale : List (Prevalence × ℚ) := softL0 isFemalePrior
 #eval l1_isFemale      -- 50% gets lower probability (matches unimodal expectation)
 #eval softL0_laysEggs  -- Soft semantics approximation
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /-- "Lays eggs" at 50%: high posterior (TRUE generic) -/
 theorem lays_eggs_50_percent_high :
@@ -176,9 +160,7 @@ theorem rare_property_true_generic :
     RSA.Eval.getScore l1_carriesMalaria .p1 > RSA.Eval.getScore l1_carriesMalaria .p0 := by
   native_decide
 
--- ============================================================================
 -- Connection to LassiterGoodman2017: Same Framework
--- ============================================================================
 
 /-!
 ## Unified Threshold Semantics

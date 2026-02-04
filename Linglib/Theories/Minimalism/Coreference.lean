@@ -31,9 +31,7 @@ namespace Minimalism.Coreference
 
 open Lexicon
 
--- ============================================================================
 -- Part 1: Nominal Types
--- ============================================================================
 
 /-- Types of nominal expressions for coreference -/
 inductive NominalType where
@@ -53,9 +51,7 @@ def classifyNominal (w : Word) : Option NominalType :=
   else
     none
 
--- ============================================================================
 -- Part 2: Structural Relations (Simplified)
--- ============================================================================
 
 /-- Simple clause structure for coreference checking
 
@@ -96,9 +92,7 @@ def subjectCCommandsObject (_clause : SimpleClause) : Bool :=
 def objectCCommandsSubject (_clause : SimpleClause) : Bool :=
   false
 
--- ============================================================================
 -- Part 3: Locality (Binding Domain)
--- ============================================================================
 
 /-- Is a position local to another? (same clause)
 
@@ -115,9 +109,7 @@ def sameLocalDomain (_clause : SimpleClause) : Bool :=
 def inSameBindingDomain (_clause : SimpleClause) (_pos1 _pos2 : String) : Bool :=
   true
 
--- ============================================================================
 -- Part 4: Agreement Checking
--- ============================================================================
 
 /-- Do two nominals agree in phi-features (person, number, gender)?
 
@@ -142,9 +134,7 @@ def phiAgree (w1 w2 : Word) : Bool :=
       true
   personMatch && numberMatch && genderMatch
 
--- ============================================================================
 -- Part 5: Coreference Constraints
--- ============================================================================
 
 /-- Principle A: Reflexives must be bound in their local domain
 
@@ -197,9 +187,7 @@ def rExpressionFree (clause : SimpleClause) : Bool :=
     | none => true
   | _ => true
 
--- ============================================================================
 -- Part 6: Combined Coreference Check
--- ============================================================================
 
 /-- Is a sentence grammatical for coreference under Minimalist binding?
 
@@ -235,9 +223,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
   | none => false
   | some clause => !pronounLocallyFree clause
 
--- ============================================================================
 -- Part 7: Tests - Matching Phenomena/Coreference/Data.lean
--- ============================================================================
 
 -- reflexiveCoreferenceData pairs:
 -- Pair 1: john sees himself ✓ vs himself sees john ✗
@@ -270,9 +256,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 #eval reflexiveLicensedInSentence [john, sees, himself]     -- true (reflexive ok)
 #eval pronounCoreferenceBlocked [john, sees, him]           -- true (pronoun coreference blocked)
 
--- ============================================================================
 -- Part 8: Capturing the Phenomena Data
--- ============================================================================
 
 /-- Check if Minimalism correctly predicts a minimal pair for coreference
 
@@ -285,9 +269,7 @@ def capturesCoreferenceMinimalPair (pair : MinimalPair) : Bool :=
 def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
   phenom.pairs.all capturesCoreferenceMinimalPair
 
--- ============================================================================
 -- Part 9: Theorems - Minimalism Captures Imported Phenomena
--- ============================================================================
 
 /-- Minimalism captures reflexiveCoreferenceData -/
 theorem captures_reflexive_coreference :
@@ -323,9 +305,7 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
--- ============================================================================
 -- Part 9: Grammar Instance for Comparison
--- ============================================================================
 
 /-- Minimalist coreference configuration -/
 structure MinimalistCoreferenceGrammar where
@@ -335,9 +315,7 @@ structure MinimalistCoreferenceGrammar where
 /-- Default Minimalist grammar for coreference -/
 def defaultGrammar : MinimalistCoreferenceGrammar := {}
 
--- ============================================================================
 -- Part 10: Limitations and Future Work
--- ============================================================================
 
 /-
 ## Current Limitations
@@ -365,9 +343,7 @@ For simple transitive clauses, the implementation correctly derives:
 - Complementary distribution of reflexives/pronouns
 -/
 
--- ============================================================================
 -- Part 11: CoreferenceTheory Interface Implementation
--- ============================================================================
 
 /-- Marker type for Minimalism as a coreference theory -/
 structure MinimalismTheory

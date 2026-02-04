@@ -35,9 +35,7 @@ namespace Montague.Plural.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
--- ============================================================================
 -- Tolerance Relations (Križ & Spector 2021, Definition 14)
--- ============================================================================
 
 /--
 A tolerance relation determines which sub-pluralities count as
@@ -69,9 +67,7 @@ def full : Tolerance Atom where
 
 end Tolerance
 
--- ============================================================================
 -- Distributivity Operators
--- ============================================================================
 
 /--
 Maximal distributive: ⟦each P⟧(x) = ∀a ∈ x. P(a)
@@ -90,9 +86,7 @@ def distTolerant (P : Atom → W → Bool) (tol : Tolerance Atom)
     (x : Finset Atom) (w : W) : Bool :=
   decide (∃ z ∈ x.powerset, tol.rel z x = true ∧ ∀ a ∈ z, P a w = true)
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /-- Maximal distributive = tolerant distributive with identity tolerance -/
 theorem distMaximal_eq_identity (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
@@ -121,9 +115,7 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
   · simp only [Tolerance.full, Finset.singleton_subset_iff, decide_eq_true_iff]; exact ha
   · simp [hPa]
 
--- ============================================================================
 -- Križ & Spector (2021): Full Formalization
--- ============================================================================
 
 /-!
 ## The Križ & Spector (2021) Account
@@ -150,9 +142,7 @@ section KrizSpector
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
--- ============================================================================
 -- Part 1: Basic Predicates on Pluralities
--- ============================================================================
 
 /-- All atoms in x satisfy P at w -/
 def allSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
@@ -166,9 +156,7 @@ def someSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
 def noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
   decide (∀ a ∈ x, P a w = false)
 
--- ============================================================================
 -- Part 2: Trivalent Truth Values
--- ============================================================================
 
 /-- Trivalent truth value for homogeneous predicates -/
 inductive TruthValue where
@@ -191,9 +179,7 @@ def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Truth
   else if noneSatisfy P x w then .false
   else .gap
 
--- ============================================================================
 -- Part 3: The Homogeneity Theorem
--- ============================================================================
 
 /-- The gap condition: some but not all atoms satisfy P -/
 def inGap (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
@@ -243,9 +229,7 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     | .gap => .gap := by
   sorry
 
--- ============================================================================
 -- Part 4: Candidate Interpretations
--- ============================================================================
 
 /-- Decidable proposition type -/
 abbrev BProp (W : Type*) := W → Bool
@@ -274,9 +258,7 @@ def candidateSet (P : Atom → W → Bool) (tol : Tolerance Atom)
     (x : Finset Atom) : Set (BProp W) :=
   { p | ∃ z ∈ x.powerset, tol.rel z x = true ∧ p = candidateProp P z }
 
--- ============================================================================
 -- Part 5: Truth on All Readings
--- ============================================================================
 
 /-- All candidates in the set are true at w -/
 def trueOnAll (candidates : Set (BProp W)) (w : W) : Prop :=
@@ -290,9 +272,7 @@ def falseOnAll (candidates : Set (BProp W)) (w : W) : Prop :=
 def gapOnCandidates (candidates : Set (BProp W)) (w : W) : Prop :=
   (∃ p ∈ candidates, p w = true) ∧ (∃ p ∈ candidates, p w = false)
 
--- ============================================================================
 -- Part 6: Key Correspondence Theorems
--- ============================================================================
 
 /--
 **THEOREM**: The maximal candidate is exactly distMaximal.
@@ -390,9 +370,7 @@ theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Bool) (x : Fi
 
 end KrizSpector
 
--- ============================================================================
 -- Strong Relevance and QUD Filtering
--- ============================================================================
 
 section StrongRelevance
 
@@ -476,9 +454,7 @@ theorem nonMaximality_from_coarse_qud (P : Atom → W → Bool) (x : Finset Atom
 
 end StrongRelevance
 
--- ============================================================================
 -- Correspondence Theorems
--- ============================================================================
 
 section Correspondence
 
@@ -588,9 +564,7 @@ theorem distTolerant_iff_exists_tolerant (P : Atom → W → Bool) (tol : Tolera
 
 end Correspondence
 
--- ============================================================================
 -- The Independence Result
--- ============================================================================
 
 /-- Classification by [±distributive] × [±maximal] -/
 inductive DistMaxClass where

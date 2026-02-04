@@ -36,9 +36,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.VanTielEtAl2016
 
--- ============================================================================
--- PART 1: Scale Data Structure
--- ============================================================================
 
 /--
 Grammatical category of a scale.
@@ -94,9 +91,6 @@ structure ScaleDatum where
   bounded : Bool
   deriving Repr
 
--- ============================================================================
--- PART 2: Complete Scale Data (Table 3, sorted by Exp1 SI rate)
--- ============================================================================
 
 namespace Scales
 
@@ -536,9 +530,6 @@ def allScales : List ScaleDatum := [
   Scales.contentHappy
 ]
 
--- ============================================================================
--- PART 3: Summary Statistics
--- ============================================================================
 
 /-- Number of scales tested -/
 def numScales : Nat := allScales.length
@@ -557,9 +548,6 @@ def numBounded : Nat := boundedScales.length
 /-- Number of non-bounded scales -/
 def numNonBounded : Nat := nonBoundedScales.length
 
--- ============================================================================
--- PART 4: Key Findings
--- ============================================================================
 
 /--
 Main finding: SI rates vary enormously (4% to 100%).
@@ -648,9 +636,6 @@ def semanticRelatednessEffect : PredictorEffect :=
   , p := 0.355
   , r2 := 0.006 }
 
--- ============================================================================
--- PART 5: Verified Empirical Patterns
--- ============================================================================
 
 /-- ⟨some, all⟩ is in the top tier (96%) -/
 theorem someAll_high_rate : Scales.someAll.siRateExp1 = 96 := rfl
@@ -692,9 +677,6 @@ theorem frequency_not_significant : frequencyEffect.p > 0.05 := by
 theorem semanticRelatedness_not_significant : semanticRelatednessEffect.p > 0.05 := by
   native_decide
 
--- ============================================================================
--- PART 6: Connection to Other Studies
--- ============================================================================
 
 /-!
 ## Connection to Ronai (2024)
@@ -736,9 +718,7 @@ def mainConclusion : String :=
   "availability of the scale (association strength, grammatical class, " ++
   "word frequency, or semantic relatedness)."
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## Summary of van Tiel et al. (2016)

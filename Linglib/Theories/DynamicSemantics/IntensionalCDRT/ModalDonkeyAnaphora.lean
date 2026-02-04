@@ -46,9 +46,6 @@ open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Donkey Binding Relations
--- ============================================================================
 
 /--
 A situation variable is **bound** if it was introduced by SUBJ.
@@ -101,9 +98,6 @@ structure DonkeyAccessibility (W Time E : Type*) where
   /-- Same-world constraint satisfied -/
   sameWorld : modallyAccessible antecedent consequent
 
--- ============================================================================
--- PART 2: Cross-Clausal Binding
--- ============================================================================
 
 /--
 **Cross-clausal situation binding**: Situation introduced in one clause
@@ -142,9 +136,6 @@ theorem cross_clausal_same_world {W Time E : Type*} [LE Time]
   unfold dynIND at h
   exact h.2
 
--- ============================================================================
--- PART 3: The SUBJ-IND Anaphoric Chain
--- ============================================================================
 
 /--
 **The SUBJ-IND anaphoric chain** (Mendes 2025, §4.3)
@@ -200,9 +191,6 @@ theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
   unfold dynIND at h_in_ind
   exact h_in_ind.2
 
--- ============================================================================
--- PART 4: Parallel with Classic Donkey Anaphora
--- ============================================================================
 
 /--
 **Classic donkey anaphora structure** (for comparison)
@@ -253,9 +241,6 @@ def structuralParallel : Prop :=
   -- 3. Universal force in the consequent
   True  -- Documented parallel
 
--- ============================================================================
--- PART 5: Binding and Scope
--- ============================================================================
 
 /--
 **E-type vs unselective binding for situations**
@@ -306,9 +291,6 @@ theorem unselective_universal_force {W Time E : Type*} [LE Time]
   simp only [Set.mem_setOf_eq] at h_mem
   exact h_mem.2
 
--- ============================================================================
--- PART 6: Key Theorems
--- ============================================================================
 
 /--
 **Main Theorem: Modal donkey anaphora enables temporal shift**
@@ -364,9 +346,7 @@ theorem donkey_accessibility_transitive {W Time : Type*}
   -- goal : s₂.world = s₀.world
   exact h₂.trans h₁
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

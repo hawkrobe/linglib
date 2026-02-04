@@ -46,9 +46,7 @@ namespace RSA.VanTielEtAl2021
 open RSA.Eval
 open VanTielQuantity
 
--- ============================================================================
 -- Domain Setup (using unified infrastructure)
--- ============================================================================
 
 /-
 ## Simplified Domain
@@ -77,9 +75,7 @@ abbrev Monotonicity := VanTielQuantity.Monotonicity
 
 def monotonicity := VanTielQuantity.monotonicity
 
--- ============================================================================
 -- GQT Semantics (using unified Determiners infrastructure)
--- ============================================================================
 
 /-- Threshold for each quantity word (from unified entry) -/
 def threshold (m : QuantityWord) : Nat :=
@@ -89,9 +85,7 @@ def threshold (m : QuantityWord) : Nat :=
 def gqtMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
   VanTielQuantity.gqtMeaningRat domainSize m t
 
--- ============================================================================
 -- PT Semantics (using unified Determiners infrastructure)
--- ============================================================================
 
 /-- Prototype (peak truth) for each quantity word (from unified entry) -/
 def prototype (m : QuantityWord) : Nat :=
@@ -105,9 +99,7 @@ def spread (m : QuantityWord) : ℚ :=
 def ptMeaning (m : QuantityWord) (t : WorldState) : ℚ :=
   VanTielQuantity.ptMeaning domainSize m t
 
--- ============================================================================
 -- Salience: Lexical Accessibility
--- ============================================================================
 
 /-- Salience prior (uniform for simplicity) -/
 def salience : QuantityWord → ℚ
@@ -118,9 +110,7 @@ def salience : QuantityWord → ℚ
   | .most  => 1
   | .all   => 1
 
--- ============================================================================
 -- Domains (using unified infrastructure)
--- ============================================================================
 
 private theorem salience_nonneg (u : QuantityWord) : 0 ≤ salience u := by
   cases u <;> decide
@@ -133,9 +123,7 @@ def gqtDomain : VanTielQuantity.Domain domainSize :=
 def ptDomain : VanTielQuantity.Domain domainSize :=
   VanTielQuantity.ptDomainWithSalience domainSize salience salience_nonneg
 
--- ============================================================================
 -- The Four Speaker Models (using unified RSA infrastructure)
--- ============================================================================
 
 /-- GQ-literal: GQT semantics + literal speaker (S0) -/
 def gqLit (t : WorldState) : List (QuantityWord × ℚ) :=
@@ -153,9 +141,7 @@ def gqPrag (t : WorldState) : List (QuantityWord × ℚ) :=
 def ptPrag (t : WorldState) : List (QuantityWord × ℚ) :=
   ptDomain.runS1 .S0Based t
 
--- ============================================================================
 -- Pragmatic Listeners
--- ============================================================================
 
 /-- Pragmatic listener with GQT (S0-based chain): P(t | m) ∝ Prior(t) · P_S0(m | t) -/
 def pragListener_GQT (m : QuantityWord) : List (WorldState × ℚ) :=
@@ -169,9 +155,7 @@ def pragListener_PT (m : QuantityWord) : List (WorldState × ℚ) :=
 def compareListeners_GQT (m : QuantityWord) : RSA.ChainComparison WorldState :=
   gqtDomain.compareL1 m
 
--- ============================================================================
 -- RSAScenario Instances
--- ============================================================================
 
 /-- GQT RSAScenario for type-safe proofs -/
 def gqtScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) := gqtDomain.toScenario
@@ -179,9 +163,7 @@ def gqtScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) :
 /-- PT RSAScenario for type-safe proofs -/
 def ptScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) := ptDomain.toScenario
 
--- ============================================================================
 -- Demonstrations
--- ============================================================================
 
 -- Semantic values at different world states
 #eval gqtMeaning .some_ ⟨3, by omega⟩  -- 1 (t=3 ≥ 1)
@@ -210,9 +192,7 @@ def ptScenario : RSAScenario VanTielQuantity.Utterance (Fin (domainSize + 1)) :=
 #eval! gqLit ⟨10, by omega⟩  -- "all" (and others ≥ threshold)
 #eval! ptLit ⟨10, by omega⟩  -- "all" highest
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /-
 ## Theorem 1: Gradience in Production
@@ -265,9 +245,7 @@ theorem gqPrag_ptLit_agree_half :
     getScore (ptLit ⟨5, by omega⟩) .half > getScore (ptLit ⟨5, by omega⟩) .few := by
   native_decide
 
--- ============================================================================
 -- Production Distributions for Analysis
--- ============================================================================
 
 /-- Production distribution across all world states for a given model -/
 def productionProfile (speaker : WorldState → List (QuantityWord × ℚ))
@@ -286,9 +264,7 @@ def productionProfile (speaker : WorldState → List (QuantityWord × ℚ))
 #eval! productionProfile ptLit .most    -- Gaussian around prototype
 #eval! productionProfile ptPrag .most   -- sharpened
 
--- ============================================================================
 -- Connection to Montague Quantifiers (Grounding)
--- ============================================================================
 
 /-
 ## Grounding in Montague Semantics
@@ -322,9 +298,7 @@ theorem gqt_some_grounded : threshold .some_ = 1 := by native_decide
 NOTE: The threshold for "all" in GQT equals the total set size. -/
 theorem gqt_all_grounded : threshold .all = totalSetSize := by native_decide
 
--- ============================================================================
 -- Connection to Phenomena Data
--- ============================================================================
 
 /-- Convert our QuantityWord to Phenomena type -/
 def toDataWord : QuantityWord → Phenomena.VanTielEtAl2021.QuantityWord
@@ -353,9 +327,7 @@ theorem monotonicity_matches_data_decreasing (q : QuantityWord) :
     (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .decreasing) := by
   cases q <;> native_decide
 
--- ============================================================================
 -- Pragmatic Competition Beyond Entailment
--- ============================================================================
 
 /-
 ## Competition Without Scalar Scales
@@ -385,9 +357,7 @@ example : getScore (gqLit ⟨2, by omega⟩) .some_ > 0 ∧
           getScore (gqLit ⟨2, by omega⟩) .few > 0 := by
   native_decide
 
--- ============================================================================
 -- Chain Comparison: S0-Based vs L0-Based
--- ============================================================================
 
 /-!
 ## S0-Based vs L0-Based Chains
@@ -442,9 +412,7 @@ theorem pt_diverges_more_than_gqt :
     RSA.totalVariation (gqtDomain.compareS1 ⟨5, by decide⟩) := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Implementation Shows

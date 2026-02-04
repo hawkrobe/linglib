@@ -37,9 +37,7 @@ namespace Montague.Modal
 
 open Montague.Verb.Attitude.Examples
 
--- ============================================================================
 -- The Simple Theory Constructor
--- ============================================================================
 
 /--
 Construct a simple modal theory from an accessibility relation.
@@ -56,9 +54,7 @@ def Simple (R : World → World → Bool) : ModalTheory where
     | .necessity => accessible.all p
     | .possibility => accessible.any p
 
--- ============================================================================
 -- Standard Accessibility Relations
--- ============================================================================
 
 /-- Universal accessibility: every world is accessible from every world. -/
 def universalR : World → World → Bool := fun _ _ => true
@@ -82,9 +78,7 @@ def sampleEpistemicR : World → World → Bool := fun w w' =>
 def sampleDeonticR : World → World → Bool := fun _ w' =>
   w' == .w0 || w' == .w2
 
--- ============================================================================
 -- Instantiated Theories
--- ============================================================================
 
 /-- Simple theory with universal accessibility (S5-like). -/
 def SimpleUniversal : ModalTheory := Simple universalR
@@ -98,9 +92,7 @@ def SimpleEpistemic : ModalTheory := Simple sampleEpistemicR
 /-- Simple deontic theory. -/
 def SimpleDeontic : ModalTheory := Simple sampleDeonticR
 
--- ============================================================================
 -- Key Properties
--- ============================================================================
 
 /-- With universal accessibility, necessity means truth at all worlds. -/
 theorem simple_universal_necessity :
@@ -129,9 +121,7 @@ theorem simple_reflexive_necessity_johnHome :
   intro w
   cases w <;> native_decide
 
--- ============================================================================
 -- Duality Verification
--- ============================================================================
 
 /-- Helper: duality holds for any list. -/
 private theorem list_duality (L : List World) (p : Proposition) :
@@ -148,9 +138,7 @@ theorem simple_duality (R : World → World → Bool) (p : Proposition) (w : Wor
   unfold ModalTheory.dualityHolds Simple ModalTheory.necessity ModalTheory.possibility
   exact list_duality (allWorlds'.filter (R w)) p
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- With universal accessibility, "must it rain" = "does it rain everywhere"
 #eval SimpleUniversal.eval .necessity raining .w0  -- false
@@ -164,9 +152,7 @@ theorem simple_duality (R : World → World → Bool) (p : Proposition) (w : Wor
 -- With reflexive-only, "must it rain at w2" = "is it raining at w2"
 #eval SimpleReflexive.eval .necessity raining .w2  -- false
 
--- ============================================================================
 -- Consistency Check
--- ============================================================================
 
 /-- Consistency (□p → ◇p) holds with universal accessibility (concrete check). -/
 theorem simple_universal_consistent_raining :
@@ -184,9 +170,7 @@ theorem simple_universal_consistent_triviallyTrue :
   intro w
   cases w <;> native_decide
 
--- ============================================================================
 -- PART: Connecting to isNormal (Completing the Derivation Chain)
--- ============================================================================
 
 /-!
 ## Normality: Simple Theories are Normal Modal Logics
@@ -213,9 +197,7 @@ theorem simpleUniversal_isNormal : SimpleUniversal.isNormal :=
 theorem simpleReflexive_isNormal : SimpleReflexive.isNormal :=
   simple_isNormal reflexiveR
 
--- ============================================================================
 -- PART: Kripke Correspondence Theory (Kripke 1963)
--- ============================================================================
 
 /-!
 ## Kripke Correspondence: R Properties ↔ Modal Axioms
@@ -378,9 +360,7 @@ theorem simple_K_axiom (R : World → World → Bool) :
     (Simple R).eval .necessity q w = true :=
   fun p q w => K_axiom R p q w
 
--- ============================================================================
 -- Summary: What We've Derived
--- ============================================================================
 
 /-!
 ## Summary: Kripke Correspondence Theorems

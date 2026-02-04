@@ -46,9 +46,6 @@ namespace RSA.PriorPQ
 open Phenomena.Questions.Studies.HawkinsEtAl2025
 open Montague.Question (DecisionProblem expectedUtility)
 
--- ============================================================================
--- PART 1: Domain Types
--- ============================================================================
 
 /-- Items that can be mentioned in a response -/
 structure Item where
@@ -85,9 +82,6 @@ def classifyResponse (r : Response) (targetCategory : Nat) : ResponseType :=
       else .otherCategory
   | .exhaustive _ _ => .exhaustive
 
--- ============================================================================
--- PART 2: Decision Problem (Grounded in Van Rooy 2003)
--- ============================================================================
 
 /-!
 ## Grounding in Van Rooy (2003)
@@ -143,9 +137,6 @@ def responseUtilityValue (d : PQDecisionProblem) (w : World) (_r : Response)
     (actions : List Action) (valueBefore : ℚ) : ℚ :=
   dpValue d w actions - valueBefore
 
--- ============================================================================
--- PART 3: Response Semantics
--- ============================================================================
 
 /-- Truth of a response given world state -/
 def responseTruth (r : Response) (w : World) : Bool :=
@@ -162,9 +153,6 @@ def responseCost (r : Response) : ℚ :=
   | .withMention _ _ => 2
   | .exhaustive _ items => 1 + items.length
 
--- ============================================================================
--- PART 4: Model Parameters
--- ============================================================================
 
 /-- PRIOR-PQ model parameters -/
 structure Params where
@@ -176,9 +164,6 @@ structure Params where
 
 def defaultParams : Params := {}
 
--- ============================================================================
--- PART 5: R0 - Base-level Respondent
--- ============================================================================
 
 /-!
 ## R0: Base-level Respondent
@@ -206,9 +191,6 @@ def r0Prob (w : World) (responses : List Response) (r : Response) : ℚ :=
     1 / validResponses.length
   else 0
 
--- ============================================================================
--- PART 6: Q - Questioner Model
--- ============================================================================
 
 /-!
 ## Q: Questioner
@@ -250,9 +232,6 @@ def softmax (alpha : ℚ) (utilities : List ℚ) : List ℚ :=
   if total == 0 then scores.map fun _ => 0
   else scores.map fun s => s / total
 
--- ============================================================================
--- PART 7: R1 - Pragmatic Respondent
--- ============================================================================
 
 /-!
 ## R1: Pragmatic Respondent
@@ -312,9 +291,6 @@ def r1Dist (params : Params) (w : World) (q : PolarQuestion)
   let probs := softmax params.αR utilities
   responses.zip probs
 
--- ============================================================================
--- PART 8: Simplified Iced Tea Scenario (Case Study 2)
--- ============================================================================
 
 /-!
 ## Case Study 2: Iced Tea
@@ -355,9 +331,6 @@ def coldDrinkDP : PQDecisionProblem :=
   , prior := fun _ => 1  -- Simplified
   }
 
--- ============================================================================
--- PART 9: Theoretical Predictions
--- ============================================================================
 
 /-!
 ## Key Theoretical Predictions
@@ -454,9 +427,6 @@ theorem prior_pq_vs_llm :
 def classifyIcedTeaResponses : List (ResponseType × Response) :=
   icedTeaResponses.map fun r => (classifyResponse r 0, r)
 
--- ============================================================================
--- PART 10: Core Theoretical Contribution
--- ============================================================================
 
 /-!
 ## PRIOR-PQ: Resolving the Circularity
@@ -504,9 +474,6 @@ theorem r0_grounds_pragmatics (w : World) (responses : List Response) (r : Respo
   · simp only [Bool.and_eq_true] at h2; exact h2.1
   · simp at hr
 
--- ============================================================================
--- PART 11: Grounding in Van Rooy (2003)
--- ============================================================================
 
 /-!
 ## Theoretical Lineage: Van Rooy (2003) → Hawkins et al. (2025)

@@ -22,9 +22,6 @@ This file contains theory-neutral empirical data on:
 
 namespace Phenomena.Questions.MentionSome
 
--- ============================================================================
--- PART 1: Mention-Some vs Choice Readings
--- ============================================================================
 
 /-- Data point distinguishing mention-some from choice readings.
 
@@ -82,9 +79,6 @@ def newspaperContexts : MentionSomeVsChoiceDatum :=
 def mentionSomeVsChoiceExamples : List MentionSomeVsChoiceDatum :=
   [whereCanIBuy, whereIsPen, whoHasSomething, newspaperContexts]
 
--- ============================================================================
--- PART 2: Embedded Mention-Some Data
--- ============================================================================
 
 /-- Data on embedded mention-some questions under attitude verbs.
 
@@ -159,9 +153,6 @@ def embeddedMentionSomeExamples : List EmbeddedMentionSomeDatum :=
   [johnKnowsWherePaper, johnKnowsWhoHasPen, johnWondersWherePaper,
    johnAskedWhoHasPen, maryToldJohn]
 
--- ============================================================================
--- PART 3: Negative Answer Problem (Section 5.2)
--- ============================================================================
 
 /-- Data illustrating why partial answerhood doesn't capture mention-some.
 
@@ -216,9 +207,6 @@ def newspaperNegative : NegativeAnswerDatum :=
 def negativeAnswerExamples : List NegativeAnswerDatum :=
   [penLocationNegative, coffeeNegative, newspaperNegative]
 
--- ============================================================================
--- PART 4: Verb Licensing Data (Section 5.4)
--- ============================================================================
 
 /-- Data on which verbs allow/block mention-some readings.
 
@@ -291,9 +279,6 @@ def verbLicensingExamples : List VerbLicensingDatum :=
   [dependsBlocks, matterBlocks, determineBlocks,
    knowAllows, wonderAllows, findOutAllows]
 
--- ============================================================================
--- PART 5: Mention-Two / Cumulative Quantification (Section 5.3)
--- ============================================================================
 
 /-- Data on mention-n readings with numeral quantification.
 
@@ -351,9 +336,6 @@ def whoTwoProfessors : MentionNDatum :=
 def mentionNExamples : List MentionNDatum :=
   [whereTwoUnicorns, whereThreeStudents, whoTwoProfessors]
 
--- ============================================================================
--- PART 6: Human Concerns / Goal-Based Licensing
--- ============================================================================
 
 /-- Data on how human concerns/goals license mention-some.
 
@@ -407,9 +389,6 @@ def getDirectionsGoal : HumanConcernDatum :=
 def humanConcernExamples : List HumanConcernDatum :=
   [buyCoffeeGoal, borrowPenGoal, findDoctorGoal, getDirectionsGoal]
 
--- ============================================================================
--- PART 7: Summary Statistics
--- ============================================================================
 
 /-- Total number of mention-some phenomena examples. -/
 def totalExamples : Nat :=

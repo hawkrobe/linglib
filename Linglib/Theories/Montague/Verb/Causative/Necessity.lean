@@ -53,9 +53,7 @@ namespace Theories.NadathurLauer2020.Necessity
 open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 
--- ============================================================================
 -- Causal Necessity (Definition 24)
--- ============================================================================
 
 /--
 **Causal Necessity** (Definition 24)
@@ -81,9 +79,7 @@ def necessaryIn (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : Bool :=
   causallyNecessary dyn background cause effect
 
--- ============================================================================
 -- Semantics for "cause"
--- ============================================================================
 
 /--
 **Semantics of "cause"** (causative verb asserting necessity)
@@ -117,9 +113,7 @@ def causeExtended (dyn : CausalDynamics) (actual background : Situation)
   actual.hasValue effectEvent true &&
   causallyNecessary dyn background causeEvent effectEvent
 
--- ============================================================================
 -- Properties of Necessity
--- ============================================================================
 
 /-
 Necessity is sensitive to background: the same cause may be necessary
@@ -139,9 +133,7 @@ theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
   -- Without c1, c2 still causes effect
   sorry  -- Requires showing c2 fires even without c1
 
--- ============================================================================
 -- Necessity and Sufficiency Interaction
--- ============================================================================
 
 /--
 **Key theorem**: Sufficiency does NOT imply necessity.
@@ -197,9 +189,7 @@ theorem necessity_not_implies_sufficiency :
     simp only [causallySufficient]
     sorry
 
--- ============================================================================
 -- The INUS Condition
--- ============================================================================
 
 /--
 An **INUS cause** is:
@@ -221,9 +211,7 @@ def isINUSCause (dyn : CausalDynamics) (cause effect : Variable)
   -- C alone is NOT sufficient (it needs the enabling conditions)
   !causallySufficient dyn Situation.empty cause effect
 
--- ============================================================================
 -- But-For Causation
--- ============================================================================
 
 /--
 **But-for causation**: C is a but-for cause of E in s iff
@@ -242,9 +230,7 @@ theorem butfor_eq_necessary (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
     butForCause dyn s cause effect = causallyNecessary dyn s cause effect := rfl
 
--- ============================================================================
 -- Actual Causation
--- ============================================================================
 
 /--
 **Actual causation**: A full analysis combining necessity and actuality.

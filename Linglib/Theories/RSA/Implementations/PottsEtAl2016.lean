@@ -56,9 +56,6 @@ namespace RSA.PottsLU
 open RSA.Eval LURSA
 open Phenomena.ScalarImplicatures
 
--- ============================================================================
--- PART 1: Player Outcomes
--- ============================================================================
 
 /--
 Outcome for a single player.
@@ -92,9 +89,6 @@ def Outcome.scoredNotAced : Outcome → Bool
   | .S => true
   | .A => false
 
--- ============================================================================
--- PART 2: World States (Equivalence Classes)
--- ============================================================================
 
 /--
 World state as equivalence class based on outcome counts.
@@ -190,9 +184,6 @@ def WorldClass.someScoredNotAced (w : WorldClass) : Bool := w.numScoredNotAced >
 def allWorlds : List WorldClass :=
   [.NN, .NS, .NA, .SS, .SA, .AA, .SSS, .SSA, .SAA, .AAA]
 
--- ============================================================================
--- PART 3: Utterances
--- ============================================================================
 
 /--
 Quantifiers in the utterance.
@@ -249,9 +240,6 @@ def allUtterances : List Utterance :=
    exactlyOneScored, exactlyOneAced, exactlyTwoScored, exactlyTwoAced,
    everyScored, everyAced, nullUtt]
 
--- ============================================================================
--- PART 4: Lexica (Equation 14)
--- ============================================================================
 
 /--
 Lexicon parameters: which items are refined.
@@ -313,9 +301,6 @@ def lexiconOfParams (params : LexParams) : Lexicon Utterance WorldClass where
 def allLexica : List (Lexicon Utterance WorldClass) :=
   allLexParams.map lexiconOfParams
 
--- ============================================================================
--- PART 5: The Full LU Scenario
--- ============================================================================
 
 /--
 The complete Potts et al. (2016) scenario.
@@ -335,9 +320,6 @@ def pottsScenario : LUScenario where
   worlds := allWorlds
   α := 1  -- Note: paper uses λ=0.1, we analyze effects below
 
--- ============================================================================
--- PART 6: RSA Computations
--- ============================================================================
 
 /-- L₁ distribution over worlds for a given utterance -/
 def l1Worlds (u : Utterance) : List (WorldClass × ℚ) :=
@@ -347,9 +329,6 @@ def l1Worlds (u : Utterance) : List (WorldClass × ℚ) :=
 def l1Prob (u : Utterance) (w : WorldClass) : ℚ :=
   LURSA.L1_prob pottsScenario u w
 
--- ============================================================================
--- PART 7: Key Predictions
--- ============================================================================
 
 /-
 ## DE Context: "No one scored"
@@ -415,9 +394,6 @@ def pGlobalOnlyUE : ℚ :=
 #eval (pLocalUE, pGlobalOnlyUE)
 #eval decide (pLocalUE > pGlobalOnlyUE)
 
--- ============================================================================
--- PART 8: Main Theorems - The Model Derives Correct Predictions
--- ============================================================================
 
 /--
 **MAIN RESULT 1: DE Blocking**
@@ -458,9 +434,6 @@ theorem potts_model_derives_de_ue_asymmetry :
     pGlobalDE > pLocalOnlyDE ∧ pLocalUE > pGlobalOnlyUE := by
   exact ⟨potts_model_derives_de_blocking, potts_model_derives_ue_implicature⟩
 
--- ============================================================================
--- PART 9: Formal Predictions
--- ============================================================================
 
 /-
 ## Summary of Predictions
@@ -479,9 +452,6 @@ The key mechanism is ALTERNATIVE COMPETITION:
 - In UE ("someone scored"), the local reading is simply more informative
 -/
 
--- ============================================================================
--- PART 10: Low Rationality Analysis (λ = 0.1)
--- ============================================================================
 
 /-
 ## The Role of λ = 0.1
@@ -512,9 +482,6 @@ def lowRationalityNote : String :=
   "Paper uses λ=0.1 (nearly uniform speaker). Our α=1 is more rational. " ++
   "For exact replication, implement ℚ-valued exponentiation."
 
--- ============================================================================
--- PART 11: Connection to Phenomena Data
--- ============================================================================
 
 /--
 Connection to the empirical DE blocking pattern.
@@ -538,9 +505,6 @@ theorem potts_model_ue_prediction :
     someAllBlocking.implicatureInUE = true := by
   native_decide
 
--- ============================================================================
--- PART 12: Detailed World-by-World Analysis
--- ============================================================================
 
 /-- Pretty-print L₁ distribution -/
 def showL1 (u : Utterance) : List (String × ℚ) :=
@@ -551,9 +515,6 @@ def showL1 (u : Utterance) : List (String × ℚ) :=
 #eval showL1 noAced
 #eval showL1 someAced
 
--- ============================================================================
--- PART 13: Regression Tests - Reduced Models Fail
--- ============================================================================
 
 /-
 ## Why the Full Model is Necessary
@@ -647,9 +608,6 @@ theorem two_lexicon_pred_model_succeeds_ue :
     pLocalUE_reduced > pGlobalOnlyUE_reduced := by
   native_decide
 
--- ============================================================================
--- PART 14: REGRESSION TESTS - Simplified Models Fail
--- ============================================================================
 
 /-
 ## Why the Full Model Structure is Necessary
@@ -742,9 +700,7 @@ theorem world_space_is_critical :
          two_lexicon_pred_model_succeeds_de,
          potts_model_derives_de_blocking⟩
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Implements

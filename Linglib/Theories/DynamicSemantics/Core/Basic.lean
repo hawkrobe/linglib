@@ -35,9 +35,6 @@ import Mathlib.Data.Set.Basic
 
 namespace Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Possibilities
--- ============================================================================
 
 /--
 A possibility: a world paired with a variable assignment.
@@ -84,9 +81,6 @@ theorem extend_world (p : Possibility W E) (x : Nat) (e : E) :
 
 end Possibility
 
--- ============================================================================
--- PART 2: Information States
--- ============================================================================
 
 /--
 An information state: a set of possibilities.
@@ -130,9 +124,6 @@ def consistent (s : InfoState W E) : Prop := s.Nonempty
 /-- State is trivial (all possibilities) -/
 def trivial (s : InfoState W E) : Prop := s = Set.univ
 
--- ============================================================================
--- PART 3: Definedness and Novelty
--- ============================================================================
 
 /--
 Variable x is *defined* in state s iff all possibilities agree on x's value.
@@ -167,9 +158,6 @@ theorem novelAt_iff_disagree (s : InfoState W E) (x : Nat) (hs : s.consistent) :
     push_neg
     exact ⟨p, q, hp, hq, hne⟩
 
--- ============================================================================
--- PART 4: Projection Operations
--- ============================================================================
 
 /-- Project to the set of worlds in the state -/
 def worlds (s : InfoState W E) : Set W :=
@@ -185,9 +173,6 @@ def filterAssign (s : InfoState W E) (pred : (Nat → E) → Bool) : InfoState W
 
 end InfoState
 
--- ============================================================================
--- PART 5: Context (Rich Information State)
--- ============================================================================
 
 /--
 A context extends an information state with metadata.
@@ -228,9 +213,6 @@ def narrow (c : Context W E) (s : InfoState W E) : Context W E :=
 
 end Context
 
--- ============================================================================
--- PART 6: State Relations
--- ============================================================================
 
 /--
 State subsistence: s subsists in s' iff every possibility in s has a
@@ -259,9 +241,6 @@ theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
   intro p hp
   exact ⟨p, h hp, rfl, fun _ _ => rfl⟩
 
--- ============================================================================
--- PART 7: Support Relation
--- ============================================================================
 
 /--
 State s supports proposition φ iff φ holds at all worlds in s.
@@ -284,9 +263,7 @@ theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
 
 end InfoState
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

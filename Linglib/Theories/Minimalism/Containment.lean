@@ -19,9 +19,7 @@ import Linglib.Theories.Minimalism.SyntacticObjects
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: Immediate Containment (Definition 13)
--- ============================================================================
 
 /-- X immediately contains Y iff Y is a member of X
 
@@ -55,9 +53,7 @@ instance decImmediatelyContains (x y : SyntacticObject) :
         simp at h2
         exact isFalse (λ h => h.elim h1 h2)
 
--- ============================================================================
 -- Part 2: Containment / Dominance (Definition 14)
--- ============================================================================
 
 /-- Containment is the transitive closure of immediate containment
 
@@ -69,9 +65,7 @@ inductive contains : SyntacticObject → SyntacticObject → Prop where
   | imm : ∀ x y, immediatelyContains x y → contains x y
   | trans : ∀ x y z, immediatelyContains x z → contains z y → contains x y
 
--- ============================================================================
 -- Part 3: Properties of Containment
--- ============================================================================
 
 /-- Immediate containment implies containment -/
 theorem imm_implies_contains {x y : SyntacticObject}
@@ -97,9 +91,7 @@ theorem leaf_contains_nothing (tok : LIToken) (y : SyntacticObject) :
   | trans _ _ z himm _ =>
     simp [immediatelyContains] at himm
 
--- ============================================================================
 -- Part 3b: Well-Foundedness via nodeCount
--- ============================================================================
 
 /-- Immediate containment strictly decreases nodeCount -/
 theorem immediatelyContains_lt_nodeCount {x y : SyntacticObject}
@@ -129,9 +121,7 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
   have hlt := contains_lt_nodeCount h
   exact Nat.lt_irrefl _ hlt
 
--- ============================================================================
 -- Part 4: Membership in Derivation
--- ============================================================================
 
 /-- X is a term of Y iff X = Y or Y contains X
 
@@ -149,9 +139,7 @@ theorem self_is_term (x : SyntacticObject) : isTermOf x x :=
 theorem contained_is_term {x y : SyntacticObject} (h : contains y x) : isTermOf x y :=
   Or.inr h
 
--- ============================================================================
 -- Part 5: Root and Reflexive Containment
--- ============================================================================
 
 /-- Reflexive containment (useful for stating constraints) -/
 def containsOrEq (x y : SyntacticObject) : Prop :=
@@ -170,9 +158,7 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
     · exact Or.inr hxy
     · exact Or.inr (contains_trans hxy hyz)
 
--- ============================================================================
 -- Part 6: Sisters
--- ============================================================================
 
 /-- X and Y are sisters iff they are immediately contained in the same SO
 
@@ -190,9 +176,7 @@ theorem node_daughters_are_sisters (a b : SyntacticObject) (h : a ≠ b) :
   · simp [immediatelyContains]
   · exact h
 
--- ============================================================================
 -- Part 7: C-Command (Standard Definition)
--- ============================================================================
 
 /-- X c-commands Y iff X's sister contains (or equals) Y
 

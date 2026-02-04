@@ -99,9 +99,7 @@ def beliefSensitive (answers : List Prop') (GS : List Prop') (p : Prop')
     (belS belS' : Prop') : Bool :=
   wantQuestionBased belS GS answers p != wantQuestionBased belS' GS answers p
 
--- ============================================================================
 -- Key Theorems
--- ============================================================================
 
 /--
 **Theorem: Preference between answers is transitive.**
@@ -157,9 +155,7 @@ theorem empty_desires_belief_only (belS : Prop') (answers : List Prop') (p : Pro
     trivial
   exact this _
 
--- ============================================================================
 -- C-distributivity (Phillips-Brown §4)
--- ============================================================================
 
 /-!
 ## C-distributivity
@@ -181,9 +177,7 @@ def isCDistributive (semantics : List Prop' → Prop' → Bool)
   let existsSingle := answers.any fun a => semantics [a] p
   wholeQ == existsSingle
 
--- ============================================================================
 -- Connection to Core.SatisfactionOrdering Framework
--- ============================================================================
 
 open Core.SatisfactionOrdering
 
@@ -206,9 +200,7 @@ def propositionPreorder (GS : List Prop') : Preorder Prop' :=
 
 end Montague.Modal.PhillipsBrown
 
--- ============================================================================
 -- BouleticFlavor Extension: Question-Based Desire Semantics
--- ============================================================================
 
 namespace Montague.Modal.Kratzer.BouleticFlavor
 
@@ -261,9 +253,7 @@ theorem empty_bouletic_indifferent (w : World) (a a' : Prop') :
   unfold preferAnswer satisfiedBy emptyBackground
   simp
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Phillips-Brown (2025) Integration

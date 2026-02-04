@@ -32,9 +32,7 @@ namespace Minimalism.Scope
 open ScopeTheory
 open Phenomena.Quantification.ScopeFreezing
 
--- ============================================================================
 -- Structural Positions
--- ============================================================================
 
 /-- Structural positions relevant for scope -/
 inductive Position where
@@ -55,9 +53,7 @@ structure PositionedQuantifier where
   inDoubleObject : Bool := false
   deriving Repr
 
--- ============================================================================
 -- QR Operation
--- ============================================================================
 
 /--
 Quantifier Raising (QR) as covert movement.
@@ -74,9 +70,7 @@ structure QROperation where
   createsNewScope : Bool
   deriving Repr
 
--- ============================================================================
 -- Locality Constraints on QR
--- ============================================================================
 
 /--
 Barriers to QR movement.
@@ -103,9 +97,7 @@ def violatesSuperiority (lower upper : PositionedQuantifier) : Bool :=
   -- In double object, IO c-commands DO; QR of DO over IO violates superiority
   lower.inDoubleObject && upper.inDoubleObject
 
--- ============================================================================
 -- Scope Economy (Fox 2000)
--- ============================================================================
 
 /--
 Scope Economy: QR is only licensed if it creates a truth-conditional difference.
@@ -126,9 +118,7 @@ structure ScopeEconomy where
 def economyBlocksQR (e : ScopeEconomy) : Bool :=
   e.equivalent
 
--- ============================================================================
 -- Freezing Context Analysis
--- ============================================================================
 
 /--
 Analyze why a freezing context blocks inverse scope in Minimalism.
@@ -147,9 +137,7 @@ def analyzeFreezingContext : FreezingContext → Option QRBarrier
 def predictsFreezing (ctx : FreezingContext) : Bool :=
   (analyzeFreezingContext ctx).isSome
 
--- ============================================================================
 -- Scope Availability in Minimalism
--- ============================================================================
 
 /--
 Minimalist representation of a scope configuration.
@@ -175,9 +163,7 @@ def availableReadings (config : MinimalistScopeConfig) : Availability :=
   else
     .ambiguous
 
--- ============================================================================
 -- HasAvailableScopes Instance
--- ============================================================================
 
 /-- Marker type for Minimalist scope theory -/
 structure MinimalismScopeTheory where
@@ -199,9 +185,7 @@ instance : HasAvailableScopes MinimalismScopeTheory MinimalistScopeConfig where
     | .surfaceOnly => ⟨[surfaceReading config], by simp⟩
     | .inverseOnly => ⟨[inverseReading config], by simp⟩
 
--- ============================================================================
 -- Predictions for Phenomena
--- ============================================================================
 
 /-- Build config from a freezing example -/
 def configFromExample (ex : Example) : MinimalistScopeConfig :=
@@ -223,9 +207,7 @@ def predictAvailability (ex : Example) : Availability :=
 def correctlyPredicts (ex : Example) : Bool :=
   predictAvailability ex == ex.observed
 
--- ============================================================================
 -- Theoretical Claims as Theorems
--- ============================================================================
 
 /-- Possessor freezing follows from DP being a phase -/
 theorem possessor_freezes_scope :
@@ -247,9 +229,7 @@ theorem heavy_np_not_grammatically_frozen :
 theorem baseline_is_ambiguous :
     predictsFreezing .none = false := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Minimalist Scope Theory

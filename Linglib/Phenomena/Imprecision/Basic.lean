@@ -103,9 +103,7 @@ import Linglib.Phenomena.Imprecision.InferencePreservation
 
 namespace Phenomena.Imprecision
 
--- ============================================================================
 -- Re-exports for convenient access
--- ============================================================================
 
 -- From Plurals.Homogeneity
 export Phenomena.Plurals.Homogeneity (
@@ -158,9 +156,7 @@ export InferencePreservation (
   inferencePreservation
 )
 
--- ============================================================================
 -- Summary Statistics
--- ============================================================================
 
 /--
 Summary of phenomena covered in this module.
@@ -189,9 +185,7 @@ def phenomenaSummary : ImprecisionPhenomenaSummary :=
   , inferencePreservationExamples := 4  -- 99, 100, conjunction (2)
   }
 
--- ============================================================================
 -- Promissory Notes for Future Work
--- ============================================================================
 
 /-
 ## Future Work: Theoretical Infrastructure

@@ -36,9 +36,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.WhComplement
 
--- ============================================================================
--- PART 1: Complement Question Pairs
--- ============================================================================
 
 /-- A complement question pair: Q and its negated counterpart.
     Key observation: same partition, different required answers.
@@ -105,9 +102,6 @@ def whatDidJohnBuy : ComplementPair :=
 def complementPairs : List ComplementPair :=
   [whoWalks, whichStudentsPassed, whatDidJohnBuy]
 
--- ============================================================================
--- PART 2: Partition Equivalence
--- ============================================================================
 
 /-- Key theoretical claim: complement questions induce the same partition.
 
@@ -126,9 +120,6 @@ theorem answers_differ (cp : ComplementPair)
     (h : cp.positiveAnswer ≠ cp.negativeAnswer) :
     cp.positiveAnswer ≠ cp.negativeAnswer := h
 
--- ============================================================================
--- PART 3: Answer Appropriateness
--- ============================================================================
 
 /-- An answer is appropriate if it names the right set of individuals.
     For positive Q: name the satisfiers.
@@ -190,9 +181,6 @@ def answerAppropriatenessExamples : List AnswerAppropriateness :=
   , whoWalks_neg_incorrect
   ]
 
--- ============================================================================
--- PART 4: Analogy to Polar Question Polarity
--- ============================================================================
 
 /-- The parallel between wh-complement and polar question polarity.
 
@@ -231,9 +219,6 @@ def polarWhParallels : List PolarWhParallel :=
     }
   ]
 
--- ============================================================================
--- PART 5: Theoretical Implications
--- ============================================================================
 
 /-- Key observation: partition semantics alone cannot explain the asymmetry.
 

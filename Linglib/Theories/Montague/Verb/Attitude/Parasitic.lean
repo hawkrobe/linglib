@@ -50,9 +50,6 @@ open Montague.Verb.Attitude.Doxastic
 open Montague.Verb.Attitude.Preferential
 open Montague.Sentence.Presupposition.BeliefEmbedding
 
--- ============================================================================
--- PART 1: Parasitic Dependency Relation
--- ============================================================================
 
 /--
 A non-doxastic attitude is parasitic on a doxastic one when its
@@ -88,9 +85,6 @@ def PreferentialParasiticOn {W E : Type*}
     -- ...then presupposition is satisfied locally for the preferential attitude
     ∀ w' ∈ worlds, p.presup w' = true ∨ dox.access agent w w' = false
 
--- ============================================================================
--- PART 2: Standard Parasitic Relationships
--- ============================================================================
 
 /--
 The list of attitude verbs that are parasitic on belief.
@@ -131,9 +125,6 @@ filtered using X's belief state.
 -/
 def dreamParasiticOnBelief : ParasiticAttitude := .dream
 
--- ============================================================================
--- PART 3: Asymmetry Theorem
--- ============================================================================
 
 /--
 **Core Theorem**: The parasitic dependency is asymmetric.
@@ -175,9 +166,6 @@ def canFilter : FilteringDirection → Bool
 theorem doxastic_first_can_filter : canFilter .doxasticFirst = true := rfl
 theorem parasitic_first_cannot_filter : canFilter .parasiticFirst = false := rfl
 
--- ============================================================================
--- PART 4: Worked Example: Bill/Fred/Hope
--- ============================================================================
 
 /--
 World type for the Bill/Fred example.
@@ -245,9 +233,6 @@ theorem no_belief_no_filter :
   intro w' hw'
   cases w' <;> simp_all [billBeliefAccess, fredWasBeatingPresup]
 
--- ============================================================================
--- PART 5: Local Context Computation for Parasitic Attitudes
--- ============================================================================
 
 /--
 The local context for a parasitic attitude embedded under belief.
@@ -274,9 +259,6 @@ def presupFilteredInParasitic {W E : Type*}
     (worlds : List W) : Bool :=
   worlds.all fun w' => !dox.access agent w w' || presup w'
 
--- ============================================================================
--- PART 6: Connection to BeliefEmbedding Infrastructure
--- ============================================================================
 
 /--
 Convert a parasitic attitude context to a BeliefLocalCtx.
@@ -315,9 +297,6 @@ theorem parasitic_uses_belief_local_context {W E : Type*}
   · intro h w_star hw_star w' hw
     exact h w_star hw_star w' hw.2
 
--- ============================================================================
--- PART 7: Theoretical Summary
--- ============================================================================
 
 /--
 Summary structure capturing the parasitic attitude analysis.
@@ -339,9 +318,7 @@ def standardAnalysis {W E : Type*} (believe : DoxasticPredicate W E) :
   , parasiticAttitudes := [.hope, .fear, .imagine, .dream, .wish, .expect]
   , useDoxasticAccessibility := true }
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

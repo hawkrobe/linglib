@@ -57,9 +57,7 @@ namespace Montague.Verb.Attitude.Preferential
 open Core.Proposition
 open Montague.Verb.Attitude.CDistributivity (IsCDistributive degreeComparison_isCDistributive
                       degreeComparisonProp degreeComparisonQuestion)
--- ============================================================================
 -- Basic Types
--- ============================================================================
 
 /-- Proposition type -/
 abbrev Prop' (W : Type*) := W → Bool
@@ -84,9 +82,7 @@ abbrev PreferenceFunction (W E : Type*) := E → Prop' W → ℚ
 /-- Threshold function: θ(comparison_class) → degree -/
 abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 
--- ============================================================================
 -- Connection to Hamblin Question Semantics
--- ============================================================================
 
 /-!
 ## Grounding in Hamblin Semantics
@@ -159,9 +155,7 @@ Rooth focus alternatives in triggering significance presuppositions.
 def alternativesTriggersSignificance : Prop :=
   True  -- Placeholder for the formal statement; see documentation above
 
--- ============================================================================
 -- List ↔ Hamblin Equivalence (for finite worlds)
--- ============================================================================
 
 /-!
 ## Representation Equivalence
@@ -240,9 +234,7 @@ theorem triviality_representation_independent {W : Type*}
   obtain ⟨p, hp_in_Q, hp_holds⟩ := h_exists_Q
   exact ⟨p, h_subset p hp_in_Q, hp_holds⟩
 
--- ============================================================================
 -- Valence: Positive vs. Negative
--- ============================================================================
 
 /--
 Evaluative valence of a preferential predicate.
@@ -259,9 +251,7 @@ inductive AttitudeValence where
   | negative   -- fear, worry, dread
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
 -- Significance Presuppositions (Kennedy 2007, Uegaki & Sudo 2019)
--- ============================================================================
 
 /-!
 ## Deriving TSP from Degree Semantics
@@ -394,9 +384,7 @@ def significancePresupSatisfied {W E : Type*}
   | .desiredExists => tspSatisfied μ θ agent C  -- ∃p. μ(x,p) > θ
   | .threatIdentified => true  -- Weaker: just requires threat context
 
--- ============================================================================
 -- Preferential Predicate Structure
--- ============================================================================
 
 /--
 A preferential attitude predicate with explicit semantics.
@@ -428,9 +416,7 @@ def PreferentialPredicate.hasTSP {W E : Type*}
     (V : PreferentialPredicate W E) : Bool :=
   Preferential.hasTSP V.valence
 
--- ============================================================================
 -- C-Distributivity: A Provable Property
--- ============================================================================
 
 /--
 C-distributivity is a PROPERTY of a predicate's semantics, not a field.
@@ -451,9 +437,7 @@ def PreferentialPredicate.cDistributive {W E : Type*}
     (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) : Bool :=
   V.questionSemantics x Q C == Q.any (fun p => V.propSemantics x p C)
 
--- ============================================================================
 -- Degree-Comparison Predicates (hope, fear, expect, wish)
--- ============================================================================
 
 /--
 Build a degree-comparison predicate.
@@ -490,9 +474,7 @@ theorem degreeComparisonPredicate_isCDistributive {W E : Type*}
   intro x Q C w
   simp only [mkDegreeComparisonPredicate, List.any_eq_true]
 
--- ============================================================================
 -- Standard Predicates with C-Distributivity Proofs
--- ============================================================================
 
 /-- Hope: degree-comparison, positive valence -/
 def hope {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
@@ -549,9 +531,7 @@ theorem dread_isCDistributive {W E : Type*}
     (dread μ θ).isCDistributive :=
   degreeComparisonPredicate_isCDistributive "dread" .negative μ θ
 
--- ============================================================================
 -- Non-C-Distributive Predicates (worry, qidai)
--- ============================================================================
 
 /--
 Worry has DIFFERENT question semantics involving global uncertainty.
@@ -626,9 +606,7 @@ def qidai {W E : Type*}
       anticipatesResolution x Q && Q.any (fun p => decide (μ x p > θ C))
   }
 
--- ============================================================================
 -- NVP Classification
--- ============================================================================
 
 /--
 The three classes of Non-Veridical Preferential predicates.
@@ -654,9 +632,7 @@ def NVPClass.canTakeQuestion : NVPClass → Bool
   | .class2_cDist_negative => true -- No TSP, so no triviality
   | .class3_cDist_positive => false -- Triviality!
 
--- ============================================================================
 -- Triviality for Class 3
--- ============================================================================
 
 /--
 Class 3 triviality for degree-comparison predicates specifically.
@@ -692,9 +668,7 @@ theorem hope_triviality {W E : Type*}
     tspSatisfied μ θ x C = true :=
   degreeComparison_triviality "hope" .positive μ θ x Q C h_subset h_assert
 
--- ============================================================================
 -- Classification Verification
--- ============================================================================
 
 /-- Hope is Class 3 (anti-rogative) -/
 example : classifyNVP true .positive = .class3_cDist_positive := rfl
@@ -708,9 +682,7 @@ example : classifyNVP false .negative = .class1_nonCDist := rfl
 /-- Qidai is Class 1 (positive but non-C-distributive, takes questions) -/
 example : classifyNVP false .positive = .class1_nonCDist := rfl
 
--- ============================================================================
 -- Veridical Preferential Predicates (U&S 2019)
--- ============================================================================
 
 /-!
 ## Veridical vs Non-Veridical Preferential Predicates
@@ -817,9 +789,7 @@ def PreferentialPredicate.questionSemanticsAt {W E : Type*}
   else
     V.questionSemantics x Q C
 
--- ============================================================================
 -- Veridical Predicate Instances
--- ============================================================================
 
 /-- "be happy": veridical, positive valence -/
 def beHappy {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
@@ -841,9 +811,7 @@ def beSad {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
     PreferentialPredicate W E :=
   mkVeridicalPreferential "be sad" .negative μ θ
 
--- ============================================================================
 -- Veridical Breaks Triviality: The Core Theorem
--- ============================================================================
 
 /--
 **Core Theorem**: Veridicality breaks triviality.
@@ -906,9 +874,7 @@ theorem nonveridical_is_trivial {W E : Type*}
     tspSatisfied μ θ x C = true :=
   hope_triviality μ θ x Q C h_subset h_assert
 
--- ============================================================================
 -- C-Distributivity for Veridical Predicates
--- ============================================================================
 
 /--
 Veridical predicates ARE C-distributive (at a given world).
@@ -944,9 +910,7 @@ theorem beSurprised_isCDistributiveAt {W E : Type*}
     ∃ p ∈ Q, (beSurprised μ θ).propSemanticsAt x p C w = true :=
   veridicalPreferential_isCDistributiveAt "be surprised" .positive μ θ x Q C w
 
--- ============================================================================
 -- The Complete Picture: Why Veridicality Matters
--- ============================================================================
 
 /-!
 ## The Triviality Conditions (U&S 2019)
@@ -988,9 +952,7 @@ Together, these theorems prove that non-veridicality is NECESSARY for
 the triviality derivation that creates anti-rogativity.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Main Results

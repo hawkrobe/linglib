@@ -27,9 +27,6 @@ Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
 
 namespace Phenomena.Imprecision.Numerals
 
--- ============================================================================
--- PART 1: Roundness
--- ============================================================================
 
 /--
 Roundness level of a numeral.
@@ -54,9 +51,6 @@ def classifyRoundness (n : Nat) : RoundnessLevel :=
   else if n % 10 = 0 then .round1
   else .exact
 
--- ============================================================================
--- PART 2: Basic Imprecision Pattern
--- ============================================================================
 
 /--
 Numeral imprecision datum: context-dependent exactness.
@@ -107,9 +101,6 @@ def carsNonRound : NumeralImprecisionDatum :=
   , acceptableInexact := false  -- 99 requires exact reading even here
   }
 
--- ============================================================================
--- PART 3: Round vs Non-Round Asymmetry
--- ============================================================================
 
 /--
 Minimal pair showing round/non-round asymmetry.
@@ -147,9 +138,6 @@ def fiftyVsFortyNine : RoundnessAsymmetryDatum :=
   , nonRoundAcceptable := false
   }
 
--- ============================================================================
--- PART 4: Negation Constraint
--- ============================================================================
 
 /--
 Numerals under negation require polar questions.
@@ -180,9 +168,6 @@ def sheepNegation : NegationConstraintDatum :=
   , negativeOkPolar := true     -- fine as answer to polar question
   }
 
--- ============================================================================
--- PART 5: Game Show Scenario (Homogeneity Test)
--- ============================================================================
 
 /--
 The game show scenario tests for homogeneity gaps.
@@ -231,9 +216,6 @@ def gameShowNegative : GameShowDatum :=
   , notes := "Complementary to positive - one is true depending on reading"
   }
 
--- ============================================================================
--- PART 6: Exactly Modifier
--- ============================================================================
 
 /--
 "Exactly" removes imprecision, parallel to "all" for plurals.
@@ -264,9 +246,6 @@ def exactlyRemovesImprecision : ExactlyModifierDatum :=
   , exactlyAcceptable := false -- "exactly" forces precise reading
   }
 
--- ============================================================================
--- PART 7: Approximately Modifier
--- ============================================================================
 
 /--
 "Approximately" explicitly marks imprecision.
@@ -305,9 +284,6 @@ def approximatelyWithNonRound : ApproximatelyDatum :=
   , notes := "Odd/marked: why approximate to a non-round number?"
   }
 
--- ============================================================================
--- PART 8: Time Expressions
--- ============================================================================
 
 /--
 Time expressions show similar round/non-round patterns.
@@ -347,9 +323,6 @@ def arriveAt258 : TimeExpressionDatum :=
   , acceptable := false  -- non-round requires exact time
   }
 
--- ============================================================================
--- PART 9: Granularity Scales
--- ============================================================================
 
 /--
 Granularity affects which numerals count as "round."
@@ -379,9 +352,6 @@ def granularityExample : GranularityDatum :=
   , roundOnFine := false    -- not divisible by 10
   }
 
--- ============================================================================
--- PART 10: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about numeral imprecision.
@@ -410,9 +380,7 @@ def mainGeneralizations : NumeralImprecisionGeneralizations :=
   , contextSensitive := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def carsExamples : List NumeralImprecisionDatum :=
   [carsExact, carsNonRound]
@@ -423,9 +391,7 @@ def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
 def gameShowExamples : List GameShowDatum :=
   [gameShowPositive, gameShowNegative]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

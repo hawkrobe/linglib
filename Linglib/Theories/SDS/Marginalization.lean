@@ -52,9 +52,6 @@ open SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
 open Theories.Montague.BayesianSemantics
 
--- ============================================================================
--- PART 1: Threshold Semantics Equivalence
--- ============================================================================
 
 /-!
 ## Threshold Semantics Equivalences
@@ -106,9 +103,6 @@ theorem gradable_noun_sds_equiv {E : Type} (gn : GradableNounWithSize E) (x : E)
   · intro ⟨h1, h2⟩
     exact max_le h1 h2
 
--- ============================================================================
--- PART 2: SDS ↔ LU-RSA Bidirectional Translation
--- ============================================================================
 
 /-!
 ## Bidirectional Translation: SDS ↔ LU-RSA
@@ -141,9 +135,7 @@ We construct an SDS system with:
 This shows SDS generalizes LU-RSA by factoring the prior.
 -/
 
--- ============================================================================
 -- Forward: SDS → LU-RSA
--- ============================================================================
 
 /--
 The lexicon prior induced by an SDS system.
@@ -168,9 +160,7 @@ theorem sds_to_lursa_marginal_equiv {α Θ : Type*} [SDSConstraintSystem α Θ]
     SDSConstraintSystem.posteriorProb sys pred := by
   rfl
 
--- ============================================================================
 -- Backward: LU-RSA → SDS
--- ============================================================================
 
 /--
 Convert an LU-RSA lexicon to an SDS parameter.
@@ -232,9 +222,6 @@ theorem sds_trivial_selectional_reduces {U W : Type}
              SDSConstraintSystem.scenarioFactor]
   ring
 
--- ============================================================================
--- PART 3: The Key Difference - Factored Priors
--- ============================================================================
 
 /-!
 ## SDS Extends LU-RSA with Factored Priors
@@ -278,9 +265,6 @@ def sdsConflictImpliesAmbiguity {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq
     (sys : α) : Bool :=
   hasConflict sys
 
--- ============================================================================
--- PART 4: Formal Bidirectional Translation
--- ============================================================================
 
 /-!
 ## Formal Bidirectional Translation Theorems
@@ -360,9 +344,6 @@ theorem lursa_sds_roundtrip_prior (pkg : LURSAPackage) (L : Lexicon pkg.U pkg.W)
   simp only [SDSConstraintSystem.selectionalFactor, SDSConstraintSystem.scenarioFactor]
   ring
 
--- ============================================================================
--- PART 5: Scale Structure Effects
--- ============================================================================
 
 /-!
 ## Scale Structure from SDS Perspective
@@ -399,9 +380,7 @@ theorem negative_scale_vacuous :
   intro x h
   exact h
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: SDS ↔ LU-RSA Correspondence

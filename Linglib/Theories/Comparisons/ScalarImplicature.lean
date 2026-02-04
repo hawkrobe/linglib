@@ -47,9 +47,6 @@ open NeoGricean.ScalarImplicatures
 open RSA.ScalarImplicatures
 open Montague.SemDeriv
 
--- ============================================================================
--- PART 1: Agreement on "some students sleep"
--- ============================================================================
 
 /-
 ## The Core Agreement
@@ -97,9 +94,6 @@ theorem both_derive_not_most :
   · native_decide
   · native_decide
 
--- ============================================================================
--- PART 2: Agreement on "every" (top of scale)
--- ============================================================================
 
 /--
 **Agreement: No implicature at top of scale**
@@ -117,9 +111,6 @@ theorem no_implicature_for_every :
   · native_decide
   · native_decide
 
--- ============================================================================
--- PART 3: Agreement on DE Blocking
--- ============================================================================
 
 /--
 **Agreement on DE Blocking**
@@ -135,9 +126,6 @@ theorem de_blocking_agreement :
     hasImplicature someStudentsSleep_DE_result "all" = false := by
   native_decide
 
--- ============================================================================
--- PART 4: Correspondence Table
--- ============================================================================
 
 /-
 ## Correspondence Between Frameworks

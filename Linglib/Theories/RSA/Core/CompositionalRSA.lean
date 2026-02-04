@@ -60,9 +60,7 @@ namespace RSA.Compositional
 open NeoGricean.Exhaustivity
 open Comparisons.RSAExhExpressivity
 
--- ============================================================================
 -- SECTION 1: Local Alternatives at a Node
--- ============================================================================
 
 /-- A node in a compositional derivation with local alternatives. -/
 structure LocalAltNode (World : Type) (Alt : Type) where
@@ -87,9 +85,7 @@ def LocalAltNode.prejacent_prop {World Alt : Type} (node : LocalAltNode World Al
 def localExhMW {World Alt : Type} (node : LocalAltNode World Alt) : Prop' World :=
   exhMW node.toAltSet node.prejacent_prop
 
--- ============================================================================
 -- SECTION 2: Why Lexical Uncertainty (LU) is Insufficient
--- ============================================================================
 
 /-!
 ## LU-RSA: What It Can and Cannot Do
@@ -252,9 +248,7 @@ The question: Does top-level marginalization over lexica give the
 same results as node-by-node pragmatic reasoning?
 -/
 
--- ============================================================================
 -- SECTION 2.5: Compositional Structure of Uncertainty
--- ============================================================================
 
 /-!
 ### How Multiple Uncertainties Compose
@@ -314,9 +308,7 @@ Does the locus of pragmatic reasoning (global vs. local) matter
 for predicting human behavior in complex embedded contexts?
 -/
 
--- ============================================================================
 -- SECTION 3: Compositional RSA - The Solution
--- ============================================================================
 
 /-!
 ## Compositional RSA: The Right Approach
@@ -367,9 +359,7 @@ def singleStudentNode : LocalAltNode StudentReading QuantAlt where
   prejacent := .some_
   alternatives := [.some_, .all]
 
--- ============================================================================
 -- SECTION 4: Composition with Universal Quantifier
--- ============================================================================
 
 /-- Map aggregate world to per-student readings -/
 def aliceReading : EmbeddedSIWorld → StudentReading
@@ -403,9 +393,7 @@ theorem local_strictly_stronger :
     ∃ w, globalExhMeaning w = true ∧ composedLocalInterp w = false :=
   ⟨.SA, rfl, rfl⟩
 
--- ============================================================================
 -- SECTION 5: The Key Difference: LU vs Compositional
--- ============================================================================
 
 /-!
 ## Summary: Why LU Fails and Compositional Succeeds
@@ -473,9 +461,7 @@ theorem compositional_expressivity_gain :
       luMeaning ⟨.strong, w⟩ = false :=
   ⟨.SA, rfl, rfl, rfl⟩
 
--- ============================================================================
 -- SECTION 5.5: The Fundamental Limitation of Sentence-Level RSA
--- ============================================================================
 
 /-!
 ## Why Standard RSA Cannot Derive Local Readings
@@ -666,9 +652,7 @@ can derive the local reading without stipulating EXH. EXH then emerges as
 the α → ∞ limit of local RSA.
 -/
 
--- ============================================================================
 -- SECTION 6: Global Intentions and "RSA All The Way Down"
--- ============================================================================
 
 /-!
 ## Bergen & Franke (2020): Global Intentions Model
@@ -847,9 +831,7 @@ theorem gi_success_case :
     composedLocalInterp .AA = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
 -- SECTION 7: Algebraic Decomposition
--- ============================================================================
 
 /-!
 ## Algebraic Structure of Compositional RSA

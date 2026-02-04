@@ -28,9 +28,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.VanTielEtAl2021
 
--- ============================================================================
 -- Quantity Words Used in Experiments
--- ============================================================================
 
 /-- The 17 quantity words studied (in order from low to high intersection) -/
 inductive QuantityWord where
@@ -58,9 +56,7 @@ def allQuantityWords : List QuantityWord :=
   [.none_, .hardlyAny, .veryFew, .aFew, .few, .lessThanHalf, .some_, .several,
    .half, .aboutHalf, .many, .moreThanHalf, .aLot, .majority, .most, .almostAll, .all]
 
--- ============================================================================
 -- Monotonicity Classification (Exp. 2)
--- ============================================================================
 
 /-- Monotonicity determines threshold direction in GQT -/
 inductive Monotonicity where
@@ -103,9 +99,7 @@ def decreasingQuantifiers : List QuantityWord :=
 def increasingQuantifiers : List QuantityWord :=
   allQuantityWords.filter (fun q => monotonicity q == .increasing)
 
--- ============================================================================
 -- Model Comparison Results (Table 1)
--- ============================================================================
 
 /-- The four models compared in the paper -/
 inductive Model where
@@ -148,9 +142,7 @@ def notSignificantlyWorse : Model → Bool
   | .gqPrag => true   -- p = 0.07
   | _       => false  -- all others p < 0.02
 
--- ============================================================================
 -- Approximate Number System (Exp. 3)
--- ============================================================================
 
 /-- Weber's fraction estimated from Exp. 3
 
@@ -165,9 +157,7 @@ def totalSetSize : Nat := 432
 /-- Number of possible intersection set sizes (0 through 432) -/
 def numWorldStates : Nat := 433
 
--- ============================================================================
 -- Focal Production Points (from Fig. 1)
--- ============================================================================
 
 /-- Approximate prototype (peak production) for each quantity word.
 
@@ -193,9 +183,7 @@ def approximatePrototype : QuantityWord → Nat
   | .almostAll     => 400
   | .all           => 432
 
--- ============================================================================
 -- Key Empirical Patterns
--- ============================================================================
 
 /-
 ## Pattern 1: Gradience
@@ -233,9 +221,7 @@ def hasFocality : Bool := true
 /-- Multiple quantity words can describe same state -/
 def hasOverlap : Bool := true
 
--- ============================================================================
 -- Competition Without Entailment (Novel Contribution)
--- ============================================================================
 
 /-
 ## Pragmatic Competition Beyond Scalar Implicature
@@ -258,9 +244,7 @@ theorem some_few_no_entailment :
     -- They have opposite monotonicity, so neither entails the other
     := by native_decide
 
--- ============================================================================
 -- Summary Statistics
--- ============================================================================
 
 /-- Number of participants in Exp. 1a (training) -/
 def exp1a_participants : Nat := 600

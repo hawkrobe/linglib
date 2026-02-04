@@ -55,9 +55,6 @@ namespace Phenomena.Presupposition.ProjectiveContent
 open Core.Presupposition
 open Core.Proposition
 
--- ============================================================================
--- PART 1: The Two Distinguishing Properties
--- ============================================================================
 
 /--
 **Strong Contextual Felicity (SCF)**
@@ -103,9 +100,6 @@ inductive ObligatoryLocalEffect where
   | notObligatory -- OLE = no: attributed to speaker
   deriving DecidableEq, Repr
 
--- ============================================================================
--- PART 2: The Four Classes of Projective Content
--- ============================================================================
 
 /--
 The four classes of projective content from Tonhauser et al. (2013).
@@ -161,9 +155,6 @@ theorem class_properties_roundtrip (c : ProjectiveClass) :
     classFromProperties c.scf c.ole = c := by
   cases c <;> rfl
 
--- ============================================================================
--- PART 3: Projective Trigger Types
--- ============================================================================
 
 /--
 Types of projective content triggers, following Tonhauser et al. (2013).
@@ -232,9 +223,6 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
   | .demonstrative_indication => .classD
   | .focus_salience => .classD
 
--- ============================================================================
--- PART 4: Projective Content Structure
--- ============================================================================
 
 /--
 A projective content item, combining a trigger with its content.
@@ -266,9 +254,6 @@ Get the projective class for this item.
 def ProjectiveItem.projectiveClass {W : Type*} (pc : ProjectiveItem W) : ProjectiveClass :=
   pc.trigger.toClass
 
--- ============================================================================
--- PART 5: Projection Behavior by Class
--- ============================================================================
 
 /--
 Projection behavior describes how content behaves under embedding.
@@ -300,9 +285,6 @@ def defaultProjection : ProjectionBehavior :=
   , projectsPastModals := true
   , projectsPastConditionals := true }
 
--- ============================================================================
--- PART 6: At-Issueness and Challengeability
--- ============================================================================
 
 /--
 At-issueness status of content.
@@ -342,9 +324,6 @@ first place.
 def projectiveContentTypicalStatus : AtIssueness × Challengeability :=
   (.notAtIssue, .hwamChallenge)
 
--- ============================================================================
--- PART 7: Belief Embedding Behavior
--- ============================================================================
 
 /--
 Attribution of projective content under belief predicates.
@@ -370,9 +349,6 @@ def ProjectiveClass.beliefAttribution : ProjectiveClass → BeliefAttribution
   | .classC => .attitudeHolder  -- OLE = yes
   | .classD => .speaker         -- OLE = no
 
--- ============================================================================
--- PART 8: Example Trigger Classifications
--- ============================================================================
 
 /--
 "John stopped smoking" example.
@@ -410,9 +386,6 @@ The salience requirement of "too" has:
 -/
 example : ProjectiveTrigger.too_salience.toClass = .classD := rfl
 
--- ============================================================================
--- PART 9: Relationship to Traditional Terminology
--- ============================================================================
 
 /--
 Traditional classification of projective phenomena.
@@ -455,9 +428,6 @@ def ProjectiveTrigger.traditionalCategory : ProjectiveTrigger → TraditionalCat
   | .demonstrative_indication => .presupposition
   | .focus_salience => .presupposition
 
--- ============================================================================
--- PART 10: Cross-Linguistic Evidence (Paraguayan Guaraní)
--- ============================================================================
 
 /--
 The paper uses data from English and Paraguayan Guaraní to establish
@@ -482,9 +452,7 @@ distinction based on SCF and OLE.
 -/
 def taxonomyCrossLinguisticallySupported : Bool := true
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -33,9 +33,6 @@ open Classical
 
 variable {E : Type*} [Nonempty E]
 
--- ============================================================================
--- PART 1: The Export Theorem
--- ============================================================================
 
 /--
 **Theorem (Discourse Referent Export)**
@@ -68,9 +65,6 @@ theorem exists_update_characterization (M : Model E) (x : VarIdx) (φ : Formula)
   ext p
   simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
 
--- ============================================================================
--- PART 2: Cross-Sentential Anaphora
--- ============================================================================
 
 /--
 **Theorem (Cross-Sentential Binding)**
@@ -103,9 +97,6 @@ theorem cross_sentential_witness (M : Model E) (x : VarIdx) (φ ψ : Formula)
   have h := (cross_sentential_binding M x φ ψ s p hp).1
   exact export_witness M x φ s p h
 
--- ============================================================================
--- PART 3: Double Negation - Syntactic vs Semantic
--- ============================================================================
 
 /-!
 ### Double Negation in PLA
@@ -171,9 +162,6 @@ theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :
   simp only [Formula.domain]
   exact Finset.mem_insert_self x _
 
--- ============================================================================
--- PART 4: Conjunction Asymmetry (Non-Commutativity)
--- ============================================================================
 
 /--
 **Lemma**: Sequential update composition membership.
@@ -217,9 +205,6 @@ theorem dyn_eq_static_when_no_drefs (M : Model E) (φ ψ : Formula) (s : InfoSta
   ext p
   simp only [Set.mem_setOf_eq, Formula.update, InfoState.restrict, Formula.sat]
 
--- ============================================================================
--- PART 5: The Scope Difference
--- ============================================================================
 
 /-!
 ### Key Insight
@@ -266,9 +251,6 @@ theorem static_existential_local_scope (x : VarIdx) (φ ψ : Formula) :
     exact Finset.mem_insert_self x _
   · simp only [Formula.domain]
 
--- ============================================================================
--- PART 6: Bathroom Sentences Preview
--- ============================================================================
 
 /--
 **Bathroom Sentences** (Partee)
@@ -311,9 +293,7 @@ theorem bathroom_domain_nonempty :
   left
   exact Finset.mem_insert_self 0 _
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

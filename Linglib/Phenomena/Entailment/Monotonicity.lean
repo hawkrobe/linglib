@@ -27,9 +27,7 @@ namespace Phenomena.Entailment.Monotonicity
 
 open Phenomena
 
--- ============================================================================
 -- Monotonicity Judgment Data Structure
--- ============================================================================
 
 /--
 Type of monotonicity position being tested.
@@ -67,9 +65,7 @@ structure MonotonicityJudgment where
   judgedValid : Bool
   deriving Repr
 
--- ============================================================================
 -- "Every" Monotonicity
--- ============================================================================
 
 /--
 "Every" is DE in restrictor: dogs ⊆ animals, but "every animal" ↛ "every dog"
@@ -117,9 +113,7 @@ def everyScopeUE : MonotonicityJudgment :=
   , judgedValid := true
   }
 
--- ============================================================================
 -- "Some" Monotonicity
--- ============================================================================
 
 /--
 "Some" is UE in restrictor: dogs ⊆ animals
@@ -151,9 +145,7 @@ def someScopeUE : MonotonicityJudgment :=
   , judgedValid := true
   }
 
--- ============================================================================
 -- "No" Monotonicity
--- ============================================================================
 
 /--
 "No" is DE in restrictor: dogs ⊆ animals
@@ -200,9 +192,7 @@ def noScopeNotUE : MonotonicityJudgment :=
   , judgedValid := false
   }
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 /-- All monotonicity judgments -/
 def allMonotonicityJudgments : List MonotonicityJudgment :=
@@ -216,9 +206,7 @@ def allMonotonicityJudgments : List MonotonicityJudgment :=
   , noScopeNotUE
   ]
 
--- ============================================================================
 -- Summary Patterns
--- ============================================================================
 
 /--
 Summary of determiner monotonicity patterns.
@@ -245,9 +233,7 @@ def noPattern : MonotonicityPattern :=
 def allPatterns : List MonotonicityPattern :=
   [everyPattern, somePattern, noPattern]
 
--- ============================================================================
 -- Theorems About the Data
--- ============================================================================
 
 /-- "Every" has the classic DE-restrictor, UE-scope pattern -/
 theorem everyMonotonicity :
@@ -269,9 +255,7 @@ theorem noMonotonicity :
     noScopeNotUE.judgedValid = false := by
   native_decide
 
--- ============================================================================
 -- Connection to Scalar Implicatures
--- ============================================================================
 
 /-
 ## Why Monotonicity Matters for Pragmatics
@@ -292,9 +276,7 @@ Theories/Semantics/Entailment.lean should prove it predicts these patterns.
 Theories/NeoGricean/ScalarImplicatures.lean uses this to predict SI blocking.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

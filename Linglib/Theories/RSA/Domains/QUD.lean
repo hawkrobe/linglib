@@ -46,9 +46,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.QUD
 
--- ============================================================================
 -- Generic Multi-Dimensional Meanings
--- ============================================================================
 
 /--
 A QUD specifies which dimensions of meaning are relevant.
@@ -63,9 +61,7 @@ structure Goal (dims : List String) where
   name : String := ""
   deriving Repr, DecidableEq, BEq
 
--- ============================================================================
 -- Price × Affect Domain (Kao et al. 2014)
--- ============================================================================
 
 /-- Price levels -/
 inductive Price where
@@ -105,9 +101,7 @@ def priceAffectProject (q : PriceAffectQUD) (w1 w2 : PriceAffect) : Bool :=
   | .affect => w1.2 == w2.2         -- same affect
   | .both => w1 == w2               -- exact match
 
--- ============================================================================
 -- Utterances for Price Domain
--- ============================================================================
 
 /-- Price utterances (can be literal or hyperbolic) -/
 inductive PriceUtt where
@@ -151,9 +145,7 @@ def uttArousal (u : PriceUtt) : Affect :=
   | .million => .amazed  -- hyperbolic = high arousal
   | .silent => .neutral
 
--- ============================================================================
 -- Scenario Builders
--- ============================================================================
 
 /--
 A list-based QUD scenario for #eval demonstrations.
@@ -251,9 +243,7 @@ def scenario {U W Q : Type} [BEq U] [BEq W] [BEq Q]
   worldPrior := worldPrior
   qudPrior := qudPrior
 
--- ============================================================================
 -- Binary Dimension Pattern
--- ============================================================================
 
 /--
 Common pattern: two dimensions where QUD selects one.
@@ -285,9 +275,7 @@ def binaryProject {D1 D2 : Type} [BEq D1] [BEq D2]
 def BinaryDomain.allWorlds {D1 D2 : Type} (d : BinaryDomain D1 D2) : List (D1 × D2) :=
   d.dim1Values.flatMap fun x => d.dim2Values.map fun y => (x, y)
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- Hyperbole scenario
 #eval priceAffect.L1_world .million

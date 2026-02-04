@@ -51,9 +51,6 @@ open Montague.Verb.ChangeOfState
 open Montague.Verb.Aspect
 open Phenomena.Presupposition.Diagnostics
 
--- ============================================================================
--- PART 1: Event Phase Structure
--- ============================================================================
 
 variable {W : Type*}
 
@@ -79,9 +76,6 @@ This is the ontological constraint: you can't stop smoking unless you were smoki
 def EventPhase.wellFormed (e : EventPhase W) : Prop :=
   ∀ w, e.eventOccurs w → e.precondition w
 
--- ============================================================================
--- PART 2: CoS Verbs as Event Phases
--- ============================================================================
 
 /-- "Stop P" as an event phase -/
 def stopAsEventPhase (P : W → Bool) : EventPhase W where
@@ -101,9 +95,6 @@ def continueAsEventPhase (P : W → Bool) : EventPhase W where
   eventOccurs := P
   consequence := P
 
--- ============================================================================
--- PART 3: Grounding to CoS Semantics
--- ============================================================================
 
 /--
 **GROUNDING**: Event phase precondition = CoS presupposition.
@@ -129,9 +120,6 @@ theorem start_consequence_is_assertion (P : W → Bool) :
 theorem continue_consequence_is_assertion (P : W → Bool) :
     (continueAsEventPhase P).consequence = resultStateAssertion .continuation P := rfl
 
--- ============================================================================
--- PART 4: Event Reference and Aboutness (Roberts & Simons 2024)
--- ============================================================================
 
 /-
 ## The Aboutness Mechanism
@@ -209,9 +197,7 @@ Construct a negative sentence about an event type.
 def negative (e : EventPhase W) : EventSentence W :=
   { eventType := e, polarity := .negated }
 
--- ============================================================================
 -- PART 4a: The Key Theorems
--- ============================================================================
 
 /--
 **THEOREM**: Affirmative and negative sentences have the SAME aboutness.
@@ -251,9 +237,7 @@ what we're talking ABOUT, not what we're SAYING about it.
 theorem presupposition_independent_of_assertion (s : EventSentence W) :
     s.presupposition = s.eventType.precondition := rfl
 
--- ============================================================================
 -- PART 4b: Contrast with Assertion-Only View
--- ============================================================================
 
 /-
 ## The Assertion-Only View (for contrast)
@@ -301,9 +285,7 @@ theorem assertionOnly_no_presupposition (P : W → Bool) (w : W)
     (assertionOnly_notStop P).truthConditions w = true := by
   simp [assertionOnly_notStop]
 
--- ============================================================================
 -- PART 4c: The Aboutness View Predicts Projection
--- ============================================================================
 
 /--
 Under the aboutness view, BOTH sentences refer to the stopping event.
@@ -329,9 +311,6 @@ and the assertion-only view cannot.
 theorem stop_presupposes_P (P : W → Bool) (pol : Polarity) :
     ({ eventType := stopAsEventPhase P, polarity := pol } : EventSentence W).presupposition = P := rfl
 
--- ============================================================================
--- PART 5: Theoretical Predictions (Revised)
--- ============================================================================
 
 /--
 Consequential event: the event entails its consequence when it occurs.
@@ -393,9 +372,6 @@ theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
     (negative e).assertion w = !(affirmative e).assertion w := by
   constructor <;> rfl
 
--- ============================================================================
--- PART 5: Deriving the Diagnostic Pattern
--- ============================================================================
 
 /-
 ## Why "Allows For" Identifies Preconditions
@@ -438,9 +414,6 @@ def theoryPredictsPattern : Bool :=
   stopPattern.resultFailsAllowsFor == true &&
   resultStateProjection.projectsThroughNegation == false
 
--- ============================================================================
--- PART 6: Telicity (Integrated with Aspect Module)
--- ============================================================================
 
 /--
 Get the telicity of an event phase.
@@ -505,9 +478,6 @@ theorem start_is_telic (P : W → Bool) (w : W) (hNotP : P w = false) :
     (startAsEventPhase P).precondition w ≠ (startAsEventPhase P).consequence w := by
   simp [startAsEventPhase, hNotP]
 
--- ============================================================================
--- PART 7: Connection to Vendler Classes
--- ============================================================================
 
 /--
 CoS verbs have specific Vendler classifications based on their telicity
@@ -544,9 +514,7 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
       | .continuation => .atelic := by
   cases t <;> rfl
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-
 ## What This Module Provides

@@ -28,9 +28,7 @@ namespace Phenomena.Conditionals
 
 open Phenomena
 
--- ============================================================================
 -- Conditional Perfection
--- ============================================================================
 
 /--
 **Conditional Perfection** (Geis & Zwicky 1971)
@@ -78,9 +76,7 @@ def disjunctiveAntecedent : ConditionalPerfectionDatum := {
   conditions := "Disjunctive antecedent - perfection applies to the disjunction"
 }
 
--- ============================================================================
 -- Missing-Link Infelicity
--- ============================================================================
 
 /--
 **Missing-Link Infelicity**
@@ -130,9 +126,7 @@ def rainUmbrellaExample : MissingLinkDatum := {
   explanation := "Clear causal link: rain causes wet streets"
 }
 
--- ============================================================================
 -- Douven's Puzzle
--- ============================================================================
 
 /--
 **Douven's Puzzle** (Douven 2008, discussed in Grusdt et al. 2022)
@@ -183,9 +177,7 @@ def baseRateCase : DouvenPuzzleDatum := {
   sentence := "If you use sunscreen, you won't get sunburned"
 }
 
--- ============================================================================
 -- Indicative vs Subjunctive Conditionals
--- ============================================================================
 
 /--
 **Indicative/Subjunctive Split**
@@ -229,9 +221,7 @@ def weatherExample : IndicativeSubjunctivePair := {
   subjunctiveJudgment := "Hypothetical (assuming it probably won't rain)"
 }
 
--- ============================================================================
 -- Conditional Questions
--- ============================================================================
 
 /--
 Conditionals in questions exhibit interesting behavior.
@@ -257,9 +247,7 @@ def conditionalQuestionExample : ConditionalQuestionDatum := {
   notes := "The antecedent is presupposed as a possibility being considered"
 }
 
--- ============================================================================
 -- Biscuit Conditionals
--- ============================================================================
 
 /--
 **Biscuit Conditionals** (Austin 1956)
@@ -294,9 +282,7 @@ def anotherBiscuit : BiscuitConditionalDatum := {
   consequentDepends := false
 }
 
--- ============================================================================
 -- Summary Statistics
--- ============================================================================
 
 /-- Key empirical generalizations about conditionals -/
 structure ConditionalGeneralizations where

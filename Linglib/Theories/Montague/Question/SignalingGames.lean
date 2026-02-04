@@ -47,9 +47,7 @@ The QUD determines which partition equilibrium is played.
 
 namespace Montague.Question
 
--- ============================================================================
 -- Signaling Game Structure
--- ============================================================================
 
 /-- A signaling game with types T, messages M, and actions A.
 
@@ -80,9 +78,7 @@ def isZeroSum (g : SignalingGame T M A) : Prop :=
 
 end SignalingGame
 
--- ============================================================================
 -- Strategies
--- ============================================================================
 
 /-- A sender strategy maps types to messages -/
 structure SenderStrategy (T M : Type*) where
@@ -97,9 +93,7 @@ structure StrategyProfile (T M A : Type*) where
   sender : SenderStrategy T M
   receiver : ReceiverStrategy M A
 
--- ============================================================================
 -- Best Responses
--- ============================================================================
 
 /-- Best response action for receiver given beliefs about type -/
 def bestResponseAction {T M A : Type*} [DecidableEq A]
@@ -131,9 +125,7 @@ def isBestResponse {T M A : Type*} [DecidableEq A] [DecidableEq M]
   | some b => a == b
   | none => false
 
--- ============================================================================
 -- Equilibrium
--- ============================================================================
 
 /-- A strategy profile is a Nash equilibrium if neither player can profitably deviate.
 
@@ -176,9 +168,7 @@ def isPoolingEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M]
   | [] => true
   | t :: ts => ts.all fun t' => profile.sender.send t == profile.sender.send t'
 
--- ============================================================================
 -- Credibility Conditions
--- ============================================================================
 
 /-!
 ## Credibility: When Can Messages Be Trusted?
@@ -240,9 +230,7 @@ def credible {T M A : Type*} [DecidableEq A] [DecidableEq T]
     (t : T) : Bool :=
   selfCommitting g types actions t && selfSignaling g types actions t
 
--- ============================================================================
 -- Conventional vs Speaker's Meaning
--- ============================================================================
 
 /-!
 ## Grice's Distinction in Game-Theoretic Terms
@@ -278,9 +266,7 @@ def isTruthful {T M : Type*} [DecidableEq M]
     (types : List T) : Bool :=
   types.all fun t => conv (S.send t) t
 
--- ============================================================================
 -- Crawford-Sobel: Partition Equilibria
--- ============================================================================
 
 /-!
 ## Crawford & Sobel (1982): How Much Communication?
@@ -331,9 +317,7 @@ theorem cooperative_has_separating {T M A : Type*} (g : SignalingGame T M A)
     True := by -- Placeholder for existence of separating equilibrium
   trivial
 
--- ============================================================================
 -- Connection to RSA
--- ============================================================================
 
 /-!
 ## RSA as a Signaling Game

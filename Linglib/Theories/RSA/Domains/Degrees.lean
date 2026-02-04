@@ -57,9 +57,7 @@ namespace RSA.Domains.Degrees
 
 open Montague.Domain.Degrees
 
--- ============================================================================
 -- Utterances
--- ============================================================================
 
 /-- Standard gradable adjective utterances -/
 inductive AdjUtt where
@@ -75,9 +73,7 @@ def adjMeaning {max : Nat} (u : AdjUtt) (d : Degree max) (t : Threshold max) : B
   | .negative => negativeMeaning d t
   | .silent => true
 
--- ============================================================================
 -- Joint World: Degree x Threshold
--- ============================================================================
 
 /--
 Joint world state for vagueness: both degree and threshold.
@@ -94,9 +90,7 @@ def allDegreeWorlds (max : Nat) (h : 0 < max := by omega) : List (DegreeWorld ma
 
 instance {n : Nat} (h : 0 < n := by omega) : BEq (DegreeWorld n) := instBEqProd
 
--- ============================================================================
 -- Scenario Builders
--- ============================================================================
 
 /--
 Tall/short scenario with threshold inference.
@@ -129,9 +123,7 @@ def withDegreePrior (max : Nat) (h : 0 < max := by omega)
     (fun utt (d, t) => boolToRat (adjMeaning utt d t))
     worldPrior 1 (fun _ => 0) u
 
--- ============================================================================
 -- Graded (Non-Boolean) Semantics
--- ============================================================================
 
 /--
 Graded meaning: returns a value in [0, 1] instead of Bool.
@@ -156,9 +148,7 @@ def sigmoidMeaning {max : Nat} (d : Degree max) (t : Threshold max) (_sharpness 
   else if diff < -2 then 0
   else (diff + 3) / 6  -- Linear approximation in transition zone
 
--- ============================================================================
 -- Comparison Class Pattern
--- ============================================================================
 
 /--
 Comparison class: the relevant population for determining threshold.
@@ -173,9 +163,7 @@ structure ComparisonClass (max : Nat) where
   /-- Typical threshold for this class -/
   typicalThreshold : Threshold max
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- Height domain 0..10
 #eval tallShort 10 (by omega) .positive
@@ -185,9 +173,7 @@ structure ComparisonClass (max : Nat) where
 #eval positiveMeaning (Degree.ofNat 10 8) (⟨⟨5, by omega⟩⟩ : Threshold 10)  -- true
 #eval positiveMeaning (Degree.ofNat 10 3) (⟨⟨5, by omega⟩⟩ : Threshold 10)  -- false
 
--- ============================================================================
 -- Domain: Prices (for Kao et al. 2014 hyperbole)
--- ============================================================================
 
 namespace Price
 
@@ -232,9 +218,7 @@ def runL1 (u : Utterance) : List (World × ℚ) :=
 
 end Price
 
--- ============================================================================
 -- Domain: Heights
--- ============================================================================
 
 namespace Height
 
@@ -265,9 +249,7 @@ def meaning (u : Utterance) (w : World) : Bool :=
 
 end Height
 
--- ============================================================================
 -- Domain: Temperature
--- ============================================================================
 
 namespace Temperature
 
@@ -281,9 +263,7 @@ instance : HasDegree World where
 
 end Temperature
 
--- ============================================================================
 -- Grounding Theorems
--- ============================================================================
 
 /-- Price meaning uses the HasDegree instance -/
 theorem price_uses_degree (u : Price.Utterance) (w : Price.World) :
@@ -296,9 +276,7 @@ theorem million_never_literal :
   simp [Price.standardWorlds] at hw
   rcases hw with rfl | rfl | rfl <;> native_decide
 
--- ============================================================================
 -- RSA Convenience (Prices)
--- ============================================================================
 
 def Price.l0 (u : Price.Utterance) : List (Price.World × ℚ) :=
   RSA.Eval.basicL0 Price.standardUtterances Price.standardWorlds

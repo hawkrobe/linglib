@@ -32,9 +32,7 @@ namespace Phenomena.Gradability.Adjectives
 
 open Phenomena
 
--- ============================================================================
 -- Data Structures
--- ============================================================================
 
 /--
 An adjective entailment judgment: does the premise entail the conclusion?
@@ -80,9 +78,7 @@ structure FelicityJudgment where
   significance : String
   deriving Repr
 
--- ============================================================================
 -- INTERSECTIVE ADJECTIVES ("gray", "French", "carnivorous")
--- ============================================================================
 
 /-
 Key property: ⟦A N⟧ = ⟦A⟧ ∩ ⟦N⟧
@@ -144,9 +140,7 @@ def intersective_context_independence : ConjunctionInference :=
   , pattern := "same 'gray' extension in both contexts"
   }
 
--- ============================================================================
 -- SUBSECTIVE NON-INTERSECTIVE ADJECTIVES ("skillful", "good", "typical")
--- ============================================================================
 
 /-
 Key property: ⟦A N⟧ ⊆ ⟦N⟧, but ⟦A N⟧ ≠ ⟦A⟧ ∩ ⟦N⟧
@@ -208,9 +202,7 @@ def typical_nonintersective : ConjunctionInference :=
   , pattern := "A N₁ ∧ N₂ ⊬ A N₂ (typicality is relative)"
   }
 
--- ============================================================================
 -- NON-SUBSECTIVE / MODAL ADJECTIVES ("alleged", "potential", "putative")
--- ============================================================================
 
 /-
 Key property: NO entailment either way.
@@ -254,9 +246,7 @@ def putativeFather_not_entails_father : AdjectiveEntailment :=
   , pattern := "A N ⊬ N (putative doesn't entail actual)"
   }
 
--- ============================================================================
 -- "PRIVATIVE" ADJECTIVES ("fake", "counterfeit", "fictitious")
--- ============================================================================
 
 /-
 Traditional view: ⟦A N⟧ ∩ ⟦N⟧ = ∅
@@ -309,9 +299,7 @@ def fictitiousCharacter : AdjectiveEntailment :=
   , pattern := "Subsective within coerced domain of characters"
   }
 
--- ============================================================================
 -- Collected Test Cases
--- ============================================================================
 
 /-- All intersective adjective entailments -/
 def intersectiveEntailments : List AdjectiveEntailment :=
@@ -355,9 +343,7 @@ def privativeJudgments : List FelicityJudgment :=
   , realOrFake_requires_coercion
   ]
 
--- ============================================================================
 -- Theorems About the Data
--- ============================================================================
 
 /-- Intersective adjectives have bidirectional entailment -/
 theorem intersective_bidirectional :
@@ -391,9 +377,7 @@ theorem partee_coercion_evidence :
     realOrFake_felicitous.felicitous = true := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

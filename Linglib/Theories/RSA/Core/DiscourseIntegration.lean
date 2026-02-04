@@ -49,9 +49,6 @@ namespace RSA.DiscourseIntegration
 open Theories.DynamicSemantics.State
 open Core.Proposition
 
--- ============================================================================
--- PART 1: Basic Credence from Discourse State
--- ============================================================================
 
 /--
 Credence function from a full discourse state.
@@ -71,9 +68,6 @@ This is what S&T (2025) call the speaker's "private assumptions."
 def speakerDcSCredence {W : Type*} (ds : DiscourseState W) (w : W) : ℚ :=
   _root_.boolToRat (ds.speakerCompatible w)
 
--- ============================================================================
--- PART 2: Credence for dcS Inference (S&T Style)
--- ============================================================================
 
 /--
 For models with uncertainty over dcS (Scontras & Tonhauser style):
@@ -107,9 +101,6 @@ def dcSCredenceBool {A W : Type*}
     (a : A) (w : W) : Bool :=
   (dcSOptions a).all (fun p => p w)
 
--- ============================================================================
--- PART 3: Credence for CG Inference (Warstadt/Qing Style)
--- ============================================================================
 
 /--
 For models with uncertainty over cg (Warstadt/Qing style):
@@ -139,9 +130,6 @@ def cgCredenceBool {C W : Type*}
     (c : C) (w : W) : Bool :=
   (cgOptions c).all (fun p => p w)
 
--- ============================================================================
--- PART 4: Unified Interface
--- ============================================================================
 
 /--
 Unified credence function that works with any discourse component.
@@ -154,9 +142,6 @@ def discourseComponentCredence {D W : Type*}
     (d : D) (w : W) : ℚ :=
   _root_.boolToRat ((componentOptions d).all (fun p => p w))
 
--- ============================================================================
--- PART 5: Example Patterns
--- ============================================================================
 
 /-!
 ## Usage Patterns
@@ -209,9 +194,6 @@ def cred := discourseCredence ds
 ```
 -/
 
--- ============================================================================
--- PART 6: Theorems Connecting to Existing Models
--- ============================================================================
 
 /-!
 ## Theoretical Connection
@@ -263,9 +245,7 @@ theorem cg_matches_generic {C W : Type*}
     cgCredence options c w = discourseComponentCredence options c w := by
   simp only [cgCredence, discourseComponentCredence]
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

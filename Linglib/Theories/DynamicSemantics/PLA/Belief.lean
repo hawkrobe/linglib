@@ -43,9 +43,6 @@ open Classical
 
 variable {E : Type*} [Nonempty E]
 
--- ============================================================================
--- PART 1: Belief Accessibility
--- ============================================================================
 
 /--
 **Doxastic Accessibility Relation**: What worlds/possibilities agent a
@@ -82,9 +79,6 @@ This is the minimal requirement for belief: consistent belief states.
 def DoxAccessibility.isSerial (R : DoxAccessibility E) : Prop :=
   ∀ a p, ∃ q, R a p q
 
--- ============================================================================
--- PART 2: Belief Operator
--- ============================================================================
 
 /--
 **Belief Operator**: Agent a believes φ.
@@ -106,9 +100,6 @@ def Formula.believeTerm (R : DoxAccessibility E) (M : Model E) (t : Term) (φ : 
     let a := t.eval p.1 p.2
     ∀ q ∈ doxAccessible R a p, φ.sat M q.1 q.2 }
 
--- ============================================================================
--- PART 3: Belief Properties
--- ============================================================================
 
 /--
 **Belief is Eliminative**: Filtering to believers never adds possibilities.
@@ -148,9 +139,6 @@ theorem believe_conj (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : For
   · intro ⟨⟨hp, hφ⟩, ⟨_, hψ⟩⟩
     exact ⟨hp, fun q hq => ⟨hφ q hq, hψ q hq⟩⟩
 
--- ============================================================================
--- PART 4: Conceptual Covers
--- ============================================================================
 
 /--
 A **Conceptual Cover** is a set of concepts (ways of identifying entities).
@@ -210,9 +198,6 @@ theorem nameCover_rigid (dom : Set E) :
   obtain ⟨e, _, rfl⟩ := hc
   exact const_is_rigid e
 
--- ============================================================================
--- PART 5: De Re and De Dicto
--- ============================================================================
 
 /--
 **De Re Belief**: Belief about a specific individual, identified rigidly.
@@ -264,9 +249,6 @@ theorem deRe_implies_deDicto_rigid (R : DoxAccessibility E) (M : Model E)
 -- The winner in John's belief worlds might not be the actual winner.
 -- This is a semantic fact that requires a counterexample model.
 
--- ============================================================================
--- PART 6: Substitutivity and Quine's Puzzle
--- ============================================================================
 
 /--
 **Substitutivity of Identicals (De Re)**: If a = b and you believe P(a),
@@ -357,9 +339,6 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
 -- Proving this requires constructing a model where two concepts coincide at p
 -- but diverge in some belief-accessible q.
 
--- ============================================================================
--- PART 7: Observation 17 - Quantifier Import/Export (Dekker §4.2, p.88)
--- ============================================================================
 
 /-!
 ## Observation 17: Quantifier Scope and Belief
@@ -454,9 +433,6 @@ theorem obs17_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
   simp only [believeExistsNarrow, believeExistsWide, Set.mem_setOf_eq] at hp ⊢
   exact ⟨hp.1, hwit⟩
 
--- ============================================================================
--- PART 8: Observation 18 - Knowing Who (Dekker §4.2, p.91)
--- ============================================================================
 
 /-!
 ## Observation 18: Knowing Who is Cover-Relative
@@ -567,9 +543,6 @@ theorem knowsWho_cover_relative (R : DoxAccessibility E) (agent venus : E)
     True := by
   trivial
 
--- ============================================================================
--- PART 9: Belief with Covers (Generalized)
--- ============================================================================
 
 /--
 **Belief relative to a cover**: The agent's beliefs are interpreted
@@ -604,9 +577,6 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
     simp only [Concept.const]
     exact hall q hq
 
--- ============================================================================
--- PART 10: Acquaintance and Knowledge
--- ============================================================================
 
 /--
 **Acquaintance Requirement** (Russell): De re belief requires acquaintance.
@@ -628,9 +598,6 @@ def believeDeReWithAcquaintance (R : DoxAccessibility E) (M : Model E)
     -- Belief content: predicate holds in all belief worlds
     ∀ q ∈ doxAccessible R agent p, M.interp pred [individual] }
 
--- ============================================================================
--- PART 11: Knowledge vs Belief
--- ============================================================================
 
 /--
 **Knowledge**: Factive belief (what you know is true).
@@ -664,9 +631,7 @@ theorem know_factive (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formul
   simp only [Formula.know, Set.mem_setOf_eq] at hp
   exact hp.2.1
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

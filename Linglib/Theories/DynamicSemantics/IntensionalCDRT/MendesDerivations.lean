@@ -34,9 +34,6 @@ open Montague.Core.Time
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
 
--- ============================================================================
--- PART 1: Lexical Types (CDRT-style)
--- ============================================================================
 
 /--
 Basic CDRT types following Muskens (1996) and Mendes (2025).
@@ -67,9 +64,6 @@ def sentType : CDRTType := .s ⇒ .c ⇒ .c
 /-- NP type: (entity → context → context) → context → context -/
 def npType : CDRTType := (.e ⇒ .c ⇒ .c) ⇒ .c ⇒ .c
 
--- ============================================================================
--- PART 2: Lexical Entries
--- ============================================================================
 
 variable {W Time E : Type*} [LE Time] [LT Time]
 variable (history : WorldHistory W Time)
@@ -162,9 +156,6 @@ def lexIf
   -- Dynamic interpretation: consequent holds wherever antecedent holds
   consequent (antecedent c)
 
--- ============================================================================
--- PART 3: Step-by-Step Derivation
--- ============================================================================
 
 /--
 **STEP 1: Parse tree**
@@ -237,9 +228,6 @@ def deriveFullSentence
   let consequent := deriveConsequent maria answerRel sfVar
   lexIf antecedent consequent c
 
--- ============================================================================
--- PART 4: Matching Paper Formulas (61)-(63)
--- ============================================================================
 
 /--
 **Formula (61): Antecedent LF**
@@ -285,9 +273,6 @@ def formula63
     (c : SitContext W Time E) : SitContext W Time E :=
   deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c
 
--- ============================================================================
--- PART 5: Verification Theorems
--- ============================================================================
 
 /--
 **Theorem: Derivation introduces situation in historical base**
@@ -379,9 +364,6 @@ theorem derivation_conditional_holds
   -- h = ⟨h_ind, h_answer⟩ where h_answer : answerRel maria (gs.1.sit sfVar)
   exact h.2
 
--- ============================================================================
--- PART 6: Table 3 Patterns (Temporal Reference Summary)
--- ============================================================================
 
 /--
 **Table 3 from Mendes (2025): Temporal reference patterns**
@@ -410,9 +392,6 @@ def sfEnablesFutureReference (constr : Construction) : Prop :=
   | .complement => True      -- Variable (context-dependent)
   | .temporalClause => True  -- "Quando estiver..." → future
 
--- ============================================================================
--- PART 7: Alternative Derivations (Counterfactual, etc.)
--- ============================================================================
 
 /--
 **Counterfactual conditional** (for comparison)
@@ -457,9 +436,7 @@ theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
     exact derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c gs h
   · trivial
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

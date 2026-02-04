@@ -33,9 +33,7 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Anaphora.DonkeyAnaphora
 
--- ============================================================================
 -- Part 1: Basic Donkey Sentence Data
--- ============================================================================
 
 /-- A donkey anaphora datum records a sentence with its readings -/
 structure DonkeyDatum where
@@ -95,9 +93,7 @@ def mostDonkey : DonkeyDatum := {
   source := "Kadmon (1987)"
 }
 
--- ============================================================================
 -- Part 2: Weak vs Strong Readings
--- ============================================================================
 
 /-- Data on weak vs strong reading availability -/
 structure WeakStrongDatum where
@@ -139,9 +135,7 @@ def onlyStrong : WeakStrongDatum := {
   source := "Kanazawa (1994)"
 }
 
--- ============================================================================
 -- Part 3: Related Anaphora Puzzles
--- ============================================================================
 
 /-- Bathroom sentences (Partee) -/
 def bathroomSentence : DonkeyDatum := {
@@ -173,9 +167,7 @@ def sagePlant : DonkeyDatum := {
   source := "Evans (1977)"
 }
 
--- ============================================================================
 -- Part 4: Cross-sentential Donkey Anaphora
--- ============================================================================
 
 /-- Discourse-level donkey anaphora -/
 structure DiscourseDonkeyDatum where
@@ -207,9 +199,7 @@ def indefinitePersists : DiscourseDonkeyDatum := {
   source := "Heim (1982)"
 }
 
--- ============================================================================
 -- Part 5: Proportion Problem Data
--- ============================================================================
 
 /-- The proportion problem: what is being counted? -/
 structure ProportionDatum where
@@ -232,9 +222,7 @@ def proportionProblem : ProportionDatum := {
   source := "Kadmon (1987)"
 }
 
--- ============================================================================
 -- Part 6: Collected Data
--- ============================================================================
 
 /-- All basic donkey data -/
 def donkeyData : List DonkeyDatum := [
@@ -260,9 +248,7 @@ def discourseDonkeyData : List DiscourseDonkeyDatum := [
   indefinitePersists
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

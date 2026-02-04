@@ -14,9 +14,7 @@ import Linglib.Core.Proposition
 
 namespace Montague.Sentence.Entailment
 
--- ============================================================================
 -- Finite World Semantics
--- ============================================================================
 
 /-- A small finite set of worlds for decidable reasoning -/
 inductive World where
@@ -29,17 +27,13 @@ def allWorlds : List World := [.w0, .w1, .w2, .w3]
     This is `Core.Proposition.BProp World` specialized to our 4-world type. -/
 abbrev Prop' := Core.Proposition.BProp World
 
--- ============================================================================
 -- Entailment (Decidable Version)
--- ============================================================================
 
 /-- Semantic entailment: p entails q iff q is true whenever p is true -/
 def entails (p q : Prop') : Bool :=
   Core.Proposition.Decidable.entails World allWorlds p q
 
--- ============================================================================
 -- Propositional Operations (inherit from Core.Proposition.Decidable)
--- ============================================================================
 
 /-- Negation: ¬p w = !p w. Inherits DE property from Core.Proposition. -/
 def pnot (p : Prop') : Prop' := Core.Proposition.Decidable.pnot World p
@@ -57,9 +51,7 @@ theorem pnot_reverses_entailment (p q : Prop')
     ∀ w, pnot q w = true → pnot p w = true :=
   Core.Proposition.Decidable.pnot_reverses_entailment p q h
 
--- ============================================================================
 -- Concrete Test Propositions
--- ============================================================================
 
 /-- Proposition true only in w0 -/
 def p0 : Prop' := λ w => w == .w0
@@ -83,9 +75,7 @@ def pNone : Prop' := λ _ => false
 def testCases : List (Prop' × Prop') :=
   [(p0, p01), (p01, p012), (p012, pAll), (p0, pAll)]
 
--- ============================================================================
 -- Basic Entailment Theorems
--- ============================================================================
 
 /-- p0 entails p01 -/
 theorem p0_entails_p01 : entails p0 p01 = true := by native_decide

@@ -40,9 +40,6 @@ open Montague.Core.Polarity
 
 variable {W : Type*}
 
--- ============================================================================
--- PART 1: Presupposition Projection in Polarized Contexts
--- ============================================================================
 
 /--
 The projected presupposition at a given polarity context.
@@ -65,9 +62,6 @@ A presupposition is satisfied at world w if it holds at w.
 def presupSatisfiedAt (p : PrProp W) (w : W) : Prop :=
   p.presup w = true
 
--- ============================================================================
--- PART 2: Filtering and Polarity
--- ============================================================================
 
 /--
 **Key Theorem**: Filtering is independent of assertion polarity.
@@ -90,9 +84,6 @@ theorem neg_presup_polarity_independent (p : PrProp W) :
     presupProjectsAt .upward (PrProp.neg p) =
     presupProjectsAt .downward (PrProp.neg p) := rfl
 
--- ============================================================================
--- PART 3: Connection to GroundedPolarity
--- ============================================================================
 
 /--
 A presupposition projection context tracks both:
@@ -145,9 +136,6 @@ def negationPresupContext : PresupContext W :=
   , accumulatedPresup := fun _ => true
   }
 
--- ============================================================================
--- PART 4: Presupposition Under Quantifiers
--- ============================================================================
 
 /--
 Presupposition projection behavior varies by quantifier.
@@ -164,9 +152,6 @@ inductive QuantifierProjection where
   | none        -- no projection (presupposition failure)
   deriving DecidableEq, Repr
 
--- ============================================================================
--- PART 5: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

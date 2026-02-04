@@ -36,9 +36,7 @@ namespace Theories.DynamicSemantics.UpdateSemantics
 
 open Classical
 
--- ============================================================================
 -- Core Types
--- ============================================================================
 
 /--
 Update Semantics state: a set of possible worlds.
@@ -56,9 +54,7 @@ Update function: how a sentence modifies a state.
 -/
 def Update (W : Type*) := State W → State W
 
--- ============================================================================
 -- Basic Updates
--- ============================================================================
 
 /--
 Propositional update: eliminate worlds where φ fails.
@@ -87,9 +83,7 @@ If φ is definitely false (no worlds survive), then ¬φ passes (returns s).
 def Update.neg {W : Type*} (φ : Update W) : Update W :=
   fun s => if (φ s).Nonempty then ∅ else s
 
--- ============================================================================
 -- Epistemic Modals
--- ============================================================================
 
 /--
 Epistemic "might": compatibility test.
@@ -111,9 +105,7 @@ Epistemic "must": universal test.
 def Update.must {W : Type*} (φ : Update W) : Update W :=
   fun s => if φ s = s then s else ∅
 
--- ============================================================================
 -- Key Properties
--- ============================================================================
 
 /--
 Might is a TEST: it doesn't change the state (if it passes).
@@ -131,9 +123,7 @@ Order matters for might.
 -/
 theorem might_order_matters : True := trivial  -- TODO: Formalize
 
--- ============================================================================
 -- Support and Acceptance
--- ============================================================================
 
 /--
 State s supports φ iff updating with φ doesn't change s.
@@ -151,9 +141,7 @@ s accepts φ iff ⟦φ⟧(s) ≠ ∅
 def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Will Provide

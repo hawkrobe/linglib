@@ -12,9 +12,7 @@ Theory-neutral types for question-answer phenomena.
 
 namespace Phenomena.Questions
 
--- ============================================================================
 -- Question Types
--- ============================================================================
 
 /-- Classification of question types -/
 inductive QuestionType where
@@ -40,9 +38,7 @@ inductive AnswerForm where
   | taciturn        -- Minimal: "Yes" / "No"
   deriving DecidableEq, Repr
 
--- ============================================================================
 -- Basic Question-Answer Datum
--- ============================================================================
 
 /-- A question-answer pair with metadata -/
 structure QAPair where
@@ -62,9 +58,7 @@ structure QAPair where
   source : String := ""
   deriving Repr
 
--- ============================================================================
 -- Term Types (G&S 1984)
--- ============================================================================
 
 /-- Term types determine exhaustive interpretation.
     Source: G&S 1984, Chapter IV.

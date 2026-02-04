@@ -29,9 +29,6 @@ The `no` vs `not every` asymmetry is particularly important.
 
 namespace Phenomena.Imprecision.Projection
 
--- ============================================================================
--- PART 1: Embedding Operators
--- ============================================================================
 
 /--
 Types of embedding operators for projection.
@@ -62,9 +59,6 @@ def monotonicity : EmbeddingOperator → Monotonicity
   | .notEvery => .downward  -- but with implicature making it non-monotonic
   | .atLeastOne => .upward
 
--- ============================================================================
--- PART 2: Projection Pattern Data
--- ============================================================================
 
 /--
 Projection pattern for a plural under an embedding operator.
@@ -86,9 +80,6 @@ structure ProjectionDatum where
   nonMaximalAvailable : Bool
   deriving Repr
 
--- ============================================================================
--- PART 3: Križ & Chemla (2015) Experimental Data
--- ============================================================================
 
 /--
 Križ & Chemla (2015) tested these conditions experimentally.
@@ -131,9 +122,6 @@ def exactlyTwoProjection : ProjectionDatum :=
   , nonMaximalAvailable := true
   }
 
--- ============================================================================
--- PART 4: Augurzky et al. (2023) - QUD Manipulation
--- ============================================================================
 
 /--
 Augurzky et al. (2023) manipulated QUD between participants.
@@ -197,9 +185,6 @@ def notEveryQUDEffect : QUDManipulationDatum :=
   , contextEffect := true              -- big effect of QUD
   }
 
--- ============================================================================
--- PART 5: The No vs Not-Every Asymmetry
--- ============================================================================
 
 /--
 Key asymmetry: `no` resists non-maximality but `not every` permits it.
@@ -232,9 +217,6 @@ def noNotEveryAsymmetry : NoNotEveryAsymmetryDatum :=
   , explanation := "On exhaustification account: `not every` triggers scalar implicature ('some did'), creating non-monotonic context where exhaustification can strengthen embedded plural. `no` lacks this implicature, so embedded exhaustification has no effect."
   }
 
--- ============================================================================
--- PART 6: Truth Conditions Under Embedding
--- ============================================================================
 
 /--
 Predicted truth conditions for embedded plurals.
@@ -278,9 +260,6 @@ def exactlyOneTruthConditions : EmbeddedTruthConditions :=
   , gapConditions := "Various mixed scenarios"
   }
 
--- ============================================================================
--- PART 7: Restrictor vs Scope Position
--- ============================================================================
 
 /--
 Plurals in restrictor vs nuclear scope behave differently.
@@ -316,9 +295,6 @@ def pluralInScope : RestrictorScopeDatum :=
   , notes := "Default is universal; existential requires special context"
   }
 
--- ============================================================================
--- PART 8: Key Generalizations
--- ============================================================================
 
 /--
 Core empirical generalizations about projection.
@@ -344,9 +320,7 @@ def mainGeneralizations : ProjectionGeneralizations :=
   , strongReadingsUniversal := true
   }
 
--- ============================================================================
 -- Collections
--- ============================================================================
 
 def krizChemlaData : List ProjectionDatum :=
   [everyProjection, noProjection, exactlyTwoProjection]
@@ -357,9 +331,7 @@ def augurzkyData : List QUDManipulationDatum :=
 def truthConditionsData : List EmbeddedTruthConditions :=
   [everyTruthConditions, noTruthConditions, exactlyOneTruthConditions]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

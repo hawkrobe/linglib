@@ -44,9 +44,7 @@ namespace Montague.Sentence.FocusParticles
 
 variable {World Entity : Type}
 
--- ============================================================================
 -- Propositions and Alternatives
--- ============================================================================
 
 /-- A proposition as a characteristic function -/
 abbrev Prop' (World : Type) := World → Bool
@@ -58,9 +56,7 @@ structure FocusStructure (α : Type) where
   /-- The focus alternatives -/
   alternatives : List α
 
--- ============================================================================
 -- EVEN: The Traditional Account
--- ============================================================================
 
 /-!
 ## Covert EVEN (Lahiri 1998, Crnič 2014)
@@ -113,9 +109,7 @@ def TraditionalEven.defined (even : TraditionalEven (World := World)) : Prop :=
 def TraditionalEven.trueAt (even : TraditionalEven (World := World)) (w : World) : Prop :=
   even.defined ∧ even.prejacent w
 
--- ============================================================================
 -- NPI Licensing via EVEN
--- ============================================================================
 
 /-!
 ## NPI Licensing Mechanism
@@ -165,9 +159,7 @@ theorem npi_unlicensed_ue (npiDomain regularDomain : Set Entity)
     (hWider : regularDomain ⊆ npiDomain) :
     npiLicensed .up npiDomain regularDomain hWider = False := rfl
 
--- ============================================================================
 -- Only: The Exhaustification Particle
--- ============================================================================
 
 /-!
 ## Overt "only" (Rooth 1992)
@@ -202,9 +194,7 @@ def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : Prop' 
 def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=
   only.prejacent w ∧ only.assertion w
 
--- ============================================================================
 -- Comparison: EVEN vs EXH vs Only
--- ============================================================================
 
 /-!
 ## Focus Particle Comparison
@@ -230,9 +220,7 @@ def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World)
    - But with prejacent as presupposition, not assertion
 -/
 
--- ============================================================================
 -- The Circularity Problem (Parallel to GEN)
--- ============================================================================
 
 /-!
 ## Problem with Covert EVEN

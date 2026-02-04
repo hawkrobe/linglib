@@ -20,9 +20,6 @@ import Linglib.Phenomena.Questions.Basic
 
 namespace Phenomena.Questions.PolarAnswers
 
--- ============================================================================
--- PART 1: Yes/No as Zero-Place Terms
--- ============================================================================
 
 /-- G&S 1984: Yes and No are T⁰ (sentence adverbs, category S/S).
     - yes ~ λp.p(a)   (affirms the proposition)
@@ -64,9 +61,6 @@ def doesJohnWalk_no : YesNoDatum :=
 def yesNoExamples : List YesNoDatum :=
   [doesJohnWalk_yes, doesJohnWalk_no]
 
--- ============================================================================
--- PART 2: Conditional Answers → Biconditional
--- ============================================================================
 
 /-- G&S 1984, p. 324-326: A conditional answer to a polar question
     receives a BICONDITIONAL interpretation via exhaustification.
@@ -117,9 +111,6 @@ def conditionalBiconditionalPrinciple : String :=
   "a question about the conditional itself. They become biconditional " ++
   "when answering a question about their consequent."
 
--- ============================================================================
--- PART 3: Disjunction → Exclusive in Answers
--- ============================================================================
 
 /-- G&S 1984, p. 327: Similar to conditionals, disjunctions in answers
     receive exclusive interpretation via exhaustification.
@@ -158,9 +149,6 @@ def cookiesOrChocolates_inclusive : DisjunctionAnswerDatum :=
 def disjunctionAnswerExamples : List DisjunctionAnswerDatum :=
   [cookiesOrChocolates_exclusive, cookiesOrChocolates_inclusive]
 
--- ============================================================================
--- PART 4: Negative Interrogatives (Doxastic Marking)
--- ============================================================================
 
 /-- G&S 1984, p. 331-334: Negation in interrogatives does NOT contribute
     to semantic content. Instead, it marks a doxastic attitude:
@@ -197,9 +185,6 @@ def doesntJohnWalk : NegativeInterrogativeDatum :=
 def negativeInterrogativeExamples : List NegativeInterrogativeDatum :=
   [doesntJohnWalk]
 
--- ============================================================================
--- PART 5: Positive vs Negative Answer Marking
--- ============================================================================
 
 /-- When answering against the questioner's expected polarity,
     the answer must be MARKED (emphatic stress, do-support).
@@ -238,9 +223,6 @@ def tagQuestion_negativeAnswer : MarkedAnswerDatum :=
 def markedAnswerExamples : List MarkedAnswerDatum :=
   [negativeQuestion_positiveAnswer, tagQuestion_negativeAnswer]
 
--- ============================================================================
--- PART 6: "Not happy" vs "Unhappy" Distinction
--- ============================================================================
 
 /-- G&S p. 333: Clear evidence that negation in interrogatives is not semantic:
     "Are you not happy?" vs "Are you unhappy?" have different answer patterns.
@@ -272,9 +254,6 @@ def notHappy_vs_unhappy : NegationVsAntonymDatum :=
 def negationVsAntonymExamples : List NegationVsAntonymDatum :=
   [notHappy_vs_unhappy]
 
--- ============================================================================
--- PART 7: Theoretical Explanation
--- ============================================================================
 
 /-- G&S's explanation for why negation can be used non-semantically:
     In the semantics of interrogatives, "Does John walk?" and

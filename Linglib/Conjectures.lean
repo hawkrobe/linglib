@@ -38,9 +38,7 @@ namespace Conjectures
 open Core.GradedProposition
 open Theories.Montague.BayesianSemantics
 
--- ============================================================================
 -- TIER 1: Graded Semantics = Boolean + Noise
--- ============================================================================
 
 /-!
 ## Tier 1: The Degen Question
@@ -107,9 +105,7 @@ theorem no_uncertainty_is_boolean
 
 end GradedFromBoolean
 
--- ============================================================================
 -- TIER 1b: Degen et al. Decomposition
--- ============================================================================
 
 section DegenDecomposition
 
@@ -133,9 +129,7 @@ open RSA.ContinuousSemantics
 #check degen_is_boolean_times_noise_full
 #check noiseChannel
 
--- ============================================================================
 -- Informativeness / Discrimination Definitions
--- ============================================================================
 
 /--
 The "noise gap" for a single feature channel.
@@ -250,9 +244,7 @@ theorem product_discrimination_monotone_color
   -- This needs careful analysis of the multiplicative structure
   sorry  -- Full proof requires case analysis on parameter orderings
 
--- ============================================================================
 -- TIER 1c: Unification of Noise Models
--- ============================================================================
 
 /-!
 ## Unifying Channel Noise and Semantic Noise
@@ -332,9 +324,7 @@ theorem max_gap_is_boolean (b : ℚ) (hb : b ∈ ({0, 1} : Set ℚ)) :
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb
   rcases hb with rfl | rfl <;> ring
 
--- ============================================================================
 -- TIER 1d: Perceptual Difficulty Hypothesis (Kursat & Degen 2021)
--- ============================================================================
 
 /-!
 ## Perceptual Difficulty as Source of Noise
@@ -426,9 +416,7 @@ theorem perceptual_difficulty_chain :
 
 end DegenDecomposition
 
--- ============================================================================
 -- TIER 2: RSA Dynamics
--- ============================================================================
 
 section RSADynamics
 
@@ -494,9 +482,7 @@ theorem zero_rationality_is_uniform :
 
 end RSADynamics
 
--- ============================================================================
 -- TIER 3: Compositionality
--- ============================================================================
 
 section Compositionality
 
@@ -544,9 +530,7 @@ theorem rsa_does_not_preserve_entailment :
 
 end Compositionality
 
--- ============================================================================
 -- TIER 4: Novel Results
--- ============================================================================
 
 section NovelResults
 
@@ -618,9 +602,7 @@ theorem rsa_is_rate_distortion_optimal :
 
 end NovelResults
 
--- ============================================================================
 -- PROVABLE NOW: Boolean Correspondence
--- ============================================================================
 
 section BooleanCorrespondence
 
@@ -642,9 +624,7 @@ here for reference as examples of the kind of theorems we want.
 
 end BooleanCorrespondence
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Status Summary

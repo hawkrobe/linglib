@@ -37,9 +37,7 @@ private def word_mary : Word := ⟨"Mary", Cat.D, { number := some .sg, person :
 private def word_sleeps : Word := ⟨"sleeps", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 private def word_laughs : Word := ⟨"laughs", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
--- ============================================================================
 -- Semantic Lexical Entries
--- ============================================================================
 
 /--
 Scale membership: which scale an item belongs to and its position.
@@ -97,9 +95,7 @@ def SemLexEntry.strongerAlternatives {m : Model} (e : SemLexEntry m) : List Stri
       | .four => "four"
       | .five => "five"
 
--- ============================================================================
 -- Toy Model Lexicon
--- ============================================================================
 
 open ToyEntity
 open ToyLexicon
@@ -179,9 +175,7 @@ def students_entry : SemLexEntry toyModel :=
   , denot := student_sem  -- same denotation as singular
   }
 
--- ============================================================================
 -- Lexicon Lookup
--- ============================================================================
 
 /-- A lexicon maps surface forms to semantic entries -/
 def SemLexicon (m : Model) := String → Option (SemLexEntry m)
@@ -209,9 +203,7 @@ def lookupAlternatives {m : Model} (lex : SemLexicon m) (form : String) : List (
   | some entry =>
     entry.strongerAlternatives.filterMap λ altForm => lex altForm
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /-- "some" is a scalar item -/
 theorem some_is_scalar :

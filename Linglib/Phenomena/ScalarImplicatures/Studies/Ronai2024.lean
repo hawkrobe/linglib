@@ -57,9 +57,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Ronai2024
 
--- ============================================================================
--- PART 1: Scale Data Structure
--- ============================================================================
 
 /--
 A lexical scale with properties from van Tiel et al. (2016) and
@@ -86,9 +83,6 @@ structure ScaleDatum where
 def ScaleDatum.name (s : ScaleDatum) : String :=
   s!"⟨{s.weakerTerm}, {s.strongerTerm}⟩"
 
--- ============================================================================
--- PART 2: The 42 Lexical Scales
--- ============================================================================
 
 /-!
 ## Scale Data
@@ -449,9 +443,6 @@ def boundedScales : List ScaleDatum := allScales.filter (·.bounded)
 /-- Non-bounded scales -/
 def nonBoundedScales : List ScaleDatum := allScales.filter (!·.bounded)
 
--- ============================================================================
--- PART 3: Experiment 1 Results
--- ============================================================================
 
 /--
 Experiment 1 design (Gotzner & Romoli 2018 paradigm).
@@ -519,9 +510,6 @@ theorem exp1_strong_above_false :
     exp1Aggregate.strongInference > exp1Aggregate.falseControl + 20 := by
   native_decide
 
--- ============================================================================
--- PART 4: Experiment 2 Results
--- ============================================================================
 
 /--
 Experiment 2 design (van Tiel et al. 2016 inference task).
@@ -540,9 +528,6 @@ structure Exp2Design where
 def exp2Design : Exp2Design :=
   { n := 45, nScales := 42 }
 
--- ============================================================================
--- PART 5: Correlation Results
--- ============================================================================
 
 /--
 Correlation between global SI rates (van Tiel et al. 2016) and
@@ -580,9 +565,6 @@ theorem high_correlations :
     exp2_globalEmbeddedCorrelation.r > 0.7 := by
   native_decide
 
--- ============================================================================
--- PART 6: Predictor Effects
--- ============================================================================
 
 /--
 Effect of a predictor on SI rates.
@@ -638,9 +620,6 @@ theorem predictors_significant :
     boundednessEffect_Exp2.significant := by
   native_decide
 
--- ============================================================================
--- PART 7: Boundedness Comparison
--- ============================================================================
 
 /--
 Mean embedded SI rate by boundedness (Exp 1).
@@ -664,9 +643,6 @@ theorem bounded_higher :
     boundedMean_Exp2 > nonBoundedMean_Exp2 := by
   native_decide
 
--- ============================================================================
--- PART 8: Theoretical Implications
--- ============================================================================
 
 /--
 Theoretical accounts evaluated in the paper.
@@ -711,9 +687,6 @@ theorem alternatives_supported :
   intro t
   cases t <;> native_decide
 
--- ============================================================================
--- PART 9: Connection to Prior Work
--- ============================================================================
 
 /--
 Prior studies on embedded SI discussed in the paper.
@@ -756,9 +729,7 @@ theorem comprehensive_test :
     exp2Design.nScales = 42 := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## What This Module Provides

@@ -48,9 +48,6 @@ import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 
 namespace RSA.InformationTheory
 
--- ============================================================================
--- PART 1: Counterexample Scenario (Graded Lexicon, α < 1)
--- ============================================================================
 
 /-!
 ## Key Insight from Zaslavsky et al. (2020)
@@ -187,9 +184,6 @@ def utilityScenario_α2 : RSA.RSAScenarioQ :=
     (α := 2)
     (precision := 2)
 
--- ============================================================================
--- PART 2: Alternative Counterexample (Asymmetric)
--- ============================================================================
 
 /--
 Alternative counterexample with asymmetric semantics.
@@ -234,9 +228,6 @@ def asymCounterexampleQ : RSA.RSAScenarioQ :=
     (α := 1/2)
     (precision := 2)
 
--- ============================================================================
--- PART 3: Verification
--- ============================================================================
 
 /--
 Trace E[V_L] for the α = 1/2 counterexample.
@@ -254,9 +245,6 @@ def gAlphaTraceQ (maxIter : Nat := 5) : List (Nat × ℚ) :=
 -- #eval utilityTraceQ 5
 -- #eval gAlphaTraceQ 5
 
--- ============================================================================
--- PART 4: Theorems
--- ============================================================================
 
 /--
 G_α is monotonically increasing for the counterexample.
@@ -326,9 +314,6 @@ theorem g_alpha_increases_despite_utility :
     isMonotoneG_alpha_Q utilityCounterexampleQ 5 = true := by
   native_decide
 
--- ============================================================================
--- PART 5: Comparison Across α Values
--- ============================================================================
 
 /--
 Helper to build scenarios with different α values.
@@ -353,9 +338,6 @@ theorem higher_alpha_less_volatile :
   left
   native_decide
 
--- ============================================================================
--- PART 6: Documentation of the Phenomenon
--- ============================================================================
 
 /-!
 ## Why Utility Can Decrease

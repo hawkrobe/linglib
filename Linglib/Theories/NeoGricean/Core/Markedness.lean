@@ -38,9 +38,6 @@ open Montague.Adjective
 open Montague.Domain.Degrees
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
--- ============================================================================
--- PART 1: Morphological Structure
--- ============================================================================
 
 /--
 Morphological structure of an adjective form.
@@ -77,9 +74,6 @@ def prefixedMorphology (form : String) (pfx : String := "un") : Morphology :=
   , isDerived := true
   }
 
--- ============================================================================
--- PART 2: Extended Adjective Entry
--- ============================================================================
 
 /--
 Extended gradable adjective entry with morphological information.
@@ -95,9 +89,6 @@ structure GradableAdjWithMorphology (max : Nat) extends GradableAdjEntry max whe
   isPositivePole : Bool
   deriving Repr
 
--- ============================================================================
--- PART 3: Markedness Criteria
--- ============================================================================
 
 /--
 A markedness criterion computes which member of an antonym pair is marked.
@@ -176,9 +167,6 @@ def negativePrefixCriterion : MarkednessCriterion where
     else
       none
 
--- ============================================================================
--- PART 4: Combined Markedness Computation
--- ============================================================================
 
 /--
 Default priority ordering for markedness criteria.
@@ -215,9 +203,6 @@ def isMarkedForm {max : Nat}
     (form : String) (adj1 adj2 : GradableAdjWithMorphology max) : Bool :=
   computeMarked adj1 adj2 == some form
 
--- ============================================================================
--- PART 5: Production Cost
--- ============================================================================
 
 /--
 Production cost based on markedness.
@@ -240,9 +225,6 @@ Cost difference between marked and unmarked forms.
 -/
 def costDifference : ℚ := 1
 
--- ============================================================================
--- PART 6: Sample Entries
--- ============================================================================
 
 /--
 "tall" with morphology: simple, positive pole
@@ -276,9 +258,6 @@ def unhappy_with_morphology : GradableAdjWithMorphology 10 where
   morphology := prefixedMorphology "unhappy"
   isPositivePole := false
 
--- ============================================================================
--- PART 7: Theorems
--- ============================================================================
 
 /--
 Morphological complexity determines markedness: more morphemes = marked.
@@ -313,9 +292,6 @@ theorem marked_costs_more :
     productionCost "short" tall_with_morphology short_with_morphology >
     productionCost "tall" tall_with_morphology short_with_morphology := by native_decide
 
--- ============================================================================
--- PART 8: Summary
--- ============================================================================
 
 /-
 ## Summary: Neo-Gricean Markedness

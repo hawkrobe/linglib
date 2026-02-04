@@ -34,9 +34,7 @@ Theory-neutral data about NPI licensing and distribution.
 
 namespace Phenomena.Polarity.NPIs
 
--- ============================================================================
 -- NPI Classification
--- ============================================================================
 
 /-- Types of NPI items -/
 inductive NPIType where
@@ -53,9 +51,7 @@ inductive NPIProperty where
   | temporal         -- Temporal reference (ever, yet)
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
 -- Licensing Context Classification
--- ============================================================================
 
 /-- Types of licensing contexts -/
 inductive LicensingContext where
@@ -89,9 +85,7 @@ inductive AntiAdditivity where
   | merelyDE      -- DE but not anti-additive: "few", "at most 3"
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
 -- Basic Data Structure
--- ============================================================================
 
 /-- An NPI licensing datum -/
 structure NPIDatum where
@@ -106,9 +100,7 @@ structure NPIDatum where
   /-- Notes -/
   notes : String
 
--- ============================================================================
 -- Classic "Any" Examples
--- ============================================================================
 
 /-!
 ## The "Any" Paradigm
@@ -233,9 +225,7 @@ def anyDoubt : NPIDatum :=
   , notes := "\"Doubt\" is a negative verb, creates DE context"
   }
 
--- ============================================================================
 -- "Ever" Examples
--- ============================================================================
 
 /-!
 ## "Ever" - Temporal NPI
@@ -273,9 +263,7 @@ def everConditional : NPIDatum :=
   , notes := "Conditionals license \"ever\""
   }
 
--- ============================================================================
 -- Strong NPIs: "Lift a Finger" / "In Years"
--- ============================================================================
 
 /-!
 ## Strong NPIs
@@ -332,9 +320,7 @@ def inYearsQuestion : NPIDatum :=
   , notes := "Strong NPI: questions insufficient (marginal)"
   }
 
--- ============================================================================
 -- "Yet" Examples
--- ============================================================================
 
 /-!
 ## "Yet" - Aspectual/Temporal Strong NPI
@@ -364,9 +350,7 @@ def yetPositive : NPIDatum :=
   , notes := "Positive context blocks \"yet\""
   }
 
--- ============================================================================
 -- "At All" Examples
--- ============================================================================
 
 /-!
 ## "At All" - Scalar Endpoint NPI
@@ -404,9 +388,7 @@ def atAllConditional : NPIDatum :=
   , notes := "Licensed in conditionals"
   }
 
--- ============================================================================
 -- Intervention Effects
--- ============================================================================
 
 /-!
 ## Intervention Effects
@@ -430,9 +412,7 @@ def noIntervention : NPIDatum :=
   , notes := "No intervention when NPI precedes quantifier"
   }
 
--- ============================================================================
 -- Free Choice "Any"
--- ============================================================================
 
 /-!
 ## Free Choice "Any"
@@ -464,9 +444,7 @@ def fcAnyImperative : NPIDatum :=
   , notes := "Free choice any in imperatives"
   }
 
--- ============================================================================
 -- Cross-Linguistic Data
--- ============================================================================
 
 /-!
 ## Cross-Linguistic Patterns
@@ -514,9 +492,7 @@ def germanJemals : CrossLingNPI :=
   , notes := "Similar distribution to English \"ever\""
   }
 
--- ============================================================================
 -- NPIs in Questions (van Rooy, Borkin 1971, Krifka)
--- ============================================================================
 
 /-!
 ## NPIs in Questions
@@ -637,9 +613,7 @@ def questionData : List NPIQuestionDatum :=
    liftFingerQuestion, batAnEyeQuestion, aDropQuestion, millionYearsQuestion,
    ppiRatherQuestion, ppiPrettyQuestion]
 
--- ============================================================================
 -- Minimizers vs Non-Minimizers (Israel 2001)
--- ============================================================================
 
 /-!
 ## Minimizers vs Non-Minimizers
@@ -666,9 +640,7 @@ def longNPI : NPIDatum :=
   , notes := "Non-minimizer NPI. Israel 2001"
   }
 
--- ============================================================================
 -- Aggregate Data
--- ============================================================================
 
 /-- All "any" examples -/
 def anyData : List NPIDatum :=
@@ -693,9 +665,7 @@ def yetData : List NPIDatum :=
 def atAllData : List NPIDatum :=
   [atAllNegation, atAllQuestion, atAllPositive, atAllConditional]
 
--- ============================================================================
 -- Empirical Generalizations
--- ============================================================================
 
 /-!
 ## Core Empirical Generalizations
@@ -743,9 +713,7 @@ Local RSA derives NPI effects from polarity-sensitive informativity:
 - No covert EVEN needed - it's pragmatic inference
 -/
 
--- ============================================================================
 -- Tests for Generalizations
--- ============================================================================
 
 -- Weak NPIs licensed in all DE contexts
 #guard anyData.filter (fun d => d.grammatical)
@@ -760,9 +728,6 @@ Local RSA derives NPI effects from polarity-sensitive informativity:
 #guard strongNPIData.filter (fun d => d.context == some .withoutClause)
       |>.all (fun d => d.grammatical)
 
--- ============================================================================
--- PART 9: N-words and Scale-Minimality (Chierchia 2013)
--- ============================================================================
 
 /-!
 ## N-words and Scale-Minimality

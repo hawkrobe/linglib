@@ -44,9 +44,7 @@ open Core.Proposition
 open Montague.Core.Polarity
 open Theories.DynamicSemantics.State
 
--- ============================================================================
 -- Conditional Type: HC vs PC
--- ============================================================================
 
 /--
 The two fundamental conditional interpretation types.
@@ -85,9 +83,7 @@ def canUseGivenThat : ConditionalType → Bool
 
 end ConditionalType
 
--- ============================================================================
 -- Discourse Echo Condition
--- ============================================================================
 
 /--
 Check whether a proposition "echoes" the current discourse state.
@@ -114,9 +110,7 @@ def consistentWithDiscourse {W : Type*} (ds : DiscourseState W) (p : BProp W)
     (worlds : List W) : Bool :=
   worlds.any fun w => ds.compatible w && p w
 
--- ============================================================================
 -- Felicity Conditions
--- ============================================================================
 
 /--
 Felicity condition for premise conditionals.
@@ -144,9 +138,7 @@ def hcFelicitous {W : Type*} (ds : DiscourseState W) (antecedent : BProp W)
     (worlds : List W) : Bool :=
   consistentWithDiscourse ds antecedent worlds
 
--- ============================================================================
 -- Polarity Context for Conditionals
--- ============================================================================
 
 /--
 Epistemic status of an antecedent for polarity licensing purposes.
@@ -221,9 +213,7 @@ def licensesPPI (ctx : ConditionalPolarityContext) : Bool :=
 
 end ConditionalPolarityContext
 
--- ============================================================================
 -- Theorems: Semantic Equivalence, Polarity Licensing
--- ============================================================================
 
 /--
 **HCs and PCs have identical truth conditions.**
@@ -283,9 +273,7 @@ theorem hc_blocks_ppi :
     (ConditionalPolarityContext.fromConditionalType .hypothetical).licensesPPI = false := by
   native_decide
 
--- ============================================================================
 -- Conditional with Explicit Type
--- ============================================================================
 
 /--
 A conditional with its interpretation type made explicit.
@@ -322,9 +310,7 @@ def antecedentPolarityContext (tc : TypedConditional W) : ConditionalPolarityCon
 
 end TypedConditional
 
--- ============================================================================
 -- Cross-Linguistic Markers
--- ============================================================================
 
 /--
 Cross-linguistic conditional markers and their type restrictions.
@@ -396,9 +382,7 @@ def englishIf : ConditionalMarker :=
 def conditionalMarkers : List ConditionalMarker :=
   [japaneseRa, japaneseNara, germanFalls, germanWenn, englishIf]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary

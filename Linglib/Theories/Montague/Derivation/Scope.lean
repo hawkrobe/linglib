@@ -34,9 +34,7 @@ open ScopeTheory
 open Montague
 open Montague.Determiner.Quantifier
 
--- ============================================================================
 -- Scope Configurations
--- ============================================================================
 
 /-- General scope configuration for two operators -/
 inductive ScopeConfig where
@@ -55,9 +53,7 @@ def toQNScope : ScopeConfig → QNScope
   | .surface => .forallNeg
   | .inverse => .negForall
 
--- ============================================================================
 -- Connection to ScopeTheory Interface
--- ============================================================================
 
 /-- Convert ScopeConfig to abstract ScopeReading for binary scope -/
 def ScopeConfig.toScopeReading (s : ScopeConfig) (op1 op2 : String) : ScopeReading :=
@@ -74,9 +70,7 @@ def toAvailableScopes (configs : List ScopeConfig) (op1 op2 : String) : Availabl
   else
     ⟨readings, h⟩
 
--- ============================================================================
 -- Scope Derivation Structure
--- ============================================================================
 
 /--
 A derivation that can be interpreted under multiple scope readings.
@@ -97,9 +91,7 @@ def ScopeDerivation.allMeanings {m : Model} {τ : Ty}
     (d : ScopeDerivation m τ) : List (ScopeConfig × m.interpTy τ) :=
   d.availableScopes.map λ s => (s, d.meaningAt s)
 
--- ============================================================================
 -- Scoped Form (for HasAvailableScopes interface)
--- ============================================================================
 
 /--
 A form (utterance) with scope ambiguity.
@@ -132,9 +124,7 @@ def MontagueScopeTheory : Type := Unit
 instance : HasAvailableScopes MontagueScopeTheory ScopedForm where
   availableScopes := ScopedForm.toAvailableScopes
 
--- ============================================================================
 -- Scope Enumeration Utilities
--- ============================================================================
 
 /-- All binary scope configurations -/
 def allScopeConfigs : List ScopeConfig := [.surface, .inverse]
@@ -147,9 +137,7 @@ def scopeYieldsTrue {m : Model}
     (d : ScopeDerivation m .t) (s : ScopeConfig) : Bool :=
   d.meaningAt s
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

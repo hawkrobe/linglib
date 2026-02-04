@@ -19,9 +19,7 @@ namespace Montague.Sentence.Entailment.Monotonicity
 
 open Montague.Sentence.Entailment
 
--- ============================================================================
 -- Monotonicity (Decidable Versions)
--- ============================================================================
 
 /-- Check if f is upward entailing on given test cases -/
 def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
@@ -31,9 +29,7 @@ def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bo
 def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
   tests.all λ (p, q) => !entails p q || entails (f q) (f p)
 
--- ============================================================================
 -- Monotonicity Theorems
--- ============================================================================
 
 /--
 **Theorem: Negation is Downward Entailing**
@@ -72,9 +68,7 @@ If P ⊨ Q, then (R ∨ P) ⊨ (R ∨ Q)
 theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := by
   native_decide
 
--- ============================================================================
 -- Quantifier Semantics
--- ============================================================================
 
 /-- "Every A is B" = ∀x. A(x) → B(x) -/
 def every (a b : World → Bool) : Bool :=
@@ -129,9 +123,7 @@ This is why "no" blocks scalar implicatures!
 theorem no_scope_DE : isDownwardEntailing no_scope testCases = true := by
   native_decide
 
--- ============================================================================
 -- "Every" Restrictor is DE
--- ============================================================================
 
 /-- Fixed scope for testing restrictor monotonicity -/
 def fixedScope : Prop' := p012  -- "smokes" = {w0, w1, w2}
@@ -163,9 +155,7 @@ theorem de_reverses_strength :
     entails (pnot p01) (pnot p0) = true := by
   native_decide
 
--- ============================================================================
 -- Conditional Antecedent is DE
--- ============================================================================
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
 def materialCond (c : Prop') : Prop' → Prop' :=

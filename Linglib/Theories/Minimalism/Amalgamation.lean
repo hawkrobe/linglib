@@ -43,9 +43,7 @@ import Linglib.Theories.Minimalism.Constraints.HMC
 
 namespace Minimalism
 
--- ============================================================================
 -- Part 1: The Covering Relation (Lattice-Theoretic Foundation)
--- ============================================================================
 
 /-- The covering relation in a partial order.
 
@@ -69,9 +67,7 @@ theorem covers_asymm {x y root : SyntacticObject}
   -- But no element contains itself (well-foundedness via nodeCount)
   exact contains_irrefl x hxx
 
--- ============================================================================
 -- Part 2: Restriction to Heads
--- ============================================================================
 
 /-- The set of heads in a structure -/
 def headsIn (root : SyntacticObject) : Set SyntacticObject :=
@@ -98,9 +94,7 @@ theorem covers_among_heads_no_intervener
   use z
   exact ⟨hne_x, hne_y, ⟨hxz, h.1.2.1, hz_head⟩, ⟨hzy, hz_head, h.1.2.2⟩⟩
 
--- ============================================================================
 -- Part 3: Amalgamation Locality = Covering
--- ============================================================================
 
 /-
 The `Amalgamation` structure is defined in HMC.lean with:
@@ -112,9 +106,7 @@ The `is_local` constraint IS the covering constraint!
 "Immediately c-commands" means no intervening head.
 -/
 
--- ============================================================================
 -- Part 3: Maximal Projections
--- ============================================================================
 
 /-
 ## The Correct Formulation
@@ -232,9 +224,7 @@ the projection machinery is properly defined.
 -- TODO: syntactic_movement_can_skip_heads (requires projection-based covering)
 -- TODO: amalgamation_vs_syntactic_locality (depends on above)
 
--- ============================================================================
 -- Part 6: The Exhaustivity Theorem
--- ============================================================================
 
 /-- The grammatical module where an operation applies -/
 inductive GramModule where
@@ -287,9 +277,7 @@ theorem displacement_modules_disjoint :
   | syntactic m => simp [HeadDisplacement.module]
   | amalgam a => simp [HeadDisplacement.module]
 
--- ============================================================================
 -- Part 7: Diagnostic Properties
--- ============================================================================
 
 /-- If HMC is violated, the operation must be syntactic -/
 theorem hmc_violation_diagnostic (root : SyntacticObject)
@@ -314,9 +302,7 @@ axiom word_formation_implies_amalgamation :
       isComplexMorphologicalWord complex →
       ∃ (a : Amalgamation), True  -- amalgamation occurred somewhere
 
--- ============================================================================
 -- Part 8: Summary and Connection to Barker & Pullum
--- ============================================================================
 
 /-
 ## Main Results

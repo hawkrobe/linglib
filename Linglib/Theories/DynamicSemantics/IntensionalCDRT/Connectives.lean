@@ -39,9 +39,6 @@ namespace Theories.DynamicSemantics.IntensionalCDRT
 
 open Theories.DynamicSemantics.Core
 
--- ============================================================================
--- PART 1: Negation (DNE Validated)
--- ============================================================================
 
 namespace BilateralICDRT
 
@@ -66,9 +63,6 @@ Negation preserves context consistency.
 theorem neg_consistent_iff (φ : BilateralICDRT W E) (c : IContext W E) :
     (φ.neg.positive c).Nonempty ↔ (φ.negative c).Nonempty := Iff.rfl
 
--- ============================================================================
--- PART 2: Disjunction (Standard)
--- ============================================================================
 
 /--
 Standard disjunction: either φ or ψ holds.
@@ -84,9 +78,6 @@ def disjStd (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
 
 infixl:60 " ⊕ " => disjStd
 
--- ============================================================================
--- PART 3: Disjunction with Cross-Disjunct Anaphora
--- ============================================================================
 
 /--
 Bathroom disjunction: ψ evaluated after ¬φ.
@@ -120,9 +111,6 @@ def disjBathroom' (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
     let ctxAfterNotPhi := φ.negative c
     ctxAfterNotPhi ∩ ψ.negative ctxAfterNotPhi
 
--- ============================================================================
--- PART 4: Conditional
--- ============================================================================
 
 /--
 Conditional: if φ then ψ.
@@ -170,9 +158,6 @@ theorem impl_as_disj (φ ψ : BilateralICDRT W E) (c : IContext W E)
     | inl h_neg => left; exact h_neg
     | inr h_psi => right; exact ⟨hψ_subsetting h_psi, h_psi⟩
 
--- ============================================================================
--- PART 5: De Morgan Laws
--- ============================================================================
 
 /--
 De Morgan: ¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ
@@ -190,9 +175,6 @@ De Morgan: ¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ
 theorem de_morgan_disj_positive (φ ψ : BilateralICDRT W E) (c : IContext W E) :
     (φ.disjStd ψ).neg.positive c = φ.negative c ∩ ψ.negative c := rfl
 
--- ============================================================================
--- PART 6: Existential in Different Scopes
--- ============================================================================
 
 /--
 Wide-scope existential: ∃x.(φ ∨ ψ)
@@ -214,9 +196,6 @@ def existsNarrowFirstDisj (p : PVar) (v : IVar) (domain : Set E)
     (φ ψ : BilateralICDRT W E) : BilateralICDRT W E :=
   disjBathroom (exists_ p v domain φ) ψ
 
--- ============================================================================
--- PART 7: Universal Quantifier
--- ============================================================================
 
 /--
 Universal quantifier via de Morgan: ∀x.φ ≡ ¬∃x.¬φ
@@ -225,9 +204,6 @@ def forall_ (p : PVar) (v : IVar) (domain : Set E)
     (φ : BilateralICDRT W E) : BilateralICDRT W E :=
   (exists_ p v domain φ.neg).neg
 
--- ============================================================================
--- PART 8: Donkey Sentences
--- ============================================================================
 
 /--
 Donkey conditional: "If a farmer owns a donkey, he beats it."
@@ -253,9 +229,6 @@ def donkeyConditional (pFarmer pDonkey : PVar) (vFarmer vDonkey : IVar)
     (exists_ pDonkey vDonkey donkeys
       (impl antecedent consequent))
 
--- ============================================================================
--- PART 9: Bathroom Sentence Example
--- ============================================================================
 
 /--
 The classic bathroom sentence:
@@ -298,9 +271,7 @@ def bathroomSentenceFull (p : PVar) (v : IVar) (domain : Set E)
 
 end BilateralICDRT
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

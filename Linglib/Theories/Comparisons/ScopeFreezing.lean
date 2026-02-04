@@ -35,9 +35,7 @@ open Phenomena.Quantification.ScopeFreezing
 open Minimalism.Scope
 open CCG.Scope
 
--- ============================================================================
 -- CCG Analysis of Freezing Contexts
--- ============================================================================
 
 /-!
 ## CCG Explanation of Scope Freezing
@@ -80,9 +78,7 @@ def ccgAnalyzeContext : FreezingContext → CCGFreezingReason
 def ccgPredictsFreezing (ctx : FreezingContext) : Bool :=
   ccgAnalyzeContext ctx != .notFrozen
 
--- ============================================================================
 -- Processing/Gradient Account
--- ============================================================================
 
 /-!
 ## Processing Explanation
@@ -123,9 +119,7 @@ def inverseThreshold : Nat := 10
 def processingPredictsFreezing (c : ProcessingComplexity) : Bool :=
   estimateCost c > inverseThreshold
 
--- ============================================================================
 -- Theory Comparison
--- ============================================================================
 
 /-- Predictions from all three theories -/
 structure TheoryPredictions where
@@ -145,9 +139,7 @@ def comparePredictions (ctx : FreezingContext) (obs : Availability)
   , processing := processingPredictsFreezing complexity
   , observed := obs }
 
--- ============================================================================
 -- Key Comparisons
--- ============================================================================
 
 /-- Possessor freezing: all theories agree -/
 def possessorComparison : TheoryPredictions :=
@@ -165,9 +157,7 @@ def heavyNPComparison : TheoryPredictions :=
 def baselineComparison : TheoryPredictions :=
   comparePredictions .none .ambiguous ⟨3, 0, 2⟩
 
--- ============================================================================
 -- Divergence Detection
--- ============================================================================
 
 /-- Check if all theories agree -/
 def theoriesAgree (p : TheoryPredictions) : Bool :=
@@ -186,9 +176,7 @@ theorem heavy_np_diverges :
 theorem possessor_agrees :
     theoriesAgree possessorComparison = true := by native_decide
 
--- ============================================================================
 -- Detailed Divergence Analysis
--- ============================================================================
 
 /-!
 ## Where Theories Diverge
@@ -243,9 +231,7 @@ theorem heavy_np_is_processing_case :
     classifyDivergence heavyNPComparison = .grammarVsProcessing := by
   native_decide
 
--- ============================================================================
 -- Accuracy Comparison
--- ============================================================================
 
 /-- Count correct predictions for a theory -/
 def countCorrect (predictions : List TheoryPredictions)
@@ -277,9 +263,7 @@ def processingAccuracy : Nat :=
 #eval ccgAccuracy          -- 3/4 (misses heavy NP)
 #eval processingAccuracy   -- 4/4
 
--- ============================================================================
 -- Theoretical Implications
--- ============================================================================
 
 /-!
 ## Theoretical Implications
@@ -331,9 +315,7 @@ then `rsa_can_rescue_frozen` proves world priors can rescue.
 Frozen: P(inverse) = 2%; Rescued: P(inverse) > 50%.
 -/
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Scope Freezing Comparison

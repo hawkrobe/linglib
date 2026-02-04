@@ -34,9 +34,7 @@ namespace CCG.Intonation
 open CCG
 open Theories.Montague.Sentence.InformationStructure
 
--- ============================================================================
 -- Pitch Accents
--- ============================================================================
 
 /--
 Pitch accent types (Pierrehumbert 1980, ToBI conventions).
@@ -52,9 +50,7 @@ inductive PitchAccent where
   | null        -- No accent (background)
   deriving Repr, DecidableEq, Inhabited
 
--- ============================================================================
 -- Boundary Tones
--- ============================================================================
 
 /--
 Boundary tones mark prosodic phrase edges.
@@ -70,9 +66,7 @@ inductive BoundaryTone where
   | LL_pct -- Falling boundary (LL%) - finality, rheme
   deriving Repr, DecidableEq, Inhabited
 
--- ============================================================================
 -- Information Feature
--- ============================================================================
 
 /--
 The INFORMATION feature on CCG categories.
@@ -108,9 +102,7 @@ def InfoFeature.unify : InfoFeature → InfoFeature → Option InfoFeature
   | .φ, .φ => some .φ
   | _, _ => none
 
--- ============================================================================
 -- Prosodic CCG Categories
--- ============================================================================
 
 /--
 A CCG category with prosodic annotation.
@@ -129,9 +121,7 @@ def ProsodicCat.rheme (c : Cat) : ProsodicCat := ⟨c, .ρ⟩
 def ProsodicCat.plain (c : Cat) : ProsodicCat := ⟨c, .unmarked⟩
 def ProsodicCat.phrasal (c : Cat) : ProsodicCat := ⟨c, .φ⟩
 
--- ============================================================================
 -- Prosodic Lexical Entries
--- ============================================================================
 
 /--
 A prosodic lexical entry: word + pitch accent → prosodic category.
@@ -155,9 +145,7 @@ def ProsodicLexEntry.prosodicCat (e : ProsodicLexEntry) : ProsodicCat :=
     | .null => .unmarked
   ⟨e.cat, info⟩
 
--- ============================================================================
 -- Intonational Tunes
--- ============================================================================
 
 /--
 An intonational tune: pitch accent + boundary.
@@ -185,9 +173,7 @@ def Tune.isTheme (t : Tune) : Bool :=
 def Tune.isRheme (t : Tune) : Bool :=
   t.accent == .H_star && t.boundary == .LL_pct
 
--- ============================================================================
 -- Prosodic Combination Rules
--- ============================================================================
 
 /--
 Prosodic forward application: X/Y + Y → X
@@ -238,9 +224,7 @@ def applyBoundary : ProsodicCat → BoundaryTone → ProsodicCat
     | .θ | .ρ | .unmarked => ⟨cat, .φ⟩
     | .φ => ⟨cat, .φ⟩  -- already phrasal
 
--- ============================================================================
 -- Prosodic Derivations
--- ============================================================================
 
 /--
 A prosodic derivation step.
@@ -279,9 +263,7 @@ def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
     let c ← d.prosodicCat
     some (applyBoundary c b)
 
--- ============================================================================
 -- Information Structure Extraction
--- ============================================================================
 
 /--
 A prosodic phrase: a derivation with a boundary tone applied.
@@ -312,9 +294,7 @@ def extractInfoStructure (phrases : List ProsodicPhrase)
     }
   | _, _ => none  -- ambiguous or ill-formed
 
--- ============================================================================
 -- Instance: CCG Intonation provides Information Structure
--- ============================================================================
 
 /--
 Prosodic CCG derivations have Information Structure.
@@ -328,9 +308,7 @@ instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv where
         rheme := ⟨.lex ⟨"", S, .null⟩, false⟩
       }
 
--- ============================================================================
 -- Example: "FRED ate the BEANS"
--- ============================================================================
 
 /-
 Context: "What did Fred eat?"
@@ -371,9 +349,7 @@ def the_beans_phrase : ProsodicDeriv := .boundary the_beans .LL_pct
 #eval fred_ate.prosodicCat       -- Sθ/NPθ (theme: "Fred ate _")
 #eval fred_ate_phrase.prosodicCat -- Sφ/NPφ
 
--- ============================================================================
 -- Example: "(ANNA married) (MANNY)" from Steedman Ch. 5
--- ============================================================================
 
 def anna_L : ProsodicLexEntry := ⟨"Anna", NP, .L_plus_H_star⟩
 def married_null : ProsodicLexEntry := ⟨"married", TV, .null⟩
@@ -396,9 +372,7 @@ def anna_married_manny : List ProsodicPhrase := [anna_married_theme, manny_rheme
 -- Theme: "Anna married _" (λx. married x anna)
 -- Rheme: "Manny"
 
--- ============================================================================
 -- Constraint: Prosody must align with CCG constituency
--- ============================================================================
 
 /-
 Steedman's key insight: prosodic boundaries can ONLY occur at CCG constituent
@@ -422,9 +396,7 @@ def ProsodicDeriv.wellFormed : ProsodicDeriv → Bool
   | .ftr d _ => d.wellFormed
   | .boundary d _ => d.wellFormed && d.prosodicCat.isSome
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

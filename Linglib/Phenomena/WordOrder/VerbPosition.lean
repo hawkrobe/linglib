@@ -14,9 +14,7 @@ import Linglib.Core.Basic
 
 namespace Phenomena.WordOrderAlternations.VerbPosition
 
--- ============================================================================
 -- Bulgarian Participle Fronting (Lambova 2004c, Harizanov 2019)
--- ============================================================================
 
 /-!
 ## Bulgarian: Participle Fronting
@@ -53,9 +51,7 @@ structure BulgarianParticipleData where
 
 def bulgarianExample : BulgarianParticipleData := {}
 
--- ============================================================================
 -- Germanic V2 (Vikner 1995, Harizanov 2019)
--- ============================================================================
 
 /-!
 ## German: V2 Word Order

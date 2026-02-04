@@ -47,9 +47,6 @@ namespace RSA.InformationTheory
 open RSA.Eval
 open RationalPower
 
--- ============================================================================
--- PART 1: Information-Theoretic Primitives
--- ============================================================================
 
 /--
 Natural logarithm approximated as a rational (for decidable proofs).
@@ -118,9 +115,6 @@ def klDivergence {α : Type} [BEq α]
     else px * log2Approx (px / qx)
   terms.foldl (· + ·) 0
 
--- ============================================================================
--- PART 2: RSA Information-Theoretic Components
--- ============================================================================
 
 /--
 Speaker entropy: H_S(U|M).
@@ -173,9 +167,6 @@ def expectedListenerUtility (S : RSA.RSAScenarioQ)
     terms.foldl (· + ·) 0
   | _, _ => 0  -- Empty interps or quds returns 0
 
--- ============================================================================
--- PART 3: The G_α Objective
--- ============================================================================
 
 /--
 The G_α objective function from Zaslavsky et al. (2020).
@@ -214,9 +205,6 @@ def G_alpha_RSA (S : RSA.RSAScenarioQ) (α : ℚ) : ℚ :=
   let prior := worldPriorDist S
   G_alpha S α speaker listener prior
 
--- ============================================================================
--- PART 4: Iteration Tracking
--- ============================================================================
 
 /--
 RSA iteration level.
@@ -302,9 +290,6 @@ def G_alpha_at (S : RSA.RSAScenarioQ) (α : ℚ) (d : RSADynamics S) : ℚ :=
   let prior := worldPriorDist S
   G_alpha S α speaker d.listener prior
 
--- ============================================================================
--- PART 5: Expected Listener Utility Tracking
--- ============================================================================
 
 /--
 Expected listener utility at a given dynamics state.
@@ -322,9 +307,6 @@ def H_S_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
   let prior := worldPriorDist S
   speakerEntropy S speaker prior
 
--- ============================================================================
--- PART 6: Utilities for Analysis
--- ============================================================================
 
 /--
 Trace G_α over iterations.
@@ -358,9 +340,6 @@ def isMonotoneE_VL (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let pairs := trace.zip trace.tail
   pairs.all fun ((_, v1), (_, v2)) => v1 ≤ v2
 
--- ============================================================================
--- PART 7: Rational-α Dynamics (RSAScenarioQ)
--- ============================================================================
 
 /--
 RSA dynamics with rational α support.
@@ -515,9 +494,6 @@ def H_S_at_Q (S : RSA.RSAScenarioQ) (d : RSADynamicsQ S) : ℚ :=
   let prior := worldPriorDistQ S
   speakerEntropyQ S d.speaker prior
 
--- ============================================================================
--- PART 8: Analysis Utilities for RSAScenarioQ
--- ============================================================================
 
 /--
 Trace G_α over iterations for RSAScenarioQ.
@@ -560,9 +536,6 @@ def hasUtilityDecrease (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let pairs := trace.zip trace.tail
   pairs.any fun ((_, v1), (_, v2)) => v2 < v1
 
--- ============================================================================
--- PART 9: Lexicon-Initialized Analysis (for Prop 2)
--- ============================================================================
 
 /--
 Trace E[V_L] over iterations starting from LEXICON initialization.

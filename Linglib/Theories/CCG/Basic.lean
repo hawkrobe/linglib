@@ -28,9 +28,7 @@ import Linglib.Core.Basic
 
 namespace CCG
 
--- ============================================================================
 -- Categories
--- ============================================================================
 
 /-- Atomic categories -/
 inductive Atom where
@@ -57,9 +55,7 @@ def NP : Cat := .atom .NP
 def N : Cat := .atom .N
 def PP : Cat := .atom .PP
 
--- ============================================================================
 -- Common Category Patterns
--- ============================================================================
 
 -- Intransitive verb: (S\NP) - takes NP on left, gives S
 def IV : Cat := S \ NP
@@ -82,9 +78,7 @@ def AdjAttr : Cat := N / N
 -- Adjective (predicative): S\NP (like IV)
 def AdjPred : Cat := S \ NP
 
--- ============================================================================
 -- Combinatory Rules
--- ============================================================================
 
 /-- Forward application: X/Y  Y  ⇒  X -/
 def forwardApp : Cat → Cat → Option Cat
@@ -116,9 +110,7 @@ def combine : Cat → Cat → Option Cat
     forwardComp c1 c2 <|>
     backwardComp c1 c2
 
--- ============================================================================
 -- Type-Raising
--- ============================================================================
 
 /-- Forward type-raising: X ⇒ T/(T\X)
     Typically used for subjects: NP ⇒ S/(S\NP) -/
@@ -136,18 +128,14 @@ def NPobj : Cat := backwardTypeRaise NP S    -- S\(S/NP) - object (less common)
 
 #eval NPsubj  -- S/(S\NP)
 
--- ============================================================================
 -- Coordination
--- ============================================================================
 
 /-- Coordination: X conj X ⇒ X
     Both conjuncts must have the same category -/
 def coordinate : Cat → Cat → Option Cat
   | x, y => if x == y then some x else none
 
--- ============================================================================
 -- Lexical Entries
--- ============================================================================
 
 /-- A CCG lexical entry -/
 structure LexEntry where
@@ -158,9 +146,7 @@ structure LexEntry where
 /-- A CCG lexicon -/
 def Lexicon := List LexEntry
 
--- ============================================================================
 -- Example Lexicon
--- ============================================================================
 
 def exampleLexicon : Lexicon := [
   -- Proper names: NP
@@ -203,9 +189,7 @@ def exampleLexicon : Lexicon := [
   ⟨"happy", AdjAttr⟩
 ]
 
--- ============================================================================
 -- Derivations
--- ============================================================================
 
 /-- A derivation step -/
 inductive DerivStep where
@@ -249,9 +233,7 @@ def DerivStep.cat : DerivStep → Option Cat
     let c2 ← d2.cat
     coordinate c1 c2
 
--- ============================================================================
 -- Example Derivations
--- ============================================================================
 
 -- "John sleeps"
 -- John:NP  sleeps:S\NP  ⇒  S  (backward application)
@@ -303,17 +285,13 @@ def the_big_cat_sleeps : DerivStep :=
 #eval the_big_cat.cat          -- some NP ✓
 #eval the_big_cat_sleeps.cat   -- some S ✓
 
--- ============================================================================
 -- Derivation Yields Sentence
--- ============================================================================
 
 /-- Check if a derivation yields category S -/
 def derivesS (d : DerivStep) : Bool :=
   d.cat == some S
 
--- ============================================================================
 -- Derivation Complexity Measures
--- ============================================================================
 
 /-- Count combinatory operations in a derivation -/
 def DerivStep.opCount : DerivStep → Nat
@@ -342,9 +320,7 @@ example : derivesS john_sees_mary = true := rfl
 example : derivesS the_cat_sleeps = true := rfl
 example : derivesS the_big_cat_sleeps = true := rfl
 
--- ============================================================================
 -- Non-Constituent Coordination (Steedman's Classic Example)
--- ============================================================================
 
 /-
 "John likes and Mary hates beans"
@@ -409,9 +385,7 @@ are actually constituents in CCG! They have category S/NP.
 CCG's flexible constituency allows coordination of these phrases.
 -/
 
--- ============================================================================
 -- Contrast: Why Standard Phrase Structure Can't Do This
--- ============================================================================
 
 /-
 In standard phrase structure grammar:

@@ -33,9 +33,6 @@ namespace RSA
 
 open RationalPower
 
--- ============================================================================
--- PART 1: RSAScenarioQ Structure
--- ============================================================================
 
 /--
 RSA scenario with rational α parameter.
@@ -94,9 +91,6 @@ structure RSAScenarioQ where
 attribute [instance] RSAScenarioQ.uttBEq RSAScenarioQ.worldBEq
   RSAScenarioQ.interpBEq RSAScenarioQ.qudBEq
 
--- ============================================================================
--- PART 2: Smart Constructors
--- ============================================================================
 
 /--
 Build a basic RSA scenario with rational α (no interpretation ambiguity, no QUD).
@@ -180,9 +174,6 @@ def RSAScenarioQ.ambiguousBool {U W I : Type} [BEq U] [BEq W] [BEq I] [Decidable
   RSAScenarioQ.ambiguous utterances worlds interps
     (fun i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α α_nonneg precision
 
--- ============================================================================
--- PART 3: RSA Computations with Rational α
--- ============================================================================
 
 namespace Q
 
@@ -267,9 +258,6 @@ def S2Q (S : RSAScenarioQ) (w : S.World) : List (S.Utterance × ℚ) :=
 
 end Q
 
--- ============================================================================
--- PART 4: RSAScenarioQ is standalone for rational alpha scenarios
--- ============================================================================
 
 -- Note: RSAScenarioQ provides a list-based API for scenarios requiring
 -- rational alpha values. For Fintype-based scenarios with natural alpha,

@@ -38,9 +38,7 @@ open Theories.Montague.Sentence.InformationStructure
 
 namespace Montague.Sentence.FocusInterpretation
 
--- ============================================================================
 -- Focus Semantic Values (Rooth 1985, 1992)
--- ============================================================================
 
 /-- Focus semantic value: a set of propositions (alternatives).
     Reuses the Alternatives structure from Core.InformationStructure.
@@ -51,9 +49,7 @@ abbrev FocusValue (α : Type) := Alternatives α
     Type: <<s,t>,t> - same as Hamblin questions! -/
 abbrev PropFocusValue (W : Type*) := (W → Bool) → Bool
 
--- ============================================================================
 -- The ~ Operator (Squiggle)
--- ============================================================================
 
 /-- The ~ operator introduces a focus constraint via anaphor Γ.
 
@@ -72,9 +68,7 @@ structure Squiggle (W : Type*) where
 def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) → Bool) : Prop :=
   ∀ p, gamma p → focusValue p
 
--- ============================================================================
 -- Grounding: Hamblin Questions = Focus Semantic Values
--- ============================================================================
 
 /-- Grounding theorem: Hamblin question denotations have the same type as
     propositional focus semantic values.
@@ -84,9 +78,7 @@ def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) �
 theorem hamblin_is_focus_type (W : Type*) :
     Montague.Question.Hamblin.QuestionDen W = ((W → Bool) → Bool) := rfl
 
--- ============================================================================
 -- Question-Answer Congruence
--- ============================================================================
 
 /-- Q-A Congruence: An answer is congruent to a question iff the focus
     semantic value of the answer equals the question denotation.
@@ -107,9 +99,7 @@ def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
     (question : Montague.Question.Hamblin.QuestionDen W) : Prop :=
   ∀ p, question p → answerFocus p
 
--- ============================================================================
 -- FIP Applications (Rooth §2)
--- ============================================================================
 
 /-- Application type for the Focus Interpretation Principle -/
 inductive FIPApplication where
@@ -130,9 +120,7 @@ def FIPApplication.description : FIPApplication → String
   | .scalarImplicature => "Focus alternatives feed into scalar implicature computation"
   | .qaCongruence => "Answer focus must match question (see Questions/FocusAnswer.lean)"
 
--- ============================================================================
 -- Connection to Additive Particles
--- ============================================================================
 
 /-!
 ## Additive Particles and FIP

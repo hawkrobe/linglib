@@ -25,9 +25,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Generics
 
--- ============================================================================
 -- Prevalence Asymmetry Data
--- ============================================================================
 
 /-- A prevalence asymmetry datum: same prevalence, different judgments -/
 structure PrevalenceAsymmetry where
@@ -64,9 +62,7 @@ def hasLiverVsHasBrownEyes : PrevalenceAsymmetry :=
   , source := "Prasada & Dillingham 2006"
   }
 
--- ============================================================================
 -- Rare Property Generics
--- ============================================================================
 
 /-- A rare property generic: true despite very low prevalence -/
 structure RarePropertyGeneric where
@@ -115,9 +111,7 @@ def peacocksTails : RarePropertyGeneric :=
   , source := "Leslie 2008"
   }
 
--- ============================================================================
 -- Striking Property Effect
--- ============================================================================
 
 /-- The striking property effect: dangerous/distinctive properties
     require less prevalence for generic acceptance -/
@@ -139,9 +133,7 @@ def malariaVsWings : StrikingPropertyEffect :=
   , source := "Cimpian et al. 2010"
   }
 
--- ============================================================================
 -- Principled vs Statistical Connections
--- ============================================================================
 
 /-- Prasada & Dillingham's distinction between connection types -/
 inductive ConnectionType where
@@ -171,9 +163,7 @@ def hasBrownFur : ConnectionDatum :=
   , source := "Prasada & Dillingham 2006"
   }
 
--- ============================================================================
 -- Habitual Data
--- ============================================================================
 
 /-- A habitual sentence datum -/
 structure HabitualDatum where
@@ -208,9 +198,7 @@ def johnDrinksAmbiguity : HabitualDatum :=
   , source := "Carlson 1977"
   }
 
--- ============================================================================
 -- Causal Generics
--- ============================================================================
 
 /-- A causal generic datum -/
 structure CausalGenericDatum where
@@ -236,9 +224,7 @@ def pillsClots : CausalGenericDatum :=
   , source := "Tessler & Goodman 2019"
   }
 
--- ============================================================================
 -- Quantifier Contrast Data
--- ============================================================================
 
 /-- Generics vs explicit quantifiers -/
 structure QuantifierContrast where
@@ -268,9 +254,7 @@ def ducksLay : QuantifierContrast :=
   , source := "Leslie 2008"
   }
 
--- ============================================================================
 -- Acquisition Data (Cimpian et al. 2010)
--- ============================================================================
 
 /-- Children accept generics with minimal evidence -/
 structure AcquisitionDatum where
@@ -292,9 +276,7 @@ def lorpsPurple : AcquisitionDatum :=
   , source := "Cimpian et al. 2010"
   }
 
--- ============================================================================
 -- Theory Desiderata
--- ============================================================================
 
 /-!
 ## What a Theory of Generics Must Explain

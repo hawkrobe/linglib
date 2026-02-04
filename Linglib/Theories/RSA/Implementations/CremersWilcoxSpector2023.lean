@@ -31,9 +31,6 @@ namespace RSA.Implementations.CremersWilcoxSpector2023
 
 open Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
--- ============================================================================
--- PART 1: Baseline RSA (Model 1)
--- ============================================================================
 
 /-- Convert Bool meaning to ℚ (for RSA φ function) -/
 def boolToQ (b : Bool) : ℚ := if b then 1 else 0
@@ -44,9 +41,6 @@ def baselineL1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
     (fun u w => boolToQ (literalTruth w u))
     cfg.prior.prob cfg.alpha (fun _ => 0) u
 
--- ============================================================================
--- PART 2: Exhaustified RSA (Simple EXH model)
--- ============================================================================
 
 /-- Meaning with parse-dependent exhaustification.
 
@@ -63,9 +57,6 @@ def exhL1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
     cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
--- ============================================================================
--- PART 3: FREE-LU (Model 5) - Lexical Uncertainty
--- ============================================================================
 
 /-- Convert lexicon meaning to ℚ -/
 def lexiconMeaningQ (l : CWSLexicon) (u : CWSUtterance) (w : CWSWorld) : ℚ :=
@@ -78,9 +69,6 @@ def freeLU_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
     cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
--- ============================================================================
--- PART 4: svRSA (Model 4) - Supervaluationist QUD
--- ============================================================================
 
 /-- Compute L1 for svRSA using RSA.Eval -/
 def svRSA_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
@@ -89,9 +77,6 @@ def svRSA_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
     cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun q w w' => qudEquiv q w w') (fun _ => 0) cfg.alpha u
 
--- ============================================================================
--- PART 5: EXH-LU (Model 6) - Full Integration
--- ============================================================================
 
 /-- Combined meaning: parse-dependent exhaustification + lexicon uncertainty.
 
@@ -115,9 +100,6 @@ def exhLU_L1 (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
     cfg.prior.prob (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) cfg.alpha u
 
--- ============================================================================
--- PART 6: wRSA (Model 2) - Non-Bayesian Wonky Mixture
--- ============================================================================
 
 /-- wRSA: Non-Bayesian wonky world model (Model 2).
 
@@ -145,9 +127,6 @@ def wRSA_L1 (cfg : CWSConfig) (w_wonk : ℚ) (u : CWSUtterance) : List (CWSWorld
 def wRSA_L1_wab_given_A (cfg : CWSConfig) (w_wonk : ℚ) : ℚ :=
   RSA.Eval.getScore (wRSA_L1 cfg w_wonk .A) .w_ab
 
--- ============================================================================
--- PART 7: BwRSA (Model 3) - Bayesian Wonky Inference
--- ============================================================================
 
 /-- BwRSA goal projection: how goals partition worlds.
 
@@ -169,9 +148,6 @@ def bwRSA_L1 (cfg : CWSConfig) (p_wonk : ℚ) (u : CWSUtterance) : List (CWSWorl
 def bwRSA_L1_wab_given_A (cfg : CWSConfig) (p_wonk : ℚ) : ℚ :=
   RSA.Eval.getScore (bwRSA_L1 cfg p_wonk .A) .w_ab
 
--- ============================================================================
--- PART 8: RSA-LI (Models 7-8) - Lexical Intentions
--- ============================================================================
 
 /-
 RSA-LI: Lexical Intentions model.
@@ -213,9 +189,6 @@ def rsaLI_uniform_L1_wab_given_A (cfg : CWSConfig) : ℚ :=
 def rsaLI_biased_L1_wab_given_A (cfg : CWSConfig) (p_weak : ℚ) : ℚ :=
   RSA.Eval.getScore (rsaLI_biased_L1 cfg p_weak .A) .w_ab
 
--- ============================================================================
--- PART 9: Verification - Dimensions
--- ============================================================================
 
 /-- Verify utterance count -/
 theorem utterance_count : allUtterances.length = 3 := by native_decide
@@ -232,9 +205,6 @@ theorem lexica_count : allLexica.length = 4 := by native_decide
 /-- Verify wonky goals count -/
 theorem wonky_goals_count : allWonkyGoals.length = 2 := by native_decide
 
--- ============================================================================
--- PART 10: Anti-Exhaustivity Analysis
--- ============================================================================
 
 /-- Compute L1 distribution over worlds for baseline RSA -/
 def baselineL1_world (cfg : CWSConfig) (u : CWSUtterance) : List (CWSWorld × ℚ) :=
@@ -256,9 +226,6 @@ def baselineL1_wab_given_A (cfg : CWSConfig) : ℚ :=
 def exhLU_L1_wab_given_A (cfg : CWSConfig) : ℚ :=
   getL1Prob (exhLU_L1_world cfg .A) .w_ab
 
--- ============================================================================
--- PART 11: Key Theorems - Baseline Behavior
--- ============================================================================
 
 /-- Under uniform prior, baseline RSA does NOT produce anti-exhaustivity.
 
@@ -281,9 +248,6 @@ theorem baseline_biased_antiexh :
 theorem exh_meaning_blocks_wab :
     exhMeaning .w_ab .A = false := by rfl
 
--- ============================================================================
--- PART 12: Key Theorems - Model Comparison
--- ============================================================================
 
 /-- With EXH-LU under biased prior, anti-exhaustivity is reduced.
 
@@ -327,9 +291,7 @@ theorem freeLU_reduces_antiexh :
     baselineL1_wab_given_A antiExhConfig := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

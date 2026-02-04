@@ -45,9 +45,7 @@ namespace Phenomena.KursatDegen2021
 
 open RSA.Noise
 
--- ============================================================================
 -- Property Types
--- ============================================================================
 
 /-- Property types tested in the experiments -/
 inductive PropertyType where
@@ -56,9 +54,7 @@ inductive PropertyType where
   | size      -- e.g., "small", "large" (from Degen et al. 2020)
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
 -- Experiment 1: Perceptual Difficulty Norms
--- ============================================================================
 
 /--
 Perceptual difficulty datum from Exp 1.
@@ -111,9 +107,7 @@ structure Exp1Stats where
 
 def exp1_stats : Exp1Stats := {}
 
--- ============================================================================
 -- Experiment 2: Redundant Modifier Production
--- ============================================================================
 
 /--
 Production datum from Exp 2.
@@ -152,9 +146,7 @@ structure Exp2Stats where
 
 def exp2_stats : Exp2Stats := {}
 
--- ============================================================================
 -- Experiment 3: Perceptual Difficulty in Context
--- ============================================================================
 
 /-- Exp 3 results: Replication with displays from Exp 2 -/
 def exp3_color : PerceptualDifficultyDatum := {
@@ -186,9 +178,7 @@ structure Exp3Stats where
 
 def exp3_stats : Exp3Stats := {}
 
--- ============================================================================
 -- The Perceptual Difficulty Hypothesis
--- ============================================================================
 
 /-!
 ## The Perceptual Difficulty Hypothesis
@@ -252,9 +242,7 @@ structure PerceptualDifficultyHypothesis where
 
 def hypothesis : PerceptualDifficultyHypothesis := {}
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 def perceptualDifficultyData : List PerceptualDifficultyDatum :=
   [exp1_color, exp1_material, exp3_color, exp3_material]
@@ -262,9 +250,7 @@ def perceptualDifficultyData : List PerceptualDifficultyDatum :=
 def productionData : List ProductionDatum :=
   [exp2_colorRedundant, exp2_materialRedundant]
 
--- ============================================================================
 -- Connection to Degen et al. (2020) Parameters
--- ============================================================================
 
 /-!
 ## Mapping to SemanticParams
@@ -309,9 +295,7 @@ structure MaterialParams where
 
 def hypotheticalMaterialParams : MaterialParams := {}
 
--- ============================================================================
 -- Connection to Unified Noise Theory
--- ============================================================================
 
 /-!
 ## Connection to `RSA.Noise`

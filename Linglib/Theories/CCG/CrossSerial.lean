@@ -46,9 +46,7 @@ namespace CCG.CrossSerial
 open CCG
 open Phenomena.FillerGap.CrossSerial
 
--- ============================================================================
 -- Additional Categories for Dutch
--- ============================================================================
 
 /-- Verb phrase (infinitival) -/
 def VP : Cat := S \ NP
@@ -75,9 +73,7 @@ This differs from the simple intransitive VP = S\NP.
 -/
 def InfSubj : Cat := (S \ NP) / NP
 
--- ============================================================================
 -- Generalized Composition Rules
--- ============================================================================
 
 -- Forward Composition (B): X/Y  Y/Z  →  X/Z
 -- This is already in CCG.Basic as `forwardComp`.
@@ -102,9 +98,7 @@ def forwardComp3 : Cat → Cat → Option Cat
     if y == y' then some (.rslash (.rslash (.rslash x z) w) v) else none
   | _, _ => none
 
--- ============================================================================
 -- Extended Derivation Steps
--- ============================================================================
 
 /--
 Extended derivation with generalized composition.
@@ -146,9 +140,7 @@ def ExtDerivStep.cat : ExtDerivStep → Option Cat
     let x ← d.cat
     some (forwardTypeRaise x t)
 
--- ============================================================================
 -- Dutch Lexicon
--- ============================================================================
 
 def dutchLexicon : List LexEntry := [
   -- NPs (proper names)
@@ -170,9 +162,7 @@ def dutchLexicon : List LexEntry := [
   ⟨"zwemmen_vr", InfSubj⟩  -- (S\NP)/NP - for verb-raising constructions
 ]
 
--- ============================================================================
 -- Lexical Entries for Derivations
--- ============================================================================
 
 def jan_lex : ExtDerivStep := .lex ⟨"Jan", NP⟩
 def piet_lex : ExtDerivStep := .lex ⟨"Piet", NP⟩
@@ -186,9 +176,7 @@ def laten_lex : ExtDerivStep := .lex ⟨"laten", ControlV⟩   -- VP/VP
 /-- zwemmen with InfSubj category for verb-raising -/
 def zwemmen_vr : ExtDerivStep := .lex ⟨"zwemmen", InfSubj⟩ -- (S\NP)/NP
 
--- ============================================================================
 -- Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs)
--- ============================================================================
 
 /-
 ## Cross-Serial Derivation Strategy
@@ -268,9 +256,7 @@ def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
   , bindings := crossSerialDeps 2  -- Jan→zag, Piet→zwemmen
   }
 
--- ============================================================================
 -- Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
--- ============================================================================
 
 /-
 For 3-verb cross-serial "Jan Piet Marie zag helpen zwemmen"
@@ -328,9 +314,7 @@ def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
   , bindings := crossSerialDeps 3  -- Jan→zag, Piet→helpen, Marie→zwemmen
   }
 
--- ============================================================================
 -- The Key Theorem: CCG Predicts Cross-Serial
--- ============================================================================
 
 /--
 The 2-verb derivation produces category S.
@@ -383,9 +367,7 @@ theorem ccg_predicts_dutch_pattern :
     dutch_3np_3v.pattern = .crossSerial := by
   rfl
 
--- ============================================================================
 -- Generative Capacity: Beyond CFG
--- ============================================================================
 
 /--
 The cross-serial language {aⁿbⁿcⁿ | n ≥ 1} is NOT context-free.
@@ -418,9 +400,7 @@ theorem ccg_handles_both_patterns :
     nestedRequires = .contextFree := by
   constructor <;> rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

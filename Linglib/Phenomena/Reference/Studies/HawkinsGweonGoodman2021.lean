@@ -67,9 +67,6 @@ Perspective. Cognitive Science, 45, e12926.
 
 namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 
--- ============================================================================
--- PART 1: Task Structure
--- ============================================================================
 
 /-- Visual perspective state in director-matcher task -/
 inductive PerspectiveState where
@@ -92,9 +89,6 @@ def exp1TrialTypes : List Exp1TrialType := [
   ⟨true, true⟩     -- Occlusion, distractor
 ]
 
--- ============================================================================
--- PART 2: Experiment 1 Results (Speaker Production)
--- ============================================================================
 
 /-- Mean words produced in each condition -/
 def exp1MeanWords : Exp1TrialType → ℚ
@@ -123,9 +117,6 @@ def featureRates_noOcclusion_noDistractor : FeatureMentionRates :=
 def featureRates_occlusion_noDistractor : FeatureMentionRates :=
   { shape := 99/100, color := 50/100, texture := 65/100 }
 
--- ============================================================================
--- PART 3: Experiment 2 Results (Listener Comprehension)
--- ============================================================================
 
 /-- Speaker condition in Experiment 2 -/
 inductive SpeakerCondition where
@@ -150,9 +141,6 @@ def errorRateByTrial : Nat → ℚ
 theorem errors_decrease_over_trials :
     errorRateByTrial 4 < errorRateByTrial 1 := by native_decide
 
--- ============================================================================
--- PART 4: Speaker Informativity Analysis
--- ============================================================================
 
 /-- Informativity: how well utterance fits target vs distractor -/
 structure InformativityRating where
@@ -180,9 +168,6 @@ theorem unscripted_more_informative :
 /-- Informativity-error correlation: ρ = -0.81 -/
 def informativityErrorCorrelation : ℚ := -81/100
 
--- ============================================================================
--- PART 5: Key Predictions from Resource-Rational Model
--- ============================================================================
 
 /--
 The paper identifies these key qualitative predictions:
@@ -207,9 +192,6 @@ def keyPredictions : List KeyPrediction := [
   .intermediateWeightsOptimal
 ]
 
--- ============================================================================
--- PART 6: Model Parameters from Paper
--- ============================================================================
 
 /-- Configuration for resource-rational analysis -/
 structure ResourceRationalConfig where
@@ -228,9 +210,6 @@ def defaultConfig : ResourceRationalConfig := {}
 def optimalSpeakerWeight : ℚ := 36/100   -- w*_S = 0.36
 def optimalListenerWeight : ℚ := 51/100  -- w*_L = 0.51
 
--- ============================================================================
--- PART 7: Stimuli from Experiment 2 (Table 1)
--- ============================================================================
 
 /-- Critical item from Keysar et al. (2003) replication -/
 structure CriticalItem where

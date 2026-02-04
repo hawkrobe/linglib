@@ -55,9 +55,6 @@ open Theories.DynamicSemantics.Core
 export BilateralDen (atom neg conj disj exists_ existsFull forall_ pred1 pred2
   supports entails toPair ofPair toUnilateral)
 
--- ============================================================================
--- PART 1: BUS-Specific Extensions
--- ============================================================================
 
 /--
 BUS denotation is a bilateral denotation specialized for a particular
@@ -86,9 +83,6 @@ Sentence is defined (no presupposition failure).
 def defined (φ : BUSDen W E) (s : InfoState W E) : Prop :=
   φ.positive s ∪ φ.negative s = s
 
--- ============================================================================
--- PART 2: BUS-specific Connectives
--- ============================================================================
 
 /--
 Strong Kleene conjunction in BUS.
@@ -111,9 +105,6 @@ def pConj (φ ψ : BUSDen W E) : BUSDen W E :=
       φ.negative s ∪ (s \ (φ.positive s ∪ φ.negative s)) ∪
         (φ.positive s ∩ ψ.negative (φ.positive s)) }
 
--- ============================================================================
--- PART 3: BUS Entailment Relations
--- ============================================================================
 
 /--
 Strawson entailment: φ entails ψ if whenever φ is defined and true, ψ is true.
@@ -135,9 +126,6 @@ def strongEntails (φ ψ : BUSDen W E) : Prop :=
     defined ψ (φ.positive s) ∧
     (φ.positive s) ⊆ ψ.positive (φ.positive s)
 
--- ============================================================================
--- PART 4: Update Algebra Properties
--- ============================================================================
 
 /--
 Negation swaps positive and negative.
@@ -163,9 +151,6 @@ theorem conj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
 
 end BUSDen
 
--- ============================================================================
--- PART 5: Backward Compatibility
--- ============================================================================
 
 -- For files that still import the old location
 namespace Compat
@@ -175,9 +160,7 @@ abbrev BilateralDen := Theories.DynamicSemantics.Core.BilateralDen
 
 end Compat
 
--- ============================================================================
 -- SUMMARY
--- ============================================================================
 
 /-!
 ## What This Module Provides

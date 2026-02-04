@@ -43,9 +43,6 @@ namespace RSA.RateDistortion
 
 open Real Classical RSA.Convergence
 
--- ============================================================================
--- PART 1: Rate-Distortion Objective
--- ============================================================================
 
 /--
 Mutual information I(M;U) under speaker distribution.
@@ -87,9 +84,6 @@ theorem G_F_relation (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
   simp only [F_α, G_α, I_MU]
   ring
 
--- ============================================================================
--- PART 2: Critical Point at α = 1
--- ============================================================================
 
 /--
 **Proposition 3 (Zaslavsky et al.)**: α = 1 is the critical point.
@@ -107,9 +101,6 @@ theorem alpha_one_critical (S : RSAScenarioR) (hα : S.α = 1) :
   funext Spk L
   simp only [G_α, hα, one_mul]
 
--- ============================================================================
--- PART 3: Utility Non-Monotonicity (Proposition 2)
--- ============================================================================
 
 /-!
 ## The Key Distinction: Utility Can Decrease
@@ -140,9 +131,6 @@ theorem utility_can_decrease (S : RSAScenarioR) (hα : S.α < 1) :
          E_VL S (iterateRSA S n).speaker (iterateRSA S n).listener := by
   sorry -- Existence proof via graded lexicon counterexample
 
--- ============================================================================
--- PART 4: NeoGricean Limit
--- ============================================================================
 
 /--
 Argmax: set of utterances with maximum listener probability for a given meaning.
@@ -174,9 +162,6 @@ theorem neoGricean_limit (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) 
       (nhds (neoGriceanLimitFn S L m)) := by
   sorry -- Proof via properties of x^α as α → ∞
 
--- ============================================================================
--- PART 5: Supporting Lemmas
--- ============================================================================
 
 /--
 **Base < 1 limit**: For 0 < x < 1, x^α → 0 as α → ∞.
@@ -204,9 +189,6 @@ theorem rpow_tendsto_atTop_of_base_gt_one {x : ℝ} (hx : 1 < x) :
   simp only [Function.comp_apply]
   exact (Real.rpow_def_of_pos hx0 α).symm
 
--- ============================================================================
--- PART 6: Provable Properties
--- ============================================================================
 
 /--
 **α = 0 gives uniform scores**: When α = 0, all positive listener values

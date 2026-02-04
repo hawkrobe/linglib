@@ -68,9 +68,7 @@ import Linglib.Theories.Montague.Determiner.Numeral.LowerBound
 
 namespace Montague.Determiner.Numeral
 
--- ============================================================================
 -- Bilateral Meaning Function
--- ============================================================================
 
 /--
 Bilateral meaning for bare numerals: max{n | P(n)} = w.toNat
@@ -81,9 +79,7 @@ This yields an exact (=n) reading, derived compositionally via maximality.
 def bilateralMeaning (w : NumWord) (n : Nat) : Bool :=
   n == w.toNat
 
--- ============================================================================
 -- The Theory
--- ============================================================================
 
 /--
 Bilateral numeral theory (Kennedy 2015).
@@ -96,9 +92,7 @@ def Bilateral : NumeralTheory where
   citation := "Kennedy 2015"
   meaning := bilateralMeaning
 
--- ============================================================================
 -- Key Properties
--- ============================================================================
 
 /-- "two" is compatible with only world 2 (exact meaning) -/
 theorem bilateral_two_worlds :
@@ -110,9 +104,7 @@ theorem bilateral_no_ambiguity :
     Bilateral.hasAmbiguity .two = false := by
   native_decide
 
--- ============================================================================
 -- Difference from LowerBound
--- ============================================================================
 
 /--
 Bilateral differs from LowerBound on bare numerals.
@@ -135,9 +127,7 @@ theorem ambiguity_differs :
     Bilateral.hasAmbiguity .two = false := by
   native_decide
 
--- ============================================================================
 -- RSA Role Difference
--- ============================================================================
 
 /--
 Under Bilateral semantics, RSA does NOT derive "exactly n" for bare numerals.
@@ -153,9 +143,7 @@ theorem bilateral_no_rsa_strengthening_needed :
     Bilateral.compatibleCount .two = 1 := by
   native_decide
 
--- ============================================================================
 -- Monotonicity
--- ============================================================================
 
 /-- Bilateral is not monotonic (numerals have disjoint denotations) -/
 theorem bilateral_not_monotonic :
@@ -167,16 +155,12 @@ theorem bilateral_three_not_stronger :
     Bilateral.isStrongerThan .three .two = false := by
   native_decide
 
--- ============================================================================
 -- RSA Scenario
--- ============================================================================
 
 -- Run L1 inference for Bilateral numerals (using NumeralTheory.runL1)
 #eval NumeralTheory.runL1 Bilateral .two  -- Should show exact match
 
--- ============================================================================
 -- Backward Compatibility
--- ============================================================================
 
 /-- Alias for backward compatibility with code using DeFregean -/
 abbrev DeFregean := Bilateral
@@ -190,9 +174,7 @@ abbrev Exact := Bilateral
 /-- Alias for backward compatibility -/
 abbrev exactMeaning := bilateralMeaning
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /--
 **Summary: Bilateral vs LowerBound (Bare Numerals)**

@@ -80,9 +80,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.Eval
 
--- ============================================================================
 -- List-based Utility Functions
--- ============================================================================
 
 /-- Sum a list of rationals -/
 def sumScores (scores : List ℚ) : ℚ :=
@@ -108,9 +106,7 @@ def marginalize {α β : Type} [BEq β] (dist : List (α × ℚ)) (proj : α →
     let total := projected.filter (fun (k', _) => k' == k) |>.map (·.2) |> sumScores
     (k, total)
 
--- ============================================================================
 -- List-based RSA Computations
--- ============================================================================
 
 /--
 L0: Literal listener distribution (list-based).
@@ -237,9 +233,7 @@ def L1_world {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq Q
     let wScores := normalized.filter (fun ((w', _, _, _, _), _) => w' == w) |>.map (·.2)
     (w, sumScores wScores)
 
--- ============================================================================
 -- Simplified API for Basic Scenarios
--- ============================================================================
 
 /--
 Basic L0 for simple scenarios (no interp, lexicon, belief state, goal).
@@ -329,9 +323,7 @@ def basicL1 {U W : Type} [BEq U] [BEq W]
     (fun _ _ => φ) worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') cost α u
 
--- ============================================================================
 -- Unified API with ChainVariant
--- ============================================================================
 
 /--
 Run S1 (pragmatic speaker) with chain selection.
@@ -373,9 +365,7 @@ def runL1 {U W : Type} [BEq U] [BEq W]
   | .L0Based => basicL1 utterances worlds φ worldPrior α cost u
   | .S0Based => basicL1_fromS0 utterances worlds φ worldPrior utterancePrior u
 
--- ============================================================================
 -- Full Joint and Marginal Distributions
--- ============================================================================
 
 /--
 L1 joint distribution over all latent variables (W × I × L × A × Q).
@@ -506,9 +496,7 @@ def L1_beliefState {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] 
     speakerCredence goalProject cost α u
   marginalize joint (fun (_, _, _, a, _) => a)
 
--- ============================================================================
 -- Conditioned Distributions (given specific Goal/QUD)
--- ============================================================================
 
 /--
 L1 world distribution conditioned on a specific goal.
@@ -571,9 +559,7 @@ def L1_beliefState_givenGoal {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L
   -- Marginalize over belief states
   marginalize renorm (fun (_, _, _, a, _) => a)
 
--- ============================================================================
 -- Simplified APIs for Common Scenario Types
--- ============================================================================
 
 /--
 L1 joint for ambiguous scenarios (interp varies, others fixed).
@@ -686,9 +672,7 @@ def lexUncertaintyL1_lexicon {U W L : Type} [BEq U] [BEq W] [BEq L]     (utteran
     (fun _ l => φ l) worldPrior (fun _ => 1) lexiconPrior (fun _ => 1) (fun _ => 1)
     (fun _ _ => 1) (fun _ w w' => w == w') cost α u
 
--- ============================================================================
 -- Utility Aliases
--- ============================================================================
 
 /-- Alias for normalize (some files use normalizeScores) -/
 def normalizeScores (scores : List ℚ) : List ℚ :=

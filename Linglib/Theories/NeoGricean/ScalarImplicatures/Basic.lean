@@ -49,9 +49,6 @@ open NeoGricean.Exhaustivity
 open Montague.Core.Polarity (ContextPolarity)
 open Phenomena.ScalarImplicatures
 
--- ============================================================================
--- PART 1: DE Environment Effects
--- ============================================================================
 
 /--
 A scalar implicature derivation attempt.
@@ -121,9 +118,6 @@ theorem de_all_has_implicature :
     allNotSome_DE.implicatureArises = true := by
   native_decide
 
--- ============================================================================
--- PART 2: Disjunction - Exclusivity vs Ignorance
--- ============================================================================
 
 /--
 Two types of inferences from disjunction.
@@ -189,9 +183,6 @@ theorem exclusivity_ignorance_compatible :
     (analyzeDisjunction simpleAssertion).compatible = true := by
   native_decide
 
--- ============================================================================
--- PART 3: Long Disjunction Problem
--- ============================================================================
 
 /--
 The long disjunction problem (Geurts p.61-64).
@@ -275,9 +266,6 @@ theorem three_way_total :
     threeWayExample.derivedAlternatives.length = 7 := by
   native_decide
 
--- ============================================================================
--- PART 4: Substitution Method Failure
--- ============================================================================
 
 /--
 The simple substitution method: replace "or" with "and".
@@ -338,9 +326,6 @@ theorem substitution_fails_n3 :
     (compareSubstitution 3).neededAlternatives = 4 := by
   native_decide
 
--- ============================================================================
--- PART 5: Complete Scalar Implicature Derivation
--- ============================================================================
 
 /--
 Complete scalar implicature derivation result.
@@ -400,9 +385,6 @@ theorem some_de_no_implicatures :
     someDE.implicatures = ([] : List String) := by
   native_decide
 
--- ============================================================================
--- PART 6: Derivation from Semantic Interface
--- ============================================================================
 
 /-
 ## Connection to Syntax via SemDeriv.Derivation
@@ -533,9 +515,6 @@ theorem some_students_de_no_not_all :
     hasImplicature someStudentsSleep_DE_result "all" = false := by
   native_decide
 
--- ============================================================================
--- PART 7: Connection to Geurts & Pouscoulous (2009) Experimental Data
--- ============================================================================
 
 /-
 ## Connecting Theory to Empirical Data
@@ -660,9 +639,6 @@ def competenceExplainsBelief : Bool :=
 theorem competence_explains_think :
     competenceExplainsBelief = true := by native_decide
 
--- ============================================================================
--- PART 8: Defaultism vs Contextualism - Derived Predictions
--- ============================================================================
 
 /-
 ## Comparing Neo-Gricean Variants
@@ -754,9 +730,6 @@ theorem data_supports_contextualism_over_defaultism :
     levinsonParams.predictedNeutralRate - mainFinding.verificationTaskRate > 50 := by
   native_decide
 
--- ============================================================================
--- PART 9: Scale Semantics - Horn Scale Structure
--- ============================================================================
 
 /--
 A Horn scale with semantic content.
@@ -786,9 +759,6 @@ Alternative set for a Horn scale: {weaker, stronger}.
 def HornScale.alts {World : Type*} (s : HornScale World) : Set (Prop' World) :=
   {s.weaker, s.stronger}
 
--- ============================================================================
--- PART 10: Scale Semantics - Hurford Structure
--- ============================================================================
 
 /--
 Semantic structure for a Hurford configuration.
@@ -822,9 +792,6 @@ This is the relevant check when the original entailment goes from B to A.
 def HurfordSemantic.isRescuedFromBA {World : Type*} (h : HurfordSemantic World) : Prop :=
   ¬(exhIE h.alts h.disjunctB ⊆ₚ h.disjunctA)
 
--- ============================================================================
--- PART 11: Scale Semantics - Singh Structure
--- ============================================================================
 
 /--
 Semantic structure for Singh configurations.
@@ -855,9 +822,6 @@ Strong-first can't be rescued because exh(strong) is vacuous.
 def SinghSemantic.predictedFelicitous {World : Type*} (s : SinghSemantic World) : Prop :=
   s.weakerFirst ∧ s.exhBreaksEntailment
 
--- ============================================================================
--- PART 12: Concrete Scales - SOME/ALL
--- ============================================================================
 
 /-- Worlds for quantifier scale: number satisfying predicate (0 to 3). -/
 abbrev QuantWorld := Fin 4
@@ -892,9 +856,6 @@ def someAllScale : HornScale QuantWorld :=
   , nonTrivial := some_not_entails_all
   }
 
--- ============================================================================
--- PART 13: Concrete Scales - OR/AND
--- ============================================================================
 
 /-- Worlds for connective scale. -/
 inductive ConnWorld where
@@ -937,9 +898,6 @@ def orAndScale : HornScale ConnWorld :=
   , nonTrivial := or_not_entails_and
   }
 
--- ============================================================================
--- PART 14: Concrete Scales - POSSIBLE/NECESSARY
--- ============================================================================
 
 /-- Worlds for modal scale: accessibility relation outcomes. -/
 inductive ModalWorld where
@@ -982,9 +940,6 @@ def possibleNecessaryScale : HornScale ModalWorld :=
   , nonTrivial := possible_not_entails_necessary
   }
 
--- ============================================================================
--- PART 15: Predictions - Horn Scale Implicatures
--- ============================================================================
 
 /-
 ## Scale Predictions
@@ -1137,9 +1092,6 @@ theorem possibleNecessary_implicature :
   simp only [pneg] at hneg_nec_w
   exact hneg_nec_w hnec
 
--- ============================================================================
--- PART 16: Predictions - Hurford
--- ============================================================================
 
 /-
 ## Hurford Predictions
@@ -1339,9 +1291,6 @@ theorem americanCalifornian_prediction_matches_data :
   · intro _; rfl
   · intro _; exact americanCalifornian_not_rescued
 
--- ============================================================================
--- PART 17: Predictions - Singh
--- ============================================================================
 
 /-
 ## Singh Predictions
@@ -1455,9 +1404,6 @@ theorem bothThenOr_prediction_matches_data :
   · intro _; rfl
   · intro _; exact bothThenOr_not_predicted_felicitous
 
--- ============================================================================
--- PART 18: Summary Theorems
--- ============================================================================
 
 /--
 **Main Result**: Theory correctly predicts all three Horn scale implicatures.
@@ -1480,9 +1426,6 @@ theorem singh_asymmetry_derived :
     ¬bothThenOr_semantic.predictedFelicitous :=
   ⟨orThenBoth_predicted_felicitous, bothThenOr_not_predicted_felicitous⟩
 
--- ============================================================================
--- PART 19: Summary
--- ============================================================================
 
 /-
 ## What This Module Provides
@@ -1560,9 +1503,6 @@ theorem singh_asymmetry_derived :
 
 end NeoGricean.ScalarImplicatures
 
--- ============================================================================
--- PART 20: ImplicatureTheory Instance
--- ============================================================================
 
 namespace NeoGricean
 
@@ -1587,9 +1527,7 @@ structure NeoGriceanStructure where
   params : NeoGriceanParams := geurtsParams
   deriving Repr
 
--- ============================================================================
 -- Parsing
--- ============================================================================
 
 /-- Check if a word is a scalar quantifier -/
 def isScalarQuantifierWord (w : Word) : Bool :=
@@ -1629,9 +1567,7 @@ def parseToNeoGricean (ws : List Word) : Option NeoGriceanStructure :=
        , params := geurtsParams
        }
 
--- ============================================================================
 -- ImplicatureTheory Instance
--- ============================================================================
 
 instance : ImplicatureTheory NeoGriceanTheory where
   Structure := NeoGriceanStructure
@@ -1664,9 +1600,7 @@ instance : ImplicatureTheory NeoGriceanTheory where
 
   predictedBaselineRate := geurtsParams.predictedNeutralRate  -- 35%
 
--- ============================================================================
 -- Theorems (Interface Properties)
--- ============================================================================
 
 /-- NeoGricean predicts DE blocking -/
 theorem neogricean_predicts_de_blocking :
@@ -1680,9 +1614,7 @@ theorem neogricean_predicts_task_effect :
 theorem neogricean_baseline_rate :
     ImplicatureTheory.predictedBaselineRate (T := NeoGriceanTheory) = 35 := rfl
 
--- ============================================================================
 -- Example Derivations (via Interface)
--- ============================================================================
 
 /-- Example: "some students sleep" in UE context -/
 def someStudentsSleepNG : NeoGriceanStructure :=

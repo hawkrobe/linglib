@@ -29,9 +29,7 @@ namespace Phenomena.ScopeWordOrder
 
 open Montague.Scope
 
--- ============================================================================
 -- Word Order Types
--- ============================================================================
 
 /--
 Word order patterns in verb-final constructions.
@@ -50,9 +48,7 @@ def blocksInverseScope : VerbOrder → Bool
   | .verbRaising => false          -- allows both readings
   | .verbProjectionRaising => true -- blocks inverse scope
 
--- ============================================================================
 -- Scope Availability
--- ============================================================================
 
 /--
 Available scope readings for a sentence.
@@ -70,9 +66,7 @@ def wordOrderToAvailability : VerbOrder → ScopeAvailability
   | .verbRaising => .ambiguous
   | .verbProjectionRaising => .surfaceOnly
 
--- ============================================================================
 -- Empirical Data: German (Bayer 1990, 1996; Kayne 1998)
--- ============================================================================
 
 /--
 German sentence data from Bayer/Kayne.
@@ -110,9 +104,7 @@ def german_97 : GermanScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
--- ============================================================================
 -- Empirical Data: West Flemish (Haegeman & van Riemsdijk 1986)
--- ============================================================================
 
 /--
 West Flemish data from Haegeman & van Riemsdijk (1986).
@@ -146,9 +138,7 @@ def westFlemish_98b : WestFlemishScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
--- ============================================================================
 -- Empirical Data: Standard Dutch (Steedman 2000)
--- ============================================================================
 
 /--
 Dutch equi verb data from Steedman (2000) §6.8.
@@ -208,9 +198,7 @@ def dutch_100b : DutchScopeExample :=
   , observed := .surfaceOnly
   , quantifiers := ["iemand/someone", "alle/every"] }
 
--- ============================================================================
 -- Collected Data
--- ============================================================================
 
 def allDutchExamples : List DutchScopeExample :=
   [dutch_99a, dutch_99b, dutch_100a, dutch_100b]
@@ -221,9 +209,7 @@ def allWestFlemishExamples : List WestFlemishScopeExample :=
 def allGermanExamples : List GermanScopeExample :=
   [german_96, german_97]
 
--- ============================================================================
 -- Predictions
--- ============================================================================
 
 /-- Word order correctly predicts scope availability -/
 theorem wordOrder_predicts_dutch_99a :
@@ -244,9 +230,7 @@ theorem wordOrder_predicts_german_96 :
 theorem wordOrder_predicts_german_97 :
     wordOrderToAvailability german_97.wordOrder = german_97.observed := rfl
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

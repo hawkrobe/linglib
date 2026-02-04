@@ -43,9 +43,7 @@ namespace Montague.Question.Inquisitive
 
 open Montague.Question
 
--- ============================================================================
 -- Information States
--- ============================================================================
 
 /-- An information state: worlds compatible with current information.
 
@@ -82,9 +80,7 @@ def InfoState.inter {W : Type*} (σ σ' : InfoState W) : InfoState W :=
 def InfoState.union {W : Type*} (σ σ' : InfoState W) : InfoState W :=
   fun w => σ w || σ' w
 
--- ============================================================================
 -- Support Relation
--- ============================================================================
 
 /-- Info state σ supports proposition p iff σ ⊆ ⟦p⟧.
 
@@ -101,9 +97,7 @@ def propEntails {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
   -- Equivalent to: worlds.all fun w => p w → q w
   entails p q worlds
 
--- ============================================================================
 -- Issues (Questions in Inquisitive Semantics)
--- ============================================================================
 
 /-- An issue: set of information states that resolve the question.
 
@@ -151,9 +145,7 @@ def empty : Issue W := { alternatives := [trivialState] }
 /-- The absurd issue: resolved only by the absurd state. -/
 def absurd : Issue W := { alternatives := [absurdState] }
 
--- ============================================================================
 -- Mention-Some Detection
--- ============================================================================
 
 /-- A mention-some issue has multiple alternatives (non-singleton).
 
@@ -175,9 +167,7 @@ def isMentionAll (q : Issue W) : Bool :=
 def numAlternatives (q : Issue W) : Nat :=
   q.alternatives.length
 
--- ============================================================================
 -- Issue Operations
--- ============================================================================
 
 /-- Intersection of two issues (conjunction): Q ∩ Q'.
 
@@ -197,9 +187,7 @@ Alternatives: alts from Q plus alts from Q'. -/
 def union (q q' : Issue W) : Issue W :=
   { alternatives := q.alternatives ++ q'.alternatives }
 
--- ============================================================================
 -- Conversion from Other Question Types
--- ============================================================================
 
 /-- Convert a Hamblin question to an Issue.
 
@@ -236,9 +224,7 @@ def which {E : Type*} (domain : List E) (pred : E → W → Bool) : Issue W :=
 
 end Issue
 
--- ============================================================================
 -- Propositional Content of Issues
--- ============================================================================
 
 /-- The informational content of an issue: the union of all alternatives.
 
@@ -254,9 +240,7 @@ inquisitive semantics. -/
 def Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
   q.infoContent
 
--- ============================================================================
 -- Theorems
--- ============================================================================
 
 /-- Polar questions are always inquisitive (two alternatives). -/
 theorem polar_is_inquisitive {W : Type*} (p : W → Bool) :

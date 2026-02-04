@@ -1,89 +1,14 @@
-/-
-# Scontras & Tonhauser (2025): Projection via RSA
-
-"Projection without lexically-specified presupposition: A model for know"
-
-## Farkas & Bruce (2010) Connection
-
-In F&B terms, this model has L1 infer the **speaker's discourse commitments (dcS)**.
-
-The `BeliefState` type represents different possible dcS values—what the speaker
-privately takes for granted. This may extend beyond the common ground (cg).
-
-| F&B Component | This Implementation |
-|---------------|---------------------|
-| dcS | `BeliefState` (latent variable) |
-| dcL | Fixed (= baseCG) |
-| cg | Fixed (= baseCG) |
-| table | Not modeled (stable state) |
-
-The `speakerCredence` function returns 1 for worlds compatible with dcS.
-This captures the key insight that the speaker may assume things not yet
-mutually accepted.
-
-## Key Insight
-
-Projection is NOT a lexical property of predicates. Instead, it emerges from:
-1. **Lexical entailments** (know entails CC, think doesn't)
-2. **QUD sensitivity** (what's at-issue vs not)
-3. **Speaker's private assumptions** (what speaker takes for granted)
-4. **Prior beliefs** (listener's expectations about CC)
-
-## The Model
-
-World states: W = {⟨BEL:1, C:1⟩, ⟨BEL:1, C:0⟩, ⟨BEL:0, C:1⟩, ⟨BEL:0, C:0⟩}
-- BEL: whether the subject (Cole) believes C
-- C: whether the complement content is true
-
-Utterances:
-- "Cole knows that C" / "Cole doesn't know that C"
-- "Cole thinks that C" / "Cole doesn't think that C"
-
-QUDs:
-- BEL?: Is the subject's belief state at issue?
-- C?: Is the complement content at issue?
-
-Speaker's private assumptions A:
-- Non-empty subsets of W that speaker privately considers possible
-- L1 marginalizes over A to infer what speaker assumes
-
-## Key Constraints (from WebPPL model)
-
-1. **Speaker truthfulness**: S1 only produces utterances true in actual world w
-2. **w ∈ A**: Speaker's assumptions must include the true world
-   (pragmatic listener conditions on this)
-
-## Predictions (ALL VERIFIED ✓)
-
-(a) know > think in projection strength (due to entailment) ✓
-(b) Higher prior P(C) → stronger projection ✓
-(c) C? QUD → weaker projection (C is at-issue) ✓
-
-## Implementation Notes
-
-This implementation uses:
-- 9 belief states (subset of paper's 15)
-- Simplified belief state prior (paper uses qingETAL prior)
-- α = 10 (matches paper's Section 3)
-- No utterance costs (paper uses cost=1 for bare, cost=2 for complex)
-
-Despite simplifications, all three qualitative predictions are verified.
-
-## References
-
-- Scontras, G. & Tonhauser, J. (2025). Projection without lexically-specified
-  presupposition: A model for know.
-- WebPPL model: https://github.com/judith-tonhauser/SuB29-Scontras-Tonhauser
--/
-
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 
+/-! # Scontras & Tonhauser (2025)
+
+Projection emerges from RSA over speaker's private assumptions, not lexical
+presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
+-/
+
 namespace RSA.ScontrasTonhauser2025
 
--- ============================================================================
--- PART 1: World States
--- ============================================================================
 
 /--
 World state: tracks belief and complement truth.
@@ -105,9 +30,6 @@ def allWorlds : List WorldState := [
   ⟨false, false⟩  -- Cole doesn't believe C, C is false
 ]
 
--- ============================================================================
--- PART 2: Utterances
--- ============================================================================
 
 /--
 Attitude verb utterances about Cole's mental state.
@@ -121,9 +43,6 @@ inductive Utterance where
 
 def allUtterances : List Utterance := [.knowPos, .knowNeg, .thinkPos, .thinkNeg]
 
--- ============================================================================
--- PART 3: Literal Semantics
--- ============================================================================
 
 /--
 Literal truth conditions.
@@ -152,9 +71,6 @@ theorem think_not_entails_c : ∃ w, literalMeaning .thinkPos w = true ∧ w.c =
   use ⟨true, false⟩
   simp [literalMeaning]
 
--- ============================================================================
--- PART 4: QUDs (Communicative Goals)
--- ============================================================================
 
 /--
 Two possible QUDs:
@@ -175,9 +91,6 @@ def qudProject : QUD → WorldState → WorldState → Bool
   | .bel, w1, w2 => w1.bel == w2.bel  -- Same belief state
   | .c, w1, w2 => w1.c == w2.c        -- Same complement truth
 
--- ============================================================================
--- PART 5: Speaker's Private Assumptions
--- ============================================================================
 
 /--
 Speaker's private assumptions: a non-empty subset of worlds.
@@ -229,9 +142,6 @@ def assumesC : BeliefState → Bool
   | .cTrueBelFalse => true
   | _ => false
 
--- ============================================================================
--- PART 6: RSA Scenario
--- ============================================================================
 
 /--
 World prior parameterized by P(C).
@@ -260,9 +170,6 @@ def beliefStatePrior : BeliefState → ℚ
   | .belFalse => 1        -- Knowledge of BEL: 1 (base)
   | _ => 1/2              -- Singletons: 0.5 (half of knowledge of BEL)
 
--- ============================================================================
--- PART 7: Projection Computation
--- ============================================================================
 
 /--
 Projection strength (world-based): P(C=true | utterance, QUD)
@@ -303,9 +210,6 @@ def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10
 def projectionOfC (pC : ℚ) (u : Utterance) (q : QUD) : ℚ :=
   projectionOfC_world pC u q
 
--- ============================================================================
--- PART 8: Predictions
--- ============================================================================
 
 /--
 **Prediction (a)**: "know" projects more strongly than "think".
@@ -336,82 +240,11 @@ def prediction_qud_effect (pC : ℚ) (u : Utterance) : Bool :=
   -- Projection under BEL? > projection under C?
   projectionOfC pC u .bel > projectionOfC pC u .c
 
--- ============================================================================
--- PART 9: Evaluation
--- ============================================================================
 
 -- Uncomment to evaluate predictions
 -- #eval prediction_know_gt_think (1/2) .bel
 -- #eval prediction_prior_effect .knowPos .bel
 -- #eval prediction_qud_effect (1/2) .knowPos
 
--- ============================================================================
--- PART 10: Connection to Tonhauser Taxonomy
--- ============================================================================
-
-/-
-## How This Relates to Tonhauser et al. (2013)
-
-### SCF (Strong Contextual Felicity)
-- NOT modeled as a lexical property
-- Emerges from prior beliefs and QUD
-- High prior P(C) + BEL? QUD → behaves like SCF=yes (must be established)
-- Low prior P(C) + C? QUD → behaves like SCF=no (can be informative)
-
-### OLE (Obligatory Local Effect)
-- Modeled via speaker's private assumptions A
-- Under attitude embedding, A represents what the attitude holder assumes
-- OLE=yes (know, stop): listener infers attitude holder's A
-- OLE=no (damn, too): not captured by this model (requires speaker-oriented content)
-
-### Gradient Projection (Degen & Tonhauser 2021)
-- Different predicates have different entailment patterns
-- "know" entails C → strong projection
-- "think" doesn't entail C → weaker projection
-- Gradient behavior emerges from probabilistic inference, not categorical classes
-
-## Key Theoretical Claims
-
-1. **No lexical presupposition**: Projection is derived, not stipulated
-2. **Unified mechanism**: Same RSA inference for all predicates
-3. **Prior-sensitivity**: Explains experimental findings from Degen & Tonhauser (2022)
-4. **QUD-sensitivity**: Explains at-issueness effects
--/
-
--- ============================================================================
--- SUMMARY
--- ============================================================================
-
-/-
-## What This Module Provides
-
-### Domain
-- `WorldState`: ⟨BEL, C⟩ states
-- `Utterance`: know/think × pos/neg
-- `QUD`: BEL? vs C?
-- `BeliefState`: Speaker's private assumptions
-
-### Semantics
-- `literalMeaning`: Factive know vs non-factive think
-- `know_entails_c`: Proof of factivity
-- `think_not_entails_c`: Proof of non-factivity
-
-### RSA Model
-- `projectionScenario`: Full mental state scenario
-- `projectionOfC`: Compute projection strength
-- `prediction_*`: Testable predictions
-
-### Predictions
-(a) know > think in projection
-(b) Higher prior → more projection
-(c) BEL? QUD → more projection than C? QUD
-
-## Future Work
-
-- Add more predicates (stop, discover, be annoyed, ...)
-- Model negation effects
-- Connect to empirical data from Degen & Tonhauser (2021, 2022)
-- Extend to attitude embedding (OLE effects)
--/
 
 end RSA.ScontrasTonhauser2025

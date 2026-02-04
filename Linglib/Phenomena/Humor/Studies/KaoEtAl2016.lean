@@ -35,9 +35,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Humor.Studies.KaoEtAl2016
 
--- ============================================================================
 -- Pun Structure
--- ============================================================================
 
 /-- A phonetic pun with two meanings -/
 structure PhoneticPun where
@@ -73,9 +71,7 @@ structure NonPunSentence where
   distinctiveness : ℚ
   deriving Repr
 
--- ============================================================================
 -- Example Puns from Paper (Table 3 and text)
--- ============================================================================
 
 /-!
 ## Key Examples
@@ -134,9 +130,7 @@ def dentistExamines : NonPunSentence where
   ambiguity := 892/10000000  -- 8.92E-5
   distinctiveness := 765/100  -- 7.65
 
--- ============================================================================
 -- Aggregate Statistics
--- ============================================================================
 
 /-!
 ## Key Statistical Results
@@ -159,9 +153,7 @@ def ambiguity_funniness_correlation : ℚ := 3/100
 /-- Model R² for predicting funniness from ambiguity + distinctiveness -/
 def model_r_squared : ℚ := 25/100
 
--- ============================================================================
 -- Regression Coefficients (Table 2)
--- ============================================================================
 
 /-- Regression intercept -/
 def regression_intercept : ℚ := -2139/1000
@@ -172,9 +164,7 @@ def regression_ambiguity_coef : ℚ := 1915/1000
 /-- Distinctiveness coefficient (significant predictor) -/
 def regression_distinctiveness_coef : ℚ := 264/1000
 
--- ============================================================================
 -- Key Theoretical Claims
--- ============================================================================
 
 /-!
 ## Theoretical Framework
@@ -210,9 +200,7 @@ The paper argues:
 Both are needed for humor: incongruity alone is puzzling, not funny.
 -/
 
--- ============================================================================
 -- Additional Pun Examples
--- ============================================================================
 
 /-!
 ## More Examples from Supplementary Materials
@@ -249,9 +237,7 @@ def examplePuns : List PhoneticPun := [
     distinctiveness := 750/100 }
 ]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-!
 ## Summary: Kao et al. (2016)

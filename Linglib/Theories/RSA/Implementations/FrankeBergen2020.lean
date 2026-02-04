@@ -35,9 +35,6 @@ open NeoGricean.Exhaustivity.Interface
 open NeoGricean.Exhaustivity (Prop')
 open Phenomena.Quantification.Studies.FrankeBergen2020
 
--- ============================================================================
--- PART 1: World Model (Alien/Water Domain)
--- ============================================================================
 
 /-- World state: (aliensWhoDrank, potsPerAlien)
     Simplified: 2 aliens, 3 pots. -/
@@ -51,9 +48,6 @@ def alienWorlds : List AlienWorld :=
   (List.finRange 3).flatMap fun a =>
     (List.finRange 4).map fun p => ⟨a, p⟩
 
--- ============================================================================
--- PART 2: Literal Meaning
--- ============================================================================
 
 /-- Quantifier meaning (simplified for 2-alien, 3-pot domain) -/
 def quantMeaning (q : AristQuant) (n total : Nat) : Bool :=
@@ -71,9 +65,6 @@ def literalMeaning (s : NestedAristotelian) (w : AlienWorld) : Bool :=
   quantMeaning s.outer aliensWhoDrankSome numAliens &&
   quantMeaning s.inner potsEachDrank numPots
 
--- ============================================================================
--- PART 3: Alternatives (Position-Dependent)
--- ============================================================================
 
 /-- Scale for Aristotelian quantifiers: none < some < all -/
 def aristScale : List AristQuant := [.none, .some, .all]
@@ -109,9 +100,6 @@ def alternativesAtPosition (s : NestedAristotelian) : AlternativesAtPosition Ali
   | .O => outerAlternatives s
   | .I => innerAlternatives s
 
--- ============================================================================
--- PART 4: Exhaustifiable Instance (Unified Interface)
--- ============================================================================
 
 /-- Exhaustifiable instance for nested Aristotelians.
 
@@ -132,9 +120,6 @@ instance : Exhaustifiable NestedAristotelian AlienWorld where
   -- Position-dependent alternatives
   alternativesAt := alternativesAtPosition
 
--- ============================================================================
--- PART 5: RSA Model
--- ============================================================================
 
 /-- GI model meaning function. -/
 def giMeaning (p : Core.Parse) (s : NestedAristotelian) (w : AlienWorld) : ℚ :=
@@ -155,9 +140,6 @@ def giL1_world (s : NestedAristotelian) : List (AlienWorld × ℚ) :=
     1  -- α = 1
     s
 
--- ============================================================================
--- PART 6: Verification
--- ============================================================================
 
 /-- Correct dimensions: 9 sentences × 8 parses × 12 worlds -/
 theorem gi_dimensions :
@@ -181,9 +163,7 @@ theorem gi_is_best_model :
     getPosterior .globalIntentions > getPosterior .lexicalUncertainty := by
   native_decide
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Shows

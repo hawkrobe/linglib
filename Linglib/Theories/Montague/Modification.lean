@@ -67,9 +67,7 @@ namespace Montague.Modification
 
 open Montague
 
--- ============================================================================
 -- Generic Predicate Modification (for any entity type)
--- ============================================================================
 
 /-!
 ## Generic Predicate Modification
@@ -111,9 +109,7 @@ theorem predMod_true_right {E : Type*} (p : E → Bool) : predMod p truePred = p
 theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePred p = p := by
   funext x; simp only [predMod, truePred, Bool.true_and]
 
--- ============================================================================
 -- General Adjective Semantics (Kamp 1975, Parsons 1970)
--- ============================================================================
 
 /--
 The general type for adjectives: functions from properties to properties.
@@ -157,9 +153,7 @@ theorem intersective_implies_subsective {m : Model} (adj : AdjMeaning m)
   rw [hAdj] at hx
   exact Bool.and_elim_right hx
 
--- ============================================================================
 -- Predicate Modification (H&K §4.2) - For Intersective Adjectives Only!
--- ============================================================================
 
 /--
 Predicate Modification: intersect two ⟨e,t⟩ predicates.
@@ -196,9 +190,7 @@ theorem intersectiveAdj_is_intersective {m : Model} (adjPred : m.interpTy (.e �
   intro noun x
   rfl
 
--- ============================================================================
 -- Algebraic Properties
--- ============================================================================
 
 /-- Predicate Modification is commutative -/
 theorem predicateModification_comm {m : Model} (p₁ p₂ : m.interpTy (.e ⇒ .t))
@@ -243,9 +235,7 @@ theorem predicateModification_false_left {m : Model} (p : m.interpTy (.e ⇒ .t)
   funext x
   simp only [predicateModification, Bool.false_and]
 
--- ============================================================================
 -- Connection to Set Theory
--- ============================================================================
 
 /-- The extension of a modified predicate is the intersection of extensions -/
 theorem predicateModification_extension {m : Model}
@@ -273,9 +263,7 @@ theorem predicateModification_subset_right {m : Model}
   simp only [predicateModification_extension]
   exact Set.inter_subset_inter_right _ h
 
--- ============================================================================
 -- The Intersective Adjective Equivalence (H&K §4.3.3)
--- ============================================================================
 
 /-
 H&K Chapter 4, section 4.3.3:
@@ -367,9 +355,7 @@ theorem pm_intro {m : Model}
   simp only [predicateModification]
   exact Bool.and_intro hp hq
 
--- ============================================================================
 -- Examples with Toy Model
--- ============================================================================
 
 section Examples
 
@@ -427,9 +413,7 @@ theorem grayCat_order :
 
 end Examples
 
--- ============================================================================
 -- Type-Driven Composition
--- ============================================================================
 
 /--
 Check if two semantic types can compose via Predicate Modification.
@@ -443,9 +427,7 @@ theorem canPM_spec (ty₁ ty₂ : Ty) :
     canPM ty₁ ty₂ = true ↔ ty₁ = Ty.fn Ty.e Ty.t ∧ ty₂ = Ty.fn Ty.e Ty.t := by
   simp only [canPM, Bool.and_eq_true, decide_eq_true_eq]
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

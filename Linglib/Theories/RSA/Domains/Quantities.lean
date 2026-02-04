@@ -35,9 +35,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Quantity
 
--- ============================================================================
 -- Generic Quantity Domain (Parameterized by size)
--- ============================================================================
 
 /--
 A quantity domain with n+1 worlds (0 through n).
@@ -92,9 +90,7 @@ def Domain.runL1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) ×
   RSA.Eval.basicL1 allUtterances (allWorlds n)
     (fun u w => boolToRat (meaning n u w)) d.prior 1 (fun _ => 0) u
 
--- ============================================================================
 -- Convenience Constructors
--- ============================================================================
 
 /-- Standard uniform-prior domain -/
 def standard (n : Nat) : Domain n := {}
@@ -103,9 +99,7 @@ def standard (n : Nat) : Domain n := {}
 def withPrior (n : Nat) (p : Fin (n + 1) → ℚ) (hp : ∀ w, 0 ≤ p w := by intros; decide) : Domain n :=
   { prior := p, prior_nonneg := hp }
 
--- ============================================================================
 -- RSA Computations
--- ============================================================================
 
 /-- L0 distribution -/
 def l0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
@@ -119,9 +113,7 @@ def s1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
 def l1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
   d.runL1 u
 
--- ============================================================================
 -- Named World Accessors (for readability)
--- ============================================================================
 
 /-- World where 0 have the property -/
 def w0 {n : Nat} : Fin (n + 1) := ⟨0, Nat.zero_lt_succ n⟩
@@ -135,9 +127,7 @@ def w2 {n : Nat} (h : 2 < n + 1 := by omega) : Fin (n + 1) := ⟨2, h⟩
 /-- World where all n have the property -/
 def wAll {n : Nat} : Fin (n + 1) := ⟨n, Nat.lt_succ_self n⟩
 
--- ============================================================================
 -- Extended Scalar Utterances (with "most")
--- ============================================================================
 
 /-- Extended scalar utterances including "most" -/
 inductive ExtUtterance where
@@ -174,9 +164,7 @@ def ExtDomain.runL1 {n : Nat} (d : ExtDomain n) (u : ExtUtterance) : List (Fin (
 /-- Standard extended domain -/
 def extStandard (n : Nat) : ExtDomain n := {}
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- Build a 3-person domain (like the cookie scenario)
 private def threePerson : Domain 3 := standard 3
@@ -194,9 +182,7 @@ private def threePerson : Domain 3 := standard 3
 -- Extended with "most"
 #eval (extStandard 5).runL1 ExtUtterance.most
 
--- ============================================================================
 -- Fintype-Based API (RSAScenario / RSA)
--- ============================================================================
 
 /-- Helper for uniform prior non-negativity -/
 private theorem one_nonneg : (0 : ℚ) ≤ 1 := by decide
@@ -237,9 +223,7 @@ def l1F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1
 
 end RSA.Domains.Quantity
 
--- ============================================================================
 -- VanTiel Quantity Domain (6-word scale)
--- ============================================================================
 
 -- Uses unified QuantityWord from Fragments.English.Determiners
 
@@ -259,9 +243,7 @@ def allUtterances : List Utterance := Fragments.English.Determiners.QuantityWord
 def monotonicity (u : Utterance) : Monotonicity :=
   Fragments.English.Determiners.QuantityWord.monotonicity u
 
--- ============================================================================
 -- GQT Semantics (from Determiners)
--- ============================================================================
 
 /-- GQT meaning from unified entry -/
 def gqtMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : Bool :=
@@ -271,17 +253,13 @@ def gqtMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : Bool :=
 def gqtMeaningRat (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
   Fragments.English.Determiners.QuantityWord.gqtMeaningRat n m t
 
--- ============================================================================
 -- PT Semantics (from Determiners)
--- ============================================================================
 
 /-- PT meaning from unified entry -/
 def ptMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : ℚ :=
   Fragments.English.Determiners.QuantityWord.ptMeaning n m t
 
--- ============================================================================
 -- Quantity Domain Structure
--- ============================================================================
 
 /--
 A unified quantity domain for VanTiel-style analysis.
@@ -335,13 +313,9 @@ def ptDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
   meaning_nonneg := fun u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
   salience_nonneg := h
 
--- ============================================================================
 -- RSA Computations using Domain
--- ============================================================================
 
--- ============================================================================
 -- Base Agents (Level 0)
--- ============================================================================
 
 /-- S0: Literal speaker. P(m | w) ∝ salience(m) · φ(m, w) -/
 def Domain.runS0 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
@@ -351,9 +325,7 @@ def Domain.runS0 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance ×
 def Domain.runL0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
   RSA.Eval.basicL0 allUtterances (allWorlds n) d.meaning d.worldPrior u
 
--- ============================================================================
 -- ChainVariant-Parameterized Methods (Primary API)
--- ============================================================================
 
 /--
 Run S1 (pragmatic speaker) using the specified chain variant.
@@ -377,9 +349,7 @@ def Domain.runL1 {n : Nat} (d : Domain n)
     (u : Utterance) (α : ℕ := 1) : List (Fin (n + 1) × ℚ) :=
   RSA.Eval.runL1 allUtterances (allWorlds n) d.meaning d.worldPrior d.salience α (fun _ => 0) chain u
 
--- ============================================================================
 -- Chain Comparison Methods
--- ============================================================================
 
 /--
 Compare S1 outputs from S0-based vs L0-based chains.
@@ -399,9 +369,7 @@ def Domain.compareL1 {n : Nat} (d : Domain n) (u : Utterance)
   { S0Based := d.runL1 .S0Based u α
     L0Based := d.runL1 .L0Based u α }
 
--- ============================================================================
 -- Backwards Compatibility Aliases
--- ============================================================================
 
 /-- Run L1 from S0 (S0-based chain). Alias for `runL1 .S0Based`. -/
 def Domain.runL1_fromS0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
@@ -412,9 +380,7 @@ def Domain.runS1_fromL1S0 {n : Nat} (d : Domain n) (w : Fin (n + 1))
     (α : ℕ := 1) : List (Utterance × ℚ) :=
   d.runS1 .S0Based w α
 
--- ============================================================================
 -- RSAScenario Construction
--- ============================================================================
 
 /-- Build RSAScenario from Domain (includes salience as utterancePrior) -/
 def Domain.toScenario {n : Nat} (d : Domain n) (α : ℕ := 1) : RSAScenario Utterance (Fin (n + 1)) :=
@@ -429,9 +395,7 @@ def Domain.toScenario {n : Nat} (d : Domain n) (α : ℕ := 1) : RSAScenario Utt
     (utterancePrior := d.salience)
     (utterancePrior_nonneg := d.salience_nonneg)
 
--- ============================================================================
 -- Examples
--- ============================================================================
 
 -- GQT domain of size 10
 #eval (gqtDomain 10).runS0 ⟨5, by omega⟩

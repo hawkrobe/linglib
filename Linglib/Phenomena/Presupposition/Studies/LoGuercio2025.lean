@@ -15,9 +15,6 @@ Semantics & Pragmatics, 18(9). https://doi.org/10.3765/sp.18.9
 
 namespace Phenomena.LoGuercio2025
 
--- ============================================================================
--- PART 1: Basic ACI Judgment Data
--- ============================================================================
 
 /--
 Judgment status for whether an ACI arises.
@@ -44,9 +41,6 @@ structure EmpiricalItem where
   priorContext : Option String
   deriving Repr
 
--- ============================================================================
--- PART 2: Epithet Data (§3.2.1)
--- ============================================================================
 
 /--
 Example (18): Out of the blue, NO epithet ACI.
@@ -109,9 +103,6 @@ def ex21_contrastive_ACI : EmpiricalItem :=
   , judgment := .arises
   , priorContext := none }
 
--- ============================================================================
--- PART 3: Honorific Data (§3.2.1)
--- ============================================================================
 
 /--
 Example (22)-(23): Spanish honorific ACI.
@@ -128,9 +119,6 @@ def ex22_23_honorific_ACI : EmpiricalItem :=
   , judgment := .arises
   , priorContext := none }
 
--- ============================================================================
--- PART 4: Appositive Data (§3.2.3)
--- ============================================================================
 
 /--
 Example (31)-(32): Nominal appositive ACI.
@@ -147,9 +135,6 @@ def ex31_32_appositive_ACI : EmpiricalItem :=
   , judgment := .arises
   , priorContext := none }
 
--- ============================================================================
--- PART 5: Property Tests (§4)
--- ============================================================================
 
 /--
 Property test data structure.
@@ -229,9 +214,6 @@ def ex63_reinforceable : PropertyTest :=
   , propertyHolds := true
   , comparison := some "Unlike presupposition reinforcement (redundant), ACI reinforcement is informative" }
 
--- ============================================================================
--- PART 6: Summary Comparison Table
--- ============================================================================
 
 /--
 Comparison of scalar inference types from Lo Guercio Table 1.
@@ -273,9 +255,6 @@ def aciComparison : InferenceTypeComparison :=
   , cancellable := true
   , reinforceable := true }
 
--- ============================================================================
--- PART 7: Expression Type Coverage
--- ============================================================================
 
 /--
 CI expression types tested in the paper.
@@ -298,9 +277,7 @@ def expressionTypeCoverage : List (CIExpressionType × String × Bool) :=
   , (.supplementaryAdverb, "§3.2.3", true)                 -- "Luckily"
   , (.emotiveMarker, "§3.2.3", true) ]                     -- "Alas"
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This File Provides

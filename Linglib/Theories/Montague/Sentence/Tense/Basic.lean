@@ -39,9 +39,6 @@ namespace Montague.Sentence.Tense
 
 open Montague.Core.Time
 
--- ============================================================================
--- PART 1: Tense as Temporal Constraint
--- ============================================================================
 
 /--
 Grammatical tense: a temporal relation imposed by tense morphology.
@@ -73,9 +70,6 @@ def inverseRelation : GramTense → TemporalRelation
 
 end GramTense
 
--- ============================================================================
--- PART 2: Tense Operators (Situation-Semantic Style)
--- ============================================================================
 
 /--
 Type of situation-level propositions.
@@ -131,9 +125,6 @@ The FUTURE operator:
 def FUT {W Time : Type*} [LT Time] : TenseOp W Time :=
   fun P s s' => s.time > s'.time ∧ P s
 
--- ============================================================================
--- PART 3: Simplified Tense Operators (Single Situation)
--- ============================================================================
 
 /-
 For simpler analyses, tense can modify a predicate relative to a fixed
@@ -162,9 +153,6 @@ def presSimple {Time : Type*} (P : Time → Prop) (eventTime speechTime : Time) 
 def futSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTime : Time) : Prop :=
   eventTime > speechTime ∧ P eventTime
 
--- ============================================================================
--- PART 4: Tense with Reichenbach Frames
--- ============================================================================
 
 /--
 Apply a tense to a Reichenbach frame, constraining R relative to S.
@@ -186,9 +174,6 @@ def satisfiesTense {Time : Type*} [LinearOrder Time] [DecidableEq Time]
   | .present => f.referenceTime == f.speechTime
   | .future => f.referenceTime > f.speechTime
 
--- ============================================================================
--- PART 5: Tense Composition
--- ============================================================================
 
 /--
 Sequence of tenses (for embedded tense in reported speech, etc.)
@@ -216,9 +201,6 @@ inductive SOTParameter where
   | absolute  -- Japanese: embedded tense absolute (to utterance time)
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
--- PART 6: Theorems
--- ============================================================================
 
 /--
 **PAST requires temporal precedence**
@@ -270,9 +252,6 @@ theorem fut_preserves_pred {W Time : Type*} [LT Time]
   intro ⟨_, h⟩
   exact h
 
--- ============================================================================
--- PART 7: Examples
--- ============================================================================
 
 section Examples
 
@@ -296,9 +275,7 @@ example : FUT (raining Unit) ⟨(), 1⟩ ⟨(), 0⟩ := by
 
 end Examples
 
--- ============================================================================
 -- Summary
--- ============================================================================
 
 /-
 ## What This Module Provides

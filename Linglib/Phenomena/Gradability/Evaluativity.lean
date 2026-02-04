@@ -23,9 +23,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Gradability.Evaluativity
 
--- ============================================================================
 -- Construction Types
--- ============================================================================
 
 /--
 Types of adjectival constructions.
@@ -53,9 +51,7 @@ instance : ToString AdjectivalConstruction where
     | .measurePhrase => "measurePhrase"
     | .degreeQuestion => "degreeQuestion"
 
--- ============================================================================
 -- Evaluativity Judgments
--- ============================================================================
 
 /--
 Whether a construction is evaluative (requires exceeding a standard).
@@ -91,9 +87,6 @@ structure EvaluativityDatum where
   notes : String := ""
   deriving Repr
 
--- ============================================================================
--- PART 1: Positive Constructions (Evaluative)
--- ============================================================================
 
 /-!
 ## Positive Constructions
@@ -124,9 +117,6 @@ def positive_short : EvaluativityDatum :=
   , notes := "Positive construction with marked adjective"
   }
 
--- ============================================================================
--- PART 2: Comparatives (Non-Evaluative)
--- ============================================================================
 
 /-!
 ## Comparatives
@@ -168,9 +158,6 @@ Comparatives entail their equative counterpart but not vice versa.
 def comparative_entails_equative : String :=
   "Adam is taller than Doug → Adam is as tall as Doug"
 
--- ============================================================================
--- PART 3: Equatives (Asymmetric!)
--- ============================================================================
 
 /-!
 ## Equatives
@@ -206,9 +193,6 @@ def equative_short : EvaluativityDatum :=
   , notes := "KEY ASYMMETRY: marked adjective triggers evaluativity"
   }
 
--- ============================================================================
--- PART 4: Measure Phrases (Non-Evaluative, Polarity Restricted)
--- ============================================================================
 
 /-!
 ## Measure Phrase Constructions
@@ -244,9 +228,6 @@ def mp_short : EvaluativityDatum :=
   , notes := "MPs don't combine with negative-polar adjectives"
   }
 
--- ============================================================================
--- PART 5: Degree Questions (Asymmetric)
--- ============================================================================
 
 /-!
 ## Degree Questions
@@ -282,9 +263,7 @@ def question_short : EvaluativityDatum :=
   , notes := "Marked question - presupposes shortness"
   }
 
--- ============================================================================
 -- Summary Data
--- ============================================================================
 
 def allEvaluativityData : List EvaluativityDatum :=
   [ positive_tall, positive_short
@@ -319,9 +298,7 @@ def evaluativitySummary : String :=
 | Degree Question  | non-evaluative       | EVALUATIVE             |
 "
 
--- ============================================================================
 -- Theoretical Predictions
--- ============================================================================
 
 /-!
 ## Theoretical Predictions
@@ -398,9 +375,7 @@ def allPredictions : List EvaluativityPrediction :=
   , prediction_question_asymmetry
   ]
 
--- ============================================================================
 -- Connection to Other Phenomena
--- ============================================================================
 
 /-!
 ## Connections
