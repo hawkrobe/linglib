@@ -9,7 +9,6 @@ and connecting them to computational pragmatics (RSA - Rational Speech Acts).
 ### Core/ - Shared types and interfaces
 - Core.Basic: Word, Cat, ClauseType, Lexicon
 - Core.Grammar: Abstract Grammar typeclass
-- Core.Pipeline: Theory composition (provides/requires)
 
 ### Theories/ - Theoretical frameworks
 - CCG/: Combinatory Categorial Grammar
@@ -46,7 +45,6 @@ Missing Theories/X/Y.lean = conjecture (theory hasn't proven it handles Y)
 -- Core types and interfaces
 import Linglib.Core.Basic
 import Linglib.Core.Grammar
-import Linglib.Core.Pipeline
 import Linglib.Core.InformationStructure
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
@@ -175,6 +173,7 @@ import Linglib.Theories.Montague.Anaphora
 import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Determiner.Quantifier
+import Linglib.Theories.Montague.Determiner.Demonstrative.AhnZhu2025
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
@@ -193,6 +192,7 @@ import Linglib.Theories.Montague.Noun.Kind.Krifka2004
 import Linglib.Theories.Montague.Noun.Kind.Dayal2004
 import Linglib.Theories.Montague.Noun.Kind.Generics
 import Linglib.Theories.Montague.Noun.Kind.Carlson1977
+import Linglib.Theories.Montague.Noun.Relational.Barker2011
 
 -- Montague Derivations
 import Linglib.Theories.Montague.Core.Derivation
@@ -227,6 +227,9 @@ import Linglib.Theories.Montague.Sentence.Conditional.Basic
 import Linglib.Theories.Montague.Sentence.Conditional.Assertability
 import Linglib.Theories.Montague.Sentence.Conditional.ConditionalType
 import Linglib.Theories.Montague.Sentence.Conditional.LeftNested
+
+-- Montague Focus (Rooth 1992 FIP)
+import Linglib.Theories.Montague.Sentence.FocusInterpretation
 
 -- Montague Particles (Additive: too, also, either)
 import Linglib.Theories.Montague.Particle.Additive
@@ -343,6 +346,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.BathroomSentences
+import Linglib.Phenomena.Anaphora.Bridging
 
 -- Scalar Implicatures
 import Linglib.Phenomena.ScalarImplicatures.Basic
@@ -414,6 +418,12 @@ import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.Coordination
 import Linglib.Phenomena.Questions.MentionSome
+import Linglib.Phenomena.Questions.NegativeQuestions
+
+-- Focus phenomena (prosody and interpretation)
+import Linglib.Phenomena.Focus.Basic
+import Linglib.Phenomena.Focus.ProsodicExhaustivity
+import Linglib.Phenomena.Focus.PolarityStress
 
 -- Imprecision and homogeneity (Haslinger 2024)
 import Linglib.Phenomena.Imprecision.Basic
@@ -433,8 +443,9 @@ import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 
--- Additive particles (too, also, either) - Thomas (2026)
+-- Additive particles (too, also, either)
 import Linglib.Phenomena.AdditiveParticles.Data
+import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
 
 -- Generics (bare plurals, kind reference)
 import Linglib.Phenomena.Generics.Data

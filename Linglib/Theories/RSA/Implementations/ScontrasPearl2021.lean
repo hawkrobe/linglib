@@ -35,7 +35,6 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Pipeline
 import Linglib.Core.Parse
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Theories.Montague.Derivation.Scope
@@ -456,20 +455,8 @@ theorem rsa_and_empirical_agree :
   native_decide
 
 -- ============================================================================
--- Complete Pipeline Analysis
+-- Predictions vs Empirical Data
 -- ============================================================================
-
-/-
-Now we wire everything together into a complete pipeline analysis:
-
-1. **Semantics**: Montague.Scope provides truth conditions
-2. **Pragmatics**: RSA uses those truth conditions
-3. **Predictions match data**: RSA ordering matches empirical ordering
-
-This demonstrates the Pipeline architecture in action.
--/
-
-open Pipeline
 
 /--
 **Prediction type for the scope ambiguity phenomenon**:
@@ -492,17 +479,6 @@ structure ScopeEmpiricalOrdering where
   /-- Did more people say true for 1-horse than 2-horses? -/
   oneGtTwo : Bool
   deriving Repr
-
-/-- Marker type for the Scontras & Pearl 2021 phenomenon -/
-def ScontrasPearl2021Phenomenon : Type := Unit
-
-/-- The phenomenon instance: predictions match if orderings agree -/
-instance : Phenomenon ScontrasPearl2021Phenomenon where
-  description := "Scontras & Pearl 2021: Quantifier scope ambiguity truth-value judgments"
-  EmpiricalData := ScopeEmpiricalOrdering
-  Prediction := ScopePrediction
-  predictionMatches pred emp :=
-    pred.zeroGtOne = emp.zeroGtOne ∧ pred.oneGtTwo = emp.oneGtTwo
 
 /-- RSA predictions from the model -/
 def rsaPrediction : ScopePrediction :=
@@ -542,14 +518,6 @@ theorem complete_analysis_scontras_pearl :
     rsaPrediction.zeroGtOne = empiricalOrdering.zeroGtOne ∧
     rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
   native_decide
-
-/--
-Alternative statement using the Phenomenon interface.
--/
-theorem complete_analysis_via_interface :
-    (Phenomenon.predictionMatches (P := ScontrasPearl2021Phenomenon))
-      rsaPrediction empiricalOrdering :=
-  complete_analysis_scontras_pearl
 
 -- ============================================================================
 -- Summary
@@ -607,9 +575,9 @@ The model captures Scontras & Pearl (2021)'s key findings:
    the model predicts graded endorsements proportional to the
    posterior probability of the world given the utterance.
 
-### Complete Pipeline Analysis
+### Derivation Chain
 
-This module demonstrates a complete pipeline analysis in Linglib:
+This module demonstrates a grounded analysis:
 
 ```
 everyHorseDidntJump_form : ScopedForm
@@ -625,7 +593,7 @@ complete_analysis_scontras_pearl
     ↓ proves: RSA ordering = empirical ordering
 ```
 
-The pipeline is "complete" because:
+The analysis is grounded because:
 1. Scope availability comes from grammar (ScopedForm)
 2. Truth conditions are explicitly defined (WorldMeaning)
 3. Predictions match empirical data
