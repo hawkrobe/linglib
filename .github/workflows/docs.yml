@@ -41,6 +41,13 @@ jobs:
       - name: Build documentation
         run: lake build Linglib:docs
 
+      - name: Create landing page
+        run: |
+          sudo apt-get install -y pandoc
+          pandoc docs/overview.md -s --metadata title="Linglib" -o .lake/build/doc/index.html
+          # Fix links to point to actual doc paths
+          sed -i 's|(./Linglib.html)|(Linglib.html)|g' .lake/build/doc/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
