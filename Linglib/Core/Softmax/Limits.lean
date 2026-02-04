@@ -217,7 +217,21 @@ theorem entropy_tendsto_zero [Nonempty ι] (s : ι → ℝ)
 theorem softmax_exponential_decay [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_max : ∀ j, s j ≤ s i_max) (i : ι) (hi : s i < s i_max) :
     ∃ C > 0, ∀ α > 0, softmax s α i ≤ C * exp (-α * (s i_max - s i)) := by
-  sorry
+  use 1
+  constructor
+  · exact one_pos
+  · intro α _
+    -- softmax i = softmax i_max * exp(α(s_i - s_i_max))
+    have hratio := softmax_ratio s α i i_max
+    rw [hratio]
+    have hle : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
+    calc softmax s α i_max * exp (α * (s i - s i_max))
+        ≤ 1 * exp (α * (s i - s i_max)) := by
+            apply mul_le_mul_of_nonneg_right hle (le_of_lt (exp_pos _))
+      _ = exp (α * (s i - s i_max)) := one_mul _
+      _ = exp (-(α * (s i_max - s i))) := by ring_nf
+      _ = exp (-α * (s i_max - s i)) := by ring_nf
+      _ = 1 * exp (-α * (s i_max - s i)) := (one_mul _).symm
 
 /-- For practical computation: when is softmax close enough to hardmax? -/
 theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
@@ -225,6 +239,50 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     (gap : ℝ) (hgap : 0 < gap) (h_gap_bound : ∀ j, j ≠ i_max → s i_max - s j ≥ gap) :
     ∀ α, α > (1/gap) * |log ε| →
       ∀ j, j ≠ i_max → softmax s α j < ε := by
-  sorry
+  intro α hα j hj
+  have hgap_j : s i_max - s j ≥ gap := h_gap_bound j hj
+  have hsj : s j < s i_max := by linarith
+  have hα_pos : 0 < α := by
+    have h : 0 ≤ (1/gap) * |log ε| := by positivity
+    linarith
+  -- Direct bound: softmax j = softmax i_max * exp(α(s_j - s_i_max)) ≤ exp(-α * gap)
+  have hratio := softmax_ratio s α j i_max
+  have hle_max : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
+  have hbound : softmax s α j ≤ exp (-α * (s i_max - s j)) := by
+    rw [hratio]
+    calc softmax s α i_max * exp (α * (s j - s i_max))
+        ≤ 1 * exp (α * (s j - s i_max)) := by
+            apply mul_le_mul_of_nonneg_right hle_max (le_of_lt (exp_pos _))
+      _ = exp (α * (s j - s i_max)) := one_mul _
+      _ = exp (-α * (s i_max - s j)) := by ring_nf
+  -- softmax j ≤ exp(-α * (s i_max - s j)) ≤ exp(-α * gap)
+  have hexp_mono : exp (-α * (s i_max - s j)) ≤ exp (-α * gap) := by
+    apply exp_le_exp.mpr
+    have : -α * (s i_max - s j) ≤ -α * gap := by
+      apply mul_le_mul_of_nonpos_left hgap_j
+      linarith
+    exact this
+  -- exp(-α * gap) < ε when α > (1/gap) * |log ε|
+  have hexp_lt : exp (-α * gap) < ε := by
+    rw [← exp_log hε]
+    apply exp_lt_exp.mpr
+    have h1 : α * gap > |log ε| := by
+      have : α > (1/gap) * |log ε| := hα
+      calc α * gap > (1/gap) * |log ε| * gap := by nlinarith
+        _ = |log ε| := by field_simp
+    by_cases hε1 : ε < 1
+    · have hlog_neg : log ε < 0 := log_neg hε hε1
+      have habs : |log ε| = -log ε := abs_of_neg hlog_neg
+      rw [habs] at h1
+      linarith
+    · push_neg at hε1
+      have hlog_nonneg : 0 ≤ log ε := log_nonneg hε1
+      have habs : |log ε| = log ε := abs_of_nonneg hlog_nonneg
+      rw [habs] at h1
+      have : -α * gap < 0 := by linarith
+      linarith
+  calc softmax s α j ≤ exp (-α * (s i_max - s j)) := hbound
+    _ ≤ exp (-α * gap) := hexp_mono
+    _ < ε := hexp_lt
 
 end Softmax

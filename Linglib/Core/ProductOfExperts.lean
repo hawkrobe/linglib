@@ -38,34 +38,66 @@ theorem poe_eq_unnorm_then_norm {α : Type} (ps : List (α → ℚ)) (support : 
     productOfExperts ps support = normalizeOver (unnormalizedProduct ps) support := by
   rfl
 
+/-- Folding multiplication with zero accumulator stays zero. -/
+theorem foldl_mul_zero_init {α : Type} (ps : List (α → ℚ)) (a : α) :
+    ps.foldl (fun acc p => acc * p a) 0 = 0 := by
+  induction ps with
+  | nil => rfl
+  | cons hd tl ih => simp only [List.foldl_cons, zero_mul, ih]
+
+/-- Folding multiplication absorbs zero. -/
+theorem foldl_mul_zero {α : Type} (ps : List (α → ℚ)) (a : α) (init : ℚ)
+    (hp : ∃ p ∈ ps, p a = 0) :
+    ps.foldl (fun acc p => acc * p a) init = 0 := by
+  obtain ⟨p, hp_mem, hp_zero⟩ := hp
+  induction ps generalizing init with
+  | nil => simp at hp_mem
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    rw [List.mem_cons] at hp_mem
+    rcases hp_mem with rfl | htl
+    · simp only [hp_zero, mul_zero, foldl_mul_zero_init]
+    · exact ih (init * hd a) htl
+
 /-- PoE with single expert returns normalized version of that expert. -/
 theorem poe_single {α : Type} (p : α → ℚ) (support : List α) :
     productOfExperts [p] support = normalizeOver p support := by
-  simp only [productOfExperts, normalizeOver, unnormalizedProduct, List.foldl, one_mul]
+  simp only [productOfExperts, normalizeOver, List.foldl, one_mul]
 
 /-- PoE is zero-absorbing: if any expert gives zero, product is zero. -/
 theorem poe_zero_absorbing {α : Type} (ps : List (α → ℚ)) (support : List α) (a : α)
     (hp : ∃ p ∈ ps, p a = 0) : productOfExperts ps support a = 0 ∨
                                ∃ a' ∈ support, productOfExperts ps support a' > 0 := by
-  -- If all unnormalized products are zero, everything maps to 0
-  -- Otherwise, this specific a maps to 0 but others may not
   left
   simp only [productOfExperts]
   split_ifs with hZ
   · rfl
-  · obtain ⟨p, hp_mem, hp_zero⟩ := hp
-    -- Need to show unnorm a = 0
-    suffices h : ps.foldl (fun acc p => acc * p a) 1 = 0 by
-      simp only [h, zero_div]
-    -- The fold multiplies by p a = 0 at some point
-    sorry -- Requires induction on list position
+  · simp only [foldl_mul_zero ps a 1 hp, zero_div]
+
+/-- Foldl adding 1 with any init. -/
+theorem foldl_add_one {α : Type} (xs : List α) (init : ℚ) :
+    xs.foldl (fun acc _ => acc + (1 : ℚ)) init = init + xs.length := by
+  induction xs generalizing init with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.foldl_cons, List.length_cons, Nat.cast_add, Nat.cast_one]
+    rw [ih]
+    ring
+
+/-- Foldl adding 1 equals length. -/
+theorem foldl_add_one_eq_length {α : Type} (xs : List α) :
+    xs.foldl (fun acc _ => acc + (1 : ℚ)) 0 = xs.length := by
+  simp [foldl_add_one]
 
 /-- PoE with empty expert list gives uniform. -/
 theorem poe_empty {α : Type} (support : List α) (a : α) :
     productOfExperts ([] : List (α → ℚ)) support a =
-    if support.length = 0 then 0 else 1 / support.length := by
+    if support.length = 0 then 0 else 1 / (support.length : ℚ) := by
   simp only [productOfExperts, List.foldl]
-  sorry  -- Requires case analysis on support
+  rw [foldl_add_one_eq_length]
+  by_cases h : support.length = 0
+  · simp [h]
+  · simp only [h, ↓reduceIte, Nat.cast_ne_zero.mpr h]
 
 /-- Linear combination of two values. -/
 def linearCombine (lam : ℚ) (v₁ v₂ : ℚ) : ℚ :=
@@ -144,10 +176,19 @@ def weightedPoe {α : Type} (experts : List ((α → ℚ) × ℚ)) (support : Li
 def bayesianPoe {α : Type} (likelihood prior : α → ℚ) (support : List α) : α → ℚ :=
   poe2 likelihood prior support
 
-/-- Iterated Bayesian updates can be combined into single PoE. -/
-theorem iterated_bayes_is_poe {α : Type} (l₁ l₂ prior : α → ℚ) (support : List α) :
-    -- Two observations: first l₁, then l₂
-    -- Equals single PoE with all three
-    True := trivial  -- Structural observation
+/-- Unnormalized PoE is order-independent. -/
+theorem unnormalizedProduct_comm {α : Type} (p q : α → ℚ) (a : α) :
+    unnormalizedProduct [p, q] a = unnormalizedProduct [q, p] a := by
+  simp only [unnormalizedProduct, List.foldl, one_mul]
+  ring
+
+/-- PoE with reordered experts gives same result. -/
+theorem poe_comm {α : Type} (p q : α → ℚ) (support : List α) :
+    productOfExperts [p, q] support = productOfExperts [q, p] support := by
+  simp only [productOfExperts]
+  have h : ∀ a, [p, q].foldl (fun acc f => acc * f a) 1 =
+               [q, p].foldl (fun acc f => acc * f a) 1 := by
+    intro a; simp only [List.foldl, one_mul]; ring
+  simp_rw [h]
 
 end Core.ProductOfExperts

@@ -22,7 +22,19 @@ noncomputable def shannonEntropy (p : ι → ℝ) : ℝ :=
 theorem shannonEntropy_nonneg (p : ι → ℝ)
     (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     0 ≤ shannonEntropy p := by
-  sorry
+  simp only [shannonEntropy]
+  rw [neg_nonneg]
+  apply Finset.sum_nonpos
+  intro i _
+  by_cases hi : p i = 0
+  · simp [hi]
+  · simp only [hi, ↓reduceIte]
+    have hp_pos : 0 < p i := (hp_nonneg i).lt_of_ne' hi
+    have hp_le : p i ≤ 1 := by
+      calc p i ≤ ∑ j : ι, p j := Finset.single_le_sum (fun j _ => hp_nonneg j) (Finset.mem_univ i)
+        _ = 1 := hp_sum
+    have hlog : log (p i) ≤ 0 := log_nonpos (le_of_lt hp_pos) hp_le
+    exact mul_nonpos_of_nonneg_of_nonpos (le_of_lt hp_pos) hlog
 
 /-- Maximum entropy is achieved by uniform distribution. -/
 theorem shannonEntropy_le_log_card (p : ι → ℝ)
@@ -33,13 +45,51 @@ theorem shannonEntropy_le_log_card (p : ι → ℝ)
 /-- Entropy of uniform distribution. -/
 theorem shannonEntropy_uniform :
     shannonEntropy (fun _ : ι => 1 / Fintype.card ι) = log (Fintype.card ι) := by
-  sorry
+  simp only [shannonEntropy]
+  have hcard : (0 : ℝ) < Fintype.card ι := Nat.cast_pos.mpr Fintype.card_pos
+  have hne : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt hcard
+  have hunif_pos : (0 : ℝ) < 1 / Fintype.card ι := by positivity
+  have hunif_ne : (1 : ℝ) / Fintype.card ι ≠ 0 := ne_of_gt hunif_pos
+  simp only [hunif_ne, ↓reduceIte, log_div one_ne_zero hne, log_one, zero_sub]
+  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  field_simp
 
 /-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
 theorem shannonEntropy_softmax (s : ι → ℝ) (α : ℝ) :
     shannonEntropy (softmax s α) =
     log (partitionFn s α) - α * ∑ i : ι, softmax s α i * s i := by
-  sorry
+  simp only [shannonEntropy, softmax, partitionFn]
+  have hZ : 0 < ∑ j : ι, exp (α * s j) := partitionFn_pos s α
+  have hne : (∑ j : ι, exp (α * s j)) ≠ 0 := ne_of_gt hZ
+  -- Each softmax(i) > 0, so the if-then-else simplifies
+  have hsm_pos : ∀ i, exp (α * s i) / ∑ j : ι, exp (α * s j) ≠ 0 := by
+    intro i; exact ne_of_gt (div_pos (exp_pos _) hZ)
+  simp only [hsm_pos, ↓reduceIte]
+  -- log(exp(α·sᵢ)/Z) = α·sᵢ - log Z
+  have hlog : ∀ i, log (exp (α * s i) / ∑ j : ι, exp (α * s j)) =
+                   α * s i - log (∑ j : ι, exp (α * s j)) := by
+    intro i; rw [log_div (ne_of_gt (exp_pos _)) hne, log_exp]
+  simp_rw [hlog]
+  -- Σ(exp/Z)·(αs - log Z) = Σ(exp/Z)·αs - Σ(exp/Z)·log Z = α·𝔼[s] - log Z
+  have hsum1 : ∑ i : ι, exp (α * s i) / ∑ j : ι, exp (α * s j) = 1 := by
+    rw [← Finset.sum_div, div_self hne]
+  calc -∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i - log (∑ j : ι, exp (α * s j)))
+      = -∑ i : ι, ((exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) -
+                   (exp (α * s i) / ∑ j : ι, exp (α * s j)) * log (∑ j : ι, exp (α * s j))) := by
+        congr 1; apply Finset.sum_congr rfl; intros; ring
+    _ = -(∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) -
+          ∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * log (∑ j : ι, exp (α * s j))) := by
+        rw [Finset.sum_sub_distrib]
+    _ = -(∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) -
+          (∑ i : ι, exp (α * s i) / ∑ j : ι, exp (α * s j)) * log (∑ j : ι, exp (α * s j))) := by
+        rw [← Finset.sum_mul]
+    _ = -(∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) - 1 * log (∑ j : ι, exp (α * s j))) := by
+        rw [hsum1]
+    _ = log (∑ j : ι, exp (α * s j)) - ∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) := by ring
+    _ = log (∑ j : ι, exp (α * s j)) - ∑ i : ι, α * ((exp (α * s i) / ∑ j : ι, exp (α * s j)) * s i) := by
+        congr 1; apply Finset.sum_congr rfl; intros; ring
+    _ = log (∑ j : ι, exp (α * s j)) - α * ∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * s i := by
+        rw [← Finset.mul_sum]
 
 /-- Alternative form using log-sum-exp. -/
 theorem shannonEntropy_softmax' (s : ι → ℝ) (α : ℝ) :
@@ -61,7 +111,10 @@ theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
 /-- The maximum value of the entropy-regularized objective. -/
 theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
     entropyRegObjective s α (softmax s α) = (1 / α) * log (partitionFn s α) := by
-  sorry
+  simp only [entropyRegObjective, shannonEntropy_softmax]
+  have hne : α ≠ 0 := ne_of_gt hα
+  field_simp
+  ring
 
 /-- Softmax is the unique maximizer. -/
 theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
@@ -126,6 +179,8 @@ theorem logSumExp_convex (s : ι → ℝ) :
 /-- Derivative of log-partition gives expected value. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     deriv (fun α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
+  -- TODO: Requires calculus lemmas for sum of exp derivatives
+  -- d/dα log(Z) = Z'/Z where Z = ∑ exp(α * s_j), Z' = ∑ s_j * exp(α * s_j)
   sorry
 
 /-- Strong duality: max entropy = min free energy. -/

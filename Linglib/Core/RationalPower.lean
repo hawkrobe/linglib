@@ -1,4 +1,5 @@
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Linarith
 
 /-!
 # Rational Power Approximation
@@ -97,11 +98,19 @@ def checkPowAccuracy (x : ℚ) (α : ℚ) (tolerance : ℚ) (precision : ℕ := 
 /-- powApprox x 1 = x. -/
 theorem powApprox_one (x : ℚ) (hx : 0 ≤ x) (precision : ℕ) :
     powApprox x 1 precision = x := by
-  sorry
+  unfold powApprox
+  have hx_not_neg : ¬x < 0 := by linarith
+  have h1_ne_0 : (1 : ℚ) ≠ 0 := by decide
+  by_cases hx0 : x = 0
+  · simp only [hx0, lt_self_iff_false, ↓reduceIte]; decide
+  · simp only [hx_not_neg, hx0, h1_ne_0, ↓reduceIte]
 
 /-- powApprox x 0 = 1 for positive x. -/
 theorem powApprox_zero (x : ℚ) (hx : 0 < x) (precision : ℕ) :
     powApprox x 0 precision = 1 := by
-  sorry
+  unfold powApprox
+  have hx_not_neg : ¬x < 0 := by linarith
+  have hx_ne_zero : x ≠ 0 := by linarith
+  simp only [hx_not_neg, hx_ne_zero, ↓reduceIte]
 
 end RationalPower
