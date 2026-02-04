@@ -1,38 +1,12 @@
-/-
-# Softmax as Maximum Entropy Distribution
-
-Formalization of softmax as the maximum entropy distribution subject to
-expected score constraints, following Franke & Degen "The softmax function:
-Properties, motivation, and interpretation."
-
-## Key Result (Fact 5)
-
-Softmax solves the optimization problem:
-
-  argmax_p H(p)  subject to  𝔼_p[s] = c
-
-where H(p) = -Σᵢ pᵢ log pᵢ is Shannon entropy.
-
-Equivalently, softmax solves the entropy-regularized objective:
-
-  argmax_p [⟨s, p⟩ + (1/α) H(p)]
-
-This connects softmax to:
-- Boltzmann/Gibbs distributions in statistical mechanics
-- Entropy regularization in optimal transport
-- Maximum entropy inference (Jaynes)
-- Rate-distortion theory
-
-## References
-
-- Franke & Degen. The softmax function: Properties, motivation, and interpretation.
-- Jaynes (1957). Information theory and statistical mechanics.
-- Cuturi (2013). Sinkhorn distances (entropy-regularized OT).
--/
-
 import Linglib.Core.Softmax.Basic
 import Mathlib.Analysis.Convex.Mul
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+
+/-!
+# Softmax as Maximum Entropy Distribution
+
+Softmax maximizes entropy-regularized objective: argmax_p [⟨s, p⟩ + (1/α) H(p)].
+-/
 
 namespace Softmax
 
@@ -40,16 +14,7 @@ open Real BigOperators Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
 
--- ============================================================================
--- SECTION 1: Shannon Entropy
--- ============================================================================
-
-/-- Shannon entropy of a distribution.
-
-H(p) = -Σᵢ pᵢ log pᵢ
-
-Convention: 0 log 0 = 0 (limit as x → 0⁺).
--/
+/-- Shannon entropy: H(p) = -Σᵢ pᵢ log pᵢ. -/
 noncomputable def shannonEntropy (p : ι → ℝ) : ℝ :=
   -∑ i : ι, if p i = 0 then 0 else p i * log (p i)
 
@@ -70,16 +35,7 @@ theorem shannonEntropy_uniform :
     shannonEntropy (fun _ : ι => 1 / Fintype.card ι) = log (Fintype.card ι) := by
   sorry
 
--- ============================================================================
--- SECTION 2: Entropy of Softmax
--- ============================================================================
-
-/-- Entropy of softmax distribution.
-
-H(softmax(s, α)) = log Z - α · 𝔼[s]
-
-where Z = Σⱼ exp(α · sⱼ) is the partition function.
--/
+/-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
 theorem shannonEntropy_softmax (s : ι → ℝ) (α : ℝ) :
     shannonEntropy (softmax s α) =
     log (partitionFn s α) - α * ∑ i : ι, softmax s α i * s i := by
@@ -92,27 +48,11 @@ theorem shannonEntropy_softmax' (s : ι → ℝ) (α : ℝ) :
   simp only [logSumExp]
   exact shannonEntropy_softmax s α
 
--- ============================================================================
--- SECTION 3: Entropy-Regularized Objective
--- ============================================================================
-
-/-- The entropy-regularized objective.
-
-G_α(p, s) = ⟨s, p⟩ + (1/α) H(p)
-
-For α > 0: rewards high scores and high entropy.
--/
+/-- Entropy-regularized objective: G_α(p, s) = ⟨s, p⟩ + (1/α) H(p). -/
 noncomputable def entropyRegObjective (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
   ∑ i : ι, p i * s i + (1 / α) * shannonEntropy p
 
-/-- **Fact 5**: Softmax maximizes the entropy-regularized objective.
-
-This is THE key characterization: softmax is the unique maximizer of
-
-  argmax_p [⟨s, p⟩ + (1/α) H(p)]
-
-over the probability simplex.
--/
+/-- Fact 5: Softmax maximizes the entropy-regularized objective. -/
 theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     entropyRegObjective s α p ≤ entropyRegObjective s α (softmax s α) := by
@@ -129,10 +69,6 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (h_max : entropyRegObjective s α p = entropyRegObjective s α (softmax s α)) :
     p = softmax s α := by
   sorry
-
--- ============================================================================
--- SECTION 4: Connection to KL Divergence
--- ============================================================================
 
 /-- KL divergence from q to p. -/
 noncomputable def klDiv (p q : ι → ℝ) : ℝ :=
@@ -152,28 +88,14 @@ theorem klDiv_eq_zero_iff (p q : ι → ℝ)
     klDiv p q = 0 ↔ p = q := by
   sorry
 
-/-- Softmax minimizes KL divergence from prior weighted by scores.
-
-An equivalent formulation: softmax(s, α) minimizes
-
-  D_KL(p || uniform) - α · ⟨s, p⟩
--/
+/-- Softmax minimizes KL divergence from prior weighted by scores. -/
 theorem softmax_minimizes_kl_plus_energy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     klDiv p (fun _ => 1 / Fintype.card ι) - α * ∑ i, p i * s i ≥
     klDiv (softmax s α) (fun _ => 1 / Fintype.card ι) - α * ∑ i, softmax s α i * s i := by
   sorry
 
--- ============================================================================
--- SECTION 5: Free Energy Interpretation
--- ============================================================================
-
-/-- Free energy (from statistical mechanics).
-
-F = 𝔼[E] - T · H = -⟨s, p⟩ + (1/α) · (-H(p))
-
-where s = -E (negative energy) and T = 1/α (temperature).
--/
+/-- Free energy (from statistical mechanics). -/
 noncomputable def freeEnergy (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
   -∑ i : ι, p i * s i - (1 / α) * shannonEntropy p
 
@@ -187,16 +109,7 @@ theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
   simp only [entropyRegObjective] at h
   linarith
 
--- ============================================================================
--- SECTION 6: Exponential Family Interpretation
--- ============================================================================
-
-/-- Softmax is an exponential family distribution.
-
-p(i; η) = exp(η · s_i - A(η))
-
-where η = α is the natural parameter and A(η) = log Z is the log-partition function.
--/
+/-- Softmax is an exponential family distribution. -/
 theorem softmax_exponential_family (s : ι → ℝ) (α : ℝ) (i : ι) :
     softmax s α i = exp (α * s i - logSumExp s α) := by
   simp only [softmax, logSumExp]
@@ -210,24 +123,12 @@ theorem logSumExp_convex (s : ι → ℝ) :
     ConvexOn ℝ Set.univ (fun α => logSumExp s α) := by
   sorry
 
-/-- Derivative of log-partition gives expected value.
-
-d/dα log Z(α) = 𝔼_α[s]
--/
+/-- Derivative of log-partition gives expected value. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     deriv (fun α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
   sorry
 
--- ============================================================================
--- SECTION 7: Duality
--- ============================================================================
-
-/-- Strong duality: max entropy = min free energy.
-
-max_p {H(p) : 𝔼_p[s] = c} = log Z - α · c
-
-where α is chosen so that 𝔼_softmax(s,α)[s] = c.
--/
+/-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
     (α : ℝ) (hα : 0 < α) (h_constraint : ∑ i : ι, softmax s α i * s i = c) :
     shannonEntropy (softmax s α) = log (partitionFn s α) - α * c := by

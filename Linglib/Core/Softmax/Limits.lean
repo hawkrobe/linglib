@@ -1,25 +1,3 @@
-/-
-# Softmax Function: Limit Behavior
-
-Formalization of softmax limits as α varies, following Franke & Degen
-"The softmax function: Properties, motivation, and interpretation."
-
-## Key Results
-
-- **α → 0**: Softmax converges to uniform distribution (Fact 4)
-- **α → ∞**: Softmax converges to argmax (point mass on maximum) (Fact 5)
-- **α → -∞**: Softmax converges to argmin
-
-These limits connect:
-- RSA (probabilistic) ↔ IBR (deterministic) via α → ∞
-- Entropy regularization: high temperature → maximum entropy (uniform)
-
-## References
-
-- Franke & Degen. The softmax function: Properties, motivation, and interpretation.
-- Franke (2011). Quantity implicatures, exhaustive interpretation, and rational conversation.
--/
-
 import Linglib.Core.Softmax.Basic
 import Mathlib.Order.Filter.Basic
 import Mathlib.Topology.Order.Basic
@@ -28,15 +6,17 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 
+/-!
+# Softmax Function: Limit Behavior
+
+α → 0: uniform, α → ∞: argmax, α → -∞: argmin.
+-/
+
 namespace Softmax
 
 open Real BigOperators Finset Filter Topology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
--- ============================================================================
--- SECTION 1: Argmax and Argmin
--- ============================================================================
 
 /-- The set of indices achieving the maximum score. -/
 def argmaxSet (s : ι → ℝ) : Set ι :=
@@ -54,14 +34,7 @@ noncomputable def maxScore [Nonempty ι] (s : ι → ℝ) : ℝ :=
 noncomputable def minScore [Nonempty ι] (s : ι → ℝ) : ℝ :=
   ⨅ i, s i
 
--- ============================================================================
--- SECTION 2: Limit as α → 0 (Uniform Distribution)
--- ============================================================================
-
-/-- **Fact 4**: As α → 0, softmax converges to uniform distribution.
-
-This is immediate from softmax_zero in Basic.lean.
--/
+/-- Fact 4: As α → 0, softmax converges to uniform distribution. -/
 theorem tendsto_softmax_zero [Nonempty ι] (s : ι → ℝ) (i : ι) :
     Tendsto (fun α => softmax s α i) (𝓝 0) (𝓝 (1 / Fintype.card ι)) := by
   have h : softmax s 0 i = 1 / Fintype.card ι := by
@@ -80,10 +53,6 @@ theorem tendsto_softmax_zero [Nonempty ι] (s : ι → ℝ) (i : ι) :
     exact continuous_exp.comp (continuous_mul_right (s j))
   · intro α
     exact partitionFn_ne_zero s α
-
--- ============================================================================
--- SECTION 3: Limit as α → ∞ (Argmax / Point Mass)
--- ============================================================================
 
 /-- The ratio of non-max to max probability vanishes as α → ∞. -/
 theorem softmax_ratio_tendsto_zero [Nonempty ι] (s : ι → ℝ)
@@ -189,10 +158,6 @@ theorem log_softmax_ratio_tendsto [Nonempty ι] (s : ι → ℝ)
   rw [heq]
   exact tendsto_id.const_mul_atTop h
 
--- ============================================================================
--- SECTION 4: Limit as α → -∞ (Argmin)
--- ============================================================================
-
 /-- As α → -∞, softmax concentrates on the minimum. -/
 theorem tendsto_softmax_neg_infty_unique_min [Nonempty ι] (s : ι → ℝ)
     (i_min : ι) (h_unique : ∀ j, j ≠ i_min → s i_min < s j) (i : ι) :
@@ -215,15 +180,7 @@ theorem tendsto_softmax_neg_infty_unique_min [Nonempty ι] (s : ι → ℝ)
   have := tendsto_softmax_infty_unique_max (fun j => -s j) i_min hneg i
   exact this.comp tendsto_neg_atBot_atTop
 
--- ============================================================================
--- SECTION 5: Connection to IBR (Iterated Best Response)
--- ============================================================================
-
-/-- The IBR limit: hardmax selector.
-
-This is the deterministic limit of softmax as α → ∞.
-When there's a unique maximum, IBR selects it with probability 1.
--/
+/-- The IBR limit: hardmax selector. -/
 noncomputable def hardmax [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) : ι → ℝ :=
   fun i => if i = i_max then 1 else 0
@@ -236,10 +193,6 @@ theorem softmax_tendsto_hardmax [Nonempty ι] (s : ι → ℝ)
   intro i
   simp only [hardmax]
   exact tendsto_softmax_infty_unique_max s i_max h_unique i
-
--- ============================================================================
--- SECTION 6: Entropy Bounds
--- ============================================================================
 
 /-- Shannon entropy of a distribution. -/
 noncomputable def entropy [Nonempty ι] (p : ι → ℝ) : ℝ :=
@@ -260,29 +213,13 @@ theorem entropy_tendsto_zero [Nonempty ι] (s : ι → ℝ)
     Tendsto (fun α => entropy (softmax s α)) atTop (𝓝 0) := by
   sorry
 
--- ============================================================================
--- SECTION 7: Rate of Convergence
--- ============================================================================
-
-/-- Exponential rate of concentration.
-
-For α large, the probability of non-max alternatives decays as exp(-α·gap)
-where gap = s_max - s_i.
--/
+/-- Exponential rate of concentration. -/
 theorem softmax_exponential_decay [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_max : ∀ j, s j ≤ s i_max) (i : ι) (hi : s i < s i_max) :
     ∃ C > 0, ∀ α > 0, softmax s α i ≤ C * exp (-α * (s i_max - s i)) := by
   sorry
 
--- ============================================================================
--- SECTION 8: Finite Precision Considerations
--- ============================================================================
-
-/-- For practical computation: when is softmax "close enough" to hardmax?
-
-If α · gap > threshold, the probability of suboptimal alternatives is
-negligible (< ε).
--/
+/-- For practical computation: when is softmax close enough to hardmax? -/
 theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_max : ∀ j, s j ≤ s i_max) (ε : ℝ) (hε : 0 < ε)
     (gap : ℝ) (hgap : 0 < gap) (h_gap_bound : ∀ j, j ≠ i_max → s i_max - s j ≥ gap) :

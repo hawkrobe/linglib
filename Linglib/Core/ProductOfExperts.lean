@@ -67,50 +67,17 @@ theorem poe_empty {α : Type} (support : List α) (a : α) :
   simp only [productOfExperts, List.foldl]
   sorry  -- Requires case analysis on support
 
--- ============================================================================
--- PART 4: Comparison with Linear Combination
--- ============================================================================
-
-/-!
-## PoE vs Linear Combination
-
-**Product of Experts** (this module):
-- Multiplicative: P(x) ∝ Π_i p_i(x)
-- AND-like: all experts must agree for high probability
-- Zero-absorbing: one zero kills the product
-
-**Linear Combination** (CombinedUtility):
-- Additive: U(x) = Σ_i w_i · u_i(x)
-- Interpolation: weighted average of values
-- Not zero-absorbing: one zero just lowers the average
-
-### When to Use Each
-
-| Criterion | PoE | Linear |
-|-----------|-----|--------|
-| Semantics | All constraints must hold | Trade off objectives |
-| Zero effect | Kills probability | Reduces average |
-| Combination type | Distributions | Utilities |
-| Use case | Bayesian evidence fusion | Multi-objective optimization |
--/
-
-/--
-Linear combination of two values.
--/
+/-- Linear combination of two values. -/
 def linearCombine (lam : ℚ) (v₁ v₂ : ℚ) : ℚ :=
   (1 - lam) * v₁ + lam * v₂
 
-/--
-Linear combination is NOT zero-absorbing.
--/
+/-- Linear combination is NOT zero-absorbing. -/
 theorem linear_not_zero_absorbing :
     linearCombine (1/2) 0 1 ≠ 0 := by
   simp only [linearCombine]
   norm_num
 
-/--
-PoE IS zero-absorbing (for the 2-expert case).
--/
+/-- PoE IS zero-absorbing (for the 2-expert case). -/
 theorem poe2_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List α) (a : α) :
     p₁ a = 0 → poe2 p₁ p₂ support a = 0 ∨ (support.foldl (fun acc x => acc + p₁ x * p₂ x) 0 = 0) := by
   intro h
@@ -120,27 +87,7 @@ theorem poe2_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List
   · rfl
   · simp only [zero_div]
 
--- ============================================================================
--- PART 5: SDS-Style Factored Distributions
--- ============================================================================
-
-/-!
-## SDS Factorization Pattern
-
-Erk & Herbelot (2024) factor concept distributions as:
-
-```
-P(concept | context) ∝ P_selectional(concept | role) × P_scenario(concept | frame)
-```
-
-This is PoE with two experts:
-1. Selectional preference expert
-2. Scenario/frame expert
--/
-
-/--
-Find the element with maximum value according to a scoring function.
--/
+/-- Find the element with maximum value according to a scoring function. -/
 def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
   xs.foldl (fun acc x =>
     match acc with
@@ -148,38 +95,28 @@ def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
     | some best => if f x > f best then some x else some best
   ) none
 
-/--
-A factored distribution in SDS style.
--/
+/-- A factored distribution in SDS style. -/
 structure FactoredDist (α : Type) where
   selectionalExpert : α → ℚ
   scenarioExpert : α → ℚ
   support : List α
 
-/--
-Combine a factored distribution using PoE.
--/
+/-- Combine a factored distribution using PoE. -/
 def FactoredDist.combine {α : Type} (d : FactoredDist α) : α → ℚ :=
   poe2 d.selectionalExpert d.scenarioExpert d.support
 
-/--
-Get the unnormalized scores (useful for debugging/inspection).
--/
+/-- Get the unnormalized scores. -/
 def FactoredDist.unnormScores {α : Type} (d : FactoredDist α) : α → ℚ :=
   fun a => d.selectionalExpert a * d.scenarioExpert a
 
-/--
-Detect conflict: experts disagree on the mode.
--/
+/-- Detect conflict: experts disagree on the mode. -/
 def FactoredDist.hasConflict {α : Type} [BEq α] (d : FactoredDist α) : Bool :=
   match listArgmax d.support d.selectionalExpert,
         listArgmax d.support d.scenarioExpert with
   | some a₁, some a₂ => a₁ != a₂
   | _, _ => false
 
-/--
-Get the degree of conflict (how different the expert modes are).
--/
+/-- Get the degree of conflict between expert modes. -/
 def FactoredDist.conflictDegree {α : Type} [BEq α] (d : FactoredDist α) : ℚ :=
   match listArgmax d.support d.selectionalExpert,
         listArgmax d.support d.scenarioExpert with
@@ -192,19 +129,7 @@ def FactoredDist.conflictDegree {α : Type} [BEq α] (d : FactoredDist α) : ℚ
       diff1 + diff2
   | _, _ => 0
 
--- ============================================================================
--- PART 6: Weighted Product of Experts
--- ============================================================================
-
-/--
-Weighted PoE: experts can have different "temperatures" (exponents).
-
-```
-P(x) ∝ Π_i p_i(x)^{β_i}
-```
-
-Higher β means the expert has more influence.
--/
+/-- Weighted PoE: P(x) ∝ Π_i p_i(x)^{β_i}. -/
 def weightedPoe {α : Type} (experts : List ((α → ℚ) × ℚ)) (support : List α) : α → ℚ :=
   -- experts is list of (probability function, weight/temperature)
   let unnorm a := experts.foldl (fun acc (p, β) =>
@@ -215,51 +140,11 @@ def weightedPoe {α : Type} (experts : List ((α → ℚ) × ℚ)) (support : Li
   let Z := support.foldl (fun acc a => acc + unnorm a) 0
   fun a => if Z = 0 then 0 else unnorm a / Z
 
--- ============================================================================
--- PART 7: Connection to Bayesian Inference
--- ============================================================================
-
-/-!
-## PoE as Bayesian Update
-
-PoE can be viewed as iterated Bayesian conditioning:
-
-```
-P(x | e₁, e₂) ∝ P(e₁ | x) · P(e₂ | x) · P(x)
-```
-
-Each expert p_i(x) can be interpreted as a likelihood P(e_i | x).
-
-### Connection to RSA
-
-In RSA, L₁ does something similar:
-```
-L₁(w | u) ∝ S₁(u | w) · P(w)
-```
-
-S₁(u | w) acts as a "speaker expert" that evaluates how likely
-the speaker would produce u given world w.
-
-### Connection to LU-RSA
-
-LU-RSA marginalizes over lexica:
-```
-L₁(w | u) ∝ Σ_L P(L) · S₁(u | w, L) · P(w)
-```
-
-This is a **mixture** over lexica, with PoE happening inside
-each lexicon-specific computation.
--/
-
-/--
-Bayesian update as PoE: posterior ∝ likelihood × prior.
--/
+/-- Bayesian update as PoE: posterior ∝ likelihood × prior. -/
 def bayesianPoe {α : Type} (likelihood prior : α → ℚ) (support : List α) : α → ℚ :=
   poe2 likelihood prior support
 
-/--
-Iterated Bayesian updates can be combined into single PoE.
--/
+/-- Iterated Bayesian updates can be combined into single PoE. -/
 theorem iterated_bayes_is_poe {α : Type} (l₁ l₂ prior : α → ℚ) (support : List α) :
     -- Two observations: first l₁, then l₂
     -- Equals single PoE with all three

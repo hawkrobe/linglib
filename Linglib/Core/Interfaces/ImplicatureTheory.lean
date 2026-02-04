@@ -1,60 +1,14 @@
-/-
-# ImplicatureTheory: Abstract Interface for Scalar Implicature Predictions
-
-This typeclass defines what it means for a theory to make predictions about
-scalar implicatures. The interface is **theory-neutral**: it doesn't assume
-Neo-Gricean belief states, RSA probabilities, or any particular mechanism.
-
-## Design Principle
-
-Different theories use different mechanisms:
-- NeoGricean: Belief states + competence (Bel_S(¬ψ))
-- RSA: Probabilistic reasoning (P_L1(some_not_all) > P_L1(all))
-- Grammatical: Local vs global computation
-
-But they all make **predictions** about when implicatures arise.
-This interface captures that common ground.
-
-## Key Challenge
-
-NeoGricean makes **categorical** predictions (Bel_S(¬all)), while RSA makes
-**probabilistic** predictions (P_L1(some_not_all) > P_L1(all)). The interface
-accommodates both by:
-1. Using a status enum for categorical predictions
-2. Providing optional strength field for quantitative theories
-
-## Usage
-
-Each theory implements this interface in its own terms. Then comparison
-theorems can prove when different theories make the same predictions.
-
-```
-Theories/NeoGricean/ImplicatureInstance.lean
-  instance : ImplicatureTheory NeoGriceanTheory where ...
-
-Theories/RSA/ImplicatureInstance.lean
-  instance : ImplicatureTheory RSATheory where ...
-
-Comparisons/Implicature.lean
-  theorem theories_diverge_on_de : ...
-```
-
-## References
-
-- Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
-- Goodman & Frank (2016). Pragmatic Language Interpretation as Probabilistic Inference.
-- Geurts & Pouscoulous (2009). Embedded implicatures?!
--/
-
 import Linglib.Core.Basic
+
+/-!
+# ImplicatureTheory
+
+Abstract interface for scalar implicature predictions.
+-/
 
 namespace Interfaces
 
--- ============================================================================
--- Part 1: Implicature Status
--- ============================================================================
-
-/-- The possible implicature outcomes for a scalar position -/
+/-- The possible implicature outcomes for a scalar position. -/
 inductive ImplicatureStatus where
   /-- Implicature is derived (Bel_S(¬ψ) or P > threshold) -/
   | triggered
@@ -66,17 +20,7 @@ inductive ImplicatureStatus where
   | absent
   deriving Repr, DecidableEq
 
--- ============================================================================
--- Part 2: The Core Interface
--- ============================================================================
-
-/-- A theory that makes predictions about scalar implicatures.
-
-    This is the **theory-neutral interface** that all frameworks implement.
-    The interface says nothing about mechanism (belief states, probabilities, etc.),
-    only about observable predictions.
-
-    Type parameter `T` is a marker type for the theory (e.g., `NeoGriceanTheory`). -/
+/-- A theory that makes predictions about scalar implicatures. -/
 class ImplicatureTheory (T : Type) where
   /-- The theory's internal representation of an utterance in context -/
   Structure : Type
@@ -110,10 +54,6 @@ class ImplicatureTheory (T : Type) where
   /-- Predicted baseline implicature rate (%) in neutral contexts -/
   predictedBaselineRate : Nat
 
--- ============================================================================
--- Part 3: Derived Operations
--- ============================================================================
-
 variable {T : Type} [ImplicatureTheory T]
 
 /-- Check if implicature is derived at position pos -/
@@ -140,10 +80,6 @@ def anyImplicature (s : ImplicatureTheory.Structure T) (pos : Nat) : Bool :=
   | .triggered => true
   | .possible => true
   | _ => false
-
--- ============================================================================
--- Part 4: Theory Comparison
--- ============================================================================
 
 variable {T1 T2 : Type} [ImplicatureTheory T1] [ImplicatureTheory T2]
 
@@ -176,11 +112,7 @@ def theoriesAgreeOnTaskEffect : Bool :=
   ImplicatureTheory.predictsTaskEffect (T := T1) ==
   ImplicatureTheory.predictsTaskEffect (T := T2)
 
--- ============================================================================
--- Part 5: Empirical Comparison
--- ============================================================================
-
-/-- Compare a theory's predicted rate to empirical data -/
+/-- Compare a theory's predicted rate to empirical data. -/
 def rateMatchesData (predictedRate observedRate : Nat) (tolerance : Nat := 5) : Bool :=
   let diff := if predictedRate > observedRate
               then predictedRate - observedRate
@@ -197,88 +129,7 @@ def closerToData (observed : Nat) : Bool :=
                else observed - ImplicatureTheory.predictedBaselineRate (T := T2)
   diff1 < diff2
 
--- ============================================================================
--- Part 6: Documentation
--- ============================================================================
-
-/-
-## How to Implement This Interface
-
-Each theory provides an instance by defining:
-
-1. `Structure`: The theory's internal representation
-   - NeoGricean: StandardRecipeResult + polarity + scalar position
-   - RSA: RSAScalarResult
-
-2. `parse`: How to build the structure from words
-   - Can be partial (return `none` for unparseable inputs)
-
-3. `implicatureStatus`: The theory's prediction for each position
-   - This is where the theory's mechanism gets applied
-
-4. `implicatureStrength`: Optional quantitative prediction
-   - NeoGricean: baseline rate from params
-   - RSA: L1 probability
-
-5. `predictsDEBlocking`: Does the theory model DE blocking?
-   - NeoGricean: Yes (context polarity affects alternatives)
-   - RSA: No (current model doesn't include DE)
-
-6. `predictsTaskEffect`: Does asking about SI raise rates?
-   - Contextualism (Geurts): Yes
-   - Defaultism (Levinson): No
-   - RSA: No
-
-7. `predictedBaselineRate`: What rate does theory predict?
-   - Geurts: ~35%
-   - Levinson: ~90%
-   - RSA: ~50%
-
-## Example: NeoGricean
-
-```
-structure NeoGriceanTheory
-
-instance : ImplicatureTheory NeoGriceanTheory where
-  Structure := NeoGriceanStructure
-  parse := parseToNeoGricean
-  implicatureStatus := λ s pos =>
-    if s.scalarPosition != some pos then .absent
-    else if s.polarity == .downward then .blocked
-    else if s.result.strongImplicature then .triggered
-    else if s.result.weakImplicature then .possible
-    else .absent
-  implicatureStrength := ...
-  predictsDEBlocking := true
-  predictsTaskEffect := true
-  predictedBaselineRate := 35
-```
-
-## What This Enables
-
-1. **Automatic comparison**: Once theories implement the interface,
-   we can test if they agree on any input.
-
-2. **Divergence detection**: If Theory A predicts triggered and
-   Theory B predicts blocked, we've found a divergence point.
-
-3. **Empirical adjudication**: When theories diverge, empirical data
-   (Geurts & Pouscoulous 2009) can decide which prediction is correct.
-
-4. **Coverage tracking**: Which theories handle which phenomena?
--/
-
--- ============================================================================
--- Part 6: Systematic Coverage Tracking
--- ============================================================================
-
-/-- Coverage status for a phenomenon.
-
-    Distinguishes between different reasons for missing coverage:
-    - `complete`: Theory models this and predictions are verified
-    - `incomplete`: Theory could model this but formalization is missing
-    - `outOfScope`: Theory doesn't claim to handle this phenomenon
-    - `wrong`: Theory makes prediction that conflicts with data -/
+/-- Coverage status for a phenomenon. -/
 inductive CoverageStatus where
   | complete      -- Modeled and verified
   | incomplete    -- Could be modeled, formalization missing
@@ -326,11 +177,7 @@ def TheoryCoverage.incompletePhenomena (tc : TheoryCoverage) : List PragmaticPhe
 def TheoryCoverage.outOfScopePhenomena (tc : TheoryCoverage) : List PragmaticPhenomenon :=
   tc.phenomena.filter (·.status == .outOfScope) |>.map (·.phenomenon)
 
--- ============================================================================
--- Part 6b: Legacy Coverage Summary (for backwards compatibility)
--- ============================================================================
-
-/-- Summary of what a theory covers vs what's incomplete -/
+/-- Summary of what a theory covers vs what's incomplete. -/
 structure CoverageSummary where
   /-- Does it derive basic SIs? -/
   derivesBasicSI : Bool
@@ -357,19 +204,7 @@ def coverageSummary (T : Type) [ImplicatureTheory T] : CoverageSummary :=
        else ["Task effect not modeled"])
   }
 
--- ============================================================================
--- Part 7: Linking to Empirical Data
--- ============================================================================
-
-/-
-## Connecting to Empirical Data
-
-These structures and functions link ImplicatureTheory predictions to
-the empirical data types in Phenomena/EmpiricalData.lean and
-Phenomena/ScalarImplicatures/Data.lean.
--/
-
-/-- A DE blocking test case derived from empirical data -/
+/-- A DE blocking test case derived from empirical data. -/
 structure DEBlockingTestCase where
   /-- Description of the UE example -/
   ueDescription : String
@@ -443,11 +278,7 @@ def testTaskEffect {T : Type} [ImplicatureTheory T] (tc : TaskEffectTestCase) (t
   , isMatch := (theoryPredicts == dataShows) && (diff <= tolerance)
   }
 
--- ============================================================================
--- Part 7: Captures Typeclasses
--- ============================================================================
-
-/-- A theory captures DE blocking data if its prediction isMatch the pattern -/
+/-- A theory captures DE blocking data if its prediction isMatch the pattern. -/
 class CapturesDEBlockingPattern (T : Type) [ImplicatureTheory T] where
   /-- The test case from empirical data -/
   testCase : DEBlockingTestCase
@@ -466,11 +297,7 @@ class CapturesTaskEffectData (T : Type) [ImplicatureTheory T] where
   /-- Proof that predicted rate is close to observed -/
   rateWithinTolerance : (testTaskEffect (T := T) taskEffectData tolerance).rateDifference <= tolerance
 
--- ============================================================================
--- Part 8: Comparison with Rate Data
--- ============================================================================
-
-/-- Compare a theory's baseline rate to observed data -/
+/-- Compare a theory's baseline rate to observed data. -/
 def compareToObservedRate {T : Type} [ImplicatureTheory T] (observedRate : Nat) : Nat × Nat × Bool :=
   let predicted := ImplicatureTheory.predictedBaselineRate (T := T)
   let diff := if predicted > observedRate then predicted - observedRate else observedRate - predicted
