@@ -19,6 +19,8 @@ The subject precedes the verb, and the object follows the verb.
 import Linglib.Phenomena.Core.Basic
 import Linglib.Theories.Surface.Basic
 
+namespace Phenomena.WordOrder
+
 open Lexicon
 
 -- The Empirical Data
@@ -56,3 +58,5 @@ def wordOrderData : PhenomenonData := {
 #eval Surface.wordOrderOk [john, mary, sees] .declarative  -- true (verb still after subj)
 -- Note: the current simple checker only verifies S < V, not full SVO
 -- A more complete implementation would check V < O as well
+
+end Phenomena.WordOrder

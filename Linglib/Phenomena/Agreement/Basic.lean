@@ -23,6 +23,8 @@ In English, the verb must agree with its subject in number (and person for some 
 import Linglib.Phenomena.Core.Basic
 import Linglib.Theories.Surface.Basic
 
+namespace Phenomena.Agreement
+
 open Lexicon
 
 -- The Empirical Data
@@ -64,3 +66,5 @@ def agreementData : PhenomenonData := {
 #eval Surface.agreementOk [they, sleeps]    -- false
 #eval Surface.agreementOk [john, sleeps]    -- true
 #eval Surface.agreementOk [john, sleep]     -- false
+
+end Phenomena.Agreement

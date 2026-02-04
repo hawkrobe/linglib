@@ -8,10 +8,7 @@ import Linglib.Core.Basic
 import Linglib.Core.Grammar
 import Linglib.Phenomena.Core.Lexicon
 
-open Lexicon
-
--- Minimal Pairs
-
+open Lexicon in
 /-- A minimal pair: grammatical vs ungrammatical, with context -/
 structure MinimalPair where
   grammatical : List Word
@@ -26,8 +23,6 @@ structure PhenomenonData where
   pairs : List MinimalPair
   generalization : String
 
--- Phenomenon Coverage
-
 /-- A grammar captures a minimal pair if it derives the good one and blocks the bad one -/
 def Grammar.capturesPair (G : Type) [Grammar G] (g : G) (pair : MinimalPair) : Prop :=
   Grammar.derives g pair.grammatical pair.clauseType ∧
@@ -36,8 +31,6 @@ def Grammar.capturesPair (G : Type) [Grammar G] (g : G) (pair : MinimalPair) : P
 /-- A grammar captures a phenomenon if it captures all its minimal pairs -/
 def Grammar.capturesPhenomenon (G : Type) [Grammar G] (g : G) (phenom : PhenomenonData) : Prop :=
   ∀ pair ∈ phenom.pairs, Grammar.capturesPair G g pair
-
--- Framework-Neutral Theorems
 
 /-- If two grammars both capture a phenomenon, they agree on grammatical sentences -/
 theorem grammars_agree_on_phenomenon
