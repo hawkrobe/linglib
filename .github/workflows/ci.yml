@@ -18,6 +18,9 @@ jobs:
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
+      - name: Install toolchain
+        run: elan install $(cat lean-toolchain)
+
       - name: Get Mathlib cache
         run: lake exe cache get
 
