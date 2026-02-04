@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
 
-A Lean 4 library for formalizing linguistic theories and computational pragmatics (RSA).
+Linglib is an effort to build a unified library of formal linguistics in the Lean proof assistant, covering semantics, pragmatics, and their interfaces.
 
 ## Documentation
 

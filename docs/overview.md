@@ -1,6 +1,6 @@
 # Linglib Overview
 
-A Lean 4 library for formalizing linguistic theories and connecting them to computational pragmatics.
+Linglib is an effort to build a unified library of formal linguistics in the Lean proof assistant, covering semantics, pragmatics, and their interfaces.
 
 ---
 
