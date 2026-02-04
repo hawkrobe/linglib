@@ -32,11 +32,11 @@ In other words: if we add C to the background, E necessarily follows.
 - Nadathur & Lauer (2020), Section 5.1
 -/
 
-import Linglib.Core.CausalModel
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
 
 namespace Theories.NadathurLauer2020.Sufficiency
 
-open Core.CausalModel
+open Theories.Montague.Conditional.CausalModel
 
 -- ============================================================================
 -- Causal Sufficiency (Definition 23)

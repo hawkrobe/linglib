@@ -21,7 +21,7 @@ their proper homes in the library.
 -/
 
 import Linglib.Core.GradedProposition
-import Linglib.Core.BayesianSemantics
+import Linglib.Theories.Montague.BayesianSemantics
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Model
 import Linglib.Theories.RSA.Core.Noise
@@ -36,7 +36,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 namespace Conjectures
 
 open Core.GradedProposition
-open Core.BayesianSemantics
+open Theories.Montague.BayesianSemantics
 
 -- ============================================================================
 -- TIER 1: Graded Semantics = Boolean + Noise

@@ -42,7 +42,7 @@ import Linglib.Core.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 
-namespace Core.DiscourseState
+namespace Theories.DynamicSemantics.State
 
 open Core.Proposition
 open Core.CommonGround
@@ -480,4 +480,4 @@ end DiscourseConfig
 4. **Rising declaratives**: Assertions with interrogative prosody
 -/
 
-end Core.DiscourseState
+end Theories.DynamicSemantics.State

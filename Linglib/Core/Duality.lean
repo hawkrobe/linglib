@@ -1,40 +1,13 @@
-/-
+import Mathlib.Order.Basic
+import Mathlib.Order.Lattice
+import Mathlib.Order.BoundedOrder.Basic
+
+/-!
 # Duality: The Universal/Existential Divide
 
 The fundamental duality between universal-like and existential-like operators,
-formalized as a Galois connection.
-
-## The Core Insight
-
-Many linguistic phenomena reduce to a single categorical duality:
-
-```
-    ∃ ⊣ Δ ⊣ ∀
-
-    Left adjoint     Right adjoint
-    (preserves ⋁)    (preserves ⋀)
-    ROBUST           FRAGILE
-```
-
-## Manifestations
-
-| Domain | ∃-like (Robust) | ∀-like (Fragile) |
-|--------|-----------------|------------------|
-| Quantifiers | some, not-every | every, no |
-| Modals | ◇ (possibility) | □ (necessity) |
-| Connectives | ∨ (disjunction) | ∧ (conjunction) |
-| Presuppositions | existential | universal |
-| Plurals | "some Xs P" | "the Xs P" |
-| Counterfactuals | weak quantifiers accept | strong quantifiers reject |
-
-## Categorical Foundation (RAPL/LAPC)
-
-- **Left adjoints preserve colimits** (joins): one success suffices
-- **Right adjoints preserve limits** (meets): one failure breaks
-
-This explains why STRENGTH (not polarity) determines behavior:
-- `no` patterns with `every` (both right adjoints / ∀-like)
-- `some` patterns with `not-every` (both left adjoints / ∃-like)
+formalized as a Galois connection: ∃ ⊣ Δ ⊣ ∀. Left adjoints (∃-like) are robust
+(one success suffices); right adjoints (∀-like) are fragile (one failure breaks).
 
 ## References
 
@@ -43,15 +16,7 @@ This explains why STRENGTH (not polarity) determines behavior:
 - Partee, ter Meulen & Wall (1990). Mathematical Methods in Linguistics. Ch. 14.
 -/
 
-import Mathlib.Order.Basic
-import Mathlib.Order.Lattice
-import Mathlib.Order.BoundedOrder.Basic
-
 namespace Core.Duality
-
--- ============================================================================
--- PART 1: Duality Type
--- ============================================================================
 
 /-- The fundamental duality: existential-like vs universal-like. -/
 inductive DualityType where
@@ -76,10 +41,6 @@ def DualityType.dual : DualityType → DualityType
 
 theorem dual_involutive (d : DualityType) : d.dual.dual = d := by
   cases d <;> rfl
-
--- ============================================================================
--- PART 2: Three-Valued Truth (for indeterminacy)
--- ============================================================================
 
 /-- Three-valued truth for phenomena with indeterminacy. -/
 inductive Truth3 where
@@ -164,10 +125,6 @@ instance : BoundedOrder Truth3 where
 
 end Truth3
 
--- ============================================================================
--- PART 3: Aggregation Functions
--- ============================================================================
-
 /-- Aggregate a list according to duality type. -/
 def aggregate (d : DualityType) (l : List Truth3) : Truth3 :=
   match d with
@@ -179,10 +136,6 @@ def existsAny (l : List Truth3) : Truth3 := aggregate .existential l
 
 /-- Universal aggregation: true only if ALL true. -/
 def forallAll (l : List Truth3) : Truth3 := aggregate .universal l
-
--- ============================================================================
--- PART 4: The Key Theorems (Robustness vs Fragility)
--- ============================================================================
 
 /-- sup with true absorbs: a ⊔ true = true -/
 @[simp] theorem Truth3.sup_true (a : Truth3) : a ⊔ .true = .true := by cases a <;> rfl
@@ -238,11 +191,7 @@ theorem foldl_inf_mem_false (l : List Truth3) (acc : Truth3) (h : Truth3.false �
     | inr hmem =>
       exact ih (acc ⊓ hd) hmem
 
-/--
-**Existential is robust**: one true element yields true.
-
-This is the defining property of left adjoints (colimit preservation).
--/
+/-- Existential is robust: one true element yields true. -/
 theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
     existsAny l = .true := by
   simp only [existsAny, aggregate, List.any_eq_true] at *
@@ -252,11 +201,7 @@ theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
   | false => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
 
-/--
-**Universal is fragile**: one false element yields false.
-
-This is the defining property of right adjoints (limit preservation).
--/
+/-- Universal is fragile: one false element yields false. -/
 theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
     forallAll l = .false := by
   simp only [forallAll, aggregate, List.any_eq_true] at *
@@ -265,10 +210,6 @@ theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
   | false => exact foldl_inf_mem_false l ⊤ hx_mem
   | true => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
-
--- ============================================================================
--- PART 5: Quantifier Classification
--- ============================================================================
 
 /-- Standard quantifier names. -/
 inductive Quantifier where
@@ -288,80 +229,20 @@ def Quantifier.duality : Quantifier → DualityType
 def Quantifier.isStrong (q : Quantifier) : Bool :=
   q.duality == .universal
 
-/--
-**Strength = Duality Type**
-
-This is the key insight from Ramotowska et al. (2025):
-quantifier STRENGTH determines projection behavior because
-strength corresponds to adjoint type (∀ vs ∃).
--/
+/-- Strength = duality type (Ramotowska et al. 2025). -/
 theorem strength_is_duality (q : Quantifier) :
     q.isStrong = true ↔ q.duality = .universal := by
   cases q <;> decide
 
--- ============================================================================
--- PART 6: Galois Connection (Abstract)
--- ============================================================================
-
-/-!
-## Galois Connection Structure
-
-The duality is captured by the adjunction ∃ ⊣ Δ ⊣ ∀ where:
-- ∃ : (D → T) → T is supremum (join over domain)
-- Δ : T → (D → T) is the constant function
-- ∀ : (D → T) → T is infimum (meet over domain)
-
-The Galois connection properties:
-- `∃(P) ≤ t ↔ ∀d. P(d) ≤ t` (∃ ⊣ Δ)
-- `t ≤ ∀(P) ↔ ∀d. t ≤ P(d)` (Δ ⊣ ∀)
-
-These are standard lattice-theoretic facts that Mathlib's
-`GaloisConnection` captures.
--/
-
 /-- The constant function Δ : T → (D → T). -/
 def const {α : Type*} (t : Truth3) : α → Truth3 := fun _ => t
 
-/--
-Existential over a predicate.
--/
+/-- Existential over a predicate. -/
 def exists' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
   existsAny (l.map P)
 
-/--
-Universal over a predicate.
--/
+/-- Universal over a predicate. -/
 def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
   forallAll (l.map P)
-
--- ============================================================================
--- PART 7: Applications
--- ============================================================================
-
-/-!
-## Applications
-
-This duality infrastructure is used by:
-
-1. **Counterfactuals** (`Conditional/Counterfactual.lean`)
-   - Strong quantifiers (every, no) → reject mixed scenarios
-   - Weak quantifiers (some) → accept mixed scenarios
-
-2. **Presupposition Projection** (`Montague/Projection/`)
-   - Universal presuppositions: all must be satisfied
-   - Existential accommodation: one satisfaction suffices
-
-3. **Homogeneity** (`Phenomena/Homogeneity/`)
-   - "The Xs P" requires homogeneity (∀-like)
-   - "Some Xs P" tolerates heterogeneity (∃-like)
-
-4. **NPI Licensing** (`Phenomena/NPIs/`)
-   - DE contexts (∀-like composition) license NPIs
-   - UE contexts (∃-like composition) block NPIs
-
-5. **Free Choice** (`NeoGricean/FreeChoice/`)
-   - □(A∨B) → □A ∧ □B (necessity distributes)
-   - ◇(A∨B) → ◇A ∨ ◇B (possibility distributes)
--/
 
 end Core.Duality

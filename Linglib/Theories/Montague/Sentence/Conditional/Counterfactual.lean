@@ -42,13 +42,13 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 -/
 
 import Linglib.Theories.Montague.Sentence.Conditional.Basic
-import Linglib.Core.CausalModel
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
 import Linglib.Core.Duality
 
 namespace Montague.Sentence.Conditional.Counterfactual
 
 open Montague.Sentence.Conditional
-open Core.CausalModel
+open Theories.Montague.Conditional.CausalModel
 
 -- ============================================================================
 -- PART 1: Common Infrastructure
@@ -717,6 +717,6 @@ This connects Stalnaker selection to Lewis/Nadathur-Lauer counterfactual depende
 theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
     causalCounterfactual dyn s cause effect =
-    Core.CausalModel.developsToTrue dyn (s.extend cause true) effect := rfl
+    Theories.Montague.Conditional.CausalModel.developsToTrue dyn (s.extend cause true) effect := rfl
 
 end Montague.Sentence.Conditional.Counterfactual

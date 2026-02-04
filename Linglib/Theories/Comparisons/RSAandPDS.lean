@@ -28,14 +28,14 @@ posterior ← do
 In the probability monad, this is Bayesian conditioning via `observe`.
 -/
 
-import Linglib.Core.ProbabilisticDynamics
+import Linglib.Theories.DynamicSemantics.Probabilistic
 import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 
 namespace Comparisons.RSAandPDS
 
-open Core.ProbabilisticDynamics
+open Theories.DynamicSemantics.Probabilistic
 
 -- ============================================================================
 -- PART 1: RSA's φ as probProp

@@ -72,7 +72,7 @@ Qing/Warstadt argue "common ground" is appropriate because:
 import Linglib.Theories.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.RSA.Implementations.Warstadt2022
-import Linglib.Core.DiscourseState
+import Linglib.Theories.DynamicSemantics.State
 
 namespace Comparisons.PresuppositionProjection
 
@@ -129,9 +129,9 @@ The CG interpretation connects directly to:
 - Lewis's (1979) scorekeeping (accommodation updates CG)
 - The intuition that presuppositions constrain felicitous contexts
 
-### Unified via Core.DiscourseState
+### Unified via Theories.DynamicSemantics.State
 
-The `Core.DiscourseState` module provides explicit types for F&B components.
+The `Theories.DynamicSemantics.State` module provides explicit types for F&B components.
 See `RSA.DiscourseIntegration` for credence functions that bridge these
 types to RSA computations.
 -/

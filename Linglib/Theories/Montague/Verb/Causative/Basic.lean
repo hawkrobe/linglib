@@ -21,7 +21,7 @@ Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
 
 ## Module Structure
 
-- `Core.CausalModel`: Situations, causal laws, normal development
+- `Theories.Montague.Conditional.CausalModel`: Situations, causal laws, normal development
 - `Sufficiency`: Causal sufficiency, semantics of "make"
 - `Necessity`: Causal necessity, semantics of "cause"
 - `Examples`: Fire scenario, circuit, causal chains
@@ -31,7 +31,7 @@ Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
 ## Usage
 
 ```lean
-import Linglib.Theories.NadathurLauer2020.Basic
+import Linglib.Theories.Montague.Verb.Causative.Basic
 
 open Theories.NadathurLauer2020.Examples
 
@@ -68,17 +68,17 @@ open Theories.NadathurLauer2020.Examples
 -/
 
 -- Re-export all submodules
-import Linglib.Core.CausalModel
-import Linglib.Theories.NadathurLauer2020.Sufficiency
-import Linglib.Theories.NadathurLauer2020.Necessity
-import Linglib.Theories.NadathurLauer2020.Examples
-import Linglib.Theories.NadathurLauer2020.CoerciveImplication
-import Linglib.Theories.NadathurLauer2020.Integration
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
+import Linglib.Theories.Montague.Verb.Causative.Sufficiency
+import Linglib.Theories.Montague.Verb.Causative.Necessity
+import Linglib.Theories.Montague.Verb.Causative.Examples
+import Linglib.Theories.Montague.Verb.Causative.CoerciveImplication
+import Linglib.Theories.Montague.Verb.Causative.Integration
 
 namespace Theories.NadathurLauer2020
 
 -- Re-export key definitions for convenience
-export Core.CausalModel (
+export Theories.Montague.Conditional.CausalModel (
   Variable mkVar
   Situation CausalLaw CausalDynamics
 )

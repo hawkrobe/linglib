@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.60.0] - 2025-02-04
+
+### Changed
+- Move theory-specific files from Core/ to appropriate Theories/ locations (Analyticity→NeoGricean, TeamSemantics/DiscourseState/Probabilistic→DynamicSemantics, CausalModel/BayesNet→Montague/Conditional, BilateralUpdateSemantics→DynamicSemantics/BilateralUpdate, NadathurLauer2020→Montague/Verb/Causative)
+
 ## [0.59.0] - 2025-02-03
 
 ### Changed

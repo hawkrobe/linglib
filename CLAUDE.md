@@ -207,6 +207,48 @@ This is preferable to "backing away" from the full statement by:
 
 Rationale: It's hard to remember which formalizations are incomplete when they compile without warnings. A `sorry` warning explicitly marks incomplete work for later, while a weakened-but-proved theorem may be forgotten as not fully capturing the intended claim.
 
+**Do not encode conclusions as definitions — derive them from deeper principles.**
+
+Bad pattern (stipulative):
+```lean
+def naCanBridge := true
+def bareCanBridge (n) := n.isRelational
+theorem na_can_bridge : naCanBridge = true := rfl  -- Trivially true by definition!
+```
+
+Good pattern (derived):
+```lean
+-- Define structural properties
+inductive Pred (E S : Type) : Arity → Type where
+  | pred1 : (E → S → Bool) → Pred E S .one
+  | pred2 : (E → E → S → Bool) → Pred E S .two
+
+-- Define π as a type-changing operation
+def π (P : Pred E S .one) (R : Pred2 E S) : Pred E S .two := ...
+
+-- Define bridging capability structurally
+def canBridge (a : Arity) := a == .two
+
+-- DERIVE that π enables bridging (follows from types)
+theorem pi_enables_bridging (P : Pred E S .one) (R : Pred2 E S) :
+    canBridge (π P R).arity = true := rfl  -- Non-trivial: follows from π's type signature
+```
+
+The difference:
+- In the bad pattern, the "theorem" just unpacks what we stipulated
+- In the good pattern, the theorem follows from deeper structural properties
+- The good pattern is genuinely explanatory and enables cumulative building
+
+**Build cumulatively — later modules should import and use earlier ones.**
+
+When formalizing related papers:
+- Identify shared theoretical foundations (e.g., Barker's π for all possession/bridging work)
+- Put shared foundations in a common module
+- Have paper-specific modules IMPORT and USE the shared definitions
+- Derive paper-specific results from the shared framework
+
+Example: Ahn & Zhu (2025) should import Barker (2011)'s π operator, not redefine it. Their bridging results should derive from Barker's type-shifting framework.
+
 ## References
 
 ### RSA Papers (Implemented)

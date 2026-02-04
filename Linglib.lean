@@ -45,21 +45,19 @@ Missing Theories/X/Y.lean = conjecture (theory hasn't proven it handles Y)
 -- Core types and interfaces
 import Linglib.Core.Basic
 import Linglib.Core.Grammar
-import Linglib.Core.InformationStructure
 import Linglib.Core.FormalLanguageTheory
 import Linglib.Core.QUD
 import Linglib.Core.Proposition
 import Linglib.Core.SatisfactionOrdering
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
-import Linglib.Core.Analyticity
 
 -- Dynamic semantics core (InfoState, CCP, update operations)
 import Linglib.Theories.DynamicSemantics.Core.Basic
 import Linglib.Theories.DynamicSemantics.Core.Update
 
 -- Team semantics (Aloni, Inquisitive Semantics infrastructure)
-import Linglib.Core.TeamSemantics
+import Linglib.Theories.DynamicSemantics.TeamSemantics
 
 -- Softmax infrastructure (Franke & Degen)
 import Linglib.Core.Softmax.Basic
@@ -321,12 +319,12 @@ import Linglib.Core.RationalPower
 import Linglib.Theories.PragmaticComparison
 
 -- Bilateral Update Semantics (Elliott & Sudo 2025)
-import Linglib.Theories.BilateralUpdateSemantics.Basic
-import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
+import Linglib.Theories.DynamicSemantics.BilateralUpdate.Basic
+import Linglib.Theories.DynamicSemantics.BilateralUpdate.FreeChoice
 
 -- Causative Verbs (Nadathur & Lauer 2020)
-import Linglib.Core.CausalModel
-import Linglib.Theories.NadathurLauer2020.Basic
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
+import Linglib.Theories.Montague.Verb.Causative.Basic
 
 -- Cross-theoretic comparisons
 import Linglib.Theories.Comparisons.Coreference

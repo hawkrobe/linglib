@@ -33,7 +33,7 @@ This explains why PCs block NPIs despite being semantically DE!
 - Bhatt & Pancheva (2006). Conditionals.
 -/
 
-import Linglib.Core.DiscourseState
+import Linglib.Theories.DynamicSemantics.State
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Core.Polarity
 import Linglib.Theories.Montague.Sentence.Conditional.Basic
@@ -42,7 +42,7 @@ namespace Montague.Sentence.Conditional
 
 open Core.Proposition
 open Montague.Core.Polarity
-open Core.DiscourseState
+open Theories.DynamicSemantics.State
 
 -- ============================================================================
 -- Conditional Type: HC vs PC

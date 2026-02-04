@@ -142,6 +142,50 @@ def laoshi : NounEntry := { form := "老师", pinyin := "lǎoshī", classifier :
 def pengyou : NounEntry := { form := "朋友", pinyin := "péngyou", classifier := some "个" }  -- friend
 
 -- ============================================================================
+-- Bridging-Relevant Nouns (Ahn & Zhu 2025)
+-- ============================================================================
+
+/-!
+## Part-Whole Nouns
+
+These nouns denote parts of larger wholes, enabling part-whole bridging:
+"我买了一辆车。座椅坏了。" (I bought a car. The seat was broken.)
+
+In part-whole bridging, uniqueness is mediated by the whole:
+- There is typically ONE seat (of the relevant kind) per car
+- Uniqueness presupposition satisfied via mereological relation
+-/
+
+def zuoyi : NounEntry := { form := "座椅", pinyin := "zuòyǐ", classifier := some "个" }  -- seat
+def fangxiangpan : NounEntry := { form := "方向盘", pinyin := "fāngxiàngpán", classifier := some "个" }  -- steering wheel
+def lunzi : NounEntry := { form := "轮子", pinyin := "lúnzi", classifier := some "个" }  -- wheel
+def fengmian : NounEntry := { form := "封面", pinyin := "fēngmiàn", classifier := some "个" }  -- cover (of book)
+
+/-!
+## Relational Nouns
+
+These nouns denote entities defined by a relation to another entity,
+enabling relational bridging:
+"我读了一本书。作者很有名。" (I read a book. The author was famous.)
+
+In relational bridging, familiarity (not uniqueness) is the key:
+- The author must be contextually salient
+- Mandarin bare nouns and *na*+CL both license this
+
+**Ahn & Zhu's Analysis of *na***:
+⟦na⟧ = λsr.λP.λz : ιx[π(P)(z)(x)(sr)]
+- Introduces an external relatum sr
+- Acts as a relationalizing operator
+- Allows relational bridging for all noun types
+-/
+
+def zuozhe : NounEntry := { form := "作者", pinyin := "zuòzhě", classifier := some "位" }  -- author
+def muqin : NounEntry := { form := "母亲", pinyin := "mǔqīn", classifier := some "位" }  -- mother
+def fuqin : NounEntry := { form := "父亲", pinyin := "fùqīn", classifier := some "位" }  -- father
+def laobanniang : NounEntry := { form := "老板娘", pinyin := "lǎobǎnniáng", classifier := some "位" }  -- proprietress
+def laoban : NounEntry := { form := "老板", pinyin := "lǎobǎn", classifier := some "位" }  -- boss/owner
+
+-- ============================================================================
 -- Proper Names
 -- ============================================================================
 
@@ -156,6 +200,11 @@ def xiaoming : NounEntry := { form := "小明", pinyin := "Xiǎo Míng", proper 
 def allNouns : List NounEntry := [
   gou, mao, ren, shu, che, niao, hua, shui, fan,
   nuer, erzi, xuesheng, laoshi, pengyou,
+  -- Part-whole nouns (Ahn & Zhu 2025)
+  zuoyi, fangxiangpan, lunzi, fengmian,
+  -- Relational nouns (Ahn & Zhu 2025)
+  zuozhe, muqin, fuqin, laobanniang, laoban,
+  -- Proper names
   zhangsan, lisi, xiaoming
 ]
 

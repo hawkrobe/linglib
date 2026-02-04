@@ -1,49 +1,58 @@
 /-
-# Verum Focus: Empirical Data
+# Negative Questions: Empirical Data
 
-Theory-neutral data on verum focus (VERUM) and its interaction with
-negative yes/no questions.
+Theory-neutral data on negative yes/no questions and epistemic bias.
 
 ## The Phenomenon
 
-Verum focus (Höhle 1992) is focus on the truth/polarity of a proposition,
-signaling that the speaker is addressing whether p should be added to
-the Common Ground.
+Negative questions exhibit systematic asymmetries in interpretation:
 
-  "Does John DRINK?" (focus on truth, not on 'drink')
-  "John DOES drink." (emphatic affirmation)
+1. **Preposed vs non-preposed negation**:
+   - "Doesn't John drink?" → speaker expects "yes" (positive bias)
+   - "Does John not drink?" → neutral information-seeking possible
 
-## Key Properties
+2. **PI/NI ambiguity** (Ladd 1981):
+   - "Isn't Jane coming too?" → positive implicature (PI)
+   - "Isn't Jane coming either?" → negative implicature (NI)
 
-1. **Preposed negation**: "Doesn't John drink?" vs "Does John not drink?"
-2. **Epistemic implicature**: Preposed negation forces positive bias
-3. **PI/NI ambiguity**: "Isn't Jane coming {too/either}?" (Ladd 1981)
-4. **VERUM sources**: Preposed negation, "really", focus on auxiliary
+3. **Cross-linguistic variation** in how languages mark epistemic bias
+
+## Theoretical Analyses
+
+Different theories explain these facts:
+- **Verum Focus** (Höhle 1992, Romero & Han 2004): Covert VERUM operator
+- **Decision Theory** (van Rooy & Šafářová 2003): Utility-based question choice
+- **Structural ambiguity** (Ladd 1981): p/¬p scope ambiguity
+
+This file records the phenomena; theories belong in Theories/.
+
+## Related Files
+
+- `Focus/PolarityStress.lean` - Prosodic stress on auxiliaries/negation
+- `Polarity/` - NPI/PPI licensing in these contexts
 
 ## References
 
-- Höhle, T. (1992). Über Verum-Fokus im Deutschen.
 - Ladd, D.R. (1981). A First Look at the Semantics and Pragmatics of
   Negative Questions and Tag Questions.
 - Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
+- van Rooy, R. & Šafářová, M. (2003). On Polar Questions.
 -/
 
 import Linglib.Phenomena.Core.Basic
 
-namespace Phenomena.Focus.VerumFocus
+namespace Phenomena.Questions.NegativeQuestions
 
 -- ============================================================================
--- Part 1: Basic Verum Focus Data
+-- Part 1: Negative Question Data
 -- ============================================================================
 
-/-- A verum focus datum records a sentence with its verum interpretation -/
-structure VerumFocusDatum where
+/-- A negative question datum records epistemic bias -/
+structure NegativeQuestionDatum where
   /-- The sentence -/
   sentence : String
-  /-- Does this have verum focus? -/
-  hasVerumFocus : Bool
-  /-- Source of verum focus (if any) -/
-  verumSource : Option String  -- "preposed_neg", "really", "aux_focus", etc.
+  /-- Negation position -/
+  negationPosition : String  -- "preposed", "non_preposed", "none"
   /-- Epistemic bias (positive, negative, or none) -/
   epistemicBias : Option String
   /-- Notes -/
@@ -52,57 +61,35 @@ structure VerumFocusDatum where
   source : String := ""
   deriving Repr
 
-/-- Preposed vs non-preposed negation contrast (Romero & Han 2004 core data) -/
-def preposedNegation : VerumFocusDatum := {
+/-- Preposed negation forces positive bias -/
+def preposedNegation : NegativeQuestionDatum := {
   sentence := "Doesn't John drink?"
-  hasVerumFocus := true
-  verumSource := some "preposed_neg"
+  negationPosition := "preposed"
   epistemicBias := some "positive"
-  notes := "Preposed negation necessarily triggers VERUM. Speaker expected 'yes'."
+  notes := "Preposed negation forces positive bias. Speaker expected 'yes'."
   source := "Romero & Han (2004)"
 }
 
-def nonPreposedNegation : VerumFocusDatum := {
+/-- Non-preposed negation allows neutral reading -/
+def nonPreposedNegation : NegativeQuestionDatum := {
   sentence := "Does John not drink?"
-  hasVerumFocus := false
-  verumSource := none
+  negationPosition := "non_preposed"
   epistemicBias := none
   notes := "Non-preposed negation: neutral information-seeking question possible."
   source := "Romero & Han (2004)"
 }
 
-/-- Adverb "really" as VERUM source -/
-def reallyVerum : VerumFocusDatum := {
+/-- Adverb "really" triggers positive bias -/
+def reallyBias : NegativeQuestionDatum := {
   sentence := "Does John really drink?"
-  hasVerumFocus := true
-  verumSource := some "really"
+  negationPosition := "none"
   epistemicBias := some "positive"
-  notes := "'Really' contributes VERUM. Speaker expected 'yes' but doubts."
-  source := "Romero & Han (2004)"
-}
-
-/-- Focus on auxiliary as VERUM source -/
-def auxFocusVerum : VerumFocusDatum := {
-  sentence := "DOES John drink?"
-  hasVerumFocus := true
-  verumSource := some "aux_focus"
-  epistemicBias := some "positive"
-  notes := "Pitch accent on auxiliary signals verum focus."
-  source := "Höhle (1992)"
-}
-
-/-- Focused NOT (negation focus) -/
-def notFocusVerum : VerumFocusDatum := {
-  sentence := "Does John NOT drink?"
-  hasVerumFocus := true
-  verumSource := some "not_focus"
-  epistemicBias := some "negative"
-  notes := "Pitch accent on NOT: speaker expected 'no' (negative bias)."
+  notes := "'Really' signals speaker checking expected positive answer."
   source := "Romero & Han (2004)"
 }
 
 -- ============================================================================
--- Part 2: Ladd's PI/NI Ambiguity (Positive/Negative Epistemic Implicature)
+-- Part 2: Ladd's PI/NI Ambiguity
 -- ============================================================================
 
 /-- Ladd's (1981) ambiguity: same form, opposite implicatures -/
@@ -157,50 +144,10 @@ def laddAlreadyYet : LaddAmbiguityDatum := {
 }
 
 -- ============================================================================
--- Part 3: VERUM Scope and LF Structure
+-- Part 3: Cross-linguistic Data
 -- ============================================================================
 
-/-- LF structure for PI vs NI questions -/
-structure LFStructureDatum where
-  /-- Surface form -/
-  surface : String
-  /-- Reading type -/
-  readingType : String  -- "PI" or "NI"
-  /-- LF representation -/
-  lf : String
-  /-- Paraphrase -/
-  paraphrase : String
-  /-- Notes -/
-  notes : String := ""
-  /-- Citation -/
-  source : String := ""
-  deriving Repr
-
-/-- PI question LF: negation scopes over VERUM -/
-def piQuestionLF : LFStructureDatum := {
-  surface := "Isn't Jane coming too?"
-  readingType := "PI"
-  lf := "[Q [not [VERUM [Jane is coming]]]]"
-  paraphrase := "Is it not for-sure-CG that Jane is coming?"
-  notes := "VERUM below negation. Speaker asks: shouldn't we add p to CG?"
-  source := "Romero & Han (2004)"
-}
-
-/-- NI question LF: VERUM scopes over negation -/
-def niQuestionLF : LFStructureDatum := {
-  surface := "Isn't Jane coming either?"
-  readingType := "NI"
-  lf := "[Q [VERUM [not [Jane is coming]]]]"
-  paraphrase := "Is it for-sure-CG that Jane is not coming?"
-  notes := "VERUM above negation. Speaker asks: should we add ¬p to CG?"
-  source := "Romero & Han (2004)"
-}
-
--- ============================================================================
--- Part 4: Cross-linguistic Data
--- ============================================================================
-
-/-- Cross-linguistic verum focus data -/
+/-- Cross-linguistic negative question data -/
 structure CrossLinguisticDatum where
   /-- Language -/
   language : String
@@ -210,8 +157,8 @@ structure CrossLinguisticDatum where
   gloss : String
   /-- Translation -/
   translation : String
-  /-- Verum marking strategy -/
-  verumStrategy : String
+  /-- How the language marks bias -/
+  biasStrategy : String
   /-- Notes -/
   notes : String := ""
   /-- Citation -/
@@ -219,62 +166,62 @@ structure CrossLinguisticDatum where
   deriving Repr
 
 /-- German: clitic position determines PI vs NI -/
-def germanVerum : CrossLinguisticDatum := {
+def germanNegQ : CrossLinguisticDatum := {
   language := "German"
   sentence := "Hat Hans nicht schon angerufen?"
   gloss := "Has Hans not already called?"
   translation := "Hasn't Hans already called?"
-  verumStrategy := "clitic_position"
+  biasStrategy := "clitic_position"
   notes := "German uses clitic position to disambiguate. 'nicht' placement matters."
   source := "Romero & Han (2004)"
 }
 
 /-- Spanish: tampoco/también for NI/PI -/
-def spanishVerum : CrossLinguisticDatum := {
+def spanishNegQ : CrossLinguisticDatum := {
   language := "Spanish"
   sentence := "¿No viene María también/tampoco?"
   gloss := "Not comes María too/either?"
   translation := "Isn't María coming too/either?"
-  verumStrategy := "polarity_item"
+  biasStrategy := "polarity_item"
   notes := "Spanish uses PPIs/NPIs like English to disambiguate."
   source := "Romero & Han (2004)"
 }
 
 /-- Korean: morphological marking -/
-def koreanVerum : CrossLinguisticDatum := {
+def koreanNegQ : CrossLinguisticDatum := {
   language := "Korean"
   sentence := "Chelswu-ka an o-ni?"
   gloss := "Chelswu-NOM not come-Q?"
   translation := "Isn't Chelswu coming?"
-  verumStrategy := "morphological"
+  biasStrategy := "morphological"
   notes := "Korean 'an' negation with question particle. Bias depends on context."
   source := "Romero & Han (2004)"
 }
 
 /-- Bulgarian: separate negation and question particles -/
-def bulgarianVerum : CrossLinguisticDatum := {
+def bulgarianNegQ : CrossLinguisticDatum := {
   language := "Bulgarian"
   sentence := "Ne dojde li Ivan?"
   gloss := "Not came Q Ivan?"
   translation := "Didn't Ivan come?"
-  verumStrategy := "particle_order"
+  biasStrategy := "particle_order"
   notes := "Bulgarian negation-question particle order encodes bias."
   source := "Romero & Han (2004)"
 }
 
 /-- Modern Greek: dhen vs mi negation -/
-def greekVerum : CrossLinguisticDatum := {
+def greekNegQ : CrossLinguisticDatum := {
   language := "Modern Greek"
   sentence := "Dhen irthe o Yannis?"
   gloss := "Not came the Yannis?"
   translation := "Didn't Yannis come?"
-  verumStrategy := "negation_choice"
+  biasStrategy := "negation_choice"
   notes := "'Dhen' (indicative neg) vs 'mi' (subjunctive neg) affects bias."
   source := "Romero & Han (2004)"
 }
 
 -- ============================================================================
--- Part 5: Unbalanced Partition Data
+-- Part 4: Question Partition Data
 -- ============================================================================
 
 /-- Data on balanced vs unbalanced question partitions -/
@@ -283,10 +230,8 @@ structure PartitionDatum where
   question : String
   /-- Is the partition balanced ({p, ¬p})? -/
   balanced : Bool
-  /-- Partition cells (if unbalanced, what are they?) -/
+  /-- Partition cells description -/
   partitionDescription : String
-  /-- Which cell is "pronounced" (asked about)? -/
-  pronouncedCell : String
   /-- Notes -/
   notes : String := ""
   /-- Citation -/
@@ -298,33 +243,30 @@ def balancedPartition : PartitionDatum := {
   question := "Does John drink?"
   balanced := true
   partitionDescription := "{John drinks, John doesn't drink}"
-  pronouncedCell := "p (surface form)"
   notes := "Standard yes/no question. Balanced partition, no bias."
   source := "Romero & Han (2004)"
 }
 
-/-- PI question: unbalanced partition -/
+/-- Negative question with positive bias: unbalanced -/
 def piUnbalancedPartition : PartitionDatum := {
   question := "Doesn't John drink? [PI reading]"
   balanced := false
-  partitionDescription := "{FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}"
-  pronouncedCell := "¬FOR-SURE-CG(p)"
-  notes := "VERUM creates unbalanced partition. Pronounced ¬FOR-SURE-CG(p) implicates belief in p."
+  partitionDescription := "Speaker expects positive answer"
+  notes := "Preposed negation creates unbalanced partition favoring 'yes'."
   source := "Romero & Han (2004)"
 }
 
-/-- NI question: unbalanced partition (different direction) -/
+/-- Negative question with negative bias: unbalanced -/
 def niUnbalancedPartition : PartitionDatum := {
   question := "Doesn't John drink? [NI reading]"
   balanced := false
-  partitionDescription := "{FOR-SURE-CG(¬p), ¬FOR-SURE-CG(¬p)}"
-  pronouncedCell := "FOR-SURE-CG(¬p)"
-  notes := "VERUM scopes over negation. Pronounced FOR-SURE-CG(¬p) implicates belief in ¬p."
+  partitionDescription := "Speaker expects negative answer"
+  notes := "NI reading creates unbalanced partition favoring 'no'."
   source := "Romero & Han (2004)"
 }
 
 -- ============================================================================
--- Part 6: Generalization Data
+-- Part 5: Generalizations
 -- ============================================================================
 
 /-- Romero & Han's Generalization 1 -/
@@ -339,16 +281,14 @@ def generalization2 : String :=
   "PI-reading (double-check p, licenses PPIs) and NI-reading (double-check ¬p, licenses NPIs)."
 
 -- ============================================================================
--- Part 7: Collected Data
+-- Part 6: Collected Data
 -- ============================================================================
 
-/-- All basic verum focus data -/
-def verumFocusData : List VerumFocusDatum := [
+/-- All basic negative question data -/
+def negativeQuestionData : List NegativeQuestionDatum := [
   preposedNegation,
   nonPreposedNegation,
-  reallyVerum,
-  auxFocusVerum,
-  notFocusVerum
+  reallyBias
 ]
 
 /-- All Ladd ambiguity data -/
@@ -358,19 +298,13 @@ def laddAmbiguityData : List LaddAmbiguityDatum := [
   laddAlreadyYet
 ]
 
-/-- All LF structure data -/
-def lfStructureData : List LFStructureDatum := [
-  piQuestionLF,
-  niQuestionLF
-]
-
 /-- All cross-linguistic data -/
 def crossLinguisticData : List CrossLinguisticDatum := [
-  germanVerum,
-  spanishVerum,
-  koreanVerum,
-  bulgarianVerum,
-  greekVerum
+  germanNegQ,
+  spanishNegQ,
+  koreanNegQ,
+  bulgarianNegQ,
+  greekNegQ
 ]
 
 /-- All partition data -/
@@ -388,10 +322,9 @@ def partitionData : List PartitionDatum := [
 ## What This Module Provides
 
 ### Data Types
-- `VerumFocusDatum`: Basic verum focus with source and bias
+- `NegativeQuestionDatum`: Negative questions with negation position and bias
 - `LaddAmbiguityDatum`: PI vs NI question pairs
-- `LFStructureDatum`: LF representations showing VERUM/negation scope
-- `CrossLinguisticDatum`: Cross-linguistic verum strategies
+- `CrossLinguisticDatum`: Cross-linguistic bias marking strategies
 - `PartitionDatum`: Balanced vs unbalanced question partitions
 
 ### Key Examples
@@ -402,26 +335,15 @@ def partitionData : List PartitionDatum := [
 ### Theoretical Neutrality
 
 This module records WHAT the data is. Theoretical analyses include:
-- **Romero & Han (2004)**: VERUM as conversational epistemic operator
-- **Ladd (1981)**: p/¬p structural ambiguity
-- **van Rooy & Šafářová (2003)**: Decision-theoretic bias (see Polarity.lean)
+- **Verum Focus** (Höhle 1992, Romero & Han 2004): Covert VERUM operator
+- **Structural ambiguity** (Ladd 1981): p/¬p scope ambiguity
+- **Decision Theory** (van Rooy & Šafářová 2003): Utility-based question choice
 
 All theories must account for:
 1. Preposed negation forces epistemic implicature
 2. PI vs NI readings (Ladd's ambiguity)
-3. Cross-linguistic variation in verum marking
+3. Cross-linguistic variation in bias marking
 4. Polarity item licensing under PI/NI readings
-
-### Promissory Notes: Future Theoretical Work
-
-**VERUM Operator** (`Theories/Montague/Questions/VerumFocus.lean`):
-- `FOR-SURE-CG_x(p)` = ∀w' ∈ Epi_x(w)[∀w'' ∈ Conv_x(w')[p ∈ CG_w'']]
-- Unbalanced partition semantics
-- Scope interactions with negation
-
-**Connection to Polarity.lean**:
-- van Rooy & Šafářová explain WHICH question to use (decision theory)
-- Romero & Han explain WHY preposed negation forces bias (VERUM)
 -/
 
-end Phenomena.Focus.VerumFocus
+end Phenomena.Questions.NegativeQuestions

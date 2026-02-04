@@ -27,12 +27,12 @@ Steedman (2000). The Syntactic Process, Chapter 5: Structure and Intonation.
 -/
 
 import Linglib.Theories.CCG.Basic
-import Linglib.Core.InformationStructure
+import Linglib.Theories.Montague.Sentence.InformationStructure
 
 namespace CCG.Intonation
 
 open CCG
-open InformationStructure
+open Theories.Montague.Sentence.InformationStructure
 
 -- ============================================================================
 -- Pitch Accents

@@ -29,7 +29,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
 
-namespace Core.ProbabilisticDynamics
+namespace Theories.DynamicSemantics.Probabilistic
 
 -- ============================================================================
 -- PART 1: The Probability Monad (Abstract)
@@ -459,4 +459,4 @@ Boolean semantics + uncertainty over parameters.
 4. Connection to existing RSA infrastructure
 -/
 
-end Core.ProbabilisticDynamics
+end Theories.DynamicSemantics.Probabilistic

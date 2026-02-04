@@ -20,11 +20,11 @@ def myScenario := RSAScenario.discourse
 -/
 
 import Linglib.Theories.RSA.Core.Basic
-import Linglib.Core.DiscourseState
+import Linglib.Theories.DynamicSemantics.State
 
 namespace RSA
 
-open Core.DiscourseState
+open Theories.DynamicSemantics.State
 
 -- ============================================================================
 -- QUD Configuration

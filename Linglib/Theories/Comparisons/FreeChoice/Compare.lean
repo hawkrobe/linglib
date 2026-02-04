@@ -38,7 +38,7 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 import Linglib.Theories.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.Alsop2024
-import Linglib.Theories.BilateralUpdateSemantics.FreeChoice
+import Linglib.Theories.DynamicSemantics.BilateralUpdate.FreeChoice
 import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
 
@@ -249,7 +249,7 @@ Aloni (2022) derives FC **semantically** using team semantics.
 
 /-- Aloni BSML: DNE holds definitionally -/
 theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (φ : BSMLFormula W) (t : Core.TeamSemantics.Team W) (worlds : List W) :
+    (φ : BSMLFormula W) (t : Theories.DynamicSemantics.TeamSemantics.Team W) (worlds : List W) :
     Aloni2022.support M worlds (.neg (.neg φ)) t = Aloni2022.support M worlds φ t :=
   Aloni2022.dne_support M φ t worlds
 

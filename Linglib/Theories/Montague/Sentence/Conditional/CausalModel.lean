@@ -35,7 +35,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.Linarith
 
-namespace Core.CausalModel
+namespace Theories.Montague.Conditional.CausalModel
 
 -- ============================================================================
 -- Variables
@@ -361,4 +361,4 @@ def causalChain (a b c : Variable) : CausalDynamics :=
 
 end CausalDynamics
 
-end Core.CausalModel
+end Theories.Montague.Conditional.CausalModel

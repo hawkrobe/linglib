@@ -42,12 +42,12 @@ The coercive implication arises from:
 - Talmy (1988). Force dynamics in language and cognition.
 -/
 
-import Linglib.Theories.NadathurLauer2020.Sufficiency
-import Linglib.Theories.NadathurLauer2020.Necessity
+import Linglib.Theories.Montague.Verb.Causative.Sufficiency
+import Linglib.Theories.Montague.Verb.Causative.Necessity
 
 namespace Theories.NadathurLauer2020.CoerciveImplication
 
-open Core.CausalModel
+open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 
 -- ============================================================================

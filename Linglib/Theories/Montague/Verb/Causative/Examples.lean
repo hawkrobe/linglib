@@ -33,12 +33,12 @@ Key results:
 - Nadathur & Lauer (2020), Section 3
 -/
 
-import Linglib.Theories.NadathurLauer2020.Sufficiency
-import Linglib.Theories.NadathurLauer2020.Necessity
+import Linglib.Theories.Montague.Verb.Causative.Sufficiency
+import Linglib.Theories.Montague.Verb.Causative.Necessity
 
 namespace Theories.NadathurLauer2020.Examples
 
-open Core.CausalModel
+open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity
 

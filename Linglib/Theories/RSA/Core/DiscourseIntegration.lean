@@ -41,12 +41,12 @@ def contextCredence := cgCredence cgOptions
 - Qing, Goodman & Lassiter (2016). A rational speech-act model of projective content.
 -/
 
-import Linglib.Core.DiscourseState
+import Linglib.Theories.DynamicSemantics.State
 import Linglib.Theories.RSA.Core.Basic
 
 namespace RSA.DiscourseIntegration
 
-open Core.DiscourseState
+open Theories.DynamicSemantics.State
 open Core.Proposition
 
 -- ============================================================================

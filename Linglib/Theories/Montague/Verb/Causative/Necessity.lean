@@ -45,12 +45,12 @@ These can come apart in overdetermination cases:
 - Lewis (1973). Counterfactuals.
 -/
 
-import Linglib.Core.CausalModel
-import Linglib.Theories.NadathurLauer2020.Sufficiency
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
+import Linglib.Theories.Montague.Verb.Causative.Sufficiency
 
 namespace Theories.NadathurLauer2020.Necessity
 
-open Core.CausalModel
+open Theories.Montague.Conditional.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 
 -- ============================================================================

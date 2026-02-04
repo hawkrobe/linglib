@@ -1,37 +1,30 @@
 import Linglib.Phenomena.Core.EmpiricalData
 
 /-!
-# Additive Particle Data (Thomas 2026)
+# Additive Particle Data
 
 Empirical data on additive particles (too, also, either) and their felicity
-conditions, following Thomas (2026) "A probabilistic, question-based approach
-to additivity".
+conditions.
 
 ## Overview
 
 This file contains theory-neutral empirical data on:
 1. Classic additive examples (standard presuppositional use)
-2. Argument-building examples (Thomas's key contribution)
-3. Infelicitous cases (missing antecedent, failed conditions)
-4. Polarity-sensitive uses (either in negative contexts)
-5. Cross-linguistic patterns
+2. Infelicitous cases (missing antecedent, failed conditions)
+3. Polarity-sensitive uses (either in negative contexts)
+4. Rooth (1992) focus-based examples
+5. Ahn (2015) "either" analysis
+6. Cross-linguistic patterns
 
-## The Argument-Building Phenomenon
+## Related Files
 
-Thomas (2026) identifies a novel use of "too" where the antecedent and
-prejacent aren't focus alternatives but jointly build an argument:
-
-"Sue cooks, and she has a lot of free time, too."
-- ANT = "Sue cooks"
-- π = "Sue has a lot of free time"
-- Neither is a focus alternative of the other
-- Both contribute toward: "Sue should host the dinner party"
-
-This challenges traditional analyses requiring focus alternatives.
+- `Studies/Thomas2026.lean` - Argument-building phenomenon (Thomas's key contribution)
+- `Theories/Montague/Sentence/FocusInterpretation.lean` - Rooth's FIP formalization
 
 ## Sources
 
-- Thomas (2026). A probabilistic, question-based approach to additivity.
+- Rooth (1992). A Theory of Focus Interpretation.
+- Ahn (2015). The Semantics of Additive Either.
 - Kripke (2009). Presupposition and Anaphora.
 - Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 - Beaver & Clark (2008). Sense and Sensitivity.
@@ -128,79 +121,6 @@ def classicExamples : List AdditiveParticleDatum :=
   ]
 
 -- ============================================================================
--- Argument-Building Examples (Thomas 2026)
--- ============================================================================
-
-/-- The flagship argument-building example from Thomas (2026). -/
-def sueCooksFreetime : AdditiveParticleDatum :=
-  { sentence := "Sue cooks, and she has a lot of free time, too."
-  , antecedent := "Sue cooks"
-  , prejacent := "Sue has a lot of free time"
-  , particle := "too"
-  , resolvedQuestion := some "Who should host the dinner party?"
-  , felicity := .ok
-  , useType := .argumentBuilding
-  , notes := "Key example: ANT and π jointly evidence 'Sue should host'"
-  }
-
-/-- Another argument-building example: hiring decision. -/
-def brilliantHardworking : AdditiveParticleDatum :=
-  { sentence := "He's brilliant, and he's hard-working, too."
-  , antecedent := "He's brilliant"
-  , prejacent := "He's hard-working"
-  , particle := "too"
-  , resolvedQuestion := some "Should we hire him?"
-  , felicity := .ok
-  , useType := .argumentBuilding
-  , notes := "Both properties evidence positive hiring decision"
-  }
-
-/-- Argument-building: qualities supporting a conclusion. -/
-def kindGenerous : AdditiveParticleDatum :=
-  { sentence := "She's kind, and she's generous, too."
-  , antecedent := "She's kind"
-  , prejacent := "She's generous"
-  , particle := "too"
-  , resolvedQuestion := some "Is she a good person?"
-  , felicity := .ok
-  , useType := .argumentBuilding
-  , notes := "Cumulative positive evidence"
-  }
-
-/-- Argument-building with negative conclusion. -/
-def lateUnprepared : AdditiveParticleDatum :=
-  { sentence := "He was late, and he was unprepared, too."
-  , antecedent := "He was late"
-  , prejacent := "He was unprepared"
-  , particle := "too"
-  , resolvedQuestion := some "Did the presentation go well?"
-  , felicity := .ok
-  , useType := .argumentBuilding
-  , notes := "Both properties evidence negative outcome"
-  }
-
-/-- Argument-building: recommendation. -/
-def quietAffordable : AdditiveParticleDatum :=
-  { sentence := "The neighborhood is quiet, and it's affordable, too."
-  , antecedent := "The neighborhood is quiet"
-  , prejacent := "It's affordable"
-  , particle := "too"
-  , resolvedQuestion := some "Should we move there?"
-  , felicity := .ok
-  , useType := .argumentBuilding
-  , notes := "Cumulative factors supporting a decision"
-  }
-
-/-- Argument-building examples from Thomas (2026). -/
-def argumentBuildingExamples : List AdditiveParticleDatum :=
-  [ sueCooksFreetime
-  , brilliantHardworking
-  , kindGenerous
-  , lateUnprepared
-  , quietAffordable
-  ]
-
--- ============================================================================
 -- Infelicitous Cases
 -- ============================================================================
 
@@ -228,18 +148,6 @@ def irrelevantAntecedent : AdditiveParticleDatum :=
   , notes := "ANT doesn't answer RQ - fails antecedent condition"
   }
 
-/-- Prejacent trivially entails conclusion. -/
-def trivialPrejacent : AdditiveParticleDatum :=
-  { sentence := "#John is a bachelor, and he's unmarried, too."
-  , antecedent := "John is a bachelor"
-  , prejacent := "John is unmarried"
-  , particle := "too"
-  , resolvedQuestion := some "What is John's status?"
-  , felicity := .odd
-  , useType := .argumentBuilding
-  , notes := "π entails the same content as ANT - no additional evidence"
-  }
-
 /-- Out-of-the-blue "too" with clear context mismatch. -/
 def contextMismatch : AdditiveParticleDatum :=
   { sentence := "#[Out of the blue] I like coffee, too."
@@ -256,7 +164,6 @@ def contextMismatch : AdditiveParticleDatum :=
 def infelicitousExamples : List AdditiveParticleDatum :=
   [ missingAntecedent
   , irrelevantAntecedent
-  , trivialPrejacent
   , contextMismatch
   ]
 
@@ -380,13 +287,227 @@ def crossLinguisticData : List CrossLinguisticDatum :=
   ]
 
 -- ============================================================================
+-- Rooth (1992) Examples: Focus and "Too"
+-- ============================================================================
+
+/-!
+## Rooth's Focus-Based Analysis
+
+Rooth (1992) §2.2 analyzes "too" via the Focus Interpretation Principle (FIP):
+- The antecedent must be a **focus alternative** of the prejacent
+- "Mary read Lear, and she read Macbeth too"
+- Focus: MACBETH
+- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet, ...}
+- Antecedent "Lear" ∈ ⟦Macbeth⟧f ✓
+
+See `Theories/Montague/Sentence/FocusInterpretation.lean` for formalization.
+-/
+
+/-- Rooth's classic "too" example -/
+def roothTooLear : AdditiveParticleDatum :=
+  { sentence := "Mary read Lear, and she read Macbeth too"
+  , antecedent := "Mary read Lear"
+  , prejacent := "Mary read Macbeth"
+  , particle := "too"
+  , resolvedQuestion := some "What did Mary read?"
+  , felicity := .ok
+  , useType := .standard
+  , notes := "Antecedent 'Lear' must be in focus alternatives of 'Macbeth'"
+  , source := "Rooth (1992) §2.2"
+  }
+
+/-- Rooth's example with verb focus -/
+def roothTooSing : AdditiveParticleDatum :=
+  { sentence := "John sang, and he danced too"
+  , antecedent := "John sang"
+  , prejacent := "John danced"
+  , particle := "too"
+  , resolvedQuestion := some "What did John do?"
+  , felicity := .ok
+  , useType := .standard
+  , notes := "Verb-level focus: singing and dancing are activity alternatives"
+  , source := "Rooth (1992)"
+  }
+
+/-- Parallel subject focus -/
+def roothTooMary : AdditiveParticleDatum :=
+  { sentence := "John came to the party, and Mary came too"
+  , antecedent := "John came to the party"
+  , prejacent := "Mary came to the party"
+  , particle := "too"
+  , resolvedQuestion := some "Who came to the party?"
+  , felicity := .ok
+  , useType := .standard
+  , notes := "Subject focus: John and Mary are individual alternatives"
+  , source := "Rooth (1992)"
+  }
+
+def roothExamples : List AdditiveParticleDatum :=
+  [ roothTooLear
+  , roothTooSing
+  , roothTooMary
+  ]
+
+-- ============================================================================
+-- Ahn (2015) Examples: "Either" Analysis
+-- ============================================================================
+
+/-!
+## Ahn's Analysis of "Either"
+
+Ahn (2015) analyzes "either" as the negative polarity counterpart of "too":
+- "too" presupposes conjunction: q ∧ p (antecedent q is true, prejacent p is true)
+- "either" presupposes disjunction: ¬q ∨ ¬p (at least one is false)
+
+### Three Key Properties (Ahn 2015)
+
+1. **Antecedent Requirement**: Both require a salient antecedent
+2. **Focus Sensitivity**: Both associate with focus
+3. **Distinctness**: Antecedent and prejacent must be distinct propositions
+
+### Polarity Restriction
+
+- "too" is a PPI: requires positive context
+- "either" is an NPI: requires negative context
+-/
+
+/-- Ahn's semantic characterization of "too" vs "either" -/
+structure AdditiveSemanticsDatum where
+  /-- The particle -/
+  particle : String
+  /-- Semantic contribution -/
+  semantics : String
+  /-- Polarity restriction -/
+  polarity : String
+  /-- Notes -/
+  notes : String := ""
+  /-- Source -/
+  source : String := ""
+  deriving Repr
+
+def ahnTooSemantics : AdditiveSemanticsDatum :=
+  { particle := "too"
+  , semantics := "q ∧ p (conjunction: antecedent q true, prejacent p true)"
+  , polarity := "PPI (positive polarity item)"
+  , notes := "Presupposes both antecedent and prejacent are true"
+  , source := "Ahn (2015)"
+  }
+
+def ahnEitherSemantics : AdditiveSemanticsDatum :=
+  { particle := "either"
+  , semantics := "¬q ∨ ¬p (disjunction: at least one false)"
+  , polarity := "NPI (negative polarity item)"
+  , notes := "Presupposes at least one of antecedent/prejacent is false"
+  , source := "Ahn (2015)"
+  }
+
+/-- Ahn's three properties of additive particles -/
+structure AhnPropertyDatum where
+  /-- Property name -/
+  property : String
+  /-- Particle this applies to -/
+  particle : String
+  /-- Example sentence -/
+  exampleSentence : String
+  /-- Explanation -/
+  explanation : String
+  /-- Source -/
+  source : String := "Ahn (2015)"
+  deriving Repr
+
+/-- Antecedent requirement for "too" -/
+def ahnAntecedentToo : AhnPropertyDatum :=
+  { property := "antecedent_requirement"
+  , particle := "too"
+  , exampleSentence := "#Mary came to the party too. (out of the blue)"
+  , explanation := "Requires salient antecedent proposition in discourse"
+  }
+
+/-- Antecedent requirement for "either" -/
+def ahnAntecedentEither : AhnPropertyDatum :=
+  { property := "antecedent_requirement"
+  , particle := "either"
+  , exampleSentence := "#Mary didn't come to the party either. (out of the blue)"
+  , explanation := "Requires salient antecedent proposition in discourse"
+  }
+
+/-- Focus sensitivity for "too" -/
+def ahnFocusToo : AhnPropertyDatum :=
+  { property := "focus_sensitivity"
+  , particle := "too"
+  , exampleSentence := "John read Lear. Mary read MACBETH too."
+  , explanation := "Focus on 'Macbeth' determines alternatives (other plays)"
+  }
+
+/-- Focus sensitivity for "either" -/
+def ahnFocusEither : AhnPropertyDatum :=
+  { property := "focus_sensitivity"
+  , particle := "either"
+  , exampleSentence := "John didn't read Lear. Mary didn't read MACBETH either."
+  , explanation := "Focus determines what's being denied as an alternative"
+  }
+
+/-- Distinctness for "too" -/
+def ahnDistinctToo : AhnPropertyDatum :=
+  { property := "distinctness"
+  , particle := "too"
+  , exampleSentence := "#John came, and John came too."
+  , explanation := "Antecedent and prejacent must be distinct"
+  }
+
+/-- Distinctness for "either" -/
+def ahnDistinctEither : AhnPropertyDatum :=
+  { property := "distinctness"
+  , particle := "either"
+  , exampleSentence := "#John didn't come, and John didn't come either."
+  , explanation := "Antecedent and prejacent must be distinct"
+  }
+
+def ahnPropertyData : List AhnPropertyDatum :=
+  [ ahnAntecedentToo, ahnAntecedentEither
+  , ahnFocusToo, ahnFocusEither
+  , ahnDistinctToo, ahnDistinctEither
+  ]
+
+/-- Ahn's "either" examples as AdditiveParticleDatum -/
+def ahnEitherBasic : AdditiveParticleDatum :=
+  { sentence := "John didn't come. Mary didn't come either."
+  , antecedent := "John didn't come"
+  , prejacent := "Mary didn't come"
+  , particle := "either"
+  , resolvedQuestion := some "Who didn't come?"
+  , felicity := .ok
+  , useType := .standard
+  , notes := "Basic 'either' with parallel negation"
+  , source := "Ahn (2015)"
+  }
+
+def ahnEitherVerb : AdditiveParticleDatum :=
+  { sentence := "John doesn't sing. He doesn't dance either."
+  , antecedent := "John doesn't sing"
+  , prejacent := "John doesn't dance"
+  , particle := "either"
+  , resolvedQuestion := some "What doesn't John do?"
+  , felicity := .ok
+  , useType := .standard
+  , notes := "Verb focus with 'either'"
+  , source := "Ahn (2015)"
+  }
+
+def ahnExamples : List AdditiveParticleDatum :=
+  [ ahnEitherBasic
+  , ahnEitherVerb
+  ]
+
+-- ============================================================================
 -- Summary Statistics
 -- ============================================================================
 
-/-- All additive particle examples. -/
+/-- All additive particle examples in this file.
+    Note: Argument-building examples are in Studies/Thomas2026.lean -/
 def allExamples : List AdditiveParticleDatum :=
-  classicExamples ++ argumentBuildingExamples ++ infelicitousExamples ++
-  eitherExamples ++ scalarExamples
+  classicExamples ++ infelicitousExamples ++
+  eitherExamples ++ scalarExamples ++ roothExamples ++ ahnExamples
 
 /-- Count felicitous examples. -/
 def felicitousCount : Nat :=
@@ -395,10 +516,6 @@ def felicitousCount : Nat :=
 /-- Count infelicitous examples. -/
 def infelicitousCount : Nat :=
   allExamples.filter (fun d => d.felicity == .odd) |>.length
-
-/-- Count argument-building examples. -/
-def argumentBuildingCount : Nat :=
-  allExamples.filter (fun d => d.useType == .argumentBuilding) |>.length
 
 /-- Total example count. -/
 def totalCount : Nat := allExamples.length

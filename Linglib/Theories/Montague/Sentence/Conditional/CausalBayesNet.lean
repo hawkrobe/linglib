@@ -27,7 +27,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
-namespace Core.CausalBayesNet
+namespace Theories.Montague.Conditional.CausalBayesNet
 
 -- ============================================================================
 -- Causal Relations
@@ -375,4 +375,4 @@ structure DiscreteWorldSpace where
   /-- States are non-empty -/
   nonempty : states ≠ []
 
-end Core.CausalBayesNet
+end Theories.Montague.Conditional.CausalBayesNet

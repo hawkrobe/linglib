@@ -46,7 +46,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
-namespace Core.BayesianSemantics
+namespace Theories.Montague.BayesianSemantics
 
 open Core.Proposition
 open Core.GradedProposition
@@ -335,4 +335,4 @@ probability as a separate effect.
 3. **Compilation**: Target Mathlib measures or external PPLs
 -/
 
-end Core.BayesianSemantics
+end Theories.Montague.BayesianSemantics

@@ -1,39 +1,20 @@
-/-
-# Formal Language Theory
-
-Foundational definitions for the Chomsky hierarchy and formal language classes.
-
-## Goal (Phase 4.1 of Roadmap)
-
-Provide rigorous definitions that let us PROVE CCG's position in the hierarchy,
-not just assert it.
-
-## Key Results
-
-- Definition of context-free languages
-- Proof that {aⁿbⁿcⁿdⁿ} is NOT context-free (via pumping lemma)
-- This is the language of cross-serial dependencies
-
-## References
-
-- Joshi, A.K. (1985). Tree Adjoining Grammars
-- Hopcroft, Motwani & Ullman (2006). Introduction to Automata Theory
-- Steedman (2000). The Syntactic Process, Ch. 2
--/
-
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Nat.Basic
 
--- ============================================================================
--- Basic Definitions
--- ============================================================================
+/-!
+# Formal Language Theory
 
-/--
-Alphabet for cross-serial dependencies: a, b, c, d.
+Definitions for the Chomsky hierarchy. Key result: {aⁿbⁿcⁿdⁿ} is not context-free
+(via pumping lemma), but CCG generates it, proving CCG > CFG.
 
-This models Dutch word order:
-  NP₁ NP₂ V₁ V₂ → aabbccdd pattern
+## References
+
+- Joshi (1985). Tree Adjoining Grammars.
+- Hopcroft, Motwani & Ullman (2006). Introduction to Automata Theory.
+- Steedman (2000). The Syntactic Process, Ch. 2.
 -/
+
+/-- Alphabet for cross-serial dependencies (models Dutch word order). -/
 inductive FourSymbol where
   | a | b | c | d
   deriving DecidableEq, Repr, BEq

@@ -42,7 +42,7 @@ import Linglib.Theories.Montague.Sentence.Conditional.Basic
 namespace Montague.Sentence.Conditional
 
 open Core.Proposition
-open Core.DiscourseState
+open Theories.DynamicSemantics.State
 
 -- ============================================================================
 -- Left-Nested Conditional Structure

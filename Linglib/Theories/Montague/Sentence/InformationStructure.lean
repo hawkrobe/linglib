@@ -28,7 +28,7 @@ This module defines the INTERFACE. Implementations include:
 - Beaver & Clark (2008). Sense and Sensitivity.
 -/
 
-namespace InformationStructure
+namespace Theories.Montague.Sentence.InformationStructure
 
 -- ============================================================================
 -- Alternative Sets (Rooth-style Focus Semantics)

@@ -38,7 +38,7 @@ BUS + Modal Disjunction:
 - Alonso-Ovalle, L. (2006). Disjunction in Alternative Semantics.
 -/
 
-import Linglib.Theories.BilateralUpdateSemantics.Basic
+import Linglib.Theories.DynamicSemantics.BilateralUpdate.Basic
 
 namespace Theories.BilateralUpdateSemantics.FreeChoice
 

@@ -50,12 +50,12 @@ L0_conditional_meaning = conditionalSemantics
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.CausalBayesNet
+import Linglib.Theories.Montague.Sentence.Conditional.CausalBayesNet
 import Linglib.Theories.Montague.Sentence.Conditional.Assertability
 
 namespace RSA.GrusdtLassiterFranke2022
 
-open Core.CausalBayesNet
+open Theories.Montague.Conditional.CausalBayesNet
 open RSA.Eval
 open Montague.Sentence.Conditional.Assertability
 

@@ -21,12 +21,12 @@ This probabilistic semantics:
   communication with conditionals.
 -/
 
-import Linglib.Core.CausalBayesNet
+import Linglib.Theories.Montague.Sentence.Conditional.CausalBayesNet
 import Mathlib.Data.Rat.Defs
 
 namespace Montague.Sentence.Conditional.Assertability
 
-open Core.CausalBayesNet
+open Theories.Montague.Conditional.CausalBayesNet
 
 -- ============================================================================
 -- Conditional Probability

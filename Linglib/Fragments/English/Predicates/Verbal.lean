@@ -43,7 +43,7 @@ import Linglib.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
-import Linglib.Theories.NadathurLauer2020.Basic
+import Linglib.Theories.Montague.Verb.Causative.Basic
 
 namespace Fragments.English.Predicates.Verbal
 

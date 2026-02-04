@@ -38,16 +38,16 @@ This module proves that:
 - Pearl (2000). Causality.
 -/
 
-import Linglib.Core.CausalModel
-import Linglib.Core.CausalBayesNet
+import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
+import Linglib.Theories.Montague.Sentence.Conditional.CausalBayesNet
 import Linglib.Theories.Montague.Sentence.Conditional.Assertability
-import Linglib.Theories.NadathurLauer2020.Sufficiency
-import Linglib.Theories.NadathurLauer2020.Necessity
+import Linglib.Theories.Montague.Verb.Causative.Sufficiency
+import Linglib.Theories.Montague.Verb.Causative.Necessity
 
 namespace Theories.NadathurLauer2020.Integration
 
-open Core.CausalModel
-open Core.CausalBayesNet
+open Theories.Montague.Conditional.CausalModel
+open Theories.Montague.Conditional.CausalBayesNet
 open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity
 open Montague.Sentence.Conditional.Assertability

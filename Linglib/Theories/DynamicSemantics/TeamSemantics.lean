@@ -36,7 +36,7 @@ This module provides general infrastructure. Specific applications:
 
 import Mathlib.Data.Set.Basic
 
-namespace Core.TeamSemantics
+namespace Theories.DynamicSemantics.TeamSemantics
 
 -- ============================================================================
 -- PART 1: Teams (Sets of Worlds)
@@ -335,4 +335,4 @@ This infrastructure is used by:
 - Other team-based linguistic analyses
 -/
 
-end Core.TeamSemantics
+end Theories.DynamicSemantics.TeamSemantics

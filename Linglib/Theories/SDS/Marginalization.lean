@@ -43,14 +43,14 @@ This factorization enables:
 import Linglib.Theories.SDS.Core
 import Linglib.Theories.SDS.ThresholdInstances
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Core.BayesianSemantics
+import Linglib.Theories.Montague.BayesianSemantics
 
 namespace SDS.Marginalization
 
 open SDS.Core
 open SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
-open Core.BayesianSemantics
+open Theories.Montague.BayesianSemantics
 
 -- ============================================================================
 -- PART 1: Threshold Semantics Equivalence

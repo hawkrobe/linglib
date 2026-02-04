@@ -33,11 +33,11 @@ BSML derives free choice inferences SEMANTICALLY via:
 - Aloni, M., Anttila, A. & Yang, F. (2024). State-based Modal Logics for Free Choice.
 -/
 
-import Linglib.Core.TeamSemantics
+import Linglib.Theories.DynamicSemantics.TeamSemantics
 
 namespace Comparisons.FreeChoice.Aloni2022
 
-open Core.TeamSemantics
+open Theories.DynamicSemantics.TeamSemantics
 
 -- ============================================================================
 -- PART 1: BSML Model Structure
