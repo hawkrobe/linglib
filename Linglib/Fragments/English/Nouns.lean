@@ -136,6 +136,30 @@ def allNouns : List NounEntry := [
   john, mary, bill, sue
 ]
 
+/-- Convert a noun entry to a `Word` in singular form.
+    Proper names get `cat := .D, person := .third`.
+    Common nouns get `cat := .N, countable`. -/
+def NounEntry.toWordSg (n : NounEntry) : Word :=
+  { form := n.formSg
+  , cat := if n.proper then .D else .N
+  , features := {
+      number := some .sg
+    , countable := if n.proper then none else some n.countable
+    , person := if n.proper then some .third else none
+    }
+  }
+
+/-- Convert a noun entry to a `Word` in plural form.
+    Defaults to appending "s" if no irregular plural is specified. -/
+def NounEntry.toWordPl (n : NounEntry) : Word :=
+  { form := (n.formPl.getD (n.formSg ++ "s"))
+  , cat := .N
+  , features := {
+      number := some .pl
+    , countable := some n.countable
+    }
+  }
+
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.formSg == form || n.formPl == some form
 

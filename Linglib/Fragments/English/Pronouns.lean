@@ -94,7 +94,7 @@ def how : PronounEntry := { form := "how", pronounType := .wh, wh := true }
 -- Conversion to Word
 -- ============================================================================
 
-def toWord (p : PronounEntry) : Word :=
+def PronounEntry.toWord (p : PronounEntry) : Word :=
   { form := p.form
   , cat := if p.wh then .Wh else .D
   , features := {

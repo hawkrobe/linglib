@@ -10,16 +10,20 @@ Word Grammar (Hudson 1984, 1990) handles inversion via:
 Reference: Hudson (1990), Gibson (2025) Section 3.5-3.6
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.DependencyGrammar.LexicalRules
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 open DepGrammar
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def can : Word := ⟨"can", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
-private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private abbrev what := Fragments.English.Pronouns.what.toWord
+private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
+private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
 -- ============================================================================
 -- Inversion via Argument Structure Direction

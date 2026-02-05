@@ -886,6 +886,30 @@ def force : VerbEntry where
   causativeType := some .sufficiency
   -- "Force" lexically encodes coercion (unlike pragmatic "make")
 
+/-- "devour" — transitive, no presupposition -/
+def devour : VerbEntry where
+  form := "devour"
+  form3sg := "devours"
+  formPast := "devoured"
+  formPastPart := "devoured"
+  formPresPart := "devouring"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .simple
+
+/-- "read" — transitive, no presupposition -/
+def read : VerbEntry where
+  form := "read"
+  form3sg := "reads"
+  formPast := "read"
+  formPastPart := "read"
+  formPresPart := "reading"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .simple
+
 /-- "say" — communication verb, not factive -/
 def say : VerbEntry where
   form := "say"
@@ -1054,7 +1078,7 @@ Get all verb entries as a list (for enumeration).
 -/
 def allVerbs : List VerbEntry := [
   -- Simple
-  sleep, run, arrive, eat, kick, give, put, see,
+  sleep, run, arrive, eat, kick, give, put, see, devour, read,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State
@@ -1090,17 +1114,21 @@ Look up a verb entry by citation form.
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (λ v => v.form == form)
 
+/-- Map complement type to syntactic valence. -/
+private def complementToValence : ComplementType → Valence
+  | .none => .intransitive
+  | .np => .transitive
+  | .np_np => .ditransitive
+  | _ => .transitive  -- Clause-embedding verbs are syntactically transitive
+
 /--
 Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form.
 -/
-def toWord3sg (v : VerbEntry) : Word :=
+def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
   , cat := .V
   , features := {
-      valence := some (match v.complementType with
-        | .none => .intransitive
-        | .np => .transitive
-        | _ => .transitive)  -- Clause-embedding verbs are syntactically transitive
+      valence := some (complementToValence v.complementType)
       , number := some .sg
       , person := some .third
       , voice := some .active
@@ -1109,15 +1137,25 @@ def toWord3sg (v : VerbEntry) : Word :=
   }
 
 /--
-Convert a verb entry to a `Word` in base/infinitive form.
+Convert a verb entry to a `Word` in base/plural present form.
 -/
-def toWordBase (v : VerbEntry) : Word :=
+def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .V
   , features := {
-      valence := some (match v.complementType with
-        | .none => .intransitive
-        | _ => .transitive)
+      valence := some (complementToValence v.complementType)
+      , number := some .pl
+    }
+  }
+
+/--
+Convert a verb entry to a `Word` in base/infinitive form.
+-/
+def VerbEntry.toWordBase (v : VerbEntry) : Word :=
+  { form := v.form
+  , cat := .V
+  , features := {
+      valence := some (complementToValence v.complementType)
       , vform := some .infinitive
     }
   }

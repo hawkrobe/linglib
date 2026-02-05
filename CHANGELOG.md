@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.65.0] - 2025-02-04
+
+### Added
+- **Fragments/English/Nouns.lean**: `NounEntry.toWordSg`, `NounEntry.toWordPl` projections
+- **Fragments/English/Predicates/Verbal.lean**: `VerbEntry.toWordPl` (base/plural form), `devour` and `read` verb entries
+- **Fragments/English/Predicates/Verbal.lean**: `complementToValence` helper mapping `.np_np` → `.ditransitive` (was `.transitive`)
+
+### Changed
+- **Move Comparisons/ to top level**: `Theories/Comparisons/` → `Comparisons/` (sibling of Core, Fragments, Phenomena, Theories)
+- **Upgrade Theory files to Fragment projections**: Replace `private def` Word literals with `private abbrev` projections from Fragment entries across 11 files (DependencyGrammar/{Coreference,Inversion,Coordination,LongDistance,CRDC,LexicalRules}, HPSG/{Coreference,Inversion}, Minimalism/{Coreference,Inversion}, Comparisons/CommandRelations)
+- **Fix dot notation**: Rename `toWord` → `VerbEntry.toWord3sg`/`VerbEntry.toWordBase`, `PronounEntry.toWord`, `AdjModifierEntry.toWord` for proper dot-notation support
+
 ## [0.64.0] - 2025-02-04
 
 ### Added

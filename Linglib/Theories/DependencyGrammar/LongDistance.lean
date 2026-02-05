@@ -6,6 +6,11 @@ Word Grammar (Hudson 1984, 1990) analysis using SLASH features and filler-gap tr
 Reference: Hudson (1990), Gibson (2025) Section 3.9
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Phenomena.FillerGap.LongDistance
 
@@ -13,22 +18,22 @@ namespace LongDistanceDependencies.WordGrammarAnalysis
 
 open DepGrammar
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def who : Word := ⟨"who", .Wh, { wh := true }⟩
-private def did : Word := ⟨"did", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def reads : Word := ⟨"reads", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
-private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def think : Word := ⟨"think", .V, { valence := some .transitive, number := some .pl }⟩
-private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
-private def the : Word := ⟨"the", .D, {}⟩
-private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
-private def that : Word := ⟨"that", .D, { number := some .sg }⟩
-private def if_ : Word := ⟨"if", .C, {}⟩
+private abbrev what := Fragments.English.Pronouns.what.toWord
+private abbrev who := Fragments.English.Pronouns.who.toWord
+private abbrev did := Fragments.English.FunctionWords.did.toWord
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev mary := Fragments.English.Nouns.mary.toWordSg
+private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
+private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
+private abbrev reads := Fragments.English.Predicates.Verbal.read.toWord3sg
+private abbrev gives := Fragments.English.Predicates.Verbal.give.toWord3sg
+private abbrev sleeps := Fragments.English.Predicates.Verbal.sleep.toWord3sg
+private abbrev think := Fragments.English.Predicates.Verbal.think.toWordPl
+private abbrev wonder := Fragments.English.Predicates.Verbal.wonder.toWordPl
+private abbrev the := Fragments.English.Determiners.the.toWord
+private abbrev book := Fragments.English.Nouns.book.toWordSg
+private abbrev that := Fragments.English.Determiners.that.toWord
+private abbrev if_ := Fragments.English.FunctionWords.if_.toWord
 
 -- ============================================================================
 -- SLASH Features

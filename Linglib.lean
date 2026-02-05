@@ -179,24 +179,24 @@ import Linglib.Theories.CCG.Scope
 import Linglib.Theories.CCG.Semantics
 import Linglib.Theories.CCG.TruthConditions
 
--- Theories: Comparisons
-import Linglib.Theories.Comparisons.CommandRelations
-import Linglib.Theories.Comparisons.FreeChoice.Aloni2022
-import Linglib.Theories.Comparisons.FreeChoice.Compare
-import Linglib.Theories.Comparisons.GenericSemantics
-import Linglib.Theories.Comparisons.Implicature
-import Linglib.Theories.Comparisons.KindReference
-import Linglib.Theories.Comparisons.PolarQuestions
-import Linglib.Theories.Comparisons.PresuppositionProjection
-import Linglib.Theories.Comparisons.RelevanceTheories
-import Linglib.Theories.Comparisons.RSAandPDS
-import Linglib.Theories.Comparisons.RSAExhExpressivity
-import Linglib.Theories.Comparisons.RSANeoGricean
-import Linglib.Theories.Comparisons.SauerlandRSA
-import Linglib.Theories.Comparisons.ScalarImplicature
-import Linglib.Theories.Comparisons.ScopeFreezing
-import Linglib.Theories.Comparisons.SDSandRSA
-import Linglib.Theories.Comparisons.ThresholdSemantics
+-- Comparisons (cross-theory)
+import Linglib.Comparisons.CommandRelations
+import Linglib.Comparisons.FreeChoice.Aloni2022
+import Linglib.Comparisons.FreeChoice.Compare
+import Linglib.Comparisons.GenericSemantics
+import Linglib.Comparisons.Implicature
+import Linglib.Comparisons.KindReference
+import Linglib.Comparisons.PolarQuestions
+import Linglib.Comparisons.PresuppositionProjection
+import Linglib.Comparisons.RelevanceTheories
+import Linglib.Comparisons.RSAandPDS
+import Linglib.Comparisons.RSAExhExpressivity
+import Linglib.Comparisons.RSANeoGricean
+import Linglib.Comparisons.SauerlandRSA
+import Linglib.Comparisons.ScalarImplicature
+import Linglib.Comparisons.ScopeFreezing
+import Linglib.Comparisons.SDSandRSA
+import Linglib.Comparisons.ThresholdSemantics
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Basic

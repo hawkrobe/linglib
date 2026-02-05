@@ -39,6 +39,9 @@ the theories make identical predictions on simple transitive clauses.
 - Hale (1983). Warlpiri and the grammar of non-configurational languages.
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.Minimalism.Coreference
 import Linglib.Theories.HPSG.Coreference
@@ -51,17 +54,17 @@ import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Data.Set.Lattice
 import Mathlib.Order.Heyting.Basic
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def himself : Word := ⟨"himself", .D, { person := some .third, number := some .sg }⟩
-private def herself : Word := ⟨"herself", .D, { person := some .third, number := some .sg }⟩
-private def themselves : Word := ⟨"themselves", .D, { person := some .third, number := some .pl }⟩
-private def him : Word := ⟨"him", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def her : Word := ⟨"her", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def them : Word := ⟨"them", .D, { person := some .third, number := some .pl, case_ := some .acc }⟩
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev mary := Fragments.English.Nouns.mary.toWordSg
+private abbrev they := Fragments.English.Pronouns.they.toWord
+private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
+private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
+private abbrev himself := Fragments.English.Pronouns.himself.toWord
+private abbrev herself := Fragments.English.Pronouns.herself.toWord
+private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
+private abbrev him := Fragments.English.Pronouns.him.toWord
+private abbrev her := Fragments.English.Pronouns.her.toWord
+private abbrev them := Fragments.English.Pronouns.them.toWord
 
 namespace Comparisons.CommandRelations
 

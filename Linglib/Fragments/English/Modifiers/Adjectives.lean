@@ -256,7 +256,7 @@ def pregnant : AdjModifierEntry :=
 -- Conversion to Word
 -- ============================================================================
 
-def toWord (a : AdjModifierEntry) : Word :=
+def AdjModifierEntry.toWord (a : AdjModifierEntry) : Word :=
   { form := a.form, cat := .Adj, features := {} }
 
 -- ============================================================================

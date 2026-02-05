@@ -14,6 +14,9 @@ References:
 - Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.DependencyGrammar.Basic
 
 namespace DepGrammar
@@ -232,9 +235,9 @@ def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
 -- Example: Declarative vs Interrogative Trees
 -- ============================================================================
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def can : Word := ⟨"can", .Aux, {}⟩
-private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev sleep := Fragments.English.Predicates.Verbal.sleep.toWordPl
 
 /-- "John can sleep" - declarative (subject left of aux)
     John ←subj─ can ─aux→ sleep
