@@ -43,6 +43,7 @@ import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.Case
 import Linglib.Phenomena.Agreement.DetNoun
+import Linglib.Phenomena.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Coreference
