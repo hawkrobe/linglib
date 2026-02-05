@@ -27,7 +27,7 @@ Local context theory unifies presupposition projection and implicature:
 - Chierchia & McConnell-Ginet (2000). Meaning and Grammar, Ch. 6.
 -/
 
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Core.Polarity
 

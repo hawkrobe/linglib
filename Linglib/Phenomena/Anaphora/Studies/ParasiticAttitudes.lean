@@ -34,7 +34,7 @@ but hope cannot filter belief's presuppositions.
 - Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 
 namespace Phenomena.ParasiticAttitudes.Karttunen1973
 

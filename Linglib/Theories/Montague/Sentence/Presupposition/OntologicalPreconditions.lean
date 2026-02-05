@@ -39,7 +39,7 @@ and thus can't be "allowed for" independently.
 - Tonhauser et al. (2013). Toward a taxonomy of projective content.
 -/
 
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Aspect
 import Linglib.Phenomena.Presupposition.Diagnostics

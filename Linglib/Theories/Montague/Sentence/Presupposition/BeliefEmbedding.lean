@@ -51,7 +51,7 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 -/
 
 import Linglib.Theories.Core.CommonGround
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 

@@ -36,7 +36,7 @@ These tests identify what's presupposed vs. what's asserted.
 - Tonhauser et al. (2013). Toward a taxonomy of projective content.
 -/
 
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 
 namespace Phenomena.Presupposition.Diagnostics
 

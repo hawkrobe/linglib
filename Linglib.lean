@@ -8,7 +8,6 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Core.Basic
 import Linglib.Core.Kleene
-import Linglib.Core.Presupposition
 import Linglib.Core.Proposition
 
 -- Fragments
@@ -142,6 +141,7 @@ import Linglib.Phenomena.WordOrder.VerbPosition
 
 -- Theories: Core (cross-theory utilities)
 import Linglib.Theories.Core.CommonGround
+import Linglib.Theories.Core.Presupposition
 import Linglib.Theories.Core.Interfaces.BindingSemantics
 import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 import Linglib.Theories.Core.Interfaces.ImplicatureTheory

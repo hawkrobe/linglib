@@ -88,7 +88,7 @@ information structure (see Core.QUD, Core.InformationStructure).
 -/
 
 import Linglib.Theories.Core.CommonGround
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
 import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
 import Linglib.Phenomena.Presupposition.ProjectiveContent
