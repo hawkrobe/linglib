@@ -21,8 +21,8 @@ knowledge state affects interpretation.
 -/
 
 import Linglib.Theories.RSA.Domains.Quantities
-import Linglib.Theories.Montague.Determiner.Quantifier
-import Linglib.Theories.Montague.Determiner.Numeral.Compare
+import Linglib.Theories.TruthConditional.Determiner.Quantifier
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Compare
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
@@ -777,9 +777,9 @@ end NumberWords
 
 namespace MontaguGrounding
 
-open Montague.Determiner.Numeral
-open Montague.Determiner.Quantifier
-open Montague
+open TruthConditional.Determiner.Numeral
+open TruthConditional.Determiner.Quantifier
+open TruthConditional
 
 /-
 ## Grounding in Montague Semantics
@@ -855,7 +855,7 @@ theorem scalar_implicature_grounded :
 ## Grounding Number Word Semantics
 
 The ad-hoc definitions in NumberWords are grounded in the Montague
-infrastructure from `Montague.Determiner.Numeral`.
+infrastructure from `TruthConditional.Determiner.Numeral`.
 
 We show:
 1. `lowerBoundMeaning` = `LowerBound.meaning`
@@ -875,13 +875,13 @@ def stateToNat : KnowledgeState.WorldState → Nat
 -- Grounding Theorems
 
 /-- The ad-hoc `lowerBoundMeaning` in NumberWords is exactly the same as
-`LowerBound.meaning` from Montague.Determiner.Numeral. -/
+`LowerBound.meaning` from TruthConditional.Determiner.Numeral. -/
 theorem lowerBound_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.lowerBoundMeaning u s = LowerBound.meaning (uttToNumWord u) (stateToNat s) := by
   cases u <;> cases s <;> native_decide
 
 /-- The ad-hoc `exactMeaning` in NumberWords is exactly the same as
-`DeFregean.meaning` from Montague.Determiner.Numeral. -/
+`DeFregean.meaning` from TruthConditional.Determiner.Numeral. -/
 theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.exactMeaning u s = DeFregean.meaning (uttToNumWord u) (stateToNat s) := by
   cases u <;> cases s <;> native_decide
@@ -890,7 +890,7 @@ theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldS
 
 /-- Montague theory comparison applies to this empirical phenomenon.
 
-From Montague.Determiner.Numeral.Compare:
+From TruthConditional.Determiner.Numeral.Compare:
 - LowerBound has ambiguity (can support implicature cancellation)
 - DeFregean has no ambiguity (cannot support implicature cancellation)
 

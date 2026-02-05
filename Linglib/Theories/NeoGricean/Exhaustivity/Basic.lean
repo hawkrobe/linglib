@@ -40,12 +40,12 @@ import Mathlib.Order.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Powerset
-import Linglib.Theories.Montague.Core.Polarity
+import Linglib.Theories.TruthConditional.Core.Polarity
 
 namespace NeoGricean.Exhaustivity
 
 -- Re-export ContextPolarity from the consolidated polarity module
-open Montague.Core.Polarity (ContextPolarity)
+open TruthConditional.Core.Polarity (ContextPolarity)
 
 -- SECTION 2.1: Definitions (Spector p.6-8)
 
@@ -1668,7 +1668,7 @@ This principle unifies several phenomena:
 -- 7.1: Context Polarity
 -- ----------------------------------------------------------------------------
 
--- ContextPolarity is imported from Montague.Sentence.Entailment.Polarity
+-- ContextPolarity is imported from TruthConditional.Sentence.Entailment.Polarity
 -- with constructors: .upward, .downward, .nonMonotonic
 
 /--

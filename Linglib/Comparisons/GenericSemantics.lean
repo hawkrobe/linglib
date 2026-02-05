@@ -20,13 +20,13 @@ making the observable "prevalence" sufficient.
 - Lassiter, D. & Goodman, N. D. (2017). Adjectival vagueness in a Bayesian model.
 -/
 
-import Linglib.Theories.Montague.Noun.Kind.Generics
+import Linglib.Theories.TruthConditional.Noun.Kind.Generics
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Linarith
 
 namespace Theories.Comparisons.GenericSemantics
 
-open Montague.Noun.Kind.Generics
+open TruthConditional.Noun.Kind.Generics
 
 -- Helper Lemmas for Rational Arithmetic
 

@@ -22,11 +22,11 @@ The theory in `Theories/Montague/Plural/Distributivity.lean` predicts:
   distributivity and maximality. Semantics & Pragmatics 18.
 -/
 
-import Linglib.Theories.Montague.Plural.Distributivity
+import Linglib.Theories.TruthConditional.Plural.Distributivity
 
 namespace Phenomena.Plurals.Studies.HaslingerEtAl2025
 
-open Montague.Plural.Distributivity (DistMaxClass)
+open TruthConditional.Plural.Distributivity (DistMaxClass)
 
 -- German Distributive Lexical Items
 

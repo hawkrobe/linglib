@@ -42,15 +42,15 @@ From Horn (1984), Rett (2015):
 
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Markedness
-import Linglib.Theories.Montague.Scales
-import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Core.Scales
+import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Phenomena.Gradability.Evaluativity
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
 
--- Use shared ContextPolarity from Montague.Core.Polarity
-open Montague.Core.Polarity (ContextPolarity)
+-- Use shared ContextPolarity from TruthConditional.Core.Polarity
+open TruthConditional.Core.Polarity (ContextPolarity)
 open NeoGricean.Markedness
 open Phenomena.Gradability.Evaluativity
 
@@ -119,14 +119,14 @@ def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List �
   h.members.filter (· != x)
 
 
-open Montague.Scales.Quantifiers (QuantExpr)
-open Montague.Scales.Connectives (ConnExpr)
-open Montague.Scales.Modals (ModalExpr)
+open Core.Scales.Quantifiers (QuantExpr)
+open Core.Scales.Connectives (ConnExpr)
+open Core.Scales.Modals (ModalExpr)
 
 /--
 The quantifier Horn set: {some, most, all}
 
-Uses type-safe `QuantExpr` from Montague.Scales.
+Uses type-safe `QuantExpr` from Core.Scales.
 Note: This is a SET, not an ordered scale. The ordering comes from
 sentence-level semantics, not from this data structure.
 -/
@@ -153,7 +153,7 @@ def numeralSet : HornSet String :=
   ⟨["one", "two", "three", "four", "five"]⟩
 
 
--- Note: ContextPolarity is imported from Montague.SemDeriv
+-- Note: ContextPolarity is imported from TruthConditional.SemDeriv
 -- with constructors .upward and .downward
 
 /--
@@ -241,13 +241,13 @@ def strongerAlternatives {α : Type} [BEq α]
 /--
 Standard quantifier strength ordering (for UE contexts).
 
-Uses `QuantExpr.entails` from Montague.Scales:
+Uses `QuantExpr.entails` from Core.Scales:
 - all > most > some (in terms of logical strength)
 - "all" entails "some", so "all" is stronger
 -/
 def quantifierStrengthUE (q1 q2 : QuantExpr) : Bool :=
   -- q1 is stronger than q2 iff q1 entails q2 (and they're different)
-  Montague.Scales.Quantifiers.entails q1 q2 && q1 != q2
+  Core.Scales.Quantifiers.entails q1 q2 && q1 != q2
 
 /--
 Reversed quantifier strength (for DE contexts).
@@ -257,12 +257,12 @@ In DE context, "some" is stronger than "all" at sentence level.
 -/
 def quantifierStrengthDE (q1 q2 : QuantExpr) : Bool :=
   -- In DE, entailment reverses: q1 stronger iff q2 entails q1
-  Montague.Scales.Quantifiers.entails q2 q1 && q1 != q2
+  Core.Scales.Quantifiers.entails q2 q1 && q1 != q2
 
 /--
 Entailment checker for quantifiers (type-safe).
 
-Grounded in Montague.Scales.Quantifiers.entails.
+Grounded in Core.Scales.Quantifiers.entails.
 -/
 def quantifierChecker : EntailmentChecker QuantExpr :=
   { isStronger := λ pol q1 q2 =>
@@ -279,13 +279,13 @@ Connective strength in UE context.
 "and" is stronger than "or".
 -/
 def connectiveStrengthUE (c1 c2 : ConnExpr) : Bool :=
-  Montague.Scales.Connectives.entails c1 c2 && c1 != c2
+  Core.Scales.Connectives.entails c1 c2 && c1 != c2
 
 /--
 Connective strength in DE context (reversed).
 -/
 def connectiveStrengthDE (c1 c2 : ConnExpr) : Bool :=
-  Montague.Scales.Connectives.entails c2 c1 && c1 != c2
+  Core.Scales.Connectives.entails c2 c1 && c1 != c2
 
 /--
 Entailment checker for connectives (type-safe).
@@ -339,12 +339,12 @@ theorem context_determines_alternatives :
 
 
 /--
-Convert a HornScale (from Montague.Scales) to a HornSet.
+Convert a HornScale (from Core.Scales) to a HornSet.
 
 This allows us to reuse the scale definitions while treating them
 as unordered sets. The ordering comes from the SentenceContext.
 -/
-def fromHornScale {α : Type} (scale : Montague.Scales.HornScale α) : HornSet α :=
+def fromHornScale {α : Type} (scale : Core.Scales.HornScale α) : HornSet α :=
   ⟨scale.members⟩
 
 /--

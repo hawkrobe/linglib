@@ -1,9 +1,9 @@
 import Linglib.Core.Basic
 import Linglib.Theories.Core.Presupposition
-import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
-import Linglib.Theories.Montague.Verb.Attitude.Doxastic
-import Linglib.Theories.Montague.Verb.Attitude.Preferential
-import Linglib.Theories.Montague.Verb.Causative.Basic
+import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
+import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
+import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
+import Linglib.Theories.IntensionalSemantics.Causative.Basic
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -14,15 +14,15 @@ and links to compositional semantics (CoS, attitudes, causatives).
 namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
-open Montague.Verb.ChangeOfState
-open Montague.Verb.Attitude.Doxastic (Veridicality)
-open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+open TruthConditional.Verb.ChangeOfState
+open IntensionalSemantics.Attitude.Doxastic (Veridicality)
+open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 
 /--
 Which Montague predicate builder this verb uses.
 
 This links the Fragment entry to the compositional semantics in
-`Montague.Verb.Attitude.Preferential`. Properties like C-distributivity
+`IntensionalSemantics.Attitude.Preferential`. Properties like C-distributivity
 are DERIVED from the builder via theorems, not stipulated.
 
 - `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive (PROVED)

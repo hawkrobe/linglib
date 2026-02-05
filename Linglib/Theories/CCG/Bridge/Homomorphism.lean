@@ -20,13 +20,13 @@ corresponds to a semantic operation.
 import Linglib.Theories.CCG.Core.Basic
 import Linglib.Theories.CCG.Bridge.Interface
 import Linglib.Theories.CCG.Core.Combinators
-import Linglib.Theories.Montague.Basic
+import Linglib.Theories.TruthConditional.Basic
 
 namespace CCG.Homomorphism
 
 open CCG
 open CCG.Combinators
-open Montague
+open TruthConditional
 
 -- Well-Typed Derivations
 

@@ -26,11 +26,11 @@ Following Muskens (1996) CDRT:
 
 import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Situations
 import Linglib.Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
-import Linglib.Theories.Montague.Core.Time
+import Linglib.Theories.TruthConditional.Core.Time
 
 namespace Theories.DynamicSemantics.IntensionalCDRT.MendesDerivations
 
-open Montague.Core.Time
+open TruthConditional.Core.Time
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
 

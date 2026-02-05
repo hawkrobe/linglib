@@ -16,12 +16,12 @@ to function application and composition.
 -/
 
 import Linglib.Theories.CCG.Core.Basic
-import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Conjunction
+import Linglib.Theories.TruthConditional.Basic
+import Linglib.Theories.TruthConditional.Conjunction
 
 namespace CCG
 
-open Montague
+open TruthConditional
 
 -- Combinators (defined locally to avoid circular import)
 
@@ -428,7 +428,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
   | .coord d1 d2 => do
       -- Coordination: X and X → X
       -- Semantic rule: generalized conjunction (Partee & Rooth 1983)
-      -- Uses Montague.Conjunction.genConj for uniform type-driven coordination
+      -- Uses TruthConditional.Conjunction.genConj for uniform type-driven coordination
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then

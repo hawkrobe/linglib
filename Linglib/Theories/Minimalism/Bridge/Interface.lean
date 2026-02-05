@@ -42,12 +42,12 @@ This interface is specific to movement-based syntax because:
 -/
 
 import Linglib.Theories.Minimalism.Core.Basic
-import Linglib.Theories.Montague.Variables
-import Linglib.Theories.Montague.Modification
+import Linglib.Theories.TruthConditional.Variables
+import Linglib.Theories.TruthConditional.Modification
 
 namespace Minimalism.Semantics
 
-open Montague Montague.Variables Montague.Modification
+open TruthConditional TruthConditional.Variables TruthConditional.Modification
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)

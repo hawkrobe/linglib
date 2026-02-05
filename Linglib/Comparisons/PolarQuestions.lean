@@ -45,17 +45,17 @@ All three frameworks share the insight that question choice is informative:
 - Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
 -/
 
-import Linglib.Theories.Montague.Question.DecisionTheory
-import Linglib.Theories.Montague.Question.Polarity
-import Linglib.Theories.Montague.Question.VerumFocus
+import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Theories.QuestionSemantics.Polarity
+import Linglib.Theories.QuestionSemantics.VerumFocus
 import Linglib.Theories.RSA.Questions.PolarQuestions
 import Linglib.Theories.RSA.Questions.ResponseSelection
 
 namespace Theories.Comparisons.PolarQuestions
 
-open Montague.Question
-open Montague.Question.Polarity
-open Montague.Question.VerumFocus
+open QuestionSemantics
+open QuestionSemantics.Polarity
+open QuestionSemantics.VerumFocus
 open RSA.Questions
 
 

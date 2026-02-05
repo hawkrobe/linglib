@@ -32,8 +32,8 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Core.Proposition
-import Linglib.Theories.Montague.Basic
-import Linglib.Theories.Montague.Core.Polarity
+import Linglib.Theories.TruthConditional.Basic
+import Linglib.Theories.TruthConditional.Core.Polarity
 
 namespace RSA.Implementations.HeKaiserIskarous2025
 
@@ -389,7 +389,7 @@ This bridges the two notions:
 
 Negative sentences contain negation → DE context.
 -/
-def toContextPolarity : Polarity → Montague.Core.Polarity.ContextPolarity
+def toContextPolarity : Polarity → TruthConditional.Core.Polarity.ContextPolarity
   | .positive => .upward
   | .negative => .downward
   | .null => .upward
@@ -415,7 +415,7 @@ where `neg` is Montague's sentence-level negation operator.
 
 section CompositionalGrounding
 
-open Montague
+open TruthConditional
 
 /--
 A simple model for part-whole relations.
@@ -466,7 +466,7 @@ theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
 
 -- Connecting to Polarity Machinery (with proven DE property)
 
-open Montague.Core.Polarity
+open TruthConditional.Core.Polarity
 open Core.Proposition
 
 /--

@@ -33,13 +33,13 @@ since all derivations in an equivalence class have the same meaning.
 import Linglib.Theories.CCG.Core.Basic
 import Linglib.Theories.CCG.Bridge.Interface
 import Linglib.Theories.CCG.Core.Combinators
-import Linglib.Theories.Montague.Basic
+import Linglib.Theories.TruthConditional.Basic
 
 namespace CCG.Equivalence
 
 open CCG
 open CCG.Combinators
-open Montague
+open TruthConditional
 
 -- Semantic Equivalence
 

@@ -11,12 +11,12 @@ These examples use the infrastructure from `Theories/Montague/Verb/Attitude/Inte
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
-import Linglib.Theories.Montague.Verb.Attitude.Intensional
+import Linglib.Theories.IntensionalSemantics.Attitude.Intensional
 
 namespace Phenomena.Attitudes.IntensionalExamples
 
-open Montague
-open Montague.Verb.Attitude.Intensional
+open TruthConditional
+open IntensionalSemantics.Attitude.Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where

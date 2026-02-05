@@ -41,20 +41,20 @@ Future extensions could handle:
 - Connectives (or/and scales)
 -/
 
-import Linglib.Theories.Montague.Core.Lexicon
-import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Theories.TruthConditional.Core.Lexicon
+import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Mathlib.Data.Set.Basic
 
 namespace NeoGricean.AlternativeGeneration
 
-open Montague
-open Montague.Core
-open Montague.Core.Derivation
-open Montague.Core.Polarity (ContextPolarity)
-open Montague.Determiner.Quantifier
-open Montague.Scales
+open TruthConditional
+open TruthConditional.Core
+open TruthConditional.Core.Derivation
+open TruthConditional.Core.Polarity (ContextPolarity)
+open TruthConditional.Determiner.Quantifier
+open Core.Scales
 open NeoGricean.Exhaustivity
 
 

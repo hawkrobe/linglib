@@ -10,7 +10,7 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 namespace Fragments.Turkish.Predicates
 
 open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
-open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
+open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
 
 /-- "kork-" — fear (Class 2: C-distributive, negative, takes questions with symmetric interpretation). -/
 def kork : VerbEntry where

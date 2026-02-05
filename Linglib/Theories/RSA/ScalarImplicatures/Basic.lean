@@ -19,16 +19,16 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 int
 
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Theories.TruthConditional.Core.Derivation
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 
 open RSA RSA.Domains.Quantity
-open Montague
-open Montague.SemDeriv
-open Montague.Core
+open TruthConditional
+open TruthConditional.SemDeriv
+open TruthConditional.Core
 
 
 /-

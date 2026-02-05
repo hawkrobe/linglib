@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-! # English Noun Lexicon Fragment
 
@@ -8,7 +8,7 @@ English NP structure. Bare plurals/mass nouns OK, bare singulars blocked (Chierc
 
 namespace Fragments.English.Nouns
 
-open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple)
+open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 
 /-- A lexical entry for an English noun. -/
