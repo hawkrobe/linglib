@@ -150,4 +150,21 @@ def allConjunctions : List ConjEntry := [and_, or_, but, nor]
 def ConjEntry.toWord (c : ConjEntry) : Word :=
   { form := c.form, cat := .C, features := {} }
 
+-- ============================================================================
+-- Discourse Particles (Focus-sensitive)
+-- ============================================================================
+
+structure ParticleEntry where
+  form : String
+  /-- Does this particle require the CQ to be commonly shared? -/
+  requiresSharedCQ : Bool
+  /-- Can it access non-Roothian alternatives? -/
+  nonRoothianAlts : Bool
+  deriving Repr, BEq
+
+def just_ : ParticleEntry := { form := "just", requiresSharedCQ := false, nonRoothianAlts := true }
+def only_ : ParticleEntry := { form := "only", requiresSharedCQ := true, nonRoothianAlts := false }
+
+def allParticles : List ParticleEntry := [just_, only_]
+
 end Fragments.English.FunctionWords

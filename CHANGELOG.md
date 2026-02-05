@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.61.0] - 2025-02-04
+
+### Added
+- **Theories/Montague/Sentence/Focus/DomainWidening.lean**: Deo & Thomas (2025) *just* as domain widening
+  - `AlternativeSource` enum: roothian, granularity, causal, elaboration, normative
+  - `DiscourseContext`: construals + Quality/Relevance filters
+  - `JustSemantics`/`OnlySemantics`: unified vs Roothian lexical entries
+  - 4 proven theorems linking theory to empirical data from Phenomena/Focus/Exclusives
+- **Fragments/English/FunctionWords.lean**: `ParticleEntry` structure with `just_` and `only_`
+
+### Changed
+- **Sentence/ reorganization**: Move loose focus/IS files into new `Sentence/Focus/` subdirectory
+  - `Focus.lean` → `Focus/Particles.lean`
+  - `FocusInterpretation.lean` → `Focus/Interpretation.lean`
+  - `InformationStructure.lean` → `Focus/InformationStructure.lean`
+  - Zero loose files remain at `Sentence/` top level
+
 ## [0.60.0] - 2025-02-04
 
 ### Changed

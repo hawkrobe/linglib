@@ -31,7 +31,7 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 - Hamblin, C. (1973). Questions in Montague English. Foundations of Language.
 -/
 
-import Linglib.Theories.Montague.Sentence.InformationStructure
+import Linglib.Theories.Montague.Sentence.Focus.InformationStructure
 import Linglib.Theories.Montague.Question.Hamblin
 
 open Theories.Montague.Sentence.InformationStructure

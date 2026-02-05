@@ -340,9 +340,10 @@ import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
 import Linglib.Theories.Montague.Sentence.Entailment.NegationTests
 import Linglib.Theories.Montague.Sentence.Entailment.PresuppositionPolarity
 import Linglib.Theories.Montague.Sentence.Entailment.ScaleInteraction
-import Linglib.Theories.Montague.Sentence.Focus
-import Linglib.Theories.Montague.Sentence.FocusInterpretation
-import Linglib.Theories.Montague.Sentence.InformationStructure
+import Linglib.Theories.Montague.Sentence.Focus.DomainWidening
+import Linglib.Theories.Montague.Sentence.Focus.InformationStructure
+import Linglib.Theories.Montague.Sentence.Focus.Interpretation
+import Linglib.Theories.Montague.Sentence.Focus.Particles
 import Linglib.Theories.Montague.Sentence.Mood.Basic
 import Linglib.Theories.Montague.Sentence.Presupposition.BeliefEmbedding
 import Linglib.Theories.Montague.Sentence.Presupposition.LocalContext
