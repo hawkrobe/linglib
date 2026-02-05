@@ -15,7 +15,6 @@ References:
 -/
 
 import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Phenomena.Core.Lexicon
 
 namespace DepGrammar
 
@@ -233,7 +232,10 @@ def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
 -- Example: Declarative vs Interrogative Trees
 -- ============================================================================
 
-open Lexicon in
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def can : Word := ⟨"can", .Aux, {}⟩
+private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
+
 /-- "John can sleep" - declarative (subject left of aux)
     John ←subj─ can ─aux→ sleep
 -/
@@ -242,7 +244,6 @@ def johnCanSleepTree : DepTree :=
     deps := [⟨1, 0, .subj⟩, ⟨1, 2, .aux⟩]
     rootIdx := 1 }
 
-open Lexicon in
 /-- "Can John sleep?" - interrogative (subject right of aux)
     can ─subj→ John
      └──aux→ sleep

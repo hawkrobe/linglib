@@ -8,6 +8,7 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Core.Basic
 import Linglib.Core.Kleene
+import Linglib.Core.Empirical
 import Linglib.Core.Proposition
 
 -- Fragments
@@ -63,9 +64,6 @@ import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
-import Linglib.Phenomena.Core.Basic
-import Linglib.Phenomena.Core.EmpiricalData
-import Linglib.Phenomena.Core.Lexicon
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing

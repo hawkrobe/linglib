@@ -41,9 +41,31 @@ observed across diverse theoretical frameworks.
 - Szabolcsi, A. (2006). "Strong vs. Weak Islands" in The Blackwell Companion to Syntax.
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
-open Lexicon
+private def what : Word := ⟨"what", .Wh, { wh := true }⟩
+private def did : Word := ⟨"did", .Aux, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def buy : Word := ⟨"buy", .V, { valence := some .transitive, number := some .pl }⟩
+private def you : Word := ⟨"you", .D, { person := some .second, case_ := some .nom }⟩
+private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
+private def who : Word := ⟨"who", .Wh, { wh := true }⟩
+private def bought : Word := ⟨"bought", .V, { valence := some .transitive, vform := some .finite }⟩
+private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
+private def met : Word := ⟨"met", .V, { valence := some .transitive, vform := some .finite }⟩
+private def man : Word := ⟨"man", .N, { number := some .sg, countable := some true }⟩
+private def that : Word := ⟨"that", .D, { number := some .sg }⟩
+private def saw : Word := ⟨"saw", .V, { valence := some .transitive, vform := some .finite }⟩
+private def leave : Word := ⟨"leave", .V, { valence := some .intransitive, number := some .pl }⟩
+private def before : Word := ⟨"before", .P, {}⟩
+private def because : Word := ⟨"because", .C, {}⟩
+private def books : Word := ⟨"books", .N, { number := some .pl, countable := some true }⟩
+private def and_ : Word := ⟨"and", .C, {}⟩
+private def sell : Word := ⟨"sell", .V, { valence := some .transitive, number := some .pl }⟩
+private def do_ : Word := ⟨"do", .Aux, { number := some .pl }⟩
+private def the : Word := ⟨"the", .D, {}⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
 
 -- Embedded Question Constraint (Wh-Islands)
 

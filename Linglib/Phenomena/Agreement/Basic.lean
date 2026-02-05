@@ -20,12 +20,19 @@ In English, the verb must agree with its subject in number (and person for some 
   (4b) *The cats sleeps.             ✗  pl subject, sg verb
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-namespace Phenomena.Agreement
+private def he : Word := ⟨"he", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
+private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
+private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def laugh : Word := ⟨"laugh", .V, { valence := some .intransitive, number := some .pl }⟩
+private def laughs : Word := ⟨"laughs", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
-open Lexicon
+namespace Phenomena.Agreement
 
 -- The Empirical Data
 

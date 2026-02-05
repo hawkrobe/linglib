@@ -18,9 +18,15 @@ embedded questions do not.
   (3b) *I wonder what can John eat.     ✗
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
-open Lexicon
+private def what : Word := ⟨"what", .Wh, { wh := true }⟩
+private def can : Word := ⟨"can", .Aux, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
+private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private def i : Word := ⟨"I", .D, { person := some .first, number := some .sg, case_ := some .nom }⟩
+private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
 
 -- The Empirical Data
 

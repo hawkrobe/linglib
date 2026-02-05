@@ -36,10 +36,23 @@ This changes:
 - The verb takes passive morphology (past participle)
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-open Lexicon
+private def the : Word := ⟨"the", .D, {}⟩
+private def ball : Word := ⟨"ball", .N, { number := some .sg, countable := some true }⟩
+private def was : Word := ⟨"was", .Aux, { number := some .sg }⟩
+private def kicked : Word := ⟨"kicked", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
+private def cat_ : Word := ⟨"cat", .N, { number := some .sg, countable := some true }⟩
+private def chased : Word := ⟨"chased", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
+private def by_ : Word := ⟨"by", .P, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private def eaten : Word := ⟨"eaten", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def balls : Word := ⟨"balls", .N, { number := some .pl, countable := some true }⟩
+private def dog : Word := ⟨"dog", .N, { number := some .sg, countable := some true }⟩
+private def kicks : Word := ⟨"kicks", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
 
 -- The Empirical Data
 

@@ -17,7 +17,7 @@ Key example: "some" implicates "not all" (some-all scale)
 - Grice (1975). Logic and Conversation.
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 namespace Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 

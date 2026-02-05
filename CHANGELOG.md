@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.64.0] - 2025-02-04
+
+### Added
+- **Core/Empirical.lean**: `ScaleType`, `TaskType`, `MeasureSpec` (moved from Phenomena/Core/EmpiricalData.lean, trimmed)
+- **Core/Basic.lean**: `MinimalPair`, `PhenomenonData`, `Grammar.capturesPair`, `Grammar.capturesPhenomenon`, `grammars_agree_on_phenomenon` (moved from Phenomena/Core/Basic.lean)
+
+### Changed
+- **Dissolve Phenomena/Core/**: Delete `Basic.lean`, `EmpiricalData.lean`, `Lexicon.lean`; move reusable types to `Core/`
+- **Inline lexical entries**: Replace `open Lexicon` with file-local `private def` declarations across 30+ Phenomena and Theory files (Agreement, Case, DetNoun, Anaphora, ArgumentStructure, Coordination, FillerGap, Islands, WordOrder, DependencyGrammar, HPSG, Minimalism, Comparisons)
+- Update all Phenomena imports from `Linglib.Phenomena.Core.*` to `Linglib.Core.*`
+
 ## [0.63.0] - 2025-02-04
 
 ### Added

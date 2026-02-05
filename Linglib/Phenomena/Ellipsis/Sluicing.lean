@@ -52,7 +52,7 @@ Case matching follows from the continuation analysis:
 - Barker, C. & Shan, C. (2014). Continuations and Natural Language. Ch. 16.
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
 namespace Phenomena.Ellipsis.Sluicing
 

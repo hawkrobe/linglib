@@ -21,7 +21,7 @@ Core patterns in semantic entailment: truth conditions and entailment judgments.
 - van Benthem (1986). Essays in Logical Semantics.
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 namespace Phenomena.Entailment
 

@@ -26,10 +26,24 @@ Some determiners (the, some) are compatible with either.
   (5b)  the girls                    ✓  neutral det, pl noun
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-open Lexicon
+private def a : Word := ⟨"a", .D, { number := some .sg }⟩
+private def girl : Word := ⟨"girl", .N, { number := some .sg, countable := some true }⟩
+private def girls : Word := ⟨"girls", .N, { number := some .pl, countable := some true }⟩
+private def this : Word := ⟨"this", .D, { number := some .sg }⟩
+private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
+private def books : Word := ⟨"books", .N, { number := some .pl, countable := some true }⟩
+private def every : Word := ⟨"every", .D, { number := some .sg }⟩
+private def cat_ : Word := ⟨"cat", .N, { number := some .sg, countable := some true }⟩
+private def cats : Word := ⟨"cats", .N, { number := some .pl, countable := some true }⟩
+private def these : Word := ⟨"these", .D, { number := some .pl }⟩
+private def many : Word := ⟨"many", .D, { number := some .pl }⟩
+private def dogs : Word := ⟨"dogs", .N, { number := some .pl, countable := some true }⟩
+private def few : Word := ⟨"few", .D, { number := some .pl }⟩
+private def dog : Word := ⟨"dog", .N, { number := some .sg, countable := some true }⟩
+private def the : Word := ⟨"the", .D, {}⟩
 
 -- The Empirical Data
 

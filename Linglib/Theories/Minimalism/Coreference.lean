@@ -19,9 +19,19 @@ import Linglib.Core.Basic
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 
-namespace Minimalism.Coreference
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
+private def himself : Word := ⟨"himself", .D, { person := some .third, number := some .sg }⟩
+private def herself : Word := ⟨"herself", .D, { person := some .third, number := some .sg }⟩
+private def themselves : Word := ⟨"themselves", .D, { person := some .third, number := some .pl }⟩
+private def him : Word := ⟨"him", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def her : Word := ⟨"her", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def them : Word := ⟨"them", .D, { person := some .third, number := some .pl, case_ := some .acc }⟩
 
-open Lexicon
+namespace Minimalism.Coreference
 
 /-- Types of nominal expressions for coreference -/
 inductive NominalType where

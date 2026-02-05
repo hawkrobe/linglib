@@ -13,7 +13,13 @@ Reference: Hudson (1990), Gibson (2025) Section 3.5-3.6
 import Linglib.Theories.DependencyGrammar.LexicalRules
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
-open DepGrammar Lexicon
+open DepGrammar
+
+private def what : Word := ⟨"what", .Wh, { wh := true }⟩
+private def can : Word := ⟨"can", .Aux, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
+private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
 
 -- ============================================================================
 -- Inversion via Argument Structure Direction

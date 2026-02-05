@@ -11,7 +11,21 @@ import Linglib.Phenomena.Coordination.Data
 
 namespace Coordination.WordGrammarAnalysis
 
-open DepGrammar Lexicon
+open DepGrammar
+
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def and_ : Word := ⟨"and", .C, {}⟩
+private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
+private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def the : Word := ⟨"the", .D, {}⟩
+private def happy : Word := ⟨"happy", .Adj, {}⟩
+private def smart : Word := ⟨"smart", .Adj, {}⟩
+private def boy : Word := ⟨"boy", .N, { number := some .sg, countable := some true }⟩
+private def eats : Word := ⟨"eats", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private def devours : Word := ⟨"devours", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
 
 -- ============================================================================
 -- Coordination Structure

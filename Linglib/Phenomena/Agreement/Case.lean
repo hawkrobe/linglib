@@ -22,10 +22,21 @@ English pronouns show morphological case:
   (3c) *I see he.                    ✗  nom in object position
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-open Lexicon
+private def he : Word := ⟨"he", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def her : Word := ⟨"her", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def him : Word := ⟨"him", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
+private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
+private def us : Word := ⟨"us", .D, { person := some .first, number := some .pl, case_ := some .acc }⟩
+private def them : Word := ⟨"them", .D, { person := some .third, number := some .pl, case_ := some .acc }⟩
+private def she : Word := ⟨"she", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
+private def i : Word := ⟨"I", .D, { person := some .first, number := some .sg, case_ := some .nom }⟩
+private def me : Word := ⟨"me", .D, { person := some .first, number := some .sg, case_ := some .acc }⟩
+private def we : Word := ⟨"we", .D, { person := some .first, number := some .pl, case_ := some .nom }⟩
 
 -- The Empirical Data
 

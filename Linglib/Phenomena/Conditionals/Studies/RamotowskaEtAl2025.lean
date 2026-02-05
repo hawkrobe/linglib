@@ -28,7 +28,7 @@ Test sentences:
 - "Not every X would have Y-ed if they had Z-ed"
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Conditionals.Studies.RamotowskaEtAl2025
