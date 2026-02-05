@@ -40,6 +40,7 @@ Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordina
 -/
 
 import Linglib.Theories.Montague.Basic
+import Linglib.Core.Proposition
 -- Re-export modular attitude theories
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
@@ -55,6 +56,10 @@ inductive World where
   deriving DecidableEq, BEq, Repr, Inhabited
 
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
+
+instance : Core.Proposition.FiniteWorlds World where
+  worlds := allWorlds
+  complete := λ w => by cases w <;> simp [allWorlds]
 
 
 /-!
