@@ -48,18 +48,13 @@ import Linglib.Theories.Montague.Verb.Attitude.Preferential
 namespace Montague.Verb.Attitude.Examples
 
 open Montague
+open Core.Proposition (World4 FiniteWorlds)
 
+/-- Canonical 4-world type for modal examples. Alias for `Core.Proposition.World4`. -/
+abbrev World := World4
 
-/-- A finite set of possible worlds for decidable reasoning -/
-inductive World where
-  | w0 | w1 | w2 | w3
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-def allWorlds : List World := [.w0, .w1, .w2, .w3]
-
-instance : Core.Proposition.FiniteWorlds World where
-  worlds := allWorlds
-  complete := λ w => by cases w <;> simp [allWorlds]
+/-- List of all worlds. -/
+def allWorlds : List World := FiniteWorlds.worlds
 
 
 /-!
