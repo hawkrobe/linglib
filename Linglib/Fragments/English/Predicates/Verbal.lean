@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential

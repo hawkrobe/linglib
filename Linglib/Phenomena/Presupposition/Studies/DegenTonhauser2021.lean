@@ -54,7 +54,7 @@ This paper extends and empirically tests the Tonhauser taxonomy:
   taxonomy of projective content.
 -/
 
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 
 namespace Phenomena.Presupposition.Studies.DegenTonhauser2021
 

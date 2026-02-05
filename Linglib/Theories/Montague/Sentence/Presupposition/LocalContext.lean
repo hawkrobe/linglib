@@ -39,7 +39,7 @@ For a sentence S with embedded clause φ at position i:
 -/
 
 import Linglib.Theories.Core.CommonGround
-import Linglib.Core.Presupposition
+import Linglib.Theories.Core.Presupposition
 
 namespace Montague.Sentence.Presupposition.LocalContext
 
