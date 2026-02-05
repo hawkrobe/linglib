@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.66.0] - 2025-02-05
+
+### Added
+- **Core/ModalLogic.lean**: Theory-neutral modal logic infrastructure
+  - `ModalForce`, `AccessRel`, `kripkeEval` (Kripke semantics)
+  - Frame conditions: `Refl`, `Serial`, `Trans`, `Symm`, `Eucl`
+  - Correspondence theorems: `T_of_refl`, `D_of_serial`, `K_axiom`, `four_of_trans`, `B_of_symm`, `five_of_eucl`
+  - Lattice of normal modal logics: `Axiom`, `Logic`, named logics (K, T, S4, S5, KD45, etc.)
+  - `S5_collapse`: M+5 implies all frame conditions
+  - Standard frames: `universalR`, `emptyR`, `identityR`
+- **Core/OrderTheory.lean**: Generic satisfaction-based orderings
+  - `SatisfactionOrdering α Criterion`: preorder by subset inclusion of satisfied criteria
+  - `satisfiedBy`, `atLeastAsGood`, `best`, `toPreorder`
+
+### Changed
+- **Refactor Montague/Modal/ to use Core**: `SatisfactionOrdering.lean`, `Kratzer.lean`, `PhillipsBrown.lean` now import from `Core/OrderTheory.lean`
+- **Rename `Ideal` → `Criterion`**: More neutral terminology (field `.ideals` → `.criteria`)
+- **CLAUDE.md**: Add "Prefer Unicode `λ` over `fun` in code"
+
 ## [0.65.0] - 2025-02-04
 
 ### Added

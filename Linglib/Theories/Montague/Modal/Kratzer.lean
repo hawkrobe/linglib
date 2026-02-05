@@ -2,7 +2,7 @@
 Kratzer (1981) Modal Semantics.
 
 Accessibility is derived from two conversational backgrounds: modal base f
-(relevant facts) and ordering source g (ideals for ranking worlds).
+(relevant facts) and ordering source g (criteria for ranking worlds).
 w ≤_A z iff {p in A : z in p} ⊆ {p in A : w in p}.
 
 - Kratzer, A. (1981). The Notional Category of Modality. de Gruyter. pp. 38-74.
@@ -128,7 +128,7 @@ def strictlyBetter (A : List Prop') (w z : World) : Bool :=
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
 
-open Core.SatisfactionOrdering
+open Core.OrderTheory
 
 /--
 Kratzer's world ordering as a `SatisfactionOrdering`.
@@ -138,7 +138,7 @@ This connects Kratzer semantics to the generic ordering framework.
 -/
 def worldOrdering (A : List Prop') : SatisfactionOrdering World Prop' where
   satisfies := λ w p => p w
-  ideals := A
+  criteria := A
 
 /--
 **Kratzer's ordering matches the generic framework.**

@@ -16,10 +16,9 @@ open Montague.Verb.Attitude.Examples
 open Montague.Modal.Kratzer
 open Montague.Question.Hamblin
 
-/-- p entails q iff every p-world is a q-world.
-    Uses Core.SatisfactionOrdering.propEntails with global allWorlds. -/
+/-- p entails q iff every p-world is a q-world. -/
 def propEntails (p q : Prop') : Bool :=
-  Core.SatisfactionOrdering.propEntails allWorlds p q
+  Montague.Modal.propEntails allWorlds p q
 
 /-- Propositions overlap iff they share at least one world. -/
 def propOverlap (p q : Prop') : Bool :=
@@ -177,14 +176,14 @@ def isCDistributive (semantics : List Prop' → Prop' → Bool)
   let existsSingle := answers.any λ a => semantics [a] p
   wholeQ == existsSingle
 
--- Connection to Core.SatisfactionOrdering Framework
+-- Connection to Core.OrderTheory
 
-open Core.SatisfactionOrdering
+open Core.OrderTheory
 
 /-- Proposition ordering: a satisfies p iff a entails p. -/
 def propositionOrdering (GS : List Prop') : SatisfactionOrdering Prop' Prop' where
   satisfies := λ a p => propEntails a p
-  ideals := GS
+  criteria := GS
 
 -- Connection theorems: local definitions = generic framework
 
@@ -215,8 +214,8 @@ def evalWant (self : BouleticFlavor) (w : World)
 
 /-- Preference ordering on propositions at world w. -/
 def preferenceOrdering (self : BouleticFlavor) (w : World) :
-    Core.SatisfactionOrdering.SatisfactionOrdering Prop' Prop' :=
-  propositionOrdering (self.desires w)
+    Core.OrderTheory.SatisfactionOrdering Prop' Prop' :=
+  PhillipsBrown.propositionOrdering (self.desires w)
 
 /-- Best answers according to S's desires at world w. -/
 def getBestAnswers (self : BouleticFlavor) (w : World) (answers : List Prop') :
