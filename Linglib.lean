@@ -23,8 +23,10 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Predicates
@@ -52,7 +54,11 @@ import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
+import Linglib.Phenomena.Complementation.Bridge
+import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Coordination.Data
+import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
+import Linglib.Phenomena.Coordination.Typology
 import Linglib.Phenomena.Core.Basic
 import Linglib.Phenomena.Core.EmpiricalData
 import Linglib.Phenomena.Core.Lexicon
@@ -116,6 +122,8 @@ import Linglib.Phenomena.Quantification.ScopeWordOrder
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Questions.Basic
+import Linglib.Phenomena.Questions.Typology
+import Linglib.Phenomena.Questions.Embedding
 import Linglib.Phenomena.Questions.Coordination
 import Linglib.Phenomena.Questions.Exhaustivity
 import Linglib.Phenomena.Questions.FocusAnswer
@@ -317,6 +325,7 @@ import Linglib.Theories.Montague.Question.EntropyNPIs
 import Linglib.Theories.Montague.Question.GSVanRooyBridge
 import Linglib.Theories.Montague.Question.Hamblin
 import Linglib.Theories.Montague.Question.Inquisitive
+import Linglib.Theories.Montague.Question.LeftPeriphery
 import Linglib.Theories.Montague.Question.LiftedTypes
 import Linglib.Theories.Montague.Question.MentionSome
 import Linglib.Theories.Montague.Question.Partition

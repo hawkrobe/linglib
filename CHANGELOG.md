@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.62.0] - 2025-02-04
+
+### Added
+- **Phenomena/Complementation/Typology.lean**: Noonan (2007) complementation typology
+  - `NoonanCompType`: 6 cross-linguistic complement types (indicative, subjunctive, paratactic, infinitive, nominalized, participle)
+  - `CTPClass`: 12 complement-taking predicate classes
+  - `RealityStatus`: realis/irrealis split predicting complement selection
+  - 36 `CTPDatum` entries across 7 languages (English, Latin, Turkish, Irish, Persian, Hindi-Urdu, Japanese)
+  - Verified generalizations: realis/irrealis consistency, equi-deletion restriction, negative raising class restriction, implicational hierarchy
+  - First negative raising data in linglib
+- **Phenomena/Complementation/Bridge.lean**: Interconnection theorems
+  - `deriveCTPClass`: Derives CTP class from VerbEntry fields (40+ per-verb theorems)
+  - `ctpToDefaultSelectionClass`: Maps CTP → SelectionClass with consistency checks against `deriveSelectionClass`
+  - `ctpToMoodSelector`: Maps CTP → MoodSelector with realis/irrealis alignment theorems
+  - `englishToNoonan`: Maps English ComplementType → NoonanCompType
+  - `deriveMoodSelector`: Derives MoodSelector from VerbEntry fields (fills gap)
+  - Three-way agreement theorems (CTP × SelectionClass × MoodSelector) for key verbs
+
 ## [0.61.0] - 2025-02-04
 
 ### Added
