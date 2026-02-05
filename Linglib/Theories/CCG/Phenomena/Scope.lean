@@ -5,7 +5,7 @@ CCG derivational structure determines available scope readings (Steedman 2000 Ch
 -/
 
 import Linglib.Theories.CCG.Core.Basic
-import Linglib.Theories.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Phenomena.Quantification.ScopeWordOrder
 
 namespace CCG.Scope

@@ -8,7 +8,7 @@ Integrates with Erk & Herbelot (2024) Product of Experts for disambiguation.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Core.ProductOfExperts
+import Linglib.Core.ProductOfExperts
 
 namespace TruthConditional.Verb.SelectionalPreferences
 

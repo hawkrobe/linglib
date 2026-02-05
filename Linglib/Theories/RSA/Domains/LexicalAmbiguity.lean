@@ -42,7 +42,7 @@ Lexical ambiguity maps to Lexical Uncertainty RSA:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Core.ProductOfExperts
+import Linglib.Core.ProductOfExperts
 import Linglib.Theories.TruthConditional.Verb.SelectionalPreferences
 import Linglib.Theories.TruthConditional.Frames.Basic
 

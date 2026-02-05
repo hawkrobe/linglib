@@ -39,7 +39,7 @@ import Linglib.Theories.TruthConditional.Sentence.Entailment.Monotonicity
 import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Theories.Core.Interfaces.ImplicatureTheory
+import Linglib.Core.Interfaces.ImplicatureTheory
 
 namespace NeoGricean.ScalarImplicatures
 

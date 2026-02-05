@@ -36,7 +36,7 @@ In short: "It is for sure that we should add p to the CG."
 -/
 
 import Linglib.Theories.QuestionSemantics.Basic
-import Linglib.Theories.Core.CommonGround
+import Linglib.Core.CommonGround
 
 namespace QuestionSemantics.VerumFocus
 

@@ -24,7 +24,7 @@ which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Core.Parse
+import Linglib.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 
@@ -182,7 +182,7 @@ theorem gi_is_best_model :
 
 5. **Clean separation**:
    - `Core.Parse`: general grammatical ambiguity
-   - `Core.exhParses`: EXH position parses
+   - `NeoGricean.Exhaustivity.Interface.exhParses`: EXH position parses
    - `Core.scopeParses`: scope reading parses
    - `Exhaustifiable`: typeclass for EXH-specific phenomena
    - `applyExhAtParse`: unified entry point for parse-guided EXH

@@ -18,6 +18,16 @@ import Linglib.Core.Scales
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
 import Linglib.Core.Conjectures
+import Linglib.Core.CommonGround
+import Linglib.Core.Parse
+import Linglib.Core.Presupposition
+import Linglib.Core.ProductOfExperts
+import Linglib.Core.QUD
+import Linglib.Core.Interfaces.BindingSemantics
+import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interfaces.SemanticStructure
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -160,18 +170,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.VerbPosition
-
--- Theories: Core (cross-theory utilities)
-import Linglib.Theories.Core.CommonGround
-import Linglib.Theories.Core.Presupposition
-import Linglib.Theories.Core.Interfaces.BindingSemantics
-import Linglib.Theories.Core.Interfaces.CoreferenceTheory
-import Linglib.Theories.Core.Interfaces.ImplicatureTheory
-import Linglib.Theories.Core.Interfaces.ScopeTheory
-import Linglib.Theories.Core.Interfaces.SemanticStructure
-import Linglib.Theories.Core.Parse
-import Linglib.Theories.Core.ProductOfExperts
-import Linglib.Theories.Core.QUD
 
 -- Theories: CCG
 import Linglib.Theories.CCG.Core.Basic

@@ -35,7 +35,7 @@ This maps directly to `PrProp` from `Core.Presupposition`:
 - Simons, M. (2001). On the conversational basis of some presuppositions.
 -/
 
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 
 namespace TruthConditional.Verb.ChangeOfState
 

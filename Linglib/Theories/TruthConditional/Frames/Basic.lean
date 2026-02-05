@@ -39,7 +39,7 @@ Scenarios can be modeled in RSA as:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Core.ProductOfExperts
+import Linglib.Core.ProductOfExperts
 
 namespace TruthConditional.Frames
 

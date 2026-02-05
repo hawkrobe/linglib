@@ -18,7 +18,7 @@ terminals and branching via the `SemanticStructure` interface.
 
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Modification
-import Linglib.Theories.Core.Interfaces.SemanticStructure
+import Linglib.Core.Interfaces.SemanticStructure
 
 namespace TruthConditional.Composition
 
@@ -130,10 +130,10 @@ instance : HasUnaryProjection SynTree where
 instance : HasBinding SynTree where
   getBinder _ := none
 
-instance : HasSemanticType SynTree where
+instance : HasSemanticType SynTree Ty where
   getType _ := none
 
-instance : SemanticStructure SynTree where
+instance : SemanticStructure SynTree Ty where
 
 def interpTree (m : Model) (lex : Lexicon m) : SynTree → Option (TypedDenot m)
   | .terminal w => interpTerminal m lex w

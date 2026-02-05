@@ -50,8 +50,8 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
   Projective Content. Language 89(1).
 -/
 
-import Linglib.Theories.Core.CommonGround
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.CommonGround
+import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.LocalContext
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 

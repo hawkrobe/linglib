@@ -15,9 +15,10 @@ Any theory invoking EXH in a parse should use this interface, ensuring:
 
 ```
 Core/Parse.lean
-├── Parse, ExhPosition (M/O/I)
-├── exhParses, scopeParses
-└── Parse.hasExhAt
+├── Parse, scopeParses
+
+NeoGricean/Exhaustivity/Interface.lean (this file)
+├── ExhPosition (M/O/I), exhParses, parseHasExhAt
 
 NeoGricean/Exhaustivity/Basic.lean
 ├── exhIE, exhMW (core operators)
@@ -39,7 +40,7 @@ NeoGricean/Exhaustivity/Interface.lean (this file)
 - Franke & Bergen (2020). Theory-driven statistical modeling.
 -/
 
-import Linglib.Theories.Core.Parse
+import Linglib.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 
 namespace NeoGricean.Exhaustivity.Interface
@@ -47,6 +48,40 @@ namespace NeoGricean.Exhaustivity.Interface
 open Core
 open NeoGricean.Exhaustivity
 
+/-- Positions where EXH can occur in a doubly-quantified sentence. -/
+inductive ExhPosition where
+  | M : ExhPosition  -- Matrix (whole sentence)
+  | O : ExhPosition  -- Outer quantifier
+  | I : ExhPosition  -- Inner quantifier
+  deriving DecidableEq, Repr, BEq, Hashable
+
+/-- Convert EXH positions to a parse -/
+def parseFromExhPositions (positions : List ExhPosition) : Parse :=
+  let id := if positions.isEmpty then "lit"
+    else positions.map (λ p => match p with
+      | .M => "M" | .O => "O" | .I => "I") |> String.intercalate ""
+  let desc := if positions.isEmpty then "Literal (no EXH)"
+    else s!"EXH at {id}"
+  ⟨id, desc⟩
+
+/-- All 8 EXH parses for doubly-quantified sentences -/
+def exhParses : List Parse :=
+  [ parseFromExhPositions []
+  , parseFromExhPositions [.M]
+  , parseFromExhPositions [.O]
+  , parseFromExhPositions [.I]
+  , parseFromExhPositions [.M, .O]
+  , parseFromExhPositions [.M, .I]
+  , parseFromExhPositions [.O, .I]
+  , parseFromExhPositions [.M, .O, .I]
+  ]
+
+/-- Check if a parse includes a specific EXH position -/
+def parseHasExhAt (p : Parse) (pos : ExhPosition) : Bool :=
+  let char := match pos with | .M => 'M' | .O => 'O' | .I => 'I'
+  p.id.any (· == char)
+
+theorem exh_parses_count : exhParses.length = 8 := rfl
 
 /-- Different exhaustification strategies from the literature.
 
@@ -109,13 +144,13 @@ abbrev AlternativesAtPosition (World : Type*) := ExhPosition → Set (Prop' Worl
 def applyExhAtParse {World : Type*} (op : ExhOperator) (p : Parse)
     (base : Prop' World) (altsAt : AlternativesAtPosition World) : Prop' World :=
   -- Apply from innermost to outermost: I, then O, then M
-  let withI := if p.hasExhAt .I then applyExh op (altsAt .I) base else base
-  let withO := if p.hasExhAt .O then applyExh op (altsAt .O) withI else withI
-  let withM := if p.hasExhAt .M then applyExh op (altsAt .M) withO else withO
+  let withI := if parseHasExhAt p .I then applyExh op (altsAt .I) base else base
+  let withO := if parseHasExhAt p .O then applyExh op (altsAt .O) withI else withI
+  let withM := if parseHasExhAt p .M then applyExh op (altsAt .M) withO else withO
   withM
 
 /-- Helper: "lit" has no EXH positions -/
-private theorem lit_has_no_exh : ∀ pos, Parse.literal.hasExhAt pos = false := by
+private theorem lit_has_no_exh : ∀ pos, parseHasExhAt Parse.literal pos = false := by
   intro pos; cases pos <;> native_decide
 
 /-- The literal parse (no EXH) returns the base meaning unchanged. -/
@@ -126,20 +161,20 @@ theorem literal_parse_is_identity {World : Type*} (op : ExhOperator)
   simp only [Bool.false_eq_true, ↓reduceIte]
 
 /-- Helper: Parse from single position has that position -/
-private theorem single_pos_has_M : (Parse.fromExhPositions [.M]).hasExhAt .M = true := by native_decide
-private theorem single_pos_has_O : (Parse.fromExhPositions [.O]).hasExhAt .O = true := by native_decide
-private theorem single_pos_has_I : (Parse.fromExhPositions [.I]).hasExhAt .I = true := by native_decide
-private theorem single_M_not_O : (Parse.fromExhPositions [.M]).hasExhAt .O = false := by native_decide
-private theorem single_M_not_I : (Parse.fromExhPositions [.M]).hasExhAt .I = false := by native_decide
-private theorem single_O_not_M : (Parse.fromExhPositions [.O]).hasExhAt .M = false := by native_decide
-private theorem single_O_not_I : (Parse.fromExhPositions [.O]).hasExhAt .I = false := by native_decide
-private theorem single_I_not_M : (Parse.fromExhPositions [.I]).hasExhAt .M = false := by native_decide
-private theorem single_I_not_O : (Parse.fromExhPositions [.I]).hasExhAt .O = false := by native_decide
+private theorem single_pos_has_M : parseHasExhAt (parseFromExhPositions [.M]) .M = true := by native_decide
+private theorem single_pos_has_O : parseHasExhAt (parseFromExhPositions [.O]) .O = true := by native_decide
+private theorem single_pos_has_I : parseHasExhAt (parseFromExhPositions [.I]) .I = true := by native_decide
+private theorem single_M_not_O : parseHasExhAt (parseFromExhPositions [.M]) .O = false := by native_decide
+private theorem single_M_not_I : parseHasExhAt (parseFromExhPositions [.M]) .I = false := by native_decide
+private theorem single_O_not_M : parseHasExhAt (parseFromExhPositions [.O]) .M = false := by native_decide
+private theorem single_O_not_I : parseHasExhAt (parseFromExhPositions [.O]) .I = false := by native_decide
+private theorem single_I_not_M : parseHasExhAt (parseFromExhPositions [.I]) .M = false := by native_decide
+private theorem single_I_not_O : parseHasExhAt (parseFromExhPositions [.I]) .O = false := by native_decide
 
 /-- EXH at a single position applies that operator once. -/
 theorem single_position_exh {World : Type*} (op : ExhOperator) (pos : ExhPosition)
     (base : Prop' World) (altsAt : AlternativesAtPosition World) :
-    let p := Parse.fromExhPositions [pos]
+    let p := parseFromExhPositions [pos]
     applyExhAtParse op p base altsAt = applyExh op (altsAt pos) base := by
   cases pos
   · simp only [applyExhAtParse, single_pos_has_M, single_M_not_O, single_M_not_I,

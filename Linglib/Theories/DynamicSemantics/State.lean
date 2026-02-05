@@ -38,7 +38,7 @@ with existing RSA infrastructure.
 -/
 
 import Linglib.Core.Proposition
-import Linglib.Theories.Core.CommonGround
+import Linglib.Core.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 

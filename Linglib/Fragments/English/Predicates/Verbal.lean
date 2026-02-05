@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential

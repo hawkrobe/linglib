@@ -25,7 +25,7 @@ This module provides:
 
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Theories.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interfaces.ScopeTheory
 
 namespace TruthConditional.Derivation.Scope
 

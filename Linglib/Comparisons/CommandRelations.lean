@@ -47,7 +47,7 @@ import Linglib.Theories.Minimalism.Phenomena.Coreference
 import Linglib.Theories.HPSG.Coreference
 import Linglib.Theories.DependencyGrammar.Coreference
 import Linglib.Theories.DependencyGrammar.CRDC
-import Linglib.Theories.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.CoreferenceTheory
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.CompleteLattice.Basic

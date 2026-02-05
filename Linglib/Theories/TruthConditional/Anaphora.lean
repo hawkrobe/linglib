@@ -13,7 +13,7 @@ with the continuation approach (Barker & Shan 2014).
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Theories.Core.Interfaces.BindingSemantics
+import Linglib.Core.Interfaces.BindingSemantics
 
 namespace TruthConditional.Anaphora
 
