@@ -15,10 +15,13 @@ Function application: if α has type σ → τ and β has type σ, then ⟦α β
 -/
 
 import Linglib.Core.Basic
+import Linglib.Core.Proposition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
 namespace TruthConditional
+
+open Core.Proposition (BProp)
 
 /-- Semantic types (Montague's type theory). -/
 inductive Ty where
@@ -240,7 +243,7 @@ World-indexed types for modal semantics, kind reference, etc.
 -/
 
 abbrev IntensionalProp (Entity World : Type) := World → Entity → Bool
-abbrev Proposition (World : Type) := World → Bool
+abbrev Proposition (World : Type) := BProp World
 abbrev IntensionalVP (Entity World : Type) := Entity → Proposition World
 
 def Proposition.neg {World : Type} (p : Proposition World) : Proposition World :=

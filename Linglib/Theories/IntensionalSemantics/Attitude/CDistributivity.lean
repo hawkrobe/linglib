@@ -35,13 +35,16 @@ This is NOT C-distributive because worry-about-Q involves global uncertainty.
 -/
 
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Proposition
 
 namespace IntensionalSemantics.Attitude.CDistributivity
+
+open Core.Proposition (BProp)
 
 -- Basic Types
 
 /-- A proposition is a function from worlds to truth values -/
-abbrev Prop' (W : Type*) := W → Bool
+abbrev Prop' (W : Type*) := BProp W
 
 /-- A Hamblin question denotation: set of possible answers -/
 abbrev QuestionDen (W : Type*) := List (Prop' W)

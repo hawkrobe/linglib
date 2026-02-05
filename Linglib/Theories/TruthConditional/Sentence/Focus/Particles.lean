@@ -39,15 +39,18 @@ See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
 -/
 
 import Mathlib.Data.Set.Basic
+import Linglib.Core.Proposition
 
 namespace TruthConditional.Sentence.FocusParticles
+
+open Core.Proposition (BProp)
 
 variable {World Entity : Type}
 
 -- Propositions and Alternatives
 
 /-- A proposition as a characteristic function -/
-abbrev Prop' (World : Type) := World → Bool
+abbrev Prop' (World : Type) := BProp World
 
 /-- Alternative semantics: focused element evokes alternatives -/
 structure FocusStructure (α : Type) where

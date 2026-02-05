@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.70.0] - 2025-02-05
+
+### Added
+- **Core/Intension.lean**: Framework-agnostic intensional logic primitives
+  - `Intension W τ`, `rigid`, `evalAt`, `IsRigid`
+  - `rigid_isRigid`, `evalAt_rigid`, `rigid_injective`, `proposition_eq_bprop` theorems
+- **Core/ModalLogic.lean**: `AgentAccessRel W E` — agent-indexed accessibility relations
+- **Bridge theorems** connecting IntensionalSemantics types to Core types:
+  - `IntensionalSemantics.proposition_eq_bprop`, `intension_t_eq_core`
+  - `Modal.proposition_eq_bprop`
+  - `Attitude.Intensional.up_eq_rigid`, `down_eq_evalAt`
+
+### Changed
+- **Consolidated 7 local Prop'/Proposition definitions** to alias `Core.Proposition.BProp`:
+  - `IntensionalSemantics/Attitude/CDistributivity.lean`
+  - `IntensionalSemantics/Attitude/Preferential.lean`
+  - `IntensionalSemantics/Modal/Kratzer.lean`
+  - `IntensionalSemantics/Modal/Basic.lean`
+  - `TruthConditional/Basic.lean`
+  - `TruthConditional/Sentence/Focus/Particles.lean`
+  - `DynamicSemantics/Probabilistic.lean`
+- **Unified `Doxastic.AccessRel`** with `Core.ModalLogic.AgentAccessRel`
+- **CLAUDE.md**: Updated Core/ directory listing with Intension.lean, ModalLogic.lean
+
 ## [0.69.0] - 2025-02-05
 
 ### Changed

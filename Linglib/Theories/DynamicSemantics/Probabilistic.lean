@@ -28,6 +28,7 @@ The PDS framework shows that:
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
+import Linglib.Core.Proposition
 
 namespace Theories.DynamicSemantics.Probabilistic
 
@@ -376,7 +377,7 @@ This is exactly Lassiter & Goodman's "threshold + uncertainty = graded".
 /--
 A proposition in the PDS sense: a function from indices to truth values.
 -/
-def Prop' (ι : Type) := ι → Bool
+abbrev Prop' (ι : Type) := Core.Proposition.BProp ι
 
 /--
 Probability of a proposition in a finite distribution.

@@ -43,6 +43,7 @@ L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
+import Linglib.Core.Intension
 
 namespace IntensionalSemantics
 
@@ -81,6 +82,14 @@ def Intension (m : IntensionalModel) (τ : Ty) : Type :=
 
 /-- A proposition is an intension of type t (World → Bool) -/
 def Proposition (m : IntensionalModel) : Type := m.World → Bool
+
+/-- IntensionalSemantics.Proposition equals Core.Proposition.BProp. -/
+theorem proposition_eq_bprop (m : IntensionalModel) :
+    Proposition m = Core.Proposition.BProp m.World := rfl
+
+/-- IntensionalSemantics.Intension .t equals Core.Intension.Intension W Bool. -/
+theorem intension_t_eq_core (m : IntensionalModel) :
+    Intension m .t = Core.Intension.Intension m.World Bool := rfl
 
 /-- A property intension: World → (Entity → Bool) -/
 def PropertyIntension (m : IntensionalModel) : Type :=
