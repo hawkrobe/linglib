@@ -22,13 +22,20 @@ Key constraints:
 Reference: Gibson (2025) "Syntax", MIT Press, Section 3.8
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
-open Lexicon
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def and_ : Word := ⟨"and", .C, {}⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
+private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def the : Word := ⟨"the", .D, {}⟩
+private def boy : Word := ⟨"boy", .N, { number := some .sg, countable := some true }⟩
+private def girl : Word := ⟨"girl", .N, { number := some .sg, countable := some true }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
 
 -- Coordination Lexicon (extends core Lexicon)
 
--- Note: and_, or_ are defined in Core/Basic.lean Lexicon
 def but_ : Word := ⟨"but", Cat.C, {}⟩
 
 -- The Empirical Data

@@ -34,7 +34,7 @@ Polarity stress targets truth/polarity rather than content alternatives.
 - Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
 namespace Phenomena.Focus.PolarityStress
 

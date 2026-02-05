@@ -11,7 +11,24 @@ import Linglib.Phenomena.FillerGap.LongDistance
 
 namespace LongDistanceDependencies.WordGrammarAnalysis
 
-open DepGrammar Lexicon
+open DepGrammar
+
+private def what : Word := ⟨"what", .Wh, { wh := true }⟩
+private def who : Word := ⟨"who", .Wh, { wh := true }⟩
+private def did : Word := ⟨"did", .Aux, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def reads : Word := ⟨"reads", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
+private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def think : Word := ⟨"think", .V, { valence := some .transitive, number := some .pl }⟩
+private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
+private def the : Word := ⟨"the", .D, {}⟩
+private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
+private def that : Word := ⟨"that", .D, { number := some .sg }⟩
+private def if_ : Word := ⟨"if", .C, {}⟩
 
 -- ============================================================================
 -- SLASH Features

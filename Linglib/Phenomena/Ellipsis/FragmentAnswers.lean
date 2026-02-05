@@ -33,7 +33,7 @@ Fragment answers differ from sluicing:
 - Stainton, R. (2006). Words and Thoughts. OUP.
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 
 /-!
 ## Connection to RSA Theory

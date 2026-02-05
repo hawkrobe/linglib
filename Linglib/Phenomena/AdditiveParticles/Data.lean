@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 /-!
 # Additive Particle Data

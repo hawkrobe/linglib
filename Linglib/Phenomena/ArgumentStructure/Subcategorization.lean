@@ -21,10 +21,18 @@ Verbs select for a specific number and type of arguments.
   (3c) *John gives the book.         ✗  ditransitive with one object
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-open Lexicon
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def arrives : Word := ⟨"arrives", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def devours : Word := ⟨"devours", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
+private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
 
 -- The Empirical Data
 

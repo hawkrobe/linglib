@@ -145,7 +145,10 @@ theorem not_licenses_embedded_t_first (ws : List Word)
 
 -- Verification
 
-open Lexicon
+private def what : Word := ⟨"what", .Wh, { wh := true }⟩
+private def can : Word := ⟨"can", .Aux, {}⟩
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
 
 #eval wordsHaveTBeforeSubject [what, can, john, eat]   -- true
 #eval wordsHaveTBeforeSubject [what, john, can, eat]   -- false

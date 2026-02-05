@@ -33,10 +33,19 @@ In this formalization, we use separate lexical entries for the two frames:
 A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
-import Linglib.Phenomena.Core.Basic
+import Linglib.Core.Basic
 import Linglib.Theories.Surface.Basic
 
-open Lexicon
+private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
+private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
+private def gives_dat : Word := ⟨"gives", .V, { valence := some .dative, number := some .sg, person := some .third }⟩
+private def to : Word := ⟨"to", .P, {}⟩
+private def puts : Word := ⟨"puts", .V, { valence := some .locative, number := some .sg, person := some .third }⟩
+private def on : Word := ⟨"on", .P, {}⟩
+private def table : Word := ⟨"table", .N, { number := some .sg, countable := some true }⟩
+private def sends : Word := ⟨"sends", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
 
 -- The Empirical Data
 

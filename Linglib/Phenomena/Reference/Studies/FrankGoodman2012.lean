@@ -10,7 +10,7 @@ Empirical data for simple reference games:
 - Task: speaker refers to target object, listener identifies it
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 namespace Phenomena.Reference.Studies.FrankGoodman2012
 

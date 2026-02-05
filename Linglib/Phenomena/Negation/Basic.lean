@@ -23,7 +23,7 @@ Empirical data: semantic and pragmatic properties of sentential negation.
 - Horn (1989) on negation
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 namespace Phenomena.Negation
 

@@ -30,7 +30,7 @@ Griceans claim SIs are global pragmatic inferences, not local.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 
 namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 

@@ -47,7 +47,7 @@ The M&S decomposition maps directly onto Montague/Conjunction.lean:
 - Haslinger et al. (2019). A plural analysis of distributive conjunctions.
 -/
 
-import Linglib.Phenomena.Core.EmpiricalData
+import Linglib.Core.Empirical
 import Linglib.Theories.Montague.Conjunction
 
 namespace Phenomena.Coordination.Studies.BillEtAl2025
