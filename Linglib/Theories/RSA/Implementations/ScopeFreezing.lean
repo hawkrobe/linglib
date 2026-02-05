@@ -154,7 +154,7 @@ theorem grammar_view_no_rescue :
 /-! ## Connection to Grammar Theories
 
 Both Minimalism and CCG predict `possessor_frozen.observed = .surfaceOnly`:
-- **Minimalism**: DP phase blocks QR (see `Minimalism.Scope.predictsFreezing`)
+- **Minimalism**: DP phase blocks QR (see `Minimalism.Phenomena.Scope.predictsFreezing`)
 - **CCG**: Single derivation for possessor DP (see `CCG.Scope.ccgPredictsFreezing`)
 
 RSA takes this grammatical prediction as input (via `interpPriorFromExample`)

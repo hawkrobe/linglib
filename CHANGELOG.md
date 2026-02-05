@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.67.0] - 2025-02-05
+
+### Added
+- **Core/UPOS.lean**: Universal POS tags from UD v2
+  - 17 UPOS tags: `NOUN`, `VERB`, `ADJ`, `ADV`, `PRON`, `DET`, `ADP`, `AUX`, `CCONJ`, `SCONJ`, `NUM`, `PART`, `INTJ`, `SYM`, `PUNCT`, `X`, `PROPN`
+  - Helper predicates: `isOpenClass`, `isClosedClass`, `isNominal`, `isPredicate`, `isModifier`
+- **Core/UDFeatures.lean**: UD morphological features
+  - `Number`, `Gender`, `Case`, `Definite`, `Degree`, `PronType`, `Person`, `VerbForm`, `Tense`, `Aspect`, `Mood`, `Voice`, `Polarity`
+  - `MorphFeatures` structure with `compatible` and `unify` operations
+- **Core/DepRel.lean**: Universal dependency relations
+  - 37+ relations including core arguments (`nsubj`, `obj`, `iobj`), modifiers (`amod`, `advmod`, `nmod`), function words (`aux`, `det`, `case_`)
+  - Helper predicates: `isCoreArg`, `isSubject`, `isObject`, `isModifier`, `isFunctionWord`
+  - `DepArc` and `DepTree` types for dependency structures
+
+### Changed
+- **Core/Basic.lean**: Alias core types to UD for cross-linguistic compatibility
+  - `Number` = `UD.Number` (with `Number.sg`, `Number.pl` compatibility aliases)
+  - `Person` = `UD.Person` (uses `.first`, `.second`, `.third` directly)
+  - `Case` = `UD.Case` (with `Case.nom`, `Case.acc`, `Case.gen` compatibility aliases)
+  - `Voice` = `UD.Voice` (with `Voice.active`, `Voice.passive` compatibility aliases)
+  - `VForm` = `UD.VerbForm` (with compatibility aliases)
+- **Minimalism reorganization**: Move disconnected formal analyses to Phenomena/ with grounding
+  - `Formal/Derivations.lean` → `Phenomena/Derivations.lean` (grounded to WordOrder, Subcategorization)
+  - `Formal/HeadMovement/BulgarianLHM.lean` → `Phenomena/HeadMovement/BulgarianLHM.lean` (grounded to VerbPosition)
+  - `Formal/HeadMovement/GermanicV2.lean` → `Phenomena/HeadMovement/GermanicV2.lean` (grounded to VerbPosition)
+
+### Removed
+- **Core/UDMapping.lean**: Obsolete after aliasing (types are identical, no mapping needed)
+
 ## [0.66.0] - 2025-02-05
 
 ### Added

@@ -27,76 +27,49 @@ Some determiners (the, some) are compatible with either.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Surface.Basic
 
-private def a : Word := ⟨"a", .D, { number := some .sg }⟩
-private def girl : Word := ⟨"girl", .N, { number := some .sg, countable := some true }⟩
-private def girls : Word := ⟨"girls", .N, { number := some .pl, countable := some true }⟩
-private def this : Word := ⟨"this", .D, { number := some .sg }⟩
-private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
-private def books : Word := ⟨"books", .N, { number := some .pl, countable := some true }⟩
-private def every : Word := ⟨"every", .D, { number := some .sg }⟩
-private def cat_ : Word := ⟨"cat", .N, { number := some .sg, countable := some true }⟩
-private def cats : Word := ⟨"cats", .N, { number := some .pl, countable := some true }⟩
-private def these : Word := ⟨"these", .D, { number := some .pl }⟩
-private def many : Word := ⟨"many", .D, { number := some .pl }⟩
-private def dogs : Word := ⟨"dogs", .N, { number := some .pl, countable := some true }⟩
-private def few : Word := ⟨"few", .D, { number := some .pl }⟩
-private def dog : Word := ⟨"dog", .N, { number := some .sg, countable := some true }⟩
-private def the : Word := ⟨"the", .D, {}⟩
+namespace Phenomena.Agreement.DetNoun
 
--- The Empirical Data
+/-- Determiner-noun agreement data.
 
-/-- Determiner-noun agreement data -/
-def detNounAgrData : PhenomenonData := {
+Pure empirical data with no theoretical commitments.
+Theories interpret this via their Bridge modules. -/
+def data : StringPhenomenonData := {
   name := "Determiner-Noun Agreement"
   generalization := "Determiners must agree with their head noun in number"
   pairs := [
     -- Singular determiners with singular/plural nouns
-    { grammatical := [a, girl]
-      ungrammatical := [a, girls]
+    { grammatical := "a girl"
+      ungrammatical := "a girls"
       clauseType := .declarative
       description := "Singular 'a' requires singular noun" },
 
-    { grammatical := [this, book]
-      ungrammatical := [this, books]
+    { grammatical := "this book"
+      ungrammatical := "this books"
       clauseType := .declarative
       description := "Singular 'this' requires singular noun" },
 
-    { grammatical := [every, cat_]
-      ungrammatical := [every, cats]
+    { grammatical := "every cat"
+      ungrammatical := "every cats"
       clauseType := .declarative
       description := "Singular 'every' requires singular noun" },
 
     -- Plural determiners with singular/plural nouns
-    { grammatical := [these, books]
-      ungrammatical := [these, book]
+    { grammatical := "these books"
+      ungrammatical := "these book"
       clauseType := .declarative
       description := "Plural 'these' requires plural noun" },
 
-    { grammatical := [many, cats]
-      ungrammatical := [many, cat_]
+    { grammatical := "many cats"
+      ungrammatical := "many cat"
       clauseType := .declarative
       description := "Plural 'many' requires plural noun" },
 
-    { grammatical := [few, dogs]
-      ungrammatical := [few, dog]
+    { grammatical := "few dogs"
+      ungrammatical := "few dog"
       clauseType := .declarative
       description := "Plural 'few' requires plural noun" }
   ]
 }
 
--- Tests
-
-#eval Surface.detNounAgrOk [a, girl]       -- true
-#eval Surface.detNounAgrOk [a, girls]      -- false
-#eval Surface.detNounAgrOk [this, book]    -- true
-#eval Surface.detNounAgrOk [this, books]   -- false
-#eval Surface.detNounAgrOk [these, books]  -- true
-#eval Surface.detNounAgrOk [these, book]   -- false
-#eval Surface.detNounAgrOk [many, cats]    -- true
-#eval Surface.detNounAgrOk [many, cat_]    -- false
-
--- Number-neutral determiners work with both
-#eval Surface.detNounAgrOk [the, girl]     -- true
-#eval Surface.detNounAgrOk [the, girls]    -- true
+end Phenomena.Agreement.DetNoun

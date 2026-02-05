@@ -10,11 +10,15 @@ import Linglib.Core.Basic
 import Linglib.Core.Kleene
 import Linglib.Core.Empirical
 import Linglib.Core.Proposition
+import Linglib.Core.UPOS
+import Linglib.Core.UDFeatures
+import Linglib.Core.DepRel
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Lexicon
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.PolarityItems
@@ -165,20 +169,23 @@ import Linglib.Theories.Core.ProductOfExperts
 import Linglib.Theories.Core.QUD
 
 -- Theories: CCG
-import Linglib.Theories.CCG.Basic
-import Linglib.Theories.CCG.FormalLanguageTheory
-import Linglib.Theories.CCG.Combinators
-import Linglib.Theories.CCG.Coordination
-import Linglib.Theories.CCG.CrossSerial
-import Linglib.Theories.CCG.Equivalence
-import Linglib.Theories.CCG.Gapping
-import Linglib.Theories.CCG.GenerativeCapacity
-import Linglib.Theories.CCG.Homomorphism
-import Linglib.Theories.CCG.Interpret
-import Linglib.Theories.CCG.Intonation
-import Linglib.Theories.CCG.Scope
-import Linglib.Theories.CCG.Semantics
-import Linglib.Theories.CCG.TruthConditions
+import Linglib.Theories.CCG.Core.Basic
+import Linglib.Theories.CCG.Core.Combinators
+import Linglib.Theories.CCG.Core.FromFragments
+import Linglib.Theories.CCG.Bridge.Interface
+import Linglib.Theories.CCG.Bridge.Homomorphism
+import Linglib.Theories.CCG.Bridge.Derivation
+import Linglib.Theories.CCG.Phenomena.Agreement
+import Linglib.Theories.CCG.Phenomena.Coordination
+import Linglib.Theories.CCG.Phenomena.CrossSerial
+import Linglib.Theories.CCG.Phenomena.Derivations
+import Linglib.Theories.CCG.Phenomena.Gapping
+import Linglib.Theories.CCG.Phenomena.TruthConditions
+import Linglib.Theories.CCG.Formal.Equivalence
+import Linglib.Theories.CCG.Formal.FormalLanguageTheory
+import Linglib.Theories.CCG.Formal.GenerativeCapacity
+import Linglib.Theories.CCG.Phenomena.Scope
+import Linglib.Theories.CCG.Phenomena.Intonation
 
 -- Comparisons (cross-theory)
 import Linglib.Comparisons.CommandRelations
@@ -256,25 +263,27 @@ import Linglib.Theories.HPSG.Features
 import Linglib.Theories.HPSG.Inversion
 
 -- Theories: Minimalism
-import Linglib.Theories.Minimalism.Agree
-import Linglib.Theories.Minimalism.Amalgamation
-import Linglib.Theories.Minimalism.Basic
-import Linglib.Theories.Minimalism.Constraints.HMC
-import Linglib.Theories.Minimalism.Containment
-import Linglib.Theories.Minimalism.Coreference
-import Linglib.Theories.Minimalism.HeadMovement.Basic
-import Linglib.Theories.Minimalism.HeadMovement.BulgarianLHM
-import Linglib.Theories.Minimalism.HeadMovement.GermanicV2
-import Linglib.Theories.Minimalism.Inversion
-import Linglib.Theories.Minimalism.Labeling
-import Linglib.Theories.Minimalism.MergeUnification
-import Linglib.Theories.Minimalism.Scope
-import Linglib.Theories.Minimalism.Semantics.Interface
-import Linglib.Theories.Minimalism.Semantics.RelativeClauses
-import Linglib.Theories.Minimalism.Structure
-import Linglib.Theories.Minimalism.SyntacticObjects
-import Linglib.Theories.Minimalism.Workspace
-import Linglib.Theories.Minimalism.XBar
+import Linglib.Theories.Minimalism.Core.Agree
+import Linglib.Theories.Minimalism.Formal.Amalgamation
+import Linglib.Theories.Minimalism.Core.Basic
+import Linglib.Theories.Minimalism.Formal.Constraints.HMC
+import Linglib.Theories.Minimalism.Core.Containment
+import Linglib.Theories.Minimalism.Phenomena.Coreference
+import Linglib.Theories.Minimalism.Phenomena.Derivations
+import Linglib.Theories.Minimalism.Core.FromFragments
+import Linglib.Theories.Minimalism.Formal.HeadMovement.Basic
+import Linglib.Theories.Minimalism.Phenomena.HeadMovement.BulgarianLHM
+import Linglib.Theories.Minimalism.Phenomena.HeadMovement.GermanicV2
+import Linglib.Theories.Minimalism.Phenomena.Inversion
+import Linglib.Theories.Minimalism.Core.Labeling
+import Linglib.Theories.Minimalism.Formal.MergeUnification
+import Linglib.Theories.Minimalism.Phenomena.Scope
+import Linglib.Theories.Minimalism.Bridge.Interface
+import Linglib.Theories.Minimalism.Bridge.RelativeClauses
+import Linglib.Theories.Minimalism.Core.Structure
+import Linglib.Theories.Minimalism.Core.SyntacticObjects
+import Linglib.Theories.Minimalism.Formal.Workspace
+import Linglib.Theories.Minimalism.Formal.XBar
 
 -- Theories: Montague
 import Linglib.Theories.Montague.Adjective.Theory
@@ -485,5 +494,3 @@ import Linglib.Theories.SDS.Marginalization
 import Linglib.Theories.SDS.MeasureTheory
 import Linglib.Theories.SDS.ThresholdInstances
 
--- Theories: Other
-import Linglib.Theories.Surface.Basic

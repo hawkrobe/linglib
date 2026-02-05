@@ -34,62 +34,40 @@ A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Surface.Basic
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
-private def gives_dat : Word := ⟨"gives", .V, { valence := some .dative, number := some .sg, person := some .third }⟩
-private def to : Word := ⟨"to", .P, {}⟩
-private def puts : Word := ⟨"puts", .V, { valence := some .locative, number := some .sg, person := some .third }⟩
-private def on : Word := ⟨"on", .P, {}⟩
-private def table : Word := ⟨"table", .N, { number := some .sg, countable := some true }⟩
-private def sends : Word := ⟨"sends", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
+namespace Phenomena.ArgumentStructure.DativeAlternation
 
--- The Empirical Data
+/-- Dative alternation data.
 
-/-- Dative alternation data -/
-def dativeAlternationData : PhenomenonData := {
+Pure empirical data with no theoretical commitments.
+Theories interpret this via their Bridge modules. -/
+def data : StringPhenomenonData := {
   name := "Dative Alternation"
   generalization := "Transfer verbs allow double-object or prepositional frames"
   pairs := [
     -- Double object requires two NPs
-    { grammatical := [john, gives, mary, book]
-      ungrammatical := [john, gives, mary]
+    { grammatical := "John gives Mary book"
+      ungrammatical := "John gives Mary"
       clauseType := .declarative
       description := "Double object requires two objects" },
 
-    { grammatical := [mary, sends, john, book]
-      ungrammatical := [mary, sends, book]
+    { grammatical := "Mary sends John book"
+      ungrammatical := "Mary sends book"
       clauseType := .declarative
       description := "Double object requires recipient and theme" },
 
     -- Prepositional dative requires NP + PP
-    { grammatical := [john, gives_dat, book, to, mary]
-      ungrammatical := [john, gives_dat, book]
+    { grammatical := "John gives book to Mary"
+      ungrammatical := "John gives book"
       clauseType := .declarative
       description := "Dative requires prepositional phrase" },
 
     -- Locative verbs require PP
-    { grammatical := [john, puts, book, on, table]
-      ungrammatical := [john, puts, book]
+    { grammatical := "John puts book on table"
+      ungrammatical := "John puts book"
       clauseType := .declarative
       description := "Locative verb requires prepositional phrase" }
   ]
 }
 
--- Tests
-
--- Double object frame
-#eval Surface.subcatOk [john, gives, mary, book]    -- true (ditrans, 2 obj)
-#eval Surface.subcatOk [john, gives, mary]          -- false (ditrans, 1 obj)
-#eval Surface.subcatOk [john, gives, book]          -- false (ditrans, 1 obj)
-
--- Prepositional dative frame
-#eval Surface.subcatOk [john, gives_dat, book, to, mary]  -- true (dative, 1 obj + PP)
-#eval Surface.subcatOk [john, gives_dat, book]            -- false (dative, no PP)
-
--- Locative frame
-#eval Surface.subcatOk [john, puts, book, on, table]  -- true (locative, 1 obj + PP)
-#eval Surface.subcatOk [john, puts, book]             -- false (locative, no PP)
+end Phenomena.ArgumentStructure.DativeAlternation
