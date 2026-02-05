@@ -10,11 +10,8 @@ Future work and wishlist items.
 
 ### The Characterization Theorem (Meta-Goal)
 
-```lean
-theorem rsa_exh_equivalence_conditions :
-    (∀ u w, RSA.L1 α scenario u w > 0 ↔ EXH.eval alternatives u w) ↔
-    (alternatives_match ∧ uniform_prior ∧ high_rationality ∧ depth_one ∧ no_qud)
-```
+Formal statement in `Core/Conjectures.lean` (`rsa_exh_equivalence`).
+When do RSA and grammatical exhaustification make identical predictions?
 
 ### Priority Phenomena
 
@@ -27,21 +24,11 @@ theorem rsa_exh_equivalence_conditions :
 
 ## Algebraic Metatheory
 
-### Key Theorems to Prove
+Formal statements in `Core/Conjectures.lean`. Key conjectures:
 
-```lean
--- Lexicon refinement transfers to inference strength
-theorem lexicon_refinement_monotone :
-    ⟦·⟧₁ ≤ ⟦·⟧₂ → ∀ u w, RSA.L1 scenario₁ u w ≥ RSA.L1 scenario₂ u w
-
--- RSA iteration converges to a unique fixed point
-theorem rsa_fixed_point_unique (scenario : RSAScenario U W) (α : ℚ) (hα : α > 0) :
-    ∃! (L, S), RSA.iterate scenario α (L, S) = (L, S)
-
--- α → ∞ limit coincides with tropical semiring / iterated best response
-theorem rsa_tropical_deformation :
-    ∀ ε > 0, ∃ α₀, ∀ α > α₀, dist (RSA.S1 α scenario) (tropicalArgmax scenario) < ε
-```
+- **`rsa_fixed_point_unique`**: RSA iteration converges to a unique fixed point for α > 0
+- **`lexicon_refinement_monotone`**: Refining denotations can only strengthen pragmatic inferences
+- **`rsa_tropical_limit`**: α → ∞ recovers iterated best response (tropical semiring)
 
 ---
 
@@ -58,10 +45,7 @@ theorem dependency_locality_optimal :
 
 ### Project B: RSA from LLM
 
-```lean
-theorem rsa_emerges_from_lm (M : LanguageModel) (coarsen : Continuation → Meaning) (α : ℚ) :
-    ∃ ε > 0, ∀ u w, |M.coarsened_prob coarsen w u - RSA.L1 α scenario w u| < ε
-```
+Formal statement in `Core/Conjectures.lean` (`rsa_from_coarsened_lm`).
 
 ---
 
