@@ -40,11 +40,15 @@ section WordOrder
 
 /-- Find the position of the first auxiliary. -/
 def findAuxPosition (ws : List Word) : Option Nat :=
-  ws.findIdx? (·.cat == Cat.Aux)
+  ws.findIdx? (·.cat == .AUX)
+
+/-- Is this a nominal category that can be a subject? -/
+def isSubjectCat (c : Cat) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Find the position of the first subject (non-wh DP). -/
 def findSubjectPosition (ws : List Word) : Option Nat :=
-  ws.findIdx? λ w => w.cat == Cat.D && !w.features.wh
+  ws.findIdx? λ w => isSubjectCat w.cat && !w.features.wh
 
 /-- Auxiliary precedes subject. -/
 def auxPrecedesSubject (ws : List Word) : Bool :=

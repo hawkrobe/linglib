@@ -378,6 +378,7 @@ import Linglib.Theories.Montague.Variables
 import Linglib.Theories.Montague.Verb.Aspect
 import Linglib.Theories.Montague.Verb.Attitude.BuilderProperties
 import Linglib.Theories.Montague.Verb.Attitude.CDistributivity
+import Linglib.Theories.Montague.Verb.Attitude.ContrafactiveGap
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Intensional
 import Linglib.Theories.Montague.Verb.Attitude.Parasitic

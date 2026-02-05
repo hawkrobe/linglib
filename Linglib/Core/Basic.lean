@@ -81,20 +81,40 @@ end VForm
 -- Types Without UD Equivalents
 -- ============================================================================
 
-/-- Syntactic categories (coarse-grained, refined per framework).
+/-- Syntactic categories. Aliased to UD.UPOS for cross-linguistic compatibility.
 
-    Note: This will eventually be replaced by or mapped to UD.UPOS.
-    For now it's kept separate because the mapping isn't 1:1. -/
-inductive Cat where
-  | D      -- Determiner / DP
-  | N      -- Noun
-  | V      -- Verb (lexical)
-  | Aux    -- Auxiliary verb
-  | C      -- Complementizer
-  | Wh     -- Wh-phrase
-  | P      -- Preposition
-  | Adj    -- Adjective
-  deriving Repr, DecidableEq, Inhabited
+    UPOS provides 17 universal part-of-speech tags. The old Cat constructors
+    are provided as compatibility aliases:
+    - `Cat.D` → `UPOS.DET` (determiners; use `UPOS.PRON` for pronouns)
+    - `Cat.N` → `UPOS.NOUN` (common nouns; use `UPOS.PROPN` for proper nouns)
+    - `Cat.V` → `UPOS.VERB` (lexical verbs)
+    - `Cat.Aux` → `UPOS.AUX` (auxiliary verbs)
+    - `Cat.C` → `UPOS.SCONJ` (complementizers are subordinating conjunctions)
+    - `Cat.Wh` → `UPOS.PRON` (wh-pronouns; use `UPOS.ADV` for wh-adverbs)
+    - `Cat.P` → `UPOS.ADP` (adpositions)
+    - `Cat.Adj` → `UPOS.ADJ` (adjectives)
+
+    New UPOS tags available: `ADV`, `CCONJ`, `INTJ`, `NUM`, `PART`, `PROPN`, `PUNCT`, `SYM`, `X` -/
+abbrev Cat := UD.UPOS
+
+namespace Cat
+/-- Determiner (compatibility alias for UPOS.DET) -/
+abbrev D : Cat := .DET
+/-- Noun (compatibility alias for UPOS.NOUN) -/
+abbrev N : Cat := .NOUN
+/-- Verb (compatibility alias for UPOS.VERB) -/
+abbrev V : Cat := .VERB
+/-- Auxiliary (compatibility alias for UPOS.AUX) -/
+abbrev Aux : Cat := .AUX
+/-- Complementizer (compatibility alias for UPOS.SCONJ) -/
+abbrev C : Cat := .SCONJ
+/-- Wh-phrase (compatibility alias for UPOS.PRON) -/
+abbrev Wh : Cat := .PRON
+/-- Preposition (compatibility alias for UPOS.ADP) -/
+abbrev P : Cat := .ADP
+/-- Adjective (compatibility alias for UPOS.ADJ) -/
+abbrev Adj : Cat := .ADJ
+end Cat
 
 /-- Transitivity / argument structure. No direct UD equivalent. -/
 inductive Valence where

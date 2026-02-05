@@ -94,9 +94,13 @@ def how : PronounEntry := { form := "how", pronounType := .wh, wh := true }
 -- Conversion to Word
 -- ============================================================================
 
+/-- Is this a wh-adverb (where, when, why, how) rather than a wh-pronoun? -/
+def PronounEntry.isWhAdverb (p : PronounEntry) : Bool :=
+  p.form ∈ ["where", "when", "why", "how"]
+
 def PronounEntry.toWord (p : PronounEntry) : Word :=
   { form := p.form
-  , cat := if p.wh then .Wh else .D
+  , cat := if p.isWhAdverb then .ADV else .PRON
   , features := {
       person := p.person
       , number := p.number

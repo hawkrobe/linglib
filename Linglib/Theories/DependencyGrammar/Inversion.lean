@@ -29,18 +29,26 @@ private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 -- Inversion via Argument Structure Direction
 -- ============================================================================
 
+/-- Is this a nominal category that can be a subject? -/
+def isSubjectCat (c : Cat) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
+/-- Is this word a potential subject? Must be nominal and non-wh. -/
+def isSubjectWord (w : Word) : Bool :=
+  isSubjectCat w.cat && !w.features.wh
+
 /-- Check if auxiliary precedes subject (inverted order) -/
 def auxPrecedesSubject (ws : List Word) : Bool :=
-  let auxPos := ws.findIdx? (·.cat == Cat.Aux)
-  let subjPos := ws.findIdx? (·.cat == Cat.D)
+  let auxPos := ws.findIdx? (·.cat == .AUX)
+  let subjPos := ws.findIdx? isSubjectWord
   match auxPos, subjPos with
   | some a, some s => a < s
   | _, _ => false
 
 /-- Check if subject precedes auxiliary (non-inverted order) -/
 def subjectPrecedesAux (ws : List Word) : Bool :=
-  let auxPos := ws.findIdx? (·.cat == Cat.Aux)
-  let subjPos := ws.findIdx? (·.cat == Cat.D)
+  let auxPos := ws.findIdx? (·.cat == .AUX)
+  let subjPos := ws.findIdx? isSubjectWord
   match auxPos, subjPos with
   | some a, some s => s < a
   | _, _ => false
@@ -56,7 +64,7 @@ def subjectPrecedesAux (ws : List Word) : Bool :=
 def depGrammarLicenses (ws : List Word) (ct : ClauseType) : Bool :=
   match ct with
   | .matrixQuestion => auxPrecedesSubject ws
-  | .declarative => subjectPrecedesAux ws || !ws.any (·.cat == .Aux)
+  | .declarative => subjectPrecedesAux ws || !ws.any (·.cat == .AUX)
   | .embeddedQuestion => subjectPrecedesAux ws  -- No inversion in embedded
   | .echo => true  -- Echo questions don't require inversion
 

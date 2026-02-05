@@ -35,7 +35,7 @@ def after : PrepEntry := { form := "after" }
 def allPrepositions : List PrepEntry := [to, on, in_, at_, by_, with_, from_, before, after]
 
 def PrepEntry.toWord (p : PrepEntry) : Word :=
-  { form := p.form, cat := .P, features := {} }
+  { form := p.form, cat := .ADP, features := {} }
 
 -- ============================================================================
 -- Complementizers
@@ -61,7 +61,7 @@ def while_ : CompEntry := { form := "while" }
 def allComplementizers : List CompEntry := [that, if_, whether, because, although, while_]
 
 def CompEntry.toWord (c : CompEntry) : Word :=
-  { form := c.form, cat := .C, features := {} }
+  { form := c.form, cat := .SCONJ, features := {} }
 
 -- ============================================================================
 -- Auxiliaries
@@ -122,7 +122,7 @@ def allAuxiliaries : List AuxEntry := [
 
 def AuxEntry.toWord (a : AuxEntry) : Word :=
   { form := a.form
-  , cat := .Aux
+  , cat := .AUX
   , features := {
       finite := true
       , person := a.person
@@ -148,7 +148,7 @@ def nor : ConjEntry := { form := "nor" }
 def allConjunctions : List ConjEntry := [and_, or_, but, nor]
 
 def ConjEntry.toWord (c : ConjEntry) : Word :=
-  { form := c.form, cat := .C, features := {} }
+  { form := c.form, cat := .SCONJ, features := {} }
 
 -- ============================================================================
 -- Discourse Particles (Focus-sensitive)

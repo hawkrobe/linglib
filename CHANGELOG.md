@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.68.0] - 2025-02-05
+
+### Added
+- **Theories/Montague/Verb/Attitude/Doxastic.lean**: Roberts & Özyıldız (2025) causal model framework
+  - `CausalModel`, `CausalVar`, `CausalEdge` types for Pearl-style causal graphs
+  - `hasCausalChain`: BFS reachability for causal paths
+  - `beliefFormationModel`: Standard causal model for knowledge/belief formation
+  - `satisfiesPLC`: Predicate Lexicalization Constraint check
+  - `deriveCGRequirement`: Derive CG requirements from veridicality
+  - `contrafactive_gap` theorem: Factives satisfy PLC, strong contrafactives violate it
+  - `contrafactive_gap_is_structural` theorem: The gap emerges from belief formation structure
+- **Theories/Montague/Verb/Attitude/ContrafactiveGap.lean**: Bridge infrastructure
+  - `deriveCGReqFromVerb`: Derive CG requirement from VerbEntry's attitudeBuilder
+  - `effectiveCGReq`: Handle exceptions (yǐwéi) while defaulting to derivation
+  - Per-verb verification theorems for English attitude verbs
+  - `yiwei_exception_justified` theorem: Verifies yǐwéi's exception is necessary
+- **Fragments/Mandarin/Predicates.lean**: Add yǐwéi with postsupposition flag
+  - `yiwei` VerbEntry with `.doxastic .nonVeridical`
+  - `hasExceptionalPostsupposition` function: Theory-neutral flag for exceptional CG behavior
+
+### Changed
+- **Fragments/English/Predicates/Verbal.lean**: Remove `cgRequirement` field
+  - CG requirements now DERIVED in Theory layer, not stipulated in Fragments
+  - Fragments remain theory-neutral (no CGRequirement types)
+- **Architecture**: Clean separation of concerns
+  - Fragments: Theory-neutral lexical data (`attitudeBuilder`)
+  - Theory: Derivation functions (`deriveCGRequirement`)
+  - Bridge: Per-verb verification + exception handling
+
+### Design
+- **Derive, don't stipulate**: CG requirements follow from veridicality
+- **Exceptions in Bridge layer**: yǐwéi's postsupposition handled in ContrafactiveGap.lean
+- **Enforcement theorems**: `yiwei_exception_justified` fails if exception becomes derivable
+
 ## [0.67.0] - 2025-02-05
 
 ### Added
