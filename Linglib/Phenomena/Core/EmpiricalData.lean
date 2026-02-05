@@ -36,6 +36,7 @@ inductive TaskType where
   | production
   | selfPacedReading
   | eyeTracking
+  | actOut
   deriving Repr, DecidableEq
 
 /-- Combined measure specification -/

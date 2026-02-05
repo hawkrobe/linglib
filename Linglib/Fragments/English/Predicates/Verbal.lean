@@ -992,6 +992,63 @@ def isPreferentialAttitude (v : VerbEntry) : Bool :=
 -- Note: isAntiRogative and canEmbedQuestion are derived properties
 -- defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
 
+/-- "investigate" — rogative, embeds interrogatives only, no embedded inversion -/
+def investigate : VerbEntry where
+  form := "investigate"
+  form3sg := "investigates"
+  formPast := "investigated"
+  formPastPart := "investigated"
+  formPresPart := "investigating"
+  verbClass := .simple
+  complementType := .question
+  subjectTheta := some .agent
+  takesQuestionBase := true
+
+/-- "depend_on" — rogative, embeds interrogatives only (Dayal 2025: rogativeCP) -/
+def depend_on : VerbEntry where
+  form := "depend on"
+  form3sg := "depends on"
+  formPast := "depended on"
+  formPastPart := "depended on"
+  formPresPart := "depending on"
+  verbClass := .simple
+  complementType := .question
+  takesQuestionBase := true
+
+/-- "remember" in factive/question-embedding sense:
+    "I remember who left" / "*I remember [was Henry a communist↑]"
+    Distinct from infinitival "remember to VP" (implicative). -/
+def remember_q : VerbEntry where
+  form := "remember"
+  form3sg := "remembers"
+  formPast := "remembered"
+  formPastPart := "remembered"
+  formPresPart := "remembering"
+  verbClass := .factive
+  complementType := .finiteClause
+  subjectTheta := some .experiencer
+  passivizable := false
+  presupType := some .softTrigger
+  factivePresup := true
+  takesQuestionBase := true
+
+/-- "forget" in factive/question-embedding sense:
+    "I have forgotten [did Ann get A's↑]" (McCloskey 2006)
+    Distinct from infinitival "forget to VP" (negative implicative). -/
+def forget_q : VerbEntry where
+  form := "forget"
+  form3sg := "forgets"
+  formPast := "forgot"
+  formPastPart := "forgotten"
+  formPresPart := "forgetting"
+  verbClass := .factive
+  complementType := .finiteClause
+  subjectTheta := some .experiencer
+  passivizable := false
+  presupType := some .softTrigger
+  factivePresup := true
+  takesQuestionBase := true
+
 /--
 Get all verb entries as a list (for enumeration).
 -/
@@ -1018,8 +1075,10 @@ def allVerbs : List VerbEntry := [
   let_, have_causative, get_causative, force,  -- Other causatives
   -- Communication
   say, tell, claim,
-  -- Question-embedding
-  wonder, ask
+  -- Question-embedding (Dayal 2025)
+  wonder, ask, investigate, depend_on,
+  -- Factive question-embedding senses
+  remember_q, forget_q
 ]
 
 -- Note: antiRogativeVerbs and questionEmbeddingVerbs are defined in
