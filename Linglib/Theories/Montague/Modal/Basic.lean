@@ -9,6 +9,7 @@ semantics with Simple/Kripke (1963) primitive-accessibility semantics.
 -/
 
 import Linglib.Theories.Montague.Verb.Attitude.Examples
+import Linglib.Core.ModalLogic
 
 namespace Montague.Modal
 
@@ -16,16 +17,8 @@ open Montague.Verb.Attitude.Examples
 
 section CoreTypes
 
-/-- Modal force: necessity (□) or possibility (◇). -/
-inductive ModalForce where
-  | necessity   -- must, have to, necessarily
-  | possibility -- can, may, might, possibly
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-instance : ToString ModalForce where
-  toString
-    | .necessity => "□"
-    | .possibility => "◇"
+/-- Modal force: necessity (□) or possibility (◇). Reuses `Core.ModalLogic.ModalForce`. -/
+abbrev ModalForce := Core.ModalLogic.ModalForce
 
 /-- A proposition is a function from worlds to truth values. -/
 abbrev Proposition := World → Bool
