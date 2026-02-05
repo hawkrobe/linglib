@@ -46,14 +46,14 @@ c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ  (innocently excludable)
 - McCready, E. (2019). The Semantics and Pragmatics of Honorification. OUP.
 -/
 
-import Linglib.Theories.Montague.Lexicon.Expressives.Basic
+import Linglib.Theories.Montague.Expressives.Basic
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Theories.Montague.Core.Polarity
 
 namespace NeoGricean.ConventionalImplicatures
 
-open Montague.Lexicon.Expressives
+open Montague.Expressives
 open Montague.Core.Polarity (ContextPolarity)
 open NeoGricean (BeliefState)
 
