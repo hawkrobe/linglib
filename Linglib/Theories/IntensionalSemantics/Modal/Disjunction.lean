@@ -38,7 +38,7 @@ Three innovations over Zimmermann:
 -/
 
 import Linglib.Core.Proposition
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 
 namespace IntensionalSemantics.Modal.Disjunction
 

@@ -33,7 +33,7 @@ It then shows `PrProp.orFlex` (flexible accommodation) handles both observations
 - Aloni, M. (2022). Logic and conversation.
 -/
 
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 import Linglib.Core.Kleene
 
 namespace Phenomena.Presupposition.Studies.Yagi2025
@@ -153,7 +153,7 @@ theorem expected_satisfied_at_kingOpens :
 
 -- ══════════════════════════════════════════════════════════
 -- § Flexible accommodation succeeds (Yagi §3.2)
--- Uses PrProp.orFlex from Theories.Core.Presupposition
+-- Uses PrProp.orFlex from Core.Presupposition
 -- ══════════════════════════════════════════════════════════
 
 /-- The flexible accommodation disjunction. -/

@@ -10,7 +10,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Theories.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.CoreferenceTheory
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg

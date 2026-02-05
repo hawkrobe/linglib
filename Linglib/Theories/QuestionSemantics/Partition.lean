@@ -1,5 +1,5 @@
 import Linglib.Theories.QuestionSemantics.Basic
-import Linglib.Theories.Core.QUD
+import Linglib.Core.QUD
 
 /-!
 # Questions/Partition.lean

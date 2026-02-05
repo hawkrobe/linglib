@@ -35,7 +35,7 @@ Where S1(u | w, i) is proportional to informativity of u under interpretation i.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Core.Parse
+import Linglib.Core.Parse
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Theories.TruthConditional.Derivation.Scope
 

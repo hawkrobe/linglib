@@ -35,7 +35,7 @@ This module provides NeoGricean-specific infrastructure:
 - Beaver (2001). Presupposition and Assertion in Dynamic Semantics
 -/
 
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Core.Polarity
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Phenomena.Presupposition.Basic

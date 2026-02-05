@@ -1,5 +1,4 @@
 import Linglib.Core.Basic
-import Linglib.Phenomena.Anaphora.Coreference
 
 /-!
 # CoreferenceTheory

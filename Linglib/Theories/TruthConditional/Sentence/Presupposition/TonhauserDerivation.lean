@@ -87,8 +87,8 @@ information structure (see Core.QUD, Core.InformationStructure).
 - van der Sandt (1993). Presupposition Projection as Anaphora Resolution.
 -/
 
-import Linglib.Theories.Core.CommonGround
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.CommonGround
+import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.LocalContext
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.BeliefEmbedding
 import Linglib.Phenomena.Presupposition.ProjectiveContent

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.72.0] - 2025-02-05
+
+### Changed
+- **Eliminated `Theories/Core/`** — moved all 10 files to `Core/` and `Core/Interfaces/`
+  - `CommonGround`, `Presupposition`, `ProductOfExperts`, `QUD`, `Parse` → `Core/`
+  - `BindingSemantics`, `CoreferenceTheory`, `ImplicatureTheory`, `ScopeTheory`, `SemanticStructure` → `Core/Interfaces/`
+  - Fixes: 6 Phenomena files + 1 Fragments file no longer import from `Theories/`
+  - 47 import sites updated mechanically
+- **Cleaned up theory leakage from Core/**
+  - `SemanticStructure`: parameterized `HasSemanticType S T` over type system (was hardcoded to `Ty`)
+  - `CoreferenceTheory`: removed dead `Phenomena.Anaphora.Coreference` import
+  - `Parse`: moved `ExhPosition`/`exhParses`/`parseHasExhAt` to `NeoGricean/Exhaustivity/Interface`
+
 ## [0.71.0] - 2025-02-05
 
 ### Added

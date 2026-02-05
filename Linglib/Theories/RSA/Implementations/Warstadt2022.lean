@@ -95,7 +95,7 @@ directly from `Core.CommonGround`.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Discourse
-import Linglib.Theories.Core.CommonGround
+import Linglib.Core.CommonGround
 
 namespace RSA.Warstadt2022
 

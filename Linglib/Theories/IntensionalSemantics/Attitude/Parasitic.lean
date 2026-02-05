@@ -40,7 +40,7 @@ The parasitic relationship means:
 
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
-import Linglib.Theories.Core.Presupposition
+import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.BeliefEmbedding
 
 namespace IntensionalSemantics.Attitude.Parasitic

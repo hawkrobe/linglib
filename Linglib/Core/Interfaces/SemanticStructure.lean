@@ -1,14 +1,12 @@
-import Linglib.Theories.TruthConditional.Basic
-
 /-!
 # Semantic Structure Interfaces
 
 Typeclasses defining what compositional semantics needs from syntax.
+Parameterized over an arbitrary type system `T` — TruthConditional instantiates
+with `Ty`, but other theories can supply their own.
 -/
 
 namespace Core.Interfaces
-
-open TruthConditional
 
 /-- Access to lexical/terminal content. -/
 class HasTerminals (S : Type) where
@@ -28,20 +26,20 @@ class HasUnaryProjection (S : Type) where
 /-- Binding sites for λ-abstraction. -/
 class HasBinding (S : Type) where
   /-- Get binding index and body if this is a binder -/
-  getBinder : S → Option (ℕ × S)
+  getBinder : S → Option (Nat × S)
 
-/-- Access to semantic types. -/
-class HasSemanticType (S : Type) where
+/-- Access to semantic types, parameterized over the type system `T`. -/
+class HasSemanticType (S : Type) (T : Type) where
   /-- Get the semantic type of this node -/
-  getType : S → Option Ty
+  getType : S → Option T
 
 /-- Full semantic structure for H&K-style interpretation. -/
-class SemanticStructure (S : Type) extends
+class SemanticStructure (S : Type) (T : Type) extends
     HasTerminals S,
     HasBinaryComposition S,
     HasUnaryProjection S,
     HasBinding S,
-    HasSemanticType S
+    HasSemanticType S T
 
 /-- Check if a node is a terminal. -/
 def isTerminal {S : Type} [HasTerminals S] (s : S) : Bool :=
