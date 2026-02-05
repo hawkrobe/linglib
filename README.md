@@ -2,19 +2,27 @@
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
 
-A Lean 4 library for formal linguistics. The goal is to state linguistic theories precisely enough that a proof assistant can check whether they actually predict the phenomena they claim to explain.
+A Lean 4 library for formal linguistics.
+
+## Why
+
+Formal linguistics has a dependency problem. Theories of modality rely on theories of propositions, which rely on theories of quantification, which rely on theories of types. A change anywhere can silently break things downstream — but the field tracks these dependencies informally, in prose scattered across hundreds of papers.
+
+Linglib puts the theories in one place so a proof assistant can do the bookkeeping:
+
+- **Detect breakage.** If you change your semantics for attitude verbs, Lean tells you exactly which downstream theorems about conditionals, questions, or pragmatic inference no longer follow. No more discovering an inconsistency from a reviewer.
+
+- **Check predictions.** Theories are often stated in notation ambiguous enough to hide gaps between what is claimed and what actually follows from the definitions. Lean won't let a proof go through unless the prediction genuinely follows from the theory.
+
+- **Compare theories.** When two theories (RSA vs. exhaustification, Kratzer vs. Kripke modals) both claim to handle the same data, we can formally characterize where they agree and where they diverge — rather than arguing past each other with different formalisms.
 
 ## How It's Organized
 
 Linglib separates **phenomena** (what we observe) from **theories** (what explains it).
 
-`Phenomena/` contains theory-neutral empirical data — acceptability judgments, experimental results, distributional patterns. For example, `Phenomena/Modality/` records that *"John must be home"* is judged true in certain scenarios, without committing to any particular theory of modals.
+`Phenomena/` contains theory-neutral empirical data — acceptability judgments, experimental results, distributional patterns. `Theories/` contains formal theories that make predictions about those phenomena. The connection between them is explicit: theories prove theorems that reference the data.
 
-`Theories/` contains formal theories that make predictions about those phenomena. For example, `Theories/IntensionalSemantics/Modal/Kratzer.lean` formalizes Kratzer's conversational backgrounds and proves they predict the judgments in `Phenomena/Modality/`.
-
-The payoff: when two theories both claim to handle the same data, we can formally compare their predictions — proving equivalence, identifying divergence, or characterizing the exact boundary between them.
-
-Other top-level directories: `Core/` (shared infrastructure), `Fragments/` (lexical data for specific languages), `Comparisons/` (cross-theory comparisons). See `CLAUDE.md` for the full directory tree.
+Other top-level directories: `Core/` (shared infrastructure like propositions, intensions, accessibility relations), `Fragments/` (lexical data for specific languages), `Comparisons/` (cross-theory results).
 
 ## Building
 
