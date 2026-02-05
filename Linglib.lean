@@ -67,6 +67,7 @@ import Linglib.Phenomena.FillerGap.LongDistance
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
+import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
