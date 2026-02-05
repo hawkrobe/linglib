@@ -157,4 +157,15 @@ theorem easier_higher_discrimination :
     difficultyToDiscrimination .easy > difficultyToDiscrimination .hard := by
   native_decide
 
+/-- Product discrimination is monotone in the gap: larger match-mismatch gap → larger product. -/
+theorem product_discrimination_monotone
+    (match₁ mismatch₁ match₂ mismatch₂ : ℚ)
+    (sizeMatch sizeMismatch : ℚ)
+    (h_gap : match₁ - mismatch₁ ≥ match₂ - mismatch₂)
+    (h_size_nonneg : sizeMatch ≥ 0 ∧ sizeMismatch ≥ 0)
+    (h_size_order : sizeMatch ≥ sizeMismatch) :
+    match₁ * sizeMatch - mismatch₁ * sizeMismatch ≥
+    match₂ * sizeMatch - mismatch₂ * sizeMismatch := by
+  sorry
+
 end RSA.Noise
