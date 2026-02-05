@@ -11,7 +11,6 @@ inductive Cat where
   | V      -- Verb (lexical)
   | Aux    -- Auxiliary verb
   | C      -- Complementizer
-  | T      -- Tense (Minimalism)
   | Wh     -- Wh-phrase
   | P      -- Preposition
   | Adj    -- Adjective
