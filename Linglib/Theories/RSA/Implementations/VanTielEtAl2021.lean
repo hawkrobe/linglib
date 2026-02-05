@@ -31,13 +31,13 @@ This file uses the unified RSA infrastructure:
 
 ## Grounding
 
-Connects to `Montague.Quantifiers` for threshold semantics.
+Connects to `TruthConditional.Quantifiers` for threshold semantics.
 -/
 
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.ChainComparison
 import Linglib.Theories.RSA.Domains.Quantities
-import Linglib.Theories.Montague.Determiner.Quantifier
+import Linglib.Theories.TruthConditional.Determiner.Quantifier
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Mathlib.Data.Rat.Defs
 

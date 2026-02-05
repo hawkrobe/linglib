@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-!
 # Japanese Noun Lexicon Fragment
@@ -11,7 +11,7 @@ nouns freely occur as arguments with multiple interpretations.
 
 namespace Fragments.Japanese.Nouns
 
-open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Japanese noun. -/
 structure NounEntry where

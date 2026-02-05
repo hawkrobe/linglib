@@ -13,16 +13,16 @@ This allows CCG derivations to feed into pragmatics (NeoGricean, RSA).
 
 import Linglib.Theories.CCG.Core.Basic
 import Linglib.Theories.CCG.Bridge.Interface
-import Linglib.Theories.Montague.Core.Derivation
-import Linglib.Theories.Montague.Core.Lexicon
+import Linglib.Theories.TruthConditional.Core.Derivation
+import Linglib.Theories.TruthConditional.Core.Lexicon
 
 namespace CCG.Interpret
 
 open CCG
-open Montague
-open Montague.SemDeriv
--- Note: Don't open Montague.Core to avoid SemLexEntry name conflict with CCG.Semantics
--- We use qualified names: Montague.Core.SemLexEntry, Montague.Core.toyLexicon
+open TruthConditional
+open TruthConditional.SemDeriv
+-- Note: Don't open TruthConditional.Core to avoid SemLexEntry name conflict with CCG.Semantics
+-- We use qualified names: TruthConditional.Core.SemLexEntry, TruthConditional.Core.toyLexicon
 
 -- Extract Words from Derivation
 
@@ -40,8 +40,8 @@ def getWords : DerivStep → List String
 -- Identify Scalar Items
 
 /-- Check if a word form is a scalar item and return its lexical entry -/
-def getScalarEntry (form : String) : Option (Montague.Core.SemLexEntry toyModel) :=
-  match Montague.Core.toyLexicon form with
+def getScalarEntry (form : String) : Option (TruthConditional.Core.SemLexEntry toyModel) :=
+  match TruthConditional.Core.toyLexicon form with
   | some entry => if entry.isScalar then Option.some entry else none
   | none => none
 

@@ -34,8 +34,8 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
-import Linglib.Theories.Montague.Domain.Degree
-import Linglib.Theories.Montague.Core.Polarity
+import Linglib.Theories.TruthConditional.Domain.Degree
+import Linglib.Theories.TruthConditional.Core.Polarity
 import Linglib.Core.Proposition
 
 namespace RSA.Implementations.YoonEtAl2020
@@ -334,7 +334,7 @@ theorem softNot_involutive : ∀ p : SoftProp, softNot (softNot p) = p := by
 /-- softNot is antitone (downward entailing).
 
 If `p s ≤ q s` for all states, then `softNot q s ≤ softNot p s`.
-This is the soft analog of `pnot_isDownwardEntailing` from Montague. -/
+This is the soft analog of `pnot_isDownwardEntailing` from TruthConditional. -/
 theorem softNot_antitone : ∀ p q : SoftProp,
     (∀ s, p s ≤ q s) → (∀ s, softNot q s ≤ softNot p s) := by
   intro p q hpq s
@@ -354,7 +354,7 @@ theorem negation_is_compositional :
 
 -- PART 9b: Connection to Montague's pnot
 
-open Montague.Core.Polarity in
+open TruthConditional.Core.Polarity in
 /-- softNot mirrors pnot structure.
 
 Both negation operators share the same algebraic structure:

@@ -40,8 +40,8 @@ import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
 
 namespace Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
 
-open Montague.Core.Time
-open Montague.Sentence.Mood
+open TruthConditional.Core.Time
+open IntensionalSemantics.Mood
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.IntensionalCDRT.Situations
 open Theories.DynamicSemantics.Core

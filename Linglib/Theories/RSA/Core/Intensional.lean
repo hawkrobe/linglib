@@ -26,11 +26,11 @@ Montague evaluation.
 import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Option.Basic
-import Linglib.Theories.Montague.Intensional.Basic
+import Linglib.Theories.IntensionalSemantics.Basic
 
 namespace RSA.Intensional
 
-open Montague.Intensional
+open IntensionalSemantics
 
 -- Propositional Derivations (type t only)
 

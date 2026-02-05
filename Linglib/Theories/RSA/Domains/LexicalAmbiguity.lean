@@ -43,14 +43,14 @@ Lexical ambiguity maps to Lexical Uncertainty RSA:
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Core.ProductOfExperts
-import Linglib.Theories.Montague.Verb.SelectionalPreferences
-import Linglib.Theories.Montague.Frames.Basic
+import Linglib.Theories.TruthConditional.Verb.SelectionalPreferences
+import Linglib.Theories.TruthConditional.Frames.Basic
 
 namespace RSA.Domains.LexicalAmbiguity
 
 open Core.ProductOfExperts
-open Montague.Verb.SelectionalPreferences
-open Montague.Frames
+open TruthConditional.Verb.SelectionalPreferences
+open TruthConditional.Frames
 
 -- Helper Functions
 

@@ -40,13 +40,13 @@ The mood operators from `Sentence/Mood/Basic.lean` have dynamic counterparts:
 
 import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
 import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
-import Linglib.Theories.Montague.Core.Time
-import Linglib.Theories.Montague.Sentence.Mood.Basic
+import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Theories.IntensionalSemantics.Mood.Basic
 
 namespace Theories.DynamicSemantics.IntensionalCDRT.Situations
 
-open Montague.Core.Time
-open Montague.Sentence.Mood
+open TruthConditional.Core.Time
+open IntensionalSemantics.Mood
 open Theories.DynamicSemantics.IntensionalCDRT
 open Theories.DynamicSemantics.Core
 

@@ -43,14 +43,14 @@ This factorization enables:
 import Linglib.Theories.SDS.Core
 import Linglib.Theories.SDS.ThresholdInstances
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Theories.Montague.BayesianSemantics
+import Linglib.Theories.TruthConditional.Graded.BayesianSemantics
 
 namespace SDS.Marginalization
 
 open SDS.Core
 open SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
-open Theories.Montague.BayesianSemantics
+open Theories.TruthConditional.BayesianSemantics
 
 
 /-!

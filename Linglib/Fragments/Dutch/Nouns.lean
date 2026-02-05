@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-!
 # Dutch Noun Lexicon Fragment
@@ -13,7 +13,7 @@ still be kind-referring, supporting Krifka (2004) over Chierchia (1998).
 
 namespace Fragments.Dutch.Nouns
 
-open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple)
+open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 /-- A lexical entry for a Dutch noun. -/
 structure NounEntry where

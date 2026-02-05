@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-! # French Noun Lexicon Fragment
 
@@ -8,7 +8,7 @@ French NP structure with gender. Bare arguments restricted (Chierchia 1998 [-arg
 
 namespace Fragments.French.Nouns
 
-open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 
 /-- Grammatical gender -/

@@ -53,7 +53,7 @@ open NeoGricean.Markedness
 open NeoGricean.Alternatives
 open Phenomena.Gradability.Evaluativity
 open RSA.Domains.Degrees
-open Montague.Adjective
+open TruthConditional.Adjective
 
 
 /--

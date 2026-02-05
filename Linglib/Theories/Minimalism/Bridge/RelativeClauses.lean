@@ -39,7 +39,7 @@ import Linglib.Theories.Minimalism.Core.Basic
 
 namespace Minimalism.Bridge.RelativeClauses
 
-open Montague Montague.Variables Montague.Modification
+open TruthConditional TruthConditional.Variables TruthConditional.Modification
 open Minimalism.Semantics
 
 -- ============================================================================
@@ -332,8 +332,8 @@ theorem trace_example_has_index : getTraceIndex traceExample = some 1 := rfl
 This module uses:
 - `Minimalism.Core.Basic` for syntactic structures with traces
 - `Minimalism.Bridge.Interface` for trace interpretation
-- `Montague.Variables` for assignments and λ-abstraction
-- `Montague.Modification` for Predicate Modification
+- `TruthConditional.Variables` for assignments and λ-abstraction
+- `TruthConditional.Modification` for Predicate Modification
 
 The derivation shows how Minimalist LF structures (with traces and
 movement) receive compositional semantic interpretations following

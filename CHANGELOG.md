@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.69.0] - 2025-02-05
+
+### Changed
+- **Major reorganization: Montague/ → TruthConditional/ + IntensionalSemantics/ + QuestionSemantics/**
+  - `Theories/Montague/` split into three modules reflecting standard subfield boundaries
+  - **TruthConditional/**: Extensional semantics (entities, truth values, sets)
+    - Quantifiers, entailment, focus, presupposition, composition, adjectives, nouns, tense, aspect
+  - **IntensionalSemantics/**: Possible-worlds semantics (29 files)
+    - `Modal/`: Kratzer conversational backgrounds, Simple modal semantics, comparisons (7 files)
+    - `Attitude/`: Doxastic, preferential, parasitic attitude verbs (7 files)
+    - `Conditional/`: Material, strict, variably strict, causal model conditionals (7 files)
+    - `Causative/`: Causative verb semantics (6 files)
+    - `Mood/`: Sentence mood (1 file)
+    - `Basic.lean`: Core intensional types
+  - **QuestionSemantics/**: Hamblin, partition, inquisitive semantics (18 files)
+- **Core/Duality.lean, Core/Scales.lean**: Moved from Montague/ to Core/ (framework-agnostic)
+- **CLAUDE.md**: Updated architecture documentation for new module structure
+- All import paths and namespaces updated across 181 files
+
 ## [0.68.0] - 2025-02-05
 
 ### Added

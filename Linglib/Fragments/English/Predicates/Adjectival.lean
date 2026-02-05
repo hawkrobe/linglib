@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Adjective.Theory
+import Linglib.Theories.TruthConditional.Adjective.Theory
 
 /-! # Adjectival Predicate Lexicon Fragment
 
@@ -7,8 +7,8 @@ Gradable adjective entries following Kennedy (2007). Scale type, dimension, anto
 
 namespace Fragments.English.Predicates.Adjectival
 
-open Montague.Adjective (ScaleType AntonymRelation GradableAdjEntry)
-open Montague.Domain.Degrees (NegationType)
+open TruthConditional.Adjective (ScaleType AntonymRelation GradableAdjEntry)
+open TruthConditional.Domain.Degrees (NegationType)
 
 
 /--

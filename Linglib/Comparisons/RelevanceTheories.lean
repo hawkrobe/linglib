@@ -44,9 +44,9 @@ U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 - Blackwell, D. (1953). Equivalent Comparisons of Experiments.
 -/
 
-import Linglib.Theories.Montague.Question.DecisionTheory
-import Linglib.Theories.Montague.Question.Partition
-import Linglib.Theories.Montague.Question.GSVanRooyBridge
+import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Theories.QuestionSemantics.Partition
+import Linglib.Theories.QuestionSemantics.GSVanRooyBridge
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.CombinedUtility
 import Linglib.Theories.RSA.Questions.Basic
@@ -55,7 +55,7 @@ import Mathlib.Tactic.Ring
 
 namespace Theories.Comparisons.Relevance
 
-open Montague.Question
+open QuestionSemantics
 open RSA.Questions
 open scoped GSQuestion  -- For ⊑ notation
 

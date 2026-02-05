@@ -1,4 +1,4 @@
-import Linglib.Theories.Montague.Basic
+import Linglib.Theories.TruthConditional.Basic
 
 /-!
 # Semantic Structure Interfaces
@@ -8,7 +8,7 @@ Typeclasses defining what compositional semantics needs from syntax.
 
 namespace Core.Interfaces
 
-open Montague
+open TruthConditional
 
 /-- Access to lexical/terminal content. -/
 class HasTerminals (S : Type) where

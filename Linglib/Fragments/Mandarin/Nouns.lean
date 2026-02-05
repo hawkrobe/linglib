@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.Montague.Noun.Kind.Chierchia1998
+import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-!
 # Mandarin Chinese Noun Lexicon Fragment
@@ -11,7 +11,7 @@ classifiers required for counting, bare nouns freely occur as arguments.
 
 namespace Fragments.Mandarin.Nouns
 
-open Montague.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Mandarin noun (no plural forms, kind-denoting). -/
 structure NounEntry where

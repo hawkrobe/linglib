@@ -33,7 +33,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Turkish.Predicates
-import Linglib.Theories.Montague.Verb.Attitude.BuilderProperties
+import Linglib.Theories.IntensionalSemantics.Attitude.BuilderProperties
 
 namespace Phenomena.QingEtAl2025
 
@@ -146,7 +146,7 @@ We can verify that predictions match observations:
 
 ```lean
 -- From Theory (BuilderProperties.lean), derived from Fragment entry:
-Montague.Verb.Attitude.BuilderProperties.AttitudeBuilder.nvpClass hope.attitudeBuilder = some .class3_cDist_positive
+IntensionalSemantics.Attitude.BuilderProperties.AttitudeBuilder.nvpClass hope.attitudeBuilder = some .class3_cDist_positive
 -- This predicts: canTakeQuestion = false
 
 -- From Phenomena/QingEtAl2025/Data.lean:

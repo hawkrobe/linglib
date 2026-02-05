@@ -34,9 +34,9 @@ Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
-import Linglib.Theories.Montague.Sentence.Entailment.Basic
-import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
-import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
+import Linglib.Theories.TruthConditional.Sentence.Entailment.Monotonicity
+import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Theories.Core.Interfaces.ImplicatureTheory
@@ -46,7 +46,7 @@ namespace NeoGricean.ScalarImplicatures
 open NeoGricean.Alternatives
 open NeoGricean
 open NeoGricean.Exhaustivity
-open Montague.Core.Polarity (ContextPolarity)
+open TruthConditional.Core.Polarity (ContextPolarity)
 open Phenomena.ScalarImplicatures
 
 
@@ -148,7 +148,7 @@ structure DisjunctionAnalysis where
   deriving Repr
 
 -- Note: connectiveCheckerString is defined in Alternatives.lean
--- It's grounded in Montague.Scales.Connectives.entails
+-- It's grounded in Core.Scales.Connectives.entails
 
 /--
 Analyze a simple disjunction in UE context.
@@ -398,15 +398,15 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarI
 ```
 -/
 
-open Montague
-open Montague.SemDeriv
-open Montague.Core
+open TruthConditional
+open TruthConditional.SemDeriv
+open TruthConditional.Core
 
 /--
 Map scale membership to the appropriate HornSet and EntailmentChecker.
 
 Uses string-based versions for interface with SemDeriv, but these
-are backed by type-safe implementations grounded in Montague.Scales.
+are backed by type-safe implementations grounded in Core.Scales.
 -/
 def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
   match sm with
@@ -460,7 +460,7 @@ Example: "some students sleep" via CCG
 Using the CCG derivation from CCG/Interpret.lean:
 -/
 def someStudentsSleep_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Montague.SemDeriv.someStudentsSleep .upward
+  deriveFromDerivation TruthConditional.SemDeriv.someStudentsSleep .upward
 
 /--
 Theorem: "some students sleep" derives "not(all)"
@@ -485,7 +485,7 @@ Example: "every student sleeps" in UE
 "every" is at the top of the quantifier scale, so no stronger alternatives.
 -/
 def everyStudentsSleeps_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Montague.SemDeriv.everyStudentSleeps .upward
+  deriveFromDerivation TruthConditional.SemDeriv.everyStudentSleeps .upward
 
 /--
 Theorem: "every student sleeps" has no implicatures
@@ -504,7 +504,7 @@ In a downward-entailing context (e.g., "No one thinks some students sleep"),
 the "not all" implicature is blocked.
 -/
 def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Montague.SemDeriv.someStudentsSleep .downward
+  deriveFromDerivation TruthConditional.SemDeriv.someStudentsSleep .downward
 
 /--
 Theorem: "some" in DE has no "not all" implicature
@@ -1434,7 +1434,7 @@ namespace NeoGricean
 
 open Interfaces
 open NeoGricean.Alternatives
-open Montague.Core.Polarity (ContextPolarity)
+open TruthConditional.Core.Polarity (ContextPolarity)
 
 /-- Marker type for the NeoGricean theory -/
 structure NeoGriceanTheory

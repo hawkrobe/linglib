@@ -48,7 +48,7 @@ The M&S decomposition maps directly onto Montague/Conjunction.lean:
 -/
 
 import Linglib.Core.Empirical
-import Linglib.Theories.Montague.Conjunction
+import Linglib.Theories.TruthConditional.Conjunction
 
 namespace Phenomena.Coordination.Studies.BillEtAl2025
 
@@ -167,7 +167,7 @@ The result: {Mary} ⊆ ⟦sleep⟧ ∧ {Susan} ⊆ ⟦sleep⟧
          = sleep(Mary) ∧ sleep(Susan)
 -/
 
-open Montague.Conjunction in
+open TruthConditional.Conjunction in
 /--
 Type-raising an entity and checking subset inclusion of its singleton
 is equivalent to applying the predicate directly.
@@ -175,15 +175,15 @@ is equivalent to applying the predicate directly.
 This is the core of the M&S decomposition: the roundtrip through
 ☉ + MU + J recovers ordinary conjunction semantics.
 -/
-theorem typeRaise_incl_reduces {m : Montague.Model} (e : m.Entity) (p : m.Entity → Bool) :
+theorem typeRaise_incl_reduces {m : TruthConditional.Model} (e : m.Entity) (p : m.Entity → Bool) :
     typeRaise e p = p e := rfl
 
-open Montague.Conjunction in
+open TruthConditional.Conjunction in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
 -/
-theorem ms_decomposition_eq_coord {m : Montague.Model} (e1 e2 : m.Entity)
+theorem ms_decomposition_eq_coord {m : TruthConditional.Model} (e1 e2 : m.Entity)
     (p : m.Entity → Bool) :
     (typeRaise e1 p && typeRaise e2 p) = coordEntities e1 e2 p := rfl
 

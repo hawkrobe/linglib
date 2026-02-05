@@ -54,12 +54,12 @@ Section 6: Relationship to Focus
 
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Core.Alternatives
-import Linglib.Theories.Montague.Core.Derivation
+import Linglib.Theories.TruthConditional.Core.Derivation
 
 namespace NeoGricean.FoxSpector2018
 
 open NeoGricean.Exhaustivity
-open Montague.Core.Polarity (ContextPolarity)
+open TruthConditional.Core.Polarity (ContextPolarity)
 
 -- SECTION 2: HURFORD'S CONSTRAINT
 

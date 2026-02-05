@@ -50,12 +50,12 @@ Context sets:
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Verb.ChangeOfState.Theory
+import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 
 namespace RSA.QingEtAl2016
 
 open RSA.Eval
-open Montague.Verb.ChangeOfState
+open TruthConditional.Verb.ChangeOfState
 
 
 /--

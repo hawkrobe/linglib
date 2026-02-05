@@ -14,11 +14,11 @@ Word order affects available quantifier scope readings in verb-final constructio
 - Kayne (1983, 1998). Scope and word order.
 -/
 
-import Linglib.Theories.Montague.Derivation.Scope
+import Linglib.Theories.TruthConditional.Derivation.Scope
 
 namespace Phenomena.ScopeWordOrder
 
-open Montague.Scope
+open TruthConditional.Scope
 
 /-- Word order patterns in verb-final constructions. -/
 inductive VerbOrder where

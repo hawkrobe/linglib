@@ -40,12 +40,12 @@ def scenario := Scope.everyNotScenario 3
 -/
 
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Derivation.Scope
+import Linglib.Theories.TruthConditional.Derivation.Scope
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Scope
 
-open Montague.Derivation.Scope (ScopeConfig)
+open TruthConditional.Derivation.Scope (ScopeConfig)
 
 -- Outcome Worlds
 

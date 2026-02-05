@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Complementation.Typology
-import Linglib.Theories.Montague.Question.LeftPeriphery
-import Linglib.Theories.Montague.Sentence.Mood.Basic
+import Linglib.Theories.QuestionSemantics.LeftPeriphery
+import Linglib.Theories.IntensionalSemantics.Mood.Basic
 
 /-! # Complementation Bridge Theorems
 
@@ -25,8 +25,8 @@ namespace Phenomena.Complementation.Bridge
 
 open Phenomena.Complementation.Typology
 open Fragments.English.Predicates.Verbal
-open Montague.Question.LeftPeriphery
-open Montague.Sentence.Mood
+open QuestionSemantics.LeftPeriphery
+open IntensionalSemantics.Mood
 
 -- ============================================================================
 -- A. Bridge 1: CTPClass ↔ VerbEntry

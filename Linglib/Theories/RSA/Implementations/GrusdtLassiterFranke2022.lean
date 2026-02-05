@@ -35,7 +35,7 @@ likely phrases (likely A, likely C, etc.)
 ## Grounding
 
 The meaning of conditionals is grounded in the assertability condition from
-`Montague.Sentence.Conditional.Assertability`:
+`IntensionalSemantics.Conditional.Assertability`:
 
 ```
 L0_conditional_meaning = conditionalSemantics
@@ -50,14 +50,14 @@ L0_conditional_meaning = conditionalSemantics
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.Montague.Sentence.Conditional.CausalBayesNet
-import Linglib.Theories.Montague.Sentence.Conditional.Assertability
+import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
+import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 
 namespace RSA.GrusdtLassiterFranke2022
 
-open Theories.Montague.Conditional.CausalBayesNet
+open Theories.TruthConditional.Conditional.CausalBayesNet
 open RSA.Eval
-open Montague.Sentence.Conditional.Assertability
+open IntensionalSemantics.Conditional.Assertability
 
 -- Utterance Types
 
@@ -164,7 +164,7 @@ def softConjunctionSemantics (ws : WorldState) : ℚ :=
   ws.pAC
 
 /--
-Conditional semantics: P(C|A) > θ (from Montague.Sentence.Conditional.Assertability)
+Conditional semantics: P(C|A) > θ (from IntensionalSemantics.Conditional.Assertability)
 
 This is the grounding: we use the assertability condition directly.
 -/
@@ -417,7 +417,7 @@ def L1_causalRelation (u : Utterance) (α : ℕ := 1) : List (CausalRelation × 
 **Grounding Theorem**: L0 conditional meaning equals Montague assertability.
 
 The RSA model's literal listener interprets conditionals using the
-assertability condition from `Montague.Sentence.Conditional.Assertability`.
+assertability condition from `IntensionalSemantics.Conditional.Assertability`.
 
 This proves that the RSA model is grounded in compositional semantics.
 -/
@@ -628,7 +628,7 @@ theorem semantics_causal_independent (u : Utterance) (ws : WorldState)
 The material conditional p → q does NOT entail the perfected reading ¬p → ¬q.
 This is a semantic fact: there exist worlds where (p → q) is true but (¬p → ¬q) is false.
 
-See `Montague.Sentence.Conditional.Basic.perfection_not_entailed` for the proof.
+See `IntensionalSemantics.Conditional.Basic.perfection_not_entailed` for the proof.
 -/
 theorem perfection_not_semantic : ∃ (ws : WorldState),
     conditionalSemantics ws conditionalThreshold = 1 ∧
@@ -801,7 +801,7 @@ theorem model_demonstrates :
    the causal relation that L1 infers.
 
 3. **Grounding in Assertability**: The conditional semantics is exactly
-   the assertability condition from Montague.Sentence.Conditional.
+   the assertability condition from IntensionalSemantics.Conditional.
 
 ## References
 
