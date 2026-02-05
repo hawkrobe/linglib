@@ -147,6 +147,11 @@ theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
     if sem θ₀ x then 1 else 0 := by
   simp only [gradedTruth, FinitePMF.prob, FinitePMF.expect_pure]
 
+/-- Graded truth unfolds to expected value of the Boolean indicator. -/
+theorem gradedTruth_eq_expect (sem : Θ → E → Bool) (prior : FinitePMF Θ) (x : E) :
+    (ParamPred.mk sem prior).gradedTruth x =
+    prior.expect (λ θ => if sem θ x then 1 else 0) := rfl
+
 end ParamPred
 
 -- Example: Threshold Predicates (Lassiter & Goodman Style)

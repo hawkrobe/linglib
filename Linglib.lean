@@ -6,7 +6,6 @@ and their interfaces. See README.md for documentation links.
 -/
 
 -- Core
-import Linglib.Conjectures
 import Linglib.Core.Basic
 import Linglib.Core.CommonGround
 import Linglib.Core.Distribution
