@@ -32,7 +32,7 @@ Scalar adjectives have a free threshold variable:
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.Distribution
+import Linglib.Theories.RSA.Core.Distribution
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.LassiterGoodman2017

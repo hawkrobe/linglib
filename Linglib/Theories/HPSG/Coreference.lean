@@ -27,7 +27,7 @@ Pollard & Sag (1994) Chapter 6.
 
 import Linglib.Core.Basic
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 
 namespace HPSG.Coreference
 

@@ -8,7 +8,7 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 
 import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Question.Hamblin
-import Linglib.Core.SatisfactionOrdering
+import Linglib.Theories.Montague.Modal.SatisfactionOrdering
 
 namespace Montague.Modal.PhillipsBrown
 

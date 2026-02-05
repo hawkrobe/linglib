@@ -37,7 +37,7 @@ Geurts & Pouscoulous (2009) verification task: 34% SI rate
 - Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
 -/
 
-import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Theories.Core.Interfaces.ImplicatureTheory
 import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.RSA.ScalarImplicatures.Basic
 

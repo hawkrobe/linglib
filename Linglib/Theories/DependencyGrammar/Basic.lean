@@ -21,7 +21,6 @@ References:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Grammar
 
 namespace DepGrammar
 

@@ -17,7 +17,6 @@ Key characteristics:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Grammar
 
 namespace HPSG
 

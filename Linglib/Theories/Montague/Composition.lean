@@ -35,7 +35,7 @@ the typeclasses in `Core/Interfaces/SemanticStructure.lean`.
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Modification
-import Linglib.Core.Interfaces.SemanticStructure
+import Linglib.Theories.Core.Interfaces.SemanticStructure
 
 namespace Montague.Composition
 

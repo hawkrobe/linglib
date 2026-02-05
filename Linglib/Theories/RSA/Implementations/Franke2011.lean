@@ -16,8 +16,8 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
-import Linglib.Core.Softmax.Basic
-import Linglib.Core.Softmax.Limits
+import Linglib.Theories.RSA.Core.Softmax.Basic
+import Linglib.Theories.RSA.Core.Softmax.Limits
 
 namespace RSA.IBR
 

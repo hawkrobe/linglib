@@ -31,7 +31,7 @@ the "mildly context-sensitive" property (polynomial parsing).
 - Vijay-Shanker & Weir (1994). The equivalence of CCG, TAG, and LIG
 -/
 
-import Linglib.Core.FormalLanguageTheory
+import Linglib.Theories.CCG.FormalLanguageTheory
 import Linglib.Theories.CCG.CrossSerial
 import Linglib.Theories.CCG.Basic
 

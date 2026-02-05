@@ -1,3 +1,5 @@
+import Mathlib.Data.Rat.Defs
+
 /-!
 # English Scales
 
@@ -13,8 +15,6 @@ Horn scales for quantifiers, modals, and degrees.
 - Horn (1972). On the semantic properties of logical operators in English.
 - Kennedy (2007). Vagueness and grammar.
 -/
-
-import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.Scales
 

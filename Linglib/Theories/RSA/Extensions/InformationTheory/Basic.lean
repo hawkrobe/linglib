@@ -39,7 +39,7 @@ This connects pragmatic reasoning to optimal lossy compression.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.BasicQ
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.RationalPower
+import Linglib.Theories.RSA.Core.RationalPower
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.InformationTheory

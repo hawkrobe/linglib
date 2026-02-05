@@ -44,7 +44,7 @@ For simple transitives, predictions are identical. Differences emerge with:
 
 import Linglib.Core.Basic
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 
 namespace DepGrammar.CRDC
 

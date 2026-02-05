@@ -25,7 +25,7 @@ This module provides:
 
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.Determiner.Quantifier
-import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Theories.Core.Interfaces.ScopeTheory
 
 namespace Montague.Derivation.Scope
 

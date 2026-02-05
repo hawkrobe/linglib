@@ -44,7 +44,7 @@ This avoids the Limit Assumption!
 import Linglib.Theories.Montague.Verb.Attitude.Examples
 import Linglib.Theories.Montague.Modal.Basic
 import Linglib.Core.Proposition
-import Linglib.Core.SatisfactionOrdering
+import Linglib.Theories.Montague.Modal.SatisfactionOrdering
 import Mathlib.Order.Basic
 
 namespace Montague.Modal.Kratzer

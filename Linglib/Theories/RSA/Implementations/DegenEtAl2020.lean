@@ -9,7 +9,7 @@ via asymmetric noise across feature types (color reliable, size noisy).
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Noise
-import Linglib.Core.ProductOfExperts
+import Linglib.Theories.Core.ProductOfExperts
 import Linglib.Theories.RSA.Domains.ReferenceGames
 import Mathlib.Data.Rat.Defs
 

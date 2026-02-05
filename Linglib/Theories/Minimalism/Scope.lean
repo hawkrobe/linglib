@@ -24,7 +24,7 @@ Inverse scope is unavailable when:
 - Szabolcsi (2010). Quantification.
 -/
 
-import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Theories.Core.Interfaces.ScopeTheory
 import Linglib.Phenomena.Quantification.ScopeFreezing
 
 namespace Minimalism.Scope

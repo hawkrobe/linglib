@@ -38,7 +38,7 @@ For a sentence S with embedded clause φ at position i:
 - Karttunen (1974). Presupposition and Linguistic Context.
 -/
 
-import Linglib.Core.CommonGround
+import Linglib.Theories.Core.CommonGround
 import Linglib.Core.Presupposition
 
 namespace Montague.Sentence.Presupposition.LocalContext

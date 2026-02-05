@@ -27,7 +27,7 @@ CCG predicts this connection between word order and scope.
 -/
 
 import Linglib.Theories.CCG.Basic
-import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Theories.Core.Interfaces.ScopeTheory
 
 namespace CCG.Scope
 

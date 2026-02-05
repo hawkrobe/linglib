@@ -1,5 +1,5 @@
 import Linglib.Theories.Montague.Question.Inquisitive
-import Linglib.Core.Distribution
+import Linglib.Theories.RSA.Core.Distribution
 
 /-!
 # Probabilistic Answerhood (Thomas 2026)

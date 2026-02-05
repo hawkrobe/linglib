@@ -1,5 +1,5 @@
 import Linglib.Theories.Montague.Question.Basic
-import Linglib.Core.QUD
+import Linglib.Theories.Core.QUD
 
 /-!
 # Questions/Partition.lean

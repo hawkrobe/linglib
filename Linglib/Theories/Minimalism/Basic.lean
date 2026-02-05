@@ -15,7 +15,6 @@ The Minimalist Program (Chomsky 1995+) builds structure through:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Grammar
 
 namespace Minimalism
 
