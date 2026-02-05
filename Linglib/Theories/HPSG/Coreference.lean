@@ -1,28 +1,8 @@
 /-
-# HPSG Coreference (Binding)
+HPSG Coreference (Binding).
 
-Coreference constraints using HPSG's feature-based approach, following
-Pollard & Sag (1994) Chapter 6.
-
-## Mechanism
-
-- **Binding Domain**: Defined via LOCAL feature structure
-- **O-command**: Uses obliqueness hierarchy (subject > object > ...)
-- **Reflexives**: Must be o-commanded by coindexed antecedent locally
-- **Pronouns**: Must NOT be o-commanded by coindexed antecedent locally
-
-## Key Differences from Minimalism
-
-| Minimalism | HPSG |
-|------------|------|
-| C-command (structural) | O-command (obliqueness) |
-| Phase/clause locality | LOCAL feature percolation |
-| Movement-based | Constraint-based |
-
-## References
-
-- Pollard, C. & I. Sag (1994). Head-Driven Phrase Structure Grammar, Ch. 6.
-- Sag, I., T. Wasow & E. Bender (2003). Syntactic Theory, Ch. 5.
+O-command-based binding using obliqueness hierarchy and LOCAL feature domains.
+Pollard & Sag (1994) Ch. 6, Sag, Wasow & Bender (2003) Ch. 5.
 -/
 
 import Linglib.Fragments.English.Nouns
@@ -45,18 +25,16 @@ private abbrev them := Fragments.English.Pronouns.them.toWord
 
 namespace HPSG.Coreference
 
--- ============================================================================
--- Part 1: Nominal Types (same classification as Minimalism)
--- ============================================================================
+section NominalTypes
 
-/-- Types of nominal expressions for coreference -/
+/-- Types of nominal expressions for coreference. -/
 inductive NominalType where
   | reflexive   -- himself, herself, themselves
   | pronoun     -- he, she, they, him, her, them
   | rExpression -- John, Mary, the cat
   deriving Repr, DecidableEq
 
-/-- Classify a word as a nominal type -/
+/-- Classify a word as a nominal type. -/
 def classifyNominal (w : Word) : Option NominalType :=
   if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
     some .reflexive
@@ -67,16 +45,11 @@ def classifyNominal (w : Word) : Option NominalType :=
   else
     none
 
--- ============================================================================
--- Part 2: Obliqueness Hierarchy
--- ============================================================================
+end NominalTypes
 
-/-- Position in argument structure (obliqueness ranking)
+section Obliqueness
 
-    In HPSG, binding is based on the obliqueness hierarchy:
-    Subject > Direct Object > Indirect Object > Obliques
-
-    Lower numbers = less oblique = higher on hierarchy -/
+/-- Position in argument structure (obliqueness ranking). -/
 inductive ArgPosition where
   | subject : ArgPosition       -- Most prominent
   | directObject : ArgPosition  -- Less prominent
@@ -95,30 +68,22 @@ def lessOblique (pos1 pos2 : ArgPosition) : Bool :=
   | .indirectObject, .oblique => true
   | _, _ => false
 
-/-- O-command: A o-commands B iff A is less oblique than B
-
-    This replaces c-command in HPSG binding theory -/
+/-- O-command: A o-commands B iff A is less oblique than B. -/
 def oCommands (pos1 pos2 : ArgPosition) : Bool :=
   lessOblique pos1 pos2
 
--- ============================================================================
--- Part 3: LOCAL Feature Structure (Simplified)
--- ============================================================================
+end Obliqueness
 
-/-- Simple clause structure for HPSG coreference checking
+section LocalFeatureStructure
 
-    The LOCAL feature in HPSG includes:
-    - CAT (category, valence)
-    - CONT (content/semantics)
-
-    For coreference, what matters is the binding domain. -/
+/-- Simple clause structure for HPSG coreference checking. -/
 structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
   deriving Repr
 
-/-- Parse a simple transitive sentence into a clause -/
+/-- Parse a simple transitive sentence into a clause. -/
 def parseSimpleClause (ws : List Word) : Option SimpleClause :=
   match ws with
   | [subj, v, obj] =>
@@ -131,18 +96,14 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
     else none
   | _ => none
 
-/-- In a simple clause, subject and object are locally related
-    (same LOCAL domain in HPSG terms) -/
+/-- In a simple clause, subject and object are in the same LOCAL domain. -/
 def sameLocalDomain (_clause : SimpleClause) : Bool := true
 
--- ============================================================================
--- Part 4: Agreement (Feature Matching)
--- ============================================================================
+end LocalFeatureStructure
 
-/-- Do two nominals agree in phi-features?
+section Agreement
 
-    In HPSG, this is formalized as feature structure unification.
-    For coreference, agreement is required between anaphor and antecedent. -/
+/-- Do two nominals agree in phi-features? -/
 def phiAgree (w1 w2 : Word) : Bool :=
   let personMatch := match w1.features.person, w2.features.person with
     | some p1, some p2 => p1 == p2
@@ -150,7 +111,6 @@ def phiAgree (w1 w2 : Word) : Bool :=
   let numberMatch := match w1.features.number, w2.features.number with
     | some n1, some n2 => n1 == n2
     | _, _ => true
-  -- Gender check: infer from form
   let genderMatch :=
     if w2.form == "himself" then
       w1.form ∈ ["John", "he", "him"]  -- masculine antecedents
@@ -162,61 +122,49 @@ def phiAgree (w1 w2 : Word) : Bool :=
       true
   personMatch && numberMatch && genderMatch
 
--- ============================================================================
--- Part 5: HPSG Binding Constraints
--- ============================================================================
+end Agreement
 
-/-- Principle A (HPSG version): Locally o-commanded
+section BindingConstraints
 
-    A reflexive must be locally o-commanded by a coindexed element -/
+/-- Principle A (HPSG): a reflexive must be locally o-commanded by a coindexed element. -/
 def reflexiveLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
   | some obj =>
     match classifyNominal obj with
     | some .reflexive =>
-      -- Reflexive in object position needs subject as antecedent
-      -- Subject o-commands object (subject is less oblique)
       oCommands .subject .directObject &&
       sameLocalDomain clause &&
       phiAgree clause.subject obj
-    | _ => true  -- Non-reflexives don't need this
+    | _ => true
 
-/-- Principle B (HPSG version): Locally o-free
-
-    A pronoun must NOT be locally o-commanded by a coindexed element -/
+/-- Principle B (HPSG): a pronoun must NOT be locally o-commanded by a coindexed element. -/
 def pronounLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => true
   | some obj =>
     match classifyNominal obj with
     | some .pronoun =>
-      -- Pronoun in object position: if subject o-commands it locally,
-      -- coreference would be blocked
       !(oCommands .subject .directObject && sameLocalDomain clause)
     | _ => true
 
-/-- Principle C (HPSG version): O-free
-
-    An R-expression must not be o-commanded by a coreferent pronoun -/
+/-- Principle C (HPSG): an R-expression must not be o-commanded by a coreferent pronoun. -/
 def rExpressionFree (clause : SimpleClause) : Bool :=
   match classifyNominal clause.subject with
   | some .pronoun =>
     match clause.object with
     | some obj =>
       match classifyNominal obj with
-      | some .rExpression => true  -- Pronoun subject, R-expression object is fine
+      | some .rExpression => true
       | _ => true
     | none => true
   | _ => true
 
--- ============================================================================
--- Part 6: Combined Coreference Check
--- ============================================================================
+end BindingConstraints
 
-/-- Is a sentence grammatical for coreference under HPSG binding?
+section CombinedCheck
 
-    Checks whether the coreference pattern is licensed by HPSG constraints -/
+/-- Is a sentence grammatical for coreference under HPSG binding? -/
 def grammaticalForCoreference (ws : List Word) : Bool :=
   match parseSimpleClause ws with
   | none => false
@@ -426,5 +374,7 @@ instance : Interfaces.CoreferenceTheory HPSGTheory where
         | some .reflexive => reflexiveLicensed clause
         | some .pronoun => false
         | _ => true
+
+end CombinedCheck
 
 end HPSG.Coreference

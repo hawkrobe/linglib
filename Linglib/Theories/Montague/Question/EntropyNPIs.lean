@@ -5,52 +5,13 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # NPIs in Questions: Entropy as Strength
 
-Van Rooy (2003) "Negative Polarity Items in Questions: Strength as Relevance"
+Van Rooy (2003): for assertions, strength = informativity; for questions,
+strength = entropy. NPIs are licensed when they increase entropy by reducing bias.
 
-## Core Insight
-
-For assertions, strength = informativity (entailment).
-For questions, strength = **entropy** (average informativity of answers).
-
-NPIs are licensed in questions when they INCREASE entropy by reducing bias.
-
-## The Entropy Measure
-
-Following Bar-Hillel & Carnap (1953) and Shannon (1948):
-
-```
-E(Q) = Σ_{q∈Q} P(q) × (-log₂ P(q))
-     = Σ_{q∈Q} P(q) × inf(q)
-```
-
-This is the **expected informativity** of the answers.
-
-Key property: E(Q) is maximal when all answers are equally likely.
-
-## NPI Licensing in Questions
-
-Krifka's observation formalized:
-- Biased question: P(negative) >> P(positive)
-- NPI widens domain: makes positive answer easier to satisfy
-- This increases P(positive), reducing bias
-- Lower bias = higher entropy = more useful question
-- Therefore: NPI LICENSED
-
-## Rhetorical Questions (Section 4)
-
-Strong NPIs (lift a finger, bat an eye) share presupposition with EVEN:
-- Presupposes: alternatives are already settled
-- Question remains open only for minimal value
-- This creates rhetorical effect (near-zero entropy)
-
-## References
-
-- van Rooy, R. (2003). Negative Polarity Items in Questions: Strength as Relevance.
-- Bar-Hillel & Carnap (1953). Semantic Information.
+- van Rooy (2003). Negative Polarity Items in Questions: Strength as Relevance.
 - Shannon (1948). Mathematical Theory of Communication.
 - Krifka (1995). The semantics and pragmatics of polarity items.
 - Kadmon & Landman (1993). Any.
-- Borkin (1971). Polarity items in questions.
 -/
 
 namespace Montague.Question.EntropyNPIs
@@ -58,32 +19,15 @@ namespace Montague.Question.EntropyNPIs
 open Montague.Question
 
 
-/-!
-## Shannon Entropy for Questions
+section ShannonEntropy
 
-The informativity value of a question equals the expected informativity
-of its answers. This is Shannon's entropy.
-
-E(Q) = Σ_{q∈Q} P(q) × (-log₂ P(q))
-
-Properties:
-- E(Q) ≥ 0 always
-- E(Q) = 0 iff one answer has probability 1 (question is settled)
-- E(Q) is maximal when all answers are equiprobable
--/
-
-/-- Informativity of a proposition: inf(p) = -log₂ P(p)
-
-More informative = lower probability = higher surprisal.
-We approximate with 1/p for rational arithmetic. -/
+/-- inf(p) = -log2 P(p), approximated with 1/p for rational arithmetic. -/
 def informativity (prob : ℚ) : ℚ :=
   if prob ≤ 0 then 0
   else if prob ≥ 1 then 0
   else 1 / prob  -- Simplified; true version uses -log₂
 
-/-- Entropy of a question: E(Q) = Σ P(q) × inf(q)
-
-This measures the expected informativity of learning the answer. -/
+/-- E(Q) = Sum P(q) * inf(q), Shannon entropy of a question. -/
 def questionEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : ℚ :=
   q.foldl (λ acc cell =>
@@ -93,7 +37,7 @@ def questionEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     acc + prob * inf
   ) 0
 
-/-- A question is maximally entropic when answers are equiprobable -/
+/-- A question is maximally entropic when answers are equiprobable. -/
 def isMaximalEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : Prop :=
   ∀ c₁ c₂, c₁ ∈ q → c₂ ∈ q →
@@ -101,12 +45,12 @@ def isMaximalEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     let prob₂ := (worlds.filter c₂).foldl (λ p w => p + prior w) 0
     prob₁ = prob₂
 
-/-- A question has zero entropy iff it's already settled -/
+/-- A question has zero entropy iff it is already settled. -/
 def isSettled {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : Prop :=
   ∃ c ∈ q, (worlds.filter c).foldl (λ p w => p + prior w) 0 = 1
 
-/-- Entropy is maximal for equiprobable binary question -/
+/-- Entropy is maximal for equiprobable binary question. -/
 theorem entropy_maximal_equiprobable {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) (hBinary : q.length = 2)
     (hEqui : isMaximalEntropy prior worlds q) :
@@ -115,20 +59,9 @@ theorem entropy_maximal_equiprobable {W : Type*} (prior : W → ℚ) (worlds : L
   sorry
 
 
-/-!
-## Bias Reduction via NPIs
+end ShannonEntropy
 
-Krifka (1990, 1992, 1995): NPIs turn biased questions into unbiased ones.
-
-A biased polar question has P(negative) ≠ P(positive).
-Domain widening (any vs some) can reduce this bias.
-
-**Example**: "Have you ever been to China?" vs "Have you been to China?"
-- If recent visits unlikely, "ever" widens to any past time
-- This makes positive answer more achievable
-- Probabilities become more balanced
-- Higher entropy = more useful question
--/
+section BiasReduction
 
 /-- A polar question is biased toward negative if P(neg) > P(pos) -/
 def isBiasedNegative {W : Type*} (prior : W → ℚ) (worlds : List W)
@@ -452,5 +385,7 @@ theorem npi_licensed_wh_subject {W Entity : Type*}
     -- NPI in subject widens domain → question with NPI entails question without
     -- This is standard DE licensing
     True := trivial
+
+end BiasReduction
 
 end Montague.Question.EntropyNPIs

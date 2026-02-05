@@ -1,26 +1,8 @@
 /-
-# Dependency Grammar Coreference (Binding)
+Dependency grammar coreference (binding) via dependency paths and d-command.
+Reflexives require short dependency paths; locality = same subgraph rooted at verb.
 
-Coreference constraints using dependency grammar mechanisms.
-
-## Mechanism
-
-- **Dependency Path**: Reflexives must be reachable via short dependency path
-- **Head-Dependent Relations**: Binding follows dependency structure
-- **Locality**: Same clause = same subgraph rooted at verb
-
-## Key Differences from Other Theories
-
-| Minimalism | HPSG | Dependency Grammar |
-|------------|------|-------------------|
-| C-command | O-command | Dependency path |
-| Tree geometry | Obliqueness | Graph reachability |
-| Phrases | Feature structures | Words + edges |
-
-## References
-
-- Hudson, R. (1990). English Word Grammar, Ch. 6.
-- Gibson, J. (2025). Syntax, Ch. 7.
+References: Hudson (1990) Ch. 6, Gibson (2025) Ch. 7.
 -/
 
 import Linglib.Fragments.English.Nouns
@@ -46,18 +28,16 @@ namespace DepGrammar.Coreference
 
 open DepGrammar
 
--- ============================================================================
--- Part 1: Nominal Types (same classification)
--- ============================================================================
+section NominalTypes
 
-/-- Types of nominal expressions for coreference -/
+/-- Types of nominal expressions for coreference. -/
 inductive NominalType where
   | reflexive   -- himself, herself, themselves
   | pronoun     -- he, she, they, him, her, them
   | rExpression -- John, Mary, the cat
   deriving Repr, DecidableEq
 
-/-- Classify a word as a nominal type -/
+/-- Classify a word as a nominal type. -/
 def classifyNominal (w : Word) : Option NominalType :=
   if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
     some .reflexive
@@ -68,21 +48,18 @@ def classifyNominal (w : Word) : Option NominalType :=
   else
     none
 
--- ============================================================================
--- Part 2: Dependency-Based Locality
--- ============================================================================
+end NominalTypes
 
-/-- Simple clause structure for dependency coreference checking
+section DependencyBasedLocality
 
-    In dependency grammar, a clause is a subgraph rooted at the main verb.
-    Subject and object are both direct dependents of the verb. -/
+/-- Simple clause structure: a subgraph rooted at the main verb. -/
 structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
   deriving Repr
 
-/-- Parse a simple transitive sentence into a clause -/
+/-- Parse a simple transitive sentence into a clause. -/
 def parseSimpleClause (ws : List Word) : Option SimpleClause :=
   match ws with
   | [subj, v, obj] =>
@@ -95,52 +72,34 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
     else none
   | _ => none
 
-/-- In dependency terms, subject and object are both direct dependents
-    of the same verb head, so they are in the same local domain -/
+/-- Subject and object are co-dependents of the same verb, hence in the same local domain. -/
 def sameLocalDomain (_clause : SimpleClause) : Bool := true
 
-/-- Dependency path length from subject to object in a simple clause
-
-    In [Subj V Obj]:
-    - Subj --subj--> V
-    - Obj --obj--> V
-
-    Path from Subj to Obj goes through V, so length = 2 -/
+/-- Path length from subject to object = 2 (Subj --subj--> V <--obj-- Obj). -/
 def pathLength (_clause : SimpleClause) : Nat := 2
 
--- ============================================================================
--- Part 3: Dependency-Based Command
--- ============================================================================
+end DependencyBasedLocality
 
-/-- In dependency grammar, binding is based on dependency relations.
+section DependencyBasedCommand
 
-    A word W1 "d-commands" W2 if:
-    1. W1 is a dependent of some head H
-    2. W2 is also a dependent of H
-    3. W1 is the subject dependent (or other designated binder)
-
-    This is analogous to c-command but defined over dependency structure. -/
+/-- W1 d-commands W2 if both are dependents of the same head H and W1 is the subject. -/
 def subjectDCommandsObject (_clause : SimpleClause) : Bool := true
 
-/-- Object does not d-command subject (objects can't bind subjects) -/
+/-- Object does not d-command subject. -/
 def objectDCommandsSubject (_clause : SimpleClause) : Bool := false
 
--- ============================================================================
--- Part 4: Agreement (Feature Matching)
--- ============================================================================
+end DependencyBasedCommand
 
-/-- Do two nominals agree in phi-features?
+section Agreement
 
-    Agreement in dependency grammar is a feature-matching constraint
-    on dependency edges. For coreference, agreement must hold. -/
+/-- Check phi-feature agreement (person, number, gender) between two nominals. -/
 def phiAgree (w1 w2 : Word) : Bool :=
   let personMatch := match w1.features.person, w2.features.person with
     | some p1, some p2 => p1 == p2
-    | _, _ => true  -- Compatible if unspecified
+    | _, _ => true
   let numberMatch := match w1.features.number, w2.features.number with
     | some n1, some n2 => n1 == n2
     | _, _ => true
-  -- Gender check: infer from form
   let genderMatch :=
     if w2.form == "himself" then
       w1.form ∈ ["John", "he", "him"]
@@ -152,39 +111,29 @@ def phiAgree (w1 w2 : Word) : Bool :=
       true
   personMatch && numberMatch && genderMatch
 
--- ============================================================================
--- Part 5: Coreference Constraints
--- ============================================================================
+end Agreement
 
-/-- Reflexive licensing in dependency grammar
+section CoreferenceConstraints
 
-    A reflexive is licensed if:
-    1. There is a potential antecedent that d-commands it
-    2. The antecedent is within the local dependency domain
-    3. Agreement holds -/
+/-- Reflexive is licensed if d-commanded by an agreeing antecedent in the local domain. -/
 def reflexiveLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
   | some obj =>
     match classifyNominal obj with
     | some .reflexive =>
-      -- Reflexive in object position needs subject as antecedent
       subjectDCommandsObject clause &&
       sameLocalDomain clause &&
       phiAgree clause.subject obj
-    | _ => true  -- Non-reflexives don't need local binding
+    | _ => true
 
-/-- Pronoun local freedom in dependency grammar
-
-    A pronoun must not be d-commanded by a coreferent antecedent locally -/
+/-- A pronoun must not be d-commanded by a coreferent antecedent locally. -/
 def pronounLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => true
   | some obj =>
     match classifyNominal obj with
     | some .pronoun =>
-      -- Pronoun in object position: if subject d-commands it locally,
-      -- coreference would be blocked
       !(subjectDCommandsObject clause && sameLocalDomain clause)
     | _ => true
 
@@ -410,5 +359,7 @@ instance : Interfaces.CoreferenceTheory DepGrammarTheory where
         | some .reflexive => reflexiveLicensed clause
         | some .pronoun => false
         | _ => true
+
+end CoreferenceConstraints
 
 end DepGrammar.Coreference

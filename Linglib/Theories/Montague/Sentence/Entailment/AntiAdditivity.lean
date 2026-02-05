@@ -1,34 +1,6 @@
 /-
-# Anti-Additivity Hierarchy (Zwarts 1996)
-
-Formal definitions and proofs for the DE < Anti-Additive < Anti-Morphic hierarchy.
-
-## The Hierarchy
-
-| Level | Definition | Examples | Licenses |
-|-------|------------|----------|----------|
-| DE | f(A∨B) ⊢ f(A)∧f(B) | few, at most n | weak NPIs |
-| Anti-Additive | f(A∨B) ⊣⊢ f(A)∧f(B) | no, nobody, without | strong NPIs |
-| Anti-Morphic | AA + f(A∧B) ⊣⊢ f(A)∨f(B) | not, never | strong NPIs |
-
-## Insight (Chierchia 2013)
-
-The contrast in (83) from Chierchia:
-- "At most 5 students smoke or drink" ⊢ "At most 5 smoke ∧ at most 5 drink"
-- But NOT vice versa! (4 smoke, 3 different drink → 7 total)
-
-So `at most n` is DE but NOT anti-additive.
-
-In contrast:
-- "John never smokes or drinks" ⊣⊢ "John never smokes ∧ John never drinks"
-
-So `never` IS anti-additive (in fact, anti-morphic).
-
-## References
-
-- Zwarts, F. (1996). A hierarchy of negative expressions.
-- Chierchia, G. (2013). Logic in Grammar. §1.4.3.
-- Ladusaw, W. (1980). Polarity sensitivity as inherent scope relations.
+The DE < Anti-Additive < Anti-Morphic hierarchy (Zwarts 1996).
+Reference: Zwarts (1996), Chierchia (2013) section 1.4.3, Ladusaw (1980).
 -/
 
 import Mathlib.Order.Monotone.Defs
@@ -45,38 +17,9 @@ open Fragments.English.PolarityItems (DEStrength)
 open List (Sublist)
 
 
-/-!
-## Semantic Properties
+section Definitions
 
-For a function `f : Prop' → Prop'`, we define:
-
-1. **DE** (Downward Entailing): f preserves ∨ to ∧ (one direction)
-   `f(A ∨ B) ≤ f(A) ∧ f(B)`
-
-2. **Anti-Additive**: f preserves ∨ to ∧ (both directions)
-   `f(A ∨ B) = f(A) ∧ f(B)`
-
-3. **Anti-Morphic**: Anti-additive + f preserves ∧ to ∨ (both directions)
-   `f(A ∧ B) = f(A) ∨ f(B)`
-
-The hierarchy: Anti-Morphic ⊂ Anti-Additive ⊂ DE
--/
-
-/-!
-Downward entailing (DE): reverses entailment direction.
-
-We reuse `IsDownwardEntailing` from `Polarity.lean`, which is `Antitone f`.
--/
-
-/--
-Anti-additive (AA): f distributes ∨ to ∧ in both directions.
-
-`∀ A B, f(A ∨ B) = f(A) ∧ f(B)`
-
-Equivalently:
-- Left-to-right: DE property
-- Right-to-left: `f(A) ∧ f(B) ⊢ f(A ∨ B)`
--/
+/-- Anti-additive: forall A B, f(A | B) = f(A) & f(B). -/
 def IsAntiAdditive (f : Prop' → Prop') : Prop :=
   ∀ p q : Prop', (∀ w, f (por p q) w = (f p w && f q w))
 
@@ -360,5 +303,7 @@ def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
 #guard strengthSufficient .antiAdditive .antiAdditive -- "no" licenses strong NPIs
 #guard strengthSufficient .weak .weak             -- "few" licenses weak NPIs
 #guard !strengthSufficient .weak .antiAdditive    -- "few" does NOT license strong NPIs
+
+end Definitions
 
 end Montague.Sentence.Entailment.AntiAdditivity

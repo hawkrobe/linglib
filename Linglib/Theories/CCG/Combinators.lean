@@ -1,40 +1,12 @@
 /-
 # CCG Combinators: B, T, S, C
 
-Steedman's key insight: CCG combinatory rules correspond to combinators
-from combinatory logic. This module formalizes that correspondence.
-
-## Combinators (Steedman 2000, Chapter 8)
-
-- **B** (Bluebird/composition): B f g x = f (g x)
-- **T** (Thrush/type-raising): T x f = f x
-- **S** (Starling/substitution): S f g x = f x (g x)
-- **C** (Cardinal/commutation): C f x y = f y x
-- **I** (Identity): I x = x
-- **K** (Kestrel/constant): K x y = x
-
-## CCG Rules ↔ Combinators
-
-| CCG Rule           | Combinator | Type Transformation              |
-|--------------------|------------|----------------------------------|
-| Forward comp (>B)  | B          | X/Y + Y/Z → X/Z                  |
-| Backward comp (<B) | B          | Y\Z + X\Y → X\Z                  |
-| Forward type-raise | T          | X → T/(T\X)                      |
-| Backward type-raise| T          | X → T\(T/X)                      |
-| Forward crossing   | S          | (X/Y)/Z + Y/Z → X/Z              |
-
-## Results from Chapter 8
-
-- **T = CI**: Type-raising equals C applied to Identity
-- **C from B and T**: The Cardinal is definable from Bluebird and Thrush
-- **BTS ≈ λI-calculus**: CCG's combinators are essentially complete
-
-## References
+CCG combinatory rules correspond to combinators from combinatory logic.
+T = CI, C is definable from B and T, and BTS is equivalent to the lambda-I calculus.
 
 - Curry & Feys (1958). Combinatory Logic.
-- Steedman (2000). The Syntactic Process, Chapters 3 & 8.
+- Steedman (2000). The Syntactic Process, Chapters 3 and 8.
 - Smullyan (1985). To Mock a Mockingbird.
-- Steedman & Baldridge (2011). Combinatory Categorial Grammar.
 -/
 
 import Linglib.Theories.CCG.Basic
@@ -46,314 +18,145 @@ namespace CCG.Combinators
 open CCG
 open Montague
 
--- The Combinators
+section Combinators
 
-/--
-**The B Combinator (Composition)**
-
-B f g x = f (g x)
-
-In CCG, this corresponds to forward and backward composition.
-Semantically: compose two functions.
--/
+/-- B combinator (composition): B f g x = f (g x). -/
 def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
   λ x => f (g x)
 
-/--
-**The T Combinator (Type-Raising / Flip)**
-
-T x f = f x
-
-In CCG, this corresponds to type-raising.
-Semantically: turn an argument into something that takes a function.
--/
+/-- T combinator (type-raising): T x f = f x. -/
 def T {α β : Type} (x : α) : (α → β) → β :=
   λ f => f x
 
-/--
-**The S Combinator (Substitution)**
-
-S f g x = f x (g x)
-
-In CCG, this corresponds to crossed composition (less common).
-Semantically: apply f to x, apply g to x, then apply the result of f to the result of g.
--/
+/-- S combinator (substitution): S f g x = f x (g x). -/
 def S {α β γ : Type} (f : α → β → γ) (g : α → β) : α → γ :=
   λ x => f x (g x)
 
-/--
-**The I Combinator (Identity)**
-
-I x = x
-
-The identity function. In CCG, this is implicit in lexical lookup.
--/
+/-- I combinator (identity): I x = x. -/
 def I {α : Type} : α → α :=
   λ x => x
 
-/--
-**The K Combinator (Constant)**
-
-K x y = x
-
-Not directly used in standard CCG, but completes the SK basis.
--/
+/-- K combinator (constant): K x y = x. -/
 def K {α β : Type} (x : α) : β → α :=
   λ _ => x
 
-/--
-**The C Combinator (Commutation/Cardinal)**
-
-C f x y = f y x
-
-Swaps the arguments of a binary function.
-In Smullyan's fable, this is the Cardinal.
-
-From Steedman (2000, p. 205):
-"The 'commuting' combinator C, which has not been encountered in natural
-syntax before, but whose definition is as follows: C f x y = f y x"
--/
+/-- C combinator (commutation): C f x y = f y x. -/
 def C {α β γ : Type} (f : α → β → γ) (x : β) (y : α) : γ :=
   f y x
 
--- Key Theorems from Chapter 8: T = CI and C from T and B
+end Combinators
 
-/-
-## The BTS System (Steedman 2000, Chapter 8)
+section BTS
 
-Steedman (p. 206-207):
-"What then can we say concerning the nature and raison d'être of the
-combinatory system BTS that we have observed in natural language syntax?"
-
-Key results:
-1. T = CI (type-raising is C applied to I)
-2. C is definable from T and B
-3. BTS is essentially equivalent to λI-calculus
--/
-
-/--
-**T = CI (Steedman p. 206-207)**
-
-The type-raising combinator T is equivalent to C applied to I.
-
-T x = λf. f x
-C I x = λf. I f x = λf. f x  (since I f = f)
-
-Therefore T = C I.
-
-From Steedman: "Since the type-raising combinator T is equivalent to the
-combinatory expression CI..."
--/
+/-- T = CI: type-raising equals C applied to I (Steedman p. 206-207). -/
 theorem T_eq_CI {α β : Type} (x : α) :
     @T α β x = @C (α → β) α β (@I (α → β)) x := by
   ext f
-  -- T x f = f x
-  -- C I x f = I f x = f x
   rfl
 
-/--
-The C combinator applied to identity gives type-raising.
--/
+/-- CI is T. -/
 theorem CI_is_T {α β : Type} :
     (λ x => @C (α → β) α β (@I (α → β)) x) = @T α β := by
   ext x f
   rfl
 
-/--
-**C is definable from T and B (Church's result)**
-
-From Steedman (p. 207):
-"C is definable in terms of T and B, as shown by Church (see Smullyan 1985, 113)"
-
-C f x y = f y x
-
-We show pointwise: C f x y = B (T x) f y
-  B (T x) f y = (T x) (f y) = f y x  ✓
-
-Here T x : (β → γ) → γ takes a function and applies it to x.
--/
+/-- C = B(T_) pointwise: C f x y = B (T x) f y (Church's result via Steedman p. 207). -/
 theorem C_eq_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
     C f x y = B (T x) f y := rfl
 
-/--
-C is expressible pointwise using B and T.
-This is Church's result cited by Steedman.
--/
+/-- C from B and T pointwise. -/
 theorem C_from_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
     let Tx : (β → γ) → γ := T x
     let fy : β → γ := f y
     C f x y = Tx fy := rfl
 
-/-
-**The λI-calculus connection (Steedman p. 205-206)**
+end BTS
 
-The set BCSI is complete with respect to the λI-calculus
-(λ-calculus without vacuous abstraction).
+section CombinatorLaws
 
-From Steedman: "The most interesting of these is the set BCSI. This set is
-complete with respect to the λ-calculus with the single exception that K
-itself is not definable."
-
-K is the combinator for vacuous abstraction (λx.y where x not free in y).
-Natural languages don't seem to need K in syntax.
--/
-
--- Combinator Laws
-
-/-- B is associative function composition -/
+/-- B is function composition. -/
 theorem B_comp {α β γ : Type} (f : β → γ) (g : α → β) :
     B f g = f ∘ g := rfl
 
-/-- B applied is function composition -/
+/-- B f g x = f (g x). -/
 theorem B_apply {α β γ : Type} (f : β → γ) (g : α → β) (x : α) :
     B f g x = f (g x) := rfl
 
-/-- T is flip application -/
+/-- T x f = f x. -/
 theorem T_apply {α β : Type} (x : α) (f : α → β) :
     T x f = f x := rfl
 
-/-- S distributes an argument to two functions -/
+/-- S f g x = f x (g x). -/
 theorem S_apply {α β γ : Type} (f : α → β → γ) (g : α → β) (x : α) :
     S f g x = f x (g x) := rfl
 
-/-- I is the identity -/
+/-- I x = x. -/
 theorem I_apply {α : Type} (x : α) :
     I x = x := rfl
 
-/-- K is the constant function -/
+/-- K x y = x. -/
 theorem K_apply {α β : Type} (x : α) (y : β) :
     K x y = x := rfl
 
--- SKI Basis Reductions
-
-/-- I can be expressed as S K K -/
+/-- I = SKK. -/
 theorem I_eq_SKK {α : Type} :
     @I α = @S α (α → α) α (@K α (α → α)) (@K α α) := by
   ext x
   rfl
 
-/-- B can be expressed in terms of S and K -/
+/-- B f g = S (K f) g. -/
 theorem B_eq_S_KS_K {α β γ : Type} (f : β → γ) (g : α → β) :
     B f g = @S α β γ (K f) g := by
   ext x
   rfl
 
--- Forward Composition Corresponds to B
+end CombinatorLaws
 
-/--
-**Forward Composition = B Combinator**
+section CCGCorrespondence
 
-CCG: X/Y + Y/Z → X/Z (via >B)
-Semantics: (β→γ) and (α→β) compose to (α→γ)
-
-If f : X/Y with meaning ⟦f⟧ : ⟦Y⟧→⟦X⟧
-and g : Y/Z with meaning ⟦g⟧ : ⟦Z⟧→⟦Y⟧
-then fcomp(f,g) : X/Z with meaning B ⟦f⟧ ⟦g⟧ = λz.⟦f⟧(⟦g⟧(z))
--/
+/-- Forward composition = B: fcomp semantics is B f g. -/
 theorem fcomp_is_B {m : Model} {x y z : Cat}
     (f_sem : m.interpTy (catToTy (x.rslash y)))
     (g_sem : m.interpTy (catToTy (y.rslash z))) :
     -- The semantics of forward composition is B
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
-/--
-Forward composition type verification.
-
-X/Y has type ⟦Y⟧→⟦X⟧
-Y/Z has type ⟦Z⟧→⟦Y⟧
-X/Z has type ⟦Z⟧→⟦X⟧ = B (⟦Y⟧→⟦X⟧) (⟦Z⟧→⟦Y⟧)
--/
+/-- catToTy (X/Z) = catToTy Z => catToTy X. -/
 theorem fcomp_type_is_B (x _y z : Cat) :
     catToTy (x.rslash z) = (catToTy z ⇒ catToTy x) := rfl
 
--- Backward Composition Corresponds to B
-
-/--
-**Backward Composition = B Combinator**
-
-CCG: Y\Z + X\Y → X\Z (via <B)
-Semantics: (α→β) and (β→γ) compose to (α→γ)
-
-Note: In backward composition, the functor types are reversed but the
-semantic operation is still B (composition).
--/
+/-- Backward composition = B: bcomp semantics is B f g. -/
 theorem bcomp_is_B {m : Model} {x y z : Cat}
     (g_sem : m.interpTy (catToTy (y.lslash z)))
     (f_sem : m.interpTy (catToTy (x.lslash y))) :
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
--- Type-Raising Corresponds to T
-
-/--
-**Forward Type-Raising = T Combinator**
-
-CCG: X → T/(T\X) (via >T)
-Semantics: α becomes (α→β)→β
-
-If a : X with meaning ⟦a⟧ : ⟦X⟧
-then ftr(a) : T/(T\X) with meaning T ⟦a⟧ = λf.f(⟦a⟧)
-
-This is how "John" (type e) becomes "λP.P(john)" (type (e→t)→t),
-allowing it to combine with quantifier-taking predicates.
--/
+/-- Forward type-raising = T: semantics of ftr is T a. -/
 theorem type_raise_is_T {m : Model} {x t : Cat}
     (a_sem : m.interpTy (catToTy x)) :
-    -- The semantics of type-raising is T
     (λ (f : m.interpTy (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
 
-/--
-Type-raising type verification.
-
-X has type ⟦X⟧
-T\X has type ⟦X⟧→⟦T⟧
-T/(T\X) has type (⟦X⟧→⟦T⟧)→⟦T⟧ = T ⟦X⟧
--/
+/-- catToTy (T/(T\X)) = (catToTy X => catToTy T) => catToTy T. -/
 theorem ftr_type_is_T (x t : Cat) :
     catToTy (forwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
-/--
-**Backward Type-Raising = T Combinator**
-
-CCG: X → T\(T/X) (via <T)
-Semantics: α becomes (α→β)→β (same as forward)
--/
+/-- Backward type-raising type = forward type-raising type. -/
 theorem btr_type_is_T (x t : Cat) :
     catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
--- Crossed Composition and the S Combinator
-
-/--
-**Crossed Composition = S Combinator**
-
-CCG: (X/Y)/Z + Y/Z → X/Z (via >S)
-
-This is less common in standard CCG but allows for more flexible word order.
-Semantically: S f g x = f x (g x)
-
-If f : (X/Y)/Z with meaning ⟦f⟧ : ⟦Z⟧→⟦Y⟧→⟦X⟧
-and g : Y/Z with meaning ⟦g⟧ : ⟦Z⟧→⟦Y⟧
-then scomp(f,g) : X/Z with meaning S ⟦f⟧ ⟦g⟧ = λz.⟦f⟧(z)(⟦g⟧(z))
--/
+/-- Crossed composition = S: (X/Y)/Z + Y/Z => X/Z with S f g x = f x (g x). -/
 theorem crossed_comp_is_S {m : Model} {x y z : Cat}
     (f_sem : m.interpTy (catToTy ((x.rslash y).rslash z)))
     (g_sem : m.interpTy (catToTy (y.rslash z))) :
     (λ arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
 
--- Application as a Degenerate Case
-
-/--
-Forward application can be viewed as B with the identity.
-X/Y + Y → X is like X/Y + Y/Y → X/Y with Y/Y = I.
-
-Actually, application is simpler: it's just function application.
-But we can express it using combinators: f(a) = T a f = flip ($) a f
--/
+/-- Forward application via T: f a = T a f. -/
 theorem fapp_via_T {m : Model} {x y : Cat}
     (f_sem : m.interpTy (catToTy (x.rslash y)))
     (a_sem : m.interpTy (catToTy y)) :
     f_sem a_sem = T a_sem f_sem := rfl
 
-/-- Application is just ($): f $ a = f a -/
+/-- Direct function application. -/
 def apply' {α β : Type} (f : α → β) (a : α) : β := f a
 
 theorem fapp_is_apply {m : Model} {x y : Cat}
@@ -1162,5 +965,7 @@ def ccgMonostratal : Prop := True
 
 /-- Different derivations can yield the same Logical Form -/
 def semanticEquivalenceClass : Prop := True
+
+end CCGCorrespondence
 
 end CCG.Combinators

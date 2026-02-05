@@ -1,43 +1,11 @@
 /-
-# Kratzer (1981) Modal Semantics
+Kratzer (1981) Modal Semantics.
 
-A comprehensive formalization of Kratzer's "The Notional Category of Modality"
-with all key arguments fully derived, not just defined and checked.
+Accessibility is derived from two conversational backgrounds: modal base f
+(relevant facts) and ordering source g (ideals for ranking worlds).
+w ≤_A z iff {p in A : z in p} ⊆ {p in A : w in p}.
 
-## Paper Structure
-
-Kratzer's central innovation is that modal accessibility is DERIVED from
-two conversational backgrounds, rather than being primitive:
-
-1. **Modal Base** f: W → ℘(℘(W)) - maps worlds to sets of propositions
-2. **Ordering Source** g: W → ℘(℘(W)) - maps worlds to sets of ideal propositions
-
-The ordering source induces a PREORDER on worlds, from which modal force emerges.
-
-## Key Definitions (from paper, p. 31-40)
-
-### Logical Properties (p. 31)
-- p **follows from** A iff ∩A ⊆ p
-- A is **consistent** iff ∩A ≠ ∅
-- p is **compatible with** A iff A ∪ {p} is consistent
-
-### Ordering Relation (p. 39)
-For all w, z ∈ W:
-  w ≤_A z iff {p ∈ A : z ∈ p} ⊆ {p ∈ A : w ∈ p}
-
-This says: w is at least as close to the ideal A as z iff every ideal
-proposition satisfied by z is also satisfied by w.
-
-### Necessity with Ordering (p. 40)
-p is a necessity in w w.r.t. f and g iff for all u ∈ ∩f(w):
-  ∃v ∈ ∩f(w): v ≤_{g(w)} u ∧ ∀z ∈ ∩f(w): z ≤_{g(w)} v → z ∈ p
-
-This avoids the Limit Assumption!
-
-## References
-
-- Kratzer, A. (1981). The Notional Category of Modality. In Eikmeyer & Rieser (eds.),
-  Words, Worlds, and Contexts. de Gruyter. pp. 38-74.
+- Kratzer, A. (1981). The Notional Category of Modality. de Gruyter. pp. 38-74.
 - Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 -/
 
@@ -53,7 +21,7 @@ open Montague.Verb.Attitude.Examples
 open Montague.Modal (ModalTheory ModalForce Proposition allWorlds')
 
 
-/-- A proposition is a characteristic function on worlds. -/
+/-- A proposition is a characteristic function on worlds (Kratzer-local). -/
 abbrev Prop' := World → Bool
 
 /-- Convert to list of worlds where proposition holds. -/
