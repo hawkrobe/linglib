@@ -179,4 +179,63 @@ def ofBProp (p : W → Bool) : Prop3 W := λ w => TVal.ofBool (p w)
 
 end Prop3
 
+
+-- Weak Kleene Logic and Meta-Assertion
+-- References:
+-- - Kleene (1952), weak tables (§64)
+-- - Beaver & Krahmer (2001). A partial account of presupposition projection.
+
+namespace TVal
+
+/-- Weak Kleene disjunction: * is absorbing (both operands must be defined). -/
+def orWeak : TVal -> TVal -> TVal
+  | some a, some b => some (a || b)
+  | _, _ => unk
+
+/-- Weak Kleene conjunction: * is absorbing. -/
+def andWeak : TVal -> TVal -> TVal
+  | some a, some b => some (a && b)
+  | _, _ => unk
+
+/-- Meta-assertion operator (Beaver & Krahmer 2001): maps * to 0.
+Makes any trivalent value bivalent by treating undefinedness as falsity. -/
+def metaAssert : TVal -> TVal
+  | some b => some b
+  | none => ff
+
+theorem orWeak_comm (a b : TVal) : orWeak a b = orWeak b a := by
+  rcases a with _ | ⟨_ | _⟩ <;> rcases b with _ | ⟨_ | _⟩ <;> rfl
+
+theorem andWeak_comm (a b : TVal) : andWeak a b = andWeak b a := by
+  rcases a with _ | ⟨_ | _⟩ <;> rcases b with _ | ⟨_ | _⟩ <;> rfl
+
+/-- Meta-assertion always produces a defined value. -/
+theorem metaAssert_defined (v : TVal) : (metaAssert v).isDefined = true := by
+  cases v with | none => rfl | some b => cases b <;> rfl
+
+/-- Meta-assertion is idempotent. -/
+theorem metaAssert_idempotent (v : TVal) : metaAssert (metaAssert v) = metaAssert v := by
+  cases v with | none => rfl | some b => cases b <;> rfl
+
+/-- Meta-assertion preserves defined values. -/
+theorem metaAssert_of_defined (v : TVal) (h : v.isDefined = true) : metaAssert v = v := by
+  cases v with | none => simp [isDefined] at h | some => rfl
+
+end TVal
+
+namespace Prop3
+
+variable {W : Type*}
+
+/-- Pointwise Weak Kleene disjunction. -/
+def orWeak (p q : Prop3 W) : Prop3 W := λ w => TVal.orWeak (p w) (q w)
+
+/-- Pointwise Weak Kleene conjunction. -/
+def andWeak (p q : Prop3 W) : Prop3 W := λ w => TVal.andWeak (p w) (q w)
+
+/-- Pointwise meta-assertion. -/
+def metaAssert (p : Prop3 W) : Prop3 W := λ w => TVal.metaAssert (p w)
+
+end Prop3
+
 end Core.Kleene

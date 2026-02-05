@@ -188,6 +188,37 @@ def strawsonEntails (p q : PrProp W) : Prop :=
   forall w, p.presup w = true -> p.assertion w = true ->
     q.presup w = true /\ (q.presup w = true -> q.assertion w = true)
 
+/-- Flexible accommodation disjunction (Geurts 2005, Aloni 2022, Yagi 2025).
+
+Each disjunct is evaluated only against worlds where its own presupposition
+holds. The overall presupposition is the disjunction of the individual
+presuppositions. This handles conflicting presuppositions (p ∧ q = ⊥):
+standard disjunction and filtering disjunction both fail for this case,
+but flexible accommodation correctly predicts presupposition p ∨ q and
+allows the disjunction to be false.
+
+Formally, this is the static counterpart of Yagi's dynamic update:
+  s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ],  where s[χ] ∪ s[ω] = s
+When presuppositions conflict, χ = ¬q and ω = ¬p, giving pointwise:
+  (p(w) ∧ φ(w)) ∨ (q(w) ∧ ψ(w))
+-/
+def orFlex (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w || q.presup w
+  , assertion := λ w => (p.presup w && p.assertion w) || (q.presup w && q.assertion w) }
+
+/-- orFlex reduces to standard disjunction when both presuppositions hold. -/
+theorem orFlex_eq_or_when_both_defined (p q : PrProp W) (w : W)
+    (hp : p.presup w = true) (hq : q.presup w = true) :
+    (orFlex p q).assertion w = (or p q).assertion w := by
+  simp only [orFlex, or, hp, hq, Bool.true_and]
+
+/-- orFlex presupposition is weaker than or's (p ∨ q vs p ∧ q). -/
+theorem orFlex_presup_weaker (p q : PrProp W) (w : W)
+    (h : (or p q).presup w = true) :
+    (orFlex p q).presup w = true := by
+  simp only [or, orFlex] at *
+  cases hp : p.presup w <;> cases hq : q.presup w <;> simp_all
+
 /-- Presupposition projection: get the presupposition as a classical proposition. -/
 def projectPresup (p : PrProp W) : BProp W := p.presup
 
