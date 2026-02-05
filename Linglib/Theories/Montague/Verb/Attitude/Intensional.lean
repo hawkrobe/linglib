@@ -19,7 +19,7 @@ import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Verb.Attitude.Doxastic
 import Linglib.Theories.Montague.Verb.Attitude.Preferential
 
-namespace Montague.Verb.Attitude.Examples
+namespace Montague.Verb.Attitude.Intensional
 
 open Montague
 open Core.Proposition (World4 FiniteWorlds)
@@ -69,4 +69,4 @@ In Montague's notation: ˇα is the extension of α at the evaluation world. -/
 def down {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) : m.interpTy τ :=
   f w
 
-end Montague.Verb.Attitude.Examples
+end Montague.Verb.Attitude.Intensional

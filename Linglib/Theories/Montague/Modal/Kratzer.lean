@@ -9,7 +9,7 @@ w ≤_A z iff {p in A : z in p} ⊆ {p in A : w in p}.
 - Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 -/
 
-import Linglib.Theories.Montague.Verb.Attitude.Examples
+import Linglib.Theories.Montague.Verb.Attitude.Intensional
 import Linglib.Theories.Montague.Modal.Basic
 import Linglib.Core.Proposition
 import Linglib.Theories.Montague.Modal.SatisfactionOrdering
@@ -17,7 +17,7 @@ import Mathlib.Order.Basic
 
 namespace Montague.Modal.Kratzer
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Montague.Modal (ModalTheory ModalForce Proposition allWorlds')
 
 

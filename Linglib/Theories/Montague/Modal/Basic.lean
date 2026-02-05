@@ -8,12 +8,12 @@ semantics with Simple/Kripke (1963) primitive-accessibility semantics.
 - Kripke, S. (1963). Semantical Considerations on Modal Logic.
 -/
 
-import Linglib.Theories.Montague.Verb.Attitude.Examples
+import Linglib.Theories.Montague.Verb.Attitude.Intensional
 import Linglib.Core.ModalLogic
 
 namespace Montague.Modal
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 
 section CoreTypes
 
