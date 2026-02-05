@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.63.0] - 2025-02-04
+
+### Added
+- **Theories/Montague/Modal/Disjunction.lean**: Geurts (2005) disjunctions as modals
+  - `Disjunct`: modal disjunct (domain × force × content), `MDisjunction` as conjunction of modal propositions
+  - Three constraints: `exhaustivity`, `disjointness₂`, `nonTriviality`
+  - `free_choice`: free choice follows structurally (disjunction IS conjunction of ◇ claims)
+  - `disjointness_gives_exclusivity`: exclusive 'or' from Disjointness, not scalar implicature
+  - `defaultBinding`: default domain = background C (Geurts p. 394)
+  - Bridge to `PrProp.orFlex`: `fromPrProp_presup_eq_orFlex`, `fromPrProp_cell_eq_orFlex`, `conflicting_presups_disjoint`
+  - Worked examples: "must here or must there" (□ with partition), "may here or may there" (◇ with free choice)
+- **Core/Kleene.lean**: Weak Kleene operators and meta-assertion (Beaver & Krahmer 2001)
+  - `TVal.orWeak`, `TVal.andWeak`: weak Kleene (⊥ absorbing)
+  - `TVal.metaAssert`: maps ⊥ to 0 (bivalentizes trivalent values)
+  - `Prop3.orWeak`, `Prop3.andWeak`, `Prop3.metaAssert`: pointwise lifts
+- **Theories/Core/Presupposition.lean**: Flexible accommodation disjunction
+  - `PrProp.orFlex`: presup = p ∨ q, assertion = (p.presup ∧ p.assertion) ∨ (q.presup ∧ q.assertion)
+  - `orFlex_eq_or_when_both_defined`, `orFlex_presup_weaker`: relationship to classical `PrProp.or`
+- **Phenomena/Presupposition/Studies/Yagi2025.lean**: Yagi (2025) conflicting presuppositions in disjunction
+  - Buganda scenario (4 worlds: kingOpens, kingDoesnt, presidentConducts, presidentDoesnt)
+  - Failure theorems: Strong Kleene never false, classical never defined, filtering wrong presupposition
+  - Success: `PrProp.orFlex` gives correct presupposition p ∨ q and allows falsity
+  - Meta-assertion analysis: allows falsity but loses presupposition
+
+### Changed
+- **Theories/Montague/Expressives/Basic.lean**: Moved from Lexicon/Expressives/ (Lexicon/ was otherwise empty)
+
 ## [0.62.0] - 2025-02-04
 
 ### Added
