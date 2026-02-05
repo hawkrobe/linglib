@@ -134,7 +134,7 @@ The presupposition triggered by a CoS type, given the activity predicate P.
 def priorStatePresup (t : CoSType) (P : W → Bool) : W → Bool :=
   match t with
   | .cessation => P           -- stop P presupposes P was true
-  | .inception => fun w => !P w  -- start P presupposes P was false
+  | .inception => λ w => !P w  -- start P presupposes P was false
   | .continuation => P        -- continue P presupposes P was true
 
 /--
@@ -146,7 +146,7 @@ The assertion made by a CoS type, given the activity predicate P.
 -/
 def resultStateAssertion (t : CoSType) (P : W → Bool) : W → Bool :=
   match t with
-  | .cessation => fun w => !P w  -- stop P asserts P is now false
+  | .cessation => λ w => !P w  -- stop P asserts P is now false
   | .inception => P              -- start P asserts P is now true
   | .continuation => P           -- continue P asserts P is still true
 
@@ -290,7 +290,7 @@ def hasSCF (_e : CoSEntry) : Bool := false
 - `resultStateAssertion t P`: What result state is asserted?
 - `cosSemantics t P`: Combined PrProp with both components
 
-### Key Results
+### Results
 - `negation_preserves_presup`: Presupposition projects through negation
 - `cessation_inception_complementary`: stop/start have opposite presupps
 - `cessation_continuation_same_presup`: stop/continue share presupposition

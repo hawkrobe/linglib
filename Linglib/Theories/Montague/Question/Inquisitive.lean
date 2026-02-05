@@ -55,10 +55,10 @@ The empty info state (σ = λ_ => false) represents inconsistent information. -/
 abbrev InfoState (W : Type*) := W → Bool
 
 /-- The absurd/inconsistent info state: no worlds are compatible. -/
-def absurdState {W : Type*} : InfoState W := fun _ => false
+def absurdState {W : Type*} : InfoState W := λ _ => false
 
 /-- The trivial info state: all worlds are compatible (total ignorance). -/
-def trivialState {W : Type*} : InfoState W := fun _ => true
+def trivialState {W : Type*} : InfoState W := λ _ => true
 
 /-- Check if an info state is empty (inconsistent). -/
 def InfoState.isEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool :=
@@ -70,15 +70,15 @@ def InfoState.isNonEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool
 
 /-- Info state σ is a subset of σ' (σ ⊆ σ'). -/
 def InfoState.subset {W : Type*} (σ σ' : InfoState W) (worlds : List W) : Bool :=
-  worlds.all fun w => σ w → σ' w
+  worlds.all λ w => σ w → σ' w
 
 /-- Intersection of two info states. -/
 def InfoState.inter {W : Type*} (σ σ' : InfoState W) : InfoState W :=
-  fun w => σ w && σ' w
+  λ w => σ w && σ' w
 
 /-- Union of two info states. -/
 def InfoState.union {W : Type*} (σ σ' : InfoState W) : InfoState W :=
-  fun w => σ w || σ' w
+  λ w => σ w || σ' w
 
 -- Support Relation
 
@@ -89,12 +89,12 @@ This is the fundamental relation in Inquisitive Semantics:
 
 If σ is empty, it supports every proposition (ex falso quodlibet). -/
 def supports {W : Type*} (σ : InfoState W) (p : W → Bool) (worlds : List W) : Bool :=
-  worlds.all fun w => σ w → p w
+  worlds.all λ w => σ w → p w
 
 /-- Proposition entailment via support: p entails q iff every state supporting p
 also supports q. -/
 def propEntails {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
-  -- Equivalent to: worlds.all fun w => p w → q w
+  -- Equivalent to: worlds.all λ w => p w → q w
   entails p q worlds
 
 -- Issues (Questions in Inquisitive Semantics)
@@ -123,7 +123,7 @@ variable {W : Type*}
 σ resolves Q iff σ is contained in some alternative.
 (Downward closure: any sub-state of an alternative also resolves.) -/
 def resolves (q : Issue W) (σ : InfoState W) (worlds : List W) : Bool :=
-  q.alternatives.any fun alt => σ.subset alt worlds
+  q.alternatives.any λ alt => σ.subset alt worlds
 
 /-- An issue is inquisitive if it has multiple alternatives.
 
@@ -174,8 +174,8 @@ def numAlternatives (q : Issue W) : Nat :=
 σ resolves Q ∩ Q' iff σ resolves both Q and Q'.
 Alternatives: pairs (a, a') where a ∈ Q.alts, a' ∈ Q'.alts, a ∩ a' non-empty. -/
 def inter (q q' : Issue W) (worlds : List W) : Issue W :=
-  let pairs := q.alternatives.flatMap fun a =>
-    q'.alternatives.filterMap fun a' =>
+  let pairs := q.alternatives.flatMap λ a =>
+    q'.alternatives.filterMap λ a' =>
       let intersection := a.inter a'
       if intersection.isNonEmpty worlds then some intersection else none
   { alternatives := pairs }
@@ -209,7 +209,7 @@ def ofPartition (q : GSQuestion W) (worlds : List W) : Issue W :=
 
 "Is p true?" has two alternatives: ⟦p⟧ and ⟦¬p⟧. -/
 def polar (p : W → Bool) : Issue W :=
-  { alternatives := [p, fun w => !p w] }
+  { alternatives := [p, λ w => !p w] }
 
 /-- Create an Issue from a list of alternatives (direct construction). -/
 def ofAlternatives (alts : List (InfoState W)) : Issue W :=
@@ -220,7 +220,7 @@ def ofAlternatives (alts : List (InfoState W)) : Issue W :=
 Each entity e in the domain creates an alternative: the set of worlds where
 e satisfies P. -/
 def which {E : Type*} (domain : List E) (pred : E → W → Bool) : Issue W :=
-  { alternatives := domain.map fun e => fun w => pred e w }
+  { alternatives := domain.map λ e => λ w => pred e w }
 
 end Issue
 
@@ -231,7 +231,7 @@ end Issue
 This is what the issue "presupposes" - the proposition that SOME alternative
 is true. In Thomas (2026), this is used to compute P(A | info(R)). -/
 def Issue.infoContent {W : Type*} (q : Issue W) : W → Bool :=
-  fun w => q.alternatives.any fun alt => alt w
+  λ w => q.alternatives.any λ alt => alt w
 
 /-- The highlighted proposition: the disjunction of all alternatives.
 

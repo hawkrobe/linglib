@@ -3,7 +3,7 @@
 
 Formalization of Rett (2015) "The Semantics of Evaluativity" Chapters 3-5.
 
-## Key Insight
+## Insight
 
 Evaluativity (the requirement that a degree exceed a contextual standard)
 is NOT semantically encoded but derived pragmatically via implicature.
@@ -273,9 +273,9 @@ Summary table matching Rett's Table 5.1.
 | Degree Question  | non-eval       | evaluative (R) |
 -/
 def evaluativityPredictionTable : String :=
-  let posResults := positivePolarPredictions.map fun d =>
+  let posResults := positivePolarPredictions.map λ d =>
     if d.isEvaluative then "evaluative" else "non-eval"
-  let negResults := negativePolarPredictions.map fun d =>
+  let negResults := negativePolarPredictions.map λ d =>
     if d.isEvaluative then "evaluative" else "non-eval"
   s!"Positive-polar: {posResults}\nNegative-polar: {negResults}"
 
@@ -731,14 +731,14 @@ MMP only applies in polar-invariant constructions (equative case).
 -/
 theorem mmp_requires_invariance_equative :
     (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true →
-    Alternatives.polarVariance .equative = .invariant := fun _ => rfl
+    Alternatives.polarVariance .equative = .invariant := λ _ => rfl
 
 /--
 MMP only applies in polar-invariant constructions (question case).
 -/
 theorem mmp_requires_invariance_question :
     (applyMMP "short" .degreeQuestion tall_with_morphology short_with_morphology).mmpApplies = true →
-    Alternatives.polarVariance .degreeQuestion = .invariant := fun _ => rfl
+    Alternatives.polarVariance .degreeQuestion = .invariant := λ _ => rfl
 
 /--
 MMP does not apply in comparative constructions.
@@ -1053,14 +1053,14 @@ theorem complete_derivation_as_tall_as :
 - `deriveEvaluativityWithLexicon`: Lexicon-grounded derivation
 - `analyzeDegreeTautology`: Explain why positive constructions are evaluative
 
-### Key Theorems (Original)
+### Theorems (Original)
 - `positive_both_evaluative`: Positive constructions always evaluative (Q)
 - `comparative_never_evaluative`: Comparatives never evaluative
 - `equative_asymmetry`: Equatives show marked-only evaluativity (R)
 - `question_asymmetry`: Questions show same pattern as equatives
 - `asymmetry_iff_invariant`: Asymmetry only in polar-invariant constructions
 
-### Key Theorems (New - MMP)
+### Theorems (New - MMP)
 - `mmp_requires_invariance`: MMP only in polar-invariant constructions
 - `mmp_not_in_comparative`: MMP doesn't apply in comparatives
 - `mmp_applies_short_equative`: MMP applies for "short" in equatives

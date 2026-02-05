@@ -12,7 +12,7 @@ In other words: head movement cannot "skip" an intervening head.
 
 ## Harizanov's Claim
 
-BOTH types of syntactic head movement (head-to-spec and head-to-head)
+Both types of syntactic head movement (head-to-spec and head-to-head)
 violate the HMC. This distinguishes them from Amalgamation, which is
 a post-syntactic (PF) operation that respects the HMC.
 
@@ -67,14 +67,14 @@ def violatesHMC (m : Movement) (root : SyntacticObject) : Prop :=
 /-
 ## Why Syntactic Head Movement Violates HMC
 
-Harizanov's central claim: BOTH head-to-spec and head-to-head violate HMC.
+Harizanov's central claim: both head-to-spec and head-to-head violate HMC.
 
-**Head-to-specifier** (e.g., Bulgarian LHM):
+Head-to-specifier (e.g., Bulgarian LHM):
 - V moves from VP to Spec-CP
 - Skips T head and C head
 - Clearly violates HMC
 
-**Head-to-head** (e.g., V-to-C in V2):
+Head-to-head (e.g., V-to-C in V2):
 - V moves to T, then T(+V) moves to C
 - Each step might seem local, but:
   - The complex [T+V] moving to C has V crossing T's original position
@@ -84,7 +84,7 @@ This violation is what distinguishes syntactic head movement from
 Amalgamation (which happens at PF and respects locality).
 -/
 
-/-- Head-to-specifier movement ALWAYS violates HMC (universal claim)
+/-- Head-to-specifier movement always violates HMC.
 
     From Harizanov (p.12, p.29): In head-to-specifier movement, the head X
     becomes a maximal projection in its derived position.
@@ -92,18 +92,18 @@ Amalgamation (which happens at PF and respects locality).
     This violates HMC because:
     - HMC requires `isHeadIn mover root`
     - `isHeadIn` requires `¬isMaximalIn mover root`
-    - But head-to-spec movement is DEFINED by `isMaximalIn mover result`
-    - Therefore the mover is NOT a head in the result
+    - But head-to-spec movement is defined by `isMaximalIn mover result`
+    - Therefore the mover is not a head in the result
     - Therefore HMC fails
 
-    This is a universal proof: ANY head-to-spec movement violates HMC,
-    by the very definition of what head-to-spec movement is. -/
+    Any head-to-spec movement violates HMC, by the very definition of
+    what head-to-spec movement is. -/
 theorem head_to_spec_violates_hmc (m : HeadToSpecMovement) :
     violatesHMC m.toMovement m.result := by
   -- The mover is maximal in result (by definition of head-to-spec)
   -- But respectsHMC requires isHeadIn mover root
   -- And isHeadIn requires ¬isMaximalIn
-  -- Contradiction!
+  -- Contradiction.
   unfold violatesHMC respectsHMC
   intro ⟨_landingSite, _hImm, hMoverHead, _hLandingHead⟩
   -- hMoverHead : isHeadIn m.mover m.result
@@ -125,11 +125,11 @@ projects at its base position (in VP) even though it's maximal at its
 derived position (Spec-CP).
 
 The position-aware version captures Harizanov's insight that maximality
-is evaluated AT A SPECIFIC POSITION, not globally. The mover is maximal
+is evaluated at a specific position, not globally. The mover is maximal
 "at its derived position" (p.29), which is sufficient to violate HMC.
 
-Key insight: HMC requires the mover to be a HEAD at its landing site.
-Being maximal at the landing site means NOT being a head there.
+HMC requires the mover to be a head at its landing site.
+Being maximal at the landing site means not being a head there.
 Position-specific maximality captures this correctly.
 -/
 
@@ -150,7 +150,7 @@ def violatesHMC_positional (m : Movement) (root : SyntacticObject) (pos : TreePo
 
     This version works correctly with multidominance:
     - The mover is maximal AT ITS DERIVED POSITION
-    - This means it's NOT a head at that position
+    - This means it is not a head at that position
     - Therefore HMC fails for the derived position
 
     Unlike the global version, we don't need to claim global maximality. -/
@@ -190,7 +190,7 @@ structure Amalgamation where
       from syntactic head movement. -/
   is_local : ∀ root, immediatelyCCommands host target root
 
-/-- **KEY THEOREM**: Amalgamation cannot skip intervening elements
+/-- Amalgamation cannot skip intervening elements.
 
     This formalizes Harizanov's claim (Section 3.3, p.15):
     "Amalgamation-based displacement obeys the Head Movement Constraint"
@@ -200,7 +200,7 @@ structure Amalgamation where
     there is NO z such that host c-commands z and z c-commands target.
 
     This is what distinguishes Amalgamation from syntactic head movement,
-    which CAN skip intervening heads (as shown by Bulgarian LHM and V2). -/
+    which can skip intervening heads (as shown by Bulgarian LHM and V2). -/
 theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
     ¬∃ z, z ≠ a.host ∧ z ≠ a.target ∧ cCommands a.host z ∧ cCommands z a.target := by
   have h := a.is_local root
@@ -209,7 +209,7 @@ theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
 
 /-- If there's an intervening element, the displacement cannot be Amalgamation
 
-    This provides a DIAGNOSTIC: if we observe a head displacement that
+    This provides a diagnostic: if we observe a head displacement that
     skips an intervening head, we know it must be syntactic movement,
     not Amalgamation.
 
@@ -245,8 +245,8 @@ theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticO
 ## Using HMC as a Diagnostic
 
 The HMC provides a diagnostic for distinguishing:
-- **Syntactic head movement**: Violates HMC
-- **Amalgamation**: Respects HMC
+- Syntactic head movement: Violates HMC
+- Amalgamation: Respects HMC
 
 If a construction shows HMC violations (e.g., skipping heads),
 it involves syntactic head movement, not Amalgamation.
@@ -270,18 +270,18 @@ def compatibleWithAmalgamation (m : Movement) (root : SyntacticObject) : Prop :=
 /-
 ## Empirical Cases
 
-**Bulgarian Long Head Movement** (head-to-spec):
+Bulgarian Long Head Movement (head-to-spec):
 - V moves from embedded clause to matrix Spec-CP
 - Skips multiple heads (T, C of embedded clause; T of matrix)
 - Clear HMC violation
 
-**Germanic V2** (head-to-head):
+Germanic V2 (head-to-head):
 - V moves to T: local
 - T(+V) moves to C: local
-- BUT: V ends up having "passed through" T's position
+- V ends up having "passed through" T's position
 - The complex movement violates HMC when viewed globally
 
-**English Predicate Fronting** (Amalgamation):
+English Predicate Fronting (Amalgamation):
 - "Happy though John is t"
 - AP moves to Spec-CP (phrasal movement)
 - "though" amalgamates with AP at PF

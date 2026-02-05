@@ -7,11 +7,11 @@ Theory-neutral presupposition examples and empirical patterns.
 
 1. **The King Example (Karttunen 1974)**
    "If the king exists, the king is bald"
-   → Does NOT presuppose king exists! (filtering)
+   → Does not presuppose king exists (filtering)
 
 2. **Factive Verbs**
    "John knows that it's raining" presupposes it's raining
-   "John doesn't know that it's raining" STILL presupposes it's raining
+   "John doesn't know that it's raining" still presupposes it's raining
 
 3. **Definite Descriptions**
    "The king is bald" presupposes there is a unique king
@@ -58,7 +58,7 @@ inductive KingWorld where
 
 instance : FiniteWorlds KingWorld where
   worlds := [.kingExists, .noKing]
-  complete := fun w => by cases w <;> simp
+  complete := λ w => by cases w <;> simp
 
 /--
 "The king exists" — a presuppositionless assertion.
@@ -68,8 +68,8 @@ This sentence has:
 - Assertion: the king exists
 -/
 def kingExists : PrProp KingWorld :=
-  { presup := fun _ => true
-  , assertion := fun w => match w with
+  { presup := λ _ => true
+  , assertion := λ w => match w with
       | .kingExists => true
       | .noKing => false
   }
@@ -82,10 +82,10 @@ This sentence has:
 - Assertion: the king is bald (true when king exists)
 -/
 def kingBald : PrProp KingWorld :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .kingExists => true
       | .noKing => false
-  , assertion := fun _ => true
+  , assertion := λ _ => true
   }
 
 /--
@@ -98,11 +98,11 @@ def ifKingThenBald : PrProp KingWorld :=
   PrProp.impFilter kingExists kingBald
 
 /--
-**Theorem: "If the king exists, the king is bald" has no presupposition.**
+"If the king exists, the king is bald" has no presupposition.
 
-This is the key example demonstrating presupposition filtering.
+This demonstrates presupposition filtering.
 -/
-theorem ifKingThenBald_no_presup : ifKingThenBald.presup = fun _ => true := by
+theorem ifKingThenBald_no_presup : ifKingThenBald.presup = λ _ => true := by
   funext w
   simp only [ifKingThenBald, PrProp.impFilter, kingExists, kingBald]
   cases w <;> rfl
@@ -129,14 +129,14 @@ inductive RainWorld where
 
 instance : FiniteWorlds RainWorld where
   worlds := [.rainingBelieved, .rainingNotBelieved, .notRaining]
-  complete := fun w => by cases w <;> simp
+  complete := λ w => by cases w <;> simp
 
 /--
 "It's raining" — no presupposition.
 -/
 def raining : PrProp RainWorld :=
-  { presup := fun _ => true
-  , assertion := fun w => match w with
+  { presup := λ _ => true
+  , assertion := λ w => match w with
       | .rainingBelieved => true
       | .rainingNotBelieved => true
       | .notRaining => false
@@ -149,11 +149,11 @@ Presupposes: it's raining
 Asserts: John believes it's raining
 -/
 def johnKnowsRaining : PrProp RainWorld :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .rainingBelieved => true
       | .rainingNotBelieved => true
       | .notRaining => false  -- Presupposition fails
-  , assertion := fun w => match w with
+  , assertion := λ w => match w with
       | .rainingBelieved => true
       | .rainingNotBelieved => false
       | .notRaining => false  -- Undefined, but we need a value
@@ -182,7 +182,7 @@ inductive SmokingWorld where
 
 instance : FiniteWorlds SmokingWorld where
   worlds := [.usedToNowQuit, .usedToStillDoes, .neverSmoked]
-  complete := fun w => by cases w <;> simp
+  complete := λ w => by cases w <;> simp
 
 /--
 "John stopped smoking" — presupposes prior smoking.
@@ -191,11 +191,11 @@ Presupposes: John used to smoke
 Asserts: John no longer smokes
 -/
 def johnStoppedSmoking : PrProp SmokingWorld :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .usedToNowQuit => true
       | .usedToStillDoes => true
       | .neverSmoked => false  -- Presupposition fails
-  , assertion := fun w => match w with
+  , assertion := λ w => match w with
       | .usedToNowQuit => true
       | .usedToStillDoes => false
       | .neverSmoked => false
@@ -222,8 +222,8 @@ This creates a pragmatically odd sentence (you can't currently smoke AND have st
 -/
 def johnSmokesAndStopped : PrProp SmokingWorld :=
   let johnSmokes : PrProp SmokingWorld :=
-    { presup := fun _ => true
-    , assertion := fun w => match w with
+    { presup := λ _ => true
+    , assertion := λ w => match w with
         | .usedToNowQuit => false
         | .usedToStillDoes => true
         | .neverSmoked => false
@@ -267,29 +267,5 @@ def disjunctionPattern : ProjectionPattern :=
   , description := "Each disjunct can satisfy the other's presupposition"
   , projects := false  -- filtered (symmetric)
   }
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Example Worlds
-- `KingWorld`: For definite description examples
-- `RainWorld`: For factive verb examples
-- `SmokingWorld`: For change-of-state examples
-
-### Classic Examples
-- `kingExists`, `kingBald`, `ifKingThenBald`: The filtering conditional
-- `johnKnowsRaining`: Factive presupposition
-- `johnStoppedSmoking`: Change-of-state presupposition
-
-### Key Theorems
-- `ifKingThenBald_no_presup`: Filtering works
-- `negation_preserves_factive`: Negation doesn't affect presupposition
-- `negation_preserves_change_of_state`: Ditto for aspectual predicates
-
-### Projection Patterns
-- `negationPattern`, `conditionalPattern`, etc.: Empirical generalizations
--/
 
 end Phenomena.Presupposition

@@ -44,15 +44,15 @@ abbrev QuestionDen (W : Type*) := (W → Bool) → Bool
 /-- Construct a Hamblin question from a list of alternative propositions.
     A proposition p is an answer iff it matches one of the alternatives. -/
 def fromAlternatives {W : Type*} [BEq W] (alts : List (W → Bool)) (worlds : List W) : QuestionDen W :=
-  fun p => alts.any fun alt => worlds.all fun w => p w == alt w
+  λ p => alts.any λ alt => worlds.all λ w => p w == alt w
 
 /-- A polar question has two alternatives: p and ¬p -/
 def polar {W : Type*} [BEq W] (p : W → Bool) (worlds : List W) : QuestionDen W :=
-  fun ans => (worlds.all fun w => ans w == p w) || (worlds.all fun w => ans w == !p w)
+  λ ans => (worlds.all λ w => ans w == p w) || (worlds.all λ w => ans w == !p w)
 
 /-- A wh-question over a domain: "which x satisfies P?" -/
 def which {W E : Type*} [BEq W] (domain : List E) (pred : E → W → Bool) (worlds : List W) : QuestionDen W :=
-  fun ans => domain.any fun e => worlds.all fun w => ans w == pred e w
+  λ ans => domain.any λ e => worlds.all λ w => ans w == pred e w
 
 -- Coordination (Partee & Rooth style)
 
@@ -61,14 +61,14 @@ def which {W E : Type*} [BEq W] (domain : List E) (pred : E → W → Bool) (wor
 
     Semantically: P answers (Q₁ ∧ Q₂) iff P answers both Q₁ and Q₂. -/
 def conj {W : Type*} (q1 q2 : QuestionDen W) : QuestionDen W :=
-  fun p => q1 p && q2 p
+  λ p => q1 p && q2 p
 
 /-- Disjoin two question denotations.
     (Q₁ ∨ Q₂)(P) = Q₁(P) ∨ Q₂(P)
 
     Semantically: P answers (Q₁ ∨ Q₂) iff P answers Q₁ or P answers Q₂. -/
 def disj {W : Type*} (q1 q2 : QuestionDen W) : QuestionDen W :=
-  fun p => q1 p || q2 p
+  λ p => q1 p || q2 p
 
 instance {W : Type*} : Add (QuestionDen W) where add := conj
 instance {W : Type*} : HAdd (QuestionDen W) (QuestionDen W) (QuestionDen W) where hAdd := conj
@@ -98,10 +98,10 @@ theorem disj_assoc {W : Type*} (q1 q2 q3 : QuestionDen W) (p : W → Bool) :
 def isAnswer {W : Type*} (q : QuestionDen W) (p : W → Bool) : Bool := q p
 
 /-- The tautology answers every question vacuously (if in the denotation). -/
-def tautology {W : Type*} : W → Bool := fun _ => true
+def tautology {W : Type*} : W → Bool := λ _ => true
 
 /-- The contradiction answers no question. -/
-def contradiction {W : Type*} : W → Bool := fun _ => false
+def contradiction {W : Type*} : W → Bool := λ _ => false
 
 -- Connection to Partition Semantics
 

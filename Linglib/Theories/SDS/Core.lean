@@ -97,7 +97,7 @@ Partition function (normalizing constant) for the posterior.
 `Z = Σ_θ selectionalFactor(θ) × scenarioFactor(θ)`
 -/
 def partitionFunction (sys : α) : ℚ :=
-  (paramSupport sys).foldl (fun acc θ => acc + unnormalizedPosterior sys θ) 0
+  (paramSupport sys).foldl (λ acc θ => acc + unnormalizedPosterior sys θ) 0
 
 /--
 Normalized posterior probability at a given parameter value.
@@ -116,7 +116,7 @@ Expected value of a function under the normalized posterior.
 `E[f] = Σ_θ P(θ | sys) × f(θ)`
 -/
 def expectation (sys : α) (f : Θ → ℚ) : ℚ :=
-  (paramSupport sys).foldl (fun acc θ => acc + normalizedPosterior sys θ * f θ) 0
+  (paramSupport sys).foldl (λ acc θ => acc + normalizedPosterior sys θ * f θ) 0
 
 /--
 Probability that a predicate holds under the posterior.
@@ -124,7 +124,7 @@ Probability that a predicate holds under the posterior.
 `P(pred) = E[1_pred]`
 -/
 def posteriorProb (sys : α) (pred : Θ → Bool) : ℚ :=
-  expectation sys fun θ => if pred θ then 1 else 0
+  expectation sys λ θ => if pred θ then 1 else 0
 
 -- Properties
 
@@ -179,7 +179,7 @@ end SDSConstraintSystem
 Find the element with maximum value according to a scoring function.
 -/
 def listArgmax {α : Type*} (xs : List α) (f : α → ℚ) : Option α :=
-  xs.foldl (fun acc x =>
+  xs.foldl (λ acc x =>
     match acc with
     | none => some x
     | some best => if f x > f best then some x else some best
@@ -284,7 +284,7 @@ This module provides:
 - `conflictDegree`: Quantify disagreement between factors
 - `hasUniformScenario`: Check for degenerate/trivial scenario factors
 
-### Key Insight
+### Insight
 
 SDS unifies many linguistic phenomena under a common computational pattern:
 - Gradable adjectives (threshold uncertainty)

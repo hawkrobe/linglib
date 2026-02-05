@@ -10,25 +10,24 @@ Do embedded scalar implicatures (under universal quantifiers) show the same
 cross-scale variation ("scalar diversity") as global SIs? And do the same
 properties of alternatives predict this variation?
 
-## Key Findings
+## Findings
 
-1. **Embedded SIs arise**: Strong inferences like "Every soup was warm" →
+1. Embedded SIs arise: strong inferences like "Every soup was warm" →
    "No soup was hot" are computed by hearers.
 
-2. **Scalar diversity extends to embedded SIs**: Cross-scale variation in
+2. Scalar diversity extends to embedded SIs: cross-scale variation in
    embedded SI rates parallels global SI variation (r=0.76-0.80).
 
-3. **Same predictors**: Semantic distance and boundedness predict both
-   global and embedded SI rates.
+3. Semantic distance and boundedness predict both global and embedded SI rates.
 
 ## Theoretical Implications
 
-Results support **alternative-based** accounts of embedded SI:
+Results support alternative-based accounts of embedded SI:
 - Grammatical theory (Chierchia 2004; Chierchia, Fox & Spector 2012)
 - Modified neo-Gricean (Sauerland 2004)
 - Neo-Gricean uncertainty RSA-LU (Potts et al. 2015)
 
-Results are **less compatible** with:
+Results are less compatible with:
 - Unconstrained uncertainty RSA-LU (Bergen et al. 2016)
 
 This is because the alternative-free unconstrained model cannot explain
@@ -489,23 +488,15 @@ def exp1Aggregate : Exp1AggregateResult :=
   , strongInference := 32
   , falseControl := 6 }
 
-/--
-**Theorem: Response ordering matches prediction**
-
-true > weak > strong > false
--/
+/-- Response ordering matches prediction: true > weak > strong > false. -/
 theorem exp1_ordering :
     exp1Aggregate.trueControl > exp1Aggregate.weakInference ∧
     exp1Aggregate.weakInference > exp1Aggregate.strongInference ∧
     exp1Aggregate.strongInference > exp1Aggregate.falseControl := by
   native_decide
 
-/--
-**Theorem: Strong inference above false baseline**
-
-Strong inference (32%) significantly above false control (6%),
-indicating embedded SIs are computed.
--/
+/-- Strong inference (32%) significantly above false control (6%),
+    indicating embedded SIs are computed. -/
 theorem exp1_strong_above_false :
     exp1Aggregate.strongInference > exp1Aggregate.falseControl + 20 := by
   native_decide
@@ -554,12 +545,8 @@ Exp 2: Strong correlation between global and embedded SI rates.
 def exp2_globalEmbeddedCorrelation : CorrelationResult :=
   { r := 0.80, p := 0.001, significant := true }
 
-/--
-**Theorem: High correlations support shared mechanism**
-
-Both experiments show strong positive correlation (r > 0.7),
-suggesting a shared mechanism for global and embedded SIs.
--/
+/-- Both experiments show strong positive correlation (r > 0.7),
+    suggesting a shared mechanism for global and embedded SIs. -/
 theorem high_correlations :
     exp1_globalEmbeddedCorrelation.r > 0.7 ∧
     exp2_globalEmbeddedCorrelation.r > 0.7 := by
@@ -610,9 +597,7 @@ def boundednessEffect_Exp2 : PredictorEffect :=
   , significant := true
   , p := 0.001 }
 
-/--
-**Theorem: Both predictors significant in both experiments**
--/
+/-- Both predictors significant in both experiments. -/
 theorem predictors_significant :
     semanticDistanceEffect_Exp1.significant ∧
     semanticDistanceEffect_Exp2.significant ∧
@@ -635,9 +620,7 @@ From Figure 7.
 def boundedMean_Exp2 : Nat := 23
 def nonBoundedMean_Exp2 : Nat := 10
 
-/--
-**Theorem: Bounded scales show higher embedded SI**
--/
+/-- Bounded scales show higher embedded SI rates. -/
 theorem bounded_higher :
     boundedMean_Exp1 > nonBoundedMean_Exp1 ∧
     boundedMean_Exp2 > nonBoundedMean_Exp2 := by
@@ -677,11 +660,7 @@ def supportedByData : TheoryType → Bool
   | .rsaLU_neoGricean => true
   | .rsaLU_unconstrained => false
 
-/--
-**Theorem: Alternative-based theories supported**
-
-Theories that use alternatives are supported by the data.
--/
+/-- Theories that use alternatives are supported by the data. -/
 theorem alternatives_supported :
     ∀ t : TheoryType, usesAlternatives t = supportedByData t := by
   intro t
@@ -700,9 +679,7 @@ structure PriorStudy where
   nScales : Nat
   deriving Repr
 
-/--
-Key prior studies.
--/
+/-- Prior studies on embedded SIs. -/
 def priorStudies : List PriorStudy := [
   { citation := "Geurts & Pouscoulous (2009)"
   , foundEmbeddedSI := false  -- Limited evidence
@@ -718,53 +695,11 @@ def priorStudies : List PriorStudy := [
   , nScales := 43 }
 ]
 
-/--
-**Theorem: This study tests the most scales with the paradigm**
-
-Ronai (2024) combines the Gotzner & Romoli paradigm with
-van Tiel et al.'s 42 scales.
--/
+/-- Ronai (2024) combines the Gotzner & Romoli paradigm with
+    van Tiel et al.'s 42 scales. -/
 theorem comprehensive_test :
     exp1Design.nScales = 42 ∧
     exp2Design.nScales = 42 := by
   native_decide
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Scale Data
-- `ScaleDatum`: Structure with semantic distance, boundedness, SI rates
-- `allScales`: All 42 scales from van Tiel et al. (2016)
-- `boundedScales`, `nonBoundedScales`: Partitioned by boundedness
-
-### Experimental Results
-- `exp1Aggregate`: Aggregate sliding scale responses
-- `exp1_ordering`: true > weak > strong > false
-- `exp1_strong_above_false`: Embedded SIs arise
-
-### Correlations
-- `exp1_globalEmbeddedCorrelation`: r = 0.76
-- `exp2_globalEmbeddedCorrelation`: r = 0.80
-- `high_correlations`: Both > 0.7
-
-### Predictor Effects
-- `semanticDistanceEffect_*`: Significant positive effect
-- `boundednessEffect_*`: Significant positive effect
-- `bounded_higher`: Bounded scales show more embedded SI
-
-### Theoretical Implications
-- `TheoryType`: grammatical, neoGricean, rsaLU variants
-- `usesAlternatives`: Which theories rely on alternatives
-- `supportedByData`: Which theories are supported
-- `alternatives_supported`: Alternative-based theories favored
-
-### Key Theorems
-- `exp1_ordering`: Response ordering matches prediction
-- `high_correlations`: Strong global-embedded correlation
-- `predictors_significant`: Both predictors work
-- `alternatives_supported`: Alternative-based theories supported
--/
 
 end Phenomena.Ronai2024

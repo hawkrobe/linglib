@@ -4,15 +4,15 @@
 Formalization of Lo Guercio (2025) "Maximize Conventional Implicatures!"
 Semantics & Pragmatics 18(9).
 
-## Key Thesis
+## Thesis
 
 Scalar inferences can arise from comparing CI content, not just at-issue
-or presuppositional content. These are **Anti-Conventional Implicatures (ACIs)**.
+or presuppositional content. These are Anti-Conventional Implicatures (ACIs).
 
 The mechanism parallels:
-- **Scalar Implicatures**: Compare at-issue content (Quantity maxim)
-- **Antipresuppositions**: Compare presuppositional content (Maximize Presupposition!)
-- **ACIs**: Compare CI content (Maximize Conventional Implicatures!)
+- Scalar Implicatures: Compare at-issue content (Quantity maxim)
+- Antipresuppositions: Compare presuppositional content (Maximize Presupposition)
+- ACIs: Compare CI content (Maximize Conventional Implicatures)
 
 ## The MCIs! Principle (Lo Guercio Definition 15)
 
@@ -97,7 +97,7 @@ structure CIAlternativePair where
 /--
 Standard CI alternative pairs from Lo Guercio.
 
-Note: The stronger alternative is only a FORMAL alternative if it's
+The stronger alternative is only a formal alternative if it is
 contextually relevant (mentioned, subconstituent, or lexical).
 -/
 def epithetPair (name : String) (relevant : Bool) : CIAlternativePair :=
@@ -164,7 +164,7 @@ Example (18)-(19): Out of the blue, NO ACI arises.
 "John arrived late" ⇝̸ ¬(John is a bastard)
 "Diego entró" ⇝̸ ¬(speaker respects Diego)
 
-Because "that bastard John" is NOT a formal alternative - it's more complex.
+Because "that bastard John" is not a formal alternative; it is more complex.
 -/
 def example_outOfBlue_noACI : MCIsResult :=
   applyMCIs (epithetPair "John" false)  -- Not relevant out of the blue
@@ -172,13 +172,13 @@ def example_outOfBlue_noACI : MCIsResult :=
 #check example_outOfBlue_noACI  -- aciArises = false
 
 /--
-Example (20)-(21): With prior mention, ACI DOES arise.
+Example (20)-(21): With prior mention, an ACI arises.
 
 "John arrived first, then that bastard Pedro arrived."
-⇝ ¬(John is a bastard)
+Implicates: not(John is a bastard)
 
 Because "that bastard" is now contextually relevant (mentioned),
-so "that bastard John" IS a formal alternative.
+"that bastard John" is a formal alternative.
 -/
 def example_priorMention_ACI : MCIsResult :=
   applyMCIs (epithetPair "John" true)  -- Relevant due to prior mention
@@ -205,16 +205,16 @@ def example_appositive_ACI : MCIsResult :=
 
 
 /--
-**Property 1: ACIs Don't Require Same Assertive Content**
+ACIs do not require the same assertive content.
 
 Unlike antipresuppositions, ACIs can arise even when the utterance
 and alternative have different truth conditions.
 
-Example (50): "Juan called María or that bastard Pedro"
-- ACI: ¬(María is a bastard)
+Example (50): "Juan called Maria or that bastard Pedro"
+- ACI: not(Maria is a bastard)
 - Stronger alternative has different assertive content (and vs or)
 
-This is because CI content is INDEPENDENT of at-issue content (Potts 2005).
+CI content is independent of at-issue content (Potts 2005).
 -/
 theorem aci_independent_of_assertion :
     -- Constructive witness: ACI arises despite different assertions
@@ -225,25 +225,25 @@ theorem aci_independent_of_assertion :
   exact ⟨epithetPair "John" true, rfl, rfl⟩
 
 /--
-**Property 2: ACIs Not Affected by DE Contexts**
+ACIs are not affected by DE contexts.
 
-Unlike scalar implicatures, ACIs arise in BOTH UE and DE contexts.
+Unlike scalar implicatures, ACIs arise in both UE and DE contexts.
 
 Example (61): "I doubt that Juan or that bastard Pedro passed"
-- SI blocked: ⇝̸ ¬(I doubt Juan AND that bastard Pedro passed)
-- ACI NOT blocked: ⇝ ¬(Juan is a bastard)
+- SI blocked: does not implicate not(I doubt Juan and that bastard Pedro passed)
+- ACI not blocked: implicates not(Juan is a bastard)
 
-This is because CI content doesn't interact with truth-conditional entailment.
+CI content does not interact with truth-conditional entailment.
 -/
 def aciInDEContext (pair : CIAlternativePair) (_ctx : ContextPolarity) : MCIsResult :=
-  -- ACI derivation is the SAME regardless of polarity
+  -- ACI derivation is the same regardless of polarity
   applyMCIs pair
 
 theorem aci_polarity_insensitive (pair : CIAlternativePair) :
     aciInDEContext pair .upward = aciInDEContext pair .downward := rfl
 
 /--
-**Property 3: ACIs Are Cancellable**
+ACIs are cancellable.
 
 Example (52): "Juan arrived first, then that bastard Pedro arrived
               (by the way, Juan is also a bastard)"
@@ -262,7 +262,7 @@ def cancelACI (result : MCIsResult) (phrase : String) : ACIWithCancellation :=
   , cancellationPhrase := some phrase }
 
 /--
-**Property 4: ACIs Are Reinforceable**
+ACIs are reinforceable.
 
 Example (63): Repeating the ACI content is not redundant.
 
@@ -320,8 +320,6 @@ def aciProperties : ScalarInferenceComparison :=
 
 
 /--
-**Grounding Theorem: ACI from MCIs! and Potts Semantics**
-
 The ACI mechanism is grounded in:
 1. Potts (2005): CI content is independent of at-issue content
 2. Fox & Katzir (2011): Formal alternatives are structurally constrained
@@ -335,45 +333,5 @@ theorem aci_grounded_in_mcis {W : Type*}
     (h_relevant : True)  -- ψ is contextually relevant (formal alternative)
     : -- Then ACI arises: speaker believes ¬(CI of ψ)
       True := trivial
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `CIAlternativeType`: Types of CI expressions (epithet, honorific, etc.)
-- `CIAlternativePair`: Weaker/stronger CI alternative pair
-- `MCIsResult`: Result of applying MCIs!
-
-### MCIs! Application
-- `applyMCIs`: Derive ACI from alternative pair
-- `epithetPair`, `honorificPair`, `appositivePair`: Construct standard pairs
-
-### Key Examples (Lo Guercio 2025)
-- `example_outOfBlue_noACI`: No ACI without prior mention
-- `example_priorMention_ACI`: ACI arises with prior mention
-- `example_honorific_ACI`: Parallel for honorifics
-- `example_appositive_ACI`: Parallel for appositives
-
-### Properties
-- `aci_independent_of_assertion`: ACIs don't require same assertion
-- `aci_polarity_insensitive`: ACIs not affected by DE context
-- `cancelACI`: ACIs are cancellable
-- `reinforceACI`: ACIs are reinforceable
-
-### Comparison
-- `siProperties`, `antipresupProperties`, `aciProperties`: Compare inference types
-
-### Grounding
-- `aci_grounded_in_mcis`: ACIs derive from Potts + Fox-Katzir + Grice
-
-## Connection to Other Modules
-
-- `Montague.Lexicon.Expressives.Basic`: Two-dimensional semantics, CI strength
-- `NeoGricean.Core.Basic`: BeliefState, StandardRecipe (parallel structure)
-- `NeoGricean.Core.Alternatives`: HornSet, formal alternatives
-- `Montague.Core.Polarity`: Context polarity (for DE insensitivity proof)
--/
 
 end NeoGricean.ConventionalImplicatures

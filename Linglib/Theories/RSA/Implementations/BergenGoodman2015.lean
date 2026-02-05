@@ -19,7 +19,7 @@ showing that noise can be *strategically exploited* for communication.
    - "BOB went" signals exhaustivity (only Bob went)
    - Speaker strategically protects important information
 
-## Key Innovation
+## Innovation
 
 Standard RSA assumes perfect transmission. This model adds:
 - P_N(u_p | u_i) : noisy channel (probability of perceiving u_p given intended u_i)
@@ -86,7 +86,7 @@ def symmetric (allU : List U) (ε : ℚ) (hε : 0 ≤ ε ∧ ε ≤ 1) : NoisyCh
     intros ui up
     split_ifs with h1 h2
     · linarith [hε.1, hε.2]
-    · apply div_nonneg hε.1; simp; sorry  -- h2 : allU.length > 1
+    · exact div_nonneg hε.1 (sub_nonneg.mpr (by exact_mod_cast (le_of_lt h2)))
     · decide
 
 end NoisyChannel
@@ -205,9 +205,9 @@ The listener:
 3. Assigns meaning based on literal semantics of u_i
 -/
 def L0_noisy (δ : ℚ) (u_perceived : Utterance) : List (Meaning × ℚ) :=
-  let scores := allMeanings.map fun m =>
+  let scores := allMeanings.map λ m =>
     let compatibleSources := fullSentences.filter (literalMeaning · m)
-    let score := compatibleSources.foldl (fun acc u_i =>
+    let score := compatibleSources.foldl (λ acc u_i =>
       acc + utterancePrior u_i * noiseChannel δ u_i u_perceived) 0
     (m, score)
   normalize scores
@@ -219,9 +219,9 @@ Utility = P(listener gets correct meaning) - cost
 -/
 def S1_noisy (δ : ℚ) (m : Meaning) : List (Utterance × ℚ) :=
   -- Only consider full sentences (speaker doesn't intentionally use fragments)
-  let scores := fullSentences.map fun u_i =>
+  let scores := fullSentences.map λ u_i =>
     -- Expected accuracy: how often does listener recover correct meaning?
-    let expectedAccuracy := allUtterances.foldl (fun acc u_p =>
+    let expectedAccuracy := allUtterances.foldl (λ acc u_p =>
       let pNoise := noiseChannel δ u_i u_p
       let l0Score := getScore (L0_noisy δ u_p) m
       acc + pNoise * l0Score) 0
@@ -234,8 +234,8 @@ def S1_noisy (δ : ℚ) (m : Meaning) : List (Utterance × ℚ) :=
 L1(m | u_p) ∝ P(m) Σ_{u_i} S1(u_i | m) P_N(u_p | u_i)
 -/
 def L1_noisy (δ : ℚ) (u_perceived : Utterance) : List (Meaning × ℚ) :=
-  let scores := allMeanings.map fun m =>
-    let score := fullSentences.foldl (fun acc u_i =>
+  let scores := allMeanings.map λ m =>
+    let score := fullSentences.foldl (λ acc u_i =>
       let s1Score := getScore (S1_noisy δ m) u_i
       let pNoise := noiseChannel δ u_i u_perceived
       acc + s1Score * pNoise) 0
@@ -387,8 +387,8 @@ def speakerBelief (k : Knowledge) (m : Meaning) : ℚ :=
 
 /-- L0 with noise -/
 def L0 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
-  let scores := allMeanings.map fun m =>
-    let score := allUtterances.foldl (fun acc u_i =>
+  let scores := allMeanings.map λ m =>
+    let score := allUtterances.foldl (λ acc u_i =>
       if literalMeaning u_i m then
         acc + noiseChannel ε u_i u_p
       else acc) 0
@@ -399,9 +399,9 @@ def L0 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
 def S1 (ε : ℚ) (k : Knowledge) (m : Meaning) : List (Utterance × ℚ) :=
   -- Only consider utterances compatible with meaning
   let compatUtts := allUtterances.filter (literalMeaning · m)
-  let scores := compatUtts.map fun u_i =>
+  let scores := compatUtts.map λ u_i =>
     -- Expected probability listener gets correct meaning
-    let expectedScore := allUtterances.foldl (fun acc u_p =>
+    let expectedScore := allUtterances.foldl (λ acc u_p =>
       let pNoise := noiseChannel ε u_i u_p
       let l0Score := getScore (L0 ε u_p) m
       acc + pNoise * l0Score) 0
@@ -410,8 +410,8 @@ def S1 (ε : ℚ) (k : Knowledge) (m : Meaning) : List (Utterance × ℚ) :=
 
 /-- L1: Pragmatic listener -/
 def L1 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
-  let scores := allMeanings.map fun m =>
-    let score := allUtterances.foldl (fun acc u_i =>
+  let scores := allMeanings.map λ m =>
+    let score := allUtterances.foldl (λ acc u_i =>
       let s1Score := getScore (S1 ε .full m) u_i  -- Assume full knowledge for now
       let pNoise := noiseChannel ε u_i u_p
       acc + s1Score * pNoise) 0
@@ -532,7 +532,7 @@ end TheoreticalConnections
    - "Bob went" → non-exhaustive (maybe others too)
    - `stress_increases_exhaustivity`: proven
 
-### Key Innovation
+### Innovation
 
 The noisy channel model explains phenomena that standard RSA cannot:
 - Fragments have NO literal meaning, yet are interpreted

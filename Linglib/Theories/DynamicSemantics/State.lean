@@ -22,8 +22,8 @@ Farkas & Bruce decompose the discourse state into five components:
 Current RSA models for presupposition projection use the `BeliefState` slot
 for different components of the discourse state:
 
-- **Scontras & Tonhauser (2025)**: BeliefState = dcS (speaker's private assumptions)
-- **Warstadt (2022) / Qing et al. (2016)**: BeliefState = cg (common ground)
+- Scontras & Tonhauser (2025): BeliefState = dcS (speaker's private assumptions)
+- Warstadt (2022) / Qing et al. (2016): BeliefState = cg (common ground)
 
 This module provides explicit types for these components, making the
 theoretical distinctions clear while maintaining computational compatibility
@@ -130,19 +130,19 @@ Convert common ground to a ContextSet (worlds where all cg props hold).
 This bridges to the existing `Core.CommonGround` infrastructure.
 -/
 def toContextSet (ds : DiscourseState W) : ContextSet W :=
-  fun w => ds.cg.all (fun p => p w)
+  λ w => ds.cg.all (λ p => p w)
 
 /--
 World compatibility: w is compatible with the discourse state if
 w satisfies all common ground propositions.
 -/
 def compatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.cg.all (fun p => p w)
+  ds.cg.all (λ p => p w)
 
 /--
 Check if the table is empty (stable state).
 
-A discourse state is **stable** when the table is empty, meaning all
+A discourse state is stable when the table is empty, meaning all
 issues have been resolved and there's nothing pending.
 -/
 def isStable (ds : DiscourseState W) : Bool := ds.table.isEmpty
@@ -154,19 +154,19 @@ This is what S&T (2025) call "speakerCredence": the speaker only considers
 worlds compatible with their private assumptions.
 -/
 def speakerCompatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.dcS.all (fun p => p w)
+  ds.dcS.all (λ p => p w)
 
 /--
 Check if a world is compatible with listener's commitments.
 -/
 def listenerCompatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.dcL.all (fun p => p w)
+  ds.dcL.all (λ p => p w)
 
 
 /--
 Add a proposition to the common ground.
 
-This models **acceptance** of an assertion: the proposition moves from
+This models acceptance of an assertion: the proposition moves from
 a participant's discourse commitments to the joint common ground.
 -/
 def addToCG (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
@@ -175,7 +175,7 @@ def addToCG (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
 /--
 Add a proposition to speaker's discourse commitments.
 
-This models the speaker **asserting** a proposition, which commits
+This models the speaker asserting a proposition, which commits
 the speaker but doesn't yet affect the common ground.
 -/
 def addToDcS (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
@@ -212,7 +212,7 @@ Following F&B: an assertion of p by the speaker:
 
 The listener can then respond by:
 - Accepting (adds p to dcL and cg, pops table)
-- Rejecting (adds ¬p to dcL, conflict!)
+- Rejecting (adds ¬p to dcL, creating a conflict)
 - Neither (leaving p "on the table")
 -/
 def assertDeclarative (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
@@ -224,7 +224,7 @@ Effect of a polar question.
 
 Following F&B: a polar question about p:
 1. Pushes the issue {p, ¬p} onto the table
-2. Does NOT add commitments (questions don't commit)
+2. Does not add commitments (questions don't commit)
 -/
 def askPolarQuestion (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
   let negP : BProp W := Decidable.pnot W p
@@ -280,15 +280,15 @@ The `BeliefState` type represents different possible values of dcS (what
 the speaker privately assumes). L1 infers which dcS best explains the
 speaker's utterance choice.
 
-Key insight: The speaker may assume things not yet in the common ground.
-This is why S&T prefer "private assumptions" over "common ground."
+The speaker may assume things not yet in the common ground,
+which is why S&T prefer "private assumptions" over "common ground."
 
 ### Warstadt (2022) / Qing et al. (2016): Inferring cg
 
 The `Context` type represents different possible values of cg (what's
 jointly accepted). L1 infers which cg state the speaker is acting on.
 
-Key insight: Accommodation is updating one's model of the common ground.
+Accommodation is updating one's model of the common ground.
 -/
 
 /--
@@ -330,7 +330,7 @@ function and prior, providing a clean interface for building RSA scenarios.
 
 ## Two Main Patterns
 
-**Pattern 1: dcS inference (S&T style)**
+Pattern 1: dcS inference (S&T style)
 ```lean
 def stConfig : DiscourseConfig WorldState := {
   D := BeliefState
@@ -339,7 +339,7 @@ def stConfig : DiscourseConfig WorldState := {
 }
 ```
 
-**Pattern 2: cg inference (Warstadt style)**
+Pattern 2: cg inference (Warstadt style)
 ```lean
 def warstadtConfig : DiscourseConfig WorldState := {
   D := Context
@@ -381,9 +381,9 @@ Create a trivial discourse config with no latent variable.
 -/
 def trivial : DiscourseConfig W where
   D := Unit
-  compatible := fun _ _ => true
-  prior := fun _ => 1
-  prior_nonneg := fun _ => by decide
+  compatible := λ _ _ => true
+  prior := λ _ => 1
+  prior_nonneg := λ _ => by decide
 
 /--
 Create a config for dcS-style inference from a list of proposition options.
@@ -392,10 +392,10 @@ Each value of D determines which propositions the speaker privately assumes.
 -/
 def forDcS {D : Type} [Fintype D] [DecidableEq D]
     (dcSOptions : D → List (BProp W))
-    (prior : D → ℚ := fun _ => 1)
+    (prior : D → ℚ := λ _ => 1)
     (prior_nonneg : ∀ d, 0 ≤ prior d := by intros; decide) : DiscourseConfig W where
   D := D
-  compatible := fun d w => (dcSOptions d).all (fun p => p w)
+  compatible := λ d w => (dcSOptions d).all (λ p => p w)
   prior := prior
   prior_nonneg := prior_nonneg
 
@@ -406,49 +406,13 @@ Each value of D determines which propositions are in the common ground.
 -/
 def forCG {D : Type} [Fintype D] [DecidableEq D]
     (cgOptions : D → List (BProp W))
-    (prior : D → ℚ := fun _ => 1)
+    (prior : D → ℚ := λ _ => 1)
     (prior_nonneg : ∀ d, 0 ≤ prior d := by intros; decide) : DiscourseConfig W where
   D := D
-  compatible := fun d w => (cgOptions d).all (fun p => p w)
+  compatible := λ d w => (cgOptions d).all (λ p => p w)
   prior := prior
   prior_nonneg := prior_nonneg
 
 end DiscourseConfig
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Types
-- `Participant`: Speaker / Listener roles
-- `SentenceForm`: Declarative / Interrogative clause types
-- `Issue`: A question on the conversational table
-- `DiscourseState`: Full F&B discourse state (dcS, dcL, cg, table)
-
-### Basic Operations
-- `empty`: Initial discourse state
-- `toContextSet`: Bridge to CommonGround infrastructure
-- `compatible`: World-state compatibility
-- `isStable`: Check if table is empty
-
-### Discourse Updates
-- `addToCG`, `addToDcS`, `addToDcL`: Add propositions
-- `pushIssue`, `popIssue`: Manage the table
-- `assertDeclarative`, `askPolarQuestion`: Full speech act effects
-- `acceptTop`: Accept top issue
-
-### RSA Connection
-- `forDcSInference`: Setup for S&T-style models (infer speaker's assumptions)
-- `forCGInference`: Setup for Warstadt-style models (infer common ground)
-
-## Future Extensions
-
-1. **Multi-turn dynamics**: Model sequences of assertions and responses
-2. **Projection through the table**: How presuppositions interact with
-   issues under discussion
-3. **Non-canonical responses**: Beyond simple accept/reject
-4. **Rising declaratives**: Assertions with interrogative prosody
--/
 
 end Theories.DynamicSemantics.State

@@ -1,65 +1,25 @@
 /-
 # Scope Freezing Phenomena
 
-Empirical data on configurations where inverse scope becomes unavailable.
+Configurations where inverse scope becomes unavailable. No controlled experimental data exists for baseline-vs-frozen contrasts; judgments are introspective.
 
-## Overview
-
-Scope freezing occurs when a sentence with two scope-bearing elements
-allows only surface scope, despite structurally similar sentences
-being ambiguous.
-
-## Key Paradigm: Possessor Freezing
-
-(1) A student attended every seminar.        → ∃>∀, ∀>∃ (AMBIGUOUS)
-(2) A student's teacher attended every seminar. → ∃>∀ only (FROZEN)
-
-The possessor in (2) "freezes" scope: inverse scope (∀>∃) is unavailable.
-
-## Other Freezing Contexts
-
-- **Double object construction**: "gave NP NP" freezes scope
-- **Passive**: "was V-ed by NP" often freezes scope
-- **Heavy NP**: Complex NPs resist inverse scope
-- **Weak crossover**: Bound variable readings block inverse scope
-
-## Theoretical Significance
-
-Different theories explain freezing differently:
-- **Minimalism**: QR is blocked by structural constraints (possessor, etc.)
-- **CCG**: Derivational structure doesn't generate inverse reading
-- **Processing**: Inverse scope is costly; freezing = extreme cost
-- **Pragmatics**: Context could make "frozen" readings available
-
-The key question: Is freezing **categorical** (grammatical) or **gradient** (preference)?
-
-## Empirical Status
-
-**No controlled experimental data known** for the baseline-vs-frozen contrasts.
-
-The judgments in this file are from theoretical literature (introspective).
-Scontras et al. (2014, 2017) tested baseline ambiguity (~53% inverse acceptance
-for "A shark attacked every pirate") but not freezing configurations.
-
-This is an empirical gap — a direct comparison study would be valuable.
+## Main definitions
+- `Availability`, `FreezingContext`, `Example`
 
 ## References
-
 - May (1985). Logical Form.
 - Larson (1988). On the double object construction.
 - Bruening (2001). QR obeys Superiority.
 - Antonyuk (2015). Quantifier scope and scope freezing in Russian.
-- Scontras et al. (2014, 2017). Experimental studies on scope ambiguity (baseline only).
+- Scontras et al. (2014, 2017). Experimental studies on scope ambiguity.
 -/
 
 namespace Phenomena.Quantification.ScopeFreezing
 
--- Scope Availability
-
 /-- Available scope readings for a sentence -/
 inductive Availability where
   | ambiguous     -- Both surface and inverse available
-  | surfaceOnly   -- Only surface scope (inverse FROZEN)
+  | surfaceOnly   -- Only surface scope (inverse frozen)
   | inverseOnly   -- Only inverse scope (rare)
   deriving DecidableEq, BEq, Repr, Inhabited
 
@@ -77,8 +37,6 @@ inductive DataSource where
   | corpus          -- Corpus-based evidence
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- Freezing Context Types
-
 /-- Types of configurations that induce scope freezing -/
 inductive FreezingContext where
   | none              -- No freezing context (baseline ambiguous)
@@ -91,41 +49,23 @@ inductive FreezingContext where
   | attitude          -- Attitude verb complements
   deriving DecidableEq, BEq, Repr, Inhabited
 
--- Scope Freezing Example Structure
-
 /-- A scope freezing example with empirical judgment -/
 structure Example where
-  /-- Unique identifier -/
   id : String
-  /-- The sentence -/
   sentence : String
-  /-- Quantifier 1 (typically subject) -/
   quant1 : String
-  /-- Quantifier 2 (typically object) -/
   quant2 : String
-  /-- Type of freezing context -/
   context : FreezingContext
-  /-- Observed availability -/
   observed : Availability
-  /-- Confidence in judgment -/
   confidence : Confidence := .clear
-  /-- Source of judgment -/
   source : DataSource := .introspective
-  /-- Surface scope gloss -/
   surfaceGloss : String := ""
-  /-- Inverse scope gloss -/
   inverseGloss : String := ""
-  /-- Notes -/
   notes : String := ""
   deriving Repr
 
 
-/-!
-## Possessor Freezing
-
-The canonical scope freezing paradigm from the literature.
-When the subject contains a possessor, inverse scope disappears.
--/
+-- Possessor Freezing
 
 def possessor_baseline : Example :=
   { id := "poss-1a"
@@ -174,14 +114,7 @@ def possessor_variant2 : Example :=
   , notes := "Possessor blocks inverse; sentence is odd" }
 
 
-/-!
-## Double Object Freezing
-
-The double object construction ("V NP NP") freezes scope,
-while the prepositional dative ("V NP to NP") allows ambiguity.
-
-Larson (1988), Bruening (2001)
--/
+-- Double Object Freezing
 
 def dative_baseline : Example :=
   { id := "dat-1a"
@@ -218,12 +151,7 @@ def dative_variant : Example :=
   , notes := "Double object freezes subject-IO scope" }
 
 
-/-!
-## Passive Freezing
-
-Passive constructions often show scope freezing,
-though judgments are more gradient than possessor cases.
--/
+-- Passive Freezing
 
 def passive_baseline : Example :=
   { id := "pass-1a"
@@ -260,12 +188,7 @@ def passive_variant : Example :=
   , notes := "by-phrase scope is limited" }
 
 
-/-!
-## Heavy NP Effects
-
-Complex/heavy NPs in subject position tend to resist inverse scope.
-This may be processing-based rather than grammatical.
--/
+-- Heavy NP Effects
 
 def heavy_baseline : Example :=
   { id := "heavy-1a"
@@ -288,12 +211,7 @@ def heavy_frozen : Example :=
   , notes := "Heavy subject: inverse scope degraded" }
 
 
-/-!
-## Weak Crossover and Scope
-
-When inverse scope would create a weak crossover configuration,
-it's blocked.
--/
+-- Weak Crossover and Scope
 
 def crossover_baseline : Example :=
   { id := "wco-1a"
@@ -318,11 +236,7 @@ def crossover_frozen : Example :=
   , notes := "Bound pronoun blocks QR (weak crossover)" }
 
 
-/-!
-## Attitude Verb Scope
-
-Quantifiers in attitude complements often can't scope out.
--/
+-- Attitude Verb Scope
 
 def attitude_frozen : Example :=
   { id := "att-1"
@@ -360,8 +274,6 @@ def allExamples : List Example :=
   possessorExamples ++ doubleObjectExamples ++ passiveExamples ++
   heavyNPExamples ++ crossoverExamples ++ attitudeExamples
 
--- Key Empirical Generalizations
-
 /-- Possessor freezing is robust (clear judgments) -/
 def possessorFreezingIsClear : Bool :=
   possessor_frozen.confidence == .clear
@@ -385,67 +297,5 @@ def ambiguousCount : Nat :=
 #eval frozenCount      -- 9
 #eval ambiguousCount   -- 6
 
--- Theoretical Predictions (to be tested in Theories/Comparisons/)
-
-/-!
-## What Theories Predict
-
-### Minimalism (QR + Economy)
-- Possessor blocks QR: the indefinite is "trapped" inside the DP
-- Double object: indirect object c-commands direct object at LF
-- Passive: by-phrase is an adjunct, can't undergo QR
-- Prediction: **Categorical** freezing
-
-### CCG (Derivational)
-- Scope = derivational ambiguity
-- Possessor: single derivation for complex DP
-- Double object: different argument structure than PP dative
-- Prediction: **Categorical** freezing (different cause)
-
-### Processing
-- Inverse scope requires holding material in memory
-- Complex subjects increase memory load
-- Prediction: **Gradient** freezing (difficulty, not impossibility)
-
-### RSA / Pragmatics
-- Listeners integrate over possible interpretations
-- "Frozen" readings might be available but dispreferred
-- Context could make frozen readings accessible
-- Prediction: **Gradient** freezing (preference, not grammar)
-
-### Key Differentiating Data
-1. Can context ever rescue "frozen" readings? (Pragmatics: yes; Syntax: no)
-2. Is there a sharp boundary or continuous degradation? (Syntax: sharp; Processing: continuous)
-3. Do all freezing contexts behave identically? (Syntax: possibly not; Processing: graded by complexity)
--/
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Types
-- `Availability`: ambiguous | surfaceOnly | inverseOnly
-- `FreezingContext`: possessor | doubleObject | passive | heavyNP | ...
-- `Example`: structured representation of scope freezing data
-
-### Data
-- 15 examples across 6 freezing contexts
-- Judgments with confidence levels
-- Surface and inverse glosses
-
-### Key Paradigms
-1. **Possessor freezing**: most robust, clearest judgments
-2. **Double object**: robust, structural explanation clear
-3. **Passive**: more gradient, theoretical debate
-4. **Heavy NP**: likely processing-based
-5. **Weak crossover**: binding theory interaction
-6. **Attitude verbs**: clause-boundedness
-
-### What Belongs Elsewhere
-- Formal derivations: `Theories/Minimalism/`, `Theories/CCG/`
-- Theory comparison: `Theories/Comparisons/ScopeFreezing/`
-- RSA modeling: `Theories/RSA/Implementations/`
--/
 
 end Phenomena.Quantification.ScopeFreezing

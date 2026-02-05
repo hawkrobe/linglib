@@ -11,18 +11,18 @@ Sluicing is ellipsis of the complement of a wh-phrase:
 
 The elided material ("left") is reconstructed from the antecedent clause.
 
-## Key Properties
+## Properties
 
-1. **Inner antecedent**: The correlate in the antecedent (e.g., "someone")
-2. **Case matching**: Wh-phrase case must match inner antecedent case
-3. **Scope constraint**: Inner antecedent must scope over rest of antecedent
-4. **Sprouting**: Sluicing without overt inner antecedent
+1. Inner antecedent: the correlate in the antecedent (e.g., "someone")
+2. Case matching: wh-phrase case must match inner antecedent case
+3. Scope constraint: inner antecedent must scope over rest of antecedent
+4. Sprouting: sluicing without overt inner antecedent
 
 ## Theoretical Connections (Promissory Notes)
 
 ### Continuation-Based Analysis (B&S 2014, Ch. 16)
 
-Barker & Shan analyze sluicing as **anaphora to a continuation**:
+Barker & Shan analyze sluicing as anaphora to a continuation:
 - The sluice = wh-phrase + (antecedent − inner-antecedent)
 - SLUICEGAP is a proform of category `(DP⦵S)^(DP⦵S)`
 - This explains scope constraints: inner antecedent must take scope
@@ -33,7 +33,7 @@ This connects to `Theories/Montague/Anaphora.lean`:
 
 ### Answer Ban (Chung, Ladusaw & McCloskey 1995)
 
-The antecedent clause must NOT resolve the sluiced interrogative's issue.
+The antecedent clause must not resolve the sluiced interrogative's issue.
 This is a pragmatic constraint connecting to question semantics.
 
 See `Theories/Montague/Questions.lean` for partition semantics.
@@ -370,57 +370,5 @@ def answerBanData : List AnswerBanDatum := [
   answerBanViolated,
   definiteViolatesAnswerBan
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `SluicingDatum`: Basic sluicing with antecedent and correlate
-- `CaseMatchingDatum`: Case matching effects across languages
-- `SproutingDatum`: Sluicing without overt correlate
-- `ScopeConstraintDatum`: Inner antecedent scope requirement
-- `AndrewsAmalgamDatum`: Recursive interrogative embedding
-- `AnswerBanDatum`: Pragmatic constraint on antecedent
-
-### Key Examples
-- Basic sluicing: "Someone left, but I don't know who"
-- Sprouting: "John was eating, but I don't know what"
-- Case matching: German dative matching
-- Scope constraint: Wide scope requirement for inner antecedent
-- Andrews Amalgams: "Sally will eat I don't know what"
-- Answer Ban: "*John left, but I don't know who"
-
-### Theoretical Neutrality
-
-This module records WHAT the data is. Theoretical analyses include:
-- **Continuation-based** (B&S 2014): Sluicing as anaphora to continuation
-- **LF-copying** (Merchant 2001): PF deletion with LF identity
-- **Direct interpretation** (Chung et al. 1995): Semantic reconstruction
-
-All theories must account for:
-1. Case matching in morphologically rich languages
-2. Scope constraints on inner antecedent
-3. Sprouting from implicit arguments
-4. Answer Ban effects
-
-### Promissory Notes: Future Theoretical Work
-
-**Continuation Analysis** (`Theories/Montague/Anaphora.lean`):
-- SLUICEGAP as proform: `(DP⦵S)^(DP⦵S)`
-- Parasitic scope parallels W combinator binding
-- Tower notation for in-situ scope
-
-**Question Semantics** (`Theories/Montague/Questions.lean`):
-- Answer Ban as partition semantics constraint
-- Sluiced question must remain open
-- Connects to pragmatic answerhood
-
-**Type-Logical Grammar**:
-- NLλ analysis of sluicing
-- Product categories for implicit arguments
-- Hypothetical reasoning with continuations
--/
 
 end Phenomena.Ellipsis.Sluicing

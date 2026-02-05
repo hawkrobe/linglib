@@ -35,10 +35,10 @@ PLA assignment merges variable and pronoun assignments via sum type.
 abbrev MergedAssignment (E : Type*) := (VarIdx ⊕ PronIdx) → E
 
 /-- Variable dref: projection at .inl i -/
-def varDref {E : Type*} (i : VarIdx) : Dref (MergedAssignment E) E := fun g => g (.inl i)
+def varDref {E : Type*} (i : VarIdx) : Dref (MergedAssignment E) E := λ g => g (.inl i)
 
 /-- Pronoun dref: projection at .inr i -/
-def pronDref {E : Type*} (i : PronIdx) : Dref (MergedAssignment E) E := fun g => g (.inr i)
+def pronDref {E : Type*} (i : PronIdx) : Dref (MergedAssignment E) E := λ g => g (.inr i)
 
 
 /--
@@ -60,8 +60,8 @@ def plaPossToMerged {E : Type*} (p : PLAPoss E) : MergedAssignment E
 Convert merged assignment to PLAPoss.
 -/
 def mergedToPLAPoss {E : Type*} (g : MergedAssignment E) : PLAPoss E :=
-  { assignment := fun i => g (.inl i)
-  , witnesses := fun i => g (.inr i) }
+  { assignment := λ i => g (.inl i)
+  , witnesses := λ i => g (.inr i) }
 
 theorem plaPoss_roundtrip {E : Type*} (p : PLAPoss E) :
     mergedToPLAPoss (plaPossToMerged p) = p := by
@@ -77,7 +77,7 @@ variable {E : Type*} [Nonempty E]
 
 /-- Functional update for merged assignments (only affects variables) -/
 def extend (g : MergedAssignment E) (i : VarIdx) (e : E) : MergedAssignment E :=
-  fun x => match x with
+  λ x => match x with
     | .inl j => if j = i then e else g (.inl j)
     | .inr j => g (.inr j)
 
@@ -94,15 +94,15 @@ Note: PLA existentials check for EXISTENCE of a witness, but
 don't actually extend the assignment (eliminative semantics).
 -/
 def formulaToCondition (M : Model E) : Formula → Condition (MergedAssignment E)
-  | .atom name ts => fun g => M.interp name (ts.map (evalTerm g))
-  | .neg φ => fun g => ¬(formulaToCondition M φ g)
-  | .conj φ ψ => fun g => formulaToCondition M φ g ∧ formulaToCondition M ψ g
-  | .exists_ x φ => fun g => ∃ e : E, formulaToCondition M φ (extend g x e)
+  | .atom name ts => λ g => M.interp name (ts.map (evalTerm g))
+  | .neg φ => λ g => ¬(formulaToCondition M φ g)
+  | .conj φ ψ => λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g
+  | .exists_ x φ => λ g => ∃ e : E, formulaToCondition M φ (extend g x e)
 
 /--
 Translate a PLA formula to a Dynamic Ty2 DRS.
 
-PLA updates are **eliminative** (they only filter, never extend assignments).
+PLA updates are eliminative (they only filter, never extend assignments).
 This means every PLA formula translates to a TEST in Dynamic Ty2.
 -/
 def formulaToDRS (M : Model E) (φ : Formula) : DRS (MergedAssignment E) :=
@@ -111,24 +111,24 @@ def formulaToDRS (M : Model E) (φ : Formula) : DRS (MergedAssignment E) :=
 
 /-- Atom translation: predicate applied to evaluated terms -/
 theorem formulaToDRS_atom (M : Model E) (name : String) (ts : List Term) :
-    formulaToDRS M (.atom name ts) = test (fun g => M.interp name (ts.map (evalTerm g))) := rfl
+    formulaToDRS M (.atom name ts) = test (λ g => M.interp name (ts.map (evalTerm g))) := rfl
 
 /-- Negation translation: test of negated condition -/
 theorem formulaToDRS_neg (M : Model E) (φ : Formula) :
-    formulaToDRS M (∼φ) = test (fun g => ¬formulaToCondition M φ g) := rfl
+    formulaToDRS M (∼φ) = test (λ g => ¬formulaToCondition M φ g) := rfl
 
 /-- Conjunction translation: test of conjoined conditions -/
 theorem formulaToDRS_conj (M : Model E) (φ ψ : Formula) :
-    formulaToDRS M (φ ⋀ ψ) = test (fun g => formulaToCondition M φ g ∧ formulaToCondition M ψ g) := rfl
+    formulaToDRS M (φ ⋀ ψ) = test (λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g) := rfl
 
 /-- Existential translation: test for existence of witness -/
 theorem formulaToDRS_exists (M : Model E) (x : VarIdx) (φ : Formula) :
-    formulaToDRS M (.exists_ x φ) = test (fun g => ∃ e : E, formulaToCondition M φ (extend g x e)) := rfl
+    formulaToDRS M (.exists_ x φ) = test (λ g => ∃ e : E, formulaToCondition M φ (extend g x e)) := rfl
 
 
 /-- Split a merged assignment into variable and witness components -/
 def splitAssignment (g : MergedAssignment E) : Assignment E × WitnessSeq E :=
-  (fun i => g (.inl i), fun i => g (.inr i))
+  (λ i => g (.inl i), λ i => g (.inr i))
 
 /-- Term evaluation agrees with PLA semantics -/
 theorem evalTerm_eq_Term_eval (g : MergedAssignment E) (t : Term) :
@@ -155,7 +155,7 @@ theorem formulaToCondition_eq_sat (M : Model E) (φ : Formula) (g : MergedAssign
   induction φ generalizing g with
   | atom name ts =>
     simp only [formulaToCondition, Formula.sat, splitAssignment]
-    have h : ts.map (evalTerm g) = ts.map (Term.eval (fun i => g (.inl i)) fun i => g (.inr i)) := by
+    have h : ts.map (evalTerm g) = ts.map (Term.eval (λ i => g (.inl i)) λ i => g (.inr i)) := by
       apply List.map_congr_left
       intro t _
       exact evalTerm_eq_Term_eval g t
@@ -181,7 +181,7 @@ theorem formulaToCondition_eq_sat (M : Model E) (φ : Formula) (g : MergedAssign
       exact he
 
 /--
-**Main Embedding Theorem**: PLA formula semantics corresponds to Dynamic Ty2 DRS.
+PLA formula semantics corresponds to Dynamic Ty2 DRS.
 
 A merged assignment g satisfies the DRS iff the split assignment satisfies
 the original PLA formula.
@@ -196,49 +196,5 @@ theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignmen
   · intro ⟨heq, hsat⟩
     subst heq
     exact ⟨rfl, (formulaToCondition_eq_sat M φ g).mpr hsat⟩
-
--- SUMMARY
-
-/-!
-## PLA ↪ Dynamic Ty2 Embedding
-
-### Assignment Encoding
-
-PLA embeds via sum type encoding:
-- Variables (VarIdx) → `.inl i`
-- Pronouns (PronIdx) → `.inr i`
-- `MergedAssignment E = (VarIdx ⊕ PronIdx) → E` is the S parameter
-
-This provides type-safe separation without magic numbers or bounds constraints.
-
-### Formula Translation
-
-PLA formulas translate to **tests** in Dynamic Ty2 because PLA updates
-are eliminative (they filter, don't extend assignments):
-
-| PLA | Dynamic Ty2 |
-|-----|-------------|
-| `atom name ts` | `test (fun g => M.interp name (ts.map (evalTerm g)))` |
-| `∼φ` | `test (fun g => ¬cond φ g)` |
-| `φ ⋀ ψ` | `test (fun g => cond φ g ∧ cond ψ g)` |
-| `∃x.φ` | `test (fun g => ∃e. cond φ (extend g x e))` |
-
-### Key Functions
-
-- `formulaToCondition M φ`: Formula → Condition (when g satisfies φ)
-- `formulaToDRS M φ`: Formula → DRS (the test-based translation)
-- `splitAssignment g`: Recover (Assignment, WitnessSeq) from merged
-- `plaPossToMerged` / `mergedToPLAPoss`: Bijection with PLAPoss
-
-### Main Theorem
-
-`formulaToDRS_correct`: The DRS semantics matches PLA satisfaction:
-```
-formulaToDRS M φ g h ↔ (g = h ∧ φ.sat M (split g).1 (split g).2)
-```
-
-This shows that PLA's eliminative dynamic semantics embeds faithfully
-into Dynamic Ty2's test construct.
--/
 
 end Theories.DynamicSemantics.PLA

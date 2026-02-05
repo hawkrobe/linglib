@@ -127,7 +127,7 @@ inductive StarConcept where
 /-- WILDLIFE scenario: nature, animals, habitat -/
 def wildlifeScenario : Scenario BatConcept :=
   { name := "WILDLIFE"
-  , conceptDist := fun
+  , conceptDist := λ
       | .animal => 95/100
       | .equipment => 5/100
   }
@@ -135,7 +135,7 @@ def wildlifeScenario : Scenario BatConcept :=
 /-- SPORTS scenario: games, players, equipment -/
 def sportsScenario : Scenario BatConcept :=
   { name := "SPORTS"
-  , conceptDist := fun
+  , conceptDist := λ
       | .animal => 5/100
       | .equipment => 95/100
   }
@@ -143,7 +143,7 @@ def sportsScenario : Scenario BatConcept :=
 /-- ASTRONOMY scenario: telescopes, observations, celestial objects -/
 def astronomyScenario : Scenario StarConcept :=
   { name := "ASTRONOMY"
-  , conceptDist := fun
+  , conceptDist := λ
       | .celestial => 95/100
       | .celebrity => 5/100
   }
@@ -151,7 +151,7 @@ def astronomyScenario : Scenario StarConcept :=
 /-- ENTERTAINMENT scenario: movies, celebrities, awards -/
 def entertainmentScenario : Scenario StarConcept :=
   { name := "ENTERTAINMENT"
-  , conceptDist := fun
+  , conceptDist := λ
       | .celestial => 10/100
       | .celebrity => 90/100
   }
@@ -186,10 +186,10 @@ def inferScenario {S : Type} [BEq S]
     (prior : S → ℚ)
     (cues : List (ContextCue S))
     (scenarios : List S) : S → ℚ :=
-  let likelihood s := cues.foldl (fun acc cue => acc * cue.likelihood s) 1
+  let likelihood s := cues.foldl (λ acc cue => acc * cue.likelihood s) 1
   let unnorm s := prior s * likelihood s
-  let Z := scenarios.foldl (fun acc s => acc + unnorm s) 0
-  fun s => if Z = 0 then 0 else unnorm s / Z
+  let Z := scenarios.foldl (λ acc s => acc + unnorm s) 0
+  λ s => if Z = 0 then 0 else unnorm s / Z
 
 
 /-!
@@ -219,7 +219,7 @@ inductive BatScenario where
 /-- "player" cue: strong evidence for SPORTS -/
 def playerCue : ContextCue BatScenario :=
   { word := "player"
-  , likelihood := fun
+  , likelihood := λ
       | .sports => 95/100
       | .wildlife => 5/100
   }
@@ -245,8 +245,8 @@ P(concept | context) = Σ_s P(s | context) × P(concept | s)
 -/
 def batConceptDist (cues : List (ContextCue BatScenario)) : BatConcept → ℚ :=
   let scenPost := inferScenario batScenarioPrior cues [.sports, .wildlife]
-  fun c => [BatScenario.sports, .wildlife].foldl
-    (fun acc s => acc + scenPost s * scenarioConceptDist s c) 0
+  λ c => [BatScenario.sports, .wildlife].foldl
+    (λ acc s => acc + scenPost s * scenarioConceptDist s c) 0
 
 
 /-!
@@ -273,7 +273,7 @@ Given an evoked frame, get expectations for unfilled elements.
 def frameExpectations {Concept : Type}
     (frame : FrameDef Concept)
     (filledElements : List String) : List (FrameElement Concept) :=
-  frame.elements.filter fun el => !filledElements.contains el.name
+  frame.elements.filter λ el => !filledElements.contains el.name
 
 
 /-!
@@ -308,7 +308,7 @@ def sdsDisambiguateWithUncertainty {Concept Scenario : Type}
     (scenarios : List Scenario) : Concept → ℚ :=
   -- First, compute marginal scenario constraint
   let marginalScenario c := scenarios.foldl
-    (fun acc s => acc + scenarioPosterior s * scenarioConceptDist s c) 0
+    (λ acc s => acc + scenarioPosterior s * scenarioConceptDist s c) 0
   -- Then combine with selectional via PoE
   poe2 selectional marginalScenario concepts
 
@@ -349,6 +349,6 @@ Create a "scenario goal" that filters worlds by scenario membership.
 -/
 def scenarioGoalFilter {Concept Scenario : Type} [BEq Scenario]
     (targetScenario : Scenario) : ScenarioWorld Concept Scenario → Bool :=
-  fun w => w.scenario == targetScenario
+  λ w => w.scenario == targetScenario
 
 end Montague.Frames

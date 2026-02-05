@@ -114,8 +114,8 @@ theorem intersection_theorem {Node : Type} (T : AbstractTree Node) (P Q : Set No
     | inl hp => exact hP x ⟨hdom, hp⟩
     | inr hq => exact hQ x ⟨hdom, hq⟩
   · intro hPQ
-    exact ⟨fun x ⟨hdom, hp⟩ => hPQ x ⟨hdom, Or.inl hp⟩,
-           fun x ⟨hdom, hq⟩ => hPQ x ⟨hdom, Or.inr hq⟩⟩
+    exact ⟨λ x ⟨hdom, hp⟩ => hPQ x ⟨hdom, Or.inl hp⟩,
+           λ x ⟨hdom, hq⟩ => hPQ x ⟨hdom, Or.inr hq⟩⟩
 
 /-- **Corollary**: The map P ↦ C_P is antitone (order-reversing) -/
 theorem command_antitone {Node : Type} (T : AbstractTree Node) (P Q : Set Node) (hPQ : P ⊆ Q) :
@@ -705,15 +705,15 @@ theorem command_sInter {Node : Type} (T : AbstractTree Node) (S : Set (Set Node)
 
 /-- OrderDual for the powerset ordered by superset -/
 def commandMap {Node : Type} (T : AbstractTree Node) : Set Node →o (Set (Node × Node))ᵒᵈ :=
-  ⟨fun P => OrderDual.toDual (commandRelation T P),
-   fun P Q hPQ => by
+  ⟨λ P => OrderDual.toDual (commandRelation T P),
+   λ P Q hPQ => by
      simp only [OrderDual.toDual_le_toDual]
      exact command_antitone T P Q hPQ⟩
 
 /-- The command map is order-reversing (stated directly) -/
 theorem command_order_reversing {Node : Type} (T : AbstractTree Node) :
     ∀ P Q : Set Node, P ⊆ Q → commandRelation T Q ⊆ commandRelation T P :=
-  fun P Q => command_antitone T P Q
+  λ P Q => command_antitone T P Q
 
 -- G.3: Ambidextrousness (B&P Theorem 3)
 
@@ -760,7 +760,7 @@ theorem command_bounded {Node : Type} (T : AbstractTree Node) (P : Set Node)
       simp only [mem_singleton_iff] at hxr
       subst hxr
       -- Need: root dominates b. Use: (a,b) ∈ C_P, so b ∈ T.nodes, so root dom b
-      have hcmd : (a, b) ∈ commandRelation T P := fun y hy => hP' y hy
+      have hcmd : (a, b) ∈ commandRelation T P := λ y hy => hP' y hy
       exact T.root_dom_all b (hb a b hcmd)
   · intro hPr x hxUB
     -- x ∈ UB(a,P) implies x ∈ UB(a, P ∪ {r})
@@ -932,7 +932,7 @@ def commandByRelation {Node : Type} (T : AbstractTree Node) (R : Node → Node �
 
 /-- The property-based command is a special case of relation-based -/
 theorem command_as_relation {Node : Type} (T : AbstractTree Node) (P : Set Node) :
-    commandRelation T P = commandByRelation T (fun a x => T.properDom x a ∧ x ∈ P) := by
+    commandRelation T P = commandByRelation T (λ a x => T.properDom x a ∧ x ∈ P) := by
   ext ⟨a, b⟩
   simp only [commandRelation, commandByRelation, upperBounds, mem_setOf_eq]
 
@@ -951,7 +951,7 @@ def commandEquivalent {Node : Type} (T : AbstractTree Node)
     Key insight: if c dominates some upper bound b for a, then (c,a) can be
     added to R without changing C_R (non-minimal upper bounds don't affect command). -/
 def maximalGenerator {Node : Type} (T : AbstractTree Node) (R : Node → Node → Prop) : Node → Node → Prop :=
-  fun a x => ∃ S, (∀ a' x', R a' x' → S a' x') ∧
+  λ a x => ∃ S, (∀ a' x', R a' x' → S a' x') ∧
                    commandEquivalent T R S ∧
                    S a x
 
@@ -960,7 +960,7 @@ theorem maximalGenerator_contains {Node : Type} (T : AbstractTree Node) (R : Nod
     ∀ a x, R a x → maximalGenerator T R a x := by
   intro a x hRax
   use R
-  exact ⟨fun _ _ h => h, rfl, hRax⟩
+  exact ⟨λ _ _ h => h, rfl, hRax⟩
 
 /-- **Key Lemma for Union Theorem**: Non-minimal upper bounds are in the maximal generator.
 
@@ -975,7 +975,7 @@ theorem nonminimal_in_maximalGenerator {Node : Type} (T : AbstractTree Node)
     (hR_proper : ∀ a' x', R a' x' → T.properDom x' a') :
     maximalGenerator T R a c := by
   -- Define S = R ∪ {(a, c)}
-  let S := fun a' x' => R a' x' ∨ (a' = a ∧ x' = c)
+  let S := λ a' x' => R a' x' ∨ (a' = a ∧ x' = c)
   use S
   constructor
   · -- S ⊇ R
@@ -1035,7 +1035,7 @@ theorem maximalGenerator_equivalent {Node : Type} (T : AbstractTree Node) (R : N
     Analogous to property-based intersection theorem. -/
 theorem relation_intersection_theorem {Node : Type} (T : AbstractTree Node)
     (R S : Node → Node → Prop) :
-    commandByRelation T R ∩ commandByRelation T S = commandByRelation T (fun a x => R a x ∨ S a x) := by
+    commandByRelation T R ∩ commandByRelation T S = commandByRelation T (λ a x => R a x ∨ S a x) := by
   ext ⟨a, b⟩
   simp only [commandByRelation, mem_inter_iff, mem_setOf_eq]
   constructor
@@ -1044,7 +1044,7 @@ theorem relation_intersection_theorem {Node : Type} (T : AbstractTree Node)
     | inl hRax => exact hR x hRax
     | inr hSax => exact hS x hSax
   · intro h
-    exact ⟨fun x hRax => h x (Or.inl hRax), fun x hSax => h x (Or.inr hSax)⟩
+    exact ⟨λ x hRax => h x (Or.inl hRax), λ x hSax => h x (Or.inr hSax)⟩
 
 /-- **Union Theorem** (B&P Theorem 9): C_R ∪ C_S = C_{R̂ ∩ Ŝ}
 
@@ -1058,7 +1058,7 @@ theorem relation_intersection_theorem {Node : Type} (T : AbstractTree Node)
     contradicting (a,b) ∈ C_{R̂∩Ŝ}. -/
 theorem relation_union_theorem {Node : Type} (T : AbstractTree Node) (R S : Node → Node → Prop) :
     commandByRelation T R ∪ commandByRelation T S ⊆
-    commandByRelation T (fun a x => maximalGenerator T R a x ∧ maximalGenerator T S a x) := by
+    commandByRelation T (λ a x => maximalGenerator T R a x ∧ maximalGenerator T S a x) := by
   intro ⟨a, b⟩ h x ⟨hRhat, hShat⟩
   cases h with
   | inl hCR =>
@@ -1088,7 +1088,7 @@ theorem relation_union_theorem_reverse {Node : Type} (T : AbstractTree Node)
     (R S : Node → Node → Prop)
     (hR_proper : ∀ a x, R a x → T.properDom x a)
     (hS_proper : ∀ a x, S a x → T.properDom x a) :
-    commandByRelation T (fun a x => maximalGenerator T R a x ∧ maximalGenerator T S a x) ⊆
+    commandByRelation T (λ a x => maximalGenerator T R a x ∧ maximalGenerator T S a x) ⊆
     commandByRelation T R ∪ commandByRelation T S := by
   intro ⟨a, b⟩ hInt
   -- By contradiction: assume (a,b) ∉ C_R ∪ C_S
@@ -1170,7 +1170,7 @@ theorem commandImage_closed_under_sInter {Node : Type} (T : AbstractTree Node)
 theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
     ∀ S : Set (Set (Node × Node)), S ⊆ commandImage T → S.Nonempty →
     ⋂₀ S ∈ commandImage T :=
-  fun S hS hne => commandImage_closed_under_sInter T S hS hne
+  λ S hS hne => commandImage_closed_under_sInter T S hS hne
 
 -- PART I: B&P COVERAGE SUMMARY
 
@@ -1233,7 +1233,7 @@ generated command relation.
 - **Configurational equivalence** explains why theories agree on simple clauses
 - **Concrete command relations** (c-command, o-command, d-command) demonstrated
 
-### Key Insight
+### Insight
 
 The formalization shows that **grammar comparison** can be made mathematically precise:
 theories that seem to differ in mechanism (tree geometry vs obliqueness vs dependency paths)
@@ -1263,7 +1263,7 @@ identified:
 5. **Union Elimination**: ∪ can be expressed using ∩ and ∘ alone:
    C_P ∪ C_Q = (C_P ∘ C_Q) ∩ (C_Q ∘ C_P) ∩ (C_P • C_Q)
 
-### Key Insight
+### Insight
 
 Working with **associated functions** f : T → T (monotone, bounded) is more
 elegant than working with the relations directly. The composition of command
@@ -1659,7 +1659,7 @@ theorem commandImplication_eq_sUnion {Node : Type} (_T : AbstractTree Node)
     show (C ⇨ D) ∩ C ⊆ D
     exact himp_inf_le
   · -- ⋃₀ {E | E ∩ C ⊆ D} ⊆ C ⇨ D: each member is ⊆ C ⇨ D
-    exact Set.sUnion_subset (fun E hE => le_himp_iff.mpr hE)
+    exact Set.sUnion_subset (λ E hE => le_himp_iff.mpr hE)
 
 /-- The Heyting adjunction: E ∩ C ⊆ D ↔ E ⊆ (C ⇨ D)
 
@@ -1697,7 +1697,7 @@ theorem command_himp_trans {Node : Type} (_T : AbstractTree Node)
     Heyting algebra on the set of command relations. -/
 theorem command_rels_complete_heyting {Node : Type} (_T : AbstractTree Node) :
     ∀ C D : Set (Node × Node), (C ⇨ D) ∩ C ⊆ D :=
-  fun _ _ => himp_inf_le
+  λ _ _ => himp_inf_le
 
 -- J.7.1: Consequences of Heyting Algebra Structure
 
@@ -1735,7 +1735,7 @@ theorem command_inf_compl {Node : Type} (_T : AbstractTree Node)
     but not a Boolean algebra. -/
 theorem command_rels_not_boolean_explanation {Node : Type} (_T : AbstractTree Node) :
     ∀ C : Set (Node × Node), C ∪ Cᶜ = Set.univ :=
-  fun _ => sup_compl_eq_top
+  λ _ => sup_compl_eq_top
 
 /-- **Currying via Heyting implication**: (A ∩ B) ⇨ C = A ⇨ (B ⇨ C)
 
@@ -1814,7 +1814,7 @@ The Heyting algebra structure now uses Mathlib's `HeytingAlgebra` typeclass:
   leverage Mathlib's `Set.subset_himp_iff` and related lemmas
 - `commandImplication_eq_sUnion` shows our explicit definition equals Mathlib's `⇨`
 
-### Key Insights
+### Insights
 
 1. **Associated functions** provide a cleaner interface than relations.
    The map f : T → T replaces the "minimal P-upper-bound" concept.

@@ -18,14 +18,14 @@ But:
 
 ## Maier's Solution
 
-Non-doxastic attitudes (hope, fear, imagine) are **parasitic** on doxastic
+Non-doxastic attitudes (hope, fear, imagine) are parasitic on doxastic
 attitudes (believe, know): their presupposition computation uses the
 doxastic accessibility relation, not their own.
 
 This explains the asymmetry: belief provides a context that satisfies
 hope's presuppositions, but hope cannot provide a context for belief.
 
-## Key Insight
+## Insight
 
 The parasitic relationship means:
 - Hope's local context = belief's local context (when belief is available)
@@ -127,7 +127,7 @@ def dreamParasiticOnBelief : ParasiticAttitude := .dream
 
 
 /--
-**Core Theorem**: The parasitic dependency is asymmetric.
+The parasitic dependency is asymmetric.
 
 Non-doxastic attitudes depend on doxastic ones for presupposition
 filtering, but NOT vice versa.
@@ -209,7 +209,7 @@ def fredWasBeatingPresup : BeatingWorld → Bool
   | .fredNeverBeat => false
 
 /--
-**Key Result**: When Bill believes Fred was beating, hope's presupposition
+When Bill believes Fred was beating, hope's presupposition
 is satisfied.
 
 At worlds where Bill believes Fred was beating, ALL his belief-accessible
@@ -224,7 +224,7 @@ theorem belief_satisfies_hope_presup :
   | inr h => subst h; cases w' <;> simp_all [billBeliefAccess, fredWasBeatingPresup]
 
 /--
-**Contrast**: At worlds where Bill doesn't believe Fred was beating,
+At worlds where Bill doesn't believe Fred was beating,
 the presupposition of "stop" fails in Bill's belief worlds.
 -/
 theorem no_belief_no_filter :
@@ -245,7 +245,7 @@ def parasiticLocalContext {W E : Type*}
     (agent : E)
     (w : W)
     (globalCtx : W → Bool) : W → Bool :=
-  fun w' => globalCtx w && dox.access agent w w' = true
+  λ w' => globalCtx w && dox.access agent w w' = true
 
 /--
 A presupposition is filtered in the parasitic local context iff
@@ -257,7 +257,7 @@ def presupFilteredInParasitic {W E : Type*}
     (w : W)
     (presup : W → Bool)
     (worlds : List W) : Bool :=
-  worlds.all fun w' => !dox.access agent w w' || presup w'
+  worlds.all λ w' => !dox.access agent w w' || presup w'
 
 
 /--
@@ -317,58 +317,5 @@ def standardAnalysis {W E : Type*} (believe : DoxasticPredicate W E) :
   { doxasticHost := believe
   , parasiticAttitudes := [.hope, .fear, .imagine, .dream, .wish, .expect]
   , useDoxasticAccessibility := true }
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Core Definitions
-- `isParasiticOn`: When a non-doxastic accessibility depends on doxastic
-- `PreferentialParasiticOn`: Type-specific version for PreferentialPredicate
-- `ParasiticAttitude`: Enumeration of parasitic attitude verbs
-
-### Asymmetry
-- `ParasiticAsymmetry`: Structure capturing the one-way dependency
-- `FilteringDirection`: Whether filtering can occur given attitude order
-- `canFilter`: Predicate for filtering possibility
-
-### Worked Example
-- `BeatingWorld`: Karttunen's Bill/Fred scenario
-- `billBeliefAccess`: Bill's belief accessibility
-- `belief_satisfies_hope_presup`: Core filtering theorem
-- `no_belief_no_filter`: Contrast case
-
-### Local Context Machinery
-- `parasiticLocalContext`: Local context for parasitic attitudes
-- `presupFilteredInParasitic`: Filtering condition
-- `toBeliefLocalCtx`: Connection to BeliefEmbedding infrastructure
-- `parasitic_uses_belief_local_context`: Unification theorem
-
-### Theoretical Structure
-- `ParasiticAnalysis`: Summary structure
-- `standardAnalysis`: Standard belief-based analysis
-
-## Key Results
-
-1. **Asymmetry Explained**: Filtering works for believe→hope because hope
-   computes presuppositions using belief's accessibility relation.
-
-2. **No Reverse Filtering**: Filtering fails for hope→believe because
-   belief uses its own accessibility relation, not hope's.
-
-3. **Unified Treatment**: Parasitic attitudes use the same BeliefLocalCtx
-   machinery as direct belief embedding.
-
-## Connection to Phenomena
-
-This analysis explains the data in:
-`Phenomena/ParasiticAttitudes/Karttunen1973.lean`
-
-Specifically:
-- `believeHopeFiltering`: Explained by hope being parasitic on belief
-- `hopeBelieverNoFiltering`: Explained by belief NOT being parasitic
-- The `asymmetry_data` theorem is derived from `canFilter`
--/
 
 end Montague.Verb.Attitude.Parasitic

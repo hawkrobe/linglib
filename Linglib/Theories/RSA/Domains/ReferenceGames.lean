@@ -52,7 +52,7 @@ inductive Color where
 
 instance : Fintype Color where
   elems := {.blue, .green, .red, .yellow, .purple, .orange}
-  complete := fun c => by cases c <;> decide
+  complete := λ c => by cases c <;> decide
 
 instance : ToString Color where
   toString
@@ -70,7 +70,7 @@ inductive Shape where
 
 instance : Fintype Shape where
   elems := {.square, .circle, .triangle, .star}
-  complete := fun s => by cases s <;> decide
+  complete := λ s => by cases s <;> decide
 
 instance : ToString Shape where
   toString
@@ -106,10 +106,10 @@ instance : Inhabited Feature := ⟨.color .blue⟩
 /-- Feature is finite (Color + Shape) -/
 instance : Fintype Feature :=
   Fintype.ofEquiv (Color ⊕ Shape) {
-    toFun := fun | .inl c => .color c | .inr s => .shape s
-    invFun := fun | .color c => .inl c | .shape s => .inr s
-    left_inv := fun | .inl _ => rfl | .inr _ => rfl
-    right_inv := fun | .color _ => rfl | .shape _ => rfl
+    toFun := λ | .inl c => .color c | .inr s => .shape s
+    invFun := λ | .color c => .inl c | .shape s => .inr s
+    left_inv := λ | .inl _ => rfl | .inr _ => rfl
+    right_inv := λ | .color _ => rfl | .shape _ => rfl
   }
 
 -- Feature Meaning (Generic)
@@ -165,10 +165,10 @@ instance : Inhabited Object := ⟨⟨.blue, .square⟩⟩
 /-- Object is finite (Color × Shape) -/
 instance : Fintype Object :=
   Fintype.ofEquiv (Color × Shape) {
-    toFun := fun (c, s) => ⟨c, s⟩
-    invFun := fun e => (e.color, e.shape)
-    left_inv := fun _ => rfl
-    right_inv := fun _ => rfl
+    toFun := λ (c, s) => ⟨c, s⟩
+    invFun := λ e => (e.color, e.shape)
+    left_inv := λ _ => rfl
+    right_inv := λ _ => rfl
   }
 
 -- HasColor / HasShape Instances
@@ -220,7 +220,7 @@ structure Context where
 def context (pairs : List (String × List String)) (_h : pairs ≠ [] := by decide) : Context :=
   let objects := pairs.map (·.1)
   let allProps := pairs.flatMap (·.2) |>.eraseDups
-  let hasProperty obj prop := pairs.any fun (o, ps) => o == obj && ps.contains prop
+  let hasProperty obj prop := pairs.any λ (o, ps) => o == obj && ps.contains prop
   { objects := objects
   , properties := allProps
   , hasProperty := hasProperty
@@ -233,7 +233,7 @@ def Context.satisfies (ctx : Context) (obj : String) (utt : String) : Bool :=
 /-- Run L1 for a context using RSA.Eval -/
 def Context.runL1 (ctx : Context) (utt : String) : List (String × ℚ) :=
   RSA.Eval.basicL1 ctx.properties ctx.objects
-    (fun u w => boolToRat (ctx.satisfies w u)) (fun _ => 1) 1 (fun _ => 0) utt
+    (λ u w => boolToRat (ctx.satisfies w u)) (λ _ => 1) 1 (λ _ => 0) utt
 
 /--
 A typed reference game context with Color × Shape objects.
@@ -256,31 +256,31 @@ def TypedContext.fromObjects (objs : List Object) : TypedContext :=
 /-- Run L1 for a typed context using RSA.Eval -/
 def TypedContext.runL1 (ctx : TypedContext) (feat : Feature) : List (Object × ℚ) :=
   RSA.Eval.basicL1 ctx.features ctx.objects
-    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) 1 (fun _ => 0) feat
+    (λ f o => boolToRat (f.appliesTo o)) (λ _ => 1) 1 (λ _ => 0) feat
 
 /-- Run S1 for a typed context using RSA.Eval -/
 def TypedContext.runS1 (ctx : TypedContext) (obj : Object) : List (Feature × ℚ) :=
   RSA.Eval.basicS1 ctx.features ctx.objects
-    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) 1 (fun _ => 0) obj
+    (λ f o => boolToRat (f.appliesTo o)) (λ _ => 1) 1 (λ _ => 0) obj
 
 /-- Run L0 for a typed context using RSA.Eval -/
 def TypedContext.runL0 (ctx : TypedContext) (feat : Feature) : List (Object × ℚ) :=
   RSA.Eval.basicL0 ctx.features ctx.objects
-    (fun f o => boolToRat (f.appliesTo o)) (fun _ => 1) feat
+    (λ f o => boolToRat (f.appliesTo o)) (λ _ => 1) feat
 
 -- Convenience: Quick Context Builders
 
 /-- Build context with just colors (single shape) -/
 def colorsOnly (colors : List Color) (shape : Shape := .square) : TypedContext :=
-  TypedContext.fromObjects (colors.map fun c => ⟨c, shape⟩)
+  TypedContext.fromObjects (colors.map λ c => ⟨c, shape⟩)
 
 /-- Build context with just shapes (single color) -/
 def shapesOnly (shapes : List Shape) (color : Color := .blue) : TypedContext :=
-  TypedContext.fromObjects (shapes.map fun s => ⟨color, s⟩)
+  TypedContext.fromObjects (shapes.map λ s => ⟨color, s⟩)
 
 /-- Build context from color-shape pairs -/
 def fromPairs (pairs : List (Color × Shape)) : TypedContext :=
-  TypedContext.fromObjects (pairs.map fun (c, s) => ⟨c, s⟩)
+  TypedContext.fromObjects (pairs.map λ (c, s) => ⟨c, s⟩)
 
 -- RSA Computations (Convenience wrappers)
 

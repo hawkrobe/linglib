@@ -23,11 +23,11 @@ open Theories.DynamicSemantics.Core.DynamicTy2
 abbrev Assignment (E : Type*) := Nat → E
 
 /-- DPL dref: projection function for variable n -/
-def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := fun g => g n
+def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := λ g => g n
 
 /-- Functional update -/
 def extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
-  fun m => if m = n then e else g m
+  λ m => if m = n then e else g m
 
 theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
     dref n (extend g n e) = e := by simp [dref, extend]
@@ -47,7 +47,7 @@ def ofDRS {E : Type*} (D : DRS (Assignment E)) : DPLRel E := D
 
 
 theorem atom_eq_test {E : Type*} (p : Assignment E → Prop) :
-    toDRS (DPLRel.atom p) = test (fun g => p g) := by
+    toDRS (DPLRel.atom p) = test (λ g => p g) := by
   ext g h
   simp only [toDRS, DPLRel.atom, test, eq_iff_iff]
   constructor
@@ -68,25 +68,8 @@ theorem neg_eq_test_dneg {E : Type*} (φ : DPLRel E) :
   · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [heq]; exact hnex⟩
 
 theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
-    toDRS (DPLRel.exists_ x φ) = fun g h => ∃ d : E, toDRS φ (extend g x d) h := by
+    toDRS (DPLRel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
   -- The definitions are definitionally equal (just variable renaming)
   rfl
-
--- SUMMARY
-
-/-!
-## DPL ↪ Dynamic Ty2 Embedding
-
-DPL is literally a fragment of Dynamic Ty2:
-- `Assignment E = Nat → E` is the S parameter
-- `DPLRel E` = `DRS (Assignment E)` (definitionally!)
-- Translation functions are identity
-
-Connective preservation:
-- atom = test
-- conj = dseq
-- neg = test ∘ dneg
-- exists_ = random assignment pattern
--/
 
 end Theories.DynamicSemantics.DPL

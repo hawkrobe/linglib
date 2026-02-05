@@ -12,16 +12,16 @@ Dekker (2012) Chapter 4, §4.2: Belief Reports and Conceptual Covers.
 - Question: Is this de re or de dicto?
 
 ### De Re vs De Dicto
-- **De re**: "John believes of Mary that she is smart"
+- De re: "John believes of Mary that she is smart"
   The belief is about a specific individual (Mary herself).
   Uses rigid concept - same individual in all belief-accessible worlds.
 
-- **De dicto**: "John believes that the winner is smart"
+- De dicto: "John believes that the winner is smart"
   The belief is about whoever satisfies "the winner" in John's belief worlds.
   Uses descriptive concept - may pick out different individuals.
 
 ### Conceptual Covers (Aloni 2001, Dekker §4.3)
-A **conceptual cover** is a set of concepts that:
+A conceptual cover is a set of concepts that:
 1. Covers the domain (every entity is picked out by some concept)
 2. Is functional (each concept picks out at most one entity per possibility)
 
@@ -45,7 +45,7 @@ variable {E : Type*} [Nonempty E]
 
 
 /--
-**Doxastic Accessibility Relation**: What worlds/possibilities agent a
+Doxastic accessibility relation: what worlds/possibilities agent a
 considers compatible with their beliefs.
 
 `R a p q` means: in possibility p, agent a considers q doxastically accessible
@@ -60,20 +60,20 @@ def doxAccessible (R : DoxAccessibility E) (a : E) (p : Poss E) : Set (Poss E) :
   { q | R a p q }
 
 /--
-**Reflexivity**: Agent believes truths (factivity for knowledge).
-Note: Belief is NOT typically factive, but this is useful for knowledge.
+Reflexivity: agent believes truths (factivity for knowledge).
+Note: belief is not typically factive, but this is useful for knowledge.
 -/
 def DoxAccessibility.isReflexive (R : DoxAccessibility E) : Prop :=
   ∀ a p, R a p p
 
 /--
-**Transitivity**: Positive introspection (believing implies believing you believe).
+Transitivity: positive introspection (believing implies believing you believe).
 -/
 def DoxAccessibility.isTransitive (R : DoxAccessibility E) : Prop :=
   ∀ a p q r, R a p q → R a q r → R a p r
 
 /--
-**Seriality**: No inconsistent belief states (for every p, some q is accessible).
+Seriality: no inconsistent belief states (for every p, some q is accessible).
 This is the minimal requirement for belief: consistent belief states.
 -/
 def DoxAccessibility.isSerial (R : DoxAccessibility E) : Prop :=
@@ -81,7 +81,7 @@ def DoxAccessibility.isSerial (R : DoxAccessibility E) : Prop :=
 
 
 /--
-**Belief Operator**: Agent a believes φ.
+Belief operator: agent a believes φ.
 
 B(a, φ) is true at (g, ê) iff φ is true at all doxastically accessible possibilities.
 
@@ -89,20 +89,20 @@ This is a TEST: it checks if the agent's belief state supports φ.
 -/
 def Formula.believe (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula) :
     Update E :=
-  fun s => { p ∈ s | ∀ q ∈ doxAccessible R a p, φ.sat M q.1 q.2 }
+  λ s => { p ∈ s | ∀ q ∈ doxAccessible R a p, φ.sat M q.1 q.2 }
 
 /--
-**Belief with Term**: B(t, φ) where t is a term denoting the agent.
+Belief with term: B(t, φ) where t is a term denoting the agent.
 -/
 def Formula.believeTerm (R : DoxAccessibility E) (M : Model E) (t : Term) (φ : Formula) :
     Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     let a := t.eval p.1 p.2
     ∀ q ∈ doxAccessible R a p, φ.sat M q.1 q.2 }
 
 
 /--
-**Belief is Eliminative**: Filtering to believers never adds possibilities.
+Belief is eliminative: Filtering to believers never adds possibilities.
 -/
 theorem believe_eliminative (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula)
     (s : InfoState E) :
@@ -112,7 +112,7 @@ theorem believe_eliminative (R : DoxAccessibility E) (M : Model E) (a : E) (φ :
   exact hp.1
 
 /--
-**Belief Closure under Entailment**: If you believe φ and φ entails ψ, you believe ψ.
+Belief closure under entailment: If you believe φ and φ entails ψ, you believe ψ.
 -/
 theorem believe_closure (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : Formula)
     (s : InfoState E) (p : Poss E)
@@ -126,7 +126,7 @@ theorem believe_closure (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : 
     exact hent q.1 q.2 (hp.2 q hq)
 
 /--
-**Conjunction Distribution**: B(a, φ ∧ ψ) ↔ B(a, φ) ∧ B(a, ψ)
+Conjunction distribution: B(a, φ ∧ ψ) ↔ B(a, φ) ∧ B(a, ψ)
 -/
 theorem believe_conj (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : Formula)
     (s : InfoState E) (p : Poss E) :
@@ -135,13 +135,13 @@ theorem believe_conj (R : DoxAccessibility E) (M : Model E) (a : E) (φ ψ : For
   simp only [Formula.believe, Set.mem_setOf_eq, Formula.sat]
   constructor
   · intro ⟨hp, hall⟩
-    exact ⟨⟨hp, fun q hq => (hall q hq).1⟩, ⟨hp, fun q hq => (hall q hq).2⟩⟩
+    exact ⟨⟨hp, λ q hq => (hall q hq).1⟩, ⟨hp, λ q hq => (hall q hq).2⟩⟩
   · intro ⟨⟨hp, hφ⟩, ⟨_, hψ⟩⟩
-    exact ⟨hp, fun q hq => ⟨hφ q hq, hψ q hq⟩⟩
+    exact ⟨hp, λ q hq => ⟨hφ q hq, hψ q hq⟩⟩
 
 
 /--
-A **Conceptual Cover** is a set of concepts (ways of identifying entities).
+A Conceptual Cover is a set of concepts (ways of identifying entities).
 
 In Aloni's framework, a cover represents the "ways of thinking" available
 to an agent or in a context.
@@ -149,28 +149,28 @@ to an agent or in a context.
 abbrev Cover (E : Type*) := Set (Concept E)
 
 /--
-A cover is **exhaustive** if every entity in the domain is picked out
+A cover is exhaustive if every entity in the domain is picked out
 by some concept in the cover (at every possibility).
 -/
 def Cover.isExhaustive (C : Cover E) : Prop :=
   ∀ (p : Poss E) (e : E), ∃ c ∈ C, c p = e
 
 /--
-A cover is **functional** if each concept picks out a unique entity
+A cover is functional if each concept picks out a unique entity
 (this is automatic since concepts are functions).
 -/
 def Cover.isFunctional (C : Cover E) : Prop :=
   ∀ c ∈ C, ∀ p : Poss E, ∃! e : E, c p = e
 
 /--
-The **name cover**: rigid concepts for each entity.
+The name cover: rigid concepts for each entity.
 This is the "de re" cover - thinking of entities as themselves.
 -/
 def nameCover (dom : Set E) : Cover E :=
   { Concept.const e | e ∈ dom }
 
 /--
-The **variable cover**: concepts from variable assignments.
+The variable cover: concepts from variable assignments.
 This is more "de dicto" - thinking via variable bindings.
 -/
 def variableCover : Cover E :=
@@ -200,7 +200,7 @@ theorem nameCover_rigid (dom : Set E) :
 
 
 /--
-**De Re Belief**: Belief about a specific individual, identified rigidly.
+De re belief: Belief about a specific individual, identified rigidly.
 
 "John believes of Mary that she is smart."
 
@@ -208,12 +208,12 @@ The individual (Mary) is fixed across all of John's belief worlds.
 -/
 def believeDeRe (R : DoxAccessibility E) (M : Model E) (agent : E) (individual : E)
     (pred : String) : Update E :=
-  fun s => { p ∈ s |
-    -- In all belief-accessible worlds, the predicate holds of the SAME individual
+  λ s => { p ∈ s |
+    -- In all belief-accessible worlds, the predicate holds of the same individual
     ∀ q ∈ doxAccessible R agent p, M.interp pred [individual] }
 
 /--
-**De Dicto Belief**: Belief about whoever satisfies a description.
+De dicto belief: Belief about whoever satisfies a description.
 
 "John believes that the winner is smart."
 
@@ -221,13 +221,13 @@ The individual may vary across John's belief worlds (whoever is the winner there
 -/
 def believeDeDicto (R : DoxAccessibility E) (M : Model E) (agent : E)
     (description : Concept E) (pred : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- In all belief-accessible worlds, the predicate holds of whoever
-    -- satisfies the description IN THAT WORLD
+    -- satisfies the description in that world
     ∀ q ∈ doxAccessible R agent p, M.interp pred [description q] }
 
 /--
-**Key Theorem**: De re implies de dicto when the concept is rigid.
+De re implies de dicto when the concept is rigid.
 
 If you believe of x that P(x), and concept c rigidly picks out x,
 then you believe that P(c).
@@ -245,13 +245,13 @@ theorem deRe_implies_deDicto_rigid (R : DoxAccessibility E) (M : Model E)
     rw [hpicks q]
     exact hp.2 q hq
 
--- NOTE: De dicto does NOT imply de re in general.
+-- Note: De dicto does not imply de re in general.
 -- The winner in John's belief worlds might not be the actual winner.
 -- This is a semantic fact that requires a counterexample model.
 
 
 /--
-**Substitutivity of Identicals (De Re)**: If a = b and you believe P(a),
+Substitutivity of identicals (de re): If a = b and you believe P(a),
 then you believe P(b).
 
 This holds for de re beliefs because the individual is fixed.
@@ -277,16 +277,16 @@ Naively, this seems to attribute contradictory beliefs to Ralph. But Ralph
 is perfectly rational - he simply doesn't know that the two descriptions
 pick out the same individual.
 
-**Key Insight**: The apparent contradiction dissolves when we recognize that
-Ralph's beliefs are *relativized to conceptual covers*:
+The apparent contradiction dissolves when we recognize that Ralph's
+beliefs are *relativized to conceptual covers*:
 - Under the "brown hat" cover, Ralph believes Ortcutt is a spy
-- Under the "beach" cover, Ralph believes Ortcutt is NOT a spy
+- Under the "beach" cover, Ralph believes Ortcutt is not a spy
 
 These are consistent because the covers don't overlap in Ralph's belief worlds.
 -/
 
 /--
-**Quine Consistency**: An agent can believe P(x) under one cover and ¬P(x)
+Quine consistency: An agent can believe P(x) under one cover and ¬P(x)
 under another cover, without inconsistency.
 
 This is the formal core of Quine's puzzle: what looks like believing
@@ -302,15 +302,15 @@ def quineConsistent (R : DoxAccessibility E) (M : Model E) (agent : E)
   c1 p = c2 p ∧
   -- But agent believes predicate holds via c1
   (∀ q ∈ doxAccessible R agent p, M.interp pred [c1 q]) ∧
-  -- And agent believes predicate FAILS via c2
+  -- And agent believes predicate fails via c2
   (∀ q ∈ doxAccessible R agent p, ¬M.interp pred [c2 q])
 
 /--
-**Quine Consistency Requires Concept Divergence**: If an agent has
+Quine consistency requires concept divergence: If an agent has
 Quine-consistent beliefs about an individual (believing P under one cover,
 ¬P under another), then the concepts must diverge in some belief-accessible world.
 
-This captures WHY Quine consistency is possible: the concepts that coincide
+Quine consistency is possible because the concepts that coincide
 in the actual world must pick out different individuals in some of the
 agent's belief worlds.
 -/
@@ -330,7 +330,7 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
   rw [heq] at h1
   exact h2 h1
 
--- NOTE: Substitutivity Fails (De Dicto)
+-- Note: Substitutivity fails (de dicto).
 -- Even if descriptions a and b are coextensive in the actual world,
 -- de dicto beliefs don't transfer.
 -- Example: "The morning star" = "The evening star" (both are Venus).
@@ -347,50 +347,50 @@ Dekker (2012) Observation 17 (p.88):
 > B(r, ∃x_C Sx) = ∃x_C B(r, Sx)
 
 This equivalence holds when quantification is relativized to a conceptual cover C.
-The key insight: you can "export" an existential quantifier from inside a belief
-context, provided it ranges over concepts in the agent's cover.
+An existential quantifier can be "exported" from inside a belief context,
+provided it ranges over concepts in the agent's cover.
 
-**Linguistic motivation**: Consider "Ralph believes someone is a spy."
+Linguistic motivation: consider "Ralph believes someone is a spy."
 
-1. **Wide scope** (de re): ∃x_C B(r, Sx)
+1. Wide scope (de re): ∃x_C B(r, Sx)
    "There is someone (under cover C) such that Ralph believes they are a spy."
    Ralph has a specific individual in mind.
 
-2. **Narrow scope** (de dicto): B(r, ∃x_C Sx)
+2. Narrow scope (de dicto): B(r, ∃x_C Sx)
    "Ralph believes that someone (under cover C) is a spy."
    Ralph believes the existential claim without necessarily having
    a specific individual in mind.
 
-The equivalence says these are the SAME when the cover C represents
+These readings are equivalent when the cover C represents
 Ralph's available ways of identifying individuals.
 
-**Why this matters**: In classical intensional semantics (without covers),
-wide and narrow scope are NOT equivalent. Covers make them equivalent
+In classical intensional semantics (without covers),
+wide and narrow scope are not equivalent. Covers make them equivalent
 because the quantifier domain is "grounded" in the agent's conceptual repertoire.
 -/
 
 /--
-**Narrow Scope Existential Belief**: Agent believes ∃x.P(x)
+Narrow scope existential belief: Agent believes ∃x.P(x)
 The existential is inside the belief operator.
 -/
 def believeExistsNarrow (R : DoxAccessibility E) (M : Model E) (agent : E)
     (C : Cover E) (pred : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- Agent believes: there exists a concept in C satisfying pred
     ∀ q ∈ doxAccessible R agent p, ∃ c ∈ C, M.interp pred [c q] }
 
 /--
-**Wide Scope Existential Belief**: ∃x.B(agent, P(x))
+Wide scope existential belief: ∃x.B(agent, P(x))
 The existential scopes over the belief operator.
 -/
 def believeExistsWide (R : DoxAccessibility E) (M : Model E) (agent : E)
     (C : Cover E) (pred : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- There exists a concept in C such that agent believes pred holds of it
     ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q] }
 
 /--
-**Observation 17**: Wide scope implies narrow scope (always holds).
+Observation 17: Wide scope implies narrow scope (always holds).
 
 ∃x_C B(r, Sx) → B(r, ∃x_C Sx)
 
@@ -409,7 +409,7 @@ theorem obs17_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
     exact ⟨c, hc, hall q hq⟩
 
 /--
-**Observation 17 (Converse)**: Narrow scope implies wide scope
+Observation 17 (converse): Narrow scope implies wide scope
 WHEN the cover is closed under the agent's beliefs.
 
 B(r, ∃x_C Sx) → ∃x_C B(r, Sx)
@@ -418,7 +418,7 @@ This direction requires that concepts in C "persist" across belief worlds:
 if c ∈ C picks out some individual in q, then the agent can track that
 individual across their belief states.
 
-**Linguistic relevance**: This formalizes when "Ralph believes someone is a spy"
+This formalizes when "Ralph believes someone is a spy"
 licenses the inference to "Ralph has someone specific in mind" - namely,
 when Ralph's conceptual repertoire provides stable ways of identifying individuals.
 -/
@@ -440,23 +440,23 @@ theorem obs17_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
 Dekker (2012) Observation 18 (p.91):
 > "Knowing who" is relative to a conceptual cover.
 
-**The Hesperus/Phosphorus Puzzle**:
+The Hesperus/Phosphorus puzzle:
 
 The ancients knew that:
 - Hesperus is the evening star (visible at dusk)
 - Phosphorus is the morning star (visible at dawn)
 
-They did NOT know that Hesperus = Phosphorus (both are Venus).
+They did not know that Hesperus = Phosphorus (both are Venus).
 
 Question: Did the ancients "know who Hesperus is"?
 
-**Answer depends on the cover**:
-- Under the ASTRONOMICAL cover (celestial bodies as physical objects):
+Answer depends on the cover:
+- Under the astronomical cover (celestial bodies as physical objects):
   No - they didn't know Hesperus is Venus.
-- Under the OBSERVATIONAL cover (celestial bodies by when they appear):
+- Under the observational cover (celestial bodies by when they appear):
   Yes - they knew Hesperus is "the bright thing in the evening sky."
 
-**Key insight**: "Knowing who" isn't absolute - it's relative to a
+"Knowing who" is not absolute but relative to a
 contextually supplied way of carving up the domain of individuals.
 
 This explains why "knowing who" questions are context-sensitive:
@@ -467,7 +467,7 @@ Different questions presuppose different conceptual covers.
 -/
 
 /--
-**Knowing Who (Cover-Relative)**: Agent knows who x is under cover C.
+Knowing who (cover-relative): Agent knows who x is under cover C.
 
 K_C(a, who(x)) holds iff:
 1. Agent has an identifying concept c in cover C
@@ -478,11 +478,11 @@ def knowsWho (R : DoxAccessibility E) (agent individual : E) (C : Cover E) (p : 
   ∃ c ∈ C,
     -- c picks out individual at p
     c p = individual ∧
-    -- c picks out the SAME individual in all accessible worlds (rigidity under belief)
+    -- c picks out the same individual in all accessible worlds (rigidity under belief)
     ∀ q ∈ doxAccessible R agent p, c q = individual
 
 /--
-**Hesperus/Phosphorus**: Two concepts can pick out the same individual
+Hesperus/Phosphorus: Two concepts can pick out the same individual
 at the actual world but different individuals in belief-accessible worlds.
 -/
 def hesperusPhosphorusScenario (R : DoxAccessibility E) (agent : E)
@@ -493,7 +493,7 @@ def hesperusPhosphorusScenario (R : DoxAccessibility E) (agent : E)
   ∃ q ∈ doxAccessible R agent p, hesperus q ≠ phosphorus q
 
 /--
-**Observation 18 Theorem**: Knowing who is cover-relative.
+Observation 18: Knowing who is cover-relative.
 
 If the cover includes only rigid concepts (like proper names),
 then knowing who is equivalent to de re identification.
@@ -519,7 +519,7 @@ theorem knowsWho_with_rigid_cover (R : DoxAccessibility E) (agent individual : E
   rw [hrig q p, hpicks]
 
 /--
-**Knowing Who Failure**: An agent can know who x is under one cover
+Knowing who failure: An agent can know who x is under one cover
 but not under another, even for the same individual.
 
 This is the formal content of the Hesperus/Phosphorus puzzle.
@@ -535,7 +535,7 @@ theorem knowsWho_cover_relative (R : DoxAccessibility E) (agent venus : E)
     (_hHinC : hesperus ∈ Cobs)
     -- Astronomical cover only has rigid concepts
     (_hCastro_rigid : ∀ c ∈ Castro, c.isRigid)
-    -- Hesperus is NOT in astronomical cover (it's descriptive)
+    -- Hesperus is not in astronomical cover (it's descriptive)
     (_hHnotCastro : hesperus ∉ Castro)
     -- Agent knows who Venus is via Hesperus in observational cover
     (_hknowsObs : knowsWho R agent venus Cobs p) :
@@ -545,7 +545,7 @@ theorem knowsWho_cover_relative (R : DoxAccessibility E) (agent venus : E)
 
 
 /--
-**Belief relative to a cover**: The agent's beliefs are interpreted
+Belief relative to a cover: The agent's beliefs are interpreted
 relative to a conceptual cover (their available ways of thinking).
 
 B_C(a, ∃x.P(x)) is true iff for some concept c in cover C,
@@ -553,11 +553,11 @@ a believes P(c).
 -/
 def believeExistsWithCover (R : DoxAccessibility E) (M : Model E) (agent : E)
     (C : Cover E) (pred : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q] }
 
 /--
-**Belief relative to name cover = de re quantification**.
+Belief relative to name cover is equivalent to de re quantification.
 -/
 theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
     (agent : E) (dom : Set E) (pred : String) (s : InfoState E) (p : Poss E) :
@@ -579,7 +579,7 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
 
 
 /--
-**Acquaintance Requirement** (Russell): De re belief requires acquaintance.
+Acquaintance requirement (Russell): De re belief requires acquaintance.
 
 You can only have de re beliefs about entities you're "acquainted with"
 (entities in your conceptual cover).
@@ -592,7 +592,7 @@ De re belief presupposes acquaintance (relative to a cover).
 -/
 def believeDeReWithAcquaintance (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (individual : E) (pred : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- Presupposition: agent is acquainted with individual
     isAcquaintedWith agent individual C p ∧
     -- Belief content: predicate holds in all belief worlds
@@ -600,20 +600,20 @@ def believeDeReWithAcquaintance (R : DoxAccessibility E) (M : Model E)
 
 
 /--
-**Knowledge**: Factive belief (what you know is true).
+Knowledge: factive belief (what you know is true).
 
 K(a, φ) implies φ is actually true, not just believed.
 -/
 def Formula.know (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula) :
     Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- Factivity: φ is actually true
     φ.sat M p.1 p.2 ∧
     -- Belief: φ is true in all accessible worlds
     ∀ q ∈ doxAccessible R a p, φ.sat M q.1 q.2 }
 
 /--
-**Knowledge implies Belief**.
+Knowledge implies belief.
 -/
 theorem know_implies_believe (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula)
     (s : InfoState E) :
@@ -623,101 +623,12 @@ theorem know_implies_believe (R : DoxAccessibility E) (M : Model E) (a : E) (φ 
   exact ⟨hp.1, hp.2.2⟩
 
 /--
-**Knowledge is Factive**: K(a, φ) → φ
+Knowledge is factive: K(a, φ) → φ
 -/
 theorem know_factive (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formula)
     (s : InfoState E) (p : Poss E) (hp : p ∈ Formula.know R M a φ s) :
     φ.sat M p.1 p.2 := by
   simp only [Formula.know, Set.mem_setOf_eq] at hp
   exact hp.2.1
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Belief Operator
-- `DoxAccessibility`: Agent-indexed accessibility relation
-- `Formula.believe`: B(a, φ) operator
-- `Formula.believeTerm`: B(t, φ) with term agent
-- `believe_eliminative`: Belief is eliminative
-- `believe_closure`: Closure under entailment
-- `believe_conj`: Conjunction distribution
-
-### Conceptual Covers
-- `Cover`: Set of concepts (ways of thinking)
-- `Cover.isExhaustive`: Every entity is picked out
-- `nameCover`: Rigid concepts for each entity (de re)
-- `variableCover`: Concepts from variables (de dicto)
-- `nameCover_exhaustive`, `nameCover_rigid`: Properties
-
-### De Re / De Dicto
-- `believeDeRe`: Belief about a fixed individual
-- `believeDeDicto`: Belief about whoever satisfies a description
-- `deRe_implies_deDicto_rigid`: Connection when concept is rigid
-- `substitutivity_deRe`: Identicals substitute in de re
-- `believeExistsWithCover`: Quantified belief relative to cover
-- `believeExists_nameCover_deRe`: Name cover = de re quantification
-
-### Quine's Puzzle (Part 6)
-- `quineConsistent`: Agent believes P(x) under one cover, ¬P(x) under another
-- `quine_requires_divergence`: Quine consistency requires concept divergence
-
-### Observation 17: Quantifier Import/Export (Part 7)
-- `believeExistsNarrow`: B(a, ∃x.P(x)) - existential inside belief
-- `believeExistsWide`: ∃x.B(a, P(x)) - existential scopes over belief
-- `obs17_wide_implies_narrow`: Wide scope → narrow scope (always)
-- `obs17_narrow_implies_wide`: Narrow scope → wide scope (with witnesses)
-
-### Observation 18: Knowing Who (Part 8)
-- `knowsWho`: Agent knows who x is under cover C
-- `hesperusPhosphorusScenario`: Two concepts, same individual, diverge in belief
-- `knowsWho_with_rigid_cover`: Knowing who with rigid cover = de re identification
-- `knowsWho_cover_relative`: Knowing who is cover-relative (Hesperus/Phosphorus)
-
-### Knowledge
-- `Formula.know`: Factive belief
-- `know_implies_believe`: K → B
-- `know_factive`: K(a, φ) → φ
-
-## De Re / De Dicto Examples
-
-### De Re
-"Mary believes of John that he is a spy."
-- Fixed individual (John himself)
-- Substitutivity holds: if John = Agent 007, then Mary believes of Agent 007...
-- Requires Mary to be "acquainted with" John
-
-### De Dicto
-"Mary believes that the tallest spy is dangerous."
-- Whoever is the tallest spy in Mary's belief worlds
-- Substitutivity fails: actual tallest spy may differ from Mary's belief
-- No acquaintance required
-
-## Connection to Quine's Puzzle
-
-Quine (1956): "Ralph believes that the man in the brown hat is a spy."
-
-Three readings:
-1. **De dicto**: Ralph has a belief about whoever he thinks is "the man in the brown hat"
-2. **De re**: There's a specific man such that Ralph believes he's a spy
-3. **Specific de dicto**: Ralph has a specific individual in mind via that description
-
-Conceptual covers formalize these distinctions by making explicit
-the "ways of thinking" available to the agent.
-
-## Dekker Chapter 4.2 Observations
-
-### Observation 17: Quantifier Scope (p.88)
-B(r, ∃x_C Sx) = ∃x_C B(r, Sx) when quantification is cover-relative.
-This makes wide/narrow scope equivalent because the quantifier domain
-is "grounded" in the agent's conceptual repertoire.
-
-### Observation 18: Knowing Who (p.91)
-"Knowing who" is relative to a conceptual cover. The ancients knew
-who Hesperus was (under the observational cover: "the evening star")
-but not under the astronomical cover (they didn't know it was Venus).
-This explains why "knowing who" questions are context-sensitive.
--/
 
 end Theories.DynamicSemantics.PLA

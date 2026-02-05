@@ -1,14 +1,16 @@
 /-
 # Quantification Phenomena
 
-This module covers quantifier scope and numeral semantics:
-- Scope freezing (double-object constructions)
-- Scope-word order correlations
-- Numeral imprecision and exactness
+Quantifier scope and numeral semantics.
 
-## Cross-references
-- Related to Plurals/: Distributivity of quantifiers
-- Related to Negation/: Quantifier-negation scope
+## Main definitions
+- `ScopeFreezing.Availability`, `ScopeFreezing.FreezingContext`
+- `Numerals.NumeralImprecisionDatum`, `Numerals.RoundnessLevel`
+
+## References
+- May (1985). Logical Form.
+- Krifka (2007). Approximate interpretation.
+- Solt (2014, 2018). Imprecise numerals.
 -/
 
 import Linglib.Phenomena.Quantification.ScopeFreezing

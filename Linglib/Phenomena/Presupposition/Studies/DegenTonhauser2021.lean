@@ -4,7 +4,7 @@
 Empirical data from "Are there factive predicates? An empirical investigation"
 by Judith Degen and Judith Tonhauser.
 
-## Key Finding
+## Finding
 
 **There is no empirically supported coherent class of "factive predicates."**
 
@@ -61,7 +61,7 @@ namespace Phenomena.Presupposition.Studies.DegenTonhauser2021
 
 /--
 Traditional classification of clause-embedding predicates.
-This classification is CHALLENGED by the experimental results.
+This classification is challenged by the experimental results.
 -/
 inductive TraditionalClass where
   /-- Canonically factive: CC traditionally assumed presupposed + entailed -/
@@ -134,11 +134,11 @@ def traditionalClass : Predicate → TraditionalClass
 Mean certainty ratings from Experiment 1a (gradient scale 0-1).
 Higher = more projective (speaker more certain of CC).
 
-Values read from Figure 2 of the paper. The key finding is the
-GRADIENT nature and ORDERING, showing no categorical factive/nonfactive gap.
+Values read from Figure 2 of the paper. The gradient nature and
+ordering show no categorical factive/nonfactive gap.
 -/
 def projectionRating_Exp1a : Predicate → Float
-  -- Canonically factive (purple diamonds) - NOT clustered at top!
+  -- Canonically factive (purple diamonds) - not clustered at top
   | .beAnnoyed => 0.89
   | .know => 0.84
   | .see => 0.81
@@ -152,7 +152,7 @@ def projectionRating_Exp1a : Predicate → Float
   -- Veridical nonfactive (blue triangles down)
   | .beRight => 0.19
   | .demonstrate => 0.49
-  -- Optionally factive (orange triangles up) - spans wide range!
+  -- Optionally factive (orange triangles up) - spans wide range
   | .inform => 0.79
   | .hear => 0.75
   | .acknowledge => 0.73
@@ -220,13 +220,10 @@ def inferenceRating_Exp2a : Predicate → Float
 
 
 /--
-**KEY FINDING 1**: Optionally factive predicates can be as projective as
-canonically factive ones.
+Optionally factive predicates can be as projective as canonically factive ones.
 
-Specifically: inform projects MORE strongly than reveal (a canonical factive).
-The ratings are inform=0.80 vs reveal=0.72.
-
-These are empirical facts from the experimental data, verified by computation.
+Inform projects more strongly than reveal (a canonical factive):
+inform=0.80 vs reveal=0.72.
 -/
 theorem optionally_factive_as_projective_as_factive :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal ∧
@@ -234,18 +231,18 @@ theorem optionally_factive_as_projective_as_factive :
   ⟨by native_decide, by native_decide⟩
 
 /--
-**KEY FINDING 2**: There is NO categorical gap between factive and
-optionally factive predicates in projection.
+There is no categorical gap between factive and optionally factive
+predicates in projection.
 
 The mean projection rating of the least projective factive (reveal: 0.72)
-is LOWER than the most projective optionally factive (inform: 0.80).
+is lower than the most projective optionally factive (inform: 0.80).
 -/
 theorem no_categorical_projection_gap :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal := by
   native_decide
 
 /--
-**KEY FINDING 3**: Predicates with highest entailment have LOWEST projection.
+Predicates with highest entailment have lowest projection.
 
 be_right and prove have the highest inference ratings but among the
 lowest projection ratings. This undermines Definition 3b.
@@ -262,7 +259,7 @@ theorem high_entailment_low_projection :
 /--
 The Degen & Tonhauser findings suggest that rather than a binary
 factive/nonfactive distinction, we should think of predicates as
-having CONTINUOUS projection strength.
+having continuous projection strength.
 
 This affects how we interpret the Tonhauser taxonomy:
 - SCF is not simply "factive vs. nonfactive"
@@ -336,42 +333,5 @@ def predictedProjection (p : Predicate) (factors : ProjectionFactors) : Float :=
   0.5 * projectionRating_Exp1a p +
   0.3 * factors.priorBelief +
   0.2 * (1.0 - factors.atIssueness)
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Empirical Data
-- `projectionRating_Exp1a`: Gradient projection ratings (n=266)
-- `projectionRating_Exp1b`: Categorical projection ratings (n=436)
-- `inferenceRating_Exp2a`: Entailment ratings via inference diagnostic
-
-### Key Findings (Formalized)
-- `optionally_factive_as_projective_as_factive`: No categorical distinction
-- `no_categorical_projection_gap`: inform > reveal in projection
-- `high_entailment_low_projection`: be_right entailed but not projective
-
-### New Classification
-- `ProjectionStrength`: High/Medium/Low/VeryLow based on empirical data
-- `projectionStrength`: Maps predicates to their empirical category
-
-### Theoretical Implications
-- Traditional factive/nonfactive distinction not empirically supported
-- Projection is gradient, not categorical
-- Multiple factors influence projection (lexical, prior beliefs, at-issueness)
-- Need RSA-style models to capture full projection behavior
-
-## Connection to Other Modules
-
-This data should inform:
-- `Montague.Projection.LocalContext`: Local satisfaction is not the whole story
-- `Montague.Projection.BeliefEmbedding`: OLE behavior varies by predicate
-- `Montague.Projection.TonhauserDerivation`: SCF/OLE not simply binary
-
-The empirical data challenges clean theoretical derivations and suggests
-that a probabilistic, RSA-based approach may be more appropriate for
-modeling projection in natural language.
--/
 
 end Phenomena.Presupposition.Studies.DegenTonhauser2021

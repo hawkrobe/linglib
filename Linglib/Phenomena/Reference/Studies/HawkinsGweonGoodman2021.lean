@@ -17,7 +17,7 @@ The paper extends RSA with **resource-rational perspective-taking**:
 2. Optimal effort depends on expectations about partner's effort
 3. This creates a "division of labor" between speaker and listener
 
-## Key Insight: The Director-Matcher Task
+## Insight: The Director-Matcher Task
 
 In the classic Keysar et al. (2003) paradigm:
 - Speaker (director) sees some objects

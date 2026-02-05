@@ -4,7 +4,7 @@
 Formalizes Schlenker (2009)'s local contexts algorithm for computing
 presupposition projection compositionally.
 
-## Key Insight
+## Insight
 
 The "local context" at a position in a sentence determines what
 presuppositions are filtered vs. projected. Schlenker shows this
@@ -24,7 +24,7 @@ For a sentence S with embedded clause φ at position i:
 - Global context: c
 - Local context at "the king is bald": c + [the king exists]
 - Presupposition "king exists" is entailed by local context
-- Therefore: presupposition is FILTERED, doesn't project globally
+- Therefore: presupposition is filtered, doesn't project globally
 
 "John stopped smoking"
 - Global context: c
@@ -113,16 +113,16 @@ Local context for each disjunct.
 (and symmetrically for P)
 -/
 def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
-  { worlds := fun w => c.worlds w ∧ first.assertion w = false
+  { worlds := λ w => c.worlds w ∧ first.assertion w = false
   , position := c.position + 1
   , depth := c.depth }
 
 
 /--
-A presupposition projects at a local context if it's NOT entailed.
+A presupposition projects at a local context if it's not entailed.
 
-This is the key insight: projection is the DEFAULT. Filtering (non-projection)
-happens when the local context already satisfies the presupposition.
+Projection is the default. Filtering (non-projection) happens when the
+local context already satisfies the presupposition.
 -/
 def presupProjects (lc : LocalCtx W) (p : PrProp W) : Prop :=
   ¬ ContextSet.entails lc.worlds p.presup
@@ -187,8 +187,8 @@ inductive KingWorld' where
 "The king exists" — no presupposition.
 -/
 def kingExists' : PrProp KingWorld' :=
-  { presup := fun _ => true
-  , assertion := fun w => match w with
+  { presup := λ _ => true
+  , assertion := λ w => match w with
       | .kingExists => true
       | .noKing => false }
 
@@ -196,13 +196,13 @@ def kingExists' : PrProp KingWorld' :=
 "The king is bald" — presupposes king exists.
 -/
 def kingBald' : PrProp KingWorld' :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .kingExists => true
       | .noKing => false
-  , assertion := fun _ => true }
+  , assertion := λ _ => true }
 
 /--
-**Key Theorem**: In the conditional, the presupposition is filtered.
+In the conditional, the presupposition is filtered.
 
 The local context at "the king is bald" is c + [king exists],
 which entails the presupposition [king exists].
@@ -249,40 +249,5 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     cases ha : p.assertion w
     · simp
     · simp [himp ha]
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Local Context Structure
-- `LocalCtx`: Context at a sentence position
-- `initialLocalCtx`: Start from global context
-
-### Local Context Computation
-- `localCtxConsequent`: For conditionals
-- `localCtxSecondConjunct`: For conjunction
-- `localCtxNegation`: For negation
-- `localCtxSecondDisjunct`: For disjunction
-
-### Projection Predicates
-- `presupProjects`: Presupposition NOT entailed by local context
-- `presupFiltered`: Presupposition IS entailed
-
-### Key Theorems
-- `conditional_filters_when_entailed`: Antecedent can satisfy consequent presup
-- `negation_preserves_projection`: Negation doesn't affect projection
-- `king_conditional_filters`: The classic example works
-- `local_context_matches_impFilter`: This matches Core.Presupposition
-
-### Connection to Tonhauser et al.
-
-This module provides the machinery to explain CLASS C and CLASS A
-differences in terms of whether the content can be informative
-(project to update context) vs. must be presupposed.
-
-The next step (BeliefEmbedding.lean) handles OLE — whether content
-projects to speaker or attitude holder under belief embedding.
--/
 
 end Montague.Sentence.Presupposition.LocalContext

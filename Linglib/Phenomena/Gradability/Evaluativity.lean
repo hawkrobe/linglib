@@ -1,22 +1,15 @@
 /-
 # Evaluativity: Empirical Patterns
 
-Evaluativity is the property of requiring a degree to exceed a contextual standard.
-This file documents the distribution of evaluativity across adjectival constructions.
+Evaluativity distribution across adjectival constructions. Positive constructions are evaluative, comparatives are not, equatives show asymmetry.
 
-## Key Observation
+## Main definitions
 
-Evaluativity is NOT uniformly distributed:
-- Positive constructions: evaluative
-- Comparatives: NOT evaluative
-- Equatives: asymmetric (marked adjectives only)
-- Measure phrases: NOT evaluative
+`AdjectivalConstruction`, `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
 ## References
 
-- Rett (2015). The Semantics of Evaluativity.
-- Kennedy (2007). Vagueness and grammar.
-- Bierwisch (1989). The semantics of gradation.
+- Rett (2015), Kennedy (2007), Bierwisch (1989)
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -25,21 +18,12 @@ namespace Phenomena.Gradability.Evaluativity
 
 -- Construction Types
 
-/--
-Types of adjectival constructions.
-
-Each construction type has different evaluativity properties.
--/
+/-- Adjectival construction type. -/
 inductive AdjectivalConstruction where
-  /-- "Adam is tall" - bare adjective predication -/
   | positive
-  /-- "Adam is taller than Doug" - explicit comparison -/
   | comparative
-  /-- "Adam is as tall as Doug" - equation -/
   | equative
-  /-- "Adam is 6ft tall" - with measure phrase -/
   | measurePhrase
-  /-- "How tall is Adam?" - degree question -/
   | degreeQuestion
   deriving Repr, DecidableEq, BEq
 
@@ -53,49 +37,26 @@ instance : ToString AdjectivalConstruction where
 
 -- Evaluativity Judgments
 
-/--
-Whether a construction is evaluative (requires exceeding a standard).
--/
+/-- Evaluativity status. -/
 inductive EvaluativityStatus where
-  /-- Always evaluative -/
   | evaluative
-  /-- Never evaluative -/
   | nonEvaluative
-  /-- Evaluative only with marked (negative) adjectives -/
   | markedOnly
-  /-- Ungrammatical -/
   | ungrammatical
   deriving Repr, DecidableEq, BEq
 
-/--
-An evaluativity judgment for a construction-adjective combination.
--/
+/-- Evaluativity judgment datum. -/
 structure EvaluativityDatum where
-  /-- The construction type -/
   construction : AdjectivalConstruction
-  /-- The adjective (surface form) -/
   adjective : String
-  /-- Whether the adjective is positive-polar (tall) or negative-polar (short) -/
   isPositivePolar : Bool
-  /-- Example sentence -/
   exampleSentence : String
-  /-- Evaluativity status -/
   status : EvaluativityStatus
-  /-- What is presupposed/entailed (if evaluative) -/
   presupposition : Option String := none
-  /-- Notes -/
   notes : String := ""
   deriving Repr
 
 
-/-!
-## Positive Constructions
-
-Positive constructions are ALWAYS evaluative, regardless of adjective polarity.
-
-"Adam is tall" is true iff Adam's height exceeds the contextual standard for tallness.
-"Adam is short" is true iff Adam's height is below the contextual standard for shortness.
--/
 
 def positive_tall : EvaluativityDatum :=
   { construction := .positive

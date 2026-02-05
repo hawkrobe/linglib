@@ -118,7 +118,7 @@ This is the fundamental modal duality. In terms of our Bool semantics:
 - □p at w ↔ ¬(◇(¬p)) at w
 -/
 def ModalTheory.dualityHolds (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
-  let notP : Proposition := fun w' => !p w'
+  let notP : Proposition := λ w' => !p w'
   let lhs := T.necessity p w
   let rhs := !T.possibility notP w
   lhs == rhs
@@ -127,13 +127,13 @@ def ModalTheory.dualityHolds (T : ModalTheory) (p : Proposition) (w : World) : B
 Check duality across all worlds for a proposition.
 -/
 def ModalTheory.checkDuality (T : ModalTheory) (p : Proposition) : Bool :=
-  allWorlds'.all fun w => T.dualityHolds p w
+  allWorlds'.all λ w => T.dualityHolds p w
 
 /--
 Check consistency across all worlds for a proposition.
 -/
 def ModalTheory.checkConsistency (T : ModalTheory) (p : Proposition) : Bool :=
-  allWorlds'.all fun w => T.necessityEntailsPossibility p w
+  allWorlds'.all λ w => T.necessityEntailsPossibility p w
 
 -- Properties
 
@@ -156,7 +156,7 @@ def ModalTheory.isConsistent (T : ModalTheory) : Prop :=
 -- Standard Test Propositions
 
 /-- Proposition: it is raining -/
-def raining : Proposition := fun w =>
+def raining : Proposition := λ w =>
   match w with
   | .w0 => true
   | .w1 => true
@@ -164,7 +164,7 @@ def raining : Proposition := fun w =>
   | .w3 => false
 
 /-- Proposition: the ground is wet -/
-def groundWet : Proposition := fun w =>
+def groundWet : Proposition := λ w =>
   match w with
   | .w0 => true
   | .w1 => true
@@ -172,7 +172,7 @@ def groundWet : Proposition := fun w =>
   | .w3 => true
 
 /-- Proposition: John is home -/
-def johnHome : Proposition := fun w =>
+def johnHome : Proposition := λ w =>
   match w with
   | .w0 => true
   | .w1 => false
@@ -180,9 +180,9 @@ def johnHome : Proposition := fun w =>
   | .w3 => false
 
 /-- A trivially true proposition (true at all worlds) -/
-def triviallyTrue : Proposition := fun _ => true
+def triviallyTrue : Proposition := λ _ => true
 
 /-- A trivially false proposition (false at all worlds) -/
-def triviallyFalse : Proposition := fun _ => false
+def triviallyFalse : Proposition := λ _ => false
 
 end Montague.Modal

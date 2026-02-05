@@ -18,25 +18,25 @@ abbrev GProp (W : Type*) := W → ℚ
 variable {W : Type*}
 
 /-- Graded negation: P(¬A) = 1 - P(A). -/
-def neg (p : GProp W) : GProp W := fun w => 1 - p w
+def neg (p : GProp W) : GProp W := λ w => 1 - p w
 
 /-- Graded conjunction: P(A ∧ B) = P(A) × P(B) under independence. -/
-def conj (p q : GProp W) : GProp W := fun w => p w * q w
+def conj (p q : GProp W) : GProp W := λ w => p w * q w
 
 /-- Graded disjunction: P(A ∨ B) = P(A) + P(B) - P(A)P(B) under independence. -/
-def disj (p q : GProp W) : GProp W := fun w => p w + q w - p w * q w
+def disj (p q : GProp W) : GProp W := λ w => p w + q w - p w * q w
 
 /-- Minimum-based conjunction (alternative to product). -/
-def conjMin (p q : GProp W) : GProp W := fun w => min (p w) (q w)
+def conjMin (p q : GProp W) : GProp W := λ w => min (p w) (q w)
 
 /-- Maximum-based disjunction (alternative to probabilistic or). -/
-def disjMax (p q : GProp W) : GProp W := fun w => max (p w) (q w)
+def disjMax (p q : GProp W) : GProp W := λ w => max (p w) (q w)
 
 /-- The always-true graded proposition (degree 1 everywhere). -/
-def top : GProp W := fun _ => 1
+def top : GProp W := λ _ => 1
 
 /-- The always-false graded proposition (degree 0 everywhere). -/
-def bot : GProp W := fun _ => 0
+def bot : GProp W := λ _ => 0
 
 /-- Graded entailment: p entails q iff p(w) ≤ q(w) for all worlds. -/
 def entails (p q : GProp W) : Prop := ∀ w, p w ≤ q w
@@ -49,8 +49,8 @@ instance : LE (GProp W) where
 
 instance : Preorder (GProp W) where
   le := entails
-  le_refl := fun _ _ => le_refl _
-  le_trans := fun _ _ _ hab hbc w => le_trans (hab w) (hbc w)
+  le_refl := λ _ _ => le_refl _
+  le_trans := λ _ _ _ hab hbc w => le_trans (hab w) (hbc w)
 
 instance : Top (GProp W) where
   top := top
@@ -61,14 +61,14 @@ instance : Bot (GProp W) where
 /-- Partial order on graded propositions. -/
 instance : PartialOrder (GProp W) where
   le := entails
-  le_refl := fun _ _ => le_refl _
-  le_trans := fun _ _ _ hab hbc w => le_trans (hab w) (hbc w)
-  le_antisymm := fun p q hpq hqp => by
+  le_refl := λ _ _ => le_refl _
+  le_trans := λ _ _ _ hab hbc w => le_trans (hab w) (hbc w)
+  le_antisymm := λ p q hpq hqp => by
     funext w
     exact le_antisymm (hpq w) (hqp w)
 
 /-- Convert a Boolean proposition to a graded proposition. -/
-def ofBool (p : W → Bool) : GProp W := fun w => if p w then 1 else 0
+def ofBool (p : W → Bool) : GProp W := λ w => if p w then 1 else 0
 
 /-- Alias matching the existing RSA function name. -/
 def boolToGProp (p : W → Bool) : GProp W := ofBool p
@@ -214,21 +214,21 @@ theorem disj_monotone_left (p q r : GProp W)
 
 /-- When restricted to Boolean values, graded negation equals Boolean negation. -/
 theorem neg_ofBool (p : W → Bool) :
-    neg (ofBool p) = ofBool (fun w => !p w) := by
+    neg (ofBool p) = ofBool (λ w => !p w) := by
   funext w
   simp only [neg, ofBool]
   split <;> simp_all
 
 /-- When restricted to Boolean values, graded conjunction equals Boolean conjunction. -/
 theorem conj_ofBool (p q : W → Bool) :
-    conj (ofBool p) (ofBool q) = ofBool (fun w => p w && q w) := by
+    conj (ofBool p) (ofBool q) = ofBool (λ w => p w && q w) := by
   funext w
   simp only [conj, ofBool]
   split <;> split <;> simp_all
 
 /-- When restricted to Boolean values, graded disjunction equals Boolean disjunction. -/
 theorem disj_ofBool (p q : W → Bool) :
-    disj (ofBool p) (ofBool q) = ofBool (fun w => p w || q w) := by
+    disj (ofBool p) (ofBool q) = ofBool (λ w => p w || q w) := by
   funext w
   simp only [disj, ofBool]
   split <;> split <;> simp_all
@@ -244,7 +244,7 @@ abbrev GPred (E : Type*) := E → ℚ
 
 /-- Lift a Boolean predicate to a graded predicate. -/
 def GPred.ofBool {E : Type*} (p : E → Bool) : GPred E :=
-  fun e => if p e then 1 else 0
+  λ e => if p e then 1 else 0
 
 /-- Semantic reliability parameters for a feature dimension. -/
 structure FeatureReliability where

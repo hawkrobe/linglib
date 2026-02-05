@@ -6,8 +6,8 @@ Lifted-variable RSA model for scope resolution.
 ## Model (Scontras & Pearl 2021)
 
 The listener jointly infers:
-- **w**: World state (how many horses jumped: 0, 1, or 2)
-- **i**: Interpretation (surface vs inverse scope)
+- w: World state (how many horses jumped: 0, 1, or 2)
+- i: Interpretation (surface vs inverse scope)
 
 ```
 L1(w, i | u) ∝ P(w) × P(i) × S1(u | w, i)
@@ -115,8 +115,8 @@ theorem parametric_matches_truth :
 /--
 Build RSA meaning function from world-parametric meaning.
 
-This is the key bridge: RSA's meaning function is DERIVED from the
-formal semantic derivation, not stipulated separately.
+RSA's meaning function is derived from the formal semantic derivation,
+not stipulated separately.
 
 The null utterance is always true (uninformative baseline).
 Other utterances get their meaning from the WorldMeaning structure.
@@ -132,12 +132,10 @@ def meaningFromWorldMeaning
 def scopeMeaning : ScopeConfig → ScopeUtterance → Nat → Bool :=
   meaningFromWorldMeaning everyHorseDidntJump_meaning
 
-/--
-**Key theorem**: RSA meaning agrees with world-parametric meaning.
+/-- RSA meaning agrees with world-parametric meaning.
 
-This proves the connection is faithful - we're not stipulating
-separate truth conditions, we're using the semantic derivation.
--/
+The connection is faithful: we use the semantic derivation,
+not separately stipulated truth conditions. -/
 theorem rsa_meaning_from_montague :
     scopeMeaning .surface .everyHorseNotJump 0 =
       everyHorseDidntJump_meaning.meaningAt .surface 0 ∧
@@ -156,37 +154,37 @@ L1 world distribution using RSA.Eval API.
 def l1WorldScores : List (Nat × ℚ) :=
   RSA.Eval.L1_world allScopeUtterances everyHorseDidntJump_meaning.worlds
     everyHorseDidntJump_meaning.interps [()] [()] [()]
-    (fun i _ u w => boolToRat (scopeMeaning i u w))
-    (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+    (λ i _ u w => boolToRat (scopeMeaning i u w))
+    (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
     .everyHorseNotJump
 
 /-- L1 marginal scores over scope interpretations -/
 def l1ScopeScores : List (ScopeConfig × ℚ) :=
-  let tuples := everyHorseDidntJump_meaning.worlds.flatMap fun w =>
-    everyHorseDidntJump_meaning.interps.map fun i => (w, i)
-  let scores := tuples.map fun (w, i) =>
+  let tuples := everyHorseDidntJump_meaning.worlds.flatMap λ w =>
+    everyHorseDidntJump_meaning.interps.map λ i => (w, i)
+  let scores := tuples.map λ (w, i) =>
     let priorScore := 1  -- uniform
     let s1 := RSA.Eval.S1 allScopeUtterances everyHorseDidntJump_meaning.worlds
-      (fun i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
-      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      (λ i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
+      (λ _ => 1) (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
       w i () () ()
     let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
     ((w, i), priorScore * s1Score)
   let normalized := RSA.Eval.normalize scores
-  everyHorseDidntJump_meaning.interps.map fun i =>
-    let iScores := normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2)
+  everyHorseDidntJump_meaning.interps.map λ i =>
+    let iScores := normalized.filter (λ ((_, i'), _) => i' == i) |>.map (·.2)
     (i, RSA.Eval.sumScores iScores)
 
 /-- L1 joint scores over (world × scope) -/
 def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
-  let tuples := everyHorseDidntJump_meaning.worlds.flatMap fun w =>
-    everyHorseDidntJump_meaning.interps.map fun i => (w, i)
-  let scores := tuples.map fun (w, i) =>
+  let tuples := everyHorseDidntJump_meaning.worlds.flatMap λ w =>
+    everyHorseDidntJump_meaning.interps.map λ i => (w, i)
+  let scores := tuples.map λ (w, i) =>
     let priorScore := 1  -- uniform
     let s1 := RSA.Eval.S1 allScopeUtterances everyHorseDidntJump_meaning.worlds
-      (fun i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
-      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      (λ i' _ u' w' => boolToRat (scopeMeaning i' u' w'))
+      (λ _ => 1) (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
       w i () () ()
     let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
     ((w, i), priorScore * s1Score)
@@ -197,16 +195,16 @@ def l1JointScores : List ((Nat × ScopeConfig) × ℚ) :=
 -- Fintype instances for our domain types
 instance : Fintype ScopeUtterance where
   elems := {.null, .everyHorseNotJump}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 instance scopeConfigFintype : Fintype ScopeConfig where
   elems := {.surface, .inverse}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 -- Use JumpOutcome from the data module (already has DecidableEq, BEq)
 instance jumpOutcomeFintype : Fintype Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome where
   elems := {.zero, .one, .two}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /--
 Truth conditions using JumpOutcome (typed version).
@@ -231,37 +229,37 @@ def typedScopes : List ScopeConfig :=
 /-- L1 marginal world distribution (typed) -/
 def l1WorldTyped : List (Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome × ℚ) :=
   RSA.Eval.L1_world typedUtterances typedWorlds typedScopes [()] [()] [()]
-    (fun i _ u w => boolToRat (scopeMeaningTyped i u w))
-    (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+    (λ i _ u w => boolToRat (scopeMeaningTyped i u w))
+    (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
     .everyHorseNotJump
 
 /-- L1 marginal scope distribution (typed) -/
 def l1ScopeTyped : List (ScopeConfig × ℚ) :=
-  let tuples := typedWorlds.flatMap fun w =>
-    typedScopes.map fun i => (w, i)
-  let scores := tuples.map fun (w, i) =>
+  let tuples := typedWorlds.flatMap λ w =>
+    typedScopes.map λ i => (w, i)
+  let scores := tuples.map λ (w, i) =>
     let priorScore := 1
     let s1 := RSA.Eval.S1 typedUtterances typedWorlds
-      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
-      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      (λ i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      (λ _ => 1) (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
       w i () () ()
     let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
     ((w, i), priorScore * s1Score)
   let normalized := RSA.Eval.normalize scores
-  typedScopes.map fun i =>
-    let iScores := normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2)
+  typedScopes.map λ i =>
+    let iScores := normalized.filter (λ ((_, i'), _) => i' == i) |>.map (·.2)
     (i, RSA.Eval.sumScores iScores)
 
 /-- L1 joint distribution as list (typed) -/
 def l1JointTyped : List ((Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome × ScopeConfig) × ℚ) :=
-  let tuples := typedWorlds.flatMap fun w =>
-    typedScopes.map fun i => (w, i)
-  let scores := tuples.map fun (w, i) =>
+  let tuples := typedWorlds.flatMap λ w =>
+    typedScopes.map λ i => (w, i)
+  let scores := tuples.map λ (w, i) =>
     let priorScore := 1
     let s1 := RSA.Eval.S1 typedUtterances typedWorlds
-      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
-      (fun _ => 1) (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      (λ i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      (λ _ => 1) (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
       w i () () ()
     let s1Score := RSA.Eval.getScore s1 .everyHorseNotJump
     ((w, i), priorScore * s1Score)
@@ -284,41 +282,33 @@ def getTypedWorldScore (w : Phenomena.Quantification.Studies.ScontrasPearl2021.J
 def getTypedScopeScore (s : ScopeConfig) : ℚ :=
   RSA.Eval.getScore l1ScopeTyped s
 
-/--
-**Typed distributions: exact values for world marginal**.
+/-- Exact values for the typed world marginal.
 
-P(zero) = 9/13, P(one) = 4/13, P(two) = 0
--/
+P(zero) = 9/13, P(one) = 4/13, P(two) = 0 -/
 theorem typed_world_exact_values :
     (getTypedWorldScore .zero, getTypedWorldScore .one, getTypedWorldScore .two) =
       (9/13, 4/13, 0) := by
   native_decide
 
-/--
-**Typed distributions: exact values for scope marginal**.
+/-- Exact values for the typed scope marginal.
 
-P(surface) = 5/13, P(inverse) = 8/13
--/
+P(surface) = 5/13, P(inverse) = 8/13 -/
 theorem typed_scope_exact_values :
     (getTypedScopeScore .surface, getTypedScopeScore .inverse) =
       (5/13, 8/13) := by
   native_decide
 
-/--
-**Typed distributions: ordering matches empirical data**.
+/-- Ordering of typed distributions matches empirical data.
 
 P(zero) = 9/13 > P(one) = 4/13 > P(two) = 0
-matches empirical 92% > 59% > 18%
--/
+matches empirical 92% > 59% > 18% -/
 theorem typed_ordering_matches_empirical :
     (9 : ℚ)/13 > (4 : ℚ)/13 ∧ (4 : ℚ)/13 > 0 := by
   native_decide
 
-/--
-**Typed distributions: inverse scope preference**.
+/-- Inverse scope preference in typed distributions.
 
-P(inverse) = 8/13 > P(surface) = 5/13
--/
+P(inverse) = 8/13 > P(surface) = 5/13 -/
 theorem typed_inverse_preference :
     (8 : ℚ)/13 > (5 : ℚ)/13 := by
   native_decide
@@ -340,91 +330,70 @@ def getScopeScore (s : ScopeConfig) : ℚ :=
 
 -- Key Theorems
 
-/--
-**RSA assigns positive probability to partial world (w=1)**.
+/-- RSA assigns positive probability to the partial world (w=1).
 
-Unlike pure scope theories, RSA doesn't categorically rule out
-the partial world. This matches the empirical 59% rate.
--/
+Unlike pure scope theories, RSA does not categorically rule out
+the partial world. This matches the empirical 59% rate. -/
 theorem rsa_partial_world_possible :
     getWorldScore 1 > 0 := by
   native_decide
 
-/--
-**RSA assigns positive probability to compatible worlds**.
+/-- RSA assigns positive probability to compatible worlds.
 
 Zero and one have positive probability because "Every horse didn't jump"
 is true in these worlds under at least one scope reading.
-Two has zero probability because the utterance is false there under both scopes.
--/
+Two has zero probability because the utterance is false there under both scopes. -/
 theorem rsa_compatible_worlds_positive :
     getWorldScore 0 > 0 ∧ getWorldScore 1 > 0 := by
   native_decide
 
-/--
-**World=two gets zero probability**.
+/-- World=two gets zero probability.
 
 When all horses jumped, "Every horse didn't jump" is false under both
-scope readings, so L1 assigns probability 0 to this world.
--/
+scope readings, so L1 assigns probability 0 to this world. -/
 theorem rsa_two_world_zero :
     getWorldScore 2 = 0 := by
   native_decide
 
-/--
-**RSA prefers inverse scope over surface scope**.
+/-- RSA prefers inverse scope over surface scope.
 
 The model assigns higher probability to the inverse (¬>∀)
-interpretation than the surface (∀>¬) interpretation.
-
-This reflects the general preference for inverse scope readings
-of "every...not" sentences in English.
--/
+interpretation than the surface (∀>¬) interpretation,
+reflecting the general preference for inverse scope readings
+of "every...not" sentences in English. -/
 theorem rsa_prefers_inverse_scope :
     getScopeScore .inverse > getScopeScore .surface := by
   native_decide
 
-/--
-**Zero-horse world has highest probability**.
+/-- Zero-horse world has highest probability.
 
 Both scopes agree that "Every horse didn't jump" is true
-when no horse jumped, so this world gets the highest mass.
--/
+when no horse jumped, so this world gets the highest mass. -/
 theorem rsa_zero_world_highest :
     getWorldScore 0 > getWorldScore 1 ∧
     getWorldScore 0 > getWorldScore 2 := by
   native_decide
 
-/--
-**Partial world (one) has more probability than all-jumped world (two)**.
+/-- Partial world (one) has more probability than all-jumped world (two).
 
 The inverse scope (¬>∀) is true for w=1 but false for w=2.
-Since inverse scope is preferred, w=1 gets more mass than w=2.
--/
+Since inverse scope is preferred, w=1 gets more mass than w=2. -/
 theorem rsa_one_greater_than_two :
     getWorldScore 1 > getWorldScore 2 := by
   native_decide
 
 -- Connection to Empirical Data
 
-/--
-**RSA ordering matches empirical ordering**.
+/-- RSA ordering matches empirical ordering.
 
 RSA predicts: P(w=0) > P(w=1) > P(w=2)
-Empirical data: 92% > 59% > 18%
-
-The model captures the qualitative pattern.
--/
+Empirical data: 92% > 59% > 18% -/
 theorem rsa_matches_empirical_ordering :
     getWorldScore 0 > getWorldScore 1 ∧
     getWorldScore 1 > getWorldScore 2 := by
   native_decide
 
-/--
-**Both RSA and empirical data show the same ordering**.
-
-This links the RSA predictions to the empirical findings.
--/
+/-- Both RSA and empirical data show the same ordering. -/
 theorem rsa_and_empirical_agree :
     (getWorldScore 0 > getWorldScore 1) ∧
     (getWorldScore 1 > getWorldScore 2) ∧
@@ -434,10 +403,8 @@ theorem rsa_and_empirical_agree :
 
 -- Predictions vs Empirical Data
 
-/--
-**Prediction type for the scope ambiguity phenomenon**:
-An ordering over worlds (which world is most likely given the utterance).
--/
+/-- Prediction type for the scope ambiguity phenomenon:
+an ordering over worlds (which world is most likely given the utterance). -/
 structure ScopePrediction where
   /-- Does w0 have higher probability than w1? -/
   zeroGtOne : Bool
@@ -445,10 +412,8 @@ structure ScopePrediction where
   oneGtTwo : Bool
   deriving Repr
 
-/--
-**Empirical data type for the scope ambiguity phenomenon**:
-The ordering from the experiment.
--/
+/-- Empirical data type for the scope ambiguity phenomenon:
+the ordering from the experiment. -/
 structure ScopeEmpiricalOrdering where
   /-- Did more people say true for 0-horses than 1-horse? -/
   zeroGtOne : Bool
@@ -466,12 +431,10 @@ def empiricalOrdering : ScopeEmpiricalOrdering :=
   { zeroGtOne := Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .zero > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one
   , oneGtTwo := Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .two }
 
-/--
-**RSA prediction values match empirical orderings**.
+/-- RSA prediction values match empirical orderings.
 
 RSA predicts: P(w=0) > P(w=1) > P(w=2)
-Empirical:    92%    > 59%    > 18%
--/
+Empirical:    92%    > 59%    > 18% -/
 theorem rsa_prediction_matches_empirical :
     rsaPrediction.zeroGtOne = empiricalOrdering.zeroGtOne ∧
     rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
@@ -480,110 +443,15 @@ theorem rsa_prediction_matches_empirical :
 #eval rsaPrediction
 #eval empiricalOrdering
 
-/--
-**The complete pipeline analysis for Scontras & Pearl 2021**.
+/-- Complete pipeline analysis for Scontras & Pearl 2021.
 
-This demonstrates:
 1. Semantics (Montague) provides meaning function
 2. Pragmatics (RSA) consumes that meaning function (not stipulated)
-3. Predictions match empirical data
-
-The analysis is "complete" because all dependencies bottom out.
--/
+3. Predictions match empirical data -/
 theorem complete_analysis_scontras_pearl :
     rsaPrediction.zeroGtOne = empiricalOrdering.zeroGtOne ∧
     rsaPrediction.oneGtTwo = empiricalOrdering.oneGtTwo := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Architecture: Separation of Concerns
-
-```
-Montague/Scope.lean               RSA/ScontrasPearl2021.lean
-───────────────────               ─────────────────────────
-ScopedForm                        WorldMeaning
-  availableScopes                   meaningAt : Interp → World → Bool
-  scopeTakers                       worlds, interps
-
-HasAvailableScopes                RSAScenario.ambiguous
-  (grammar determines scope)        (RSA uses for inference)
-```
-
-**Key insight**: Scope availability (grammar) is separated from
-world-parametric meaning (RSA). This ensures:
-- Montague/CCG focus on what readings are available
-- RSA handles truth conditions and probabilistic inference
-- Clean parallel structure between theories
-
-### Types
-- `WorldMeaning`: Truth conditions parameterized by (Interp, World)
-- `ScopeUtterance`: Utterances (null, everyHorseNotJump)
-
-### RSA Computations
-- `l1JointScores`: P(w, i | u) distribution
-- `l1WorldScores`: Marginal P(w | u)
-- `l1ScopeScores`: Marginal P(i | u)
-
-### Key Theorems
-- `rsa_meaning_from_montague`: RSA meaning = Montague derivation
-- `rsa_partial_world_possible`: P(w=1 | u) > 0
-- `rsa_prefers_inverse_scope`: P(inverse) > P(surface)
-- `rsa_matches_empirical_ordering`: RSA matches qualitative data pattern
-- `complete_analysis_scontras_pearl`: Full pipeline from semantics → pragmatics → data
-
-### Connection to Empirical Findings
-
-The model captures Scontras & Pearl (2021)'s key findings:
-
-1. **Mixed judgments for partial worlds**: The 59% rate for 1-horse
-   worlds is explained by uncertainty over scope interpretations.
-
-2. **Inverse scope preference**: Listeners prefer the ¬>∀ reading,
-   which allows more worlds to be true.
-
-3. **Graded truth-value judgments**: Rather than categorical true/false,
-   the model predicts graded endorsements proportional to the
-   posterior probability of the world given the utterance.
-
-### Derivation Chain
-
-This module demonstrates a grounded analysis:
-
-```
-everyHorseDidntJump_form : ScopedForm
-    ↓ provides: available scope readings
-
-everyHorseDidntJump_meaning : WorldMeaning
-    ↓ provides: truth conditions (scope × world → Bool)
-
-RSAScenario.ambiguous (unified API)
-    ↓ provides: probability distribution
-
-complete_analysis_scontras_pearl
-    ↓ proves: RSA ordering = empirical ordering
-```
-
-The analysis is grounded because:
-1. Scope availability comes from grammar (ScopedForm)
-2. Truth conditions are explicitly defined (WorldMeaning)
-3. Predictions match empirical data
-
-### Model Limitations
-
-This implementation uses:
-- Uniform priors over worlds and interpretations
-- No QUD (Question Under Discussion) modeling
-- No S2 (pragmatic speaker for endorsement predictions)
-
-Future extensions could add:
-- Non-uniform priors (e.g., all-jumped as default expectation)
-- QUD-based projection (how-many vs all-jumped vs none-jumped)
-- S2 layer for explicit truth-value judgment predictions
--/
 
 -- Integration with HasAvailableScopes / HasScopePreference
 
@@ -637,48 +505,40 @@ instance : HasScopePreference RSAScopeTheory ScopedForm Unit where
     else
       -- Default: surface preferred
       { ranking := avail.readings
-      , scores := avail.readings.map (fun _ => 1.0)
+      , scores := avail.readings.map (λ _ => 1.0)
       , aligned := by simp }
 
-/--
-**Connection theorem**: RSA's interpretation set matches ScopedForm's available scopes.
+/-- RSA's interpretation set matches ScopedForm's available scopes.
 
 The interpretations used by RSA ({surface, inverse}) correspond exactly to
-the available scopes declared by the ScopedForm.
--/
+the available scopes declared by the ScopedForm. -/
 theorem rsa_interps_match_available_scopes :
     everyHorseDidntJump_form.availableScopes.length =
     everyHorseDidntJump_meaning.interps.length := by
   native_decide
 
-/--
-**RSA scope preference agrees with marginal distribution**.
+/-- RSA scope preference agrees with marginal distribution.
 
-The preference ranking from RSA puts inverse first (since P(inverse) > P(surface)).
--/
+The preference ranking from RSA puts inverse first (since P(inverse) > P(surface)). -/
 theorem rsa_preference_is_inverse_first :
     getScopeScore .inverse > getScopeScore .surface := by
   native_decide
 
-/--
-**Grounding theorem**: RSA's available interpretations come from ScopedForm.
+/-- RSA's available interpretations come from ScopedForm.
 
-This proves that RSA doesn't stipulate its own scope readings - they're
-derived from the grammatical analysis in ScopedForm.
--/
+RSA does not stipulate its own scope readings; they are
+derived from the grammatical analysis in ScopedForm. -/
 theorem rsa_grounded_in_scopedform :
     (everyHorseDidntJump_form.availableScopes.map ScopeConfig.toScopeReading') =
     (everyHorseDidntJump_meaning.interps.map ScopeConfig.toScopeReading') := by
   native_decide
 
-/--
-**Full integration theorem**: From ScopedForm through RSA to preference ranking.
+/-- From ScopedForm through RSA to preference ranking.
 
 1. ScopedForm declares available scopes (grammar)
 2. WorldMeaning provides truth conditions (semantics)
 3. RSA computes L1 distribution (pragmatics)
-4. Preference ranking emerges from L1 marginal
--/
+4. Preference ranking emerges from L1 marginal -/
 theorem full_scope_integration :
     -- ScopedForm is ambiguous
     everyHorseDidntJump_form.availableScopes.length > 1 ∧
@@ -688,61 +548,18 @@ theorem full_scope_integration :
     getScopeScore .inverse > getScopeScore .surface := by
   native_decide
 
--- Summary: Integration Architecture
-
-/-
-## Integration Architecture
-
-```
-ScopedForm                    HasAvailableScopes
-    │                              │
-    │ availableScopes = [surface, inverse]
-    │                              │
-    ▼                              ▼
-WorldMeaning                  (grammar determines what's possible)
-    │
-    │ meaningAt : ScopeConfig → World → Bool
-    │
-    ▼
-RSAScenario.ambiguous
-    │
-    │ RSA.L1_interp : List (ScopeConfig × ℚ)
-    │
-    ▼
-HasScopePreference            (RSA determines what's preferred)
-    │
-    │ ranking = [inverse, surface]
-    │ scores = [8/13, 5/13]
-    │
-    ▼
-Predictions match empirical data
-```
-
-**Key theorems:**
-- `rsa_interps_match_available_scopes`: RSA uses exactly the scopes from grammar
-- `rsa_preference_is_inverse_first`: RSA predicts inverse scope preference
-- `rsa_grounded_in_scopedform`: RSA interpretations = ScopedForm scopes
-- `full_scope_integration`: Complete integration proof
--/
-
--- Using Core.Parse (NOT Exhaustifiable)
+-- Using Core.Parse (not Exhaustifiable)
 
 /-
 ## Scope Ambiguity Uses Core.Parse Directly
 
-**Important**: Scope ambiguity is NOT exhaustification!
-
+Scope ambiguity is not exhaustification:
 - Scope ambiguity: different quantifier raising configurations (surface/inverse)
 - EXH placement: where exhaustification operator inserts (M/O/I)
 
-We use `Core.Parse` and `Core.scopeParses` directly here, NOT the
+We use `Core.Parse` and `Core.scopeParses` directly here, not the
 `Exhaustifiable` typeclass (which is for EXH-specific phenomena like
 Franke & Bergen 2020).
-
-This demonstrates the clean separation:
-- `Core.Parse`: general grammatical ambiguity (used here)
-- `Core.scopeParses`: [surface, inverse] scope parses
-- `Exhaustifiable`: only for actual exhaustification
 -/
 
 open Core
@@ -771,16 +588,16 @@ theorem uses_scope_not_exh_parses :
 /-- L1 scope distribution with custom world prior -/
 def l1ScopeWithPrior (worldPrior : Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome → ℚ)
     : List (ScopeConfig × ℚ) :=
-  let tuples := typedWorlds.flatMap fun w => typedScopes.map fun i => (w, i)
-  let scores := tuples.map fun (w, i) =>
+  let tuples := typedWorlds.flatMap λ w => typedScopes.map λ i => (w, i)
+  let scores := tuples.map λ (w, i) =>
     let s1 := RSA.Eval.S1 typedUtterances typedWorlds
-      (fun i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
-      worldPrior (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1
+      (λ i' _ u' w' => boolToRat (scopeMeaningTyped i' u' w'))
+      worldPrior (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1
       w i () () ()
     ((w, i), worldPrior w * RSA.Eval.getScore s1 .everyHorseNotJump)
   let normalized := RSA.Eval.normalize scores
-  typedScopes.map fun i =>
-    (i, normalized.filter (fun ((_, i'), _) => i' == i) |>.map (·.2) |> RSA.Eval.sumScores)
+  typedScopes.map λ i =>
+    (i, normalized.filter (λ ((_, i'), _) => i' == i) |>.map (·.2) |> RSA.Eval.sumScores)
 
 def inverseProb (prior : Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome → ℚ) : ℚ :=
   RSA.Eval.getScore (l1ScopeWithPrior prior) .inverse
@@ -789,7 +606,7 @@ def inverseProb (prior : Phenomena.Quantification.Studies.ScontrasPearl2021.Jump
 def partialOutcomePrior : Phenomena.Quantification.Studies.ScontrasPearl2021.JumpOutcome → ℚ
   | .one => 8/10 | _ => 1/10
 
-/-- Priors shift ∀>¬ vs ¬>∀ preference (NOT scope freezing - that's two quantifiers).
+/-- Priors shift ∀>¬ vs ¬>∀ preference (not scope freezing -- that involves two quantifiers).
     Uniform prior: P(¬>∀) = 62%. Partial-outcome prior: P(¬>∀) = 84%. -/
 theorem priors_shift_negation_scope : inverseProb partialOutcomePrior > 1/2 := by
   native_decide

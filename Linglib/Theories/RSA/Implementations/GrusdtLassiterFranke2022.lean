@@ -10,7 +10,7 @@ This paper extends RSA to model conditionals by:
 2. Using assertability (P(C|A) > θ) as the literal meaning of conditionals
 3. Having L1 infer both the world state AND the causal structure
 
-## Key Innovation: WorldState as the "World"
+## Innovation: WorldState as the "World"
 
 Unlike standard RSA where worlds are atomic states, here a "world" is itself
 a probability distribution over atomic propositions A and C. This is because
@@ -236,9 +236,9 @@ def isValidTriple (pA pC pAC : ℚ) : Bool :=
 Generate all valid discretized world states.
 -/
 def allWorldStates : List WorldState :=
-  probLevels.flatMap fun pA =>
-    probLevels.flatMap fun pC =>
-      probLevels.filterMap fun pAC =>
+  probLevels.flatMap λ pA =>
+    probLevels.flatMap λ pC =>
+      probLevels.filterMap λ pAC =>
         if isValidTriple pA pC pAC then
           some { pA := pA, pC := pC, pAC := pAC }
         else none
@@ -264,8 +264,8 @@ def allCausalRelations : List CausalRelation :=
 All full meanings (world states × causal relations).
 -/
 def allFullMeanings : List FullMeaning :=
-  allWorldStates.flatMap fun ws =>
-    allCausalRelations.map fun cr => (ws, cr)
+  allWorldStates.flatMap λ ws =>
+    allCausalRelations.map λ cr => (ws, cr)
 
 -- Priors
 
@@ -348,7 +348,7 @@ Note: The semantics only depends on the world state, not the causal relation.
 But L0 returns a distribution over full meanings for consistency with L1.
 -/
 def L0 (u : Utterance) : List (FullMeaning × ℚ) :=
-  let scores := allFullMeanings.map fun m =>
+  let scores := allFullMeanings.map λ m =>
     let sem := utteranceSemantics u m.1
     (m, fullMeaningPrior m * sem)
   normalize scores
@@ -366,11 +366,11 @@ S1: Pragmatic speaker given a full meaning and goal.
 P_S1(u | m, g) ∝ exp(α · log P_L0_projected(m | u) - cost(u))
 -/
 def S1 (m : FullMeaning) (g : Goal) (α : ℕ := 1) : List (Utterance × ℚ) :=
-  let scores := allUtterances.map fun u =>
+  let scores := allUtterances.map λ u =>
     let l0 := L0 u
     -- Project L0 according to goal
     let projectedScore :=
-      l0.filter (fun (m', _) => goalProject g m m') |>.map (·.2) |> sumScores
+      l0.filter (λ (m', _) => goalProject g m m') |>.map (·.2) |> sumScores
     let costDiscount := 1 / ((1 + utteranceCost u) ^ α)
     (u, (projectedScore ^ α) * costDiscount)
   normalize scores
@@ -383,14 +383,14 @@ P_L1(m | u) ∝ Prior(m) · P_S1(u | m)
 L1 marginalizes over possible goals.
 -/
 def L1 (u : Utterance) (α : ℕ := 1) : List (FullMeaning × ℚ) :=
-  let scores := allFullMeanings.flatMap fun m =>
-    allGoals.map fun g =>
+  let scores := allFullMeanings.flatMap λ m =>
+    allGoals.map λ g =>
       let s1 := S1 m g α
       let s1Score := getScore s1 u
       (m, fullMeaningPrior m * s1Score)
   -- Sum over goals for each meaning
-  let combined := allFullMeanings.map fun m =>
-    let totalScore := scores.filter (fun (m', _) => m' == m) |>.map (·.2) |> sumScores
+  let combined := allFullMeanings.map λ m =>
+    let totalScore := scores.filter (λ (m', _) => m' == m) |>.map (·.2) |> sumScores
     (m, totalScore)
   normalize combined
 
@@ -581,7 +581,7 @@ This is verified by checking that all world states with positive L0 weight
 satisfy the assertability condition.
 -/
 theorem L0_concentrates_on_assertable :
-    (L0_world .conditional).all (fun (ws, p) => p = 0 ∨ assertable ws conditionalThreshold = true) := by
+    (L0_world .conditional).all (λ (ws, p) => p = 0 ∨ assertable ws conditionalThreshold = true) := by
   native_decide
 
 -- Theorems: Causal Inference Limitations
@@ -748,7 +748,7 @@ but requires richer priors to derive conditional perfection.
 -/
 theorem model_demonstrates :
     -- L0 concentrates on assertable world states
-    (L0_world .conditional).all (fun (ws, p) => p = 0 ∨ assertable ws conditionalThreshold = true) ∧
+    (L0_world .conditional).all (λ (ws, p) => p = 0 ∨ assertable ws conditionalThreshold = true) ∧
     -- Causal inference detects asymmetric world states
     (assertable causalWorldState conditionalThreshold = true ∧
      reverseAssertable causalWorldState conditionalThreshold = false) ∧

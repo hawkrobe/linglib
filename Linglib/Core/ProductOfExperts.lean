@@ -12,9 +12,9 @@ namespace Core.ProductOfExperts
 
 /-- Product of Experts: combine distributions multiplicatively. -/
 def productOfExperts {α : Type} (ps : List (α → ℚ)) (support : List α) : α → ℚ :=
-  let unnorm a := ps.foldl (fun acc p => acc * p a) 1
-  let Z := support.foldl (fun acc a => acc + unnorm a) 0
-  fun a => if Z = 0 then 0 else unnorm a / Z
+  let unnorm a := ps.foldl (λ acc p => acc * p a) 1
+  let Z := support.foldl (λ acc a => acc + unnorm a) 0
+  λ a => if Z = 0 then 0 else unnorm a / Z
 
 /-- Product of two experts. -/
 def poe2 {α : Type} (p₁ p₂ : α → ℚ) (support : List α) : α → ℚ :=
@@ -26,12 +26,12 @@ def poe3 {α : Type} (p₁ p₂ p₃ : α → ℚ) (support : List α) : α → 
 
 /-- Unnormalized product: multiply expert scores without normalizing. -/
 def unnormalizedProduct {α : Type} (ps : List (α → ℚ)) : α → ℚ :=
-  fun a => ps.foldl (fun acc p => acc * p a) 1
+  λ a => ps.foldl (λ acc p => acc * p a) 1
 
 /-- Normalize a scoring function over a finite support. -/
 def normalizeOver {α : Type} (f : α → ℚ) (support : List α) : α → ℚ :=
-  let Z := support.foldl (fun acc a => acc + f a) 0
-  fun a => if Z = 0 then 0 else f a / Z
+  let Z := support.foldl (λ acc a => acc + f a) 0
+  λ a => if Z = 0 then 0 else f a / Z
 
 /-- PoE equals unnormalized product followed by normalization. -/
 theorem poe_eq_unnorm_then_norm {α : Type} (ps : List (α → ℚ)) (support : List α) :
@@ -40,7 +40,7 @@ theorem poe_eq_unnorm_then_norm {α : Type} (ps : List (α → ℚ)) (support : 
 
 /-- Folding multiplication with zero accumulator stays zero. -/
 theorem foldl_mul_zero_init {α : Type} (ps : List (α → ℚ)) (a : α) :
-    ps.foldl (fun acc p => acc * p a) 0 = 0 := by
+    ps.foldl (λ acc p => acc * p a) 0 = 0 := by
   induction ps with
   | nil => rfl
   | cons hd tl ih => simp only [List.foldl_cons, zero_mul, ih]
@@ -48,7 +48,7 @@ theorem foldl_mul_zero_init {α : Type} (ps : List (α → ℚ)) (a : α) :
 /-- Folding multiplication absorbs zero. -/
 theorem foldl_mul_zero {α : Type} (ps : List (α → ℚ)) (a : α) (init : ℚ)
     (hp : ∃ p ∈ ps, p a = 0) :
-    ps.foldl (fun acc p => acc * p a) init = 0 := by
+    ps.foldl (λ acc p => acc * p a) init = 0 := by
   obtain ⟨p, hp_mem, hp_zero⟩ := hp
   induction ps generalizing init with
   | nil => simp at hp_mem
@@ -76,7 +76,7 @@ theorem poe_zero_absorbing {α : Type} (ps : List (α → ℚ)) (support : List 
 
 /-- Foldl adding 1 with any init. -/
 theorem foldl_add_one {α : Type} (xs : List α) (init : ℚ) :
-    xs.foldl (fun acc _ => acc + (1 : ℚ)) init = init + xs.length := by
+    xs.foldl (λ acc _ => acc + (1 : ℚ)) init = init + xs.length := by
   induction xs generalizing init with
   | nil => simp
   | cons hd tl ih =>
@@ -86,7 +86,7 @@ theorem foldl_add_one {α : Type} (xs : List α) (init : ℚ) :
 
 /-- Foldl adding 1 equals length. -/
 theorem foldl_add_one_eq_length {α : Type} (xs : List α) :
-    xs.foldl (fun acc _ => acc + (1 : ℚ)) 0 = xs.length := by
+    xs.foldl (λ acc _ => acc + (1 : ℚ)) 0 = xs.length := by
   simp [foldl_add_one]
 
 /-- PoE with empty expert list gives uniform. -/
@@ -111,7 +111,7 @@ theorem linear_not_zero_absorbing :
 
 /-- PoE IS zero-absorbing (for the 2-expert case). -/
 theorem poe2_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List α) (a : α) :
-    p₁ a = 0 → poe2 p₁ p₂ support a = 0 ∨ (support.foldl (fun acc x => acc + p₁ x * p₂ x) 0 = 0) := by
+    p₁ a = 0 → poe2 p₁ p₂ support a = 0 ∨ (support.foldl (λ acc x => acc + p₁ x * p₂ x) 0 = 0) := by
   intro h
   simp only [poe2, productOfExperts, List.foldl, one_mul, h, zero_mul]
   left
@@ -121,7 +121,7 @@ theorem poe2_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List
 
 /-- Find the element with maximum value according to a scoring function. -/
 def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
-  xs.foldl (fun acc x =>
+  xs.foldl (λ acc x =>
     match acc with
     | none => some x
     | some best => if f x > f best then some x else some best
@@ -139,7 +139,7 @@ def FactoredDist.combine {α : Type} (d : FactoredDist α) : α → ℚ :=
 
 /-- Get the unnormalized scores. -/
 def FactoredDist.unnormScores {α : Type} (d : FactoredDist α) : α → ℚ :=
-  fun a => d.selectionalExpert a * d.scenarioExpert a
+  λ a => d.selectionalExpert a * d.scenarioExpert a
 
 /-- Detect conflict: experts disagree on the mode. -/
 def FactoredDist.hasConflict {α : Type} [BEq α] (d : FactoredDist α) : Bool :=
@@ -164,13 +164,13 @@ def FactoredDist.conflictDegree {α : Type} [BEq α] (d : FactoredDist α) : ℚ
 /-- Weighted PoE: P(x) ∝ Π_i p_i(x)^{β_i}. -/
 def weightedPoe {α : Type} (experts : List ((α → ℚ) × ℚ)) (support : List α) : α → ℚ :=
   -- experts is list of (probability function, weight/temperature)
-  let unnorm a := experts.foldl (fun acc (p, β) =>
+  let unnorm a := experts.foldl (λ acc (p, β) =>
     -- Approximate p(a)^β for small integer β
     -- Full implementation would need Real numbers
-    acc * (List.range β.num.natAbs).foldl (fun r _ => r * p a) 1
+    acc * (List.range β.num.natAbs).foldl (λ r _ => r * p a) 1
   ) 1
-  let Z := support.foldl (fun acc a => acc + unnorm a) 0
-  fun a => if Z = 0 then 0 else unnorm a / Z
+  let Z := support.foldl (λ acc a => acc + unnorm a) 0
+  λ a => if Z = 0 then 0 else unnorm a / Z
 
 /-- Bayesian update as PoE: posterior ∝ likelihood × prior. -/
 def bayesianPoe {α : Type} (likelihood prior : α → ℚ) (support : List α) : α → ℚ :=
@@ -186,8 +186,8 @@ theorem unnormalizedProduct_comm {α : Type} (p q : α → ℚ) (a : α) :
 theorem poe_comm {α : Type} (p q : α → ℚ) (support : List α) :
     productOfExperts [p, q] support = productOfExperts [q, p] support := by
   simp only [productOfExperts]
-  have h : ∀ a, [p, q].foldl (fun acc f => acc * f a) 1 =
-               [q, p].foldl (fun acc f => acc * f a) 1 := by
+  have h : ∀ a, [p, q].foldl (λ acc f => acc * f a) 1 =
+               [q, p].foldl (λ acc f => acc * f a) 1 := by
     intro a; simp only [List.foldl, one_mul]; ring
   simp_rw [h]
 

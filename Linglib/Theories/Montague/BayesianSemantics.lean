@@ -76,8 +76,8 @@ variable {Θ : Type*} [Fintype Θ] [DecidableEq Θ]
 
 /-- Point mass at a single value -/
 def pure (θ₀ : Θ) : FinitePMF Θ where
-  mass := fun θ => if θ = θ₀ then 1 else 0
-  mass_nonneg := fun θ => by split_ifs <;> decide
+  mass := λ θ => if θ = θ₀ then 1 else 0
+  mass_nonneg := λ θ => by split_ifs <;> decide
   mass_sum_one := by
     rw [Finset.sum_eq_single θ₀]
     · simp
@@ -86,11 +86,11 @@ def pure (θ₀ : Θ) : FinitePMF Θ where
 
 /-- Expected value of a function under this distribution -/
 def expect (pmf : FinitePMF Θ) (f : Θ → ℚ) : ℚ :=
-  Finset.sum Finset.univ fun θ => pmf.mass θ * f θ
+  Finset.sum Finset.univ λ θ => pmf.mass θ * f θ
 
 /-- Expected value of an indicator (probability of event) -/
 def prob (pmf : FinitePMF Θ) (event : Θ → Bool) : ℚ :=
-  pmf.expect fun θ => if event θ then 1 else 0
+  pmf.expect λ θ => if event θ then 1 else 0
 
 /-- Expected value of pure distribution is the value at that point -/
 theorem expect_pure (θ₀ : Θ) (f : Θ → ℚ) :
@@ -125,10 +125,10 @@ variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ]
 /--
 Graded truth value: expected value of the Boolean predicate.
 
-This is the key operation: `P(x) = E_θ[P_θ(x)]`
+`P(x) = E_θ[P_θ(x)]`
 -/
 def gradedTruth (pred : ParamPred E Θ) (x : E) : ℚ :=
-  pred.prior.prob fun θ => pred.semantics θ x
+  pred.prior.prob λ θ => pred.semantics θ x
 
 /--
 Convert a parameterized predicate to a graded predicate.
@@ -169,7 +169,7 @@ variable [DecidableRel (· < · : Θ → Θ → Prop)]
 
 /-- Convert to a parameterized predicate -/
 def toParamPred (pred : ThresholdPred E Θ) : ParamPred E Θ where
-  semantics := fun θ x => pred.measure x > θ
+  semantics := λ θ x => pred.measure x > θ
   prior := pred.thresholdPrior
 
 /-- Graded truth for threshold predicates -/
@@ -182,7 +182,7 @@ Graded truth equals probability that measure > threshold.
 For "tall(John)": P(height(John) > θ) under the threshold prior.
 -/
 theorem gradedTruth_eq_prob (pred : ThresholdPred E Θ) (x : E) :
-    pred.gradedTruth x = pred.thresholdPrior.prob (fun θ => pred.measure x > θ) := rfl
+    pred.gradedTruth x = pred.thresholdPrior.prob (λ θ => pred.measure x > θ) := rfl
 
 end ThresholdPred
 
@@ -219,7 +219,7 @@ variable {E : Type*} {n : ℕ}
 
 /-- Dot product of weight vector and feature vector -/
 def dotProduct (w f : Fin n → ℚ) : ℚ :=
-  Finset.sum Finset.univ fun i => w i * f i
+  Finset.sum Finset.univ λ i => w i * f i
 
 /-- Boolean semantics for a specific parameter setting -/
 def satisfies (pred : FeaturePred E n) (p : pred.params) (x : E) : Bool :=
@@ -271,56 +271,20 @@ Under independence, the joint prior is the product of individual priors.
 def ParamPred.conj {E Θ₁ Θ₂ : Type*}
     [Fintype Θ₁] [Fintype Θ₂] [DecidableEq Θ₁] [DecidableEq Θ₂]
     (p : ParamPred E Θ₁) (q : ParamPred E Θ₂) : ParamPred E (Θ₁ × Θ₂) where
-  semantics := fun ⟨θ₁, θ₂⟩ x => p.semantics θ₁ x && q.semantics θ₂ x
+  semantics := λ ⟨θ₁, θ₂⟩ x => p.semantics θ₁ x && q.semantics θ₂ x
   prior := {
-    mass := fun ⟨θ₁, θ₂⟩ => p.prior.mass θ₁ * q.prior.mass θ₂
-    mass_nonneg := fun ⟨θ₁, θ₂⟩ => mul_nonneg (p.prior.mass_nonneg θ₁) (q.prior.mass_nonneg θ₂)
+    mass := λ ⟨θ₁, θ₂⟩ => p.prior.mass θ₁ * q.prior.mass θ₂
+    mass_nonneg := λ ⟨θ₁, θ₂⟩ => mul_nonneg (p.prior.mass_nonneg θ₁) (q.prior.mass_nonneg θ₂)
     mass_sum_one := by
       simp only [Fintype.sum_prod_type]
-      calc Finset.sum Finset.univ (fun a =>
-             Finset.sum Finset.univ (fun b => p.prior.mass a * q.prior.mass b))
-          = Finset.sum Finset.univ (fun a =>
+      calc Finset.sum Finset.univ (λ a =>
+             Finset.sum Finset.univ (λ b => p.prior.mass a * q.prior.mass b))
+          = Finset.sum Finset.univ (λ a =>
               p.prior.mass a * Finset.sum Finset.univ q.prior.mass) := by
             congr 1; ext a; rw [← Finset.mul_sum]
-        _ = Finset.sum Finset.univ (fun a => p.prior.mass a * 1) := by
+        _ = Finset.sum Finset.univ (λ a => p.prior.mass a * 1) := by
             rw [q.prior.mass_sum_one]
         _ = 1 := by simp [p.prior.mass_sum_one]
   }
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Types
-- `FinitePMF Θ`: Simple finite PMF with rational values
-- `ParamPred E Θ`: Predicate with parameter uncertainty
-- `ThresholdPred E Θ`: Lassiter & Goodman-style threshold predicate
-- `FeaturePred E n`: Bernardy-style linear classifier predicate
-
-### Key Operations
-- `ParamPred.gradedTruth`: Extract graded value by marginalization
-- `ParamPred.toGPred`: Convert to `GPred` for use with `GradedProposition`
-- `ParamPred.conj`: Compose predicates with independent parameters
-
-### Key Theorem
-- `gradedTruth_pure`: No uncertainty → Boolean semantics
-
-### Philosophy
-
-This module implements the "marginalize over parameters" strategy:
-- Boolean semantics at each parameter setting
-- Graded truth emerges from expectation over parameter prior
-
-This is a stepping stone toward the more principled probability monad
-approach (Grove's PDS), which keeps composition standard and handles
-probability as a separate effect.
-
-## Future Directions
-
-1. **Probability Monad**: Implement `P α` monad following Grove
-2. **State + Probability**: Parameterized monad for discourse state
-3. **Compilation**: Target Mathlib measures or external PPLs
--/
 
 end Theories.Montague.BayesianSemantics

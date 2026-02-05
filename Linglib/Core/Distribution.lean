@@ -30,7 +30,7 @@ variable {α : Type*} [Fintype α]
 
 /-- The support: elements with positive probability. -/
 def support (d : ExactDist α) : Finset α :=
-  Finset.univ.filter fun x => 0 < d.mass x
+  Finset.univ.filter λ x => 0 < d.mass x
 
 /-- Support is nonempty (since masses sum to 1 > 0). -/
 theorem support_nonempty (d : ExactDist α) : d.support.Nonempty := by
@@ -109,8 +109,8 @@ def pure (x : α) [DecidableEq α] : ExactDist α where
 
 /-- Convert ExactDist to Mathlib's PMF. Noncomputable; use for proofs. -/
 noncomputable def toPMF (d : ExactDist α) : PMF α :=
-  PMF.ofFintype (fun x => ENNReal.ofReal (d.mass x : ℝ)) (by
-    simp only [← ENNReal.ofReal_sum_of_nonneg (fun x _ => Rat.cast_nonneg.mpr (d.nonneg x))]
+  PMF.ofFintype (λ x => ENNReal.ofReal (d.mass x : ℝ)) (by
+    simp only [← ENNReal.ofReal_sum_of_nonneg (λ x _ => Rat.cast_nonneg.mpr (d.nonneg x))]
     simp only [← Rat.cast_sum, d.sum_one, Rat.cast_one, ENNReal.ofReal_one])
 
 /-- PMF probability agrees with ExactDist probability. -/
@@ -131,12 +131,12 @@ def ExactDist.tryNormalize {α : Type*} [Fintype α]
 
 /-- Convert ExactDist to List representation (noncomputable). -/
 noncomputable def ExactDist.toList {α : Type*} [Fintype α] (d : ExactDist α) : List (α × ℚ) :=
-  (Finset.univ : Finset α).toList.map fun x => (x, d.mass x)
+  (Finset.univ : Finset α).toList.map λ x => (x, d.mass x)
 
 /-- Convert ExactDist to List using an explicit enumeration. -/
 def ExactDist.toListWith {α : Type*} [Fintype α]
     (d : ExactDist α) (elements : List α) : List (α × ℚ) :=
-  elements.map fun x => (x, d.mass x)
+  elements.map λ x => (x, d.mass x)
 
 /-- Attempt to construct ExactDist from a list distribution. -/
 def ExactDist.tryFromList {α : Type*} [Fintype α] [DecidableEq α] [BEq α]
@@ -154,5 +154,5 @@ def ExactDist.tryFromList {α : Type*} [Fintype α] [DecidableEq α] [BEq α]
   else
     none
 
-instance {α : Type*} [Fintype α] : CoeFun (ExactDist α) (fun _ => α → ℚ) where
+instance {α : Type*} [Fintype α] : CoeFun (ExactDist α) (λ _ => α → ℚ) where
   coe d := d.mass

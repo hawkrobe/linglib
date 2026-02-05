@@ -23,8 +23,8 @@ Empirical diagnostics for identifying and classifying projective content.
 ## Precondition/Consequence Diagnostics
 
 The "allows for" vs "results in" tests distinguish:
-- **Preconditions**: States necessary for an event to be possible
-- **Consequences**: States resulting from an event
+- Preconditions: states necessary for an event to be possible
+- Consequences: states resulting from an event
 
 These tests identify what's presupposed vs. what's asserted.
 
@@ -70,7 +70,7 @@ structure DiagnosticResult where
 
 
 /--
-The "allows for" test identifies PRECONDITIONS.
+The "allows for" test identifies preconditions.
 
 Frame: "S allows for C"
 
@@ -127,7 +127,7 @@ def allowsFor_stop_consequence : DiagnosticResult :=
 
 
 /--
-The "results in" test identifies CONSEQUENCES.
+The "results in" test identifies consequences.
 
 Frame: "S results in C"
 
@@ -245,15 +245,15 @@ def patternIsUniform : Bool :=
 
 
 /--
-Key empirical finding: Content that passes "allows for" projects.
+Content that passes "allows for" projects.
 
 The precondition/consequence tests predict projection behavior:
 - Preconditions (pass "allows for") → project through negation
-- Consequences (pass "results in") → do NOT project through negation
+- Consequences (pass "results in") → do not project through negation
 
 Example:
 - "John didn't stop smoking" still implies he was smoking (precondition projects)
-- "John didn't stop smoking" does NOT imply he's not smoking (consequence doesn't project)
+- "John didn't stop smoking" does not imply he's not smoking (consequence doesn't project)
 -/
 structure ProjectionPrediction where
   /-- Content type -/
@@ -336,7 +336,7 @@ def conditionalTest_stop_filter : DiagnosticResult :=
 
 
 /--
-Summary: The key diagnostic tests and what they reveal.
+The diagnostic tests and what they reveal.
 -/
 structure DiagnosticSummary where
   /-- Name of diagnostic -/
@@ -367,36 +367,5 @@ def diagnosticTests : List DiagnosticSummary := [
   , testsFor := "At-issueness"
   , positiveIndicates := "Content is not at-issue (backgrounded)" }
 ]
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Diagnostic Frames
-- `allowsForFrame`: Tests for precondition status
-- `resultsInFrame`: Tests for consequence status
-- `negationTestFrame`: Tests for projection
-- `questionTestFrame`: Tests for projection
-- `conditionalFilterFrame`: Tests for local satisfaction
-
-### Judgment Data
-- `allowsFor_*`: Judgments for "allows for" frame
-- `resultsIn_*`: Judgments for "results in" frame
-- `negationTest_*`, `questionTest_*`: Standard projection tests
-
-### Empirical Patterns
-- `PreconditionConsequencePattern`: The diagnostic signature
-- `stopPattern`, `startPattern`, `winPattern`: Specific predicates
-- `patternIsUniform`: The pattern generalizes
-
-### Key Finding
-The "allows for" / "results in" tests reliably distinguish:
-- **Preconditions**: Pass "allows for", fail "results in", PROJECT
-- **Consequences**: Pass "results in", fail "allows for", DON'T PROJECT
-
-This provides an empirical basis for the theoretical claim that
-presuppositions are ontological preconditions.
--/
 
 end Phenomena.Presupposition.Diagnostics

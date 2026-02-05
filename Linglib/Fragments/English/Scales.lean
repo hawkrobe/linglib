@@ -1,142 +1,76 @@
-/-
-# English Scale Library
+/-!
+# English Scales
 
-English Horn scales for RSA and NeoGricean models.
+Horn scales for quantifiers, modals, and degrees.
 
-## Scales Included
+## Main definitions
 
-**Quantifier Scales (Horn)**:
-- ⟨some, all⟩
-- ⟨some, most, all⟩
-- ⟨or, and⟩
-
-**Modal Scales (Fauconnier)**:
-- ⟨might, must⟩ / ⟨possible, necessary⟩
-- ⟨allowed, required⟩
-
-**Degree Scales (Kennedy)**:
-- ⟨warm, hot⟩
-- ⟨good, excellent⟩
-
-**Numeral Scales**:
-- ⟨one, two, three, ...⟩
+- `Scale`: ordered list from weak to strong
+- `someAll`, `mightMust`: standard scales
 
 ## References
 
-- Horn, L. R. (1972). On the semantic properties of logical operators in English.
-- Fauconnier, G. (1975). Pragmatic scales and logical structure.
-- Kennedy, C. (2007). Vagueness and grammar.
+- Horn (1972). On the semantic properties of logical operators in English.
+- Kennedy (2007). Vagueness and grammar.
 -/
 
 import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.Scales
 
--- ============================================================================
--- Scale Structure
--- ============================================================================
-
-/--
-A Horn scale: ordered list of scalar alternatives from weak to strong.
-
-The key property: each item entails all weaker items.
-⟨some, all⟩: "all" entails "some"
--/
+/-- Horn scale: ordered list from weak to strong. -/
 structure Scale (α : Type) where
-  /-- Items from weakest to strongest -/
   items : List α
-  /-- Name for display -/
   name : String := ""
 
-/-- Get alternatives (items strictly stronger than x) -/
 def Scale.alternatives {α : Type} [BEq α] (s : Scale α) (x : α) : List α :=
   match s.items.dropWhile (· != x) with
   | [] => []
   | _ :: rest => rest
 
-/-- Get the strongest item -/
 def Scale.strongest {α : Type} (s : Scale α) : Option α :=
   s.items.getLast?
 
-/-- Get the weakest item -/
 def Scale.weakest {α : Type} (s : Scale α) : Option α :=
   s.items.head?
 
-/-- Is x weaker than y on this scale? -/
 def Scale.weaker {α : Type} [BEq α] (s : Scale α) (x y : α) : Bool :=
   let findIdx (item : α) := s.items.findIdx? (· == item)
   match findIdx x, findIdx y with
   | some i, some j => i < j
   | _, _ => false
 
--- ============================================================================
--- Quantifier Scales
--- ============================================================================
-
-/-- Basic quantifier expressions -/
 inductive QuantExpr where
   | some_ | most | all
   deriving Repr, DecidableEq, BEq, Inhabited
 
-/-- The ⟨some, all⟩ scale -/
 def someAll : Scale QuantExpr :=
-  { items := [.some_, .all]
-  , name := "⟨some, all⟩"
-  }
+  { items := [.some_, .all], name := "⟨some, all⟩" }
 
-/-- The ⟨some, most, all⟩ scale -/
 def someMostAll : Scale QuantExpr :=
-  { items := [.some_, .most, .all]
-  , name := "⟨some, most, all⟩"
-  }
+  { items := [.some_, .most, .all], name := "⟨some, most, all⟩" }
 
--- ============================================================================
--- Connective Scales
--- ============================================================================
-
-/-- Connective expressions -/
 inductive ConnExpr where
   | or_ | and_
   deriving Repr, DecidableEq, BEq, Inhabited
 
-/-- The ⟨or, and⟩ scale -/
 def orAnd : Scale ConnExpr :=
-  { items := [.or_, .and_]
-  , name := "⟨or, and⟩"
-  }
+  { items := [.or_, .and_], name := "⟨or, and⟩" }
 
--- ============================================================================
--- Modal Scales
--- ============================================================================
-
-/-- Modal expressions -/
 inductive ModalExpr where
   | might | must
   | possible | necessary
   | allowed | required
   deriving Repr, DecidableEq, BEq, Inhabited
 
-/-- The ⟨might, must⟩ scale -/
 def mightMust : Scale ModalExpr :=
-  { items := [.might, .must]
-  , name := "⟨might, must⟩"
-  }
+  { items := [.might, .must], name := "⟨might, must⟩" }
 
-/-- The ⟨possible, necessary⟩ scale -/
 def possibleNecessary : Scale ModalExpr :=
-  { items := [.possible, .necessary]
-  , name := "⟨possible, necessary⟩"
-  }
+  { items := [.possible, .necessary], name := "⟨possible, necessary⟩" }
 
-/-- The ⟨allowed, required⟩ scale -/
 def allowedRequired : Scale ModalExpr :=
-  { items := [.allowed, .required]
-  , name := "⟨allowed, required⟩"
-  }
-
--- ============================================================================
--- Degree Scales
--- ============================================================================
+  { items := [.allowed, .required], name := "⟨allowed, required⟩" }
 
 /-- Degree/gradable adjective expressions -/
 inductive DegreeExpr where
@@ -244,7 +178,7 @@ def numerals (n : Nat) : Scale Nat :=
 
 /-- Compute scalar implicature: x implicates ¬y for each stronger y -/
 def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : List (String × α) :=
-  (s.alternatives x).map fun y => (s!"¬{repr y}", y)
+  (s.alternatives x).map λ y => (s!"¬{repr y}", y)
 
 -- ============================================================================
 -- Examples
@@ -286,7 +220,7 @@ The puzzle of Free Choice Items depends on alternatives NOT being closed:
 When domain alternatives are NOT closed, exhaustification can lead to
 contradiction (the EFCI puzzle), which is then resolved by rescue mechanisms.
 
-### Key Insight
+### Insight
 
 | Alternative Type | Closed? | Exhaustification Result |
 |-----------------|---------|-------------------------|
@@ -332,7 +266,7 @@ For ⟨some, all⟩:
 -/
 def quantifierScaleClosed : ClosedUnderConj QuantExpr :=
   { alts := [.some_, .all]
-  , conj := fun x y =>
+  , conj := λ x y =>
       match x, y with
       | .all, _ => .all
       | _, .all => .all
@@ -351,7 +285,7 @@ For ⟨or, and⟩:
 -/
 def connScaleClosed : ClosedUnderConj ConnExpr :=
   { alts := [.or_, .and_]
-  , conj := fun x y =>
+  , conj := λ x y =>
       match x, y with
       | .and_, _ => .and_
       | _, .and_ => .and_

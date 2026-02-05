@@ -56,7 +56,7 @@ open NeoGricean.Exhaustivity
     - `MW`: Maximal Worlds / Minimal Models (Groenendijk & Stokhof 1984)
       Keeps only minimal worlds relative to the alternative ordering.
 
-    **Theorem 9 (Spector 2016)**: When ALT is closed under ∧, exhIE = exhMW. -/
+    Theorem 9 (Spector 2016): When ALT is closed under ∧, exhIE = exhMW. -/
 inductive ExhOperator where
   | IE : ExhOperator  -- Innocent Exclusion
   | MW : ExhOperator  -- Maximal Worlds / Minimal Models
@@ -64,7 +64,7 @@ inductive ExhOperator where
 
 /-- Apply an exhaustification operator to a proposition given alternatives.
 
-    This is the SINGLE entry point for applying EXH to a proposition.
+    This is the single entry point for applying EXH to a proposition.
     All theories should use this rather than calling exhIE/exhMW directly. -/
 def applyExh {World : Type*} (op : ExhOperator) (ALT : Set (Prop' World))
     (φ : Prop' World) : Prop' World :=
@@ -95,7 +95,7 @@ abbrev AlternativesAtPosition (World : Type*) := ExhPosition → Set (Prop' Worl
 
 /-- Apply EXH at positions indicated by a Parse.
 
-    This is the SINGLE entry point for parse-guided exhaustification.
+    This is the single entry point for parse-guided exhaustification.
 
     Given:
     - `op`: Which EXH operator to use (IE or MW)
@@ -105,7 +105,7 @@ abbrev AlternativesAtPosition (World : Type*) := ExhPosition → Set (Prop' Worl
 
     Returns: The meaning after applying EXH at all indicated positions.
 
-    **Application order**: I → O → M (innermost first, standard scope convention) -/
+    Application order: I → O → M (innermost first, standard scope convention). -/
 def applyExhAtParse {World : Type*} (op : ExhOperator) (p : Parse)
     (base : Prop' World) (altsAt : AlternativesAtPosition World) : Prop' World :=
   -- Apply from innermost to outermost: I, then O, then M
@@ -152,7 +152,7 @@ theorem single_position_exh {World : Type*} (op : ExhOperator) (pos : ExhPositio
 
 /-- Typeclass for sentence types where EXH can insert at parse positions.
 
-    **Key Design Decisions**:
+    Design decisions:
     1. `exhOperator`: Which operator to use (default: IE)
     2. `literalMeaning`: Base meaning before any EXH
     3. `alternativesAt`: Position-dependent alternatives
@@ -160,11 +160,11 @@ theorem single_position_exh {World : Type*} (op : ExhOperator) (pos : ExhPositio
     The meaning under a parse is computed by `meaningAtParse`, which calls
     `applyExhAtParse` with the unified EXH machinery.
 
-    **When to use this**:
+    When to use this:
     - RSA models with grammatical ambiguity about EXH placement
     - Any theory that needs to reason about EXH insertion sites
 
-    **When NOT to use this**:
+    When not to use this:
     - Scope ambiguity (use `Core.scopeParses` directly)
     - Direct application of EXH (use `applyExh` directly) -/
 class Exhaustifiable (Sentence : Type) (World : Type) where
@@ -183,7 +183,7 @@ class Exhaustifiable (Sentence : Type) (World : Type) where
     theories that use `Exhaustifiable` apply EXH consistently. -/
 def Exhaustifiable.meaningAtParse {S W : Type} [inst : Exhaustifiable S W]
     (p : Parse) (s : S) : Prop' W :=
-  let base : Prop' W := fun w => Exhaustifiable.literalMeaning s w = true
+  let base : Prop' W := λ w => Exhaustifiable.literalMeaning s w = true
   let altsAt := Exhaustifiable.alternativesAt s
   applyExhAtParse inst.exhOperator p base altsAt
 
@@ -197,7 +197,7 @@ def Exhaustifiable.meaningAtParseBool {S W : Type} [Exhaustifiable S W]
 
 /-- The literal parse gives the literal meaning. -/
 theorem Exhaustifiable.literal_is_literal {S W : Type} [inst : Exhaustifiable S W]
-    (s : S) : meaningAtParse (W := W) Parse.literal s = fun w => Exhaustifiable.literalMeaning s w = true := by
+    (s : S) : meaningAtParse (W := W) Parse.literal s = λ w => Exhaustifiable.literalMeaning s w = true := by
   simp only [meaningAtParse]
   rw [literal_parse_is_identity]
 
@@ -217,10 +217,10 @@ The connection:
 - Spector 2007's `Exhaust` keeps minimal valuations relative to ⊂
 - These are the same when the ALT-ordering matches set inclusion
 
-**Theorem (Spector 2007)**: For positive propositions P, Max(P) = {Exhaust(P)},
+Theorem (Spector 2007): For positive propositions P, Max(P) = {Exhaust(P)},
 showing that Gricean reasoning derives exhaustive interpretation.
 
-This provides the THEORETICAL JUSTIFICATION for why we exhaustify.
+This provides the theoretical justification for why we exhaustify.
 The operators `exhIE` and `exhMW` provide the MECHANISM for how we exhaustify.
 -/
 
@@ -246,58 +246,5 @@ def toRSAMeaning {S W : Type} [Exhaustifiable S W]
     (p : Parse) (w : W) (s : S) : Bool :=
   Exhaustifiable.meaningAtParseBool p s w
 
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Unified EXH Application
-- `ExhOperator`: Enum of exhaustification strategies (IE, MW)
-- `applyExh`: Single entry point for applying EXH to a proposition
-- `applyExhAtParse`: Single entry point for parse-guided EXH
-
-### Exhaustifiable Typeclass
-- `Exhaustifiable S W`: For sentences where EXH can insert
-  - `exhOperator`: Which operator to use (default: IE)
-  - `literalMeaning`: Base meaning
-  - `alternativesAt`: Position-dependent alternatives
-- `meaningAtParse`: Computes meaning under a parse using unified machinery
-
-### Theoretical Connections
-- `ie_eq_mw_when_closed`: Theorem 9 (IE = MW when ALT closed under ∧)
-- `griceanJustification`: Link to Spector 2007's derivation
-
-### RSA Integration
-- `getParses`: Get parses for RSAScenario
-- `toRSAMeaning`: Convert to RSA's meaning function type
-
-## Usage
-
-### For RSA Models (like FrankeBergen2020)
-```lean
-instance : Exhaustifiable NestedAristotelian AlienWorld where
-  literalMeaning := myLiteralMeaning
-  alternativesAt := fun s pos => myAlternatives s pos
-
-def myMeaning (p : Parse) (s : Sentence) (w : World) : Bool :=
-  Exhaustifiable.meaningAtParseBool p s w
-```
-
-### For NeoGricean Work (like FoxSpector2018)
-```lean
--- Direct application without the typeclass
-def myExhMeaning := applyExh .IE myAlts myProp
-
--- Or with parse guidance
-def myParseMeaning := applyExhAtParse .IE myParse myProp myAltsAt
-```
-
-## Design Rationale
-
-1. **Single entry points**: `applyExh` and `applyExhAtParse` ensure consistency
-2. **Operator flexibility**: Can switch between IE and MW easily
-3. **Position-dependent alternatives**: Realistic for nested quantifiers
-4. **Theoretical grounding**: Connected to Spector 2007's Gricean derivation
--/
 
 end NeoGricean.Exhaustivity.Interface

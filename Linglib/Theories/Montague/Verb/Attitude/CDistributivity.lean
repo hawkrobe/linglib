@@ -3,7 +3,7 @@
 
 This file derives C-distributivity as a **theorem** rather than stipulating it.
 
-## Key Insight
+## Insight
 
 C-distributivity follows from the **structure** of the semantics:
 - If `⟦x V Q⟧ := ∃p ∈ Q. ⟦x V p⟧`, then V is C-distributive by construction
@@ -94,7 +94,7 @@ with existential closure.
 -/
 def degreeComparisonQuestion {W E : Type*} (μ : DegreeFn W E) (θ : ThresholdFn W)
     (C : QuestionDen W) (x : E) (Q : QuestionDen W) (_w : W) : Bool :=
-  Q.any fun p => decide (μ x p > θ C)
+  Q.any λ p => decide (μ x p > θ C)
 
 /--
 **Theorem**: Degree-comparison predicates are C-distributive.
@@ -258,7 +258,7 @@ is defined as existential quantification over propositional semantics.
 def isDegreeComparisonLike {W E : Type*}
     (V_prop : E → Prop' W → W → Bool)
     (V_question : E → QuestionDen W → W → Bool) : Prop :=
-  ∀ x Q w, V_question x Q w = Q.any (fun p => V_prop x p w)
+  ∀ x Q w, V_question x Q w = Q.any (λ p => V_prop x p w)
 
 /--
 Degree-comparison-like predicates are automatically C-distributive.

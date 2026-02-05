@@ -6,11 +6,11 @@ would fail to preserve certain inferences.
 
 ## Phenomena Covered
 
-1. **Numeral alternatives**: 99 vs 100 asymmetry
-2. **Conjunction entailments**: "A and B are P" |= "A is P"
-3. **Numeral-modified definites**: "the four doors" lacks non-maximality
+1. Numeral alternatives: 99 vs 100 asymmetry.
+2. Conjunction entailments: "A and B are P" |= "A is P".
+3. Numeral-modified definites: "the four doors" lacks non-maximality.
 
-## Key Insight (INFERENCE PRESERVATION)
+## Inference Preservation
 
 An imprecise construal of φ is blocked if it would fail to preserve
 inferences about alternatives of φ that hold on the precise construal.
@@ -20,7 +20,7 @@ This explains:
 - Why conjunctions resist non-maximality (conjuncts are alternatives)
 - Why "the four doors" is precise (sub-numerals are alternatives)
 
-## Key References
+## References
 
 - Dissertation Chapters 6-7
 - Sauerland & Stateva (2007): Numeral alternatives
@@ -53,7 +53,7 @@ inductive InferenceRelation where
 /--
 Numeral alternative blocking datum.
 
-Key idea: The alternatives of a numeral n include nearby numerals.
+The alternatives of a numeral n include nearby numerals.
 If n contradicts m on precise reading, imprecise construal can't
 be compatible with m.
 
@@ -90,7 +90,7 @@ def hundredNotBlocked : NumeralBlockingDatum :=
   { numeral := 100
   , round := true
   , alternative := 99
-  , alternativeInSet := false  -- 99 is NOT obligatorily an alternative of 100
+  , alternativeInSet := false  -- 99 is not obligatorily an alternative of 100
   , inferenceRelation := .contradicts
   , imprecisionBlocked := false
   , explanation := "99 is not obligatorily an alternative of 100 due to 100's roundness. The alternative set of 100 might include {200, 50, ...} but not necessarily {99, 101, ...}. So imprecision doesn't violate inference preservation."
@@ -241,7 +241,7 @@ def cumulativeCarryException : CollectiveCumulativeException :=
 
 
 /--
-INFERENCE PRESERVATION constraint (informal statement).
+Inference preservation constraint (informal statement).
 
 For an imprecise construal of φ to be available:
 - For all alternatives ψ of φ:
@@ -264,7 +264,7 @@ structure InferencePreservationConstraint where
   deriving Repr
 
 def inferencePreservation : InferencePreservationConstraint :=
-  { name := "INFERENCE PRESERVATION"
+  { name := "Inference Preservation"
   , statement := "An imprecise construal of φ must preserve the inferential relations (entailment, contradiction) between φ and its alternatives that hold on the precise construal."
   , appliesToEntailments := true
   , appliesToContradictions := true
@@ -273,7 +273,7 @@ def inferencePreservation : InferencePreservationConstraint :=
 
 
 /--
-Predictions of INFERENCE PRESERVATION.
+Predictions of Inference Preservation.
 -/
 structure InferencePreservationPrediction where
   /-- Construction -/
@@ -310,7 +310,7 @@ def prediction4 : InferencePreservationPrediction :=
 
 
 /--
-Open questions for INFERENCE PRESERVATION.
+Open questions for Inference Preservation.
 -/
 structure OpenQuestion where
   /-- The question -/
@@ -372,35 +372,5 @@ def predictions : List InferencePreservationPrediction :=
 
 def openQuestions : List OpenQuestion :=
   [question1, question2, question3]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `NumeralBlockingDatum`: Why non-round numerals are exact
-- `AlternativeSetAsymmetry`: Round vs non-round alternative sets
-- `ConjunctionBlockingDatum`: Why conjunctions resist non-max
-- `NumeralDefiniteBlockingDatum`: "The four doors" pattern
-- `CollectiveCumulativeException`: Exceptions for collective predicates
-- `InferencePreservationConstraint`: The blocking constraint
-
-### Key Finding: INFERENCE PRESERVATION
-Imprecise construals must preserve inferential relations with alternatives:
-- If precise(φ) |= ψ, then imprecise(φ) |= ψ
-- If precise(φ) |= ¬ψ, then imprecise(φ) |= ¬ψ
-
-### Applications
-1. 99 can't mean "approximately 99" because it would then be compatible
-   with 100, but 99 must contradict 100 (an alternative).
-2. "Ann and Bert are P" can't mean "Ann or Bert is P" because it would
-   then fail to entail "Ann is P" (an alternative).
-
-### Key References
-- Dissertation Chapters 6-7
-- Sauerland & Stateva (2007)
-- Križ (2015), Brisson (1998)
--/
 
 end Phenomena.Imprecision.InferencePreservation

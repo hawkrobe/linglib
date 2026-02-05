@@ -176,7 +176,7 @@ def adjToThreshold {E : Type} (adj : GradableAdjective E) (θ : ℚ) : Threshold
 /-- Convert generic to threshold predicate at a given θ -/
 def genericToThreshold (gen : GenericPredicate) (θ : ℚ) : ThresholdPredicate Unit ℚ :=
   { name := s!"{gen.kind} {gen.property}"
-  , measure := fun _ => gen.prevalence
+  , measure := λ _ => gen.prevalence
   , threshold := θ
   }
 
@@ -213,11 +213,11 @@ For negative adjectives (small):
 
 /-- Positive (upward monotonic) size predicate -/
 def positiveSizePred (threshold : ℚ) : ℚ → Bool :=
-  fun d => threshold ≤ d
+  λ d => threshold ≤ d
 
 /-- Negative (downward monotonic) size predicate -/
 def negativeSizePred (threshold : ℚ) : ℚ → Bool :=
-  fun d => d ≤ threshold
+  λ d => d ≤ threshold
 
 /-- Min degree for positive predicate is the threshold itself -/
 theorem min_positive (θ : ℚ) (hθ : 0 < θ) :

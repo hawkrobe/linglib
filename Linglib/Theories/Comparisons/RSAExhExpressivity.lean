@@ -1,10 +1,8 @@
 /-
 # RSA vs EXH: Expressivity Gap
 
-Formalizes what standard RSA CANNOT express that EXH CAN:
-**scope-sensitive implicatures**.
-
-## The Core Problem
+Formalizes what standard RSA cannot express that EXH can:
+scope-sensitive implicatures.
 
 Standard RSA treats utterances atomically:
 - Input: utterance u, alternatives ALT, world prior P(w)
@@ -14,7 +12,7 @@ EXH is a compositional operator that can scope at different positions:
 - "EXH [every student read some book]" (global)
 - "every student [EXH read some book]" (local)
 
-These give DIFFERENT truth conditions, but standard RSA conflates them.
+These give different truth conditions, but standard RSA conflates them.
 
 ## The Classic Example: Embedded Scalar Implicatures
 
@@ -31,19 +29,19 @@ Alternative: "Every student read all books"
   = "every student read some but not all"
   = each individual student read some but not all
 
-These are DIFFERENT propositions! Standard RSA gives ONE answer.
+These are different propositions. Standard RSA gives one answer.
 
-## What This File Establishes
+## Results
 
-1. **Standard RSA is scope-blind**: It computes one distribution P(w | u)
+1. Standard RSA is scope-blind: it computes one distribution P(w | u)
    without distinguishing scope configurations
 
-2. **EXH is scope-sensitive**: Different scope positions yield different meanings
+2. EXH is scope-sensitive: different scope positions yield different meanings
 
-3. **The gap exists**: There are scenarios where global and local EXH
+3. The gap exists: there are scenarios where global and local EXH
    predict different worlds, but standard RSA cannot distinguish them
 
-4. **Compositional RSA closes the gap**: By lifting scope to a latent variable,
+4. Compositional RSA closes the gap: by lifting scope to a latent variable,
    RSA can recover EXH's scope sensitivity (as in ScontrasPearl2021)
 
 ## References
@@ -71,13 +69,13 @@ open RSA.IBR
 We model a simple scenario with 2 students (Alice, Bob) and consider
 whether each read "some" or "all" books.
 
-**Worlds** (4 total):
+Worlds (4 total):
 - w_SS: Alice some, Bob some (neither read all)
 - w_SA: Alice some, Bob all
 - w_AS: Alice all, Bob some
 - w_AA: Alice all, Bob all
 
-**Key observation**:
+Key observation:
 - Global SI: excludes only w_AA (at least one didn't read all)
 - Local SI: excludes w_SA, w_AS, w_AA (each read some but not all)
 - Standard RSA: gives ONE answer, can't distinguish these
@@ -111,10 +109,10 @@ def embeddedMeaning : EmbeddedSIMessage → EmbeddedSIWorld → Bool
 /-!
 ## EXH Scope Positions
 
-**Global EXH**: EXH scopes over the entire sentence
+Global EXH: EXH scopes over the entire sentence
   EXH [every x. some(x)] = every x. some(x) ∧ ¬(every x. all(x))
 
-**Local EXH**: EXH scopes under the universal quantifier
+Local EXH: EXH scopes under the universal quantifier
   every x. [EXH some(x)] = every x. [some(x) ∧ ¬all(x)]
 
 The key difference:
@@ -163,8 +161,8 @@ Standard RSA computes P(w | u) without any notion of scope.
 It treats "every student read some book" as an atomic utterance
 and computes a single distribution over worlds.
 
-**The problem**: RSA gives ONE answer, but there are TWO legitimate
-readings (global vs local EXH).
+RSA gives one answer, but there are two legitimate readings (global vs
+local EXH).
 -/
 
 /-- Standard RSA interpretation game for embedded SI.
@@ -173,7 +171,7 @@ def standardRSAGame : InterpGame where
   State := EmbeddedSIWorld
   Message := EmbeddedSIMessage
   meaning := embeddedMeaning
-  prior := fun _ => 1 / 4  -- Uniform prior
+  prior := λ _ => 1 / 4  -- Uniform prior
 
 -- SECTION 4: The Expressivity Gap
 
@@ -183,7 +181,7 @@ def standardRSAGame : InterpGame where
 The key observation is that standard RSA, by treating utterances atomically,
 must give the same probability to worlds that EXH would distinguish by scope.
 
-**The distinguishing worlds**: w_SA and w_AS
+The distinguishing worlds are w_SA and w_AS:
 - Global EXH: allows these (prob > 0)
 - Local EXH: excludes these (prob = 0)
 - Standard RSA L0: allows these (literal meaning satisfied)
@@ -208,7 +206,7 @@ theorem localExh_excludes_AS : localExhMeaning .AS = false := rfl
 theorem standardRSA_includes_SA : embeddedMeaning .everySome .SA = true := rfl
 theorem standardRSA_includes_AS : embeddedMeaning .everySome .AS = true := rfl
 
-/-- **Main Theorem**: The expressivity gap exists.
+/-- The expressivity gap exists.
 
     There exists a world that is:
     1. Excluded by local EXH (prob 0)
@@ -228,18 +226,18 @@ theorem expressivity_gap :
 /-!
 ## How Compositional RSA Resolves This
 
-The solution is to make scope a LATENT VARIABLE that the listener infers:
+The solution is to make scope a latent variable that the listener infers:
 
   L1(w, scope | u) ∝ P(w) × P(scope) × S1(u | w, scope)
 
-Now the listener can infer EITHER:
+Now the listener can infer either:
 - Global scope interpretation (SA, AS possible)
 - Local scope interpretation (only SS possible)
 
 This is exactly what ScontrasPearl2021 does for "every horse didn't jump".
 The scope ambiguity model lifts interpretation to a latent variable.
 
-**Key insight**: Compositional RSA = Standard RSA + Scope as Latent Variable
+Compositional RSA = Standard RSA + Scope as Latent Variable.
 -/
 
 /-- Compositional RSA scenario: scope is a latent variable -/
@@ -273,8 +271,8 @@ The IBR/exhMW analysis of "every student read some book":
 - Result: excludes only w_AA (where "every all" is true)
 - This matches GLOBAL EXH, not local EXH
 
-**Conclusion**: Even IBR (the limit of RSA) is scope-blind.
-To get local readings, you need scope as a latent variable.
+Even IBR (the limit of RSA) is scope-blind. To get local readings,
+scope must be a latent variable.
 -/
 
 /-- IBR excludes AA (where "every all" is true) -/
@@ -304,36 +302,32 @@ theorem ibr_is_global_not_local :
 -- SECTION 7: Summary
 
 /-!
-## Summary: The Expressivity Hierarchy
+## The Expressivity Hierarchy
 
-1. **Standard RSA** (scope-blind):
+1. Standard RSA (scope-blind):
    - Treats utterances atomically
    - Cannot distinguish scope positions
-   - In the α→∞ limit, equals GLOBAL EXH (exhMW)
+   - In the α→∞ limit, equals global EXH (exhMW)
 
-2. **IBR / exhMW** (scope-blind):
+2. IBR / exhMW (scope-blind):
    - Deterministic limit of RSA
    - Still scope-blind
    - Implements global EXH only
 
-3. **Compositional RSA** (scope-aware):
+3. Compositional RSA (scope-aware):
    - Lifts scope to a latent variable
    - Can express both global and local readings
    - Listener infers scope jointly with world
 
-4. **EXH operator** (fully compositional):
+4. EXH operator (fully compositional):
    - Can be inserted at any scope position
    - Gives different meanings at different positions
    - Compositional RSA approximates this
 
-**The Gap**: Standard RSA ⊂ Compositional RSA ≈ EXH
-
-Standard RSA cannot express local exhaustification.
-This motivates compositional/lexical approaches to RSA.
-
-**Key Implication**: The RSA → IBR → exhMW chain (Franke 2011) only captures
-GLOBAL readings. For LOCAL readings, we need the scope-aware approach
-of ScontrasPearl2021, LexicalUncertainty, or compositional RSA.
+Standard RSA ⊂ Compositional RSA ≈ EXH. Standard RSA cannot express local
+exhaustification. The RSA → IBR → exhMW chain (Franke 2011) only captures
+global readings. For local readings, the scope-aware approach of
+ScontrasPearl2021, LexicalUncertainty, or compositional RSA is needed.
 -/
 
 /-- The expressivity hierarchy is strict:

@@ -6,8 +6,8 @@ Dekker (2012) Chapter 4: Epistemic and doxastic modals.
 ## Key Concepts
 
 ### Epistemic Modality
-- **Might φ**: φ is compatible with current information
-- **Must φ**: φ follows from current information
+- Might φ: φ is compatible with current information
+- Must φ: φ follows from current information
 
 ### The Test Semantics
 Unlike assertoric updates that eliminate possibilities, epistemic modals
@@ -17,8 +17,8 @@ TEST the information state:
 
 ### Conceptual Covers (Dekker §4.3)
 For de re/de dicto distinctions:
-- A **peg** is an extensional reference to an entity
-- A **concept** is an intensional way of identifying entities
+- A peg is an extensional reference to an entity
+- A concept is an intensional way of identifying entities
 
 ## References
 
@@ -36,28 +36,28 @@ open Classical
 variable {E : Type*} [Nonempty E]
 
 /--
-**Might φ**: φ is consistent with the information state.
+Might φ: φ is consistent with the information state.
 
 ⟦might φ⟧(s) = s if ⟦φ⟧(s) ≠ ∅, else ∅
 
 This is a TEST: it doesn't eliminate possibilities, it checks if φ is possible.
 -/
 def Formula.might (M : Model E) (φ : Formula) : Update E :=
-  fun s => if (φ.update M s).Nonempty then s else ∅
+  λ s => if (φ.update M s).Nonempty then s else ∅
 
 /--
-**Must φ**: φ is supported by the information state.
+Must φ: φ is supported by the information state.
 
 ⟦must φ⟧(s) = s if s ⊫[M] φ, else ∅
 
 This is also a TEST: it passes only if φ is certain.
 -/
 def Formula.must (M : Model E) (φ : Formula) : Update E :=
-  fun s => if s ⊫[M] φ then s else ∅
+  λ s => if s ⊫[M] φ then s else ∅
 
 
 /--
-**Might as Consistency Test**: might φ passes iff some possibility satisfies φ.
+Might as consistency test: might φ passes iff some possibility satisfies φ.
 -/
 theorem might_iff_consistent (M : Model E) (φ : Formula) (s : InfoState E) :
     φ.might M s = s ↔ (φ.update M s).Nonempty ∨ s = ∅ := by
@@ -76,7 +76,7 @@ theorem might_iff_consistent (M : Model E) (φ : Formula) (s : InfoState E) :
                  Set.not_nonempty_empty, ↓reduceIte]
 
 /--
-**Must as Support Test**: must φ passes iff the state supports φ.
+Must as support test: must φ passes iff the state supports φ.
 -/
 theorem must_iff_supports (M : Model E) (φ : Formula) (s : InfoState E) :
     φ.must M s = s ↔ (s ⊫[M] φ) ∨ s = ∅ := by
@@ -138,7 +138,7 @@ theorem update_then_must (M : Model E) (φ ψ : Formula) (s : InfoState E) :
 
 
 /--
-**Must Idempotence**: must (must φ) ≡ must φ
+Must idempotence: must (must φ) ≡ must φ
 
 Once we've verified certainty, re-checking doesn't change anything.
 -/
@@ -150,7 +150,7 @@ theorem must_idempotent (M : Model E) (φ : Formula) (s : InfoState E) :
   · simp only [if_neg hsup, InfoState.empty_supports, ↓reduceIte]
 
 /--
-**Might Idempotence**: might (might φ) ≡ might φ
+Might idempotence: might (might φ) ≡ might φ
 
 Testing for consistency twice is the same as testing once.
 -/
@@ -188,7 +188,7 @@ theorem supports_implies_must (M : Model E) (φ : Formula) (s : InfoState E)
 
 
 /--
-**Key Theorem**: might φ ≈ ¬must ¬φ
+might φ ≈ ¬must ¬φ
 
 φ is possible iff ¬φ is not necessary.
 -/
@@ -243,20 +243,20 @@ theorem might_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
 
 
 /--
-A **concept** is a way of identifying entities across possibilities.
+A concept is a way of identifying entities across possibilities.
 
 In the simplest case, a concept is a function from (g, ê) pairs to entities.
 -/
 abbrev Concept (E : Type*) := (Assignment E × WitnessSeq E) → E
 
 /--
-A **rigid concept** identifies the same entity in all possibilities.
+A rigid concept identifies the same entity in all possibilities.
 -/
 def Concept.isRigid (c : Concept E) : Prop :=
   ∀ p q, c p = c q
 
 /--
-A **descriptive concept** may identify different entities.
+A descriptive concept may identify different entities.
 -/
 def Concept.isDescriptive (c : Concept E) : Prop :=
   ¬c.isRigid
@@ -264,20 +264,20 @@ def Concept.isDescriptive (c : Concept E) : Prop :=
 /--
 Constant concept: always refers to the same entity (proper names).
 -/
-def Concept.const (e : E) : Concept E := fun _ => e
+def Concept.const (e : E) : Concept E := λ _ => e
 
 omit [Nonempty E] in
-theorem const_is_rigid (e : E) : (Concept.const e).isRigid := fun _ _ => rfl
+theorem const_is_rigid (e : E) : (Concept.const e).isRigid := λ _ _ => rfl
 
 /--
 Variable concept: looks up a variable in the assignment.
 -/
-def Concept.fromVar (i : VarIdx) : Concept E := fun p => p.1 i
+def Concept.fromVar (i : VarIdx) : Concept E := λ p => p.1 i
 
 /--
 Pronoun concept: looks up a pronoun in the witness sequence.
 -/
-def Concept.fromPron (i : PronIdx) : Concept E := fun p => p.2 i
+def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 
 
 /-!
@@ -295,24 +295,24 @@ from `Montague.Modal.Kratzer`. Both frameworks implement:
 
 ### Key Structural Similarities
 
-1. **Modal Base ≈ Information State**
+1. Modal base ≈ information state
    - Kratzer: Modal base `f(w)` determines accessible worlds via `∩f(w)`
    - PLA: Information state `s` is the set of live possibilities
 
-2. **Necessity as Test**
+2. Necessity as test
    - Kratzer: `□φ` tests if φ holds at all best worlds
    - PLA: `must φ` tests if state supports φ (all possibilities satisfy φ)
 
-3. **Possibility as Consistency**
+3. Possibility as consistency
    - Kratzer: `◇φ` tests if some accessible world satisfies φ
    - PLA: `might φ` tests if some possibility in s satisfies φ
 
-4. **Duality**
+4. Duality
    - Both satisfy: `might φ ≈ ¬must ¬φ`
 
 ### Key Difference: Dynamic Dimension
 
-PLA adds **state transformation** that Kratzer's propositional semantics lacks:
+PLA adds state transformation that Kratzer's propositional semantics lacks:
 - Kratzer modals are purely propositional (`World → Bool`)
 - PLA operators are state transformers (`InfoState → InfoState`)
 
@@ -332,54 +332,6 @@ See `Montague.Modal.Kratzer` for the full Kratzer framework with:
 - Preorder on worlds (`kratzerPreorder`)
 - Frame correspondence theorems (T, D, 4, B, 5 axioms)
 - Galois connection (extension/intension duality)
--/
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Epistemic Operators (Dekker §4.1)
-- `Formula.might`: Consistency test (might φ)
-- `Formula.must`: Entailment test (must φ)
-
-### Key Theorems
-- `might_iff_consistent`: might passes ↔ some possibility satisfies φ
-- `must_iff_supports`: must passes ↔ state supports φ (or state is empty)
-- `might_idempotent`, `must_idempotent`: Tests are idempotent
-- `might_subset`, `must_subset`: Tests don't add information
-- `might_not_must_neg`: Might-must duality
-
-### Test Semantics (Veltman Connection)
-- Tests are "gates": they pass (return s) or fail (return ∅)
-- `might_preserves_info`, `must_preserves_info`: When tests pass, info unchanged
-- `update_then_might`, `update_then_must`: Composition with updates
-
-### Conceptual Covers (Dekker §4.3)
-- `Concept`: Ways of identifying entities
-- `Concept.isRigid`: Same entity in all possibilities (de re)
-- `Concept.isDescriptive`: May vary across possibilities (de dicto)
-- `Concept.const`: Constant concept (proper names)
-- `Concept.fromVar`, `Concept.fromPron`: Variable/pronoun concepts
-
-## De Re / De Dicto
-
-The conceptual cover framework supports de re/de dicto distinctions:
-- **De re**: "John believes of Mary that she is smart"
-  Uses rigid concept (same individual across possibilities)
-- **De dicto**: "John believes the winner is smart"
-  Uses descriptive concept (whoever satisfies "winner" in each possibility)
-
-## Kratzer Connection
-
-PLA epistemic operators parallel Kratzer's (1981) modal semantics:
-- `might` ≈ Kratzer's `◇` (consistency test)
-- `must` ≈ Kratzer's `□` (necessity test)
-- `s ⊫[M] φ` ≈ Kratzer's necessity over accessible worlds
-
-The key innovation of PLA is adding the **dynamic dimension**: state transformation
-rather than pure truth conditions. See `Montague.Modal.Kratzer` for the
-full Kratzer framework.
 -/
 
 end Theories.DynamicSemantics.PLA

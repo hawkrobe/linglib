@@ -8,7 +8,7 @@ This module provides types for:
 - Noisy-OR parameterization for probabilistic dependencies
 - World states as distributions over atomic propositions
 
-## Key Insight
+## Insight
 
 Following Grusdt, Lassiter & Franke (2022), conditionals are used to communicate
 about causal/correlational relationships in the world. The listener must infer:

@@ -3,7 +3,7 @@
 
 This module shows how monotonicity affects scalar implicatures.
 
-## Key Insight
+## Insight
 
 In **UE contexts** (default):
 - Scale: some < all (all is informationally stronger)
@@ -92,7 +92,7 @@ theorem de_blocks_scalar_implicature :
 - `every_scope_UE`: scope of "every" is UE
 - `some_scope_UE`: scope of "some" is UE
 
-### Key Results
+### Results
 - `negation_reverses_example`: Concrete proof that negation reverses entailment
 - `de_reverses_strength`: DE contexts reverse scalar strength ordering
 - `scale_alternatives_reverse`: DE reverses which alternatives are "stronger"

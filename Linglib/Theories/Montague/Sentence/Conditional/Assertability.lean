@@ -3,7 +3,7 @@
 
 Assertability conditions for conditional sentences based on conditional probability.
 
-## Key Insight (Grusdt, Lassiter & Franke 2022)
+## Insight (Grusdt, Lassiter & Franke 2022)
 
 The literal meaning of a conditional "if A then C" is NOT its material implication
 truth value, but rather whether P(C|A) exceeds a threshold θ.

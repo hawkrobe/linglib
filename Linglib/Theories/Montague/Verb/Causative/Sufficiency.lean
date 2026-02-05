@@ -4,7 +4,7 @@
 Causal sufficiency semantics for the verb "make" based on
 Nadathur & Lauer (2020) Definition 23.
 
-## Key Insight
+## Insight
 
 "X made Y happen" asserts that X was **sufficient** for Y:
 - Given the background situation, adding X guarantees Y
@@ -179,8 +179,9 @@ In disjunctive causation (A ∨ B → C), each disjunct is sufficient.
 theorem disjunctive_each_sufficient (a b c : Variable) (_ha : a ≠ b) :
     let dyn := CausalDynamics.disjunctiveCausation a b c
     causallySufficient dyn Situation.empty a c = true := by
-  -- a causes c via the first law
-  sorry  -- Requires unfolding the fixpoint computation
+  -- The first law (a → c) fires immediately, setting c=true. The result is a fixpoint.
+  -- TODO: Prove using normalDevelopment_fixpoint_after_one + applyLawsOnce unfolding
+  sorry
 
 /--
 In conjunctive causation (A ∧ B → C), neither alone is sufficient (in empty background).

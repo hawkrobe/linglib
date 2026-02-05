@@ -53,10 +53,10 @@ inductive HKIState where
 
 instance : Fintype HKIState where
   elems := {.pos, .neg}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 instance : FinEnum HKIState :=
-  FinEnum.ofList [.pos, .neg] (fun x => by cases x <;> simp)
+  FinEnum.ofList [.pos, .neg] (λ x => by cases x <;> simp)
 
 /-- All states -/
 def allStates : List HKIState := [.pos, .neg]
@@ -78,10 +78,10 @@ inductive HKIUtterance where
 
 instance : Fintype HKIUtterance where
   elems := {.uPos, .uNeg, .uNull}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 instance : FinEnum HKIUtterance :=
-  FinEnum.ofList [.uPos, .uNeg, .uNull] (fun x => by cases x <;> simp)
+  FinEnum.ofList [.uPos, .uNeg, .uNull] (λ x => by cases x <;> simp)
 
 /-- All utterances -/
 def allUtterances : List HKIUtterance := [.uPos, .uNeg, .uNull]
@@ -264,32 +264,5 @@ def asymmetryHypothesis1 : String :=
 def asymmetryHypothesis2 : String :=
   "Negation presupposes that its positive-polarity counterpart is " ++
   "relevant or prominent in the common ground, not the other way around."
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Domain Types
-- `HKIState`: Two states (pos, neg)
-- `HKIUtterance`: Three utterances (uPos, uNeg, uNull)
-- `Polarity`: Sentence polarity (positive, negative, null)
-- `WorldType`: Normal vs wonky worlds
-
-### Semantics
-- `literalTruth`: Boolean literal semantics
-- `utteranceCost`: Cost function (0, 1, 2)
-
-### Priors
-- `HKIPrior`: Prior probability structure
-- `uniformPrior`, `highPrior`, `lowPrior`: Example priors
-
-### Parameters
-- `FuzzyParams`: Parameters for fuzzy interpretation
-- `bestFitFuzzyParams`: Best-fit values from paper
-
-### Configuration
-- `HKIConfig`: Full model configuration
--/
 
 end HeKaiserIskarous2025

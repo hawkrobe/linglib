@@ -1,40 +1,23 @@
 /-
-# Numeral Imprecision: Empirical Data
+# Numeral Imprecision
 
-Theory-neutral empirical patterns for imprecision in bare numerals.
+Empirical patterns for imprecision in bare numerals. Round numerals (100, 50) permit imprecision; non-round numerals (99, 47) require exactness.
 
-## Phenomena Covered
+## Main definitions
+- `RoundnessLevel`, `NumeralImprecisionDatum`, `RoundnessAsymmetryDatum`
+- `NegationConstraintDatum`, `GameShowDatum`
 
-1. **Round vs non-round asymmetry**: 100 permits imprecision, 99 doesn't
-2. **Context-sensitivity**: Same numeral, exact vs inexact readings
-3. **Negation constraint**: Numerals under negation require polar questions
-4. **Lack of homogeneity gaps**: Unlike plurals, numerals don't show clear gaps
-
-## Key Puzzle
-
-Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
-(99, 47, 1003) require exact readings. This asymmetry is systematic across languages.
-
-## Key References
-
-- Krifka (2007): Approximate interpretation
-- Sauerland & Stateva (2007): Scalar alternatives for numerals
-- Solt (2014, 2018): Imprecise numerals
-- Solt & Waldon (2019): Numerals under negation
-- Križ (2015): Numerals and homogeneity
-- Solt (2023): Imprecision without homogeneity
+## References
+- Krifka (2007). Approximate interpretation.
+- Solt (2014, 2018). Imprecise numerals.
+- Solt & Waldon (2019). Numerals under negation.
+- Solt (2023). Imprecision without homogeneity.
 -/
 
 namespace Phenomena.Quantification.Numerals
 
 
-/--
-Roundness level of a numeral.
-
-More round = more potential for imprecision.
-
-Source: Krifka (2007), Sauerland & Stateva (2007)
--/
+/-- Roundness level of a numeral. -/
 inductive RoundnessLevel where
   | exact       -- 99, 47, 1003
   | round1      -- 100, 50 (divisible by 10)
@@ -42,9 +25,7 @@ inductive RoundnessLevel where
   | round3      -- 10000 (divisible by 1000)
   deriving Repr, DecidableEq
 
-/--
-Classify numeral roundness (simplified).
--/
+/-- Classify numeral roundness. -/
 def classifyRoundness (n : Nat) : RoundnessLevel :=
   if n % 1000 = 0 then .round3
   else if n % 100 = 0 then .round2
@@ -52,33 +33,19 @@ def classifyRoundness (n : Nat) : RoundnessLevel :=
   else .exact
 
 
-/--
-Numeral imprecision datum: context-dependent exactness.
--/
+/-- Numeral imprecision datum: context-dependent exactness. -/
 structure NumeralImprecisionDatum where
-  /-- The numeral -/
   numeral : Nat
-  /-- Roundness level -/
   roundness : RoundnessLevel
-  /-- Sentence frame -/
   sentenceFrame : String
-  /-- Context favoring exact reading -/
   exactContext : String
-  /-- Context favoring inexact reading -/
   inexactContext : String
-  /-- Actual value in scenario -/
   actualValue : Nat
-  /-- Acceptable in exact context? -/
   acceptableExact : Bool
-  /-- Acceptable in inexact context? -/
   acceptableInexact : Bool
   deriving Repr
 
-/--
-The CARS scenario from the dissertation.
-
-Source: dissertation (19), (20)
--/
+/-- The cars scenario. -/
 def carsExact : NumeralImprecisionDatum :=
   { numeral := 100
   , roundness := .round2
@@ -102,21 +69,13 @@ def carsNonRound : NumeralImprecisionDatum :=
   }
 
 
-/--
-Minimal pair showing round/non-round asymmetry.
--/
+/-- Minimal pair showing round/non-round asymmetry. -/
 structure RoundnessAsymmetryDatum where
-  /-- Round numeral -/
   roundNumeral : Nat
-  /-- Non-round numeral -/
   nonRoundNumeral : Nat
-  /-- Context (same for both) -/
   context : String
-  /-- Actual value -/
   actualValue : Nat
-  /-- Round numeral acceptable? -/
   roundAcceptable : Bool
-  /-- Non-round acceptable? -/
   nonRoundAcceptable : Bool
   deriving Repr
 
@@ -139,23 +98,13 @@ def fiftyVsFortyNine : RoundnessAsymmetryDatum :=
   }
 
 
-/--
-Numerals under negation require polar questions.
-
-Source: Solt & Waldon (2019)
--/
+/-- Numerals under negation require polar questions. -/
 structure NegationConstraintDatum where
-  /-- Positive sentence -/
   positiveSentence : String
-  /-- Negative sentence -/
   negativeSentence : String
-  /-- "How many" question context -/
   howManyContext : String
-  /-- Polar question context -/
   polarContext : String
-  /-- Negative OK in how-many context? -/
   negativeOkHowMany : Bool
-  /-- Negative OK in polar context? -/
   negativeOkPolar : Bool
   deriving Repr
 
@@ -169,28 +118,14 @@ def sheepNegation : NegationConstraintDatum :=
   }
 
 
-/--
-The game show scenario tests for homogeneity gaps.
-
-Context makes both exact and inexact readings relevant.
-If numerals had gaps like plurals, neither sentence should be clearly true.
-
-Source: dissertation (164)
--/
+/-- Game show scenario testing for homogeneity gaps. -/
 structure GameShowDatum where
-  /-- The sentence -/
   sentence : String
-  /-- Scenario description -/
   scenario : String
-  /-- Exact reading true? -/
   exactReadingTrue : Bool
-  /-- Inexact reading true? -/
   inexactReadingTrue : Bool
-  /-- Judgment: is sentence acceptable? -/
   acceptable : Bool
-  /-- Do speakers agree? -/
   speakersAgree : Bool
-  /-- Notes -/
   notes : String
   deriving Repr
 
@@ -217,23 +152,13 @@ def gameShowNegative : GameShowDatum :=
   }
 
 
-/--
-"Exactly" removes imprecision, parallel to "all" for plurals.
-
-Source: dissertation (4)
--/
+/-- "Exactly" removes imprecision. -/
 structure ExactlyModifierDatum where
-  /-- Bare numeral sentence -/
   bareSentence : String
-  /-- Modified sentence -/
   exactlySentence : String
-  /-- Context -/
   context : String
-  /-- Actual value -/
   actualValue : Nat
-  /-- Bare acceptable? -/
   bareAcceptable : Bool
-  /-- Exactly acceptable? -/
   exactlyAcceptable : Bool
   deriving Repr
 
@@ -247,24 +172,12 @@ def exactlyRemovesImprecision : ExactlyModifierDatum :=
   }
 
 
-/--
-"Approximately" explicitly marks imprecision.
-
-Interesting: "approximately" doesn't ADD imprecision to a precise expression;
-it makes imprecision explicit on an already-imprecise expression.
-
-Source: dissertation (4)
--/
+/-- "Approximately" makes imprecision explicit. -/
 structure ApproximatelyDatum where
-  /-- Bare sentence -/
   bareSentence : String
-  /-- Approximately sentence -/
   approxSentence : String
-  /-- Roundness of numeral -/
   roundness : RoundnessLevel
-  /-- Is approximately acceptable with this numeral? -/
   approxNatural : Bool
-  /-- Notes -/
   notes : String
   deriving Repr
 
@@ -285,23 +198,13 @@ def approximatelyWithNonRound : ApproximatelyDatum :=
   }
 
 
-/--
-Time expressions show similar round/non-round patterns.
-
-Source: dissertation (163), Solt (2023)
--/
+/-- Time expressions show round/non-round patterns. -/
 structure TimeExpressionDatum where
-  /-- The sentence -/
   sentence : String
-  /-- Time expression -/
   timeExpression : String
-  /-- Is it round? -/
   round : Bool
-  /-- Scenario -/
   scenario : String
-  /-- Exact arrival time -/
   actualTime : String
-  /-- Sentence acceptable? -/
   acceptable : Bool
   deriving Repr
 
@@ -324,23 +227,12 @@ def arriveAt258 : TimeExpressionDatum :=
   }
 
 
-/--
-Granularity affects which numerals count as "round."
-
-E.g., on a scale of dozens, 48 might be "round" (4 dozen).
-
-Source: Krifka (2007)
--/
+/-- Granularity affects which numerals count as "round." -/
 structure GranularityDatum where
-  /-- The numeral -/
   numeral : Nat
-  /-- Coarse scale description -/
   coarseScale : String
-  /-- Is numeral round on this scale? -/
   roundOnCoarse : Bool
-  /-- Fine scale description -/
   fineScale : String
-  /-- Is numeral round on this scale? -/
   roundOnFine : Bool
   deriving Repr
 
@@ -353,21 +245,13 @@ def granularityExample : GranularityDatum :=
   }
 
 
-/--
-Core empirical generalizations about numeral imprecision.
--/
+/-- Core empirical generalizations about numeral imprecision. -/
 structure NumeralImprecisionGeneralizations where
-  /-- Round numerals permit imprecision -/
   roundPermitsImprecision : Bool
-  /-- Non-round require exactness -/
   nonRoundRequiresExact : Bool
-  /-- "Exactly" removes imprecision -/
   exactlyRemoves : Bool
-  /-- Negation requires polar questions -/
   negationRequiresPolar : Bool
-  /-- No clear homogeneity gaps (unlike plurals) -/
   noHomogeneityGaps : Bool
-  /-- Imprecision is context-sensitive -/
   contextSensitive : Bool
   deriving Repr
 
@@ -390,33 +274,5 @@ def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
 
 def gameShowExamples : List GameShowDatum :=
   [gameShowPositive, gameShowNegative]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `RoundnessLevel`: Classification of numeral roundness
-- `NumeralImprecisionDatum`: Context-dependent exactness
-- `RoundnessAsymmetryDatum`: Round vs non-round contrast
-- `NegationConstraintDatum`: Polar question requirement
-- `GameShowDatum`: Homogeneity gap test
-- `ExactlyModifierDatum`: Imprecision removal
-- `ApproximatelyDatum`: Explicit imprecision marking
-- `GranularityDatum`: Scale-relative roundness
-
-### Key Findings
-1. Round numerals (100) permit imprecision; non-round (99) don't
-2. "Exactly" removes imprecision (parallel to "all" for plurals)
-3. Numerals under negation require polar question contexts
-4. Unlike plurals, numerals don't show clear homogeneity gaps
-5. Roundness is scale-relative (granularity matters)
-
-### Key References
-- Krifka (2007), Sauerland & Stateva (2007)
-- Solt (2014, 2018), Solt & Waldon (2019), Solt (2023)
-- Križ (2015)
--/
 
 end Phenomena.Quantification.Numerals

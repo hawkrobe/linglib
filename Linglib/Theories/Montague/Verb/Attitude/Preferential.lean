@@ -133,7 +133,7 @@ Note: Equality of propositions is checked extensionally over a finite world list
 -/
 def toHamblin {W : Type*} [BEq W] (Q : QuestionDen W) (worlds : List W) :
     Montague.Question.Hamblin.QuestionDen W :=
-  fun p => Q.any fun q => worlds.all fun w => p w == q w
+  λ p => Q.any λ q => worlds.all λ w => p w == q w
 
 /--
 Convert Hamblin's intensional representation to our extensional one.
@@ -368,7 +368,7 @@ theorem negative_lacks_TSP : hasTSP .negative = false := rfl
 def tspSatisfied {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
     (agent : E) (C : QuestionDen W) : Bool :=
-  C.any fun p => μ agent p > θ C
+  C.any λ p => μ agent p > θ C
 
 /--
 The significance presupposition for a degree predicate.
@@ -435,7 +435,7 @@ def PreferentialPredicate.isCDistributive {W E : Type*}
 /-- Boolean version for computation -/
 def PreferentialPredicate.cDistributive {W E : Type*}
     (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) : Bool :=
-  V.questionSemantics x Q C == Q.any (fun p => V.propSemantics x p C)
+  V.questionSemantics x Q C == Q.any (λ p => V.propSemantics x p C)
 
 -- Degree-Comparison Predicates (hope, fear, expect, wish)
 
@@ -457,8 +457,8 @@ def mkDegreeComparisonPredicate {W E : Type*}
   , valence := valence
   , μ := μ
   , θ := θ
-  , propSemantics := fun x p C => decide (μ x p > θ C)
-  , questionSemantics := fun x Q C => Q.any fun p => decide (μ x p > θ C)
+  , propSemantics := λ x p C => decide (μ x p > θ C)
+  , questionSemantics := λ x Q C => Q.any λ p => decide (μ x p > θ C)
   }
 
 /--
@@ -551,10 +551,10 @@ def worry {W E : Type*}
   , μ := μ
   , θ := θ
   -- Propositional: degree comparison (like fear)
-  , propSemantics := fun x p C => decide (μ x p > θ C)
+  , propSemantics := λ x p C => decide (μ x p > θ C)
   -- Question: GLOBAL uncertainty, not existential over prop semantics
-  , questionSemantics := fun x Q C =>
-      isUncertain x Q && Q.any (fun p => decide (μ x p > θ C))
+  , questionSemantics := λ x Q C =>
+      isUncertain x Q && Q.any (λ p => decide (μ x p > θ C))
   }
 
 /--
@@ -600,10 +600,10 @@ def qidai {W E : Type*}
   , valence := .positive  -- Positive valence!
   , μ := μ
   , θ := θ
-  , propSemantics := fun x p C => decide (μ x p > θ C)
+  , propSemantics := λ x p C => decide (μ x p > θ C)
   -- Question semantics involves resolution anticipation
-  , questionSemantics := fun x Q C =>
-      anticipatesResolution x Q && Q.any (fun p => decide (μ x p > θ C))
+  , questionSemantics := λ x Q C =>
+      anticipatesResolution x Q && Q.any (λ p => decide (μ x p > θ C))
   }
 
 -- NVP Classification
@@ -755,10 +755,10 @@ def mkVeridicalPreferential {W E : Type*}
   , θ := θ
   -- Propositional: requires p(w) = true (veridical requirement)
   -- Note: We return a function W → Bool to enable world-sensitivity
-  , propSemantics := fun x p C => decide (μ x p > θ C)
+  , propSemantics := λ x p C => decide (μ x p > θ C)
   -- Question: ∃p ∈ Q. μ(x,p) > θ(C)
   -- The world-sensitivity is handled at usage site via propSemanticsAt
-  , questionSemantics := fun x Q C => Q.any fun p => decide (μ x p > θ C)
+  , questionSemantics := λ x Q C => Q.any λ p => decide (μ x p > θ C)
   }
 
 /--
@@ -785,7 +785,7 @@ For veridical predicates, the assertion requires some TRUE answer to be preferre
 def PreferentialPredicate.questionSemanticsAt {W E : Type*}
     (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) (w : W) : Bool :=
   if V.veridical then
-    Q.any fun p => p w && V.propSemantics x p C
+    Q.any λ p => p w && V.propSemantics x p C
   else
     V.questionSemantics x Q C
 

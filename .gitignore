@@ -19,3 +19,9 @@ Thumbs.db
 *.olean
 *.ilean
 *.trace
+
+# Generated files
+*.dot
+
+# Claude Code
+CLAUDE.md

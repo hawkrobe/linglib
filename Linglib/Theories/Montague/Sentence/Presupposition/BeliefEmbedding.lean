@@ -2,10 +2,10 @@
 # Belief Embedding and Local Contexts
 
 Formalizes how presuppositions project under belief predicates, following
-Schlenker (2009) Section 3.1.2. This is the key machinery for deriving
+Schlenker (2009) Section 3.1.2. This provides the machinery for deriving
 Obligatory Local Effect (OLE) from Tonhauser et al. (2013).
 
-## Key Insight
+## Insight
 
 When a presupposition trigger appears under a belief predicate, the local
 context is determined by the *attitude holder's* belief state, not the
@@ -34,13 +34,13 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
   - Trigger: stop (Class C, OLE=yes)
   - Presupposition: Mary used to smoke
   - Local context: John's belief state
-  - Result: JOHN believes Mary used to smoke (attributed to John)
+  - Result: John believes Mary used to smoke (attributed to John)
 
 "John believes that damn cat is outside"
   - Trigger: damn (Class B, OLE=no)
   - Expressive content: speaker is annoyed at the cat
-  - Does NOT shift to John's perspective
-  - Result: SPEAKER is annoyed (attributed to speaker)
+  - Does not shift to John's perspective
+  - Result: Speaker is annoyed (attributed to speaker)
 
 ## References
 
@@ -117,7 +117,7 @@ Get the local context at a specific world of utterance.
 This is Schlenker's λw* λw(w* ∈ C and w ∈ DoxJ(w*))
 -/
 def BeliefLocalCtx.atWorld (blc : BeliefLocalCtx W Agent) (w_star : W) : ContextSet W :=
-  fun w => blc.globalCtx w_star ∧ blc.dox blc.agent w_star w
+  λ w => blc.globalCtx w_star ∧ blc.dox blc.agent w_star w
 
 /--
 A presupposition projects globally (to speaker) from under belief
@@ -185,25 +185,25 @@ def smokingDox : DoxasticAccessibility SmokingWorld SmokingAgent
   -- At world where Mary used to smoke and John believes it:
   -- John's beliefs are consistent with Mary having smoked
   | .john, .maryUsedToSmoke_johnBelieves_maryQuit =>
-      fun w => match w with
+      λ w => match w with
         | .maryUsedToSmoke_johnBelieves_maryQuit => True
         | .maryUsedToSmoke_johnBelieves_marySmokes => True
         | _ => False
   -- At world where Mary used to smoke but John believes she still does:
   | .john, .maryUsedToSmoke_johnBelieves_marySmokes =>
-      fun w => match w with
+      λ w => match w with
         | .maryUsedToSmoke_johnBelieves_maryQuit => True
         | .maryUsedToSmoke_johnBelieves_marySmokes => True
         | _ => False
   -- At world where Mary never smoked but John believes she used to:
   | .john, .maryNeverSmoked_johnBelieves_usedTo =>
-      fun w => match w with
+      λ w => match w with
         | .maryUsedToSmoke_johnBelieves_maryQuit => True
         | .maryUsedToSmoke_johnBelieves_marySmokes => True
         | _ => False
   -- At world where Mary never smoked and John doesn't believe she did:
   | .john, .maryNeverSmoked_johnDoesntBelieve =>
-      fun w => match w with
+      λ w => match w with
         | .maryNeverSmoked_johnDoesntBelieve => True
         | _ => False
 
@@ -211,19 +211,19 @@ def smokingDox : DoxasticAccessibility SmokingWorld SmokingAgent
 "Mary stopped smoking" — presupposes Mary used to smoke.
 -/
 def maryStoppedSmoking : PrProp SmokingWorld :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .maryUsedToSmoke_johnBelieves_maryQuit => true
       | .maryUsedToSmoke_johnBelieves_marySmokes => true
       | .maryNeverSmoked_johnBelieves_usedTo => true  -- John believes it
       | .maryNeverSmoked_johnDoesntBelieve => false
-  , assertion := fun w => match w with
+  , assertion := λ w => match w with
       | .maryUsedToSmoke_johnBelieves_maryQuit => true
       | .maryUsedToSmoke_johnBelieves_marySmokes => false
       | .maryNeverSmoked_johnBelieves_usedTo => true  -- In John's beliefs
       | .maryNeverSmoked_johnDoesntBelieve => false }
 
 /--
-**Key Theorem**: Under belief embedding, the presupposition "Mary used to smoke"
+Under belief embedding, the presupposition "Mary used to smoke"
 is attributed to John (the attitude holder), not required of the global context.
 
 At world `maryNeverSmoked_johnBelieves_usedTo`:
@@ -236,7 +236,7 @@ This demonstrates OLE = yes for "stop" (Class C trigger).
 -/
 theorem stop_ole_attribution :
     let blc : BeliefLocalCtx SmokingWorld SmokingAgent :=
-      { globalCtx := fun w => w = .maryNeverSmoked_johnBelieves_usedTo
+      { globalCtx := λ w => w = .maryNeverSmoked_johnBelieves_usedTo
       , dox := smokingDox
       , agent := .john }
     presupAttributedToHolder blc maryStoppedSmoking := by
@@ -258,11 +258,11 @@ theorem stop_ole_attribution :
 
 
 /--
-For OLE=no triggers (Class B and D), the projective content is NOT computed
+For OLE=no triggers (Class B and D), the projective content is not computed
 from the attitude holder's beliefs. Instead, it projects directly to the
 speaker's context.
 
-This is modeled by having the local context be the GLOBAL context, not
+This is modeled by having the local context be the global context, not
 the belief-restricted context.
 -/
 def speakerLocalCtx (c : ContextSet W) : LocalCtx W :=
@@ -286,7 +286,7 @@ def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
 
 
 /--
-**Main Theorem**: The Schlenker local context machinery derives the OLE
+The Schlenker local context machinery derives the OLE
 predictions from Tonhauser et al. (2013).
 
 For any trigger:
@@ -335,64 +335,5 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     presupFiltered (beliefToLocalCtx blc w_star _h) p ↔
     ContextSet.entails (blc.atWorld w_star) p.presup := by
   simp [presupFiltered, beliefToLocalCtx]
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Belief State Infrastructure
-- `DoxasticAccessibility`: Modal accessibility for belief
-- `beliefState`: Get an agent's belief state at a world
-- `believes`: Truth conditions for belief sentences
-
-### Belief Local Contexts (Schlenker 2009)
-- `BeliefLocalCtx`: Local context structure for belief embedding
-- `atWorld`: The local context at a specific utterance world
-- `presupProjectsFromBelief`: When presuppositions escape belief
-- `presupAttributedToHolder`: OLE=yes condition
-
-### OLE Behavior
-- `shiftsUnderBelief`: Maps projective class to OLE behavior
-- `ole_matches_shift`: Proves the correspondence
-- `expressiveProjectsToSpeaker`: OLE=no case
-
-### Key Example
-- Smoking world with John's beliefs
-- `stop_ole_attribution`: Proves "stop" presupposition attributed to John
-
-### Connection to Tonhauser et al.
-- `ole_from_local_contexts`: Derives OLE from local context machinery
-- Shows Class C (stop, know) vs Class B (expressives) difference
-
-### Integration
-- `beliefToLocalCtx`: Connects to LocalContext.lean infrastructure
-- `belief_filtering_condition`: Same filtering semantics
-
-## What This Explains
-
-1. Why "John believes Mary stopped smoking" → John believes Mary used to smoke
-   (not: speaker presupposes Mary used to smoke)
-
-2. Why "John believes that damn cat is outside" → Speaker is annoyed
-   (not: John is annoyed)
-
-3. Why Class A/C triggers shift but Class B/D don't
-
-## Connection to SCF
-
-SCF (Strong Contextual Felicity) is about whether content must be
-ESTABLISHED in context. OLE is about whose BELIEFS the content is
-attributed to under embedding. These are orthogonal:
-
-- Class A: SCF=yes, OLE=yes (pronouns: established, attributed to holder)
-- Class B: SCF=no, OLE=no (expressives: informative, attributed to speaker)
-- Class C: SCF=no, OLE=yes (stop: informative, attributed to holder)
-- Class D: SCF=yes, OLE=no (too-salience: established, attributed to speaker)
-
-The LocalContext.lean handles projection in general.
-This module (BeliefEmbedding.lean) handles attribution under belief.
-Together they derive the full Tonhauser taxonomy.
--/
 
 end Montague.Sentence.Presupposition.BeliefEmbedding

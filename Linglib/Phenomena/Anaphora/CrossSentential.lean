@@ -1,27 +1,12 @@
 /-
-# Cross-Sentential Anaphora: Empirical Data
+# Cross-Sentential Anaphora
 
-Theory-neutral data on cross-sentential anaphora - pronouns whose antecedents
-are in earlier sentences.
+Empirical data on pronouns whose antecedents are in earlier sentences.
 
-## The Phenomenon
+## Main definitions
 
-Indefinites can introduce discourse referents that persist across sentence
-boundaries:
-
-  "A man walked in. He sat down."
-
-The pronoun "he" in the second sentence refers back to the man introduced
-in the first sentence. This is surprising because:
-1. The indefinite doesn't c-command the pronoun
-2. Standard semantics treats sentences as independent propositions
-
-## Key Properties
-
-1. **Persistence**: Indefinites introduce drefs that persist
-2. **Universals block**: "Every man walked in. #He sat down" is infelicitous
-3. **Negation blocks (standard)**: "No man walked in. #He sat down" is infelicitous
-4. **But see bathroom sentences**: Negation CAN permit anaphora in special contexts
+- `CrossSententialDatum`: Data structure for cross-sentential anaphora
+- `indefinitePersists`, `universalBlocks`: Key examples of persistence and blocking
 
 ## References
 
@@ -33,27 +18,15 @@ in the first sentence. This is surprising because:
 
 namespace Phenomena.Anaphora.CrossSententialAnaphora
 
--- Part 1: Basic Cross-Sentential Data
-
-/--
-A cross-sentential anaphora datum records a discourse with felicity judgment.
--/
+/-- Cross-sentential anaphora datum. -/
 structure CrossSententialDatum where
-  /-- The sentences in order -/
   sentences : List String
-  /-- Which sentence contains the pronoun -/
   pronounSentenceIdx : Nat
-  /-- What the pronoun is -/
   pronoun : String
-  /-- Which sentence contains the antecedent -/
   antecedentSentenceIdx : Nat
-  /-- What the antecedent is -/
   antecedent : String
-  /-- Is the anaphora felicitous? -/
   felicitous : Bool
-  /-- Notes -/
   notes : String := ""
-  /-- Source -/
   source : String := ""
   deriving Repr
 
@@ -191,7 +164,7 @@ def doubleNegation : CrossSententialDatum := {
   antecedentSentenceIdx := 0
   antecedent := "a bird"
   felicitous := true
-  notes := "Double negation CAN enable anaphora - key for BUS/ICDRT"
+  notes := "Double negation can enable anaphora (relevant for BUS/ICDRT)"
   source := "Elliott & Sudo (2025)"
 }
 
@@ -260,32 +233,5 @@ def felicitousExamples : List CrossSententialDatum :=
 /-- Infelicitous examples -/
 def infelicitousExamples : List CrossSententialDatum :=
   allData.filter (!·.felicitous)
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `CrossSententialDatum`: Discourse with anaphora judgment
-
-### Key Examples
-- `indefinitePersists`: "A man walked in. He sat down." (OK)
-- `universalBlocks`: "Every man walked in. He sat down." (BAD)
-- `doubleNegation`: Special case where negation permits anaphora
-
-### Data Collections
-- `allData`: All 14 examples
-- `felicitousExamples`: Examples where anaphora is OK
-- `infelicitousExamples`: Examples where anaphora is BAD
-
-### Theoretical Neutrality
-
-This module records WHAT the data is, not how to analyze it:
-- DRT: Boxes and accessibility conditions
-- Dynamic semantics: Context change potentials
-- E-type: Pronouns as definite descriptions
-- BUS/ICDRT: Bilateral/flat update for double negation
--/
 
 end Phenomena.Anaphora.CrossSententialAnaphora

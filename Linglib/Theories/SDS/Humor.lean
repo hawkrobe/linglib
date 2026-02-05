@@ -5,7 +5,7 @@ This module establishes the formal connection between:
 1. **Kao et al. (2016)** - Computational model of pun humor
 2. **SDS** - Situation Description Systems (Erk & Herbelot 2024)
 
-## Key Insight
+## Insight
 
 Both frameworks capture the same phenomenon from different angles:
 
@@ -93,7 +93,7 @@ def posteriorUncertainty {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ]
   let probs := support.map (SDSConstraintSystem.normalizedPosterior sys)
   -- Gini impurity as entropy proxy: 1 - Σ p_i²
   -- Maximum at uniform, minimum at degenerate
-  1 - probs.foldl (fun acc p => acc + p * p) 0
+  1 - probs.foldl (λ acc p => acc + p * p) 0
 
 /--
 Two concepts are "tied" when their posteriors are approximately equal.
@@ -114,7 +114,7 @@ def isTied {α Θ : Type*} [SDSConstraintSystem α Θ]
 Kao's distinctiveness measures whether different words support different meanings.
 SDS conflict measures whether selectional and scenario factors prefer different concepts.
 
-### Key Theorem
+### Theorem
 
 If SDS has a conflict (argmax(selectional) ≠ argmax(scenario)), then:
 - The predicate words support one concept
@@ -236,11 +236,11 @@ def magicianHareSDS : DisambiguationScenario HareHairConcept where
   context := "The magician got so mad he pulled his hare out"
   -- Selectional: "pulled out" slightly prefers hair (idiomatic)
   -- but "magician" in subject position also matters
-  selectional := fun
+  selectional := λ
     | .hare => 40/100  -- Can pull a rabbit out (of hat)
     | .hair => 60/100  -- "Pulled out hair" is idiomatic
   -- Scenario: MAGIC frame from "magician"
-  scenario := fun
+  scenario := λ
     | .hare => 70/100  -- Magicians associated with rabbits
     | .hair => 30/100  -- Less associated with magic
   concepts := [.hare, .hair]
@@ -394,7 +394,7 @@ For each meaning m, the distribution over which words are relevant:
 ```lean
 /-- P(f | m, w) - which words are relevant given meaning m -/
 noncomputable def relevanceGivenMeaning (model : KaoModel W M) (m : M) : W → ℚ :=
-  fun w =>
+  λ w =>
     let pRelevant := model.relatedness w m * model.relevancePrior
     let pNoise := model.backgroundProb w * (1 - model.relevancePrior)
     pRelevant / (pRelevant + pNoise)
@@ -405,7 +405,7 @@ noncomputable def relevanceGivenMeaning (model : KaoModel W M) (m : M) : W → �
 ```lean
 /-- Symmetrized KL divergence -/
 noncomputable def symmetrizedKL (p q : W → ℚ) (support : List W) : ℚ :=
-  support.foldl (fun acc w =>
+  support.foldl (λ acc w =>
     acc + (p w - q w) * (Real.log (p w) - Real.log (q w))  -- needs real log
   ) 0
 
@@ -432,14 +432,14 @@ def kaoToSDS (model : KaoModel W M) : SDSSystem M where
   concepts := [model.meanings.1, model.meanings.2]
   -- Selectional factor: aggregate evidence from words favoring m_a
   selectionalFactor m :=
-    model.words.foldl (fun acc w =>
+    model.words.foldl (λ acc w =>
       if model.relatedness w model.meanings.1 > model.relatedness w model.meanings.2
       then acc * model.relatedness w m
       else acc
     ) 1
   -- Scenario factor: aggregate evidence from words favoring m_b
   scenarioFactor m :=
-    model.words.foldl (fun acc w =>
+    model.words.foldl (λ acc w =>
       if model.relatedness w model.meanings.2 > model.relatedness w model.meanings.1
       then acc * model.relatedness w m
       else acc
@@ -546,7 +546,7 @@ both measure whether different evidence sources prefer different interpretations
 | Distinct support | Distinctiveness (KL div) | Conflict (argmax difference) |
 | Humor prediction | Amb ↑ AND Dist ↑ | Uncertainty ↑ AND Conflict |
 
-### Key Insight
+### Insight
 
 Both frameworks formalize the same intuition:
 **Puns arise when different sources of evidence point to different interpretations.**

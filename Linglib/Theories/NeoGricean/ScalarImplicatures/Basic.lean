@@ -6,26 +6,26 @@ plus scale semantics and predictions.
 
 ## Key Topics
 
-1. **DE Environment Handling**
+1. DE Environment Handling
    In DE contexts, the entailment pattern reverses:
    - "No one ate some" entails "No one ate all"
    - So "some" is stronger than "all" at sentence level
    - This blocks the standard "not all" implicature
 
-2. **Disjunction: Exclusivity vs Ignorance**
+2. Disjunction: Exclusivity vs Ignorance
    - Exclusivity: "A or B" → "not both" (scalar implicature from ⟨or, and⟩)
    - Ignorance: "A or B" → "speaker doesn't know which"
 
-3. **Long Disjunction Problem** (p.61-64)
+3. Long Disjunction Problem (p.61-64)
    For n>2 disjuncts, substitution method fails.
    Need closure under conjunction for all alternatives.
 
-4. **Scale Semantics**
+4. Scale Semantics
    - HornScale: Semantic structure for Horn scales
    - HurfordSemantic: For Hurford's constraint analysis
    - SinghSemantic: For Singh's asymmetry analysis
 
-5. **Predictions**
+5. Predictions
    - Theory proves predictions match empirical data
 
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
@@ -84,22 +84,22 @@ def deriveImplicature
   }
 
 /--
-**Example: "some" → "not all" in UE context**
+Example: "some" → "not all" in UE context
 -/
 def someNotAll_UE : ImplicatureDerivation :=
   deriveImplicature "some" "all" simpleAssertion quantifierCheckerString
 
 /--
-**Example: "some" → "not all" BLOCKED in DE context**
+Example: "some" → "not all" blocked in DE context
 -/
 def someNotAll_DE : ImplicatureDerivation :=
   deriveImplicature "some" "all" underNegation quantifierCheckerString
 
 /--
-**Theorem: DE Blocks "Some → Not All"**
+Theorem: DE Blocks "Some → Not All"
 
 In UE context, the implicature arises.
-In DE context, the implicature is BLOCKED.
+In DE context, the implicature is blocked.
 -/
 theorem de_blocks_some_not_all :
     someNotAll_UE.implicatureArises = true ∧
@@ -107,7 +107,7 @@ theorem de_blocks_some_not_all :
   native_decide
 
 /--
-**Theorem: In DE, "All" Has Implicatures**
+Theorem: In DE, "All" Has Implicatures
 
 In DE context, "all" can implicate "not some" (reversed!).
 -/
@@ -122,10 +122,10 @@ theorem de_all_has_implicature :
 /--
 Two types of inferences from disjunction.
 
-1. **Exclusivity** (scalar): "A or B" → "not (A and B)"
+1. Exclusivity (scalar): "A or B" → "not (A and B)"
    Derived from Horn set ⟨or, and⟩.
 
-2. **Ignorance** (non-scalar): "A or B" → "speaker doesn't know which"
+2. Ignorance (non-scalar): "A or B" → "speaker doesn't know which"
    Derived from competence failure for individual disjuncts.
 -/
 inductive DisjunctionInference where
@@ -166,14 +166,14 @@ def analyzeDisjunction (ctx : SentenceContext) : DisjunctionAnalysis :=
   }
 
 /--
-**Theorem: Disjunction in UE Has Exclusivity**
+Theorem: Disjunction in UE Has Exclusivity
 -/
 theorem disjunction_exclusivity_ue :
     (analyzeDisjunction simpleAssertion).exclusivityArises = true := by
   native_decide
 
 /--
-**Theorem: Both Inferences Are Compatible**
+Theorem: Both Inferences Are Compatible
 
 "A or B" can simultaneously implicate:
 - "not both" (exclusivity)
@@ -187,7 +187,7 @@ theorem exclusivity_ignorance_compatible :
 /--
 The long disjunction problem (Geurts p.61-64).
 
-For "A or B or C", the alternatives are NOT just {A, B, C}.
+For "A or B or C", the alternatives are not just {A, B, C}.
 We need ALL conjunctive closures:
 - Core: A, B, C
 - Binary: A∧B, A∧C, B∧C
@@ -231,7 +231,7 @@ def analyzeLongDisjunction (disjuncts : List String) : LongDisjunction :=
   }
 
 /--
-**Example: Three-way disjunction**
+Example: Three-way disjunction
 
 "A or B or C" has alternatives:
 - Core: A, B, C
@@ -241,14 +241,14 @@ def threeWayExample : LongDisjunction :=
   analyzeLongDisjunction ["A", "B", "C"]
 
 /--
-**Theorem: Three-way disjunction has 3 core alternatives**
+Theorem: Three-way disjunction has 3 core alternatives
 -/
 theorem three_way_core :
     threeWayExample.coreAlternatives.length = 3 := by
   native_decide
 
 /--
-**Theorem: Three-way disjunction has 4 derived alternatives**
+Theorem: Three-way disjunction has 4 derived alternatives
 
 The 4 derived alternatives are: A∧B, A∧C, B∧C, A∧B∧C
 -/
@@ -257,7 +257,7 @@ theorem three_way_derived :
   native_decide
 
 /--
-**Theorem: Total alternatives for 3-way = 7**
+Theorem: Total alternatives for 3-way = 7
 
 Core (3) + Derived (4) = 7 alternatives
 -/
@@ -307,7 +307,7 @@ def compareSubstitution (n : Nat) : SubstitutionComparison :=
   }
 
 /--
-**Theorem: Substitution Works for n=2**
+Theorem: Substitution Works for n=2
 
 For "A or B", substitution gives "A and B" which is the only alternative.
 -/
@@ -316,7 +316,7 @@ theorem substitution_works_n2 :
   native_decide
 
 /--
-**Theorem: Substitution Fails for n=3**
+Theorem: Substitution Fails for n=3
 
 For "A or B or C", substitution gives 1 alternative
 but we need 4 (A∧B, A∧C, B∧C, A∧B∧C).
@@ -360,26 +360,26 @@ def deriveScalarImplicatures
   }
 
 /--
-**Example: Complete derivation for "some" in UE context**
+Example: Complete derivation for "some" in UE context
 -/
 def someUE : ScalarImplicatureResult :=
   deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString simpleAssertion
 
 /--
-**Theorem: "some" in UE derives "not(most)" and "not(all)"**
+Theorem: "some" in UE derives "not(most)" and "not(all)"
 -/
 theorem some_ue_implicatures :
     someUE.implicatures = ["not(most)", "not(all)"] := by
   native_decide
 
 /--
-**Example: Complete derivation for "some" in DE context**
+Example: Complete derivation for "some" in DE context
 -/
 def someDE : ScalarImplicatureResult :=
   deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString underNegation
 
 /--
-**Theorem: "some" in DE derives NO implicatures**
+Theorem: "some" in DE derives NO implicatures
 -/
 theorem some_de_no_implicatures :
     someDE.implicatures = ([] : List String) := by
@@ -435,7 +435,7 @@ This is the key function that connects syntax to pragmatics:
 3. For each scalar item, derives implicatures based on its scale
 4. Returns all derived implicatures
 
-**Syntax-agnostic**: Works with CCG, HPSG, Minimalism, or any theory
+Syntax-agnostic: Works with CCG, HPSG, Minimalism, or any theory
 that implements the SemDeriv interface.
 -/
 def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
@@ -455,7 +455,7 @@ def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Boo
   results.any λ r => r.implicatures.contains s!"not({alt})"
 
 /--
-**Example: "some students sleep" via CCG**
+Example: "some students sleep" via CCG
 
 Using the CCG derivation from CCG/Interpret.lean:
 -/
@@ -463,7 +463,7 @@ def someStudentsSleep_result : List ScalarImplicatureResult :=
   deriveFromDerivation Montague.SemDeriv.someStudentsSleep .upward
 
 /--
-**Theorem: "some students sleep" derives "not(all)"**
+Theorem: "some students sleep" derives "not(all)"
 
 This is the key milestone theorem: starting from a semantic derivation
 (which could come from CCG), NeoGricean pragmatics derives "not all".
@@ -473,14 +473,14 @@ theorem some_students_derives_not_all :
   native_decide
 
 /--
-**Theorem: "some students sleep" derives "not(most)" as well**
+Theorem: "some students sleep" derives "not(most)" as well
 -/
 theorem some_students_derives_not_most :
     hasImplicature someStudentsSleep_result "most" = true := by
   native_decide
 
 /--
-**Example: "every student sleeps" in UE**
+Example: "every student sleeps" in UE
 
 "every" is at the top of the quantifier scale, so no stronger alternatives.
 -/
@@ -488,7 +488,7 @@ def everyStudentsSleeps_result : List ScalarImplicatureResult :=
   deriveFromDerivation Montague.SemDeriv.everyStudentSleeps .upward
 
 /--
-**Theorem: "every student sleeps" has no implicatures**
+Theorem: "every student sleeps" has no implicatures
 
 Since "every/all" is the strongest quantifier, there are no stronger
 alternatives to negate.
@@ -498,7 +498,7 @@ theorem every_students_no_implicatures :
   native_decide
 
 /--
-**Example: "some students sleep" in DE context**
+Example: "some students sleep" in DE context
 
 In a downward-entailing context (e.g., "No one thinks some students sleep"),
 the "not all" implicature is blocked.
@@ -507,7 +507,7 @@ def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
   deriveFromDerivation Montague.SemDeriv.someStudentsSleep .downward
 
 /--
-**Theorem: "some" in DE has no "not all" implicature**
+Theorem: "some" in DE has no "not all" implicature
 
 Downward-entailing contexts block the standard scalar implicature.
 -/
@@ -526,7 +526,7 @@ the experimental findings from Geurts & Pouscoulous (2009).
 open Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
 /--
-**Gricean prediction for embedding types**
+Gricean prediction for embedding types
 
 The Gricean theory predicts:
 1. Simple sentences: SIs arise normally (high rate)
@@ -566,7 +566,7 @@ def griceanEmbeddingPredictions : List EmbeddingPrediction :=
   ]
 
 /--
-**Theorem: Gricean predictions match experimental pattern**
+Theorem: Gricean predictions match experimental pattern
 
 The theory correctly predicts which embeddings show elevated rates.
 -/
@@ -582,7 +582,7 @@ theorem gricean_predicts_embedding_pattern :
   native_decide
 
 /--
-**Theorem: UE implicature prediction matches data**
+Theorem: UE implicature prediction matches data
 
 NeoGricean predicts SIs arise in upward-entailing contexts.
 This matches the empirical pattern in `someAllBlocking`.
@@ -591,7 +591,7 @@ theorem ue_implicature_matches_data :
     someAllBlocking.implicatureInUE = true := by native_decide
 
 /--
-**Theorem: DE blocking prediction matches experimental data**
+Theorem: DE blocking prediction matches experimental data
 
 The NeoGricean theory predicts that SIs are blocked in DE contexts.
 Experiment 3 shows exactly this: verification task shows 0% local SIs in UE contexts.
@@ -604,7 +604,7 @@ theorem de_blocking_matches_data :
   native_decide
 
 /--
-**Theorem: Gricean account supported over conventionalism**
+Theorem: Gricean account supported over conventionalism
 
 The experimental data support the Gricean account because:
 1. Embedding rates vary dramatically (3% to 93%) - not systematic
@@ -621,7 +621,7 @@ theorem gricean_supported :
   native_decide
 
 /--
-**The competence-based explanation for belief reports**
+The competence-based explanation for belief reports
 
 From "Bob believes Anna ate some cookies", the Gricean derives:
 1. Global SI: ¬Bel(speaker, Bel(Bob, all))
@@ -650,26 +650,26 @@ Here we derive predictions from each variant's parameters and compare to data.
 -/
 
 /--
-**Derived: Defaultism predicts high neutral rate**
+Derived: Defaultism predicts high neutral rate
 -/
 theorem defaultism_predicts_high_rate :
     predictsHighNeutralRate levinsonParams = true := by native_decide
 
 /--
-**Derived: Contextualism predicts moderate neutral rate**
+Derived: Contextualism predicts moderate neutral rate
 -/
 theorem contextualism_predicts_moderate_rate :
     predictsHighNeutralRate geurtsParams = false := by native_decide
 
 /--
-**Derived: Only contextualism predicts task effect**
+Derived: Only contextualism predicts task effect
 -/
 theorem only_contextualism_predicts_task_effect :
     predictsTaskEffect levinsonParams = false ∧
     predictsTaskEffect geurtsParams = true := by native_decide
 
 /--
-**Derived: The two variants make different predictions**
+Derived: The two variants make different predictions
 
 This is what makes them empirically distinguishable.
 -/
@@ -679,7 +679,7 @@ theorem variants_make_different_predictions :
   native_decide
 
 /--
-**Data comparison: Verification rate (34%) matches contextualism**
+Data comparison: Verification rate (34%) matches contextualism
 
 Defaultism predicts ~90%, Contextualism predicts ~35%.
 Actual verification rate: 34%.
@@ -692,7 +692,7 @@ theorem verification_matches_contextualism :
   native_decide
 
 /--
-**Data comparison: Verification rate far from defaultism**
+Data comparison: Verification rate far from defaultism
 -/
 theorem verification_far_from_defaultism :
     let predicted := levinsonParams.predictedNeutralRate
@@ -701,7 +701,7 @@ theorem verification_far_from_defaultism :
   native_decide
 
 /--
-**Data comparison: Task effect observed (supports contextualism)**
+Data comparison: Task effect observed (supports contextualism)
 
 Contextualism predicts: asking about SI raises rate (makes alternative salient).
 Defaultism predicts: no effect (SIs automatic).
@@ -713,7 +713,7 @@ theorem task_effect_observed :
   native_decide
 
 /--
-**Main theorem: Data adjudicates between Neo-Gricean variants**
+Main theorem: Data adjudicates between Neo-Gricean variants
 
 The Geurts & Pouscoulous (2009) data support Contextualism over Defaultism:
 1. Neutral rate (34%) matches contextualism (~35%), not defaultism (~90%)
@@ -750,7 +750,7 @@ structure HornScale (World : Type*) where
   stronger : Prop' World
   /-- Stronger entails weaker -/
   entailment : stronger ⊆ₚ weaker
-  /-- Weaker does NOT entail stronger (non-trivial scale) -/
+  /-- Weaker does not entail stronger (non-trivial scale) -/
   nonTrivial : ¬(weaker ⊆ₚ stronger)
 
 /--
@@ -827,10 +827,10 @@ def SinghSemantic.predictedFelicitous {World : Type*} (s : SinghSemantic World) 
 abbrev QuantWorld := Fin 4
 
 /-- "Some Ps are Q" = at least one. -/
-def someQ : Prop' QuantWorld := fun w => w.val ≥ 1
+def someQ : Prop' QuantWorld := λ w => w.val ≥ 1
 
 /-- "All Ps are Q" = all three. -/
-def allQ : Prop' QuantWorld := fun w => w.val = 3
+def allQ : Prop' QuantWorld := λ w => w.val = 3
 
 /-- All entails some. -/
 theorem all_entails_some : allQ ⊆ₚ someQ := by
@@ -949,7 +949,7 @@ This matches the implicatures in `Phenomena/ScalarImplicatures/Data.lean`.
 -/
 
 /--
-**Prediction**: exh(some) → ¬all.
+Prediction: exh(some) → ¬all.
 
 At any world where exhIE(some) holds, "all" is false.
 This derives the implicature "some → not all".
@@ -1000,7 +1000,7 @@ theorem someAll_implicature :
   exact hneg_all_w hall
 
 /--
-**Prediction**: exh(or) → ¬and.
+Prediction: exh(or) → ¬and.
 
 At any world where exhIE(or) holds, "and" is false.
 This derives the implicature "or → not both".
@@ -1048,7 +1048,7 @@ theorem orAnd_implicature :
   exact hneg_and_w hand
 
 /--
-**Prediction**: exh(possible) → ¬necessary.
+Prediction: exh(possible) → ¬necessary.
 -/
 theorem possibleNecessary_implicature :
     ∀ w : ModalWorld, exhIE possibleNecessaryScale.alts possibleP w → ¬necessaryP w := by
@@ -1115,7 +1115,7 @@ def someOrAll_semantic : HurfordSemantic QuantWorld :=
   }
 
 /--
-**Prediction**: "some or all" is rescued because exh(some) doesn't entail all.
+Prediction: "some or all" is rescued because exh(some) doesn't entail all.
 -/
 theorem someOrAll_is_rescued : someOrAll_semantic.isRescued := by
   -- isRescued = ¬(exhIE alts A ⊆ B) ∨ ¬(exhIE alts B ⊆ A)
@@ -1169,7 +1169,7 @@ theorem someOrAll_is_rescued : someOrAll_semantic.isRescued := by
   simp [allQ] at hall_w1
 
 /--
-**Prediction**: Theory matches data for "some or all" (felicitous = true).
+Prediction: Theory matches data for "some or all" (felicitous = true).
 -/
 theorem someOrAll_prediction_matches_data :
     someOrAll_semantic.isRescued ↔ someOrAll.felicitous = true := by
@@ -1200,14 +1200,14 @@ inductive HyponymWorld where
   deriving DecidableEq, Repr
 
 /-- "American" predicate -/
-def americanP : Prop' HyponymWorld := fun w =>
+def americanP : Prop' HyponymWorld := λ w =>
   match w with
   | .notAmerican => False
   | .americanOnly => True
   | .californian => True
 
 /-- "Californian" predicate -/
-def californianP : Prop' HyponymWorld := fun w =>
+def californianP : Prop' HyponymWorld := λ w =>
   match w with
   | .californian => True
   | _ => False
@@ -1231,7 +1231,7 @@ def americanCalifornian_semantic : HurfordSemantic HyponymWorld :=
   }
 
 /--
-**Key Lemma**: With no scalar alternatives, exh is vacuous.
+Key Lemma: With no scalar alternatives, exh is vacuous.
 
 exhIE {A, B} B = B when B is the strongest in the set.
 Since californianP ⊆ americanP, californianP has no proper stronger alternative.
@@ -1262,7 +1262,7 @@ theorem exh_californian_entails_american :
   exact californian_entails_american w hcal
 
 /--
-**Prediction**: "American or Californian" is NOT rescued.
+Prediction: "American or Californian" is not rescued.
 
 Since exh(californianP) ⊆ americanP (the ORIGINAL entailment is preserved),
 the disjunction remains redundant → infelicitous.
@@ -1281,7 +1281,7 @@ theorem americanCalifornian_not_rescued :
   exact hnotBA exh_californian_entails_american
 
 /--
-**Bridge Theorem**: NeoGricean prediction matches data for "American or Californian".
+Bridge Theorem: NeoGricean prediction matches data for "American or Californian".
 
 The theory predicts infelicity (no rescue possible), matching the empirical judgment.
 -/
@@ -1325,7 +1325,7 @@ def bothThenOr_semantic : SinghSemantic ConnWorld :=
   }
 
 /--
-**Prediction**: exh(or) breaks entailment to and.
+Prediction: exh(or) breaks entailment to and.
 -/
 theorem orAnd_exh_breaks_entailment :
     ¬(exhIE {orConn, andConn} orConn ⊆ₚ andConn) := by
@@ -1366,7 +1366,7 @@ theorem orAnd_exh_breaks_entailment :
   simp [andConn] at hand
 
 /--
-**Prediction**: "A or B, or both" (weak-first) is predicted felicitous.
+Prediction: "A or B, or both" (weak-first) is predicted felicitous.
 -/
 theorem orThenBoth_predicted_felicitous : orThenBoth_semantic.predictedFelicitous := by
   constructor
@@ -1376,7 +1376,7 @@ theorem orThenBoth_predicted_felicitous : orThenBoth_semantic.predictedFelicitou
     exact orAnd_exh_breaks_entailment
 
 /--
-**Prediction**: Theory matches data for weak-first Singh case.
+Prediction: Theory matches data for weak-first Singh case.
 -/
 theorem orThenBoth_prediction_matches_data :
     orThenBoth_semantic.predictedFelicitous ↔ orThenBoth.felicitous = true := by
@@ -1385,7 +1385,7 @@ theorem orThenBoth_prediction_matches_data :
   · intro _; exact orThenBoth_predicted_felicitous
 
 /--
-**Prediction**: "both, or A or B" (strong-first) is NOT predicted felicitous.
+Prediction: "both, or A or B" (strong-first) is not predicted felicitous.
 
 Even though exh breaks entailment, strong-first fails because
 exh(strong) is vacuous (nothing to exclude).
@@ -1396,7 +1396,7 @@ theorem bothThenOr_not_predicted_felicitous : ¬bothThenOr_semantic.predictedFel
   simp [bothThenOr_semantic] at hwf
 
 /--
-**Prediction**: Theory matches data for strong-first Singh case.
+Prediction: Theory matches data for strong-first Singh case.
 -/
 theorem bothThenOr_prediction_matches_data :
     ¬bothThenOr_semantic.predictedFelicitous ↔ bothThenOr.felicitous = false := by
@@ -1406,7 +1406,7 @@ theorem bothThenOr_prediction_matches_data :
 
 
 /--
-**Main Result**: Theory correctly predicts all three Horn scale implicatures.
+Main Result: Theory correctly predicts all three Horn scale implicatures.
 
 For each scale, exh(weaker) → ¬stronger.
 -/
@@ -1417,7 +1417,7 @@ theorem all_scale_implicatures_derived :
   ⟨someAll_implicature, orAnd_implicature, possibleNecessary_implicature⟩
 
 /--
-**Main Result**: Theory correctly predicts Singh asymmetry.
+Main Result: Theory correctly predicts Singh asymmetry.
 
 Weak-first is felicitous, strong-first is not.
 -/
@@ -1426,80 +1426,6 @@ theorem singh_asymmetry_derived :
     ¬bothThenOr_semantic.predictedFelicitous :=
   ⟨orThenBoth_predicted_felicitous, bothThenOr_not_predicted_felicitous⟩
 
-
-/-
-## What This Module Provides
-
-### Types
-- `ImplicatureDerivation`: Result of attempting to derive an implicature
-- `DisjunctionInference`: Exclusivity vs ignorance
-- `DisjunctionAnalysis`: Analysis of disjunctive utterance
-- `LongDisjunction`: Analysis of n-way disjunction
-- `SubstitutionComparison`: Comparing substitution to closure
-- `ScalarImplicatureResult`: Complete derivation result
-- `EmbeddingPrediction`: Prediction for embedding types
-- `HornScale World`: Scale with semantic content
-- `HurfordSemantic World`: Hurford disjunction semantics
-- `SinghSemantic World`: Singh asymmetry semantics
-
-### Concrete Scales
-| Scale | World Type | Weaker | Stronger |
-|-------|------------|--------|----------|
-| `someAllScale` | `QuantWorld` | some | all |
-| `orAndScale` | `ConnWorld` | or | and |
-| `possibleNecessaryScale` | `ModalWorld` | possible | necessary |
-
-### Key Functions
-- `deriveImplicature`: Derive single implicature
-- `analyzeDisjunction`: Analyze disjunction inferences
-- `analyzeLongDisjunction`: Get all alternatives for n-way disjunction
-- `deriveScalarImplicatures`: Complete implicature derivation
-
-### Key Theorems (DE Blocking & Disjunction)
-- `de_blocks_some_not_all`: DE blocks "some → not all"
-- `de_all_has_implicature`: In DE, "all" gets implicatures
-- `disjunction_exclusivity_ue`: Disjunction has exclusivity in UE
-- `exclusivity_ignorance_compatible`: Both inferences compatible
-- `substitution_works_n2`: Substitution OK for 2-way disjunction
-- `substitution_fails_n3`: Substitution fails for 3+ disjuncts
-- `some_ue_implicatures`: "some" in UE → [not(most), not(all)]
-- `some_de_no_implicatures`: "some" in DE → []
-
-### Scale Predictions
-| Scale | Implicature | Theorem |
-|-------|-------------|---------|
-| some/all | some → ¬all | `someAll_implicature` |
-| or/and | or → ¬and | `orAnd_implicature` |
-| possible/necessary | possible → ¬necessary | `possibleNecessary_implicature` |
-
-### Hurford Predictions
-| Case | Felicitous | Rescued | Theorem |
-|------|------------|---------|---------|
-| some or all | Yes | Yes | `someOrAll_is_rescued` |
-
-### Singh Predictions
-| Case | Order | Felicitous | Theorem |
-|------|-------|------------|---------|
-| A or B, or both | weak-first | Yes | `orThenBoth_predicted_felicitous` |
-| both, or A or B | strong-first | No | `bothThenOr_not_predicted_felicitous` |
-
-### Derived Predictions (Defaultism vs Contextualism)
-- `defaultism_predicts_high_rate`: Levinson predicts ~90% baseline
-- `contextualism_predicts_moderate_rate`: Geurts predicts ~35% baseline
-- `only_contextualism_predicts_task_effect`: Task effect distinguishes variants
-- `variants_make_different_predictions`: The variants are empirically distinguishable
-
-### Connection to Geurts & Pouscoulous (2009)
-- `verification_matches_contextualism`: 34% observed ≈ 35% predicted
-- `verification_far_from_defaultism`: 34% observed ≪ 90% predicted
-- `task_effect_observed`: 28-point difference supports contextualism
-- `data_supports_contextualism_over_defaultism`: Main adjudication theorem
-
-### Connection to Geurts (2010)
-- Ch. 3.2: DE blocking
-- Ch. 3.3: Disjunction (p.61-64)
-- Ch. 5: Defaultism vs Contextualism debate
--/
 
 end NeoGricean.ScalarImplicatures
 

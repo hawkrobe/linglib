@@ -76,7 +76,7 @@ def traditionalHAB
     (characteristic : Characteristic)  -- THE HIDDEN PARAMETER
     (activity : Activity)
     : Bool :=
-  occasions.all fun t =>
+  occasions.all λ t =>
     !characteristic t || activity t
 
 /-- Alternative: existential characterization of non-habitual -/
@@ -85,7 +85,7 @@ def traditionalHAB_existential
     (characteristic : Characteristic)
     (activity : Activity)
     : Bool :=
-  !occasions.any fun t => characteristic t && !activity t
+  !occasions.any λ t => characteristic t && !activity t
 
 /-- The two formulations are equivalent -/
 theorem hab_formulations_equiv
@@ -180,11 +180,11 @@ def occasions : List Occasion := [
 ]
 
 -- "John smokes" - true if he smokes regularly (say, 6/10 days)
-def johnSmokesActivity : Activity := fun t =>
+def johnSmokesActivity : Activity := λ t =>
   t.id ∈ [0, 1, 2, 4, 5, 8]  -- 6 out of 10 occasions
 
 -- "Normal" occasions for smoking (not when sick, traveling, etc.)
-def normalOccasions : Characteristic := fun t =>
+def normalOccasions : Characteristic := λ t =>
   t.id ∈ [0, 1, 2, 3, 4, 5, 6, 7]  -- 8 out of 10 are "normal"
 
 -- Traditional HAB: John smokes in all normal occasions?

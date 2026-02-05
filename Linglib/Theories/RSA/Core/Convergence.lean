@@ -3,18 +3,15 @@
 
 Proves that RSA dynamics converge by showing G_α is monotonically increasing.
 
-## Key Results
+## Results
 
-1. **Concavity**: G_α is concave in S (fixed L) and concave in L (fixed S)
-2. **Alternating maximization**: RSA speaker/listener updates maximize G_α
-3. **Monotonicity**: G_α(S_t, L_t) ≤ G_α(S_{t+1}, L_{t+1}) for all t
-4. **Convergence**: RSA dynamics converge to a fixed point
-
-## Why This Matters
+1. Concavity: G_α is concave in S (fixed L) and concave in L (fixed S)
+2. Alternating maximization: RSA speaker/listener updates maximize G_α
+3. Monotonicity: G_α(S_t, L_t) ≤ G_α(S_{t+1}, L_{t+1}) for all t
+4. Convergence: RSA dynamics converge to a fixed point
 
 These results guarantee that RSA predictions are well-defined: the iterative
-reasoning process converges rather than oscillating or diverging. This is
-essential for interpreting RSA as a model of pragmatic inference.
+reasoning process converges rather than oscillating or diverging.
 
 ## References
 
@@ -93,7 +90,7 @@ noncomputable def speakerScore (S : RSAScenarioR) (L : S.U → S.M → ℝ)
 
 -- Softmax-based speaker (inherits all softmax properties)
 
-/-- **Pragmatic speaker as softmax** (normalized distribution).
+/-- Pragmatic speaker as softmax (normalized distribution).
 
   S(u|m) = softmax(utility(·, m), α)(u)
 
@@ -104,7 +101,7 @@ The `utility` function is defined above as `log L(m|u)` when `L > 0`.
 For full RSA with cost, use `utility - cost` as the score function.
 -/
 noncomputable def speakerSoftmax (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) : S.U → ℝ :=
-  Softmax.softmax (fun u => utility L m u) S.α
+  Softmax.softmax (λ u => utility L m u) S.α
 
 /-- Speaker softmax sums to 1 (valid probability distribution). -/
 theorem speakerSoftmax_sum_one (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M) :
@@ -130,7 +127,7 @@ theorem speakerSoftmax_odds (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M �
 /-- At α = 0, speaker is uniform (ignores utility entirely). -/
 theorem speakerSoftmax_zero (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ) (m : S.M)
     (hα : S.α = 0) :
-    speakerSoftmax S L m = fun _ => 1 / (Fintype.card S.U : ℝ) := by
+    speakerSoftmax S L m = λ _ => 1 / (Fintype.card S.U : ℝ) := by
   simp only [speakerSoftmax, hα]
   exact Softmax.softmax_zero _
 
@@ -152,33 +149,30 @@ noncomputable def listenerScore (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
 
 RSA dynamics implicitly optimize an objective function G_α (Zaslavsky et al. 2020):
 
-  **G_α(S, L) = H_S(U|M) + α · E_S[V_L]**
+  G_α(S, L) = H_S(U|M) + α · E_S[V_L]
 
 where:
-- **H_S(U|M)** = Speaker's conditional entropy = Σₘ P(m) · H(S(·|m))
+- H_S(U|M) = Speaker's conditional entropy = Σₘ P(m) · H(S(·|m)).
   This measures the "cost" of the speaker's lexicon. Lower entropy means more
   deterministic (easier to produce) utterances.
 
-- **E_S[V_L]** = Expected listener utility = Σₘ,ᵤ P(m) S(u|m) log L(m|u)
+- E_S[V_L] = Expected listener utility = Σₘ,ᵤ P(m) S(u|m) log L(m|u).
   This measures how well the listener can recover the intended meaning.
-  Higher utility means better communication.
 
-- **α** = Rationality parameter controlling the cost/informativity tradeoff
+- α = Rationality parameter controlling the cost/informativity tradeoff.
   - α = 0: Maximum entropy (speaker ignores listener)
   - α = 1: Rate-distortion optimum (information-theoretic balance)
   - α → ∞: NeoGricean limit (maximum informativity)
 
 ## Why RSA Converges
 
-G_α is **concave** in both S (for fixed L) and L (for fixed S). Since RSA
-alternately maximizes over S and L, this is an instance of **alternating
-maximization** which converges to a fixed point.
+G_α is concave in both S (for fixed L) and L (for fixed S). Since RSA
+alternately maximizes over S and L, this is an instance of alternating
+maximization which converges to a fixed point.
 
-## Intuition
-
-Think of G_α as balancing two pressures:
-1. **Compression (H_S)**: Keep utterances simple/predictable
-2. **Communication (E_S[V_L])**: Help the listener understand
+G_α balances two pressures:
+1. Compression (H_S): Keep utterances simple/predictable
+2. Communication (E_S[V_L]): Help the listener understand
 
 The rationality parameter α controls which pressure dominates.
 -/
@@ -188,7 +182,7 @@ The rationality parameter α controls which pressure dominates.
 This measures the "cost" of the speaker's utterance distribution.
 Lower entropy = more predictable (less costly) choices. -/
 noncomputable def H_S (S : RSAScenarioR) (Spk : S.M → S.U → ℝ) : ℝ :=
-  ∑ m, S.prior m * entropy (fun u => normalize (Spk m) u)
+  ∑ m, S.prior m * entropy (λ u => normalize (Spk m) u)
 
 /-- Expected listener utility E_S[V_L].
 
@@ -231,8 +225,8 @@ structure RSAState (S : RSAScenarioR) where
 
 /-- Initialize RSA from literal listener. -/
 noncomputable def initRSA (S : RSAScenarioR) : RSAState S where
-  speaker := fun m u => speakerScore S (L0 S) m u
-  listener := fun u m => L0 S u m
+  speaker := λ m u => speakerScore S (L0 S) m u
+  listener := λ u m => L0 S u m
 
 /-- One full step of RSA dynamics. -/
 noncomputable def stepRSA (S : RSAScenarioR) (state : RSAState S) : RSAState S where
@@ -245,10 +239,9 @@ noncomputable def iterateRSA (S : RSAScenarioR) (n : ℕ) : RSAState S :=
 
 
 /-!
-## Key Insight: G_α Concavity
+## G_α Concavity
 
 The function `negMulLog x = -x * log x` is concave on [0, ∞) (Mathlib: `concaveOn_negMulLog`).
-
 Since entropy H(p) = Σᵢ negMulLog(pᵢ), entropy is concave in p.
 
 Therefore:
@@ -260,30 +253,30 @@ Therefore:
 Similarly, log is concave, so G_α is concave in L (for fixed S).
 -/
 
-/-- **negMulLog is concave** on [0, ∞). -/
+/-- negMulLog is concave on [0, ∞). -/
 theorem negMulLog_concave : ConcaveOn ℝ (Set.Ici (0 : ℝ)) Real.negMulLog :=
   Real.concaveOn_negMulLog
 
-/-- **Log is concave** on (0, ∞). -/
+/-- Log is concave on (0, ∞). -/
 theorem log_concave : ConcaveOn ℝ (Set.Ioi (0 : ℝ)) Real.log :=
   strictConcaveOn_log_Ioi.concaveOn
 
-/-- **Projection is a linear map**: p ↦ p(i) is linear. -/
+/-- Projection is a linear map: p ↦ p(i) is linear. -/
 def projLinearMap {α : Type*} (i : α) : (α → ℝ) →ₗ[ℝ] ℝ where
   toFun p := p i
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- **negMulLog composed with projection is concave**. -/
+/-- negMulLog composed with projection is concave. -/
 theorem negMulLog_proj_concave {α : Type*} (i : α) :
-    ConcaveOn ℝ {p : α → ℝ | 0 ≤ p i} (fun p => Real.negMulLog (p i)) := by
+    ConcaveOn ℝ {p : α → ℝ | 0 ≤ p i} (λ p => Real.negMulLog (p i)) := by
   have h1 : ConcaveOn ℝ (Set.Ici (0 : ℝ)) Real.negMulLog := Real.concaveOn_negMulLog
   have h2 := h1.comp_linearMap (projLinearMap i)
   have hset : {p : α → ℝ | 0 ≤ p i} = projLinearMap i ⁻¹' Set.Ici 0 := by
     ext p
     simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_Ici]
     rfl
-  have hfun : (fun p => Real.negMulLog (p i)) = Real.negMulLog ∘ projLinearMap i := by
+  have hfun : (λ p => Real.negMulLog (p i)) = Real.negMulLog ∘ projLinearMap i := by
     ext p
     simp only [Function.comp_apply]
     rfl
@@ -305,7 +298,7 @@ theorem convex_nonneg_functions {α : Type*} :
 theorem concaveOn_finset_sum' {α : Type*} {E : Type*}
     [AddCommGroup E] [Module ℝ E] {s : Set E} (hs : Convex ℝ s)
     (f : α → E → ℝ) (F : Finset α) (hf : ∀ i ∈ F, ConcaveOn ℝ s (f i)) :
-    ConcaveOn ℝ s (fun x => ∑ i ∈ F, f i x) := by
+    ConcaveOn ℝ s (λ x => ∑ i ∈ F, f i x) := by
   classical
   induction F using Finset.induction_on with
   | empty =>
@@ -314,23 +307,23 @@ theorem concaveOn_finset_sum' {α : Type*} {E : Type*}
   | @insert a F' ha ih =>
     simp only [Finset.sum_insert ha]
     have hfa : ConcaveOn ℝ s (f a) := hf a (Finset.mem_insert_self a F')
-    have hrest : ConcaveOn ℝ s (fun x => ∑ i ∈ F', f i x) :=
-      ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))
+    have hrest : ConcaveOn ℝ s (λ x => ∑ i ∈ F', f i x) :=
+      ih (λ i hi => hf i (Finset.mem_insert_of_mem hi))
     exact hfa.add hrest
 
 /-- Helper: Finite sum of concave functions is concave (over a Fintype). -/
 theorem concaveOn_finset_sum {α : Type*} [Fintype α] {E : Type*}
     [AddCommGroup E] [Module ℝ E] {s : Set E} (hs : Convex ℝ s)
     (f : α → E → ℝ) (hf : ∀ i, ConcaveOn ℝ s (f i)) :
-    ConcaveOn ℝ s (fun x => ∑ i, f i x) := by
+    ConcaveOn ℝ s (λ x => ∑ i, f i x) := by
   apply concaveOn_finset_sum' hs f Finset.univ
   intro i _
   exact hf i
 
-/-- **Entropy is concave**: H(p) = Σᵢ negMulLog(pᵢ) is concave in p. -/
+/-- Entropy is concave: H(p) = Σᵢ negMulLog(pᵢ) is concave in p. -/
 theorem entropy_concave_on_simplex {α : Type*} [Fintype α] :
     ConcaveOn ℝ {p : α → ℝ | ∀ i, 0 ≤ p i}
-      (fun p => ∑ i, Real.negMulLog (p i)) := by
+      (λ p => ∑ i, Real.negMulLog (p i)) := by
   apply concaveOn_finset_sum convex_nonneg_functions
   intro i
   apply ConcaveOn.subset (negMulLog_proj_concave i)
@@ -339,16 +332,16 @@ theorem entropy_concave_on_simplex {α : Type*} [Fintype α] :
     exact hp i
   · exact convex_nonneg_functions
 
-/-- **Weighted sum of concave functions is concave**. -/
+/-- Weighted sum of concave functions is concave. -/
 theorem weighted_sum_concave {α : Type*} [Fintype α] {E : Type*}
     [AddCommGroup E] [Module ℝ E] {s : Set E} (hs : Convex ℝ s)
     (f : α → E → ℝ) (w : α → ℝ) (hw : ∀ i, 0 ≤ w i)
     (hf : ∀ i, ConcaveOn ℝ s (f i)) :
-    ConcaveOn ℝ s (fun x => ∑ i, w i * f i x) := by
+    ConcaveOn ℝ s (λ x => ∑ i, w i * f i x) := by
   apply concaveOn_finset_sum hs
   intro i
   have h := (hf i).smul (hw i)
-  have heq : (fun x => w i * f i x) = w i • f i := by
+  have heq : (λ x => w i * f i x) = w i • f i := by
     ext x
     simp only [Pi.smul_apply, smul_eq_mul]
   rw [heq]
@@ -356,12 +349,8 @@ theorem weighted_sum_concave {α : Type*} [Fintype α] {E : Type*}
 
 
 /--
-**Proposition 1, Part 1 (Zaslavsky et al.)**: G_α is concave in S for fixed L.
+Proposition 1, Part 1 (Zaslavsky et al.): G_α is concave in S for fixed L.
 
-From the paper (SM, proof of Proposition 1):
-> "note that the function g(S) = G_α[S, L_{t-1}] is concave in S"
-
-**Proof**:
 On the probability simplex (where Σ_u Spk m u = 1 and Spk m u ≥ 0):
 - normalize(Spk m) = Spk m (no normalization needed)
 - H_S = Σ_m P(m) · entropy(Spk m) is weighted sum of entropies → concave
@@ -370,7 +359,7 @@ On the probability simplex (where Σ_u Spk m u = 1 and Spk m u ≥ 0):
 -/
 theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
     ConcaveOn ℝ {Spk | (∀ m u, 0 ≤ Spk m u) ∧ (∀ m, ∑ u, Spk m u = 1)}
-      (fun Spk => G_α S Spk L) := by
+      (λ Spk => G_α S Spk L) := by
   -- Define the simplex domain
   let D := {Spk : S.M → S.U → ℝ | (∀ m u, 0 ≤ Spk m u) ∧ (∀ m, ∑ u, Spk m u = 1)}
   -- The simplex is convex
@@ -397,7 +386,7 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
     rw [if_neg hne, hsum, div_one]
   -- H_S on the simplex: H_S(Spk) = Σ_m P(m) · entropy(Spk m)
   -- This is a weighted sum of entropies, which is concave
-  have hH_concave : ConcaveOn ℝ D (fun Spk => H_S S Spk) := by
+  have hH_concave : ConcaveOn ℝ D (λ Spk => H_S S Spk) := by
     unfold H_S
     -- For each m, entropy(normalize(Spk m)) = entropy(Spk m) on simplex
     -- entropy(Spk m) is concave in Spk m
@@ -421,14 +410,14 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
         · simp only [hpu, ↓reduceIte]
       -- entropy is concave (via entropy_concave_on_simplex)
       have hentropy_concave : ConcaveOn ℝ {p : S.U → ℝ | ∀ u, 0 ≤ p u}
-          (fun p => entropy p) := by
+          (λ p => entropy p) := by
         apply ConcaveOn.congr entropy_concave_on_simplex
         intro p hp
         exact (hentropy_eq p hp).symm
       -- Now compose with projection Spk ↦ Spk m
       -- The projection is linear, and D projects into {p | ∀ u, 0 ≤ p u}
       let nonneg_fns := {q : S.U → ℝ | ∀ v, 0 ≤ q v}
-      let proj_fn : (S.M → S.U → ℝ) → (S.U → ℝ) := fun spkFn => spkFn m
+      let proj_fn : (S.M → S.U → ℝ) → (S.U → ℝ) := λ spkFn => spkFn m
       have hD_proj : D ⊆ proj_fn ⁻¹' nonneg_fns := by
         intro spkFn hspkFn
         simp only [Set.mem_preimage]
@@ -441,20 +430,20 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
         exact hnorm_eq spkFn hspkFn m v
       -- Compose: spkFn ↦ entropy(spkFn m) is concave
       have hcomp : ConcaveOn ℝ (proj_fn ⁻¹' nonneg_fns)
-          (fun spkFn => entropy (spkFn m)) := by
+          (λ spkFn => entropy (spkFn m)) := by
         -- projection is linear
         let proj_m : (S.M → S.U → ℝ) →ₗ[ℝ] (S.U → ℝ) := {
-          toFun := fun spkFn => spkFn m
-          map_add' := fun _ _ => rfl
-          map_smul' := fun _ _ => rfl
+          toFun := λ spkFn => spkFn m
+          map_add' := λ _ _ => rfl
+          map_smul' := λ _ _ => rfl
         }
         exact hentropy_concave.comp_linearMap proj_m
       -- Restrict to D and use heq_on_D
-      have hrestrict : ConcaveOn ℝ D (fun spkFn => entropy (spkFn m)) :=
+      have hrestrict : ConcaveOn ℝ D (λ spkFn => entropy (spkFn m)) :=
         hcomp.subset hD_proj hD_convex
-      exact hrestrict.congr (fun spkFn hspkFn => (heq_on_D spkFn hspkFn).symm)
+      exact hrestrict.congr (λ spkFn hspkFn => (heq_on_D spkFn hspkFn).symm)
   -- E_VL on the simplex is linear in Spk (hence concave)
-  have hE_concave : ConcaveOn ℝ D (fun Spk => E_VL S Spk L) := by
+  have hE_concave : ConcaveOn ℝ D (λ Spk => E_VL S Spk L) := by
     unfold E_VL
     -- E_VL = Σ_m Σ_u P(m) · normalize(Spk m)(u) · utility(L, m, u)
     -- On D, normalize(Spk m)(u) = Spk m u, so:
@@ -470,7 +459,7 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
       intro u _
       rw [hnorm_eq Spk hSpk m u]
     -- A linear function is concave
-    apply ConcaveOn.congr _ (fun Spk hSpk => (hlinear Spk hSpk).symm)
+    apply ConcaveOn.congr _ (λ Spk hSpk => (hlinear Spk hSpk).symm)
     -- The function Σ_m Σ_u c(m,u) * Spk m u is linear, hence concave
     apply concaveOn_finset_sum' hD_convex
     intro m _
@@ -478,7 +467,7 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
     intro u _
     -- Spk ↦ c * Spk m u is linear (concave) for c = P(m) * V(m,u)
     -- The coefficient could be negative (if V < 0), but linear is still concave
-    have hlinear_comp : ConcaveOn ℝ D (fun Spk => S.prior m * Spk m u * utility L m u) := by
+    have hlinear_comp : ConcaveOn ℝ D (λ Spk => S.prior m * Spk m u * utility L m u) := by
       -- This is: (const) * (linear projection) which is affine, hence concave
       constructor
       · exact hD_convex
@@ -498,10 +487,10 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
   exact hH_concave.add (hE_concave.smul hα_nonneg)
 
 /--
-**Proposition 1, Part 2 (Zaslavsky et al.)**: G_α is concave in L for fixed S.
+Proposition 1, Part 2 (Zaslavsky et al.): G_α is concave in L for fixed S.
 
-**Proof**:
-- H_S(Spk) doesn't depend on L → constant → concave
+Proof:
+- H_S(Spk) does not depend on L → constant → concave
 - E_VL = Σ P(m)·S(u|m)·log(L(u,m)) is weighted sum of logs
 - log is concave on (0,∞) by `strictConcaveOn_log_Ioi`
 - Weighted sum of concave functions (with non-negative weights) is concave
@@ -510,7 +499,7 @@ theorem G_α_concave_in_S (S : RSAScenarioR) (L : S.U → S.M → ℝ) :
 theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (hSpk_nonneg : ∀ m u, 0 ≤ Spk m u) :
     ConcaveOn ℝ {L | ∀ u m, 0 < L u m}
-      (fun L => G_α S Spk L) := by
+      (λ L => G_α S Spk L) := by
   -- The domain {L | ∀ u m, 0 < L u m} is convex
   have hD_convex : Convex ℝ {L : S.U → S.M → ℝ | ∀ u m, 0 < L u m} := by
     intro x hx y hy a b ha hb hab
@@ -530,7 +519,7 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
   -- Define the domain for clarity
   let D := {Lis : S.U → S.M → ℝ | ∀ u m, 0 < Lis u m}
   -- H_S is constant in L, hence concave
-  have hH_concave : ConcaveOn ℝ D (fun _ => H_S S Spk) :=
+  have hH_concave : ConcaveOn ℝ D (λ _ => H_S S Spk) :=
     concaveOn_const (H_S S Spk) hD_convex
   -- For the E_VL term, we need log concavity
   -- utility Lis m u = log (Lis u m) when Lis u m > 0
@@ -538,11 +527,11 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
   -- This is a weighted sum of logs, which is concave
   -- The full proof requires showing each log(Lis u m) is concave in Lis
   -- via composition with the projection Lis ↦ Lis u m
-  have hE_concave : ConcaveOn ℝ D (fun Lis => E_VL S Spk Lis) := by
+  have hE_concave : ConcaveOn ℝ D (λ Lis => E_VL S Spk Lis) := by
     -- E_VL = Σ_m Σ_u w(m,u) · utility(Lis, m, u)
     -- On D, utility(Lis, m, u) = log(Lis u m)
     -- Step 1: Show each (Lis ↦ utility Lis m u) is concave on D
-    have h_utility_concave : ∀ m u, ConcaveOn ℝ D (fun Lis => utility Lis m u) := by
+    have h_utility_concave : ∀ m u, ConcaveOn ℝ D (λ Lis => utility Lis m u) := by
       intro m u
       -- On D, utility Lis m u = log (Lis u m)
       -- The evaluation map eval_{u,m} : Lis ↦ Lis u m is linear
@@ -552,9 +541,9 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
         strictConcaveOn_log_Ioi.concaveOn
       -- Define the evaluation functional
       let eval_um : (S.U → S.M → ℝ) →ₗ[ℝ] ℝ := {
-        toFun := fun Lis => Lis u m
-        map_add' := fun _ _ => rfl
-        map_smul' := fun _ _ => rfl
+        toFun := λ Lis => Lis u m
+        map_add' := λ _ _ => rfl
+        map_smul' := λ _ _ => rfl
       }
       -- log ∘ eval is concave on eval⁻¹(Ioi 0)
       have hcomp : ConcaveOn ℝ (eval_um ⁻¹' Set.Ioi 0) (Real.log ∘ eval_um) :=
@@ -568,7 +557,7 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
       have hcomp_D : ConcaveOn ℝ D (Real.log ∘ eval_um) :=
         hcomp.subset hsubset hD_convex
       -- On D, utility Lis m u = log(Lis u m) = (log ∘ eval_um) Lis
-      have heq : Set.EqOn (fun Lis => utility Lis m u) (Real.log ∘ eval_um) D := by
+      have heq : Set.EqOn (λ Lis => utility Lis m u) (Real.log ∘ eval_um) D := by
         intro Lis hLis
         simp only [Function.comp_apply, utility]
         rw [if_neg (not_le.mpr (hLis u m))]
@@ -592,19 +581,19 @@ theorem G_α_concave_in_L (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
       · exact le_refl 0
       · -- Spk m u / Σ Spk m ≥ 0 when Spk m u ≥ 0 and sum ≥ 0
         apply div_nonneg (hSpk_nonneg m u)
-        exact Finset.sum_nonneg (fun v _ => hSpk_nonneg m v)
+        exact Finset.sum_nonneg (λ v _ => hSpk_nonneg m v)
     exact (h_utility_concave m u).smul hw_nonneg
   -- G_α = H_S + α · E_VL
   -- H_S is constant (concave), α · E_VL is concave (α ≥ 0)
   unfold G_α
   have hα_nonneg : 0 ≤ S.α := S.α_nonneg
-  have hαE_concave : ConcaveOn ℝ D (fun Lis => S.α * E_VL S Spk Lis) :=
+  have hαE_concave : ConcaveOn ℝ D (λ Lis => S.α * E_VL S Spk Lis) :=
     hE_concave.smul hα_nonneg
   exact hH_concave.add hαE_concave
 
 
 /-!
-## Proof Strategy: KKT Conditions
+## KKT Conditions
 
 For fixed L, the speaker optimization problem is:
   max_S  G_α(S, L) = Σ_m P(m) [Σ_u negMulLog(S(u|m)) + α · Σ_u S(u|m) · V_L(m,u)]
@@ -623,11 +612,10 @@ Solving for S(u|m):
   S(u|m) = L(m|u)^α · exp(-1 - λ_m/P(m))
   S(u|m) ∝ L(m|u)^α
 
-This is exactly the RSA speaker update! By concavity of G_α in S,
+This is the RSA speaker update. By concavity of G_α in S,
 this stationary point is the global maximum.
 
-## Key Mathlib Lemmas Used
-
+Mathlib lemmas used:
 - `Real.hasDerivAt_negMulLog`: d/dx(negMulLog x) = -log x - 1
 - `Real.deriv_negMulLog`: Same in deriv form
 - Concavity from Part 6 ensures stationary point is maximum
@@ -652,16 +640,16 @@ Using Mathlib's `Real.deriv_negMulLog`:
 theorem deriv_speakerObjective_component (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (m : S.M) (u : S.U) (s_u : ℝ) (hs : s_u ≠ 0) (_hs_pos : 0 < s_u)
     (_hL : 0 < L u m) :
-    HasDerivAt (fun x => Real.negMulLog x + S.α * x * utility L m u)
+    HasDerivAt (λ x => Real.negMulLog x + S.α * x * utility L m u)
                (-Real.log s_u - 1 + S.α * utility L m u)
                s_u := by
   -- negMulLog has derivative -log x - 1 by Real.hasDerivAt_negMulLog
   have h1 : HasDerivAt Real.negMulLog (-Real.log s_u - 1) s_u :=
     Real.hasDerivAt_negMulLog hs
   -- The linear term α * x * V has derivative α * V
-  have h2 : HasDerivAt (fun x => S.α * x * utility L m u) (S.α * utility L m u) s_u := by
-    have hid : HasDerivAt (fun x => x) 1 s_u := hasDerivAt_id s_u
-    have hmul : HasDerivAt (fun x => S.α * x) S.α s_u := by
+  have h2 : HasDerivAt (λ x => S.α * x * utility L m u) (S.α * utility L m u) s_u := by
+    have hid : HasDerivAt (λ x => x) 1 s_u := hasDerivAt_id s_u
+    have hmul : HasDerivAt (λ x => S.α * x) S.α s_u := by
       simpa using hid.const_mul S.α
     exact hmul.mul_const (utility L m u)
   -- Sum of derivatives: (-log s_u - 1) + (α * V) = -log s_u - 1 + α * V
@@ -673,7 +661,7 @@ The RSA speaker update satisfies the first-order optimality condition.
 At s_u = L(m|u)^α (normalized), the derivative equals a constant across all u
 (the Lagrange multiplier). This is the KKT stationarity condition.
 
-**Key insight**: For s_u ∝ L(m|u)^α, we have:
+For s_u ∝ L(m|u)^α, we have:
   -log s_u - 1 + α·log L(m|u) = -log(L(m|u)^α / Z) - 1 + α·log L(m|u)
                                = -α·log L(m|u) + log Z - 1 + α·log L(m|u)
                                = log Z - 1  (constant!)
@@ -682,7 +670,7 @@ So all components have the same derivative value, satisfying KKT.
 -/
 theorem rsa_speaker_satisfies_foc (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (m : S.M) (hL : ∀ u, 0 < L u m) :
-    let s_rsa := fun u => speakerScore S L m u
+    let s_rsa := λ u => speakerScore S L m u
     let Zsum := ∑ u, s_rsa u
     Zsum ≠ 0 →
     ∀ u, s_rsa u / Zsum > 0 →
@@ -710,7 +698,7 @@ theorem rsa_speaker_satisfies_foc (S : RSAScenarioR) (L : S.U → S.M → ℝ)
   have hZpos : 0 < Zsum := by
     by_contra h
     push_neg at h
-    have hsum_nonneg : 0 ≤ Zsum := Finset.sum_nonneg (fun v _ => by
+    have hsum_nonneg : 0 ≤ Zsum := Finset.sum_nonneg (λ v _ => by
       show 0 ≤ speakerScore S L m v
       simp only [speakerScore]
       split_ifs with hv
@@ -729,20 +717,20 @@ theorem rsa_speaker_satisfies_foc (S : RSAScenarioR) (L : S.U → S.M → ℝ)
 /-!
 ### The KKT Gap
 
-The standard convex optimization result we need is:
+The standard convex optimization result needed is:
 
-**Theorem (KKT sufficiency for concave functions)**:
+Theorem (KKT sufficiency for concave functions):
 If f is concave on a convex set K, and x* ∈ K satisfies the KKT conditions
 (gradient equals Lagrange multiplier times constraint gradient), then x* is
 a global maximum of f over K.
 
-**Proof idea** (not formalized):
+Proof idea (not formalized):
 1. Concavity gives: f(y) ≤ f(x*) + ∇f(x*)·(y - x*)
 2. KKT on simplex: ∇f(x*) = λ·𝟙  (constant gradient)
 3. For feasible y: 𝟙·(y - x*) = Σy - Σx* = 1 - 1 = 0
 4. Therefore: f(y) ≤ f(x*) + λ·0 = f(x*)
 
-Mathlib doesn't directly provide this result. The pieces exist:
+Mathlib does not directly provide this result. The pieces exist:
 - `ConcaveOn` provides the concavity inequality
 - `HasFDerivAt` provides derivatives
 - But connecting them to KKT for simplex constraints is not formalized
@@ -757,13 +745,13 @@ This is a significant formalization project beyond the scope of the current work
 -/
 
 /--
-**AXIOM: KKT sufficiency for concave functions on the simplex**
+AXIOM: KKT sufficiency for concave functions on the simplex.
 
-This is the key convex optimization result:
+This is a standard convex optimization result:
 If f is concave on the simplex Δ = {x | ∀i, x_i ≥ 0, Σx_i = 1}, and x* ∈ Δ
 satisfies the KKT first-order conditions, then x* is a global maximum.
 
-**Standard proof** (not formalized in Mathlib):
+Standard proof (not formalized in Mathlib):
 1. Concavity: f(y) ≤ f(x*) + ∇f(x*)·(y - x*) for all y ∈ Δ
 2. KKT on simplex: ∇f(x*) = λ·𝟙 (constant gradient when optimal)
 3. Feasibility: 𝟙·(y - x*) = 1 - 1 = 0 for y, x* ∈ Δ
@@ -783,11 +771,11 @@ axiom kkt_sufficiency_for_concave_on_simplex {α : Type*} [Fintype α]
     (hconcave : ConcaveOn ℝ {x | (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1} f)
     (hsum_star : ∑ i, x_star i = 1)
     (hpos_star : ∀ i, 0 ≤ x_star i)
-    (hfoc : ∃ lam : ℝ, ∀ i, 0 < x_star i → deriv (f ∘ (fun t => Function.update x_star i t)) (x_star i) = lam) :
+    (hfoc : ∃ lam : ℝ, ∀ i, 0 < x_star i → deriv (f ∘ (λ t => Function.update x_star i t)) (x_star i) = lam) :
     ∀ y : α → ℝ, (∀ i, 0 ≤ y i) → ∑ i, y i = 1 → f y ≤ f x_star
 
 /--
-**AXIOM: KKT sufficiency for concave functions on the positive orthant**
+AXIOM: KKT sufficiency for concave functions on the positive orthant.
 
 Similar to simplex case but for the domain {L | ∀ u m, 0 < L u m}.
 The RSA listener update L(m|u) ∝ prior(m) · S(u|m) satisfies KKT
@@ -797,24 +785,23 @@ axiom kkt_sufficiency_for_concave_on_positive {β : Type*} [Fintype β]
     {f : (β → ℝ) → ℝ} {x_star : β → ℝ}
     (hconcave : ConcaveOn ℝ {x | ∀ i, 0 < x i} f)
     (hpos_star : ∀ i, 0 < x_star i)
-    (hfoc : ∀ i, deriv (f ∘ (fun t => Function.update x_star i t)) (x_star i) = 0) :
+    (hfoc : ∀ i, deriv (f ∘ (λ t => Function.update x_star i t)) (x_star i) = 0) :
     ∀ y : β → ℝ, (∀ i, 0 < y i) → f y ≤ f x_star
 
 /--
-**AXIOM: RSA Speaker Update is G_α-Optimal** (Zaslavsky et al. Eq. 7)
+AXIOM: RSA Speaker Update is G_α-Optimal (Zaslavsky et al. Eq. 7).
 
-This axiom encapsulates the specific optimization result needed:
 For fixed listener L, the RSA speaker update S(u|m) ∝ L(m|u)^α
 achieves the maximum of G_α over all valid speaker distributions.
 
-**Justification**:
+Justification:
 1. `G_α_concave_in_S`: G_α is concave in S on the simplex
 2. `rsa_speaker_satisfies_foc`: RSA speaker satisfies KKT first-order conditions
 3. Standard result: KKT + concave ⟹ global optimum
 
-The axiom bridges the type-theoretic gap between:
-- The abstract simplex optimization result
-- The specific RSA formulation with S.M → S.U → ℝ functions
+The axiom bridges the type-theoretic gap between the abstract simplex
+optimization result and the specific RSA formulation with
+S.M → S.U → ℝ functions.
 -/
 axiom rsa_speaker_maximizes_G_α (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (hL : ∀ u m, 0 < L u m)
@@ -824,12 +811,12 @@ axiom rsa_speaker_maximizes_G_α (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     G_α S Spk' L ≤ G_α S (speakerUpdate S L) L
 
 /--
-**AXIOM: RSA Listener Update is G_α-Optimal** (Zaslavsky et al. Eq. 8)
+AXIOM: RSA Listener Update is G_α-Optimal (Zaslavsky et al. Eq. 8).
 
 For fixed speaker S, the RSA listener L(m|u) ∝ P(m) · S(u|m)
 achieves the maximum of G_α over all valid listener distributions.
 
-**Justification**:
+Justification:
 1. `G_α_concave_in_L`: G_α is concave in L on the positive orthant
 2. KKT conditions: ∂G_α/∂L(m,u) = α · P(m) · S(u|m) / L(m,u) - α · (normalization)
    Setting to zero gives L(m|u) ∝ P(m) · S(u|m)
@@ -843,11 +830,10 @@ axiom rsa_listener_maximizes_G_α (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     G_α S Spk L' ≤ G_α S Spk (listenerUpdate S Spk)
 
 /--
-**The RSA Speaker Update Maximizes G_α** (Zaslavsky et al. Eq. 7)
+The RSA speaker update maximizes G_α (Zaslavsky et al. Eq. 7).
 
 For fixed listener L_{t-1}, the RSA speaker update S_t = argmax_S G_α[S, L_{t-1}].
-
-Proof: Direct application of `rsa_speaker_maximizes_G_α` axiom.
+Follows directly from `rsa_speaker_maximizes_G_α`.
 -/
 theorem speaker_update_maximizes_G (S : RSAScenarioR) (L : S.U → S.M → ℝ)
     (hL : ∀ u m, 0 < L u m) :
@@ -857,11 +843,10 @@ theorem speaker_update_maximizes_G (S : RSAScenarioR) (L : S.U → S.M → ℝ)
   exact rsa_speaker_maximizes_G_α S L hL Spk' hSpk'_sum hSpk'_nonneg
 
 /--
-**The RSA Listener Update Maximizes G_α** (Zaslavsky et al. Eq. 8)
+The RSA listener update maximizes G_α (Zaslavsky et al. Eq. 8).
 
 For fixed speaker S_t, the RSA listener update L_t = argmax_L G_α[S_t, L].
-
-Proof: Direct application of `rsa_listener_maximizes_G_α` axiom.
+Follows directly from `rsa_listener_maximizes_G_α`.
 -/
 theorem listener_update_maximizes_G (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (hSpk : ∀ m u, 0 < Spk m u) :
@@ -872,7 +857,7 @@ theorem listener_update_maximizes_G (S : RSAScenarioR) (Spk : S.M → S.U → �
 
 
 /--
-**MAIN THEOREM: G_α Monotonicity** (Zaslavsky et al. Proposition 1, Eq. 9)
+G_α Monotonicity (Zaslavsky et al. Proposition 1, Eq. 9).
 
 RSA dynamics implement alternating maximization of G_α.
 For every t ≥ 1:
@@ -898,7 +883,7 @@ theorem G_α_monotone (S : RSAScenarioR) [Nonempty S.U] (n : ℕ)
   have hstep : state_n1 = stepRSA S state_n := Function.iterate_succ_apply' (stepRSA S) n _
   -- Step 1: G_α(S_n, L_n) ≤ G_α(S_{n+1}, L_n)  [speaker improved]
   have hSpk_nonneg : ∀ m u, 0 ≤ state_n.speaker m u :=
-    fun m u => le_of_lt (h_Spk_pos n m u)
+    λ m u => le_of_lt (h_Spk_pos n m u)
   have h_spk_eq : state_n1.speaker = speakerUpdate S state_n.listener := by
     simp only [hstep, stepRSA]
   have h1 : G_α S state_n.speaker state_n.listener ≤ G_α S state_n1.speaker state_n.listener := by
@@ -928,12 +913,12 @@ theorem G_α_monotone (S : RSAScenarioR) [Nonempty S.U] (n : ℕ)
   exact le_trans h1 h2
 
 /--
-**Corollary: RSA Converges** (Zaslavsky et al. Footnote 1)
+Corollary: RSA Converges (Zaslavsky et al. Footnote 1).
 
 From the paper: "Because Gα is bounded from above, it follows that RSA iterations
 are guaranteed to converge."
 
-Proof: By the Monotone Convergence Theorem.
+Proof by the Monotone Convergence Theorem:
 - G_α is monotonically non-decreasing (by `G_α_monotone`)
 - G_α is bounded above by log |U| (max entropy)
 - Therefore the sequence G_α(S_t, L_t) converges
@@ -944,7 +929,7 @@ theorem RSA_converges (S : RSAScenarioR) [Nonempty S.U]
     (h_Spk_sum : ∀ t m, ∑ u, (iterateRSA S t).speaker m u = 1)
     (h_L_sum : ∀ t u, ∑ m, (iterateRSA S t).listener u m = 1) :
     ∃ L : ℝ, Filter.Tendsto
-      (fun n => G_α S (iterateRSA S n).speaker (iterateRSA S n).listener)
+      (λ n => G_α S (iterateRSA S n).speaker (iterateRSA S n).listener)
       Filter.atTop
       (nhds L) := by
   -- Proof: Monotone bounded sequences converge (Monotone Convergence Theorem)
@@ -960,7 +945,7 @@ theorem RSA_converges (S : RSAScenarioR) [Nonempty S.U]
 /--
 G_α is bounded above.
 
-**Proof sketch**:
+Proof sketch:
 - H_S = weighted entropy ≤ log|U| (max entropy)
 - E_VL = expected log utility, bounded by log(max L value) for normalized listeners
 - G_α = H_S + α·E_VL is bounded above

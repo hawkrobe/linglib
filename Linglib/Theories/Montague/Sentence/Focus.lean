@@ -188,7 +188,7 @@ def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : P
 
 /-- "only" asserts no alternative is true (except prejacent) -/
 def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : Prop' World :=
-  fun w => only.alternatives.all (fun alt => !alt w || (alt w == only.prejacent w))
+  λ w => only.alternatives.all (λ alt => !alt w || (alt w == only.prejacent w))
 
 /-- Full "only" meaning -/
 def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=

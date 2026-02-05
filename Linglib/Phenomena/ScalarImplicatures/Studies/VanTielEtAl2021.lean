@@ -19,7 +19,7 @@ PNAS 118(9): e2005453118
 4. **Exp. 4**: Model evaluation (200 participants)
    - Rated adequacy of model-predicted quantity words
 
-## Key Finding
+## Finding
 
 GQ-pragmatic model explains gradience as well as prototype-based models.
 -/
@@ -97,7 +97,7 @@ def decreasingQuantifiers : List QuantityWord :=
 
 /-- Increasing quantifiers (all others) -/
 def increasingQuantifiers : List QuantityWord :=
-  allQuantityWords.filter (fun q => monotonicity q == .increasing)
+  allQuantityWords.filter (λ q => monotonicity q == .increasing)
 
 -- Model Comparison Results (Table 1)
 

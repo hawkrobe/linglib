@@ -21,10 +21,10 @@ Griceans claim SIs are global pragmatic inferences, not local.
 3. **Exp 3**: Verification vs inference by monotonicity (UE vs DE)
 4. **Exp 4**: Ambiguity detection (70% for genuine, 6% for alleged SI-ambiguities)
 
-## Key Findings
+## Findings
 
-- Local SIs are NOT the default in embedded positions
-- The inference task BIASES toward seeing SIs (methodological concern)
+- Local SIs are not the default in embedded positions
+- The inference task biases toward seeing SIs (methodological concern)
 - Apparent "local" SIs under belief verbs explained by global SI + competence
 - Data strongly favor Gricean over conventionalist accounts
 -/
@@ -103,7 +103,7 @@ inductive Monotonicity where
 /--
 Result from Experiment 1 by embedding type.
 
-Key finding: Local SI rates vary DRAMATICALLY by embedding type,
+Local SI rates vary dramatically by embedding type,
 contrary to conventionalist predictions of systematic local SIs.
 -/
 structure EmbeddingResult where
@@ -161,19 +161,19 @@ Think embedding shows 57% SI rate (avg of 50% and 65%).
 def thinkRate : Nat := 57
 
 /--
-**Theorem: Simple sentences show high SI rates**
+Simple sentences show high SI rates.
 -/
 theorem simple_high_rate : simpleRate > 90 := by native_decide
 
 /--
-**Theorem: Must embedding nearly eliminates local SIs**
+Must embedding nearly eliminates local SIs.
 
-This is striking: deontic must shows only 3% local SIs.
+Deontic must shows only 3% local SIs.
 -/
 theorem must_near_zero : mustRate < 5 := by native_decide
 
 /--
-**Theorem: Huge variation by embedding type**
+Huge variation by embedding type.
 
 The range from 3% (must) to 93% (simple) refutes the claim
 that SIs occur "systematically and freely" in embedded positions.
@@ -257,7 +257,7 @@ structure Exp3Result where
 /--
 Experiment 3 results (n=26).
 
-Key insight: Verification shows ~0% local SIs in UE contexts,
+Verification shows ~0% local SIs in UE contexts,
 while inference shows ~50%. The verification task is more neutral.
 -/
 def exp3Results : List Exp3Result :=
@@ -269,7 +269,7 @@ def exp3Results : List Exp3Result :=
   ]
 
 /--
-**Theorem: Verification shows no local SIs in UE contexts**
+Verification shows no local SIs in UE contexts.
 
 100% "true" means 0% local SI (since local SI would make it false).
 -/
@@ -279,7 +279,7 @@ theorem verification_no_local_SI_in_UE :
   native_decide
 
 /--
-**Theorem: Inference task shows ~50% even in UE contexts**
+Inference task shows ~50% even in UE contexts.
 
 This is an artifact of the inference paradigm, not genuine local SIs.
 -/
@@ -297,7 +297,7 @@ def allVerificationRate : Nat := 100
 def allInferenceRate : Nat := 46
 
 /--
-**Theorem: Massive task effect in UE contexts**
+Massive task effect in UE contexts.
 
 Verification: 0% local SIs. Inference: ~50%. This ~46-point gap
 shows the inference task creates spurious "local SIs".
@@ -321,7 +321,7 @@ structure AmbiguityResult where
   deriving Repr
 
 /--
-Control sentences that ARE genuinely ambiguous.
+Control sentences that are genuinely ambiguous.
 People recognized these as ambiguous 70% of the time.
 -/
 def genuineAmbiguityResults : List AmbiguityResult :=
@@ -339,7 +339,7 @@ def genuineAmbiguityAverage : Nat := 70
 
 /--
 Target sentences with alleged SI-induced "ambiguity".
-People only said "could be either" 6% of the time!
+People only said "could be either" 6% of the time.
 -/
 def allegedSIAmbiguityRate : Nat := 6
 
@@ -350,7 +350,7 @@ Total responses consistent with conventionalism: only 10%.
 def totalConventionalistConsistent : Nat := 10
 
 /--
-**Theorem: People DON'T detect alleged SI ambiguities**
+People do not detect alleged SI ambiguities.
 
 Conventionalism predicts ambiguity; participants don't see it.
 -/
@@ -360,7 +360,7 @@ theorem no_SI_ambiguity_detected :
   native_decide
 
 /--
-**Theorem: Minimal support for conventionalism**
+Minimal support for conventionalism.
 
 Only 10% of responses consistent with local SI readings.
 -/
@@ -370,7 +370,7 @@ theorem minimal_conventionalist_support :
 
 
 /--
-**Theorem: Think embedding shows elevated rate vs other embeddings**
+Think embedding shows elevated rate vs other embeddings.
 
 At 57%, think is the only embedding that shows substantial SI rate.
 Other embeddings (all: 27%, must: 3%, want: 32%) are all below 35%.
@@ -405,24 +405,24 @@ def mainFinding : TaskEffectDatum :=
   }
 
 /--
-**Theorem: Inference task shows higher rate than verification task**
+Inference task shows higher rate than verification task.
 -/
 theorem inference_higher_than_verification :
     mainFinding.inferenceTaskRate > mainFinding.verificationTaskRate := by
   native_decide
 
 /--
-**Theorem: Verification rate is below 50%**
+Verification rate is below 50%.
 
-This is crucial: in the more neutral task, scalar inferences arise
-less than half the time, arguing against weak defaultism.
+In the more neutral task, scalar inferences arise less than half
+the time, arguing against weak defaultism.
 -/
 theorem verification_below_fifty :
     mainFinding.verificationTaskRate < 50 := by
   native_decide
 
 /--
-**Theorem: Task effect is substantial**
+Task effect is substantial.
 
 The inference task nearly doubles the rate.
 -/
@@ -461,7 +461,7 @@ def literatureData : List LiteratureDatum :=
   ]
 
 /--
-**Theorem: Average rate is below 50%**
+Average rate is below 50%.
 
 Across the literature, scalar inference rates average below 50%.
 -/
@@ -470,61 +470,12 @@ theorem average_below_fifty :
   native_decide
 
 /--
-**Theorem: No study exceeds 65%**
+No study exceeds 65%.
 
 Even the highest rates are well below defaultism's predictions.
 -/
 theorem max_rate_below_seventy :
     literatureData.all (·.upperBoundRate < 70) := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-This module contains EMPIRICAL DATA from Geurts & Pouscoulous (2009).
-Theory-specific predictions and comparisons are in Theories/NeoGricean/.
-
-### Experiment 1a-b: Embedding Types
-- `EmbeddingType`: simple, think, want, must, all
-- `combinedEmbeddingResults`: SI rates by embedding
-- `embedding_variation`: 3% (must) to 93% (simple) - huge variation
-
-### Experiment 2: Task Effect (Simple Sentences)
-- `inferenceTaskResult`: 62% in inference task
-- `verificationTaskResult`: 34% in verification task
-- `mainFinding`: The 28-point task effect
-
-### Experiment 3: Monotonicity Effects
-- `QuantifierContext`: all, moreThanOne, exactlyTwo, notAll, notMoreThanOne
-- `exp3Results`: Verification vs inference by context
-- `verification_no_local_SI_in_UE`: 0% local SIs in verification for UE
-
-### Experiment 4: Ambiguity Detection
-- `genuineAmbiguityAverage`: 70% for genuine ambiguities
-- `allegedSIAmbiguityRate`: only 6% for alleged SI ambiguities
-- `no_SI_ambiguity_detected`: People don't see predicted ambiguity
-
-### Literature Survey
-- `literatureData`: SI rates from 11 studies
-- `average_below_fifty`: Literature average < 50%
-- `max_rate_below_seventy`: No study exceeds 65%
-
-### Key Data-Level Theorems
-- `embedding_variation`: 90-point range across embeddings
-- `verification_no_local_SI_in_UE`: 0% local SIs in neutral task
-- `no_SI_ambiguity_detected`: 6% vs 70% ambiguity detection
-- `think_elevated`: Think embedding is exceptional (57%)
-- `verification_below_fifty`: 34% < 50% baseline
-- `task_effect_substantial`: 28-point task effect
-
-### Theory Comparisons (in Theories/NeoGricean/ScalarImplicatures.lean)
-The following theorems derive predictions from theory parameters and
-compare to this data:
-- `data_supports_contextualism_over_defaultism`
-- `verification_matches_contextualism`
-- `verification_far_from_defaultism`
--/
 
 end Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009

@@ -13,7 +13,7 @@ This parallels the indefinite/definite distinction:
 - Indefinites introduce discourse referents
 - Definites retrieve existing referents
 
-## Key Insight
+## Insight
 
 The "Subordinate Future" (SF) in Portuguese/Spanish:
 - Uses present morphology for future reference in subordinate contexts
@@ -89,16 +89,16 @@ The two situations are:
 abbrev SitPred (W Time : Type*) := Situation W Time → Situation W Time → Prop
 
 /--
-**SUBJ operator** (Mendes 2025, Definition on p.29)
+SUBJ operator (Mendes 2025, Definition on p.29).
 
 ⟦SUBJ^{s₁}_{s₀}⟧ = λP. [s₁ | s₁ ∈ hist(s₀)]; P(s₁)(s₀)
 
 The subjunctive:
-1. Introduces a NEW situation dref s₁
+1. Introduces a new situation dref s₁
 2. Constrains s₁ to be in the historical alternatives of s₀
 3. Passes s₁ and s₀ to the embedded predicate P
 
-This is the "indefinite" for situations.
+Analogous to an indefinite for situations.
 -/
 def SUBJ {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -108,7 +108,7 @@ def SUBJ {W Time : Type*} [LE Time]
     s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀
 
 /--
-**IND operator** (Mendes 2025, Definition on p.29)
+IND operator (Mendes 2025, Definition on p.29).
 
 ⟦IND_{s₁,s₂}⟧ = λP. [| s₂ ≤ w_{s₁}]; P(s₂)(s₁)
 
@@ -117,7 +117,7 @@ The indicative:
 2. Requires s₂'s world to be "part of" s₁'s world (same world)
 3. Passes s₂ and s₁ to P
 
-This is the "definite" for situations.
+Analogous to a definite for situations.
 -/
 def IND {W Time : Type*}
     (P : SitPred W Time)
@@ -153,7 +153,7 @@ Dynamic situation predicate: updates the situation context.
 abbrev DynSitPred (W Time : Type*) := SitContext W Time → SitContext W Time → Prop
 
 /--
-**Dynamic SUBJ**: Introduces a situation and adds it to the context.
+Dynamic SUBJ: introduces a situation and adds it to the context.
 
 ⟦SUBJ⟧_dyn = λP.λc. ∃s₁ ∈ hist(c.current). P({...c, situations := s₁ :: c.situations})
 -/
@@ -169,7 +169,7 @@ def SUBJdyn {W Time : Type*} [LE Time]
       P { situations := s₁ :: c.situations, current := s₁ } c'
 
 /--
-**Dynamic IND**: Retrieves the most recent situation from context.
+Dynamic IND: retrieves the most recent situation from context.
 
 ⟦IND⟧_dyn = λP.λc. c.situations.head? = some s → P(c)(c)
 -/
@@ -205,7 +205,7 @@ def prefersSubjunctive : MoodSelector → Bool
 
 
 /--
-**Conditional with SF antecedent** (Mendes' main application)
+Conditional with SF antecedent (Mendes 2025, main application).
 
 "If Maria be.SF home, she will answer"
 
@@ -222,10 +222,10 @@ def conditionalSF {W Time : Type*} [LE Time]
     (antecedent : Situation W Time → Prop)  -- "Maria is home"
     (consequent : Situation W Time → Situation W Time → Prop)  -- "she answers"
     (s₀ : Situation W Time) : Prop :=
-  SUBJ history (fun s₁ s₀' => antecedent s₁ → consequent s₁ s₀') s₀
+  SUBJ history (λ s₁ s₀' => antecedent s₁ → consequent s₁ s₀') s₀
 
 /--
-**Standard indicative conditional** (for comparison)
+Standard indicative conditional (for comparison).
 
 "If Maria is home, she answers"
 
@@ -240,14 +240,14 @@ def conditionalIND {W Time : Type*}
 
 
 /--
-**Key insight from Mendes (2025)**:
+Temporal shift (Mendes 2025).
 
 The subjunctive future (SF) enables future reference because:
 1. SUBJ introduces a situation s₁ in the historical alternatives
 2. Historical alternatives can have times ≥ current time
 3. The consequent is evaluated relative to τ(s₁), not τ(s₀)
 
-This "temporal shift" is what gives SF its future-oriented interpretation.
+This temporal shift gives SF its future-oriented interpretation.
 -/
 def temporalShift {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -272,7 +272,7 @@ def futureShift {W Time : Type*} [LT Time] [LE Time]
 
 
 /--
-**SUBJ is existential**: It introduces a situation.
+SUBJ is existential: it introduces a situation.
 -/
 theorem subj_is_existential {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -283,7 +283,7 @@ theorem subj_is_existential {W Time : Type*} [LE Time]
   exact ⟨s₁, hP⟩
 
 /--
-**SUBJ constrains to historical base**: The introduced situation
+SUBJ constrains to historical base: the introduced situation
 is in the historical alternatives.
 -/
 theorem subj_in_hist {W Time : Type*} [LE Time]
@@ -295,7 +295,7 @@ theorem subj_in_hist {W Time : Type*} [LE Time]
   exact h
 
 /--
-**IND requires same world**: The two situations must share a world.
+IND requires same world: the two situations must share a world.
 -/
 theorem ind_same_world {W Time : Type*}
     (P : SitPred W Time)
@@ -305,7 +305,7 @@ theorem ind_same_world {W Time : Type*}
   exact h
 
 /--
-**SUBJ with reflexive history**: If the history is reflexive,
+SUBJ with reflexive history: if the history is reflexive,
 the current situation is always an option.
 -/
 theorem subj_current_option {W Time : Type*} [Preorder Time]
@@ -337,7 +337,7 @@ def nonVeridical {W Time : Type*}
     F P s ∧ ¬P s
 
 /--
-**SUBJ is non-veridical**: The introduced situation may differ from actual.
+SUBJ is non-veridical: the introduced situation may differ from actual.
 
 This follows from the existential nature of SUBJ: it quantifies over
 situations in the historical base, which includes non-actual futures.
@@ -347,51 +347,11 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
     -- Need: history has an option distinct from the evaluation point
     (h_branching : ∃ s₀ s₁ : Situation W Time,
       s₁ ∈ historicalBase history s₀ ∧ s₀ ≠ s₁) :
-    nonVeridical (fun P s₀ => SUBJ history (fun s₁ _ => P s₁) s₀) := by
+    nonVeridical (λ P s₀ => SUBJ history (λ s₁ _ => P s₁) s₀) := by
   obtain ⟨s₀, s₁, h₁, hne⟩ := h_branching
-  use (fun s => s = s₁), s₀
+  use (λ s => s = s₁), s₀
   refine ⟨⟨s₁, h₁, rfl⟩, ?_⟩
   -- ¬(s₀ = s₁)
   exact hne
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `Mood`: indicative, subjunctive
-- `SubjunctiveType`: counterfactual, dubitative, optative, potential, subordinateFuture
-- `SitPred W Time`: Situation predicates
-- `SitContext W Time`: Dynamic context with situation drefs
-
-### Mood Operators (Mendes 2025)
-- `SUBJ`: Introduces situation s₁ ∈ hist(s₀), existential
-- `IND`: Retrieves situation, requires same world, presuppositional
-
-### Dynamic Versions
-- `SUBJdyn`: Adds introduced situation to context
-- `INDdyn`: Retrieves from context
-
-### Applications
-- `conditionalSF`: Conditional with subjunctive future antecedent
-- `conditionalIND`: Standard indicative conditional
-- `temporalShift`, `futureShift`: Mendes' temporal anchoring mechanism
-
-### Mood Selection
-- `MoodSelector`: Which mood a predicate selects
-- `prefersSubjunctive`: Check if selector prefers SUBJ
-
-### Theorems
-- `subj_is_existential`: SUBJ introduces a situation
-- `subj_in_hist`: Introduced situation is in historical base
-- `ind_same_world`: IND requires world identity
-- `subj_current_option`: With reflexive history, current is an option
-
-### Connection to Other Modules
-- `Core/Time.lean`: Situation, historicalBase, WorldHistory
-- `Sentence/Tense/Basic.lean`: PAST, PRES, FUT interact with mood
-- `DynamicSemantics/IntensionalCDRT/`: Dynamic compositional framework
--/
 
 end Montague.Sentence.Mood

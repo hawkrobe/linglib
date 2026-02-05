@@ -145,18 +145,18 @@ def condWorlds : List CondWorld := [
 
 instance : Fintype StudentResult where
   elems := ⟨[StudentResult.noneP, StudentResult.someP, StudentResult.allP], by decide⟩
-  complete := fun x => by cases x <;> decide
+  complete := λ x => by cases x <;> decide
 
 instance : Fintype ProfState where
   elems := ⟨[ProfState.unhappy, ProfState.happy], by decide⟩
-  complete := fun x => by cases x <;> decide
+  complete := λ x => by cases x <;> decide
 
 instance : Fintype CondWorld :=
   Fintype.ofEquiv (StudentResult × ProfState)
-    { toFun := fun ⟨s, p⟩ => ⟨s, p⟩
-      invFun := fun ⟨s, p⟩ => ⟨s, p⟩
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl }
+    { toFun := λ ⟨s, p⟩ => ⟨s, p⟩
+      invFun := λ ⟨s, p⟩ => ⟨s, p⟩
+      left_inv := λ _ => rfl
+      right_inv := λ _ => rfl }
 
 -- Key Predictions: DE-like Behavior
 
@@ -223,7 +223,7 @@ theorem local_not_entails_global :
 Worlds where global and local differ.
 -/
 def globalLocalDiffer : List CondWorld :=
-  condWorlds.filter (fun w =>
+  condWorlds.filter (λ w =>
     conditionalMeaning .global w != conditionalMeaning .local_ w)
 
 #eval globalLocalDiffer  -- Should be: allP + unhappy
@@ -296,7 +296,7 @@ theorem conditional_like_de_context :
 -- Summary
 
 /-
-## Key Results
+## Results
 
 1. **Conditional antecedents are DE**: Strengthening the antecedent weakens
    the conditional (contraposition).

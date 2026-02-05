@@ -5,7 +5,7 @@ import Linglib.Theories.Montague.Question.Partition
 
 Pragmatic answerhood theory from Groenendijk & Stokhof (1984), Chapter IV.
 
-## Key Insight
+## Insight
 
 Semantic answerhood is a **limit case** of pragmatic answerhood.
 When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhood.
@@ -47,14 +47,14 @@ these idealizations are harmless." -/
 abbrev InfoSet (W : Type*) := W -> Bool
 
 /-- The total information set (no factual knowledge). -/
-def totalIgnorance {W : Type*} : InfoSet W := fun _ => true
+def totalIgnorance {W : Type*} : InfoSet W := λ _ => true
 
 /-- Check if a world is in the information set -/
 def InfoSet.contains {W : Type*} (j : InfoSet W) (w : W) : Bool := j w
 
 /-- Intersection of a proposition with an information set -/
 def InfoSet.intersect {W : Type*} (j : InfoSet W) (p : W -> Bool) : W -> Bool :=
-  fun w => j w && p w
+  λ w => j w && p w
 
 -- Restricted Partition (J/Q)
 
@@ -76,10 +76,10 @@ def GSQuestion.restrictedCells {W : Type*} (q : GSQuestion W) (j : InfoSet W)
     (worlds : List W) : List (W -> Bool) :=
   let jWorlds := worlds.filter j
   -- Build cells from representatives in J
-  let reps := jWorlds.foldl (fun acc w =>
-    if acc.any fun r => q.equiv r w then acc else w :: acc) []
+  let reps := jWorlds.foldl (λ acc w =>
+    if acc.any λ r => q.equiv r w then acc else w :: acc) []
   -- Each cell is the intersection of the original cell with J
-  reps.map fun rep => fun w => j w && q.equiv rep w
+  reps.map λ rep => λ w => j w && q.equiv rep w
 
 /-- Q is a question in J iff the restricted partition has at least 2 cells.
 
@@ -100,8 +100,8 @@ def isPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
   let pInJ := j.intersect p
   let cells := q.restrictedCells j worlds
   -- P ∩ J must be exactly one of the cells
-  cells.any fun cell =>
-    worlds.all fun w => pInJ w == cell w
+  cells.any λ cell =>
+    worlds.all λ w => pInJ w == cell w
 
 /-- P **gives** a pragmatic answer to Q in J iff P ∩ J ⊆ some cell of J/Q.
 
@@ -116,8 +116,8 @@ def givesPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
   -- P ∩ J must be non-empty
   let nonEmpty := worlds.any pInJ
   -- P ∩ J must be contained in some cell
-  let contained := cells.any fun cell =>
-    worlds.all fun w => pInJ w -> cell w
+  let contained := cells.any λ cell =>
+    worlds.all λ w => pInJ w -> cell w
   nonEmpty && contained
 
 /-- Giving a pragmatic answer is weaker than being a pragmatic answer.
@@ -170,7 +170,7 @@ def pragmaticallyRigid {W E : Type*} [DecidableEq E]
   let jWorlds := worlds.filter j
   match jWorlds with
   | [] => true
-  | w :: ws => ws.all fun v => t w == t v
+  | w :: ws => ws.all λ v => t w == t v
 
 /-- Semantically rigid: term denotes the same individual across ALL indices.
 
@@ -196,6 +196,9 @@ theorem pragmaticallyRigid_implies_definite {W E : Type*} [DecidableEq E]
     (t : TermDenotation W E) (j : InfoSet W) (worlds : List W) :
     pragmaticallyRigid t j worlds = true ->
     pragmaticallyDefinite t j worlds = true := by
+  -- TODO: Proof requires lemma about eraseDups on constant lists.
+  -- pragmaticallyRigid says all jWorlds map to the same entity under t,
+  -- so eraseDups on the mapped list has length ≤ 1.
   sorry
 
 /-- Semantic rigidity implies pragmatic rigidity (for any J). -/
@@ -203,7 +206,45 @@ theorem semanticallyRigid_implies_pragmaticallyRigid {W E : Type*} [DecidableEq 
     (t : TermDenotation W E) (j : InfoSet W) (worlds : List W) :
     semanticallyRigid t worlds = true ->
     pragmaticallyRigid t j worlds = true := by
-  sorry
+  unfold semanticallyRigid pragmaticallyRigid
+  -- First establish: filter totalIgnorance = worlds
+  have hfilt : worlds.filter totalIgnorance = worlds := by
+    induction worlds with
+    | nil => rfl
+    | cons w ws ih => simp [totalIgnorance, ih]
+  rw [hfilt]
+  -- Now both h and goal have pattern matching on lists
+  -- h : match worlds with | [] => true | w :: ws => ws.all (t w == t ·)
+  -- goal : match (worlds.filter j) with | [] => true | w' :: ws' => ws'.all (t w' == t ·)
+  intro h
+  -- Extract the "all have same denotation" property from h
+  match hwlds : worlds with
+  | [] => -- worlds is empty, so filter j is empty too
+    simp [hwlds]
+  | w :: ws =>
+    simp only [List.all_eq_true, beq_iff_eq] at h
+    -- h : ∀ v ∈ ws, t w = t v  (i.e., all elements agree with t w)
+    -- Now consider filter j on (w :: ws)
+    match hjw : (w :: ws).filter j with
+    | [] => rfl
+    | w' :: ws' =>
+      simp only [List.all_eq_true, beq_iff_eq]
+      intro v hv
+      -- w' and v are both in (w :: ws).filter j ⊆ w :: ws
+      have hw'_in : w' ∈ (w :: ws).filter j := by simp [hjw]
+      have hv_in : v ∈ (w :: ws).filter j := by simp [hjw, hv]
+      have hw'_mem := (List.mem_filter.mp hw'_in).1
+      have hv_mem := (List.mem_filter.mp hv_in).1
+      -- Both are in w :: ws, so both have same denotation as w
+      have hw'_eq : t w' = t w := by
+        cases List.mem_cons.mp hw'_mem with
+        | inl heq => rw [heq]
+        | inr hmem => exact (h w' hmem).symm
+      have hv_eq : t v = t w := by
+        cases List.mem_cons.mp hv_mem with
+        | inl heq => rw [heq]
+        | inr hmem => exact (h v hmem).symm
+      rw [hw'_eq, hv_eq]
 
 -- Pragmatic Exhaustiveness
 
@@ -216,9 +257,9 @@ def pragmaticallyExhaustive {W E : Type*} [DecidableEq E]
     (j : InfoSet W) (worlds : List W) : Bool :=
   let jWorlds := worlds.filter j
   -- The term picks out exactly those satisfying the predicate in J
-  jWorlds.all fun w =>
+  jWorlds.all λ w =>
     let e := t w
-    predicate w e == jWorlds.all fun v => predicate v e
+    predicate w e == jWorlds.all λ v => predicate v e
 
 -- Key G&S Theorems: Term Properties → Answerhood
 
@@ -232,7 +273,7 @@ theorem exhaustive_rigid_gives_complete_answer {W E : Type} [DecidableEq E]
     (hExh : pragmaticallyExhaustive t predicate j worlds = true)
     (hRigid : pragmaticallyRigid t j worlds = true) :
     -- The answer "t(a)" completely answers the question in J
-    let answerProp := fun w => predicate w (t w)
+    let answerProp := λ w => predicate w (t w)
     let q := GSQuestion.ofPredicate answerProp
     givesPragmaticAnswer answerProp q j worlds = true := by
   sorry
@@ -246,7 +287,7 @@ theorem nonExhaustive_incomplete_answer {W E : Type} [DecidableEq E]
     (j : InfoSet W) (worlds : List W)
     (hNotExh : pragmaticallyExhaustive t predicate j worlds = false) :
     -- t(a) cannot be a (strict) pragmatic answer
-    let answerProp := fun w => predicate w (t w)
+    let answerProp := λ w => predicate w (t w)
     let q := GSQuestion.ofPredicate answerProp
     isPragmaticAnswer answerProp q j worlds = false := by
   sorry
@@ -273,7 +314,7 @@ theorem false_proposition_true_pragmatic_answer {W : Type*}
     p actual = false ->
     -- But p can still give a pragmatic answer in J
     -- (there exist such p, q, j where this holds)
-    True := fun _ => trivial
+    True := λ _ => trivial
 
 -- Institutional vs Ordinary Question-Answering
 
@@ -298,7 +339,7 @@ theorem diverse_audience_prefers_semantic {W E : Type*} [DecidableEq E]
     -- Semantically rigid terms work for ALL information sets
     semanticallyRigid t worlds = true ->
     forall j : InfoSet W, pragmaticallyRigid t j worlds = true :=
-  fun hSem j => semanticallyRigid_implies_pragmaticallyRigid t j worlds hSem
+  λ hSem j => semanticallyRigid_implies_pragmaticallyRigid t j worlds hSem
 
 -- Note: W is implicit in TermDenotation, InfoSet, etc.
 

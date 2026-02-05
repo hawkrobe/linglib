@@ -24,7 +24,7 @@ The two interpretation functions represent optional exhaustification (Fox 2007):
 4. Hearer reasons: "Speaker chose Or to prevent me thinking Only A or Only B"
 5. Hearer infers: Only One or Any Number → Free choice!
 
-## Key Results
+## Results
 
 - FCI is robust to prior manipulation (pure pragmatic reasoning)
 - EI is prior-sensitive (world knowledge determines if "not both" is inferred)
@@ -163,13 +163,13 @@ def lexicon1 : Lexicon Utterance FCState := lexiconOf I1
 def lexicon2 : Lexicon Utterance FCState := lexiconOf I2
 
 instance : BEq (Lexicon Utterance FCState) where
-  beq l1 l2 := allUtterances.all fun u =>
-    allStates.all fun w => l1.meaning u w == l2.meaning u w
+  beq l1 l2 := allUtterances.all λ u =>
+    allStates.all λ w => l1.meaning u w == l2.meaning u w
 
 -- SECTION 4: RSA Scenario
 
 /-- Uniform prior over states -/
-def uniformPrior : FCState → ℚ := fun _ => 1
+def uniformPrior : FCState → ℚ := λ _ => 1
 
 /-- The free choice RSA scenario with lexical uncertainty -/
 def fcScenario (α : ℕ := 100) (worldPrior : FCState → ℚ := uniformPrior) : LUScenario where
@@ -177,7 +177,7 @@ def fcScenario (α : ℕ := 100) (worldPrior : FCState → ℚ := uniformPrior) 
   World := FCState
   baseLexicon := lexicon1
   lexica := [lexicon1, lexicon2]
-  lexPrior := fun _ => 1  -- Uniform over interpretation functions
+  lexPrior := λ _ => 1  -- Uniform over interpretation functions
   worldPrior := worldPrior
   utterances := allUtterances
   worlds := allStates
@@ -445,8 +445,8 @@ def lexiconNull1 : Lexicon UtteranceWithNull FCState := Lexicon.ofBool I1_null
 def lexiconNull2 : Lexicon UtteranceWithNull FCState := Lexicon.ofBool I2_null
 
 instance : BEq (Lexicon UtteranceWithNull FCState) where
-  beq l1 l2 := allUtterancesWithNull.all fun u =>
-    allStates.all fun w => l1.meaning u w == l2.meaning u w
+  beq l1 l2 := allUtterancesWithNull.all λ u =>
+    allStates.all λ w => l1.meaning u w == l2.meaning u w
 
 /-- Scenario without And, with null utterance -/
 def fcScenarioNull : LUScenario where
@@ -454,8 +454,8 @@ def fcScenarioNull : LUScenario where
   World := FCState
   baseLexicon := lexiconNull1
   lexica := [lexiconNull1, lexiconNull2]
-  lexPrior := fun _ => 1
-  worldPrior := fun _ => 1
+  lexPrior := λ _ => 1
+  worldPrior := λ _ => 1
   utterances := allUtterancesWithNull
   worlds := allStates
   α := 100
@@ -487,7 +487,7 @@ def l1OnlyBoth_null : ℚ :=
 - `I1`, `I2`: Two interpretation functions (literal vs exhaustified)
 - `fcScenario`: The RSA scenario with lexical uncertainty
 
-### Key Results
+### Results
 - `fci_derived`: L1 assigns >99% to FCI states for Or
 - `fci_robust_to_prior`: FCI holds even with asymmetric priors
 - `ei_prior_sensitive`: EI is cancelable via world knowledge

@@ -5,18 +5,18 @@ Theory-neutral empirical patterns for non-maximal readings of plural sentences.
 
 ## Phenomena Covered
 
-1. **Issue-sensitivity**: Same sentence, different contexts → different readings
-2. **SWITCHES scenarios**: Maximal vs non-maximal contexts
-3. **BANK ROBBERY scenario**: Fine-grained non-maximality
-4. **Homogeneity removers block non-maximality**: "all" prevents weakening
+1. Issue-sensitivity: same sentence, different contexts yield different readings
+2. Switches scenarios: maximal vs non-maximal contexts
+3. Bank robbery scenario: fine-grained non-maximality
+4. Homogeneity removers block non-maximality: "all" prevents weakening
 
-## Key Insight
+## Insight
 
 Non-maximal readings arise when the distinction between "all" and "some but not all"
 is irrelevant for the conversational goals. The perceived truth conditions are
 "weakened" to match the salient issue.
 
-## Key References
+## References
 
 - Krifka (1996): "Pragmatic strengthening in plural predications"
 - Lasersohn (1999): "Pragmatic halos"
@@ -60,14 +60,14 @@ structure NonMaximalityDatum where
 
 
 /--
-The SWITCHES scenario from Križ (2015, 2016).
+The switches scenario from Križ (2015, 2016).
 
 Context: 10 light switches, potential electrical fire hazard.
 Scenario: 2 switches are on.
 
-Key manipulation: What triggers the fire risk?
-- MAXIMAL: Fire only if ALL 10 switches are on
-- NON-MAXIMAL: Fire if ANY switch is on
+The manipulation concerns what triggers the fire risk:
+- Maximal: fire only if all 10 switches are on
+- Non-maximal: fire if any switch is on
 
 Source: Križ (2015, 2016), dissertation (11)
 -/
@@ -119,7 +119,7 @@ def switchesAllBlocks : AllBlocksNonMaxDatum :=
 
 
 /--
-The BANK ROBBERY scenario from Krifka (1996).
+The bank robbery scenario from Krifka (1996).
 
 Shows that non-maximal readings can be very fine-grained,
 not just "existential" weakening.
@@ -179,7 +179,7 @@ def bankRobberyConfigA_Door2Closed : BankRobberyDatum :=
 /--
 Configuration B: All 4 doors in sequence (must pass all).
 
-Path exists only if ALL doors open.
+Path exists only if all doors are open.
 -/
 def bankRobberyConfigB_AllOpen : BankRobberyDatum :=
   { sentence := "The doors were open."
@@ -206,10 +206,10 @@ The problem sets example (Križ 2015, attributed to Spector).
 Shows that non-maximal readings cannot convey arbitrary information.
 
 Context: Course with two paths to pass:
-  1. Do ALL problem sets, OR
-  2. Do HALF problem sets AND write essay
+  1. Do all problem sets, or
+  2. Do half problem sets and write essay
 
-"He did the problem sets" should NOT be able to mean
+"He did the problem sets" should not be able to mean
 "He did what was necessary (via either path)".
 
 Source: Križ (2015:85), dissertation (75)
@@ -341,7 +341,7 @@ structure DevelopmentalDatum where
 def tieuEtAlFinding : DevelopmentalDatum :=
   { ageGroup := "French-speaking children"
   , construction := "Plural definites"
-  , finding := "Children often interpret existentially; adult-like homogeneous reading found but NOT non-homogeneous 'all' reading"
+  , finding := "Children often interpret existentially; adult-like homogeneous reading found but not non-homogeneous 'all' reading"
   }
 
 
@@ -390,30 +390,5 @@ def truthDistinctionExamples : List TruthDistinctionDatum :=
 
 def strongRelevanceExamples : List StrongRelevanceDatum :=
   [stronglyRelevantExample, notStronglyRelevantExample, existentialStronglyRelevant]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `ContextualIssue`: Description of salient issue in context
-- `NonMaximalityDatum`: Same sentence, different contexts
-- `AllBlocksNonMaxDatum`: How "all" prevents weakening
-- `BankRobberyDatum`: Fine-grained non-maximality patterns
-- `StructuredNonMaxDatum`: Limits on non-maximal readings
-- `TruthDistinctionDatum`: Semantic vs p-truth
-- `StrongRelevanceDatum`: Partition alignment
-
-### Example Collections
-- `canonicalExamples`: SWITCHES scenario
-- `bankRobberyExamples`: Krifka's door configurations
-- `truthDistinctionExamples`: p-truth vs semantic truth
-- `strongRelevanceExamples`: Issue alignment patterns
-
-### Key References
-- Krifka (1996), Lasersohn (1999), Malamud (2012)
-- Križ (2015, 2016), Križ & Spector (2021)
--/
 
 end Phenomena.Plurals.NonMaximality

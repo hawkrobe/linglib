@@ -4,12 +4,12 @@
 Formalization of Montague (1973), the foundational paper establishing
 the homomorphism between natural language syntax and model-theoretic semantics.
 
-## Key Innovations
+## Innovations
 
-1. **Intensions**: Type `s` for possible worlds, `s ⇒ a` for intensions of type `a`
-2. **Category-Type Correspondence**: Syntactic categories map to semantic types
-3. **Quantifying-In (S14/T14)**: Derives scope ambiguity compositionally
-4. **The Homomorphism**: Syntax-semantics mapping is structure-preserving
+1. Intensions: Type `s` for possible worlds, `s ⇒ a` for intensions of type `a`
+2. Category-type correspondence: Syntactic categories map to semantic types
+3. Quantifying-in (S14/T14): Derives scope ambiguity compositionally
+4. The homomorphism: Syntax-semantics mapping is structure-preserving
 
 ## Note on Types
 
@@ -32,7 +32,7 @@ open Montague
 -- Section 1: Types (IL - Intensional Logic)
 
 /-!
-**Types of Intensional Logic (Definition 1)**
+Types of Intensional Logic (Definition 1)
 
 The set of types is the smallest set Y such that:
 - e ∈ Y (entities)
@@ -69,7 +69,7 @@ abbrev Ty.setIntens := ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄       -- Sets of
 -- Section 2: Syntactic Categories (Definition 3)
 
 /--
-**Syntactic Categories**
+Syntactic Categories
 
 Basic categories: t (sentences), e (entity-denoting), CN (common nouns), IV (intransitive verbs)
 Derived categories: A/B and A//B (slash categories)
@@ -95,9 +95,9 @@ notation A " //' " B => Cat.rslashI A B
 -- Section 3: Category-Type Correspondence (Definition 4)
 
 /--
-**The function f from categories to types**
+The function f from categories to types.
 
-This is the heart of the syntax-semantics interface.
+This is the core of the syntax-semantics interface.
 Each syntactic category corresponds to a semantic type.
 
 Key mappings:
@@ -119,7 +119,7 @@ def catToTy : Cat → Ty
   | .rslashI a b => ⦃⦃𝐬, catToTy b⦄, catToTy a⦄
 
 /--
-**Key insight**: Term phrases (T) denote generalized quantifiers.
+Term phrases (T) denote generalized quantifiers.
 
 "Every man" doesn't denote an entity; it denotes a function that takes
 a property (intension) and returns true iff every man has that property.
@@ -129,7 +129,7 @@ theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭�
 -- Section 4: Model Structure
 
 /--
-**Intensional Model**
+Intensional Model
 
 A PTQ model uses the canonical `Montague.Model` which includes:
 - `Entity` : domain of entities
@@ -146,7 +146,7 @@ abbrev PTQModel.Intens (m : PTQModel) (a : Ty) := m.World → m.interpTy a
 -- Section 5: Lexical Entries and Translations
 
 /--
-**Lexical Entry Structure**
+Lexical Entry Structure
 
 Each word has:
 - Surface form
@@ -159,7 +159,7 @@ structure LexEntry (m : PTQModel) where
   -- The translation would be a term of type m.interpTy (catToTy cat)
 
 /-
-**Basic Expressions (BₐC for each category C)**
+Basic Expressions (BₐC for each category C)
 
 Examples from PTQ:
 - Bₐₑ = {John, Mary, Bill, ...} (proper names)
@@ -171,7 +171,7 @@ Examples from PTQ:
 -- Section 6: Syntactic Rules (S1-S17)
 
 /--
-**Syntactic Rule**
+Syntactic Rule
 
 A rule specifies:
 - Input categories
@@ -188,7 +188,7 @@ inductive SynRule where
   deriving DecidableEq, Repr
 
 /-
-**S4: Subject-Predicate Rule**
+S4: Subject-Predicate Rule
 
 If α ∈ P_T and δ ∈ P_IV, then F₄(α, δ) ∈ P_t
 
@@ -196,7 +196,7 @@ If α ∈ P_T and δ ∈ P_IV, then F₄(α, δ) ∈ P_t
 -/
 
 /-
-**S14: Quantifying-In (The Key Rule)**
+S14: Quantifying-In
 
 If α ∈ P_T and φ ∈ P_t, then F₁₀,ₙ(α, φ) ∈ P_t
 
@@ -211,7 +211,7 @@ Example: "Every man loves a woman"
 -- Section 7: Translation Rules (T1-T17) - The Homomorphism
 
 /--
-**Translation Rule**
+Translation Rule
 
 Maps syntactic derivations to semantic representations.
 This is the homomorphism: h : Syntax → Semantics
@@ -226,7 +226,7 @@ inductive TransRule where
   deriving DecidableEq, Repr
 
 /-
-**T2: Determiner Translations**
+T2: Determiner Translations
 
 - "every α" translates to: λP.∀x[α'(x) → ˇP(x)]
 - "a α" / "an α" translates to: λP.∃x[α'(x) ∧ ˇP(x)]
@@ -238,7 +238,7 @@ Where:
 -/
 
 /-
-**T4: Subject-Predicate Translation**
+T4: Subject-Predicate Translation
 
 If α translates to α' and δ translates to δ', then
 F₄(α, δ) translates to α'(^δ')
@@ -249,7 +249,7 @@ F₄(α, δ) translates to α'(^δ')
 -/
 
 /-
-**T14: Quantifying-In Translation (The Key Rule)**
+T14: Quantifying-In Translation
 
 If α translates to α' and φ translates to φ', then
 F₁₀,ₙ(α, φ) translates to α'(^λxₙ.φ')
@@ -261,7 +261,7 @@ the resulting property intension.
 -- Section 8: Scope Ambiguity via Quantifying-In
 
 /--
-**Scope Reading**
+Scope Reading
 
 Represents different scope orderings of quantifiers.
 -/
@@ -271,15 +271,15 @@ inductive ScopeReading where
   deriving DecidableEq, Repr
 
 /-
-**"Every man loves a woman" - Two Derivations**
+"Every man loves a woman" - Two Derivations
 
-**Derivation 1 (∀ > ∃): Surface scope**
+Derivation 1 (∀ > ∃): Surface scope
 1. "he₁ loves a woman" (S5)
 2. "every man loves a woman" by quantifying-in "every man" for he₁ (S14,1)
 → ∀x[man(x) → ∃y[woman(y) ∧ love(x,y)]]
   "For every man, there is some woman he loves" (possibly different women)
 
-**Derivation 2 (∃ > ∀): Inverse scope**
+Derivation 2 (∃ > ∀): Inverse scope
 1. "he₁ loves he₂" (S5 with pronoun object)
 2. "he₁ loves a woman" by quantifying-in "a woman" for he₂ (S14,2)
 3. "every man loves a woman" by quantifying-in "every man" for he₁ (S14,1)
@@ -315,7 +315,7 @@ def isWoman : ToyEntity → Bool
 def allEntities : List ToyEntity := [.m1, .m2, .w1, .w2]
 
 /--
-**Love relation for surface scope scenario**
+Love relation for surface scope scenario.
 
 m1 loves w1, m2 loves w2 (different women)
 -/
@@ -325,7 +325,7 @@ def loveSurface : ToyEntity → ToyEntity → Bool
   | _, _ => false
 
 /--
-**Love relation for inverse scope scenario**
+Love relation for inverse scope scenario.
 
 m1 loves w1, m2 loves w1 (same woman)
 -/
@@ -335,7 +335,7 @@ def loveInverse : ToyEntity → ToyEntity → Bool
   | _, _ => false
 
 /--
-**Surface scope reading: ∀x[man(x) → ∃y[woman(y) ∧ love(x,y)]]**
+Surface scope reading: ∀x[man(x) → ∃y[woman(y) ∧ love(x,y)]]
 
 "For every man, there exists a woman that he loves."
 -/
@@ -344,7 +344,7 @@ def surfaceScopeTrue (love : ToyEntity → ToyEntity → Bool) : Bool :=
     allEntities.filter isWoman |>.any λ y => love x y
 
 /--
-**Inverse scope reading: ∃y[woman(y) ∧ ∀x[man(x) → love(x,y)]]**
+Inverse scope reading: ∃y[woman(y) ∧ ∀x[man(x) → love(x,y)]]
 
 "There exists a woman such that every man loves her."
 -/
@@ -355,7 +355,7 @@ def inverseScopeTrue (love : ToyEntity → ToyEntity → Bool) : Bool :=
 -- Section 9: Key Theorems
 
 /--
-**Surface scope is true in surface scenario**
+Surface scope is true in surface scenario.
 
 When each man loves a different woman, surface scope is satisfied.
 -/
@@ -363,7 +363,7 @@ theorem surface_scope_surface_scenario :
     surfaceScopeTrue loveSurface = true := by native_decide
 
 /--
-**Inverse scope is false in surface scenario**
+Inverse scope is false in surface scenario.
 
 No single woman is loved by all men.
 -/
@@ -371,7 +371,7 @@ theorem inverse_scope_surface_scenario :
     inverseScopeTrue loveSurface = false := by native_decide
 
 /--
-**Both scopes are true in inverse scenario**
+Both scopes are true in inverse scenario.
 
 When all men love the same woman, both readings are true.
 -/
@@ -382,7 +382,7 @@ theorem inverse_scope_inverse_scenario :
     inverseScopeTrue loveInverse = true := by native_decide
 
 /--
-**Scope ambiguity theorem**
+Scope ambiguity theorem.
 
 The two readings are not equivalent - they differ in the surface scenario.
 This is why "Every man loves a woman" is ambiguous.
@@ -392,7 +392,7 @@ theorem scope_readings_differ :
   native_decide
 
 /--
-**Inverse scope entails surface scope**
+Inverse scope entails surface scope.
 
 ∃y∀x.R(x,y) → ∀x∃y.R(x,y)
 
@@ -412,9 +412,9 @@ theorem inverse_entails_surface (love : ToyEntity → ToyEntity → Bool) :
 -- Section 10: The Homomorphism Property
 
 /-
-**The Fundamental Insight of PTQ**
+The fundamental insight of PTQ.
 
-The translation h from syntax to semantics is a **homomorphism**:
+The translation h from syntax to semantics is a homomorphism:
 it preserves structure.
 
 For each syntactic rule Sₙ: A × B → C with operation Fₙ,
@@ -428,13 +428,13 @@ This means:
 - Translate each step (apply corresponding semantic rules)
 - The final translation gives the sentence's meaning
 
-**This is the "proper treatment"**: quantifier scope is handled by
+This is the "proper treatment": quantifier scope is handled by
 the grammar itself (via S14 quantifying-in), not by post-hoc
 scope-assignment rules.
 -/
 
 /--
-**Derivation Tree**
+Derivation Tree
 
 Represents a syntactic derivation with rule applications.
 -/
@@ -445,7 +445,7 @@ inductive Derivation where
   deriving Repr
 
 /--
-**Derived category of a derivation**
+Derived category of a derivation.
 -/
 def Derivation.cat : Derivation → Cat
   | .lex _ c => c
@@ -456,58 +456,5 @@ def Derivation.cat : Derivation → Cat
       | _ => .t  -- simplified
   | .quantIn _ _ _ => .t
 
--- Summary
-
-/-
-## What This Module Formalizes
-
-### From Montague (1973)
-
-1. **Intensional Logic Types** (Definition 1)
-   - Basic types e, t, s (using canonical Montague.Ty)
-   - Function types `a ⇒ b`
-   - Intension types `s ⇒ a`
-
-2. **Syntactic Categories** (Definition 3)
-   - Basic: e, t, CN, IV, TV, T
-   - Derived: A/B, A\B, A//B
-
-3. **Category-Type Correspondence** (Definition 4)
-   - f(e) = e, f(t) = t
-   - f(CN) = f(IV) = s ⇒ (e ⇒ t)
-   - f(T) = (s ⇒ (e ⇒ t)) ⇒ t
-   - f(A/B) = (s ⇒ f(B)) ⇒ f(A)
-
-4. **Quantifying-In (S14/T14)**
-   - Syntactic rule substituting term for pronoun
-   - Semantic rule abstracting over pronoun position
-   - Source of scope ambiguity
-
-### Key Theorems
-
-- `scope_readings_differ`: Surface and inverse scope are distinct
-- `inverse_entails_surface`: ∃∀ entails ∀∃
-- `surface_scope_surface_scenario`: Example verification
-- `inverse_scope_inverse_scenario`: Example verification
-
-### The PTQ Homomorphism
-
-```
-Syntax                          Semantics
-──────                          ─────────
-"every man"                 →   λP.∀x[man(x) → P(x)]
-"loves"                     →   love'
-"a woman"                   →   λP.∃y[woman(y) ∧ P(y)]
-
-S14 (quantify-in)           →   T14 (apply quantifier to abstraction)
-
-"every man loves a woman"   →   Reading 1: ∀x∃y[...]
-(derivation 1)                  Reading 2: ∃y∀x[...]
-(derivation 2)
-```
-
-The homomorphism ensures that **different derivations yield different meanings**,
-which is exactly what we need for scope ambiguity.
--/
 
 end Montague.PTQ

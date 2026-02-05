@@ -97,7 +97,7 @@ def allNouns : List NounEntry := [
 ]
 
 def lookup (form : String) : Option NounEntry :=
-  allNouns.find? fun n => n.form == form
+  allNouns.find? λ n => n.form == form
 
 def bareNPLicensed : Bool := true
 

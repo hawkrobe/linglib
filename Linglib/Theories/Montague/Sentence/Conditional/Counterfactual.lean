@@ -6,14 +6,14 @@ following Ramotowska, Marty, Romoli & Santorio (2025).
 
 ## The Three Theories
 
-1. **Universal Theory** (Lewis/Kratzer): Universal quantification over closest A-worlds
+1. Universal Theory (Lewis/Kratzer): Universal quantification over closest A-worlds
    - ⦃A □→ B⦄_w = ∀w' ∈ closest(w, A). B(w')
 
-2. **Selectional Theory** (Stalnaker): Selection function + supervaluation
+2. Selectional Theory (Stalnaker): Selection function + supervaluation
    - ⦃A □→ B⦄_w = B(s(w, A)) for all legitimate selection functions s
    - Indeterminate when s₁(w,A) ∈ B but s₂(w,A) ∉ B
 
-3. **Homogeneity Theory** (von Fintel, Križ): Universal + homogeneity presupposition
+3. Homogeneity Theory (von Fintel, Križ): Universal + homogeneity presupposition
    - Presupposes: all closest A-worlds agree on B
    - Asserts: they all satisfy B (given the presupposition)
 
@@ -65,8 +65,8 @@ def closestWorlds {W : Type*} (sim : SimilarityOrdering W)
 def closestWorldsB {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W) (w : W) (A : List W) : List W :=
   let pWorlds := A.filter (domain.contains ·)
-  pWorlds.filter fun w' =>
-    pWorlds.all fun w'' => closer w w' w'' || !closer w w'' w'
+  pWorlds.filter λ w' =>
+    pWorlds.all λ w'' => closer w w' w'' || !closer w w'' w'
 
 
 /-!
@@ -75,7 +75,7 @@ def closestWorldsB {W : Type*} [DecidableEq W]
 The standard possible-worlds analysis: counterfactuals universally quantify
 over the closest antecedent-worlds.
 
-**Definition**: "If A were, B would" is true at w iff every closest A-world satisfies B.
+"If A were, B would" is true at w iff every closest A-world satisfies B.
 
 This predicts:
 - "Every student would pass if they studied" is FALSE if even ONE closest
@@ -83,20 +83,20 @@ This predicts:
 -/
 
 /--
-**Universal counterfactual semantics** (Lewis/Kratzer).
+Universal counterfactual semantics (Lewis/Kratzer).
 
-True at w iff ALL closest A-worlds satisfy B.
+True at w iff all closest A-worlds satisfy B.
 -/
 def universalCounterfactual {W : Type*} (sim : SimilarityOrdering W)
     (domain : Set W) (A B : W → Prop) : W → Prop :=
-  fun w =>
+  λ w =>
     let closest := closestWorlds sim domain w { w' | A w' }
     closest = ∅ ∨ ∀ w' ∈ closest, B w'
 
 /-- Decidable version. -/
 def universalCounterfactualB {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W) (A B : W → Bool) : W → Bool :=
-  fun w =>
+  λ w =>
     let closest := closestWorldsB closer domain w (domain.filter A)
     closest.isEmpty || closest.all B
 
@@ -108,10 +108,10 @@ Stalnaker's approach with supervaluation over ties:
 1. A selection function picks THE closest antecedent-world
 2. When multiple worlds are equally close (ties), supervaluate over all choices
 
-**Three-valued semantics**:
-- TRUE: B holds at s(w, A) for ALL legitimate selection functions s
-- FALSE: B fails at s(w, A) for ALL legitimate selection functions s
-- INDETERMINATE: B holds for some s but not others
+Three-valued semantics:
+- True: B holds at s(w, A) for all legitimate selection functions s
+- False: B fails at s(w, A) for all legitimate selection functions s
+- Indeterminate: B holds for some s but not others
 
 This predicts:
 - "Every student would pass if they studied" is INDETERMINATE when
@@ -150,7 +150,7 @@ def or : TruthValue → TruthValue → TruthValue
 end TruthValue
 
 /--
-**Selectional counterfactual semantics** (Stalnaker + supervaluation).
+Selectional counterfactual semantics (Stalnaker + supervaluation).
 
 Returns a three-valued truth value based on agreement across selection functions.
 -/
@@ -167,7 +167,7 @@ def selectionalCounterfactual {W : Type*} [DecidableEq W]
     else .indeterminate
 
 /--
-**Conditional Excluded Middle (CEM)** holds for selectional semantics.
+Conditional Excluded Middle (CEM) holds for selectional semantics.
 
 (A □→ B) ∨ (A □→ ¬B) is always true or indeterminate, never false.
 
@@ -200,8 +200,8 @@ theorem cem_selectional {W : Type*} [DecidableEq W]
 ## Homogeneity Theory
 
 Universal quantification PLUS a homogeneity presupposition:
-- **Presupposes**: All closest A-worlds AGREE on B (all true or all false)
-- **Asserts**: They all satisfy B (given the presupposition)
+- Presupposes: all closest A-worlds agree on B (all true or all false)
+- Asserts: they all satisfy B (given the presupposition)
 
 When the presupposition fails (mixed closest worlds), the sentence is
 neither true nor false (presupposition failure).
@@ -224,7 +224,7 @@ structure PresupResult where
   deriving Repr, DecidableEq
 
 /--
-**Homogeneity counterfactual semantics**.
+Homogeneity counterfactual semantics.
 
 Presupposes that all closest A-worlds agree on B.
 -/
@@ -245,7 +245,7 @@ def homogeneityCounterfactual {W : Type*} [DecidableEq W]
       { presupposition := .failed, assertion := none }
 
 /--
-**Presupposition Preservation** for homogeneity semantics.
+Presupposition Preservation for homogeneity semantics.
 
 If the presupposition is satisfied for (A □→ B), it's also satisfied for (A □→ ¬B).
 This is because homogeneity for B (all true or all false) implies homogeneity for ¬B.
@@ -263,7 +263,7 @@ theorem presup_preserved_homogeneity {W : Type*} [DecidableEq W]
     all_goals (first | rfl | simp_all [Bool.not_not])
 
 /--
-**Negation Swap** holds for homogeneity semantics in the non-vacuous case.
+Negation Swap holds for homogeneity semantics in the non-vacuous case.
 
 When closest worlds are non-empty and presupposition is satisfied:
   assertion(A □→ B).map (¬·) = assertion(A □→ ¬B)
@@ -287,18 +287,18 @@ theorem negation_swap_homogeneity_nonvacuous {W : Type*} [DecidableEq W]
 ## Projection Duality: Why Strength Matters
 
 The deeper insight behind Ramotowska et al.'s findings is that quantifier
-STRENGTH corresponds to a fundamental duality in how semantic values
+strength corresponds to a fundamental duality in how semantic values
 project through operators:
 
-**Universal-like operators** (every, no, □, ∧):
-  - CONJUNCTIVE projection: need ALL components to succeed
-  - Sensitive to NEGATIVE witnesses (one failure → overall failure)
-  - FRAGILE under heterogeneity
+Universal-like operators (every, no, □, ∧):
+  - Conjunctive projection: need all components to succeed
+  - Sensitive to negative witnesses (one failure leads to overall failure)
+  - Fragile under heterogeneity
 
-**Existential-like operators** (some, not-every, ◇, ∨):
-  - DISJUNCTIVE projection: need ONE component to succeed
-  - Sensitive to POSITIVE witnesses (one success → overall success)
-  - ROBUST under heterogeneity
+Existential-like operators (some, not-every, ◇, ∨):
+  - Disjunctive projection: need one component to succeed
+  - Sensitive to positive witnesses (one success leads to overall success)
+  - Robust under heterogeneity
 
 This duality manifests across natural language semantics:
 
@@ -329,7 +329,7 @@ def quantifierProjection : String → ProjectionType
   | _ => .disjunctive
 
 /--
-**The Projection Duality Theorem**
+The Projection Duality Theorem.
 
 For a list of three-valued results:
 - Conjunctive projection: TRUE iff all TRUE, FALSE iff any FALSE
@@ -350,7 +350,7 @@ def projectTruthValues (proj : ProjectionType) (results : List TruthValue) : Tru
     else .indeterminate
 
 /--
-**Strength effect as projection duality**.
+Strength effect as projection duality.
 
 Strong quantifiers use conjunctive projection; weak use disjunctive.
 -/
@@ -366,7 +366,7 @@ theorem strength_is_projection_duality (q : String) (results : List TruthValue) 
   constructor <;> intro h <;> cases h <;> simp_all [quantifierProjection, projectTruthValues]
 
 /--
-**Conjunctive projection is fragile**: one false element yields false.
+Conjunctive projection is fragile: one false element yields false.
 
 When any element is false, conjunctive projection cannot return true.
 -/
@@ -386,7 +386,7 @@ theorem conjunctive_fragile (results : List TruthValue)
   · decide
 
 /--
-**Disjunctive projection is robust**: one true element yields true.
+Disjunctive projection is robust: one true element yields true.
 
 When any element is true, disjunctive projection returns true.
 -/
@@ -401,7 +401,7 @@ theorem disjunctive_robust (results : List TruthValue)
 /-!
 ## Galois Connection: Why Duality?
 
-The projection duality is an instance of the **adjoint functor** relationship:
+The projection duality is an instance of the adjoint functor relationship:
 
     ∃ ⊣ Δ ⊣ ∀
 
@@ -414,8 +414,8 @@ Given projection π: D × W → W:
 - ∀_π is RIGHT adjoint to pullback π*
 
 The RAPL/LAPC principle:
-- **Left adjoints preserve colimits** (joins): ∃ is ROBUST
-- **Right adjoints preserve limits** (meets): ∀ is FRAGILE
+- Left adjoints preserve colimits (joins): ∃ is robust
+- Right adjoints preserve limits (meets): ∀ is fragile
 
 ### In the Truth Value Lattice
 
@@ -435,19 +435,19 @@ The quantifier-projection correspondence:
 Natural language quantifiers inherit their projection behavior from their
 categorical status as adjoints. This explains cross-linguistic universals:
 
-1. ALL languages have robust existentials and fragile universals
+1. All languages have robust existentials and fragile universals
 2. Polarity doesn't matter (no is strong like every) because both are ∀-like
 3. Strength = adjoint type, not logical polarity
 
 ### Connection to Other Phenomena
 
 The same adjoint duality explains:
-- **Presupposition projection**: Universal presup (fragile) vs existential (robust)
-- **Free Choice**: □(A∨B) → □A∧□B (right adjoint distributes over meet)
-- **NPI licensing**: DE = right adjoint composition = license; UE = left = block
-- **Homogeneity**: "The Xs" = hidden universal = fragile under heterogeneity
+- Presupposition projection: Universal presup (fragile) vs existential (robust)
+- Free Choice: □(A∨B) → □A∧□B (right adjoint distributes over meet)
+- NPI licensing: DE = right adjoint composition = license; UE = left = block
+- Homogeneity: "The Xs" = hidden universal = fragile under heterogeneity
 
-The Ramotowska et al. finding that STRENGTH determines counterfactual
+The Ramotowska et al. finding that strength determines counterfactual
 judgments is thus a reflection of deep categorical structure in semantics.
 -/
 
@@ -540,12 +540,12 @@ Given:
 | No d □→ | FALSE | FALSE | PRESUP FAIL |
 | Not every d □→ | TRUE | INDET | PRESUP FAIL |
 
-Ramotowska et al. find that participants' judgments pattern with SELECTIONAL:
-- Quantifier STRENGTH determines responses, not polarity
+Ramotowska et al. find that participants' judgments pattern with the selectional theory:
+- Quantifier strength determines responses, not polarity
 -/
 
 /--
-**Result of embedding counterfactual under a quantifier**.
+Result of embedding counterfactual under a quantifier.
 
 For each individual, we get a truth value. The quantifier then operates
 over these truth values.
@@ -596,11 +596,11 @@ def noSelectional (results : List TruthValue) : TruthValue :=
   else .indeterminate
 
 /--
-**Key theorem: Quantifier strength determines response pattern**.
+Quantifier strength determines response pattern.
 
 Under selectional semantics with mixed individual results:
-- STRONG quantifiers (every, no) → FALSE
-- WEAK quantifier (some) → TRUE
+- Strong quantifiers (every, no) yield false
+- Weak quantifier (some) yields true
 
 This matches Ramotowska et al.'s experimental findings.
 
@@ -663,7 +663,7 @@ See `Theories/NadathurLauer2020/` for the causal model infrastructure.
 -/
 
 /--
-**Intervention-based selection**: Select the world resulting from do(A).
+Intervention-based selection: Select the world resulting from do(A).
 
 Given a causal dynamics and situation, the selected A-world is the
 result of normal development after intervening to make A true.
@@ -674,7 +674,7 @@ def interventionSelection (dyn : CausalDynamics) (s : Situation)
   normalDevelopment dyn sWithA
 
 /--
-**Counterfactual via intervention**.
+Counterfactual via intervention.
 
 "If A were true, B would be true" using causal model semantics.
 -/
@@ -684,7 +684,7 @@ def causalCounterfactual (dyn : CausalDynamics) (s : Situation)
   counterfactualWorld.hasValue consequent true
 
 /--
-**Theorem: Causal counterfactual matches necessity test for negative antecedent**.
+Causal counterfactual matches necessity test for negative antecedent.
 
 "If A were false, B would be false" = A is necessary for B.
 This connects Stalnaker selection to Lewis/Nadathur-Lauer counterfactual dependence.

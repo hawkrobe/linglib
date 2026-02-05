@@ -3,9 +3,9 @@
 
 "Polite Speech Emerges From Competing Social Goals"
 
-## Key Innovation
+## Innovation
 
-This model has TWO speaker levels with different utility structures:
+This model has two speaker levels with different utility structures:
 - **S1**: Balances informational + social utilities (weighted by φ)
 - **S2**: Balances informational + social + presentational utilities (ω weights)
 
@@ -46,7 +46,7 @@ open RSA RSA.Eval
 
 /-- Expected value under a distribution -/
 def expectedValue (dist : List (HeartState × ℚ)) (f : HeartState → ℚ) : ℚ :=
-  dist.foldl (fun acc (s, p) => acc + p * f s) 0
+  dist.foldl (λ acc (s, p) => acc + p * f s) 0
 
 
 /--
@@ -58,7 +58,7 @@ Uses soft semantics from the norming experiment.
 Assumes uniform prior over states.
 -/
 def L0 (w : Utterance) : List (HeartState × ℚ) :=
-  let scores := allHeartStates.map fun s =>
+  let scores := allHeartStates.map λ s =>
     let sem := utteranceSemantics w s
     let prior := 1  -- Uniform prior
     (s, sem * prior)
@@ -96,7 +96,7 @@ P_S1(w | s, φ) ∝ exp[α · U_S1(w; s; φ)]
 φ = 0: Pure social
 -/
 def S1 (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) : List (Utterance × ℚ) :=
-  let scores := allUtterances.map fun w =>
+  let scores := allUtterances.map λ w =>
     let infoScore := S1_informationalUtility w s
     let socialScore := S1_socialUtility w / 3  -- Normalize to [0, 1]
     let cost := (utteranceCost w : ℚ) * cfg.costScale / 3  -- Scaled cost
@@ -120,7 +120,7 @@ Discretized goal weights φ for L1 to reason over.
 -/
 def discretePhis (steps : ℕ) : List ℚ :=
   if steps <= 1 then [1/2]
-  else List.range steps |>.map fun i => (i : ℚ) / (steps - 1 : ℚ)
+  else List.range steps |>.map λ i => (i : ℚ) / (steps - 1 : ℚ)
 
 /--
 L1: Pragmatic listener jointly infers state and S1's goal weight.
@@ -131,9 +131,9 @@ Assumes uniform priors over states and goal weights.
 -/
 def L1_joint (cfg : PolitenessConfig) (w : Utterance) : List ((HeartState × ℚ) × ℚ) :=
   let phis := discretePhis cfg.phiSteps
-  let pairs := allHeartStates.flatMap fun s =>
-    phis.map fun phi => (s, phi)
-  let scores := pairs.map fun (s, phi) =>
+  let pairs := allHeartStates.flatMap λ s =>
+    phis.map λ phi => (s, phi)
+  let scores := pairs.map λ (s, phi) =>
     let s1Score := S1_prob cfg s phi w
     let statePrior := 1  -- Uniform
     let phiPrior := 1    -- Uniform
@@ -143,8 +143,8 @@ def L1_joint (cfg : PolitenessConfig) (w : Utterance) : List ((HeartState × ℚ
 /-- L1 marginal distribution over states -/
 def L1_state (cfg : PolitenessConfig) (w : Utterance) : List (HeartState × ℚ) :=
   let joint := L1_joint cfg w
-  allHeartStates.map fun s =>
-    let prob := joint.filter (fun ((s', _), _) => s' == s)
+  allHeartStates.map λ s =>
+    let prob := joint.filter (λ ((s', _), _) => s' == s)
       |>.map (·.2) |> sumScores
     (s, prob)
 
@@ -152,8 +152,8 @@ def L1_state (cfg : PolitenessConfig) (w : Utterance) : List (HeartState × ℚ)
 def L1_phi (cfg : PolitenessConfig) (w : Utterance) : List (ℚ × ℚ) :=
   let joint := L1_joint cfg w
   let phis := discretePhis cfg.phiSteps
-  phis.map fun phi =>
-    let prob := joint.filter (fun ((_, phi'), _) => phi' == phi)
+  phis.map λ phi =>
+    let prob := joint.filter (λ ((_, phi'), _) => phi' == phi)
       |>.map (·.2) |> sumScores
     (phi, prob)
 
@@ -189,7 +189,7 @@ S2 presentational utility: speaker wants to project a particular goal φ.
 
 U_pres(w; φ) = ln(P_L1(φ | w))
 
-When φ ≈ 0.5, speaker wants to appear BOTH kind and honest.
+When φ ≈ 0.5, speaker wants to appear both kind and honest.
 This uniquely drives preference for indirect (negated) utterances.
 -/
 def S2_presentationalUtility (cfg : PolitenessConfig) (w : Utterance) (projectedPhi : ℚ) : ℚ :=
@@ -197,7 +197,7 @@ def S2_presentationalUtility (cfg : PolitenessConfig) (w : Utterance) (projected
   let phis := discretePhis cfg.phiSteps
   -- Helper: absolute difference for rationals
   let absDiff (a b : ℚ) : ℚ := if a > b then a - b else b - a
-  let closestPhi := phis.foldl (fun best phi =>
+  let closestPhi := phis.foldl (λ best phi =>
     if absDiff phi projectedPhi < absDiff best projectedPhi then phi else best) (1/2)
   L1_phi_prob cfg w closestPhi
 
@@ -224,7 +224,7 @@ P_S2(w | s, ω) ∝ exp[α · U_total(w; s; ω; φ)]
 -/
 def S2 (cfg : PolitenessConfig) (s : HeartState) (weights : InferredWeights)
     : List (Utterance × ℚ) :=
-  let scores := allUtterances.map fun w =>
+  let scores := allUtterances.map λ w =>
     let util := S2_totalUtility cfg w s weights
     -- Softmax approximation
     let softmaxScore := if util > 0 then powRat util cfg.alpha else 1/1000
@@ -240,25 +240,25 @@ def S2_prob (cfg : PolitenessConfig) (s : HeartState) (goal : GoalCondition)
 /--
 Prediction: "Both" goal produces more negation for bad states.
 
-When true state is 0 hearts and goal is to be BOTH informative and kind,
+When true state is 0 hearts and goal is to be both informative and kind,
 the speaker should prefer "It wasn't terrible" over direct alternatives.
 -/
 def predictNegationForBothGoal (cfg : PolitenessConfig) (s : HeartState) : ℚ :=
   let dist := S2 cfg s weightsBoth
   -- Sum probability of all negated utterances
-  dist.foldl (fun acc (w, p) =>
+  dist.foldl (λ acc (w, p) =>
     if w.isNegated then acc + p else acc) 0
 
 /-- Negation probability for informative goal -/
 def predictNegationForInfoGoal (cfg : PolitenessConfig) (s : HeartState) : ℚ :=
   let dist := S2 cfg s weightsInformative
-  dist.foldl (fun acc (w, p) =>
+  dist.foldl (λ acc (w, p) =>
     if w.isNegated then acc + p else acc) 0
 
 /-- Negation probability for kind goal -/
 def predictNegationForKindGoal (cfg : PolitenessConfig) (s : HeartState) : ℚ :=
   let dist := S2 cfg s weightsKind
-  dist.foldl (fun acc (w, p) =>
+  dist.foldl (λ acc (w, p) =>
     if w.isNegated then acc + p else acc) 0
 
 
@@ -272,10 +272,10 @@ Uses RSA.Eval for list-based computations suitable for #eval.
 -/
 def s1_L1 (cfg : PolitenessConfig) (u : Utterance) : List (HeartState × ℚ) :=
   RSA.Eval.basicL1 allUtterances allHeartStates
-    (fun u' s => utteranceSemantics u' s)
-    (fun _ => 1)  -- Uniform prior
+    (λ u' s => utteranceSemantics u' s)
+    (λ _ => 1)  -- Uniform prior
     cfg.alpha
-    (fun w => utteranceCost w)
+    (λ w => utteranceCost w)
     u
 
 
@@ -322,23 +322,19 @@ This soft semantics emerges from degree uncertainty + threshold uncertainty.
 
 -- PART 9a: Compositional Negation Properties
 
-/--
-**softNot is involutive (double negation cancels).**
+/-- softNot is involutive (double negation cancels).
 
-This is the soft analog of `pnot (pnot p) = p` in Boolean logic.
--/
+This is the soft analog of `pnot (pnot p) = p` in Boolean logic. -/
 theorem softNot_involutive : ∀ p : SoftProp, softNot (softNot p) = p := by
   intro p
   funext s
   simp only [softNot]
   ring
 
-/--
-**softNot is antitone (downward entailing).**
+/-- softNot is antitone (downward entailing).
 
 If `p s ≤ q s` for all states, then `softNot q s ≤ softNot p s`.
-This is the soft analog of `pnot_isDownwardEntailing` from Montague.
--/
+This is the soft analog of `pnot_isDownwardEntailing` from Montague. -/
 theorem softNot_antitone : ∀ p q : SoftProp,
     (∀ s, p s ≤ q s) → (∀ s, softNot q s ≤ softNot p s) := by
   intro p q hpq s
@@ -346,11 +342,9 @@ theorem softNot_antitone : ∀ p q : SoftProp,
   -- 1 - q s ≤ 1 - p s  ↔  p s ≤ q s
   linarith [hpq s]
 
-/--
-**Negated utterances are compositionally derived.**
+/-- Negated utterances are compositionally derived.
 
-This verifies that `utteranceSemantics .notX = softNot (utteranceSemantics .X)`.
--/
+`utteranceSemantics .notX = softNot (utteranceSemantics .X)`. -/
 theorem negation_is_compositional :
     (utteranceSemantics .notTerrible = softNot (utteranceSemantics .terrible)) ∧
     (utteranceSemantics .notBad = softNot (utteranceSemantics .bad)) ∧
@@ -361,15 +355,13 @@ theorem negation_is_compositional :
 -- PART 9b: Connection to Montague's pnot
 
 open Montague.Core.Polarity in
-/--
-**softNot mirrors pnot structure.**
+/-- softNot mirrors pnot structure.
 
 Both negation operators share the same algebraic structure:
 1. Involution: `not(not(x)) = x`
 2. Antitone: reverses ordering (DE property)
 
-`pnot_isDownwardEntailing` proves the Boolean case; `softNot_antitone` proves the soft case.
--/
+`pnot_isDownwardEntailing` proves the Boolean case; `softNot_antitone` proves the soft case. -/
 theorem softNot_mirrors_pnot_structure :
     -- Both are involutions
     (∀ p : SoftProp, softNot (softNot p) = p) ∧
@@ -377,38 +369,28 @@ theorem softNot_mirrors_pnot_structure :
     (∀ p q : SoftProp, (∀ s, p s ≤ q s) → (∀ s, softNot q s ≤ softNot p s)) :=
   ⟨softNot_involutive, softNot_antitone⟩
 
-/--
-**At Boolean endpoints, softNot = pnot.**
+/-- At Boolean endpoints, softNot = pnot.
 
-When soft semantics take values in {0, 1}, the operations coincide.
--/
+When soft semantics take values in {0, 1}, the operations coincide. -/
 theorem softNot_matches_boolean :
-    softNot (fun _ => 0) = (fun _ => 1) ∧
-    softNot (fun _ => 1) = (fun _ => 0) := by
+    softNot (λ _ => 0) = (λ _ => 1) ∧
+    softNot (λ _ => 1) = (λ _ => 0) := by
   constructor <;> funext s <;> simp [softNot]
 
-/--
-**Negation reverses the goodness ordering.**
+/-- Negation reverses the goodness ordering.
 
 If adjective A is "better" than B (more compatible with high states),
-then "not A" is "worse" than "not B".
-
-This is a direct application of `softNot_antitone`.
--/
+then "not A" is "worse" than "not B" (by `softNot_antitone`). -/
 theorem negation_reverses_goodness_order :
     -- "amazing" is better than "good" at h3
     adjMeaning .amazing .h3 > adjMeaning .good .h3 →
-    -- So "not amazing" is LESS good than "not good" at h3
+    -- So "not amazing" is less good than "not good" at h3
     softNot (adjMeaning .amazing) .h3 < softNot (adjMeaning .good) .h3 := by
   intro _
   native_decide
 
-/--
-**Double negation restores original meaning.**
-
-Applying softNot twice returns the original semantics.
-This mirrors `pnot_pnot_isUpwardEntailing` (DE ∘ DE = UE).
--/
+/-- Applying softNot twice returns the original semantics.
+This mirrors `pnot_pnot_isUpwardEntailing` (DE ∘ DE = UE). -/
 theorem double_negation_cancels :
     ∀ adj : Adjective, softNot (softNot (adjMeaning adj)) = adjMeaning adj := by
   intro adj
@@ -416,15 +398,11 @@ theorem double_negation_cancels :
 
 -- PART 9c: Qualitative Predictions from Compositionality
 
-/--
-**Qualitative theorem: Negation makes bad states more acceptable.**
+/-- Negation makes bad states more acceptable.
 
-For the "terrible" adjective:
-- Direct "terrible" is highly compatible with 0 hearts
-- Compositional "not terrible" is highly compatible with higher states
-
-This emerges from the compositional semantics, not stipulated.
--/
+For "terrible": direct form is highly compatible with 0 hearts;
+compositional "not terrible" is highly compatible with higher states.
+This emerges from the compositional semantics, not stipulated. -/
 theorem negation_shifts_compatibility :
     -- "terrible" peaks at h0
     adjMeaning .terrible .h0 > adjMeaning .terrible .h3 →
@@ -433,58 +411,18 @@ theorem negation_shifts_compatibility :
   intro _
   native_decide
 
-/--
-**Qualitative theorem: Negation is informationally weaker.**
+/-- Negation is informationally weaker.
 
 "Not terrible" is compatible with multiple states (1, 2, 3 hearts),
 while "good" is more specific (peaks at 2-3 hearts).
 
-This weak informativity + face-saving is why "both" goal speakers prefer negation.
--/
+This weak informativity combined with face-saving is why "both" goal
+speakers prefer negation. -/
 theorem negation_is_vague :
     -- "not terrible" has high probability for states 1, 2, 3
     softNot (adjMeaning .terrible) .h1 > 90/100 ∧
     softNot (adjMeaning .terrible) .h2 > 90/100 ∧
     softNot (adjMeaning .terrible) .h3 > 90/100 := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Functions
-- `L0`: Literal listener (soft semantics)
-- `S1`: First-order speaker (informational + social)
-- `L1_joint`: Pragmatic listener (state + goal inference)
-- `S2`: Second-order speaker (informational + social + presentational)
-
-### Key Types
-- `HeartState`: 0-3 hearts (true quality)
-- `Utterance`: 8 options (4 adjectives × pos/neg)
-- `GoalCondition`: informative, kind, both
-- `InferredWeights`: ω_inf, ω_soc, ω_pres, φ
-
-### Predictions
-- `predictNegationForBothGoal`: P(negation | both-goal)
-- `predictNegationForInfoGoal`: P(negation | informative-goal)
-- `predictNegationForKindGoal`: P(negation | kind-goal)
-
-### Key Result
-The "both" goal condition uniquely produces preference for negated utterances
-(indirect speech) when the true state is bad. This emerges from the
-presentational utility: the speaker wants to *appear* both kind and honest,
-which negation signals even when the speaker can't fully achieve both goals.
-
-## Architectural Note
-
-This model does NOT fit neatly into the standard RSAScenario because:
-1. It has TWO speaker levels (S1, S2) with different utility structures
-2. The presentational utility requires L1 to infer S1's goal weight φ
-3. S2's utility depends on what L1 infers about the speaker
-
-The custom implementation here shows how the RSA framework can be extended
-for more complex social reasoning beyond standard pragmatic inference.
--/
 
 end RSA.Implementations.YoonEtAl2020

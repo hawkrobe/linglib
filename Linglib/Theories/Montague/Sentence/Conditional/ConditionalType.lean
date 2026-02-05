@@ -4,7 +4,7 @@
 Formalizes the distinction between Hypothetical Conditionals (HCs) and
 Premise Conditionals (PCs) as described in the linguistics literature.
 
-## Key Insight
+## Insight
 
 HCs and PCs have the SAME truth conditions but DIFFERENT felicity conditions:
 - **HC**: Antecedent is supposed/hypothesized; speaker uncertain
@@ -97,8 +97,8 @@ antecedent grounded in prior discourse.
 -/
 def echoesDiscourse {W : Type*} (ds : DiscourseState W) (p : BProp W)
     (worlds : List W) : Bool :=
-  ds.dcS.any (fun q => Decidable.entails W worlds q p) ||
-  ds.cg.any (fun q => Decidable.entails W worlds q p)
+  ds.dcS.any (λ q => Decidable.entails W worlds q p) ||
+  ds.cg.any (λ q => Decidable.entails W worlds q p)
 
 /--
 Weaker echo check: proposition is merely consistent with discourse.
@@ -108,7 +108,7 @@ what's been established, even if not explicitly entailed.
 -/
 def consistentWithDiscourse {W : Type*} (ds : DiscourseState W) (p : BProp W)
     (worlds : List W) : Bool :=
-  worlds.any fun w => ds.compatible w && p w
+  worlds.any λ w => ds.compatible w && p w
 
 -- Felicity Conditions
 
@@ -403,14 +403,14 @@ This module provides:
 - `licensesNPI`: Check if context licenses NPIs
 - `licensesPPI`: Check if context licenses PPIs
 
-### Key Theorems
+### Theorems
 - `hc_pc_same_semantics`: HCs and PCs have identical truth conditions
 - `hc_licenses_npi`: HCs license NPIs in antecedent
 - `pc_licenses_ppi`: PCs license PPIs in antecedent
 - `pc_blocks_npi`: PCs do NOT license NPIs (key insight!)
 - `hc_blocks_ppi`: HCs do NOT license PPIs
 
-### Key Insight
+### Insight
 
 The HC/PC distinction is DISCOURSE-LEVEL, not semantic. The polarity
 licensing pattern requires separating:

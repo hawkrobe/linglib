@@ -6,16 +6,16 @@ Theory-neutral empirical patterns and formal puzzles for vague predicates.
 ## Scope
 
 This module covers vagueness-specific phenomena:
-- **Borderline Cases**: Intermediate judgments for middle values
-- **Sorites Paradox**: Acceptance of individual premises, rejection of conclusion
-- **Higher-Order Vagueness**: Borderline cases of borderline cases
-- **Penumbral Connections**: Logical relationships in borderline region
-- **Tolerance Principle**: The key sorites ingredient
+- Borderline cases: intermediate judgments for middle values
+- Sorites paradox: acceptance of individual premises, rejection of conclusion
+- Higher-order vagueness: borderline cases of borderline cases
+- Penumbral connections: logical relationships in borderline region
+- Tolerance principle: the sorites ingredient
 
 For degree semantics (scale structure, Kennedy typology, degree modifiers),
 see `Phenomena/Degrees.lean`.
 
-## Key Insight
+## Insight
 
 Vagueness arises from degree semantics + threshold uncertainty:
 - Degrees provide the underlying scale
@@ -136,7 +136,7 @@ def tallSorites : SoritesDatum :=
   , numSteps := 762  -- ~30 inches = 762 mm
   , acceptPremise1 := true
   , acceptToleranceSteps := true  -- each individual step accepted
-  , acceptConclusion := false     -- paradoxical!
+  , acceptConclusion := false     -- paradoxical
   }
 
 def heapSorites : SoritesDatum :=
@@ -175,14 +175,14 @@ def soritesExamples : List SoritesDatum :=
 The problem of higher-order vagueness.
 
 If "tall" has borderline cases, what about "borderline tall"?
-Is there a SHARP boundary between "borderline tall" and "clearly tall"?
+Is there a sharp boundary between "borderline tall" and "clearly tall"?
 
 - First-order vagueness: borderline cases of "tall"
 - Second-order vagueness: borderline cases of "borderline tall"
 - Third-order vagueness: borderline cases of "borderline borderline tall"
 - ... and so on
 
-This threatens any theory that posits sharp boundaries ANYWHERE.
+This threatens any theory that posits sharp boundaries anywhere.
 
 Source: Fine (1975), Williamson (1994), Raffman (2014)
 -/
@@ -213,7 +213,7 @@ The "definitely" operator and higher-order vagueness.
 
 If "Definitely tall" means "clearly tall" (not borderline), then:
 - "Definitely tall" should have sharper boundaries than "tall"
-- But "definitely" is ITSELF vague!
+- But "definitely" is itself vague.
 - So we get: "borderline definitely tall"
 
 Iterating: "definitely definitely tall", etc.
@@ -231,7 +231,7 @@ structure DefinitelyOperatorData where
 def definitelyOperator : DefinitelyOperatorData :=
   { predicate := "tall"
   , eliminatesBorderline := true   -- that's the intent
-  , definitelyIsVague := true      -- the problem!
+  , definitelyIsVague := true      -- the problem
   , borderlineDefinitely := true   -- so this is possible
   , iterationHelps := false        -- problem just moves up
   }
@@ -241,8 +241,8 @@ def definitelyOperator : DefinitelyOperatorData :=
 Penumbral connections: logical relationships that hold even in borderline cases.
 
 Even if we don't know whether John is tall:
-- "John is tall ∨ John is not tall" is TRUE (excluded middle)
-- "John is tall ∧ John is not tall" is FALSE (non-contradiction)
+- "John is tall ∨ John is not tall" is true (excluded middle)
+- "John is tall ∧ John is not tall" is false (non-contradiction)
 - If John = 5'9" and Mary = 5'9", then "John is tall ↔ Mary is tall" (same-height)
 
 These are "penumbral truths" - true in the borderline region.
@@ -265,7 +265,7 @@ def excludedMiddle : PenumbralConnectionData :=
   { connectionName := "Excluded Middle"
   , formalStatement := "∀x. Tall(x) ∨ ¬Tall(x)"
   , alwaysTrue := true
-  , borderlineExample := "John is 5'9\". 'John is tall or John is not tall' is TRUE"
+  , borderlineExample := "John is 5'9\". 'John is tall or John is not tall' is true"
   , supervaluationismCaptures := true   -- true on all precisifications
   , degreeTheoryCaptures := false       -- 0.5 ∨ 0.5 = 0.5 ≠ 1 (with standard ∨)
   }
@@ -274,7 +274,7 @@ def nonContradiction : PenumbralConnectionData :=
   { connectionName := "Non-Contradiction"
   , formalStatement := "∀x. ¬(Tall(x) ∧ ¬Tall(x))"
   , alwaysTrue := true
-  , borderlineExample := "John is 5'9\". 'John is tall and not tall' is FALSE"
+  , borderlineExample := "John is 5'9\". 'John is tall and not tall' is false"
   , supervaluationismCaptures := true
   , degreeTheoryCaptures := false  -- 0.5 ∧ 0.5 = 0.5 ≠ 0
   }
@@ -283,7 +283,7 @@ def sameHeightConnection : PenumbralConnectionData :=
   { connectionName := "Same-Height Equivalence"
   , formalStatement := "∀x y. Height(x) = Height(y) → (Tall(x) ↔ Tall(y))"
   , alwaysTrue := true
-  , borderlineExample := "John and Mary are both 5'9\". 'John is tall iff Mary is tall' is TRUE"
+  , borderlineExample := "John and Mary are both 5'9\". 'John is tall iff Mary is tall' is true"
   , supervaluationismCaptures := true  -- all precisifications respect this
   , degreeTheoryCaptures := true       -- same degree → same truth value
   }
@@ -302,12 +302,12 @@ def penumbralExamples : List PenumbralConnectionData :=
 
 
 /--
-The tolerance principle: the key ingredient in sorites paradoxes.
+The tolerance principle: the central ingredient in sorites paradoxes.
 
 Tolerance: If x is F and y differs from x by only a tiny amount,
            then y is also F.
 
-This seems TRUE for vague predicates:
+This seems true for vague predicates:
 - 1mm can't make the difference between tall and not-tall
 - $1 can't make the difference between expensive and not-expensive
 - 1 grain can't make the difference between heap and not-heap
@@ -340,7 +340,7 @@ def priceTolerance : TolerancePrincipleData :=
   , toleranceMargin := "$1"
   , individualStepAcceptable := true
   , iterationAbsurd := true
-  , proposedResolution := "Threshold uncertainty makes each step PROBABLY but not CERTAINLY acceptable"
+  , proposedResolution := "Threshold uncertainty makes each step probably but not certainly acceptable"
   }
 
 def toleranceExamples : List TolerancePrincipleData :=
@@ -349,16 +349,16 @@ def toleranceExamples : List TolerancePrincipleData :=
 /--
 Probabilistic sorites analysis (Edgington 1997, Lassiter & Goodman 2017).
 
-Key insight: Each tolerance step is HIGHLY PROBABLE, not certain.
+Each tolerance step is highly probable, not certain.
 
 Let P(step) = 0.99 (each step is 99% acceptable)
 After N steps: P(all steps) = 0.99^N
 
 For N = 762 (mm from 7'4\" to 4'10\"):
-0.99^762 ≈ 0.0005 (extremely unlikely!)
+0.99^762 ≈ 0.0005 (extremely unlikely)
 
-The paradox dissolves: the argument is valid but UNSOUND.
-Each premise is PROBABLY true, but the conjunction is PROBABLY false.
+The paradox dissolves: the argument is valid but unsound.
+Each premise is probably true, but the conjunction is probably false.
 
 Source: Edgington (1997), Lassiter & Goodman (2017) Section 5
 -/
@@ -379,7 +379,7 @@ def tallProbabilisticSorites : ProbabilisticSoritesData :=
   , cumulativeProbability := 0.0005  -- 0.99^762
   , premise1Accepted := true
   , eachStepAccepted := true
-  , fullArgumentAccepted := false  -- conjunction fails!
+  , fullArgumentAccepted := false  -- conjunction fails
   }
 
 def probabilisticSoritesExamples : List ProbabilisticSoritesData :=
@@ -516,49 +516,5 @@ def higherOrderProblem : VaguenessDesideratum :=
 def desiderata : List VaguenessDesideratum :=
   [borderlineCasesExist, toleranceIntuition, soritesParadoxicality,
    penumbralPreservation, higherOrderProblem]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Vagueness-Specific Phenomena
-
-**Borderline Cases**
-- `BorderlineDatum`: Structure for borderline case data
-- Examples: expensive house, tall person
-
-**Sorites Paradox**
-- `SoritesDatum`: Structure for sorites arguments
-- Examples: tall, heap, expensive sorites
-- `ProbabilisticSoritesData`: Edgington's probabilistic dissolution
-
-**Higher-Order Vagueness**
-- `HigherOrderVaguenessData`: Borderline of borderline problem
-- `DefinitelyOperatorData`: "Definitely" operator and iteration
-
-**Penumbral Connections**
-- `PenumbralConnectionData`: Classical logic in borderline region
-- Examples: excluded middle, non-contradiction, same-height
-
-**Tolerance Principle**
-- `TolerancePrincipleData`: The key sorites ingredient
-
-**Theoretical Landscape**
-- `VaguenessTheoryType`: Epistemicism, supervaluationism, etc.
-- `TheoryPredictionProfile`: What each theory predicts
-- `VaguenessDesideratum`: Theory-neutral constraints
-
-### Relationship to Degrees
-
-This module imports `Phenomena.Degrees` for:
-- `AdjectiveClass` (RGA vs AGA) - relevant to which adjectives are vague in which ways
-- Scale structure informs which predicates have borderline cases
-
-The key insight: **Vagueness = Degrees + Threshold Uncertainty**
-- Degrees provide the underlying scale structure
-- Uncertainty about thresholds creates borderline cases
-- Tolerance comes from small threshold differences being unlikely
--/
 
 end Phenomena.Gradability.Vagueness

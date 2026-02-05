@@ -7,22 +7,22 @@ Theory-neutral data on negative yes/no questions and epistemic bias.
 
 Negative questions exhibit systematic asymmetries in interpretation:
 
-1. **Preposed vs non-preposed negation**:
+1. Preposed vs non-preposed negation:
    - "Doesn't John drink?" → speaker expects "yes" (positive bias)
    - "Does John not drink?" → neutral information-seeking possible
 
-2. **PI/NI ambiguity** (Ladd 1981):
+2. PI/NI ambiguity (Ladd 1981):
    - "Isn't Jane coming too?" → positive implicature (PI)
    - "Isn't Jane coming either?" → negative implicature (NI)
 
-3. **Cross-linguistic variation** in how languages mark epistemic bias
+3. Cross-linguistic variation in how languages mark epistemic bias
 
 ## Theoretical Analyses
 
 Different theories explain these facts:
-- **Verum Focus** (Höhle 1992, Romero & Han 2004): Covert VERUM operator
-- **Decision Theory** (van Rooy & Šafářová 2003): Utility-based question choice
-- **Structural ambiguity** (Ladd 1981): p/¬p scope ambiguity
+- Verum Focus (Höhle 1992, Romero & Han 2004): Covert VERUM operator
+- Decision Theory (van Rooy & Šafářová 2003): Utility-based question choice
+- Structural ambiguity (Ladd 1981): p/¬p scope ambiguity
 
 This file records the phenomena; theories belong in Theories/.
 
@@ -301,35 +301,5 @@ def partitionData : List PartitionDatum := [
   piUnbalancedPartition,
   niUnbalancedPartition
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `NegativeQuestionDatum`: Negative questions with negation position and bias
-- `LaddAmbiguityDatum`: PI vs NI question pairs
-- `CrossLinguisticDatum`: Cross-linguistic bias marking strategies
-- `PartitionDatum`: Balanced vs unbalanced question partitions
-
-### Key Examples
-- Preposed vs non-preposed negation contrast
-- Ladd's "Isn't Jane coming {too/either}?" ambiguity
-- Cross-linguistic data: German, Spanish, Korean, Bulgarian, Greek
-
-### Theoretical Neutrality
-
-This module records WHAT the data is. Theoretical analyses include:
-- **Verum Focus** (Höhle 1992, Romero & Han 2004): Covert VERUM operator
-- **Structural ambiguity** (Ladd 1981): p/¬p scope ambiguity
-- **Decision Theory** (van Rooy & Šafářová 2003): Utility-based question choice
-
-All theories must account for:
-1. Preposed negation forces epistemic implicature
-2. PI vs NI readings (Ladd's ambiguity)
-3. Cross-linguistic variation in bias marking
-4. Polarity item licensing under PI/NI readings
--/
 
 end Phenomena.Questions.NegativeQuestions

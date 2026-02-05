@@ -47,7 +47,7 @@ open Montague.Verb.Attitude.Preferential (AttitudeValence NVPClass)
 -- C-Distributivity from Semantic Builder
 
 /--
-C-distributivity is DERIVED from the semantic builder structure.
+C-distributivity is derived from the semantic builder structure.
 
 This function mirrors the proved theorems:
 - `degreeComparisonPredicate_isCDistributive`: degree-comparison → C-dist
@@ -67,7 +67,7 @@ def PreferentialBuilder.isCDistributive : PreferentialBuilder → Bool
 -- NVP Classification from C-Distributivity + Valence
 
 /--
-NVP class is DERIVED from C-distributivity and valence.
+NVP class is derived from C-distributivity and valence.
 
 This matches `Preferential.classifyNVP` but computed from the builder:
 - Class 1: Non-C-distributive (worry, qidai) — can embed questions regardless of valence
@@ -106,16 +106,16 @@ def AttitudeBuilder.nvpClass : AttitudeBuilder → Option NVPClass
 
 open Fragments.English.Predicates.Verbal (VerbEntry)
 
-/-- C-distributivity is DERIVED from the attitude builder -/
+/-- C-distributivity is derived from the attitude builder -/
 def VerbEntry.cDistributive (v : VerbEntry) : Option Bool :=
   v.attitudeBuilder.bind AttitudeBuilder.cDistributive
 
-/-- NVP class is DERIVED from the attitude builder -/
+/-- NVP class is derived from the attitude builder -/
 def VerbEntry.nvpClass (v : VerbEntry) : Option NVPClass :=
   v.attitudeBuilder.bind AttitudeBuilder.nvpClass
 
 /--
-Can take questions: DERIVED for preferential verbs, base field for others.
+Can take questions: Derived for preferential verbs, base field for others.
 
 For preferential verbs: determined by NVP class (Class 1, 2 can; Class 3 cannot)
 For non-preferential verbs: uses `takesQuestionBase` field
@@ -206,45 +206,5 @@ theorem worry_builder_class1 :
 theorem qidai_builder_class1 :
     PreferentialBuilder.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
   native_decide
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Derived Properties
-- `PreferentialBuilder.isCDistributive`: C-distributivity from semantic structure
-- `PreferentialBuilder.nvpClass`: NVP class from C-distributivity + valence
-- `AttitudeBuilder.cDistributive`: C-distributivity for attitude builders
-- `AttitudeBuilder.nvpClass`: NVP class for attitude builders
-
-### Verification Theorems
-- `hope_builder_cDistributive`, `fear_builder_cDistributive`: Degree-comparison is C-dist
-- `worry_builder_not_cDistributive`, `qidai_builder_not_cDistributive`: Others are not
-- `hope_builder_class3`, `fear_builder_class2`, `worry_builder_class1`, `qidai_builder_class1`
-
-## Connection to Theory
-
-These derivations mirror the proved theorems in Theory:
-- `isCDistributive` mirrors `degreeComparisonPredicate_isCDistributive` (CDistributivity.lean)
-- `nvpClass` mirrors `classifyNVP` (Preferential.lean)
-
-The difference is that these functions work on the Fragment's `PreferentialBuilder`
-type (lexical features), while Theory works on `PreferentialPredicate` type
-(semantic objects). The correspondence is:
-- `degreeComparison` → `mkDegreeComparisonPredicate`
-- `uncertaintyBased` → `worry`
-- `relevanceBased` → `qidai`
-
-## Usage
-
-```lean
-import Linglib.Theories.Montague.Verb.Attitude.BuilderProperties
-
--- Get NVP class for a verb entry
-#eval hope.attitudeBuilder.bind AttitudeBuilder.nvpClass
--- some .class3_cDist_positive
-```
--/
 
 end Montague.Verb.Attitude.BuilderProperties

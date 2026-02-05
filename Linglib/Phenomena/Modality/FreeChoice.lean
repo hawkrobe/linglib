@@ -11,9 +11,9 @@ Theory-neutral empirical patterns for free choice inferences.
 Semantically: ◇(C∨T) ↔ ◇C ∨ ◇T (standard modal logic)
 Pragmatically: ◇(C∨T) → ◇C ∧ ◇T (free choice!)
 
-This is NOT a semantic entailment - it's a pragmatic inference.
+This is not a semantic entailment; it is a pragmatic inference.
 
-## Key References
+## References
 
 - Ross, A. (1944). Imperatives and Logic. Theoria.
 - Kamp, H. (1973). Free Choice Permission. Proceedings of the Aristotelian Society.
@@ -30,7 +30,7 @@ Empirical pattern: Free choice permission.
 "You may have coffee or tea" pragmatically implies:
 "You may have coffee AND you may have tea"
 
-This is NOT a semantic entailment:
+This is not a semantic entailment:
 - Semantically: ◇(C∨T) ↔ ◇C ∨ ◇T
 - Pragmatically: ◇(C∨T) → ◇C ∧ ◇T
 -/
@@ -57,8 +57,8 @@ def coffeeOrTea : FreeChoiceDatum :=
   , disjunctA := "coffee"
   , disjunctB := "tea"
   , inference := "You may have coffee AND you may have tea"
-  , isSemanticEntailment := false  -- NOT semantic
-  , isPragmaticInference := true   -- IS pragmatic
+  , isSemanticEntailment := false  -- not semantic
+  , isPragmaticInference := true   -- pragmatic
   }
 
 /--
@@ -121,7 +121,7 @@ def postOrBurn : RossParadoxDatum :=
   { original := "Post the letter"
   , derived := "Post the letter or burn it"
   , semanticallyValid := true      -- p ⊢ p ∨ q is valid
-  , pragmaticallyFelicitous := false -- But pragmatically odd!
+  , pragmaticallyFelicitous := false -- but pragmatically odd
   }
 
 /--
@@ -215,7 +215,7 @@ def explicitCancellation : FCCancellationDatum :=
   { original := "You may have coffee or tea"
   , cancellation := "but I don't know which"
   , combined := "You may have coffee or tea, but I don't know which"
-  , felicitous := true  -- Cancellation is possible (pragmatic!)
+  , felicitous := true  -- cancellation is possible (pragmatic)
   }
 
 /--
@@ -247,7 +247,7 @@ to disjunctive free choice but involve universal quantification.
 - You may take Semantics (specifically)
 - ... (for all classes)
 
-This is the **exclusiveness inference**: permission applies to EACH individual
+This is the exclusiveness inference: permission applies to each individual
 alternative, not just to "some class or other".
 
 Key difference from disjunction:
@@ -266,7 +266,7 @@ Key difference from disjunction:
 Empirical pattern: Free choice *any* (universal FCI).
 
 "You may take any class" pragmatically implies permission for each specific class.
-This is the **exclusiveness inference** - distinct from simple existential permission.
+This is the exclusiveness inference, distinct from simple existential permission.
 -/
 structure FCIAnyDatum where
   /-- The sentence with *any* -/
@@ -392,7 +392,7 @@ Inference:
 2. ◇(there's a bathroom ∧ it's in a funny place)
 
 The pronoun "it" in the second disjunct is bound by the existential
-in the NEGATED first disjunct. This is puzzling because negation should
+in the negated first disjunct. This is puzzling because negation should
 block binding, yet the inference requires x to be accessible.
 
 ## References
@@ -527,35 +527,5 @@ All standard FC examples (contrast with bathroom).
 -/
 def standardFCExamples : List StandardFCDatum :=
   [coffeeTeaStandard, parisLondonStandard]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `FreeChoiceDatum`: Basic free choice pattern
-- `RossParadoxDatum`: Ross's paradox examples
-- `ModalFreeChoiceDatum`: Free choice across modal types
-- `FCCancellationDatum`: Cancellation evidence
-- `FCIAnyDatum`: Universal free choice items
-- `BathroomDisjunctionDatum`: FC with cross-disjunct anaphora
-
-### Example Collections
-- `freeChoiceExamples`: 3 basic examples
-- `rossParadoxExamples`: 2 paradox examples
-- `modalFreeChoiceExamples`: 3 modal types
-- `cancellationExamples`: 2 cancellation examples
-- `fciAnyExamples`: 3 universal FCI examples
-- `bathroomDisjunctionExamples`: 4 bathroom-type examples
-
-### Key References
-- Ross (1944): Original paradox
-- Kamp (1973): Free choice permission
-- Zimmermann (2000): Epistemic possibility
-- Geurts (2010): Modern pragmatic analysis
-- Kadmon & Landman (1993): Free choice *any*
-- Elliott & Sudo (2025): FC with anaphora
--/
 
 end Phenomena.Modality.FreeChoice

@@ -6,17 +6,17 @@ Abstract interface for Information Structure (theme/rheme, focus/background, QUD
 ## Overview
 
 Information Structure partitions utterances along two orthogonal dimensions:
-1. **Theme/Rheme** (topic/comment): What's being talked about vs. what's said about it
-2. **Focus/Background**: What's contrasted vs. what's given
+1. Theme/Rheme (topic/comment): What's being talked about vs. what's said about it
+2. Focus/Background: What's contrasted vs. what's given
 
-The **Question Under Discussion (QUD)** connects these to pragmatics:
+The Question Under Discussion (QUD) connects these to pragmatics:
 - The theme presupposes a QUD (set of alternatives)
 - The rheme answers/restricts the QUD
 - Informativity in RSA is relative to the QUD
 
 ## Architecture
 
-This module defines the INTERFACE. Implementations include:
+This module defines the interface. Implementations include:
 - `Theories/CCG/Intonation.lean`: Prosodic realization (Steedman 2000)
 - (Future) Syntactic focus marking, discourse models, etc.
 
@@ -253,33 +253,5 @@ def congruent {P World : Type} (info : InfoStructure P) (_qud : QUD World) : Boo
   -- Simplified: placeholder
   -- Full version would check focus-QUD alignment via QUDSemantics
   true  -- TODO: implement properly
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `Alternatives`: Focus semantic values (actual + alternatives)
-- `QUD`: Question Under Discussion (partition of context)
-- `Theme`/`Rheme`: Information Structure partition
-- `Focus`/`Background`: Contrast structure
-- `InfoStructure`: Complete IS analysis
-
-### Interfaces (Typeclasses)
-- `HasInfoStructure`: Extract IS from derivations
-- `HasAlternatives`: Compute focus alternatives
-- `QUDSemantics`: Connect IS to pragmatics/RSA
-
-### Design Principles
-1. **Abstract**: Doesn't commit to prosodic/syntactic realization
-2. **Extensible**: Ready for QUD stack models, discourse structure
-3. **Connected**: Interfaces with RSA via `QUDSemantics`
-
-### What's NOT Here (belongs in implementations)
-- Prosodic categories (θ/ρ marking) → CCG/Intonation
-- Pitch accent types (H*, L+H*) → CCG/Intonation
-- Specific QUD update rules → Discourse theories
--/
 
 end InformationStructure

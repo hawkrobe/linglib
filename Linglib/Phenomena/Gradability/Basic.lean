@@ -18,7 +18,7 @@ see `Gradability/Vagueness.lean`.
 
 For evaluativity patterns, see `Gradability/Evaluativity.lean`.
 
-## Key Insight
+## Insight
 
 Scales (⟨warm, hot⟩, ⟨some, all⟩) are grounded in degree semantics:
 "hot" is stronger than "warm" because it requires a higher degree threshold.

@@ -86,9 +86,9 @@ def informativity (prob : ℚ) : ℚ :=
 This measures the expected informativity of learning the answer. -/
 def questionEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : ℚ :=
-  q.foldl (fun acc cell =>
+  q.foldl (λ acc cell =>
     let cellWorlds := worlds.filter cell
-    let prob := cellWorlds.foldl (fun p w => p + prior w) 0
+    let prob := cellWorlds.foldl (λ p w => p + prior w) 0
     let inf := informativity prob
     acc + prob * inf
   ) 0
@@ -97,14 +97,14 @@ def questionEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
 def isMaximalEntropy {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : Prop :=
   ∀ c₁ c₂, c₁ ∈ q → c₂ ∈ q →
-    let prob₁ := (worlds.filter c₁).foldl (fun p w => p + prior w) 0
-    let prob₂ := (worlds.filter c₂).foldl (fun p w => p + prior w) 0
+    let prob₁ := (worlds.filter c₁).foldl (λ p w => p + prior w) 0
+    let prob₂ := (worlds.filter c₂).foldl (λ p w => p + prior w) 0
     prob₁ = prob₂
 
 /-- A question has zero entropy iff it's already settled -/
 def isSettled {W : Type*} (prior : W → ℚ) (worlds : List W)
     (q : Question W) : Prop :=
-  ∃ c ∈ q, (worlds.filter c).foldl (fun p w => p + prior w) 0 = 1
+  ∃ c ∈ q, (worlds.filter c).foldl (λ p w => p + prior w) 0 = 1
 
 /-- Entropy is maximal for equiprobable binary question -/
 theorem entropy_maximal_equiprobable {W : Type*} (prior : W → ℚ) (worlds : List W)
@@ -133,15 +133,15 @@ Domain widening (any vs some) can reduce this bias.
 /-- A polar question is biased toward negative if P(neg) > P(pos) -/
 def isBiasedNegative {W : Type*} (prior : W → ℚ) (worlds : List W)
     (positive negative : W → Bool) : Bool :=
-  let pPos := (worlds.filter positive).foldl (fun p w => p + prior w) 0
-  let pNeg := (worlds.filter negative).foldl (fun p w => p + prior w) 0
+  let pPos := (worlds.filter positive).foldl (λ p w => p + prior w) 0
+  let pNeg := (worlds.filter negative).foldl (λ p w => p + prior w) 0
   pNeg > pPos
 
 /-- Degree of bias: |P(pos) - P(neg)| -/
 def biasDegree {W : Type*} (prior : W → ℚ) (worlds : List W)
     (positive negative : W → Bool) : ℚ :=
-  let pPos := (worlds.filter positive).foldl (fun p w => p + prior w) 0
-  let pNeg := (worlds.filter negative).foldl (fun p w => p + prior w) 0
+  let pPos := (worlds.filter positive).foldl (λ p w => p + prior w) 0
+  let pNeg := (worlds.filter negative).foldl (λ p w => p + prior w) 0
   if pPos ≥ pNeg then pPos - pNeg else pNeg - pPos
 
 /-- NPI effect on a polar question: widens the positive answer's domain -/
@@ -155,10 +155,10 @@ structure NPIQuestionEffect (W : Type*) where
 
 /-- Negative answer is complement of positive -/
 def NPIQuestionEffect.negWithoutNPI {W : Type*} (e : NPIQuestionEffect W) : W → Bool :=
-  fun w => !e.posWithoutNPI w
+  λ w => !e.posWithoutNPI w
 
 def NPIQuestionEffect.negWithNPI {W : Type*} (e : NPIQuestionEffect W) : W → Bool :=
-  fun w => !e.posWithNPI w
+  λ w => !e.posWithNPI w
 
 /-- Question without NPI -/
 def NPIQuestionEffect.questionWithoutNPI {W : Type*} (e : NPIQuestionEffect W) : Question W :=
@@ -278,8 +278,8 @@ def isRhetorical {W : Type*} (prior : W → ℚ) (worlds : List W)
 def alternativesSettledImpliesLowEntropy {W : Type*}
     (prior : W → ℚ) (worlds : List W) (e : StrongNPIEffect W)
     (hSettled : ∀ alt ∈ e.alternatives,
-      (worlds.filter alt).foldl (fun p w => p + prior w) 0 = 0 ∨
-      (worlds.filter alt).foldl (fun p w => p + prior w) 0 = 1) : Prop :=
+      (worlds.filter alt).foldl (λ p w => p + prior w) 0 = 0 ∨
+      (worlds.filter alt).foldl (λ p w => p + prior w) 0 = 1) : Prop :=
   -- When alternatives are settled, only minimal value has uncertainty
   -- This means very low entropy overall
   isRhetorical prior worlds e.questionWithNPI
@@ -297,8 +297,8 @@ When a strong NPI is used in a question:
 theorem strong_npi_creates_rhetorical {W : Type*}
     (prior : W → ℚ) (worlds : List W) (e : StrongNPIEffect W)
     (hAltsSettled : ∀ alt ∈ e.alternatives,
-      (worlds.filter alt).foldl (fun p w => p + prior w) 0 = 0)
-    (hMinimalUnlikely : (worlds.filter e.posWithNPI).foldl (fun p w => p + prior w) 0 < 1/10) :
+      (worlds.filter alt).foldl (λ p w => p + prior w) 0 = 0)
+    (hMinimalUnlikely : (worlds.filter e.posWithNPI).foldl (λ p w => p + prior w) 0 < 1/10) :
     isRhetorical prior worlds e.questionWithNPI := by
   sorry
 
@@ -365,7 +365,7 @@ inductive SpeechAct where
 /-- Strength for assertions: informativity (inverse probability) -/
 def assertionStrength {W : Type*} (prior : W → ℚ) (worlds : List W)
     (p : W → Bool) : ℚ :=
-  let prob := (worlds.filter p).foldl (fun acc w => acc + prior w) 0
+  let prob := (worlds.filter p).foldl (λ acc w => acc + prior w) 0
   informativity prob
 
 /-- Strength for questions: entropy -/
@@ -442,7 +442,7 @@ theorem wh_subject_is_de {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain)
     (hStrictlyWider : ∃ e, e ∈ q'.domain ∧ e ∉ q.domain) :
-    whQuestionEntails q' q (fun e he => hWider e (by sorry)) := by
+    whQuestionEntails q' q (λ e he => hWider e (by sorry)) := by
   sorry
 
 /-- NPIs licensed in wh-subject position via standard DE reasoning -/

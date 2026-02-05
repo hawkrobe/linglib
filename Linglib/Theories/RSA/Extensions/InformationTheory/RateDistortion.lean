@@ -6,7 +6,7 @@ Formalizes the connection between RSA and Rate-Distortion theory from:
   Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human
   pragmatic reasoning. arXiv:2005.06641.
 
-## Key Insights
+## Insights
 
 1. **RSA as RD optimization**: At α = 1, RSA minimizes the rate-distortion
    functional, connecting pragmatic reasoning to optimal lossy compression.
@@ -52,7 +52,7 @@ I(M;U) = H(M) - H(M|U) = H(U) - H(U|M)
 This measures how much the utterance "tells you" about the meaning.
 -/
 noncomputable def I_MU (S : RSAScenarioR) (Spk : S.M → S.U → ℝ) : ℝ :=
-  let pU := fun u => ∑ m, S.prior m * normalize (Spk m) u
+  let pU := λ u => ∑ m, S.prior m * normalize (Spk m) u
   entropy pU - H_S S Spk
 
 /--
@@ -79,7 +79,7 @@ This shows that maximizing G_α is equivalent to minimizing F_α
 -/
 theorem G_F_relation (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (L : S.U → S.M → ℝ) :
-    let pU := fun u => ∑ m, S.prior m * normalize (Spk m) u
+    let pU := λ u => ∑ m, S.prior m * normalize (Spk m) u
     F_α S Spk L = entropy pU - G_α S Spk L := by
   simp only [F_α, G_α, I_MU]
   ring
@@ -97,7 +97,7 @@ where R[D] is the rate-distortion function.
 This connects pragmatic reasoning to information-theoretic optimality.
 -/
 theorem alpha_one_critical (S : RSAScenarioR) (hα : S.α = 1) :
-    G_α S = fun Spk L => H_S S Spk + E_VL S Spk L := by
+    G_α S = λ Spk L => H_S S Spk + E_VL S Spk L := by
   funext Spk L
   simp only [G_α, hα, one_mul]
 
@@ -136,7 +136,7 @@ theorem utility_can_decrease (S : RSAScenarioR) (hα : S.α < 1) :
 Argmax: set of utterances with maximum listener probability for a given meaning.
 -/
 noncomputable def argmaxU (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) : Finset S.U :=
-  Finset.univ.filter (fun u => ∀ u', L u m ≥ L u' m)
+  Finset.univ.filter (λ u => ∀ u', L u m ≥ L u' m)
 
 /--
 The NeoGricean limit function: uniform over argmax, zero elsewhere.
@@ -157,7 +157,7 @@ deterministically chooses the most informative utterance."
 -/
 theorem neoGricean_limit (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) :
     Filter.Tendsto
-      (fun α => normalize (fun u => (L u m).rpow α) )
+      (λ α => normalize (λ u => (L u m).rpow α) )
       Filter.atTop
       (nhds (neoGriceanLimitFn S L m)) := by
   sorry -- Proof via properties of x^α as α → ∞
@@ -169,7 +169,7 @@ theorem neoGricean_limit (S : RSAScenarioR) (L : S.U → S.M → ℝ) (m : S.M) 
 Sub-optimal utterances vanish in the NeoGricean limit.
 -/
 theorem rpow_tendsto_zero_of_base_lt_one {x : ℝ} (_hx0 : 0 < x) (hx1 : x < 1) :
-    Filter.Tendsto (fun α => x.rpow α) Filter.atTop (nhds 0) :=
+    Filter.Tendsto (λ α => x.rpow α) Filter.atTop (nhds 0) :=
   tendsto_rpow_atTop_of_base_lt_one x (by linarith : -1 < x) hx1
 
 /--
@@ -178,10 +178,10 @@ theorem rpow_tendsto_zero_of_base_lt_one {x : ℝ} (_hx0 : 0 < x) (hx1 : x < 1) 
 Optimal utterances dominate in the NeoGricean limit.
 -/
 theorem rpow_tendsto_atTop_of_base_gt_one {x : ℝ} (hx : 1 < x) :
-    Filter.Tendsto (fun α => x.rpow α) Filter.atTop Filter.atTop := by
+    Filter.Tendsto (λ α => x.rpow α) Filter.atTop Filter.atTop := by
   have hx0 : 0 < x := lt_trans zero_lt_one hx
   have hlog : 0 < log x := Real.log_pos hx
-  have key : Filter.Tendsto (fun α => log x * α) Filter.atTop Filter.atTop :=
+  have key : Filter.Tendsto (λ α => log x * α) Filter.atTop Filter.atTop :=
     Filter.Tendsto.const_mul_atTop hlog Filter.tendsto_id
   have h := Filter.Tendsto.comp Real.tendsto_exp_atTop key
   refine Filter.Tendsto.congr ?_ h
@@ -290,6 +290,6 @@ theorem normalize_le_one {α : Type*} [Fintype α] (f : α → ℝ)
   simp only [Convergence.normalize]
   rw [if_neg (ne_of_gt hZ)]
   rw [div_le_one hZ]
-  exact Finset.single_le_sum (fun x _ => hf x) (Finset.mem_univ a)
+  exact Finset.single_le_sum (λ x _ => hf x) (Finset.mem_univ a)
 
 end RSA.RateDistortion

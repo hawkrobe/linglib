@@ -24,7 +24,7 @@ Both theories consume the same `SemDeriv.Derivation` (syntax-agnostic interface)
          BOTH derive "not all"
 ```
 
-## Key Result
+## Result
 
 `scalar_implicature_agreement`: Both theories derive "not all" from "some"
 

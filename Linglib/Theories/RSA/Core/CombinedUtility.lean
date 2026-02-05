@@ -102,7 +102,14 @@ theorem combined_convex (lam : ℚ) (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1)
     (utilA utilB : ℚ) :
     min utilA utilB ≤ combined lam utilA utilB 0 ∧
     combined lam utilA utilB 0 ≤ max utilA utilB := by
-  sorry  -- Requires case analysis on utilA vs utilB
+  unfold combined; simp only [sub_zero]
+  constructor
+  · rcases le_total utilA utilB with h | h
+    · rw [min_eq_left h]; nlinarith
+    · rw [min_eq_right h]; nlinarith
+  · rcases le_total utilA utilB with h | h
+    · rw [max_eq_right h]; nlinarith
+    · rw [max_eq_left h]; nlinarith
 
 /-- Midpoint property -/
 theorem combined_midpoint (utilA utilB : ℚ) :

@@ -12,7 +12,7 @@ Implementation of RSA models for sentence polarity asymmetries.
 | wonkyRSA | Complex prior for common ground update |
 | funkyRSA | Combination of fuzzy + wonky |
 
-## Key Insight
+## Insight
 
 The paper shows that standard RSA fails to capture:
 1. The interaction between state prior and polarity on utterance likelihood
@@ -76,7 +76,7 @@ def standardL1 (cfg : HKIConfig) (u : HKIUtterance) : List (HKIState × ℚ) :=
   RSA.Eval.basicL1
     allUtterances
     allStates
-    (fun utt s => boolToQ (literalTruth s utt))
+    (λ utt s => boolToQ (literalTruth s utt))
     cfg.prior.prob
     cfg.alpha
     utteranceCost
@@ -87,7 +87,7 @@ def standardS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
   RSA.Eval.basicS1
     allUtterances
     allStates
-    (fun utt st => boolToQ (literalTruth st utt))
+    (λ utt st => boolToQ (literalTruth st utt))
     cfg.prior.prob
     cfg.alpha
     utteranceCost
@@ -105,9 +105,9 @@ For positive utterances (equations 12-13):
   [[u_pos]](s_pos) = sigmoid(P(s_pos); θ)
   [[u_pos]](s_neg) = 1 - [[u_pos]](s_pos)
 
-The key insight: negative interpretation is constant (reflects inherent
-presupposition trigger), while positive interpretation varies with prior
-(disincentivizes communication of low-prior positive states).
+Negative interpretation is constant (reflects inherent presupposition trigger),
+while positive interpretation varies with prior (disincentivizes communication
+of low-prior positive states).
 -/
 
 /-- Fuzzy interpretation for negative utterances.
@@ -130,7 +130,7 @@ def fuzzyNegInterpretation (n : ℚ) : HKIState → ℚ
     are less likely to be interpreted as intended. -/
 def fuzzyPosInterpretation (p_pos : ℚ) (params : FuzzyParams) : HKIState → ℚ :=
   let sig := sigmoidApprox p_pos params.L params.k params.x0 params.c
-  fun s => match s with
+  λ s => match s with
     | .pos => sig
     | .neg => 1 - sig
 
@@ -156,7 +156,7 @@ def fuzzyL1 (cfg : HKIConfig) (u : HKIUtterance) : List (HKIState × ℚ) :=
   RSA.Eval.basicL1
     allUtterances
     allStates
-    (fun utt s => fuzzyMeaning cfg utt s)
+    (λ utt s => fuzzyMeaning cfg utt s)
     cfg.prior.prob
     cfg.alpha
     utteranceCost
@@ -167,7 +167,7 @@ def fuzzyS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
   RSA.Eval.basicS1
     allUtterances
     allStates
-    (fun utt st => fuzzyMeaning cfg utt st)
+    (λ utt st => fuzzyMeaning cfg utt st)
     cfg.prior.prob
     cfg.alpha
     utteranceCost
@@ -183,8 +183,8 @@ P(s|w) ∝ P(s)        if normal world
 The pragmatic listener jointly infers state and world:
 L1(s, w|u) ∝ S1(u|s, w) · P(s|normal) · P(w)
 
-Key insight (from Cremers et al. 2023 correction): The literal listener
-uses P(s|w), but L1 uses P(s|normal) to avoid "contaminating" the observation.
+From Cremers et al. 2023 correction: the literal listener uses P(s|w),
+but L1 uses P(s|normal) to avoid "contaminating" the observation.
 -/
 
 /-- World-conditioned prior for wonkyRSA.
@@ -201,7 +201,7 @@ def worldConditionedPrior (cfg : HKIConfig) : WorldType → HKIState → ℚ
     In wonky world: states are still distinguished
 
     Note: Unlike BwRSA in CWS where wonky goals collapse worlds,
-    here the wonkiness affects the PRIOR, not the goal structure. -/
+    here the wonkiness affects the prior, not the goal structure. -/
 def wonkyGoalProject : WorldType → HKIState → HKIState → Bool
   | _, s1, s2 => s1 == s2
 
@@ -211,15 +211,15 @@ def wonkyGoalProject : WorldType → HKIState → HKIState → Bool
     where normal priors don't apply. This allows common ground update:
     low-utility utterances → infer wonky world → adjust typicality. -/
 def wonkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType) × ℚ) :=
-  let jointWorlds := allStates.flatMap fun s => allWorldTypes.map fun w => (s, w)
-  let goalPrior : WorldType → ℚ := fun w => match w with
+  let jointWorlds := allStates.flatMap λ s => allWorldTypes.map λ w => (s, w)
+  let goalPrior : WorldType → ℚ := λ w => match w with
     | .wonky => cfg.p_wonky
     | .normal => 1 - cfg.p_wonky
   RSA.Eval.basicL1
     allUtterances
     jointWorlds
-    (fun utt (s, _) => boolToQ (literalTruth s utt))
-    (fun (s, w) => cfg.prior.prob s * goalPrior w)
+    (λ utt (s, _) => boolToQ (literalTruth s utt))
+    (λ (s, w) => cfg.prior.prob s * goalPrior w)
     cfg.alpha
     utteranceCost
     u
@@ -227,7 +227,7 @@ def wonkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType)
 /-- Get inferred wonkiness P(wonky | u) -/
 def inferredWonkiness (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
   let joint := wonkyL1 cfg u
-  let wonkyScores := joint.filter (fun ((_, w), _) => w == .wonky) |>.map (·.2)
+  let wonkyScores := joint.filter (λ ((_, w), _) => w == .wonky) |>.map (·.2)
   RSA.Eval.sumScores wonkyScores
 
 
@@ -246,15 +246,15 @@ This attempts to capture both:
     This is the most complex model, attempting to capture both
     polarity asymmetries in a unified framework. -/
 def funkyL1 (cfg : HKIConfig) (u : HKIUtterance) : List ((HKIState × WorldType) × ℚ) :=
-  let jointWorlds := allStates.flatMap fun s => allWorldTypes.map fun w => (s, w)
-  let goalPrior : WorldType → ℚ := fun w => match w with
+  let jointWorlds := allStates.flatMap λ s => allWorldTypes.map λ w => (s, w)
+  let goalPrior : WorldType → ℚ := λ w => match w with
     | .wonky => cfg.p_wonky
     | .normal => 1 - cfg.p_wonky
   RSA.Eval.basicL1
     allUtterances
     jointWorlds
-    (fun utt (s, _) => fuzzyMeaning cfg utt s)
-    (fun (s, w) => cfg.prior.prob s * goalPrior w)
+    (λ utt (s, _) => fuzzyMeaning cfg utt s)
+    (λ (s, w) => cfg.prior.prob s * goalPrior w)
     cfg.alpha
     utteranceCost
     u
@@ -281,7 +281,7 @@ def expectedTypicality (cfg : HKIConfig) (u : HKIUtterance) : ℚ :=
   let joint := wonkyL1 cfg u
   let goalDist := RSA.Eval.marginalize joint Prod.snd
   -- Sum over world types, weighting by P(s_pos|world) * P(world|u)
-  allWorldTypes.foldl (fun acc w =>
+  allWorldTypes.foldl (λ acc w =>
     let p_world := RSA.Eval.getScore goalDist w
     let p_pos_given_world := worldConditionedPrior cfg w .pos
     acc + p_world * p_pos_given_world) 0
@@ -306,14 +306,14 @@ theorem neg_higher_cost :
 
 /-
 He et al. Experiment 1 found:
-- NO main effect of polarity (p = .296)
-- Significant prior × polarity INTERACTION
+- No main effect of polarity (p = .296)
+- Significant prior × polarity interaction
 
 Standard RSA + cost predicts:
-- Main effect of polarity (positive always > negative) ← WRONG
-- No interaction ← WRONG
+- Main effect of polarity (positive always > negative) -- incorrect
+- No interaction -- incorrect
 
-This section demonstrates these MISMATCHES.
+This section demonstrates these mismatches.
 -/
 
 /-- S1 without cost (for comparison) -/
@@ -321,10 +321,10 @@ def noCostS1 (cfg : HKIConfig) (s : HKIState) : List (HKIUtterance × ℚ) :=
   RSA.Eval.basicS1
     allUtterances
     allStates
-    (fun utt st => boolToQ (literalTruth st utt))
+    (λ utt st => boolToQ (literalTruth st utt))
     cfg.prior.prob
     cfg.alpha
-    (fun _ => 0)  -- No cost
+    (λ _ => 0)  -- No cost
     s
 
 /-- S1 probability without cost -/
@@ -337,23 +337,23 @@ theorem no_cost_symmetric :
     noCostS1Prob defaultConfig .uNeg .neg := by
   native_decide
 
-/-- LIMITATION: Standard RSA + cost predicts positive ALWAYS beats negative.
+/-- Limitation: standard RSA + cost predicts positive always beats negative.
 
-    He et al. found NO main effect of polarity empirically (p = .296).
-    This prediction is WRONG - cost alone is insufficient. -/
+    He et al. found no main effect of polarity empirically (p = .296).
+    This prediction is incorrect -- cost alone is insufficient. -/
 theorem standard_rsa_limitation_main_effect :
     standardS1Prob defaultConfig .uPos .pos >
     standardS1Prob defaultConfig .uNeg .neg := by
   native_decide
 
-/-- Standard RSA + cost DOES show an interaction, but the WRONG pattern.
+/-- Standard RSA + cost does show an interaction, but the wrong pattern.
 
-    At low prior: positive > negative (cost dominates)
-    At high prior: negative > positive (prior dominates)
+    At low prior: positive > negative (cost dominates).
+    At high prior: negative > positive (prior dominates).
 
-    He et al. found the OPPOSITE interaction empirically:
-    - At LOW prior: negative preferred (low-prior states get negation)
-    - At HIGH prior: positive preferred (high-prior states get positive)
+    He et al. found the opposite interaction empirically:
+    - At low prior: negative preferred (low-prior states get negation)
+    - At high prior: positive preferred (high-prior states get positive)
 
     This shows standard RSA + cost is insufficient. -/
 theorem standard_rsa_shows_interaction :
@@ -379,53 +379,6 @@ theorem neg_interpretation_constant :
     fuzzyMeaning lowPriorConfig .uNeg .neg =
     fuzzyMeaning highPriorConfig .uNeg .neg := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### RSA Scenarios
-
-| Model | Constructor | Key Feature |
-|-------|-------------|-------------|
-| Standard RSA | `standardScenario` | Boolean semantics + costs |
-| fuzzyRSA | `fuzzyScenario` | Polarity-specific soft semantics |
-| wonkyRSA | `wonkyScenario` | Complex prior for CG update |
-| funkyRSA | `funkyScenario` | Fuzzy + wonky combined |
-
-### Analysis Functions
-- `standardS1Prob`, `fuzzyS1Prob`: S1 probabilities
-- `standardL1Prob`: L1 state probabilities
-- `stateInference`: L1 distribution
-- `inferredWonkiness`: P(wonky | u)
-- `expectedTypicality`: Post-utterance typicality
-
-### Key Theorems
-
-**Standard RSA limitations (cost alone insufficient):**
-- `no_cost_symmetric`: Without cost, pos = neg (no asymmetry)
-- `standard_rsa_limitation_main_effect`: With cost, pos > neg ALWAYS (wrong!)
-- `standard_rsa_limitation_no_interaction`: Same pattern at all priors (wrong!)
-
-**Fuzzy semantics (captures the interaction):**
-- `fuzzy_low_prior_effect`: Low prior reduces positive interpretation
-- `neg_interpretation_constant`: Negative interpretation independent of prior
-
-## Model Insights
-
-The paper shows that:
-1. Standard RSA captures cost asymmetry but not the prior×polarity interaction
-2. fuzzyRSA captures utterance likelihood patterns via soft semantics
-3. wonkyRSA captures typicality inferences via common ground update
-4. funkyRSA attempts to unify both (with mixed success)
-
-The key innovation is using DIFFERENT interpretation functions for
-positive vs negative polarity:
-- Negative: constant (inherent presupposition trigger)
-- Positive: prior-dependent sigmoid (low-prior states less reliable)
--/
-
 
 /--
 Map He et al.'s sentence polarity to compositional context polarity.
@@ -485,7 +438,7 @@ Typical: house-bathroom (most houses have bathrooms)
 Atypical: classroom-stove (most classrooms don't have stoves)
 -/
 def has_sem : pwModel.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun part container => match container, part with
+  λ part container => match container, part with
     | .house, .bathroom => true   -- Houses typically have bathrooms
     | .classroom, .stove => false -- Classrooms typically don't have stoves
     | _, _ => false
@@ -522,7 +475,7 @@ Lift He et al. sentences to world-indexed propositions.
 Uses `Core.Proposition.BProp HKIState = HKIState → Bool`.
 -/
 def liftToWorlds (s : HKIState) : BProp HKIState :=
-  fun w => w == s
+  λ w => w == s
 
 /--
 Negative sentence meaning as world-indexed proposition.

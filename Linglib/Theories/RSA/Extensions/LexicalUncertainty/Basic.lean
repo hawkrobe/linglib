@@ -10,7 +10,7 @@ the semantic content of utterances. Rather than a fixed lexicon, there is a
 set of possible lexica Λ, and pragmatic inference involves reasoning about
 which lexicon is in use.
 
-### Key Innovation (Bergen, Levy & Goodman 2016)
+### Innovation (Bergen, Levy & Goodman 2016)
 
 The marginalization over lexica happens at L₁, not L₀:
 - L₀ is still parameterized by a specific lexicon L
@@ -92,9 +92,9 @@ structure LUScenario where
   /-- Set of possible refined lexica -/
   lexica : List (Lexicon Utterance World)
   /-- Prior over lexica (default: uniform) -/
-  lexPrior : Lexicon Utterance World → ℚ := fun _ => 1
+  lexPrior : Lexicon Utterance World → ℚ := λ _ => 1
   /-- Prior over worlds -/
-  worldPrior : World → ℚ := fun _ => 1
+  worldPrior : World → ℚ := λ _ => 1
   /-- Enumeration of utterances -/
   utterances : List Utterance
   /-- Enumeration of worlds -/
@@ -146,8 +146,8 @@ def allRefinements {W : Type} [DecidableEq W] (worlds : List W) (base : W → Bo
   -- Generate all non-empty subsets
   let subsets := trueWorlds.sublists.filter (·.length > 0)
   -- Convert each subset to a refinement
-  subsets.map fun subset =>
-    { meaning := fun w => subset.contains w }
+  subsets.map λ subset =>
+    { meaning := λ w => subset.contains w }
 
 /--
 Generate all lexica from refinements of each utterance meaning.
@@ -160,10 +160,10 @@ def generateLexica {U W : Type} [DecidableEq W] [DecidableEq U]
     : List (Lexicon U W) :=
   -- For simplicity, we generate refinements for Boolean semantics
   -- Convert base to Boolean (threshold at 0.5)
-  let baseBool : U → W → Bool := fun u w => base.meaning u w > 0
+  let baseBool : U → W → Bool := λ u w => base.meaning u w > 0
   -- Get refinements for each utterance
   let _uttRefinements : List (U × List (Refinement W)) :=
-    utterances.map fun u => (u, allRefinements worlds (baseBool u))
+    utterances.map λ u => (u, allRefinements worlds (baseBool u))
   -- Take product over all utterances to get all possible lexica
   -- For now, just return the base lexicon and some key refinements
   -- (Full enumeration is exponential; we'll be selective)
@@ -184,7 +184,7 @@ This is the standard literal listener, but parameterized by lexicon L.
 -/
 def L0_given (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (u : S.Utterance) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w => (w, S.worldPrior w * L.meaning u w)
+  let scores := S.worlds.map λ w => (w, S.worldPrior w * L.meaning u w)
   RSA.Eval.normalize scores
 
 /--
@@ -196,7 +196,7 @@ The speaker believes the literal listener is using lexicon L.
 -/
 def S1_given (S : LUScenario) (L : Lexicon S.Utterance S.World)
     (w : S.World) : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
+  let scores := S.utterances.map λ u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
   RSA.Eval.normalize scores
 
 /--
@@ -212,9 +212,9 @@ The pragmatic listener:
 This is Equation (29) in Bergen et al. (2016).
 -/
 def L1 (S : LUScenario) (u : S.Utterance) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w =>
+  let scores := S.worlds.map λ w =>
     -- Sum over lexica: Σ_L P(L) · S1(u | w, L)
-    let lexSum := S.lexica.foldl (init := (0 : ℚ)) fun acc L =>
+    let lexSum := S.lexica.foldl (init := (0 : ℚ)) λ acc L =>
       acc + S.lexPrior L * RSA.Eval.getScore (S1_given S L w) u
     (w, S.worldPrior w * lexSum)
   RSA.Eval.normalize scores
@@ -228,8 +228,8 @@ Useful for understanding which lexicon the listener infers.
 -/
 def L1_joint (S : LUScenario) (u : S.Utterance)
     : List ((S.World × Lexicon S.Utterance S.World) × ℚ) :=
-  let pairs := S.worlds.flatMap fun w => S.lexica.map fun L => (w, L)
-  let scores := pairs.map fun (w, L) =>
+  let pairs := S.worlds.flatMap λ w => S.lexica.map λ L => (w, L)
+  let scores := pairs.map λ (w, L) =>
     let priorScore := S.worldPrior w * S.lexPrior L
     let s1Score := RSA.Eval.getScore (S1_given S L w) u
     ((w, L), priorScore * s1Score)
@@ -243,7 +243,7 @@ What lexicon does the listener think is being used?
 def L1_lexicon (S : LUScenario) [BEq (Lexicon S.Utterance S.World)]
     (u : S.Utterance) : List (Lexicon S.Utterance S.World × ℚ) :=
   let joint := L1_joint S u
-  S.lexica.map fun L =>
+  S.lexica.map λ L =>
     let lScores := joint.filter (·.1.2 == L) |>.map (·.2)
     (L, RSA.Eval.sumScores lScores)
 
@@ -274,12 +274,12 @@ This is the degenerate case: no lexical uncertainty, equivalent to standard RSA.
 -/
 def LUScenario.ofBasic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utts : List U) (worlds : List W)
-    (φ : U → W → ℚ) (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) : LUScenario where
+    (φ : U → W → ℚ) (prior : W → ℚ := λ _ => 1) (α : ℕ := 1) : LUScenario where
   Utterance := U
   World := W
   baseLexicon := Lexicon.ofScenario utts worlds φ
   lexica := [Lexicon.ofScenario utts worlds φ]
-  lexPrior := fun _ => 1
+  lexPrior := λ _ => 1
   worldPrior := prior
   utterances := utts
   worlds := worlds
@@ -291,7 +291,7 @@ Run L1 for an LUScenario using RSA.Eval (standard RSA, not LU).
 Useful for comparing LU-RSA predictions to standard RSA.
 -/
 def LUScenario.runStandardL1 (S : LUScenario) (u : S.Utterance) : List (S.World × ℚ) :=
-  RSA.Eval.basicL1 S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α (fun _ => 0) u
+  RSA.Eval.basicL1 S.utterances S.worlds S.baseLexicon.meaning S.worldPrior S.α (λ _ => 0) u
 
 -- M-Implicature Scenario Builder
 
@@ -310,22 +310,22 @@ def mkMImplicatureScenario {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (freqPrior : ℚ := 2/3) : LUScenario where
   Utterance := U
   World := W
-  baseLexicon := { meaning := fun _ _ => 1 }  -- Both utterances true everywhere
+  baseLexicon := { meaning := λ _ _ => 1 }  -- Both utterances true everywhere
   -- Three lexica: base + two where one utterance is specialized
   lexica := [
     -- L₁: Both utterances mean {FREQ, rare} (unrefined)
-    { meaning := fun _ _ => 1 },
+    { meaning := λ _ _ => 1 },
     -- L₂: SHORT means {FREQ}, long means {FREQ, rare}
-    { meaning := fun u w => if u == SHORT then (if w == FREQ then 1 else 0) else 1 },
+    { meaning := λ u w => if u == SHORT then (if w == FREQ then 1 else 0) else 1 },
     -- L₃: SHORT means {FREQ, rare}, long means {rare}
-    { meaning := fun u w => if u == long then (if w == rare then 1 else 0) else 1 },
+    { meaning := λ u w => if u == long then (if w == rare then 1 else 0) else 1 },
     -- L₄: SHORT means {FREQ}, long means {rare}
-    { meaning := fun u w =>
+    { meaning := λ u w =>
         if u == SHORT then (if w == FREQ then 1 else 0)
         else if u == long then (if w == rare then 1 else 0)
         else 1 }
   ]
-  worldPrior := fun w => if w == FREQ then freqPrior else (1 - freqPrior)
+  worldPrior := λ w => if w == FREQ then freqPrior else (1 - freqPrior)
   utterances := [SHORT, long]
   worlds := [FREQ, rare]
 
@@ -370,7 +370,7 @@ Key prediction: "some or all" → speaker is ignorant
 def mkSomeOrAllScenario : LUScenario where
   Utterance := SomeOrAllUtt
   World := ObsState  -- Using observation states as "worlds" for this model
-  baseLexicon := { meaning := fun u _ =>
+  baseLexicon := { meaning := λ u _ =>
     match u with
     | .all_ => 1  -- "all" compatible with knowAll
     | .some_ => 1  -- "some" compatible with all states (weak reading)
@@ -379,14 +379,14 @@ def mkSomeOrAllScenario : LUScenario where
   -- Lexica with different refinements of "some"
   lexica := [
     -- L₁: Unrefined (base)
-    { meaning := fun u o =>
+    { meaning := λ u o =>
         match u, o with
         | .all_, .knowAll => 1
         | .all_, _ => 0
         | .some_, _ => 1
         | .someOrAll, _ => 1 },
     -- L₂: "some" refined to {knowSomeNot}
-    { meaning := fun u o =>
+    { meaning := λ u o =>
         match u, o with
         | .all_, .knowAll => 1
         | .all_, _ => 0
@@ -394,7 +394,7 @@ def mkSomeOrAllScenario : LUScenario where
         | .some_, _ => 0
         | .someOrAll, _ => 1 },
     -- L₃: "some" refined to {knowAll}
-    { meaning := fun u o =>
+    { meaning := λ u o =>
         match u, o with
         | .all_, .knowAll => 1
         | .all_, _ => 0
@@ -402,7 +402,7 @@ def mkSomeOrAllScenario : LUScenario where
         | .some_, _ => 0
         | .someOrAll, _ => 1 }
   ]
-  worldPrior := fun _ => 1  -- Uniform over observation states
+  worldPrior := λ _ => 1  -- Uniform over observation states
   utterances := [.all_, .some_, .someOrAll]
   worlds := [.knowAll, .knowSomeNot, .ignorant]
 
@@ -417,9 +417,9 @@ When |Λ| = 1, the marginalization is trivial and L₁_LU = L₁_standard.
 -/
 theorem single_lexicon_reduces_to_rsa {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utts : List U) (worlds : List W) (φ : U → W → ℚ)
-    (prior : W → ℚ := fun _ => 1) (α : ℕ := 1) :
+    (prior : W → ℚ := λ _ => 1) (α : ℕ := 1) :
     let LU := LUScenario.ofBasic utts worlds φ prior α
-    let stdL1 := RSA.Eval.basicL1 utts worlds φ prior α (fun _ => 0)
+    let stdL1 := RSA.Eval.basicL1 utts worlds φ prior α (λ _ => 0)
     ∀ u w, LURSA.L1_prob LU u w = RSA.Eval.getScore (stdL1 u) w := by
   intro u w
   -- The proof requires showing that with single lexicon,

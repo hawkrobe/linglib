@@ -5,20 +5,20 @@ Theory-neutral empirical patterns for homogeneity gaps in natural language.
 
 ## Phenomena Covered
 
-1. **Plural definites**: "The doors are open" / "The doors aren't open"
-2. **Conjunctions**: "Ann and Bert have red hair"
-3. **Summative predicates**: "The flag is blue"
-4. **Conditionals**: "They play if the sun shines"
-5. **Collective predicates**: "The teachers met"
+1. Plural definites: "The doors are open" / "The doors aren't open"
+2. Conjunctions: "Ann and Bert have red hair"
+3. Summative predicates: "The flag is blue"
+4. Conditionals: "They play if the sun shines"
+5. Collective predicates: "The teachers met"
 
-## Key Observation
+## Observation
 
 Homogeneity is characterized by non-complementary truth conditions:
 - Positive: requires universal (or near-universal) satisfaction
 - Negative: requires existential denial (none satisfy)
 - Gap: some but not all satisfy → neither clearly true nor false
 
-## Key References
+## References
 
 - Löbner (2000): Polarity in natural language
 - Križ (2015, 2016): Homogeneity, trivalence, non-maximality
@@ -121,7 +121,7 @@ def booksExample : HomogeneityDatum :=
 /--
 Conjunctions exhibit homogeneity but resist non-maximal readings.
 
-Key observation: "Ann and Bert have red hair" behaves like a plural definite
+"Ann and Bert have red hair" behaves like a plural definite
 for homogeneity, but unlike plural definites, it resists non-maximal readings.
 
 Source: Schwarzschild (1994), Križ (2015), dissertation Chapter 7
@@ -212,7 +212,7 @@ def conditionalExample : HomogeneityDatum :=
 /--
 Collective predicates: "The teachers met."
 
-Homogeneity concerns whether ALL teachers participated in a meeting,
+Homogeneity concerns whether all teachers participated in a meeting,
 or just some subgroup.
 
 Source: Križ (2015, 2019)
@@ -375,27 +375,5 @@ def otherHomogeneityExamples : List HomogeneityDatum :=
 
 def removalExamples : List HomogeneityRemovalDatum :=
   [allRemovesHomogeneity, bothRemovesHomogeneity, completelyRemovesHomogeneity]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `HomogeneityDatum`: Basic pattern (positive/negative/gap scenarios)
-- `ConjunctionVsPluralDatum`: Contrast for non-maximality
-- `UpwardHomogeneityDatum`: Collective predicate patterns
-- `HomogeneityRemovalDatum`: How elements remove gaps
-- `QuestionAnswerDatum`: Question-response patterns
-
-### Example Collections
-- `pluralDefiniteExamples`: switches, books
-- `otherHomogeneityExamples`: conjunctions, summatives, conditionals, collectives
-- `removalExamples`: all, both, completely
-
-### Key References
-- Löbner (2000), Križ (2015, 2016), Križ & Chemla (2015)
-- Križ & Spector (2021), Bar-Lev (2021a)
--/
 
 end Phenomena.Plurals.Homogeneity

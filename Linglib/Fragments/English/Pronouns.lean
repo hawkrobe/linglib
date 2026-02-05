@@ -117,6 +117,6 @@ def allPronouns : List PronounEntry := [
 ]
 
 def lookup (form : String) : Option PronounEntry :=
-  allPronouns.find? fun p => p.form == form
+  allPronouns.find? λ p => p.form == form
 
 end Fragments.English.Pronouns

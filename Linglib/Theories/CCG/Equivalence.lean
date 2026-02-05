@@ -9,19 +9,19 @@ since all derivations in an equivalence class have the same meaning.
 
 ## Key Concepts
 
-1. **Semantic equivalence**: Two derivations are equivalent iff they have
-   the same category AND the same meaning.
+1. Semantic equivalence: Two derivations are equivalent iff they have
+   the same category and the same meaning.
 
-2. **Source of equivalence**: The B combinator is associative:
+2. Source of equivalence: The B combinator is associative:
    B (B f g) h = B f (B g h)
    So (f ∘ g) ∘ h = f ∘ (g ∘ h) in the semantics.
 
-3. **Equivalence classes**: For a string of n words, there are Catalan(n-1)
+3. Equivalence classes: For a string of n words, there are Catalan(n-1)
    different binary bracketings, but they all yield the same meaning if
    built purely from composition.
 
-4. **Processing implication**: A parser only needs to find ONE derivation
-   from each equivalence class - the others are redundant.
+4. Processing implication: A parser only needs to find one derivation
+   from each equivalence class; the others are redundant.
 
 ## References
 
@@ -47,7 +47,7 @@ open Montague
 Two derivations are semantically equivalent iff they span the same substring,
 have the same category, and have the same meaning.
 
-This is the key equivalence relation for "spurious ambiguity".
+This defines equivalence for "spurious ambiguity" analysis.
 -/
 structure DerivEquiv (m : Model) where
   /-- First derivation's category -/
@@ -76,7 +76,7 @@ theorem sem_equiv_refl {m : Model} (cm : Σ c : Cat, m.interpTy (catToTy c)) :
 Semantic equivalence is symmetric.
 -/
 theorem sem_equiv_symm {m : Model} (cm₁ cm₂ : Σ c : Cat, m.interpTy (catToTy c)) :
-    semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₁ := fun ⟨h, eq⟩ =>
+    semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₁ := λ ⟨h, eq⟩ =>
   match cm₁, cm₂, h, eq with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, rfl, eq => ⟨rfl, eq.symm⟩
 
@@ -85,7 +85,7 @@ Semantic equivalence is transitive.
 -/
 theorem sem_equiv_trans {m : Model} (cm₁ cm₂ cm₃ : Σ c : Cat, m.interpTy (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₃ →
-    semanticallyEquivalent cm₁ cm₃ := fun ⟨h₁, eq₁⟩ ⟨h₂, eq₂⟩ =>
+    semanticallyEquivalent cm₁ cm₃ := λ ⟨h₁, eq₁⟩ ⟨h₂, eq₂⟩ =>
   match cm₁, cm₂, cm₃, h₁, eq₁, h₂, eq₂ with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, ⟨_, _m₃⟩, rfl, eq₁, rfl, eq₂ => ⟨rfl, eq₁.trans eq₂⟩
 
@@ -147,9 +147,7 @@ The number of ways to fully bracket n items is the (n-1)th Catalan number:
 For a sentence of n words with purely compositional derivation, there are
 C_{n-1} structurally distinct derivations, all semantically equivalent.
 
-## The Key Recurrence
-
-Catalan numbers satisfy:
+Catalan numbers satisfy the recurrence:
   C₀ = 1
   C_{n+1} = Σ_{i=0}^{n} Cᵢ × C_{n-i}
 
@@ -206,10 +204,10 @@ def allTreesWithLeavesAux : (n : Nat) → (fuel : Nat) → List BinTree
   | 1, _ => [.leaf]
   | n + 2, fuel + 1 =>
     -- Split n+2 leaves: left gets i+1, right gets n+1-i (where i : 0..n)
-    (List.range (n + 1)).flatMap fun i =>
+    (List.range (n + 1)).flatMap λ i =>
       let leftTrees := allTreesWithLeavesAux (i + 1) fuel
       let rightTrees := allTreesWithLeavesAux (n + 1 - i) fuel
-      leftTrees.flatMap fun l => rightTrees.map fun r => .node l r
+      leftTrees.flatMap λ l => rightTrees.map λ r => .node l r
 
 /--
 Generate all binary trees with exactly n leaves.
@@ -241,7 +239,7 @@ def countBracketingsAux : (n : Nat) → (fuel : Nat) → Nat
   | 1, _ => 1  -- 1 item: trivial bracketing
   | n + 2, fuel + 1 =>
     -- n+2 items: sum over all ways to split
-    (List.range (n + 1)).foldl (fun acc i =>
+    (List.range (n + 1)).foldl (λ acc i =>
       acc + countBracketingsAux (i + 1) fuel * countBracketingsAux (n + 1 - i) fuel) 0
 
 /--
@@ -262,12 +260,12 @@ def countBracketings (n : Nat) : Nat :=
 #eval countBracketings 4  -- 5
 #eval countBracketings 5  -- 14
 
--- THE MAIN THEOREM: Catalan Counts Bracketings
+-- Catalan Counts Bracketings
 
 /--
-**THEOREM: countBracketings n = catalan (n-1) for n ≥ 1**
+countBracketings n = catalan (n-1) for n >= 1.
 
-This is verified computationally for small values.
+Verified computationally for small values.
 -/
 theorem catalan_counts_bracketings_1 : countBracketings 1 = catalan 0 := by native_decide
 theorem catalan_counts_bracketings_2 : countBracketings 2 = catalan 1 := by native_decide
@@ -277,7 +275,7 @@ theorem catalan_counts_bracketings_5 : countBracketings 5 = catalan 4 := by nati
 theorem catalan_counts_bracketings_6 : countBracketings 6 = catalan 5 := by native_decide
 
 /--
-**THEOREM: allTreesWithLeaves generates exactly countBracketings trees**
+allTreesWithLeaves generates exactly countBracketings trees.
 
 The tree enumeration function produces the correct count.
 -/
@@ -326,11 +324,11 @@ derivation strategies that select exactly one representative from each
 equivalence class.
 
 Common approaches:
-1. **Leftmost composition** (Hepple & Morrill 1989): Always compose left-to-right
-2. **Eisner normal form** (Eisner 1996): Constraints on when composition applies
+1. Leftmost composition (Hepple & Morrill 1989): Always compose left-to-right
+2. Eisner normal form (Eisner 1996): Constraints on when composition applies
 
-The key insight: if we only need one derivation per equivalence class,
-we can impose constraints that eliminate the others without losing coverage.
+If only one derivation per equivalence class is needed, constraints can
+eliminate the others without losing coverage.
 -/
 
 /--
@@ -398,11 +396,11 @@ def chartEntriesSameCat {m : Model} (e₁ e₂ : ChartEntry m) : Bool :=
 /-
 ## Spurious vs Real Ambiguity
 
-**Spurious ambiguity**: Different derivations, same meaning
+Spurious ambiguity: Different derivations, same meaning
   - "Harry thinks Anna married Manny" has many derivations
   - All yield: thinks'(married'(manny')(anna'))(harry')
 
-**Real ambiguity**: Different derivations, different meanings
+Real ambiguity: Different derivations, different meanings
   - "Flying planes can be dangerous" has two readings
   - Gerund: Being the pilot of planes is dangerous
   - Adjective: Planes that are flying are dangerous
@@ -410,8 +408,8 @@ def chartEntriesSameCat {m : Model} (e₁ e₂ : ChartEntry m) : Bool :=
 Only real ambiguity matters for interpretation. Spurious ambiguity is a
 parsing problem, not a semantic one.
 
-The key insight: CCG's flexibility in derivation does NOT increase semantic
-ambiguity - it just provides more paths to the same meanings.
+CCG's flexibility in derivation does not increase semantic ambiguity;
+it provides more paths to the same meanings.
 -/
 
 /--
@@ -433,41 +431,5 @@ Spuriously ambiguous: multiple derivations but only one equivalence class.
 -/
 def spuriouslyAmbiguous {m : Model} (derivCount : Nat) (classes : List (EquivalenceClass m)) : Prop :=
   derivCount > 1 ∧ classes.length = 1
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Equivalence Relation
-- `semanticallyEquivalent`: Two derivations have same category and meaning
-- Reflexivity, symmetry, transitivity proofs
-
-### Source of Spurious Ambiguity
-- `B_assoc`: Composition is associative
-- `composition_order_irrelevant`: Different bracketings yield same result
-- `catalan`: Counting the number of bracketings
-
-### Chart Parsing Support
-- `ChartEntry`: Category + meaning for a span
-- `chartEntriesMatch`: The matching entry test
-
-### Disambiguation
-- `EquivalenceClass`: Groups derivations by meaning
-- `reallyAmbiguous` vs `spuriouslyAmbiguous`: The key distinction
-
-## Key Theorem
-
-The central result is `B_assoc`: composition is associative, so different
-derivation trees built from composition yield identical meanings. This is
-why CCG has "spurious ambiguity" - many derivations per reading - but this
-is a parsing concern, not a semantic one.
-
-## Processing Implication
-
-A parser that finds ONE derivation per equivalence class has found all
-distinct readings. The "matching entry test" in chart parsing achieves this
-by checking for semantic equivalence before adding entries.
--/
 
 end CCG.Equivalence

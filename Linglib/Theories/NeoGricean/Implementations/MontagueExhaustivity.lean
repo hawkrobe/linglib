@@ -10,7 +10,7 @@ Connects compositional Montague semantics to exhaustivity operators.
 3. Show these match the hand-crafted `someStudents`/`allStudents` from Exhaustivity.lean
 4. Apply Theorem 9 to compositionally-derived meanings
 
-## Key Result
+## Result
 
 The scalar implicature "some → not all" is derived from:
 - Compositional semantics (Montague)
@@ -55,16 +55,16 @@ def studentModel : Model where
 
 instance : FiniteModel studentModel where
   elements := [.alice, .bob, .carol]
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /-- All entities are students in this model -/
-def isStudent : studentModel.interpTy (.e ⇒ .t) := fun _ => true
+def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true
 
 /--
 "Passed" predicate indexed by world.
 World w means exactly w students passed (Alice, then Bob, then Carol).
 -/
-def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := fun s =>
+def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := λ s =>
   match w.val, s with
   | 0, _ => false
   | 1, .alice => true
@@ -116,10 +116,10 @@ example : allPassedMontague ⟨3, by omega⟩ = true := rfl
 def boolToProp (b : Bool) : Prop := b = true
 
 /-- "Some students passed" as Prop' (Fin 4) -/
-def somePassed_Prop : Prop' (Fin 4) := fun w => boolToProp (somePassedMontague w)
+def somePassed_Prop : Prop' (Fin 4) := λ w => boolToProp (somePassedMontague w)
 
 /-- "All students passed" as Prop' (Fin 4) -/
-def allPassed_Prop : Prop' (Fin 4) := fun w => boolToProp (allPassedMontague w)
+def allPassed_Prop : Prop' (Fin 4) := λ w => boolToProp (allPassedMontague w)
 
 /-- Alternative set for exhaustivity -/
 def someAllALT_Montague : Set (Prop' (Fin 4)) := {somePassed_Prop, allPassed_Prop}
@@ -133,10 +133,10 @@ hand-crafted definitions from Exhaustivity.lean Section 6.
 -/
 
 /-- someStudents from Exhaustivity.lean -/
-def someStudents_handcrafted : Prop' (Fin 4) := fun w => w.val ≥ 1
+def someStudents_handcrafted : Prop' (Fin 4) := λ w => w.val ≥ 1
 
 /-- allStudents from Exhaustivity.lean -/
-def allStudents_handcrafted : Prop' (Fin 4) := fun w => w.val = 3
+def allStudents_handcrafted : Prop' (Fin 4) := λ w => w.val = 3
 
 /-- Compositional "some" matches hand-crafted definition -/
 theorem somePassed_eq_handcrafted :
@@ -265,7 +265,7 @@ theorem exhIE_somePassed_at_w1 :
 3. **Prop' conversion**: Boolean truth values become `Prop' World` for exhaustivity
 4. **Grounding theorem**: Compositional = hand-crafted (`somePassed_eq_handcrafted`)
 
-### Key Results
+### Results
 
 | Theorem | Statement |
 |---------|-----------|

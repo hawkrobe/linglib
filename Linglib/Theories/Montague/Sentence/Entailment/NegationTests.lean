@@ -43,12 +43,12 @@ inductive Animal where
 def allAnimals : List Animal := [.dog1, .dog2, .cat1, .cat2]
 
 /-- Proposition: x is a dog -/
-def isDog : BProp Animal := fun x => match x with
+def isDog : BProp Animal := λ x => match x with
   | .dog1 | .dog2 => true
   | _ => false
 
 /-- Proposition: x is an animal (always true in our domain) -/
-def isAnimal : BProp Animal := fun _ => true
+def isAnimal : BProp Animal := λ _ => true
 
 /-- Key fact: dogs ⊆ animals (isDog ≤ isAnimal pointwise) -/
 theorem dogs_subset_animals : ∀ x, isDog x = true → isAnimal x = true := by

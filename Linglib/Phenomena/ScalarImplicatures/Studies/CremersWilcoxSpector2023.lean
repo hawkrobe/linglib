@@ -3,18 +3,18 @@
 
 Empirical data and domain types for RSA exhaustivity models.
 
-## Key Phenomenon: Anti-Exhaustivity
+## Anti-Exhaustivity
 
-In baseline RSA, hearing "A" can INCREASE belief in w_ab (where A and B are both true)
+In baseline RSA, hearing "A" can increase belief in w_ab (where A and B are both true)
 when priors are biased. This "anti-exhaustive" behavior contradicts human interpretation.
 
 ## Domain
 
-**Two worlds:**
+Two worlds:
 - `w_a`: A true, B false (A ∧ ¬B)
 - `w_ab`: A and B both true (A ∧ B)
 
-**Three utterances:**
+Three utterances:
 - `A` with cost 0 (base utterance)
 - `A∧B` with cost c_AB
 - `A∧¬B` with cost c_A¬B
@@ -32,7 +32,7 @@ L1(w_ab | A) > P(w_ab) iff prior(w_ab) / prior(w_a) > c_A¬B / c_AB
 | 3 | BwRSA | Bayesian wonky inference |
 | 4 | svRSA | Supervaluationist QUD semantics |
 | 5 | FREE-LU | Lexical uncertainty (4 lexica) |
-| 6 | EXH-LU | Exhaustification + LU (key test) |
+| 6 | EXH-LU | Exhaustification + LU |
 | 7-8 | RSA-LI | Lexical Intentions variants |
 
 ## Reference
@@ -122,7 +122,7 @@ theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTrut
     - c(A∧B) = c_AB
     - c(A∧¬B) = c_A¬B
 
-    Key insight: Anti-exhaustivity depends on the RATIO c_A¬B / c_AB -/
+    Anti-exhaustivity depends on the ratio c_A¬B / c_AB. -/
 structure CWSCosts where
   /-- Cost of "A∧B" -/
   c_AB : ℚ
@@ -184,8 +184,8 @@ def uniformPrior : CWSPrior where
     L1(w_ab | A) > P(w_ab) iff P(w_ab) / P(w_a) > c(A∧¬B) / c(A∧B)
 
     When the prior ratio exceeds the cost ratio, the listener's posterior
-    on w_ab given "A" INCREASES relative to the prior. This is "anti-exhaustive"
-    because normally we expect "A" (without "and B") to suggest NOT B. -/
+    on w_ab given "A" increases relative to the prior. This is "anti-exhaustive"
+    because normally we expect "A" (without "and B") to suggest not B. -/
 def antiExhaustivityCondition (prior : CWSPrior) (costs : CWSCosts) : Prop :=
   prior.p_wab / prior.p_wa > costs.c_AnotB / costs.c_AB
 
@@ -329,53 +329,20 @@ def antiExhConfig : CWSConfig where
 
 -- Key Theoretical Claims
 
-/-- Central claim: Baseline RSA can be anti-exhaustive under biased priors.
+/-- Baseline RSA can be anti-exhaustive under biased priors.
 
-    This is the core problem that Cremers et al. identify. Human listeners
-    do NOT become anti-exhaustive even with strong prior bias. -/
+    Cremers et al. identify that human listeners
+    do not become anti-exhaustive even with strong prior bias. -/
 def baselineAntiExhaustivityClaim : String :=
   "In baseline RSA with biased priors, L1(w_ab | A) > P(w_ab). " ++
   "This 'anti-exhaustive' interpretation is not observed in humans."
 
-/-- Key insight: EXH blocks anti-exhaustivity by strengthening the meaning.
+/-- EXH blocks anti-exhaustivity by strengthening the meaning.
 
     When EXH is inserted, "A" means "A ∧ ¬B", which is false in w_ab.
     This forces L1(w_ab | A) = 0, eliminating anti-exhaustivity. -/
 def exhBlocksAntiExhaustivityClaim : String :=
   "Grammatical EXH strengthens 'A' to 'A ∧ ¬B', which is false in w_ab. " ++
   "This blocks anti-exhaustive interpretations regardless of prior bias."
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Domain Types
-- `CWSWorld`: Two worlds (w_a, w_ab)
-- `CWSUtterance`: Three utterances (A, A∧B, A∧¬B)
-- `CWSPrior`: Prior probability structure
-- `CWSCosts`: Cost parameters
-
-### Semantics
-- `literalTruth`: Literal meaning
-- `exhMeaning`: Exhaustified meaning (with EXH)
-- `lexiconMeaning`: Meaning under each of 4 lexica
-
-### Anti-Exhaustivity
-- `antiExhaustivityCondition`: Equation 6 from the paper
-- `antiExhaustivityHolds`: Decidable check
-- Example showing biased priors trigger anti-exhaustivity
-
-### Model Infrastructure
-- `CWSParse`: literal vs exhaustified
-- `CWSLexicon`: 4 lexica for FREE-LU
-- `CWSQUD`: QUDs for svRSA
-- `CWSConfig`: Model configuration
-
-## Key Theorems
-- `uniform_equal_no_antiexh`: Uniform prior + equal costs = no anti-exhaustivity
-- `strongly_biased_triggers_antiexh`: Biased prior triggers anti-exhaustivity
-- `exhA_only_in_wa`: EXH(A) is only true in w_a (blocks anti-exhaustivity)
--/
 
 end CremersWilcoxSpector2023

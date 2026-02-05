@@ -1,41 +1,15 @@
 /-
 # Kursat & Degen (2021): Perceptual Difficulty and Redundant Modification
 
-"Perceptual difficulty differences predict asymmetry in redundant modification
-with color and material adjectives"
-Proceedings of the Linguistic Society of America 6(1): 676-688.
+Perceptual difficulty predicts redundant modifier use. Material adjectives are harder to perceive and less redundantly used than color adjectives.
 
-## Key Question
+## Main definitions
 
-What is the SOURCE of the noise parameter in Degen et al. (2020)'s RSA model?
-
-## The Perceptual Difficulty Hypothesis
-
-The noise term reflects the **perceptual difficulty** of establishing whether
-the property denoted by the adjective holds of the contextually relevant objects.
-
-Prediction: More difficult to perceive → higher noise → less redundant use
-
-## Experiments
-
-1. **Exp 1**: Timed forced-choice property verification (color vs material)
-2. **Exp 2**: Reference game measuring redundant modifier production
-3. **Exp 3**: Perceptual difficulty in context (replication)
-
-## Main Finding
-
-Material adjectives are:
-- Harder to perceive (higher RT, more errors)
-- Less likely to be used redundantly
-
-This supports the hypothesis that Degen et al.'s noise parameter
-reflects perceptual difficulty.
+`PropertyType`, `PerceptualDifficultyDatum`, `ProductionDatum`, `Exp1Stats`, `Exp2Stats`, `Exp3Stats`, `PerceptualDifficultyHypothesis`
 
 ## References
 
-Kursat, L. & Degen, J. (2021). Perceptual difficulty differences predict
-asymmetry in redundant modification with color and material adjectives.
-Proc Ling Soc Amer 6(1). 676-688.
+- Kursat & Degen (2021)
 -/
 
 import Linglib.Phenomena.Core.Basic
@@ -47,33 +21,22 @@ open RSA.Noise
 
 -- Property Types
 
-/-- Property types tested in the experiments -/
+/-- Property type tested. -/
 inductive PropertyType where
-  | color     -- e.g., "green", "blue"
-  | material  -- e.g., "plastic", "metal", "wooden"
-  | size      -- e.g., "small", "large" (from Degen et al. 2020)
+  | color
+  | material
+  | size
   deriving DecidableEq, BEq, Repr
 
 -- Experiment 1: Perceptual Difficulty Norms
 
-/--
-Perceptual difficulty datum from Exp 1.
-
-Participants saw images with adjectives and indicated yes/no
-as quickly as possible (4 second timeout).
--/
+/-- Perceptual difficulty datum from Exp 1. -/
 structure PerceptualDifficultyDatum where
-  /-- The property type -/
   property : PropertyType
-  /-- Mean proportion of correct responses -/
   accuracy : Float
-  /-- Mean response time for correct responses (ms) -/
   responseTime : Float
-  /-- Standard error for accuracy -/
   accuracySE : Float := 0
-  /-- Standard error for RT -/
   rtSE : Float := 0
-  /-- Notes -/
   notes : String := ""
   deriving Repr
 
@@ -109,17 +72,10 @@ def exp1_stats : Exp1Stats := {}
 
 -- Experiment 2: Redundant Modifier Production
 
-/--
-Production datum from Exp 2.
-
-Interactive reference game where speakers describe targets to listeners.
--/
+/-- Production datum from Exp 2. -/
 structure ProductionDatum where
-  /-- Which property was redundant (not needed for unique reference) -/
   redundantProperty : PropertyType
-  /-- Proportion of utterances including the redundant property -/
   redundantUseRate : Float
-  /-- Notes -/
   notes : String := ""
   deriving Repr
 
@@ -178,66 +134,19 @@ structure Exp3Stats where
 
 def exp3_stats : Exp3Stats := {}
 
--- The Perceptual Difficulty Hypothesis
 
-/-!
-## The Perceptual Difficulty Hypothesis
-
-**Claim**: The noise parameter in Degen et al. (2020)'s RSA model reflects
-the perceptual difficulty of property verification.
-
-### Formalization
-
-In our noise channel formalization:
-- `noiseChannel onMatch onMismatch b = onMatch * b + onMismatch * (1 - b)`
-- Discrimination = `onMatch - onMismatch`
-
-The Perceptual Difficulty Hypothesis states:
-- Higher perceptual difficulty → Lower discrimination
-- Lower discrimination → Less redundant use
-
-### Evidence
-
-| Property | Perceptual Difficulty | Discrimination | Redundant Use |
-|----------|----------------------|----------------|---------------|
-| Color    | Low (fast, accurate) | High (~0.98)   | High (~75%)   |
-| Size     | Medium               | Medium (~0.60) | Medium        |
-| Material | High (slow, errors)  | Low            | Low (~25%)    |
-
-### Theoretical Import
-
-This gives an **empirical grounding** to the noise parameter:
-- It's not just a free parameter to fit data
-- It reflects measurable perceptual properties
-- Different features have different inherent discriminability
-
-### Connection to Information Theory
-
-Perceptual difficulty → Channel capacity:
-- Easy features (color): high channel capacity, low noise
-- Hard features (material): low channel capacity, high noise
-
-This connects to Bergen & Goodman's (2015) channel noise model.
--/
-
-/-- Summary of the perceptual difficulty hypothesis -/
+/-- Perceptual difficulty hypothesis summary. -/
 structure PerceptualDifficultyHypothesis where
-  /-- Claim: noise reflects perceptual difficulty -/
   claim : String :=
     "The noise term in cs-RSA reflects perceptual difficulty of property verification"
-  /-- Prediction -/
   prediction : String :=
     "More perceptually difficult properties are used redundantly less often"
-  /-- Weak version: between-property effects -/
   weakVersion : String :=
     "Color vs material asymmetry explained by perceptual difficulty asymmetry"
-  /-- Strong version: within-property effects -/
   strongVersion : String :=
     "Within property type, easier items used redundantly more often"
-  /-- Evidence for weak version -/
   weakEvidence : Bool := true
-  /-- Evidence for strong version -/
-  strongEvidence : Bool := false  -- Not found in this study
+  strongEvidence : Bool := false
   deriving Repr
 
 def hypothesis : PerceptualDifficultyHypothesis := {}
@@ -250,40 +159,6 @@ def perceptualDifficultyData : List PerceptualDifficultyDatum :=
 def productionData : List ProductionDatum :=
   [exp2_colorRedundant, exp2_materialRedundant]
 
--- Connection to Degen et al. (2020) Parameters
-
-/-!
-## Mapping to SemanticParams
-
-Based on the perceptual difficulty findings, we can interpret
-Degen et al.'s parameters as reflecting perceptual discriminability:
-
-```lean
--- Color: high discriminability (low perceptual difficulty)
-colorMatch := 99/100    -- 0.99
-colorMismatch := 1/100  -- 0.01
--- Discrimination = 0.98
-
--- Size: medium discriminability
-sizeMatch := 8/10       -- 0.80
-sizeMismatch := 2/10    -- 0.20
--- Discrimination = 0.60
-
--- Material (hypothetical, based on Kursat & Degen):
-materialMatch := 7/10   -- 0.70 (lower due to higher perceptual difficulty)
-materialMismatch := 3/10 -- 0.30
--- Discrimination = 0.40
-```
-
-The ordering of discrimination:
-  color (0.98) > size (0.60) > material (0.40)
-
-matches the ordering of perceptual ease:
-  color (fast, accurate) > size > material (slow, error-prone)
-
-and the ordering of redundant use:
-  color (75%) > size > material (25%)
--/
 
 /-- Hypothetical material parameters based on perceptual difficulty findings -/
 structure MaterialParams where
@@ -295,16 +170,7 @@ structure MaterialParams where
 
 def hypotheticalMaterialParams : MaterialParams := {}
 
--- Connection to Unified Noise Theory
-
-/-!
-## Connection to `RSA.Noise`
-
-The perceptual difficulty findings map directly to the unified noise theory
-in `Theories/RSA/Core/Noise.lean`.
--/
-
-/-- Map our property types to discrimination values from RSA.Noise -/
+/-- Map property types to discrimination values. -/
 def propertyToDiscrimination : PropertyType → ℚ
   | .color => RSA.Noise.colorDiscrimination
   | .size => RSA.Noise.sizeDiscrimination

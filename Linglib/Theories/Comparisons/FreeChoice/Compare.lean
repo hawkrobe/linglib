@@ -152,7 +152,7 @@ For "You may A":
 4. Hearer reasons: "Speaker avoided A to prevent me thinking Only A"
 5. Hearer concludes: Must be Only One or Any Number → FCI!
 
-### Key Insight
+### Insight
 
 The semantic uncertainty creates an **avoidance pattern**:
 - Disjuncts are "risky" (might be interpreted exclusively)

@@ -4,14 +4,14 @@
 Connects the traditional GEN operator (Krifka et al. 1995) to
 Tessler & Goodman's (2019) threshold-based RSA approach.
 
-## Key Result
+## Result
 
 The hidden "normalcy" parameter in traditional GEN can be eliminated:
 for any normalcy-based GEN configuration, there exists a threshold θ
 such that threshold semantics gives the same truth value.
 
-This shows that GEN is **eliminable** — threshold semantics can express
-any GEN configuration, making the observable "prevalence" sufficient.
+GEN is eliminable: threshold semantics can express any GEN configuration,
+making the observable "prevalence" sufficient.
 
 ## References
 
@@ -77,23 +77,21 @@ theorem prevalence_le_one
 -- Main Theorem: GEN Reduces to Threshold
 
 /--
-**Main Theorem**: Traditional GEN is eliminable via threshold semantics.
+Traditional GEN is eliminable via threshold semantics.
 
 For any normalcy predicate (the hidden parameter in GEN), there exists
 a threshold θ such that `thresholdGeneric` gives the same truth value.
 
-**Proof**:
+Proof:
 - If GEN = true, pick θ = -1. Since prevalence ≥ 0 > -1, threshold generic is true.
 - If GEN = false, pick θ = 1. Since prevalence ≤ 1, threshold generic is false.
 
-**Significance**: This shows that the "normalcy" parameter, which is:
-1. Not observable (covert)
-2. Context-dependent (varies by property)
-3. Potentially circular (defined to give right results)
-
-...can be replaced by observable prevalence plus uncertain threshold.
-The RSA model (Tessler & Goodman 2019) then explains how the threshold
-is inferred pragmatically from priors over prevalence.
+The "normalcy" parameter is (1) not observable (covert), (2)
+context-dependent (varies by property), and (3) potentially circular
+(defined to give right results). It can be replaced by observable
+prevalence plus uncertain threshold. The RSA model (Tessler & Goodman
+2019) then explains how the threshold is inferred pragmatically from
+priors over prevalence.
 -/
 theorem gen_eliminable
     (situations : List Situation)
@@ -174,14 +172,14 @@ theorem gen_false_implies_threshold_false
 Tessler & Goodman (2019) go further than just showing GEN is eliminable.
 They explain WHY certain generics are judged true despite low prevalence.
 
-**Key insight**: The threshold θ is UNCERTAIN, and integrated out:
+The threshold θ is uncertain and integrated out:
 
 ```
 P(generic true | prevalence p) = ∫ δ_{p > θ} · P(θ) dθ = p
 ```
 
 With a uniform prior over θ, the probability a generic is true equals
-the prevalence. But the LISTENER reasons about both prevalence AND
+the prevalence. But the listener reasons about both prevalence and
 what the speaker meant:
 
 ```
@@ -193,8 +191,8 @@ The prior P(p) varies by property:
 - "Is female": unimodal prior (peak at 50%)
 
 Same 50% prevalence, different judgments:
-- "Robins lay eggs" TRUE — 50% is HIGH relative to prior
-- "Robins are female" FALSE — 50% is EXPECTED given prior
+- "Robins lay eggs" true -- 50% is high relative to prior
+- "Robins are female" false -- 50% is expected given prior
 
 See `Theories/RSA/Implementations/TesslerGoodman2019.lean` for the
 full RSA implementation with prevalence priors.

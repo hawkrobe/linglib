@@ -1,24 +1,15 @@
 /-
 # Generics and Habituals: Empirical Patterns
 
-Theory-neutral data about generic and habitual sentences.
+Theory-neutral data about generic and habitual sentences, including prevalence asymmetries, rare property generics, striking property effects, habituals, and causal generics.
 
-## Key Phenomena
+## Main definitions
 
-1. **Prevalence asymmetries**: Same prevalence, different truth judgments
-2. **Rare property generics**: True generics with <1% prevalence
-3. **Striking property effect**: Dangerous properties need less prevalence
-4. **Habituals**: Individual-level frequency generalizations
-5. **Causal generics**: "Smoking causes cancer"
+`PrevalenceAsymmetry`, `RarePropertyGeneric`, `StrikingPropertyEffect`, `ConnectionType`, `HabitualDatum`, `CausalGenericDatum`, `QuantifierContrast`, `AcquisitionDatum`
 
 ## References
 
-- Carlson, G.N. (1977). Reference to Kinds in English. PhD dissertation.
-- Leslie, S.J. (2008). Generics: Cognition and Acquisition. Philosophical Review.
-- Prasada, S. & Dillingham, E. (2006). Principled and statistical connections.
-- Cimpian, A., Brandone, A., & Gelman, S. (2010). Generic statements require
-  little evidence for acceptance but have powerful implications.
-- Tessler, M.H. & Goodman, N.D. (2019). The Language of Generalization.
+- Carlson (1977), Leslie (2008), Prasada & Dillingham (2006), Cimpian et al. (2010), Tessler & Goodman (2019)
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -27,19 +18,13 @@ namespace Phenomena.Generics
 
 -- Prevalence Asymmetry Data
 
-/-- A prevalence asymmetry datum: same prevalence, different judgments -/
+/-- Same prevalence, different truth judgments. -/
 structure PrevalenceAsymmetry where
-  /-- First sentence -/
   sentence1 : String
-  /-- Second sentence -/
   sentence2 : String
-  /-- Shared prevalence (approximate) -/
   prevalence : ℚ
-  /-- Judgment for sentence1 (1 = clearly true, 0 = clearly false) -/
   judgment1 : ℚ
-  /-- Judgment for sentence2 -/
   judgment2 : ℚ
-  /-- Source -/
   source : String
 
 /-- Classic asymmetry: "lays eggs" vs "is female" (Leslie 2008) -/
@@ -64,14 +49,11 @@ def hasLiverVsHasBrownEyes : PrevalenceAsymmetry :=
 
 -- Rare Property Generics
 
-/-- A rare property generic: true despite very low prevalence -/
+/-- True generic despite very low prevalence. -/
 structure RarePropertyGeneric where
   sentence : String
-  /-- Actual prevalence (very low) -/
   prevalence : ℚ
-  /-- Truth judgment (typically high despite low prevalence) -/
   judgment : ℚ
-  /-- Why it's accepted (striking, dangerous, etc.) -/
   explanation : String
   source : String
 
@@ -113,13 +95,10 @@ def peacocksTails : RarePropertyGeneric :=
 
 -- Striking Property Effect
 
-/-- The striking property effect: dangerous/distinctive properties
-    require less prevalence for generic acceptance -/
+/-- Dangerous/distinctive properties require less prevalence for generic acceptance. -/
 structure StrikingPropertyEffect where
-  /-- Neutral property sentence -/
   neutralSentence : String
   neutralPrevalenceNeeded : ℚ
-  /-- Striking property sentence -/
   strikingSentence : String
   strikingPrevalenceNeeded : ℚ
   source : String
@@ -135,17 +114,16 @@ def malariaVsWings : StrikingPropertyEffect :=
 
 -- Principled vs Statistical Connections
 
-/-- Prasada & Dillingham's distinction between connection types -/
+/-- Principled vs statistical connection (Prasada & Dillingham). -/
 inductive ConnectionType where
-  | principled  -- Part of what it IS to be a K (e.g., having a heart)
-  | statistical -- Merely correlated (e.g., having brown eyes)
+  | principled
+  | statistical
   deriving Repr, DecidableEq, BEq
 
-/-- A connection type datum -/
+/-- Connection type datum. -/
 structure ConnectionDatum where
   sentence : String
   connectionType : ConnectionType
-  /-- Principled connections accepted at lower prevalence -/
   acceptanceThreshold : ℚ
   source : String
 
@@ -165,12 +143,10 @@ def hasBrownFur : ConnectionDatum :=
 
 -- Habitual Data
 
-/-- A habitual sentence datum -/
+/-- Habitual sentence datum. -/
 structure HabitualDatum where
   sentence : String
-  /-- Frequency description -/
   frequency : String
-  /-- Acceptance rate -/
   judgment : ℚ
   source : String
 
@@ -200,10 +176,9 @@ def johnDrinksAmbiguity : HabitualDatum :=
 
 -- Causal Generics
 
-/-- A causal generic datum -/
+/-- Causal generic datum. -/
 structure CausalGenericDatum where
   sentence : String
-  /-- Estimated causal power (Cheng 1997) -/
   causalPower : ℚ
   judgment : ℚ
   source : String
@@ -226,13 +201,11 @@ def pillsClots : CausalGenericDatum :=
 
 -- Quantifier Contrast Data
 
-/-- Generics vs explicit quantifiers -/
+/-- Generics vs explicit quantifiers. -/
 structure QuantifierContrast where
   generic : String
   quantified : String
-  /-- Generic judgment -/
   genericJudgment : ℚ
-  /-- Quantified judgment -/
   quantifiedJudgment : ℚ
   source : String
 
@@ -256,15 +229,11 @@ def ducksLay : QuantifierContrast :=
 
 -- Acquisition Data (Cimpian et al. 2010)
 
-/-- Children accept generics with minimal evidence -/
+/-- Child generic acceptance with minimal evidence. -/
 structure AcquisitionDatum where
-  /-- The generic tested -/
   sentence : String
-  /-- Evidence provided (e.g., "2 out of 4 lorps have purple feathers") -/
   evidence : String
-  /-- Child acceptance rate -/
   childAcceptance : ℚ
-  /-- Adult acceptance rate -/
   adultAcceptance : ℚ
   source : String
 
@@ -276,39 +245,5 @@ def lorpsPurple : AcquisitionDatum :=
   , source := "Cimpian et al. 2010"
   }
 
--- Theory Desiderata
-
-/-!
-## What a Theory of Generics Must Explain
-
-1. **Prevalence asymmetries**: Same % prevalence, different judgments
-   - "Robins lay eggs" (TRUE) vs "Robins are female" (FALSE)
-
-2. **Rare property generics**: Acceptance at very low prevalence
-   - "Mosquitos carry malaria" (~1%)
-   - "Sharks attack swimmers" (~0.1%)
-
-3. **Striking property effect**: Dangerous/distinctive properties
-   need less prevalence
-
-4. **Principled vs statistical**: "Has a heart" vs "has brown eyes"
-
-5. **Quantifier contrast**: Generics ≠ universal quantification
-   - "Ducks lay eggs" (TRUE) but "All ducks lay eggs" (FALSE)
-
-6. **Habituals**: Individual-level generalizations with frequency sensitivity
-
-7. **Acquisition**: Children accept generics with minimal evidence
-
-## Theoretical Approaches
-
-| Approach | Key Mechanism |
-|----------|---------------|
-| Tessler & Goodman 2019 | Uncertain threshold + prevalence priors |
-| Leslie 2008 | Cognitive default + striking properties |
-| Prasada & Dillingham 2006 | Principled vs statistical connections |
-| Cohen 1999 | Homogeneity presupposition |
-| Nickel 2016 | Normality-based semantics |
--/
 
 end Phenomena.Generics

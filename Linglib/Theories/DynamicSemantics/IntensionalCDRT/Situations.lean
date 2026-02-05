@@ -1,12 +1,12 @@
 /-
 # Situation Discourse Referents for ICDRT
 
-Extension of ICDRT with **situation discourse referents** (SDrefs).
+Extension of ICDRT with situation discourse referents (SDrefs).
 
 ## Motivation: Mendes (2025)
 
 Mendes argues that the Portuguese Subordinate Future (SF) is a subjunctive
-that introduces a **situation dref** - parallel to how indefinites introduce
+that introduces a situation dref -- parallel to how indefinites introduce
 individual drefs in DRT.
 
 Just as:
@@ -75,15 +75,15 @@ namespace SDref
 variable {W Time E : Type*}
 
 /-- Constant situation dref (same situation in all contexts) -/
-def const (s : Situation W Time) : SDref W Time E := fun _ => s
+def const (s : Situation W Time) : SDref W Time E := λ _ => s
 
 /-- Extract the world component -/
 def world (d : SDref W Time E) : ICDRTAssignment W E → W :=
-  fun g => (d g).world
+  λ g => (d g).world
 
 /-- Extract the time component -/
 def time (d : SDref W Time E) : ICDRTAssignment W E → Time :=
-  fun g => (d g).time
+  λ g => (d g).time
 
 end SDref
 
@@ -106,12 +106,12 @@ variable {W Time E : Type*}
 /-- Empty assignment -/
 def empty (defaultSit : Situation W Time) : SitAssignment W Time E where
   base := ICDRTAssignment.empty
-  sit := fun _ => defaultSit
+  sit := λ _ => defaultSit
 
 /-- Update situation variable -/
 def updateSit (g : SitAssignment W Time E) (v : SVar) (s : Situation W Time) :
     SitAssignment W Time E :=
-  { g with sit := fun v' => if v' == v then s else g.sit v' }
+  { g with sit := λ v' => if v' == v then s else g.sit v' }
 
 /-- Lookup situation variable -/
 notation g "⟦" v "⟧ₛ" => SitAssignment.sit g v
@@ -235,7 +235,7 @@ def dynFUT {W Time E : Type*} [LT Time]
 
 
 /--
-**Subordinate Future (SF) analysis**
+Subordinate Future (SF) analysis.
 
 The SF in Portuguese conditionals:
   "Se Maria estiver em casa, ela vai atender."
@@ -261,7 +261,7 @@ def subordinateFuture {W Time E : Type*} [LE Time] [LT Time]
   dynFUT newSitVar refSitVar c'
 
 /--
-**Conditional with SF antecedent** (dynamic version)
+Conditional with SF antecedent (dynamic version).
 
 "Se Maria estiver em casa, ela vai atender."
 
@@ -285,7 +285,7 @@ def conditionalWithSF {W Time E : Type*} [LE Time] [LT Time]
 
 
 /--
-**SF introduces a future situation**
+SF introduces a future situation.
 
 The subordinate future always introduces a situation with time ≥ current.
 -/
@@ -304,7 +304,7 @@ theorem sf_introduces_future {W Time E : Type*} [Preorder Time]
   exact le_of_lt h_gt
 
 /--
-**SUBJ is existential over historical base**
+SUBJ is existential over historical base.
 -/
 theorem dynSUBJ_existential {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -321,7 +321,7 @@ theorem dynSUBJ_existential {W Time E : Type*} [LE Time]
   · rw [h_eq]; exact h_hist
 
 /--
-**IND is presuppositional (same-world check)**
+IND is presuppositional (same-world check).
 -/
 theorem dynIND_same_world {W Time E : Type*}
     (v : SVar)
@@ -334,9 +334,9 @@ theorem dynIND_same_world {W Time E : Type*}
 
 
 /--
-**KEY THEOREM: Temporal shift is parasitic on modal donkey anaphora**
+Temporal shift is parasitic on modal donkey anaphora.
 
-Mendes (2025) §3.2: The future-oriented interpretation of SF is NOT due
+Mendes (2025) §3.2: the future-oriented interpretation of SF is not due
 to an independent temporal operator. Instead, it follows from:
 
 1. SUBJ introduces s₁ ∈ hist(s₀) - modal component
@@ -345,7 +345,7 @@ to an independent temporal operator. Instead, it follows from:
 
 The temporal shift is *derived* from the modal semantics, not stipulated.
 
-This is the central theoretical claim: modal donkey anaphora explains
+Modal donkey anaphora explains
 why subjunctive mood enables future reference in subordinate clauses.
 -/
 theorem temporal_shift_parasitic_on_modal {W Time E : Type*} [Preorder Time]
@@ -396,7 +396,7 @@ theorem temporal_shift_parasitic_on_modal {W Time E : Type*} [Preorder Time]
   · exact h_gt
 
 /--
-**Corollary: Without modal displacement, no temporal shift**
+Without modal displacement, no temporal shift.
 
 If we remove the modal component (SUBJ), there's no mechanism for
 the future-oriented reading. This shows the temporal shift is parasitic.
@@ -415,7 +415,7 @@ theorem no_modal_no_temporal_shift {W Time E : Type*} [Preorder Time]
 
 
 /--
-**Relative clause with SF in restrictor**
+Relative clause with SF in restrictor.
 
 "Cada menino [que estiver acordado] vai receber um biscoito."
 "Every boy [who is.SF awake] will get a cookie."
@@ -435,7 +435,7 @@ def relativeClauseSF {W Time E : Type*} [LE Time] [LT Time]
   subordinateFuture history rcVar speechVar c
 
 /--
-**Strong quantifier with SF restrictor**
+Strong quantifier with SF restrictor.
 
 "Todo livro [que Maria ler.SF] será interessante"
 "Every book [that Maria reads.SF] will be interesting"
@@ -459,7 +459,7 @@ def everyWithSFRestrictor {W Time E : Type*} [LE Time] [LT Time]
   nuclear c₂
 
 /--
-**Theorem: SF in restrictor enables future reference for strong quantifiers**
+SF in restrictor enables future reference for strong quantifiers.
 
 With SF in the relative clause, "every" can quantify over future entities.
 
@@ -487,7 +487,7 @@ theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
 
 
 /--
-**Example sentence derivation** (Paper example 53)
+Example sentence derivation (paper example 53).
 
 "Se Maria estiver em casa, ela vai atender."
 "If Maria be.SF home, she will answer."
@@ -505,7 +505,7 @@ structure SentenceDerivation (W Time E : Type*) where
   speechSitVar : SVar
 
 /--
-**Step-by-step derivation** following paper's formulas
+Step-by-step derivation following paper's formulas.
 
 (54) ⟦SUBJ^s₁_{s₀}⟧ = λcλc'. ∃s₁[s₁ ∈ hist(s₀); c'(s₁)]
 (55) ⟦Maria⟧ = maria
@@ -527,15 +527,15 @@ def exampleDerivation {W Time E : Type*} [LE Time] [LT Time]
     (c : SitContext W Time E) : SitContext W Time E :=
   -- (60) Antecedent: SF introduces s₁ with Maria at home
   let antecedent : SitContext W Time E → SitContext W Time E :=
-    fun c' => { gs ∈ c' | atHome maria (gs.1.sit s₁) }
+    λ c' => { gs ∈ c' | atHome maria (gs.1.sit s₁) }
   -- (61) Consequent: Maria answers, evaluated at s₁'s time
   let consequent : SitContext W Time E → SitContext W Time E :=
-    fun c' => { gs ∈ c' | answer maria (gs.1.sit s₁) }
+    λ c' => { gs ∈ c' | answer maria (gs.1.sit s₁) }
   -- (62-63) Full conditional with SF
   conditionalWithSF history s₁ s₀ antecedent consequent c
 
 /--
-**Theorem: Derivation matches Mendes' formulas (54)-(63)**
+Derivation matches Mendes' formulas (54)-(63).
 
 The output context captures exactly the truth conditions described
 in the paper: universal quantification over historical alternatives
@@ -606,53 +606,5 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
   · intro _
     exact h_ans
 
--- Summary
-
-/-
-## What This Module Provides
-
-### Situation Drefs
-- `SVar`: Situation variable indices
-- `SDref W Time E`: Situation drefs (assignment → Situation)
-- `SitAssignment W Time E`: Assignments extended with situation variables
-- `SitContext W Time E`: Contexts as (assignment, situation) pairs
-
-### Dynamic Mood Operators
-- `dynSUBJ`: Introduces situation dref from historical base
-- `dynIND`: Retrieves situation dref with same-world check
-
-### Dynamic Tense Operators
-- `dynPAST`, `dynPRES`, `dynFUT`: Temporal constraints on situation drefs
-
-### Mendes (2025) Analysis
-- `subordinateFuture`: SF = SUBJ + FUT composition
-- `conditionalWithSF`: Conditional with SF antecedent
-
-### Theorems (Original)
-- `sf_introduces_future`: SF introduces future situations
-- `dynSUBJ_existential`: SUBJ quantifies over historical alternatives
-- `dynIND_same_world`: IND requires world identity
-
-### NEW: Temporal Shift is Parasitic (§3.2)
-- `temporal_shift_parasitic_on_modal`: KEY THEOREM - temporal shift derives from modal
-- `no_modal_no_temporal_shift`: Without SUBJ, no temporal shift
-
-### NEW: Relative Clause Integration
-- `relativeClauseSF`: SF in relative clause restrictors
-- `everyWithSFRestrictor`: Strong quantifier with SF restrictor
-- `sf_restrictor_future_reference`: SF enables future reference in restrictors
-
-### NEW: Complete CDRT Derivation (§4.3.1)
-- `SentenceDerivation`: Structure for compositional derivation
-- `exampleDerivation`: Full derivation of example (53)
-- `derivation_matches_paper`: Verification against formulas (54)-(63)
-
-### Connection to Other Modules
-- `IntensionalCDRT/Basic.lean`: Base ICDRT types (PDref, IDref, IContext)
-- `Montague/Core/Time.lean`: Situation, historicalBase
-- `Montague/Sentence/Mood/Basic.lean`: Static mood operators
-- `ModalDonkeyAnaphora.lean`: Cross-clausal binding theory
-- `PresuppositionWeakening.lean`: SF weakens existential presuppositions
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT.Situations

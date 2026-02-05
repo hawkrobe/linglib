@@ -5,7 +5,7 @@ Semantic analysis of verum focus following Romero & Han (2004).
 
 ## Core Idea
 
-VERUM is a **conversational epistemic operator**:
+VERUM is a conversational epistemic operator:
 
   FOR-SURE-CG_x(p) = ∀w' ∈ Epi_x(w)[∀w'' ∈ Conv_x(w')[p ∈ CG_w'']]
 
@@ -14,16 +14,16 @@ compatible with x's conversational goals, p is in the Common Ground."
 
 In short: "It is for sure that we should add p to the CG."
 
-## Key Results
+## Results
 
-1. VERUM creates **unbalanced partitions**: {FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}
+1. VERUM creates unbalanced partitions: {FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}
    rather than {p, ¬p}
 
-2. **Ladd's ambiguity** (PI vs NI) is scope ambiguity:
+2. Ladd's ambiguity (PI vs NI) is scope ambiguity:
    - PI: [Q [not [VERUM [p]]]] → double-check p
    - NI: [Q [VERUM [not [p]]]] → double-check ¬p
 
-3. **Epistemic implicature** from intent/pronunciation:
+3. Epistemic implicature from intent/pronunciation:
    - Asserting ¬FOR-SURE-CG(p) (PI) implicates belief in p
    - Asserting FOR-SURE-CG(¬p) (NI) implicates belief in ¬p
 
@@ -70,7 +70,7 @@ structure VerumFrame (W : Type*) where
 
 -- Part 2: The VERUM Operator
 
-/-- **FOR-SURE-CG**: The VERUM operator (Romero & Han 2004)
+/-- FOR-SURE-CG: The VERUM operator (Romero & Han 2004).
 
 ∀w' ∈ Epi_x(w)[∀w'' ∈ Conv_x(w')[p ∈ CG_w'']]
 
@@ -81,12 +81,12 @@ This captures: "It is for sure that we should add p to the CG."
 -/
 def forSureCG {W : Type*} (frame : VerumFrame W)
     (w : W) (p : W → Bool) : Bool :=
-  frame.worlds.all fun w' =>
+  frame.worlds.all λ w' =>
     if frame.epiAccessible w w' then
-      frame.worlds.all fun w'' =>
+      frame.worlds.all λ w'' =>
         if frame.convAccessible w' w'' then
-          (frame.commonGround w'').any fun q =>
-            frame.worlds.all fun v => p v == q v  -- p ∈ CG means p equals some CG proposition
+          (frame.commonGround w'').any λ q =>
+            frame.worlds.all λ v => p v == q v  -- p ∈ CG means p equals some CG proposition
         else true
     else true
 
@@ -96,8 +96,8 @@ def verum {W : Type*} [DecidableEq W]
     (epiWorlds : W → List W)                 -- Epi_x(w)
     (convWorlds : W → List W)                -- Conv_x(w')
     (w : W) (p : W → Bool) : Bool :=
-  (epiWorlds w).all fun w' =>
-    (convWorlds w').all fun w'' =>
+  (epiWorlds w).all λ w' =>
+    (convWorlds w').all λ w'' =>
       cgMembership w'' p
 
 -- Part 3: Unbalanced Partitions
@@ -113,7 +113,7 @@ structure QuestionPartition (W : Type*) where
 /-- Standard balanced polar question: {p, ¬p} -/
 def balancedQuestion {W : Type*} (p : W → Bool) : QuestionPartition W := {
   cell1 := p
-  cell2 := fun w => !p w
+  cell2 := λ w => !p w
   pronounced := p
 }
 
@@ -129,11 +129,11 @@ def verumQuestion {W : Type*} [DecidableEq W]
     (p : W → Bool)
     (pronounceNeg : Bool)  -- true for PI, false for NI
     : QuestionPartition W := {
-  cell1 := fun w => verum cgMembership epiWorlds convWorlds w p
-  cell2 := fun w => !verum cgMembership epiWorlds convWorlds w p
+  cell1 := λ w => verum cgMembership epiWorlds convWorlds w p
+  cell2 := λ w => !verum cgMembership epiWorlds convWorlds w p
   pronounced := if pronounceNeg
-    then fun w => !verum cgMembership epiWorlds convWorlds w p  -- PI: ¬FOR-SURE-CG(p)
-    else fun w => verum cgMembership epiWorlds convWorlds w p   -- NI: FOR-SURE-CG(p)
+    then λ w => !verum cgMembership epiWorlds convWorlds w p  -- PI: ¬FOR-SURE-CG(p)
+    else λ w => verum cgMembership epiWorlds convWorlds w p   -- NI: FOR-SURE-CG(p)
 }
 
 -- Part 4: Ladd's Ambiguity (PI vs NI)
@@ -177,7 +177,7 @@ def interpretNegQuestion {W : Type*} [DecidableEq W]
     verumQuestion cgMembership epiWorlds convWorlds p true
   | .niLF p =>
     -- NI: VERUM scopes over negation, asking about FOR-SURE-CG(¬p)
-    let notP : W → Bool := fun w => !p w
+    let notP : W → Bool := λ w => !p w
     verumQuestion cgMembership epiWorlds convWorlds notP false
 
 -- Part 5: Epistemic Implicature
@@ -276,13 +276,13 @@ theorem preposed_negation_forces_verum :
 /-!
 ## Relationship to Polarity.lean
 
-Van Rooy & Šafářová (2003) and Romero & Han (2004) are **complementary**:
+Van Rooy & Šafářová (2003) and Romero & Han (2004) are complementary:
 
-1. **vR&Š (Polarity.lean)**: Explains WHICH polar question to use
+1. vR&S (Polarity.lean): Explains which polar question to use
    - Decision-theoretic: choose question that maximizes expected utility
    - Predicts bias based on speaker's credences and stakes
 
-2. **R&H (this file)**: Explains WHY preposed negation forces bias
+2. R&H (this file): Explains why preposed negation forces bias
    - VERUM semantics: preposed negation introduces FOR-SURE-CG
    - Explains structural ambiguity (PI vs NI)
    - Explains polarity item licensing
@@ -308,7 +308,7 @@ Partition: {¬FOR-SURE-CG(drinks(j)), FOR-SURE-CG(drinks(j))}
 Pronounced: ¬FOR-SURE-CG(drinks(j))
 Implicature: Speaker believes John drinks
 -/
-def examplePI : NegQuestionLF Unit := .piLF (fun () => true)
+def examplePI : NegQuestionLF Unit := .piLF (λ () => true)
 
 /-- Example: "Doesn't John drink?" (NI reading, with "either")
 
@@ -317,66 +317,6 @@ Partition: {FOR-SURE-CG(¬drinks(j)), ¬FOR-SURE-CG(¬drinks(j))}
 Pronounced: FOR-SURE-CG(¬drinks(j))
 Implicature: Speaker believes John doesn't drink
 -/
-def exampleNI : NegQuestionLF Unit := .niLF (fun () => true)
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### VERUM Operator
-- `forSureCG`: Full definition with epistemic/conversational accessibility
-- `verum`: Simplified version for finite models
-
-### Unbalanced Partitions
-- `QuestionPartition`: General polar question partition
-- `balancedQuestion`: Standard {p, ¬p}
-- `verumQuestion`: VERUM-based {FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}
-
-### Ladd's Ambiguity
-- `NegQuestionReading`: PI vs NI
-- `NegQuestionLF`: LF structures with VERUM/negation scope
-- `interpretNegQuestion`: LF → partition
-
-### Polarity Item Licensing
-- `PolarityItem`: PPIs and NPIs
-- `isLicensed`: Licensing under PI/NI readings
-- `ppi_implies_pi`: Ladd's generalization (proven)
-
-### VERUM Sources
-- `VerumSource`: Preposed negation, "really", aux focus, NOT focus
-- `necessarilyTriggersVerum`: All sources force VERUM
-
-### Integration
-- Connection to `Polarity.lean` (decision-theoretic side)
-- Cross-theory explanation of polar question bias
-
-## Architecture
-
-```
-Phenomena/Focus/VerumFocus.lean     ← Empirical data
-           │
-           ▼
-This module (Theory)
-           │
-           ├── VERUM operator (conversational epistemic)
-           ├── Unbalanced partitions
-           ├── Ladd's ambiguity (PI/NI)
-           └── Polarity item licensing
-           │
-           ▼
-Questions/Polarity.lean              ← Decision theory (vR&Š)
-           │
-           ▼
-Questions.lean hub                   ← G&S partition semantics
-```
-
-## References
-
-- Romero & Han (2004): VERUM semantics, Ladd's ambiguity
-- Ladd (1981): PI/NI observation, p/¬p ambiguity
-- Höhle (1992): Original verum focus concept
-- van Rooy & Šafářová (2003): Decision-theoretic complement
--/
+def exampleNI : NegQuestionLF Unit := .niLF (λ () => true)
 
 end Montague.Question.VerumFocus

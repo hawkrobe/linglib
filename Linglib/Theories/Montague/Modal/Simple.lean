@@ -48,7 +48,7 @@ Construct a simple modal theory from an accessibility relation.
 def Simple (R : World → World → Bool) : ModalTheory where
   name := "Simple"
   citation := "Kripke 1963"
-  eval := fun force p w =>
+  eval := λ force p w =>
     let accessible := allWorlds'.filter (R w)
     match force with
     | .necessity => accessible.all p
@@ -57,16 +57,16 @@ def Simple (R : World → World → Bool) : ModalTheory where
 -- Standard Accessibility Relations
 
 /-- Universal accessibility: every world is accessible from every world. -/
-def universalR : World → World → Bool := fun _ _ => true
+def universalR : World → World → Bool := λ _ _ => true
 
 /-- Reflexive accessibility: each world is accessible from itself. -/
-def reflexiveR : World → World → Bool := fun w w' => w == w'
+def reflexiveR : World → World → Bool := λ w w' => w == w'
 
 /-- Empty accessibility: no world is accessible from any world. -/
-def emptyR : World → World → Bool := fun _ _ => false
+def emptyR : World → World → Bool := λ _ _ => false
 
 /-- Sample epistemic accessibility: w0↔w2, w1↔w3. -/
-def sampleEpistemicR : World → World → Bool := fun w w' =>
+def sampleEpistemicR : World → World → Bool := λ w w' =>
   match w, w' with
   | .w0, .w0 => true | .w0, .w2 => true
   | .w2, .w0 => true | .w2, .w2 => true
@@ -75,7 +75,7 @@ def sampleEpistemicR : World → World → Bool := fun w w' =>
   | _, _ => false
 
 /-- Sample deontic accessibility: ideal worlds w0, w2 accessible from anywhere. -/
-def sampleDeonticR : World → World → Bool := fun _ w' =>
+def sampleDeonticR : World → World → Bool := λ _ w' =>
   w' == .w0 || w' == .w2
 
 -- Instantiated Theories
@@ -125,7 +125,7 @@ theorem simple_reflexive_necessity_johnHome :
 
 /-- Helper: duality holds for any list. -/
 private theorem list_duality (L : List World) (p : Proposition) :
-    (L.all p == !L.any fun w' => !p w') = true := by
+    (L.all p == !L.any λ w' => !p w') = true := by
   induction L with
   | nil => rfl
   | cons x xs ih =>
@@ -187,7 +187,7 @@ This completes the derivation chain:
   simple_duality (per p, w) → simple_isNormal (universal property)
 -/
 theorem simple_isNormal (R : World → World → Bool) : (Simple R).isNormal :=
-  fun p w => simple_duality R p w
+  λ p w => simple_duality R p w
 
 /-- Corollary: SimpleUniversal is normal. -/
 theorem simpleUniversal_isNormal : SimpleUniversal.isNormal :=
@@ -250,7 +250,7 @@ theorem T_axiom_from_reflexivity (R : World → World → Bool) (hRefl : isRefle
 theorem reflexive_implies_T (R : World → World → Bool) (hRefl : isReflexive R) :
     ∀ (p : Proposition) (w : World),
     (Simple R).eval .necessity p w = true → p w = true :=
-  fun p w => T_axiom_from_reflexivity R hRefl p w
+  λ p w => T_axiom_from_reflexivity R hRefl p w
 
 -- ----------------------------------------------------------------------------
 -- D Axiom: □p → ◇p (Seriality)
@@ -290,17 +290,17 @@ theorem D_axiom_from_seriality (R : World → World → Bool) (hSerial : isSeria
 theorem serial_implies_D (R : World → World → Bool) (hSerial : isSerial R) :
     ∀ (p : Proposition) (w : World),
     (Simple R).eval .necessity p w = true → (Simple R).eval .possibility p w = true :=
-  fun p w => D_axiom_from_seriality R hSerial p w
+  λ p w => D_axiom_from_seriality R hSerial p w
 
 -- ----------------------------------------------------------------------------
 -- Consistency as Corollary of D
 -- ----------------------------------------------------------------------------
 
 /-- Universal R is serial (trivially: all worlds accessible). -/
-theorem universalR_isSerial : isSerial universalR := fun w => ⟨w, rfl⟩
+theorem universalR_isSerial : isSerial universalR := λ w => ⟨w, rfl⟩
 
 /-- Reflexive R is serial (every world accesses itself). -/
-theorem reflexiveR_isSerial : isSerial reflexiveR := fun w => ⟨w, by
+theorem reflexiveR_isSerial : isSerial reflexiveR := λ w => ⟨w, by
   unfold reflexiveR
   cases w <;> rfl⟩
 
@@ -324,7 +324,7 @@ theorem simple_universal_isConsistent_from_D :
 -- ----------------------------------------------------------------------------
 
 /-- Material implication as a proposition. -/
-def pImpl (p q : Proposition) : Proposition := fun w => !p w || q w
+def pImpl (p q : Proposition) : Proposition := λ w => !p w || q w
 
 /-- K Axiom: Necessity distributes over implication.
 
@@ -358,7 +358,7 @@ theorem simple_K_axiom (R : World → World → Bool) :
     (Simple R).eval .necessity (pImpl p q) w = true →
     (Simple R).eval .necessity p w = true →
     (Simple R).eval .necessity q w = true :=
-  fun p q w => K_axiom R p q w
+  λ p q w => K_axiom R p q w
 
 -- Summary: What We've Derived
 

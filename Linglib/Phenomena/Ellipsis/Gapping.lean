@@ -26,13 +26,13 @@ The directionality of gapping correlates with basic word order:
   SVO languages: forward gapping (SVO and SO)
     "Dexter ate bread, and Warren, potatoes"
 
-## Key Insight (Steedman 2000)
+## Insight (Steedman 2000)
 
-Gapping direction depends on the AVAILABILITY of verb categories:
+Gapping direction depends on the availability of verb categories:
 - Forward gapping requires rightward-combining verbs
 - Backward gapping requires leftward-combining verbs
 
-Languages with BOTH verb orders (Dutch, Zapotec) allow BOTH gapping patterns.
+Languages with both verb orders (Dutch, Zapotec) allow both gapping patterns.
 
 ## References
 
@@ -70,11 +70,11 @@ structure WordOrderProfile where
 /--
 Direction of gapping in coordinate structures.
 
-Forward: Verb in FIRST conjunct, gap in SECOND
+Forward: verb in first conjunct, gap in second
   "Dexter ate bread, and Warren, potatoes"
         ↑                        ↑gap
 
-Backward: Gap in FIRST conjunct, verb in SECOND
+Backward: gap in first conjunct, verb in second
   "Ken Naomi-o, Erika Sara-o tazuneta"
        ↑gap                    ↑verb
 -/
@@ -111,7 +111,7 @@ def rossOriginal (order : WordOrder) : GappingPattern :=
   | .OSV => GappingPattern.backwardOnly  -- Rare, patterns with SOV
 
 /--
-Steedman's revised generalization: gapping depends on LEXICAL availability
+Steedman's revised generalization: gapping depends on lexical availability
 of verb categories, not "underlying" word order.
 
 A language allows forward gapping iff it has rightward-combining verbs.
@@ -146,13 +146,13 @@ def irish : WordOrderProfile := ⟨.VSO, .VSO⟩
 /-- English: pure SVO, forward gapping only -/
 def english : WordOrderProfile := ⟨.SVO, .SVO⟩
 
-/-- Dutch: VSO main clause, SOV subordinate clause - BOTH directions -/
+/-- Dutch: VSO main clause, SOV subordinate clause - both directions -/
 def dutch : WordOrderProfile := ⟨.SVO, .SOV⟩  -- Main is V2 ≈ VSO
 
 /-- German: similar to Dutch -/
 def german : WordOrderProfile := ⟨.SVO, .SOV⟩
 
-/-- Zapotec: VSO subordinate, but allows SOV main clause - BOTH directions -/
+/-- Zapotec: VSO subordinate, but allows SOV main clause - both directions -/
 def zapotec : WordOrderProfile := ⟨.VSO, .VSO⟩  -- But allows SOV main
 
 -- Gapping Examples
@@ -314,37 +314,5 @@ theorem mixed_allows_both :
     (rossRevised dutch).allowsForward = true ∧
     (rossRevised dutch).allowsBackward = true := by
   constructor <;> rfl
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Word Order Typology
-- `WordOrder`: SOV, SVO, VSO, VOS, OVS, OSV
-- `WordOrderProfile`: main vs subordinate clause orders
-- `GappingDirection`: forward vs backward
-
-### Ross's Generalization
-- `rossOriginal`: original correlation
-- `rossRevised`: Steedman's lexically-based revision
-
-### Key Examples
-- Japanese (pure SOV): backward only
-- Irish (pure VSO): forward only
-- English (pure SVO): forward only
-- Dutch (mixed): both directions
-
-### Key Theorems
-- `sov_backward_only`: SOV → backward gapping
-- `vso_forward_only`: VSO → forward gapping
-- `svo_forward_only`: SVO → forward gapping
-- `mixed_allows_both`: Mixed order → both directions
-
-### What's NOT Here (belongs in Theories/CCG/)
-- CCG derivations of gapped sentences
-- Category decomposition rules
-- Type-raised argument coordination
--/
 
 end Phenomena.Ellipsis.Gapping

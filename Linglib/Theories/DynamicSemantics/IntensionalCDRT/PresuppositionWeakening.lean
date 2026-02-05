@@ -1,7 +1,7 @@
 /-
 # Presupposition Weakening with SF (Mendes 2025 §2.2)
 
-The Subordinate Future (SF) **weakens existential presuppositions** of
+The Subordinate Future (SF) weakens existential presuppositions of
 strong quantifiers in restrictors.
 
 ## Key Data (Portuguese)
@@ -53,17 +53,17 @@ the input context.
 def Presupposition (W : Type*) := W → Prop
 
 /--
-**Existential presupposition**: The restrictor of a quantifier is non-empty.
+Existential presupposition: the restrictor of a quantifier is non-empty.
 
 For "every book that Maria reads", this presupposes:
   ∃x. book(x) ∧ reads(maria, x)
 -/
 def existentialPresup {W E : Type*}
     (restrictor : E → W → Prop) : Presupposition W :=
-  fun w => ∃ x, restrictor x w
+  λ w => ∃ x, restrictor x w
 
 /--
-**Strong quantifier**: Quantifiers that carry existential presupposition.
+Strong quantifier: quantifiers that carry existential presupposition.
 
 - "every", "each", "both" presuppose non-empty domain
 - "some", "a" do not (they assert existence)
@@ -82,7 +82,7 @@ def hasExistentialPresup : QuantifierStrength → Bool
 
 
 /--
-**Indicative restrictor**: Evaluates the restrictor at the actual world.
+Indicative restrictor: evaluates the restrictor at the actual world.
 
 "Every book that Maria reads.IND..."
 → Presupposes books exist that Maria reads in the actual world
@@ -90,10 +90,10 @@ def hasExistentialPresup : QuantifierStrength → Bool
 def indicativeRestrictor {W Time E : Type*}
     (restrictor : E → Situation W Time → Prop)
     (s : Situation W Time) : E → Prop :=
-  fun x => restrictor x s
+  λ x => restrictor x s
 
 /--
-**SF restrictor**: Quantifies over historical alternatives.
+SF restrictor: quantifies over historical alternatives.
 
 "Every book that Maria reads.SF..."
 → Quantifies over situations where Maria might read books
@@ -103,11 +103,11 @@ def sfRestrictor {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (restrictor : E → Situation W Time → Prop)
     (s₀ : Situation W Time) : E → Prop :=
-  fun x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
+  λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
 
 
 /--
-A context **satisfies** a presupposition if the presupposition holds
+A context satisfies a presupposition if the presupposition holds
 throughout the context.
 
 Following Heim's context change semantics: presuppositions are
@@ -118,14 +118,14 @@ def satisfiesPresup {W E : Type*}
   ∀ gw ∈ c, p gw.2
 
 /--
-A presupposition is **locally satisfied** if it holds at the evaluation world.
+A presupposition is locally satisfied if it holds at the evaluation world.
 -/
 def locallySatisfied {W : Type*}
     (p : Presupposition W) (w : W) : Prop :=
   p w
 
 /--
-A presupposition is **weakened** to a conditional presupposition.
+A presupposition is weakened to a conditional presupposition.
 
 Weak(P) = "if there are relevant entities, then P"
 
@@ -135,11 +135,11 @@ it makes the assertion conditional on existence.
 def weakenedPresup {W : Type*}
     (p : Presupposition W)
     (condition : W → Prop) : Presupposition W :=
-  fun w => condition w → p w
+  λ w => condition w → p w
 
 
 /--
-**Theorem: Indicative preserves existential presupposition**
+Indicative preserves existential presupposition.
 
 With indicative mood in the restrictor, the strong quantifier's
 existential presupposition projects.
@@ -156,7 +156,7 @@ theorem indicative_preserves_presup {W Time E : Type*}
   exact ⟨x, hx⟩
 
 /--
-**Theorem: SF weakens existential presupposition**
+SF weakens existential presupposition.
 
 With SF in the restrictor, existence is only presupposed *conditionally*
 on the relevant situation obtaining.
@@ -164,7 +164,7 @@ on the relevant situation obtaining.
 "Cada livro que Maria ler.SF será interessante"
 → No categorical presupposition; existence conditional on future
 
-The key insight: quantifying over historical alternatives means
+Quantifying over historical alternatives means
 we don't presuppose existence in any particular world.
 -/
 theorem sf_weakens_presup {W Time E : Type*} [LE Time]
@@ -182,7 +182,7 @@ theorem sf_weakens_presup {W Time E : Type*} [LE Time]
   exact ⟨s₁, h_s₁, hx⟩
 
 /--
-**Corollary: SF makes strong quantifiers felicitous in uncertain contexts**
+SF makes strong quantifiers felicitous in uncertain contexts.
 
 When the speaker is uncertain whether the restrictor will be satisfied,
 SF is felicitous but indicative is not.
@@ -207,7 +207,7 @@ theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
 
 
 /--
-**Relative clause with indicative**
+Relative clause with indicative.
 
 "todo livro [que Maria ler.IND]"
 "every book [that Maria reads.IND]"
@@ -219,10 +219,10 @@ def relClauseIND {W Time E : Type*}
     (noun : E → Situation W Time → Prop)      -- "book"
     (relClause : E → Situation W Time → Prop) -- "Maria reads"
     (s : Situation W Time) : E → Prop :=
-  fun x => noun x s ∧ relClause x s
+  λ x => noun x s ∧ relClause x s
 
 /--
-**Relative clause with SF**
+Relative clause with SF.
 
 "todo livro [que Maria ler.SF]"
 "every book [that Maria reads.SF]"
@@ -235,10 +235,10 @@ def relClauseSF {W Time E : Type*} [LE Time]
     (noun : E → Situation W Time → Prop)
     (relClause : E → Situation W Time → Prop)
     (s₀ : Situation W Time) : E → Prop :=
-  fun x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
+  λ x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
 
 /--
-**Theorem: SF in relative clause weakens strong quantifier presupposition**
+SF in relative clause weakens strong quantifier presupposition.
 
 This is the formal version of the contrast in (17)-(18).
 -/
@@ -259,7 +259,7 @@ theorem relClause_sf_weakens_quantifier {W Time E : Type*} [LE Time]
 
 
 /--
-**Modal displacement**: SF introduces quantification over situations,
+Modal displacement: SF introduces quantification over situations,
 which "displaces" the existential presupposition.
 
 Without SF: ∃x.P(x) presupposed, ∀x.P(x) → Q(x) asserted
@@ -276,7 +276,7 @@ def modalDisplacement {W Time E : Type*} [LE Time]
     ∀ x, restrictor x s₁ → nuclear x s₁
 
 /--
-**Theorem: Modal displacement captures SF semantics**
+Modal displacement captures SF semantics.
 
 The universal quantifier with SF is equivalent to modal displacement:
 quantifying over situations, with local existence conditions.
@@ -302,7 +302,7 @@ theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
 
 
 /--
-**Accommodation** vs **Modal displacement**
+Accommodation vs modal displacement.
 
 Presupposition accommodation: Adding the presupposition to the context.
 Modal displacement: Quantifying over situations where presupposition holds.
@@ -322,7 +322,7 @@ def sfStrategy : PresuppositionStrategy :=
   .modalDisplacement
 
 /--
-**Theorem: Modal displacement is weaker than global accommodation**
+Modal displacement is weaker than global accommodation.
 
 With modal displacement, we only require existence in *some* accessible
 situations, not in all of them.
@@ -339,35 +339,5 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
     : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Presupposition Infrastructure
-- `Presupposition W`: Type of presuppositions
-- `existentialPresup`: Existential presupposition for restrictors
-- `QuantifierStrength`: Strong (presupposing) vs weak quantifiers
-
-### Mood in Restrictors
-- `indicativeRestrictor`: Evaluates at actual world (presupposition projects)
-- `sfRestrictor`: Quantifies over alternatives (weakens presupposition)
-
-### Key Theorems
-- `indicative_preserves_presup`: IND preserves existential presupposition
-- `sf_weakens_presup`: SF weakens to conditional existence
-- `sf_felicitous_under_uncertainty`: SF is felicitous when speaker uncertain
-- `relClause_sf_weakens_quantifier`: SF in rel clause weakens "every"
-
-### Modal Displacement
-- `modalDisplacement`: The mechanism by which SF weakens presuppositions
-- `sf_is_modal_displacement`: SF semantics = modal displacement
-
-### Connection to Paper
-- Examples (17)-(18): `relClause_sf_weakens_quantifier`
-- §2.2 analysis: `modalDisplacement`, `sf_weakens_presup`
-- Table 1 patterns: `indicativeRestrictor` vs `sfRestrictor`
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT.PresuppositionWeakening

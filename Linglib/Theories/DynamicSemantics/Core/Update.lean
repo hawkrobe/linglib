@@ -1,26 +1,11 @@
 /-
 # Context Change Potentials
 
-Core update operations for dynamic semantics. Context Change Potentials (CCPs)
-are the fundamental semantic objects in dynamic theories - functions that
-transform information states.
+Core update operations for dynamic semantics.
 
-## Key Concepts
+## Main definitions
 
-| Concept | Type | Description |
-|---------|------|-------------|
-| CCP | InfoState → InfoState | Context change potential |
-| update | InfoState → (W → Bool) → InfoState | Propositional update |
-| randomAssign | InfoState → Nat → Set E → InfoState | Existential introduction |
-| seq | CCP → CCP → CCP | Sequential composition |
-
-## Composition Patterns
-
-Dynamic semantics uses sequential composition rather than conjunction:
-- Static: ⟦φ ∧ ψ⟧ = ⟦φ⟧ ∩ ⟦ψ⟧
-- Dynamic: ⟦φ ; ψ⟧ = ⟦ψ⟧ ∘ ⟦φ⟧ (update with φ, then with ψ)
-
-This enables discourse referents to "scope out" of their syntactic position.
+`CCP`, `update`, `randomAssign`, `seq`, `exists_`, `neg`, `impl`, `entails`
 
 ## References
 
@@ -37,16 +22,7 @@ open InfoState
 open Classical
 
 
-/--
-A Context Change Potential (CCP): the basic semantic type for sentences
-in dynamic semantics.
-
-In static semantics, sentences denote propositions (sets of worlds).
-In dynamic semantics, sentences denote CCPs (state transformers).
-
-This type is the unilateral version. For bilateral semantics, see
-`Theories.DynamicSemantics.Core.Bilateral.BilateralDen`.
--/
+/-- Context Change Potential: state transformer. -/
 def CCP (W : Type*) (E : Type*) := InfoState W E → InfoState W E
 
 namespace CCP
@@ -54,13 +30,13 @@ namespace CCP
 variable {W E : Type*}
 
 /-- Identity CCP (says nothing, changes nothing) -/
-def id : CCP W E := fun s => s
+def id : CCP W E := λ s => s
 
 /-- Absurd CCP (always returns empty state) -/
-def absurd : CCP W E := fun _ => ∅
+def absurd : CCP W E := λ _ => ∅
 
 /-- Sequential composition: φ ; ψ -/
-def seq (φ ψ : CCP W E) : CCP W E := fun s => ψ (φ s)
+def seq (φ ψ : CCP W E) : CCP W E := λ s => ψ (φ s)
 
 /-- Notation for sequential composition -/
 infixl:65 " ;; " => seq
@@ -74,20 +50,11 @@ theorem id_seq (φ : CCP W E) : id ;; φ = φ := rfl
 /-- Identity is right unit -/
 theorem seq_id (φ : CCP W E) : φ ;; id = φ := rfl
 
--- Note: absurd ;; φ = absurd only holds when φ preserves ∅
--- This is NOT always true for arbitrary CCPs
 
 end CCP
 
 
-/--
-Update a state with a proposition: keep only possibilities where φ holds.
-
-This is the basic dynamic operation: learning that φ eliminates all
-possibilities where φ is false.
-
-s[φ] = { p ∈ s | φ(p.world) }
--/
+/-- Update state with proposition: keep only possibilities where φ holds. -/
 def InfoState.update {W E : Type*} (s : InfoState W E) (φ : W → Bool) : InfoState W E :=
   { p ∈ s | φ p.world }
 
@@ -114,7 +81,7 @@ theorem update_update (s : InfoState W E) (φ : W → Bool) :
 
 /-- Sequential update = conjunction -/
 theorem update_seq (s : InfoState W E) (φ ψ : W → Bool) :
-    s⟦φ⟧⟦ψ⟧ = s⟦fun w => φ w && ψ w⟧ := by
+    s⟦φ⟧⟦ψ⟧ = s⟦λ w => φ w && ψ w⟧ := by
   ext p
   simp only [update, Set.mem_setOf_eq, Bool.and_eq_true]
   constructor
@@ -132,12 +99,7 @@ theorem update_supports (s : InfoState W E) (φ : W → Bool) : s⟦φ⟧ ⊫ φ
   intro p ⟨_, hφ⟩
   exact hφ
 
-/--
-Dynamic entailment for propositions: φ entails ψ iff for all states s,
-if s is consistent after updating with φ, then s[φ] supports ψ.
-
-This is the dynamic notion of logical consequence for propositions.
--/
+/-- Dynamic entailment for propositions. -/
 def dynamicEntails (φ ψ : W → Bool) : Prop :=
   ∀ s : InfoState W E, (s⟦φ⟧).consistent → s⟦φ⟧ ⊫ ψ
 
@@ -149,7 +111,7 @@ theorem dynamicEntails_refl (φ : W → Bool) : dynamicEntails (W := W) (E := E)
 /-- φ dynamically entails φ ∧ ψ when φ entails ψ -/
 theorem dynamicEntails_conj (φ ψ : W → Bool)
     (h : dynamicEntails (W := W) (E := E) φ ψ) :
-    dynamicEntails (W := W) (E := E) φ (fun w => φ w && ψ w) := by
+    dynamicEntails (W := W) (E := E) φ (λ w => φ w && ψ w) := by
   intro s hcons p hp
   simp only [Bool.and_eq_true]
   constructor
@@ -159,17 +121,7 @@ theorem dynamicEntails_conj (φ ψ : W → Bool)
 end InfoState
 
 
-/--
-Random assignment: introduce a new discourse referent at variable x.
-
-This is the dynamic interpretation of existential quantification:
-∃x.φ is interpreted as "introduce x, then update with φ".
-
-s[x:=?] = { p.extend(x,e) | p ∈ s, e ∈ domain }
-
-After random assignment, x is no longer defined (its value varies across
-possibilities).
--/
+/-- Random assignment: introduce new discourse referent at variable x. -/
 def InfoState.randomAssign {W E : Type*} (s : InfoState W E) (x : Nat) (domain : Set E) : InfoState W E :=
   { p' | ∃ p ∈ s, ∃ e ∈ domain, p' = p.extend x e }
 
@@ -207,17 +159,13 @@ theorem randomAssign_preserves_defined (s : InfoState W E) (x y : Nat) (domain :
 end InfoState
 
 
-/--
-Existential CCP: ∃x.φ as a context change potential.
-
-Introduces x via random assignment, then updates with the body.
--/
+/-- Existential CCP: ∃x.φ introduces x then updates with φ. -/
 def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E) (φ : CCP W E) : CCP W E :=
-  fun s => φ (s.randomAssign x domain)
+  λ s => φ (s.randomAssign x domain)
 
 /-- Existential with full domain -/
 def CCP.existsFull {W E : Type*} (x : Nat) (φ : CCP W E) : CCP W E :=
-  fun s => φ (s.randomAssignFull x)
+  λ s => φ (s.randomAssignFull x)
 
 
 /--
@@ -227,16 +175,9 @@ Dynamic conjunction via sequencing.
 -/
 def CCP.conj {W E : Type*} (φ ψ : CCP W E) : CCP W E := CCP.seq φ ψ
 
-/--
-Dynamic negation (test-based).
-
-s[¬φ] = s if s[φ] = ∅, else ∅
-
-Note: This is the standard unilateral negation, which does NOT validate DNE.
-For DNE-validating negation, use bilateral semantics.
--/
+/-- Dynamic negation (test-based, no DNE). -/
 def CCP.neg {W E : Type*} (φ : CCP W E) : CCP W E :=
-  fun s => if (φ s).Nonempty then ∅ else s
+  λ s => if (φ s).Nonempty then ∅ else s
 
 /--
 Dynamic implication.
@@ -244,16 +185,10 @@ Dynamic implication.
 φ → ψ tests whether updating with φ then ψ yields the same as updating with φ.
 -/
 def CCP.impl {W E : Type*} (φ ψ : CCP W E) : CCP W E :=
-  fun s => if φ s ⊆ ψ (φ s) then s else ∅
+  λ s => if φ s ⊆ ψ (φ s) then s else ∅
 
 
-/--
-Dynamic entailment: φ entails ψ iff for all consistent states s,
-updating with φ then ψ gives the same result as updating with φ alone.
-That is, ψ adds no new information after φ.
-
-φ ⊨ ψ iff ∀s. consistent(s[φ]) → s[φ][ψ] = s[φ]
--/
+/-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
 def CCP.entails {W E : Type*} (φ ψ : CCP W E) : Prop :=
   ∀ s : InfoState W E, (φ s).consistent → ψ (φ s) = φ s
 
@@ -267,59 +202,19 @@ theorem CCP.entails_id {W E : Type*} (φ : CCP W E) : CCP.entails φ CCP.id := b
 Lift a classical proposition to a CCP.
 -/
 def CCP.ofProp {W E : Type*} (φ : W → Bool) : CCP W E :=
-  fun s => s⟦φ⟧
+  λ s => s⟦φ⟧
 
 /--
 Lift a predicate on entities (via variable lookup).
 -/
 def CCP.ofPred1 {W E : Type*} (p : E → W → Bool) (x : Nat) : CCP W E :=
-  fun s => { poss ∈ s | p (poss.assignment x) poss.world }
+  λ s => { poss ∈ s | p (poss.assignment x) poss.world }
 
 /--
 Lift a binary predicate.
 -/
 def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP W E :=
-  fun s => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
+  λ s => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Core Types
-- `CCP W E`: Context Change Potentials (InfoState → InfoState)
-
-### Basic CCPs
-- `CCP.id`: Identity (no change)
-- `CCP.absurd`: Always returns empty state
-- `CCP.ofProp`: Lift classical proposition
-- `CCP.ofPred1`, `CCP.ofPred2`: Lift predicates
-
-### Composition
-- `CCP.seq` (;;): Sequential composition
-- `CCP.conj`: Dynamic conjunction (= seq)
-
-### Quantification
-- `CCP.exists_`: Existential quantification
-- `CCP.existsFull`: Existential with full domain
-
-### Update Operations
-- `InfoState.update` (s⟦φ⟧): Propositional update
-- `InfoState.randomAssign`: Variable introduction
-
-### Key Theorems
-- `update_mono`: Update is monotonic
-- `update_preserves_defined`: Update preserves defined variables
-- `randomAssign_makes_novel`: Random assignment makes variable novel
-- `update_supports`: s[φ] ⊫ φ
-
-## Note on Negation
-
-The negation defined here (`CCP.neg`) is the standard unilateral negation,
-which does NOT validate Double Negation Elimination (DNE).
-
-For DNE-validating negation, use bilateral semantics
-(`Theories.DynamicSemantics.Core.Bilateral`).
--/
 
 end Theories.DynamicSemantics.Core

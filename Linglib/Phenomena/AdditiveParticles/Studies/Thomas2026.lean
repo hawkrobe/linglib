@@ -1,35 +1,12 @@
 /-
 # Thomas (2026): Argument-Building Additives
 
-Empirical data from Thomas (2026) "A probabilistic, question-based approach
-to additivity" on the **argument-building** use of additive particles.
+Empirical data from Thomas (2026) on argument-building uses of additive particles where antecedent and prejacent jointly support a conclusion rather than being focus alternatives.
 
-## The Phenomenon
+## Main definitions
 
-Thomas identifies a novel use of "too" where the antecedent and prejacent
-are NOT focus alternatives but jointly build an argument toward a conclusion:
-
-"Sue cooks, and she has a lot of free time, too."
-- ANT = "Sue cooks"
-- π = "Sue has a lot of free time"
-- Neither is a focus alternative of the other
-- Both contribute toward: "Sue should host the dinner party"
-
-This challenges traditional analyses (Rooth 1992, Kripke 2009) that require
-the antecedent to be a focus alternative of the prejacent.
-
-## Thomas's Analysis
-
-Thomas proposes a **question-based** account:
-- Both ANT and π must answer a common Resolved Question (RQ)
-- The RQ is typically an implicit "big question" being addressed
-- "too" signals that π provides additional evidence toward the same goal
-
-## Key Properties
-
-1. **Non-alternative antecedents**: ANT and π need not be focus alternatives
-2. **Cumulative evidence**: Both contribute to answering a common RQ
-3. **Implicit conclusion**: The RQ is often an evaluative/decision question
+- `sueCooksFreetime`: Flagship example of argument-building "too"
+- `argumentBuildingExamples`: Collected argument-building data
 
 ## References
 
@@ -42,9 +19,7 @@ namespace Phenomena.AdditiveParticles.Studies.Thomas2026
 
 open Phenomena.AdditiveParticles
 
--- Argument-Building Examples
-
-/-- The flagship argument-building example from Thomas (2026). -/
+/-- Flagship argument-building example from Thomas (2026). -/
 def sueCooksFreetime : AdditiveParticleDatum :=
   { sentence := "Sue cooks, and she has a lot of free time, too."
   , antecedent := "Sue cooks"
@@ -53,7 +28,7 @@ def sueCooksFreetime : AdditiveParticleDatum :=
   , resolvedQuestion := some "Who should host the dinner party?"
   , felicity := .ok
   , useType := .argumentBuilding
-  , notes := "Key example: ANT and π jointly evidence 'Sue should host'"
+  , notes := ""
   , source := "Thomas (2026)"
   }
 
@@ -66,7 +41,7 @@ def brilliantHardworking : AdditiveParticleDatum :=
   , resolvedQuestion := some "Should we hire him?"
   , felicity := .ok
   , useType := .argumentBuilding
-  , notes := "Both properties evidence positive hiring decision"
+  , notes := ""
   , source := "Thomas (2026)"
   }
 
@@ -143,29 +118,5 @@ def infelicitousExamples : List AdditiveParticleDatum :=
 /-- All Thomas (2026) examples. -/
 def allExamples : List AdditiveParticleDatum :=
   argumentBuildingExamples ++ infelicitousExamples
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data
-- `argumentBuildingExamples`: 5 felicitous argument-building uses of "too"
-- `infelicitousExamples`: Cases where argument-building fails
-
-### Key Insight
-
-The argument-building use shows that "too" does NOT require focus alternatives:
-- "Sue cooks" and "Sue has free time" are not alternatives
-- But both answer "Who should host?" → felicitous use of "too"
-
-This motivates Thomas's question-based analysis over Rooth's focus-based one.
-
-### Theoretical Connections
-
-- Contrasts with Rooth (1992): Focus alternatives not required
-- Contrasts with Kripke (2009): Anaphoric analysis insufficient
-- Supports question-based pragmatics (Roberts 1996, Beaver & Clark 2008)
--/
 
 end Phenomena.AdditiveParticles.Studies.Thomas2026

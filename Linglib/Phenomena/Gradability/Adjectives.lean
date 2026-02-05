@@ -8,7 +8,7 @@ Empirical data testing the adjective hierarchy (Kamp 1975, Partee 1995, 2001).
 Adjectives differ in their entailment patterns. A semantic theory must predict:
 
 1. **Intersective** ("gray", "French"): "gray cat" = gray ∩ cat
-2. **Subsective non-intersective** ("skillful", "good"): entails noun, but NOT intersection
+2. **Subsective non-intersective** ("skillful", "good"): entails noun, but not intersection
 3. **Non-subsective/Modal** ("alleged", "potential"): no entailment either way
 4. **"Privative"** ("fake", "counterfeit"): traditionally ∩ noun = ∅, but Partee argues coercion
 
@@ -145,7 +145,7 @@ def intersective_context_independence : ConjunctionInference :=
 /-
 Key property: ⟦A N⟧ ⊆ ⟦N⟧, but ⟦A N⟧ ≠ ⟦A⟧ ∩ ⟦N⟧
 
-The adjective extension is RELATIVE to the noun.
+The adjective extension is relative to the noun.
 -/
 
 /-- "skillful surgeon" entails "surgeon" (subsectivity) -/
@@ -157,12 +157,12 @@ def skillfulSurgeon_entails_surgeon : AdjectiveEntailment :=
   , pattern := "A N → N (subsectivity holds)"
   }
 
-/-- THE KEY TEST: "skillful surgeon" + "violinist" does NOT entail "skillful violinist" -/
+/-- "skillful surgeon" + "violinist" does not entail "skillful violinist" -/
 def skillful_nonintersective : ConjunctionInference :=
   { premise1 := "Francis is a skillful surgeon"
   , premise2 := some "Francis is a violinist"
   , conclusion := "Francis is a skillful violinist"
-  , valid := false  -- THIS IS THE KEY: inference is INVALID
+  , valid := false  -- inference is invalid
   , pattern := "A N₁ ∧ N₂ ⊬ A N₂ (non-intersectivity)"
   }
 
@@ -205,12 +205,12 @@ def typical_nonintersective : ConjunctionInference :=
 -- NON-SUBSECTIVE / MODAL ADJECTIVES ("alleged", "potential", "putative")
 
 /-
-Key property: NO entailment either way.
+No entailment either way.
 
 An alleged murderer may or may not be a murderer.
 -/
 
-/-- "alleged murderer" does NOT entail "murderer" -/
+/-- "alleged murderer" does not entail "murderer" -/
 def allegedMurderer_not_entails_murderer : AdjectiveEntailment :=
   { premise := "John is an alleged murderer"
   , conclusion := "John is a murderer"
@@ -219,7 +219,7 @@ def allegedMurderer_not_entails_murderer : AdjectiveEntailment :=
   , pattern := "A N ⊬ N (no positive entailment)"
   }
 
-/-- "alleged murderer" does NOT entail "not a murderer" -/
+/-- "alleged murderer" does not entail "not a murderer" -/
 def allegedMurderer_not_entails_notMurderer : AdjectiveEntailment :=
   { premise := "John is an alleged murderer"
   , conclusion := "John is not a murderer"
@@ -252,10 +252,10 @@ def putativeFather_not_entails_father : AdjectiveEntailment :=
 Traditional view: ⟦A N⟧ ∩ ⟦N⟧ = ∅
 "A fake gun is not a gun."
 
-Partee (2001): Actually subsective + noun coercion!
+Partee (2001): Actually subsective + noun coercion.
 "fake gun" = subsective within coerced "gun*" (= guns ∪ fake-guns)
 
-Evidence: "Is that gun real or fake?" - the noun must include both!
+Evidence: "Is that gun real or fake?" - the noun must include both.
 -/
 
 /-- Traditional view: "fake gun" entails "not a gun" -/
@@ -324,9 +324,9 @@ def nonSubsectiveEntailments : List AdjectiveEntailment :=
   , putativeFather_not_entails_father
   ]
 
-/-- The key non-intersectivity tests -/
+/-- Non-intersectivity tests -/
 def nonIntersectivityTests : List ConjunctionInference :=
-  [ skillful_nonintersective  -- THE classic test
+  [ skillful_nonintersective  -- the classic test
   , good_nonintersective
   , typical_nonintersective
   ]
@@ -376,47 +376,5 @@ theorem skillful_surgeon_test :
 theorem partee_coercion_evidence :
     realOrFake_felicitous.felicitous = true := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `AdjectiveEntailment`: premise → conclusion entailment test
-- `ConjunctionInference`: premise₁ ∧ premise₂ → conclusion validity test
-- `FelicityJudgment`: sentence felicity test
-
-### Intersective Adjectives ("gray", "French")
-- `grayCat_entails_gray/cat`: A N → A, A N → N
-- `gray_and_cat_entails_grayCat`: A ∧ N → A N
-
-### Subsective Non-Intersective ("skillful", "good", "typical")
-- `skillfulSurgeon_entails_surgeon`: A N → N (subsective)
-- `skillful_nonintersective`: A N₁ ∧ N₂ ⊬ A N₂ (THE KEY TEST)
-
-### Non-Subsective/Modal ("alleged", "potential")
-- `allegedMurderer_not_entails_murderer`: A N ⊬ N
-- `allegedMurderer_not_entails_notMurderer`: A N ⊬ ¬N
-
-### "Privative" / Coercion ("fake", "counterfeit")
-- `realOrFake_felicitous`: Partee's coercion evidence
-
-### Key Theorems
-- `intersective_bidirectional`: intersectives have ↔
-- `subsective_one_direction`: subsectives have → but not ←
-- `nonsubsective_no_entailment`: modals have neither
-- `skillful_surgeon_test`: THE diagnostic for intersectivity
-
-## Theory Predictions (from Montague/Modification.lean)
-
-A theory correctly predicts intersective adjectives if:
-1. `intersective_equivalence` holds (PM gives ↔)
-2. `pm_entails_left/right` hold (downward entailments)
-3. `pm_intro` holds (conjunction introduction)
-
-A theory should NOT apply PM to non-intersective adjectives, or it will
-incorrectly validate `skillful_nonintersective`.
--/
 
 end Phenomena.Gradability.Adjectives

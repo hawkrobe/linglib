@@ -7,7 +7,7 @@ predict the observed cross-linguistic patterns.
 
 ## Theoretical Lineage
 
-**Carlson 1977** is the foundational paper that all subsequent theories build on:
+Carlson 1977 is the foundational paper that all subsequent theories build on:
 
 ```
 Carlson 1977 (bare plurals = proper names of kinds)
@@ -30,21 +30,12 @@ Carlson 1977 (bare plurals = proper names of kinds)
 
 ## Integration Points
 
-1. **Foundational equivalences**: Carlson's R relation ≈ Chierchia's ∪ operator
-2. **Cross-linguistic bare nominal patterns**: Theory parameters predict data
-3. **Scopelessness**: DKP locality (Chierchia) / local binding (Krifka) predicts narrow scope
-4. **Predicate classification**: Kind-level vs object-level predicate behavior
-5. **Theory comparison**: Chierchia vs Krifka — equivalent for English, differ for scrambling
-6. **Scrambling** (Le Bruyn & de Swart 2022): Dutch/German data distinguishes the theories
-
-## Why This Matters
-
-This file demonstrates that Linglib goes beyond documenting individual papers
-to building a **cumulative, unified** account where:
-- Theories make testable predictions
-- Predictions are verified against phenomena
-- Alternative theories are compared for observational equivalence
-- **Crucial test cases** (scrambling) distinguish otherwise equivalent theories
+1. Foundational equivalences: Carlson's R relation ≈ Chierchia's ∪ operator
+2. Cross-linguistic bare nominal patterns: Theory parameters predict data
+3. Scopelessness: DKP locality (Chierchia) / local binding (Krifka) predicts narrow scope
+4. Predicate classification: Kind-level vs object-level predicate behavior
+5. Theory comparison: Chierchia vs Krifka -- equivalent for English, differ for scrambling
+6. Scrambling (Le Bruyn & de Swart 2022): Dutch/German data distinguishes the theories
 
 ## References
 
@@ -76,29 +67,29 @@ open Phenomena.Generics.KindReference
 
 Carlson (1977) established the key ideas that all subsequent theories build on:
 
-1. **Bare plurals are proper names of kinds** (type e, not quantifiers)
-2. **Kinds are spatially unbounded** (can be "here and there")
-3. **The Realization relation R(y,x)** connects stages to individuals/kinds
-4. **Predicate level determines reading**: Stage-level → ∃, Individual-level → generic
-5. **The ∃ comes from the predicate, not the NP**
+1. Bare plurals are proper names of kinds (type e, not quantifiers)
+2. Kinds are spatially unbounded (can be "here and there")
+3. The Realization relation R(y,x) connects stages to individuals/kinds
+4. Predicate level determines reading: Stage-level → ∃, Individual-level → generic
+5. The ∃ comes from the predicate, not the NP
 
 ### How Subsequent Theories Relate
 
-**Chierchia 1998** formalizes Carlson's R relation as the ∪ operator:
+Chierchia 1998 formalizes Carlson's R relation as the ∪ operator:
 - Carlson: `R y k` means "y is a stage/realization of k"
 - Chierchia: `x ∈ ∪k(w)` means "x is in the extension of kind k at world w"
 
-**Chierchia's DKP** is Carlson's stage-level predication:
+Chierchia's DKP is Carlson's stage-level predication:
 - Carlson: `stageLevelPred R P k = ∃y[R(y,k) ∧ P(y)]`
 - Chierchia: `DKP P k w = ∃x[x ∈ ∪k(w) ∧ P(x)]`
 
-**Krifka 2004** departs from Carlson:
-- Rejects kinds as basic; bare NPs are PROPERTIES
+Krifka 2004 departs from Carlson:
+- Rejects kinds as basic; bare NPs are properties
 - But keeps the insight: ∃ is introduced locally, yielding narrow scope
 -/
 
 /--
-**Structural equivalence**: Carlson's stage-level predication and Chierchia's DKP
+Structural equivalence: Carlson's stage-level predication and Chierchia's DKP
 have the same logical form.
 
 Both introduce existential quantification over instances/stages of the kind,
@@ -127,7 +118,7 @@ theorem carlson_chierchia_structural_equivalence :
   · trivial
 
 /--
-**Predicate classification equivalence**:
+Predicate classification equivalence:
 
 | Carlson 1977 | Chierchia 1998 | Effect |
 |--------------|----------------|--------|
@@ -149,8 +140,8 @@ theorem predicate_classification_equivalence :
   · trivial
 
 /--
-**Scopelessness explanation**: Both Carlson and Chierchia explain narrow scope
-the same way — the ∃ is introduced INSIDE the predicate abstract.
+Both Carlson and Chierchia explain narrow scope the same way: the ∃ is
+introduced inside the predicate abstract.
 
 - Carlson: "The existential over stages is introduced by the predicate"
 - Chierchia: "DKP introduces a LOCAL existential"
@@ -181,7 +172,7 @@ This is captured in `bare_plural_not_ambiguous` in Carlson1977.lean.
 -/
 
 /--
-**Carlson's core thesis**: One meaning, two readings.
+Carlson's core thesis: One meaning, two readings.
 
 The bare plural "dogs" always denotes the kind DOGS.
 - With "be intelligent" (individual-level): predicate applies to kind directly
@@ -203,7 +194,7 @@ theorem carlson_unified_analysis :
 -- Cross-Linguistic Predictions
 
 /--
-**Theorem**: English parameters predict bare plural licensing.
+English parameters predict bare plural licensing.
 
 The theory (englishKindRef) correctly predicts the empirical pattern
 (englishBarePlural.bareKindOK = true).
@@ -212,7 +203,7 @@ theorem english_bare_plural_prediction :
     englishKindRef.bareKindsOK = englishBarePlural.bareKindOK := rfl
 
 /--
-**Theorem**: English parameters predict bare singular restriction.
+English parameters predict bare singular restriction.
 
 The theory predicts bare singulars need "the" for kind reference,
 matching the empirical pattern.
@@ -224,7 +215,7 @@ theorem english_singular_needs_definite :
   simp [englishKindRef, englishDefiniteSingularKind]
 
 /--
-**Theorem**: French (Romance) parameters predict definite requirement.
+French (Romance) parameters predict definite requirement.
 
 The theory (romanceKindRef) correctly predicts that French requires
 definite articles for kind reference.
@@ -237,7 +228,7 @@ theorem french_definite_required :
   simp [romanceKindRef, frenchPluralKind]
 
 /--
-**Theorem**: Hindi (determiner-less) parameters predict bare nominal freedom.
+Hindi (determiner-less) parameters predict bare nominal freedom.
 
 The theory (determinerlessKindRef) correctly predicts that Hindi allows
 bare nominals for kind reference.
@@ -267,7 +258,7 @@ theorem explicit_quantifier_ambiguous :
   simp [negationSomeDogs, universalSomeBooks]
 
 /--
-**Key Result**: Theory (DKP locality) correctly predicts empirical scopelessness.
+Theory (DKP locality) correctly predicts empirical scopelessness.
 
 The theoretical claim `dkpIsLocal = true` from Kinds.lean predicts
 the empirical pattern of bare plural scopelessness.
@@ -302,10 +293,10 @@ theorem object_level_predicates_need_dkp :
 The predicate classification correctly partitions the data.
 -/
 theorem predicate_classification_complete :
-    (predicateData.filter (fun p => p.level == .kind)
-      |>.all (fun p => p.directKindApplication)) ∧
-    (predicateData.filter (fun p => p.level == .object)
-      |>.all (fun p => !p.directKindApplication)) := by
+    (predicateData.filter (λ p => p.level == .kind)
+      |>.all (λ p => p.directKindApplication)) ∧
+    (predicateData.filter (λ p => p.level == .object)
+      |>.all (λ p => !p.directKindApplication)) := by
   native_decide
 
 -- Singular Kind Verification
@@ -329,7 +320,7 @@ theorem modification_blocks_singular_kind :
 -- Summary: Theory-Phenomena Alignment
 
 /--
-**Main Result**: The Chierchia/Dayal theoretical framework correctly predicts
+The Chierchia/Dayal theoretical framework correctly predicts
 the major empirical patterns in kind reference:
 
 1. Cross-linguistic bare nominal licensing
@@ -371,11 +362,11 @@ but propose different underlying mechanisms:
 | Bare singular out | ∩ undefined | Number param unfilled |
 | Kind reading | Always available | Requires topic position |
 
-Below we prove they are **observationally equivalent** for the core phenomena.
+Below we prove they are observationally equivalent for the core phenomena.
 -/
 
 /--
-**Theorem**: Both theories predict bare singular restriction.
+Both theories predict bare singular restriction.
 
 - Chierchia: ∩ is undefined for singular count nouns
 - Krifka: Number parameter is unfilled
@@ -392,7 +383,7 @@ theorem both_theories_bare_singular_out :
   simp [downDefinedFor, bareSgSubject]
 
 /--
-**Theorem**: Both theories predict scopelessness via locality.
+Both theories predict scopelessness via locality.
 
 - Chierchia: `dkpIsLocal = true` — DKP introduces ∃ inside predicate abstract
 - Krifka: `plural_is_local` — ∃ binds number argument inside NP
@@ -408,7 +399,7 @@ theorem both_theories_scopelessness :
   simp [dkpIsLocal, negationBarePlural, universalBarePlural]
 
 /--
-**Theorem**: Both theories predict mass nouns pattern with plurals.
+Both theories predict mass nouns pattern with plurals.
 
 - Chierchia: ∩ is defined for mass nouns (always, regardless of "plural" flag)
 - Krifka: Mass nouns have no number parameter to fill
@@ -424,9 +415,9 @@ theorem both_theories_mass_ok :
   simp [downDefinedFor, englishMassNoun]
 
 /--
-**Key Result**: Observational equivalence for core phenomena.
+Observational equivalence for core phenomena.
 
-Both Chierchia and Krifka correctly predict ALL of:
+Both Chierchia and Krifka correctly predict all of:
 1. Bare plural licensing
 2. Bare singular restriction
 3. Scopelessness
@@ -455,13 +446,13 @@ theorem chierchia_krifka_observationally_equivalent :
 
 The theories make different predictions for:
 
-1. **Scrambling and scope** (Le Bruyn & de Swart 2022): See below — this is
-   the crucial test case where Krifka is correct and Chierchia fails.
+1. Scrambling and scope (Le Bruyn & de Swart 2022): See below. This is
+   where Krifka is correct and Chierchia fails.
 
-2. **Information structure effects**: Krifka predicts kind readings require
-   topic position; Chierchia doesn't distinguish.
+2. Information structure effects: Krifka predicts kind readings require
+   topic position; Chierchia does not distinguish.
 
-3. **Non-cumulative properties**: Krifka's ∩ is unrestricted; Chierchia's
+3. Non-cumulative properties: Krifka's ∩ is unrestricted; Chierchia's
    requires cumulativity.
 -/
 
@@ -473,27 +464,27 @@ The theories make different predictions for:
 In Dutch and German, objects can "scramble" to precede negation/adverbs.
 This affects bare plural scope:
 
-- **Unscrambled**: narrow scope only (both theories predict this)
-- **Scrambled**: WIDE scope (Krifka predicts this, Chierchia doesn't)
+- Unscrambled: narrow scope only (both theories predict this)
+- Scrambled: wide scope (Krifka predicts this, Chierchia does not)
 
-**Chierchia's Problem**:
+Chierchia's problem:
 - BPs denote kinds via ∩
 - DKP introduces LOCAL existential quantification
-- Locality predicts narrow scope ALWAYS, regardless of surface position
-- But scrambled BPs take wide scope!
+- Locality predicts narrow scope always, regardless of surface position
+- But scrambled BPs take wide scope.
 
-**Krifka's Solution**:
+Krifka's solution:
 - BPs undergo ∃-shift at their surface position
 - Scrambling moves the BP, so ∃ scopes from the higher position
 - Correctly predicts: unscrambled = narrow, scrambled = wide
 
-**Crucial Evidence**: Scrambled BPs can STILL be kind-referring with
-appropriate predicates like "haten" (hate). This shows scrambling doesn't
-force an indefinite reading — it just affects scope when ∃-shift applies.
+Scrambled BPs can still be kind-referring with appropriate predicates like
+"haten" (hate). This shows scrambling does not force an indefinite reading;
+it just affects scope when ∃-shift applies.
 -/
 
 /--
-**Theorem**: Chierchia predicts narrow scope for ALL bare plurals.
+Chierchia predicts narrow scope for all bare plurals.
 
 DKP locality means the existential is introduced inside the predicate,
 so it cannot scope over external operators like negation.
@@ -502,7 +493,7 @@ theorem chierchia_predicts_narrow_scope_always :
     dkpIsLocal = true := rfl
 
 /--
-**Theorem**: Krifka predicts scope follows surface position.
+Krifka predicts scope follows surface position.
 
 The ∃-shift applies at the surface position of the BP, so:
 - Unscrambled (below negation) → narrow scope
@@ -513,7 +504,7 @@ theorem krifka_scope_follows_position :
     existentialShiftPositionSensitive = true := rfl
 
 /--
-**Theorem**: Dutch unscrambled BPs are narrow scope only.
+Dutch unscrambled BPs are narrow scope only.
 
 Both theories correctly predict this.
 -/
@@ -524,7 +515,7 @@ theorem dutch_unscrambled_narrow :
   simp [dutchUnscrambledNeg]
 
 /--
-**Theorem**: Dutch scrambled BPs take wide scope.
+Dutch scrambled BPs take wide scope.
 
 This is where Krifka succeeds and Chierchia fails.
 -/
@@ -535,7 +526,7 @@ theorem dutch_scrambled_wide :
   simp [dutchScrambledBoeken]
 
 /--
-**Theorem**: Scrambled BPs can still be kind-referring.
+Scrambled BPs can still be kind-referring.
 
 With kind-level predicates like "hate", scrambled BPs get kind readings.
 This shows scrambling doesn't force indefinite interpretation.
@@ -546,11 +537,11 @@ theorem scrambled_allows_kind_reference :
   simp [dutchScrambledKindBoeken]
 
 /--
-**Key Result**: Krifka correctly predicts scrambling scope; Chierchia doesn't.
+Krifka correctly predicts scrambling scope; Chierchia does not.
 
 This breaks observational equivalence for the scrambling data:
-- Chierchia: narrow scope always (INCORRECT for scrambled BPs)
-- Krifka: scope follows position (CORRECT)
+- Chierchia: narrow scope always (incorrect for scrambled BPs)
+- Krifka: scope follows position (correct)
 -/
 theorem krifka_handles_scrambling_chierchia_doesnt :
     -- Empirical fact: scrambled BPs take wide scope
@@ -579,10 +570,10 @@ Here we instantiate them with a concrete example to demonstrate the divergence.
 
 ### The Key Difference
 
-**Chierchia**: DKP is position-invariant (proved in `chierchia_position_invariant`)
+Chierchia: DKP is position-invariant (proved in `chierchia_position_invariant`)
   - scrambled = unscrambled = ¬∃x[P(x) ∧ V(x)]
 
-**Krifka**: ∃-shift is position-sensitive (definition of `krifkaDerivScrambled`)
+Krifka: ∃-shift is position-sensitive (definition of `krifkaDerivScrambled`)
   - unscrambled = ¬∃x[P(x) ∧ V(x)]
   - scrambled = ∃x[P(x) ∧ ¬V(x)]
 -/
@@ -612,15 +603,15 @@ inductive Book where | b1 | b2 deriving DecidableEq, Repr
 
 def bookDomain : List Book := [.b1, .b2]
 
-def isBook : KrifkaProp Book Unit := fun _ _ => true
+def isBook : KrifkaProp Book Unit := λ _ _ => true
 
-def finishedVP : KrifkaVP Book Unit := fun b _ =>
+def finishedVP : KrifkaVP Book Unit := λ b _ =>
   match b with
   | .b1 => true   -- finished b1
   | .b2 => false  -- didn't finish b2
 
 -- Chierchia's kind: at each world, the list of books
-def bookKind : KindExtension Book Unit := fun _ => bookDomain
+def bookKind : KindExtension Book Unit := λ _ => bookDomain
 
 -- Chierchia's VP (same type as Krifka's)
 def finishedChierchia : ChierchiaVP Book Unit := finishedVP
@@ -634,8 +625,8 @@ example : chierchiaDerivUnscrambled bookKind finishedChierchia () = false := rfl
 example : chierchiaDerivScrambled bookKind finishedChierchia () = false := rfl
 
 /--
-**Main Result**: Krifka correctly distinguishes scrambled/unscrambled;
-Chierchia incorrectly predicts they're the same.
+Krifka correctly distinguishes scrambled/unscrambled;
+Chierchia incorrectly predicts they are the same.
 
 This theorem combines:
 1. The position-invariance of Chierchia (`chierchia_position_invariant`)
@@ -659,7 +650,7 @@ theorem scrambling_main_result :
         finishedChierchia, dutchScrambledBoeken]
 
 /--
-**Corollary**: The theories agree on unscrambled but diverge on scrambled.
+The theories agree on unscrambled but diverge on scrambled.
 -/
 theorem theories_diverge_on_scrambling :
     -- Agree on unscrambled (both give FALSE in our example)
@@ -677,9 +668,9 @@ theorem theories_diverge_on_scrambling :
 
 Le Bruyn & de Swart (2022) conclude:
 
-1. **Krifka (2004) is empirically superior** for scrambling languages
-2. **Chierchia (1998) needs modification** to handle position-sensitive scope
-3. **Kind reference ≠ narrow scope**: Scrambled BPs can be kind-referring
+1. Krifka (2004) is empirically superior for scrambling languages
+2. Chierchia (1998) needs modification to handle position-sensitive scope
+3. Kind reference ≠ narrow scope: Scrambled BPs can be kind-referring
    while taking wide scope, showing these are orthogonal properties
 
 The key theorems from the theory files:

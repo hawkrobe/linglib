@@ -4,7 +4,7 @@
 Implementation of Franke & Bergen (2020) "Theory-driven statistical modeling
 for semantics and pragmatics" - the Global Intentions (GI) model.
 
-## Key Insight
+## Insight
 
 This IS an exhaustification phenomenon: the speaker chooses where to insert
 EXH (matrix, outer, inner positions). This is different from scope ambiguity,
@@ -45,8 +45,8 @@ structure AlienWorld where
 
 /-- All 12 worlds -/
 def alienWorlds : List AlienWorld :=
-  (List.finRange 3).flatMap fun a =>
-    (List.finRange 4).map fun p => ⟨a, p⟩
+  (List.finRange 3).flatMap λ a =>
+    (List.finRange 4).map λ p => ⟨a, p⟩
 
 
 /-- Quantifier meaning (simplified for 2-alien, 3-pot domain) -/
@@ -70,7 +70,7 @@ def literalMeaning (s : NestedAristotelian) (w : AlienWorld) : Bool :=
 def aristScale : List AristQuant := [.none, .some, .all]
 
 /-- Convert Bool meaning to Prop' -/
-def toProp (f : AlienWorld → Bool) : Prop' AlienWorld := fun w => f w = true
+def toProp (f : AlienWorld → Bool) : Prop' AlienWorld := λ w => f w = true
 
 /-- Alternatives for outer quantifier (Q₁) -/
 def outerAlternatives (s : NestedAristotelian) : Set (Prop' AlienWorld) :=
@@ -95,7 +95,7 @@ def matrixAlternatives (_s : NestedAristotelian) : Set (Prop' AlienWorld) :=
     - Position O: alternatives vary the outer quantifier
     - Position I: alternatives vary the inner quantifier -/
 def alternativesAtPosition (s : NestedAristotelian) : AlternativesAtPosition AlienWorld :=
-  fun pos => match pos with
+  λ pos => match pos with
   | .M => matrixAlternatives s
   | .O => outerAlternatives s
   | .I => innerAlternatives s
@@ -128,15 +128,15 @@ def giMeaning (p : Core.Parse) (s : NestedAristotelian) (w : AlienWorld) : ℚ :
 /-- L1 computation using RSA.Eval for the GI model -/
 def giL1_world (s : NestedAristotelian) : List (AlienWorld × ℚ) :=
   RSA.Eval.L1_world allSentences alienWorlds exhParses [()] [()] [()]
-    (fun p _ s' w => giMeaning p s' w)
-    (fun _ => 1)  -- world prior
-    (fun _ => 1)  -- interp prior
-    (fun _ => 1)  -- lexicon prior
-    (fun _ => 1)  -- belief state prior
-    (fun _ => 1)  -- goal prior
-    (fun _ _ => 1)  -- speaker credence
-    (fun _ w1 w2 => w1 == w2)  -- identity goal projection
-    (fun _ => 0)  -- no cost
+    (λ p _ s' w => giMeaning p s' w)
+    (λ _ => 1)  -- world prior
+    (λ _ => 1)  -- interp prior
+    (λ _ => 1)  -- lexicon prior
+    (λ _ => 1)  -- belief state prior
+    (λ _ => 1)  -- goal prior
+    (λ _ _ => 1)  -- speaker credence
+    (λ _ w1 w2 => w1 == w2)  -- identity goal projection
+    (λ _ => 0)  -- no cost
     1  -- α = 1
     s
 

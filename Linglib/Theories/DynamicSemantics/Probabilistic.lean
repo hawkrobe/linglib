@@ -6,10 +6,10 @@ Grove & White's PDS framework.
 
 ## Key Ideas
 
-1. **Probability monad `P α`**: Distributions over values of type α
-2. **Parameterized state monad `Pσ σ σ' α = σ → P (α × σ')`**: Discourse dynamics
-3. **Monad laws**: Equational theory for probabilistic programs
-4. **δ-rules**: Reductions that preserve semantic equivalence
+1. Probability monad `P α`: distributions over values of type α
+2. Parameterized state monad `Pσ σ σ' α = σ → P (α × σ')`: discourse dynamics
+3. Monad laws: equational theory for probabilistic programs
+4. δ-rules: reductions that preserve semantic equivalence
 
 ## Connection to Existing Work
 
@@ -41,7 +41,7 @@ programs without committing to a specific representation (PMF, measure, etc.).
 
 In Grove & White notation:
 - `⌜v⌝` is `pure v` (trivial distribution at v)
-- `x ← m; k` is `bind m (fun x => k)`
+- `x ← m; k` is `bind m (λ x => k)`
 -/
 
 /--
@@ -68,7 +68,7 @@ class ProbMonad (P : Type → Type) where
   bind_pure : {α : Type} → ∀ (m : P α), bind m pure = m
   /-- Associativity: `(m >>= n) >>= o = m >>= (λx. n x >>= o)` -/
   bind_assoc : {α β γ : Type} → ∀ (m : P α) (n : α → P β) (o : β → P γ),
-    bind (bind m n) o = bind m (fun x => bind (n x) o)
+    bind (bind m n) o = bind m (λ x => bind (n x) o)
 
 namespace ProbMonad
 
@@ -77,11 +77,11 @@ variable {α β γ : Type}
 
 /-- Map a function over a distribution -/
 def map (f : α → β) (m : P α) : P β :=
-  bind m (fun x => pure (f x))
+  bind m (λ x => pure (f x))
 
 /-- Sequence two distributions, ignoring the first result -/
 def seq (m : P α) (n : P β) : P β :=
-  bind m (fun _ => n)
+  bind m (λ _ => n)
 
 /-- Map preserves identity -/
 theorem map_id (m : P α) : map (id : α → α) m = m := by
@@ -95,7 +95,7 @@ theorem map_comp (f : α → β) (g : β → γ) (m : P α) :
   rw [bind_assoc]
   congr 1
   ext x
-  exact pure_bind (f x) (fun y => pure (g y))
+  exact pure_bind (f x) (λ y => pure (g y))
 
 end ProbMonad
 
@@ -103,7 +103,7 @@ end ProbMonad
 /-!
 ## Parameterized State Monad
 
-Grove & White's key innovation: the state type can *change* during computation.
+In Grove & White's parameterized state monad, the state type can *change* during computation.
 This models how discourse updates can modify the structure of the context
 (e.g., pushing questions onto the QUD stack).
 
@@ -136,7 +136,7 @@ Returns the value paired with the unchanged state.
 Grove & White: `⌜v⌝^σ = λs. ⌜(v, s)⌝`
 -/
 def pure (v : α) : PState P σ σ α :=
-  fun s => ProbMonad.pure (v, s)
+  λ s => ProbMonad.pure (v, s)
 
 /--
 Bind for the parameterized state monad.
@@ -145,7 +145,7 @@ Sequences stateful-probabilistic computations, threading state through.
 Grove & White: `do { x ← m; k x } = λs. (x, s') ← m(s); k(x)(s')`
 -/
 def bind (m : PState P σ σ' α) (k : α → PState P σ' σ'' β) : PState P σ σ'' β :=
-  fun s => ProbMonad.bind (m s) (fun ⟨x, s'⟩ => k x s')
+  λ s => ProbMonad.bind (m s) (λ ⟨x, s'⟩ => k x s')
 
 /--
 View (get) a component of the state.
@@ -153,7 +153,7 @@ View (get) a component of the state.
 Returns the value of applying `proj` to the current state, without modification.
 -/
 def view (proj : σ → α) : PState P σ σ α :=
-  fun s => ProbMonad.pure (proj s, s)
+  λ s => ProbMonad.pure (proj s, s)
 
 /--
 Set (put) a component of the state.
@@ -161,13 +161,13 @@ Set (put) a component of the state.
 Returns the new state created by `upd`, with a trivial value.
 -/
 def set (upd : σ → σ') : PState P σ σ' Unit :=
-  fun s => ProbMonad.pure ((), upd s)
+  λ s => ProbMonad.pure ((), upd s)
 
 /--
 Modify the state in place.
 -/
 def modify (f : σ → σ) : PState P σ σ Unit :=
-  fun s => ProbMonad.pure ((), f s)
+  λ s => ProbMonad.pure ((), f s)
 
 /--
 Left identity for PState: `pure v >>= k = k v`
@@ -176,7 +176,7 @@ theorem pure_bind (v : α) (k : α → PState P σ σ' β) :
     bind (pure v) k = k v := by
   funext s
   simp only [bind, pure]
-  exact ProbMonad.pure_bind (v, s) (fun ⟨x, s'⟩ => k x s')
+  exact ProbMonad.pure_bind (v, s) (λ ⟨x, s'⟩ => k x s')
 
 /--
 Right identity for PState: `m >>= pure = m`
@@ -192,7 +192,7 @@ Associativity for PState.
 -/
 theorem bind_assoc (m : PState P σ σ' α)
     (n : α → PState P σ' σ'' β) (o : β → PState P σ'' σ''' γ) :
-    bind (bind m n) o = bind m (fun x => bind (n x) o) := by
+    bind (bind m n) o = bind m (λ x => bind (n x) o) := by
   funext s
   simp only [bind]
   rw [ProbMonad.bind_assoc]
@@ -237,12 +237,12 @@ variable {P : Type → Type} [CondProbMonad P]
 
 /-- Observe filters: observe true then return is identity -/
 theorem observe_true_pure :
-    ProbMonad.bind (observe true) (fun _ => ProbMonad.pure (P := P) ()) = observe true := by
+    ProbMonad.bind (observe true) (λ _ => ProbMonad.pure (P := P) ()) = observe true := by
   rw [observe_true, ProbMonad.pure_bind]
 
 /-- Observe false blocks: any continuation after observe false gives fail -/
 theorem observe_false_pure :
-    ProbMonad.bind (observe false) (fun _ => ProbMonad.pure (P := P) ()) = fail := by
+    ProbMonad.bind (observe false) (λ _ => ProbMonad.pure (P := P) ()) = fail := by
   exact observe_false_bind _
 
 end CondProbMonad
@@ -274,11 +274,11 @@ class ChoiceProbMonad (P : Type → Type) extends CondProbMonad P where
   choose : {α : Type} → [Fintype α] → (α → ℚ) → P α
   /-- choose with uniform weights is like a uniform prior -/
   choose_uniform : {α : Type} → [Fintype α] → [Nonempty α] →
-    choose (fun _ : α => 1) = choose (fun _ => 1)  -- trivial, but states the interface
+    choose (λ _ : α => 1) = choose (λ _ => 1)  -- trivial, but states the interface
   /-- choose then observe is like weighted observe -/
   choose_observe : {α : Type} → [Fintype α] → ∀ (w : α → ℚ) (p : α → Bool),
-    bind (choose w) (fun a => bind (observe (p a)) (fun _ => pure a)) =
-    choose (fun a => w a * if p a then 1 else 0)
+    bind (choose w) (λ a => bind (observe (p a)) (λ _ => pure a)) =
+    choose (λ a => w a * if p a then 1 else 0)
 
 namespace ChoiceProbMonad
 
@@ -304,8 +304,8 @@ end ChoiceProbMonad
 /-!
 ## Threshold Semantics
 
-Lassiter & Goodman's key result: threshold semantics + threshold uncertainty
-produces graded truth values. This is a special case of the PDS framework.
+Threshold semantics + threshold uncertainty produces graded truth values
+(Lassiter & Goodman 2017). This is a special case of the PDS framework.
 
 For a gradable adjective like "tall":
 - `measure : Entity → ℝ` gives heights
@@ -315,7 +315,7 @@ For a gradable adjective like "tall":
 With uncertainty over θ:
 - `⟦tall⟧(x) = E_θ[⟦tall⟧_θ(x)] = P(measure(x) > θ)`
 
-This probability IS the graded truth value.
+This probability is the graded truth value.
 -/
 
 variable {ε : Type}
@@ -334,18 +334,18 @@ that the entity's measure exceeds the threshold.
 -/
 def gradedFromThreshold {Θ : Type} [Fintype Θ] [DecidableEq Θ]
     (measure : ε → ℚ) (thresholds : Θ → ℚ) (prior : Θ → ℚ) (x : ε) : ℚ :=
-  Finset.sum Finset.univ fun θ =>
+  Finset.sum Finset.univ λ θ =>
     prior θ * if measure x > thresholds θ then 1 else 0
 
 /--
-Key theorem: For a point-mass prior (no uncertainty), graded = Boolean.
+For a point-mass prior (no uncertainty), graded truth reduces to Boolean.
 
 This shows that graded semantics *reduces to* Boolean semantics when
 there's no parameter uncertainty.
 -/
 theorem graded_eq_bool_of_point_mass {Θ : Type} [Fintype Θ] [DecidableEq Θ]
     (measure : ε → ℚ) (thresholds : Θ → ℚ) (θ₀ : Θ) (x : ε) :
-    let pointMass : Θ → ℚ := fun θ => if θ = θ₀ then 1 else 0
+    let pointMass : Θ → ℚ := λ θ => if θ = θ₀ then 1 else 0
     gradedFromThreshold measure thresholds pointMass x =
       if measure x > thresholds θ₀ then 1 else 0 := by
   simp only [gradedFromThreshold]
@@ -360,12 +360,12 @@ theorem graded_eq_bool_of_point_mass {Θ : Type} [Fintype Θ] [DecidableEq Θ]
 
 Grove & White's framework connects to RSA as follows:
 
-1. **Literal meaning φ**: A function `ι → Bool` (proposition)
-2. **Common ground**: A distribution `P ι` over indices
-3. **Assertion**: `observe(φ(i))` for `i ← cg`
-4. **Probability computation**: `Pr[φ] = E_i[1_{φ(i)}]`
+1. Literal meaning φ: a function `ι → Bool` (proposition)
+2. Common ground: a distribution `P ι` over indices
+3. Assertion: `observe(φ(i))` for `i ← cg`
+4. Probability computation: `Pr[φ] = E_i[1_{φ(i)}]`
 
-The key insight: RSA's graded φ emerges from:
+RSA's graded φ emerges from:
 - Boolean φ_θ indexed by parameters θ
 - A prior distribution over θ
 - Marginalization: φ(x) = E_θ[φ_θ(x)]
@@ -385,58 +385,22 @@ This is `Pr[φ] = E_i[1_{φ(i)}]` in Grove & White notation.
 For finite distributions, this is the sum of masses where φ holds.
 -/
 def probProp {ι : Type} [Fintype ι] (mass : ι → ℚ) (φ : Prop' ι) : ℚ :=
-  Finset.sum Finset.univ fun i => mass i * if φ i then 1 else 0
+  Finset.sum Finset.univ λ i => mass i * if φ i then 1 else 0
 
 /--
 Probability of a true proposition is the total mass (1 for normalized distributions).
 -/
 theorem probProp_true {ι : Type} [Fintype ι] (mass : ι → ℚ) :
-    probProp mass (fun _ => true) = Finset.sum Finset.univ mass := by
+    probProp mass (λ _ => true) = Finset.sum Finset.univ mass := by
   simp only [probProp, ↓reduceIte, mul_one]
 
 /--
 Probability of a false proposition is 0.
 -/
 theorem probProp_false {ι : Type} [Fintype ι] (mass : ι → ℚ) :
-    probProp mass (fun _ => false) = 0 := by
+    probProp mass (λ _ => false) = 0 := by
   simp only [probProp]
-  have h : ∀ i, mass i * (if false then 1 else 0) = 0 := fun i => by simp
+  have h : ∀ i, mass i * (if false then 1 else 0) = 0 := λ i => by simp
   simp only [h, Finset.sum_const_zero]
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Types
-- `ProbMonad P`: Abstract probability monad interface
-- `PState P σ σ' α`: Parameterized probabilistic state monad
-- `Prop' ι`: Propositions as functions from indices
-
-### Operations
-- `pure`, `bind`: Monad operations
-- `view`, `set`, `modify`: State access
-- `observe`: Conditioning
-
-### Key Theorems
-- `pure_bind`, `bind_pure`, `bind_assoc`: Monad laws for PState
-- `graded_eq_bool_of_point_mass`: Graded reduces to Boolean without uncertainty
-- `probProp_true`, `probProp_false`: Probability of constant propositions
-
-### Connection to Literature
-This module formalizes:
-1. Grove & White's PDS framework
-2. Lassiter & Goodman's threshold uncertainty result
-3. The relationship between Boolean and graded semantics
-
-The key insight: graded truth VALUES are not primitive—they EMERGE from
-Boolean semantics + uncertainty over parameters.
-
-## Future Extensions
-1. δ-rules for semantic computation
-2. QUD stack for question dynamics
-3. Linking models for experimental predictions
-4. Connection to existing RSA infrastructure
--/
 
 end Theories.DynamicSemantics.Probabilistic

@@ -23,13 +23,13 @@ approach of Champollion, Alsop & Grosu (2019) for disjunction.
 
 Following Szabolcsi (2004) and Dayal (1998):
 
-**Szabolcsi parse (weak)**: O_ExhDA O_σA(∃x[◇take(x)])
+Szabolcsi parse (weak): O_ExhDA O_σA(∃x[◇take(x)])
 - Wide scope existential with domain alternatives exhaustified
 - Yields: "You may take some specific one"
 
-**Dayal parse (strong)**: O_ExhDA(∃x[O_σA(◇O_ALT(take(x)))])
+Dayal parse (strong): O_ExhDA(∃x[O_σA(◇O_ALT(take(x)))])
 - Narrow scope modalized existential
-- Yields: "For each x, you may take x" (exclusiveness!)
+- Yields: "For each x, you may take x" (exclusiveness)
 
 ## References
 
@@ -54,7 +54,7 @@ open RSA.Eval
 ## Compositional Semantics for *Any*
 
 Before defining RSA meanings, we establish the compositional foundation.
-The meanings are DERIVED from Montague quantifier and modal semantics,
+The meanings are derived from Montague quantifier and modal semantics,
 not stipulated.
 
 ### Domain Structure
@@ -67,18 +67,18 @@ Each state encodes which permissions hold:
 
 ### Compositional Meanings
 
-**"You may take S"** = ◇take(S)
+"You may take S" = ◇take(S)
 - True iff S is permitted (alone or via both)
 
-**"You may take any class"** has two parses:
+"You may take any class" has two parses:
 
-**Szabolcsi**: ∃x[◇take(x)] = ◇take(S) ∨ ◇take(P)
+Szabolcsi: ∃x[◇take(x)] = ◇take(S) ∨ ◇take(P)
 - Existential scopes over modal
-- True if SOME class is permitted
+- True if some class is permitted
 
-**Dayal**: ∀x[◇take(x)] = ◇take(S) ∧ ◇take(P)
+Dayal: ∀x[◇take(x)] = ◇take(S) ∧ ◇take(P)
 - Universal with exclusiveness
-- True if EACH class is individually permitted
+- True if each class is individually permitted
 -/
 
 /-- The two items in our domain -/
@@ -108,7 +108,7 @@ or apple, pear for fruits). This yields 7 states based on permission structure:
 | SorBoth   | T   | F   | T      | T   | partial        | no         |
 | PorBoth   | F   | T   | T      | T   | partial        | no         |
 
-States Only1 and AnyNum are the **exclusiveness states** where free choice
+States Only1 and AnyNum are the exclusiveness states where free choice
 holds for each individual item.
 -/
 
@@ -236,18 +236,18 @@ def compMayP (w : FCIState) : Bool := permP_liberal w
 /-- Compositional meaning of "may every": ∀x.◇take(x)_liberal
     True if both S and P are obtainable (possibly together) -/
 def compMayEvery (w : FCIState) : Bool :=
-  forallItem (fun x => perm_liberal x w)
+  forallItem (λ x => perm_liberal x w)
 
 /-- Szabolcsi meaning of "may any": ∃x.◇take(x)_liberal
     (weak: some item is obtainable, possibly via both) -/
 def compSzabolcsi (w : FCIState) : Bool :=
-  existsItem (fun x => perm_liberal x w)
+  existsItem (λ x => perm_liberal x w)
 
 /-- Dayal meaning of "may any": ∀x.◇take(x)_strict
     (strong: each item is INDIVIDUALLY permitted, not just via both)
     This is the exclusiveness reading. -/
 def compDayal (w : FCIState) : Bool :=
-  forallItem (fun x => perm x w)
+  forallItem (λ x => perm x w)
 
 -- SECTION 2: Utterances
 
@@ -362,9 +362,9 @@ it doesn't replace it.
 -/
 
 -- Verification: check compositional meanings match stipulated ones
-#eval allStates.map (fun w => (w, szabolcsiMeaning .mayS w, compMayS w))
-#eval allStates.map (fun w => (w, dayalMeaning .mayAny w, compDayal w))
-#eval allStates.map (fun w => (w, szabolcsiMeaning .mayEvery w, compMayEvery w))
+#eval allStates.map (λ w => (w, szabolcsiMeaning .mayS w, compMayS w))
+#eval allStates.map (λ w => (w, dayalMeaning .mayAny w, compDayal w))
+#eval allStates.map (λ w => (w, szabolcsiMeaning .mayEvery w, compMayEvery w))
 
 /-- Grounding: Szabolcsi "may any" is always true (some item obtainable) -/
 theorem szabolcsi_mayAny_weak : ∀ w, szabolcsiMeaning .mayAny w = true := by
@@ -420,26 +420,26 @@ This is the GI model from Franke & Bergen (2020), applied to *any*.
 -/
 
 /-- Uniform prior over states -/
-def uniformPrior : FCIState → ℚ := fun _ => 1
+def uniformPrior : FCIState → ℚ := λ _ => 1
 
 /-- Uniform prior over parses -/
-def uniformParsePrior : AnyParse → ℚ := fun _ => 1
+def uniformParsePrior : AnyParse → ℚ := λ _ => 1
 
 /-- L1 world distribution using RSA.Eval.ambiguousL1_world -/
 def giL1_world (α : ℕ) (prior : FCIState → ℚ) (u : Utterance) : List (FCIState × ℚ) :=
   ambiguousL1_world allUtterances allStates allParses
-    meaningAtParse prior uniformParsePrior α (fun _ => 0) u
+    meaningAtParse prior uniformParsePrior α (λ _ => 0) u
 
 /-- L1 parse distribution using RSA.Eval.ambiguousL1_interp -/
 def giL1_parse (α : ℕ) (prior : FCIState → ℚ) (u : Utterance) : List (AnyParse × ℚ) :=
   ambiguousL1_interp allUtterances allStates allParses
-    meaningAtParse prior uniformParsePrior α (fun _ => 0) u
+    meaningAtParse prior uniformParsePrior α (λ _ => 0) u
 
 /-- L1 joint distribution -/
 def giL1_joint (α : ℕ) (prior : FCIState → ℚ) (u : Utterance)
     : List ((FCIState × AnyParse) × ℚ) :=
   ambiguousL1_joint allUtterances allStates allParses
-    meaningAtParse prior uniformParsePrior α (fun _ => 0) u
+    meaningAtParse prior uniformParsePrior α (λ _ => 0) u
 
 -- SECTION 6: Key Predictions
 
@@ -953,7 +953,7 @@ theorem rsa_concentrates_on_pure_exclusiveness :
     informativity advantage. This is a more refined prediction than
     simply "Dayal is true". -/
 def rsaExhMeaning (u : Utterance) : FCIState → Bool :=
-  fun w => rsaExh 100 (1/10000) u w
+  λ w => rsaExh 100 (1/10000) u w
 
 /-- RSA-EXH implies Dayal (but not conversely).
     States that survive RSA inference are all Dayal-true.
@@ -1192,7 +1192,7 @@ theorem dayal_more_informative :
 - `giL1_parse`: L1 parse distribution
 - `giL1_joint`: L1 joint distribution over (world × parse)
 
-### Key Results
+### Results
 
 **Pragmatic Inference**:
 - `exclusiveness_derived`: L1 assigns >99% to exclusiveness states

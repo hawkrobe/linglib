@@ -15,20 +15,20 @@ A signaling game models strategic communication:
 
 ## Equilibrium Concepts
 
-**Separating Equilibrium**: Different types send different messages.
+Separating Equilibrium: Different types send different messages.
 Communication is fully successful.
 
-**Pooling Equilibrium**: All types send the same message.
+Pooling Equilibrium: All types send the same message.
 No information is transmitted.
 
-**Partial Pooling**: Some types pool, others separate.
+Partial Pooling: Some types pool, others separate.
 Partial information transmission.
 
 ## Credibility
 
-**Self-Committing**: If believed, sender wants to follow through.
-**Self-Signaling**: Sender wants it believed iff it's true.
-**Credible**: Both self-committing and self-signaling.
+Self-Committing: If believed, sender wants to follow through.
+Self-Signaling: Sender wants it believed iff it's true.
+Credible: Both self-committing and self-signaling.
 
 ## Connection to RSA
 
@@ -99,12 +99,12 @@ structure StrategyProfile (T M A : Type*) where
 def bestResponseAction {T M A : Type*} [DecidableEq A]
     (g : SignalingGame T M A) (actions : List A) (types : List T)
     (beliefs : T -> ℚ) : Option A :=
-  actions.foldl (fun best a =>
-    let eu := types.foldl (fun acc t => acc + beliefs t * g.receiverUtility t a) 0
+  actions.foldl (λ best a =>
+    let eu := types.foldl (λ acc t => acc + beliefs t * g.receiverUtility t a) 0
     match best with
     | none => some a
     | some b =>
-      let euB := types.foldl (fun acc t => acc + beliefs t * g.receiverUtility t b) 0
+      let euB := types.foldl (λ acc t => acc + beliefs t * g.receiverUtility t b) 0
       if eu > euB then some a else some b
   ) none
 
@@ -112,10 +112,10 @@ def bestResponseAction {T M A : Type*} [DecidableEq A]
 def posteriorBeliefs {T M A : Type*} [DecidableEq M]
     (g : SignalingGame T M A) (S : SenderStrategy T M) (types : List T)
     (m : M) : T -> ℚ :=
-  let senders := types.filter fun t => S.send t == m
-  let totalProb := senders.foldl (fun acc t => acc + g.prior t) 0
-  if totalProb == 0 then fun _ => 0
-  else fun t => if S.send t == m then g.prior t / totalProb else 0
+  let senders := types.filter λ t => S.send t == m
+  let totalProb := senders.foldl (λ acc t => acc + g.prior t) 0
+  if totalProb == 0 then λ _ => 0
+  else λ t => if S.send t == m then g.prior t / totalProb else 0
 
 /-- Is action a a best response to message m? -/
 def isBestResponse {T M A : Type*} [DecidableEq A] [DecidableEq M]
@@ -135,15 +135,15 @@ def isNashEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M]
     (g : SignalingGame T M A) (profile : StrategyProfile T M A)
     (types : List T) (messages : List M) (actions : List A) : Bool :=
   -- Check sender optimality: for each type, the chosen message is optimal
-  let senderOptimal := types.all fun t =>
+  let senderOptimal := types.all λ t =>
     let m := profile.sender.send t
     let a := profile.receiver.respond m
     let currentUtil := g.senderUtility t a
-    messages.all fun m' =>
+    messages.all λ m' =>
       let a' := profile.receiver.respond m'
       currentUtil >= g.senderUtility t a'
   -- Check receiver optimality: for each message, response is best response
-  let receiverOptimal := messages.all fun m =>
+  let receiverOptimal := messages.all λ m =>
     let a := profile.receiver.respond m
     isBestResponse g profile.sender types actions m a
   senderOptimal && receiverOptimal
@@ -154,8 +154,8 @@ def isSeparatingEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M] [Dec
     (g : SignalingGame T M A) (profile : StrategyProfile T M A)
     (types : List T) (messages : List M) (actions : List A) : Bool :=
   isNashEquilibrium g profile types messages actions &&
-  types.all fun t1 =>
-    types.all fun t2 =>
+  types.all λ t1 =>
+    types.all λ t2 =>
       (t1 == t2) || (profile.sender.send t1 != profile.sender.send t2)
 
 /-- A pooling equilibrium: all types send the same message.
@@ -166,21 +166,21 @@ def isPoolingEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M]
   isNashEquilibrium g profile types messages actions &&
   match types with
   | [] => true
-  | t :: ts => ts.all fun t' => profile.sender.send t == profile.sender.send t'
+  | t :: ts => ts.all λ t' => profile.sender.send t == profile.sender.send t'
 
 -- Credibility Conditions
 
 /-!
 ## Credibility: When Can Messages Be Trusted?
 
-**Self-Committing** (Farrell 1988):
+Self-Committing (Farrell 1988):
 If the receiver believes message m, it creates an incentive for the
 sender to fulfill the commitment.
 
-**Self-Signaling** (Farrell & Rabin 1996):
+Self-Signaling (Farrell & Rabin 1996):
 The sender would want m to be believed only if it is true.
 
-**Credible** = Self-Committing ∧ Self-Signaling
+Credible = Self-Committing ∧ Self-Signaling
 -/
 
 /-- Message m_t claiming type t is self-committing if:
@@ -192,12 +192,12 @@ def selfCommitting {T M A : Type*} [DecidableEq A] [DecidableEq T]
     (g : SignalingGame T M A) (types : List T) (actions : List A)
     (t : T) : Bool :=
   -- Get best response to type t
-  let beliefs : T -> ℚ := fun t' => if t' == t then 1 else 0
+  let beliefs : T -> ℚ := λ t' => if t' == t then 1 else 0
   match bestResponseAction g actions types beliefs with
   | none => false
   | some a =>
     -- Check if type-t sender prefers a to other possible actions
-    actions.all fun a' =>
+    actions.all λ a' =>
       g.senderUtility t a >= g.senderUtility t a'
 
 /-- Message m_t is self-signaling if the sender wants it believed iff true.
@@ -207,18 +207,18 @@ Condition 2: Non-t senders prefer their own BR to BR(t). -/
 def selfSignaling {T M A : Type*} [DecidableEq A] [DecidableEq T]
     (g : SignalingGame T M A) (types : List T) (actions : List A)
     (t : T) : Bool :=
-  let beliefs_t : T -> ℚ := fun t' => if t' == t then 1 else 0
+  let beliefs_t : T -> ℚ := λ t' => if t' == t then 1 else 0
   match bestResponseAction g actions types beliefs_t with
   | none => false
   | some a_t =>
     -- Condition 1: Type t prefers a_t
-    let cond1 := actions.all fun a' =>
+    let cond1 := actions.all λ a' =>
       a' == a_t || g.senderUtility t a_t > g.senderUtility t a'
     -- Condition 2: Other types prefer their own BR
-    let cond2 := types.all fun t' =>
+    let cond2 := types.all λ t' =>
       if t' == t then true
       else
-        let beliefs_t' : T -> ℚ := fun t'' => if t'' == t' then 1 else 0
+        let beliefs_t' : T -> ℚ := λ t'' => if t'' == t' then 1 else 0
         match bestResponseAction g actions types beliefs_t' with
         | none => true
         | some a_t' => g.senderUtility t' a_t' > g.senderUtility t' a_t
@@ -235,13 +235,13 @@ def credible {T M A : Type*} [DecidableEq A] [DecidableEq T]
 /-!
 ## Grice's Distinction in Game-Theoretic Terms
 
-**Conventional Meaning**: The pre-existing interpretation function [[·]].
+Conventional Meaning: The pre-existing interpretation function [[·]].
 Maps messages to propositions (subsets of types).
 
-**Speaker's Meaning**: The partition induced by the sender's strategy.
+Speaker's Meaning: The partition induced by the sender's strategy.
 S_t = {t' | S(t') = S(t)} - types that send the same message as t.
 
-**Communicated Meaning**: The intersection.
+Communicated Meaning: The intersection.
 What the receiver can infer = conventional ∩ speaker's meaning.
 -/
 
@@ -251,20 +251,20 @@ def ConventionalMeaning (M T : Type*) := M -> (T -> Bool)
 /-- Speaker's meaning induced by sender strategy S.
 S_t = {t' | S(t') = S(t)} -/
 def speakerMeaning {T M : Type*} [DecidableEq M] (S : SenderStrategy T M) (t : T) : T -> Bool :=
-  fun t' => S.send t' == S.send t
+  λ t' => S.send t' == S.send t
 
 /-- Communicated meaning: intersection of conventional and speaker's meaning -/
 def communicatedMeaning {T M : Type*} [DecidableEq M]
     (conv : ConventionalMeaning M T) (S : SenderStrategy T M)
     (t : T) : T -> Bool :=
-  fun t' => conv (S.send t) t' && speakerMeaning S t t'
+  λ t' => conv (S.send t) t' && speakerMeaning S t t'
 
 /-- A strategy is truthful if speaker's meaning ⊆ conventional meaning.
 The sender only sends messages whose conventional meaning includes her type. -/
 def isTruthful {T M : Type*} [DecidableEq M]
     (conv : ConventionalMeaning M T) (S : SenderStrategy T M)
     (types : List T) : Bool :=
-  types.all fun t => conv (S.send t) t
+  types.all λ t => conv (S.send t) t
 
 -- Crawford-Sobel: Partition Equilibria
 
@@ -274,7 +274,7 @@ def isTruthful {T M : Type*} [DecidableEq M]
 In cheap-talk games, the amount of credible communication depends on
 how aligned sender and receiver preferences are.
 
-**Key Result**: Equilibria are characterized by partitions of the type space.
+Equilibria are characterized by partitions of the type space.
 Types in the same cell send the same message.
 
 The finer the equilibrium partition, the more information is transmitted.
@@ -291,7 +291,7 @@ def isPartitionEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M]
 def strategyPartition {T M : Type*} [DecidableEq M] (S : SenderStrategy T M)
     (types : List T) : List (T -> Bool) :=
   let messages := types.map S.send |>.eraseDups
-  messages.map fun m => fun t => S.send t == m
+  messages.map λ m => λ t => S.send t == m
 
 /-- Number of cells in the equilibrium partition -/
 def partitionSize {T M : Type*} [DecidableEq M] (S : SenderStrategy T M)
@@ -305,10 +305,10 @@ Perfect alignment (cooperative game) → separating equilibrium exists. -/
 def preferenceAlignment {T M A : Type*} (g : SignalingGame T M A)
     (types : List T) (actions : List A) : ℚ :=
   -- Simple measure: correlation of sender and receiver utilities
-  let pairs := types.flatMap fun t => actions.map fun a => (g.senderUtility t a, g.receiverUtility t a)
+  let pairs := types.flatMap λ t => actions.map λ a => (g.senderUtility t a, g.receiverUtility t a)
   if pairs.length == 0 then 0
   else
-    let sumProduct := pairs.foldl (fun acc (s, r) => acc + s * r) 0
+    let sumProduct := pairs.foldl (λ acc (s, r) => acc + s * r) 0
     sumProduct / pairs.length
 
 /-- In cooperative games, separating equilibria always exist. -/
@@ -331,10 +331,10 @@ equilibria of a signaling game where:
 - Sender utility = communicative success (listener understands)
 - Receiver utility = accurate beliefs
 
-**L0**: Literal listener = receiver who trusts conventional meaning
-**S1**: Strategic speaker = sender best-responding to L0
-**L1**: Strategic listener = receiver best-responding to S1
-**...and so on**
+L0: Literal listener = receiver who trusts conventional meaning
+S1: Strategic speaker = sender best-responding to L0
+L1: Strategic listener = receiver best-responding to S1
+...and so on
 
 The fixed point is a signaling game equilibrium.
 -/

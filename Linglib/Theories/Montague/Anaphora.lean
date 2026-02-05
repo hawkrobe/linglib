@@ -5,8 +5,8 @@ Semantic interpretation of binding configurations, following Heim & Kratzer (199
 
 ## Architecture
 
-1. **Syntax provides**: `BindingConfig` (via `HasBindingConfig` interface)
-2. **Semantics interprets**: Assignment functions + λ-abstraction
+1. Syntax provides: `BindingConfig` (via `HasBindingConfig` interface)
+2. Semantics interprets: Assignment functions + λ-abstraction
 
 This module extends `Variables.lean` to interpret full binding configurations.
 
@@ -46,9 +46,9 @@ open Interfaces.BindingSemantics
 Given a `BindingConfig` from some syntactic theory, we interpret it using
 assignment functions. The key operations:
 
-1. **Binder**: Introduces λ-abstraction over a variable index
-2. **Bindee**: Reads from the assignment at that index
-3. **Free variable**: Reads from the ambient assignment
+1. Binder: Introduces λ-abstraction over a variable index
+2. Bindee: Reads from the assignment at that index
+3. Free variable: Reads from the ambient assignment
 -/
 
 /-- Semantic interpretation state: current assignment + pending abstractions -/
@@ -76,14 +76,14 @@ def interpretBoundPronoun {m : Model}
 def interpretBinder {m : Model} {τ : Ty}
     (varIdx : Nat) (body : InterpState m → m.interpTy τ)
     (state : InterpState m) : m.interpTy (.e ⇒ τ) :=
-  fun x => body { state with assignment := state.assignment[varIdx ↦ x] }
+  λ x => body { state with assignment := state.assignment[varIdx ↦ x] }
 
 
 /-!
 ## Semantic Binding Conditions
 
-The traditional binding conditions (A, B, C) constrain SYNTAX.
-Here we state their SEMANTIC correlates: when does binding produce
+The traditional binding conditions (A, B, C) constrain syntax.
+Here we state their semantic correlates: when does binding produce
 well-defined interpretations?
 -/
 
@@ -112,7 +112,7 @@ def interpretBindingConfig {m : Model}
 ## Continuations as Mathematical Abstraction
 
 B&S 2014 shows that GQs are continuations: `(Entity → Bool) → Bool`.
-This view reveals that binding is fundamentally about **duplication**:
+This view reveals that binding is fundamentally about duplication:
 when a pronoun is bound, the binder's entity is used twice.
 
 ### The W Combinator
@@ -126,13 +126,10 @@ The duplicator combinator W = λκλx.κxx captures binding:
 - W duplicates: the VP expects subject and object, gets x for both
 -/
 
-/-- **Duplicator combinator** W = λκλx.κxx
+/-- Duplicator combinator W = λκλx.κxx
 
-This is the mathematical essence of binding: duplication of a value
+Binding amounts to duplication of a value
 into multiple positions in a continuation.
-
-When you bind a pronoun, you're saying: "use the same entity here
-as was used there." W makes this explicit.
 -/
 def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 
@@ -141,9 +138,9 @@ def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 "John sees himself" = W(λsubj λobj. sees(subj, obj))(john)
                     = sees(john, john)
 -/
-example : W (fun x y => x == y) 5 = true := rfl
+example : W (λ x y => x == y) 5 = true := rfl
 
-/-- **Continuation monad** for binding.
+/-- Continuation monad for binding.
 
 This is the GQ type from Quantifiers.lean, made explicit as a monad.
 Binders are values of this type; binding is monadic composition.
@@ -151,11 +148,11 @@ Binders are values of this type; binding is monadic composition.
 abbrev Cont' (R A : Type) := (A → R) → R
 
 /-- Return (unit): lift a value into the continuation monad -/
-def Cont'.pure {R A : Type} (a : A) : Cont' R A := fun k => k a
+def Cont'.pure {R A : Type} (a : A) : Cont' R A := λ k => k a
 
 /-- Bind: compose continuations -/
 def Cont'.bind {R A B : Type} (m : Cont' R A) (f : A → Cont' R B) : Cont' R B :=
-  fun k => m (fun a => f a k)
+  λ k => m (λ a => f a k)
 
 instance {R : Type} : Monad (Cont' R) where
   pure := Cont'.pure
@@ -166,8 +163,8 @@ instance {R : Type} : Monad (Cont' R) where
 
 The H&K assignment approach and B&S continuation approach are equivalent:
 
-- **H&K**: Binder introduces λx_n, bindee reads g(n)
-- **B&S**: Binder is continuation (Entity → Bool) → Bool, bindee uses W
+- H&K: Binder introduces λx_n, bindee reads g(n)
+- B&S: Binder is continuation (Entity → Bool) → Bool, bindee uses W
 
 The W combinator corresponds to the H&K rule:
   "λx_n body" applied to "e" = body[n ↦ e]
@@ -205,11 +202,11 @@ theorem hk_bs_reflexive_equiv {m : Model} (n : Nat)
 ## Categorical Relationship: Reader ↔ Continuation
 
 The H&K and B&S approaches are categorically related via the
-**Reader-Continuation adjunction**.
+Reader-Continuation adjunction.
 
 ### Reader Monad (H&K)
 
-Assignment functions are instances of the **Reader monad**:
+Assignment functions are instances of the Reader monad:
 ```
 Reader E A = E → A
 ```
@@ -232,15 +229,15 @@ For binding, R = Bool, A = Entity, so GQ = Cont Bool Entity.
 
 ### The Adjunction
 
-These monads are related via the **continuation-passing transform**:
+These monads are related via the continuation-passing transform:
 
-1. **CPS transform**: Converts Reader-style to Cont-style
+1. CPS transform: Converts Reader-style to Cont-style
    ```
    cps : (E → A) → ((A → R) → E → R)
    cps f = λk e. k (f e)
    ```
 
-2. **Uncps transform**: Converts Cont-style back to Reader-style
+2. Uncps transform: Converts Cont-style back to Reader-style
    ```
    uncps : ((A → R) → E → R) → (E → A)
    uncps g = λe. g (λa. a) e   -- when R = A
@@ -251,13 +248,13 @@ flows differently through continuations vs readers.
 
 ### The W Combinator Categorically
 
-W is the **diagonal** in the Kleisli category of Cont:
+W is the diagonal in the Kleisli category of Cont:
 ```
 W : Cont R (A × A) → Cont R A
 W m = m >>= λ(x,y). pure x   -- when x = y
 ```
 
-Or more directly, W is the **contraction** morphism of the
+Or more directly, W is the contraction morphism of the
 comonoid structure on continuations.
 -/
 
@@ -266,15 +263,15 @@ abbrev Reader (E A : Type) := E → A
 
 /-- Reader is a monad -/
 instance {E : Type} : Monad (Reader E) where
-  pure a := fun _ => a
-  bind m f := fun e => f (m e) e
+  pure a := λ _ => a
+  bind m f := λ e => f (m e) e
 
 /-- CPS transform: Reader → Continuation-expecting function.
 
 This is one direction of the Reader-Cont relationship.
 -/
 def cpsTransform {E A R : Type} (f : Reader E A) : (A → R) → E → R :=
-  fun k e => k (f e)
+  λ k e => k (f e)
 
 /-- The Yoneda embedding view: Cont R A ≅ ∀X. (A → X) → (R → X) → X
 
@@ -283,7 +280,7 @@ universal property (existential types / coproducts).
 -/
 def contAsYoneda {R A : Type} (c : Cont' R A) : (A → R) → R := c
 
-/-- **Theorem**: CPS transform preserves binding semantics.
+/-- CPS transform preserves binding semantics.
 
 For any Reader-style denotation, the CPS transform produces
 a Cont-style denotation with equivalent behavior.
@@ -291,7 +288,7 @@ a Cont-style denotation with equivalent behavior.
 theorem cps_preserves_semantics {E A : Type} (f : Reader E A) (e : E) (k : A → Bool) :
     cpsTransform f k e = k (f e) := rfl
 
-/-- **Theorem**: W is the semantic content of binding in both frameworks.
+/-- W is the semantic content of binding in both frameworks.
 
 In the Reader framework: binding copies a value from the environment.
 In the Cont framework: binding duplicates via W.
@@ -300,7 +297,7 @@ Both reduce to "use the same entity twice."
 -/
 theorem binding_is_contraction {A : Type} (rel : A → A → Bool) (x : A) :
     -- Reader-style: read x twice from environment
-    (fun _ : Unit => rel x x) () =
+    (λ _ : Unit => rel x x) () =
     -- Cont-style: use W to duplicate
     W rel x := rfl
 
@@ -311,13 +308,13 @@ theorem binding_is_contraction {A : Type} (rel : A → A → Bool) (x : A) :
 B&S's insight: traditional binding conditions follow from evaluation order.
 In left-to-right evaluation:
 
-- **Condition A** (reflexives local): Reflexive must be evaluated while
+- Condition A (reflexives local): Reflexive must be evaluated while
   binder's continuation is active
 
-- **Condition B** (pronouns non-local): Pronouns shift to find binders
+- Condition B (pronouns non-local): Pronouns shift to find binders
   outside the local evaluation context
 
-- **Crossover**: Pronoun evaluated before binder → no entity available
+- Crossover: Pronoun evaluated before binder, so no entity is available
 -/
 
 /-- Evaluation context tracks which binders are "active" -/
@@ -344,8 +341,8 @@ def crossover (pronounPos binderPos : Nat) : Bool :=
 VP ellipsis with bound pronouns creates ambiguity:
 
 "John₁ loves his₁ mother, and Bill does too"
-- **Strict**: Bill loves John's mother (pronoun keeps original referent)
-- **Sloppy**: Bill loves Bill's mother (pronoun re-bound)
+- Strict: Bill loves John's mother (pronoun keeps original referent)
+- Sloppy: Bill loves Bill's mother (pronoun re-bound)
 
 The continuation approach explains this as two evaluation strategies:
 - Strict: Copy the VP's denotation (including resolved pronoun)
@@ -379,71 +376,5 @@ def VPEAmbiguity.strictValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
 def VPEAmbiguity.sloppyValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
   sloppyReading a.vp a.ellipsisSite
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Interpretation Infrastructure
-- `InterpState`: Semantic interpretation state
-- `interpretBoundPronoun`: Read from assignment
-- `interpretBinder`: Create λ-abstraction
-
-### Mathematical Abstraction (Continuations)
-- `W`: Duplicator combinator (essence of binding)
-- `Cont'`: Continuation monad
-- `hk_bs_reflexive_equiv`: H&K ↔ B&S correspondence
-
-### Categorical Perspective
-- `Reader`: The Reader monad (assignment-based)
-- `cpsTransform`: Reader → Continuation transform
-- `cps_preserves_semantics`: CPS preserves binding behavior
-- `binding_is_contraction`: W = contraction in both frameworks
-
-### Evaluation Order
-- `EvalContext`: Tracks active binders
-- `canBind`, `crossover`: Binding constraints from evaluation
-
-### VPE
-- `strictReading`, `sloppyReading`: Two VPE interpretations
-- `VPEAmbiguity`: Both readings available
-
-## Architecture
-
-```
-Syntax Theory (Minimalism, HPSG, CCG, ...)
-       │
-       │ HasBindingConfig instance
-       ▼
-BindingConfig (what binds what)
-       │
-       │ This module
-       ▼
-Assignment-based interpretation (H&K)     ←──── Reader monad
-       │                                          │
-       │ (categorically related via)              │ CPS transform
-       ▼                                          ▼
-Continuation-based interpretation (B&S)   ←──── Cont monad
-```
-
-## Categorical Summary
-
-The Reader ↔ Continuation relationship:
-- **Reader E A = E → A**: "Read from environment E"
-- **Cont R A = (A → R) → R**: "Take a continuation, produce R"
-- **CPS transform**: Converts Reader-style to Cont-style
-- **W combinator**: The "contraction" (diagonal) morphism
-
-Binding is **contraction**: using the same entity in multiple positions.
-Whether expressed via assignment update (H&K) or duplication (B&S),
-the essence is the same categorical operation.
-
-## Connection to Other Modules
-
-- `Variables.lean`: Assignment functions, λ-abstraction
-- `Quantifiers.lean`: GQ = Cont Bool Entity
-- `Core/Interfaces/BindingSemantics.lean`: Abstract interface
-- `Phenomena/Anaphora/DonkeyAnaphora.lean`: Empirical data
--/
 
 end Montague.Anaphora

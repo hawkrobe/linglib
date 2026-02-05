@@ -3,25 +3,28 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 
 /-!
-# Duality: The Universal/Existential Divide
+# Duality
 
-The fundamental duality between universal-like and existential-like operators,
-formalized as a Galois connection: ∃ ⊣ Δ ⊣ ∀. Left adjoints (∃-like) are robust
-(one success suffices); right adjoints (∀-like) are fragile (one failure breaks).
+Universal vs existential operators formalized as a Galois connection.
+
+## Main definitions
+
+- `DualityType`: existential vs universal classification
+- `Truth3`: three-valued truth (Kleene strong)
+- `aggregate`: aggregate list by duality type
 
 ## References
 
 - Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
 - Keenan & Stavi (1986). A Semantic Characterization of Natural Language Determiners.
-- Partee, ter Meulen & Wall (1990). Mathematical Methods in Linguistics. Ch. 14.
 -/
 
 namespace Core.Duality
 
-/-- The fundamental duality: existential-like vs universal-like. -/
+/-- Existential vs universal classification. -/
 inductive DualityType where
-  | existential  -- ∃-like: join, left adjoint, robust
-  | universal    -- ∀-like: meet, right adjoint, fragile
+  | existential
+  | universal
   deriving Repr, DecidableEq, BEq, Inhabited
 
 /-- Existential is robust: one witness suffices. -/
@@ -34,7 +37,7 @@ def DualityType.isFragile : DualityType → Bool
   | .existential => false
   | .universal => true
 
-/-- The dual of a duality type. -/
+/-- Swap existential and universal. -/
 def DualityType.dual : DualityType → DualityType
   | .existential => .universal
   | .universal => .existential
@@ -42,36 +45,36 @@ def DualityType.dual : DualityType → DualityType
 theorem dual_involutive (d : DualityType) : d.dual.dual = d := by
   cases d <;> rfl
 
-/-- Three-valued truth for phenomena with indeterminacy. -/
+/-- Three-valued truth. -/
 inductive Truth3 where
   | true
   | false
-  | indet  -- indeterminate / undefined / presupposition failure
+  | indet
   deriving Repr, DecidableEq, BEq, Inhabited
 
 namespace Truth3
 
-/-- Negation in three-valued logic (Kleene strong). -/
+/-- Kleene strong negation. -/
 def neg : Truth3 → Truth3
   | .true => .false
   | .false => .true
   | .indet => .indet
 
-/-- Join (disjunction) - existential aggregation. -/
+/-- Existential aggregation. -/
 def join : Truth3 → Truth3 → Truth3
   | .true, _ => .true
   | _, .true => .true
   | .false, .false => .false
   | _, _ => .indet
 
-/-- Meet (conjunction) - universal aggregation. -/
+/-- Universal aggregation. -/
 def meet : Truth3 → Truth3 → Truth3
   | .false, _ => .false
   | _, .false => .false
   | .true, .true => .true
   | _, _ => .indet
 
-/-- Lattice ordering: false < indet < true -/
+/-- Lattice ordering: false < indet < true. -/
 def le : Truth3 → Truth3 → Bool
   | .false, _ => Bool.true
   | .indet, .indet => Bool.true
@@ -79,12 +82,9 @@ def le : Truth3 → Truth3 → Bool
   | .true, .true => Bool.true
   | _, _ => Bool.false
 
--- Mathlib Lattice Instances
-
 instance : LE Truth3 where
   le a b := le a b = Bool.true
 
--- Lattice instances for Truth3 (finite lattice, prove by cases)
 
 instance : Preorder Truth3 where
   le a b := le a b = Bool.true
@@ -137,31 +137,21 @@ def existsAny (l : List Truth3) : Truth3 := aggregate .existential l
 /-- Universal aggregation: true only if ALL true. -/
 def forallAll (l : List Truth3) : Truth3 := aggregate .universal l
 
-/-- sup with true absorbs: a ⊔ true = true -/
 @[simp] theorem Truth3.sup_true (a : Truth3) : a ⊔ .true = .true := by cases a <;> rfl
-
-/-- sup with true absorbs: true ⊔ a = true -/
 @[simp] theorem Truth3.true_sup (a : Truth3) : Truth3.true ⊔ a = .true := by cases a <;> rfl
-
-/-- inf with false absorbs: a ⊓ false = false -/
 @[simp] theorem Truth3.inf_false (a : Truth3) : a ⊓ .false = .false := by cases a <;> rfl
-
-/-- inf with false absorbs: false ⊓ a = false -/
 @[simp] theorem Truth3.false_inf (a : Truth3) : Truth3.false ⊓ a = .false := by cases a <;> rfl
 
-/-- Once at true, foldl sup stays at true. -/
 theorem foldl_sup_of_true (l : List Truth3) : l.foldl (· ⊔ ·) Truth3.true = .true := by
   induction l with
   | nil => rfl
   | cons hd tl ih => simp only [List.foldl_cons, Truth3.true_sup, ih]
 
-/-- Once at false, foldl inf stays at false. -/
 theorem foldl_inf_of_false (l : List Truth3) : l.foldl (· ⊓ ·) Truth3.false = .false := by
   induction l with
   | nil => rfl
   | cons hd tl ih => simp only [List.foldl_cons, Truth3.false_inf, ih]
 
-/-- foldl sup containing true yields true, regardless of accumulator. -/
 theorem foldl_sup_mem_true (l : List Truth3) (acc : Truth3) (h : Truth3.true ∈ l) :
     l.foldl (· ⊔ ·) acc = .true := by
   induction l generalizing acc with
@@ -176,7 +166,6 @@ theorem foldl_sup_mem_true (l : List Truth3) (acc : Truth3) (h : Truth3.true ∈
     | inr hmem =>
       exact ih (acc ⊔ hd) hmem
 
-/-- foldl inf containing false yields false, regardless of accumulator. -/
 theorem foldl_inf_mem_false (l : List Truth3) (acc : Truth3) (h : Truth3.false ∈ l) :
     l.foldl (· ⊓ ·) acc = .false := by
   induction l generalizing acc with
@@ -191,7 +180,6 @@ theorem foldl_inf_mem_false (l : List Truth3) (acc : Truth3) (h : Truth3.false �
     | inr hmem =>
       exact ih (acc ⊓ hd) hmem
 
-/-- Existential is robust: one true element yields true. -/
 theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
     existsAny l = .true := by
   simp only [existsAny, aggregate, List.any_eq_true] at *
@@ -201,7 +189,6 @@ theorem existential_robust (l : List Truth3) (h : l.any (· == .true)) :
   | false => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
 
-/-- Universal is fragile: one false element yields false. -/
 theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
     forallAll l = .false := by
   simp only [forallAll, aggregate, List.any_eq_true] at *
@@ -211,37 +198,33 @@ theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
   | true => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
 
-/-- Standard quantifier names. -/
+/-- Standard quantifiers. -/
 inductive Quantifier where
   | every | some | no | notEvery | most | few
   deriving Repr, DecidableEq, BEq
 
-/-- Classify quantifier by duality type. -/
+/-- Quantifier duality classification. -/
 def Quantifier.duality : Quantifier → DualityType
   | .every => .universal
-  | .no => .universal       -- ¬∃ is ∀-like
+  | .no => .universal
   | .some => .existential
-  | .notEvery => .existential  -- ¬∀ is ∃-like
-  | .most => .universal     -- proportional, but ∀-like behavior
-  | .few => .existential    -- proportional, but ∃-like behavior
+  | .notEvery => .existential
+  | .most => .universal
+  | .few => .existential
 
-/-- Is the quantifier "strong" (universal-like)? -/
+/-- Universal-like quantifiers are "strong". -/
 def Quantifier.isStrong (q : Quantifier) : Bool :=
   q.duality == .universal
 
-/-- Strength = duality type (Ramotowska et al. 2025). -/
 theorem strength_is_duality (q : Quantifier) :
     q.isStrong = true ↔ q.duality = .universal := by
   cases q <;> decide
 
-/-- The constant function Δ : T → (D → T). -/
-def const {α : Type*} (t : Truth3) : α → Truth3 := fun _ => t
+def const {α : Type*} (t : Truth3) : α → Truth3 := λ _ => t
 
-/-- Existential over a predicate. -/
 def exists' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
   existsAny (l.map P)
 
-/-- Universal over a predicate. -/
 def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
   forallAll (l.map P)
 

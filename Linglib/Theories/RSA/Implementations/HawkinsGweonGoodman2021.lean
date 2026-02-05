@@ -5,7 +5,7 @@
 Asymmetries in Visual Perspective"
 Cognitive Science, 45, e12926.
 
-## Key Innovation
+## Innovation
 
 Extends RSA with **resource-rational perspective-taking**:
 - Perspective-taking is costly
@@ -146,7 +146,7 @@ This captures the speaker's expected listener success rate under uncertainty.
 -/
 def asymmetricInformativity (u : Utterance) (target : Object)
     (visibleObjects : List Object) (hiddenPrior : ObjectFeatures → ℚ) : ℚ :=
-  possibleHiddenObjects.foldl (fun acc hiddenFeatures =>
+  possibleHiddenObjects.foldl (λ acc hiddenFeatures =>
     let hiddenObj : Object := ⟨hiddenFeatures, false⟩
     let allObjects := hiddenObj :: visibleObjects
     let prob := literalListenerProb u target.features target allObjects
@@ -199,11 +199,11 @@ def speakerScore (u : Utterance) (target : Object) (visibleObjects : List Object
 def speakerDist (target : Object) (visibleObjects : List Object)
     (hiddenPrior : ObjectFeatures → ℚ) (wS : PerspectiveWeight) (alpha : ℕ)
     : List (Utterance × ℚ) :=
-  let scores := allUtterances.map fun u =>
+  let scores := allUtterances.map λ u =>
     (u, speakerScore u target visibleObjects hiddenPrior wS alpha)
-  let total := scores.foldl (fun acc (_, s) => acc + s) 0
+  let total := scores.foldl (λ acc (_, s) => acc + s) 0
   if total == 0 then scores
-  else scores.map fun (u, s) => (u, s / total)
+  else scores.map λ (u, s) => (u, s / total)
 
 
 /--
@@ -214,7 +214,7 @@ def expectedAccuracy (target : Object) (visibleObjects : List Object)
     (hiddenPrior : ObjectFeatures → ℚ) (wS : PerspectiveWeight) (alpha : ℕ) : ℚ :=
   let dist := speakerDist target visibleObjects hiddenPrior wS alpha
   -- For each utterance, compute P(correct | u) and weight by P(u)
-  dist.foldl (fun acc (u, prob) =>
+  dist.foldl (λ acc (u, prob) =>
     let listenerCorrect := literalListenerProb u target.features target visibleObjects
     acc + prob * listenerCorrect
   ) 0
@@ -243,7 +243,7 @@ def exampleDistractors : List Object := [
 def exampleVisible : List Object := exampleTarget :: exampleDistractors
 
 /-- Uniform prior over hidden objects -/
-def uniformHiddenPrior : ObjectFeatures → ℚ := fun _ => 1/64
+def uniformHiddenPrior : ObjectFeatures → ℚ := λ _ => 1/64
 
 /-- Shape-only utterance -/
 def shapeOnly : Utterance := ⟨true, false, false⟩
@@ -341,9 +341,9 @@ Each feature denotes a characteristic function from entities (Objects) to
 truth values. These are the basic building blocks for compositional utterance
 semantics.
 -/
-def shapePred (targetShape : Nat) : Object → Bool := fun o => o.features.shape == targetShape
-def colorPred (targetColor : Nat) : Object → Bool := fun o => o.features.color == targetColor
-def texturePred (targetTexture : Nat) : Object → Bool := fun o => o.features.texture == targetTexture
+def shapePred (targetShape : Nat) : Object → Bool := λ o => o.features.shape == targetShape
+def colorPred (targetColor : Nat) : Object → Bool := λ o => o.features.color == targetColor
+def texturePred (targetTexture : Nat) : Object → Bool := λ o => o.features.texture == targetTexture
 
 /--
 Compositionally derived utterance denotation.
@@ -364,7 +364,7 @@ def compositionalDenotation (u : Utterance) (targetFeatures : ObjectFeatures) : 
 
 /-- Direct (ad-hoc) utterance denotation from Part 2 -/
 def directDenotation (u : Utterance) (targetFeatures : ObjectFeatures) : Object → Bool :=
-  fun o =>
+  λ o =>
     let shape_ok := !u.mentionShape || o.features.shape == targetFeatures.shape
     let color_ok := !u.mentionColor || o.features.color == targetFeatures.color
     let texture_ok := !u.mentionTexture || o.features.texture == targetFeatures.texture
@@ -433,7 +433,7 @@ structure VisualAccess where
 
 /-- All world states: each possible hidden object configuration -/
 def allWorldStates (visible : List Object) (target : Object) : List WorldState :=
-  possibleHiddenObjects.map fun h => ⟨visible, h, target⟩
+  possibleHiddenObjects.map λ h => ⟨visible, h, target⟩
 
 /-- Speaker credence: uniform over hidden objects given visual access.
 
@@ -458,15 +458,15 @@ def l1_asymmetric_unified (visible : List Object) (target : Object) (u : Utteran
   let worlds := allWorldStates visible target
   let accessStates := [⟨visible, target⟩]
   RSA.Eval.L1_world allUtterances worlds [()] [()] accessStates [()]
-    (fun _ _ u' w => worldMeaning u' w)
-    (fun _ => 1)  -- world prior
-    (fun _ => 1)  -- interp prior
-    (fun _ => 1)  -- lexicon prior
-    (fun _ => 1)  -- belief state prior
-    (fun _ => 1)  -- goal prior
+    (λ _ _ u' w => worldMeaning u' w)
+    (λ _ => 1)  -- world prior
+    (λ _ => 1)  -- interp prior
+    (λ _ => 1)  -- lexicon prior
+    (λ _ => 1)  -- belief state prior
+    (λ _ => 1)  -- goal prior
     visualAccessCredence
-    (fun _ w1 w2 => w1 == w2)  -- identity goal projection
-    (fun u' => (utteranceCost u' : ℚ) / 10)
+    (λ _ w1 w2 => w1 == w2)  -- identity goal projection
+    (λ u' => (utteranceCost u' : ℚ) / 10)
     1  -- α = 1
     u
 

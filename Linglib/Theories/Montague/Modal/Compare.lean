@@ -44,11 +44,11 @@ def theoriesAgreeAt (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition)
 
 /-- Do two theories agree on modal force `f` for proposition `p` across all worlds? -/
 def theoriesAgreeOn (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition) : Bool :=
-  allWorlds'.all fun w => theoriesAgreeAt T₁ T₂ f p w
+  allWorlds'.all λ w => theoriesAgreeAt T₁ T₂ f p w
 
 /-- Find worlds where two theories diverge. -/
 def divergingWorlds (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition) : List World :=
-  allWorlds'.filter fun w => !theoriesAgreeAt T₁ T₂ f p w
+  allWorlds'.filter λ w => !theoriesAgreeAt T₁ T₂ f p w
 
 /-- Do two theories agree on all modal forces for proposition `p`? -/
 def theoriesAgreeOnProposition (T₁ T₂ : ModalTheory) (p : Proposition) : Bool :=

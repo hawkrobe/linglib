@@ -5,25 +5,25 @@ Theory-neutral empirical patterns relating syntactic complexity to precision.
 
 ## Phenomena Covered
 
-1. **Complexity-precision pairs**: "the doors" / "all the doors"
-2. **Unattested patterns**: No language has DEF [all doors] → "the doors"
-3. **Cross-constructional parallels**: Plurals, numerals, conjunctions
+1. Complexity-precision pairs: "the doors" / "all the doors".
+2. No language has DEF [all doors] → "the doors" (unattested patterns).
+3. Cross-constructional parallels: plurals, numerals, conjunctions.
 
-## Key Observation (NO NEEDLESS MANNER VIOLATIONS)
+## No Needless Manner Violations
 
 There is a systematic correlation:
 - Less complex expressions → more potential for imprecision
 - More complex expressions → more precise meanings
 
-The reverse pattern (adding complexity to ADD imprecision) is unattested.
+The reverse pattern (adding complexity to add imprecision) is unattested.
 
-## Key References
+## References
 
 - Löbner (2000): Polarity and complexity
 - Krifka (2002, 2007): Complexity and imprecision
 - Horn (1984): Division of pragmatic labor
 - Katzir (2007): Structural complexity and alternatives
-- Dissertation Chapter 3: NO NEEDLESS MANNER VIOLATIONS
+- Dissertation Chapter 3: No Needless Manner Violations
 -/
 
 namespace Phenomena.Imprecision.FormMeaning
@@ -132,7 +132,7 @@ def blueCompletely : ComplexityPrecisionPair :=
 
 
 /--
-Hypothetical pattern that would violate NO NEEDLESS MANNER VIOLATIONS.
+Hypothetical pattern that would violate No Needless Manner Violations.
 -/
 structure UnattestedPattern where
   /-- The hypothetical pattern description -/
@@ -211,7 +211,7 @@ Source: dissertation (4-c)
 def approximatelyExample : ApparentCounterexample :=
   { pattern := "'100 cars' vs 'approximately 100 cars'"
   , apparentProblem := "'Approximately' seems to add imprecision to '100'"
-  , resolution := "'100' is already imprecise - 'approximately' makes the imprecision explicit/obligatory rather than adding new imprecision. The pair isn't truth-conditionally equivalent: bare '100' CAN be exact in some contexts, 'approximately 100' cannot."
+  , resolution := "'100' is already imprecise - 'approximately' makes the imprecision explicit/obligatory rather than adding new imprecision. The pair isn't truth-conditionally equivalent: bare '100' can be exact in some contexts, 'approximately 100' cannot."
   }
 
 
@@ -243,7 +243,7 @@ def germanDoorsExample : CrossLinguisticDatum :=
 /--
 Markedness relation between forms.
 
-The constraint predicts: MARKED form → MORE PRECISE meaning.
+The constraint predicts: marked form → more precise meaning.
 
 Source: Horn (1984), Krifka (2007)
 -/
@@ -282,7 +282,7 @@ def bareNumeralMarkedness : MarkednessData :=
 
 
 /--
-The NO NEEDLESS MANNER VIOLATIONS principle makes predictions.
+The No Needless Manner Violations principle makes predictions.
 -/
 structure MannerPrediction where
   /-- Description of predicted pattern -/
@@ -349,30 +349,5 @@ def apparentCounterexamples : List ApparentCounterexample :=
 
 def predictions : List MannerPrediction :=
   [prediction1, prediction2, prediction3]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `ComplexityPrecisionPair`: Attested complexity-precision correlations
-- `UnattestedPattern`: Hypothetical violations of the constraint
-- `ApparentCounterexample`: Patterns that look problematic but aren't
-- `CrossLinguisticDatum`: Cross-linguistic evidence
-- `MarkednessData`: Morphosyntactic markedness patterns
-- `MannerPrediction`: Testable predictions
-
-### Key Finding: NO NEEDLESS MANNER VIOLATIONS
-For truth-conditionally equivalent expressions φ and ψ:
-- If ψ is more complex than φ, then ψ must be more precise
-- If ψ is more precise than φ, then φ must be less complex
-- Violations (more complex AND more imprecise) are blocked
-
-### Key References
-- Löbner (2000), Krifka (2002, 2007)
-- Horn (1984), Katzir (2007)
-- Dissertation Chapter 3
--/
 
 end Phenomena.Imprecision.FormMeaning

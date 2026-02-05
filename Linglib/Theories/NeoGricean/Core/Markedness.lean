@@ -3,7 +3,7 @@
 
 Formalization of markedness computation for Rett (2015) Chapters 5-6.
 
-## Key Insight
+## Insight
 
 Markedness is COMPUTED from objective properties, not stipulated in the lexicon.
 This module provides the NeoGricean-internal machinery for determining which
@@ -119,7 +119,7 @@ From Horn (1984): "Toward a new taxonomy for pragmatic inference"
 def morphologicalCriterion : MarkednessCriterion where
   name := "Morphological Complexity"
   citation := "Horn (1984)"
-  computeMarked := fun adj1 adj2 =>
+  computeMarked := λ adj1 adj2 =>
     if adj1.morphology.morphemeCount > adj2.morphology.morphemeCount then
       some adj1.form
     else if adj2.morphology.morphemeCount > adj1.morphology.morphemeCount then
@@ -138,7 +138,7 @@ From Bierwisch (1989), Kennedy (2007)
 def scaleDirectionCriterion : MarkednessCriterion where
   name := "Scale Direction"
   citation := "Bierwisch (1989), Kennedy (2007)"
-  computeMarked := fun adj1 adj2 =>
+  computeMarked := λ adj1 adj2 =>
     -- Negative pole (isPositivePole = false) is marked
     if adj1.isPositivePole && !adj2.isPositivePole then
       some adj2.form  -- adj2 is negative pole, hence marked
@@ -159,7 +159,7 @@ From Cruse (1986)
 def negativePrefixCriterion : MarkednessCriterion where
   name := "Negative Prefix"
   citation := "Cruse (1986)"
-  computeMarked := fun adj1 adj2 =>
+  computeMarked := λ adj1 adj2 =>
     if adj1.morphology.hasNegativePrefix && !adj2.morphology.hasNegativePrefix then
       some adj1.form
     else if adj2.morphology.hasNegativePrefix && !adj1.morphology.hasNegativePrefix then
@@ -311,7 +311,7 @@ theorem marked_costs_more :
 * `isMarkedForm`: Check if a form is marked
 * `productionCost`: Cost for producing a form (2 for marked, 1 for unmarked)
 
-### Key Theorems
+### Theorems
 * `morphological_determines_markedness`: unhappy marked over happy
 * `scale_direction_for_equal_morphology`: short marked over tall
 * `marked_costs_more`: Marked forms cost more to produce

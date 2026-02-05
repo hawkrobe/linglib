@@ -4,9 +4,9 @@
 Comparison between Predicate Logic with Anaphora (PLA) and
 Bilateral Update Semantics (BUS), showing:
 
-1. **DNE Gap**: Where PLA fails (DNE for anaphora), BUS succeeds
-2. **Bathroom Bridge**: The sentence that breaks PLA works in BUS
-3. **Structural Difference**: PLA negation = test, BUS negation = swap
+1. DNE gap: where PLA fails (DNE for anaphora), BUS succeeds
+2. Bathroom bridge: the sentence that breaks PLA works in BUS
+3. Structural difference: PLA negation = test, BUS negation = swap
 
 ## The Core Difference
 
@@ -74,21 +74,14 @@ This gives DNE definitionally: `neg (neg φ) = φ` by `rfl`.
 See `Linglib.Theories.DynamicSemantics.Core.Bilateral` for the full development.
 -/
 
-/--
-**BUS DNE Principle**: In bilateral semantics, ¬¬φ = φ definitionally.
-
-This is because negation swaps positive/negative dimensions:
-- (¬φ).positive = φ.negative
-- (¬φ).negative = φ.positive
-
-Swapping twice gives identity.
--/
-theorem bus_dne_principle : True := trivial
--- The actual theorem is `BilateralDen.neg_neg` in Core.Bilateral
+-- BUS DNE principle: in bilateral semantics, ¬¬φ = φ definitionally.
+-- Negation swaps positive/negative dimensions, so swapping twice gives identity.
+-- Proved as `BilateralDen.neg_neg` in Core.Bilateral (cannot import here due to
+-- conflicting PLA/BUS infrastructure; stated abstractly as documentation).
 
 
 /--
-**PLA Problem**: The bathroom sentence has an unbound pronoun.
+PLA problem: the bathroom sentence has an unbound pronoun.
 
 "Either there's no bathroom, or it's in a funny place."
 The pronoun "it" (index 0) appears in the range but the existential
@@ -99,7 +92,7 @@ theorem bathroom_pla_has_unbound_pronoun :
   bathroom_range_has_pronoun
 
 /--
-**PLA Problem**: The domain is nonempty (existential is syntactically present).
+PLA problem: the domain is nonempty (existential is syntactically present).
 -/
 theorem bathroom_pla_has_domain :
     bathroomSentence.domain.Nonempty :=
@@ -155,31 +148,6 @@ Swapping twice gives identity, so ¬¬φ = φ.
 The structural difference in negation is the key:
 - PLA traps drefs under negation (eliminative test)
 - BUS preserves them in the other dimension (structural swap)
--/
-
--- SUMMARY
-
-/-!
-## Bridge Theorems in This Module
-
-### PLA Side (Proved)
-- `pla_dne_syntactic`: ¬¬φ.domain = φ.domain
-- `pla_existential_exports`: ∃x.φ exports witnesses
-- `pla_dne_has_domain`: x ∈ (¬¬∃x.φ).domain
-- `bathroom_pla_has_unbound_pronoun`: Pronoun 0 in bathroom range
-- `bathroom_pla_has_domain`: Bathroom domain nonempty
-
-### BUS Side (Stated, proved in Core.Bilateral/BUS.FreeChoice)
-- `BilateralDen.neg_neg`: ¬¬φ = φ
-- `bathroom_bus_binding`: (¬∃x.φ).negative = (∃x.φ).positive
-
-### The Key Insight
-
-PLA and BUS agree on positive updates for simple cases.
-They diverge on negation: PLA tests, BUS swaps.
-
-This divergence determines whether drefs survive under negation,
-which is exactly what bathroom sentences require.
 -/
 
 end Theories.DynamicSemantics.Comparisons

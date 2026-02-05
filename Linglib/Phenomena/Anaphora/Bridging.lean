@@ -10,25 +10,25 @@ inferentially related to a previously mentioned antecedent, rather than
 being coreferent with it.
 
 "I saw a bicycle yesterday. The seat was broken."
-- "the seat" is NOT coreferent with "a bicycle"
+- "the seat" is not coreferent with "a bicycle"
 - But "the seat" is inferentially accessible via part-whole relation
 
 ## Two Types of Bridging (Clark 1975, Asher & Lascarides 1998)
 
-1. **Part-whole bridging**: The bridged entity is a part of the antecedent
+1. Part-whole bridging: the bridged entity is a part of the antecedent.
    - "a bicycle" → "the seat" (seat is part of bicycle)
    - Mediated by uniqueness (there's typically one seat per bicycle)
 
-2. **Relational bridging**: The bridged entity is relationally connected
+2. Relational bridging: the bridged entity is relationally connected.
    - "a book" → "the author" (author is the one who wrote it)
    - Mediated by familiarity (the author must be contextually salient)
 
 ## Cross-Linguistic Variation (Ahn & Zhu 2025)
 
 Mandarin vs English contrast in bridging:
-- **Mandarin bare nouns**: Accept both bridging types freely
-- **Mandarin *na*+CL**: Accept both bridging types (relationalizing operator)
-- **English demonstratives**: Degraded in bridging contexts
+- Mandarin bare nouns accept both bridging types freely.
+- Mandarin *na*+CL accepts both bridging types (relationalizing operator).
+- English demonstratives are degraded in bridging contexts.
 
 ## References
 
@@ -222,7 +222,7 @@ def ahnZhuExp1Relational : BridgingDatum :=
 
 -- Uniqueness vs Familiarity Presupposition Types
 
-/-- Presupposition type for definites (Ahn & Zhu's key distinction) -/
+/-- Presupposition type for definites (Ahn & Zhu's distinction) -/
 inductive PresupType where
   /-- Uniqueness: there is a unique entity satisfying the description -/
   | uniqueness
@@ -257,38 +257,5 @@ def mandarinBridgingData : List BridgingDatum :=
 /-- All bridging data -/
 def allBridgingData : List BridgingDatum :=
   englishBridgingData ++ mandarinBridgingData
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `BridgingType`: Part-whole vs relational bridging
-- `DefiniteForm`: English the/that vs Mandarin bare/na+CL
-- `PresupType`: Uniqueness vs familiarity presupposition
-- `BridgingDatum`: Full bridging example record
-
-### Key Empirical Generalizations (Ahn & Zhu 2025)
-
-1. **English "the"** works for both bridging types
-2. **English "that"** is degraded in bridging (requires prior familiarity)
-3. **Mandarin bare nouns** work for both bridging types
-4. **Mandarin na+CL** works for both bridging types
-
-### Theoretical Insight
-
-Ahn & Zhu propose that:
-- Part-whole bridging is mediated by **uniqueness** (the unique seat of the bike)
-- Relational bridging is mediated by **familiarity** (the author must be salient)
-- Mandarin *na* is a **relationalizing operator** that introduces an external relatum
-- English "that" encodes strong familiarity, blocking bridging
-
-### Connection to Other Modules
-
-- `Core.Presupposition`: Presupposition machinery (uniqueness as presup)
-- `DynamicSemantics/Core/Basic`: `definedAt` = familiarity condition
-- `Fragments/Mandarin/Nouns`: Mandarin NP structure with demonstratives
--/
 
 end Phenomena.Anaphora.Bridging

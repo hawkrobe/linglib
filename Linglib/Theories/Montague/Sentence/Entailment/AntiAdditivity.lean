@@ -11,7 +11,7 @@ Formal definitions and proofs for the DE < Anti-Additive < Anti-Morphic hierarch
 | Anti-Additive | f(A∨B) ⊣⊢ f(A)∧f(B) | no, nobody, without | strong NPIs |
 | Anti-Morphic | AA + f(A∧B) ⊣⊢ f(A)∨f(B) | not, never | strong NPIs |
 
-## Key Insight (Chierchia 2013)
+## Insight (Chierchia 2013)
 
 The contrast in (83) from Chierchia:
 - "At most 5 students smoke or drink" ⊢ "At most 5 smoke ∧ at most 5 drink"
@@ -63,13 +63,13 @@ The hierarchy: Anti-Morphic ⊂ Anti-Additive ⊂ DE
 -/
 
 /-!
-**Downward Entailing (DE)**: Reverses entailment direction.
+Downward entailing (DE): reverses entailment direction.
 
 We reuse `IsDownwardEntailing` from `Polarity.lean`, which is `Antitone f`.
 -/
 
 /--
-**Anti-Additive (AA)**: f distributes ∨ to ∧ in both directions.
+Anti-additive (AA): f distributes ∨ to ∧ in both directions.
 
 `∀ A B, f(A ∨ B) = f(A) ∧ f(B)`
 
@@ -81,7 +81,7 @@ def IsAntiAdditive (f : Prop' → Prop') : Prop :=
   ∀ p q : Prop', (∀ w, f (por p q) w = (f p w && f q w))
 
 /--
-**Anti-Morphic (AM)**: Anti-additive + distributes ∧ to ∨ in both directions.
+Anti-morphic (AM): Anti-additive + distributes ∧ to ∨ in both directions.
 
 `∀ A B, f(A ∧ B) = f(A) ∨ f(B)`
 
@@ -93,7 +93,7 @@ def IsAntiMorphic (f : Prop' → Prop') : Prop :=
 
 
 /--
-**Theorem: Anti-Additive implies DE.**
+Anti-additive implies DE.
 
 The left-to-right direction of anti-additivity is exactly the DE property.
 -/
@@ -131,7 +131,7 @@ theorem antiAdditive_implies_de (f : Prop' → Prop') (hAA : IsAntiAdditive f) :
   cases hfp : f p w <;> cases hfq : f q w <;> simp_all
 
 /--
-**Theorem: Anti-Morphic implies Anti-Additive.**
+Anti-morphic implies anti-additive.
 
 By definition, anti-morphic is anti-additive plus the ∧-to-∨ property.
 -/
@@ -140,7 +140,7 @@ theorem antiMorphic_implies_antiAdditive (f : Prop' → Prop') (hAM : IsAntiMorp
   hAM.1
 
 /--
-**Theorem: Anti-Morphic implies DE.**
+Anti-morphic implies DE.
 
 Transitive: AM → AA → DE.
 -/
@@ -150,7 +150,7 @@ theorem antiMorphic_implies_de (f : Prop' → Prop') (hAM : IsAntiMorphic f) :
 
 
 /--
-**Theorem: Negation is Anti-Additive.**
+Negation is anti-additive.
 
 `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan's law, part 1)
 -/
@@ -160,7 +160,7 @@ theorem pnot_isAntiAdditive : IsAntiAdditive pnot := by
   cases p w <;> cases q w <;> rfl
 
 /--
-**Theorem: Negation satisfies the ∧-to-∨ property.**
+Negation satisfies the conjunction-to-disjunction property.
 
 `¬(A ∧ B) = ¬A ∨ ¬B` (De Morgan's law, part 2)
 -/
@@ -170,7 +170,7 @@ theorem pnot_distributes_and : ∀ p q : Prop', (∀ w, pnot (pand p q) w = (pno
   cases p w <;> cases q w <;> rfl
 
 /--
-**Theorem: Negation is Anti-Morphic.**
+Negation is anti-morphic.
 
 This is the strongest level in the hierarchy.
 -/
@@ -184,7 +184,7 @@ theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
 For a fixed restrictor, "no ___" as a function of scope.
 -/
 def no' (restr : Prop') (scope : Prop') : Prop' :=
-  fun _ => allWorlds.all fun x => !(restr x && scope x)
+  λ _ => allWorlds.all λ x => !(restr x && scope x)
 
 /--
 "No student ___" with fixed restrictor.
@@ -192,44 +192,23 @@ def no' (restr : Prop') (scope : Prop') : Prop' :=
 def no_student : Prop' → Prop' := no' p01  -- p01 = "students"
 
 /--
-**Theorem: "No" is Anti-Additive in scope.**
+"No" is anti-additive in scope.
 
 `No A (B ∨ C) ⊣⊢ No A B ∧ No A C`
 
 Proof: "No student smokes or drinks" iff "No student smokes and no student drinks"
 -/
 theorem no_isAntiAdditive_scope : IsAntiAdditive no_student := by
-  intro p q w
-  -- Unfold definitions
-  simp only [no_student, no', por, Core.Proposition.Decidable.por]
-  -- Goal: allWorlds.all (¬(p01 && (p || q))) = (allWorlds.all (¬(p01 && p))) && (allWorlds.all (¬(p01 && q)))
-  -- This is De Morgan's law for universal quantification.
-  -- Case split on the boolean values
-  cases h1 : allWorlds.all fun x => !(p01 x && (p x || q x))
-    <;> cases h2 : allWorlds.all fun x => !(p01 x && p x)
-    <;> cases h3 : allWorlds.all fun x => !(p01 x && q x)
-    <;> try rfl
-  -- The remaining cases are contradictory
-  all_goals {
-    simp only [List.all_eq_true, Bool.not_eq_true'] at h1 h2 h3
-    -- Use the fact that the cases are inconsistent
-    -- Case 1: h1=false, h2=true, h3=true - impossible
-    -- Case 2: h1=true, h2=false - if no (p∨q), then no p
-    -- Case 3: h1=true, h3=false - if no (p∨q), then no q
-    first
-    | -- Case: h1 is negated (was false before simp)
-      exfalso
-      -- There exists x where p01 x ∧ (p x ∨ q x)
-      -- But h2 and h3 say no p01 ∧ p and no p01 ∧ q, contradiction
-      sorry
-    | -- Case: h2 or h3 is negated
-      exfalso
-      -- If h1 says ∀x. ¬(p01 x ∧ (p x ∨ q x)), then a fortiori ∀x. ¬(p01 x ∧ p x)
-      sorry
-  }
+  intro p q _w
+  simp only [no_student, no', por, Core.Proposition.Decidable.por,
+             allWorlds, p01, List.all_cons, List.all_nil]
+  -- After expanding allWorlds and p01, case-split on all variable values
+  -- World has 4 constructors, so we split on p and q at each
+  cases p .w0 <;> cases q .w0 <;> cases p .w1 <;> cases q .w1 <;>
+    cases p .w2 <;> cases q .w2 <;> cases p .w3 <;> cases q .w3 <;> decide
 
 /--
-**Theorem: "No" is DE in scope.**
+"No" is DE in scope.
 
 Follows from anti-additivity.
 -/
@@ -243,16 +222,16 @@ theorem no_isDE_scope : IsDE no_student :=
 We use a simplified version for our 4-world model.
 -/
 def atMost (n : Nat) (restr scope : Prop') : Bool :=
-  (allWorlds.filter fun w => restr w && scope w).length ≤ n
+  (allWorlds.filter λ w => restr w && scope w).length ≤ n
 
 /--
 "At most 2 students ___" with fixed restrictor.
 -/
 def atMost2_student : Prop' → Prop' :=
-  fun scope => fun _ => atMost 2 p01 scope
+  λ scope => λ _ => atMost 2 p01 scope
 
 /--
-**Theorem: "At most n" is DE in scope.**
+"At most n" is DE in scope.
 
 If P ⊆ Q, then "At most n A's are Q" ⊢ "At most n A's are P"
 
@@ -272,11 +251,11 @@ theorem atMost_isDE_scope : IsDE atMost2_student := by
     exact ⟨hx.1, hpq x hx.2⟩
   -- The filter for p has elements that are a subset of those for q
   -- so |filter p| ≤ |filter q| when filtering the same base list
-  have len_le : (allWorlds.filter fun w => p01 w && p w).length ≤
-                (allWorlds.filter fun w => p01 w && q w).length := by
+  have len_le : (allWorlds.filter λ w => p01 w && p w).length ≤
+                (allWorlds.filter λ w => p01 w && q w).length := by
     -- Use monotone_filter_right: if p a → q a, then l.filter p <+ l.filter q
-    have hsub : Sublist (allWorlds.filter fun w => p01 w && p w)
-                        (allWorlds.filter fun w => p01 w && q w) :=
+    have hsub : Sublist (allWorlds.filter λ w => p01 w && p w)
+                        (allWorlds.filter λ w => p01 w && q w) :=
       List.monotone_filter_right allWorlds subset
     exact Sublist.length_le hsub
   -- h and len_le together imply the goal
@@ -285,7 +264,7 @@ theorem atMost_isDE_scope : IsDE atMost2_student := by
   exact Nat.le_trans len_le h
 
 /--
-**Counterexample: "At most n" is NOT Anti-Additive.**
+"At most n" is not anti-additive (counterexample).
 
 The right-to-left direction fails:
 - "At most 5 smoke" ∧ "At most 5 drink" does NOT imply "At most 5 smoke or drink"
@@ -302,7 +281,7 @@ theorem atMost_not_antiAdditive :
 
 
 /-!
-**DEStrength** is imported from `Fragments.English.PolarityItems`.
+`DEStrength` is imported from `Fragments.English.PolarityItems`.
 
 The hierarchy corresponds to:
 - `.weak` = DE only (licenses weak NPIs)
@@ -312,14 +291,14 @@ The hierarchy corresponds to:
 
 
 /--
-**Weak NPI licensing**: Requires DE context.
+Weak NPI licensing: Requires DE context.
 
 Examples: ever, any (unstressed), alcun
 -/
 def licensesWeakNPI (f : Prop' → Prop') : Prop := IsDownwardEntailing f
 
 /--
-**Strong NPI licensing**: Requires Anti-Additive context.
+Strong NPI licensing: Requires Anti-Additive context.
 
 Examples: lift a finger, in weeks, until
 -/
@@ -362,7 +341,7 @@ The `DEStrength` enum there corresponds to this hierarchy:
 -/
 
 /--
-**Check if a context's strength is sufficient for an NPI.**
+Check if a context's strength is sufficient for an NPI.
 
 `contextStrength ≥ requiredStrength`
 -/
@@ -381,45 +360,5 @@ def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
 #guard strengthSufficient .antiAdditive .antiAdditive -- "no" licenses strong NPIs
 #guard strengthSufficient .weak .weak             -- "few" licenses weak NPIs
 #guard !strengthSufficient .weak .antiAdditive    -- "few" does NOT license strong NPIs
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Reused Infrastructure
-- `IsDownwardEntailing f` from `Polarity.lean` (= `Antitone f`)
-- `DEStrength` enum from `Fragments.English.PolarityItems`
-
-### New Semantic Definitions
-- `IsAntiAdditive f`: `f(A ∨ B) = f(A) ∧ f(B)` pointwise
-- `IsAntiMorphic f`: AA + `f(A ∧ B) = f(A) ∨ f(B)` pointwise
-
-### Hierarchy Theorems
-- `antiAdditive_implies_de`: AA → DE
-- `antiMorphic_implies_antiAdditive`: AM → AA
-- `antiMorphic_implies_de`: AM → DE (transitive)
-
-### Instance Proofs
-- `pnot_isAntiMorphic`: Negation is anti-morphic (strongest)
-- `no_isAntiAdditive_scope`: "No" is anti-additive in scope
-- `atMost_isDE_scope`: "At most n" is DE in scope
-
-### Licensing Functions
-- `licensesWeakNPI f`: DE is sufficient
-- `licensesStrongNPI f`: AA is required
-- `strengthSufficient`: Check context ≥ NPI requirement
-
-### Key Predictions (Chierchia 2013, Zwarts 1996)
-- "Few students lifted a finger" — blocked (few = DE only)
-- "No one lifted a finger" — OK (no one = AA)
-- "Few students ever complained" — OK (ever = weak, few = DE)
-- "No one ever complained" — OK (ever = weak, no one = AA ≥ weak)
-
-### References
-- Zwarts, F. (1996). A hierarchy of negative expressions.
-- Chierchia, G. (2013). Logic in Grammar. Ch.1 §1.4.3.
-- Ladusaw, W. (1980). Polarity sensitivity as inherent scope relations.
--/
 
 end Montague.Sentence.Entailment.AntiAdditivity

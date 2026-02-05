@@ -6,11 +6,11 @@ in semantics and pragmatics.
 
 ## Contents
 
-1. **ContextPolarity enum** - Theory-neutral polarity marker (upward/downward)
-2. **IsUpwardEntailing/IsDownwardEntailing** - Mathlib-based formal definitions
-3. **Decidable test functions** - For verification on finite models
-4. **GroundedPolarity** - Context + polarity + proof
-5. **Monotonicity theorems** - Negation, conditionals, quantifiers
+1. ContextPolarity enum - Theory-neutral polarity marker (upward/downward)
+2. IsUpwardEntailing/IsDownwardEntailing - Mathlib-based formal definitions
+3. Decidable test functions - For verification on finite models
+4. GroundedPolarity - Context + polarity + proof
+5. Monotonicity theorems - Negation, conditionals, quantifiers
 
 ## Integration with Mathlib
 
@@ -66,7 +66,7 @@ We use Mathlib's Monotone/Antitone as the canonical definitions.
 -/
 
 /--
-**IsUpwardEntailing** is an abbreviation for `Monotone`.
+IsUpwardEntailing is an abbreviation for `Monotone`.
 
 A context function `f : Prop' → Prop'` is upward entailing if
 it preserves the ordering: If p ≤ q, then f(p) ≤ f(q).
@@ -76,7 +76,7 @@ Examples: "some", "or", scope of "every"
 abbrev IsUpwardEntailing (f : Prop' → Prop') := Monotone f
 
 /--
-**IsDownwardEntailing** is an abbreviation for `Antitone`.
+IsDownwardEntailing is an abbreviation for `Antitone`.
 
 A context function `f : Prop' → Prop'` is downward entailing if
 it reverses the ordering: If p ≤ q, then f(q) ≤ f(p).
@@ -91,13 +91,13 @@ abbrev IsDE := IsDownwardEntailing
 
 
 /--
-**Identity is UE**: The trivial context preserves entailment.
+Identity is UE: The trivial context preserves entailment.
 -/
 theorem id_isUpwardEntailing : IsUpwardEntailing (id : Prop' → Prop') :=
   monotone_id
 
 /--
-**Negation is DE**: If P ⊆ Q, then ¬Q ⊆ ¬P.
+Negation is DE: If P ⊆ Q, then ¬Q ⊆ ¬P.
 
 Uses `Core.Proposition.Decidable.pnot_antitone` for the proof.
 -/
@@ -110,7 +110,7 @@ theorem pnot_isDownwardEntailing : IsDownwardEntailing pnot := by
   cases hp : p w <;> cases hq : q w <;> simp_all
 
 /--
-**Double negation is UE**: ¬¬ preserves entailment.
+Double negation is UE: negating twice preserves entailment.
 
 This follows from Mathlib's `Antitone.comp` (DE ∘ DE = UE).
 -/
@@ -170,7 +170,7 @@ def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : 
 
 
 /--
-**Theorem: Negation is Downward Entailing**
+Negation is Downward Entailing.
 
 If P ⊨ Q, then ¬Q ⊨ ¬P
 
@@ -180,7 +180,7 @@ theorem negation_is_DE : isDownwardEntailing pnot testCases = true := by
   native_decide
 
 /--
-**Concrete example: Negation reverses entailment**
+Negation reverses entailment.
 
 p0 ⊨ p01 (true in {w0} entails true in {w0,w1})
 ¬p01 ⊨ ¬p0 (false in {w0,w1} entails false in {w0})
@@ -191,7 +191,7 @@ theorem negation_reverses_example :
   native_decide
 
 /--
-**Theorem: Conjunction (second arg) is Upward Entailing**
+Conjunction (second arg) is Upward Entailing.
 
 If P ⊨ Q, then (R ∧ P) ⊨ (R ∧ Q)
 -/
@@ -199,7 +199,7 @@ theorem conjunction_second_UE : isUpwardEntailing (pand p01) testCases = true :=
   native_decide
 
 /--
-**Theorem: Disjunction (second arg) is Upward Entailing**
+Disjunction (second arg) is Upward Entailing.
 
 If P ⊨ Q, then (R ∨ P) ⊨ (R ∨ Q)
 -/
@@ -207,7 +207,7 @@ theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := 
   native_decide
 
 /--
-**Theorem: Double negation is UE** (decidable verification)
+Double negation is UE (decidable verification).
 -/
 theorem double_negation_is_ue : isUpwardEntailing (pnot ∘ pnot) testCases = true := by
   native_decide
@@ -215,10 +215,10 @@ theorem double_negation_is_ue : isUpwardEntailing (pnot ∘ pnot) testCases = tr
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
 def materialCond (c : Prop') : Prop' → Prop' :=
-  fun p => fun w => !p w || c w
+  λ p => λ w => !p w || c w
 
 /--
-**Conditional antecedent is Downward Entailing**.
+Conditional antecedent is Downward Entailing.
 
 If P ⊨ Q, then "If Q, C" ⊨ "If P, C"
 
@@ -232,17 +232,17 @@ theorem conditional_antecedent_DE :
   native_decide
 
 /--
-**Implication second argument is UE**.
+Implication second argument is UE.
 
 If P ⊨ Q, then (A → P) ⊨ (A → Q)
 
 The consequent position of a conditional is upward entailing.
 -/
-theorem implication_consequent_UE : isUpwardEntailing (fun c => materialCond c p01) testCases = true := by
+theorem implication_consequent_UE : isUpwardEntailing (λ c => materialCond c p01) testCases = true := by
   native_decide
 
 /--
-**Summary: Conditional positions and monotonicity**
+Conditional positions and monotonicity.
 
 - Antecedent position: DE (strengthening weakens the conditional)
 - Consequent position: UE (strengthening strengthens the conditional)
@@ -253,14 +253,14 @@ This explains scalar implicature patterns:
 -/
 theorem conditional_monotonicity_summary :
     isDownwardEntailing (materialCond p012) testCases = true ∧
-    isUpwardEntailing (fun c => materialCond c p01) testCases = true := by
+    isUpwardEntailing (λ c => materialCond c p01) testCases = true := by
   constructor
   · exact conditional_antecedent_DE
   · exact implication_consequent_UE
 
 
 /--
-**Key Insight: DE contexts reverse scalar strength**
+DE contexts reverse scalar strength.
 
 In UE: all ⊢ some (all is stronger, "some" implicates "not all")
 In DE: some ⊢ all (some is stronger, no "not all" implicature)
@@ -274,7 +274,7 @@ theorem de_reverses_strength :
 
 
 /--
-A **grounded UE polarity** carries proof that a context function is monotone.
+A grounded UE polarity carries proof that a context function is monotone.
 -/
 structure GroundedUE where
   /-- The context function -/
@@ -283,7 +283,7 @@ structure GroundedUE where
   witness : Monotone context
 
 /--
-A **grounded DE polarity** carries proof that a context function is antitone.
+A grounded DE polarity carries proof that a context function is antitone.
 -/
 structure GroundedDE where
   /-- The context function -/
@@ -292,7 +292,7 @@ structure GroundedDE where
   witness : Antitone context
 
 /--
-A **grounded polarity** is either UE or DE, with proof.
+A grounded polarity is either UE or DE, with proof.
 -/
 inductive GroundedPolarity where
   | ue : GroundedUE → GroundedPolarity
@@ -351,7 +351,7 @@ def composePolarity (outer inner : GroundedPolarity) : GroundedPolarity :=
 
 
 /--
-**Theorem: Polarity composition table is correct.**
+Polarity composition table is correct.
 
 | Outer | Inner | Result |
 |-------|-------|--------|
@@ -371,7 +371,7 @@ theorem polarity_composition_table :
              GroundedPolarity.toContextPolarity, and_self]
 
 /--
-**Theorem: Double DE gives UE.**
+Double DE gives UE.
 
 This captures the linguistic insight: "It's not the case that no one..."
 creates a UE context for the embedded scalar item.
@@ -382,7 +382,7 @@ theorem double_de_is_ue_grounded (f g : Prop' → Prop') (hf : Antitone f) (hg :
 
 
 /--
-**Key Insight**: Scalar implicatures require UE context.
+Scalar implicatures require UE context.
 
 In a DE context, the alternatives reverse, so "not all" doesn't follow
 from "some". This function captures that constraint.
@@ -391,19 +391,19 @@ def implicatureAllowed (gp : GroundedPolarity) : Prop :=
   gp.toContextPolarity = .upward
 
 /--
-**Theorem**: Implicature is allowed in identity context.
+Implicature is allowed in identity context.
 -/
 theorem implicature_allowed_identity : implicatureAllowed identityPolarity := by
   simp [implicatureAllowed, identityPolarity, mkUpward, GroundedPolarity.toContextPolarity]
 
 /--
-**Theorem**: Implicature is blocked under single negation.
+Implicature is blocked under single negation.
 -/
 theorem implicature_blocked_negation : ¬implicatureAllowed negationPolarity := by
   simp [implicatureAllowed, negationPolarity, mkDownward, GroundedPolarity.toContextPolarity]
 
 /--
-**Theorem**: Implicature is allowed under double negation.
+Implicature is allowed under double negation.
 
 "It's not the case that John didn't eat some of the cookies"
 → Can derive "not all" implicature because double DE = UE!
@@ -412,62 +412,5 @@ theorem implicature_allowed_double_negation :
     implicatureAllowed (composePolarity negationPolarity negationPolarity) := by
   simp [implicatureAllowed, composePolarity, negationPolarity, mkDownward,
         GroundedPolarity.toContextPolarity]
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### ContextPolarity Enum
-- `ContextPolarity.upward` : Preserves entailment
-- `ContextPolarity.downward` : Reverses entailment
-
-### Using Mathlib's Monotone/Antitone
-- `IsUpwardEntailing f` := `Monotone f` (preserves ordering)
-- `IsDownwardEntailing f` := `Antitone f` (reverses ordering)
-- `IsUE`, `IsDE` : Shorthand aliases
-
-### Decidable Test Functions
-- `isUpwardEntailing f tests` : Check UE on test cases
-- `isDownwardEntailing f tests` : Check DE on test cases
-
-### Basic Proofs
-- `id_isUpwardEntailing` : Identity is monotone
-- `pnot_isDownwardEntailing` : Negation is antitone
-- `pnot_pnot_isUpwardEntailing` : Double negation is monotone
-
-### Composition Rules (From Mathlib)
-- `ue_comp_ue` : UE ∘ UE = UE (`Monotone.comp`)
-- `de_comp_de` : DE ∘ DE = UE (`Antitone.comp_antitone`)
-- `ue_comp_de` : UE ∘ DE = DE (`Monotone.comp_antitone`)
-- `de_comp_ue` : DE ∘ UE = DE (`Antitone.comp`)
-
-### Monotonicity Theorems (Decidable)
-- `negation_is_DE` : Negation reverses entailment
-- `conjunction_second_UE` : (R ∧ _) is UE
-- `disjunction_second_UE` : (R ∨ _) is UE
-- `conditional_antecedent_DE` : (If _, C) is DE
-- `implication_consequent_UE` : (If A, _) is UE
-
-### Grounded Polarity
-- `GroundedPolarity`: Context + polarity + proof
-- `composePolarity`: Compositional polarity with proof
-- `implicatureAllowed`: UE contexts allow implicature
-
-### Verified Properties
-- `polarity_composition_table`: The 2×2 table is correct
-- `double_de_is_ue_grounded`: Double negation gives UE
-- `implicature_allowed_double_negation`: SI under ¬¬ is OK
-
-## Connection to Other Modules
-
-This module bridges:
-- `AntiAdditivity.lean`: Uses IsDownwardEntailing for DE < AA < AM hierarchy
-- `ContextPolarity`: The enum used throughout NeoGricean/
-- `FoxSpector2018.lean`: Economy condition uses polarity
-- `PottsLU.lean`: LU model's DE/UE predictions
-
-Now `ContextPolarity` can be DERIVED from Mathlib's Monotone/Antitone proofs!
--/
 
 end Montague.Core.Polarity

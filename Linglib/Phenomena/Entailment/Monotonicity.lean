@@ -6,7 +6,7 @@ Empirical data: which inferences involving set inclusion do people accept?
 Monotonicity determines whether inferences "go through" when you
 substitute a subset for a superset (or vice versa).
 
-## Key Pattern
+## Pattern
 
 Given: dogs ⊆ animals
 
@@ -70,7 +70,7 @@ structure MonotonicityJudgment where
 /--
 "Every" is DE in restrictor: dogs ⊆ animals, but "every animal" ↛ "every dog"
 
-Actually the VALID direction is: every animal barks → every dog barks
+The valid direction is: every animal barks → every dog barks
 (If every animal barks, and dogs are animals, then every dog barks)
 -/
 def everyRestrictorDE : MonotonicityJudgment :=
@@ -84,7 +84,7 @@ def everyRestrictorDE : MonotonicityJudgment :=
   }
 
 /--
-"Every" restrictor: upward is INVALID.
+"Every" restrictor: upward is invalid.
 
 "Every dog barks" ↛ "Every animal barks"
 -/
@@ -178,7 +178,7 @@ def noScopeDE : MonotonicityJudgment :=
   }
 
 /--
-"No" scope: upward is INVALID.
+"No" scope: upward is invalid.
 
 "No dog barks" ↛ "No dog makes noise"
 -/
@@ -260,44 +260,20 @@ theorem noMonotonicity :
 /-
 ## Why Monotonicity Matters for Pragmatics
 
-DE positions BLOCK scalar implicatures:
+DE positions block scalar implicatures:
 
 In UE: "Some students passed" → SI: "Not all passed"
-In DE: "No student ate some cookies" → NO SI about "all"
+In DE: "No student ate some cookies" → no SI about "all"
 
 This is because in DE contexts, the scale reverses:
 - UE: all ⊢ some (all is stronger)
 - DE: some ⊢ all (some is stronger!)
 
-The empirical monotonicity judgments here are the FOUNDATION for
+The empirical monotonicity judgments here are the foundation for
 understanding why scalar implicatures are blocked in certain contexts.
 
 Theories/Semantics/Entailment.lean should prove it predicts these patterns.
 Theories/NeoGricean/ScalarImplicatures.lean uses this to predict SI blocking.
--/
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `MonotonicityJudgment`: determiner, position, direction, validity
-- `MonotonicityPattern`: summary of UE/DE for each position
-
-### Empirical Data
-- "Every": DE restrictor, UE scope
-- "Some": UE both
-- "No": DE both
-
-### Key Patterns
-- `everyMonotonicity`: restrictor DE, scope UE
-- `someMonotonicity`: both UE
-- `noMonotonicity`: both DE
-
-### Theory Connection
-- Theories/Semantics/ should predict these patterns
-- Theories/NeoGricean/ uses these to predict SI blocking in DE contexts
 -/
 
 end Phenomena.Entailment.Monotonicity

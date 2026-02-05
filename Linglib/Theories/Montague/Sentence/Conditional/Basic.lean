@@ -51,7 +51,7 @@ def materialImp {W : Type*} (p q : Prop' W) : Prop' W :=
 
 /-- Decidable version of material implication -/
 def materialImpB {W : Type*} (p q : BProp W) : BProp W :=
-  fun w => !p w || q w
+  λ w => !p w || q w
 
 -- Strict Conditional
 
@@ -70,11 +70,11 @@ Parameters:
 - `q`: The consequent proposition
 -/
 def strictImp {W : Type*} (access : W → Set W) (p q : Prop' W) : Prop' W :=
-  fun w => ∀ w' ∈ access w, p w' → q w'
+  λ w => ∀ w' ∈ access w, p w' → q w'
 
 /-- Strict implication with finite accessibility (for computation) -/
 def strictImpFinite {W : Type*} (access : W → List W) (p q : BProp W) : BProp W :=
-  fun w => (access w).all fun w' => !p w' || q w'
+  λ w => (access w).all λ w' => !p w' || q w'
 
 -- Variably Strict Conditional (Stalnaker-Lewis)
 
@@ -106,7 +106,7 @@ where the antecedent holds.
 -/
 def variablyStrictImp {W : Type*} (sim : SimilarityOrdering W)
     (allWorlds : Set W) (p q : Prop' W) : Prop' W :=
-  fun w =>
+  λ w =>
     let pWorlds := { w' ∈ allWorlds | p w' }
     -- Vacuously true if no p-worlds
     pWorlds = ∅ ∨
@@ -157,8 +157,8 @@ theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
   -- Use a simple 2-world type
   use Bool
   -- p = (w = true), q = constantly true
-  use (fun w => w = true)
-  use (fun _ => True)
+  use (λ w => w = true)
+  use (λ _ => True)
   use false
   constructor
   · -- (p → q)(false) = (false = true → True) = True (vacuously)
@@ -281,7 +281,7 @@ Best worlds are those maximal under `kratzerBetter`: w' is best if
 for all w'' in pWorlds, if w' ≤ w'' then w'' ≤ w' (i.e., they're equivalent).
 -/
 def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Prop' W :=
-  fun w =>
+  λ w =>
     let accessible := ctx.modalBase w
     let pWorlds := { w' ∈ accessible | p w' }
     let os := ctx.orderingSource w
@@ -381,7 +381,7 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
 -/
 def selectionalCounterfactual {W : Type*} (s : SelectionFunction W)
     (allWorlds : Set W) (p q : Prop' W) : Prop' W :=
-  fun w =>
+  λ w =>
     let pWorlds := { w' ∈ allWorlds | p w' }
     pWorlds = ∅ ∨ q (s.select w pWorlds)
 

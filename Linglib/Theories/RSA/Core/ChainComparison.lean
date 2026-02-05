@@ -3,7 +3,7 @@
 
 Compares production-first (S0 → L1 → S1) and comprehension-first (L0 → S1 → L1) RSA chains.
 
-## Key Insight
+## Insight
 
 Both chains use the same RSAScenario:
 - Meaning function φ
@@ -62,7 +62,7 @@ Returns a value in [0, 1] where 0 means identical distributions.
 -/
 def totalVariation {α : Type} [BEq α] (c : ChainComparison α) : ℚ :=
   let allKeys := (c.S0Based.map (·.1) ++ c.L0Based.map (·.1)).eraseDups
-  let diffs := allKeys.map fun x =>
+  let diffs := allKeys.map λ x =>
     let pS0 := RSA.Eval.getScore c.S0Based x
     let pL0 := RSA.Eval.getScore c.L0Based x
     if pS0 ≥ pL0 then pS0 - pL0 else pL0 - pS0
@@ -100,12 +100,12 @@ Analyze divergence between S0-based and L0-based chains.
 -/
 def analyzeDivergence {α : Type} [BEq α] (c : ChainComparison α) : DivergenceInfo α :=
   let allKeys := (c.S0Based.map (·.1) ++ c.L0Based.map (·.1)).eraseDups
-  let diffs := allKeys.map fun x =>
+  let diffs := allKeys.map λ x =>
     let pS0 := RSA.Eval.getScore c.S0Based x
     let pL0 := RSA.Eval.getScore c.L0Based x
     let diff := if pS0 ≥ pL0 then pS0 - pL0 else pL0 - pS0
     (x, diff)
-  let maxPair := diffs.foldl (fun acc (x, d) =>
+  let maxPair := diffs.foldl (λ acc (x, d) =>
     match acc with
     | none => some (x, d)
     | some (_, dMax) => if d > dMax then some (x, d) else acc

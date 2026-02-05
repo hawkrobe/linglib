@@ -4,7 +4,7 @@
 Following Muskens (1996) and Brasoveanu (2007), Dynamic Ty2 is the
 type-logical foundation into which ALL dynamic semantic systems embed.
 
-## The Key Insight (Muskens 1991)
+## Core Idea (Muskens 1991)
 
 "Instead of modeling discourse referents as atomic entities (variables)
 and info states as functions taking dref's as arguments (i.e. variable
@@ -23,10 +23,10 @@ dref's as functions taking info states as arguments."
 
 ## Embeddings
 
-- **DPL**: Variables xᵢ ↦ λs. s(i) (projection functions)
-- **PLA**: Variables + pronouns via resolution
-- **DRT**: Isomorphic to CDRT (box notation)
-- **BUS**: Dynamic Ty2 + bilateral (pos/neg) structure
+- DPL: variables xᵢ ↦ λs. s(i) (projection functions)
+- PLA: variables + pronouns via resolution
+- DRT: isomorphic to CDRT (box notation)
+- BUS: Dynamic Ty2 + bilateral (pos/neg) structure
 
 ## References
 
@@ -65,33 +65,33 @@ variable {S E : Type*}
 
 /-- Dynamic negation: ~D is true at i iff no j satisfies D from i -/
 def dneg (D : DRS S) : Condition S :=
-  fun i => ¬∃ k, D i k
+  λ i => ¬∃ k, D i k
 
 notation "∼" D => dneg D
 
 /-- Test: lift a condition to a DRS (identity on assignments) -/
 def test (C : Condition S) : DRS S :=
-  fun i j => i = j ∧ C j
+  λ i j => i = j ∧ C j
 
 notation "[" C "]" => test C
 
 /-- Dynamic conjunction (sequencing): D₁ ; D₂ -/
 def dseq (D₁ D₂ : DRS S) : DRS S :=
-  fun i j => ∃ h, D₁ i h ∧ D₂ h j
+  λ i j => ∃ h, D₁ i h ∧ D₂ h j
 
 infixl:65 " ⨟ " => dseq  -- semicolon-like
 
 /-- Dynamic implication: D₁ → D₂ -/
 def dimpl (D₁ D₂ : DRS S) : Condition S :=
-  fun i => ∀ h, D₁ i h → ∃ k, D₂ h k
+  λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
 
 /-- Dynamic disjunction: D₁ ∨ D₂ -/
 def ddisj (D₁ D₂ : DRS S) : Condition S :=
-  fun i => ∃ k, D₁ i k ∨ D₂ i k
+  λ i => ∃ k, D₁ i k ∨ D₂ i k
 
 /-- Anaphoric closure: !D = ∃output state -/
 def closure (D : DRS S) : Condition S :=
-  fun i => ∃ k, D i k
+  λ i => ∃ k, D i k
 
 notation "!" D => closure D
 
@@ -122,7 +122,7 @@ variable {S E : Type*} [AssignmentStructure S E]
 
 /-- Random assignment DRS: [u] introduces dref u -/
 def randomAssign (u : S → E) : DRS S :=
-  fun i j => ∃ e : E, j = extend i u e
+  λ i j => ∃ e : E, j = extend i u e
 
 notation "[" u "]ᵈʳᵉᶠ" => randomAssign u
 
@@ -147,17 +147,17 @@ variable {S E : Type*}
 
 /-- Atomic condition from a predicate and drefs -/
 def atom1 (P : E → Prop) (u : Dref S E) : Condition S :=
-  fun i => P (u i)
+  λ i => P (u i)
 
 def atom2 (P : E → E → Prop) (u v : Dref S E) : Condition S :=
-  fun i => P (u i) (v i)
+  λ i => P (u i) (v i)
 
 def atom3 (P : E → E → E → Prop) (u v w : Dref S E) : Condition S :=
-  fun i => P (u i) (v i) (w i)
+  λ i => P (u i) (v i) (w i)
 
 /-- Equality condition -/
 def eq' (u v : Dref S E) : Condition S :=
-  fun i => u i = v i
+  λ i => u i = v i
 
 end Atomic
 
@@ -175,7 +175,7 @@ DPL variables xₙ become drefs uₙ : S → E (projection functions).
 | ~φ | [∼TR(φ)] |
 | [x] | [uₓ] (random assignment) |
 
-The key insight: DPL's assignment functions g : Var → E
+DPL's assignment functions g : Var → E
 become "flipped" to drefs u : S → E, where S plays the role
 of the assignment itself.
 -/
@@ -192,7 +192,7 @@ John := λi. john
 
 A proper name denotes the same individual regardless of assignment.
 -/
-def specificDref (e : E) : Dref S E := fun _ => e
+def specificDref (e : E) : Dref S E := λ _ => e
 
 /--
 Proper name introduction (indefinite-like analysis).
@@ -287,7 +287,7 @@ theorem closure_closure (D : DRS S) :
 
 /-- Sequencing distributes over closure -/
 theorem dseq_closure (D₁ D₂ : DRS S) :
-    closure (D₁ ⨟ D₂) = fun i => ∃ h, D₁ i h ∧ closure D₂ h := by
+    closure (D₁ ⨟ D₂) = λ i => ∃ h, D₁ i h ∧ closure D₂ h := by
   funext i
   simp only [closure, dseq, eq_iff_iff]
   constructor
@@ -298,53 +298,5 @@ theorem dseq_closure (D₁ D₂ : DRS S) :
 
 end Theorems
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Types
-- `Dref S E`: Discourse referent (type `se`)
-- `DRS S`: DRS meaning (type `s(st)`)
-- `Condition S`: Property of assignments (type `st`)
-
-### Core Connectives
-- `dneg` (∼): Dynamic negation
-- `test` ([_]): Lift condition to DRS
-- `dseq` (⨟): Dynamic conjunction/sequencing
-- `dimpl`: Dynamic implication
-- `closure` (!): Anaphoric closure
-
-### Quantification (with AssignmentStructure)
-- `randomAssign`: [u] introduces dref
-- `dexists`: ∃u(D) existential
-- `dforall`: ∀u(D) universal
-
-### Atomic Formulas
-- `atom1`, `atom2`, `atom3`: Predicate application
-- `eq'`: Equality condition
-
-### Truth
-- `trueAt`: D true at input i
-- `valid`: D true at all inputs
-- `entails`: Dynamic entailment
-
-## The Unification Architecture
-
-All dynamic systems embed into Dynamic Ty2:
-
-```
-        Dynamic Ty2 (this module)
-       /     |      \       \
-     DPL    PLA    DRT/CDRT  BUS
-```
-
-Each system provides:
-1. A type for S (assignments)
-2. Axioms on S (AssignmentStructure)
-3. A translation function into Dynamic Ty2
-
-This avoids pairwise translations: everything goes through the hub.
--/
 
 end Theories.DynamicSemantics.Core.DynamicTy2

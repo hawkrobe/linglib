@@ -1,15 +1,16 @@
-/-
-# English Determiner and Quantifier Lexicon
+/-!
+# English Determiners
 
-Single source of truth for English determiners and quantifiers with:
-- Syntactic properties (qforce, number, mass compatibility)
-- Semantic properties (monotonicity, GQT threshold, PT prototype)
-- Scale membership
+Quantifier lexicon with syntactic and semantic properties.
+
+## Main definitions
+
+- `QForce`: quantificational force
+- `QuantEntry`: unified lexical entry
 
 ## References
 
-- Horn, L. R. (1972). On the semantic properties of logical operators in English.
-- van Tiel, B., Franke, M., & Sauerland, U. (2021). Probabilistic pragmatics.
+- Horn (1972). On the semantic properties of logical operators in English.
 -/
 
 import Linglib.Core.Basic
@@ -20,101 +21,47 @@ import Mathlib.Tactic.NormNum
 
 namespace Fragments.English.Determiners
 
--- ============================================================================
--- Basic Types
--- ============================================================================
-
-/-- Quantificational force of a determiner -/
 inductive QForce where
-  | universal    -- every, all, each
-  | existential  -- a, some
-  | definite     -- the, this, that
-  | negative     -- no, none, neither
-  | proportional -- most, few, many, half
+  | universal
+  | existential
+  | definite
+  | negative
+  | proportional
   deriving DecidableEq, Repr, BEq
 
-/-- Monotonicity direction -/
 inductive Monotonicity where
-  | increasing  -- more X → still true (some, most, all)
-  | decreasing  -- fewer X → still true (no, few, none)
-  | nonMonotone -- neither (exactly half)
+  | increasing
+  | decreasing
+  | nonMonotone
   deriving DecidableEq, Repr, BEq
 
--- ============================================================================
--- Quantifier Entry (Unified Lexical Entry)
--- ============================================================================
-
-/--
-A unified lexical entry for quantifiers/determiners.
-
-Bundles syntactic AND semantic properties in one place.
--/
+/-- Unified lexical entry for quantifiers/determiners. -/
 structure QuantifierEntry where
-  /-- Surface form -/
   form : String
-  /-- Quantificational force -/
   qforce : QForce
-  /-- Number restriction (none = either) -/
   numberRestriction : Option Number := none
-  /-- Can combine with mass nouns? -/
   allowsMass : Bool := false
-  /-- Monotonicity direction -/
   monotonicity : Monotonicity := .increasing
-  /-- GQT threshold as fraction of domain (0.0 to 1.0) -/
   gqtThreshold : ℚ := 0
-  /-- PT prototype as fraction of domain (0.0 to 1.0) -/
   ptPrototype : ℚ := 0
-  /-- PT spread (higher = more tolerance) -/
   ptSpread : ℚ := 2
   deriving Repr, BEq
 
--- ============================================================================
--- The Quantifier Lexicon
--- ============================================================================
-
-/-- "none" / "no" - nothing satisfies -/
 def none_ : QuantifierEntry :=
-  { form := "none"
-  , qforce := .negative
-  , allowsMass := true
-  , monotonicity := .decreasing
-  , gqtThreshold := 0
-  , ptPrototype := 0
-  , ptSpread := 1
-  }
+  { form := "none", qforce := .negative, allowsMass := true, monotonicity := .decreasing
+  , gqtThreshold := 0, ptPrototype := 0, ptSpread := 1 }
 
-/-- "few" - a small number -/
 def few : QuantifierEntry :=
-  { form := "few"
-  , qforce := .proportional
-  , numberRestriction := some .pl
-  , monotonicity := .decreasing
-  , gqtThreshold := 1/3  -- roughly 1/3
-  , ptPrototype := 1/5   -- peak at ~20%
-  , ptSpread := 2
-  }
+  { form := "few", qforce := .proportional, numberRestriction := some .pl
+  , monotonicity := .decreasing, gqtThreshold := 1/3, ptPrototype := 1/5, ptSpread := 2 }
 
-/-- "some" - at least one (weak, existential) -/
 def some_ : QuantifierEntry :=
-  { form := "some"
-  , qforce := .existential
-  , allowsMass := true
-  , monotonicity := .increasing
-  , gqtThreshold := 0  -- threshold is >0, i.e., ≥1 when scaled
-  , ptPrototype := 1/3
-  , ptSpread := 3
-  }
+  { form := "some", qforce := .existential, allowsMass := true, monotonicity := .increasing
+  , gqtThreshold := 0, ptPrototype := 1/3, ptSpread := 3 }
 
-/-- "half" - approximately 50% -/
 def half : QuantifierEntry :=
-  { form := "half"
-  , qforce := .proportional
-  , allowsMass := true
-  , monotonicity := .nonMonotone  -- neither direction preserves truth
-  , gqtThreshold := 1/2
-  , ptPrototype := 1/2
-  , ptSpread := 2
-  }
+  { form := "half", qforce := .proportional, allowsMass := true, monotonicity := .nonMonotone
+  , gqtThreshold := 1/2, ptPrototype := 1/2, ptSpread := 2 }
 
 /-- "most" - more than half -/
 def most : QuantifierEntry :=
@@ -214,7 +161,7 @@ def allDeterminers : List QuantifierEntry := [
 
 /-- Lookup by form -/
 def lookup (form : String) : Option QuantifierEntry :=
-  allDeterminers.find? fun d => d.form == form
+  allDeterminers.find? λ d => d.form == form
 
 -- ============================================================================
 -- Scalar Quantity Words (for RSA quantity domains)
@@ -231,7 +178,7 @@ inductive QuantityWord where
 
 instance : Fintype QuantityWord where
   elems := {.none_, .few, .some_, .half, .most, .all}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /-- Get the lexical entry for a quantity word -/
 def QuantityWord.entry : QuantityWord → QuantifierEntry

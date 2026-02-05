@@ -60,8 +60,8 @@ structure BSMLModel (W : Type*) where
 
 /-- Universal accessibility (S5-like): all worlds accessible from all -/
 def BSMLModel.universal {W : Type*} : BSMLModel W where
-  access := fun _ => Team.full
-  valuation := fun _ _ => false
+  access := λ _ => Team.full
+  valuation := λ _ _ => false
 
 /-- Indisputable accessibility: all worlds in team have same accessible worlds -/
 def BSMLModel.isIndisputable {W : Type*} (M : BSMLModel W) (t : Team W)
@@ -69,7 +69,7 @@ def BSMLModel.isIndisputable {W : Type*} (M : BSMLModel W) (t : Team W)
   let members := t.toList worlds
   match members with
   | [] => true
-  | w :: rest => rest.all fun v => (M.access w).beq (M.access v) worlds
+  | w :: rest => rest.all λ v => (M.access w).beq (M.access v) worlds
 
 -- ============================================================================
 -- PART 2: BSML Formulas
@@ -113,9 +113,9 @@ def allSubsets {α : Type*} : List α -> List (List α)
 def generateSplits {W : Type*} [DecidableEq W] (t : Team W) (worlds : List W) :
     List (Team W × Team W) :=
   let members := t.toList worlds
-  (allSubsets members).map fun left =>
+  (allSubsets members).map λ left =>
     let leftTeam : Team W := Team.ofList left
-    let rightTeam : Team W := fun w => t w && !leftTeam w
+    let rightTeam : Team W := λ w => t w && !leftTeam w
     (leftTeam, rightTeam)
 
 /-- Generate all subteams of a team -/
@@ -145,32 +145,32 @@ def support {W : Type*} [DecidableEq W] (M : BSMLModel W) (worlds : List W)
   | .conj ψ₁ ψ₂ => support M worlds ψ₁ t && support M worlds ψ₂ t
   | .disj ψ₁ ψ₂ =>
       let splits := generateSplits t worlds
-      splits.any fun (t1, t2) => support M worlds ψ₁ t1 && support M worlds ψ₂ t2
+      splits.any λ (t1, t2) => support M worlds ψ₁ t1 && support M worlds ψ₂ t2
   | .poss ψ =>
-      t.all (fun w =>
+      t.all (λ w =>
         let accessible := M.access w
         let subteams := generateSubteams accessible worlds
-        subteams.any fun t' => t'.isNonEmpty worlds && support M worlds ψ t'
+        subteams.any λ t' => t'.isNonEmpty worlds && support M worlds ψ t'
       ) worlds
   | .nec ψ =>
-      t.all (fun w => support M worlds ψ (M.access w)) worlds
+      t.all (λ w => support M worlds ψ (M.access w)) worlds
 
 def antiSupport {W : Type*} [DecidableEq W] (M : BSMLModel W) (worlds : List W)
     (φ : BSMLFormula W) (t : Team W) : Bool :=
   match φ with
-  | .atom p => t.all (fun w => !M.valuation p w) worlds
+  | .atom p => t.all (λ w => !M.valuation p w) worlds
   | .ne => t.isEmpty worlds
   | .neg ψ => support M worlds ψ t
   | .conj ψ₁ ψ₂ => antiSupport M worlds ψ₁ t || antiSupport M worlds ψ₂ t
   | .disj ψ₁ ψ₂ => antiSupport M worlds ψ₁ t && antiSupport M worlds ψ₂ t
   | .poss ψ =>
-      t.all (fun w =>
+      t.all (λ w =>
         let accessible := M.access w
         let subteams := generateSubteams accessible worlds
-        subteams.all fun t' => t'.isEmpty worlds || antiSupport M worlds ψ t'
+        subteams.all λ t' => t'.isEmpty worlds || antiSupport M worlds ψ t'
       ) worlds
   | .nec ψ =>
-      t.any (fun w => antiSupport M worlds ψ (M.access w)) worlds
+      t.any (λ w => antiSupport M worlds ψ (M.access w)) worlds
 end
 
 -- ============================================================================
@@ -220,19 +220,26 @@ def isFlat' {W : Type*} (prop : Team W → List W → Bool) (worlds : List W) : 
 
 /-- Atoms are flat: if all worlds in t satisfy p, then all worlds in t' ⊆ t satisfy p -/
 theorem atom_is_flat {W : Type*} [DecidableEq W] (M : BSMLModel W) (p : String) (worlds : List W) :
-    isFlat' (fun t ws => support M ws (.atom p) t) worlds := by
+    isFlat' (λ t ws => support M ws (.atom p) t) worlds := by
   intro t t' hSub hSupp
   simp only [support, Team.all] at *
-  -- We need: (worlds.all fun w => !t' w || M.valuation p w) = true
-  -- We have: (worlds.all fun w => !t w || M.valuation p w) = true
+  -- We need: (worlds.all λ w => !t' w || M.valuation p w) = true
+  -- We have: (worlds.all λ w => !t w || M.valuation p w) = true
   -- And: t' ⊆ t (so !t' w → !t w, meaning if w ∉ t' then w ∉ t or just !t' w || p w holds)
-  simp only [Team.subset] at hSub
-  -- The proof follows from: if !t' w then LHS is true; if t' w then t w (by subset), so p w (by hSupp)
-  sorry  -- Requires detailed List.all manipulation
+  simp only [Team.subset, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true',
+              Bool.eq_false_iff] at *
+  intro w hw
+  cases ht' : t' w
+  · simp
+  · have h1 := hSub w hw
+    simp [ht'] at h1
+    have h2 := hSupp w hw
+    simp [h1] at h2
+    simp [h2]
 
 /-- NE is NOT flat: the empty team doesn't support NE, but is a subset of any team that does -/
 theorem ne_not_flat {W : Type*} [DecidableEq W] [Inhabited W] (worlds : List W) (hWorlds : worlds ≠ []) :
-    ¬isFlat' (fun t ws => support (BSMLModel.universal : BSMLModel W) ws .ne t) worlds := by
+    ¬isFlat' (λ t ws => support (BSMLModel.universal : BSMLModel W) ws .ne t) worlds := by
   intro hFlat
   -- Take any non-empty team t (exists since worlds is non-empty)
   -- t ⊨ NE, and ∅ ⊆ t, but ∅ ⊭ NE
@@ -240,12 +247,7 @@ theorem ne_not_flat {W : Type*} [DecidableEq W] [Inhabited W] (worlds : List W) 
   simp only [isFlat'] at hFlat
   -- The empty team is a subset of any team
   have hEmpty : Team.empty.subset Team.full worlds = true := by
-    simp only [Team.subset, Team.empty, Team.full]
-    induction worlds with
-    | nil => rfl
-    | cons w ws ih =>
-        simp only [List.all_cons, Bool.not_false, Bool.true_or, Bool.true_and]
-        sorry  -- ih doesn't match goal structure, need different approach
+    simp [Team.subset, Team.empty, Team.full, List.all_eq_true]
   -- Team.full supports NE (it's non-empty)
   have hFullNE : support BSMLModel.universal worlds .ne Team.full = true := by
     simp only [support, Team.isNonEmpty]
@@ -258,7 +260,7 @@ theorem ne_not_flat {W : Type*} [DecidableEq W] [Inhabited W] (worlds : List W) 
   have hEmptyNotNE : support BSMLModel.universal worlds .ne Team.empty = false := by
     simp only [support, Team.isNonEmpty]
     -- Team.empty w = false for all w, so worlds.any Team.empty = false
-    have hAnyEmpty : ∀ ws : List W, ws.any Team.empty = false := fun ws => by
+    have hAnyEmpty : ∀ ws : List W, ws.any Team.empty = false := λ ws => by
       induction ws with
       | nil => rfl
       | cons w ws ih => simp only [List.any_cons, Team.empty, Bool.false_or, ih]
@@ -269,7 +271,7 @@ theorem ne_not_flat {W : Type*} [DecidableEq W] [Inhabited W] (worlds : List W) 
   exact Bool.false_ne_true this
 
 /-!
-### Key insight
+### insight
 
 NE being non-flat means that split disjunction behaves differently from conjunction.
 In [φ ∨ ψ]⁺, the NE constraint applies to EACH part of the split, forcing both
@@ -421,7 +423,7 @@ theorem enriched_split_forces_both_nonempty {W : Type*} [DecidableEq W] (M : BSM
   -- Step 1: Unpack the enriched disjunction
   simp only [enrich, support] at h
   -- Split the top-level conjunction (disjunction result && NE)
-  have hDisj : (generateSplits t worlds).any (fun x =>
+  have hDisj : (generateSplits t worlds).any (λ x =>
       support M worlds (enrich φ) x.fst && support M worlds (enrich ψ) x.snd) = true := by
     cases hD : (generateSplits t worlds).any _ <;> simp_all
   -- Step 2: Get the split from disjunction support
@@ -472,7 +474,7 @@ theorem support_antiSupport_asymmetry {W : Type*} [DecidableEq W] (M : BSMLModel
     (φ ψ : BSMLFormula W) (t : Team W) (worlds : List W) :
     -- Support: existential over splits
     (support M worlds (.disj φ ψ) t = true ↔
-      (generateSplits t worlds).any (fun (t1, t2) =>
+      (generateSplits t worlds).any (λ (t1, t2) =>
         support M worlds φ t1 && support M worlds ψ t2) = true) ∧
     -- Anti-support: universal (conjunction)
     (antiSupport M worlds (.disj φ ψ) t = true ↔
@@ -688,8 +690,8 @@ def permissionWorlds : List PermissionWorld :=
 
 /-- Deontic model: universal accessibility -/
 def deonticModel : BSMLModel PermissionWorld where
-  access := fun _ => Team.full
-  valuation := fun p w =>
+  access := λ _ => Team.full
+  valuation := λ p w =>
     match p with
     | "coffee" => coffeePermitted w
     | "tea" => teaPermitted w
@@ -701,7 +703,7 @@ def mayHaveCoffeeOrTea : BSMLFormula PermissionWorld :=
 
 /-- Team representing "free choice holds" (both options available) -/
 def freeChoiceTeam : Team PermissionWorld :=
-  fun w => w == .both || w == .onlyCoffee || w == .onlyTea
+  λ w => w == .both || w == .onlyCoffee || w == .onlyTea
 
 -- Verify: the enriched formula supports free choice inference
 #eval support deonticModel permissionWorlds (enrich mayHaveCoffeeOrTea) freeChoiceTeam
@@ -734,11 +736,11 @@ def mayTea : BSMLFormula PermissionWorld := .poss (.atom "tea")
 
 /-- Restrictive deontic model: from 'neither', only 'neither' is accessible -/
 def restrictiveModel : BSMLModel PermissionWorld where
-  access := fun w =>
+  access := λ w =>
     match w with
-    | .neither => fun w' => w' == .neither  -- Only 'neither' accessible
+    | .neither => λ w' => w' == .neither  -- Only 'neither' accessible
     | _ => Team.full  -- Other worlds have full access (for free choice)
-  valuation := fun p w =>
+  valuation := λ p w =>
     match p with
     | "coffee" => coffeePermitted w
     | "tea" => teaPermitted w
@@ -752,7 +754,7 @@ def notMayTea : BSMLFormula PermissionWorld := .neg (.poss (.atom "tea"))
 
 -- Team where neither is permitted (with restricted accessibility)
 def prohibitionTeam : Team PermissionWorld :=
-  fun w => w == .neither
+  λ w => w == .neither
 
 #eval
   let enrichedProhib := enrich prohibition

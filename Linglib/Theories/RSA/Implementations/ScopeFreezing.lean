@@ -93,22 +93,22 @@ def uttMeaning (s : ScopeConfig) (u : Utterance) (w : World) : Bool :=
   match u with | .null => true | .target => meaning s w
 
 def l1Interp (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : List (ScopeConfig × ℚ) :=
-  let tuples := allWorlds.flatMap fun w => allScopes.map fun s => (w, s)
-  let scores := tuples.map fun (w, s) =>
+  let tuples := allWorlds.flatMap λ w => allScopes.map λ s => (w, s)
+  let scores := tuples.map λ (w, s) =>
     let s1 := RSA.Eval.S1 allUtterances allWorlds
-      (fun s' _ u' w' => boolToRat (uttMeaning s' u' w'))
-      worldPrior (fun _ _ => 1) (fun _ w1 w2 => w1 == w2) (fun _ => 0) 1 w s () () ()
+      (λ s' _ u' w' => boolToRat (uttMeaning s' u' w'))
+      worldPrior (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1 w s () () ()
     ((w, s), worldPrior w * interpPrior s * RSA.Eval.getScore s1 .target)
   let normalized := RSA.Eval.normalize scores
-  allScopes.map fun s =>
-    (s, normalized.filter (fun ((_, s'), _) => s' == s) |>.map (·.2) |> RSA.Eval.sumScores)
+  allScopes.map λ s =>
+    (s, normalized.filter (λ ((_, s'), _) => s' == s) |>.map (·.2) |> RSA.Eval.sumScores)
 
 def getInverseProb (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : ℚ :=
   RSA.Eval.getScore (l1Interp worldPrior interpPrior) .inverse
 
 -- Priors
 
-def uniformWorldPrior : World → ℚ := fun _ => 1
+def uniformWorldPrior : World → ℚ := λ _ => 1
 
 /-- Rescue prior: strongly favor inverse-only world -/
 def rescueWorldPrior : World → ℚ

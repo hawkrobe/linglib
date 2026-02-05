@@ -149,28 +149,4 @@ def somePersonSleeps : toyModel.interpTy .t :=
 -- The pattern: someStudentSleeps → somePersonSleeps (UE in restrictor)
 -- Both are true, consistent with the entailment
 
--- Summary
-
-/-
-## What This Module Provides
-
-### Quantifier Denotations
-- `every_sem`: λR.λS. ∀x. R(x) → S(x)
-- `some_sem`: λR.λS. ∃x. R(x) ∧ S(x)
-- `no_sem`: λR.λS. ¬∃x. R(x) ∧ S(x)
-- `most_sem`: λR.λS. |R ∩ S| > |R - S|
-
-### FiniteModel Class
-Uses computable `FiniteModel` with explicit element list
-for quantifier evaluation.
-
-### Composition Examples
-- "Every student sleeps" via function application
-- "Some student laughs" etc.
-
-### Key Properties
-- Entailment: every → some (demonstrated)
-- Monotonicity: UE/DE patterns (demonstrated)
--/
-
 end Montague.Determiner.Quantifier

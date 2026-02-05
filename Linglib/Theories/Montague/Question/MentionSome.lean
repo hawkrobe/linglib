@@ -85,8 +85,8 @@ def partialAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W) (worlds : List 
   -- p overlaps with some world in some cell
   let overlaps := worlds.any p
   -- p doesn't determine a unique cell (there exist w, v with p true but q-inequivalent)
-  let incomplete := worlds.any fun w =>
-    worlds.any fun v =>
+  let incomplete := worlds.any λ w =>
+    worlds.any λ v =>
       p w && p v && !q.equiv w v
   overlaps && incomplete
 
@@ -162,7 +162,7 @@ def MentionSomeInterrogative.applyToProperty {W E : Type*} [DecidableEq E]
     (msi : MentionSomeInterrogative W E)
     (Q : GSQuestion W -> Bool)
     (w : W) : Bool :=
-  msi.whDomain.any fun x =>
+  msi.whDomain.any λ x =>
     msi.abstract w x &&  -- β'(x) holds at actual world
     Q (yesNoQuestionFor msi.abstract x)  -- Q applied to "does x satisfy β?"
 
@@ -198,7 +198,7 @@ def knowMentionSome {W E : Type*} [DecidableEq E]
     (msi : MentionSomeInterrogative W E)
     (knows : W -> E -> (W -> Bool) -> Bool)  -- know*(w, agent, prop)
     (agent : E) (w : W) : Bool :=
-  msi.whDomain.any fun x =>
+  msi.whDomain.any λ x =>
     msi.abstract w x &&  -- x actually satisfies the property
     knows w agent (msi.abstract · x)  -- agent knows x satisfies it
 
@@ -213,8 +213,8 @@ def wonderMentionSome {W E : Type*} [DecidableEq E]
     (wants : W -> E -> (W -> Bool) -> Bool)  -- want(w, agent, prop)
     (knows : W -> E -> (W -> Bool) -> Bool)  -- know*(w, agent, prop)
     (agent : E) (w : W) : Bool :=
-  wants w agent fun w' =>
-    msi.whDomain.any fun x =>
+  wants w agent λ w' =>
+    msi.whDomain.any λ x =>
       msi.abstract w' x && knows w' agent (msi.abstract · x)
 
 /-- "Ask" embedding of mention-some question.
@@ -225,8 +225,8 @@ def askMentionSome {W E : Type*} [DecidableEq E]
     (msi : MentionSomeInterrogative W E)
     (asks : W -> E -> (W -> Bool) -> Bool)  -- ask(w, agent, prop)
     (agent : E) (w : W) : Bool :=
-  asks w agent fun w' =>
-    msi.whDomain.any fun x => msi.abstract w' x
+  asks w agent λ w' =>
+    msi.whDomain.any λ x => msi.abstract w' x
 
 
 /-!
@@ -281,22 +281,22 @@ These are important for understanding the logical landscape of readings.
 
 /-- Choice reading implies mention-some reading.
 
-If you know the answer for SOME choice of the wide-scope element,
-you have a mention-some answer.
+G&S 1984, Section 5.3, p. 538: "The choice reading of (24) implies its
+mention-some reading. This is correct, to know of a particular pen who
+has that pen, implies to know a person who has a pen."
 
-G&S 1984, Section 5.3: The choice reading is stronger than mention-some. -/
-theorem choice_implies_mentionSome {W E : Type*} [DecidableEq E]
+A choice answer selects a specific satisfier from the wh-domain. Any such
+witness directly satisfies the existential required by mention-some.
+
+For the full two-domain case (wide-scope existential over a separate domain),
+see `wideScope_existential_licenses_mentionSome` in ScopeReadings.lean. -/
+theorem choice_implies_mentionSome {W E : Type*}
     (msi : MentionSomeInterrogative W E)
-    (choiceAnswer : E -> Option E)  -- For each wide-scope element, the answer
-    (w : W)
-    (_hChoice : msi.whDomain.any fun y =>
-      match choiceAnswer y with
-      | some x => msi.abstract w x
-      | none => false) :
-    -- Then mention-some is satisfied
-    msi.whDomain.any fun x => msi.abstract w x := by
-  -- If some choice gives a satisfier, that's a mention-some answer
-  sorry
+    (w : W) (y : E)
+    (hy_mem : y ∈ msi.whDomain)
+    (hy_sat : msi.abstract w y = true) :
+    msi.whDomain.any λ x => msi.abstract w x := by
+  exact List.any_eq_true.mpr ⟨y, hy_mem, hy_sat⟩
 
 /-- Mention-all implies mention-some for non-empty extensions.
 
@@ -305,10 +305,14 @@ theorem mentionAll_implies_mentionSome {W E : Type*}
     (msi : MentionSomeInterrogative W E)
     (w : W)
     (satisfiers : List E)
-    (_hAll : satisfiers = msi.whDomain.filter (msi.abstract w))
-    (_hNonempty : satisfiers.length > 0) :
-    msi.whDomain.any fun x => msi.abstract w x := by
-  sorry
+    (hAll : satisfiers = msi.whDomain.filter (msi.abstract w))
+    (hNonempty : satisfiers.length > 0) :
+    msi.whDomain.any λ x => msi.abstract w x := by
+  rw [hAll] at hNonempty
+  simp only [List.any_eq_true]
+  obtain ⟨x, hx⟩ := List.exists_mem_of_length_pos hNonempty
+  rw [List.mem_filter] at hx
+  exact ⟨x, hx.1, hx.2⟩
 
 
 /-!
@@ -401,8 +405,8 @@ structure MentionNQuestion (W E : Type*) where
 For mention-n, we need the UNION of entities at these places to have size ≥ n. -/
 def collectivelyCovers {W E : Type*} [DecidableEq E]
     (mnq : MentionNQuestion W E) (places : List E) (w : W) : Bool :=
-  let entities := places.flatMap fun place =>
-    mnq.entityDomain.filter fun entity => mnq.relation w place entity
+  let entities := places.flatMap λ place =>
+    mnq.entityDomain.filter λ entity => mnq.relation w place entity
   entities.eraseDups.length >= mnq.n
 
 /-- Mention-some answer to mention-n: ONE place with n entities.
@@ -410,7 +414,7 @@ def collectivelyCovers {W E : Type*} [DecidableEq E]
 "Where do two unicorns live?" (mention-some) = a single place with 2+ unicorns -/
 def mentionSomeAnswerToMentionN {W E : Type*} [DecidableEq E]
     (mnq : MentionNQuestion W E) (place : E) (w : W) : Bool :=
-  let entitiesHere := mnq.entityDomain.filter fun e => mnq.relation w place e
+  let entitiesHere := mnq.entityDomain.filter λ e => mnq.relation w place e
   entitiesHere.length >= mnq.n
 
 /-- Cumulative mention-n: multiple places collectively covering n entities.

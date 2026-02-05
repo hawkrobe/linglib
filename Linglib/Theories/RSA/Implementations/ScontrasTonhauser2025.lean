@@ -130,7 +130,7 @@ def speakerCredenceBool : BeliefState → WorldState → Bool
   | .cFalseBelFalse, w => !w.c && !w.bel
 
 def speakerCredence : BeliefState → WorldState → ℚ :=
-  fun a w => boolToRat (speakerCredenceBool a w)
+  λ a w => boolToRat (speakerCredenceBool a w)
 
 /--
 Whether C is true in all worlds of the belief state.
@@ -182,11 +182,11 @@ def projectionOfC_world (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10)
   -- Get L1 distribution over worlds GIVEN the QUD
   let worldDist := RSA.Eval.L1_world_givenGoal
     allUtterances allWorlds [()] [()] allBeliefStates allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    (worldPrior pC) (fun _ => 1) (fun _ => 1) beliefStatePrior (fun _ => 1)
-    speakerCredence qudProject (fun _ => 0) alpha u q
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    (worldPrior pC) (λ _ => 1) (λ _ => 1) beliefStatePrior (λ _ => 1)
+    speakerCredence qudProject (λ _ => 0) alpha u q
   -- Sum probability of worlds where C is true
-  worldDist.foldl (fun acc (w, p) =>
+  worldDist.foldl (λ acc (w, p) =>
     if w.c then acc + p else acc) 0
 
 /--
@@ -199,11 +199,11 @@ def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10
   -- Get L1 distribution over belief states GIVEN the QUD
   let beliefDist := RSA.Eval.L1_beliefState_givenGoal
     allUtterances allWorlds [()] [()] allBeliefStates allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    (worldPrior pC) (fun _ => 1) (fun _ => 1) beliefStatePrior (fun _ => 1)
-    speakerCredence qudProject (fun _ => 0) alpha u q
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    (worldPrior pC) (λ _ => 1) (λ _ => 1) beliefStatePrior (λ _ => 1)
+    speakerCredence qudProject (λ _ => 0) alpha u q
   -- Sum probability of states that assume C
-  beliefDist.foldl (fun acc (a, p) =>
+  beliefDist.foldl (λ acc (a, p) =>
     if assumesC a then acc + p else acc) 0
 
 /-- Default projection function uses world-based measure (as in paper). -/

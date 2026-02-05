@@ -103,34 +103,4 @@ Simplified version checking conditions hold.
 def DRS.satisfies {E : Type*} (k : DRS E) (f : Embedding E) : Prop :=
   ∀ cond ∈ k.conditions, cond f
 
--- Summary
-
-/-!
-## What This Module Will Provide
-
-### Core Types
-- `DRS E`: Discourse Representation Structure
-- `DRSCondition E`: DRS conditions (including complex ones)
-- `Embedding E`: Embedding functions
-
-### Operations
-- `merge`: DRS combination
-- `accessible`: Accessibility check
-- `satisfies`: Truth via embeddings
-
-### Key Results (TODO)
-- Proper subordination and accessibility
-- Negation traps referents
-- Donkey anaphora handling
-
-## TODO
-
-Full implementation including:
-- Proper recursive DRS structure
-- Complex conditions (negation, implication)
-- Accessibility algorithm
-- Connection to dynamic predicate logic
-- Model-theoretic semantics
--/
-
 end Theories.DynamicSemantics.DRT

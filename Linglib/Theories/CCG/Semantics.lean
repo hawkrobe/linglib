@@ -1,14 +1,18 @@
 /-
 # CCG Syntax-Semantics Interface
 
-The key insight of CCG: syntactic categories directly encode semantic types.
+Syntactic categories directly encode semantic types. Combinatory rules correspond
+to function application and composition.
 
-- NP corresponds to type e (entities)
-- S corresponds to type t (truth values)
-- X/Y corresponds to type ⟦Y⟧ → ⟦X⟧
-- X\Y corresponds to type ⟦Y⟧ → ⟦X⟧
+## Main definitions
 
-Combinatory rules correspond to function application/composition.
+- `catToTy`: Maps CCG categories to semantic types
+- `SemLexEntry`: Lexical entry with semantics
+- `DerivStep.interp`: Computes meaning from derivation compositionally
+
+## References
+
+- Steedman (2000). The Syntactic Process.
 -/
 
 import Linglib.Theories.CCG.Basic
@@ -23,11 +27,11 @@ open Montague
 
 /-- B combinator (composition): B f g x = f (g x) -/
 private def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
-  fun x => f (g x)
+  λ x => f (g x)
 
 /-- T combinator (type-raising): T x f = f x -/
 private def T {α β : Type} (x : α) : (α → β) → β :=
-  fun f => f x
+  λ f => f x
 
 -- Type Correspondence
 

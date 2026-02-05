@@ -1,29 +1,18 @@
 /-
-# Focus Phenomena: Basic Data
+# Focus Phenomena
 
-Theory-neutral data on focus interpretation, including classic examples
-from Rooth (1992) "A Theory of Focus Interpretation".
+Empirical data on focus interpretation effects (association with focus, contrast, Q-A congruence).
 
-## The Phenomenon
+## Main definitions
 
-Focus (prosodic prominence) affects interpretation in systematic ways:
-
-1. **Association with focus** - Particles like "only" and "even" interact with focus
-2. **Contrast** - Parallel focus in discourse triggers contrast effects
-3. **Q-A Congruence** - Answer focus must match question (see Questions/FocusAnswer.lean)
-4. **Scalar effects** - Focus on scalar items affects implicature strength
-
-## What Counts as Focus?
-
-At the phenomenon level, "focus" refers to prosodic prominence (pitch accent,
-stress) that speakers use to mark information. The observable facts are:
-- Certain words receive prosodic prominence (marked with CAPS in examples)
-- This affects interpretation (exhaustivity, contrast, Q-A felicity)
+- `FocusDatum`: Data structure for focus examples
+- `FIPApplication`: Types of focus interpretation effects
+- Classic examples from Rooth (1992)
 
 ## References
 
-- Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1(1): 75-116.
-- Rooth, M. (1985). Association with Focus. PhD Dissertation, UMass Amherst.
+- Rooth, M. (1992). A Theory of Focus Interpretation.
+- Rooth, M. (1985). Association with Focus. PhD Dissertation.
 - Jackendoff, R. (1972). Semantic Interpretation in Generative Grammar.
 -/
 
@@ -31,23 +20,16 @@ import Linglib.Phenomena.Core.Basic
 
 namespace Phenomena.Focus.Basic
 
--- Focus Data Structure
-
-/-- FIP application type (Rooth 1992 §2) -/
+/-- FIP application type (Rooth 1992). -/
 inductive FIPApplication where
-  /-- Focusing adverbs: only, even, also -/
   | focusingAdverb
-  /-- Contrast/parallelism in discourse -/
   | contrast
-  /-- Scalar implicature effects -/
   | scalarImplicature
-  /-- Question-answer congruence -/
   | qaCongruence
   deriving DecidableEq, Repr, BEq
 
-/-- A focus phenomenon datum -/
+/-- Focus phenomenon datum (CAPS marks prosodic prominence). -/
 structure FocusDatum where
-  /-- The sentence (CAPS marks prosodic prominence) -/
   sentence : String
   /-- The focused element(s) -/
   focus : String
@@ -104,7 +86,7 @@ def evenExample : FocusDatum := {
   alternatives := ["Mary", "John", "Bill", "Sue"]
   effect := "Mary was the least likely person to pass (scalar presupposition)"
   application := .focusingAdverb
-  notes := "Focus determines who EVEN compares to"
+  notes := "Focus determines who 'even' compares to"
   source := "Rooth (1985)"
 }
 
@@ -237,27 +219,5 @@ def qaExamples : List FocusDatum :=
 /-- All focus examples -/
 def allFocusData : List FocusDatum :=
   focusingAdverbExamples ++ contrastExamples ++ scalarExamples ++ qaExamples
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `FocusDatum`: Focus example with alternatives and interpretive effect
-- `FIPApplication`: Type of focus interpretation application
-
-### Key Examples (Rooth 1992)
-- "Only" association with focus (§2.1)
-- Contrast/parallelism (§3)
-- Scalar implicature effects
-- Q-A congruence (§4)
-
-### Related Files
-- `ProsodicExhaustivity.lean` - Prosody effects on exhaustivity
-- `NegativeQuestions.lean` - Polarity emphasis in questions
-- `Questions/FocusAnswer.lean` - Q-A congruence in detail
-- `Theories/Montague/Sentence/FocusInterpretation.lean` - Rooth's FIP formalized
--/
 
 end Phenomena.Focus.Basic

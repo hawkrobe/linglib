@@ -9,7 +9,7 @@ This module formalizes the connections between QUD-based (partition) semantics
 and decision-theoretic semantics for questions, based on Sumers et al. (2023)
 and the foundational work of Van Rooy (2003) and Groenendijk & Stokhof (1984).
 
-## Key Results
+## Results
 
 ### Theorem 1: Epistemic Utility as Special Decision Problem
 There exists a decision problem D₀ (the "identity DP") such that:
@@ -21,12 +21,11 @@ U_Relevance(u|w, D₀) = ln P_L(w|u) = U_Truthfulness(u|w)
 Any partition-based QUD can be recovered via an "identity decision problem"
 where actions map to partition cells.
 
-### Key Insight: Truthfulness from Marginalization
-**Identity QUD = Limit of Marginalizing over Contexts**
+### Truthfulness from Marginalization
 
 When we marginalize over all possible decision problems with uniform prior,
-we recover pure epistemic utility (truthfulness). This explains why RSA's
-epistemic utility is itself decision-theoretic under the "identity DP".
+we recover pure epistemic utility (truthfulness). RSA's epistemic utility
+is itself decision-theoretic under the "identity DP".
 
 ### Theorem 3: Decision-Theoretic Strictly More Expressive
 Not all decision problems can be expressed as QUD partitions.
@@ -70,9 +69,9 @@ The identity DP is the decision problem where:
 
 This encodes pure epistemic accuracy: the agent wants to know the truth.
 
-**Key insight**: Under the identity DP, decision-theoretic utility equals
-epistemic utility (log-likelihood). This is why RSA is "decision-theoretic"
-even though it maximizes informativity.
+Under the identity DP, decision-theoretic utility equals epistemic utility
+(log-likelihood). RSA is "decision-theoretic" even though it maximizes
+informativity.
 -/
 
 /-- The identity decision problem: actions = worlds, utility = accuracy.
@@ -83,7 +82,7 @@ Choosing action w is equivalent to guessing "the true world is w".
 D_identity = ⟨W, W, U, π⟩ where U(w, a) = 1 if a = w, else 0
 -/
 def identityDP {W : Type*} [DecidableEq W] (worlds : List W)
-    (prior : W → ℚ := fun _ => 1) : DecisionProblem W W where
+    (prior : W → ℚ := λ _ => 1) : DecisionProblem W W where
   utility w a := if a == w then 1 else 0
   prior := prior
 
@@ -116,25 +115,20 @@ theorem identityDP_UV_is_information_gain {W : Type*} [DecidableEq W]
 /-!
 ## Theorem 1: Epistemic as Decision-Theoretic
 
-**Sumers et al. Theorem 1**: There exists a decision problem D₀ such that
+Sumers et al. Theorem 1: There exists a decision problem D₀ such that
 decision-theoretic utility equals epistemic utility (log-likelihood).
 
-Specifically, under the identity DP with appropriate parameterization,
-maximizing decision-theoretic utility is equivalent to maximizing
-informativity in the RSA sense.
-
-This is profound: RSA's "epistemic" speaker IS a decision-theoretic speaker
-with the identity decision problem. There's no fundamental distinction
-between "knowing the truth" and "making good decisions" - accuracy IS
-a decision problem.
+Under the identity DP with appropriate parameterization, maximizing
+decision-theoretic utility is equivalent to maximizing informativity in
+the RSA sense. RSA's "epistemic" speaker is a decision-theoretic speaker
+with the identity decision problem. Accuracy is itself a decision problem.
 -/
 
-/-- **Theorem 1**: Epistemic utility IS decision-theoretic utility.
+/-- Theorem 1: Epistemic utility is decision-theoretic utility.
 
 RSA's speaker utility (log P_L(w|u)) can be recovered from decision-theoretic
-utility under the identity DP.
-
-This unifies RSA with game-theoretic/decision-theoretic pragmatics.
+utility under the identity DP. This unifies RSA with game-theoretic/
+decision-theoretic pragmatics.
 -/
 theorem epistemic_is_decision_theoretic
     {W : Type*} [DecidableEq W]
@@ -154,7 +148,7 @@ theorem epistemic_is_decision_theoretic
 /-- Corollary: RSA speaker IS a decision-theoretic agent.
 
 The RSA speaker maximizes expected utility under the identity DP.
-This explains why RSA works: it's optimal communication for accuracy goals.
+RSA is optimal communication for accuracy goals.
 -/
 theorem rsa_speaker_is_dt_optimal
     {W : Type*} [DecidableEq W]
@@ -168,20 +162,18 @@ theorem rsa_speaker_is_dt_optimal
 
 
 /-!
-## The Deep Insight: Truthfulness as Limit
+## Truthfulness as Limit
 
-**Key theoretical point**: The identity QUD (pure truthfulness) emerges
-as the limit when we marginalize over all possible decision problems
-with a uniform prior over DPs.
+The identity QUD (pure truthfulness) emerges as the limit when we marginalize
+over all possible decision problems with a uniform prior over DPs.
 
-Intuition:
 - Specific DPs care about specific distinctions (e.g., "is it raining?")
-- When we don't know the DP, we must communicate information useful for ANY DP
+- When we do not know the DP, we must communicate information useful for any DP
 - The only universally useful information is accurate information about the world
 - Thus: E_DP[U_DT(u|w, DP)] = U_truthfulness(u|w) as DP→uniform
 
-This explains why epistemic utility is fundamental: it's the decision-theoretic
-utility that's robust across all possible goals.
+Epistemic utility is the decision-theoretic utility that is robust across
+all possible goals.
 -/
 
 /-- When marginalizing over all DPs with uniform prior, we recover truthfulness.
@@ -223,7 +215,7 @@ theorem identity_qud_is_finest
 /-!
 ## Theorem 2: Every QUD is a Decision Problem
 
-**Sumers et al. Theorem 2**: Any partition-based QUD can be recovered
+Sumers et al. Theorem 2: Any partition-based QUD can be recovered
 from some decision problem via an "identity DP over cells".
 
 Given a QUD Q that partitions W into cells {C₁, ..., Cₙ}:
@@ -241,7 +233,7 @@ This encodes "the goal is to identify which cell the world is in".
 -/
 def qudToDP {W : Type*}
     (q : GSQuestion W) (worlds : List W)
-    (prior : W → ℚ := fun _ => 1) : DecisionProblem W Nat where
+    (prior : W → ℚ := λ _ => 1) : DecisionProblem W Nat where
   -- Action i = "guess the world is in cell i"
   utility w i :=
     let cells := q.toCells worlds
@@ -250,7 +242,7 @@ def qudToDP {W : Type*}
     | none => 0
   prior := prior
 
-/-- **Theorem 2**: Any QUD can be recovered from some DP.
+/-- Theorem 2: Any QUD can be recovered from some DP.
 
 QUD-based utility can be expressed as decision-theoretic utility.
 -/
@@ -269,7 +261,7 @@ If U(w, a) depends only on which cell w is in, the DP is QUD-equivalent.
 def dpToQUD {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (actions : List A) : GSQuestion W where
   -- Two worlds are equivalent iff they have the same utility profile
-  sameAnswer w v := actions.all fun a => dp.utility w a == dp.utility v a
+  sameAnswer w v := actions.all λ a => dp.utility w a == dp.utility v a
   refl w := by
     simp only [List.all_eq_true]
     intro a _
@@ -290,7 +282,7 @@ def dpToQUD {W A : Type*} [DecidableEq A]
 /-!
 ## Theorem 3: Decision-Theoretic Relevance is Strictly More Expressive
 
-**Sumers et al. Theorem 3**: Not all decision problems can be expressed
+Sumers et al. Theorem 3: Not all decision problems can be expressed
 as QUD partitions.
 
 Counterexample: Continuous utility gradations.
@@ -302,7 +294,7 @@ This shows decision-theoretic semantics is strictly more expressive than
 partition semantics.
 -/
 
-/-- **Theorem 3**: DT is strictly more expressive than QUD.
+/-- Theorem 3: DT is strictly more expressive than QUD.
 
 There exist decision problems that cannot be expressed as partitions.
 -/
@@ -342,17 +334,16 @@ theorem continuous_dp_not_partition :
 Standard RSA speaker utility is `log P_L(w|u)`. By Theorem 1, this equals
 decision-theoretic utility under the identity DP.
 
-Therefore RSA is not "merely epistemic" - it IS decision-theoretic communication
-with an accuracy-oriented DP.
-
-This unifies RSA with game-theoretic pragmatics (Benz, Parikh, Van Rooij).
-The apparent distinction between "epistemic" and "decision-theoretic" models
-dissolves: epistemic IS decision-theoretic under the identity DP.
+RSA is not "merely epistemic" -- it is decision-theoretic communication
+with an accuracy-oriented DP. This unifies RSA with game-theoretic
+pragmatics (Benz, Parikh, Van Rooij). The apparent distinction between
+"epistemic" and "decision-theoretic" models dissolves: epistemic is
+decision-theoretic under the identity DP.
 -/
 
-/-- **Theorem 6**: RSA IS decision-theoretic communication.
+/-- Theorem 6: RSA is decision-theoretic communication.
 
-RSA's epistemic utility function IS decision-theoretic utility
+RSA's epistemic utility function is decision-theoretic utility
 under the identity decision problem.
 -/
 theorem rsa_is_decision_theoretic
@@ -388,7 +379,7 @@ This bridges discourse-level concepts (answering questions) to
 decision-level concepts (helping achieve goals).
 -/
 
-/-- **Theorem 7**: Pragmatic answerhood corresponds to positive UV.
+/-- Theorem 7: Pragmatic answerhood corresponds to positive UV.
 
 An answer "gives" a pragmatic answer iff learning it improves
 expected utility in the identity decision problem.
@@ -420,7 +411,7 @@ For partition-based questions:
 
 Blackwell: These orderings coincide!
 
-This explains the empirical success of both theories: they agree on
+The empirical success of both theories follows from agreement on
 the fundamental ordering of question informativity.
 -/
 
@@ -447,7 +438,7 @@ U_combined(u|w,A) = λ·U_relevance + (1-λ)·U_truthfulness + C(u)
 - 0 < λ < 1: Weighted combination
 -/
 
-/-- **Theorem 5**: Combined model endpoints (uses combinedUtility from RSA.Questions.Basic).
+/-- Theorem 5: Combined model endpoints (uses combinedUtility from RSA.Questions.Basic).
 
 The combined model reduces to pure truthfulness when lam=0
 and pure relevance when lam=1.
@@ -492,9 +483,9 @@ def approxMutualInformation {W : Type*} [DecidableEq W]
   -- The identity DP's value = max posterior probability
   -- which is related to MI reduction
   let dp := identityDP worlds prior
-  worlds.foldl (fun acc w => acc + prior w * dp.utility w w) 0
+  worlds.foldl (λ acc w => acc + prior w * dp.utility w w) 0
 
-/-- **Theorem 12**: QUD maximizes mutual information.
+/-- Theorem 12: QUD maximizes mutual information.
 
 Under log-loss (identity DP), this equals decision-theoretic relevance.
 -/
@@ -514,10 +505,8 @@ theorem qud_maximizes_mutual_information :
 | Answerhood | Cell membership | Positive UV |
 | Ordering | ⊑ (refines) | ≥_DT (dominates) |
 
-**Key insight**: These are not competing theories but the SAME theory
-expressed in different mathematical languages.
-
-Blackwell's theorem is the Rosetta Stone that translates between them.
+These are not competing theories but the same theory expressed in different
+mathematical languages. Blackwell's theorem translates between them.
 -/
 
 /-- The unified view: QUD and DT semantics are equivalent for partitions. -/

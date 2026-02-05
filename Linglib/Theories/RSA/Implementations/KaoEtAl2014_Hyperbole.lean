@@ -383,11 +383,11 @@ def allGoals : List Goal := [.price, .valence, .priceValence, .approxPrice, .app
 
 /-- All price states for a given item -/
 def allPricesForItem (item : Item) : List Price :=
-  allPriceLevels.map fun p => { item := item, price := p }
+  allPriceLevels.map λ p => { item := item, price := p }
 
 /-- All meanings for a given item -/
 def allMeaningsForItem (item : Item) : List Meaning :=
-  (allPricesForItem item).flatMap fun p => allAffects.map fun a => (p, a)
+  (allPricesForItem item).flatMap λ p => allAffects.map λ a => (p, a)
 
 -- For the main scenario, we focus on electric kettles (where hyperbole is most striking)
 def allPrices : List Price := allPricesForItem .electricKettle
@@ -404,7 +404,7 @@ def goalPrior : Goal → ℚ
   | .approxPriceValence => 2
 
 /-- Uniform goal prior for strict scenario -/
-def uniformGoalPrior : Goal → ℚ := fun _ => 1
+def uniformGoalPrior : Goal → ℚ := λ _ => 1
 
 -- Compute Distributions
 
@@ -413,24 +413,24 @@ def kettle (p : PriceLevel) : Price := { item := .electricKettle, price := p }
 
 /-- L0 for a QUD scenario -/
 def qudL0 (u : Utterance) (q : Goal) : List (Meaning × ℚ) :=
-  RSA.Eval.L0 allUtterances allMeanings (fun _ _ => extendedSemantics)
-    priceAffectPrior (fun _ _ => 1) u () () () q
+  RSA.Eval.L0 allUtterances allMeanings (λ _ _ => extendedSemantics)
+    priceAffectPrior (λ _ _ => 1) u () () () q
 
 /-- S1 for a QUD scenario -/
 def qudS1 (m : Meaning) (q : Goal) : List (Utterance × ℚ) :=
-  RSA.Eval.S1 allUtterances allMeanings (fun _ _ => extendedSemantics)
-    priceAffectPrior (fun _ _ => 1) qudEquiv (fun _ => 0) 1 m () () () q
+  RSA.Eval.S1 allUtterances allMeanings (λ _ _ => extendedSemantics)
+    priceAffectPrior (λ _ _ => 1) qudEquiv (λ _ => 0) 1 m () () () q
 
 /-- L1 world distribution for QUD scenario -/
 def qudL1_world (u : Utterance) : List (Meaning × ℚ) :=
   RSA.Eval.qudL1_world allUtterances allMeanings allGoals
-    extendedSemantics priceAffectPrior goalPrior qudEquiv 1 (fun _ => 0) u
+    extendedSemantics priceAffectPrior goalPrior qudEquiv 1 (λ _ => 0) u
 
 /-- L1 goal distribution for QUD scenario -/
 def qudL1_goal (u : Utterance) : List (Goal × ℚ) :=
   RSA.Eval.L1_goal allUtterances allMeanings [()] [()] [()] allGoals
-    (fun _ _ => extendedSemantics) priceAffectPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) goalPrior
-    (fun _ _ => 1) qudEquiv (fun _ => 0) 1 u
+    (λ _ _ => extendedSemantics) priceAffectPrior (λ _ => 1) (λ _ => 1) (λ _ => 1) goalPrior
+    (λ _ _ => 1) qudEquiv (λ _ => 0) 1 u
 
 /-- L0 for "fifty dollars" -/
 def l0_fifty : List (Meaning × ℚ) := qudL0 Utterance.fifty Goal.price
@@ -510,9 +510,9 @@ correctly infers the speaker meant to convey strong affect.
 def l1_infers_affect : Bool :=
   let dist := l1_million
   -- P(annoyed | million) + P(amazed | million) > P(neutral | million)
-  let pAnnoyed := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.annoyed)) 0
-  let pAmazed := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.amazed)) 0
-  let pNeutral := allPrices.foldl (fun acc p => acc + getScore dist (p, Affect.neutral)) 0
+  let pAnnoyed := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.annoyed)) 0
+  let pAmazed := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.amazed)) 0
+  let pNeutral := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.neutral)) 0
   pAnnoyed + pAmazed > pNeutral
 
 #eval l1_infers_affect
@@ -539,16 +539,16 @@ def strictSemantics (u : Utterance) (m : Meaning) : ℚ :=
 
 /-- Under strict semantics, "million" gets zero probability -/
 def l0_million_strict : List (Meaning × ℚ) :=
-  RSA.Eval.L0 allUtterances allMeanings (fun _ _ => strictSemantics)
-    priceAffectPrior (fun _ _ => 1) Utterance.million () () () Goal.price
+  RSA.Eval.L0 allUtterances allMeanings (λ _ _ => strictSemantics)
+    priceAffectPrior (λ _ _ => 1) Utterance.million () () () Goal.price
 
 #eval l0_million_strict
 -- All zeros (million is literally false for all meanings)
 
 /-- S1 under strict semantics can't use hyperbole -/
 def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.Eval.S1 allUtterances allMeanings (fun _ _ => strictSemantics)
-    priceAffectPrior (fun _ _ => 1) qudEquiv (fun _ => 0) 1
+  RSA.Eval.S1 allUtterances allMeanings (λ _ _ => strictSemantics)
+    priceAffectPrior (λ _ _ => 1) qudEquiv (λ _ => 0) 1
     (kettle .p500, Affect.annoyed) () () () Goal.valence
 
 #eval s1_strict_p500_annoyed_affect

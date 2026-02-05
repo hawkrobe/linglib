@@ -3,7 +3,7 @@
 
 Compares NeoGricean and RSA theories using the ImplicatureTheory interface.
 
-## Key Results
+## Results
 
 ### Where Theories Agree
 - Both derive scalar implicatures for "some" (predicted baseline > 0)

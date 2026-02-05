@@ -29,7 +29,7 @@ namespace Phenomena.Gradability.ComparisonClass
 Empirical pattern: Polarity and prior expectations interact to determine
 the inferred comparison class.
 
-Key prediction:
+Prediction:
 - Positive adjective + expected property → superordinate class
   (e.g., "tall basketball player" → compared to people in general)
 - Negative adjective + expected property → subordinate class
@@ -234,7 +234,7 @@ inductive NounLevel where
 /--
 Empirical pattern: Linguistic cues dominate visual cues for comparison class.
 
-Key finding: When taxonomic label conflicts with visual context, both children
+When taxonomic label conflicts with visual context, both children
 and adults privilege the linguistic information.
 
 - "The big animal" + visual context of mice → compare to animals (linguistic wins)
@@ -299,7 +299,7 @@ def linguisticVsVisualExamples : List LinguisticVsVisualDatum :=
 /--
 Empirical pattern: Children show same linguistic > visual preference as adults.
 
-Key finding: Both 4-6 year olds and adults privilege linguistic over visual
+Both 4-6 year olds and adults privilege linguistic over visual
 information, though adults show larger subordinate selections with basic-level
 nouns (possible scalar implicature contribution).
 
@@ -396,31 +396,5 @@ def mainGeneralizations : ComparisonClassGeneralizations :=
   , developmentallyStable := true
   , rgaMoreContextSensitive := true
   }
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `PolarityExpectationsDatum`: Polarity × expectations interaction
-- `PolarityExpectationsPattern`: The systematic pattern
-- `AdjectiveTypeDatum`: RGA vs AGA distinction
-- `LinguisticVsVisualDatum`: Cue competition patterns
-- `DevelopmentalDatum`: Age-related patterns
-- `ComparisonClassGeneralizations`: Key empirical generalizations
-
-### Example Collections
-- `polarityExpectationsExamples`: 4 examples (tall/short × basketball/jockey)
-- `adjectiveTypeExamples`: 2 examples (big RGA, wet AGA)
-- `linguisticVsVisualExamples`: 2 examples (linguistic dominance)
-- `developmentalExamples`: 4 examples (adults/children × basic/superordinate)
-
-### Key References
-- Tessler & Goodman (2022): Comparison class as embedded inference
-- Weicker & Schulz (2024): Linguistic vs visual cues across development
-- Kennedy (2007): Vagueness and grammar
-- Syrett et al. (2010): Prior work on RGA/AGA acquisition
--/
 
 end Phenomena.Gradability.ComparisonClass

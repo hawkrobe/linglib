@@ -154,14 +154,14 @@ def attitudeWorlds : List BeliefWorld := [
 
 instance : Fintype StudentOutcome where
   elems := ⟨[StudentOutcome.noneO, StudentOutcome.someO, StudentOutcome.allO], by decide⟩
-  complete := fun x => by cases x <;> decide
+  complete := λ x => by cases x <;> decide
 
 instance : Fintype BeliefWorld :=
   Fintype.ofEquiv (StudentOutcome × StudentOutcome)
-    { toFun := fun ⟨a, b⟩ => ⟨a, b⟩
-      invFun := fun ⟨a, b⟩ => ⟨a, b⟩
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl }
+    { toFun := λ ⟨a, b⟩ => ⟨a, b⟩
+      invFun := λ ⟨a, b⟩ => ⟨a, b⟩
+      left_inv := λ _ => rfl
+      right_inv := λ _ => rfl }
 
 -- RSA Model
 
@@ -237,14 +237,14 @@ Both are pragmatically available.
 Worlds where global is true but local is false.
 -/
 def globalNotLocal : List BeliefWorld :=
-  attitudeWorlds.filter (fun w => believesSomeMeaning .global w && !believesSomeMeaning .local_ w)
+  attitudeWorlds.filter (λ w => believesSomeMeaning .global w && !believesSomeMeaning .local_ w)
 
 /--
 Worlds where local is true but global is false: NONE!
 Local entails global for "believes some".
 -/
 def localNotGlobal : List BeliefWorld :=
-  attitudeWorlds.filter (fun w => believesSomeMeaning .local_ w && !believesSomeMeaning .global w)
+  attitudeWorlds.filter (λ w => believesSomeMeaning .local_ w && !believesSomeMeaning .global w)
 
 #eval globalNotLocal  -- Worlds where John believes all
 #eval localNotGlobal  -- Empty: local entails global
@@ -368,7 +368,7 @@ theorem local_entails_global_grounded :
 -- Summary
 
 /-
-## Key Results
+## Results
 
 1. **Attitude verbs allow both interpretations** because neither is strictly
    more informative than the other (from the perspective of what the speaker

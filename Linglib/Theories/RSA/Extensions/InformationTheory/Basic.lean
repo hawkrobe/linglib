@@ -3,7 +3,7 @@
 
 Formalizes the information-theoretic analysis of RSA from Zaslavsky et al. (2020).
 
-## Key Results
+## Results
 
 1. **RSA as alternating maximization**: RSA optimizes G_α = H_S(U|M) + α·E[V_L]
 2. **G_α monotonicity**: G_α(S_t, L_t) ≤ G_α(S_{t+1}, L_{t+1})
@@ -72,7 +72,7 @@ H(X) = -Σ_x P(x) log P(x)
 Note: 0 log 0 is defined as 0 (standard convention).
 -/
 def entropy {α : Type} [BEq α] (dist : List (α × ℚ)) : ℚ :=
-  let terms := dist.map fun (_, p) =>
+  let terms := dist.map λ (_, p) =>
     if p ≤ 0 then 0
     else -p * log2Approx p
   terms.foldl (· + ·) 0
@@ -86,7 +86,7 @@ H(Y|X) = Σ_x P(x) H(Y|X=x)
 def conditionalEntropy {α β : Type} [BEq α] [BEq β]
     (joint : List ((α × β) × ℚ))
     (marginalX : List (α × ℚ)) : ℚ :=
-  let terms := joint.map fun ((x, _), pxy) =>
+  let terms := joint.map λ ((x, _), pxy) =>
     let px := getScore marginalX x
     if pxy ≤ 0 || px ≤ 0 then 0
     else -pxy * log2Approx (pxy / px)
@@ -108,7 +108,7 @@ KL divergence D_KL(P || Q) = Σ_x P(x) log(P(x)/Q(x)).
 -/
 def klDivergence {α : Type} [BEq α]
     (p : List (α × ℚ)) (q : List (α × ℚ)) : ℚ :=
-  let terms := p.map fun (x, px) =>
+  let terms := p.map λ (x, px) =>
     let qx := getScore q x
     if px ≤ 0 then 0
     else if qx ≤ 0 then 1000  -- Infinity approximation for undefined KL
@@ -129,7 +129,7 @@ def speakerEntropy (S : RSA.RSAScenarioQ)
   -- Use first interp and QUD (for basic scenarios these are Unit)
   match S.interps, S.quds with
   | i :: _, q :: _ =>
-    let terms := worldPrior.map fun (w, pw) =>
+    let terms := worldPrior.map λ (w, pw) =>
       let s1Dist := speaker w i q
       pw * entropy s1Dist
     terms.foldl (· + ·) 0
@@ -159,9 +159,9 @@ def expectedListenerUtility (S : RSA.RSAScenarioQ)
     (worldPrior : List (S.World × ℚ)) : ℚ :=
   match S.interps, S.quds with
   | i :: _, q :: _ =>
-    let terms := worldPrior.flatMap fun (m, pm) =>
+    let terms := worldPrior.flatMap λ (m, pm) =>
       let s1 := speaker m i q
-      s1.map fun (u, su) =>
+      s1.map λ (u, su) =>
         let vl := listenerUtility S listener u m
         pm * su * vl
     terms.foldl (· + ·) 0
@@ -191,7 +191,7 @@ def G_alpha (S : RSA.RSAScenarioQ) (α : ℚ)
 Build the world prior distribution from an RSAScenario.
 -/
 def worldPriorDist (S : RSA.RSAScenarioQ) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w => (w, S.worldPrior w)
+  let scores := S.worlds.map λ w => (w, S.worldPrior w)
   normalize scores
 
 /--
@@ -200,8 +200,8 @@ G_α using the S1 speaker and L1 listener from an RSAScenarioQ.
 This extracts the implicit G_α value that the standard RSA dynamics optimize.
 -/
 def G_alpha_RSA (S : RSA.RSAScenarioQ) (α : ℚ) : ℚ :=
-  let speaker := fun w i q => RSA.Q.S1Q S w i q
-  let listener := fun u => RSA.Q.L1Q_world S u
+  let speaker := λ w i q => RSA.Q.S1Q S w i q
+  let listener := λ u => RSA.Q.L1Q_world S u
   let prior := worldPriorDist S
   G_alpha S α speaker listener prior
 
@@ -246,11 +246,11 @@ Note: Uses first available interpretation and QUD.
 -/
 def initDynamics (S : RSA.RSAScenarioQ) : RSADynamics S where
   iteration := 0
-  speaker := fun _ => normalize (S.utterances.map fun u => (u, 1))
-  listener := fun u =>
+  speaker := λ _ => normalize (S.utterances.map λ u => (u, 1))
+  listener := λ u =>
     match S.interps with
     | i :: _ => RSA.Q.L0Q S u i
-    | [] => normalize (S.worlds.map fun w => (w, 1))  -- Uniform fallback
+    | [] => normalize (S.worlds.map λ w => (w, 1))  -- Uniform fallback
 
 /--
 One step of RSA dynamics.
@@ -260,15 +260,15 @@ S_{t+1}(u|m) ∝ L_{t+1}(m|u)^α
 -/
 def stepDynamics (S : RSA.RSAScenarioQ) (d : RSADynamics S) : RSADynamics S :=
   -- New listener: L_{t+1}(m|u) ∝ P(m) S_t(u|m)
-  let newListener := fun u =>
-    let scores := S.worlds.map fun m =>
+  let newListener := λ u =>
+    let scores := S.worlds.map λ m =>
       let prior := S.worldPrior m
       let su := getScore (d.speaker m) u
       (m, prior * su)
     normalize scores
   -- New speaker: S_{t+1}(u|m) ∝ L_{t+1}(m|u)^α
-  let newSpeaker := fun m =>
-    let scores := S.utterances.map fun u =>
+  let newSpeaker := λ m =>
+    let scores := S.utterances.map λ u =>
       let lm := getScore (newListener u) m
       (u, RationalPower.powApprox lm S.α S.precision)
     normalize scores
@@ -280,13 +280,13 @@ def stepDynamics (S : RSA.RSAScenarioQ) (d : RSADynamics S) : RSADynamics S :=
 Run RSA dynamics for n iterations.
 -/
 def runDynamics (S : RSA.RSAScenarioQ) (n : Nat) : RSADynamics S :=
-  (List.range n).foldl (fun d _ => stepDynamics S d) (initDynamics S)
+  (List.range n).foldl (λ d _ => stepDynamics S d) (initDynamics S)
 
 /--
 G_α value at a given dynamics state.
 -/
 def G_alpha_at (S : RSA.RSAScenarioQ) (α : ℚ) (d : RSADynamics S) : ℚ :=
-  let speaker := fun w _ _ => d.speaker w
+  let speaker := λ w _ _ => d.speaker w
   let prior := worldPriorDist S
   G_alpha S α speaker d.listener prior
 
@@ -295,7 +295,7 @@ def G_alpha_at (S : RSA.RSAScenarioQ) (α : ℚ) (d : RSADynamics S) : ℚ :=
 Expected listener utility at a given dynamics state.
 -/
 def E_VL_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
-  let speaker := fun w _ _ => d.speaker w
+  let speaker := λ w _ _ => d.speaker w
   let prior := worldPriorDist S
   expectedListenerUtility S speaker d.listener prior
 
@@ -303,7 +303,7 @@ def E_VL_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
 Speaker entropy at a given dynamics state.
 -/
 def H_S_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
-  let speaker := fun w _ _ => d.speaker w
+  let speaker := λ w _ _ => d.speaker w
   let prior := worldPriorDist S
   speakerEntropy S speaker prior
 
@@ -312,7 +312,7 @@ def H_S_at (S : RSA.RSAScenarioQ) (d : RSADynamics S) : ℚ :=
 Trace G_α over iterations.
 -/
 def traceG_alpha (S : RSA.RSAScenarioQ) (α : ℚ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runDynamics S n
     (n, G_alpha_at S α d)
 
@@ -320,7 +320,7 @@ def traceG_alpha (S : RSA.RSAScenarioQ) (α : ℚ) (maxIter : Nat) : List (Nat �
 Trace E[V_L] over iterations.
 -/
 def traceE_VL (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runDynamics S n
     (n, E_VL_at S d)
 
@@ -330,7 +330,7 @@ Check if G_α is monotonically increasing over iterations.
 def isMonotoneG_alpha (S : RSA.RSAScenarioQ) (α : ℚ) (maxIter : Nat) : Bool :=
   let trace := traceG_alpha S α maxIter
   let pairs := trace.zip trace.tail
-  pairs.all fun ((_, g1), (_, g2)) => g1 ≤ g2
+  pairs.all λ ((_, g1), (_, g2)) => g1 ≤ g2
 
 /--
 Check if E[V_L] is monotonically increasing over iterations.
@@ -338,7 +338,7 @@ Check if E[V_L] is monotonically increasing over iterations.
 def isMonotoneE_VL (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceE_VL S maxIter
   let pairs := trace.zip trace.tail
-  pairs.all fun ((_, v1), (_, v2)) => v1 ≤ v2
+  pairs.all λ ((_, v1), (_, v2)) => v1 ≤ v2
 
 
 /--
@@ -361,11 +361,11 @@ Uses uniform speaker distribution (maximal entropy).
 -/
 def initDynamicsQ (S : RSA.RSAScenarioQ) : RSADynamicsQ S where
   iteration := 0
-  speaker := fun _ => normalize (S.utterances.map fun u => (u, 1))
-  listener := fun u =>
+  speaker := λ _ => normalize (S.utterances.map λ u => (u, 1))
+  listener := λ u =>
     match S.interps with
     | i :: _ => RSA.Q.L0Q S u i
-    | [] => normalize (S.worlds.map fun w => (w, 1))
+    | [] => normalize (S.worlds.map λ w => (w, 1))
 
 /--
 One step of RSA dynamics with rational α.
@@ -378,14 +378,14 @@ This order is crucial for utility non-monotonicity (Prop 2).
 -/
 def stepDynamicsQ (S : RSA.RSAScenarioQ) (d : RSADynamicsQ S) : RSADynamicsQ S :=
   -- Step 1: New speaker from OLD listener: S_t(u|m) ∝ L_{t-1}(m|u)^α
-  let newSpeaker := fun m =>
-    let scores := S.utterances.map fun u =>
+  let newSpeaker := λ m =>
+    let scores := S.utterances.map λ u =>
       let lm := getScore (d.listener u) m  -- Use OLD listener
       (u, RationalPower.powApprox lm S.α S.precision)
     normalize scores
   -- Step 2: New listener from NEW speaker: L_t(m|u) ∝ P(m) S_t(u|m)
-  let newListener := fun u =>
-    let scores := S.worlds.map fun m =>
+  let newListener := λ u =>
+    let scores := S.worlds.map λ m =>
       let prior := S.worldPrior m
       let su := getScore (newSpeaker m) u  -- Use NEW speaker
       (m, prior * su)
@@ -398,7 +398,7 @@ def stepDynamicsQ (S : RSA.RSAScenarioQ) (d : RSADynamicsQ S) : RSADynamicsQ S :
 Run RSA dynamics for n iterations with rational α.
 -/
 def runDynamicsQ (S : RSA.RSAScenarioQ) (n : Nat) : RSADynamicsQ S :=
-  (List.range n).foldl (fun d _ => stepDynamicsQ S d) (initDynamicsQ S)
+  (List.range n).foldl (λ d _ => stepDynamicsQ S d) (initDynamicsQ S)
 
 /--
 Initialize RSA dynamics from lexicon values (NOT maximal entropy).
@@ -413,22 +413,22 @@ conditional entropy" - but the counterexample needs lower initial entropy.
 def initFromLexiconQ (S : RSA.RSAScenarioQ) : RSADynamicsQ S where
   iteration := 0
   -- Speaker initialized from lexicon: S_0(u|m) ∝ φ(u,m)
-  speaker := fun m =>
+  speaker := λ m =>
     match S.interps with
     | i :: _ =>
-      let scores := S.utterances.map fun u => (u, S.φ i u m)
+      let scores := S.utterances.map λ u => (u, S.φ i u m)
       normalize scores
-    | [] => normalize (S.utterances.map fun u => (u, 1))
+    | [] => normalize (S.utterances.map λ u => (u, 1))
   -- Listener from Bayes: L_0(m|u) ∝ P(m) S_0(u|m)
-  listener := fun u =>
+  listener := λ u =>
     match S.interps with
     | i :: _ =>
-      let scores := S.worlds.map fun m =>
+      let scores := S.worlds.map λ m =>
         let prior := S.worldPrior m
         let phiVal := S.φ i u m
         (m, prior * phiVal)
       normalize scores
-    | [] => normalize (S.worlds.map fun w => (w, 1))
+    | [] => normalize (S.worlds.map λ w => (w, 1))
 
 /--
 Run RSA dynamics for n iterations starting from LEXICON (not uniform).
@@ -436,13 +436,13 @@ Run RSA dynamics for n iterations starting from LEXICON (not uniform).
 This initialization is required for utility non-monotonicity (Prop 2).
 -/
 def runFromLexiconQ (S : RSA.RSAScenarioQ) (n : Nat) : RSADynamicsQ S :=
-  (List.range n).foldl (fun d _ => stepDynamicsQ S d) (initFromLexiconQ S)
+  (List.range n).foldl (λ d _ => stepDynamicsQ S d) (initFromLexiconQ S)
 
 /--
 Build the world prior distribution from an RSAScenarioQ.
 -/
 def worldPriorDistQ (S : RSA.RSAScenarioQ) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w => (w, S.worldPrior w)
+  let scores := S.worlds.map λ w => (w, S.worldPrior w)
   normalize scores
 
 /--
@@ -451,7 +451,7 @@ Speaker entropy at a given dynamics state (for RSAScenarioQ).
 def speakerEntropyQ (S : RSA.RSAScenarioQ)
     (speaker : S.World → List (S.Utterance × ℚ))
     (worldPrior : List (S.World × ℚ)) : ℚ :=
-  let terms := worldPrior.map fun (w, pw) =>
+  let terms := worldPrior.map λ (w, pw) =>
     let s1Dist := speaker w
     pw * entropy s1Dist
   terms.foldl (· + ·) 0
@@ -463,9 +463,9 @@ def expectedListenerUtilityQ (S : RSA.RSAScenarioQ)
     (speaker : S.World → List (S.Utterance × ℚ))
     (listener : S.Utterance → List (S.World × ℚ))
     (worldPrior : List (S.World × ℚ)) : ℚ :=
-  let terms := worldPrior.flatMap fun (m, pm) =>
+  let terms := worldPrior.flatMap λ (m, pm) =>
     let s1 := speaker m
-    s1.map fun (u, su) =>
+    s1.map λ (u, su) =>
       let lm := getScore (listener u) m
       let vl := if lm ≤ 0 then -1000 else log2Approx lm
       pm * su * vl
@@ -499,7 +499,7 @@ def H_S_at_Q (S : RSA.RSAScenarioQ) (d : RSADynamicsQ S) : ℚ :=
 Trace G_α over iterations for RSAScenarioQ.
 -/
 def traceG_alpha_Q (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runDynamicsQ S n
     (n, G_alpha_at_Q S d)
 
@@ -507,7 +507,7 @@ def traceG_alpha_Q (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
 Trace E[V_L] over iterations for RSAScenarioQ.
 -/
 def traceE_VL_Q (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runDynamicsQ S n
     (n, E_VL_at_Q S d)
 
@@ -517,7 +517,7 @@ Check if G_α is monotonically increasing over iterations for RSAScenarioQ.
 def isMonotoneG_alpha_Q (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceG_alpha_Q S maxIter
   let pairs := trace.zip trace.tail
-  pairs.all fun ((_, g1), (_, g2)) => g1 ≤ g2
+  pairs.all λ ((_, g1), (_, g2)) => g1 ≤ g2
 
 /--
 Check if E[V_L] is monotonically increasing over iterations for RSAScenarioQ.
@@ -525,7 +525,7 @@ Check if E[V_L] is monotonically increasing over iterations for RSAScenarioQ.
 def isMonotoneE_VL_Q (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceE_VL_Q S maxIter
   let pairs := trace.zip trace.tail
-  pairs.all fun ((_, v1), (_, v2)) => v1 ≤ v2
+  pairs.all λ ((_, v1), (_, v2)) => v1 ≤ v2
 
 /--
 Check if E[V_L] has a strict decrease at some iteration for RSAScenarioQ.
@@ -534,7 +534,7 @@ Returns true if there exists an iteration where E[V_L] decreases.
 def hasUtilityDecrease (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceE_VL_Q S maxIter
   let pairs := trace.zip trace.tail
-  pairs.any fun ((_, v1), (_, v2)) => v2 < v1
+  pairs.any λ ((_, v1), (_, v2)) => v2 < v1
 
 
 /--
@@ -544,7 +544,7 @@ This is required for Zaslavsky et al. (2020) Proposition 2:
 utility non-monotonicity only occurs from non-maximal entropy starts.
 -/
 def traceE_VL_fromLexicon (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runFromLexiconQ S n
     (n, E_VL_at_Q S d)
 
@@ -552,7 +552,7 @@ def traceE_VL_fromLexicon (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × 
 Trace G_α over iterations starting from LEXICON initialization.
 -/
 def traceG_alpha_fromLexicon (S : RSA.RSAScenarioQ) (maxIter : Nat) : List (Nat × ℚ) :=
-  (List.range (maxIter + 1)).map fun n =>
+  (List.range (maxIter + 1)).map λ n =>
     let d := runFromLexiconQ S n
     (n, G_alpha_at_Q S d)
 
@@ -564,7 +564,7 @@ This is the key test for Zaslavsky et al. (2020) Proposition 2.
 def hasUtilityDecreaseFromLexicon (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceE_VL_fromLexicon S maxIter
   let pairs := trace.zip trace.tail
-  pairs.any fun ((_, v1), (_, v2)) => v2 < v1
+  pairs.any λ ((_, v1), (_, v2)) => v2 < v1
 
 /--
 Check if G_α is monotone starting from LEXICON initialization.
@@ -573,6 +573,6 @@ Should be true for all α ≥ 0 (Equation 9 in Zaslavsky et al.).
 def isMonotoneG_alpha_fromLexicon (S : RSA.RSAScenarioQ) (maxIter : Nat) : Bool :=
   let trace := traceG_alpha_fromLexicon S maxIter
   let pairs := trace.zip trace.tail
-  pairs.all fun ((_, g1), (_, g2)) => g1 ≤ g2
+  pairs.all λ ((_, g1), (_, g2)) => g1 ≤ g2
 
 end RSA.InformationTheory

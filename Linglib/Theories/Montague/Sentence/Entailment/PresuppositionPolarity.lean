@@ -3,7 +3,7 @@
 
 Connects presupposition projection to the existing polarity infrastructure.
 
-## Key Insight
+## Insight
 
 Context polarity (upward/downward entailing) affects presupposition projection:
 - In UE contexts: presuppositions project normally
@@ -64,7 +64,7 @@ def presupSatisfiedAt (p : PrProp W) (w : W) : Prop :=
 
 
 /--
-**Key Theorem**: Filtering is independent of assertion polarity.
+Filtering is independent of assertion polarity.
 
 When computing presupposition projection for filtering connectives,
 the presupposition formula (p.presup && (!p.assertion || q.presup))
@@ -112,10 +112,10 @@ def composePresupContext (outer inner : PresupContext W) : PresupContext W :=
       | .upward, .upward => .upward
       | .upward, .downward => .downward
       | .downward, .upward => .downward
-      | .downward, .downward => .upward  -- Key: DE ∘ DE = UE!
+      | .downward, .downward => .upward  -- DE ∘ DE = UE
       | .nonMonotonic, _ => .nonMonotonic
       | _, .nonMonotonic => .nonMonotonic
-  , accumulatedPresup := fun w => outer.accumulatedPresup w && inner.accumulatedPresup w
+  , accumulatedPresup := λ w => outer.accumulatedPresup w && inner.accumulatedPresup w
   }
 
 /--
@@ -124,7 +124,7 @@ The identity presupposition context.
 def identityPresupContext : PresupContext W :=
   { context := id
   , polarity := .upward
-  , accumulatedPresup := fun _ => true
+  , accumulatedPresup := λ _ => true
   }
 
 /--
@@ -133,7 +133,7 @@ Negation context: flips polarity, preserves presupposition.
 def negationPresupContext : PresupContext W :=
   { context := pnot
   , polarity := .downward
-  , accumulatedPresup := fun _ => true
+  , accumulatedPresup := λ _ => true
   }
 
 
@@ -152,28 +152,5 @@ inductive QuantifierProjection where
   | none        -- no projection (presupposition failure)
   deriving DecidableEq, Repr
 
-
-/-
-## What This Module Provides
-
-### Basic Functions
-- `presupProjectsAt`: Get projected presupposition at a polarity
-- `presupSatisfiedAt`: Check if presupposition holds
-
-### Context Composition
-- `PresupContext`: Tracks polarity + accumulated presupposition
-- `composePresupContext`: Compose contexts
-- `identityPresupContext`, `negationPresupContext`: Basic contexts
-
-### Key Theorems
-- `impFilter_presup_polarity_independent`: Filtering doesn't depend on polarity
-- `neg_presup_polarity_independent`: Negation preserves presupposition
-
-### Connection to Other Modules
-- Uses `ContextPolarity` from `Core.Polarity`
-- Uses `Prop'`, `pnot` from `Entailment.Polarity`
-- Uses `PrProp` from `Core.Presupposition`
-- Parallels `GroundedPolarity` for presupposition contexts
--/
 
 end Montague.Sentence.Entailment.PresuppositionPolarity

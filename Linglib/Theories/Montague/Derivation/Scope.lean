@@ -75,8 +75,8 @@ def toAvailableScopes (configs : List ScopeConfig) (op1 op2 : String) : Availabl
 /--
 A derivation that can be interpreted under multiple scope readings.
 
-The key insight is that the SAME syntactic derivation can yield
-DIFFERENT semantic values depending on scope resolution.
+The same syntactic derivation can yield different semantic values
+depending on scope resolution.
 -/
 structure ScopeDerivation (m : Model) (τ : Ty) where
   /-- Surface form (string representation) -/
@@ -136,37 +136,6 @@ def allQNScopes : List QNScope := [.forallNeg, .negForall]
 def scopeYieldsTrue {m : Model}
     (d : ScopeDerivation m .t) (s : ScopeConfig) : Bool :=
   d.meaningAt s
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Types
-- `ScopeConfig`: General binary scope (surface/inverse)
-- `QNScope`: Quantifier-negation specific (∀>¬ vs ¬>∀)
-- `ScopeDerivation`: Derivation with scope-parameterized meaning (fixed model)
-- `ScopedForm`: Form with available scope readings (for interface)
-
-### Interface Implementation
-
-Implements `ScopeTheory.HasAvailableScopes` typeclass:
-- `MontagueScopeTheory`: Marker type for the instance
-- `ScopedForm.toAvailableScopes`: Get abstract scope readings
-- `ScopeConfig.toScopeReading`: Convert to abstract ScopeReading
-
-### Key Functions
-- `toQNScope`: Convert general config to QN-specific
-- `ScopeDerivation.allMeanings`: Get all scope readings
-
-### Architecture
-
-This module handles **scope availability** only:
-- What readings are possible for a form
-
-World-parametric meaning (truth conditions as function of world state)
-is handled in `RSA/` where it's used for pragmatic inference.
--/
 
 end Montague.Derivation.Scope
 

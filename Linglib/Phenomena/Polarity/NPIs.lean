@@ -716,17 +716,17 @@ Local RSA derives NPI effects from polarity-sensitive informativity:
 -- Tests for Generalizations
 
 -- Weak NPIs licensed in all DE contexts
-#guard anyData.filter (fun d => d.grammatical)
-      |>.all (fun d => d.context.isSome)
+#guard anyData.filter (λ d => d.grammatical)
+      |>.all (λ d => d.context.isSome)
 
 -- Strong NPIs not licensed by merely-DE "few"
-#guard strongNPIData.filter (fun d => d.npiItem == "lift a finger" || d.npiItem == "in years")
-      |>.filter (fun d => d.context == some .fewNP)
-      |>.all (fun d => !d.grammatical)
+#guard strongNPIData.filter (λ d => d.npiItem == "lift a finger" || d.npiItem == "in years")
+      |>.filter (λ d => d.context == some .fewNP)
+      |>.all (λ d => !d.grammatical)
 
 -- Strong NPIs licensed by anti-additive "without"
-#guard strongNPIData.filter (fun d => d.context == some .withoutClause)
-      |>.all (fun d => d.grammatical)
+#guard strongNPIData.filter (λ d => d.context == some .withoutClause)
+      |>.all (λ d => d.grammatical)
 
 
 /-!
@@ -874,7 +874,7 @@ def nwordExamples : List NWord :=
   [nessuno, niente, nessdue_hypothetical, nessmost_hypothetical, nadie, nada]
 
 -- Scale-minimality predicts N-word existence
-#guard nwordExamples.all (fun nw =>
+#guard nwordExamples.all (λ nw =>
   (nw.baseScalePosition == .minimal) == nw.isRealNWord)
 
 -- ----------------------------------------------------------------------------
@@ -946,7 +946,7 @@ def neancheExamples : List NeancheExample :=
   [neanche_uno, neanche_due_bad, neanche_due_ok, neanche_dieci_bad, neanche_dieci_ok]
 
 -- Grammaticality tracks contextual minimality
-#guard neancheExamples.all (fun ex =>
+#guard neancheExamples.all (λ ex =>
   ex.grammatical == ex.contextuallyMinimal)
 
 -- ----------------------------------------------------------------------------

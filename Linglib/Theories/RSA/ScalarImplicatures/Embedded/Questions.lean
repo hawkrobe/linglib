@@ -63,7 +63,7 @@ inductive StudentResult where
 
 instance : Fintype StudentResult where
   elems := ⟨[StudentResult.noneP, StudentResult.someP, StudentResult.allP], by decide⟩
-  complete := fun x => by cases x <;> decide
+  complete := λ x => by cases x <;> decide
 
 /--
 Worlds represent the actual state of affairs.
@@ -297,7 +297,7 @@ def questionIsUnique : QuestionUniqueness where
 -- Summary
 
 /-
-## Key Results
+## Results
 
 1. **Global preferred in questions**: Like DE contexts but different reason.
 

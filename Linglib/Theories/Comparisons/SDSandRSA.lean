@@ -5,7 +5,7 @@ This module establishes the correspondence between:
 - **SDS**: Situation Description Systems (Erk & Herbelot 2024)
 - **LU-RSA**: Lexical Uncertainty RSA (Bergen et al. 2016)
 
-## Key Insight
+## Insight
 
 SDS concept disambiguation is structurally equivalent to LU-RSA lexicon inference.
 
@@ -160,8 +160,8 @@ Product of Experts: multiplicative combination of distributions.
 -/
 def productOfExperts {α : Type} (p₁ p₂ : α → ℚ) (support : List α) : α → ℚ :=
   let unnorm a := p₁ a * p₂ a
-  let Z := support.foldl (fun acc a => acc + unnorm a) 0
-  fun a => if Z = 0 then 0 else unnorm a / Z
+  let Z := support.foldl (λ acc a => acc + unnorm a) 0
+  λ a => if Z = 0 then 0 else unnorm a / Z
 
 /--
 Linear combination: interpolation of utilities.
@@ -313,7 +313,7 @@ L₁(w, L | u) ∝ S₁(u | w, L) × P(L) × P(w)
 | P_scen(c \| frame) | P(w) (world prior, frame-dependent) |
 | Product combination | Marginalization over L and w |
 
-### Key Insight
+### Insight
 
 SDS's Product of Experts over (selectional × scenario) corresponds to
 LU-RSA's joint inference over (lexicon × world) with structured priors.
@@ -463,7 +463,7 @@ def factoredLexiconPrior (C : Type) (sel scen : C → ℚ) (support : List C) : 
 Find the element with maximum value according to a scoring function.
 -/
 def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
-  xs.foldl (fun acc x =>
+  xs.foldl (λ acc x =>
     match acc with
     | none => some x
     | some best => if f x > f best then some x else some best

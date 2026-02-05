@@ -23,7 +23,7 @@ from combinatory logic. This module formalizes that correspondence.
 | Backward type-raise| T          | X → T\(T/X)                      |
 | Forward crossing   | S          | (X/Y)/Z + Y/Z → X/Z              |
 
-## Key Results from Chapter 8
+## Results from Chapter 8
 
 - **T = CI**: Type-raising equals C applied to Identity
 - **C from B and T**: The Cardinal is definable from Bluebird and Thrush
@@ -57,7 +57,7 @@ In CCG, this corresponds to forward and backward composition.
 Semantically: compose two functions.
 -/
 def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
-  fun x => f (g x)
+  λ x => f (g x)
 
 /--
 **The T Combinator (Type-Raising / Flip)**
@@ -68,7 +68,7 @@ In CCG, this corresponds to type-raising.
 Semantically: turn an argument into something that takes a function.
 -/
 def T {α β : Type} (x : α) : (α → β) → β :=
-  fun f => f x
+  λ f => f x
 
 /--
 **The S Combinator (Substitution)**
@@ -79,7 +79,7 @@ In CCG, this corresponds to crossed composition (less common).
 Semantically: apply f to x, apply g to x, then apply the result of f to the result of g.
 -/
 def S {α β γ : Type} (f : α → β → γ) (g : α → β) : α → γ :=
-  fun x => f x (g x)
+  λ x => f x (g x)
 
 /--
 **The I Combinator (Identity)**
@@ -89,7 +89,7 @@ I x = x
 The identity function. In CCG, this is implicit in lexical lookup.
 -/
 def I {α : Type} : α → α :=
-  fun x => x
+  λ x => x
 
 /--
 **The K Combinator (Constant)**
@@ -99,7 +99,7 @@ K x y = x
 Not directly used in standard CCG, but completes the SK basis.
 -/
 def K {α β : Type} (x : α) : β → α :=
-  fun _ => x
+  λ _ => x
 
 /--
 **The C Combinator (Commutation/Cardinal)**
@@ -155,7 +155,7 @@ theorem T_eq_CI {α β : Type} (x : α) :
 The C combinator applied to identity gives type-raising.
 -/
 theorem CI_is_T {α β : Type} :
-    (fun x => @C (α → β) α β (@I (α → β)) x) = @T α β := by
+    (λ x => @C (α → β) α β (@I (α → β)) x) = @T α β := by
   ext x f
   rfl
 
@@ -254,7 +254,7 @@ theorem fcomp_is_B {m : Model} {x y z : Cat}
     (f_sem : m.interpTy (catToTy (x.rslash y)))
     (g_sem : m.interpTy (catToTy (y.rslash z))) :
     -- The semantics of forward composition is B
-    (fun arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
+    (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
 /--
 Forward composition type verification.
@@ -280,7 +280,7 @@ semantic operation is still B (composition).
 theorem bcomp_is_B {m : Model} {x y z : Cat}
     (g_sem : m.interpTy (catToTy (y.lslash z)))
     (f_sem : m.interpTy (catToTy (x.lslash y))) :
-    (fun arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
+    (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
 -- Type-Raising Corresponds to T
 
@@ -299,7 +299,7 @@ allowing it to combine with quantifier-taking predicates.
 theorem type_raise_is_T {m : Model} {x t : Cat}
     (a_sem : m.interpTy (catToTy x)) :
     -- The semantics of type-raising is T
-    (fun (f : m.interpTy (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
+    (λ (f : m.interpTy (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
 
 /--
 Type-raising type verification.
@@ -337,7 +337,7 @@ then scomp(f,g) : X/Z with meaning S ⟦f⟧ ⟦g⟧ = λz.⟦f⟧(z)(⟦g⟧(z)
 theorem crossed_comp_is_S {m : Model} {x y z : Cat}
     (f_sem : m.interpTy (catToTy ((x.rslash y).rslash z)))
     (g_sem : m.interpTy (catToTy (y.rslash z))) :
-    (fun arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
+    (λ arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
 
 -- Application as a Degenerate Case
 
@@ -439,19 +439,19 @@ structure CombinatorCorrespondence where
   fapp_apply : ∀ {α β : Type} (f : α → β) (a : α), f a = f a
   /-- Forward composition is B -/
   fcomp_B : ∀ {α β γ : Type} (f : β → γ) (g : α → β) (x : α),
-    (fun z => f (g z)) x = B f g x
+    (λ z => f (g z)) x = B f g x
   /-- Type-raising is T -/
   ftr_T : ∀ {α β : Type} (a : α) (f : α → β), T a f = f a
   /-- Crossed composition is S -/
   xcomp_S : ∀ {α β γ : Type} (f : α → β → γ) (g : α → β) (x : α),
-    (fun z => f z (g z)) x = S f g x
+    (λ z => f z (g z)) x = S f g x
 
 /-- The CCG-combinator correspondence holds -/
 def ccgCombinatorCorrespondence : CombinatorCorrespondence where
-  fapp_apply := fun _ _ => rfl
-  fcomp_B := fun _ _ _ => rfl
-  ftr_T := fun _ _ => rfl
-  xcomp_S := fun _ _ _ => rfl
+  fapp_apply := λ _ _ => rfl
+  fcomp_B := λ _ _ _ => rfl
+  ftr_T := λ _ _ => rfl
+  xcomp_S := λ _ _ _ => rfl
 
 -- Steedman's Formal CCG Rules (The Syntactic Process, Chapter 3)
 
@@ -513,7 +513,7 @@ theorem steedman_B_def {α β γ : Type} (f : β → γ) (g : α → β) (x : α
 
 /-- Forward composition produces B-combined semantics -/
 theorem forward_comp_semantics {α β γ : Type} (f : β → γ) (g : α → β) :
-    B f g = fun x => f (g x) := rfl
+    B f g = λ x => f (g x) := rfl
 
 /-
 ## Backward Composition (Steedman p. 46)
@@ -526,7 +526,7 @@ The mirror image of forward composition.
 
 /-- Backward composition also uses B, just with reversed linear order -/
 theorem backward_comp_semantics {α β γ : Type} (g : α → β) (f : β → γ) :
-    B f g = fun x => f (g x) := rfl
+    B f g = λ x => f (g x) := rfl
 
 /-
 ## Generalized Composition (Steedman p. 42)
@@ -540,15 +540,15 @@ the series of combinators called B, B², B³."
 
 /-- B² combinator: composition into a binary function -/
 def B2 {α β γ δ : Type} (f : γ → δ) (g : α → β → γ) : α → β → δ :=
-  fun x y => f (g x y)
+  λ x y => f (g x y)
 
 /-- B³ combinator: composition into a ternary function -/
 def B3 {α β γ δ ε : Type} (f : δ → ε) (g : α → β → γ → δ) : α → β → γ → ε :=
-  fun x y z => f (g x y z)
+  λ x y z => f (g x y z)
 
 /-- B² is B composed with B -/
 theorem B2_is_B_B {α β γ δ : Type} (f : γ → δ) (g : α → β → γ) :
-    B2 f g = fun x => B f (g x) := rfl
+    B2 f g = λ x => B f (g x) := rfl
 
 /-
 ## Type-Raising - The T Combinator (Steedman p. 43-44)
@@ -574,7 +574,7 @@ theorem steedman_T_def {α β : Type} (x : α) (f : α → β) :
 
 /-- Type-raising turns an entity into a generalized quantifier -/
 theorem type_raise_to_gq {α β : Type} (a : α) :
-    T a = fun (f : α → β) => f a := rfl
+    T a = λ (f : α → β) => f a := rfl
 
 /-
 ## Backward Crossed Substitution - The S Combinator (Steedman p. 50-51)
@@ -602,7 +602,7 @@ theorem steedman_S_def {α β γ : Type} (f : α → β → γ) (g : α → β) 
 
 /-- S distributes the argument to both functions -/
 theorem S_distributes {α β γ : Type} (f : α → β → γ) (g : α → β) :
-    S f g = fun x => f x (g x) := rfl
+    S f g = λ x => f x (g x) := rfl
 
 /-
 ## The Complete Combinatory Rule System
@@ -756,16 +756,16 @@ structure VariableFreeSemantics where
   app_direct : ∀ {α β : Type} (f : α → β) (x : α), f x = f x
   /-- Composition uses B, not λ-abstraction -/
   comp_is_B : ∀ {α β γ : Type} (f : β → γ) (g : α → β),
-    (fun x => f (g x)) = B f g
+    (λ x => f (g x)) = B f g
   /-- Type-raising uses T, not λ-abstraction -/
   raise_is_T : ∀ {α β : Type} (x : α),
-    (fun (f : α → β) => f x) = T x
+    (λ (f : α → β) => f x) = T x
 
 /-- CCG provides variable-free semantics -/
 def ccgVariableFree : VariableFreeSemantics where
-  app_direct := fun _ _ => rfl
-  comp_is_B := fun _ _ => rfl
-  raise_is_T := fun _ => rfl
+  app_direct := λ _ _ => rfl
+  comp_is_B := λ _ _ => rfl
+  raise_is_T := λ _ => rfl
 
 /-
 ## Nesting vs. Intercalating Dependencies

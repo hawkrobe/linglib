@@ -4,9 +4,9 @@
 CCG derivations for Dutch cross-serial dependencies, proving that
 CCG correctly predicts the observed NP-verb pairings.
 
-## Key Insight
+## Insight
 
-CCG handles cross-serial dependencies via GENERALIZED COMPOSITION:
+CCG handles cross-serial dependencies via generalized composition:
 
   Forward Composition (B):   X/Y  Y/Z  →  X/Z
   Forward Composition² (B²): X/Y  Y/Z/W  →  X/Z/W
@@ -205,11 +205,11 @@ Step-by-step:
 3. Jan + (zag zwemmen Piet): NP + S\NP = S
    (Backward application: give zag its subject)
 
-The SEMANTIC bindings (cross-serial):
+The semantic bindings are cross-serial:
 - Jan is subject of "zag" (Jan saw...)
 - Piet is subject of "zwemmen" (...Piet swim)
 
-The SYNTACTIC derivation encodes this: Jan combines with the matrix,
+The syntactic derivation encodes this: Jan combines with the matrix,
 Piet combines with the embedded (via the argument passed through composition).
 -/
 
@@ -262,7 +262,7 @@ def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
 For 3-verb cross-serial "Jan Piet Marie zag helpen zwemmen"
 (Jan saw Piet help Marie swim):
 
-**The Challenge**: We need all 3 NPs to bind with their respective verbs:
+We need all 3 NPs to bind with their respective verbs:
 - Jan → zag (Jan saw...)
 - Piet → helpen (Piet help...)
 - Marie → zwemmen (Marie swim)
@@ -271,7 +271,7 @@ This requires B² (generalized composition) to thread multiple arguments through
 Standard B composition only adds ONE extra argument slot, but 3-verb cross-serial
 needs TWO extra slots.
 
-**Steedman's Solution** (Chapter 6): Use B² and carefully chosen categories:
+Steedman (Chapter 6) uses B² and carefully chosen categories:
 - Type-raise each NP into its respective domain
 - Use B² to thread argument slots through composition
 
@@ -301,7 +301,7 @@ def jan_piet_marie_zag_helpen_zwemmen_deriv : ExtDerivStep :=
 /--
 Derivation for "Jan Piet Marie zag helpen zwemmen".
 
-**Note**: The full cross-serial derivation for 3+ verbs requires B² (generalized
+The full cross-serial derivation for 3+ verbs requires B² (generalized
 composition) with carefully chosen categories. This simplified derivation produces
 category S but doesn't use all NPs.
 
@@ -373,7 +373,7 @@ theorem ccg_predicts_dutch_pattern :
 The cross-serial language {aⁿbⁿcⁿ | n ≥ 1} is NOT context-free.
 
 CCG can generate this via generalized composition, proving
-CCG is MILDLY CONTEXT-SENSITIVE.
+CCG is mildly context-sensitive.
 -/
 def crossSerialLanguage (n : Nat) : List String :=
   List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"
@@ -393,42 +393,11 @@ CCG can generate both:
 - Cross-serial (Dutch) via generalized composition
 - Nested (German) via standard composition
 
-This is the "right" level of power for natural language.
+CCG occupies the mildly context-sensitive level of the Chomsky hierarchy.
 -/
 theorem ccg_handles_both_patterns :
     crossSerialRequires = .mildlyContextSensitive ∧
     nestedRequires = .contextFree := by
   constructor <;> rfl
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Generalized Composition Rules
-- `forwardComp2` (B²): X/Y (Y/Z)/W → (X/Z)/W
-- `forwardComp3` (B³): X/Y ((Y/Z)/W)/V → ((X/Z)/W)/V
-
-### Dutch Lexicon
-- Perception verbs: "zag" (saw) : (S\NP)/VP
-- Control verbs: "helpen", "laten" : VP/VP
-- Infinitives: "zwemmen" : VP
-
-### Key Theorems
-- `ccg_produces_crossSerial_2`: 2-NP case matches data
-- `ccg_produces_crossSerial_3`: 3-NP case matches data
-- `ccg_is_mildly_context_sensitive`: CCG > CFG
-- `ccg_handles_both_patterns`: CCG handles Dutch AND German
-
-### The Core Insight
-
-CCG's generalized composition allows arguments to be "threaded through"
-multiple verbs, naturally producing cross-serial dependencies.
-
-This is exactly the power needed for natural language:
-- More than CFG (handles Dutch)
-- Less than full CSG (polynomial parsing)
-- = MILDLY CONTEXT-SENSITIVE
--/
 
 end CCG.CrossSerial

@@ -250,7 +250,7 @@ theorem gqPrag_ptLit_agree_half :
 /-- Production distribution across all world states for a given model -/
 def productionProfile (speaker : WorldState → List (QuantityWord × ℚ))
     (m : QuantityWord) : List (WorldState × ℚ) :=
-  allWorlds.map fun t => (t, getScore (speaker t) m)
+  allWorlds.map λ t => (t, getScore (speaker t) m)
 
 -- Production profiles for "some"
 #eval! productionProfile gqLit .some_   -- step function at t=1

@@ -84,8 +84,8 @@ instance : BEq PriceAffect := instBEqProd
 
 /-- All Price × Affect worlds -/
 def allPriceAffect : List PriceAffect :=
-  [Price.low, .medium, .high].flatMap fun p =>
-    [Affect.neutral, .annoyed, .amazed].map fun a => (p, a)
+  [Price.low, .medium, .high].flatMap λ p =>
+    [Affect.neutral, .annoyed, .amazed].map λ a => (p, a)
 
 /-- QUD for Price × Affect domain -/
 inductive PriceAffectQUD where
@@ -168,9 +168,9 @@ structure QUDScenario where
   /-- QUD projection -/
   project : QUD → World → World → Bool
   /-- World prior -/
-  worldPrior : World → ℚ := fun _ => 1
+  worldPrior : World → ℚ := λ _ => 1
   /-- QUD prior -/
-  qudPrior : QUD → ℚ := fun _ => 1
+  qudPrior : QUD → ℚ := λ _ => 1
   /-- BEq instances -/
   [uttBEq : BEq Utterance]
   [worldBEq : BEq World]
@@ -180,27 +180,27 @@ attribute [instance] QUDScenario.uttBEq QUDScenario.worldBEq QUDScenario.qudBEq
 
 /-- L1 world distribution for QUD scenario -/
 def QUDScenario.L1_world (S : QUDScenario) (u : S.Utterance) : List (S.World × ℚ) :=
-  let φ := fun _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
+  let φ := λ _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
   RSA.Eval.L1_world S.utterances S.worlds [()] [()] [()] S.quds
-    φ S.worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) S.qudPrior
-    (fun _ _ => 1) (fun q w w' => S.project q w w') (fun _ => 0) 1 u
+    φ S.worldPrior (λ _ => 1) (λ _ => 1) (λ _ => 1) S.qudPrior
+    (λ _ _ => 1) (λ q w w' => S.project q w w') (λ _ => 0) 1 u
 
 /-- L1 QUD distribution for QUD scenario -/
 def QUDScenario.L1_qud (S : QUDScenario) (u : S.Utterance) : List (S.QUD × ℚ) :=
-  let φ := fun _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
+  let φ := λ _ _ (u : S.Utterance) (w : S.World) => boolToRat (S.meaning w u)
   -- Full joint computation, then marginalize
-  let tuples := S.worlds.flatMap fun w =>
-    S.quds.map fun q => (w, q)
-  let scores := tuples.map fun (w, q) =>
+  let tuples := S.worlds.flatMap λ w =>
+    S.quds.map λ q => (w, q)
+  let scores := tuples.map λ (w, q) =>
     let prior := S.worldPrior w * S.qudPrior q
     let s1 := RSA.Eval.S1 S.utterances S.worlds φ S.worldPrior
-      (fun _ _ => 1) (fun q' w1 w2 => S.project q' w1 w2) (fun _ => 0) 1 w () () () q
+      (λ _ _ => 1) (λ q' w1 w2 => S.project q' w1 w2) (λ _ => 0) 1 w () () () q
     let s1Score := RSA.Eval.getScore s1 u
     ((w, q), prior * s1Score)
   let normalized := RSA.Eval.normalize scores
   -- Marginalize over worlds
-  S.quds.map fun q =>
-    let qScores := normalized.filter (fun ((_, q'), _) => q' == q) |>.map (·.2)
+  S.quds.map λ q =>
+    let qScores := normalized.filter (λ ((_, q'), _) => q' == q) |>.map (·.2)
     (q, RSA.Eval.sumScores qScores)
 
 /--
@@ -229,8 +229,8 @@ def scenario {U W Q : Type} [BEq U] [BEq W] [BEq Q]
     (quds : List Q)
     (meaning : W → U → Bool)
     (project : Q → W → W → Bool)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (qudPrior : Q → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (qudPrior : Q → ℚ := λ _ => 1)
     : QUDScenario where
   Utterance := U
   World := W
@@ -273,7 +273,7 @@ def binaryProject {D1 D2 : Type} [BEq D1] [BEq D2]
 
 /-- All worlds for binary domain -/
 def BinaryDomain.allWorlds {D1 D2 : Type} (d : BinaryDomain D1 D2) : List (D1 × D2) :=
-  d.dim1Values.flatMap fun x => d.dim2Values.map fun y => (x, y)
+  d.dim1Values.flatMap λ x => d.dim2Values.map λ y => (x, y)
 
 -- Examples
 

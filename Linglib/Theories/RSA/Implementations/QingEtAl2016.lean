@@ -4,15 +4,13 @@
 "A rational speech-act model of projective content"
 Proceedings of the Annual Meeting of the Cognitive Science Society, 38.
 
-## Key Insight
-
-The **original** formulation of the joint-inference-over-(world, context) model
+The original formulation of the joint-inference-over-(world, context) model
 for presupposition projection. Scontras & Tonhauser (2025) and Warstadt (2022)
 are mathematically equivalent instances applied to different domains.
 
 ## The Model
 
-L1 jointly infers the world state and the **context set** C (what's in the
+L1 jointly infers the world state and the context set C (what's in the
 common ground). Projection emerges because:
 
 1. "John didn't stop smoking" is under-informative in the full universe
@@ -34,7 +32,7 @@ Context sets:
 - -now: John doesn't smoke now is in CG
 - U: No constraints (full universe)
 
-## Key Predictions
+## Predictions
 
 1. "John didn't stop smoking" → P(+past ∈ C | utterance) > prior
    (presupposition projects through negation)
@@ -111,8 +109,8 @@ def allContextSets : List ContextSet := [
 /--
 World-context compatibility: Is world w compatible with context set C?
 
-This is the key constraint function that plays the same role as
-`speakerCredence` in S&T and `contextCredence` in Warstadt.
+This constraint function plays the same role as `speakerCredence` in S&T
+and `contextCredence` in Warstadt.
 -/
 def compatibleBool (c : ContextSet) (w : WorldState) : Bool :=
   match c with
@@ -230,7 +228,7 @@ def worldPrior (_w : WorldState) : ℚ := 1 / 4
 Context set prior: Following Qing et al., context sets derived from
 "natural observations" about past/now smoking have higher prior.
 
-The key assumption: complex context sets (like "change") have lower prior.
+Complex context sets (like "change") have lower prior.
 -/
 def contextPrior : ContextSet → ℚ
   | .pastTrue => 4         -- Natural observation: "John smoked"
@@ -247,17 +245,17 @@ def contextPrior : ContextSet → ℚ
 /--
 Projection strength: P(+past ∈ C | utterance, QUD)
 
-This is the key measure: how likely is it that "John smoked" is
-established in the common ground after hearing the utterance?
+How likely is it that "John smoked" is established in the common ground
+after hearing the utterance?
 -/
 def projectionOfPast (u : Utterance) (q : QUD) (α : ℕ := 6) : ℚ :=
   let contextDist := RSA.Eval.L1_beliefState_givenGoal
     allUtterances allWorlds [()] [()] allContextSets allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
-    contextCredence qudProject (fun _ => 0) α u q
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    contextCredence qudProject (λ _ => 0) α u q
   -- Sum probability of context sets that entail +past
-  contextDist.foldl (fun acc (c, p) =>
+  contextDist.foldl (λ acc (c, p) =>
     match c with
     | .pastTrue | .pastTrueNowTrue | .pastTrueNowFalse => acc + p
     | _ => acc) 0
@@ -276,13 +274,13 @@ World posterior: P(w | utterance, QUD)
 def L1_world (u : Utterance) (q : QUD) (α : ℕ := 6) : List (WorldState × ℚ) :=
   RSA.Eval.L1_world_givenGoal
     allUtterances allWorlds [()] [()] allContextSets allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
-    contextCredence qudProject (fun _ => 0) α u q
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    contextCredence qudProject (λ _ => 0) α u q
 
 
 /--
-**Prediction 1**: "John didn't stop smoking" projects "John smoked"
+Prediction 1: "John didn't stop smoking" projects "John smoked".
 
 Under QUD = nowQ (the default), hearing "John didn't stop smoking"
 increases P(+past ∈ CG).
@@ -291,17 +289,18 @@ def prediction_projection_under_negation (α : ℕ := 6) : Bool :=
   projectionShift .notStoppedSmoking .nowQ α > 0
 
 /--
-**Prediction 2**: QUD affects projection strength
+Prediction 2: QUD affects projection strength.
 
 When QUD = pastQ (the past is at-issue), projection is weaker.
-When QUD = nowQ (the past is NOT at-issue), projection is stronger.
+When QUD = nowQ (the past is not at-issue), projection is stronger.
 -/
 def prediction_qud_effect (α : ℕ := 6) : Bool :=
   projectionOfPast .notStoppedSmoking .nowQ α >
   projectionOfPast .notStoppedSmoking .pastQ α
 
 /--
-**Prediction 3**: Presuppositional > Non-presuppositional
+Prediction 3: Presuppositional utterances project more strongly than
+non-presuppositional ones.
 
 "John didn't stop smoking" projects more strongly than "John doesn't smoke"
 because the CoS verb presupposes the prior state.
@@ -314,8 +313,8 @@ def prediction_presup_vs_nonpresup (α : ℕ := 6) : Bool :=
 /-!
 ## Connection to S&T (2025) and Warstadt (2022)
 
-This implementation demonstrates that Qing et al. (2016) uses the **same
-mathematical structure** as S&T and Warstadt:
+This implementation demonstrates that Qing et al. (2016) uses the same
+mathematical structure as S&T and Warstadt:
 
 | Component | Qing 2016 | S&T 2025 | Warstadt 2022 |
 |-----------|-----------|----------|---------------|
@@ -339,36 +338,6 @@ Where:
 - S1 optimizes for L0(Q(w) | u, C, Q)
 - L1 jointly infers (world, context)
 - Projection = marginal P(C | u) for contexts entailing the presupposition
--/
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Domain (Qing et al. 2016)
-- `WorldState`: ⟨past, now⟩ smoking status
-- `ContextSet`: Which facts are in common ground
-- `Utterance`: Change-of-state and baseline utterances
-
-### Semantics
-- `literalMeaning`: Compositional semantics for CoS verbs
-- `stopped_matches_cos`: Verification against Montague module
-
-### RSA Model
-- `projectionOfPast`: P(+past ∈ CG | utterance)
-- `projectionShift`: Change from prior
-- `L1_world`: World posterior
-
-### Predictions
-1. Projection through negation: "didn't stop" → +past
-2. QUD sensitivity: pastQ weakens projection
-3. Presup > non-presup: CoS projects more than simple assertion
-
-### Theoretical Contribution
-Demonstrates that Qing (2016), S&T (2025), and Warstadt (2022) are
-**mathematically identical** instances of the same RSA framework,
-differing only in domain (CoS verbs, factives, possessives).
 -/
 
 end RSA.QingEtAl2016

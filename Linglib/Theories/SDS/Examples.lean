@@ -7,15 +7,15 @@ demonstrating how SDS constraint systems compute disambiguations.
 
 ## Key Examples from the Paper
 
-1. **"A bat was sleeping"** - Selectional preference dominates
-2. **"A player was holding a bat"** - Scenario constraint dominates
-3. **"The astronomer married the star"** - Conflict → pun/zeugma
-4. **"The sailor liked the port"** - Multiple ambiguous words
-5. **"The coach told the star to play"** - Chained disambiguation
+1. "A bat was sleeping" - Selectional preference dominates
+2. "A player was holding a bat" - Scenario constraint dominates
+3. "The astronomer married the star" - Conflict → pun/zeugma
+4. "The sailor liked the port" - Multiple ambiguous words
+5. "The coach told the star to play" - Chained disambiguation
 
 ## Compositional Constraint Interaction
 
-The key insight: constraints from MULTIPLE sources combine via Product of Experts:
+Constraints from multiple sources combine via Product of Experts:
 - Selectional preferences from predicates
 - Scenario constraints from context words
 - World knowledge priors
@@ -74,9 +74,9 @@ instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
 /-!
 ## Example 1: "A bat was sleeping"
 
-**Context**: The verb SLEEP provides a strong selectional preference.
+Context: The verb SLEEP provides a strong selectional preference.
 
-**Constraints**:
+Constraints:
 - Selectional (SLEEP wants animate subject):
   - P(ANIMAL | subject-of-SLEEP) = 0.95
   - P(EQUIPMENT | subject-of-SLEEP) = 0.05
@@ -84,16 +84,16 @@ instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
   - P(ANIMAL | neutral) = 0.5
   - P(EQUIPMENT | neutral) = 0.5
 
-**Prediction**: ANIMAL wins because selectional preference is strong.
+Prediction: ANIMAL wins because selectional preference is strong.
 -/
 
 def batSleeping : DisambiguationScenario BatConcept where
   word := "bat"
   context := "A bat was sleeping"
-  selectional := fun
+  selectional := λ
     | .animal => 95/100     -- SLEEP strongly prefers animate
     | .equipment => 5/100   -- Equipment can't really sleep
-  scenario := fun
+  scenario := λ
     | .animal => 50/100     -- Neutral context
     | .equipment => 50/100
   concepts := [.animal, .equipment]
@@ -101,18 +101,18 @@ def batSleeping : DisambiguationScenario BatConcept where
 /-!
 ### Worked Computation
 
-**Step 1**: Unnormalized posteriors
+Step 1: Unnormalized posteriors
 - unnorm(ANIMAL) = 0.95 × 0.50 = 0.475
 - unnorm(EQUIPMENT) = 0.05 × 0.50 = 0.025
 
-**Step 2**: Partition function
+Step 2: Partition function
 - Z = 0.475 + 0.025 = 0.50
 
-**Step 3**: Normalized posteriors
+Step 3: Normalized posteriors
 - P(ANIMAL) = 0.475 / 0.50 = 0.95
 - P(EQUIPMENT) = 0.025 / 0.50 = 0.05
 
-**Result**: Strong preference for ANIMAL (95%)
+Result: Strong preference for ANIMAL (95%)
 -/
 
 def batSleepingPosterior : BatConcept → ℚ :=
@@ -129,10 +129,10 @@ example : hasConflict batSleeping = false := by native_decide
 /-!
 ## Example 2: "A player was holding a bat"
 
-**Context**: The word "player" activates a SPORTS scenario.
+Context: The word "player" activates a SPORTS scenario.
 The verb HOLD has weak selectional preference (both concepts are holdable).
 
-**Constraints**:
+Constraints:
 - Selectional (HOLD wants concrete object):
   - P(ANIMAL | object-of-HOLD) = 0.4 (can hold an animal)
   - P(EQUIPMENT | object-of-HOLD) = 0.6 (slightly prefer inanimate)
@@ -140,17 +140,17 @@ The verb HOLD has weak selectional preference (both concepts are holdable).
   - P(ANIMAL | SPORTS) = 0.1
   - P(EQUIPMENT | SPORTS) = 0.9
 
-**Prediction**: EQUIPMENT wins because scenario constraint is strong
+Prediction: EQUIPMENT wins because scenario constraint is strong
 and selectional is weak.
 -/
 
 def playerHoldingBat : DisambiguationScenario BatConcept where
   word := "bat"
   context := "A player was holding a bat"
-  selectional := fun
+  selectional := λ
     | .animal => 40/100     -- Can hold an animal
     | .equipment => 60/100  -- Slightly prefer inanimate objects
-  scenario := fun
+  scenario := λ
     | .animal => 10/100     -- SPORTS frame disfavors animals
     | .equipment => 90/100  -- SPORTS frame strongly favors equipment
   concepts := [.animal, .equipment]
@@ -158,20 +158,20 @@ def playerHoldingBat : DisambiguationScenario BatConcept where
 /-!
 ### Worked Computation
 
-**Step 1**: Unnormalized posteriors
+Step 1: Unnormalized posteriors
 - unnorm(ANIMAL) = 0.40 × 0.10 = 0.04
 - unnorm(EQUIPMENT) = 0.60 × 0.90 = 0.54
 
-**Step 2**: Partition function
+Step 2: Partition function
 - Z = 0.04 + 0.54 = 0.58
 
-**Step 3**: Normalized posteriors
+Step 3: Normalized posteriors
 - P(ANIMAL) = 0.04 / 0.58 ≈ 0.069
 - P(EQUIPMENT) = 0.54 / 0.58 ≈ 0.931
 
-**Result**: Strong preference for EQUIPMENT (93%)
+Result: Strong preference for EQUIPMENT (93%)
 
-**Key insight**: Even though HOLD doesn't strongly select for equipment,
+Key observation: Even though HOLD doesn't strongly select for equipment,
 the SPORTS scenario from "player" tips the balance decisively.
 -/
 
@@ -190,9 +190,9 @@ example : hasConflict playerHoldingBat = false := by native_decide
 /-!
 ## Example 3: "The astronomer married the star"
 
-**Context**: Competing constraints create a pun/zeugma reading.
+Context: Competing constraints create a pun/zeugma reading.
 
-**Constraints**:
+Constraints:
 - Selectional (MARRY wants human object):
   - P(CELEBRITY | object-of-MARRY) = 0.9
   - P(CELESTIAL | object-of-MARRY) = 0.1
@@ -200,7 +200,7 @@ example : hasConflict playerHoldingBat = false := by native_decide
   - P(CELEBRITY | ASTRONOMY) = 0.1
   - P(CELESTIAL | ASTRONOMY) = 0.9
 
-**Prediction**: TIE → pun/zeugma reading emerges.
+Prediction: TIE → pun/zeugma reading emerges.
 
 This is the signature example from the paper showing how
 conflicting constraints predict pragmatic ambiguity.
@@ -209,10 +209,10 @@ conflicting constraints predict pragmatic ambiguity.
 def astronomerMarriedStar : DisambiguationScenario StarConcept where
   word := "star"
   context := "The astronomer married the star"
-  selectional := fun
+  selectional := λ
     | .celebrity => 90/100  -- MARRY wants human
     | .celestial => 10/100  -- Can't literally marry a star
-  scenario := fun
+  scenario := λ
     | .celebrity => 10/100  -- ASTRONOMY frame disfavors celebrities
     | .celestial => 90/100  -- ASTRONOMY frame strongly favors celestial
   concepts := [.celebrity, .celestial]
@@ -220,20 +220,20 @@ def astronomerMarriedStar : DisambiguationScenario StarConcept where
 /-!
 ### Worked Computation
 
-**Step 1**: Unnormalized posteriors
+Step 1: Unnormalized posteriors
 - unnorm(CELEBRITY) = 0.90 × 0.10 = 0.09
 - unnorm(CELESTIAL) = 0.10 × 0.90 = 0.09
 
-**Step 2**: Partition function
+Step 2: Partition function
 - Z = 0.09 + 0.09 = 0.18
 
-**Step 3**: Normalized posteriors
+Step 3: Normalized posteriors
 - P(CELEBRITY) = 0.09 / 0.18 = 0.50
 - P(CELESTIAL) = 0.09 / 0.18 = 0.50
 
-**Result**: Perfect tie (50-50)
+Result: Perfect tie (50-50)
 
-**Key insight**: When selectional and scenario constraints have equal
+Key observation: When selectional and scenario constraints have equal
 strength but opposite preferences, we get a tie. This predicts:
 1. Pun reading (both meanings simultaneously)
 2. Zeugma effect (semantic clash)
@@ -254,13 +254,13 @@ example : hasConflict astronomerMarriedStar = true := by native_decide
 /-!
 ## Example 4: "The sailor liked the port"
 
-**Context**: Both "sailor" (activates NAUTICAL scenario) and "port"
+Context: Both "sailor" (activates NAUTICAL scenario) and "port"
 (ambiguous between harbor/wine/computer) need disambiguation.
 
 This shows how scenario constraints propagate: "sailor" activates
 NAUTICAL which then disambiguates "port".
 
-**Constraints for "port"**:
+Constraints for "port":
 - Selectional (LIKE is neutral):
   - P(HARBOR | object-of-LIKE) = 0.33
   - P(WINE | object-of-LIKE) = 0.33
@@ -270,17 +270,17 @@ NAUTICAL which then disambiguates "port".
   - P(WINE | NAUTICAL) = 0.25 (sailors drink!)
   - P(COMPUTER | NAUTICAL) = 0.05
 
-**Prediction**: HARBOR wins, WINE is plausible, COMPUTER unlikely.
+Prediction: HARBOR wins, WINE is plausible, COMPUTER unlikely.
 -/
 
 def sailorLikedPort : DisambiguationScenario PortConcept where
   word := "port"
   context := "The sailor liked the port"
-  selectional := fun  -- LIKE is neutral
+  selectional := λ  -- LIKE is neutral
     | .harbor => 33/100
     | .wine => 33/100
     | .computer => 34/100
-  scenario := fun  -- NAUTICAL frame from "sailor"
+  scenario := λ  -- NAUTICAL frame from "sailor"
     | .harbor => 70/100    -- Primary nautical meaning
     | .wine => 25/100      -- Sailors historically drink port wine
     | .computer => 5/100   -- Unlikely in nautical context
@@ -289,22 +289,22 @@ def sailorLikedPort : DisambiguationScenario PortConcept where
 /-!
 ### Worked Computation
 
-**Step 1**: Unnormalized posteriors
+Step 1: Unnormalized posteriors
 - unnorm(HARBOR) = 0.33 × 0.70 = 0.231
 - unnorm(WINE) = 0.33 × 0.25 = 0.0825
 - unnorm(COMPUTER) = 0.34 × 0.05 = 0.017
 
-**Step 2**: Partition function
+Step 2: Partition function
 - Z = 0.231 + 0.0825 + 0.017 = 0.3305
 
-**Step 3**: Normalized posteriors
+Step 3: Normalized posteriors
 - P(HARBOR) = 0.231 / 0.3305 ≈ 0.699
 - P(WINE) = 0.0825 / 0.3305 ≈ 0.250
 - P(COMPUTER) = 0.017 / 0.3305 ≈ 0.051
 
-**Result**: HARBOR (70%), WINE (25%), COMPUTER (5%)
+Result: HARBOR (70%), WINE (25%), COMPUTER (5%)
 
-**Key insight**: With a neutral predicate (LIKE), the scenario
+Key observation: With a neutral predicate (LIKE), the scenario
 constraint from "sailor" does all the disambiguation work.
 WINE remains plausible due to cultural association.
 -/
@@ -321,13 +321,13 @@ example : sailorPortPosterior .wine > sailorPortPosterior .computer := by native
 /-!
 ## Example 5: "The coach told the star to play"
 
-**Context**: Multiple words contribute to the scenario:
+Context: Multiple words contribute to the scenario:
 - "coach" → SPORTS frame
 - "play" → reinforces SPORTS (or ENTERTAINMENT)
 
 This shows how constraints from multiple words combine.
 
-**Constraints for "star"**:
+Constraints for "star":
 - Selectional (TELL wants animate recipient):
   - P(CELEBRITY | recipient-of-TELL) = 0.95
   - P(CELESTIAL | recipient-of-TELL) = 0.05
@@ -335,16 +335,16 @@ This shows how constraints from multiple words combine.
   - P(CELEBRITY | SPORTS) = 0.8 (sports stars are celebrities)
   - P(CELESTIAL | SPORTS) = 0.2
 
-**Prediction**: CELEBRITY wins strongly (both constraints agree).
+Prediction: CELEBRITY wins strongly (both constraints agree).
 -/
 
 def coachToldStar : DisambiguationScenario StarConcept where
   word := "star"
   context := "The coach told the star to play"
-  selectional := fun  -- TELL wants animate
+  selectional := λ  -- TELL wants animate
     | .celebrity => 95/100
     | .celestial => 5/100
-  scenario := fun  -- SPORTS frame from "coach" + "play"
+  scenario := λ  -- SPORTS frame from "coach" + "play"
     | .celebrity => 80/100  -- Sports stars
     | .celestial => 20/100
   concepts := [.celebrity, .celestial]
@@ -352,22 +352,21 @@ def coachToldStar : DisambiguationScenario StarConcept where
 /-!
 ### Worked Computation
 
-**Step 1**: Unnormalized posteriors
+Step 1: Unnormalized posteriors
 - unnorm(CELEBRITY) = 0.95 × 0.80 = 0.76
 - unnorm(CELESTIAL) = 0.05 × 0.20 = 0.01
 
-**Step 2**: Partition function
+Step 2: Partition function
 - Z = 0.76 + 0.01 = 0.77
 
-**Step 3**: Normalized posteriors
+Step 3: Normalized posteriors
 - P(CELEBRITY) = 0.76 / 0.77 ≈ 0.987
 - P(CELESTIAL) = 0.01 / 0.77 ≈ 0.013
 
-**Result**: CELEBRITY wins decisively (98.7%)
+Result: CELEBRITY wins decisively (98.7%)
 
-**Key insight**: When selectional and scenario constraints AGREE,
-they reinforce each other multiplicatively, leading to very
-confident disambiguation.
+Key observation: When selectional and scenario constraints agree, they reinforce
+each other multiplicatively, leading to very confident disambiguation.
 -/
 
 def coachStarPosterior : StarConcept → ℚ :=
@@ -396,10 +395,10 @@ Consider "The child saw the bat":
 def childSawBat (scenarioStrength : ℚ) : DisambiguationScenario BatConcept where
   word := "bat"
   context := "The child saw the bat"
-  selectional := fun  -- SAW is neutral
+  selectional := λ  -- SAW is neutral
     | .animal => 50/100
     | .equipment => 50/100
-  scenario := fun  -- DOMESTIC scenario (varies)
+  scenario := λ  -- DOMESTIC scenario (varies)
     | .animal => scenarioStrength        -- Pets more likely at home
     | .equipment => 1 - scenarioStrength -- Toys/sports equipment
   concepts := [.animal, .equipment]
@@ -435,16 +434,16 @@ example : SDSConstraintSystem.normalizedPosterior (childSawBat (70/100)) .animal
 
 The paper analyzes different contexts for "marry a star":
 
-1. **Neutral context**: "Someone married a star"
+1. Neutral context: "Someone married a star"
    - Selectional dominates → CELEBRITY
 
-2. **Astronomy context**: "The astronomer married the star"
+2. Astronomy context: "The astronomer married the star"
    - Conflict → TIE
 
-3. **Hollywood context**: "The producer married the star"
+3. Hollywood context: "The producer married the star"
    - Both agree → CELEBRITY (reinforced)
 
-4. **Sci-fi context**: "The alien married the star"
+4. Sci-fi context: "The alien married the star"
    - Weak conflict → depends on genre conventions
 -/
 
@@ -452,10 +451,10 @@ The paper analyzes different contexts for "marry a star":
 def neutralMarryStar : DisambiguationScenario StarConcept where
   word := "star"
   context := "Someone married a star"
-  selectional := fun
+  selectional := λ
     | .celebrity => 90/100
     | .celestial => 10/100
-  scenario := fun  -- Neutral
+  scenario := λ  -- Neutral
     | .celebrity => 50/100
     | .celestial => 50/100
   concepts := [.celebrity, .celestial]
@@ -464,10 +463,10 @@ def neutralMarryStar : DisambiguationScenario StarConcept where
 def producerMarryStar : DisambiguationScenario StarConcept where
   word := "star"
   context := "The producer married the star"
-  selectional := fun
+  selectional := λ
     | .celebrity => 90/100
     | .celestial => 10/100
-  scenario := fun  -- ENTERTAINMENT frame
+  scenario := λ  -- ENTERTAINMENT frame
     | .celebrity => 95/100  -- Hollywood stars
     | .celestial => 5/100
   concepts := [.celebrity, .celestial]
@@ -476,10 +475,10 @@ def producerMarryStar : DisambiguationScenario StarConcept where
 def alienMarryStar : DisambiguationScenario StarConcept where
   word := "star"
   context := "The alien married the star"
-  selectional := fun  -- SCI-FI loosens constraints
+  selectional := λ  -- SCI-FI loosens constraints
     | .celebrity => 60/100  -- Aliens could marry humans
     | .celestial => 40/100  -- Or merge with celestial bodies!
-  scenario := fun  -- SCIFI frame
+  scenario := λ  -- SCIFI frame
     | .celebrity => 30/100
     | .celestial => 70/100  -- Space context
   concepts := [.celebrity, .celestial]
@@ -534,21 +533,21 @@ example : hasConflict alienMarryStar = true := by native_decide       -- Weak co
 
 ### Key Principles from Erk & Herbelot (2024)
 
-1. **Product of Experts**: Constraints multiply, they don't add
+1. Product of Experts: Constraints multiply, they do not add.
    - Both must be satisfied for high probability
    - One zero kills the interpretation
 
-2. **Relative Strength Matters**: The RATIO determines the winner
+2. Relative strength matters: The ratio determines the winner.
    - Strong selectional + weak scenario → selectional wins
    - Weak selectional + strong scenario → scenario wins
    - Equal strengths → conflict/tie
 
-3. **Scenario Propagation**: Context words activate frames
+3. Scenario propagation: Context words activate frames.
    - "sailor" → NAUTICAL
    - "coach" + "play" → SPORTS
    - "astronomer" → ASTRONOMY
 
-4. **Conflict Predicts Pragmatic Effects**:
+4. Conflict predicts pragmatic effects:
    - Tie → pun/zeugma reading
    - Near-tie → garden path potential
    - Agreement → confident interpretation

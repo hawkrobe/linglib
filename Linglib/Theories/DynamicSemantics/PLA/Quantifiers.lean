@@ -45,7 +45,7 @@ open Classical
 
 
 /--
-A **Generalized Quantifier** relation: determines truth based on two sets.
+A Generalized quantifier relation: determines truth based on two sets.
 
 `GQRel α` = `Set α → Set α → Prop`
 
@@ -60,30 +60,30 @@ namespace GQRel
 
 variable {α : Type*}
 
-/-- **Every**: All A's are B's -/
-def every : GQRel α := fun A B => A ⊆ B
+/-- Every: All A's are B's -/
+def every : GQRel α := λ A B => A ⊆ B
 
-/-- **Some**: At least one A is a B -/
-def some : GQRel α := fun A B => (A ∩ B).Nonempty
+/-- Some: At least one A is a B -/
+def some : GQRel α := λ A B => (A ∩ B).Nonempty
 
-/-- **No**: No A is a B -/
-def no : GQRel α := fun A B => A ∩ B = ∅
+/-- No: No A is a B -/
+def no : GQRel α := λ A B => A ∩ B = ∅
 
-/-- **Most**: More than half of the A's are B's (requires finite) -/
-def most [Fintype α] : GQRel α := fun A B =>
+/-- Most: More than half of the A's are B's (requires finite) -/
+def most [Fintype α] : GQRel α := λ A B =>
   2 * (A ∩ B).toFinite.toFinset.card > A.toFinite.toFinset.card
 
-/-- **At least n**: At least n A's are B's -/
-def atLeast (n : ℕ) : GQRel α := fun A B =>
+/-- At least n: At least n A's are B's -/
+def atLeast (n : ℕ) : GQRel α := λ A B =>
   ∃ s : Finset α, s.card ≥ n ∧ ↑s ⊆ A ∩ B
 
-/-- **Exactly n**: Exactly n A's are B's -/
-def exactly [Fintype α] (n : ℕ) : GQRel α := fun A B =>
+/-- Exactly n: Exactly n A's are B's -/
+def exactly [Fintype α] (n : ℕ) : GQRel α := λ A B =>
   (A ∩ B).toFinite.toFinset.card = n
 
 
 /--
-A quantifier is **conservative** if `D(A)(B) ↔ D(A)(A ∩ B)`.
+A quantifier is conservative if `D(A)(B) ↔ D(A)(A ∩ B)`.
 
 This is the key semantic universal: determiners only care about
 the A's when determining the relation to B.
@@ -126,24 +126,24 @@ theorem no_conservative : IsConservative (no : GQRel α) := by
 
 
 /--
-A quantifier is **upward monotone in the second argument** if
+A quantifier is upward monotone in the second argument if
 `D(A)(B)` and `B ⊆ C` implies `D(A)(C)`.
 -/
 def IsUpwardMono (D : GQRel α) : Prop :=
   ∀ A B C, B ⊆ C → D A B → D A C
 
 /--
-A quantifier is **downward monotone in the second argument** if
+A quantifier is downward monotone in the second argument if
 `D(A)(B)` and `C ⊆ B` implies `D(A)(C)`.
 -/
 def IsDownwardMono (D : GQRel α) : Prop :=
   ∀ A B C, C ⊆ B → D A B → D A C
 
 theorem every_upward_mono : IsUpwardMono (every : GQRel α) :=
-  fun _ _ _ hBC hAB x hxA => hBC (hAB hxA)
+  λ _ _ _ hBC hAB x hxA => hBC (hAB hxA)
 
 theorem some_upward_mono : IsUpwardMono (some : GQRel α) :=
-  fun _ _ _ hBC ⟨x, hxA, hxB⟩ => ⟨x, hxA, hBC hxB⟩
+  λ _ _ _ hBC ⟨x, hxA, hxB⟩ => ⟨x, hxA, hBC hxB⟩
 
 theorem no_downward_mono : IsDownwardMono (no : GQRel α) := by
   intro A B C hCB hAB
@@ -157,7 +157,7 @@ theorem no_downward_mono : IsDownwardMono (no : GQRel α) := by
 
 
 /--
-A quantifier is **truthful** (has existential import) if
+A quantifier is truthful (has existential import) if
 `D(A)(B)` implies `A ∩ B ≠ ∅`.
 
 Truthful quantifiers: some, every (presuppositionally), most
@@ -167,7 +167,7 @@ def IsTruthful (D : GQRel α) : Prop :=
   ∀ A B, D A B → (A ∩ B).Nonempty
 
 theorem some_truthful : IsTruthful (some : GQRel α) :=
-  fun _ _ h => h
+  λ _ _ h => h
 
 /--
 Note: `every` is only truthful if we assume existential presupposition.
@@ -184,7 +184,7 @@ end GQRel
 
 
 /--
-A **witness function** selects, for each entity in the restrictor satisfying
+A witness function selects, for each entity in the restrictor satisfying
 some condition, a witnessing entity.
 
 For "Every farmer who owns a donkey beats it":
@@ -195,7 +195,7 @@ This is Dekker's solution to donkey anaphora with universal quantifiers.
 abbrev WitnessFn (α : Type*) := α → α
 
 /--
-A witness function is **valid** for sets A and R if:
+A witness function is valid for sets A and R if:
 for all x ∈ A, the witness wit(x) is related to x by R.
 
 For "owns a donkey": `valid_witness owns farmers donkeys wit`
@@ -205,7 +205,7 @@ def ValidWitness {α : Type*} (R : α → α → Prop) (A B : Set α) (wit : Wit
   ∀ x ∈ A, R x (wit x) ∧ wit x ∈ B
 
 /--
-**Truthful Existence**: For truthful quantifiers, if D(A)(B) holds,
+Truthful existence: For truthful quantifiers, if D(A)(B) holds,
 there exists a valid witness function.
 
 This is the key to dynamic binding: truthful quantifiers "export"
@@ -221,7 +221,7 @@ theorem truthful_has_witness {α : Type*} [Nonempty α]
 variable {E : Type*} [Nonempty E]
 
 /--
-**Dynamic Quantifier Update**: `Dx(φ)(ψ)` where D is a generalized quantifier.
+Dynamic quantifier update: `Dx(φ)(ψ)` where D is a generalized quantifier.
 
 Semantics: D(restrictor)(scope) where:
 - restrictor = {e | M, g[x↦e], ê ⊨ φ}
@@ -231,7 +231,7 @@ This generalizes `∃x.φ` (which is `some(univ)(φ)`).
 -/
 def Formula.gqUpdate (M : Model E) (D : GQRel E) (x : VarIdx) (φ ψ : Formula) :
     Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     let restrictor := { e : E | φ.sat M (p.1[x ↦ e]) p.2 }
     let scope := { e : E | ψ.sat M (p.1[x ↦ e]) p.2 }
     D restrictor scope }
@@ -255,27 +255,27 @@ def Formula.forallGQ (M : Model E) (x : VarIdx) (φ : Formula) :
 
 
 /--
-**Donkey Update**: For "Every farmer who owns a donkey beats it".
+Donkey update: For "Every farmer who owns a donkey beats it".
 
 This captures the dependency between the universally quantified farmer
 and the existentially introduced donkey.
 
-The key insight: we need to track, for each farmer f, which donkey
+We need to track, for each farmer f, which donkey
 witnesses the "owns a donkey" part, and that donkey is what "it" refers to.
 -/
 def donkeyUpdate (M : Model E) (farmer donkey : VarIdx) (pron_it : PronIdx)
     (owns beats : String) : Update E :=
-  fun s => { p ∈ s |
+  λ s => { p ∈ s |
     -- For every farmer f who owns some donkey d
     -- (where d is the witness for that farmer)
     -- f beats d
     let farmers := { f : E | M.interp "Farmer" [f] }
-    let ownsDonkey := fun f => { d : E | M.interp owns [f, d] ∧ M.interp "Donkey" [d] }
+    let ownsDonkey := λ f => { d : E | M.interp owns [f, d] ∧ M.interp "Donkey" [d] }
     ∀ f ∈ farmers, (ownsDonkey f).Nonempty →
       ∃ d ∈ ownsDonkey f, M.interp beats [f, d] }
 
 /--
-The **E-type** approach (Evans): pronouns pick out the unique/salient entity.
+The E-type approach (Evans): pronouns pick out the unique/salient entity.
 
 For "Every farmer who owns a donkey beats it":
 "it" = the unique donkey that the farmer owns (if unique), or
@@ -290,7 +290,7 @@ def etypeApproach (M : Model E) (farmer donkey : String) (owns beats : String) :
 
 
 /--
-**GQ updates are eliminative**: They never add possibilities.
+GQ updates are eliminative: They never add possibilities.
 -/
 theorem gqUpdate_eliminative (M : Model E) (D : GQRel E) (x : VarIdx)
     (φ ψ : Formula) (s : InfoState E) :
@@ -300,7 +300,7 @@ theorem gqUpdate_eliminative (M : Model E) (D : GQRel E) (x : VarIdx)
   exact hp.1
 
 /--
-**Conservativity transfers**: If D is conservative, so is the dynamic version
+Conservativity transfers: If D is conservative, so is the dynamic version
 (in a suitable sense).
 -/
 theorem gqUpdate_conservative (M : Model E) (D : GQRel E) (hC : GQRel.IsConservative D)
@@ -323,7 +323,7 @@ theorem gqUpdate_conservative (M : Model E) (D : GQRel E) (hC : GQRel.IsConserva
 
 
 /--
-**Indefinites take wide scope** (in dynamic semantics).
+Indefinites take wide scope (in dynamic semantics).
 
 "If a farmer owns a donkey, he beats it."
 The indefinites "a farmer" and "a donkey" can bind pronouns in the consequent.
@@ -336,12 +336,12 @@ theorem indefinite_wide_scope (M : Model E) (x : VarIdx) (φ ψ : Formula)
     -- After ∃x.φ, the assignment has x bound
     ∀ p ∈ (Formula.exists_ x φ).update M s,
       ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 :=
-  fun p hp => by
+  λ p hp => by
     simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
     exact hp.2
 
 /--
-**Universals don't export**: "Every farmer owns a donkey" doesn't make
+Universals don't export: "Every farmer owns a donkey" doesn't make
 "the donkey" available for subsequent anaphora (without special mechanisms).
 -/
 theorem universal_no_export (M : Model E) (x : VarIdx) (φ : Formula)
@@ -349,46 +349,5 @@ theorem universal_no_export (M : Model E) (x : VarIdx) (φ : Formula)
     -- Universal just tests, doesn't change assignment structure
     Formula.forallGQ M x φ s ⊆ s :=
   gqUpdate_eliminative M GQRel.every x (Formula.atom "⊤" []) φ s
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Generalized Quantifier Relations
-- `GQRel α`: Type of quantifier relations
-- `every`, `some`, `no`, `most`, `atLeast`, `exactly`: Standard quantifiers
-
-### Semantic Properties
-- `IsConservative`: D(A)(B) ↔ D(A)(A ∩ B)
-- `IsUpwardMono`, `IsDownwardMono`: Monotonicity directions
-- `IsTruthful`: Existential import property
-
-### Key Theorems
-- `every_conservative`, `some_conservative`, `no_conservative`
-- `every_upward_mono`, `some_upward_mono`, `no_downward_mono`
-- `some_truthful`, `every_not_truthful` (without presupposition)
-
-### Dynamic Quantifiers
-- `Formula.gqUpdate`: Dynamic GQ update Dx(φ)(ψ)
-- `gqUpdate_eliminative`: Dynamic GQs are eliminative
-- `gqUpdate_conservative`: Conservativity transfers
-
-### Donkey Anaphora
-- `WitnessFn`: Witness functions for covariation
-- `ValidWitness`: Validity condition for witnesses
-- `donkeyUpdate`: Donkey sentence semantics
-
-## Connection to Dekker §4.1
-
-This module formalizes the key insight: truthful quantifiers "export"
-witnesses that enable donkey anaphora. The witness function approach
-(vs. E-type uniqueness) is Dekker's preferred solution.
-
-## Next: §4.2 Belief Reports
-
-Following Dekker, we next formalize belief reports with conceptual covers
-for de re/de dicto distinctions.
--/
 
 end Theories.DynamicSemantics.PLA

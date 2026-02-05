@@ -7,7 +7,7 @@ import Linglib.Theories.Montague.Question.Basic
 Felicity conditions for additive particles following Thomas (2026)
 "A probabilistic, question-based approach to additivity".
 
-## Key Insight: Argument-Building Use
+## Insight: Argument-Building Use
 
 The novel contribution of Thomas (2026) is explaining the "argument-building"
 use of "too" where the antecedent and prejacent aren't focus alternatives
@@ -141,9 +141,9 @@ Uses a provided world list for computability. -/
 def nonTrivialityConditionWith {W : Type*}
     (prejacent : W → Bool) (strengthened : List (InfoState W))
     (worlds : List W) : Bool :=
-  strengthened.any fun alt =>
+  strengthened.any λ alt =>
     -- π doesn't entail alt (there's a π-world that's not in alt)
-    !(worlds.all fun w => prejacent w → alt w)
+    !(worlds.all λ w => prejacent w → alt w)
 
 /-- Condition 3b: No weaker proposition works as well.
 
@@ -241,8 +241,8 @@ In standard use, the antecedent and prejacent are typically:
 def isFocusAlternativeUseWith {W : Type*}
     (ant prejacent : W → Bool) (rq : Issue W) (worlds : List W) : Bool :=
   -- Both ANT and π should be (non-trivial) partial answers to RQ
-  rq.alternatives.any (fun alt => worlds.any fun w => ant w && alt w) &&
-  rq.alternatives.any (fun alt => worlds.any fun w => prejacent w && alt w)
+  rq.alternatives.any (λ alt => worlds.any λ w => ant w && alt w) &&
+  rq.alternatives.any (λ alt => worlds.any λ w => prejacent w && alt w)
 
 /-- Noncomputable version using Fintype. -/
 noncomputable def isFocusAlternativeUse {W : Type*} [Fintype W]
@@ -297,12 +297,12 @@ When p directly determines alt, learning p makes P(alt) = 1. -/
 def directlyDetermines {W : Type*} (p : W → Bool) (alt : W → Bool)
     (worlds : List W) : Bool :=
   -- p entails alt: every p-world is an alt-world
-  worlds.all fun w => p w → alt w
+  worlds.all λ w => p w → alt w
 
 /-- Check if a proposition directly determines SOME alternative of an issue. -/
 def determinesSomeAlternative {W : Type*} (p : W → Bool) (q : Issue W)
     (worlds : List W) : Bool :=
-  q.alternatives.any fun alt => directlyDetermines p alt worlds
+  q.alternatives.any λ alt => directlyDetermines p alt worlds
 
 /-- **Theorem: Standard Use Reduction**
 
@@ -330,21 +330,21 @@ theorem standard_use_reduction {W : Type*} [Fintype W]
     (hEntails : ∀ w : W, prejacent w = true → alt w = true)
     (hNotAlreadyCertain : conditionalProb ctx.prior ctx.antecedent alt < 1)
     (_hAntPossible : probOfProp ctx.prior ctx.antecedent > 0)
-    (hConjPossible : probOfProp ctx.prior (fun w => ctx.antecedent w && prejacent w) > 0) :
+    (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0) :
     -- Then π raises the probability of alt given ANT
-    conditionalProb ctx.prior (fun w => ctx.antecedent w && prejacent w) alt >
+    conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt >
     conditionalProb ctx.prior ctx.antecedent alt := by
   -- When π entails alt, P(alt | ANT ∧ π) = 1 (since every ANT∧π world is an alt world)
   -- And we're given P(alt | ANT) < 1
   -- So P(alt | ANT ∧ π) > P(alt | ANT)
 
   -- Step 1: Show P(alt | ANT ∧ π) = 1
-  have hCondEq1 : conditionalProb ctx.prior (fun w => ctx.antecedent w && prejacent w) alt = 1 := by
+  have hCondEq1 : conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt = 1 := by
     simp only [conditionalProb]
     simp only [hConjPossible, ↓reduceIte]
     -- P((ANT ∧ π) ∧ alt) = P(ANT ∧ π) because π entails alt
-    have hEqMass : probOfProp ctx.prior (fun w => (ctx.antecedent w && prejacent w) && alt w) =
-                   probOfProp ctx.prior (fun w => ctx.antecedent w && prejacent w) := by
+    have hEqMass : probOfProp ctx.prior (λ w => (ctx.antecedent w && prejacent w) && alt w) =
+                   probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) := by
       simp only [probOfProp]
       congr 1
       ext w
@@ -356,7 +356,7 @@ theorem standard_use_reduction {W : Type*} [Fintype W]
         simp only [hp, Bool.and_false, Bool.false_and]
     rw [hEqMass]
     -- P(ANT ∧ π) / P(ANT ∧ π) = 1
-    have hne : probOfProp ctx.prior (fun w => ctx.antecedent w && prejacent w) ≠ 0 :=
+    have hne : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) ≠ 0 :=
       ne_of_gt hConjPossible
     exact div_self hne
 
@@ -376,10 +376,10 @@ theorem standard_use_conjunction_condition {W : Type*} [Fintype W]
     (hEntails : ∀ w : W, prejacent w = true → alt w = true)
     (hNotAlreadyCertain : conditionalProb ctx.prior ctx.antecedent alt < 1)
     (hAntPossible : probOfProp ctx.prior ctx.antecedent > 0)
-    (hConjPossible : probOfProp ctx.prior (fun w => ctx.antecedent w && prejacent w) > 0) :
+    (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0) :
     conjunctionCondition ctx prejacent = true := by
   -- Use standard_use_reduction to show the conjunction strengthens evidence for alt
-  have hStrengthens : conditionalProb ctx.prior (fun w => ctx.antecedent w && prejacent w) alt >
+  have hStrengthens : conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt >
                       conditionalProb ctx.prior ctx.antecedent alt :=
     standard_use_reduction ctx prejacent alt hAltInQ hEntails hNotAlreadyCertain hAntPossible hConjPossible
 
@@ -389,7 +389,7 @@ theorem standard_use_conjunction_condition {W : Type*} [Fintype W]
 
   -- Show the filtered list is non-empty (alt is in it)
   have hInFiltered : alt ∈ ctx.resolvedQuestion.alternatives.filter
-      (fun a => conjunctionStrengthens ctx.antecedent prejacent a ctx.prior) := by
+      (λ a => conjunctionStrengthens ctx.antecedent prejacent a ctx.prior) := by
     simp only [List.mem_filter]
     constructor
     · exact hAltInQ
@@ -454,7 +454,7 @@ When π is independent of all alternatives given ANT, π provides no
 additional evidence - it's irrelevant to the question at hand. -/
 def conditionallyIndependent {W : Type*} [Fintype W]
     (p1 p2 target : W → Bool) (prior : ExactDist W) : Prop :=
-  let pBoth := fun w => p1 w && p2 w
+  let pBoth := λ w => p1 w && p2 w
   conditionalProb prior pBoth target = conditionalProb prior p1 target
 
 /-- π is evidentially irrelevant to Q given ANT if π doesn't change the
@@ -489,7 +489,7 @@ theorem cumulative_evidence_necessary {W : Type*} [Fintype W]
   unfold conjunctionCondition someResolutionStrengthened strengthenedResolutions
   -- The list of strengthened alternatives is empty
   have hEmpty : (ctx.resolvedQuestion.alternatives.filter
-      fun alt => conjunctionStrengthens ctx.antecedent prejacent alt ctx.prior) = [] := by
+      λ alt => conjunctionStrengthens ctx.antecedent prejacent alt ctx.prior) = [] := by
     rw [List.filter_eq_nil_iff]
     intro alt halt
     simp only [conjunctionStrengthens, evidencesMoreStronglyProp]

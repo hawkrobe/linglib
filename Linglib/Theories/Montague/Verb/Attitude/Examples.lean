@@ -19,15 +19,15 @@ For the modular, reusable theory of attitude verbs, see:
 
 Following Montague (1973) "The Proper Treatment of Quantification":
 
-**Intension**: A function from possible worlds to extensions
+Intension: A function from possible worlds to extensions
 - The intension of "the morning star" maps each world to whatever is the morning star in that world
 - The intension of a proposition (type t) maps each world to a truth value
 
-**Attitude Verbs**: Relate individuals to intensions, not extensions
+Attitude Verbs: Relate individuals to intensions, not extensions
 - "John believes that Mary sleeps" = believe(john, ^(sleeps(mary)))
 - This avoids the problem of substituting co-referential terms in belief contexts
 
-**De Dicto vs De Re**:
+De Dicto vs De Re:
 - De dicto: "John believes someone is a spy" (existential under belief)
 - De re: "There is someone John believes is a spy" (existential over belief)
 
@@ -276,26 +276,26 @@ def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
 #eval johnBelievesJohnSleeps  -- true
 
 /-
-**Substitution failure example**
+Substitution failure example.
 
 Even if "the morning star" = "the evening star" at the actual world,
 "John believes the morning star is F" need not equal
 "John believes the evening star is F"
 
-Because belief operates on INTENSIONS, not extensions.
+Because belief operates on intensions, not extensions.
 -/
 
 
 /-
-**Why this matters for scalar implicatures**
+Relevance to scalar implicatures.
 
 "Mary believes John ate some of the cookies"
 
 In the Gricean analysis (Geurts 2010), the "not all" implicature
 from "some" can either be:
 
-1. **Global (de re)**: Speaker implicates ¬(speaker believes all)
-2. **Local (de dicto)**: Mary believes (some but not all)
+1. Global (de re): Speaker implicates ¬(speaker believes all)
+2. Local (de dicto): Mary believes (some but not all)
 
 The Neo-Gricean predicts only global implicatures.
 RSA can model both readings through different parses.
@@ -336,7 +336,7 @@ def maryBelievesAll : toyIModel.interpTy .t :=
 
 
 /--
-**Theorem: Belief is intensional**
+Belief is intensional.
 
 Two expressions can have the same extension but yield different
 truth values under belief.
@@ -355,51 +355,12 @@ theorem belief_intensional :
     cases this
 
 /--
-**Theorem: Up-down identity**
+Up-down identity.
 
 Applying down after up at any world returns the original value.
 -/
 theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) :
     down (up x) w = x := rfl
 
-
-/-
-## What This Module Provides
-
-### Types (using canonical Montague.Ty)
-- `Ty.intens τ` = `s ⇒ τ` : intension of type τ
-- `Ty.prop` = `s ⇒ t` : propositions
-- `Ty.indConcept` = `s ⇒ e` : individual concepts
-
-### Model
-- `World`: Finite set of possible worlds
-- `IModel`: Intensional model with entities
-
-### Operators
-- `up`: Convert extension to constant intension
-- `down`: Evaluate intension at a world
-
-### Attitude Verbs
-- `believes_access`: Doxastic accessibility relation
-- `believe`: Belief verb semantics
-- `believeAt`: World-dependent belief
-
-### Key Examples
-- Morning star / Evening star problem
-- John believes Mary sleeps (de dicto)
-- Substitution failure in belief contexts
-
-### Connection to Pragmatics
-This module provides the semantic foundation for understanding:
-1. Why belief embedding affects scalar implicatures
-2. De dicto vs de re scope distinctions
-3. The competence-based explanation of "apparent local" SIs
-
-### Theoretical Context
-Following Montague (1973), intensions are necessary for:
-- Handling opacity (substitution failures)
-- Modeling propositional attitudes
-- Distinguishing necessarily equivalent but intensionally distinct meanings
--/
 
 end Montague.Verb.Attitude.Examples
