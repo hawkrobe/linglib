@@ -15,6 +15,8 @@ import Linglib.Core.UDFeatures
 import Linglib.Core.DepRel
 import Linglib.Core.Duality
 import Linglib.Core.Scales
+import Linglib.Core.Intension
+import Linglib.Core.ModalLogic
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns

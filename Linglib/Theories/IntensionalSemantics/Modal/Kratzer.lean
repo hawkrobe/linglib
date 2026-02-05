@@ -21,8 +21,10 @@ open IntensionalSemantics.Attitude.Intensional
 open IntensionalSemantics.Modal (ModalTheory ModalForce Proposition allWorlds')
 
 
+open Core.Proposition (BProp)
+
 /-- A proposition is a characteristic function on worlds (Kratzer-local). -/
-abbrev Prop' := World → Bool
+abbrev Prop' := BProp World
 
 /-- Convert to list of worlds where proposition holds. -/
 def Prop'.extension (p : Prop') : List World :=

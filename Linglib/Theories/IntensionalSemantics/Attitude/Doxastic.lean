@@ -28,6 +28,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 -/
 
 import Linglib.Core.Proposition
+import Linglib.Core.ModalLogic
 import Linglib.Theories.QuestionSemantics.Hamblin
 
 namespace IntensionalSemantics.Attitude.Doxastic
@@ -42,7 +43,7 @@ Doxastic accessibility relation type.
 R(agent, evalWorld, accessibleWorld) = true iff accessibleWorld is compatible
 with what agent believes/knows in evalWorld.
 -/
-abbrev AccessRel (W E : Type*) := E → W → W → Bool
+abbrev AccessRel (W E : Type*) := Core.ModalLogic.AgentAccessRel W E
 
 /--
 Universal modal: true at w iff p true at all accessible worlds.

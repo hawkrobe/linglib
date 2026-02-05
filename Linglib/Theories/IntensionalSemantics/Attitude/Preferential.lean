@@ -60,7 +60,7 @@ open IntensionalSemantics.Attitude.CDistributivity (IsCDistributive degreeCompar
 -- Basic Types
 
 /-- Proposition type -/
-abbrev Prop' (W : Type*) := W → Bool
+abbrev Prop' (W : Type*) := BProp W
 
 /--
 Question denotation (Hamblin: set of propositions).

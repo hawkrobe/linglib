@@ -42,6 +42,9 @@ def ModalForce.dual : ModalForce → ModalForce
 
 abbrev AccessRel (W : Type*) := W → W → Bool
 
+/-- Agent-indexed accessibility relation: each agent has their own AccessRel. -/
+abbrev AgentAccessRel (W E : Type*) := E → AccessRel W
+
 /-- Kripke evaluation of modal formulas. -/
 def kripkeEval {W : Type*} [FiniteWorlds W] (R : AccessRel W) (force : ModalForce)
     (p : BProp W) (w : W) : Bool :=

@@ -14,6 +14,7 @@ import Linglib.Core.ModalLogic
 namespace IntensionalSemantics.Modal
 
 open IntensionalSemantics.Attitude.Intensional
+open Core.Proposition (BProp)
 
 section CoreTypes
 
@@ -21,10 +22,13 @@ section CoreTypes
 abbrev ModalForce := Core.ModalLogic.ModalForce
 
 /-- A proposition is a function from worlds to truth values. -/
-abbrev Proposition := World → Bool
+abbrev Proposition := BProp World
 
 /-- The set of all worlds (from Attitudes.lean). -/
 def allWorlds' : List World := allWorlds
+
+/-- Modal.Proposition equals Core.Proposition.BProp World. -/
+theorem proposition_eq_bprop : Proposition = Core.Proposition.BProp World := rfl
 
 end CoreTypes
 

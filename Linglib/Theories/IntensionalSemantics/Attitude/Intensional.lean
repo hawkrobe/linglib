@@ -15,6 +15,7 @@ Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordina
 
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Core.Proposition
+import Linglib.Core.Intension
 -- Re-export modular attitude theories
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
@@ -68,5 +69,13 @@ def up {m : IModel} {τ : Ty} (x : m.interpTy τ) : m.interpTy (Ty.intens τ) :=
 In Montague's notation: ˇα is the extension of α at the evaluation world. -/
 def down {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) : m.interpTy τ :=
   f w
+
+/-- The up operator equals Core.Intension.rigid. -/
+theorem up_eq_rigid {m : IModel} {τ : Ty} (x : m.interpTy τ) :
+    up x = Core.Intension.rigid x := rfl
+
+/-- The down operator equals Core.Intension.evalAt. -/
+theorem down_eq_evalAt {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) :
+    down f w = Core.Intension.evalAt f w := rfl
 
 end IntensionalSemantics.Attitude.Intensional
