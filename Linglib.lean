@@ -23,8 +23,12 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
+import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.French.Nouns
+import Linglib.Fragments.Irish.Coordination
+import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
@@ -115,6 +119,7 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+import Linglib.Phenomena.Presupposition.Studies.Yagi2025
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Numerals
 import Linglib.Phenomena.Quantification.ScopeFreezing
@@ -298,9 +303,10 @@ import Linglib.Theories.Montague.Frames.Basic
 import Linglib.Theories.Montague.Intensional.Basic
 import Linglib.Theories.Montague.Interface.SemanticBackend
 import Linglib.Theories.Montague.Interface.SyntaxInterface
-import Linglib.Theories.Montague.Lexicon.Expressives.Basic
+import Linglib.Theories.Montague.Expressives.Basic
 import Linglib.Theories.Montague.Modal.Basic
 import Linglib.Theories.Montague.Modal.Compare
+import Linglib.Theories.Montague.Modal.Disjunction
 import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Modal.PhillipsBrown
 import Linglib.Theories.Montague.Modal.SatisfactionOrdering
