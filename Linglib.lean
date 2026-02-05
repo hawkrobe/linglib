@@ -17,6 +17,7 @@ import Linglib.Core.Duality
 import Linglib.Core.Scales
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
+import Linglib.Core.Conjectures
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns

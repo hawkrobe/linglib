@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.71.0] - 2025-02-05
+
+### Added
+- **Core/Conjectures.lean**: Open conjectures as `def : Prop` (no axioms, no unsoundness)
+  - BToM ↔ Intensional Logic correspondence (accessibility = positive credence)
+  - RSA ≅ EXH characterization conjecture
+  - RSA fixed point uniqueness, lexicon refinement monotonicity, tropical limit
+  - RSA from coarsened language models
+- **README.md**: Documentation of organizing principle (Phenomena vs Theories)
+  - Directory overview, conventions, intended audience for collaborators
+- **docs/ROADMAP.md**: Speculative formal statements moved to `Core/Conjectures.lean`
+
 ## [0.70.0] - 2025-02-05
 
 ### Added
