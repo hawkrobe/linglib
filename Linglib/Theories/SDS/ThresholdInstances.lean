@@ -35,7 +35,7 @@ The difference is in how the threshold is determined:
 -/
 
 import Linglib.Theories.SDS.Core
-import Linglib.Theories.Comparisons.ThresholdSemantics
+import Linglib.Comparisons.ThresholdSemantics
 
 namespace SDS.ThresholdInstances
 

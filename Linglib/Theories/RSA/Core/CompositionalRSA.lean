@@ -46,7 +46,7 @@ not the structural level.
 -/
 
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Comparisons.RSAExhExpressivity
+import Linglib.Comparisons.RSAExhExpressivity
 
 namespace RSA.Compositional
 

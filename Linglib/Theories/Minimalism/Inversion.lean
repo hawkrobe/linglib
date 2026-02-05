@@ -15,6 +15,10 @@ This derives the word order asymmetry:
 - Embedded: no T-to-C → subject precedes T
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Minimalism.Structure
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
@@ -145,10 +149,10 @@ theorem not_licenses_embedded_t_first (ws : List Word)
 
 -- Verification
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def can : Word := ⟨"can", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
+private abbrev what := Fragments.English.Pronouns.what.toWord
+private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 
 #eval wordsHaveTBeforeSubject [what, can, john, eat]   -- true
 #eval wordsHaveTBeforeSubject [what, john, can, eat]   -- false

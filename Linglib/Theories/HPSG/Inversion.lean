@@ -14,6 +14,10 @@ Builds on the general feature system from Features.lean.
 This derives the word order asymmetry between matrix and embedded questions.
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.HPSG.Features
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
@@ -126,11 +130,11 @@ theorem not_licenses_embedded_aux_first (ws : List Word)
 -- Verification
 -- ============================================================================
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def can : Word := ⟨"can", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def eat : Word := ⟨"eat", .V, { valence := some .transitive, number := some .pl }⟩
-private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
+private abbrev what := Fragments.English.Pronouns.what.toWord
+private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
+private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
 #eval auxPrecedesSubject [what, can, john, eat]   -- true
 #eval auxPrecedesSubject [what, john, can, eat]   -- false

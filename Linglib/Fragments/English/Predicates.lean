@@ -17,7 +17,6 @@ export Verbal (
   getCoSSemantics presupposesComplement isPresupTrigger
   isPreferentialAttitude
   allVerbs
-  toWord3sg toWordBase
 )
 
 export Adjectival (

@@ -6,6 +6,11 @@ Word Grammar (Hudson 1984, 1990) analysis of coordination structures.
 Reference: Hudson (1990), Gibson (2025) Section 3.8
 -/
 
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Theories.DependencyGrammar.Basic
 import Linglib.Phenomena.Coordination.Data
 
@@ -13,19 +18,19 @@ namespace Coordination.WordGrammarAnalysis
 
 open DepGrammar
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def and_ : Word := ⟨"and", .C, {}⟩
-private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
-private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def the : Word := ⟨"the", .D, {}⟩
-private def happy : Word := ⟨"happy", .Adj, {}⟩
-private def smart : Word := ⟨"smart", .Adj, {}⟩
-private def boy : Word := ⟨"boy", .N, { number := some .sg, countable := some true }⟩
-private def eats : Word := ⟨"eats", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
-private def devours : Word := ⟨"devours", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private abbrev john := Fragments.English.Nouns.john.toWordSg
+private abbrev mary := Fragments.English.Nouns.mary.toWordSg
+private abbrev and_ := Fragments.English.FunctionWords.and_.toWord
+private abbrev sleep := Fragments.English.Predicates.Verbal.sleep.toWordPl
+private abbrev sleeps := Fragments.English.Predicates.Verbal.sleep.toWord3sg
+private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
+private abbrev the := Fragments.English.Determiners.the.toWord
+private abbrev happy := Fragments.English.Modifiers.Adjectives.happy.toWord
+private abbrev smart := Fragments.English.Modifiers.Adjectives.smart.toWord
+private abbrev boy := Fragments.English.Nouns.boy.toWordSg
+private abbrev eats := Fragments.English.Predicates.Verbal.eat.toWord3sg
+private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
+private abbrev devours := Fragments.English.Predicates.Verbal.devour.toWord3sg
 
 -- ============================================================================
 -- Coordination Structure
