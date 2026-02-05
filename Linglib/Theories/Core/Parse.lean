@@ -1,4 +1,4 @@
-/-!
+/-
 # Parse
 
 Grammatical ambiguity representation. A `Parse` represents one reading among

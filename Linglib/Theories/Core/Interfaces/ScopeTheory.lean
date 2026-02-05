@@ -1,4 +1,4 @@
-/-!
+/-
 # Scope Theory Interface
 
 Abstract interface for theories that determine available scope readings.

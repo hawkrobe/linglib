@@ -1,34 +1,17 @@
 /-
-# Word Grammar (Dependency Grammar)
+Word Grammar (Dependency Grammar): nodes are words, edges are typed dependencies.
+Auxiliaries are heads; lexical rules derive new entries; argument structures specify direction.
 
-This module implements Word Grammar, a dependency-based framework developed by
-Richard Hudson (1984, 1990, 2007) and presented in Gibson (2025).
-
-Key characteristics of Word Grammar:
-- Nodes are words, edges are typed dependencies (subj, obj, det, etc.)
-- Auxiliaries are heads (unlike Universal Dependencies where main verb is head)
-- Lexical rules derive new entries (e.g., inversion rule, passive rule)
-- Argument structures specify direction of dependents (left/right)
-
-Note: This is ONE dependency grammar framework. Others (Universal Dependencies,
-Meaning-Text Theory) make different analytical choices, especially about headedness.
-
-References:
-- Hudson (1984) "Word Grammar"
-- Hudson (1990) "English Word Grammar"
-- Hudson (2007) "Language Networks: The New Word Grammar"
-- Gibson (2025) "Syntax", MIT Press. https://mitpress.mit.edu/9780262553575/syntax/
+References: Hudson (1984, 1990, 2007), Gibson (2025) Syntax, MIT Press.
 -/
 
 import Linglib.Core.Basic
 
 namespace DepGrammar
 
--- ============================================================================
--- Dependency Types
--- ============================================================================
+section DependencyTypes
 
-/-- Types of dependency relations -/
+/-- Types of dependency relations. -/
 inductive DepType where
   | subj      -- subject (noun → verb)
   | obj       -- direct object (noun → verb)
@@ -63,101 +46,95 @@ instance : ToString DepType where
     | .conj => "conj"
     | .root => "root"
 
--- ============================================================================
--- Dependencies and Trees
--- ============================================================================
+end DependencyTypes
 
-/-- A dependency: directed edge from head to dependent -/
+section DependenciesAndTrees
+
+/-- A dependency: directed edge from head to dependent. -/
 structure Dependency where
-  headIdx : Nat      -- index of head word (or n for root)
-  depIdx : Nat       -- index of dependent word
-  depType : DepType  -- type of the dependency
+  headIdx : Nat
+  depIdx : Nat
+  depType : DepType
   deriving Repr, DecidableEq
 
-/-- A dependency tree for a sentence -/
+/-- A dependency tree for a sentence. -/
 structure DepTree where
   words : List Word
   deps : List Dependency
-  rootIdx : Nat      -- index of the root word
+  rootIdx : Nat
   deriving Repr
 
--- ============================================================================
--- Argument Structure (Lexical Requirements)
--- ============================================================================
+end DependenciesAndTrees
 
-/-- Direction of a dependent relative to head -/
+section ArgumentStructure
+
+/-- Direction of a dependent relative to head. -/
 inductive Direction where
-  | left   -- dependent precedes head
-  | right  -- dependent follows head
+  | left
+  | right
   deriving Repr, DecidableEq
 
-/-- A single argument requirement -/
+/-- A single argument requirement. -/
 structure ArgReq where
   depType : DepType
   direction : Direction
-  required : Bool := true  -- false for optional arguments
-  category : Option Cat := none  -- required category of dependent
+  required : Bool := true
+  category : Option Cat := none
   deriving Repr, DecidableEq
 
-/-- Argument structure: what dependents a word requires/allows -/
+/-- Argument structure: what dependents a word requires/allows. -/
 structure ArgStructure where
   args : List ArgReq
   deriving Repr
 
--- ============================================================================
--- Well-formedness Conditions
--- ============================================================================
+end ArgumentStructure
 
-/-- Check if every word except root has exactly one head -/
+section WellFormedness
+
+/-- Check if every word except root has exactly one head. -/
 def hasUniqueHeads (t : DepTree) : Bool :=
   let n := t.words.length
-  -- Count incoming edges for each word
   let inCounts := List.range n |>.map λ i =>
     t.deps.filter (·.depIdx == i) |>.length
-  -- Root should have 0 incoming, others should have exactly 1
   (List.range inCounts.length).zip inCounts |>.all λ (i, count) =>
     if i == t.rootIdx then count == 0 else count == 1
 
-/-- Check for cycles (simple version: no word is its own ancestor) -/
+/-- Check for cycles: no word is its own ancestor. -/
 def isAcyclic (t : DepTree) : Bool :=
-  -- For each word, follow head pointers; should never return to start
   let n := t.words.length
   List.range n |>.all λ start =>
     let rec follow (current : Nat) (visited : List Nat) (fuel : Nat) : Bool :=
       match fuel with
-      | 0 => true  -- ran out of fuel, assume ok
+      | 0 => true
       | fuel' + 1 =>
-        if visited.contains current then false  -- cycle!
+        if visited.contains current then false
         else
           match t.deps.find? (·.depIdx == current) with
           | some dep => follow dep.headIdx (current :: visited) fuel'
-          | none => true  -- reached root
+          | none => true
     follow start [] (n + 1)
 
-/-- Check projectivity: no crossing dependencies -/
+/-- Check projectivity: no crossing dependencies. -/
 def isProjective (t : DepTree) : Bool :=
   t.deps.all λ d1 =>
     t.deps.all λ d2 =>
       if d1 == d2 then true
       else
-        -- Dependencies from the same head never cross each other
         if d1.headIdx == d2.headIdx then true
         else
-          -- Dependencies cross if their spans overlap improperly
           let (h1, d1i) := (d1.headIdx, d1.depIdx)
           let (h2, d2i) := (d2.headIdx, d2.depIdx)
           let (min1, max1) := (min h1 d1i, max h1 d1i)
           let (min2, max2) := (min h2 d2i, max h2 d2i)
-          -- No crossing: disjoint, adjacent, or one properly contains the other
-          max1 <= min2 || max2 <= min1 ||  -- disjoint or adjacent
-          (min1 <= min2 && max2 <= max1) ||  -- d1 contains d2
-          (min2 <= min1 && max1 <= max2)     -- d2 contains d1
+          max1 <= min2 || max2 <= min1 ||
+          (min1 <= min2 && max2 <= max1) ||
+          (min2 <= min1 && max1 <= max2)
 
--- ============================================================================
--- Agreement Checking
--- ============================================================================
+end WellFormedness
 
-/-- Check subject-verb number agreement -/
+section AgreementChecking
+
+/-- Check subject-verb number agreement. -/
 def checkSubjVerbAgr (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .subj then
@@ -165,11 +142,11 @@ def checkSubjVerbAgr (t : DepTree) : Bool :=
       | some subj, some verb =>
         match subj.features.number, verb.features.number with
         | some sn, some vn => sn == vn
-        | _, _ => true  -- underspecified, allow
+        | _, _ => true
       | _, _ => true
     else true
 
-/-- Check determiner-noun number agreement -/
+/-- Check determiner-noun number agreement. -/
 def checkDetNounAgr (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .det then
@@ -181,15 +158,15 @@ def checkDetNounAgr (t : DepTree) : Bool :=
       | _, _ => true
     else true
 
--- ============================================================================
--- Subcategorization Checking
--- ============================================================================
+end AgreementChecking
 
-/-- Count dependents of a given type for a head -/
+section SubcategorizationChecking
+
+/-- Count dependents of a given type for a head. -/
 def countDepsOfType (t : DepTree) (headIdx : Nat) (dtype : DepType) : Nat :=
   t.deps.filter (λ d => d.headIdx == headIdx && d.depType == dtype) |>.length
 
-/-- Check if verb has correct argument structure -/
+/-- Check if verb has correct argument structure. -/
 def checkVerbSubcat (t : DepTree) : Bool :=
   List.range t.words.length |>.all λ i =>
     match t.words[i]? with
@@ -206,11 +183,9 @@ def checkVerbSubcat (t : DepTree) : Bool :=
       else true
     | none => true
 
--- ============================================================================
--- Overall Well-formedness
--- ============================================================================
+end SubcategorizationChecking
 
-/-- A dependency tree is well-formed if it satisfies all constraints -/
+/-- A dependency tree is well-formed if it satisfies all constraints. -/
 def isWellFormed (t : DepTree) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
@@ -219,11 +194,9 @@ def isWellFormed (t : DepTree) : Bool :=
   checkDetNounAgr t &&
   checkVerbSubcat t
 
--- ============================================================================
--- Grammar Instance
--- ============================================================================
+section GrammarInstance
 
-/-- Dependency grammar configuration -/
+/-- Dependency grammar configuration. -/
 structure DependencyGrammar where
   checkProjectivity : Bool := true
   checkAgreement : Bool := true
@@ -236,32 +209,34 @@ instance : Grammar DependencyGrammar where
 
 def defaultGrammar : DependencyGrammar := {}
 
--- ============================================================================
--- Tree Construction Helpers
--- ============================================================================
+end GrammarInstance
 
-/-- Create a simple SV tree: subject → verb -/
+section TreeConstructionHelpers
+
+/-- Create a simple SV tree: subject -> verb. -/
 def mkSVTree (subj verb : Word) : DepTree :=
   { words := [subj, verb]
-    deps := [⟨1, 0, .subj⟩]  -- subj at 0 depends on verb at 1
+    deps := [⟨1, 0, .subj⟩]
     rootIdx := 1 }
 
-/-- Create a simple SVO tree: subject → verb ← object -/
+/-- Create a simple SVO tree: subject -> verb <- object. -/
 def mkSVOTree (subj verb obj : Word) : DepTree :=
   { words := [subj, verb, obj]
     deps := [⟨1, 0, .subj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1 }
 
-/-- Create Det-N-V tree: det → noun → verb -/
+/-- Create Det-N-V tree: det -> noun -> verb. -/
 def mkDetNVTree (det noun verb : Word) : DepTree :=
   { words := [det, noun, verb]
-    deps := [⟨1, 0, .det⟩, ⟨2, 1, .subj⟩]  -- det→noun, noun→verb
+    deps := [⟨1, 0, .det⟩, ⟨2, 1, .subj⟩]
     rootIdx := 2 }
 
-/-- Create a ditransitive tree: subj → verb ← iobj ← obj -/
+/-- Create a ditransitive tree: subj -> verb <- iobj <- obj. -/
 def mkDitransTree (subj verb iobj obj : Word) : DepTree :=
   { words := [subj, verb, iobj, obj]
     deps := [⟨1, 0, .subj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
     rootIdx := 1 }
+
+end TreeConstructionHelpers
 
 end DepGrammar

@@ -317,6 +317,7 @@ import Linglib.Theories.Montague.Noun.Kind.Dayal2004
 import Linglib.Theories.Montague.Noun.Kind.Generics
 import Linglib.Theories.Montague.Noun.Kind.Krifka2004
 import Linglib.Theories.Montague.Noun.Relational.Barker2011
+import Linglib.Theories.Montague.Noun.TypeShifting
 import Linglib.Theories.Montague.Numbers
 import Linglib.Theories.Montague.Particle.Additive
 import Linglib.Theories.Montague.Plural.Distributivity

@@ -1,27 +1,17 @@
 /-
-# Linglib.Core.RSA
+# RSA Core
 
-Core RSA (Rational Speech Acts) infrastructure with exact rational arithmetic.
-
-## Main definitions
-
-- `RSAScenario`: Parametric RSA scenario with Fintype constraints
-- `RSA.L0`, `RSA.S0`, `RSA.S1`, `RSA.L1_world`: Core RSA agents
-- `RSAScenario.basic`, `.basicBool`, `.ambiguous`, `.qud`: Smart constructors
-- `RSA.ChainVariant`: L0-based vs S0-based recursion
-
-## References
-
-- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
+Core RSA infrastructure with exact rational arithmetic (Frank & Goodman 2012).
+Provides `RSAScenario`, `RSA.L0/S0/S1/L1_world`, and smart constructors.
 -/
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.FinEnum
 import Linglib.Theories.RSA.Core.Distribution
 
--- Chain Variant
+section ChainVariant
 
-/-- RSA chain variant: L0-based (standard) or S0-based (production-first) -/
+/-- RSA chain variant: L0-based (standard) or S0-based (production-first). -/
 inductive RSA.ChainVariant
   | L0Based  -- L0 → S1 → L1 (literal listener base, standard)
   | S0Based  -- S0 → L1 → S1 (literal speaker base)
@@ -32,14 +22,18 @@ instance : ToString RSA.ChainVariant where
     | .L0Based => "L0-based (L0→S1→L1)"
     | .S0Based => "S0-based (S0→L1→S1)"
 
--- Utility Functions
+end ChainVariant
 
-/-- Convert Bool to ℚ (1 if true, 0 if false) -/
+section UtilityFunctions
+
+/-- Convert Bool to ℚ (1 if true, 0 if false). -/
 def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
--- RSAScenario: Fintype-Based Unified Type (Primary API)
+end UtilityFunctions
 
-/-- Parametric RSA scenario with Fintype constraints for exact computation -/
+section RSAScenario
+
+/-- Parametric RSA scenario with Fintype constraints for exact computation. -/
 structure RSAScenario (U W : Type) [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W] where
   /-- Interpretation type -/
   Interp : Type := Unit
@@ -94,9 +88,9 @@ attribute [instance] RSAScenario.interpFintype RSAScenario.lexiconFintype
   RSAScenario.interpDecEq RSAScenario.lexiconDecEq
   RSAScenario.beliefStateDecEq RSAScenario.goalDecEq
 
--- Smart Constructors for RSAScenario
+section SmartConstructors
 
-/-- Basic RSA scenario with no latent variables -/
+/-- Basic RSA scenario with no latent variables. -/
 def RSAScenario.basic {U W : Type}
     [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
     (φ : U → W → ℚ)
@@ -361,25 +355,26 @@ def RSAScenario.lexicalUncertainty {U W L : Type}
   cost_nonneg := cost_nonneg
   utterancePrior_nonneg := utterancePrior_nonneg
 
--- RSA: Fintype-Based RSA Computations
+end SmartConstructors
+end RSAScenario
+
+section RSAComputations
 
 namespace RSA
 
 variable {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
 variable (S : RSAScenario U W)
 
-/-- Helper: sum scores over Fintype -/
+/-- Helper: sum scores over Fintype. -/
 private def sumScores (scores : W → ℚ) : ℚ :=
   ∑ w : W, scores w
 
-/-- Helper: try to normalize scores to ExactDist -/
+/-- Helper: try to normalize scores to ExactDist. -/
 private def tryNormalize {α : Type*} [Fintype α]
     (scores : α → ℚ) (hnonneg : ∀ x, 0 ≤ scores x) : Option (ExactDist α) :=
   ExactDist.tryNormalize scores hnonneg
 
--- L0: Literal Listener
-
-/-- L0: Literal listener P(w|u,i,l,a,q) ∝ φ · prior · credence -/
+/-- L0: Literal listener P(w|u,i,l,a,q) ∝ φ · prior · credence. -/
 def L0 (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (_q : S.Goal)
     : Option (ExactDist W) :=
@@ -388,7 +383,7 @@ def L0 (u : U)
     mul_nonneg (mul_nonneg (S.worldPrior_nonneg w) (S.φ_nonneg i l u w)) (S.speakerCredence_nonneg a w)
   tryNormalize scores hnonneg
 
-/-- L0 projected onto QUD equivalence classes -/
+/-- L0 projected onto QUD equivalence classes. -/
 def L0_projected (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
     : Option (ExactDist W) :=
@@ -405,9 +400,7 @@ def L0_projected (u : U)
       · exact le_refl 0
     tryNormalize scores hnonneg
 
--- S0: Literal Speaker
-
-/-- S0: Literal speaker P(u|w) ∝ utterancePrior · φ -/
+/-- S0: Literal speaker P(u|w) ∝ utterancePrior · φ. -/
 def S0 (w : W)
     (i : S.Interp) (l : S.Lexicon) (_a : S.BeliefState) (_q : S.Goal)
     : Option (ExactDist U) :=
@@ -416,7 +409,7 @@ def S0 (w : W)
     mul_nonneg (S.utterancePrior_nonneg u) (S.φ_nonneg i l u w)
   tryNormalize scores hnonneg
 
-/-- L1 from S0: P(w|u) ∝ prior · S0(u|w) -/
+/-- L1 from S0: P(w|u) ∝ prior · S0(u|w). -/
 def L1_fromS0 (u : U)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
     : Option (ExactDist W) :=
@@ -433,9 +426,7 @@ def L1_fromS0 (u : U)
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
--- S1: Pragmatic Speaker
-
-/-- S1: Pragmatic speaker P(u|w) ∝ φ · L0^α · cost^(-α) -/
+/-- S1: Pragmatic speaker P(u|w) ∝ φ · L0^α · cost^(-α). -/
 def S1 (w : W)
     (i : S.Interp) (l : S.Lexicon) (a : S.BeliefState) (q : S.Goal)
     : Option (ExactDist U) :=
@@ -460,9 +451,7 @@ def S1 (w : W)
       linarith
   tryNormalize scores hnonneg
 
--- L1: Pragmatic Listener
-
-/-- L1 marginal P(w|u) summing over all latent variables -/
+/-- L1 marginal P(w|u) summing over all latent variables. -/
 def L1_world (u : U) : Option (ExactDist W) :=
   let scores := λ w =>
     ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
@@ -492,7 +481,7 @@ def L1_world (u : U) : Option (ExactDist W) :=
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
-/-- L1 marginal over interpretations -/
+/-- L1 marginal over interpretations. -/
 def L1_interp (u : U) : Option (ExactDist S.Interp) :=
   let scores := λ i =>
     ∑ w : W, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
@@ -522,7 +511,7 @@ def L1_interp (u : U) : Option (ExactDist S.Interp) :=
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
-/-- L1 marginal over belief states -/
+/-- L1 marginal over belief states. -/
 def L1_beliefState (u : U) : Option (ExactDist S.BeliefState) :=
   let scores := λ a =>
     ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ q : S.Goal,
@@ -552,7 +541,7 @@ def L1_beliefState (u : U) : Option (ExactDist S.BeliefState) :=
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
-/-- L1 marginal over goals -/
+/-- L1 marginal over goals. -/
 def L1_goal (u : U) : Option (ExactDist S.Goal) :=
   let scores := λ q =>
     ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
@@ -582,9 +571,7 @@ def L1_goal (u : U) : Option (ExactDist S.Goal) :=
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
--- L1 Given Goal (for BToM models)
-
-/-- L1 over worlds conditioned on specific goal -/
+/-- L1 over worlds conditioned on specific goal. -/
 def L1_world_givenGoal (u : U) (q : S.Goal)
     : Option (ExactDist W) :=
   let scores := λ w =>
@@ -615,7 +602,7 @@ def L1_world_givenGoal (u : U) (q : S.Goal)
       | some d => exact d.nonneg u
   tryNormalize scores hnonneg
 
-/-- L1 over belief states conditioned on specific goal -/
+/-- L1 over belief states conditioned on specific goal. -/
 def L1_beliefState_givenGoal (u : U) (q : S.Goal)
     : Option (ExactDist S.BeliefState) :=
   let scores := λ a =>

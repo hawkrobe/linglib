@@ -5,13 +5,6 @@ import Mathlib.Data.List.Basic
 # Basic Question Types
 
 Core types for question semantics shared across theoretical approaches.
-
-## Main definitions
-
-`Question`, `Answer`, `Cell`, `exactQuestion`, `questionProduct`, `answers`
-
-## References
-
 -/
 
 namespace Montague.Question
