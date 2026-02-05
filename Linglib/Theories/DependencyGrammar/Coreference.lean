@@ -26,7 +26,7 @@ Coreference constraints using dependency grammar mechanisms.
 import Linglib.Core.Basic
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 
 namespace DepGrammar.Coreference
 

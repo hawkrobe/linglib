@@ -1,11 +1,11 @@
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates.Adjectival
+
 /-!
 # English Predicates
 
 Re-exports verbal and adjectival predicate entries.
 -/
-
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Predicates.Adjectival
 
 namespace Fragments.English.Predicates
 

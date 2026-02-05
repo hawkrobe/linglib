@@ -1,4 +1,4 @@
-import Linglib.Core.Softmax.Basic
+import Linglib.Theories.RSA.Core.Softmax.Basic
 import Mathlib.Analysis.Convex.Mul
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 

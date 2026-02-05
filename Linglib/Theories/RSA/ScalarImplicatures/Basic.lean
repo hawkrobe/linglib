@@ -21,7 +21,7 @@ import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.Montague.Core.Derivation
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Theories.Core.Interfaces.ImplicatureTheory
 
 namespace RSA.ScalarImplicatures
 

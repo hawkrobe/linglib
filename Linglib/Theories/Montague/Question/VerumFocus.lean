@@ -36,7 +36,7 @@ In short: "It is for sure that we should add p to the CG."
 -/
 
 import Linglib.Theories.Montague.Question.Basic
-import Linglib.Core.CommonGround
+import Linglib.Theories.Core.CommonGround
 
 namespace Montague.Question.VerumFocus
 

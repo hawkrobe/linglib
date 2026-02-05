@@ -28,7 +28,7 @@ import Mathlib.Analysis.Convex.Function
 import Mathlib.Topology.Order.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Field
-import Linglib.Core.Softmax.Basic
+import Linglib.Theories.RSA.Core.Softmax.Basic
 
 namespace RSA.Convergence
 

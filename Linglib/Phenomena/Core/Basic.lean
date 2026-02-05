@@ -5,7 +5,6 @@ Core types for specifying linguistic phenomena.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Grammar
 import Linglib.Phenomena.Core.Lexicon
 
 open Lexicon in

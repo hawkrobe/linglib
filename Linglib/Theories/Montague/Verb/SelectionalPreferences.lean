@@ -36,7 +36,7 @@ Selectional preferences can be encoded as:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.ProductOfExperts
+import Linglib.Theories.Core.ProductOfExperts
 
 namespace Montague.Verb.SelectionalPreferences
 

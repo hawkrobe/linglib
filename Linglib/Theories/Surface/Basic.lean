@@ -7,7 +7,6 @@ Useful as a reference implementation before encoding in HPSG or Minimalism.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Grammar
 
 namespace Surface
 

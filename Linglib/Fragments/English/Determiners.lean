@@ -1,3 +1,9 @@
+import Linglib.Core.Basic
+import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+
 /-!
 # English Determiners
 
@@ -12,12 +18,6 @@ Quantifier lexicon with syntactic and semantic properties.
 
 - Horn (1972). On the semantic properties of logical operators in English.
 -/
-
-import Linglib.Core.Basic
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
 
 namespace Fragments.English.Determiners
 

@@ -17,7 +17,7 @@ Core RSA (Rational Speech Acts) infrastructure with exact rational arithmetic.
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.FinEnum
-import Linglib.Core.Distribution
+import Linglib.Theories.RSA.Core.Distribution
 
 -- Chain Variant
 

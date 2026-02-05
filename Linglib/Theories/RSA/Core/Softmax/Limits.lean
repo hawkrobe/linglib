@@ -1,4 +1,4 @@
-import Linglib.Core.Softmax.Basic
+import Linglib.Theories.RSA.Core.Softmax.Basic
 import Mathlib.Order.Filter.Basic
 import Mathlib.Topology.Order.Basic
 import Mathlib.Topology.Order.Real

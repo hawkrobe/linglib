@@ -59,7 +59,7 @@ Combined utility (Eq. 9):
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Mathlib.Tactic.Ring
-import Linglib.Core.Distribution
+import Linglib.Theories.RSA.Core.Distribution
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.CombinedUtility

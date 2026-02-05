@@ -39,7 +39,7 @@ NeoGricean/Exhaustivity/Interface.lean (this file)
 - Franke & Bergen (2020). Theory-driven statistical modeling.
 -/
 
-import Linglib.Core.Parse
+import Linglib.Theories.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 
 namespace NeoGricean.Exhaustivity.Interface

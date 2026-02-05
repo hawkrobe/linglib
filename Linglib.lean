@@ -7,27 +7,9 @@ and their interfaces. See README.md for documentation links.
 
 -- Core
 import Linglib.Core.Basic
-import Linglib.Core.CommonGround
-import Linglib.Core.Distribution
-import Linglib.Core.Duality
-import Linglib.Core.FormalLanguageTheory
-import Linglib.Core.GradedProposition
-import Linglib.Core.Grammar
-import Linglib.Core.Interfaces.BindingSemantics
-import Linglib.Core.Interfaces.CoreferenceTheory
-import Linglib.Core.Interfaces.ImplicatureTheory
-import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Core.Interfaces.SemanticStructure
-import Linglib.Core.Parse
+import Linglib.Core.Kleene
 import Linglib.Core.Presupposition
-import Linglib.Core.ProductOfExperts
 import Linglib.Core.Proposition
-import Linglib.Core.QUD
-import Linglib.Core.RationalPower
-import Linglib.Core.SatisfactionOrdering
-import Linglib.Core.Softmax.Basic
-import Linglib.Core.Softmax.Limits
-import Linglib.Core.Softmax.MaxEntropy
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -158,8 +140,20 @@ import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.VerbPosition
 
+-- Theories: Core (cross-theory utilities)
+import Linglib.Theories.Core.CommonGround
+import Linglib.Theories.Core.Interfaces.BindingSemantics
+import Linglib.Theories.Core.Interfaces.CoreferenceTheory
+import Linglib.Theories.Core.Interfaces.ImplicatureTheory
+import Linglib.Theories.Core.Interfaces.ScopeTheory
+import Linglib.Theories.Core.Interfaces.SemanticStructure
+import Linglib.Theories.Core.Parse
+import Linglib.Theories.Core.ProductOfExperts
+import Linglib.Theories.Core.QUD
+
 -- Theories: CCG
 import Linglib.Theories.CCG.Basic
+import Linglib.Theories.CCG.FormalLanguageTheory
 import Linglib.Theories.CCG.Combinators
 import Linglib.Theories.CCG.Coordination
 import Linglib.Theories.CCG.CrossSerial
@@ -274,6 +268,8 @@ import Linglib.Theories.Montague.Adjective.Theory
 import Linglib.Theories.Montague.Anaphora
 import Linglib.Theories.Montague.Basic
 import Linglib.Theories.Montague.BayesianSemantics
+import Linglib.Theories.Montague.Duality
+import Linglib.Theories.Montague.GradedProposition
 import Linglib.Theories.Montague.Composition
 import Linglib.Theories.Montague.Conjunction
 import Linglib.Theories.Montague.Core.Derivation
@@ -298,6 +294,7 @@ import Linglib.Theories.Montague.Modal.Basic
 import Linglib.Theories.Montague.Modal.Compare
 import Linglib.Theories.Montague.Modal.Kratzer
 import Linglib.Theories.Montague.Modal.PhillipsBrown
+import Linglib.Theories.Montague.Modal.SatisfactionOrdering
 import Linglib.Theories.Montague.Modal.Simple
 import Linglib.Theories.Montague.Modification
 import Linglib.Theories.Montague.Noun.GradableNouns
@@ -404,6 +401,11 @@ import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Intensional
 import Linglib.Theories.RSA.Core.Model
 import Linglib.Theories.RSA.Core.Noise
+import Linglib.Theories.RSA.Core.Distribution
+import Linglib.Theories.RSA.Core.RationalPower
+import Linglib.Theories.RSA.Core.Softmax.Basic
+import Linglib.Theories.RSA.Core.Softmax.Limits
+import Linglib.Theories.RSA.Core.Softmax.MaxEntropy
 import Linglib.Theories.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.RSA.Domains.Degrees
 import Linglib.Theories.RSA.Domains.LexicalAmbiguity

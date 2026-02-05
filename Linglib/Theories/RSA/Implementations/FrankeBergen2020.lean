@@ -24,7 +24,7 @@ which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.Parse
+import Linglib.Theories.Core.Parse
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 

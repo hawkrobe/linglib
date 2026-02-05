@@ -39,7 +39,7 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 -/
 
 import Linglib.Core.Proposition
-import Linglib.Core.GradedProposition
+import Linglib.Theories.Montague.GradedProposition
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod

@@ -39,7 +39,7 @@ import Linglib.Theories.Montague.Sentence.Entailment.Monotonicity
 import Linglib.Theories.Montague.Core.Derivation
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Theories.Core.Interfaces.ImplicatureTheory
 
 namespace NeoGricean.ScalarImplicatures
 

@@ -43,7 +43,7 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 
 import Linglib.Theories.Montague.Sentence.Conditional.Basic
 import Linglib.Theories.Montague.Sentence.Conditional.CausalModel
-import Linglib.Core.Duality
+import Linglib.Theories.Montague.Duality
 
 namespace Montague.Sentence.Conditional.Counterfactual
 

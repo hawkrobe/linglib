@@ -17,7 +17,7 @@ Coreference constraints via c-command and locality following Chomsky (1981, 1986
 
 import Linglib.Core.Basic
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Theories.Core.Interfaces.CoreferenceTheory
 
 namespace Minimalism.Coreference
 

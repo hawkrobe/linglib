@@ -36,7 +36,7 @@ This asymmetry emerges from pragmatic inference, not stipulation.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.Distribution
+import Linglib.Theories.RSA.Core.Distribution
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.TesslerGoodman2022
