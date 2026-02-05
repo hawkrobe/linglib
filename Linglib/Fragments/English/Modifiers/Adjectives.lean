@@ -275,6 +275,6 @@ def allEntries : List AdjModifierEntry := [
 ]
 
 def lookup (form : String) : Option AdjModifierEntry :=
-  allEntries.find? fun a => a.form == form
+  allEntries.find? λ a => a.form == form
 
 end Fragments.English.Modifiers.Adjectives

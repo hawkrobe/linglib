@@ -10,10 +10,10 @@ Theory-neutral empirical patterns for ignorance inferences from disjunction.
 2. Speaker doesn't know Harry is in Brussels
 
 This is different from scalar implicature:
-- Scalar: "some" → speaker KNOWS not all
-- Ignorance: "A or B" → speaker DOESN'T KNOW which
+- Scalar: "some" → speaker knows not all
+- Ignorance: "A or B" → speaker doesn't know which
 
-## Key References
+## References
 
 - Gazdar, G. (1979). Pragmatics: Implicature, Presupposition, and Logical Form.
 - Sauerland, U. (2004). Scalar Implicatures in Complex Sentences.
@@ -89,9 +89,9 @@ def disjunctionIgnoranceExamples : List DisjunctionIgnoranceDatum :=
 /--
 Comparison between ignorance and scalar implicatures.
 
-Key difference:
-- Scalar: Speaker KNOWS the stronger alternative is false
-- Ignorance: Speaker DOESN'T KNOW which disjunct is true
+Scalar implicatures and ignorance inferences differ:
+- Scalar: speaker knows the stronger alternative is false
+- Ignorance: speaker doesn't know which disjunct is true
 -/
 structure IgnoranceVsScalarDatum where
   /-- The utterance -/
@@ -111,7 +111,7 @@ def someScalar : IgnoranceVsScalarDatum :=
   { utterance := "Some students passed"
   , inferenceType := "scalar"
   , inference := "Speaker believes not all students passed"
-  , speakerClaimsKnowledge := true  -- Speaker KNOWS not all
+  , speakerClaimsKnowledge := true  -- Speaker knows not all
   }
 
 /--
@@ -121,7 +121,7 @@ def orIgnorance : IgnoranceVsScalarDatum :=
   { utterance := "John passed or Mary passed"
   , inferenceType := "ignorance"
   , inference := "Speaker doesn't know which one passed"
-  , speakerClaimsKnowledge := false  -- Speaker DOESN'T KNOW
+  , speakerClaimsKnowledge := false  -- Speaker doesn't know
   }
 
 /--
@@ -266,7 +266,7 @@ Disjunction scoping over universal.
 def disjScopeUniversal : QuantifiedIgnoranceDatum :=
   { sentence := "Every student read Moby Dick, or every student read Huckleberry Finn"
   , quantifierScope := "∨ > ∀"
-  , inference := "Speaker doesn't know which book ALL students read"
+  , inference := "Speaker doesn't know which book all students read"
   , notes := "Global ignorance about which alternative"
   }
 
@@ -280,8 +280,8 @@ def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
 /-!
 ## Positional Asymmetry in Disjunction Interpretation
 
-Chierchia (2013) "Logic in Grammar" Ch.1 observes that the SAME lexical
-material yields different PREFERRED readings based on structural position:
+Chierchia (2013) "Logic in Grammar" Ch.1 observes that the same lexical
+material yields different preferred readings based on structural position:
 
 | Position | Polarity | Preferred Reading |
 |----------|----------|-------------------|
@@ -294,19 +294,19 @@ material yields different PREFERRED readings based on structural position:
 
 ### The Core Pattern
 
-**UE contexts**: Exclusive reading preferred
+UE contexts: exclusive reading preferred
 - "If everything goes well, we'll hire Mary or Sue"
 - Default: we'll hire exactly one of them
 
-**DE contexts**: Inclusive reading preferred
+DE contexts: inclusive reading preferred
 - "If we hire Mary or Sue, everything will go well"
 - Default: hiring either or both leads to success
 
 ### Explanation via Maximize Strength
 
 The asymmetry follows from the Maximize Strength principle:
-- In UE: Adding "not both" STRENGTHENS → compute SI
-- In DE: Adding "not both" would WEAKEN → don't compute SI
+- In UE: adding "not both" strengthens → compute SI
+- In DE: adding "not both" would weaken → don't compute SI
 
 When the exclusive SI is not computed, the inclusive reading emerges.
 
@@ -450,14 +450,14 @@ def exclusiveInclusiveExamples : List ExclusiveInclusiveExample :=
   ]
 
 -- Verify predictions match data
-#guard exclusiveInclusiveExamples.all (fun ex =>
+#guard exclusiveInclusiveExamples.all (λ ex =>
   predictReading ex.polarity == ex.preferredReading)
 
 
 /-!
 ## Forcing Non-Preferred Readings
 
-While polarity determines the DEFAULT reading, context can FORCE the
+While polarity determines the default reading, context can force the
 non-preferred interpretation:
 
 ### Forcing Inclusive in UE (harder)
@@ -468,7 +468,7 @@ non-preferred interpretation:
 "If we hire Mary or Sue but not both, everything will go well."
 - Explicit "but not both" forces exclusive
 
-The key observation: forcing requires EXPLICIT marking.
+The observation: forcing requires explicit marking.
 The unmarked reading follows from Maximize Strength.
 -/
 
@@ -513,45 +513,5 @@ All forced reading examples.
 -/
 def forcedReadingExamples : List ForcedReadingExample :=
   [force_inclusive_ue, force_exclusive_de]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `DisjunctionIgnoranceDatum`: Basic ignorance pattern
-- `IgnoranceVsScalarDatum`: Comparison with scalar implicatures
-- `LongDisjunctionIgnoranceDatum`: Ignorance with n>2 disjuncts
-- `IgnoranceBlockingDatum`: Cases where ignorance is blocked
-- `QuantifiedIgnoranceDatum`: Interaction with quantifiers
-
-### Example Collections
-- `disjunctionIgnoranceExamples`: 3 basic examples
-- `comparisonExamples`: 2 scalar vs ignorance examples
-- `longDisjunctionExamples`: 2 long disjunction examples
-- `blockingExamples`: 3 blocking contexts
-- `quantifiedIgnoranceExamples`: 2 quantifier interactions
-- `exclusiveInclusiveExamples`: 6 polarity-dependent reading examples
-- `forcedReadingExamples`: 2 context-forcing examples
-
-### Exclusive/Inclusive Asymmetry (Chierchia 2013)
-- `DisjunctionReading`: inclusive vs exclusive
-- `DisjunctionPosition`: structural position types
-- `positionPolarity`: map position to polarity
-- `predictReading`: predict reading from polarity
-- `ExclusiveInclusiveExample`: empirical data structure
-
-### Key Predictions
-- UE contexts → exclusive (SI computed)
-- DE contexts → inclusive (SI not computed)
-- Non-preferred readings require explicit marking
-
-### Key References
-- Gazdar (1979): Original observation
-- Sauerland (2004): Compositional analysis
-- Geurts (2010): Modern synthesis
-- Chierchia (2013): Exclusive/inclusive asymmetry
--/
 
 end Phenomena.Polarity.DisjunctionIgnorance

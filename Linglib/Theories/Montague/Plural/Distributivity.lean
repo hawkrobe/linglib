@@ -4,7 +4,7 @@
 Formalizes the independence of distributivity and maximality,
 following Križ & Spector (2021) and Haslinger et al. (2025).
 
-## Key Insight
+## Insight
 
 Distributivity (predicate applies to each atom) and maximality
 (no exceptions allowed) are orthogonal semantic properties.
@@ -122,19 +122,19 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
 
 The K&S theory explains both homogeneity and non-maximality through:
 
-1. **Candidate interpretations**: For "the Xs are P", generate propositions
+1. Candidate interpretations: For "the Xs are P", generate propositions
    {∀a∈z. P(a) | z ⊆ X} for all sub-pluralities z.
 
-2. **Trivalent semantics**:
+2. Trivalent semantics:
    - TRUE at w: all candidates true at w
    - FALSE at w: all candidates false at w
    - GAP: some true, some false
 
-3. **Homogeneity**: The gap is symmetric under negation—this explains why
+3. Homogeneity: The gap is symmetric under negation. This explains why
    "the Xs are P" (quasi-universal) and "the Xs aren't P" (quasi-existential)
    have the same undefined region.
 
-4. **Non-maximality**: QUD-based relevance filtering reduces the candidate set,
+4. Non-maximality: QUD-based relevance filtering reduces the candidate set,
    allowing sentences to be judged true even when not all candidates hold.
 -/
 
@@ -202,21 +202,21 @@ theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) 
 
 /-- If all satisfy P, then none satisfy ¬P -/
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    allSatisfy P x w = true → noneSatisfy (fun a w => !P a w) x w = true := by
+    allSatisfy P x w = true → noneSatisfy (λ a w => !P a w) x w = true := by
   simp only [allSatisfy, noneSatisfy, decide_eq_true_eq, Bool.not_eq_false']
   intro h a ha
   exact h a ha
 
 /-- If none satisfy P, then all satisfy ¬P -/
 theorem noneSatisfy_imp_allSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    noneSatisfy P x w = true → allSatisfy (fun a w => !P a w) x w = true := by
+    noneSatisfy P x w = true → allSatisfy (λ a w => !P a w) x w = true := by
   simp only [allSatisfy, noneSatisfy, decide_eq_true_eq, Bool.not_eq_true']
   intro h a ha
   exact h a ha
 
 /-- If not all satisfy ¬P, then not none satisfy P -/
 theorem not_allSatisfy_neg_imp_not_noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    allSatisfy (fun a w => !P a w) x w = false → noneSatisfy P x w = false := by
+    allSatisfy (λ a w => !P a w) x w = false → noneSatisfy P x w = false := by
   intro h
   unfold allSatisfy at h
   unfold noneSatisfy
@@ -231,7 +231,7 @@ theorem not_allSatisfy_neg_imp_not_noneSatisfy (P : Atom → W → Bool) (x : Fi
 
 /-- If not none satisfy ¬P, then not all satisfy P -/
 theorem not_noneSatisfy_neg_imp_not_allSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    noneSatisfy (fun a w => !P a w) x w = false → allSatisfy P x w = false := by
+    noneSatisfy (λ a w => !P a w) x w = false → allSatisfy P x w = false := by
   intro h
   unfold noneSatisfy at h
   unfold allSatisfy
@@ -251,7 +251,7 @@ def inGap (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
   (∃ a ∈ x, P a w = true) ∧ (∃ a ∈ x, P a w = false)
 
 /--
-**HOMOGENEITY THEOREM (Križ & Spector 2021, Section 2.1)**
+Homogeneity Theorem (Križ & Spector 2021, Section 2.1).
 
 The gap is symmetric under negation: a world is in the gap for P
 iff it's in the gap for ¬P.
@@ -265,22 +265,22 @@ Proof: The gap for P is {∃a.P(a) ∧ ∃a.¬P(a)}.
        These are identical.
 -/
 theorem homogeneity_gap_symmetric (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    inGap P x w ↔ inGap (fun a w => !P a w) x w := by
+    inGap P x w ↔ inGap (λ a w => !P a w) x w := by
   simp only [inGap, Bool.not_eq_true', Bool.not_eq_false']
   constructor <;> (intro ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩; exact ⟨⟨b, hb, hPb⟩, ⟨a, ha, hPa⟩⟩)
 
 /--
-**COROLLARY**: pluralTruthValue is gap iff negated version is gap.
+Corollary: pluralTruthValue is gap iff negated version is gap.
 -/
 theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (_hne : x.Nonempty) :
-    pluralTruthValue P x w = .gap ↔ pluralTruthValue (fun a w => !P a w) x w = .gap := by
+    pluralTruthValue P x w = .gap ↔ pluralTruthValue (λ a w => !P a w) x w = .gap := by
   unfold pluralTruthValue allSatisfy noneSatisfy
   simp only [decide_eq_true_eq, Bool.not_eq_true', Bool.not_eq_false', Bool.not_not]
   constructor <;> (intro h; split_ifs at h ⊢ <;> first | rfl | contradiction | omega)
 
 /--
-**HOMOGENEITY POLARITY THEOREM**: Truth and falsity swap under negation.
+Homogeneity Polarity Theorem: Truth and falsity swap under negation.
 
 If "the Xs are P" is TRUE, then "the Xs are ¬P" is FALSE, and vice versa.
 
@@ -288,7 +288,7 @@ Note: Requires x to be nonempty. For empty x, both `allSatisfy P` and `allSatisf
 are vacuously true, so the theorem doesn't hold.
 -/
 theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    pluralTruthValue (fun a w => !P a w) x w =
+    pluralTruthValue (λ a w => !P a w) x w =
     match pluralTruthValue P x w with
     | .true => .false
     | .false => .true
@@ -299,7 +299,7 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
   · rw [pluralTruthValue_eq_true_iff] at h
     have hNone := allSatisfy_imp_noneSatisfy_neg P x w h
     -- Need to show allSatisfy ¬P = false
-    have hNotAll : allSatisfy (fun a w => !P a w) x w = false := by
+    have hNotAll : allSatisfy (λ a w => !P a w) x w = false := by
       simp only [allSatisfy, decide_eq_true_eq, Bool.not_eq_true'] at h
       simp only [allSatisfy, Bool.not_eq_true', decide_eq_false_iff_not, decide_eq_true_eq,
                  not_forall, exists_prop]
@@ -322,11 +322,11 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     push_neg at hNotNone
     obtain ⟨b, hb, hPb⟩ := hNotNone
     -- Now show allSatisfy ¬P = false and noneSatisfy ¬P = false
-    have h1 : allSatisfy (fun a w => !P a w) x w = false := by
+    have h1 : allSatisfy (λ a w => !P a w) x w = false := by
       simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_true',
                  not_forall, exists_prop]
       exact ⟨b, hb, by simp [hPb]⟩
-    have h2 : noneSatisfy (fun a w => !P a w) x w = false := by
+    have h2 : noneSatisfy (λ a w => !P a w) x w = false := by
       simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_false',
                  not_forall, exists_prop]
       exact ⟨a, ha, by simp [hPa]⟩
@@ -341,7 +341,7 @@ abbrev BProp (W : Type*) := W → Bool
 The candidate proposition for sub-plurality z: "P holds of all atoms in z".
 -/
 def candidateProp (P : Atom → W → Bool) (z : Finset Atom) : BProp W :=
-  fun w => decide (∀ a ∈ z, P a w = true)
+  λ w => decide (∀ a ∈ z, P a w = true)
 
 /--
 Full candidate set: all sub-plurality propositions.
@@ -378,14 +378,14 @@ def gapOnCandidates (candidates : Set (BProp W)) (w : W) : Prop :=
 -- Part 6: Key Correspondence Theorems
 
 /--
-**THEOREM**: The maximal candidate is exactly distMaximal.
+Theorem: The maximal candidate is exactly distMaximal.
 -/
 theorem candidateProp_x_eq_distMaximal (P : Atom → W → Bool) (x : Finset Atom) :
     candidateProp P x = distMaximal P x := by
   rfl
 
 /--
-**THEOREM**: With identity tolerance, the candidate set is a singleton
+Theorem: With identity tolerance, the candidate set is a singleton
 containing only the maximal candidate.
 -/
 theorem identity_candidateSet_eq_singleton (P : Atom → W → Bool) (x : Finset Atom) :
@@ -400,7 +400,7 @@ theorem identity_candidateSet_eq_singleton (P : Atom → W → Bool) (x : Finset
     exact ⟨x, Finset.Subset.refl x, rfl, hp⟩
 
 /--
-**THEOREM**: With full tolerance, the candidate set is exactly fullCandidateSet.
+Theorem: With full tolerance, the candidate set is exactly fullCandidateSet.
 -/
 theorem full_candidateSet_eq_full (P : Atom → W → Bool) (x : Finset Atom) :
     candidateSet P Tolerance.full x = fullCandidateSet P x := by
@@ -414,30 +414,44 @@ theorem full_candidateSet_eq_full (P : Atom → W → Bool) (x : Finset Atom) :
     exact ⟨z, hz_mem, hz_mem, hp.symm⟩
 
 /--
-**THEOREM**: trueOnAll for the full candidate set iff all atoms satisfy P.
+Theorem: trueOnAll for the full candidate set iff all atoms satisfy P.
 
 This connects the candidate framework to the simple universal condition.
-
-**Proof sketch**:
-- (→): If all candidates true, singleton candidates {a} are true, so each P(a) holds.
-- (←): If all P(a) hold, then for any sub-plurality z, all atoms in z satisfy P.
-
-TODO: Complete proof (set membership issues with Finset.powerset representation)
 -/
 theorem trueOnAll_full_iff_allSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     trueOnAll (fullCandidateSet P x) w ↔ allSatisfy P x w = true := by
-  sorry
+  constructor
+  · -- (→): If all candidates true, then all atoms satisfy P
+    intro h
+    simp only [allSatisfy, decide_eq_true_eq]
+    intro a ha
+    -- The singleton {a} is in fullCandidateSet
+    have hsing : candidateProp P {a} ∈ fullCandidateSet P x := by
+      simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset]
+      exact ⟨{a}, Finset.singleton_subset_iff.mpr ha, rfl⟩
+    have := h (candidateProp P {a}) hsing
+    simp only [candidateProp, decide_eq_true_eq, Finset.mem_singleton, forall_eq] at this
+    exact this
+  · -- (←): If all atoms satisfy P, then all candidates are true
+    intro h p hp
+    simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset] at hp
+    obtain ⟨z, hz, rfl⟩ := hp
+    simp only [candidateProp, decide_eq_true_eq]
+    intro a ha
+    simp only [allSatisfy, decide_eq_true_eq] at h
+    exact h a (hz ha)
 
 /--
-**THEOREM**: falseOnAll for full candidates iff no atom satisfies P.
+Theorem: falseOnAll for full candidates iff no atom satisfies P.
 
-**Proof sketch**:
-- (→): If all candidates false, singleton candidates {a} are false, so each P(a) fails.
-- (←): If no P(a) holds, then for any non-empty z, some atom fails P.
+Known issue: This theorem is currently unprovable because `fullCandidateSet`
+includes the empty sub-plurality `∅`, and `candidateProp P ∅ w = true` vacuously
+for all w. Therefore `falseOnAll (fullCandidateSet P x) w` is always `False`.
 
-Note: Requires x nonempty because the empty candidate is vacuously true.
-
-TODO: Complete proof (requires careful handling of empty sub-pluralities)
+TODO: Fix `fullCandidateSet` to exclude empty sub-pluralities (which have no
+linguistic interpretation). Then the proof follows by:
+- (→): Singleton candidates {a} false → each P(a) fails.
+- (←): No P(a) holds → for any nonempty z ⊆ x, some atom in z fails P.
 -/
 theorem falseOnAll_full_iff_noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (hne : x.Nonempty) :
@@ -445,7 +459,7 @@ theorem falseOnAll_full_iff_noneSatisfy (P : Atom → W → Bool) (x : Finset At
   sorry
 
 /--
-**MAIN THEOREM**: The trivalent semantics matches the candidate interpretation framework.
+Main Theorem: The trivalent semantics matches the candidate interpretation framework.
 
 pluralTruthValue P x w equals:
 - .true iff trueOnAll (fullCandidateSet P x) w
@@ -456,13 +470,15 @@ This is the central correspondence theorem of K&S (2021), showing that the
 simple trivalent semantics (based on all/some/none) coincides with the more
 sophisticated "truth on all readings" approach.
 
-**Proof sketch**:
-- TRUE: pluralTruthValue is .true iff all atoms satisfy P iff all candidates true
-- FALSE: pluralTruthValue is .false iff no atoms satisfy P iff all candidates false
-- GAP: pluralTruthValue is .gap iff some-but-not-all atoms satisfy P
-       iff exists both true and false candidates (singleton witnesses)
+Known issue: The `.false` and `.gap` cases are blocked by the same empty
+candidate issue as `falseOnAll_full_iff_noneSatisfy`: `fullCandidateSet` includes
+`candidateProp P ∅` which is vacuously true, so `falseOnAll` is always `False`
+and `gapOnCandidates` is trivially satisfied on the true-witness side.
 
-TODO: Complete proof (depends on trueOnAll_full_iff_allSatisfy, falseOnAll_full_iff_noneSatisfy)
+TODO: Fix `fullCandidateSet` to exclude empty sub-pluralities, then prove:
+- TRUE: via `trueOnAll_full_iff_allSatisfy` + `pluralTruthValue_eq_true_iff`
+- FALSE: via corrected `falseOnAll_full_iff_noneSatisfy` + `pluralTruthValue_eq_false_iff`
+- GAP: singleton witnesses for both true and false candidates
 -/
 theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (hne : x.Nonempty) :
@@ -492,8 +508,8 @@ def isStronglyRelevantProp (q : QUD W) (p : BProp W) : Prop :=
 
 /-- Decidable version -/
 noncomputable def isStronglyRelevant (q : QUD W) (p : BProp W) : Bool :=
-  (Fintype.elems : Finset W).toList.all fun w1 =>
-    (Fintype.elems : Finset W).toList.all fun w2 =>
+  (Fintype.elems : Finset W).toList.all λ w1 =>
+    (Fintype.elems : Finset W).toList.all λ w2 =>
       !q.sameAnswer w1 w2 || (p w1 == p w2)
 
 /-- Filter candidate set to strongly relevant propositions -/
@@ -501,7 +517,7 @@ def stronglyRelevantSet (q : QUD W) (candidates : Set (BProp W)) : Set (BProp W)
   { p ∈ candidates | isStronglyRelevantProp q p }
 
 /--
-**THEOREM**: With exact QUD, all propositions are strongly relevant.
+Theorem: With exact QUD, all propositions are strongly relevant.
 
 The exact QUD distinguishes all worlds, so every proposition trivially
 respects the partition.
@@ -513,7 +529,7 @@ theorem exact_all_relevant [LawfulBEq W] (p : BProp W) :
   exact congrArg p h
 
 /--
-**COROLLARY**: With exact QUD, the filtered set equals the original set.
+Corollary: With exact QUD, the filtered set equals the original set.
 -/
 theorem exact_stronglyRelevantSet_eq [LawfulBEq W] (candidates : Set (BProp W)) :
     stronglyRelevantSet (QUD.exact (M := W)) candidates = candidates := by
@@ -524,7 +540,7 @@ theorem exact_stronglyRelevantSet_eq [LawfulBEq W] (candidates : Set (BProp W)) 
   · intro h; exact ⟨h, exact_all_relevant p⟩
 
 /--
-**THEOREM**: With trivial QUD, only constant propositions are strongly relevant.
+Theorem: With trivial QUD, only constant propositions are strongly relevant.
 -/
 theorem trivial_relevant_iff_constant (p : BProp W) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
@@ -534,18 +550,20 @@ theorem trivial_relevant_iff_constant (p : BProp W) :
   · intro h _ _ _; exact h _ _
 
 /--
-**NON-MAXIMALITY THEOREM**: With a coarse QUD that groups "all P" with "almost all P",
+Non-Maximality Theorem: With a coarse QUD that groups "all P" with "almost all P",
 the maximal candidate may not be strongly relevant, allowing non-maximal readings.
 
 This is the formal content of K&S (2021) Section 3's relevance filtering.
 
-**Proof idea**:
+Proof idea:
 - If q groups w_all (where all satisfy P) with w_almost (where not all satisfy),
   then candidateProp P x has different values at these QUD-equivalent worlds.
 - But strong relevance requires same values at QUD-equivalent worlds.
 - Contradiction.
 
-TODO: Complete proof (technical issue with decide expressions)
+The proof is by contradiction: strong relevance + QUD equivalence forces the
+maximal candidate to agree on w_all and w_almost, but allSatisfy gives
+different values.
 -/
 theorem nonMaximality_from_coarse_qud (P : Atom → W → Bool) (x : Finset Atom)
     (q : QUD W) (w_all w_almost : W)
@@ -553,7 +571,12 @@ theorem nonMaximality_from_coarse_qud (P : Atom → W → Bool) (x : Finset Atom
     (h_all : allSatisfy P x w_all = true)
     (h_not_all : allSatisfy P x w_almost = false) :
     ¬isStronglyRelevantProp q (candidateProp P x) := by
-  sorry
+  intro hsr
+  have heq := hsr w_all w_almost h_equiv
+  -- candidateProp P x w = allSatisfy P x w (definitionally)
+  change allSatisfy P x w_all = allSatisfy P x w_almost at heq
+  rw [h_all, h_not_all] at heq
+  exact absurd heq (by decide)
 
 end StrongRelevance
 
@@ -580,7 +603,7 @@ stating it in terms of the explicit proposition form.
 -/
 theorem identity_candidateSet_singleton' (P : Atom → W → Bool) (x : Finset Atom) :
     candidateSet P Tolerance.identity x =
-    {fun w => decide (∀ a ∈ x, P a w = true)} := by
+    {λ w => decide (∀ a ∈ x, P a w = true)} := by
   -- This follows from identity_candidateSet_eq_singleton + candidateProp definition
   rw [identity_candidateSet_eq_singleton]
   rfl
@@ -619,29 +642,29 @@ theorem trivial_stronglyRelevant_iff (p : BProp W) :
     exact h _ _
 
 /--
-**KEY THEOREM**: The maximal proposition is always strongly relevant to exact QUD.
+Key Theorem: The maximal proposition is always strongly relevant to exact QUD.
 
 This shows the connection between `distMaximal` and the truth-on-all-readings
 approach: under the exact QUD, the maximal candidate is always relevant.
 -/
 theorem maximal_relevant_to_exact [LawfulBEq W] (P : Atom → W → Bool) (x : Finset Atom) :
     isStronglyRelevantProp (QUD.exact (M := W))
-      (fun w => decide (∀ a ∈ x, P a w = true)) :=
+      (λ w => decide (∀ a ∈ x, P a w = true)) :=
   exact_all_stronglyRelevant _
 
 /--
-**CORRESPONDENCE THEOREM**: distMaximal characterizes truth on the maximal candidate.
+Correspondence Theorem: distMaximal characterizes truth on the maximal candidate.
 
 The algebraic operator `distMaximal` equals the truth value of the unique candidate
 generated by identity tolerance. This connects the operator-based approach
 to the pragmatic truth-on-all-readings approach of Križ & Spector (2021).
 -/
 theorem distMaximal_eq_maximal_candidate (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    distMaximal P x w = (fun w => decide (∀ a ∈ x, P a w = true)) w := by
+    distMaximal P x w = (λ w => decide (∀ a ∈ x, P a w = true)) w := by
   rfl
 
 /--
-**CORRESPONDENCE THEOREM**: distTolerant with full tolerance is always true.
+Correspondence Theorem: distTolerant with full tolerance is always true.
 
 With full tolerance, any sub-plurality (including the empty set) is tolerant,
 so distTolerant is true as long as x is in the powerset of itself (always true).
@@ -655,7 +678,7 @@ theorem distTolerant_full_always_true (P : Atom → W → Bool) (x : Finset Atom
   · intro a ha; simp at ha
 
 /--
-**CORRESPONDENCE THEOREM**: distTolerant unfolds to existence of tolerant witness.
+Correspondence Theorem: distTolerant unfolds to existence of tolerant witness.
 
 This connects the operator to the candidate interpretation framework.
 -/

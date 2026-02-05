@@ -3,24 +3,15 @@
 
 RSA scenario using real numbers for mathematical proofs.
 
-## Architecture
+## Main definitions
 
-```
-RSAScenario (Core.lean)  →  ℚ, ℕ  →  Computation  →  #eval works!
-RSAScenarioR (this file) →  ℝ     →  Proofs      →  Zaslavsky theorems
-```
-
-Convert between them with `RSAScenario.toReal`.
-
-## Future
-
-Once migration is complete, this will become the main `RSAScenario` type,
-with the computational version as a specialization.
+- `RSAScenarioR`: RSA scenario with real-valued parameters
+- `RSAModel`: Typeclass for theorem instantiation
+- `G_α_generic`: Combined utility objective H + α·E[V]
 
 ## References
 
-- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human
-  pragmatic reasoning. arXiv:2005.06641.
+- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human pragmatic reasoning.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -33,16 +24,7 @@ import Linglib.Theories.RSA.Core.Basic
 namespace RSA
 
 
-/--
-RSA scenario using real numbers.
-
-This version supports:
-- Real-valued rationality parameter α (including α < 1)
-- Zaslavsky et al. convergence theorems
-- Real analysis (limits, continuity)
-
-For computation, use `RSAScenario` from Core.lean instead.
--/
+/-- RSA scenario with real-valued parameters for analysis -/
 structure RSAScenarioR where
   /-- Type of utterances -/
   Utterance : Type
@@ -70,13 +52,7 @@ structure RSAScenarioR where
 attribute [instance] RSAScenarioR.finU RSAScenarioR.finW
 
 
-/--
-Convert a computational RSAScenario to RSAScenarioR for proofs.
-
-This lifts ℚ → ℝ and ℕ → ℝ, enabling real analysis.
-
-Note: This uses specified default values for Interp and Lexicon parameters.
--/
+/-- Convert computational RSAScenario to RSAScenarioR -/
 def RSAScenario.toReal {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
     (S : RSAScenario U W)
     (defaultInterp : S.Interp) (defaultLexicon : S.Lexicon) : RSAScenarioR where
@@ -86,20 +62,12 @@ def RSAScenario.toReal {U W : Type} [Fintype U] [Fintype W] [DecidableEq U] [Dec
   prior w := (S.worldPrior w : ℝ)
   α := (S.α : ℝ)
   α_nonneg := Nat.cast_nonneg S.α
-  lexicon_nonneg := fun _ _ => by sorry  -- Would need to show ℚ values are non-negative
-  prior_nonneg := fun _ => by sorry
+  lexicon_nonneg := λ _ _ => by sorry  -- Would need to show ℚ values are non-negative
+  prior_nonneg := λ _ => by sorry
   prior_pos := by sorry
 
 
-/--
-RSAModel typeclass - enables instance-based theorem application.
-
-This is equivalent to RSAScenarioR but as a typeclass, allowing:
-```lean
-instance : RSAModel MyType := scenario.toModel
--- Now G_α_monotone_generic applies to MyType
-```
--/
+/-- RSA model typeclass for instance-based theorems -/
 class RSAModel (M : Type*) where
   /-- Type of utterances -/
   Utterance : Type
@@ -167,7 +135,7 @@ noncomputable def entropy_generic {α : Type*} [Fintype α] (p : α → ℝ) : �
 
 /-- Speaker's conditional entropy H_S(U|W). -/
 noncomputable def H_S_generic (Spk : I.World → I.Utterance → ℝ) : ℝ :=
-  ∑ w, I.prior w * entropy_generic (fun u => normalize_generic (Spk w) u)
+  ∑ w, I.prior w * entropy_generic (λ u => normalize_generic (Spk w) u)
 
 /-- Utility function V_L(w,u) = log L(w|u) -/
 noncomputable def utility_generic (L : I.Utterance → I.World → ℝ)
@@ -192,62 +160,52 @@ structure RSAState_generic (I : RSAModel M) where
 
 /-- Initialize RSA from literal listener. -/
 noncomputable def initRSA_generic : RSAState_generic I where
-  speaker := fun w u => speakerScore_generic (L0_generic (I := I)) w u
-  listener := fun u w => L0_generic (I := I) u w
+  speaker := λ w u => speakerScore_generic (L0_generic (I := I)) w u
+  listener := λ u w => L0_generic (I := I) u w
 
 /-- One step of RSA dynamics. -/
 noncomputable def stepRSA_generic (state : RSAState_generic I) : RSAState_generic I where
-  speaker := fun w u => speakerScore_generic state.listener w u
-  listener := fun u w => listenerScore_generic (speakerScore_generic state.listener) u w
+  speaker := λ w u => speakerScore_generic state.listener w u
+  listener := λ u w => listenerScore_generic (speakerScore_generic state.listener) u w
 
 /-- RSA dynamics after n iterations. -/
 noncomputable def iterateRSA_generic (n : ℕ) : RSAState_generic I :=
   (stepRSA_generic)^[n] initRSA_generic
 
 
-/--
-**Proposition 1 (Zaslavsky et al.)**: G_α is monotonically non-decreasing.
-
-This theorem applies to ANY model satisfying `RSAModel`.
--/
+/-- G_α monotonically non-decreasing (Zaslavsky et al. Proposition 1) -/
 theorem G_α_monotone_generic {M : Type*} [I : RSAModel M] (n : ℕ) :
     G_α_generic (I := I) (iterateRSA_generic (I := I) n).speaker (iterateRSA_generic (I := I) n).listener ≤
     G_α_generic (I := I) (iterateRSA_generic (I := I) (n+1)).speaker (iterateRSA_generic (I := I) (n+1)).listener := by
   sorry
 
-/--
-**Convergence**: RSA dynamics converge to a fixed point in G_α.
--/
+/-- RSA dynamics converge to fixed point -/
 theorem RSA_converges_generic {M : Type*} [I : RSAModel M] :
     ∃ L : ℝ, Filter.Tendsto
-      (fun n => G_α_generic (I := I) (iterateRSA_generic (I := I) n).speaker (iterateRSA_generic (I := I) n).listener)
+      (λ n => G_α_generic (I := I) (iterateRSA_generic (I := I) n).speaker (iterateRSA_generic (I := I) n).listener)
       Filter.atTop
       (nhds L) := by
   sorry
 
-/--
-**Proposition 2 (Zaslavsky et al.)**: Utility can decrease for α < 1.
--/
+/-- Utility can decrease for α < 1 (Zaslavsky et al. Proposition 2) -/
 theorem utility_can_decrease_generic {M : Type*} [I : RSAModel M] (hα : I.α < 1) :
     ∃ n, E_VL_generic (I := I) (iterateRSA_generic (I := I) (n+1)).speaker (iterateRSA_generic (I := I) (n+1)).listener <
          E_VL_generic (I := I) (iterateRSA_generic (I := I) n).speaker (iterateRSA_generic (I := I) n).listener := by
   sorry
 
-/--
-**Proposition 3 (Zaslavsky et al.)**: α = 1 is the critical point.
--/
+/-- α = 1 is critical point (Zaslavsky et al. Proposition 3) -/
 theorem alpha_one_critical_generic {M : Type*} [I : RSAModel M] (hα : I.α = 1) :
-    G_α_generic (I := I) = fun Spk L => H_S_generic (I := I) Spk + E_VL_generic (I := I) Spk L := by
+    G_α_generic (I := I) = λ Spk L => H_S_generic (I := I) Spk + E_VL_generic (I := I) Spk L := by
   funext Spk L
   simp only [G_α_generic, hα, one_mul]
 
 
-/-- Check if RSA has converged within tolerance ε. -/
+/-- Check convergence within tolerance ε -/
 def εConverged_generic {M : Type*} [I : RSAModel M] (t : ℕ) (ε : ℝ) : Prop :=
   |G_α_generic (I := I) (iterateRSA_generic (I := I) (t+1)).speaker (iterateRSA_generic (I := I) (t+1)).listener -
    G_α_generic (I := I) (iterateRSA_generic (I := I) t).speaker (iterateRSA_generic (I := I) t).listener| < ε
 
-/-- Eventually ε-converged: For any ε > 0, RSA is eventually ε-converged. -/
+/-- Eventually ε-converged -/
 theorem eventually_εConverged_generic {M : Type*} [I : RSAModel M] (ε : ℝ) (hε : 0 < ε) :
     ∃ T, ∀ t, T ≤ t → εConverged_generic (I := I) t ε := by
   sorry

@@ -75,11 +75,11 @@ structure Situation where
 namespace Situation
 
 /-- The empty situation: nothing is determined -/
-def empty : Situation := ⟨fun _ => none⟩
+def empty : Situation := ⟨λ _ => none⟩
 
 /-- Create a situation from a list of (variable, value) pairs -/
 def ofList (assignments : List (Variable × Bool)) : Situation :=
-  ⟨fun v => assignments.find? (fun (v', _) => v' == v) |>.map (·.2)⟩
+  ⟨λ v => assignments.find? (λ (v', _) => v' == v) |>.map (·.2)⟩
 
 /-- Get the value of a variable (if determined) -/
 def get (s : Situation) (v : Variable) : Option Bool := s.valuation v
@@ -100,15 +100,15 @@ This is used for:
 - Setting counterfactual values (to test necessity)
 -/
 def extend (s : Situation) (v : Variable) (val : Bool) : Situation :=
-  ⟨fun v' => if v' == v then some val else s.valuation v'⟩
+  ⟨λ v' => if v' == v then some val else s.valuation v'⟩
 
 /-- Remove a variable from the situation (set to undetermined) -/
 def remove (s : Situation) (v : Variable) : Situation :=
-  ⟨fun v' => if v' == v then none else s.valuation v'⟩
+  ⟨λ v' => if v' == v then none else s.valuation v'⟩
 
 /-- Combine two situations (right takes precedence) -/
 def merge (s1 s2 : Situation) : Situation :=
-  ⟨fun v => s2.valuation v <|> s1.valuation v⟩
+  ⟨λ v => s2.valuation v <|> s1.valuation v⟩
 
 /-- Check if situation s1 is subsumed by s2 (s2 agrees with s1 on all determined values) -/
 def subsumes (_s1 _s2 : Situation) : Bool :=
@@ -145,7 +145,7 @@ namespace CausalLaw
 
 /-- Check if all preconditions of a law are satisfied in a situation -/
 def preconditionsMet (law : CausalLaw) (s : Situation) : Bool :=
-  law.preconditions.all fun (v, val) => s.hasValue v val
+  law.preconditions.all λ (v, val) => s.hasValue v val
 
 /-- Apply a law to a situation (if preconditions met, set effect) -/
 def apply (law : CausalLaw) (s : Situation) : Situation :=
@@ -204,7 +204,7 @@ This is one step of forward propagation: for each law, if its preconditions
 are met, set its effect variable.
 -/
 def applyLawsOnce (dyn : CausalDynamics) (s : Situation) : Situation :=
-  dyn.laws.foldl (fun s' law => law.apply s') s
+  dyn.laws.foldl (λ s' law => law.apply s') s
 
 /--
 Check if a situation is a fixpoint (no law can change it).
@@ -212,7 +212,7 @@ Check if a situation is a fixpoint (no law can change it).
 A situation is a fixpoint when applying all laws leaves it unchanged.
 -/
 def isFixpoint (dyn : CausalDynamics) (s : Situation) : Bool :=
-  dyn.laws.all fun law =>
+  dyn.laws.all λ law =>
     !law.preconditionsMet s ||  -- Either preconditions not met
     s.hasValue law.effect law.effectValue  -- Or effect already has the value
 
@@ -237,6 +237,19 @@ def normalDevelopment (dyn : CausalDynamics) (s : Situation)
     else normalDevelopment dyn s' n
 
 -- Fixpoint Theorems
+
+/-- Unfold normalDevelopment one step. -/
+@[simp] theorem normalDevelopment_succ (dyn : CausalDynamics) (s : Situation) (n : Nat) :
+    normalDevelopment dyn s (n + 1) =
+      let s' := applyLawsOnce dyn s
+      if isFixpoint dyn s' then s' else normalDevelopment dyn s' n := rfl
+
+/-- If the result of one round of law application is a fixpoint,
+    normalDevelopment returns that result. -/
+theorem normalDevelopment_fixpoint_after_one (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
+    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) :
+    normalDevelopment dyn s (fuel + 1) = applyLawsOnce dyn s := by
+  simp [h]
 
 /--
 Empty dynamics has trivial fixpoint: any situation is a fixpoint.

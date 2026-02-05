@@ -1,7 +1,7 @@
 /-
 # Presupposition Projection: Model Comparison
 
-## Key Finding: Three Papers, One Model
+## Finding: Three Papers, One Model
 
 Three influential RSA approaches to presupposition projection are
 **mathematically identical**—they differ only in terminology and domain:
@@ -482,7 +482,7 @@ is compatible with both models.
 /-!
 ## Summary
 
-### Key Finding
+### Finding
 
 Qing et al. (2016), Scontras & Tonhauser (2025), and Warstadt (2022) are
 **mathematically identical models** with different interpretations:
@@ -605,7 +605,7 @@ def projectionMeasure (u : Utterance) : ℚ :=
     φ worldPrior ... latentPrior ...
     compatibleBool qudProject cost α u q
   -- Sum over latent states that entail the presupposition
-  dist.foldl (fun acc (c, p) => if entailsPresup c then acc + p else acc) 0
+  dist.foldl (λ acc (c, p) => if entailsPresup c then acc + p else acc) 0
 ```
 
 The computation is **identical**; only the types differ.

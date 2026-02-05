@@ -13,7 +13,7 @@ rather than height/degree:
 ⟦generic⟧(p, θ) = 1 if prevalence p > threshold θ
 ```
 
-## Key Result: Soft Semantics
+## Result: Soft Semantics
 
 Integrating over uniform θ gives:
 
@@ -105,10 +105,10 @@ def allThresholds : List Threshold := [.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .
 
 /-- L₁ joint over (prevalence, threshold) given generic -/
 def runL1_joint (prior : Prevalence → ℚ) (u : Utterance) : List ((Prevalence × Threshold) × ℚ) :=
-  let jointWorlds := allPrevalences.flatMap fun p => allThresholds.map fun θ => (p, θ)
+  let jointWorlds := allPrevalences.flatMap λ p => allThresholds.map λ θ => (p, θ)
   RSA.Eval.basicL1 allUtterances jointWorlds
-    (fun utt (p, θ) => boolToRat (meaning utt θ p))
-    (fun (p, _) => prior p) 1 (fun _ => 0) u
+    (λ utt (p, θ) => boolToRat (meaning utt θ p))
+    (λ (p, _) => prior p) 1 (λ _ => 0) u
 
 /-- L₁ marginal over prevalence -/
 def runL1_prevalence (prior : Prevalence → ℚ) (u : Utterance) : List (Prevalence × ℚ) :=
@@ -121,7 +121,7 @@ def softGenericMeaning (p : Prevalence) : ℚ := p.toRat
 
 /-- Direct soft listener: L₀(p | gen) ∝ p · P(p) -/
 def softL0 (prior : Prevalence → ℚ) : List (Prevalence × ℚ) :=
-  let scores := allPrevalences.map fun p => (p, softGenericMeaning p * prior p)
+  let scores := allPrevalences.map λ p => (p, softGenericMeaning p * prior p)
   RSA.Eval.normalize scores
 
 -- Worked Examples

@@ -3,9 +3,9 @@
 
 Empirical patterns for "X but Y" exceptive constructions.
 
-## Key Pattern (von Fintel 1993)
+## Pattern (von Fintel 1993)
 
-But-exceptives require UNIVERSAL quantifiers (positive or negative):
+But-exceptives require universal quantifiers (positive or negative):
 
 | Quantifier | Example | Grammatical |
 |------------|---------|-------------|
@@ -19,7 +19,7 @@ But-exceptives require UNIVERSAL quantifiers (positive or negative):
 
 The but-exceptive:
 1. Subtracts the exception from the quantifier's domain
-2. Presupposes/asserts that WITHOUT the exception, the claim would be false
+2. Presupposes/asserts that without the exception, the claim would be false
 
 ## Theoretical Analysis
 
@@ -173,20 +173,20 @@ def butExceptiveExamples : List ButExceptiveExample :=
   ]
 
 -- Verify: universal quantifiers license exceptives
-#guard butExceptiveExamples.filter (fun ex =>
+#guard butExceptiveExamples.filter (λ ex =>
   ex.quantifierType == .universalPositive || ex.quantifierType == .universalNegative)
-  |>.all (fun ex => ex.grammatical)
+  |>.all (λ ex => ex.grammatical)
 
 -- Verify: non-universal quantifiers block exceptives
-#guard butExceptiveExamples.filter (fun ex =>
+#guard butExceptiveExamples.filter (λ ex =>
   ex.quantifierType != .universalPositive && ex.quantifierType != .universalNegative)
-  |>.all (fun ex => !ex.grammatical)
+  |>.all (λ ex => !ex.grammatical)
 
 
 /--
 Predict grammaticality from quantifier type.
 
-The generalization: only UNIVERSAL quantifiers (positive or negative)
+The generalization: only universal quantifiers (positive or negative)
 license but-exceptives.
 -/
 def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
@@ -198,14 +198,14 @@ def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
   | .numeral => false
 
 -- Verify predictions match data
-#guard butExceptiveExamples.all (fun ex =>
+#guard butExceptiveExamples.all (λ ex =>
   predictExceptiveGrammaticality ex.quantifierType == ex.grammatical)
 
 
 /-!
 ## Exception Uniqueness
 
-The but-exceptive typically requires that the exception be UNIQUE:
+The but-exceptive typically requires that the exception be unique:
 
 ✓ "Everyone but John passed" (one exception)
 ? "Everyone but John and Mary passed" (multiple exceptions)
@@ -303,7 +303,7 @@ def crossLinguisticExamples : List CrossLinguisticExceptive :=
   [english_but, german_ausser, french_sauf, spanish_excepto]
 
 -- Universal constraint appears cross-linguistically
-#guard crossLinguisticExamples.all (fun ex => ex.universalConstraint)
+#guard crossLinguisticExamples.all (λ ex => ex.universalConstraint)
 
 
 /--
@@ -359,33 +359,5 @@ All exceptive construction examples.
 -/
 def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
   [but_construction, except_construction, other_than_construction, besides_construction]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `QuantifierType`: Classification of quantifiers
-- `ButExceptiveExample`: Grammaticality data
-- `ExceptionCardinalityExample`: Exception count effects
-- `CrossLinguisticExceptive`: Cross-linguistic patterns
-- `ExceptiveConstructionExample`: Related constructions
-
-### Key Generalizations
-1. Only UNIVERSAL quantifiers license but-exceptives
-2. Existential, proportional, and numeral quantifiers are blocked
-3. The constraint is L-analytic (see Core/Analyticity.lean)
-4. The constraint appears cross-linguistically
-5. Multiple exceptions degrade acceptability
-
-### Predictions
-- `predictExceptiveGrammaticality`: Universal → OK, else → blocked
-
-### References
-- von Fintel (1993). Exceptive constructions.
-- Gajewski (2002). On analyticity in natural language.
-- Hoeksema (1995). The semantics of exception phrases.
--/
 
 end Phenomena.Polarity.Exceptives

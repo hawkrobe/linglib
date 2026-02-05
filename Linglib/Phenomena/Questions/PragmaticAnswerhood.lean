@@ -3,7 +3,7 @@
 
 Pragmatic notions of answerhood relativized to information sets.
 
-## Key Insight
+## Insight
 
 Semantic answerhood is a limit case of pragmatic answerhood.
 When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhood.

@@ -51,7 +51,7 @@ Universal modal: true at w iff p true at all accessible worlds.
 -/
 def boxAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
     (worlds : List W) (p : W → Bool) : Bool :=
-  worlds.all fun w' => !R agent w w' || p w'
+  worlds.all λ w' => !R agent w w' || p w'
 
 /--
 Existential modal: true at w iff p true at some accessible world.
@@ -60,7 +60,7 @@ Existential modal: true at w iff p true at some accessible world.
 -/
 def diaAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
     (worlds : List W) (p : W → Bool) : Bool :=
-  worlds.any fun w' => R agent w w' && p w'
+  worlds.any λ w' => R agent w w' && p w'
 
 -- Veridicality
 
@@ -126,7 +126,7 @@ For non-veridical predicates, we drop the p(w) requirement:
 def DoxasticPredicate.holdsAtQuestion {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (Q : (W → Bool) → Bool)
     (w : W) (worlds : List W) (answers : List (W → Bool)) : Bool :=
-  answers.any fun p =>
+  answers.any λ p =>
     Q p &&  -- p is an answer to Q
     (match V.veridicality with
      | .veridical => p w  -- For know: p must be true
@@ -206,10 +206,17 @@ If x knows p and x knows (p → q), then x knows q.
 theorem doxastic_k_axiom {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (p q : W → Bool)
     (w : W) (worlds : List W)
-    (_hp : boxAt V.access agent w worlds p = true)
-    (_hpq : boxAt V.access agent w worlds (fun w' => !p w' || q w') = true) :
-    boxAt V.access agent w worlds q = true :=
-  sorry  -- K axiom proof: requires detailed case analysis
+    (hp : boxAt V.access agent w worlds p = true)
+    (hpq : boxAt V.access agent w worlds (λ w' => !p w' || q w') = true) :
+    boxAt V.access agent w worlds q = true := by
+  simp only [boxAt, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at *
+  intro w' hw'
+  cases hR : V.access agent w w'
+  · left; rfl
+  · right
+    have h1 := hp w' hw'; simp [hR] at h1
+    have h2 := hpq w' hw'; simp [hR, h1] at h2
+    exact h2
 
 -- Substitution and Opacity
 
@@ -261,7 +268,7 @@ Here we need a domain of individuals to quantify over.
 def deRe {W E D : Type*} (V : DoxasticPredicate W E)
     (agent : E) (predicate : D → W → Bool) (domain : List D)
     (w : W) (worlds : List W) : Bool :=
-  domain.any fun x => V.holdsAt agent (predicate x) w worlds
+  domain.any λ x => V.holdsAt agent (predicate x) w worlds
 
 -- Connection to Scalar Implicature
 

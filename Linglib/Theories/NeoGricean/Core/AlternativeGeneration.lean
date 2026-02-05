@@ -138,7 +138,7 @@ def alternativeFrames {m : Model} (f : SentenceFrame m)
   | .upward =>
     -- Get stronger alternative entries from lexicon
     let altEntries := lookupAlternatives lex f.form
-    altEntries.filterMap fun entry =>
+    altEntries.filterMap λ entry =>
       -- Only include quantifier-type entries
       if h : entry.ty = Ty.det then
         some { quant := h ▸ entry.denot
@@ -188,14 +188,14 @@ For each world w:
 -/
 def frameToProp {m : Model} {World : Type} (f : SentenceFrame m)
     (vpAt : WorldIndexedVP m World) : Prop' World :=
-  fun w => f.eval (vpAt w) = true
+  λ w => f.eval (vpAt w) = true
 
 /--
 Convert all frames to propositions.
 -/
 def framesToProps {m : Model} {World : Type} (frames : List (SentenceFrame m))
     (vpAt : WorldIndexedVP m World) : List (Prop' World) :=
-  frames.map (fun f => frameToProp f vpAt)
+  frames.map (λ f => frameToProp f vpAt)
 
 
 /-
@@ -318,7 +318,7 @@ def altSetFromDerivation {m : Model} {World : Type} (d : SemDeriv m)
     (vpAt : WorldIndexedVP m World)
     (lex : SemLexicon m)
     (ctx : ContextPolarity := .upward) : Option (Set (Prop' World)) :=
-  (frameFromDerivation d noun).map fun frame =>
+  (frameFromDerivation d noun).map λ frame =>
     altSet frame vpAt lex ctx
 
 /--
@@ -329,7 +329,7 @@ def exhMW_derivation {m : Model} {World : Type} (d : SemDeriv m)
     (vpAt : WorldIndexedVP m World)
     (lex : SemLexicon m)
     (ctx : ContextPolarity := .upward) : Option (Prop' World) :=
-  (frameFromDerivation d noun).map fun frame =>
+  (frameFromDerivation d noun).map λ frame =>
     exhMW_frame frame vpAt lex ctx
 
 /--
@@ -340,7 +340,7 @@ def exhIE_derivation {m : Model} {World : Type} (d : SemDeriv m)
     (vpAt : WorldIndexedVP m World)
     (lex : SemLexicon m)
     (ctx : ContextPolarity := .upward) : Option (Prop' World) :=
-  (frameFromDerivation d noun).map fun frame =>
+  (frameFromDerivation d noun).map λ frame =>
     exhIE_frame frame vpAt lex ctx
 
 
@@ -362,16 +362,16 @@ def studentModel : Model where
 
 instance : FiniteModel studentModel where
   elements := [.alice, .bob, .carol]
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /-- All entities are students -/
-def isStudent : studentModel.interpTy (.e ⇒ .t) := fun _ => true
+def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true
 
 /-- World = number of students who passed (0-3) -/
 abbrev PassWorld := Fin 4
 
 /-- "passed" indexed by world -/
-def passedAt : WorldIndexedVP studentModel PassWorld := fun w s =>
+def passedAt : WorldIndexedVP studentModel PassWorld := λ w s =>
   match w.val, s with
   | 0, _ => false
   | 1, .alice => true
@@ -383,7 +383,7 @@ def passedAt : WorldIndexedVP studentModel PassWorld := fun w s =>
   | _, _ => false
 
 -- Lexicon for student model
-def studentLexicon : SemLexicon studentModel := fun form =>
+def studentLexicon : SemLexicon studentModel := λ form =>
   match form with
   | "some" => some { word := ⟨"some", Cat.D, {}⟩
                    , ty := Ty.det
@@ -457,7 +457,7 @@ theorem both_at_w3 : somePassed w3 ∧ allPassed w3 := by
 /-- Alternative frames include "all" (via lookupAlternatives) -/
 theorem some_has_all_alternative :
     (alternativeFrames someStudentsFrame studentLexicon .upward).any
-      (fun f => f.form == "all") = true := by native_decide
+      (λ f => f.form == "all") = true := by native_decide
 
 /--
 The automatically generated ALT set contains somePassed.
@@ -481,7 +481,7 @@ def exhSomePassed : Prop' PassWorld :=
   exhMW_frame someStudentsFrame passedAt studentLexicon
 
 /--
-**Main Theorem**: Exhaustified "some" holds at w1 (automatic ALT).
+Exhaustified "some" holds at w1 (automatic ALT).
 
 This theorem shows that with automatically generated alternatives,
 exhMW correctly derives "some but not all" at w1.
@@ -527,71 +527,5 @@ theorem exh_some_at_w1 : exhSomePassed w1 := by
     -- Deferring to focus on infrastructure.
     sorry
 
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Core Types
-- `SentenceFrame m`: Det-N-VP sentence with substitutable quantifier
-- `WorldIndexedVP m World`: VP denotation that varies by world
-
-### Core Functions (Frame-level)
-- `alternativeFrames`: Generate frames with stronger quantifiers
-- `frameToProp`: Convert frame to `Prop' World`
-- `altSet`: Generate the ALT set for exhaustivity
-- `exhMW_frame`: Apply exhMW with automatic ALT
-- `exhIE_frame`: Apply exhIE with automatic ALT
-
-### Core Functions (Derivation-level)
-- `frameFromDerivation`: Extract frame from a SemDeriv
-- `altSetFromDerivation`: Generate ALT directly from derivation
-- `exhMW_derivation`: Apply exhMW to a derivation
-- `exhIE_derivation`: Apply exhIE to a derivation
-
-### The Pipeline
-
-```
-Option A: From SentenceFrame
-  SentenceFrame + WorldIndexedVP → altSet → exhMW/exhIE
-
-Option B: From Derivation
-  SemDeriv + noun + WorldIndexedVP → frameFromDerivation → altSet → exhMW/exhIE
-```
-
-### Architecture Integration
-
-```
-CCG/HPSG/Minimalism
-        ↓ (produces)
-  SemDeriv (with scalarItems)
-        ↓ frameFromDerivation
-  SentenceFrame
-        ↓ alternativeFrames (uses lexicon)
-  List SentenceFrame
-        ↓ framesToProps (with world-indexed VP)
-  List (Prop' World)
-        ↓ (Set comprehension)
-  ALT : Set (Prop' World)
-        ↓ exhMW or exhIE
-  Exhaustified Prop' World
-```
-
-### Limitations (v1)
-
-- Only Det-N-VP sentences
-- Single scalar item per sentence
-- Requires explicit world-indexed VP
-- UE contexts only (DE not yet implemented)
-- Main exhaustivity theorem has `sorry`
-
-### Future Work
-
-- Complete the `exh_some_at_w1` proof
-- Embedded scalar items (scope interactions)
-- Connective alternatives (or/and)
-- DE alternative generation
-- Compositional world-indexed models
--/
 
 end NeoGricean.AlternativeGeneration

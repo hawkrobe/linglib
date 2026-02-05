@@ -5,12 +5,12 @@ Core formalization of the Standard Recipe from Geurts (2010) Chapter 2.
 
 ## Key Concepts
 
-1. **Belief States** (Geurts p.39 diagram)
+1. Belief States (Geurts p.39 diagram)
    - Belief: Bel_S(ψ)
    - Disbelief: Bel_S(¬ψ)
    - No Opinion: ¬Bel_S(ψ) ∧ ¬Bel_S(¬ψ)
 
-2. **Standard Recipe** (Geurts p.32)
+2. Standard Recipe (Geurts p.32)
    The derivation mechanism for quantity implicatures:
    - Step 1: Speaker said φ
    - Step 2: There exists stronger alternative ψ
@@ -18,7 +18,7 @@ Core formalization of the Standard Recipe from Geurts (2010) Chapter 2.
    - Step 4: Therefore ¬Bel_S(ψ) (weak implicature)
    - Step 5: With competence, Bel_S(¬ψ) (strong implicature)
 
-3. **Competence Assumption**
+3. Competence Assumption
    Speaker knows whether ψ: Bel_S(ψ) ∨ Bel_S(¬ψ)
 
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
@@ -57,7 +57,7 @@ def competent : BeliefState → Bool
 Non-belief: speaker doesn't believe ψ.
 Formally: ¬Bel_S(ψ)
 
-This is the WEAK implicature — speaker might believe ¬ψ or have no opinion.
+This is the weak implicature -- speaker might believe ¬ψ or have no opinion.
 -/
 def nonBelief : BeliefState → Bool
   | .belief => false
@@ -102,7 +102,7 @@ def applyStandardRecipe (b : BeliefState) : StandardRecipeResult :=
 
 
 /--
-**Theorem: Competence Strengthening**
+Theorem: Competence Strengthening
 
 weak implicature + competence → strong implicature
 
@@ -120,7 +120,7 @@ theorem competence_strengthening :
   | noOpinion => simp [competent] at hcomp
 
 /--
-**Theorem: Weak Without Strong**
+Theorem: Weak Without Strong
 
 A weak implicature can hold without the strong implicature
 (when the speaker lacks competence).
@@ -130,7 +130,7 @@ theorem weak_without_strong :
   exact ⟨.noOpinion, by native_decide⟩
 
 /--
-**Theorem: Strong Implies Weak**
+Theorem: Strong Implies Weak
 
 If the strong implicature holds, the weak implicature holds.
 Bel_S(¬ψ) → ¬Bel_S(ψ)
@@ -144,7 +144,7 @@ theorem strong_implies_weak :
   | noOpinion => simp [strongImpl] at hstrong
 
 /--
-**Theorem: Strong Implies Competent**
+Theorem: Strong Implies Competent
 
 If the strong implicature holds, the speaker is competent.
 Bel_S(¬ψ) → (Bel_S(ψ) ∨ Bel_S(¬ψ))
@@ -158,7 +158,7 @@ theorem strong_implies_competent :
   | noOpinion => simp [strongImpl] at hstrong
 
 /--
-**Theorem: No Belief Implies Weak Implicature**
+Theorem: No Belief Implies Weak Implicature
 
 If the speaker doesn't believe ψ, the weak implicature holds.
 This is direct from the definition.
@@ -175,9 +175,9 @@ theorem no_belief_weak :
 /--
 Three possible outcomes for a hearer processing an implicature:
 
-1. **Undecided**: Weak implicature only (¬Bel_S(ψ)), competence not assumed
-2. **Strong**: Competence holds, derive Bel_S(¬ψ)
-3. **Incompetent**: Competence rejected, speaker has no opinion
+1. Undecided: Weak implicature only (¬Bel_S(ψ)), competence not assumed
+2. Strong: Competence holds, derive Bel_S(¬ψ)
+3. Incompetent: Competence rejected, speaker has no opinion
 
 Following Geurts' discussion on p.40.
 -/
@@ -196,7 +196,7 @@ def outcomeOf : BeliefState → ImplicatureOutcome
   | .noOpinion => .incompetent
 
 /--
-**Theorem: Outcomes are Exhaustive and Distinct**
+Theorem: Outcomes are Exhaustive and Distinct
 
 The three outcomes partition the space of competent/weak combinations.
 -/
@@ -216,8 +216,8 @@ theorem outcomes_exhaustive :
 When do scalar implicatures get triggered?
 
 Both views are Neo-Gricean (pragmatic, maxim-based), but differ on triggering:
-- **Defaultism** (Levinson): SIs fire by default, automatically
-- **Contextualism** (Geurts): SIs depend on context (QUD, salience)
+- Defaultism (Levinson): SIs fire by default, automatically
+- Contextualism (Geurts): SIs depend on context (QUD, salience)
 
 Reference:
 - Levinson, S. (2000). Presumptive Meanings. MIT Press.
@@ -277,9 +277,9 @@ def geurtsParams : NeoGriceanParams :=
 Does this theory variant predict a task effect?
 
 Contextualism predicts that asking "does this imply not-all?" will
-RAISE SI rates by making the alternative salient.
+raise SI rates by making the alternative salient.
 
-Defaultism predicts NO task effect since SIs are automatic.
+Defaultism predicts no task effect since SIs are automatic.
 -/
 def predictsTaskEffect (p : NeoGriceanParams) : Bool :=
   match p.trigger with
@@ -293,38 +293,5 @@ def predictsHighNeutralRate (p : NeoGriceanParams) : Bool :=
   p.predictedNeutralRate > 50
 
 
-/-
-## What This Module Provides
-
-### Types
-- `BeliefState`: Three-way belief state (belief, disbelief, noOpinion)
-- `StandardRecipeResult`: Result of applying the Standard Recipe
-- `ImplicatureOutcome`: Three outcomes for hearer interpretation
-- `SITrigger`: When SIs fire (default vs contextual)
-- `NeoGriceanParams`: Parameters characterizing a theory variant
-
-### Theory Variants
-- `levinsonParams`: Defaultism (SIs automatic, predicts ~90% baseline)
-- `geurtsParams`: Contextualism (SIs context-dependent, predicts ~35% baseline)
-
-### Predicates
-- `competent`: Speaker knows whether ψ
-- `nonBelief`: Speaker doesn't believe ψ (weak implicature)
-- `strongImpl`: Speaker believes ¬ψ (strong implicature)
-- `predictsTaskEffect`: Does theory predict task affects SI rate?
-- `predictsHighNeutralRate`: Does theory predict >50% in neutral context?
-
-### Key Theorems
-- `competence_strengthening`: weak + competence → strong
-- `weak_without_strong`: Weak can hold without strong
-- `strong_implies_weak`: Strong → weak
-- `strong_implies_competent`: Strong → competent
-- `outcomes_exhaustive`: Three outcomes partition belief states
-
-### Connection to Geurts (2010)
-- Ch. 2.1 (p.32): Standard Recipe formalized
-- Ch. 2.3 (p.39-40): Belief states and competence
-- Ch. 5: Defaultism vs Contextualism debate
--/
 
 end NeoGricean

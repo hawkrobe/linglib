@@ -2,30 +2,30 @@
 # Parasitic Attitudes: Karttunen (1973) Puzzle
 
 Theory-neutral empirical data on presupposition projection across attitude sequences,
-the key puzzle that motivates Maier (2015)'s parasitic attitude analysis.
+the puzzle that motivates Maier (2015)'s parasitic attitude analysis.
 
-## The Core Puzzle
+## The Puzzle
 
 Karttunen (1973) observed an asymmetry in presupposition projection:
 
   "Bill believed Fred had been beating his wife and he hoped Fred would stop"
-  → Does NOT presuppose Fred was beating his wife (to speaker)
+  → Does not presuppose Fred was beating his wife (to speaker)
   → The presupposition is "filtered" by the belief ascription
 
 But the reverse order doesn't filter:
 
   "*John hopes Mary will come. He believes Sue will come too."
-  → DOES presuppose someone (contextually salient) will come
+  → Does presuppose someone (contextually salient) will come
   → The hope doesn't filter for the belief
 
 ## Maier's Analysis (2015)
 
-Non-doxastic attitudes (hope, imagine, dream) are **parasitic** on doxastic
+Non-doxastic attitudes (hope, imagine, dream) are parasitic on doxastic
 attitudes (believe, know): their presupposition computation uses the belief
 state's accessibility relation, not their own.
 
-Key insight: The dependency is asymmetric - belief can filter hope's
-presuppositions, but hope cannot filter belief's presuppositions.
+The dependency is asymmetric: belief can filter hope's presuppositions,
+but hope cannot filter belief's presuppositions.
 
 ## References
 
@@ -77,45 +77,34 @@ structure AttitudeSequenceJudgment where
   deriving Repr
 
 
-/--
-**Core Puzzle**: Believe-hope sequences FILTER presuppositions.
+/-- Believe-hope sequences filter presuppositions.
 
-"Bill believed Fred had been beating his wife and he hoped Fred would stop"
+    "Bill believed Fred had been beating his wife and he hoped Fred would stop"
 
-The presupposition of "stop" (that Fred was beating) is filtered by the
-preceding belief ascription - it does NOT project to the speaker.
-
-This is the key datum that Maier (2015) explains via parasitic attitudes.
--/
+    The presupposition of "stop" (that Fred was beating) is filtered by the
+    preceding belief ascription -- it does not project to the speaker. -/
 def believeHopeFiltering : AttitudeSequenceJudgment :=
   { sentence := "Bill believed Fred had been beating his wife and he hoped Fred would stop"
-  , presupProjectsToSpeaker := false  -- KEY: presup is filtered!
+  , presupProjectsToSpeaker := false  -- presup is filtered
   , presupProjectsToHolder := true    -- Attributed to Bill's belief state
   , acceptable := true }
 
-/--
-**Contrast**: Hope-believe does NOT filter.
+/-- Hope-believe does not filter.
 
-"*John hopes Mary will come. He believes Sue will come too."
+    "*John hopes Mary will come. He believes Sue will come too."
 
-The "too" presupposition (someone salient will come) is NOT filtered by
-the preceding hope - it projects to the speaker, causing infelicity if
-no one is salient.
-
-This asymmetry shows the dependency is one-directional: believe → hope.
--/
+    The "too" presupposition (someone salient will come) is not filtered by
+    the preceding hope -- it projects to the speaker, causing infelicity if
+    no one is salient. This asymmetry shows the dependency is one-directional:
+    believe → hope. -/
 def hopeBelieverNoFiltering : AttitudeSequenceJudgment :=
   { sentence := "*John hopes Mary will come. He believes Sue will come too."
   , presupProjectsToSpeaker := true  -- Presup projects to speaker
   , presupProjectsToHolder := false
   , acceptable := false }            -- Infelicitous without context
 
-/--
-**Key asymmetry**: The believe-hope order matters.
-
-Belief can satisfy hope's presuppositions, but hope cannot satisfy
-belief's presuppositions. This is the parasitic dependency.
--/
+/-- Belief can satisfy hope's presuppositions, but hope cannot satisfy
+    belief's presuppositions. -/
 theorem asymmetry_data :
     believeHopeFiltering.presupProjectsToSpeaker = false ∧
     hopeBelieverNoFiltering.presupProjectsToSpeaker = true := by
@@ -147,7 +136,7 @@ def believeDreamFiltering : AttitudeSequenceJudgment :=
   , acceptable := true }
 
 /--
-Imagine-believe does NOT filter (belief is not parasitic on imagination).
+Imagine-believe does not filter (belief is not parasitic on imagination).
 
 "?John imagined there was a monster. He believed it was dangerous."
 → Awkward: "it" presupposes established referent not from imagination
@@ -166,11 +155,11 @@ Presupposition: Fred was beating his wife
 Assertion: Fred no longer beats his wife
 -/
 def fredStopped : PrProp BeatingWorld :=
-  { presup := fun w => match w with
+  { presup := λ w => match w with
       | .fredWasBeating_fredStopped => true
       | .fredWasBeating_fredContinues => true
       | .fredNeverBeat => false  -- Presupposition fails
-  , assertion := fun w => match w with
+  , assertion := λ w => match w with
       | .fredWasBeating_fredStopped => true
       | .fredWasBeating_fredContinues => false
       | .fredNeverBeat => false }
@@ -181,14 +170,14 @@ def fredStopped : PrProp BeatingWorld :=
 No presupposition, just an assertion.
 -/
 def fredWasBeating : PrProp BeatingWorld :=
-  { presup := fun _ => true  -- No presupposition
-  , assertion := fun w => match w with
+  { presup := λ _ => true  -- No presupposition
+  , assertion := λ w => match w with
       | .fredWasBeating_fredStopped => true
       | .fredWasBeating_fredContinues => true
       | .fredNeverBeat => false }
 
 /--
-The key semantic observation: the assertion of "Fred was beating" entails
+The assertion of "Fred was beating" entails
 the presupposition of "Fred stopped beating".
 
 This is what enables filtering in believe-hope sequences.
@@ -228,7 +217,7 @@ def classifyAttitude : String → AttitudeType
 /--
 Filtering can only occur when a doxastic attitude precedes a parasitic one.
 
-This captures Maier's key insight about the asymmetric dependency.
+This captures Maier's asymmetric dependency.
 -/
 def canFilter (first second : AttitudeType) : Bool :=
   first == .doxastic && second == .parasitic
@@ -264,41 +253,5 @@ The non-filtering cases are those where parasitic precedes doxastic.
 def nonFilteringCases : List AttitudeSequenceJudgment :=
   [ hopeBelieverNoFiltering
   , imagineBelieverNoFiltering ]
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### World Types
-- `BeatingWorld`: Models Fred's wife-beating scenario
-
-### Empirical Judgments
-- `AttitudeSequenceJudgment`: Structure for recording projection patterns
-- `believeHopeFiltering`: Core Karttunen puzzle (believe→hope filters)
-- `hopeBelieverNoFiltering`: Contrast (hope→believe doesn't filter)
-- Extended cases: imagine, dream
-
-### Semantic Analysis
-- `fredStopped`, `fredWasBeating`: PrProp representations
-- `assertion_entails_presup`: Why filtering works
-
-### Attitude Classification
-- `AttitudeType`: Doxastic vs parasitic
-- `canFilter`: Predicts filtering based on order
-
-### Key Results
-- `asymmetry_data`: The believe→hope vs hope→believe asymmetry
-- `doxastic_then_parasitic_can_filter`: Filtering condition
-
-## Connection to Theory
-
-This data motivates the theoretical analysis in:
-`Theories/Montague/Verb/Attitude/Parasitic.lean`
-
-The key insight: parasitic attitudes (hope, fear, imagine) compute their
-presuppositions using the doxastic accessibility relation, not their own
-preferential accessibility relation.
--/
 
 end Phenomena.ParasiticAttitudes.Karttunen1973

@@ -135,7 +135,7 @@ def allNouns : List NounEntry := [
 ]
 
 def lookup (form : String) : Option NounEntry :=
-  allNouns.find? fun n =>
+  allNouns.find? λ n =>
     n.formSg == form ||
     n.formPl == some form ||
     n.formDim == some form

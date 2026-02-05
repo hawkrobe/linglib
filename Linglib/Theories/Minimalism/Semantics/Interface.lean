@@ -1,10 +1,10 @@
 /-
 # Minimalism-Montague Semantics Interface
 
-The key H&K insight: traces left by movement are interpreted as variables
-bound by λ-abstraction at the landing site.
+Traces left by movement are interpreted as variables bound by
+λ-abstraction at the landing site (Heim and Kratzer 1998).
 
-## The Architecture
+## Architecture
 
 This module bridges Minimalist syntax and Montague semantics:
 
@@ -19,12 +19,12 @@ Minimalism/Basic.lean          Montague/Variables.lean
          predicateAbstraction: λ-bind at landing site
 ```
 
-## The Key Rules
+## Rules
 
-1. **Trace Interpretation**: A trace t_n is interpreted as g(n)
+1. Trace Interpretation: A trace t_n is interpreted as g(n)
    ⟦t_n⟧^g = g(n)
 
-2. **Predicate Abstraction**: At the landing site of movement,
+2. Predicate Abstraction: At the landing site of movement,
    λ-abstract over the trace's index
    ⟦[CP Op_n ... t_n ...]⟧^g = λx. ⟦... t_n ...⟧^{g[n↦x]}
 
@@ -56,9 +56,9 @@ open Montague Montague.Variables Montague.Modification
 /--
 Interpret a trace as a variable: ⟦t_n⟧^g = g(n)
 
-This is the key H&K insight: traces left by movement are semantically
-identical to pronouns — both are interpreted by looking up the assignment
-function at the appropriate index.
+Heim and Kratzer's trace interpretation rule: traces left by movement
+are semantically identical to pronouns. Both are interpreted by looking up
+the assignment function at the appropriate index.
 
 The trace index n should match the index of the binder (λ-abstraction)
 at the landing site of movement.
@@ -203,7 +203,7 @@ def relativePM {m : Model} (n : ℕ)
     (headNoun : DenotG m (.e ⇒ .t))
     (relClauseBody : DenotG m .t)
     : DenotG m (.e ⇒ .t) :=
-  fun g => predicateModification (headNoun g) (predicateAbstraction n relClauseBody g)
+  λ g => predicateModification (headNoun g) (predicateAbstraction n relClauseBody g)
 
 /-- Relative PM is commutative (the order of N and RC doesn't matter) -/
 theorem relativePM_comm {m : Model} (n : ℕ)
@@ -214,40 +214,5 @@ theorem relativePM_comm {m : Model} (n : ℕ)
       predicateModification (predicateAbstraction n relClauseBody g) (headNoun g) := by
   simp only [relativePM, predicateModification_comm]
 
--- ============================================================================
--- Summary
--- ============================================================================
-
-/-
-## What This Module Provides
-
-### Trace Interpretation
-- `interpTrace n`: interpret trace t_n as g(n)
-- Traces are semantically identical to indexed pronouns
-
-### Predicate Abstraction
-- `predicateAbstraction n body`: λ-abstract over index n
-- `predicateAbstractionGen n body`: generalized for any type
-- `interpMovement n body`: convenient wrapper for movement chains
-
-### Integration
-- `relativePM`: combines abstraction with Predicate Modification
-- Connects Minimalist movement to compositional semantics
-
-### Key Theorems
-- `binding_correct`: abstraction binds the right index
-- `trace_indices_independent`: different indices are independent
-- `relativePM_comm`: relative clause combination is commutative
-
-### Architectural Note
-
-This module depends on:
-- `Minimalism.Basic` for syntactic objects with traces
-- `Montague.Variables` for assignment functions
-- `Montague.Modification` for predicate modification
-
-It provides the bridge that lets Minimalist LF structures receive
-compositional semantic interpretations.
--/
 
 end Minimalism.Semantics

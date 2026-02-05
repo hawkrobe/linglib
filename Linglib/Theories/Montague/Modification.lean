@@ -8,17 +8,17 @@ Parsons (1970), and the synthesis in Kamp & Partee (1995).
 
 Adjectives form a hierarchy based on their semantic properties:
 
-1. **Intersective** ("gray", "French", "carnivorous"):
+1. Intersective ("gray", "French", "carnivorous"):
    ⟦gray cat⟧ = ⟦gray⟧ ∩ ⟦cat⟧
 
-2. **Subsective** ("skillful", "good", "typical"):
-   ⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧  (but NOT intersection!)
+2. Subsective ("skillful", "good", "typical"):
+   ⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧  (but not intersection)
    A skillful surgeon + violinist ≠ skillful violinist
 
-3. **Non-subsective/Modal** ("alleged", "potential", "putative"):
+3. Non-subsective/Modal ("alleged", "potential", "putative"):
    No entailment either way. An alleged murderer may or may not be a murderer.
 
-4. **"Privative"** ("fake", "counterfeit", "fictitious"):
+4. "Privative" ("fake", "counterfeit", "fictitious"):
    Traditionally: ⟦fake gun⟧ ∩ ⟦gun⟧ = ∅
    But Partee (2001) argues these are actually subsective + noun coercion!
 
@@ -34,14 +34,14 @@ Meaning postulates constrain subclasses:
 
 ## Predicate Modification (H&K Ch. 4)
 
-PM is a **special composition rule** for intersective adjectives only:
+PM is a special composition rule for intersective adjectives only:
   ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
 
 This handles: "gray cat" = λx. gray(x) ∧ cat(x)
 
-**Important**: PM should NOT be applied blindly to all adjective-noun
+PM should not be applied blindly to all adjective-noun
 combinations. The inference "Francis is a skillful surgeon and a violinist,
-therefore Francis is a skillful violinist" is INVALID.
+therefore Francis is a skillful violinist" is invalid.
 
 ## Partee's Insight: No Privatives
 
@@ -75,7 +75,7 @@ open Montague
 These definitions work for any entity type `E`, making them usable in
 RSA implementations without requiring full Montague model infrastructure.
 
-**Key function**: `predMod` implements the H&K predicate modification rule:
+`predMod` implements the H&K predicate modification rule:
   ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
 -/
 
@@ -87,10 +87,10 @@ Implements H&K Ch. 4 predicate modification:
 This is the semantic operation underlying intersective adjective composition.
 -/
 def predMod {E : Type*} (p q : E → Bool) : E → Bool :=
-  fun x => p x && q x
+  λ x => p x && q x
 
 /-- The tautological predicate (λx. true) is the identity for predMod -/
-def truePred {E : Type*} : E → Bool := fun _ => true
+def truePred {E : Type*} : E → Bool := λ _ => true
 
 /-- Predicate modification is commutative -/
 theorem predMod_comm {E : Type*} (p q : E → Bool) : predMod p q = predMod q p := by
@@ -122,7 +122,7 @@ In extensional terms: ⟨⟨e,t⟩, ⟨e,t⟩⟩
 abbrev AdjMeaning (m : Model) := m.interpTy (.e ⇒ .t) → m.interpTy (.e ⇒ .t)
 
 /--
-An adjective is **subsective** if ADJ(N) ⊆ N for all nouns N.
+An adjective is subsective if ADJ(N) ⊆ N for all nouns N.
 
 This captures: "skillful surgeon" ⊆ "surgeon", "fake gun" ⊆ "gun*" (coerced)
 
@@ -134,7 +134,7 @@ def isSubsective {m : Model} (adj : AdjMeaning m) : Prop :=
     predicateToSet (adj noun) ⊆ predicateToSet noun
 
 /--
-An adjective is **intersective** if ADJ(N) = ADJ ∩ N for some fixed predicate ADJ.
+An adjective is intersective if ADJ(N) = ADJ ∩ N for some fixed predicate ADJ.
 
 This is STRONGER than subsectivity: the adjective has a context-independent
 extension that simply intersects with the noun.
@@ -158,7 +158,7 @@ theorem intersective_implies_subsective {m : Model} (adj : AdjMeaning m)
 /--
 Predicate Modification: intersect two ⟨e,t⟩ predicates.
 
-**IMPORTANT**: This rule is valid ONLY for intersective adjectives!
+This rule is valid only for intersective adjectives.
 
 If α and β are both of type ⟨e,t⟩ AND the adjective is intersective, then:
   ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
@@ -168,7 +168,7 @@ blindly leads to invalid inferences.
 -/
 def predicateModification {m : Model}
     (p₁ p₂ : m.interpTy (.e ⇒ .t)) : m.interpTy (.e ⇒ .t) :=
-  fun x => p₁ x && p₂ x
+  λ x => p₁ x && p₂ x
 
 /-- Infix notation for predicate modification -/
 infixl:70 " ⊓ₚ " => predicateModification
@@ -181,7 +181,7 @@ This shows how intersective adjectives can be "lowered" from the general
 ⟨⟨e,t⟩,⟨e,t⟩⟩ type to a simple ⟨e,t⟩ predicate.
 -/
 def intersectiveAdj {m : Model} (adjPred : m.interpTy (.e ⇒ .t)) : AdjMeaning m :=
-  fun noun => adjPred ⊓ₚ noun
+  λ noun => adjPred ⊓ₚ noun
 
 /-- An intersective adjective defined via PM is indeed intersective -/
 theorem intersectiveAdj_is_intersective {m : Model} (adjPred : m.interpTy (.e ⇒ .t))
@@ -213,25 +213,25 @@ theorem predicateModification_idem {m : Model} (p : m.interpTy (.e ⇒ .t))
 
 /-- The tautological predicate (λx. true) is a right identity -/
 theorem predicateModification_true_right {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : p ⊓ₚ (fun _ => true) = p := by
+    : p ⊓ₚ (λ _ => true) = p := by
   funext x
   simp only [predicateModification, Bool.and_true]
 
 /-- The tautological predicate (λx. true) is a left identity -/
 theorem predicateModification_true_left {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : (fun _ => true) ⊓ₚ p = p := by
+    : (λ _ => true) ⊓ₚ p = p := by
   funext x
   simp only [predicateModification, Bool.true_and]
 
 /-- The contradictory predicate (λx. false) is a right annihilator -/
 theorem predicateModification_false_right {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : p ⊓ₚ (fun _ => false) = (fun _ => false) := by
+    : p ⊓ₚ (λ _ => false) = (λ _ => false) := by
   funext x
   simp only [predicateModification, Bool.and_false]
 
 /-- The contradictory predicate (λx. false) is a left annihilator -/
 theorem predicateModification_false_left {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : (fun _ => false) ⊓ₚ p = (fun _ => false) := by
+    : (λ _ => false) ⊓ₚ p = (λ _ => false) := by
   funext x
   simp only [predicateModification, Bool.false_and]
 
@@ -275,15 +275,15 @@ following pair of sentences are logically equivalent:
        (b) Julius is gray and Julius is a cat.
 
 In the analysis that uses PM, the equivalence follows directly from the content
-of the rule. **We can prove it without using any specific information about the
-meanings of the lexical items, except the information about their semantic type.**
+of the rule. This can be proved without using any specific information about the
+meanings of the lexical items, except the information about their semantic type.
 
 This is the key theorem: PM ensures intersective adjective equivalence purely
 from the composition rule itself.
 -/
 
 /--
-**Intersective Adjective Equivalence (pointwise)**
+Intersective Adjective Equivalence (pointwise).
 
 For any entity x and predicates P, Q of type ⟨e,t⟩:
   (P ⊓ₚ Q)(x) = true  ↔  P(x) = true ∧ Q(x) = true
@@ -301,7 +301,7 @@ theorem intersective_equivalence {m : Model}
   · intro ⟨h1, h2⟩; exact Bool.and_intro h1 h2
 
 /--
-**Intersective Adjective Equivalence (membership form)**
+Intersective Adjective Equivalence (membership form).
 
 x ∈ ⟦A N⟧ ↔ x ∈ ⟦A⟧ ∧ x ∈ ⟦N⟧
 
@@ -316,7 +316,7 @@ theorem intersective_equivalence_set {m : Model}
   · intro ⟨h1, h2⟩; exact Bool.and_intro h1 h2
 
 /--
-**Downward Entailment for PM**
+Downward Entailment for PM.
 
 If x satisfies (P ⊓ₚ Q), then x satisfies P.
 
@@ -329,7 +329,7 @@ theorem pm_entails_left {m : Model}
   exact Bool.and_elim_left h
 
 /--
-**Downward Entailment for PM (right)**
+Downward Entailment for PM (right).
 
 If x satisfies (P ⊓ₚ Q), then x satisfies Q.
 
@@ -342,7 +342,7 @@ theorem pm_entails_right {m : Model}
   exact Bool.and_elim_right h
 
 /--
-**Conjunction Introduction for PM**
+Conjunction Introduction for PM.
 
 If x satisfies P and x satisfies Q, then x satisfies (P ⊓ₚ Q).
 
@@ -363,20 +363,20 @@ open ToyEntity ToyLexicon
 
 /-- "gray" as a predicate (John and Mary are gray for this example) -/
 def gray_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .john => true
     | .mary => true
     | _ => false
 
 /-- "cat" as a predicate (pizza is our "cat" in this toy model) -/
 def cat_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .pizza => true
     | _ => false
 
 /-- "big" as a predicate (only book is big) -/
 def big_sem : toyModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .book => true
     | _ => false
 
@@ -426,61 +426,5 @@ def canPM (ty₁ ty₂ : Ty) : Bool :=
 theorem canPM_spec (ty₁ ty₂ : Ty) :
     canPM ty₁ ty₂ = true ↔ ty₁ = Ty.fn Ty.e Ty.t ∧ ty₂ = Ty.fn Ty.e Ty.t := by
   simp only [canPM, Bool.and_eq_true, decide_eq_true_eq]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### The Adjective Hierarchy (Kamp 1975, Parsons 1970, Partee 2001)
-
-1. **General type**: `AdjMeaning m` = ⟨⟨e,t⟩, ⟨e,t⟩⟩ (property → property)
-
-2. **Subsectivity**: `isSubsective adj` - ADJ(N) ⊆ N
-   - The weakest constraint on "normal" adjectives
-   - "skillful surgeon" ⊆ "surgeon"
-
-3. **Intersectivity**: `isIntersective adj` - ADJ(N) = ADJ ∩ N
-   - Stronger: adjective has context-independent extension
-   - "gray cat" = "gray" ∩ "cat"
-
-4. **Key theorem**: `intersective_implies_subsective`
-   - Every intersective adjective is subsective
-
-### Predicate Modification (for Intersective Adjectives)
-
-- `predicateModification p₁ p₂`: intersect two ⟨e,t⟩ predicates
-- Notation: `p₁ ⊓ₚ p₂`
-- `intersectiveAdj adjPred`: lift ⟨e,t⟩ to intersective ⟨⟨e,t⟩,⟨e,t⟩⟩
-
-**WARNING**: PM should ONLY be used for intersective adjectives!
-
-### Algebraic Properties of PM
-- Commutativity, Associativity, Idempotence
-- Identity (λx.true), Annihilator (λx.false)
-
-### The H&K §4.3.3 Theorem (Intersective Case Only)
-- `intersective_equivalence`: (P ⊓ₚ Q)(x) ↔ P(x) ∧ Q(x)
-- `pm_entails_left/right`: downward entailment
-- `pm_intro`: conjunction introduction
-
-### What This Module Does NOT Handle
-
-- **Subsective non-intersective** ("skillful"): Francis is a skillful surgeon
-  and a violinist, but NOT a skillful violinist. Requires relative interpretation.
-
-- **Modal/Non-subsective** ("alleged"): No entailment. Needs intensional types.
-
-- **"Privative"** ("fake"): Partee argues these are subsective + coercion.
-  "fake gun" = subsective within coerced "gun*" (= guns ∪ fake-guns).
-  This requires formalizing noun coercion, not currently implemented.
-
-## References
-
-- Kamp (1975) "Two theories about adjectives"
-- Kamp & Partee (1995) "Prototype theory and compositionality"
-- Partee (2001) "Privative Adjectives: Subsective plus Coercion"
-- Heim & Kratzer (1998) Ch. 4
--/
 
 end Montague.Modification

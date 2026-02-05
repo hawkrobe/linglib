@@ -4,15 +4,15 @@
 Causal necessity semantics for the verb "cause" based on
 Nadathur & Lauer (2020) Definition 24.
 
-## Key Insight
+## Insight
 
-"X caused Y" asserts that X was **necessary** for Y:
+"X caused Y" asserts that X was necessary for Y:
 - Without X, Y would not have occurred (counterfactual dependence)
 - X is a but-for cause: "but for X, not Y"
 
 ## Formal Definition (Def 24)
 
-C is **causally necessary** for E in situation s iff:
+C is causally necessary for E in situation s iff:
   normalDevelopment(s ⊕ {C = false}) does NOT include E = true
 
 In other words: if we remove C (or set it false), E doesn't happen.
@@ -56,7 +56,7 @@ open Theories.NadathurLauer2020.Sufficiency
 -- Causal Necessity (Definition 24)
 
 /--
-**Causal Necessity** (Definition 24)
+Causal Necessity (Definition 24).
 
 C is causally necessary for E in situation s iff:
 removing C (setting it false) and developing normally does NOT produce E.
@@ -69,7 +69,7 @@ def causallyNecessary (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) : Bool :=
   let sWithoutCause := s.extend cause false
   let developed := normalDevelopment dyn sWithoutCause
-  -- E should NOT become true without C
+  -- E should not become true without C
   !developed.hasValue effect true
 
 /--
@@ -82,7 +82,7 @@ def necessaryIn (dyn : CausalDynamics) (background : Situation)
 -- Semantics for "cause"
 
 /--
-**Semantics of "cause"** (causative verb asserting necessity)
+Semantics of "cause" (causative verb asserting necessity).
 
 "X caused Y" is true iff:
 1. Y actually occurred (effect is true in developed situation)
@@ -136,7 +136,7 @@ theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
 -- Necessity and Sufficiency Interaction
 
 /--
-**Key theorem**: Sufficiency does NOT imply necessity.
+Key theorem: Sufficiency does NOT imply necessity.
 
 A cause can be sufficient (adding it guarantees the effect)
 without being necessary (removing it might not prevent the effect).
@@ -163,7 +163,7 @@ theorem sufficiency_not_implies_necessity :
     sorry  -- Without a, b still causes c
 
 /--
-**Key theorem**: Necessity does NOT imply sufficiency.
+Key theorem: Necessity does NOT imply sufficiency.
 
 A cause can be necessary (removing it prevents the effect)
 without being sufficient (adding it alone might not guarantee the effect).
@@ -192,7 +192,7 @@ theorem necessity_not_implies_sufficiency :
 -- The INUS Condition
 
 /--
-An **INUS cause** is:
+An INUS cause is:
 - Insufficient but Necessary part of an
 - Unnecessary but Sufficient condition
 
@@ -214,7 +214,7 @@ def isINUSCause (dyn : CausalDynamics) (cause effect : Variable)
 -- But-For Causation
 
 /--
-**But-for causation**: C is a but-for cause of E in s iff
+But-for causation: C is a but-for cause of E in s iff
 "but for C, E would not have occurred."
 
 This is just necessity with a different framing.
@@ -233,7 +233,7 @@ theorem butfor_eq_necessary (dyn : CausalDynamics) (s : Situation)
 -- Actual Causation
 
 /--
-**Actual causation**: A full analysis combining necessity and actuality.
+Actual causation: A full analysis combining necessity and actuality.
 
 C actually caused E in situation s iff:
 1. C occurred (C = true in s)

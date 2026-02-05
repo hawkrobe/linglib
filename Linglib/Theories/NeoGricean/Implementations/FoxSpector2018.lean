@@ -6,36 +6,36 @@ Natural Language Semantics 26:1–50.
 
 ## Paper Structure
 
-**Section 1**: Introduction
+Section 1: Introduction
 - Problem: Where can `exh` be inserted?
 - Three puzzles: Implicature Focus Generalization, Hurford's, Singh's Asymmetry
 
-**Section 2**: Hurford's Constraint
+Section 2: Hurford's Constraint
 - 2.1: Hurford disjunctions and their rescue
 - 2.2: Extending to negation contexts
 
-**Section 3**: Implicature Focus Generalization (IFG)
+Section 3: Implicature Focus Generalization (IFG)
 - Embedded exhaustification under DE operators requires focus
 
-**Section 4**: Singh's Asymmetry
+Section 4: Singh's Asymmetry
 - "p or q, or both" vs "both, or p or q"
 
-**Section 5**: Economy Condition on Exhaustification
+Section 5: Economy Condition on Exhaustification
 - 5.1: Incremental vacuity/weakening
 - 5.2: Economy condition formulation
 - 5.3: Deriving the three puzzles
 
-**Section 6**: Relationship to Focus
+Section 6: Relationship to Focus
 - Association with Focus (AF)
 - Minimize Focus (MF)
 
-## Key Definitions
+## Definitions
 
-- **Hurford's Constraint (HC)**: Bans disjunctions where one disjunct entails another
-- **Incremental vacuity**: exh is vacuous at a parse point for all continuations
-- **Incremental weakening**: exh is weakening at a parse point for all continuations
-- **Economy condition**: exh cannot be incrementally vacuous or weakening
-- **Singh's Asymmetry**: Order matters in "p or q, or both"
+- Hurford's Constraint (HC): Bans disjunctions where one disjunct entails another
+- Incremental vacuity: exh is vacuous at a parse point for all continuations
+- Incremental weakening: exh is weakening at a parse point for all continuations
+- Economy condition: exh cannot be incrementally vacuous or weakening
+- Singh's Asymmetry: Order matters in "p or q, or both"
 
 ## Main Results
 
@@ -77,15 +77,15 @@ variable {World : Type*}
 /--
 Disjunction of two propositions.
 -/
-def por (φ ψ : Prop' World) : Prop' World := fun w => φ w ∨ ψ w
+def por (φ ψ : Prop' World) : Prop' World := λ w => φ w ∨ ψ w
 
 infixl:60 " ∨ₚ " => por
 
 /--
-**Hurford's Constraint (HC)**: A disjunction "A or B" is infelicitous if
+Hurford's Constraint (HC): A disjunction "A or B" is infelicitous if
 one disjunct entails the other (and no exhaustification repairs it).
 
-This is the *surface* constraint. Fox & Spector derive it from economy.
+Fox & Spector derive this surface constraint from economy.
 -/
 def hurfordViolation (A B : Prop' World) : Prop :=
   (A ⊆ₚ B) ∨ (B ⊆ₚ A)
@@ -100,7 +100,7 @@ def satisfiesHC (A B : Prop' World) : Prop :=
 attribute [local simp] satisfiesHC
 
 /--
-**Hurford Disjunction**: A disjunction where one disjunct entails the other.
+A disjunction where one disjunct entails the other.
 These are the problematic cases that need explanation.
 -/
 structure HurfordDisjunction (World : Type*) where
@@ -114,18 +114,18 @@ structure HurfordDisjunction (World : Type*) where
 -- SECTION 2.1: Rescuing Hurford Disjunctions with exh
 
 /-
-Key insight from Fox & Spector: Some Hurford disjunctions are acceptable
-because embedded exh breaks the entailment.
+Some Hurford disjunctions are acceptable because embedded exh
+breaks the entailment (Fox & Spector 2018).
 
 "Mary read some of the books or all of them" is OK because:
   exh(Mary read some) = Mary read some but not all
   This doesn't entail "all of them"
 
-This is the *rescue* mechanism.
+This is the rescue mechanism.
 -/
 
 /--
-A Hurford disjunction is **rescued** by embedding exh in the weaker disjunct
+A Hurford disjunction is rescued by embedding exh in the weaker disjunct
 if the exhaustified weaker disjunct no longer entails the stronger one.
 
 Given "A or B" where A ⊆ B:
@@ -137,7 +137,7 @@ def isRescuedByExh (ALT : Set (Prop' World)) (A B : Prop' World) : Prop :=
   ¬(exhIE ALT A ⊆ₚ B)
 
 /--
-**Theorem**: If A ⊆ B and exh(A) ⊄ B, then "A or B" is acceptable
+If A entails B and exh(A) does not entail B, then "A or B" is acceptable
 (the Hurford violation is rescued).
 -/
 theorem hurford_rescue {ALT : Set (Prop' World)} {A B : Prop' World}
@@ -149,7 +149,7 @@ theorem hurford_rescue {ALT : Set (Prop' World)} {A B : Prop' World}
 -- SECTION 2.2: Hurford's Constraint Under Negation
 
 /-
-Fox & Spector's key observation: Hurford's Constraint extends to DE contexts.
+Fox & Spector observe that Hurford's Constraint extends to DE contexts.
 
 "It's not the case that Mary read some or all of the books"
 
@@ -157,11 +157,11 @@ Under negation, the entailment reverses:
   In UE: "all" entails "some"
   In DE: "some" entails "all"
 
-So under negation, "some or all" becomes a Hurford violation!
+So under negation, "some or all" becomes a Hurford violation.
 -/
 
 /--
-**DE-Hurford**: Under a DE operator, the entailment direction reverses.
+Under a DE operator, the entailment direction reverses.
 "some or all" violates Hurford under negation because (¬some ⊆ ¬all).
 -/
 def deHurfordViolation (A B : Prop' World) : Prop :=
@@ -179,7 +179,7 @@ This explains contrasts like:
   "Every student who read SOME of the books passed" ✓ (SI possible)
   "Every student who read some of the books passed" ?? (SI marginal)
 
-In the DE restrictor of "every", embedded exh is blocked unless there's focus.
+In the DE restrictor of "every", embedded exh is blocked unless there is focus.
 -/
 
 /--
@@ -193,7 +193,7 @@ structure Focused (α : Type*) where
   hasFocus : Bool
 
 /--
-**Implicature Focus Generalization (IFG)**:
+Implicature Focus Generalization (IFG):
 Embedded exhaustification under DE operators requires focus on the scalar item.
 -/
 def satisfiesIFG (pol : ContextPolarity) (focused : Bool) : Prop :=
@@ -211,7 +211,7 @@ Singh (2008) observed an asymmetry:
 
 The order matters! Fox & Spector derive this from economy.
 
-Key insight: In (a), exh can be embedded in the first disjunct [A or B],
+In (a), exh can be embedded in the first disjunct [A or B],
 creating exh(A or B) which is "A or B but not both".
 This breaks the entailment to [A and B].
 
@@ -220,8 +220,8 @@ from {A∨B, A∧B} when in the stronger position).
 -/
 
 /--
-**Singh's Asymmetry**: The configuration of a disjunction with one disjunct
-entailing the other.
+The configuration of a disjunction with one disjunct entailing the other
+(Singh's Asymmetry).
 
 `order` indicates which disjunct is mentioned first:
 - `weakerFirst = true`: "A or B" or "A and B" (weak before strong)
@@ -288,7 +288,7 @@ structure ParsePoint (World : Type*) where
 -- SECTION 5.2: Incremental Vacuity and Weakening
 
 /--
-**Incremental Vacuity**: exh is incrementally vacuous at a parse point if
+Incremental vacuity: exh is incrementally vacuous at a parse point if
 for ALL possible continuations C, C(exh(φ)) = C(φ).
 
 "No matter how the sentence continues, exh makes no difference."
@@ -298,7 +298,7 @@ def isIncrementallyVacuous (ALT : Set (Prop' World)) (φ : Prop' World)
   ∀ C ∈ conts, ∀ w : World, C (exhIE ALT φ) w ↔ C φ w
 
 /--
-**Incremental Weakening**: exh is incrementally weakening at a parse point if
+Incremental weakening: exh is incrementally weakening at a parse point if
 for ALL possible continuations C, C(φ) ⊆ C(exh(φ)).
 
 "No matter how the sentence continues, exh weakens the meaning."
@@ -310,10 +310,10 @@ def isIncrementallyWeakening (ALT : Set (Prop' World)) (φ : Prop' World)
   ∀ C ∈ conts, C φ ⊆ₚ C (exhIE ALT φ)
 
 /--
-**Incremental Strengthening**: exh is incrementally strengthening if
-for ALL continuations, C(exh(φ)) ⊆ C(φ).
+Incremental strengthening: exh is incrementally strengthening if
+for all continuations, C(exh(phi)) entails C(phi).
 
-This is the GOOD case - exh adds content without weakening.
+In this case, exh adds content without weakening.
 -/
 def isIncrementallyStrengthening (ALT : Set (Prop' World)) (φ : Prop' World)
     (conts : Set (Continuation World)) : Prop :=
@@ -322,8 +322,8 @@ def isIncrementallyStrengthening (ALT : Set (Prop' World)) (φ : Prop' World)
 -- SECTION 5.3: The Economy Condition
 
 /--
-**Economy Condition on Exhaustification (ECE)**:
-exh(φ) is licensed at a parse point only if exh is neither
+Economy Condition on Exhaustification (ECE):
+exh(phi) is licensed at a parse point only if exh is neither
 incrementally vacuous nor incrementally weakening.
 
 This is the main formal contribution of Fox & Spector (2018).
@@ -359,7 +359,7 @@ Either way, economy blocks exh(B), so the Hurford violation cannot be rescued.
 /--
 The disjunction continuation: given first disjunct A, continuation is (λp. A ∨ p).
 -/
-def disjCont (A : Prop' World) : Continuation World := fun p => A ∨ₚ p
+def disjCont (A : Prop' World) : Continuation World := λ p => A ∨ₚ p
 
 /--
 **Theorem (Hurford from Economy)**: If B ⊆ A and exh(B) cannot break
@@ -393,21 +393,21 @@ Singh's Asymmetry follows from economy:
 "[A or B] or [A and B]" (weak first):
   - At [A or B], continuation is (λp. p ∨ (A ∧ B))
   - exh(A or B) = (A or B) but not both = (A ∨ B) ∧ ¬(A ∧ B)
-  - This breaks the entailment! exh(A ∨ B) ⊄ (A ∧ B)
-  - So exh is strengthening, economy met ✓
+  - exh(A or B) does not entail (A and B)
+  - So exh is strengthening, economy met
 
 "[A and B] or [A or B]" (strong first):
   - At [A and B], continuation is (λp. p ∨ (A ∨ B))
   - exh(A and B) = A and B (no alternatives to exclude from {A∧B, A∨B})
-  - So exh is vacuous, economy NOT met ✗
+  - So exh is vacuous, economy not met
 -/
 
 /--
-**Theorem (Singh: exh on weak is non-vacuous)**: When:
-1. exh(weak) doesn't entail strong (h_breaks)
+exh on weak is non-vacuous (Singh's Asymmetry). When:
+1. exh(weak) does not entail strong (h_breaks)
 2. There exists a world where weak holds but neither exh(weak) nor strong holds (h_excludes)
 
-Then exh on weak is NOT incrementally vacuous in the disjunction context.
+Then exh on weak is not incrementally vacuous in the disjunction context.
 
 The second condition captures that exh actually excludes something from weak.
 For concrete scales like {or, and}, this holds: there are worlds where
@@ -435,8 +435,8 @@ theorem singh_weak_exh_nonvacuous (ALT : Set (Prop' World))
   · exact hnexh hexh
 
 /--
-**Theorem (Singh: exh on strong is vacuous)**: When strong ⊆ weak and
-ALT = {weak, strong}, exh on strong is vacuous because there's nothing to exclude.
+exh on strong is vacuous (Singh's Asymmetry). When strong entails weak and
+ALT = {weak, strong}, exh on strong is vacuous because there is nothing to exclude.
 
 In "strong or weak", exh(strong) = strong (no alternatives can be innocently excluded
 without making strong inconsistent).
@@ -447,11 +447,11 @@ theorem singh_strong_exh_vacuous (weak strong : Prop' World)
   constructor
   · -- exhIE ⊆ strong: follows from exhIE entailing the base
     intro w hexh
-    have hstrong_in_IE : strong ∈ IE {weak, strong} strong := fun E hE_mc => hE_mc.1.1
+    have hstrong_in_IE : strong ∈ IE {weak, strong} strong := λ E hE_mc => hE_mc.1.1
     exact hexh strong hstrong_in_IE
   · -- strong ⊆ exhIE: show strong(w) → all IE members hold at w
     intro w hstrong_w ψ hψ_IE
-    -- Key insight: when strong ⊆ weak, the only MC-set is {strong}
+    -- When strong entails weak, the only MC-set is {strong}
     -- because both ¬weak and ¬strong are inconsistent with strong
     -- So IE = {strong}, meaning ψ = strong, and we use hstrong_w
     --
@@ -462,7 +462,7 @@ theorem singh_strong_exh_vacuous (weak strong : Prop' World)
         left
         exact Set.mem_singleton_iff.mp hψ'
       · -- Consistency: any world with strong satisfies {strong}
-        exact ⟨w, fun ψ' hψ' => Set.mem_singleton_iff.mp hψ' ▸ hstrong_w⟩
+        exact ⟨w, λ ψ' hψ' => Set.mem_singleton_iff.mp hψ' ▸ hstrong_w⟩
     have hE₀_maximal : isMCSet {weak, strong} strong {strong} := by
       refine ⟨hE₀_compat, ?_⟩
       -- Maximality: any compatible extension E' must equal {strong}
@@ -497,23 +497,23 @@ theorem singh_strong_exh_vacuous (weak strong : Prop' World)
 /-
 Fox & Spector connect their economy condition to focus theory.
 
-**Association with Focus (AF)**: exh associates with focused alternatives.
-**Minimize Focus (MF)**: Don't mark more focus than necessary.
+Association with Focus (AF): exh associates with focused alternatives.
+Minimize Focus (MF): Do not mark more focus than necessary.
 
-The connection: Economy condition interacts with focus marking.
-In DE contexts, focus is REQUIRED to license exh (deriving IFG).
+The economy condition interacts with focus marking.
+In DE contexts, focus is required to license exh (deriving IFG).
 -/
 
 /--
-**Focus-Sensitivity**: The alternative set depends on focus marking.
-Focused items contribute their scalar alternatives; unfocused don't.
+The alternative set depends on focus marking.
+Focused items contribute their scalar alternatives; unfocused items do not.
 -/
 def focusSensitiveAlts (α : Type*) [BEq α] (focused : List α)
     (altGen : α → List α) : List α :=
   focused.flatMap altGen
 
 /--
-**Association with Focus (AF)**: exh only considers alternatives to focused items.
+Association with Focus (AF): exh only considers alternatives to focused items.
 -/
 structure AFExh (World : Type*) where
   /-- The focused expression -/
@@ -526,7 +526,7 @@ structure AFExh (World : Type*) where
   meaning : Prop' World := exhIE alts focusedExpr
 
 /--
-**Minimize Focus (MF)**: Among parses with equivalent meanings,
+Minimize Focus (MF): Among parses with equivalent meanings,
 prefer the one with minimal focus marking.
 
 The equivalence check must be decidable (returns Bool).
@@ -534,8 +534,8 @@ The equivalence check must be decidable (returns Bool).
 def minimizeFocus {α : Type*} (parses : List (Focused α × Prop' World))
     (equivCheck : Prop' World → Prop' World → Bool) : Option (Focused α × Prop' World) :=
   -- Find parses with minimal focus (hasFocus = false preferred)
-  let withoutFocus := parses.filter (fun p => !p.1.hasFocus)
-  let withFocus := parses.filter (fun p => p.1.hasFocus)
+  let withoutFocus := parses.filter (λ p => !p.1.hasFocus)
+  let withFocus := parses.filter (λ p => p.1.hasFocus)
   -- Return non-focused parse if meanings are equivalent
   match withoutFocus, withFocus with
   | p :: _, q :: _ => if equivCheck p.2 q.2 then some p else some q
@@ -567,7 +567,7 @@ structure ScalePosition where
   expr : String
 
 /--
-**Distant Entailing Disjunction (DED)**: A disjunction where disjuncts
+A Distant Entailing Disjunction (DED): a disjunction where disjuncts
 are non-adjacent on the scale.
 -/
 structure DED where
@@ -605,13 +605,11 @@ This section formalizes the connection.
 -/
 
 /--
-**Shared Prediction Interface**: Both theories predict the same asymmetry.
+Both theories predict the same asymmetry.
 
 Given a context polarity:
 - UE: embedded implicature is available
 - DE: embedded implicature is blocked
-
-This is the core empirical pattern both theories explain.
 -/
 def embeddedImplicatureAvailable (pol : ContextPolarity) : Prop :=
   match pol with
@@ -620,7 +618,7 @@ def embeddedImplicatureAvailable (pol : ContextPolarity) : Prop :=
   | .nonMonotonic => false  -- NM: implicature blocked
 
 /--
-**Fox & Spector (2018) Prediction**: Economy condition determines availability.
+Fox & Spector (2018) prediction: Economy condition determines availability.
 
 In UE contexts, exh is incrementally strengthening → licensed.
 In DE contexts, exh is incrementally weakening → blocked.
@@ -632,7 +630,7 @@ def foxSpectorPrediction (pol : ContextPolarity) : Bool :=
   | .nonMonotonic => false  -- NM: blocked
 
 /--
-**Potts et al. (2016) Prediction**: Lexical uncertainty determines reading.
+Potts et al. (2016) prediction: Lexical uncertainty determines reading.
 
 In UE contexts, local (refined) reading wins.
 In DE contexts, global (base) reading wins.
@@ -644,10 +642,8 @@ def pottsPrediction (pol : ContextPolarity) : Bool :=
   | .nonMonotonic => false  -- NM: global reading
 
 /--
-**THEOREM: Fox & Spector (2018) and Potts et al. (2016) Agree**
-
-Both theories make identical predictions about embedded implicature availability
-across DE/UE contexts.
+Fox & Spector (2018) and Potts et al. (2016) make identical predictions
+about embedded implicature availability across DE/UE contexts.
 -/
 theorem foxSpector_potts_agreement :
     ∀ pol : ContextPolarity, foxSpectorPrediction pol = pottsPrediction pol := by
@@ -655,13 +651,13 @@ theorem foxSpector_potts_agreement :
   cases pol <;> rfl
 
 /--
-**Connection to IFG**: Focus is required in DE contexts.
+Focus is required in DE contexts (connection to IFG).
 
 Fox & Spector derive IFG from economy:
 - In UE, exh is automatically licensed (strengthening)
 - In DE, exh needs focus to overcome the economy constraint
 
-Potts et al. don't explicitly model focus, but the pattern is the same:
+Potts et al. do not explicitly model focus, but the pattern is the same:
 DE blocks embedded implicatures by default.
 -/
 theorem ifg_matches_de_blocking :
@@ -672,76 +668,5 @@ theorem ifg_matches_de_blocking :
   · rfl
   · simp [foxSpectorPrediction] at h
   · simp [foxSpectorPrediction] at h
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Core Definitions
-- `hurfordViolation`: Disjunction where one disjunct entails the other
-- `isRescuedByExh`: Hurford violation repaired by embedded exh
-- `deHurfordViolation`: Hurford in DE contexts
-- `SinghDisjunction`: Configuration for Singh's asymmetry
-- `Continuation`: Parse continuation (rest of sentence)
-- `ParsePoint`: Point in parse with alternatives and continuations
-
-### Economy Condition (Main Contribution)
-- `isIncrementallyVacuous`: exh makes no difference for all continuations
-- `isIncrementallyWeakening`: exh weakens for all continuations
-- `isIncrementallyStrengthening`: exh strengthens for all continuations
-- `economyConditionMet`: exh is licensed (not vacuous, not weakening)
-- `LicensedExh`: Parse point where exh meets economy
-
-### Derivations from Economy
-- `hurford_from_economy`: Economy derives Hurford's Constraint
-- `singh_weak_first_licensed`: Economy explains Singh's Asymmetry
-
-### Focus Theory Connection
-- `Focused`: Expression with focus annotation
-- `satisfiesIFG`: Implicature Focus Generalization
-- `AFExh`: Association with Focus for exh
-- `minimizeFocus`: Minimize Focus principle
-
-### Distant Entailing Disjunctions
-- `ScalePosition`: Position on a Horn scale
-- `DED`: Distant Entailing Disjunction structure
-- `dedIsAcceptable`: DEDs are acceptable via intermediate exclusion
-
-### Connection to Potts et al. (2016)
-- `embeddedImplicatureAvailable`: Shared prediction interface
-- `foxSpectorPrediction`: Economy-based prediction
-- `pottsPrediction`: LU-based prediction
-- `foxSpector_potts_agreement`: Both theories agree on DE/UE
-
-## Relationship to Other Modules
-
-```
-Exhaustivity.lean (Spector 2016)
-├── exhMW, exhIE
-├── IE sets, MC-sets
-├── theorem9_main
-│
-FoxSpector2018.lean (this file)
-├── Economy condition on exh
-├── Incremental vacuity/weakening
-├── Derives: Hurford, Singh, IFG
-├── Focus: AF, MF
-└── Connection to Potts et al. (2016)
-    └── foxSpector_potts_agreement theorem
-
-PottsLU.lean (Potts et al. 2016)
-├── LU model with predicate refinement
-├── potts_model_derives_de_blocking
-└── potts_model_derives_ue_implicature
-```
-
-## Key Insights
-
-1. **Economy over stipulation**: Hurford's Constraint is derived, not stipulated
-2. **Incremental computation**: Vacuity/weakening checked for ALL continuations
-3. **Focus-sensitivity**: Explains when embedded exh is licensed in DE contexts
-4. **Singh's Asymmetry**: Order matters due to what exh can achieve at each point
--/
 
 end NeoGricean.FoxSpector2018

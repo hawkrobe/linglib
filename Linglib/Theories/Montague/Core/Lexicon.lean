@@ -1,21 +1,15 @@
 /-
 # Montague Semantics: Lexicon
 
-Lexical entries that bundle syntactic words with semantic denotations
-and scalar alternative information.
+Lexical entries with semantic denotations and scalar alternatives.
 
-This extends Core.Basic.Word with:
-- Montague type and denotation
-- Horn scale membership (for scalar implicatures)
+## Main definitions
 
-## Architecture
+`ScaleMembership`, `SemLexEntry`, `SemLexicon`, `toyLexicon`
 
-- Core/Basic.lean: Word = form + Cat + Features (syntax only)
-- Montague/Scales.lean: HornScale with ordering and entailment
-- This file: SemLexEntry = Word + Ty + denotation + scale position
+## References
 
-Pragmatics (NeoGricean, RSA) imports this, not Core directly,
-when it needs meanings.
+Montague (1973)
 -/
 
 import Linglib.Core.Basic
@@ -29,7 +23,6 @@ open Montague
 open Montague.Determiner.Quantifier
 open Montague.Scales
 
--- Local word definitions for toy model (main lexicon is in Fragments/)
 private def word_some : Word := ⟨"some", Cat.D, {}⟩
 private def word_every : Word := ⟨"every", Cat.D, { number := some .sg }⟩
 private def word_john : Word := ⟨"John", Cat.D, { number := some .sg, person := some .third }⟩
@@ -37,12 +30,7 @@ private def word_mary : Word := ⟨"Mary", Cat.D, { number := some .sg, person :
 private def word_sleeps : Word := ⟨"sleeps", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 private def word_laughs : Word := ⟨"laughs", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
--- Semantic Lexical Entries
-
-/--
-Scale membership: which scale an item belongs to and its position.
-This links surface forms to the abstract scales in Scales.lean.
--/
+/-- Scale membership position -/
 inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)
   | connective (pos : Connectives.ConnExpr)
@@ -50,57 +38,44 @@ inductive ScaleMembership where
   | numeral (pos : Numerals.NumExpr)
   deriving Repr
 
-/--
-A semantic lexical entry bundles:
-- A syntactic word (from Core)
-- A Montague type
-- A denotation in that type
-- Optional scale membership (for scalar items)
--/
+/-- Semantic lexical entry -/
 structure SemLexEntry (m : Model) where
   word : Word
   ty : Ty
   denot : m.interpTy ty
   scaleMembership : Option ScaleMembership := none
 
-/-- Get the surface form -/
 def SemLexEntry.form {m : Model} (e : SemLexEntry m) : String := e.word.form
-
-/-- Check if this is a scalar item -/
 def SemLexEntry.isScalar {m : Model} (e : SemLexEntry m) : Bool := e.scaleMembership.isSome
 
-/-- Get stronger alternatives on the scale (for scalar implicatures) -/
 def SemLexEntry.strongerAlternatives {m : Model} (e : SemLexEntry m) : List String :=
   match e.scaleMembership with
   | none => []
   | some (.quantifier pos) =>
-    (Scales.strongerAlternatives Quantifiers.quantScale pos).map fun
+    (Scales.strongerAlternatives Quantifiers.quantScale pos).map λ
       | .none_ => "no"
       | .some_ => "some"
       | .most => "most"
       | .all => "all"
   | some (.connective pos) =>
-    (Scales.strongerAlternatives Connectives.connScale pos).map fun
+    (Scales.strongerAlternatives Connectives.connScale pos).map λ
       | .or_ => "or"
       | .and_ => "and"
   | some (.modal pos) =>
-    (Scales.strongerAlternatives Modals.modalScale pos).map fun
+    (Scales.strongerAlternatives Modals.modalScale pos).map λ
       | .possible => "might"
       | .necessary => "must"
   | some (.numeral pos) =>
-    (Scales.strongerAlternatives Numerals.numScale pos).map fun
+    (Scales.strongerAlternatives Numerals.numScale pos).map λ
       | .one => "one"
       | .two => "two"
       | .three => "three"
       | .four => "four"
       | .five => "five"
 
--- Toy Model Lexicon
-
 open ToyEntity
 open ToyLexicon
 
-/-- "some" as determiner: λP.λQ. ∃x. P(x) ∧ Q(x) -/
 def some_entry : SemLexEntry toyModel :=
   { word := word_some
   , ty := Ty.det
@@ -108,7 +83,6 @@ def some_entry : SemLexEntry toyModel :=
   , scaleMembership := some (.quantifier .some_)
   }
 
-/-- "every" / "all" as determiner: λP.λQ. ∀x. P(x) → Q(x) -/
 def every_entry : SemLexEntry toyModel :=
   { word := word_every
   , ty := Ty.det
@@ -116,7 +90,6 @@ def every_entry : SemLexEntry toyModel :=
   , scaleMembership := some (.quantifier .all)
   }
 
-/-- "most" as determiner: λP.λQ. |P∩Q| > |P-Q| -/
 def most_entry : SemLexEntry toyModel :=
   { word := ⟨"most", Cat.D, { number := Option.some .pl }⟩
   , ty := Ty.det
@@ -124,68 +97,56 @@ def most_entry : SemLexEntry toyModel :=
   , scaleMembership := some (.quantifier .most)
   }
 
-/-- "no" as determiner: λP.λQ. ¬∃x. P(x) ∧ Q(x) -/
 def no_entry : SemLexEntry toyModel :=
   { word := ⟨"no", Cat.D, {}⟩
   , ty := Ty.det
   , denot := no_sem toyModel
-  , scaleMembership := some (.quantifier .none_)  -- on scale but at bottom
+  , scaleMembership := some (.quantifier .none_)
   }
 
-/-- "John" as proper name -/
 def john_entry : SemLexEntry toyModel :=
   { word := word_john
   , ty := .e
   , denot := ToyEntity.john
-  -- scaleMembership defaults to none (proper names aren't scalar)
   }
 
-/-- "Mary" as proper name -/
 def mary_entry : SemLexEntry toyModel :=
   { word := word_mary
   , ty := .e
   , denot := ToyEntity.mary
   }
 
-/-- "sleeps" as intransitive verb -/
 def sleeps_entry : SemLexEntry toyModel :=
   { word := word_sleeps
   , ty := .e ⇒ .t
   , denot := ToyLexicon.sleeps_sem
   }
 
-/-- "laughs" as intransitive verb -/
 def laughs_entry : SemLexEntry toyModel :=
   { word := word_laughs
   , ty := .e ⇒ .t
   , denot := ToyLexicon.laughs_sem
   }
 
-/-- "student" as common noun -/
 def student_entry : SemLexEntry toyModel :=
   { word := ⟨"student", Cat.N, { number := Option.some .sg }⟩
   , ty := .e ⇒ .t
   , denot := student_sem
   }
 
-/-- "students" as common noun (plural) -/
 def students_entry : SemLexEntry toyModel :=
   { word := ⟨"students", Cat.N, { number := Option.some .pl }⟩
   , ty := .e ⇒ .t
-  , denot := student_sem  -- same denotation as singular
+  , denot := student_sem
   }
 
--- Lexicon Lookup
-
-/-- A lexicon maps surface forms to semantic entries -/
 def SemLexicon (m : Model) := String → Option (SemLexEntry m)
 
-/-- The toy model lexicon -/
 def toyLexicon : SemLexicon toyModel := λ form =>
   match form with
   | "some" => some some_entry
   | "every" => some every_entry
-  | "all" => some every_entry  -- "all" and "every" have same denotation
+  | "all" => some every_entry
   | "most" => some most_entry
   | "no" => some no_entry
   | "John" => some john_entry
@@ -196,28 +157,14 @@ def toyLexicon : SemLexicon toyModel := λ form =>
   | "students" => some students_entry
   | _ => none
 
-/-- Look up scalar alternatives for a form -/
 def lookupAlternatives {m : Model} (lex : SemLexicon m) (form : String) : List (SemLexEntry m) :=
   match lex form with
   | none => []
   | some entry =>
     entry.strongerAlternatives.filterMap λ altForm => lex altForm
 
--- Theorems
-
-/-- "some" is a scalar item -/
-theorem some_is_scalar :
-    some_entry.isScalar = true := rfl
-
-/-- "every" is a scalar item -/
-theorem every_is_scalar :
-    every_entry.isScalar = true := rfl
-
-/-- Non-scalar items return empty alternatives -/
-theorem john_not_scalar :
-    john_entry.isScalar = false := rfl
-
--- Note: Full evaluation of strongerAlternatives depends on Scales functions
--- which use native_decide. For demonstration, we verify structure is correct.
+theorem some_is_scalar : some_entry.isScalar = true := rfl
+theorem every_is_scalar : every_entry.isScalar = true := rfl
+theorem john_not_scalar : john_entry.isScalar = false := rfl
 
 end Montague.Core

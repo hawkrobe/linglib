@@ -6,7 +6,7 @@ Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).
 Counterfactuals and quantificational force: Experimental evidence for
 selectional semantics. Semantics & Pragmatics.
 
-## Key Finding
+## Finding
 
 Quantifier STRENGTH determines truth-value judgments for counterfactuals
 embedded under quantifiers, not polarity or QUD.
@@ -208,7 +208,7 @@ A theory "fits" if its predicted responses align with observed acceptance rates:
 - indeterminate/presupFailure → intermediate or variable
 -/
 def theoryFit (t : Theory) : ℚ :=
-  let predictions := experiment1Results.map fun d =>
+  let predictions := experiment1Results.map λ d =>
     let pred := theoreticalPrediction t d.quantifier
     let observed := d.trueResponseRate
     match pred with

@@ -89,7 +89,7 @@ def relationalizer {E S : Type}
     (P : Pred E S .one)
     (R : E → E → S → Bool)
     : Pred E S .two :=
-  .pred2 (fun z x s => P.toPred1 x s && R z x s)
+  .pred2 (λ z x s => P.toPred1 x s && R z x s)
 
 /-- Notation: π(P, R) -/
 scoped notation "π(" P ", " R ")" => relationalizer P R

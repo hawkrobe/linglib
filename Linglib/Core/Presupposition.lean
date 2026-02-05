@@ -153,25 +153,25 @@ namespace Prop3
 variable {W : Type*}
 
 /-- Pointwise negation. -/
-def neg (p : Prop3 W) : Prop3 W := fun w => TVal.neg (p w)
+def neg (p : Prop3 W) : Prop3 W := λ w => TVal.neg (p w)
 
 /-- Pointwise Strong Kleene conjunction. -/
-def and (p q : Prop3 W) : Prop3 W := fun w => TVal.and (p w) (q w)
+def and (p q : Prop3 W) : Prop3 W := λ w => TVal.and (p w) (q w)
 
 /-- Pointwise Strong Kleene disjunction. -/
-def or (p q : Prop3 W) : Prop3 W := fun w => TVal.or (p w) (q w)
+def or (p q : Prop3 W) : Prop3 W := λ w => TVal.or (p w) (q w)
 
 /-- Always true. -/
-def top : Prop3 W := fun _ => TVal.tt
+def top : Prop3 W := λ _ => TVal.tt
 
 /-- Always false. -/
-def bot : Prop3 W := fun _ => TVal.ff
+def bot : Prop3 W := λ _ => TVal.ff
 
 /-- Always undefined. -/
-def unk : Prop3 W := fun _ => TVal.unk
+def unk : Prop3 W := λ _ => TVal.unk
 
 /-- Convert BProp to Prop3 (always defined). -/
-def ofBProp (p : BProp W) : Prop3 W := fun w => TVal.ofBool (p w)
+def ofBProp (p : BProp W) : Prop3 W := λ w => TVal.ofBool (p w)
 
 end Prop3
 
@@ -187,14 +187,14 @@ namespace PrProp
 variable {W : Type*}
 
 /-- Evaluate a presuppositional proposition to three-valued truth. -/
-def eval (p : PrProp W) : Prop3 W := fun w =>
+def eval (p : PrProp W) : Prop3 W := λ w =>
   if p.presup w then TVal.ofBool (p.assertion w) else TVal.unk
 
 /-- A PrProp is defined at w iff its presupposition holds at w. -/
 def isDefinedAt (p : PrProp W) (w : W) : Prop := p.presup w = true
 
 /-- The set of worlds where p is defined. -/
-def definedWorlds (p : PrProp W) : W -> Prop := fun w => p.presup w = true
+def definedWorlds (p : PrProp W) : W -> Prop := λ w => p.presup w = true
 
 /-- Evaluation is defined iff presupposition holds. -/
 theorem eval_isDefined (p : PrProp W) (w : W) :
@@ -205,40 +205,40 @@ theorem eval_isDefined (p : PrProp W) (w : W) :
 /-- Classical negation of a presuppositional proposition. -/
 def neg (p : PrProp W) : PrProp W :=
   { presup := p.presup
-  , assertion := fun w => !p.assertion w }
+  , assertion := λ w => !p.assertion w }
 
 /-- Classical conjunction: both presuppositions must hold. -/
 def and (p q : PrProp W) : PrProp W :=
-  { presup := fun w => p.presup w && q.presup w
-  , assertion := fun w => p.assertion w && q.assertion w }
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => p.assertion w && q.assertion w }
 
 /-- Classical disjunction: both presuppositions must hold. -/
 def or (p q : PrProp W) : PrProp W :=
-  { presup := fun w => p.presup w && q.presup w
-  , assertion := fun w => p.assertion w || q.assertion w }
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => p.assertion w || q.assertion w }
 
 /-- Classical implication: both presuppositions must hold. -/
 def imp (p q : PrProp W) : PrProp W :=
-  { presup := fun w => p.presup w && q.presup w
-  , assertion := fun w => !p.assertion w || q.assertion w }
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => !p.assertion w || q.assertion w }
 
 /-- Filtering conjunction: antecedent can satisfy consequent's presupposition. -/
 def andFilter (p q : PrProp W) : PrProp W :=
-  { presup := fun w => p.presup w && (!p.assertion w || q.presup w)
-  , assertion := fun w => p.assertion w && q.assertion w }
+  { presup := λ w => p.presup w && (!p.assertion w || q.presup w)
+  , assertion := λ w => p.assertion w && q.assertion w }
 
 /-- Filtering implication: antecedent can satisfy consequent's presupposition. -/
 def impFilter (p q : PrProp W) : PrProp W :=
-  { presup := fun w => p.presup w && (!p.assertion w || q.presup w)
-  , assertion := fun w => !p.assertion w || q.assertion w }
+  { presup := λ w => p.presup w && (!p.assertion w || q.presup w)
+  , assertion := λ w => !p.assertion w || q.assertion w }
 
 /-- Filtering disjunction: disjuncts can satisfy each other's presuppositions. -/
 def orFilter (p q : PrProp W) : PrProp W :=
-  { presup := fun w =>
+  { presup := λ w =>
       (!p.assertion w || q.presup w) &&
       (!q.assertion w || p.presup w) &&
       (p.presup w || q.presup w)
-  , assertion := fun w => p.assertion w || q.assertion w }
+  , assertion := λ w => p.assertion w || q.assertion w }
 
 -- Notation for filtering connectives
 scoped infixl:65 " /\\' " => andFilter
@@ -279,23 +279,23 @@ theorem impFilter_trivializes_presup (p q : PrProp W)
 
 /-- Create a presuppositionless proposition from a BProp. -/
 def ofBProp (p : BProp W) : PrProp W :=
-  { presup := fun _ => true
+  { presup := λ _ => true
   , assertion := p }
 
 /-- Create a tautological presupposition. -/
 def top : PrProp W :=
-  { presup := fun _ => true
-  , assertion := fun _ => true }
+  { presup := λ _ => true
+  , assertion := λ _ => true }
 
 /-- Create a contradictory presupposition. -/
 def bot : PrProp W :=
-  { presup := fun _ => true
-  , assertion := fun _ => false }
+  { presup := λ _ => true
+  , assertion := λ _ => false }
 
 /-- Create a presupposition failure (never defined). -/
 def undefined : PrProp W :=
-  { presup := fun _ => false
-  , assertion := fun _ => false }
+  { presup := λ _ => false
+  , assertion := λ _ => false }
 
 /-- ofBProp creates presuppositionless propositions. -/
 theorem ofBProp_no_presup (p : BProp W) (w : W) : (ofBProp p).presup w = true := rfl

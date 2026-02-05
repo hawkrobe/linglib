@@ -49,19 +49,19 @@ def theoriesAgreeAt (T₁ T₂ : NumeralTheory) (w : NumWord) (n : Nat) : Bool :
 Do two theories agree on utterance `w` across all worlds?
 -/
 def theoriesAgreeOn (T₁ T₂ : NumeralTheory) (w : NumWord) : Bool :=
-  T₁.worlds.all fun n => theoriesAgreeAt T₁ T₂ w n
+  T₁.worlds.all λ n => theoriesAgreeAt T₁ T₂ w n
 
 /--
 Find worlds where two theories diverge on utterance `w`.
 -/
 def divergingWorlds (T₁ T₂ : NumeralTheory) (w : NumWord) : List Nat :=
-  T₁.worlds.filter fun n => !theoriesAgreeAt T₁ T₂ w n
+  T₁.worlds.filter λ n => !theoriesAgreeAt T₁ T₂ w n
 
 /--
 Do two theories agree on all utterances in all worlds?
 -/
 def theoriesEquivalent (T₁ T₂ : NumeralTheory) : Bool :=
-  T₁.utterances.all fun w => theoriesAgreeOn T₁ T₂ w
+  T₁.utterances.all λ w => theoriesAgreeOn T₁ T₂ w
 
 /--
 Ambiguity difference: does T₁ have more ambiguity than T₂ for utterance w?

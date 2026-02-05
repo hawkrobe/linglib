@@ -16,7 +16,7 @@ G&S and Van Rooy approach question semantics from different angles:
 
 This file establishes the formal connections between these approaches.
 
-## Key Results
+## Results
 
 1. **Blackwell's Theorem**: Semantic refinement = pragmatic dominance
 2. **Mention-Some Characterization**: Decision-theoretic <-> goal-based licensing
@@ -147,7 +147,7 @@ theorem humanConcern_implies_mentionSomeDP {W E : Type*} [DecidableEq E]
     (_hLicensed : MentionSomeLicensor.humanConcern goal = MentionSomeLicensor.humanConcern goal) :
     -- There exists a DP with mention-some structure
     ∃ (A : Type) (_ : DecidableEq A) (dp : DecisionProblem W A) (actions : List A) (worlds : List W),
-      hasMentionSomeStructure dp worlds actions (msi.whDomain.map fun x => fun w => msi.abstract w x) := by
+      hasMentionSomeStructure dp worlds actions (msi.whDomain.map λ x => λ w => msi.abstract w x) := by
   sorry
 
 /-- Van Rooy's mention-some structure implies G&S mention-some is appropriate.
@@ -180,7 +180,7 @@ theorem canonicalMentionSomeDP_has_structure {W : Type*} [DecidableEq W]
     (satisfies : W -> Bool) (worlds : List W)
     (hMultiple : (worlds.filter satisfies).length > 1) :
     let dp := canonicalMentionSomeDP satisfies
-    let q : Question W := worlds.filter satisfies |>.map fun w => (· == w)
+    let q : Question W := worlds.filter satisfies |>.map λ w => (· == w)
     hasMentionSomeStructure dp worlds [true, false] q = true := by
   sorry
 
@@ -204,7 +204,7 @@ the relevant decision problems to those consistent with J.
 assigns positive probability only to worlds in J. -/
 def dpConsistentWithInfoSet {W A : Type*}
     (dp : DecisionProblem W A) (j : InfoSet W) (worlds : List W) : Bool :=
-  worlds.all fun w => dp.prior w > 0 → j w
+  worlds.all λ w => dp.prior w > 0 → j w
 
 /-- Pragmatic answerhood implies positive utility for consistent DPs.
 
@@ -268,7 +268,7 @@ def requiresExhaustive {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (q : Question W) : Bool :=
   -- No single cell resolves the DP
-  q.all fun cell => !resolves dp worlds actions cell
+  q.all λ cell => !resolves dp worlds actions cell
 
 /-- Complete information DP always requires exhaustive answers.
 
@@ -287,7 +287,7 @@ theorem mentionSomeDP_not_exhaustive {W : Type*} [DecidableEq W]
     (satisfies : W -> Bool) (worlds : List W)
     (_hExists : worlds.any satisfies = true) :
     let dp := canonicalMentionSomeDP satisfies
-    let q : Question W := [satisfies, fun w => !satisfies w]
+    let q : Question W := [satisfies, λ w => !satisfies w]
     requiresExhaustive dp worlds [true, false] q = false := by
   -- The satisfies cell resolves the DP (true dominates false in satisfying worlds)
   -- so not all cells fail to resolve, hence requiresExhaustive = false
@@ -324,20 +324,20 @@ success given the speaker's goals.
 def positiveMoreUseful {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (p : W -> Bool) : Bool :=
-  utilityValue dp worlds actions p > utilityValue dp worlds actions (fun w => !p w)
+  utilityValue dp worlds actions p > utilityValue dp worlds actions (λ w => !p w)
 
 /-- Utility of negative answer exceeds positive. -/
 def negativeMoreUseful {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (p : W -> Bool) : Bool :=
-  utilityValue dp worlds actions (fun w => !p w) > utilityValue dp worlds actions p
+  utilityValue dp worlds actions (λ w => !p w) > utilityValue dp worlds actions p
 
 /-- Utilities are approximately equal. -/
 def utilitiesBalanced {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (p : W -> Bool) (epsilon : ℚ) : Bool :=
   let uvPos := utilityValue dp worlds actions p
-  let uvNeg := utilityValue dp worlds actions (fun w => !p w)
+  let uvNeg := utilityValue dp worlds actions (λ w => !p w)
   let diff := uvPos - uvNeg
   ((-epsilon) ≤ diff) && (diff ≤ epsilon)
 
@@ -395,7 +395,7 @@ This follows from Blackwell but is useful to state directly.
 def questionResolves {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (q : Question W) : Bool :=
-  q.all fun cell => resolves dp worlds actions cell
+  q.all λ cell => resolves dp worlds actions cell
 
 /-- Helper: If action a dominates in a superset, it dominates in any subset.
 
@@ -411,7 +411,7 @@ theorem resolves_subset {W A : Type*} [DecidableEq A]
   cases actions with
   | nil => rfl
   | cons a rest =>
-    -- Need to show: rest.all (fun b => (worlds.filter c').all (fun w => ...))
+    -- Need to show: rest.all (λ b => (worlds.filter c').all (λ w => ...))
     simp only [List.all_eq_true] at *
     intro b hb w hw
     -- w ∈ worlds.filter c' means w ∈ worlds ∧ c' w = true
@@ -445,13 +445,13 @@ If the trivial question (one cell) resolves DP, the DP is trivial
 (one action dominates regardless of world). -/
 theorem trivial_resolves_only_trivial {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
-    (_hResolves : questionResolves dp worlds actions [fun _ => true] = true) :
+    (_hResolves : questionResolves dp worlds actions [λ _ => true] = true) :
     -- One action dominates unconditionally
-    ∃ a ∈ actions, actions.all fun b =>
-      worlds.all fun w => dp.utility w a >= dp.utility w b := by
-  -- The trivial cell (fun _ => true) covers all worlds.
+    ∃ a ∈ actions, actions.all λ b =>
+      worlds.all λ w => dp.utility w a >= dp.utility w b := by
+  -- The trivial cell (λ _ => true) covers all worlds.
   -- If it resolves, the first action dominates all others unconditionally.
-  -- This follows from: worlds.filter (fun _ => true) = worlds
+  -- This follows from: worlds.filter (λ _ => true) = worlds
   sorry
 
 /-- The exact question resolves all DPs.

@@ -5,16 +5,16 @@ Detailed competence analysis from Geurts (2010) Chapter 2.3.
 
 ## Key Concepts
 
-1. **Competence** (basic): Bel_S(ψ) ∨ Bel_S(¬ψ)
+1. Competence (basic): Bel_S(ψ) ∨ Bel_S(¬ψ)
    Speaker knows whether ψ.
 
-2. **Competence+** (Soames 1982): Bel_S(ψ) ↔ ψ
+2. Competence+ (Soames 1982): Bel_S(ψ) ↔ ψ
    Speaker's belief matches truth. Stronger than basic competence.
 
-3. **Disjunction Blocks Competence**
+3. Disjunction Blocks Competence
    For "A or B", competence about A leads to contradiction via Quality.
 
-4. **Three-Way Outcome** (p.40)
+4. Three-Way Outcome (p.40)
    - Weak only (undecided)
    - Strong (competence holds)
    - No opinion (competence rejected)
@@ -45,7 +45,7 @@ def competencePlus (truth : Bool) (b : BeliefState) : Bool :=
   | _, _ => false
 
 /--
-**Theorem: Competence+ Implies Basic Competence**
+Theorem: Competence+ Implies Basic Competence
 
 If Competence+ holds, basic competence holds.
 -/
@@ -56,7 +56,7 @@ theorem competence_plus_implies_basic :
   cases truth <;> cases b <;> simp [competencePlus, competent] at *
 
 /--
-**Theorem: Basic Competence Doesn't Imply Competence+**
+Theorem: Basic Competence Doesn't Imply Competence+
 
 A speaker can be competent (have an opinion) but wrong.
 -/
@@ -108,7 +108,7 @@ def qualityConsistent (d : DisjunctionState) : Bool :=
   | _, _ => true
 
 /--
-**Theorem: Competence About Both Disjuncts Violates Quality**
+Theorem: Competence About Both Disjuncts Violates Quality
 
 If the speaker is competent about both A and B, and "A or B" is asserted,
 Quality is likely violated (speaker should have been more specific).
@@ -123,7 +123,7 @@ theorem disjunction_blocks_full_competence :
     simp [competentAboutBoth, competent, qualityConsistent] at *
 
 /--
-**Theorem: Disjunction Suggests Ignorance**
+Theorem: Disjunction Suggests Ignorance
 
 If "A or B" is asserted consistently with Quality, speaker lacks
 full competence about both disjuncts.
@@ -167,7 +167,7 @@ def processAlternative (assumeCompetence : Bool) (b : BeliefState) : Implicature
   }
 
 /--
-**Theorem: Outcome i (Undecided)**
+Theorem: Outcome i (Undecided)
 
 When competence is not assumed, only weak implicature holds.
 -/
@@ -180,7 +180,7 @@ theorem outcome_i_undecided :
   cases b <;> simp_all [processAlternative, nonBelief]
 
 /--
-**Theorem: Outcome ii (Strong)**
+Theorem: Outcome ii (Strong)
 
 When competence is assumed and speaker disbelieves,
 strong implicature is derived.
@@ -191,7 +191,7 @@ theorem outcome_ii_strong :
   native_decide
 
 /--
-**Theorem: Outcome iii (Incompetent)**
+Theorem: Outcome iii (Incompetent)
 
 When speaker has no opinion, competence assumption fails,
 only weak implicature holds.
@@ -210,7 +210,7 @@ Following Geurts' discussion, competence is more likely assumed when:
 - The speaker is an authority on the topic
 - Context suggests speaker should know
 
-Competence is BLOCKED for disjunctions due to Quality interaction.
+Competence is blocked for disjunctions due to Quality interaction.
 -/
 inductive CompetenceContext where
   | simpleAssertion  -- Default: competence assumed
@@ -229,7 +229,7 @@ def shouldAssumeCompetence : CompetenceContext → Bool
   | .uncertain => false
 
 /--
-**Theorem: Disjunction Context Blocks Competence**
+Theorem: Disjunction Context Blocks Competence
 
 In disjunction context, we don't assume competence,
 so only weak implicatures (ignorance) arise.
@@ -239,32 +239,5 @@ theorem disjunction_context_weak_only :
   rfl
 
 
-/-
-## What This Module Provides
-
-### Types
-- `DisjunctionState`: Epistemic state for "A or B"
-- `ImplicatureProcessing`: Detailed processing result
-- `CompetenceContext`: Factors affecting competence assumption
-
-### Competence Variants
-- `competent`: Basic competence (Bel(ψ) ∨ Bel(¬ψ))
-- `competencePlus`: Soames' stronger version (Bel(ψ) ↔ ψ)
-
-### Key Theorems
-- `competence_plus_implies_basic`: Plus → basic
-- `basic_not_implies_plus`: Basic ↛ plus
-- `disjunction_blocks_full_competence`: Full competence + Quality → contradiction
-- `disjunction_implies_partial_ignorance`: Disjunction → ignorance
-
-### Three Outcomes
-- `outcome_i_undecided`: No competence → weak only
-- `outcome_ii_strong`: Competence + disbelief → strong
-- `outcome_iii_incompetent`: No opinion → competence fails
-
-### Connection to Geurts (2010)
-- Ch. 2.3 (p.40-41): Three outcomes
-- Ch. 3.3 (p.61): Disjunction blocks competence
--/
 
 end NeoGricean.Competence

@@ -7,7 +7,7 @@ Unpublished manuscript (extension of Cognition 2019 paper)
 This paper extends Lassiter & Goodman (2017) by modeling how listeners infer
 not just the threshold θ but also the COMPARISON CLASS c.
 
-## Key Innovation
+## Innovation
 
 Lassiter & Goodman (2017): `P_L1(x, θ | u) ∝ P_S1(u | x, θ) × P(x) × P(θ)`
 
@@ -187,15 +187,15 @@ def comparisonClassPrior (k : Kind) : ComparisonClass → ℚ :=
   match k with
   | .person =>
     -- For generic "person", subordinate = superordinate = people
-    fun _ => 1  -- uniform
+    λ _ => 1  -- uniform
   | .basketballPlayer =>
     -- Slight preference for subordinate (compare to basketball players)
-    fun c => match c with
+    λ c => match c with
       | .subordinate => 3    -- 60% baseline
       | .superordinate => 2  -- 40%
   | .jockey =>
     -- Slight preference for subordinate (compare to jockeys)
-    fun c => match c with
+    λ c => match c with
       | .subordinate => 3
       | .superordinate => 2
 
@@ -276,7 +276,7 @@ The literal listener:
 -/
 def L0 (k : Kind) (c : ComparisonClass) (u : Utterance) : List (Height × ℚ) :=
   let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  let scores := heights.map fun h =>
+  let scores := heights.map λ h =>
     let sem := if meaning u c k h then (1 : ℚ) else 0
     let prior := heightPriorGivenKind k h
     (h, sem * prior)
@@ -292,7 +292,7 @@ given the comparison class they have in mind.
 -/
 def S1 (k : Kind) (c : ComparisonClass) (h : Height) : List (Utterance × ℚ) :=
   let utterances : List Utterance := [.tall, .short, .silent]
-  let scores := utterances.map fun u =>
+  let scores := utterances.map λ u =>
     let l0Score := RSA.Eval.getScore (L0 k c u) h
     (u, l0Score)
   RSA.Eval.normalize scores
@@ -311,8 +311,8 @@ The comparison class inference is the novel contribution.
 def L1_joint (k : Kind) (u : Utterance) : List (JointState × ℚ) :=
   let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
   let classes : List ComparisonClass := [.subordinate, .superordinate]
-  let pairs := heights.flatMap fun h => classes.map fun c => (h, c)
-  let scores := pairs.map fun (h, c) =>
+  let pairs := heights.flatMap λ h => classes.map λ c => (h, c)
+  let scores := pairs.map λ (h, c) =>
     let heightPrior := heightPriorGivenKind k h
     let classPrior := comparisonClassPrior k c
     let s1Score := RSA.Eval.getScore (S1 k c h) u
@@ -325,7 +325,7 @@ L1 marginal over heights: P_L1(h | u, k) = Σ_c P_L1(h, c | u, k)
 def L1_height (k : Kind) (u : Utterance) : List (Height × ℚ) :=
   let joint := L1_joint k u
   let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  heights.map fun h =>
+  heights.map λ h =>
     let hScores := joint.filter (·.1.1 == h) |>.map (·.2)
     (h, RSA.Eval.sumScores hScores)
 
@@ -335,7 +335,7 @@ L1 marginal over comparison classes: P_L1(c | u, k) = Σ_h P_L1(h, c | u, k)
 def L1_class (k : Kind) (u : Utterance) : List (ComparisonClass × ℚ) :=
   let joint := L1_joint k u
   let classes : List ComparisonClass := [.subordinate, .superordinate]
-  classes.map fun c =>
+  classes.map λ c =>
     let cScores := joint.filter (·.1.2 == c) |>.map (·.2)
     (c, RSA.Eval.sumScores cScores)
 
@@ -678,7 +678,7 @@ The predictions connect to `Phenomena/Vagueness/Data.lean`:
 - `ContextShiftDatum`: Same adjective, different comparison classes
 - `AntonymDatum`: Polarity asymmetry in interpretation
 
-### Key Insight
+### Insight
 
 The comparison class inference emerges from RSA reasoning about
 INFORMATIVITY. Speakers choose utterances that maximize information

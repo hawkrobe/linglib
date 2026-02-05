@@ -20,17 +20,17 @@ From Horn (1984), Rett (2015):
 - Generate R-implicatures via Manner maxim (Division of Pragmatic Labor)
 - Construction-sensitive: only in polar-invariant constructions
 
-## Key Insights
+## Insights
 
-1. **Horn Sets, Not Scales** (Geurts p.58)
-   Use SETS not ordered SCALES. Ordering comes from sentence-level semantics.
+1. Horn Sets, Not Scales (Geurts p.58)
+   Use sets not ordered scales. Ordering comes from sentence-level semantics.
 
-2. **Q vs M Distinction** (Horn 1984)
+2. Q vs M Distinction (Horn 1984)
    Q-alternatives compete on informativity; M-alternatives compete on form cost.
    These are orthogonal dimensions of pragmatic competition.
 
-3. **Polar Variance** (Rett 2015)
-   M-alternatives only exist in polar-INVARIANT constructions where
+3. Polar Variance (Rett 2015)
+   M-alternatives only exist in polar-invariant constructions where
    antonyms have the same truth conditions.
 
 ## References
@@ -59,8 +59,8 @@ open Phenomena.Gradability.Evaluativity
 Types of pragmatic alternatives.
 
 Following Horn (1984) and Levinson (2000):
-- **Q-alternatives**: Compete on informativity (Quantity principle)
-- **M-alternatives**: Compete on form cost (Manner principle)
+- Q-alternatives: Compete on informativity (Quantity principle)
+- M-alternatives: Compete on form cost (Manner principle)
 
 These generate different types of implicatures via different mechanisms.
 -/
@@ -91,7 +91,7 @@ structure PragmaticAlternative where
 /--
 A Horn Set is an unordered collection of expressions.
 
-Following Geurts' argument on p.58, we use SETS not SCALES.
+Following Geurts' argument on p.58, we use sets not scales.
 The ordering (which term is stronger) is determined at the SENTENCE level
 by checking semantic entailment, not by a fixed word-level ordering.
 
@@ -159,7 +159,7 @@ def numeralSet : HornSet String :=
 /--
 A sentence context for alternative generation.
 
-The key insight: what counts as a "stronger alternative" depends on
+What counts as a "stronger alternative" depends on
 the polarity of the context, not just the Horn set.
 -/
 structure SentenceContext where
@@ -228,7 +228,7 @@ def generateAlternatives {α : Type} [BEq α]
     }
 
 /--
-Get only the STRONGER alternatives (the ones that generate implicatures).
+Get only the stronger alternatives (the ones that generate implicatures).
 -/
 def strongerAlternatives {α : Type} [BEq α]
     (hornSet : HornSet α)
@@ -300,7 +300,7 @@ def connectiveChecker : EntailmentChecker ConnExpr :=
 
 
 /--
-**Theorem: "some" has stronger alternatives in UE context**
+"some" has stronger alternatives in UE context.
 
 In UE context, "all" and "most" are stronger than "some".
 -/
@@ -309,9 +309,9 @@ theorem some_alternatives_ue :
   native_decide
 
 /--
-**Theorem: "some" has NO stronger alternatives in DE context**
+"some" has no stronger alternatives in DE context.
 
-In DE context, "some" is already the strongest term!
+In DE context, "some" is already the strongest term.
 This explains why "not all" implicature is blocked in DE contexts.
 -/
 theorem some_no_alternatives_de :
@@ -319,7 +319,7 @@ theorem some_no_alternatives_de :
   native_decide
 
 /--
-**Theorem: "all" has stronger alternatives in DE context**
+"all" has stronger alternatives in DE context.
 
 In DE context, "some" is stronger than "all" at sentence level.
 -/
@@ -328,7 +328,7 @@ theorem all_alternatives_de :
   native_decide
 
 /--
-**Theorem: Context determines alternatives**
+Context determines alternatives.
 
 The same Horn set produces different alternatives depending on context.
 -/
@@ -574,54 +574,5 @@ M-alternatives generate evaluativity from marked forms (cost competition).
 "
 
 
-/-
-## What This Module Provides
-
-### Alternative Types
-- `AlternativeType`: Q (quantity) vs M (manner)
-- `PragmaticAlternative`: Unified alternative with type and properties
-
-### Q-Alternative Infrastructure
-- `HornSet`: Unordered set of comparable expressions
-- `ContextPolarity`: UE vs DE
-- `SentenceContext`: Context with polarity
-- `Alternative`: Q-alternative with strength info
-- `EntailmentChecker`: Abstract entailment checking
-- `generateAlternatives`: Generate Q-alternatives
-- `strongerAlternatives`: Get stronger Q-alternatives
-
-### M-Alternative Infrastructure
-- `PolarVariance`: variant vs invariant constructions
-- `MAlternativeSet`: Forms differing in cost, not meaning
-- `generateMAlternatives`: Generate M-alternatives for a construction
-- `isMarkedInMAlternatives`: Check if form is marked
-- `getMAlternative`: Get the alternative to a form
-
-### Type-Safe Horn Sets
-- `quantifierSet`: {.some_, .most, .all}
-- `connectiveSet`: {.or_, .and_}
-- `modalSet`: {.possible, .necessary}
-
-### Key Theorems
-
-**Q-Alternative Theorems:**
-- `some_alternatives_ue`: some → [most, all] in UE
-- `some_no_alternatives_de`: some → [] in DE (blocked!)
-- `all_alternatives_de`: all → [some, most] in DE (reversed)
-- `context_determines_alternatives`: Context matters
-
-**M-Alternative Theorems:**
-- `equative_has_m_alternatives`: Equatives license M-competition
-- `question_has_m_alternatives`: Questions license M-competition
-- `comparative_no_m_alternatives`: Comparatives don't
-- `positive_no_m_alternatives`: Positives don't
-- `short_is_marked_in_equative`: "short" is marked in equatives
-
-### Design Philosophy
-1. **Unified framework**: Both Q and M are pragmatic alternatives
-2. **Orthogonal dimensions**: Q competes on informativity, M on cost
-3. **Context-sensitive**: Both depend on context (polarity for Q, construction for M)
-4. **Grounded**: Q in Montague.Scales, M in Markedness
--/
 
 end NeoGricean.Alternatives

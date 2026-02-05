@@ -3,7 +3,7 @@
 
 Formalization of Potts (2005) "The Logic of Conventional Implicatures" (LCI).
 
-## Key Insight
+## Insight
 
 Natural language meanings have TWO dimensions:
 1. **At-issue content**: Truth-conditional, composes normally
@@ -71,7 +71,7 @@ Create a proposition with no CI content.
 Most ordinary expressions have trivial CI content (always satisfied).
 -/
 def ofAtIssue (p : BProp W) : TwoDimProp W :=
-  { atIssue := p, ci := fun _ => true }
+  { atIssue := p, ci := λ _ => true }
 
 /--
 Create a pure CI (no at-issue contribution).
@@ -80,7 +80,7 @@ Some expressions ONLY contribute CI content.
 Example: "damn" in "the damn dog" doesn't change truth conditions.
 -/
 def pureCI (c : BProp W) : TwoDimProp W :=
-  { atIssue := fun _ => true, ci := c }
+  { atIssue := λ _ => true, ci := c }
 
 /--
 Combine at-issue content with CI content.
@@ -90,64 +90,63 @@ def withCI (p : BProp W) (c : BProp W) : TwoDimProp W :=
 
 
 /--
-Negation: negates at-issue, CI PROJECTS UNCHANGED.
+Negation: negates at-issue content; CI projects unchanged.
 
 "John didn't see that bastard Pete"
 - atIssue: ¬(John saw Pete)
-- ci: Speaker thinks Pete is a bastard ← UNCHANGED!
+- ci: Speaker thinks Pete is a bastard (unchanged)
 
-This is the key difference from presuppositions.
+This distinguishes CIs from presuppositions.
 -/
 def neg (p : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := fun w => !p.atIssue w
+  { atIssue := λ w => !p.atIssue w
   , ci := p.ci }  -- CI projects through negation
 
 /--
-Conjunction: at-issue conjoins, CIs BOTH project.
+Conjunction: at-issue content conjoins; both CIs project.
 
 "That bastard John met that jerk Pete"
 - atIssue: John met Pete
-- ci: Speaker thinks John is bastard AND Pete is jerk
+- ci: Speaker thinks John is bastard and Pete is jerk
 -/
 def and (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := fun w => p.atIssue w && q.atIssue w
-  , ci := fun w => p.ci w && q.ci w }  -- Both CIs project
+  { atIssue := λ w => p.atIssue w && q.atIssue w
+  , ci := λ w => p.ci w && q.ci w }  -- Both CIs project
 
 /--
-Disjunction: at-issue disjoins, CIs BOTH project.
+Disjunction: at-issue content disjoins; both CIs project.
 
-CIs project even through disjunction - they're not "either/or".
+CIs project through disjunction rather than being disjoined.
 -/
 def or (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := fun w => p.atIssue w || q.atIssue w
-  , ci := fun w => p.ci w && q.ci w }  -- Both CIs project (not disjoined!)
+  { atIssue := λ w => p.atIssue w || q.atIssue w
+  , ci := λ w => p.ci w && q.ci w }  -- Both CIs project (not disjoined!)
 
 /--
-Implication: at-issue implies, CIs BOTH project.
+Implication: at-issue content forms conditional; both CIs project.
 
 "If that bastard John calls, I'll leave"
 - atIssue: John calls → I leave
-- ci: Speaker thinks John is bastard ← Projects from antecedent!
+- ci: Speaker thinks John is bastard (projects from antecedent)
 -/
 def imp (p q : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := fun w => !p.atIssue w || q.atIssue w
-  , ci := fun w => p.ci w && q.ci w }  -- Both CIs project
+  { atIssue := λ w => !p.atIssue w || q.atIssue w
+  , ci := λ w => p.ci w && q.ci w }  -- Both CIs project
 
 
 /--
-**Theorem: CI Projects Through Negation**
+CI projects through negation (Potts 2005).
 
-This is Potts' key observation distinguishing CIs from presuppositions.
-Presuppositions can be "filtered" by antecedents; CIs cannot.
+Presuppositions can be filtered by antecedents; CIs cannot.
 -/
 theorem ci_projects_through_neg (p : TwoDimProp W) :
     (neg p).ci = p.ci := rfl
 
 /--
-**Theorem: CI Projects Through Conditional Antecedent**
+CI projects through conditional antecedent.
 
 Unlike presuppositions, CIs in the antecedent of a conditional
-are NOT filtered - they project to the root.
+are not filtered; they project to the root.
 
 "If the king of France is bald, ..." - presupposes king exists (filtered)
 "If that bastard calls, ..." - CI projects (speaker thinks he's bastard)
@@ -156,25 +155,24 @@ theorem ci_projects_from_antecedent (p q : TwoDimProp W) (w : W) :
     (imp p q).ci w = (p.ci w && q.ci w) := rfl
 
 /--
-**Theorem: Double Negation Preserves CI**
+Double negation preserves CI.
 
-CIs are completely unaffected by truth-functional operators.
+CIs are unaffected by truth-functional operators.
 -/
 theorem ci_double_neg (p : TwoDimProp W) :
     (neg (neg p)).ci = p.ci := rfl
 
 /--
-**Theorem: At-Issue Independence**
+At-issue independence: CI content is independent of at-issue truth value.
 
-CI content is independent of at-issue truth value.
-The at-issue content can be true, false, or unknown - CI still holds.
+The at-issue content can be true, false, or unknown; CI still holds.
 -/
 theorem ci_independent_of_atIssue (p : TwoDimProp W) (w : W)
     (h_ci : p.ci w = true) :
     -- CI holds regardless of at-issue value
     (p.atIssue w = true → p.ci w = true) ∧
     (p.atIssue w = false → p.ci w = true) := by
-  exact ⟨fun _ => h_ci, fun _ => h_ci⟩
+  exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 end TwoDimProp
 
@@ -316,40 +314,5 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
   | .honorific => ctx.speakerAttitudes target > 50  -- Respect required
   | .emotiveMarker => ctx.emotionalValence.natAbs > 30  -- Strong emotion
   | _ => true  -- Other types: context-independent
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `TwoDimProp W`: Two-dimensional meaning (at-issue + CI)
-- `CIExprType`: Taxonomy of CI expressions
-- `CIExprProperties`: Properties (speaker-oriented, repeatable, etc.)
-- `CIContext`: Context for felicity evaluation
-
-### Connectives with CI Projection
-- `neg`, `and`, `or`, `imp`: At-issue composes, CI always projects
-
-### Key Theorems
-- `ci_projects_through_neg`: CIs project through negation
-- `ci_projects_from_antecedent`: CIs project from conditional antecedents
-- `ci_independent_of_atIssue`: CI independent of truth value
-
-### CI Informativeness (for ACIs)
-- `ciStrongerThan`: φ has stronger CI than ψ
-- `ciEquiv`, `ciWeakerThan`: Related orderings
-
-### Construction
-- `ofAtIssue`: No CI content
-- `pureCI`: Only CI content
-- `comma`: Type-shift for appositives
-- `supplementaryAdverb`: Adverb application
-
-### Connection to Other Modules
-- `Core.Proposition`: Base proposition type
-- `NeoGricean.ConventionalImplicatures`: Uses CI informativeness for ACIs
-- `Montague.Lexicon.Expressives.Epithets`: Specific expressive lexical entries
--/
 
 end Montague.Lexicon.Expressives

@@ -10,7 +10,7 @@ This file imports verb entries from `Fragments/` and records empirical observati
 The lexical properties (valence, C-distributivity, NVP class) come from the fragments;
 only the empirical acceptability judgments are specified here.
 
-## Key Findings
+## Findings
 
 The paper identifies three classes of NVPs based on:
 1. **C-distributivity**: Does `x V Q` ⟺ `∃p ∈ Q. x V that p`?

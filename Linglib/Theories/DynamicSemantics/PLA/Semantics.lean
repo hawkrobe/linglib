@@ -6,7 +6,7 @@ Satisfaction and truth for Predicate Logic with Anaphora (Dekker 2012, §2).
 ## Key Concepts
 
 ### Witness Sequences
-Pronouns are interpreted via **witness sequences** ê = (e₁, ..., eₙ).
+Pronouns are interpreted via witness sequences ê = (e₁, ..., eₙ).
 Unlike variables (interpreted by assignments), pronouns get their values
 from outside the formula through the witness sequence.
 
@@ -39,7 +39,7 @@ abbrev WitnessSeq (E : Type*) := PronIdx → E
 
 /-- Update an assignment at a single variable: g[i ↦ e] -/
 def Assignment.update {E : Type*} (g : Assignment E) (i : VarIdx) (e : E) : Assignment E :=
-  fun j => if j = i then e else g j
+  λ j => if j = i then e else g j
 
 notation g "[" i " ↦ " e "]" => Assignment.update g i e
 
@@ -63,7 +63,7 @@ Evaluate a term given assignment g and witness sequence ê.
 ⟦x_i⟧^{g,ê} = g(i)    (variables from assignment)
 ⟦p_i⟧^{g,ê} = ê(i)    (pronouns from witness sequence)
 
-This is the key insight: variables and pronouns have different interpretation sources.
+Variables and pronouns have different interpretation sources.
 -/
 def Term.eval {E : Type*} (g : Assignment E) (ê : WitnessSeq E) : Term → E
   | .var i => g i
@@ -126,7 +126,7 @@ theorem Formula.sat_conj_intro {E : Type*} [Nonempty E] (M : Model E) (g : Assig
 theorem Formula.sat_exists_intro {E : Type*} [Nonempty E] (M : Model E) (g : Assignment E)
     (ê : WitnessSeq E) (i : VarIdx) (φ : Formula) (e : E) :
     φ.sat M (g[i ↦ e]) ê → (Formula.exists_ i φ).sat M g ê :=
-  fun h => ⟨e, h⟩
+  λ h => ⟨e, h⟩
 
 
 /--
@@ -174,21 +174,21 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
     simp only [heq]
   | neg φ ih =>
     simp only [sat, resolve]
-    rw [ih g ê (fun i hi => hcompat i hi) (fun i hi => hnoCapture i hi)]
+    rw [ih g ê (λ i hi => hcompat i hi) (λ i hi => hnoCapture i hi)]
   | conj φ ψ ih1 ih2 =>
     simp only [sat, resolve]
     have h1 := ih1 g ê
-      (fun i hi => hcompat i (range_conj_left φ ψ hi))
-      (fun i hi => by
+      (λ i hi => hcompat i (range_conj_left φ ψ hi))
+      (λ i hi => by
         have := hnoCapture i (range_conj_left φ ψ hi)
         simp only [domain] at this ⊢
-        exact fun hc => this (Finset.mem_union_left _ hc))
+        exact λ hc => this (Finset.mem_union_left _ hc))
     have h2 := ih2 g ê
-      (fun i hi => hcompat i (range_conj_right φ ψ hi))
-      (fun i hi => by
+      (λ i hi => hcompat i (range_conj_right φ ψ hi))
+      (λ i hi => by
         have := hnoCapture i (range_conj_right φ ψ hi)
         simp only [domain] at this ⊢
-        exact fun hc => this (Finset.mem_union_right _ hc))
+        exact λ hc => this (Finset.mem_union_right _ hc))
     rw [h1, h2]
   | exists_ j φ ih =>
     simp only [sat, resolve]
@@ -200,14 +200,14 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
         have hne : ρ i ≠ j := by
           have := hnoCapture i hi
           simp only [domain] at this
-          exact fun heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
+          exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
         simp only [Assignment.update, if_neg hne]
         exact hcompat i hi
       have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
         intro i hi
         have := hnoCapture i hi
         simp only [domain] at this ⊢
-        exact fun hc => this (Finset.mem_insert_of_mem hc)
+        exact λ hc => this (Finset.mem_insert_of_mem hc)
       rwa [← ih (g[j ↦ e]) ê hcompat' hnoCapture']
     · intro ⟨e, he⟩
       use e
@@ -216,14 +216,14 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
         have hne : ρ i ≠ j := by
           have := hnoCapture i hi
           simp only [domain] at this
-          exact fun heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
+          exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
         simp only [Assignment.update, if_neg hne]
         exact hcompat i hi
       have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
         intro i hi
         have := hnoCapture i hi
         simp only [domain] at this ⊢
-        exact fun hc => this (Finset.mem_insert_of_mem hc)
+        exact λ hc => this (Finset.mem_insert_of_mem hc)
       rwa [ih (g[j ↦ e]) ê hcompat' hnoCapture']
 
 
@@ -235,42 +235,12 @@ def exManWalkedIn : Formula :=
   ⋀ Formula.atom "SatDown" [.pron 0]
 
 /-- Resolution: p₀ → x₀ -/
-def exResolution : Resolution := fun _ => 0
+def exResolution : Resolution := λ _ => 0
 
 /-- The resolved formula has no pronouns -/
 example : (exManWalkedIn.resolve exResolution).range = ∅ :=
   Formula.resolve_no_pronouns exManWalkedIn exResolution
 
 end Examples
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Types
-- `Assignment E`: VarIdx → E (variable assignment)
-- `WitnessSeq E`: PronIdx → E (pronoun interpretation)
-- `Model E`: Predicate interpretation
-
-### Operations
-- `Term.eval`: Evaluate term given g and ê
-- `Assignment.update`: g[i ↦ e]
-
-### Satisfaction
-- `Formula.sat`: M, g, ê ⊨ φ
-- `Formula.trueIn`: M ⊨ φ
-
-### Key Theorems
-- `sat_neg_neg`: Double negation elimination
-- `sat_resolve`: Resolution correctness
-
-## Next Steps
-
-Following Dekker Ch. 3:
-- Dynamic update semantics
-- Support relation
-- Equivalence of Contents/Updates/Support views
--/
 
 end Theories.DynamicSemantics.PLA

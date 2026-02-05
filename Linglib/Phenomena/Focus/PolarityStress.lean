@@ -153,35 +153,4 @@ def contentFocusData : List PolarityStressDatum := [
 def allData : List PolarityStressDatum :=
   polarityStressData ++ contentFocusData
 
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `PolarityStressDatum`: Prosodic stress affecting polarity interpretation
-
-### Key Examples
-- "John DOES drink" (emphatic affirmation)
-- "DOES John drink?" (checking expected positive)
-- "Does John NOT drink?" (checking expected negative)
-
-### Theoretical Neutrality
-
-This module records the prosodic facts. Theoretical analyses include:
-- **Verum Focus** (Höhle 1992): Focus on a VERUM operator
-- **Polarity Focus**: Focus directly on truth value
-- **Epistemic Focus**: Focus signals epistemic checking
-
-### Key Distinction
-
-Polarity stress targets truth/polarity:
-- "John DOES drink" → whether John drinks (polarity)
-
-Content focus targets alternatives:
-- "JOHN drinks" → who drinks (content)
-
-Both involve prosodic prominence but different semantic targets.
--/
-
 end Phenomena.Focus.PolarityStress

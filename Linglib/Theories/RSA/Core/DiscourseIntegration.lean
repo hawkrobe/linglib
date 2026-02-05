@@ -4,8 +4,6 @@
 Provides functions to connect Farkas & Bruce (2010) discourse state
 components to RSA model computations.
 
-## Key Insight
-
 RSA presupposition models all use the same mathematical structure:
 
 ```
@@ -89,7 +87,7 @@ def dcSCredence {A W : Type*}
     (_baseCG : List (BProp W))
     (a : A) (w : W) : ℚ :=
   -- Speaker credence: w must satisfy speaker's private assumptions
-  let compatible := (dcSOptions a).all (fun p => p w)
+  let compatible := (dcSOptions a).all (λ p => p w)
   _root_.boolToRat compatible
 
 /--
@@ -99,7 +97,7 @@ def dcSCredenceBool {A W : Type*}
     (dcSOptions : A → List (BProp W))
     (_baseCG : List (BProp W))
     (a : A) (w : W) : Bool :=
-  (dcSOptions a).all (fun p => p w)
+  (dcSOptions a).all (λ p => p w)
 
 
 /--
@@ -119,7 +117,7 @@ Returns 1 if w satisfies all common ground propositions under c.
 def cgCredence {C W : Type*}
     (cgOptions : C → List (BProp W))
     (c : C) (w : W) : ℚ :=
-  let compatible := (cgOptions c).all (fun p => p w)
+  let compatible := (cgOptions c).all (λ p => p w)
   _root_.boolToRat compatible
 
 /--
@@ -128,7 +126,7 @@ Boolean version of cgCredence for pattern matching.
 def cgCredenceBool {C W : Type*}
     (cgOptions : C → List (BProp W))
     (c : C) (w : W) : Bool :=
-  (cgOptions c).all (fun p => p w)
+  (cgOptions c).all (λ p => p w)
 
 
 /--
@@ -140,7 +138,7 @@ depending on how the options function is defined.
 def discourseComponentCredence {D W : Type*}
     (componentOptions : D → List (BProp W))
     (d : D) (w : W) : ℚ :=
-  _root_.boolToRat ((componentOptions d).all (fun p => p w))
+  _root_.boolToRat ((componentOptions d).all (λ p => p w))
 
 
 /-!
@@ -157,8 +155,8 @@ inductive BeliefState where
 
 -- Map to propositions
 def dcSOptions : BeliefState → List (BProp World)
-  | .cTrue => [fun w => w.c]
-  | .cFalse => [fun w => !w.c]
+  | .cTrue => [λ w => w.c]
+  | .cFalse => [λ w => !w.c]
   | .all => []
 
 -- Use with RSA
@@ -216,11 +214,11 @@ interpretations of what D represents.
 ### Why the Interpretation Matters
 
 The interpretation affects:
-1. **Prior choice**: P(D) should reflect beliefs about dcS vs cg
-2. **Experimental predictions**: Different measures are appropriate
-3. **Theoretical framing**: "Speaker belief inference" vs "accommodation"
+1. Prior choice: P(D) should reflect beliefs about dcS vs cg
+2. Experimental predictions: Different measures are appropriate
+3. Theoretical framing: "Speaker belief inference" vs "accommodation"
 
-But the **computation** is identical.
+The computation, however, is identical.
 -/
 
 /--
@@ -244,34 +242,5 @@ theorem cg_matches_generic {C W : Type*}
     (c : C) (w : W) :
     cgCredence options c w = discourseComponentCredence options c w := by
   simp only [cgCredence, discourseComponentCredence]
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Credence Functions
-- `discourseCredence`: From full DiscourseState (uses cg)
-- `speakerDcSCredence`: From full DiscourseState (uses dcS)
-- `dcSCredence`: For S&T-style dcS inference
-- `cgCredence`: For Warstadt-style cg inference
-- `discourseComponentCredence`: Generic interface
-
-### Theorems
-- `dcS_cg_same_structure`: dcS and cg credence are structurally identical
-- `cg_matches_generic`: cg credence is instance of generic
-
-### Connection to F&B
-This module makes explicit that:
-- S&T's `BeliefState` = possible values of dcS
-- Warstadt's `Context` = possible values of cg
-- Both use the same RSA computation with different interpretations
-
-## Future Extensions
-
-1. **Joint dcS-cg models**: Uncertainty over both components
-2. **Table dynamics**: How issues affect credence
-3. **Multi-agent**: Different dcS for different speakers
--/
 
 end RSA.DiscourseIntegration

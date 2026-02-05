@@ -6,10 +6,10 @@ Semantics & Pragmatics 18(10).
 
 ## What is the Subordinate Future?
 
-The **Subordinate Future** (SF) is a verbal form in Romance languages that:
-1. Uses **present tense morphology** (not future morphology)
-2. Appears in **subordinate contexts** (conditionals, relative clauses)
-3. Receives **future reference** interpretation
+The Subordinate Future (SF) is a verbal form in Romance languages that:
+1. Uses present tense morphology (not future morphology).
+2. Appears in subordinate contexts (conditionals, relative clauses).
+3. Receives future reference interpretation.
 
 Example (Portuguese):
   "Se Maria estiver em casa, ela vai atender."
@@ -18,11 +18,11 @@ Example (Portuguese):
 
 The puzzle: Why does present morphology yield future interpretation?
 
-Mendes' answer: SF is **subjunctive**, not indicative. The subjunctive
+Mendes' answer: SF is subjunctive, not indicative. The subjunctive
 introduces a situation dref from the historical modal base, which can
 include future times.
 
-## Key Data Points
+## Data Points
 
 1. SF vs Indicative Present in conditionals
 2. Temporal anchoring asymmetries
@@ -122,7 +122,7 @@ Example (2): Indicative present in conditional (contrast).
 "Se a Maria está em casa, ela vai atender o telefone."
 "If Maria is.IND at home, she will answer the phone."
 
-Key observation: Indicative present has PRESENT reading, not future.
+Indicative present has present reading, not future.
 This contrasts with SF which gets future reading.
 -/
 def ex2_indicativeContrast : SFExample :=
@@ -172,7 +172,7 @@ def ex4_relativeClause : SFExample :=
 /--
 Modal donkey anaphora data structure.
 
-Mendes' key evidence: SF licenses donkey anaphora across clause boundaries
+SF licenses donkey anaphora across clause boundaries
 in a way that requires a situation dref analysis.
 -/
 structure ModalDonkeyExample where
@@ -210,7 +210,7 @@ Example (6): Temporal anchoring evidence.
 "Se a Maria estiver em casa às 5h, ela vai estar cansada."
 "If Maria be.SF at home at 5pm, she will be tired."
 
-Key: The tiredness is evaluated at the ANTECEDENT time (5pm),
+The tiredness is evaluated at the antecedent time (5pm),
 not the speech time. This shows temporal anchoring to the
 situation introduced by SF.
 -/
@@ -256,7 +256,7 @@ def italian_congiuntivo : CrossLinguisticExample :=
 /--
 Predictions of Mendes' analysis.
 
-The key predictions that follow from treating SF as subjunctive
+Predictions that follow from treating SF as subjunctive
 (introducing a situation dref) rather than future indicative.
 -/
 structure MendesPrediction where
@@ -309,36 +309,5 @@ def predictions : List MendesPrediction :=
   , prediction_temporalShift
   , prediction_donkeyAnaphora
   , prediction_indicativeContrast ]
-
--- Summary
-
-/-
-## What This File Provides
-
-### Morphological Types
-- `PortugueseForm`: Portuguese verbal forms
-- `SFDecomposition`: Mendes' morphological analysis of SF
-
-### Example Data
-- `SFExample`: Structure for SF examples
-- `ex1_basicConditional` through `ex6_temporalAnchoring`: Core examples
-
-### Modal Donkey Evidence
-- `ModalDonkeyExample`: Structure for donkey anaphora data
-- `ex5_donkeyWithSF`: Key donkey example
-
-### Cross-Linguistic
-- `CrossLinguisticExample`: Parallel data from other languages
-- `spanish_sf`, `italian_congiuntivo`: Romance parallels
-
-### Theoretical Predictions
-- `MendesPrediction`: Testable predictions
-- `prediction_*`: Four key predictions from Mendes' analysis
-
-### Connection to Theory Files
-- `Theories/Montague/Sentence/Mood/Basic.lean`: SUBJ/IND operators
-- `Theories/Montague/Sentence/Tense/Basic.lean`: PAST/PRES/FUT operators
-- `Theories/DynamicSemantics/IntensionalCDRT/Situations.lean`: Dynamic implementation
--/
 
 end Phenomena.SubordinateFuture

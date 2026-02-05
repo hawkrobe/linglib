@@ -10,7 +10,7 @@ BUS adds a layer on top of Dynamic Ty2:
 - Base: DRS S = S → S → Prop (from Dynamic Ty2)
 - BUS: BilateralDRS S = { positive : DRS S, negative : DRS S }
 
-The key insight: negation SWAPS dimensions, giving DNE definitionally.
+Negation swaps dimensions, giving DNE definitionally.
 
 ## References
 
@@ -44,7 +44,7 @@ variable {S : Type*}
 /-- Bilateral test -/
 def btest (C : Condition S) : BilateralDRS S :=
   { positive := test C
-  , negative := test (fun i => ¬C i) }
+  , negative := test (λ i => ¬C i) }
 
 /-- Bilateral negation: swap -/
 def bneg (D : BilateralDRS S) : BilateralDRS S :=
@@ -58,15 +58,15 @@ prefix:max "∼ᵇ" => bneg
 /-- Bilateral sequencing -/
 def bseq (D₁ D₂ : BilateralDRS S) : BilateralDRS S :=
   { positive := dseq D₁.positive D₂.positive
-  , negative := fun i j =>
+  , negative := λ i j =>
       D₁.negative i j ∨ (∃ k, D₁.positive i k ∧ D₂.negative k j) }
 
 infixl:65 " ⨟ᵇ " => bseq
 
 /-- Bilateral disjunction -/
 def bdisj (D₁ D₂ : BilateralDRS S) : BilateralDRS S :=
-  { positive := fun i j => D₁.positive i j ∨ D₂.positive i j
-  , negative := fun i j => D₁.negative i j ∧ D₂.negative i j }
+  { positive := λ i j => D₁.positive i j ∨ D₂.positive i j
+  , negative := λ i j => D₁.negative i j ∧ D₂.negative i j }
 
 
 /--
@@ -75,7 +75,7 @@ This is how standard dynamic systems embed into BUS.
 -/
 def ofDRS (D : DRS S) : BilateralDRS S :=
   { positive := D
-  , negative := fun i j => i = j ∧ ¬∃ k, D i k }
+  , negative := λ i j => i = j ∧ ¬∃ k, D i k }
 
 /-- The positive dimension preserves the original DRS -/
 theorem ofDRS_positive (D : DRS S) : (ofDRS D).positive = D := rfl
@@ -101,12 +101,12 @@ For worldless systems (W = Unit), we can relate them via:
   CCP Unit E = InfoState Unit E → InfoState Unit E
 
 The relation: a DRS D : S → S → Prop induces a CCP:
-  fun s => { j | ∃ i ∈ s, D i j }
+  λ s => { j | ∃ i ∈ s, D i j }
 -/
 
 /-- Convert DRS to CCP (set-based update) -/
 def drsToUpdate {S : Type*} (D : DRS S) : Set S → Set S :=
-  fun s => { j | ∃ i ∈ s, D i j }
+  λ s => { j | ∃ i ∈ s, D i j }
 
 /-- BilateralDRS induces pair of CCPs -/
 def toUpdatePair (D : BilateralDRS S) : (Set S → Set S) × (Set S → Set S) :=
@@ -132,30 +132,5 @@ theorem bseq_positive_assoc {S : Type*} (D₁ D₂ D₃ : BilateralDRS S) :
   constructor
   · intro ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩; exact ⟨h', hD₁, h, hD₂, hD₃⟩
   · intro ⟨h', hD₁, h, hD₂, hD₃⟩; exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
-
--- SUMMARY
-
-/-!
-## BUS + Dynamic Ty2
-
-BUS is orthogonal to Dynamic Ty2:
-
-1. **Base layer**: Dynamic Ty2 provides DRS S = S → S → Prop
-2. **BUS layer**: BilateralDRS S = { positive : DRS S, negative : DRS S }
-
-Key operations:
-- `btest`: Lift condition to bilateral form
-- `bneg` (∼ᵇ): Swap dimensions (DNE definitional!)
-- `bseq` (⨟ᵇ): Bilateral sequencing
-- `bdisj`: Bilateral disjunction
-- `ofDRS`: Embed unilateral → bilateral
-
-The DNE property `∼ᵇ(∼ᵇD) = D` is what enables bathroom sentences:
-- "No bathroom" has the existential in its negative dimension
-- Double negation recovers it for pronoun binding
-
-Any Dynamic Ty2 instantiation (DPL, CDRT, PLA) can be made bilateral
-by lifting through `ofDRS` and using BUS operations.
--/
 
 end Theories.DynamicSemantics.BUS

@@ -5,9 +5,9 @@ Theory of presupposition projection based on event structure.
 
 ## Core Claim
 
-Projective contents are **ontological preconditions** of events:
-- Preconditions: States necessary for the event to exist/occur → PROJECT
-- Consequences: States resulting from the event → AT-ISSUE (don't project)
+Projective contents are ontological preconditions of events:
+- Preconditions: States necessary for the event to exist/occur -- project
+- Consequences: States resulting from the event -- at-issue (don't project)
 
 ## Theoretical Explanation
 
@@ -16,12 +16,12 @@ Why do preconditions project through negation?
 Consider: "John didn't stop smoking"
 
 For this sentence to be evaluable:
-1. The STOPPING EVENT must be the kind of thing that could have happened
+1. The stopping event must be the kind of thing that could have happened
 2. For stopping to be possible, John must have been smoking
 3. The sentence asserts that this possible stopping didn't actually occur
 
 Therefore, even though we're negating the event, we're still presupposing
-that the event was POSSIBLE — and possibility requires the precondition.
+that the event was possible, and possibility requires the precondition.
 
 ## Connection to Diagnostics
 
@@ -29,7 +29,7 @@ The empirical diagnostics in `Phenomena.Presupposition.Diagnostics`:
 - "allows for" test → identifies preconditions
 - "results in" test → identifies consequences
 
-This theory PREDICTS that pattern: preconditions can be elaborated because
+This theory predicts that pattern: preconditions can be elaborated because
 they're independent facts about the world; consequences follow from the event
 and thus can't be "allowed for" independently.
 
@@ -61,11 +61,11 @@ An event decomposed into temporal phases:
 3. Consequence: State that holds AFTER the event
 -/
 structure EventPhase (W : Type*) where
-  /-- Precondition: must hold BEFORE for the event to be possible -/
+  /-- Precondition: must hold before the event for it to be possible -/
   precondition : W → Bool
   /-- The event actually occurs -/
   eventOccurs : W → Bool
-  /-- Consequence: holds AFTER the event (result state) -/
+  /-- Consequence: holds after the event (result state) -/
   consequence : W → Bool
 
 /--
@@ -81,12 +81,12 @@ def EventPhase.wellFormed (e : EventPhase W) : Prop :=
 def stopAsEventPhase (P : W → Bool) : EventPhase W where
   precondition := P
   eventOccurs := P
-  consequence := fun w => !P w
+  consequence := λ w => !P w
 
 /-- "Start P" as an event phase -/
 def startAsEventPhase (P : W → Bool) : EventPhase W where
-  precondition := fun w => !P w
-  eventOccurs := fun w => !P w
+  precondition := λ w => !P w
+  eventOccurs := λ w => !P w
   consequence := P
 
 /-- "Continue P" as an event phase -/
@@ -96,9 +96,7 @@ def continueAsEventPhase (P : W → Bool) : EventPhase W where
   consequence := P
 
 
-/--
-**GROUNDING**: Event phase precondition = CoS presupposition.
--/
+/-- Event phase precondition = CoS presupposition. -/
 theorem stop_precondition_is_presup (P : W → Bool) :
     (stopAsEventPhase P).precondition = priorStatePresup .cessation P := rfl
 
@@ -108,9 +106,7 @@ theorem start_precondition_is_presup (P : W → Bool) :
 theorem continue_precondition_is_presup (P : W → Bool) :
     (continueAsEventPhase P).precondition = priorStatePresup .continuation P := rfl
 
-/--
-**GROUNDING**: Event phase consequence = CoS assertion.
--/
+/-- Event phase consequence = CoS assertion. -/
 theorem stop_consequence_is_assertion (P : W → Bool) :
     (stopAsEventPhase P).consequence = resultStateAssertion .cessation P := rfl
 
@@ -126,10 +122,10 @@ theorem continue_consequence_is_assertion (P : W → Bool) :
 
 Why do preconditions project through negation? Roberts & Simons (2024) argue:
 
-1. Sentences REFER TO event types (not just assert propositions)
+1. Sentences refer to event types (not just assert propositions)
 2. Event types have inherent preconditions (ontological requirements)
-3. Both "John stopped" and "John didn't stop" refer to THE SAME event type
-4. Negation affects the CLAIM about the event, not WHICH event is referenced
+3. Both "John stopped" and "John didn't stop" refer to the same event type
+4. Negation affects the claim about the event, not which event is referenced
 5. Therefore, preconditions project: they're tied to the event reference
 
 This contrasts with an assertion-only view where sentences are just truth conditions.
@@ -147,11 +143,11 @@ inductive Polarity where
 /--
 A sentence that refers to an event type and makes a claim about it.
 
-The key insight: the EVENT TYPE REFERENCED is independent of the claim made.
+The event type referenced is independent of the claim made.
 Both affirmative and negative sentences can refer to the same event type.
 -/
 structure EventSentence (W : Type*) where
-  /-- The event type this sentence is ABOUT -/
+  /-- The event type this sentence is about -/
   eventType : EventPhase W
   /-- The polarity of the claim -/
   polarity : Polarity
@@ -159,7 +155,7 @@ structure EventSentence (W : Type*) where
 /--
 The "aboutness" of a sentence: what event type it refers to.
 
-This is INDEPENDENT of polarity — both "John stopped" and "John didn't stop"
+This is independent of polarity: both "John stopped" and "John didn't stop"
 are about the same event type (the stopping).
 -/
 def EventSentence.aboutness (s : EventSentence W) : EventPhase W :=
@@ -174,13 +170,12 @@ The assertion made by a sentence depends on polarity.
 def EventSentence.assertion (s : EventSentence W) : W → Bool :=
   match s.polarity with
   | .affirmed => s.eventType.consequence
-  | .negated => fun w => !s.eventType.consequence w
+  | .negated => λ w => !s.eventType.consequence w
 
 /--
-The presupposition comes from ABOUTNESS, not from the assertion.
+The presupposition comes from aboutness, not from the assertion.
 
-This is the key structural feature that explains projection:
-presuppositions are tied to event reference, not to what we claim.
+Presuppositions are tied to event reference, not to the claim being made.
 -/
 def EventSentence.presupposition (s : EventSentence W) : W → Bool :=
   s.aboutness.precondition
@@ -197,20 +192,18 @@ Construct a negative sentence about an event type.
 def negative (e : EventPhase W) : EventSentence W :=
   { eventType := e, polarity := .negated }
 
--- PART 4a: The Key Theorems
-
 /--
-**THEOREM**: Affirmative and negative sentences have the SAME aboutness.
+Affirmative and negative sentences have the same aboutness.
 
 Both "John stopped smoking" and "John didn't stop smoking" are about
-the same event type — the stopping event. This is the structural basis
+the same event type, the stopping event. This is the structural basis
 for presupposition projection.
 -/
 theorem same_aboutness (e : EventPhase W) :
     (affirmative e).aboutness = (negative e).aboutness := rfl
 
 /--
-**THEOREM**: Presuppositions project because they come from shared aboutness.
+Presuppositions project because they come from shared aboutness.
 
 Since presuppositions are derived from aboutness, and aboutness is shared
 across polarities, presuppositions must be shared too.
@@ -219,20 +212,20 @@ theorem presupposition_projects (e : EventPhase W) :
     (affirmative e).presupposition = (negative e).presupposition := rfl
 
 /--
-**THEOREM**: Assertions differ by polarity.
+Assertions differ by polarity.
 
-While presuppositions are shared, assertions ARE different:
+While presuppositions are shared, assertions differ:
 the negative asserts the opposite of the affirmative.
 -/
 theorem assertion_differs (e : EventPhase W) (w : W) :
     (negative e).assertion w = !(affirmative e).assertion w := rfl
 
 /--
-**THEOREM**: Presupposition is independent of assertion content.
+Presupposition is independent of assertion content.
 
 The presupposition depends only on the event type, not on what is asserted.
-This is what makes presuppositions "backgrounded" — they're part of
-what we're talking ABOUT, not what we're SAYING about it.
+This is what makes presuppositions "backgrounded": they're part of
+what we're talking about, not what we're saying about it.
 -/
 theorem presupposition_independent_of_assertion (s : EventSentence W) :
     s.presupposition = s.eventType.precondition := rfl
@@ -245,7 +238,7 @@ theorem presupposition_independent_of_assertion (s : EventSentence W) :
 Under an assertion-only view, a sentence IS its truth conditions.
 There's no notion of "event reference" or "aboutness" — just a proposition.
 
-This view CANNOT explain why presuppositions project, because it lacks
+This view cannot explain why presuppositions project, because it lacks
 the structural component (shared event reference) that would force
 affirmative and negative to share anything.
 -/
@@ -260,7 +253,7 @@ structure AssertionOnlyMeaning (W : Type*) where
 Under assertion-only, "stop P" just means: was P and now ¬P.
 -/
 def assertionOnly_stop (P : W → Bool) : AssertionOnlyMeaning W :=
-  { truthConditions := fun w => P w && !P w }
+  { truthConditions := λ w => P w && !P w }
   -- Note: This is actually always false! This reveals the inadequacy
   -- of purely extensional semantics for CoS verbs.
 
@@ -268,14 +261,14 @@ def assertionOnly_stop (P : W → Bool) : AssertionOnlyMeaning W :=
 Under assertion-only, "not stop P" just means: ¬(was P and now ¬P).
 -/
 def assertionOnly_notStop (P : W → Bool) : AssertionOnlyMeaning W :=
-  { truthConditions := fun w => !(P w && !P w) }
+  { truthConditions := λ w => !(P w && !P w) }
   -- This is ¬P ∨ P, which is a tautology!
 
 /--
-Under assertion-only, the negation does NOT entail the precondition.
+Under assertion-only, the negation does not entail the precondition.
 
 The negated assertion !(P w && !P w) = !P w ∨ P w is true when P w is false.
-So we CANNOT infer P from the negated sentence.
+So we cannot infer P from the negated sentence.
 
 This demonstrates the inadequacy of the assertion-only view:
 it cannot explain why "John didn't stop smoking" presupposes he was smoking.
@@ -285,12 +278,10 @@ theorem assertionOnly_no_presupposition (P : W → Bool) (w : W)
     (assertionOnly_notStop P).truthConditions w = true := by
   simp [assertionOnly_notStop]
 
--- PART 4c: The Aboutness View Predicts Projection
-
 /--
-Under the aboutness view, BOTH sentences refer to the stopping event.
+Under the aboutness view, both sentences refer to the stopping event.
 The stopping event has precondition P (was smoking).
-Therefore, BOTH sentences presuppose P.
+Therefore, both sentences presuppose P.
 -/
 theorem aboutness_predicts_projection (P : W → Bool) :
     (affirmative (stopAsEventPhase P)).presupposition =
@@ -319,21 +310,21 @@ def EventPhase.hasConsequence (e : EventPhase W) : Prop :=
   ∀ w, e.eventOccurs w → e.consequence w
 
 /--
-**PREDICTION**: Consequences do NOT project through negation.
+Consequences do not project through negation.
 
 Under "not E", the event didn't occur, so we can't infer the consequence.
 This explains why "John didn't stop smoking" doesn't entail he's not smoking.
 
 The asymmetry:
-- Preconditions: tied to event REFERENCE → project
-- Consequences: tied to event OCCURRENCE → don't project under negation
+- Preconditions: tied to event reference, so they project
+- Consequences: tied to event occurrence, so they don't project under negation
 -/
 theorem consequence_requires_occurrence (e : EventPhase W)
     (h : e.hasConsequence) (w : W) (hOccur : e.eventOccurs w) : e.consequence w :=
   h w hOccur
 
 /--
-**STRUCTURAL EXPLANATION**: Why preconditions project and consequences don't.
+Structural explanation: why preconditions project and consequences don't.
 
 1. Presupposition = aboutness.precondition (comes from event reference)
 2. Assertion = depends on polarity (comes from claim about occurrence)
@@ -359,11 +350,10 @@ theorem assertions_differ_at_definite_worlds (e : EventPhase W) (w : W) :
   simp [affirmative, negative, EventSentence.assertion]
 
 /--
-The key asymmetry: presuppositions are CONSTANT across polarity,
-assertions VARY with polarity.
+Presuppositions are constant across polarity; assertions vary with polarity.
 
-This explains projection: presuppositions are tied to event reference
-(which is constant), not to the claim (which varies).
+Presuppositions are tied to event reference (which is constant),
+not to the claim (which varies).
 -/
 theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
     -- Presupposition is the same for both polarities
@@ -378,8 +368,8 @@ theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
 
 The "allows for" test works because:
 
-1. "S allows for C" is acceptable when C is COMPATIBLE with S but not ENTAILED
-2. Preconditions are independent facts that the event DEPENDS ON
+1. "S allows for C" is acceptable when C is compatible with S but not entailed
+2. Preconditions are independent facts that the event depends on
 3. Since preconditions are prior to the event, they can be elaborated
 4. "John stopped smoking allows for him to have been a heavy smoker" ✓
 
@@ -387,15 +377,15 @@ The "allows for" test works because:
 
 The "results in" test works because:
 
-1. "S results in C" is acceptable when C FOLLOWS FROM S
-2. Consequences are states that the event BRINGS ABOUT
+1. "S results in C" is acceptable when C follows from S
+2. Consequences are states that the event brings about
 3. Since consequences follow from occurrence, they "result from" it
 4. "John stopped smoking results in him no longer smoking" ✓
 
 ## Cross-Classification
 
-- Preconditions: pass "allows for", fail "results in", PROJECT
-- Consequences: pass "results in", fail "allows for", DON'T PROJECT
+- Preconditions: pass "allows for", fail "results in", project
+- Consequences: pass "results in", fail "allows for", don't project
 
 This is exactly the pattern in `Phenomena.Presupposition.Diagnostics`.
 -/
@@ -427,7 +417,7 @@ def EventPhase.telicity (_e : EventPhase W) : Telicity :=
   .telic  -- Default; specific instances override
 
 /--
-An event is TELIC if its consequence differs from its precondition.
+An event is telic if its consequence differs from its precondition.
 
 This is the existential property: there exists some world where
 precondition ≠ consequence, indicating a state change.
@@ -436,7 +426,7 @@ def EventPhase.isTelic (e : EventPhase W) : Prop :=
   ∃ w, e.precondition w ≠ e.consequence w
 
 /--
-An event is ATELIC if precondition and consequence are the same.
+An event is atelic if precondition and consequence are the same.
 
 This is the universal property: in all worlds, the state persists.
 -/
@@ -513,77 +503,5 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
       | .inception => .telic
       | .continuation => .atelic := by
   cases t <;> rfl
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Event Structure
-- `EventPhase`: Precondition/occurrence/consequence decomposition
-- `stopAsEventPhase`, `startAsEventPhase`, `continueAsEventPhase`
-
-### Grounding Theorems
-- `stop_precondition_is_presup`: Event precondition = CoS presupposition
-- `stop_consequence_is_assertion`: Event consequence = CoS assertion
-
-### Aboutness Mechanism (Roberts & Simons 2024)
-
-The core theoretical contribution: WHY do presuppositions project?
-
-**Key Types**:
-- `Polarity`: affirmed vs negated
-- `EventSentence`: event reference + polarity
-
-**Key Functions**:
-- `EventSentence.aboutness`: What event type the sentence refers to
-- `EventSentence.presupposition`: Derived from aboutness
-- `EventSentence.assertion`: Depends on polarity
-
-**Key Theorems**:
-- `same_aboutness`: Affirmative and negative share event reference
-- `presupposition_projects`: Therefore presuppositions are shared
-- `assertion_differs`: But assertions differ by polarity
-- `aboutness_predicts_projection`: The aboutness view predicts empirical facts
-- `assertionOnly_no_presupposition`: Assertion-only view CANNOT predict projection
-- `structural_asymmetry`: Presupposition constant across polarity
-- `presupposition_constant_assertion_varies`: The key asymmetry formalized
-
-**The Insight**: Presuppositions project because they're tied to EVENT REFERENCE
-(what we're talking about), not to ASSERTION (what we claim about it).
-Negation changes the claim but not the reference.
-
-### Theoretical Predictions
-- `consequence_requires_occurrence`: Consequences don't project
-- `theoryPredictsPattern`: Derives the diagnostic pattern
-
-### Telicity (Integrated with Aspect Module)
-- `EventPhase.isTelic`, `EventPhase.isAtelic`: Telicity properties
-- `stopTelicity`, `startTelicity`, `continueTelicity`: Telicity values
-- Uses `Telicity` type from `Montague.Verb.Aspect`
-
-### Connection to Vendler Classes
-- `cosTypeToVendlerClass`: Maps CoS types to Vendler classes
-- `cessation_is_achievement`, `continuation_is_activity`: Classification theorems
-- `cos_vendler_telicity_correct`: Telicity matches Vendler prediction
-
-### Connection to Phenomena
-This theory explains the empirical patterns in:
-- `Phenomena.Presupposition.Diagnostics`: "allows for" / "results in" tests
-- `Phenomena.Presuppositions.Data`: Projection through negation
-- `Phenomena.Aspect.Diagnostics`: Aspectual classification tests
-
-### Contrast with Alternative Views
-
-The **assertion-only view** treats sentences as just truth conditions.
-This view CANNOT explain projection because:
-- There's no structural link between "stop P" and "not stop P"
-- The negation !(P ∧ ¬P) = ¬P ∨ P doesn't entail P
-
-The **aboutness view** explains projection because:
-- Both sentences REFER TO the same event type
-- The event type's preconditions are inherited by any sentence about it
-- Negation affects the claim, not the reference
--/
 
 end Montague.Sentence.Presupposition.OntologicalPreconditions

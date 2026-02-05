@@ -7,15 +7,15 @@ Dekker (2012) Chapter 3: Updates and Information Exchange.
 
 Dekker shows three equivalent perspectives on dynamic meaning:
 
-1. **Contents**: Sets of world-assignment pairs (what information is conveyed)
-2. **Updates**: Functions from input states to output states (how information changes)
-3. **Support**: When a state supports a formula (evidential perspective)
+1. Contents: sets of world-assignment pairs (what information is conveyed)
+2. Updates: functions from input states to output states (how information changes)
+3. Support: when a state supports a formula (evidential perspective)
 
-## Key Theorems
+## Theorems
 
-- **Theorem 3.1**: Contents-to-Updates equivalence
-- **Theorem 3.2**: Updates-to-Support equivalence
-- **Dynamic Conjunction**: Non-commutative, non-idempotent
+- Theorem 3.1: contents-to-updates equivalence
+- Theorem 3.2: updates-to-support equivalence
+- Dynamic conjunction: non-commutative, non-idempotent
 
 ## References
 
@@ -64,7 +64,7 @@ end InfoState
 
 
 /--
-The **content** of a formula: set of (g, ê) pairs where φ is satisfied.
+The content of a formula: set of (g, ê) pairs where φ is satisfied.
 
 ⟦φ⟧^M = { (g, ê) | M, g, ê ⊨ φ }
 
@@ -105,18 +105,18 @@ This bridges PLA to the Core.CCP infrastructure, matching the signature
 -/
 def satisfiesPLA {E : Type*} [Nonempty E] (M : Model E) :
     Poss E → Formula → Prop :=
-  fun p φ => φ.sat M p.1 p.2
+  λ p φ => φ.sat M p.1 p.2
 
 /--
 PLA satisfaction as a predicate on possibilities (curried version).
 -/
 def Formula.satPoss {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) :
     Poss E → Prop :=
-  fun p => satisfiesPLA M p φ
+  λ p => satisfiesPLA M p φ
 
 
 /--
-An **update** is a Context Change Potential over PLA possibilities.
+An update is a Context Change Potential over PLA possibilities.
 
 We inherit the Monoid structure from `Core.CCP`:
 - Identity: `Core.CCP.id` (leaves state unchanged)
@@ -144,13 +144,13 @@ theorem seq_absurd (u : Update E) : Core.CCP.seq u absurd = absurd := Core.CCP.s
 end Update
 
 /--
-The **update** of a formula: filter state to satisfying pairs.
+The update of a formula: filter state to satisfying pairs.
 
 ⟦φ⟧ : InfoState → InfoState
 ⟦φ⟧(s) = { (g, ê) ∈ s | M, g, ê ⊨ φ }
 -/
 def Formula.update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula) : Update E :=
-  fun s => InfoState.restrict s M φ
+  λ s => InfoState.restrict s M φ
 
 theorem Formula.mem_update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s : InfoState E) (g : Assignment E) (ê : WitnessSeq E) :
@@ -159,7 +159,7 @@ theorem Formula.mem_update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
 
 
 /--
-**Theorem 3.1 (Contents-Updates Equivalence)**
+Theorem 3.1 (contents-updates equivalence).
 
 The update of φ is intersection with the content of φ:
 
@@ -175,7 +175,7 @@ theorem contents_updates_equiv {E : Type*} [Nonempty E]
 
 
 /--
-A state **supports** a formula iff the formula is satisfied throughout the state.
+A state supports a formula iff the formula is satisfied throughout the state.
 
 s ⊨ φ iff ∀(g, ê) ∈ s, M, g, ê ⊨ φ
 
@@ -196,7 +196,7 @@ theorem InfoState.empty_supports {E : Type*} [Nonempty E] (M : Model E) (φ : Fo
 /-- Support is monotonic: if s ⊆ t and t supports φ, then s supports φ -/
 theorem InfoState.supports_mono {E : Type*} [Nonempty E] (s t : InfoState E) (M : Model E)
     (φ : Formula) (h : s ⊆ t) (ht : t ⊫[M] φ) :
-    s ⊫[M] φ := fun p hp => ht p (h hp)
+    s ⊫[M] φ := λ p hp => ht p (h hp)
 
 /-- Support and conjunction -/
 theorem InfoState.supports_conj {E : Type*} [Nonempty E] (s : InfoState E) (M : Model E)
@@ -212,7 +212,7 @@ theorem InfoState.supports_conj {E : Type*} [Nonempty E] (s : InfoState E) (M : 
 
 
 /--
-**Theorem 3.2 (Updates-Support Equivalence)**
+Theorem 3.2 (updates-support equivalence).
 
 A state supports φ iff updating with φ leaves it unchanged:
 
@@ -236,7 +236,7 @@ theorem updates_support_equiv {E : Type*} [Nonempty E]
 
 
 /--
-**Dynamic conjunction** (Observation 4): sequential update, φ then ψ.
+Dynamic conjunction (Observation 4): sequential update, φ then ψ.
 
 Non-commutative: "A man came in. He sat down." ≠ "He sat down. A man came in."
 Non-idempotent: ∃x.φ ; ∃x.φ ≠ ∃x.φ (may introduce different witnesses).
@@ -256,7 +256,7 @@ theorem Formula.mem_dynConj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Form
   tauto
 
 /--
-**Key Theorem**: For static formulas (no new drefs), dynamic conjunction
+For static formulas (no new drefs), dynamic conjunction
 equals static conjunction.
 -/
 theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
@@ -269,7 +269,7 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
 
 
 /--
-**Observation 5**: Existentials are NOT idempotent.
+Observation 5: existentials are not idempotent.
 
 "A man came in. A man sat down." - may be different men.
 Each ∃x.φ independently chooses a witness.
@@ -280,7 +280,7 @@ theorem obs5_exists_domain_grows (x : VarIdx) (φ : Formula) :
   simp only [Formula.domain, Finset.union_self]
 
 /--
-**Observation 6**: ¬¬φ ≢ φ for dref-introducing φ.
+Observation 6: ¬¬φ ≢ φ for dref-introducing φ.
 
 "It's not the case that no man came in. He sat down." - "He" is problematic.
 Negation "traps" drefs: ∃x.P(x) exports x, but ¬¬∃x.P(x) only tests existence.
@@ -325,9 +325,9 @@ theorem update_eq_updateFromSat {E : Type*} [Nonempty E] (M : Model E) (φ : For
     φ.update M s = Core.updateFromSat (satisfiesPLA M) φ s := rfl
 
 /--
-**Eliminativity**: Updates never add possibilities, only remove them.
+Eliminativity: updates never add possibilities, only remove them.
 
-This is THE fundamental property of dynamic semantics: information only grows.
+This is the fundamental property of dynamic semantics: information only grows.
 Every update is a subset of the input state.
 
 This follows from `Core.updateFromSat_eliminative`.
@@ -344,7 +344,7 @@ theorem update_isEliminative {E : Type*} [Nonempty E] (M : Model E) (φ : Formul
   Core.updateFromSat_eliminative (satisfiesPLA M) φ
 
 /--
-**Monotonicity of Update**: Larger input states yield larger output states.
+Monotonicity of update: larger input states yield larger output states.
 
 If s ⊆ t, then φ.update(s) ⊆ φ.update(t).
 
@@ -355,16 +355,16 @@ theorem update_monotone {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
   Core.updateFromSat_monotone (satisfiesPLA M) φ s t h
 
 /--
-**Support is downward closed**: If t ⊆ s and s supports φ, then t supports φ.
+Support is downward closed: if t ⊆ s and s supports φ, then t supports φ.
 
 Smaller states have "more information" (fewer possibilities = more certainty).
 -/
 theorem support_downward_closed {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) (h : t ⊆ s) (hs : s ⊫[M] φ) : t ⊫[M] φ :=
-  fun p hp => hs p (h hp)
+  λ p hp => hs p (h hp)
 
 /--
-**Intersection preserves support**: If s and t both support φ, so does s ∩ t.
+Intersection preserves support: if s and t both support φ, so does s ∩ t.
 -/
 theorem support_inter {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) (hs : s ⊫[M] φ) (_ht : t ⊫[M] φ) : (s ∩ t) ⊫[M] φ := by
@@ -372,21 +372,21 @@ theorem support_inter {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
   exact hs p hp.1
 
 /--
-**Union and support**: s ∪ t supports φ iff both s and t support φ.
+Union and support: s ∪ t supports φ iff both s and t support φ.
 -/
 theorem support_union_iff {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) : ((s ∪ t) ⊫[M] φ) ↔ (s ⊫[M] φ) ∧ (t ⊫[M] φ) := by
   constructor
   · intro h
-    exact ⟨fun p hp => h p (Set.mem_union_left t hp),
-           fun p hp => h p (Set.mem_union_right s hp)⟩
+    exact ⟨λ p hp => h p (Set.mem_union_left t hp),
+           λ p hp => h p (Set.mem_union_right s hp)⟩
   · intro ⟨hs, ht⟩ p hp
     cases hp with
     | inl hps => exact hs p hps
     | inr hpt => exact ht p hpt
 
 /--
-**Update distributes over intersection**: φ.update(s ∩ t) = φ.update(s) ∩ φ.update(t)
+Update distributes over intersection: φ.update(s ∩ t) = φ.update(s) ∩ φ.update(t)
 -/
 theorem update_inter {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) : φ.update M (s ∩ t) = φ.update M s ∩ φ.update M t := by
@@ -395,9 +395,9 @@ theorem update_inter {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
   tauto
 
 /--
-**Sequential composition with intersection**: (φ ;; ψ)(s) ⊆ φ(s) ∩ ψ(s)
+Sequential composition with intersection: (φ ;; ψ)(s) ⊆ φ(s) ∩ ψ(s)
 
-Note: This is NOT equality in general due to the dynamic nature of sequencing.
+Note: this is not equality in general due to the dynamic nature of sequencing.
 -/
 theorem dynConj_subset_inter {E : Type*} [Nonempty E] (M : Model E)
     (φ ψ : Formula) (s : InfoState E) :
@@ -443,7 +443,7 @@ theorem domain_empty_iff_no_exists : ∀ φ : Formula, φ.domain = ∅ ↔
   intro φ
   rw [Finset.eq_empty_iff_forall_notMem]
 
-/-- **CCP Reducibility**: For dref-free formulas, φ ;; ψ = φ ∧ ψ. -/
+/-- CCP reducibility: for dref-free formulas, φ ;; ψ = φ ∧ ψ. -/
 theorem ccp_reduces_to_static {E : Type*} [Nonempty E] (M : Model E)
     (φ ψ : Formula) (s : InfoState E)
     (hφ : φ.domain = ∅) (hψ : ψ.domain = ∅) :
@@ -474,7 +474,7 @@ theorem dekker_minimalism {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
 
 
 /--
-**Dynamic Entailment**: φ dynamically entails ψ if updating with φ always
+Dynamic entailment: φ dynamically entails ψ if updating with φ always
 yields a state that supports ψ.
 
 This is the fundamental semantic consequence relation for dynamic semantics.
@@ -485,7 +485,7 @@ def dynamicEntails {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formula) : Pr
 notation:50 φ " ⊨[" M "]_dyn " ψ => dynamicEntails M φ ψ
 
 /--
-**Reflexivity of dynamic entailment**: φ ⊨_dyn φ
+Reflexivity of dynamic entailment: φ ⊨_dyn φ.
 
 Updating with φ yields a state that supports φ.
 -/
@@ -496,7 +496,7 @@ theorem dynamicEntails_refl {E : Type*} [Nonempty E] (M : Model E) (φ : Formula
   exact hp.2
 
 /--
-**Chaining dynamic entailment**: If φ ⊨_dyn ψ and ψ ⊨_dyn χ, then φ ⊨_dyn χ.
+Chaining dynamic entailment: if φ ⊨_dyn ψ and ψ ⊨_dyn χ, then φ ⊨_dyn χ.
 
 Note: This holds because update is eliminative - if φ entails ψ,
 then updating with φ produces a state that supports ψ, and since
@@ -523,30 +523,12 @@ theorem dynamicEntails_trans {E : Type*} [Nonempty E] (M : Model E)
   exact hχ p hp_in_ψ
 
 /--
-**Weakening**: If s supports φ and φ ⊨_dyn ψ, then φ.update(s) supports ψ.
+Weakening: if s supports φ and φ ⊨_dyn ψ, then φ.update(s) supports ψ.
 -/
 theorem dynamicEntails_weakening {E : Type*} [Nonempty E] (M : Model E)
     (φ ψ : Formula) (s : InfoState E) (hent : φ ⊨[M]_dyn ψ) :
     (φ.update M s) ⊫[M] ψ :=
   hent s
 
--- SUMMARY
-
-/-!
-## Summary
-
-### Core Equivalences (Dekker Theorems 3.1-3.2)
-- `contents_updates_equiv`: ⟦φ⟧(s) = s ∩ ⟦φ⟧^M
-- `updates_support_equiv`: s ⊫ φ ↔ ⟦φ⟧(s) = s
-
-### CCP Reducibility
-- `ccp_reducibility`: Updates = intersection with content
-- `ccp_reduces_to_static`: φ ;; ψ = φ ∧ ψ for dref-free formulas
-- `dekker_minimalism`: Updates determined by Tarskian content
-
-### Dynamicity Source
-- `dynamicity_source_exists`: Only ∃ introduces drefs
-- `dynamicity_source_neg/conj/atom`: Other operators preserve domain
--/
 
 end Theories.DynamicSemantics.PLA

@@ -5,7 +5,7 @@ Proves that CCG is strictly more expressive than context-free grammars.
 
 ## Main Result
 
-CCG generates {aⁿbⁿcⁿdⁿ}, which is NOT context-free.
+CCG generates {aⁿbⁿcⁿdⁿ}, which is not context-free.
 Therefore: CCG ⊃ CFG (strictly)
 
 ## The Argument
@@ -97,10 +97,10 @@ theorem ccg_generates_cross_serial_language :
 -- CCG ⊃ CFG (Strictly)
 
 /--
-**Main Theorem: CCG is strictly more expressive than CFG**
+CCG is strictly more expressive than CFG.
 
 1. CCG generates {aⁿbⁿcⁿdⁿ} (via generalized composition)
-2. {aⁿbⁿcⁿdⁿ} is NOT context-free (pumping lemma)
+2. {aⁿbⁿcⁿdⁿ} is not context-free (pumping lemma)
 3. Therefore: CCG can generate languages that CFG cannot
 -/
 theorem ccg_strictly_more_expressive_than_cfg :
@@ -139,39 +139,12 @@ theorem cross_serial_requires_mcs :
 /--
 Combined result: CCG is mildly context-sensitive.
 
-This is the "right" level of power for natural language:
+CCG occupies the mildly context-sensitive level:
 - More than context-free (handles cross-serial dependencies)
 - Less than context-sensitive (polynomial parsing)
 -/
 theorem ccg_is_mildly_context_sensitive :
     CCG_MCS.generates_anbncndn = true := by
   rfl
-
--- Summary
-
-/-
-## What This File Proves
-
-1. **ccg_generates_cross_serial_language**: CCG can derive aⁿbⁿcⁿdⁿ patterns
-2. **ccg_strictly_more_expressive_than_cfg**: CCG > CFG (uses pumping lemma result)
-3. **ccg_is_mildly_context_sensitive**: CCG sits at the right complexity level
-
-## The Key Insight
-
-Cross-serial dependencies in Dutch demonstrate that natural language
-requires more than context-free power. CCG's generalized composition (B²)
-provides exactly this, while maintaining polynomial-time parsing.
-
-## Remaining Work
-
-The `sorry` placeholders need:
-1. Concrete derivation-to-string mapping
-2. Proof that makeString_anbncndn satisfies the predicate for all n
-
-## References
-
-- CrossSerial.lean: CCG derivations for Dutch cross-serial dependencies
-- FormalLanguageTheory.lean: Pumping lemma and non-CFL proof
--/
 
 end CCG.GenerativeCapacity

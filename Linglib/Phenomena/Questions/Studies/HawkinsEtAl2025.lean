@@ -4,7 +4,7 @@
 Empirical data from "Relevant answers to polar questions"
 Phil. Trans. R. Soc. B 380: 20230505.
 
-## Key Innovation
+## Innovation
 
 PRIOR-PQ (Pragmatic Reasoning In Overinformative Responses to Polar Questions)
 models how people use theory of mind to produce and interpret relevantly
@@ -67,7 +67,7 @@ Replication/extension of Clark (1979), N = 25 participants.
 - (4) "Do you accept American Express?" → "No, we accept [exhaustive list]"
 - (5) "Do you accept credit cards?" → "Yes, we accept [exhaustive list]"
 
-### Key Finding
+### Finding
 Probability of exhaustive-list answers: (4) ≥ (5) > (3)
 -/
 
@@ -103,7 +103,7 @@ A woman asks: 'Do you have iced tea?'"
 - Same-category: soda (similar but less useful)
 - Other-category: Chardonnay (unrelated)
 
-### Key Finding
+### Finding
 Response preference ordering: competitor > taciturn ≥ same-category > exhaustive
 -/
 
@@ -150,7 +150,7 @@ Example:
 - Context 1 (sleepover): "Do you have a blanket?" → sleeping bag preferred
 - Context 2 (transportation): "Do you have a blanket?" → bubble wrap preferred
 
-### Key Finding
+### Finding
 Participants mentioned context-congruent competitor significantly more often.
 - Context 1 competitor in context 1 vs 2: β = -2.14 [-2.60, -1.71]
 - Context 2 competitor in context 2 vs 1: β = 1.34 [0.92, 1.77]
@@ -172,7 +172,7 @@ theorem cs3_context_sensitivity :
 
 Tested: GPT-3.5, GPT-4, Llama-3-70b-Instruct, Mixtral-Instruct
 
-### Key Finding
+### Finding
 LLMs have strong bias toward exhaustive responses in zero-shot condition.
 Psychologically-informed chain-of-thought (CoT) prompting improves performance.
 

@@ -5,7 +5,7 @@
 
 ## Farkas & Bruce (2010) Connection
 
-In F&B terms, this model has L1 infer the **common ground (cg)**.
+In F&B terms, this model has L1 infer the common ground (cg).
 
 The `Context` type represents different possible cg values—what propositions
 are mutually accepted. Unlike S&T (2025), this model treats the latent variable
@@ -19,16 +19,14 @@ as a property of the shared conversational state, not the speaker's private beli
 | table | Not modeled (stable state) |
 
 The `contextCredence` function returns 1 for worlds compatible with cg.
-This captures accommodation as **updating one's model of the common ground**.
+This captures accommodation as updating one's model of the common ground.
 
-## Key Insight
-
-Presupposition **accommodation** emerges from L1 performing **joint inference
-over (world, context)**, where context represents the shared common ground.
+Presupposition accommodation emerges from L1 performing joint inference
+over (world, context), where context represents the shared common ground.
 
 ## Theoretical Relationship: Qing-S&T-Warstadt Equivalence
 
-This model is **mathematically identical** to:
+This model is mathematically identical to:
 - Qing, Goodman & Lassiter (2016) - the original formulation
 - Scontras & Tonhauser (2025) - applied to factives
 
@@ -39,7 +37,7 @@ S1(u | w, C, Q) ∝ P(u) · L0(Q(w) | u, C, Q)^α
 L1(w, C | u, Q) ∝ P(w) · P(C) · S1(u | w, C, Q)
 ```
 
-The only difference is **interpretation** of the latent variable C:
+The only difference is interpretation of the latent variable C:
 
 | Paper | Name | Interpretation |
 |-------|------|----------------|
@@ -147,11 +145,11 @@ def allContexts : List Context := [.hasDogEstablished, .hasDogNotEstablished]
 
 
 /--
-A world is **compatible** with a context iff all presuppositions
+A world is compatible with a context iff all presuppositions
 established in the context hold in the world.
 
-This is the key constraint: if "Mary has a dog" is established in CG,
-then worlds where Mary doesn't have a dog get probability 0.
+If "Mary has a dog" is established in CG, then worlds where Mary
+doesn't have a dog get probability 0.
 
 This function plays the role of `speakerCredenceBool` in ScontrasTonhauser2025,
 but with a different interpretation:
@@ -172,8 +170,8 @@ def contextCredence (c : Context) (w : WorldState) : ℚ :=
 /--
 Utterances differing in presuppositional content.
 
-- marysDogIsSick: "Mary's dog is sick" (PRESUPPOSES: Mary has a dog)
-- maryHasASickDog: "Mary has a sick dog" (ASSERTS: Mary has a dog)
+- marysDogIsSick: "Mary's dog is sick" (presupposes: Mary has a dog)
+- maryHasASickDog: "Mary has a sick dog" (asserts: Mary has a dog)
 - silence: Null utterance
 -/
 inductive Utterance where
@@ -213,8 +211,7 @@ theorem same_atissue_content :
 
 /--
 For this model, we use a simple QUD that partitions by world state.
-The key insight is that accommodation emerges from context inference,
-not from QUD variation.
+Accommodation emerges from context inference, not from QUD variation.
 -/
 inductive QUD where
   | dogStatus   -- Is Mary's dog sick?
@@ -232,8 +229,8 @@ def qudProject : QUD → WorldState → WorldState → Bool
 
 /--
 World prior: uniform over all worlds.
-The key insight is that the CONDITIONAL prior P(w | C) arises from
-speakerCredence (contextCredence), not from the base world prior.
+The conditional prior P(w | C) arises from speakerCredence (contextCredence),
+not from the base world prior.
 -/
 def worldPrior (_w : WorldState) : ℚ := 1 / 4
 
@@ -247,18 +244,18 @@ def contextPrior (_c : Context) : ℚ := 1 / 2
 /--
 Projection computation: P(C=hasDogEstablished | u)
 
-This is the key measure of **accommodation**: how strongly does L1
-infer that the presupposition is established in the common ground?
+Measures accommodation: how strongly does L1 infer that the presupposition
+is established in the common ground?
 -/
 def accommodationStrength (u : Utterance) (α : ℕ := 10) : ℚ :=
   -- Get L1 distribution over belief states (= contexts) GIVEN the QUD
   let contextDist := RSA.Eval.L1_beliefState_givenGoal
     allUtterances allWorlds [()] [()] allContexts allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
-    contextCredence qudProject (fun _ => 0) α u .dogStatus
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    contextCredence qudProject (λ _ => 0) α u .dogStatus
   -- Get probability of hasDogEstablished context
-  contextDist.foldl (fun acc (c, p) =>
+  contextDist.foldl (λ acc (c, p) =>
     if c == .hasDogEstablished then acc + p else acc) 0
 
 /--
@@ -279,13 +276,13 @@ L1's posterior over worlds after hearing utterance u.
 def L1_world (u : Utterance) (α : ℕ := 10) : List (WorldState × ℚ) :=
   RSA.Eval.L1_world_givenGoal
     allUtterances allWorlds [()] [()] allContexts allQUDs
-    (fun _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (fun _ => 1) (fun _ => 1) contextPrior (fun _ => 1)
-    contextCredence qudProject (fun _ => 0) α u .dogStatus
+    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    contextCredence qudProject (λ _ => 0) α u .dogStatus
 
 
 /--
-**Prediction 1**: Presuppositional utterance triggers accommodation.
+Prediction 1: Presuppositional utterance triggers accommodation.
 
 Hearing "Mary's dog is sick" causes L1 to infer that "Mary has a dog"
 is established in the common ground (accommodation).
@@ -294,17 +291,17 @@ def prediction_presup_triggers_accommodation (α : ℕ := 10) : Bool :=
   accommodationShift .marysDogIsSick α > 0
 
 /--
-**Prediction 2**: Non-presuppositional alternative triggers less accommodation.
+Prediction 2: Non-presuppositional alternative triggers less accommodation.
 
 "Mary has a sick dog" triggers less accommodation than "Mary's dog is sick"
-because it doesn't presuppose that Mary has a dog—it asserts it.
+because it doesn't presuppose that Mary has a dog -- it asserts it.
 -/
 def prediction_nonpresup_less_accommodation (α : ℕ := 10) : Bool :=
   accommodationStrength .marysDogIsSick α >
   accommodationStrength .maryHasASickDog α
 
 /--
-**Prediction 3**: Silence is uninformative about context.
+Prediction 3: Silence is uninformative about context.
 
 With no utterance, L1 doesn't update on context (stays near prior).
 -/
@@ -338,7 +335,7 @@ Our `compatibleBool c w` corresponds to `ContextSet.mem`:
 
 ```lean
 def toContextSet (c : Context) : ContextSet WorldState :=
-  fun w => compatibleBool c w
+  λ w => compatibleBool c w
 ```
 
 ### Entailment
@@ -348,7 +345,7 @@ When `c = .hasDogEstablished`, the context set entails the proposition
 
 ```lean
 theorem established_entails_hasDog :
-    (toContextSet .hasDogEstablished) ⊧ (fun w => w.maryHasDog) := by
+    (toContextSet .hasDogEstablished) ⊧ (λ w => w.maryHasDog) := by
   intro w hw
   simp [toContextSet, compatibleBool] at hw
   exact hw
@@ -357,12 +354,12 @@ theorem established_entails_hasDog :
 ### Accommodation as Context Update
 
 Lewis (1979): When a presupposition is not satisfied, listeners
-**accommodate** by adding it to the common ground.
+accommodate by adding it to the common ground.
 
 In our model:
 - Prior: P(hasDogEstablished) = 0.5
 - After hearing presuppositional utterance: P(hasDogEstablished | u) > 0.5
-- This increase IS accommodation: L1 updates their model of CG
+- This increase is accommodation: L1 updates their model of CG
 
 ### Future Integration
 
@@ -385,13 +382,13 @@ Both models use the same RSA infrastructure but with different interpretations:
 
 ### Different Interpretation
 
-**Scontras & Tonhauser 2025**:
+Scontras & Tonhauser 2025:
 - BeliefState = speaker's private assumptions A
 - speakerCredence a w = "speaker considers w possible given A"
 - L1 infers: "What does the speaker privately assume about C?"
 - Projection = P(speaker assumes C | utterance)
 
-**Warstadt 2022**:
+Warstadt 2022:
 - BeliefState = context (common ground state) C
 - contextCredence c w = "w is compatible with CG state c"
 - L1 infers: "What is established in our shared common ground?"
@@ -400,11 +397,11 @@ Both models use the same RSA infrastructure but with different interpretations:
 ### When They Diverge
 
 The models make different predictions when:
-1. **Asymmetric knowledge**: Speaker knows more than listener
+1. Asymmetric knowledge: Speaker knows more than listener
    - S&T: L1 infers speaker's private beliefs (may exceed CG)
    - Warstadt: L1 infers shared CG (speaker beliefs don't matter directly)
 
-2. **Informational vs social presupposition**:
+2. Informational vs social presupposition:
    - S&T: Better for cognitive/epistemic presuppositions
    - Warstadt: Better for conventional presuppositions that modify CG
 
@@ -429,21 +426,21 @@ a cleaner interface that makes the F&B connection explicit.
 -- Fintype instances (needed for DiscourseConfig)
 instance : Fintype WorldState where
   elems := { ⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩ }
-  complete := fun ⟨a, b⟩ => by
+  complete := λ ⟨a, b⟩ => by
     simp only [Finset.mem_insert, Finset.mem_singleton]
     cases a <;> cases b <;> simp
 
 instance : Fintype Context where
   elems := { .hasDogEstablished, .hasDogNotEstablished }
-  complete := fun c => by cases c <;> simp
+  complete := λ c => by cases c <;> simp
 
 instance : Fintype Utterance where
   elems := { .marysDogIsSick, .maryHasASickDog, .silence }
-  complete := fun u => by cases u <;> simp
+  complete := λ u => by cases u <;> simp
 
 instance : Fintype QUD where
   elems := { .dogStatus }
-  complete := fun q => by cases q <;> simp
+  complete := λ q => by cases q <;> simp
 
 open Theories.DynamicSemantics.State in
 /--
@@ -456,7 +453,7 @@ def discourseConfig : DiscourseConfig WorldState where
   D := Context
   compatible := compatibleBool
   prior := contextPrior
-  prior_nonneg := fun _ => by simp only [contextPrior]; norm_num
+  prior_nonneg := λ _ => by simp only [contextPrior]; norm_num
 
 /--
 QUD configuration for this model.
@@ -464,8 +461,8 @@ QUD configuration for this model.
 def qudConfig : RSA.QUDConfig WorldState where
   G := QUD
   project := qudProject
-  prior := fun _ => 1
-  prior_nonneg := fun _ => by decide
+  prior := λ _ => 1
+  prior_nonneg := λ _ => by decide
 
 /-
 ## Demo: Using the Unified Discourse API
@@ -478,54 +475,15 @@ type annotations in some contexts.
 ```lean
 def scenario (α : ℕ := 10) : RSAScenario :=
   RSAScenario.discourseWithQUD
-    (φ := fun u w => if literalMeaning u w then 1 else 0)
+    (φ := λ u w => if literalMeaning u w then 1 else 0)
     (discourse := discourseConfig)
     (qud := qudConfig)
     (worldPrior := worldPrior)
     (α := α)
-    (φ_nonneg := fun u w => by split_ifs <;> decide)
+    (φ_nonneg := λ u w => by split_ifs <;> decide)
 ```
 
 The explicit `accommodationStrength` function above shows the working pattern.
--/
-
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Domain
-- `WorldState`: ⟨maryHasDog, dogIsSick⟩
-- `Context`: Which presuppositions are in common ground
-- `Utterance`: Presuppositional vs non-presuppositional alternatives
-
-### RSA Integration
-- Uses unified `RSAScenario` API via `L1_beliefState_givenGoal`
-- `Context` fills the `BeliefState` slot
-- `contextCredence` fills the `speakerCredence` slot
-
-### Accommodation Measures
-- `accommodationStrength`: P(presup ∈ CG | utterance)
-- `accommodationShift`: Change from prior context probability
-
-### Predictions
-1. Presuppositional utterances trigger accommodation (shift > 0)
-2. Non-presuppositional alternatives trigger less accommodation
-3. Silence is uninformative about context (near prior)
-
-### Theoretical Contribution
-- Shows RSAScenario API can express accommodation (not just belief inference)
-- Connects to Core.CommonGround infrastructure
-- Provides comparison point with ScontrasTonhauser2025
-
-## Future Work
-
-- Ground in compositional semantics (definite descriptions from Montague)
-- Extend to other presupposition triggers (factives, change-of-state)
-- Model local vs global accommodation (Heim 1983)
-- Compare predictions with experimental data
-- Integrate with Schlenker's local context computation
-- Formalize the S&T vs Warstadt divergence conditions
 -/
 
 end RSA.Warstadt2022

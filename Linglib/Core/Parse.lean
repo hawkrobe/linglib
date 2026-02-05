@@ -39,7 +39,7 @@ inductive ExhPosition where
 /-- Convert EXH positions to a parse -/
 def Parse.fromExhPositions (positions : List ExhPosition) : Parse :=
   let id := if positions.isEmpty then "lit"
-    else positions.map (fun p => match p with
+    else positions.map (λ p => match p with
       | .M => "M" | .O => "O" | .I => "I") |> String.intercalate ""
   let desc := if positions.isEmpty then "Literal (no EXH)"
     else s!"EXH at {id}"

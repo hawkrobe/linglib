@@ -69,7 +69,7 @@ def trivial [BEq W] : GSQuestion W := QUD.trivial
 /-- Build a question from a projection function.
 Two worlds are equivalent iff they have the same value under projection.
 
-Example: `ofProject (fun w => w.weather)` asks "What's the weather?" -/
+Example: `ofProject (λ w => w.weather)` asks "What's the weather?" -/
 def ofProject {A : Type} [BEq A] [LawfulBEq A] (f : W → A) : GSQuestion W :=
   QUD.ofProject f
 
@@ -101,12 +101,12 @@ def refines (q q' : GSQuestion W) : Prop :=
 scoped infix:50 " ⊑ " => refines
 
 /-- Refinement is reflexive -/
-theorem refines_refl (q : GSQuestion W) : q ⊑ q := fun _ _ h => h
+theorem refines_refl (q : GSQuestion W) : q ⊑ q := λ _ _ h => h
 
 /-- Refinement is transitive -/
 theorem refines_trans (q1 q2 q3 : GSQuestion W) :
     q1 ⊑ q2 → q2 ⊑ q3 → q1 ⊑ q3 :=
-  fun h12 h23 w v h1 => h23 w v (h12 w v h1)
+  λ h12 h23 w v h1 => h23 w v (h12 w v h1)
 
 /-- Refinement is antisymmetric (up to equivalence of the equiv relation) -/
 theorem refines_antisymm (q1 q2 : GSQuestion W) :
@@ -133,7 +133,7 @@ theorem exact_refines_all [BEq W] [LawfulBEq W] (q : GSQuestion W) :
 
 /-- All questions refine the trivial question -/
 theorem all_refine_trivial [BEq W] (q : GSQuestion W) :
-    q ⊑ trivial := fun _ _ _ => rfl
+    q ⊑ trivial := λ _ _ _ => rfl
 
 /-- Composing with a question refines both factors -/
 theorem compose_refines_left (q1 q2 : GSQuestion W) : (q1 * q2) ⊑ q1 := by
@@ -151,10 +151,10 @@ theorem compose_refines_right (q1 q2 : GSQuestion W) : (q1 * q2) ⊑ q2 := by
 /-- Convert a question to its cells (equivalence classes as characteristic functions).
 Given a finite list of worlds, compute the partition cells. -/
 def toCells (q : GSQuestion W) (worlds : List W) : List (W → Bool) :=
-  let representatives := worlds.foldl (fun acc w =>
-    if acc.any fun r => q.sameAnswer r w then acc else w :: acc
+  let representatives := worlds.foldl (λ acc w =>
+    if acc.any λ r => q.sameAnswer r w then acc else w :: acc
   ) []
-  representatives.map fun rep => fun w => q.sameAnswer rep w
+  representatives.map λ rep => λ w => q.sameAnswer rep w
 
 /-- Number of cells in the partition (given a finite world set) -/
 def numCells (q : GSQuestion W) (worlds : List W) : Nat :=
@@ -200,7 +200,7 @@ theorem polarQuestion_eq_ofProject {W : Type*} (p : W → Bool) :
 
 /-- A wh-question asks for the value of some function.
 
-Example: "Who came?" = ofProject (fun w => w.guests)
+Example: "Who came?" = ofProject (λ w => w.guests)
 Two worlds are equivalent iff they have the same set of guests. -/
 def whQuestion {W A : Type} [BEq A] [LawfulBEq A] (f : W → A) : GSQuestion W :=
   GSQuestion.ofProject f
@@ -210,7 +210,7 @@ def whQuestion {W A : Type} [BEq A] [LawfulBEq A] (f : W → A) : GSQuestion W :
 Example: "Did John or Mary come?" -/
 def alternativeQuestion {W : Type*}
     (alts : List (W → Bool)) : GSQuestion W :=
-  QUD.ofProject fun w => alts.map fun p => p w
+  QUD.ofProject λ w => alts.map λ p => p w
 
 -- Exhaustivity
 

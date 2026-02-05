@@ -6,12 +6,12 @@ Theory-neutral lexical entries for polarity-sensitive items:
 - Free Choice Items (FCIs): any (FC use), whatever, whichever
 - Positive Polarity Items (PPIs): some, already, somewhat
 
-## Key Properties Captured
+## Properties Captured
 
-1. **Licensing contexts**: Where the item can appear
-2. **Strength**: Weak (DE) vs strong (anti-additive) NPIs
-3. **Base quantificational force**: Underlying semantic type
-4. **Domain alternatives**: Obligatory vs optional activation
+1. Licensing contexts: where the item can appear
+2. Strength: weak (DE) vs strong (anti-additive) NPIs
+3. Base quantificational force: underlying semantic type
+4. Domain alternatives: obligatory vs optional activation
 
 ## Theoretical Analyses (in Theories/)
 
@@ -165,7 +165,7 @@ def any : PolarityItemEntry :=
       [ .negation, .nobody, .conditional_ant, .question
       , .modal_possibility, .modal_necessity, .imperative, .generic ]
   , minStrength := .weak
-  , obligatoryDomainAlts := true  -- Key to Chierchia's analysis
+  , obligatoryDomainAlts := true  -- Central to Chierchia's analysis
   , modalRescue := true
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
   }
@@ -396,7 +396,7 @@ def allPolarityItems : List PolarityItemEntry :=
 
 /-- Lookup by form -/
 def lookup (form : String) : Option PolarityItemEntry :=
-  allPolarityItems.find? fun p => p.form == form
+  allPolarityItems.find? λ p => p.form == form
 
 -- ============================================================================
 -- Licensing Predicates
@@ -456,39 +456,5 @@ def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Bool :=
 -- ============================================================================
 -- Summary
 -- ============================================================================
-
-/-!
-## What This Module Provides
-
-### Types
-- `LicensingContext`: Contexts that license polarity items
-- `DEStrength`: weak < anti-additive < anti-morphic
-- `PolarityType`: npiWeak, npiStrong, fci, npi_fci, ppi
-- `BaseForce`: existential, universal, degree, temporal, manner
-
-### Lexical Entries
-- `PolarityItemEntry`: Theory-neutral polarity item representation
-- `any`, `ever`, `yet`, `anymore`: Weak NPIs
-- `liftAFinger`, `budgeAnInch`, `inYears`: Strong NPIs
-- `whatever`, `whoever`, `whichever`: FCIs
-- `some_ppi`, `already`, `somewhat`: PPIs
-
-### Key Properties of "any"
-- `polarityType = .npi_fci` (dual use)
-- `obligatoryDomainAlts = true` (key to Chierchia analysis)
-- `modalRescue = true` (FC reading under modals)
-- Licensed in: negation, questions, conditionals, modals, generics
-
-### Lexicon Access
-- `weakNPIs`, `strongNPIs`, `allNPIs`
-- `allFCIs`, `allPPIs`, `allPolarityItems`
-- `lookup`: Find by form
-- `isLicensedIn`: Check licensing
-
-### References
-- Ladusaw (1979). Polarity sensitivity as inherent scope relations.
-- Kadmon & Landman (1993). Any.
-- Chierchia (2013). Logic in Grammar.
--/
 
 end Fragments.English.PolarityItems

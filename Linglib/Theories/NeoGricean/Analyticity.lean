@@ -42,7 +42,7 @@ def liftPermT (_π : EntityPerm Entity) : Bool → Bool := id
 
 /-- Lift a permutation to functions: π⟨a,b⟩(f) = πb ∘ f ∘ πa⁻¹. -/
 def liftPermFn {A B : Type*} (_πA : A → A) (πB : B → B) (πAinv : A → A) (f : A → B) : A → B :=
-  fun a => πB (f (πAinv a))
+  λ a => πB (f (πAinv a))
 
 /-- A property is permutation invariant iff preserved under all domain permutations. -/
 def isPermInvariant_et (P : Entity → Prop) : Prop :=
@@ -51,22 +51,22 @@ def isPermInvariant_et (P : Entity → Prop) : Prop :=
 /-- A GQ is permutation invariant iff π(Q) = Q for all permutations π. -/
 def isPermInvariant_ett (Q : (Entity → Prop) → Prop) : Prop :=
   ∀ π : EntityPerm Entity, ∀ P : Entity → Prop,
-    Q (fun x => P (π.symm x)) ↔ Q P
+    Q (λ x => P (π.symm x)) ↔ Q P
 
 /-- A determiner is permutation invariant iff π(D) = D for all permutations π. -/
 def isPermInvariant_Det (D : (Entity → Prop) → (Entity → Prop) → Prop) : Prop :=
   ∀ π : EntityPerm Entity, ∀ P Q : Entity → Prop,
-    D (fun x => P (π.symm x)) (fun x => Q (π.symm x)) ↔ D P Q
+    D (λ x => P (π.symm x)) (λ x => Q (π.symm x)) ↔ D P Q
 
 /-- Standard logical determiners (returning Prop for cleaner proofs). -/
 def everyD (Entity : Type*) : (Entity → Prop) → (Entity → Prop) → Prop :=
-  fun P Q => ∀ x, P x → Q x
+  λ P Q => ∀ x, P x → Q x
 
 def someD (Entity : Type*) : (Entity → Prop) → (Entity → Prop) → Prop :=
-  fun P Q => ∃ x, P x ∧ Q x
+  λ P Q => ∃ x, P x ∧ Q x
 
 def noD (Entity : Type*) : (Entity → Prop) → (Entity → Prop) → Prop :=
-  fun P Q => ¬∃ x, P x ∧ Q x
+  λ P Q => ¬∃ x, P x ∧ Q x
 
 /-- "every" is permutation invariant -/
 theorem every_permInvariant : isPermInvariant_Det (everyD Entity) := by
@@ -100,7 +100,7 @@ theorem some_permInvariant : isPermInvariant_Det (someD Entity) := by
     exact ⟨hPx, hQx⟩
 
 /-- Expletive "there" denotes the full domain (always true predicate) -/
-def thereP (Entity : Type*) : Entity → Prop := fun _ => True
+def thereP (Entity : Type*) : Entity → Prop := λ _ => True
 
 /-- "there" is permutation invariant (proof for Prop version) -/
 theorem there_permInvariant_prop : ∀ (π : EntityPerm Entity), ∀ x, thereP Entity (π x) ↔ thereP Entity x := by
@@ -131,8 +131,8 @@ def LogicalSkeleton.isLAnalytic (skel : LogicalSkeleton Entity) : Prop :=
 /-- Skeleton for "There are some Xs". -/
 def thereSomeSkeleton (Entity : Type*) [Inhabited Entity] : LogicalSkeleton Entity where
   numSlots := 1
-  slotTypes := fun _ => et
-  interpret := fun assignment =>
+  slotTypes := λ _ => et
+  interpret := λ assignment =>
     -- some(v₁)(there) = ∃x. v₁(x) ∧ there(x) = ∃x. v₁(x)
     ∃ x : Entity, assignment ⟨0, by omega⟩ x
 
@@ -143,20 +143,20 @@ theorem thereSome_not_LAnalytic [Inhabited Entity] :
   rcases h with hTaut | hContra
   · -- Not a tautology: assignment to empty set makes it false
     simp only [LogicalSkeleton.isLTautology, thereSomeSkeleton] at hTaut
-    have := hTaut (fun _ _ => False)
+    have := hTaut (λ _ _ => False)
     -- this : ∃ x, False
     obtain ⟨_, hFalse⟩ := this
     exact hFalse
   · -- Not a contradiction: assignment to full set makes it true
     simp only [LogicalSkeleton.isLContradiction, thereSomeSkeleton] at hContra
-    have := hContra (fun _ _ => True)
+    have := hContra (λ _ _ => True)
     exact this ⟨default, trivial⟩
 
 /-- Skeleton for "*There is every X". -/
 def thereEverySkeleton (Entity : Type*) : LogicalSkeleton Entity where
   numSlots := 1
-  slotTypes := fun _ => et
-  interpret := fun assignment =>
+  slotTypes := λ _ => et
+  interpret := λ assignment =>
     -- every(v₁)(there) = ∀x. v₁(x) → there(x) = ∀x. v₁(x) → true = true
     ∀ x : Entity, assignment ⟨0, by omega⟩ x → thereP Entity x
 
@@ -171,8 +171,8 @@ theorem thereEvery_LAnalytic : (thereEverySkeleton Entity).isLAnalytic :=
 /-- Skeleton for "Every X is a Y" with distinct variables. -/
 def everyXisYSkeleton (Entity : Type*) [Inhabited Entity] : LogicalSkeleton Entity where
   numSlots := 2
-  slotTypes := fun _ => et
-  interpret := fun assignment =>
+  slotTypes := λ _ => et
+  interpret := λ assignment =>
     ∀ x : Entity, assignment ⟨0, by omega⟩ x → assignment ⟨1, by omega⟩ x
 
 /-- "Every X is a Y" is NOT L-analytic -/
@@ -184,7 +184,7 @@ theorem everyXisY_not_LAnalytic [Inhabited Entity] :
     simp only [LogicalSkeleton.isLTautology, everyXisYSkeleton] at hTaut
     -- Assignment: v₀(x) = True, v₁(x) = False
     -- Then ∀x, True → False is false
-    let assignment : Fin 2 → Entity → Prop := fun i _ =>
+    let assignment : Fin 2 → Entity → Prop := λ i _ =>
       match i with
       | ⟨0, _⟩ => True
       | ⟨1, _⟩ => False
@@ -197,21 +197,21 @@ theorem everyXisY_not_LAnalytic [Inhabited Entity] :
     simp only [LogicalSkeleton.isLContradiction, everyXisYSkeleton] at hContra
     -- Assignment: v₀ = v₁ = full domain
     -- Then ∀x, True → True is true
-    let assignment : Fin 2 → Entity → Prop := fun _ _ => True
+    let assignment : Fin 2 → Entity → Prop := λ _ _ => True
     have := hContra assignment
-    exact this (fun _ _ => trivial)
+    exact this (λ _ _ => trivial)
 
 /-- Von Fintel's but-exceptive semantics. -/
 def butExceptive (D : (Entity → Prop) → (Entity → Prop) → Prop)
     (A C P : Entity → Prop) : Prop :=
-  D (fun x => A x ∧ ¬C x) P ∧
-  ∀ S : Entity → Prop, D (fun x => A x ∧ ¬S x) P → (∀ x, C x → S x)
+  D (λ x => A x ∧ ¬C x) P ∧
+  ∀ S : Entity → Prop, D (λ x => A x ∧ ¬S x) P → (∀ x, C x → S x)
 
 /-- Skeleton for "*Some X but Y Zs" -/
 def someButSkeleton (Entity : Type*) : LogicalSkeleton Entity where
   numSlots := 3  -- v₀ = restrictor, v₁ = exception, v₂ = scope
-  slotTypes := fun _ => et
-  interpret := fun assignment =>
+  slotTypes := λ _ => et
+  interpret := λ assignment =>
     butExceptive (someD Entity) (assignment ⟨0, by omega⟩) (assignment ⟨1, by omega⟩) (assignment ⟨2, by omega⟩)
 
 /-- "*Some X but Y Zs" is L-contradictory (hence ungrammatical). -/
@@ -227,8 +227,8 @@ theorem someBut_LContradiction : (someButSkeleton Entity).isLContradiction := by
 /-- Skeleton for "Every X but Y Zs" -/
 def everyButSkeleton (Entity : Type*) : LogicalSkeleton Entity where
   numSlots := 3
-  slotTypes := fun _ => et
-  interpret := fun assignment =>
+  slotTypes := λ _ => et
+  interpret := λ assignment =>
     butExceptive (everyD Entity) (assignment ⟨0, by omega⟩) (assignment ⟨1, by omega⟩) (assignment ⟨2, by omega⟩)
 
 /-- "Every X but Y Zs" is NOT L-analytic (hence grammatical). -/
@@ -241,7 +241,7 @@ theorem everyBut_not_LAnalytic [Inhabited Entity] [DecidableEq Entity]
     simp only [LogicalSkeleton.isLTautology, everyButSkeleton, butExceptive, everyD] at hTaut
     -- Assignment where the but-clause fails
     obtain ⟨a, b, hab⟩ := h2
-    let assignment : Fin 3 → Entity → Prop := fun i x =>
+    let assignment : Fin 3 → Entity → Prop := λ i x =>
       match i with
       | 0 => True     -- A = full domain
       | 1 => x = a    -- C = {a}

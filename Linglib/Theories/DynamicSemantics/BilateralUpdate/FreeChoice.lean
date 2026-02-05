@@ -6,7 +6,7 @@ following Elliott & Sudo (2025) "Free choice with anaphora".
 
 ## The Puzzle
 
-**Bathroom disjunction**: "Either there's no bathroom or it's in a funny place"
+Bathroom disjunction: "Either there's no bathroom or it's in a funny place"
 
 From this, we infer:
 1. It's possible there's no bathroom
@@ -24,11 +24,11 @@ BUS + Modal Disjunction:
 2. Negation swaps positive/negative: ¬∃xφ positive = ∃xφ negative
 3. Cross-disjunct binding: x introduced in ¬∃xφ is visible to ψ(x)
 
-## Key Results
+## Results
 
-- **Modified FC**: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
-- **FC with anaphora**: Bathroom inference pattern
-- **Dual prohibition**: ¬◇φ ∧ ¬◇ψ ⊨ ¬(φ ∨ ψ) (preserved)
+- Modified FC: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
+- FC with anaphora: bathroom inference pattern
+- Dual prohibition: ¬◇φ ∧ ¬◇ψ ⊨ ¬(φ ∨ ψ) (preserved)
 
 ## References
 
@@ -88,8 +88,8 @@ For standard disjunction φ ∨ ψ:
 This is used as the base for modal disjunction.
 -/
 def disjStd (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s => φ.positive s ∪ ψ.positive s
-  , negative := fun s => φ.negative s ∩ ψ.negative s }
+  { positive := λ s => φ.positive s ∪ ψ.positive s
+  , negative := λ s => φ.negative s ∩ ψ.negative s }
 
 /--
 The part of the positive update that φ (first disjunct) is responsible for.
@@ -126,15 +126,15 @@ From E&S (2025) Definition 96:
 s[φ ∨ ψ]⁺ = s[φ ∨ ψ]⁺ if s[φ ∨ ψ]⁺₁ ≠ ∅ AND s[φ ∨ ψ]⁺₂ ≠ ∅, else ∅
 s[φ ∨ ψ]⁻ = s[φ ∨ ψ]⁻ (unchanged)
 
-The KEY SEMANTIC INSIGHT: Modal disjunction adds a PRECONDITION to the
-positive update requiring that EACH disjunct contribute at least some
-possibilities. This semantically derives FC without pragmatic reasoning.
+Modal disjunction adds a precondition to the positive update requiring
+that each disjunct contribute at least some possibilities. This
+semantically derives FC without pragmatic reasoning.
 
 The negative update is unchanged, preserving Dual Prohibition:
 ¬◇(φ ∨ ψ) ⊨ ¬◇φ ∧ ¬◇ψ
 -/
 def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s =>
+  { positive := λ s =>
       -- The precondition: each disjunct must contribute possibilities
       if (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty then
         (disjStd φ ψ).positive s
@@ -148,7 +148,7 @@ notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
 
 
 /--
-KEY THEOREM: FC is SEMANTICALLY DERIVED from modal disjunction.
+FC is semantically derived from modal disjunction.
 
 If `possible (φ ∨ᶠᶜ ψ) s`, then by the definition of `disjModal`:
 1. `disjPos1 φ ψ s` is non-empty (i.e., φ contributes possibilities)
@@ -181,7 +181,7 @@ For bathroom disjunctions where φ = ~bathroom:
 - `(~bathroom).negative s = bathroom.positive s` (by DNE)
 - So `disjPos2 (~bathroom) funnyPlace s = funnyPlace.positive (bathroom.positive s)`
 
-This is where cross-disjunct anaphoric binding happens!
+Cross-disjunct anaphoric binding arises here.
 -/
 theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
@@ -198,7 +198,7 @@ theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : InfoState W 
 /--
 Modified FC: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
 
-This is SEMANTICALLY DERIVED. The second component comes from the fact that
+This is semantically derived. The second component comes from the fact that
 `disjPos2` evaluates ψ in the context where φ is false.
 
 For bathroom disjunction:
@@ -209,7 +209,7 @@ For bathroom disjunction:
   = funnyPlace.positive ((~bathroom).negative s)
   = funnyPlace.positive (bathroom.positive s)
 
-This IS the "∃x.bathroom(x) ∧ funny-place(x)" reading!
+This is the "∃x.bathroom(x) ∧ funny-place(x)" reading.
 -/
 theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
@@ -246,7 +246,7 @@ FC with anaphora: bathroom disjunction inference pattern.
 From: ◇(¬∃x.bathroom(x) ∨ funny-place(x))
 Infer: ◇¬∃x.bathroom(x) ∧ ◇(∃x.bathroom(x) ∧ funny-place(x))
 
-The crucial point: the second conjunct has the POSITIVE existential
+The second conjunct has the positive existential
 (∃x.bathroom(x)) conjoined with funny-place(x), allowing the pronoun
 to be bound.
 -/
@@ -289,8 +289,8 @@ theorem dual_prohibition (φ ψ : BilateralDen W E) (s : InfoState W E)
 /--
 Semantic FC (disjunctive form): if ◇(φ ∨ ψ), then ◇φ ∨ ◇ψ.
 
-This is the WEAKER form of FC. Modal disjunction actually gives us the
-STRONGER conjunctive form `◇φ ∧ (ψ after ¬φ is possible)`.
+This is the weaker disjunctive form. Modal disjunction actually gives the
+stronger conjunctive form `◇φ ∧ (ψ after ¬φ is possible)`.
 -/
 theorem disj_to_poss_disj (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
@@ -301,11 +301,11 @@ theorem disj_to_poss_disj (φ ψ : BilateralDen W E) (s : InfoState W E)
 
 
 /--
-Key insight: In BUS, negation SWAPS positive and negative updates.
+In BUS, negation swaps positive and negative updates.
 
 For ¬∃x.φ:
-- (¬∃x.φ)⁺ = (∃x.φ)⁻ = states where NO entity satisfies φ
-- (¬∃x.φ)⁻ = (∃x.φ)⁺ = states where SOME entity satisfies φ
+- (¬∃x.φ)⁺ = (∃x.φ)⁻ = states where no entity satisfies φ
+- (¬∃x.φ)⁻ = (∃x.φ)⁺ = states where some entity satisfies φ
 
 When we have ¬∃x.φ ∨ ψ(x), the negative dimension of ¬∃x.φ
 (= positive of ∃x.φ) introduces x, making it available for ψ(x).
@@ -353,7 +353,7 @@ theorem dne_preserves_binding (x : Nat) (dom : Set E) (φ ψ : BilateralDen W E)
 /--
 Bathroom FC (semantic core): from ◇(¬∃x.bath ∨ funny(x)), derive ◇¬∃x.bath ∨ ◇funny(x).
 
-This is the pure semantic content of disjunction. The CONJUNCTION of
+This is the pure semantic content of disjunction. The conjunction of
 possibilities (◇¬∃x.bath ∧ ◇(∃x.bath ∧ funny(x))) requires pragmatic
 reasoning about alternatives - see Comparisons/FreeChoice.lean for
 different pragmatic accounts (RSA, Innocent Inclusion, etc.).
@@ -367,7 +367,7 @@ theorem bathroom_fc_semantic (cfg : BathroomConfig W E) (s : InfoState W E)
 Bathroom FC (with anaphoric binding): when the second disjunct is possible,
 its binding comes from the negative dimension of the first disjunct.
 
-The key insight: funnyPlace.positive s contains possibilities where x is
+funnyPlace.positive s contains possibilities where x is
 assigned to an entity. These possibilities come from the random assignment
 that would have happened if we took the "bathroom exists" branch.
 
@@ -383,7 +383,7 @@ theorem bathroom_binding_source (cfg : BathroomConfig W E) (s : InfoState W E)
 Standard FC disjunctive form: from ◇(φ ∨ ψ), get ◇φ ∨ ◇ψ.
 
 This is the weaker disjunctive form. The modal disjunction semantics
-actually gives us the stronger CONJUNCTIVE form via `modified_fc_semantic`.
+actually gives the stronger conjunctive form via `modified_fc_semantic`.
 -/
 theorem fc_disjunctive (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
@@ -430,40 +430,5 @@ def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
   { bathroom := exists_ 0 Set.univ (pred1 isBathroom 0)
   , funnyPlace := pred1 inFunnyPlace 0
   , x := 0 }
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Modal Operators
-- `possible`: ◇φ (positive update is consistent)
-- `necessary`: □φ (state subsists in update)
-- `impossible`: ¬◇φ (positive update is empty)
-
-### Free Choice Disjunction
-- `disjFC` (∨ᶠᶜ): Disjunction that licenses FC inference
-
-### Inference Patterns
-- `fc_basic`: ◇(φ ∨ ψ) → ◇φ ∧ ◇ψ (given both live)
-- `modified_fc`: ◇(φ ∨ ψ) → ◇φ ∧ ◇(¬φ ∧ ψ)
-- `fc_with_anaphora`: Bathroom disjunction pattern
-- `dual_prohibition`: ¬◇φ ∧ ¬◇ψ → ¬◇(φ ∨ ψ)
-
-### Example
-- `BathroomConfig`: Configuration for bathroom disjunction
-- `bathroomSentence`: ¬∃x.bathroom(x) ∨ funny-place(x)
-- Example entities and predicates
-
-## The Key Insight
-
-FC with anaphora works because:
-1. Negation swaps positive/negative (DNE holds)
-2. Modified FC gives ◇(¬φ ∧ ψ), not just ◇ψ
-3. ¬(¬∃x.φ) = ∃x.φ by DNE, introducing x for anaphora
-
-This is why "Either there's no bathroom or it's in a funny place"
-can have "it" bound by the bathroom introduced under negation.
--/
 
 end Theories.BilateralUpdateSemantics.FreeChoice

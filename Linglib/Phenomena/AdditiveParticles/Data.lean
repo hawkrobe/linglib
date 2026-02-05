@@ -3,75 +3,53 @@ import Linglib.Phenomena.Core.EmpiricalData
 /-!
 # Additive Particle Data
 
-Empirical data on additive particles (too, also, either) and their felicity
-conditions.
+Empirical data on additive particles (too, also, either) and their felicity conditions.
 
-## Overview
+## Main definitions
 
-This file contains theory-neutral empirical data on:
-1. Classic additive examples (standard presuppositional use)
-2. Infelicitous cases (missing antecedent, failed conditions)
-3. Polarity-sensitive uses (either in negative contexts)
-4. Rooth (1992) focus-based examples
-5. Ahn (2015) "either" analysis
-6. Cross-linguistic patterns
+- `AdditiveParticleDatum`: Data point for additive particle use
+- `FelicityJudgment`: Acceptability ratings (ok/marginal/odd)
+- `UseType`: Standard, argument-building, scalar, contrastive uses
 
-## Related Files
-
-- `Studies/Thomas2026.lean` - Argument-building phenomenon (Thomas's key contribution)
-- `Theories/Montague/Sentence/FocusInterpretation.lean` - Rooth's FIP formalization
-
-## Sources
+## References
 
 - Rooth (1992). A Theory of Focus Interpretation.
 - Ahn (2015). The Semantics of Additive Either.
 - Kripke (2009). Presupposition and Anaphora.
 - Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
-- Beaver & Clark (2008). Sense and Sensitivity.
 -/
 
 namespace Phenomena.AdditiveParticles
 
 -- Basic Data Structures
 
-/-- Felicity judgment for an additive particle example. -/
+/-- Felicity judgment for additive particle examples. -/
 inductive FelicityJudgment where
-  | ok       -- Fully acceptable
-  | marginal -- Somewhat degraded
-  | odd      -- Clearly infelicitous
+  | ok
+  | marginal
+  | odd
   deriving DecidableEq, Repr, BEq
 
 /-- Type of additive particle use. -/
 inductive UseType where
-  | standard        -- ANT and π are focus alternatives
-  | argumentBuilding -- ANT and π jointly support conclusion
-  | scalar          -- π is scalar alternative
-  | contrastive     -- Contrastive focus
+  | standard
+  | argumentBuilding
+  | scalar
+  | contrastive
   deriving DecidableEq, Repr, BEq
 
-/-- An empirical data point for additive particles. -/
+/-- Empirical data point for additive particles. -/
 structure AdditiveParticleDatum where
-  /-- The example sentence -/
   sentence : String
-  /-- The antecedent (if present) -/
   antecedent : String
-  /-- The prejacent (scope of additive particle) -/
   prejacent : String
-  /-- The additive particle -/
   particle : String
-  /-- The resolved question (if identifiable) -/
   resolvedQuestion : Option String
-  /-- Felicity judgment -/
   felicity : FelicityJudgment
-  /-- Type of use -/
   useType : UseType
-  /-- Additional notes -/
   notes : String := ""
-  /-- Source reference -/
   source : String := "Thomas (2026)"
   deriving Repr
-
--- Classic Standard Examples
 
 /-- Classic "too" with focus alternatives. -/
 def johnCameMaryToo : AdditiveParticleDatum :=
@@ -82,7 +60,6 @@ def johnCameMaryToo : AdditiveParticleDatum :=
   , resolvedQuestion := some "Who came to the party?"
   , felicity := .ok
   , useType := .standard
-  , notes := "Classic case: John and Mary are focus alternatives"
   }
 
 /-- "Also" in medial position. -/
@@ -94,7 +71,6 @@ def maryAlsoCame : AdditiveParticleDatum :=
   , resolvedQuestion := some "Who came to the party?"
   , felicity := .ok
   , useType := .standard
-  , notes := "'Also' is medial; 'too' is final"
   }
 
 /-- Same subject, different properties. -/
@@ -106,19 +82,14 @@ def johnSingsJohnDancesToo : AdditiveParticleDatum :=
   , resolvedQuestion := some "What does John do?"
   , felicity := .ok
   , useType := .standard
-  , notes := "Same entity, different properties as alternatives"
   }
 
-/-- Classic examples from the literature. -/
 def classicExamples : List AdditiveParticleDatum :=
   [ johnCameMaryToo
   , maryAlsoCame
   , johnSingsJohnDancesToo
   ]
 
--- Infelicitous Cases
-
-/-- Missing antecedent - classic infelicity. -/
 def missingAntecedent : AdditiveParticleDatum :=
   { sentence := "#Mary came to the party, too."
   , antecedent := ""
@@ -127,7 +98,7 @@ def missingAntecedent : AdditiveParticleDatum :=
   , resolvedQuestion := none
   , felicity := .odd
   , useType := .standard
-  , notes := "No antecedent established - presupposition failure"
+  , notes := ""
   }
 
 /-- Antecedent doesn't answer RQ. -/
@@ -493,11 +464,11 @@ def allExamples : List AdditiveParticleDatum :=
 
 /-- Count felicitous examples. -/
 def felicitousCount : Nat :=
-  allExamples.filter (fun d => d.felicity == .ok) |>.length
+  allExamples.filter (λ d => d.felicity == .ok) |>.length
 
 /-- Count infelicitous examples. -/
 def infelicitousCount : Nat :=
-  allExamples.filter (fun d => d.felicity == .odd) |>.length
+  allExamples.filter (λ d => d.felicity == .odd) |>.length
 
 /-- Total example count. -/
 def totalCount : Nat := allExamples.length

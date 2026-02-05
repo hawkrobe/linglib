@@ -3,9 +3,7 @@
 
 Models Hurford's constraint as a consequence of speaker rationality in RSA.
 
-## Key Insight (Potts & Levy 2015)
-
-Hurford's constraint: "#A or B" is infelicitous when A ⊆ B or B ⊆ A.
+Hurford's constraint (Potts & Levy 2015): "#A or B" is infelicitous when A ⊆ B or B ⊆ A.
 
 In RSA, felicity = speaker rationality. A speaker wouldn't say "A or B" if:
 1. One disjunct is redundant (B⊆A makes B add nothing)
@@ -82,14 +80,14 @@ Under this lexicon:
 - "all" is true only in {all_}
 - "some or all" = "some" ∨ "all" = "some" (since all⊆some)
 
-This makes "some or all" REDUNDANT — a Hurford violation!
+This makes "some or all" redundant -- a Hurford violation.
 -/
 def lexBase : Lexicon HUtterance HWorld where
   meaning u w := boolToRat $ match u, w with
     -- "some" = at-least-one
     | .some_, .none => false
     | .some_, .someNotAll => true
-    | .some_, .all_ => true  -- TRUE: "at least one" includes all
+    | .some_, .all_ => true  -- "at least one" includes all
     -- "all"
     | .all_, .all_ => true
     | .all_, _ => false
@@ -108,14 +106,14 @@ Under this lexicon:
 - "all" is true only in {all_}
 - "some or all" is now informative: covers {someNotAll, all_}
 
-This RESCUES the Hurford violation — the disjunction is no longer redundant!
+This rescues the Hurford violation -- the disjunction is no longer redundant.
 -/
 def lexRefined : Lexicon HUtterance HWorld where
   meaning u w := boolToRat $ match u, w with
     -- "some" = some-but-not-all (exhaustified)
     | .some_, .none => false
     | .some_, .someNotAll => true
-    | .some_, .all_ => false  -- FALSE: exh(some) excludes "all"
+    | .some_, .all_ => false  -- exh(some) excludes "all"
     -- "all"
     | .all_, .all_ => true
     | .all_, _ => false
@@ -130,7 +128,6 @@ def lexRefined : Lexicon HUtterance HWorld where
 /--
 Hurford LU Scenario.
 
-Key features:
 - Two lexica: base (weak "some") and refined (strong "some")
 - Uniform priors
 - α = 1 (moderate rationality)
@@ -144,8 +141,8 @@ def hurfordScenario : LUScenario where
   World := HWorld
   baseLexicon := lexBase
   lexica := [lexBase, lexRefined]
-  lexPrior := fun _ => 1  -- Uniform prior over lexica
-  worldPrior := fun _ => 1  -- Uniform prior over worlds
+  lexPrior := λ _ => 1  -- Uniform prior over lexica
+  worldPrior := λ _ => 1  -- Uniform prior over worlds
   utterances := [.some_, .all_, .someOrAll, .null]
   worlds := [.none, .someNotAll, .all_]
   α := 1
@@ -190,13 +187,13 @@ def s1Some_base_someNotAll : ℚ :=
 #eval (s1Some_base_someNotAll, s1SomeOrAll_base_someNotAll, decide (s1Some_base_someNotAll > s1SomeOrAll_base_someNotAll))
 
 /--
-S1 probability for "someOrAll" given world = someNotAll, under REFINED lexicon.
+S1 probability for "someOrAll" given world = someNotAll, under refined lexicon.
 -/
 def s1SomeOrAll_refined_someNotAll : ℚ :=
   RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .someOrAll
 
 /--
-S1 probability for "some" alone given world = someNotAll, under REFINED lexicon.
+S1 probability for "some" alone given world = someNotAll, under refined lexicon.
 -/
 def s1Some_refined_someNotAll : ℚ :=
   RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexRefined .someNotAll) .some_
@@ -206,7 +203,7 @@ def s1Some_refined_someNotAll : ℚ :=
 
 
 /--
-**Hurford Violation under Base Lexicon**
+Hurford violation under base lexicon.
 
 Under the base lexicon (weak "some"), a rational speaker prefers "some" over
 "some or all" because the disjunction is redundant (all⊆some makes "or all"
@@ -219,7 +216,7 @@ theorem base_lexicon_disprefers_disjunction :
   native_decide
 
 /--
-**Hurford Rescue under Refined Lexicon**
+Hurford rescue under refined lexicon.
 
 Under the refined lexicon (exh(some) = some-but-not-all), "some or all" becomes
 informative because the disjuncts are now mutually exclusive.
@@ -232,13 +229,13 @@ theorem refined_some_sufficient :
 
 
 /--
-S1 probability for "someOrAll" in the ALL world, base lexicon.
+S1 probability for "someOrAll" in the all world, base lexicon.
 -/
 def s1SomeOrAll_base_all : ℚ :=
   RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .someOrAll
 
 /--
-S1 probability for "all" alone in the ALL world, base lexicon.
+S1 probability for "all" alone in the all world, base lexicon.
 -/
 def s1All_base_all : ℚ :=
   RSA.Eval.getScore (LURSA.S1_given hurfordScenario lexBase .all_) .all_
@@ -247,9 +244,9 @@ def s1All_base_all : ℚ :=
 #eval s1All_base_all
 
 /--
-In the ALL world, "all" is strongly preferred over "some or all".
+In the all world, "all" is strongly preferred over "some or all".
 
-This is expected: if you know it's ALL, just say "all"!
+If you know it's all, just say "all".
 -/
 theorem all_world_prefers_all :
     s1All_base_all > s1SomeOrAll_base_all := by
@@ -257,7 +254,7 @@ theorem all_world_prefers_all :
 
 
 /-
-Key quantity: How informative is "some or all" under each lexicon?
+How informative is "some or all" under each lexicon?
 
 Under L_base: "some or all" = "some" (redundant)
 Under L_refined: "some or all" covers {someNotAll, all_} distinctly
@@ -265,11 +262,11 @@ Under L_refined: "some or all" covers {someNotAll, all_} distinctly
 
 /-- Worlds where "some or all" is true under base lexicon -/
 def someOrAllTrueWorlds_base : List HWorld :=
-  hurfordScenario.worlds.filter (fun w => lexBase.meaning .someOrAll w > 0)
+  hurfordScenario.worlds.filter (λ w => lexBase.meaning .someOrAll w > 0)
 
 /-- Worlds where "some" is true under base lexicon -/
 def someTrueWorlds_base : List HWorld :=
-  hurfordScenario.worlds.filter (fun w => lexBase.meaning .some_ w > 0)
+  hurfordScenario.worlds.filter (λ w => lexBase.meaning .some_ w > 0)
 
 #eval someOrAllTrueWorlds_base
 #eval someTrueWorlds_base
@@ -284,17 +281,17 @@ theorem base_redundancy :
 
 /-- Worlds where "some or all" is true under refined lexicon -/
 def someOrAllTrueWorlds_refined : List HWorld :=
-  hurfordScenario.worlds.filter (fun w => lexRefined.meaning .someOrAll w > 0)
+  hurfordScenario.worlds.filter (λ w => lexRefined.meaning .someOrAll w > 0)
 
 /-- Worlds where "some" is true under refined lexicon -/
 def someTrueWorlds_refined : List HWorld :=
-  hurfordScenario.worlds.filter (fun w => lexRefined.meaning .some_ w > 0)
+  hurfordScenario.worlds.filter (λ w => lexRefined.meaning .some_ w > 0)
 
 #eval someOrAllTrueWorlds_refined
 #eval someTrueWorlds_refined
 
 /--
-Under refined lexicon, "some or all" covers MORE worlds than "some" alone.
+Under refined lexicon, "some or all" covers more worlds than "some" alone.
 This is why the disjunction is informative and the Hurford violation is rescued.
 -/
 theorem refined_disjunction_informative :
@@ -303,7 +300,7 @@ theorem refined_disjunction_informative :
 
 
 /--
-**Connection to empirical Hurford data**
+Connection to empirical Hurford data.
 
 The model predicts:
 1. Hurford violations (e.g., "American or Californian") = low S1 probability
@@ -312,7 +309,7 @@ The model predicts:
 2. Rescued cases (e.g., "some or all") = higher S1 probability when the
    listener interprets with the refined lexicon (exh applied)
 
-The key prediction: felicitous ↔ (disjunction is informative under some lexicon)
+The prediction: felicitous iff the disjunction is informative under some lexicon.
 -/
 theorem hurford_model_captures_rescue :
     -- The disjunction "some or all" is rescued because:
@@ -323,22 +320,22 @@ theorem hurford_model_captures_rescue :
   native_decide
 
 /--
-**RSA Prediction**: Disjunction is felicitous iff informative under some lexicon.
+RSA prediction: disjunction is felicitous iff informative under some lexicon.
 
 For "some or all":
 - Under L_refined, the disjunction covers {someNotAll, all_}
 - "some" alone only covers {someNotAll}
-- So the disjunction IS informative → predicted FELICITOUS
+- So the disjunction is informative, predicted felicitous.
 -/
 def rsaPredictsFelicitous_someOrAll : Bool :=
   -- Felicitous iff disjunction is informative under some lexicon
   someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length
 
 /--
-**Bridge Theorem**: RSA prediction matches empirical data for "some or all".
+RSA prediction matches empirical data for "some or all".
 
 The model predicts "some or all" is felicitous (disjunction informative under
-refined lexicon), and this matches the empirical judgment in Data.lean.
+refined lexicon), matching the empirical judgment in Data.lean.
 -/
 theorem rsa_matches_data_someOrAll :
     rsaPredictsFelicitous_someOrAll = someOrAll.felicitous := by
@@ -389,44 +386,44 @@ def hyponymScenario : LUScenario where
   Utterance := HyponymUtterance
   World := HyponymWorld
   baseLexicon := lexHyponym
-  lexica := [lexHyponym]  -- Only one lexicon — no LU!
-  lexPrior := fun _ => 1
-  worldPrior := fun _ => 1
+  lexica := [lexHyponym]  -- Only one lexicon -- no LU
+  lexPrior := λ _ => 1
+  worldPrior := λ _ => 1
   utterances := [.american, .californian, .americanOrCalifornian, .null]
   worlds := [.neither, .americanOnly, .californian]
   α := 1
 
 /-- Worlds where "American or Californian" is true -/
 def americanOrCalifornianTrueWorlds : List HyponymWorld :=
-  hyponymScenario.worlds.filter (fun w => lexHyponym.meaning .americanOrCalifornian w > 0)
+  hyponymScenario.worlds.filter (λ w => lexHyponym.meaning .americanOrCalifornian w > 0)
 
 /-- Worlds where "American" alone is true -/
 def americanTrueWorlds : List HyponymWorld :=
-  hyponymScenario.worlds.filter (fun w => lexHyponym.meaning .american w > 0)
+  hyponymScenario.worlds.filter (λ w => lexHyponym.meaning .american w > 0)
 
 #eval americanOrCalifornianTrueWorlds
 #eval americanTrueWorlds
 
 /--
-For hyponymy, the disjunction is ALWAYS redundant — no rescue possible.
+For hyponymy, the disjunction is always redundant -- no rescue possible.
 -/
 theorem hyponym_always_redundant :
     americanOrCalifornianTrueWorlds = americanTrueWorlds := by
   native_decide
 
 /--
-**RSA Prediction**: "American or Californian" is NOT felicitous.
+RSA prediction: "American or Californian" is not felicitous.
 
 Since there's no lexicon under which the disjunction is informative,
 RSA predicts this is infelicitous.
 -/
 def rsaPredictsFelicitous_americanCalifornian : Bool :=
-  -- Would need disjunction to be informative under SOME lexicon
-  -- But with only one lexicon and fixed hyponymy, it's always redundant
+  -- Would need disjunction to be informative under some lexicon.
+  -- But with only one lexicon and fixed hyponymy, it's always redundant.
   americanOrCalifornianTrueWorlds.length > americanTrueWorlds.length
 
 /--
-**Bridge Theorem**: RSA prediction matches empirical data for "American or Californian".
+RSA prediction matches empirical data for "American or Californian".
 
 RSA predicts infelicity (disjunction always redundant), matching the empirical judgment.
 -/
@@ -434,40 +431,5 @@ theorem rsa_matches_data_americanCalifornian :
     rsaPredictsFelicitous_americanCalifornian = americanCalifornian.felicitous := by
   native_decide
 
-
-/-
-## What This Module Provides
-
-### Scenario
-- `hurfordScenario`: LU scenario for Hurford's constraint with 2 lexica
-
-### Key Quantities
-- `s1SomeOrAll_base_someNotAll`: S1 for disjunction under base lexicon
-- `s1Some_base_someNotAll`: S1 for simple "some" under base lexicon
-- `s1SomeOrAll_refined_someNotAll`: S1 for disjunction under refined lexicon
-
-### Key Theorems
-- `base_lexicon_disprefers_disjunction`: Hurford violation as low S1
-- `base_redundancy`: "some or all" = "some" under weak reading
-- `refined_disjunction_informative`: Rescue by exhaustification
-- `hurford_model_captures_rescue`: Main prediction matches data
-
-### Theoretical Contribution
-
-This implements the Potts & Levy (2015) insight:
-1. Hurford's constraint falls out from speaker rationality
-2. No need for a stipulated constraint
-3. Rescue by exhaustification = lexical uncertainty over "some" meaning
-
-The model predicts:
-- Redundant disjunctions (A⊆B) have low speaker probability → infelicitous
-- When exhaustification breaks entailment, probability increases → felicitous
-
-### Limitations
-
-- Simple 3-world model (doesn't capture graded acceptability)
-- Binary lexicon choice (real speakers may have continuous uncertainty)
-- Doesn't model Singh's asymmetry (order effects require different mechanism)
--/
 
 end RSA.Hurford

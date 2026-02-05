@@ -357,12 +357,12 @@ abbrev IntensionalVP (Entity World : Type) := Entity → Proposition World
 
 /-- Negate a proposition -/
 def Proposition.neg {World : Type} (p : Proposition World) : Proposition World :=
-  fun w => !p w
+  λ w => !p w
 
 /-- Negate a VP (pointwise) -/
 def IntensionalVP.neg {Entity World : Type} (vp : IntensionalVP Entity World)
     : IntensionalVP Entity World :=
-  fun x w => !vp x w
+  λ x w => !vp x w
 
 /-- Existential quantification over a finite domain -/
 def IntensionalProp.exists {Entity World : Type}
@@ -370,6 +370,6 @@ def IntensionalProp.exists {Entity World : Type}
     (prop : IntensionalProp Entity World)
     (vp : IntensionalVP Entity World)
     : Proposition World :=
-  fun w => domain.any (fun x => prop w x && vp x w)
+  λ w => domain.any (λ x => prop w x && vp x w)
 
 end Montague

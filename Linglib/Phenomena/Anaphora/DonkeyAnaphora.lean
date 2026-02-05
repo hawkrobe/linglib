@@ -13,12 +13,12 @@ in syntactically "inaccessible" positions:
 The indefinite "a donkey" is inside a relative clause, yet "it" seems
 to depend on it for its reference.
 
-## Key Properties
+## Properties
 
-1. **Scope puzzle**: The indefinite doesn't c-command the pronoun
-2. **Universal force**: Often interpreted as "...beats every donkey they own"
-3. **Weak readings**: Sometimes "...beats some donkey they own"
-4. **Proportion problem**: "Most farmers who own a donkey beat it"
+1. The indefinite doesn't c-command the pronoun (scope puzzle).
+2. Often interpreted as "...beats every donkey they own" (universal force).
+3. Sometimes "...beats some donkey they own" (weak readings).
+4. "Most farmers who own a donkey beat it" (proportion problem).
 
 ## References
 
@@ -247,33 +247,5 @@ def discourseDonkeyData : List DiscourseDonkeyDatum := [
   crossSententialDonkey,
   indefinitePersists
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `DonkeyDatum`: Basic donkey sentence with reading information
-- `WeakStrongDatum`: Weak vs strong reading availability
-- `DiscourseDonkeyDatum`: Cross-sentential anaphora
-- `ProportionDatum`: Proportion problem cases
-
-### Key Examples
-- `geachDonkey`: Classic "Every farmer who owns a donkey beats it"
-- `conditionalDonkey`: "If a farmer owns a donkey, he beats it"
-- `bathroomSentence`: "Either there is no bathroom, or it is in a funny place"
-- `paycheckSentence`: Paycheck pronouns (functional reading)
-
-### Theoretical Neutrality
-
-This module records WHAT the data is, not how to analyze it:
-- Dynamic semantics (Heim, G&S): Indefinites introduce discourse referents
-- E-type (Evans): Pronouns are disguised definite descriptions
-- Choice functions (Reinhart): Indefinites denote choice functions
-- DRT (Kamp): Boxes and accessibility
-
-All theories must account for this data; none is privileged here.
--/
 
 end Phenomena.Anaphora.DonkeyAnaphora

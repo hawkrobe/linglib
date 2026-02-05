@@ -355,7 +355,7 @@ def allVerbData : List VerbAspectData :=
 - `stopVingPrediction`: "stop V-ing" — requires ongoing eventuality
 - `imperativePrediction`: Imperative — requires agentivity
 
-### Key Results
+### Results
 - `forX_identifies_atelic`: "for X" ↔ atelic
 - `inX_identifies_telic`: "in X" ↔ telic
 - `progressive_accepts_durative_dynamic`: Progressive ↔ durative ∧ dynamic

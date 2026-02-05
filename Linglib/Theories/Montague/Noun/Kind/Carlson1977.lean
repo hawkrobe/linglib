@@ -6,30 +6,30 @@ English Bare Plural" (Linguistics & Philosophy 1:413-457, 1977).
 
 ## The Core Insight
 
-**Bare plurals are proper names of KINDS** — abstract individuals that can
+Bare plurals are proper names of kinds, which are abstract individuals that can
 be spatially unbounded. The generic/existential distinction arises from
 the PREDICATE, not from an ambiguous determiner.
 
 ## Key Claims
 
-1. **No ambiguity in ∅NP**: The bare plural has ONE meaning (kind-denoting)
-2. **Kinds are individuals**: Abstract entities tied to their instances
-3. **Stages vs individuals**: Predicates select for stages or individuals
-4. **Existential from realization**: The R relation introduces ∃ in the predicate
+1. No ambiguity in bare NPs: The bare plural has one meaning (kind-denoting)
+2. Kinds are individuals: Abstract entities tied to their instances
+3. Stages vs individuals: Predicates select for stages or individuals
+4. Existential from realization: The R relation introduces existential in the predicate
 
 ## Ontology: Individuals, Kinds, Stages
 
 Following Carlson:
-- **Individuals**: Spatially bounded (can only be in one place at a time)
-- **Kinds**: Spatially unbounded (can be "here and there")
-- **Stages**: Temporally bounded "realizations" of individuals/kinds
-- **R relation**: x R y means "x is a realization (stage) of y"
+- Individuals: Spatially bounded (can only be in one place at a time)
+- Kinds: Spatially unbounded (can be "here and there")
+- Stages: Temporally bounded "realizations" of individuals/kinds
+- R relation: x R y means "x is a realization (stage) of y"
 
 ## The Stage/Individual-Level Distinction
 
 Milsark (1974) and Siegel (1976) distinguished:
-- **States**: hungry, available, sick (physical), in the room → predicated of STAGES
-- **Properties**: intelligent, tall, sick (mental) → predicated of INDIVIDUALS
+- States: hungry, available, sick (physical), in the room -- predicated of stages
+- Properties: intelligent, tall, sick (mental) -- predicated of individuals
 
 Carlson connects this to bare plural interpretation:
 - Stage-level predicates → existential reading ("Dogs are in the yard")
@@ -37,14 +37,14 @@ Carlson connects this to bare plural interpretation:
 
 ## Why This Analysis Works
 
-1. **Narrow scope**: Kinds are rigid designators (like proper names)
+1. Narrow scope: Kinds are rigid designators (like proper names)
    - No scope ambiguity with other quantifiers
    - "Everyone saw dogs" ≠ "∃x[dog(x) ∧ everyone saw x]"
 
-2. **Opacity only**: In intensional contexts, only opaque readings
+2. Opacity only: In intensional contexts, only opaque readings
    - Because the kind is rigid, not the stages
 
-3. **Differentiated scope**: Can have narrower scope than "a dog"
+3. Differentiated scope: Can have narrower scope than "a dog"
    - "A dog was everywhere" (bizarre: same dog everywhere)
    - "Dogs were everywhere" (natural: different dogs in different places)
 
@@ -67,7 +67,7 @@ namespace Montague.Noun.Kind.Carlson1977
 variable (Entity World : Type)
 
 /--
-The **Realization relation**: x R y means "x is a stage/realization of y."
+The realization relation: x R y means "x is a stage/realization of y."
 
 A stage is a temporally and spatially bounded "slice" of an individual or kind.
 
@@ -111,7 +111,7 @@ structure IsOrdinaryIndividual (R : RealizationRel Entity) (i : Entity) : Prop w
 -- Bare Plurals as Proper Names of Kinds
 
 /--
-**Core claim**: Bare plurals denote kinds, which are INDIVIDUALS (type e).
+Core claim: Bare plurals denote kinds, which are individuals (type e).
 
 This is the same semantic type as proper names like "Jake" or "Bossie."
 The only difference is that kinds are spatially unbounded.
@@ -140,16 +140,16 @@ structure BarePluralEntry where
 -- Stage-Level vs Individual-Level Predicates
 
 /--
-**Predicate classification** (Milsark 1974, Siegel 1976):
+Predicate classification (Milsark 1974, Siegel 1976):
 
-- **Stage-level (states)**: Predicated of STAGES (realizations)
+- Stage-level (states): Predicated of stages (realizations).
   Examples: available, hungry, sick (physical), in the room, running
 
-- **Individual-level (properties)**: Predicated of INDIVIDUALS
+- Individual-level (properties): Predicated of individuals.
   Examples: intelligent, tall, a mammal, sick (mental)
 
-The key insight: This classification determines whether the bare plural
-gets a generic or existential reading — NOT an ambiguity in the NP itself.
+This classification determines whether the bare plural
+gets a generic or existential reading, not an ambiguity in the NP itself.
 -/
 inductive PredicateLevel where
   | stageLevel       -- "States" in Milsark's terminology
@@ -164,7 +164,7 @@ These can appear in existential there-constructions:
 - "There are dogs hungry" ✓
 - "There are dogs in the yard" ✓
 
-These select STAGES, not individuals.
+These select stages, not individuals.
 -/
 def stageLevelExamples : List String :=
   ["available", "hungry", "awake", "drunk", "asleep",
@@ -174,12 +174,12 @@ def stageLevelExamples : List String :=
 /--
 Individual-level predicates (Milsark's "properties").
 
-These CANNOT appear in existential there-constructions:
+These cannot appear in existential there-constructions:
 - *"There are dogs intelligent" ✗
 - *"There are dogs tall" ✗
 - *"There are dogs mammals" ✗
 
-These select INDIVIDUALS, not stages.
+These select individuals, not stages.
 -/
 def individualLevelExamples : List String :=
   ["intelligent", "tall", "clever", "obnoxious",
@@ -197,7 +197,7 @@ structure PredicateEntry where
 -- Semantic Composition: The Key Insight
 
 /--
-**Individual-level predicate semantics**: Direct predication of the kind.
+Individual-level predicate semantics: Direct predication of the kind.
 
 `⟦be intelligent⟧ = I'`
 
@@ -210,7 +210,7 @@ No existential quantifier involved!
 abbrev IndividualLevelPred := Entity → Bool
 
 /--
-**Stage-level predicate semantics**: Predication via the R relation.
+Stage-level predicate semantics: Predication via the R relation.
 
 `⟦be hungry⟧ = λx.∃y[R(y,x) ∧ hungry'(y)]`
 
@@ -220,10 +220,10 @@ The existential comes from THE PREDICATE, not from the NP.
 This is why bare plurals get existential readings with stage-level predicates.
 -/
 def stageLevelPred (R : RealizationRel Entity) (P : Entity → Bool) : Entity → Prop :=
-  fun x => ∃ y, R y x ∧ P y = true
+  λ x => ∃ y, R y x ∧ P y = true
 
 /--
-**The progressive operator**: Turns any predicate into stage-level.
+The progressive operator: Turns any predicate into stage-level.
 
 `⟦-ing⟧ = λP'.λx.∃y[R(y,x) ∧ P'(y)]`
 
@@ -276,11 +276,11 @@ def existentialDerivation
 -- Key Theorem: One Meaning, Two Readings
 
 /--
-**Carlson's central claim**: The bare plural is NEVER ambiguous.
+Carlson's central claim: The bare plural is never ambiguous.
 
 The different "readings" (generic vs existential) arise from:
 1. The predicate's level (individual vs stage)
-2. NOT from different meanings of ∅NP
+2. Not from different meanings of ∅NP
 
 This is why there's no scope ambiguity with bare plurals —
 they're just proper names, and proper names don't scope.
@@ -299,7 +299,7 @@ theorem bare_plural_not_ambiguous
 -- Narrow Scope: Proper Names Don't Scope
 
 /-!
-**Why bare plurals show narrow scope**: They're proper names.
+Why bare plurals show narrow scope: They're proper names.
 
 Just as "Jake is everywhere" only means "Jake is in every place"
 (not "every place has some Jake"), so too:
@@ -319,16 +319,16 @@ abbrev BarePluralNP (E : Type) := (E → Bool) → Bool
 
 /-- Bare plural NP: λP.P{k} -/
 def barePluralTranslation (k : Entity) : BarePluralNP Entity :=
-  fun P => P k
+  λ P => P k
 
 /-- Some-NP: λP.∃x[N(x) ∧ P(x)] -/
 def someNPTranslation (domain : List Entity) (N : Entity → Bool) : QuantifiedNP Entity :=
-  fun P => domain.any (fun x => N x && P x)
+  λ P => domain.any (λ x => N x && P x)
 
 /--
-**Key theorem**: Bare plurals behave like proper names, not quantifiers.
+Key theorem: Bare plurals behave like proper names, not quantifiers.
 
-"Everyone saw dogs" is NOT ambiguous in the way "Everyone saw some dogs" is.
+"Everyone saw dogs" is not ambiguous in the way "Everyone saw some dogs" is.
 
 With "some dogs": ∃ can scope above or below "everyone"
 With "dogs": the kind d is rigid, no scope interaction
@@ -341,7 +341,7 @@ theorem bare_plural_rigid_designator
 -- Differentiated Scope: Narrower Than Indefinites
 
 /-!
-**Differentiated scope**: Bare plurals can scope NARROWER than "a N".
+Differentiated scope: Bare plurals can scope narrower than "a N".
 
 (29) "A dog was everywhere" — bizarre (same dog in every place)
 (30) "Dogs were everywhere" — natural (different dogs in different places)
@@ -363,15 +363,15 @@ def beEverywhere
     (places : List Entity)
     (atPred : Entity → Entity → Bool)  -- At(stage, place)
     : Entity → Prop :=
-  fun x => ∀ p ∈ places, ∃ y, R y x ∧ atPred y p = true
+  λ x => ∀ p ∈ places, ∃ y, R y x ∧ atPred y p = true
 
 /--
-**Key theorem**: Kinds allow differentiated scope; individuals don't.
+Key theorem: Kinds allow differentiated scope; individuals don't.
 
-For an ordinary individual i: "i was everywhere" requires the SAME
+For an ordinary individual i: "i was everywhere" requires the same
 realizations at each place (bizarre for spatially bounded entities).
 
-For a kind k: "k was everywhere" allows DIFFERENT realizations
+For a kind k: "k was everywhere" allows different realizations
 at each place (natural, because kinds are spatially unbounded).
 -/
 theorem kind_allows_differentiated_scope
@@ -386,16 +386,16 @@ theorem kind_allows_differentiated_scope
 -- Opacity: Kinds Are Rigid, Stages Are Not
 
 /-!
-**Opacity facts explained**:
+Opacity facts explained:
 
 "Max believes dogs to have eaten his sponge"
 - Only opaque reading: Max believes the KIND dogs to have this property
-- NOT: Max believes of some particular dogs that they ate his sponge
+- Not: Max believes of some particular dogs that they ate his sponge
 
 The transparent reading is unavailable because:
 1. "dogs" denotes the kind d (rigid designator)
 2. No particular dogs are referred to
-3. The stages are introduced by the predicate, INSIDE the intensional context
+3. The stages are introduced by the predicate, inside the intensional context
 
 Compare with "Max believes some dogs to have eaten his sponge":
 - Transparent: ∃x[dog(x) ∧ Max believes x ate the sponge]
@@ -415,14 +415,14 @@ def beliefContext
     (w : World)
     : Prop :=
   -- Max believes: ∃y[R(y,d) ∧ ate-sponge(y)]
-  -- The ∃ is INSIDE the belief, not outside
+  -- The ∃ is inside the belief, not outside
   beliefContent kind w = true
 
 /--
-**Key theorem**: Bare plurals in intensional contexts yield only opaque readings.
+Key theorem: Bare plurals in intensional contexts yield only opaque readings.
 
 The existential over stages is introduced by the predicate,
-which is INSIDE the intensional context. Therefore, no transparent reading.
+which is inside the intensional context. Therefore, no transparent reading.
 -/
 theorem bare_plural_opaque_only
     (R : RealizationRel Entity)
@@ -438,10 +438,10 @@ theorem bare_plural_opaque_only
 
 Carlson 1977 established:
 
-1. **Unified analysis**: One meaning for bare plurals, readings from context
-2. **Kinds as individuals**: Type e, not a quantifier
-3. **Stage/individual distinction**: Source of generic vs existential
-4. **R relation**: Connects kinds to their instances via stages
+1. Unified analysis: One meaning for bare plurals, readings from context
+2. Kinds as individuals: Type e, not a quantifier
+3. Stage/individual distinction: Source of generic vs existential
+4. R relation: Connects kinds to their instances via stages
 
 Subsequent theories build on or respond to this:
 
@@ -461,7 +461,7 @@ Subsequent theories build on or respond to this:
 - Meaning Preservation ranking for type shifts
 - Number morphology constrains instantiation sets
 
-## Key Insight for RSA
+## Insight for RSA
 
 Carlson's analysis suggests that:
 - Literal meaning of "dogs" = the kind
@@ -518,7 +518,7 @@ example (k : Entity) (P : Entity → Bool) :
 ### Opacity
 - "Max believes dogs ate his sponge"
   = Max believes [∃y[R(y,DOGS) ∧ ate-sponge(y)]]
-  NOT: ∃y[R(y,DOGS) ∧ Max believes ate-sponge(y)]
+  Not: ∃y[R(y,DOGS) ∧ Max believes ate-sponge(y)]
 -/
 
 end Montague.Noun.Kind.Carlson1977

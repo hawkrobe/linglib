@@ -39,7 +39,7 @@ structure QUDConfig (W : Type) where
   /-- Goal projection: are two worlds equivalent under this goal? -/
   project : G → W → W → Bool
   /-- Prior over goals -/
-  prior : G → ℚ := fun _ => 1
+  prior : G → ℚ := λ _ => 1
   /-- Fintype instance for G -/
   [gFintype : Fintype G]
   /-- DecidableEq instance for G -/
@@ -58,8 +58,8 @@ Trivial QUD config: all worlds are equivalent.
 -/
 def trivial : QUDConfig W where
   G := Unit
-  project := fun _ _ _ => true
-  prior_nonneg := fun _ => by decide
+  project := λ _ _ _ => true
+  prior_nonneg := λ _ => by decide
 
 end QUDConfig
 
@@ -82,7 +82,7 @@ function becomes speakerCredence.
 
 ```lean
 def warstadtScenario := RSAScenario.discourse
-  (φ := fun u w => if literalMeaning u w then 1 else 0)
+  (φ := λ u w => if literalMeaning u w then 1 else 0)
   (discourse := {
     D := Context
     compatible := compatibleBool
@@ -96,30 +96,30 @@ def discourse {U W : Type}
     [Fintype W] [DecidableEq W]
     (φ : U → W → ℚ)
     (discourse : DiscourseConfig W)
-    (worldPrior : W → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w := by intros; decide)
     (φ_nonneg : ∀ u w, 0 ≤ φ u w := by intros; decide)
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     : RSAScenario U W where
   BeliefState := discourse.D
-  φ := fun _ _ u w => φ u w
-  goalProject := fun _ _ _ => true
+  φ := λ _ _ u w => φ u w
+  goalProject := λ _ _ _ => true
   speakerCredence := discourse.credence
   worldPrior := worldPrior
   beliefStatePrior := discourse.prior
   α := α
   cost := cost
   worldPrior_nonneg := worldPrior_nonneg
-  interpPrior_nonneg := fun _ => by decide
-  lexiconPrior_nonneg := fun _ => by decide
+  interpPrior_nonneg := λ _ => by decide
+  lexiconPrior_nonneg := λ _ => by decide
   beliefStatePrior_nonneg := discourse.prior_nonneg
-  goalPrior_nonneg := fun _ => by decide
-  speakerCredence_nonneg := fun d w => by
+  goalPrior_nonneg := λ _ => by decide
+  speakerCredence_nonneg := λ d w => by
     simp only [DiscourseConfig.credence]
     split <;> decide
-  φ_nonneg := fun _ _ u w => φ_nonneg u w
+  φ_nonneg := λ _ _ u w => φ_nonneg u w
   cost_nonneg := cost_nonneg
 
 /--
@@ -147,16 +147,16 @@ def discourseWithQUD {U W : Type}
     (φ : U → W → ℚ)
     (discourse : DiscourseConfig W)
     (qud : QUDConfig W)
-    (worldPrior : W → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w := by intros; decide)
     (φ_nonneg : ∀ u w, 0 ≤ φ u w := by intros; decide)
     (cost_nonneg : ∀ u, 0 ≤ cost u := by intros; decide)
     : RSAScenario U W where
   BeliefState := discourse.D
   Goal := qud.G
-  φ := fun _ _ u w => φ u w
+  φ := λ _ _ u w => φ u w
   goalProject := qud.project
   speakerCredence := discourse.credence
   worldPrior := worldPrior
@@ -165,14 +165,14 @@ def discourseWithQUD {U W : Type}
   α := α
   cost := cost
   worldPrior_nonneg := worldPrior_nonneg
-  interpPrior_nonneg := fun _ => by decide
-  lexiconPrior_nonneg := fun _ => by decide
+  interpPrior_nonneg := λ _ => by decide
+  lexiconPrior_nonneg := λ _ => by decide
   beliefStatePrior_nonneg := discourse.prior_nonneg
   goalPrior_nonneg := qud.prior_nonneg
-  speakerCredence_nonneg := fun d w => by
+  speakerCredence_nonneg := λ d w => by
     simp only [DiscourseConfig.credence]
     split <;> decide
-  φ_nonneg := fun _ _ u w => φ_nonneg u w
+  φ_nonneg := λ _ _ u w => φ_nonneg u w
   cost_nonneg := cost_nonneg
 
 end RSAScenario

@@ -9,7 +9,7 @@ This paper introduces a unified speaker model that combines:
 - **Truthfulness** (epistemic utility): preference for true utterances
 - **Relevance** (decision-theoretic utility): preference for action-improving utterances
 
-Key insight: These are independent objectives that speakers trade off, not a single
+These are independent objectives that speakers trade off, not a single
 unified goal. The λ parameter controls the tradeoff.
 
 ## Signaling Bandits Paradigm
@@ -43,7 +43,7 @@ Relevance utility (Eq. 8):
 Combined utility (Eq. 9):
   U_C(u|w,A) = λ·U_R + (1-λ)·U_T + C(u)
 
-## Key Results
+## Results
 
 1. **Theorem 1**: Identity DP makes relevance = truthfulness (Appendix A)
 2. **Theorem 2**: Any QUD is equivalent to some decision problem (Appendix A)
@@ -121,7 +121,7 @@ structure WorldState where
   featureValue : Feature → FeatureValue
 
 instance : BEq WorldState where
-  beq w1 w2 := allFeatures.all fun f => w1.featureValue f == w2.featureValue f
+  beq w1 w2 := allFeatures.all λ f => w1.featureValue f == w2.featureValue f
 
 /-- Get the rational value of a feature in a world -/
 def WorldState.getValue (w : WorldState) (f : Feature) : ℚ :=
@@ -135,7 +135,7 @@ structure Action where
   name : String := "action"
 
 instance : BEq Action where
-  beq a1 a2 := allFeatures.all fun f => a1.hasFeature f == a2.hasFeature f
+  beq a1 a2 := allFeatures.all λ f => a1.hasFeature f == a2.hasFeature f
 
 /-- Reward for taking an action in a world state.
 
@@ -144,7 +144,7 @@ R(a,w) = Σ_f [a has f] · w(f)
 Linear combination of feature values for features the action has.
 -/
 def reward (a : Action) (w : WorldState) : ℚ :=
-  allFeatures.foldl (fun acc f =>
+  allFeatures.foldl (λ acc f =>
     if a.hasFeature f then acc + w.getValue f else acc
   ) 0
 
@@ -163,8 +163,8 @@ structure Utterance where
 
 /-- All possible utterances (30 = 6 features × 5 values) -/
 def allUtterances : List Utterance :=
-  allFeatures.flatMap fun f =>
-    allFeatureValues.map fun v => ⟨f, v⟩
+  allFeatures.flatMap λ f =>
+    allFeatureValues.map λ v => ⟨f, v⟩
 
 /-- Truth of an utterance in a world state -/
 def utteranceTruth (u : Utterance) (w : WorldState) : Bool :=
@@ -211,8 +211,8 @@ P_L(w|u) ∝ ⟦u⟧(w) · P(w)
 Returns posterior over worlds consistent with utterance.
 -/
 def literalListener (u : Utterance) (worlds : List WorldState)
-    (prior : WorldState → ℚ := fun _ => 1) : List (WorldState × ℚ) :=
-  let scores := worlds.map fun w =>
+    (prior : WorldState → ℚ := λ _ => 1) : List (WorldState × ℚ) :=
+  let scores := worlds.map λ w =>
     if utteranceTruth u w then prior w else 0
   let probs := normalizeScores scores
   worlds.zip probs
@@ -222,18 +222,18 @@ def literalListener (u : Utterance) (worlds : List WorldState)
 R_L(a,u) = Σ_w R(a,w) · P_L(w|u)
 -/
 def expectedReward (a : Action) (u : Utterance) (worlds : List WorldState)
-    (prior : WorldState → ℚ := fun _ => 1) : ℚ :=
+    (prior : WorldState → ℚ := λ _ => 1) : ℚ :=
   let posterior := literalListener u worlds prior
-  posterior.foldl (fun acc (w, p) => acc + p * reward a w) 0
+  posterior.foldl (λ acc (w, p) => acc + p * reward a w) 0
 
 /-- Listener policy: probability of choosing each action (Eq. 7).
 
 π_L(a|u,A) ∝ exp(β_L · R_L(a,u))
 -/
 def listenerPolicy (params : Params) (ctx : Context) (u : Utterance)
-    (worlds : List WorldState) (prior : WorldState → ℚ := fun _ => 1)
+    (worlds : List WorldState) (prior : WorldState → ℚ := λ _ => 1)
     : List (Action × ℚ) :=
-  let utilities := ctx.actions.map fun a => expectedReward a u worlds prior
+  let utilities := ctx.actions.map λ a => expectedReward a u worlds prior
   let probs := softmax params.βL utilities
   ctx.actions.zip probs
 
@@ -265,9 +265,9 @@ The expected reward of the listener's actual choice in the true world.
 -/
 def relevanceUtility (params : Params) (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState)
-    (prior : WorldState → ℚ := fun _ => 1) : ℚ :=
+    (prior : WorldState → ℚ := λ _ => 1) : ℚ :=
   let policy := listenerPolicy params ctx u worlds prior
-  policy.foldl (fun acc (a, p) => acc + p * reward a w) 0
+  policy.foldl (λ acc (a, p) => acc + p * reward a w) 0
 
 /-- Utterance cost.
 
@@ -294,7 +294,7 @@ Convex combination of relevance and truthfulness, minus cost.
 -/
 def combinedUtility (params : Params) (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState)
-    (prior : WorldState → ℚ := fun _ => 1) : ℚ :=
+    (prior : WorldState → ℚ := λ _ => 1) : ℚ :=
   let uT := truthfulnessUtility u w
   let uR := relevanceUtility params u w ctx worlds prior
   let cost := params.costWeight * utteranceCost u
@@ -315,8 +315,8 @@ P_S(u|w,A) ∝ exp(β_S · U_C(u|w,A))
 -/
 def speakerDist (params : Params) (w : WorldState) (ctx : Context)
     (worlds : List WorldState) (utterances : List Utterance := allUtterances)
-    (prior : WorldState → ℚ := fun _ => 1) : List (Utterance × ℚ) :=
-  let utilities := utterances.map fun u =>
+    (prior : WorldState → ℚ := λ _ => 1) : List (Utterance × ℚ) :=
+  let utilities := utterances.map λ u =>
     combinedUtility params u w ctx worlds prior
   let probs := softmax params.βS utilities
   utterances.zip probs
@@ -324,15 +324,15 @@ def speakerDist (params : Params) (w : WorldState) (ctx : Context)
 /-- Pure truthfulness speaker (λ = 0) -/
 def truthOnlySpeaker (params : Params) (w : WorldState)
     (utterances : List Utterance := allUtterances) : List (Utterance × ℚ) :=
-  let utilities := utterances.map fun u => truthfulnessUtility u w
+  let utilities := utterances.map λ u => truthfulnessUtility u w
   let probs := softmax params.βS utilities
   utterances.zip probs
 
 /-- Pure relevance speaker (λ = 1) -/
 def relevanceOnlySpeaker (params : Params) (w : WorldState) (ctx : Context)
     (worlds : List WorldState) (utterances : List Utterance := allUtterances)
-    (prior : WorldState → ℚ := fun _ => 1) : List (Utterance × ℚ) :=
-  let utilities := utterances.map fun u =>
+    (prior : WorldState → ℚ := λ _ => 1) : List (Utterance × ℚ) :=
+  let utilities := utterances.map λ u =>
     relevanceUtility params u w ctx worlds prior
   let probs := softmax params.βS utilities
   utterances.zip probs
@@ -353,9 +353,9 @@ P_L1(w|u,A) ∝ P_S(u|w,A) · P(w)
 Note: This requires a context A, unlike standard RSA.
 -/
 def pragmaticListener (params : Params) (u : Utterance) (ctx : Context)
-    (worlds : List WorldState) (prior : WorldState → ℚ := fun _ => 1)
+    (worlds : List WorldState) (prior : WorldState → ℚ := λ _ => 1)
     : List (WorldState × ℚ) :=
-  let scores := worlds.map fun w =>
+  let scores := worlds.map λ w =>
     let sDist := speakerDist params w ctx worlds allUtterances prior
     let sProb := match sDist.find? (·.1 == u) with
       | some (_, p) => p
@@ -371,10 +371,9 @@ def pragmaticListener (params : Params) (u : Utterance) (ctx : Context)
 These connect to Comparisons/RelevanceTheories.lean for the deep theorems.
 -/
 
-/-- **Theorem**: Combined model reduces to truthfulness when λ = 0.
+/-- Combined model reduces to truthfulness when λ = 0.
 
-U_C(u|w,A) = U_T(u|w) when λ = 0
--/
+U_C(u|w,A) = U_T(u|w) when λ = 0 -/
 theorem combined_pure_truthfulness (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
     let params := { defaultParams with lam := 0, costWeight := 0 }
@@ -382,10 +381,9 @@ theorem combined_pure_truthfulness (u : Utterance) (w : WorldState)
   simp only [combinedUtility, truthfulnessUtility, utteranceCost]
   simp only [mul_zero, zero_mul, sub_zero, zero_add, one_mul]
 
-/-- **Theorem**: Combined model reduces to relevance when λ = 1.
+/-- Combined model reduces to relevance when λ = 1.
 
-U_C(u|w,A) = U_R(u|w,A) when λ = 1
--/
+U_C(u|w,A) = U_R(u|w,A) when λ = 1 -/
 theorem combined_pure_relevance (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
     let params := { defaultParams with lam := 1, costWeight := 0 }
@@ -394,13 +392,12 @@ theorem combined_pure_relevance (u : Utterance) (w : WorldState)
   simp only [combinedUtility, truthfulnessUtility, utteranceCost]
   simp only [mul_zero, zero_mul, sub_self, add_zero, one_mul, sub_zero]
 
-/-- **Key insight**: Truthfulness and relevance are independent objectives.
+/-- Truthfulness and relevance are independent objectives.
 
-In Lewis signaling games, they're perfectly correlated (knowing the world =
+In Lewis signaling games, they are perfectly correlated (knowing the world =
 knowing the best action). In signaling bandits, they can diverge:
 - True but irrelevant: "Green is +2" when no green actions in context
-- False but relevant: "Spots are +2" when spots are actually +1
--/
+- False but relevant: "Spots are +2" when spots are actually +1 -/
 theorem truthfulness_relevance_independent :
     -- There exist utterances that are true but not relevance-maximizing
     -- and utterances that are relevance-maximizing but false
@@ -418,7 +415,7 @@ The experiments use a mushroom foraging cover story:
 
 /-- Create a mushroom with one color and one texture -/
 def makeMushroom (color texture : Feature) (name : String := "mushroom") : Action :=
-  { hasFeature := fun f => f == color || f == texture
+  { hasFeature := λ f => f == color || f == texture
   , name := name }
 
 /-- Canonical world state from the experiment.
@@ -427,7 +424,7 @@ Green = +2, Red = 0, Blue = -2
 Spotted = +1, Solid = 0, Striped = -1
 -/
 def canonicalWorld : WorldState :=
-  { featureValue := fun f => match f with
+  { featureValue := λ f => match f with
     | .green => .pos2
     | .red => .zero
     | .blue => .neg2
@@ -493,20 +490,18 @@ structure Exp2Results where
 
 def exp2Results : Exp2Results := {}
 
-/-- **Key finding**: Unbiased participants jointly optimize truthfulness AND relevance.
+/-- Unbiased participants jointly optimize truthfulness and relevance.
 
 Neither λ = 0 (pure truth) nor λ = 1 (pure relevance) fits the data.
-Participants make a graded tradeoff.
--/
+Participants make a graded tradeoff. -/
 theorem unbiased_participants_use_combined :
     exp1Results.unbiased_lam > 0 ∧ exp1Results.unbiased_lam < 1 := by
   simp only [exp1Results]
   native_decide
 
-/-- **Key finding**: Manipulation affects λ parameter ordering.
+/-- Manipulation affects λ parameter ordering.
 
-λ_truth < λ_unbiased < λ_relevance
--/
+λ_truth < λ_unbiased < λ_relevance -/
 theorem manipulation_affects_lambda :
     exp1Results.truthBiased_lam < exp1Results.unbiased_lam ∧
     exp1Results.unbiased_lam < exp1Results.relevanceBiased_lam := by
@@ -554,16 +549,16 @@ theorem relevance_theory_challenged :
 /-!
 ## Summary
 
-**Main contribution**: Unified speaker model combining truthfulness and relevance.
+Unified speaker model combining truthfulness and relevance:
 
 U_C(u|w,A) = λ·U_R(u|w,A) + (1-λ)·U_T(u|w) - C(u)
 
-**Key empirical findings**:
-1. Participants use BOTH truthfulness and relevance (0 < λ < 1)
+Empirical findings:
+1. Participants use both truthfulness and relevance (0 < λ < 1)
 2. Neither objective strictly dominates
 3. The tradeoff is graded, not binary
 
-**Theoretical implications**:
+Theoretical implications:
 - Decision-theoretic relevance grounds QUD-based relevance
 - Truthfulness is an independent constraint, not derived from relevance
 - The combined model explains loose talk and context-sensitivity

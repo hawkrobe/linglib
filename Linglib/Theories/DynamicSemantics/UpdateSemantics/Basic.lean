@@ -17,7 +17,7 @@ In Update Semantics:
 ⟦φ⟧ : State → State
 where State = Set World
 
-## Key Innovation
+## Innovation
 
 The treatment of epistemic "might":
 
@@ -62,7 +62,7 @@ Propositional update: eliminate worlds where φ fails.
 ⟦φ⟧(s) = { w ∈ s | φ(w) }
 -/
 def Update.prop {W : Type*} (φ : W → Bool) : Update W :=
-  fun s => { w ∈ s | φ w }
+  λ s => { w ∈ s | φ w }
 
 /--
 Conjunction: sequential update.
@@ -70,7 +70,7 @@ Conjunction: sequential update.
 ⟦φ ∧ ψ⟧ = ⟦ψ⟧ ∘ ⟦φ⟧
 -/
 def Update.conj {W : Type*} (φ ψ : Update W) : Update W :=
-  fun s => ψ (φ s)
+  λ s => ψ (φ s)
 
 /--
 Negation: test and possibly fail.
@@ -81,7 +81,7 @@ If φ could be true (some worlds survive φ), then ¬φ fails (returns ∅).
 If φ is definitely false (no worlds survive), then ¬φ passes (returns s).
 -/
 def Update.neg {W : Type*} (φ : Update W) : Update W :=
-  fun s => if (φ s).Nonempty then ∅ else s
+  λ s => if (φ s).Nonempty then ∅ else s
 
 -- Epistemic Modals
 
@@ -93,7 +93,7 @@ Epistemic "might": compatibility test.
 "It might rain" is felicitous iff rain is epistemically possible.
 -/
 def Update.might {W : Type*} (φ : Update W) : Update W :=
-  fun s => if (φ s).Nonempty then s else ∅
+  λ s => if (φ s).Nonempty then s else ∅
 
 /--
 Epistemic "must": universal test.
@@ -103,7 +103,7 @@ Epistemic "must": universal test.
 "It must rain" requires all worlds have rain.
 -/
 def Update.must {W : Type*} (φ : Update W) : Update W :=
-  fun s => if φ s = s then s else ∅
+  λ s => if φ s = s then s else ∅
 
 -- Key Properties
 
@@ -116,12 +116,22 @@ theorem might_is_test {W : Type*} (φ : Update W) (s : State W)
   simp [Update.might, h]
 
 /--
-Order matters for might.
+Order matters for epistemic might.
 
-"It's raining and it might not be raining" is contradictory.
-"It might not be raining and it's raining" might pass (then learn it is).
+"It's raining and it might not be raining" is contradictory:
+after learning rain, the might-not-rain test fails (no ¬rain worlds remain).
+But "it might not be raining and it's raining" can succeed:
+the might test passes on the initial state, then learning eliminates ¬rain worlds.
+
+TODO: Prove by exhibiting a state with both p-worlds and ¬p-worlds.
+Needs `Nontrivial W` (and classical decidability): for empty or singleton W,
+no state has both p-worlds and ¬p-worlds, making the second conjunct unsatisfiable.
 -/
-theorem might_order_matters : True := trivial  -- TODO: Formalize
+theorem might_order_matters {W : Type*} :
+    ∃ (p : W → Bool) (s : State W),
+      Update.conj (Update.prop p) (Update.might (Update.prop λ w => !p w)) s = ∅ ∧
+      (Update.conj (Update.might (Update.prop λ w => !p w)) (Update.prop p) s).Nonempty := by
+  sorry
 
 -- Support and Acceptance
 
@@ -140,38 +150,5 @@ s accepts φ iff ⟦φ⟧(s) ≠ ∅
 -/
 def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
-
--- Summary
-
-/-!
-## What This Module Will Provide
-
-### Core Types
-- `State W`: Set of possible worlds
-- `Update W`: State transformation function
-
-### Operations
-- `prop`: Propositional update
-- `conj`: Sequential conjunction
-- `neg`: Test-based negation
-- `might`: Epistemic possibility
-- `must`: Epistemic necessity
-
-### Relations
-- `supports`: s ⊨ φ (φ holds throughout s)
-- `accepts`: s accepts φ (φ compatible with s)
-
-### Key Properties
-- `might_is_test`: Might doesn't change passing states
-- Order sensitivity of epistemic modals
-
-## TODO
-
-Full implementation including:
-- Defaults and conditionals
-- More epistemic operators
-- Connection to belief revision
-- Comparison with DPL/DRT
--/
 
 end Theories.DynamicSemantics.UpdateSemantics

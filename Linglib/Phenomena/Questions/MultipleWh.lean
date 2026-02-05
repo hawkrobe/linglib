@@ -8,7 +8,7 @@ Questions with multiple wh-phrases require n-place term answers.
 - "Which man loves which woman?" → "John, Mary; and Bill, Suzy"
 - Expresses: John loves Mary, Bill loves Suzy, and no other man-woman pairs
 
-## Key Insight
+## Insight
 
 An n-constituent interrogative asks for an n-place relation.
 The answer specifies which n-tuples satisfy the relation exhaustively.

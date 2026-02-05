@@ -3,7 +3,7 @@
 
 RSA model for flexible negation: why two negatives don't make a positive.
 
-## Key Innovation
+## Innovation
 
 The paper models why "not unhappy" ≠ "happy" by treating the
 contradictory/contrary distinction as lexical ambiguity:
@@ -135,15 +135,15 @@ marginalizing over the two possible lexica for "un-".
 def l1_world_lexicalUncertainty (u : Utterance) : List (HappinessDegree × ℚ) :=
   RSA.Eval.L1_world allUtterances allHappinessDegrees [()] allLexica
     [()] [()]
-    (fun _ l u' d => boolToRat (meaning l u' d))
+    (λ _ l u' d => boolToRat (meaning l u' d))
     degreePrior
-    (fun _ => 1)  -- interp prior
+    (λ _ => 1)  -- interp prior
     lexiconPrior
-    (fun _ => 1)  -- belief state prior
-    (fun _ => 1)  -- goal prior
-    (fun _ _ => 1)  -- speaker credence
-    (fun _ d1 d2 => d1 == d2)  -- identity goal projection
-    (fun _ => 0)  -- no cost
+    (λ _ => 1)  -- belief state prior
+    (λ _ => 1)  -- goal prior
+    (λ _ _ => 1)  -- speaker credence
+    (λ _ d1 d2 => d1 == d2)  -- identity goal projection
+    (λ _ => 0)  -- no cost
     1  -- α = 1
     u
 
@@ -154,18 +154,18 @@ This computes the listener's posterior over lexica,
 useful for seeing which interpretation is preferred.
 -/
 def l1_lexicon (u : Utterance) : List (UnLexicon × ℚ) :=
-  let tuples := allHappinessDegrees.flatMap fun d =>
-    allLexica.map fun l => (d, l)
-  let scores := tuples.map fun (d, l) =>
+  let tuples := allHappinessDegrees.flatMap λ d =>
+    allLexica.map λ l => (d, l)
+  let scores := tuples.map λ (d, l) =>
     let priorScore := degreePrior d * lexiconPrior l
     let s1 := basicS1 allUtterances allHappinessDegrees
-      (fun u' d' => boolToRat (meaning l u' d')) degreePrior 1 (fun _ => 0) d
+      (λ u' d' => boolToRat (meaning l u' d')) degreePrior 1 (λ _ => 0) d
     let s1Score := getScore s1 u
     ((d, l), priorScore * s1Score)
   let normalized := normalize scores
   -- Marginalize over degrees
-  allLexica.map fun l =>
-    let lScores := normalized.filter (fun ((_, l'), _) => l' == l) |>.map (·.2)
+  allLexica.map λ l =>
+    let lScores := normalized.filter (λ ((_, l'), _) => l' == l) |>.map (·.2)
     (l, sumScores lScores)
 
 -- Computations
@@ -191,7 +191,7 @@ def l1_lexicon_notUnhappy : List (UnLexicon × ℚ) := l1_lexicon .notUnhappy
 -- Gap Analysis (using Fragments.Degrees infrastructure)
 
 def gapProb (dist : List (HappinessDegree × ℚ)) : ℚ :=
-  dist.foldl (fun acc (d, p) =>
+  dist.foldl (λ acc (d, p) =>
     if inGapRegion d happinessThresholds then acc + p else acc) 0
 
 def gapProb_happy : ℚ := gapProb l1_happy
@@ -239,7 +239,7 @@ Why does "not unhappy" ≠ "happy"?
 - `notContraryNegMeaning`: "not unhappy" = degree ≥ θ_neg (includes gap!)
 - `positiveMeaning'`: "happy" = degree > θ_pos (excludes gap)
 
-### Key Results
+### Results
 1. `unhappy_prefers_contrary`: Morphological negation → polar opposite
 2. `happy_excludes_gap`: "happy" has zero probability in gap
 3. `not_unhappy_includes_gap`: "not unhappy" has positive probability in gap

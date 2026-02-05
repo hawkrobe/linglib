@@ -222,7 +222,7 @@ def extendedWorlds : List Nat := [0, 1, 2, 3, 4, 5]
 Filter extended worlds under negation for a given numeral.
 -/
 def compatibleExtended (w : NumWord) (scope : NegationScope) : List Nat :=
-  extendedWorlds.filter fun k =>
+  extendedWorlds.filter λ k =>
     negatedMeaning LowerBound w scope k
 
 /--

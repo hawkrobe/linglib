@@ -6,7 +6,7 @@ This module contains empirical data from:
 Kao, J.T., Levy, R., & Goodman, N.D. (2016). A Computational Model of Linguistic
 Humor in Puns. Cognitive Science, 40, 1270-1285.
 
-## Key Findings
+## Findings
 
 1. **Ambiguity** (entropy of meaning distribution) distinguishes puns from non-puns
 2. **Distinctiveness** (KL divergence of supporting words) predicts funniness within puns
@@ -248,7 +248,7 @@ def examplePuns : List PhoneticPun := [
 2. Formal measures (ambiguity, distinctiveness) derived from language processing model
 3. Empirical validation with 435 sentences and human ratings
 
-### Key Insight
+### Insight
 
 Puns are funny when:
 1. **Both meanings are plausible** (high ambiguity)

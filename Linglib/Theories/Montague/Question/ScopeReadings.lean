@@ -97,8 +97,8 @@ def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
     (plq : PairListQuestion W E) : GSQuestion W where
   sameAnswer w v :=
     -- Same iff for all y∈Y, the unique x with R(y,x) is the same
-    plq.universalDomain.all fun y =>
-      plq.whDomain.all fun x =>
+    plq.universalDomain.all λ y =>
+      plq.whDomain.all λ x =>
         plq.relation w y x == plq.relation v y x
   refl w := by
     simp only [List.all_eq_true]
@@ -122,8 +122,8 @@ def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
 def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E] [DecidableEq (List E)]
     (plq : PairListQuestion W E) (y : E) : GSQuestion W where
   sameAnswer w v :=
-    decide (plq.whDomain.filter (fun x => plq.relation w y x) =
-            plq.whDomain.filter (fun x => plq.relation v y x))
+    decide (plq.whDomain.filter (λ x => plq.relation w y x) =
+            plq.whDomain.filter (λ x => plq.relation v y x))
   refl w := by simp [decide_eq_true_iff]
   symm w v := by simp [decide_eq_decide]; exact eq_comm
   trans w v x hwv hvx := by
@@ -200,7 +200,7 @@ structure ChoiceAnswer (E : Type*) where
 - This is the CONDITIONAL ANSWER: for each disjunct, the answer. -/
 def ChoiceQuestion.conditionalAnswer {W E : Type*} [DecidableEq E]
     (cq : ChoiceQuestion W E) (w : W) : List (E × List E) :=
-  cq.disjuncts.map fun d =>
+  cq.disjuncts.map λ d =>
     (d, cq.whDomain.filter (cq.relation w d))
 
 /-- Convert choice question to LiftedQuestion under choice reading.
@@ -215,12 +215,12 @@ def ChoiceQuestion.toLiftedQuestion_choice {W E : Type*} [BEq W] [DecidableEq E]
   -- The choice reading is a disjunction over the per-disjunct questions
   -- We build each question directly to avoid LawfulBEq constraint on List E
   let mkQuestion (d : E) : GSQuestion W := {
-    sameAnswer := fun w v =>
-      decide (cq.whDomain.filter (fun x => cq.relation w d x) =
-              cq.whDomain.filter (fun x => cq.relation v d x))
-    refl := fun w => by simp [decide_eq_true_iff]
-    symm := fun w v => by simp [decide_eq_decide]; exact eq_comm
-    trans := fun w v x hwv hvx => by
+    sameAnswer := λ w v =>
+      decide (cq.whDomain.filter (λ x => cq.relation w d x) =
+              cq.whDomain.filter (λ x => cq.relation v d x))
+    refl := λ w => by simp [decide_eq_true_iff]
+    symm := λ w v => by simp [decide_eq_decide]; exact eq_comm
+    trans := λ w v x hwv hvx => by
       simp only [decide_eq_true_iff] at *
       exact hvx ▸ hwv
   }
@@ -228,7 +228,7 @@ def ChoiceQuestion.toLiftedQuestion_choice {W E : Type*} [BEq W] [DecidableEq E]
   match perDisjunct with
   | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
   | q :: qs =>
-    qs.foldl (fun acc q' =>
+    qs.foldl (λ acc q' =>
       LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q'))
       (LiftedTypes.LiftedQuestion.lift q)
 
@@ -237,16 +237,15 @@ def ChoiceQuestion.toGSQuestion_nonchoice {W E : Type*} [DecidableEq E]
     (cq : ChoiceQuestion W E) : GSQuestion W where
   sameAnswer w v :=
     -- Same iff all disjuncts give same answer
-    cq.disjuncts.all fun d =>
-      cq.whDomain.all fun x =>
+    cq.disjuncts.all λ d =>
+      cq.whDomain.all λ x =>
         cq.relation w d x == cq.relation v d x
   refl w := by
     simp only [List.all_eq_true]
     intro _ _ _ _
     exact beq_self_eq_true _
   symm w v := by
-    -- Symmetry of component-wise equality
-    sorry
+    simp only [List.all_eq_true, Bool.beq_comm]
   trans w v x hwv hvx := by
     simp only [List.all_eq_true] at *
     intro d hd e he
@@ -299,8 +298,8 @@ structure ExistentialQuestion (W E : Type*) where
 def ExistentialQuestion.narrowScope {W E : Type} [DecidableEq E] [DecidableEq (List E)]
     (eq : ExistentialQuestion W E) : GSQuestion W where
   sameAnswer w v :=
-    let answersW := eq.whDomain.filter fun x => eq.existentialDomain.any fun y => eq.relation w y x
-    let answersV := eq.whDomain.filter fun x => eq.existentialDomain.any fun y => eq.relation v y x
+    let answersW := eq.whDomain.filter λ x => eq.existentialDomain.any λ y => eq.relation w y x
+    let answersV := eq.whDomain.filter λ x => eq.existentialDomain.any λ y => eq.relation v y x
     decide (answersW = answersV)
   refl w := by simp [decide_eq_true_iff]
   symm w v := by simp [decide_eq_decide]; exact eq_comm
@@ -320,12 +319,12 @@ def ExistentialQuestion.wideScope {W E : Type*} [BEq W] [DecidableEq E]
   -- Wide scope is a disjunction over the per-witness questions
   -- Build each question directly to avoid LawfulBEq constraint on List E
   let mkQuestion (y : E) : GSQuestion W := {
-    sameAnswer := fun w v =>
-      decide (eq.whDomain.filter (fun x => eq.relation w y x) =
-              eq.whDomain.filter (fun x => eq.relation v y x))
-    refl := fun w => by simp [decide_eq_true_iff]
-    symm := fun w v => by simp [decide_eq_decide]; exact eq_comm
-    trans := fun w v x hwv hvx => by
+    sameAnswer := λ w v =>
+      decide (eq.whDomain.filter (λ x => eq.relation w y x) =
+              eq.whDomain.filter (λ x => eq.relation v y x))
+    refl := λ w => by simp [decide_eq_true_iff]
+    symm := λ w v => by simp [decide_eq_decide]; exact eq_comm
+    trans := λ w v x hwv hvx => by
       simp only [decide_eq_true_iff] at *
       exact hvx ▸ hwv
   }
@@ -333,7 +332,7 @@ def ExistentialQuestion.wideScope {W E : Type*} [BEq W] [DecidableEq E]
   match perWitness with
   | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
   | q :: qs =>
-    qs.foldl (fun acc q' =>
+    qs.foldl (λ acc q' =>
       LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q'))
       (LiftedTypes.LiftedQuestion.lift q)
 
@@ -366,8 +365,8 @@ This happens when:
 def hasFunctionalReading {W E : Type*} [DecidableEq E]
     (plq : PairListQuestion W E) (worlds : List W) : Bool :=
   -- In each world, each y has at most one x with R(y,x)
-  worlds.all fun w =>
-    plq.universalDomain.all fun y =>
+  worlds.all λ w =>
+    plq.universalDomain.all λ y =>
       let answers := plq.whDomain.filter (plq.relation w y)
       answers.length <= 1
 
@@ -428,7 +427,7 @@ formal treatment of mention-some. -/
 def ExistentialQuestion.toMentionSomeInterrogative {W E : Type*}
     (eq : ExistentialQuestion W E) : MentionSomeInterrogative W E :=
   { whDomain := eq.whDomain
-  , abstract := fun w x => eq.existentialDomain.any fun y => eq.relation w y x
+  , abstract := λ w x => eq.existentialDomain.any λ y => eq.relation w y x
   }
 
 /-- Wide-scope existential implies mention-some is licensed.
@@ -438,11 +437,14 @@ the question receives a mention-some interpretation because any witness
 for the existential provides a sufficient answer. -/
 theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]
     (eq : ExistentialQuestion W E) (w : W)
-    (_hExists : eq.existentialDomain.any fun y =>
-      eq.whDomain.any fun x => eq.relation w y x) :
-    (eq.toMentionSomeInterrogative).whDomain.any fun x =>
+    (_hExists : eq.existentialDomain.any λ y =>
+      eq.whDomain.any λ x => eq.relation w y x) :
+    (eq.toMentionSomeInterrogative).whDomain.any λ x =>
       (eq.toMentionSomeInterrogative).abstract w x := by
-  sorry
+  unfold ExistentialQuestion.toMentionSomeInterrogative
+  simp only [List.any_eq_true] at *
+  obtain ⟨y, hy_mem, x, hx_mem, hx_rel⟩ := _hExists
+  exact ⟨x, hx_mem, y, hy_mem, hx_rel⟩
 
 
 /-!

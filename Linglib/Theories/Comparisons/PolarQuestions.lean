@@ -29,7 +29,7 @@ Hawkins et al. (2025): Q(q|D) ∝ exp(α·EU)    →    P(D|q) ∝ Q(q|D)·P(D)
                        [formalized in RSA]         [ToM inference]
 ```
 
-## Key Insight: Questions Signal Goals
+## Insight: Questions Signal Goals
 
 All three frameworks share the insight that question choice is informative:
 

@@ -6,7 +6,7 @@ monotonicity properties of various operators.
 
 ## Key Concepts
 
-**Monotonicity**: A function f on propositions is:
+Monotonicity: A function f on propositions is:
   - Upward Entailing (UE): A ⊨ B → f(A) ⊨ f(B)
   - Downward Entailing (DE): A ⊨ B → f(B) ⊨ f(A)
 
@@ -32,7 +32,7 @@ def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : 
 -- Monotonicity Theorems
 
 /--
-**Theorem: Negation is Downward Entailing**
+Negation is Downward Entailing.
 
 If P ⊨ Q, then ¬Q ⊨ ¬P
 
@@ -42,7 +42,7 @@ theorem negation_is_DE : isDownwardEntailing pnot testCases = true := by
   native_decide
 
 /--
-**Concrete example: Negation reverses entailment**
+Negation reverses entailment.
 
 p0 ⊨ p01 (true in {w0} entails true in {w0,w1})
 ¬p01 ⊨ ¬p0 (false in {w0,w1} entails false in {w0})
@@ -53,7 +53,7 @@ theorem negation_reverses_example :
   native_decide
 
 /--
-**Theorem: Conjunction (second arg) is Upward Entailing**
+Conjunction (second arg) is Upward Entailing.
 
 If P ⊨ Q, then (R ∧ P) ⊨ (R ∧ Q)
 -/
@@ -61,7 +61,7 @@ theorem conjunction_second_UE : isUpwardEntailing (pand p01) testCases = true :=
   native_decide
 
 /--
-**Theorem: Disjunction (second arg) is Upward Entailing**
+Disjunction (second arg) is Upward Entailing.
 
 If P ⊨ Q, then (R ∨ P) ⊨ (R ∨ Q)
 -/
@@ -98,7 +98,7 @@ def no_scope : Prop' → Prop' :=
   λ scope => λ _ => no fixedRestr scope
 
 /--
-**Theorem: "Every" is UE in scope**
+"Every" is UE in scope.
 
 If P ⊨ Q, then "Every student P" ⊨ "Every student Q"
 -/
@@ -106,7 +106,7 @@ theorem every_scope_UE : isUpwardEntailing every_scope testCases = true := by
   native_decide
 
 /--
-**Theorem: "Some" is UE in scope**
+"Some" is UE in scope.
 
 If P ⊨ Q, then "Some student P" ⊨ "Some student Q"
 -/
@@ -114,11 +114,11 @@ theorem some_scope_UE : isUpwardEntailing some_scope testCases = true := by
   native_decide
 
 /--
-**Theorem: "No" is DE in scope**
+"No" is DE in scope.
 
 If P ⊨ Q, then "No student Q" ⊨ "No student P"
 
-This is why "no" blocks scalar implicatures!
+This is why "no" blocks scalar implicatures.
 -/
 theorem no_scope_DE : isDownwardEntailing no_scope testCases = true := by
   native_decide
@@ -133,7 +133,7 @@ def every_restr : Prop' → Prop' :=
   λ restr => λ _ => every restr fixedScope
 
 /--
-**Theorem: "Every" is DE in restrictor**
+"Every" is DE in restrictor.
 
 If P ⊨ Q, then "Every Q smokes" ⊨ "Every P smokes"
 
@@ -143,7 +143,7 @@ theorem every_restr_DE : isDownwardEntailing every_restr testCases = true := by
   native_decide
 
 /--
-**Key Insight: DE contexts reverse scalar strength**
+DE contexts reverse scalar strength.
 
 In UE: all ⊢ some (all is stronger, "some" implicates "not all")
 In DE: some ⊢ all (some is stronger, no "not all" implicature)
@@ -159,10 +159,10 @@ theorem de_reverses_strength :
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
 def materialCond (c : Prop') : Prop' → Prop' :=
-  fun p => fun w => !p w || c w
+  λ p => λ w => !p w || c w
 
 /--
-**Conditional antecedent is Downward Entailing**.
+Conditional antecedent is Downward Entailing.
 
 If P ⊨ Q, then "If Q, C" ⊨ "If P, C"
 
@@ -176,7 +176,7 @@ theorem conditional_antecedent_DE :
   native_decide
 
 /--
-**Conditional antecedent DE property (explicit for test cases)**.
+Conditional antecedent DE property (explicit for test cases).
 
 This verifies the DE property holds for all test case pairs.
 
@@ -185,22 +185,22 @@ antecedent strengthens the conditional).
 -/
 theorem conditional_antecedent_DE_test_cases :
     -- Check all test case pairs satisfy the DE property
-    testCases.all (fun (p, q) =>
+    testCases.all (λ (p, q) =>
       !entails p q || entails (materialCond fixedScope q) (materialCond fixedScope p)) = true := by
   native_decide
 
 /--
-**Implication second argument is UE**.
+Implication second argument is UE.
 
 If P ⊨ Q, then (A → P) ⊨ (A → Q)
 
 The consequent position of a conditional is upward entailing.
 -/
-theorem implication_consequent_UE : isUpwardEntailing (fun c => materialCond c fixedRestr) testCases = true := by
+theorem implication_consequent_UE : isUpwardEntailing (λ c => materialCond c fixedRestr) testCases = true := by
   native_decide
 
 /--
-**Summary: Conditional positions and monotonicity**
+Conditional positions and monotonicity.
 
 - Antecedent position: DE (strengthening weakens the conditional)
 - Consequent position: UE (strengthening strengthens the conditional)
@@ -211,7 +211,7 @@ This explains scalar implicature patterns:
 -/
 theorem conditional_monotonicity_summary :
     isDownwardEntailing (materialCond fixedScope) testCases = true ∧
-    isUpwardEntailing (fun c => materialCond c fixedRestr) testCases = true := by
+    isUpwardEntailing (λ c => materialCond c fixedRestr) testCases = true := by
   constructor
   · exact conditional_antecedent_DE
   · exact implication_consequent_UE

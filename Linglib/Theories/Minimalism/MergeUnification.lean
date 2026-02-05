@@ -205,14 +205,14 @@ theorem no_mutual_preserves_symmetry (α β : SyntacticObject)
   cases h_some with
   | inl hαβ =>
     -- α selects β, so β doesn't select α (by no mutual)
-    have hβα : ¬selects β α := fun h => h_no_mutual ⟨hαβ, h⟩
+    have hβα : ¬selects β α := λ h => h_no_mutual ⟨hαβ, h⟩
     -- Both merges have label α
     have h1 : label (merge α β) = label α := label_of_merge_when_selects α β hαβ
     have h2 : label (merge β α) = label α := label_of_merge_when_right_selects β α hαβ hβα
     rw [h1, h2]
   | inr hβα =>
     -- β selects α, so α doesn't select β (by no mutual)
-    have hαβ : ¬selects α β := fun h => h_no_mutual ⟨h, hβα⟩
+    have hαβ : ¬selects α β := λ h => h_no_mutual ⟨h, hβα⟩
     -- Both merges have label β
     have h1 : label (merge α β) = label β := label_of_merge_when_right_selects α β hβα hαβ
     have h2 : label (merge β α) = label β := label_of_merge_when_selects β α hβα
@@ -452,7 +452,7 @@ theorem external_merge_either_projects (em : ExternalMerge)
       right; trivial
     · rw [em.is_merge]
       -- β selects α. By acyclicity, α cannot also select β.
-      have hαβ : ¬selects em.α em.β := fun hαβ => h_acyclic ⟨hαβ, h⟩
+      have hαβ : ¬selects em.α em.β := λ hαβ => h_acyclic ⟨hαβ, h⟩
       exact sameLabel_when_right_selects em.α em.β h hαβ
 
 /-- **Property 3 for Internal Merge**: Either element can project.
@@ -474,7 +474,7 @@ theorem internal_merge_either_projects (im : InternalMerge)
       right; trivial
     · rw [im.is_merge]
       -- target selects mover. By acyclicity, mover cannot also select target.
-      have hmov : ¬selects im.mover im.target := fun hmov => h_acyclic ⟨hmov, h⟩
+      have hmov : ¬selects im.mover im.target := λ hmov => h_acyclic ⟨hmov, h⟩
       exact sameLabel_when_right_selects im.mover im.target h hmov
 
 /-- **THEOREM (Harizanov Unification)**: Both merge types satisfy all three properties.
@@ -497,8 +497,8 @@ theorem harizanov_unification :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact external_merge_uniform
   · exact internal_merge_uniform
-  · exact fun em => labeling_uniform_external em
-  · exact fun im => labeling_uniform_internal im
+  · exact λ em => labeling_uniform_external em
+  · exact λ im => labeling_uniform_internal im
   · exact external_merge_either_projects
   · exact internal_merge_either_projects
 
@@ -559,7 +559,7 @@ theorem target_can_project (im : InternalMerge)
   · -- target has the same label as result
     rw [im.is_merge]
     -- target selects mover. By acyclicity, mover cannot also select target.
-    have hmov : ¬selects im.mover im.target := fun hmov => h_acyclic ⟨hmov, h_target_selects⟩
+    have hmov : ¬selects im.mover im.target := λ hmov => h_acyclic ⟨hmov, h_target_selects⟩
     exact sameLabel_when_right_selects im.mover im.target h_target_selects hmov
 
 /-- The dichotomy: either mover or target projects (one must).
@@ -676,8 +676,8 @@ theorem contains_irrefl' (x : SyntacticObject) : ¬contains x x :=
 /-- Containment on syntactic objects forms a strict partial order -/
 theorem contains_is_strict_partial_order : StrictPartialOrder SyntacticObject contains where
   irrefl := contains_irrefl'
-  asymm := fun x y hxy hyx => contains_irrefl' x (contains_trans hxy hyx)
-  trans := fun _ _ _ => contains_trans
+  asymm := λ x y hxy hyx => contains_irrefl' x (contains_trans hxy hyx)
+  trans := λ _ _ _ => contains_trans
 
 /-- **TRICHOTOMY THEOREM** (Order Theory):
     For any strict partial order, element pairs fall into exactly one of three cases.
@@ -747,19 +747,19 @@ def AccessCondition := Set SyntacticObject → SyntacticObject → SyntacticObje
 
 /-- External-only: both must be roots -/
 def externalOnly : AccessCondition :=
-  fun W A B => A ∈ W ∧ B ∈ W
+  λ W A B => A ∈ W ∧ B ∈ W
 
 /-- Standard (Chomsky): A is root, B is either in A or a root -/
 def standardAccess : AccessCondition :=
-  fun W A B => A ∈ W ∧ (contains A B ∨ B ∈ W)
+  λ W A B => A ∈ W ∧ (contains A B ∨ B ∈ W)
 
 /-- Sideward: A is root, B is anywhere in W -/
 def sidewardAccess : AccessCondition :=
-  fun W A B => A ∈ W ∧ (∃ C ∈ W, containsOrEq C B)
+  λ W A B => A ∈ W ∧ (∃ C ∈ W, containsOrEq C B)
 
 /-- Full: both anywhere in W -/
 def fullAccess : AccessCondition :=
-  fun W A B => (∃ C ∈ W, containsOrEq C A) ∧ (∃ D ∈ W, containsOrEq D B)
+  λ W A B => (∃ C ∈ W, containsOrEq C A) ∧ (∃ D ∈ W, containsOrEq D B)
 
 /-- One condition is more permissive than another -/
 def morePermissive (c1 c2 : AccessCondition) : Prop :=
@@ -830,7 +830,7 @@ but the LEAST UPPER BOUND of the two fundamental merge types.
 
 /-- The pure Internal Merge condition (without External) -/
 def internalOnly : AccessCondition :=
-  fun W A B => A ∈ W ∧ contains A B
+  λ W A B => A ∈ W ∧ contains A B
 
 /-- **THEOREM (Join Characterization)**:
     Standard access is exactly the join of External and Internal conditions.
@@ -954,11 +954,11 @@ theorem complete_harizanov_unification :
     (∀ α β : SyntacticObject, α ≠ β →
       (¬contains α β ∧ ¬contains β α) ∨ (contains α β ∨ contains β α)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact fun em => em.is_merge
-  · exact fun im => im.is_merge
+  · exact λ em => em.is_merge
+  · exact λ im => im.is_merge
   · exact all_movement_is_internal_merge
-  · exact fun m => m.is_merge
-  · exact fun m => m.is_merge
+  · exact λ m => m.is_merge
+  · exact λ m => m.is_merge
   · intro α β _
     by_cases h : contains α β ∨ contains β α
     · exact Or.inr h

@@ -3,9 +3,9 @@
 
 Dekker's foundational system for dynamic semantics (Dekker 2012, Ch. 2).
 
-## Key Innovation
+## Innovation
 
-PLA distinguishes **variables** (x_i) from **pronouns** (p_i):
+PLA distinguishes variables (x_i) from pronouns (p_i):
 - Variables are bound by quantifiers (∃x_i)
 - Pronouns are anaphoric expressions resolved from discourse context
 
@@ -197,26 +197,5 @@ theorem Formula.resolve_no_pronouns (φ : Formula) (ρ : Resolution) :
   | neg φ ih => exact ih
   | conj φ ψ ih1 ih2 => simp [Formula.resolve, Formula.range, ih1, ih2]
   | exists_ i φ ih => exact ih
-
--- SUMMARY
-
-/-!
-## Advantages of This Approach
-
-### Cleaner Proofs
-- `termsPronouns` uses `Finset.biUnion` instead of `List.foldl`
-- `mem_termsPronouns` gives us the key membership lemma for free
-- Resolution correctness follows easily from `Finset.biUnion_eq_empty`
-
-### Mathlib Integration
-- Leverages `Finset.mem_biUnion`, `Finset.biUnion_eq_empty`, etc.
-- Works with decidability automatically
-- Clean induction on formulas
-
-### Key Mathlib Lemmas Used
-- `Finset.mem_biUnion`: `i ∈ s.biUnion f ↔ ∃ a ∈ s, i ∈ f a`
-- `Finset.biUnion_eq_empty`: `s.biUnion f = ∅ ↔ ∀ a ∈ s, f a = ∅`
-- `Finset.subset_union_left/right`: automatic subset lemmas
--/
 
 end Theories.DynamicSemantics.PLA

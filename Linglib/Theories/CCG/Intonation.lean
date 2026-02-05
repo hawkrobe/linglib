@@ -3,7 +3,7 @@
 
 Steedman's (2000) theory of how prosodic structure aligns with CCG derivations.
 
-## Key Insight
+## Insight
 
 CCG's "spurious ambiguity" is not spurious: different derivations correspond to
 different Information Structures, disambiguated by intonation in speech.
@@ -17,9 +17,9 @@ Intonation selects among these:
 
 ## Prosodic Marking
 
-- **Pitch accents** (H*, L+H*): Mark focus/contrast at word level
-- **Boundary tones** (L, LH%, LL%): Mark prosodic phrase edges
-- **INFORMATION feature** (θ/ρ): Projects theme/rheme through derivation
+- Pitch accents (H*, L+H*): Mark focus/contrast at word level
+- Boundary tones (L, LH%, LL%): Mark prosodic phrase edges
+- Information feature (theta/rho): Projects theme/rheme through derivation
 
 ## Reference
 
@@ -375,14 +375,14 @@ def anna_married_manny : List ProsodicPhrase := [anna_married_theme, manny_rheme
 -- Constraint: Prosody must align with CCG constituency
 
 /-
-Steedman's key insight: prosodic boundaries can ONLY occur at CCG constituent
-boundaries. This explains Selkirk's "Sense Unit Condition" as a theorem.
+Prosodic boundaries can only occur at CCG constituent boundaries
+(Steedman 2000). This explains Selkirk's "Sense Unit Condition" as a theorem.
 
-ALLOWED:
+Allowed:
   (FRED ate) (the BEANS)   -- "Fred ate" is a CCG constituent (S/NP)
 
-DISALLOWED:
-  *(FRED ate the) (BEANS)  -- "Fred ate the" is NOT a constituent
+Disallowed:
+  *(FRED ate the) (BEANS)  -- "Fred ate the" is not a constituent
   *(The beans that FRED) (ate were DELICIOUS)  -- violates island
 -/
 
@@ -395,33 +395,5 @@ def ProsodicDeriv.wellFormed : ProsodicDeriv → Bool
   | .bcomp d1 d2 => d1.wellFormed && d2.wellFormed
   | .ftr d _ => d.wellFormed
   | .boundary d _ => d.wellFormed && d.prosodicCat.isSome
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Prosodic Types
-- `PitchAccent`: H*, L+H*, null
-- `BoundaryTone`: L, LH%, LL%
-- `InfoFeature`: θ, ρ, unmarked, φ
-- `ProsodicCat`: CCG category + info feature
-- `Tune`: Pitch accent + boundary
-
-### Prosodic Rules
-- `prosodicForwardApp`: Application with info unification
-- `prosodicForwardComp`: Composition with info projection
-- `applyBoundary`: Convert to phrasal category
-
-### Information Structure
-- `ProsodicDeriv`: Derivations with prosodic marking
-- `extractInfoStructure`: Derive IS from prosodic phrases
-- `HasInfoStructure` instance: CCG → IS
-
-### Key Properties
-1. **Constituency = Prosody**: Boundaries only at CCG constituents
-2. **Spurious ≠ Spurious**: Different derivations = different IS
-3. **Theme = λ-abstract**: Composition creates thematic properties
--/
 
 end CCG.Intonation

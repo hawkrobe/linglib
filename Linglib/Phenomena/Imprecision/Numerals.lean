@@ -5,17 +5,17 @@ Theory-neutral empirical patterns for imprecision in bare numerals.
 
 ## Phenomena Covered
 
-1. **Round vs non-round asymmetry**: 100 permits imprecision, 99 doesn't
-2. **Context-sensitivity**: Same numeral, exact vs inexact readings
-3. **Negation constraint**: Numerals under negation require polar questions
-4. **Lack of homogeneity gaps**: Unlike plurals, numerals don't show clear gaps
+1. Round vs non-round asymmetry: 100 permits imprecision, 99 doesn't.
+2. Context-sensitivity: same numeral, exact vs inexact readings.
+3. Negation constraint: numerals under negation require polar questions.
+4. Unlike plurals, numerals don't show clear homogeneity gaps.
 
-## Key Puzzle
+## Puzzle
 
 Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
 (99, 47, 1003) require exact readings. This asymmetry is systematic across languages.
 
-## Key References
+## References
 
 - Krifka (2007): Approximate interpretation
 - Sauerland & Stateva (2007): Scalar alternatives for numerals
@@ -75,7 +75,7 @@ structure NumeralImprecisionDatum where
   deriving Repr
 
 /--
-The CARS scenario from the dissertation.
+The cars scenario from the dissertation.
 
 Source: dissertation (19), (20)
 -/
@@ -250,7 +250,7 @@ def exactlyRemovesImprecision : ExactlyModifierDatum :=
 /--
 "Approximately" explicitly marks imprecision.
 
-Interesting: "approximately" doesn't ADD imprecision to a precise expression;
+Interestingly, "approximately" doesn't add imprecision to a precise expression;
 it makes imprecision explicit on an already-imprecise expression.
 
 Source: dissertation (4)
@@ -390,33 +390,5 @@ def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
 
 def gameShowExamples : List GameShowDatum :=
   [gameShowPositive, gameShowNegative]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `RoundnessLevel`: Classification of numeral roundness
-- `NumeralImprecisionDatum`: Context-dependent exactness
-- `RoundnessAsymmetryDatum`: Round vs non-round contrast
-- `NegationConstraintDatum`: Polar question requirement
-- `GameShowDatum`: Homogeneity gap test
-- `ExactlyModifierDatum`: Imprecision removal
-- `ApproximatelyDatum`: Explicit imprecision marking
-- `GranularityDatum`: Scale-relative roundness
-
-### Key Findings
-1. Round numerals (100) permit imprecision; non-round (99) don't
-2. "Exactly" removes imprecision (parallel to "all" for plurals)
-3. Numerals under negation require polar question contexts
-4. Unlike plurals, numerals don't show clear homogeneity gaps
-5. Roundness is scale-relative (granularity matters)
-
-### Key References
-- Krifka (2007), Sauerland & Stateva (2007)
-- Solt (2014, 2018), Solt & Waldon (2019), Solt (2023)
-- Križ (2015)
--/
 
 end Phenomena.Imprecision.Numerals

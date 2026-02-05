@@ -133,8 +133,8 @@ Note: `disjGSQuestion` was removed from this file because it's semantically inva
 
 "Did P₁ or P₂ or ... or Pₙ?" partitions by which Pᵢ is true. -/
 def alternativeQuestion {W : Type*} (alts : List (W -> Bool)) : GSQuestion W where
-  sameAnswer w v := alts.all fun p => p w == p v
-  refl w := List.all_eq_true.mpr fun _ _ => beq_self_eq_true _
+  sameAnswer w v := alts.all λ p => p w == p v
+  refl w := List.all_eq_true.mpr λ _ _ => beq_self_eq_true _
   symm w v := by
     congr 1
     funext p
@@ -151,7 +151,7 @@ def alternativeQuestion {W : Type*} (alts : List (W -> Bool)) : GSQuestion W whe
 
 "Is it the case that P₁ ∨ P₂?" has two cells: yes and no. -/
 def polarDisjunction {W : Type*} (p1 p2 : W -> Bool) : GSQuestion W :=
-  polarQuestion (fun w => p1 w || p2 w)
+  polarQuestion (λ w => p1 w || p2 w)
 
 /-- Alternative and polar-disjunction are different partitions.
 
@@ -243,10 +243,10 @@ def EmbeddedCoordination.meaningLifted {W : Type*} [BEq W] (ec : EmbeddedCoordin
     let liftedQ := LiftedTypes.LiftedQuestion.lift q
     if ec.coordType then
       -- Conjunction: lift each and conjoin
-      qs.foldl (fun acc q' => LiftedTypes.LiftedQuestion.conj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
+      qs.foldl (λ acc q' => LiftedTypes.LiftedQuestion.conj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
     else
       -- Disjunction: lift each and disjoin (this is the key fix!)
-      qs.foldl (fun acc q' => LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
+      qs.foldl (λ acc q' => LiftedTypes.LiftedQuestion.disj acc (LiftedTypes.LiftedQuestion.lift q')) liftedQ
 
 -- Sluicing and Coordinated Antecedents
 
@@ -292,8 +292,8 @@ Q₂ is functionally dependent on Q₁ if the answer to Q₂ can vary
 depending on which cell of Q₁ we're in. -/
 def functionallyDependent {W : Type*} (q1 q2 : GSQuestion W) (worlds : List W) : Bool :=
   -- Check if there exist w, v in same q1-cell but different q2-cells
-  worlds.any fun w =>
-    worlds.any fun v =>
+  worlds.any λ w =>
+    worlds.any λ v =>
       q1.sameAnswer w v && !q2.sameAnswer w v
 
 /-- When Q₂ is functionally dependent on Q₁, conjunction gives pair-list readings. -/
@@ -329,7 +329,7 @@ def pairListAsConjunction {W E : Type*} [BEq W]
     : GSQuestion W :=
   match quantDomain with
   | [] => GSQuestion.trivial
-  | e :: es => es.foldl (fun acc e' => acc + questionFor e') (questionFor e)
+  | e :: es => es.foldl (λ acc e' => acc + questionFor e') (questionFor e)
 
 /-- The pair-list reading refines any individual question. -/
 theorem pairList_refines_individual {W E : Type*} [BEq W]

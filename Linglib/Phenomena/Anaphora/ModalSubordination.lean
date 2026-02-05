@@ -13,12 +13,12 @@ under "might" in the first sentence. This is surprising because:
 1. The wolf only exists in modal worlds
 2. Yet "would" can access it
 
-## Key Properties
+## Properties
 
-1. **Modal context persistence**: Modals can establish contexts that persist
-2. **Would/could continuation**: Certain modals continue the modal context
-3. **Indicative blocks**: "A wolf might come in. It eats you." is odd
-4. **Connection to counterfactuals**: Similar to counterfactual conditionals
+1. Modals can establish contexts that persist across sentences.
+2. Certain modals (would, could) continue the modal context.
+3. "A wolf might come in. It eats you." is odd (indicative blocks).
+4. The pattern is similar to counterfactual conditionals.
 
 ## References
 
@@ -295,47 +295,5 @@ def accessibilityData : List AccessibilityDatum := [
   hypotheticalAccess,
   counterfactualAccess
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `ModalSubDatum`: Two-sentence modal subordination
-- `CounterfactualDatum`: Counterfactual conditionals
-- `AccessibilityDatum`: Hofmann's accessibility classification
-
-### Key Examples
-- `wolfMightWould`: "A wolf might... It would..." (OK)
-- `wolfMightIndicative`: "A wolf might... It eats..." (BAD)
-- `counterfactualWolf`: If-conditional equivalent
-
-### Patterns
-
-| Modal1 | Modal2 | Felicitous |
-|--------|--------|------------|
-| might | would | Yes |
-| might | could | Yes |
-| could | would | Yes |
-| might | indicative | No |
-| might | will | No |
-| might | must | No |
-
-### Accessibility Classes (Hofmann 2025)
-
-| Class | Example | Accessible By |
-|-------|---------|---------------|
-| Veridical | "A wolf came in" | Any continuation |
-| Hypothetical | "A wolf might come in" | would/could |
-| Counterfactual | "If a wolf had come in" | would have |
-
-### Theoretical Relevance
-
-Modal subordination tests:
-- Dynamic semantics: How do modals affect accessibility?
-- ICDRT: Propositional drefs track modal contexts
-- DRT: Subordinate boxes for modal contexts
--/
 
 end Phenomena.Anaphora.ModalSubordination

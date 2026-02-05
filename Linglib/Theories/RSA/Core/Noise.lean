@@ -11,7 +11,7 @@ This module provides a unified treatment of noise in RSA models.
 | Degen et al. 2020 | Semantic | Perception |
 | Kursat & Degen 2021 | Perceptual | Verification |
 
-## Key Insight
+## Insight
 
 All three use the same underlying operation:
 ```

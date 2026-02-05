@@ -7,10 +7,10 @@ generic sentences like "Dogs bark", "Birds fly", etc.
 ## The Traditional Account
 
 In the standard analysis (Krifka et al. 1995, Carlson 1977), generics involve:
-1. A covert quantifier **GEN** over situations/cases
-2. A **restrictor** (the kind)
-3. A **nuclear scope** (the property)
-4. A hidden **normalcy** parameter
+1. A covert quantifier GEN over situations/cases
+2. A restrictor (the kind)
+3. A nuclear scope (the property)
+4. A hidden normalcy parameter
 
 Structure: GEN_s [Restrictor(s)] [NuclearScope(s)]
 
@@ -21,9 +21,9 @@ Example: "Dogs bark"
 ## The Problem with GEN
 
 The `normal` parameter is doing all the work, but it's:
-1. **Not observable** (covert)
-2. **Context-dependent** (varies by property)
-3. **Essentially circular** — "normal dog situations" are stipulated to be
+1. Not observable (covert)
+2. Context-dependent (varies by property)
+3. Essentially circular: "normal dog situations" are stipulated to be
    situations where dogs do the characteristic thing
 
 ## Comparison with RSA Treatment
@@ -92,7 +92,7 @@ Traditional GEN as a quantifier over situations.
     - `restrictor`: the kind property (e.g., "is a dog in s")
     - `scope`: the predicated property (e.g., "barks in s")
 
-    **Critical observation**: The `normal` parameter is where all the
+    The `normal` parameter is where all the
     context-sensitivity and exception-tolerance is hidden.
 -/
 def traditionalGEN
@@ -101,7 +101,7 @@ def traditionalGEN
     (restrictor : Restrictor)
     (scope : Scope)
     : Bool :=
-  situations.all fun s =>
+  situations.all λ s =>
     -- For all normal situations where restrictor holds, scope holds
     !(normal s && restrictor s) || scope s
 
@@ -116,7 +116,7 @@ def traditionalGEN_existential
     (restrictor : Restrictor)
     (scope : Scope)
     : Bool :=
-  !situations.any fun s => normal s && restrictor s && !scope s
+  !situations.any λ s => normal s && restrictor s && !scope s
 
 /-- The two formulations are equivalent -/
 theorem gen_formulations_equiv
@@ -150,7 +150,7 @@ Different theories of generics differ primarily in how they characterize
 the "normal" situations. This structure captures what any GEN-based theory
 must provide.
 
-**Comparison with ModalTheory**:
+Comparison with ModalTheory:
 | Aspect    | ModalTheory                  | GenericTheory                |
 |-----------|------------------------------|------------------------------|
 | Quantifier| Over accessible worlds       | Over normal situations       |
@@ -182,34 +182,34 @@ def GenericTheory.eval
 def strictUniversal : GenericTheory :=
   { name := "Strict Universal"
   , citation := "Naive universal quantification"
-  , normalcyFunction := fun _ => fun _ => true
+  , normalcyFunction := λ _ => λ _ => true
   , allowsExceptions := false }
 
 /-- Majority-based GEN: "normal" = occurring more than half the time -/
 def majorityBased (restrictor : Restrictor) : GenericTheory :=
   { name := "Majority-Based"
   , citation := "Simple prevalence threshold"
-  , normalcyFunction := fun situations =>
+  , normalcyFunction := λ situations =>
       let restrictorSits := situations.filter restrictor
       let count := restrictorSits.length
-      fun s => restrictor s && count > 0
+      λ s => restrictor s && count > 0
   , allowsExceptions := true }
 
 -- The Circularity Problem
 
 /--
-**The Problem with Traditional GEN**:
+The problem with traditional GEN:
 
 The `normal` parameter does all the explanatory work but is:
 
-1. **Not observable** — it's covert, posited to explain judgments
-2. **Context-dependent** — varies with the property being predicated
-3. **Essentially circular** — defined to give the right results
+1. Not observable: it is covert, posited to explain judgments
+2. Context-dependent: varies with the property being predicated
+3. Essentially circular: defined to give the right results
 
 Example: Why is "Dogs bark" true despite some dogs not barking?
 - Traditional answer: Those dogs aren't in "normal" dog situations
 - But what makes a situation normal? Being one where dogs bark.
-- This is **not explanatory**.
+- This is not explanatory.
 
 Example: "Mosquitoes carry malaria" is true with ~1% prevalence
 - Traditional answer: The "normal" mosquito situations are disease-carrying ones
@@ -224,7 +224,7 @@ The RSA/Tessler-Goodman approach replaces "normalcy" with:
 structure CircularityProblem where
   /-- The normalcy predicate is context-dependent -/
   normalcyVaries : GenericTheory → GenericTheory → Prop :=
-    fun T1 T2 => T1.normalcyFunction ≠ T2.normalcyFunction
+    λ T1 T2 => T1.normalcyFunction ≠ T2.normalcyFunction
   /-- The normalcy is chosen to fit judgments, not independently motivated -/
   normalcyNotIndependent : Prop := True
 
@@ -260,7 +260,7 @@ def thresholdGeneric
   prevalence situations restrictor scope > threshold
 
 /-!
-**Key Result**: GEN is eliminable via threshold semantics.
+GEN is eliminable via threshold semantics.
 
 The theorem `gen_eliminable` proving this is in `Theories/Comparisons/GenericSemantics.lean`,
 which connects traditional GEN to Tessler & Goodman's (2019) RSA approach.
@@ -278,16 +278,16 @@ def dogSituations : List Situation := [
 ]
 
 /-- All situations involve dogs (restrictor = true) -/
-def isDogSituation : Restrictor := fun _ => true
+def isDogSituation : Restrictor := λ _ => true
 
 /-- Most dogs bark in these situations -/
-def dogBarks : Scope := fun s =>
+def dogBarks : Scope := λ s =>
   match s.id with
   | 2 => false  -- Rex is sleeping
   | _ => true
 
 /-- "Normal" = typical/expected situations (NOT sleeping) -/
-def normalDogSituation : NormalcyPredicate := fun s =>
+def normalDogSituation : NormalcyPredicate := λ s =>
   s.id != 2  -- Sleeping is not "normal" for purposes of barking
 
 -- "Dogs bark" is true under traditional GEN with appropriate normalcy

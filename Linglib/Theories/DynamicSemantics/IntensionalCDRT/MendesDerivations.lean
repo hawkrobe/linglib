@@ -69,7 +69,7 @@ variable {W Time E : Type*} [LE Time] [LT Time]
 variable (history : WorldHistory W Time)
 
 /--
-**(54) Maria** - Proper name
+(54) Maria -- proper name.
 
 ⟦Maria⟧ = λP.P(maria)
 
@@ -81,7 +81,7 @@ def lexMaria (maria : E)
   P maria c
 
 /--
-**(55) estar em casa** - "be at home"
+(55) estar em casa -- "be at home".
 
 ⟦estar em casa⟧ = λxλsλc. [| at-home(x)(s)]; c
 
@@ -95,7 +95,7 @@ def lexAtHome
   { gs ∈ c | atHomeRel x (gs.1.sit sitVar) }
 
 /--
-**(56) atender** - "answer (the door)"
+(56) atender -- "answer (the door)".
 
 ⟦atender⟧ = λxλsλc. [| answer(x)(s)]; c
 
@@ -109,7 +109,7 @@ def lexAnswer
   { gs ∈ c | answerRel x (gs.1.sit sitVar) }
 
 /--
-**(57) SF (Subordinate Future)**
+(57) SF (Subordinate Future).
 
 ⟦SF⟧ = SUBJ ∘ FUT = λv_new λv_ref λc. SUBJ^{v_new}_{v_ref}[FUT(v_new, v_ref); c]
 
@@ -118,7 +118,7 @@ Type: SVar ⇒ SVar ⇒ c ⇒ c
 def lexSF := @subordinateFuture W Time E _ _
 
 /--
-**(58) ela** - "she" (pronoun bound to Maria in discourse)
+(58) ela -- "she" (pronoun bound to Maria in discourse).
 
 ⟦ela⟧ = λP.P(maria)  -- In this context, bound to Maria
 
@@ -130,7 +130,7 @@ def lexShe (maria : E)
   P maria c
 
 /--
-**(59) vai** - Future auxiliary "will"
+(59) vai -- future auxiliary "will".
 
 ⟦vai⟧ = λVPλsλc. VP(s)(c)  -- Transparent, temporal info from SF
 
@@ -144,7 +144,7 @@ def lexWill
   VP sitVar c
 
 /--
-**(60) Conditional "se"** - "if"
+(60) Conditional "se" -- "if".
 
 ⟦se⟧ = λAntλConsλsλc. ∀(g,s₀)∈c: Ant(s)(c) ⊆ Cons(s)(c)
 
@@ -158,7 +158,7 @@ def lexIf
 
 
 /--
-**STEP 1: Parse tree**
+Step 1: parse tree.
 
 [S [Cond se [S_ant Maria estiver.SF em casa]]
     [S_cons ela vai atender]]
@@ -173,7 +173,7 @@ structure ParseTree (W Time E : Type*) where
   consequentVP : E → Situation W Time → Prop
 
 /--
-**STEP 2: Antecedent derivation**
+Step 2: antecedent derivation.
 
 ⟦Maria estiver em casa⟧
 = ⟦SF⟧(s₁)(s₀)(⟦Maria⟧(⟦em casa⟧))
@@ -193,7 +193,7 @@ def deriveAntecedent
   lexAtHome atHomeRel maria sfVar c₁
 
 /--
-**STEP 3: Consequent derivation**
+Step 3: consequent derivation.
 
 ⟦ela vai atender⟧
 = ⟦ela⟧(λx.⟦vai⟧(⟦atender⟧(x)))
@@ -212,7 +212,7 @@ def deriveConsequent
   lexAnswer answerRel maria sfVar c₁
 
 /--
-**STEP 4: Full sentence derivation**
+Step 4: full sentence derivation.
 
 ⟦Se Maria estiver em casa, ela vai atender⟧
 = ⟦se⟧(⟦Maria estiver em casa⟧)(⟦ela vai atender⟧)
@@ -230,7 +230,7 @@ def deriveFullSentence
 
 
 /--
-**Formula (61): Antecedent LF**
+Formula (61): antecedent LF.
 
 [SUBJ^{s₁}_{s₀} [FUT [Maria em casa(s₁)]]]
 
@@ -244,7 +244,7 @@ def formula61
   deriveAntecedent history maria atHomeRel sfVar speechVar
 
 /--
-**Formula (62): Consequent LF (anchored)**
+Formula (62): consequent LF (anchored).
 
 [IND_{s₁} [ela atender(s₁)]]
 
@@ -258,7 +258,7 @@ def formula62
   deriveConsequent maria answerRel sfVar
 
 /--
-**Formula (63): Full conditional**
+Formula (63): full conditional.
 
 ⟦(53)⟧^c = { (g, s₀) ∈ c |
   ∀s₁ ∈ hist(s₀): τ(s₁) > τ(s₀) →
@@ -275,7 +275,7 @@ def formula63
 
 
 /--
-**Theorem: Derivation introduces situation in historical base**
+Derivation introduces situation in historical base.
 
 The situation s₁ introduced by SF is in the historical alternatives.
 -/
@@ -317,7 +317,7 @@ theorem derivation_in_historical_base
     exact h_hist
 
 /--
-**Theorem: Derivation enforces future ordering**
+Derivation enforces future ordering.
 
 The situation s₁ has time strictly after the speech situation.
 -/
@@ -344,7 +344,7 @@ theorem derivation_future_ordering
   exact h_sf.2
 
 /--
-**Theorem: Derivation enforces conditional semantics**
+Derivation enforces conditional semantics.
 
 If Maria is at home at s₁, she answers at s₁.
 -/
@@ -366,7 +366,7 @@ theorem derivation_conditional_holds
 
 
 /--
-**Table 3 from Mendes (2025): Temporal reference patterns**
+Table 3 from Mendes (2025): temporal reference patterns.
 
 | Construction      | Matrix Mood | Embedded Mood | Time Reference |
 |-------------------|-------------|---------------|----------------|
@@ -394,7 +394,7 @@ def sfEnablesFutureReference (constr : Construction) : Prop :=
 
 
 /--
-**Counterfactual conditional** (for comparison)
+Counterfactual conditional (for comparison).
 
 "Se Maria estivesse em casa, ela atenderia."
 "If Maria were at home, she would answer."
@@ -416,7 +416,7 @@ def deriveCounterfactual
   lexAnswer answerRel maria cfVar c₃
 
 /--
-**Theorem: SF vs counterfactual differ in temporal constraint**
+SF vs counterfactual differ in temporal constraint.
 
 SF constrains to future; counterfactual allows past/present.
 -/
@@ -436,46 +436,5 @@ theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
     exact derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c gs h
   · trivial
 
--- Summary
-
-/-
-## What This Module Provides
-
-### CDRT Type System
-- `CDRTType`: Basic types (e, t, s, c)
-- `vpType`, `sentType`, `npType`: Derived types
-
-### Lexical Entries (Formulas 54-60)
-- `lexMaria`: Proper name
-- `lexAtHome`: "estar em casa"
-- `lexAnswer`: "atender"
-- `lexSF`: Subordinate Future operator
-- `lexShe`: Pronoun "ela"
-- `lexWill`: Future auxiliary "vai"
-- `lexIf`: Conditional "se"
-
-### Step-by-Step Derivation
-- `deriveAntecedent`: Antecedent with SF
-- `deriveConsequent`: Consequent with IND retrieval
-- `deriveFullSentence`: Complete conditional
-
-### Paper Formulas (61-63)
-- `formula61`: Antecedent LF
-- `formula62`: Consequent LF
-- `formula63`: Full conditional truth conditions
-
-### Verification Theorems
-- `derivation_in_historical_base`: s₁ ∈ hist(s₀)
-- `derivation_future_ordering`: τ(s₁) > τ(s₀)
-- `derivation_conditional_holds`: Conditional semantics
-
-### Table 3 Patterns
-- `Construction`: Types of SF constructions
-- `sfEnablesFutureReference`: All enable future via modal anaphora
-
-### Comparison
-- `deriveCounterfactual`: Counterfactual for comparison
-- `sf_vs_counterfactual_temporal`: Temporal difference
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT.MendesDerivations

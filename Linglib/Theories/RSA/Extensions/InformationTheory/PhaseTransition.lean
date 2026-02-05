@@ -6,7 +6,7 @@ Formalizes Proposition 3 from Zaslavsky et al. (2020):
 > At α = 1, the RSA objective G_α equals the negative rate-distortion
 > functional -R[D], connecting pragmatic reasoning to optimal compression.
 
-## Key Results
+## Results
 
 1. **Critical point**: α = 1 is where G_α = -R[D]
 2. **Phase transition**: Qualitatively different behavior above/below α = 1
@@ -64,7 +64,7 @@ def phaseTestScenario (α : ℚ) (α_nonneg : 0 ≤ α := by norm_num) : RSA.RSA
   RSA.RSAScenarioQ.basicBool
     [true, false]  -- Two utterances
     [true, false]  -- Two worlds
-    (fun w u => w == u)  -- Perfect alignment
+    (λ w u => w == u)  -- Perfect alignment
     (α := α)
     (α_nonneg := α_nonneg)
 
@@ -175,7 +175,7 @@ Higher α typically means faster convergence (more deterministic dynamics).
 def convergenceIterations (S : RSA.RSAScenarioQ) (ε : ℚ) (maxIter : Nat) : Nat :=
   -- Find first iteration where dynamics have converged
   let iterations := List.range maxIter
-  match iterations.find? (fun n => hasConverged S (runDynamicsQ S n) ε) with
+  match iterations.find? (λ n => hasConverged S (runDynamicsQ S n) ε) with
   | some n => n
   | none => maxIter  -- Didn't converge in maxIter steps
 

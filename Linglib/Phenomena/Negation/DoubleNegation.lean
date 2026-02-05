@@ -8,17 +8,17 @@ with anaphora in dynamic semantics.
 
 In classical logic, ¬¬φ ↔ φ (Double Negation Elimination).
 
-In standard dynamic semantics, this FAILS for anaphora:
+In standard dynamic semantics, this fails for anaphora:
 - "A man walked in. He sat down." (OK)
 - "It's not the case that no man walked in. He sat down." (??)
 
 The puzzle: semantically these should be equivalent, but anaphora differs.
 
-## Key Properties
+## Properties
 
-1. **DNE for truth**: ¬¬φ and φ have the same truth conditions
-2. **DNE for anaphora**: In standard DS, ¬¬φ and φ differ in dref accessibility
-3. **BUS/ICDRT solution**: Bilateral/flat update validates DNE for anaphora too
+1. ¬¬φ and φ have the same truth conditions (DNE for truth).
+2. In standard DS, ¬¬φ and φ differ in dref accessibility (DNE for anaphora).
+3. Bilateral/flat update validates DNE for anaphora too (BUS/ICDRT solution).
 
 ## References
 
@@ -125,7 +125,7 @@ def standardDSDoubleNeg : StandardDSPrediction := {
 -- Part 3: BUS Predictions (DNE Success)
 
 /--
-In bilateral semantics, negation SWAPS positive and negative.
+In bilateral semantics, negation swaps positive and negative.
 
 ¬¬φ = φ definitionally, so DNE holds for anaphora.
 -/
@@ -156,7 +156,7 @@ def busDoubleNeg : BUSPrediction := {
 -- Part 4: ICDRT Predictions (Flat Update)
 
 /--
-In ICDRT, drefs are introduced GLOBALLY (flat), tracked by propositional drefs.
+In ICDRT, drefs are introduced globally (flat), tracked by propositional drefs.
 -/
 structure ICDRTPrediction where
   sentence : String
@@ -283,38 +283,5 @@ def judgments : List JudgmentDatum := [
   testDoubleNeg,
   naturalDoubleNeg
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `DNEDatum`: Comparison of original vs double-negated
-- `StandardDSPrediction`: What standard DS predicts
-- `BUSPrediction`: What BUS predicts
-- `ICDRTPrediction`: What ICDRT predicts
-- `JudgmentDatum`: Empirical felicity judgments
-
-### Key Examples
-- `basicExistential`: "A man walked in" vs "It's not the case that no man..."
-- `bathroomDNE`: Bathroom pattern with DNE
-- `testDoubleNeg`: Critical test case for theories
-
-### Theory Comparison
-
-| Theory | DNE for Truth | DNE for Anaphora |
-|--------|--------------|------------------|
-| Standard DS | Yes | No |
-| BUS | Yes | Yes |
-| ICDRT | Yes | Yes |
-
-### Theoretical Significance
-
-DNE for anaphora is a key diagnostic:
-- Standard DS: ¬ is a test, loses drefs
-- BUS: ¬ swaps positive and negative, DNE by swap∘swap = id
-- ICDRT: Flat update, drefs always global
--/
 
 end Phenomena.Negation.DoubleNegation

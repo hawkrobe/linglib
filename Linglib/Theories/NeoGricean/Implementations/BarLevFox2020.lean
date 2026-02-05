@@ -100,7 +100,7 @@ def isInnocentlyIncludable (a : Prop' World) : Prop :=
 
 This is Bar-Lev & Fox's key operator that derives free choice.
 -/
-def exhIEII : Prop' World := fun w =>
+def exhIEII : Prop' World := λ w =>
   φ w ∧
   (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, isInnocentlyIncludable ALT φ r → r w)
@@ -393,9 +393,9 @@ theorem simple_exclusive_or :
   -- Since propAorB ∈ IE (it's in every MC-set as the prejacent), propAorB w
   cases w
   · -- neither: propAorB is false, so exhIE is vacuously inconsistent here
-    simp only [propA, propB]
-    -- This case requires showing the IE set contains φ and φ is false at neither
-    sorry
+    -- φ ∈ IE ALT φ (the prejacent is in every MC-set by compatibility)
+    -- propAorB .neither is definitionally False
+    exact (hExh propAorB (λ E hE_mc => hE_mc.1.1)).elim
   · -- onlyA
     left; simp [propA, propB]
   · -- onlyB
@@ -445,7 +445,7 @@ theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.is
 - `exhIEII`: Combined exhaustivity operator Exh^{IE+II}
 - `isInnocentlyIncludable`: Predicate for II membership
 
-### Key Results
+### Results
 - `free_choice`: Exh^{IE+II}(◇(a ∨ b)) ⊢ ◇a ∧ ◇b
 - `fc_not_closed_general`: FC alternatives not closed under ∧
 - `simple_has_conjunction`: Simple disjunction alternatives ARE closed

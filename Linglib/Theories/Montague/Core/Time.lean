@@ -274,7 +274,7 @@ The lifted proposition is true at situation s iff the original
 proposition is true at s.world.
 -/
 def liftProp {W Time : Type*} (p : W → Prop) : TProp W Time :=
-  fun s => p s.world
+  λ s => p s.world
 
 /--
 A proposition holds at time t in world w.
@@ -339,36 +339,5 @@ def todayZ : ℤ := 0
 
 /-- Example: tomorrow (t = 1) -/
 def tomorrowZ : ℤ := 1
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `Interval Time`: Time intervals with start/finish
-- `Situation W Time`: World-time pairs (Kratzer situations)
-- `ReichenbachFrame Time`: S, R, E triple for tense/aspect
-- `TProp W Time`: Temporal propositions (situation → Prop)
-
-### Temporal Relations
-- `TemporalRelation`: before, after, overlapping, etc.
-- `Interval.precedes`, `.overlaps`, `.subinterval`: Allen relations
-
-### Historical Modal Base
-- `WorldHistory W Time`: Function mapping (world, time) to agreeing worlds
-- `historicalBase`: Situations in the historical alternatives
-- `HistoricalProperties`: Reflexivity, backwards-closure
-
-### Situation Operations
-- `Situation.τ`: Temporal trace
-- `Situation.w`: World extraction
-- `Situation.before`, `.after`, `.contemporaneous`: Temporal ordering
-
-### Connection to Other Modules
-- `Sentence/Tense/Basic.lean`: Uses TemporalRelation, ReichenbachFrame
-- `Sentence/Mood/Basic.lean`: Uses Situation, historicalBase
-- `DynamicSemantics/IntensionalCDRT/Situations.lean`: Situation drefs
--/
 
 end Montague.Core.Time

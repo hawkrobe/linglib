@@ -47,7 +47,7 @@ Standard scalar semantics:
 -/
 structure Domain (n : Nat) where
   /-- Prior over worlds (defaults to uniform) -/
-  prior : Fin (n + 1) → ℚ := fun _ => 1
+  prior : Fin (n + 1) → ℚ := λ _ => 1
   /-- Prior is non-negative -/
   prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide
 
@@ -60,7 +60,7 @@ inductive Utterance where
 
 instance : Fintype Utterance where
   elems := {.none_, .some_, .all}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /-- Literal semantics (weak "some") -/
 def meaning (n : Nat) : Utterance → Fin (n + 1) → Bool
@@ -78,17 +78,17 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
 /-- Run L0 for domain using RSA.Eval -/
 def Domain.runL0 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
   RSA.Eval.basicL0 allUtterances (allWorlds n)
-    (fun u w => boolToRat (meaning n u w)) d.prior u
+    (λ u w => boolToRat (meaning n u w)) d.prior u
 
 /-- Run S1 for domain using RSA.Eval -/
 def Domain.runS1 {n : Nat} (d : Domain n) (w : Fin (n + 1)) : List (Utterance × ℚ) :=
   RSA.Eval.basicS1 allUtterances (allWorlds n)
-    (fun u w => boolToRat (meaning n u w)) d.prior 1 (fun _ => 0) w
+    (λ u w => boolToRat (meaning n u w)) d.prior 1 (λ _ => 0) w
 
 /-- Run L1 for domain using RSA.Eval -/
 def Domain.runL1 {n : Nat} (d : Domain n) (u : Utterance) : List (Fin (n + 1) × ℚ) :=
   RSA.Eval.basicL1 allUtterances (allWorlds n)
-    (fun u w => boolToRat (meaning n u w)) d.prior 1 (fun _ => 0) u
+    (λ u w => boolToRat (meaning n u w)) d.prior 1 (λ _ => 0) u
 
 -- Convenience Constructors
 
@@ -139,7 +139,7 @@ inductive ExtUtterance where
 
 instance : Fintype ExtUtterance where
   elems := {.none_, .some_, .most, .all}
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /-- Extended semantics with "most" -/
 def extMeaning (n : Nat) : ExtUtterance → Fin (n + 1) → Bool
@@ -153,13 +153,13 @@ def allExtUtterances : List ExtUtterance := [.none_, .some_, .most, .all]
 
 /-- Extended domain with "most" -/
 structure ExtDomain (n : Nat) where
-  prior : Fin (n + 1) → ℚ := fun _ => 1
+  prior : Fin (n + 1) → ℚ := λ _ => 1
   prior_nonneg : ∀ w, 0 ≤ prior w := by intros; decide
 
 /-- Run L1 for extended domain using RSA.Eval -/
 def ExtDomain.runL1 {n : Nat} (d : ExtDomain n) (u : ExtUtterance) : List (Fin (n + 1) × ℚ) :=
   RSA.Eval.basicL1 allExtUtterances (allWorlds n)
-    (fun u w => boolToRat (extMeaning n u w)) d.prior 1 (fun _ => 0) u
+    (λ u w => boolToRat (extMeaning n u w)) d.prior 1 (λ _ => 0) u
 
 /-- Standard extended domain -/
 def extStandard (n : Nat) : ExtDomain n := {}
@@ -190,24 +190,24 @@ private theorem one_nonneg : (0 : ℚ) ≤ 1 := by decide
 /-- Build Fintype-based RSA scenario from domain -/
 def Domain.toScenarioF {n : Nat} (d : Domain n) : RSAScenario Utterance (Fin (n + 1)) :=
   RSAScenario.basicBool
-    (satisfies := fun w u => meaning n u w)
+    (satisfies := λ w u => meaning n u w)
     (prior := d.prior)
     (prior_nonneg := d.prior_nonneg)
-    (cost := fun _ => 0)
-    (cost_nonneg := fun _ => le_refl 0)
-    (utterancePrior := fun _ => 1)
-    (utterancePrior_nonneg := fun _ => one_nonneg)
+    (cost := λ _ => 0)
+    (cost_nonneg := λ _ => le_refl 0)
+    (utterancePrior := λ _ => 1)
+    (utterancePrior_nonneg := λ _ => one_nonneg)
 
 /-- Build Fintype-based RSA scenario from extended domain -/
 def ExtDomain.toScenarioF {n : Nat} (d : ExtDomain n) : RSAScenario ExtUtterance (Fin (n + 1)) :=
   RSAScenario.basicBool
-    (satisfies := fun w u => extMeaning n u w)
+    (satisfies := λ w u => extMeaning n u w)
     (prior := d.prior)
     (prior_nonneg := d.prior_nonneg)
-    (cost := fun _ => 0)
-    (cost_nonneg := fun _ => le_refl 0)
-    (utterancePrior := fun _ => 1)
-    (utterancePrior_nonneg := fun _ => one_nonneg)
+    (cost := λ _ => 0)
+    (cost_nonneg := λ _ => le_refl 0)
+    (utterancePrior := λ _ => 1)
+    (utterancePrior_nonneg := λ _ => one_nonneg)
 
 /-- L0 distribution (Fintype) -/
 def l0F {n : Nat} (d : Domain n) (u : Utterance) : Option (ExactDist (Fin (n + 1))) :=
@@ -275,9 +275,9 @@ structure Domain (n : Nat) where
   /-- Meaning function: truth/compatibility of utterance at world -/
   meaning : Utterance → Fin (n + 1) → ℚ
   /-- Salience/accessibility prior over utterances -/
-  salience : Utterance → ℚ := fun _ => 1
+  salience : Utterance → ℚ := λ _ => 1
   /-- Prior over world states -/
-  worldPrior : Fin (n + 1) → ℚ := fun _ => 1
+  worldPrior : Fin (n + 1) → ℚ := λ _ => 1
   /-- Non-negativity proofs -/
   meaning_nonneg : ∀ u w, 0 ≤ meaning u w := by intros; decide
   salience_nonneg : ∀ u, 0 ≤ salience u := by intros; decide
@@ -290,19 +290,19 @@ def allWorlds (n : Nat) : List (Fin (n + 1)) :=
 /-- GQT domain with uniform priors -/
 def gqtDomain (n : Nat) : Domain n where
   meaning := gqtMeaningRat n
-  meaning_nonneg := fun u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
+  meaning_nonneg := λ u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
 
 /-- PT domain with uniform priors -/
 def ptDomain (n : Nat) : Domain n where
   meaning := ptMeaning n
-  meaning_nonneg := fun u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
+  meaning_nonneg := λ u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
 
 /-- GQT domain with custom salience -/
 def gqtDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := gqtMeaningRat n
   salience := salience
-  meaning_nonneg := fun u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
+  meaning_nonneg := λ u w => Fragments.English.Determiners.QuantityWord.gqtMeaningRat_nonneg n u w
   salience_nonneg := h
 
 /-- PT domain with custom salience -/
@@ -310,7 +310,7 @@ def ptDomainWithSalience (n : Nat) (salience : Utterance → ℚ)
     (h : ∀ u, 0 ≤ salience u := by intros; decide) : Domain n where
   meaning := ptMeaning n
   salience := salience
-  meaning_nonneg := fun u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
+  meaning_nonneg := λ u _ => Fragments.English.Determiners.QuantityWord.ptMeaning_nonneg n u _
   salience_nonneg := h
 
 -- RSA Computations using Domain
@@ -336,7 +336,7 @@ Run S1 (pragmatic speaker) using the specified chain variant.
 def Domain.runS1 {n : Nat} (d : Domain n)
     (chain : RSA.ChainVariant := .L0Based)
     (w : Fin (n + 1)) (α : ℕ := 1) : List (Utterance × ℚ) :=
-  RSA.Eval.runS1 allUtterances (allWorlds n) d.meaning d.worldPrior d.salience α (fun _ => 0) chain w
+  RSA.Eval.runS1 allUtterances (allWorlds n) d.meaning d.worldPrior d.salience α (λ _ => 0) chain w
 
 /--
 Run L1 (pragmatic listener) using the specified chain variant.
@@ -347,7 +347,7 @@ Run L1 (pragmatic listener) using the specified chain variant.
 def Domain.runL1 {n : Nat} (d : Domain n)
     (chain : RSA.ChainVariant := .L0Based)
     (u : Utterance) (α : ℕ := 1) : List (Fin (n + 1) × ℚ) :=
-  RSA.Eval.runL1 allUtterances (allWorlds n) d.meaning d.worldPrior d.salience α (fun _ => 0) chain u
+  RSA.Eval.runL1 allUtterances (allWorlds n) d.meaning d.worldPrior d.salience α (λ _ => 0) chain u
 
 -- Chain Comparison Methods
 
@@ -390,8 +390,8 @@ def Domain.toScenario {n : Nat} (d : Domain n) (α : ℕ := 1) : RSAScenario Utt
     (prior := d.worldPrior)
     (prior_nonneg := d.worldPrior_nonneg)
     (α := α)
-    (cost := fun _ => 0)
-    (cost_nonneg := fun _ => le_refl 0)
+    (cost := λ _ => 0)
+    (cost_nonneg := λ _ => le_refl 0)
     (utterancePrior := d.salience)
     (utterancePrior_nonneg := d.salience_nonneg)
 

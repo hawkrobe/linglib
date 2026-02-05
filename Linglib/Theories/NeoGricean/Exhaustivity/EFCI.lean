@@ -7,16 +7,16 @@ based on Chierchia (2013) exhaustification with domain alternatives.
 ## Key Concepts
 
 ### Two Types of Alternatives
-1. **Scalar alternatives**: Stronger quantificational force (some → all)
-2. **Domain alternatives**: Subdomain restrictions (D → D')
+1. Scalar alternatives: Stronger quantificational force (some → all)
+2. Domain alternatives: Subdomain restrictions (D → D')
 
 ### Pre-exhaustified Domain Alternatives
-Domain alternatives are PRE-EXHAUSTIFIED via innocent exclusion:
+Domain alternatives are pre-exhaustified via innocent exclusion:
 - Original: ∃x∈D. P(x)
 - Domain alt for d: ∃x∈{d}. P(x) = P(d)
 - Pre-exh'd: P(d) ∧ ∀y≠d. ¬P(y) = "exactly d satisfies P"
 
-### The EFCI Puzzle
+### The EFCI puzzle
 Without rescue mechanisms, exhaustifying both alt types causes contradiction:
 - Scalar negation: ¬∀x. P(x)
 - Domain negation: ∀d. ¬[P(d) ∧ ∀y≠d. ¬P(y)]
@@ -24,8 +24,8 @@ Without rescue mechanisms, exhaustifying both alt types causes contradiction:
 Combined with assertion ∃x. P(x), this yields ⊥.
 
 ### Rescue Mechanisms
-1. **Modal insertion**: Insert covert ◇ (irgendein)
-2. **Partial exhaustification**: Prune one alt type (yek-i)
+1. Modal insertion: Insert covert ◇ (irgendein)
+2. Partial exhaustification: Prune one alt type (yek-i)
 
 ## References
 
@@ -47,8 +47,8 @@ open NeoGricean.Exhaustivity
 /--
 Types of alternatives for EFCIs (Chierchia 2013).
 
-Scalar alternatives differ in QUANTIFICATIONAL FORCE.
-Domain alternatives differ in DOMAIN RESTRICTION.
+Scalar alternatives differ in quantificational force.
+Domain alternatives differ in domain restriction.
 -/
 inductive AlternativeType where
   /-- Scalar alternatives: some vs all -/
@@ -75,7 +75,7 @@ structure EFCIAlternative (World : Type*) where
 For an existential over domain D, domain alternatives are existentials
 over proper subsets D' ⊂ D.
 
-Key insight: Singleton subdomain alternatives are most relevant:
+Singleton subdomain alternatives are most relevant:
 - ∃x∈{d}. P(x) = P(d)
 
 These become the basis for pre-exhaustified alternatives.
@@ -100,7 +100,7 @@ The existential assertion over a domain.
 ∃x∈D. P(x) holds at world w iff some entity in D satisfies P at w.
 -/
 def existsInDomain (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
-  fun w => ∃ d ∈ D, P d w
+  λ w => ∃ d ∈ D, P d w
 
 /--
 A singleton domain alternative.
@@ -113,15 +113,15 @@ def singletonAlt (d : Entity) (P : Entity → Prop' World) : Prop' World :=
 /-!
 ## Pre-Exhaustified Domain Alternatives
 
-Following Chierchia (2013), domain alternatives are PRE-EXHAUSTIFIED:
+Following Chierchia (2013), domain alternatives are pre-exhaustified:
 the exhaustification operator applies to them before they enter the
 alternative set for the main exhaustification.
 
 For singleton alternative P(d):
   Pre-exh(P(d)) = P(d) ∧ ∀y≠d. ¬P(y)
-                = "d is the ONLY one satisfying P"
+                = "d is the only one satisfying P"
 
-This is the crucial insight: domain alternatives convey UNIQUENESS.
+Domain alternatives convey uniqueness.
 -/
 
 /--
@@ -130,7 +130,7 @@ P(d) becomes: P(d) ∧ ∀y∈D, y≠d → ¬P(y)
 "d is the unique satisfier in D"
 -/
 def preExhaustify (D : Domain Entity) (d : Entity) (P : Entity → Prop' World) : Prop' World :=
-  fun w => P d w ∧ ∀ y ∈ D, y ≠ d → ¬(P y w)
+  λ w => P d w ∧ ∀ y ∈ D, y ≠ d → ¬(P y w)
 
 /--
 The set of pre-exhaustified domain alternatives.
@@ -152,7 +152,7 @@ In DE contexts: ∃ is stronger than ∀
 The universal (scalar) alternative to an existential.
 -/
 def universalAlt (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
-  fun w => ∀ d ∈ D, P d w
+  λ w => ∀ d ∈ D, P d w
 
 /--
 The scalar alternative set for an existential.
@@ -171,14 +171,14 @@ def efciAlternatives (D : Domain Entity) (P : Entity → Prop' World) : Set (Pro
   {existsInDomain D P} ∪ scalarAlts D P ∪ preExhDomainAlts D P
 
 /--
-Alternative set with ONLY scalar alternatives (pruned domain).
+Alternative set with only scalar alternatives (pruned domain).
 Used when partial exhaustification prunes domain alternatives.
 -/
 def scalarOnlyAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
   {existsInDomain D P} ∪ scalarAlts D P
 
 /--
-Alternative set with ONLY domain alternatives (pruned scalar).
+Alternative set with only domain alternatives (pruned scalar).
 Used when partial exhaustification prunes scalar alternatives.
 -/
 def domainOnlyAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
@@ -203,7 +203,7 @@ Simple exhaustification: negate all stronger alternatives.
 This is a simplified version; full IE requires MC-set computation.
 -/
 def simpleExh (ALT : Set (Prop' World)) (φ : Prop' World) : Prop' World :=
-  fun w => φ w ∧ ∀ ψ ∈ ALT, (∀ v, φ v → ψ v) → ψ ≠ φ → ¬(ψ w)
+  λ w => φ w ∧ ∀ ψ ∈ ALT, (∀ v, φ v → ψ v) → ψ ≠ φ → ¬(ψ w)
 
 
 /-!
@@ -211,12 +211,12 @@ def simpleExh (ALT : Set (Prop' World)) (φ : Prop' World) : Prop' World :=
 
 Consider domain D = {a, b} and predicate "came":
 
-1. **Prejacent**: ∃x∈{a,b}. came(x) = "a came ∨ b came"
+1. Prejacent: ∃x∈{a,b}. came(x) = "a came ∨ b came"
 
-2. **Scalar alt**: ∀x∈{a,b}. came(x) = "a came ∧ b came"
+2. Scalar alt: ∀x∈{a,b}. came(x) = "a came ∧ b came"
    After exh: ¬(a came ∧ b came) = "not both came"
 
-3. **Pre-exh domain alts**:
+3. Pre-exh domain alts:
    - [a]: came(a) ∧ ¬came(b) = "only a came"
    - [b]: came(b) ∧ ¬came(a) = "only b came"
    After exh: ¬[only a] ∧ ¬[only b]
@@ -228,7 +228,7 @@ Combined with prejacent (a ∨ b) and scalar neg ¬(a ∧ b):
 - = (a ∨ b) ∧ (a ⊕ b) ∧ (a ↔ b)
 - = ⊥
 
-This is why EFCIs need RESCUE MECHANISMS.
+This is why EFCIs need rescue mechanisms.
 -/
 
 /--
@@ -247,10 +247,10 @@ Insert a covert epistemic modal ◇_epi above the existential:
 Now domain alternatives become:
   ◇[P(a) ∧ ∀y≠a. ¬P(y)]
 
-Under modal, these are COMPATIBLE with each other:
+Under modal, these are compatible with each other:
   ◇[only a] ∧ ◇[only b]
 = "possibly only a, possibly only b"
-= MODAL VARIATION
+= modal variation
 
 No contradiction!
 -/
@@ -259,7 +259,7 @@ No contradiction!
 Covert epistemic modal (possibility).
 -/
 def covertEpi (φ : Prop' World) : Prop' World :=
-  fun _ => ∃ w, φ w
+  λ _ => ∃ w, φ w
 
 /--
 Modal insertion: wrap existential in covert epistemic.
@@ -270,7 +270,7 @@ def withModalInsertion (D : Domain Entity) (P : Entity → Prop' World) : Prop' 
 /-!
 ## Rescue Mechanism 2: Partial Exhaustification (Yek-i-type)
 
-Instead of exhaustifying both alt types, PRUNE one:
+Instead of exhaustifying both alt types, prune one:
 
 Option A: Prune domain alts → only scalar exh
   Result: ∃x. P(x) ∧ ¬∀x. P(x) = "some but not all"
@@ -278,7 +278,7 @@ Option A: Prune domain alts → only scalar exh
 
 Option B: Prune scalar alts → only domain exh
   Result: ∃x. P(x) ∧ ¬[only a] ∧ ¬[only b] ∧ ...
-  For |D| ≥ 2: ∃!x. P(x) = "EXACTLY ONE satisfies P"
+  For |D| ≥ 2: ∃!x. P(x) = "exactly one satisfies P"
   This IS what yek-i does!
 -/
 
@@ -341,12 +341,12 @@ def yekiType : EFCIRescue := .partialExh
 /-!
 ## Modal Contexts
 
-Under DEONTIC modals (permission), yek-i yields FREE CHOICE:
+Under deontic modals (permission), yek-i yields free choice:
   ◇_deo[∃x. P(x)] with domain exh
 = ◇_deo[P(a) ∧ ¬P(b)] ∨ ◇_deo[P(b) ∧ ¬P(a)] (simplified)
 = For each x, ◇_deo[P(x)]
 
-Under EPISTEMIC modals, yek-i yields MODAL VARIATION:
+Under epistemic modals, yek-i yields modal variation:
   ◇_epi[∃x. P(x)] with domain exh
 = At least two individuals are epistemically possible
 -/
@@ -401,10 +401,10 @@ def efciReading (rescue : EFCIRescue) (isDE : Bool) (modal : Option ModalFlavor)
 /-!
 ## Theoretical Predictions
 
-1. **Root context prediction**: yek-i → uniqueness, irgendein → epistemic
-2. **Deontic prediction**: Both → free choice
-3. **Epistemic prediction**: Both → modal variation
-4. **DE prediction**: Both → plain existential
+1. Root context prediction: yek-i → uniqueness, irgendein → epistemic
+2. Deontic prediction: Both → free choice
+3. Epistemic prediction: Both → modal variation
+4. DE prediction: Both → plain existential
 -/
 
 /-- Yek-i in root yields uniqueness -/
@@ -439,26 +439,26 @@ existential FCIs like German "irgendein" and Farsi "yek-i":
 | Existential | ∃ | irgendein, yek-i, vreun | Often contains "one" |
 | Universal | ∀ | any, qualunque, whatever | Often wh-based |
 
-### Chierchia's Key Insight
+### Chierchia's analysis
 
-Both FCI types have the SAME underlying existential semantics!
-The universal force of "any" emerges from OBLIGATORY exhaustification
+Both FCI types have the same underlying existential semantics.
+The universal force of "any" emerges from obligatory exhaustification
 of domain alternatives.
 
-- "any" = ∃ + OBLIGATORY domain alternatives (always active)
-- "some" = ∃ + OPTIONAL domain alternatives (relevance-gated)
+- "any" = ∃ + obligatory domain alternatives (always active)
+- "some" = ∃ + optional domain alternatives (relevance-gated)
 
 ### The "any" Distribution
 
-1. **NPI use** (DE contexts): "I didn't see any students"
+1. NPI use (DE contexts): "I didn't see any students"
    - In DE, exhaustification is vacuous (domain alts are entailed)
    - Result: plain existential reading
 
-2. **FC use** (modal contexts): "You may read any book"
+2. FC use (modal contexts): "You may read any book"
    - Under modal, domain alts yield free choice
    - Result: universal-like permission
 
-3. **Generic use**: "Any owl hunts mice" (subtrigging)
+3. Generic use: "Any owl hunts mice" (subtrigging)
    - Generic contexts license FC reading
    - Result: universal generalization
 
@@ -472,21 +472,21 @@ contradiction:
 - ∀d∈D. ¬[P(d) ∧ ∀y≠d.¬P(y)] (domain alt negation)
 
 With two witnesses d₁, d₂: the second clause requires that for any d
-satisfying P, some OTHER y also satisfies P. Combined with the first
+satisfying P, some other y also satisfies P. Combined with the first
 clause, this leads to infinite regress/contradiction for finite domains.
 
 ### Contrast with "some"
 
-"Some" has the SAME alternatives as "any", but they're OPTIONAL.
+"Some" has the same alternatives as "any", but they are optional.
 When not activated (low relevance), "some" = plain existential.
-"Any" MUST activate alternatives, hence the restricted distribution.
+"Any" must activate alternatives, hence the restricted distribution.
 -/
 
 /--
 FCI flavor: existential vs universal force.
 
-Note: "Universal" FCIs have existential BASE meaning but
-universal SURFACE force due to obligatory exhaustification.
+Note: "Universal" FCIs have existential base meaning but
+universal surface force due to obligatory exhaustification.
 -/
 inductive FCIFlavor where
   | existential  -- irgendein, yek-i, vreun
@@ -494,12 +494,12 @@ inductive FCIFlavor where
   deriving DecidableEq, BEq, Repr
 
 /--
-Universal FCI: existential with OBLIGATORILY active domain alternatives.
+Universal FCI: existential with obligatorily active domain alternatives.
 -/
 structure UniversalFCI where
   /-- Base meaning is existential -/
   baseIsExistential : Bool := true
-  /-- Domain alternatives are ALWAYS active (not relevance-gated) -/
+  /-- Domain alternatives are always active (not relevance-gated) -/
   obligatoryDomainAlts : Bool := true
   /-- Can be rescued via modal insertion -/
   modalRescue : Bool := true
@@ -567,7 +567,7 @@ def ufciReading (ctx : UFCIContext) : Option EFCIReading :=
 
 /--
 In DE contexts, exhaustifying "any"'s alternatives yields entailments,
-so the exhaustification is VACUOUS and "any" = plain existential.
+so the exhaustification is vacuous and "any" = plain existential.
 
 This explains the NPI distribution of "any".
 -/
@@ -628,7 +628,7 @@ theorem any_positive_contradiction : ufciReading .positiveEpisodic = none := rfl
 | Modal reading | Free choice | Free choice |
 | DE reading | Plain ∃ | Plain ∃ (NPI) |
 
-The key difference is whether domain alternatives are OPTIONAL or OBLIGATORY.
+The key difference is whether domain alternatives are optional or obligatory.
 This single parameter derives the entire distribution difference.
 -/
 
@@ -705,43 +705,7 @@ def anyExamples : List AnyExample :=
   , any_generic_ok, any_question_ok, any_conditional_ok ]
 
 -- Verify all grammaticality predictions match
-#guard anyExamples.all (fun ex => ex.grammatical == ufciGrammatical ex.context)
+#guard anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context)
 
--- Summary
-
-/-!
-## What This Module Provides
-
-### Alternative Types
-- `AlternativeType`: scalar vs domain
-- `EFCIAlternative`: alternative with type and pre-exhaustification status
-
-### Domain Alternatives
-- `singletonSubdomains`: Generate singleton subsets
-- `singletonAlt`: Singleton domain alternative P(d)
-- `preExhaustify`: P(d) → P(d) ∧ ∀y≠d. ¬P(y)
-- `preExhDomainAlts`: Set of pre-exhaustified domain alternatives
-
-### Exhaustification
-- `efciAlternatives`: Full alternative set (scalar + pre-exh domain)
-- `simpleExh`: Simple exhaustification operator
-- `partialExhDomainOnly`: Prune scalar, keep domain
-- `partialExhScalarOnly`: Prune domain, keep scalar
-
-### EFCI Typology
-- `EFCIRescue`: Rescue mechanism type
-- `vreunType`, `irgendeinType`, `yekiType`: Concrete EFCI types
-- `efciReading`: Determine reading from context
-
-### Key Predictions
-- Root: yek-i → uniqueness, irgendein → epistemic/uniqueness
-- Deontic: → free choice
-- Epistemic: → modal variation
-- DE: → plain existential
-
-### References
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items. S&P 18.
-- Chierchia (2013). Logic in Grammar.
--/
 
 end NeoGricean.Exhaustivity.EFCI

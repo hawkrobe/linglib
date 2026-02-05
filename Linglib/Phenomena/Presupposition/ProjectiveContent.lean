@@ -4,7 +4,7 @@
 Formalizes the taxonomy of projective contents from Tonhauser, Beaver,
 Roberts & Simons (2013) "Toward a Taxonomy of Projective Content", Language 89(1).
 
-## Key Insight
+## Insight
 
 Not all projective contents behave alike. The taxonomy distinguishes four
 classes based on two cross-cutting properties:
@@ -26,16 +26,16 @@ classes based on two cross-cutting properties:
 
 ## Diagnostics
 
-**Family-of-Sentences Diagnostic** (for projection):
+Family-of-Sentences Diagnostic (for projection):
 - "It's not the case that P" — negation
 - "Is it the case that P?" — question
 - "It's possible that P" — modal
 - "If P, then Q" — conditional antecedent
 
-**Hey wait a minute! Test** (for at-issueness):
+Hey wait a minute! test (for at-issueness):
 Content that can be challenged with "Hey wait a minute!" is at-issue.
 
-**Belief-Predicate Test** (for OLE):
+Belief-Predicate Test (for OLE):
 "x believes that P" — does the projective content describe x's beliefs?
 
 ## References
@@ -57,7 +57,7 @@ open Core.Proposition
 
 
 /--
-**Strong Contextual Felicity (SCF)**
+Strong Contextual Felicity (SCF).
 
 A trigger has SCF if it requires its projective content to be
 established in the utterance context prior to its use.
@@ -78,7 +78,7 @@ inductive StrongContextualFelicity where
   deriving DecidableEq, Repr
 
 /--
-**Obligatory Local Effect (OLE)**
+Obligatory Local Effect (OLE).
 
 A trigger has OLE if, when embedded under a belief predicate,
 its projective content must be part of the attitude holder's beliefs.
@@ -236,7 +236,7 @@ structure ProjectiveItem (W : Type*) where
   /-- The projective content as a proposition -/
   content : W → Bool
   /-- The at-issue content (if any) -/
-  atIssue : W → Bool := fun _ => true
+  atIssue : W → Bool := λ _ => true
 
 /--
 Convert a ProjectiveItem to a PrProp.
@@ -275,7 +275,7 @@ structure ProjectionBehavior where
 /--
 Default projection behavior: all projective contents project by default.
 
-The key insight of Tonhauser et al. is that projection is the *default*
+Tonhauser et al. argue that projection is the *default*
 for all projective contents. The differences are in SCF and OLE, not
 in whether they project.
 -/
@@ -318,8 +318,7 @@ inductive Challengeability where
 /--
 Projective content is typically not-at-issue and HWAM-challengeable.
 
-This is the diagnostic for identifying projective content in the
-first place.
+This diagnostic identifies projective content.
 -/
 def projectiveContentTypicalStatus : AtIssueness × Challengeability :=
   (.notAtIssue, .hwamChallenge)
@@ -433,8 +432,7 @@ def ProjectiveTrigger.traditionalCategory : ProjectiveTrigger → TraditionalCat
 The paper uses data from English and Paraguayan Guaraní to establish
 that the SCF/OLE distinctions are cross-linguistically valid.
 
-This structure records the key finding that the four-class taxonomy
-is supported by data from both languages.
+The four-class taxonomy is supported by data from both languages.
 -/
 structure CrossLinguisticEvidence where
   /-- The trigger tested -/
@@ -451,49 +449,5 @@ Both English and Guaraní provide evidence for the four-class
 distinction based on SCF and OLE.
 -/
 def taxonomyCrossLinguisticallySupported : Bool := true
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Distinguishing Properties
-- `StrongContextualFelicity`: whether trigger requires prior context
-- `ObligatoryLocalEffect`: whether content attributed to attitude holder
-
-### The Four Classes
-- `ProjectiveClass`: classA, classB, classC, classD
-- `classFromProperties`: reconstruct class from SCF/OLE
-- `ProjectiveClass.scf`, `.ole`: extract properties
-
-### Trigger Types
-- `ProjectiveTrigger`: enumeration of trigger types
-- `.toClass`: maps triggers to their classes
-- `.traditionalCategory`: maps to traditional terminology
-
-### Projective Content Structure
-- `ProjectiveItem`: trigger + content + at-issue
-- `.toPrProp`: convert to core presupposition infrastructure
-
-### Behavior Descriptions
-- `ProjectionBehavior`: how content projects
-- `AtIssueness`: at-issue vs. backgrounded
-- `Challengeability`: how content can be challenged
-- `BeliefAttribution`: who is committed under belief
-
-### Key Insight
-
-All projective contents project by default. The taxonomy distinguishes
-them by:
-1. Whether they require prior contextual establishment (SCF)
-2. Whether they must be attributed to attitude holders when embedded (OLE)
-
-This cross-cuts the traditional presupposition/CI distinction.
-
-### Connection to Other Modules
-- Uses `PrProp` from `Core.Presupposition`
-- Compatible with trigger tracking in `NeoGricean.Presuppositions`
-- Examples in `Phenomena.Presuppositions.Data` are typically Class C
--/
 
 end Phenomena.Presupposition.ProjectiveContent

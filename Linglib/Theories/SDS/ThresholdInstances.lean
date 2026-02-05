@@ -155,13 +155,13 @@ This shows the SDS machinery reproduces the expected soft meaning.
 -/
 def adjSoftMeaningSDS {E : Type} (adj : GradableAdjective E) (x : E) : ℚ :=
   let sys := adjToSDS adj x
-  SDSConstraintSystem.softTruth sys fun θ => adj.measure x ≥ θ
+  SDSConstraintSystem.softTruth sys λ θ => adj.measure x ≥ θ
 
 /--
 Compute soft truth for a generic via SDS marginalization.
 -/
 def genericSoftTruthSDS (gen : GenericPredicate) : ℚ :=
-  SDSConstraintSystem.softTruth gen fun θ => gen.prevalence ≥ θ
+  SDSConstraintSystem.softTruth gen λ θ => gen.prevalence ≥ θ
 
 /--
 Compute holds for a gradable noun via SDS.
@@ -239,7 +239,7 @@ This module establishes:
 - `genericSoftTruthSDS`: Compute generic soft truth via SDS
 - `gnHoldsSDS`: Compute gradable noun truth via SDS
 
-### Key Theorems
+### Theorems
 - `threshold_domains_are_sds`: All three domains are SDS instances
 - `gradable_noun_uniform_scenario`: Gradable nouns have trivial scenario factors
 

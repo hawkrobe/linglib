@@ -4,7 +4,7 @@
 Formalization of postsyntactic amalgamation following Harizanov & Gribanova (2019)
 "Whither head movement?" (NLLT 37:461-522).
 
-## Key Insight
+## Insight
 
 Amalgamation locality can be characterized lattice-theoretically as the
 **covering relation** on the dominance order restricted to heads.

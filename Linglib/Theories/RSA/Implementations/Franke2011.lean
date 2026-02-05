@@ -1,48 +1,14 @@
 /-
-# Iterated Best Response (IBR) Model
+Franke (2011). Quantity implicatures, exhaustive interpretation, and
+rational conversation. S&P 4(1):1-82.
 
-Implements Franke (2011) "Quantity implicatures, exhaustive interpretation,
-and rational conversation" Semantics & Pragmatics 4(1):1-82.
-
-## The Core Insight
-
-This paper provides the game-theoretic foundation for quantity implicatures,
-showing that:
-
-1. **IBR = EXH**: Iterated best response reasoning converges to exhaustive
-   interpretation (exhMW/exhIE)
-
-2. **RSA is "soft" IBR**: RSA's softmax is a smoothed version of IBR's argmax.
-   As α → ∞, RSA → IBR → EXH
-
-## Key Definitions
-
-**Interpretation Game** (Section 6):
-- States: Equivalence classes of worlds grouped by which alternatives are true
-- Messages: The set of alternative utterances
-- Meaning: ⟦m⟧(s) = 1 iff m is true at state s
-
-**IBR Reasoning** (Section 8):
-- L₀(s | m) ∝ ⟦m⟧(s) · P(s)         -- Literal listener
-- S₁(m | s) = argmax_m L₀(s | m)    -- Best-responding speaker
-- L₂(s | m) ∝ 1_{S₁(m|s) > 0}       -- Pragmatic listener
-- Iterate until fixed point
-
-**Main Result**: IBR fixed point = exhMW (minimal worlds exhaustification)
-
-## Architecture
-
-This implementation connects:
-- RSA.Core.Basic (softmax recursion)
-- NeoGricean.Exhaustivity.Basic (exhMW, exhIE)
-- The limit theorem: RSA → IBR as α → ∞
+IBR (iterated best response) converges to exhaustive interpretation (exhMW).
+RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
 
 ## References
 
-- Franke (2011). Quantity implicatures, exhaustive interpretation, and
-  rational conversation. S&P 4(1):1-82.
+- Franke (2011). S&P 4(1):1-82.
 - Benz, Jäger & van Rooij (2005). Game theory and pragmatics.
-- Jäger & Ebert (2009). Pragmatic rationalizability.
 -/
 
 import Mathlib.Data.Set.Basic
@@ -57,26 +23,7 @@ namespace RSA.IBR
 
 open NeoGricean.Exhaustivity
 
--- SECTION 1: Interpretation Games (Franke Section 6)
-
-/-!
-## Interpretation Games
-
-Franke defines an interpretation game as:
-- A set of states T (epistemic possibilities)
-- A set of messages M (alternative utterances)
-- A meaning function ⟦·⟧ : M → T → Bool
-- Prior probability P over states
-
-States are defined as equivalence classes: two worlds are in the same state
-iff they agree on the truth of all alternatives.
--/
-
-/-- An interpretation game for quantity implicature reasoning.
-
-This formalizes Section 6 of Franke (2011). The key insight is that
-states are not arbitrary possible worlds, but rather equivalence classes
-defined by alternative truth patterns. -/
+/-- Interpretation game (Franke §6): states are equivalence classes over alternative truth patterns. -/
 structure InterpGame where
   /-- Type of states (equivalence classes of worlds) -/
   State : Type
@@ -101,11 +48,11 @@ variable (G : InterpGame)
 
 /-- States where message m is true -/
 def trueStates (m : G.Message) : Finset G.State :=
-  Finset.univ.filter (fun s => G.meaning m s = true)
+  Finset.univ.filter (λ s => G.meaning m s = true)
 
 /-- Messages true at state s -/
 def trueMessages (s : G.State) : Finset G.Message :=
-  Finset.univ.filter (fun m => G.meaning m s = true)
+  Finset.univ.filter (λ m => G.meaning m s = true)
 
 /-- Informativity of a message (reciprocal of true states, as ratio) -/
 def informativity (m : G.Message) : ℚ :=
@@ -113,18 +60,6 @@ def informativity (m : G.Message) : ℚ :=
   if n = 0 then 0 else 1 / n
 
 end InterpGame
-
--- SECTION 2: IBR Strategies (Franke Section 8)
-
-/-!
-## IBR Strategies
-
-A hearer strategy maps messages to probability distributions over states.
-A speaker strategy maps states to probability distributions over messages.
-
-In the discrete IBR model, strategies are typically "pure" (deterministic),
-but we use rational weights to handle ties uniformly.
--/
 
 /-- A hearer strategy: P(state | message) -/
 structure HearerStrategy (G : InterpGame) where
@@ -140,7 +75,7 @@ variable {G : InterpGame}
 
 /-- Uniform distribution over states where m is true -/
 def literal (G : InterpGame) : HearerStrategy G where
-  respond := fun m s =>
+  respond := λ m s =>
     if G.meaning m s then
       let n := (G.trueStates m).card
       if n = 0 then 0 else 1 / n
@@ -148,7 +83,7 @@ def literal (G : InterpGame) : HearerStrategy G where
 
 /-- Support of hearer's response to message m -/
 def support (H : HearerStrategy G) (m : G.Message) : Finset G.State :=
-  Finset.univ.filter (fun s => H.respond m s > 0)
+  Finset.univ.filter (λ s => H.respond m s > 0)
 
 end HearerStrategy
 
@@ -158,20 +93,20 @@ variable {G : InterpGame}
 
 /-- Support of speaker's choice at state s -/
 def support (S : SpeakerStrategy G) (s : G.State) : Finset G.Message :=
-  Finset.univ.filter (fun m => S.choose s m > 0)
+  Finset.univ.filter (λ m => S.choose s m > 0)
 
 /-- Best response speaker: choose messages that maximize hearer success -/
 def bestResponse (G : InterpGame) (H : HearerStrategy G) : SpeakerStrategy G where
-  choose := fun s m =>
+  choose := λ s m =>
     -- Utility of message m at state s = P(hearer guesses s | m)
     let utility := H.respond m s
     -- Find max utility among true messages
     let trueMessages := G.trueMessages s
     -- Use fold to find max (handles empty case)
-    let maxUtility := trueMessages.fold max 0 (fun m' => H.respond m' s)
+    let maxUtility := trueMessages.fold max 0 (λ m' => H.respond m' s)
     -- Uniform over optimal messages
     if G.meaning m s = true ∧ utility == maxUtility then
-      let optimalCount := trueMessages.filter (fun m' =>
+      let optimalCount := trueMessages.filter (λ m' =>
         H.respond m' s == maxUtility)
       if optimalCount.card = 0 then 0 else 1 / optimalCount.card
     else 0
@@ -207,27 +142,13 @@ theorem bestResponse_false_zero (G : InterpGame) (H : HearerStrategy G) (s : G.S
 For states with at least one true message, this is exactly 1 (uniform over optimal).
 For states with no true messages, this is 0. -/
 theorem bestResponse_sum_le_one (G : InterpGame) (H : HearerStrategy G) (s : G.State) :
-    Finset.univ.sum (fun m => (bestResponse G H).choose s m) ≤ 1 := by
+    Finset.univ.sum (λ m => (bestResponse G H).choose s m) ≤ 1 := by
   -- bestResponse distributes probability uniformly over k optimal messages.
   -- Each gets 1/k, sum = k*(1/k) = 1 (or 0 if no optimal messages).
   sorry
 
 end SpeakerStrategy
 
--- SECTION 3: IBR Iteration (Franke Section 8.2)
-
-/-!
-## IBR Iteration
-
-The core IBR algorithm iterates between:
-- Hearer update: Given speaker strategy, update beliefs
-- Speaker update: Given hearer strategy, best-respond
-
-Starting from L₀ (literal interpretation), we get:
-L₀ → S₁ → L₂ → S₃ → L₄ → ...
-
-Franke proves this converges in finite steps for finite games.
--/
 
 /-- L₀: Literal listener (Franke Def. 22) -/
 def L0 (G : InterpGame) : HearerStrategy G :=
@@ -239,9 +160,9 @@ L_{n+1}(s | m) ∝ S_n(m | s) · P(s)
 
 This is Bayes' rule with the speaker strategy as likelihood. -/
 def hearerUpdate (G : InterpGame) (S : SpeakerStrategy G) : HearerStrategy G where
-  respond := fun m s =>
+  respond := λ m s =>
     let numerator := S.choose s m * G.prior s
-    let denominator := Finset.univ.sum fun s' => S.choose s' m * G.prior s'
+    let denominator := Finset.univ.sum λ s' => S.choose s' m * G.prior s'
     if denominator == 0 then 0 else numerator / denominator
 
 /-- Speaker update: Best response to hearer strategy.
@@ -269,15 +190,6 @@ def S1 (G : InterpGame) : SpeakerStrategy G :=
 /-- L₂: First pragmatic listener -/
 def L2 (G : InterpGame) : HearerStrategy G :=
   hearerUpdate G (S1 G)
-
--- SECTION 4: IBR Fixed Point (Franke Section 8.3)
-
-/-!
-## IBR Fixed Point
-
-Franke proves that IBR converges to a fixed point in finite steps.
-The fixed point hearer strategy is the "pragmatic interpretation."
--/
 
 /-- Check if hearer strategy is a fixed point of IBR -/
 def isIBRFixedPoint (G : InterpGame) (H : HearerStrategy G) : Prop :=
@@ -313,75 +225,20 @@ def pragmaticSupport (G : InterpGame) (H : HearerStrategy G) (m : G.Message) :
     Finset G.State :=
   H.support m
 
--- SECTION 4.1: Expected Gain and IBR Convergence (Franke Appendix B.4)
-
-/-!
-## Expected Gain Framework
-
-Franke proves IBR convergence via monotonicity of expected gain.
-This is the key to establishing both:
-1. IBR always reaches a fixed point (Theorem 3)
-2. The fixed point equals exhMW (via the characterization)
-
-### Definition (Expected Gain)
-
-For interpretation games with aligned utilities U_S = U_R = U:
-
-  EG(σ, ρ) = Σ_t Pr(t) × Σ_m σ(t,m) × Σ_a ρ(m,a) × U(t,m,a)
-
-For interpretation games where A = T and U(t,m,a) = 1 if t = a, else 0:
-
-  EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t)
-
-This measures the expected success rate of communication.
-
-### Lemma 3 (Monotonicity)
-
-In signaling games of pure cooperation, EG is monotonically increasing:
-- EG(S_i, R_{i+1}) ≤ EG(S_{i+2}, R_{i+1})
-- EG(S_{i+1}, R_i) ≤ EG(S_{i+1}, R_{i+2})
-
-### Theorem 3 (Convergence)
-
-For finite games of pure cooperation, IBR always reaches a fixed point.
-Proof: EG is monotonically increasing and bounded, so must stabilize.
-
-### Key Insight (Equation 131)
-
-At each IBR step, the receiver prefers states where the speaker had fewer options:
-
-  μ_{k+1}(t₁|m) > μ_{k+1}(t₂|m)  iff  |S_k(t₁)| < |S_k(t₂)|
-
-This means: receiver selects states with **minimum true alternatives** = minimal in <_ALT!
--/
-
-/-- Expected gain of a speaker-hearer strategy pair.
-
-For interpretation games: EG measures expected communication success.
-EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t)
-
-This equals the probability of successful state recovery. -/
+/-- EG(S, R) = Σ_t Pr(t) × Σ_m S(t,m) × R(m,t): expected communication success. -/
 noncomputable def expectedGain (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G) : ℚ :=
-  Finset.univ.sum fun t =>
-    G.prior t * Finset.univ.sum fun m =>
+  Finset.univ.sum λ t =>
+    G.prior t * Finset.univ.sum λ m =>
       S.choose t m * H.respond m t
 
-/-- **Lemma 3a**: Speaker improvement increases expected gain.
-
-If S_{i+2} is a best response to R_{i+1}, then EG(S_i, R_{i+1}) ≤ EG(S_{i+2}, R_{i+1}).
-
-Proof: By definition of best response, S_{i+2}(t) maximizes expected utility for each t. -/
+/-- Lemma 3a: best-response speaker improves EG. -/
 theorem eg_speaker_improvement (G : InterpGame)
     (S_old S_new : SpeakerStrategy G) (H : HearerStrategy G)
     (hBR : S_new = SpeakerStrategy.bestResponse G H) :
     expectedGain G S_old H ≤ expectedGain G S_new H := by
   sorry -- Requires showing best response improves expected utility at each state
 
-/-- **Lemma 3b**: Hearer improvement increases expected gain.
-
-If R_{i+2} is a best response to S_{i+1}, then EG(S_{i+1}, R_i) ≤ EG(S_{i+1}, R_{i+2}).
-
-Proof: By Bayesian update, R_{i+2} maximizes posterior probability of correct state. -/
+/-- Lemma 3b: Bayesian hearer update improves EG. -/
 theorem eg_hearer_improvement (G : InterpGame)
     (S : SpeakerStrategy G) (H_old H_new : HearerStrategy G)
     (hBR : H_new = hearerUpdate G S) :
@@ -395,63 +252,18 @@ theorem eg_bounded (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy 
     expectedGain G S H ≤ 1 := by
   sorry -- Requires showing it's a probability
 
-/-- **Theorem 3**: IBR always reaches a fixed point for finite interpretation games.
-
-Proof: By Lemma 3, expected gain EG is monotonically increasing along the IBR sequence.
-Since EG is bounded above and there are only finitely many possible strategy profiles,
-the sequence must reach a fixed point where EG stabilizes.
-
-More precisely:
-1. EG(S_k, R_{k+1}) ≤ EG(S_{k+2}, R_{k+1}) by speaker improvement
-2. EG(S_{k+1}, R_k) ≤ EG(S_{k+1}, R_{k+2}) by hearer improvement
-3. EG ≤ 1 (bounded)
-4. Finitely many strategies ⟹ sequence stabilizes ⟹ fixed point
--/
+/-- Theorem 3: IBR converges. EG is monotone increasing and bounded ⟹ fixed point. -/
 theorem ibr_reaches_fixed_point (G : InterpGame) :
     ∃ n : ℕ, isIBRFixedPoint G (ibrN G n) := by
   sorry -- Requires formalizing the monotonicity + finiteness argument
 
--- SECTION 4.2: Fixed Point Characterization via Minimum Alternatives
-
-/-!
-## Fixed Point = Minimum Alternatives = ExhMW
-
-The key insight from Franke's "light system" (Appendix B.2, eq. 131):
-
-At each IBR iteration, the receiver updates beliefs via Bayes' rule:
-  μ_{k+1}(t|m) = Pr(t) × S_k(t,m) / Σ_{t'} Pr(t') × S_k(t',m)
-
-With flat priors (C3), comparing two states t₁, t₂:
-  μ_{k+1}(t₁|m) > μ_{k+1}(t₂|m)
-  iff S_k(t₁,m) > S_k(t₂,m)
-  iff |S_k(t₁)| < |S_k(t₂)|  (fewer speaker options = higher speaker prob for m)
-
-This means: **receiver prefers states where fewer messages are true**.
-
-At the fixed point:
-- R_∞(m) selects states t where |{m' : m'(t)}| is minimum among m-worlds
-- This is exactly `isMinimalByAltCount`
-- Which equals `exhMW` (proved as `r1_subset_exhMW`)
-
-### The Light System (Equations 123-124)
-
-With flat priors, IBR simplifies to:
-  S_{k+1}(t) = argmin_{m ∈ R_k^{-1}(t)} |R_k(m)|
-  R_{k+1}(m) = argmin_{t ∈ S_k^{-1}(m)} |S_k(t)|
-
-Both select elements with minimum "competitor count" - exactly minimal worlds!
--/
+-- Fixed point = minimum alternatives = exhMW (Franke Appendix B.2, eq. 131)
 
 /-- Number of messages the speaker uses at state t (|S(t)|). -/
 def speakerOptionCount (G : InterpGame) (S : SpeakerStrategy G) (t : G.State) : ℕ :=
-  (Finset.univ.filter fun m => S.choose t m > 0).card
+  (Finset.univ.filter λ m => S.choose t m > 0).card
 
-/-- At the fixed point, receiver prefers states with fewer speaker options.
-
-This is the key lemma connecting IBR to alternative minimization.
-If S = bestResponse to H, and H = hearerUpdate of S (fixed point),
-then H.respond m t₁ > H.respond m t₂ iff speakerOptionCount G S t₁ < speakerOptionCount G S t₂
-(among states where m is true and has positive prior). -/
+/-- At the fixed point with flat priors, fewer speaker options ↔ higher hearer probability (eq. 131). -/
 theorem fp_prefers_fewer_options (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H)
     (hFlatPrior : ∀ t₁ t₂, G.prior t₁ = G.prior t₂)
@@ -463,12 +275,7 @@ theorem fp_prefers_fewer_options (G : InterpGame) (H : HearerStrategy G)
       speakerOptionCount G S t₁ < speakerOptionCount G S t₂ := by
   sorry -- Follows from Bayes' rule with flat priors (eq. 131)
 
-/-- Speaker option count is bounded by the number of true messages.
-
-When S = bestResponse to some H, the speaker uses a subset of true messages
-(specifically, the optimal ones). So speakerOptionCount ≤ |trueMessages|.
-
-Note: alternativeCount is defined later in Section 5.1 as the count of true messages. -/
+/-- Best-response speaker uses ⊆ true messages, so speakerOptionCount ≤ |trueMessages|. -/
 theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
     (t : G.State) :
     let S := speakerUpdate G H
@@ -508,7 +315,7 @@ In notation:
 
 This connects game-theoretic pragmatics to grammatical exhaustification.
 
-### Key Results from Section 10 and Appendix A
+### Results from Section 10 and Appendix A
 
 **Equation (107)**: R₁ characterization
   R₁(m) = {t ∈ ⟦m⟧ | ¬∃t′ ∈ ⟦m⟧ : |R⁻¹₀(t′)| < |R⁻¹₀(t)|}
@@ -526,15 +333,13 @@ Under "homogeneity" of alternatives, R₁(mₛ) = ExhMM(S).
 /-- Convert interpretation game to alternative set for exhaustification.
     Converts Bool meaning to Prop' by using equality with true. -/
 def toAlternatives (G : InterpGame) : Set (Prop' G.State) :=
-  { fun s => G.meaning m s = true | m : G.Message }
+  { λ s => G.meaning m s = true | m : G.Message }
 
 /-- The prejacent proposition for a message (Bool → Prop conversion) -/
 def prejacent (G : InterpGame) (m : G.Message) : Prop' G.State :=
-  fun s => G.meaning m s = true
+  λ s => G.meaning m s = true
 
--- ----------------------------------------------------------------------------
--- 5.1: Alternative Counting (Franke eq. 107)
--- ----------------------------------------------------------------------------
+--5.1: Alternative Counting (Franke eq. 107)
 
 /-- Number of alternatives (messages) true at state s.
     This is |R⁻¹₀(s)| in Franke's notation. -/
@@ -553,12 +358,10 @@ noncomputable def minAltCountStates (G : InterpGame) (m : G.Message) : Finset G.
   if h : mWorlds.Nonempty then
     let witness := Classical.choose h
     let minCount := mWorlds.fold min (alternativeCount G witness) (alternativeCount G ·)
-    mWorlds.filter (fun s => alternativeCount G s = minCount)
+    mWorlds.filter (λ s => alternativeCount G s = minCount)
   else ∅
 
--- ----------------------------------------------------------------------------
--- 5.2: Fact 1 - R₁ ⊆ ExhMW (Franke Section 10)
--- ----------------------------------------------------------------------------
+--5.2: Fact 1 - R₁ ⊆ ExhMW (Franke Section 10)
 
 /-- Key lemma: s' <_ALT s implies trueMessages s' ⊂ trueMessages s.
 
@@ -577,7 +380,7 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
     simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
     -- m' is true at s', so the alternative "meaning m' = true" is true at s'
     -- By hle, this alternative is also true at s
-    have halt : (fun x => G.meaning m' x = true) s' → (fun x => G.meaning m' x = true) s := by
+    have halt : (λ x => G.meaning m' x = true) s' → (λ x => G.meaning m' x = true) s := by
       apply hle
       simp only [toAlternatives, Set.mem_setOf_eq]
       exact ⟨m', rfl⟩
@@ -589,9 +392,9 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
     intro a ha_mem ha_s
     simp only [toAlternatives, Set.mem_setOf_eq] at ha_mem
     obtain ⟨m', hm'_eq⟩ := ha_mem
-    -- a = (fun x => G.meaning m' x = true), and a s holds
+    -- a = (λ x => G.meaning m' x = true), and a s holds
     subst hm'_eq
-    -- ha_s : (fun x => G.meaning m' x = true) s, i.e., G.meaning m' s = true
+    -- ha_s : (λ x => G.meaning m' x = true) s, i.e., G.meaning m' s = true
     -- Since trueMessages s' = trueMessages s, m' ∈ trueMessages s implies m' ∈ trueMessages s'
     have hm'_in : m' ∈ G.trueMessages s := by
       simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
@@ -656,7 +459,7 @@ theorem trueMessages_injective_of_homogeneous (G : InterpGame)
     exact (h2.mp hmem).symm
   | false =>
     -- meaning m' s' = false, so m' ∉ trueMessages s (via h1 contrapositive)
-    have hnmem : m' ∉ G.trueMessages s := fun hmem => by
+    have hnmem : m' ∉ G.trueMessages s := λ hmem => by
       have := h1.mp hmem
       simp only [hm'] at this
       -- this : false = true, which is a contradiction
@@ -691,8 +494,8 @@ theorem trueMessages_ssubset_implies_ltALT (G : InterpGame)
     have hsub : G.trueMessages s ⊆ G.trueMessages s' := by
       intro m' hm'
       simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
-      have h : (fun x => G.meaning m' x = true) s := hm'
-      have halt := hle (fun x => G.meaning m' x = true) ⟨m', rfl⟩ h
+      have h : (λ x => G.meaning m' x = true) s := hm'
+      have halt := hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ h
       exact halt
     -- But hss says trueMessages s' ⊂ trueMessages s (proper subset)
     -- hss.2 : ¬(trueMessages s ⊆ trueMessages s')
@@ -721,9 +524,7 @@ theorem r1_containedIn_exhMW (G : InterpGame) (m : G.Message) (s : G.State)
     exhMW (toAlternatives G) (prejacent G m) s :=
   r1_subset_exhMW G m s h
 
--- ----------------------------------------------------------------------------
--- 5.2b: Conditions for the Converse (ExhMW ⊆ R₁)
--- ----------------------------------------------------------------------------
+--5.2b: Conditions for the Converse (ExhMW ⊆ R₁)
 
 /-- The alternative ordering is **total** on m-worlds if for any two states
 where m is true, one's true alternatives are a subset of the other's.
@@ -771,7 +572,7 @@ theorem exhMW_subset_r1_under_totality (G : InterpGame) (m : G.Message) (s : G.S
       · -- trueMessages s' ⊂ trueMessages s (proper subset)
         -- This means s' <_ALT s, contradicting hmw.2
         have hss : G.trueMessages s' ⊂ G.trueMessages s :=
-          ⟨hsub', fun h => heq (Finset.Subset.antisymm hsub' h)⟩
+          ⟨hsub', λ h => heq (Finset.Subset.antisymm hsub' h)⟩
         -- Prove s' <_ALT s directly from hss
         have hlt : ltALT (toAlternatives G) s' s := by
           constructor
@@ -791,8 +592,8 @@ theorem exhMW_subset_r1_under_totality (G : InterpGame) (m : G.Message) (s : G.S
             have hsub'' : G.trueMessages s ⊆ G.trueMessages s' := by
               intro m' hm'
               simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
-              have h : (fun x => G.meaning m' x = true) s := hm'
-              have halt := hle (fun x => G.meaning m' x = true) ⟨m', rfl⟩ h
+              have h : (λ x => G.meaning m' x = true) s := hm'
+              have halt := hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ h
               exact halt
             exact hss.2 hsub''
         -- hmw.2 says there's no v such that (prejacent G m v ∧ v <_ALT s)
@@ -807,9 +608,7 @@ theorem r1_eq_exhMW_under_totality (G : InterpGame) (m : G.Message) (s : G.State
     isMinimalByAltCount G m s ↔ exhMW (toAlternatives G) (prejacent G m) s :=
   ⟨r1_subset_exhMW G m s, exhMW_subset_r1_under_totality G m s hTotal⟩
 
--- ----------------------------------------------------------------------------
--- 5.3: Fact 3 - ExhMW ⊆ ExhIE (Franke Appendix A)
--- ----------------------------------------------------------------------------
+--5.3: Fact 3 - ExhMW ⊆ ExhIE (Franke Appendix A)
 
 /-- **Franke Fact 3 (Appendix A)**: ExhMW(S, Alt) ⊆ ExhIE(S, Alt)
 
@@ -829,9 +628,7 @@ theorem fact3_exhMW_subset_exhIE (G : InterpGame) (m : G.Message) :
     exhMW (toAlternatives G) (prejacent G m) ⊆ₚ exhIE (toAlternatives G) (prejacent G m) :=
   prop6_exhMW_entails_exhIE (toAlternatives G) (prejacent G m)
 
--- ----------------------------------------------------------------------------
--- 5.4: Fact 4 - ExhMW = ExhIE under closure (Franke Appendix A)
--- ----------------------------------------------------------------------------
+--5.4: Fact 4 - ExhMW = ExhIE under closure (Franke Appendix A)
 
 /-- **Franke Fact 4 (Appendix A)**: ExhMW = ExhIE when Alt is closed under ∧.
 
@@ -850,9 +647,7 @@ theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
     exhMW (toAlternatives G) (prejacent G m) ≡ₚ exhIE (toAlternatives G) (prejacent G m) :=
   theorem9_main (toAlternatives G) (prejacent G m) hClosed
 
--- ----------------------------------------------------------------------------
--- 5.5: IBR Fixed Point Theorems (previously in this section)
--- ----------------------------------------------------------------------------
+--5.5: IBR Fixed Point Theorems (previously in this section)
 
 /-- IBR fixed point equals exhMW (Main theorem - Franke 2011, Section 9.3)
 
@@ -947,11 +742,11 @@ theorem ibr_fp_excludes_nonminimal (G : InterpGame) (H : HearerStrategy G)
     (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     H.respond m s = 0 := by
   -- s is not in exhMW because it's non-minimal
-  have hNotExh : ¬exhMW (toAlternatives G) (prejacent G m) s := fun hexh => hexh.2 hNonMin
+  have hNotExh : ¬exhMW (toAlternatives G) (prejacent G m) s := λ hexh => hexh.2 hNonMin
   -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
   -- Since ¬exhMW s, we have ¬(H.respond m s > 0)
   have hNotPos : ¬(H.respond m s > 0) :=
-    fun hpos => hNotExh ((ibr_equals_exhMW G H hFP m s).mp hpos)
+    λ hpos => hNotExh ((ibr_equals_exhMW G H hFP m s).mp hpos)
   -- At a fixed point with non-negative priors, H.respond ≥ 0
   have hNonneg := fp_respond_nonneg G H hFP hPriorNonneg m s
   -- ¬(x > 0) ∧ x ≥ 0 → x = 0
@@ -991,11 +786,11 @@ This connects the probabilistic RSA model to the deterministic IBR model.
     Note: This assumes the game has non-negative priors. -/
 def toRSAScenario (G : InterpGame) (α : ℕ)
     (hPrior : ∀ s, 0 ≤ G.prior s) : RSAScenario G.Message G.State where
-  φ := fun _ _ m s => if G.meaning m s then 1 else 0
-  goalProject := fun _ s s' => s == s'
+  φ := λ _ _ m s => if G.meaning m s then 1 else 0
+  goalProject := λ _ s s' => s == s'
   worldPrior := G.prior
   α := α
-  φ_nonneg := fun _ _ _ _ => by split <;> decide
+  φ_nonneg := λ _ _ _ _ => by split <;> decide
   worldPrior_nonneg := hPrior
 
 /-- RSA S1 probability for message given state (rational version) -/
@@ -1003,7 +798,7 @@ def rsaS1Prob (G : InterpGame) (α : ℕ) (s : G.State) (m : G.Message) : ℚ :=
   -- Simplified: (L0(s|m))^α normalized
   let l0 := if G.meaning m s then (G.informativity m) else 0
   let score := l0 ^ α
-  let total := Finset.univ.sum fun m' =>
+  let total := Finset.univ.sum λ m' =>
     let l0' := if G.meaning m' s then (G.informativity m') else 0
     l0' ^ α
   if total == 0 then 0 else score / total
@@ -1022,7 +817,7 @@ RSA S1 is exactly softmax over log-informativity scores:
 -/
 noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
   -- Score = log(informativity) for true messages, floor for false
-  let score := fun m =>
+  let score := λ m =>
     if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
   Softmax.softmax score α
 
@@ -1033,7 +828,7 @@ scores = log(informativity of message).
 -/
 theorem rsaS1_eq_softmax (G : InterpGame) [Nonempty G.Message] (α : ℝ) (s : G.State) :
     rsaS1Real G α s = Softmax.softmax
-      (fun m => if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G) α := rfl
+      (λ m => if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G) α := rfl
 
 /-- As α → ∞, RSA S1 concentrates on optimal messages (IBR S1).
 
@@ -1048,11 +843,11 @@ theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m 
     (hTrue : G.meaning m s = true)
     (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
     (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
   -- RSA S1 = softmax over log-informativity
   -- The optimal message m has highest log-informativity among true messages
   -- By softmax_tendsto_hardmax, softmax concentrates on the maximum
-  let score := fun m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
+  let score := λ m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
   -- m is the unique maximum of score (log is monotone, so max inf = max log inf)
   have hmax : ∀ m', m' ≠ m → score m' < score m := by
     intro m' hne
@@ -1145,11 +940,11 @@ inductive ScalarMessage where
 def scalarGame : InterpGame where
   State := ScalarState
   Message := ScalarMessage
-  meaning := fun m s => match m, s with
+  meaning := λ m s => match m, s with
     | .some_, _ => true           -- "some" true at both states
     | .all, .all => true          -- "all" true only at all
     | .all, .someNotAll => false
-  prior := fun _ => 1 / 2  -- Uniform prior
+  prior := λ _ => 1 / 2  -- Uniform prior
 
 -- L₀ for "some" is uniform over both states
 #eval (L0 scalarGame).respond .some_ .someNotAll  -- Expected: 1/2
@@ -1192,7 +987,7 @@ inductive FCMessage where
 def freeChoiceGame : InterpGame where
   State := FCState
   Message := FCMessage
-  meaning := fun m s => match m, s with
+  meaning := λ m s => match m, s with
     | .mayA, .onlyA => true
     | .mayA, .either => true
     | .mayA, .both => true
@@ -1202,7 +997,7 @@ def freeChoiceGame : InterpGame where
     | .mayAorB, _ => true        -- Always true under standard deontic logic
     | .mayAandB, .both => true
     | _, _ => false
-  prior := fun _ => 1 / 4  -- Uniform prior
+  prior := λ _ => 1 / 4  -- Uniform prior
 
 -- SECTION 8: The Complete Chain: RSA → IBR → ExhMW → ExhIE
 
@@ -1230,7 +1025,7 @@ ExhMW (minimal worlds)
 ExhIE (innocent exclusion)
 ```
 
-### Key Results
+### Results
 
 1. **rsa_to_ibr_limit** (proved above): RSA S1 → IBR S1 as α → ∞
 2. **Fact 1** (r1_subset_exhMW): IBR R₁ ⊆ ExhMW (Franke 2011 Appendix A)
@@ -1247,9 +1042,7 @@ Combined: Under closure, lim_{α→∞} RSA = IBR = ExhMW = ExhIE
 **RSA and EXH are the same rational principle at different "temperatures"**
 -/
 
--- ----------------------------------------------------------------------------
--- 8.1: IBR to ExhMW (combining facts from Section 5)
--- ----------------------------------------------------------------------------
+--8.1: IBR to ExhMW (combining facts from Section 5)
 
 /-- IBR fixed point equals exhMW (Main theorem - Franke 2011, Section 9.3)
 
@@ -1268,9 +1061,7 @@ theorem ibr_fp_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
   -- once we have the full fixed point characterization.
   ibr_equals_exhMW G H hFP m
 
--- ----------------------------------------------------------------------------
--- 8.2: ExhMW to ExhIE (Spector's Theorem 9)
--- ----------------------------------------------------------------------------
+--8.2: ExhMW to ExhIE (Spector's Theorem 9)
 
 /-- When alternatives are closed under conjunction, ExhMW = ExhIE.
 
@@ -1284,9 +1075,7 @@ theorem exhMW_eq_exhIE_under_closure (G : InterpGame) (m : G.Message)
   have h := fact4_exhMW_eq_exhIE_closed G m hClosed
   exact ⟨h.1 s, h.2 s⟩
 
--- ----------------------------------------------------------------------------
--- 8.3: IBR to ExhIE (combining the chain)
--- ----------------------------------------------------------------------------
+--8.3: IBR to ExhIE (combining the chain)
 
 /-- When alternatives are closed under conjunction, IBR = exhIE.
 
@@ -1304,11 +1093,9 @@ theorem ibr_fp_equals_exhIE (G : InterpGame) (H : HearerStrategy G)
   -- Chain: IBR = exhMW = exhIE
   have h1 := ibr_fp_equals_exhMW G H hFP m hGame s
   have h2 := exhMW_eq_exhIE_under_closure G m hClosed s
-  exact ⟨fun h => h2.1 (h1.1 h), fun h => h1.2 (h2.2 h)⟩
+  exact ⟨λ h => h2.1 (h1.1 h), λ h => h1.2 (h2.2 h)⟩
 
--- ----------------------------------------------------------------------------
--- 8.4: RSA to ExhIE (the full limit theorem)
--- ----------------------------------------------------------------------------
+--8.4: RSA to ExhIE (the full limit theorem)
 
 /-- The grand unification: RSA → ExhMW as α → ∞.
 
@@ -1324,7 +1111,7 @@ theorem rsa_to_exhMW_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message)
     (hInfPos : 0 < G.informativity m) :
     -- The RSA speaker probability for message m at state s converges to 1 as α → ∞
     -- when s is a minimal state (i.e., in exhMW)
-    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
   rsa_to_ibr_limit G s m hTrue hUnique hInfPos
 
 /-- The full limit theorem: RSA → ExhIE under closure as α → ∞.
@@ -1346,7 +1133,7 @@ theorem rsa_to_exhIE_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G))
     (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
     (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
   -- Chain: exhIE = exhMW (under closure) = isMinimalByAltCount = RSA limit
   -- We use the closure condition to connect exhIE to exhMW
   have hMW : exhMW (toAlternatives G) (prejacent G m) s :=

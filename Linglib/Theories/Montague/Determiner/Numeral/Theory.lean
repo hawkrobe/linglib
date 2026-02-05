@@ -95,7 +95,7 @@ This is the key connection: any numeral theory can be used with RSA.
 -/
 def NumeralTheory.runL1 (T : NumeralTheory) (w : NumWord) : List (Nat × ℚ) :=
   RSA.Eval.basicL1 T.utterances T.worlds
-    (fun u n => boolToRat (T.meaning u n)) (fun _ => 1) 1 (fun _ => 0) w
+    (λ u n => boolToRat (T.meaning u n)) (λ _ => 1) 1 (λ _ => 0) w
 
 /--
 Strength ordering: `w₁` is stronger than `w₂` if `w₁` entails `w₂`.
@@ -110,7 +110,7 @@ def NumeralTheory.strongerThan (T : NumeralTheory) (w₁ w₂ : NumWord) : Prop 
 Decidable strength comparison for computation.
 -/
 def NumeralTheory.isStrongerThan (T : NumeralTheory) (w₁ w₂ : NumWord) : Bool :=
-  T.worlds.all fun n => !T.meaning w₁ n || T.meaning w₂ n
+  T.worlds.all λ n => !T.meaning w₁ n || T.meaning w₂ n
 
 /--
 Count worlds compatible with an utterance.

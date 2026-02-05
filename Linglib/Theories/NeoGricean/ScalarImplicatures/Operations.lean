@@ -19,7 +19,7 @@ Horn identifies three operations that speakers can perform on scalar implicature
    - Leaves the upper bound undetermined
    - Example: "I have two children, possibly more"
 
-## Key Insight
+## Insight
 
 These operations target the IMPLICATURE, not the assertion.
 - You can suspend "not all" from "some" (implicature)

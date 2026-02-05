@@ -17,7 +17,7 @@ variable {ι : Type*} [Fintype ι]
 
 /-- The softmax function: softmax(s, α)ᵢ = exp(α · sᵢ) / Σⱼ exp(α · sⱼ). -/
 noncomputable def softmax (s : ι → ℝ) (α : ℝ) : ι → ℝ :=
-  fun i => exp (α * s i) / ∑ j : ι, exp (α * s j)
+  λ i => exp (α * s i) / ∑ j : ι, exp (α * s j)
 
 /-- The partition function (normalizing constant) Z = Σⱼ exp(α · sⱼ) -/
 noncomputable def partitionFn (s : ι → ℝ) (α : ℝ) : ℝ :=
@@ -64,9 +64,9 @@ theorem softmax_nonneg [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
 theorem softmax_le_one [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
     softmax s α i ≤ 1 := by
   have h := softmax_sum_eq_one s α
-  have hpos : ∀ j, 0 ≤ softmax s α j := fun j => softmax_nonneg s α j
+  have hpos : ∀ j, 0 ≤ softmax s α j := λ j => softmax_nonneg s α j
   calc softmax s α i
-      ≤ ∑ j : ι, softmax s α j := Finset.single_le_sum (fun j _ => hpos j) (Finset.mem_univ i)
+      ≤ ∑ j : ι, softmax s α j := Finset.single_le_sum (λ j _ => hpos j) (Finset.mem_univ i)
     _ = 1 := h
 
 /-- Fact 2: Odds are determined by score differences: pᵢ/pⱼ = exp(α(sᵢ - sⱼ)). -/
@@ -107,7 +107,7 @@ theorem softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
 
 /-- Fact 6: Softmax is translation invariant. -/
 theorem softmax_add_const (s : ι → ℝ) (α c : ℝ) :
-    softmax (fun i => s i + c) α = softmax s α := by
+    softmax (λ i => s i + c) α = softmax s α := by
   funext i
   simp only [softmax]
   have hexp : ∀ j, exp (α * (s j + c)) = exp (α * s j) * exp (α * c) := by
@@ -119,7 +119,7 @@ theorem softmax_add_const (s : ι → ℝ) (α c : ℝ) :
 
 /-- Fact 8: Multiplicative scaling can be absorbed into α. -/
 theorem softmax_scale (s : ι → ℝ) (α a : ℝ) (ha : a ≠ 0) :
-    softmax (fun i => a * s i) (α / a) = softmax s α := by
+    softmax (λ i => a * s i) (α / a) = softmax s α := by
   funext i
   simp only [softmax]
   congr 1
@@ -150,7 +150,7 @@ theorem softmax_strict_mono [Nonempty ι] (s : ι → ℝ) {α : ℝ} (hα : 0 <
 
 /-- At α = 0, softmax is uniform. -/
 theorem softmax_zero [Nonempty ι] (s : ι → ℝ) :
-    softmax s 0 = fun _ => 1 / (Fintype.card ι : ℝ) := by
+    softmax s 0 = λ _ => 1 / (Fintype.card ι : ℝ) := by
   funext i
   simp only [softmax, zero_mul, exp_zero, Finset.sum_const, Finset.card_univ,
              nsmul_eq_mul, mul_one]

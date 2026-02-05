@@ -1,17 +1,17 @@
 /-
 # Team Semantics Infrastructure
 
-Team semantics evaluates formulas relative to **sets** of evaluation points
+Team semantics evaluates formulas relative to sets of evaluation points
 (teams) rather than single points. This module provides the core infrastructure.
 
 ## Background
 
 Team semantics originated in logic (Hodges 1997, Väänänen 2007) and has been
 applied to linguistics for:
-- **Inquisitive Semantics**: Questions as issues (sets of info states)
-- **Free Choice**: Aloni's BSML derives FC via non-emptiness constraints
-- **Modified Numerals**: First-order team semantics
-- **Exceptional Scope**: Indefinites with team-based evaluation
+- Inquisitive Semantics: questions as issues (sets of info states)
+- Free Choice: Aloni's BSML derives FC via non-emptiness constraints
+- Modified Numerals: first-order team semantics
+- Exceptional Scope: indefinites with team-based evaluation
 
 ## Key Concepts
 
@@ -51,13 +51,13 @@ This is equivalent to `InfoState` in Inquisitive Semantics.
 abbrev Team (W : Type*) := W -> Bool
 
 /-- The empty team (inconsistent information state) -/
-def Team.empty {W : Type*} : Team W := fun _ => false
+def Team.empty {W : Type*} : Team W := λ _ => false
 
 /-- The full team (no information / total ignorance) -/
-def Team.full {W : Type*} : Team W := fun _ => true
+def Team.full {W : Type*} : Team W := λ _ => true
 
 /-- Singleton team containing just one world -/
-def Team.singleton {W : Type*} [DecidableEq W] (w : W) : Team W := fun w' => w == w'
+def Team.singleton {W : Type*} [DecidableEq W] (w : W) : Team W := λ w' => w == w'
 
 /-- Check if a team is empty (no worlds) -/
 def Team.isEmpty {W : Type*} (t : Team W) (worlds : List W) : Bool :=
@@ -72,35 +72,35 @@ def Team.mem {W : Type*} (t : Team W) (w : W) : Bool := t w
 
 /-- Team subset: t ⊆ t' -/
 def Team.subset {W : Type*} (t t' : Team W) (worlds : List W) : Bool :=
-  worlds.all fun w => !t w || t' w
+  worlds.all λ w => !t w || t' w
 
 /-- Team intersection: t ∩ t' -/
 def Team.inter {W : Type*} (t t' : Team W) : Team W :=
-  fun w => t w && t' w
+  λ w => t w && t' w
 
 /-- Team union: t ∪ t' -/
 def Team.union {W : Type*} (t t' : Team W) : Team W :=
-  fun w => t w || t' w
+  λ w => t w || t' w
 
 /-- Team complement: W \ t -/
 def Team.compl {W : Type*} (t : Team W) : Team W :=
-  fun w => !t w
+  λ w => !t w
 
 /-- Team difference: t \ t' -/
 def Team.diff {W : Type*} (t t' : Team W) : Team W :=
-  fun w => t w && !t' w
+  λ w => t w && !t' w
 
 /-- Filter team by predicate -/
 def Team.filter {W : Type*} (t : Team W) (p : W -> Bool) : Team W :=
-  fun w => t w && p w
+  λ w => t w && p w
 
 /-- All worlds in team satisfy predicate -/
 def Team.all {W : Type*} (t : Team W) (p : W -> Bool) (worlds : List W) : Bool :=
-  worlds.all fun w => !t w || p w
+  worlds.all λ w => !t w || p w
 
 /-- Some world in team satisfies predicate -/
 def Team.any {W : Type*} (t : Team W) (p : W -> Bool) (worlds : List W) : Bool :=
-  worlds.any fun w => t w && p w
+  worlds.any λ w => t w && p w
 
 /-- Convert team to list of worlds -/
 def Team.toList {W : Type*} (t : Team W) (worlds : List W) : List W :=
@@ -108,20 +108,20 @@ def Team.toList {W : Type*} (t : Team W) (worlds : List W) : List W :=
 
 /-- Team from list of worlds -/
 def Team.ofList {W : Type*} [DecidableEq W] (ws : List W) : Team W :=
-  fun w => ws.contains w
+  λ w => ws.contains w
 
 /-- Team equality (extensional, given finite world list) -/
 def Team.beq {W : Type*} (t t' : Team W) (worlds : List W) : Bool :=
-  worlds.all fun w => t w == t' w
+  worlds.all λ w => t w == t' w
 
 
 /--
 A proposition in team semantics: evaluated relative to teams.
 
 Unlike classical propositions (W -> Bool), team propositions are
-(Team W -> Bool). The key insight is that team propositions can
-express properties that single-world propositions cannot, like
-"the team is non-empty" or "all worlds in the team agree on p".
+(Team W -> Bool). Team propositions can express properties that
+single-world propositions cannot, such as "the team is non-empty"
+or "all worlds in the team agree on p".
 -/
 abbrev TeamProp (W : Type*) := Team W -> Bool
 
@@ -133,16 +133,16 @@ This is the "flatness" or "downward closure" property:
 if t ⊨ p and t' ⊆ t, then t' ⊨ p.
 -/
 def liftProp {W : Type*} (p : W -> Bool) (worlds : List W) : TeamProp W :=
-  fun t => t.all p worlds
+  λ t => t.all p worlds
 
 /--
 The non-emptiness atom (NE): team is non-empty.
 
-This is Aloni's key innovation for free choice. NE is NOT flat:
-∅ does NOT support NE, but all non-empty subsets do.
+Aloni's non-emptiness atom for free choice. NE is not flat:
+∅ does not support NE, but all non-empty subsets do.
 -/
 def ne {W : Type*} (worlds : List W) : TeamProp W :=
-  fun t => t.isNonEmpty worlds
+  λ t => t.isNonEmpty worlds
 
 /--
 Support relation: team t supports proposition p.
@@ -164,15 +164,15 @@ For classical propositions:
 The empty team anti-supports everything.
 -/
 def antiSupports {W : Type*} (t : Team W) (p : W -> Bool) (worlds : List W) : Bool :=
-  t.all (fun w => !p w) worlds
+  t.all (λ w => !p w) worlds
 
 
 /--
 A bilateral formula has both support and anti-support conditions.
 
 This is the foundation for bilateral semantics (Aloni 2022, cf. BUS).
-The key property is that negation swaps support and anti-support,
-giving us double negation elimination.
+Negation swaps support and anti-support,
+yielding double negation elimination.
 
 In BSML:
 - Atomic p: t ⊨⁺ p iff ∀w ∈ t, p(w); t ⊨⁻ p iff ∀w ∈ t, ¬p(w)
@@ -186,33 +186,33 @@ structure BilateralFormula (W : Type*) where
 
 /-- Atomic formula from a classical proposition -/
 def BilateralFormula.atom {W : Type*} (p : W -> Bool) : BilateralFormula W where
-  support := fun t worlds => supports t p worlds
-  antiSupport := fun t worlds => antiSupports t p worlds
+  support := λ t worlds => supports t p worlds
+  antiSupport := λ t worlds => antiSupports t p worlds
 
 /-- Negation: swap support and anti-support -/
 def BilateralFormula.neg {W : Type*} (φ : BilateralFormula W) : BilateralFormula W where
   support := φ.antiSupport
   antiSupport := φ.support
 
-/-- Double negation elimination (definitional!) -/
+/-- Double negation elimination (definitional). -/
 @[simp]
 theorem BilateralFormula.neg_neg {W : Type*} (φ : BilateralFormula W) :
     φ.neg.neg = φ := rfl
 
 /-- Conjunction: both must be supported -/
 def BilateralFormula.conj {W : Type*} (φ ψ : BilateralFormula W) : BilateralFormula W where
-  support := fun t worlds => φ.support t worlds && ψ.support t worlds
-  antiSupport := fun t worlds => φ.antiSupport t worlds || ψ.antiSupport t worlds
+  support := λ t worlds => φ.support t worlds && ψ.support t worlds
+  antiSupport := λ t worlds => φ.antiSupport t worlds || ψ.antiSupport t worlds
 
 /-- Standard disjunction: at least one supported -/
 def BilateralFormula.disjStd {W : Type*} (φ ψ : BilateralFormula W) : BilateralFormula W where
-  support := fun t worlds => φ.support t worlds || ψ.support t worlds
-  antiSupport := fun t worlds => φ.antiSupport t worlds && ψ.antiSupport t worlds
+  support := λ t worlds => φ.support t worlds || ψ.support t worlds
+  antiSupport := λ t worlds => φ.antiSupport t worlds && ψ.antiSupport t worlds
 
 /-- Non-emptiness atom -/
 def BilateralFormula.NE {W : Type*} : BilateralFormula W where
-  support := fun t worlds => t.isNonEmpty worlds
-  antiSupport := fun t worlds => t.isEmpty worlds
+  support := λ t worlds => t.isNonEmpty worlds
+  antiSupport := λ t worlds => t.isEmpty worlds
 
 
 /--
@@ -220,7 +220,7 @@ A team proposition is flat (downward closed) if:
 whenever t ⊨ φ and t' ⊆ t, then t' ⊨ φ.
 
 Classical propositions lifted to teams are always flat.
-NE is NOT flat (the key to free choice).
+NE is not flat, which is what enables free choice derivations.
 -/
 def isFlat {W : Type*} (φ : TeamProp W) (worlds : List W) : Prop :=
   ∀ t t' : Team W, t'.subset t worlds = true -> φ t = true -> φ t' = true
@@ -260,9 +260,9 @@ def TeamPartition.allPartitions {W : Type*} [DecidableEq W] (t : Team W)
     | w :: ws =>
         let withoutW := allSubsets ws
         withoutW ++ withoutW.map (w :: ·)
-  (allSubsets members).map fun left =>
+  (allSubsets members).map λ left =>
     let leftTeam : Team W := Team.ofList left
-    let rightTeam : Team W := fun w => t w && !leftTeam w
+    let rightTeam : Team W := λ w => t w && !leftTeam w
     { left := leftTeam, right := rightTeam }
 
 
@@ -273,46 +273,5 @@ def Entails {W : Type*} (φ ψ : BilateralFormula W) (worlds : List W) : Prop :=
   ∀ t : Team W, φ.support t worlds = true -> ψ.support t worlds = true
 
 notation:50 φ " ⊨ₜ " ψ => Entails φ ψ
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Core Types
-- `Team W`: Set of worlds (characteristic function)
-- `TeamProp W`: Team-level proposition
-- `BilateralFormula W`: Formula with support and anti-support
-
-### Team Operations
-- `empty`, `full`, `singleton`: Constructors
-- `inter`, `union`, `compl`, `diff`: Set operations
-- `subset`, `isEmpty`, `isNonEmpty`: Predicates
-- `all`, `any`, `filter`: Higher-order operations
-
-### Support Relations
-- `supports`: Team supports classical proposition
-- `antiSupports`: Team anti-supports classical proposition
-- `liftProp`: Lift classical to team proposition
-- `ne`: Non-emptiness atom (NOT flat!)
-
-### Bilateral Operations
-- `atom`: Lift classical proposition
-- `neg`: Negation (swap support/anti-support)
-- `conj`, `disjStd`: Conjunction, standard disjunction
-- `NE`: Non-emptiness as bilateral formula
-
-### Properties
-- `isFlat`: Downward closure property
-- `TeamPartition`: For split disjunction
-- `Entails`: Team-semantic entailment
-
-## Usage
-
-This infrastructure is used by:
-- Inquisitive Semantics (questions as issues)
-- BSML (Aloni 2022) for free choice
-- Other team-based linguistic analyses
--/
 
 end Theories.DynamicSemantics.TeamSemantics

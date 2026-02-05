@@ -5,7 +5,7 @@ This module establishes:
 1. **Equivalence theorems**: Threshold semantics soft meanings equal SDS posteriors
 2. **Bidirectional translation**: SDS ↔ LU-RSA correspondence
 
-## Key Insight
+## Insight
 
 SDS concept disambiguation is structurally equivalent to LU-RSA lexicon inference:
 - Both marginalize over a latent variable (concept/lexicon)
@@ -311,11 +311,11 @@ indicator function in the lexicon meaning.
 def sdsToLURSA (pkg : SDSPackage) [DecidableEq pkg.Param] : LURSAPackage where
   U := Unit  -- Trivial utterance type
   W := pkg.Param  -- Worlds are parameter values
-  lexica := (pkg.inst.paramSupport pkg.sys).map fun θ =>
-    { meaning := fun _ w => if w = θ then 1 else 0 }
-  prior := fun L =>
+  lexica := (pkg.inst.paramSupport pkg.sys).map λ θ =>
+    { meaning := λ _ w => if w = θ then 1 else 0 }
+  prior := λ L =>
     -- Find which parameter this lexicon corresponds to
-    match (pkg.inst.paramSupport pkg.sys).find? (fun θ =>
+    match (pkg.inst.paramSupport pkg.sys).find? (λ θ =>
       L.meaning () θ = 1) with
     | some θ => pkg.inst.selectionalFactor pkg.sys θ * pkg.inst.scenarioFactor pkg.sys θ
     | none => 0
@@ -393,7 +393,7 @@ theorem negative_scale_vacuous :
 2. **LU-RSA → SDS** (`lursaToSDS`): Every LU-RSA scenario is an SDS system where
    selectionalFactor = 1 (trivial) and scenarioFactor = P(L).
 
-### Key Theorems
+### Theorems
 
 - `sds_to_lursa_marginal_equiv`: SDS soft truth = SDS posterior probability
 - `lursa_to_sds_exists`: Every LU-RSA scenario is representable as SDS

@@ -11,7 +11,7 @@ strictly necessary when answering yes/no questions.
 
 Example: "Do you have iced tea?" → "No, but we have iced coffee."
 
-## Key Innovation
+## Innovation
 
 The question choice itself signals information about the questioner's goals.
 The respondent uses Theory of Mind to infer the likely decision problem
@@ -90,8 +90,8 @@ Van Rooy's key insight: questions are asked to resolve decision problems.
 The utility of an answer depends on how much it helps choose the right action.
 
 PRIOR-PQ builds on this by adding Theory of Mind:
-- **Van Rooy**: Respondent knows the decision problem
-- **PRIOR-PQ**: Respondent *infers* decision problem from question choice
+- Van Rooy: Respondent knows the decision problem
+- PRIOR-PQ: Respondent *infers* decision problem from question choice
 
 We reuse Van Rooy's `DecisionProblem` structure from `DecisionTheory.VanRooy2003`.
 -/
@@ -114,7 +114,7 @@ structure PQDecisionProblem where
 
 /-- Convert to Van Rooy's general decision problem type -/
 def PQDecisionProblem.toVanRooy (d : PQDecisionProblem) : DecisionProblem World Action :=
-  { utility := fun w a => if d.goalSatisfied w a then 1 else 0
+  { utility := λ w a => if d.goalSatisfied w a then 1 else 0
   , prior := d.prior }
 
 /-- Value of decision problem: max utility over actions (simplified).
@@ -124,7 +124,7 @@ Van Rooy defines: V(D) = max_a EU(a)
 For PRIOR-PQ, utility is binary (0 or 1), so this is whether any action
 satisfies the goal. -/
 def dpValue (d : PQDecisionProblem) (w : World) (actions : List Action) : ℚ :=
-  let utilities := actions.map fun a => if d.goalSatisfied w a then (1 : ℚ) else 0
+  let utilities := actions.map λ a => if d.goalSatisfied w a then (1 : ℚ) else 0
   utilities.foldl max 0
 
 /-- Utility value of learning response (Van Rooy's UV).
@@ -144,7 +144,7 @@ def responseTruth (r : Response) (w : World) : Bool :=
   | .taciturn b => b == w.targetAvailable
   | .withMention b item => b == w.targetAvailable && w.alternatives.contains item
   | .exhaustive b items => b == w.targetAvailable &&
-      items.all (fun i => w.alternatives.contains i)
+      items.all (λ i => w.alternatives.contains i)
 
 /-- Response cost (proportional to length) -/
 def responseCost (r : Response) : ℚ :=
@@ -169,8 +169,8 @@ def defaultParams : Params := {}
 ## R0: Base-level Respondent
 
 R0 selects uniformly among responses that are both:
-1. **True**: The response accurately describes the world
-2. **Safe**: The response answers the question (at minimum, yes or no)
+1. True: The response accurately describes the world
+2. Safe: The response answers the question (at minimum, yes or no)
 
 R0(r | w, q) ∝ 1 if r is true in w & safe for q, else 0
 -/
@@ -184,7 +184,7 @@ def isSafe (r : Response) : Bool :=
 
 /-- R0 distribution: uniform over true and safe responses -/
 def r0Prob (w : World) (responses : List Response) (r : Response) : ℚ :=
-  let validResponses := responses.filter fun r' =>
+  let validResponses := responses.filter λ r' =>
     responseTruth r' w && isSafe r'
   if validResponses.isEmpty then 0
   else if responseTruth r w && isSafe r then
@@ -214,9 +214,9 @@ def valueAfterResponse (d : PQDecisionProblem) (w : World) (r : Response)
 def questionUtility (params : Params) (d : PQDecisionProblem)
     (_q : PolarQuestion) (worlds : List World) (responses : List Response)
     (actions : List Action) : ℚ :=
-  worlds.foldl (fun acc w =>
+  worlds.foldl (λ acc w =>
     let worldProb := d.prior w
-    let responseUtil := responses.foldl (fun acc' r =>
+    let responseUtil := responses.foldl (λ acc' r =>
       let rProb := r0Prob w responses r
       let value := valueAfterResponse d w r actions
       let cost := params.costWeight * responseCost r
@@ -227,10 +227,10 @@ def questionUtility (params : Params) (d : PQDecisionProblem)
 
 /-- Soft-max normalization -/
 def softmax (alpha : ℚ) (utilities : List ℚ) : List ℚ :=
-  let scores := utilities.map fun u => max 0 (1 + alpha * u)
+  let scores := utilities.map λ u => max 0 (1 + alpha * u)
   let total := scores.foldl (· + ·) 0
-  if total == 0 then scores.map fun _ => 0
-  else scores.map fun s => s / total
+  if total == 0 then scores.map λ _ => 0
+  else scores.map λ s => s / total
 
 
 /-!
@@ -244,22 +244,22 @@ their choice of question:
 Then chooses response by soft-maximizing:
 (1-β)·informativity + β·V(D|r,q) - w_c·C(r)
 
-This is the key innovation: the question signals goals.
+The question signals goals.
 -/
 
 /-- Prior over decision problems (uniform) -/
 def dpPrior (dps : List PQDecisionProblem) : PQDecisionProblem → ℚ :=
-  fun _ => if dps.isEmpty then 0 else 1 / dps.length
+  λ _ => if dps.isEmpty then 0 else 1 / dps.length
 
 /-- Posterior over decision problems given question -/
 def inferredDP (params : Params) (q : PolarQuestion)
     (dps : List PQDecisionProblem) (worlds : List World)
     (responses : List Response) (actions : List Action)
     : List (PQDecisionProblem × ℚ) :=
-  let likelihoods := dps.map fun d =>
+  let likelihoods := dps.map λ d =>
     (d, questionUtility params d q worlds responses actions)
   let probs := softmax params.αQ (likelihoods.map (·.2))
-  (dps.zip probs).map fun (d, p) => (d, p * dpPrior dps d)
+  (dps.zip probs).map λ (d, p) => (d, p * dpPrior dps d)
 
 /-- Informativity of response (simplified: inverse of response set size) -/
 def informativity (_r : Response) (responses : List Response) : ℚ :=
@@ -268,7 +268,7 @@ def informativity (_r : Response) (responses : List Response) : ℚ :=
 /-- Action relevance: expected utility under inferred DP distribution -/
 def actionRelevance (_params : Params) (r : Response) (w : World)
     (dpDist : List (PQDecisionProblem × ℚ)) (actions : List Action) : ℚ :=
-  dpDist.foldl (fun acc (d, prob) =>
+  dpDist.foldl (λ acc (d, prob) =>
     acc + prob * valueAfterResponse d w r actions
   ) 0
 
@@ -287,7 +287,7 @@ def r1Dist (params : Params) (w : World) (q : PolarQuestion)
     (responses : List Response) (actions : List Action)
     : List (Response × ℚ) :=
   let dpDist := inferredDP params q dps worlds responses actions
-  let utilities := responses.map fun r => r1Utility params r w dpDist responses actions
+  let utilities := responses.map λ r => r1Utility params r w dpDist responses actions
   let probs := softmax params.αR utilities
   responses.zip probs
 
@@ -323,12 +323,12 @@ def icedTeaResponses : List Response :=
 
 /-- Decision problem: find a cold refreshing drink -/
 def coldDrinkDP : PQDecisionProblem :=
-  { goalSatisfied := fun _w a =>
+  { goalSatisfied := λ _w a =>
       match a with
       | .choose item => item.category == 0  -- Cold drink category
       | .chooseTarget => true               -- Iced tea would satisfy
       | .leave => false
-  , prior := fun _ => 1  -- Simplified
+  , prior := λ _ => 1  -- Simplified
   }
 
 
@@ -339,7 +339,7 @@ PRIOR-PQ makes several testable predictions that distinguish it from
 simpler models of question answering.
 -/
 
-/-- **Prediction 1**: Higher-utility items are preferred in responses.
+/-- Prediction 1: Higher-utility items are preferred in responses.
 
 When an item has higher utility for the inferred goal, mentioning it
 yields higher action-relevance, making it more likely to be mentioned.
@@ -349,7 +349,7 @@ theorem higher_utility_preferred (i1 i2 : Item) (h : i1.utility > i2.utility) :
     -- (when goal is satisfied by that item's category)
     i1.utility > i2.utility := h
 
-/-- **Prediction 2**: β controls informativity vs action-relevance tradeoff.
+/-- Prediction 2: β controls informativity vs action-relevance tradeoff.
 
 - β = 0: Pure informativity → exhaustive responses preferred
 - β = 1: Pure action-relevance → goal-relevant responses preferred
@@ -363,7 +363,7 @@ theorem beta_tradeoff (params : Params) :
   · simp [h]
   · exact h
 
-/-- **Prediction 3**: Response cost increases with length. -/
+/-- Prediction 3: Response cost increases with length. -/
 theorem cost_increases_with_length (items : List Item) :
     responseCost (.exhaustive false items) = 1 + items.length := rfl
 
@@ -425,7 +425,7 @@ theorem prior_pq_vs_llm :
 
 /-- Classify responses by type -/
 def classifyIcedTeaResponses : List (ResponseType × Response) :=
-  icedTeaResponses.map fun r => (classifyResponse r 0, r)
+  icedTeaResponses.map λ r => (classifyResponse r 0, r)
 
 
 /-!
@@ -437,7 +437,7 @@ The model resolves a fundamental circularity in question-answer pragmatics:
 2. To choose a good response, respondent reasons about questioner's goals
 3. But respondent doesn't directly know the goals!
 
-**Solution**: Question choice signals goals.
+Solution: Question choice signals goals.
 
 ```
   P(goal | question) ∝ P(question | goal) · P(goal)

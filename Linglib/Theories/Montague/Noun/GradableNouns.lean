@@ -64,10 +64,10 @@ instance : LT Degree where
   lt d1 d2 := d1.toNat < d2.toNat
 
 instance : DecidableRel (α := Degree) (· ≤ ·) :=
-  fun d1 d2 => inferInstanceAs (Decidable (d1.toNat ≤ d2.toNat))
+  λ d1 d2 => inferInstanceAs (Decidable (d1.toNat ≤ d2.toNat))
 
 instance : DecidableRel (α := Degree) (· < ·) :=
-  fun d1 d2 => inferInstanceAs (Decidable (d1.toNat < d2.toNat))
+  λ d1 d2 => inferInstanceAs (Decidable (d1.toNat < d2.toNat))
 
 def allDegrees : List Degree := [.d0, .d1, .d2, .d3, .d4, .d5, .d6, .d7, .d8, .d9, .d10]
 
@@ -87,7 +87,7 @@ structure GradableNoun (Entity : Type) where
 
 /-- Apply POS to a gradable noun: λx. standard(g) ≤ g(x) -/
 def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=
-  fun x => n.standard ≤ n.measure x
+  λ x => n.standard ≤ n.measure x
 
 
 /-- Size adjectives measure "size" of objects including degrees.
@@ -139,7 +139,7 @@ def measN {E : Type}
     (noun : GradableNoun E)
     (sizeAdj : Degree → Bool)  -- The [POS size-adj] predicate on degrees
     : E → Bool :=
-  fun x =>
+  λ x =>
     match minDegree sizeAdj with
     | none => false  -- No degree satisfies the size adjective
     | some minD =>

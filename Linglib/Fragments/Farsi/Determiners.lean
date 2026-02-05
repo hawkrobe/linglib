@@ -242,7 +242,7 @@ def allIndefinites : List IndefiniteEntry :=
 
 /-- Lookup by romanization -/
 def lookup (romanization : String) : Option IndefiniteEntry :=
-  allIndefinites.find? fun e => e.romanization == romanization
+  allIndefinites.find? λ e => e.romanization == romanization
 
 
 /--

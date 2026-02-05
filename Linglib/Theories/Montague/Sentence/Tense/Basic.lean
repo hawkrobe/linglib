@@ -90,7 +90,7 @@ A tense operator takes:
 abbrev TenseOp (W Time : Type*) := SitProp W Time → Situation W Time → Situation W Time → Prop
 
 /--
-**PAST operator** (Mendes 2025 style)
+PAST operator (Mendes 2025 style)
 
 ⟦PAST⟧ = λP.λs.λs'. τ(s) < τ(s') ∧ P(s)
 
@@ -99,10 +99,10 @@ The PAST operator:
 2. Evaluates P at the past situation s
 -/
 def PAST {W Time : Type*} [LT Time] : TenseOp W Time :=
-  fun P s s' => s.time < s'.time ∧ P s
+  λ P s s' => s.time < s'.time ∧ P s
 
 /--
-**PRES operator** (Mendes 2025 style)
+PRES operator (Mendes 2025 style)
 
 ⟦PRES⟧ = λP.λs.λs'. τ(s) = τ(s') ∧ P(s)
 
@@ -111,10 +111,10 @@ The PRESENT operator:
 2. Evaluates P at situation s
 -/
 def PRES {W Time : Type*} : TenseOp W Time :=
-  fun P s s' => s.time = s'.time ∧ P s
+  λ P s s' => s.time = s'.time ∧ P s
 
 /--
-**FUT operator** (Mendes 2025 style)
+FUT operator (Mendes 2025 style)
 
 ⟦FUT⟧ = λP.λs.λs'. τ(s) > τ(s') ∧ P(s)
 
@@ -123,7 +123,7 @@ The FUTURE operator:
 2. Evaluates P at the future situation s
 -/
 def FUT {W Time : Type*} [LT Time] : TenseOp W Time :=
-  fun P s s' => s.time > s'.time ∧ P s
+  λ P s s' => s.time > s'.time ∧ P s
 
 
 /-
@@ -134,7 +134,7 @@ These are the "traditional" tense operators.
 -/
 
 /--
-**Simple PAST**: Event time precedes speech time.
+Simple PAST: Event time precedes speech time.
 
 ⟦PAST⟧ₛᵢₘₚₗₑ = λP.λt.λt_s. t < t_s ∧ P(t)
 -/
@@ -142,13 +142,13 @@ def pastSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTim
   eventTime < speechTime ∧ P eventTime
 
 /--
-**Simple PRESENT**: Event time equals speech time.
+Simple PRESENT: Event time equals speech time.
 -/
 def presSimple {Time : Type*} (P : Time → Prop) (eventTime speechTime : Time) : Prop :=
   eventTime = speechTime ∧ P eventTime
 
 /--
-**Simple FUTURE**: Event time follows speech time.
+Simple FUTURE: Event time follows speech time.
 -/
 def futSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTime : Time) : Prop :=
   eventTime > speechTime ∧ P eventTime
@@ -203,7 +203,7 @@ inductive SOTParameter where
 
 
 /--
-**PAST requires temporal precedence**
+PAST requires temporal precedence.
 -/
 theorem past_requires_precedence {W Time : Type*} [LT Time]
     (P : SitProp W Time) (s s' : Situation W Time) :
@@ -212,7 +212,7 @@ theorem past_requires_precedence {W Time : Type*} [LT Time]
   exact h
 
 /--
-**FUT requires temporal succession**
+FUT requires temporal succession.
 -/
 theorem fut_requires_succession {W Time : Type*} [LT Time]
     (P : SitProp W Time) (s s' : Situation W Time) :
@@ -221,7 +221,7 @@ theorem fut_requires_succession {W Time : Type*} [LT Time]
   exact h
 
 /--
-**PRES requires contemporaneity**
+PRES requires contemporaneity.
 -/
 theorem pres_requires_contemporaneity {W Time : Type*}
     (P : SitProp W Time) (s s' : Situation W Time) :
@@ -230,7 +230,7 @@ theorem pres_requires_contemporaneity {W Time : Type*}
   exact h
 
 /--
-**Tense preserves the predicate**
+Tense preserves the predicate.
 
 If TENSE(P)(s, s'), then P(s).
 -/
@@ -256,7 +256,7 @@ theorem fut_preserves_pred {W Time : Type*} [LT Time]
 section Examples
 
 /-- Example predicate: "rain at situation s" -/
-def raining (W : Type*) : SitProp W ℤ := fun _s => True  -- placeholder
+def raining (W : Type*) : SitProp W ℤ := λ _s => True  -- placeholder
 
 /-- "It rained" is true iff there's a past situation where it rained -/
 example : PAST (raining Unit) ⟨(), -1⟩ ⟨(), 0⟩ := by
@@ -274,41 +274,5 @@ example : FUT (raining Unit) ⟨(), 1⟩ ⟨(), 0⟩ := by
   · trivial
 
 end Examples
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Types
-- `Tense`: Grammatical tense (past, present, future)
-- `SitProp W Time`: Situation-level propositions
-- `TenseOp W Time`: Tense operator type
-
-### Tense Operators
-- `PAST`: Requires τ(s) < τ(s')
-- `PRES`: Requires τ(s) = τ(s')
-- `FUT`: Requires τ(s) > τ(s')
-
-### Simple Variants
-- `pastSimple`, `presSimple`, `futSimple`: Single-time versions
-
-### Reichenbach Integration
-- `applyTense`: Check tense against R/S relation
-- `satisfiesTense`: Decidable tense checking
-
-### Tense Composition
-- `composeTense`: Embedded tense resolution
-- `SOTParameter`: Relative vs absolute tense in embedding
-
-### Theorems
-- `past_requires_precedence`, `fut_requires_succession`
-- `past_preserves_pred`, `pres_preserves_pred`, `fut_preserves_pred`
-
-### Connection to Other Modules
-- `Core/Time.lean`: Situation, TemporalRelation, ReichenbachFrame
-- `Sentence/Mood/Basic.lean`: Mood interacts with tense for temporal anchoring
-- `Verb/Aspect.lean`: Aspect relates E to R (complements tense)
--/
 
 end Montague.Sentence.Tense

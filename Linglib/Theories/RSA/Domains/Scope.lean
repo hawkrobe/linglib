@@ -130,23 +130,23 @@ Run L1 inference for "Every X didn't VP" with n entities.
 Returns joint distribution over (Outcome, Reading) pairs.
 -/
 def everyNotL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
   RSA.Eval.basicL1
     [ScopeUtt.everyNot, .null]
     jointWorlds
-    (fun utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
-    (fun _ => 1) 1 (fun _ => 0) u
+    (λ utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
+    (λ _ => 1) 1 (λ _ => 0) u
 
 /--
 Run L1 inference for full scope scenario with both "every...not" and "some...not".
 -/
 def fullL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
   RSA.Eval.basicL1
     [ScopeUtt.everyNot, .someNot, .null]
     jointWorlds
-    (fun utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
-    (fun _ => 1) 1 (fun _ => 0) u
+    (λ utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
+    (λ _ => 1) 1 (λ _ => 0) u
 
 /--
 Generic scope scenario runner.
@@ -157,14 +157,14 @@ def runL1 {U : Type} [BEq U] [DecidableEq U]
     (utterances : List U)
     (n : Nat)
     (meaning : Reading → Outcome n → U → Bool)
-    (worldPrior : Outcome n → ℚ := fun _ => 1)
-    (readingPrior : Reading → ℚ := fun _ => 1)
+    (worldPrior : Outcome n → ℚ := λ _ => 1)
+    (readingPrior : Reading → ℚ := λ _ => 1)
     (u : U)
     : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap fun w => allReadings.map fun r => (w, r)
+  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
   RSA.Eval.basicL1 utterances jointWorlds
-    (fun utt (w, reading) => boolToRat (meaning reading w utt))
-    (fun (w, r) => worldPrior w * readingPrior r) 1 (fun _ => 0) u
+    (λ utt (w, reading) => boolToRat (meaning reading w utt))
+    (λ (w, r) => worldPrior w * readingPrior r) 1 (λ _ => 0) u
 
 -- Convenience: RSA Computations
 

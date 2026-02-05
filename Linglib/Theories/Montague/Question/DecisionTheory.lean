@@ -62,8 +62,8 @@ variable {W A : Type*}
 /-- A uniform prior over a finite list of worlds -/
 def uniformPrior [BEq W] (worlds : List W) : W -> ℚ :=
   let n := worlds.length
-  if n == 0 then fun _ => 0
-  else fun w => if worlds.contains w then 1 / n else 0
+  if n == 0 then λ _ => 0
+  else λ w => if worlds.contains w then 1 / n else 0
 
 /-- Create a decision problem with uniform prior -/
 def withUniformPrior [BEq W] (utility : W -> A -> ℚ) (worlds : List W) : DecisionProblem W A where
@@ -77,12 +77,12 @@ end DecisionProblem
 /-- Expected utility of action a given beliefs -/
 def expectedUtility {W A : Type*} (dp : DecisionProblem W A)
     (worlds : List W) (a : A) : ℚ :=
-  worlds.foldl (fun acc w => acc + dp.prior w * dp.utility w a) 0
+  worlds.foldl (λ acc w => acc + dp.prior w * dp.utility w a) 0
 
 /-- Optimal action: the one with highest expected utility -/
 def optimalAction {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A) : Option A :=
-  actions.foldl (fun best a =>
+  actions.foldl (λ best a =>
     match best with
     | none => some a
     | some b => if expectedUtility dp worlds a > expectedUtility dp worlds b
@@ -102,9 +102,9 @@ def dpValue {W A : Type*} [DecidableEq A]
 def conditionalEU {W A : Type*} (dp : DecisionProblem W A)
     (worlds : List W) (a : A) (c : W -> Bool) : ℚ :=
   let cWorlds := worlds.filter c
-  let totalProb := cWorlds.foldl (fun acc w => acc + dp.prior w) 0
+  let totalProb := cWorlds.foldl (λ acc w => acc + dp.prior w) 0
   if totalProb == 0 then 0
-  else cWorlds.foldl (fun acc w =>
+  else cWorlds.foldl (λ acc w =>
     acc + (dp.prior w / totalProb) * dp.utility w a
   ) 0
 
@@ -113,7 +113,7 @@ def valueAfterLearning {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (c : W -> Bool) : ℚ :=
   let cWorlds := worlds.filter c
-  actions.foldl (fun best a =>
+  actions.foldl (λ best a =>
     max best (conditionalEU dp cWorlds a c)
   ) 0
 
@@ -129,7 +129,7 @@ def utilityValue {W A : Type*} [DecidableEq A]
 def cellProbability {W A : Type*} (dp : DecisionProblem W A)
     (worlds : List W) (cell : W -> Bool) : ℚ :=
   let cellWorlds := worlds.filter cell
-  cellWorlds.foldl (fun acc w => acc + dp.prior w) 0
+  cellWorlds.foldl (λ acc w => acc + dp.prior w) 0
 
 -- Question Utility (Expected Utility Criterion)
 
@@ -141,7 +141,7 @@ which cell contains the actual world. -/
 def questionUtility {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (q : Question W) : ℚ :=
-  q.foldl (fun acc cell =>
+  q.foldl (λ acc cell =>
     let prob := cellProbability dp worlds cell
     let uv := utilityValue dp worlds actions cell
     acc + prob * uv
@@ -163,7 +163,7 @@ S(a) = min_{w} U(w, a) -/
 def securityLevel {W A : Type*} (dp : DecisionProblem W A) (worlds : List W) (a : A) : ℚ :=
   match worlds with
   | [] => 0
-  | w :: ws => ws.foldl (fun m w' => min m (dp.utility w' a)) (dp.utility w a)
+  | w :: ws => ws.foldl (λ m w' => min m (dp.utility w' a)) (dp.utility w a)
 
 /-- Maximin value: best security level among actions.
 MV = max_a min_w U(w, a) -/
@@ -171,7 +171,7 @@ def maximinValue {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A) : ℚ :=
   match actions with
   | [] => 0
-  | a :: as => as.foldl (fun m a' =>
+  | a :: as => as.foldl (λ m a' =>
       max m (securityLevel dp worlds a')
     ) (securityLevel dp worlds a)
 
@@ -203,7 +203,7 @@ def questionMaximin {W A : Type*} [DecidableEq A]
     (q : Question W) : ℚ :=
   match q with
   | [] => 0
-  | c :: cs => cs.foldl (fun m cell =>
+  | c :: cs => cs.foldl (λ m cell =>
       min m (maximinUtilityValue dp worlds actions cell)
     ) (maximinUtilityValue dp worlds actions c)
 
@@ -323,14 +323,14 @@ def resolves {W A : Type*} [DecidableEq A]
   match actions with
   | [] => true
   | a :: rest =>
-    rest.all fun b =>
-      cWorlds.all fun w => dp.utility w a >= dp.utility w b
+    rest.all λ b =>
+      cWorlds.all λ w => dp.utility w a >= dp.utility w b
 
 /-- Set of answers that resolve the decision problem -/
 def resolvingAnswers {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (q : Question W) : List (W -> Bool) :=
-  q.filter fun cell => resolves dp worlds actions cell
+  q.filter λ cell => resolves dp worlds actions cell
 
 /-- A question has a mention-some reading if:
 1. Multiple cells resolve the DP
@@ -340,9 +340,9 @@ def isMentionSome {W A : Type*} [DecidableEq A]
     (q : Question W) : Bool :=
   let resolving := resolvingAnswers dp worlds actions q
   resolving.length > 1 &&
-    resolving.any fun c1 =>
-      resolving.any fun c2 =>
-        worlds.any fun w => c1 w && c2 w
+    resolving.any λ c1 =>
+      resolving.any λ c2 =>
+        worlds.any λ w => c1 w && c2 w
 
 /-- Mention-all reading: need the complete partition to resolve DP -/
 def isMentionAll {W A : Type*} [DecidableEq A]

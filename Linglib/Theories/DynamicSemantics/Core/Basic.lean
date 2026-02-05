@@ -1,29 +1,11 @@
 /-
 # Dynamic Semantics Shared Infrastructure
 
-Common types for dynamic semantic theories. This module provides
-the foundational structures that all dynamic semantic theories build on.
+Common types for dynamic semantic theories.
 
-## Key Types
+## Main definitions
 
-| Type | Description | Used By |
-|------|-------------|---------|
-| `Possibility W E` | (world, assignment) pair | Heim, DPL, BUS, ICDRT |
-| `InfoState W E` | Set of possibilities | All theories |
-| `Context W E` | InfoState + metadata | Rich dynamic theories |
-
-## Architecture
-
-This module provides the canonical infrastructure for dynamic semantic theories:
-- `Possibility W E`: (world, assignment) pairs
-- `InfoState W E`: sets of possibilities
-- State relations: `subsistsIn`, `supports`
-
-Specific theories in Theories/DynamicSemantics/ build on this:
-- BUS: Elliott & Sudo 2025
-- IntensionalCDRT: Hofmann 2025
-- DPL: Groenendijk & Stokhof 1991
-- DRT: Kamp 1981
+`Possibility`, `InfoState`, `Context`, `subsistsIn`, `supports`
 
 ## References
 
@@ -36,20 +18,9 @@ import Mathlib.Data.Set.Basic
 namespace Theories.DynamicSemantics.Core
 
 
-/--
-A possibility: a world paired with a variable assignment.
-
-This is the basic unit of information in dynamic semantics. Each possibility
-represents one way the discourse could be going:
-- The world component captures facts about the world
-- The assignment component captures discourse referent bindings
-
-The entity type E is the domain of individuals that variables range over.
--/
+/-- A possibility: world paired with variable assignment. -/
 structure Possibility (W : Type*) (E : Type*) where
-  /-- The possible world -/
   world : W
-  /-- The variable assignment -/
   assignment : Nat → E
 
 namespace Possibility
@@ -65,7 +36,7 @@ def sameWorld (p q : Possibility W E) : Prop := p.world = q.world
 
 /-- Extend an assignment at a single variable -/
 def extend (p : Possibility W E) (x : Nat) (e : E) : Possibility W E :=
-  { p with assignment := fun n => if n = x then e else p.assignment n }
+  { p with assignment := λ n => if n = x then e else p.assignment n }
 
 @[simp]
 theorem extend_at (p : Possibility W E) (x : Nat) (e : E) :
@@ -82,18 +53,7 @@ theorem extend_world (p : Possibility W E) (x : Nat) (e : E) :
 end Possibility
 
 
-/--
-An information state: a set of possibilities.
-
-This is the fundamental type for dynamic semantics. An information state
-represents the current state of the discourse - all the ways the conversation
-could be going given what's been said.
-
-Specific theories add structure:
-- BUS adds bilateral structure (positive/negative)
-- ICDRT adds propositional drefs
-- DRT adds box structure
--/
+/-- Information state: set of possibilities. -/
 def InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
 
 instance {W E : Type*} : Membership (Possibility W E) (InfoState W E) := Set.instMembership
@@ -125,12 +85,7 @@ def consistent (s : InfoState W E) : Prop := s.Nonempty
 def trivial (s : InfoState W E) : Prop := s = Set.univ
 
 
-/--
-Variable x is *defined* in state s iff all possibilities agree on x's value.
-
-This corresponds to the familiarity condition in Heim (1982): a definite
-description presupposes its variable is already defined (familiar).
--/
+/-- Variable x is defined in state s iff all possibilities agree on x's value. -/
 def definedAt (s : InfoState W E) (x : Nat) : Prop :=
   ∀ p q : Possibility W E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
 
@@ -138,11 +93,7 @@ def definedAt (s : InfoState W E) (x : Nat) : Prop :=
 def definedVars (s : InfoState W E) : Set Nat :=
   { x | s.definedAt x }
 
-/--
-Variable x is *novel* in state s iff x is NOT defined (free to vary).
-
-Novel variables can be bound by existential quantifiers or indefinites.
--/
+/-- Variable x is novel in state s iff x is not defined. -/
 def novelAt (s : InfoState W E) (x : Nat) : Prop := ¬s.definedAt x
 
 /-- In a consistent state, novel means assignments actually disagree -/
@@ -174,21 +125,10 @@ def filterAssign (s : InfoState W E) (pred : (Nat → E) → Bool) : InfoState W
 end InfoState
 
 
-/--
-A context extends an information state with metadata.
-
-This structure is useful for theories that need to track additional
-information beyond the possibilities themselves, such as:
-- Which variables have been introduced
-- Domain restrictions for quantifiers
-- Presupposition state
--/
+/-- Context extends InfoState with metadata. -/
 structure Context (W : Type*) (E : Type*) where
-  /-- The underlying information state -/
   state : InfoState W E
-  /-- Variables that have been introduced -/
   definedVars : Set Nat := ∅
-  /-- Domain of entities -/
   domain : Set E := Set.univ
 
 namespace Context
@@ -214,13 +154,7 @@ def narrow (c : Context W E) (s : InfoState W E) : Context W E :=
 end Context
 
 
-/--
-State subsistence: s subsists in s' iff every possibility in s has a
-"descendant" in s'.
-
-This notion is central to Elliott & Sudo (2025): bilateral updates must
-preserve subsistence relations to validate key inferences.
--/
+/-- State subsistence: s subsists in s' iff every possibility in s has a descendant in s'. -/
 def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
   ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
     ∀ x, s.definedAt x → p.assignment x = p'.assignment x
@@ -234,22 +168,15 @@ variable {W E : Type*}
 /-- Subsistence is reflexive -/
 theorem subsistsIn_refl (s : InfoState W E) : s ⪯ s := by
   intro p hp
-  exact ⟨p, hp, rfl, fun _ _ => rfl⟩
+  exact ⟨p, hp, rfl, λ _ _ => rfl⟩
 
 /-- Subset implies subsistence -/
 theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
   intro p hp
-  exact ⟨p, h hp, rfl, fun _ _ => rfl⟩
+  exact ⟨p, h hp, rfl, λ _ _ => rfl⟩
 
 
-/--
-State s supports proposition φ iff φ holds at all worlds in s.
-
-s ⊨ φ iff ∀p ∈ s, φ(p.world)
-
-This is the dynamic notion of truth: a sentence is true relative to an
-information state if it holds throughout that state.
--/
+/-- State s supports proposition φ iff φ holds at all worlds in s. -/
 def supports (s : InfoState W E) (φ : W → Bool) : Prop :=
   ∀ p ∈ s, φ p.world
 
@@ -263,46 +190,5 @@ theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
 
 end InfoState
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Core Types
-- `Possibility W E`: (world, assignment) pair
-- `InfoState W E`: Set of possibilities
-- `Context W E`: InfoState + metadata
-
-### Possibility Operations
-- `extend`: Modify assignment at one variable
-- `agreeOn`: Agreement on a set of variables
-- `sameWorld`: Same world component
-
-### State Properties
-- `consistent`: Non-empty state
-- `definedAt`: Variable is uniquely determined
-- `novelAt`: Variable is free to vary
-- `definedVars`: Set of defined variables
-
-### State Operations
-- `filterWorlds`: Filter by world predicate
-- `filterAssign`: Filter by assignment predicate
-- `worlds`: Project to world set
-
-### Relations
-- `subsistsIn` (⪯): Every possibility has descendant
-- `supports` (⊫): Proposition holds throughout state
-
-## Architecture
-
-This module provides shared infrastructure for:
-- BUS (Bilateral Update Semantics)
-- ICDRT (Intensional CDRT)
-- DPL (Dynamic Predicate Logic)
-- DRT (Discourse Representation Theory)
-
-The existing `Core.HeimState` provides a similar but more specialized
-infrastructure focused on Heim's File Change Semantics.
--/
 
 end Theories.DynamicSemantics.Core

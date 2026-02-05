@@ -71,7 +71,7 @@ H&K §3.1: "The lexicon specifies the denotation of terminal nodes."
 -/
 def interpTerminal (m : Model) (lex : Lexicon m) (word : String)
     : Option (TypedDenot m) :=
-  (lex word).map fun entry => ⟨entry.ty, entry.denot⟩
+  (lex word).map λ entry => ⟨entry.ty, entry.denot⟩
 
 /--
 Non-Branching Nodes (NN): If α is non-branching with daughter β, then ⟦α⟧ = ⟦β⟧.
@@ -351,55 +351,6 @@ theorem tryPM_preserves_type {m : Model} (d1 d2 : TypedDenot m)
 
 /-- FA and PM are the only composition mechanisms for binary nodes -/
 theorem interpBinary_eq {m : Model} (d1 d2 : TypedDenot m) :
-    interpBinary d1 d2 = (tryFA d1 d2).orElse (fun _ => tryPM d1 d2) := rfl
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Principles (H&K §3.1, §4.3)
-- `interpTerminal`: TN - lexical lookup
-- `interpNonBranching`: NN - unary projection
-- `interpFA`: FA - functional application
-- `tryPM`: PM - predicate modification
-
-### Syntax-Agnostic Interpretation
-- `interpret`: Generic interpretation for ANY syntax satisfying `SemanticStructure`
-- `TypedDenot`: Type-value pairs (syntax-independent)
-- `interpBinary`: Binary node composition (FA then PM)
-
-### Concrete Example: SynTree
-- `SynTree`: Simple phrase structure trees
-- `interpTree`: SynTree-specific interpretation
-- Instances: `HasTerminals`, `HasBinaryComposition`, `HasUnaryProjection`, etc.
-
-### Interpretability (H&K §3.3)
-- `isInterpretableWith`: Generic interpretability check
-- `satisfiesInterpretabilityWith`: Generic Principle of Interpretability
-- `isInterpretable`: SynTree-specific check
-- `satisfiesInterpretability`: SynTree-specific principle
-
-### Key H&K Insight (§3.2)
-
-"Syntactic category labels and linear order are irrelevant."
-
-Type-driven interpretation means:
-1. We don't need construction-specific rules
-2. Semantic types determine composition order
-3. Type mismatch causes uninterpretability
-4. ANY syntax that provides terminals + branching can be interpreted
-
-### For Other Syntactic Theories
-
-To interpret your syntax, implement:
-```lean
-instance : HasTerminals   YourSyntax where ...
-instance : HasBinaryComposition YourSyntax where ...
-instance : HasUnaryProjection   YourSyntax where ...
-```
-
-Then use `interpret` or write a recursive function using the composition primitives.
--/
+    interpBinary d1 d2 = (tryFA d1 d2).orElse (λ _ => tryPM d1 d2) := rfl
 
 end Montague.Composition

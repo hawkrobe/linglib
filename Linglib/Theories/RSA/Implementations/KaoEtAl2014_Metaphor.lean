@@ -210,7 +210,7 @@ Prior over meanings.
 We use a uniform prior over feature combinations for a person.
 In a richer model, this would come from world knowledge.
 -/
-def meaningPrior : Meaning → ℚ := fun _ => 1
+def meaningPrior : Meaning → ℚ := λ _ => 1
 
 -- Prior Over Goals
 
@@ -231,26 +231,26 @@ def goalPrior : Goal → ℚ
 /-- Run L0 for metaphor scenario with extended semantics -/
 def runL0 (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
   RSA.Eval.basicL0 allUtterances allMeanings
-    (fun utt m => extendedSemantics utt m) meaningPrior u
+    (λ utt m => extendedSemantics utt m) meaningPrior u
 
 /-- Run S1 for metaphor scenario -/
 def runS1 (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
   -- S1 with QUD projection
-  let l0_projected := allUtterances.map fun u =>
+  let l0_projected := allUtterances.map λ u =>
     let l0 := runL0 u g
-    let projected := allMeanings.map fun m' =>
+    let projected := allMeanings.map λ m' =>
       if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
     (u, RSA.Eval.sumScores projected)
   let normalized := RSA.Eval.normalize l0_projected
-  let scores := allUtterances.map fun u =>
+  let scores := allUtterances.map λ u =>
     let l0Score := RSA.Eval.getScore normalized u
     (u, l0Score)
   RSA.Eval.normalize scores
 
 /-- Run L1 joint for metaphor scenario -/
 def runL1_joint (u : Utterance) : List ((Meaning × Goal) × ℚ) :=
-  let jointWorlds := allMeanings.flatMap fun m => allGoals.map fun g => (m, g)
-  let scores := jointWorlds.map fun (m, g) =>
+  let jointWorlds := allMeanings.flatMap λ m => allGoals.map λ g => (m, g)
+  let scores := jointWorlds.map λ (m, g) =>
     let priorScore := meaningPrior m * goalPrior g
     let s1Score := RSA.Eval.getScore (runS1 m g) u
     ((m, g), priorScore * s1Score)
@@ -267,17 +267,17 @@ def runL1_goal (u : Utterance) : List (Goal × ℚ) :=
 /-- Run L0 for strict scenario (Boolean semantics) -/
 def runL0_strict (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
   RSA.Eval.basicL0 allUtterances allMeanings
-    (fun utt m => boolToRat (meaningSemantics utt m)) meaningPrior u
+    (λ utt m => boolToRat (meaningSemantics utt m)) meaningPrior u
 
 /-- Run S1 for strict scenario -/
 def runS1_strict (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
-  let l0_projected := allUtterances.map fun u =>
+  let l0_projected := allUtterances.map λ u =>
     let l0 := runL0_strict u g
-    let projected := allMeanings.map fun m' =>
+    let projected := allMeanings.map λ m' =>
       if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
     (u, RSA.Eval.sumScores projected)
   let normalized := RSA.Eval.normalize l0_projected
-  let scores := allUtterances.map fun u =>
+  let scores := allUtterances.map λ u =>
     let l0Score := RSA.Eval.getScore normalized u
     (u, l0Score)
   RSA.Eval.normalize scores
@@ -367,9 +367,9 @@ given the utterance is close to one (P(cp|u) = 0.994)"
 def l1_infers_person_not_shark : Bool :=
   let dist := l1_shark
   let pPerson := allMeanings.filter (·.category == .person) |>.foldl
-    (fun acc m => acc + getScore dist m) 0
+    (λ acc m => acc + getScore dist m) 0
   let pShark := allMeanings.filter (·.category == .shark) |>.foldl
-    (fun acc m => acc + getScore dist m) 0
+    (λ acc m => acc + getScore dist m) 0
   pPerson > pShark * 10  -- Person should be ~99%, shark ~1%
 
 #eval l1_infers_person_not_shark
@@ -422,9 +422,9 @@ def l1_shark_infers_dangerous : Bool :=
   let dist := l1_shark
   -- P(dangerous=true | shark) > P(dangerous=false | shark)
   let pDangerous := allMeanings.filter (·.dangerous) |>.foldl
-    (fun acc m => acc + getScore dist m) 0
+    (λ acc m => acc + getScore dist m) 0
   let pNotDangerous := allMeanings.filter (! ·.dangerous) |>.foldl
-    (fun acc m => acc + getScore dist m) 0
+    (λ acc m => acc + getScore dist m) 0
   pDangerous > pNotDangerous
 
 #eval l1_shark_infers_dangerous
@@ -459,9 +459,9 @@ theorem listener_infers_feature_qud : l1_infers_feature_qud = true := by native_
 -/
 def fire_more_unpredictable_than_shark : Bool :=
   let fireUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (fun acc m => acc + getScore l1_fire m) 0
+    (λ acc m => acc + getScore l1_fire m) 0
   let sharkUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (fun acc m => acc + getScore l1_shark m) 0
+    (λ acc m => acc + getScore l1_shark m) 0
   fireUnpred > sharkUnpred
 
 #eval fire_more_unpredictable_than_shark
@@ -555,9 +555,9 @@ Each `Feature` corresponds to a Montague adjective denotation:
 - ⟦comforting⟧ = λm. m.comforting
 -/
 def featureDenotation : Feature → FeaturePred
-  | .dangerous => fun m => m.dangerous
-  | .unpredictable => fun m => m.unpredictable
-  | .comforting => fun m => m.comforting
+  | .dangerous => λ m => m.dangerous
+  | .unpredictable => λ m => m.unpredictable
+  | .comforting => λ m => m.comforting
 
 /--
 **Category as Montague common noun.**
@@ -573,10 +573,10 @@ abbrev CategoryPred := Meaning → Bool
 Each `Category` corresponds to a Montague common noun denotation.
 -/
 def categoryDenotation : Category → CategoryPred
-  | .person => fun m => m.category == .person
-  | .shark => fun m => m.category == .shark
-  | .fire => fun m => m.category == .fire
-  | .blanket => fun m => m.category == .blanket
+  | .person => λ m => m.category == .person
+  | .shark => λ m => m.category == .shark
+  | .fire => λ m => m.category == .fire
+  | .blanket => λ m => m.category == .blanket
 
 /--
 **Literal semantics IS category predication.**

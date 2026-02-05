@@ -21,7 +21,7 @@ open Theories.DynamicSemantics.Core.DynamicTy2
 theorem register_eq {E : Type*} : Register E = (Nat → E) := rfl
 
 /-- CDRT dref: register lookup -/
-def dref {E : Type*} (n : Nat) : Dref (Register E) E := fun r => r n
+def dref {E : Type*} (n : Nat) : Dref (Register E) E := λ r => r n
 
 
 /-- CDRT DProp IS a DRS -/
@@ -66,23 +66,5 @@ theorem impl_eq_test_dimpl {E : Type*} (φ ψ : DProp E) :
 theorem trueAt_eq_closure {E : Type*} (φ : DProp E) (i : Register E) :
     φ.true_at i ↔ closure (toDRS φ) i := by
   simp only [DProp.true_at, closure, toDRS]
-
--- SUMMARY
-
-/-!
-## CDRT ≅ Dynamic Ty2 (Isomorphism)
-
-CDRT is not just embedded - it IS Dynamic Ty2:
-- `Register E = Nat → E` is the S parameter
-- `DProp E = DRS (Register E)` (definitionally!)
-- `SProp E = Condition (Register E)`
-
-Connective correspondence:
-- ofStatic = test
-- ;; = ⨟
-- neg = test ∘ dneg
-- impl = test ∘ dimpl
-- true_at = closure
--/
 
 end Theories.DynamicSemantics.CDRT

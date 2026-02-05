@@ -2,7 +2,7 @@
 # Modal Donkey Anaphora (Mendes 2025 §3.1)
 
 The central theoretical insight of Mendes (2025): the Subordinate Future (SF)
-enables **modal donkey anaphora** - subjunctive binds situation variables
+enables modal donkey anaphora -- subjunctive binds situation variables
 across clause boundaries, just like indefinites bind individual variables
 in classic donkey sentences.
 
@@ -48,7 +48,7 @@ open Theories.DynamicSemantics.Core
 
 
 /--
-A situation variable is **bound** if it was introduced by SUBJ.
+A situation variable is bound if it was introduced by SUBJ.
 
 In classic DRT, a variable is bound if it was introduced by an existential
 quantifier or indefinite. Here, SUBJ plays the role of the indefinite.
@@ -62,7 +62,7 @@ structure SitBinding (W Time : Type*) where
   alternatives : Set (Situation W Time)
 
 /--
-**Antecedent-contained binding**: The bound variable's value is
+Antecedent-contained binding: the bound variable's value is
 constrained to be in the historical alternatives of the binding situation.
 
 This is the modal analog of the accessibility constraint in DRT.
@@ -73,7 +73,7 @@ def SitBinding.isValid {W Time : Type*} [LE Time]
   b.alternatives = historicalBase history b.bindingSituation
 
 /--
-**Modal accessibility**: A situation s₂ can anaphorically access s₁
+Modal accessibility: a situation s₂ can anaphorically access s₁
 if they share the same world (same-world constraint from IND).
 
 This is formula (31) from the paper:
@@ -84,7 +84,7 @@ def modallyAccessible {W Time : Type*}
   s₂.world = s₁.world
 
 /--
-**Donkey accessibility** for situations: s₂ can retrieve s₁ if:
+Donkey accessibility for situations: s₂ can retrieve s₁ if:
 1. s₁ was introduced by SUBJ (in some local context)
 2. s₂ satisfies the same-world constraint (IND)
 
@@ -100,10 +100,10 @@ structure DonkeyAccessibility (W Time E : Type*) where
 
 
 /--
-**Cross-clausal situation binding**: Situation introduced in one clause
+Cross-clausal situation binding: situation introduced in one clause
 can be retrieved in another clause via modal donkey anaphora.
 
-This formalizes the key insight: SF in the antecedent of a conditional
+SF in the antecedent of a conditional
 introduces a situation that the consequent can anaphorically access.
 
 Example:
@@ -120,7 +120,7 @@ def crossClausualBinding {W Time E : Type*} [LE Time]
   dynIND antecedentVar c₁
 
 /--
-**Theorem: Cross-clausal binding preserves world identity**
+Cross-clausal binding preserves world identity.
 
 When a situation is introduced in the antecedent and retrieved in the
 consequent, the two clauses are evaluated at the same world.
@@ -138,7 +138,7 @@ theorem cross_clausal_same_world {W Time E : Type*} [LE Time]
 
 
 /--
-**The SUBJ-IND anaphoric chain** (Mendes 2025, §4.3)
+The SUBJ-IND anaphoric chain (Mendes 2025, §4.3).
 
 This represents the complete anaphoric dependency:
 1. SUBJ^v introduces situation s₁ ∈ hist(s₀)
@@ -165,7 +165,7 @@ def subjIndChain {W Time E : Type*} [LE Time]
   consequentPred c₃
 
 /--
-**Theorem: The SUBJ-IND chain establishes modal donkey anaphora**
+The SUBJ-IND chain establishes modal donkey anaphora.
 
 The consequent is evaluated at a world that agrees with the antecedent
 world up to the introduction time.
@@ -193,7 +193,7 @@ theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
 
 
 /--
-**Classic donkey anaphora structure** (for comparison)
+Classic donkey anaphora structure (for comparison).
 
 "If a farmer owns a donkey, he beats it."
 
@@ -207,7 +207,7 @@ structure ClassicDonkey (E : Type*) where
   boundEntity : E
 
 /--
-**Modal donkey anaphora structure** (Mendes' contribution)
+Modal donkey anaphora structure (Mendes' contribution).
 
 "If Maria be.SF home, she will answer."
 
@@ -223,8 +223,6 @@ structure ModalDonkey (W Time : Type*) where
   historicalBase : Set (Situation W Time)
 
 /--
-**The structural parallel**
-
 Both classic and modal donkey anaphora share:
 1. Existential introduction in a subordinate position
 2. Anaphoric retrieval outside c-command domain
@@ -243,7 +241,7 @@ def structuralParallel : Prop :=
 
 
 /--
-**E-type vs unselective binding for situations**
+E-type vs unselective binding for situations.
 
 Mendes follows the DRT/dynamic tradition where binding is "unselective":
 the situation variable is directly bound, not via an E-type pronoun.
@@ -257,7 +255,7 @@ inductive SituationBindingStrategy where
   deriving DecidableEq, Repr
 
 /--
-**Mendes uses unselective binding**
+Mendes uses unselective binding.
 
 The SF directly binds a situation variable, and IND retrieves it.
 This is parallel to how indefinites work in DRT.
@@ -266,7 +264,7 @@ def mendesBindingStrategy : SituationBindingStrategy :=
   .unselective
 
 /--
-**Theorem: Unselective binding gives universal force**
+Unselective binding gives universal force.
 
 When SUBJ introduces a situation in a conditional antecedent,
 the conditional quantifies universally over situations satisfying
@@ -281,8 +279,8 @@ theorem unselective_universal_force {W Time E : Type*} [LE Time]
     (c : SitContext W Time E) :
     -- For all situations in the output...
     (∀ gs ∈ subjIndChain history v
-      (fun c' => { gs' ∈ c' | antecedent gs'.2 })
-      (fun c' => { gs' ∈ c' | consequent gs'.2 })
+      (λ c' => { gs' ∈ c' | antecedent gs'.2 })
+      (λ c' => { gs' ∈ c' | consequent gs'.2 })
       c,
       -- ...if the antecedent holds, so does the consequent
       antecedent gs.2 → consequent gs.2) := by
@@ -293,7 +291,7 @@ theorem unselective_universal_force {W Time E : Type*} [LE Time]
 
 
 /--
-**Main Theorem: Modal donkey anaphora enables temporal shift**
+Modal donkey anaphora enables temporal shift.
 
 The future-oriented interpretation of SF follows from modal donkey anaphora:
 1. SUBJ introduces s₁ ∈ hist(s₀) with τ(s₁) ≥ τ(s₀)
@@ -330,7 +328,7 @@ theorem modal_donkey_enables_temporal_shift {W Time E : Type*} [Preorder Time]
     exact h_hist.2
 
 /--
-**Theorem: Donkey accessibility is transitive within a discourse**
+Donkey accessibility is transitive within a discourse.
 
 If s₁ is accessible from s₀, and s₂ is accessible from s₁,
 then s₂ is accessible from s₀ (within the same world).
@@ -346,35 +344,5 @@ theorem donkey_accessibility_transitive {W Time : Type*}
   -- goal : s₂.world = s₀.world
   exact h₂.trans h₁
 
--- Summary
-
-/-
-## What This Module Provides
-
-### Core Concepts
-- `SitBinding`: Records situation variable binding by SUBJ
-- `modallyAccessible`: Same-world constraint for IND retrieval
-- `DonkeyAccessibility`: Full accessibility relation for situations
-
-### Cross-Clausal Binding
-- `crossClausualBinding`: Situation introduced in one clause, retrieved in another
-- `subjIndChain`: Complete SUBJ-IND anaphoric chain
-
-### Structural Parallel
-- `ClassicDonkey`: Traditional donkey anaphora structure
-- `ModalDonkey`: Mendes' modal analog
-- `structuralParallel`: Documents the parallel
-
-### Key Theorems
-- `cross_clausal_same_world`: Cross-clausal binding preserves world identity
-- `modal_donkey_enables_temporal_shift`: Modal anaphora enables future reference
-- `unselective_universal_force`: Donkey universals for situations
-- `donkey_accessibility_transitive`: Transitivity of modal accessibility
-
-### Connection to Other Modules
-- `Situations.lean`: dynSUBJ, dynIND, subordinateFuture
-- `Mood/Basic.lean`: Static SUBJ and IND operators
-- Standard DRT infrastructure for individual donkey anaphora
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora

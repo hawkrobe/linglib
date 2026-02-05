@@ -193,7 +193,7 @@ theorem ccg_predicts_all_cases :
 3. **Interpretation**: `interp` computes meanings compositionally
 4. **Data Match**: Theorems prove predictions match empirical judgments
 
-### Key Theorems
+### Theorems
 
 - `ccg_predicts_john_sleeps`: CCG derives correct truth for intransitive
 - `ccg_predicts_mary_sleeps`: CCG derives correct falsity for intransitive

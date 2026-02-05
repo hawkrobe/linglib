@@ -148,7 +148,7 @@ structure AdjectiveTheory (max : Nat) where
   /-- Contradictory antonym meaning (if not using contrary) -/
   contradictoryAntonym : Degree max → Threshold max → Bool
   /-- Contrary antonym meaning (if supported) — uses ThresholdPair -/
-  contraryAntonym : Degree max → ThresholdPair max → Bool := fun _ _ => false
+  contraryAntonym : Degree max → ThresholdPair max → Bool := λ _ _ => false
 
 -- Standard Theory: Single Threshold
 
@@ -166,8 +166,8 @@ def standardTheory (max : Nat) : AdjectiveTheory max where
   name := "Standard Threshold"
   citation := "Kennedy (2007), Lassiter & Goodman (2017)"
   supportsContrary := false
-  positiveMeaning := fun d θ => d.toNat > θ.toNat
-  contradictoryAntonym := fun d θ => d.toNat ≤ θ.toNat
+  positiveMeaning := λ d θ => d.toNat > θ.toNat
+  contradictoryAntonym := λ d θ => d.toNat ≤ θ.toNat
 
 -- Contrary Theory: Two Thresholds
 
@@ -184,9 +184,9 @@ def contraryTheory (max : Nat) : AdjectiveTheory max where
   name := "Contrary Antonyms (Two Threshold)"
   citation := "Tessler & Franke (2020), Cruse (1986)"
   supportsContrary := true
-  positiveMeaning := fun d θ => d.toNat > θ.toNat
-  contradictoryAntonym := fun d θ => d.toNat ≤ θ.toNat
-  contraryAntonym := fun d tp => d.toNat < tp.neg.toNat
+  positiveMeaning := λ d θ => d.toNat > θ.toNat
+  contradictoryAntonym := λ d θ => d.toNat ≤ θ.toNat
+  contraryAntonym := λ d tp => d.toNat < tp.neg.toNat
 
 -- Derived Operations
 
@@ -279,7 +279,7 @@ theorem contrary_double_neg_differs :
 - `standardTheory`: Single threshold, contradictory antonyms
 - `contraryTheory`: Two thresholds, contrary antonyms with gap
 
-### Key Results
+### Results
 - `standard_no_gap`: No gap in standard theory
 - `contrary_has_gap`: Gap exists in contrary theory
 - `standard_double_neg_cancels`: "not short" = "tall" in standard

@@ -68,7 +68,7 @@ Embed a static proposition as a dynamic one (test).
 ⟦p⟧(i, o) iff i = o ∧ p(i)
 -/
 def DProp.ofStatic {E : Type*} (p : SProp E) : DProp E :=
-  fun i o => i = o ∧ p i
+  λ i o => i = o ∧ p i
 
 /--
 Dynamic conjunction: relational composition.
@@ -76,7 +76,7 @@ Dynamic conjunction: relational composition.
 ⟦φ ; ψ⟧(i, o) iff ∃k. ⟦φ⟧(i, k) ∧ ⟦ψ⟧(k, o)
 -/
 def DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E :=
-  fun i o => ∃ k, φ i k ∧ ψ k o
+  λ i o => ∃ k, φ i k ∧ ψ k o
 
 infixl:65 " ;; " => DProp.seq
 
@@ -86,7 +86,7 @@ New discourse referent introduction.
 [new n] extends the register at position n with an arbitrary value.
 -/
 def DProp.new {E : Type*} (n : Nat) : DProp E :=
-  fun i o => ∃ e : E, o = fun m => if m = n then e else i m
+  λ i o => ∃ e : E, o = λ m => if m = n then e else i m
 
 /--
 Dynamic negation: test for failure.
@@ -94,7 +94,7 @@ Dynamic negation: test for failure.
 ⟦¬φ⟧(i, o) iff i = o ∧ ¬∃k. ⟦φ⟧(i, k)
 -/
 def DProp.neg {E : Type*} (φ : DProp E) : DProp E :=
-  fun i o => i = o ∧ ¬∃ k, φ i k
+  λ i o => i = o ∧ ¬∃ k, φ i k
 
 /--
 Dynamic implication: if φ succeeds, ψ must succeed.
@@ -102,7 +102,7 @@ Dynamic implication: if φ succeeds, ψ must succeed.
 ⟦φ → ψ⟧(i, o) iff i = o ∧ ∀k. (⟦φ⟧(i, k) → ∃m. ⟦ψ⟧(k, m))
 -/
 def DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E :=
-  fun i o => i = o ∧ ∀ k, φ i k → ∃ m, ψ k m
+  λ i o => i = o ∧ ∀ k, φ i k → ∃ m, ψ k m
 
 -- Compositional Semantics
 
@@ -124,7 +124,7 @@ Indefinite "a/an": introduces dref and applies predicate.
 where rn is the register lookup at n.
 -/
 def indefinite {E : Type*} (n : Nat) (p : E → DProp E) (q : E → DProp E) : DProp E :=
-  DProp.new n ;; (fun i o => ∃ k, p (i n) i k ∧ q (k n) k o)
+  DProp.new n ;; (λ i o => ∃ k, p (i n) i k ∧ q (k n) k o)
 
 /--
 Pronoun: lookup register value.
@@ -132,7 +132,7 @@ Pronoun: lookup register value.
 ⟦heₙ⟧ = rn (returns the value at register n)
 -/
 def pronoun {E : Type*} (n : Nat) : Register E → E :=
-  fun r => r n
+  λ r => r n
 
 -- Truth and Entailment
 
@@ -147,47 +147,5 @@ Dynamic entailment: φ entails ψ if ψ is true after φ.
 -/
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
   ∀ i o, φ i o → ψ.true_at o
-
--- Summary
-
-/-!
-## What This Module Will Provide
-
-### Core Types
-- `Register E`: State as assignment function
-- `DProp E`: Dynamic propositions (state relations)
-- `SProp E`: Static propositions (for embedding)
-- `GQ E`: Generalized quantifiers
-
-### Operations
-- `ofStatic`: Embed static as dynamic
-- `seq` (;;): Dynamic conjunction
-- `new`: Discourse referent introduction
-- `neg`: Dynamic negation
-- `impl`: Dynamic implication
-
-### Compositional Rules
-- `indefinite`: "a/an" semantics
-- `pronoun`: Pronoun resolution
-
-### Relations
-- `true_at`: Truth at a state
-- `entails`: Dynamic entailment
-
-## Key Feature: Compositionality
-
-Unlike standard DRT, CDRT meanings combine compositionally:
-- NPs have type (e → DProp) → DProp
-- VPs have type e → DProp
-- Sentences have type DProp
-
-## TODO
-
-Full implementation including:
-- Full fragment (VP, NP, S rules)
-- Presupposition handling
-- Connection to Core.Basic InfoState
-- Proof of equivalence with DRT
--/
 
 end Theories.DynamicSemantics.CDRT

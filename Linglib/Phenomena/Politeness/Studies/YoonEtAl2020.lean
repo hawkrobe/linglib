@@ -17,7 +17,7 @@ import Linglib.Fragments.English.Scales
 - States: 0-3 hearts (true quality rating)
 - Utterances: 8 options (4 adjectives × pos/neg)
 
-## Key Finding
+## Finding
 
 Speakers with BOTH goals (informative + kind) produce more negation
 in bad states (0-1 hearts) compared to single-goal conditions.
@@ -197,7 +197,7 @@ Key properties (proven in YoonEtAl2020.lean):
 - Antitone: If `p ≤ q` pointwise, then `softNot q ≤ softNot p`
 - Coincides with Boolean negation when restricted to {0, 1}
 -/
-def softNot (p : SoftProp) : SoftProp := fun s => 1 - p s
+def softNot (p : SoftProp) : SoftProp := λ s => 1 - p s
 
 /-- Base adjective meaning (positive form) -/
 def adjMeaning : Adjective → SoftProp

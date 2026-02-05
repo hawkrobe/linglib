@@ -3,15 +3,15 @@
 
 Connection between EFCI alternatives and Spector's Theorem 9.
 
-The EFCI contradiction arises because the alternative set is NOT closed
+The EFCI contradiction arises because the alternative set is not closed
 under conjunction. This directly connects to Spector's main result:
-when ALT IS closed under conjunction, exh_mw = exh_ie.
+when ALT is closed under conjunction, exh_mw = exh_ie.
 
-## Key Insight
+## Insight
 
 For standard scalar alternatives, the set is typically closed under
 conjunction. For EFCI alternatives, the pre-exhaustified domain
-alternatives are MUTUALLY INCONSISTENT - their conjunction is ⊥.
+alternatives are mutually inconsistent -- their conjunction is ⊥.
 This breaks closure and creates the need for rescue mechanisms.
 
 ## References
@@ -37,10 +37,10 @@ The prejacent and scalar alternative set is "almost closed" under conjunction.
 The universal is the conjunction of all singleton assertions.
 -/
 theorem scalar_alts_structure (D : Domain Entity) (P : Entity → Prop' World) :
-    universalAlt D P = fun w => ∀ d ∈ D, P d w := rfl
+    universalAlt D P = λ w => ∀ d ∈ D, P d w := rfl
 
 /--
-Pre-exhaustified domain alternatives are pairwise INCONSISTENT.
+Pre-exhaustified domain alternatives are pairwise inconsistent.
 For distinct d₁, d₂ ∈ D:
   preExh(d₁) ∧ preExh(d₂) = ⊥
 
@@ -100,10 +100,10 @@ theorem efci_not_closed_witness
 Spector's main result: When ALT is closed under conjunction, exh_mw ≡ exh_ie.
 
 For EFCI:
-1. The full alternative set is NOT closed (theorem above)
+1. The full alternative set is not closed (theorem above)
 2. Therefore Theorem 9 doesn't directly apply
 3. Rescue mechanisms (modal insertion, partial exhaustification) can be
-   understood as RESTORING consistency by pruning the alternative set
+   understood as restoring consistency by pruning the alternative set
 -/
 
 /--
@@ -117,7 +117,7 @@ theorem scalar_only_contains_universal (D : Domain Entity) (P : Entity → Prop'
 
 /--
 Domain-only alternatives (scalar pruned) still have the inconsistency.
-But under INNOCENT EXCLUSION, not all can be negated together.
+But under innocent exclusion, not all can be negated together.
 -/
 theorem domain_only_still_not_closed
     (D : Domain Entity) (P : Entity → Prop' World)
@@ -145,8 +145,8 @@ The deep explanation for EFCI behavior has three parts:
 
 ### 1. Why Full Exhaustification Causes Contradiction
 
-Pre-exhaustified domain alternatives are **mutually exclusive**:
-- preExh(d) = "d is the UNIQUE satisfier"
+Pre-exhaustified domain alternatives are mutually exclusive:
+- preExh(d) = "d is the unique satisfier"
 - Two things can't both be the unique satisfier
 - So ⋀_d preExh(d) = ⊥ for |D| ≥ 2
 
@@ -155,15 +155,15 @@ XOR combined with the equivalence from domain negations yields ⊥.
 
 ### 2. Why Rescue Mechanisms Work
 
-**Modal insertion** (irgendein):
+Modal insertion (irgendein):
 - Insert ◇ above the existential
-- Now ◇[preExh(d₁)] and ◇[preExh(d₂)] are COMPATIBLE
+- Now ◇[preExh(d₁)] and ◇[preExh(d₂)] are compatible
 - "Possibly only d₁, possibly only d₂" is consistent
 - Result: Modal variation (at least two possibilities)
 
-**Partial exhaustification** (yek-i):
+Partial exhaustification (yek-i):
 - Prune scalar alternatives → only domain alternatives remain
-- Under INNOCENT EXCLUSION: can't negate ALL domain alts
+- Under innocent exclusion: can't negate all domain alts
 - (Negating preExh(d) for ALL d makes the prejacent false)
 - Result: No negations added; uniqueness via pragmatic reasoning
 
@@ -174,11 +174,11 @@ For yek-i in root (no modal):
 - But the ALTERNATIVE SET still includes preExh(d) for each d
 - Pragmatic reasoning: "Why did the speaker use yek-i (activating
   domain alternatives) if not to convey that exactly one satisfies P?"
-- This is a SECONDARY pragmatic inference, not from exhaustification
+- This is a secondary pragmatic inference, not from exhaustification
 
 ### Summary
 
-The root explanation is **MUTUAL EXCLUSIVITY of pre-exhaustified alternatives**:
+The root explanation is mutual exclusivity of pre-exhaustified alternatives:
 1. Full exhaustification → contradiction (because preExh alts conflict)
 2. Modal insertion → compatibility under possibility
 3. Partial exhaustification → no negations (IE can't negate consistently)
@@ -191,17 +191,17 @@ The negation of a pre-exhaustified alternative.
            = "either ¬P(d) or ∃y≠d. P(y)"
 -/
 def notPreExh (D : Domain Entity) (d : Entity) (P : Entity → Prop' World) : Prop' World :=
-  fun w => ¬(preExhaustify D d P w)
+  λ w => ¬(preExhaustify D d P w)
 
 /--
 The conjunction of negated pre-exhaustified alternatives.
 This says "NO element is the unique satisfier" = "either none or ≥2 satisfy P".
 -/
 def allNotPreExh (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
-  fun w => ∀ d ∈ D, notPreExh D d P w
+  λ w => ∀ d ∈ D, notPreExh D d P w
 
 /--
-Key insight: allNotPreExh is FALSE when exactly one element satisfies P.
+allNotPreExh is false when exactly one element satisfies P.
 
 If exactly d₀ satisfies P, then preExh(d₀) is TRUE (d₀ is unique),
 so notPreExh(d₀) is FALSE, so allNotPreExh is FALSE.
@@ -216,34 +216,9 @@ theorem unique_witness_falsifies_allNotPreExh
     (hunique : ∀ w d, d ∈ D → d ≠ d₀ → ¬P d w) :
     ∀ w, ¬(allNotPreExh D P w) := by
   intro w hall
-  have hpreExh : preExhaustify D d₀ P w := ⟨hPd₀ w, fun d hd hne => hunique w d hd hne⟩
+  have hpreExh : preExhaustify D d₀ P w := ⟨hPd₀ w, λ d hd hne => hunique w d hd hne⟩
   have hnotPreExh := hall d₀ hd₀
   exact hnotPreExh hpreExh
 
--- Summary
-
-/-!
-## What This Module Provides
-
-### Key Theorems
-
-1. `preExh_pairwise_inconsistent`: Pre-exhaustified alts can't both be true
-2. `preExh_all_inconsistent`: Conjunction of all pre-exh alts is ⊥
-3. `efci_not_closed_witness`: EFCI alts are not closed under conjunction
-4. `unique_witness_falsifies_allNotPreExh`: Unique witness makes all negations false
-
-### The Root Explanation
-
-**Mutual exclusivity** of pre-exhaustified alternatives is the root cause:
-- Full exhaustification contradicts because pre-exh alts conflict
-- Modal insertion rescues by making possibilities compatible
-- Partial exhaustification rescues by preventing negation of all alts
-- Uniqueness emerges from pragmatic reasoning about why speaker used EFCI
-
-### Connection to Spector's Theorem 9
-
-Non-closure under conjunction explains why exh_mw ≠ exh_ie for EFCI.
-Rescue mechanisms effectively restore a form of consistency.
--/
 
 end NeoGricean.Exhaustivity.EFCIClosure

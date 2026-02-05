@@ -13,7 +13,7 @@ as reasoning about rational, informative speakers.
 Context: {blue_square, blue_circle, green_square}
 Utterances: {blue, green, square, circle}
 
-## Key Result
+## Result
 
 L1("square") assigns higher probability to blue_square than green_square.
 
@@ -211,13 +211,13 @@ The following demonstrates the new `RSAScenario` / `RSA` API which provides:
 /-- Reference game scenario using Fintype-based API -/
 def refGameScenarioF : RSAScenario Feature Object :=
   RSAScenario.basicBool
-    (satisfies := fun o u => u.appliesTo o)  -- Satisfies relation from Montague
-    (prior := fun _ => 1)
-    (prior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
-    (cost := fun _ => 0)
-    (cost_nonneg := fun _ => le_refl 0)
-    (utterancePrior := fun _ => 1)
-    (utterancePrior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
+    (satisfies := λ o u => u.appliesTo o)  -- Satisfies relation from Montague
+    (prior := λ _ => 1)
+    (prior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
+    (cost := λ _ => 0)
+    (cost_nonneg := λ _ => le_refl 0)
+    (utterancePrior := λ _ => 1)
+    (utterancePrior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
 
 -- RSAModel Instance: Convergence Guarantees
 
@@ -282,10 +282,10 @@ def l1_square_F : Option (ExactDist Object) :=
 -- Evaluate (compare with List-based versions above)
 -- Note: Currently disabled due to sorry axioms in RSAF non-negativity proofs
 
--- #eval l0_square_F.map (fun d => (d.mass blue_square, d.mass green_square))
+-- #eval l0_square_F.map (λ d => (d.mass blue_square, d.mass green_square))
 -- Should be (1/2, 1/2) - uniform over squares
 
--- #eval l1_square_F.map (fun d => (d.mass blue_square, d.mass green_square))
+-- #eval l1_square_F.map (λ d => (d.mass blue_square, d.mass green_square))
 -- Should show blue_square > green_square (the pragmatic inference!)
 
 /--

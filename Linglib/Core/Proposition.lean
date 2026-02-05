@@ -344,11 +344,11 @@ theorem closure_expanding' {W : Type*} (A : Set (Prop' W)) :
 
 /-- Extension (List-based): compute worlds where all propositions hold. -/
 def extensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List W :=
-  worlds.filter fun w => props.all fun p => p w
+  worlds.filter λ w => props.all λ p => p w
 
 /-- Intension (List-based): filter propositions true at all given worlds. -/
 def intensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List (BProp W) :=
-  props.filter fun p => worlds.all p
+  props.filter λ p => worlds.all p
 
 /-- Extension is antitone (List version). -/
 theorem extensionL_antitone {W : Type*} (worlds : List W)

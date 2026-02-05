@@ -88,7 +88,7 @@ def isA : SemClass → SemClass → Bool
   | c₁, c₂ => c₁ == c₂ || subclassOf c₁ c₂ ||
     -- One level of transitivity
     [SemClass.animate, .inanimate, .human, .animal, .plant, .artifact].any
-      fun c => subclassOf c₁ c && subclassOf c c₂
+      λ c => subclassOf c₁ c && subclassOf c c₂
 
 
 /-!
@@ -262,7 +262,7 @@ def drawWeaponPatientPref : SemClass → ℚ
 def drawPictureFrame : Frame SemClass :=
   { predicate := "draw-picture"
   , arguments := [
-      { role := .agent, selectionalPref := fun
+      { role := .agent, selectionalPref := λ
           | .human => 9/10
           | .animate => 5/10
           | _ => 1/10 }
@@ -273,7 +273,7 @@ def drawPictureFrame : Frame SemClass :=
 def drawWeaponFrame : Frame SemClass :=
   { predicate := "draw-weapon"
   , arguments := [
-      { role := .agent, selectionalPref := fun
+      { role := .agent, selectionalPref := λ
           | .human => 95/100
           | _ => 1/100 }
     , { role := .patient, selectionalPref := drawWeaponPatientPref }
@@ -322,8 +322,8 @@ def disambiguateBySelection
     (selPref : SemClass → ℚ)
     (senses : List String) : String → ℚ :=
   let unnorm s := selPref (senseToClass s)
-  let Z := senses.foldl (fun acc s => acc + unnorm s) 0
-  fun s => if Z = 0 then 0 else unnorm s / Z
+  let Z := senses.foldl (λ acc s => acc + unnorm s) 0
+  λ s => if Z = 0 then 0 else unnorm s / Z
 
 
 /-!
@@ -379,7 +379,7 @@ def bladeSenseToClass : BladeSense → SemClass
 
 -- Selectional preference from DRAW-weapon frame
 def bladeSelectional : BladeSense → ℚ :=
-  fun sense => drawWeaponPatientPref (bladeSenseToClass sense)
+  λ sense => drawWeaponPatientPref (bladeSenseToClass sense)
 
 -- With no scenario, selectional alone prefers weapon and propeller equally
 example : bladeSelectional .weapon = bladeSelectional .propeller := rfl
@@ -434,7 +434,7 @@ def selectionalEpsilon : ℚ := 1/1000
 Convert a hard selectional constraint to soft.
 -/
 def softenConstraint (hard : SemClass → Bool) : SemClass → ℚ :=
-  fun c => if hard c then 1 else selectionalEpsilon
+  λ c => if hard c then 1 else selectionalEpsilon
 
 /--
 Example: SLEEP hard constraint (animate only)

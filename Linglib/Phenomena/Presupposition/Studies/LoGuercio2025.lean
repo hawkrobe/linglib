@@ -3,7 +3,7 @@
 
 Phenomena from "Maximize Conventional Implicatures!" Semantics & Pragmatics 18(9).
 
-This file contains PURE EMPIRICAL FACTS from the paper:
+This file contains empirical facts from the paper:
 - Judgment data on when ACIs arise
 - No theoretical commitments (those belong in Theories/NeoGricean/)
 
@@ -21,7 +21,7 @@ Judgment status for whether an ACI arises.
 -/
 inductive ACIJudgment where
   | arises          -- The ACI inference is drawn
-  | doesNotArise    -- The ACI inference is NOT drawn
+  | doesNotArise    -- The ACI inference is not drawn
   | marginal        -- Speakers vary / uncertain
   deriving DecidableEq, BEq, Repr
 
@@ -74,7 +74,7 @@ def ex19_spanish_outOfBlue : EmpiricalItem :=
   , priorContext := none }
 
 /--
-Example (20): With prior epithet mention, ACI DOES arise.
+Example (20): With prior epithet mention, ACI arises.
 
 Context: "John arrived first, then that bastard Pedro arrived."
 "John arrived" ⇝ ¬(John is a bastard)
@@ -153,15 +153,15 @@ structure PropertyTest where
   deriving Repr
 
 /--
-Example (50): ACIs DON'T require same assertive content.
+Example (50): ACIs do not require same assertive content.
 
 "Juan called María or that bastard Pedro"
 ACI: ¬(María is a bastard)
 
 Even though the stronger alternative "Juan called María and that bastard Pedro"
-has DIFFERENT assertive content (and vs or), the ACI still arises.
+has different assertive content (and vs or), the ACI still arises.
 
-This distinguishes ACIs from antipresuppositions (which DO require same assertion).
+This distinguishes ACIs from antipresuppositions (which do require same assertion).
 -/
 def ex50_different_assertion : PropertyTest :=
   { property := "ACIs independent of assertive content"
@@ -171,7 +171,7 @@ def ex50_different_assertion : PropertyTest :=
   , comparison := some "Unlike antipresuppositions, ACIs arise even with different at-issue content" }
 
 /--
-Example (52): ACIs are CANCELLABLE.
+Example (52): ACIs are cancellable.
 
 "Juan arrived first, then that bastard Pedro arrived (by the way, Juan is also a bastard)"
 
@@ -185,13 +185,13 @@ def ex52_cancellable : PropertyTest :=
   , comparison := some "Like SIs and antipresuppositions, ACIs can be explicitly cancelled" }
 
 /--
-Example (61): ACIs NOT affected by downward-entailing contexts.
+Example (61): ACIs not affected by downward-entailing contexts.
 
 "I doubt that Juan or that bastard Pedro passed"
-SI blocked: ⇝̸ ¬(I doubt Juan AND Pedro passed)
-ACI NOT blocked: ⇝ ¬(Juan is a bastard)
+SI blocked: ⇝̸ ¬(I doubt Juan and Pedro passed)
+ACI not blocked: ⇝ ¬(Juan is a bastard)
 
-DE context blocks the scalar implicature but NOT the ACI.
+DE context blocks the scalar implicature but not the ACI.
 -/
 def ex61_de_insensitive : PropertyTest :=
   { property := "ACIs not affected by DE contexts"
@@ -201,7 +201,7 @@ def ex61_de_insensitive : PropertyTest :=
   , comparison := some "Unlike SIs (blocked in DE), ACIs arise regardless of polarity context" }
 
 /--
-Example (63): ACIs are REINFORCEABLE.
+Example (63): ACIs are reinforceable.
 
 "Juan arrived first, that bastard Pedro arrived second (by the way, Juan is not a bastard)"
 
@@ -242,7 +242,7 @@ def siComparison : InferenceTypeComparison :=
 /-- Antipresupposition properties from Lo Guercio -/
 def antipresupComparison : InferenceTypeComparison :=
   { name := "Antipresupposition"
-  , requiresSameAssertion := true  -- MP! requires same assertion
+  , requiresSameAssertion := true  -- MP requires same assertion
   , affectedByDE := false          -- Varies by analysis
   , cancellable := true
   , reinforceable := false }       -- Redundant
@@ -276,37 +276,5 @@ def expressionTypeCoverage : List (CIExpressionType × String × Bool) :=
   , (.nominalAppositive, "§3.2.3 Examples 31-32", true)    -- "Laura, a doctor"
   , (.supplementaryAdverb, "§3.2.3", true)                 -- "Luckily"
   , (.emotiveMarker, "§3.2.3", true) ]                     -- "Alas"
-
--- Summary
-
-/-
-## What This File Provides
-
-### Empirical Items
-- `ex18_outOfBlue_noACI`: Out of blue, no ACI
-- `ex19_spanish_outOfBlue`: Spanish parallel
-- `ex20_priorMention_ACI`: Prior mention triggers ACI
-- `ex21_contrastive_ACI`: Contrastive use triggers ACI
-- `ex22_23_honorific_ACI`: Honorific parallel
-- `ex31_32_appositive_ACI`: Appositive parallel
-
-### Property Tests
-- `ex50_different_assertion`: ACIs independent of at-issue content
-- `ex52_cancellable`: ACIs can be cancelled
-- `ex61_de_insensitive`: ACIs unaffected by DE contexts
-- `ex63_reinforceable`: ACIs can be reinforced
-
-### Type Comparisons
-- `siComparison`, `antipresupComparison`, `aciComparison`: Property comparison
-
-### Expression Coverage
-- `expressionTypeCoverage`: Which CI types show ACIs
-
-## Connection to Theory Files
-
-This phenomena file provides the empirical facts that:
-- `Theories/NeoGricean/ConventionalImplicatures.lean` aims to derive
-- `Theories/Montague/Lexicon/Expressives/Basic.lean` provides semantics for
--/
 
 end Phenomena.LoGuercio2025

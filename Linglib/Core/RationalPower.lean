@@ -38,7 +38,7 @@ def nthRootApprox (x : ℚ) (n : ℕ) (iterations : ℕ := 10) : ℚ :=
     -- Initial guess: start at x if x < 1, else start at 1
     -- This helps convergence for both small and large x
     let init := if x < 1 then x else 1
-    (List.range iterations).foldl (fun y _ => newtonStep x n y) init
+    (List.range iterations).foldl (λ y _ => newtonStep x n y) init
 
 /-- Square root approximation. -/
 def sqrtApprox (x : ℚ) (iterations : ℕ := 10) : ℚ :=

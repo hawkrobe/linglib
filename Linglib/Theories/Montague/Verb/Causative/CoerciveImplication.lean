@@ -4,7 +4,7 @@
 The coercive interpretation of "make" with volitional causees,
 based on Nadathur & Lauer (2020).
 
-## Key Insight
+## Insight
 
 When "X made Y do Z" involves a volitional action Z:
 - The causee (Y) could have chosen otherwise

@@ -11,7 +11,7 @@ B as the cause and A as the effect (~60% subject-as-effect).
 
 However, "A is correlated with B" shows NO such preference (~50%).
 
-## Key Insight (Goodwin et al. 2025)
+## Insight (Goodwin et al. 2025)
 
 The asymmetry in English predicates drives the inference:
 - "correlate" has BOTH active and passive forms available
@@ -168,7 +168,7 @@ def L0 (u : Utterance) : List (CausalDir × ℚ) :=
   let compatible := CausalDir.all.filter (u.denotes ·)
   let n := compatible.length
   if n == 0 then []
-  else compatible.map fun c => (c, 1 / n)
+  else compatible.map λ c => (c, 1 / n)
 
 /--
 Speaker probability: chooses utterance to communicate causal direction.
@@ -183,19 +183,19 @@ Uses softmax over negative cost (standard RSA).
 def S1 (α : ℕ) (passivePenalty lexicalPenalty : ℚ) (p : Predicate)
     (t : Subject) (c : CausalDir) : List (Utterance × ℚ) :=
   -- Get available utterances with correct subject that denote c
-  let candidates := Utterance.all.filter fun u =>
+  let candidates := Utterance.all.filter λ u =>
     u.subject == t && u.availableFor p && u.denotes c
   -- Score by cost (using power instead of exp for rationals)
   let cost := utteranceCost passivePenalty lexicalPenalty
-  let scores := candidates.map fun u =>
+  let scores := candidates.map λ u =>
     let c := cost u
     -- Use 1/(1+c)^α as softmax approximation for rationals
     let score : ℚ := 1 / ((1 + c) ^ α)
     (u, score)
   -- Normalize
-  let total := scores.foldl (fun acc (_, s) => acc + s) 0
+  let total := scores.foldl (λ acc (_, s) => acc + s) 0
   if total == 0 then []
-  else scores.map fun (u, s) => (u, s / total)
+  else scores.map λ (u, s) => (u, s / total)
 
 /--
 Pragmatic listener: inverts speaker model.
@@ -205,14 +205,14 @@ Given an observed utterance, infers the causal direction.
 def L1 (α : ℕ) (passivePenalty lexicalPenalty : ℚ) (p : Predicate)
     (u : Utterance) : List (CausalDir × ℚ) :=
   -- For each causal direction, compute P(speaker produces u | c)
-  let scores := CausalDir.all.map fun c =>
+  let scores := CausalDir.all.map λ c =>
     let speakerDist := S1 α passivePenalty lexicalPenalty p u.subject c
     let prob := speakerDist.find? (·.1 == u) |>.map (·.2) |>.getD 0
     (c, prob)
   -- Normalize (uniform prior over causal directions)
-  let total := scores.foldl (fun acc (_, s) => acc + s) 0
+  let total := scores.foldl (λ acc (_, s) => acc + s) 0
   if total == 0 then []
-  else scores.map fun (c, s) => (c, s / total)
+  else scores.map λ (c, s) => (c, s / total)
 
 -- Predictions
 

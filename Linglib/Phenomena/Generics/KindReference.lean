@@ -1,39 +1,15 @@
 /-
 # Kind Reference and Bare Nominals: Empirical Patterns
 
-Theory-neutral data about kind reference, bare nominals, and related phenomena.
+Theory-neutral data on kind reference, bare nominals, cross-linguistic patterns, scopelessness, and scrambling effects.
 
-For **information structure effects** on bare plural interpretation (topic/focus,
-presuppositional verbs), see `Phenomena/BarePlurals/Data.lean`.
+## Main definitions
 
-## Phenomena Covered
-
-1. **Cross-linguistic bare nominal licensing**: Which forms can refer to kinds
-2. **Singular vs plural kind reference**: "The dodo" vs "Dogs"
-3. **Kind-level vs object-level predicates**: What applies directly to kinds
-4. **Scopelessness**: Bare plurals don't take wide scope
-5. **Scrambling and scope**: Scrambled bare plurals CAN take wide scope (Dutch/German)
-6. **Generic vs existential readings**: When each interpretation is available
-7. **Taxonomic readings**: Sub-kind level predication
-8. **Number morphology effects**: Singular kinds, mass nouns
-
-## Languages
-
-- English, German (bare plurals OK, bare singulars need D)
-- French, Italian, Spanish (definite required for kinds)
-- Hindi, Russian (bare nominals for all readings)
-- Mandarin, Japanese (classifier languages)
+`BareNominalType`, `CrossLingDatum`, `BareSingularDatum`, `ScopeDatum`, `ScramblingPosition`, `ScramblingScopeDatum`, `PredLevel`, `PredicateDatum`, `SingularKindDatum`, `TaxonomicDatum`, `PredicateClass`, `BPInterpDatum`
 
 ## References
 
-- Carlson, G. (1977). Reference to Kinds in English.
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Dayal, V. (2004). Number Marking and (In)definiteness in Kind Terms.
-- Cohen, A. & Erteschik-Shir, N. (2002). Topic, Focus, and Bare Plurals.
-- Krifka, M. et al. (1995). Genericity: An Introduction.
-- Le Bruyn, B. & de Swart, H. (2022). Exceptional wide scope of bare nominals.
-- de Hoop, H. (1996). Case Configuration and Noun Phrase Interpretation.
-- Ruys, E. (2001). Dutch Scrambling and the Strong-Weak Distinction.
+- Carlson (1977), Chierchia (1998), Dayal (2004), Cohen & Erteschik-Shir (2002), Krifka et al. (1995), Le Bruyn & de Swart (2022), de Hoop (1996), Ruys (2001)
 -/
 
 namespace Phenomena.Generics.KindReference
@@ -44,30 +20,22 @@ def containsSubstr (s : String) (sub : String) : Bool :=
 
 -- Cross-Linguistic Bare Nominal Patterns
 
-/-- Language typology for bare nominal licensing -/
+/-- Language typology for bare nominal licensing. -/
 inductive BareNominalType where
-  /-- Bare plurals/mass OK, bare singulars need D (English, German) -/
   | barePluralOnly
-  /-- Definite required for kind reference (French, Italian) -/
   | definiteRequired
-  /-- Bare nominals OK for all readings (Hindi, Russian) -/
   | fullyBare
-  /-- Classifier language - bare nouns mass-like (Mandarin, Japanese) -/
   | classifier
   deriving Repr, DecidableEq, BEq
 
-/-- A cross-linguistic kind reference datum -/
+/-- Cross-linguistic kind reference datum. -/
 structure CrossLingDatum where
   language : String
   nominalType : BareNominalType
-  /-- Example sentence -/
   sentence : String
   gloss : String
-  /-- Can bare NP refer to kind? -/
   bareKindOK : Bool
-  /-- Can definite NP refer to kind? -/
   defKindOK : Bool
-  /-- Can bare singular refer to kind? -/
   bareSgKindOK : Bool
   notes : String
 
@@ -276,43 +244,22 @@ def universalSomeBooks : ScopeDatum :=
 
 -- Scrambling and Scope (Le Bruyn & de Swart 2022)
 
-/-!
-## Scrambling Creates Wide Scope for Bare Plurals
 
-In Dutch and German, objects can "scramble" to precede adverbs and negation.
-Scrambled bare plurals take WIDE scope — unlike unscrambled bare plurals.
-
-**Key finding**: This is problematic for Chierchia (1998) because:
-- His analysis derives narrow scope from local DKP
-- But scrambled bare plurals show wide scope while still allowing kind reference
-
-**Key data**:
-- Dutch: "ik boeken niet heb uitgelezen" = "there are books I didn't finish" (∃ > ¬)
-- But "ik niet boeken heb uitgelezen" = "I didn't finish any books" (¬ > ∃)
-
-This supports Krifka (2004): bare plurals undergo direct ∃-shift, and scope
-follows surface composition order.
--/
-
-/-- Word order position for scrambling -/
+/-- Scrambling position. -/
 inductive ScramblingPosition where
-  | unscrambled  -- Object follows negation/adverb (base position)
-  | scrambled    -- Object precedes negation/adverb (scrambled)
+  | unscrambled
+  | scrambled
   deriving Repr, DecidableEq, BEq
 
-/-- Extended scope datum for scrambling data -/
+/-- Scrambling scope datum. -/
 structure ScramblingScopeDatum where
   sentence : String
   language : String
   gloss : Option String := none
   translation : String
-  /-- Word order position -/
   position : ScramblingPosition
-  /-- Is narrow scope available? -/
   narrowOK : Bool
-  /-- Is wide scope available? -/
   wideOK : Bool
-  /-- Can the BP still refer to a kind in this position? -/
   kindReferenceOK : Bool := true
   notes : String
 
@@ -337,7 +284,7 @@ def dutchScrambledMensen : ScramblingScopeDatum :=
   , gloss := some "that you people not have invited"
   , translation := "There are people you didn't invite"
   , position := .scrambled
-  , narrowOK := false  -- NOT "you didn't invite anyone"
+  , narrowOK := false  -- not "you didn't invite anyone"
   , wideOK := true     -- ∃ > ¬
   , notes := "Scrambled BP: obligatory wide scope over negation"
   }
@@ -363,7 +310,7 @@ def dutchScrambledKindMensen : ScramblingScopeDatum :=
   , position := .scrambled
   , narrowOK := true   -- Kind reading with 'hate'
   , wideOK := false
-  , kindReferenceOK := true  -- Kind reference maintained!
+  , kindReferenceOK := true  -- kind reference maintained
   , notes := "Scrambled BP can still be kind-referring with kind-level predicate"
   }
 
@@ -676,34 +623,34 @@ def bpInterpData : List BPInterpDatum :=
 -- Empirical Generalizations
 
 -- Bare plurals are scopeless
-#guard scopeData.filter (fun d => d.sentence.startsWith "I didn't see dogs" ||
+#guard scopeData.filter (λ d => d.sentence.startsWith "I didn't see dogs" ||
                                    d.sentence.startsWith "Every student read books")
-      |>.all (fun d => !d.ambiguous)
+      |>.all (λ d => !d.ambiguous)
 
 -- Kind-level predicates apply directly to kinds
-#guard predicateData.filter (fun p => p.level == .kind)
-      |>.all (fun p => p.directKindApplication)
+#guard predicateData.filter (λ p => p.level == .kind)
+      |>.all (λ p => p.directKindApplication)
 
 -- English bare singular count nouns are ungrammatical
-#guard bareSingularData.filter (fun d => d.npType == "bare sg count")
-      |>.all (fun d => !d.grammatical)
+#guard bareSingularData.filter (λ d => d.npType == "bare sg count")
+      |>.all (λ d => !d.grammatical)
 
 -- English bare plurals and mass nouns are grammatical
-#guard bareSingularData.filter (fun d => d.npType == "bare pl" || d.npType == "bare mass")
-      |>.all (fun d => d.grammatical)
+#guard bareSingularData.filter (λ d => d.npType == "bare pl" || d.npType == "bare mass")
+      |>.all (λ d => d.grammatical)
 
 -- I-level predicates block existential BP reading
-#guard bpInterpData.filter (fun d => d.predClass == .iLevel)
-      |>.all (fun d => !d.existentialOK)
+#guard bpInterpData.filter (λ d => d.predClass == .iLevel)
+      |>.all (λ d => !d.existentialOK)
 
 -- Scrambled bare plurals take wide scope (Dutch/German)
-#guard scramblingData.filter (fun d => d.position == .scrambled &&
+#guard scramblingData.filter (λ d => d.position == .scrambled &&
          containsSubstr d.sentence "niet" && d.kindReferenceOK)
-      |>.all (fun d => d.wideOK)
+      |>.all (λ d => d.wideOK)
 
 -- Scrambled BPs can still be kind-referring (with appropriate predicates)
-#guard scramblingData.filter (fun d => d.position == .scrambled &&
+#guard scramblingData.filter (λ d => d.position == .scrambled &&
          containsSubstr d.sentence "gehaat")
-      |>.all (fun d => d.kindReferenceOK)
+      |>.all (λ d => d.kindReferenceOK)
 
 end Phenomena.Generics.KindReference

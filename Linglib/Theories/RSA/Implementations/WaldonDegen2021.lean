@@ -129,7 +129,7 @@ def lexContinuous (r : Referent) (i : LexItem) : ℚ :=
 
 /-- Continuous utterance meaning [[u]]^C(r) = ∏_{i∈u} L^C(r, i). -/
 def uttContinuous (r : Referent) (u : Utterance) : ℚ :=
-  u.foldl (fun acc i => acc * lexContinuous r i) 1
+  u.foldl (λ acc i => acc * lexContinuous r i) 1
 
 -- Grounding: Connection to unified noise theory
 
@@ -188,7 +188,7 @@ def grammaticalUtterances (order : WordOrder) (scene : List Referent)
 /-- Get all grammatical continuations of a partial utterance. -/
 def continuations (partialUtt : Utterance) (order : WordOrder)
     (allUtts : List Utterance) : List Utterance :=
-  allUtts.filter fun u => partialUtt.isPrefixOf u
+  allUtts.filter λ u => partialUtt.isPrefixOf u
 
 /-- Incremental string interpretation X^C(c, i, r).
     Averages continuous semantics over all grammatical completions. -/
@@ -198,7 +198,7 @@ def stringInterpretation (context : Utterance) (nextWord : LexItem)
   let conts := continuations partialUtt order allUtts
   if conts.isEmpty then 0
   else
-    let total := conts.foldl (fun acc u => acc + uttContinuous r u) 0
+    let total := conts.foldl (λ acc u => acc + uttContinuous r u) 0
     total / conts.length
 
 
@@ -207,11 +207,11 @@ def stringInterpretation (context : Utterance) (nextWord : LexItem)
 def l0Incremental (context : Utterance) (nextWord : LexItem)
     (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
     : List (Referent × ℚ) :=
-  let scores := scene.map fun r =>
+  let scores := scene.map λ r =>
     (r, stringInterpretation context nextWord r order allUtts)
-  let total := scores.foldl (fun acc (_, s) => acc + s) 0
-  if total == 0 then scores.map fun (r, _) => (r, 0)
-  else scores.map fun (r, s) => (r, s / total)
+  let total := scores.foldl (λ acc (_, s) => acc + s) 0
+  if total == 0 then scores.map λ (r, _) => (r, 0)
+  else scores.map λ (r, s) => (r, s / total)
 
 /-- Incremental speaker S1^INCR(i | c, r).
     Soft-maximizes utility of next word.
@@ -227,22 +227,22 @@ def s1Incremental (context : Utterance) (target : Referent)
             | .postnominal => [LexItem.pin]
     | _ =>
       let conts := continuations context order allUtts
-      let nextWords := conts.filterMap fun u =>
+      let nextWords := conts.filterMap λ u =>
         if context.length < u.length then u[context.length]? else none
       (nextWords ++ [LexItem.stop]).eraseDups
   -- Compute L0 probability for target for each word
-  let scores : List (LexItem × ℚ) := availableWords.map fun w =>
+  let scores : List (LexItem × ℚ) := availableWords.map λ w =>
     let l0dist := l0Incremental context w scene order allUtts
-    let l0prob := match l0dist.find? (fun p => p.1 == target) with
+    let l0prob := match l0dist.find? (λ p => p.1 == target) with
       | some (_, prob) => prob
       | none => 0
     -- Utility ∝ (L0 prob)^α (simplified softmax without cost for now)
     let score := if l0prob > 0 then l0prob ^ α else 0
     (w, score)
   -- Normalize
-  let total := scores.foldl (fun acc p => acc + p.2) 0
-  if total == 0 then scores.map fun (w, _) => (w, 0)
-  else scores.map fun (w, s) => (w, s / total)
+  let total := scores.foldl (λ acc p => acc + p.2) 0
+  if total == 0 then scores.map λ (w, _) => (w, 0)
+  else scores.map λ (w, s) => (w, s / total)
 
 
 /-- Full utterance probability via chain rule.
@@ -255,7 +255,7 @@ def utteranceProb (u : Utterance) (target : Referent)
     | [] => prob
     | w :: ws =>
       let dist := s1Incremental context target scene order allUtts α cost
-      let wProb := match dist.find? (fun p => p.1 == w) with
+      let wProb := match dist.find? (λ p => p.1 == w) with
         | some (_, prob) => prob
         | none => 0
       go (context ++ [w]) ws (prob * wProb)

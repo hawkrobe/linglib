@@ -38,8 +38,8 @@ def equivalent (o : SatisfactionOrdering α Ideal) (a a' : α) : Bool :=
 
 /-- Best elements: those at least as good as all others. -/
 def best (o : SatisfactionOrdering α Ideal) (candidates : List α) : List α :=
-  candidates.filter fun a =>
-    candidates.all fun a' => o.atLeastAsGood a a'
+  candidates.filter λ a =>
+    candidates.all λ a' => o.atLeastAsGood a a'
 
 /-- The ordering is reflexive. -/
 theorem atLeastAsGood_refl (o : SatisfactionOrdering α Ideal) (a : α) :
@@ -112,18 +112,18 @@ end SatisfactionOrdering
 /-- Kratzer's world ordering: w satisfies p iff p(w) = true. -/
 def worldOrdering (World : Type*) (props : List (World → Bool)) :
     SatisfactionOrdering World (World → Bool) where
-  satisfies := fun w p => p w
+  satisfies := λ w p => p w
   ideals := props
 
 /-- Phillips-Brown's proposition ordering: a satisfies p iff a entails p. -/
 def propositionOrdering (World : Type*) [BEq World] (worlds : List World)
     (desires : List (World → Bool)) :
     SatisfactionOrdering (World → Bool) (World → Bool) where
-  satisfies := fun a p => worlds.all fun w => !a w || p w  -- a entails p
+  satisfies := λ a p => worlds.all λ w => !a w || p w  -- a entails p
   ideals := desires
 
 /-- Proposition entailment: a entails p iff every a-world is a p-world. -/
 def propEntails {World : Type*} (worlds : List World) (a p : World → Bool) : Bool :=
-  worlds.all fun w => !a w || p w
+  worlds.all λ w => !a w || p w
 
 end Core.SatisfactionOrdering

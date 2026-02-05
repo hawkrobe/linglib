@@ -6,14 +6,14 @@ to the core presupposition projection from Core.Presupposition.
 
 ## Key Concepts
 
-1. **Presupposition Triggers**: Lexical items that introduce presuppositions
+1. Presupposition Triggers: Lexical items that introduce presuppositions
    - Definites: "the" presupposes existence and uniqueness
    - Factives: "know", "regret" presuppose their complement
    - Change-of-state: "stop", "start" presuppose prior state
    - Iteratives: "again", "still" presuppose prior occurrence
    - Clefts: "It was X that..." presupposes existence
 
-2. **Interaction with Exhaustification**
+2. Interaction with Exhaustification
    - Exhaustification can strengthen presuppositions
    - Presupposition failure may block SI computation
 
@@ -103,7 +103,7 @@ structure PresupDerivation (W : Type*) where
 
 
 /--
-**Presupposition Failure Blocks SI Computation**
+Presupposition failure blocks SI computation.
 
 When a sentence's presupposition fails, we cannot compute scalar implicatures
 because the sentence lacks a truth value. This captures the intuition that
@@ -122,7 +122,7 @@ def siRequiresPresup {W : Type*} (p : PrProp W) (w : W) : Prop :=
   p.presup w = true
 
 /--
-**Exhaustification May Strengthen Presuppositions**
+Exhaustification may strengthen presuppositions.
 
 When alternatives to a sentence have presuppositions, exhaustification
 (negating those alternatives) can introduce additional presuppositions.
@@ -194,33 +194,5 @@ involving that trigger may behave differently.
 theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
 
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Presupposition Triggers
-- `PresupTrigger`: Types of lexical triggers (definite, factive, etc.)
-- `TriggerOccurrence`: Records trigger position in a sentence
-
-### Extended Derivations
-- `PresupDerivation`: Tracks presuppositions through derivation
-
-### SI-Presupposition Interaction
-- `siBlockedByPresupFailure`: Presup failure blocks SI
-- `siRequiresPresup`: SI needs felicitous context
-- `ExhWithPresup`: Exhaustification with presupposition tracking
-
-### Example Derivations (from Phenomena)
-- `kingBaldDerivation`: The king is bald (with trigger)
-- `ifKingThenBaldDerivation`: Filtering conditional
-- `johnKnowsRainingDerivation`: Factive verb
-
-### Connection to Other Modules
-- Uses `PrProp`, `impFilter` from `Core.Presupposition`
-- Uses `ContextPolarity` from `Core.Polarity`
-- Imports examples from `Phenomena.Presuppositions.Data`
-- Compatible with `NeoGricean.Exhaustivity` (future integration)
--/
 
 end NeoGricean.Presuppositions

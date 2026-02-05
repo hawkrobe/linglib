@@ -127,7 +127,7 @@ The soft meaning becomes:
 
 For uniform prior p(θ) = 1, this gives ⟦tall⟧(x) = height(x).
 
-### Key Result (Lassiter & Goodman 2017)
+### Result (Lassiter & Goodman 2017)
 
 With uniform threshold prior:
 - softMeaning(x) = measure(x)

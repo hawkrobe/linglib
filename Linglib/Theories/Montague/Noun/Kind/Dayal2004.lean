@@ -4,10 +4,10 @@
 Formalizes Dayal's "Number Marking and (In)definiteness in Kind Terms"
 which extends Chierchia's NMP analysis with:
 
-1. **Meaning Preservation Ranking**: {∩, ι} > ∃
-2. **Number morphology constraints on instantiation sets**
-3. **Taxonomic readings** of common nouns
-4. **Singular kinds** ("the dodo", "the lion")
+1. Meaning Preservation Ranking: {∩, ι} > ∃
+2. Number morphology constraints on instantiation sets
+3. Taxonomic readings of common nouns
+4. Singular kinds ("the dodo", "the lion")
 
 ## Core Insight
 
@@ -18,13 +18,13 @@ Type-shifting operations are RANKED by meaning preservation:
 When multiple type-shifts are available, choose the one that preserves
 the most meaning. This derives cross-linguistic patterns.
 
-## Key Innovation: Singular Kinds
+## Innovation: Singular Kinds
 
 "The dodo is extinct" - grammatically singular but about a kind.
 
 Analysis: ι can apply to kinds directly when the instantiation set is:
-- **Singleton**: only one salient instance (unique species)
-- **Inaccessible**: no actual instances to distinguish (extinct species)
+- Singleton: only one salient instance (unique species)
+- Inaccessible: no actual instances to distinguish (extinct species)
 
 Number morphology (sg/pl) constrains the instantiation set, not the
 denotation type. Singular morphology requires that instances are
@@ -64,7 +64,7 @@ inductive TypeShift where
   deriving DecidableEq, Repr, BEq
 
 /--
-**Meaning Preservation Ranking** (Dayal 2004: 408)
+Meaning Preservation Ranking (Dayal 2004: 408)
 
 {∩, ι} > ∃
 
@@ -97,7 +97,7 @@ example : equallyPreferred .down .iota = true := rfl
 -- Instantiation Sets and Number
 
 /--
-**Instantiation set** of a kind at a world.
+Instantiation set of a kind at a world.
 
 The instantiation set is the collection of actual instances of the kind.
 For "dog-kind" at world w, this is the set of all dogs in w.
@@ -116,7 +116,7 @@ structure InstantiationSet where
   deriving Repr, DecidableEq, BEq
 
 /--
-**Accessibility** of instantiation sets.
+Accessibility of instantiation sets.
 
 An instantiation set is "inaccessible" when:
 1. The kind is extinct (no actual instances exist)
@@ -164,7 +164,7 @@ inductive SingularLicense where
   deriving DecidableEq, Repr, BEq
 
 /--
-**Singular Kinds** (Dayal 2004: 411-423)
+Singular Kinds (Dayal 2004: 411-423)
 
 Grammatically singular but denoting kinds:
 - "The lion is a predator" (taxonomic)
@@ -187,7 +187,7 @@ structure SingularKind where
 -- Taxonomic Readings
 
 /--
-**Taxonomic readings** (Dayal 2004: 426-433)
+Taxonomic readings (Dayal 2004: 426-433)
 
 Common nouns can denote:
 1. Properties of INDIVIDUALS: dog(x) = "x is a dog individual"
@@ -244,10 +244,10 @@ def dogTaxonomy : TaxonomicHierarchy :=
 Type-shift availability given number and blocking.
 
 Dayal's system: type-shifts are constrained by:
-1. **Meaning preservation ranking**: prefer ∩/ι over ∃
-2. **Number morphology**: sg requires singleton/inaccessible instantiation
-3. **Blocking**: overt D blocks covert equivalent
-4. **∩ definedness**: requires kind-compatible property
+1. Meaning preservation ranking: prefer ∩/ι over ∃
+2. Number morphology: sg requires singleton/inaccessible instantiation
+3. Blocking: overt D blocks covert equivalent
+4. ∩ definedness: requires kind-compatible property
 -/
 structure TypeShiftContext where
   /-- Number feature on the NP -/
@@ -319,7 +319,7 @@ structure KindReferenceParams where
   deriving Repr
 
 /--
-**English** kind reference:
+English kind reference:
 - Bare plurals for kinds: "Dogs are mammals"
 - "The" for singular kinds: "The lion is a predator"
 - "The" for plural kinds is marked: ?"The dogs are mammals"
@@ -332,7 +332,7 @@ def englishKindRef : KindReferenceParams :=
   , definitePluralKinds := false }
 
 /--
-**Romance (French, Italian, Spanish)** kind reference:
+Romance (French, Italian, Spanish) kind reference:
 - Definite article required for kinds: "Les chiens sont des mammifères"
 - Both singular and plural kinds use definite article
 - Bare nominals restricted to special contexts
@@ -345,7 +345,7 @@ def romanceKindRef : KindReferenceParams :=
   , definitePluralKinds := true }
 
 /--
-**Determiner-less languages (Hindi, Russian, Chinese)** kind reference:
+Determiner-less languages (Hindi, Russian, Chinese) kind reference:
 - Bare nominals freely denote kinds
 - No definite/indefinite distinction in morphology
 - All interpretations available in context
@@ -358,7 +358,7 @@ def determinerlessKindRef : KindReferenceParams :=
   , definitePluralKinds := false }  -- N/A
 
 /--
-**German** kind reference (intermediate):
+German kind reference (intermediate):
 - Bare plurals OK for kinds: "Hunde sind Säugetiere"
 - Definite optional for plural/mass kinds
 - Similar to English but with more flexibility
@@ -373,7 +373,7 @@ def germanKindRef : KindReferenceParams :=
 -- Derived Kind Predication (DKP) - Extended
 
 /--
-**DKP** (Derived Kind Predication) - Dayal's version.
+DKP (Derived Kind Predication) - Dayal's version.
 
 When an object-level predicate applies to a kind, introduce existential
 quantification over instances:
@@ -412,7 +412,7 @@ def isKindLevelPredicate : String → Bool
 -- Well-Established Kinds
 
 /--
-**Well-established kinds** (Dayal 2004: 417-420)
+Well-established kinds (Dayal 2004: 417-420)
 
 For ι to apply to a kind (giving "the NP"), the kind must be
 "well-established" - a recognized natural class.
@@ -516,7 +516,7 @@ def englishBlocking : BlockingPrinciple :=
   , downBlocked := false }
 
 /--
-**Key Theorem**: Dayal's framework is consistent with Chierchia's for English.
+Dayal's framework is consistent with Chierchia's for English.
 
 When Chierchia predicts bare plurals are licensed (∩ defined and not blocked),
 Dayal's selectShift returns .down (the kind-forming shift).
@@ -541,7 +541,7 @@ theorem dayal_consistent_english_mass_noun :
     selectShift ctx = some .down := by native_decide
 
 /--
-**Dayal subsumes Chierchia**: When a type-shift is available, selectShift finds it.
+Dayal subsumes Chierchia: When a type-shift is available, selectShift finds it.
 
 Verified for the key cases via the concrete theorems above.
 The general pattern: selectShift returns Some iff at least one of:
@@ -575,7 +575,7 @@ theorem dayal_consistent_romance_bare_plural :
     selectShift ctx = some .down := by native_decide
 
 /--
-**Meaning Preservation explains Chierchia's blocking**.
+Meaning Preservation explains Chierchia's blocking.
 
 When both ∩ and ∃ are available, Dayal selects ∩ (more meaning-preserving).
 This derives Chierchia's observation that bare plurals prefer kind readings.

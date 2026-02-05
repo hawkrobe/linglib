@@ -105,7 +105,7 @@ abbrev FCP (W : Type*) (E : Type*) := File W E → File W E
 Atomic predicate update.
 -/
 def FCP.atom {W E : Type*} (pred : W → Bool) : FCP W E :=
-  fun f => f.updateProp pred
+  λ f => f.updateProp pred
 
 /--
 Indefinite introduction: requires novelty.
@@ -113,7 +113,7 @@ Indefinite introduction: requires novelty.
 This models "a man" - introduces a new discourse referent.
 -/
 def FCP.indefinite {W E : Type*} (x : Nat) (dom : Set E) (body : FCP W E) : FCP W E :=
-  fun f => body (f.introduce x dom)
+  λ f => body (f.introduce x dom)
 
 /--
 Definite reference: requires familiarity.
@@ -121,7 +121,7 @@ Definite reference: requires familiarity.
 This models "the man" - presupposes the referent is established.
 -/
 def FCP.definite {W E : Type*} (x : Nat) (body : FCP W E) : FCP W E :=
-  fun f => if f.familiar x then body f else ∅
+  λ f => if f.familiar x then body f else ∅
 
 /--
 Conjunction: sequential file update.
@@ -129,7 +129,7 @@ Conjunction: sequential file update.
 f[φ ∧ ψ] = f[φ][ψ]
 -/
 def FCP.conj {W E : Type*} (φ ψ : FCP W E) : FCP W E :=
-  fun f => ψ (φ f)
+  λ f => ψ (φ f)
 
 /--
 Negation: test-based (standard FCS).
@@ -139,7 +139,7 @@ f[¬φ] = f if f[φ] = ∅, else ∅
 Note: This does NOT validate DNE.
 -/
 def FCP.neg {W E : Type*} (φ : FCP W E) : FCP W E :=
-  fun f => if (φ f).Nonempty then ∅ else f
+  λ f => if (φ f).Nonempty then ∅ else f
 
 -- Key Properties
 
@@ -174,45 +174,6 @@ This module provides FCS-specific vocabulary as aliases:
 | familiar | definedAt |
 | introduce | randomAssign |
 | updateProp | update |
--/
-
--- Summary
-
-/-!
-## What This Module Will Provide
-
-### Core Types (via aliases)
-- `File W E`: Information state (= InfoState)
-- `FileCard W E`: Single possibility
-- `FCP W E`: File Change Potential
-
-### Novelty/Familiarity
-- `novel`: Variable is not yet constrained
-- `familiar`: Variable is uniquely constrained
-
-### Operations
-- `updateProp`: Propositional update
-- `introduce`: Discourse referent introduction
-- `atom`: Atomic predicate
-- `indefinite`: "a/an" with novelty requirement
-- `definite`: "the" with familiarity requirement
-- `conj`: Sequential conjunction
-- `neg`: Test-based negation
-
-## Key Insight: The File Metaphor
-
-Heim's file metaphor makes anaphora resolution concrete:
-- Opening a new card = introducing a discourse referent
-- Looking up a card = anaphoric reference
-- Novelty = can't reuse names
-- Familiarity = must already have a card for "the X"
-
-## TODO
-
-Full implementation including:
-- Presupposition projection
-- Accommodation
-- Connection to Core.HeimState proofs
 -/
 
 end Theories.DynamicSemantics.FileChangeSemantics

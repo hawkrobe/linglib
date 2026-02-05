@@ -62,7 +62,7 @@ def Prop'.extension (p : Prop') : List World :=
 
 /-- The intersection of a set of propositions: worlds satisfying ALL. -/
 def propIntersection (props : List Prop') : List World :=
-  allWorlds.filter fun w => props.all fun p => p w
+  allWorlds.filter λ w => props.all λ p => p w
 
 /-- A proposition p **follows from** a set A iff ∩A ⊆ p (Kratzer p. 31)
 
@@ -101,7 +101,7 @@ Kratzer (p. 32): "For each world, there is a particular body of facts in w
 that has a counterpart in each world in ∩f(w)."
 -/
 def isRealistic (f : ConvBackground) : Prop :=
-  ∀ w : World, (f w).all (fun p => p w) = true
+  ∀ w : World, (f w).all (λ p => p w) = true
 
 /--
 A conversational background is **totally realistic** iff for all w: ∩f(w) = {w}.
@@ -120,7 +120,7 @@ Kratzer (p. 33): "The empty conversational background is the function f such
 that for any w ∈ W, f(w) = ∅. Since ∩f(w) = W if f(w) = ∅, empty
 conversational backgrounds are also realistic."
 -/
-def emptyBackground : ConvBackground := fun _ => []
+def emptyBackground : ConvBackground := λ _ => []
 
 
 /--
@@ -129,7 +129,7 @@ The set of propositions from A that world w satisfies.
 This is {p ∈ A : w ∈ p} in Kratzer's notation.
 -/
 def satisfiedPropositions (A : List Prop') (w : World) : List Prop' :=
-  A.filter (fun p => p w)
+  A.filter (λ p => p w)
 
 /--
 Kratzer's ordering relation: w ≤_A z
@@ -145,7 +145,7 @@ NOT counting (which would be incorrect).
 -/
 def atLeastAsGoodAs (A : List Prop') (w z : World) : Bool :=
   -- Every proposition in A satisfied by z is also satisfied by w
-  (satisfiedPropositions A z).all fun p => p w
+  (satisfiedPropositions A z).all λ p => p w
 
 notation:50 w " ≤[" A "] " z => atLeastAsGoodAs A w z
 
@@ -169,7 +169,7 @@ A world w satisfies proposition p iff p(w) = true.
 This connects Kratzer semantics to the generic ordering framework.
 -/
 def worldOrdering (A : List Prop') : SatisfactionOrdering World Prop' where
-  satisfies := fun w p => p w
+  satisfies := λ w p => p w
   ideals := A
 
 /--
@@ -296,7 +296,7 @@ theorem accessible_is_extension (f : ModalBase) (w : World) :
 **Accessibility predicate**: w' is accessible from w iff w' ∈ ∩f(w).
 -/
 def accessibleFrom (f : ModalBase) (w w' : World) : Bool :=
-  (f w).all (fun p => p w')
+  (f w).all (λ p => p w')
 
 /--
 The **best** worlds among accessible worlds, according to ordering source g.
@@ -309,8 +309,8 @@ When g(w) = ∅, all accessible worlds are best (by Theorem 2).
 def bestWorlds (f : ModalBase) (g : OrderingSource) (w : World) : List World :=
   let accessible := accessibleWorlds f w
   let ordering := g w
-  accessible.filter fun w' =>
-    accessible.all fun w'' => atLeastAsGoodAs ordering w' w''
+  accessible.filter λ w' =>
+    accessible.all λ w'' => atLeastAsGoodAs ordering w' w''
 
 /--
 **Theorem 3: Empty ordering source reduces to simple accessibility.**
@@ -318,7 +318,7 @@ def bestWorlds (f : ModalBase) (g : OrderingSource) (w : World) : List World :=
 When g(w) = ∅, bestWorlds = accessibleWorlds.
 -/
 theorem empty_ordering_simple (f : ModalBase) (w : World) :
-    bestWorlds f (fun _ => []) w = accessibleWorlds f w := by
+    bestWorlds f (λ _ => []) w = accessibleWorlds f w := by
   unfold bestWorlds accessibleWorlds
   simp only [List.filter_eq_self]
   intro w' _
@@ -361,7 +361,7 @@ def possibility (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : B
 
 
 private theorem list_all_not_any_not (L : List World) (p : Prop') :
-    (L.all p == !L.any fun w => !p w) = true := by
+    (L.all p == !L.any λ w => !p w) = true := by
   induction L with
   | nil => rfl
   | cons x xs ih =>
@@ -374,7 +374,7 @@ private theorem list_all_not_any_not (L : List World) (p : Prop') :
 □p ↔ ¬◇¬p
 -/
 theorem duality (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) :
-    (necessity f g p w == !possibility f g (fun w' => !p w') w) = true := by
+    (necessity f g p w == !possibility f g (λ w' => !p w') w) = true := by
   unfold necessity possibility
   exact list_all_not_any_not (bestWorlds f g w) p
 
@@ -488,7 +488,7 @@ theorem four_axiom (f : ModalBase) (p : Prop') (w : World)
     (hNec : necessity f emptyBackground p w = true) :
     necessity f emptyBackground (necessity f emptyBackground p) w = true := by
   have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
-    fun v => empty_ordering_simple f v
+    λ v => empty_ordering_simple f v
   unfold necessity
   rw [hSimple w]
   apply List.all_eq_true.mpr
@@ -510,7 +510,7 @@ theorem B_axiom (f : ModalBase) (p : Prop') (w : World)
     (hP : p w = true) :
     necessity f emptyBackground (possibility f emptyBackground p) w = true := by
   have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
-    fun v => empty_ordering_simple f v
+    λ v => empty_ordering_simple f v
   unfold necessity
   rw [hSimple w]
   apply List.all_eq_true.mpr
@@ -529,7 +529,7 @@ theorem five_axiom (f : ModalBase) (p : Prop') (w : World)
     (hPoss : possibility f emptyBackground p w = true) :
     necessity f emptyBackground (possibility f emptyBackground p) w = true := by
   have hSimple : ∀ v, bestWorlds f emptyBackground v = accessibleWorlds f v :=
-    fun v => empty_ordering_simple f v
+    λ v => empty_ordering_simple f v
   unfold possibility at hPoss
   rw [hSimple w] at hPoss
   obtain ⟨w'', hw''Acc, hPw''⟩ := List.any_eq_true.mp hPoss
@@ -580,9 +580,9 @@ def atLeastAsGoodPossibility (f : ModalBase) (g : OrderingSource)
     (p q : Prop') (w : World) : Bool :=
   let accessible := accessibleWorlds f w
   let ordering := g w
-  let qMinusP := accessible.filter (fun w' => q w' && !p w')
-  let pMinusQ := accessible.filter (fun w' => p w' && !q w')
-  qMinusP.all fun w' => pMinusQ.any fun w'' => atLeastAsGoodAs ordering w'' w'
+  let qMinusP := accessible.filter (λ w' => q w' && !p w')
+  let pMinusQ := accessible.filter (λ w' => p w' && !q w')
+  qMinusP.all λ w' => pMinusQ.any λ w'' => atLeastAsGoodAs ordering w'' w'
 
 def betterPossibility (f : ModalBase) (g : OrderingSource)
     (p q : Prop') (w : World) : Bool :=
@@ -636,7 +636,7 @@ structure TeleologicalFlavor where
   goals : OrderingSource
 
 
-def implies (p q : Prop') : Prop' := fun w => !p w || q w
+def implies (p q : Prop') : Prop' := λ w => !p w || q w
 
 /--
 **Theorem: K Axiom (Distribution) holds.**
@@ -664,13 +664,13 @@ Conditionals as modal base restrictors.
 "If α, (must) β" = must_f+α β
 -/
 def restrictedBase (f : ModalBase) (antecedent : Prop') : ModalBase :=
-  fun w => antecedent :: f w
+  λ w => antecedent :: f w
 
 def materialImplication (p q : Prop') (w : World) : Bool :=
   !p w || q w
 
 def strictImplication (p q : Prop') : Bool :=
-  allWorlds.all fun w => !p w || q w
+  allWorlds.all λ w => !p w || q w
 
 
 structure KratzerParams where
@@ -680,7 +680,7 @@ structure KratzerParams where
 def KratzerTheory (params : KratzerParams) : ModalTheory where
   name := "Kratzer"
   citation := "Kratzer 1981"
-  eval := fun force p w =>
+  eval := λ force p w =>
     let best := bestWorlds params.base params.ordering w
     match force with
     | .necessity => best.all p
@@ -705,7 +705,7 @@ def deonticParams (circumstances : ModalBase) (norms : OrderingSource) : Kratzer
 
 def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
 
-def concreteEpistemicBase : ModalBase := fun _ => [groundWet]
+def concreteEpistemicBase : ModalBase := λ _ => [groundWet]
 
 def concreteEpistemicParams : KratzerParams where
   base := concreteEpistemicBase
@@ -713,8 +713,8 @@ def concreteEpistemicParams : KratzerParams where
 
 def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
 
-def concreteCircumstantialBase : ModalBase := fun _ => []
-def concreteDeonticOrdering : OrderingSource := fun _ => [johnHome]
+def concreteCircumstantialBase : ModalBase := λ _ => []
+def concreteDeonticOrdering : OrderingSource := λ _ => [johnHome]
 
 def concreteDeonticParams : KratzerParams where
   base := concreteCircumstantialBase
@@ -725,7 +725,7 @@ def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
 -- Duality for ModalTheory Interface
 
 private theorem list_duality_helper (L : List World) (p : Proposition) :
-    (L.all p == !L.any fun w' => !p w') = true := by
+    (L.all p == !L.any λ w' => !p w') = true := by
   induction L with
   | nil => rfl
   | cons x xs ih =>
@@ -738,7 +738,7 @@ theorem kratzer_duality (params : KratzerParams) (p : Proposition) (w : World) :
   exact list_duality_helper (bestWorlds params.base params.ordering w) p
 
 theorem kratzer_isNormal (params : KratzerParams) : (KratzerTheory params).isNormal :=
-  fun p w => kratzer_duality params p w
+  λ p w => kratzer_duality params p w
 
 theorem kratzerMinimal_isNormal : KratzerMinimal.isNormal :=
   kratzer_isNormal minimalParams

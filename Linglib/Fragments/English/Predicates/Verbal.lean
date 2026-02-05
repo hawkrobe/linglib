@@ -947,7 +947,7 @@ where `P` is the activity predicate (complement denotation).
 -/
 def getCoSSemantics {W : Type*} (v : VerbEntry) (P : W → Bool) :
     Option (PrProp W) :=
-  v.cosType.map fun t => cosSemantics t P
+  v.cosType.map λ t => cosSemantics t P
 
 /--
 Does this verb presuppose its complement?
@@ -1029,7 +1029,7 @@ def allVerbs : List VerbEntry := [
 Look up a verb entry by citation form.
 -/
 def lookup (form : String) : Option VerbEntry :=
-  allVerbs.find? (fun v => v.form == form)
+  allVerbs.find? (λ v => v.form == form)
 
 /--
 Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form.

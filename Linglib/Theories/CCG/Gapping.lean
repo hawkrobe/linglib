@@ -6,9 +6,9 @@ CCG derivations for gapping constructions, proving that:
 2. Gapping direction follows from lexical verb categories
 3. Ross's generalization emerges from the Principles of Consistency and Inheritance
 
-## Key Insight (Steedman 2000, Chapter 7)
+## Insight (Steedman 2000, Chapter 7)
 
-Gapping is NOT a special ellipsis rule - it's ordinary constituent coordination!
+Gapping is not a special ellipsis rule but ordinary constituent coordination.
 
 In "Dexter ate bread, and Warren, potatoes":
 - "Warren, potatoes" = S\((S/NP)/NP) via backward composition of type-raised NPs
@@ -97,13 +97,13 @@ def hasForwardRaising : WordOrder → Bool
 /--
 Gapping direction follows from available type-raised categories.
 
-Forward gapping: gapped conjunct is LEFTWARD-looking (needs verb to LEFT)
-  → requires backward type-raising (T\(T/NP))
-  → requires VSO/SVO verbs
+Forward gapping: gapped conjunct is leftward-looking (needs verb to left)
+  -> requires backward type-raising (T\(T/NP))
+  -> requires VSO/SVO verbs
 
-Backward gapping: gapped conjunct is RIGHTWARD-looking (needs verb to RIGHT)
-  → requires forward type-raising (T/(T\NP))
-  → requires SOV verbs
+Backward gapping: gapped conjunct is rightward-looking (needs verb to right)
+  -> requires forward type-raising (T/(T\NP))
+  -> requires SOV verbs
 -/
 def predictedGappingPattern (order : WordOrder) : GappingPattern :=
   ⟨hasBackwardRaising order, hasForwardRaising order⟩
@@ -111,13 +111,13 @@ def predictedGappingPattern (order : WordOrder) : GappingPattern :=
 -- Ross's Generalization from CCG Principles
 
 /--
-Ross's generalization EMERGES from CCG's Principles of Consistency and Inheritance.
+Ross's generalization emerges from CCG's Principles of Consistency and Inheritance.
 
 The gapped conjunct's directionality is determined by:
 1. What type-raised categories are available (from verb categories)
 2. What composition rules preserve those directions
 
-This is NOT a stipulation - it follows from the grammar.
+This follows from the grammar rather than being stipulated.
 -/
 theorem ross_from_ccg_principles :
     ∀ order : WordOrder,
@@ -141,8 +141,8 @@ The Principle of Inheritance ensures composed functions inherit directionality.
 When we backward-compose two T\(T/NP) categories:
   T\(T/NP₁) ∘ T\(T/NP₂) → T\((T/NP₂)/NP₁)
 
-The result is STILL leftward-looking (backslash on top).
-Hence it can only combine with a verb to its LEFT.
+The result is still leftward-looking (backslash on top).
+Hence it can only combine with a verb to its left.
 -/
 theorem inheritance_determines_gapping :
     GappedTV = S \ ((S / NP) / NP) := rfl
@@ -165,13 +165,13 @@ English doesn't license T/(T\NP) categories.
 -/
 def BackwardGappedTV : Cat := S / ((S \ NP) / NP)
 
--- The Key Insight: Gapped Conjunct Directionality
+-- Gapped Conjunct Directionality
 
 /--
-The gapped conjunct S\((S/NP)/NP) is LEFTWARD-looking.
+The gapped conjunct S\((S/NP)/NP) is leftward-looking.
 
-The backslash on the outside means it seeks an argument to its LEFT.
-This is why forward gapping (verb LEFT, gap RIGHT) works in SVO.
+The backslash on the outside means it seeks an argument to its left.
+Forward gapping (verb left, gap right) works in SVO for this reason.
 -/
 theorem gapped_tv_is_leftward :
     match GappedTV with
@@ -179,9 +179,9 @@ theorem gapped_tv_is_leftward :
     | _ => false := rfl
 
 /--
-The backward-gapped conjunct S/((S\NP)/NP) would be RIGHTWARD-looking.
+The backward-gapped conjunct S/((S\NP)/NP) would be rightward-looking.
 
-The slash on the outside means it seeks an argument to its RIGHT.
+The slash on the outside means it seeks an argument to its right.
 This would require backward gapping (gap LEFT, verb RIGHT).
 But SVO doesn't license this category.
 -/
@@ -193,8 +193,8 @@ theorem backward_gapped_tv_is_rightward :
 -- Dutch: Both Directions
 
 /--
-Dutch has BOTH VSO main verbs AND SOV subordinate verbs.
-Therefore, Dutch licenses BOTH type-raising directions.
+Dutch has both VSO main verbs and SOV subordinate verbs.
+Therefore, Dutch licenses both type-raising directions.
 -/
 def dutchProfile : WordOrderProfile := dutch
 
@@ -227,33 +227,5 @@ This is because both use the same type-raised categories.
 -/
 theorem stripping_same_constraints_as_gapping :
     GappedSubj = BackwardRaisedNP := rfl
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Gapped Constituent Categories
-- `GappedTV`: S\((S/NP)/NP) - gapped transitive (Warren, potatoes)
-- `GappedSubj`: S\(S/NP) - gapped subject (Warren)
-- `BackwardRaisedNP`, `ForwardRaisedNP`: type-raised NP categories
-
-### Key Theorems
-- `ross_from_ccg_principles`: Ross's generalization emerges from CCG
-- `svo_patterns_with_vso`: SVO and VSO both have forward gapping
-- `no_backward_gapping_in_english`: Why *SO and SVO fails
-- `dutch_allows_both_gapping`: Mixed-order languages allow both
-- `gapped_tv_is_leftward`: Forward gapping uses leftward-looking categories
-- `inheritance_determines_gapping`: Category structure determines directionality
-
-### The Core Insight
-
-Gapping direction is determined by:
-1. Verb categories in the lexicon (SOV vs VSO vs SVO)
-2. Type-raised categories licensed by those verbs
-3. The Principle of Inheritance (composed functions keep their direction)
-
-Ross's generalization is NOT a stipulation - it's a THEOREM of CCG.
--/
 
 end CCG.Gapping

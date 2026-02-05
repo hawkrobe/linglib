@@ -317,7 +317,7 @@ inductive PartyWorld where
 
 instance : Core.Proposition.FiniteWorlds PartyWorld where
   worlds := [.sOnly, .kOnly, .aOnly, .sk, .sa, .ka, .ska, .none_]
-  complete := fun w => by cases w <;> simp
+  complete := λ w => by cases w <;> simp
 
 namespace PartyWorld
 
@@ -365,7 +365,7 @@ This module provides:
 - `lncFelicitous`: Check felicity in discourse context
 - `embeddedConsequentPolarity`: Get polarity licensing for embedded position
 
-### Key Theorems
+### Theorems
 - `bare_lnc_as_pc`: Bare LNCs default to PC interpretation
 - `modal_lnc_allows_hc`: Modal LNCs can be HCs (when no discourse anchor)
 - `modal_lnc_prefers_pc`: Modal LNCs prefer PC when discourse anchor exists
@@ -373,7 +373,7 @@ This module provides:
 - `bare_lnc_licenses_ppi_in_B`: Bare LNCs license PPIs in embedded consequent
 - `bare_lnc_blocks_npi_in_B`: Bare LNCs block NPIs in embedded consequent
 
-### Key Insight
+### Insight
 
 Bare LNCs force PC interpretation because the inner conditional (a propositional
 object) inherently requires discourse anchoring to be supposed. This explains:

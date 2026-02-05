@@ -157,7 +157,7 @@ Lift a constant extension to an intension (rigid designator).
 For entities like proper names, the extension doesn't vary by world.
 -/
 def rigid {m : IntensionalModel} {τ : Ty} (ext : m.base.interpTy τ) : Intension m τ :=
-  fun _ => ext
+  λ _ => ext
 
 /--
 Create a world-varying intension from a function.
@@ -173,7 +173,7 @@ open Determiner.Quantifier in
 -/
 def someIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  fun w => FiniteModel.elements.any fun x => P w x && Q w x
+  λ w => FiniteModel.elements.any λ x => P w x && Q w x
 
 open Determiner.Quantifier in
 /--
@@ -181,7 +181,7 @@ open Determiner.Quantifier in
 -/
 def everyIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  fun w => FiniteModel.elements.all fun x => !P w x || Q w x
+  λ w => FiniteModel.elements.all λ x => !P w x || Q w x
 
 open Determiner.Quantifier in
 /--
@@ -189,7 +189,7 @@ open Determiner.Quantifier in
 -/
 def noIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  fun w => !FiniteModel.elements.any fun x => P w x && Q w x
+  λ w => !FiniteModel.elements.any λ x => P w x && Q w x
 
 -- Example: Scalar Implicature Scenario
 
@@ -220,14 +220,14 @@ def scalarModel : IntensionalModel := {
 /-- FiniteModel instance for scalarModel.base -/
 instance scalarModelFinite : Determiner.Quantifier.FiniteModel scalarModel.base where
   elements := [.john, .mary, .pizza, .book]
-  complete := fun x => by cases x <;> simp
+  complete := λ x => by cases x <;> simp
 
 /--
 "Students" is a rigid property (doesn't vary by world).
 In the toy model, John and Mary are students.
 -/
 def students_rigid : PropertyIntension scalarModel :=
-  fun _ => Determiner.Quantifier.student_sem
+  λ _ => Determiner.Quantifier.student_sem
 
 /--
 "Sleep" varies by world:
@@ -235,13 +235,13 @@ def students_rigid : PropertyIntension scalarModel :=
 - someNotAll: only John sleeps
 - all: both John and Mary sleep
 -/
-def sleep_varying : PropertyIntension scalarModel := fun w =>
+def sleep_varying : PropertyIntension scalarModel := λ w =>
   match w with
-  | .none => fun _ => false
-  | .someNotAll => fun x => match x with
+  | .none => λ _ => false
+  | .someNotAll => λ x => match x with
       | .john => true
       | _ => false
-  | .all => fun x => match x with
+  | .all => λ x => match x with
       | .john => true
       | .mary => true
       | _ => false
@@ -335,42 +335,5 @@ The `phi` function handles this type coercion.
 theorem phi_def {m : IntensionalModel} (d : IntensionalDerivation m)
     (h : d.ty = .t) (w : m.World) :
     phi d h w = d.trueAt h w := rfl
-
--- Summary: What This Module Provides
-
-/-
-## Types
-
-- `IntensionalModel`: Model with World type
-- `Intension m τ`: World → m.base.interpTy τ
-- `Proposition m`: World → Bool
-- `IntensionalDerivation m`: Derivation with intensional meaning
-
-## Key Functions
-
-- `evalAt`: Evaluate intension at a world
-- `rigid`: Lift constant to intension
-- `varying`: Create world-varying intension
-- `someIntensional`, `everyIntensional`: Quantifiers over intensions
-- `phi`: RSA's literal semantics (= eval at world)
-
-## Key Theorems
-
-- `some_false_at_none`, `some_true_at_someNotAll`, `some_true_at_all`
-- `every_false_at_none`, `every_false_at_someNotAll`, `every_true_at_all`
-- `phi_is_eval`: φ(u, w) = ⟦u⟧(w)
-
-## RSA Integration
-
-RSA can now use compositional semantics directly:
-
-```lean
--- L0(u, w) = 1 if ⟦u⟧(w), 0 otherwise
-def L0 (u : IntensionalDerivation m) (w : m.World) : Bool :=
-  phi u rfl w
-```
-
-The meaning comes from the derivation, not from stipulation.
--/
 
 end Montague.Intensional

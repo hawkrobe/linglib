@@ -79,14 +79,14 @@ def mary_sem : readModel.interpTy .e := mary
 
 /-- "book" is true of book1 and book2 -/
 def book_sem : readModel.interpTy (.e ⇒ .t) :=
-  fun x => match x with
+  λ x => match x with
     | .book1 => true
     | .book2 => true
     | _ => false
 
 /-- "read" as a relation: John read book1, Mary read book2 -/
 def read_sem : readModel.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun obj => fun subj => match subj, obj with
+  λ obj => λ subj => match subj, obj with
     | .john, .book1 => true      -- John read book1
     | .mary, .book2 => true      -- Mary read book2
     | .mary, .newspaper => true  -- Mary also read the newspaper
@@ -113,7 +113,7 @@ Note: Our read_sem takes object first, then subject.
 So "read t₁" is the function waiting for a subject.
 -/
 def vp_readTrace : DenotG readModel (.e ⇒ .t) :=
-  fun g => fun subj => read_sem (trace1 g) subj
+  λ g => λ subj => read_sem (trace1 g) subj
 
 /--
 IP meaning: "John read t₁"
@@ -270,7 +270,7 @@ An equivalent formulation using the relativePM combinator directly.
 This shows the interface abstracts over the composition steps.
 -/
 def np_bookThatJohnRead' : DenotG readModel (.e ⇒ .t) :=
-  relativePM 1 (constDenot book_sem) (applyG (fun g subj => read_sem (g 1) subj) (constDenot john))
+  relativePM 1 (constDenot book_sem) (applyG (λ g subj => read_sem (g 1) subj) (constDenot john))
 
 /-- The two formulations are equivalent -/
 theorem np_formulations_equiv (g : Assignment readModel) :
@@ -321,7 +321,7 @@ theorem trace_example_has_index : getTraceIndex traceExample = some 1 := rfl
 4. **Predicate Modification**: intersects with head noun
 5. **Definite description**: iota selects the unique satisfier
 
-### Key Theorems
+### Theorems
 - `cp_meaning_correct`: the relative clause means λx.read(j,x)
 - `np_meaning_correct`: the modified NP means λx.book(x) ∧ read(j,x)
 - `the_book_correct`: ιx[book(x) ∧ read(j,x)] = book1

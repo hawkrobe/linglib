@@ -14,12 +14,12 @@ negated in the first disjunct. This is surprising because:
 1. Standard dynamic semantics: negation blocks dref introduction
 2. Yet the anaphora is clearly felicitous
 
-## Key Properties
+## Properties
 
-1. **Cross-disjunct anaphora**: Pronoun in one disjunct, antecedent in another
-2. **Under negation**: The antecedent is inside a negated existential
-3. **Free choice**: These typically involve modal possibility
-4. **Double negation pattern**: ¬¬∃x accessible iff ∃x accessible
+1. Cross-disjunct anaphora: pronoun in one disjunct, antecedent in another.
+2. The antecedent is inside a negated existential.
+3. These typically involve modal possibility (free choice).
+4. Double negation pattern: ¬¬∃x accessible iff ∃x accessible.
 
 ## References
 
@@ -317,36 +317,5 @@ def doubleNegationData : List DoubleNegationDatum := [
   doubleNegBathroom,
   doubleNegNobody
 ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `BathroomDatum`: Bathroom-type disjunction
-- `ModalSubordinationDatum`: Related modal subordination
-- `DoubleNegationDatum`: DNE accessibility pattern
-
-### Key Examples
-- `classicBathroom`: "Either there's no bathroom, or it's upstairs"
-- `standardNegation`: Contrast showing sentence boundary blocks
-- `doubleNegBathroom`: DNE enables anaphora
-
-### Collections
-- `bathroomData`: 11 bathroom-type examples
-- `felicitousBathroom`: 8 felicitous cases
-- `infelicitousBathroom`: 3 infelicitous contrasts
-- `modalSubordinationData`: 2 modal subordination examples
-- `doubleNegationData`: 2 DNE examples
-
-### Theoretical Relevance
-
-Key data for:
-- BUS (Bilateral Update Semantics): Negation swaps positive/negative
-- ICDRT (Intensional CDRT): Flat update with propositional drefs
-- DRT: Extended accessibility conditions
-- E-type: Domain widening analysis
--/
 
 end Phenomena.Anaphora.BathroomSentences

@@ -72,15 +72,15 @@ def boundBy (s : HasBindingConfig.Structure T) (binder : Position) : List Positi
 /-- A binding configuration is well-formed. -/
 def BindingConfig.wellFormed (bc : BindingConfig) : Bool :=
   -- No double binding
-  let noDoubleBinding := bc.bindings.all fun r1 =>
-    bc.bindings.all fun r2 =>
+  let noDoubleBinding := bc.bindings.all λ r1 =>
+    bc.bindings.all λ r2 =>
       r1.bindee != r2.bindee || r1.binder == r2.binder
   -- No self-binding
-  let noSelfBinding := bc.bindings.all fun r =>
+  let noSelfBinding := bc.bindings.all λ r =>
     r.binder != r.bindee
   -- Consistent indices
-  let consistentIndices := bc.bindings.all fun r1 =>
-    bc.bindings.all fun r2 =>
+  let consistentIndices := bc.bindings.all λ r1 =>
+    bc.bindings.all λ r2 =>
       r1.binder != r2.binder || r1.varIndex == r2.varIndex
   noDoubleBinding && noSelfBinding && consistentIndices
 
@@ -97,8 +97,8 @@ def bindingEquivalent
   let bc1 := HasBindingConfig.bindingConfig s1
   let bc2 := HasBindingConfig.bindingConfig s2
   -- Check same binder-bindee pairs (ignoring indices)
-  let pairs1 := bc1.bindings.map fun r => (r.binder, r.bindee)
-  let pairs2 := bc2.bindings.map fun r => (r.binder, r.bindee)
+  let pairs1 := bc1.bindings.map λ r => (r.binder, r.bindee)
+  let pairs2 := bc2.bindings.map λ r => (r.binder, r.bindee)
   pairs1.all (pairs2.contains ·) && pairs2.all (pairs1.contains ·)
 
 end Interfaces.BindingSemantics

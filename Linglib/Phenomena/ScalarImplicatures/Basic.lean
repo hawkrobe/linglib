@@ -28,11 +28,11 @@ namespace Phenomena.ScalarImplicatures
 Empirical pattern: Scalar implicatures in DE contexts.
 
 In upward-entailing (UE) contexts, "some" implicates "not all".
-In downward-entailing (DE) contexts, this implicature is BLOCKED.
+In downward-entailing (DE) contexts, this implicature is blocked.
 
 Examples:
 - UE: "John ate some cookies" → "not all cookies"
-- DE: "No one ate some cookies" → NO "not all" implicature
+- DE: "No one ate some cookies" → no "not all" implicature
 -/
 structure DEBlockingDatum where
   /-- Example in UE context -/
@@ -59,7 +59,7 @@ def someAllBlocking : DEBlockingDatum :=
   , scalarTerm := "some"
   , strongerAlt := "all"
   , implicatureInUE := true   -- "not all" implicature arises
-  , implicatureInDE := false  -- "not all" implicature BLOCKED
+  , implicatureInDE := false  -- "not all" implicature blocked
   }
 
 /--
@@ -72,7 +72,7 @@ def orAndBlocking : DEBlockingDatum :=
   , scalarTerm := "or"
   , strongerAlt := "and"
   , implicatureInUE := true   -- "not both" implicature arises
-  , implicatureInDE := false  -- "not both" implicature BLOCKED
+  , implicatureInDE := false  -- "not both" implicature blocked
   }
 
 /--
@@ -115,7 +115,7 @@ From "some students came":
 - Weak: Speaker doesn't believe all came (¬Bel_S(all))
 - Strong: Speaker believes not all came (Bel_S(¬all))
 
-The strong requires COMPETENCE assumption.
+The strong requires a competence assumption.
 
 Source: Soames (1982), Geurts (2010) Ch. 2.3
 -/
@@ -562,50 +562,11 @@ theorem singh_strongFirst_order : singhStrongFirstCases.all (·.weakerFirst == f
   native_decide
 
 /--
-**The Singh Asymmetry**: felicitous ↔ weakerFirst
-(at the data level; theory explains WHY)
+The Singh asymmetry: felicitous ↔ weakerFirst
+(at the data level; theory explains why)
 -/
 theorem singh_asymmetry :
-    allSinghData.all (fun d => d.felicitous == d.weakerFirst) := by
+    allSinghData.all (λ d => d.felicitous == d.weakerFirst) := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `DEBlockingDatum`: DE context blocking pattern
-- `WeakStrongDatum`: Weak vs strong implicature pattern
-- `HornScaleDatum`: Horn scale with examples
-- `ScaleExample`: Example sentence with implicature
-- `HornScaleDatumPair`: Scale with weaker/stronger terms
-- `HurfordDatum`: Hurford's constraint data
-- `SinghDatum`: Singh's asymmetry data
-
-### Example Collections
-- `deBlockingExamples`: 4 examples (some/all, or/and, possible/necessary, every-restrictor)
-- `weakStrongExamples`: 3 examples (some, or, numerals)
-- `hornScaleExamples`: 4 scales (quantifiers, connectives, modals, numerals)
-- `allScalePairs`: 3 scale pairs (some/all, or/and, possible/necessary)
-- `allHurfordData`: 6 examples (3 violations, 3 rescued)
-- `allSinghData`: 6 examples (3 weak-first, 3 strong-first)
-
-### Theorems About the Data
-- `all_arise_in_UE`: All scale examples arise in UE contexts
-- `hurford_violations_infelicitous`: Violations are infelicitous
-- `hurford_rescued_felicitous`: Rescued cases are felicitous
-- `singh_asymmetry`: felicitous ↔ weakerFirst
-
-### Key References
-- Horn (1972): Original scale proposal
-- Hurford (1974): Hurford's constraint
-- Gazdar (1979): Weak vs strong distinction
-- Ladusaw (1980): DE environments
-- Soames (1982): Competence assumption
-- Singh (2008): Order asymmetry
-- Geurts (2010): Modern synthesis
-- Fox & Spector (2018): Economy and embedded exhaustification
--/
 
 end Phenomena.ScalarImplicatures

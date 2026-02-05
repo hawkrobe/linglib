@@ -31,7 +31,7 @@ theorem shannonEntropy_nonneg (p : ι → ℝ)
   · simp only [hi, ↓reduceIte]
     have hp_pos : 0 < p i := (hp_nonneg i).lt_of_ne' hi
     have hp_le : p i ≤ 1 := by
-      calc p i ≤ ∑ j : ι, p j := Finset.single_le_sum (fun j _ => hp_nonneg j) (Finset.mem_univ i)
+      calc p i ≤ ∑ j : ι, p j := Finset.single_le_sum (λ j _ => hp_nonneg j) (Finset.mem_univ i)
         _ = 1 := hp_sum
     have hlog : log (p i) ≤ 0 := log_nonpos (le_of_lt hp_pos) hp_le
     exact mul_nonpos_of_nonneg_of_nonpos (le_of_lt hp_pos) hlog
@@ -44,7 +44,7 @@ theorem shannonEntropy_le_log_card (p : ι → ℝ)
 
 /-- Entropy of uniform distribution. -/
 theorem shannonEntropy_uniform :
-    shannonEntropy (fun _ : ι => 1 / Fintype.card ι) = log (Fintype.card ι) := by
+    shannonEntropy (λ _ : ι => 1 / Fintype.card ι) = log (Fintype.card ι) := by
   simp only [shannonEntropy]
   have hcard : (0 : ℝ) < Fintype.card ι := Nat.cast_pos.mpr Fintype.card_pos
   have hne : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt hcard
@@ -144,8 +144,8 @@ theorem klDiv_eq_zero_iff (p q : ι → ℝ)
 /-- Softmax minimizes KL divergence from prior weighted by scores. -/
 theorem softmax_minimizes_kl_plus_energy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
-    klDiv p (fun _ => 1 / Fintype.card ι) - α * ∑ i, p i * s i ≥
-    klDiv (softmax s α) (fun _ => 1 / Fintype.card ι) - α * ∑ i, softmax s α i * s i := by
+    klDiv p (λ _ => 1 / Fintype.card ι) - α * ∑ i, p i * s i ≥
+    klDiv (softmax s α) (λ _ => 1 / Fintype.card ι) - α * ∑ i, softmax s α i * s i := by
   sorry
 
 /-- Free energy (from statistical mechanics). -/
@@ -173,12 +173,12 @@ theorem softmax_exponential_family (s : ι → ℝ) (α : ℝ) (i : ι) :
 
 /-- The log-partition function is convex in α. -/
 theorem logSumExp_convex (s : ι → ℝ) :
-    ConvexOn ℝ Set.univ (fun α => logSumExp s α) := by
+    ConvexOn ℝ Set.univ (λ α => logSumExp s α) := by
   sorry
 
 /-- Derivative of log-partition gives expected value. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
-    deriv (fun α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
+    deriv (λ α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
   -- TODO: Requires calculus lemmas for sum of exp derivatives
   -- d/dα log(Z) = Z'/Z where Z = ∑ exp(α * s_j), Z' = ∑ s_j * exp(α * s_j)
   sorry

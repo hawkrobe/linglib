@@ -6,7 +6,7 @@ Proceedings of the ESSLLI 2003 Student Session (revised 2007).
 
 ## Main Result
 
-**Theorem**: For any positive proposition P, Max(P) = {Exhaust(P)}.
+For any positive proposition P, Max(P) = {Exhaust(P)}.
 
 This shows that exhaustive interpretation is derivable from Gricean maxims:
 - The speaker chose P over alternatives (Quantity)
@@ -15,12 +15,12 @@ This shows that exhaustive interpretation is derivable from Gricean maxims:
 
 ## Key Concepts
 
-1. **Valuations**: Assignments of truth values to atoms (modeled as sets of true atoms)
-2. **Propositions**: Sets of valuations
-3. **Favoring**: P favors literal L iff flipping L can change P's truth value
-4. **Positive propositions**: Favor only positive literals (equivalent to negation-free)
-5. **Exhaustification**: Keep only minimal valuations
-6. **Gricean reasoning**: I(P) = states making P optimal; Max(P) = most informed such states
+1. Valuations: Assignments of truth values to atoms (modeled as sets of true atoms)
+2. Propositions: Sets of valuations
+3. Favoring: P favors literal L iff flipping L can change P's truth value
+4. Positive propositions: Favor only positive literals (equivalent to negation-free)
+5. Exhaustification: Keep only minimal valuations
+6. Gricean reasoning: I(P) = states making P optimal; Max(P) = most informed such states
 
 ## References
 
@@ -99,8 +99,8 @@ end Literal
 Then F favors L if there exists a valuation V such that V(F) = V(L) = 1 and
 such that V_{-L}(F) = 0"
 
-This is the key concept: P favors L iff there's a valuation where both P and L
-are true, but flipping L makes P false.
+P favors L iff there exists a valuation where both P and L are true,
+but flipping L makes P false.
 -/
 
 /--
@@ -113,7 +113,7 @@ def flipLiteral (V : Valuation Atom) (L : Literal Atom) : Valuation Atom :=
   if h : a ∈ V then V.erase a else V.cons a h
 
 /--
-**Definition 2 (Favoring)**: A proposition P favors a literal L if there exists
+Definition 2 (Favoring): A proposition P favors a literal L if there exists
 a valuation V such that:
 1. V ∈ P (V makes P true)
 2. L.satisfies V = true (V makes L true)
@@ -123,7 +123,7 @@ def favors (P : Proposition Atom) (L : Literal Atom) : Prop :=
   ∃ V : Valuation Atom, V ∈ P ∧ L.satisfies V ∧ flipLiteral Atom V L ∉ P
 
 /--
-**Definition 4 (Positive Proposition)**: A proposition is positive if it favors
+Definition 4 (Positive Proposition): A proposition is positive if it favors
 at least one positive literal and no negative literal.
 
 "A positive proposition is a proposition that favors no negative literal and
@@ -156,7 +156,7 @@ def properSubset (V' V : Valuation Atom) : Prop :=
   V' ⊂ V
 
 /--
-**Definition 6 (Exhaustification)**: The set of minimal valuations in P.
+Definition 6 (Exhaustification): The set of minimal valuations in P.
 
 Exhaust(P) = {V ∈ P | ¬∃V' ∈ P, V' ⊂ V}
 -/
@@ -164,7 +164,7 @@ def Exhaust (P : Proposition Atom) : Proposition Atom :=
   {V | V ∈ P ∧ ∀ V' ∈ P, ¬(V' ⊂ V)}
 
 /--
-**Definition 5 (Positive Extension)**: The upward closure of P.
+Definition 5 (Positive Extension): The upward closure of P.
 
 Pos(P) = {V | ∃V' ∈ P, V' ⊆ V}
 
@@ -178,7 +178,7 @@ def Pos (P : Proposition Atom) : Proposition Atom :=
 
 omit [DecidableEq Atom] in
 theorem Exhaust_subset (P : Proposition Atom) : Exhaust Atom P ⊆ P :=
-  fun _ hV => hV.1
+  λ _ hV => hV.1
 
 omit [DecidableEq Atom] in
 /--
@@ -253,10 +253,10 @@ lemma positive_superset_mem (P : Proposition Atom) (hpos : isPositive Atom P)
 
 omit [DecidableEq Atom] in
 theorem P_subset_Pos (P : Proposition Atom) : P ⊆ Pos Atom P :=
-  fun V hV => ⟨V, hV, Finset.Subset.refl V⟩
+  λ V hV => ⟨V, hV, Finset.Subset.refl V⟩
 
 /--
-**Fact 1**: If P is positive, then Pos(P) = P.
+Fact 1: If P is positive, then Pos(P) = P.
 
 "If P is positive, Pos(P) = P"
 -/
@@ -274,7 +274,7 @@ theorem Pos_of_positive (P : Proposition Atom) (hpos : isPositive Atom P) :
 
 omit [DecidableEq Atom] in
 /--
-**Fact 2**: Pos(Exhaust(P)) = Pos(P).
+Fact 2: Pos(Exhaust(P)) = Pos(P).
 
 "Pos(Exhaust(P)) = P" [when P is positive, this is Pos(P)]
 -/
@@ -311,7 +311,7 @@ considers possible).
 abbrev InfoState := Proposition Atom
 
 /--
-**Definition 3 (Optimal States)**: I(P) is the set of information states where
+Definition 3 (Optimal States): I(P) is the set of information states where
 P is the strongest positive proposition entailed.
 
 I(P) = {i | Pos(i) = P}
@@ -323,7 +323,7 @@ def I (P : Proposition Atom) : Set (InfoState Atom) :=
   {i | Pos Atom i = P}
 
 /--
-**Definition 4 (Maximal Optimal States)**: Max(P) is the set of maximal elements
+Definition 4 (Maximal Optimal States): Max(P) is the set of maximal elements
 of I(P) - the most informed states that still make P optimal.
 
 "Max(S, α, Q) = {i | i ∈ I(S, α, Q) and ∀i' (i' ∈ I(S, α, Q)) → ¬(i'/Q ⊂ i/Q)}"
@@ -342,7 +342,7 @@ This is the main result: Gricean reasoning leads to exhaustive interpretation.
 -/
 
 /--
-**Lemma**: Exhaust(P) ∈ I(P) for positive P.
+Exhaust(P) is in I(P) for positive P.
 
 Since Pos(Exhaust(P)) = Pos(P) = P (by Facts 1 and 2), Exhaust(P) is an
 information state that makes P optimal.
@@ -353,7 +353,7 @@ theorem Exhaust_mem_I (P : Proposition Atom) (hpos : isPositive Atom P) :
   rw [Pos_Exhaust_eq_Pos, Pos_of_positive Atom P hpos]
 
 /--
-**Lemma**: Exhaust(P) entails all members of I(P).
+Exhaust(P) entails all members of I(P).
 
 "We want to show that Exhaust(P) entails all the other members of I(P)."
 -/
@@ -366,7 +366,7 @@ theorem Exhaust_entails_I (P : Proposition Atom) (_hpos : isPositive Atom P) :
   -- Since i ∈ I(P), we have Pos(i) = P
   have hi_pos : Pos Atom i = P := hi
   -- Key fact: i ⊆ P (since for any V' ∈ i, V' ∈ Pos(i) = P by reflexivity)
-  have hi_sub_P : i ⊆ P := fun V' hV'i =>
+  have hi_sub_P : i ⊆ P := λ V' hV'i =>
     hi_pos ▸ (P_subset_Pos Atom i hV'i)
   -- We need to show V ∈ i. By contradiction, assume V ∉ i.
   by_contra hV_not_i
@@ -374,14 +374,14 @@ theorem Exhaust_entails_I (P : Proposition Atom) (_hpos : isPositive Atom P) :
   have hV_in_Pos_i : V ∈ Pos Atom i := hi_pos ▸ hV_P
   obtain ⟨V', hV'i, hV'_sub⟩ := hV_in_Pos_i
   -- Since V ∉ i and V' ∈ i with V' ⊆ V, we must have V' ≠ V
-  have hV'_ne : V' ≠ V := fun h => hV_not_i (h ▸ hV'i)
+  have hV'_ne : V' ≠ V := λ h => hV_not_i (h ▸ hV'i)
   -- So V' ⊂ V (proper subset)
   have hV'_ssub : V' ⊂ V := Finset.ssubset_iff_subset_ne.mpr ⟨hV'_sub, hV'_ne⟩
   -- But V' ∈ i ⊆ P, so V' ∈ P with V' ⊂ V, contradicting V's minimality
   exact hV_min V' (hi_sub_P hV'i) hV'_ssub
 
 /--
-**MAIN THEOREM** (Spector 2007, Section 3.3.2):
+Spector (2007, Section 3.3.2):
 
 For any positive proposition P, Max(P) = {Exhaust(P)}.
 
@@ -411,7 +411,7 @@ theorem main_theorem (P : Proposition Atom) (hpos : isPositive Atom P) :
       obtain ⟨V, hVi, hV_not_exh⟩ := Set.not_subset.mp h
       -- V ∈ i but V ∉ Exhaust(P)
       -- Since Exhaust(P) ⊆ i (by h1) but V ∈ i \ Exhaust(P), we have Exhaust(P) ⊂ i
-      have hExh_ne : Exhaust Atom P ≠ i := fun heq => hV_not_exh (heq ▸ hVi)
+      have hExh_ne : Exhaust Atom P ≠ i := λ heq => hV_not_exh (heq ▸ hVi)
       have hExh_ssub : Exhaust Atom P ⊂ i := Set.ssubset_iff_subset_ne.mpr ⟨h1, hExh_ne⟩
       -- This contradicts hi_max applied to Exhaust(P)
       exact hi_max (Exhaust Atom P) (Exhaust_mem_I Atom P hpos) hExh_ssub
@@ -448,7 +448,7 @@ def orProp (A B : Atom) : Proposition Atom :=
 /--
 Example: The exhaustification of "A or B" is "exactly A or exactly B".
 
-Note: This is the MINIMAL exclusive disjunction - singletons only.
+This is the minimal exclusive disjunction (singletons only).
 The more general "A xor B" (A ∈ V ↔ B ∉ V) includes non-minimal sets like {A, C}.
 -/
 def exclOrProp (A B : Atom) : Proposition Atom :=
@@ -475,7 +475,7 @@ theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
         by_contra hne_x
         -- x ∈ V but x ≠ A. Then V.erase x ⊂ V and A ∈ V.erase x.
         apply hV_min (V.erase x)
-        · left; exact Finset.mem_erase.mpr ⟨fun h => hne_x h.symm, hA⟩
+        · left; exact Finset.mem_erase.mpr ⟨λ h => hne_x h.symm, hA⟩
         · exact Finset.erase_ssubset hx
       · intro hxa; rw [hxa]; exact hA
     | inr hB =>
@@ -487,7 +487,7 @@ theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
       · intro hx
         by_contra hne_x
         apply hV_min (V.erase x)
-        · right; exact Finset.mem_erase.mpr ⟨fun h => hne_x h.symm, hB⟩
+        · right; exact Finset.mem_erase.mpr ⟨λ h => hne_x h.symm, hB⟩
         · exact Finset.erase_ssubset hx
       · intro hxb; rw [hxb]; exact hB
   · -- {{A}, {B}} ⊆ Exhaust(A∨B)
@@ -514,98 +514,5 @@ theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
         cases hV' with
         | inl hA' => exact Finset.notMem_empty A hA'
         | inr hB' => exact Finset.notMem_empty B hB'
-
--- SUMMARY
-
-/-
-## What This Module Provides
-
-### Core Framework
-- `Valuation`: Assignments of truth to atoms (as Finsets)
-- `Proposition`: Sets of valuations
-- `Literal`: Positive or negative atoms
-- `favors`: When a proposition "favors" a literal
-
-### Polarity Classification
-- `isPositive`: Favors positive literals only
-- `isNegative`: Favors negative literals only
-
-### Exhaustification
-- `Exhaust`: Minimal valuations in a proposition
-- `Pos`: Upward closure (strongest positive entailed)
-
-### Gricean Reasoning
-- `I P`: Information states making P optimal
-- `Max P`: Maximal such states (most informed)
-
-### Main Result
-- `main_theorem`: Max(P) = {Exhaust(P)} for positive P
-
-This shows that exhaustive interpretation is a consequence of Gricean reasoning,
-not an arbitrary stipulation.
-
-## Connection to Spector (2016)
-
-The `Exhaust` operator here corresponds to `exhMW` in Exhaustivity.lean.
-Spector (2007) shows WHY we exhaustify (Gricean reasoning).
-Spector (2016) compares DIFFERENT exhaustivity operators (exhMW vs exhIE).
-
-## Conjectured Connection to RSA
-
-RSA (Rational Speech Acts) is a probabilistic formalization of Gricean reasoning.
-The key connection is:
-
-**Spector's Classical Gricean Result:**
-```
-Max(P) = {Exhaust(P)}   for positive P
-```
-
-**RSA Probabilistic Version:**
-```
-L1(u) ∝ Prior(w) · S1(u | w)
-S1(u | w) ∝ L0(w | u)^α
-```
-
-**Conjectured Limit Theorem:**
-```
-lim_{α → ∞} L1(u) concentrates on Exhaust(⟦u⟧)
-```
-
-### Intuition
-
-1. **Classical**: Max(P) picks the MOST INFORMATIVE info state consistent with P
-2. **RSA**: Higher α makes S1 prefer MORE INFORMATIVE utterances more strongly
-3. **Connection**: At α → ∞, S1 becomes deterministic (always picks most informative)
-4. **Result**: L1 at high α should converge to exhaustive interpretation
-
-### Formal Statement (Sketch)
-
-Given:
-- `S : RSAScenario U W` with Boolean semantics
-- `u : U` an utterance
-- `⟦u⟧ = {w | φ(u,w) = 1}` the semantic denotation
-
-Define:
-- `Exhaust_RSA(u) = minimal worlds in ⟦u⟧`
-- `L1_α(u)` = L1 distribution with rationality α
-
-**Conjecture**: For all ε > 0, there exists N such that for all α > N,
-```
-∑_{w ∈ Exhaust_RSA(u)} L1_α(u)(w) > 1 - ε
-```
-
-### Implementation Notes
-
-To formalize this, we would need:
-1. Parameterize RSAScenario by α (already done)
-2. Define `Exhaust_RSA` matching `Exhaust` from this file
-3. Prove monotonicity lemmas about L1 as α increases
-4. Use limits or ε-δ formulation for the convergence
-
-This would provide a formal bridge between:
-- Classical Gricean pragmatics (this file)
-- Probabilistic RSA (Core/RSA.lean)
-- Showing RSA generalizes classical reasoning with probabilistic softening
--/
 
 end NeoGricean.Spector2007

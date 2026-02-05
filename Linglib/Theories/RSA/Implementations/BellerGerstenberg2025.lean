@@ -1,48 +1,20 @@
 /-
 # Beller & Gerstenberg (2025)
 
-"Causation, Meaning, and Communication"
-Psychological Review
+RSA model for causal expression choice based on whether-causation (W),
+how-causation (H), and sufficient-causation (S).
 
-RSA model for causal expression choice based on three causal aspects from the
-Counterfactual Simulation Model (CSM):
+## Main definitions
 
-| Aspect | Symbol | Definition |
-|--------|--------|------------|
-| Whether-causation | W | Counterfactual necessity (but-for causation) |
-| Sufficient-causation | S | Would have been enough alone |
-| How-causation | H | Fine-grained process difference |
-
-## Causal Expressions
-
-The paper analyzes four causal expressions with overlapping semantics:
-
-| Expression | Semantics | Scalar Position |
-|------------|-----------|-----------------|
-| affected | W ∨ H ∨ S | Weakest |
-| enabled | W ∨ S | Middle |
-| caused | H ∧ (W ∨ S) | Strongest |
-| made_no_difference | ¬W ∧ ¬H ∧ ¬S | Negative |
-
-## Simplifications
-
-This implementation simplifies the causal reasoning machinery from the paper.
-We use Boolean aspects (W, H, S) directly rather than computing them from
-full structural causal models. This captures the RSA pragmatic reasoning
-over causal expressions while avoiding the complexity of CSM counterfactual
-computation.
-
-For full causal model integration, see:
-- `Core.CausalModel` for structural causal dynamics
-- `NadathurLauer2020.Necessity` for causallyNecessary (≈ W)
-- `NadathurLauer2020.Sufficiency` for causallySufficient (≈ S)
+- `CausalExpression`
+- `CausalWorld`
+- `expressionMeaning`
+- `scenario`
 
 ## References
 
-- Beller, A. & Gerstenberg, T. (2025). Causation, Meaning, and Communication.
+- Beller & Gerstenberg (2025). Causation, Meaning, and Communication.
   Psychological Review.
-- Gerstenberg, T. et al. (2021). A counterfactual simulation model of
-  causal judgments for physical events. Psychological Review.
 -/
 
 import Linglib.Theories.RSA.Core.Basic
@@ -51,22 +23,18 @@ import Mathlib.Data.Rat.Defs
 namespace RSA.BellerGerstenberg2025
 
 
-/--
-Causal expressions in English for describing causation.
-
-These form a scalar hierarchy: caused > enabled > affected
--/
+/-- Causal expressions in English for describing causation. -/
 inductive CausalExpression
-  | affected          -- "X affected Y" - weakest positive
-  | enabled           -- "X enabled Y" - middle
-  | caused            -- "X caused Y" - strongest
-  | madeNoDifference  -- "X made no difference to Y" - negative
+  | affected
+  | enabled
+  | caused
+  | madeNoDifference
   deriving DecidableEq, BEq, Repr, Inhabited, Fintype
 
 /-- FinEnum instance for computable enumeration -/
 instance : FinEnum CausalExpression :=
   FinEnum.ofList [.affected, .enabled, .caused, .madeNoDifference]
-    (fun x => by cases x <;> simp)
+    (λ x => by cases x <;> simp)
 
 instance : ToString CausalExpression where
   toString
@@ -132,7 +100,7 @@ instance : Fintype CausalWorld where
 
 /-- FinEnum instance for computable enumeration -/
 instance : FinEnum CausalWorld :=
-  FinEnum.ofList allCausalWorlds (fun ⟨w, h, s⟩ => by
+  FinEnum.ofList allCausalWorlds (λ ⟨w, h, s⟩ => by
     simp only [allCausalWorlds, List.mem_cons, CausalWorld.mk.injEq]
     cases w <;> cases h <;> cases s <;> simp)
 
@@ -165,13 +133,13 @@ expression. The listener hears the expression and infers the world.
 -/
 def scenario : RSAScenario CausalExpression CausalWorld :=
   RSAScenario.basicBool
-    (satisfies := fun cw u => expressionMeaning cw u)
-    (prior := fun _ => 1)
-    (prior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
-    (cost := fun _ => 0)
-    (cost_nonneg := fun _ => le_refl 0)
-    (utterancePrior := fun _ => 1)
-    (utterancePrior_nonneg := fun _ => le_refl 0 |> fun _ => by norm_num)
+    (satisfies := λ cw u => expressionMeaning cw u)
+    (prior := λ _ => 1)
+    (prior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
+    (cost := λ _ => 0)
+    (cost_nonneg := λ _ => le_refl 0)
+    (utterancePrior := λ _ => 1)
+    (utterancePrior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
 
 /-- Default scenario with uniform prior over causal worlds -/
 def defaultScenario : RSAScenario CausalExpression CausalWorld := scenario
@@ -224,7 +192,7 @@ Full scalar chain: caused → enabled → affected.
 -/
 theorem caused_implies_affected (cw : CausalWorld) :
     expressionMeaning cw .caused → expressionMeaning cw .affected :=
-  fun h => enabled_implies_affected cw (caused_implies_enabled cw h)
+  λ h => enabled_implies_affected cw (caused_implies_enabled cw h)
 
 /--
 "madeNoDifference" is the negation of "affected".

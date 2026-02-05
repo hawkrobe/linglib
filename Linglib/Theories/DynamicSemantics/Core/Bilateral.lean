@@ -5,7 +5,7 @@ The bilateral denotation structure for dynamic semantics. Bilateral semantics
 tracks both positive and negative update dimensions, enabling Double Negation
 Elimination (DNE) and proper treatment of cross-disjunct anaphora.
 
-## Key Insight
+## Insight
 
 Standard dynamic semantics struggles with:
 1. Double Negation Elimination (DNE): ¬¬φ should entail φ
@@ -26,8 +26,8 @@ BilateralDen W E = {
 
 ## Key Properties
 
-- **DNE**: ¬¬φ = φ (definitional - negation swaps, swap twice = identity)
-- **de Morgan**: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
+- DNE: ¬¬φ = φ (definitional - negation swaps, swap twice = identity)
+- de Morgan: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
 
 ## References
 
@@ -78,8 +78,8 @@ For an atomic proposition p:
 - s[p]⁻ = { w ∈ s | ¬p(w) }   (keep worlds where p fails)
 -/
 def atom (pred : W → Bool) : BilateralDen W E :=
-  { positive := fun s => s.update pred
-  , negative := fun s => s.update (fun w => !pred w) }
+  { positive := λ s => s.update pred
+  , negative := λ s => s.update (λ w => !pred w) }
 
 /-- Atomic positive and negative are complementary -/
 theorem atom_complementary (pred : W → Bool) (s : InfoState W E) :
@@ -120,7 +120,7 @@ def neg (φ : BilateralDen W E) : BilateralDen W E :=
 /-- Notation for negation -/
 prefix:max "~" => neg
 
-/-- Double negation is identity (DNE!) -/
+/-- Double negation is identity (DNE). -/
 @[simp]
 theorem neg_neg (φ : BilateralDen W E) : ~~φ = φ := rfl
 
@@ -134,7 +134,7 @@ theorem dne_negative (φ : BilateralDen W E) (s : InfoState W E) :
 
 /-- Negation is involutive -/
 theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → BilateralDen W E) :=
-  fun φ => neg_neg φ
+  λ φ => neg_neg φ
 
 
 /--
@@ -148,8 +148,8 @@ The negative update reflects: a conjunction is denied if either conjunct
 could be denied.
 -/
 def conj (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s => ψ.positive (φ.positive s)
-  , negative := fun s => φ.negative s ∪ (φ.positive s ∩ ψ.negative (φ.positive s)) }
+  { positive := λ s => ψ.positive (φ.positive s)
+  , negative := λ s => φ.negative s ∪ (φ.positive s ∩ ψ.negative (φ.positive s)) }
 
 /-- Notation for conjunction -/
 infixl:65 " ⊙ " => conj
@@ -168,8 +168,8 @@ For standard disjunction φ ∨ ψ:
 - s[φ ∨ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻   (both must fail to deny)
 -/
 def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s => φ.positive s ∪ ψ.positive s
-  , negative := fun s => φ.negative s ∩ ψ.negative s }
+  { positive := λ s => φ.positive s ∪ ψ.positive s
+  , negative := λ s => φ.negative s ∩ ψ.negative s }
 
 /-- Notation for disjunction -/
 infixl:60 " ⊕ " => disj
@@ -188,15 +188,15 @@ For ∃x.φ:
 - s[∃x.φ]⁻ = { p ∈ s | ∀e, p[x↦e] ∉ s[x:=?][φ]⁺ }   (no witness makes φ true)
 -/
 def exists_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s => φ.positive (s.randomAssign x domain)
-  , negative := fun s =>
+  { positive := λ s => φ.positive (s.randomAssign x domain)
+  , negative := λ s =>
       { p ∈ s | ∀ e ∈ domain,
         (p.extend x e) ∉ φ.positive (s.randomAssign x domain) } }
 
 /-- Existential with full domain -/
 def existsFull (x : Nat) (φ : BilateralDen W E) : BilateralDen W E :=
-  { positive := fun s => φ.positive (s.randomAssignFull x)
-  , negative := fun s =>
+  { positive := λ s => φ.positive (s.randomAssignFull x)
+  , negative := λ s =>
       { p ∈ s | ∀ e : E, (p.extend x e) ∉ φ.positive (s.randomAssignFull x) } }
 
 
@@ -247,13 +247,13 @@ theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : InfoStat
 
 /-- Create bilateral from predicate over entities -/
 def pred1 (p : E → W → Bool) (t : Nat) : BilateralDen W E :=
-  { positive := fun s => { poss ∈ s | p (poss.assignment t) poss.world }
-  , negative := fun s => { poss ∈ s | !p (poss.assignment t) poss.world } }
+  { positive := λ s => { poss ∈ s | p (poss.assignment t) poss.world }
+  , negative := λ s => { poss ∈ s | !p (poss.assignment t) poss.world } }
 
 /-- Create bilateral from binary predicate -/
 def pred2 (p : E → E → W → Bool) (t₁ t₂ : Nat) : BilateralDen W E :=
-  { positive := fun s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
-  , negative := fun s => { poss ∈ s | !p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
+  { positive := λ s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
+  , negative := λ s => { poss ∈ s | !p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
 
 
 /-- Unilateral denotation: single update function -/
@@ -290,45 +290,5 @@ instance : InvolutiveNeg (BilateralDen W E) where
 
 end BilateralDen
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Core Type
-- `BilateralDen W E`: Pair of update functions (positive/negative)
-
-### Constructors
-- `atom`: Lift classical proposition
-- `pred1`, `pred2`: From entity predicates
-
-### Logical Operations
-- `neg` (~): Swap positive/negative (enables DNE)
-- `conj` (⊙): Sequence positive, combine negative
-- `disj` (⊕): Standard disjunction
-- `exists_`: Existential with domain
-- `forall_`: Universal via de Morgan
-
-### Relations
-- `supports`: State supports sentence
-- `entails` (⊨ᵇ): Bilateral entailment
-
-### Key Theorems
-- `neg_neg`: Double negation is identity (DNE!)
-- `egli`: ∃x.φ ∧ ψ ⊨ ∃x[φ ∧ ψ]
-- `atom_complementary`: Positive and negative cover the state
-- `atom_disjoint`: Positive and negative are disjoint
-
-## The Key Insight
-
-DNE holds because negation is defined as SWAPPING positive and negative:
-- `(~φ).positive = φ.negative`
-- `(~φ).negative = φ.positive`
-
-Swapping twice is identity, so `~~φ = φ` definitionally.
-
-This is what enables "Either there's no bathroom, or it's upstairs"
-to have the pronoun bound by the negated existential.
--/
 
 end Theories.DynamicSemantics.Core

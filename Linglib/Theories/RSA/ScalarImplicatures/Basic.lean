@@ -11,7 +11,7 @@ can feed into RSA for probabilistic scalar implicature derivation.
 CCG/HPSG/Minimalism → SemDeriv.Derivation → rsaFromDerivation → RSA L1 interpretation
 ```
 
-## Key Results
+## Results
 
 - `rsa_some_not_all`: RSA derives P(some_not_all | "some") > P(all | "some")
 - `rsa_derives_not_all`: Using derivation interface, RSA prefers non-all worlds
@@ -99,8 +99,6 @@ def rsaSomeResult : RSAScalarResult :=
   }
 
 /--
-**RSA Scalar Implicature Theorem**
-
 RSA assigns higher probability to "some but not all" worlds than to "all" world.
 This is the RSA counterpart to NeoGricean's categorical "not all" implicature.
 -/
@@ -109,7 +107,7 @@ theorem rsa_some_not_all :
   native_decide
 
 /--
-**Theorem: P(some_not_all) > P(all) explicitly**
+P(some_not_all) > P(all) explicitly.
 -/
 theorem rsa_some_not_all_explicit :
     rsaSomeResult.probSomeNotAll > rsaSomeResult.probAll := by
@@ -140,7 +138,7 @@ Derive RSA scalar implicature from a semantic derivation.
 For derivations with "some", returns the RSA analysis showing
 higher probability for "some but not all" worlds.
 
-**Syntax-agnostic**: Works with CCG, HPSG, Minimalism, or any theory
+Syntax-agnostic: works with CCG, HPSG, Minimalism, or any theory
 that implements the SemDeriv interface.
 -/
 def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
@@ -160,38 +158,38 @@ def rsaFromDerivation {m : Model} (d : Derivation m) : Option RSAScalarResult :=
 
 
 /--
-**Example: "some students sleep" via RSA**
+"some students sleep" via RSA.
 -/
 def someStudentsSleep_rsa : Option RSAScalarResult :=
   rsaFromDerivation someStudentsSleep
 
 /--
-**Theorem: someStudentsSleep produces a result**
+someStudentsSleep produces a result.
 -/
 theorem someStudentsSleep_rsa_isSome :
     someStudentsSleep_rsa.isSome = true := by native_decide
 
 /--
-**Theorem: RSA derives "not all" from "some students sleep"**
+RSA derives "not all" from "some students sleep".
 -/
 theorem rsa_derives_not_all_from_some_students :
     (someStudentsSleep_rsa.get someStudentsSleep_rsa_isSome).implicatureHolds = true := by
   native_decide
 
 /--
-**Example: "every student sleeps" via RSA**
+"every student sleeps" via RSA.
 -/
 def everyStudentSleeps_rsa : Option RSAScalarResult :=
   rsaFromDerivation everyStudentSleeps
 
 /--
-**Theorem: everyStudentSleeps produces a result**
+everyStudentSleeps produces a result.
 -/
 theorem everyStudentSleeps_rsa_isSome :
     everyStudentSleeps_rsa.isSome = true := by native_decide
 
 /--
-**Theorem: "every" has no scalar implicature**
+"every" has no scalar implicature.
 
 Since "every/all" is at the top of the scale, no stronger alternative exists.
 -/
@@ -210,68 +208,23 @@ def l1ProbForWorld (w : Fin 4) : ℚ :=
 #eval l1 threePerson .some_
 
 /--
-**Theorem: w1 > w3 (one vs all)**
+w1 > w3 (one vs all).
 -/
 theorem l1_w1_gt_w3 : l1ProbForWorld (w1 (n := 3)) > l1ProbForWorld (wAll (n := 3)) := by
   native_decide
 
 /--
-**Theorem: w2 > w3 (two vs all)**
+w2 > w3 (two vs all).
 -/
 theorem l1_w2_gt_w3 : l1ProbForWorld (w2 (n := 3)) > l1ProbForWorld (wAll (n := 3)) := by
   native_decide
 
 /--
-**Theorem: w1 = w2 (symmetry among "some but not all" worlds)**
+w1 = w2 (symmetry among "some but not all" worlds).
 -/
 theorem l1_w1_eq_w2 : l1ProbForWorld (w1 (n := 3)) = l1ProbForWorld (w2 (n := 3)) := by
   native_decide
 
-
-/-
-## What This Module Provides
-
-### Types
-- `ScalarWorld`: Coarse partition (none/some/all)
-- `RSAScalarResult`: RSA analysis result with probabilities
-
-### Key Functions
-- `rsaFromDerivation`: Main pipeline function (syntax-agnostic)
-- `rsaSomeResult`: RSA analysis for "some" utterance
-- `hasSomeQuantifier`: Check for "some" in derivation
-- `hasAllQuantifier`: Check for "all" in derivation
-
-### Key Theorems
-- `rsa_some_not_all`: RSA implicature holds for "some"
-- `rsa_some_not_all_explicit`: P(some_not_all) > P(all) directly
-- `rsa_derives_not_all_from_some_students`: Pipeline works end-to-end
-- `rsa_every_no_implicature`: Top of scale has no SI
-- `l1_w1_gt_w3`, `l1_w2_gt_w3`: Individual world comparisons
-
-### Architecture
-
-```
-SemDeriv.Derivation (syntax-agnostic)
-        │
-        ▼
-rsaFromDerivation
-        │
-        ▼
-RSAScalarResult (probabilistic implicature)
-        │
-        ├── probSomeNotAll: combined probability for "some but not all" worlds
-        ├── probAll: probability for "all" world
-        └── implicatureHolds: probSomeNotAll > probAll
-```
-
-### Connection to NeoGricean
-
-| NeoGricean | RSA |
-|------------|-----|
-| ¬Bel_S(all) | P_L1(w3) < P_L1(w1) + P_L1(w2) |
-| Bel_S(¬all) | P_L1(w1,w2) ≫ P_L1(w3) |
-| Categorical "not all" | Probabilistic preference for non-all worlds |
--/
 
 end RSA.ScalarImplicatures
 
@@ -282,38 +235,34 @@ end RSA.ScalarImplicatures
 Implements the ImplicatureTheory interface for the RSA (Rational Speech Acts)
 framework (Goodman & Frank 2016).
 
-## Current Coverage
-
 The RSA model currently handles:
 - Simple sentences with scalar quantifiers ("some students sleep")
 - Probabilistic implicature derivation: P(some_not_all) > P(all)
 
-## Model Limitations (Incomplete, Not Wrong)
+The current RSA formalization is incomplete -- it cannot represent:
 
-The current RSA formalization is **incomplete** - it cannot represent:
-
-1. **Embedded contexts**: The model uses a toy domain with 4 world states.
+1. Embedded contexts: The model uses a toy domain with 4 world states.
    There's no way to represent "No one ate some cookies" or other embeddings.
 
-2. **DE blocking**: Without compositional semantics over sentence structure,
+2. DE blocking: Without compositional semantics over sentence structure,
    context polarity (upward/downward entailing) cannot be modeled.
 
-3. **Task effects**: The model has no notion of QUD (Question Under Discussion)
+3. Task effects: The model has no notion of QUD (Question Under Discussion)
    or attention-based mechanisms that could explain task effects.
 
-**Important**: The `predictsDEBlocking := false` flag means "model incomplete"
+The `predictsDEBlocking := false` flag means "model incomplete"
 not "RSA predicts no blocking". A full RSA model with compositional semantics
 could potentially derive DE blocking through:
 - Context-sensitive QUDs
 - Compositional alternative generation
 - Recursive pragmatic reasoning in embedded contexts
 
-## What Would a Complete RSA Model Need?
+A complete RSA model would need:
 
-1. **Compositional RSA**: RSA over sentence meanings, not just world labels
-2. **Structured utterance space**: Sentences with operators, not just "some"/"all"
-3. **Context-sensitive literal semantics**: L0 changes based on embedding
-4. **QUD manipulation**: Different QUDs for different tasks
+1. Compositional RSA: RSA over sentence meanings, not just world labels
+2. Structured utterance space: Sentences with operators, not just "some"/"all"
+3. Context-sensitive literal semantics: L0 changes based on embedding
+4. QUD manipulation: Different QUDs for different tasks
 
 See: Bergen et al. (2016), Potts et al. (2016) for RSA extensions.
 
@@ -412,7 +361,7 @@ instance : ImplicatureTheory RSATheory where
     else
       none
 
-  -- NOTE: These flags reflect MODEL INCOMPLETENESS, not theoretical predictions.
+  -- These flags reflect model incompleteness, not theoretical predictions.
   -- A complete RSA model with compositional semantics could potentially
   -- derive DE blocking and task effects. See header comment for details.
 

@@ -1,67 +1,27 @@
 /-
 # Coreference Patterns
 
-## The Phenomenon
+Empirical data on coreference constraints for reflexives, pronouns, and full nominals.
 
-Languages constrain when two nominal expressions can refer to the same entity.
-These patterns concern the distribution of reflexives, pronouns, and full
-nominal expressions (names, descriptions) with respect to potential antecedents.
+## Main definitions
 
-## The Data
-
-### Reflexive Coreference
-
-Reflexives require a local antecedent - an expression in the same local domain
-(roughly, the same clause) that they can be interpreted as coreferent with.
-
-  (1a)  John saw himself.                 ✓  reflexive has local antecedent
-  (1b) *Himself saw John.                 ✗  no c-commanding antecedent
-  (1c) *John thinks Mary saw himself.     ✗  antecedent not in local domain
-
-### Pronominal Disjoint Reference
-
-Pronouns resist coreference with a local antecedent - they prefer to refer
-to a different entity than a nearby (clause-mate) nominal.
-
-  (2a)  John thinks Mary saw him.         ✓  pronoun refers to non-local John
-  (2b) *John saw him. (him = John)        ✗  pronoun resists local coreference
-  (2c)  John saw him. (him ≠ John)        ✓  disjoint reference is fine
-
-### Referential Expression Freedom
-
-Full nominals (names, descriptions) generally cannot be interpreted as
-coreferent with a c-commanding expression.
-
-  (3a)  He thinks Mary likes John.        ✓  (he ≠ John) disjoint reference
-  (3b) *He likes John. (he = John)        ✗  name resists bound reading
-
-### Complementary Distribution
-
-Reflexives and pronouns show complementary distribution in the local domain:
-where reflexives are required, pronouns are blocked (for coreference), and
-vice versa.
-
-  (4a)  John saw himself.                 ✓  local → reflexive
-  (4b) *John saw him. (him = John)        ✗  local → pronoun blocked
-  (4c) *John thinks Mary saw himself.     ✗  non-local → reflexive blocked
-  (4d)  John thinks Mary saw him.         ✓  non-local → pronoun ok
+- `reflexiveCoreferenceData`: Reflexives require local c-commanding antecedent
+- `pronominalDisjointReferenceData`: Pronouns cannot corefer locally
+- `complementaryDistributionData`: Reflexives and pronouns in complementary distribution
+- `AnaphorType`, `CoreferencePattern`: Classification of anaphoric expressions
 
 ## References
 
-- Chomsky, N. (1981). Lectures on Government and Binding. (theoretical)
-- Büring, D. (2005). Binding Theory. (overview)
+- Chomsky, N. (1981). Lectures on Government and Binding.
 - Pollard, C. & I. Sag (1994). Head-Driven Phrase Structure Grammar, Ch. 6.
-- Langacker, R. (1991). Foundations of Cognitive Grammar, Vol. 2. (reference points)
-- König, E. & P. Siemund (2000). "Intensifiers and Reflexives" in Haspelmath et al.
+- König, E. & P. Siemund (2000). Intensifiers and Reflexives.
 -/
 
 import Linglib.Phenomena.Core.Basic
 
 open Lexicon
 
--- Reflexive Coreference
-
-/-- Reflexives require a local antecedent for coreference -/
+/-- Reflexives require local c-commanding antecedent. -/
 def reflexiveCoreferenceData : PhenomenonData := {
   name := "Reflexive Coreference"
   generalization := "Reflexives require a c-commanding antecedent in the local domain"
@@ -96,9 +56,7 @@ def reflexiveCoreferenceData : PhenomenonData := {
   ]
 }
 
--- Pronominal Disjoint Reference
-
-/-- Pronouns resist coreference with local antecedents -/
+/-- Pronouns cannot corefer with local c-commanding antecedent. -/
 def pronominalDisjointReferenceData : PhenomenonData := {
   name := "Pronominal Disjoint Reference"
   generalization := "Pronouns cannot corefer with a c-commanding nominal in the local domain"
@@ -117,9 +75,7 @@ def pronominalDisjointReferenceData : PhenomenonData := {
   ]
 }
 
--- Referential Expression Freedom
-
-/-- Full nominals resist coreference with c-commanding expressions -/
+/-- Full nominals cannot corefer with c-commanding pronoun. -/
 def referentialExpressionFreedomData : PhenomenonData := {
   name := "Referential Expression Freedom"
   generalization := "Names and descriptions cannot corefer with a c-commanding pronoun"
@@ -132,9 +88,7 @@ def referentialExpressionFreedomData : PhenomenonData := {
   ]
 }
 
--- Complementary Distribution
-
-/-- Reflexives and pronouns are in complementary distribution for coreference -/
+/-- Reflexives and pronouns in complementary distribution. -/
 def complementaryDistributionData : PhenomenonData := {
   name := "Complementary Distribution"
   generalization := "In the local domain, coreference requires reflexive; pronouns are blocked"
@@ -152,9 +106,6 @@ def complementaryDistributionData : PhenomenonData := {
   ]
 }
 
--- Combined Coreference Data
-
-/-- All coreference pattern data -/
 def coreferenceData : List PhenomenonData := [
   reflexiveCoreferenceData,
   pronominalDisjointReferenceData,
@@ -162,54 +113,47 @@ def coreferenceData : List PhenomenonData := [
   complementaryDistributionData
 ]
 
--- Coreference Pattern Types
-
-/-- Types of anaphoric expressions -/
+/-- Types of anaphoric expressions. -/
 inductive AnaphorType where
-  | reflexive    -- himself, herself, themselves
-  | reciprocal   -- each other
-  | pronoun      -- he, she, they, him, her, them
-  | name         -- John, Mary
-  | description  -- the man, a woman
+  | reflexive
+  | reciprocal
+  | pronoun
+  | name
+  | description
   deriving Repr, DecidableEq
 
-/-- Domain types for coreference constraints -/
+/-- Domain types for coreference constraints. -/
 inductive Domain where
-  | local_     -- within the same clause
-  | nonlocal   -- across clause boundaries
-  | any        -- no domain restriction
+  | local_
+  | nonlocal
+  | any
   deriving Repr, DecidableEq
 
-/-- Coreference requirement for an anaphor type -/
+/-- Coreference requirements for an anaphor type. -/
 structure CoreferencePattern where
   anaphorType : AnaphorType
-  requiresAntecedent : Bool           -- must have an antecedent?
-  antecedentDomain : Option Domain    -- where must/can't antecedent be?
+  requiresAntecedent : Bool
+  antecedentDomain : Option Domain
   deriving Repr
 
-/-- English reflexives require local antecedents -/
 def reflexivePattern : CoreferencePattern := {
   anaphorType := .reflexive
   requiresAntecedent := true
   antecedentDomain := some .local_
 }
 
-/-- English pronouns are free locally (antecedent must be non-local or absent) -/
 def pronounPattern : CoreferencePattern := {
   anaphorType := .pronoun
   requiresAntecedent := false
-  antecedentDomain := some .nonlocal  -- if coreferent, must be non-local
+  antecedentDomain := some .nonlocal
 }
 
-/-- Names are referentially free -/
 def namePattern : CoreferencePattern := {
   anaphorType := .name
   requiresAntecedent := false
-  antecedentDomain := none  -- cannot have c-commanding antecedent
+  antecedentDomain := none
 }
 
--- Tests
-
-#eval wordsToString [john, sees, himself]   -- "John sees himself"
-#eval wordsToString [mary, sees, herself]   -- "Mary sees herself"
-#eval wordsToString [they, see, themselves] -- "they see themselves"
+#eval wordsToString [john, sees, himself]
+#eval wordsToString [mary, sees, herself]
+#eval wordsToString [they, see, themselves]

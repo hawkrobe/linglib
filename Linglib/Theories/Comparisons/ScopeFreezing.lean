@@ -236,7 +236,7 @@ theorem heavy_np_is_processing_case :
 /-- Count correct predictions for a theory -/
 def countCorrect (predictions : List TheoryPredictions)
     (theory : TheoryPredictions → Bool) : Nat :=
-  predictions.filter (fun p =>
+  predictions.filter (λ p =>
     let frozen := p.observed == .surfaceOnly
     theory p == frozen
   ) |>.length

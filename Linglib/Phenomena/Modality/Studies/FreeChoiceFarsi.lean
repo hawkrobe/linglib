@@ -3,7 +3,7 @@
 
 Empirical patterns for Farsi *yek-i* DPs as Existential Free Choice Items (EFCIs).
 
-## The Key Pattern
+## Pattern
 
 *yek-i* DPs behave as:
 - Plain existentials in DE contexts
@@ -50,15 +50,15 @@ structure YekIDatum where
 /-!
 ## Root Contexts: Uniqueness
 
-In root contexts without modals, *yek-i* DPs convey UNIQUENESS:
+In root contexts without modals, *yek-i* DPs convey uniqueness:
 "exactly one individual satisfies the predicate"
 
-This is NOT a free choice reading - there's no permission or epistemic possibility.
+This is not a free choice reading; there's no permission or epistemic possibility.
 The uniqueness is part of the core meaning.
 
 Alonso-Ovalle & Moghiseh argue this comes from exhaustification of domain
 alternatives (pre-exhaustified), conveying that for most individuals, the
-predicate does NOT hold.
+predicate does not hold.
 -/
 
 /-- Example (15): Root context with uniqueness -/
@@ -79,11 +79,11 @@ def rootUniqueness : YekIDatum :=
 /-!
 ## Deontic Modals: Free Choice Effect
 
-Under deontic modals (permission), *yek-i* DPs yield FREE CHOICE:
+Under deontic modals (permission), *yek-i* DPs yield free choice:
 "for each individual, it is permitted to VP"
 
 Example: "You may take one of the apples"
-Reading: You may take THIS apple, you may take THAT apple, etc.
+Reading: You may take this apple, you may take that apple, etc.
 -/
 
 /-- Example (17): Deontic free choice -/
@@ -118,14 +118,14 @@ def deonticBooks : YekIDatum :=
 /-!
 ## Epistemic Modals: Modal Variation Effect
 
-Under epistemic modals, *yek-i* DPs yield MODAL VARIATION:
+Under epistemic modals, *yek-i* DPs yield modal variation:
 "at least two individuals are epistemically possible"
 
 Example: "One of the students might have stolen the book"
-Reading: It's possible it was THIS student, it's possible it was THAT student...
+Reading: It's possible it was this student, it's possible it was that student...
 
-This is WEAKER than free choice - not every individual is a possibility,
-but at least TWO are.
+This is weaker than free choice: not every individual is a possibility,
+but at least two are.
 -/
 
 /-- Example (22): Epistemic modal variation -/
@@ -161,7 +161,7 @@ def epistemicExplicit : YekIDatum :=
 ## DE Contexts: Plain Existential
 
 In downward-entailing contexts (negation, antecedent of conditional),
-*yek-i* DPs behave as PLAIN EXISTENTIALS (like English "any"):
+*yek-i* DPs behave as plain existentials (like English "any"):
 
 "I didn't see one of the students" = "I didn't see any student"
 -/
@@ -198,13 +198,13 @@ def deConditional : YekIDatum :=
 /-!
 ## Cross-linguistic Contrast: Yek-i vs Irgendein
 
-A key empirical contrast from the paper:
+An empirical contrast from the paper:
 
-**German *irgendein*** in root contexts: MODAL COMPONENT
+German *irgendein* in root contexts has a modal component:
 - "Irgendjemand hat angerufen" = "Somebody (or other) called"
 - Speaker conveys epistemic uncertainty/indifference
 
-**Farsi *yek-i*** in root contexts: NO MODAL COMPONENT
+Farsi *yek-i* in root contexts has no modal component:
 - "Yek-i zæng zæd" = "Exactly one person called"
 - No epistemic uncertainty, just uniqueness
 
@@ -266,8 +266,8 @@ def vreunRoot : EFCIContrastDatum :=
 A distinctive feature of *yek-i*: uniqueness is preserved even under modals.
 
 "You may take one of the apples" conveys:
-1. FREE CHOICE: For each apple, you may take it
-2. UNIQUENESS: ...but only take ONE apple total
+1. Free choice: for each apple, you may take it.
+2. Uniqueness: but only take one apple total.
 
 This embedded uniqueness comes from exhaustification happening below the modal.
 -/
@@ -376,38 +376,5 @@ def efciTypology : List EFCITypologyDatum :=
   , irgendeinTypology
   , yekiTypology
   ]
-
--- Summary
-
-/-!
-## What This Module Provides
-
-### Data Types
-- `YekIDatum`: Judgment about a Farsi yek-i sentence
-- `EFCIContrastDatum`: Cross-linguistic EFCI contrast
-- `EFCITypologyDatum`: EFCI rescue mechanism typology
-
-### Key Empirical Patterns
-
-| Context | Reading | FC? | MV? | Uniqueness? |
-|---------|---------|-----|-----|-------------|
-| Root (no modal) | Exactly one | ✗ | ✗ | ✓ |
-| Deontic | Free choice | ✓ | ✗ | ✓ |
-| Epistemic | Modal variation | ✗ | ✓ | ✓ |
-| DE contexts | Plain existential | ✗ | ✗ | ✗ |
-
-### EFCI Typology
-
-| Type | +Modal insertion | +Partial exh | Root reading |
-|------|-----------------|--------------|--------------|
-| vreun | ✗ | ✗ | *Ungrammatical |
-| irgendein | ✓ | ✓ | Epistemic modal |
-| yek-i | ✗ | ✓ | Uniqueness |
-
-### References
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items. S&P 18.
-- Kratzer & Shimoyama (2002). Indeterminate pronouns.
-- Fălăuș (2014). (Non)exhaustivity in unconditionals.
--/
 
 end Phenomena.FreeChoice.FarsiYekI

@@ -164,7 +164,7 @@ instance {n : Nat} : BEq (ThresholdPair n) where
   beq t1 t2 := t1.pos == t2.pos && t1.neg == t2.neg
 
 instance {n : Nat} : DecidableEq (ThresholdPair n) :=
-  fun t1 t2 =>
+  λ t1 t2 =>
     if h : t1.pos = t2.pos ∧ t1.neg = t2.neg then
       isTrue (by cases t1; cases t2; simp_all)
     else

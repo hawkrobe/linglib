@@ -1,31 +1,11 @@
 /-
 # ICDRT Connectives
 
-Logical connectives for Intensional CDRT with flat update.
+Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences).
 
-## The Key Patterns
+## Main definitions
 
-### 1. Double Negation Elimination (DNE)
-  ¬¬φ ⟺ φ (by definition: negation swaps positive/negative)
-
-### 2. Bathroom Disjunctions
-  "Either there's no bathroom, or it's upstairs."
-
-  The indefinite "a bathroom" is accessible to "it" in the second disjunct
-  because:
-  1. φ ∨ ψ evaluates ψ in the context where φ is false
-  2. The negative of "there's a bathroom" introduces the bathroom dref
-  3. That dref is available in the second disjunct
-
-### 3. Cross-Disjunct Anaphora Pattern
-
-From Elliott & Sudo (2025), adapted to flat update:
-
-  ⟦φ ∨ ψ⟧^+ = ⟦φ⟧^+ ∪ (⟦φ⟧^- ∩ ⟦ψ⟧^+)
-  ⟦φ ∨ ψ⟧^- = ⟦φ⟧^- ∩ ⟦ψ⟧^-
-
-The second disjunct ψ is evaluated AFTER the negative update of φ!
-This is what makes the bathroom dref accessible.
+`BilateralICDRT.neg`, `disjBathroom`, `impl`, `donkeyConditional`, `bathroomSentence`
 
 ## References
 
@@ -44,59 +24,29 @@ namespace BilateralICDRT
 
 variable {W E : Type*}
 
-/--
-DNE as equality of updates.
-
-This is the key property: double negation doesn't just entail φ,
-it IS φ (same positive and negative updates).
-
-This was already proven as `neg_neg` but we re-emphasize it here.
--/
+/-- DNE holds definitionally: ¬¬φ = φ. -/
 theorem dne_equality (φ : BilateralICDRT W E) (c : IContext W E) :
     φ.neg.neg.positive c = φ.positive c ∧
     φ.neg.neg.negative c = φ.negative c := by
   simp [neg_neg]
 
-/--
-Negation preserves context consistency.
--/
+/-- Negation preserves context consistency. -/
 theorem neg_consistent_iff (φ : BilateralICDRT W E) (c : IContext W E) :
     (φ.neg.positive c).Nonempty ↔ (φ.negative c).Nonempty := Iff.rfl
 
 
-/--
-Standard disjunction: either φ or ψ holds.
-
-⟦φ ∨ ψ⟧^+ = ⟦φ⟧^+ ∪ ⟦ψ⟧^+
-⟦φ ∨ ψ⟧^- = ⟦φ⟧^- ∩ ⟦ψ⟧^-
-
-This is the simple case WITHOUT cross-disjunct anaphora.
--/
+/-- Standard disjunction without cross-disjunct anaphora. -/
 def disjStd (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
-  positive := fun c => φ.positive c ∪ ψ.positive c
-  negative := fun c => φ.negative c ∩ ψ.negative c
+  positive := λ c => φ.positive c ∪ ψ.positive c
+  negative := λ c => φ.negative c ∩ ψ.negative c
 
 infixl:60 " ⊕ " => disjStd
 
 
-/--
-Bathroom disjunction: ψ evaluated after ¬φ.
-
-This is the key to bathroom sentences like:
-  "Either there's no bathroom, or it's upstairs."
-
-The pattern: evaluate the second disjunct in the context where the
-first disjunct has been DENIED. This makes drefs from the negation
-of the first disjunct accessible to the second.
-
-⟦φ ∨_bath ψ⟧^+ = ⟦φ⟧^+ ∪ (⟦ψ⟧^+ evaluated at ⟦φ⟧^-)
-⟦φ ∨_bath ψ⟧^- = ⟦φ⟧^- ∩ ⟦ψ⟧^-
-
-Key insight: ψ.positive is applied to φ.negative, NOT to c directly.
--/
+/-- Bathroom disjunction: ψ evaluated in context where φ failed, enabling cross-disjunct anaphora. -/
 def disjBathroom (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
-  positive := fun c => φ.positive c ∪ ψ.positive (φ.negative c)
-  negative := fun c => φ.negative c ∩ ψ.negative (φ.negative c)
+  positive := λ c => φ.positive c ∪ ψ.positive (φ.negative c)
+  negative := λ c => φ.negative c ∩ ψ.negative (φ.negative c)
 
 /--
 Alternative formulation making the sequencing clearer.
@@ -104,10 +54,10 @@ Alternative formulation making the sequencing clearer.
 The second disjunct "sees" the context where the first disjunct failed.
 -/
 def disjBathroom' (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
-  positive := fun c =>
+  positive := λ c =>
     let ctxAfterNotPhi := φ.negative c  -- Context where φ failed
     φ.positive c ∪ ψ.positive ctxAfterNotPhi
-  negative := fun c =>
+  negative := λ c =>
     let ctxAfterNotPhi := φ.negative c
     ctxAfterNotPhi ∩ ψ.negative ctxAfterNotPhi
 
@@ -124,8 +74,8 @@ The antecedent introduces drefs accessible in the consequent.
 ⟦φ → ψ⟧^- = ⟦φ⟧^+ ∩ ⟦ψ⟧^-
 -/
 def impl (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
-  positive := fun c => φ.negative c ∪ (φ.positive c ∩ ψ.positive (φ.positive c))
-  negative := fun c => φ.positive c ∩ ψ.negative (φ.positive c)
+  positive := λ c => φ.negative c ∪ (φ.positive c ∩ ψ.positive (φ.positive c))
+  negative := λ c => φ.positive c ∩ ψ.negative (φ.positive c)
 
 infixr:55 " ⟹ " => impl
 
@@ -190,7 +140,7 @@ def existsWideDisj (p : PVar) (v : IVar) (domain : Set E)
 Narrow-scope existential in first disjunct: (∃x.φ) ∨ ψ
 
 With bathroom disjunction, x introduced in ∃x.φ is accessible in ψ
-because ψ is evaluated in the negative of ∃x.φ, which still introduces x!
+because ψ is evaluated in the negative of ∃x.φ, which still introduces x.
 -/
 def existsNarrowFirstDisj (p : PVar) (v : IVar) (domain : Set E)
     (φ ψ : BilateralICDRT W E) : BilateralICDRT W E :=
@@ -221,9 +171,9 @@ track that they're introduced in the antecedent context.
 def donkeyConditional (pFarmer pDonkey : PVar) (vFarmer vDonkey : IVar)
     (farmers donkeys : Set E)
     (owns beats : E → E → W → Prop) : BilateralICDRT W E :=
-  let antecedent : BilateralICDRT W E := atom (fun w =>
+  let antecedent : BilateralICDRT W E := atom (λ w =>
     True)  -- Placeholder for owns predicate
-  let consequent : BilateralICDRT W E := atom (fun w =>
+  let consequent : BilateralICDRT W E := atom (λ w =>
     True)  -- Placeholder for beats predicate
   exists_ pFarmer vFarmer farmers
     (exists_ pDonkey vDonkey donkeys
@@ -239,16 +189,16 @@ Analysis:
 2. Second disjunct: upstairs(x)
 3. Bathroom disjunction: x from ¬∃ is accessible in second disjunct
 
-Key: The negative of ∃x.bathroom(x) STILL introduces x (flatly),
+The negative of ∃x.bathroom(x) still introduces x (flatly),
 but with local context where bathroom(x) is false.
 -/
 def bathroomSentence (p : PVar) (v : IVar) (domain : Set E)
     (bathroom upstairs : E → W → Prop) : BilateralICDRT W E :=
   let thereIsABathroom : BilateralICDRT W E :=
-    exists_ p v domain (atom (fun w => ∃ e, bathroom e w))
+    exists_ p v domain (atom (λ w => ∃ e, bathroom e w))
   let itIsUpstairs : BilateralICDRT W E :=
     -- The individual dref v is accessible here!
-    atom (fun w => True)  -- Placeholder - needs entity lookup
+    atom (λ w => True)  -- Placeholder - needs entity lookup
   disjBathroom thereIsABathroom.neg itIsUpstairs
 
 /--
@@ -261,47 +211,15 @@ def bathroomSentenceFull (p : PVar) (v : IVar) (domain : Set E)
     (bathroom upstairs : Entity E → W → Prop) : BilateralICDRT W E :=
   let thereIsABathroom : BilateralICDRT W E :=
     exists_ p v domain
-      { positive := fun c => c.updateFull (fun g w => bathroom (g.indiv v) w)
-        negative := fun c => c.updateFull (fun g w => ¬bathroom (g.indiv v) w) }
+      { positive := λ c => c.updateFull (λ g w => bathroom (g.indiv v) w)
+        negative := λ c => c.updateFull (λ g w => ¬bathroom (g.indiv v) w) }
   let itIsUpstairs : BilateralICDRT W E :=
-    -- v is accessible! We can reference g.indiv v
-    { positive := fun c => c.updateFull (fun g w => upstairs (g.indiv v) w)
-      negative := fun c => c.updateFull (fun g w => ¬upstairs (g.indiv v) w) }
+    -- v is accessible; we can reference g.indiv v
+    { positive := λ c => c.updateFull (λ g w => upstairs (g.indiv v) w)
+      negative := λ c => c.updateFull (λ g w => ¬upstairs (g.indiv v) w) }
   disjBathroom thereIsABathroom.neg itIsUpstairs
 
 end BilateralICDRT
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Connectives
-- `neg`: Negation (swap positive/negative) - with DNE
-- `conj`: Conjunction (sequence positive)
-- `disjStd`: Standard disjunction (union/intersection)
-- `disjBathroom`: Bathroom disjunction (cross-disjunct anaphora)
-- `impl`: Conditional
-- `forall_`: Universal via de Morgan
-- `exists_`: Existential (from Update.lean)
-
-### Key Theorems
-- `dne_equality`: ¬¬φ = φ
-- `impl_as_disj`: φ → ψ ≡ ¬φ ∨ ψ
-- `de_morgan_conj_positive`, `de_morgan_disj_positive`
-
-### Examples
-- `donkeyConditional`: Donkey sentence structure
-- `bathroomSentence`, `bathroomSentenceFull`: Bathroom disjunction
-
-## The Bathroom Pattern
-
-The key insight: `disjBathroom` evaluates the second disjunct in the
-context where the first disjunct's NEGATIVE update has been applied.
-
-This means drefs introduced by the negation of the first disjunct
-are accessible in the second disjunct - exactly what's needed for
-"Either there's no bathroom, or it's upstairs."
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT

@@ -4,8 +4,6 @@
 This module connects RSA pragmatics to compositional Montague semantics.
 Instead of stipulating meaning functions, RSA evaluates intensional derivations.
 
-## The Grounding
-
 RSA's literal semantics L0 is defined as:
   L0(w | u) ∝ δ⟦u⟧(w) · P(w)
 
@@ -14,10 +12,10 @@ Where:
 - δ is the indicator function (1 if true, 0 if false)
 - P(w) is the prior probability of world w
 
-This module provides:
-1. `IntensionalBackend`: RSA backend from intensional derivations
-2. `L0_from_derivation`: L0 computed by evaluating Montague meaning
-3. Grounding theorem: RSA's meaning function = Montague evaluation
+This module provides `IntensionalBackend` (RSA backend from intensional
+derivations), `L0_from_derivation` (L0 computed by evaluating Montague
+meaning), and a grounding theorem showing RSA's meaning function equals
+Montague evaluation.
 
 ## References
 
@@ -74,9 +72,7 @@ structure IntensionalScenario (m : IntensionalModel) where
   worldsNonempty : worlds ≠ []
 
 /--
-Meaning function derived from compositional semantics.
-
-This is the key grounding: meaning(u, w) = ⟦u⟧(w)
+Meaning function derived from compositional semantics: meaning(u, w) = ⟦u⟧(w).
 -/
 def intensionalMeaning {m : IntensionalModel}
     (u : PropDerivation m) (w : m.World) : Bool :=
@@ -89,7 +85,7 @@ Count worlds where the derivation is true.
 -/
 def compatibleWorldCount {m : IntensionalModel}
     (d : PropDerivation m) (worlds : List m.World) : Nat :=
-  (worlds.filter (fun w => d.eval w)).length
+  (worlds.filter (λ w => d.eval w)).length
 
 /--
 L0 scores computed by evaluating intensional meanings.
@@ -104,7 +100,7 @@ def L0_from_derivation {m : IntensionalModel}
     : List (m.World × ℚ) :=
   let n := compatibleWorldCount d worlds
   let prob : ℚ := if n > 0 then 1 / n else 0
-  worlds.map fun w => (w, if d.eval w then prob else 0)
+  worlds.map λ w => (w, if d.eval w then prob else 0)
 
 /--
 L0 probability mass function.
@@ -114,25 +110,23 @@ Returns P(w | u) for a specific world.
 def L0_prob {m : IntensionalModel}
     (d : PropDerivation m) (worlds : List m.World) (w : m.World) : ℚ :=
   let scores := L0_from_derivation d worlds
-  match scores.find? (fun (w', _) => w' == w) with
+  match scores.find? (λ (w', _) => w' == w) with
   | some (_, p) => p
   | none => 0
 
 -- Grounding Theorem
 
 /--
-**Grounding Theorem**: L0 uses the compositional meaning.
+Grounding theorem: L0 uses the compositional meaning.
 
 The L0 distribution assigns probability only to worlds where
-the Montague meaning evaluates to true. This formalizes that
-RSA's literal semantics comes from compositional evaluation,
-not from stipulation.
+the Montague meaning evaluates to true. RSA's literal semantics
+comes from compositional evaluation, not from stipulation.
 
 Formally: L0(w | u) > 0  →  ⟦u⟧(w) = true
 
-Note: Full proof requires technical lemmas about List.find?.
-The key insight is structural: L0_from_derivation explicitly
-checks `d.eval w` and assigns zero when false.
+L0_from_derivation explicitly checks `d.eval w` and assigns
+zero when false.
 -/
 theorem l0_uses_compositional_meaning {m : IntensionalModel}
     [DecidableEq m.World]
@@ -160,7 +154,7 @@ theorem l0_uses_compositional_meaning {m : IntensionalModel}
     rfl
 
 /--
-**Grounding Theorem (Contrapositive)**: false meaning → zero probability.
+Grounding theorem (contrapositive): false meaning → zero probability.
 
 When the compositional meaning is false at a world, L0 assigns
 zero probability to that world.
@@ -274,12 +268,12 @@ def S1_from_derivations {m : IntensionalModel}
     (worlds : List m.World)
     (w : m.World) : List (PropDerivation m × ℚ) :=
   -- Get all utterances true at this world
-  let trueUtts := utterances.filter (fun d => d.eval w)
+  let trueUtts := utterances.filter (λ d => d.eval w)
   -- Compute informativity for each (as rationals)
-  let infos : List ℚ := trueUtts.map (fun d => informativity d worlds)
+  let infos : List ℚ := trueUtts.map (λ d => informativity d worlds)
   let total := infos.foldl (· + ·) 0
   -- Normalize: P(u | w) = informativity(u) / sum_u' informativity(u')
-  utterances.map fun d =>
+  utterances.map λ d =>
     if d.eval w then
       let info := informativity d worlds
       if total > 0 then (d, info / total) else (d, 0)
@@ -296,9 +290,9 @@ def L1_from_derivations {m : IntensionalModel}
     (utterances : List (PropDerivation m))
     (worlds : List m.World)
     (u : PropDerivation m) : List (m.World × ℚ) :=
-  worlds.map fun w =>
+  worlds.map λ w =>
     let s1 := S1_from_derivations utterances worlds w
-    let score := match s1.find? (fun (d, _) => d.surface == u.surface) with
+    let score := match s1.find? (λ (d, _) => d.surface == u.surface) with
       | some (_, p) => p
       | none => 0
     (w, score)
@@ -314,19 +308,19 @@ def s1_at_someNotAll : List (PropDerivation scalarModel × ℚ) :=
   S1_from_derivations [someProp, everyProp] [.none, .someNotAll, .all] .someNotAll
 
 -- Evaluate S1 to see speaker preferences
-#eval s1_at_all.map (fun (d, f) => (d.surface, f))
-#eval s1_at_someNotAll.map (fun (d, f) => (d.surface, f))
+#eval s1_at_all.map (λ (d, f) => (d.surface, f))
+#eval s1_at_someNotAll.map (λ (d, f) => (d.surface, f))
 
 /-- L1 scores for "some students sleep" -/
 def l1_some_grounded : List (ScalarWorld × ℚ) :=
   L1_from_derivations [someProp, everyProp] [.none, .someNotAll, .all] someProp
 
-#eval l1_some_grounded  -- Should prefer someNotAll over all (scalar implicature!)
+#eval l1_some_grounded  -- Should prefer someNotAll over all (scalar implicature)
 
 -- Key Result: Scalar Implicature Emerges
 
 /--
-**Scalar Implicature Theorem**: L1 prefers "some but not all" for "some".
+Scalar implicature theorem: L1 prefers "some but not all" for "some".
 
 When the listener hears "some students sleep", they infer the speaker
 meant "some but not all" rather than "all", because a rational speaker
@@ -336,37 +330,11 @@ This emerges from compositional semantics + RSA, not stipulation.
 -/
 theorem scalar_implicature_from_grounded_rsa :
     let l1 := l1_some_grounded
-    let p_someNotAll := match l1.find? (fun (w, _) => w == .someNotAll) with
+    let p_someNotAll := match l1.find? (λ (w, _) => w == .someNotAll) with
       | some (_, p) => p | none => 0
-    let p_all := match l1.find? (fun (w, _) => w == .all) with
+    let p_all := match l1.find? (λ (w, _) => w == .all) with
       | some (_, p) => p | none => 0
     p_someNotAll > p_all := by
   native_decide
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Types
-- `IntensionalScenario`: RSA scenario from intensional derivations
-- `L0_from_derivation`: L0 computed from Montague meaning
-- `S1_from_derivations`: S1 using compositional informativity
-- `L1_from_derivations`: L1 as pragmatic listener
-
-### Key Theorems
-- `l0_uses_compositional_meaning`: L0 nonzero → meaning true
-- `scalar_implicature_from_grounded_rsa`: "some" → "not all" emerges
-
-### The Grounding
-
-```
-Montague ⟦u⟧(w)     RSA L0(w | u)
-      ↓                    ↓
-  d.meaning w    =    indicator for L0 scores
-```
-
-RSA's meaning function is NOT stipulated—it evaluates compositional semantics.
--/
 
 end RSA.Intensional

@@ -126,7 +126,7 @@ lift(Q) = λP. P(Q)
 
 The lifted question is the characteristic function of Q's properties. -/
 def lift (q : GSQuestion W) : LiftedQuestion W :=
-  fun P => P q
+  λ P => P q
 
 /-- A lifted question is "principal" if it comes from lifting a core question. -/
 def isPrincipal (lq : LiftedQuestion W) : Prop :=
@@ -173,13 +173,13 @@ m >>= f  =  λP. m(λq. f(q)(P))
 In B&S terms, this corresponds to the combination schema where the left
 element's scope effect wraps around the right's result. -/
 def bind (lq : LiftedQuestion W) (f : GSQuestion W → LiftedQuestion W) : LiftedQuestion W :=
-  fun P => lq (fun q => f q P)
+  λ P => lq (λ q => f q P)
 
 /-- Map: functorial action on lifted questions.
 
 Applies a function to the underlying question(s) without changing scope structure. -/
 def map (f : GSQuestion W → GSQuestion W) (lq : LiftedQuestion W) : LiftedQuestion W :=
-  fun P => lq (fun q => P (f q))
+  λ P => lq (λ q => P (f q))
 
 /-- Run: evaluate a lifted question by closing off the continuation.
 
@@ -189,7 +189,7 @@ Applies the trivial continuation (constant True), effectively asking
 For principal lifted questions, this always returns True.
 This corresponds to B&S's LOWER when we don't need the value back. -/
 def run (lq : LiftedQuestion W) : Prop :=
-  lq (fun _ => True)
+  lq (λ _ => True)
 
 -- Notation for bind
 scoped infixl:55 " >>= " => bind
@@ -212,7 +212,7 @@ theorem bind_right_id (lq : LiftedQuestion W) :
 theorem bind_assoc (lq : LiftedQuestion W)
     (f : GSQuestion W → LiftedQuestion W)
     (g : GSQuestion W → LiftedQuestion W) :
-    (lq >>= f) >>= g = lq >>= (fun q => f q >>= g) := by
+    (lq >>= f) >>= g = lq >>= (λ q => f q >>= g) := by
   funext P
   simp only [bind]
 
@@ -222,7 +222,7 @@ theorem lift_bind (q : GSQuestion W) (f : GSQuestion W → LiftedQuestion W) :
 
 /-- Map can be defined via bind and pure. -/
 theorem map_via_bind (f : GSQuestion W → GSQuestion W) (lq : LiftedQuestion W) :
-    map f lq = lq >>= (fun q => pure (f q)) := by
+    map f lq = lq >>= (λ q => pure (f q)) := by
   funext P
   simp only [map, bind, pure, lift]
 
@@ -238,13 +238,13 @@ theorem run_principal (q : GSQuestion W) : run (lift q) = True := by
 
 This is well-defined and doesn't require transitivity! -/
 def disj (lq1 lq2 : LiftedQuestion W) : LiftedQuestion W :=
-  fun P => lq1 P ∨ lq2 P
+  λ P => lq1 P ∨ lq2 P
 
 /-- Conjunction of lifted questions.
 
 (Q₁ ∧ Q₂)(P) iff P holds of Q₁ and P holds of Q₂. -/
 def conj (lq1 lq2 : LiftedQuestion W) : LiftedQuestion W :=
-  fun P => lq1 P ∧ lq2 P
+  λ P => lq1 P ∧ lq2 P
 
 -- Note: Could add Sup/Inf instances with mathlib import
 
@@ -406,11 +406,11 @@ In the lifted setting, "p answers LQ" means:
 
 Note: Full definition requires a world list parameter for toCells. -/
 def answers (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) : Prop :=
-  lq (fun q => ∃ cell ∈ q.toCells worlds, ∀ w, cell w = true ↔ p w)
+  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, cell w = true ↔ p w)
 
 /-- Partial answerhood for lifted questions. -/
 def partiallyAnswers (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) : Prop :=
-  lq (fun q => ∃ cell ∈ q.toCells worlds, ∀ w, p w → cell w = true)
+  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, p w → cell w = true)
 
 end LiftedQuestion
 

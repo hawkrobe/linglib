@@ -4,7 +4,7 @@
 This module shows that RSA computations are instances of the probability
 monad operations from Grove & White's PDS framework.
 
-## Key Results
+## Results
 
 1. **L0 is observe**: Literal listener conditioning = monadic observe
 2. **RSA's φ is probProp**: Graded meaning = probability of Boolean property
@@ -84,7 +84,7 @@ that it's true across worlds.
 This is exactly PDS's `probProp`.
 -/
 def gradedMeaning (u : rsa.Utterance) : ℚ :=
-  probProp rsa.worldPrior (fun w => rsa.L0 u w)
+  probProp rsa.worldPrior (λ w => rsa.L0 u w)
 
 /--
 At a specific world, the Boolean meaning is just L0.
@@ -193,7 +193,7 @@ Graded semantics: probability that entity exceeds threshold.
 This is exactly `probProp` applied to threshold uncertainty.
 -/
 def gradedSemantics (x : adj.Entity) : ℚ :=
-  probProp adj.thresholdPrior (fun θ => adj.booleanSemantics θ x)
+  probProp adj.thresholdPrior (λ θ => adj.booleanSemantics θ x)
 
 /--
 Key theorem: Graded semantics IS probability of Boolean semantics.
@@ -203,7 +203,7 @@ This formalizes Lassiter & Goodman's insight that graded truth values
 -/
 theorem graded_is_prob_of_boolean (x : adj.Entity) :
     adj.gradedSemantics x =
-    Finset.sum Finset.univ (fun θ =>
+    Finset.sum Finset.univ (λ θ =>
       adj.thresholdPrior θ * if adj.booleanSemantics θ x then 1 else 0) := rfl
 
 /--
@@ -239,20 +239,20 @@ The graded φ is derived from Boolean L0: φ(u, w) = 1 if L0(u,w), else 0.
 -/
 def BooleanRSA.toRSAScenario (rsa : BooleanRSA) : RSAScenario rsa.Utterance rsa.World where
   -- Boolean semantics: φ returns 1 for true, 0 for false
-  φ := fun _ _ u w => if rsa.L0 u w then 1 else 0
-  goalProject := fun _ _ _ => true
-  speakerCredence := fun _ _ => 1
+  φ := λ _ _ u w => if rsa.L0 u w then 1 else 0
+  goalProject := λ _ _ _ => true
+  speakerCredence := λ _ _ => 1
   worldPrior := rsa.worldPrior
   α := 1
-  cost := fun _ => 0
+  cost := λ _ => 0
   worldPrior_nonneg := rsa.worldPrior_nonneg
-  interpPrior_nonneg := fun _ => by decide
-  lexiconPrior_nonneg := fun _ => by decide
-  beliefStatePrior_nonneg := fun _ => by decide
-  goalPrior_nonneg := fun _ => by decide
-  speakerCredence_nonneg := fun _ _ => by decide
-  φ_nonneg := fun _ _ _ _ => by split_ifs <;> decide
-  cost_nonneg := fun _ => by decide
+  interpPrior_nonneg := λ _ => by decide
+  lexiconPrior_nonneg := λ _ => by decide
+  beliefStatePrior_nonneg := λ _ => by decide
+  goalPrior_nonneg := λ _ => by decide
+  speakerCredence_nonneg := λ _ _ => by decide
+  φ_nonneg := λ _ _ _ _ => by split_ifs <;> decide
+  cost_nonneg := λ _ => by decide
 
 
 /-!
@@ -269,7 +269,7 @@ monadic operations. This makes the computational structure explicit.
 | S1 | choose | Sample utterance by utility |
 | L1 | observe + invert | Condition on speaker's choice |
 
-### Key Insight
+### Insight
 
 S1 is NOT just conditioning - it's *choosing* from a softmax distribution.
 This requires the `choose` operation, not just `observe`.
@@ -278,7 +278,7 @@ This requires the `choose` operation, not just `observe`.
 S1(u | w) ∝ exp(α · utility(u, w))
 ```
 
-This is `choose (fun u => exp(α * utility u w))`.
+This is `choose (λ u => exp(α * utility u w))`.
 -/
 
 /--
@@ -338,7 +338,7 @@ S1 chooses an utterance to maximize informativity minus cost.
 
 ```
 S1 w := do
-  u ← choose (fun u => exp(α * (log(L0 u w) - cost u)))
+  u ← choose (λ u => exp(α * (log(L0 u w) - cost u)))
   pure u
 ```
 

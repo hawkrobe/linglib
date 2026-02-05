@@ -85,8 +85,8 @@ abbrev DegreeWorld (max : Nat) := Degree max × Threshold max
 
 /-- All joint worlds -/
 def allDegreeWorlds (max : Nat) (h : 0 < max := by omega) : List (DegreeWorld max) :=
-  (allDegrees max).flatMap fun d =>
-    (allThresholds max h).map fun t => (d, t)
+  (allDegrees max).flatMap λ d =>
+    (allThresholds max h).map λ t => (d, t)
 
 instance {n : Nat} (h : 0 < n := by omega) : BEq (DegreeWorld n) := instBEqProd
 
@@ -103,8 +103,8 @@ def tallShort (max : Nat) (h : 0 < max := by omega) (u : AdjUtt) : List (DegreeW
   RSA.Eval.basicL1
     [AdjUtt.positive, .negative, .silent]
     (allDegreeWorlds max h)
-    (fun utt (d, t) => boolToRat (adjMeaning utt d t))
-    (fun _ => 1) 1 (fun _ => 0) u
+    (λ utt (d, t) => boolToRat (adjMeaning utt d t))
+    (λ _ => 1) 1 (λ _ => 0) u
 
 /--
 Scenario with custom prior over degrees.
@@ -113,15 +113,15 @@ Often degrees have a prior (e.g., height is roughly normal).
 -/
 def withDegreePrior (max : Nat) (h : 0 < max := by omega)
     (degreePrior : Degree max → ℚ)
-    (thresholdPrior : Threshold max → ℚ := fun _ => 1)
+    (thresholdPrior : Threshold max → ℚ := λ _ => 1)
     (u : AdjUtt)
     : List (DegreeWorld max × ℚ) :=
-  let worldPrior : DegreeWorld max → ℚ := fun (d, t) => degreePrior d * thresholdPrior t
+  let worldPrior : DegreeWorld max → ℚ := λ (d, t) => degreePrior d * thresholdPrior t
   RSA.Eval.basicL1
     [AdjUtt.positive, .negative, .silent]
     (allDegreeWorlds max h)
-    (fun utt (d, t) => boolToRat (adjMeaning utt d t))
-    worldPrior 1 (fun _ => 0) u
+    (λ utt (d, t) => boolToRat (adjMeaning utt d t))
+    worldPrior 1 (λ _ => 0) u
 
 -- Graded (Non-Boolean) Semantics
 
@@ -214,7 +214,7 @@ def standardUtterances : List Utterance := [.fifty, .fiveHundred, .tenThousand, 
 /-- Run L1 inference for a price utterance -/
 def runL1 (u : Utterance) : List (World × ℚ) :=
   RSA.Eval.basicL1 standardUtterances standardWorlds
-    (fun utt w => boolToRat (meaning utt w)) (fun _ => 1) 1 (fun _ => 0) u
+    (λ utt w => boolToRat (meaning utt w)) (λ _ => 1) 1 (λ _ => 0) u
 
 end Price
 
@@ -280,11 +280,11 @@ theorem million_never_literal :
 
 def Price.l0 (u : Price.Utterance) : List (Price.World × ℚ) :=
   RSA.Eval.basicL0 Price.standardUtterances Price.standardWorlds
-    (fun utt w => boolToRat (Price.meaning utt w)) (fun _ => 1) u
+    (λ utt w => boolToRat (Price.meaning utt w)) (λ _ => 1) u
 
 def Price.s1 (w : Price.World) : List (Price.Utterance × ℚ) :=
   RSA.Eval.basicS1 Price.standardUtterances Price.standardWorlds
-    (fun utt world => boolToRat (Price.meaning utt world)) (fun _ => 1) 1 (fun _ => 0) w
+    (λ utt world => boolToRat (Price.meaning utt world)) (λ _ => 1) 1 (λ _ => 0) w
 
 def Price.l1 (u : Price.Utterance) : List (Price.World × ℚ) :=
   Price.runL1 u

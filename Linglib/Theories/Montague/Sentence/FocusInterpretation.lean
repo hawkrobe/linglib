@@ -4,7 +4,7 @@
 Rooth's "A Theory of Focus Interpretation" introduces the Focus Interpretation
 Principle (FIP) and the ~ operator to connect focus semantic values with context.
 
-## Key Insight: Type Identity
+## Insight: Type Identity
 
 Rooth's focus semantic value ⟦α⟧f has the same TYPE as Hamblin question denotations:
 - `⟦α⟧f : (W → Bool) → Bool` (set of propositions)
@@ -20,10 +20,10 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 
 ## Four FIP Applications (Rooth §2)
 
-1. **Focusing adverbs** (only, even) - association with focus
-2. **Contrast/parallelism** - parallel focus triggers contrast presupposition
-3. **Scalar implicature** - focus alternatives feed into SI computation
-4. **Q-A congruence** - answer focus must match question
+1. Focusing adverbs (only, even) - association with focus
+2. Contrast/parallelism - parallel focus triggers contrast presupposition
+3. Scalar implicature - focus alternatives feed into SI computation
+4. Q-A congruence - answer focus must match question
 
 ## References
 

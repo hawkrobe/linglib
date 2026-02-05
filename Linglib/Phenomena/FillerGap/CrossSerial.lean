@@ -12,7 +12,7 @@ with each NP interpreted as the argument of a corresponding verb:
   "... that Jan Piet Marie saw help   swim"
   = "that Jan saw Piet help Marie swim"
 
-The dependencies are CROSS-SERIAL (not nested):
+The dependencies are cross-serial (not nested):
   NP₁ NP₂ NP₃ V₁ V₂ V₃
   └────────────┘
       └────────────┘
@@ -21,9 +21,9 @@ The dependencies are CROSS-SERIAL (not nested):
 This pattern is beyond the power of context-free grammars.
 CCG handles it via generalized composition.
 
-## Key Contrast with German
+## Contrast with German
 
-German has NESTED dependencies (can be handled by CFG):
+German has nested dependencies (can be handled by CFG):
   NP₁ NP₂ NP₃ V₃ V₂ V₁
   └────────────────────┘
       └────────────┘
@@ -62,11 +62,11 @@ inductive DependencyPattern where
 
 /-- Generate cross-serial dependencies for n NP-V pairs -/
 def crossSerialDeps (n : Nat) : List Dependency :=
-  List.range n |>.map (fun i => ⟨i + 1, i + 1⟩)
+  List.range n |>.map (λ i => ⟨i + 1, i + 1⟩)
 
 /-- Generate nested dependencies for n NP-V pairs -/
 def nestedDeps (n : Nat) : List Dependency :=
-  List.range n |>.map (fun i => ⟨i + 1, n - i⟩)
+  List.range n |>.map (λ i => ⟨i + 1, n - i⟩)
 
 -- Dutch Examples (Steedman 2000)
 
@@ -134,8 +134,8 @@ def dutch_4np_4v : DutchExample :=
 /--
 German nested dependency example.
 
-German has the OPPOSITE verb order from Dutch, giving nested dependencies
-that ARE context-free.
+German has the opposite verb order from Dutch, giving nested dependencies
+that are context-free.
 -/
 structure GermanExample where
   surface : String
@@ -163,7 +163,7 @@ def german_3np_3v : GermanExample :=
 Cross-serial dependencies correspond to the copy language {ww | w ∈ Σ*},
 or more precisely to {aⁿbⁿcⁿdⁿ | n ≥ 1}.
 
-This is NOT context-free (proven by pumping lemma).
+This is not context-free (proven by pumping lemma).
 CCG can generate it via generalized composition.
 -/
 inductive FormalLanguageType where
@@ -205,29 +205,5 @@ theorem dutch_3_is_crossSerial :
 /-- German 3-NP example has nested pattern -/
 theorem german_3_is_nested :
     german_3np_3v.pattern = .nested := rfl
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Empirical Data
-- Dutch cross-serial examples (2, 3, 4 NP-V clusters)
-- German nested examples (for contrast)
-- Dependency pairings (which NP goes with which V)
-
-### Key Distinction
-- **Cross-serial (Dutch)**: NP₁→V₁, NP₂→V₂, NP₃→V₃
-- **Nested (German)**: NP₁→V₃, NP₂→V₂, NP₃→V₁
-
-### Formal Language Connection
-- Cross-serial requires MILD CONTEXT-SENSITIVITY (CCG, TAG)
-- Nested is CONTEXT-FREE (standard CFG can handle)
-
-### What's NOT Here (belongs in Theories/CCG/)
-- CCG derivations for these sentences
-- Generalized composition rules (B, B², S)
-- Proof that CCG generates cross-serial pattern
--/
 
 end Phenomena.FillerGap.CrossSerial

@@ -55,13 +55,9 @@ def l1_some : List (Fin 4 × ℚ) := l1 threePerson .some_
 #eval l0_all    -- L0("all"): 1 for w3, 0 elsewhere
 #eval s1_w3     -- S1(w3): "all" preferred over "some"
 #eval s1_w1     -- S1(w1): only "some" gets probability
-#eval l1_some   -- L1("some"): w1, w2 higher than w3 (the implicature!)
+#eval l1_some   -- L1("some"): w1, w2 higher than w3 (the implicature)
 
-/--
-**Scalar Implicature Theorem**
-
-L1("some") assigns higher probability to w1 (some but not all) than to w3 (all).
--/
+/-- L1("some") assigns higher probability to w1 (some but not all) than to w3 (all). -/
 theorem scalar_implicature :
     RSA.Eval.getScore l1_some (w1 (n := 3)) > RSA.Eval.getScore l1_some (wAll (n := 3)) := by
   native_decide
@@ -93,13 +89,13 @@ end BasicImplicature
 ## Connection to Unified Mental State API
 
 The knowledge state model implements the mental state inference pattern from
-RSA.Core.Basic with GRADED belief states (speaker credence).
+RSA.Core.Basic with graded belief states (speaker credence).
 
 ### Unified API Pattern (from RSA.Core.Basic)
 ```
 RSAScenario.mentalState
   beliefStates : List BeliefState
-  speakerCredence : BeliefState → World → ℚ  -- graded credence!
+  speakerCredence : BeliefState → World → ℚ  -- graded credence
   beliefStatePrior : BeliefState → ℚ
 ```
 
@@ -168,7 +164,7 @@ def literalMeaning : Utterance → WorldState → Bool
   | .none_, .s0 => true
   | .none_, _ => false
   | .some_, .s0 => false
-  | .some_, _ => true   -- includes s3!
+  | .some_, _ => true   -- includes s3
   | .all, .s3 => true
   | .all, _ => false
 
@@ -178,7 +174,7 @@ def choose : Nat → Nat → Nat
   | 0, _ + 1 => 0
   | n + 1, k + 1 => choose n k + choose n (k + 1)
 
--- DERIVATION: Hypergeometric from Individual Apple States
+-- Deriving the hypergeometric from individual apple states
 
 /-
 ## Deriving the Hypergeometric from Individual Facts
@@ -222,7 +218,7 @@ def AppleConfig.redCount (c : AppleConfig) : Nat :=
 
 /-- Configs consistent with a world state (total red count) -/
 def configsFor (s : WorldState) : List AppleConfig :=
-  allConfigs.filter (fun c => c.redCount == s.toNat)
+  allConfigs.filter (λ c => c.redCount == s.toNat)
 
 /-- A sample: which apples were looked at (as a set represented by bools) -/
 structure Sample where
@@ -239,7 +235,7 @@ def Sample.size (s : Sample) : Nat :=
 def samplesOfSize (n : Nat) : List Sample :=
   let all := [⟨false, false, false⟩, ⟨true, false, false⟩, ⟨false, true, false⟩, ⟨false, false, true⟩,
               ⟨true, true, false⟩, ⟨true, false, true⟩, ⟨false, true, true⟩, ⟨true, true, true⟩]
-  all.filter (fun s => s.size == n)
+  all.filter (λ s => s.size == n)
 
 /-- Observation from a config and sample: count red apples in sample -/
 def observe (config : AppleConfig) (sample : Sample) : Nat :=
@@ -258,8 +254,8 @@ def obsProbDerived (o : Observation) (a : Access) (s : WorldState) : ℚ :=
   let configs := configsFor s
   let samples := samplesOfSize a.toNat
   if configs.isEmpty || samples.isEmpty then 0 else
-    let matchCount := configs.foldl (fun acc c =>
-      samples.foldl (fun acc' samp =>
+    let matchCount := configs.foldl (λ acc c =>
+      samples.foldl (λ acc' samp =>
         if observe c samp == o.seen then acc' + 1 else acc') acc) 0
     let totalCount := configs.length * samples.length
     if totalCount > 0 then (matchCount : ℚ) / (totalCount : ℚ) else 0
@@ -352,14 +348,14 @@ theorem implicature_canceled_access1 :
 
 end KnowledgeState
 
--- PART 2b: Unified API Version (Approximation)
+-- Unified API Version (Approximation)
 
 namespace UnifiedAPIVersion
 
 /-
 ## Approximation Using Unified Mental State API
 
-This section shows how the knowledge-state model COULD be expressed using
+This section shows how the knowledge-state model could be expressed using
 the unified `RSAScenario.mentalState` API, with Boolean belief state membership.
 
 Limitation: This loses the graded hypergeometric compatibility, replacing it
@@ -368,11 +364,8 @@ with Boolean "observation is compatible with world state."
 
 open KnowledgeState
 
-/--
-Observation as belief state: what the speaker saw.
-
-In the unified API, BeliefState = Observation.
--/
+/-- Observation as belief state: what the speaker saw.
+In the unified API, BeliefState = Observation. -/
 abbrev BeliefState := Observation
 
 /--
@@ -418,16 +411,16 @@ via the hypergeometric.
 def l1_graded (u : KnowledgeState.Utterance) : List (WorldState × ℚ) :=
   -- Use the custom implementation with graded credence
   -- This is computed directly rather than through a scenario constructor
-  let joint := allWorldStates.flatMap fun w =>
-    allObservations.map fun o => (w, o)
-  let scores := joint.map fun (w, o) =>
+  let joint := allWorldStates.flatMap λ w =>
+    allObservations.map λ o => (w, o)
+  let scores := joint.map λ (w, o) =>
     let priorScore := observationPrior o
     let s1Score := S1_givenObs o u
     ((w, o), priorScore * s1Score)
   let normalized := RSA.Eval.normalize scores
   -- Marginalize over observations
-  allWorldStates.map fun w =>
-    let wScores := normalized.filter (fun ((w', _), _) => w' == w) |>.map (·.2)
+  allWorldStates.map λ w =>
+    let wScores := normalized.filter (λ ((w', _), _) => w' == w) |>.map (·.2)
     (w, RSA.Eval.sumScores wScores)
 
 #eval l1_graded .some_
@@ -456,21 +449,21 @@ This demonstrates that:
 /--
 Compute L1 using Boolean approximation.
 
-This is a COARSE approximation that only checks compatibility, not probability.
+This is a coarse approximation that only checks compatibility, not probability.
 Compare with `l1_graded` which uses the full hypergeometric.
 -/
 def l1_unified (u : KnowledgeState.Utterance) : List (WorldState × ℚ) :=
   -- Boolean approximation: only check compatibility
-  let joint := allWorldStates.flatMap fun w =>
-    allObservations.map fun o => (w, o)
-  let scores := joint.map fun (w, o) =>
+  let joint := allWorldStates.flatMap λ w =>
+    allObservations.map λ o => (w, o)
+  let scores := joint.map λ (w, o) =>
     let compatible := boolToRat (speakerCredenceBool o w)
     let priorScore := observationPrior o * compatible
     let s1Score := S1_givenObs o u
     ((w, o), priorScore * s1Score)
   let normalized := RSA.Eval.normalize scores
-  allWorldStates.map fun w =>
-    let wScores := normalized.filter (fun ((w', _), _) => w' == w) |>.map (·.2)
+  allWorldStates.map λ w =>
+    let wScores := normalized.filter (λ ((w', _), _) => w' == w) |>.map (·.2)
     (w, RSA.Eval.sumScores wScores)
 
 theorem unified_version_computes :
@@ -495,14 +488,10 @@ theorem l0_meaning_consistent (u : Utterance) (w : Fin 4) :
     meaning 3 u w = KnowledgeState.literalMeaning (quantityToUtt u) (quantityToWorld w) := by
   cases u <;> fin_cases w <;> rfl
 
-/--
-**Consistency Theorem**
-
-Both models produce the same qualitative result for full-knowledge speakers:
+/-- Both models produce the same qualitative result for full-knowledge speakers:
 "some" triggers the "not all" implicature.
 
-Basic RSA is a consistent specialization of Knowledge-State RSA.
--/
+Basic RSA is a consistent specialization of Knowledge-State RSA. -/
 theorem models_consistent_on_implicature :
     (RSA.Eval.getScore (l1 threePerson .some_) (w1 (n := 3)) >
      RSA.Eval.getScore (l1 threePerson .some_) (wAll (n := 3)))
@@ -519,23 +508,14 @@ namespace NumberWords
 /-
 ## Two Competing Semantic Backends
 
-This section demonstrates how different **semantic backends** (meaning functions)
+This section demonstrates how different semantic backends (meaning functions)
 make different empirical predictions when plugged into RSA.
 
-**Lower-bound semantics** (Horn 1972): "two" means ≥2
-**Exact semantics**: "two" means exactly 2
+Lower-bound semantics (Horn 1972): "two" means ≥2
+Exact semantics: "two" means exactly 2
 
-The RSA layer is the same - only the meaning function differs.
+The RSA layer is the same -- only the meaning function differs.
 The empirical data adjudicates between backends.
-
-### Architectural Note
-
-In a full implementation, these would be separate `FiniteSemanticBackend` instances:
-- `Linglib/Theories/Semantics/Numbers/LowerBound.lean`
-- `Linglib/Theories/Semantics/Numbers/Exact.lean`
-
-RSA would be parameterized by any semantic backend, and the proofs here
-would show which backend is consistent with empirical data.
 -/
 
 -- Number word utterances
@@ -630,23 +610,21 @@ theorem lowerbound_full_access_implicature :
     getNumScore l1_lb_two_fullAccess .s2 > getNumScore l1_lb_two_fullAccess .s3 := by
   native_decide
 
--- The Core Argument: Exact Semantics Has No Implicature to Cancel
-
 /-
-## Why Exact Semantics Cannot Explain the Phenomenon
+## Why exact semantics cannot explain the phenomenon
 
-The empirical finding is that interpretation CHANGES with access:
+The empirical finding is that interpretation changes with access:
 - Full access: "two" → exactly 2
 - Partial access: "two" → ≥2 (weaker interpretation)
 
-**Lower-bound semantics explains this:**
+Lower-bound semantics explains this:
 - Literal meaning: "two" = ≥2
 - With full access: implicature strengthens to "exactly 2"
 - With partial access: implicature canceled, reverts to ≥2
 
-**Exact semantics CANNOT explain this:**
+Exact semantics cannot explain this:
 - Literal meaning: "two" = exactly 2
-- There is NO implicature - meaning is already exact
+- There is no implicature -- meaning is already exact
 - Nothing to cancel → no change with access predicted
 
 The contradiction:
@@ -661,20 +639,18 @@ theorem exact_only_s2_compatible :
     exactMeaning .two .s3 = false := by
   native_decide
 
-/-- With lower-bound semantics, "two" is compatible with BOTH s2 and s3 -/
+/-- With lower-bound semantics, "two" is compatible with both s2 and s3 -/
 theorem lowerbound_s2_and_s3_compatible :
     lowerBoundMeaning .two .s2 = true ∧
     lowerBoundMeaning .two .s3 = true := by
   native_decide
 
-/--
-**The Key Theorem: Implicature Can Only Exist with Lower-Bound Semantics**
+/-- Implicature can only exist with lower-bound semantics.
 
-Lower-bound: "two" compatible with {s2, s3} → pragmatic reasoning needed to prefer s2
-Exact: "two" compatible with {s2} only → no pragmatic reasoning needed
+Lower-bound: "two" compatible with {s2, s3} → pragmatic reasoning needed to prefer s2.
+Exact: "two" compatible with {s2} only → no pragmatic reasoning needed.
 
-If there's no ambiguity at L0, there's no implicature to cancel.
--/
+If there is no ambiguity at L0, there is no implicature to cancel. -/
 theorem exact_has_no_ambiguity :
     -- Exact: only one state compatible
     (KnowledgeState.allWorldStates.filter (exactMeaning .two)).length = 1 := by
@@ -685,17 +661,15 @@ theorem lowerbound_has_ambiguity :
     (KnowledgeState.allWorldStates.filter (lowerBoundMeaning .two)).length = 2 := by
   native_decide
 
-/--
-**Exact Semantics Cannot Model Cancellation**
+/-- Exact semantics cannot model cancellation.
 
 With exact semantics:
 - L0("two") gives probability 1 to s2, 0 to everything else
 - No matter what RSA does, s2 will always be preferred
-- There's nothing for partial knowledge to "cancel"
+- There is nothing for partial knowledge to "cancel"
 
-The empirical pattern (cancellation with partial access) is ONLY
-explainable if the literal meaning allows ambiguity.
--/
+The empirical pattern (cancellation with partial access) is only
+explainable if the literal meaning allows ambiguity. -/
 theorem exact_semantics_incompatible_with_cancellation :
     -- Exact semantics: "two" literally means exactly s2
     (KnowledgeState.allWorldStates.filter (exactMeaning .two) = [.s2])
@@ -707,14 +681,14 @@ theorem exact_semantics_incompatible_with_cancellation :
 /-
 ## Empirical Adjudication
 
-**Empirical data** (Goodman & Stuhlmüller 2013, Experiment 2):
-- Implicature cancellation IS observed
-- Interpretation DOES vary with speaker's access level
+Empirical data (Goodman & Stuhlmüller 2013, Experiment 2):
+- Implicature cancellation is observed
+- Interpretation does vary with speaker's access level
 
-**Lower-bound semantics**: ✓ Predicts implicature that can be canceled
-**Exact semantics**: ✗ No implicature to cancel
+Lower-bound semantics predicts implicature that can be canceled.
+Exact semantics has no implicature to cancel.
 
-**Conclusion**: Exact semantics is inconsistent with the empirical phenomenon.
+Conclusion: exact semantics is inconsistent with the empirical phenomenon.
 -/
 
 -- Connection to Semantic Backends
@@ -739,33 +713,28 @@ Both can be used with the Core RSA machinery. The proofs here and there show:
 /-
 ## The Logical Chain
 
-**Empirical Phenomenon** (from Phenomena/GoodmanStuhlmuller2013/Data.lean):
-  Cancellation IS observed - interpretation varies with speaker access
+Empirical phenomenon (from Phenomena/GoodmanStuhlmuller2013/Data.lean):
+  Cancellation is observed -- interpretation varies with speaker access.
 
-**Logical Requirements**:
+Logical requirements:
   1. Cancellation requires an implicature to cancel
   2. Implicature requires semantic ambiguity (multiple states compatible)
 
-**Test Each Backend**:
-  - Lower-bound: 2 states compatible with "two" → HAS ambiguity → CAN model cancellation ✓
-  - Exact: 1 state compatible with "two" → NO ambiguity → CANNOT model cancellation ✗
+Test each backend:
+  - Lower-bound: 2 states compatible with "two" → has ambiguity → can model cancellation
+  - Exact: 1 state compatible with "two" → no ambiguity → cannot model cancellation
 -/
 
-/--
-**Why Number of Compatible States Matters**
+/-- When more than one state is compatible, the listener is uncertain which
+state holds, so RSA resolves the ambiguity via pragmatic reasoning. "Exactly 2"
+then emerges as an implicature (not literal meaning) and can be canceled with
+partial knowledge.
 
-`>1 compatible states` = AMBIGUITY = listener uncertain which state
-  → RSA resolves ambiguity via pragmatic reasoning
-  → "exactly 2" emerges as IMPLICATURE (not literal meaning)
-  → Implicature CAN be canceled with partial knowledge
+When exactly one state is compatible, the listener is already certain, so
+there is no uncertainty for RSA to resolve. "Exactly 2" is the literal meaning,
+not an implicature, and there is nothing to cancel.
 
-`=1 compatible state` = NO AMBIGUITY = listener certain of state
-  → No uncertainty for RSA to resolve
-  → "exactly 2" is the LITERAL meaning (not an implicature)
-  → Nothing to cancel
-
-The empirical phenomenon is cancellation, so we need ambiguity.
--/
+The empirical phenomenon is cancellation, so ambiguity is required. -/
 theorem lowerbound_consistent_exact_inconsistent :
     -- Lower-bound: >1 states compatible → ambiguity → implicature possible → cancellation possible
     (KnowledgeState.allWorldStates.filter (lowerBoundMeaning .two)).length > 1 ∧
@@ -773,22 +742,20 @@ theorem lowerbound_consistent_exact_inconsistent :
     (KnowledgeState.allWorldStates.filter (exactMeaning .two)).length = 1 := by
   native_decide
 
-/--
-**Why Ambiguity is Required for Cancellation**
+/-- Ambiguity is required for cancellation.
 
-Cancellation = interpretation VARIES with speaker's knowledge state
+Cancellation means interpretation varies with speaker's knowledge state:
   - Full knowledge: "two" → exactly 2
-  - Partial knowledge: "two" → ≥2 (different!)
+  - Partial knowledge: "two" → ≥2 (different)
 
-For interpretation to VARY, it must be context-dependent.
-For it to be context-dependent, it must be DERIVED (not literal).
-For it to be derived, there must be AMBIGUITY to resolve.
+For interpretation to vary, it must be context-dependent.
+For it to be context-dependent, it must be derived (not literal).
+For it to be derived, there must be ambiguity to resolve.
 
 With exact semantics (1 compatible state):
   - L0("two") = {s2} with probability 1
   - No matter what knowledge state, L0 is the same
-  - No variation possible → contradicts empirical data
--/
+  - No variation possible → contradicts empirical data -/
 theorem no_ambiguity_means_no_variation :
     -- With exact semantics, "two" always gives s2 probability 1 at L0
     -- This doesn't change with speaker knowledge - contradiction
@@ -796,15 +763,13 @@ theorem no_ambiguity_means_no_variation :
   native_decide
 
 /-
-**Summary**
-
 The empirical phenomenon (interpretation varies with knowledge) requires:
 1. Multiple compatible states at L0 (ambiguity)
 2. RSA resolves ambiguity → exact interpretation emerges
 3. With partial knowledge, RSA reasoning disrupted → interpretation weakens
 
-Lower-bound has step 1 → can model phenomenon ✓
-Exact lacks step 1 → cannot model phenomenon ✗
+Lower-bound has step 1 and can model the phenomenon.
+Exact lacks step 1 and cannot model the phenomenon.
 -/
 
 end NumberWords
@@ -909,37 +874,27 @@ def stateToNat : KnowledgeState.WorldState → Nat
 
 -- Grounding Theorems
 
-/--
-**Grounding: Lower-bound meaning matches Montague LowerBound theory**
-
-The ad-hoc `lowerBoundMeaning` in NumberWords is exactly the same as
-`LowerBound.meaning` from Montague.Determiner.Numeral.
--/
+/-- The ad-hoc `lowerBoundMeaning` in NumberWords is exactly the same as
+`LowerBound.meaning` from Montague.Determiner.Numeral. -/
 theorem lowerBound_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.lowerBoundMeaning u s = LowerBound.meaning (uttToNumWord u) (stateToNat s) := by
   cases u <;> cases s <;> native_decide
 
-/--
-**Grounding: Exact meaning matches Montague DeFregean (bilateral) theory**
-
-The ad-hoc `exactMeaning` in NumberWords is exactly the same as
-`DeFregean.meaning` from Montague.Determiner.Numeral.
--/
+/-- The ad-hoc `exactMeaning` in NumberWords is exactly the same as
+`DeFregean.meaning` from Montague.Determiner.Numeral. -/
 theorem exact_grounded (u : NumberWords.NumUtterance) (s : KnowledgeState.WorldState) :
     NumberWords.exactMeaning u s = DeFregean.meaning (uttToNumWord u) (stateToNat s) := by
   cases u <;> cases s <;> native_decide
 
 -- Connecting to Empirical Predictions
 
-/--
-**Montague theory comparison applies to this empirical phenomenon**
+/-- Montague theory comparison applies to this empirical phenomenon.
 
-The key result from Montague.Determiner.Numeral.Compare:
+From Montague.Determiner.Numeral.Compare:
 - LowerBound has ambiguity (can support implicature cancellation)
 - DeFregean has no ambiguity (cannot support implicature cancellation)
 
-This directly explains why the empirical data matches LowerBound but not DeFregean.
--/
+This explains why the empirical data matches LowerBound but not DeFregean. -/
 theorem montague_ambiguity_predicts_cancellation :
     -- LowerBound (Montague) has ambiguity
     LowerBound.hasAmbiguity .two = true ∧
@@ -947,23 +902,19 @@ theorem montague_ambiguity_predicts_cancellation :
     DeFregean.hasAmbiguity .two = false := by
   native_decide
 
-/--
-**Closing the grounding loop**
-
-The full chain from Montague semantics to empirical prediction:
+/-- The full chain from Montague semantics to empirical prediction:
 
 1. Montague LowerBound.meaning = lowerBoundMeaning (by lowerBound_grounded)
 2. LowerBound has ambiguity (by LowerBound.hasAmbiguity)
 3. Ambiguity enables implicature that can be canceled
 4. Cancellation is observed with partial speaker knowledge
-5. Therefore: LowerBound matches empirical data ✓
+5. Therefore: LowerBound matches empirical data
 
 The same chain for DeFregean breaks at step 2:
 1. Montague DeFregean.meaning = exactMeaning (by exact_grounded)
-2. DeFregean has NO ambiguity (by DeFregean.hasAmbiguity = false)
+2. DeFregean has no ambiguity (DeFregean.hasAmbiguity = false)
 3. No ambiguity → no implicature → nothing to cancel
-4. But cancellation IS observed → contradiction ✗
--/
+4. But cancellation is observed → contradiction -/
 theorem grounding_enables_empirical_adjudication :
     -- Local definitions are grounded in Montague
     (∀ u s, NumberWords.lowerBoundMeaning u s = LowerBound.meaning (uttToNumWord u) (stateToNat s))
@@ -979,53 +930,6 @@ theorem grounding_enables_empirical_adjudication :
   · native_decide
 
 end MontaguGrounding
-
--- Summary
-
-/-
-## What This File Formalizes
-
-### From the Paper:
-
-1. **Basic Scalar Implicature** (Experiment 1, full access)
-   - `BasicImplicature.scalar_implicature`: L1("some") prefers w1 over w3
-
-2. **Knowledge State Interaction** (Experiment 1, varying access)
-   - `KnowledgeState.implicature_with_full_access`: full access → implicature
-   - `KnowledgeState.implicature_canceled_access1`: partial access → canceled
-
-3. **Number Words** (Experiment 2)
-   - `NumberWords.num_implicature_full_access`: "two" → exact interpretation
-   - `NumberWords.num_implicature_canceled_access2`: partial access → canceled
-   - `NumberWords.one_partial_implicature_access2`: partial implicature case
-
-4. **Semantic Backend Comparison**
-   - `NumberWords.exact_vs_lowerbound_inconsistent`: exact semantics refuted
-   - Lower-bound semantics correctly predicts knowledge interaction
-   - Exact semantics cannot explain the empirical pattern
-
-### Semantic Interface Implications:
-
-```
-Semantic Backend          Knowledge Interaction    Empirical Fit
-─────────────────────────────────────────────────────────────────
-Lower-bound ("two" ≥ 2)   YES (predicted)          ✓ Matches data
-Exact ("two" = 2)         NO (not predicted)       ✗ Refuted
-```
-
-Any semantic backend claiming exact number semantics is INCONSISTENT
-with the empirical data formalized here.
-
-### Dependency Structure:
-
-```
-KnowledgeState.RSA (general model)
-        │
-        ├── access = a3 ──→ Basic.RSA (proven equivalent)
-        │
-        └── access < a3 ──→ Implicature canceled/partial
-```
--/
 
 -- Fintype-Based API Demonstration
 
@@ -1051,7 +955,7 @@ def s1_w3_F : Option (ExactDist Utterance) :=
 
 -- Note: #eval disabled due to sorry in RSAF non-negativity proofs
 -- Once those are filled, can evaluate:
--- #eval l1_some_F.map (fun d => (d.mass (w1 (n := 3)), d.mass (wAll (n := 3))))
+-- #eval l1_some_F.map (λ d => (d.mass (w1 (n := 3)), d.mass (wAll (n := 3))))
 
 end FintypeDemo
 

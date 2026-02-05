@@ -4,7 +4,7 @@
 Demonstrates that expected listener utility E[V_L] is NOT monotonically
 increasing during RSA iterations, even though G_α is.
 
-## Key Result (Zaslavsky et al. 2020, Proposition 2)
+## Result (Zaslavsky et al. 2020, Proposition 2)
 
 There exist RSA scenarios where:
 1. G_α increases monotonically (always)
@@ -78,7 +78,7 @@ def utilityCounterexample : RSA.RSAScenarioQ :=
   RSA.RSAScenarioQ.basicBool
     [u1, u2]
     [m1, m2, m3]
-    (fun w u => utilSemantics u w)
+    (λ w u => utilSemantics u w)
     (α := 2)  -- Moderate rationality
 
 /--
@@ -88,7 +88,7 @@ def utilityCounterexample_α1 : RSA.RSAScenarioQ :=
   RSA.RSAScenarioQ.basicBool
     [u1, u2]
     [m1, m2, m3]
-    (fun w u => utilSemantics u w)
+    (λ w u => utilSemantics u w)
     (α := 1)
 
 
@@ -138,7 +138,7 @@ def simpleCounterexample : RSA.RSAScenarioQ :=
   RSA.RSAScenarioQ.basicBool
     [aOrB, a, b]
     [onlyA, onlyB, both]
-    (fun w u => simpleSemantics u w)
+    (λ w u => simpleSemantics u w)
     (α := 3)
 
 

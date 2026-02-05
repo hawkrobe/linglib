@@ -62,7 +62,7 @@ def conditionalProb {W : Type*} [Fintype W]
     (prior : ExactDist W) (condition : W → Bool) (target : W → Bool) : ℚ :=
   let pCondition := probOfProp prior condition
   if pCondition > 0 then
-    let pBoth := probOfProp prior (fun w => condition w && target w)
+    let pBoth := probOfProp prior (λ w => condition w && target w)
     pBoth / pCondition
   else
     0
@@ -87,7 +87,7 @@ A proposition P is relevant to question Q iff learning P would change
 the probability distribution over Q's alternatives. -/
 def relevant {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : Bool :=
-  q.alternatives.any fun alt =>
+  q.alternatives.any λ alt =>
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     condProb != priorProb
@@ -113,7 +113,7 @@ This is a weaker condition than standard partial answerhood:
 Under uniform priors on partitions, these coincide. -/
 def probAnswers {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : Bool :=
-  q.alternatives.any fun alt =>
+  q.alternatives.any λ alt =>
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     condProb > priorProb
@@ -123,7 +123,7 @@ def probAnswers {W : Type*} [Fintype W]
 Returns the alternatives whose probability is raised by learning P. -/
 def supportedAlternatives {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : List (InfoState W) :=
-  q.alternatives.filter fun alt =>
+  q.alternatives.filter λ alt =>
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     condProb > priorProb
@@ -132,12 +132,12 @@ def supportedAlternatives {W : Type*} [Fintype W]
 increases the most when P is learned. -/
 def maxSupportedAlternative {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : Option (InfoState W × ℚ) :=
-  let increases := q.alternatives.filterMap fun alt =>
+  let increases := q.alternatives.filterMap λ alt =>
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     let increase := condProb - priorProb
     if increase > 0 then some (alt, increase) else none
-  increases.foldl (fun best current =>
+  increases.foldl (λ best current =>
     match best with
     | none => some current
     | some (_, bestInc) =>
@@ -153,7 +153,7 @@ info(σ) is just σ itself - the proposition that the actual world is in σ.
 
 For multiple resolving states, info({σ₁, ..., σₙ}) is their union. -/
 def infoContent {W : Type*} (states : List (InfoState W)) : W → Bool :=
-  fun w => states.any fun σ => σ w
+  λ w => states.any λ σ => σ w
 
 /-- Evidences more strongly: R evidences A more strongly than R' does.
 
@@ -218,7 +218,7 @@ def isUniformOver {W : Type*} [Fintype W] [DecidableEq W]
   | [] => true
   | w :: ws =>
     let prob := prior.mass w
-    ws.all fun v => prior.mass v == prob
+    ws.all λ v => prior.mass v == prob
 
 /-- Under uniform priors, positive propositions raise alternative probability.
 
@@ -228,8 +228,8 @@ worlds outside A, then P raises A's probability. -/
 theorem probAnswers_when_consistent {W : Type*} [Fintype W] [DecidableEq W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W)
     (_hUniform : isUniformOver prior (Fintype.elems.toList) = true)
-    (_hConsistent : q.alternatives.any fun alt =>
-      Fintype.elems.toList.any fun w => p w && alt w) :
+    (_hConsistent : q.alternatives.any λ alt =>
+      Fintype.elems.toList.any λ w => p w && alt w) :
     -- If P is consistent with some alternative and has positive probability
     probOfProp prior p > 0 →
     -- Then P is at least relevant to Q
@@ -247,13 +247,13 @@ than ANT alone. -/
 def conjunctionStrengthens {W : Type*} [Fintype W]
     (p1 p2 : W → Bool) (conclusion : W → Bool)
     (prior : ExactDist W) : Bool :=
-  evidencesMoreStronglyProp (fun w => p1 w && p2 w) p1 conclusion prior
+  evidencesMoreStronglyProp (λ w => p1 w && p2 w) p1 conclusion prior
 
 /-- Find resolutions that the conjunction evidences more strongly. -/
 def strengthenedResolutions {W : Type*} [Fintype W]
     (p1 p2 : W → Bool) (q : Issue W)
     (prior : ExactDist W) : List (InfoState W) :=
-  q.alternatives.filter fun alt =>
+  q.alternatives.filter λ alt =>
     conjunctionStrengthens p1 p2 alt prior
 
 /-- Check if there exists some resolution that is strengthened. -/
@@ -275,7 +275,7 @@ def isProbMentionSomeAnswer {W : Type*} [Fintype W]
   -- Raises probability of some alternatives
   supported.length > 0 &&
   -- But doesn't make any alternative certain (probability 1)
-  supported.all fun alt => conditionalProb prior p alt < 1
+  supported.all λ alt => conditionalProb prior p alt < 1
 
 /-- Probabilistic mention-all: P resolves Q completely.
 
@@ -283,7 +283,7 @@ P is a probabilistic mention-all answer if learning P makes
 exactly one alternative have probability 1. -/
 def isProbMentionAllAnswer {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : ExactDist W) : Bool :=
-  let certainAlts := q.alternatives.filter fun alt =>
+  let certainAlts := q.alternatives.filter λ alt =>
     conditionalProb prior p alt == 1
   certainAlts.length == 1
 

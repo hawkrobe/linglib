@@ -23,44 +23,44 @@ def propEntails (p q : Prop') : Bool :=
 
 /-- Propositions overlap iff they share at least one world. -/
 def propOverlap (p q : Prop') : Bool :=
-  allWorlds.any fun w => p w && q w
+  allWorlds.any λ w => p w && q w
 
 /-- Desires from G_S that proposition a satisfies (a entails p). -/
 def satisfiedBy (GS : List Prop') (a : Prop') : List Prop' :=
-  GS.filter fun p => propEntails a p
+  GS.filter λ p => propEntails a p
 
 /-- S prefers a to a' iff a satisfies strictly more desires. -/
 def preferAnswer (GS : List Prop') (a a' : Prop') : Bool :=
   let desiresA := satisfiedBy GS a
   let desiresA' := satisfiedBy GS a'
-  (desiresA'.all fun p => desiresA.any fun q => allWorlds.all fun w => p w == q w) &&
-  (desiresA.any fun p => desiresA'.all fun q => allWorlds.any fun w => p w != q w)
+  (desiresA'.all λ p => desiresA.any λ q => allWorlds.all λ w => p w == q w) &&
+  (desiresA.any λ p => desiresA'.all λ q => allWorlds.any λ w => p w != q w)
 
 /-- a ≥ a' iff a satisfies all desires that a' satisfies. -/
 def atLeastAsPreferred (GS : List Prop') (a a' : Prop') : Bool :=
   let desiresA := satisfiedBy GS a
   let desiresA' := satisfiedBy GS a'
-  desiresA'.all fun p => desiresA.any fun q => allWorlds.all fun w => p w == q w
+  desiresA'.all λ p => desiresA.any λ q => allWorlds.all λ w => p w == q w
 
 /-- Q-Bel_S: answers compatible with S's beliefs. -/
 def questionRelativeBelief (answers : List Prop') (belS : Prop') : List Prop' :=
-  answers.filter fun a => propOverlap a belS
+  answers.filter λ a => propOverlap a belS
 
 /-- Extensional equivalence of propositions. -/
 def propEquiv (p q : Prop') : Bool :=
-  allWorlds.all fun w => p w == q w
+  allWorlds.all λ w => p w == q w
 
 /-- Best answers: those not strictly dominated by any other. -/
 def bestAnswers (GS : List Prop') (answers : List Prop') : List Prop' :=
-  answers.filter fun a =>
-    answers.all fun a' => propEquiv a' a || !preferAnswer GS a' a
+  answers.filter λ a =>
+    answers.all λ a' => propEquiv a' a || !preferAnswer GS a' a
 
 /-- ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
 def wantQuestionBased (belS : Prop') (GS : List Prop')
     (answers : List Prop') (p : Prop') : Bool :=
   let qBelS := questionRelativeBelief answers belS
   let best := bestAnswers GS qBelS
-  best.all fun a => propEntails a p
+  best.all λ a => propEntails a p
 
 /-- Convenience: extract desires from BouleticFlavor. -/
 def wantBouletic (belS : Prop') (flavor : BouleticFlavor) (w : World)
@@ -71,8 +71,8 @@ def wantBouletic (belS : Prop') (flavor : BouleticFlavor) (w : World)
 
 /-- Considering: Q must have both p-answers and ¬p-answers. -/
 def considering (answers : List Prop') (p : Prop') : Bool :=
-  (answers.any fun a => propEntails a p) &&
-  (answers.any fun a => propEntails a (fun w => !p w))
+  (answers.any λ a => propEntails a p) &&
+  (answers.any λ a => propEntails a (λ w => !p w))
 
 /-- Diversity: |Q-Bel_S| ≥ 2. -/
 def diversity (answers : List Prop') (belS : Prop') : Bool :=
@@ -85,9 +85,9 @@ This prevents "rigged" questions that make the desire ascription vacuously true.
 def antiDeckstacking (answers : List Prop') (belS : Prop') (GS : List Prop') (p : Prop') : Bool :=
   let qBelS := questionRelativeBelief answers belS
   let best := bestAnswers GS qBelS
-  (best.any fun a => !propEntails a p) ||
-  (qBelS.any fun a => propEntails a (fun w => !p w) &&
-    qBelS.any fun a' => propEntails a' p && preferAnswer GS a' a)
+  (best.any λ a => !propEntails a p) ||
+  (qBelS.any λ a => propEntails a (λ w => !p w) &&
+    qBelS.any λ a' => propEntails a' p && preferAnswer GS a' a)
 
 /--
 **Belief-sensitivity**: S's beliefs affect the truth value.
@@ -141,12 +141,12 @@ If G_S = ∅, then ⟦S wants p⟧ = 1 iff every answer in Q-Bel_S entails p.
 -/
 theorem empty_desires_belief_only (belS : Prop') (answers : List Prop') (p : Prop') :
     wantQuestionBased belS [] answers p =
-    (questionRelativeBelief answers belS).all fun a => propEntails a p := by
+    (questionRelativeBelief answers belS).all λ a => propEntails a p := by
   unfold wantQuestionBased bestAnswers preferAnswer satisfiedBy
   simp only [List.filter_nil, List.all_nil, List.any_nil, Bool.and_false,
              Bool.not_false, Bool.or_true]
   congr 1
-  have : ∀ (L : List Prop'), L.filter (fun _ => L.all fun _ => true) = L := by
+  have : ∀ (L : List Prop'), L.filter (λ _ => L.all λ _ => true) = L := by
     intro L
     rw [List.filter_eq_self]
     intros
@@ -174,7 +174,7 @@ Returns true iff semantics(Q, p) = ∃a ∈ Q. semantics({a}, p)
 def isCDistributive (semantics : List Prop' → Prop' → Bool)
     (answers : List Prop') (p : Prop') : Bool :=
   let wholeQ := semantics answers p
-  let existsSingle := answers.any fun a => semantics [a] p
+  let existsSingle := answers.any λ a => semantics [a] p
   wholeQ == existsSingle
 
 -- Connection to Core.SatisfactionOrdering Framework
@@ -183,7 +183,7 @@ open Core.SatisfactionOrdering
 
 /-- Proposition ordering: a satisfies p iff a entails p. -/
 def propositionOrdering (GS : List Prop') : SatisfactionOrdering Prop' Prop' where
-  satisfies := fun a p => propEntails a p
+  satisfies := λ a p => propEntails a p
   ideals := GS
 
 -- Connection theorems: local definitions = generic framework

@@ -4,7 +4,7 @@
 Explores the relationship between RSA (probabilistic) and NeoGricean (categorical)
 approaches to scalar implicature.
 
-## Key Insight
+## Insight
 
 NeoGricean is a **limiting case** of RSA:
 - As rationality α → ∞, RSA predictions become categorical
@@ -139,7 +139,7 @@ theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (
     (hTrue : G.meaning m s = true)
     (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
     (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
   rsa_to_ibr_limit G s m hTrue hUnique hInfPos
 
 /--
@@ -156,7 +156,7 @@ structure RSAExhLimit (G : InterpGame) where
     G.meaning m s = true →
     (∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m') →
     0 < G.informativity m →
-    Filter.Tendsto (fun α => rsaS1Real G α s m) Filter.atTop (nhds 1)
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1)
   /-- IBR fixed point = exhMW (placeholder for full proof) -/
   ibr_to_exhMW : True  -- See ibr_equals_exhMW in Franke2011.lean
   /-- Under closure, exhMW = exhIE (Spector Theorem 9) -/
@@ -243,7 +243,7 @@ def some_de_agreement : DEContextAgreement where
   scalarItem := "some"
   neoGricean_blocks := true  -- From NeoGricean.ScalarImplicatures
   rsa_prefers_global := true -- From RSA.PottsLU
-  agreement := fun _ => rfl
+  agreement := λ _ => rfl
 
 -- Structural Comparison
 

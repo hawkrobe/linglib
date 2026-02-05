@@ -145,7 +145,7 @@ def allNouns : List NounEntry := [
 ]
 
 def lookup (form : String) : Option NounEntry :=
-  allNouns.find? fun n => n.formSg == form || n.formPl == some form
+  allNouns.find? λ n => n.formSg == form || n.formPl == some form
 
 
 /-- In French, bare plurals are NOT generally licensed -/

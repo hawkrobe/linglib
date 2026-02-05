@@ -126,8 +126,8 @@ def noSomeLUScenario : LUScenario where
   World := EmbeddedWorld
   baseLexicon := lexBase
   lexica := [lexBase, lexRefined]
-  lexPrior := fun _ => 1  -- Flat prior per Potts
-  worldPrior := fun _ => 1  -- Flat prior per Potts
+  lexPrior := λ _ => 1  -- Flat prior per Potts
+  worldPrior := λ _ => 1  -- Flat prior per Potts
   utterances := [.noSome, .noAll, .null]
   worlds := [.none, .someNotAll, .someAll]
   α := 1  -- Potts uses λ=0.1, we analyze the α→0 limit separately
@@ -146,7 +146,7 @@ def l1JointDE : List ((EmbeddedWorld × Lexicon DEUtterance EmbeddedWorld) × �
 
 
 /-
-## Key Insight: Lexicon Inference Reveals Global/Local Preference
+## Insight: Lexicon Inference Reveals Global/Local Preference
 
 - "Global" reading = L_base inferred
 - "Local" reading = L_refined inferred
@@ -217,8 +217,8 @@ def someSomeLUScenario : LUScenario where
   World := EmbeddedWorld
   baseLexicon := lexBaseUE
   lexica := [lexBaseUE, lexRefinedUE]
-  lexPrior := fun _ => 1
-  worldPrior := fun _ => 1
+  lexPrior := λ _ => 1
+  worldPrior := λ _ => 1
   utterances := [.someSome, .someAll, .null]
   worlds := [.none, .someNotAll, .someAll]
   α := 1
@@ -374,7 +374,7 @@ The correct LU architecture from the paper:
 - Two lexica: L_base and L_refined
 - This is Section 4.3, equations (13a-c)
 
-### Key Finding
+### Finding
 
 With just 2 lexica and 3 worlds, the model predicts:
 - DE: local wins (WRONG)

@@ -9,7 +9,7 @@ This extends lexical uncertainty to handle **compositional** utterances.
 Instead of refining whole-utterance meanings, we refine **atomic lexical items**
 and then compose meanings via Boolean connectives.
 
-### Key Innovation (Bergen et al. 2016, Section 5)
+### Innovation (Bergen et al. 2016, Section 5)
 
 For compositional LU:
 1. Atomic utterances have refinable meanings in the lexicon
@@ -129,9 +129,9 @@ structure CompLUScenario where
   /-- Set of possible refined atomic lexica -/
   lexica : List (AtomicLexicon Atom World)
   /-- Prior over lexica -/
-  lexPrior : AtomicLexicon Atom World → ℚ := fun _ => 1
+  lexPrior : AtomicLexicon Atom World → ℚ := λ _ => 1
   /-- Prior over worlds -/
-  worldPrior : World → ℚ := fun _ => 1
+  worldPrior : World → ℚ := λ _ => 1
   /-- Set of available (complex) utterances -/
   utterances : List (CompUtt Atom)
   /-- Enumeration of worlds -/
@@ -156,7 +156,7 @@ The meaning is computed compositionally from atomic meanings.
 -/
 def L0_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
     (u : CompUtt S.Atom) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w =>
+  let scores := S.worlds.map λ w =>
     (w, S.worldPrior w * boolToRat (L.interpret u w))
   RSA.Eval.normalize scores
 
@@ -167,7 +167,7 @@ P(u | w, L) ∝ L₀(w | u, L)
 -/
 def S1_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
     (w : S.World) : List (CompUtt S.Atom × ℚ) :=
-  let scores := S.utterances.map fun u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
+  let scores := S.utterances.map λ u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
   RSA.Eval.normalize scores
 
 /--
@@ -178,8 +178,8 @@ P(w | u) ∝ P(w) · Σ_L P(L) · S₁(u | w, L)
 The listener marginalizes over refined ATOMIC lexica.
 -/
 def L1 (S : CompLUScenario) (u : CompUtt S.Atom) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w =>
-    let lexSum := S.lexica.foldl (init := (0 : ℚ)) fun acc L =>
+  let scores := S.worlds.map λ w =>
+    let lexSum := S.lexica.foldl (init := (0 : ℚ)) λ acc L =>
       acc + S.lexPrior L * RSA.Eval.getScore (S1_given S L w) u
     (w, S.worldPrior w * lexSum)
   RSA.Eval.normalize scores
@@ -231,7 +231,7 @@ def numeralRefinedLexica : List (AtomicLexicon NumeralAtom ThreePointWorld) :=
     -- L₁: Unrefined (base)
     numeralBaseLexicon,
     -- L₂: "one" refined to exactly-1, "two" refined to exactly-2
-    { meaning := fun a w =>
+    { meaning := λ a w =>
         match a, w with
         | .one_, .one => true
         | .one_, _ => false
@@ -240,7 +240,7 @@ def numeralRefinedLexica : List (AtomicLexicon NumeralAtom ThreePointWorld) :=
         | .three_, .three => true
         | .three_, _ => false },
     -- L₃: "one" refined to {1,2}, "two" refined to exactly-2
-    { meaning := fun a w =>
+    { meaning := λ a w =>
         match a, w with
         | .one_, .three => false
         | .one_, _ => true
@@ -249,7 +249,7 @@ def numeralRefinedLexica : List (AtomicLexicon NumeralAtom ThreePointWorld) :=
         | .three_, .three => true
         | .three_, _ => false },
     -- L₄: "one" refined to {1,3} (non-convex!)
-    { meaning := fun a w =>
+    { meaning := λ a w =>
         match a, w with
         | .one_, .two => false
         | .one_, _ => true
@@ -285,7 +285,7 @@ def mkNonConvexDisjScenario : CompLUScenario where
 Check if one utterance semantically entails another under base semantics.
 -/
 def entails (S : CompLUScenario) (u₁ u₂ : CompUtt S.Atom) : Bool :=
-  S.worlds.all fun w =>
+  S.worlds.all λ w =>
     !S.baseLexicon.interpret u₁ w || S.baseLexicon.interpret u₂ w
 
 /--

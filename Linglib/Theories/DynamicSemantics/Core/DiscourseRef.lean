@@ -22,9 +22,9 @@ The falsifier ⋆ satisfies: R(⋆) = false for all predicates R.
 
 ## Propositional Drefs as Local Contexts
 
-The key innovation of ICDRT is **propositional discourse referents**:
-- Individual drefs: track WHAT an expression refers to
-- Propositional drefs: track WHERE the dref was introduced (local context)
+ICDRT extends DRT with propositional discourse referents:
+- Individual drefs: track what an expression refers to
+- Propositional drefs: track where the dref was introduced (local context)
 
 This separation enables anaphora to indefinites under negation:
 "Either there's no bathroom, or it's upstairs."
@@ -86,9 +86,9 @@ instance [Inhabited E] : Inhabited (Entity E) where
   default := .star
 
 instance [Fintype E] : Fintype (Entity E) where
-  elems := Finset.cons .star (Finset.map ⟨Entity.some, fun _ _ h => by cases h; rfl⟩ Finset.univ)
+  elems := Finset.cons .star (Finset.map ⟨Entity.some, λ _ _ h => by cases h; rfl⟩ Finset.univ)
     (by simp [Finset.mem_map])
-  complete := fun x => by
+  complete := λ x => by
     cases x
     · simp [Finset.mem_map, Finset.mem_cons]
     · simp [Finset.mem_map, Finset.mem_cons]
@@ -142,16 +142,16 @@ variable {W E : Type*}
 
 /-- Empty assignment (all variables map to ⋆ / empty set) -/
 def empty : ICDRTAssignment W E where
-  indiv := fun _ => .star
-  prop := fun _ => ∅
+  indiv := λ _ => .star
+  prop := λ _ => ∅
 
 /-- Update individual variable -/
 def updateIndiv (g : ICDRTAssignment W E) (v : IVar) (e : Entity E) : ICDRTAssignment W E :=
-  { g with indiv := fun v' => if v' == v then e else g.indiv v' }
+  { g with indiv := λ v' => if v' == v then e else g.indiv v' }
 
 /-- Update propositional variable -/
 def updateProp (g : ICDRTAssignment W E) (p : PVar) (s : Set W) : ICDRTAssignment W E :=
-  { g with prop := fun p' => if p' == p then s else g.prop p' }
+  { g with prop := λ p' => if p' == p then s else g.prop p' }
 
 end ICDRTAssignment
 
@@ -179,19 +179,19 @@ namespace PDref
 variable {W E : Type*}
 
 /-- The tautological propositional dref (all worlds) -/
-def top : PDref W E := fun _ => Set.univ
+def top : PDref W E := λ _ => Set.univ
 
 /-- The contradictory propositional dref (no worlds) -/
-def bot : PDref W E := fun _ => ∅
+def bot : PDref W E := λ _ => ∅
 
 /-- Propositional dref from a classical proposition -/
-def ofProp (p : W → Prop) : PDref W E := fun _ => { w | p w }
+def ofProp (p : W → Prop) : PDref W E := λ _ => { w | p w }
 
 /-- Intersection of propositional drefs -/
-def inter (φ ψ : PDref W E) : PDref W E := fun g => φ g ∩ ψ g
+def inter (φ ψ : PDref W E) : PDref W E := λ g => φ g ∩ ψ g
 
 /-- Union of propositional drefs -/
-def union (φ ψ : PDref W E) : PDref W E := fun g => φ g ∪ ψ g
+def union (φ ψ : PDref W E) : PDref W E := λ g => φ g ∪ ψ g
 
 end PDref
 
@@ -215,17 +215,17 @@ namespace IDref
 variable {W E : Type*}
 
 /-- Constant individual dref (same entity in all contexts) -/
-def const (e : Entity E) : IDref W E := fun _ _ => e
+def const (e : Entity E) : IDref W E := λ _ _ => e
 
 /-- The undefined individual dref (always ⋆) -/
-def undef : IDref W E := fun _ _ => .star
+def undef : IDref W E := λ _ _ => .star
 
 /-- Variable lookup dref -/
-def ofVar (v : IVar) : IDref W E := fun g _ => g.indiv v
+def ofVar (v : IVar) : IDref W E := λ g _ => g.indiv v
 
 /-- Apply predicate to individual dref -/
 def satisfies (d : IDref W E) (p : E → W → Bool) : ICDRTAssignment W E → W → Bool :=
-  fun g w => (d g w).liftPred (fun e => p e w)
+  λ g w => (d g w).liftPred (λ e => p e w)
 
 end IDref
 
@@ -234,7 +234,7 @@ end IDref
 A local context is a propositional dref that tracks WHERE an
 individual dref was introduced.
 
-Key insight: In "Either there's no bathroom, or it's upstairs",
+In "Either there's no bathroom, or it's upstairs",
 the bathroom is introduced in the local context of the first disjunct.
 The propositional dref p_bathroom tracks: "worlds where there is a bathroom"
 (the local context of the positive update).
@@ -257,7 +257,7 @@ def dynamicPredication {W E : Type*}
     (φ : LocalContext W E)       -- The local context
     (v : IDref W E)              -- The individual dref
     : ICDRTAssignment W E → W → Prop :=
-  fun g _ =>
+  λ g _ =>
     ∀ w' ∈ φ g,
       match v g w' with
       | .some e => R e w'
@@ -281,41 +281,5 @@ An entity is accessible in a local context if it exists throughout.
 def accessibleIn {W E : Type*} (e : E) (p : Set W) (dref : W → Entity E) : Prop :=
   ∀ w ∈ p, dref w = .some e
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Entity Domain
-- `Entity E`: Entities extended with universal falsifier ⋆
-- `Entity.liftPred`: Lift predicates (⋆ → false)
-- `Entity.liftPred₂`: Lift binary predicates
-
-### Variables
-- `PVar`: Propositional variable indices
-- `IVar`: Individual variable indices
-
-### Assignments
-- `ICDRTAssignment W E`: Combined assignment for ICDRT
-- `updateIndiv`, `updateProp`: Assignment update operations
-
-### Discourse Referents
-- `PDref W E`: Propositional drefs s(wt) = assignment → set of worlds
-- `IDref W E`: Individual drefs s(we) = assignment → world → entity
-- `SimplePDref`, `SimpleIDref`: Simpler versions for standard DS
-
-### Local Contexts
-- `LocalContext`: Alias for propositional drefs used as local contexts
-- `dynamicPredication`: R_φ(v) evaluated relative to local context φ
-- `entityDomain`: Entities defined throughout a local context
-- `accessibleIn`: Entity accessibility in local context
-
-## Usage by Theories
-
-- **BUS**: Uses `InfoState` from Basic.lean, doesn't need Entity/PDref
-- **ICDRT**: Uses full `Entity`, `IDref`, `PDref`, `ICDRTAssignment`
-- **DPL**: Uses simpler `SimpleIDref` with Nat → E assignments
-- **DRT**: Uses box structure built on `InfoState`
--/
 
 end Theories.DynamicSemantics.Core

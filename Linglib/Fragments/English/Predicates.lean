@@ -1,26 +1,7 @@
-/-
-# English Predicate Lexicon
+/-!
+# English Predicates
 
 Re-exports verbal and adjectival predicate entries.
-
-## Modules
-
-- `Predicates.Verbal` — Verbal predicates (know, believe, hope, run, kick...)
-- `Predicates.Adjectival` — Adjectival predicates (tall, happy, full...)
-
-## Usage
-
-```lean
-import Linglib.Fragments.English.Predicates
-
--- Verbal predicates
-#check Predicates.Verbal.know
-#check Predicates.Verbal.hope
-
--- Adjectival predicates
-#check Predicates.Adjectival.tall
-#check Predicates.Adjectival.happy
-```
 -/
 
 import Linglib.Fragments.English.Predicates.Verbal
@@ -28,9 +9,6 @@ import Linglib.Fragments.English.Predicates.Adjectival
 
 namespace Fragments.English.Predicates
 
--- Re-export for convenience
--- Note: isAntiRogative, canEmbedQuestion, antiRogativeVerbs, questionEmbeddingVerbs
--- are derived properties now in Theories/Montague/Verb/Attitude/BuilderProperties.lean
 export Verbal (
   -- Types
   VerbClass PresupTriggerType ComplementType ThetaRole ControlType VerbEntry

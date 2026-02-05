@@ -68,11 +68,11 @@ structure RSAScenarioQ where
   /-- Enumeration of QUDs -/
   quds : List QUD
   /-- Prior over worlds -/
-  worldPrior : World → ℚ := fun _ => 1
+  worldPrior : World → ℚ := λ _ => 1
   /-- Prior over interpretations -/
-  interpPrior : Interp → ℚ := fun _ => 1
+  interpPrior : Interp → ℚ := λ _ => 1
   /-- Prior over QUDs -/
-  qudPrior : QUD → ℚ := fun _ => 1
+  qudPrior : QUD → ℚ := λ _ => 1
   /-- Rationality parameter (RATIONAL, not natural) -/
   α : ℚ := 1
   /-- α must be non-negative -/
@@ -98,7 +98,7 @@ Build a basic RSA scenario with rational α (no interpretation ambiguity, no QUD
 def RSAScenarioQ.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (prior : W → ℚ := fun _ => 1)
+    (prior : W → ℚ := λ _ => 1)
     (α : ℚ := 1)
     (α_nonneg : 0 ≤ α := by norm_num)
     (precision : ℕ := 10) : RSAScenarioQ where
@@ -113,8 +113,8 @@ def RSAScenarioQ.basic {U W : Type} [BEq U] [BEq W] [DecidableEq W]
   interps := [()]
   quds := [()]
   worldPrior := prior
-  interpPrior := fun _ => 1
-  qudPrior := fun _ => 1
+  interpPrior := λ _ => 1
+  qudPrior := λ _ => 1
   α := α
   α_nonneg := α_nonneg
   precision := precision
@@ -125,12 +125,12 @@ Build a basic RSA scenario with rational α from Boolean semantics.
 def RSAScenarioQ.basicBool {U W : Type} [BEq U] [BEq W] [DecidableEq W]
     (utterances : List U) (worlds : List W)
     (satisfies : W → U → Bool)
-    (prior : W → ℚ := fun _ => 1)
+    (prior : W → ℚ := λ _ => 1)
     (α : ℚ := 1)
     (α_nonneg : 0 ≤ α := by norm_num)
     (precision : ℕ := 10) : RSAScenarioQ :=
   RSAScenarioQ.basic utterances worlds
-    (fun u w => boolToRat (satisfies w u)) prior α α_nonneg precision
+    (λ u w => boolToRat (satisfies w u)) prior α α_nonneg precision
 
 /--
 Build a scenario with interpretation ambiguity and rational α.
@@ -138,8 +138,8 @@ Build a scenario with interpretation ambiguity and rational α.
 def RSAScenarioQ.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (interpPrior : I → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (interpPrior : I → ℚ := λ _ => 1)
     (α : ℚ := 1)
     (α_nonneg : 0 ≤ α := by norm_num)
     (precision : ℕ := 10) : RSAScenarioQ where
@@ -155,7 +155,7 @@ def RSAScenarioQ.ambiguous {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W
   quds := [()]
   worldPrior := worldPrior
   interpPrior := interpPrior
-  qudPrior := fun _ => 1
+  qudPrior := λ _ => 1
   α := α
   α_nonneg := α_nonneg
   precision := precision
@@ -166,13 +166,13 @@ Build a scenario with interpretation ambiguity and rational α from Boolean sema
 def RSAScenarioQ.ambiguousBool {U W I : Type} [BEq U] [BEq W] [BEq I] [DecidableEq W]
     (utterances : List U) (worlds : List W) (interps : List I)
     (satisfies : I → W → U → Bool)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (interpPrior : I → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (interpPrior : I → ℚ := λ _ => 1)
     (α : ℚ := 1)
     (α_nonneg : 0 ≤ α := by norm_num)
     (precision : ℕ := 10) : RSAScenarioQ :=
   RSAScenarioQ.ambiguous utterances worlds interps
-    (fun i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α α_nonneg precision
+    (λ i u w => boolToRat (satisfies i w u)) worldPrior interpPrior α α_nonneg precision
 
 
 namespace Q
@@ -183,7 +183,7 @@ L0Q: Literal listener distribution (same as L0, but for RSAScenarioQ).
 P(w | u, i) ∝ P(w) · φ(i, u, w)
 -/
 def L0Q (S : RSAScenarioQ) (u : S.Utterance) (i : S.Interp) : List (S.World × ℚ) :=
-  let scores := S.worlds.map fun w => (w, S.worldPrior w * S.φ i u w)
+  let scores := S.worlds.map λ w => (w, S.worldPrior w * S.φ i u w)
   RSA.Eval.normalize scores
 
 /--
@@ -192,8 +192,8 @@ L0Q projected by QUD.
 def L0Q_projected (S : RSAScenarioQ) (u : S.Utterance) (i : S.Interp) (q : S.QUD)
     : List (S.World × ℚ) :=
   let l0 := L0Q S u i
-  S.worlds.map fun w =>
-    let eqClassScore := l0.filter (fun (w', _) => S.qudProject q w w')
+  S.worlds.map λ w =>
+    let eqClassScore := l0.filter (λ (w', _) => S.qudProject q w w')
       |>.map (·.2) |> RSA.Eval.sumScores
     (w, eqClassScore)
 
@@ -206,7 +206,7 @@ Uses powApprox for rational exponentiation.
 -/
 def S1Q (S : RSAScenarioQ) (w : S.World) (i : S.Interp) (q : S.QUD)
     : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u =>
+  let scores := S.utterances.map λ u =>
     let l0Score := RSA.Eval.getScore (L0Q_projected S u i q) w
     (u, powApprox l0Score S.α S.precision)
   RSA.Eval.normalize scores
@@ -218,10 +218,10 @@ P(w, i, q | u) ∝ P(w) · P(i) · P(q) · S1Q(u | w, i, q)
 -/
 def L1Q_joint (S : RSAScenarioQ) (u : S.Utterance)
     : List ((S.World × S.Interp × S.QUD) × ℚ) :=
-  let triples := S.worlds.flatMap fun w =>
-    S.interps.flatMap fun i =>
-      S.quds.map fun q => (w, i, q)
-  let scores := triples.map fun (w, i, q) =>
+  let triples := S.worlds.flatMap λ w =>
+    S.interps.flatMap λ i =>
+      S.quds.map λ q => (w, i, q)
+  let scores := triples.map λ (w, i, q) =>
     let priorScore := S.worldPrior w * S.interpPrior i * S.qudPrior q
     let s1Score := RSA.Eval.getScore (S1Q S w i q) u
     ((w, i, q), priorScore * s1Score)
@@ -232,8 +232,8 @@ L1Q marginal over worlds.
 -/
 def L1Q_world (S : RSAScenarioQ) (u : S.Utterance) : List (S.World × ℚ) :=
   let joint := L1Q_joint S u
-  S.worlds.map fun w =>
-    let wScores := joint.filter (fun ((w', _, _), _) => w' == w) |>.map (·.2)
+  S.worlds.map λ w =>
+    let wScores := joint.filter (λ ((w', _, _), _) => w' == w) |>.map (·.2)
     (w, RSA.Eval.sumScores wScores)
 
 /--
@@ -241,8 +241,8 @@ L1Q marginal over interpretations.
 -/
 def L1Q_interp (S : RSAScenarioQ) (u : S.Utterance) : List (S.Interp × ℚ) :=
   let joint := L1Q_joint S u
-  S.interps.map fun i =>
-    let iScores := joint.filter (fun ((_, i', _), _) => i' == i) |>.map (·.2)
+  S.interps.map λ i =>
+    let iScores := joint.filter (λ ((_, i', _), _) => i' == i) |>.map (·.2)
     (i, RSA.Eval.sumScores iScores)
 
 /--
@@ -251,7 +251,7 @@ S2Q: Second-level pragmatic speaker with rational α.
 P(u | w) ∝ L1Q_world(w | u)^α
 -/
 def S2Q (S : RSAScenarioQ) (w : S.World) : List (S.Utterance × ℚ) :=
-  let scores := S.utterances.map fun u =>
+  let scores := S.utterances.map λ u =>
     let l1Score := RSA.Eval.getScore (L1Q_world S u) w
     (u, powApprox l1Score S.α S.precision)
   RSA.Eval.normalize scores

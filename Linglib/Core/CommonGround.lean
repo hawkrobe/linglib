@@ -18,10 +18,10 @@ namespace ContextSet
 variable {W : Type*}
 
 /-- The trivial context: all worlds possible. -/
-def trivial : ContextSet W := fun _ => True
+def trivial : ContextSet W := λ _ => True
 
 /-- The absurd context: no worlds possible. -/
-def absurd : ContextSet W := fun _ => False
+def absurd : ContextSet W := λ _ => False
 
 /-- A world is in the context set. -/
 def mem (c : ContextSet W) (w : W) : Prop := c w
@@ -43,14 +43,14 @@ def compatible (c : ContextSet W) (p : BProp W) : Prop :=
 theorem trivial_entails_iff (p : BProp W) :
     (trivial ⊧ p) ↔ ∀ w, p w = true := by
   unfold entails trivial
-  exact ⟨fun h w => h w True.intro, fun h w _ => h w⟩
+  exact ⟨λ h w => h w True.intro, λ h w _ => h w⟩
 
 /-- Absurd context entails everything. -/
-theorem absurd_entails (p : BProp W) : absurd ⊧ p := fun _ hw => hw.elim
+theorem absurd_entails (p : BProp W) : absurd ⊧ p := λ _ hw => hw.elim
 
 /-- Update a context with a proposition: keep only worlds where it holds. -/
 def update (c : ContextSet W) (p : BProp W) : ContextSet W :=
-  fun w => c w ∧ p w = true
+  λ w => c w ∧ p w = true
 
 notation:60 c " + " p => update c p
 
@@ -60,28 +60,28 @@ theorem update_restricts (c : ContextSet W) (p : BProp W) (w : W) :
 
 /-- Updated context entails the update proposition. -/
 theorem update_entails (c : ContextSet W) (p : BProp W) :
-    (c + p) ⊧ p := fun _ hw => hw.2
+    (c + p) ⊧ p := λ _ hw => hw.2
 
 /-- Updating with what's already entailed doesn't change the context. -/
 theorem update_entailed (c : ContextSet W) (p : BProp W) (h : c ⊧ p) :
     (c + p) = c := by
   funext w
   unfold update
-  exact propext ⟨And.left, fun hw => ⟨hw, h w hw⟩⟩
+  exact propext ⟨And.left, λ hw => ⟨hw, h w hw⟩⟩
 
 /-- Sequential updates are associative. -/
 theorem update_assoc (c : ContextSet W) (p q : BProp W) :
-    ((c + p) + q) = fun w => c w ∧ p w = true ∧ q w = true := by
+    ((c + p) + q) = λ w => c w ∧ p w = true ∧ q w = true := by
   funext w
   simp only [update, and_assoc]
 
 /-- Intersection of contexts: worlds in both. -/
 def inter (c₁ c₂ : ContextSet W) : ContextSet W :=
-  fun w => c₁ w ∧ c₂ w
+  λ w => c₁ w ∧ c₂ w
 
 /-- Union of contexts: worlds in either. -/
 def union (c₁ c₂ : ContextSet W) : ContextSet W :=
-  fun w => c₁ w ∨ c₂ w
+  λ w => c₁ w ∨ c₂ w
 
 instance : Inter (ContextSet W) where
   inter := inter
@@ -91,7 +91,7 @@ instance : Union (ContextSet W) where
 
 /-- Create a context from a single proposition: worlds where it holds. -/
 def fromProp (p : BProp W) : ContextSet W :=
-  fun w => p w = true
+  λ w => p w = true
 
 /-- Updating trivial context with P gives context from P. -/
 theorem trivial_update (p : BProp W) : (trivial + p) = fromProp p := by
@@ -101,12 +101,12 @@ theorem trivial_update (p : BProp W) : (trivial + p) = fromProp p := by
 /-- Entailment is monotonic: smaller context entails more. -/
 theorem entails_mono (c₁ c₂ : ContextSet W) (p : BProp W)
     (h_sub : ∀ w, c₁ w → c₂ w) (h_ent : c₂ ⊧ p) : c₁ ⊧ p :=
-  fun w hw => h_ent w (h_sub w hw)
+  λ w hw => h_ent w (h_sub w hw)
 
 /-- Update is monotonic in the context. -/
 theorem update_mono (c₁ c₂ : ContextSet W) (p : BProp W)
     (h : ∀ w, c₁ w → c₂ w) (w : W) :
-    (c₁ + p) w → (c₂ + p) w := fun ⟨hw, hp⟩ => ⟨h w hw, hp⟩
+    (c₁ + p) w → (c₂ + p) w := λ ⟨hw, hp⟩ => ⟨h w hw, hp⟩
 
 end ContextSet
 
@@ -121,7 +121,7 @@ variable {W : Type*}
 
 /-- The context set determined by a common ground. -/
 def contextSet (cg : CG W) : ContextSet W :=
-  fun w => cg.propositions.all (fun p => p w)
+  λ w => cg.propositions.all (λ p => p w)
 
 /-- Add a proposition to the common ground. -/
 def add (cg : CG W) (p : BProp W) : CG W :=

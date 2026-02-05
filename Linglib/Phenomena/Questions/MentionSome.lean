@@ -401,10 +401,10 @@ def totalExamples : Nat :=
 
 /-- Number of verb licensing examples that BLOCK mention-some. -/
 def verbsThatBlock : Nat :=
-  verbLicensingExamples.filter (fun d => !d.mentionSomePossible) |>.length
+  verbLicensingExamples.filter (λ d => !d.mentionSomePossible) |>.length
 
 /-- Number of verb licensing examples that ALLOW mention-some. -/
 def verbsThatAllow : Nat :=
-  verbLicensingExamples.filter (fun d => d.mentionSomePossible) |>.length
+  verbLicensingExamples.filter (λ d => d.mentionSomePossible) |>.length
 
 end Phenomena.Questions.MentionSome

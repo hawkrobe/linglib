@@ -3,20 +3,20 @@
 
 Hofmann (2025) §2.3-2.4: The core innovation of flat update semantics.
 
-## Key Insight: Flat Update
+## Flat Update
 
 In standard DRT, discourse referents introduced under negation are
 inaccessible for later anaphora:
   "There's no bathroom. #It is upstairs."  -- standard DRT: infelicitous
 
 Hofmann's flat update changes this:
-1. ALL drefs are introduced GLOBALLY (at the top level)
+1. All drefs are introduced globally (at the top level)
 2. Propositional drefs track WHERE drefs were introduced (local context)
 3. Accessibility depends on local context, not syntactic scope
 
 ## The Relative Variable Update: i[φ : v]j
 
-The key mechanism is **relative variable update**:
+The central mechanism is relative variable update:
   i[φ : v]j iff j differs from i at most in that j(v) is some entity
             that exists in the local context φ^j
 
@@ -104,7 +104,7 @@ def relativeVarUpdate' {W E : Type*}
 /--
 Flat existential update: ∃v.φ
 
-The key to flat update: the existential introduces v GLOBALLY,
+The existential introduces v globally,
 but the propositional dref tracks the local context.
 
 In Hofmann's system:
@@ -264,13 +264,13 @@ theorem neg_neg (φ : BilateralICDRT W E) : φ.neg.neg = φ := rfl
 
 /-- Atomic proposition -/
 def atom (prop : W → Prop) : BilateralICDRT W E where
-  positive := fun c => c.update prop
-  negative := fun c => c.update (fun w => ¬prop w)
+  positive := λ c => c.update prop
+  negative := λ c => c.update (λ w => ¬prop w)
 
 /-- Conjunction: sequence positive updates -/
 def conj (φ ψ : BilateralICDRT W E) : BilateralICDRT W E where
-  positive := fun c => ψ.positive (φ.positive c)
-  negative := fun c => φ.negative c ∪ (φ.positive c ∩ ψ.negative (φ.positive c))
+  positive := λ c => ψ.positive (φ.positive c)
+  negative := λ c => φ.negative c ∪ (φ.positive c ∩ ψ.negative (φ.positive c))
 
 /-- Notation -/
 prefix:max "∼" => neg
@@ -282,7 +282,7 @@ end BilateralICDRT
 /--
 Flat existential with bilateral structure.
 
-Key insight: the existential introduces drefs in BOTH positive and negative
+The existential introduces drefs in both positive and negative
 updates. This is what makes double negation accessible:
 
 ⟦¬¬∃x.P(x)⟧^+ = ⟦∃x.P(x)⟧^+ (by DNE)
@@ -296,49 +296,14 @@ def BilateralICDRT.exists_ {W E : Type*}
     (domain : Set E)
     (body : BilateralICDRT W E)
     : BilateralICDRT W E where
-  positive := fun c =>
+  positive := λ c =>
     let extended := extendContext c v domain
     body.positive extended
-  negative := fun c =>
+  negative := λ c =>
     -- For negative: no entity makes the body true
     { gw ∈ c | ∀ e ∈ domain,
         let g' := gw.1.updateIndiv v (.some e)
         (g', gw.2) ∉ body.positive (extendContext c v domain) }
 
--- SUMMARY
-
-/-!
-## What This Module Provides
-
-### Relative Variable Update
-- `relativeVarUpdate`: The i[φ:v]j relation
-- `entityDomain`: Entities defined throughout a local context
-
-### Flat Update Operations
-- `flatExists`: Flat existential update
-- `extendContext`: Add variable binding to context
-- `extendContextWithLocal`: Bind variable and track local context
-
-### Propositional Dref Management
-- `initPropDref`: Initialize propositional dref
-- `narrowPropDref`: Narrow propositional dref after update
-- `updateWithProposition`: Update returning local context
-- `updateInLocalContext`: Update relative to propositional dref
-
-### Bilateral Structure
-- `BilateralICDRT`: Positive/negative update pairs for ICDRT
-- `neg`, `conj`, `exists_`: Bilateral connectives
-- `neg_neg`: DNE theorem (definitional)
-
-## The Key Innovation
-
-Standard DRT: drefs introduced under negation are trapped there.
-Flat update: drefs introduced globally, local context tracked separately.
-
-This is what enables:
-- Double negation accessibility
-- Bathroom disjunctions
-- Modal subordination
--/
 
 end Theories.DynamicSemantics.IntensionalCDRT

@@ -9,7 +9,7 @@ van Tiel, B., van Miltenburg, E., Zevakhina, N., & Geurts, B. (2016).
 Scalar Diversity. Journal of Semantics, 33(1), 137-175.
 https://doi.org/10.1093/jos/ffu017
 
-## Key Findings
+## Findings
 
 1. **Scalar Diversity**: SI rates vary from 4% to 100% across 43 scales
 2. **Distinctness matters**: Semantic distance and boundedness predict SI rates
@@ -728,7 +728,7 @@ def mainConclusion : String :=
 - Predictor values: cloze scores, frequency, LSA, semantic distance, boundedness
 - Regression results with effect sizes
 
-### Key Findings
+### Findings
 1. SI rates vary from 4% to 100% across scales
 2. Distinctness (distance + boundedness) predicts SI rates
 3. Availability measures (cloze, frequency, LSA, class) do not predict

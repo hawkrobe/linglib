@@ -58,7 +58,7 @@ open Montague.Frames
 Find the element with maximum value according to a scoring function.
 -/
 def listArgmax {α : Type} (xs : List α) (f : α → ℚ) : Option α :=
-  xs.foldl (fun acc x =>
+  xs.foldl (λ acc x =>
     match acc with
     | none => some x
     | some best => if f x > f best then some x else some best
@@ -113,8 +113,8 @@ def AmbiguousWord.getSense (w : AmbiguousWord) (id : String) : Option Sense :=
 Base prior over senses (from frequencies, normalized).
 -/
 def AmbiguousWord.basePrior (w : AmbiguousWord) : String → ℚ :=
-  let total := w.senses.foldl (fun acc s => acc + s.frequency) 0
-  fun id =>
+  let total := w.senses.foldl (λ acc s => acc + s.frequency) 0
+  λ id =>
     match w.senses.find? (·.id == id) with
     | some s => if total = 0 then 0 else s.frequency / total
     | none => 0
@@ -277,7 +277,7 @@ def disambiguateWithPrior (w : AmbiguousWord) (ctx : DisambiguationContext) : St
 
 def sleepingBatContext : DisambiguationContext :=
   { selectional := sleepSubjectPref
-  , scenario := fun _ => 1  -- uniform (no scenario constraint)
+  , scenario := λ _ => 1  -- uniform (no scenario constraint)
   }
 
 /-!
@@ -290,7 +290,7 @@ def sleepingBatContext : DisambiguationContext :=
 
 def playerHoldingBatContext : DisambiguationContext :=
   { selectional := holdPatientPref
-  , scenario := fun
+  , scenario := λ
       | .artifact => 90/100  -- sports equipment
       | .animal => 10/100
       | _ => 10/100
@@ -307,7 +307,7 @@ def playerHoldingBatContext : DisambiguationContext :=
 
 def astronomerMarriedContext : DisambiguationContext :=
   { selectional := marryPatientPref  -- prefers human
-  , scenario := fun  -- astronomy scenario
+  , scenario := λ  -- astronomy scenario
       | .abstract_ => 90/100  -- celestial bodies
       | .human => 10/100
       | _ => 10/100
@@ -323,7 +323,7 @@ def astronomerMarriedContext : DisambiguationContext :=
 
 def drewBladeContext : DisambiguationContext :=
   { selectional := drawWeaponPatientPref
-  , scenario := fun
+  , scenario := λ
       | .artifact => 95/100  -- weapons are artifacts
       | .plant => 2/100
       | _ => 3/100
@@ -371,8 +371,8 @@ def hasConflict (w : AmbiguousWord) (ctx : DisambiguationContext) : Bool :=
   let senseToClass id := match w.getSense id with
     | some s => s.semClass
     | none => .abstract_
-  let selBest := listArgmax w.senseIds (fun id => ctx.selectional (senseToClass id))
-  let scenBest := listArgmax w.senseIds (fun id => ctx.scenario (senseToClass id))
+  let selBest := listArgmax w.senseIds (λ id => ctx.selectional (senseToClass id))
+  let scenBest := listArgmax w.senseIds (λ id => ctx.scenario (senseToClass id))
   match selBest, scenBest with
   | some a, some b => a != b
   | _, _ => false
@@ -435,7 +435,7 @@ Generate all meaning hypotheses for a word in context.
 def meaningHypotheses (w : AmbiguousWord) (ctx : DisambiguationContext)
     : List MeaningHypothesis :=
   let dist := disambiguate w ctx
-  w.senseIds.map fun id =>
+  w.senseIds.map λ id =>
     { word := w.form
     , sense := id
     , probability := dist id }
@@ -482,7 +482,7 @@ Get all available interpretations (above threshold).
 def availableSenses (w : AmbiguousWord) (ctx : DisambiguationContext)
     (threshold : ℚ := 1/20) : List String :=
   let dist := disambiguate w ctx
-  w.senseIds.filter (fun id => dist id > threshold)
+  w.senseIds.filter (λ id => dist id > threshold)
 
 /--
 Check if multiple interpretations are available.
@@ -557,7 +557,7 @@ This fragment provides:
 4. **Conflict detection**: identifying pun/ambiguity conditions
 5. **Multiple interpretation prediction**: all available readings
 
-### Key Insight
+### Insight
 
 The shift from context-independent to token meaning happens via:
 1. Compositional constraints from syntactic structure (selectional)

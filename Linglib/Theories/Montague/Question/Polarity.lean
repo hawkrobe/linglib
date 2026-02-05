@@ -149,9 +149,9 @@ def conditionalGoalProb {W : Type*}
     (goal : W -> Bool) (prior : W -> ℚ) (worlds : List W)
     (condition : W -> Bool) : ℚ :=
   let condWorlds := worlds.filter condition
-  let totalProb := condWorlds.foldl (fun acc w => acc + prior w) 0
+  let totalProb := condWorlds.foldl (λ acc w => acc + prior w) 0
   if totalProb == 0 then 0
-  else condWorlds.foldl (fun acc w =>
+  else condWorlds.foldl (λ acc w =>
     acc + if goal w then prior w / totalProb else 0
   ) 0
 
@@ -186,7 +186,7 @@ Higher surprisal = lower probability = more informative if true.
 Note: We approximate log with a rational function for computability. -/
 def surprisal {W : Type*} (prior : W -> ℚ) (worlds : List W)
     (p : W -> Bool) : ℚ :=
-  let prob := worlds.foldl (fun acc w => acc + if p w then prior w else 0) 0
+  let prob := worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0
   -- Approximation: surprisal ∝ 1/prob (for small probabilities)
   if prob == 0 then 1000  -- Very surprising
   else if prob >= 1 then 0  -- Not surprising
@@ -205,8 +205,8 @@ For most natural language statements q: P(q) < P(¬q)
 This explains why PPQs are the default form of polar questions. -/
 def positiveIsLessLikely {W : Type*} (prior : W -> ℚ) (worlds : List W)
     (p : W -> Bool) : Bool :=
-  let pProb := worlds.foldl (fun acc w => acc + if p w then prior w else 0) 0
-  let notPProb := worlds.foldl (fun acc w => acc + if !p w then prior w else 0) 0
+  let pProb := worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0
+  let notPProb := worlds.foldl (λ acc w => acc + if !p w then prior w else 0) 0
   pProb < notPProb
 
 -- Question Uses (Van Rooy & Šafářová Classification)

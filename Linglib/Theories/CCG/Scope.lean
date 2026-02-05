@@ -3,22 +3,22 @@
 
 How CCG derivational structure determines available scope readings.
 
-## Key Insight (Steedman 2000 Ch. 6)
+## Insight (Steedman 2000 Ch. 6)
 
 In CCG, scope is determined by derivational structure, not by a separate
 LF movement operation. Different derivations of the same string can yield
 different scope readings:
 
-1. **Direct application**: Object combines with verb first → surface scope
-2. **Type-raising + composition**: Subject "wraps around" → can take narrow scope
+1. Direct application: Object combines with verb first, yielding surface scope.
+2. Type-raising + composition: Subject "wraps around," enabling narrow scope.
 
 ## Verb Raising vs Verb Projection Raising
 
 In Dutch/German embedded clauses:
-- **Verb raising order**: Object combines with embedded verb first → ambiguous
-- **Verb projection raising order**: Matrix verb combines first → surface only
+- Verb raising order: Object combines with embedded verb first, yielding ambiguity.
+- Verb projection raising order: Matrix verb combines first, yielding surface scope only.
 
-This connection between word order and scope is a key prediction of CCG.
+CCG predicts this connection between word order and scope.
 
 ## References
 
@@ -103,7 +103,7 @@ def analyzeDerivation : DerivStep → DerivationType
 /--
 Determine scope availability from derivation type.
 
-Key principle: Composition and type-raising enable scope flexibility.
+Composition and type-raising enable scope flexibility.
 Without them, only surface scope is available.
 -/
 def derivationTypeToAvailability : DerivationType → BinaryScopeAvailability
@@ -153,12 +153,12 @@ Example: "Every horse didn't jump"
 
 Two possible derivations:
 
-1. **Surface scope derivation** (∀ > ¬):
+1. Surface scope derivation (forall > not):
    - "every horse" combines directly with "didn't jump"
    - Standard backward application
    - Only surface scope available
 
-2. **Inverse scope derivation** (¬ > ∀):
+2. Inverse scope derivation (not > forall):
    - "every horse" type-raises
    - Composes with negated verb
    - Inverse scope becomes available
@@ -181,17 +181,17 @@ def everyHorse_inverse : DerivStep :=
 /-
 From Steedman (2000) §6.8 and Phenomena/ScopeWordOrder/Data.lean:
 
-**Verb Raising Order** (object before all verbs):
+Verb raising order (object before all verbs):
 - "(dat) Jan veel boeken probeert te lezen"
 - Object combines with embedded verb first (via composition)
-- Multiple derivations possible → AMBIGUOUS
+- Multiple derivations possible, yielding ambiguity
 
-**Verb Projection Raising Order** (object after matrix verb):
+Verb projection raising order (object after matrix verb):
 - "(dat) Jan probeert veel boeken te lezen"
 - Matrix verb combines first
-- Only one derivation → SURFACE SCOPE ONLY
+- Only one derivation, yielding surface scope only
 
-The CCG analysis predicts this directly from derivational structure.
+The CCG analysis predicts this from derivational structure.
 -/
 
 /-- Verb raising derivation type -/
@@ -204,38 +204,5 @@ inductive VerbRaisingType where
 def verbRaisingToAvailability : VerbRaisingType → BinaryScopeAvailability
   | .verbRaising => .ambiguous
   | .verbProjectionRaising => .surfaceOnly
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Types
-- `ScopeTaker`: A scope-taking element with position info
-- `DerivationType`: Classification of derivation structure
-- `ScopedDerivation`: Derivation annotated with scope-takers
-
-### Interface Implementation
-- `CCGScopeTheory`: Marker type for instance
-- `HasAvailableScopes CCGScopeTheory ScopedDerivation`: CCG determines scope
-
-### Key Functions
-- `analyzeDerivation`: Classify derivation by structure
-- `derivationTypeToAvailability`: Structure → scope possibilities
-
-### Key Insight
-
-CCG directly encodes the Steedman (2000) insight:
-- **Derivational structure = scope possibilities**
-- No separate QR or LF movement needed
-- Word order effects fall out from which derivations are available
-
-### Connection to Phenomena/ScopeWordOrder
-
-The Dutch/German examples in `Phenomena/ScopeWordOrder/Data.lean` are
-explained by this module:
-- Verb raising order → composition derivation → ambiguous
-- Verb projection raising → direct application → surface only
--/
 
 end CCG.Scope

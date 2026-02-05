@@ -6,12 +6,12 @@ under embedding operators.
 
 ## Phenomena Covered
 
-1. **Under `every`**: Strong (maximal) reading
-2. **Under `no`**: Strong reading, limited non-maximality
-3. **Under `exactly one`**: Strong reading
-4. **Under `not every`**: Permits non-maximality (asymmetric with `no`)
+1. Under `every`: strong (maximal) reading.
+2. Under `no`: strong reading, limited non-maximality.
+3. Under `exactly one`: strong reading.
+4. Under `not every`: permits non-maximality (asymmetric with `no`).
 
-## Key Puzzle
+## Puzzle
 
 Different embedding operators show different patterns for:
 - Whether homogeneity gaps project
@@ -19,7 +19,7 @@ Different embedding operators show different patterns for:
 
 The `no` vs `not every` asymmetry is particularly important.
 
-## Key References
+## References
 
 - Križ & Chemla (2015): Experimental investigation
 - Bar-Lev (2021a): Exhaustification approach predictions
@@ -96,8 +96,8 @@ def everyProjection : ProjectionDatum :=
   { operator := .every
   , sentence := "Every boy found his presents."
   , gapScenario := "Every boy found some presents, but not every boy found all"
-  , strongReadingAvailable := true   -- "every boy found ALL his presents"
-  , weakReadingAvailable := true     -- "every boy found SOME presents"
+  , strongReadingAvailable := true   -- "every boy found all his presents"
+  , weakReadingAvailable := true     -- "every boy found some presents"
   , gapDetectable := true            -- many "neither" responses
   , nonMaximalAvailable := true      -- some "completely true" in gap scenario
   }
@@ -106,9 +106,9 @@ def noProjection : ProjectionDatum :=
   { operator := .no
   , sentence := "No boy found his presents."
   , gapScenario := "Some boys found some presents, no boy found all"
-  , strongReadingAvailable := true   -- "no boy found ANY presents"
-  , weakReadingAvailable := true     -- "no boy found ALL presents"
-  , gapDetectable := false           -- few "neither" responses (KEY FINDING)
+  , strongReadingAvailable := true   -- "no boy found any presents"
+  , weakReadingAvailable := true     -- "no boy found all presents"
+  , gapDetectable := false           -- few "neither" responses
   , nonMaximalAvailable := false     -- almost no "completely true" in gap
   }
 
@@ -126,10 +126,10 @@ def exactlyTwoProjection : ProjectionDatum :=
 /--
 Augurzky et al. (2023) manipulated QUD between participants.
 
-STRICT context: QUD targets strongest reading
-LAX context: QUD targets weakest reading
+Strict context: QUD targets strongest reading.
+Lax context: QUD targets weakest reading.
 
-Key finding: `no` is less sensitive to QUD manipulation than `every`.
+`no` is less sensitive to QUD manipulation than `every`.
 
 Source: Augurzky et al. (2023), Experiments 1-2
 -/
@@ -155,8 +155,8 @@ structure QUDManipulationDatum where
 def everyQUDEffect : QUDManipulationDatum :=
   { operator := .every
   , sentence := "Every boy opened his presents."
-  , strictReading := "Every boy opened ALL his presents"
-  , laxReading := "Every boy opened SOME of his presents"
+  , strictReading := "Every boy opened all his presents"
+  , laxReading := "Every boy opened some of his presents"
   , gapScenario := "Every boy opened some, not all opened all"
   , strictContextAcceptance := "low"   -- strict QUD → reject in gap
   , laxContextAcceptance := "high"     -- lax QUD → accept in gap
@@ -166,30 +166,29 @@ def everyQUDEffect : QUDManipulationDatum :=
 def noQUDEffect : QUDManipulationDatum :=
   { operator := .no
   , sentence := "No boy opened his presents."
-  , strictReading := "No boy opened ANY presents"
-  , laxReading := "No boy opened ALL his presents"
+  , strictReading := "No boy opened any presents"
+  , laxReading := "No boy opened all his presents"
   , gapScenario := "Some boys opened some, none opened all"
   , strictContextAcceptance := "low"
-  , laxContextAcceptance := "low"      -- still low! (KEY FINDING)
+  , laxContextAcceptance := "low"      -- still low
   , contextEffect := false             -- small effect of QUD
   }
 
 def notEveryQUDEffect : QUDManipulationDatum :=
   { operator := .notEvery
   , sentence := "Not every boy opened his presents."
-  , strictReading := "At least one boy opened NONE"
-  , laxReading := "At least one boy didn't open ALL"
+  , strictReading := "At least one boy opened none"
+  , laxReading := "At least one boy didn't open all"
   , gapScenario := "Some boys opened some but not all"
   , strictContextAcceptance := "low"
-  , laxContextAcceptance := "high"     -- high! (unlike `no`)
+  , laxContextAcceptance := "high"     -- unlike `no`
   , contextEffect := true              -- big effect of QUD
   }
 
 
 /--
-Key asymmetry: `no` resists non-maximality but `not every` permits it.
-
-This is surprising because both are downward-entailing!
+`no` resists non-maximality but `not every` permits it,
+which is surprising because both are downward-entailing.
 
 Source: Augurzky et al. (2023), Bar-Lev (2021a)
 -/
@@ -239,24 +238,24 @@ structure EmbeddedTruthConditions where
 def everyTruthConditions : EmbeddedTruthConditions :=
   { operator := .every
   , sentence := "Every student read the books."
-  , truthConditions := "Every student read ALL the books"
-  , falsityConditions := "Some student read NONE of the books"
-  , gapConditions := "Every student read SOME, at least one didn't read ALL"
+  , truthConditions := "Every student read all the books"
+  , falsityConditions := "Some student read none of the books"
+  , gapConditions := "Every student read some, at least one didn't read all"
   }
 
 def noTruthConditions : EmbeddedTruthConditions :=
   { operator := .no
   , sentence := "No student read the books."
-  , truthConditions := "No student read ANY of the books"
-  , falsityConditions := "Some student read ALL the books"
-  , gapConditions := "Some students read SOME, none read ALL"
+  , truthConditions := "No student read any of the books"
+  , falsityConditions := "Some student read all the books"
+  , gapConditions := "Some students read some, none read all"
   }
 
 def exactlyOneTruthConditions : EmbeddedTruthConditions :=
   { operator := .exactlyOne
   , sentence := "Exactly one student read the books."
-  , truthConditions := "One student read ALL, no more than one read ANY"
-  , falsityConditions := "Either no student read ALL, or more than one read SOME"
+  , truthConditions := "One student read all, no more than one read any"
+  , falsityConditions := "Either no student read all, or more than one read some"
   , gapConditions := "Various mixed scenarios"
   }
 
@@ -282,8 +281,8 @@ structure RestrictorScopeDatum where
 def pluralInRestrictor : RestrictorScopeDatum :=
   { sentence := "Every immigrant who lives in the five Nordic countries is worried."
   , pluralPosition := "restrictor"
-  , universalReading := true  -- "lives in ALL five"
-  , existentialReading := true -- "lives in ONE of the five"
+  , universalReading := true  -- "lives in all five"
+  , existentialReading := true -- "lives in one of the five"
   , notes := "Existential reading: quantify over immigrants living in at least one Nordic country"
   }
 
@@ -330,29 +329,5 @@ def augurzkyData : List QUDManipulationDatum :=
 
 def truthConditionsData : List EmbeddedTruthConditions :=
   [everyTruthConditions, noTruthConditions, exactlyOneTruthConditions]
-
--- Summary
-
-/-
-## What This Module Provides
-
-### Data Types
-- `ProjectionDatum`: Basic projection pattern for an operator
-- `QUDManipulationDatum`: QUD effect on acceptability
-- `NoNotEveryAsymmetryDatum`: The key asymmetry
-- `EmbeddedTruthConditions`: Truth/falsity/gap conditions
-- `RestrictorScopeDatum`: Restrictor vs scope position effects
-
-### Key Findings
-1. `every`: Gaps project, non-maximality available
-2. `no`: Gaps don't project (!), non-maximality blocked
-3. `not every`: Gaps project, non-maximality available (unlike `no`!)
-4. `exactly one`: Strong reading; gaps project
-
-### Key References
-- Križ & Chemla (2015), Križ (2015)
-- Bar-Lev (2021a), Augurzky et al. (2023)
-- Mayr & Sudo (2022)
--/
 
 end Phenomena.Imprecision.Projection

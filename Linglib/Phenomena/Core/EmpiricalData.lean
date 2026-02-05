@@ -1,50 +1,41 @@
 /-
 # Empirical Data Types and Linking Functions
 
-Different empirical paradigms provide different kinds of evidence:
-- Categorical judgments: "Is this grammatical?" (Yes/No)
-- Graded acceptability: "How acceptable is this?" (1-7 scale)
-- Processing measures: Reading times, eye-tracking, surprisal
-- Choice data: Forced choice, production probabilities
+Types for empirical data from different paradigms (categorical judgments, graded acceptability, processing measures, choice data).
 
-A theory makes predictions by providing "linking functions"
-that map theoretical constructs to predicted empirical measures.
+## Main definitions
 
-## The Architecture
+- `ScaleType`: Binary, proportion, ordinal, continuous
+- `TaskType`: Grammaticality judgment, acceptability rating, TVJ, etc.
+- `MeasureType`: Combined specification of scale and task
 
-Theory → Linking Function → Predicted Data ↔ Observed Data
+## References
 
-For example:
-- CCG derivation depth → reading time prediction
-- Feature unification cost → acceptability prediction
-- Derivation probability → choice probability
-- NeoGricean parameters → implicature rate prediction
+None (framework definitions).
 -/
 
 import Linglib.Core.Basic
 
 namespace Phenomena
 
--- Empirical Measure Types
-
-/-- Scale type: what kind of values are recorded -/
+/-- Scale type for empirical measures. -/
 inductive ScaleType where
-  | binary          -- yes/no, grammatical/ungrammatical
-  | proportion      -- probability/percentage (0-1 or 0-100)
-  | ordinal         -- ranked scale (e.g., 1-7 Likert)
-  | continuous      -- continuous measure (reading time in ms, surprisal in bits)
+  | binary
+  | proportion
+  | ordinal
+  | continuous
   deriving Repr, DecidableEq
 
-/-- Task type: how the measure was elicited -/
+/-- Task type for data elicitation. -/
 inductive TaskType where
-  | grammaticalityJudgment    -- "Is this grammatical?"
-  | acceptabilityRating       -- "Rate acceptability 1-7"
-  | truthValueJudgment        -- "Is this true/false of the situation?"
-  | inferenceEndorsement      -- "Does this imply X?"
-  | forcedChoice              -- "Which object/referent?"
-  | production                -- "What would you say?"
-  | selfPacedReading          -- Reading time at each word
-  | eyeTracking               -- Fixation times, regressions
+  | grammaticalityJudgment
+  | acceptabilityRating
+  | truthValueJudgment
+  | inferenceEndorsement
+  | forcedChoice
+  | production
+  | selfPacedReading
+  | eyeTracking
   deriving Repr, DecidableEq
 
 /-- Combined measure specification -/

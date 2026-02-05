@@ -95,7 +95,7 @@ private theorem not_eq_true_iff (b : Bool) : ((!b) = true) ↔ (b = false) := by
 Standard epistemic duality: ¬K¬φ ↔ Pφ
 -/
 theorem duality {W : Type*} (e : EpistemicState W) (φ : Prop' W) :
-    (knows e (fun w => !φ w) = false) ↔ (possible e φ = true) := by
+    (knows e (λ w => !φ w) = false) ↔ (possible e φ = true) := by
   simp only [knows, possible, Bool.eq_false_iff, ne_eq, List.all_eq_true, List.any_eq_true]
   constructor
   · intro h
@@ -130,13 +130,13 @@ def hasPrimaryImplicature {W : Type*} (S : ScalarScenario W) (e : EpistemicState
 Secondary implicature: speaker knows the alternative is false.
 -/
 def hasSecondaryImplicature {W : Type*} (e : EpistemicState W) (ψ : Prop' W) : Prop :=
-  knows e (fun w => !ψ w) = true
+  knows e (λ w => !ψ w) = true
 
 /--
 Key insight: if ψ is possible, then K¬ψ is blocked.
 -/
 theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : Prop' W) :
-    possible e ψ = true → knows e (fun w => !ψ w) = false := by
+    possible e ψ = true → knows e (λ w => !ψ w) = false := by
   intro hpos
   simp only [possible, List.any_eq_true] at hpos
   simp only [knows, Bool.eq_false_iff, ne_eq, List.all_eq_true]
@@ -192,7 +192,7 @@ of the probability distribution.
 -/
 theorem primary_possibility_correspondence {W : Type*}
     (e : EpistemicState W) (ψ : Prop' W) :
-    (knows e ψ = false) → (possible e (fun w => !ψ w) = true) := by
+    (knows e ψ = false) → (possible e (λ w => !ψ w) = true) := by
   intro h
   simp only [knows, Bool.eq_false_iff, ne_eq, List.all_eq_true] at h
   simp only [possible, List.any_eq_true]
@@ -249,10 +249,10 @@ L1 world distribution for disjunction with given α (using RSA.Eval).
 def disjL1 (α : ℕ := 1) (u : DisjUtterance) : List (DisjWorld × ℚ) :=
   let utts := [AorB, A, B, AandB]
   let worlds := [onlyA, onlyB, both]
-  let φ := fun (u : DisjUtterance) (w : DisjWorld) => boolToRat (disjMeaning u w)
+  let φ := λ (u : DisjUtterance) (w : DisjWorld) => boolToRat (disjMeaning u w)
   RSA.Eval.L1_world utts worlds [()] [()] [()] [()]
-    (fun _ _ => φ) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w w' => w == w') (fun _ => 0) α u
+    (λ _ _ => φ) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w w' => w == w') (λ _ => 0) α u
 
 -- Inspect L1 probabilities:
 -- #eval disjL1 1 AorB

@@ -14,8 +14,8 @@ List-based computation helpers for RSA implementations.
 Example:
 ```lean
 def scenario : RSAScenario MyUtterance MyWorld := RSAScenario.basicBool
-  (satisfies := fun w u => mySemantics u w)
-  (prior := fun _ => 1)
+  (satisfies := λ w u => mySemantics u w)
+  (prior := λ _ => 1)
   ...
 
 #eval scenario.evalL1 .someUtterance  -- Clean!
@@ -95,15 +95,15 @@ def getScore {α : Type} [BEq α] (dist : List (α × ℚ)) (x : α) : ℚ :=
 /-- Normalize a distribution (divide each score by total) -/
 def normalize {α : Type} (dist : List (α × ℚ)) : List (α × ℚ) :=
   let total := sumScores (dist.map (·.2))
-  dist.map fun (x, s) =>
+  dist.map λ (x, s) =>
     (x, if total ≠ 0 then s / total else 0)
 
 /-- Marginalize a joint distribution by projecting onto a component -/
 def marginalize {α β : Type} [BEq β] (dist : List (α × ℚ)) (proj : α → β) : List (β × ℚ) :=
-  let projected := dist.map fun (x, s) => (proj x, s)
+  let projected := dist.map λ (x, s) => (proj x, s)
   let uniqueKeys := projected.map (·.1) |>.eraseDups
-  uniqueKeys.map fun k =>
-    let total := projected.filter (fun (k', _) => k' == k) |>.map (·.2) |> sumScores
+  uniqueKeys.map λ k =>
+    let total := projected.filter (λ (k', _) => k' == k) |>.map (·.2) |> sumScores
     (k, total)
 
 -- List-based RSA Computations
@@ -120,7 +120,7 @@ def L0 {U W I L A Q : Type} [BEq W]
     (speakerCredence : A → W → ℚ)
     (u : U) (i : I) (l : L) (a : A) (_q : Q)
     : List (W × ℚ) :=
-  let scores := worlds.map fun w =>
+  let scores := worlds.map λ w =>
     let semantic := φ i l u w
     let credence := speakerCredence a w
     (w, worldPrior w * semantic * credence)
@@ -138,8 +138,8 @@ def L0_projected {U W I L A Q : Type} [BEq W]
     (u : U) (i : I) (l : L) (a : A) (q : Q)
     : List (W × ℚ) :=
   let l0 := L0 utterances worlds φ worldPrior speakerCredence u i l a q
-  worlds.map fun w =>
-    let eqClassScore := l0.filter (fun (w', _) => goalProject q w w') |>.map (·.2) |> sumScores
+  worlds.map λ w =>
+    let eqClassScore := l0.filter (λ (w', _) => goalProject q w w') |>.map (·.2) |> sumScores
     (w, eqClassScore)
 
 /--
@@ -155,7 +155,7 @@ def S0 {U W I L A Q : Type} [BEq U]
     (utterancePrior : U → ℚ)
     (w : W) (i : I) (l : L) (_a : A) (_q : Q)
     : List (U × ℚ) :=
-  let scores := utterances.map fun u =>
+  let scores := utterances.map λ u =>
     (u, utterancePrior u * φ i l u w)
   normalize scores
 
@@ -171,7 +171,7 @@ def L1_fromS0 {U W I L A Q : Type} [BEq U] [BEq W]
     (utterancePrior : U → ℚ)
     (u : U) (i : I) (l : L) (a : A) (q : Q)
     : List (W × ℚ) :=
-  let scores := worlds.map fun w =>
+  let scores := worlds.map λ w =>
     let s0Dist := S0 utterances worlds φ utterancePrior w i l a q
     let s0Score := getScore s0Dist u
     (w, worldPrior w * s0Score)
@@ -190,7 +190,7 @@ def S1 {U W I L A Q : Type} [BEq U] [BEq W]
     (α : ℕ)
     (w : W) (i : I) (l : L) (a : A) (q : Q)
     : List (U × ℚ) :=
-  let scores := utterances.map fun u =>
+  let scores := utterances.map λ u =>
     let truthful := φ i l u w
     let l0Score := getScore (L0_projected utterances worlds φ worldPrior speakerCredence goalProject u i l a q) w
     let costDiscount := 1 / ((1 + cost u) ^ α)
@@ -216,12 +216,12 @@ def L1_world {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq Q
     (α : ℕ)
     (u : U)
     : List (W × ℚ) :=
-  let tuples := worlds.flatMap fun w =>
-    interps.flatMap fun i =>
-      lexica.flatMap fun l =>
-        beliefStates.flatMap fun a =>
-          goals.map fun q => (w, i, l, a, q)
-  let scores := tuples.map fun (w, i, l, a, q) =>
+  let tuples := worlds.flatMap λ w =>
+    interps.flatMap λ i =>
+      lexica.flatMap λ l =>
+        beliefStates.flatMap λ a =>
+          goals.map λ q => (w, i, l, a, q)
+  let scores := tuples.map λ (w, i, l, a, q) =>
     let priorScore := worldPrior w * interpPrior i * lexiconPrior l *
                       beliefStatePrior a * goalPrior q
     let s1 := S1 utterances worlds φ worldPrior speakerCredence goalProject cost α w i l a q
@@ -229,8 +229,8 @@ def L1_world {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq Q
     ((w, i, l, a, q), priorScore * s1Score)
   let normalized := normalize scores
   -- Marginalize over i, l, a, q
-  worlds.map fun w =>
-    let wScores := normalized.filter (fun ((w', _, _, _, _), _) => w' == w) |>.map (·.2)
+  worlds.map λ w =>
+    let wScores := normalized.filter (λ ((w', _, _, _, _), _) => w' == w) |>.map (·.2)
     (w, sumScores wScores)
 
 -- Simplified API for Basic Scenarios
@@ -241,10 +241,10 @@ Basic L0 for simple scenarios (no interp, lexicon, belief state, goal).
 def basicL0 {U W : Type} [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
     (u : U)
     : List (W × ℚ) :=
-  L0 utterances worlds (fun _ _ => φ) worldPrior (fun _ _ => 1) u () () () ()
+  L0 utterances worlds (λ _ _ => φ) worldPrior (λ _ _ => 1) u () () () ()
 
 /--
 Basic S0 for simple scenarios (literal speaker).
@@ -254,10 +254,10 @@ P(m | w) ∝ utterancePrior(m) · φ(m, w)
 def basicS0 {U W : Type} [BEq U]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (utterancePrior : U → ℚ := fun _ => 1)
+    (utterancePrior : U → ℚ := λ _ => 1)
     (w : W)
     : List (U × ℚ) :=
-  S0 utterances worlds (fun _ _ => φ) utterancePrior w () () () ()
+  S0 utterances worlds (λ _ _ => φ) utterancePrior w () () () ()
 
 /--
 Basic L1 from S0 for simple scenarios.
@@ -267,11 +267,11 @@ P(w | m) ∝ Prior(w) · P_S0(m | w)
 def basicL1_fromS0 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (utterancePrior : U → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (utterancePrior : U → ℚ := λ _ => 1)
     (u : U)
     : List (W × ℚ) :=
-  L1_fromS0 utterances worlds (fun _ _ => φ) worldPrior utterancePrior u () () () ()
+  L1_fromS0 utterances worlds (λ _ _ => φ) worldPrior utterancePrior u () () () ()
 
 /--
 Basic S1 for simple scenarios.
@@ -279,13 +279,13 @@ Basic S1 for simple scenarios.
 def basicS1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (w : W)
     : List (U × ℚ) :=
-  S1 utterances worlds (fun _ _ => φ) worldPrior (fun _ _ => 1)
-     (fun _ w w' => w == w') cost α w () () () ()
+  S1 utterances worlds (λ _ _ => φ) worldPrior (λ _ _ => 1)
+     (λ _ w w' => w == w') cost α w () () () ()
 
 /--
 Basic S1 via production-first chain (S0 → L1_fromS0 → S1_fromL1S0).
@@ -295,13 +295,13 @@ P(m | w) ∝ utterancePrior(m) · P_L1_fromS0(w | m)^α · costDiscount(m)
 def basicS1_fromL1S0 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (utterancePrior : U → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (utterancePrior : U → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (w : W)
     : List (U × ℚ) :=
-  let scores := utterances.map fun u =>
+  let scores := utterances.map λ u =>
     let l1Dist := basicL1_fromS0 utterances worlds φ worldPrior utterancePrior u
     let l1Score := getScore l1Dist w
     let costDiscount := 1 / ((1 + cost u) ^ α)
@@ -314,14 +314,14 @@ Basic L1 for simple scenarios.
 def basicL1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (W × ℚ) :=
   L1_world utterances worlds [()] [()] [()] [()]
-    (fun _ _ => φ) worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w w' => w == w') cost α u
+    (λ _ _ => φ) worldPrior (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w w' => w == w') cost α u
 
 -- Unified API with ChainVariant
 
@@ -334,10 +334,10 @@ Run S1 (pragmatic speaker) with chain selection.
 def runS1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (utterancePrior : U → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (utterancePrior : U → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (chain : RSA.ChainVariant := .L0Based)
     (w : W)
     : List (U × ℚ) :=
@@ -354,10 +354,10 @@ Run L1 (pragmatic listener) with chain selection.
 def runL1 {U W : Type} [BEq U] [BEq W]
     (utterances : List U) (worlds : List W)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (utterancePrior : U → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (utterancePrior : U → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (chain : RSA.ChainVariant := .L0Based)
     (u : U)
     : List (W × ℚ) :=
@@ -387,12 +387,12 @@ def L1_joint {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq Q
     (α : ℕ)
     (u : U)
     : List ((W × I × L × A × Q) × ℚ) :=
-  let tuples := worlds.flatMap fun w =>
-    interps.flatMap fun i =>
-      lexica.flatMap fun l =>
-        beliefStates.flatMap fun a =>
-          goals.map fun q => (w, i, l, a, q)
-  let scores := tuples.map fun (w, i, l, a, q) =>
+  let tuples := worlds.flatMap λ w =>
+    interps.flatMap λ i =>
+      lexica.flatMap λ l =>
+        beliefStates.flatMap λ a =>
+          goals.map λ q => (w, i, l, a, q)
+  let scores := tuples.map λ (w, i, l, a, q) =>
     let priorScore := worldPrior w * interpPrior i * lexiconPrior l *
                       beliefStatePrior a * goalPrior q
     let s1 := S1 utterances worlds φ worldPrior speakerCredence goalProject cost α w i l a q
@@ -422,7 +422,7 @@ def L1_interp {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq 
   let joint := L1_joint utterances worlds interps lexica beliefStates goals
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
-  marginalize joint (fun (_, i, _, _, _) => i)
+  marginalize joint (λ (_, i, _, _, _) => i)
 
 /--
 L1 marginal over goals/QUDs.
@@ -446,7 +446,7 @@ def L1_goal {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq Q]
   let joint := L1_joint utterances worlds interps lexica beliefStates goals
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
-  marginalize joint (fun (_, _, _, _, q) => q)
+  marginalize joint (λ (_, _, _, _, q) => q)
 
 /--
 L1 marginal over lexica.
@@ -470,7 +470,7 @@ def L1_lexicon {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] [BEq
   let joint := L1_joint utterances worlds interps lexica beliefStates goals
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
-  marginalize joint (fun (_, _, l, _, _) => l)
+  marginalize joint (λ (_, _, l, _, _) => l)
 
 /--
 L1 marginal over belief states.
@@ -494,7 +494,7 @@ def L1_beliefState {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq A] 
   let joint := L1_joint utterances worlds interps lexica beliefStates goals
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
-  marginalize joint (fun (_, _, _, a, _) => a)
+  marginalize joint (λ (_, _, _, a, _) => a)
 
 -- Conditioned Distributions (given specific Goal/QUD)
 
@@ -523,11 +523,11 @@ def L1_world_givenGoal {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L] [BEq
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
   -- Filter to only this goal
-  let filtered := joint.filter (fun ((_, _, _, _, q'), _) => q' == q)
+  let filtered := joint.filter (λ ((_, _, _, _, q'), _) => q' == q)
   -- Renormalize
   let renorm := normalize filtered
   -- Marginalize over w
-  marginalize renorm (fun (w, _, _, _, _) => w)
+  marginalize renorm (λ (w, _, _, _, _) => w)
 
 /--
 L1 belief state distribution conditioned on a specific goal.
@@ -553,11 +553,11 @@ def L1_beliefState_givenGoal {U W I L A Q : Type} [BEq U] [BEq W] [BEq I] [BEq L
     φ worldPrior interpPrior lexiconPrior beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
   -- Filter to only this goal
-  let filtered := joint.filter (fun ((_, _, _, _, q'), _) => q' == q)
+  let filtered := joint.filter (λ ((_, _, _, _, q'), _) => q' == q)
   -- Renormalize
   let renorm := normalize filtered
   -- Marginalize over belief states
-  marginalize renorm (fun (_, _, _, a, _) => a)
+  marginalize renorm (λ (_, _, _, a, _) => a)
 
 -- Simplified APIs for Common Scenario Types
 
@@ -567,27 +567,27 @@ Returns distribution over (W × I).
 -/
 def ambiguousL1_joint {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (interpPrior : I → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (interpPrior : I → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List ((W × I) × ℚ) :=
   let joint := L1_joint utterances worlds interps [()] [()] [()]
-    (fun i _ => φ i) worldPrior interpPrior (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w w' => w == w') cost α u
+    (λ i _ => φ i) worldPrior interpPrior (λ _ => 1) (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w w' => w == w') cost α u
   -- Project to (W × I)
-  joint.map fun ((w, i, _, _, _), p) => ((w, i), p)
+  joint.map λ ((w, i, _, _, _), p) => ((w, i), p)
 
 /--
 L1 world marginal for ambiguous scenarios.
 -/
 def ambiguousL1_world {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (interpPrior : I → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (interpPrior : I → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (W × ℚ) :=
   let joint := ambiguousL1_joint utterances worlds interps φ worldPrior interpPrior α cost u
@@ -598,10 +598,10 @@ L1 interp marginal for ambiguous scenarios.
 -/
 def ambiguousL1_interp {U W I : Type} [BEq U] [BEq W] [BEq I]     (utterances : List U) (worlds : List W) (interps : List I)
     (φ : I → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (interpPrior : I → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (interpPrior : I → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (I × ℚ) :=
   let joint := ambiguousL1_joint utterances worlds interps φ worldPrior interpPrior α cost u
@@ -612,16 +612,16 @@ L1 for QUD/goal scenarios (goal varies, others fixed).
 -/
 def qudL1_world {U W Q : Type} [BEq U] [BEq W] [BEq Q]     (utterances : List U) (worlds : List W) (goals : List Q)
     (φ : U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (goalPrior : Q → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (goalPrior : Q → ℚ := λ _ => 1)
     (goalProject : Q → W → W → Bool)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (W × ℚ) :=
   L1_world utterances worlds [()] [()] [()] goals
-    (fun _ _ => φ) worldPrior (fun _ => 1) (fun _ => 1) (fun _ => 1) goalPrior
-    (fun _ _ => 1) goalProject cost α u
+    (λ _ _ => φ) worldPrior (λ _ => 1) (λ _ => 1) (λ _ => 1) goalPrior
+    (λ _ _ => 1) goalProject cost α u
 
 /--
 L1 for mental state scenarios (belief states vary).
@@ -635,11 +635,11 @@ def mentalStateL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q]     (ut
     (speakerCredence : A → W → ℚ)
     (goalProject : Q → W → W → Bool)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (W × ℚ) :=
   L1_world utterances worlds [()] [()] beliefStates goals
-    (fun _ _ => φ) worldPrior (fun _ => 1) (fun _ => 1) beliefStatePrior goalPrior
+    (λ _ _ => φ) worldPrior (λ _ => 1) (λ _ => 1) beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
 
 /--
@@ -647,37 +647,37 @@ L1 for lexical uncertainty scenarios (lexicon varies).
 -/
 def lexUncertaintyL1_world {U W L : Type} [BEq U] [BEq W] [BEq L]     (utterances : List U) (worlds : List W) (lexica : List L)
     (φ : L → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (lexiconPrior : L → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (lexiconPrior : L → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (W × ℚ) :=
   L1_world utterances worlds [()] lexica [()] [()]
-    (fun _ l => φ l) worldPrior (fun _ => 1) lexiconPrior (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w w' => w == w') cost α u
+    (λ _ l => φ l) worldPrior (λ _ => 1) lexiconPrior (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w w' => w == w') cost α u
 
 /--
 L1 lexicon marginal for lexical uncertainty scenarios.
 -/
 def lexUncertaintyL1_lexicon {U W L : Type} [BEq U] [BEq W] [BEq L]     (utterances : List U) (worlds : List W) (lexica : List L)
     (φ : L → U → W → ℚ)
-    (worldPrior : W → ℚ := fun _ => 1)
-    (lexiconPrior : L → ℚ := fun _ => 1)
+    (worldPrior : W → ℚ := λ _ => 1)
+    (lexiconPrior : L → ℚ := λ _ => 1)
     (α : ℕ := 1)
-    (cost : U → ℚ := fun _ => 0)
+    (cost : U → ℚ := λ _ => 0)
     (u : U)
     : List (L × ℚ) :=
   L1_lexicon utterances worlds [()] lexica [()] [()]
-    (fun _ l => φ l) worldPrior (fun _ => 1) lexiconPrior (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (fun _ w w' => w == w') cost α u
+    (λ _ l => φ l) worldPrior (λ _ => 1) lexiconPrior (λ _ => 1) (λ _ => 1)
+    (λ _ _ => 1) (λ _ w w' => w == w') cost α u
 
 -- Utility Aliases
 
 /-- Alias for normalize (some files use normalizeScores) -/
 def normalizeScores (scores : List ℚ) : List ℚ :=
   let total := sumScores scores
-  if total > 0 then scores.map (· / total) else scores.map (fun _ => 0)
+  if total > 0 then scores.map (· / total) else scores.map (λ _ => 0)
 
 /-- Rational power function (kept for backward compatibility) -/
 def powRat (base : ℚ) (exp : ℕ) : ℚ :=
@@ -702,11 +702,11 @@ def floatToRat (f : Float) : ℚ :=
     P(i) = exp(α · u_i) / Σ_j exp(α · u_j) -/
 def softmax (α : ℚ) (utilities : List ℚ) : List ℚ :=
   let αF := ratToFloat α
-  let exps := utilities.map fun u => Float.exp (αF * ratToFloat u)
+  let exps := utilities.map λ u => Float.exp (αF * ratToFloat u)
   let total := exps.foldl (· + ·) 0.0
   if total > 0 then
-    exps.map fun e => floatToRat (e / total)
+    exps.map λ e => floatToRat (e / total)
   else
-    utilities.map fun _ => 0
+    utilities.map λ _ => 0
 
 end RSA.Eval
