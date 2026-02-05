@@ -54,11 +54,15 @@ theorem embedded_has_subject_before_t (tPos : TPosition)
 
 /-- Find auxiliary (T) position in word list -/
 def findAuxInWords (ws : List Word) : Option Nat :=
-  ws.findIdx? (·.cat == Cat.Aux)
+  ws.findIdx? (·.cat == .AUX)
+
+/-- Is this a nominal category that can be a subject? -/
+def isSubjectCat (c : Cat) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Find subject position in word list -/
 def findSubjectInWords (ws : List Word) : Option Nat :=
-  ws.findIdx? λ w => w.cat == Cat.D && !w.features.wh
+  ws.findIdx? λ w => isSubjectCat w.cat && !w.features.wh
 
 /-- Word list has T-before-subject order -/
 def wordsHaveTBeforeSubject (ws : List Word) : Bool :=

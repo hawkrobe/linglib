@@ -19,18 +19,18 @@ Empirical data on coreference constraints for reflexives, pronouns, and full nom
 
 import Linglib.Core.Basic
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def himself : Word := ⟨"himself", .D, { person := some .third, number := some .sg }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def herself : Word := ⟨"herself", .D, { person := some .third, number := some .sg }⟩
-private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def themselves : Word := ⟨"themselves", .D, { person := some .third, number := some .pl }⟩
-private def him : Word := ⟨"him", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def her : Word := ⟨"her", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def he : Word := ⟨"he", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
-private def them : Word := ⟨"them", .D, { person := some .third, number := some .pl, case_ := some .acc }⟩
+private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third }⟩
+private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def himself : Word := ⟨"himself", .PRON, { person := some .third, number := some .sg }⟩
+private def mary : Word := ⟨"Mary", .PROPN, { number := some .sg, person := some .third }⟩
+private def herself : Word := ⟨"herself", .PRON, { person := some .third, number := some .sg }⟩
+private def they : Word := ⟨"they", .PRON, { person := some .third, number := some .pl, case_ := some .nom }⟩
+private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def themselves : Word := ⟨"themselves", .PRON, { person := some .third, number := some .pl }⟩
+private def him : Word := ⟨"him", .PRON, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def her : Word := ⟨"her", .PRON, { person := some .third, number := some .sg, case_ := some .acc }⟩
+private def he : Word := ⟨"he", .PRON, { person := some .third, number := some .sg, case_ := some .nom }⟩
+private def them : Word := ⟨"them", .PRON, { person := some .third, number := some .pl, case_ := some .acc }⟩
 
 /-- Reflexives require local c-commanding antecedent. -/
 def reflexiveCoreferenceData : PhenomenonData := {

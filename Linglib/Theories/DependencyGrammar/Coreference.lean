@@ -37,13 +37,17 @@ inductive NominalType where
   | rExpression -- John, Mary, the cat
   deriving Repr, DecidableEq
 
+/-- Is this a nominal category? -/
+def isNominalCat (c : Cat) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
 /-- Classify a word as a nominal type. -/
 def classifyNominal (w : Word) : Option NominalType :=
   if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
     some .reflexive
   else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
     some .pronoun
-  else if w.cat == Cat.D then
+  else if isNominalCat w.cat then
     some .rExpression
   else
     none
@@ -63,11 +67,11 @@ structure SimpleClause where
 def parseSimpleClause (ws : List Word) : Option SimpleClause :=
   match ws with
   | [subj, v, obj] =>
-    if subj.cat == Cat.D && v.cat == Cat.V && obj.cat == Cat.D then
+    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
       some ⟨subj, v, some obj⟩
     else none
   | [subj, v] =>
-    if subj.cat == Cat.D && v.cat == Cat.V then
+    if isNominalCat subj.cat && v.cat == .VERB then
       some ⟨subj, v, none⟩
     else none
   | _ => none

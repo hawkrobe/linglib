@@ -256,15 +256,19 @@ structure ValencyClause where
   frame : ValencyFrame
   deriving Repr
 
+/-- Is this a nominal category? -/
+def isNominalCat (c : Cat) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
 /-- Parse a sentence into a valency clause -/
 def parseValencyClause (ws : List Word) : Option ValencyClause :=
   match ws with
   | [subj, v, obj] =>
-    if subj.cat == Cat.D && v.cat == Cat.V && obj.cat == Cat.D then
+    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
       some ⟨subj, v, some obj, transitiveFrame v.form⟩
     else none
   | [subj, v] =>
-    if subj.cat == Cat.D && v.cat == Cat.V then
+    if isNominalCat subj.cat && v.cat == .VERB then
       some ⟨subj, v, none, intransitiveFrame v.form⟩
     else none
   | _ => none
@@ -286,7 +290,7 @@ def classifyNominal (w : Word) : Option NominalType :=
     some .reflexive
   else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
     some .pronoun
-  else if w.cat == Cat.D then
+  else if isNominalCat w.cat then
     some .rExpression
   else
     none

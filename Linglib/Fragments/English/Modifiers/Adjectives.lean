@@ -257,7 +257,7 @@ def pregnant : AdjModifierEntry :=
 -- ============================================================================
 
 def AdjModifierEntry.toWord (a : AdjModifierEntry) : Word :=
-  { form := a.form, cat := .Adj, features := {} }
+  { form := a.form, cat := .ADJ, features := {} }
 
 -- ============================================================================
 -- All Adjective Modifiers

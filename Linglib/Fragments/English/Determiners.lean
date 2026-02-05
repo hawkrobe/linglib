@@ -316,7 +316,7 @@ theorem QuantityWord.ptMeaning_nonneg (n : Nat) (q : QuantityWord) (t : Fin (n +
 
 def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
   { form := d.form
-  , cat := .D
+  , cat := .DET
   , features := { number := d.numberRestriction }
   }
 

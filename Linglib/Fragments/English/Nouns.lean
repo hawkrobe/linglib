@@ -137,11 +137,11 @@ def allNouns : List NounEntry := [
 ]
 
 /-- Convert a noun entry to a `Word` in singular form.
-    Proper names get `cat := .D, person := .third`.
-    Common nouns get `cat := .N, countable`. -/
+    Proper names get `cat := .PROPN, person := .third`.
+    Common nouns get `cat := .NOUN, countable`. -/
 def NounEntry.toWordSg (n : NounEntry) : Word :=
   { form := n.formSg
-  , cat := if n.proper then .D else .N
+  , cat := if n.proper then .PROPN else .NOUN
   , features := {
       number := some .sg
     , countable := if n.proper then none else some n.countable
@@ -153,7 +153,7 @@ def NounEntry.toWordSg (n : NounEntry) : Word :=
     Defaults to appending "s" if no irregular plural is specified. -/
 def NounEntry.toWordPl (n : NounEntry) : Word :=
   { form := (n.formPl.getD (n.formSg ++ "s"))
-  , cat := .N
+  , cat := .NOUN
   , features := {
       number := some .pl
     , countable := some n.countable

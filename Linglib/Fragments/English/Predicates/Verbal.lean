@@ -265,12 +265,12 @@ structure VerbEntry where
   attitudeBuilder : Option AttitudeBuilder := none
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
-
   deriving Repr, BEq
 
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbEntry.veridicality (v : VerbEntry) : Option Veridicality :=
   v.attitudeBuilder.map (·.veridicality)
+
 
 /-- Is this verb a doxastic attitude? -/
 def VerbEntry.isDoxastic (v : VerbEntry) : Bool :=
@@ -1126,7 +1126,7 @@ Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form.
 -/
 def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
-  , cat := .V
+  , cat := .VERB
   , features := {
       valence := some (complementToValence v.complementType)
       , number := some .sg
@@ -1141,7 +1141,7 @@ Convert a verb entry to a `Word` in base/plural present form.
 -/
 def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
-  , cat := .V
+  , cat := .VERB
   , features := {
       valence := some (complementToValence v.complementType)
       , number := some .pl
@@ -1153,7 +1153,7 @@ Convert a verb entry to a `Word` in base/infinitive form.
 -/
 def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   { form := v.form
-  , cat := .V
+  , cat := .VERB
   , features := {
       valence := some (complementToValence v.complementType)
       , vform := some .infinitive

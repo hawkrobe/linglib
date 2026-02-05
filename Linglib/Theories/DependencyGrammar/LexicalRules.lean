@@ -71,33 +71,33 @@ structure LexEntry where
 
 /-- Intransitive verb: subject to the left -/
 def argStr_V0 : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .D⟩] }
+  { slots := [⟨.subj, .left, true, some .DET⟩] }
 
 /-- Transitive verb: subject left, object right -/
 def argStr_VN : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .D⟩,
-              ⟨.obj, .right, true, some .D⟩] }
+  { slots := [⟨.subj, .left, true, some .DET⟩,
+              ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Ditransitive verb: subject left, indirect object right, object right -/
 def argStr_VNN : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .D⟩,
-              ⟨.iobj, .right, true, some .D⟩,
-              ⟨.obj, .right, true, some .D⟩] }
+  { slots := [⟨.subj, .left, true, some .DET⟩,
+              ⟨.iobj, .right, true, some .DET⟩,
+              ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Auxiliary verb (non-inverted): subject left, main verb right -/
 def argStr_Aux : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .D⟩,
-              ⟨.aux, .right, true, some .V⟩] }
+  { slots := [⟨.subj, .left, true, some .DET⟩,
+              ⟨.aux, .right, true, some .VERB⟩] }
 
 /-- Auxiliary verb (inverted): subject right, main verb right -/
 def argStr_AuxInv : ArgStr :=
-  { slots := [⟨.subj, .right, true, some .D⟩,
-              ⟨.aux, .right, true, some .V⟩] }
+  { slots := [⟨.subj, .right, true, some .DET⟩,
+              ⟨.aux, .right, true, some .VERB⟩] }
 
 /-- Passive transitive: subject left (was patient), optional by-phrase right -/
 def argStr_VPassive : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .D⟩,
-              ⟨.obl, .right, false, some .P⟩] }  -- by-phrase is optional
+  { slots := [⟨.subj, .left, true, some .DET⟩,
+              ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
 
 -- ============================================================================
 -- Lexical Rules
@@ -116,7 +116,7 @@ structure LexRule where
 def auxInversionRule : LexRule :=
   { name := "Auxiliary Inversion"
     applies := λ e =>
-      e.cat == .Aux && !e.features.inv
+      e.cat == .AUX && !e.features.inv
     transform := λ e =>
       let newSlots := e.argStr.slots.map λ slot =>
         if slot.depType == .subj then
@@ -131,11 +131,11 @@ def auxInversionRule : LexRule :=
 def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
-      e.cat == .V && !e.features.passive &&
+      e.cat == .VERB && !e.features.passive &&
       e.argStr.slots.any (·.depType == .obj)
     transform := λ e =>
       let newSlots := e.argStr.slots.filter (·.depType != .obj)
-      let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .P⟩]
+      let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .ADP⟩]
       { e with
         features := { e.features with passive := true }
         argStr := { slots := withByPhrase } } }
@@ -160,7 +160,7 @@ def deriveEntries (rules : List LexRule) (entry : LexEntry) : List LexEntry :=
 /-- "can" - modal auxiliary (non-inverted) -/
 def lex_can : LexEntry :=
   { form := "can"
-    cat := .Aux
+    cat := .AUX
     features := { inv := false, finite := true }
     argStr := argStr_Aux }
 
@@ -171,14 +171,14 @@ def lex_can_inv : LexEntry :=
 /-- "does" - do-support auxiliary (non-inverted) -/
 def lex_does : LexEntry :=
   { form := "does"
-    cat := .Aux
+    cat := .AUX
     features := { inv := false, finite := true, number := some .sg, person := some .third }
     argStr := argStr_Aux }
 
 /-- "kicked" - transitive verb -/
 def lex_kicked : LexEntry :=
   { form := "kicked"
-    cat := .V
+    cat := .VERB
     features := { passive := false, finite := true }
     argStr := argStr_VN }
 

@@ -68,7 +68,46 @@ def haipa : VerbEntry where
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
-def allVerbs : List VerbEntry := [qidai, danxin, xiwang, haipa]
+/-!
+## yǐwéi: Exceptional Postsupposition
+
+yǐwéi "be under the impression" (Glass 2022, 2025) has a POSTSUPPOSITION
+(output-context constraint) that ¬p is compatible with the Common Ground
+after the utterance. This is NOT a presupposition and cannot be derived
+from veridicality alone.
+
+The postsupposition is interpreted in the Theory layer (ContrafactiveGap.lean).
+Here we just flag the exceptional behavior.
+-/
+
+/-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
+
+**Exceptional**: Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
+This cannot be derived from veridicality; see Glass (2022, 2025).
+-/
+def yiwei : VerbEntry where
+  form := "yiwei"
+  form3sg := "yiwei"
+  formPast := "yiwei"
+  formPastPart := "yiwei"
+  formPresPart := "yiwei"
+  complementType := .finiteClause
+  subjectTheta := some .experiencer
+  passivizable := false
+  verbClass := .attitude
+  opaqueContext := true
+  -- Doxastic non-veridical, but with exceptional postsupposition (see docs)
+  attitudeBuilder := some (.doxastic .nonVeridical)
+
+/-- Does this verb have an exceptional postsupposition (not derivable from veridicality)?
+
+This is a theory-neutral flag. The actual CGRequirement interpretation
+happens in the Bridge layer (ContrafactiveGap.lean).
+-/
+def hasExceptionalPostsupposition (form : String) : Bool :=
+  form == "yiwei"
+
+def allVerbs : List VerbEntry := [qidai, danxin, xiwang, haipa, yiwei]
 
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (·.form == form)
