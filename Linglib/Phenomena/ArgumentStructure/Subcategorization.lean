@@ -22,60 +22,45 @@ Verbs select for a specific number and type of arguments.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Surface.Basic
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def arrives : Word := ⟨"arrives", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def devours : Word := ⟨"devours", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def gives : Word := ⟨"gives", .V, { valence := some .ditransitive, number := some .sg, person := some .third }⟩
-private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
+namespace Phenomena.ArgumentStructure.Subcategorization
 
--- The Empirical Data
+/-- Subcategorization data.
 
-/-- Subcategorization data -/
-def subcatData : PhenomenonData := {
+Pure empirical data with no theoretical commitments.
+Theories interpret this via their Bridge modules. -/
+def data : StringPhenomenonData := {
   name := "Subcategorization"
   generalization := "Verbs require a specific number of arguments"
   pairs := [
     -- Intransitive verbs
-    { grammatical := [john, sleeps]
-      ungrammatical := [john, sleeps, book]
+    { grammatical := "John sleeps"
+      ungrammatical := "John sleeps book"
       clauseType := .declarative
       description := "Intransitive verb cannot take an object" },
 
-    { grammatical := [mary, arrives]
-      ungrammatical := [mary, arrives, john]
+    { grammatical := "Mary arrives"
+      ungrammatical := "Mary arrives John"
       clauseType := .declarative
       description := "Intransitive verb cannot take an object" },
 
     -- Transitive verbs
-    { grammatical := [john, devours, pizza]
-      ungrammatical := [john, devours]
+    { grammatical := "John devours pizza"
+      ungrammatical := "John devours"
       clauseType := .declarative
       description := "Transitive verb requires an object" },
 
-    { grammatical := [mary, sees, john]
-      ungrammatical := [mary, sees]
+    { grammatical := "Mary sees John"
+      ungrammatical := "Mary sees"
       clauseType := .declarative
       description := "Transitive verb requires an object" },
 
     -- Ditransitive verbs
-    { grammatical := [john, gives, mary, book]
-      ungrammatical := [john, gives, mary]
+    { grammatical := "John gives Mary book"
+      ungrammatical := "John gives Mary"
       clauseType := .declarative
       description := "Ditransitive verb requires two objects" }
   ]
 }
 
--- Tests
-
-#eval Surface.subcatOk [john, sleeps]           -- true (intrans, 0 obj)
-#eval Surface.subcatOk [john, sleeps, book]     -- false (intrans, 1 obj)
-#eval Surface.subcatOk [john, devours, pizza]   -- true (trans, 1 obj)
-#eval Surface.subcatOk [john, devours]          -- false (trans, 0 obj)
-#eval Surface.subcatOk [john, gives, mary, book] -- true (ditrans, 2 obj)
-#eval Surface.subcatOk [john, gives, mary]      -- false (ditrans, 1 obj)
+end Phenomena.ArgumentStructure.Subcategorization

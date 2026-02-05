@@ -37,64 +37,34 @@ This changes:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Surface.Basic
 
-private def the : Word := ⟨"the", .D, {}⟩
-private def ball : Word := ⟨"ball", .N, { number := some .sg, countable := some true }⟩
-private def was : Word := ⟨"was", .Aux, { number := some .sg }⟩
-private def kicked : Word := ⟨"kicked", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
-private def cat_ : Word := ⟨"cat", .N, { number := some .sg, countable := some true }⟩
-private def chased : Word := ⟨"chased", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
-private def by_ : Word := ⟨"by", .P, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def pizza : Word := ⟨"pizza", .N, { number := some .sg }⟩
-private def eaten : Word := ⟨"eaten", .V, { valence := some .transitive, vform := some .pastParticiple, voice := some .passive }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def balls : Word := ⟨"balls", .N, { number := some .pl, countable := some true }⟩
-private def dog : Word := ⟨"dog", .N, { number := some .sg, countable := some true }⟩
-private def kicks : Word := ⟨"kicks", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
+namespace Phenomena.ArgumentStructure.Passive
 
--- The Empirical Data
+/-- Passive construction data.
 
-/-- Passive construction data -/
-def passiveData : PhenomenonData := {
+Pure empirical data with no theoretical commitments.
+Theories interpret this via their Bridge modules. -/
+def data : StringPhenomenonData := {
   name := "Passive Construction"
   generalization := "Passive promotes object to subject, demotes subject to optional by-phrase"
   pairs := [
     -- Active vs passive
-    { grammatical := [the, ball, was, kicked]
-      ungrammatical := [the, ball, was, kicked, the, ball]  -- can't have object in passive
+    { grammatical := "the ball was kicked"
+      ungrammatical := "the ball was kicked the ball"  -- can't have object in passive
       clauseType := .declarative
       description := "Passive cannot have direct object" },
 
-    { grammatical := [the, cat_, was, chased, by_, john]
-      ungrammatical := [the, cat_, was, chased, the, dog]  -- object instead of by-phrase
+    { grammatical := "the cat was chased by John"
+      ungrammatical := "the cat was chased the dog"  -- object instead of by-phrase
       clauseType := .declarative
       description := "Passive agent marked with 'by', not bare NP" },
 
     -- Subject-aux agreement in passive
-    { grammatical := [the, ball, was, kicked]
-      ungrammatical := [the, balls, was, kicked]  -- agreement mismatch
+    { grammatical := "the ball was kicked"
+      ungrammatical := "the balls was kicked"  -- agreement mismatch
       clauseType := .declarative
       description := "Passive auxiliary must agree with subject" }
   ]
 }
 
--- Tests
-
--- Well-formed passives
-#eval Surface.passiveOk [the, ball, was, kicked]              -- true
-#eval Surface.passiveOk [the, cat_, was, chased]              -- true
-#eval Surface.passiveOk [the, cat_, was, chased, by_, john]   -- true
-#eval Surface.passiveOk [the, pizza, was, eaten]              -- true
-#eval Surface.passiveOk [the, pizza, was, eaten, by_, mary]   -- true
-
--- Ill-formed: passive with direct object
-#eval Surface.passiveOk [the, ball, was, kicked, the, dog]    -- false
-
--- Active sentences (passiveOk is vacuously true for non-passives)
-#eval Surface.passiveOk [john, kicks, ball]                   -- true (not a passive)
-
--- Combined checks
-#eval Surface.checkSentence Surface.defaultGrammar [the, ball, was, kicked] .declarative  -- true
-#eval Surface.checkSentence Surface.defaultGrammar [the, cat_, was, chased, by_, john] .declarative  -- true
+end Phenomena.ArgumentStructure.Passive

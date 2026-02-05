@@ -1,10 +1,90 @@
+import Linglib.Core.UPOS
+import Linglib.Core.UDFeatures
+
 /-!
 # Basic
 
 Core types shared across all theoretical frameworks.
+
+## Migration to Universal Dependencies
+
+As of this version, core morphological features are aliased to UD types:
+- `Number` = `UD.Number` (with compatibility constructors `sg`, `pl`)
+- `Person` = `UD.Person` (with compatibility constructors `first`, `second`, `third`)
+- `Case` = `UD.Case` (with compatibility constructors `nom`, `acc`, `gen`)
+- `Voice` = `UD.Voice` (with compatibility constructors `active`, `passive`)
+- `VForm` = `UD.VerbForm` (with compatibility constructors)
+
+Types without UD equivalents remain defined here:
+- `Cat` (coarse syntactic category - will eventually map to UPOS)
+- `Valence` (argument structure)
+- `ClauseType` (sentence type)
 -/
 
-/-- Syntactic categories (coarse-grained, refined per framework). -/
+-- ============================================================================
+-- Aliased Types (backed by UD)
+-- ============================================================================
+
+/-- Grammatical number. Aliased to UD.Number for cross-linguistic compatibility. -/
+abbrev Number := UD.Number
+
+namespace Number
+/-- Singular (compatibility alias for UD.Number.Sing) -/
+abbrev sg : Number := .Sing
+/-- Plural (compatibility alias for UD.Number.Plur) -/
+abbrev pl : Number := .Plur
+end Number
+
+/-- Grammatical person. Aliased to UD.Person for cross-linguistic compatibility.
+
+    Constructors are: `.first`, `.second`, `.third`, `.zero`
+    (no compatibility aliases needed - names match) -/
+abbrev Person := UD.Person
+
+/-- Grammatical case. Aliased to UD.Case for cross-linguistic compatibility. -/
+abbrev Case := UD.Case
+
+namespace Case
+/-- Nominative (compatibility alias) -/
+abbrev nom : Case := .Nom
+/-- Accusative (compatibility alias) -/
+abbrev acc : Case := .Acc
+/-- Genitive (compatibility alias) -/
+abbrev gen : Case := .Gen
+end Case
+
+/-- Voice: active vs passive. Aliased to UD.Voice. -/
+abbrev Voice := UD.Voice
+
+namespace Voice
+/-- Active voice (compatibility alias) -/
+abbrev active : Voice := .Act
+/-- Passive voice (compatibility alias) -/
+abbrev passive : Voice := .Pass
+end Voice
+
+/-- Verb form. Aliased to UD.VerbForm. -/
+abbrev VForm := UD.VerbForm
+
+namespace VForm
+/-- Finite (compatibility alias) -/
+abbrev finite : VForm := .Fin
+/-- Infinitive (compatibility alias) -/
+abbrev infinitive : VForm := .Inf
+/-- Past participle (compatibility alias - maps to Part) -/
+abbrev pastParticiple : VForm := .Part
+/-- Present participle (compatibility alias - maps to Part) -/
+abbrev presParticiple : VForm := .Part
+end VForm
+
+-- ============================================================================
+-- Types Without UD Equivalents
+-- ============================================================================
+
+/-- Syntactic categories (coarse-grained, refined per framework).
+
+    Note: This will eventually be replaced by or mapped to UD.UPOS.
+    For now it's kept separate because the mapping isn't 1:1. -/
 inductive Cat where
   | D      -- Determiner / DP
   | N      -- Noun
@@ -16,27 +96,7 @@ inductive Cat where
   | Adj    -- Adjective
   deriving Repr, DecidableEq, Inhabited
 
-/-- Grammatical number. -/
-inductive Number where
-  | sg  -- singular
-  | pl  -- plural
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Grammatical person. -/
-inductive Person where
-  | first
-  | second
-  | third
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Grammatical case. -/
-inductive Case where
-  | nom  -- nominative (subject): I, he, she, we, they
-  | acc  -- accusative (object): me, him, her, us, them
-  | gen  -- genitive (possessive): my, his, her, our, their
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Transitivity / argument structure. -/
+/-- Transitivity / argument structure. No direct UD equivalent. -/
 inductive Valence where
   | intransitive  -- sleep, arrive
   | transitive    -- see, eat
@@ -44,20 +104,6 @@ inductive Valence where
   | dative        -- give X to Y (prepositional dative)
   | locative      -- put X on Y
   | copular       -- be (takes predicate)
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Voice: active vs passive. -/
-inductive Voice where
-  | active
-  | passive
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Verb form. -/
-inductive VForm where
-  | finite
-  | infinitive
-  | pastParticiple  -- eaten, given (for passive & perfect)
-  | presParticiple  -- eating, giving (for progressive)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Clause types - determines constraints on word order. -/
@@ -68,7 +114,11 @@ inductive ClauseType where
   | echo                -- no inversion even in matrix position
   deriving Repr, DecidableEq
 
-/-- Feature bundle for words. -/
+-- ============================================================================
+-- Feature Bundle and Word
+-- ============================================================================
+
+/-- Feature bundle for words. Uses aliased UD types. -/
 structure Features where
   wh : Bool := false
   finite : Bool := true
@@ -98,6 +148,10 @@ instance : ToString Word where
 def wordsToString (ws : List Word) : String :=
   " ".intercalate (ws.map (·.form))
 
+-- ============================================================================
+-- Grammar Typeclasses
+-- ============================================================================
+
 /-- A Grammar assigns derivations to strings. Derivations are proof objects. -/
 class Grammar (G : Type) where
   /-- The type of derivations/analyses this grammar produces -/
@@ -115,6 +169,10 @@ theorem derives_agreement
     (h₂ : Grammar.derives g₂ ws ct) :
     Grammar.derives g₁ ws ct ∧ Grammar.derives g₂ ws ct :=
   ⟨h₁, h₂⟩
+
+-- ============================================================================
+-- Minimal Pairs (Word-Based)
+-- ============================================================================
 
 /-- A minimal pair: grammatical vs ungrammatical, with context -/
 structure MinimalPair where
@@ -152,3 +210,59 @@ theorem grammars_agree_on_phenomenon
   · intro _; exact (h₂ pair hp).1
   · intro _; exact (h₁ pair hp).1
 
+-- ============================================================================
+-- String-Based Phenomena (Theory-Neutral)
+-- ============================================================================
+
+/-- String-based minimal pair for theory-neutral phenomena.
+
+Unlike `MinimalPair` which uses `List Word` (requiring feature specifications),
+this type uses raw strings that can be parsed by any theory. This keeps
+empirical data in `Phenomena/` free from theoretical commitments. -/
+structure SentencePair where
+  /-- The grammatical sentence -/
+  grammatical : String
+  /-- The ungrammatical sentence -/
+  ungrammatical : String
+  /-- Clause type (declarative, question, etc.) -/
+  clauseType : ClauseType
+  /-- Description of what the pair tests -/
+  description : String
+  /-- Optional citation for the data -/
+  citation : Option String := none
+  deriving Repr, BEq
+
+/-- String-based phenomenon data for theory-neutral representation.
+
+This is the string-based analogue of `PhenomenonData`. Phenomena files
+should use this type so that empirical data is decoupled from any
+particular grammatical theory's representation. -/
+structure StringPhenomenonData where
+  /-- Name of the phenomenon -/
+  name : String
+  /-- List of minimal pairs -/
+  pairs : List SentencePair
+  /-- Generalization captured by this data -/
+  generalization : String
+  deriving Repr
+
+/-- A grammar with parsing can verify string-based phenomena -/
+class GrammarWithParsing (G : Type) extends Grammar G where
+  /-- Parse a string into a list of words (tokenization + lexical lookup) -/
+  parse : G → String → Option (List Word)
+
+/-- A grammar captures a string-based pair if it derives the grammatical
+    and blocks the ungrammatical (after parsing) -/
+def GrammarWithParsing.capturesStringPair
+    (G : Type) [GrammarWithParsing G] (g : G) (pair : SentencePair) : Prop :=
+  match GrammarWithParsing.parse g pair.grammatical,
+        GrammarWithParsing.parse g pair.ungrammatical with
+  | some ws_good, some ws_bad =>
+      Grammar.derives g ws_good pair.clauseType ∧
+      ¬ Grammar.derives g ws_bad pair.clauseType
+  | _, _ => False  -- Parse failure means we can't verify
+
+/-- A grammar captures a string-based phenomenon if it captures all pairs -/
+def GrammarWithParsing.capturesStringPhenomenon
+    (G : Type) [GrammarWithParsing G] (g : G) (phenom : StringPhenomenonData) : Prop :=
+  ∀ pair ∈ phenom.pairs, GrammarWithParsing.capturesStringPair G g pair

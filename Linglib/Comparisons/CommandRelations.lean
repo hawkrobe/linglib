@@ -43,7 +43,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Theories.Minimalism.Coreference
+import Linglib.Theories.Minimalism.Phenomena.Coreference
 import Linglib.Theories.HPSG.Coreference
 import Linglib.Theories.DependencyGrammar.Coreference
 import Linglib.Theories.DependencyGrammar.CRDC
@@ -488,12 +488,12 @@ the command relations must agree.
 All four theories correctly predict the reflexive coreference patterns.
 -/
 theorem all_theories_capture_reflexive_coreference :
-    Minimalism.Coreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Minimalism.Phenomena.Coreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     HPSG.Coreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     DepGrammar.Coreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     DepGrammar.CRDC.capturesCoreferenceData reflexiveCoreferenceData = true := by
   constructor
-  · exact Minimalism.Coreference.captures_reflexive_coreference
+  · exact Minimalism.Phenomena.Coreference.captures_reflexive_coreference
   constructor
   · exact HPSG.Coreference.captures_reflexive_coreference
   constructor
@@ -504,12 +504,12 @@ theorem all_theories_capture_reflexive_coreference :
 **Main Agreement Theorem: Complementary Distribution**
 -/
 theorem all_theories_capture_complementary_distribution :
-    Minimalism.Coreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Minimalism.Phenomena.Coreference.capturesCoreferenceData complementaryDistributionData = true ∧
     HPSG.Coreference.capturesCoreferenceData complementaryDistributionData = true ∧
     DepGrammar.Coreference.capturesCoreferenceData complementaryDistributionData = true ∧
     DepGrammar.CRDC.capturesCoreferenceData complementaryDistributionData = true := by
   constructor
-  · exact Minimalism.Coreference.captures_complementary_distribution
+  · exact Minimalism.Phenomena.Coreference.captures_complementary_distribution
   constructor
   · exact HPSG.Coreference.captures_complementary_distribution
   constructor
@@ -520,12 +520,12 @@ theorem all_theories_capture_complementary_distribution :
 **Main Agreement Theorem: Pronominal Disjoint Reference**
 -/
 theorem all_theories_capture_pronominal_disjoint_reference :
-    Minimalism.Coreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Minimalism.Phenomena.Coreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     HPSG.Coreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     DepGrammar.Coreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     DepGrammar.CRDC.capturesCoreferenceData pronominalDisjointReferenceData = true := by
   constructor
-  · exact Minimalism.Coreference.captures_pronominal_disjoint_reference
+  · exact Minimalism.Phenomena.Coreference.captures_pronominal_disjoint_reference
   constructor
   · exact HPSG.Coreference.captures_pronominal_disjoint_reference
   constructor
@@ -553,17 +553,17 @@ def testSentences : List (List Word) :=
 /-- All four theories are pairwise equivalent on test sentences -/
 theorem all_theories_pairwise_equivalent :
     -- Original three comparisons
-    theoriesAgreeOnAll (T1 := Minimalism.Coreference.MinimalismTheory)
+    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
                        (T2 := HPSG.Coreference.HPSGTheory)
                        testSentences = true ∧
     theoriesAgreeOnAll (T1 := HPSG.Coreference.HPSGTheory)
                        (T2 := DepGrammar.Coreference.DepGrammarTheory)
                        testSentences = true ∧
-    theoriesAgreeOnAll (T1 := Minimalism.Coreference.MinimalismTheory)
+    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
                        (T2 := DepGrammar.Coreference.DepGrammarTheory)
                        testSentences = true ∧
     -- New comparisons with CRDC
-    theoriesAgreeOnAll (T1 := Minimalism.Coreference.MinimalismTheory)
+    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
                        (T2 := DepGrammar.CRDC.CRDCTheory)
                        testSentences = true ∧
     theoriesAgreeOnAll (T1 := HPSG.Coreference.HPSGTheory)

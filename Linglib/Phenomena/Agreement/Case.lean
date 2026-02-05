@@ -23,67 +23,49 @@ English pronouns show morphological case:
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Surface.Basic
 
-private def he : Word := ⟨"he", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def her : Word := ⟨"her", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def him : Word := ⟨"him", .D, { person := some .third, number := some .sg, case_ := some .acc }⟩
-private def they : Word := ⟨"they", .D, { person := some .third, number := some .pl, case_ := some .nom }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def us : Word := ⟨"us", .D, { person := some .first, number := some .pl, case_ := some .acc }⟩
-private def them : Word := ⟨"them", .D, { person := some .third, number := some .pl, case_ := some .acc }⟩
-private def she : Word := ⟨"she", .D, { person := some .third, number := some .sg, case_ := some .nom }⟩
-private def i : Word := ⟨"I", .D, { person := some .first, number := some .sg, case_ := some .nom }⟩
-private def me : Word := ⟨"me", .D, { person := some .first, number := some .sg, case_ := some .acc }⟩
-private def we : Word := ⟨"we", .D, { person := some .first, number := some .pl, case_ := some .nom }⟩
+namespace Phenomena.Agreement.Case
 
--- The Empirical Data
+/-- Case marking data.
 
-/-- Case marking data -/
-def caseData : PhenomenonData := {
+Pure empirical data with no theoretical commitments.
+Theories interpret this via their Bridge modules. -/
+def data : StringPhenomenonData := {
   name := "Case Marking"
   generalization := "Subjects require nominative case; objects require accusative case"
   pairs := [
     -- Subject case
-    { grammatical := [he, sees, her]
-      ungrammatical := [him, sees, her]
+    { grammatical := "he sees her"
+      ungrammatical := "him sees her"
       clauseType := .declarative
       description := "Subject must be nominative, not accusative" },
 
-    { grammatical := [they, see, us]
-      ungrammatical := [them, see, us]
+    { grammatical := "they see us"
+      ungrammatical := "them see us"
       clauseType := .declarative
       description := "Subject must be nominative, not accusative" },
 
-    { grammatical := [i, see, him]
-      ungrammatical := [me, see, him]
+    { grammatical := "I see him"
+      ungrammatical := "me see him"
       clauseType := .declarative
       description := "Subject must be nominative, not accusative" },
 
     -- Object case
-    { grammatical := [he, sees, her]
-      ungrammatical := [he, sees, she]
+    { grammatical := "he sees her"
+      ungrammatical := "he sees she"
       clauseType := .declarative
       description := "Object must be accusative, not nominative" },
 
-    { grammatical := [they, see, us]
-      ungrammatical := [they, see, we]
+    { grammatical := "they see us"
+      ungrammatical := "they see we"
       clauseType := .declarative
       description := "Object must be accusative, not nominative" },
 
-    { grammatical := [i, see, him]
-      ungrammatical := [i, see, he]
+    { grammatical := "I see him"
+      ungrammatical := "I see he"
       clauseType := .declarative
       description := "Object must be accusative, not nominative" }
   ]
 }
 
--- Tests
-
-#eval Surface.caseOk [he, sees, her]   -- true (nom subj, acc obj)
-#eval Surface.caseOk [him, sees, her]  -- false (acc in subj position)
-#eval Surface.caseOk [he, sees, she]   -- false (nom in obj position)
-#eval Surface.caseOk [they, see, us]   -- true
-#eval Surface.caseOk [them, see, us]   -- false
-#eval Surface.caseOk [they, see, we]   -- false
+end Phenomena.Agreement.Case
