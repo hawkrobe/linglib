@@ -36,7 +36,7 @@ Key CI expressions:
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
 
-namespace Montague.Lexicon.Expressives
+namespace Montague.Expressives
 
 open Core.Proposition
 
@@ -315,4 +315,4 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
   | .emotiveMarker => ctx.emotionalValence.natAbs > 30  -- Strong emotion
   | _ => true  -- Other types: context-independent
 
-end Montague.Lexicon.Expressives
+end Montague.Expressives
