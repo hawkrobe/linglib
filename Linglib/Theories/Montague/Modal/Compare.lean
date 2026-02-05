@@ -13,7 +13,7 @@ import Linglib.Theories.Montague.Modal.Simple
 
 namespace Montague.Modal
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Montague.Modal.Kratzer
 
 section ComparisonFunctions

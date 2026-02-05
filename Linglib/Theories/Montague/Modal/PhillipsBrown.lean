@@ -12,7 +12,7 @@ import Linglib.Theories.Montague.Modal.SatisfactionOrdering
 
 namespace Montague.Modal.PhillipsBrown
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Montague.Modal.Kratzer
 open Montague.Question.Hamblin
 
@@ -203,7 +203,7 @@ end Montague.Modal.PhillipsBrown
 
 namespace Montague.Modal.Kratzer.BouleticFlavor
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Montague.Modal.Kratzer
 open Montague.Modal.PhillipsBrown
 
@@ -231,7 +231,7 @@ end Montague.Modal.Kratzer.BouleticFlavor
 
 namespace Montague.Modal.PhillipsBrown
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Montague.Modal.Kratzer
 
 /--

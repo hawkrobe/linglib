@@ -6,17 +6,17 @@ Toy examples demonstrating intensional semantics phenomena:
 - Belief contexts and substitution failure
 - De dicto vs de re readings
 
-These examples use the infrastructure from `Theories/Montague/Verb/Attitude/Examples.lean`.
+These examples use the infrastructure from `Theories/Montague/Verb/Attitude/Intensional.lean`.
 
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
-import Linglib.Theories.Montague.Verb.Attitude.Examples
+import Linglib.Theories.Montague.Verb.Attitude.Intensional
 
 namespace Phenomena.Attitudes.IntensionalExamples
 
 open Montague
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where

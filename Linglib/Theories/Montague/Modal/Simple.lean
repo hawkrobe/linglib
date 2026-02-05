@@ -13,7 +13,7 @@ import Linglib.Core.ModalLogic
 
 namespace Montague.Modal
 
-open Montague.Verb.Attitude.Examples
+open Montague.Verb.Attitude.Intensional
 open Core.ModalLogic (Refl Serial Trans Symm Eucl)
 
 /-- Construct a simple modal theory from accessibility relation R. -/
