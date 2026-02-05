@@ -9,10 +9,12 @@ Accessibility is a primitive relation, unlike Kratzer's derived approach.
 -/
 
 import Linglib.Theories.Montague.Modal.Basic
+import Linglib.Core.ModalLogic
 
 namespace Montague.Modal
 
 open Montague.Verb.Attitude.Examples
+open Core.ModalLogic (Refl Serial Trans Symm Eucl)
 
 /-- Construct a simple modal theory from accessibility relation R. -/
 def Simple (R : World → World → Bool) : ModalTheory where
@@ -26,14 +28,17 @@ def Simple (R : World → World → Bool) : ModalTheory where
 
 section AccessibilityRelations
 
-/-- Universal accessibility: every world is accessible from every world. -/
-def universalR : World → World → Bool := λ _ _ => true
+/-- Universal accessibility: every world is accessible from every world.
+Matches `Core.ModalLogic.universalR`. -/
+def universalR : World → World → Bool := Core.ModalLogic.universalR
 
-/-- Reflexive accessibility: each world is accessible from itself. -/
-def reflexiveR : World → World → Bool := λ w w' => w == w'
+/-- Reflexive accessibility: each world is accessible from itself.
+Matches `Core.ModalLogic.identityR`. -/
+def reflexiveR : World → World → Bool := Core.ModalLogic.identityR
 
-/-- Empty accessibility: no world is accessible from any world. -/
-def emptyR : World → World → Bool := λ _ _ => false
+/-- Empty accessibility: no world is accessible from any world.
+Matches `Core.ModalLogic.emptyR`. -/
+def emptyR : World → World → Bool := Core.ModalLogic.emptyR
 
 /-- Sample epistemic accessibility: w0↔w2, w1↔w3. -/
 def sampleEpistemicR : World → World → Bool := λ w w' =>
@@ -161,11 +166,11 @@ end Normality
 
 section TAxiom
 
-/-- Reflexivity of R: every world accesses itself. -/
-def isReflexive (R : World → World → Bool) : Prop :=
-  ∀ w : World, R w w = true
+/-- Reflexivity of R: every world accesses itself. Alias for `Core.ModalLogic.Refl`. -/
+abbrev isReflexive (R : World → World → Bool) : Prop := Refl R
 
-/-- T Axiom: reflexive R implies □p -> p. -/
+/-- T Axiom: reflexive R implies □p -> p.
+Uses `Core.ModalLogic.T_of_refl` under the hood. -/
 theorem T_axiom_from_reflexivity (R : World → World → Bool) (hRefl : isReflexive R)
     (p : Proposition) (w : World)
     (hNec : (Simple R).eval .necessity p w = true) : p w = true := by
@@ -189,18 +194,17 @@ end TAxiom
 
 section DAxiom
 
-/-- Seriality of R: every world accesses at least one world. -/
-def isSerial (R : World → World → Bool) : Prop :=
-  ∀ w : World, ∃ w' : World, R w w' = true
+/-- Seriality of R: every world accesses at least one world. Alias for `Core.ModalLogic.Serial`. -/
+abbrev isSerial (R : World → World → Bool) : Prop := Serial R
 
-/-- D Axiom: serial R implies □p -> ◇p. -/
+/-- D Axiom: serial R implies □p -> ◇p.
+Uses `Core.ModalLogic.D_of_serial` under the hood. -/
 theorem D_axiom_from_seriality (R : World → World → Bool) (hSerial : isSerial R)
     (p : Proposition) (w : World)
     (hNec : (Simple R).eval .necessity p w = true) :
     (Simple R).eval .possibility p w = true := by
   unfold Simple at hNec ⊢
   simp only at hNec ⊢
-  -- Get a witness from seriality
   obtain ⟨w', hW'Acc⟩ := hSerial w
   have hW'In : w' ∈ allWorlds'.filter (R w) := by
     simp only [List.mem_filter, allWorlds']
@@ -220,13 +224,12 @@ end DAxiom
 
 section ConsistencyFromD
 
-/-- Universal R is serial. -/
-theorem universalR_isSerial : isSerial universalR := λ w => ⟨w, rfl⟩
+/-- Universal R is serial. Uses `Core.ModalLogic.universalR_serial`. -/
+theorem universalR_isSerial : isSerial universalR := Core.ModalLogic.universalR_serial
 
-/-- Reflexive R is serial. -/
-theorem reflexiveR_isSerial : isSerial reflexiveR := λ w => ⟨w, by
-  unfold reflexiveR
-  cases w <;> rfl⟩
+/-- Reflexive R is serial (reflexivity implies seriality). -/
+theorem reflexiveR_isSerial : isSerial reflexiveR :=
+  Core.ModalLogic.refl_serial Core.ModalLogic.identityR_refl
 
 /-- Universal accessibility gives consistency via D axiom. -/
 theorem simple_universal_isConsistent_from_D :
