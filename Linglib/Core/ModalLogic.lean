@@ -1,4 +1,6 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Order.Lattice
+import Mathlib.Order.BoundedOrder.Basic
 import Linglib.Core.Proposition
 
 /-!
@@ -185,16 +187,43 @@ def KD45 : Logic := ⟨{.D, .four, .five}⟩
 def K45 : Logic := ⟨{.four, .five}⟩
 
 /-- L₁ ≤ L₂ means L₁ is weaker (fewer axioms). -/
-instance : LE Logic := ⟨fun L₁ L₂ => L₁.axioms ⊆ L₂.axioms⟩
+instance : LE Logic := ⟨λ L₁ L₂ => L₁.axioms ⊆ L₂.axioms⟩
 
-instance : Preorder Logic where
-  le_refl := fun _ => Finset.Subset.refl _
-  le_trans := fun _ _ _ h₁ h₂ => Finset.Subset.trans h₁ h₂
+instance : PartialOrder Logic where
+  le_refl := λ _ => Finset.Subset.refl _
+  le_trans := λ _ _ _ h₁ h₂ => Finset.Subset.trans h₁ h₂
+  le_antisymm := λ _ _ h₁ h₂ => by
+    cases_type* Logic
+    simp only [Logic.mk.injEq]
+    exact Finset.Subset.antisymm h₁ h₂
 
-def join (L₁ L₂ : Logic) : Logic := ⟨L₁.axioms ∪ L₂.axioms⟩
-def meet (L₁ L₂ : Logic) : Logic := ⟨L₁.axioms ∩ L₂.axioms⟩
+instance : Lattice Logic where
+  sup := λ L₁ L₂ => ⟨L₁.axioms ∪ L₂.axioms⟩
+  inf := λ L₁ L₂ => ⟨L₁.axioms ∩ L₂.axioms⟩
+  le_sup_left := λ _ _ => Finset.subset_union_left
+  le_sup_right := λ _ _ => Finset.subset_union_right
+  sup_le := λ _ _ _ h₁ h₂ => Finset.union_subset h₁ h₂
+  inf_le_left := λ _ _ => Finset.inter_subset_left
+  inf_le_right := λ _ _ => Finset.inter_subset_right
+  le_inf := λ _ _ _ h₁ h₂ => Finset.subset_inter h₁ h₂
 
-theorem K_le (L : Logic) : K ≤ L := Finset.empty_subset _
+def top : Logic := ⟨{.M, .D, .B, .four, .five}⟩
+
+instance : OrderBot Logic where
+  bot := K
+  bot_le := λ _ => Finset.empty_subset _
+
+instance : OrderTop Logic where
+  top := top
+  le_top := λ L => by
+    simp only [top, LE.le]
+    intro a _
+    cases a <;> decide
+
+instance : BoundedOrder Logic := BoundedOrder.mk
+
+theorem K_bot : K = ⊥ := rfl
+theorem top_all_axioms : top = ⊤ := rfl
 
 def hasAxiom (L : Logic) (a : Axiom) : Bool := a ∈ L.axioms
 

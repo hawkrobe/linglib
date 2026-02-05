@@ -8,6 +8,7 @@
   - Frame conditions: `Refl`, `Serial`, `Trans`, `Symm`, `Eucl`
   - Correspondence theorems: `T_of_refl`, `D_of_serial`, `K_axiom`, `four_of_trans`, `B_of_symm`, `five_of_eucl`
   - Lattice of normal modal logics: `Axiom`, `Logic`, named logics (K, T, S4, S5, KD45, etc.)
+  - Mathlib integration: `Lattice`, `BoundedOrder` instances for `Logic` (K = ⊥, all axioms = ⊤)
   - `S5_collapse`: M+5 implies all frame conditions
   - Standard frames: `universalR`, `emptyR`, `identityR`
 - **Core/OrderTheory.lean**: Generic satisfaction-based orderings
