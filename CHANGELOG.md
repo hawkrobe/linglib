@@ -19,7 +19,9 @@
 - **Refactor Montague/Modal/ to use Core**: `SatisfactionOrdering.lean`, `Kratzer.lean`, `PhillipsBrown.lean` now import from `Core/OrderTheory.lean`
 - **Refactor Simple.lean to use Core/ModalLogic**: `isReflexive`, `isSerial` are now aliases for `Refl`, `Serial`; standard relations use Core's implementations
 - **Refactor Modal/Basic.lean**: `ModalForce` is now an alias for `Core.ModalLogic.ModalForce`
-- **Unify World with Core.Proposition.World4**: `Montague.Verb.Attitude.Examples.World` is now an alias for `Core.Proposition.World4`
+- **Unify World with Core.Proposition.World4**: `Montague.Verb.Attitude.Intensional.World` is now an alias for `Core.Proposition.World4`
+- **Rename Examples.lean → Intensional.lean**: `Verb/Attitude/Examples.lean` renamed to `Intensional.lean` (contains infrastructure only)
+- **Move toy examples to Phenomena**: `ToyIEntity`, `sleeps`, `morningStar`, etc. moved to `Phenomena/Attitudes/IntensionalExamples.lean`
 - **Rename `Ideal` → `Criterion`**: More neutral terminology (field `.ideals` → `.criteria`)
 - **CLAUDE.md**: Add "Prefer Unicode `λ` over `fun` in code"
 
