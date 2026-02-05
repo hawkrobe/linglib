@@ -377,9 +377,7 @@ theorem realistic_gives_reflexive_access (f : ModalBase)
     w ∈ accessibleWorlds f w := by
   unfold accessibleWorlds propIntersection
   simp only [List.mem_filter]
-  constructor
-  · cases w <;> simp [allWorlds]
-  · exact hReal w
+  exact ⟨Core.Proposition.FiniteWorlds.complete w, hReal w⟩
 
 /--
 **Theorem 6: Empty modal base gives universal accessibility.**

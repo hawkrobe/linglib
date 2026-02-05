@@ -179,9 +179,7 @@ theorem T_axiom_from_reflexivity (R : World → World → Bool) (hRefl : isRefle
   have hWIn : R w w = true := hRefl w
   have hWFiltered : w ∈ allWorlds'.filter (R w) := by
     simp only [List.mem_filter, allWorlds']
-    constructor
-    · cases w <;> simp [allWorlds]
-    · exact hWIn
+    exact ⟨Core.Proposition.FiniteWorlds.complete w, hWIn⟩
   exact List.all_eq_true.mp hNec w hWFiltered
 
 /-- Reflexive accessibility gives T axiom: □p -> p. -/
@@ -208,9 +206,7 @@ theorem D_axiom_from_seriality (R : World → World → Bool) (hSerial : isSeria
   obtain ⟨w', hW'Acc⟩ := hSerial w
   have hW'In : w' ∈ allWorlds'.filter (R w) := by
     simp only [List.mem_filter, allWorlds']
-    constructor
-    · cases w' <;> simp [allWorlds]
-    · exact hW'Acc
+    exact ⟨Core.Proposition.FiniteWorlds.complete w', hW'Acc⟩
   have hPw' : p w' = true := List.all_eq_true.mp hNec w' hW'In
   exact List.any_eq_true.mpr ⟨w', hW'In, hPw'⟩
 
