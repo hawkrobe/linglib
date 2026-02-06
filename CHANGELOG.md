@@ -4,6 +4,14 @@
 
 ### Added
 - **Theories/ConstructionGrammar/Basic.lean**: Core CxG types (Construction, Constructicon, Specificity, InheritanceMode, InheritanceLink)
+- **Theories/ConstructionGrammar/Studies/FillmoreKayOConnor1988.lean**: *Let alone* construction
+  - Idiom typology: encoding/decoding, grammatical/extragrammatical, substantive/formal (§1.1–1.2)
+  - Scalar model formalization: n-dimensional argument space with monotonicity constraint (Appendix Def A3)
+  - *Let alone* construction with semantic conditions (scalar entailment, same polarity, A stronger than B)
+  - *Let alone* family (*much less*, *not to mention*, *if not*, *in fact*) with clause-ordering distinction
+  - Pragmatic analysis: Gricean Quantity/Relevance conflict (§2.4)
+  - NPI trigger inventory (§2.2.4)
+  - The X-er the Y-er and Incredulity Response constructions
 - **Theories/ConstructionGrammar/Studies/GoldbergShirtz2025.lean**: PAL construction analysis
   - PAL construction + 4 conventional subtypes (must-VERB, a simple ⟨PAL⟩, Don't PAL me, the old ⟨PAL⟩ N)
   - Inheritance network from NN compounds and Adj+N modification (Figure 5)
