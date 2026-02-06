@@ -264,6 +264,7 @@ import Linglib.Theories.DynamicSemantics.UpdateSemantics.Basic
 
 -- Theories: Construction Grammar
 import Linglib.Theories.ConstructionGrammar.Basic
+import Linglib.Theories.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergShirtz2025
 
 -- Theories: HPSG
