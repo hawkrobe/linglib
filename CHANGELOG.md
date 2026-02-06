@@ -11,6 +11,9 @@
   - *Let alone* family (*much less*, *not to mention*, *if not*, *in fact*) with clause-ordering distinction
   - Pragmatic analysis: Gricean Quantity/Relevance conflict (§2.4)
   - NPI trigger inventory (§2.2.4)
+  - Bridge 1: NPI triggers → `Polarity.NPIs.LicensingContext` mapping
+  - Bridge 2: Phenomena judgment data verification (`barely_licenses_let_alone`, `almost_blocks_let_alone`)
+  - Bridge 3: Military rank scalar model with entailment proofs (`general_stronger_than_colonel`)
   - The X-er the Y-er and Incredulity Response constructions
 - **Theories/ConstructionGrammar/Studies/GoldbergShirtz2025.lean**: PAL construction analysis
   - PAL construction + 4 conventional subtypes (must-VERB, a simple ⟨PAL⟩, Don't PAL me, the old ⟨PAL⟩ N)

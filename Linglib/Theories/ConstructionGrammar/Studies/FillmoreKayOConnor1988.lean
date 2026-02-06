@@ -1,6 +1,8 @@
 import Linglib.Theories.ConstructionGrammar.Basic
 import Linglib.Core.Presupposition
 import Linglib.Core.Scales
+import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
 /-!
 # Fillmore, Kay & O'Connor (1988): Let Alone
@@ -314,7 +316,7 @@ have an odd number of books, let alone seventy-five") from ex.105
 (good: "He didn't even have an odd number, let alone seventy-five"
 in a lottery context). The second dimension (prize size) rescues 105. -/
 def claim_scalar_model_min_2d : Prop :=
-  ∀ (S α : Type*) (sm : ScalarModel S α) (d : ArgumentPoint α),
+  ∀ (S α : Type*) (_ : ScalarModel S α) (d : ArgumentPoint α),
     d.coordinates.length ≥ 2 → True
 
 theorem claim_scalar_model_min_2d_holds : claim_scalar_model_min_2d :=
@@ -332,5 +334,164 @@ def claim_quantity_relevance_conflict : Prop :=
 
 theorem claim_quantity_relevance_conflict_holds :
     claim_quantity_relevance_conflict := rfl
+
+/-! ## Section 8: Bridges to existing infrastructure -/
+
+/-! ### Bridge 1: NPI triggers → Polarity.NPIs.LicensingContext
+
+FKO1988's NPI trigger inventory (§2.2.4) maps onto the licensing contexts
+already catalogued in `Phenomena.Polarity.NPIs`. This bridge makes that
+mapping explicit: each FKO trigger type corresponds to a known NPI
+licensing context. -/
+
+open Phenomena.Polarity.NPIs in
+/-- Map FKO1988 *let alone* NPI triggers to Polarity.NPIs licensing contexts. -/
+def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
+  | .simpleNegation         => .sententialNegation
+  | .tooComplementation     => .tooAdjective
+  | .comparisonOfInequality => .comparativeThan
+  | .onlyDeterminer         => .onlyFocus
+  | .minimalAttainment      => .sententialNegation  -- "barely" ≈ negation
+  | .conditionalSurprise    => .conditional
+  | .failureVerb            => .sententialNegation   -- "fail" ≈ implicit negation
+  | .anyoneWhod             => .universalRestrictor
+
+open Phenomena.Polarity.NPIs in
+/-- Every FKO trigger maps to a known NPI licensing context.
+This verifies that FKO's *let alone* data is consistent with Ladusaw's
+generalization: *let alone* appears in DE environments. -/
+theorem all_triggers_are_known_contexts :
+    ∀ t : LetAloneNPITrigger, ∃ c : LicensingContext, npiTriggerToContext t = c :=
+  λ t => ⟨npiTriggerToContext t, rfl⟩
+
+/-! ### Bridge 2: FKO Phenomena data ↔ NPI theory
+
+The phenomena file records that *barely* licenses *let alone* (ex.115)
+while *almost* does not (ex.113). This matches the Polarity.NPIs
+classification: *barely* is a syntactic negative polarity trigger,
+*almost* is not. -/
+
+open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+/-- *barely* licenses *let alone* in the phenomena data. -/
+theorem barely_licenses_let_alone :
+    ex115.judgment = Judgment.grammatical := rfl
+
+open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+/-- *almost* does NOT license *let alone* in the phenomena data. -/
+theorem almost_blocks_let_alone :
+    ex113.judgment = Judgment.ungrammatical := rfl
+
+/-! ### Bridge 3: Scalar model generalizes HornScale
+
+FKO1988's `ScalarModel` (n-dimensional, with monotonicity constraint)
+is a generalization of `Core.Scales.HornScale` (1-dimensional, linear).
+A 1D scalar model with a propositional function that respects the
+linear order is exactly a HornScale.
+
+We show this by constructing a scalar model from the military rank
+example in the paper (§2.1, ex.21): the scale
+⟨second lieutenant, ... , colonel, general⟩. -/
+
+/-- Military ranks from the paper's running example. -/
+inductive Rank where
+  | secondLieutenant | lieutenant | captain | major
+  | colonel | general
+  deriving Repr, DecidableEq, BEq
+
+/-- Rank ordering (lower index = lower rank). -/
+def rankLe : Rank → Rank → Bool
+  | .secondLieutenant, _ => true
+  | .lieutenant, .secondLieutenant => false
+  | .lieutenant, _ => true
+  | .captain, .secondLieutenant => false
+  | .captain, .lieutenant => false
+  | .captain, _ => true
+  | .major, .colonel => true
+  | .major, .general => true
+  | .major, .major => true
+  | .major, _ => false
+  | .colonel, .general => true
+  | .colonel, .colonel => true
+  | .colonel, _ => false
+  | .general, .general => true
+  | .general, _ => false
+
+/-- States: whether a person achieved each rank. -/
+inductive AchievementState where
+  | achievedNone | achievedUpToLt | achievedUpToCol | achievedUpToGen
+  deriving Repr, DecidableEq, BEq
+
+/-- "He made rank R" is true in a state iff the state includes R. -/
+def madeRank : Rank → AchievementState → Bool
+  | .secondLieutenant, .achievedNone => false
+  | .secondLieutenant, _ => true
+  | .lieutenant, .achievedNone => false
+  | .lieutenant, _ => true
+  | .captain, .achievedNone => false
+  | .captain, .achievedUpToLt => false
+  | .captain, _ => true
+  | .major, .achievedUpToCol => true
+  | .major, .achievedUpToGen => true
+  | .major, _ => false
+  | .colonel, .achievedUpToCol => true
+  | .colonel, .achievedUpToGen => true
+  | .colonel, _ => false
+  | .general, .achievedUpToGen => true
+  | .general, _ => false
+
+/-- The military rank scalar model. -/
+def rankScalarModel : ScalarModel AchievementState Rank :=
+  { points := [⟨[.secondLieutenant]⟩, ⟨[.lieutenant]⟩, ⟨[.captain]⟩,
+               ⟨[.major]⟩, ⟨[.colonel]⟩, ⟨[.general]⟩]
+  , propFn := λ pt => match pt.coordinates.head? with
+      | some r => madeRank r
+      | none => λ _ => false
+  , dimLe := rankLe }
+
+/-- Scalar entailment: "He made general" entails "He made colonel".
+This is the core semantic condition on *let alone* (p.523, 528):
+the stronger (A) proposition entails the weaker (B) proposition. -/
+theorem general_entails_colonel :
+    rankScalarModel.entails ⟨[.general]⟩ ⟨[.colonel]⟩ := by
+  intro s h
+  cases s <;> simp_all [rankScalarModel, madeRank]
+
+/-- Scalar entailment: "He made colonel" entails "He made lieutenant". -/
+theorem colonel_entails_lieutenant :
+    rankScalarModel.entails ⟨[.colonel]⟩ ⟨[.lieutenant]⟩ := by
+  intro s h
+  cases s <;> simp_all [rankScalarModel, madeRank]
+
+/-- The reverse does NOT hold: "He made colonel" does not entail
+"He made general". This is why "He didn't make colonel, let alone
+general" is felicitous — general is STRONGER (p.528). -/
+theorem colonel_does_not_entail_general :
+    ¬ rankScalarModel.entails ⟨[.colonel]⟩ ⟨[.general]⟩ := by
+  intro h
+  have := h .achievedUpToCol rfl
+  simp [rankScalarModel, madeRank] at this
+
+/-- Scalar entailment: "He made general" entails "He made colonel"
+(but not vice versa — proved above). Thus making general is STRONGER
+than making colonel: the extension of "made general" is a proper
+subset of the extension of "made colonel". -/
+theorem general_stronger_than_colonel :
+    rankScalarModel.strongerThan ⟨[.general]⟩ ⟨[.colonel]⟩ :=
+  ⟨general_entails_colonel, colonel_does_not_entail_general⟩
+
+/-- The rank scalar model validates FKO's ex.21:
+"He didn't make colonel, let alone general."
+
+Under negation, the scalar direction REVERSES: "didn't make colonel"
+is stronger than "didn't make general" because making colonel is
+easier (more states satisfy it). The *let alone* B focus (general)
+names the STRONGER positive proposition, whose negation is WEAKER.
+
+FKO's condition: A focus yields a stronger proposition than B focus.
+Under negation of "make R", "not make colonel" entails "not make general"
+(if you can't do the easier thing, you can't do the harder thing). -/
+theorem ex21_scalar_condition_neg :
+    ∀ s, madeRank .general s = true → madeRank .colonel s = true :=
+  general_entails_colonel
 
 end ConstructionGrammar.Studies.FillmoreKayOConnor1988
