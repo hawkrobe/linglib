@@ -19,6 +19,9 @@ how-causation (H), and sufficient-causation (S).
 
 import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.CausalModel
+import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
+import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
 namespace RSA.BellerGerstenberg2025
 
@@ -289,5 +292,151 @@ theorem none_world_only_negative :
 This captures the scalar implicature pattern: stronger expressions
 implicate the presence of stronger causal aspects.
 -/
+
+/-! ## Bridge to Structural Causal Models (Nadathur & Lauer 2020)
+
+Beller & Gerstenberg's W, H, S dimensions can be COMPUTED from
+structural causal models, grounding the primitive Boolean features
+in the counterfactual reasoning machinery of `Core.CausalModel`.
+
+| B&G dimension | Structural definition |
+|---------------|---------------------|
+| W (whether) | `causallyNecessary` — would effect still occur without cause? |
+| H (how) | `hasDirectLaw` — does a causal law directly connect cause to effect? |
+| S (sufficient) | `causallySufficient` — does adding cause guarantee effect? |
+
+This bridge reveals why certain causal scenarios yield specific
+expression choices: the structural properties of the causal model
+determine the W-H-S world, which determines literal semantics,
+which RSA pragmatics then sharpens.
+
+### References
+
+- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
+  and the implications of causative verbs. Glossa 5(1), 49.
+- Levin, B. (2019). Resultatives and constraints on concealed causatives.
+  In Proceedings of JerSem.
+-/
+
+section StructuralBridge
+
+open Core.CausalModel
+
+/-- Compute a `CausalWorld` from a structural causal model.
+
+    Grounds B&G's W-H-S Booleans in `Core.CausalModel`:
+    W = necessity, H = direct law, S = sufficiency. -/
+def causalWorldFromModel (dyn : CausalDynamics) (bg : Situation)
+    (cause effect : Variable) : CausalWorld :=
+  let p := extractProfile dyn bg cause effect
+  { whether := p.necessary, how := p.direct, sufficient := p.sufficient }
+
+-- Concrete models for testing the bridge
+private def mA : Variable := mkVar "bg_cause"
+private def mB : Variable := mkVar "bg_alt"
+private def mC : Variable := mkVar "bg_effect"
+private def mI : Variable := mkVar "bg_intermediate"
+
+/-- Solo cause model: one direct law, a → c. -/
+private def soloModel : CausalDynamics := ⟨[CausalLaw.simple mA mC]⟩
+
+/-- Overdetermination model: a ∨ b → c, with b active in background. -/
+private def overdetModel : CausalDynamics :=
+  CausalDynamics.disjunctiveCausation mA mB mC
+private def overdetBg : Situation := Situation.empty.extend mB true
+
+/-- Causal chain model: a → intermediate → c. -/
+private def chainModel : CausalDynamics :=
+  CausalDynamics.causalChain mA mI mC
+
+/-- Solo cause → full causation world (W=true, H=true, S=true).
+
+    When there's one direct cause and no alternatives, all three
+    causal dimensions are active. -/
+theorem solo_cause_world :
+    causalWorldFromModel soloModel Situation.empty mA mC =
+    ⟨true, true, true⟩ := by native_decide
+
+/-- Overdetermination → W=false, H=true, S=true.
+
+    The cause is sufficient (S) and directly connected (H), but NOT
+    necessary (W=false) because the alternative cause in the background
+    would produce the effect anyway. -/
+theorem overdetermination_world :
+    causalWorldFromModel overdetModel overdetBg mA mC =
+    ⟨false, true, true⟩ := by native_decide
+
+/-- Causal chain → W=true, H=false, S=true.
+
+    The initial cause is sufficient (S) and necessary (W), but NOT
+    directly connected (H=false) — it operates through an intermediate.
+    This is Levin's (2019) "intervening causer" scenario. -/
+theorem chain_world :
+    causalWorldFromModel chainModel Situation.empty mA mC =
+    ⟨true, false, true⟩ := by native_decide
+
+/-! ### Expression predictions from structural models
+
+The structural bridge makes testable predictions: given a causal
+model, we can compute both the W-H-S world AND the appropriate
+causal expression. -/
+
+/-- Solo cause: "caused" is literally true.
+
+    With W, H, S all true, the strongest expression applies. -/
+theorem solo_cause_expression_caused :
+    expressionMeaning (causalWorldFromModel soloModel Situation.empty mA mC)
+      .caused = true := by native_decide
+
+/-- Chain causation: "caused" is NOT literally true.
+
+    Despite sufficiency and necessity, the lack of direct connection
+    (H=false) means "caused" doesn't apply. B&G predict speakers will
+    use "enabled" instead — capturing Levin's (2019) intuition that
+    indirect causation is expressed differently. -/
+theorem chain_not_caused :
+    expressionMeaning (causalWorldFromModel chainModel Situation.empty mA mC)
+      .caused = false := by native_decide
+
+/-- Chain causation: "enabled" still applies.
+
+    W ∨ S = true ∨ true = true, so "enabled" is literally true.
+    This is the weaker expression appropriate for indirect causation. -/
+theorem chain_still_enabled :
+    expressionMeaning (causalWorldFromModel chainModel Situation.empty mA mC)
+      .enabled = true := by native_decide
+
+/-- Overdetermination: "caused" is literally true.
+
+    H ∧ (W ∨ S) = true ∧ (false ∨ true) = true. The cause is directly
+    connected (H) and sufficient (S), so "caused" applies even without
+    necessity (W=false). -/
+theorem overdetermination_caused :
+    expressionMeaning (causalWorldFromModel overdetModel overdetBg mA mC)
+      .caused = true := by native_decide
+
+/-- Bridge between B&G's "caused" and N&L's make/cause distinction.
+
+    In the overdetermination scenario, `makeSem` holds (a IS sufficient)
+    but `causeSem` fails (a is NOT necessary). Meanwhile B&G's "caused"
+    applies (because H is true). This shows B&G's expression semantics
+    and N&L's verb semantics make orthogonal predictions:
+
+    - N&L: You can say "A made C happen" (sufficient) but NOT "A caused
+      C" (not necessary)
+    - B&G: Speakers would use "caused" (H ∧ S = true)
+
+    The divergence reflects different questions: N&L model *verb choice*
+    (make vs cause), B&G model *expression choice* (caused vs enabled). -/
+theorem bg_caused_vs_nl_cause_diverge :
+    -- B&G: "caused" applies in overdetermination
+    expressionMeaning (causalWorldFromModel overdetModel overdetBg mA mC) .caused = true ∧
+    -- N&L: makeSem holds (sufficient)
+    causallySufficient overdetModel overdetBg mA mC = true ∧
+    -- N&L: causeSem fails (not necessary)
+    causallyNecessary overdetModel overdetBg mA mC = false := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+
+end StructuralBridge
 
 end RSA.BellerGerstenberg2025

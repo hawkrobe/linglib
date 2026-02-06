@@ -11,6 +11,7 @@ namespace Fragments.Turkish.Predicates
 
 open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
+open Theories.NadathurLauer2020.Builder (CausativeBuilder)
 
 /-- "kork-" — fear (Class 2: C-distributive, negative, takes questions with symmetric interpretation). -/
 def kork : VerbEntry where
@@ -68,7 +69,47 @@ def endiselen : VerbEntry where
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
-def allVerbs : List VerbEntry := [kork, um, merakEt, endiselen]
+/-! ## Causative predicates
+
+Turkish morphological causative suffix -dür (Song 1996: COMPACT type).
+Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
+"Ali Hasan-ı öl-dür-dü" = "Ali killed Hasan" (öl 'die' + -dür CAUS) -/
+
+/-- öl-dür-mek — die-CAUS = "to kill" (morphological COMPACT causative).
+
+    Song (1996): Turkish *-dür* is a productive morphological causative
+    suffix creating COMPACT causatives. -/
+def ol_dur : VerbEntry where
+  form := "öl-dür-mek"
+  form3sg := "öl-dür-ür"
+  formPast := "öl-dür-dü"
+  formPastPart := "öl-dür-müş"
+  formPresPart := "öl-dür-en"
+  complementType := .np  -- Fused: no separate complement clause
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .causative
+  causativeBuilder := some .make
+
+/-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
+def yap_tir : VerbEntry where
+  form := "yap-tır-mak"
+  form3sg := "yap-tır-ır"
+  formPast := "yap-tır-dı"
+  formPastPart := "yap-tır-mış"
+  formPresPart := "yap-tır-an"
+  complementType := .smallClause
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeBuilder := some .make
+
+/-- Turkish causative *-dür* uses `.make` builder. -/
+theorem ol_dur_is_make :
+    ol_dur.causativeBuilder = some .make := rfl
+
+def allVerbs : List VerbEntry := [kork, um, merakEt, endiselen, ol_dur, yap_tir]
 
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (·.form == form)

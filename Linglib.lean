@@ -50,9 +50,11 @@ import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.French.Nouns
+import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Nouns
@@ -89,6 +91,8 @@ import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Causatives.Data
+import Linglib.Phenomena.Causatives.Typology
+import Linglib.Phenomena.Causatives.ThickThin
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -278,7 +282,6 @@ import Linglib.Theories.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.ConstructionGrammar.Studies.KayFillmore1999
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004
-import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004.Bridge
 
 -- Theories: HPSG
 import Linglib.Theories.HPSG.Basic
@@ -387,6 +390,8 @@ import Linglib.Theories.IntensionalSemantics.Causative.GradedCausation
 import Linglib.Theories.IntensionalSemantics.Causative.Integration
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
+import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
+import Linglib.Theories.IntensionalSemantics.Causative.Resultatives
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Conditional.Basic
 import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet

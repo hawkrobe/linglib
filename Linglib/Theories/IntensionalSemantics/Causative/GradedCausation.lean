@@ -205,25 +205,27 @@ theorem shared_interactions :
 
 /-! ## Bridge to CausativeBuilder
 
-Nadathur & Lauer's binary sufficiency/necessity distinction is a
-coarsening of the graded model. The graded model reveals that
-verbs grouped under the same builder (e.g., *make* and *force*
-both use `.sufficiency`) can still differ in their full semantics. -/
+The force-dynamic builder (Wolff 2003 / Talmy 1988) provides a finer
+categorization than sufficiency/necessity alone. The graded model
+reveals that verbs with different builders (e.g., `.make` and `.force`)
+can still differ in their full semantics even when they share the
+same N&L truth conditions. -/
 
-/-- *make* and *force* share the same `CausativeBuilder` but have
-different interaction profiles.
+/-- *make* and *force* now have different `CausativeBuilder`s (`.make` vs
+`.force`) but both assert sufficiency, and have different interaction
+profiles.
 
-This demonstrates that the binary builder is a useful but incomplete
-characterization: both verbs assert sufficiency, but *make* additionally
-encodes a SUF×INT sensitivity that *force* lacks. -/
-theorem make_force_same_builder_different_profiles :
-    -- Same builder
-    (CausativeBuilder.sufficiency = CausativeBuilder.sufficiency) ∧
+This demonstrates that the graded model provides information beyond
+even the fine-grained force-dynamic builder: *make* has a SUF×INT
+sensitivity that *force* lacks. -/
+theorem make_force_both_assert_sufficiency_different_profiles :
+    -- Both assert sufficiency (derived from builder)
+    CausativeBuilder.make.assertsSufficiency = true ∧
+    CausativeBuilder.force.assertsSufficiency = true ∧
     -- Different reliable interactions
     (makeProfile.reliablePositive ≠ forceProfile.reliablePositive) := by
-  constructor
-  · rfl
-  · decide
+  refine ⟨rfl, rfl, ?_⟩
+  decide
 
 /-- The graded model subsumes the binary model.
 
@@ -234,7 +236,7 @@ theorem graded_subsumes_binary (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) :
     -- When deterministic SUF = 1, the builder's `makeSem` agrees
     deterministicSuf dyn bg c e = 1 →
-    CausativeBuilder.sufficiency.toSemantics dyn bg c e = true := by
+    CausativeBuilder.make.toSemantics dyn bg c e = true := by
   intro h
   rw [deterministicSuf_iff_sufficient] at h
   simp [CausativeBuilder.toSemantics, makeSem, h]

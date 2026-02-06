@@ -97,15 +97,16 @@ def toNoisyOR (p : DeterministicParams) : NoisyOR :=
 
 end DeterministicParams
 
-/--
-Extract deterministic parameters from a structural causal model.
--/
+/-- Build `DeterministicParams` from a `CausalProfile`. -/
+def DeterministicParams.ofProfile (p : CausalProfile) : DeterministicParams :=
+  { sufficient := p.sufficient
+  , necessary := p.necessary
+  , alternativeCause := !p.necessary }
+
+/-- Extract deterministic parameters from a structural causal model. -/
 def extractParams (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : DeterministicParams :=
-  { sufficient := causallySufficient dyn background cause effect
-  , necessary := causallyNecessary dyn background cause effect
-  , alternativeCause := !causallyNecessary dyn background cause effect
-  }
+  .ofProfile (extractProfile dyn background cause effect)
 
 -- WorldState from Structural Model
 
@@ -155,11 +156,11 @@ theorem sufficiency_implies_pCGivenA_one (dyn : CausalDynamics) (background : Si
     (cause effect : Variable) (pCause : ℚ) (hCause : 0 < pCause ∧ pCause ≤ 1)
     (h_suff : causallySufficient dyn background cause effect = true) :
     (situationToWorldState dyn background cause effect pCause).pCGivenA = 1 := by
-  simp only [situationToWorldState, extractParams, WorldState.pCGivenA,
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, WorldState.pCGivenA,
              DeterministicParams.toConditionals, h_suff, ↓reduceIte]
   have hpA_pos : 0 < pCause := hCause.1
   simp only [gt_iff_lt, hpA_pos, ↓reduceIte]
-  -- P(C|A) = P(A∧C) / P(A) = (1 * pCause) / pCause = 1
   have hpA_ne : pCause ≠ 0 := ne_of_gt hpA_pos
   field_simp
 
@@ -198,18 +199,14 @@ theorem structural_ac_implies_inferred_ac (dyn : CausalDynamics) (background : S
     -- and "if C then A" is also assertable (since C only happens with A)
     -- This leads to biconditional assertability → ACausesC inference
     assertable ws θ = true := by
-  simp only [situationToWorldState, extractParams, h_suff, h_nec,
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, h_suff, h_nec,
              Bool.not_true, assertable, WorldState.pCGivenA, conditionalProbability,
              DeterministicParams.toConditionals, ↓reduceIte]
   simp only [Bool.and_eq_true, decide_eq_true_eq]
   constructor
-  · -- P(A) = 1/2 > 0
-    norm_num
-  · -- P(C|A) = 1 > θ
-    simp only [gt_iff_lt]
-    have h_pAC : (1 : ℚ) * (1/2) = 1/2 := by ring
-    have h_pA : (0 : ℚ) * (1 - 1/2) = 0 := by ring
-    -- P(C|A) = P(A∧C) / P(A) = (1 * 1/2) / (1/2) = 1
+  · norm_num
+  · simp only [gt_iff_lt]
     norm_num
     linarith [hθ.2]
 
@@ -269,8 +266,9 @@ theorem grounding_chain_consistent (dyn : CausalDynamics) (background : Situatio
     (h_nec : causallyNecessary dyn background cause effect = true) :
     -- Structural inference
     inferStructuralCausalRelation dyn background cause effect = .ACausesC := by
-  simp only [inferStructuralCausalRelation, extractParams, structuralToCausalRelation,
-             h_suff, h_nec, Bool.and_true, ↓reduceIte]
+  simp only [inferStructuralCausalRelation, extractParams, DeterministicParams.ofProfile,
+             extractProfile, structuralToCausalRelation, h_suff, h_nec]
+  decide
 
 -- Overdetermination: Structural vs Probabilistic
 
@@ -289,9 +287,9 @@ theorem overdetermination_not_ac (dyn : CausalDynamics) (background : Situation)
     (h_suff : causallySufficient dyn background cause effect = true)
     (h_not_nec : causallyNecessary dyn background cause effect = false) :
     inferStructuralCausalRelation dyn background cause effect = .Independent := by
-  simp only [inferStructuralCausalRelation, extractParams, structuralToCausalRelation,
-             h_suff, h_not_nec, Bool.and_false, Bool.and_true, Bool.not_false]
-  rfl
+  simp only [inferStructuralCausalRelation, extractParams, DeterministicParams.ofProfile,
+             extractProfile, structuralToCausalRelation, h_suff, h_not_nec]
+  decide
 
 -- Causal Perfection
 

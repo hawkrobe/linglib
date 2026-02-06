@@ -358,4 +358,59 @@ def causalChain (a b c : Variable) : CausalDynamics :=
 
 end CausalDynamics
 
+/-- Does any causal law directly connect `cause` to `effect`?
+
+    Checks whether `cause` appears in a law's preconditions and
+    `effect` is that law's target. Distinct from transitive
+    reachability via `normalDevelopment`. -/
+def hasDirectLaw (dyn : CausalDynamics) (cause effect : Variable) : Bool :=
+  dyn.laws.any fun law =>
+    law.preconditions.any (fun (v, _) => v == cause) && law.effect == effect
+
+/-- Does the intermediate have a causal law not depending on `cause`?
+
+    An intermediate with an independent source can be activated
+    without the original cause, disrupting causal necessity in
+    chain models. -/
+def hasIndependentSource (dyn : CausalDynamics)
+    (cause intermediate : Variable) : Bool :=
+  dyn.laws.any fun law =>
+    law.effect == intermediate &&
+    !(law.preconditions.any (fun (v, _) => v == cause))
+
+-- Counterfactual Queries (N&L 2020 Definitions 23-24)
+
+/-- **Causal Sufficiency** (N&L 2020, Definition 23).
+    C is causally sufficient for E in situation s iff adding C and
+    developing normally produces E: E ∈ normalDevelopment(s ⊕ {C=true}). -/
+def causallySufficient (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Bool :=
+  let sWithCause := s.extend cause true
+  let developed := normalDevelopment dyn sWithCause
+  developed.hasValue effect true
+
+/-- **Causal Necessity** (N&L 2020, Definition 24).
+    C is causally necessary for E in situation s iff removing C and
+    developing normally does NOT produce E: E ∉ normalDevelopment(s ⊕ {C=false}). -/
+def causallyNecessary (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Bool :=
+  let sWithoutCause := s.extend cause false
+  let developed := normalDevelopment dyn sWithoutCause
+  !developed.hasValue effect true
+
+/-- Causal profile: packages the counterfactual properties
+    of a cause-effect pair in a structural model. -/
+structure CausalProfile where
+  sufficient : Bool
+  necessary : Bool
+  direct : Bool
+  deriving DecidableEq, Repr, BEq
+
+/-- Extract the causal profile of a cause-effect pair. -/
+def extractProfile (dyn : CausalDynamics) (bg : Situation)
+    (cause effect : Variable) : CausalProfile :=
+  { sufficient := causallySufficient dyn bg cause effect
+  , necessary := causallyNecessary dyn bg cause effect
+  , direct := hasDirectLaw dyn cause effect }
+
 end Core.CausalModel
