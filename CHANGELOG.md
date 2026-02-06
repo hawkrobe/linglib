@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.95.1] - 2026-02-06
+
+### Changed
+- **MCB2023/FreeMagmaEquiv.lean**: Added `leafCount_eq_freeMagma_length` and `leafCount_pos` — bridge SO.leafCount to mathlib's `FreeMagma.length` (positivity comes free from `FreeMagma.length_pos`)
+- **MCB2023/BinaryOptimality.lean**: Added `freemagmaNodeCount_eq_length_sub` and `nodeCount_eq_freeMagma_length_sub` — bridge nodeCount to `FreeMagma.length - 1`; added `NaryTree.nodeCount` and `nary_leaf_node_relation`; proved `nary_leaf_count_mod` (was sorry) via leaf-node relation; proved `binary_achieves_all` (was sorry) via `NaryTree.expandLeaf`; added `NaryTree.expandLeaf` + `expandLeaf_leafCount`. **BinaryOptimality.lean now has zero sorrys.**
+- **MCB2023/Accessible.lean**: Rewrote `numAcc`/`numVertices` using `List.map`/`List.sum` (was `foldl`); added `numAcc_eq_numVertices` replacing `foldl_acc_eq_vert`; added `Multiset`-valued `leafMultisetM` and `accessibleTermsM`; proved `im_b0_preserved` (was sorry) via `length_filter_bne_of_count_one`
+- **MCB2023/Coproduct.lean**: Refactored `AdmissibleCut` to use `Finset` + mathlib's `IsAntichain contains` (was `List` + manual pairwise condition); proved `quotientTree_some_of_contains` (was sorry) via structural induction on SO; proved `quotientTree_leafCount` (was sorry) via auxiliary `quotientTree_implies_containsOrEq` and `leafCount_le_of_containsOrEq`; proved `coproduct_size_identity` (was sorry) from `quotientTree_leafCount`. **Coproduct.lean now has zero sorrys.**
+
+## [0.95.0] - 2026-02-06
+
+### Added
+- **Minimalism/Formal/MCB2023/FreeMagmaEquiv.lean**: Marcolli, Chomsky & Berwick (2023) §1 — SO ≅ FreeMagma bridge
+  - `toFreeMagma`/`fromFreeMagma`: explicit maps between `SyntacticObject` and `FreeMagma LIToken`
+  - `soFreeMagmaEquiv`: the type equivalence `SyntacticObject ≃ FreeMagma LIToken`
+  - `Mul SyntacticObject` instance: positions Merge as a magma operation
+  - `toFreeMagmaMulHom`: magma homomorphism `SO →ₙ* FreeMagma LIToken`
+  - `SyntacticObject.liftMagma`: universal property — lift any `LIToken → M` to `SO →ₙ* M`
+  - `contains_iff_properSubterm`: proven — containment = proper subterm in free magma
+- **Minimalism/Formal/MCB2023/Accessible.lean**: MCB2023 §2 — accessible terms + workspace counting
+  - `subtrees`, `properSubtrees`, `internalNodes`: subtree extraction functions
+  - `leafMultiset`, `accessibleTerms`: frontier tokens and accessible terms (Def 2.4)
+  - `b₀`, `numAcc`, `wsSize`, `wsSizeAlt`: workspace counting functions (eq 2.8–2.9)
+  - `wsSize_eq_wsSizeAlt`: proven — σ̂ = σ
+  - `SidewardMerge` structure + `sideward_violates_b0`: proven — sideward adds a component
+  - Proposition 2.17 counting theorems (EM/IM behavior) stated with sorry
+- **Minimalism/Formal/MCB2023/BinaryOptimality.lean**: MCB2023 §4 — binary optimality + Catalan
+  - `NaryTree`: n-ary tree type generalizing SyntacticObject
+  - `achievableLeafCounts`: achievable leaf counts for n-ary Merge
+  - `nary_misses_two`: proven (modulo `nary_leaf_count_mod`) — n≥3 can't achieve leaf count 2
+  - `binary_unique_optimal`: proven — binary is the only n≥2 achieving all leaf counts (Lemma 4.4)
+  - `tree_shapes_catalan`: binary tree shapes with n nodes = catalan n (via mathlib)
+- **Minimalism/Formal/MCB2023/Coproduct.lean**: MCB2023 §2.2–2.3 — coproduct structure
+  - `quotientTree`: T with subtree at v contracted to a leaf (Def 2.5)
+  - `AdmissibleCut`: admissible cuts as pairwise-incomparable node sets
+  - `leadingCoproduct`: Δ₍₂₎(T) = Σᵥ Tᵥ ⊗ T/Tᵥ (eq 2.16)
+  - `listExternalMerge`/`listInternalMerge`: Merge lifted to workspace lists
+  - `workspace_merge_recovers_merge`: proven — algebraic formulation recovers simple Merge
+  - `workspace_merge_partition`: proven — EM/IM partition aligns with containment
+- **Linglib.lean**: Registered 4 new MCB2023 files
+
+## [0.94.0] - 2026-02-06
+
+### Added
+- **NeoGricean/Exhaustivity/Chierchia2004.lean**: Chierchia (2004) parallel recursive strengthening architecture
+  - `StrengthenedMeaning`: plain + strong + alternatives at every compositional node
+  - `krifkaRule`: direct implicature introduction at scope sites (Krifka 1995)
+  - `strengthCondition`: ‖α‖^S must entail ‖α‖, else fallback
+  - `IsDE`, `pneg_isDE`: DE-ness for `Prop' World = World → Prop`
+  - `strongApply`: DE-sensitive function application (84) — the formal heart of the paper
+  - `si_npi_generalization`: proven — SIs suspended in exactly NPI-licensing (DE) contexts
+  - `de_blocks_direct_si`: proven — DE functions weaken Krifka-strengthened arguments
+  - `domainExhaustify`: O operator for NPI domain widening (127)
+  - `npi_blocked_under_de`: proven — DE reverses NPI strengthening
+  - `ScalarStrength`, `intervenes`: intervention effects from strong scalar items (§4.3)
+  - `scaleAxiomsSatisfied`: Chierchia's scale axioms (99a–c)
+  - `root_ue_bridge`: **proven** — Krifka output entails exhIE on flat scales
+- **Linglib.lean**: Registered `Chierchia2004`
+
 ## [0.93.0] - 2026-02-06
 
 ### Added
