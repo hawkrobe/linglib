@@ -18,6 +18,12 @@
   - Presupposition bridge: `palPresupposition` connects to `Core.Presupposition.PrProp`
   - Two-dimensional meaning: `palTwoDim` connects to `TruthConditional.Expressives.TwoDimProp`
   - 4 core claims with proofs (form-function, familiarity presupposition, rhetorical effects, cross-linguistic)
+- **Phenomena/Constructions/Studies/FillmoreKayOConnor1988.lean**: *Let alone* judgment data
+  - 24 examples with 4-way judgments (grammatical/ungrammatical/marginal/anomalous)
+  - NPI licensing contrasts (barely vs almost vs only)
+  - Topicalization, VP ellipsis, IT-cleft asymmetries vs *and*-coordination
+  - Scalar anomaly examples (swapped foci)
+  - Positive polarity counterexamples
 - **Phenomena/Constructions/Studies/GoldbergShirtz2025.lean**: Empirical data
   - Studies 1a/1b (common knowledge), 2 (wit), 3 (sarcasm), 5 (conventional subtypes)
   - Cross-linguistic PAL attestations (German, Dutch, Afrikaans, Turkish, Hebrew, Brazilian Portuguese)
