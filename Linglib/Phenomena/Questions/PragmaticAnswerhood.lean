@@ -188,7 +188,7 @@ def profAAcceptance : NonExhaustiveImplicationDatum :=
   { question := "From whom did the organizers receive a letter of acceptance?"
   , answer := "At least from Prof. A."
   , backgroundKnowledge := "Prof. A. is always the first to accept invitations"
-  , exhaustiveConclusion := ""  -- No exhaustive conclusion possible!
+  , exhaustiveConclusion := ""  -- No exhaustive conclusion possible
   , explanation := "The same answer to a different question yields no exhaustive " ++
       "conclusion, because being first to accept doesn't entail others accepted"
   , source := "G&S 1984, p. 362"

@@ -303,8 +303,7 @@ def spanishFlipPrediction (α : ℕ) : Bool :=
 #eval grammaticalUtterances .prenominal ssScene smallBlue
 #eval grammaticalUtterances .postnominal ssScene smallBlue
 
--- Note: Full evaluation requires implementing the exponential/log utilities
--- The structure above captures the model; full numerical predictions would
--- require more careful handling of rational arithmetic for exp/log.
+-- TODO: Full numerical predictions require exponential/log utilities
+-- with careful handling of rational arithmetic.
 
 end RSA.Implementations.WaldonDegen2021

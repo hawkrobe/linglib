@@ -21,8 +21,7 @@ namespace CCG.Interpret
 open CCG
 open TruthConditional
 open TruthConditional.SemDeriv
--- Note: Don't open TruthConditional.Core to avoid SemLexEntry name conflict with CCG.Semantics
--- We use qualified names: TruthConditional.Core.SemLexEntry, TruthConditional.Core.toyLexicon
+-- Qualified names avoid SemLexEntry conflict between TruthConditional.Core and CCG.Semantics
 
 -- Extract Words from Derivation
 
@@ -87,7 +86,7 @@ def john_sleeps_sem : Derivation toyModel :=
   toDerivation ccg_john_sleeps .t (ToyLexicon.sleeps_sem ToyEntity.john)
 
 /-- CCG derivation for "some student sleeps" -/
--- Note: This is simplified - real CCG would have Det combining with N
+-- Simplified: full CCG would have Det combining with N
 def ccg_some_student_sleeps : DerivStep :=
   .bapp
     (.fapp (.lex ⟨"some", Det⟩) (.lex ⟨"student", N⟩))

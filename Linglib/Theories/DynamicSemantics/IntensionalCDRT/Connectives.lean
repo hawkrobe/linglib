@@ -197,7 +197,7 @@ def bathroomSentence (p : PVar) (v : IVar) (domain : Set E)
   let thereIsABathroom : BilateralICDRT W E :=
     exists_ p v domain (atom (λ w => ∃ e, bathroom e w))
   let itIsUpstairs : BilateralICDRT W E :=
-    -- The individual dref v is accessible here!
+    -- The individual dref v is accessible here
     atom (λ w => True)  -- Placeholder - needs entity lookup
   disjBathroom thereIsABathroom.neg itIsUpstairs
 

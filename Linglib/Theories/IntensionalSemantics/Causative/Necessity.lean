@@ -45,12 +45,12 @@ These can come apart in overdetermination cases:
 - Lewis (1973). Counterfactuals.
 -/
 
-import Linglib.Theories.IntensionalSemantics.Conditional.CausalModel
+import Linglib.Core.CausalModel
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 
 namespace Theories.NadathurLauer2020.Necessity
 
-open Theories.TruthConditional.Conditional.CausalModel
+open Core.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 
 -- Causal Necessity (Definition 24)

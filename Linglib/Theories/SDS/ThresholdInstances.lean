@@ -127,7 +127,7 @@ is fixed by the size adjective's scale structure.
 -/
 
 instance {E : Type} : SDSConstraintSystem (GradableNounWithSize E) ℚ where
-  paramSupport gn := [max gn.sizeThreshold gn.nounStandard]  -- Single point support!
+  paramSupport gn := [max gn.sizeThreshold gn.nounStandard]  -- Single point support
   selectionalFactor gn θ :=
     -- Delta function: only the compositional threshold gets mass
     if θ = max gn.sizeThreshold gn.nounStandard then 1 else 0

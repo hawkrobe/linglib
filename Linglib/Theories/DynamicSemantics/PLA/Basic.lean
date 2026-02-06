@@ -77,7 +77,7 @@ theorem pronouns_pron (i : PronIdx) : (Term.pron i).pronouns = {i} := rfl
 end Term
 
 
-/-- Pronouns in a list of terms using biUnion (much cleaner than foldl!) -/
+/-- Pronouns in a list of terms via `Finset.biUnion`. -/
 def termsPronouns (ts : List Term) : Finset PronIdx :=
   ts.toFinset.biUnion Term.pronouns
 

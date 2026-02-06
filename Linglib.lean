@@ -29,6 +29,7 @@ import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.SemanticStructure
+import Linglib.Core.CausalModel
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -86,6 +87,8 @@ import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
+import Linglib.Phenomena.Constructions.Resultatives.Data
+import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -215,6 +218,7 @@ import Linglib.Comparisons.ScopeFreezing
 import Linglib.Comparisons.SDSandRSA
 import Linglib.Comparisons.Mueller2013
 import Linglib.Comparisons.ThresholdSemantics
+import Linglib.Comparisons.ResultativeArgLicensing
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Basic
@@ -273,6 +277,8 @@ import Linglib.Theories.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.ConstructionGrammar.Studies.KayFillmore1999
+import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004.Bridge
 
 -- Theories: HPSG
 import Linglib.Theories.HPSG.Basic
@@ -374,15 +380,16 @@ import Linglib.Theories.IntensionalSemantics.Attitude.Intensional
 import Linglib.Theories.IntensionalSemantics.Attitude.Parasitic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
+import Linglib.Theories.IntensionalSemantics.Causative.Builder
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication
 import Linglib.Theories.IntensionalSemantics.Causative.Examples
+import Linglib.Theories.IntensionalSemantics.Causative.GradedCausation
 import Linglib.Theories.IntensionalSemantics.Causative.Integration
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Conditional.Basic
 import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
-import Linglib.Theories.IntensionalSemantics.Conditional.CausalModel
 import Linglib.Theories.IntensionalSemantics.Conditional.ConditionalType
 import Linglib.Theories.IntensionalSemantics.Conditional.Counterfactual
 import Linglib.Theories.IntensionalSemantics.Conditional.LeftNested

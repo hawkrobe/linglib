@@ -115,7 +115,7 @@ theorem complement_same_partition_claim :
     True := by  -- Placeholder for the semantic equivalence
   trivial
 
-/-- Yet the answers differ! This is the puzzle. -/
+/-- The answers differ despite identical complements. -/
 theorem answers_differ (cp : ComplementPair)
     (h : cp.positiveAnswer ≠ cp.negativeAnswer) :
     cp.positiveAnswer ≠ cp.negativeAnswer := h

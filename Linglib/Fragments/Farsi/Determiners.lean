@@ -221,7 +221,7 @@ def vreun_ro : IndefiniteEntry :=
   , romanization := "vreun"
   , gloss := "VREUN"
   , isEFCI := true
-  , efciRescue := some .none  -- No rescue!
+  , efciRescue := some .none  -- No rescue
   , requiresPartitive := false
   }
 

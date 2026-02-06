@@ -120,7 +120,7 @@ CIs project through disjunction rather than being disjoined.
 -/
 def or (p q : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => p.atIssue w || q.atIssue w
-  , ci := λ w => p.ci w && q.ci w }  -- Both CIs project (not disjoined!)
+  , ci := λ w => p.ci w && q.ci w }  -- Both CIs project (conjunction, not disjunction)
 
 /--
 Implication: at-issue content forms conditional; both CIs project.

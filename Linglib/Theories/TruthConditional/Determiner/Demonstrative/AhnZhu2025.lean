@@ -366,7 +366,7 @@ theorem complete_bridging_pattern {E S : Type}
 ```
 def naCanBridge := true
 def bareCanBridge (n) := n.isRelational
-theorem na_can_bridge : naCanBridge = true := rfl  -- Trivial!
+theorem na_can_bridge : naCanBridge = true := rfl
 ```
 
 ### This Version (Derived)

@@ -341,6 +341,6 @@ theorem diverse_audience_prefers_semantic {W E : Type*} [DecidableEq E]
     forall j : InfoSet W, pragmaticallyRigid t j worlds = true :=
   λ hSem j => semanticallyRigid_implies_pragmaticallyRigid t j worlds hSem
 
--- Note: W is implicit in TermDenotation, InfoSet, etc.
+-- W is implicit in TermDenotation, InfoSet, etc.
 
 end QuestionSemantics

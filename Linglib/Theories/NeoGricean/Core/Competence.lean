@@ -116,7 +116,7 @@ Quality is likely violated (speaker should have been more specific).
 theorem disjunction_blocks_full_competence :
     ∀ d : DisjunctionState,
       competentAboutBoth d = true → qualityConsistent d = true →
-      -- Only remaining case: both believed false (but then assertion is false!)
+      -- Only remaining case: both believed false (then assertion is false)
       d.beliefA = .disbelief ∧ d.beliefB = .disbelief := by
   intro ⟨beliefA, beliefB⟩ hcomp hqual
   cases beliefA <;> cases beliefB <;>
@@ -224,7 +224,7 @@ Should competence be assumed in this context?
 -/
 def shouldAssumeCompetence : CompetenceContext → Bool
   | .simpleAssertion => true
-  | .disjunction => false      -- Key insight: disjunction blocks competence
+  | .disjunction => false      -- Disjunction blocks competence
   | .authority => true
   | .uncertain => false
 

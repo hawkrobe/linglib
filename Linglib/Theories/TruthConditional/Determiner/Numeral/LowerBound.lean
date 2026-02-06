@@ -98,7 +98,7 @@ theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by
 
 -- RSA with Lower-Bound Semantics
 
--- Note: For RSA computations with lower-bound semantics, use:
+-- For RSA computations with lower-bound semantics, use:
 -- NumeralTheory.runL1 from Theory.lean
 
 -- Verify it works

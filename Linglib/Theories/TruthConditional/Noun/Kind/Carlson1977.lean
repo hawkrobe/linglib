@@ -194,7 +194,7 @@ structure PredicateEntry where
   form : String
   level : PredicateLevel
 
--- Semantic Composition: The Key Insight
+-- Semantic Composition
 
 /--
 Individual-level predicate semantics: Direct predication of the kind.

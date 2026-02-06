@@ -230,7 +230,7 @@ theorem map_via_bind (f : GSQuestion W → GSQuestion W) (lq : LiftedQuestion W)
 theorem run_principal (q : GSQuestion W) : run (lift q) = True := by
   simp only [run, lift]
 
--- Coordination (the whole point!)
+-- Coordination
 
 /-- Disjunction of lifted questions.
 
@@ -246,7 +246,7 @@ def disj (lq1 lq2 : LiftedQuestion W) : LiftedQuestion W :=
 def conj (lq1 lq2 : LiftedQuestion W) : LiftedQuestion W :=
   λ P => lq1 P ∧ lq2 P
 
--- Note: Could add Sup/Inf instances with mathlib import
+-- TODO: Add Sup/Inf instances with mathlib import
 
 /-- Disjunction of core questions via lifting. -/
 def disjCore (q1 q2 : GSQuestion W) : LiftedQuestion W :=

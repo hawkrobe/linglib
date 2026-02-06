@@ -220,7 +220,7 @@ theorem someBut_LContradiction : (someButSkeleton Entity).isLContradiction := by
   simp only [someButSkeleton, butExceptive, someD]
   intro ⟨⟨x, ⟨hAx, hNotCx⟩, hPx⟩, hMin⟩
   -- The witness x satisfies A (slot 0) and P (slot 2) but not C (slot 1)
-  -- The key insight: for upward-monotone "some", any witness works for
+  -- For upward-monotone "some", any witness works for
   -- the empty exception set, which contradicts minimality of C when C ≠ ∅
   sorry  -- Full proof requires careful case analysis
 

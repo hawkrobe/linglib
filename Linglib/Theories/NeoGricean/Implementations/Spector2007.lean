@@ -426,7 +426,7 @@ theorem main_theorem (P : Proposition Atom) (hpos : isPositive Atom P) :
       -- i' ∈ I(P) means Pos(i') = P
       -- By Exhaust_entails_I: Exhaust(P) ⊆ i'
       -- If i' ⊂ Exhaust(P), then ¬(Exhaust(P) ⊆ i') by definition of ⊂
-      -- Contradiction!
+      -- Contradiction
       have h := Exhaust_entails_I Atom P hpos i' hi'
       exact hsub.2 h
 

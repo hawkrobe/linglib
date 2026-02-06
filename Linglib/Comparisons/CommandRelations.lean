@@ -1520,7 +1520,7 @@ theorem tight_implies_fair {Node : Type} (T : AbstractTree Node)
   -- had: tf.f(a) dom d
   -- Need: b dom d
   -- From tightness: if a < tf.f(b), then tf.f(a) ≤ tf.f(b)
-  -- Key insight: tf.f(a) dom b but ¬(tf.f(a) dom c), while tf.f(b) dom c
+  -- tf.f(a) dom b but ¬(tf.f(a) dom c), while tf.f(b) dom c
   -- This means tf.f(a) > b (properly dominates), so by tightness tf.f(b) ≤ tf.f(a)
   -- But we have tf.f(a) dom b and tf.f(b) dom c...
   -- Actually the proof is more subtle. We need tf.f(a) = b or tf.f(a) properly dom b

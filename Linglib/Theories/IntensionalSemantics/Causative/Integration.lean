@@ -38,7 +38,7 @@ This module proves that:
 - Pearl (2000). Causality.
 -/
 
-import Linglib.Theories.IntensionalSemantics.Conditional.CausalModel
+import Linglib.Core.CausalModel
 import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
@@ -46,7 +46,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
 namespace Theories.NadathurLauer2020.Integration
 
-open Theories.TruthConditional.Conditional.CausalModel
+open Core.CausalModel
 open Theories.TruthConditional.Conditional.CausalBayesNet
 open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity

@@ -254,15 +254,14 @@ Under assertion-only, "stop P" just means: was P and now ¬P.
 -/
 def assertionOnly_stop (P : W → Bool) : AssertionOnlyMeaning W :=
   { truthConditions := λ w => P w && !P w }
-  -- Note: This is actually always false! This reveals the inadequacy
-  -- of purely extensional semantics for CoS verbs.
+  -- Always false: reveals the inadequacy of purely extensional semantics for CoS verbs.
 
 /--
 Under assertion-only, "not stop P" just means: ¬(was P and now ¬P).
 -/
 def assertionOnly_notStop (P : W → Bool) : AssertionOnlyMeaning W :=
   { truthConditions := λ w => !(P w && !P w) }
-  -- This is ¬P ∨ P, which is a tautology!
+  -- ¬P ∨ P, a tautology
 
 /--
 Under assertion-only, the negation does not entail the precondition.

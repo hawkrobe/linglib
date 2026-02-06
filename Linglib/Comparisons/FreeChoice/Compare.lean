@@ -449,7 +449,7 @@ This SEMANTICALLY derives FC: if the disjunction is assertable, both must
 contribute possibilities.
 -/
 
-/-- Bar-Lev & Fox's key insight: closure determines outcome -/
+/-- Bar-Lev & Fox: closure under conjunction determines outcome. -/
 inductive ClosureStatus where
   | closed : ClosureStatus      -- ALT closed under ∧
   | notClosed : ClosureStatus   -- ALT not closed under ∧

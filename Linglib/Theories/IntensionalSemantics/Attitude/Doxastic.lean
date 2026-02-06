@@ -139,7 +139,7 @@ def satisfied {W : Type*} (req : CGRequirement) (contextSet : List W) (p : W →
 end CGRequirement
 
 -- ============================================================================
--- Derivation: Veridicality → CG Requirement (not stipulation!)
+-- Derivation: Veridicality → CG Requirement
 -- ============================================================================
 
 /-!
@@ -369,7 +369,7 @@ def beliefFormationModel : CausalModel :=
   , edges := [
       -- p generates indicators for p
       ⟨BeliefVars.p, BeliefVars.indic_p⟩,
-      -- ¬p generates indicators for ¬p (NOT for p!)
+      -- ¬p generates indicators for ¬p, not for p
       ⟨BeliefVars.not_p, BeliefVars.indic_not_p⟩,
       -- Acquiring indicator for p leads to belief in p
       ⟨BeliefVars.indic_p, BeliefVars.acq_a_ip⟩,

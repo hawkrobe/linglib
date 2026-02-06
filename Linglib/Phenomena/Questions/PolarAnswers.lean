@@ -95,17 +95,15 @@ def conditionalAsQuestion : ConditionalAnswerDatum :=
   { question := "Is it true that John walks if Mary walks?"
   , conditionalAnswer := "Yes, John walks if Mary walks"
   , surfaceMeaning := "John walks if Mary walks"
-  , exhaustifiedMeaning := "John walks if Mary walks"  -- no biconditional!
+  , exhaustifiedMeaning := "John walks if Mary walks"  -- no biconditional
   , source := "G&S 1984, p. 327"
   }
 
 def conditionalAnswerExamples : List ConditionalAnswerDatum :=
   [ifMaryWalks, conditionalAsQuestion]
 
-/-- The key insight: what determines conditional vs biconditional reading
-    is whether the question asks about the conditional itself, or about
-    its consequent.
--/
+/-- Conditional vs biconditional reading depends on whether the question
+    targets the conditional itself or its consequent. -/
 def conditionalBiconditionalPrinciple : String :=
   "Conditionals receive standard logical interpretation when answering " ++
   "a question about the conditional itself. They become biconditional " ++
@@ -177,7 +175,7 @@ def doesntJohnWalk : NegativeInterrogativeDatum :=
   { positiveForm := "Does John walk?"
   , negativeForm := "Doesn't John walk?"
   , sameQuestion := true
-  , noMeaning := "John doesn't walk"  -- NOT "John walks"!
+  , noMeaning := "John doesn't walk"  -- Not "John walks"
   , doxasticAttitude := "Questioner expects negative answer"
   , source := "G&S 1984, p. 331"
   }

@@ -1227,7 +1227,7 @@ def americanCalifornian_semantic : HurfordSemantic HyponymWorld :=
   { disjunctA := americanP
   , disjunctB := californianP
   , entailment := Or.inr californian_entails_american
-  , alts := {americanP, californianP}  -- No stronger alternatives!
+  , alts := {americanP, californianP}  -- No stronger alternatives
   }
 
 /--
@@ -1244,7 +1244,7 @@ The proof shows that exh(californianP) still entails americanP because:
 -/
 theorem exh_californian_entails_american :
     exhIE americanCalifornian_semantic.alts californianP ⊆ₚ americanP := by
-  -- The key insight: exh(californianP) implies californianP
+  -- exh(californianP) implies californianP
   -- and californianP implies americanP
   intro w hexh
   -- exhIE implies the base proposition holds
