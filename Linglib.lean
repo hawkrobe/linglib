@@ -314,6 +314,10 @@ import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Minimalism.Bridge.RelativeClauses
 import Linglib.Theories.Minimalism.Core.Structure
 import Linglib.Theories.Minimalism.Core.SyntacticObjects
+import Linglib.Theories.Minimalism.Formal.MCB2023.FreeMagmaEquiv
+import Linglib.Theories.Minimalism.Formal.MCB2023.Accessible
+import Linglib.Theories.Minimalism.Formal.MCB2023.BinaryOptimality
+import Linglib.Theories.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Minimalism.Formal.Workspace
 import Linglib.Theories.Minimalism.Formal.XBar
 
@@ -443,6 +447,7 @@ import Linglib.Theories.NeoGricean.Core.Competence
 import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.NeoGricean.Evaluativity
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.NeoGricean.Exhaustivity.Chierchia2004
 import Linglib.Theories.NeoGricean.Exhaustivity.EFCI
 import Linglib.Theories.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface
