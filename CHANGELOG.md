@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.90.0] - 2026-02-06
+
+### Added
+- **Minimalism/Formal/ExtendedProjection/Basic.lean**: Grimshaw (2005) Extended Projection theory
+  - `CatFeatures`, `catFeatures`: [±V, ±N] decomposition computed over existing `Cat`
+  - `fValue`: functional level (F0–F3) within extended projections
+  - `categoryConsistent`, `fMonotone`: EP well-formedness constraints
+  - `CatFamily`: verbal/nominal/adjectival/adpositional category families
+  - `ExtendedProjection` structure with `computeEPSpine`, `mkExtendedProjection`
+  - 12 bridge theorems (chain consistency, F-value monotonicity, family consistency)
+- **Minimalism/Formal/ExtendedProjection/Properties.lean**: Derived EP properties
+  - `EPSemanticType`: maps EP levels to semantic types (property/proposition/entity/intermediate)
+  - `canAssignTheta`: Generalized Theta Criterion (only F0 heads assign theta roles)
+  - `isEPInternal`/`isEPExternal`: complement vs specifier in EP terms
+  - `argumentDomainCat`, `isInArgumentDomain`: Anand et al. (2025) argument domain boundary
+  - Standard/truncated EP spines (`fullVerbalEP`, `infinitivalEP`, small clause variants)
+  - 18 bridge theorems connecting EP levels, argument domains, and truncation
+- **Minimalism/Formal/Sluicing/FormalMatching.lean**: Anand, Hardt & McCloskey (2025) SIC
+  - `ArgumentDomain`, `HeadPair`, `extractHeadPairs`: argument domain structure
+  - `lexicallyIdentical`, `structurallyIdentical`: syntactic identity (Defs 5–6)
+  - `SluicingLicense` with `isLicensed`: Syntactic Isomorphism Condition
+  - Bridge theorems: voice mismatch outside argument domain, case matching, small clause predictions
+  - Bridge to `Phenomena/Ellipsis/Sluicing.lean` empirical data
+
 ## [0.89.0] - 2026-02-06
 
 ### Changed
