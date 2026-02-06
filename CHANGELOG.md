@@ -1,5 +1,60 @@
 # Changelog
 
+## [0.76.0] - 2025-02-05
+
+### Added
+- **Theories/ConstructionGrammar/Basic.lean**: Core CxG types (Construction, Constructicon, Specificity, InheritanceMode, InheritanceLink)
+- **Theories/ConstructionGrammar/Studies/GoldbergShirtz2025.lean**: PAL construction analysis
+  - PAL construction + 4 conventional subtypes (must-VERB, a simple ⟨PAL⟩, Don't PAL me, the old ⟨PAL⟩ N)
+  - Inheritance network from NN compounds and Adj+N modification (Figure 5)
+  - Presupposition bridge: `palPresupposition` connects to `Core.Presupposition.PrProp`
+  - Two-dimensional meaning: `palTwoDim` connects to `TruthConditional.Expressives.TwoDimProp`
+  - 4 core claims with proofs (form-function, familiarity presupposition, rhetorical effects, cross-linguistic)
+- **Phenomena/Constructions/Studies/GoldbergShirtz2025.lean**: Empirical data
+  - Studies 1a/1b (common knowledge), 2 (wit), 3 (sarcasm), 5 (conventional subtypes)
+  - Cross-linguistic PAL attestations (German, Dutch, Afrikaans, Turkish, Hebrew, Brazilian Portuguese)
+  - Distributional data (PALPosition, PALExample, stress pattern)
+
+## [0.75.0] - 2025-02-05
+
+### Changed
+- **RSA/Implementations/EgreEtAl2023.lean**: Close all 5 Appendix A sorrys
+  - `no_quality_implies_S1_zero` (A-2a): proved by induction on foldl (ℚ)
+  - `softmax_translation_invariant` (A-5): removed; use `Softmax.softmax_add_const` from Core
+  - `core_lemma_A6` (A-6): proved over ℝ via `weighted_sum_shift` lemma
+  - `same_support_implies_equal_S1` (A-7): proved over ℝ via A-6 + `Softmax.softmax_add_const`
+  - `lu_limitation` (A-8): proved as corollary of A-7
+  - Added import of `Linglib.Theories.RSA.Core.Softmax.Basic`
+
+## [0.74.0] - 2025-02-05
+
+### Fixed
+- **RSA/Implementations/EgreEtAl2023.lean**: Corrected BIR tolerance range
+  - `birWeight`: y ∈ {0,...,n} per Section 3.2.2, was incorrectly {0,...,6}
+  - `birJoint`, `wirPosterior`: restricted to valid tolerances y ≤ n
+  - L0 now produces [1/16, 1/8, 3/16, 1/4, ...] matching paper's closed-form prediction
+
+### Added
+- **RSA/Implementations/EgreEtAl2023.lean**: Bridge theorems and strengthened appendices
+  - Bridge: `bir_matches_closed_form`, `closed_form_matches_phenomena_center/offset5`
+  - Appendix A: proper `U1`, `S1_score`, `softmaxLocal` defs; `no_quality_implies_S1_zero` (A-2a), `core_lemma_A6` (A-6), `same_support_implies_equal_S1` (A-7), `lu_limitation` (A-8) with full type signatures (sorry'd)
+  - Appendix C: concrete same-support test with `obs_peaked`/`obs_flat`; `peaked_gets_higher_utility_from_around`, `same_utility_under_uniform_l0` (native_decide)
+
+## [0.73.0] - 2025-02-05
+
+### Added
+- **RSA/Implementations/EgreEtAl2023.lean**: Égré, Spector, Mortier & Verheyen (2023) "On the optimality of vagueness"
+  - BIR model with tolerance marginalization (parallels LassiterGoodman2017 threshold inference)
+  - Triangular posterior, ratio inequality, around-beats-between theorems
+  - Appendix A: LU limitation (SameSupport, Quality/Weak Quality, SoftMax TI, A-1 through A-8)
+  - Appendix B: WIR alternative model
+  - Appendix C: standard utility and Bergen utility variants
+  - Grounding: BIR from compositional aroundMeaning
+- **Fragments/English/NumeralModifiers.lean**: "around", "approximately", "between", "exactly", "precisely", "roughly"
+  - ModifierType (tolerance/interval/exactifier), PragmaticFunction, ModifierScale
+- **Phenomena/Imprecision/Studies/EgreEtAl2023.lean**: Empirical data from the paper
+  - Shape inference, speaker preference, sorites, LU limitation, closed-form data
+
 ## [0.72.0] - 2025-02-05
 
 ### Changed

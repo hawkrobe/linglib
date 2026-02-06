@@ -33,6 +33,7 @@ import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Fragments.English.Lexicon
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.English.Nouns
@@ -81,6 +82,7 @@ import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology
+import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -111,6 +113,7 @@ import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
 import Linglib.Phenomena.Imprecision.InferencePreservation
 import Linglib.Phenomena.Imprecision.Numerals
+import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Projection
 import Linglib.Phenomena.Islands.Data
 import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
@@ -258,6 +261,10 @@ import Linglib.Theories.DynamicSemantics.Probabilistic
 import Linglib.Theories.DynamicSemantics.State
 import Linglib.Theories.DynamicSemantics.TeamSemantics
 import Linglib.Theories.DynamicSemantics.UpdateSemantics.Basic
+
+-- Theories: Construction Grammar
+import Linglib.Theories.ConstructionGrammar.Basic
+import Linglib.Theories.ConstructionGrammar.Studies.GoldbergShirtz2025
 
 -- Theories: HPSG
 import Linglib.Theories.HPSG.Basic
@@ -457,6 +464,7 @@ import Linglib.Theories.RSA.Implementations.BergenGoodman2015
 import Linglib.Theories.RSA.Implementations.CausalCorrelation
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.CremersWilcoxSpector2023
+import Linglib.Theories.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.RSA.Implementations.Franke2011
 import Linglib.Theories.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.RSA.Implementations.FrankGoodman2012
