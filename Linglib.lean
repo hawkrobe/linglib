@@ -27,6 +27,7 @@ import Linglib.Core.Interfaces.BindingSemantics
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.SemanticStructure
 
 -- Fragments
@@ -84,6 +85,7 @@ import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
+import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -211,6 +213,7 @@ import Linglib.Comparisons.SauerlandRSA
 import Linglib.Comparisons.ScalarImplicature
 import Linglib.Comparisons.ScopeFreezing
 import Linglib.Comparisons.SDSandRSA
+import Linglib.Comparisons.Mueller2013
 import Linglib.Comparisons.ThresholdSemantics
 
 -- Theories: Dependency Grammar
@@ -221,6 +224,7 @@ import Linglib.Theories.DependencyGrammar.CRDC
 import Linglib.Theories.DependencyGrammar.Inversion
 import Linglib.Theories.DependencyGrammar.LexicalRules
 import Linglib.Theories.DependencyGrammar.LongDistance
+import Linglib.Theories.DependencyGrammar.NonProjective
 
 -- Theories: Dynamic Semantics
 import Linglib.Theories.DynamicSemantics.BilateralUpdate.Basic
@@ -267,12 +271,16 @@ import Linglib.Theories.DynamicSemantics.UpdateSemantics.Basic
 import Linglib.Theories.ConstructionGrammar.Basic
 import Linglib.Theories.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Theories.ConstructionGrammar.ArgumentStructure
+import Linglib.Theories.ConstructionGrammar.Studies.KayFillmore1999
 
 -- Theories: HPSG
 import Linglib.Theories.HPSG.Basic
 import Linglib.Theories.HPSG.Coreference
 import Linglib.Theories.HPSG.Features
+import Linglib.Theories.HPSG.HeadFiller
 import Linglib.Theories.HPSG.Inversion
+import Linglib.Theories.HPSG.LexicalRules
 
 -- Theories: Minimalism
 import Linglib.Theories.Minimalism.Core.Agree
@@ -291,6 +299,7 @@ import Linglib.Theories.Minimalism.Core.Labeling
 import Linglib.Theories.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Minimalism.Phenomena.Scope
 import Linglib.Theories.Minimalism.Bridge.Interface
+import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Minimalism.Bridge.RelativeClauses
 import Linglib.Theories.Minimalism.Core.Structure
 import Linglib.Theories.Minimalism.Core.SyntacticObjects
