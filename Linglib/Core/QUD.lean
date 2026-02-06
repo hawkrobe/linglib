@@ -116,6 +116,22 @@ theorem mem_cell_iff (q : QUD M) (m m' : M) :
     m' ∈ q.cell m ↔ q.sameAnswer m m' = true := by
   simp only [cell, Set.mem_setOf_eq]
 
+/-- Build QUD from a projection function using `DecidableEq` on the codomain.
+Avoids the need for `BEq` + `LawfulBEq`; useful when the codomain only derives
+`DecidableEq` (which is common for inductive types in Lean 4).
+
+Example: `QUD.ofDecEq MagriWorld.grade` partitions by grade value. -/
+def ofDecEq {α : Type*} [DecidableEq α] (project : M → α) (name : String := "") : QUD M where
+  sameAnswer w v := decide (project w = project v)
+  refl w := decide_eq_true_eq.mpr rfl
+  symm w v := by
+    show decide (project w = project v) = decide (project v = project w)
+    congr 1; exact propext ⟨Eq.symm, Eq.symm⟩
+  trans w v u h1 h2 := by
+    rw [decide_eq_true_eq] at *
+    exact h1.trans h2
+  name := name
+
 end QUD
 
 namespace ProductQUD

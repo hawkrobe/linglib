@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.93.0] - 2026-02-06
+
+### Added
+- **Core/QUD.lean**: `QUD.ofDecEq` smart constructor using `DecidableEq` instead of `BEq`+`LawfulBEq`
+- **Core/CommonGround.lean**: `BContextSet` decidable context set type with `toProp`, `update`, `filterWorlds`, `entails`, and bridge theorems to classical `ContextSet`
+- **Core/Proposition.lean**: `FiniteWorlds.ofFintype`/`toFintype` bidirectional bridges between `FiniteWorlds` (47+ files) and `Fintype` (26+ RSA files)
+- **Core/Interfaces/FelicityCondition.lean**: Unified felicity/oddness interface (`FelicityCondition` typeclass, `FelicityStatus`, `OddnessSource`, `FelicityResult`) following `ImplicatureTheory` pattern
+- **QuestionSemantics/EconomyOddness.lean**:
+  - `needlesslyInferiorStrict`: context-aware Answer Condition that also checks dominating alternative is CK-compatible
+  - `SemanticModel`, `DiscourseContext`, `Scenario.mk'`: composable scenario infrastructure
+  - 5 verification theorems showing `needlesslyInferiorStrict` agrees with `needlesslyInferior` on all scenarios
+  - Composability demo: `deModel` reused with two different discourse contexts
+- **Linglib.lean**: Registered `FelicityCondition`
+
+### Changed
+- Simplified all 5 EconomyOddness QUDs from manual 4-line match blocks to `QUD.ofDecEq id`
+
+## [0.92.0] - 2026-02-06
+
+### Added
+- **QuestionSemantics/EconomyOddness.lean**: Katzir & Singh (2015) economy-based oddness
+  - `Scenario`: discourse scenario packaging meaning, complexity, context, QUD, alternatives
+  - `badQuestion`: Question Condition violation (QUD trivially settled by CK)
+  - `atLeastAsGood`, `betterThan`: K&S def 16 combining structural complexity + semantic strength
+  - `needlesslyInferior`, `isOdd`: Answer Condition violation + unified oddness predicate
+  - Spector (2014) `isTrivialInC`, `allAlternativesTrivial`: triviality definitions for comparison
+  - 5 concrete scenarios with `native_decide` verified predictions:
+    - Magri/Spector: both some/all odd via Question Condition + Spector bridge theorem
+    - Needlessly weak: "some" odd / "all" ok via Answer Condition (grade paradigm)
+    - Hurford: "France or Paris" odd via needless complexity
+    - DE reversal: opposite oddness verdicts in DE vs UE (`ue_de_oddness_flips`)
+    - Maximize Presupposition: "a sun" odd / "the sun" ok from Answer Condition
+  - `conditions_independent`: Question and Answer Conditions are logically independent
+- **Linglib.lean**: Registered `EconomyOddness`
+
 ## [0.91.0] - 2026-02-06
 
 ### Added

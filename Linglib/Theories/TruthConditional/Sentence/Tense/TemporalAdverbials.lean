@@ -128,7 +128,21 @@ def AdverbialType.specifiesLB : AdverbialType → Bool
 theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
     (tc : Time) (w : W) :
     PERF_ADV p adv w tc ↔ PERF_XN p (adv.toLBDomain tc) w tc := by
-  sorry
+  constructor
+  · intro ⟨pts, hRB, hadv, hp⟩
+    refine ⟨pts, pts.start, ⟨le_trans pts.valid (le_of_eq hRB), fun h => ?_⟩, rfl, hRB, hp⟩
+    -- adv ⟨pts.start, tc, h⟩ = adv pts (since pts.finish = tc, proof irrelevance)
+    cases pts with | mk s f v =>
+    simp only [RB] at hRB
+    subst hRB
+    exact hadv
+  · intro ⟨pts, tLB, ⟨hle, hadv_cond⟩, hLB, hRB, hp⟩
+    refine ⟨pts, hRB, ?_, hp⟩
+    cases pts with | mk s f v =>
+    simp only [LB] at hLB
+    simp only [RB] at hRB
+    subst hLB; subst hRB
+    exact hadv_cond hle
 
 /-- "ever since t₀" specifies the LB domain to exactly {t₀}
     (assuming t₀ ≤ tc).
@@ -137,7 +151,13 @@ theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
     = {t₀} when t₀ ≤ tc. -/
 theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
     (everSince t₀ : PTSConstraint Time).toLBDomain tc = {t₀} := by
-  sorry
+  ext x
+  simp only [PTSConstraint.toLBDomain, everSince, Set.mem_setOf_eq]
+  constructor
+  · intro ⟨hle, hx⟩
+    exact hx hle
+  · intro heq
+    exact ⟨heq ▸ h, fun _ => heq⟩
 
 /-- "before" imposes no LB constraint: all tLB ≤ tc are compatible.
 
@@ -145,7 +165,9 @@ theorem everSince_specifies_lb (t₀ tc : Time) (h : t₀ ≤ tc) :
     = {tLB | tLB ≤ tc}. -/
 theorem before_no_lb_constraint (tc : Time) :
     (before : PTSConstraint Time).toLBDomain tc = {tLB | tLB ≤ tc} := by
-  sorry
+  ext x
+  simp only [PTSConstraint.toLBDomain, before, Set.mem_setOf_eq]
+  exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, fun _ => trivial⟩⟩
 
 /-- Durative adverbials (specified LB) license U-perf → simple present.
 

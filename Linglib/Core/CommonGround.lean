@@ -143,4 +143,46 @@ theorem add_restricts (cg : CG W) (p : BProp W) (w : W) :
 
 end CG
 
+/-- Decidable context set: all worlds compatible with common knowledge.
+Mirrors `ContextSet` but uses `Bool` instead of `Prop`, enabling computation. -/
+abbrev BContextSet (W : Type*) := W → Bool
+
+namespace BContextSet
+
+variable {W : Type*}
+
+/-- Coerce a decidable context set to its classical (Prop-valued) counterpart. -/
+def toProp (c : BContextSet W) : ContextSet W :=
+  λ w => c w = true
+
+/-- The trivial context: all worlds possible. -/
+def trivial : BContextSet W := λ _ => true
+
+/-- The absurd context: no worlds possible. -/
+def absurd : BContextSet W := λ _ => false
+
+/-- Update a decidable context with a decidable proposition. -/
+def update (c : BContextSet W) (p : W → Bool) : BContextSet W :=
+  λ w => c w && p w
+
+/-- Filter a list of worlds to those compatible with the context. -/
+def filterWorlds (c : BContextSet W) (worlds : List W) : List W :=
+  worlds.filter c
+
+/-- Decidable entailment: p holds at all context-compatible worlds. -/
+def entails (c : BContextSet W) (worlds : List W) (p : W → Bool) : Bool :=
+  worlds.all λ w => !c w || p w
+
+/-- Trivial context set coerces to classical trivial. -/
+theorem trivial_toProp : (trivial : BContextSet W).toProp = ContextSet.trivial := by
+  funext w; simp [trivial, toProp, ContextSet.trivial]
+
+/-- Update corresponds to classical update under coercion. -/
+theorem update_toProp (c : BContextSet W) (p : W → Bool) :
+    (c.update p).toProp = ContextSet.update c.toProp p := by
+  funext w
+  simp only [update, toProp, ContextSet.update, Bool.and_eq_true]
+
+end BContextSet
+
 end Core.CommonGround
