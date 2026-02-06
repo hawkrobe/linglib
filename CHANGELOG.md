@@ -1,5 +1,95 @@
 # Changelog
 
+## [0.85.0] - 2025-02-05
+
+### Changed
+- **CausalModel.lean**: `causallySufficient`, `causallyNecessary` consolidated from Sufficiency/Necessity
+  - Pearl's counterfactual queries now live with the causal model infrastructure
+  - New `CausalProfile` structure packages sufficient/necessary/direct properties
+  - `extractProfile` computes profile from any `CausalDynamics`
+- **Sufficiency.lean / Necessity.lean**: re-export definitions; downstream `open` statements unchanged
+- **Integration.lean**: `extractParams` derives from `CausalProfile` via `DeterministicParams.ofProfile`
+- **BellerGerstenberg2025.lean**: `causalWorldFromModel` uses `extractProfile`
+
+## [0.84.0] - 2025-02-05
+
+### Changed
+- **Resultatives.lean**: Tightness now grounded in causal model semantics, not graph inspection
+  - Tightness ≡ `completesForEffect` (runs `normalDevelopment` under counterfactual intervention)
+  - Levin (2019) §4 "drink teapot dry" (passive chain): tight despite no direct law
+  - Levin (2019) §7 *"kick door open via ball" (active chain): not tight — independent energy source
+  - `hasIndependentSource`: formalizes Levin's "intervening causer" criterion
+  - `independent_source_disrupts_tightness`: central theorem connecting energy sources to necessity
+  - `ContiguityType`: container–contents, contents–container, impingement
+  - Moved from `ConstructionGrammar/Studies/GoldbergJackendoff2004/Bridge.lean` to `Causative/`
+- **CausalModel.lean**: `hasDirectLaw`, `hasIndependentSource` extracted to shared location
+- **BellerGerstenberg2025.lean**: uses shared `hasDirectLaw` from CausalModel
+- **Linglib.lean**: Resultatives import grouped with other Causative imports
+
+### Removed
+- Dead code from Sufficiency.lean (`sufficientIn`, `makeExtended`, `uncausable`, weak/strong sufficiency)
+- Dead code from Necessity.lean (`necessaryIn`, `causeExtended`, `butForCause`)
+- Dead code from CoerciveImplication.lean (`CausativeChoice`, `recommendVerb`, `makeVolitional`, etc.)
+- Verbose docstrings trimmed across all causative files
+
+## [0.83.0] - 2025-02-05
+
+### Added
+- **Causative/Resultatives.lean**: Levin (2019) tightness + cross-module convergence
+  - `prevent_incompatible_with_resultative`: prevent builder can't be resultative CAUSE
+  - `thick_manner_resultative_convergence`: three independent paths converge on `.make`/`makeSem`
+  - `thin_incompatible_with_resultative_cause`: thin → `.cause` ≠ resultative `.make`
+- **BellerGerstenberg2025.lean**: Bridge to structural causal models
+  - `causalWorldFromModel`: computes B&G's W-H-S from `CausalDynamics` + `Situation`
+  - W ≈ `causallyNecessary`, H ≈ `hasDirectLaw`, S ≈ `causallySufficient`
+  - `solo_cause_world`/`overdetermination_world`/`chain_world`: three archetypal scenarios
+  - `chain_not_caused`/`chain_still_enabled`: indirect causation → "enabled" not "caused"
+  - `bg_caused_vs_nl_cause_diverge`: B&G expression semantics vs N&L verb semantics diverge
+- **ProductionDependence.lean**: `single_pathway_concrete` (proved P-CAUSE→D-CAUSE for concrete variables)
+
+## [0.82.0] - 2025-02-05
+
+### Added
+- **Causative/ProductionDependence.lean** (NEW): Martin, Rose & Nichols (2025) thick/thin causatives
+  - `CausationType`: `.production` (P-CAUSE) vs `.dependence` (D-CAUSE)
+  - `ThickThinClass`: `.thickManner`, `.thickState`, `.thin` with derived properties
+  - Asymmetric entailment: P-CAUSE → D-CAUSE (single-pathway sufficiency implies necessity)
+  - Bridges: `CausationType.analogousBuilder`, `productionConstraint`, `strongASRCompatible`
+  - Production entails directness (§6, Wolff 2003)
+- **Phenomena/Causatives/ThickThin.lean** (NEW): Table 3 corpus survey data (25 of 37 verbs)
+  - `ThickThinEntry` structure with 4 binary properties per verb
+  - All 13 thick verbs + 12 representative thin verbs
+  - Correlation theorems: thick↔ASR, thin↔omission subjects
+  - Bridge to `ThickThinClass` and production constraint
+- **Fragments/English/Predicates/Verbal.lean**: 5 lexical causative entries
+  - `kill`, `break_verb`, `burn_verb`, `destroy_verb`, `melt_verb` (all `.make` builder)
+  - Theorems: `lexical_causatives_use_make`, `lexical_causatives_assert_sufficiency`
+
+## [0.81.0] - 2025-02-05
+
+### Changed
+- **Causative/Builder.lean**: Redesigned `CausativeBuilder` from binary sufficiency/necessity to 5 force-dynamics-inspired builders (Wolff 2003, Talmy 1988): `.cause`, `.make`, `.force`, `.enable`, `.prevent`
+  - N&L's sufficiency/necessity now derived via `assertsSufficiency`/`assertsNecessity`
+  - Force-dynamic properties: `isCoercive` (force), `isPermissive` (enable)
+  - New `preventSem`: dual of `causeSem` (blocks effect that would otherwise occur)
+  - Derivation theorems: `sufficiency_builders_use_makeSem`, `make_force_same_truth_conditions`, `prevent_cause_duality`
+- **Fragments/English/Predicates/Verbal.lean**: Updated 6 causative verbs to new builders
+  - cause→`.cause`, make/have/get→`.make`, force→`.force`, let→`.enable`
+  - New theorems: `force_is_coercive`, `let_is_permissive`, `causative_builders_distinguished`
+- **GradedCausation.lean**: Updated bridge to new builders (`make_force_both_assert_sufficiency_different_profiles`)
+- **GoldbergJackendoff2004/Bridge.lean**: Updated resultative builder `.sufficiency`→`.make`
+
+### Added
+- **Phenomena/Causatives/Typology.lean** (NEW): Song (1996) cross-linguistic causative typology
+  - COMPACT/AND/PURP construction types with implicativity property
+  - Cross-linguistic data: English *kill*, Turkish *-dür*, Japanese *-(s)ase*, French *faire*, Korean *-ke ha-*, Vata *le*
+- **Fragments/Korean/Predicates.lean** (NEW): Korean causative predicates
+  - PURP-type *-ke ha-* (`.cause` builder, non-implicative) and COMPACT *-i-* (`.make`)
+- **Fragments/French/Predicates.lean** (NEW): French causative predicates
+  - *faire* (`.make`) and *laisser* (`.enable`, permissive)
+- **Fragments/Japanese/Predicates.lean**: Added causative *-(s)ase-* entries (`.make`)
+- **Fragments/Turkish/Predicates.lean**: Added causative *-dür-* entries (`.make`)
+
 ## [0.80.0] - 2025-02-05
 
 ### Added

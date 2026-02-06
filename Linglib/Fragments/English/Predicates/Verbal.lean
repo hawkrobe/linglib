@@ -774,7 +774,7 @@ def seem : VerbEntry where
   passivizable := false
   verbClass := .simple
 
-/-- "cause" — necessity semantics (counterfactual dependence) -/
+/-- "cause" — counterfactual dependence (necessity semantics) -/
 def cause : VerbEntry where
   form := "cause"
   form3sg := "causes"
@@ -786,10 +786,10 @@ def cause : VerbEntry where
   objectTheta := some .patient    -- Causee
   controlType := .objectControl   -- Y = agent of VP
   verbClass := .causative
-  causativeBuilder := some .necessity
+  causativeBuilder := some .cause
   -- Semantics: NadathurLauer2020.Necessity.causeSem
 
-/-- "make" — sufficiency semantics (cause guaranteed effect) -/
+/-- "make" — direct sufficient guarantee -/
 def make : VerbEntry where
   form := "make"
   form3sg := "makes"
@@ -801,11 +801,11 @@ def make : VerbEntry where
   objectTheta := some .patient    -- Causee
   controlType := .objectControl   -- Y = agent of VP
   verbClass := .causative
-  causativeBuilder := some .sufficiency
+  causativeBuilder := some .make
   -- Semantics: NadathurLauer2020.Sufficiency.makeSem
   -- Coercive implication when VP is volitional
 
-/-- "let" — permissive causative (related to "make" but weaker) -/
+/-- "let" — permissive causative (barrier removal) -/
 def let_ : VerbEntry where
   form := "let"
   form3sg := "lets"
@@ -817,9 +817,7 @@ def let_ : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .sufficiency  -- Permissive = removing barrier (sufficiency)
-  -- Note: "let" is an ENABLING causative, not FORCING
-  -- See Wolff (2003) for force-dynamic analysis
+  causativeBuilder := some .enable  -- Permissive = removing barrier (Wolff 2003)
 
 /-- "have" — causative use (directive causation) -/
 def have_causative : VerbEntry where
@@ -833,7 +831,7 @@ def have_causative : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .sufficiency
+  causativeBuilder := some .make
   -- "Have" implies social/authority-based causation
 
 /-- "get" — causative use (persuasive causation) -/
@@ -848,10 +846,10 @@ def get_causative : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .sufficiency
+  causativeBuilder := some .make
   -- "Get" implies persuasive/indirect causation
 
-/-- "force" — coercive causative -/
+/-- "force" — coercive causative (overcome resistance) -/
 def force : VerbEntry where
   form := "force"
   form3sg := "forces"
@@ -863,8 +861,86 @@ def force : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .sufficiency
+  causativeBuilder := some .force
   -- "Force" lexically encodes coercion (unlike pragmatic "make")
+
+/-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type).
+    No manner specification: compatible with abstract/absence subjects
+    (Martin, Rose & Nichols 2025). -/
+def kill : VerbEntry where
+  form := "kill"
+  form3sg := "kills"
+  formPast := "killed"
+  formPastPart := "killed"
+  formPresPart := "killing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .causative
+  causativeBuilder := some .make  -- Lexical causatives are sufficient (COMPACT)
+
+/-- "break" — thick lexical causative (manner verb, Embick 2009 break-class).
+    Root is event predicate: `break(e) ∧ cause(e,s)`.
+    Compatible with strong ASR (*break open*). Rejects abstract subjects
+    in physical sense (*#The lack of sealant broke the window*). -/
+def break_verb : VerbEntry where
+  form := "break"
+  form3sg := "breaks"
+  formPast := "broke"
+  formPastPart := "broken"
+  formPresPart := "breaking"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  unaccusative := false  -- Transitive causative use
+  verbClass := .causative
+  causativeBuilder := some .make
+
+/-- "burn" — thick lexical causative (manner = by fire/heat).
+    Encodes manner of causing: restricts subjects to heat/fire sources.
+    Compatible with strong ASR (*burn clean*).
+    Exception: occasionally found with omission subjects in corpora. -/
+def burn_verb : VerbEntry where
+  form := "burn"
+  form3sg := "burns"
+  formPast := "burned"
+  formPastPart := "burned"
+  formPresPart := "burning"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .causative
+  causativeBuilder := some .make
+
+/-- "destroy" — thin lexical causative (result-only, no manner).
+    Compatible with abstract/absence subjects
+    (*The stock market crash destroyed Sam's life*). -/
+def destroy_verb : VerbEntry where
+  form := "destroy"
+  form3sg := "destroys"
+  formPast := "destroyed"
+  formPastPart := "destroyed"
+  formPresPart := "destroying"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .causative
+  causativeBuilder := some .make
+
+/-- "melt" — thick lexical causative (manner = by heat).
+    Encodes manner: restricts subjects to heat sources.
+    Compatible with strong ASR. -/
+def melt_verb : VerbEntry where
+  form := "melt"
+  form3sg := "melts"
+  formPast := "melted"
+  formPastPart := "melted"
+  formPresPart := "melting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  verbClass := .causative
+  causativeBuilder := some .make
 
 /-- "devour" — transitive, no presupposition -/
 def devour : VerbEntry where
@@ -973,17 +1049,15 @@ def isCausative (v : VerbEntry) : Bool :=
 
 /-- Does this causative verb assert sufficiency (like "make")?
 
-    DERIVED from the builder: a verb asserts sufficiency iff its builder
-    uses `makeSem` as its semantic function (Nadathur & Lauer 2020, Def 23). -/
+    DERIVED from the builder: delegates to `CausativeBuilder.assertsSufficiency`. -/
 def assertsSufficiency (v : VerbEntry) : Bool :=
-  v.causativeBuilder == some .sufficiency
+  v.causativeBuilder.map (·.assertsSufficiency) |>.getD false
 
 /-- Does this causative verb assert necessity (like "cause")?
 
-    DERIVED from the builder: a verb asserts necessity iff its builder
-    uses `causeSem` as its semantic function (Nadathur & Lauer 2020, Def 24). -/
+    DERIVED from the builder: delegates to `CausativeBuilder.assertsNecessity`. -/
 def assertsNecessity (v : VerbEntry) : Bool :=
-  v.causativeBuilder == some .necessity
+  v.causativeBuilder.map (·.assertsNecessity) |>.getD false
 
 /--
 Is this verb a preferential attitude predicate?
@@ -1071,10 +1145,12 @@ def allVerbs : List VerbEntry := [
   worry,                         -- Class 1: takes questions (non-C-distributive)
   -- Raising
   seem,
-  -- Causative (Nadathur & Lauer 2020)
-  cause,                         -- Necessity semantics
-  make,                          -- Sufficiency semantics
-  let_, have_causative, get_causative, force,  -- Other causatives
+  -- Causative (Nadathur & Lauer 2020 + Wolff 2003)
+  cause,                         -- Counterfactual dependence (.cause)
+  make,                          -- Direct sufficient guarantee (.make)
+  let_, have_causative, get_causative, force,  -- enable/make/force builders
+  -- Lexical causatives (Martin, Rose & Nichols 2025)
+  kill, break_verb, burn_verb, destroy_verb, melt_verb,
   -- Communication
   say, tell, claim,
   -- Question-embedding (Dayal 2025)
@@ -1169,16 +1245,75 @@ theorem make_not_necessity : assertsNecessity make = false := by native_decide
 /-- "cause" does NOT assert sufficiency. -/
 theorem cause_not_sufficiency : assertsSufficiency cause = false := by native_decide
 
-/-- All sufficiency-type verbs (make, let, have, get, force) share the same
-    semantic function. -/
-theorem sufficiency_verbs_share_semantics :
-    make.causativeBuilder = let_.causativeBuilder ∧
+/-- make-type verbs (make, have, get) share the `.make` builder. -/
+theorem make_type_verbs_share_semantics :
     make.causativeBuilder = have_causative.causativeBuilder ∧
-    make.causativeBuilder = get_causative.causativeBuilder ∧
-    make.causativeBuilder = force.causativeBuilder := by
-  constructor; · rfl
-  constructor; · rfl
-  constructor; · rfl
-  · rfl
+    make.causativeBuilder = get_causative.causativeBuilder := ⟨rfl, rfl⟩
+
+/-- "force" is coercive — derived from its builder. -/
+theorem force_is_coercive :
+    force.causativeBuilder.map (·.isCoercive) = some true := rfl
+
+/-- "let" is permissive — derived from its builder. -/
+theorem let_is_permissive :
+    let_.causativeBuilder.map (·.isPermissive) = some true := rfl
+
+/-- All sufficiency-asserting causatives share the same truth conditions
+    despite having different builders (make, force, enable). -/
+theorem sufficiency_verbs_share_truth_conditions :
+    make.causativeBuilder.map CausativeBuilder.toSemantics =
+    force.causativeBuilder.map CausativeBuilder.toSemantics ∧
+    make.causativeBuilder.map CausativeBuilder.toSemantics =
+    let_.causativeBuilder.map CausativeBuilder.toSemantics ∧
+    make.causativeBuilder.map CausativeBuilder.toSemantics =
+    have_causative.causativeBuilder.map CausativeBuilder.toSemantics ∧
+    make.causativeBuilder.map CausativeBuilder.toSemantics =
+    get_causative.causativeBuilder.map CausativeBuilder.toSemantics :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- make, force, and let have different builders despite shared truth conditions. -/
+theorem causative_builders_distinguished :
+    make.causativeBuilder ≠ force.causativeBuilder ∧
+    make.causativeBuilder ≠ let_.causativeBuilder ∧
+    force.causativeBuilder ≠ let_.causativeBuilder := by
+  refine ⟨by decide, by decide, by decide⟩
+
+/-! ## Lexical causative theorems (Martin, Rose & Nichols 2025)
+
+Lexical causatives (kill, break, burn, destroy, melt) all use the `.make`
+builder (sufficiency semantics) because they are COMPACT causatives where
+cause and effect are fused — the cause guarantees the effect. -/
+
+/-- All lexical causatives use the `.make` builder. -/
+theorem lexical_causatives_use_make :
+    kill.causativeBuilder = some .make ∧
+    break_verb.causativeBuilder = some .make ∧
+    burn_verb.causativeBuilder = some .make ∧
+    destroy_verb.causativeBuilder = some .make ∧
+    melt_verb.causativeBuilder = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
+theorem lexical_causatives_assert_sufficiency :
+    assertsSufficiency kill = true ∧
+    assertsSufficiency break_verb = true ∧
+    assertsSufficiency burn_verb = true ∧
+    assertsSufficiency destroy_verb = true ∧
+    assertsSufficiency melt_verb = true := by
+  refine ⟨by native_decide, by native_decide, by native_decide,
+          by native_decide, by native_decide⟩
+
+/-- Lexical causatives share truth conditions with periphrastic "make".
+    Both thick (*break*) and thin (*kill*) map to `makeSem`. -/
+theorem lexical_causatives_match_make :
+    kill.causativeBuilder.map CausativeBuilder.toSemantics =
+    make.causativeBuilder.map CausativeBuilder.toSemantics ∧
+    break_verb.causativeBuilder.map CausativeBuilder.toSemantics =
+    make.causativeBuilder.map CausativeBuilder.toSemantics := ⟨rfl, rfl⟩
+
+/-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
+theorem lexical_causatives_differ_from_cause :
+    kill.causativeBuilder ≠ cause.causativeBuilder ∧
+    break_verb.causativeBuilder ≠ cause.causativeBuilder := by
+  constructor <;> decide
 
 end Fragments.English.Predicates.Verbal
