@@ -27,6 +27,7 @@ import Linglib.Core.Interfaces.CoreferenceTheory
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.CombinationSchema
+import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.CausalModel
 import Linglib.Core.ProcessingModel
@@ -416,6 +417,7 @@ import Linglib.Theories.QuestionSemantics.Answerhood
 import Linglib.Theories.QuestionSemantics.Basic
 import Linglib.Theories.QuestionSemantics.Coordination
 import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Theories.QuestionSemantics.EconomyOddness
 import Linglib.Theories.QuestionSemantics.EntropyNPIs
 import Linglib.Theories.QuestionSemantics.GSVanRooyBridge
 import Linglib.Theories.QuestionSemantics.Hamblin

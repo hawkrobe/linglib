@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Monotone.Basic
 
@@ -252,6 +253,21 @@ def count (W : Type*) [FiniteWorlds W] (p : BProp W) : Nat :=
 /-- Filter satisfying worlds. -/
 def filter (W : Type*) [FiniteWorlds W] (p : BProp W) : List W :=
   Decidable.filter W (FiniteWorlds.worlds) p
+
+/-- Build a `FiniteWorlds` instance from `Fintype` + `DecidableEq`.
+Bridges the Mathlib `Fintype` convention (used by 26+ RSA files) to
+the linglib `FiniteWorlds` convention (used by 47+ files). -/
+noncomputable def ofFintype {W : Type*} [Fintype W] [DecidableEq W] : FiniteWorlds W where
+  worlds := Fintype.elems.val.toList.eraseDups
+  -- TODO: prove completeness from Fintype.complete + List.mem_eraseDups
+  complete := sorry
+
+/-- Convert a `FiniteWorlds` instance to `Fintype`.
+Bridges in the other direction: linglib `FiniteWorlds` → Mathlib `Fintype`.
+TODO: The `Nodup` obligation requires deduplication; the membership proof
+follows from `FiniteWorlds.complete`. -/
+noncomputable def toFintype {W : Type*} [fw : FiniteWorlds W] : Fintype W :=
+  sorry
 
 end FiniteWorlds
 
