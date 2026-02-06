@@ -79,7 +79,7 @@ def checkArgStrMatch (t : CoordTree) : Bool :=
   t.coordinations.all λ coord =>
     match t.words[coord.firstConjunct]? with
     | some firstWord =>
-      if firstWord.cat == Cat.V then
+      if firstWord.cat == UD.UPOS.VERB then
         coord.otherConjuncts.all λ idx =>
           match t.words[idx]? with
           | some w => firstWord.features.valence == w.features.valence
@@ -88,7 +88,7 @@ def checkArgStrMatch (t : CoordTree) : Bool :=
     | none => false
 
 /-- Get the category of a coordinated phrase -/
-def coordCategory (t : CoordTree) (coord : CoordStr) : Option Cat :=
+def coordCategory (t : CoordTree) (coord : CoordStr) : Option UD.UPOS :=
   t.words[coord.firstConjunct]? |>.map (·.cat)
 
 -- ============================================================================

@@ -24,94 +24,64 @@ Reference: Gibson (2025) "Syntax", MIT Press, Section 3.8
 
 import Linglib.Core.Basic
 
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def and_ : Word := ⟨"and", .C, {}⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def sleep : Word := ⟨"sleep", .V, { valence := some .intransitive, number := some .pl }⟩
-private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def the : Word := ⟨"the", .D, {}⟩
-private def boy : Word := ⟨"boy", .N, { number := some .sg, countable := some true }⟩
-private def girl : Word := ⟨"girl", .N, { number := some .sg, countable := some true }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-
--- Coordination Lexicon (extends core Lexicon)
-
-def but_ : Word := ⟨"but", Cat.C, {}⟩
-
--- The Empirical Data
+-- ============================================================================
+-- Core Coordination Data (String-Based)
+-- ============================================================================
 
 /-- NP coordination minimal pairs -/
-def npCoordinationData : PhenomenonData := {
+def npCoordinationData : StringPhenomenonData := {
   name := "NP Coordination"
   generalization := "Coordinated NPs must have matching categories"
   pairs := [
-    { grammatical := [john, and_, mary, sleep]
-      ungrammatical := [john, and_, sleeps]
+    { grammatical := "John and Mary sleep"
+      ungrammatical := "John and sleeps"
       clauseType := .declarative
       description := "NP coordination requires matching categories" },
 
-    { grammatical := [the, boy, and_, the, girl, sleep]
-      ungrammatical := [the, boy, and_, sleeps]
+    { grammatical := "the boy and the girl sleep"
+      ungrammatical := "the boy and sleeps"
       clauseType := .declarative
       description := "Complex NP coordination" }
   ]
 }
 
 /-- VP coordination minimal pairs -/
-def vpCoordinationData : PhenomenonData := {
+def vpCoordinationData : StringPhenomenonData := {
   name := "VP Coordination"
   generalization := "Coordinated VPs must have matching argument structures"
   pairs := [
-    { grammatical := [john, sees, and_, sees, mary]  -- sees twice for "sees and hears"
-      ungrammatical := [john, sees, and_, sleeps, mary]
+    { grammatical := "John sees and hears Mary"
+      ungrammatical := "John sees and sleeps Mary"
       clauseType := .declarative
       description := "VP coordination requires matching valence (trans + trans)" },
 
-    { grammatical := [john, sleeps, and_, sleeps]  -- sleeps twice for "sleeps and snores"
-      ungrammatical := [john, sleeps, and_, sees]
+    { grammatical := "John sleeps and snores"
+      ungrammatical := "John sleeps and sees"
       clauseType := .declarative
       description := "Intransitive VP coordination" }
   ]
 }
 
 /-- S coordination minimal pairs -/
-def sCoordinationData : PhenomenonData := {
+def sCoordinationData : StringPhenomenonData := {
   name := "S Coordination"
   generalization := "Coordinated sentences must each be complete"
   pairs := [
-    { grammatical := [john, sleeps, and_, mary, sleeps]
-      ungrammatical := [john, sleeps, and_, mary]
+    { grammatical := "John sleeps and Mary sleeps"
+      ungrammatical := "John sleeps and Mary"
       clauseType := .declarative
       description := "S coordination requires complete clauses" },
 
-    { grammatical := [john, sees, mary, and_, mary, sees, john]
-      ungrammatical := [john, sees, mary, and_, sees, john]
+    { grammatical := "John sees Mary and Mary sees John"
+      ungrammatical := "John sees Mary and sees John"
       clauseType := .declarative
       description := "Each conjunct needs a subject" }
   ]
 }
 
--- Specification Typeclass
-
-/-- A grammar captures coordination -/
-class CapturesCoordination (G : Type) [Grammar G] where
-  grammar : G
-  capturesNPCoord : Grammar.capturesPhenomenon G grammar npCoordinationData
-  capturesVPCoord : Grammar.capturesPhenomenon G grammar vpCoordinationData
-  capturesSCoord : Grammar.capturesPhenomenon G grammar sCoordinationData
-
--- Helper Functions
-
-/-- Find conjunction positions in a word list -/
-def findConjunctions (ws : List Word) : List Nat :=
-  (List.range ws.length).zip ws |>.filterMap λ (i, w) =>
-    if w.form == "and" || w.form == "or" || w.form == "but" then some i else none
-
-/-- Check if a word list has coordination -/
-def hasCoordination (ws : List Word) : Bool :=
-  ws.any λ w => w.form == "and" || w.form == "or" || w.form == "but"
-
+-- ============================================================================
 -- Non-Constituent Coordination: The Semantic Fact
+-- ============================================================================
 
 /-
 ## Non-Constituent Coordination

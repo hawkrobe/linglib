@@ -22,7 +22,7 @@ namespace Minimalism
 
 /-- Features that drive syntactic operations -/
 inductive Feature where
-  | cat : Cat → Feature           -- category feature
+  | cat : UD.UPOS → Feature       -- category feature
   | q : Bool → Feature            -- question feature
   | wh : Bool → Feature           -- wh-feature
   | tense : Bool → Feature        -- tense feature
@@ -131,8 +131,8 @@ inductive Phase where
 /-- Check if a syntactic object is a phase -/
 def isPhase (so : SynObj) : Bool :=
   match so.label.find? (λ f => match f with | .cat _ => true | _ => false) with
-  | some (.cat .C) => true
-  | some (.cat .V) => true
+  | some (.cat .SCONJ) => true
+  | some (.cat .VERB) => true
   | _ => false
 
 end Minimalism

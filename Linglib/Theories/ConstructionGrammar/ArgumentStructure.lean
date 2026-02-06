@@ -40,7 +40,7 @@ Each slot specifies a syntactic category and a semantic role
 for one participant in the construction's event structure. -/
 structure ConstructionSlot where
   /-- Syntactic category of this slot (NP, V, PP, etc.) -/
-  cat : Cat
+  cat : UD.UPOS
   /-- Semantic role label -/
   role : String
   /-- Whether this slot is the head of the construction -/
@@ -72,10 +72,10 @@ def ditransitive : ArgStructureConstruction :=
       , meaning := "X CAUSES Y to RECEIVE Z"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "agent", false⟩       -- Subj
-      , ⟨Cat.V, "predicate", true⟩    -- V (head)
-      , ⟨Cat.N, "recipient", false⟩   -- Obj1
-      , ⟨Cat.N, "theme", false⟩ ]     -- Obj2
+      [ ⟨.NOUN, "agent", false⟩       -- Subj
+      , ⟨.VERB, "predicate", true⟩    -- V (head)
+      , ⟨.NOUN, "recipient", false⟩   -- Obj1
+      , ⟨.NOUN, "theme", false⟩ ]     -- Obj2
   , hasHead := by native_decide }
 
 /-- Caused-motion construction: [Subj V Obj Obl].
@@ -87,10 +87,10 @@ def causedMotion : ArgStructureConstruction :=
       , meaning := "X CAUSES Y to MOVE to Z"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "agent", false⟩       -- Subj
-      , ⟨Cat.V, "predicate", true⟩    -- V (head)
-      , ⟨Cat.N, "theme", false⟩       -- Obj
-      , ⟨Cat.P, "goal", false⟩ ]      -- Obl
+      [ ⟨.NOUN, "agent", false⟩       -- Subj
+      , ⟨.VERB, "predicate", true⟩    -- V (head)
+      , ⟨.NOUN, "theme", false⟩       -- Obj
+      , ⟨.ADP, "goal", false⟩ ]       -- Obl
   , hasHead := by native_decide }
 
 /-- Resultative construction: [Subj V Obj Pred].
@@ -102,10 +102,10 @@ def resultative : ArgStructureConstruction :=
       , meaning := "X CAUSES Y to BECOME Z"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "agent", false⟩       -- Subj
-      , ⟨Cat.V, "predicate", true⟩    -- V (head)
-      , ⟨Cat.N, "patient", false⟩     -- Obj
-      , ⟨Cat.Adj, "result", false⟩ ]  -- Pred
+      [ ⟨.NOUN, "agent", false⟩       -- Subj
+      , ⟨.VERB, "predicate", true⟩    -- V (head)
+      , ⟨.NOUN, "patient", false⟩     -- Obj
+      , ⟨.ADJ, "result", false⟩ ]     -- Pred
   , hasHead := by native_decide }
 
 /-- Intransitive motion construction: [Subj V Obl].
@@ -117,9 +117,9 @@ def intransitiveMotion : ArgStructureConstruction :=
       , meaning := "X MOVES to Y"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "theme", false⟩       -- Subj
-      , ⟨Cat.V, "predicate", true⟩    -- V (head)
-      , ⟨Cat.P, "path", false⟩ ]      -- Obl
+      [ ⟨.NOUN, "theme", false⟩       -- Subj
+      , ⟨.VERB, "predicate", true⟩    -- V (head)
+      , ⟨.ADP, "path", false⟩ ]       -- Obl
   , hasHead := by native_decide }
 
 /-! ## Decomposition into combination schemata -/

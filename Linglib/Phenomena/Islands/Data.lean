@@ -43,29 +43,29 @@ observed across diverse theoretical frameworks.
 
 import Linglib.Core.Basic
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def did : Word := ⟨"did", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def buy : Word := ⟨"buy", .V, { valence := some .transitive, number := some .pl }⟩
-private def you : Word := ⟨"you", .D, { person := some .second, case_ := some .nom }⟩
-private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
-private def who : Word := ⟨"who", .Wh, { wh := true }⟩
-private def bought : Word := ⟨"bought", .V, { valence := some .transitive, vform := some .finite }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def met : Word := ⟨"met", .V, { valence := some .transitive, vform := some .finite }⟩
-private def man : Word := ⟨"man", .N, { number := some .sg, countable := some true }⟩
-private def that : Word := ⟨"that", .D, { number := some .sg }⟩
-private def saw : Word := ⟨"saw", .V, { valence := some .transitive, vform := some .finite }⟩
-private def leave : Word := ⟨"leave", .V, { valence := some .intransitive, number := some .pl }⟩
-private def before : Word := ⟨"before", .P, {}⟩
-private def because : Word := ⟨"because", .C, {}⟩
-private def books : Word := ⟨"books", .N, { number := some .pl, countable := some true }⟩
-private def and_ : Word := ⟨"and", .C, {}⟩
-private def sell : Word := ⟨"sell", .V, { valence := some .transitive, number := some .pl }⟩
-private def do_ : Word := ⟨"do", .Aux, { number := some .pl }⟩
-private def the : Word := ⟨"the", .D, {}⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
+private def what : Word := ⟨"what", .PRON, { wh := true }⟩
+private def did : Word := ⟨"did", .AUX, {}⟩
+private def john : Word := ⟨"John", .DET, { number := some .sg, person := some .third }⟩
+private def buy : Word := ⟨"buy", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def you : Word := ⟨"you", .DET, { person := some .second, case_ := some .nom }⟩
+private def wonder : Word := ⟨"wonder", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def who : Word := ⟨"who", .PRON, { wh := true }⟩
+private def bought : Word := ⟨"bought", .VERB, { valence := some .transitive, vform := some .finite }⟩
+private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def met : Word := ⟨"met", .VERB, { valence := some .transitive, vform := some .finite }⟩
+private def man : Word := ⟨"man", .NOUN, { number := some .sg, countable := some true }⟩
+private def that : Word := ⟨"that", .DET, { number := some .sg }⟩
+private def saw : Word := ⟨"saw", .VERB, { valence := some .transitive, vform := some .finite }⟩
+private def leave : Word := ⟨"leave", .VERB, { valence := some .intransitive, number := some .pl }⟩
+private def before : Word := ⟨"before", .ADP, {}⟩
+private def because : Word := ⟨"because", .SCONJ, {}⟩
+private def books : Word := ⟨"books", .NOUN, { number := some .pl, countable := some true }⟩
+private def and_ : Word := ⟨"and", .SCONJ, {}⟩
+private def sell : Word := ⟨"sell", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def do_ : Word := ⟨"do", .AUX, { number := some .pl }⟩
+private def the : Word := ⟨"the", .DET, {}⟩
+private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .DET, { number := some .sg, person := some .third }⟩
 
 -- Embedded Question Constraint (Wh-Islands)
 
@@ -195,6 +195,156 @@ def constraintStrength : ConstraintType → ConstraintStrength
   | .coordinate => .strong          -- Strong (but ATB pattern ok)
   | .subject => .weak               -- Varies cross-linguistically
   | .sententialSubject => .strong
+
+-- ============================================================================
+-- Processing Factors (Hofmeister & Sag 2010, §3)
+-- ============================================================================
+
+/-!
+## Gradience in Island Effects
+
+Hofmeister & Sag (2010) argue that the binary strong/weak classification
+(Szabolcsi 2006) is insufficient. Island effects are **gradient** along multiple
+dimensions, and acceptability varies systematically with nonstructural
+manipulations that leave island configurations intact.
+
+This challenges every categorical island constraint proposed:
+- Subjacency (Chomsky 1973)
+- Complex NP Constraint (Ross 1967)
+- Barriers (Chomsky 1986)
+- Minimal Link Condition (Chomsky 1995)
+
+See `Comparisons.Islands` for the competence vs. performance comparison.
+-/
+
+/-- Processing factors that independently contribute to the difficulty of
+filler-gap dependencies inside islands (Hofmeister & Sag 2010, §3). -/
+inductive ProcessingFactor where
+  /-- Distance between filler and gap increases memory load (§3.1).
+  Confirmed by: Gibson 1998, 2000; Hawkins 1999; Grodner & Gibson 2005. -/
+  | locality
+  /-- Referential processing of intervening constituents depletes resources (§3.2).
+  Definites trigger referent search; proper names > definites > indefinites > pronouns
+  in processing cost (Warren & Gibson 2002, 2005; Ariel 1990). -/
+  | referentialLoad
+  /-- Clause boundaries impose processing cost independent of extraction (§3.3).
+  Even in yes-no questions, different complementizers elicit different neurological
+  responses and acceptability (Kluender & Kutas 1993b). -/
+  | clauseBoundary
+  /-- Syntactic/semantic complexity of the filler phrase affects retrieval (§3.4).
+  Counterintuitively, MORE complex fillers REDUCE processing difficulty
+  because richer representations resist interference and aid retrieval
+  (Hofmeister 2007). -/
+  | fillerComplexity
+  deriving Repr, DecidableEq, BEq
+
+/-- Complexity of the displaced wh-phrase.
+
+Hofmeister & Sag's central manipulation across all three experiments.
+More complex fillers (*which*-N phrases) facilitate processing inside islands,
+because richer representations aid memory retrieval (§3.4). -/
+inductive FillerType where
+  /-- Bare wh-word: *who*, *what* -/
+  | bare
+  /-- Complex wh-phrase: *which convict*, *which employee* -/
+  | whichN
+  deriving Repr, DecidableEq, BEq
+
+/-- Type of the island-forming NP (Experiment 1 only).
+
+Definite NPs trigger referent search and presupposition accommodation,
+consuming resources needed for dependency resolution (§3.2). -/
+inductive IslandNPType where
+  /-- Definite singular: *the report* -/
+  | definite
+  /-- Indefinite plural: *reports* -/
+  | plural
+  /-- Indefinite singular: *a report* -/
+  | indefinite
+  deriving Repr, DecidableEq, BEq
+
+-- ============================================================================
+-- Experimental Acceptability Data (Hofmeister & Sag 2010)
+-- ============================================================================
+
+/-- An experimental condition from Hofmeister & Sag 2010.
+Acceptability stored as Nat (judgment ratio × 100, so 78 means 0.78). -/
+structure IslandCondition where
+  island : ConstraintType
+  filler : FillerType
+  npType : Option IslandNPType
+  /-- Mean judgment ratio × 100 -/
+  acceptability : Nat
+  citation : String
+  deriving Repr
+
+/-- Experiment 1: CNPC violations (§5). 36 items, (2 × 3) + 1 design.
+Acceptability ratings on 1–8 scale, normalized as ratio of subject mean.
+Data from Figure 3 (p. 393). -/
+def cnpcAcceptability : List IslandCondition := [
+  { island := .complexNP, filler := .bare, npType := some .definite,
+    acceptability := 60, citation := "H&S 2010, Exp 1, Fig. 3" },
+  { island := .complexNP, filler := .bare, npType := some .indefinite,
+    acceptability := 65, citation := "H&S 2010, Exp 1, Fig. 3" },
+  { island := .complexNP, filler := .bare, npType := some .plural,
+    acceptability := 62, citation := "H&S 2010, Exp 1, Fig. 3" },
+  { island := .complexNP, filler := .whichN, npType := some .definite,
+    acceptability := 78, citation := "H&S 2010, Exp 1, Fig. 3" },
+  { island := .complexNP, filler := .whichN, npType := some .indefinite,
+    acceptability := 82, citation := "H&S 2010, Exp 1, Fig. 3" },
+  { island := .complexNP, filler := .whichN, npType := some .plural,
+    acceptability := 85, citation := "H&S 2010, Exp 1, Fig. 3" }
+]
+
+/-- Experiment 2: Wh-island violations (§6). 24 items, 2 + 1 design.
+Acceptability on 1–7 scale, normalized.
+Data from Figure 5 (p. 397).
+Key finding: F1(1,15)=15.964, p=0.001; F2(1,19)=14.428, p=0.001. -/
+def whIslandAcceptability : List IslandCondition := [
+  { island := .embeddedQuestion, filler := .bare, npType := none,
+    acceptability := 57, citation := "H&S 2010, Exp 2, Fig. 5" },
+  { island := .embeddedQuestion, filler := .whichN, npType := none,
+    acceptability := 76, citation := "H&S 2010, Exp 2, Fig. 5" }
+]
+
+/-- Non-island baseline acceptability (CNPC experiment, Figure 3). -/
+def cnpcBaseline : Nat := 108
+
+-- ============================================================================
+-- Key Empirical Generalizations
+-- ============================================================================
+
+/-- Average acceptability for a filler type across a set of conditions. -/
+def avgAcceptability (conditions : List IslandCondition) (f : FillerType) : Nat :=
+  let filtered := conditions.filter (·.filler == f)
+  if filtered.isEmpty then 0
+  else filtered.foldl (· + ·.acceptability) 0 / filtered.length
+
+/-- **Filler complexity effect in CNPC**: which-N > bare wh (§5.2).
+F1(1,20)=48.741, p<0.0001; F2(1,35)=39.494, p<0.0001.
+The structure is identical — only the filler changes. -/
+theorem cnpc_whichN_gt_bare :
+    avgAcceptability cnpcAcceptability .whichN >
+    avgAcceptability cnpcAcceptability .bare := by native_decide
+
+/-- **Filler complexity effect in wh-islands**: which-N > bare wh (§6.2).
+F1(1,15)=15.964, p=0.001. -/
+theorem whIsland_whichN_gt_bare :
+    avgAcceptability whIslandAcceptability .whichN >
+    avgAcceptability whIslandAcceptability .bare := by native_decide
+
+/-- **NP type effect**: indefinite > definite across both filler types (§5.2).
+Consistent with lower referential processing cost for indefinites. -/
+theorem cnpc_indefinite_gt_definite :
+    let indef := cnpcAcceptability.filter (·.npType == some .indefinite)
+    let def_ := cnpcAcceptability.filter (·.npType == some .definite)
+    indef.foldl (· + ·.acceptability) 0 >
+    def_.foldl (· + ·.acceptability) 0 := by native_decide
+
+/-- Even the best island condition (which-PL, 85) remains below the
+non-island baseline (108). Islands are ameliorated, not eliminated. -/
+theorem best_island_lt_baseline :
+    (85 : Nat) < cnpcBaseline := by native_decide
 
 -- Tests
 

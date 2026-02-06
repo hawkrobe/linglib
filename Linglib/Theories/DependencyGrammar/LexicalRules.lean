@@ -36,7 +36,7 @@ structure ArgSlot where
   depType : DepType      -- type of dependency (subj, obj, etc.)
   dir : Dir              -- left or right of head
   required : Bool := true -- optional arguments have required = false
-  cat : Option Cat := none -- required category (if specified)
+  cat : Option UD.UPOS := none -- required category (if specified)
   deriving Repr, DecidableEq
 
 /-- Argument structure: the dependents a word requires/allows -/
@@ -60,7 +60,7 @@ structure LexFeatures where
 /-- A lexical entry: word form + category + features + argument structure -/
 structure LexEntry where
   form : String
-  cat : Cat
+  cat : UD.UPOS
   features : LexFeatures
   argStr : ArgStr
   deriving Repr

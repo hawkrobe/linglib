@@ -81,7 +81,7 @@ Output: `SUBJ ⟨NP⟩, COMPS ⟨NP, AP⟩` (e.g., "hammer the metal flat") -/
 def resultativeRule : LexicalRule :=
   { name := "resultative"
   , transformVal := λ val =>
-      { val with comps := val.comps ++ [Cat.Adj] }  -- add result predicate slot
+      { val with comps := val.comps ++ [UD.UPOS.ADJ] }  -- add result predicate slot
   , preservesHead := true }
 
 /-- Dative shift lexical rule.
@@ -94,7 +94,7 @@ def dativeShiftRule : LexicalRule :=
   { name := "dative-shift"
   , transformVal := λ val =>
       match val.comps with
-      | [theme, _] => { val with comps := [theme, Cat.N] }  -- replace PP with NP goal
+      | [theme, _] => { val with comps := [theme, UD.UPOS.NOUN] }  -- replace PP with NP goal
       | _ => val
   , preservesHead := true }
 
@@ -115,8 +115,8 @@ theorem passive_preserves_head (s : Sign) :
 
 For a transitive verb, passive promotes the object to subject position. -/
 theorem passive_changes_valence_transitive (w : Word) (head : HeadFeatures)
-    (subjCat objCat : Cat) (rest : List Cat) :
-    let ss : Synsem := { cat := Cat.V, head := head, val := { subj := [subjCat], comps := objCat :: rest } }
+    (subjCat objCat : UD.UPOS) (rest : List UD.UPOS) :
+    let ss : Synsem := { cat := UD.UPOS.VERB, head := head, val := { subj := [subjCat], comps := objCat :: rest } }
     let s := Sign.word w ss
     (applyLexRule passiveRule s).synsem.val.subj = [objCat] := by
   simp [applyLexRule, Sign.synsem, passiveRule]

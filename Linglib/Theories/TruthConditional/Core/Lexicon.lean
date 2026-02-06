@@ -23,12 +23,12 @@ open TruthConditional
 open TruthConditional.Determiner.Quantifier
 open Core.Scales
 
-private def word_some : Word := ⟨"some", Cat.D, {}⟩
-private def word_every : Word := ⟨"every", Cat.D, { number := some .sg }⟩
-private def word_john : Word := ⟨"John", Cat.D, { number := some .sg, person := some .third }⟩
-private def word_mary : Word := ⟨"Mary", Cat.D, { number := some .sg, person := some .third }⟩
-private def word_sleeps : Word := ⟨"sleeps", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
-private def word_laughs : Word := ⟨"laughs", Cat.V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def word_some : Word := ⟨"some", .DET, {}⟩
+private def word_every : Word := ⟨"every", .DET, { number := some .sg }⟩
+private def word_john : Word := ⟨"John", .DET, { number := some .sg, person := some .third }⟩
+private def word_mary : Word := ⟨"Mary", .DET, { number := some .sg, person := some .third }⟩
+private def word_sleeps : Word := ⟨"sleeps", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def word_laughs : Word := ⟨"laughs", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
 /-- Scale membership position -/
 inductive ScaleMembership where
@@ -91,14 +91,14 @@ def every_entry : SemLexEntry toyModel :=
   }
 
 def most_entry : SemLexEntry toyModel :=
-  { word := ⟨"most", Cat.D, { number := Option.some .pl }⟩
+  { word := ⟨"most", .DET, { number := Option.some .pl }⟩
   , ty := Ty.det
   , denot := most_sem toyModel
   , scaleMembership := some (.quantifier .most)
   }
 
 def no_entry : SemLexEntry toyModel :=
-  { word := ⟨"no", Cat.D, {}⟩
+  { word := ⟨"no", .DET, {}⟩
   , ty := Ty.det
   , denot := no_sem toyModel
   , scaleMembership := some (.quantifier .none_)
@@ -129,13 +129,13 @@ def laughs_entry : SemLexEntry toyModel :=
   }
 
 def student_entry : SemLexEntry toyModel :=
-  { word := ⟨"student", Cat.N, { number := Option.some .sg }⟩
+  { word := ⟨"student", .NOUN, { number := Option.some .sg }⟩
   , ty := .e ⇒ .t
   , denot := student_sem
   }
 
 def students_entry : SemLexEntry toyModel :=
-  { word := ⟨"students", Cat.N, { number := Option.some .pl }⟩
+  { word := ⟨"students", .NOUN, { number := Option.some .pl }⟩
   , ty := .e ⇒ .t
   , denot := student_sem
   }

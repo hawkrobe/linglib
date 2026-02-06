@@ -1,5 +1,70 @@
 # Changelog
 
+## [0.89.0] - 2026-02-06
+
+### Changed
+- **Core/UD.lean** (new): Merged `Core/UPOS.lean` + `Core/UDFeatures.lean` into single file
+- **Core/Basic.lean**: Removed `abbrev Cat := UD.UPOS` and `Cat` namespace — all 18 consumer files now use `UD.UPOS` directly with native constructors (`.DET`, `.NOUN`, `.VERB`, `.AUX`, `.SCONJ`, `.PRON`, `.ADP`, `.ADJ`)
+- **Phenomena/Coordination/Data.lean**: Converted from `Word`-based `PhenomenonData` to string-based `StringPhenomenonData` — no more feature dictionaries in empirical data
+
+## [0.88.0] - 2026-02-06
+
+### Added
+- **Phenomena/FillerGap/Sag2010.lean**: Sag (2010) F-G construction typology — 5 clause types × 7 parameters
+  - `FGClauseType`: whInterrogative, whExclamative, topicalized, whRelative, theClause
+  - `FGParameters`: fillerWhType, headInversion, headFiniteness, semanticType, isIsland, independence, fillerIsNonverbal
+  - `fgParams`: maps each clause type to its parameter values
+  - `WhWordProfile` + `whWordProfiles`: Table 1 wh-word × construction participation
+  - Per-datum verification: `only_interrogative_requires_inversion`, `all_fillers_nonverbal`, `island_constructions_are`, etc.
+  - Bridge to Islands/Data: `islandConstructions` connects island parameter to `ConstraintType`
+  - Bridge to ClauseType: `interrogative_maps_to_question_clause`, `topicalized_maps_to_declarative`
+- **HPSG/HeadFiller.lean**: GAP restrictions for construction-specific islands (Sag 2010, p.514)
+  - `GapRestriction`: unrestricted, npOnly, noGap — derives island effects from GAP feature
+  - `SlashValue.satisfiesRestriction`: checks GAP compatibility
+  - `empty_satisfies_any_restriction`: empty SLASH always satisfies any restriction
+- **Comparisons/Islands.lean**: Sag 2010 bridge connecting grammar-based and processing-based islands
+  - `complementary_coverage`: Sag's grammatical islands (topicalization, exclamatives) + H&S processing islands = complete coverage
+  - `sag_island_subset`: grammatical islands are a proper subset of all F-G types
+
+## [0.87.0] - 2026-02-06
+
+### Changed
+- **Core/ProcessingModel.lean** (new): Shared axiomatic processing model replacing ad hoc cost functions
+  - `ProcessingProfile`: 4-dimensional profile (locality, boundaries, referentialLoad, ease)
+  - `CompareResult` + Pareto dominance via `ProcessingProfile.compare` — no magic weights
+  - `HasProcessingProfile` typeclass: any module claiming processing predictions must provide an instance
+  - Monotonicity axioms (stated with `sorry`): locality/boundaries/referentialLoad monotone increasing difficulty, ease monotone decreasing
+  - `OrderingPrediction` + `verifyOrdering`: verify empirical orderings via Pareto dominance
+- **Comparisons/Islands.lean**: Replaced `IslandProcessingCost`/`estimateIslandCost`/`islandThreshold` with `ProcessingProfile` and Pareto comparison
+  - `IslandCondition` enum + `HasProcessingProfile` instance
+  - Ordering theorems now use `.compare` returning `.harder`/`.easier` instead of numeric `<`
+  - `all_ordering_predictions_verified`: all H&S ordering predictions pass via shared `verifyOrdering`
+- **Comparisons/ScopeFreezing.lean**: Replaced `ProcessingComplexity`/`estimateCost`/`inverseThreshold` with `ProcessingProfile` and Pareto comparison
+  - `ScopeCondition` enum + `HasProcessingProfile` instance
+  - `TheoryPredictions.processing` now `CompareResult` instead of `Bool`
+  - `processingPredictsFreezing` uses Pareto dominance against baseline
+  - `all_scope_ordering_predictions_verified`: shared verification infrastructure
+- **Core/Empirical.lean**: Added `ProcessingDimension`, `taskSensitiveDimensions`, `ProcessingObservation` linking empirical tasks to processing profile dimensions
+
+## [0.86.0] - 2026-02-06
+
+### Added
+- **Islands/Data.lean**: Hofmeister & Sag (2010) processing factors and gradient acceptability data
+  - `ProcessingFactor`: locality, referentialLoad, clauseBoundary, fillerComplexity
+  - `FillerType` (bare/whichN), `IslandNPType` (definite/plural/indefinite)
+  - `cnpcAcceptability`: 6 conditions from Experiment 1 (Figure 3)
+  - `whIslandAcceptability`: 2 conditions from Experiment 2 (Figure 5)
+  - `cnpc_whichN_gt_bare`, `whIsland_whichN_gt_bare`: filler complexity effects
+  - `cnpc_indefinite_gt_definite`: NP type effect
+  - `best_island_lt_baseline`: islands ameliorated but not eliminated
+- **Comparisons/Islands.lean**: Competence vs performance comparison for island effects
+  - `IslandProcessingCost`: 4-dimensional cost model with superadditive interaction
+  - `filler_reduces_cnpc_cost`, `filler_reduces_whIsland_cost`: filler complexity paradox
+  - `cost_matches_acceptability_ordering`: model predictions match empirical data
+  - `processing_scores_4_of_4`, `competence_scores_0_of_4`: processing wins on all nonstructural manipulations
+  - `cnpc_acceptability_range`: 25+ point gradient within "strong" island — challenges binary classification
+  - Parallels `Comparisons.ScopeFreezing` structure
+
 ## [0.85.0] - 2025-02-05
 
 ### Changed

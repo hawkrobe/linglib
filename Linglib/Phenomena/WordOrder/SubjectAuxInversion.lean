@@ -63,16 +63,16 @@ class CapturesInversion (G : Type) [Grammar G] where
 
 /-- Check if a word list has aux-before-subject order -/
 def hasAuxSubjectOrder (ws : List Word) : Option (Nat × Nat) :=
-  let auxPos := ws.findIdx? (·.cat == Cat.Aux)
-  let subjPos := ws.findIdx? (·.cat == Cat.D)
+  let auxPos := ws.findIdx? (·.cat == .AUX)
+  let subjPos := ws.findIdx? (·.cat == .DET)
   match auxPos, subjPos with
   | some a, some s => if a < s then some (a, s) else none
   | _, _ => none
 
 /-- Check if a word list has subject-before-aux order -/
 def hasSubjectAuxOrder (ws : List Word) : Option (Nat × Nat) :=
-  let auxPos := ws.findIdx? (·.cat == Cat.Aux)
-  let subjPos := ws.findIdx? (·.cat == Cat.D)
+  let auxPos := ws.findIdx? (·.cat == .AUX)
+  let subjPos := ws.findIdx? (·.cat == .DET)
   match auxPos, subjPos with
   | some a, some s => if s < a then some (s, a) else none
   | _, _ => none

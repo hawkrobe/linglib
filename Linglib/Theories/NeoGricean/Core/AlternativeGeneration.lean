@@ -385,19 +385,19 @@ def passedAt : WorldIndexedVP studentModel PassWorld := λ w s =>
 -- Lexicon for student model
 def studentLexicon : SemLexicon studentModel := λ form =>
   match form with
-  | "some" => some { word := ⟨"some", Cat.D, {}⟩
+  | "some" => some { word := ⟨"some", .DET, {}⟩
                    , ty := Ty.det
                    , denot := some_sem studentModel
                    , scaleMembership := some (.quantifier .some_) }
-  | "every" => some { word := ⟨"every", Cat.D, {}⟩
+  | "every" => some { word := ⟨"every", .DET, {}⟩
                     , ty := Ty.det
                     , denot := every_sem studentModel
                     , scaleMembership := some (.quantifier .all) }
-  | "all" => some { word := ⟨"all", Cat.D, {}⟩
+  | "all" => some { word := ⟨"all", .DET, {}⟩
                   , ty := Ty.det
                   , denot := every_sem studentModel
                   , scaleMembership := some (.quantifier .all) }
-  | "most" => some { word := ⟨"most", Cat.D, {}⟩
+  | "most" => some { word := ⟨"most", .DET, {}⟩
                    , ty := Ty.det
                    , denot := most_sem studentModel
                    , scaleMembership := some (.quantifier .most) }

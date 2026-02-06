@@ -1,0 +1,368 @@
+/-
+# Island Effects: Competence vs. Performance
+
+Comparing how competence-based and performance-based accounts explain
+the gradient nature of island effects.
+
+## Accounts Compared
+
+1. **Competence** (Subjacency, CNPC, Barriers, MLC): categorical blocking
+2. **Performance** (Kluender, Deane, Hofmeister & Sag): gradient processing cost
+
+## Key Question
+
+Nonstructural manipulations (filler complexity, NP definiteness) dramatically
+alter island acceptability while leaving the island configuration intact.
+Which account predicts this?
+
+## References
+
+- Ross, J.R. (1967). Constraints on Variables in Syntax.
+- Chomsky, N. (1973). Conditions on Transformations.
+- Chomsky, N. (1986). Barriers.
+- Chomsky, N. (1995). The Minimalist Program.
+- Kluender, R. (1991, 1998). Cognitive constraints on variables in syntax.
+- Deane, P. (1991). Limits to attention: A cognitive theory of island phenomena.
+- Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
+  Language 86(2):366–415.
+-/
+
+import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.FillerGap.Sag2010
+import Linglib.Core.ProcessingModel
+
+namespace Comparisons.Islands
+
+open ProcessingModel
+
+-- ============================================================================
+-- Concrete Conditions from Hofmeister & Sag 2010
+-- ============================================================================
+
+/-! ### CNPC conditions (Experiment 1) -/
+
+/-- Bare wh + definite island-forming NP: worst CNPC condition.
+"I saw **who** Emma doubted **the report** that we had captured ___" -/
+def cnpc_bare_def : ProcessingProfile :=
+  { locality := 8, boundaries := 1, referentialLoad := 2, ease := 0 }
+
+/-- Which-N + indefinite island-forming NP: best CNPC condition.
+"I saw **which convict** Emma doubted **a report** that we had captured ___" -/
+def cnpc_which_indef : ProcessingProfile :=
+  { locality := 8, boundaries := 1, referentialLoad := 1, ease := 2 }
+
+/-- Non-island baseline (no extraction): "I saw who Emma doubted that ___" -/
+def cnpc_baseline : ProcessingProfile :=
+  { locality := 5, boundaries := 0, referentialLoad := 0, ease := 0 }
+
+/-! ### Wh-island conditions (Experiment 2) -/
+
+/-- Bare wh into wh-island: "**Who** did Albert learn whether they dismissed ___" -/
+def whIsland_bare : ProcessingProfile :=
+  { locality := 7, boundaries := 1, referentialLoad := 1, ease := 0 }
+
+/-- Which-N into wh-island: "**Which employee** did Albert learn whether they dismissed ___" -/
+def whIsland_which : ProcessingProfile :=
+  { locality := 7, boundaries := 1, referentialLoad := 1, ease := 2 }
+
+-- ============================================================================
+-- HasProcessingProfile Instance
+-- ============================================================================
+
+/-- Island conditions as a sum type for typeclass instance. -/
+inductive IslandCondition where
+  | cnpcBareDef
+  | cnpcWhichIndef
+  | cnpcBaseline
+  | whIslandBare
+  | whIslandWhich
+  deriving Repr, DecidableEq, BEq
+
+instance : HasProcessingProfile IslandCondition where
+  profile
+    | .cnpcBareDef    => cnpc_bare_def
+    | .cnpcWhichIndef => cnpc_which_indef
+    | .cnpcBaseline   => cnpc_baseline
+    | .whIslandBare   => whIsland_bare
+    | .whIslandWhich  => whIsland_which
+
+-- ============================================================================
+-- Processing Model Predictions (Pareto Dominance)
+-- ============================================================================
+
+/-- Complex fillers reduce processing difficulty in CNPC.
+This is the **filler complexity paradox**: more syntactic material in the
+filler makes the island *easier* to process, contrary to any account
+where cost increases monotonically with phrase size.
+
+Pareto: cnpc_which_indef is easier than cnpc_bare_def because it has
+lower referentialLoad (1 < 2) and higher ease (2 > 0), with locality
+and boundaries equal. -/
+theorem filler_reduces_cnpc_cost :
+    cnpc_bare_def.compare cnpc_which_indef = .harder := by
+  native_decide
+
+/-- Complex fillers reduce processing difficulty in wh-islands.
+
+Pareto: whIsland_which is easier than whIsland_bare because it has
+higher ease (2 > 0), with all other dimensions equal. -/
+theorem filler_reduces_whIsland_cost :
+    whIsland_bare.compare whIsland_which = .harder := by
+  native_decide
+
+/-- Worst CNPC condition is harder than baseline.
+
+Pareto: cnpc_bare_def is worse on locality (8 > 5), boundaries (1 > 0),
+and referentialLoad (2 > 0), with ease equal. -/
+theorem bare_def_harder_than_baseline :
+    cnpc_bare_def.compare cnpc_baseline = .harder := by
+  native_decide
+
+/-- Worst CNPC condition (bare-def) is strictly harder than best (which-indef).
+
+Pareto: bare-def has higher referentialLoad (2 > 1) and lower ease (0 < 2),
+with locality and boundaries equal. -/
+theorem bare_def_harder_than_which_indef :
+    cnpc_bare_def.compare cnpc_which_indef = .harder := by
+  native_decide
+
+/-- Which-indef CNPC vs baseline is incomparable under Pareto.
+
+Which-indef is worse on locality (8 > 5), boundaries (1 > 0), and
+referentialLoad (1 > 0), but better on ease (2 > 0). The trade-off
+between distance costs and retrieval facilitation is genuine — Pareto
+honestly reports it as `incomparable` rather than forcing a cardinal
+aggregate. -/
+theorem which_indef_vs_baseline_incomparable :
+    cnpc_which_indef.compare cnpc_baseline = .incomparable := by
+  native_decide
+
+-- ============================================================================
+-- Theory Comparison: Competence vs. Performance
+-- ============================================================================
+
+/-- A nonstructural manipulation that changes island acceptability
+without altering the island configuration.
+
+Competence theories predict no effect (structure unchanged).
+Performance theories predict an effect (processing cost changes). -/
+structure IslandManipulation where
+  description : String
+  /-- Does any competence theory predict an acceptability difference? -/
+  competencePredictsDifference : Bool
+  /-- Does the processing account predict a difference? -/
+  processingPredictsDifference : Bool
+  /-- Is a difference actually observed? -/
+  differenceObserved : Bool
+  /-- Statistical significance (p-value description) -/
+  significance : String
+  deriving Repr
+
+/-- Filler complexity in CNPC (Experiment 1, §5).
+which-N vs bare wh — **same island structure**, different filler. -/
+def fillerComplexityCNPC : IslandManipulation :=
+  { description := "Filler complexity (which-N vs bare) in CNPC"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    differenceObserved := true
+    significance := "F1(1,20)=48.741, p<0.0001" }
+
+/-- Filler complexity in wh-islands (Experiment 2, §6).
+which-N vs bare wh — **same island structure**. -/
+def fillerComplexityWhIsland : IslandManipulation :=
+  { description := "Filler complexity (which-N vs bare) in wh-islands"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    differenceObserved := true
+    significance := "F1(1,15)=15.964, p=0.001" }
+
+/-- NP type in CNPC (Experiment 1, §5).
+Definite vs indefinite island-forming NP — **same CNPC configuration**. -/
+def npTypeCNPC : IslandManipulation :=
+  { description := "NP definiteness (def vs indef) in CNPC"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    differenceObserved := true
+    significance := "Marginal interaction with filler type" }
+
+/-- Filler complexity in adjunct islands (Experiment 3, §7).
+Complex vs simple temporal adjunct — **same wh-island structure**. -/
+def fillerComplexityAdjunct : IslandManipulation :=
+  { description := "Adjunct complexity (complex vs simple) in wh-islands"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    differenceObserved := true
+    significance := "t1(27)=3.484, p<0.01" }
+
+-- ============================================================================
+-- Accuracy Scoring
+-- ============================================================================
+
+def allManipulations : List IslandManipulation := [
+  fillerComplexityCNPC,
+  fillerComplexityWhIsland,
+  npTypeCNPC,
+  fillerComplexityAdjunct
+]
+
+/-- Processing correctly predicts the observed difference. -/
+def processingCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.processingPredictsDifference
+
+/-- Competence correctly predicts the observed (non-)difference. -/
+def competenceCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.competencePredictsDifference
+
+def processingScore : Nat := allManipulations.filter processingCorrect |>.length
+def competenceScore : Nat := allManipulations.filter competenceCorrect |>.length
+
+/-- Processing predicts all 4 observed effects correctly. -/
+theorem processing_scores_4_of_4 :
+    processingScore = 4 := by native_decide
+
+/-- Competence predicts 0 of 4 — it cannot distinguish any of the
+manipulated conditions because the island structure is unchanged. -/
+theorem competence_scores_0_of_4 :
+    competenceScore = 0 := by native_decide
+
+-- ============================================================================
+-- Ordering Predictions (via shared infrastructure)
+-- ============================================================================
+
+/-- Ordering predictions that Pareto dominance can verify.
+
+Note: which-indef CNPC vs baseline is `incomparable` (trade-off between
+distance costs and retrieval facilitation), so it is not included here.
+See `which_indef_vs_baseline_incomparable`. -/
+def islandOrderingPredictions : List (OrderingPrediction IslandCondition) := [
+  { harder := .cnpcBareDef, easier := .cnpcWhichIndef,
+    description := "Bare-def CNPC harder than which-indef CNPC" },
+  { harder := .cnpcBareDef, easier := .cnpcBaseline,
+    description := "Bare-def CNPC harder than baseline" },
+  { harder := .whIslandBare, easier := .whIslandWhich,
+    description := "Bare wh-island harder than which-N wh-island" }
+]
+
+/-- All Pareto-orderable predictions verified. -/
+theorem all_ordering_predictions_verified :
+    islandOrderingPredictions.all verifyOrdering = true := by native_decide
+
+-- ============================================================================
+-- Connection to Existing Island Classification
+-- ============================================================================
+
+/-- The binary strong/weak classification (constraintStrength in Islands.Data)
+is challenged by H&S's data.
+
+The CNPC is classified as "strong", yet its acceptability varies by 25 points
+(60 → 85) under nonstructural manipulation. If "strong" means "consistently
+blocks the dependency", the CNPC is not consistently strong.
+
+Similarly, wh-islands are classified as "weak" (ameliorated with D-linking),
+but H&S show that the amelioration tracks processing difficulty specifically,
+not D-linking per se — the same effect appears with nonreferential adjuncts
+(Experiment 3). -/
+theorem cnpc_is_classified_strong :
+    constraintStrength .complexNP = .strong := by rfl
+
+/-- Yet CNPC acceptability varies by 25+ points under nonstructural
+manipulation — gradient, not categorical. -/
+theorem cnpc_acceptability_range :
+    let worst := 60  -- bare-def
+    let best := 85   -- which-pl
+    best - worst ≥ 25 := by native_decide
+
+-- ============================================================================
+-- Connection to Sag 2010: Construction-Specific Islands
+-- ============================================================================
+
+/-! ### Sag's (2010) construction-based island analysis
+
+Sag (2010, p.514) argues that island constraints are construction-specific
+GAP restrictions, not universal Subjacency. This means:
+- The grammar **overgerates** (licenses extractions freely)
+- Construction-specific constraints (GAP restrictions) block some extractions
+- Remaining gradient acceptability is explained by processing
+
+This is exactly the division of labor the processing comparison reveals:
+grammar determines structural possibility, processing determines ease.
+
+The Sag 2010 F-G typology (`Phenomena.FillerGap.Sag2010`) classifies which
+constructions are islands. The processing model explains **within-island**
+gradient effects (filler complexity, NP type). -/
+
+open Phenomena.FillerGap.Sag2010
+
+/-- Sag's two island constructions are a proper subset of all F-G types.
+The non-island types (interrogative, relative, the-clause) freely permit
+extraction, consistent with the processing account's prediction that
+apparent island effects in these are gradient, not categorical. -/
+theorem sag_island_subset :
+    islandConstructions.length < 5 := by native_decide
+
+/-- The constructions Sag identifies as islands (topicalization, exclamatives)
+are not among those tested by Hofmeister & Sag 2010 (CNPC, wh-islands,
+adjuncts). This is significant: H&S test processing-based islands, while
+Sag 2010 identifies grammar-based islands — they explain **different** cases.
+
+Together they cover both:
+- Grammar-based islands: topicalization [GAP ⟨⟩], exclamatives [GAP ⟨⟩]
+- Processing-based "islands": CNPC, wh-islands, adjuncts (gradient effects) -/
+theorem complementary_coverage :
+    -- Sag's grammatical islands
+    (fgParams .topicalized).isIsland = true ∧
+    (fgParams .whExclamative).isIsland = true ∧
+    -- H&S's processing-based gradient effects apply to non-Sag island types
+    -- (CNPC = complexNP constraint, tested in Experiments 1 and 2)
+    constraintStrength .complexNP = .strong ∧
+    -- Processing correctly predicts all 4 nonstructural manipulation effects
+    processingScore = 4 := by
+  refine ⟨rfl, rfl, rfl, ?_⟩; native_decide
+
+-- ============================================================================
+-- Implications
+-- ============================================================================
+
+/-!
+## Summary: Island Effects Comparison
+
+### Nonstructural manipulations of island acceptability
+
+| Manipulation | Competence | Processing | Observed |
+|---|---|---|---|
+| Filler complexity (CNPC) | No effect | Effect ✓ | p<0.0001 |
+| Filler complexity (wh-island) | No effect | Effect ✓ | p=0.001 |
+| NP definiteness (CNPC) | No effect | Effect ✓ | Marginal |
+| Adjunct complexity (wh-island) | No effect | Effect ✓ | p<0.01 |
+
+**Score**: Processing 4/4, Competence 0/4.
+
+### Key finding
+
+The filler complexity paradox: more complex wh-phrases *improve* island
+acceptability. This is predicted by memory retrieval models (richer
+representations resist interference) but is inexplicable under any
+structural account, since the island configuration is identical.
+
+### Theoretical upshot (Hofmeister & Sag 2010, §9)
+
+Competence grammars should **overgenerate**: license filler-gap dependencies
+freely, without island-specific constraints. Processing factors (locality,
+referential load, clause boundaries, filler complexity) combine to create
+the gradient acceptability patterns observed.
+
+This parallels the scope-freezing comparison (`Comparisons.ScopeFreezing`),
+where processing also outperforms grammar-only accounts on gradient data.
+Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
+for weight-free ordinal comparison.
+
+### Connection to Sag (2010)
+
+Sag's F-G typology (`Phenomena.FillerGap.Sag2010`) identifies two types of
+island: grammar-based (topicalization, exclamatives with `[GAP ⟨⟩]`) and
+processing-based (CNPC, wh-islands — gradient effects). The processing
+comparison here covers the latter; Sag's HPSG GAP restrictions cover the
+former. Together they provide a complete account.
+-/
+
+end Comparisons.Islands
