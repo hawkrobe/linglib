@@ -10,8 +10,7 @@ import Linglib.Core.Basic
 import Linglib.Core.Kleene
 import Linglib.Core.Empirical
 import Linglib.Core.Proposition
-import Linglib.Core.UPOS
-import Linglib.Core.UDFeatures
+import Linglib.Core.UD
 import Linglib.Core.DepRel
 import Linglib.Core.Duality
 import Linglib.Core.Scales
@@ -30,6 +29,7 @@ import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.CausalModel
+import Linglib.Core.ProcessingModel
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -218,6 +218,7 @@ import Linglib.Comparisons.RSAExhExpressivity
 import Linglib.Comparisons.RSANeoGricean
 import Linglib.Comparisons.SauerlandRSA
 import Linglib.Comparisons.ScalarImplicature
+import Linglib.Comparisons.Islands
 import Linglib.Comparisons.ScopeFreezing
 import Linglib.Comparisons.SDSandRSA
 import Linglib.Comparisons.Mueller2013

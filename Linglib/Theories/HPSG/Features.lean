@@ -43,7 +43,7 @@ def findAuxPosition (ws : List Word) : Option Nat :=
   ws.findIdx? (·.cat == .AUX)
 
 /-- Is this a nominal category that can be a subject? -/
-def isSubjectCat (c : Cat) : Bool :=
+def isSubjectCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Find the position of the first subject (non-wh DP). -/

@@ -257,7 +257,7 @@ structure ValencyClause where
   deriving Repr
 
 /-- Is this a nominal category? -/
-def isNominalCat (c : Cat) : Bool :=
+def isNominalCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Parse a sentence into a valency clause -/

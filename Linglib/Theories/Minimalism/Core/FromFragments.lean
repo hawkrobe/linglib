@@ -67,7 +67,7 @@ def verbToSelFeatures (v : VerbEntry) : List SelFeature :=
 Map a VerbEntry to a Minimalist feature bundle.
 -/
 def verbToFeatures (v : VerbEntry) : FeatureBundle :=
-  [.cat .V] ++
+  [.cat .VERB] ++
   -- Add EPP if verb is transitive (needs internal argument)
   (if v.complementType != .none then [.epp true] else [])
 
@@ -75,7 +75,7 @@ def verbToFeatures (v : VerbEntry) : FeatureBundle :=
 Map a PronounEntry to a Minimalist feature bundle.
 -/
 def pronounToFeatures (p : PronounEntry) : FeatureBundle :=
-  [.cat .D] ++
+  [.cat .DET] ++
   (if p.wh then [.wh true] else [])
 
 /--
@@ -83,15 +83,15 @@ Map a NounEntry to a Minimalist feature bundle.
 -/
 def nounToFeatures (n : NounEntry) : FeatureBundle :=
   if n.proper then
-    [.cat .D]  -- Proper names are D
+    [.cat .DET]  -- Proper names are D
   else
-    [.cat .N]  -- Common nouns are N
+    [.cat .NOUN]  -- Common nouns are N
 
 /--
 Map a QuantifierEntry to a Minimalist feature bundle.
 -/
 def determinerToFeatures (_d : QuantifierEntry) : FeatureBundle :=
-  [.cat .D]
+  [.cat .DET]
 
 /--
 Map a unified LexResult to a Minimalist feature bundle.
@@ -123,15 +123,15 @@ def parseToSynObjs (s : String) : Option (List SynObj) :=
 -- ============================================================================
 
 -- Verify verb features
-example : verbToFeatures Fragments.English.Predicates.Verbal.sleep = [.cat .V] := rfl
-example : verbToFeatures Fragments.English.Predicates.Verbal.eat = [.cat .V, .epp true] := rfl
+example : verbToFeatures Fragments.English.Predicates.Verbal.sleep = [.cat .VERB] := rfl
+example : verbToFeatures Fragments.English.Predicates.Verbal.eat = [.cat .VERB, .epp true] := rfl
 
 -- Verify noun features
-example : nounToFeatures Fragments.English.Nouns.john = [.cat .D] := rfl
-example : nounToFeatures Fragments.English.Nouns.cat = [.cat .N] := rfl
+example : nounToFeatures Fragments.English.Nouns.john = [.cat .DET] := rfl
+example : nounToFeatures Fragments.English.Nouns.cat = [.cat .NOUN] := rfl
 
 -- Verify pronoun features
-example : pronounToFeatures Fragments.English.Pronouns.he = [.cat .D] := rfl
-example : pronounToFeatures Fragments.English.Pronouns.who = [.cat .D, .wh true] := rfl
+example : pronounToFeatures Fragments.English.Pronouns.he = [.cat .DET] := rfl
+example : pronounToFeatures Fragments.English.Pronouns.who = [.cat .DET, .wh true] := rfl
 
 end Minimalism.Core.FromFragments

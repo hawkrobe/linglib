@@ -30,7 +30,7 @@ private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 -- ============================================================================
 
 /-- Is this a nominal category that can be a subject? -/
-def isSubjectCat (c : Cat) : Bool :=
+def isSubjectCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Is this word a potential subject? Must be nominal and non-wh. -/

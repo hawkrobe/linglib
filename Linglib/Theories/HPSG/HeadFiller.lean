@@ -41,18 +41,18 @@ In HPSG, SLASH is a set-valued feature on phrases. A phrase with
 schema discharges one element from this set. -/
 structure SlashValue where
   /-- Categories of gaps in this phrase -/
-  gaps : List Cat
+  gaps : List UD.UPOS
   deriving Repr, DecidableEq
 
 /-- Empty SLASH value (no gaps). -/
 def SlashValue.empty : SlashValue := ⟨[]⟩
 
 /-- Check if SLASH contains a specific category. -/
-def SlashValue.contains (sv : SlashValue) (c : Cat) : Bool :=
+def SlashValue.contains (sv : SlashValue) (c : UD.UPOS) : Bool :=
   sv.gaps.contains c
 
 /-- Remove a category from SLASH (when a gap is filled). -/
-def SlashValue.discharge (sv : SlashValue) (c : Cat) : SlashValue :=
+def SlashValue.discharge (sv : SlashValue) (c : UD.UPOS) : SlashValue :=
   ⟨sv.gaps.erase c⟩
 
 instance : BEq SlashValue where
@@ -71,7 +71,7 @@ structure SynsemSlash where
   deriving Repr
 
 /-- Get the category from an extended synsem. -/
-def SynsemSlash.cat (ss : SynsemSlash) : Cat := ss.local_.cat
+def SynsemSlash.cat (ss : SynsemSlash) : UD.UPOS := ss.local_.cat
 
 /-! ## Head-Filler Schema -/
 
@@ -145,5 +145,56 @@ theorem slash_discharged_default (filler headPhrase result : Sign) (headSlash : 
     (slashMatch : headSlash.contains (filler.synsem.cat) = true) :
     ({ filler, headPhrase, headSlash, result, slashMatch : HeadFillerRule}).resultSlash
       = headSlash.discharge (filler.synsem.cat) := rfl
+
+-- ============================================================================
+-- GAP Restrictions and Island Constraints (Sag 2010, p.514)
+-- ============================================================================
+
+/-! ### Islands as GAP restrictions
+
+Sag (2010, p.514) argues that island constraints are construction-specific
+restrictions on the GAP value, not universal Subjacency. This eliminates
+the need for a separate island module in the grammar.
+
+- **Absolute islands**: `[GAP ⟨⟩]` on the mother — no F-G dependency can
+  penetrate (topicalization, exclamatives)
+- **Weak islands**: `[GAP list(NP)]` — only NP gaps pass through
+  (e.g., wh-islands allow NP extraction but not PP)
+- **Unrestricted**: any GAP value permeates (no island constraint) -/
+
+/-- GAP restriction on a construction (Sag 2010, p.514).
+
+This classifies constructions by what kinds of gaps they permit,
+deriving island effects from the same feature system used for
+non-island dependencies. -/
+inductive GapRestriction where
+  | unrestricted  -- Any GAP value (not an island)
+  | npOnly        -- [GAP list(NP)] — weak island (only NP extraction)
+  | noGap         -- [GAP ⟨⟩] — absolute barrier to extraction
+  deriving Repr, DecidableEq, BEq
+
+/-- Does this GAP restriction block all extraction? -/
+def GapRestriction.isAbsoluteIsland : GapRestriction → Bool
+  | .noGap => true
+  | _ => false
+
+/-- Does this GAP restriction allow NP extraction? -/
+def GapRestriction.allowsNPExtraction : GapRestriction → Bool
+  | .unrestricted => true
+  | .npOnly => true
+  | .noGap => false
+
+/-- A SLASH value satisfies a GAP restriction if all its gaps are
+permitted by the restriction. -/
+def SlashValue.satisfiesRestriction (sv : SlashValue) (r : GapRestriction) : Bool :=
+  match r with
+  | .unrestricted => true
+  | .npOnly => sv.gaps.all (· == .NOUN)
+  | .noGap => sv.gaps.isEmpty
+
+/-- Empty SLASH always satisfies any restriction. -/
+theorem empty_satisfies_any_restriction (r : GapRestriction) :
+    SlashValue.empty.satisfiesRestriction r = true := by
+  cases r <;> rfl
 
 end HPSG

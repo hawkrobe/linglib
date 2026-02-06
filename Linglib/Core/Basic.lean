@@ -1,22 +1,22 @@
-import Linglib.Core.UPOS
-import Linglib.Core.UDFeatures
+import Linglib.Core.UD
 
 /-!
 # Basic
 
 Core types shared across all theoretical frameworks.
 
-## Migration to Universal Dependencies
+## Universal Dependencies Integration
 
-As of this version, core morphological features are aliased to UD types:
+Morphological features are aliased to UD types:
 - `Number` = `UD.Number` (with compatibility constructors `sg`, `pl`)
 - `Person` = `UD.Person` (with compatibility constructors `first`, `second`, `third`)
 - `Case` = `UD.Case` (with compatibility constructors `nom`, `acc`, `gen`)
 - `Voice` = `UD.Voice` (with compatibility constructors `active`, `passive`)
 - `VForm` = `UD.VerbForm` (with compatibility constructors)
 
+Syntactic categories use `UD.UPOS` directly (the 17 universal POS tags).
+
 Types without UD equivalents remain defined here:
-- `Cat` (coarse syntactic category - will eventually map to UPOS)
 - `Valence` (argument structure)
 - `ClauseType` (sentence type)
 -/
@@ -81,41 +81,6 @@ end VForm
 -- Types Without UD Equivalents
 -- ============================================================================
 
-/-- Syntactic categories. Aliased to UD.UPOS for cross-linguistic compatibility.
-
-    UPOS provides 17 universal part-of-speech tags. The old Cat constructors
-    are provided as compatibility aliases:
-    - `Cat.D` → `UPOS.DET` (determiners; use `UPOS.PRON` for pronouns)
-    - `Cat.N` → `UPOS.NOUN` (common nouns; use `UPOS.PROPN` for proper nouns)
-    - `Cat.V` → `UPOS.VERB` (lexical verbs)
-    - `Cat.Aux` → `UPOS.AUX` (auxiliary verbs)
-    - `Cat.C` → `UPOS.SCONJ` (complementizers are subordinating conjunctions)
-    - `Cat.Wh` → `UPOS.PRON` (wh-pronouns; use `UPOS.ADV` for wh-adverbs)
-    - `Cat.P` → `UPOS.ADP` (adpositions)
-    - `Cat.Adj` → `UPOS.ADJ` (adjectives)
-
-    New UPOS tags available: `ADV`, `CCONJ`, `INTJ`, `NUM`, `PART`, `PROPN`, `PUNCT`, `SYM`, `X` -/
-abbrev Cat := UD.UPOS
-
-namespace Cat
-/-- Determiner (compatibility alias for UPOS.DET) -/
-abbrev D : Cat := .DET
-/-- Noun (compatibility alias for UPOS.NOUN) -/
-abbrev N : Cat := .NOUN
-/-- Verb (compatibility alias for UPOS.VERB) -/
-abbrev V : Cat := .VERB
-/-- Auxiliary (compatibility alias for UPOS.AUX) -/
-abbrev Aux : Cat := .AUX
-/-- Complementizer (compatibility alias for UPOS.SCONJ) -/
-abbrev C : Cat := .SCONJ
-/-- Wh-phrase (compatibility alias for UPOS.PRON) -/
-abbrev Wh : Cat := .PRON
-/-- Preposition (compatibility alias for UPOS.ADP) -/
-abbrev P : Cat := .ADP
-/-- Adjective (compatibility alias for UPOS.ADJ) -/
-abbrev Adj : Cat := .ADJ
-end Cat
-
 /-- Transitivity / argument structure. No direct UD equivalent. -/
 inductive Valence where
   | intransitive  -- sleep, arrive
@@ -154,7 +119,7 @@ structure Features where
 /-- A word: form + category + features. -/
 structure Word where
   form : String
-  cat : Cat
+  cat : UD.UPOS
   features : Features := {}
   deriving Repr
 

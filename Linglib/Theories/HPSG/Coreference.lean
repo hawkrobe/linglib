@@ -35,7 +35,7 @@ inductive NominalType where
   deriving Repr, DecidableEq
 
 /-- Is this a nominal category? -/
-def isNominalCat (c : Cat) : Bool :=
+def isNominalCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
 /-- Classify a word as a nominal type. -/

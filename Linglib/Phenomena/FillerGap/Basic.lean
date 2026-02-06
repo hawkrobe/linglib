@@ -12,10 +12,12 @@ This module covers syntactic dependency phenomena:
 
 import Linglib.Phenomena.FillerGap.LongDistance
 import Linglib.Phenomena.FillerGap.CrossSerial
+import Linglib.Phenomena.FillerGap.Sag2010
 
 namespace Phenomena.FillerGap
 
 export LongDistance (longDistanceData)
 export CrossSerial (Dependency DependencyPattern DutchExample)
+export Sag2010 (FGClauseType FGParameters fgParams)
 
 end Phenomena.FillerGap

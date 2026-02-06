@@ -52,7 +52,7 @@ class HasCombinationSchemata (T : Type) where
   /-- Classify a combination of head + nonHead → result as one of the three schemata -/
   classify : Expr → Expr → Expr → Option CombinationKind
   /-- Get the category of an expression (if available) -/
-  catOf : Expr → Option Cat
+  catOf : Expr → Option UD.UPOS
 
 /-- Müller's labeling claim (§2.1): the head determines the category of the result.
 

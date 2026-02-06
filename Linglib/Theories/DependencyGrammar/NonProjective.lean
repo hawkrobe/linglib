@@ -143,7 +143,7 @@ Consider scrambling: word order a(0) b(1) c(2) d(3)
 - Neither contains the other: 0 ≤ 1 but 2 < 3; 1 > 0 so [1,3] doesn't contain [0,2]
 - This is genuine crossing! -/
 def nonProjectiveTree : DepTree :=
-  { words := [ ⟨"A", Cat.N, {}⟩, ⟨"B", Cat.V, {}⟩, ⟨"C", Cat.N, {}⟩, ⟨"D", Cat.V, {}⟩ ]
+  { words := [ ⟨"A", .NOUN, {}⟩, ⟨"B", .VERB, {}⟩, ⟨"C", .NOUN, {}⟩, ⟨"D", .VERB, {}⟩ ]
   , deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
   , rootIdx := 0 }
 

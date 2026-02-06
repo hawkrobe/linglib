@@ -29,23 +29,23 @@ Reference: Gibson (2025) "Syntax", MIT Press, Section 3.9
 
 import Linglib.Core.Basic
 
-private def what : Word := ⟨"what", .Wh, { wh := true }⟩
-private def did : Word := ⟨"did", .Aux, {}⟩
-private def john : Word := ⟨"John", .D, { number := some .sg, person := some .third }⟩
-private def see : Word := ⟨"see", .V, { valence := some .transitive, number := some .pl }⟩
-private def who : Word := ⟨"who", .Wh, { wh := true }⟩
-private def sees : Word := ⟨"sees", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .D, { number := some .sg, person := some .third }⟩
-private def does : Word := ⟨"does", .Aux, { number := some .sg, person := some .third }⟩
-private def wonder : Word := ⟨"wonder", .V, { valence := some .transitive, number := some .pl }⟩
-private def if_ : Word := ⟨"if", .C, {}⟩
-private def think : Word := ⟨"think", .V, { valence := some .transitive, number := some .pl }⟩
-private def that : Word := ⟨"that", .D, { number := some .sg }⟩
-private def the : Word := ⟨"the", .D, {}⟩
-private def boy : Word := ⟨"boy", .N, { number := some .sg, countable := some true }⟩
-private def book : Word := ⟨"book", .N, { number := some .sg, countable := some true }⟩
-private def reads : Word := ⟨"reads", .V, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def sleeps : Word := ⟨"sleeps", .V, { valence := some .intransitive, number := some .sg, person := some .third }⟩
+private def what : Word := ⟨"what", .PRON, { wh := true }⟩
+private def did : Word := ⟨"did", .AUX, {}⟩
+private def john : Word := ⟨"John", .DET, { number := some .sg, person := some .third }⟩
+private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def who : Word := ⟨"who", .PRON, { wh := true }⟩
+private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def mary : Word := ⟨"Mary", .DET, { number := some .sg, person := some .third }⟩
+private def does : Word := ⟨"does", .AUX, { number := some .sg, person := some .third }⟩
+private def wonder : Word := ⟨"wonder", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def if_ : Word := ⟨"if", .SCONJ, {}⟩
+private def think : Word := ⟨"think", .VERB, { valence := some .transitive, number := some .pl }⟩
+private def that : Word := ⟨"that", .DET, { number := some .sg }⟩
+private def the : Word := ⟨"the", .DET, {}⟩
+private def boy : Word := ⟨"boy", .NOUN, { number := some .sg, countable := some true }⟩
+private def book : Word := ⟨"book", .NOUN, { number := some .sg, countable := some true }⟩
+private def reads : Word := ⟨"reads", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
+private def sleeps : Word := ⟨"sleeps", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
 namespace Phenomena.FillerGap.LongDistance
 
@@ -139,10 +139,10 @@ def findWhPosition (ws : List Word) : Option Nat :=
 def isWhFronted (ws : List Word) : Bool :=
   match findWhPosition ws with
   | some 0 => true
-  | some 1 => ws[0]?.map (·.cat == .D) |>.getD false  -- embedded: "John wonders what..."
+  | some 1 => ws[0]?.map (·.cat == .DET) |>.getD false  -- embedded: "John wonders what..."
   | some 2 =>
-    let firstIsD := ws[0]?.map (·.cat == .D) |>.getD false
-    let secondIsV := ws[1]?.map (·.cat == .V) |>.getD false
+    let firstIsD := ws[0]?.map (·.cat == .DET) |>.getD false
+    let secondIsV := ws[1]?.map (·.cat == .VERB) |>.getD false
     firstIsD && secondIsV
   | some _ => false
   | none => false

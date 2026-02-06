@@ -27,13 +27,13 @@ structure HeadFeatures where
 
 /-- Valence features (what arguments are needed). -/
 structure Valence where
-  subj : List Cat := []     -- subject requirement
-  comps : List Cat := []    -- complement requirements
+  subj : List UD.UPOS := []     -- subject requirement
+  comps : List UD.UPOS := []    -- complement requirements
   deriving Repr, DecidableEq
 
 /-- The SYNSEM value (syntax-semantics bundle). -/
 structure Synsem where
-  cat : Cat
+  cat : UD.UPOS
   head : HeadFeatures := {}
   val : Valence := {}
   deriving Repr

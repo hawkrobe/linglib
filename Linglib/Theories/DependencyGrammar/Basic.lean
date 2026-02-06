@@ -79,7 +79,7 @@ structure ArgReq where
   depType : DepType
   direction : Direction
   required : Bool := true
-  category : Option Cat := none
+  category : Option UD.UPOS := none
   deriving Repr, DecidableEq
 
 /-- Argument structure: what dependents a word requires/allows. -/
@@ -171,7 +171,7 @@ def checkVerbSubcat (t : DepTree) : Bool :=
   List.range t.words.length |>.all λ i =>
     match t.words[i]? with
     | some w =>
-      if w.cat == Cat.V then
+      if w.cat == UD.UPOS.VERB then
         let subjCount := countDepsOfType t i .subj
         let objCount := countDepsOfType t i .obj
         let iobjCount := countDepsOfType t i .iobj

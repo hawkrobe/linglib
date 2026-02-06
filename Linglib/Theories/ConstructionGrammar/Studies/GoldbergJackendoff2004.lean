@@ -448,10 +448,10 @@ def causativePropertyConstruction : ArgStructureConstruction :=
       , meaning := "X CAUSES Y to BECOME Z-state (via V-ing)"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "agent", false⟩
-      , ⟨Cat.V, "predicate", true⟩
-      , ⟨Cat.N, "patient", false⟩
-      , ⟨Cat.Adj, "result", false⟩ ]
+      [ ⟨.NOUN, "agent", false⟩
+      , ⟨.VERB, "predicate", true⟩
+      , ⟨.NOUN, "patient", false⟩
+      , ⟨.ADJ, "result", false⟩ ]
   , hasHead := by native_decide }
 
 def causativePathConstruction : ArgStructureConstruction :=
@@ -461,10 +461,10 @@ def causativePathConstruction : ArgStructureConstruction :=
       , meaning := "X CAUSES Y to GO to Z-location (via V-ing)"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "agent", false⟩
-      , ⟨Cat.V, "predicate", true⟩
-      , ⟨Cat.N, "theme", false⟩
-      , ⟨Cat.P, "goal", false⟩ ]
+      [ ⟨.NOUN, "agent", false⟩
+      , ⟨.VERB, "predicate", true⟩
+      , ⟨.NOUN, "theme", false⟩
+      , ⟨.ADP, "goal", false⟩ ]
   , hasHead := by native_decide }
 
 def noncausativePropertyConstruction : ArgStructureConstruction :=
@@ -474,9 +474,9 @@ def noncausativePropertyConstruction : ArgStructureConstruction :=
       , meaning := "X BECOMES Z-state (via V-ing)"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "theme", false⟩
-      , ⟨Cat.V, "predicate", true⟩
-      , ⟨Cat.Adj, "result", false⟩ ]
+      [ ⟨.NOUN, "theme", false⟩
+      , ⟨.VERB, "predicate", true⟩
+      , ⟨.ADJ, "result", false⟩ ]
   , hasHead := by native_decide }
 
 def noncausativePathConstruction : ArgStructureConstruction :=
@@ -486,9 +486,9 @@ def noncausativePathConstruction : ArgStructureConstruction :=
       , meaning := "X GOES to Z-location (via V-ing)"
       , specificity := .fullyAbstract }
   , slots :=
-      [ ⟨Cat.N, "theme", false⟩
-      , ⟨Cat.V, "predicate", true⟩
-      , ⟨Cat.P, "goal", false⟩ ]
+      [ ⟨.NOUN, "theme", false⟩
+      , ⟨.VERB, "predicate", true⟩
+      , ⟨.ADP, "goal", false⟩ ]
   , hasHead := by native_decide }
 
 /-- The full resultative family: all four subconstructions. -/

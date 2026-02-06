@@ -154,7 +154,7 @@ def dg_hammer_flat : DGFrame :=
       , { depType := .obj, direction := .right, required := true } ]
   , constructionArgs :=
       [ { depType := .amod, direction := .right, required := true
-        , category := some Cat.Adj } ] }
+        , category := some UD.UPOS.ADJ } ] }
 
 /-- All three theories predict the same number of surface arguments
     for "hammer flat": 3 (agent + patient + result). -/
@@ -216,7 +216,7 @@ def dg_laugh_silly : DGFrame :=
   , constructionArgs :=
       [ { depType := .obj, direction := .right, required := true }
       , { depType := .amod, direction := .right, required := true
-        , category := some Cat.Adj } ] }
+        , category := some UD.UPOS.ADJ } ] }
 
 /-- CxG: the verb contributes fewer roles than the surface frame.
     The construction licenses the extra argument ("herself"). -/

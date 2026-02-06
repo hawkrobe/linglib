@@ -37,4 +37,44 @@ structure MeasureSpec where
   unit : String
   deriving Repr
 
+-- ============================================================================
+-- Processing Dimension Links
+-- ============================================================================
+
+/-- Processing dimensions that a task type is sensitive to.
+
+Different experimental paradigms tap different processing dimensions.
+This links `TaskType` to the dimensions in `ProcessingModel.ProcessingProfile`. -/
+inductive ProcessingDimension where
+  | locality        -- Distance-based effects (reading times, ERP latency)
+  | boundaries      -- Clause boundary effects (CPS, wrap-up effects)
+  | referentialLoad  -- Referential interference (similarity-based confusion)
+  | ease            -- Retrieval facilitation (complexity benefits)
+  deriving Repr, DecidableEq
+
+/-- Which processing dimensions a task type is sensitive to.
+
+Self-paced reading and eye-tracking are sensitive to locality and boundaries
+(spillover regions, wrap-up effects). Acceptability ratings aggregate across
+all dimensions. -/
+def taskSensitiveDimensions : TaskType → List ProcessingDimension
+  | .selfPacedReading => [.locality, .boundaries]
+  | .eyeTracking      => [.locality, .boundaries, .referentialLoad]
+  | .acceptabilityRating => [.locality, .boundaries, .referentialLoad, .ease]
+  | .grammaticalityJudgment => [.locality, .boundaries, .referentialLoad, .ease]
+  | _ => []  -- Other tasks not primarily about processing difficulty
+
+/-- An empirical observation linked to processing dimensions.
+
+Connects an observed behavioral measure to the processing profile dimensions
+it reflects. -/
+structure ProcessingObservation where
+  /-- What was measured -/
+  measure : MeasureSpec
+  /-- Which processing dimensions this observation reflects -/
+  dimensions : List ProcessingDimension
+  /-- Description of the observed pattern -/
+  description : String
+  deriving Repr
+
 end Phenomena

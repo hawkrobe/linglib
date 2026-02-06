@@ -24,6 +24,7 @@ Comparing how different theories explain scope freezing phenomena.
 -/
 
 import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Core.ProcessingModel
 import Linglib.Phenomena.Quantification.ScopeFreezing
 import Linglib.Theories.Minimalism.Phenomena.Scope
 import Linglib.Theories.CCG.Phenomena.Scope
@@ -31,6 +32,7 @@ import Linglib.Theories.CCG.Phenomena.Scope
 namespace Comparisons.ScopeFreezing
 
 open ScopeTheory
+open ProcessingModel
 open Phenomena.Quantification.ScopeFreezing
 open Minimalism.Phenomena.Scope
 open CCG.Scope
@@ -78,7 +80,7 @@ def ccgAnalyzeContext : FreezingContext → CCGFreezingReason
 def ccgPredictsFreezing (ctx : FreezingContext) : Bool :=
   ccgAnalyzeContext ctx != .notFrozen
 
--- Processing/Gradient Account
+-- Processing/Gradient Account via ProcessingProfile
 
 /-!
 ## Processing Explanation
@@ -86,38 +88,56 @@ def ccgPredictsFreezing (ctx : FreezingContext) : Bool :=
 Processing accounts (Anderson 2004, Scontras et al. 2017) argue:
 - Inverse scope requires **reanalysis** or **memory operations**
 - Cost scales with **complexity** of intervening material
-- Freezing = cost exceeds threshold (gradient, not categorical)
+- Freezing = processing profile of frozen condition Pareto-dominates baseline
 
 ### Processing Predictions
 
 | Context | Processing Explanation |
 |---------|----------------------|
-| Possessor | Complex subject increases memory load |
-| Double object | Two objects increase complexity |
-| Passive | By-phrase is late; reanalysis costly |
-| Heavy NP | Complexity directly increases cost |
+| Possessor | Complex subject increases locality and referential load |
+| Double object | Two objects increase referential load and boundaries |
+| Passive | By-phrase increases locality; reanalysis costly |
+| Heavy NP | Complexity directly increases locality and referential load |
 -/
 
-/-- Complexity factors that affect inverse scope processing -/
-structure ProcessingComplexity where
-  /-- Words in subject -/
-  subjectLength : Nat
-  /-- Embedding depth -/
-  embeddingDepth : Nat
-  /-- Number of scope-bearing elements -/
-  scopeBearers : Nat := 2
-  deriving Repr
+-- ============================================================================
+-- Concrete Processing Profiles for Scope Conditions
+-- ============================================================================
 
-/-- Estimate processing cost (arbitrary units) -/
-def estimateCost (c : ProcessingComplexity) : Nat :=
-  c.subjectLength + c.embeddingDepth * 3 + c.scopeBearers
+/-- Baseline: "A student attended every seminar" — short, simple. -/
+def baseline_scope : ProcessingProfile :=
+  { locality := 3, boundaries := 0, referentialLoad := 0, ease := 0 }
 
-/-- Processing threshold for inverse scope availability -/
-def inverseThreshold : Nat := 10
+/-- Possessor: "A student's teacher attended every seminar" — complex subject. -/
+def possessor_scope : ProcessingProfile :=
+  { locality := 5, boundaries := 0, referentialLoad := 2, ease := 0 }
 
-/-- Does processing predict freezing (gradient)? -/
-def processingPredictsFreezing (c : ProcessingComplexity) : Bool :=
-  estimateCost c > inverseThreshold
+/-- Double object: "A teacher gave every student a book" — two objects. -/
+def doubleObject_scope : ProcessingProfile :=
+  { locality := 4, boundaries := 0, referentialLoad := 2, ease := 0 }
+
+/-- Heavy NP: "A student from the local university attended every seminar" -/
+def heavyNP_scope : ProcessingProfile :=
+  { locality := 8, boundaries := 0, referentialLoad := 1, ease := 0 }
+
+/-- Scope condition type for typeclass instance. -/
+inductive ScopeCondition where
+  | baseline
+  | possessor
+  | doubleObject
+  | heavyNP
+  deriving Repr, DecidableEq, BEq
+
+instance : HasProcessingProfile ScopeCondition where
+  profile
+    | .baseline     => baseline_scope
+    | .possessor    => possessor_scope
+    | .doubleObject => doubleObject_scope
+    | .heavyNP      => heavyNP_scope
+
+/-- Does the processing model predict freezing (harder than baseline)? -/
+def processingPredictsFreezing (ctx : ScopeCondition) : Bool :=
+  (HasProcessingProfile.profile ctx |>.compare baseline_scope) == .harder
 
 -- Theory Comparison
 
@@ -126,43 +146,54 @@ structure TheoryPredictions where
   context : FreezingContext
   minimalism : Bool  -- Predicts freezing?
   ccg : Bool
-  processing : Bool
+  /-- Processing comparison against baseline (Pareto dominance) -/
+  processing : CompareResult
   observed : Availability
   deriving Repr
 
+/-- Does the processing prediction match observation?
+Frozen observed → processing should be harder than baseline.
+Ambiguous observed → processing should not be harder. -/
+def processingMatchesObserved (p : TheoryPredictions) : Bool :=
+  let frozen := p.observed == .surfaceOnly
+  match p.processing with
+  | .harder => frozen
+  | .easier | .equal | .incomparable => !frozen
+
 /-- Compare theories on a freezing context -/
 def comparePredictions (ctx : FreezingContext) (obs : Availability)
-    (complexity : ProcessingComplexity := ⟨5, 1, 2⟩) : TheoryPredictions :=
+    (condition : ScopeCondition) : TheoryPredictions :=
   { context := ctx
   , minimalism := predictsFreezing ctx
   , ccg := ccgPredictsFreezing ctx
-  , processing := processingPredictsFreezing complexity
+  , processing := HasProcessingProfile.profile condition |>.compare baseline_scope
   , observed := obs }
 
 -- Key Comparisons
 
 /-- Possessor freezing: all theories agree -/
 def possessorComparison : TheoryPredictions :=
-  comparePredictions .possessor .surfaceOnly ⟨8, 1, 2⟩
+  comparePredictions .possessor .surfaceOnly .possessor
 
 /-- Double object: all theories agree -/
 def doubleObjectComparison : TheoryPredictions :=
-  comparePredictions .doubleObject .surfaceOnly ⟨6, 2, 3⟩  -- 6+6+3=15 > 10
+  comparePredictions .doubleObject .surfaceOnly .doubleObject
 
 /-- Heavy NP: theories DIVERGE -/
 def heavyNPComparison : TheoryPredictions :=
-  comparePredictions .heavyNP .surfaceOnly ⟨15, 1, 2⟩
+  comparePredictions .heavyNP .surfaceOnly .heavyNP
 
 /-- Baseline: all theories agree (ambiguous) -/
 def baselineComparison : TheoryPredictions :=
-  comparePredictions .none .ambiguous ⟨3, 0, 2⟩
+  comparePredictions .none .ambiguous .baseline
 
 -- Divergence Detection
 
 /-- Check if all theories agree -/
 def theoriesAgree (p : TheoryPredictions) : Bool :=
   let frozen := p.observed == .surfaceOnly
-  (p.minimalism == frozen) && (p.ccg == frozen) && (p.processing == frozen)
+  let processingPredicts := p.processing == .harder
+  (p.minimalism == frozen) && (p.ccg == frozen) && (processingPredicts == frozen)
 
 /-- Find where theories diverge -/
 def theoriesDiverge (p : TheoryPredictions) : Bool :=
@@ -184,7 +215,7 @@ theorem possessor_agrees :
 ### Heavy NP
 - **Minimalism**: No grammatical barrier → predicts AMBIGUOUS
 - **CCG**: Same derivations available → predicts AMBIGUOUS
-- **Processing**: High complexity → predicts FROZEN
+- **Processing**: Pareto harder than baseline → predicts FROZEN
 - **Observed**: Frozen (gradient)
 
 **Verdict**: Processing explains heavy NP; grammar theories fail.
@@ -217,7 +248,8 @@ inductive DivergenceType where
 def classifyDivergence (p : TheoryPredictions) : DivergenceType :=
   let frozen := p.observed == .surfaceOnly
   let grammarPredicts := p.minimalism || p.ccg
-  if grammarPredicts == frozen && p.processing == frozen then
+  let processingPredicts := p.processing == .harder
+  if grammarPredicts == frozen && processingPredicts == frozen then
     .allAgree
   else if !grammarPredicts && frozen then
     .grammarVsProcessing  -- Grammar allows, but frozen (processing explains)
@@ -257,11 +289,27 @@ def ccgAccuracy : Nat :=
 
 /-- Processing accuracy -/
 def processingAccuracy : Nat :=
-  countCorrect allComparisons (·.processing)
+  countCorrect allComparisons (λ p => p.processing == .harder)
 
 #eval minimalismAccuracy   -- 3/4 (misses heavy NP)
 #eval ccgAccuracy          -- 3/4 (misses heavy NP)
 #eval processingAccuracy   -- 4/4
+
+-- Ordering Predictions (via shared infrastructure)
+
+/-- Verify processing ordering predictions against empirical data. -/
+def scopeOrderingPredictions : List (OrderingPrediction ScopeCondition) := [
+  { harder := .possessor, easier := .baseline,
+    description := "Possessor harder than baseline" },
+  { harder := .doubleObject, easier := .baseline,
+    description := "Double object harder than baseline" },
+  { harder := .heavyNP, easier := .baseline,
+    description := "Heavy NP harder than baseline" }
+]
+
+/-- All scope ordering predictions verified by Pareto dominance. -/
+theorem all_scope_ordering_predictions_verified :
+    scopeOrderingPredictions.all verifyOrdering = true := by native_decide
 
 -- Theoretical Implications
 
@@ -275,7 +323,7 @@ def processingAccuracy : Nat :=
    - Both fail on heavy NP (no grammatical barrier)
 
 2. **Processing fills the gap**
-   - Explains heavy NP via complexity
+   - Explains heavy NP via Pareto-harder profile
    - Explains gradient judgments
    - Compatible with grammar accounts for clear cases
 
@@ -334,7 +382,7 @@ Frozen: P(inverse) = 2%; Rescued: P(inverse) > 50%.
 **Heavy NP**: Only processing predicts freezing.
 - Minimalism: No phase/island barrier
 - CCG: Same derivations available
-- Processing: High memory cost
+- Processing: Pareto harder than baseline
 
 ### Theoretical Conclusion
 Scope freezing is likely a **mixed phenomenon**:

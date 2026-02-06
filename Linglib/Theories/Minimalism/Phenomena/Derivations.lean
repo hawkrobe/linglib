@@ -52,17 +52,17 @@ private def theySO : SynObj :=
 
 -- Proper nouns
 private def johnSO : SynObj :=
-  .lex (Fragments.English.Nouns.john.toWordSg) [.cat .D]
+  .lex (Fragments.English.Nouns.john.toWordSg) [.cat .DET]
 private def marySO : SynObj :=
-  .lex (Fragments.English.Nouns.mary.toWordSg) [.cat .D]
+  .lex (Fragments.English.Nouns.mary.toWordSg) [.cat .DET]
 
 -- Common nouns
 private def catSO : SynObj :=
-  .lex (Fragments.English.Nouns.cat.toWordSg) [.cat .N]
+  .lex (Fragments.English.Nouns.cat.toWordSg) [.cat .NOUN]
 private def pizzaSO : SynObj :=
-  .lex (Fragments.English.Nouns.pizza.toWordSg) [.cat .N]
+  .lex (Fragments.English.Nouns.pizza.toWordSg) [.cat .NOUN]
 private def bookSO : SynObj :=
-  .lex (Fragments.English.Nouns.book.toWordSg) [.cat .N]
+  .lex (Fragments.English.Nouns.book.toWordSg) [.cat .NOUN]
 
 -- Verbs
 private def sleepsSO : SynObj :=
@@ -79,11 +79,11 @@ private def givesSO : SynObj :=
   lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.give)
 
 -- Determiner
-private def theSO : SynObj := .lex ⟨"the", .D, {}⟩ [.cat .D]
+private def theSO : SynObj := .lex ⟨"the", .DET, {}⟩ [.cat .DET]
 
 -- Feature bundles
-private def npFeatures : FeatureBundle := [.cat .D]
-private def vFeatures : FeatureBundle := [.cat .V]
+private def npFeatures : FeatureBundle := [.cat .DET]
+private def vFeatures : FeatureBundle := [.cat .VERB]
 
 -- ============================================================================
 -- Word Order Derivations
