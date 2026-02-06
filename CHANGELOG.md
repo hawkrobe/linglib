@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.78.0] - 2025-02-05
+
+### Added
+- **Core/Interfaces/CombinationSchema.lean**: Theory-neutral interface for Müller's (2013) three universal combination schemata (Head-Complement, Head-Specifier, Head-Filler) with `HasCombinationSchemata`, `HasHeadFeaturePrinciple`, `HasCoordination` typeclasses
+- **Theories/HPSG/HeadFiller.lean**: HPSG's third schema — Head-Filler Schema with SLASH feature infrastructure (`SlashValue`, `SynsemSlash`, `HeadFillerRule`), unified `HPSGSchema` inductive covering all three ID schemata
+- **Theories/HPSG/LexicalRules.lean**: Valence-changing lexical rules (passive, resultative, dative shift) with `applyLexRule`, proofs that lexical rules preserve head features and enable coordination
+- **Theories/DependencyGrammar/NonProjective.lean**: Non-projective (crossing) dependencies for long-distance phenomena, `depsCross`, `FillerGapDep`, `isWellFormedNonProj` — DG analogue of Internal Merge / Head-Filler
+- **Theories/ConstructionGrammar/ArgumentStructure.lean**: Argument structure constructions (Goldberg 1995) with slot decomposition into combination schemata, concrete constructions (ditransitive, caused-motion, resultative), `isDecomposable` predicate, irreducibility proofs for PAL and *let alone*
+- **Theories/Minimalism/Bridge/CombinationSchemata.lean**: Classification of Merge into three schemata — External Merge with selection = Head-Complement, without = Head-Specifier, Internal Merge = Head-Filler, with exhaustiveness proof and concrete examples
+- **Comparisons/Mueller2013.lean**: Cross-theory comparison formalizing Müller (2013) "Unifying Everything" — classification functions for all five theories, labeling convergence theorem, External Merge ↔ Head-Complement ↔ Application correspondence, Internal Merge ↔ Head-Filler ↔ Composition, coordination diagnostic, "both directions right" theorem
+
+## [0.77.0] - 2025-02-05
+
+### Added
+- **Theories/ConstructionGrammar/Studies/KayFillmore1999.lean**: *What's X doing Y?* construction
+  - WXDY construction definition (partially open, interrogative form + expressive function)
+  - FKO1988 idiom classification bridge: WXDY as formal idiom (encoding, grammatical, formal)
+  - CxG inheritance network: inherits from wh-questions, progressive, rhetorical Q family
+  - Presupposition bridge: `wxdyPresup` → `PrProp`, projection through negation
+  - Two-dimensional semantics bridge: `wxdyTwoDim` → `TwoDimProp`, CI projection + independence
+  - Hamblin question bridge: literal = `which`; incredulity = degenerate single-answer Q
+  - Left Periphery bridge (deepest): PerspP disambiguates readings via veridical/ignorant models
+  - Common ground bridge: presupposition requires CG entailment
+  - Aspect bridge: progressive requirement derives from durative ∧ dynamic constraint
+  - Domain widening bridge: incongruity = normative alternative source (same as counterexpectational *just*)
+  - Polarity bridge: incredulity = rhetorical question requiring polar form
+  - ~20 bridge theorems across 10 modules
+- **Phenomena/Constructions/Studies/KayFillmore1999.lean**: WXDY empirical data
+  - 18 examples: basic incredulity, literal question, progressive requirement, subject referentiality, complement types, ambiguous, embedding/CI projection, FKO1988 comparison
+  - Three reading types (literal, incredulity, ambiguous) with verification
+  - Progressive requirement verification across all grammatical non-literal examples
+
 ## [0.76.0] - 2025-02-05
 
 ### Added

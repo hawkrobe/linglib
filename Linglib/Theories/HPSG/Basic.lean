@@ -68,6 +68,8 @@ structure HeadCompRule where
   comps : List Sign
   result : Sign
   compsMatch : (head.synsem.val.comps = comps.map (·.synsem.cat))
+  /-- Head Feature Principle: result category = head category -/
+  hfp : result.synsem.cat = head.synsem.cat
 
 /-- Head-Subject Schema: phrase combines with its subject. -/
 structure HeadSubjRule where
@@ -75,6 +77,8 @@ structure HeadSubjRule where
   headPhrase : Sign
   result : Sign
   subjMatch : (headPhrase.synsem.val.subj = [subj.synsem.cat])
+  /-- Head Feature Principle: result category = head phrase category -/
+  hfp : result.synsem.cat = headPhrase.synsem.cat
 
 end Schemata
 
