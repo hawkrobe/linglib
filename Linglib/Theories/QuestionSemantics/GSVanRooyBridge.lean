@@ -435,8 +435,8 @@ theorem refinement_preserves_resolution {W A : Type*} [DecidableEq A]
     (_hRefines : q' ⊑ q)
     (_hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
     questionResolves dp worlds actions (q'.toQuestion worlds) = true := by
-  -- Key insight: Each cell c' of q' is contained in some cell c of q.
-  -- We need to connect refinement to cell inclusion and use resolves_subset.
+  -- Each cell c' of q' is contained in some cell c of q.
+  -- Connect refinement to cell inclusion via resolves_subset.
   sorry -- Need to show cell inclusion from refinement, then apply resolves_subset
 
 /-- The trivial question resolves only trivial DPs.

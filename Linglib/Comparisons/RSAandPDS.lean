@@ -368,7 +368,7 @@ L1 inverts S1: given utterance, infer world.
 L1 u := do
   w ← worldPrior
   -- Condition on "speaker would choose u at world w"
-  observe (S1 w chose u)  -- This is the tricky part!
+  observe (S1 w chose u)  -- Condition on speaker choice
   pure w
 ```
 

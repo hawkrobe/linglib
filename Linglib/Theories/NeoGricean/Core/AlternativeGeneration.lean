@@ -517,7 +517,7 @@ theorem exh_some_at_w1 : exhSomePassed w1 := by
     simp only [Set.mem_setOf_eq, List.mem_map, List.mem_cons] at ha
     rcases ha with ⟨f, hf_mem, rfl⟩
     -- Both cases (base frame and alternative frames) require detailed
-    -- case analysis on the world structure. The key insight is:
+    -- case analysis on the world structure:
     -- - At w1 (1 student passed), only "some" is true
     -- - At w2,w3 (2+ students), "most"/"all" may also be true
     -- - So w1 makes the fewest alternatives true among some-worlds

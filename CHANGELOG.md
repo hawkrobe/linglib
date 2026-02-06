@@ -1,5 +1,86 @@
 # Changelog
 
+## [0.80.0] - 2025-02-05
+
+### Added
+- **Causative/GradedCausation.lean** (NEW): Cao, White & Lassiter (2025) graded causative semantics
+  - Three causal measures: SUF (sufficiency), INT (intention), ALT (alternatives)
+  - `deterministicSuf`: bridges probabilistic SUF to binary `causallySufficient` (grounding theorem)
+  - `altToActionType`: bridges graded ALT to binary `ActionType` from `CoerciveImplication`
+  - Per-verb interaction profiles (Table 1): unique reliable interactions per verb
+  - `make_has_unique_sufInt`: *make* uniquely has SUF×INT interaction
+  - `make_force_same_builder_different_profiles`: same CausativeBuilder but different profiles
+  - `graded_subsumes_binary`: graded model reduces to binary in deterministic limit
+  - Main effect coefficients with `suf_largest_main_effect` theorem
+- **Phenomena/Causatives/Data.lean** (NEW): Experimental data from Cao et al. (2025)
+  - Acceptance rates: caused (48%) > made (40%) > forced (35%)
+  - Regression coefficients from Model I (SUFresidALT, INT, ALT) with reliability checks
+  - Acceptability contrasts from examples (5)-(7)
+
+## [0.79.3] - 2025-02-05
+
+### Changed
+- **Core/CausalModel.lean**: Moved from `Theories/IntensionalSemantics/Conditional/` to `Core/`
+  - Pearl-style structural causal model infrastructure is framework-agnostic, belongs in Core
+  - Namespace: `Theories.TruthConditional.Conditional.CausalModel` → `Core.CausalModel`
+  - Updated imports/opens across ~12 files (Causative/*, Conditional/Counterfactual, Bridge)
+
+## [0.79.2] - 2025-02-05
+
+### Changed
+- **Causative/Builder.lean** (NEW): `CausativeBuilder` in Theory layer, replacing `CausativeType` in Fragment
+  - Like `PreferentialBuilder` for attitudes: builder names the semantic analysis, properties are DERIVED
+  - `CausativeBuilder.toSemantics`: maps `.sufficiency` → `makeSem`, `.necessity` → `causeSem`
+  - Derivation theorems: `sufficiency_implies_causallySufficient`, `necessity_implies_causallyNecessary`
+  - `builders_truth_conditionally_distinct`: proved via overdetermination witness
+- **Fragments/English/Predicates/Verbal.lean**: Replaced `CausativeType` with `CausativeBuilder`
+  - Removed Fragment-level `CausativeType` definition; now imports from Theory layer
+  - `causativeType` field → `causativeBuilder` field in `VerbEntry`
+  - Grounding theorems: `make_semantics` (→ `makeSem`), `cause_semantics` (→ `causeSem`)
+  - Cross-verb consistency: `sufficiency_verbs_share_semantics` (make, let, have, get, force)
+- **GoldbergJackendoff2004/Bridge.lean**: Updated to use `CausativeBuilder`
+  - `resultativeCausativeBuilder` replaces `resultativeCausativeType`
+
+## [0.79.1] - 2025-02-05
+
+### Changed
+- **Theories/ConstructionGrammar/Studies/GoldbergJackendoff2004/Bridge.lean**: Deep causal dynamics integration
+  - Concrete `CausalDynamics` models for resultative scenarios (hammer flat, kick into field, laugh silly, freeze solid)
+  - Structural `causallySufficient` proofs: verbal subevent → result state via `normalDevelopment`
+  - Structural `causallyNecessary` proofs: no overdetermination in canonical resultatives
+  - Both `makeSem` and `causeSem` verified for canonical causative resultatives
+  - Noncausative resultatives = empty `CausalDynamics` (no causal law, `causallySufficient` = false)
+  - CC-selection formalization (Baglini & Bar-Asher Siegal 2025): `CCSelectionMode` with member vs completion
+  - `completesForEffect`: BBS2025 completion event in causal model terms (sufficient + necessary)
+  - `isCompletionEvent`: combines causal completion with G&J temporal constraint (Principle 33)
+  - `resultative_cause_matches_make_verb` / `resultative_cause_differs_from_cause_verb`: cross-module verification
+
+## [0.79.0] - 2025-02-05
+
+### Added
+- **Theories/ConstructionGrammar/Studies/GoldbergJackendoff2004.lean**: Goldberg & Jackendoff (2004) "The English Resultative as a Family of Constructions"
+  - Four subconstructions (causative/noncausative × property/path RP) with `ResultativeSubconstruction`
+  - Dual subevent structure (`DualSubevent`): verbal + constructional subevents linked by typed relations (MEANS, RESULT, INSTANCE, CO-OCCURRENCE)
+  - Full Argument Realization (FAR) and Semantic Coherence predicates
+  - Aspectual profile derivation: bounded RP → telic (accomplishment), unbounded → atelic (activity)
+  - 8 empirical entries with per-datum verification theorems (subconstruction classification, subevent relations, CAUSE/BECOME presence)
+  - Inheritance network: all four subconstructions inherit from parent `resultative` in ArgumentStructure.lean
+  - Decomposition proofs: causative → [HS, HC, HC], noncausative → [HS, HC]
+- **Theories/ConstructionGrammar/Studies/GoldbergJackendoff2004/Bridge.lean**: Cross-theory bridges
+  - CxG ↔ Causative/Sufficiency: causative resultatives map to `causallySufficient`
+  - CxG ↔ Aspect: resultative telicizes activity verbs (reuses `telicize_activity`)
+  - CxG ↔ ChangeOfState: constructional BECOME maps to `CoSType.inception` with presupposition bridge
+  - CxG ↔ Müller decomposability: all subconstructions decompose into universal schemata
+- **Comparisons/ResultativeArgLicensing.lean**: Cross-theory comparison of argument licensing
+  - Three theories: Minimalism (theta criterion), CxG (FAR + Semantic Coherence), DG (valency)
+  - Convergence on canonical resultatives: all predict [Agent, Patient, ResultState]
+  - Divergence on fake reflexives: CxG handles via construction-licensed roles; Minimalism has role deficit
+  - Semantic Coherence generalizes Theta Criterion: proven that CxG's system strictly subsumes theta 1-to-1 mapping
+- **Phenomena/Constructions/Resultatives/Data.lean**: Theory-neutral empirical data
+  - 14 grammaticality judgments across all 5 resultative types (incl. fake reflexives)
+  - 4 aspectual contrast pairs (in/for-adverbial tests for telicity)
+  - Per-datum verification theorems
+
 ## [0.78.0] - 2025-02-05
 
 ### Added

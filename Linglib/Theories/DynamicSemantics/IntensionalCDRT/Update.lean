@@ -258,7 +258,7 @@ def neg (φ : BilateralICDRT W E) : BilateralICDRT W E where
   positive := φ.negative
   negative := φ.positive
 
-/-- Double negation elimination (definitional!) -/
+/-- Double negation elimination (definitional). -/
 @[simp]
 theorem neg_neg (φ : BilateralICDRT W E) : φ.neg.neg = φ := rfl
 

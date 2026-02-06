@@ -152,7 +152,7 @@ example : sentenceTrue john_sleeps_sem := rfl
 example : sentenceTrue john_sees_mary_sem := rfl
 example : sentenceTrue john_eats_pizza_sem := rfl
 
--- The Key Insight: Derivations Compute Meanings
+-- Derivation-Driven Semantic Composition
 
 /-
 The CCG derivation structure directly mirrors semantic composition:

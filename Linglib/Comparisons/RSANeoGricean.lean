@@ -376,8 +376,8 @@ at α → ∞, the speaker ignores compression and maximizes informativity.
 def isNeoGriceanLimit (α : ℚ) : Bool :=
   α ≥ 100  -- Practical threshold for "approximately categorical"
 
--- Note: Full entropy contribution analysis requires RSA.InformationTheory
--- which depends on RSAScenarioL. See InformationTheory/Basic.lean for details.
+-- TODO: Full entropy contribution analysis requires RSA.InformationTheory
+-- (depends on RSAScenarioL; see InformationTheory/Basic.lean).
 
 -- Summary
 

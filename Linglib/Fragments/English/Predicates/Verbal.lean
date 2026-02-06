@@ -129,31 +129,11 @@ inductive PresupTriggerType where
   | softTrigger     -- Can be locally accommodated
   deriving DecidableEq, Repr, BEq
 
-/--
-**Causative Type** (Nadathur & Lauer 2020)
-
-Distinguishes causative verbs by their core semantic contribution:
-- **Sufficiency**: "make" — cause was sufficient for effect (adding C guarantees E)
-- **Necessity**: "cause" — cause was necessary for effect (counterfactual dependence)
-- **Both**: "cause" with single cause — sufficient AND necessary
-
-See `Theories.NadathurLauer2020` for the formal semantics.
-
-| Type | Verb | Semantic Test |
-|------|------|---------------|
-| Sufficiency | make | Adding C to background → E happens |
-| Necessity | cause | Removing C from background → E doesn't happen |
-
-In overdetermination cases (multiple sufficient causes), "make" can be true
-while "cause" is false (the cause wasn't necessary since another would have
-produced the effect).
--/
-inductive CausativeType where
-  /-- Sufficiency semantics: cause guaranteed the effect (Definition 23) -/
-  | sufficiency
-  /-- Necessity semantics: effect depended on cause (Definition 24) -/
-  | necessity
-  deriving DecidableEq, Repr, BEq
+-- CausativeBuilder is imported from Theories.NadathurLauer2020.Builder
+-- (via Causative.Basic). Like PreferentialBuilder for attitude verbs,
+-- it links lexical entries to their compositional semantics. Properties
+-- like "asserts sufficiency" are DERIVED from the builder via theorems.
+open Theories.NadathurLauer2020.Builder (CausativeBuilder)
 
 /--
 Complement type that the verb selects.
@@ -252,8 +232,8 @@ structure VerbEntry where
   factivePresup : Bool := false
   /-- For implicative verbs: does success of main verb entail complement? -/
   implicativeEntailment : Option Bool := none
-  /-- For causative verbs: sufficiency (make) or necessity (cause)? -/
-  causativeType : Option CausativeType := none
+  /-- For causative verbs: which semantic builder (links to compositional semantics). -/
+  causativeBuilder : Option CausativeBuilder := none
 
   -- === Intensionality ===
   /-- Does the verb create an opaque context for its complement? -/
@@ -806,7 +786,7 @@ def cause : VerbEntry where
   objectTheta := some .patient    -- Causee
   controlType := .objectControl   -- Y = agent of VP
   verbClass := .causative
-  causativeType := some .necessity
+  causativeBuilder := some .necessity
   -- Semantics: NadathurLauer2020.Necessity.causeSem
 
 /-- "make" — sufficiency semantics (cause guaranteed effect) -/
@@ -821,7 +801,7 @@ def make : VerbEntry where
   objectTheta := some .patient    -- Causee
   controlType := .objectControl   -- Y = agent of VP
   verbClass := .causative
-  causativeType := some .sufficiency
+  causativeBuilder := some .sufficiency
   -- Semantics: NadathurLauer2020.Sufficiency.makeSem
   -- Coercive implication when VP is volitional
 
@@ -837,7 +817,7 @@ def let_ : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeType := some .sufficiency  -- Permissive = removing barrier (sufficiency)
+  causativeBuilder := some .sufficiency  -- Permissive = removing barrier (sufficiency)
   -- Note: "let" is an ENABLING causative, not FORCING
   -- See Wolff (2003) for force-dynamic analysis
 
@@ -853,7 +833,7 @@ def have_causative : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeType := some .sufficiency
+  causativeBuilder := some .sufficiency
   -- "Have" implies social/authority-based causation
 
 /-- "get" — causative use (persuasive causation) -/
@@ -868,7 +848,7 @@ def get_causative : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeType := some .sufficiency
+  causativeBuilder := some .sufficiency
   -- "Get" implies persuasive/indirect causation
 
 /-- "force" — coercive causative -/
@@ -883,7 +863,7 @@ def force : VerbEntry where
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeType := some .sufficiency
+  causativeBuilder := some .sufficiency
   -- "Force" lexically encodes coercion (unlike pragmatic "make")
 
 /-- "devour" — transitive, no presupposition -/
@@ -991,21 +971,19 @@ Is this verb a causative?
 def isCausative (v : VerbEntry) : Bool :=
   v.verbClass == .causative
 
-/--
-Does this causative verb assert sufficiency (like "make")?
+/-- Does this causative verb assert sufficiency (like "make")?
 
-Returns true for verbs where the cause guaranteed the effect.
--/
+    DERIVED from the builder: a verb asserts sufficiency iff its builder
+    uses `makeSem` as its semantic function (Nadathur & Lauer 2020, Def 23). -/
 def assertsSufficiency (v : VerbEntry) : Bool :=
-  v.causativeType == some .sufficiency
+  v.causativeBuilder == some .sufficiency
 
-/--
-Does this causative verb assert necessity (like "cause")?
+/-- Does this causative verb assert necessity (like "cause")?
 
-Returns true for verbs where the effect counterfactually depended on the cause.
--/
+    DERIVED from the builder: a verb asserts necessity iff its builder
+    uses `causeSem` as its semantic function (Nadathur & Lauer 2020, Def 24). -/
 def assertsNecessity (v : VerbEntry) : Bool :=
-  v.causativeType == some .necessity
+  v.causativeBuilder == some .necessity
 
 /--
 Is this verb a preferential attitude predicate?
@@ -1159,5 +1137,48 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
       , vform := some .infinitive
     }
   }
+
+/-! ## Causative grounding theorems
+
+These verify that the Fragment's causative annotations are consistent with
+the formal semantics in `Theories.NadathurLauer2020`. -/
+
+open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open Theories.NadathurLauer2020.Sufficiency (makeSem)
+open Theories.NadathurLauer2020.Necessity (causeSem)
+
+/-- "make" uses sufficiency semantics: its truth conditions are
+    computed by `makeSem`, not `causeSem`. -/
+theorem make_semantics :
+    make.causativeBuilder.map CausativeBuilder.toSemantics = some makeSem := rfl
+
+/-- "cause" uses necessity semantics: its truth conditions are
+    computed by `causeSem`, not `makeSem`. -/
+theorem cause_semantics :
+    cause.causativeBuilder.map CausativeBuilder.toSemantics = some causeSem := rfl
+
+/-- "make" asserts sufficiency — derived from its builder. -/
+theorem make_asserts_sufficiency : assertsSufficiency make = true := by native_decide
+
+/-- "cause" asserts necessity — derived from its builder. -/
+theorem cause_asserts_necessity : assertsNecessity cause = true := by native_decide
+
+/-- "make" does NOT assert necessity. -/
+theorem make_not_necessity : assertsNecessity make = false := by native_decide
+
+/-- "cause" does NOT assert sufficiency. -/
+theorem cause_not_sufficiency : assertsSufficiency cause = false := by native_decide
+
+/-- All sufficiency-type verbs (make, let, have, get, force) share the same
+    semantic function. -/
+theorem sufficiency_verbs_share_semantics :
+    make.causativeBuilder = let_.causativeBuilder ∧
+    make.causativeBuilder = have_causative.causativeBuilder ∧
+    make.causativeBuilder = get_causative.causativeBuilder ∧
+    make.causativeBuilder = force.causativeBuilder := by
+  constructor; · rfl
+  constructor; · rfl
+  constructor; · rfl
+  · rfl
 
 end Fragments.English.Predicates.Verbal

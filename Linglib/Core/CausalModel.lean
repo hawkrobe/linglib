@@ -35,7 +35,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.Linarith
 
-namespace Theories.TruthConditional.Conditional.CausalModel
+namespace Core.CausalModel
 
 -- Variables
 
@@ -358,4 +358,4 @@ def causalChain (a b c : Variable) : CausalDynamics :=
 
 end CausalDynamics
 
-end Theories.TruthConditional.Conditional.CausalModel
+end Core.CausalModel

@@ -38,7 +38,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
 namespace Theories.NadathurLauer2020.Examples
 
-open Theories.TruthConditional.Conditional.CausalModel
+open Core.CausalModel
 open Theories.NadathurLauer2020.Sufficiency
 open Theories.NadathurLauer2020.Necessity
 

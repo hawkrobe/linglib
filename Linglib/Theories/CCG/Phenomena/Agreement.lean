@@ -97,7 +97,7 @@ theorem derive_he_sleeps : canDerive "he sleeps" = true := by native_decide
 theorem derive_they_sleep : canDerive "they sleep" = true := by native_decide
 theorem derive_John_sleeps : canDerive "John sleeps" = true := by native_decide
 
--- Note: Full agreement checking would require morphological features on CCG categories.
+-- Full agreement checking requires morphological features on CCG categories.
 -- Currently CCG encodes only syntactic categories, not phi-features.
 -- A complete bridge would:
 -- 1. Extend CCG.Cat with agreement features

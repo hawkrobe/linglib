@@ -358,10 +358,10 @@ This theorem shows TSP is not stipulated — it follows from:
 def hasTSP (valence : AttitudeValence) : Bool :=
   (significanceFromValence valence).yieldsTSP
 
-/-- Positive predicates have TSP (derived, not stipulated) -/
+/-- Positive predicates have TSP. -/
 theorem positive_hasTSP : hasTSP .positive = true := rfl
 
-/-- Negative predicates lack TSP (derived, not stipulated) -/
+/-- Negative predicates lack TSP. -/
 theorem negative_lacks_TSP : hasTSP .negative = false := rfl
 
 /-- Check if TSP is satisfied for given parameters -/
@@ -597,7 +597,7 @@ def qidai {W E : Type*}
     : PreferentialPredicate W E :=
   { name := "qidai"
   , veridical := false
-  , valence := .positive  -- Positive valence!
+  , valence := .positive
   , μ := μ
   , θ := θ
   , propSemantics := λ x p C => decide (μ x p > θ C)
@@ -630,7 +630,7 @@ def classifyNVP (cDistributive : Bool) (valence : AttitudeValence) : NVPClass :=
 def NVPClass.canTakeQuestion : NVPClass → Bool
   | .class1_nonCDist => true       -- No triviality
   | .class2_cDist_negative => true -- No TSP, so no triviality
-  | .class3_cDist_positive => false -- Triviality!
+  | .class3_cDist_positive => false -- Triviality
 
 -- Triviality for Class 3
 
@@ -749,7 +749,7 @@ def mkVeridicalPreferential {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     PreferentialPredicate W E :=
   { name := name
-  , veridical := true  -- Key difference from non-veridical!
+  , veridical := true  -- Veridical (unlike non-veridical preferentials)
   , valence := valence
   , μ := μ
   , θ := θ

@@ -477,7 +477,7 @@ def alienMarryStar : DisambiguationScenario StarConcept where
   context := "The alien married the star"
   selectional := λ  -- SCI-FI loosens constraints
     | .celebrity => 60/100  -- Aliens could marry humans
-    | .celestial => 40/100  -- Or merge with celestial bodies!
+    | .celestial => 40/100  -- Or merge with celestial bodies
   scenario := λ  -- SCIFI frame
     | .celebrity => 30/100
     | .celestial => 70/100  -- Space context
@@ -519,7 +519,7 @@ example : SDSConstraintSystem.normalizedPosterior alienMarryStar .celestial >
   native_decide
 
 -- Conflict detection
--- Note: hasConflict checks if argmax differs. With neutral scenario (0.5/0.5),
+-- hasConflict checks if argmax differs. With neutral scenario (0.5/0.5),
 -- the first element wins ties, so argmax = celebrity = selectional argmax → no conflict
 example : hasConflict neutralMarryStar = false := by native_decide   -- Both argmax = celebrity
 example : hasConflict astronomerMarriedStar = true := by native_decide  -- Equal conflict

@@ -72,7 +72,7 @@ French has a rich article system that blocks most bare arguments.
 def frenchBlocking : BlockingPrinciple :=
   { determiners := ["le", "la", "les", "un", "une", "des", "du", "de la"]
   , iotaBlocked := true
-  , existsBlocked := true  -- Even for plurals!
+  , existsBlocked := true  -- Including plurals
   , downBlocked := false }
 
 /-- French is a [-arg, +pred] language -/

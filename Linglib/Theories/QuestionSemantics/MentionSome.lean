@@ -441,9 +441,8 @@ This connects the mention-some semantics to compositional Montague semantics,
 ensuring the analysis is grounded rather than stipulated. -/
 def mentionSomeUsesMontagueExistential : Bool := true
 
--- Note: Full compositional grounding would require:
--- import Linglib.Theories.TruthConditional.Determiner.Quantifier
--- and proving that the ∃ in MentionSomeInterrogative.applyToProperty
--- matches TruthConditional.Quantifiers.existsSome
+-- TODO: Full compositional grounding requires proving the ∃ in
+-- MentionSomeInterrogative.applyToProperty matches
+-- TruthConditional.Quantifiers.existsSome
 
 end QuestionSemantics.MentionSome

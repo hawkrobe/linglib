@@ -134,7 +134,7 @@ theorem ue_comp_ue {f g : Prop' → Prop'} (hf : IsUpwardEntailing f) (hg : IsUp
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
-/-- DE ∘ DE = UE (from Mathlib - the double negation rule!) -/
+/-- DE ∘ DE = UE (double negation). -/
 theorem de_comp_de {f g : Prop' → Prop'} (hf : IsDownwardEntailing f) (hg : IsDownwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
@@ -346,7 +346,7 @@ def composePolarity (outer inner : GroundedPolarity) : GroundedPolarity :=
     -- DE ∘ UE = DE
     .de ⟨f ∘ g, de_comp_ue hf hg⟩
   | .de ⟨f, hf⟩, .de ⟨g, hg⟩ =>
-    -- DE ∘ DE = UE (double negation!)
+    -- DE ∘ DE = UE (double negation)
     .ue ⟨f ∘ g, de_comp_de hf hg⟩
 
 

@@ -295,7 +295,7 @@ theorem ibr_is_global_not_local :
     -- Global EXH also excludes only AA
     (globalExhMeaning .AA = false) ∧
     (globalExhMeaning .SA = true) ∧
-    -- But local EXH excludes SA too!
+    -- Local EXH also excludes SA
     (localExhMeaning .SA = false) :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 

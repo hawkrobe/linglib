@@ -187,7 +187,7 @@ def gnToThreshold {E : Type} (gn : GradableNounWithSize E) : ThresholdPredicate 
   , threshold := max gn.sizeThreshold gn.nounStandard
   }
 
--- Key Insight: Scale Structure Effects
+-- Scale Structure Effects
 
 /-!
 ## Why Polarity Matters

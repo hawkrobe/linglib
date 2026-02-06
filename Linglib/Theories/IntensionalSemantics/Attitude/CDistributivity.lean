@@ -129,7 +129,7 @@ def hopeSemanticsQuestion {W E : Type*} (μ_hope : DegreeFn W E) (θ_hope : Thre
     (C : QuestionDen W) : E → QuestionDen W → W → Bool :=
   degreeComparisonQuestion μ_hope θ_hope C
 
-/-- Hope is C-distributive (derived, not stipulated!) -/
+/-- Hope is C-distributive. -/
 theorem hope_isCDistributive {W E : Type*}
     (μ_hope : DegreeFn W E) (θ_hope : ThresholdFn W) (C : QuestionDen W) :
     IsCDistributive

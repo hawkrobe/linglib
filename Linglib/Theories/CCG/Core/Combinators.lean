@@ -513,7 +513,7 @@ respectively, are x, y, and y → x, then the term fa is the only normalized
 combinatory rules we will consider."
 -/
 
--- Steedman's Key Insights (The Syntactic Process, Chapter 2)
+-- Steedman (2000, Chapter 2): The Syntactic Process
 
 /-
 ## The Constituent Condition on Rules
