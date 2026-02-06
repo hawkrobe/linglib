@@ -368,11 +368,14 @@ import Linglib.Theories.TruthConditional.Sentence.Presupposition.LocalContext
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.OntologicalPreconditions
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.TonhauserDerivation
 import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
+import Linglib.Theories.TruthConditional.Sentence.Tense.TenseAspectComposition
+import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalAdverbials
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.TruthConditional.Verb.Habituals
 import Linglib.Theories.TruthConditional.Verb.SelectionalPreferences
+import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
 
 -- Theories: IntensionalSemantics (possible-worlds semantics)
 import Linglib.Theories.IntensionalSemantics.Basic

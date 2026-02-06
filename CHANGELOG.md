@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.91.0] - 2026-02-06
+
+### Added
+- **Sentence/Tense/TenseAspectComposition.lean**: Knick & Sharf (2026) tense–aspect composition
+  - `evalPres`, `evalPast`, `evalFut`: tense evaluation operators bridging `PointPred` to `W → Prop`
+  - `simplePresent`, `simplePast`, `presPerfProg`, `presPerfSimple`, `presPerfProgXN`, `pastPerfProg`: composed tense–aspect forms
+  - `simplePresent_unfold`, `presPerfProgXN_unfold`: definitional unfold theorems
+  - `u_perf_entails_simple_present`: U-perf(tᵣ) → simple present (K&S Thm 3)
+  - `broad_focus_equiv`: U-perf(Set.univ) ↔ simple present (K&S Thm 4)
+  - `earlier_lb_stronger_impf`, `later_lb_stronger_prfv`: LB monotonicity (K&S Thms 5–6)
+  - `earlier_lb_not_weaker_impf`: converse of Thm 5 is false (K&S Thm 7)
+- **Sentence/Tense/TemporalAdverbials.lean**: Temporal adverbials and PTS constraints
+  - `PTSConstraint`, `AdverbialType` (durative/inclusive, Iatridou et al. 2001)
+  - `everSince`, `forDurationFrom`, `always`, `before`: concrete adverbials
+  - `PTSConstraint.toLBDomain`: convert adverbial to LB domain for PERF_XN
+  - `PERF_ADV`: perfect with adverbial constraint
+  - `perf_adv_eq_perf_xn`, `everSince_specifies_lb`, `before_no_lb_constraint`: bridge theorems
+  - `durative_licenses_u_perfect`, `inclusive_no_u_license`: Iatridou classification bridges
+- **Linglib.lean**: Registered `ViewpointAspect`, `TenseAspectComposition`, `TemporalAdverbials`
+
 ## [0.90.0] - 2026-02-06
 
 ### Added
