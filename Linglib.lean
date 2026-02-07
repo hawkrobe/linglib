@@ -91,6 +91,7 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Resultatives.Data
+import Linglib.Phenomena.ChangeOfState.Typology
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThin
@@ -393,6 +394,10 @@ import Linglib.Theories.EventSemantics.ThematicRoles
 import Linglib.Theories.EventSemantics.Mereology
 import Linglib.Theories.EventSemantics.StratifiedReference
 import Linglib.Theories.EventSemantics.Krifka1998
+import Linglib.Theories.EventSemantics.Agentivity
+import Linglib.Theories.EventSemantics.ProtoRoles
+import Linglib.Theories.EventSemantics.EventStructure
+import Linglib.Theories.EventSemantics.RootTypology
 
 -- Theories: IntensionalSemantics (possible-worlds semantics)
 import Linglib.Theories.IntensionalSemantics.Basic
