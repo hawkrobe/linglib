@@ -143,7 +143,9 @@ import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.VonFintel1999
+import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
@@ -384,6 +386,13 @@ import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.TruthConditional.Verb.Habituals
 import Linglib.Theories.TruthConditional.Verb.SelectionalPreferences
 import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
+
+-- Theories: EventSemantics (neo-Davidsonian)
+import Linglib.Theories.EventSemantics.Basic
+import Linglib.Theories.EventSemantics.ThematicRoles
+import Linglib.Theories.EventSemantics.Mereology
+import Linglib.Theories.EventSemantics.StratifiedReference
+import Linglib.Theories.EventSemantics.Krifka1998
 
 -- Theories: IntensionalSemantics (possible-worlds semantics)
 import Linglib.Theories.IntensionalSemantics.Basic
