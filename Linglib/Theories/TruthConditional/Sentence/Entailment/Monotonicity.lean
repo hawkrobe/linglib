@@ -5,40 +5,12 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
+import Linglib.Theories.TruthConditional.Core.Polarity
 
 namespace TruthConditional.Sentence.Entailment.Monotonicity
 
 open TruthConditional.Sentence.Entailment
-
-section Monotonicity
-
-/-- Check if f is upward entailing on given test cases. -/
-def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all λ (p, q) => !entails p q || entails (f p) (f q)
-
-/-- Check if f is downward entailing on given test cases. -/
-def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
-  tests.all λ (p, q) => !entails p q || entails (f q) (f p)
-
-/-- Negation is DE: if P |= Q, then not Q |= not P. -/
-theorem negation_is_DE : isDownwardEntailing pnot testCases = true := by
-  native_decide
-
-/-- p0 |= p01, so not p01 |= not p0. -/
-theorem negation_reverses_example :
-    entails p0 p01 = true ∧
-    entails (pnot p01) (pnot p0) = true := by
-  native_decide
-
-/-- Conjunction (second arg) is UE: P |= Q -> (R & P) |= (R & Q). -/
-theorem conjunction_second_UE : isUpwardEntailing (pand p01) testCases = true := by
-  native_decide
-
-/-- Disjunction (second arg) is UE: P |= Q -> (R | P) |= (R | Q). -/
-theorem disjunction_second_UE : isUpwardEntailing (por p01) testCases = true := by
-  native_decide
-
-end Monotonicity
+open TruthConditional.Core.Polarity (isUpwardEntailing isDownwardEntailing)
 
 section QuantifierSemantics
 
@@ -90,40 +62,6 @@ def every_restr : Prop' → Prop' :=
 /-- "Every" is DE in restrictor. -/
 theorem every_restr_DE : isDownwardEntailing every_restr testCases = true := by
   native_decide
-
-/-- DE contexts reverse scalar strength: p0 |= p01 but not p01 |= not p0. -/
-theorem de_reverses_strength :
-    entails p0 p01 = true ∧
-    entails (pnot p01) (pnot p0) = true := by
-  native_decide
-
-/-- Material conditional with fixed consequent: "If _, then c". -/
-def materialCond (c : Prop') : Prop' → Prop' :=
-  λ p => λ w => !p w || c w
-
-/-- Conditional antecedent is DE: P |= Q -> (Q -> C) |= (P -> C). -/
-theorem conditional_antecedent_DE :
-    isDownwardEntailing (materialCond fixedScope) testCases = true := by
-  native_decide
-
-/-- Conditional antecedent DE property verified on all test case pairs. -/
-theorem conditional_antecedent_DE_test_cases :
-    -- Check all test case pairs satisfy the DE property
-    testCases.all (λ (p, q) =>
-      !entails p q || entails (materialCond fixedScope q) (materialCond fixedScope p)) = true := by
-  native_decide
-
-/-- Consequent position is UE: P |= Q -> (A -> P) |= (A -> Q). -/
-theorem implication_consequent_UE : isUpwardEntailing (λ c => materialCond c fixedRestr) testCases = true := by
-  native_decide
-
-/-- Antecedent is DE and consequent is UE. -/
-theorem conditional_monotonicity_summary :
-    isDownwardEntailing (materialCond fixedScope) testCases = true ∧
-    isUpwardEntailing (λ c => materialCond c fixedRestr) testCases = true := by
-  constructor
-  · exact conditional_antecedent_DE
-  · exact implication_consequent_UE
 
 end QuantifierSemantics
 

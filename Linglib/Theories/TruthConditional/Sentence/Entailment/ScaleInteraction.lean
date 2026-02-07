@@ -4,13 +4,12 @@ preserved; in DE contexts scales reverse, blocking "some -> not all".
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
-import Linglib.Theories.TruthConditional.Sentence.Entailment.Monotonicity
+import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 import Linglib.Core.Scales
 
 namespace TruthConditional.Sentence.Entailment.ScaleInteraction
 
 open TruthConditional.Sentence.Entailment
-open TruthConditional.Sentence.Entailment.Monotonicity
 open Core.Scales
 
 /-- Scale reversal: UE alternatives of "some" are [most, all]; DE alternatives are [none]. -/

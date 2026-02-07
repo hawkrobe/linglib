@@ -143,6 +143,7 @@ import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Polarity.VonFintel1999
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
@@ -362,8 +363,10 @@ import Linglib.Theories.TruthConditional.Sentence.Entailment.AntiAdditivity
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Monotonicity
 import Linglib.Theories.TruthConditional.Sentence.Entailment.NegationTests
+import Linglib.Theories.TruthConditional.Sentence.Entailment.PolarityBuilder
 import Linglib.Theories.TruthConditional.Sentence.Entailment.PresuppositionPolarity
 import Linglib.Theories.TruthConditional.Sentence.Entailment.ScaleInteraction
+import Linglib.Theories.TruthConditional.Sentence.Entailment.StrawsonEntailment
 import Linglib.Theories.TruthConditional.Sentence.Focus.DomainWidening
 import Linglib.Theories.TruthConditional.Sentence.Focus.InformationStructure
 import Linglib.Theories.TruthConditional.Sentence.Focus.Interpretation

@@ -7,13 +7,11 @@ import Mathlib.Order.Monotone.Defs
 import Mathlib.Data.List.Basic
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 import Linglib.Theories.TruthConditional.Core.Polarity
-import Linglib.Fragments.English.PolarityItems
 
 namespace TruthConditional.Sentence.Entailment.AntiAdditivity
 
 open TruthConditional.Sentence.Entailment
 open TruthConditional.Core.Polarity
-open Fragments.English.PolarityItems (DEStrength)
 open List (Sublist)
 
 
@@ -223,14 +221,19 @@ theorem atMost_not_antiAdditive :
   sorry
 
 
-/-!
-`DEStrength` is imported from `Fragments.English.PolarityItems`.
+/--
+Strength of downward entailingness.
 
-The hierarchy corresponds to:
+Names the three levels of the Zwarts (1996) hierarchy:
 - `.weak` = DE only (licenses weak NPIs)
 - `.antiAdditive` = DE + right-to-left (licenses strong NPIs)
 - `.antiMorphic` = AA + De Morgan for ∧ (negation)
 -/
+inductive DEStrength where
+  | weak           -- Plain DE (licenses weak NPIs)
+  | antiAdditive   -- DE + ∨-distributive (licenses strong NPIs)
+  | antiMorphic    -- Anti-additive + ∧-distributive (= negation)
+  deriving DecidableEq, BEq, Repr
 
 
 /--
