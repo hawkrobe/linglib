@@ -35,7 +35,6 @@ import Linglib.Theories.NeoGricean.Core.Alternatives
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
-import Linglib.Theories.TruthConditional.Sentence.Entailment.Monotonicity
 import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Basic

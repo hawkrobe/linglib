@@ -59,39 +59,10 @@ inductive LicensingContext where
   | modal_necessity   -- Necessity modals
   | imperative        -- Imperatives (for FCIs)
   | generic           -- Generic contexts (for FCIs)
+  | adversative       -- "sorry", "surprised", "regret" (factive + DE)
+  | since_temporal    -- "it's been five years since" (Iatridou)
   | free_relative     -- Free relatives: "whatever", "whoever"
   deriving DecidableEq, BEq, Repr
-
-/--
-Strength of downward entailingness.
--/
-inductive DEStrength where
-  | weak           -- Plain DE (licenses weak NPIs)
-  | antiAdditive   -- DE + ∨-distributive (licenses strong NPIs)
-  | antiMorphic    -- Anti-additive + ∧-distributive (= negation)
-  deriving DecidableEq, BEq, Repr
-
-/--
-Get the DE strength of a licensing context.
--/
-def LicensingContext.strength : LicensingContext → DEStrength
-  | .negation => .antiMorphic
-  | .nobody => .antiAdditive
-  | .without_clause => .antiAdditive
-  | .few => .weak  -- Controversial: some say not even DE
-  | .atMost => .weak
-  | .conditional_ant => .weak
-  | .before_clause => .weak
-  | .only_focus => .weak
-  | .question => .weak  -- Non-monotonic, but licenses weak NPIs
-  | .comparative => .weak
-  | .superlative => .weak
-  | .too_to => .weak
-  | .modal_possibility => .weak  -- Not DE, but licenses FCIs
-  | .modal_necessity => .weak
-  | .imperative => .weak
-  | .generic => .weak
-  | .free_relative => .weak
 
 -- ============================================================================
 -- Polarity Item Types
@@ -138,8 +109,6 @@ structure PolarityItemEntry where
   baseForce : BaseForce
   /-- Contexts where licensed (empty = needs positive) -/
   licensingContexts : List LicensingContext
-  /-- Minimum DE strength required (for NPIs) -/
-  minStrength : DEStrength := .weak
   /-- Has obligatory domain alternatives? (for Chierchia analysis) -/
   obligatoryDomainAlts : Bool := false
   /-- Can be rescued by modals? -/
@@ -164,7 +133,7 @@ def any : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .modal_possibility, .modal_necessity, .imperative, .generic ]
-  , minStrength := .weak
+
   , obligatoryDomainAlts := true  -- Central to Chierchia's analysis
   , modalRescue := true
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
@@ -178,7 +147,7 @@ def ever : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .superlative, .comparative ]
-  , minStrength := .weak
+
   , notes := "Temporal NPI; also in superlatives ('best ever')"
   }
 
@@ -188,7 +157,7 @@ def yet : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts := [.negation, .question]
-  , minStrength := .weak
+
   , notes := "Restricted distribution; requires relevance to 'now'"
   }
 
@@ -198,7 +167,7 @@ def anymore : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , minStrength := .weak
+
   , notes := "Very restricted; mainly with negation"
   }
 
@@ -209,7 +178,7 @@ def atAll : PolarityItemEntry :=
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditional_ant, .question]
-  , minStrength := .weak
+
   , notes := "Degree emphasis; 'Did you sleep at all?'"
   }
 
@@ -219,7 +188,7 @@ def inTheLeast : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .degree
   , licensingContexts := [.negation, .question]
-  , minStrength := .weak
+
   , notes := "Formal register"
   }
 
@@ -229,7 +198,7 @@ def aSingle : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , minStrength := .weak
+
   , notes := "'I didn't see a single person'"
   }
 
@@ -239,7 +208,7 @@ def whatsoever : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .manner
   , licensingContexts := [.negation, .nobody]
-  , minStrength := .weak
+
   , notes := "Post-nominal: 'no reason whatsoever'"
   }
 
@@ -253,7 +222,7 @@ def liftAFinger : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , minStrength := .antiAdditive
+
   , notes := "Idiomatic; requires anti-additive (*few people lifted a finger)"
   }
 
@@ -263,7 +232,7 @@ def budgeAnInch : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , minStrength := .antiAdditive
+
   , notes := "Idiomatic strong NPI"
   }
 
@@ -273,7 +242,7 @@ def inYears : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody]
-  , minStrength := .antiAdditive
+
   , notes := "'I haven't seen him in years' (*Few people have seen him in years)"
   }
 
@@ -283,7 +252,7 @@ def until_ : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .temporal
   , licensingContexts := [.negation]
-  , minStrength := .antiAdditive
+
   , notes := "Durative 'until' is NPI: 'didn't leave until 5'"
   }
 
@@ -404,10 +373,11 @@ def lookup (form : String) : Option PolarityItemEntry :=
 
 /--
 Check if a context licenses a polarity item.
+
+An item is licensed if the context is explicitly listed in `licensingContexts`.
 -/
 def isLicensedIn (item : PolarityItemEntry) (ctx : LicensingContext) : Bool :=
-  item.licensingContexts.contains ctx &&
-  ctx.strength.ctorIdx >= item.minStrength.ctorIdx
+  item.licensingContexts.contains ctx
 
 /--
 Check if an item is an NPI (weak or strong).
@@ -446,9 +416,6 @@ def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Bool :=
 -- "whatever" is FCI but not (plain) NPI
 #guard whatever.isFCI
 #guard whatever.polarityType == .fci
-
--- Strong NPIs require anti-additive
-#guard liftAFinger.minStrength == .antiAdditive
 
 -- PPIs have empty licensing contexts
 #guard already.licensingContexts.isEmpty
