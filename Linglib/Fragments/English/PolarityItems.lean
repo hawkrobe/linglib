@@ -133,7 +133,6 @@ def any : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .modal_possibility, .modal_necessity, .imperative, .generic ]
-
   , obligatoryDomainAlts := true  -- Central to Chierchia's analysis
   , modalRescue := true
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
@@ -147,7 +146,6 @@ def ever : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .superlative, .comparative ]
-
   , notes := "Temporal NPI; also in superlatives ('best ever')"
   }
 
@@ -157,7 +155,6 @@ def yet : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts := [.negation, .question]
-
   , notes := "Restricted distribution; requires relevance to 'now'"
   }
 
@@ -167,7 +164,6 @@ def anymore : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts := [.negation]
-
   , notes := "Very restricted; mainly with negation"
   }
 
@@ -178,7 +174,6 @@ def atAll : PolarityItemEntry :=
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditional_ant, .question]
-
   , notes := "Degree emphasis; 'Did you sleep at all?'"
   }
 
@@ -188,7 +183,6 @@ def inTheLeast : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .degree
   , licensingContexts := [.negation, .question]
-
   , notes := "Formal register"
   }
 
@@ -198,7 +192,6 @@ def aSingle : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .without_clause]
-
   , notes := "'I didn't see a single person'"
   }
 
@@ -208,7 +201,6 @@ def whatsoever : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .manner
   , licensingContexts := [.negation, .nobody]
-
   , notes := "Post-nominal: 'no reason whatsoever'"
   }
 
@@ -222,7 +214,6 @@ def liftAFinger : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-
   , notes := "Idiomatic; requires anti-additive (*few people lifted a finger)"
   }
 
@@ -232,7 +223,6 @@ def budgeAnInch : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-
   , notes := "Idiomatic strong NPI"
   }
 
@@ -242,7 +232,6 @@ def inYears : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody]
-
   , notes := "'I haven't seen him in years' (*Few people have seen him in years)"
   }
 
@@ -252,7 +241,6 @@ def until_ : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .temporal
   , licensingContexts := [.negation]
-
   , notes := "Durative 'until' is NPI: 'didn't leave until 5'"
   }
 

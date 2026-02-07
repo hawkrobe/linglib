@@ -20,7 +20,7 @@ import Linglib.Phenomena.Polarity.Exceptives
 namespace Phenomena.Polarity
 
 -- Re-export for convenience
-export NPIs (NPIType NPIDatum LicensingContext)
+export NPIs (NPIDatum LicensingContext)
 export DisjunctionIgnorance (DisjunctionIgnoranceDatum DisjunctionReading)
 export Exceptives (ButExceptiveExample ExceptiveConstruction)
 

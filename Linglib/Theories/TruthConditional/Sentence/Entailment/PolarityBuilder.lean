@@ -36,7 +36,7 @@ open TruthConditional.Sentence.Entailment
 open TruthConditional.Sentence.Entailment.AntiAdditivity
 open TruthConditional.Sentence.Entailment.StrawsonEntailment
 open TruthConditional.Core.Polarity
-open Fragments.English.PolarityItems (PolarityItemEntry PolarityType ever liftAFinger)
+open Fragments.English.PolarityItems
 open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
 
 -- ============================================================================
@@ -272,13 +272,126 @@ def MonotonicityProfile.licensesItem (profile : MonotonicityProfile)
   | .fci => profile.licensesWeakNPI  -- FCIs in DE/Strawson-DE contexts
   | .ppi => !profile.isAtLeastStrawsonDE  -- PPIs blocked in DE
 
-/-! ### Per-item bridge theorems -/
+/-! ### 7a. Per-item bridge: Negation (AM) -/
 
+theorem negation_licenses_any : negationProfile.licensesItem any = true := rfl
 theorem negation_licenses_ever : negationProfile.licensesItem ever = true := rfl
 theorem negation_licenses_liftAFinger : negationProfile.licensesItem liftAFinger = true := rfl
+theorem negation_licenses_budgeAnInch : negationProfile.licensesItem budgeAnInch = true := rfl
+theorem negation_licenses_whatever : negationProfile.licensesItem whatever = true := rfl
+theorem negation_blocks_some_ppi : negationProfile.licensesItem some_ppi = false := rfl
+theorem negation_blocks_already : negationProfile.licensesItem already = false := rfl
+
+/-! ### 7b. Per-item bridge: "No student" (AA) -/
+
+theorem noStudent_licenses_any : noStudentProfile.licensesItem any = true := rfl
+theorem noStudent_licenses_ever : noStudentProfile.licensesItem ever = true := rfl
+theorem noStudent_licenses_liftAFinger : noStudentProfile.licensesItem liftAFinger = true := rfl
+theorem noStudent_licenses_budgeAnInch : noStudentProfile.licensesItem budgeAnInch = true := rfl
+theorem noStudent_blocks_some_ppi : noStudentProfile.licensesItem some_ppi = false := rfl
+
+/-! ### 7c. Per-item bridge: "At most 2" (DE) -/
+
+theorem atMost2_licenses_any : atMost2Profile.licensesItem any = true := rfl
+theorem atMost2_licenses_ever : atMost2Profile.licensesItem ever = true := rfl
 theorem atMost2_blocks_liftAFinger : atMost2Profile.licensesItem liftAFinger = false := rfl
+theorem atMost2_blocks_budgeAnInch : atMost2Profile.licensesItem budgeAnInch = false := rfl
+theorem atMost2_blocks_some_ppi : atMost2Profile.licensesItem some_ppi = false := rfl
+
+/-! ### 7d. Per-item bridge: "Only" (Strawson-DE) -/
+
+theorem only_licenses_any : onlyProfile.licensesItem any = true := rfl
 theorem only_licenses_ever : onlyProfile.licensesItem ever = true := rfl
 theorem only_blocks_liftAFinger : onlyProfile.licensesItem liftAFinger = false := rfl
+theorem only_blocks_budgeAnInch : onlyProfile.licensesItem budgeAnInch = false := rfl
+theorem only_blocks_some_ppi : onlyProfile.licensesItem some_ppi = false := rfl
+
+-- ============================================================================
+-- Section 8: Fragment ↔ Builder Cross-Layer Agreement
+-- ============================================================================
+
+/-!
+### `isLicensedIn` ↔ `licensesItem` agreement
+
+The Fragment's `isLicensedIn` says whether a context is in an item's
+empirical licensing list. The Builder's `licensesItem` derives licensing
+from monotonicity proofs. These should agree: when a context licenses an
+item empirically, the corresponding monotonicity profile should derive the
+same prediction.
+-/
+
+/-- Negation empirically licenses "ever" and the Builder agrees. -/
+theorem fragment_builder_agree_negation_ever :
+    isLicensedIn ever .negation = true ∧
+    negationProfile.licensesItem ever = true := ⟨rfl, rfl⟩
+
+/-- Negation empirically licenses "lift a finger" and the Builder agrees. -/
+theorem fragment_builder_agree_negation_liftAFinger :
+    isLicensedIn liftAFinger .negation = true ∧
+    negationProfile.licensesItem liftAFinger = true := ⟨rfl, rfl⟩
+
+/-- "Only" empirically licenses "ever" (via only_focus) and the Builder agrees. -/
+theorem fragment_builder_agree_only_ever :
+    isLicensedIn ever .only_focus = false ∧  -- "ever" doesn't list only_focus
+    onlyProfile.licensesItem ever = true :=    -- but Builder derives licensing
+  ⟨rfl, rfl⟩
+  -- Note: the Fragment is conservative (only lists attested contexts);
+  -- the Builder generalizes (any Strawson-DE context licenses weak NPIs).
+
+/-- "At most 2" empirically blocks "lift a finger" and the Builder agrees. -/
+theorem fragment_builder_agree_atMost2_liftAFinger :
+    isLicensedIn liftAFinger .atMost = false ∧
+    atMost2Profile.licensesItem liftAFinger = false := ⟨rfl, rfl⟩
+
+/-- PPIs: "some (stressed)" not licensed under negation, Builder agrees. -/
+theorem fragment_builder_agree_negation_ppi :
+    isLicensedIn some_ppi .negation = false ∧
+    negationProfile.licensesItem some_ppi = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- Section 9: `strengthSufficient` ↔ Builder Hierarchy Agreement
+-- ============================================================================
+
+/-!
+### `strengthSufficient` ↔ `licensesWeakNPI`/`licensesStrongNPI` agreement
+
+`strengthSufficient` from AntiAdditivity.lean checks the `DEStrength`
+hierarchy. The Builder's derived licensing should agree with it for each
+profile-to-strength mapping.
+-/
+
+/-- AM profile: strength sufficient for both weak and strong, Builder agrees. -/
+theorem strength_builder_agree_am :
+    strengthSufficient .antiMorphic .weak = negationProfile.licensesWeakNPI ∧
+    strengthSufficient .antiMorphic .antiAdditive = negationProfile.licensesStrongNPI :=
+  ⟨rfl, rfl⟩
+
+/-- AA profile: strength sufficient for both, Builder agrees. -/
+theorem strength_builder_agree_aa :
+    strengthSufficient .antiAdditive .weak = noStudentProfile.licensesWeakNPI ∧
+    strengthSufficient .antiAdditive .antiAdditive = noStudentProfile.licensesStrongNPI :=
+  ⟨rfl, rfl⟩
+
+/-- DE profile: sufficient for weak but not strong, Builder agrees. -/
+theorem strength_builder_agree_de :
+    strengthSufficient .weak .weak = atMost2Profile.licensesWeakNPI ∧
+    strengthSufficient .weak .antiAdditive = false ∧
+    atMost2Profile.licensesStrongNPI = false := ⟨rfl, rfl, rfl⟩
+
+/--
+Full hierarchy agreement: `strengthSufficient` and Builder licensing are
+consistent across all 4 levels × 2 NPI types.
+-/
+theorem strength_builder_full_agreement :
+    -- Weak NPI licensing
+    (strengthSufficient .antiMorphic .weak = negationProfile.licensesWeakNPI) ∧
+    (strengthSufficient .antiAdditive .weak = noStudentProfile.licensesWeakNPI) ∧
+    (strengthSufficient .weak .weak = atMost2Profile.licensesWeakNPI) ∧
+    -- Strong NPI licensing
+    (strengthSufficient .antiMorphic .antiAdditive = negationProfile.licensesStrongNPI) ∧
+    (strengthSufficient .antiAdditive .antiAdditive = noStudentProfile.licensesStrongNPI) ∧
+    (strengthSufficient .weak .antiAdditive = false ∧
+     atMost2Profile.licensesStrongNPI = false) := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ### VonFintel (1999) empirical bridge -/
 

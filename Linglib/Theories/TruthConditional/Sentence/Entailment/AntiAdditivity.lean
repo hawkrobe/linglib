@@ -263,25 +263,21 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
 
 /-!
-## Connection to `Fragments.English.PolarityItems`
+## `DEStrength` ↔ Proof Hierarchy
 
-The `DEStrength` enum there corresponds to this hierarchy:
-
-| PolarityItems.DEStrength | This Module | Example Licensor |
-|--------------------------|-------------|------------------|
+| `DEStrength` | Proof Predicate | Example Licensor |
+|--------------|-----------------|------------------|
 | `.weak` | `IsDE` | few, at most n |
 | `.antiAdditive` | `IsAntiAdditive` | no, nobody, without |
 | `.antiMorphic` | `IsAntiMorphic` | not, never |
 
 ### Strong NPIs require `.antiAdditive` or stronger:
 
-- `liftAFinger.minStrength = .antiAdditive`
 - "*Few people lifted a finger" — `few` is only DE, not AA
 - "No one lifted a finger" — `no one` is AA ✓
 
 ### Weak NPIs accept `.weak` or stronger:
 
-- `ever.minStrength = .weak`
 - "Few people ever complained" — `few` is DE ✓
 - "No one ever complained" — `no one` is AA (≥ weak) ✓
 -/
