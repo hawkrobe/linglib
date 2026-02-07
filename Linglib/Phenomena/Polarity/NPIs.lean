@@ -34,23 +34,6 @@ Theory-neutral data about NPI licensing and distribution.
 
 namespace Phenomena.Polarity.NPIs
 
--- NPI Classification
-
-/-- Types of NPI items -/
-inductive NPIType where
-  | weak       -- Licensed in DE contexts (any, ever)
-  | strong     -- Require anti-additive contexts (in years, lift a finger)
-  | superStrong -- Require antimorphic contexts (yet in some dialects)
-  deriving DecidableEq, Repr, BEq
-
-/-- Semantic property of NPI (what makes it polarity-sensitive) -/
-inductive NPIProperty where
-  | domainWidening   -- Widens quantifier domain (any vs some)
-  | scalarEndpoint   -- References scalar endpoint (at all, a bit)
-  | emphatic         -- Strong/emphatic meaning (lift a finger)
-  | temporal         -- Temporal reference (ever, yet)
-  deriving DecidableEq, Repr, BEq
-
 -- Licensing Context Classification
 
 /-- Types of licensing contexts -/
@@ -69,20 +52,6 @@ inductive LicensingContext where
   | tooAdjective         -- "too tired to see anyone"
   | doubtVerb            -- "I doubt anyone came"
   | denyVerb             -- "She denied seeing anyone"
-  deriving DecidableEq, Repr, BEq
-
-/-- Monotonicity classification -/
-inductive Monotonicity where
-  | upwardEntailing   -- UE: preserves entailment direction
-  | downwardEntailing -- DE: reverses entailment direction
-  | nonMonotone       -- Neither UE nor DE
-  deriving DecidableEq, Repr, BEq
-
-/-- Anti-additivity classification (stronger than DE) -/
-inductive AntiAdditivity where
-  | antiAdditive  -- f(A∨B) = f(A)∧f(B) : "no", "without"
-  | antiMorphic   -- antiAdditive + f(A∧B) = f(A)∨f(B) : "not"
-  | merelyDE      -- DE but not anti-additive: "few", "at most 3"
   deriving DecidableEq, Repr, BEq
 
 -- Basic Data Structure
