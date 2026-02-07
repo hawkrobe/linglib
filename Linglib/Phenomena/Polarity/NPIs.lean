@@ -32,7 +32,11 @@ Theory-neutral data about NPI licensing and distribution.
 - Israel, M. (2001). Minimizers, maximizers and the rhetoric of scalar reasoning.
 -/
 
+import Linglib.Fragments.English.PolarityItems
+
 namespace Phenomena.Polarity.NPIs
+
+open Fragments.English.PolarityItems (ScalarDirection)
 
 -- Licensing Context Classification
 
@@ -427,6 +431,8 @@ structure CrossLingNPI where
   npiItem : String
   gloss : String
   licensingContexts : List String
+  /-- Scalar direction (Israel 2011; Schwab 2022) -/
+  scalarDirection : ScalarDirection := .nonScalar
   notes : String
 
 def hindiKoii : CrossLingNPI :=
@@ -458,7 +464,18 @@ def germanJemals : CrossLingNPI :=
   , npiItem := "jemals"
   , gloss := "ever"
   , licensingContexts := ["negation", "questions", "conditionals", "without"]
+  , scalarDirection := .strengthening  -- Schwab (2022): shows NPI illusion
   , notes := "Similar distribution to English \"ever\""
+  }
+
+/-- German "so recht" — attenuating NPI. Schwab (2022): does NOT show NPI illusion. -/
+def germanSoRecht : CrossLingNPI :=
+  { language := "German"
+  , npiItem := "so recht"
+  , gloss := "all that / particularly"
+  , licensingContexts := ["negation"]
+  , scalarDirection := .attenuating  -- Schwab (2022): no NPI illusion
+  , notes := "Attenuating NPI; weakens assertion. 'nicht so recht' ≈ 'not all that'"
   }
 
 -- NPIs in Questions (van Rooy, Borkin 1971, Krifka)
@@ -968,5 +985,9 @@ def scaleMinimalityConstraint : ScaleMinimalityPrediction :=
   { constraint := "N-words are formed only from scale-minimal elements"
   , explanation := "Non-minimal elements generate positive implicatures that disrupt DE"
   , evidence := "Cross-linguistic: nessuno, nadie, etc. based on 'one'; *nessdue impossible" }
+
+-- German NPI scalar direction: jemals is strengthening, soRecht is attenuating
+#guard germanJemals.scalarDirection == .strengthening
+#guard germanSoRecht.scalarDirection == .attenuating
 
 end Phenomena.Polarity.NPIs

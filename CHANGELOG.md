@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.99.0] - 2026-02-07
+
+### Added
+- **Theories/EventSemantics/Krifka1998.lean**: Krifka (1998) "The Origins of Telicity" linking theory. `Overlap`, thematic role property hierarchy (`UP`/`CumTheta`/`ME`/`MSE`/`UE`/`MO`/`MSO`/`UO`/`GUE`, eq. 43–52), `SINC` structure (strict incrementality, eq. 51), derived properties (`me_of_mse`/`mo_of_mso`), `VP` formation by existential closure (eq. 53), **CUM propagation theorem** (`cum_propagation`: `CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ)`, fully proved), **QUA propagation theorem** (`qua_propagation`: `SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ)`), `ExtMeasure` class (extensive measure functions, eq. 7), `VerbIncClass` enum + `VerbIncrementality` axiom class (eat/push/build/read meaning postulates), `INC` general incrementality (eq. 59), bridge theorems (`sinc_cum_propagation`/`sinc_qua_propagation`/`qua_vendler_telic`/`cum_vendler_atelic`/`roleHom_implies_cumTheta`)
+
+## [0.98.0] - 2026-02-07
+
+### Added
+- **Theories/EventSemantics/Mereology.lean**: Champollion (2017) algebraic event mereology over Mathlib's `SemilatticeSup`. `AlgClosure` inductive (*P, closure under ⊔), `CUM`/`DIV`/`QUA`/`Atom` higher-order mereological properties, `algClosure_cum` (closure always cumulative), `qua_cum_incompatible` (QUA+CUM contradiction for non-singletons), `atom_qua`, `IsSumHom` class (join-preserving maps) with monotonicity theorem, `EventCEM` class (enriches EventMereology with `SemilatticeSup (Ev Time)` + τ homomorphism), `LexCum` event-specific cumulativity with `cum_iff_lexCum` bridge, `RoleHom` class (θ preserves ⊕), `vendlerClass_atelic_implies_cum_intent`/`vendlerClass_telic_implies_qua_intent` aspect bridges, `algClosure_mono`/`algClosure_idempotent`
+- **Theories/EventSemantics/StratifiedReference.lean**: Champollion (2017) Stratified Reference. `SR` (eq. 62: unified SR_{d,g} over AlgClosure), `SR_univ` (universal quantification), `SDR` (dimension=θ, granularity=Atom → distributivity), `SSR` (dimension=τ, granularity=proper subinterval → atelicity), `SMR` (dimension=μ, granularity=smaller → measurement), `DistConstr` unified distributivity constraint (eq. 68), `eachConstr`/`forConstr` construction instances, `VerbDistributivity` axiom class (see/kill/meet meaning postulates), `ssr_characterizes_atelic_predicates` aspect bridge, `forAdverbial_requires_ssr`, `forAdverbialMeaning`, `in_adverbial_incompatible_with_ssr` (QUA vs SSR)
+
+## [0.97.0] - 2026-02-07
+
+### Added
+- **Theories/EventSemantics/Basic.lean**: Neo-Davidsonian event semantics foundation (Davidson 1967, Parsons 1990). `EventSort` (action/state), `Ev` structure (temporal individual + sort), sort predicates with exhaustivity/exclusivity proofs, `EventSort ↔ Dynamicity` isomorphism (roundtrip proofs), `Ev ↔ Eventuality` bridge (forgetful/lifting pair with τ-preservation), `EventMereology` class (partial order with τ-monotonicity and sort-preservation), `EvPred`/`EvPredW` event predicate types, existential closure, concrete ℤ-time examples
+- **Theories/EventSemantics/ThematicRoles.lean**: Neo-Davidsonian thematic roles as two-place predicates. `ThematicRel` type alias, `ThematicFrame` structure (9 role fields including Parsons' `holder`), `ThetaRole.toRel` bridge from Fragment enum to frame fields (8 per-role verification theorems), `ThematicAxioms` class (agent-selects-action, holder-selects-state, uniqueness), `agent_holder_disjoint` derived theorem, neo-Davidsonian logical forms (transitive/intransitive/ditransitive), `EventModifier` + `modify` with commutativity and associativity proofs, per-verb VerbEntry grounding theorems (`kick`, `give`, `see`), toy model example with `john_kicked_mary` witness
+
+## [0.96.0] - 2026-02-06
+
+### Added
+- **Fragments/English/PolarityItems.lean**: `ScalarDirection` enum (strengthening/attenuating/nonScalar) from Israel (1996, 2011); added `scalarDirection` field to `PolarityItemEntry`; tagged `ever`→strengthening, `any`→strengthening, `atAll`→attenuating, `liftAFinger`→nonScalar
+- **TruthConditional/Domain/Degree.lean**: `ModifierDirection` (amplifier/downtoner), `DegreeModifier` structure with threshold-shifting semantics (θ + δ for amplifiers, θ - δ for downtoners); modifier instances (`slightly`, `kindOf`, `quite`, `very`, `extremely`) with Machino et al. (2025) strength hierarchy
+- **NeoGricean/Exhaustivity/Chierchia2004.lean**: `StrengthRelation` (strongerThan/weakerThan), `scalarLicensing` parametrized by direction; bridge theorem proving `scalarLicensing .strongerThan` = `krifkaRule`
+- **Phenomena/Polarity/NPIs.lean**: `scalarDirection` field on `CrossLingNPI`; `germanSoRecht` (attenuating NPI); tagged `germanJemals`→strengthening
+- **Phenomena/Polarity/Studies/Schwab2022.lean**: Schwab (2022) NPI illusion experimental data (2×3 factorial); `IllusionAsymmetry` structure; `illusion_asymmetry_from_scalar_direction` theorem connecting `ScalarDirection` to illusion predictions
+- **Phenomena/Politeness/Studies/MachinoEtAl2025.lean**: Machino et al. (2025) cross-cultural modifier interpretation data; 5 modifiers × 2 cultures; cross-cultural "quite" asymmetry (AmE amplifier vs BrE downtoner); politeness ratings
+
 ## [0.95.1] - 2026-02-06
 
 ### Changed

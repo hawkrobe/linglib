@@ -65,6 +65,28 @@ inductive LicensingContext where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
+-- Scalar Direction (Israel 1996, 2011; Schwab 2022)
+-- ============================================================================
+
+/-- Scalar direction: does this item strengthen or attenuate the assertion?
+    Orthogonal to PolarityType (weak vs strong DE requirement).
+
+    - **Strengthening** items (ever, any, jemals) make the assertion stronger
+      than its scalar alternatives (Israel's "emphatic" polarity items).
+    - **Attenuating** items (all that, so recht, long) make the assertion weaker
+      than its scalar alternatives (Israel's "understating" polarity items).
+    - **NonScalar** items (lift a finger) are idiomatic, not scalar.
+
+    Israel (1996). Polarity sensitivity as lexical semantics. L&P 19(6).
+    Israel (2011). The Grammar of Polarity. CUP.
+    Schwab (2022). Lexical variation in NPI illusions. -/
+inductive ScalarDirection where
+  | strengthening  -- ever, any, jemals: assertion stronger than alternatives
+  | attenuating    -- all that, so recht, long: assertion weaker than alternatives
+  | nonScalar      -- lift a finger: idiomatic, not scalar
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
 -- Polarity Item Types
 -- ============================================================================
 
@@ -109,6 +131,8 @@ structure PolarityItemEntry where
   baseForce : BaseForce
   /-- Contexts where licensed (empty = needs positive) -/
   licensingContexts : List LicensingContext
+  /-- Scalar direction: strengthening, attenuating, or non-scalar (Israel 2011) -/
+  scalarDirection : ScalarDirection := .nonScalar
   /-- Has obligatory domain alternatives? (for Chierchia analysis) -/
   obligatoryDomainAlts : Bool := false
   /-- Can be rescued by modals? -/
@@ -133,6 +157,7 @@ def any : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .modal_possibility, .modal_necessity, .imperative, .generic ]
+  , scalarDirection := .strengthening  -- domain widening → stronger assertion
   , obligatoryDomainAlts := true  -- Central to Chierchia's analysis
   , modalRescue := true
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
@@ -146,6 +171,7 @@ def ever : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .conditional_ant, .question
       , .superlative, .comparative ]
+  , scalarDirection := .strengthening  -- temporal endpoint → stronger assertion
   , notes := "Temporal NPI; also in superlatives ('best ever')"
   }
 
@@ -174,6 +200,7 @@ def atAll : PolarityItemEntry :=
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditional_ant, .question]
+  , scalarDirection := .attenuating  -- weakens: "not at all" = not even minimally
   , notes := "Degree emphasis; 'Did you sleep at all?'"
   }
 
@@ -407,6 +434,12 @@ def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Bool :=
 
 -- PPIs have empty licensing contexts
 #guard already.licensingContexts.isEmpty
+
+-- Scalar direction tags
+#guard ever.scalarDirection == .strengthening
+#guard any.scalarDirection == .strengthening
+#guard atAll.scalarDirection == .attenuating
+#guard liftAFinger.scalarDirection == .nonScalar
 
 -- ============================================================================
 -- Summary

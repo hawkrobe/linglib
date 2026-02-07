@@ -347,4 +347,58 @@ theorem root_ue_bridge (φ : Prop' World) (ALT : Set (Prop' World))
     -- Krifka's Rule negated all strictly stronger alternatives, including a
     exact hnegs (∼a) ⟨a, ha_ALT, rfl, ha_str, ha_strict⟩
 
+-- ============================================================================
+-- K. Scalar Licensing Parametrized by Direction (Schwab 2022)
+-- ============================================================================
+
+/-- Strength relation for scalar licensing.
+
+    Krifka (1995) and Chierchia (2004) treat all NPIs as STRENGTHENING:
+    the NPI makes the assertion stronger than its scalar alternatives,
+    so under negation the negated NPI statement is informationally weaker
+    (= more conservative), which is the hallmark of DE environments.
+
+    Schwab (2022) observes that ATTENUATING NPIs (like German "so recht")
+    work in the opposite direction: they make the assertion WEAKER than
+    alternatives. Under negation, the negated attenuating statement is
+    actually STRONGER — which means attenuating NPIs should NOT produce
+    illusion effects in non-DE environments (and empirically, they don't). -/
+inductive StrengthRelation where
+  | strongerThan  -- for strengthening NPIs / Krifka's ScalAssert
+  | weakerThan    -- for attenuating NPIs / Schwab's condition
+  deriving DecidableEq, BEq, Repr
+
+/-- Unified scalar licensing parametrized by direction.
+
+    For **strengthening** (= Krifka's ScalAssert):
+    Assert φ and deny all strictly stronger alternatives.
+    φ ∧ ⋀{¬alt : alt ∈ ALT, alt ⊂ φ}
+
+    For **attenuating** (Schwab & Liu's condition):
+    Assert φ and affirm the existence of a strictly stronger alternative.
+    φ ∧ ⋁{alt : alt ∈ ALT, alt ⊂ φ}
+    (Simplified: we record the required relationship, not the full licensing.) -/
+def scalarLicensing (rel : StrengthRelation) (φ : Prop' World)
+    (ALT : Set (Prop' World)) : StrengthenedMeaning World :=
+  match rel with
+  | .strongerThan =>
+    -- Krifka's Rule: deny stronger alternatives
+    krifkaRule φ ALT
+  | .weakerThan =>
+    -- Attenuating: assert φ and require a stronger alternative exists
+    { plain := φ
+    , strong := φ ∧ₚ (⋁ { ψ | ∃ a ∈ ALT, ψ = a ∧ (a ⊆ₚ φ) ∧ ¬(φ ⊆ₚ a) })
+    , alternatives := ALT }
+
+/-- Bridge: `scalarLicensing .strongerThan` is exactly `krifkaRule`. -/
+theorem scalarLicensing_strongerThan_eq_krifkaRule (φ : Prop' World)
+    (ALT : Set (Prop' World)) :
+    scalarLicensing .strongerThan φ ALT = krifkaRule φ ALT := rfl
+
+/-- Strengthening licensing satisfies the strength condition (inherits from krifkaRule). -/
+theorem scalarLicensing_strongerThan_strength (φ : Prop' World)
+    (ALT : Set (Prop' World)) :
+    strengthCondition (scalarLicensing .strongerThan φ ALT) :=
+  krifkaRule_satisfies_strength φ ALT
+
 end NeoGricean.Exhaustivity.Chierchia2004

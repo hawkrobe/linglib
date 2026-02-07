@@ -484,4 +484,107 @@ theorem measureSentence_fromHasDegree {E : Type} [HasDegree E]
     measureSentence (MeasurePredicate.fromHasDegree E dim) entity deg =
     numeralExact deg.value entity := rfl
 
+-- ============================================================================
+-- Degree Modifiers (Kennedy & McNally 2005; Israel 2011; Machino et al. 2025)
+-- ============================================================================
+
+/-- Degree modifier direction — same axis as NPI scalar direction.
+
+    - **Amplifiers** (very, extremely) raise the threshold → stronger assertion.
+    - **Downtoners** (slightly, kind of) lower the threshold → weaker assertion.
+
+    This is the truth-conditional reflex of Israel's (2011) strengthening/attenuating
+    axis: amplifiers strengthen gradable predicate meanings, downtoners attenuate them.
+
+    Kennedy & McNally (2005). Scale structure, degree modification.
+    Israel (2011). The Grammar of Polarity. CUP. -/
+inductive ModifierDirection where
+  | amplifier   -- very, extremely: θ + δ → strengthens
+  | downtoner   -- slightly, kind of: θ - δ → attenuates
+  deriving DecidableEq, BEq, Repr
+
+/-- A degree modifier that shifts the threshold of a gradable predicate.
+
+    Gradable predicate P holds of x iff degree(x) > θ.
+    A modifier M transforms P so that M(P) holds iff degree(x) > θ', where:
+    - Amplifier:  θ' = θ + δ  (raises the bar → harder to satisfy → stronger)
+    - Downtoner:  θ' = θ - δ  (lowers the bar → easier to satisfy → weaker) -/
+structure DegreeModifier (max : Nat) where
+  /-- Surface form -/
+  form : String
+  /-- Direction: amplifier or downtoner -/
+  direction : ModifierDirection
+  /-- How much to shift the threshold (always positive; direction determines sign) -/
+  shift : Fin (max + 1)
+  /-- Strength rank within same direction (higher = more extreme) -/
+  rank : Nat
+  deriving Repr
+
+/-- Apply a modifier to a threshold.
+    Amplifiers add shift (θ + δ), downtoners subtract shift (θ - δ).
+    Result is clamped to [0, max). -/
+def DegreeModifier.applyToThreshold {max : Nat} (m : DegreeModifier max)
+    (θ : Threshold max) : Threshold max :=
+  have hθ := θ.value.isLt  -- θ.value.val < max
+  have hm := m.shift.isLt  -- m.shift.val < max + 1
+  match m.direction with
+  | .amplifier =>
+    ⟨⟨min (θ.value.val + m.shift.val) (max - 1), by omega⟩⟩
+  | .downtoner =>
+    ⟨⟨θ.value.val - m.shift.val, by omega⟩⟩
+
+/-- A modified gradable predicate: degree(x) > M(θ). -/
+def modifiedMeaning {max : Nat} (m : DegreeModifier max)
+    (d : Degree max) (θ : Threshold max) : Bool :=
+  positiveMeaning d (m.applyToThreshold θ)
+
+-- Modifier Instances (Machino et al. 2025 hierarchy)
+
+section ModifierInstances
+
+variable (max : Nat)
+
+/-- "slightly" — minimal downtoner -/
+def slightly (h : 1 ≤ max := by omega) : DegreeModifier max :=
+  { form := "slightly", direction := .downtoner
+  , shift := ⟨1, by omega⟩, rank := 1 }
+
+/-- "kind of" — moderate downtoner -/
+def kindOf (h : 2 ≤ max := by omega) : DegreeModifier max :=
+  { form := "kind of", direction := .downtoner
+  , shift := ⟨2, by omega⟩, rank := 2 }
+
+/-- "quite" — can be amplifier (AmE) or downtoner (BrE).
+    Default: amplifier with small shift (AmE reading). -/
+def quite (h : 1 ≤ max := by omega) : DegreeModifier max :=
+  { form := "quite", direction := .amplifier
+  , shift := ⟨1, by omega⟩, rank := 1 }
+
+/-- "very" — strong amplifier -/
+def very (h : 2 ≤ max := by omega) : DegreeModifier max :=
+  { form := "very", direction := .amplifier
+  , shift := ⟨2, by omega⟩, rank := 2 }
+
+/-- "extremely" — maximal amplifier -/
+def extremely (h : 3 ≤ max := by omega) : DegreeModifier max :=
+  { form := "extremely", direction := .amplifier
+  , shift := ⟨3, by omega⟩, rank := 3 }
+
+end ModifierInstances
+
+-- Strength Hierarchy Verification
+
+-- Amplifier rank order: quite < very < extremely
+#guard Nat.blt (quite 10).rank (very 10).rank
+#guard Nat.blt (very 10).rank (extremely 10).rank
+
+-- Downtoner rank order: slightly < kindOf
+#guard Nat.blt (slightly 10).rank (kindOf 10).rank
+
+-- Amplifiers raise threshold: very(θ=3) → θ'=5 > 3
+#guard Nat.blt 3 ((very 10).applyToThreshold (⟨⟨3, by omega⟩⟩ : Threshold 10) |>.toNat)
+
+-- Downtoners lower threshold: slightly(θ=5) → θ'=4 < 5
+#guard Nat.blt ((slightly 10).applyToThreshold (⟨⟨5, by omega⟩⟩ : Threshold 10) |>.toNat) 5
+
 end TruthConditional.Domain.Degrees
