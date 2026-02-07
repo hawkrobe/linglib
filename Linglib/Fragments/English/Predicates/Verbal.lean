@@ -966,6 +966,37 @@ def read : VerbEntry where
   objectTheta := some .patient
   verbClass := .simple
 
+/-- "sweep" basic sense — motion + sustained contact, variable agentivity.
+    Rappaport Hovav & Levin (2024): underspecified for agentivity.
+    "The wind swept the deck" / "She swept the brush through her hair" -/
+def sweep_basic : VerbEntry where
+  form := "sweep"
+  form3sg := "sweeps"
+  formPast := "swept"
+  formPastPart := "swept"
+  formPresPart := "sweeping"
+  complementType := .np
+  subjectTheta := none  -- Underspecified: could be agent OR stimulus/instrument
+  objectTheta := some .theme  -- Surface (force recipient)
+  verbClass := .simple
+  passivizable := true
+
+/-- "sweep" broom sense — obligatorily agentive, instrument lexicalized.
+    Rappaport Hovav & Levin (2024): motivated polysemy via instrument
+    lexicalization. "Matt swept the floor" / "I swept the sidewalk"
+    Entails: broom instrument, agentive subject, floor-like surface. -/
+def sweep_broom : VerbEntry where
+  form := "sweep"
+  form3sg := "sweeps"
+  formPast := "swept"
+  formPastPart := "swept"
+  formPresPart := "sweeping"
+  complementType := .np
+  subjectTheta := some .agent  -- Obligatorily agentive
+  objectTheta := some .theme   -- Floor-like surface
+  verbClass := .simple
+  passivizable := true
+
 /-- "say" — communication verb, not factive -/
 def say : VerbEntry where
   form := "say"
@@ -1130,7 +1161,7 @@ Get all verb entries as a list (for enumeration).
 -/
 def allVerbs : List VerbEntry := [
   -- Simple
-  sleep, run, arrive, eat, kick, give, put, see, devour, read,
+  sleep, run, arrive, eat, kick, give, put, see, devour, read, sweep_basic, sweep_broom,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State
