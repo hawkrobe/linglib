@@ -118,6 +118,7 @@ import Linglib.Phenomena.Gradability.Basic
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Evaluativity
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
+import Linglib.Phenomena.Gradability.Intensifiers
 import Linglib.Phenomena.Gradability.Vagueness
 import Linglib.Phenomena.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
@@ -326,6 +327,7 @@ import Linglib.Theories.Minimalism.Formal.Workspace
 import Linglib.Theories.Minimalism.Formal.XBar
 
 -- Theories: TruthConditional (extensional)
+import Linglib.Theories.TruthConditional.Adjective.Intensification
 import Linglib.Theories.TruthConditional.Adjective.Theory
 import Linglib.Theories.TruthConditional.Anaphora
 import Linglib.Theories.TruthConditional.Basic
@@ -527,6 +529,7 @@ import Linglib.Theories.RSA.Implementations.HeKaiserIskarous2025
 import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
+import Linglib.Theories.RSA.Implementations.Nouwen2024
 import Linglib.Theories.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.RSA.Implementations.ScontrasPearl2021

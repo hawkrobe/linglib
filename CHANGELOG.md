@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.104.0] - 2026-02-07
+
+### Added
+- **RSA/Implementations/Nouwen2024.lean**: Nouwen (2024) "The semantics and probabilistic pragmatics of deadjectival intensifiers". Extends LassiterGoodman2017 with evaluative measures: `muHorrible` (peaks at extremes), `muPleasant` (peaks at norm), `muUsual` (constant). Sequential Bayesian update (`adverbUpdate` → `sequentialL1`), two-threshold intersecting semantics (Nouwen eq. 45). Goldilocks predictions: `horribly_shifts_high`, `pleasantly_concentrates_moderate`, `goldilocks_height_separation`. Zwicky vacuity: `usual_constant`, `constant_eval_uniform_update`. Grounding: `bare_prior_ratios_preserved` (bare case reduces to LG2017).
+- **TruthConditional/Adjective/Intensification.lean**: Evaluative measure semantics for deadjectival intensifiers. `EvaluativeMeasure` structure, `intensifiedMeaning` (Nouwen eq. 45 conjunction). Bridge theorem: `intensified_implies_positive`. Structural Goldilocks: `muHorrible_peaks_at_extreme`, `muPleasant_peaks_at_norm`, `goldilocks_at_extreme`, `goldilocks_at_norm`.
+- **Phenomena/Gradability/Intensifiers.lean**: Empirical data for deadjectival intensifiers (Nouwen 2024 Figure 2). `EvaluativeValence` (positive/negative/neutral), `IntensifierClass` (H/M), 15 `IntensifierEntry` items. Per-datum Goldilocks verification (`native_decide`): neg→H, pos→M. Per-datum Zwicky verification: neg modal→attested, pos modal→unattested.
+
 ## [0.103.0] - 2026-02-07
 
 ### Added
