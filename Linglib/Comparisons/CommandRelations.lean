@@ -45,8 +45,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.Minimalism.Phenomena.Coreference
 import Linglib.Theories.HPSG.Coreference
-import Linglib.Theories.DependencyGrammar.Coreference
-import Linglib.Theories.DependencyGrammar.CRDC
+import Linglib.Theories.DependencyGrammar.Phenomena.Coreference
+import Linglib.Theories.DependencyGrammar.Phenomena.CRDC
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic

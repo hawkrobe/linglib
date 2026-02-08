@@ -1,6 +1,6 @@
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004
 import Linglib.Theories.Minimalism.Formal.Workspace
-import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.Core.Basic
 
 /-!
 # Cross-Theory Comparison: Resultative Argument Licensing
@@ -116,13 +116,13 @@ The resultative construction adds additional dependent slots. -/
 /-- DG frame: verb's base valency + construction-added deps. -/
 structure DGFrame where
   /-- Verb's inherent argument requirements -/
-  verbArgs : List ArgReq
+  verbArgs : List ArgSlot
   /-- Arguments added by the resultative construction -/
-  constructionArgs : List ArgReq
+  constructionArgs : List ArgSlot
   deriving Repr
 
 /-- The combined DG argument frame. -/
-def DGFrame.allArgs (f : DGFrame) : List ArgReq :=
+def DGFrame.allArgs (f : DGFrame) : List ArgSlot :=
   f.verbArgs ++ f.constructionArgs
 
 /-! ## §2. Convergence on canonical resultatives
@@ -150,11 +150,11 @@ def cxg_hammer_flat : CxGFrame :=
     Resultative construction adds {result-complement}. -/
 def dg_hammer_flat : DGFrame :=
   { verbArgs :=
-      [ { depType := .subj, direction := .left, required := true }
-      , { depType := .obj, direction := .right, required := true } ]
+      [ { depType := .nsubj, dir := .left, required := true }
+      , { depType := .obj, dir := .right, required := true } ]
   , constructionArgs :=
-      [ { depType := .amod, direction := .right, required := true
-        , category := some UD.UPOS.ADJ } ] }
+      [ { depType := .amod, dir := .right, required := true
+        , cat := some UD.UPOS.ADJ } ] }
 
 /-- All three theories predict the same number of surface arguments
     for "hammer flat": 3 (agent + patient + result). -/
@@ -212,11 +212,11 @@ def minimalist_laugh_silly_full : ArgFrame := [.agent, .patient, .resultState]
     The resultative construction adds {obj, result-complement}. -/
 def dg_laugh_silly : DGFrame :=
   { verbArgs :=
-      [ { depType := .subj, direction := .left, required := true } ]
+      [ { depType := .nsubj, dir := .left, required := true } ]
   , constructionArgs :=
-      [ { depType := .obj, direction := .right, required := true }
-      , { depType := .amod, direction := .right, required := true
-        , category := some UD.UPOS.ADJ } ] }
+      [ { depType := .obj, dir := .right, required := true }
+      , { depType := .amod, dir := .right, required := true
+        , cat := some UD.UPOS.ADJ } ] }
 
 /-- CxG: the verb contributes fewer roles than the surface frame.
     The construction licenses the extra argument ("herself"). -/

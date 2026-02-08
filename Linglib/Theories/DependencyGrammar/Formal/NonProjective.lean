@@ -1,4 +1,4 @@
-import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.Core.Basic
 
 /-!
 # Non-Projective Dependencies

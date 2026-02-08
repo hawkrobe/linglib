@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.105.0] - 2026-02-08
+
+### Added
+- **DependencyGrammar/Formal/HeadCriteria.lean**: Zwicky (1985) & Hudson (1990) head determination criteria. `HeadCriterion` structure with 5 concrete criteria (categoryDetermination, obligatoriness, selection, morphologicalDetermination, positionalDetermination), `criterionCount`/`isPrototypicalHead`. `RelationClass` (coreArgument/modifier/functionWord) with `classifyRelation` mapping UD relations. `HeadednessAnalysis` (functionHead/contentHead) with `HeadednessEvidence` for aux and det relations (de Marneffe & Nivre 2019 §4.5). Theorems: `content_head_more_criteria_for_det`, `core_args_most_criteria`, classification proofs.
+- **DependencyGrammar/Core/Nominal.lean**: Shared nominal classification and phi-feature agreement extracted from Coreference.lean and CRDC.lean. `NominalType` (reflexive/pronoun/rExpression), `isNominalCat`, `classifyNominal`, `phiAgree`, parameterized `capturesMinimalPair`/`capturesPhenomenonData`.
+
+### Changed
+- **Core/UD.lean**: Merged `DepRel.lean` content — UD dependency relation classifiers (`isCoreArg`, `isNominal`, `isClause`, `isSubject`, `isObject`), `DepArc` structure now live alongside UPOS/UDFeatures.
+- **DependencyGrammar/**: Reorganized flat directory into Core/, Formal/, Phenomena/ subdirectories (matching CCG pattern). Basic.lean + LexicalRules.lean + Nominal.lean → Core/; NonProjective.lean + HeadCriteria.lean → Formal/; Coordination, Coreference, CRDC, Inversion, LongDistance → Phenomena/.
+- **DependencyGrammar/Core/Basic.lean**: Removed 14-label `DepType` in favor of full `UD.DepRel` (37 universal relations). Renamed verbose types: `Direction`→`Dir`, `ArgReq`→`ArgSlot` (with `direction`→`dir`, `category`→`cat`), `ArgStructure`→`ArgStr`.
+- **DependencyGrammar/Core/LexicalRules.lean**: Removed duplicate Dir/ArgSlot/ArgStr definitions, now imports from Basic.lean.
+- **Comparisons/Mueller2013.lean**: `classifyDepType` now takes `UD.DepRel` instead of `DepGrammar.DepType`.
+- **Comparisons/ResultativeArgLicensing.lean**: Updated to use `ArgSlot` field names (`dir`, `cat`).
+- **Comparisons/CommandRelations.lean**: Import paths updated for DG reorganization.
+
+### Removed
+- **Core/DepRel.lean**: Deleted; content merged into Core/UD.lean.
+
 ## [0.104.0] - 2026-02-07
 
 ### Added

@@ -11,7 +11,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.Core.Basic
 import Linglib.Phenomena.FillerGap.LongDistance
 
 namespace LongDistanceDependencies.WordGrammarAnalysis
@@ -47,9 +47,9 @@ inductive GapType where
   | oblGap    -- Oblique extraction: "What did you put the book on _?"
   deriving Repr, DecidableEq, Inhabited
 
-/-- Convert GapType to DepType -/
-def gapToDepType : GapType → DepType
-  | .subjGap => .subj
+/-- Convert GapType to UD dependency relation -/
+def gapToDepRel : GapType → UD.DepRel
+  | .subjGap => .nsubj
   | .objGap => .obj
   | .iobjGap => .iobj
   | .oblGap => .obl
@@ -136,21 +136,21 @@ def isLDWellFormed (t : LDTree) : Bool :=
 /-- "What did John see?" - Object wh-question -/
 def ex_whatDidJohnSee : LDTree :=
   { words := [what, did, john, see]
-    deps := [⟨1, 2, .subj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
+    deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
     rootIdx := 1
     fillerGaps := [⟨0, 3, .objGap⟩] }
 
 /-- "Who saw Mary?" - Subject wh-question (no gap needed) -/
 def ex_whoSawMary : LDTree :=
   { words := [who, sees, mary]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 2, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1
     fillerGaps := [] }
 
 /-- "Who did John see?" - Object wh-question with "who" -/
 def ex_whoDidJohnSee : LDTree :=
   { words := [who, did, john, see]
-    deps := [⟨1, 2, .subj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
+    deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
     rootIdx := 1
     fillerGaps := [⟨0, 3, .objGap⟩] }
 
@@ -161,14 +161,14 @@ def ex_whoDidJohnSee : LDTree :=
 /-- "the book that John read" - Object relative clause -/
 def ex_theBookThatJohnRead : LDTree :=
   { words := [the, book, that, john, reads]
-    deps := [⟨1, 0, .det⟩, ⟨1, 4, .nmod⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .subj⟩]
+    deps := [⟨1, 0, .det⟩, ⟨1, 4, .nmod⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
     rootIdx := 1
     fillerGaps := [⟨1, 4, .objGap⟩] }
 
 /-- "the book that John gave Mary" - Object relative with ditransitive -/
 def ex_theBookThatJohnGaveMary : LDTree :=
   { words := [the, book, that, john, gives, mary]
-    deps := [⟨1, 0, .det⟩, ⟨1, 4, .nmod⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .subj⟩, ⟨4, 5, .iobj⟩]
+    deps := [⟨1, 0, .det⟩, ⟨1, 4, .nmod⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩, ⟨4, 5, .iobj⟩]
     rootIdx := 1
     fillerGaps := [⟨1, 4, .objGap⟩] }
 
@@ -179,28 +179,28 @@ def ex_theBookThatJohnGaveMary : LDTree :=
 /-- "John thinks that Mary sleeps" - That-complement -/
 def ex_johnThinksThatMarySleeps : LDTree :=
   { words := [john, think, that, mary, sleeps]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 4, .comp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .subj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
     rootIdx := 1
     fillerGaps := [] }
 
 /-- "John thinks Mary sleeps" - Bare complement (that-omission) -/
 def ex_johnThinksMarySleeps : LDTree :=
   { words := [john, think, mary, sleeps]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 3, .comp⟩, ⟨3, 2, .subj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .ccomp⟩, ⟨3, 2, .nsubj⟩]
     rootIdx := 1
     fillerGaps := [] }
 
 /-- "John wonders if Mary sleeps" - If-complement -/
 def ex_johnWondersIfMarySleeps : LDTree :=
   { words := [john, wonder, if_, mary, sleeps]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 4, .comp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .subj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
     rootIdx := 1
     fillerGaps := [] }
 
 /-- "John wonders what Mary saw" - Embedded wh-question -/
 def ex_johnWondersWhatMarySaw : LDTree :=
   { words := [john, wonder, what, mary, sees]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 4, .comp⟩, ⟨4, 3, .subj⟩, ⟨4, 2, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨4, 2, .obj⟩]
     rootIdx := 1
     fillerGaps := [⟨2, 4, .objGap⟩] }
 
