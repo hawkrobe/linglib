@@ -14,7 +14,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.DependencyGrammar.LexicalRules
+import Linglib.Theories.DependencyGrammar.Core.LexicalRules
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 open DepGrammar
@@ -78,7 +78,7 @@ def depGrammarLicenses (ws : List Word) (ct : ClauseType) : Bool :=
 -/
 def whatCanJohnEatTree : DepTree :=
   { words := [what, can, john, eat]
-    deps := [⟨1, 2, .subj⟩, ⟨1, 3, .aux⟩, ⟨3, 0, .obj⟩]
+    deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨3, 0, .obj⟩]
     rootIdx := 1 }
 
 /-- "*What John can eat?" - Ungrammatical as matrix question
@@ -86,7 +86,7 @@ def whatCanJohnEatTree : DepTree :=
 -/
 def whatJohnCanEatTree : DepTree :=
   { words := [what, john, can, eat]
-    deps := [⟨2, 1, .subj⟩, ⟨2, 3, .aux⟩, ⟨3, 0, .obj⟩]
+    deps := [⟨2, 1, .nsubj⟩, ⟨2, 3, .aux⟩, ⟨3, 0, .obj⟩]
     rootIdx := 2 }
 
 /-- "Can John eat pizza?" - Matrix yes-no question (inverted)
@@ -95,7 +95,7 @@ def whatJohnCanEatTree : DepTree :=
 -/
 def canJohnEatPizzaTree : DepTree :=
   { words := [can, john, eat, pizza]
-    deps := [⟨0, 1, .subj⟩, ⟨0, 2, .aux⟩, ⟨2, 3, .obj⟩]
+    deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .aux⟩, ⟨2, 3, .obj⟩]
     rootIdx := 0 }
 
 /-- "*John can eat pizza?" - Ungrammatical as matrix question
@@ -103,7 +103,7 @@ def canJohnEatPizzaTree : DepTree :=
 -/
 def johnCanEatPizzaTree : DepTree :=
   { words := [john, can, eat, pizza]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 2, .aux⟩, ⟨2, 3, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .aux⟩, ⟨2, 3, .obj⟩]
     rootIdx := 1 }
 
 -- ============================================================================

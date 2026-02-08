@@ -11,7 +11,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Modifiers.Adjectives
-import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.Core.Basic
 import Linglib.Phenomena.Coordination.Data
 
 namespace Coordination.WordGrammarAnalysis
@@ -134,21 +134,21 @@ def isCoordWellFormed (t : CoordTree) : Bool :=
 /-- "John and Mary sleep" - NP coordination -/
 def ex_johnAndMarySleep : CoordTree :=
   { words := [john, and_, mary, sleep]
-    deps := [⟨3, 0, .subj⟩, ⟨0, 2, .conj⟩]
+    deps := [⟨3, 0, .nsubj⟩, ⟨0, 2, .conj⟩]
     rootIdx := 3
     coordinations := [⟨.and_, 1, 0, [2]⟩] }
 
 /-- "John sleeps and Mary sleeps" - S coordination -/
 def ex_johnSleepsAndMarySleeps : CoordTree :=
   { words := [john, sleeps, and_, mary, sleeps]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .subj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩]
     rootIdx := 1
     coordinations := [⟨.and_, 2, 1, [4]⟩] }
 
 /-- "John sees and hears Mary" - VP coordination -/
 def ex_johnSeesAndHearsMary : CoordTree :=
   { words := [john, sees, and_, sees, mary]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
     rootIdx := 1
     coordinations := [⟨.and_, 2, 1, [3]⟩] }
 
@@ -163,7 +163,7 @@ def ex_oldAndWiseMan : CoordTree :=
 def ex_gapping : GappedTree :=
   { base := {
       words := [john, eats, pizza, and_, mary, pizza]
-      deps := [⟨1, 0, .subj⟩, ⟨1, 2, .obj⟩, ⟨1, 4, .conj⟩]
+      deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩, ⟨1, 4, .conj⟩]
       rootIdx := 1
       coordinations := [⟨.and_, 3, 1, [4]⟩]
     }
@@ -172,7 +172,7 @@ def ex_gapping : GappedTree :=
 /-- "John likes and Mary hates pizza" - Right Node Raising -/
 def ex_rnr : CoordTree :=
   { words := [john, devours, and_, mary, devours, pizza]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .subj⟩, ⟨1, 5, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩, ⟨1, 5, .obj⟩]
     rootIdx := 1
     coordinations := [⟨.and_, 2, 1, [4]⟩] }
 

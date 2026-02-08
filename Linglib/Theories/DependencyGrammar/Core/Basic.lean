@@ -2,6 +2,8 @@
 Word Grammar (Dependency Grammar): nodes are words, edges are typed dependencies.
 Auxiliaries are heads; lexical rules derive new entries; argument structures specify direction.
 
+Dependency relations use UD.DepRel from Core/UD.lean (Universal Dependencies v2).
+
 References: Hudson (1984, 1990, 2007), Gibson (2025) Syntax, MIT Press.
 -/
 
@@ -9,52 +11,14 @@ import Linglib.Core.Basic
 
 namespace DepGrammar
 
-section DependencyTypes
-
-/-- Types of dependency relations. -/
-inductive DepType where
-  | subj      -- subject (noun → verb)
-  | obj       -- direct object (noun → verb)
-  | iobj      -- indirect object (noun → verb)
-  | det       -- determiner (det → noun)
-  | amod      -- adjectival modifier (adj → noun)
-  | advmod    -- adverbial modifier (adv → verb)
-  | aux       -- auxiliary (aux → verb)
-  | case_     -- case marker / preposition (prep → noun)
-  | obl       -- oblique argument (prep phrase → verb)
-  | nmod      -- nominal modifier (noun → noun, via prep)
-  | comp      -- complement clause (clause → verb)
-  | mark      -- subordinator/complementizer (comp → verb)
-  | conj      -- conjunction
-  | root      -- root of the sentence (no head)
-  deriving Repr, DecidableEq, Inhabited
-
-instance : ToString DepType where
-  toString
-    | .subj => "subj"
-    | .obj => "obj"
-    | .iobj => "iobj"
-    | .det => "det"
-    | .amod => "amod"
-    | .advmod => "advmod"
-    | .aux => "aux"
-    | .case_ => "case"
-    | .obl => "obl"
-    | .nmod => "nmod"
-    | .comp => "comp"
-    | .mark => "mark"
-    | .conj => "conj"
-    | .root => "root"
-
-end DependencyTypes
-
 section DependenciesAndTrees
 
-/-- A dependency: directed edge from head to dependent. -/
+/-- A dependency: directed edge from head to dependent.
+    Uses UD.DepRel for the relation label. -/
 structure Dependency where
   headIdx : Nat
   depIdx : Nat
-  depType : DepType
+  depType : UD.DepRel
   deriving Repr, DecidableEq
 
 /-- A dependency tree for a sentence. -/
@@ -69,22 +33,22 @@ end DependenciesAndTrees
 section ArgumentStructure
 
 /-- Direction of a dependent relative to head. -/
-inductive Direction where
-  | left
-  | right
-  deriving Repr, DecidableEq
+inductive Dir where
+  | left   -- dependent precedes head
+  | right  -- dependent follows head
+  deriving Repr, DecidableEq, Inhabited
 
-/-- A single argument requirement. -/
-structure ArgReq where
-  depType : DepType
-  direction : Direction
+/-- A single argument slot in an argument structure. -/
+structure ArgSlot where
+  depType : UD.DepRel
+  dir : Dir
   required : Bool := true
-  category : Option UD.UPOS := none
+  cat : Option UD.UPOS := none
   deriving Repr, DecidableEq
 
 /-- Argument structure: what dependents a word requires/allows. -/
-structure ArgStructure where
-  args : List ArgReq
+structure ArgStr where
+  slots : List ArgSlot
   deriving Repr
 
 end ArgumentStructure
@@ -137,7 +101,7 @@ section AgreementChecking
 /-- Check subject-verb number agreement. -/
 def checkSubjVerbAgr (t : DepTree) : Bool :=
   t.deps.all λ d =>
-    if d.depType == .subj then
+    if d.depType == .nsubj then
       match t.words[d.depIdx]?, t.words[d.headIdx]? with
       | some subj, some verb =>
         match subj.features.number, verb.features.number with
@@ -163,7 +127,7 @@ end AgreementChecking
 section SubcategorizationChecking
 
 /-- Count dependents of a given type for a head. -/
-def countDepsOfType (t : DepTree) (headIdx : Nat) (dtype : DepType) : Nat :=
+def countDepsOfType (t : DepTree) (headIdx : Nat) (dtype : UD.DepRel) : Nat :=
   t.deps.filter (λ d => d.headIdx == headIdx && d.depType == dtype) |>.length
 
 /-- Check if verb has correct argument structure. -/
@@ -172,7 +136,7 @@ def checkVerbSubcat (t : DepTree) : Bool :=
     match t.words[i]? with
     | some w =>
       if w.cat == UD.UPOS.VERB then
-        let subjCount := countDepsOfType t i .subj
+        let subjCount := countDepsOfType t i .nsubj
         let objCount := countDepsOfType t i .obj
         let iobjCount := countDepsOfType t i .iobj
         match w.features.valence with
@@ -216,25 +180,25 @@ section TreeConstructionHelpers
 /-- Create a simple SV tree: subject -> verb. -/
 def mkSVTree (subj verb : Word) : DepTree :=
   { words := [subj, verb]
-    deps := [⟨1, 0, .subj⟩]
+    deps := [⟨1, 0, .nsubj⟩]
     rootIdx := 1 }
 
 /-- Create a simple SVO tree: subject -> verb <- object. -/
 def mkSVOTree (subj verb obj : Word) : DepTree :=
   { words := [subj, verb, obj]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 2, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1 }
 
 /-- Create Det-N-V tree: det -> noun -> verb. -/
 def mkDetNVTree (det noun verb : Word) : DepTree :=
   { words := [det, noun, verb]
-    deps := [⟨1, 0, .det⟩, ⟨2, 1, .subj⟩]
+    deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩]
     rootIdx := 2 }
 
 /-- Create a ditransitive tree: subj -> verb <- iobj <- obj. -/
 def mkDitransTree (subj verb iobj obj : Word) : DepTree :=
   { words := [subj, verb, iobj, obj]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
     rootIdx := 1 }
 
 end TreeConstructionHelpers

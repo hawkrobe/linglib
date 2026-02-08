@@ -4,7 +4,7 @@ import Linglib.Theories.Minimalism.Core.Labeling
 import Linglib.Theories.HPSG.HeadFiller
 import Linglib.Theories.HPSG.LexicalRules
 import Linglib.Theories.CCG.Core.Basic
-import Linglib.Theories.DependencyGrammar.NonProjective
+import Linglib.Theories.DependencyGrammar.Formal.NonProjective
 import Linglib.Theories.ConstructionGrammar.ArgumentStructure
 
 /-!
@@ -67,25 +67,15 @@ def classifyHPSGSchema : HPSG.HPSGSchema → CombinationKind
 
 /-! ### Dependency Grammar classification -/
 
-/-- Classify a DG dependency type as one of the three schemata.
+/-- Classify a UD dependency relation as one of the three schemata.
 
-Subject dependencies are Head-Specifier; non-projective dependencies
-are Head-Filler; all other core dependencies are Head-Complement. -/
-def classifyDepType : DepGrammar.DepType → CombinationKind
-  | .subj => .headSpecifier
-  | .obj => .headComplement
-  | .iobj => .headComplement
-  | .det => .headComplement
-  | .amod => .headComplement
-  | .advmod => .headComplement
-  | .aux => .headComplement
-  | .case_ => .headComplement
-  | .obl => .headComplement
-  | .nmod => .headComplement
-  | .comp => .headComplement
-  | .mark => .headComplement
-  | .conj => .headComplement
-  | .root => .headComplement
+Subject dependencies are Head-Specifier; all other core dependencies
+are Head-Complement. Non-projective dependencies (handled separately)
+correspond to Head-Filler. -/
+def classifyDepType : UD.DepRel → CombinationKind
+  | .nsubj => .headSpecifier
+  | .csubj => .headSpecifier
+  | _ => .headComplement
 
 /-! ### CxG classification -/
 
@@ -182,7 +172,7 @@ theorem external_merge_is_head_specifier :
     (∀ r : HPSG.HeadSubjRule,
       classifyHPSGSchema (.headSubj r) = .headSpecifier) ∧
     -- DG: subj dep = headSpecifier
-    (classifyDepType .subj = .headSpecifier) := by
+    (classifyDepType .nsubj = .headSpecifier) := by
   refine ⟨?_, ?_, ?_⟩
   · intro a b ha hb; exact Minimalism.no_selection_implies_headSpecifier a b ha hb
   · intro _; rfl
@@ -333,7 +323,7 @@ example : classifyCCGDerivStep
 example : classifyDepType .det = .headComplement := rfl
 
 /-- Subject dependency is Head-Specifier in DG. -/
-example : classifyDepType .subj = .headSpecifier := rfl
+example : classifyDepType .nsubj = .headSpecifier := rfl
 
 /-- The three schemata are exhaustive for External Merge in Minimalism. -/
 theorem min_external_exhaustive (a b : Minimalism.SyntacticObject) :

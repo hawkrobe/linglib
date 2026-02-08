@@ -17,32 +17,9 @@ References:
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.DependencyGrammar.Basic
+import Linglib.Theories.DependencyGrammar.Core.Basic
 
 namespace DepGrammar
-
--- ============================================================================
--- Argument Structures (Lexical Requirements)
--- ============================================================================
-
-/-- Direction of a dependent relative to its head -/
-inductive Dir where
-  | left   -- dependent precedes head
-  | right  -- dependent follows head
-  deriving Repr, DecidableEq, Inhabited
-
-/-- A single argument slot in argument structure -/
-structure ArgSlot where
-  depType : DepType      -- type of dependency (subj, obj, etc.)
-  dir : Dir              -- left or right of head
-  required : Bool := true -- optional arguments have required = false
-  cat : Option UD.UPOS := none -- required category (if specified)
-  deriving Repr, DecidableEq
-
-/-- Argument structure: the dependents a word requires/allows -/
-structure ArgStr where
-  slots : List ArgSlot
-  deriving Repr
 
 -- ============================================================================
 -- Lexical Entries with Argument Structures
@@ -71,32 +48,32 @@ structure LexEntry where
 
 /-- Intransitive verb: subject to the left -/
 def argStr_V0 : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .DET⟩] }
+  { slots := [⟨.nsubj, .left, true, some .DET⟩] }
 
 /-- Transitive verb: subject left, object right -/
 def argStr_VN : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .DET⟩,
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Ditransitive verb: subject left, indirect object right, object right -/
 def argStr_VNN : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .DET⟩,
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.iobj, .right, true, some .DET⟩,
               ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Auxiliary verb (non-inverted): subject left, main verb right -/
 def argStr_Aux : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .DET⟩,
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.aux, .right, true, some .VERB⟩] }
 
 /-- Auxiliary verb (inverted): subject right, main verb right -/
 def argStr_AuxInv : ArgStr :=
-  { slots := [⟨.subj, .right, true, some .DET⟩,
+  { slots := [⟨.nsubj, .right, true, some .DET⟩,
               ⟨.aux, .right, true, some .VERB⟩] }
 
 /-- Passive transitive: subject left (was patient), optional by-phrase right -/
 def argStr_VPassive : ArgStr :=
-  { slots := [⟨.subj, .left, true, some .DET⟩,
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
 
 -- ============================================================================
@@ -119,7 +96,7 @@ def auxInversionRule : LexRule :=
       e.cat == .AUX && !e.features.inv
     transform := λ e =>
       let newSlots := e.argStr.slots.map λ slot =>
-        if slot.depType == .subj then
+        if slot.depType == .nsubj then
           { slot with dir := .right }  -- subject now goes to the right
         else slot
       { e with
@@ -244,7 +221,7 @@ private abbrev sleep := Fragments.English.Predicates.Verbal.sleep.toWordPl
 -/
 def johnCanSleepTree : DepTree :=
   { words := [john, can, sleep]
-    deps := [⟨1, 0, .subj⟩, ⟨1, 2, .aux⟩]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .aux⟩]
     rootIdx := 1 }
 
 /-- "Can John sleep?" - interrogative (subject right of aux)
@@ -253,7 +230,7 @@ def johnCanSleepTree : DepTree :=
 -/
 def canJohnSleepTree : DepTree :=
   { words := [can, john, sleep]
-    deps := [⟨0, 1, .subj⟩, ⟨0, 2, .aux⟩]
+    deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .aux⟩]
     rootIdx := 0 }
 
 -- Check argument structure satisfaction

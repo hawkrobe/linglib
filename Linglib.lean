@@ -11,7 +11,6 @@ import Linglib.Core.Kleene
 import Linglib.Core.Empirical
 import Linglib.Core.Proposition
 import Linglib.Core.UD
-import Linglib.Core.DepRel
 import Linglib.Core.Duality
 import Linglib.Core.Scales
 import Linglib.Core.Intension
@@ -232,14 +231,16 @@ import Linglib.Comparisons.ThresholdSemantics
 import Linglib.Comparisons.ResultativeArgLicensing
 
 -- Theories: Dependency Grammar
-import Linglib.Theories.DependencyGrammar.Basic
-import Linglib.Theories.DependencyGrammar.Coordination
-import Linglib.Theories.DependencyGrammar.Coreference
-import Linglib.Theories.DependencyGrammar.CRDC
-import Linglib.Theories.DependencyGrammar.Inversion
-import Linglib.Theories.DependencyGrammar.LexicalRules
-import Linglib.Theories.DependencyGrammar.LongDistance
-import Linglib.Theories.DependencyGrammar.NonProjective
+import Linglib.Theories.DependencyGrammar.Core.Basic
+import Linglib.Theories.DependencyGrammar.Core.LexicalRules
+import Linglib.Theories.DependencyGrammar.Core.Nominal
+import Linglib.Theories.DependencyGrammar.Formal.HeadCriteria
+import Linglib.Theories.DependencyGrammar.Formal.NonProjective
+import Linglib.Theories.DependencyGrammar.Phenomena.Coordination
+import Linglib.Theories.DependencyGrammar.Phenomena.Coreference
+import Linglib.Theories.DependencyGrammar.Phenomena.CRDC
+import Linglib.Theories.DependencyGrammar.Phenomena.Inversion
+import Linglib.Theories.DependencyGrammar.Phenomena.LongDistance
 
 -- Theories: Dynamic Semantics
 import Linglib.Theories.DynamicSemantics.BilateralUpdate.Basic
