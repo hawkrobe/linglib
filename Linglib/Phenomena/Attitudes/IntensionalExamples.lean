@@ -155,4 +155,49 @@ theorem belief_intensional :
 theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) :
     down (up x) w = x := rfl
 
+/-! ## Bridge to Direct Reference Theory
+
+The `morningStar`/`eveningStar` individual concepts defined above are
+*Fregean concepts* (world-dependent). In contrast, proper names in
+`IntensionalSemantics.Reference.Basic` are *Kripkean rigid designators*.
+
+This section makes the distinction explicit, connecting the existing
+Hesperus/Phosphorus examples to the direct reference framework. -/
+
+/-- "Hesperus" as a Kripkean proper name: rigid designator.
+
+Contrast with `morningStar` above, which is a Fregean individual concept
+that varies across worlds. The proper name always returns `.hesperus`. -/
+def hesperus_rigid : Core.Intension.Intension World ToyIEntity :=
+  Core.Intension.rigid .hesperus
+
+/-- `morningStar` is NOT rigid: it picks out different entities at
+different worlds. This contrasts with `hesperus_rigid` which IS rigid. -/
+theorem morningStar_not_rigid : ¬ Core.Intension.IsRigid morningStar := by
+  intro h
+  have h12 := h .w1 .w2
+  simp only [morningStar] at h12
+  cases h12
+
+/-- `hesperus_rigid` IS rigid (a proper name in the Kripkean sense). -/
+theorem hesperus_rigid_isRigid : Core.Intension.IsRigid hesperus_rigid :=
+  Core.Intension.rigid_isRigid _
+
+/-- Independence of names vs concepts: a Fregean individual concept
+(`morningStar`) can agree with a Kripkean name (`hesperus_rigid`) at
+one world while diverging at others. -/
+theorem name_vs_concept_independence :
+    -- They agree at w0 (both pick out .hesperus)
+    Core.Intension.CoRefer hesperus_rigid morningStar .w0 ∧
+    -- But they are NOT co-extensional
+    ¬ Core.Intension.CoExtensional hesperus_rigid morningStar := by
+  constructor
+  · -- CoRefer at w0: hesperus_rigid .w0 = morningStar .w0
+    rfl
+  · -- Not co-extensional: they disagree at w2
+    intro h
+    have := h .w2
+    simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
+    cases this
+
 end Phenomena.Attitudes.IntensionalExamples

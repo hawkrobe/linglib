@@ -26,6 +26,7 @@ and Adger (2003) Chapter 3.
 - Collins, C. & E. Stabler (2016). A Formalization of Minimalist Syntax.
 -/
 
+import Linglib.Core.Basic
 import Linglib.Theories.Minimalism.Core.Agree
 
 namespace Minimalism
@@ -249,6 +250,7 @@ inductive DerivationStep where
   | selectStep : ExtendedLI → DerivationStep
   | externalMergeStep : ExternalMergeOp → DerivationStep
   | internalMergeStep : InternalMergeOp → DerivationStep
+  | transferStep : SyntacticObject → DerivationStep  -- Transfer phase complement
   deriving Repr
 
 /-- Apply a derivation step to a state -/
@@ -266,6 +268,12 @@ def applyStep (s : DerivationState) (step : DerivationStep) : Option DerivationS
     match applyInternalMerge s.workspace op with
     | none => none
     | some w' => some ⟨s.numeration, w'⟩
+  | .transferStep _complement =>
+    -- Transfer ships the complement to PF/LF interfaces.
+    -- The complement is conceptually removed from further narrow-syntactic
+    -- operations, but the workspace structure remains intact for now.
+    -- Full PF/LF separation would require a richer state model.
+    some s
 
 -- Part 9: Full Derivation
 
@@ -292,5 +300,35 @@ def theCatNumeration : Numeration :=
     |>.add nounCat 1 (by omega)
 
 #eval theCatNumeration.totalCount  -- 2
+
+-- ============================================================================
+-- MinimalistGrammar: Grammar Instance Using Formal Types
+-- ============================================================================
+
+/-- A Minimalist grammar specifies the lexicon as a list of extended LIs. -/
+structure MinimalistGrammar where
+  lexicon : List ExtendedLI
+
+/-- Minimalist derivations link a formal derivation to a clause type. -/
+structure MinDerivation (g : MinimalistGrammar) where
+  deriv : FullDerivation
+  clauseType : ClauseType
+
+/-- Minimalism Grammar instance.
+
+    Derivations are formal `FullDerivation`s from Workspace.lean.
+    Realization checks that the phonological yield matches. -/
+instance : Grammar MinimalistGrammar where
+  Derivation := Σ g : MinimalistGrammar, MinDerivation g
+  realizes d ws ct :=
+    let result := d.2.deriv.final.workspace.getResult
+    match result with
+    | some so => so.phonYield = ws.map (·.form) ∧ d.2.clauseType = ct
+    | none => False
+  derives g ws ct :=
+    ∃ d : MinDerivation g,
+      match d.deriv.final.workspace.getResult with
+      | some so => so.phonYield = ws.map (·.form) ∧ d.clauseType = ct
+      | none => False
 
 end Minimalism

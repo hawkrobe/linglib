@@ -27,45 +27,15 @@ Steedman (2000). The Syntactic Process, Chapter 5: Structure and Intonation.
 -/
 
 import Linglib.Theories.CCG.Core.Basic
-import Linglib.Theories.TruthConditional.Sentence.Focus.InformationStructure
+import Linglib.Core.InformationStructure
+import Linglib.Core.Prosody
 import Linglib.Phenomena.Focus.Basic
 
 namespace CCG.Intonation
 
 open CCG
-open Theories.TruthConditional.Sentence.InformationStructure
-
--- Pitch Accents
-
-/--
-Pitch accent types (Pierrehumbert 1980, ToBI conventions).
-
-Pitch accents mark focus/contrast at the word level:
-- H*: Sharp rise, typically marks rheme focus ("the BEANS")
-- L+H*: Rise from low, typically marks theme focus ("FRED ate")
-- null: No accent (background material)
--/
-inductive PitchAccent where
-  | H_star      -- H*: rheme accent (sharp rise to peak)
-  | L_plus_H_star  -- L+H*: theme accent (rise from distinctive low)
-  | null        -- No accent (background)
-  deriving Repr, DecidableEq, Inhabited
-
--- Boundary Tones
-
-/--
-Boundary tones mark prosodic phrase edges.
-
-Following Pierrehumbert (1980) and Beckman & Pierrehumbert (1986):
-- L: Low intermediate phrase boundary
-- LH%: Rising intonational phrase boundary (continuation)
-- LL%: Falling intonational phrase boundary (finality)
--/
-inductive BoundaryTone where
-  | L      -- Low phrase boundary (intermediate)
-  | LH_pct -- Rising boundary (LH%) - continuation, theme
-  | LL_pct -- Falling boundary (LL%) - finality, rheme
-  deriving Repr, DecidableEq, Inhabited
+open Core.InformationStructure
+open Core.Prosody
 
 -- Information Feature
 

@@ -23,7 +23,7 @@ entire algebraic hierarchy.
   Syntactic Merge"
 -/
 
-import Linglib.Theories.Minimalism.Core.Containment
+import Linglib.Theories.Minimalism.Core.Basic
 import Mathlib.Algebra.Free
 
 namespace Minimalism

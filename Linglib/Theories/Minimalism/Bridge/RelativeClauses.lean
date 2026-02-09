@@ -1,7 +1,7 @@
 /-
 # Relative Clause Semantics: A Worked Example
 
-Demonstrates the full machinery from Minimalism/Semantics/Interface.lean
+Demonstrates the full machinery from Minimalism/Bridge/Interface.lean
 with a concrete linguistic example: "the book that John read _"
 
 ## The Derivation
@@ -41,6 +41,7 @@ namespace Minimalism.Bridge.RelativeClauses
 
 open TruthConditional TruthConditional.Variables TruthConditional.Modification
 open Minimalism.Semantics
+open Minimalism
 
 -- ============================================================================
 -- Example Model: Reading Scenario
@@ -184,10 +185,6 @@ The iota operator: ιx.P(x)
 
 Returns the unique x satisfying P, if one exists.
 For computational simplicity, we search through a list of candidates.
-
-In a proper treatment, this would use Hilbert's ε or require
-a uniqueness presupposition. Here we use Option to handle
-non-existence or non-uniqueness.
 -/
 def iota (candidates : List ReadEntity) (p : ReadEntity → Bool) : Option ReadEntity :=
   match candidates.filter p with
@@ -218,14 +215,7 @@ This shows the compositional derivation yields the correct result:
 theorem the_book_correct (g : Assignment readModel) :
     the_book_that_john_read g = some ReadEntity.book1 := by
   simp only [the_book_that_john_read, iota, allEntities, List.filter]
-  -- The filter keeps only elements where book(x) ∧ read(j,x)
   simp only [np_meaning_correct]
-  -- Check each entity:
-  -- john: book(john) = false, so false && _ = false
-  -- mary: book(mary) = false
-  -- book1: book(book1) = true, read(john, book1) = true, so true
-  -- book2: book(book2) = true, read(john, book2) = false, so false
-  -- newspaper: book(newspaper) = false
   native_decide
 
 -- ============================================================================
@@ -290,54 +280,13 @@ theorem np_formulations_equiv (g : Assignment readModel) :
 The syntactic structure with a trace.
 
 This shows how the semantic derivation corresponds to the syntax:
-the trace in SynObj.trace 1 is interpreted via interpTrace 1.
-
-Note: We use a simplified representation here. The key insight is that
-`SynObj.trace n` in the syntax corresponds to `interpTrace n` in semantics.
+the trace created via `mkTrace 1` is interpreted via `interpTrace 1`.
 -/
-def traceExample : SynObj := .trace 1
+def traceExample : SyntacticObject := mkTrace 1
 
 /--
 Extracting the trace index from a syntactic object.
 -/
-def getTraceIndex : SynObj → Option ℕ
-  | .trace n => some n
-  | .set α β _ => getTraceIndex α <|> getTraceIndex β
-  | .lex _ _ => none
-
 theorem trace_example_has_index : getTraceIndex traceExample = some 1 := rfl
-
--- ============================================================================
--- Summary
--- ============================================================================
-
-/-
-## What This Module Demonstrates
-
-### The Full Pipeline
-1. **Lexical entries**: book_sem, read_sem, john_sem
-2. **Trace interpretation**: interpTrace 1 yields g(1)
-3. **Predicate Abstraction**: λ-binds the trace at CP
-4. **Predicate Modification**: intersects with head noun
-5. **Definite description**: iota selects the unique satisfier
-
-### Theorems
-- `cp_meaning_correct`: the relative clause means λx.read(j,x)
-- `np_meaning_correct`: the modified NP means λx.book(x) ∧ read(j,x)
-- `the_book_correct`: ιx[book(x) ∧ read(j,x)] = book1
-- `np_assignment_independent`: bound variables don't leak
-
-### Architectural Note
-
-This module uses:
-- `Minimalism.Core.Basic` for syntactic structures with traces
-- `Minimalism.Bridge.Interface` for trace interpretation
-- `TruthConditional.Variables` for assignments and λ-abstraction
-- `TruthConditional.Modification` for Predicate Modification
-
-The derivation shows how Minimalist LF structures (with traces and
-movement) receive compositional semantic interpretations following
-Heim & Kratzer's framework.
--/
 
 end Minimalism.Bridge.RelativeClauses
