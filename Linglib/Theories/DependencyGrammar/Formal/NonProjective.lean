@@ -1,91 +1,198 @@
 import Linglib.Theories.DependencyGrammar.Core.Basic
 
 /-!
-# Non-Projective Dependencies
+# Mildly Non-Projective Dependency Structures
 
-Extension of the DG module for non-projective (crossing) dependencies,
-which handle long-distance phenomena (extraction, wh-movement, scrambling).
+Formalizes the structural theory of non-projectivity from:
 
-In projective dependency trees, no arcs cross. Non-projective dependencies
-arise when an element is displaced from its canonical position, creating
-crossing arcs — the DG analogue of movement/SLASH/composition.
+- Kuhlmann & Nivre (2006). Mildly Non-Projective Dependency Structures.
+  COLING/ACL 2006, pp. 507–514.
+- Kuhlmann (2013). Mildly Non-Projective Dependency Grammar.
+  Computational Linguistics 39(2):355–387.
+- Müller (2013). Unifying Everything. Language 89(4):920–950.
+- Hudson (1984, 1990, 2007). Word Grammar.
 
-## Connection to Müller (2013)
+## Core Concepts
 
-Müller §2.3: non-projective dependencies in DG correspond to:
-- Internal Merge in Minimalism (movement)
-- Head-Filler Schema in HPSG (SLASH mechanism)
-- Composition in CCG (function composition for extraction)
+Five structural constraints on dependency trees, ordered by restrictiveness:
 
-## References
+    projective ⊂ planar ⊂ well-nested ⊂ unrestricted
 
-- Hudson, R. (1984, 1990, 2007). Word Grammar.
-- Nivre, J. (2006). Constraints on Non-Projective Dependency Parsing.
-- Müller, S. (2013). Unifying Everything. Language 89(4):920–950.
+- **Projective**: every projection is an interval (gap degree 0, block-degree 1)
+- **Planar**: no edges cross when drawn above the sentence
+- **Well-nested**: no two disjoint subtrees interleave
+- **Gap degree**: max number of discontinuities in any node's projection
+- **Block-degree**: max number of contiguous blocks (= gap degree + 1 = LCFRS fan-out)
+- **Edge degree**: max number of non-dominated components spanned by any edge
+
+## Key Results
+
+- Well-nestedness + gap degree ≤ 1 covers 99.89% of PDT and DDT (K&N 2006 Table 1)
+- Block-degree = fan-out of extracted LCFRS grammar (Kuhlmann 2013, §7.3)
+- Bounded block-degree + well-nestedness → polynomial parsing (Kuhlmann 2013, Lemma 10)
+
+## Bridges
+
+- → `Core/Basic.lean`: `projection`, `isProjective`, `gaps`, `blocks`, `gapDegreeAt`, `blockDegreeAt`
+- → `Catena.lean`: blocks are special catenae (contiguous, connected)
+- → `Discontinuity.lean`: risen catenae witness non-projectivity
+- → `DependencyLength.lean`: non-projective orderings tend to longer dep length
 -/
 
 namespace DepGrammar
 
-/-! ## Non-projectivity detection -/
+-- ============================================================================
+-- §1: Arc-Crossing Detection
+-- ============================================================================
 
-/-- Check whether two dependencies cross (are non-projective with respect to each other).
-
-Two dependencies cross iff their spans overlap without one containing the other.
-Specifically, dep1 (h1, d1) crosses dep2 (h2, d2) iff the intervals [min(h1,d1), max(h1,d1)]
-and [min(h2,d2), max(h2,d2)] overlap but neither contains the other. -/
+/-- Two dependencies cross iff their spans overlap without containment.
+    (Kuhlmann & Nivre 2006, implicit in Definition 4) -/
 def depsCross (d1 d2 : Dependency) : Bool :=
   if d1 == d2 then false
   else if d1.headIdx == d2.headIdx then false
   else
     let (min1, max1) := (min d1.headIdx d1.depIdx, max d1.headIdx d1.depIdx)
     let (min2, max2) := (min d2.headIdx d2.depIdx, max d2.headIdx d2.depIdx)
-    -- They cross iff they overlap but neither contains the other
     ¬(max1 <= min2 || max2 <= min1 ||
       (min1 <= min2 && max2 <= max1) ||
       (min2 <= min1 && max1 <= max2))
 
-/-- Get all non-projective (crossing) dependencies from a tree. -/
+/-- All non-projective (crossing) dependencies in a tree. -/
 def nonProjectiveDeps (t : DepTree) : List Dependency :=
-  t.deps.filter λ d1 =>
-    t.deps.any λ d2 => depsCross d1 d2
+  t.deps.filter λ d1 => t.deps.any λ d2 => depsCross d1 d2
 
-/-- Check whether a specific dependency is non-projective in a tree. -/
+/-- Whether a specific dependency crosses other arcs in the tree. -/
 def isNonProjectiveDep (t : DepTree) (d : Dependency) : Bool :=
   t.deps.any λ d2 => depsCross d d2
 
-/-! ## Filler-gap dependencies -/
-
-/-- A filler-gap dependency is a non-projective dependency that models extraction.
-
-In DG, when a wh-phrase is fronted ("Who did you see __?"), the dependency
-from the verb to the wh-phrase crosses the dependencies within the clause,
-creating a non-projective arc.
-
-This is the DG analogue of:
-- Minimalism: Internal Merge (movement of wh-phrase)
-- HPSG: SLASH feature propagation + Head-Filler discharge
-- CCG: function composition enabling long-distance combination -/
-structure FillerGapDep where
-  /-- The underlying dependency -/
-  dep : Dependency
-  /-- The tree containing this dependency -/
-  tree : DepTree
-  /-- The dependency is part of the tree -/
-  inTree : dep ∈ tree.deps
-  /-- The dependency is non-projective (crosses other arcs) -/
-  nonProj : isNonProjectiveDep tree dep = true
-
-/-- Check whether a tree has any filler-gap (non-projective) dependencies. -/
+/-- Whether a tree has any non-projective dependencies. -/
 def hasFillerGap (t : DepTree) : Bool :=
   (nonProjectiveDeps t).length > 0
 
-/-! ## Well-formedness with non-projectivity -/
+-- ============================================================================
+-- §2: Filler-Gap Dependencies
+-- ============================================================================
 
-/-- A relaxed well-formedness check that allows non-projective dependencies.
+/-- A filler-gap dependency is a non-projective dependency modelling extraction.
 
-Standard `isWellFormed` from Basic.lean requires projectivity.
-This version drops the projectivity constraint, enabling trees with
-long-distance dependencies. -/
+In DG, wh-fronting creates crossing arcs — the analogue of:
+- Minimalism: Internal Merge (movement)
+- HPSG: SLASH feature propagation + Head-Filler discharge
+- CCG: function composition for extraction -/
+structure FillerGapDep where
+  dep : Dependency
+  tree : DepTree
+  inTree : dep ∈ tree.deps
+  nonProj : isNonProjectiveDep tree dep = true
+
+-- ============================================================================
+-- §3: Planarity (Kuhlmann & Nivre 2006, Definition 4)
+-- ============================================================================
+
+/-- Whether two positions are linked by an edge (in either direction). -/
+def linked (deps : List Dependency) (a b : Nat) : Bool :=
+  deps.any λ d =>
+    (d.headIdx == a && d.depIdx == b) || (d.headIdx == b && d.depIdx == a)
+
+/-- A dependency tree is **planar** if its edges can be drawn above the
+    sentence without crossing. Formally: no nodes a < b < c < d with
+    linked(a,c) ∧ linked(b,d).
+
+    (Kuhlmann & Nivre 2006, Definition 4; traced to Mel'čuk 1988) -/
+def DepTree.isPlanar (t : DepTree) : Bool :=
+  let deps := t.deps
+  let n := t.words.length
+  !(List.range n |>.any λ a =>
+    List.range n |>.any λ b =>
+      List.range n |>.any λ c =>
+        List.range n |>.any λ d =>
+          a < b && b < c && c < d && linked deps a c && linked deps b d)
+
+-- ============================================================================
+-- §4: Well-Nestedness (Kuhlmann & Nivre 2006, Definition 8;
+--     Kuhlmann 2013, §8.1)
+-- ============================================================================
+
+/-- Two subtrees **interleave** if there exist nodes l₁, r₁ in T₁ and
+    l₂, r₂ in T₂ such that l₁ < l₂ < r₁ < r₂.
+    (Kuhlmann & Nivre 2006, Definition 8) -/
+def projectionsInterleave (p1 p2 : List Nat) : Bool :=
+  p1.any λ l1 => p2.any λ l2 => p1.any λ r1 => p2.any λ r2 =>
+    l1 < l2 && l2 < r1 && r1 < r2
+
+/-- Two nodes are **disjoint** if neither dominates the other — i.e.,
+    neither appears in the other's projection. -/
+def disjoint (deps : List Dependency) (u v : Nat) : Bool :=
+  let pu := projection deps u
+  let pv := projection deps v
+  !(pu.contains v) && !(pv.contains u)
+
+/-- A dependency tree is **well-nested** if no two disjoint subtrees interleave.
+    (Kuhlmann & Nivre 2006, Definition 8)
+
+    Equivalent to: no sibling nodes u, v have blocks ū₁, ū₂ of u and
+    v̄₁, v̄₂ of v such that ū₁ < v̄₁ < ū₂ < v̄₂ (Kuhlmann 2013, Lemma 9). -/
+def DepTree.isWellNested (t : DepTree) : Bool :=
+  let deps := t.deps
+  let n := t.words.length
+  !(List.range n |>.any λ u =>
+    List.range n |>.any λ v =>
+      u != v && disjoint deps u v &&
+      projectionsInterleave (projection deps u) (projection deps v))
+
+-- ============================================================================
+-- §5: Edge Degree (Kuhlmann & Nivre 2006, Definition 9)
+-- ============================================================================
+
+/-- The **span** of an edge (i, j): the interval [min(i,j), max(i,j)].
+    (Kuhlmann & Nivre 2006, §3.3) -/
+def edgeSpan (d : Dependency) : List Nat :=
+  let lo := min d.headIdx d.depIdx
+  let hi := max d.headIdx d.depIdx
+  List.range (hi - lo + 1) |>.map (· + lo)
+
+/-- Find the root of a node's connected component by following head edges upward.
+    Returns the highest ancestor reachable. -/
+private def findRoot (deps : List Dependency) (node : Nat) (fuel : Nat) : Nat :=
+  match fuel with
+  | 0 => node
+  | fuel' + 1 =>
+    match deps.find? (·.depIdx == node) with
+    | some d => findRoot deps d.headIdx fuel'
+    | none => node
+
+/-- The **degree** of an edge e: the number of connected components in the
+    subgraph induced by span(e) whose root is NOT dominated by head(e).
+    (Kuhlmann & Nivre 2006, Definition 9)
+
+    Edge degree measures intervening "foreign" material within an arc's span. -/
+def edgeDegreeOf (deps : List Dependency) (d : Dependency) (fuel : Nat) : Nat :=
+  let spanNodes := edgeSpan d
+  let headProj := projection deps d.headIdx
+  -- For each node in the span that has no incoming edge from within the span
+  -- (i.e., is a local root), check if it's dominated by the head of d
+  let localRoots := spanNodes.filter λ node =>
+    node != d.headIdx && node != d.depIdx &&
+    !(deps.any λ dep => dep.depIdx == node && spanNodes.contains dep.headIdx)
+  -- Count those whose root is NOT in the head's projection
+  localRoots.filter (λ node =>
+    let root := findRoot deps node fuel
+    !(headProj.contains root)
+  ) |>.length
+
+/-- **Edge degree** of a tree: max edge degree over all edges.
+    (Kuhlmann & Nivre 2006, Definition 9)
+    Edge degree 0 ⟺ projective. -/
+def DepTree.edgeDegree (t : DepTree) : Nat :=
+  let fuel := t.words.length + 1
+  t.deps.map (edgeDegreeOf t.deps · fuel) |>.foldl max 0
+
+-- ============================================================================
+-- §6: Well-Formedness
+-- ============================================================================
+
+/-- Relaxed well-formedness allowing non-projective dependencies.
+    Drops the projectivity constraint from `isWellFormed`. -/
 def isWellFormedNonProj (t : DepTree) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
@@ -93,64 +200,347 @@ def isWellFormedNonProj (t : DepTree) : Bool :=
   checkDetNounAgr t &&
   checkVerbSubcat t
 
-/-- Non-projective well-formedness implies all structural constraints
-except projectivity hold. -/
+/-- Non-projective well-formedness implies unique heads and acyclicity. -/
 theorem nonProj_implies_structural (t : DepTree) :
     isWellFormedNonProj t = true →
     hasUniqueHeads t = true ∧ isAcyclic t = true := by
   intro h
   unfold isWellFormedNonProj at h
-  -- isWellFormedNonProj = hasUniqueHeads && isAcyclic && checkSubjVerbAgr && checkDetNounAgr && checkVerbSubcat
   revert h
   cases hasUniqueHeads t <;> cases isAcyclic t <;> simp [Bool.and]
 
-/-- Projective well-formedness implies non-projective well-formedness.
-
-A projective tree trivially satisfies the relaxed constraints. -/
+/-- Projective well-formedness implies non-projective well-formedness. -/
 theorem projective_implies_nonProj_wf (t : DepTree) :
     isWellFormed t = true → isWellFormedNonProj t = true := by
   unfold isWellFormed isWellFormedNonProj
-  intro h
-  revert h
+  intro h; revert h
   cases hasUniqueHeads t <;> cases isAcyclic t <;> cases isProjective t <;>
     cases checkSubjVerbAgr t <;> cases checkDetNounAgr t <;> cases checkVerbSubcat t <;>
     simp [Bool.and]
 
-/-! ## Example: wh-extraction -/
+-- ============================================================================
+-- §7: Example Trees from Kuhlmann & Nivre (2006)
+-- ============================================================================
 
-/-- Example: non-projective dependency from topicalization.
+/-! ### Figure 3 examples: gap degree, edge degree, well-nestedness -/
 
-"Beans, I know John likes"
-Word order: beans(0) I(1) know(2) John(3) likes(4)
-Dependencies:
-- subj: know(2) → I(1)        — projective: span [1,2]
-- comp: know(2) → likes(4)    — projective: span [2,4]
-- subj: likes(4) → John(3)    — projective: span [3,4]
-- obj: likes(4) → beans(0)    — NON-PROJECTIVE: span [0,4]
+/-- K&N 2006 Figure 3a: gd=0, ed=0, well-nested.
+    6 nodes, edges form nested (projective) structure.
+         j(0) ← 4(root)
+         i(1) ← 0
+         2 ← 1, 3 ← 1, 4 ← 1 → 5 -/
+def kn_fig3a : DepTree :=
+  { words := List.replicate 6 (Word.mk' "_" .NOUN)
+    deps := [ ⟨4, 0, .dep⟩, ⟨0, 1, .dep⟩
+            , ⟨1, 2, .dep⟩, ⟨1, 3, .dep⟩, ⟨1, 4, .dep⟩ ]
+    rootIdx := 5 }
 
-Arc obj(4→0) span [0,4] and arc subj(2→1) span [1,2]:
-- [1,2] is contained within [0,4] → not crossing per containment check.
+/-- K&N 2006 Figure 3b: gd=1, ed=1, well-nested.
+    Node i has projection [2, 3, 6] — one gap at (3, 6).
+    1 ← 0(root), 2 ← 1, 3 ← 2, 4 ← 1 → 5, 2 → 6 -/
+def kn_fig3b : DepTree :=
+  { words := List.replicate 7 (Word.mk' "_" .NOUN)
+    deps := [ ⟨0, 1, .dep⟩, ⟨1, 2, .dep⟩, ⟨2, 3, .dep⟩
+            , ⟨1, 4, .dep⟩, ⟨4, 5, .dep⟩, ⟨2, 6, .dep⟩ ]
+    rootIdx := 0 }
 
-Actually the crossing happens between obj(4→0) span [0,4] and comp(2→4) span [2,4]:
-- min1=0, max1=4, min2=2, max2=4
-- Neither contains the other? max1=max2=4, min1=0 < min2=2
-- [0,4] contains [2,4] → not crossing.
+/-- K&N 2006 Figure 3c: gd=2, ed=1, NOT well-nested.
+    Nodes i and j have interleaving projections.
+    i at 1: projection includes {2, 4}; j at 2: includes {3, 5}
+    These interleave: 2 < 3 < 4 < 5. -/
+def kn_fig3c : DepTree :=
+  { words := List.replicate 7 (Word.mk' "_" .NOUN)
+    deps := [ ⟨0, 1, .dep⟩, ⟨0, 2, .dep⟩, ⟨1, 3, .dep⟩
+            , ⟨2, 4, .dep⟩, ⟨1, 5, .dep⟩, ⟨2, 6, .dep⟩ ]
+    rootIdx := 0 }
 
-For TRUE crossing we need: arc from 1→3 and arc from 2→4.
-Consider scrambling: word order a(0) b(1) c(2) d(3)
-- dep 0→2 (span [0,2]) and dep 1→3 (span [1,3])
-- min1=0, max1=2, min2=1, max2=3
-- Neither contains the other: 0 ≤ 1 but 2 < 3; 1 > 0 so [1,3] doesn't contain [0,2]
-- This is genuine crossing! -/
+/-- Minimal crossing tree: arcs 0→2 and 1→3 cross. -/
 def nonProjectiveTree : DepTree :=
   { words := [ ⟨"A", .NOUN, {}⟩, ⟨"B", .VERB, {}⟩, ⟨"C", .NOUN, {}⟩, ⟨"D", .VERB, {}⟩ ]
-  , deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
-  , rootIdx := 0 }
+    deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
+    rootIdx := 0 }
 
-/-- The example tree has non-projective (crossing) dependencies. -/
-example : hasFillerGap nonProjectiveTree = true := by native_decide
+/-! ### Cross-serial dependencies (Kuhlmann 2013, Figure 1)
 
-/-- The example tree is NOT projective (per Basic.lean's `isProjective`). -/
+The canonical motivation for non-projectivity. In Dutch, verb–argument
+dependencies cross ("cross-serial"), producing a non-projective tree.
+In German, the same dependencies nest, producing a projective tree.
+
+Dutch: dat Jan₁ Piet₂ Marie₃ zag₁ helpen₂ lezen₃
+German: dass Jan₁ Piet₂ Marie₃ lesen₃ helfen₂ sah₁ -/
+
+/-- Dutch cross-serial: "dat Jan Piet Marie zag helpen lezen"
+    Dependencies: zag→Jan, helpen→Piet, lezen→Marie
+    These cross: zag(4)→Jan(1) spans helpen(5)→Piet(2). -/
+def dutchCrossSerial : DepTree :=
+  { words := [ Word.mk' "dat" .SCONJ, Word.mk' "Jan" .PROPN
+             , Word.mk' "Piet" .PROPN, Word.mk' "Marie" .PROPN
+             , Word.mk' "zag" .VERB, Word.mk' "helpen" .VERB
+             , Word.mk' "lezen" .VERB ]
+    deps := [ ⟨0, 4, .dep⟩       -- dat → zag
+            , ⟨4, 1, .nsubj⟩     -- zag ← Jan
+            , ⟨4, 5, .xcomp⟩     -- zag → helpen
+            , ⟨5, 2, .nsubj⟩     -- helpen ← Piet
+            , ⟨5, 6, .xcomp⟩     -- helpen → lezen
+            , ⟨6, 3, .nsubj⟩     -- lezen ← Marie
+            ]
+    rootIdx := 0 }
+
+/-- German nested: "dass Jan Piet Marie lesen helfen sah"
+    Same dependencies, but verbs are in reverse order → nested, projective. -/
+def germanNested : DepTree :=
+  { words := [ Word.mk' "dass" .SCONJ, Word.mk' "Jan" .PROPN
+             , Word.mk' "Piet" .PROPN, Word.mk' "Marie" .PROPN
+             , Word.mk' "lesen" .VERB, Word.mk' "helfen" .VERB
+             , Word.mk' "sah" .VERB ]
+    deps := [ ⟨0, 6, .dep⟩       -- dass → sah
+            , ⟨6, 1, .nsubj⟩     -- sah ← Jan
+            , ⟨6, 5, .xcomp⟩     -- sah → helfen
+            , ⟨5, 2, .nsubj⟩     -- helfen ← Piet
+            , ⟨5, 4, .xcomp⟩     -- helfen → lesen
+            , ⟨4, 3, .nsubj⟩     -- lesen ← Marie
+            ]
+    rootIdx := 0 }
+
+-- ============================================================================
+-- §8: Verified Properties
+-- ============================================================================
+
+/-! ### Projectivity -/
+
 example : isProjective nonProjectiveTree = false := by native_decide
+example : hasFillerGap nonProjectiveTree = true := by native_decide
+example : isProjective dutchCrossSerial = false := by native_decide
+example : isProjective germanNested = true := by native_decide
+
+/-! ### Gap degree and block-degree (Core/Basic.lean) -/
+
+example : DepTree.gapDegree germanNested = 0 := by native_decide
+example : DepTree.blockDegree germanNested = 1 := by native_decide
+
+example : DepTree.gapDegree dutchCrossSerial = 1 := by native_decide
+example : DepTree.blockDegree dutchCrossSerial = 2 := by native_decide
+
+example : DepTree.gapDegree nonProjectiveTree = 1 := by native_decide
+example : DepTree.blockDegree nonProjectiveTree = 2 := by native_decide
+
+/-! ### Planarity -/
+
+/-- German nested is planar (no crossing edges). -/
+example : DepTree.isPlanar germanNested = true := by native_decide
+
+/-- Dutch cross-serial is NOT planar (verb-argument edges cross). -/
+example : DepTree.isPlanar dutchCrossSerial = false := by native_decide
+
+/-- The minimal crossing tree is NOT planar. -/
+example : DepTree.isPlanar nonProjectiveTree = false := by native_decide
+
+/-! ### Well-nestedness -/
+
+/-- German nested is well-nested. -/
+example : DepTree.isWellNested germanNested = true := by native_decide
+
+/-- Dutch cross-serial: well-nested despite being non-projective.
+    The subtrees don't interleave because each verb dominates its argument. -/
+example : DepTree.isWellNested dutchCrossSerial = true := by native_decide
+
+/-- The minimal crossing tree is well-nested (gap degree 1, no interleaving
+    because the two subtrees {0,2} and {1,3} do interleave: 0 < 1 < 2 < 3.
+    Actually this IS interleaving — let's verify. -/
+example : DepTree.isWellNested nonProjectiveTree = false := by native_decide
+
+-- ============================================================================
+-- §9: Hierarchy Theorems
+-- ============================================================================
+
+/-- **Projective ⟺ gap degree 0**: a tree is projective iff no node's
+    projection has any gaps.
+    (Kuhlmann & Nivre 2006, Definition 3 + Definition 7) -/
+theorem projective_iff_gapDegree_zero (t : DepTree) :
+    isProjective t = true ↔ t.gapDegree = 0 := by
+  sorry -- TODO: unfold isProjective/isInterval/gapDegree; show isInterval ↔ gaps = []
+
+/-- **Projective ⟺ block-degree 1**: every node has exactly one block.
+    (Kuhlmann 2013, §7.1) -/
+theorem projective_iff_blockDegree_one (t : DepTree) :
+    isProjective t = true ↔ t.blockDegree = 1 := by
+  sorry -- TODO: blocks of an interval is a singleton list
+
+/-- **Block-degree = gap degree + 1** for non-empty projections.
+    (Kuhlmann 2013, §7.1 footnote 2) -/
+theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat)
+    (h : (projection deps root).length > 0) :
+    blockDegreeAt deps root = gapDegreeAt deps root + 1 := by
+  sorry -- TODO: #blocks = #gaps + 1 for non-empty sorted lists
+
+/-- **Projective ⊂ planar**: every projective tree is planar.
+    (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges) -/
+theorem projective_implies_planar (t : DepTree)
+    (h : isProjective t = true) : t.isPlanar = true := by
+  sorry -- TODO: yields are intervals ⟹ no crossing edges ⟹ planar
+
+/-- **Planar ⊂ well-nested**: every planar tree is well-nested.
+    A graph with interleaving subtrees cannot be drawn without crossing edges.
+    (Kuhlmann & Nivre 2006, §3.5) -/
+theorem planar_implies_wellNested (t : DepTree)
+    (h : t.isPlanar = true) : t.isWellNested = true := by
+  sorry -- TODO: interleaving projections force crossing edges
+
+/-- Dutch cross-serial witnesses the gap: non-projective yet well-nested.
+    (Kuhlmann & Nivre 2006, §4: 99.89% of treebank data is well-nested) -/
+theorem wellNested_not_projective_witness :
+    DepTree.isWellNested dutchCrossSerial = true ∧
+    isProjective dutchCrossSerial = false := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- The minimal crossing tree witnesses: not well-nested and not planar. -/
+theorem not_wellNested_witness :
+    DepTree.isWellNested nonProjectiveTree = false ∧
+    DepTree.isPlanar nonProjectiveTree = false := by
+  exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §10: Empirical Data (Kuhlmann & Nivre 2006, Table 1)
+-- ============================================================================
+
+/-- Treebank coverage data from Kuhlmann & Nivre (2006), Table 1.
+    Percentages scaled ×100 for Nat arithmetic. -/
+structure TreebankCoverage where
+  name : String
+  totalTrees : Nat
+  /-- Percentage ×100 of trees at each gap degree -/
+  gapDeg0 : Nat   -- projective (×100)
+  gapDeg1 : Nat
+  gapDeg2 : Nat
+  /-- Percentage ×100 of well-nested trees -/
+  wellNested : Nat
+  /-- Percentage ×100 of planar trees -/
+  planar : Nat
+  deriving Repr
+
+def pdt : TreebankCoverage :=
+  { name := "Prague Dependency Treebank"
+    totalTrees := 73088
+    gapDeg0 := 7685   -- 76.85%
+    gapDeg1 := 2272   -- 22.72%
+    gapDeg2 := 42      -- 0.42%
+    wellNested := 9989 -- 99.89%
+    planar := 8216     -- 82.16%
+  }
+
+def ddt : TreebankCoverage :=
+  { name := "Danish Dependency Treebank"
+    totalTrees := 4393
+    gapDeg0 := 8495   -- 84.95%
+    gapDeg1 := 1489   -- 14.89%
+    gapDeg2 := 16      -- 0.16%
+    wellNested := 9989 -- 99.89%
+    planar := 8641     -- 86.41%
+  }
+
+/-- Well-nestedness covers ≥99% of both treebanks. -/
+theorem wellNested_near_universal :
+    pdt.wellNested ≥ 9900 ∧ ddt.wellNested ≥ 9900 := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Gap degree ≤ 1 covers ≥99% of both treebanks. -/
+theorem gapDeg_leq1_sufficient :
+    pdt.gapDeg0 + pdt.gapDeg1 ≥ 9900 ∧
+    ddt.gapDeg0 + ddt.gapDeg1 ≥ 9900 := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Planarity covers far less than well-nestedness. -/
+theorem planarity_insufficient :
+    pdt.planar < pdt.wellNested ∧ ddt.planar < ddt.wellNested := by
+  exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §11: Extended Empirical Data (Kuhlmann 2013, Tables 3–4)
+-- ============================================================================
+
+/-- Kuhlmann (2013) Table 3: rule/tree loss under fan-out bounds.
+    Five languages from the CoNLL 2006 shared task. -/
+structure LCFRSCoverage where
+  name : String
+  totalRules : Nat
+  totalTrees : Nat
+  /-- Rules lost at fan-out = 1 (projective only) -/
+  rulesLostFanout1 : Nat
+  /-- Trees lost at fan-out = 1 -/
+  treesLostFanout1 : Nat
+  /-- Rules lost at fan-out ≤ 2 -/
+  rulesLostFanout2 : Nat
+  /-- Trees lost at fan-out ≤ 2 -/
+  treesLostFanout2 : Nat
+  /-- Rules lost when also requiring well-nestedness (with fan-out ≤ 2) -/
+  rulesLostWN : Nat
+  /-- Trees lost when also requiring well-nestedness -/
+  treesLostWN : Nat
+  deriving Repr
+
+def arabic : LCFRSCoverage :=
+  { name := "Arabic", totalRules := 5839, totalTrees := 1460
+    rulesLostFanout1 := 411, treesLostFanout1 := 163
+    rulesLostFanout2 := 1, treesLostFanout2 := 1
+    rulesLostWN := 2, treesLostWN := 2 }
+
+def czech : LCFRSCoverage :=
+  { name := "Czech", totalRules := 1322111, totalTrees := 72703
+    rulesLostFanout1 := 22283, treesLostFanout1 := 16831
+    rulesLostFanout2 := 328, treesLostFanout2 := 312
+    rulesLostWN := 407, treesLostWN := 382 }
+
+def danish : LCFRSCoverage :=
+  { name := "Danish", totalRules := 99576, totalTrees := 5190
+    rulesLostFanout1 := 1229, treesLostFanout1 := 811
+    rulesLostFanout2 := 11, treesLostFanout2 := 9
+    rulesLostWN := 17, treesLostWN := 15 }
+
+def slovene : LCFRSCoverage :=
+  { name := "Slovene", totalRules := 30284, totalTrees := 1534
+    rulesLostFanout1 := 530, treesLostFanout1 := 340
+    rulesLostFanout2 := 14, treesLostFanout2 := 11
+    rulesLostWN := 17, treesLostWN := 13 }
+
+def turkish : LCFRSCoverage :=
+  { name := "Turkish", totalRules := 62507, totalTrees := 4997
+    rulesLostFanout1 := 924, treesLostFanout1 := 580
+    rulesLostFanout2 := 54, treesLostFanout2 := 33
+    rulesLostWN := 68, treesLostWN := 43 }
+
+/-- Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages. -/
+theorem fanout2_good_coverage :
+    arabic.treesLostFanout2 ≤ 1 ∧
+    czech.treesLostFanout2 * 100 / czech.totalTrees < 1 ∧  -- < 1%
+    danish.treesLostFanout2 * 100 / danish.totalTrees < 1 ∧
+    slovene.treesLostFanout2 * 100 / slovene.totalTrees < 1 ∧
+    turkish.treesLostFanout2 * 100 / turkish.totalTrees < 1 := by
+  exact ⟨by native_decide, by native_decide, by native_decide,
+         by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §12: Bridge Theorems
+-- ============================================================================
+
+/-- Non-projective dependencies → gap degree ≥ 1. -/
+theorem nonProjective_implies_gapDeg_ge1 (t : DepTree)
+    (h : isProjective t = false) : t.gapDegree ≥ 1 := by
+  sorry -- TODO: ¬isProjective ↔ some projection is not an interval ↔ has a gap
+
+/-- Dutch cross-serial is non-projective but well-nested with gap degree 1.
+    This exemplifies K&N's key finding: the vast majority of non-projective
+    structures in treebanks are well-nested with low gap degree. -/
+theorem dutch_mildly_nonProjective :
+    isProjective dutchCrossSerial = false ∧
+    DepTree.isWellNested dutchCrossSerial = true ∧
+    DepTree.gapDegree dutchCrossSerial = 1 := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+/-- German nested is fully projective (gap degree 0), confirming that
+    the nested verb order avoids crossing dependencies. -/
+theorem german_fully_projective :
+    isProjective germanNested = true ∧
+    DepTree.gapDegree germanNested = 0 := by
+  exact ⟨by native_decide, by native_decide⟩
 
 end DepGrammar

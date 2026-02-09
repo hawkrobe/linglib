@@ -119,27 +119,11 @@ def DepTree.isCatena' (t : DepTree) (nodes : List Nat) : Bool :=
 -- Constituent (complete subtree)
 -- ============================================================================
 
-/-- All transitive dependents of a root (directed BFS on head → dep edges). -/
-def descendants (deps : List Dependency) (root : Nat) : List Nat :=
-  let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : List Nat :=
-    match fuel, queue with
-    | 0, _ => visited
-    | _, [] => visited
-    | fuel' + 1, node :: rest =>
-      if visited.contains node then go rest visited fuel'
-      else
-        let children := deps.filter (·.headIdx == node) |>.map (·.depIdx)
-        go (rest ++ children) (node :: visited) fuel'
-  go [root] [] (deps.length * (deps.length + 1) + 2)
-
-/-- Complete subtree rooted at a node: the root plus all descendants. -/
-def subtree (deps : List Dependency) (root : Nat) : List Nat :=
-  descendants deps root
-
-/-- Check if a node set equals the complete subtree rooted at some node. -/
+/-- Check if a node set equals the complete subtree (projection) rooted at
+    some node. Uses `projection` from Core/Basic.lean. -/
 def isConstituent (deps : List Dependency) (n : Nat) (nodes : List Nat) : Bool :=
   List.range n |>.any fun root =>
-    let sub := subtree deps root
+    let sub := projection deps root
     nodes.length == sub.length &&
     nodes.all sub.contains &&
     sub.all nodes.contains

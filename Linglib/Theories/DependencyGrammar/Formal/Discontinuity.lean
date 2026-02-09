@@ -99,15 +99,10 @@ inductive RisingType where
 -- §2: Risen Catenae
 -- ============================================================================
 
-/-- Check if a list of node indices is contiguous (no gaps in the sequence). -/
+/-- Check if a list of node indices is contiguous (no gaps in the sequence).
+    Delegates to `isInterval` from Core/Basic.lean after sorting. -/
 def isContiguous (nodes : List Nat) : Bool :=
-  match nodes with
-  | [] => true
-  | _ =>
-    let sorted := nodes.mergeSort (· ≤ ·)
-    let min_ := sorted.head!
-    let max_ := sorted.getLast!
-    max_ - min_ + 1 == sorted.length
+  isInterval (nodes.mergeSort (· ≤ ·))
 
 /-- A **risen catena** (Osborne 2019, Ch 7 §7.10) is a catena whose string yield
     is not contiguous — the catena is connected in the dependency tree but its

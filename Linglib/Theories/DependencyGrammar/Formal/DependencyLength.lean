@@ -74,22 +74,12 @@ def meanDepLengthScaled (t : DepTree) : Nat :=
   let n := t.words.length
   if n == 0 then 0 else totalDepLength t * 100 / n
 
-/-- Count descendants of a node via transitive closure of the dependency relation.
+/-- Count descendants of a node via `projection` from Core/Basic.lean.
 
-`subtreeSize t idx` counts all words transitively dominated by word at `idx`.
-Used by Gesetz der wachsenden Glieder (short-before-long ordering). -/
+`subtreeSize t idx` counts all words transitively dominated by word at `idx`
+(excluding the node itself). Used by Gesetz der wachsenden Glieder. -/
 def subtreeSize (t : DepTree) (idx : Nat) : Nat :=
-  let directDeps := t.deps.filter (·.headIdx == idx) |>.map (·.depIdx)
-  let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : Nat :=
-    match fuel, queue with
-    | 0, _ => visited.length
-    | _, [] => visited.length
-    | fuel' + 1, node :: rest =>
-      if visited.contains node then go rest visited fuel'
-      else
-        let children := t.deps.filter (·.headIdx == node) |>.map (·.depIdx)
-        go (rest ++ children) (node :: visited) fuel'
-  go directDeps [] (t.words.length + 1)
+  (projection t.deps idx).length - 1
 
 -- ============================================================================
 -- Head Direction

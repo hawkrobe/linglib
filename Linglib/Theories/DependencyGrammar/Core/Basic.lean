@@ -42,6 +42,93 @@ def DepTree.toGraph (t : DepTree) : DepGraph :=
 
 end DependenciesAndTrees
 
+-- ============================================================================
+-- Projection: the foundational primitive for non-projectivity theory
+-- ============================================================================
+
+section Projection
+
+/-- **Projection** π(i): the yield of node i — all nodes it transitively
+    dominates, including itself — sorted in ascending order.
+
+    The projection is the central primitive of Kuhlmann & Nivre (2006) and
+    Kuhlmann (2013). Projectivity, gap degree, block-degree, edge degree,
+    and well-nestedness are all defined in terms of projections.
+
+    A dependency graph is **projective** iff every projection is an interval
+    (Kuhlmann & Nivre 2006, Definition 3). -/
+def projection (deps : List Dependency) (root : Nat) : List Nat :=
+  let fuel := deps.length * (deps.length + 1) + 2
+  let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : List Nat :=
+    match fuel, queue with
+    | 0, _ => visited
+    | _, [] => visited
+    | fuel' + 1, node :: rest =>
+      if visited.contains node then go rest visited fuel'
+      else
+        let children := deps.filter (·.headIdx == node) |>.map (·.depIdx)
+        go (rest ++ children) (node :: visited) fuel'
+  (go [root] [] fuel).mergeSort (· ≤ ·)
+
+/-- Whether a sorted list of positions forms an interval [min..max] with no
+    internal gaps. A projection is an interval iff its node has gap degree 0. -/
+def isInterval (sorted : List Nat) : Bool :=
+  match sorted with
+  | [] | [_] => true
+  | _ => sorted.getLast! - sorted.head! + 1 == sorted.length
+
+/-- The **gaps** in a sorted projection: pairs (jₖ, jₖ₊₁) adjacent in the
+    projection where jₖ₊₁ − jₖ > 1.
+    (Kuhlmann & Nivre 2006, Definition 6; Kuhlmann 2013, §7.1) -/
+def gaps (sorted : List Nat) : List (Nat × Nat) :=
+  sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
+
+/-- The **blocks** of a sorted projection: maximal contiguous segments.
+    (Kuhlmann 2013, §4.1)
+
+    Example: projection [1, 2, 5, 6, 7] → blocks [[1, 2], [5, 6, 7]]
+
+    The number of blocks equals gap degree + 1 and corresponds to the
+    fan-out of the LCFRS rule extracted for that node (Kuhlmann 2013, §7.3). -/
+def blocks (sorted : List Nat) : List (List Nat) :=
+  match sorted with
+  | [] => []
+  | first :: rest =>
+    let (result, current) := rest.foldl (λ (acc, cur) n =>
+      match cur.getLast? with
+      | some last => if n == last + 1 then (acc, cur ++ [n])
+                     else (acc ++ [cur], [n])
+      | none => (acc, [n])
+    ) ([], [first])
+    result ++ [current]
+
+/-- **Gap degree** of a node: number of gaps in its projection.
+    (Kuhlmann & Nivre 2006, Definition 6) -/
+def gapDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
+  (gaps (projection deps root)).length
+
+/-- **Gap degree** of a tree: max gap degree over all nodes.
+    (Kuhlmann & Nivre 2006, Definition 7)
+    Gap degree 0 ⟺ projective. -/
+def DepTree.gapDegree (t : DepTree) : Nat :=
+  List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
+
+/-- **Block-degree** of a node: number of blocks in its projection.
+    (Kuhlmann 2013, §7.1)
+    Block-degree = gap degree + 1 = fan-out of extracted LCFRS rule. -/
+def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
+  (blocks (projection deps root)).length
+
+/-- **Block-degree** of a tree: max block-degree over all nodes.
+    (Kuhlmann 2013, §7.1)
+    Block-degree 1 ⟺ projective.
+    Bounded block-degree + well-nestedness ⟺ polynomial parsing
+    (Kuhlmann 2013, Lemma 10). -/
+def DepTree.blockDegree (t : DepTree) : Nat :=
+  List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
+
+end Projection
+
 section ArgumentStructure
 
 /-- Direction of a dependent relative to head. -/
@@ -90,21 +177,15 @@ def isAcyclic (t : DepTree) : Bool :=
           | none => true
     follow start [] (n + 1)
 
-/-- Check projectivity: no crossing dependencies. -/
+/-- Check projectivity: every node's projection is an interval.
+    (Kuhlmann & Nivre 2006, Definition 3)
+
+    Equivalent to: no two dependency arcs cross.
+    Equivalent to: gap degree = 0.
+    Equivalent to: block-degree = 1. -/
 def isProjective (t : DepTree) : Bool :=
-  t.deps.all λ d1 =>
-    t.deps.all λ d2 =>
-      if d1 == d2 then true
-      else
-        if d1.headIdx == d2.headIdx then true
-        else
-          let (h1, d1i) := (d1.headIdx, d1.depIdx)
-          let (h2, d2i) := (d2.headIdx, d2.depIdx)
-          let (min1, max1) := (min h1 d1i, max h1 d1i)
-          let (min2, max2) := (min h2 d2i, max h2 d2i)
-          max1 <= min2 || max2 <= min1 ||
-          (min1 <= min2 && max2 <= max1) ||
-          (min2 <= min1 && max1 <= max2)
+  List.range t.words.length |>.all λ i =>
+    isInterval (projection t.deps i)
 
 end WellFormedness
 
