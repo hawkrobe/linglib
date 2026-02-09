@@ -134,6 +134,7 @@ import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Negation.Basic
+import Linglib.Phenomena.NonProjectivity.Data
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Plurals.Basic

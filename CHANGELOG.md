@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.117.0] - 2026-02-09
+
+### Added
+- **Core/Basic.lean**: Sorry'd projection axioms (`projection_chain'`, `projection_nonempty`). List helper lemmas: `foldl_max_ge_init`, `foldl_max_ge_mem`, `foldl_max_zero_iff` (proven), `foldl_max_pos_of_mem_pos` (proven), `foldl_max_le_bound` (proven), `foldl_max_const` (proven). Sorry'd list-projection lemmas: `isInterval_iff_gaps_nil`, `blocks_length_eq_gaps_length_succ`.
+- **Phenomena/NonProjectivity/Data.lean**: Extracted treebank empirical data from NonProjective.lean. `TreebankCoverage` + `pdt`/`ddt` (K&N 2006 Table 1), `LCFRSCoverage` + `arabic`/`czech`/`danish`/`slovene`/`turkish` (Kuhlmann 2013 Tables 3-4).
+
+### Changed
+- **NonProjective.lean**: Proved 4 of 6 hierarchy theorems (modulo sorry'd axioms about `projection` output properties). `projective_iff_gapDegree_zero` (Thm 1, proven), `projective_iff_blockDegree_one` (Thm 2, proven, added `t.words.length > 0` hypothesis), `blockDegree_eq_gapDegree_succ` (Thm 3, proven), `nonProjective_implies_gapDeg_ge1` (Thm 6, proven). `projective_implies_planar` (Thm 4) and `planar_implies_wellNested` (Thm 5) remain sorry'd — require edge-projection structural lemmas. Extracted empirical data to Phenomena/, verification theorems remain and reference `Phenomena.*`.
+
 ## [0.116.0] - 2026-02-09
 
 ### Added

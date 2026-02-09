@@ -8,6 +8,7 @@ References: Hudson (1984, 1990, 2007), Gibson (2025) Syntax, MIT Press.
 -/
 
 import Linglib.Core.Basic
+import Mathlib.Data.List.Basic
 
 namespace DepGrammar
 
@@ -126,6 +127,123 @@ def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
     (Kuhlmann 2013, Lemma 10). -/
 def DepTree.blockDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
+
+-- ============================================================================
+-- Projection Axioms (properties of BFS output)
+-- ============================================================================
+
+/-- The output of `projection` is strictly increasing (sorted, no duplicates).
+    Proof sketch: BFS visits each node at most once (visited check), then
+    `mergeSort` produces a sorted list. Since visited prevents duplicates,
+    the sorted list is strictly increasing. -/
+theorem projection_chain' (deps : List Dependency) (root : Nat) :
+    (projection deps root).IsChain (· < ·) := by
+  sorry -- TODO: prove from BFS visited-set dedup + mergeSort properties
+
+/-- The output of `projection` is non-empty (root is always included).
+    Proof sketch: root is the initial queue element, and since visited starts
+    empty, root is always added to visited on the first step. -/
+theorem projection_nonempty (deps : List Dependency) (root : Nat) :
+    projection deps root ≠ [] := by
+  sorry -- TODO: prove root ∈ go [root] [] fuel, then mergeSort preserves non-emptiness
+
+-- ============================================================================
+-- List Helper Lemmas (for hierarchy theorem proofs)
+-- ============================================================================
+
+/-- For a strictly increasing list, `isInterval = true` iff `gaps` is empty.
+
+    Forward: `isInterval` says `last - first + 1 = length`. For Chain' lists,
+    consecutive elements differ by ≥ 1. If any gap exists (diff > 1), the total
+    span exceeds length - 1, contradicting isInterval.
+    Backward: no gaps + Chain' → all consecutive diffs = 1 → span = length - 1. -/
+theorem isInterval_iff_gaps_nil (ls : List Nat) (h : ls.IsChain (· < ·)) :
+    isInterval ls = true ↔ gaps ls = [] := by
+  sorry -- TODO: induction on ls; arithmetic on sorted lists
+
+/-- For a non-empty strictly increasing list,
+    `(blocks ls).length = (gaps ls).length + 1`.
+
+    Proof sketch: induction following the `foldl` in `blocks`. Starting with one
+    block, each gap starts a new block (acc grows by 1) while no-gap extends the
+    current block (acc unchanged). So #blocks = 1 + #gaps. -/
+theorem blocks_length_eq_gaps_length_succ (ls : List Nat)
+    (hne : ls ≠ []) (hc : ls.IsChain (· < ·)) :
+    (blocks ls).length = (gaps ls).length + 1 := by
+  sorry -- TODO: induction on ls following foldl structure
+
+/-- `foldl max init ls ≥ init`. -/
+theorem foldl_max_ge_init (ls : List Nat) (init : Nat) :
+    ls.foldl max init ≥ init := by
+  induction ls generalizing init with
+  | nil => simp [List.foldl]
+  | cons a as ih =>
+    simp only [List.foldl]
+    have := ih (max init a)
+    omega
+
+/-- `foldl max init ls ≥ x` for any `x ∈ ls`. -/
+theorem foldl_max_ge_mem (ls : List Nat) (init : Nat) (x : Nat)
+    (hx : x ∈ ls) : ls.foldl max init ≥ x := by
+  induction ls generalizing init with
+  | nil => contradiction
+  | cons a as ih =>
+    simp only [List.foldl]
+    rcases List.mem_cons.mp hx with rfl | h
+    · have := foldl_max_ge_init as (max init x)
+      omega
+    · exact ih (max init a) h
+
+/-- `List.foldl max 0 ls = 0` iff every element of `ls` is 0. -/
+theorem foldl_max_zero_iff (ls : List Nat) :
+    ls.foldl max 0 = 0 ↔ ∀ x ∈ ls, x = 0 := by
+  constructor
+  · intro hfold x hx
+    have hge := foldl_max_ge_mem ls 0 x hx
+    omega
+  · intro hall
+    induction ls with
+    | nil => rfl
+    | cons a as ih =>
+      simp only [List.foldl]
+      have ha : a = 0 := hall a (List.mem_cons.mpr (Or.inl rfl))
+      subst ha
+      have : max 0 0 = 0 := by omega
+      rw [this]
+      exact ih (λ x hx => hall x (List.mem_cons.mpr (Or.inr hx)))
+
+/-- If some element of `ls` is positive, then `List.foldl max 0 ls > 0`. -/
+theorem foldl_max_pos_of_mem_pos (ls : List Nat) (x : Nat)
+    (hx : x ∈ ls) (hpos : x > 0) :
+    ls.foldl max 0 > 0 := by
+  have hge := foldl_max_ge_mem ls 0 x hx
+  omega
+
+/-- `foldl max init ls ≤ bound` when `init ≤ bound` and all elements `≤ bound`. -/
+theorem foldl_max_le_bound (ls : List Nat) (init bound : Nat)
+    (hinit : init ≤ bound) (hall : ∀ x ∈ ls, x ≤ bound) :
+    ls.foldl max init ≤ bound := by
+  induction ls generalizing init with
+  | nil => simpa [List.foldl]
+  | cons a as ih =>
+    simp only [List.foldl]
+    apply ih (max init a)
+    · have := hall a (.head _)
+      omega
+    · exact λ x hx => hall x (.tail _ hx)
+
+/-- `foldl max 0 ls = k` when all elements are `k` and the list is non-empty. -/
+theorem foldl_max_const (ls : List Nat) (k : Nat)
+    (hne : ls ≠ []) (hall : ∀ x ∈ ls, x = k) :
+    ls.foldl max 0 = k := by
+  apply Nat.le_antisymm
+  · exact foldl_max_le_bound ls 0 k (Nat.zero_le _)
+      (λ x hx => Nat.le_of_eq (hall x hx))
+  · match ls, hne with
+    | a :: rest, _ =>
+      have ha : a = k := hall a (.head _)
+      have := foldl_max_ge_mem (a :: rest) 0 a (.head _)
+      omega
 
 end Projection
 

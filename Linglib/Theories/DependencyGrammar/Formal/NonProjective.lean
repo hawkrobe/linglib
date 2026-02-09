@@ -1,4 +1,5 @@
 import Linglib.Theories.DependencyGrammar.Core.Basic
+import Linglib.Phenomena.NonProjectivity.Data
 
 /-!
 # Mildly Non-Projective Dependency Structures
@@ -358,33 +359,117 @@ example : DepTree.isWellNested nonProjectiveTree = false := by native_decide
     (Kuhlmann & Nivre 2006, Definition 3 + Definition 7) -/
 theorem projective_iff_gapDegree_zero (t : DepTree) :
     isProjective t = true ↔ t.gapDegree = 0 := by
-  sorry -- TODO: unfold isProjective/isInterval/gapDegree; show isInterval ↔ gaps = []
+  unfold isProjective DepTree.gapDegree
+  constructor
+  · -- Forward: all isInterval → gapDegree = 0
+    intro hall
+    rw [foldl_max_zero_iff]
+    intro x hx
+    rw [List.mem_map] at hx
+    obtain ⟨i, hi, rfl⟩ := hx
+    unfold gapDegreeAt
+    have hiv : isInterval (projection t.deps i) = true := by
+      rw [List.all_eq_true] at hall
+      exact hall i hi
+    have := (isInterval_iff_gaps_nil _ (projection_chain' _ _)).mp hiv
+    simp [this]
+  · -- Backward: gapDegree = 0 → all isInterval
+    intro hzero
+    rw [foldl_max_zero_iff] at hzero
+    rw [List.all_eq_true]
+    intro i hi
+    rw [(isInterval_iff_gaps_nil _ (projection_chain' _ _))]
+    have := hzero (gapDegreeAt t.deps i)
+      (List.mem_map.mpr ⟨i, hi, rfl⟩)
+    unfold gapDegreeAt at this
+    exact List.eq_nil_of_length_eq_zero this
 
 /-- **Projective ⟺ block-degree 1**: every node has exactly one block.
-    (Kuhlmann 2013, §7.1) -/
-theorem projective_iff_blockDegree_one (t : DepTree) :
+    (Kuhlmann 2013, §7.1)
+    Requires at least one word (blockDegree of empty tree is 0, not 1).
+
+    Proof: projective ↔ gap degree 0 (Theorem 1). When gap degree = 0,
+    every gapDegreeAt = 0, so by blocks_length = gaps_length + 1,
+    every blockDegreeAt = 1, so foldl max 0 = 1. -/
+theorem projective_iff_blockDegree_one (t : DepTree)
+    (hne_tree : t.words.length > 0) :
     isProjective t = true ↔ t.blockDegree = 1 := by
-  sorry -- TODO: blocks of an interval is a singleton list
+  rw [projective_iff_gapDegree_zero]
+  unfold DepTree.gapDegree DepTree.blockDegree
+  constructor
+  · -- gapDegree = 0 → blockDegree = 1
+    intro hgap
+    have hall_gap : ∀ x ∈ (List.range t.words.length).map (gapDegreeAt t.deps), x = 0 :=
+      (foldl_max_zero_iff _).mp hgap
+    -- Every blockDegreeAt = 1
+    have hall_block : ∀ x ∈ (List.range t.words.length).map (blockDegreeAt t.deps), x = 1 := by
+      intro x hx
+      rw [List.mem_map] at hx
+      obtain ⟨i, hi, rfl⟩ := hx
+      have hgap_i : gapDegreeAt t.deps i = 0 :=
+        hall_gap _ (List.mem_map.mpr ⟨i, hi, rfl⟩)
+      unfold blockDegreeAt gapDegreeAt at *
+      rw [blocks_length_eq_gaps_length_succ _ (projection_nonempty t.deps i)
+          (projection_chain' t.deps i)]
+      omega
+    -- foldl max 0 of all-1 nonempty list = 1
+    have hne : (List.range t.words.length).map (blockDegreeAt t.deps) ≠ [] := by
+      intro h
+      have h1 : ((List.range t.words.length).map (blockDegreeAt t.deps)).length = 0 := by
+        rw [h]; rfl
+      simp only [List.length_map, List.length_range] at h1
+      exact absurd h1 (by omega)
+    exact foldl_max_const _ 1 hne hall_block
+  · -- blockDegree = 1 → gapDegree = 0
+    intro hblock
+    rw [foldl_max_zero_iff]
+    intro x hx
+    rw [List.mem_map] at hx
+    obtain ⟨i, hi, rfl⟩ := hx
+    -- blockDegreeAt i ≤ 1 (since max is 1)
+    have hblock_bound : blockDegreeAt t.deps i ≤ 1 := by
+      have hmem : blockDegreeAt t.deps i ∈
+          (List.range t.words.length).map (blockDegreeAt t.deps) :=
+        List.mem_map.mpr ⟨i, hi, rfl⟩
+      have hge := foldl_max_ge_mem _ 0 _ hmem
+      omega
+    unfold blockDegreeAt gapDegreeAt at *
+    rw [blocks_length_eq_gaps_length_succ _ (projection_nonempty t.deps i)
+        (projection_chain' t.deps i)] at hblock_bound
+    omega
 
 /-- **Block-degree = gap degree + 1** for non-empty projections.
     (Kuhlmann 2013, §7.1 footnote 2) -/
 theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat)
     (h : (projection deps root).length > 0) :
     blockDegreeAt deps root = gapDegreeAt deps root + 1 := by
-  sorry -- TODO: #blocks = #gaps + 1 for non-empty sorted lists
+  unfold blockDegreeAt gapDegreeAt
+  have hne : projection deps root ≠ [] := by
+    intro heq; simp [heq] at h
+  exact blocks_length_eq_gaps_length_succ
+    (projection deps root) hne (projection_chain' deps root)
 
 /-- **Projective ⊂ planar**: every projective tree is planar.
-    (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges) -/
+    (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges)
+
+    Proof approach: if d₁ = (a, c) and d₂ = (b, d) with a < b < c < d cross,
+    then b is in π(a) but not adjacent to a's other dependents — contradicting
+    that π(a) is an interval containing both a and c but not all of [a..c].
+    Formalizing this requires relating edge spans to projection membership. -/
 theorem projective_implies_planar (t : DepTree)
     (h : isProjective t = true) : t.isPlanar = true := by
-  sorry -- TODO: yields are intervals ⟹ no crossing edges ⟹ planar
+  sorry -- TODO: requires edge_in_projection lemma linking deps to projections
 
 /-- **Planar ⊂ well-nested**: every planar tree is well-nested.
     A graph with interleaving subtrees cannot be drawn without crossing edges.
-    (Kuhlmann & Nivre 2006, §3.5) -/
+    (Kuhlmann & Nivre 2006, §3.5)
+
+    Proof approach: if π(u) and π(v) interleave with l₁ < l₂ < r₁ < r₂,
+    there must be edges on the path from l₂ to v and from r₁ to u that cross,
+    contradicting planarity. -/
 theorem planar_implies_wellNested (t : DepTree)
     (h : t.isPlanar = true) : t.isWellNested = true := by
-  sorry -- TODO: interleaving projections force crossing edges
+  sorry -- TODO: requires projection_subset lemma relating dominance to projection
 
 /-- Dutch cross-serial witnesses the gap: non-projective yet well-nested.
     (Kuhlmann & Nivre 2006, §4: 99.89% of treebank data is well-nested) -/
@@ -400,121 +485,35 @@ theorem not_wellNested_witness :
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §10: Empirical Data (Kuhlmann & Nivre 2006, Table 1)
+-- §10: Empirical Data Verification
+-- (Data in Phenomena/NonProjectivity/Data.lean)
 -- ============================================================================
 
-/-- Treebank coverage data from Kuhlmann & Nivre (2006), Table 1.
-    Percentages scaled ×100 for Nat arithmetic. -/
-structure TreebankCoverage where
-  name : String
-  totalTrees : Nat
-  /-- Percentage ×100 of trees at each gap degree -/
-  gapDeg0 : Nat   -- projective (×100)
-  gapDeg1 : Nat
-  gapDeg2 : Nat
-  /-- Percentage ×100 of well-nested trees -/
-  wellNested : Nat
-  /-- Percentage ×100 of planar trees -/
-  planar : Nat
-  deriving Repr
-
-def pdt : TreebankCoverage :=
-  { name := "Prague Dependency Treebank"
-    totalTrees := 73088
-    gapDeg0 := 7685   -- 76.85%
-    gapDeg1 := 2272   -- 22.72%
-    gapDeg2 := 42      -- 0.42%
-    wellNested := 9989 -- 99.89%
-    planar := 8216     -- 82.16%
-  }
-
-def ddt : TreebankCoverage :=
-  { name := "Danish Dependency Treebank"
-    totalTrees := 4393
-    gapDeg0 := 8495   -- 84.95%
-    gapDeg1 := 1489   -- 14.89%
-    gapDeg2 := 16      -- 0.16%
-    wellNested := 9989 -- 99.89%
-    planar := 8641     -- 86.41%
-  }
-
-/-- Well-nestedness covers ≥99% of both treebanks. -/
+/-- Well-nestedness covers ≥99% of both treebanks (K&N 2006 Table 1). -/
 theorem wellNested_near_universal :
-    pdt.wellNested ≥ 9900 ∧ ddt.wellNested ≥ 9900 := by
+    Phenomena.pdt.wellNested ≥ 9900 ∧ Phenomena.ddt.wellNested ≥ 9900 := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Gap degree ≤ 1 covers ≥99% of both treebanks. -/
 theorem gapDeg_leq1_sufficient :
-    pdt.gapDeg0 + pdt.gapDeg1 ≥ 9900 ∧
-    ddt.gapDeg0 + ddt.gapDeg1 ≥ 9900 := by
+    Phenomena.pdt.gapDeg0 + Phenomena.pdt.gapDeg1 ≥ 9900 ∧
+    Phenomena.ddt.gapDeg0 + Phenomena.ddt.gapDeg1 ≥ 9900 := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Planarity covers far less than well-nestedness. -/
 theorem planarity_insufficient :
-    pdt.planar < pdt.wellNested ∧ ddt.planar < ddt.wellNested := by
+    Phenomena.pdt.planar < Phenomena.pdt.wellNested ∧
+    Phenomena.ddt.planar < Phenomena.ddt.wellNested := by
   exact ⟨by native_decide, by native_decide⟩
 
--- ============================================================================
--- §11: Extended Empirical Data (Kuhlmann 2013, Tables 3–4)
--- ============================================================================
-
-/-- Kuhlmann (2013) Table 3: rule/tree loss under fan-out bounds.
-    Five languages from the CoNLL 2006 shared task. -/
-structure LCFRSCoverage where
-  name : String
-  totalRules : Nat
-  totalTrees : Nat
-  /-- Rules lost at fan-out = 1 (projective only) -/
-  rulesLostFanout1 : Nat
-  /-- Trees lost at fan-out = 1 -/
-  treesLostFanout1 : Nat
-  /-- Rules lost at fan-out ≤ 2 -/
-  rulesLostFanout2 : Nat
-  /-- Trees lost at fan-out ≤ 2 -/
-  treesLostFanout2 : Nat
-  /-- Rules lost when also requiring well-nestedness (with fan-out ≤ 2) -/
-  rulesLostWN : Nat
-  /-- Trees lost when also requiring well-nestedness -/
-  treesLostWN : Nat
-  deriving Repr
-
-def arabic : LCFRSCoverage :=
-  { name := "Arabic", totalRules := 5839, totalTrees := 1460
-    rulesLostFanout1 := 411, treesLostFanout1 := 163
-    rulesLostFanout2 := 1, treesLostFanout2 := 1
-    rulesLostWN := 2, treesLostWN := 2 }
-
-def czech : LCFRSCoverage :=
-  { name := "Czech", totalRules := 1322111, totalTrees := 72703
-    rulesLostFanout1 := 22283, treesLostFanout1 := 16831
-    rulesLostFanout2 := 328, treesLostFanout2 := 312
-    rulesLostWN := 407, treesLostWN := 382 }
-
-def danish : LCFRSCoverage :=
-  { name := "Danish", totalRules := 99576, totalTrees := 5190
-    rulesLostFanout1 := 1229, treesLostFanout1 := 811
-    rulesLostFanout2 := 11, treesLostFanout2 := 9
-    rulesLostWN := 17, treesLostWN := 15 }
-
-def slovene : LCFRSCoverage :=
-  { name := "Slovene", totalRules := 30284, totalTrees := 1534
-    rulesLostFanout1 := 530, treesLostFanout1 := 340
-    rulesLostFanout2 := 14, treesLostFanout2 := 11
-    rulesLostWN := 17, treesLostWN := 13 }
-
-def turkish : LCFRSCoverage :=
-  { name := "Turkish", totalRules := 62507, totalTrees := 4997
-    rulesLostFanout1 := 924, treesLostFanout1 := 580
-    rulesLostFanout2 := 54, treesLostFanout2 := 33
-    rulesLostWN := 68, treesLostWN := 43 }
-
-/-- Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages. -/
+/-- Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages
+    (Kuhlmann 2013 Tables 3-4). -/
 theorem fanout2_good_coverage :
-    arabic.treesLostFanout2 ≤ 1 ∧
-    czech.treesLostFanout2 * 100 / czech.totalTrees < 1 ∧  -- < 1%
-    danish.treesLostFanout2 * 100 / danish.totalTrees < 1 ∧
-    slovene.treesLostFanout2 * 100 / slovene.totalTrees < 1 ∧
-    turkish.treesLostFanout2 * 100 / turkish.totalTrees < 1 := by
+    Phenomena.arabic.treesLostFanout2 ≤ 1 ∧
+    Phenomena.czech.treesLostFanout2 * 100 / Phenomena.czech.totalTrees < 1 ∧
+    Phenomena.danish.treesLostFanout2 * 100 / Phenomena.danish.totalTrees < 1 ∧
+    Phenomena.slovene.treesLostFanout2 * 100 / Phenomena.slovene.totalTrees < 1 ∧
+    Phenomena.turkish.treesLostFanout2 * 100 / Phenomena.turkish.totalTrees < 1 := by
   exact ⟨by native_decide, by native_decide, by native_decide,
          by native_decide, by native_decide⟩
 
@@ -522,10 +521,14 @@ theorem fanout2_good_coverage :
 -- §12: Bridge Theorems
 -- ============================================================================
 
-/-- Non-projective dependencies → gap degree ≥ 1. -/
+/-- Non-projective dependencies → gap degree ≥ 1.
+    Contrapositive of `projective_iff_gapDegree_zero`. -/
 theorem nonProjective_implies_gapDeg_ge1 (t : DepTree)
     (h : isProjective t = false) : t.gapDegree ≥ 1 := by
-  sorry -- TODO: ¬isProjective ↔ some projection is not an interval ↔ has a gap
+  by_contra hlt
+  have hzero : t.gapDegree = 0 := by omega
+  have := (projective_iff_gapDegree_zero t).mpr hzero
+  simp [this] at h
 
 /-- Dutch cross-serial is non-projective but well-nested with gap degree 1.
     This exemplifies K&N's key finding: the vast majority of non-projective
