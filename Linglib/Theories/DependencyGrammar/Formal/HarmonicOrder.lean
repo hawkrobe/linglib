@@ -143,19 +143,10 @@ adjacent to their heads. When direction is mixed (disharmonic), subtree
 material from one dependent intervenes between the next spine dependent
 and its head. -/
 
-/-- Collect all transitive descendants of a node (subtree members). -/
+/-- Collect all transitive descendants of a node (excluding the node itself).
+    Uses `projection` from Core/Basic.lean. -/
 def subtreeMembers (t : DepTree) (idx : Nat) : List Nat :=
-  let directDeps := t.deps.filter (·.headIdx == idx) |>.map (·.depIdx)
-  let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : List Nat :=
-    match fuel, queue with
-    | 0, _ => visited
-    | _, [] => visited
-    | fuel' + 1, node :: rest =>
-      if visited.contains node then go rest visited fuel'
-      else
-        let children := t.deps.filter (·.headIdx == node) |>.map (·.depIdx)
-        go (rest ++ children) (node :: visited) fuel'
-  go directDeps [] (t.words.length + 1)
+  (projection t.deps idx).filter (· != idx)
 
 /-- Count nodes from subtree(d) that fall between positions h and d
     in linear order. These are the "intervening" nodes that inflate

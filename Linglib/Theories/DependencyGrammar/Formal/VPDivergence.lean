@@ -75,17 +75,17 @@ theorem tree9_non_constituent_catenae_count :
 /-- **Universal witness for strict containment** (Osborne 2019, p. 108–109):
 
     For any tree with ≥2 nodes and an edge (v, w), the singleton {v} is a
-    catena (trivially connected) but NOT a constituent ({v} ≠ subtree(v)
-    because subtree(v) includes w as a descendant).
+    catena (trivially connected) but NOT a constituent ({v} ≠ projection(v)
+    because projection(v) includes w as a descendant).
 
-    TODO: Requires showing that subtree(v) ⊋ {v} when v has children,
+    TODO: Requires showing that projection(v) ⊋ {v} when v has children,
     hence {v} fails `isConstituent`'s subtree-match check. The key step
-    is: if (v, w) ∈ deps, then w ∈ descendants(v), so |subtree(v)| ≥ 2 > 1 = |{v}|. -/
+    is: if (v, w) ∈ deps, then w ∈ projection(v), so |projection(v)| ≥ 2 > 1 = |{v}|. -/
 theorem exists_catena_not_constituent
     {n : Nat} (G : SimpleGraph (Fin n)) (deps : List Dependency)
     (v w : Fin n) (hvw : v ≠ w)
     (hedge : ∃ d ∈ deps, d.headIdx = v.val ∧ d.depIdx = w.val) :
-    IsCatena G {v} ∧ ¬ (subtree deps v.val = [v.val]) := by
+    IsCatena G {v} ∧ ¬ (projection deps v.val = [v.val]) := by
   sorry
 
 -- ============================================================================

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.116.0] - 2026-02-09
+
+### Added
+- **Core/Basic.lean**: `projection` (π(i)) as first-class primitive — BFS yield of a node in sorted order. `isInterval`, `gaps`, `blocks`, `gapDegreeAt`, `blockDegreeAt`, `DepTree.gapDegree`, `DepTree.blockDegree`. Rewrote `isProjective` from arc-crossing to projection-based (every projection is an interval).
+- **NonProjective.lean**: Full Kuhlmann & Nivre (2006) + Kuhlmann (2013) formalization. `linked`, `DepTree.isPlanar` (Definition 4), `projectionsInterleave`, `disjoint`, `DepTree.isWellNested` (Definition 8), `edgeSpan`, `edgeDegreeOf`, `DepTree.edgeDegree` (Definition 9). Example trees: K&N Figure 3a/3b/3c, Dutch cross-serial, German nested. Hierarchy theorems (sorry'd): projective ⟺ gap degree 0, projective ⟺ block-degree 1, block-degree = gap degree + 1, projective ⊂ planar ⊂ well-nested. Empirical data: PDT/DDT (K&N 2006 Table 1), Arabic/Czech/Danish/Slovene/Turkish LCFRS coverage (Kuhlmann 2013 Tables 3–4). All example properties verified by `native_decide`.
+
+### Changed
+- **Catena.lean**: Removed `descendants`/`subtree` BFS duplicate, rewrote `isConstituent` to use `projection`.
+- **DependencyLength.lean**: Replaced `subtreeSize` BFS with `projection`-based wrapper.
+- **HarmonicOrder.lean**: Replaced `subtreeMembers` BFS with `projection`-based wrapper.
+- **Discontinuity.lean**: Replaced `isContiguous` with delegation to `isInterval`.
+- **VPDivergence.lean**: Updated `subtree` references to `projection`.
+
 ## [0.115.0] - 2026-02-09
 
 ### Added
