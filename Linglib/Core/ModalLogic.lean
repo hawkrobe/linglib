@@ -19,7 +19,7 @@ Linguistic interpretations belong in `Theories/Montague/Modal/`.
 
 namespace Core.ModalLogic
 
-open Core.Proposition (BProp FiniteWorlds)
+open Core.Proposition (FiniteWorlds)
 
 /-! ## Operators -/
 

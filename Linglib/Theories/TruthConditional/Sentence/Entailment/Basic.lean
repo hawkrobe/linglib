@@ -17,15 +17,12 @@ inductive World where
 
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
 
-/-- `Core.Proposition.BProp World` specialized to the 4-world type. -/
-abbrev Prop' := Core.Proposition.BProp World
-
 end FiniteWorldSemantics
 
 section Entailment
 
 /-- Semantic entailment: p entails q iff q is true whenever p is true. -/
-def entails (p q : Prop') : Bool :=
+def entails (p q : BProp World) : Bool :=
   Core.Proposition.Decidable.entails World allWorlds p q
 
 end Entailment
@@ -33,16 +30,16 @@ end Entailment
 section PropositionalOperations
 
 /-- Negation: (pnot p) w = !(p w). -/
-def pnot (p : Prop') : Prop' := Core.Proposition.Decidable.pnot World p
+def pnot (p : BProp World) : BProp World := Core.Proposition.Decidable.pnot World p
 
 /-- Conjunction: (pand p q) w = p w && q w. -/
-def pand (p q : Prop') : Prop' := Core.Proposition.Decidable.pand World p q
+def pand (p q : BProp World) : BProp World := Core.Proposition.Decidable.pand World p q
 
 /-- Disjunction: (por p q) w = p w || q w. -/
-def por (p q : Prop') : Prop' := Core.Proposition.Decidable.por World p q
+def por (p q : BProp World) : BProp World := Core.Proposition.Decidable.por World p q
 
 /-- Negation reverses entailment, specialized to `World`. -/
-theorem pnot_reverses_entailment (p q : Prop')
+theorem pnot_reverses_entailment (p q : BProp World)
     (h : ∀ w, p w = true → q w = true) :
     ∀ w, pnot q w = true → pnot p w = true :=
   Core.Proposition.Decidable.pnot_reverses_entailment p q h
@@ -52,22 +49,22 @@ end PropositionalOperations
 section TestPropositions
 
 /-- Proposition true only in w0. -/
-def p0 : Prop' := λ w => w == .w0
+def p0 : BProp World := λ w => w == .w0
 
 /-- Proposition true in w0 and w1. -/
-def p01 : Prop' := λ w => w == .w0 || w == .w1
+def p01 : BProp World := λ w => w == .w0 || w == .w1
 
 /-- Proposition true in w0, w1, w2. -/
-def p012 : Prop' := λ w => w == .w0 || w == .w1 || w == .w2
+def p012 : BProp World := λ w => w == .w0 || w == .w1 || w == .w2
 
 /-- Proposition true everywhere. -/
-def pAll : Prop' := λ _ => true
+def pAll : BProp World := λ _ => true
 
 /-- Proposition false everywhere. -/
-def pNone : Prop' := λ _ => false
+def pNone : BProp World := λ _ => false
 
 /-- Test cases for monotonicity: pairs where first entails second. -/
-def testCases : List (Prop' × Prop') :=
+def testCases : List (BProp World × BProp World) :=
   [(p0, p01), (p01, p012), (p012, pAll), (p0, pAll)]
 
 /-- p0 entails p01. -/

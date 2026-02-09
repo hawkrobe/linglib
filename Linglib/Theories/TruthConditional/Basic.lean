@@ -21,8 +21,6 @@ import Mathlib.Data.Fintype.Basic
 
 namespace TruthConditional
 
-open Core.Proposition (BProp)
-
 /-- Semantic types (Montague's type theory). -/
 inductive Ty where
   | e    -- entities

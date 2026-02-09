@@ -18,8 +18,6 @@ import Linglib.Core.Proposition
 
 namespace Core.Intension
 
-open Core.Proposition (BProp)
-
 /-- An intension of type τ over indices W: a function from worlds to extensions. -/
 abbrev Intension (W : Type*) (τ : Type*) := W → τ
 

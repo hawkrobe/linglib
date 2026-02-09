@@ -62,12 +62,6 @@ sentence is true."
 variable {World : Type*}
 
 /--
-A proposition as a characteristic function on worlds.
-φ(w) holds iff the proposition is true at world w.
--/
-abbrev Prop' (World : Type*) := World → Prop
-
-/--
 Entailment: φ ⊆ ψ (Spector uses set-theoretic notation)
 "I also adopt the set-theoretic notation φ ⊆ ψ to mean that φ entails ψ."
 -/

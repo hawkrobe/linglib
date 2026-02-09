@@ -20,32 +20,26 @@ namespace IntensionalSemantics.Modal.Kratzer
 open IntensionalSemantics.Attitude.Intensional
 open IntensionalSemantics.Modal (ModalTheory ModalForce Proposition allWorlds')
 
-
-open Core.Proposition (BProp)
-
-/-- A proposition is a characteristic function on worlds (Kratzer-local). -/
-abbrev Prop' := BProp World
-
 /-- Convert to list of worlds where proposition holds. -/
-def Prop'.extension (p : Prop') : List World :=
+def propExtension (p : BProp World) : List World :=
   allWorlds.filter p
 
 /-- The intersection of a set of propositions: worlds satisfying ALL. -/
-def propIntersection (props : List Prop') : List World :=
+def propIntersection (props : List (BProp World)) : List World :=
   allWorlds.filter λ w => props.all λ p => p w
 
 /-- A proposition p **follows from** a set A iff ∩A ⊆ p (Kratzer p. 31)
 
 In other words: every world satisfying all of A also satisfies p. -/
-def followsFrom (p : Prop') (A : List Prop') : Bool :=
+def followsFrom (p : BProp World) (A : List (BProp World)) : Bool :=
   (propIntersection A).all p
 
 /-- A set of propositions is **consistent** iff ∩A ≠ ∅ (Kratzer p. 31) -/
-def isConsistent (A : List Prop') : Bool :=
+def isConsistent (A : List (BProp World)) : Bool :=
   !(propIntersection A).isEmpty
 
 /-- A proposition p is **compatible with** A iff A ∪ {p} is consistent (Kratzer p. 31) -/
-def isCompatibleWith (p : Prop') (A : List Prop') : Bool :=
+def isCompatibleWith (p : BProp World) (A : List (BProp World)) : Bool :=
   isConsistent (p :: A)
 
 
@@ -55,7 +49,7 @@ A conversational background maps worlds to sets of propositions.
 This is Kratzer's key innovation: the modal base and ordering source are both
 conversational backgrounds, but play different roles.
 -/
-abbrev ConvBackground := World → List Prop'
+abbrev ConvBackground := World → List (BProp World)
 
 /-- The modal base: determines which worlds are accessible. -/
 abbrev ModalBase := ConvBackground
@@ -98,7 +92,7 @@ The set of propositions from A that world w satisfies.
 
 This is {p ∈ A : w ∈ p} in Kratzer's notation.
 -/
-def satisfiedPropositions (A : List Prop') (w : World) : List Prop' :=
+def satisfiedPropositions (A : List (BProp World)) (w : World) : List (BProp World) :=
   A.filter (λ p => p w)
 
 /--
@@ -113,7 +107,7 @@ ideal proposition that z satisfies, w also satisfies.
 Note: This is the CORRECT definition using subset inclusion,
 NOT counting (which would be incorrect).
 -/
-def atLeastAsGoodAs (A : List Prop') (w z : World) : Bool :=
+def atLeastAsGoodAs (A : List (BProp World)) (w z : World) : Bool :=
   -- Every proposition in A satisfied by z is also satisfied by w
   (satisfiedPropositions A z).all λ p => p w
 
@@ -124,7 +118,7 @@ Strict ordering: w <_A z iff w ≤_A z but not z ≤_A w.
 
 This means w satisfies strictly more ideal propositions than z.
 -/
-def strictlyBetter (A : List Prop') (w z : World) : Bool :=
+def strictlyBetter (A : List (BProp World)) (w z : World) : Bool :=
   atLeastAsGoodAs A w z && !atLeastAsGoodAs A z w
 
 notation:50 w " <[" A "] " z => strictlyBetter A w z
@@ -138,7 +132,7 @@ Kratzer's world ordering as a `SatisfactionOrdering`.
 A world w satisfies proposition p iff p(w) = true.
 This connects Kratzer semantics to the generic ordering framework.
 -/
-def worldOrdering (A : List Prop') : SatisfactionOrdering World Prop' where
+def worldOrdering (A : List (BProp World)) : SatisfactionOrdering World (BProp World) where
   satisfies := λ w p => p w
   criteria := A
 
@@ -148,20 +142,20 @@ def worldOrdering (A : List Prop') : SatisfactionOrdering World Prop' where
 This theorem establishes that `atLeastAsGoodAs` is exactly the
 generic `SatisfactionOrdering.atLeastAsGood` for worlds.
 -/
-theorem atLeastAsGoodAs_eq_generic (A : List Prop') (w z : World) :
+theorem atLeastAsGoodAs_eq_generic (A : List (BProp World)) (w z : World) :
     atLeastAsGoodAs A w z = (worldOrdering A).atLeastAsGood w z := by
   unfold atLeastAsGoodAs worldOrdering SatisfactionOrdering.atLeastAsGood
          SatisfactionOrdering.satisfiedBy satisfiedPropositions
   rfl
 
 /-- Reflexivity via generic framework. -/
-theorem ordering_reflexive (A : List Prop') (w : World) :
+theorem ordering_reflexive (A : List (BProp World)) (w : World) :
     atLeastAsGoodAs A w w = true := by
   rw [atLeastAsGoodAs_eq_generic]
   exact SatisfactionOrdering.atLeastAsGood_refl (worldOrdering A) w
 
 /-- Transitivity via generic framework. -/
-theorem ordering_transitive (A : List Prop') (u v w : World)
+theorem ordering_transitive (A : List (BProp World)) (u v w : World)
     (huv : atLeastAsGoodAs A u v = true)
     (hvw : atLeastAsGoodAs A v w = true) :
     atLeastAsGoodAs A u w = true := by
@@ -175,21 +169,21 @@ theorem ordering_transitive (A : List Prop') (u v w : World)
 
 Derived from the generic `SatisfactionOrdering.toPreorder`.
 -/
-def kratzerPreorder (A : List Prop') : Preorder World :=
+def kratzerPreorder (A : List (BProp World)) : Preorder World :=
   (worldOrdering A).toPreorder
 
 /-- Equivalence under the ordering (via generic framework). -/
-def orderingEquiv (A : List Prop') (w z : World) : Prop :=
+def orderingEquiv (A : List (BProp World)) (w z : World) : Prop :=
   (worldOrdering A).equiv w z
 
-theorem orderingEquiv_refl (A : List Prop') (w : World) : orderingEquiv A w w :=
+theorem orderingEquiv_refl (A : List (BProp World)) (w : World) : orderingEquiv A w w :=
   SatisfactionOrdering.equiv_refl (worldOrdering A) w
 
-theorem orderingEquiv_symm (A : List Prop') (w z : World)
+theorem orderingEquiv_symm (A : List (BProp World)) (w z : World)
     (h : orderingEquiv A w z) : orderingEquiv A z w :=
   SatisfactionOrdering.equiv_symm (worldOrdering A) w z h
 
-theorem orderingEquiv_trans (A : List Prop') (u v w : World)
+theorem orderingEquiv_trans (A : List (BProp World)) (u v w : World)
     (huv : orderingEquiv A u v) (hvw : orderingEquiv A v w) :
     orderingEquiv A u w :=
   SatisfactionOrdering.equiv_trans (worldOrdering A) u v w huv hvw
@@ -223,28 +217,28 @@ open Core.Proposition.GaloisConnection
 
 This is `propIntersection` renamed for clarity.
 -/
-def extension (props : List Prop') : List World :=
+def extension (props : List (BProp World)) : List World :=
   propIntersection props
 
 /--
 **Kratzer's intension**: Filter propositions true at all given worlds.
 -/
-def intension (worlds : List World) (props : List Prop') : List Prop' :=
+def intension (worlds : List World) (props : List (BProp World)) : List (BProp World) :=
   intensionL worlds props
 
-theorem extension_eq_core (props : List Prop') :
+theorem extension_eq_core (props : List (BProp World)) :
     extension props = extensionL allWorlds props := by
   unfold extension propIntersection extensionL
   rfl
 
-theorem extension_antitone (A B : List Prop') (w : World)
+theorem extension_antitone (A B : List (BProp World)) (w : World)
     (hSub : ∀ p, p ∈ A → p ∈ B)
     (hw : w ∈ extension B) :
     w ∈ extension A := by
   rw [extension_eq_core] at hw ⊢
   exact extensionL_antitone allWorlds A B w hSub hw
 
-theorem intension_antitone (W V : List World) (A : List Prop') (p : Prop')
+theorem intension_antitone (W V : List World) (A : List (BProp World)) (p : BProp World)
     (hSub : ∀ w, w ∈ W → w ∈ V)
     (hp : p ∈ intension V A) :
     p ∈ intension W A :=
@@ -302,7 +296,7 @@ theorem empty_ordering_simple (f : ModalBase) (w : World) :
 
 ⟦must⟧_f(p)(w) = ∀w' ∈ ∩f(w). p(w')
 -/
-def simpleNecessity (f : ModalBase) (p : Prop') (w : World) : Bool :=
+def simpleNecessity (f : ModalBase) (p : BProp World) (w : World) : Bool :=
   (accessibleWorlds f w).all p
 
 /--
@@ -310,7 +304,7 @@ def simpleNecessity (f : ModalBase) (p : Prop') (w : World) : Bool :=
 
 ⟦can⟧_f(p)(w) = ∃w' ∈ ∩f(w). p(w')
 -/
-def simplePossibility (f : ModalBase) (p : Prop') (w : World) : Bool :=
+def simplePossibility (f : ModalBase) (p : BProp World) (w : World) : Bool :=
   (accessibleWorlds f w).any p
 
 /--
@@ -318,7 +312,7 @@ def simplePossibility (f : ModalBase) (p : Prop') (w : World) : Bool :=
 
 ⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')
 -/
-def necessity (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : Bool :=
+def necessity (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World) : Bool :=
   (bestWorlds f g w).all p
 
 /--
@@ -326,11 +320,11 @@ def necessity (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : Boo
 
 ⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')
 -/
-def possibility (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) : Bool :=
+def possibility (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World) : Bool :=
   (bestWorlds f g w).any p
 
 
-private theorem list_all_not_any_not (L : List World) (p : Prop') :
+private theorem list_all_not_any_not (L : List World) (p : BProp World) :
     (L.all p == !L.any λ w => !p w) = true := by
   induction L with
   | nil => rfl
@@ -343,7 +337,7 @@ private theorem list_all_not_any_not (L : List World) (p : Prop') :
 
 □p ↔ ¬◇¬p
 -/
-theorem duality (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World) :
+theorem duality (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World) :
     (necessity f g p w == !possibility f g (λ w' => !p w') w) = true := by
   unfold necessity possibility
   exact list_all_not_any_not (bestWorlds f g w) p
@@ -356,7 +350,7 @@ If f is totally realistic (∩f(w) = {w}), then □p → p.
 -/
 theorem totally_realistic_gives_T (f : ModalBase) (g : OrderingSource)
     (hTotal : ∀ w, (accessibleWorlds f w) = [w])
-    (p : Prop') (w : World)
+    (p : BProp World) (w : World)
     (hNec : necessity f g p w = true) : p w = true := by
   unfold necessity at hNec
   have hAcc : accessibleWorlds f w = [w] := hTotal w
@@ -415,7 +409,7 @@ def isEuclideanAccess (f : ModalBase) : Prop :=
 /--
 **D Axiom (Seriality)**: □p → ◇p
 -/
-theorem D_axiom (f : ModalBase) (g : OrderingSource) (p : Prop') (w : World)
+theorem D_axiom (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World)
     (hSerial : (bestWorlds f g w).length > 0)
     (hNec : necessity f g p w = true) :
     possibility f g p w = true := by
@@ -437,7 +431,7 @@ theorem realistic_is_serial (f : ModalBase) (hReal : isRealistic f) (w : World) 
   exact List.length_pos_of_mem hw_acc
 
 theorem D_axiom_realistic (f : ModalBase) (hReal : isRealistic f)
-    (p : Prop') (w : World)
+    (p : BProp World) (w : World)
     (hNec : necessity f emptyBackground p w = true) :
     possibility f emptyBackground p w = true := by
   have hSimple := empty_ordering_simple f w
@@ -451,7 +445,7 @@ theorem D_axiom_realistic (f : ModalBase) (hReal : isRealistic f)
 /--
 **4 Axiom (Transitivity)**: □p → □□p
 -/
-theorem four_axiom (f : ModalBase) (p : Prop') (w : World)
+theorem four_axiom (f : ModalBase) (p : BProp World) (w : World)
     (hTrans : isTransitiveAccess f)
     (hNec : necessity f emptyBackground p w = true) :
     necessity f emptyBackground (necessity f emptyBackground p) w = true := by
@@ -473,7 +467,7 @@ theorem four_axiom (f : ModalBase) (p : Prop') (w : World)
 /--
 **B Axiom (Symmetry)**: p → □◇p
 -/
-theorem B_axiom (f : ModalBase) (p : Prop') (w : World)
+theorem B_axiom (f : ModalBase) (p : BProp World) (w : World)
     (hSym : isSymmetricAccess f)
     (hP : p w = true) :
     necessity f emptyBackground (possibility f emptyBackground p) w = true := by
@@ -492,7 +486,7 @@ theorem B_axiom (f : ModalBase) (p : Prop') (w : World)
 /--
 **5 Axiom (Euclidean)**: ◇p → □◇p
 -/
-theorem five_axiom (f : ModalBase) (p : Prop') (w : World)
+theorem five_axiom (f : ModalBase) (p : BProp World) (w : World)
     (hEuc : isEuclideanAccess f)
     (hPoss : possibility f emptyBackground p w = true) :
     necessity f emptyBackground (possibility f emptyBackground p) w = true := by
@@ -545,7 +539,7 @@ theorem S5_satisfies_all (f : ModalBase) (hS5 : isS5Base f) :
 p is **at least as good a possibility as** q in w with respect to f and g.
 -/
 def atLeastAsGoodPossibility (f : ModalBase) (g : OrderingSource)
-    (p q : Prop') (w : World) : Bool :=
+    (p q : BProp World) (w : World) : Bool :=
   let accessible := accessibleWorlds f w
   let ordering := g w
   let qMinusP := accessible.filter (λ w' => q w' && !p w')
@@ -553,11 +547,11 @@ def atLeastAsGoodPossibility (f : ModalBase) (g : OrderingSource)
   qMinusP.all λ w' => pMinusQ.any λ w'' => atLeastAsGoodAs ordering w'' w'
 
 def betterPossibility (f : ModalBase) (g : OrderingSource)
-    (p q : Prop') (w : World) : Bool :=
+    (p q : BProp World) (w : World) : Bool :=
   atLeastAsGoodPossibility f g p q w && !atLeastAsGoodPossibility f g q p w
 
 theorem comparative_poss_reflexive (f : ModalBase) (g : OrderingSource)
-    (p : Prop') (w : World) :
+    (p : BProp World) (w : World) :
     atLeastAsGoodPossibility f g p p w = true := by
   unfold atLeastAsGoodPossibility
   simp only [Bool.and_not_self, List.filter_false, List.all_nil]
@@ -604,14 +598,14 @@ structure TeleologicalFlavor where
   goals : OrderingSource
 
 
-def implies (p q : Prop') : Prop' := λ w => !p w || q w
+def implies (p q : BProp World) : BProp World := λ w => !p w || q w
 
 /--
 **Theorem: K Axiom (Distribution) holds.**
 
 □(p → q) → (□p → □q)
 -/
-theorem K_axiom (f : ModalBase) (g : OrderingSource) (p q : Prop') (w : World)
+theorem K_axiom (f : ModalBase) (g : OrderingSource) (p q : BProp World) (w : World)
     (hImpl : necessity f g (implies p q) w = true)
     (hP : necessity f g p w = true) :
     necessity f g q w = true := by
@@ -631,13 +625,13 @@ Conditionals as modal base restrictors.
 
 "If α, (must) β" = must_f+α β
 -/
-def restrictedBase (f : ModalBase) (antecedent : Prop') : ModalBase :=
+def restrictedBase (f : ModalBase) (antecedent : BProp World) : ModalBase :=
   λ w => antecedent :: f w
 
-def materialImplication (p q : Prop') (w : World) : Bool :=
+def materialImplication (p q : BProp World) (w : World) : Bool :=
   !p w || q w
 
-def strictImplication (p q : Prop') : Bool :=
+def strictImplication (p q : BProp World) : Bool :=
   allWorlds.all λ w => !p w || q w
 
 

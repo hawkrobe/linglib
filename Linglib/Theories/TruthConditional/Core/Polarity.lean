@@ -18,7 +18,7 @@ We use Mathlib's order-theoretic infrastructure:
 - `Monotone f` (from `Mathlib.Order.Monotone.Basic`): `∀ a b, a ≤ b → f a ≤ f b`
 - `Antitone f`: `∀ a b, a ≤ b → f b ≤ f a`
 
-For `Prop' = World → Bool`, the ordering is pointwise: `p ≤ q ↔ ∀ w, p w ≤ q w`
+For `BProp World = World → Bool`, the ordering is pointwise: `p ≤ q ↔ ∀ w, p w ≤ q w`
 where for `Bool`, `false ≤ true`.
 
 Mathlib provides composition lemmas for free:
@@ -58,7 +58,7 @@ inductive ContextPolarity where
 
 
 /-
-For Prop' = World → Bool, we have:
+For BProp World = World → Bool, we have:
 - BooleanAlgebra (World → Bool) via Pi.instBooleanAlgebra + Bool.instBooleanAlgebraBool
 - This gives us a lattice ordering: p ≤ q ↔ ∀ w, p w → q w (when lifted from Bool)
 
@@ -68,22 +68,22 @@ We use Mathlib's Monotone/Antitone as the canonical definitions.
 /--
 IsUpwardEntailing is an abbreviation for `Monotone`.
 
-A context function `f : Prop' → Prop'` is upward entailing if
+A context function `f : BProp World → BProp World` is upward entailing if
 it preserves the ordering: If p ≤ q, then f(p) ≤ f(q).
 
 Examples: "some", "or", scope of "every"
 -/
-abbrev IsUpwardEntailing (f : Prop' → Prop') := Monotone f
+abbrev IsUpwardEntailing (f : BProp World → BProp World) := Monotone f
 
 /--
 IsDownwardEntailing is an abbreviation for `Antitone`.
 
-A context function `f : Prop' → Prop'` is downward entailing if
+A context function `f : BProp World → BProp World` is downward entailing if
 it reverses the ordering: If p ≤ q, then f(q) ≤ f(p).
 
 Examples: "no", "not", restrictor of "every"
 -/
-abbrev IsDownwardEntailing (f : Prop' → Prop') := Antitone f
+abbrev IsDownwardEntailing (f : BProp World → BProp World) := Antitone f
 
 -- Shorthand aliases for readability
 abbrev IsUE := IsUpwardEntailing
@@ -93,7 +93,7 @@ abbrev IsDE := IsDownwardEntailing
 /--
 Identity is UE: The trivial context preserves entailment.
 -/
-theorem id_isUpwardEntailing : IsUpwardEntailing (id : Prop' → Prop') :=
+theorem id_isUpwardEntailing : IsUpwardEntailing (id : BProp World → BProp World) :=
   monotone_id
 
 /--
@@ -130,22 +130,22 @@ These are the polarity composition rules, proven once and for all!
 -/
 
 /-- UE ∘ UE = UE (from Mathlib) -/
-theorem ue_comp_ue {f g : Prop' → Prop'} (hf : IsUpwardEntailing f) (hg : IsUpwardEntailing g) :
+theorem ue_comp_ue {f g : BProp World → BProp World} (hf : IsUpwardEntailing f) (hg : IsUpwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- DE ∘ DE = UE (double negation). -/
-theorem de_comp_de {f g : Prop' → Prop'} (hf : IsDownwardEntailing f) (hg : IsDownwardEntailing g) :
+theorem de_comp_de {f g : BProp World → BProp World} (hf : IsDownwardEntailing f) (hg : IsDownwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- UE ∘ DE = DE (from Mathlib) -/
-theorem ue_comp_de {f g : Prop' → Prop'} (hf : IsUpwardEntailing f) (hg : IsDownwardEntailing g) :
+theorem ue_comp_de {f g : BProp World → BProp World} (hf : IsUpwardEntailing f) (hg : IsDownwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_antitone hg
 
 /-- DE ∘ UE = DE (from Mathlib) -/
-theorem de_comp_ue {f g : Prop' → Prop'} (hf : IsDownwardEntailing f) (hg : IsUpwardEntailing g) :
+theorem de_comp_ue {f g : BProp World → BProp World} (hf : IsDownwardEntailing f) (hg : IsUpwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_monotone hg
 
@@ -156,7 +156,7 @@ Check if f is upward entailing on given test cases.
 This is a decidable approximation: it checks the property on a finite
 set of test cases rather than proving it universally.
 -/
-def isUpwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
+def isUpwardEntailing (f : BProp World → BProp World) (tests : List (BProp World × BProp World)) : Bool :=
   tests.all λ (p, q) => !entails p q || entails (f p) (f q)
 
 /--
@@ -165,7 +165,7 @@ Check if f is downward entailing on given test cases.
 This is a decidable approximation: it checks the property on a finite
 set of test cases rather than proving it universally.
 -/
-def isDownwardEntailing (f : Prop' → Prop') (tests : List (Prop' × Prop')) : Bool :=
+def isDownwardEntailing (f : BProp World → BProp World) (tests : List (BProp World × BProp World)) : Bool :=
   tests.all λ (p, q) => !entails p q || entails (f q) (f p)
 
 
@@ -214,7 +214,7 @@ theorem double_negation_is_ue : isUpwardEntailing (pnot ∘ pnot) testCases = tr
 
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
-def materialCond (c : Prop') : Prop' → Prop' :=
+def materialCond (c : BProp World) : BProp World → BProp World :=
   λ p => λ w => !p w || c w
 
 /--
@@ -278,7 +278,7 @@ A grounded UE polarity carries proof that a context function is monotone.
 -/
 structure GroundedUE where
   /-- The context function -/
-  context : Prop' → Prop'
+  context : BProp World → BProp World
   /-- Proof of monotonicity (UE) -/
   witness : Monotone context
 
@@ -287,7 +287,7 @@ A grounded DE polarity carries proof that a context function is antitone.
 -/
 structure GroundedDE where
   /-- The context function -/
-  context : Prop' → Prop'
+  context : BProp World → BProp World
   /-- Proof of antitonicity (DE) -/
   witness : Antitone context
 
@@ -308,13 +308,13 @@ def GroundedPolarity.toContextPolarity : GroundedPolarity → ContextPolarity
 /--
 Create a grounded UE polarity from a proof.
 -/
-def mkUpward (ctx : Prop' → Prop') (h : Monotone ctx) : GroundedPolarity :=
+def mkUpward (ctx : BProp World → BProp World) (h : Monotone ctx) : GroundedPolarity :=
   .ue ⟨ctx, h⟩
 
 /--
 Create a grounded DE polarity from a proof.
 -/
-def mkDownward (ctx : Prop' → Prop') (h : Antitone ctx) : GroundedPolarity :=
+def mkDownward (ctx : BProp World → BProp World) (h : Antitone ctx) : GroundedPolarity :=
   .de ⟨ctx, h⟩
 
 /--
@@ -376,7 +376,7 @@ Double DE gives UE.
 This captures the linguistic insight: "It's not the case that no one..."
 creates a UE context for the embedded scalar item.
 -/
-theorem double_de_is_ue_grounded (f g : Prop' → Prop') (hf : Antitone f) (hg : Antitone g) :
+theorem double_de_is_ue_grounded (f g : BProp World → BProp World) (hf : Antitone f) (hg : Antitone g) :
     (composePolarity (mkDownward f hf) (mkDownward g hg)).toContextPolarity = .upward := by
   simp only [composePolarity, mkDownward, GroundedPolarity.toContextPolarity]
 

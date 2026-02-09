@@ -43,7 +43,6 @@ namespace NeoGricean.Exhaustivity.EFCI
 
 open NeoGricean.Exhaustivity
 
-
 /--
 Types of alternatives for EFCIs (Chierchia 2013).
 

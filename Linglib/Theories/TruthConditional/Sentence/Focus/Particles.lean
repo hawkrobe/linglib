@@ -43,14 +43,9 @@ import Linglib.Core.Proposition
 
 namespace TruthConditional.Sentence.FocusParticles
 
-open Core.Proposition (BProp)
-
 variable {World Entity : Type}
 
 -- Propositions and Alternatives
-
-/-- A proposition as a characteristic function -/
-abbrev Prop' (World : Type) := BProp World
 
 /-- Alternative semantics: focused element evokes alternatives -/
 structure FocusStructure (α : Type) where
@@ -74,14 +69,14 @@ For NPI licensing, only the scalar presupposition matters.
 -/
 
 /-- Likelihood ordering over propositions (context-dependent) -/
-def LikelihoodOrder (World : Type) := Prop' World → Prop' World → Prop
+def LikelihoodOrder (World : Type) := BProp World → BProp World → Prop
 
 /-- EVEN presupposition: focused element is least likely -/
 structure EvenPresupposition where
   /-- The prejacent (focused proposition) -/
-  prejacent : Prop' World
+  prejacent : BProp World
   /-- The alternatives (what focus evokes) -/
-  alternatives : List (Prop' World)
+  alternatives : List (BProp World)
   /-- Likelihood ordering (from context) -/
   likelihood : LikelihoodOrder World
   /-- The presupposition: prejacent is least likely -/
@@ -90,14 +85,14 @@ structure EvenPresupposition where
 /-- Traditional EVEN semantics -/
 structure TraditionalEven where
   /-- The prejacent proposition -/
-  prejacent : Prop' World
+  prejacent : BProp World
   /-- Focus alternatives -/
-  alternatives : List (Prop' World)
+  alternatives : List (BProp World)
   /-- Likelihood ordering -/
   likelihood : LikelihoodOrder World
 
 /-- EVEN asserts the prejacent -/
-def TraditionalEven.assertion (even : TraditionalEven (World := World)) : Prop' World :=
+def TraditionalEven.assertion (even : TraditionalEven (World := World)) : BProp World :=
   even.prejacent
 
 /-- EVEN presupposes prejacent is least likely -/
@@ -181,16 +176,16 @@ This is equivalent to EXH with the prejacent as a presupposition.
 /-- Traditional "only" semantics -/
 structure TraditionalOnly where
   /-- The prejacent (the focused element's contribution) -/
-  prejacent : Prop' World
+  prejacent : BProp World
   /-- The alternatives (what focus evokes) -/
-  alternatives : List (Prop' World)
+  alternatives : List (BProp World)
 
 /-- "only" presupposes the prejacent -/
-def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : Prop' World :=
+def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : BProp World :=
   only.prejacent
 
 /-- "only" asserts no alternative is true (except prejacent) -/
-def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : Prop' World :=
+def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : BProp World :=
   λ w => only.alternatives.all (λ alt => !alt w || (alt w == only.prejacent w))
 
 /-- Full "only" meaning -/

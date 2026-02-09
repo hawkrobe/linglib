@@ -59,13 +59,10 @@ open IntensionalSemantics.Attitude.CDistributivity (IsCDistributive degreeCompar
                       degreeComparisonProp degreeComparisonQuestion)
 -- Basic Types
 
-/-- Proposition type -/
-abbrev Prop' (W : Type*) := BProp W
-
 /--
 Question denotation (Hamblin: set of propositions).
 
-We use `List (Prop' W)` as an extensional representation of question meanings.
+We use `List (BProp W)` as an extensional representation of question meanings.
 This is equivalent to the intensional `Hamblin.QuestionDen W := (W → Bool) → Bool`
 from `TruthConditional.Questions.Hamblin`, but more convenient for computation.
 
@@ -74,10 +71,10 @@ The connection: a list `[p₁, p₂, ...]` represents the characteristic functio
 
 See `toHamblin` and `fromHamblin` for conversions.
 -/
-abbrev QuestionDen (W : Type*) := List (Prop' W)
+abbrev QuestionDen (W : Type*) := List (BProp W)
 
 /-- Preference function: μ(agent, prop) → degree -/
-abbrev PreferenceFunction (W E : Type*) := E → Prop' W → ℚ
+abbrev PreferenceFunction (W E : Type*) := E → BProp W → ℚ
 
 /-- Threshold function: θ(comparison_class) → degree -/
 abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
@@ -142,7 +139,7 @@ Given a Hamblin question and a list of candidate propositions, returns
 those propositions that are answers to the question.
 -/
 def fromHamblin {W : Type*} (hamblinQ : QuestionSemantics.Hamblin.QuestionDen W)
-    (candidates : List (Prop' W)) : QuestionDen W :=
+    (candidates : List (BProp W)) : QuestionDen W :=
   candidates.filter hamblinQ
 
 /--
@@ -160,14 +157,14 @@ def alternativesTriggersSignificance : Prop :=
 /-!
 ## Representation Equivalence
 
-For finite world sets, our `List (Prop' W)` representation is equivalent to
+For finite world sets, our `List (BProp W)` representation is equivalent to
 Hamblin's `(W → Bool) → Bool`. This theorem documents the isomorphism,
 enabling future extension to full intensional semantics if needed.
 
 ### The Equivalence
 
 Given a finite set of worlds W and a finite set of propositions P:
-- Any `List (Prop' W)` can be converted to `Hamblin.QuestionDen W` via `toHamblin`
+- Any `List (BProp W)` can be converted to `Hamblin.QuestionDen W` via `toHamblin`
 - Any `Hamblin.QuestionDen W` can be converted back via `fromHamblin`
 - The round-trip preserves answerhood for propositions in P
 
@@ -190,7 +187,7 @@ and back (using Q as candidates), p remains an answer.
 This shows the List representation loses no information for finite questions.
 -/
 theorem roundtrip_preserves_membership {W : Type*} [BEq W] [DecidableEq (W → Bool)]
-    (Q : QuestionDen W) (worlds : List W) (p : Prop' W) (hp : p ∈ Q) :
+    (Q : QuestionDen W) (worlds : List W) (p : BProp W) (hp : p ∈ Q) :
     p ∈ fromHamblin (toHamblin Q worlds) Q := by
   unfold fromHamblin toHamblin
   simp only [List.mem_filter, List.any_eq_true]
@@ -208,7 +205,7 @@ The existential quantification `∃p ∈ Q. φ(p)` that appears in:
 works identically on List (via `List.any`) and Hamblin (via function application
 to the characteristic function of answers satisfying φ).
 -/
-theorem exists_equiv_any {W : Type*} (Q : QuestionDen W) (φ : Prop' W → Bool) :
+theorem exists_equiv_any {W : Type*} (Q : QuestionDen W) (φ : BProp W → Bool) :
     (∃ p ∈ Q, φ p = true) ↔ (Q.any φ = true) := by
   simp only [List.any_eq_true]
 
@@ -226,7 +223,7 @@ The triviality condition uses subset + existential, both of which are
 representation-independent for finite cases.
 -/
 theorem triviality_representation_independent {W : Type*}
-    (Q C : QuestionDen W) (φ : Prop' W → Bool)
+    (Q C : QuestionDen W) (φ : BProp W → Bool)
     (h_subset : questionSubset Q C)
     (h_exists_Q : Q.any φ = true) :
     C.any φ = true := by
@@ -407,7 +404,7 @@ structure PreferentialPredicate (W E : Type*) where
   /-- Threshold function θ -/
   θ : ThresholdFunction W
   /-- Propositional semantics: ⟦x V p⟧(C) -/
-  propSemantics : E → Prop' W → QuestionDen W → Bool
+  propSemantics : E → BProp W → QuestionDen W → Bool
   /-- Question semantics: ⟦x V Q⟧(C) -/
   questionSemantics : E → QuestionDen W → QuestionDen W → Bool
 
@@ -769,7 +766,7 @@ World-sensitive propositional semantics for veridical predicates.
 The truth requirement p(w) is what distinguishes veridical from non-veridical.
 -/
 def PreferentialPredicate.propSemanticsAt {W E : Type*}
-    (V : PreferentialPredicate W E) (x : E) (p : Prop' W) (C : QuestionDen W) (w : W) : Bool :=
+    (V : PreferentialPredicate W E) (x : E) (p : BProp W) (C : QuestionDen W) (w : W) : Bool :=
   if V.veridical then
     p w && V.propSemantics x p C
   else
