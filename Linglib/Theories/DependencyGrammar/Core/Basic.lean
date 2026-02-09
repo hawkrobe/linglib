@@ -91,17 +91,15 @@ def gaps (sorted : List Nat) : List (Nat × Nat) :=
 
     The number of blocks equals gap degree + 1 and corresponds to the
     fan-out of the LCFRS rule extracted for that node (Kuhlmann 2013, §7.3). -/
-def blocks (sorted : List Nat) : List (List Nat) :=
-  match sorted with
+def blocks : List Nat → List (List Nat)
   | [] => []
-  | first :: rest =>
-    let (result, current) := rest.foldl (λ (acc, cur) n =>
-      match cur.getLast? with
-      | some last => if n == last + 1 then (acc, cur ++ [n])
-                     else (acc ++ [cur], [n])
-      | none => (acc, [n])
-    ) ([], [first])
-    result ++ [current]
+  | [a] => [[a]]
+  | a :: b :: rest =>
+    if b = a + 1 then
+      match blocks (b :: rest) with
+      | [] => [[a]]
+      | first :: remaining => (a :: first) :: remaining
+    else [a] :: blocks (b :: rest)
 
 /-- **Gap degree** of a node: number of gaps in its projection.
     (Kuhlmann & Nivre 2006, Definition 6) -/
@@ -129,48 +127,227 @@ def DepTree.blockDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
 
 -- ============================================================================
--- Projection Axioms (properties of BFS output)
+-- Projection Properties (proved from BFS structure)
 -- ============================================================================
 
+/-- BFS `go` produces a list with no duplicates when starting from Nodup visited. -/
+private theorem go_nodup (deps : List Dependency)
+    (queue visited : List Nat) (fuel : Nat)
+    (hv : visited.Nodup) :
+    (projection.go deps queue visited fuel).Nodup := by
+  induction fuel generalizing queue visited with
+  | zero => exact hv
+  | succ fuel' ih =>
+    match queue with
+    | [] => exact hv
+    | node :: rest =>
+      simp only [projection.go]
+      split
+      · exact ih rest visited hv
+      · rename_i hnotcontains
+        apply ih
+        have hnotin : node ∉ visited := by
+          intro hmem
+          apply hnotcontains
+          simp only [List.contains_eq_any_beq, List.any_eq_true]
+          exact ⟨node, hmem, beq_self_eq_true node⟩
+        exact List.nodup_cons.mpr ⟨hnotin, hv⟩
+
+/-- Sorted (≤) + no duplicates → strictly sorted (<). -/
+private theorem pairwise_lt_of_sorted_nodup (l : List Nat)
+    (hs : l.Pairwise (· ≤ ·)) (hn : l.Nodup) : l.Pairwise (· < ·) := by
+  induction l with
+  | nil => exact List.Pairwise.nil
+  | cons a rest ih =>
+    rw [List.pairwise_cons] at hs ⊢
+    obtain ⟨hnotin, hn_rest⟩ := List.nodup_cons.mp hn
+    exact ⟨fun b hb => Nat.lt_of_le_of_ne (hs.1 b hb) (fun heq => hnotin (heq ▸ hb)),
+           ih hs.2 hn_rest⟩
+
 /-- The output of `projection` is strictly increasing (sorted, no duplicates).
-    Proof sketch: BFS visits each node at most once (visited check), then
+    Proof: BFS visits each node at most once (visited check), then
     `mergeSort` produces a sorted list. Since visited prevents duplicates,
     the sorted list is strictly increasing. -/
 theorem projection_chain' (deps : List Dependency) (root : Nat) :
     (projection deps root).IsChain (· < ·) := by
-  sorry -- TODO: prove from BFS visited-set dedup + mergeSort properties
+  unfold projection
+  set goResult := projection.go deps [root] [] (deps.length * (deps.length + 1) + 2)
+  have hnodup_go : goResult.Nodup := go_nodup deps [root] [] _ List.nodup_nil
+  have hnodup : (goResult.mergeSort (· ≤ ·)).Nodup :=
+    (List.mergeSort_perm goResult (· ≤ ·)).nodup_iff.mpr hnodup_go
+  have hsorted : (goResult.mergeSort (· ≤ ·)).Pairwise (· ≤ ·) := by
+    have h := @List.pairwise_mergeSort Nat (fun a b => decide (a ≤ b))
+      (fun a b c hab hbc => decide_eq_true (Nat.le_trans (of_decide_eq_true hab) (of_decide_eq_true hbc)))
+      (fun a b => by rcases Nat.le_total a b with h | h <;> simp [decide_eq_true h])
+      goResult
+    exact h.imp (fun hab => of_decide_eq_true hab)
+  exact List.isChain_iff_pairwise.mpr (pairwise_lt_of_sorted_nodup _ hsorted hnodup)
 
-/-- The output of `projection` is non-empty (root is always included).
-    Proof sketch: root is the initial queue element, and since visited starts
-    empty, root is always added to visited on the first step. -/
+/-- Elements in `visited` are preserved by `go`. -/
+private theorem go_visited_subset (deps : List Dependency)
+    (queue visited : List Nat) (fuel : Nat)
+    (x : Nat) (hx : x ∈ visited) :
+    x ∈ projection.go deps queue visited fuel := by
+  induction fuel generalizing queue visited with
+  | zero => exact hx
+  | succ fuel' ih =>
+    match queue with
+    | [] => exact hx
+    | node :: rest =>
+      simp only [projection.go]
+      split
+      · exact ih rest visited hx
+      · exact ih _ _ (List.mem_cons.mpr (Or.inr hx))
+
+/-- root is always in the BFS output. -/
+private theorem root_mem_go (deps : List Dependency) (root : Nat) :
+    root ∈ projection.go deps [root] [] (deps.length * (deps.length + 1) + 2) := by
+  have : deps.length * (deps.length + 1) + 2 = (deps.length * (deps.length + 1) + 1) + 1 := by omega
+  rw [this]; simp only [projection.go, List.contains_nil]
+  exact go_visited_subset deps _ _ _ root (List.mem_cons.mpr (Or.inl rfl))
+
+/-- The output of `projection` is non-empty (root is always included). -/
 theorem projection_nonempty (deps : List Dependency) (root : Nat) :
     projection deps root ≠ [] := by
-  sorry -- TODO: prove root ∈ go [root] [] fuel, then mergeSort preserves non-emptiness
+  unfold projection; intro h
+  have hmem := (List.mergeSort_perm _ (· ≤ ·)).mem_iff.mpr (root_mem_go deps root)
+  rw [h] at hmem; simp at hmem
 
 -- ============================================================================
 -- List Helper Lemmas (for hierarchy theorem proofs)
 -- ============================================================================
 
-/-- For a strictly increasing list, `isInterval = true` iff `gaps` is empty.
+/-- For IsChain (· < ·), getLast! ≥ head + tail length. -/
+private theorem chain_getLast_ge (a : Nat) (rest : List Nat)
+    (h : (a :: rest).IsChain (· < ·)) :
+    (a :: rest).getLast! ≥ a + rest.length := by
+  induction rest generalizing a with
+  | nil => simp [List.getLast!]
+  | cons b rest' ih =>
+    have hab : a < b := by
+      have := h; simp [List.IsChain] at this; exact this.1
+    have hchain : (b :: rest').IsChain (· < ·) := by
+      have := h; simp [List.IsChain] at this; exact this.2
+    have hih := ih b hchain
+    have hlast : (a :: b :: rest').getLast! = (b :: rest').getLast! := by
+      simp [List.getLast!]
+    rw [hlast]
+    simp only [List.length_cons]
+    omega
 
-    Forward: `isInterval` says `last - first + 1 = length`. For Chain' lists,
-    consecutive elements differ by ≥ 1. If any gap exists (diff > 1), the total
-    span exceeds length - 1, contradicting isInterval.
-    Backward: no gaps + Chain' → all consecutive diffs = 1 → span = length - 1. -/
+/-- isInterval for a list with ≥ 2 elements reduces to an arithmetic check. -/
+private theorem isInterval_eq_beq (a b : Nat) (rest : List Nat) :
+    isInterval (a :: b :: rest) =
+      ((a :: b :: rest).getLast! - a + 1 == (a :: b :: rest).length) := by
+  rfl
+
+/-- Convert isInterval to a Prop equality for ≥ 2-element lists. -/
+private theorem isInterval_iff_eq (a b : Nat) (rest : List Nat) :
+    isInterval (a :: b :: rest) = true ↔
+      (a :: b :: rest).getLast! - a + 1 = (a :: b :: rest).length := by
+  rw [isInterval_eq_beq]; simp [beq_iff_eq]
+
+/-- Helper: gaps of a cons-cons list. -/
+private theorem gaps_cons_cons (a b : Nat) (rest : List Nat) :
+    gaps (a :: b :: rest) =
+      if b - a > 1 then (a, b) :: gaps (b :: rest) else gaps (b :: rest) := by
+  simp only [gaps, List.zip, List.drop, List.filter]
+  split <;> simp_all
+
+/-- For IsChain (· < ·) lists, isInterval = true ↔ gaps = []. -/
 theorem isInterval_iff_gaps_nil (ls : List Nat) (h : ls.IsChain (· < ·)) :
     isInterval ls = true ↔ gaps ls = [] := by
-  sorry -- TODO: induction on ls; arithmetic on sorted lists
+  induction h with
+  | nil => simp [isInterval, gaps]
+  | singleton a => simp [isInterval, gaps]
+  | @cons_cons a b rest hab hchain ih =>
+    rw [gaps_cons_cons]
+    have hlast_eq : (a :: b :: rest).getLast! = (b :: rest).getLast! := by
+      simp [List.getLast!]
+    have hge := chain_getLast_ge b rest hchain
+    have hlen : (a :: b :: rest).length = rest.length + 2 := by simp [List.length_cons]
+    constructor
+    · -- Forward: isInterval → gaps = []
+      intro hint
+      have hp := (isInterval_iff_eq a b rest).mp hint
+      rw [hlast_eq, hlen] at hp
+      -- hp : (b :: rest).getLast! - a + 1 = rest.length + 2
+      have hba : ¬(b - a > 1) := by intro hgap; omega
+      simp only [hba, ↓reduceIte]
+      have hba1 : b = a + 1 := by omega
+      apply ih.mp
+      match rest, hchain with
+      | [], _ => simp [isInterval]
+      | c :: rest', hchain' =>
+        rw [isInterval_iff_eq]
+        simp only [List.length_cons] at hp ⊢; omega
+    · -- Backward: gaps = [] → isInterval
+      intro hg
+      have hba : ¬(b - a > 1) := by intro hgap; simp [hgap] at hg
+      have hba1 : b = a + 1 := by omega
+      simp only [hba, ↓reduceIte] at hg
+      have ih_tl := ih.mpr hg
+      rw [isInterval_iff_eq]; rw [hlast_eq, hlen]
+      match rest, hchain, ih_tl with
+      | [], _, _ => simp [List.getLast!]; omega
+      | c :: rest', hchain', ih_tl' =>
+        have ih_prop := (isInterval_iff_eq b c rest').mp ih_tl'
+        simp only [List.length_cons] at ih_prop ⊢; omega
 
-/-- For a non-empty strictly increasing list,
-    `(blocks ls).length = (gaps ls).length + 1`.
+/-- `blocks` of a non-empty list is non-empty. -/
+private theorem blocks_ne_nil (a : Nat) (rest : List Nat) :
+    blocks (a :: rest) ≠ [] := by
+  cases rest with
+  | nil => simp [blocks]
+  | cons b rest' =>
+    simp only [blocks]
+    split
+    · split <;> exact List.cons_ne_nil _ _
+    · exact List.cons_ne_nil _ _
 
-    Proof sketch: induction following the `foldl` in `blocks`. Starting with one
-    block, each gap starts a new block (acc grows by 1) while no-gap extends the
-    current block (acc unchanged). So #blocks = 1 + #gaps. -/
+/-- blocks length for a :: b :: rest when b = a + 1. -/
+private theorem blocks_length_cons_succ (a b : Nat) (rest : List Nat)
+    (hab : b = a + 1) :
+    (blocks (a :: b :: rest)).length = (blocks (b :: rest)).length := by
+  have h := blocks_ne_nil b rest
+  show (if b = a + 1 then
+      match blocks (b :: rest) with
+      | [] => [[a]]
+      | first :: remaining => (a :: first) :: remaining
+    else [a] :: blocks (b :: rest)).length = _
+  rw [if_pos hab]
+  match hm : blocks (b :: rest) with
+  | [] => exact absurd hm h
+  | _ :: _ => rfl
+
+/-- blocks length for a :: b :: rest when b ≠ a + 1. -/
+private theorem blocks_length_cons_gap (a b : Nat) (rest : List Nat)
+    (hab : ¬(b = a + 1)) :
+    (blocks (a :: b :: rest)).length = (blocks (b :: rest)).length + 1 := by
+  show (if b = a + 1 then
+      match blocks (b :: rest) with
+      | [] => [[a]]
+      | first :: remaining => (a :: first) :: remaining
+    else [a] :: blocks (b :: rest)).length = _
+  rw [if_neg hab, List.length_cons]
+
+/-- For non-empty strictly increasing lists, #blocks = #gaps + 1. -/
 theorem blocks_length_eq_gaps_length_succ (ls : List Nat)
     (hne : ls ≠ []) (hc : ls.IsChain (· < ·)) :
     (blocks ls).length = (gaps ls).length + 1 := by
-  sorry -- TODO: induction on ls following foldl structure
+  induction hc with
+  | nil => contradiction
+  | singleton a => simp [blocks, gaps, List.zip, List.drop]
+  | @cons_cons a b rest hab hchain ih =>
+    rw [gaps_cons_cons]
+    have hb_ne : (b :: rest) ≠ [] := List.cons_ne_nil b rest
+    by_cases hgap : b - a > 1
+    · have hba : ¬(b = a + 1) := by omega
+      simp only [hgap, ↓reduceIte, List.length_cons]
+      rw [blocks_length_cons_gap a b rest hba, ih hb_ne]
+    · have hba : b = a + 1 := by omega
+      simp only [hgap, ↓reduceIte]
+      rw [blocks_length_cons_succ a b rest hba, ih hb_ne]
 
 /-- `foldl max init ls ≥ init`. -/
 theorem foldl_max_ge_init (ls : List Nat) (init : Nat) :
