@@ -1,5 +1,102 @@
 # Changelog
 
+## [0.128.0] - 2026-02-09
+
+### Added
+- **Crosslinguistic pronoun & allocutive fragments** for 9 languages: Basque, Magahi, Korean, Japanese, Tamil, Galician, Hindi, Maithili, Punjabi. Each `Fragments/{Lang}/Pronouns.lean` contains typed 2nd-person pronoun entries with formality levels, allocutive marker entries (suffixes/particles/clitics), verb agreement examples, and per-datum verification theorems. Theory-neutral (imports only `Core.Basic`).
+- **Allocutivity.lean bridge section** (Section E): `formalityToHonLevel` (Nat → HonLevel) bridging fragment formality to theory types. Per-language bridge theorems verifying fragment data consistency (all 2nd-person, correct level counts).
+
+## [0.127.0] - 2026-02-09
+
+### Added
+- **Minimalism/Phenomena/SpeechActs.lean**: Speas & Tenny (2003) configurational point-of-view roles. `PRole` (speaker/hearer/seatOfKnowledge), `SAPMood` (4 moods from 2×2 feature matrix), `deriveMood`, `seatOfKnowledge`, `resolveRole`/`resolveRoleInMood` (KContext grounding). `personToRole`/`pronounDiscourseRole` (person→P-role mapping, theory-side). Bridge theorems: mood exhaustivity, seat of knowledge by mood, KContext grounding, SA phase head, person-to-role verification.
+- **IntensionalSemantics/Reference/Kaplan.lean**: `pronYou` — "you" picks out `KContext.addressee` (parallel to `pronI` for agent). `pronYou_directlyReferential` theorem.
+
+## [0.126.0] - 2026-02-09
+
+### Added
+- **Minimalism/Core/Basic.lean**: `Cat.Fin` (finiteness, Rizzi 1997 split-CP) and `Cat.SA` (speech act head, Speas & Tenny 2003) constructors. Connects narrow syntax to QuestionSemantics/LeftPeriphery SAP analysis.
+- **Core/Context.lean**: `addressee : E` field on `KContext` (Speas & Tenny 2003). Extends the Kaplanian context tuple to model the hearer as a discourse participant.
+- **Minimalism/Core/Agree.lean**: `HonLevel` (.nh/.h/.hh) — relational honorific levels (Alok 2020, Portner et al. 2019). `FeatureVal.hon` — [iHON] as an Agree-checkable feature. `featuresMatch` extended for hon.
+- **Minimalism/Core/Phase.lean**: `isSAPhaseHead` — SA as a phase head (Speas & Tenny 2003). SAP is the highest phase; allocutive probing from SA is root-only.
+- **Phenomena/Honorifics/Data.lean**: Theory-neutral crosslinguistic allocutive agreement data (9 languages: Basque, Magahi, Korean, Japanese, Tamil, Galician, Hindi, Maithili, Punjabi). `AMType`, `Embeddability`, `HonDomain`, `AllocDatum`. Verification theorems: `rootOnly_languages_exist`, `freelyEmbed_languages_exist`, `all_have_verbal`, `all_have_tv`.
+- **Minimalism/Phenomena/Allocutivity.lean**: Allocutive agreement as standard Agree (Alok & Bhalla 2026). `AllocAgree` structure. `predictEmbeddability` (SA → rootOnly, Fin → freelyEmbed). Per-datum verification via `all_correctly_predicted`. `HonRelation`, `HonP` (nominal [iHON] projection). Bridge theorems: AA = Agree, SA/Fin embeddability predictions, per-language verification (Basque/Magahi/Korean), SAP parallel to question particle typology, pragmatic parallel to Yoon et al. 2020 social utility.
+
+### Changed
+- **IntensionalSemantics/Reference/Basic.lean**: `Context.toKContext` takes `addr : E` parameter for new `KContext.addressee` field.
+- **IntensionalSemantics/Reference/KaplanLD.lean**: `LDStructure.cAddressee` field added. `toKContext` updated.
+
+## [0.125.0] - 2026-02-09
+
+### Changed
+- **Minimalism Core reorganization**: Merged `Core/SyntacticObjects.lean` + `Core/Containment.lean` → new `Core/Basic.lean` (true foundation module). Merged old `Core/Basic.lean` (`MinimalistGrammar`, `MinDerivation`, `Grammar` instance) into `Formal/Workspace.lean`. Updated all imports (Labeling, FreeMagmaEquiv, Interface, RelativeClauses, FromFragments, Derivations, Linglib.lean). Net: 3 files → 1 file (Basic.lean), plus Workspace.lean absorbs the Grammar wrapper.
+- **Phenomena/Scope.lean**: Fixed `dp_phase_barrier_from_pic` — decompose SO as `node (leaf tok) b` (head-is-leaf, complement-is-right-daughter), making the theorem precisely capture PIC freezing the complement domain. Eliminates both `sorry` holes; proof is now complete.
+
+## [0.124.0] - 2026-02-09
+
+### Added
+- **Minimalism/Core/Phase.lean**: Phase Theory formalization (Chomsky 2000/2001/2008, Abels 2012, Citko 2014). `isPhaseHead` derived from `labelCat` (C, v). `isDPhaseHead` for D-as-phase. `PICStrength` (.strong/.weak). `Phase` structure (head, complement, edge). `phaseImpenetrable` (PIC). `antiLocality` (Abels 2012 ch.4). `stranding_from_antilocality_pic` (proven: anti-locality + PIC → complement immovable). `Transfer` (PF/LF shipping). `FeatureInheritance` (C→T, v*→V). `isPhaseBounded` locality predicate.
+- **Core/SyntacticObjects.lean**: `phonForm` field on `SimpleLI` (backward-compatible default `""`). `uposToCat` (UD UPOS → Cat mapping). `mkTrace`/`isTrace` trace convention (id ≥ 10000). `phonYield` (collect phonological forms from leaves). `mkLeafPhon` smart constructor.
+- **Core/Conjectures.lean**: Phase-bounded exhaustification conjectures: `exh_at_phase_boundaries`, `rsa_phase_locality`, `phase_bounded_alternatives`.
+- **Phenomena/Scope.lean**: `dp_phase_barrier_from_pic` theorem deriving QR barrier from PIC (sorry'd for head-child case).
+
+### Changed
+- **SynObj → SyntacticObject migration**: Fully migrated Minimalism module from informal `SynObj` (.lex/.set/.trace) to formal `SyntacticObject` (.leaf/.node). Deleted `Feature`, `FeatureBundle`, `SynObj`, old `externalMerge`, `Movement`, `DerivStep`, `Derivation`, `Phase`/`isPhase` from `Core/Basic.lean`.
+- **Core/Basic.lean**: Now a thin wrapper providing `MinimalistGrammar` and `Grammar` instance using formal `FullDerivation` from Workspace.lean. `MinDerivation` wraps `FullDerivation` + `ClauseType`.
+- **Core/FromFragments.lean**: Rewritten to use `SyntacticObject` via `mkLeafPhon`. `verbToSO`, `pronounToSO`, `nounToSO`, `determinerToSO`, `lexResultToSO` replacing old SynObj-based functions.
+- **Phenomena/Derivations.lean**: All derivation examples rewritten with `SyntacticObject` and formal `merge`. `phonYield` verification examples.
+- **Bridge/Interface.lean**: Rewritten for `SyntacticObject`. `soSemanticType`, `interpSOTrace`, `getTraceIndex` replacing SynObj versions.
+- **Bridge/RelativeClauses.lean**: Rewritten for `SyntacticObject`. Uses `mkTrace` instead of `SynObj.trace`.
+- **Formal/Workspace.lean**: Added `transferStep` to `DerivationStep`.
+- **Formal/HeadMovement/Basic.lean**: `isLocal` now uses `isPhaseHead` from Phase module. Removed axiom, replaced with theorem.
+- **Core/Agree.lean**: Added `validAgreeWithPIC` and `fullAgree` (phase-bounded Agree).
+
+## [0.123.0] - 2026-02-09
+
+### Added
+- **IntensionalSemantics/Reference/Kripke.lean**: Kripke (1980) *Naming and Necessity* Lecture I. **Main theorem: `rigid_iff_scope_invariant`** — a designator is rigid iff de re and de dicto readings coincide for all predicates (both directions proven; backward direction uses identity predicate as witness). `nonrigid_creates_ambiguity` — non-rigidity constructively produces a scope-distinguishing predicate (proven). `rigid_allOrNothing` — co-reference between rigid designators is world-independent (proven, strengthens `rigid_identity_necessary`). `nonrigid_identity_contingent` — without rigidity, identity can be contingent (the essential contrast). `modal_argument` — rigid name ≠ non-rigid description (proven). `properName_neq_description` — bridge to `Reference/Basic.properName`. `IsEssential`/`IsAccidental` with `essential_rigid_necessary` (proven) and `nonrigid_loses_essential` (proven). `rigidification_not_synonymy` — dthat rescues rigidity but destroys synonymy (proven, bridges to `KaplanLD.dthatW`). `IsStronglyRigid` with `rigid_stronglyRigid` (proven). Zero sorry.
+
+## [0.122.0] - 2026-02-09
+
+### Added
+- **Core/Context.lean**: Full Kaplanian context of utterance `KContext W E P T` with agent, world, time, position. `ProperContext` (agent exists at context world), `LocatedContext` (agent at position/time/world), `toSituation` bridge to `Core.Time.Situation`.
+- **Core/Intension.lean**: `StableCharacter` (same content at every context, Kaplan §XIX Remark 5). `stableCharacter_iff_sameContent` (proven). `rigid_stableChar_constant` — rigid + stable character = fully constant (proven, Remark 10).
+- **IntensionalSemantics/Reference/KaplanLD.lean**: Kaplan (1989) LD formal system. `LDStructure` (full model with proper-context constraint). `dthat`/`dthatW` rigidifier (§XII) with `dthat_isRigid` (proven). `alpha_eq_dthat_alpha` (proven by rfl, Remark 3). `box_alpha_eq_dthat_not_valid` (proven). Indexical operators: `opNow`, `opActually`, `opYesterday`. Tense operators: `opFuture`, `opPast`. Modal operators: `opBox`, `opDiamond`. Metatheorems: `exist_i_valid` (proven from LDStructure.proper), `i_am_located_valid`, `actually_stable` (proven by rfl).
+- **IntensionalSemantics/Reference/Demonstratives.lean**: True demonstratives and demonstrations (§IX, XV, XVI). `Demonstration` (manner of presentation → demonstratum). `TrueDemonstrative` with optional sortal. `demo_directlyReferential` — Principle 2 (proven). `demo_character_varies` (proven). `DemoFregePuzzle` — "that [Hes] = that [Phos]" informative because demonstrations differ. `fregePuzzle_same_content` (proven). `toReferringExpression` bridge to Basic.lean types.
+- **IntensionalSemantics/Reference/Monsters.lean**: Kaplan's anti-monster thesis (§VIII). `ContentOperator` (shifts circumstances), `ContextOperator` (shifts context = monster). `IsMonster` (output depends on input at other contexts). `FixityThesis` (Schlenker 2003 (1)): indexical value fixed by actual speech act. `sayM` monstrous attitude operator (Schlenker 2003 (6)): attitude verbs as quantifiers over contexts. `sayM_accesses_shifted_context` (proven). `KaplansThesis`, `englishThesis`. Cross-linguistic counterexamples: `amharicShift` (Schlenker 2003), `zazakiShift` (Anand & Nevins 2004), `englishTemporalShift` (Schlenker 2003: "yesterday" shifts under attitude verbs). `MonsterDebate` with current consensus.
+- **Reference/Basic.lean**: `Context.toKContext` bridge lifting simple `Context W E` to full `KContext W E P T`.
+- **Phenomena/Reference/DirectReference.lean**: `MonsterThesis` phenomenon — Kaplan's claim, its status, supporting vs challenging languages.
+
+## [0.121.0] - 2026-02-09
+
+### Added
+- **IntensionalSemantics/Reference/Basic.lean**: Core infrastructure for Almog's (2014) three-mechanism taxonomy of direct reference. `Context`, `Character`, `Content` (Kaplanian two-stage semantics). `RefMechanism` (`.designation | .singularProp | .referentialUse`). `ReferringExpression` bundling character + mechanisms. `isDirectlyReferential`, `constantCharacter`. `properName` with `properName_isDirectlyReferential` (proven). `IsDeJureRigid` vs `IsDeFactoRigid`. `properNames_corefer_coextensional` bridge to `Core.Intension.rigid_identity_necessary`.
+- **IntensionalSemantics/Reference/Kaplan.lean**: Kaplan (1989) character/content semantics. `indexical`, `pronI` with `pronI_directlyReferential` (proven). `SingularProposition` (structured ⟨individual, property⟩), `eval`, `flatten`. `structured_distinguishes_unstructured` (proven) — the Frege puzzle. `constantCharacter_is_up` bridge to Attitude/Intensional's `up`. `i_am_here_now_logically_true`.
+- **IntensionalSemantics/Reference/Donnellan.lean**: Donnellan (1966) referential/attributive distinction. `UseMode` (`.attributive | .referential`). `DefiniteDescription` with restrictor, use mode, optional intended referent. `attributiveContent` (Russellian unique-satisfier), `referentialContent` (rigid). `referentialUse_isRigid` (proven). `DonnellanDivergence` structure + `donnellanDivergence` theorem. `definitePrProp` bridge to `Core.Presupposition.PrProp`. `attributive_is_pointwise_iota` bridge to `TypeShifting.iota`.
+- **IntensionalSemantics/Reference/Almog2014.lean**: Synthesis — `IndependenceWitness` witnessing all three mechanisms operating independently. `frege_puzzle` (proven). Bridge theorems to: Carlson1977 (bare plurals = designation), Doxastic (opacity from structured propositions), RSA reference games (L0=attributive, S1=referential), Core.Conjectures (rigid ↔ CG), PLA/Belief (concept divergence).
+- **Phenomena/Reference/DirectReference.lean**: Six classic phenomena: `HesperusPhosphorus` (informative identity), `ModalArgument` (names rigid, descriptions not), `DonnellanMartini` (referential/attributive divergence), `SubstitutivityFailure` (belief opacity), `IAmHereNow` (logical truth ≠ necessity), `NecessityOfIdentity` (a posteriori necessity).
+- **Core/Intension.lean**: `CoRefer`, `CoExtensional`, `rigid_identity_necessary` (proven) — Kripke's necessity of identity as the formal kernel.
+- **Core/Conjectures.lean**: `almog_independence_conjecture` pointing to formal content in Almog2014.lean.
+- **Phenomena/Attitudes/IntensionalExamples.lean**: `hesperus_rigid`, `morningStar_not_rigid` (proven), `hesperus_rigid_isRigid` (proven), `name_vs_concept_independence` (proven) — bridge connecting Fregean individual concepts to Kripkean rigid designators.
+
+## [0.120.0] - 2026-02-09
+
+### Changed
+- **Factor Information Structure into Core**: Extracted foundational IS types from theory-specific files into three new Core modules, reflecting IS's cross-cutting nature (like QUD, Proposition, Scales).
+  - **Core/Alternatives.lean**: `Alternatives`, `HasAlternatives`, `AltMeaning`, `AltMeaning.unfeatured` (from Focus/InformationStructure + KratzerSelkirk2020).
+  - **Core/InformationStructure.lean**: `Theme`, `Rheme`, `Focus`, `Background`, `InfoStructure`, `HasInfoStructure`, `ISFeature`, `DiscourseStatus`, `isNew`, `applyFoC`, `applyG`, `isGiven`, `foc_g_exclusion` (from Focus/InformationStructure + KratzerSelkirk2020).
+  - **Core/Prosody.lean**: `PitchAccent`, `BoundaryTone`, `ProsodicLevel`, `ProsodicConstituent` (from CCG/Phenomena/Intonation + KratzerSelkirk2020).
+  - **KratzerSelkirk2020.lean** moved from `Theories/InformationStructure/` to `Theories/TruthConditional/Sentence/Focus/` alongside other focus theory files (Rooth, particles). Stripped to paper-specific content: TwoDimProp grounding, Contrast, ContrastOperator, onlySemantics, spellout, SOF data, Schwarzschild comparison.
+  - Deleted `Theories/TruthConditional/Sentence/Focus/InformationStructure.lean` (all content in Core).
+  - Deleted `Theories/InformationStructure/` directory.
+  - Dropped unused types: `QUD World`, `QUDAbstract`, `Answer`, `QUDSemantics`, `congruent` (duplicated or never imported).
+  - Updated imports in `Focus/Interpretation.lean`, `CCG/Phenomena/Intonation.lean`, `Linglib.lean`.
+
+## [0.119.0] - 2026-02-09
+
+### Added
+- **Theories/InformationStructure/KratzerSelkirk2020.lean**: Formalization of Kratzer & Selkirk (2020) "Deconstructing Information Structure". Two-feature decomposition: `ISFeature` (.FoC / .G) replaces unified [F]. `AltMeaning` O-value/A-value pairs (§4-5). `applyFoC` expands A-value to full domain (def 45), `applyG` identity with Givenness presupposition (def 47), `isGiven` singleton A-value check (def 46). `foc_g_exclusion`: mutual exclusivity theorem (§8 (58)). Both features grounded in Potts' `TwoDimProp` as use-conditional via `focAsTwoDim`/`gAsTwoDim` with CI projection theorems. `Contrast`/`ContrastOperator` (defs 49/53-54): ~ operator consuming alternatives, enabling [G]-marking (`consumed_alts_enable_g`). `onlySemantics` (def 56). Prosodic hierarchy: `ProsodicLevel` (σ/f/ω/φ/ι), `FoCSpellout`/`GSpellout` constraints, `SpelloutRanking` OT-style priority (§7). `SOFDatum` with Beaver et al. 2007 example. Katz & Selkirk 2011 prosodic triple data. `PressureForG`/`PressureForFoC` pragmatic pressures (§9 (61)/(66)). Comparison with Schwarzschild: `givenness_entails_aGivenness` (K&S stronger) and `aGivenness_not_sufficient` (converse fails).
+
 ## [0.118.0] - 2026-02-09
 
 ### Added

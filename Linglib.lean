@@ -30,6 +30,10 @@ import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.CausalModel
 import Linglib.Core.ProcessingModel
+import Linglib.Core.Alternatives
+import Linglib.Core.Context
+import Linglib.Core.InformationStructure
+import Linglib.Core.Prosody
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -60,6 +64,15 @@ import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Predicates
+import Linglib.Fragments.Basque.Pronouns
+import Linglib.Fragments.Magahi.Pronouns
+import Linglib.Fragments.Korean.Pronouns
+import Linglib.Fragments.Japanese.Pronouns
+import Linglib.Fragments.Tamil.Pronouns
+import Linglib.Fragments.Galician.Pronouns
+import Linglib.Fragments.Hindi.Pronouns
+import Linglib.Fragments.Maithili.Pronouns
+import Linglib.Fragments.Punjabi.Pronouns
 
 -- Phenomena
 import Linglib.Phenomena.AdditiveParticles.Data
@@ -148,6 +161,7 @@ import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.VonFintel1999
+import Linglib.Phenomena.Honorifics.Data
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Presupposition.Basic
@@ -178,6 +192,7 @@ import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
+import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.ScalarImplicatures.Basic
@@ -318,27 +333,31 @@ import Linglib.Theories.HPSG.Core.LexicalRules
 import Linglib.Theories.HPSG.Phenomena.Coreference
 import Linglib.Theories.HPSG.Phenomena.Inversion
 
+-- Theories: Information Structure (now in Focus/)
+import Linglib.Theories.TruthConditional.Sentence.Focus.KratzerSelkirk2020
+
 -- Theories: Minimalism
 import Linglib.Theories.Minimalism.Core.Agree
 import Linglib.Theories.Minimalism.Formal.Amalgamation
-import Linglib.Theories.Minimalism.Core.Basic
 import Linglib.Theories.Minimalism.Formal.Constraints.HMC
-import Linglib.Theories.Minimalism.Core.Containment
 import Linglib.Theories.Minimalism.Phenomena.Coreference
 import Linglib.Theories.Minimalism.Phenomena.Derivations
 import Linglib.Theories.Minimalism.Core.FromFragments
 import Linglib.Theories.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Theories.Minimalism.Phenomena.HeadMovement.BulgarianLHM
 import Linglib.Theories.Minimalism.Phenomena.HeadMovement.GermanicV2
+import Linglib.Theories.Minimalism.Phenomena.Allocutivity
 import Linglib.Theories.Minimalism.Phenomena.Inversion
+import Linglib.Theories.Minimalism.Phenomena.SpeechActs
 import Linglib.Theories.Minimalism.Core.Labeling
+import Linglib.Theories.Minimalism.Core.Phase
 import Linglib.Theories.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Minimalism.Phenomena.Scope
 import Linglib.Theories.Minimalism.Bridge.Interface
 import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Minimalism.Bridge.RelativeClauses
 import Linglib.Theories.Minimalism.Core.Structure
-import Linglib.Theories.Minimalism.Core.SyntacticObjects
+import Linglib.Theories.Minimalism.Core.Basic
 import Linglib.Theories.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Minimalism.Formal.MCB2023.Accessible
 import Linglib.Theories.Minimalism.Formal.MCB2023.BinaryOptimality
@@ -393,7 +412,6 @@ import Linglib.Theories.TruthConditional.Sentence.Entailment.PresuppositionPolar
 import Linglib.Theories.TruthConditional.Sentence.Entailment.ScaleInteraction
 import Linglib.Theories.TruthConditional.Sentence.Entailment.StrawsonEntailment
 import Linglib.Theories.TruthConditional.Sentence.Focus.DomainWidening
-import Linglib.Theories.TruthConditional.Sentence.Focus.InformationStructure
 import Linglib.Theories.TruthConditional.Sentence.Focus.Interpretation
 import Linglib.Theories.TruthConditional.Sentence.Focus.Particles
 import Linglib.Theories.TruthConditional.Sentence.Presupposition.BeliefEmbedding
@@ -454,6 +472,14 @@ import Linglib.Theories.IntensionalSemantics.Modal.PhillipsBrown
 import Linglib.Theories.IntensionalSemantics.Modal.SatisfactionOrdering
 import Linglib.Theories.IntensionalSemantics.Modal.Simple
 import Linglib.Theories.IntensionalSemantics.Mood.Basic
+import Linglib.Theories.IntensionalSemantics.Reference.Basic
+import Linglib.Theories.IntensionalSemantics.Reference.Kaplan
+import Linglib.Theories.IntensionalSemantics.Reference.Donnellan
+import Linglib.Theories.IntensionalSemantics.Reference.Almog2014
+import Linglib.Theories.IntensionalSemantics.Reference.Demonstratives
+import Linglib.Theories.IntensionalSemantics.Reference.KaplanLD
+import Linglib.Theories.IntensionalSemantics.Reference.Monsters
+import Linglib.Theories.IntensionalSemantics.Reference.Kripke
 
 -- Theories: QuestionSemantics
 import Linglib.Theories.QuestionSemantics.Answerhood
