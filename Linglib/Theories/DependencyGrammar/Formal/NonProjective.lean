@@ -440,14 +440,12 @@ theorem projective_iff_blockDegree_one (t : DepTree)
 
 /-- **Block-degree = gap degree + 1** for non-empty projections.
     (Kuhlmann 2013, §7.1 footnote 2) -/
-theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat)
-    (h : (projection deps root).length > 0) :
+theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     blockDegreeAt deps root = gapDegreeAt deps root + 1 := by
   unfold blockDegreeAt gapDegreeAt
-  have hne : projection deps root ≠ [] := by
-    intro heq; simp [heq] at h
   exact blocks_length_eq_gaps_length_succ
-    (projection deps root) hne (projection_chain' deps root)
+    (projection deps root) (projection_nonempty deps root)
+    (projection_chain' deps root)
 
 /-- **Projective ⊂ planar**: every projective tree is planar.
     (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges)
