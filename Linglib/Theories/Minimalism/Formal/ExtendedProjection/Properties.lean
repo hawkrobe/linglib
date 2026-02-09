@@ -47,7 +47,9 @@ def epSemanticType : Cat → EPSemanticType
   | .v                 => .intermediate   -- F1: event quantification domain
   | .D                 => .entity         -- F1: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
+  | .Fin               => .intermediate   -- F3: finiteness (Rizzi 1997)
   | .C                 => .proposition    -- F3: proposition (force)
+  | .SA                => .proposition    -- F4: speech act (Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: Generalized Theta Criterion

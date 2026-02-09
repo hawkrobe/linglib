@@ -23,7 +23,7 @@ This enables movement to change an element's syntactic status.
 - Collins, C. & E. Stabler (2016). "A Formalization of Minimalist Syntax"
 -/
 
-import Linglib.Theories.Minimalism.Core.Containment
+import Linglib.Theories.Minimalism.Core.Basic
 
 namespace Minimalism
 

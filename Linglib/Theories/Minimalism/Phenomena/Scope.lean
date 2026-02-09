@@ -26,6 +26,7 @@ Inverse scope is unavailable when:
 
 import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Phenomena.Quantification.ScopeFreezing
+import Linglib.Theories.Minimalism.Core.Phase
 
 namespace Minimalism.Phenomena.Scope
 
@@ -260,5 +261,34 @@ theorem baseline_is_ambiguous :
 
 See `Theories/Comparisons/ScopeFreezing.lean` for comparison with CCG.
 -/
+
+-- ============================================================================
+-- Phase Theory Derivation of QR Barriers
+-- ============================================================================
+
+section PhaseBridge
+
+open Minimalism
+
+/-- DP-as-barrier follows from PIC: D is a phase head (under the extended
+    phase inventory), so material inside DP's complement is frozen for QR.
+
+    This derives the previously-stipulated `QRBarrier.dpPhase` from
+    deeper principles: if D is a phase head, then PIC makes
+    DP-internal material inaccessible to operations outside DP.
+
+    The SO is decomposed as `node (leaf tok) b` — the head is a leaf
+    (the D lexical item) and `b` is the complement. PIC freezes the
+    complement domain, not the head/edge. -/
+theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
+    (h : labelCat (.node (.leaf tok) b) = some .D)
+    (h_phase : isDPhaseHead (.node (.leaf tok) b) = true) :
+    ∀ (strength : PICStrength) (goal : SyntacticObject),
+      contains b goal →
+      phaseImpenetrable strength (.node (.leaf tok) b) goal := by
+  intro strength goal hcontains
+  cases strength <;> exact hcontains
+
+end PhaseBridge
 
 end Minimalism.Phenomena.Scope

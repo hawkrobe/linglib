@@ -9,11 +9,12 @@ Traces left by movement are interpreted as variables bound by
 This module bridges Minimalist syntax and Montague semantics:
 
 ```
-Minimalism/Basic.lean          Montague/Variables.lean
+SyntacticObjects.lean          Montague/Variables.lean
        ↓                              ↓
-    SynObj with traces         Assignment functions
+    SyntacticObject with       Assignment functions
+    mkTrace/isTrace                    ↓
               ↘                    ↙
-         Minimalism/Semantics/Interface.lean
+         Minimalism/Bridge/Interface.lean
                      ↓
          interpTrace: traces → g(n)
          predicateAbstraction: λ-bind at landing site
@@ -28,12 +29,11 @@ Minimalism/Basic.lean          Montague/Variables.lean
    λ-abstract over the trace's index
    ⟦[CP Op_n ... t_n ...]⟧^g = λx. ⟦... t_n ...⟧^{g[n↦x]}
 
-## Why This Lives in Minimalism/
+## Trace Convention
 
-This interface is specific to movement-based syntax because:
-- Traces are a Minimalist construct (SynObj.trace in Basic.lean)
-- The binding relationship between filler and gap requires LF movement
-- Other frameworks (CCG, HPSG) handle long-distance dependencies differently
+Traces are encoded as `SyntacticObject.leaf` with id ≥ 10000.
+The trace index is `id - 10000`. Created via `mkTrace n`,
+detected via `isTrace so`.
 
 ## References
 
@@ -48,6 +48,7 @@ import Linglib.Theories.TruthConditional.Modification
 namespace Minimalism.Semantics
 
 open TruthConditional TruthConditional.Variables TruthConditional.Modification
+open Minimalism
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)
@@ -140,21 +141,30 @@ structure InterpContext (m : Model) where
 The semantic type corresponding to a syntactic object.
 
 - Traces have type e (they denote entities)
-- Lexical items and merged structures need lexical lookup
+- Other SOs need lexical lookup
 -/
-def synObjSemanticType : SynObj → Option Ty
-  | .trace _ => some .e
-  | .lex _ _ => none  -- depends on lexical entry
-  | .set _ _ _ => none  -- depends on composition
+def soSemanticType (so : SyntacticObject) : Option Ty :=
+  match isTrace so with
+  | some _ => some .e
+  | none => none  -- depends on lexical entry / composition
 
 /--
 Interpret a trace in a syntactic object.
 
 This extracts the trace index and interprets it via the assignment.
 -/
-def interpSynObjTrace {m : Model} : SynObj → Option (DenotG m .e)
-  | .trace n => some (interpTrace n)
-  | _ => none
+def interpSOTrace {m : Model} (so : SyntacticObject) : Option (DenotG m .e) :=
+  match isTrace so with
+  | some n => some (interpTrace n)
+  | none => none
+
+/--
+Get the trace index from a syntactic object (searches recursively).
+-/
+def getTraceIndex : SyntacticObject → Option ℕ
+  | .leaf tok =>
+    if tok.id ≥ 10000 then some (tok.id - 10000) else none
+  | .node a b => getTraceIndex a <|> getTraceIndex b
 
 -- ============================================================================
 -- Theorems about Movement Interpretation

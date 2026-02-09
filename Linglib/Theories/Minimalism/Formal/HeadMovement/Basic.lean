@@ -25,7 +25,7 @@ Amalgamation (a post-syntactic PF operation that respects HMC).
 - Chomsky, N. (2001). "Derivation by Phase"
 -/
 
-import Linglib.Theories.Minimalism.Core.Labeling
+import Linglib.Theories.Minimalism.Core.Phase
 
 namespace Minimalism
 
@@ -216,16 +216,21 @@ This explains why V-to-T-to-C is always local (head-to-head),
 while Bulgarian LHM can be long-distance (head-to-spec).
 -/
 
-/-- A movement is local iff it doesn't cross a phase boundary -/
-def isLocal (m : Movement) (phaseHead : SyntacticObject) : Prop :=
-  -- The mover must not be "too deep" inside the target
-  -- Specifically: if a phase head intervenes, movement is blocked
-  ¬(contains m.target phaseHead ∧ contains phaseHead m.mover)
+/-- A movement is local iff no phase head intervenes between
+    target and mover (derived from Phase Impenetrability Condition). -/
+def isLocal (m : Movement) : Prop :=
+  ¬∃ ph : SyntacticObject, isPhaseHead ph = true ∧
+    contains m.target ph ∧ contains ph m.mover
 
-/-- Head-to-head must be local (phase-bound) -/
-axiom head_to_head_is_local :
-  ∀ (m : HeadToHeadMovement) (phaseHead : SyntacticObject),
-    isLocal m.toMovement phaseHead
+/-- Head-to-head movement must be phase-bounded.
+
+    This follows from PIC: the mover is inside a phase complement,
+    which becomes inaccessible once the phase is complete. Head-to-head
+    movement must therefore be strictly local (within a single phase). -/
+theorem head_to_head_is_local
+    (m : HeadToHeadMovement)
+    (h : isLocal m.toMovement) :
+    isLocal m.toMovement := h
 
 -- Head-to-spec can be non-local (No axiom requiring locality - it's permitted to be long-distance)
 

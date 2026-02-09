@@ -10,7 +10,8 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 # Minimalist Derivations for Phenomena
 
 This module connects Minimalist Program derivations to empirical phenomena data.
-It uses the Fragments lexicon and shows that grammatical sentences can be built via Merge.
+It uses the Fragments lexicon and shows that grammatical sentences can be built
+via formal Merge (from SyntacticObjects.lean).
 
 ## Grounding
 
@@ -24,7 +25,7 @@ Derivations here correspond to grammatical sentences in:
           ↓
   Fragments/English/...             →  Lexical entries (VerbEntry, PronounEntry, etc.)
           ↓
-  Theories/Minimalism/FromFragments →  Interpretation: Entry → FeatureBundle
+  Theories/Minimalism/FromFragments →  Interpretation: Entry → SyntacticObject
           ↓
   Theories/Minimalism/Derivations   →  Minimalist derivations (this file)
 -/
@@ -39,51 +40,48 @@ open Minimalism.Core.FromFragments
 open Fragments.English.Lexicon (LexResult)
 
 -- ============================================================================
--- Lexical Items from Fragments
+-- Lexical Items from Fragments (as formal SyntacticObjects)
 -- ============================================================================
 
 -- Pronouns
-private def heSO : SynObj :=
-  lexResultToSynObj (.pronoun Fragments.English.Pronouns.he)
-private def herSO : SynObj :=
-  lexResultToSynObj (.pronoun Fragments.English.Pronouns.her)
-private def theySO : SynObj :=
-  lexResultToSynObj (.pronoun Fragments.English.Pronouns.they)
+private def heSO : SyntacticObject :=
+  pronounToSO Fragments.English.Pronouns.he 1
+private def herSO : SyntacticObject :=
+  pronounToSO Fragments.English.Pronouns.her 2
+private def _theySO : SyntacticObject :=
+  pronounToSO Fragments.English.Pronouns.they 3
 
 -- Proper nouns
-private def johnSO : SynObj :=
-  .lex (Fragments.English.Nouns.john.toWordSg) [.cat .DET]
-private def marySO : SynObj :=
-  .lex (Fragments.English.Nouns.mary.toWordSg) [.cat .DET]
+private def johnSO : SyntacticObject :=
+  nounToSO Fragments.English.Nouns.john 10
+private def marySO : SyntacticObject :=
+  nounToSO Fragments.English.Nouns.mary 11
 
 -- Common nouns
-private def catSO : SynObj :=
-  .lex (Fragments.English.Nouns.cat.toWordSg) [.cat .NOUN]
-private def pizzaSO : SynObj :=
-  .lex (Fragments.English.Nouns.pizza.toWordSg) [.cat .NOUN]
-private def bookSO : SynObj :=
-  .lex (Fragments.English.Nouns.book.toWordSg) [.cat .NOUN]
+private def catSO : SyntacticObject :=
+  nounToSO Fragments.English.Nouns.cat 20
+private def pizzaSO : SyntacticObject :=
+  nounToSO Fragments.English.Nouns.pizza 21
+private def bookSO : SyntacticObject :=
+  nounToSO Fragments.English.Nouns.book 22
 
 -- Verbs
-private def sleepsSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.sleep)
-private def seesSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.see)
-private def eatsSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.eat)
-private def arrivesSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.arrive)
-private def devoursSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.devour)
-private def givesSO : SynObj :=
-  lexResultToSynObj (.verb Fragments.English.Predicates.Verbal.give)
+private def sleepsSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.sleep 30
+private def seesSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.see 31
+private def eatsSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.eat 32
+private def arrivesSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.arrive 33
+private def devoursSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.devour 34
+private def givesSO : SyntacticObject :=
+  verbToSO Fragments.English.Predicates.Verbal.give 35
 
 -- Determiner
-private def theSO : SynObj := .lex ⟨"the", .DET, {}⟩ [.cat .DET]
-
--- Feature bundles
-private def npFeatures : FeatureBundle := [.cat .DET]
-private def vFeatures : FeatureBundle := [.cat .VERB]
+private def theSO : SyntacticObject :=
+  mkLeafPhon .D [.N] "the" 40
 
 -- ============================================================================
 -- Word Order Derivations
@@ -92,25 +90,25 @@ private def vFeatures : FeatureBundle := [.cat .VERB]
 section WordOrder
 
 /-- "John sees Mary" via Merge: [VP John [V' sees Mary]] -/
-def john_sees_mary : SynObj :=
-  let vp_inner := externalMerge seesSO marySO vFeatures
-  externalMerge johnSO vp_inner vFeatures
+def john_sees_mary : SyntacticObject :=
+  let vp_inner := merge seesSO marySO
+  merge johnSO vp_inner
 
 /-- "Mary eats pizza" via Merge -/
-def mary_eats_pizza : SynObj :=
-  let vp_inner := externalMerge eatsSO pizzaSO vFeatures
-  externalMerge marySO vp_inner vFeatures
+def mary_eats_pizza : SyntacticObject :=
+  let vp_inner := merge eatsSO pizzaSO
+  merge marySO vp_inner
 
 /-- "He sees her" via Merge -/
-def he_sees_her : SynObj :=
-  let vp_inner := externalMerge seesSO herSO vFeatures
-  externalMerge heSO vp_inner vFeatures
+def he_sees_her : SyntacticObject :=
+  let vp_inner := merge seesSO herSO
+  merge heSO vp_inner
 
 /-- "The cat eats pizza" via Merge -/
-def the_cat_eats_pizza : SynObj :=
-  let dp := externalMerge theSO catSO npFeatures
-  let vp_inner := externalMerge eatsSO pizzaSO vFeatures
-  externalMerge dp vp_inner vFeatures
+def the_cat_eats_pizza : SyntacticObject :=
+  let dp := merge theSO catSO
+  let vp_inner := merge eatsSO pizzaSO
+  merge dp vp_inner
 
 end WordOrder
 
@@ -121,55 +119,28 @@ end WordOrder
 section Subcategorization
 
 /-- "John sleeps" via Merge: [VP John [V' sleeps]] -/
-def john_sleeps : SynObj :=
-  externalMerge johnSO sleepsSO vFeatures
+def john_sleeps : SyntacticObject :=
+  merge johnSO sleepsSO
 
 /-- "Mary arrives" via Merge -/
-def mary_arrives : SynObj :=
-  externalMerge marySO arrivesSO vFeatures
+def mary_arrives : SyntacticObject :=
+  merge marySO arrivesSO
 
 /-- "John devours pizza" via Merge: [VP John [V' devours pizza]] -/
-def john_devours_pizza : SynObj :=
-  let vp_inner := externalMerge devoursSO pizzaSO vFeatures
-  externalMerge johnSO vp_inner vFeatures
+def john_devours_pizza : SyntacticObject :=
+  let vp_inner := merge devoursSO pizzaSO
+  merge johnSO vp_inner
 
 /-- "Mary sees John" via Merge -/
-def mary_sees_john : SynObj :=
-  let vp_inner := externalMerge seesSO johnSO vFeatures
-  externalMerge marySO vp_inner vFeatures
+def mary_sees_john : SyntacticObject :=
+  let vp_inner := merge seesSO johnSO
+  merge marySO vp_inner
 
 /-- "John gives Mary the book" via Merge -/
-def john_gives_mary_book : SynObj :=
-  let v_book := externalMerge givesSO bookSO vFeatures
-  let v_mary_book := externalMerge v_book marySO vFeatures
-  externalMerge johnSO v_mary_book vFeatures
-
-/-
-Minimalist Subcategorization
-
-In the Minimalist Program, subcategorization is encoded through:
-
-1. **Theta-roles**: Verbs assign theta-roles to their arguments
-   - sleep: assigns Agent to external argument only
-   - devour: assigns Agent + Theme
-   - give: assigns Agent + Theme + Goal
-
-2. **Merge structure**: Arguments merge in specific positions
-   - Internal arguments merge as complements of V
-   - External argument merges in Spec-vP
-
-3. **Theta Criterion**: Each argument must receive exactly one theta-role,
-   and each theta-role must be assigned to exactly one argument.
-
-Subcategorization violations:
-- "John devours" violates Theta Criterion (Theme role unassigned)
-- "John sleeps book" violates Theta Criterion (no role for "book")
-
-Full formalization would require:
-- Theta-role features on verbs
-- Theta assignment during Merge
-- Theta Criterion as a well-formedness condition
--/
+def john_gives_mary_book : SyntacticObject :=
+  let v_book := merge givesSO bookSO
+  let v_mary_book := merge v_book marySO
+  merge johnSO v_mary_book
 
 end Subcategorization
 
@@ -200,13 +171,19 @@ theorem models_ditransitive :
       (·.grammatical == "John gives Mary book") := by
   native_decide
 
-/-- Verify derivations are well-formed SynObj structures.
-    This shows the Minimalist derivations successfully build syntactic objects. -/
-example : john_sleeps = externalMerge johnSO sleepsSO vFeatures := rfl
+/-- Verify the phonological yield of a derivation matches expected word order -/
+example : john_sees_mary.phonYield = ["John", "sees", "Mary"] := rfl
+
+example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
+
+example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := rfl
+
+/-- Verify derivations are well-formed SyntacticObject structures. -/
+example : john_sleeps = merge johnSO sleepsSO := rfl
 example : john_devours_pizza =
-    externalMerge johnSO (externalMerge devoursSO pizzaSO vFeatures) vFeatures := rfl
+    merge johnSO (merge devoursSO pizzaSO) := rfl
 example : mary_sees_john =
-    externalMerge marySO (externalMerge seesSO johnSO vFeatures) vFeatures := rfl
+    merge marySO (merge seesSO johnSO) := rfl
 
 end Grounding
 

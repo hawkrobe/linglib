@@ -8,24 +8,25 @@ import Linglib.Fragments.English.Lexicon
 /-!
 # Minimalist Interpretation of Fragment Entries
 
-Maps Fragment lexical entries to Minimalist feature bundles.
+Maps Fragment lexical entries to formal `SyntacticObject`s via `LIToken`.
 
 This is the **theory interpretation layer**: Fragment entries are theory-neutral,
-and this module provides the Minimalist-specific interpretation.
+and this module provides the Minimalist-specific interpretation using the
+formal `SyntacticObject` type from `SyntacticObjects.lean`.
 
 ## Design
 
-- `VerbEntry → FeatureBundle`: category features + selectional features
-- `PronounEntry → FeatureBundle`: D features + phi-features + wh
-- `NounEntry → FeatureBundle`: N features + phi-features
-- `QuantifierEntry → FeatureBundle`: D features + quantificational features
+- `VerbEntry → SyntacticObject`: V with selectional stack from complement type
+- `PronounEntry → SyntacticObject`: D (pronouns project as DP heads)
+- `NounEntry → SyntacticObject`: N (common) or D (proper names)
+- `QuantifierEntry → SyntacticObject`: D with N selection
 
 ## Example
 
 ```
-VerbEntry.sleep (intransitive) → [cat V]
-VerbEntry.eat (transitive) → [cat V, selectsNP]
-VerbEntry.give (ditransitive) → [cat V, selectsNP, selectsNP]
+VerbEntry.sleep (intransitive) → .leaf ⟨.simple .V [], "sleeps"⟩
+VerbEntry.eat (transitive)     → .leaf ⟨.simple .V [.D], "eats"⟩
+VerbEntry.give (ditransitive)  → .leaf ⟨.simple .V [.D, .D], "gives"⟩
 ```
 -/
 
@@ -38,100 +39,65 @@ open Fragments.English.Nouns (NounEntry)
 open Fragments.English.Determiners (QuantifierEntry)
 open Fragments.English.Lexicon (LexResult)
 
-/--
-Selectional feature - what the verb selects.
--/
-inductive SelFeature where
-  | selectsNP    -- Selects an NP argument
-  | selectsCP    -- Selects a CP (finite clause)
-  | selectsIP    -- Selects an IP (infinitival)
-  | selectsVP    -- Selects a VP (gerund)
-  deriving DecidableEq, Repr, BEq
-
-/--
-Map a VerbEntry's complement type to selectional features.
--/
-def verbToSelFeatures (v : VerbEntry) : List SelFeature :=
+/-- Map a VerbEntry's complement type to a formal selectional stack. -/
+def verbToSelStack (v : VerbEntry) : SelStack :=
   match v.complementType with
-  | .none => []                           -- Intransitive: no selection
-  | .np => [.selectsNP]                   -- Transitive: selects NP
-  | .np_np => [.selectsNP, .selectsNP]    -- Ditransitive: selects two NPs
-  | .np_pp => [.selectsNP]                -- NP + PP (PP handled separately)
-  | .finiteClause => [.selectsCP]         -- Clause-embedding
-  | .infinitival => [.selectsIP]          -- Control/raising
-  | .gerund => [.selectsVP]               -- Gerund complement
-  | .smallClause => [.selectsNP]          -- Small clause (simplified)
-  | .question => [.selectsCP]             -- Question-embedding
+  | .none => []                -- intransitive
+  | .np => [.D]               -- transitive: selects DP
+  | .np_np => [.D, .D]        -- ditransitive: selects two DPs
+  | .np_pp => [.D]            -- NP + PP (PP handled separately)
+  | .finiteClause => [.C]     -- clause-embedding: selects CP
+  | .infinitival => [.T]      -- control/raising: selects TP
+  | .gerund => [.V]           -- gerund complement
+  | .smallClause => [.D]      -- small clause (simplified)
+  | .question => [.C]         -- question-embedding: selects CP
 
-/--
-Map a VerbEntry to a Minimalist feature bundle.
--/
-def verbToFeatures (v : VerbEntry) : FeatureBundle :=
-  [.cat .VERB] ++
-  -- Add EPP if verb is transitive (needs internal argument)
-  (if v.complementType != .none then [.epp true] else [])
+/-- Convert a VerbEntry to a formal SyntacticObject.
 
-/--
-Map a PronounEntry to a Minimalist feature bundle.
--/
-def pronounToFeatures (p : PronounEntry) : FeatureBundle :=
-  [.cat .DET] ++
-  (if p.wh then [.wh true] else [])
+    Uses `uposToCat` indirectly: verbs always map to `Cat.V`. -/
+def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
-/--
-Map a NounEntry to a Minimalist feature bundle.
--/
-def nounToFeatures (n : NounEntry) : FeatureBundle :=
+/-- Convert a PronounEntry to a formal SyntacticObject.
+
+    Pronouns are D heads (they project as DPs). -/
+def pronounToSO (p : PronounEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .D [] p.form id
+
+/-- Convert a NounEntry to a formal SyntacticObject.
+
+    Proper names are D (project as DP heads); common nouns are N. -/
+def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
   if n.proper then
-    [.cat .DET]  -- Proper names are D
+    mkLeafPhon .D [] n.formSg id
   else
-    [.cat .NOUN]  -- Common nouns are N
+    mkLeafPhon .N [] n.formSg id
 
-/--
-Map a QuantifierEntry to a Minimalist feature bundle.
--/
-def determinerToFeatures (_d : QuantifierEntry) : FeatureBundle :=
-  [.cat .DET]
+/-- Convert a QuantifierEntry to a formal SyntacticObject.
 
-/--
-Map a unified LexResult to a Minimalist feature bundle.
--/
-def lexResultToFeatures : LexResult → FeatureBundle
-  | .verb v => verbToFeatures v
-  | .pronoun p => pronounToFeatures p
-  | .noun n => nounToFeatures n
-  | .determiner d => determinerToFeatures d
+    Determiners are D heads that select N. -/
+def determinerToSO (d : QuantifierEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .D [.N] d.form id
 
-/--
-Convert a LexResult to a SynObj (lexical item with features).
--/
-def lexResultToSynObj (r : LexResult) : SynObj :=
+/-- Convert a unified LexResult to a formal SyntacticObject. -/
+def lexResultToSO (r : LexResult) (id : Nat) : SyntacticObject :=
   match r with
-  | .verb v => .lex (v.toWord3sg) (verbToFeatures v)
-  | .pronoun p => .lex (p.toWord) (pronounToFeatures p)
-  | .noun n => .lex (n.toWordSg) (nounToFeatures n)
-  | .determiner d => .lex (d.toWord) (determinerToFeatures d)
-
-/--
-Parse a sentence and produce Minimalist lexical items.
--/
-def parseToSynObjs (s : String) : Option (List SynObj) :=
-  Fragments.English.Lexicon.parseSentence s |>.map (·.map lexResultToSynObj)
+  | .verb v => verbToSO v id
+  | .pronoun p => pronounToSO p id
+  | .noun n => nounToSO n id
+  | .determiner d => determinerToSO d id
 
 -- ============================================================================
 -- Verification Examples
 -- ============================================================================
 
--- Verify verb features
-example : verbToFeatures Fragments.English.Predicates.Verbal.sleep = [.cat .VERB] := rfl
-example : verbToFeatures Fragments.English.Predicates.Verbal.eat = [.cat .VERB, .epp true] := rfl
+-- Verify verb selectional stacks
+example : verbToSelStack Fragments.English.Predicates.Verbal.sleep = [] := rfl
+example : verbToSelStack Fragments.English.Predicates.Verbal.eat = [.D] := rfl
+example : verbToSelStack Fragments.English.Predicates.Verbal.give = [.D, .D] := rfl
 
--- Verify noun features
-example : nounToFeatures Fragments.English.Nouns.john = [.cat .DET] := rfl
-example : nounToFeatures Fragments.English.Nouns.cat = [.cat .NOUN] := rfl
-
--- Verify pronoun features
-example : pronounToFeatures Fragments.English.Pronouns.he = [.cat .DET] := rfl
-example : pronounToFeatures Fragments.English.Pronouns.who = [.cat .DET, .wh true] := rfl
+-- Verify noun categories
+example : (nounToSO Fragments.English.Nouns.john 1).isLeaf = true := rfl
+example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf = true := rfl
 
 end Minimalism.Core.FromFragments

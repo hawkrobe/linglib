@@ -31,10 +31,12 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 - Hamblin, C. (1973). Questions in Montague English. Foundations of Language.
 -/
 
-import Linglib.Theories.TruthConditional.Sentence.Focus.InformationStructure
+import Linglib.Core.Alternatives
+import Linglib.Core.InformationStructure
 import Linglib.Theories.QuestionSemantics.Hamblin
 
-open Theories.TruthConditional.Sentence.InformationStructure
+open Core.Alternatives
+open Core.InformationStructure
 
 namespace TruthConditional.Sentence.FocusInterpretation
 

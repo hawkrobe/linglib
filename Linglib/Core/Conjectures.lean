@@ -116,4 +116,64 @@ def rsa_from_coarsened_lm {U W : Type*}
   ∀ u w (ε : ℚ), ε > 0 →
     (coarsened u w - L1 u w) ^ 2 < ε
 
+/-! ## Almog Independence Conjecture
+
+The three mechanisms of direct reference (designation, singular proposition,
+referential use) are empirically independent: natural language supplies
+expressions exercising every non-empty subset.
+
+See `IntensionalSemantics.Reference.Almog2014.IndependenceWitness` for
+the formal content. -/
+
+/-- Almog's independence thesis: for any two of the three mechanisms,
+there exists an expression exhibiting one but not the other.
+Stated abstractly — the formal witness is in Almog2014.lean. -/
+def almog_independence_conjecture (Mechanism : Type*) (exprs : List (List Mechanism)) : Prop :=
+  ∀ m₁ m₂ : Mechanism, m₁ ≠ m₂ →
+    (∃ e ∈ exprs, m₁ ∈ e ∧ m₂ ∉ e) ∧
+    (∃ e ∈ exprs, m₂ ∈ e ∧ m₁ ∉ e)
+
+/-! ## Phase-Bounded Exhaustification
+
+Phases as local computation domains for pragmatic inference.
+Charlow (2014, 2020): scope islands = evaluation boundaries.
+Chierchia/Fox/Spector (2012): Exh applies at scope positions.
+Hypothesis: phase boundaries delimit where Exh/RSA applies.
+-/
+
+/-- Exh applies at phase boundaries: alternatives are evaluated
+    within the phase domain, not globally.
+
+    If computation is phase-bounded, then local exhaustification
+    (within a phase) and global exhaustification (across the whole
+    structure) should agree within a phase domain. -/
+def exh_at_phase_boundaries {U W : Type*}
+    (exh_local : U → W → Prop)
+    (exh_global : U → W → Prop)
+    (phase_bounded : Prop) : Prop :=
+  phase_bounded → ∀ u w, exh_local u w ↔ exh_global u w
+
+/-- Phase-bounded RSA: pragmatic computation is local to phases.
+    S1 optimizes within the current phase, not globally.
+
+    If two utterances are in the same phase, S1's local computation
+    (within the phase) matches S1's global computation. -/
+def rsa_phase_locality {U W : Type*}
+    (S1_local : U → W → ℚ)
+    (S1_global : U → W → ℚ)
+    (same_phase : U → U → Prop) : Prop :=
+  ∀ u₁ u₂ w, same_phase u₁ u₂ → S1_local u₁ w = S1_global u₁ w
+
+/-- Phase-bounded alternative computation: alternatives for an expression
+    are computed from material within the same phase, not globally.
+
+    This connects to Chierchia (2006) / Fox & Katzir (2011):
+    the set of alternatives depends on what's locally available. -/
+def phase_bounded_alternatives {U : Type*}
+    (local_alts : U → List U)
+    (global_alts : U → List U)
+    (in_same_phase : U → U → Prop) : Prop :=
+  ∀ u, (∀ a ∈ local_alts u, in_same_phase u a) ∧
+       (∀ a ∈ global_alts u, ¬in_same_phase u a → a ∉ local_alts u)
+
 end Core.Conjectures

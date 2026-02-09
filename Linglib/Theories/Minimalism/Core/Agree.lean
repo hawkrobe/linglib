@@ -32,7 +32,7 @@ Agree is the mechanism by which features are checked/valued:
 - Adger, D. (2003). "Core Syntax", Chapter 4
 -/
 
-import Linglib.Theories.Minimalism.Core.Labeling
+import Linglib.Theories.Minimalism.Core.Phase
 
 namespace Minimalism
 
@@ -54,6 +54,15 @@ inductive CaseVal where
   | obl    -- oblique (default)
   deriving Repr, DecidableEq
 
+/-- Honorific level: social ordering between speaker and referent.
+    Relational, not absolute (Alok 2020, Portner et al. 2019).
+    ⟦iHON⟧ = λx. S_i ≺ x, where ≺ encodes social hierarchy. -/
+inductive HonLevel where
+  | nh    -- nonhonorific: S ≥ referent
+  | h     -- honorific: S < referent
+  | hh    -- high honorific: S << referent
+  deriving Repr, DecidableEq
+
 /-- Feature values that can be checked via Agree -/
 inductive FeatureVal where
   | phi : PhiFeature → FeatureVal
@@ -62,6 +71,7 @@ inductive FeatureVal where
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
+  | hon : HonLevel → FeatureVal      -- [iHON] (Alok & Bhalla 2026)
   deriving Repr, DecidableEq
 
 /-- A grammatical feature: either valued or unvalued
@@ -101,6 +111,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   | .q _, .q _ => true
   | .epp _, .epp _ => true
   | .tense _, .tense _ => true
+  | .hon _, .hon _ => true
   | _, _ => false
 
 -- Part 2: Feature Bundles on Syntactic Objects
@@ -590,5 +601,25 @@ def defectivelyIntervenes (probe x goal : SyntacticObject)
   xDef.isDeficient = true ∧
   -- X has a matching feature
   (xDef.features.any λ f => featuresMatch f (.unvalued ftype)) = true
+
+-- Part 16: Phase-Bounded Agree
+
+/-- Valid Agree with Phase Impenetrability Condition.
+
+    Agree is blocked if the goal is inside a phase complement
+    (and thus inaccessible under PIC). -/
+def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
+    (rel : AgreeRelation) : Prop :=
+  validAgree rel ∧
+    ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
+
+/-- PIC-bounded Agree with Activity Condition.
+
+    The full Agree constraint: probe c-commands goal, feature matching holds,
+    goal is active, AND no intervening phase boundary blocks the relation. -/
+def fullAgree (strength : PICStrength) (phases : List Phase)
+    (rel : AgreeRelation) : Prop :=
+  validAgreeWithActivity rel ∧
+    ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
 
 end Minimalism
