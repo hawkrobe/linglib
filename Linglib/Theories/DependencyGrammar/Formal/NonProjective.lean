@@ -345,9 +345,8 @@ example : DepTree.isWellNested germanNested = true := by native_decide
     The subtrees don't interleave because each verb dominates its argument. -/
 example : DepTree.isWellNested dutchCrossSerial = true := by native_decide
 
-/-- The minimal crossing tree is well-nested (gap degree 1, no interleaving
-    because the two subtrees {0,2} and {1,3} do interleave: 0 < 1 < 2 < 3.
-    Actually this IS interleaving — let's verify. -/
+/-- The minimal crossing tree is NOT well-nested: subtrees {0,2} and {1,3}
+    interleave (0 < 1 < 2 < 3). -/
 example : DepTree.isWellNested nonProjectiveTree = false := by native_decide
 
 -- ============================================================================
@@ -516,7 +515,7 @@ theorem fanout2_good_coverage :
          by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §12: Bridge Theorems
+-- §11: Bridge Theorems
 -- ============================================================================
 
 /-- Non-projective dependencies → gap degree ≥ 1.
