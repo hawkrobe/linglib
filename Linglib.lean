@@ -245,6 +245,11 @@ import Linglib.Theories.DependencyGrammar.Formal.Catena
 import Linglib.Theories.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Theories.DependencyGrammar.Formal.VPDivergence
 import Linglib.Theories.DependencyGrammar.Formal.NonProjective
+import Linglib.Theories.DependencyGrammar.Formal.Government
+import Linglib.Theories.DependencyGrammar.Formal.Ellipsis
+import Linglib.Theories.DependencyGrammar.Formal.Discontinuity
+import Linglib.Theories.DependencyGrammar.Formal.Islands
+import Linglib.Theories.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
 import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.CrossLinguistic
