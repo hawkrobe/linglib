@@ -28,6 +28,18 @@ structure DepTree where
   rootIdx : Nat
   deriving Repr
 
+/-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
+    Relaxes the unique-heads constraint (de Marneffe & Nivre 2019, §4.2). -/
+structure DepGraph where
+  words : List Word
+  deps : List Dependency
+  rootIdx : Nat
+  deriving Repr
+
+/-- Every DepTree is trivially a DepGraph. -/
+def DepTree.toGraph (t : DepTree) : DepGraph :=
+  { words := t.words, deps := t.deps, rootIdx := t.rootIdx }
+
 end DependenciesAndTrees
 
 section ArgumentStructure
