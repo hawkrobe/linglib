@@ -35,7 +35,6 @@ namespace TruthConditional.Sentence.Entailment.PresuppositionPolarity
 
 open Core.Presupposition
 open TruthConditional.Core.Polarity
-open Core.Proposition (BProp)
 open TruthConditional.Core.Polarity
 
 variable {W : Type*}
@@ -92,7 +91,7 @@ A presupposition projection context tracks both:
 -/
 structure PresupContext (W : Type*) where
   /-- The semantic context function (for computing entailments) -/
-  context : Prop' -> Prop'
+  context : BProp World -> BProp World
   /-- Whether the context is UE or DE -/
   polarity : ContextPolarity
   /-- The presupposition accumulated from outer operators -/

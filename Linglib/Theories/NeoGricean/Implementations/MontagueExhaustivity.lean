@@ -29,7 +29,6 @@ namespace NeoGricean.MontagueExhaustivity
 open TruthConditional TruthConditional.Determiner.Quantifier
 open NeoGricean.Exhaustivity
 
-
 /-
 ## World-Indexed Montague Models
 

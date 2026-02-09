@@ -26,18 +26,18 @@ def some' (a b : World → Bool) : Bool :=
 def no (a b : World → Bool) : Bool :=
   allWorlds.all λ x => !a x || !b x
 
-def fixedRestr : Prop' := p01
+def fixedRestr : BProp World := p01
 
 /-- "Every student" as a function of scope. -/
-def every_scope : Prop' → Prop' :=
+def every_scope : BProp World → BProp World :=
   λ scope => λ _ => every fixedRestr scope
 
 /-- "Some student" as a function of scope. -/
-def some_scope : Prop' → Prop' :=
+def some_scope : BProp World → BProp World :=
   λ scope => λ _ => some' fixedRestr scope
 
 /-- "No student" as a function of scope. -/
-def no_scope : Prop' → Prop' :=
+def no_scope : BProp World → BProp World :=
   λ scope => λ _ => no fixedRestr scope
 
 /-- "Every" is UE in scope. -/
@@ -53,10 +53,10 @@ theorem no_scope_DE : isDownwardEntailing no_scope testCases = true := by
   native_decide
 
 /-- Fixed scope for testing restrictor monotonicity. -/
-def fixedScope : Prop' := p012
+def fixedScope : BProp World := p012
 
 /-- "Every ___ smokes" as a function of restrictor. -/
-def every_restr : Prop' → Prop' :=
+def every_restr : BProp World → BProp World :=
   λ restr => λ _ => every restr fixedScope
 
 /-- "Every" is DE in restrictor. -/

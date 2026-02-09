@@ -54,9 +54,6 @@ namespace SauerlandRSA
 open Core.Proposition
 
 
-/-- A proposition as a function from worlds to Bool (decidable version) -/
-abbrev Prop' (W : Type*) := BProp W
-
 /--
 An epistemic state represents what the speaker knows.
 We model this as a set of worlds the speaker considers possible.
@@ -70,13 +67,13 @@ structure EpistemicState (W : Type*) where
 /--
 K operator: speaker knows φ iff φ is true in all epistemically possible worlds.
 -/
-def knows {W : Type*} (e : EpistemicState W) (φ : Prop' W) : Bool :=
+def knows {W : Type*} (e : EpistemicState W) (φ : BProp W) : Bool :=
   e.possible.all φ
 
 /--
 P operator: speaker considers φ possible.
 -/
-def possible {W : Type*} (e : EpistemicState W) (φ : Prop' W) : Bool :=
+def possible {W : Type*} (e : EpistemicState W) (φ : BProp W) : Bool :=
   e.possible.any φ
 
 /--
@@ -94,7 +91,7 @@ private theorem not_eq_true_iff (b : Bool) : ((!b) = true) ↔ (b = false) := by
 /--
 Standard epistemic duality: ¬K¬φ ↔ Pφ
 -/
-theorem duality {W : Type*} (e : EpistemicState W) (φ : Prop' W) :
+theorem duality {W : Type*} (e : EpistemicState W) (φ : BProp W) :
     (knows e (λ w => !φ w) = false) ↔ (possible e φ = true) := by
   simp only [knows, possible, Bool.eq_false_iff, ne_eq, List.all_eq_true, List.any_eq_true]
   constructor
@@ -115,27 +112,27 @@ A scalar scenario specifies an assertion and its alternatives.
 -/
 structure ScalarScenario (W : Type*) where
   /-- The asserted proposition -/
-  assertion : Prop' W
+  assertion : BProp W
   /-- The scalar alternatives (stronger propositions) -/
-  alternatives : List (Prop' W)
+  alternatives : List (BProp W)
 
 /--
 Primary implicature: speaker doesn't know the stronger alternative.
 -/
 def hasPrimaryImplicature {W : Type*} (S : ScalarScenario W) (e : EpistemicState W)
-    (ψ : Prop' W) : Prop :=
+    (ψ : BProp W) : Prop :=
   ψ ∈ S.alternatives ∧ knows e ψ = false
 
 /--
 Secondary implicature: speaker knows the alternative is false.
 -/
-def hasSecondaryImplicature {W : Type*} (e : EpistemicState W) (ψ : Prop' W) : Prop :=
+def hasSecondaryImplicature {W : Type*} (e : EpistemicState W) (ψ : BProp W) : Prop :=
   knows e (λ w => !ψ w) = true
 
 /--
 Key insight: if ψ is possible, then K¬ψ is blocked.
 -/
-theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : Prop' W) :
+theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : BProp W) :
     possible e ψ = true → knows e (λ w => !ψ w) = false := by
   intro hpos
   simp only [possible, List.any_eq_true] at hpos
@@ -161,22 +158,22 @@ inductive DisjWorld where
 open DisjWorld
 
 /-- Proposition A is true -/
-def propA : Prop' DisjWorld
+def propA : BProp DisjWorld
   | onlyA | both => true
   | _ => false
 
 /-- Proposition B is true -/
-def propB : Prop' DisjWorld
+def propB : BProp DisjWorld
   | onlyB | both => true
   | _ => false
 
 /-- A ∨ B -/
-def propAorB : Prop' DisjWorld
+def propAorB : BProp DisjWorld
   | neither => false
   | _ => true
 
 /-- A ∧ B -/
-def propAandB : Prop' DisjWorld
+def propAandB : BProp DisjWorld
   | both => true
   | _ => false
 
@@ -191,7 +188,7 @@ These are equivalent when the epistemic state corresponds to the support
 of the probability distribution.
 -/
 theorem primary_possibility_correspondence {W : Type*}
-    (e : EpistemicState W) (ψ : Prop' W) :
+    (e : EpistemicState W) (ψ : BProp W) :
     (knows e ψ = false) → (possible e (λ w => !ψ w) = true) := by
   intro h
   simp only [knows, Bool.eq_false_iff, ne_eq, List.all_eq_true] at h
@@ -211,7 +208,7 @@ theorem primary_possibility_correspondence {W : Type*}
 Secondary K¬ψ is blocked when Pψ holds.
 -/
 theorem blocking_correspondence {W : Type*}
-    (e : EpistemicState W) (ψ : Prop' W) :
+    (e : EpistemicState W) (ψ : BProp W) :
     possible e ψ = true → ¬hasSecondaryImplicature e ψ := by
   intro hpos hsec
   simp only [hasSecondaryImplicature] at hsec

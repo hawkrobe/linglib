@@ -42,7 +42,7 @@ open TruthConditional.Sentence.Entailment.AntiAdditivity
 /--
 **Strawson-DE** (von Fintel 1999, Definition 14).
 
-A function `f : Prop' → Prop'` is Strawson-DE with respect to a definedness
+A function `f : BProp World → BProp World` is Strawson-DE with respect to a definedness
 predicate `defined` iff: for all p ≤ q, if `defined p` holds (i.e. the
 presupposition of f(p) is satisfied), then f(q) ≤ f(p).
 
@@ -53,8 +53,8 @@ Compare with Mathlib's `AntitoneOn f s`, which requires BOTH p and q in s.
 Strawson-DE is one-sided: only p (the stronger proposition) needs to satisfy
 the definedness condition.
 -/
-def IsStrawsonDE (f : Prop' → Prop') (defined : Prop' → Prop) : Prop :=
-  ∀ p q : Prop', (∀ w, p w ≤ q w) → defined p → (∀ w, f q w ≤ f p w)
+def IsStrawsonDE (f : BProp World → BProp World) (defined : BProp World → Prop) : Prop :=
+  ∀ p q : BProp World, (∀ w, p w ≤ q w) → defined p → (∀ w, f q w ≤ f p w)
 
 /--
 **Strawson-valid inference** (von Fintel 1999, Definition 19).
@@ -63,7 +63,7 @@ An inference from premises to conclusion is Strawson-valid iff it is
 classically valid once we add the premise that all presuppositions of the
 conclusion are satisfied.
 -/
-def StrawsonValid (premises : List Prop') (conclusion : Prop')
+def StrawsonValid (premises : List (BProp World)) (conclusion : BProp World)
     (presupSatisfied : Prop) : Prop :=
   presupSatisfied →
     (∀ w, premises.all (· w) = true → conclusion w = true)
@@ -80,8 +80,8 @@ gives us f(q) ≤ f(p) unconditionally.
 
 This establishes: DE ⊆ Strawson-DE.
 -/
-theorem de_implies_strawsonDE (f : Prop' → Prop') (hDE : IsDownwardEntailing f)
-    (defined : Prop' → Prop) : IsStrawsonDE f defined :=
+theorem de_implies_strawsonDE (f : BProp World → BProp World) (hDE : IsDownwardEntailing f)
+    (defined : BProp World → Prop) : IsStrawsonDE f defined :=
   λ _p _q hpq _hdef => hDE hpq
 
 /--
@@ -89,8 +89,8 @@ Every anti-additive function is Strawson-DE.
 
 Via: AA → DE → Strawson-DE.
 -/
-theorem antiAdditive_implies_strawsonDE (f : Prop' → Prop')
-    (hAA : IsAntiAdditive f) (defined : Prop' → Prop) :
+theorem antiAdditive_implies_strawsonDE (f : BProp World → BProp World)
+    (hAA : IsAntiAdditive f) (defined : BProp World → Prop) :
     IsStrawsonDE f defined :=
   de_implies_strawsonDE f (antiAdditive_implies_de f hAA) defined
 
@@ -99,8 +99,8 @@ Every anti-morphic function is Strawson-DE.
 
 Via: AM → AA → DE → Strawson-DE.
 -/
-theorem antiMorphic_implies_strawsonDE (f : Prop' → Prop')
-    (hAM : IsAntiMorphic f) (defined : Prop' → Prop) :
+theorem antiMorphic_implies_strawsonDE (f : BProp World → BProp World)
+    (hAM : IsAntiMorphic f) (defined : BProp World → Prop) :
     IsStrawsonDE f defined :=
   de_implies_strawsonDE f (antiMorphic_implies_de f hAM) defined
 
@@ -109,14 +109,14 @@ The full hierarchy chain: AM → AA → DE → Strawson-DE.
 
 Given an anti-morphic proof, we can derive all weaker properties.
 -/
-structure FullHierarchy (f : Prop' → Prop') (defined : Prop' → Prop) where
+structure FullHierarchy (f : BProp World → BProp World) (defined : BProp World → Prop) where
   am : IsAntiMorphic f
   aa : IsAntiAdditive f := am.1
   de : IsDownwardEntailing f := antiAdditive_implies_de f aa
   strawsonDE : IsStrawsonDE f defined := de_implies_strawsonDE f de defined
 
 /-- Negation satisfies the full hierarchy. -/
-def pnot_fullHierarchy (defined : Prop' → Prop) : FullHierarchy pnot defined :=
+def pnot_fullHierarchy (defined : BProp World → Prop) : FullHierarchy pnot defined :=
   { am := pnot_isAntiMorphic }
 
 -- ============================================================================
@@ -148,7 +148,7 @@ Presupposition of "only x VP": x satisfies VP.
 `x` picks out a world (individual), `scope` is the VP denotation.
 In our finite model, x is a characteristic function selecting one world.
 -/
-def onlyPresup (x : World → Bool) (scope : Prop') : Prop :=
+def onlyPresup (x : World → Bool) (scope : BProp World) : Prop :=
   ∃ w, x w = true ∧ scope w = true
 
 /--
@@ -156,7 +156,7 @@ Assertion of "only x VP": no y ≠ x satisfies VP.
 
 For all worlds in the model, if y is not x, then y doesn't satisfy scope.
 -/
-def onlyAssert (x : World → Bool) (scope : Prop') : Prop' :=
+def onlyAssert (x : World → Bool) (scope : BProp World) : BProp World :=
   λ w => allWorlds.all λ y =>
     (x y) || !(scope y)
 
@@ -165,7 +165,7 @@ The full "only" meaning: presupposition + assertion combined.
 
 "Only x VP" is true at w iff x satisfies VP AND no one else does.
 -/
-def onlyFull (x : World → Bool) (scope : Prop') : Prop' :=
+def onlyFull (x : World → Bool) (scope : BProp World) : BProp World :=
   λ w => (allWorlds.any λ y => x y && scope y) &&
          (allWorlds.all λ y => x y || !(scope y))
 
@@ -181,8 +181,8 @@ theorem onlyFull_not_de : ¬IsDownwardEntailing (onlyFull (λ w => w == .w0)) :=
   -- Counterexample: p = ∅ (no one eats kale), q = {w0} (only John eats vegetables)
   -- p ≤ q trivially. onlyFull(q)(w0) = true, onlyFull(p)(w0) = false.
   -- DE requires onlyFull(q) ≤ onlyFull(p), so true ≤ false — contradiction.
-  let p : Prop' := λ _ => false
-  let q : Prop' := λ w => w == .w0
+  let p : BProp World := λ _ => false
+  let q : BProp World := λ w => w == .w0
   have hpq : ∀ w, p w ≤ q w := by intro w; simp [p]
   have h := hDE hpq World.w0
   simp (config := { decide := true }) only [onlyFull, allWorlds, p, q, List.any_cons,
@@ -307,7 +307,7 @@ complement truth and has an adversative ordering source, the complement
 position is DE conditional on presupposition satisfaction.
 -/
 theorem adversative_isStrawsonDE
-    (f : Prop' → Prop') (hFactive : ∀ p w, f p w = true → p w = true)
+    (f : BProp World → BProp World) (hFactive : ∀ p w, f p w = true → p w = true)
     (hDE_given_presup : ∀ p q, (∀ w, p w ≤ q w) →
       (∀ w, p w = true → f p w = true) →
       (∀ w, f q w ≤ f p w)) :
@@ -335,7 +335,7 @@ Presupposition of superlative: subject satisfies the domain predicate.
 
 "The tallest girl who VP" presupposes the subject is a girl who VP'd.
 -/
-def superlativePresup (subject : World → Bool) (restriction : Prop') : Prop :=
+def superlativePresup (subject : World → Bool) (restriction : BProp World) : Prop :=
   ∃ w, subject w = true ∧ restriction w = true
 
 /--
@@ -345,7 +345,7 @@ satisfying the restriction.
 Simplified model: the "tallest who VP" at w checks that no one else
 in the restriction exceeds the subject.
 -/
-def superlativeAssert (subject : World → Bool) (restriction : Prop') : Prop' :=
+def superlativeAssert (subject : World → Bool) (restriction : BProp World) : BProp World :=
   λ w => (allWorlds.any λ y => subject y && restriction y) &&
          (allWorlds.all λ y => subject y || !(restriction y) ||
             !(allWorlds.any λ z => !(subject z) && restriction z))
@@ -385,28 +385,28 @@ Bridge: `IsDE` (= `Antitone`) implies `IsStrawsonDE` for any definedness.
 This is just `de_implies_strawsonDE` but using the `IsDE` abbreviation
 from `Polarity.lean`.
 -/
-theorem isDE_implies_strawsonDE (f : Prop' → Prop') (hDE : IsDE f)
-    (defined : Prop' → Prop) : IsStrawsonDE f defined :=
+theorem isDE_implies_strawsonDE (f : BProp World → BProp World) (hDE : IsDE f)
+    (defined : BProp World → Prop) : IsStrawsonDE f defined :=
   de_implies_strawsonDE f hDE defined
 
 /--
 Negation is Strawson-DE (trivially, since it's anti-morphic).
 -/
-theorem pnot_isStrawsonDE (defined : Prop' → Prop) :
+theorem pnot_isStrawsonDE (defined : BProp World → Prop) :
     IsStrawsonDE pnot defined :=
   de_implies_strawsonDE pnot pnot_isDownwardEntailing defined
 
 /--
 "No student" is Strawson-DE (trivially, since it's anti-additive → DE).
 -/
-theorem no_student_isStrawsonDE (defined : Prop' → Prop) :
+theorem no_student_isStrawsonDE (defined : BProp World → Prop) :
     IsStrawsonDE no_student defined :=
   de_implies_strawsonDE no_student no_isDE_scope defined
 
 /--
 "At most 2 students" is Strawson-DE (trivially, since it's DE).
 -/
-theorem atMost2_isStrawsonDE (defined : Prop' → Prop) :
+theorem atMost2_isStrawsonDE (defined : BProp World → Prop) :
     IsStrawsonDE atMost2_student defined :=
   de_implies_strawsonDE atMost2_student atMost_isDE_scope defined
 

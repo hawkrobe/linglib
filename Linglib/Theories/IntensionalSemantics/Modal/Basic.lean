@@ -14,7 +14,6 @@ import Linglib.Core.ModalLogic
 namespace IntensionalSemantics.Modal
 
 open IntensionalSemantics.Attitude.Intensional
-open Core.Proposition (BProp)
 
 section CoreTypes
 

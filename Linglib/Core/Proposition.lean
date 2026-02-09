@@ -412,3 +412,5 @@ def intensionFW (W : Type*) [FiniteWorlds W] (worlds : List W) (props : List (BP
 end GaloisConnection
 
 end Core.Proposition
+
+export Core.Proposition (Prop' BProp)

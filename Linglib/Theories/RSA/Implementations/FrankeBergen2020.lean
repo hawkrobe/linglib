@@ -32,7 +32,7 @@ namespace RSA.Implementations.FrankeBergen2020
 
 open Core
 open NeoGricean.Exhaustivity.Interface
-open NeoGricean.Exhaustivity (Prop')
+open NeoGricean.Exhaustivity
 open Phenomena.Quantification.Studies.FrankeBergen2020
 
 

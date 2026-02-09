@@ -123,6 +123,9 @@ structure Word where
   features : Features := {}
   deriving Repr
 
+/-- Convenience constructor for a featureless word (form + category only). -/
+def Word.mk' (form : String) (cat : UD.UPOS) : Word := ⟨form, cat, {}⟩
+
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
 

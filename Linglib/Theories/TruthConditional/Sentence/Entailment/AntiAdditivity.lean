@@ -18,8 +18,8 @@ open List (Sublist)
 section Definitions
 
 /-- Anti-additive: forall A B, f(A | B) = f(A) & f(B). -/
-def IsAntiAdditive (f : Prop' → Prop') : Prop :=
-  ∀ p q : Prop', (∀ w, f (por p q) w = (f p w && f q w))
+def IsAntiAdditive (f : BProp World → BProp World) : Prop :=
+  ∀ p q : BProp World, (∀ w, f (por p q) w = (f p w && f q w))
 
 /--
 Anti-morphic (AM): Anti-additive + distributes ∧ to ∨ in both directions.
@@ -28,9 +28,9 @@ Anti-morphic (AM): Anti-additive + distributes ∧ to ∨ in both directions.
 
 This is the characteristic property of negation (De Morgan's law).
 -/
-def IsAntiMorphic (f : Prop' → Prop') : Prop :=
+def IsAntiMorphic (f : BProp World → BProp World) : Prop :=
   IsAntiAdditive f ∧
-  (∀ p q : Prop', (∀ w, f (pand p q) w = (f p w || f q w)))
+  (∀ p q : BProp World, (∀ w, f (pand p q) w = (f p w || f q w)))
 
 
 /--
@@ -38,7 +38,7 @@ Anti-additive implies DE.
 
 The left-to-right direction of anti-additivity is exactly the DE property.
 -/
-theorem antiAdditive_implies_de (f : Prop' → Prop') (hAA : IsAntiAdditive f) :
+theorem antiAdditive_implies_de (f : BProp World → BProp World) (hAA : IsAntiAdditive f) :
     IsDownwardEntailing f := by
   intro p q hpq
   intro w
@@ -76,7 +76,7 @@ Anti-morphic implies anti-additive.
 
 By definition, anti-morphic is anti-additive plus the ∧-to-∨ property.
 -/
-theorem antiMorphic_implies_antiAdditive (f : Prop' → Prop') (hAM : IsAntiMorphic f) :
+theorem antiMorphic_implies_antiAdditive (f : BProp World → BProp World) (hAM : IsAntiMorphic f) :
     IsAntiAdditive f :=
   hAM.1
 
@@ -85,7 +85,7 @@ Anti-morphic implies DE.
 
 Transitive: AM → AA → DE.
 -/
-theorem antiMorphic_implies_de (f : Prop' → Prop') (hAM : IsAntiMorphic f) :
+theorem antiMorphic_implies_de (f : BProp World → BProp World) (hAM : IsAntiMorphic f) :
     IsDownwardEntailing f :=
   antiAdditive_implies_de f (antiMorphic_implies_antiAdditive f hAM)
 
@@ -105,7 +105,7 @@ Negation satisfies the conjunction-to-disjunction property.
 
 `¬(A ∧ B) = ¬A ∨ ¬B` (De Morgan's law, part 2)
 -/
-theorem pnot_distributes_and : ∀ p q : Prop', (∀ w, pnot (pand p q) w = (pnot p w || pnot q w)) := by
+theorem pnot_distributes_and : ∀ p q : BProp World, (∀ w, pnot (pand p q) w = (pnot p w || pnot q w)) := by
   intro p q w
   simp only [pnot, pand, Core.Proposition.Decidable.pnot, Core.Proposition.Decidable.pand]
   cases p w <;> cases q w <;> rfl
@@ -124,13 +124,13 @@ theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
 
 For a fixed restrictor, "no ___" as a function of scope.
 -/
-def no' (restr : Prop') (scope : Prop') : Prop' :=
+def no' (restr : BProp World) (scope : BProp World) : BProp World :=
   λ _ => allWorlds.all λ x => !(restr x && scope x)
 
 /--
 "No student ___" with fixed restrictor.
 -/
-def no_student : Prop' → Prop' := no' p01  -- p01 = "students"
+def no_student : BProp World → BProp World := no' p01  -- p01 = "students"
 
 /--
 "No" is anti-additive in scope.
@@ -162,13 +162,13 @@ theorem no_isDE_scope : IsDE no_student :=
 
 We use a simplified version for our 4-world model.
 -/
-def atMost (n : Nat) (restr scope : Prop') : Bool :=
+def atMost (n : Nat) (restr scope : BProp World) : Bool :=
   (allWorlds.filter λ w => restr w && scope w).length ≤ n
 
 /--
 "At most 2 students ___" with fixed restrictor.
 -/
-def atMost2_student : Prop' → Prop' :=
+def atMost2_student : BProp World → BProp World :=
   λ scope => λ _ => atMost 2 p01 scope
 
 /--
@@ -241,14 +241,14 @@ Weak NPI licensing: Requires DE context.
 
 Examples: ever, any (unstressed), alcun
 -/
-def licensesWeakNPI (f : Prop' → Prop') : Prop := IsDownwardEntailing f
+def licensesWeakNPI (f : BProp World → BProp World) : Prop := IsDownwardEntailing f
 
 /--
 Strong NPI licensing: Requires Anti-Additive context.
 
 Examples: lift a finger, in weeks, until
 -/
-def licensesStrongNPI (f : Prop' → Prop') : Prop := IsAntiAdditive f
+def licensesStrongNPI (f : BProp World → BProp World) : Prop := IsAntiAdditive f
 
 -- Verify: negation licenses both
 example : licensesWeakNPI pnot := pnot_isDownwardEntailing

@@ -57,7 +57,6 @@ open TruthConditional.Determiner.Quantifier
 open Core.Scales
 open NeoGricean.Exhaustivity
 
-
 /-
 ## Sentence Frames
 

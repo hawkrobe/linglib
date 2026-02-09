@@ -16,7 +16,6 @@ import Mathlib.Data.Rat.Defs
 
 namespace Core.Conjectures
 
-open Core.Proposition (BProp)
 open Core.ModalLogic (AgentAccessRel)
 open Core.Intension (Intension IsRigid)
 
