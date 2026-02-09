@@ -311,12 +311,12 @@ import Linglib.Theories.ConstructionGrammar.Studies.KayFillmore1999
 import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 -- Theories: HPSG
-import Linglib.Theories.HPSG.Basic
-import Linglib.Theories.HPSG.Coreference
-import Linglib.Theories.HPSG.Features
-import Linglib.Theories.HPSG.HeadFiller
-import Linglib.Theories.HPSG.Inversion
-import Linglib.Theories.HPSG.LexicalRules
+import Linglib.Theories.HPSG.Core.Basic
+import Linglib.Theories.HPSG.Core.FromFragments
+import Linglib.Theories.HPSG.Core.HeadFiller
+import Linglib.Theories.HPSG.Core.LexicalRules
+import Linglib.Theories.HPSG.Phenomena.Coreference
+import Linglib.Theories.HPSG.Phenomena.Inversion
 
 -- Theories: Minimalism
 import Linglib.Theories.Minimalism.Core.Agree

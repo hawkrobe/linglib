@@ -1,8 +1,8 @@
 import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Minimalism.Core.Labeling
-import Linglib.Theories.HPSG.HeadFiller
-import Linglib.Theories.HPSG.LexicalRules
+import Linglib.Theories.HPSG.Core.HeadFiller
+import Linglib.Theories.HPSG.Core.LexicalRules
 import Linglib.Theories.CCG.Core.Basic
 import Linglib.Theories.DependencyGrammar.Formal.NonProjective
 import Linglib.Theories.ConstructionGrammar.ArgumentStructure

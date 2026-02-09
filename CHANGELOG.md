@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.118.0] - 2026-02-09
+
+### Added
+- **HPSG/Core/FromFragments.lean**: New Fragment → HPSG Sign mapping layer (following CCG/Core/FromFragments pattern). `verbToSign`, `nounToSign`, `pronounToSign`, `determinerToSign`. `fragmentLexicon` builds complete HPSG lexicon from all English Fragment entries. Verification examples for intransitive/transitive/ditransitive valence, proper/common noun categories.
+
+### Changed
+- **HPSG reorganization**: Reorganized 6 flat files into Core/Phenomena structure matching CCG, Minimalism, and DependencyGrammar. `Basic.lean` + `Features.lean` merged into `Core/Basic.lean` with unified types (`Inv` inductive replaces `inv : Bool`, merged `VForm`/`VForm'` and `HeadFeatures`/`HeadFeatures'`). `HeadFiller.lean` → `Core/HeadFiller.lean`, `LexicalRules.lean` → `Core/LexicalRules.lean`, `Coreference.lean` → `Phenomena/Coreference.lean`, `Inversion.lean` → `Phenomena/Inversion.lean`. Updated imports in `Mueller2013.lean`, `CommandRelations.lean`, and `Linglib.lean`.
+
 ## [0.117.0] - 2026-02-09
 
 ### Added

@@ -44,7 +44,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Theories.Minimalism.Phenomena.Coreference
-import Linglib.Theories.HPSG.Coreference
+import Linglib.Theories.HPSG.Phenomena.Coreference
 import Linglib.Theories.DependencyGrammar.Phenomena.Coreference
 import Linglib.Theories.DependencyGrammar.Phenomena.CRDC
 import Linglib.Core.Interfaces.CoreferenceTheory

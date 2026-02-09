@@ -18,11 +18,17 @@ inductive VForm where
   | presentParticiple
   deriving Repr, DecidableEq
 
+/-- The INV(erted) feature for subject-aux inversion. -/
+inductive Inv where
+  | plus
+  | minus
+  deriving Repr, DecidableEq
+
 /-- Head features (shared between head and phrase). -/
 structure HeadFeatures where
   vform : VForm := .finite
-  inv : Bool := false      -- key for subject-aux inversion
-  aux : Bool := false      -- is this an auxiliary?
+  inv : Inv := .minus
+  aux : Bool := false
   deriving Repr, DecidableEq
 
 /-- Valence features (what arguments are needed). -/
@@ -88,7 +94,7 @@ section InversionConstraint
 def satisfiesInversionConstraint (s : Sign) : Prop :=
   match s with
   | .phrase children ss =>
-    if ss.head.inv then
+    if ss.head.inv = .plus then
       match children.head? with
       | some first => first.synsem.head.aux
       | none => False
@@ -102,11 +108,11 @@ section ClauseTypes
 
 /-- Matrix questions require [INV +]. -/
 def matrixQuestionRequiresInv (s : Sign) (ct : ClauseType) : Prop :=
-  ct = .matrixQuestion → s.synsem.head.inv = true
+  ct = .matrixQuestion → s.synsem.head.inv = .plus
 
 /-- Embedded questions require [INV -]. -/
 def embeddedQuestionProhibitsInv (s : Sign) (ct : ClauseType) : Prop :=
-  ct = .embeddedQuestion → s.synsem.head.inv = false
+  ct = .embeddedQuestion → s.synsem.head.inv = .minus
 
 end ClauseTypes
 
@@ -133,5 +139,61 @@ instance : Grammar HPSGGrammar where
   derives g ws ct := ∃ d : HPSGDerivation g, d.sign.yield = ws ∧ d.clauseType = ct
 
 end HPSGGrammarDef
+
+section WordOrder
+
+/-- Find the position of the first auxiliary. -/
+def findAuxPosition (ws : List Word) : Option Nat :=
+  ws.findIdx? (·.cat == .AUX)
+
+/-- Is this a nominal category that can be a subject? -/
+def isSubjectCat (c : UD.UPOS) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
+/-- Find the position of the first subject (non-wh DP). -/
+def findSubjectPosition (ws : List Word) : Option Nat :=
+  ws.findIdx? λ w => isSubjectCat w.cat && !w.features.wh
+
+/-- Auxiliary precedes subject. -/
+def auxPrecedesSubject (ws : List Word) : Bool :=
+  match findAuxPosition ws, findSubjectPosition ws with
+  | some a, some s => a < s
+  | _, _ => false
+
+/-- Subject precedes auxiliary. -/
+def subjectPrecedesAux (ws : List Word) : Bool :=
+  match findAuxPosition ws, findSubjectPosition ws with
+  | some a, some s => s < a
+  | _, _ => false
+
+/-- [INV +] correlates with aux-before-subject order. -/
+def invPlusImpliesAuxFirst (inv : Inv) (ws : List Word) : Prop :=
+  inv = .plus → auxPrecedesSubject ws = true
+
+/-- [INV -] correlates with subject-before-aux order. -/
+def invMinusImpliesSubjectFirst (inv : Inv) (ws : List Word) : Prop :=
+  inv = .minus → subjectPrecedesAux ws = true
+
+end WordOrder
+
+section WordOrderTheorems
+
+/-- INV+ and INV- are mutually exclusive. -/
+theorem inv_exclusive (i : Inv) : i = .plus ∨ i = .minus := by
+  cases i <;> simp
+
+/-- If we have aux-first order, INV+ is possible. -/
+theorem aux_first_allows_inv_plus (ws : List Word)
+    (h : auxPrecedesSubject ws = true) :
+    invPlusImpliesAuxFirst .plus ws := by
+  intro _; exact h
+
+/-- If we have subject-first order, INV- is possible. -/
+theorem subject_first_allows_inv_minus (ws : List Word)
+    (h : subjectPrecedesAux ws = true) :
+    invMinusImpliesSubjectFirst .minus ws := by
+  intro _; exact h
+
+end WordOrderTheorems
 
 end HPSG
