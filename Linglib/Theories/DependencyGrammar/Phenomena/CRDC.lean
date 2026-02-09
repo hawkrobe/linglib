@@ -42,23 +42,8 @@ For simple transitives, predictions are identical. Differences emerge with:
 - Tesnière, L. (1959). Éléments de syntaxe structurale.
 -/
 
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.DependencyGrammar.Core.Nominal
 import Linglib.Core.Interfaces.CoreferenceTheory
-
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev they := Fragments.English.Pronouns.they.toWord
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev himself := Fragments.English.Pronouns.himself.toWord
-private abbrev herself := Fragments.English.Pronouns.herself.toWord
-private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev him := Fragments.English.Pronouns.him.toWord
-private abbrev her := Fragments.English.Pronouns.her.toWord
-private abbrev them := Fragments.English.Pronouns.them.toWord
 
 namespace DepGrammar.CRDC
 

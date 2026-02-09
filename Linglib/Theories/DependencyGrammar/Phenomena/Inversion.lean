@@ -17,6 +17,8 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.DependencyGrammar.Core.LexicalRules
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
+namespace DepGrammar.Inversion
+
 open DepGrammar
 
 private abbrev what := Fragments.English.Pronouns.what.toWord
@@ -185,3 +187,5 @@ The Dependency Grammar analysis correctly predicts:
 The key insight from Gibson: Inversion is captured by the lexical rule that
 changes the subject's direction from LEFT to RIGHT in the argument structure.
 -/
+
+end DepGrammar.Inversion

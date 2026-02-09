@@ -5,24 +5,8 @@ Reflexives require short dependency paths; locality = same subgraph rooted at ve
 References: Hudson (1990) Ch. 6, Gibson (2025) Ch. 7.
 -/
 
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.DependencyGrammar.Core.Basic
 import Linglib.Theories.DependencyGrammar.Core.Nominal
 import Linglib.Core.Interfaces.CoreferenceTheory
-
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev they := Fragments.English.Pronouns.they.toWord
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev himself := Fragments.English.Pronouns.himself.toWord
-private abbrev herself := Fragments.English.Pronouns.herself.toWord
-private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev him := Fragments.English.Pronouns.him.toWord
-private abbrev her := Fragments.English.Pronouns.her.toWord
-private abbrev them := Fragments.English.Pronouns.them.toWord
 
 namespace DepGrammar.Coreference
 
