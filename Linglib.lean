@@ -97,6 +97,7 @@ import Linglib.Phenomena.Causatives.ThickThin
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
+import Linglib.Phenomena.DependencyLength.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
@@ -187,7 +188,10 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
+import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.VerbPosition
+import Linglib.Phenomena.WordOrder.Gradience
+import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
 
 -- Theories: CCG
 import Linglib.Theories.CCG.Core.Basic
@@ -235,7 +239,16 @@ import Linglib.Theories.DependencyGrammar.Core.Basic
 import Linglib.Theories.DependencyGrammar.Core.LexicalRules
 import Linglib.Theories.DependencyGrammar.Core.Nominal
 import Linglib.Theories.DependencyGrammar.Formal.HeadCriteria
+import Linglib.Theories.DependencyGrammar.Formal.DependencyLength
+import Linglib.Theories.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Theories.DependencyGrammar.Formal.Catena
+import Linglib.Theories.DependencyGrammar.Formal.EnhancedDependencies
+import Linglib.Theories.DependencyGrammar.Formal.VPDivergence
 import Linglib.Theories.DependencyGrammar.Formal.NonProjective
+import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.Basic
+import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
+import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.CrossLinguistic
+import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
 import Linglib.Theories.DependencyGrammar.Phenomena.Coordination
 import Linglib.Theories.DependencyGrammar.Phenomena.Coreference
 import Linglib.Theories.DependencyGrammar.Phenomena.CRDC
