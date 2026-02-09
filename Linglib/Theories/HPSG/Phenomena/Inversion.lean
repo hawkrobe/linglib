@@ -2,7 +2,7 @@
 # HPSG Analysis of Subject-Auxiliary Inversion
 
 Inversion-specific constraints and licensing.
-Builds on the general feature system from Features.lean.
+Builds on the general feature system from Core/Basic.lean.
 
 ## The Analysis (Sag, Wasow & Bender 2003)
 
@@ -18,7 +18,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.HPSG.Features
+import Linglib.Theories.HPSG.Core.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 namespace HPSG

@@ -1,4 +1,4 @@
-import Linglib.Theories.HPSG.Basic
+import Linglib.Theories.HPSG.Core.Basic
 
 /-!
 # Head-Filler Schema and SLASH Feature

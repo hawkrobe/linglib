@@ -1,4 +1,4 @@
-import Linglib.Theories.HPSG.Basic
+import Linglib.Theories.HPSG.Core.Basic
 
 /-!
 # Lexical Rules in HPSG
