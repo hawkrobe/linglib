@@ -349,6 +349,14 @@ theorem blocks_length_eq_gaps_length_succ (ls : List Nat)
       simp only [hgap, ↓reduceIte]
       rw [blocks_length_cons_succ a b rest hba, ih hb_ne]
 
+end Projection
+
+-- ============================================================================
+-- Nat List Maximum Utilities (for foldl max 0 reasoning in hierarchy proofs)
+-- ============================================================================
+
+section FoldlMax
+
 /-- `foldl max init ls ≥ init`. -/
 theorem foldl_max_ge_init (ls : List Nat) (init : Nat) :
     ls.foldl max init ≥ init := by
@@ -422,7 +430,7 @@ theorem foldl_max_const (ls : List Nat) (k : Nat)
       have := foldl_max_ge_mem (a :: rest) 0 a (.head _)
       omega
 
-end Projection
+end FoldlMax
 
 section ArgumentStructure
 
