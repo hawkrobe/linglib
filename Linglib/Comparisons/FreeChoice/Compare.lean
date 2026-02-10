@@ -38,7 +38,7 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 import Linglib.Theories.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.Alsop2024
-import Linglib.Theories.DynamicSemantics.BilateralUpdate.FreeChoice
+import Linglib.Theories.DynamicSemantics.BUS.FreeChoice
 import Linglib.Comparisons.FreeChoice.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
 
@@ -48,7 +48,7 @@ open Phenomena.Modality.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
-open Theories.BilateralUpdateSemantics.FreeChoice
+open Theories.DynamicSemantics.BUS.FreeChoice
 open Comparisons.FreeChoice.Aloni2022
 
 -- ============================================================================

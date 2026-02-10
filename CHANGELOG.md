@@ -1,9 +1,30 @@
 # Changelog
 
+## [0.134.0] - 2026-02-09
+
+### Added
+- **NeoGricean/Exhaustivity/Chierchia2013.lean**: Core theorems from Chierchia (2013) *Logic in Grammar* with real proofs (no sorry). Free Choice via double exhaustification (`free_choice_forward`/`free_choice_backward`: Exh(Exh(◇(p∨q))) ↔ ◇p∧◇q). SI–NPI Generalization (`si_vacuous_in_de`: SIs contradictory in DE contexts). Domain widening reversal (`widening_strengthens_in_de`/`widening_weakens_in_ue`: Kadmon & Landman's NPI licensing). Intervention disrupts DE (`intervention_negation_not_de`: non-monotone operators break DE chains). Scalar reversal (`entailment_reversal_in_de`/`weak_is_strong_in_de`). FC duality (`fc_duality_forward`: uniform derivation for any modal satisfying distributivity over disjunction). Polarity composition grounded in Mathlib (`double_negation_ue`, `ue_under_de`, `de_under_ue`, `ue_under_ue`). Maximize Strength = exhaustification bridge (`maximize_strength_eq_exhIE`).
+
+### Removed
+- **DynamicSemantics/BilateralUpdate/**: Deleted duplicate directory (`Basic.lean`, `FreeChoice.lean`). The canonical Elliott & Sudo (2025) implementation lives in `DynamicSemantics/BUS/`. `BilateralUpdate/` was an older standalone version with near-identical content; its sole consumer (`Comparisons/FreeChoice/Compare.lean`) now imports from `BUS/` instead.
+
+### Changed
+- **CLAUDE.md**: Clarified that `/-! ... -/` module docstrings must come after all `import` statements (Lean requires imports first).
+
+## [0.133.0] - 2026-02-09
+
+### Added
+- **IntensionalSemantics/SituationSemantics/Elbourne.lean**: Formalization of Elbourne (2013) "Definite Descriptions" (OUP). `SituationFrame` ontology (D_s with ≤ partial order, isWorld, isMinimal). `the_sit`: situation-relative ⟦the⟧ — the core Fregean lexical entry with presupposition relativized to situations. `the_sit'`/`the_sit_at_world_eq_the_uniq_w`: proves existing `the_uniq_w` is a special case. `attributive_is_the_sit_bound`: Donnellan's attributive = `the_sit'`. Referential/attributive distinction derived (not ambiguity) via `SitVarStatus` (.free/.bound). `useModeToSitVar` roundtrip isomorphism bridging to Donnellan.lean. Donkey anaphora via minimal situations (`donkey_uniqueness_from_minimality`). De re/de dicto via situation scope. Existence entailments (Ch 8 data). Incomplete definites via `IncompletenessSource`. Pronouns = definite descriptions (`NPDeletionSource`, `PronounAsDefinite`, Voldemort phrases). Bridges to English fragment: `english_the_is_the_sit`, `english_the_is_uniqueness`, `english_demonstratives_are_definite`, `pronoun_is_definite_article`, per-entry classification theorems for it/he/she. Bridge to `Core/Definiteness.lean`: `presupTypeToSitDescription` maps weak/strong to situation size. Bridge to Donnellan: `useModeToSitVar`/`useMode_sitVar_roundtrip`. Situation binding operators (ς_i, Σ_i, σ_i) and situation variables (free/bound). 8 unified phenomena enumerated with `UnifiedPhenomenon`. §15 QUD–Situation bridge: `qudRelevantSituation` defines Q-relevant situation at a world (minimal part resolving QUD); conjectures `situation_pronoun_tracks_qud` (discourse-bound situation = QUD-relevant situation) and `qud_refinement_monotone` (finer QUD ⟹ larger situation).
+
+## [0.132.0] - 2026-02-09
+
+### Changed
+- **Eliminate redundant Bool encodings in Core/Definiteness.lean**: Removed `requiresStrongArticle` (Bool) — duplicate of `useTypeToPresupType` (DefPresupType). Removed `bridgingArticle` (Bool) — replaced by `bridgingPresupType : BridgingSubtype → DefPresupType`. Removed 4 trivial aliases (`schwarz_weak_semantics`, `schwarz_strong_semantics`, `partWholePresupType`, `relationalPresupType`) and 3 theorems that only existed to prove the Bool/DefPresupType encodings agree (`schwarz_mapping_consistent`, `bridging_part_whole_is_uniqueness`, `bridging_relational_is_familiarity`). Updated `PronounTypology.lean` `semantic_mapping_parallel` to use `useTypeToPresupType` directly.
+
 ## [0.131.0] - 2026-02-09
 
 ### Changed
-- **Consolidate definiteness types into Core/Definiteness.lean**: Extracted all lightweight definiteness vocabulary from Phenomena/ into a new zero-import Core/ module. `DefPresupType` (.uniqueness/.familiarity), `ArticleType` (Schwarz 2009), `DefiniteUseType` (Hawkins 1978), `BridgingSubtype` (.partWhole/.relational), `WeakArticleStrategy`, `Definiteness` (.indefinite/.definite), plus mappings (`requiresStrongArticle`, `useTypeToPresupType`, `articleTypeToAvailablePresup`, `bridgingArticle`). Eliminated duplicate `PresupType` (Bridging.lean) and `BridgingType` (Bridging.lean). Fixed inverted Theories→Phenomena dependency: PronounTypology.lean and Bridging.lean now import from Core/Definiteness.lean instead of defining their own types. Definite.lean imports Core/Definiteness.lean instead of Phenomena/ files.
+- **Consolidate definiteness types into Core/Definiteness.lean**: Extracted all lightweight definiteness vocabulary from Phenomena/ into a new zero-import Core/ module. `DefPresupType` (.uniqueness/.familiarity), `ArticleType` (Schwarz 2009), `DefiniteUseType` (Hawkins 1978), `BridgingSubtype` (.partWhole/.relational), `WeakArticleStrategy`, `Definiteness` (.indefinite/.definite), plus mappings (`useTypeToPresupType`, `articleTypeToAvailablePresup`, `bridgingPresupType`). Eliminated duplicate `PresupType` (Bridging.lean) and `BridgingType` (Bridging.lean). Fixed inverted Theories→Phenomena dependency: PronounTypology.lean and Bridging.lean now import from Core/Definiteness.lean instead of defining their own types. Definite.lean imports Core/Definiteness.lean instead of Phenomena/ files.
 
 ## [0.130.0] - 2026-02-09
 

@@ -279,8 +279,6 @@ import Linglib.Theories.DependencyGrammar.Phenomena.Inversion
 import Linglib.Theories.DependencyGrammar.Phenomena.LongDistance
 
 -- Theories: Dynamic Semantics
-import Linglib.Theories.DynamicSemantics.BilateralUpdate.Basic
-import Linglib.Theories.DynamicSemantics.BilateralUpdate.FreeChoice
 import Linglib.Theories.DynamicSemantics.BUS.Basic
 import Linglib.Theories.DynamicSemantics.BUS.DynamicTy2
 import Linglib.Theories.DynamicSemantics.BUS.FreeChoice
@@ -483,6 +481,7 @@ import Linglib.Theories.IntensionalSemantics.Reference.Demonstratives
 import Linglib.Theories.IntensionalSemantics.Reference.KaplanLD
 import Linglib.Theories.IntensionalSemantics.Reference.Monsters
 import Linglib.Theories.IntensionalSemantics.Reference.Kripke
+import Linglib.Theories.IntensionalSemantics.SituationSemantics.Elbourne
 
 -- Theories: QuestionSemantics
 import Linglib.Theories.QuestionSemantics.Answerhood
@@ -516,6 +515,7 @@ import Linglib.Theories.NeoGricean.Core.Markedness
 import Linglib.Theories.NeoGricean.Evaluativity
 import Linglib.Theories.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.NeoGricean.Exhaustivity.Chierchia2004
+import Linglib.Theories.NeoGricean.Exhaustivity.Chierchia2013
 import Linglib.Theories.NeoGricean.Exhaustivity.EFCI
 import Linglib.Theories.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.NeoGricean.Exhaustivity.Interface

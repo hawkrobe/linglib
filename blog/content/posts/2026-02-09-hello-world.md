@@ -1,24 +1,28 @@
 ---
-title: "Hello World: Introducing Linguistics in Lean"
+title: "Why Formalize Linguistics?"
 date: 2026-02-09
-summary: "Why Linglib has a blog now, and what we've been up to."
-tags: ["meta", "situation-semantics", "definiteness", "pronouns"]
+summary: "The case for a unified formal library connecting linguistic theories in Lean 4."
+tags: ["vision", "formalization", "RSA", "Montague"]
 ---
 
-Linglib is a Lean 4 library for formalizing linguistic theories and connecting them to computational pragmatics. We've been building it for a while, but until now the only public-facing documentation has been auto-generated API docs. This blog — **Linguistics in Lean** — is meant to fill the gap: documenting design decisions, summarizing new modules, and lowering the barrier to contribution.
+Linguistics has dozens of mature theoretical frameworks — Montague semantics, RSA, CCG, HPSG, Minimalism, DRT, neo-Gricean pragmatics — each with its own notation, assumptions, and community. They frequently make claims about the same phenomena, but it is surprisingly hard to tell when two theories genuinely disagree versus when they are saying the same thing in different notation. Linglib is an attempt to find out. It is a Lean 4 library that formalizes linguistic theories in a shared type-theoretic language, so their predictions can be directly compared.
 
-The idea is borrowed from the Lean math community. Baanen et al. (CICM 2025) make a convincing case that writing down unwritten knowledge about a formalization project is one of the most effective things you can do to help others contribute.
+The project's north star is: *for phenomenon P with behavioral data D, prove that theory T₁ predicts D and theory T₂ doesn't* — or prove that they both do, and identify exactly which assumptions differ. There are a few early examples of this in the library already (RSA vs. grammatical exhaustification on scalar implicatures, CCG vs. Minimalism on scope freezing), but the point is to build infrastructure that makes these comparisons routine rather than heroic.
 
-## Recent work
+## What formalization forces
 
-The last few releases (v0.129–v0.133) focused on three interconnected areas:
+A proof assistant is unforgiving about implicit assumptions. When a paper says "the speaker chooses the utterance that maximizes informativity," formalization forces you to specify: informativity with respect to what? Over which set of alternatives? With what prior? These questions often turn out to be where the real theoretical action is, and it is easy to gloss over them in prose.
 
-1. **Situation semantics** — A new `Elbourne.lean` module formalizes Elbourne (2013), deriving the referential/attributive distinction from situation binding rather than ambiguity, and connecting donkey anaphora to minimal situations.
+The same discipline applies when connecting theories. We try to maximize what might be called *interconnection density*: hooking modules together so that changing one thing breaks others. When we recently formalized Elbourne (2013) on situation semantics, for instance, the type checker immediately flagged whether his situation-relative definite article was consistent with the presupposition types already in the library. When it is, you get a bridge theorem. When it isn't, you learn something. Either way, the dependency is explicit rather than implicit.
 
-2. **Pronoun typology** — `PronounTypology.lean` encodes Patel-Grosz & Grosz (2017) with data from 11 languages, verified generalizations (Minimize DP!, DEM-subset-PER implicational universal), and bridges to coreference, demonstratives, and direct reference modules.
+## Grounding pragmatics in semantics
 
-3. **Core/Definiteness refactoring** — Definiteness vocabulary (`DefPresupType`, `ArticleType`, `BridgingSubtype`, etc.) was consolidated from scattered Phenomena files into a single `Core/Definiteness.lean` module, eliminating redundant Bool encodings and fixing an inverted Theories-to-Phenomena dependency.
+The central architectural commitment in Linglib is that RSA models should *derive* their meaning functions from Montague compositional semantics, not stipulate them. A standard RSA model defines a literal listener L₀ with a meaning function mapping utterances to truth values — but where does that function come from? In Linglib, it comes from the compositional semantics: quantifier denotations from `TruthConditional/Quantifiers`, adjective denotations from `Adjective/Theory`, and so on. Grounding theorems prove the connection explicitly.
 
-All three connect: Elbourne's situation-relative definite article bridges to `Core/Definiteness.lean`'s presupposition types, and PG&G's pronoun classification bridges to both.
+This matters because it lets you ask a question that is otherwise difficult to pose precisely: what happens to pragmatic inference when you change the underlying semantics? If the meaning function is stipulated, the question doesn't arise. If it's derived, you can swap in a different semantics and trace the consequences.
 
-Check out the [API docs](/docs/) for the full details, or browse the [overview](/overview/) for a map of the library.
+## Precedent
+
+The Lean math community demonstrated with mathlib that a unified formal library can be more than the sum of its parts — connections emerge across subfields that no one anticipated. Baanen et al. (CICM 2025) document how writing down the "unwritten knowledge" of a formalization project lowers the barrier to contribution. Linguistics seems well-suited to the same approach. Many of the interesting results live in the connections between subfields, and those connections are exactly what is hardest to maintain on paper.
+
+This blog will document design decisions and make the library's structure legible. Browse the [overview](/overview/) for a map of the library, or the [API docs](/docs/) for the full detail.

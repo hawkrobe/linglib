@@ -5,6 +5,10 @@ Framework-agnostic vocabulary for definiteness phenomena. These types classify
 definite descriptions, article systems, and presupposition types without
 committing to any particular semantic theory.
 
+The organizing principle is `DefPresupType` (.uniqueness | .familiarity) —
+every other type in this module is a dimension that maps into this binary
+distinction: article morphology, pragmatic use type, bridging relation, etc.
+
 Used by:
 - `Theories/TruthConditional/Determiner/Definite.lean` (denotations: ⟦the⟧)
 - `Phenomena/Anaphora/PronounTypology.lean` (cross-linguistic article data)
@@ -23,29 +27,18 @@ Used by:
 namespace Core.Definiteness
 
 -- ============================================================================
--- §1: Presupposition Types
+-- §1: The Core Binary Distinction
 -- ============================================================================
 
 /-- The two presupposition types underlying definite descriptions.
 
 Schwarz (2009): these correspond to two morphologically distinct articles
-in languages like German, Fering, Lakhota, and Akan. -/
+in languages like German, Fering, Lakhota, and Akan. Every classification
+in this module ultimately maps into this binary type. -/
 inductive DefPresupType where
   | uniqueness   -- Russell/Frege/Strawson: ∃!x. φ(x)
   | familiarity  -- Heim/Kamp: x is discourse-familiar
   deriving DecidableEq, BEq, Repr
-
-/-- Schwarz's weak article encodes uniqueness semantics. -/
-def schwarz_weak_semantics : DefPresupType := .uniqueness
-
-/-- Schwarz's strong article encodes familiarity semantics. -/
-def schwarz_strong_semantics : DefPresupType := .familiarity
-
-/-- Part-whole bridging is mediated by uniqueness (Schwarz 2013 §3.2). -/
-def partWholePresupType : DefPresupType := .uniqueness
-
-/-- Relational/producer bridging is mediated by familiarity (Schwarz 2013 §3.2). -/
-def relationalPresupType : DefPresupType := .familiarity
 
 /-- Demonstratives (this/that) project D_deix — the familiarity/strong-article
 layer. Schwarz (2013) §5.5 and PG&G (2017). -/
@@ -69,9 +62,7 @@ inductive ArticleType where
   | weakAndStrong -- Both weak and strong articles (e.g., German, Bavarian)
   deriving DecidableEq, BEq, Repr
 
-/-- Languages with only weak articles (ArticleType.weakOnly) have only
-uniqueness-based definites. Schwarz (2013) §5.1: the single English *the*
-may be ambiguous or neutral between uniqueness and familiarity. -/
+/-- Which presupposition types a language's article system makes available. -/
 def articleTypeToAvailablePresup : ArticleType → List DefPresupType
   | .none_         => []                            -- No articles
   | .weakOnly      => [.uniqueness]                 -- Only uniqueness (or ambiguous)
@@ -101,32 +92,15 @@ inductive DefiniteUseType where
   | bridging           -- Related to antecedent via relation (split: see BridgingSubtype)
   deriving DecidableEq, BEq, Repr
 
-/-- Which article form a definite use type requires (Schwarz 2013 §3.1).
-Returns `true` for strong article, `false` for weak. -/
-def requiresStrongArticle : DefiniteUseType → Bool
-  | .anaphoric          => true   -- Schwarz §3.1.1: strong article for anaphoric use
-  | .immediateSituation => false  -- Schwarz §3.1.2: weak article for situation uses
-  | .largerSituation    => false  -- Schwarz §3.1.2: weak article for situation uses
-  | .bridging           => false  -- default weak; relational bridging overrides to strong
+/-- Map definite use type to presupposition type (Schwarz 2013 §3.1).
 
-/-- Schwarz's use-type mapping is compositional: anaphoric uses require
-the strong article (familiarity), while situational uses require the
-weak article (uniqueness). -/
+Anaphoric uses require the strong article (familiarity); situational uses
+require the weak article (uniqueness). -/
 def useTypeToPresupType : DefiniteUseType → DefPresupType
   | .anaphoric          => .familiarity   -- Strong article: discourse-familiar
   | .immediateSituation => .uniqueness    -- Weak article: situationally unique
   | .largerSituation    => .uniqueness    -- Weak article: contextually unique
   | .bridging           => .uniqueness    -- Default weak (relational bridging overrides)
-
-/-- The mapping aligns with `requiresStrongArticle`: strong article ↔ familiarity. -/
-theorem schwarz_mapping_consistent :
-    (requiresStrongArticle .anaphoric = true ↔
-      useTypeToPresupType .anaphoric = .familiarity) ∧
-    (requiresStrongArticle .immediateSituation = false ↔
-      useTypeToPresupType .immediateSituation = .uniqueness) ∧
-    (requiresStrongArticle .largerSituation = false ↔
-      useTypeToPresupType .largerSituation = .uniqueness) := by
-  exact ⟨⟨λ _ => rfl, λ _ => rfl⟩, ⟨λ _ => rfl, λ _ => rfl⟩, ⟨λ _ => rfl, λ _ => rfl⟩⟩
 
 -- ============================================================================
 -- §4: Bridging Subtypes (Schwarz 2013 §3.2)
@@ -144,18 +118,10 @@ inductive BridgingSubtype where
   | relational  -- "the play ... the author" (strong: anaphoric relation)
   deriving DecidableEq, BEq, Repr
 
-/-- Bridging subtype determines article choice (Schwarz 2013 §3.2). -/
-def bridgingArticle : BridgingSubtype → Bool
-  | .partWhole  => false  -- weak: "the village ... the tower" (Fering, German)
-  | .relational => true   -- strong: "the play ... the author" (German ex. 16b)
-
-/-- Part-whole bridging maps to uniqueness presupposition. -/
-theorem bridging_part_whole_is_uniqueness :
-    partWholePresupType = .uniqueness := rfl
-
-/-- Relational bridging maps to familiarity presupposition. -/
-theorem bridging_relational_is_familiarity :
-    relationalPresupType = .familiarity := rfl
+/-- Map bridging subtype to presupposition type (Schwarz 2013 §3.2). -/
+def bridgingPresupType : BridgingSubtype → DefPresupType
+  | .partWhole  => .uniqueness   -- weak: "the village ... the tower"
+  | .relational => .familiarity  -- strong: "the play ... the author"
 
 -- ============================================================================
 -- §5: Weak Article Strategy (Schwarz 2013 §4)
