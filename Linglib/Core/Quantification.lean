@@ -443,4 +443,125 @@ theorem vanBenthem_cons_ext (q : GQ α) :
     Extension q → (Conservative q ↔ ∀ A, LivesOn (restrict q A) A) :=
   λ _ => conservative_iff_livesOn q
 
+-- ============================================================================
+-- Boolean operations on GQ (K&S §2.3: D_Det closure)
+-- ============================================================================
+
+/-- Meet of two GQ denotations: (f ∧ g)(A,B) = f(A,B) ∧ g(A,B).
+    K&S (20): conjunction of dets, e.g., "both John's and Mary's".
+    Also: "between n and m" = (at least n) ∧ (at most m). -/
+def gqMeet (f g : GQ α) : GQ α :=
+  λ R S => f R S && g R S
+
+/-- Join of two GQ denotations: (f ∨ g)(A,B) = f(A,B) ∨ g(A,B).
+    K&S (24): disjunction of dets, e.g., "either John's or Mary's". -/
+def gqJoin (f g : GQ α) : GQ α :=
+  λ R S => f R S || g R S
+
+-- ============================================================================
+-- Boolean closure of conservativity (K&S PROP 1)
+-- ============================================================================
+
+/-- Conservativity is closed under complement (K&S §2.3, negation).
+    If Q is conservative, then ~Q is conservative. -/
+theorem conservative_outerNeg (q : GQ α) (h : Conservative q) :
+    Conservative (outerNeg q) := by
+  intro R S; simp only [outerNeg]; rw [h R S]
+
+/-- Conservativity is closed under meet (K&S §2.3, conjunction).
+    If Q₁ and Q₂ are conservative, then Q₁ ∧ Q₂ is conservative. -/
+theorem conservative_gqMeet (f g : GQ α)
+    (hf : Conservative f) (hg : Conservative g) :
+    Conservative (gqMeet f g) := by
+  intro R S; simp only [gqMeet]; rw [hf R S, hg R S]
+
+/-- Conservativity is closed under join (K&S §2.3, disjunction).
+    If Q₁ and Q₂ are conservative, then Q₁ ∨ Q₂ is conservative. -/
+theorem conservative_gqJoin (f g : GQ α)
+    (hf : Conservative f) (hg : Conservative g) :
+    Conservative (gqJoin f g) := by
+  intro R S; simp only [gqJoin]; rw [hf R S, hg R S]
+
+-- ============================================================================
+-- De Morgan laws on GQ (K&S equation 26)
+-- ============================================================================
+
+/-- K&S (26): complement distributes over join via de Morgan.
+    ~(f ∨ g) = ~f ∧ ~g. "neither...nor" = complement of "either...or". -/
+theorem outerNeg_gqJoin (f g : GQ α) :
+    outerNeg (gqJoin f g) = gqMeet (outerNeg f) (outerNeg g) := by
+  funext R S; simp [outerNeg, gqJoin, gqMeet, Bool.not_or]
+
+/-- K&S (26): complement distributes over meet via de Morgan.
+    ~(f ∧ g) = ~f ∨ ~g. -/
+theorem outerNeg_gqMeet (f g : GQ α) :
+    outerNeg (gqMeet f g) = gqJoin (outerNeg f) (outerNeg g) := by
+  funext R S; simp [outerNeg, gqMeet, gqJoin, Bool.not_and]
+
+-- ============================================================================
+-- Monotonicity closure under boolean operations (K&S PROP 6)
+-- ============================================================================
+
+/-- K&S PROP 6: Meet (join) of scope-↑ functions is scope-↑. -/
+theorem scopeUpMono_gqMeet (f g : GQ α)
+    (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
+    ScopeUpwardMono (gqMeet f g) := by
+  intro R S S' hSS' h
+  simp only [gqMeet] at *
+  cases hfRS : f R S <;> cases hgRS : g R S <;> simp_all
+  exact ⟨hf R S S' hSS' hfRS, hg R S S' hSS' hgRS⟩
+
+/-- K&S PROP 6: Meet (join) of scope-↓ functions is scope-↓. -/
+theorem scopeDownMono_gqMeet (f g : GQ α)
+    (hf : ScopeDownwardMono f) (hg : ScopeDownwardMono g) :
+    ScopeDownwardMono (gqMeet f g) := by
+  intro R S S' hSS' h
+  simp only [gqMeet] at *
+  cases hfRS' : f R S' <;> cases hgRS' : g R S' <;> simp_all
+  exact ⟨hf R S S' hSS' hfRS', hg R S S' hSS' hgRS'⟩
+
+/-- K&S PROP 6: Join of scope-↑ functions is scope-↑. -/
+theorem scopeUpMono_gqJoin (f g : GQ α)
+    (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
+    ScopeUpwardMono (gqJoin f g) := by
+  intro R S S' hSS' h
+  simp only [gqJoin] at *
+  cases hfRS : f R S <;> simp_all
+  · exact Or.inr (hg R S S' hSS' h)
+  · exact Or.inl (hf R S S' hSS' hfRS)
+
+-- ============================================================================
+-- Adjectival restriction (K&S PROP 3, 5)
+-- ============================================================================
+
+/-- Restriction of a GQ by a restricting function (adjective/relative clause).
+    K&S (66): h_f(s) = h(f(s)). In our representation, the adjective
+    narrows the restrictor: "tall student" = student ∧ tall. -/
+def adjRestrict (q : GQ α) (adj : α → Bool) : GQ α :=
+  λ R S => q (λ x => R x && adj x) S
+
+/-- K&S PROP 3: Conservativity is preserved under adjectival restriction. -/
+theorem conservative_adjRestrict (q : GQ α) (adj : α → Bool)
+    (h : Conservative q) : Conservative (adjRestrict q adj) := by
+  intro R S
+  simp only [adjRestrict]
+  rw [h (λ x => R x && adj x) S, h (λ x => R x && adj x) (λ x => R x && S x)]
+  congr 1; funext x; cases R x <;> cases adj x <;> cases S x <;> rfl
+
+/-- K&S PROP 5: Scope-upward monotonicity is preserved under adjectival restriction.
+    If det is increasing, (det + AP) is increasing. -/
+theorem scopeUpMono_adjRestrict (q : GQ α) (adj : α → Bool)
+    (h : ScopeUpwardMono q) : ScopeUpwardMono (adjRestrict q adj) := by
+  intro R S S' hSS' hAdj
+  simp only [adjRestrict] at *
+  exact h _ S S' hSS' hAdj
+
+/-- K&S PROP 5: Scope-downward monotonicity is preserved under adjectival restriction.
+    If det is decreasing, (det + AP) is decreasing — NPIs still licensed. -/
+theorem scopeDownMono_adjRestrict (q : GQ α) (adj : α → Bool)
+    (h : ScopeDownwardMono q) : ScopeDownwardMono (adjRestrict q adj) := by
+  intro R S S' hSS' hAdj
+  simp only [adjRestrict] at *
+  exact h _ S S' hSS' hAdj
+
 end Core.Quantification

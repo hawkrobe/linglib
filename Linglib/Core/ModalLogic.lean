@@ -29,6 +29,10 @@ inductive ModalForce where
   | possibility
   deriving DecidableEq, BEq, Repr, Inhabited
 
+instance : LawfulBEq ModalForce where
+  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+  rfl {a} := by cases a <;> decide
+
 instance : ToString ModalForce where
   toString | .necessity => "□" | .possibility => "◇"
 
@@ -285,5 +289,60 @@ theorem universalR_S5 {W : Type*} :
 
 theorem identityR_refl {W : Type*} [DecidableEq W] : Refl (identityR (W := W)) :=
   fun w => by simp [identityR]
+
+/-! ## Modal Flavors and the Modal Semantic Space
+
+Theory-neutral vocabulary for cross-linguistic modal typology.
+A modal's meaning is a set of force-flavor pairs (Imel, Guo, & Steinert-Threlkeld 2026).
+
+* Kratzer (1981). The Notional Category of Modality.
+* Imel, Guo, & Steinert-Threlkeld (2026). An Efficient Communication Analysis of Modal Typology.
+-/
+
+/-- Modal flavor: the contextual source of modality (Kratzer 1981).
+    Theory-neutral: avoids commitment to how flavor is semantically encoded.
+    Teleological is subsumed under circumstantial (both concern facts/abilities). -/
+inductive ModalFlavor where
+  | epistemic       -- Evidence/knowledge
+  | deontic         -- Norms/rules
+  | circumstantial  -- Facts/abilities (subsumes teleological)
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+instance : LawfulBEq ModalFlavor where
+  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+  rfl {a} := by cases a <;> decide
+
+instance : ToString ModalFlavor where
+  toString | .epistemic => "e" | .deontic => "d" | .circumstantial => "c"
+
+/-- All modal flavors. -/
+def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial]
+
+/-- All modal forces. -/
+def ModalForce.all : List ModalForce := [.necessity, .possibility]
+
+/-- A force-flavor pair: one point in the modal semantic space P.
+    |P| = |Force| × |Flavor| = 2 × 3 = 6.
+
+    Imel, Guo, & Steinert-Threlkeld (2026): modal meanings are subsets of P. -/
+structure ForceFlavor where
+  force : ModalForce
+  flavor : ModalFlavor
+  deriving DecidableEq, BEq, Repr
+
+instance : ToString ForceFlavor where
+  toString ff := s!"({ff.force},{ff.flavor})"
+
+/-- All six points in the modal semantic space. -/
+def ForceFlavor.universe : List ForceFlavor :=
+  ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
+
+theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 6 := by native_decide
+
+/-- The Cartesian product of forces and flavors. Infrastructure for constructing
+    modal meanings; no theoretical commitment (just list operations). -/
+def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor) :
+    List ForceFlavor :=
+  fos.flatMap fun fo => fls.map fun fl => ⟨fo, fl⟩
 
 end Core.ModalLogic

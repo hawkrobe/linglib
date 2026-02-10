@@ -199,13 +199,35 @@ def a : QuantifierEntry :=
 def an : QuantifierEntry :=
   { form := "an", qforce := .existential, numberRestriction := some .sg }
 
+/-- "both" - universal dual, presupposes exactly 2.
+    K&S (83a): [_Det each of the two] ⇒ both.
+    Semantically: gqMeet of every and (the 2). -/
+def both : QuantifierEntry :=
+  { form := "both"
+  , qforce := .universal
+  , numberRestriction := some .pl
+  , monotonicity := .increasing
+  , strength := .strong  -- K&S §3.2: definite dets are strong
+  }
+
+/-- "neither" - negative dual, presupposes exactly 2.
+    K&S (83b): [_Det (not one) of the two] ⇒ neither.
+    Semantically: outerNeg of both. -/
+def neither : QuantifierEntry :=
+  { form := "neither"
+  , qforce := .negative
+  , numberRestriction := some .pl  -- syntactically singular but semantically dual
+  , monotonicity := .decreasing
+  , strength := .strong  -- K&S §3.3: negative strong
+  }
+
 -- ============================================================================
 -- Lexicon Access
 -- ============================================================================
 
 /-- All quantifier entries -/
 def allQuantifiers : List QuantifierEntry := [
-  none_, few, some_, half, most, all, every, each, many
+  none_, few, some_, half, most, all, every, each, many, both, neither
 ]
 
 /-- All determiner entries (including definites) -/
@@ -516,6 +538,51 @@ open Core.Quantification TruthConditional in
 /-- Every: strong and NOT symmetric. -/
 theorem every_not_symmetric_bridge : every.strength = .strong ∧
     ¬QSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩
+
+-- ============================================================================
+-- both/neither: Boolean GQ composition (K&S §2.3, §3.2)
+-- ============================================================================
+
+/-- `⟦both⟧(R)(S)` = `⟦every⟧(R)(S)` when |R|=2.
+    For the general case, both = every restricted to exactly-2 restrictors.
+    Simplified: on finite models, both(R,S) = every(R,S) ∧ |R|≥2. -/
+def both_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+  λ R S => every_sem m R S && decide ((FiniteModel.elements.filter R).length ≥ 2)
+
+/-- `⟦neither⟧` = outer negation of `⟦both⟧` (K&S (83b)).
+    "Neither student passed" = "It's not the case that both students passed"
+    when exactly 2 students exist. K&S: neither = (not one) of the two. -/
+def neither_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+  Core.Quantification.gqMeet (no_sem m)
+    (λ R _ => decide ((FiniteModel.elements.filter R).length ≥ 2))
+
+/-- both is conservative (follows from every_conservative + gqMeet closure). -/
+theorem both_conservative : Core.Quantification.Conservative (both_sem m) := by
+  intro R S
+  simp only [both_sem]
+  rw [every_conservative R S]
+
+/-- neither is conservative (follows from no_conservative + gqMeet closure). -/
+theorem neither_conservative :
+    Core.Quantification.Conservative (neither_sem m) := by
+  intro R S
+  simp only [neither_sem, Core.Quantification.gqMeet]
+  rw [no_conservative R S]
+
+/-- K&S §3.2: both is positive strong — both(A,A) = true when |A|≥2. -/
+theorem both_positive_strong_on_nonempty :
+    both.strength = .strong ∧ neither.strength = .strong :=
+  ⟨rfl, rfl⟩
+
+/-- K&S (26) at the fragment level: neither is scope-↓ (licenses NPIs).
+    "Neither student saw any deer" — NPI "any" licensed. -/
+theorem neither_decreasing : neither.monotonicity = .decreasing := rfl
+
+/-- both/neither duality: both is increasing, neither is decreasing,
+    mirroring every/no. -/
+theorem both_neither_mono_duality :
+    both.monotonicity = .increasing ∧ neither.monotonicity = .decreasing :=
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- Anti-additivity bridges (restrictor NPI licensing)

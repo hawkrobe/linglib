@@ -6,25 +6,44 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 import Linglib.Theories.TruthConditional.Core.Polarity
+import Linglib.Theories.TruthConditional.Determiner.Quantifier
 
 namespace TruthConditional.Sentence.Entailment.Monotonicity
 
 open TruthConditional.Sentence.Entailment
 open TruthConditional.Core.Polarity (isUpwardEntailing isDownwardEntailing)
+open TruthConditional.Determiner.Quantifier
 
 section QuantifierSemantics
 
-/-- "Every A is B" = forall x. A(x) -> B(x). -/
-def every (a b : World → Bool) : Bool :=
-  allWorlds.all λ x => !a x || b x
+/-! ## Bridge to Canonical GQ Denotations
 
-/-- "Some A is B" = exists x. A(x) & B(x). -/
-def some' (a b : World → Bool) : Bool :=
-  allWorlds.any λ x => a x && b x
+The 4-element `World` type used in the entailment domain doubles as an
+entity domain. We create a `Model` + `FiniteModel` instance so that the
+canonical GQ denotations from `TruthConditional.Determiner.Quantifier`
+(`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
 
-/-- "No A is B" = forall x. A(x) -> not B(x). -/
-def no (a b : World → Bool) : Bool :=
-  allWorlds.all λ x => !a x || !b x
+This bridges the entailment-testing infrastructure (finite, decidable)
+with the model-theoretic GQ definitions (proved conservative and monotone
+for arbitrary finite models).
+-/
+
+/-- The entailment World type, viewed as a Model entity domain. -/
+def entailmentModel : TruthConditional.Model :=
+  { Entity := World, decEq := inferInstance }
+
+instance : FiniteModel entailmentModel where
+  elements := allWorlds
+  complete := λ x => by cases x <;> simp [allWorlds]
+
+/-- "Every A is B" — delegates to canonical `every_sem`. -/
+abbrev every (a b : World → Bool) : Bool := every_sem entailmentModel a b
+
+/-- "Some A is B" — delegates to canonical `some_sem`. -/
+abbrev some' (a b : World → Bool) : Bool := some_sem entailmentModel a b
+
+/-- "No A is B" — delegates to canonical `no_sem`. -/
+abbrev no (a b : World → Bool) : Bool := no_sem entailmentModel a b
 
 def fixedRestr : BProp World := p01
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.145.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: Boolean GQ algebra — `gqMeet`, `gqJoin` (K&S §2.3 D_Det closure). Boolean closure of conservativity: `conservative_outerNeg`, `conservative_gqMeet`, `conservative_gqJoin` (K&S PROP 1 / Conservativity Theorem). De Morgan laws: `outerNeg_gqJoin`, `outerNeg_gqMeet` (K&S eq. 26). Monotonicity closure: `scopeUpMono_gqMeet`, `scopeDownMono_gqMeet`, `scopeUpMono_gqJoin` (K&S PROP 6). Adjectival restriction: `adjRestrict`, `conservative_adjRestrict` (K&S PROP 3), `scopeUpMono_adjRestrict`, `scopeDownMono_adjRestrict` (K&S PROP 5).
+- **TruthConditional/Determiner/Quantifier.lean**: K&S Existential det classification (§3.3, G3) — `some_existential`, `no_existential` (existential dets), `every_not_existential`, `most_not_existential` (non-existential, proved by toyModel witnesses). `some_existential_weak_bridge` (third independent path to weak/strong).
+- **Fragments/English/Determiners.lean**: `both`/`neither` entries with metadata. `both_sem`/`neither_sem` compositional GQ denotations via `gqMeet`. `both_conservative`, `neither_conservative`. Bridge theorems: `both_neither_mono_duality`, `neither_decreasing`, `both_positive_strong_on_nonempty`.
+- **Fragments/Japanese/Determiners.lean**: `ryoho` (両方 ryōhō "both") — universal dual, strong. `ryoho_universal_strong`.
+- **Fragments/Mandarin/Determiners.lean**: `liang_dou` (两…都 liǎng…dōu "both") — universal dual, strong, requires classifier. `liang_dou_universal_strong`, `liang_dou_requires_cl`.
+- **Phenomena/Quantification/Typology.lean**: Updated Mandarin/Japanese inventories to 7 entries. `east_asian_have_dual_universal`.
+
 ## [0.144.0] - 2026-02-10
 
 ### Added

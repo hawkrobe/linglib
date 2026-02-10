@@ -13,10 +13,12 @@ Universal vs existential operators formalized as a Galois connection.
 - `Truth3`: three-valued truth (Kleene strong)
 - `aggregate`: aggregate list by duality type
 
+For GQ-level duality operations (outer negation, inner negation, dual) see
+`Core.Quantification.outerNeg` / `innerNeg` / `dualQ`.
+
 ## References
 
 - Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
-- Keenan & Stavi (1986). A Semantic Characterization of Natural Language Determiners.
 -/
 
 namespace Core.Duality
@@ -197,28 +199,6 @@ theorem universal_fragile (l : List Truth3) (h : l.any (· == .false)) :
   | false => exact foldl_inf_mem_false l ⊤ hx_mem
   | true => exact absurd hx_eq (by decide)
   | indet => exact absurd hx_eq (by decide)
-
-/-- Standard quantifiers. -/
-inductive Quantifier where
-  | every | some | no | notEvery | most | few
-  deriving Repr, DecidableEq, BEq
-
-/-- Quantifier duality classification. -/
-def Quantifier.duality : Quantifier → DualityType
-  | .every => .universal
-  | .no => .universal
-  | .some => .existential
-  | .notEvery => .existential
-  | .most => .universal
-  | .few => .existential
-
-/-- Universal-like quantifiers are "strong". -/
-def Quantifier.isStrong (q : Quantifier) : Bool :=
-  q.duality == .universal
-
-theorem strength_is_duality (q : Quantifier) :
-    q.isStrong = true ↔ q.duality = .universal := by
-  cases q <;> decide
 
 def const {α : Type*} (t : Truth3) : α → Truth3 := λ _ => t
 
