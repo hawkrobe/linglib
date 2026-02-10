@@ -319,6 +319,23 @@ Check if a variable becomes true after normal development.
 def developsToTrue (dyn : CausalDynamics) (s : Situation) (v : Variable) : Bool :=
   developsToBe dyn s v true
 
+/-- The cause is present and the effect holds after normal development.
+
+    Shared primitive for `actuallyCaused` (Necessity.lean) and
+    `complementActualized` (Ability.lean) — both check whether a cause
+    is factually present and whether the effect develops from that
+    situation. -/
+def factuallyDeveloped (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Bool :=
+  s.hasValue cause true &&
+  (normalDevelopment dyn s).hasValue effect true
+
+/-- `factuallyDeveloped` unfolds to a conjunction of two `hasValue` checks. -/
+theorem factuallyDeveloped_iff (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) :
+    factuallyDeveloped dyn s cause effect =
+      (s.hasValue cause true && (normalDevelopment dyn s).hasValue effect true) := rfl
+
 /--
 Check if an effect occurs given a cause in some background.
 -/

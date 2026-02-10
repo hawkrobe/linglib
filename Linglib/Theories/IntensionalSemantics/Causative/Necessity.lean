@@ -127,9 +127,7 @@ def isINUSCause (dyn : CausalDynamics) (cause effect : Variable)
 /-- Actual causation: C occurred, E occurred, and C was necessary. -/
 def actuallyCaused (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) : Bool :=
-  let developed := normalDevelopment dyn s
-  s.hasValue cause true &&
-  developed.hasValue effect true &&
+  factuallyDeveloped dyn s cause effect &&
   causallyNecessary dyn s cause effect
 
 /-- Actual causation implies the effect occurred. -/
@@ -137,7 +135,7 @@ theorem actual_cause_effect_occurred (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable)
     (h : actuallyCaused dyn s cause effect = true) :
     (normalDevelopment dyn s).hasValue effect true = true := by
-  simp only [actuallyCaused, Bool.and_eq_true] at h
+  simp only [actuallyCaused, factuallyDeveloped, Bool.and_eq_true] at h
   exact h.1.2
 
 /-- Actual causation implies the cause occurred. -/
@@ -145,7 +143,7 @@ theorem actual_cause_cause_occurred (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable)
     (h : actuallyCaused dyn s cause effect = true) :
     s.hasValue cause true = true := by
-  simp only [actuallyCaused, Bool.and_eq_true] at h
+  simp only [actuallyCaused, factuallyDeveloped, Bool.and_eq_true] at h
   exact h.1.1
 
 end Theories.NadathurLauer2020.Necessity

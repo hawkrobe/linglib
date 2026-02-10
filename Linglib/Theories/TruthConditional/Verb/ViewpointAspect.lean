@@ -147,6 +147,33 @@ inductive ViewpointType where
   | prospective   -- TT BEFORE TSit
   deriving DecidableEq, Repr, BEq, Inhabited
 
+/-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
+    without the full interval-based `EventPred`/`IntervalPred` machinery.
+
+    Used by `Modal/Ability.lean` (actuality inferences) and
+    `Phenomena/ActualityInferences/Data.lean` where the key insight is simply
+    "perfective requires actualization, imperfective doesn't." -/
+inductive ViewpointAspectB where
+  | perfective
+  | imperfective
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- Project `ViewpointType` to the coarser perfective/imperfective distinction.
+    Returns `none` for `perfect` and `prospective` (neither is simply perf/impf). -/
+def ViewpointType.toBoolAspect : ViewpointType → Option ViewpointAspectB
+  | .perfective => some .perfective
+  | .imperfective => some .imperfective
+  | .perfect | .prospective => none
+
+/-- Embed `ViewpointAspectB` back into Klein's full classification. -/
+def ViewpointAspectB.toKleinViewpoint : ViewpointAspectB → ViewpointType
+  | .perfective => .perfective
+  | .imperfective => .imperfective
+
+/-- Roundtrip: embedding then projecting is the identity. -/
+theorem toBoolAspect_toKleinViewpoint (a : ViewpointAspectB) :
+    a.toKleinViewpoint.toBoolAspect = some a := by cases a <;> rfl
+
 /-- The TT↔TSit interval relation for each viewpoint (Klein 1994: 108). -/
 def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
     (v : ViewpointType) (tt tsit : Interval Time) : Prop :=

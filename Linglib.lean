@@ -102,6 +102,7 @@ import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
+import Linglib.Phenomena.ActualityInferences.Data
 import Linglib.Phenomena.Aspect.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
@@ -480,6 +481,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.GradedCausation
 import Linglib.Theories.IntensionalSemantics.Causative.Integration
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
+import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
 import Linglib.Theories.IntensionalSemantics.Causative.Resultatives
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
@@ -495,6 +497,7 @@ import Linglib.Theories.IntensionalSemantics.Modal.BiasedPQ
 import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
 import Linglib.Theories.IntensionalSemantics.Modal.PhillipsBrown
 import Linglib.Theories.IntensionalSemantics.Modal.SatisfactionOrdering
+import Linglib.Theories.IntensionalSemantics.Modal.Ability
 import Linglib.Theories.IntensionalSemantics.Modal.Simple
 import Linglib.Theories.IntensionalSemantics.Modal.Typology
 import Linglib.Theories.IntensionalSemantics.Mood.Basic
