@@ -40,7 +40,7 @@ context counts, and strength-level counts.
 namespace Phenomena.Anaphora.PronounTypology
 
 open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
-  requiresStrongArticle bridgingArticle)
+  useTypeToPresupType bridgingPresupType DefPresupType)
 
 -- ============================================================================
 -- §A: Inductive Types
@@ -394,7 +394,7 @@ theorem dem_productivity_from_article_system :
 /-! ### Definite use types (Hawkins 1978, Schwarz 2013 §2.1)
 
 Types and mappings are defined in `Core/Definiteness.lean`:
-`DefiniteUseType`, `BridgingSubtype`, `requiresStrongArticle`, `bridgingArticle`. -/
+`DefiniteUseType`, `BridgingSubtype`, `useTypeToPresupType`, `bridgingPresupType`. -/
 
 /-! ### Schwarz (2013) cross-linguistic article paradigm data -/
 
@@ -552,9 +552,9 @@ theorem schwarz_pgg_german_consistent :
 - Strong article contributes familiarity/anaphoricity (index variable)
 This parallels PG&G's D_det (weak/uniqueness) vs D_deix (strong/deixis). -/
 theorem semantic_mapping_parallel :
-    requiresStrongArticle .anaphoric = true ∧
-    requiresStrongArticle .immediateSituation = false ∧
-    requiresStrongArticle .largerSituation = false := by decide
+    useTypeToPresupType .anaphoric = .familiarity ∧
+    useTypeToPresupType .immediateSituation = .uniqueness ∧
+    useTypeToPresupType .largerSituation = .uniqueness := by decide
 
 -- ============================================================================
 -- §G: Bridges
