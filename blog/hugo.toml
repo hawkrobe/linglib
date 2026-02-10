@@ -1,0 +1,41 @@
+baseURL = "https://hawkrobe.github.io/linglib/"
+languageCode = "en-us"
+title = "L³ — Linguistics Library Log"
+theme = "PaperMod"
+
+[params]
+  description = "Development log for Linglib, a Lean 4 library for formal linguistics"
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  defaultTheme = "auto"
+
+[params.homeInfoParams]
+  Title = "Linguistics Library Log"
+  Content = "Development notes from Linglib — formalizing linguistic theories in Lean 4."
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/hawkrobe/linglib"
+
+[menu]
+  [[menu.main]]
+    name = "Posts"
+    url = "/posts/"
+    weight = 10
+  [[menu.main]]
+    name = "Overview"
+    url = "/overview/"
+    weight = 20
+  [[menu.main]]
+    name = "Roadmap"
+    url = "/roadmap/"
+    weight = 30
+  [[menu.main]]
+    name = "API Docs"
+    url = "/docs/"
+    weight = 40
+
+[outputs]
+  home = ["HTML", "RSS"]
