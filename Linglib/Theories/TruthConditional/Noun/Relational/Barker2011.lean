@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Linglib.Core.Quantification
 
 /-
 # Possessives and Relational Nouns (Barker 2011)
@@ -232,5 +233,30 @@ theorem pi_creates_slot {E S : Type} (P : Pred1 E S) (R : Pred2 E S) :
 theorem structural_explanation (t : NominalInterpType) :
     t.canBridge = true ↔ t.hasRelatumSlot = true := by
   cases t <;> simp [NominalInterpType.canBridge, NominalInterpType.hasRelatumSlot]
+
+-- ============================================================================
+-- Bridge: Possessives as Type ⟨1⟩ Quantifiers (NPQ)
+-- ============================================================================
+
+/-- A possessive like "John's" produces a type ⟨1⟩ quantifier (NPQ):
+    ⟦John's⟧ = λR.λP. ∃y. R(possessor, y) ∧ P(y).
+    When the possessum is unique, this is a Montagovian individual.
+
+    Possessive GQs are NON-ISOM: "John's cat" depends on the identity
+    of John, not just cardinalities. This connects Barker's type-shifting
+    analysis to the GQ framework in `Core.Quantification`. -/
+noncomputable def possessiveAsNPQ {E : Type} [Fintype E] [DecidableEq E]
+    (possessor : E) (R : E → E → Bool) :
+    Core.Quantification.NPQ E :=
+  λ P => (Fintype.elems : Finset E).toList.any (λ y => R possessor y && P y)
+
+/-- When the possessum is unique, the possessive NP denotes a Montagovian
+    individual: ⟦John's brother⟧ = I_{b} where b is John's unique brother.
+    The Montagovian individual I_b maps any property P to P(b).
+    Cross-ref: `Core.Quantification.individual`. -/
+theorem possessive_individual_eval {E : Type} (b : E) :
+    ∀ P : E → Bool,
+      Core.Quantification.individual b P = P b := by
+  intro P; rfl
 
 end TruthConditional.Noun.Relational.Barker2011

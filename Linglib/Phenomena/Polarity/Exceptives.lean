@@ -1,3 +1,5 @@
+import Linglib.Fragments.English.Determiners
+
 /-
 # But-Exceptive Data
 
@@ -359,5 +361,41 @@ All exceptive construction examples.
 -/
 def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
   [but_construction, except_construction, other_than_construction, besides_construction]
+
+-- ============================================================================
+-- Bridge: Fragment QForce ↔ Exceptive Licensing
+-- ============================================================================
+
+open Fragments.English.Determiners (QuantityWord QForce)
+
+/-- Map Fragment QForce to Exceptive QuantifierType. -/
+def qforceToExceptiveType : QForce → Option QuantifierType
+  | .universal => some .universalPositive  -- every, all
+  | .negative => some .universalNegative   -- no, none
+  | .existential => some .existential      -- some
+  | .proportional => some .proportional    -- most, few
+  | .definite => none
+
+/-- Universal quantifiers in the Fragment license but-exceptives;
+    existential quantifiers don't. This connects Fragment metadata
+    to the empirical generalization in von Fintel (1993).
+    "Every student but John" ✓ vs "*Some student but John" ✗. -/
+theorem fragment_exceptive_bridge :
+    QuantityWord.all.entry.qforce = .universal ∧
+    predictExceptiveGrammaticality .universalPositive = true ∧
+    QuantityWord.none_.entry.qforce = .negative ∧
+    predictExceptiveGrammaticality .universalNegative = true ∧
+    QuantityWord.some_.entry.qforce = .existential ∧
+    predictExceptiveGrammaticality .existential = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Only the two QForce.universal/.negative quantity words license exceptives;
+    the remaining four (existential, proportional) do not. -/
+theorem universal_qforce_partition :
+    ([QuantityWord.all, .none_].map (·.entry.qforce)).all
+      (λ q => q == .universal || q == .negative) = true ∧
+    ([QuantityWord.some_, .few, .half, .most].map (·.entry.qforce)).all
+      (λ q => q != .universal && q != .negative) = true := by
+  constructor <;> native_decide
 
 end Phenomena.Polarity.Exceptives
