@@ -76,6 +76,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Examples
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication
 import Linglib.Theories.IntensionalSemantics.Causative.Integration
 import Linglib.Theories.IntensionalSemantics.Causative.GradedCausation
+import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 
 namespace Theories.NadathurLauer2020
 

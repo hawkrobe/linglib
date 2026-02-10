@@ -4,6 +4,7 @@ import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
+import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -135,6 +136,9 @@ inductive PresupTriggerType where
 -- like "asserts sufficiency" are DERIVED from the builder via theorems.
 open Theories.NadathurLauer2020.Builder (CausativeBuilder)
 
+-- ImplicativeBuilder follows the same pattern for implicative verbs (manage, fail).
+open Theories.Nadathur2023.Implicative (ImplicativeBuilder)
+
 /--
 Complement type that the verb selects.
 
@@ -230,8 +234,8 @@ structure VerbEntry where
   cosType : Option CoSType := none
   /-- For factive verbs: what does it presuppose about its complement? -/
   factivePresup : Bool := false
-  /-- For implicative verbs: does success of main verb entail complement? -/
-  implicativeEntailment : Option Bool := none
+  /-- For implicative verbs: which semantic builder (links to compositional semantics). -/
+  implicativeBuilder : Option ImplicativeBuilder := none
   /-- For causative verbs: which semantic builder (links to compositional semantics). -/
   causativeBuilder : Option CausativeBuilder := none
 
@@ -540,7 +544,7 @@ def manage : VerbEntry where
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeEntailment := some true  -- Success entails complement
+  implicativeBuilder := some .positive
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
 def fail : VerbEntry where
@@ -554,7 +558,7 @@ def fail : VerbEntry where
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeEntailment := some false  -- Success entails NOT complement
+  implicativeBuilder := some .negative
 
 /-- "try" — subject control, no entailment -/
 def try_ : VerbEntry where
@@ -607,7 +611,7 @@ def remember : VerbEntry where
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeEntailment := some true
+  implicativeBuilder := some .positive
   -- Note: "remember that p" is factive, but "remember to VP" is implicative
 
 /-- "forget" — negative implicative with infinitival -/
@@ -622,7 +626,7 @@ def forget : VerbEntry where
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeEntailment := some false
+  implicativeBuilder := some .negative
   -- Note: "forget that p" is factive
 
 /-- "believe" — doxastic attitude verb, creates opaque context -/
@@ -1090,6 +1094,14 @@ def assertsSufficiency (v : VerbEntry) : Bool :=
 def assertsNecessity (v : VerbEntry) : Bool :=
   v.causativeBuilder.map (·.assertsNecessity) |>.getD false
 
+/-- Does success of this implicative verb entail the complement?
+
+    DERIVED from the builder: delegates to `ImplicativeBuilder.entailsComplement`.
+    Returns `some true` for positive implicatives (*manage*, *remember*),
+    `some false` for negative (*fail*, *forget*), `none` for non-implicatives. -/
+def VerbEntry.entailsComplement (v : VerbEntry) : Option Bool :=
+  v.implicativeBuilder.map (·.entailsComplement)
+
 /--
 Is this verb a preferential attitude predicate?
 -/
@@ -1346,5 +1358,38 @@ theorem lexical_causatives_differ_from_cause :
     kill.causativeBuilder ≠ cause.causativeBuilder ∧
     break_verb.causativeBuilder ≠ cause.causativeBuilder := by
   constructor <;> decide
+
+/-! ## Implicative grounding theorems
+
+These verify that the Fragment's implicative annotations are consistent with
+the formal semantics in `Theories.Nadathur2023.Implicative`. -/
+
+open Theories.Nadathur2023.Implicative (ImplicativeBuilder manageSem failSem)
+
+/-- "manage" uses positive implicative semantics (`manageSem`). -/
+theorem manage_semantics_implicative :
+    manage.implicativeBuilder.map ImplicativeBuilder.toSemantics =
+      some manageSem := rfl
+
+/-- "fail" uses negative implicative semantics (`failSem`). -/
+theorem fail_semantics_implicative :
+    fail.implicativeBuilder.map ImplicativeBuilder.toSemantics =
+      some failSem := rfl
+
+/-- "manage" entails the complement — derived from its builder. -/
+theorem manage_entails_complement_derived :
+    manage.entailsComplement = some true := by native_decide
+
+/-- "fail" entails NOT the complement — derived from its builder. -/
+theorem fail_entails_not_complement_derived :
+    fail.entailsComplement = some false := by native_decide
+
+/-- "remember" entails the complement — derived from its builder. -/
+theorem remember_entails_complement_derived :
+    remember.entailsComplement = some true := by native_decide
+
+/-- "forget" entails NOT the complement — derived from its builder. -/
+theorem forget_entails_not_complement_derived :
+    forget.entailsComplement = some false := by native_decide
 
 end Fragments.English.Predicates.Verbal

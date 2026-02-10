@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.159.0] - 2026-02-10
+
+### Changed
+- **TruthConditional/Verb/ViewpointAspect.lean**: Lifted `ViewpointAspectB` from `Modal/Ability.lean` to its canonical home alongside `ViewpointType`. Added `ViewpointType.toBoolAspect`, `ViewpointAspectB.toKleinViewpoint`, and roundtrip theorem `toBoolAspect_toKleinViewpoint`.
+- **Core/CausalModel.lean**: Added `factuallyDeveloped` — shared primitive for checking that a cause is present and the effect holds after normal development. Used by `actuallyCaused` (Necessity.lean) and `complementActualized` (Ability.lean).
+- **Causative/Necessity.lean**: Refactored `actuallyCaused` to use `factuallyDeveloped`.
+- **Modal/Ability.lean**: Removed local `ViewpointAspectB` and `toKleinViewpoint` (now imported from `ViewpointAspect`). Refactored `complementActualized` to use `factuallyDeveloped`. Added `complementActualized_eq_factuallyDeveloped` bridge theorem.
+- **Causative/Implicative.lean**: Added `ImplicativeBuilder` enum (`.positive`/`.negative`) following `CausativeBuilder` pattern. `entailsComplement`, `toSemantics` derived properties. Grounding theorems: `positive_entails_complement`, `negative_entails_not_complement`.
+- **Fragments/English/Predicates/Verbal.lean**: Replaced `implicativeEntailment : Option Bool` with `implicativeBuilder : Option ImplicativeBuilder`. Added derived `VerbEntry.entailsComplement`. Updated *manage*, *fail*, *remember*, *forget* entries. Grounding theorems: `manage_semantics_implicative`, `fail_semantics_implicative`, per-verb `entailsComplement` verification.
+- **Phenomena/ActualityInferences/Data.lean**: Updated `ViewpointAspectB` import to canonical location.
+
+## [0.158.0] - 2026-02-10
+
+### Added
+- **Theories/IntensionalSemantics/Causative/Implicative.lean**: Nadathur (2023) Ch. 1 implicative verb semantics (*manage*, *fail*) as two-event causal models. `ImplicativeScenario` bundles `CausalDynamics` with action/complement variables. `manageSem` = action occurred + causally sufficient + complement developed. `manage_entails_complement` grounds `VerbEntry.implicativeEntailment := some true`. `fail_entails_not_complement` for negative implicatives. `implicative_not_aspect_governed` contrasts with ability modals. Concrete `tryAction → swimAcross` scenario verified by `native_decide`.
+- **Theories/IntensionalSemantics/Modal/Ability.lean**: Central file bridging causality, modality, and aspect for actuality inferences. `AbilityScenario` maps `World → Situation` (bridge from Kratzer to CausalModel). `abilityAt = causallySufficient` (rfl). `ViewpointAspectB` with `toKleinViewpoint` bridge to Klein's interval semantics. `abilityWithAspect` conjoins ability with actualization under perfective. `perfective_ability_entails_complement` (the central result). `imperfective_ability_compatible_with_unrealized`, `aspect_governs_actuality`, `ability_differs_from_implicative`. `toCircumstantialBase` and `abilityAsKratzerPossibility` bridge to Kratzer modal semantics.
+- **Phenomena/ActualityInferences/Data.lean**: Cross-linguistic actuality inference data (8 data points: Greek *boro*, Hindi *saknaa*, French *pouvoir*, English *be able*, each PFV/IMPF). `empirical_matches_theory`: `(aspect == .perfective) == complementEntailed` for all data by `native_decide`.
+
 ## [0.157.0] - 2026-02-10
 
 ### Changed
