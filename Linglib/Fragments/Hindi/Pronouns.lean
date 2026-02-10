@@ -1,13 +1,11 @@
 /-
 # Hindi Pronoun & Allocutive Fragment
 
-Second-person pronouns and allocutive verbal morphology in Hindi (Indo-Aryan).
-Hindi has a three-level honorific system (non-hon *tuu* / hon *tum* / high-hon
-*aap*) realized as imperative agreement suffixes. AA is Fin-based and freely
-embeddable.
-
-Note: This is separate from `Fragments.HindiUrdu.Particles` which covers
-discourse particles shared between Hindi and Urdu.
+Personal pronouns and allocutive verbal morphology in Hindi (Indo-Aryan).
+Hindi has a three-level honorific system for 2nd person (non-hon *tuu* / hon
+*tum* / high-hon *aap*) realized as imperative agreement suffixes. 3rd person
+uses distal demonstrative forms (*vah* sg / *ve* pl). AA is Fin-based and
+freely embeddable.
 
 ## References
 
@@ -15,23 +13,27 @@ discourse particles shared between Hindi and Urdu.
   honorifics.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Pronouns
 
 namespace Fragments.Hindi.Pronouns
 
+open Core.Pronouns
 
 -- ============================================================================
--- Pronoun Entries
+-- First Person
 -- ============================================================================
 
-/-- A Hindi pronoun entry with formality level. -/
-structure PronounEntry where
-  form : String
-  person : Option Person := none
-  number : Option Number := none
-  /-- 0 = non-hon, 1 = hon, 2 = high-hon -/
-  formality : Nat := 0
-  deriving Repr, BEq
+/-- *maiṃ* — 1sg. -/
+def maiN : PronounEntry :=
+  { form := "maiṃ", person := some .first, number := some .sg }
+
+/-- *ham* — 1pl. -/
+def ham : PronounEntry :=
+  { form := "ham", person := some .first, number := some .pl }
+
+-- ============================================================================
+-- Second Person (three-level honorific)
+-- ============================================================================
 
 /-- *tuu* — 2sg non-honorific (intimate/inferior). -/
 def tuu : PronounEntry :=
@@ -45,47 +47,69 @@ def tum : PronounEntry :=
 def aap : PronounEntry :=
   { form := "aap", person := some .second, number := some .sg, formality := 2 }
 
-def allPronouns : List PronounEntry := [tuu, tum, aap]
+-- ============================================================================
+-- Third Person (demonstrative-based)
+-- ============================================================================
+
+/-- *vah* — 3sg (distal demonstrative, standard pronoun). -/
+def vah : PronounEntry :=
+  { form := "vah", person := some .third, number := some .sg }
+
+/-- *ve* — 3pl (distal demonstrative plural). -/
+def ve : PronounEntry :=
+  { form := "ve", person := some .third, number := some .pl }
+
+-- ============================================================================
+-- Pronoun Lists
+-- ============================================================================
+
+def secondPersonPronouns : List PronounEntry := [tuu, tum, aap]
+
+def allPronouns : List PronounEntry :=
+  [maiN, ham] ++ secondPersonPronouns ++ [vah, ve]
 
 -- ============================================================================
 -- Allocutive Markers (imperative agreement suffixes)
 -- ============================================================================
 
-/-- An allocutive marker entry: verbal suffix realizing AA. -/
-structure AllocMarkerEntry where
-  form : String
-  /-- 0 = non-hon, 1 = hon, 2 = high-hon -/
-  formality : Nat
-  gloss : String
-  deriving Repr, BEq
-
 /-- *-aa* non-honorific imperative suffix (e.g., *jaa* "go!"). -/
-def suffNH : AllocMarkerEntry :=
+def suffNH : AllocutiveEntry :=
   { form := "-aa", formality := 0, gloss := "IMP.NH" }
 
 /-- *-e* honorific imperative suffix (e.g., *jao* "go"). -/
-def suffH : AllocMarkerEntry :=
+def suffH : AllocutiveEntry :=
   { form := "-e", formality := 1, gloss := "IMP.H" }
 
 /-- *-iye* high-honorific imperative suffix (e.g., *jaaiye* "please go"). -/
-def suffHH : AllocMarkerEntry :=
+def suffHH : AllocutiveEntry :=
   { form := "-iye", formality := 2, gloss := "IMP.HH" }
 
-def allAllocMarkers : List AllocMarkerEntry := [suffNH, suffH, suffHH]
+def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
 -- ============================================================================
 -- Verification
 -- ============================================================================
 
-/-- All pronouns are 2nd person. -/
-theorem all_second_person :
-    allPronouns.all (·.person == some .second) = true := rfl
+/-- All three persons are attested. -/
+theorem has_all_persons :
+    allPronouns.any (·.person == some .first) = true ∧
+    allPronouns.any (·.person == some .second) = true ∧
+    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-/-- Three-level formality distinction is present. -/
+/-- Both singular and plural are attested. -/
+theorem has_both_numbers :
+    allPronouns.any (·.number == some .sg) = true ∧
+    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+
+/-- 2nd person pronouns are all second person. -/
+theorem second_person_all_2p :
+    secondPersonPronouns.all (·.person == some .second) = true := rfl
+
+/-- Three-level formality distinction in 2nd person. -/
 theorem three_levels :
-    allPronouns.map (·.formality) = [0, 1, 2] := rfl
+    secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
 
-/-- Allocutive markers have three levels matching pronouns. -/
+/-- Allocutive markers have three levels matching 2nd person pronouns. -/
 theorem markers_three_levels :
     allAllocMarkers.map (·.formality) = [0, 1, 2] := rfl
 

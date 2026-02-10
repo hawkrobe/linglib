@@ -237,39 +237,39 @@ def formalityToHonLevel : Nat → HonLevel
 
 /-- Basque fragment has 2nd-person pronouns. -/
 theorem basque_fragment_has_2p :
-    Fragments.Basque.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Basque.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Magahi fragment has three honorific levels. -/
 theorem magahi_fragment_three_levels :
-    Fragments.Magahi.Pronouns.allPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Magahi.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
 
 /-- Korean fragment has 2nd-person pronouns. -/
 theorem korean_fragment_has_2p :
-    Fragments.Korean.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Korean.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Japanese fragment has 2nd-person pronouns. -/
 theorem japanese_fragment_has_2p :
-    Fragments.Japanese.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Japanese.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Tamil fragment has 2nd-person pronouns. -/
 theorem tamil_fragment_has_2p :
-    Fragments.Tamil.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Tamil.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Galician fragment has 2nd-person pronouns. -/
 theorem galician_fragment_has_2p :
-    Fragments.Galician.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Galician.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Hindi fragment has three honorific levels. -/
 theorem hindi_fragment_three_levels :
-    Fragments.Hindi.Pronouns.allPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Hindi.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
 
 /-- Maithili fragment has three honorific levels. -/
 theorem maithili_fragment_three_levels :
-    Fragments.Maithili.Pronouns.allPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Maithili.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
 
 /-- Punjabi fragment has 2nd-person pronouns. -/
 theorem punjabi_fragment_has_2p :
-    Fragments.Punjabi.Pronouns.allPronouns.all (·.person == some .second) = true := rfl
+    Fragments.Punjabi.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
 /-- Formality bridge: 0 maps to non-honorific. -/
 theorem formality_0_nh : formalityToHonLevel 0 = .nh := rfl

@@ -1,9 +1,10 @@
 /-
 # Basque Pronoun & Allocutive Fragment
 
-Second-person pronouns and allocutive verbal morphology in Souletian Basque.
+Personal pronouns and allocutive verbal morphology in Souletian Basque.
 Basque has a T/V distinction (*hi* familiar vs *zu* formal) and SA-based
-allocutive verbal suffixes that are restricted to root clauses.
+allocutive verbal suffixes that are restricted to root clauses. 2nd person
+plural *zuek* is distinct from formal singular *zu*.
 
 ## References
 
@@ -14,23 +15,27 @@ allocutive verbal suffixes that are restricted to root clauses.
   honorifics.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Pronouns
 
 namespace Fragments.Basque.Pronouns
 
+open Core.Pronouns
 
 -- ============================================================================
--- Pronoun Entries
+-- First Person
 -- ============================================================================
 
-/-- A Basque pronoun entry with formality level. -/
-structure PronounEntry where
-  form : String
-  person : Option Person := none
-  number : Option Number := none
-  /-- 0 = plain/familiar, 1 = polite/formal -/
-  formality : Nat := 0
-  deriving Repr, BEq
+/-- *ni* — 1sg. -/
+def ni : PronounEntry :=
+  { form := "ni", person := some .first, number := some .sg }
+
+/-- *gu* — 1pl. -/
+def gu : PronounEntry :=
+  { form := "gu", person := some .first, number := some .pl }
+
+-- ============================================================================
+-- Second Person (T/V)
+-- ============================================================================
 
 /-- *hi* — 2sg familiar (T form). -/
 def hi : PronounEntry :=
@@ -40,30 +45,44 @@ def hi : PronounEntry :=
 def zu : PronounEntry :=
   { form := "zu", person := some .second, number := some .sg, formality := 1 }
 
-def allPronouns : List PronounEntry := [hi, zu]
+/-- *zuek* — 2pl. -/
+def zuek : PronounEntry :=
+  { form := "zuek", person := some .second, number := some .pl }
+
+-- ============================================================================
+-- Third Person
+-- ============================================================================
+
+/-- *hura* — 3sg. -/
+def hura : PronounEntry :=
+  { form := "hura", person := some .third, number := some .sg }
+
+/-- *haiek* — 3pl. -/
+def haiek : PronounEntry :=
+  { form := "haiek", person := some .third, number := some .pl }
+
+-- ============================================================================
+-- Pronoun Lists
+-- ============================================================================
+
+def secondPersonPronouns : List PronounEntry := [hi, zu]
+
+def allPronouns : List PronounEntry :=
+  [ni, gu] ++ secondPersonPronouns ++ [zuek, hura, haiek]
 
 -- ============================================================================
 -- Allocutive Markers (verbal suffixes)
 -- ============================================================================
 
-/-- An allocutive marker entry: verbal suffix realizing AA. -/
-structure AllocMarkerEntry where
-  form : String
-  /-- 0 = familiar, 1 = formal -/
-  formality : Nat
-  /-- Description of the morphosyntactic realization -/
-  gloss : String
-  deriving Repr, BEq
-
 /-- *-n* familiar allocutive suffix (Oyharçabal 1993). -/
-def allocFamiliar : AllocMarkerEntry :=
+def allocFamiliar : AllocutiveEntry :=
   { form := "-n", formality := 0, gloss := "2sg.familiar.alloc" }
 
 /-- *-zu* formal allocutive suffix. -/
-def allocFormal : AllocMarkerEntry :=
+def allocFormal : AllocutiveEntry :=
   { form := "-zu", formality := 1, gloss := "2sg.formal.alloc" }
 
-def allAllocMarkers : List AllocMarkerEntry := [allocFamiliar, allocFormal]
+def allAllocMarkers : List AllocutiveEntry := [allocFamiliar, allocFormal]
 
 -- ============================================================================
 -- Verb Agreement Examples
@@ -86,16 +105,27 @@ def duzu : VerbForm := { form := "duzu", gloss := "have.2sg.for", formality := 1
 -- Verification
 -- ============================================================================
 
-/-- All pronouns are 2nd person. -/
-theorem all_second_person :
-    allPronouns.all (·.person == some .second) = true := rfl
+/-- All three persons are attested. -/
+theorem has_all_persons :
+    allPronouns.any (·.person == some .first) = true ∧
+    allPronouns.any (·.person == some .second) = true ∧
+    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-/-- The T/V formality distinction is present. -/
+/-- Both singular and plural are attested. -/
+theorem has_both_numbers :
+    allPronouns.any (·.number == some .sg) = true ∧
+    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+
+/-- 2nd person pronouns are all second person. -/
+theorem second_person_all_2p :
+    secondPersonPronouns.all (·.person == some .second) = true := rfl
+
+/-- The T/V formality distinction is present in 2nd person. -/
 theorem tv_distinction :
-    allPronouns.any (·.formality == 0) = true ∧
-    allPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.formality == 0) = true ∧
+    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
 
-/-- Verb forms have matching formality levels with pronouns. -/
+/-- Verb forms have matching formality levels with 2nd person pronouns. -/
 theorem verb_formality_matches_pronouns :
     duk.formality = hi.formality ∧ duzu.formality = zu.formality := ⟨rfl, rfl⟩
 

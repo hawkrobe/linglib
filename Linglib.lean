@@ -7,6 +7,7 @@ and their interfaces. See README.md for documentation links.
 
 -- Core
 import Linglib.Core.Basic
+import Linglib.Core.Pronouns
 import Linglib.Core.Kleene
 import Linglib.Core.Empirical
 import Linglib.Core.Proposition
@@ -36,6 +37,7 @@ import Linglib.Core.Context
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
+import Linglib.Core.NounCategorization
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -51,6 +53,8 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
+import Linglib.Fragments.Czech.Determiners
+import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
@@ -60,11 +64,13 @@ import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Determiners
+import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Determiners
+import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Predicates
@@ -97,6 +103,10 @@ import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.Aspect.Diagnostics
+import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
+import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
+import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
@@ -155,7 +165,10 @@ import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.NonProjectivity.Data
 import Linglib.Phenomena.Negation.DoubleNegation
+import Linglib.Phenomena.Negation.CzechThreeWayNeg
+import Linglib.Phenomena.Negation.CzechThreeWayNeg.Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Phenomena.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
@@ -178,6 +191,8 @@ import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
+import Linglib.Phenomena.Agreement.NounCategorization
+import Linglib.Phenomena.Agreement.PersonMarkingTypology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Numerals
 import Linglib.Phenomena.Quantification.ScopeFreezing
@@ -199,6 +214,7 @@ import Linglib.Phenomena.Questions.NegativeQuestions
 import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
+import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Reference.DirectReference
@@ -475,6 +491,7 @@ import Linglib.Theories.IntensionalSemantics.Conditional.LeftNested
 import Linglib.Theories.IntensionalSemantics.Modal.Basic
 import Linglib.Theories.IntensionalSemantics.Modal.Compare
 import Linglib.Theories.IntensionalSemantics.Modal.Disjunction
+import Linglib.Theories.IntensionalSemantics.Modal.BiasedPQ
 import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
 import Linglib.Theories.IntensionalSemantics.Modal.PhillipsBrown
 import Linglib.Theories.IntensionalSemantics.Modal.SatisfactionOrdering

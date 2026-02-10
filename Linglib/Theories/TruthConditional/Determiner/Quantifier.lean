@@ -523,6 +523,108 @@ theorem some_existential_weak_bridge :
     ¬Existential (every_sem (m := toyModel)) :=
   ⟨some_existential, every_not_existential⟩
 
+-- ============================================================================
+-- Van Benthem (1984): Relational Properties of Concrete Quantifiers
+-- ============================================================================
+
+/-- `⟦every⟧` is transitive: A ⊆ B and B ⊆ C implies A ⊆ C. -/
+theorem every_transitive : QTransitive (every_sem m) := by
+  intro A B C hAB hBC
+  simp only [every_sem] at *
+  rw [List.all_eq_true] at *
+  intro x hx
+  specialize hAB x hx; specialize hBC x hx
+  cases hA : A x
+  · simp
+  · simp [hA] at hAB; simp [hAB] at hBC; simp [hBC]
+
+/-- `⟦every⟧` is antisymmetric: A ⊆ B and B ⊆ A implies A = B. -/
+theorem every_antisymmetric : QAntisymmetric (every_sem m) := by
+  intro A B hAB hBA
+  simp only [every_sem] at hAB hBA
+  rw [List.all_eq_true] at hAB hBA
+  funext x
+  specialize hAB x (FiniteModel.complete x)
+  specialize hBA x (FiniteModel.complete x)
+  cases hA : A x <;> cases hB : B x <;> simp [hA, hB] at hAB hBA ⊢
+
+/-- `⟦some⟧` is quasi-reflexive: A∩B ≠ ∅ implies A∩A ≠ ∅ (i.e., A ≠ ∅). -/
+theorem some_quasi_reflexive : QuasiReflexive (some_sem m) := by
+  intro A B hQAB
+  simp only [some_sem] at *
+  rw [List.any_eq_true] at *
+  obtain ⟨x, hx, hpred⟩ := hQAB
+  exact ⟨x, hx, by cases hA : A x <;> simp_all⟩
+
+/-- `⟦no⟧` is quasi-universal: A∩A = ∅ (i.e., A = ∅) implies A∩B = ∅ for all B. -/
+theorem no_quasi_universal : QuasiUniversal (no_sem m) := by
+  intro A B hQAA
+  simp only [no_sem] at *
+  rw [List.all_eq_true] at *
+  intro x hx
+  have := hQAA x hx
+  cases hA : A x <;> simp_all
+
+-- ============================================================================
+-- Van Benthem (1984): Double Monotonicity Classification
+-- ============================================================================
+
+/-- `⟦every⟧` is restrictor-↓ (anti-persistent).
+    Follows from Zwarts bridge: reflexive + transitive + CONSERV → ↓MON. -/
+theorem every_restrictor_down : RestrictorDownwardMono (every_sem m) :=
+  zwarts_refl_trans_restrictorDown _ every_conservative every_positive_strong every_transitive
+
+/-- `⟦some⟧` is restrictor-↑ (persistent): A ⊆ A' and some(A,B) → some(A',B). -/
+theorem some_restrictor_up : RestrictorUpwardMono (some_sem m) := by
+  intro R R' S hRR' hQ
+  simp only [some_sem] at *
+  rw [List.any_eq_true] at *
+  obtain ⟨x, hx, hpred⟩ := hQ
+  exact ⟨x, hx, by cases hR : R x <;> simp_all [hRR' x]⟩
+
+/-- `⟦no⟧` is restrictor-↓ (anti-persistent): A ⊆ A' and no(A',B) → no(A,B). -/
+theorem no_restrictor_down : RestrictorDownwardMono (no_sem m) := by
+  intro R R' S hRR' hQ
+  simp only [no_sem] at *
+  rw [List.all_eq_true] at *
+  intro x hx
+  have h := hQ x hx
+  cases hR : R x <;> simp_all [hRR' x]
+
+/-- `⟦every⟧` has double monotonicity ↓MON↑ (van Benthem 1984 §4.2). -/
+theorem every_doubleMono :
+    RestrictorDownwardMono (every_sem m) ∧ ScopeUpwardMono (every_sem m) :=
+  ⟨every_restrictor_down, every_scope_up⟩
+
+/-- `⟦some⟧` has double monotonicity ↑MON↑. -/
+theorem some_doubleMono :
+    RestrictorUpwardMono (some_sem m) ∧ ScopeUpwardMono (some_sem m) :=
+  ⟨some_restrictor_up, some_scope_up⟩
+
+/-- `⟦no⟧` has double monotonicity ↓MON↓. -/
+theorem no_doubleMono :
+    RestrictorDownwardMono (no_sem m) ∧ ScopeDownwardMono (no_sem m) :=
+  ⟨no_restrictor_down, no_scope_down⟩
+
+/-- `outerNeg ⟦every⟧` (= "not all") has double monotonicity ↑MON↓. -/
+theorem notAll_doubleMono :
+    RestrictorUpwardMono (outerNeg (every_sem m)) ∧
+    ScopeDownwardMono (outerNeg (every_sem m)) :=
+  ⟨outerNeg_restrictorDown_to_up _ every_restrictor_down,
+   outerNeg_up_to_down _ every_scope_up⟩
+
+/-- `⟦every⟧` is filtrating: every(A,B) ∧ every(A,C) → every(A, B∩C). -/
+theorem every_filtrating : Filtrating (every_sem m) := by
+  intro A B C hAB hAC
+  simp only [every_sem] at *
+  rw [List.all_eq_true] at *
+  intro x hx
+  have h1 := hAB x hx
+  have h2 := hAC x hx
+  cases hA : A x
+  · simp
+  · simp [hA] at h1 h2; simp [h1, h2]
+
 end FiniteModelProofs
 
 end TruthConditional.Determiner.Quantifier

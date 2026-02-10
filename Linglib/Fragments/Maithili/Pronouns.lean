@@ -1,10 +1,11 @@
 /-
 # Maithili Pronoun & Allocutive Fragment
 
-Second-person pronouns and allocutive verbal morphology in Maithili (Indo-Aryan).
-Maithili has a three-level honorific system (non-hon / hon / high-hon) realized
-as verbal agreement morphemes on finite verbs. AA is Fin-based and freely
-embeddable.
+Personal pronouns and allocutive verbal morphology in Maithili (Indo-Aryan).
+Maithili has a three-level honorific system for 2nd person (non-hon / hon /
+high-hon) realized as verbal agreement morphemes on finite verbs. 3rd person
+also distinguishes honorific levels (*ũ* non-hon / *o* hon). AA is Fin-based
+and freely embeddable.
 
 ## References
 
@@ -12,23 +13,27 @@ embeddable.
   honorifics.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Pronouns
 
 namespace Fragments.Maithili.Pronouns
 
+open Core.Pronouns
 
 -- ============================================================================
--- Pronoun Entries
+-- First Person
 -- ============================================================================
 
-/-- A Maithili pronoun entry with formality level. -/
-structure PronounEntry where
-  form : String
-  person : Option Person := none
-  number : Option Number := none
-  /-- 0 = non-hon, 1 = hon, 2 = high-hon -/
-  formality : Nat := 0
-  deriving Repr, BEq
+/-- *hum* — 1sg. -/
+def hum : PronounEntry :=
+  { form := "hum", person := some .first, number := some .sg }
+
+/-- *hum sab* — 1pl. -/
+def humSab : PronounEntry :=
+  { form := "hum sab", person := some .first, number := some .pl }
+
+-- ============================================================================
+-- Second Person (three-level honorific)
+-- ============================================================================
 
 /-- *tõ* — 2sg non-honorific. -/
 def toN : PronounEntry :=
@@ -42,48 +47,78 @@ def ahaN : PronounEntry :=
 def apne : PronounEntry :=
   { form := "apne", person := some .second, number := some .sg, formality := 2 }
 
-def allPronouns : List PronounEntry := [toN, ahaN, apne]
+-- ============================================================================
+-- Third Person (honorific-sensitive)
+-- ============================================================================
+
+/-- *ũ* — 3sg non-honorific (distal). -/
+def uN : PronounEntry :=
+  { form := "ũ", person := some .third, number := some .sg, formality := 0 }
+
+/-- *o* — 3sg honorific. -/
+def o : PronounEntry :=
+  { form := "o", person := some .third, number := some .sg, formality := 1 }
+
+/-- *ũ sab* — 3pl. -/
+def uNSab : PronounEntry :=
+  { form := "ũ sab", person := some .third, number := some .pl }
+
+-- ============================================================================
+-- Pronoun Lists
+-- ============================================================================
+
+def secondPersonPronouns : List PronounEntry := [toN, ahaN, apne]
+
+def allPronouns : List PronounEntry :=
+  [hum, humSab] ++ secondPersonPronouns ++ [uN, o, uNSab]
 
 -- ============================================================================
 -- Allocutive Markers (verbal agreement suffixes)
 -- ============================================================================
 
-/-- An allocutive marker entry: verbal suffix realizing AA. -/
-structure AllocMarkerEntry where
-  form : String
-  /-- 0 = non-hon, 1 = hon, 2 = high-hon -/
-  formality : Nat
-  gloss : String
-  deriving Repr, BEq
-
 /-- Non-honorific finite suffix. -/
-def suffNH : AllocMarkerEntry :=
+def suffNH : AllocutiveEntry :=
   { form := "-ah", formality := 0, gloss := "FIN.NH" }
 
 /-- Honorific finite suffix. -/
-def suffH : AllocMarkerEntry :=
+def suffH : AllocutiveEntry :=
   { form := "-thunh", formality := 1, gloss := "FIN.H" }
 
 /-- High-honorific finite suffix. -/
-def suffHH : AllocMarkerEntry :=
+def suffHH : AllocutiveEntry :=
   { form := "-lnhi", formality := 2, gloss := "FIN.HH" }
 
-def allAllocMarkers : List AllocMarkerEntry := [suffNH, suffH, suffHH]
+def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
 -- ============================================================================
 -- Verification
 -- ============================================================================
 
-/-- All pronouns are 2nd person. -/
-theorem all_second_person :
-    allPronouns.all (·.person == some .second) = true := rfl
+/-- All three persons are attested. -/
+theorem has_all_persons :
+    allPronouns.any (·.person == some .first) = true ∧
+    allPronouns.any (·.person == some .second) = true ∧
+    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-/-- Three-level formality distinction is present. -/
+/-- Both singular and plural are attested. -/
+theorem has_both_numbers :
+    allPronouns.any (·.number == some .sg) = true ∧
+    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+
+/-- 2nd person pronouns are all second person. -/
+theorem second_person_all_2p :
+    secondPersonPronouns.all (·.person == some .second) = true := rfl
+
+/-- Three-level formality distinction in 2nd person. -/
 theorem three_levels :
-    allPronouns.map (·.formality) = [0, 1, 2] := rfl
+    secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
 
-/-- Allocutive markers have three levels matching pronouns. -/
+/-- Allocutive markers have three levels matching 2nd person pronouns. -/
 theorem markers_three_levels :
     allAllocMarkers.map (·.formality) = [0, 1, 2] := rfl
+
+/-- 3rd person also has a formality distinction. -/
+theorem third_person_honorific :
+    uN.formality = 0 ∧ o.formality = 1 := ⟨rfl, rfl⟩
 
 end Fragments.Maithili.Pronouns
