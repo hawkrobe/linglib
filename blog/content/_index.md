@@ -1,3 +1,3 @@
 ---
-title: "L³ — Linguistics Library Log"
+title: "Linguistics in Lean"
 ---
