@@ -598,6 +598,27 @@ structure TeleologicalFlavor where
   goals : OrderingSource
 
 
+/-! ## Flavor Tags
+
+Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
+`Core.ModalLogic`, bridging Kratzer's parameterized semantics to the
+typological meaning space (Imel, Guo, & Steinert-Threlkeld 2026). -/
+
+open Core.ModalLogic (ModalFlavor)
+
+/-- Epistemic modality maps to the epistemic flavor tag. -/
+def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic
+
+/-- Deontic modality maps to the deontic flavor tag. -/
+def DeonticFlavor.flavorTag : ModalFlavor := .deontic
+
+/-- Bouletic modality maps to the deontic flavor tag (both norm-based). -/
+def BouleticFlavor.flavorTag : ModalFlavor := .deontic
+
+/-- Teleological modality maps to the circumstantial flavor tag
+    (teleological is subsumed under circumstantial in the 2×3 space). -/
+def TeleologicalFlavor.flavorTag : ModalFlavor := .circumstantial
+
 def implies (p q : BProp World) : BProp World := λ w => !p w || q w
 
 /--
@@ -638,6 +659,26 @@ def strictImplication (p q : BProp World) : Bool :=
 structure KratzerParams where
   base : ModalBase
   ordering : OrderingSource
+
+/-- Extract `KratzerParams` from an epistemic flavor structure. -/
+def EpistemicFlavor.toKratzerParams (f : EpistemicFlavor) : KratzerParams where
+  base := f.evidence
+  ordering := f.ordering
+
+/-- Extract `KratzerParams` from a deontic flavor structure. -/
+def DeonticFlavor.toKratzerParams (f : DeonticFlavor) : KratzerParams where
+  base := f.circumstances
+  ordering := f.norms
+
+/-- Extract `KratzerParams` from a bouletic flavor structure. -/
+def BouleticFlavor.toKratzerParams (f : BouleticFlavor) : KratzerParams where
+  base := f.circumstances
+  ordering := f.desires
+
+/-- Extract `KratzerParams` from a teleological flavor structure. -/
+def TeleologicalFlavor.toKratzerParams (f : TeleologicalFlavor) : KratzerParams where
+  base := f.circumstances
+  ordering := f.goals
 
 def KratzerTheory (params : KratzerParams) : ModalTheory where
   name := "Kratzer"

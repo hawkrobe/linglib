@@ -9,6 +9,7 @@ Lexical entries for English closed-class function words:
 -/
 
 import Linglib.Core.Basic
+import Linglib.Core.ModalLogic
 
 namespace Fragments.English.FunctionWords
 
@@ -22,7 +23,7 @@ structure PrepEntry where
   passiveAgent : Bool := false
   deriving Repr, BEq
 
-def to : PrepEntry := { form := "to" }
+def to_ : PrepEntry := { form := "to" }
 def on : PrepEntry := { form := "on" }
 def in_ : PrepEntry := { form := "in" }
 def at_ : PrepEntry := { form := "at" }
@@ -32,7 +33,7 @@ def from_ : PrepEntry := { form := "from" }
 def before : PrepEntry := { form := "before" }
 def after : PrepEntry := { form := "after" }
 
-def allPrepositions : List PrepEntry := [to, on, in_, at_, by_, with_, from_, before, after]
+def allPrepositions : List PrepEntry := [to_, on, in_, at_, by_, with_, from_, before, after]
 
 def PrepEntry.toWord (p : PrepEntry) : Word :=
   { form := p.form, cat := .ADP, features := {} }
@@ -67,6 +68,9 @@ def CompEntry.toWord (c : CompEntry) : Word :=
 -- Auxiliaries
 -- ============================================================================
 
+section Auxiliaries
+open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+
 /-- Auxiliary type -/
 inductive AuxType where
   | modal      -- can, will, must, should, etc.
@@ -83,18 +87,42 @@ structure AuxEntry where
   number : Option Number := none
   /-- Tense -/
   past : Bool := false
+  /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
+      Empty for non-modal auxiliaries. -/
+  modalMeaning : List ForceFlavor := []
   deriving Repr, BEq
 
--- Modals (no agreement)
-def can : AuxEntry := { form := "can", auxType := .modal }
-def could : AuxEntry := { form := "could", auxType := .modal, past := true }
-def will : AuxEntry := { form := "will", auxType := .modal }
-def would : AuxEntry := { form := "would", auxType := .modal, past := true }
-def shall : AuxEntry := { form := "shall", auxType := .modal }
-def should : AuxEntry := { form := "should", auxType := .modal, past := true }
-def may : AuxEntry := { form := "may", auxType := .modal }
-def might : AuxEntry := { form := "might", auxType := .modal, past := true }
-def must : AuxEntry := { form := "must", auxType := .modal }
+-- Modals (no agreement). Modal meanings follow Kratzer (1981), Palmer (2001).
+-- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
+private abbrev cp := ForceFlavor.cartesianProduct
+
+def can : AuxEntry where
+  form := "can"; auxType := .modal
+  modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+def could : AuxEntry where
+  form := "could"; auxType := .modal; past := true
+  modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+def will : AuxEntry where
+  form := "will"; auxType := .modal
+  modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
+def would : AuxEntry where
+  form := "would"; auxType := .modal; past := true
+  modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
+def shall : AuxEntry where
+  form := "shall"; auxType := .modal
+  modalMeaning := cp [.necessity] [.deontic]
+def should : AuxEntry where
+  form := "should"; auxType := .modal; past := true
+  modalMeaning := cp [.necessity] [.deontic, .epistemic]
+def may : AuxEntry where
+  form := "may"; auxType := .modal
+  modalMeaning := cp [.possibility] [.epistemic, .deontic]
+def might : AuxEntry where
+  form := "might"; auxType := .modal; past := true
+  modalMeaning := cp [.possibility] [.epistemic]
+def must : AuxEntry where
+  form := "must"; auxType := .modal
+  modalMeaning := cp [.necessity] [.epistemic, .deontic, .circumstantial]
 
 -- Do-support
 def do_ : AuxEntry := { form := "do", auxType := .doSupport, number := some .pl }
@@ -129,6 +157,8 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
       , number := a.number
     }
   }
+
+end Auxiliaries
 
 -- ============================================================================
 -- Conjunctions

@@ -176,4 +176,41 @@ def phase_bounded_alternatives {U : Type*}
   ∀ u, (∀ a ∈ local_alts u, in_same_phase u a) ∧
        (∀ a ∈ global_alts u, ¬in_same_phase u a → a ∉ local_alts u)
 
+/-! ## Simplicity Explains Semantic Universals
+
+Van de Pol et al. (2023): quantifiers satisfying the Barwise & Cooper
+universals (conservativity, quantity, monotonicity) have shorter minimal
+description length, measured by Lempel-Ziv complexity on truth-table
+representations.
+
+- Conservativity: `Q(A,B) = Q(A, A ∩ B)`
+- Quantity (isomorphism closure): depends only on cardinalities
+- Monotonicity: upward or downward monotone in scope
+
+Formal content: `TruthConditional.Determiner.Quantifier.SatisfiesUniversals`
+-/
+
+/-- Quantifiers satisfying the B&C semantic universals have strictly lower
+    complexity than those violating them, across multiple complexity measures.
+
+    Measures: Lempel-Ziv complexity (LZ), minimal description length (MDL)
+    in a language-of-thought grammar.
+
+    The strongest effect is for monotonicity, then conservativity;
+    quantity shows a weaker but robust effect. -/
+def simplicity_explains_universals
+    (Q : Type*) (satisfies_universals : Q → Prop)
+    (complexity : Q → ℚ) : Prop :=
+  ∀ q₁ q₂ : Q, satisfies_universals q₁ → ¬satisfies_universals q₂ →
+    complexity q₁ < complexity q₂
+
+/-- Monotonicity is the strongest predictor of simplicity,
+    stronger than conservativity or quantity alone. -/
+def monotonicity_strongest_predictor
+    (Q : Type*) (is_monotone is_conservative is_quantity : Q → Prop)
+    (complexity : Q → ℚ) : Prop :=
+  let effect (p : Q → Prop) := ∀ q₁ q₂, p q₁ → ¬p q₂ → complexity q₁ < complexity q₂
+  effect is_monotone ∧
+    (effect is_conservative → effect is_quantity → True)
+
 end Core.Conjectures

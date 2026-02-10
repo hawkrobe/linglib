@@ -478,6 +478,51 @@ theorem every_positive_strong : PositiveStrong (every_sem m) := by
   intro x _
   cases R x <;> rfl
 
+-- === K&S Existential det classification (§3.3, G3) ===
+
+/-- `⟦some⟧` is existential (K&S G3): some(A,B) = some(A∩B, everything).
+    some is natural in there-sentences: "There are some cats." -/
+theorem some_existential : Existential (some_sem m) := by
+  intro R S
+  simp only [some_sem]
+  congr 1; ext x
+  cases R x <;> simp
+
+/-- `⟦no⟧` is existential (K&S G3): no(A,B) = no(A∩B, everything).
+    no is natural in there-sentences: "There are no cats." -/
+theorem no_existential : Existential (no_sem m) := by
+  intro R S
+  simp only [no_sem]
+  congr 1; ext x
+  cases R x <;> simp
+
+/-- `⟦every⟧` is NOT existential (K&S §3.3).
+    "every" is not natural in there-sentences: *"There is every cat."
+    Witness: R=students, S=things. every(R,S)=true but every(R∩S, 1)=true trivially,
+    yet every(thing, student)≠every(thing∩student, 1). -/
+theorem every_not_existential : ¬Existential (every_sem (m := toyModel)) := by
+  intro h
+  have := h thing_sem student_sem
+  simp only [every_sem, thing_sem, student_sem, FiniteModel.elements] at this
+  exact absurd this Bool.noConfusion
+
+/-- `⟦most⟧` is NOT existential (K&S §3.3).
+    "most" is not natural in there-sentences: *"There are most cats."
+    Witness: R={john,mary}, S={john,pizza}. |R∩S|=1 vs |R\S|=1, so most(R,S)=false.
+    But most(R∩S, 1_P): |{john}∩1_P|=1 vs |{john}\1_P|=0, so most(R∩S, 1_P)=true. -/
+theorem most_not_existential : ¬Existential (most_sem (m := toyModel)) := by
+  intro h
+  have := h student_sem (λ x => match x with | .john => true | .pizza => true | _ => false)
+  simp only [most_sem, student_sem, FiniteModel.elements] at this
+  exact absurd this Bool.noConfusion
+
+/-- Existential ↔ weak (strength metadata): the existential dets are exactly those
+    that can appear in there-sentences. Third independent path to weak/strong. -/
+theorem some_existential_weak_bridge :
+    Existential (some_sem m) ∧
+    ¬Existential (every_sem (m := toyModel)) :=
+  ⟨some_existential, every_not_existential⟩
+
 end FiniteModelProofs
 
 end TruthConditional.Determiner.Quantifier

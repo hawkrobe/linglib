@@ -29,6 +29,7 @@ Test sentences:
 -/
 
 import Linglib.Core.Empirical
+import Linglib.Fragments.English.Determiners
 import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Conditionals.Studies.RamotowskaEtAl2025
@@ -52,12 +53,15 @@ inductive Quantifier where
   | notEvery   -- Negated universal
   deriving Repr, DecidableEq, BEq
 
-/-- Quantifier strength classification. -/
-def Quantifier.isStrong : Quantifier → Bool
-  | .every => true
-  | .no => true
-  | .some => false
-  | .notEvery => false
+open Fragments.English.Determiners (Strength)
+
+/-- Map local quantifiers to canonical Strength (B&C Table II). -/
+def Quantifier.strength : Quantifier → Strength
+  | .every => .strong | .no => .strong
+  | .some => .weak   | .notEvery => .weak
+
+/-- Quantifier strength classification, derived from canonical `Strength`. -/
+def Quantifier.isStrong (q : Quantifier) : Bool := q.strength == .strong
 
 /-- Quantifier polarity classification. -/
 def Quantifier.isPositive : Quantifier → Bool

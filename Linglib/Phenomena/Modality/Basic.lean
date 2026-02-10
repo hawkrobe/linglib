@@ -12,10 +12,12 @@ This module covers modal semantics phenomena:
 -/
 
 import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.Modality.Typology
 
 namespace Phenomena.Modality
 
 -- Re-export for convenience
 export FreeChoice (FreeChoiceDatum ModalFreeChoiceDatum)
+export Typology (tlingit javanese gitksan korean greek mandarin dutch hungarian)
 
 end Phenomena.Modality

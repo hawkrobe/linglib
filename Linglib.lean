@@ -12,6 +12,7 @@ import Linglib.Core.Empirical
 import Linglib.Core.Proposition
 import Linglib.Core.UD
 import Linglib.Core.Duality
+import Linglib.Core.Quantification
 import Linglib.Core.Scales
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
@@ -58,10 +59,12 @@ import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Predicates
@@ -148,6 +151,7 @@ import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
+import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.NonProjectivity.Data
 import Linglib.Phenomena.Negation.DoubleNegation
@@ -178,6 +182,9 @@ import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Numerals
 import Linglib.Phenomena.Quantification.ScopeFreezing
 import Linglib.Phenomena.Quantification.ScopeWordOrder
+import Linglib.Phenomena.Quantification.Examples
+import Linglib.Phenomena.Quantification.Typology
+import Linglib.Phenomena.Quantification.Universals
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Questions.Basic
@@ -472,6 +479,7 @@ import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
 import Linglib.Theories.IntensionalSemantics.Modal.PhillipsBrown
 import Linglib.Theories.IntensionalSemantics.Modal.SatisfactionOrdering
 import Linglib.Theories.IntensionalSemantics.Modal.Simple
+import Linglib.Theories.IntensionalSemantics.Modal.Typology
 import Linglib.Theories.IntensionalSemantics.Mood.Basic
 import Linglib.Theories.IntensionalSemantics.Reference.Basic
 import Linglib.Theories.IntensionalSemantics.Reference.Kaplan
