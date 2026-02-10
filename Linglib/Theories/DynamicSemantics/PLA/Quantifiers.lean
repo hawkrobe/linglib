@@ -28,6 +28,18 @@ We formalize:
 2. Witness-indexed updates for donkey dependencies
 3. Truthfulness condition for scope extension
 
+### Relationship to Core.Quantification
+
+`Core.Quantification` defines a parallel Bool-based GQ type:
+  `GQ α = (α → Bool) → (α → Bool) → Bool`
+with model-agnostic properties (`Conservative`, `ScopeUpwardMono`, etc.)
+and van Benthem (1984) relational characterizations.
+
+This module uses the Set-based `GQRel α = Set α → Set α → Prop` because
+PLA's dynamic updates operate on `Set`-valued info states. The two
+representations are morally equivalent — `IsConservative` here corresponds
+to `Conservative` in Core — but typed for different downstream consumers.
+
 ## References
 
 - Dekker, P. (2012). Dynamic Semantics. Springer. Chapter 4, §4.1.

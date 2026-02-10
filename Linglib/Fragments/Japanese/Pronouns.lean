@@ -1,9 +1,12 @@
 /-
 # Japanese Pronoun & Allocutive Fragment
 
-Second-person pronouns and allocutive particles in Japanese. Japanese has
+Personal pronouns and allocutive particles in Japanese. Japanese has
 particle-based politeness marking (*-desu*/*-masu*) hosted in the SAP layer,
-restricted to root clauses.
+restricted to root clauses. 1st person has register-sensitive variants
+(*watashi* neutral, *boku* male informal, *ore* male very informal).
+3rd person pronouns (*kare*, *kanojo*) are literary/modern innovations;
+traditional Japanese relies heavily on null reference.
 
 ## References
 
@@ -14,52 +17,74 @@ restricted to root clauses.
   honorifics.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Pronouns
 
 namespace Fragments.Japanese.Pronouns
 
+open Core.Pronouns
 
 -- ============================================================================
--- Pronoun Entries
+-- First Person
 -- ============================================================================
 
-/-- A Japanese pronoun entry with formality level. -/
-structure PronounEntry where
-  form : String
-  kanji : String
-  person : Option Person := none
-  number : Option Number := none
-  /-- 0 = plain, 1 = polite -/
-  formality : Nat := 0
-  deriving Repr, BEq
+/-- 私 *watashi* — 1sg neutral/polite. -/
+def watashi : PronounEntry :=
+  { form := "watashi", script := some "私", person := some .first, number := some .sg, formality := 1 }
+
+/-- 僕 *boku* — 1sg male informal. -/
+def boku : PronounEntry :=
+  { form := "boku", script := some "僕", person := some .first, number := some .sg, formality := 0 }
+
+/-- 私たち *watashitachi* — 1pl. -/
+def watashitachi : PronounEntry :=
+  { form := "watashitachi", script := some "私たち", person := some .first, number := some .pl }
+
+-- ============================================================================
+-- Second Person (T/V)
+-- ============================================================================
 
 /-- 君 *kimi* — 2sg plain. -/
 def kimi : PronounEntry :=
-  { form := "kimi", kanji := "君", person := some .second, number := some .sg, formality := 0 }
+  { form := "kimi", script := some "君", person := some .second, number := some .sg, formality := 0 }
 
 /-- あなた *anata* — 2sg polite. -/
 def anata : PronounEntry :=
-  { form := "anata", kanji := "あなた", person := some .second, number := some .sg, formality := 1 }
+  { form := "anata", script := some "あなた", person := some .second, number := some .sg, formality := 1 }
 
-def allPronouns : List PronounEntry := [kimi, anata]
+-- ============================================================================
+-- Third Person
+-- ============================================================================
+
+/-- 彼 *kare* — 3sg masculine. -/
+def kare : PronounEntry :=
+  { form := "kare", script := some "彼", person := some .third, number := some .sg }
+
+/-- 彼女 *kanojo* — 3sg feminine. -/
+def kanojo : PronounEntry :=
+  { form := "kanojo", script := some "彼女", person := some .third, number := some .sg }
+
+/-- 彼ら *karera* — 3pl. -/
+def karera : PronounEntry :=
+  { form := "karera", script := some "彼ら", person := some .third, number := some .pl }
+
+-- ============================================================================
+-- Pronoun Lists
+-- ============================================================================
+
+def secondPersonPronouns : List PronounEntry := [kimi, anata]
+
+def allPronouns : List PronounEntry :=
+  [watashi, boku, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera]
 
 -- ============================================================================
 -- Allocutive Particles (SAP-layer)
 -- ============================================================================
 
-/-- An allocutive particle entry. -/
-structure AllocParticleEntry where
-  form : String
-  /-- 0 = plain (no particle), 1 = polite -/
-  formality : Nat
-  gloss : String
-  deriving Repr, BEq
-
 /-- *-desu* polite copula / *-masu* polite verbal (Miyagawa 2012). -/
-def desuMasu : AllocParticleEntry :=
+def desuMasu : AllocutiveEntry :=
   { form := "-desu/-masu", formality := 1, gloss := "POL" }
 
-def allAllocParticles : List AllocParticleEntry := [desuMasu]
+def allAllocParticles : List AllocutiveEntry := [desuMasu]
 
 -- ============================================================================
 -- Verb Agreement Examples
@@ -82,14 +107,29 @@ def ikimasu : VerbForm := { form := "ikimasu", gloss := "go.POL", formality := 1
 -- Verification
 -- ============================================================================
 
-/-- All pronouns are 2nd person. -/
-theorem all_second_person :
-    allPronouns.all (·.person == some .second) = true := rfl
+/-- All three persons are attested. -/
+theorem has_all_persons :
+    allPronouns.any (·.person == some .first) = true ∧
+    allPronouns.any (·.person == some .second) = true ∧
+    allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-/-- The T/V formality distinction is present. -/
+/-- Both singular and plural are attested. -/
+theorem has_both_numbers :
+    allPronouns.any (·.number == some .sg) = true ∧
+    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+
+/-- 1st person has register-based formality distinction. -/
+theorem first_person_register :
+    boku.formality = 0 ∧ watashi.formality = 1 := ⟨rfl, rfl⟩
+
+/-- 2nd person pronouns are all second person. -/
+theorem second_person_all_2p :
+    secondPersonPronouns.all (·.person == some .second) = true := rfl
+
+/-- The T/V formality distinction is present in 2nd person. -/
 theorem tv_distinction :
-    allPronouns.any (·.formality == 0) = true ∧
-    allPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.formality == 0) = true ∧
+    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
 
 /-- Verb forms span plain and polite levels. -/
 theorem verb_formality_span :

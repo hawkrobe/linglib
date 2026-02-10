@@ -1,5 +1,7 @@
 import Linglib.Core.Basic
+import Linglib.Core.NounCategorization
 import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.Mandarin.Classifiers
 
 /-! # Mandarin Chinese Quantifier Fragment
 
@@ -22,6 +24,8 @@ Key typological properties:
 namespace Fragments.Mandarin.Determiners
 
 open Fragments.English.Determiners (QForce Monotonicity Strength)
+open Core.NounCategorization (ClassifierEntry)
+open Fragments.Mandarin.Classifiers (ge)
 
 /-- Mandarin quantifier entry. Extends the English pattern with
     classifier requirements (Mandarin-specific morphosyntax). -/
@@ -40,8 +44,8 @@ structure MandarinQuantEntry where
   strength : Strength := .weak
   /-- Requires a classifier (liàngcí 量词) between determiner and noun -/
   requiresClassifier : Bool := false
-  /-- Example with classifier if required -/
-  classifierExample : Option String := none
+  /-- Typical classifier used with this quantifier (个 gè by default) -/
+  typicalClassifier : Option ClassifierEntry := none
   deriving Repr, BEq
 
 -- ============================================================================
@@ -58,7 +62,7 @@ def mei : MandarinQuantEntry :=
   , monotonicity := .increasing
   , strength := .strong
   , requiresClassifier := true
-  , classifierExample := some "每个学生 (měi-gè xuéshēng)" }
+  , typicalClassifier := some ge }
 
 /-- 所有 suǒyǒu "all" — universal, plural-like, no classifier required.
     suǒyǒu xuéshēng 所有学生 "all students" -/
@@ -100,7 +104,7 @@ def ji : MandarinQuantEntry :=
   , monotonicity := .increasing
   , strength := .weak
   , requiresClassifier := true
-  , classifierExample := some "几个学生 (jǐ-gè xuéshēng)" }
+  , typicalClassifier := some ge }
 
 /-- 大部分 dà-bùfèn "most/the greater part" — proportional, increasing, strong.
     dà-bùfèn xuéshēng 大部分学生 "most students" -/
@@ -125,7 +129,7 @@ def liang_dou : MandarinQuantEntry :=
   , monotonicity := .increasing
   , strength := .strong
   , requiresClassifier := true
-  , classifierExample := some "两个学生都 (liǎng-gè xuéshēng dōu)" }
+  , typicalClassifier := some ge }
 
 -- ============================================================================
 -- Lexicon
@@ -160,5 +164,15 @@ theorem liang_dou_universal_strong :
 
 /-- 两…都 requires a classifier. -/
 theorem liang_dou_requires_cl : liang_dou.requiresClassifier = true := rfl
+
+/-- All quantifiers that require a classifier have a typicalClassifier set. -/
+theorem requires_cl_has_typical :
+    (allQuantifiers.filter (·.requiresClassifier)).all
+      (·.typicalClassifier.isSome) = true := by native_decide
+
+/-- All typical classifiers are 个 (the default). -/
+theorem typical_classifier_is_default :
+    (allQuantifiers.filterMap (·.typicalClassifier)).all
+      (·.isDefault) = true := by native_decide
 
 end Fragments.Mandarin.Determiners

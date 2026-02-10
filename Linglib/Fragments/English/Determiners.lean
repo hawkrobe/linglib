@@ -439,6 +439,39 @@ From a `QuantityWord` you can reach:
 - **Complexity**: `Core.Conjectures.simplicity_explains_universals` (van de Pol et al. 2023)
 -/
 
+-- ============================================================================
+-- Van Benthem (1984) §3.3: Inferential Characterization
+-- ============================================================================
+
+/-- Van Benthem 1984 §3.3: Inferential characterization of the Square of
+    Opposition. Each corner is uniquely determined by its relational properties
+    under CONSERV + QUANT + VAR*.
+
+    - `inclusion`: all — transitive + reflexive (⊆)
+    - `overlap`: some — symmetric + quasi-reflexive (∩ ≠ ∅)
+    - `disjointness`: no — symmetric + quasi-universal (∩ = ∅)
+    - `nonInclusion`: not all — almost-connected + irreflexive (⊄) -/
+inductive InferentialClass where
+  | inclusion
+  | overlap
+  | disjointness
+  | nonInclusion
+  deriving DecidableEq, Repr, BEq
+
+/-- Map quantity words to their inferential class (Square of Opposition corner). -/
+def QuantityWord.inferentialClass : QuantityWord → Option InferentialClass
+  | .all   => some .inclusion
+  | .some_ => some .overlap
+  | .none_ => some .disjointness
+  | _      => none
+
+/-- Map quantity words to their double monotonicity type (van Benthem 1984 §4.2). -/
+def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.DoubleMono
+  | .all   => some .downUp
+  | .some_ => some .upUp
+  | .none_ => some .downDown
+  | _      => none
+
 section CanonicalGQDenotations
 open TruthConditional (Model)
 open TruthConditional.Determiner.Quantifier
@@ -606,6 +639,56 @@ theorem none_laa_bridge :
     LeftAntiAdditive (no_sem m) ∧
     ScopeDownwardMono (no_sem m) :=
   ⟨rfl, no_laa, no_scope_down⟩
+
+-- ============================================================================
+-- Van Benthem (1984): Inferential + Double Mono Bridges
+-- ============================================================================
+
+open Core.Quantification in
+/-- All: inferential class is inclusion, confirmed by relational properties.
+    Van Benthem Thm 3.1.1: the ONLY reflexive antisymmetric quantifier. -/
+theorem all_inferential_bridge :
+    QuantityWord.all.inferentialClass = some .inclusion ∧
+    QTransitive (every_sem m) ∧ PositiveStrong (every_sem m) ∧
+    QAntisymmetric (every_sem m) :=
+  ⟨rfl, every_transitive, every_positive_strong, every_antisymmetric⟩
+
+open Core.Quantification in
+/-- Some: inferential class is overlap, confirmed by relational properties.
+    Van Benthem Thm 3.3.2: the ONLY symmetric quasi-reflexive quantifier. -/
+theorem some_inferential_bridge :
+    QuantityWord.some_.inferentialClass = some .overlap ∧
+    QSymmetric (some_sem m) ∧ QuasiReflexive (some_sem m) :=
+  ⟨rfl, some_symmetric, some_quasi_reflexive⟩
+
+open Core.Quantification in
+/-- None: inferential class is disjointness, confirmed by relational properties.
+    Van Benthem Cor 3.3.3: the ONLY symmetric quasi-universal quantifier. -/
+theorem none_inferential_bridge :
+    QuantityWord.none_.inferentialClass = some .disjointness ∧
+    QSymmetric (no_sem m) ∧ QuasiUniversal (no_sem m) :=
+  ⟨rfl, no_symmetric, no_quasi_universal⟩
+
+open Core.Quantification in
+/-- All: double mono ↓MON↑ metadata matches semantic proof. -/
+theorem all_doubleMono_bridge :
+    QuantityWord.all.doubleMono = some .downUp ∧
+    RestrictorDownwardMono (every_sem m) ∧ ScopeUpwardMono (every_sem m) :=
+  ⟨rfl, every_restrictor_down, every_scope_up⟩
+
+open Core.Quantification in
+/-- Some: double mono ↑MON↑ metadata matches semantic proof. -/
+theorem some_doubleMono_bridge :
+    QuantityWord.some_.doubleMono = some .upUp ∧
+    RestrictorUpwardMono (some_sem m) ∧ ScopeUpwardMono (some_sem m) :=
+  ⟨rfl, some_restrictor_up, some_scope_up⟩
+
+open Core.Quantification in
+/-- None: double mono ↓MON↓ metadata matches semantic proof. -/
+theorem none_doubleMono_bridge :
+    QuantityWord.none_.doubleMono = some .downDown ∧
+    RestrictorDownwardMono (no_sem m) ∧ ScopeDownwardMono (no_sem m) :=
+  ⟨rfl, no_restrictor_down, no_scope_down⟩
 
 end CanonicalGQDenotations
 

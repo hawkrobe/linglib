@@ -1,5 +1,101 @@
 # Changelog
 
+## [0.157.0] - 2026-02-10
+
+### Changed
+- **Fragments/{Hindi,Tamil,Korean,Japanese,Basque,Galician,Magahi,Maithili,Punjabi}/Pronouns.lean**: Expanded from 2nd-person-only to full person inventories (1st, 2nd, 3rd; sg, pl). Language-specific highlights: Tamil inclusive/exclusive 1pl (*naam*/*naangaL*), Korean/Japanese 1sg register variants (*na*/*jeo*, *boku*/*watashi*), Galician 2pl T/V (*vós*/*vostedes*), Basque 2pl *zuek*, Maithili 3sg honorific (*ũ*/*o*), Punjabi 3sg/3pl homophony (*uh*). Each file now exports `secondPersonPronouns` for allocutive-specific theorems and `allPronouns` for full inventory. `has_all_persons` and `has_both_numbers` verification added uniformly.
+- **Theories/Minimalism/Phenomena/Allocutivity.lean**: Bridge theorems updated to reference `secondPersonPronouns` instead of `allPronouns`.
+
+## [0.156.0] - 2026-02-10
+
+### Added
+- **Core/Pronouns.lean**: Shared cross-linguistic `PronounEntry` and `AllocutiveEntry` types. `PronounEntry` has `form`, `person`, `number`, `case_`, `formality`, `script` (for non-Latin orthography). `AllocutiveEntry` has `form`, `formality`, `gloss`. Eliminates 9 duplicate local type definitions across Fragment files.
+
+### Changed
+- **Fragments/{Hindi,Tamil,Korean,Japanese,Basque,Galician,Magahi,Maithili,Punjabi}/Pronouns.lean**: Refactored to import and use shared `Core.Pronouns.PronounEntry` and `Core.Pronouns.AllocutiveEntry`. Korean/Japanese `hangul`/`kanji` fields → `script : Option String`. All local `AllocMarkerEntry`/`AllocParticleEntry`/`AllocCliticEntry` → shared `AllocutiveEntry`. All existing verification theorems preserved.
+
+## [0.155.0] - 2026-02-10
+
+### Added
+- **Phenomena/Agreement/PersonMarkingTypology.lean**: Cysouw (2009) paradigmatic structure of person marking typology. 8-cell `PersonCategory` scheme (3 singular + 5 group categories), `ParadigmaticStructure` as morpheme-class assignment, computed `SingularType` (Sa–Se), `FirstPersonComplexType` (Pa–Pe), `ExplicitnessLevel` hierarchy (10.7), `HorizHomophonyLevel` hierarchy (10.1–10.2). 12 language paradigms (Latin, English pronouns/inflection, Dutch, Spanish subjunctive, French, Mandara, Ilocano, Maká, Pirahã, Toda, Czech). ~40 verified theorems: all 5 singular types attested, all 5 FPC types attested, addressee inclusion implication (3.23), split inclusive implication (3.24), homophony implication (10.4), explicitness–form-count correlation, first person hierarchy (3.26). Bridges: `PersonCategory ↔ UD.Person` roundtrip, `UD.Person × UD.Number` mapping with `ud_conflates_incl_excl` theorem (Cysouw's central critique), English/Czech Fragment connections, inflectional-vs-independent explicitness correlation.
+
+## [0.154.0] - 2026-02-10
+
+### Changed
+- **Core/NounCategorization.lean**: Added `ClassifierEntry.encodes` helper for uniform membership checks. Added `collectSemantics` to derive preferred semantic parameters from classifier inventories.
+- **Fragments/Mandarin/Classifiers.lean**: Verification theorems now use `encodes` idiom instead of raw `.any`.
+- **Fragments/Japanese/Classifiers.lean**: Same `encodes` idiom cleanup.
+- **Fragments/Mandarin/Determiners.lean**: Replaced `classifierExample : Option String` with `typicalClassifier : Option ClassifierEntry`. All classifier-requiring quantifiers (每/几/两…都) now reference typed `ge` from the classifier lexicon. Bridge theorems: `requires_cl_has_typical`, `typical_classifier_is_default`.
+- **Phenomena/NounCategorization/ → Phenomena/Agreement/NounCategorization.lean**: Merged Typology + Universals into a single file under `Phenomena.Agreement`, where noun categorization is framed as the cross-linguistic typological context for agreement phenomena (Aikhenvald's core diagnostic: agreement ↔ noun class, no agreement ↔ classifier). `preferredSemantics` derived from classifier lexicons via `collectSemantics`. `nominalMappingToClassifierType` returns `Option ClassifierType` — `argAndPred` (English) returns `none`. Standardized all membership checks to `.any (· == ...)` Bool idiom.
+
+## [0.153.0] - 2026-02-10
+
+### Added
+- **Core/NounCategorization.lean**: Aikhenvald (2000) noun categorization typology. `ClassifierType` (9 types from Table 15.1), `SemanticParameter` (12 universal parameters from §11.1.1), `CategorizationScope`, `AssignmentPrinciple`, `SurfaceRealization`. `ClassifierEntry` structure with typed semantics replaces `Option String`. `NounCategorizationSystem` captures all 7 definitional properties (A–G).
+- **Fragments/Mandarin/Classifiers.lean**: Typed Mandarin classifier lexicon — 11 entries (个/只/本/辆/朵/位/条/张/把/头/棵) with semantic parameters (animacy, shape, function, humanness, size, socialStatus). Verification: `ge_is_default`, `zhi_encodes_animacy`, `specific_classifiers_have_semantics`, `all_sortal`.
+- **Fragments/Japanese/Classifiers.lean**: Typed Japanese classifier lexicon — 9 entries (つ/匹/冊/台/羽/本/人/枚/頭) with semantic parameters. Verification: `tsu_is_default`, `hiki_encodes_animacy`, `nin_encodes_humanness`, `specific_classifiers_have_semantics`.
+- **Phenomena/NounCategorization/Typology.lean**: Cross-linguistic noun categorization typology mapping French (noun class), Mandarin (numeral CL), Japanese (numeral CL) to `NounCategorizationSystem`. Chierchia (1998) bridge: `nominalMappingToClassifierType`, `mandarin_chierchia_consistent`, `french_chierchia_consistent`. Cross-linguistic: `classifier_no_agreement_nounclass_agreement`, `bare_np_tracks_arg`, `blocking_tracks_mapping`.
+- **Phenomena/NounCategorization/Universals.lean**: 12 Aikhenvald universals — U1 noun class requires agreement, U3 classifier assignment semantic, U5 animacy universal, U8 noun class small inventory, Table 10.17 interaction matrix (`interacts`), Greenberg (1972) classifier–number complementarity, default classifier universals.
+
+### Changed
+- **Fragments/Mandarin/Nouns.lean**: `NounEntry.classifier` changed from `Option String` to `Option ClassifierEntry`. `NP.classifierOverride` now `Option ClassifierEntry`. Added `NP.classifierForm` for string access. Semantic verification theorems: `animals_take_zhi`, `honorific_humans_take_wei`, `books_take_ben`, `vehicles_take_liang`, `mass_nouns_no_classifier`.
+- **Fragments/Japanese/Nouns.lean**: Same typed classifier redesign as Mandarin. `NounEntry.classifier` now `Option ClassifierEntry`. Verification: `animals_take_hiki`, `birds_take_wa`, `books_take_satsu`, `vehicles_take_dai`, `people_take_nin`, `mass_nouns_no_classifier`.
+
+## [0.152.0] - 2026-02-10
+
+### Added
+- **Phenomena/AuxiliaryVerbs/Typology.lean**: Anderson (2006) AVC inflectional pattern typology. 5-way `InflPattern` (auxHeaded/lexHeaded/doubled/split/splitDoubled), `AVCElement`, `HeadednessType`, `AVCFunction`. Key invariant: `semantic_head_always_lex`. Cross-linguistic data: English, Doyayo, Gorum, Jakaltek, Pipil. Bridges to `UD.VerbForm` (auxHeaded LV is nonfinite) and `FunctionWords.AuxType` (English modals are aux-headed).
+- **Phenomena/AuxiliaryVerbs/Diagnostics.lean**: Huddleston (1976) NICE properties for English auxiliary classification. `NICEProfile` with `niceCount`, `isFullAux`, `isSemiAux`. Full auxiliaries: modals, be, have, do (all 4 NICE). Semi-auxiliaries: need, dare (2/4), ought (2/4). `niceToModule` bridge mapping each NICE property to the Phenomena module that formalizes it.
+- **Phenomena/AuxiliaryVerbs/Selection.lean**: Be/have auxiliary selection in European perfects (Burzio 1986, Sorace 2000). `PerfectAux`, `TransitivityClass`, `SelectionRule`, `canonicalSelection`. Data: Italian, French, German, Dutch (split), English (have-only). `english_breaks_canonical` theorem. Bridge to VendlerClass: `vendlerClassToTypicalTransitivity` (achievement → unaccusative → selects *be*).
+- **Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean**: Anderson (2006) §1.7.2 negative auxiliary strategies. `NegStrategy` (negVerb/negAffix/negParticle). Key theorem: `negVerb_implies_auxHeaded` (negative verbs create aux-headed AVCs). Data: Finnish *ei*, Komi *oz*, Udihe *e-si* (negVerb); Kwerba *or-*, Tswana *ga/se* (negAffix); English *not* (negParticle).
+
+## [0.151.0] - 2026-02-10
+
+### Changed
+- **CzechThreeWayNeg.lean**: Split into core (§§1–6: `NegPosition`, `Diagnostic`, `licenses`, scope generalizations) and **CzechThreeWayNeg/Typology.lean** (§§7–21: Romero bridge, Šimík CzechPQForm, VerbPosition, bias profiles, example data, corpus data). Core no longer imports BiasedPQ or Definiteness.
+- **CzechThreeWayNeg/Typology.lean**: Replaced duplicate `EpistemicBias`/`EvidentialBias` enums with `OriginalBias`/`ContextualEvidence` from BiasedPQ. `czechBiasProfile` now takes Romero types directly. Replaced stringly typed `NegPosition.wordOrder : String` with `NegPosition.toVerbPosition : VerbPosition`. `CzechNegDatum.wordOrder` → `CzechNegDatum.verbPosition : VerbPosition`. Removed stipulative `czechStrictNegConcord := true`, tautological `czech_no_articles`, and `strict_nc_predicts_inner_only_nci` (the important theorem `only_inner_licenses_nci` remains in core). Corpus data (NahodouCorpusData, InterNPQUseCategory) moved here from Particles.lean.
+- **Fragments/Czech/Particles.lean**: `requiresEvidentialBias` now dispatches on `ParticleSemantics` + diagnostic status instead of string form comparison. Corpus data sections moved to Typology.lean.
+- **Phenomena/Questions/SlavicPQStrategies.lean**: Removed unused CzechThreeWayNeg import.
+
+## [0.150.0] - 2026-02-10
+
+### Added
+- **Phenomena/StankovaSimik2024/Data.lean**: Experimental data from Staňková & Šimík (FASL 32 / JSL 33) — three naturalness judgment experiments on Czech negation in PQs. `CLMMEffect` structure stores z-values (×1000). Main experiment (2×2×2, 75 participants): V1 PPIs preferred (`v1_indefinite`, z = −15.674), V1 context-insensitive (`v1_context`, n.s.), nonV1 context-sensitive (`nonV1_context`, z = 8.674), nonV1 NCIs preferred (`nonV1_indefinite`, z = 6.208). náhodou subexperiment: PPIs preferred (`nahodou_indefinite`, z = −12.845), confirming FALSUM requirement. copak subexperiment: biased contexts preferred (`copak_context`, z = 9.372), confirming evidential bias requirement. Bridge theorems: `v1_confirms_outer_neg`, `nonV1_confirms_inner_default`, `context_asymmetry`, `epistemic_vs_evidential_coherence`. Czech FALSUM broader than English: positive-evidence subexperiment (median 6/7).
+- **Phenomena/Negation/CzechThreeWayNeg.lean**: `VerbPosition` enum (V1/nonV1) from Staňková & Šimík §2/§4. `availableReadings` (V1 → outer only; nonV1 → inner/medial/outer), `defaultReading` (V1 → outer; nonV1 → inner). `requiresContextualEvidence` (V1 = false; nonV1 = true). Bridge theorems connecting VerbPosition to PQForm, CzechPQForm, and bias strength: `v1_default_is_hiNQ`, `nonV1_default_is_declNPQ`, `context_tracks_bias_strength`, `czech_falsum_broader_than_english`.
+- **Fragments/Czech/Particles.lean**: *copak* particle entry with new `evidentialConflict` semantics variant. `requiresEvidentialBias` function contrasting náhodou (false, FALSUM-tied) vs copak (true, evidential bias). `nahodou_copak_opposite_context` theorem. `copak_nahodou_different_semantics` theorem.
+
+## [0.149.0] - 2026-02-10
+
+### Added
+- **Fragments/Czech/Determiners.lean**: Czech polarity-sensitive determiners — *žádný* (NCI), *nějaký* (PPI), *každý*, *některý*. `compatibleWith` bridges to `CzechThreeWayNeg.licenses`. Key theorems: `zadny_nejaky_complementary` (NCI/PPI have exactly opposite distributions), `nci_ppi_identifies_inner` (NCI+¬PPI uniquely picks out inner negation).
+- **Fragments/Czech/Particles.lean**: Czech diagnostic particles — *náhodou* (ordering source modifier, outer only), *ještě* (temporal endpoint, inner only), *fakt* (veridical emphasis, inner+medial), *vůbec* (NPI), *snad* (razve family). `compatibleWith` bridges to `CzechThreeWayNeg.licenses`. Identification theorems: `nahodou_identifies_outer`, `jeste_identifies_inner`, `fakt_plus_no_jeste_identifies_medial`. Šimík (2024) corpus data for *náhodou* (100 PQ occurrences, all negated, all indefinites were PPIs). InterNPQ use categories with distribution: explanation-seeking 40%, relevance 20%, hope 20%, belief 14%.
+- **Phenomena/Questions/SlavicPQStrategies.lean**: Cross-Slavic PQ strategy typology (Šimík 2024 §4.1). 10 Slavic languages with `SlavicPQProfile`: Czech/Slovak/Upper Sorbian (verb movement), Slovenian (*ali*), Ukrainian (*čy*), Polish (*czy*), Serbian (*da li*), Macedonian (*dali*), Bulgarian (*li*), Russian (intonation/li). `verbMovement_implies_declPQ` generalization. Bias particles: Russian *razve*, Czech *náhodou*/*copak*, Serbian *zar* — with `razve_nahodou_differ` theorem.
+- **IntensionalSemantics/Modal/BiasedPQ.lean**: FALSUM^CZ (Šimík 2024 eq. 44) — weaker Czech variant using epistemic *possibility* rather than belief. `standard_falsum_entails_CZ_definedness`. *Náhodou* as ordering source modifier with `nahodou_widens_domain` theorem proving that loosening the ordering source preserves FALSUM^CZ definedness.
+- **Phenomena/Negation/CzechThreeWayNeg.lean**: Šimík's 2×2 `CzechPQForm` grid (InterPPQ/InterNPQ/DeclPPQ/DeclNPQ), `CzechPQForm.toPQForm` bridge to Romero, `NegPosition.toCzechPQForm` mapping. Table 2 Czech bias profiles (`czechBiasProfile : EvidentialBias → EpistemicBias → List CzechPQForm`) with per-cell verification: `interPPQ_is_default`, `interNPQ_broad_distribution`, `decl_polarity_matches_evidence`.
+
+## [0.148.0] - 2026-02-10
+
+### Added
+- **IntensionalSemantics/Modal/BiasedPQ.lean**: Cross-linguistic framework for biased polar questions (Romero 2024). PQ form typology (`PosQ`/`LoNQ`/`HiNQ`), two bias dimensions (original speaker bias + contextual evidence bias), Romero's Tables 1–2 as compatibility matrices. VERUM and FALSUM operators built on existing Kratzer + CommonGround infrastructure. Staňková (2026) evidential bias modal □_ev as `EvidentialBiasFlavor` (just a `KratzerParams` instantiation). Inner/medial scope interactions with `inner_entails_medial` theorem (D axiom). Focus requirement on FALSUM connecting to InformationStructure.
+- **Phenomena/Negation/CzechThreeWayNeg.lean**: Czech three-way negation distinction in polar questions (Staňková 2026). `NegPosition` (inner/medial/outer), Table 1 licensing matrix (`licenses : NegPosition → Diagnostic → Bool`) with 15 per-cell verification theorems. Signature uniqueness proof. Scope generalizations: `only_inner_licenses_nci`, `only_outer_licenses_nahodou`. `NegPosition.toPQForm` mapping Czech positions to Romero's PQ typology (outer→HiNQ, inner/medial→LoNQ). Per-example Romero classification (7 theorems) and bias-prediction bridges connecting each Czech example to Romero's Tables 1–2. Key cross-linguistic result: `czech_refines_loNQ` proving that Czech inner/medial split reveals finer structure within Romero's LoNQ category (same PQ form, different bias strength, different diagnostic signatures).
+
+## [0.147.0] - 2026-02-10
+
+### Added
+- **Blog**: "Generalized Quantifiers in Three Layers" — pedagogical post covering GQ theory, the three-layer architecture (Core → TruthConditional → Fragments), van Benthem's "Aristotle reversed" characterization, and the Zwarts bridge.
+
+### Changed
+- **Core/Quantification.lean**: Reorganized into definitions-first layout: §1 property definitions (grouped by B&C, P&W, van Benthem, Mostowski), §2 operations (duality, Boolean algebra, type shifts), §3 Mathlib bridge, §4–§8 theorems (duality, symmetry/strength, Boolean closure, type ⟨1⟩, van Benthem characterization). No content changes.
+- **DynamicSemantics/PLA/Quantifiers.lean**: Added cross-reference docstring connecting PLA's Set-based `GQRel` to Core's Bool-based `GQ`, explaining why both representations exist.
+
+## [0.146.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: Van Benthem (1984) relational properties — `QTransitive`, `QAntisymmetric`, `QLinear`, `QuasiReflexive`, `QuasiUniversal`, `AlmostConnected`. `Variety` (VAR). Uniqueness theorem `vanBenthem_refl_antisym_is_inclusion` (Thm 3.1.1: "all" is the only reflexive antisymmetric quantifier). Zwarts bridge theorems: `zwarts_refl_trans_scopeUp`, `zwarts_refl_trans_restrictorDown` (Thm 4.1.1), `zwarts_sym_scopeUp_quasiRefl`, `zwarts_sym_scopeDown_quasiUniv` (Thm 4.1.3). `DoubleMono` type (§4.2 Square of Opposition). `RightContinuous` + `scopeUpMono_rightContinuous` (§4.3). `Filtrating` (§4.4). `QuantityInvariant` (model-agnostic QUANT).
+- **TruthConditional/Determiner/Quantifier.lean**: Concrete relational proofs — `every_transitive`, `every_antisymmetric`, `some_quasi_reflexive`, `no_quasi_universal`. Restrictor monotonicity: `every_restrictor_down` (from Zwarts bridge), `some_restrictor_up`, `no_restrictor_down`. Double mono classification: `every_doubleMono` (↓MON↑), `some_doubleMono` (↑MON↑), `no_doubleMono` (↓MON↓), `notAll_doubleMono` (↑MON↓). `every_filtrating`.
+- **Fragments/English/Determiners.lean**: `InferentialClass` type (van Benthem §3.3 Square of Opposition corners). `QuantityWord.inferentialClass`, `QuantityWord.doubleMono` classifications. Bridge theorems: `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`, `all_doubleMono_bridge`, `some_doubleMono_bridge`, `none_doubleMono_bridge`.
+- **Phenomena/Quantification/Universals.lean**: Van Benthem impossibility results — `no_asymmetric_quantifiers` (Thm 3.2.1), `no_strict_partial_order_quantifiers`, `no_euclidean_quantifiers` (Thm 3.2.3). `aristotle_reversed_square` (§3.3). `conservativeQuantifierCount` (Thm 5.4: 2^((n+1)(n+2)/2) conservative quantifiers on n individuals).
+
 ## [0.145.0] - 2026-02-10
 
 ### Added

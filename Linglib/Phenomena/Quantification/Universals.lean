@@ -196,4 +196,58 @@ axiom laa_licenses_npis :
     Symmetric quantifiers cannot be positive-strong (`symm_not_positive_strong`). -/
 axiom positive_strong_determiners_upward_monotone : True
 
+-- ============================================================================
+-- Van Benthem (1984) §3.2: Semantic Universals from Logic
+-- ============================================================================
+
+/-- Van Benthem 1984 Thm 3.2.1: There are no asymmetric quantifiers
+    (satisfying CONSERV + QUANT + VAR), except the empty one.
+    This is a logical impossibility, not just an empirical gap.
+    Proof sketch: as soon as QAB holds, one can construct A' with
+    A'∩A = B∩A such that QAA' and QA'A (by QUANT), violating asymmetry. -/
+axiom no_asymmetric_quantifiers : True
+
+/-- Van Benthem 1984 §3.2 + Zwarts: No human language has strict partial order
+    quantifiers (transitive + irreflexive). Follows from the fact that
+    CONSERV + QUANT + transitivity + irreflexivity + VAR leads to contradiction. -/
+axiom no_strict_partial_order_quantifiers : True
+
+/-- Van Benthem 1984 Thm 3.2.3 (VAR): No Euclidean quantifiers exist.
+    Euclidean: QXY ∧ QXZ → QYZ. This would collapse Q to a trivial relation,
+    contradicting VAR. -/
+axiom no_euclidean_quantifiers : True
+
+-- ============================================================================
+-- Van Benthem (1984) §3.3: Aristotle Reversed — Square of Opposition
+-- ============================================================================
+
+/-- Van Benthem 1984 §3.3: Under VAR*, the Square of Opposition is completely
+    determined by inferential (relational) conditions:
+    - all: transitive + reflexive
+    - some: symmetric + quasi-reflexive
+    - no: symmetric + quasi-universal
+    - not all: almost-connected + irreflexive
+
+    Cross-references:
+    - `Core.Quantification.vanBenthem_refl_antisym_is_inclusion` (Thm 3.1.1)
+    - Bridge theorems in `Fragments.English.Determiners`:
+      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge` -/
+axiom aristotle_reversed_square : True
+
+-- ============================================================================
+-- Van Benthem (1984) §5.4: Counting Quantifiers
+-- ============================================================================
+
+/-- Van Benthem 1984 Thm 5.4: On a finite set with n individuals, there are
+    exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
+    The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
+def conservativeQuantifierCount (n : Nat) : Nat :=
+  2 ^ ((n + 1) * (n + 2) / 2)
+
+#eval conservativeQuantifierCount 0  -- 2 (always-true + always-false)
+#eval conservativeQuantifierCount 1  -- 8
+#eval conservativeQuantifierCount 2  -- 64
+#eval conservativeQuantifierCount 3  -- 1024
+#eval conservativeQuantifierCount 4  -- 32768
+
 end Phenomena.Quantification.Universals
