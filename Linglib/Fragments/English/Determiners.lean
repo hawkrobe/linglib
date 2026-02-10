@@ -1,4 +1,5 @@
 import Linglib.Core.Basic
+import Linglib.Theories.TruthConditional.Determiner.Quantifier
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.Linarith
@@ -35,6 +36,14 @@ inductive Monotonicity where
   | nonMonotone
   deriving DecidableEq, Repr, BEq
 
+/-- Weak/strong classification (B&C §4.3, Table II).
+    Weak determiners allow there-insertion: "There are some cats."
+    Strong determiners don't: "*There is every cat." -/
+inductive Strength where
+  | weak
+  | strong
+  deriving DecidableEq, Repr, BEq
+
 /-- Unified lexical entry for quantifiers/determiners. -/
 structure QuantifierEntry where
   form : String
@@ -42,6 +51,7 @@ structure QuantifierEntry where
   numberRestriction : Option Number := none
   allowsMass : Bool := false
   monotonicity : Monotonicity := .increasing
+  strength : Strength := .weak
   gqtThreshold : ℚ := 0
   ptPrototype : ℚ := 0
   ptSpread : ℚ := 2
@@ -70,6 +80,7 @@ def most : QuantifierEntry :=
   , numberRestriction := some .pl
   , allowsMass := true
   , monotonicity := .increasing
+  , strength := .strong  -- B&C Table II: *"There are most cats"
   , gqtThreshold := 1/2  -- threshold is >1/2
   , ptPrototype := 4/5
   , ptSpread := 2
@@ -82,6 +93,7 @@ def all : QuantifierEntry :=
   , numberRestriction := some .pl
   , allowsMass := true
   , monotonicity := .increasing
+  , strength := .strong  -- B&C Table II: *"There is all cats"
   , gqtThreshold := 1
   , ptPrototype := 1
   , ptSpread := 1
@@ -93,6 +105,7 @@ def every : QuantifierEntry :=
   , qforce := .universal
   , numberRestriction := some .sg
   , monotonicity := .increasing
+  , strength := .strong  -- B&C Table II: *"There is every cat"
   , gqtThreshold := 1
   , ptPrototype := 1
   , ptSpread := 1
@@ -104,6 +117,7 @@ def each : QuantifierEntry :=
   , qforce := .universal
   , numberRestriction := some .sg
   , monotonicity := .increasing
+  , strength := .strong  -- B&C Table II: *"There is each cat"
   , gqtThreshold := 1
   , ptPrototype := 1
   , ptSpread := 1
@@ -121,23 +135,63 @@ def many : QuantifierEntry :=
   }
 
 -- ============================================================================
+-- Numerical Determiners (Barwise & Cooper 1981; van de Pol et al. 2023)
+-- ============================================================================
+
+/-- Numerical determiner entry. Parameterized by threshold n.
+    These are the class of determiners van de Pol et al. (2023) show
+    satisfy all three semantic universals (and have low MDL). -/
+structure NumericalDetEntry where
+  form : String
+  qforce : QForce
+  monotonicity : Monotonicity
+  /-- The numerical threshold -/
+  threshold : Nat
+  deriving Repr, BEq
+
+/-- "at least n" — upward monotone in scope, conservative, quantity -/
+def atLeast (n : Nat) : NumericalDetEntry :=
+  { form := s!"at least {n}", qforce := .proportional
+  , monotonicity := .increasing, threshold := n }
+
+/-- "at most n" — downward monotone in scope, conservative, quantity -/
+def atMost (n : Nat) : NumericalDetEntry :=
+  { form := s!"at most {n}", qforce := .proportional
+  , monotonicity := .decreasing, threshold := n }
+
+/-- "exactly n" — non-monotone (neither UE nor DE), conservative, quantity -/
+def exactlyN (n : Nat) : NumericalDetEntry :=
+  { form := s!"exactly {n}", qforce := .proportional
+  , monotonicity := .nonMonotone, threshold := n }
+
+/-- "more than n" — upward monotone, conservative, quantity -/
+def moreThan (n : Nat) : NumericalDetEntry :=
+  { form := s!"more than {n}", qforce := .proportional
+  , monotonicity := .increasing, threshold := n }
+
+/-- "fewer than n" — downward monotone, conservative, quantity -/
+def fewerThan (n : Nat) : NumericalDetEntry :=
+  { form := s!"fewer than {n}", qforce := .proportional
+  , monotonicity := .decreasing, threshold := n }
+
+-- ============================================================================
 -- Definite Determiners (less relevant for quantity scales)
 -- ============================================================================
 
 def the : QuantifierEntry :=
-  { form := "the", qforce := .definite, allowsMass := true }
+  { form := "the", qforce := .definite, allowsMass := true, strength := .strong }
 
 def this : QuantifierEntry :=
-  { form := "this", qforce := .definite, numberRestriction := some .sg }
+  { form := "this", qforce := .definite, numberRestriction := some .sg, strength := .strong }
 
 def that : QuantifierEntry :=
-  { form := "that", qforce := .definite, numberRestriction := some .sg }
+  { form := "that", qforce := .definite, numberRestriction := some .sg, strength := .strong }
 
 def these : QuantifierEntry :=
-  { form := "these", qforce := .definite, numberRestriction := some .pl }
+  { form := "these", qforce := .definite, numberRestriction := some .pl, strength := .strong }
 
 def those : QuantifierEntry :=
-  { form := "those", qforce := .definite, numberRestriction := some .pl }
+  { form := "those", qforce := .definite, numberRestriction := some .pl, strength := .strong }
 
 def a : QuantifierEntry :=
   { form := "a", qforce := .existential, numberRestriction := some .sg }
@@ -331,5 +385,161 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
 
 #eval someAllScale.alternatives .some_  -- [all]
 #eval someMostAllScale.alternatives .some_  -- [most, all]
+
+-- ============================================================================
+-- Canonical GQ Denotations (from TruthConditional.Determiner.Quantifier)
+-- ============================================================================
+
+/-!
+## Compositional Generalized Quantifier Semantics
+
+The **single source of truth** for model-theoretic GQ denotations is
+`TruthConditional.Determiner.Quantifier`. This section re-exports those
+denotations and connects them to the `QuantityWord` scale.
+
+### Thread map
+
+From a `QuantityWord` you can reach:
+- **Compositional denotations**: `QuantityWord.gqDenotation` → `every_sem`, `some_sem`, etc.
+- **Semantic universals** (B&C 1981): `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`
+  — all in `Core.Quantification`. `Quantity`, `SatisfiesUniversals` in
+  `TruthConditional.Determiner.Quantifier`
+- **Proved properties**: `every_conservative`, `some_scope_up`, `no_scope_down`, etc.
+- **Duality operations** (B&C §4.11): `Core.Quantification.outerNeg`, `innerNeg`, `dualQ`
+  with `outerNeg_up_to_down`, `outerNeg_down_to_up`, `innerNeg_up_to_down` (C9)
+- **Strength** (B&C Table II): `Strength` enum, `Core.Quantification.IntersectionCondition`,
+  `QSymmetric`, `RestrictorUpwardMono` (persistence),
+  `intersection_conservative_symmetric` (C5)
+- **Threshold semantics**: `QuantityWord.gqtMeaning` (scalar GQT representation)
+- **Prototype semantics**: `QuantityWord.ptMeaning` (gradient PT representation)
+- **RSA domains**: `RSA.Domains.Quantity` (pragmatic reasoning over quantity scales)
+- **Monotonicity**: `TruthConditional.Sentence.Entailment.Monotonicity` (polarity)
+- **Complexity**: `Core.Conjectures.simplicity_explains_universals` (van de Pol et al. 2023)
+-/
+
+section CanonicalGQDenotations
+open TruthConditional (Model)
+open TruthConditional.Determiner.Quantifier
+
+variable {m : Model} [FiniteModel m]
+
+/-- Map quantity words to their canonical model-theoretic GQ denotation.
+    These are the compositional `(e→t) → ((e→t) → t)` meanings from
+    Montague/Barwise & Cooper, proved conservative and monotone in
+    `TruthConditional.Determiner.Quantifier`. -/
+def QuantityWord.gqDenotation (q : QuantityWord)
+    (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+  match q with
+  | .none_ => no_sem m
+  | .some_ => some_sem m
+  | .all   => every_sem m
+  | .most  => most_sem m
+  | .few   => sorry -- TODO: "few" = below contextual threshold
+  | .half  => sorry -- TODO: "half" = |R∩S| = |R|/2
+
+-- ============================================================================
+-- Monotonicity bridges (gap G): enum value ∧ semantic property
+-- ============================================================================
+
+open Core.Quantification in
+/-- Every: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
+theorem every_mono_bridge : every.monotonicity = .increasing ∧
+    ScopeUpwardMono (every_sem m) :=
+  ⟨rfl, every_scope_up⟩
+
+open Core.Quantification in
+/-- Some: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
+theorem some_mono_bridge : some_.monotonicity = .increasing ∧
+    ScopeUpwardMono (some_sem m) :=
+  ⟨rfl, some_scope_up⟩
+
+open Core.Quantification in
+/-- None: monotonicity metadata says `.decreasing` and semantics is scope-↓. -/
+theorem none_mono_bridge : none_.monotonicity = .decreasing ∧
+    ScopeDownwardMono (no_sem m) :=
+  ⟨rfl, no_scope_down⟩
+
+open Core.Quantification in
+/-- All: monotonicity metadata says `.increasing` and semantics is scope-↑.
+    (All and every share `every_sem`.) -/
+theorem all_mono_bridge : all.monotonicity = .increasing ∧
+    ScopeUpwardMono (every_sem m) :=
+  ⟨rfl, every_scope_up⟩
+
+-- ============================================================================
+-- Conservativity bridges (gap G): gqDenotation identity ∧ conservative
+-- ============================================================================
+
+open Core.Quantification in
+/-- All maps to `every_sem` and `every_sem` is conservative. -/
+theorem all_conservative_bridge :
+    QuantityWord.gqDenotation .all m = every_sem m ∧
+    Conservative (every_sem m) :=
+  ⟨rfl, every_conservative⟩
+
+open Core.Quantification in
+/-- Some maps to `some_sem` and `some_sem` is conservative. -/
+theorem some_conservative_bridge :
+    QuantityWord.gqDenotation .some_ m = some_sem m ∧
+    Conservative (some_sem m) :=
+  ⟨rfl, some_conservative⟩
+
+open Core.Quantification in
+/-- None maps to `no_sem` and `no_sem` is conservative. -/
+theorem none_conservative_bridge :
+    QuantityWord.gqDenotation .none_ m = no_sem m ∧
+    Conservative (no_sem m) :=
+  ⟨rfl, no_conservative⟩
+
+open Core.Quantification in
+/-- Most maps to `most_sem` and `most_sem` is conservative. -/
+theorem most_conservative_bridge :
+    QuantityWord.gqDenotation .most m = most_sem m ∧
+    Conservative (most_sem m) :=
+  ⟨rfl, most_conservative⟩
+
+-- ============================================================================
+-- Symmetry bridges (gap G): weak ↔ symmetric (P&W Ch.6)
+-- ============================================================================
+
+open Core.Quantification in
+/-- Some: weak (allows there-insertion) and symmetric. -/
+theorem some_symmetry_bridge : some_.strength = .weak ∧
+    QSymmetric (some_sem m) := ⟨rfl, some_symmetric⟩
+
+open Core.Quantification in
+/-- None: weak and symmetric. -/
+theorem none_symmetry_bridge : none_.strength = .weak ∧
+    QSymmetric (no_sem m) := ⟨rfl, no_symmetric⟩
+
+open Core.Quantification TruthConditional in
+/-- Every: strong and NOT symmetric. -/
+theorem every_not_symmetric_bridge : every.strength = .strong ∧
+    ¬QSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩
+
+-- ============================================================================
+-- Anti-additivity bridges (restrictor NPI licensing)
+-- ============================================================================
+
+open Core.Quantification in
+/-- "Every"/"all" is left-anti-additive in the restrictor: every(A∪B, C) = every(A,C) ∧ every(B,C).
+    This licenses strong NPIs in the restrictor of "every":
+    "Everyone who ever lifted a finger..." Cross-ref: `every_laa`. -/
+theorem every_laa_bridge :
+    QuantityWord.gqDenotation .all m = every_sem m ∧
+    LeftAntiAdditive (every_sem m) :=
+  ⟨rfl, every_laa⟩
+
+open Core.Quantification in
+/-- "No"/"none" is left-anti-additive in the restrictor: no(A∪B, C) = no(A,C) ∧ no(B,C).
+    Also scope-downward-monotone (licenses weak NPIs in scope).
+    Cross-ref: `no_laa`, `no_scope_down`. -/
+theorem none_laa_bridge :
+    QuantityWord.gqDenotation .none_ m = no_sem m ∧
+    LeftAntiAdditive (no_sem m) ∧
+    ScopeDownwardMono (no_sem m) :=
+  ⟨rfl, no_laa, no_scope_down⟩
+
+end CanonicalGQDenotations
 
 end Fragments.English.Determiners

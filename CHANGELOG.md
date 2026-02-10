@@ -1,5 +1,91 @@
 # Changelog
 
+## [0.144.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: Extension (EXT) — completes the "big three" alongside CONS and ISOM. Van Benthem (1984) characterization: `vanBenthem_cons_ext` (CONS+EXT ↔ LivesOn). `extension_trivial`: EXT is a design theorem for universe-free `GQ α`.
+- **TruthConditional/Determiner/Quantifier.lean**: FiniteModel Extension spectator-irrelevance proofs (`every_ext_spectator`, `some_ext_spectator`, `no_ext_spectator`, `most_ext_spectator`). Denotation-level Extension: `every_sem_extension` (every(R,S) = filter(R).all S), `some_sem_extension`, `no_sem_extension`, `most_sem_extension` — compose spectator irrelevance with actual GQ denotations. `every_positive_strong` (P&W Ch.6).
+- **Fragments/English/Determiners.lean**: LAA bridge theorems — `every_laa_bridge` (gqDenotation identity + LeftAntiAdditive), `none_laa_bridge` (gqDenotation identity + LeftAntiAdditive + ScopeDownwardMono). Connects Fragment denotations to NPI licensing.
+- **Phenomena/Polarity/Exceptives.lean**: Bridge from Fragment QForce to but-exceptive licensing (von Fintel 1993). `qforceToExceptiveType`, `fragment_exceptive_bridge`, `universal_qforce_partition`. Now imports `Fragments.English.Determiners`.
+- **Barker2011.lean**: Bridge connecting possessives to type ⟨1⟩ GQ framework (NPQ). `possessiveAsNPQ` (existential interpretation), `possessive_individual_eval`. Now imports `Core.Quantification`.
+- **Phenomena/Quantification/Universals.lean**: `extension_universal` added to universal list. Thread map updated with Extension and PositiveStrong cross-references.
+
+## [0.143.0] - 2026-02-10
+
+### Added
+- **Phenomena/Quantification/Examples.lean** (NEW): End-to-end Fragment test-drive. Phenomena-level scenario (4 entities, 4 predicates) composed with Fragment denotations. Tier 1: there-insertion acceptability from `Strength`. Tier 2: 8 truth-value judgments (all `rfl`). Tier 3: monotonicity-driven entailments (`some_passed_entails_laughed`, `no_laughed_entails_no_passed`). Tier 4: scalar distinctness witnesses.
+- **Phenomena/Quantification/Typology.lean** (NEW): Cross-linguistic quantifier inventories for English, Mandarin, Japanese. Derived from Fragment entries. `QuantifierInventory` structure with per-language verification (size, weak/strong split, article-less). Cross-linguistic universals: `all_have_weak_strong`, `all_have_universals`, `no_articles_east_asian`, `conservativity_crosslinguistic`.
+- **Phenomena/Quantification/Universals.lean**: Added P&W Ch.5-6 universals — symmetry ↔ there-insertion (`weak_are_symmetric`, `strong_not_symmetric`), LAA → NPI licensing (`laa_licenses_npis`), positive-strong monotonicity (`positive_strong_determiners_upward_monotone`). Thread map updated with v0.142.0 proof cross-references.
+
+## [0.142.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: P&W Ch.6 Tier 1 properties — `CONS2` (second conservativity), `Existential` (there-insertion characterization), `conserv_symm_iff_int` (CONSERV → SYMM ↔ INT, the central equivalence), `PositiveStrong`, `NegativeStrong`, `symm_not_positive_strong` (P&W Ch.6 Fact 7). `LeftAntiAdditive`, `RightAntiAdditive` (P&W §5.9).
+- **TruthConditional/Determiner/Quantifier.lean**: Symmetry proofs (`some_symmetric`, `no_symmetric`, `every_not_symmetric`). Intersectivity via bridge (`some_intersective`, `no_intersective` — derived from CONSERV+SYMM, not proved directly). Left anti-additivity (`every_laa`, `no_laa`).
+- **Fragments/English/Determiners.lean**: Symmetry bridges (gap G) — `some_symmetry_bridge` (weak ∧ symmetric), `none_symmetry_bridge` (weak ∧ symmetric), `every_not_symmetric_bridge` (strong ∧ ¬symmetric). Verifies P&W Ch.6: weak ↔ symmetric under CONSERV.
+- **Fragments/Mandarin/Determiners.lean**: Cross-linguistic quantifier fragment — 6 entries (měi, suǒyǒu, yǒu-de, méi-yǒu, jǐ, dà-bùfèn) with `MandarinQuantEntry` structure including classifier requirements. Per-datum verification theorems.
+- **Fragments/Japanese/Determiners.lean**: Cross-linguistic quantifier fragment — 6 entries (subete, dono-N-mo, dare-ka, dare-mo, nan-nin-ka, hotondo) with `JapaneseQuantEntry` structure including indeterminate/particle morphology and floating quantifier properties. `particle_force_shift` theorem (ka→∃, mo→∀).
+
+## [0.141.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: Peters & Westerståhl Ch.0-3 infrastructure — `innerNeg_down_to_up` (missing duality theorem, gap F), involution theorems (`outerNeg_involution`, `innerNeg_involution`, `dualQ_involution`), restrictor duality (`outerNeg_restrictorUp_to_down`, `outerNeg_restrictorDown_to_up`). Type ⟨1⟩ quantifiers: `NPQ α`, `restrict`, `LivesOn`, `conservative_iff_livesOn`. Montagovian individuals: `individual`, `individual_upward_closed`, `individual_meet_closed`. Co-property monotonicity: `co_property_mono`.
+- **TruthConditional/Determiner/Quantifier.lean**: Concrete duality square (P&W §1.1.1) — `innerNeg_every_eq_no`, `dualQ_every_eq_some`, `outerNeg_some_eq_no`. Instantiates `every ←innerNeg→ no ←outerNeg→ some ←dualQ→ every`.
+- **Fragments/English/Determiners.lean**: Per-datum bridge theorems (gap G) — monotonicity bridges (`every_mono_bridge`, `some_mono_bridge`, `none_mono_bridge`, `all_mono_bridge`) verifying enum metadata matches semantic property. Conservativity bridges (`all_conservative_bridge`, `some_conservative_bridge`, `none_conservative_bridge`, `most_conservative_bridge`) verifying `gqDenotation` identity and `Conservative` property.
+
+## [0.140.0] - 2026-02-10
+
+### Added
+- **Core/Quantification.lean**: Extracted model-agnostic GQ properties from `TruthConditional.Determiner.Quantifier` into `Core.Quantification`. Generic over `{α : Type*}`: `GQ α` abbreviation, `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`, `IntersectionCondition`, `QSymmetric`, `RestrictorUpwardMono`, `RestrictorDownwardMono`, `outerNeg`, `innerNeg`, `dualQ`. Bridge lemmas `scopeUpMono_iff_monotone`, `scopeDownMono_iff_antitone` (no Preorder hacks needed). Duality theorems: `outerNeg_up_to_down`, `outerNeg_down_to_up`, `innerNeg_up_to_down`, `intersection_conservative_symmetric`.
+
+### Changed
+- **TruthConditional/Determiner/Quantifier.lean**: Deleted `GQProperties` section (definitions, private Preorder instances, bridge lemmas, duality operations). Now imports and opens `Core.Quantification`. Retains `FiniteModel`, denotations, and `FiniteModelProofs`.
+- **Phenomena/Conditionals/Studies/RamotowskaEtAl2025.lean**: Imports `Fragments.English.Determiners`. `Quantifier.isStrong` now derives from canonical `Strength` enum via `Quantifier.strength`.
+- **Core/Duality.lean**, **Fragments/English/Determiners.lean**, **Phenomena/Quantification/Universals.lean**: Updated docstring cross-references to point to `Core.Quantification`.
+
+## [0.139.0] - 2026-02-09
+
+### Added
+- **TruthConditional/Determiner/Quantifier.lean**: B&C §4.11 duality operations — `outerNeg`, `innerNeg`, `dualQ`. Proved `outerNeg_up_to_down`, `outerNeg_down_to_up` (Corollary 9: negation reverses scope monotonicity), `innerNeg_up_to_down`. B&C §4.3–4.8: `IntersectionCondition`, `QSymmetric`, `intersection_conservative_symmetric` (Theorem C5). `RestrictorUpwardMono` (persistence), `RestrictorDownwardMono`.
+- **Fragments/English/Determiners.lean**: `Strength` enum (weak/strong, B&C Table II). Added `strength` field to `QuantifierEntry`; annotated every/each/all/most/the/this/that/these/those as strong, rest as weak.
+- **Phenomena/Quantification/Universals.lean**: B&C universals U7 (`strong_implies_monotone`), U8 (`persistent_implies_weak_and_up`). Verification: `weak_there_insertion`, `strong_no_there_insertion`.
+
+### Changed
+- **Sentence/Entailment/Monotonicity.lean**: Refactored to delegate `every`/`some'`/`no` to canonical `every_sem`/`some_sem`/`no_sem` via `entailmentModel` bridge. Local defs are now `abbrev`s.
+
+## [0.138.0] - 2026-02-09
+
+### Added
+- **TruthConditional/Determiner/Quantifier.lean**: Barwise & Cooper (1981) semantic universals — `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`, `Quantity` (Mostowski 1957 isomorphism closure), `SatisfiesUniversals`. Proved conservativity for every/some/no/most, scope monotonicity for every (↑), some (↑), no (↓). Non-conservative counterexample `m_sem` with proof `m_not_conservative`. Numerical determiners: `at_least_n_sem`, `at_most_n_sem`, `exactly_n_sem`.
+- **Fragments/English/Determiners.lean**: Imported `Quantifier.lean` as canonical source of truth. `QuantityWord.gqDenotation` maps fragment entries to compositional GQ denotations. `NumericalDetEntry` structure with `atLeast`, `atMost`, `exactlyN`, `moreThan`, `fewerThan`. Thread-map docstring linking Fragment → Theories → Phenomena → Conjectures.
+- **Core/Conjectures.lean**: `simplicity_explains_universals` and `monotonicity_strongest_predictor` — van de Pol et al. (2023) claim that B&C-satisfying quantifiers have lower Lempel-Ziv / MDL complexity.
+- **Phenomena/Quantification/Universals.lean**: Empirical findings from Barwise & Cooper (1981) and van de Pol et al. (2023). `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`, `UniversalsSimplicityRanking`. Verification: `english_quantifiers_mostly_monotone`, `half_nonmonotone`, `some_all_scale_upward`.
+
+### Changed
+- **Sentence/Entailment/Monotonicity.lean**: Added note pointing to canonical GQ denotations in `Quantifier.lean` and thread through `Fragments.English.Determiners.QuantityWord.gqDenotation`.
+
+## [0.137.0] - 2026-02-09
+
+### Added
+- **Core/ModalLogic.lean**: `ForceFlavor.cartesianProduct` — list infrastructure for constructing modal meanings from forces × flavors, moved out of Typology.lean so Fragments can use it without importing Theories.
+- **Fragments/English/FunctionWords.lean**: `modalMeaning` field on `AuxEntry` (defaults to `[]` for non-modals). 9 English modals annotated with force-flavor meanings via `cartesianProduct` following Kratzer (1981), Palmer (2001). Renamed `to` → `to_` to avoid conflict with Mathlib keyword.
+- **IntensionalSemantics/Modal/Typology.lean**: `ModalInventory.fromAuxEntries` — constructs a modal inventory from Fragment auxiliary entries, filtering to non-empty modal meanings. Local `cartesianProduct` is now an `abbrev` for the Core definition.
+- **Phenomena/Modality/Typology.lean**: English modal inventory derived from the Fragment (single source of truth). `english_all_iff`, `english_size`. Updated cross-linguistic summary to 9 languages (7/9 perfect IFF).
+
+## [0.136.0] - 2026-02-09
+
+### Changed
+- **Core/ModalLogic.lean**: Added `LawfulBEq` instances for `ModalForce` and `ModalFlavor`, providing `beq_self_eq_true` and `eq_of_beq` for downstream proofs.
+- **IntensionalSemantics/Modal/Typology.lean**: Proved `sav_implies_iff` and `cartesianProduct_satisfies_iff` (both previously `sorry`). Added `cartesianProduct` as the primitive force-flavor meaning constructor with `mem_cartesianProduct` membership lemma, replacing the duplicated `kratzerMeaning`/`kratzerVariableForceMeaning`. Unified SAV proofs into `cartesianProduct_singleton_force_satisfies_sav` and `cartesianProduct_singleton_flavor_satisfies_sav` (both proved via `mem_cartesianProduct`). Deleted `satisfiesSAV'` and its sorry'd equivalence proof. Kratzer-Typology bridge: `FlavorAssignment`, `canonicalAssignment`. Imports Kratzer.lean.
+- **IntensionalSemantics/Modal/Kratzer.lean**: Added `.flavorTag` mapping each flavor structure (`EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`) to the theory-neutral `ModalFlavor` enum. Added `.toKratzerParams` extracting `KratzerParams` from each flavor structure.
+
+## [0.135.0] - 2026-02-09
+
+### Added
+- **Core/ModalLogic.lean**: `ModalFlavor` (epistemic/deontic/circumstantial), `ForceFlavor` (force-flavor pair), `ForceFlavor.universe` (all 6 meaning points). Theory-neutral vocabulary for cross-linguistic modal typology.
+- **IntensionalSemantics/Modal/Typology.lean**: Independence of Force and Flavor (IFF) universal (`satisfiesIFF`) and Single Axis of Variability (SAV) universal (`satisfiesSAV`) from Steinert-Threlkeld, Imel, & Guo (2023). `sav_implies_iff` (SAV strictly stronger than IFF). `iff_not_implies_sav` (IFF allows both-axis variation). `cartesian_product_satisfies_iff` (Kratzer's independent parameterization → IFF). `ModalExpression`/`ModalInventory` structures with `allIFF`, `iffDegree`, `hasSynonymy`. Bridge from Kratzer (1981) to typological universals.
+- **Phenomena/Modality/Typology.lean**: 8 cross-linguistic modal inventories (Tlingit, Javanese, Gitksan, Korean, Modern Greek, Mandarin, Dutch, Hungarian) from the Database of Modal Typology (Guo et al. 2022), mapped to the 2×3 force-flavor space following Imel, Guo, & Steinert-Threlkeld (2026). Per-expression IFF verification via `native_decide`. Verified: 6/8 languages have perfect IFF degree. Greek and Dutch have non-IFF modals (Prepei, zou/zouden...kunnen). Gitksan variable-force modals satisfy IFF but not SAV. Paper's three main empirical results stated as axioms/theorems.
+
 ## [0.134.0] - 2026-02-09
 
 ### Added
