@@ -24,6 +24,14 @@ jobs:
           elan override set $(cat lean-toolchain)
           lake --version
 
+      - name: Cache .lake
+        uses: actions/cache@v4
+        with:
+          path: .lake
+          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-${{ hashFiles('Linglib/**/*.lean', 'Linglib.lean') }}
+          restore-keys: |
+            lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-
+
       - name: Get Mathlib cache
         run: lake exe cache get
 
