@@ -1,11 +1,11 @@
 ---
-title: "Hello World: Introducing L³"
+title: "Hello World: Introducing Linguistics in Lean"
 date: 2026-02-09
 summary: "Why Linglib has a blog now, and what we've been up to."
 tags: ["meta", "situation-semantics", "definiteness", "pronouns"]
 ---
 
-Linglib is a Lean 4 library for formalizing linguistic theories and connecting them to computational pragmatics. We've been building it for a while, but until now the only public-facing documentation has been auto-generated API docs. This blog — the **Linguistics Library Log** (L³) — is meant to fill the gap: documenting design decisions, summarizing new modules, and lowering the barrier to contribution.
+Linglib is a Lean 4 library for formalizing linguistic theories and connecting them to computational pragmatics. We've been building it for a while, but until now the only public-facing documentation has been auto-generated API docs. This blog — **Linguistics in Lean** — is meant to fill the gap: documenting design decisions, summarizing new modules, and lowering the barrier to contribution.
 
 The idea is borrowed from the Lean math community. Baanen et al. (CICM 2025) make a convincing case that writing down unwritten knowledge about a formalization project is one of the most effective things you can do to help others contribute.
 
