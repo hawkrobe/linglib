@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.131.0] - 2026-02-09
+
+### Changed
+- **Consolidate definiteness types into Core/Definiteness.lean**: Extracted all lightweight definiteness vocabulary from Phenomena/ into a new zero-import Core/ module. `DefPresupType` (.uniqueness/.familiarity), `ArticleType` (Schwarz 2009), `DefiniteUseType` (Hawkins 1978), `BridgingSubtype` (.partWhole/.relational), `WeakArticleStrategy`, `Definiteness` (.indefinite/.definite), plus mappings (`requiresStrongArticle`, `useTypeToPresupType`, `articleTypeToAvailablePresup`, `bridgingArticle`). Eliminated duplicate `PresupType` (Bridging.lean) and `BridgingType` (Bridging.lean). Fixed inverted Theories→Phenomena dependency: PronounTypology.lean and Bridging.lean now import from Core/Definiteness.lean instead of defining their own types. Definite.lean imports Core/Definiteness.lean instead of Phenomena/ files.
+
+## [0.130.0] - 2026-02-09
+
+### Added
+- **TruthConditional/Determiner/Definite.lean**: Semantics of definiteness — the missing `⟦the⟧`. `the_uniq`: uniqueness-based definite (Russell/Strawson, Schwarz weak article) with existence+uniqueness presupposition via `PrProp`. `the_fam`: familiarity-based definite (Heim/Kamp, Schwarz strong article) with discourse-salience presupposition via `DiscourseContext`. Bridge theorems: `the_uniq_eq_definitePrProp` (= Donnellan attributive), `the_uniq_presup_iff_iota` (= Partee ι), `qforceToPresupType`/`qforceToDefiniteness` (Fragments `QForce`).
+
+## [0.129.0] - 2026-02-09
+
+### Added
+- **Phenomena/Anaphora/PronounTypology.lean**: Patel-Grosz & Grosz (2017) PER/DEM pronoun classification. `PronounClass` (.per/.dem), `ArticleType` (Schwarz 2009), `PronounStrength` (Cardinaletti & Starke 1999), `DEMLicensingContext`. `PronounSystemDatum` with 11 languages. `PronounComplexityProfile` gradient measures (following WordOrder/Gradience.lean pattern). Verified generalizations: Minimize DP!, DEM⊂PER implicational universal, article-D-layer correlation, DEM productivity tracks overt strong articles. Schwarz (2013) §F: `DefiniteUseType` (Hawkins 1978), `BridgingSubtype` (part-whole vs producer), `SchwarzArticleDatum` for 7 languages (German, Fering, Akan, Mauritian Creole, Lakhota, Hausa, Haitian Creole), `requiresStrongArticle` mapping, bridging-split theorem, bare-nominal strategy. Bridges to Coreference.lean (AnaphorType), Demonstratives.lean (D_deix = demonstration), DirectReference.lean (PER = rigid), Schwarz article ↔ PG&G D-layers.
+
 ## [0.128.0] - 2026-02-09
 
 ### Added

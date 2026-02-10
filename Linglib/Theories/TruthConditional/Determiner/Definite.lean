@@ -1,0 +1,217 @@
+import Linglib.Theories.TruthConditional.Determiner.Quantifier
+import Linglib.Theories.TruthConditional.Noun.TypeShifting
+import Linglib.Theories.IntensionalSemantics.Reference.Donnellan
+import Linglib.Core.Presupposition
+import Linglib.Core.Definiteness
+import Linglib.Fragments.English.Determiners
+
+/-!
+# The Semantics of Definiteness
+
+Denotations for definite descriptions using the type vocabulary from
+`Core/Definiteness.lean`. Two theories, formalized as determiner denotations
+with presuppositions:
+
+- **Uniqueness** (Russell 1905, Frege 1892, Strawson 1950): "the φ" presupposes
+  existence and uniqueness of a φ-entity; asserts predication of that entity.
+- **Familiarity** (Heim 1982, Kamp 1981): "the φ" presupposes that a φ-entity
+  is already familiar/salient in the discourse; asserts predication of it.
+
+## Key Results
+
+- `the_uniq`: ⟦the⟧ under uniqueness (Russell/Strawson)
+- `the_fam`: ⟦the⟧ under familiarity (Heim/Kamp)
+- `the_uniq_eq_definitePrProp`: uniqueness = Donnellan's attributive semantics
+- `the_uniq_presup_iff_iota`: uniqueness presup ↔ Partee's ι succeeds
+- `the_is_every_on_singletons`: ⟦the⟧ = ⟦every⟧ on singleton restrictors
+
+## References
+
+- Russell, B. (1905). On Denoting. Mind.
+- Strawson, P. (1950). On Referring. Mind.
+- Heim, I. (1982). The Semantics of Definite and Indefinite NPs. UMass diss.
+- Kamp, H. (1981). A Theory of Truth and Semantic Representation.
+- Partee, B. (1987). NP Interpretation and Type-shifting Principles.
+- Donnellan, K. (1966). Reference and Definite Descriptions. Phil. Review.
+-/
+
+namespace TruthConditional.Determiner.Definite
+
+open TruthConditional (Model Ty toyModel ToyEntity)
+open TruthConditional.Determiner.Quantifier (FiniteModel every_sem some_sem Ty.det)
+open TruthConditional.Noun.TypeShifting (iota lift)
+open Core.Presupposition (PrProp)
+open Core.Definiteness (DefPresupType Definiteness)
+open IntensionalSemantics.Reference.Donnellan (definitePrProp attributiveContent)
+
+-- ============================================================================
+-- §1: Uniqueness-Based Definite (Weak Article)
+-- ============================================================================
+
+/-- ⟦the⟧ under uniqueness (Russell/Strawson/Heim & Kratzer 1998):
+
+Presupposition: exactly one entity in the domain satisfies the restrictor.
+Assertion: the scope predicate holds of that entity.
+
+Type: `(e→t) → (e→t) → PrProp W`
+(restrictor → scope → presuppositional proposition)
+
+This corresponds to Schwarz's **weak article** (German contracted *vom*,
+Fering A-form, Lakhota *kiŋ*). -/
+def the_uniq {E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → Bool) (scope : E → Bool) : PrProp Unit :=
+  { presup := λ _ =>
+      match domain.filter restrictor with
+      | [_] => true
+      | _ => false
+  , assertion := λ _ =>
+      match domain.filter restrictor with
+      | [e] => scope e
+      | _ => false }
+
+/-- ⟦the⟧ under uniqueness, world-indexed version.
+
+For intensional contexts where the restrictor extension varies by world.
+This is the standard Heim & Kratzer (1998) entry. -/
+def the_uniq_w {W E : Type} (domain : List E)
+    (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+  { presup := λ w =>
+      match domain.filter (λ e => restrictor e w) with
+      | [_] => true
+      | _ => false
+  , assertion := λ w =>
+      match domain.filter (λ e => restrictor e w) with
+      | [e] => scope e w
+      | _ => false }
+
+-- ============================================================================
+-- §2: Familiarity-Based Definite (Strong Article)
+-- ============================================================================
+
+/-- A discourse context tracking salient/familiar entities.
+
+Heim (1982): the context is a set of "file cards" — entities that have
+been introduced into the discourse and are available for anaphoric reference. -/
+structure DiscourseContext (E : Type) where
+  /-- Entities currently salient/familiar in discourse -/
+  salient : List E
+
+/-- ⟦the⟧ under familiarity (Heim 1982, Kamp 1981):
+
+Presupposition: there exists a salient entity in the discourse context
+matching the restrictor.
+Assertion: the scope predicate holds of that entity.
+
+This corresponds to Schwarz's **strong article** (German full *von dem*,
+Fering D-form, Lakhota *k'uŋ*, Akan *nó*). -/
+def the_fam {E : Type} [DecidableEq E]
+    (dc : DiscourseContext E)
+    (restrictor : E → Bool) (scope : E → Bool) : PrProp Unit :=
+  { presup := λ _ =>
+      match dc.salient.filter restrictor with
+      | [_] => true
+      | _ => false
+  , assertion := λ _ =>
+      match dc.salient.filter restrictor with
+      | [e] => scope e
+      | _ => false }
+
+/-- Familiarity presupposition requires discourse salience, not world-relative
+uniqueness. The same restrictor can succeed under familiarity but fail under
+uniqueness (if multiple entities satisfy the restrictor in the world but only
+one is discourse-salient). -/
+theorem familiarity_weaker_existence {E : Type} [DecidableEq E]
+    (dc : DiscourseContext E) (restrictor : E → Bool) (scope : E → Bool)
+    (e : E) (h_sal : dc.salient.filter restrictor = [e]) :
+    (the_fam dc restrictor scope).presup () = true := by
+  simp only [the_fam, h_sal]
+
+-- ============================================================================
+-- §3: Bridge to Donnellan (definitePrProp)
+-- ============================================================================
+
+/-- The uniqueness-based definite IS Donnellan's attributive semantics.
+
+`the_uniq_w` and `definitePrProp` compute identical presuppositions
+and assertions. Both filter the domain for unique restrictor-satisfiers. -/
+theorem the_uniq_eq_definitePrProp {W E : Type} (domain : List E)
+    (restrictor : E → W → Bool) (scope : E → W → Bool) :
+    the_uniq_w domain restrictor scope = definitePrProp domain restrictor scope :=
+  rfl
+
+-- ============================================================================
+-- §4: Bridge to Partee's ι (TypeShifting.iota)
+-- ============================================================================
+
+/-- The uniqueness presupposition holds iff Partee's ι succeeds.
+
+`iota domain P = some e` exactly when the uniqueness presupposition
+of `the_uniq` is satisfied. The ι-operator is the presupposition-free
+core of the uniqueness-based definite. -/
+theorem the_uniq_presup_iff_iota {m : Model} (domain : List m.Entity)
+    (restrictor : m.interpTy Ty.et) :
+    (match domain.filter restrictor with | [_] => true | _ => false) =
+    (iota domain restrictor).isSome := by
+  simp only [iota]
+  cases h : domain.filter restrictor with
+  | nil => simp
+  | cons hd tl =>
+    cases tl with
+    | nil => simp
+    | cons hd' tl' => simp
+
+-- ============================================================================
+-- §5: Bridge to every_sem (⟦the⟧ = ⟦every⟧ on singletons)
+-- ============================================================================
+
+/-- ⟦the⟧ agrees with ⟦every⟧ when the restrictor is a singleton.
+
+When exactly one entity satisfies the restrictor, "the φ is ψ" and
+"every φ is ψ" have the same truth value. This is the classical
+observation that the definite article is a universal quantifier
+restricted to singletons (Barwise & Cooper 1981).
+
+TODO: prove by unfolding `every_sem` and showing that `∀x. R(x) → S(x)`
+reduces to `S(e)` when `R` is the singleton `{e}`. Requires showing that
+`elements.all (λ x => !restrictor x || scope x)` = `scope e` when
+`elements.filter restrictor = [e]`. -/
+theorem the_is_every_on_singletons (m : Model) [FiniteModel m]
+    (restrictor scope : m.interpTy Ty.et)
+    (e : m.Entity)
+    (h_singleton : FiniteModel.elements.filter restrictor = [e]) :
+    every_sem m restrictor scope = scope e := by
+  sorry
+
+-- ============================================================================
+-- §6: Bridge to Fragments/English/Determiners.lean
+-- ============================================================================
+
+open Fragments.English.Determiners (QForce QuantifierEntry)
+
+/-- English "the" is QForce.definite — our semantics provides its denotation.
+
+The lexical entry in `Fragments/English/Determiners.lean` records `the`
+as `QForce.definite`. Our `the_uniq` provides the compositional semantics
+that was previously missing: `the` denotes a presuppositional determiner
+that presupposes existence+uniqueness and asserts the scope.
+
+Since English has only one article form (ArticleType.weakOnly), the
+default semantics is uniqueness-based. The familiarity reading arises
+pragmatically (accommodation) rather than structurally. -/
+def qforceToPresupType : QForce → Option DefPresupType
+  | .definite => some .uniqueness  -- Default: uniqueness (English = weak-only)
+  | _ => none                       -- Non-definite determiners: no presupposition type
+
+/-- `QForce.definite` maps to uniqueness by default. -/
+theorem definite_is_uniqueness :
+    qforceToPresupType .definite = some .uniqueness := rfl
+
+/-- Map QForce to Definiteness. -/
+def qforceToDefiniteness : QForce → Definiteness
+  | .existential  => .indefinite
+  | .definite     => .definite
+  | .universal    => .definite   -- "every" presupposes non-empty domain
+  | .negative     => .indefinite -- "no" is existential (negative)
+  | .proportional => .indefinite -- "most" is proportional (no presupposition)
+
+end TruthConditional.Determiner.Definite

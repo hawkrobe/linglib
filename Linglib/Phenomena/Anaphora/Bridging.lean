@@ -38,7 +38,11 @@ Mandarin vs English contrast in bridging:
 - Prince, E. (1981). Toward a taxonomy of given-new information.
 -/
 
+import Linglib.Core.Definiteness
+
 namespace Phenomena.Anaphora.Bridging
+
+open Core.Definiteness (BridgingSubtype DefPresupType)
 
 -- Data Structure
 
@@ -49,13 +53,7 @@ inductive Felicity where
   | odd      -- Clearly infelicitous
   deriving DecidableEq, Repr, BEq
 
-/-- Type of bridging relation -/
-inductive BridgingType where
-  /-- Part-whole: bridged entity is part of antecedent -/
-  | partWhole
-  /-- Relational: bridged entity is relationally connected (author, mother, etc.) -/
-  | relational
-  deriving DecidableEq, Repr, BEq
+-- Type of bridging relation: uses `BridgingSubtype` from `Core/Definiteness.lean`.
 
 /-- Definite form used in the bridging context -/
 inductive DefiniteForm where
@@ -78,7 +76,7 @@ structure BridgingDatum where
   /-- The bridged definite NP -/
   bridged : String
   /-- The bridging relation -/
-  bridgingType : BridgingType
+  bridgingType : BridgingSubtype
   /-- Form of the definite (the, that, bare, na+CL) -/
   definiteForm : DefiniteForm
   /-- Language -/
@@ -220,21 +218,6 @@ def ahnZhuExp1Relational : BridgingDatum :=
   , notes := "Experiment 1: Relational bridging baseline"
   , source := "Ahn & Zhu 2025, Experiment 1" }
 
--- Uniqueness vs Familiarity Presupposition Types
-
-/-- Presupposition type for definites (Ahn & Zhu's distinction) -/
-inductive PresupType where
-  /-- Uniqueness: there is a unique entity satisfying the description -/
-  | uniqueness
-  /-- Familiarity: the entity is already salient/familiar in discourse -/
-  | familiarity
-  deriving DecidableEq, Repr, BEq
-
-/-- Part-whole bridging is mediated by uniqueness -/
-def partWholePresupType : PresupType := .uniqueness
-
-/-- Relational bridging is mediated by familiarity -/
-def relationalPresupType : PresupType := .familiarity
 
 -- Collected Data
 

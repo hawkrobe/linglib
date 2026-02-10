@@ -34,6 +34,7 @@ import Linglib.Core.Alternatives
 import Linglib.Core.Context
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
+import Linglib.Core.Definiteness
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -87,6 +88,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.ModalSubordination
+import Linglib.Phenomena.Anaphora.PronounTypology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
@@ -383,6 +385,7 @@ import Linglib.Theories.TruthConditional.Determiner.Numeral.Bilateral
 import Linglib.Theories.TruthConditional.Determiner.Numeral.Compare
 import Linglib.Theories.TruthConditional.Determiner.Numeral.LowerBound
 import Linglib.Theories.TruthConditional.Determiner.Numeral.Theory
+import Linglib.Theories.TruthConditional.Determiner.Definite
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
 import Linglib.Theories.TruthConditional.Domain.Degree
 import Linglib.Theories.TruthConditional.Expressives.Basic
