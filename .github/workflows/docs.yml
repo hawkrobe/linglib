@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install elan
         run: |
@@ -41,12 +43,24 @@ jobs:
       - name: Build documentation
         run: lake build Linglib:docs
 
-      - name: Create landing page
+      - name: Install Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Build blog
+        working-directory: blog
+        run: hugo --minify
+
+      - name: Compose site
         run: |
-          sudo apt-get install -y pandoc
-          pandoc docs/overview.md -s --metadata title="Linglib" -o .lake/build/doc/index.html
-          # Fix links to point to actual doc paths
-          sed -i 's|(./Linglib.html)|(Linglib.html)|g' .lake/build/doc/index.html
+          mkdir -p .lake/build/doc-site
+          # Hugo output → site root
+          cp -r blog/public/* .lake/build/doc-site/
+          # doc-gen4 output → /docs/ subdirectory
+          mkdir -p .lake/build/doc-site/docs
+          cp -r .lake/build/doc/* .lake/build/doc-site/docs/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -54,7 +68,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.lake/build/doc'
+          path: '.lake/build/doc-site'
 
   deploy:
     environment:
