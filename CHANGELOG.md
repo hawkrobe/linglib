@@ -1,5 +1,75 @@
 # Changelog
 
+## [0.171.0] - 2026-02-11
+
+### Added
+- **TTR Full Ch8 Context Machinery** (Underspecification.lean): `Cntxt₈` (eq 82, 7-field context: q/𝔰/𝔩/𝔯/𝔴/𝔤/𝔠), `Cntxt₈.initial`, `isEq10`/`isEq74` (evolution across eqs 10→74→82). `boundary₈` (B, eq 77: removes locality at clause boundaries), `anaphoricCombine₈` (@_{i,j} with l-field, eq 76), `sentenceRule₈` (eq 81). `anaphorFree₈` (𝔄, eq 85: r-field filter), `reflexivize₈` (full ℜ₈, eq 84), `vpRule₈` (eq 88). `UnderspecClosure₈` (eq 89: 7-clause inductive for generalized 𝔖). `NQuantScope` (n-ary scope, `ScopeOrdering`, `nestQuants`), three-quantifier example. `DiscourseContext`, `crossSententialResolve` (eqs 37-44: cross-sentential anaphora), "A man walked. He whistled." phenomenon. `alignPaths` (eq 52: path alignment), `semNo₈`, "No dog which chases a cat catches it" with true/false scenarios (eqs 46-55). Bridge: `reflexivize₈_agrees_with_simple` (ℜ₈ ↔ ℜ), `twoQuant_embeds_in_closure`, `donkeyNeg_uses_localization`.
+- **Assgnmnt operations** (Discourse.lean): `Assgnmnt.empty`, `Assgnmnt.update`, `Assgnmnt.merge` with `update_same`, `update_other`, `empty_none`, `merge_empty_left`.
+
+## [0.170.0] - 2026-02-10
+
+### Changed
+- **TTR Underspecification cleanup**: updated module docstring (was stale "First Slice"), replaced Cooper §-based section labels with conceptual names, scoped file-level `variable {E : Type}` into `ScopeInfrastructure` section to prevent namespace leakage, renamed `isDog'` → `isDog₈` for consistency with `isDonkey₈`.
+- **`localizeConditional`**: new conditional localization operator completing the 𝔏/𝔏ʸ hierarchy. `strongDonkeyConditional` now derives from `localizeConditional beatsParam ownsGate` rather than being defined ad hoc. Added `localizeUniv_iff_conditional_trivial` (𝔏ʸ = degenerate conditional) and `localizeUniv_implies_conditional` (𝔏ʸ ⊂ conditional).
+- **`like₈` made non-trivial**: Sam likes everyone, Bill likes Bill/Kim, Kim likes only herself. Reflexivization now genuinely constrains witness space (`reflexive_constrains_kim`). `allLikeSelf` requires per-case witnesses instead of trivial wildcard.
+- **Removed `PPpty.isAnaphorFree`**: convoluted unused encoding of Cooper's 𝔄 (eq 85). Left a NOTE explaining that 𝔄 and B (eq 77) await full record-type machinery.
+
+## [0.169.0] - 2026-02-10
+
+### Added
+- **TTR Binding Theory** (Ch8 §8.3): `reflexivize` (ℜ, eq 84), `anaphoricResolve` (@_{i,j}, eq 28). Phenomenon: "Sam likes himself" vs "Sam likes him" with ℜ vs pronoun resolution. Bridge theorem 3 `reflexive_predicts_binding` connecting ℜ to `Phenomena.Anaphora.Coreference`: per-datum verification for `reflexivePattern` (Condition A), `pronounPattern` (Condition B), `complementaryDistributionData`. Bridge to `Core.Interfaces.BindingSemantics`: `reflexivize_to_binding`, `reflexiveBindingConfig` (well-formed), `pronominalBindingConfig`.
+
+## [0.168.0] - 2026-02-10
+
+### Added
+- **TTR donkey → Phenomena bridge**: `strongDonkeyConditional` (conditional universal strong reading, distinct from the too-strong 𝔏ʸ), `strong_donkey_distinction` (𝔏ʸ ≠ correct strong reading). Per-datum verification theorems connecting TTR predictions to `Phenomena.Anaphora.DonkeyAnaphora`: `geach_weak_available`, `geach_strong_available`, `geach_bound_reading`, `strongDominant_readings_available`.
+
+## [0.167.0] - 2026-02-10
+
+### Added
+- **TTR Underspecification localization** (Ch8 §8.5): `localize` (𝔏), `localizeUniv` (𝔏ʸ), `localization_is_purification` bridge theorem (𝔏 = 𝔓), `localizationUniv_is_purificationUniv` (𝔏ʸ = 𝔓ʸ), `localization_readings_agree_when_pure` (corollary of Ch7 `donkey_readings_agree_when_pure`). Donkey anaphora phenomenon: "every farmer who owns a donkey beats it" with weak/strong readings, `donkey_readings_diverge` (weak ≠ strong when Bg non-trivial).
+
+## [0.166.0] - 2026-02-10
+
+### Added
+- **TTR Underspecification.lean** (Ch8 first slice): `QStore`, `isPlugged`/`isUnplugged`, `store`/`retrieve`, `TwoQuantScope`, `𝔖` underspecification closure, "every boy hugged a dog" scope example with surface/inverse readings. Bridge theorems: `𝔖_to_tagged`/`tagged_to_𝔖` (bijection with `ScopeConfig` from Scontras & Pearl 2021), `surfaceScope_inner_witness` (scope → `ParticularWC_Exist`), `surface_scope_matches_existPQ` (scope → Ch7 `existPQ`).
+- **IType → Intension bridge** (Core.lean): `IType.toIntension`, `IType.rigid_iff_isRigid`, `IType.coext_not_intEq` — connects Ch1 intensional types to `Core.Intension.IsRigid` via Bool-valued `ModalTypeSystem`.
+
+## [0.165.0] - 2026-02-10
+
+### Changed
+- **TTR re-split**: `Basic.lean` (~2161 lines) → `Core.lean` + `Discourse.lean` along linglib's conceptual joints (foundations vs discourse/pragmatics) instead of Cooper chapter boundaries. Import chain: Core → Discourse → Modality → Quantification.
+- **ModalTypeSystem**: replaced `structure` wrapper with `abbrev ModalTypeSystem (W : Type) (Pred : Type) := W → Pred → Bool` — isomorphic but lighter.
+- **propT**: added `abbrev propT (p : Prop) : Type := PLift p` in Core.lean, replacing raw `PLift` usage across all 4 files.
+- **QuantName**: replaced `String`-dispatched `anaphoraAvailable` with `QuantName` inductive for typed quantifier dispatch.
+- **ExperienceBase**: parameterized with `(E : Type) (P : Type)` and `Finset` instead of `ℕ`-indexed predicates and `List`.
+- **Bridge theorems**: `toParametric_toPrProp_assertion` (Parametric ↔ PrProp roundtrip), `modalSystem_induces_intension` + `ModalSystem.isRigidType` (Core.Intension bridge), `InfoState.toCoreInfoState` (DynamicSemantics.Core bridge), `meaningPostulate_transfers_belief` (MeaningPostulate → believe transfer).
+
+## [0.164.0] - 2026-02-10
+
+### Changed
+- **TTR cleanup**: `semDefArt`/`semUniversal` now return `Type` (not `Prop`), consistent with TTR's types-as-propositions philosophy. `WitnessSet` base structure factored out of 11 witness set types via `extends`. Three `sorry` theorems proved: `witnessGQ_exist_conservative`, `witnessGQ_every_conservative`, `comp_witness_card`. Bridge theorems connecting witness quantification to extensional GQs: `particular_exist_iff_witnessGQ`, `universal_iff_witnessGQ`, `particularWC_to_witnessGQ`, `particularWC_no_to_witnessGQ`. TTR modules added to `Linglib.lean` imports.
+
+## [0.163.0] - 2026-02-10
+
+### Changed
+- **Core/TTR.lean → Theories/DynamicSemantics/TTR/**: Moved TTR from `Core/` to `Theories/DynamicSemantics/TTR/` and split the 3744-line monolith into 3 files along chapter boundaries. `Basic.lean` (Ch 1–5: foundations, records, Ppty, frames, Parametric), `Modality.lean` (Ch 6: ModalSystem, Topos, believe/know, broccoli), `Quantification.lean` (Ch 7: witness sets, purification, witness conditions). Namespace renamed `Core.TTR` → `Theories.DynamicSemantics.TTR`. Follows existing convention alongside DRT, DPL, PLA.
+
+## [0.162.0] - 2026-02-10
+
+### Changed
+- **Core/TTR.lean**: Synthesis & integration pass (~250 lines added, restructured). Redundancy elimination: renamed `Subtype` class → `SubtypeOf` (avoids shadowing Lean's `Subtype`), consolidated `Ppty` as alias for `PredType`, unified `Topos ≃ Parametric Type` (`toposEquivParametric`). Appendix material: `Restriction T P := { x : T // P x }` (A11.7, native Lean `Subtype`), symmetric merge = `MeetType` = `Prod` with `symmetric_merge_comm` (A11.3), `AsymMerge` for asymmetric merge. New bridges: `ModalTypeSystem.toModalSystem`/`ModalSystem.toModalTypeSystem` (Ch1 Bool ↔ Ch6 Prop), `ModalSystem.toAccessRel` (TTR → Kripke accessibility), `Parametric.toPrProp`/`PrProp.toParametric` (bg/fg ↔ presupposition/assertion), `know_iff_believe_and_true` + `believe_not_entails_true` (abstract doxastic veridicality), `Topos.inducedNec`/`inducedPoss` + `nec_implies_poss` (abstract Kratzer bridge). 5-layer organization with section markers. Module docstring updated for Ch 1–6 with native Lean type table.
+
+## [0.161.0] - 2026-02-10
+
+### Added
+- **Core/TTR.lean**: Cooper (2023) Chapter 5 — Frames and Descriptions (~500 lines). Ambient temperature frames (`AmbTempFrame`, `Scale`, `ζ_temp`), rise events (`RiseEvent`). Partee puzzle resolution: `IndPpty` vs `FramePpty` distinction, `Bot` (Empty) for type-inappropriate application, `framePptyOnInd` blocks "ninety is rising". Two copulas: `semBeID` (individual identity) vs `semBeScalar` (scale readoff). Definite descriptions as dynamic GQs: `unique`, `semDefArt`, `semUniversal` with `Nonempty` bridge from Type to Prop. Fixed-point types (`FixedPtType`, `FrameType`, `pFrame`) for frame-level nouns. Property restriction (`restrictPpty`). Passenger individuation: `TravelFrame`, `PassengerFrame`, `intransVerbFrame`, `pluralPred`, `IsProperPart`. Phenomena: temperature rising/ninety/blocked, dog uniqueness, definite article, same-person-different-journeys passenger individuation.
+
+## [0.160.0] - 2026-02-10
+
+### Added
+- **Core/TTR.lean**: Cooper (2023) Chapter 4 — Reference and Mental States (~450 lines). Parametric content (`Parametric` bg/fg structure, `PPpty`, `PQuant`, `PQuantDet`, `PRel2`). `HasNamed` typeclass and `NameContext` for presuppositional proper names. `semPropNameP` — parametric proper name semantics with presupposition (revised from Ch3 `semPropName`). `TotalInfoState` for long-term memory + gameboard. `AccommodationKind` with three-level control regime (gameboard > LTM > no match). Paderewski puzzle: `TwoConcept`/`OneConcept` structures, `merge` with identity proof, `merge_preserves_both`, bridge to `Core.Intension.CoExtensional` via `paderewski_nonrigid_identity`. Unbound pronouns: `Assgnmnt` (variable assignment), `Cntxt` (assignment + propositional context), `semPron` as parametric quantifier. Parametric verb semantics: `semIntransVerbP`, `semTransVerbP`. S-combinator: `Parametric.combine` for merging backgrounds. Phenomena: "Sam leaves" full parametric derivation with `samLeavesTrue` witness, Paderewski two-concept → one-concept merge, pronoun resolution.
+
 ## [0.159.0] - 2026-02-10
 
 ### Changed
