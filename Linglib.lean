@@ -339,6 +339,11 @@ import Linglib.Theories.DynamicSemantics.PLA.Update
 import Linglib.Theories.DynamicSemantics.Probabilistic
 import Linglib.Theories.DynamicSemantics.State
 import Linglib.Theories.DynamicSemantics.TeamSemantics
+import Linglib.Theories.DynamicSemantics.TTR.Core
+import Linglib.Theories.DynamicSemantics.TTR.Discourse
+import Linglib.Theories.DynamicSemantics.TTR.Modality
+import Linglib.Theories.DynamicSemantics.TTR.Quantification
+import Linglib.Theories.DynamicSemantics.TTR.Underspecification
 import Linglib.Theories.DynamicSemantics.UpdateSemantics.Basic
 
 -- Theories: Construction Grammar
