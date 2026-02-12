@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.191.0] - 2026-02-11
+
+### Added
+- **TruthConditional/Determiner/Numeral/Semantics.lean**: EXH–type-shifting duality (Section 7c). `exhNumeral` — scalar exhaustification for numerals (Spector 2013 §6.2). `exh_lowerBound_eq_exact` — EXH(lower-bound) = exact. `typeShift_exact_eq_lowerBound` — typeShift(exact) = lower-bound. `exh_typeShift_roundtrip` — round-trip identity. `typeShift_subsumes_exh` — type-shifting produces the same {exact, lower-bound} pair as EXH, making EXH redundant for numerals when type-shifted meanings are grammatically available (Partee 1987).
+
 ## [0.190.0] - 2026-02-11
 
 ### Added
