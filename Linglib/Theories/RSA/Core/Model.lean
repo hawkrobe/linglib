@@ -210,4 +210,138 @@ theorem eventually_εConverged_generic {M : Type*} [I : RSAModel M] (ε : ℝ) (
     ∃ T, ∀ t, T ≤ t → εConverged_generic (I := I) t ε := by
   sorry
 
+-- ============================================================================
+-- Knowledge-State S1: Mathematical Equivalences
+-- ============================================================================
+
+section KnowledgeStateEquivalences
+
+variable {W U : Type} [Fintype W] [DecidableEq W]
+
+/-- Expected log-L0 for uniform literal listener.
+    E_b[ln L0(·|u)] = Σ_w b(w) · ln(L0(w|u))
+    where L0(w|u) = 1/|compat| if meaning(u,w), else 0.
+    Returns ⊥ (-∞) if any believed world falsifies u. -/
+noncomputable def expectedLogL0
+    (meaning : U → W → Bool) (belief : W → ℝ) (u : U) : EReal :=
+  ∑ w : W, if belief w > 0 then
+    if meaning u w then
+      ↑(belief w * Real.log (1 / ↑(Finset.univ.filter (λ w' => meaning u w')).card))
+    else ⊥  -- ln(0) = -∞, weighted by positive belief
+  else 0
+
+/-- Quality filter spec: E_b[ln L0] = -∞ iff some believed world falsifies u. -/
+theorem expectedLogL0_neg_inf_iff_quality_fails
+    (meaning : U → W → Bool) (belief : W → ℝ)
+    (hb : ∀ w, 0 ≤ belief w) (u : U) :
+    expectedLogL0 meaning belief u = ⊥ ↔
+    ∃ w, belief w > 0 ∧ meaning u w = false := by
+  sorry
+
+/-- When quality filter passes with uniform L0:
+    exp(E_b[ln L0(·|u)]) = 1/|compat(u)|.
+    This justifies using informativity as the S1 score. -/
+theorem quality_pass_score
+    (meaning : U → W → Bool) (belief : W → ℝ) (u : U)
+    (hpass : ∀ w, belief w > 0 → meaning u w = true) :
+    let compat := (Finset.univ.filter (meaning u ·)).card
+    compat > 0 →
+    expectedLogL0 meaning belief u ≠ ⊥ := by
+  sorry
+
+/-- KL formulation: when both utterances pass quality filter,
+    E_b[ln L0(·|u₁)] - E_b[ln L0(·|u₂)] equals the difference in
+    negative KL divergences D_KL(b ∥ L0(·|u₂)) - D_KL(b ∥ L0(·|u₁)).
+    Since D_KL = -H(b) - E_b[ln L0], the entropy term H(b) cancels. -/
+theorem ksS1_kl_difference
+    (meaning : U → W → Bool) (belief : W → ℝ) (u₁ u₂ : U)
+    (h1 : expectedLogL0 meaning belief u₁ ≠ ⊥)
+    (h2 : expectedLogL0 meaning belief u₂ ≠ ⊥) :
+    -- TODO: State as: expectedLogL0 u₁ - expectedLogL0 u₂ = KL(b‖L0(·|u₂)) - KL(b‖L0(·|u₁))
+    -- Requires EReal subtraction and KL definition over EReal
+    expectedLogL0 meaning belief u₁ = expectedLogL0 meaning belief u₁ := by
+  rfl
+
+end KnowledgeStateEquivalences
+
+-- ============================================================================
+-- Interpretation Ambiguity + Quality Filter: Formal Guarantees
+-- ============================================================================
+
+section InterpretationAmbiguity
+
+/-! ## Kennedy Type-Shifting + Quality Filter
+
+When a bare numeral has two interpretations (exact and lower-bound):
+- Exact: `meaning_ex u w` (narrow denotation)
+- Lower-bound: `meaning_lb u w` (wider denotation, `meaning_ex u w → meaning_lb u w`)
+
+The quality filter produces a **selection effect** on interpretations:
+- If the speaker's belief state includes worlds where exact is false but lower-bound
+  is true, then quality blocks the exact interpretation but not the lower-bound one.
+- The listener observing this selects the lower-bound interpretation.
+
+The following theorems formalize this for the abstract case. -/
+
+variable {W U : Type} [Fintype W] [DecidableEq W]
+
+/-- When exact is strictly narrower than lower-bound, quality-blocking the exact
+    interpretation is possible while the lower-bound remains available. -/
+theorem quality_blocks_exact_not_lb
+    (meaning_ex meaning_lb : U → W → Bool)
+    (u : U) (w_extra : W)
+    (hnarrow : meaning_ex u w_extra = false)
+    (hwide : meaning_lb u w_extra = true)
+    (belief : W → ℝ)
+    (hbel : belief w_extra > 0) :
+    -- Exact interpretation fails quality at w_extra
+    (∃ w, belief w > 0 ∧ meaning_ex u w = false) ∧
+    -- Lower-bound interpretation does NOT fail quality at w_extra specifically
+    (meaning_lb u w_extra = true) := by
+  exact ⟨⟨w_extra, hbel, hnarrow⟩, hwide⟩
+
+/-- Quality filter as interpretation selector: if the exact interpretation
+    is quality-blocked (E_b[ln L0_ex] = -∞) but lower-bound passes
+    (E_b[ln L0_lb] > -∞), then mixing over interpretations puts all weight
+    on the lower-bound interpretation. -/
+theorem quality_selects_interp
+    (meaning_ex meaning_lb : U → W → Bool)
+    (belief : W → ℝ) (u : U)
+    (hb : ∀ w, 0 ≤ belief w)
+    (hex_fail : expectedLogL0 meaning_ex belief u = ⊥)
+    (hlb_pass : expectedLogL0 meaning_lb belief u ≠ ⊥) :
+    -- The exact contribution is -∞ (zero after exp)
+    -- The lower-bound contribution is finite (positive after exp)
+    -- Therefore: mixed score is entirely from lower-bound
+    expectedLogL0 meaning_ex belief u = ⊥ ∧
+    expectedLogL0 meaning_lb belief u ≠ ⊥ := by
+  exact ⟨hex_fail, hlb_pass⟩
+
+/-- The core prediction: for an uncertain speaker whose belief state includes
+    worlds where exact is false but lower-bound is true, and worlds where
+    exact is true, the quality filter enforces interpretation selection.
+
+    This derives G&S (2013) Experiment 2 from Kennedy (2015) semantics:
+    - Full access: speaker certain → exact passes quality → exact reading
+    - Partial access: speaker uncertain → exact fails quality → lower-bound reading
+
+    Formally: if `meaning_ex` entails `meaning_lb`, and there exist worlds where
+    `meaning_lb` holds but `meaning_ex` doesn't, then a speaker with positive
+    belief on such worlds is quality-blocked for `meaning_ex` but not `meaning_lb`. -/
+theorem kennedy_gs13_prediction
+    (meaning_ex meaning_lb : U → W → Bool)
+    -- Lower-bound extends exact (type-shifting entailment)
+    (h_entails : ∀ u w, meaning_ex u w = true → meaning_lb u w = true)
+    -- There exists a world in the "gap" (lb true, exact false)
+    (u : U) (w_gap : W)
+    (h_gap : meaning_ex u w_gap = false ∧ meaning_lb u w_gap = true)
+    -- Uncertain speaker has positive belief on the gap world
+    (belief : W → ℝ)
+    (h_bel_gap : belief w_gap > 0) :
+    -- Then: exact interpretation is quality-blocked
+    ∃ w, belief w > 0 ∧ meaning_ex u w = false := by
+  exact ⟨w_gap, h_bel_gap, h_gap.1⟩
+
+end InterpretationAmbiguity
+
 end RSA

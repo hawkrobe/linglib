@@ -674,6 +674,121 @@ def lexUncertaintyL1_lexicon {U W L : Type} [BEq U] [BEq W] [BEq L]     (utteran
 
 -- Utility Aliases
 
+-- ============================================================================
+-- Knowledge-State S1 (G&S 2013 Eq. 2-3)
+-- ============================================================================
+
+/-- Quality filter: utterance must be true at every world the speaker considers possible.
+    Implements the ln(0) = -∞ penalty from log-utility: any false-at-a-believed-world
+    utterance gets utility -∞ and probability 0. -/
+def qualityFilter {U W : Type}
+    (meaning : U → W → Bool) (belief : W → ℚ) (allWorlds : List W) (u : U) : Bool :=
+  allWorlds.all λ w => belief w ≤ 0 || meaning u w
+
+/-- Knowledge-state S1 score (unnormalized).
+    0 if quality filter fails; else 1/|compat(u)| (informativity).
+    For uniform L0, this equals exp(E_belief[ln L0(·|u)]). -/
+def ksS1Score {U W : Type}
+    (meaning : U → W → Bool) (belief : W → ℚ) (allWorlds : List W) (u : U) : ℚ :=
+  if qualityFilter meaning belief allWorlds u then
+    let compat := allWorlds.filter (meaning u)
+    if compat.length > 0 then 1 / compat.length else 0
+  else 0
+
+/-- Knowledge-state S1: pragmatic speaker with uncertain beliefs.
+    P_S1(u|belief) ∝ qualityFilter(u) × informativity(u).
+    Implements G&S 2013 Eq. (2): U(w;s) = ln P_lex(s|w). -/
+def ksS1 {U W : Type} [BEq U]
+    (allUtts : List U) (allWorlds : List W)
+    (meaning : U → W → Bool) (belief : W → ℚ) : List (U × ℚ) :=
+  normalize (allUtts.map λ u => (u, ksS1Score meaning belief allWorlds u))
+
+/-- Knowledge-state L1 with interpretation marginalization.
+    L1(w|u) ∝ P(w) × Σ_i P(i) × Σ_b P(b|w) × S1_ks(u | b, meaning_i).
+
+    The `Interp` dimension handles any source of truth-conditional ambiguity:
+    - Type-shifting (Kennedy 2015: exact vs lower-bound numerals)
+    - Scope ambiguity (Scontras & Pearl 2021: surface vs inverse)
+    - Lexical ambiguity (multiple word senses)
+
+    **Unified principle**: the interpretation space for an utterance is the set of
+    grammatically available parses that produce distinct truth conditions.
+    RSA always marginalizes over this space. When `I = Unit` (single parse),
+    this reduces to the standard knowledge-state L1.
+
+    The quality filter acts as an *interpretation selector*: when the speaker's
+    epistemic state makes one interpretation quality-risky but another safe,
+    the quality filter shifts weight to the safe interpretation. The listener,
+    reasoning about this, recovers the speaker's intended interpretation. -/
+def ksL1 {U W B : Type} [BEq U] [BEq W]
+    (allUtts : List U) (allWorlds : List W) (allBeliefs : List B)
+    (meaning : U → W → Bool) (worldPrior : W → ℚ)
+    (beliefProb : B → W → ℚ)  -- P(b|w): probability of belief state given world
+    (belief : B → W → ℚ)      -- belief_b(w): speaker's credence about w in state b
+    (u : U) : List (W × ℚ) :=
+  -- Special case: single interpretation (I = Unit)
+  let scores := allWorlds.map λ w =>
+    let s1Marginal := sumScores (allBeliefs.map λ b =>
+      getScore (ksS1 allUtts allWorlds meaning (belief b)) u * beliefProb b w)
+    (w, worldPrior w * s1Marginal)
+  normalize scores
+
+/-- Knowledge-state L1 with interpretation marginalization.
+    Generalizes `ksL1` to marginalize over grammatically available parses.
+    Each interpretation `i` provides a different meaning function;
+    the listener marginalizes over interpretations weighted by `interpPrior`.
+
+    This is the general form. `ksL1` is the special case with a single interpretation. -/
+def ksL1Interp {U W B I : Type} [BEq U] [BEq W]
+    (allUtts : List U) (allWorlds : List W) (allBeliefs : List B) (allInterps : List I)
+    (meaning : I → U → W → Bool)  -- interpretation-parametrized meaning
+    (worldPrior : W → ℚ)
+    (beliefProb : B → W → ℚ)
+    (belief : B → W → ℚ)
+    (interpPrior : I → ℚ := λ _ => 1)
+    (u : U) : List (W × ℚ) :=
+  let scores := allWorlds.map λ w =>
+    let interpMarginal := sumScores (allInterps.map λ i =>
+      let s1Marginal := sumScores (allBeliefs.map λ b =>
+        getScore (ksS1 allUtts allWorlds (meaning i) (belief b)) u * beliefProb b w)
+      interpPrior i * s1Marginal)
+    (w, worldPrior w * interpMarginal)
+  normalize scores
+
+/-- Joint distribution over worlds and interpretations.
+    L1(w,i|u) ∝ P(w) × P(i) × Σ_b P(b|w) × S1_ks(u | b, meaning_i).
+    Useful for recovering which interpretation the listener selects. -/
+def ksL1InterpJoint {U W B I : Type} [BEq U] [BEq W] [BEq I]
+    (allUtts : List U) (allWorlds : List W) (allBeliefs : List B) (allInterps : List I)
+    (meaning : I → U → W → Bool)
+    (worldPrior : W → ℚ)
+    (beliefProb : B → W → ℚ)
+    (belief : B → W → ℚ)
+    (interpPrior : I → ℚ := λ _ => 1)
+    (u : U) : List ((W × I) × ℚ) :=
+  let scores := allWorlds.flatMap λ w =>
+    allInterps.map λ i =>
+      let s1Marginal := sumScores (allBeliefs.map λ b =>
+        getScore (ksS1 allUtts allWorlds (meaning i) (belief b)) u * beliefProb b w)
+      ((w, i), worldPrior w * interpPrior i * s1Marginal)
+  normalize scores
+
+/-- Interpretation marginal: which parse does the listener select?
+    L1(i|u) = Σ_w L1(w,i|u). -/
+def ksL1InterpMarginal {U W B I : Type} [BEq U] [BEq W] [BEq I]
+    (allUtts : List U) (allWorlds : List W) (allBeliefs : List B) (allInterps : List I)
+    (meaning : I → U → W → Bool)
+    (worldPrior : W → ℚ)
+    (beliefProb : B → W → ℚ)
+    (belief : B → W → ℚ)
+    (interpPrior : I → ℚ := λ _ => 1)
+    (u : U) : List (I × ℚ) :=
+  let joint := ksL1InterpJoint allUtts allWorlds allBeliefs allInterps
+    meaning worldPrior beliefProb belief interpPrior u
+  marginalize joint (·.2)
+
+-- Utility Aliases
+
 /-- Alias for normalize (some files use normalizeScores) -/
 def normalizeScores (scores : List ℚ) : List ℚ :=
   let total := sumScores scores
@@ -708,5 +823,69 @@ def softmax (α : ℚ) (utilities : List ℚ) : List ℚ :=
     exps.map λ e => floatToRat (e / total)
   else
     utilities.map λ _ => 0
+
+-- ============================================================================
+-- Soft Knowledge-State S1 (G&S 2013 Eq. 2-3, finite α, ε > 0)
+-- ============================================================================
+
+/-- Noisy L0: literal listener with ε confusion floor.
+    L0_noisy(w|u) = (1-ε) × meaning(u,w)/|compat| + ε/|W|
+    Prevents ln(0) in speaker utility computation. -/
+def noisyL0 {U W : Type}
+    (meaning : U → W → Bool) (allWorlds : List W) (ε : ℚ)
+    (u : U) (w : W) : ℚ :=
+  let compat := allWorlds.filter (meaning u)
+  let nW := allWorlds.length
+  if nW = 0 then 0
+  else if compat.length = 0 then ε / nW
+  else if meaning u w then (1 - ε) / compat.length + ε / nW
+  else ε / nW
+
+/-- Log-score for soft knowledge-state S1.
+    logS1(u|b) = α × Σ_w b(w) × ln(L0_noisy(w|u))
+    Uses Float for transcendental functions. Returns Float. -/
+def softKsS1LogScore {U W : Type}
+    (meaning : U → W → Bool) (allWorlds : List W)
+    (belief : W → ℚ) (ε α : ℚ) (u : U) : Float :=
+  let logScore := allWorlds.foldl (λ acc w =>
+    let b := ratToFloat (belief w)
+    if b > 0 then
+      let l0 := ratToFloat (noisyL0 meaning allWorlds ε u w)
+      acc + b * Float.log (if l0 > 0 then l0 else 1e-300)
+    else acc) 0.0
+  ratToFloat α * logScore
+
+/-- Soft knowledge-state S1: normalized speaker distribution with noisy L0.
+    Implements G&S 2013 Eq. (2)-(3) with finite α and ε > 0.
+    Uses log-sum-exp normalization: P(u|b) = exp(logS1(u) - max) / Σ exp(logS1(u') - max)
+    to avoid Float underflow/overflow at high α.
+    Recovers hard ksS1 in the limit α → ∞, ε → 0. -/
+def softKsS1 {U W : Type} [BEq U]
+    (allUtts : List U) (allWorlds : List W)
+    (meaning : U → W → Bool) (belief : W → ℚ)
+    (ε α : ℚ) : List (U × ℚ) :=
+  let logScores := allUtts.map λ u => (u, softKsS1LogScore meaning allWorlds belief ε α u)
+  let maxLog := logScores.foldl (λ acc (_, s) =>
+    if (Float.decLt acc s).decide then s else acc) (-1e300)
+  let expScores := logScores.map λ (u, s) => (u, Float.exp (s - maxLog))
+  let total := expScores.foldl (λ acc (_, e) => acc + e) 0.0
+  if (Float.decLt 0.0 total).decide then
+    expScores.map λ (u, e) => (u, floatToRat (e / total))
+  else
+    allUtts.map λ u => (u, 0)
+
+/-- Soft knowledge-state L1: pragmatic listener with noisy L0.
+    L1(w|u) ∝ prior(w) × Σ_b P(b|w) × softS1(u|b). -/
+def softKsL1 {U W B : Type} [BEq U] [BEq W]
+    (allUtts : List U) (allWorlds : List W) (allBeliefs : List B)
+    (meaning : U → W → Bool) (worldPrior : W → ℚ)
+    (beliefProb : B → W → ℚ)
+    (belief : B → W → ℚ)
+    (ε α : ℚ) (u : U) : List (W × ℚ) :=
+  let scores := allWorlds.map λ w =>
+    let s1Marginal := sumScores (allBeliefs.map λ b =>
+      getScore (softKsS1 allUtts allWorlds meaning (belief b) ε α) u * beliefProb b w)
+    (w, worldPrior w * s1Marginal)
+  normalize scores
 
 end RSA.Eval

@@ -46,21 +46,18 @@ moreThan(M)(n) = true ↔ n > M ↔ n ≥ M+1 = lowerBound(M+1)(n)
 
 Uses the canonical `moreThanMeaning` from Numeral.Semantics. -/
 theorem moreThan_from_lowerBound_zero (n : Nat) :
-    moreThanMeaning 0 n = lowerBoundMeaning .one n := by
-  simp [moreThanMeaning, maxMeaning, lowerBoundMeaning, NumeralTheory.meaning,
-        LowerBound, BareNumeral.toNat]
+    moreThanMeaning 0 n = LowerBound.meaning .one n := by
+  simp [moreThanMeaning, maxMeaning, NumeralTheory.meaning, LowerBound, BareNumeral.toNat]
   omega
 
 theorem moreThan_from_lowerBound_one (n : Nat) :
-    moreThanMeaning 1 n = lowerBoundMeaning .two n := by
-  simp [moreThanMeaning, maxMeaning, lowerBoundMeaning, NumeralTheory.meaning,
-        LowerBound, BareNumeral.toNat]
+    moreThanMeaning 1 n = LowerBound.meaning .two n := by
+  simp [moreThanMeaning, maxMeaning, NumeralTheory.meaning, LowerBound, BareNumeral.toNat]
   omega
 
 theorem moreThan_from_lowerBound_two (n : Nat) :
-    moreThanMeaning 2 n = lowerBoundMeaning .three n := by
-  simp [moreThanMeaning, maxMeaning, lowerBoundMeaning, NumeralTheory.meaning,
-        LowerBound, BareNumeral.toNat]
+    moreThanMeaning 2 n = LowerBound.meaning .three n := by
+  simp [moreThanMeaning, maxMeaning, NumeralTheory.meaning, LowerBound, BareNumeral.toNat]
   omega
 
 

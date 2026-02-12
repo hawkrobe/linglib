@@ -48,6 +48,7 @@ inductive ModifierType where
   | interval     -- "between ... and ..."
   | exactifier   -- "exactly", "precisely"
   | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
+  | approximator -- "almost", "nearly": proximal + polar (Nouwen 2006)
   deriving Repr, DecidableEq, BEq
 
 /--
@@ -328,6 +329,50 @@ def fromOn : NumeralModifierEntry :=
   }
 
 -- ============================================================================
+-- Approximators (Nouwen 2006)
+-- ============================================================================
+
+/--
+"almost": proximal approximation with polar exclusion.
+
+⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n)  [or ¬(x ≥ n) under LB]
+
+Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
+(the polar component). This creates a key LB/BL divergence:
+- Under LB: "almost three" = close to 3 AND <3 → only values below 3
+- Under BL: "almost three" = close to 3 AND ≠3 → values above OR below 3
+
+Empirically, "almost three" means ~2 (below only), favoring LB.
+
+Source: Nouwen (2006) "Remarks on the Polar Orientation of Almost";
+  Penka (2006); Sadock (1981).
+-/
+def almost : NumeralModifierEntry :=
+  { form := "almost"
+  , modType := .approximator
+  , pragFunction := .peakedSignal
+  , isVague := true
+  , conveysShape := true
+  , soritesSusceptible := false
+  , notes := "Polar component excludes target value (Nouwen 2006)"
+  }
+
+/--
+"nearly": synonym of "almost" with slight register difference.
+
+Same proximal + polar semantics as "almost".
+-/
+def nearly : NumeralModifierEntry :=
+  { form := "nearly"
+  , modType := .approximator
+  , pragFunction := .peakedSignal
+  , isVague := true
+  , conveysShape := true
+  , soritesSusceptible := false
+  , notes := "Register variant of 'almost'"
+  }
+
+-- ============================================================================
 -- Scale Structure
 -- ============================================================================
 
@@ -383,8 +428,12 @@ def classAModifiers : List NumeralModifierEntry :=
 def classBModifiers : List NumeralModifierEntry :=
   [atLeast, atMost, upTo, fromOn]
 
+def approximatorModifiers : List NumeralModifierEntry :=
+  [almost, nearly]
+
 def allModifiers : List NumeralModifierEntry :=
   toleranceModifiers ++ intervalModifiers ++ exactifiers ++ boundModifiers
+    ++ approximatorModifiers
 
 def modifierScales : List ModifierScale :=
   [exactlyAroundScale, aroundBetweenScale]
@@ -440,5 +489,15 @@ theorem bound_modifiers_all_bound :
 /-- No bound modifiers are vague. -/
 theorem bound_modifiers_not_vague :
     boundModifiers.all (·.isVague == false) = true := by native_decide
+
+/-- Approximators are not sorites-susceptible (unlike tolerance modifiers). -/
+theorem approximators_not_sorites :
+    approximatorModifiers.all (·.soritesSusceptible == false) = true := by native_decide
+
+/-- Approximators have polar exclusion (distinguished from tolerance modifiers by type). -/
+theorem approximators_distinct_from_tolerance :
+    approximatorModifiers.all (·.modType == .approximator) = true ∧
+    toleranceModifiers.all (·.modType == .tolerance) = true := by
+  constructor <;> native_decide
 
 end Fragments.English.NumeralModifiers
