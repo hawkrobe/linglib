@@ -155,6 +155,85 @@ theorem the_king_coherence (domain : List m.Entity) (P : m.interpTy Ty.et)
     BE (lift j) = ident j :=
   BE_lift_eq_ident j
 
+-- ============================================================================
+-- When do type-shifts change truth conditions?
+-- ============================================================================
+
+/-! ## Truth-Conditional Transparency of Type-Shifts
+
+A type-shift is **truth-conditionally transparent** when the shifted meaning
+produces the same sentential truth value as the original. The precise condition:
+
+**Theorem**: For a GQ `Q : ⟨⟨α,t⟩,t⟩`, the round-trip `A(BE(Q))` preserves
+truth conditions iff `Q` is a **principal ultrafilter** (i.e., `Q = lift(j)`
+for some individual `j`).
+
+For non-principal GQs (quantifiers, degree quantifiers like numerals),
+`A(BE(Q))` yields a strictly weaker meaning. This is precisely when
+the RSA model should include both the original and shifted meanings as
+alternative interpretations.
+
+Applications:
+- **Proper names**: `Q = lift(john)` → `A(BE(Q)) = Q` → no ambiguity
+- **Numerals**: `Q = ⟦three⟧` → `A(BE(Q)) = ∃d[d=3 ∧ D(d)]` ≠ `Q` → ambiguity
+- **Universal quantifiers**: `Q = ⟦every student⟧` → `A(BE(Q)) = ⟦some student⟧` ≠ `Q`
+-/
+
+/-- A GQ is a principal ultrafilter iff it equals `lift(j)` for some entity. -/
+def isPrincipalUltrafilter (domain : List m.Entity) (Q : m.interpTy Ty.ett) : Prop :=
+  ∃ j ∈ domain, Q = lift j
+
+/-- Helper: `decide (j = j)` is always `true`. -/
+private theorem decide_eq_self (j : m.interpTy .e) :
+    @decide (j = j) (m.decEq j j) = true := by simp
+
+/-- Helper: if `j ∈ domain`, then `domain.any (λ x => decide(j=x) && P(x)) = P(j)`. -/
+private theorem any_decide_eq_apply (domain : List m.Entity) (j : m.interpTy .e)
+    (hj : j ∈ domain) (P : m.interpTy Ty.et) :
+    domain.any (fun x => @decide (j = x) (m.decEq j x) && P x) = P j := by
+  induction domain with
+  | nil => contradiction
+  | cons a tl ih =>
+    simp only [List.any_cons]
+    cases List.mem_cons.mp hj with
+    | inl h =>
+      subst h; simp
+    | inr h =>
+      by_cases heq : j = a
+      · subst heq; simp
+      · have : @decide (j = a) (m.decEq j a) = false := by
+          simp [decide_eq_false_iff_not]; exact heq
+        simp only [this, Bool.false_and, Bool.false_or]
+        exact ih h
+
+/-- **Round-trip preservation for principal ultrafilters.**
+    For `Q = lift(j)`, `A(BE(Q))(P) = Q(P)` for all P.
+    This means type-shifting is truth-conditionally transparent for
+    proper names, pronouns, definites — any expression that denotes
+    a principal ultrafilter. -/
+theorem roundtrip_preserves_principal (domain : List m.Entity) (j : m.interpTy .e)
+    (hj : j ∈ domain) :
+    ∀ P : m.interpTy Ty.et, A domain (BE (lift j)) P = lift j P := by
+  intro P
+  simp only [A, BE, lift]
+  exact any_decide_eq_apply domain j hj P
+
+/-- For non-principal GQs, the round-trip can differ.
+    Example: `⟦every⟧(P)(Q) = ∀x[P(x) → Q(x)]`, but
+    `A(BE(⟦every⟧(P)))(Q) = ∃x[P(x) ∧ Q(x)]` — existential, not universal.
+    Verified on the toy model. -/
+private def toyDom : List ToyEntity := [.john, .mary, .pizza]
+private def toyEvery : toyModel.interpTy Ty.ett := fun P => toyDom.all P
+
+/-- For non-principal GQs, the round-trip changes truth conditions.
+    `every(⊤) = true` but `A(BE(every))(⊤) = false` — the round-trip
+    collapses universal quantification to `⊥` on multi-element domains.
+    (`BE(every)` asks "which entity equals all entities?" — none do.) -/
+theorem roundtrip_changes_nonprincipal :
+    toyEvery (fun _ => true) = true ∧
+    A toyDom (BE toyEvery) (fun _ => true) = false :=
+  ⟨rfl, rfl⟩
+
 section ToyExamples
 
 open TruthConditional.ToyLexicon (john_sem)

@@ -65,7 +65,7 @@ Compute the negated meaning under a given scope.
 - Internal: ¬(≥n) = <n (negates lower bound)
 - External: ¬(=n) = ≠n (negates exact reading)
 -/
-def negatedMeaning (T : NumeralTheory) (w : NumWord) (scope : NegationScope) (k : Nat) : Bool :=
+def negatedMeaning (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) (k : Nat) : Bool :=
   match scope with
   | .internal => !(T.meaning w k)  -- ¬(literal meaning)
   | .external => k != w.toNat      -- ¬(exact reading), regardless of theory
@@ -73,13 +73,13 @@ def negatedMeaning (T : NumeralTheory) (w : NumWord) (scope : NegationScope) (k 
 /--
 Internal negation of lower-bound: "not ≥n" = "<n"
 -/
-def lowerBound_internal_neg (w : NumWord) (k : Nat) : Bool :=
+def lowerBound_internal_neg (w : BareNumeral) (k : Nat) : Bool :=
   k < w.toNat
 
 /--
 External negation targets exact reading: "not =n" = "≠n"
 -/
-def external_neg (w : NumWord) (k : Nat) : Bool :=
+def external_neg (w : BareNumeral) (k : Nat) : Bool :=
   k != w.toNat
 
 -- Theory Predictions
@@ -126,10 +126,10 @@ theorem negation_asymmetry_at_four :
     negatedMeaning LowerBound .three .external 4 = true := by
   native_decide
 
--- DeFregean Semantics Cannot Explain the Asymmetry
+-- Exact Semantics Cannot Explain the Asymmetry
 
 /--
-**Problem for DeFregean semantics: No internal/external distinction**
+**Problem for Exact semantics: No internal/external distinction**
 
 If "three" literally means =3, then negation gives ≠3.
 There's no "weaker" lower-bound assertion to negate.
@@ -138,16 +138,16 @@ Both scopes collapse to the same meaning.
 -/
 theorem exact_no_distinction :
     -- In exact semantics, internal = external (both negate =n)
-    (negatedMeaning DeFregean .three .internal 0 = negatedMeaning DeFregean .three .external 0) ∧
-    (negatedMeaning DeFregean .three .internal 2 = negatedMeaning DeFregean .three .external 2) ∧
-    (negatedMeaning DeFregean .three .internal 4 = negatedMeaning DeFregean .three .external 4) := by
+    (negatedMeaning Exact .three .internal 0 = negatedMeaning Exact .three .external 0) ∧
+    (negatedMeaning Exact .three .internal 2 = negatedMeaning Exact .three .external 2) ∧
+    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
   native_decide
 
 /--
 **The key divergence: world 4**
 
 Lower-bound: internal at 4 = false, external at 4 = true (DIFFERENT)
-DeFregean: internal at 4 = true, external at 4 = true (SAME)
+Exact: internal at 4 = true, external at 4 = true (SAME)
 
 Empirically, "John doesn't have 3 children" (unstressed) suggests <3, not ≠3.
 This requires the internal/external distinction that only lower-bound provides.
@@ -156,8 +156,8 @@ theorem divergence_at_world_4 :
     -- Lower-bound distinguishes scopes at world 4
     (negatedMeaning LowerBound .three .internal 4 ≠ negatedMeaning LowerBound .three .external 4)
     ∧
-    -- DeFregean collapses them
-    (negatedMeaning DeFregean .three .internal 4 = negatedMeaning DeFregean .three .external 4) := by
+    -- Exact collapses them
+    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
   native_decide
 
 -- Default vs Marked Readings
@@ -185,7 +185,7 @@ def markedNegation : NegationScope := .external
 → Internal negation
 → <3 (not ≥3)
 -/
-def interpretNegatedNumeral (_T : NumeralTheory) (_w : NumWord) (stressed : Bool) : NegationScope :=
+def interpretNegatedNumeral (_T : NumeralTheory) (_w : BareNumeral) (stressed : Bool) : NegationScope :=
   if stressed then .external else .internal
 
 -- Compatible Worlds Under Negation
@@ -193,7 +193,7 @@ def interpretNegatedNumeral (_T : NumeralTheory) (_w : NumWord) (stressed : Bool
 /--
 Count worlds compatible with negated numeral under given scope.
 -/
-def compatibleUnderNegation (T : NumeralTheory) (w : NumWord) (scope : NegationScope) : List Nat :=
+def compatibleUnderNegation (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) : List Nat :=
   T.worlds.filter (negatedMeaning T w scope)
 
 /--
@@ -220,7 +220,7 @@ def extendedWorlds : List Nat := [0, 1, 2, 3, 4, 5]
 /--
 Filter extended worlds under negation for a given numeral.
 -/
-def compatibleExtended (w : NumWord) (scope : NegationScope) : List Nat :=
+def compatibleExtended (w : BareNumeral) (scope : NegationScope) : List Nat :=
   extendedWorlds.filter λ k =>
     negatedMeaning LowerBound w scope k
 
@@ -257,8 +257,8 @@ theorem negation_summary :
      negatedMeaning LowerBound .three .external 4 = true)
     ∧
     -- They collapse in exact
-    (negatedMeaning DeFregean .three .internal 4 = true ∧
-     negatedMeaning DeFregean .three .external 4 = true)
+    (negatedMeaning Exact .three .internal 4 = true ∧
+     negatedMeaning Exact .three .external 4 = true)
     ∧
     -- Extended worlds show the full pattern
     (compatibleExtended .three .internal = [0, 1, 2] ∧

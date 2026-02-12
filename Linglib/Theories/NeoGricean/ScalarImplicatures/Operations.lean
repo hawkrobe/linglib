@@ -30,7 +30,7 @@ This asymmetry is diagnostic: it shows the upper bound is implicated, not assert
 ## Predictions for Numeral Theories
 
 Lower-bound theory: All three operations valid (there IS an implicature to operate on)
-DeFregean theory: Operations are anomalous (no implicature exists)
+Exact theory: Operations are anomalous (no implicature exists)
 
 ## References
 
@@ -78,9 +78,9 @@ For numerals, this means:
 - There must be a stronger alternative on the scale
 
 Lower-bound semantics: Operations are felicitous (ambiguity exists)
-DeFregean semantics: Operations are infelicitous (no ambiguity)
+Exact semantics: Operations are infelicitous (no ambiguity)
 -/
-def operationFelicitous (T : NumeralTheory) (w : NumWord) (_op : ImplicatureOperation) : Bool :=
+def operationFelicitous (T : NumeralTheory) (w : BareNumeral) (_op : ImplicatureOperation) : Bool :=
   -- Need ambiguity (multiple compatible worlds)
   T.hasAmbiguity w
   &&
@@ -95,7 +95,7 @@ def operationFelicitous (T : NumeralTheory) (w : NumWord) (_op : ImplicatureOper
 /--
 Simplified check: is there an implicature to operate on?
 -/
-def hasImplicatureTarget (T : NumeralTheory) (w : NumWord) : Bool :=
+def hasImplicatureTarget (T : NumeralTheory) (w : BareNumeral) : Bool :=
   T.hasAmbiguity w
 
 -- Example Sentences (Horn 1972, §1.73)
@@ -109,7 +109,7 @@ These follow Horn's pattern from (1.73):
 - Suspend: "at least two" / "two if not three" / "two or more"
 -/
 structure OperationExamples where
-  numeral : NumWord
+  numeral : BareNumeral
   assertExamples : List String
   contradictExamples : List String
   suspendExamples : List String
@@ -148,15 +148,15 @@ theorem lowerBound_operations_felicitous :
   native_decide
 
 /--
-**DeFregean predicts infelicitous operations**
+**Exact predicts infelicitous operations**
 
 Since "two" means =2, it's only compatible with world 2.
 No ambiguity → no implicature → nothing to operate on.
 -/
 theorem exact_operations_infelicitous :
-    operationFelicitous DeFregean .two .assert = false ∧
-    operationFelicitous DeFregean .two .contradict = false ∧
-    operationFelicitous DeFregean .two .suspend = false := by
+    operationFelicitous Exact .two .assert = false ∧
+    operationFelicitous Exact .two .contradict = false ∧
+    operationFelicitous Exact .two .suspend = false := by
   native_decide
 
 /--
@@ -169,7 +169,7 @@ Empirically, these ARE felicitous → supports Lower-bound.
 -/
 theorem operation_felicity_differs :
     hasImplicatureTarget LowerBound .two = true ∧
-    hasImplicatureTarget DeFregean .two = false := by
+    hasImplicatureTarget Exact .two = false := by
   native_decide
 
 -- Suspension Asymmetry
@@ -183,7 +183,7 @@ IMPLICATES =2. "At least" suspends the implicature.
 In exact semantics, "at least two" would be contradictory or meaningless
 since "two" already means exactly 2.
 -/
-def suspensionNonRedundant (T : NumeralTheory) (w : NumWord) : Bool :=
+def suspensionNonRedundant (T : NumeralTheory) (w : BareNumeral) : Bool :=
   -- Suspension is non-redundant iff there's something to suspend
   T.compatibleCount w > 1
 
@@ -192,7 +192,7 @@ theorem lowerBound_suspension_nonRedundant :
   native_decide
 
 theorem exact_suspension_redundant :
-    suspensionNonRedundant DeFregean .two = false := by
+    suspensionNonRedundant Exact .two = false := by
   native_decide
 
 -- Reinforcement Analysis (Horn 1972, §1.22)
@@ -207,7 +207,7 @@ Contrast with contradiction:
 - "I have two children and I don't have all the children" (odd - "all" not implicated)
 - "I have two children and I don't have three" (fine - "three" IS implicated)
 -/
-def reinforcementNonRedundant (T : NumeralTheory) (w : NumWord) : Bool :=
+def reinforcementNonRedundant (T : NumeralTheory) (w : BareNumeral) : Bool :=
   -- Reinforcement ("just n") is non-redundant if there's an implicature
   T.hasAmbiguity w
 
@@ -216,7 +216,7 @@ theorem lowerBound_reinforcement_nonRedundant :
   native_decide
 
 theorem exact_reinforcement_redundant :
-    reinforcementNonRedundant DeFregean .two = false := by
+    reinforcementNonRedundant Exact .two = false := by
   native_decide
 
 -- Conjunction Redundancy Test (Horn 1972)
@@ -234,16 +234,16 @@ For numerals:
 -/
 structure ConjunctionTest where
   /-- The base numeral -/
-  base : NumWord
+  base : BareNumeral
   /-- The continuation numeral -/
-  continuation : NumWord
+  continuation : BareNumeral
   /-- Is "base, in fact continuation" felicitous? -/
   felicitous : Bool
 
 /--
 Upward continuation is felicitous (cancels implicature).
 -/
-def upwardContinuation (T : NumeralTheory) (base stronger : NumWord) : Bool :=
+def upwardContinuation (T : NumeralTheory) (base stronger : BareNumeral) : Bool :=
   -- "n, in fact m" where m > n is felicitous iff m was NOT entailed
   -- In lower-bound: "two" doesn't entail "three", so this is fine
   -- We need: base is true at stronger's value, but stronger is "more informative"
@@ -252,7 +252,7 @@ def upwardContinuation (T : NumeralTheory) (base stronger : NumWord) : Bool :=
 /--
 Downward continuation is infelicitous (contradicts assertion).
 -/
-def downwardContinuation (T : NumeralTheory) (base weaker : NumWord) : Bool :=
+def downwardContinuation (T : NumeralTheory) (base weaker : BareNumeral) : Bool :=
   -- "n, in fact m" where m < n is infelicitous iff m contradicts n
   -- In lower-bound: "two" means ≥2, so "in fact one" contradicts
   -- This should be false for well-formed utterances
@@ -288,7 +288,7 @@ theorem operations_support_rsa_with_lowerBound :
     -- Operations targeting the implicature are felicitous
     operationFelicitous LowerBound .two .suspend = true ∧
     -- This pattern is impossible with exact semantics
-    (DeFregean.hasAmbiguity .two = false ∧ operationFelicitous DeFregean .two .suspend = false) := by
+    (Exact.hasAmbiguity .two = false ∧ operationFelicitous Exact .two .suspend = false) := by
   native_decide
 
 -- Summary
@@ -296,7 +296,7 @@ theorem operations_support_rsa_with_lowerBound :
 /--
 **Summary: Implicature Operations Distinguish the Theories**
 
-| Operation  | Lower-bound | DeFregean      |
+| Operation  | Lower-bound | Exact      |
 |------------|-------------|------------|
 | Assert     | Felicitous  | Anomalous  |
 | Contradict | Felicitous  | Anomalous  |
@@ -311,10 +311,10 @@ theorem operations_summary :
      operationFelicitous LowerBound .two .contradict = true ∧
      operationFelicitous LowerBound .two .suspend = true)
     ∧
-    -- No operations felicitous for DeFregean
-    (operationFelicitous DeFregean .two .assert = false ∧
-     operationFelicitous DeFregean .two .contradict = false ∧
-     operationFelicitous DeFregean .two .suspend = false) := by
+    -- No operations felicitous for Exact
+    (operationFelicitous Exact .two .assert = false ∧
+     operationFelicitous Exact .two .contradict = false ∧
+     operationFelicitous Exact .two .suspend = false) := by
   native_decide
 
 end NeoGricean

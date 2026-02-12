@@ -165,6 +165,7 @@ import Linglib.Phenomena.Islands.Data
 import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
 import Linglib.Phenomena.NumeralModification.ClausWalch2024
+import Linglib.Phenomena.NumeralModification.Embedding
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
@@ -418,6 +419,7 @@ import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.TruthConditional.Derivation.Scope
 import Linglib.Theories.TruthConditional.Derivation.TruthConditions
 import Linglib.Theories.TruthConditional.Determiner.Demonstrative.AhnZhu2025
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Embedding
 import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
 import Linglib.Theories.TruthConditional.Determiner.Definite
 import Linglib.Theories.TruthConditional.Determiner.Quantifier

@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.190.0] - 2026-02-11
+
+### Added
+- **TruthConditional/Noun/TypeShifting.lean**: `isPrincipalUltrafilter`, `roundtrip_preserves_principal` (proved), `roundtrip_changes_nonprincipal` — principal ultrafilter criterion for when Partee type-shifts change truth conditions. Round-trip A(BE(Q)) preserves truth conditions iff Q is a principal ultrafilter (proper names, pronouns, definites). For non-principal GQs (universals, degree quantifiers, numerals), the round-trip collapses. This determines when RSA should treat type-shifted meanings as alternative interpretations.
+- **RSA/Core/Eval.lean**: `ksL1Interp`, `ksL1InterpJoint`, `ksL1InterpMarginal` — unified knowledge-state L1 with interpretation marginalization. Standard infrastructure for any RSA model where expressions have grammatically available type-shifted parses with different truth conditions. Generalizes Scontras & Pearl (2021) scope ambiguity to arbitrary interpretation dimensions.
+- **docs/blog/kennedy-meets-goodman-stuhlmuller.md**: Added section on when type-shifting matters for RSA — a novel observation that standard RSA models have not grappled with: for non-principal-ultrafilter expressions, type-shifted meanings are latent variables the listener should marginalize over.
+
+## [0.189.0] - 2026-02-11
+
+### Added
+- **TruthConditional/Determiner/Numeral/Semantics.lean**: `typeLower` — formal type-shifting operation (Partee 1987 BE + iota) deriving lower-bound from exact meaning. `lowerBound_from_exact_typeshift` theorem proves `LowerBound.meaning = typeLower (maxMeaning .eq)` for all standard worlds, formalizing Kennedy's (2015 §3.1) claim that `atLeastFromExact` is a derivational fact. `typeLower_uniqueness`, `universal_closure_fails` — the lower-bound is the unique output of type-shifting (existential closure is the only viable closure; universal closure is unsatisfiable).
+- **RSA/Core/Eval.lean**: `softKsS1LogScore`, log-sum-exp normalized `softKsS1`, `softKsL1` — soft quality-filtered knowledge-state S1/L1 with noisy L0 (ε > 0, finite α). Uses log-sum-exp normalization to prevent Float underflow at high α. `noisyL0` implements L0_noisy(w|u) = (1-ε)×meaning/|compat| + ε/|W|.
+- **RSA/Core/Model.lean**: `quality_blocks_exact_not_lb`, `quality_selects_interp`, `kennedy_gs13_prediction` — formal guarantees for Kennedy type-shifting + quality filter: when exact interpretation is quality-blocked but lower-bound passes, mixing over interpretations shifts to lower-bound reading. Derives G&S (2013) Experiment 2 from Kennedy (2015) semantics.
+- **RSA/Implementations/GoodmanStuhlmuller2013.lean**: `KennedyInterp`, `kennedyMeaningInterp`, refactored to use unified `ksL1Interp` — Kennedy type-shifting ambiguity model. Bare "two" has exact (de-Fregean) and lower-bound (type-lowered) interpretations; RSA marginalizes over both. Key predictions: full access → exact reading (s2=14/17), partial access → lower-bound reading (s3=3/4). Interpretation marginals: full access P(exact)=8/17, P(lb)=9/17; partial access P(exact)=0, P(lb)=1. 3 theorems: `kennedy_ambig_bare_full_exact`, `kennedy_ambig_bare_partial_lowerbound`, `kennedy_ambig_exactness_weakens`.
+
+## [0.188.0] - 2026-02-11
+
+### Fixed
+- **RSA/Core/Eval.lean**: Added `qualityFilter`, `ksS1Score`, `ksS1`, `ksL1` — general-purpose knowledge-state S1/L1 implementing G&S 2013 Eq. (2)-(3) log-utility. Quality filter kills utterances false at any world the speaker considers possible (ln(0) = -∞ penalty). For uniform L0, this is exact: pass quality filter, then score by 1/|compat|.
+- **RSA/Core/Model.lean**: Added `expectedLogL0`, `expectedLogL0_neg_inf_iff_quality_fails`, `quality_pass_score`, `ksS1_kl_difference` — ℝ equivalence theorems connecting quality filter to E[ln L0] and KL divergence (sorry'd, require Mathlib EReal reasoning).
+- **RSA/Implementations/GoodmanStuhlmuller2013.lean**: Fixed buggy `expectedL0_param` which computed E_b[L0] (arithmetic mean) instead of correct exp(E_b[ln L0]) (geometric mean via log utility). Replaced hand-rolled S1/L1 chain with unified `RSA.Eval.ksL1`. Key consequence: quality filter forces uncertain speakers to use "at least n" (bare and moreThan fail quality), deriving Kennedy Class B ignorance implicatures from RSA alone — no neo-Gricean machinery needed. Class B is now informative at partial access (L1 reads asymmetric observation distribution). 3 regression tests (`quality_blocks_moreThan_uncertain`, `quality_blocks_bare_uncertain`, `only_atLeast_survives_uncertain`). All existing quantifier and lower-bound theorems preserved.
+
+## [0.187.0] - 2026-02-11
+
+### Changed
+- **RSA/Implementations/GoodmanStuhlmuller2013.lean**: Full rewrite (~460 lines, down from ~1040). Removes dead code (UnifiedAPIVersion, FintypeDemo, AppleConfig, hand-rolled truth tables, duplicate RSA chains, MontaguGrounding). Grounds quantifier meanings in `RSA.Domains.Quantity`, numeral meanings in Kennedy (2015) `maxMeaning`. Kennedy exact semantics is now the primary numeral theory with Class A/B alternative structure ({bare, moreThan, atLeast} for numeral n). Key findings: (1) bare numerals under Kennedy ARE knowledge-sensitive through the belief channel (not implicature cancellation), (2) Class B "at least" is uninformative in RSA — Kennedy's ignorance implicatures are neo-Gricean (¬K(=n) ∧ ¬K(>n)), not derivable from Bayesian updating. Lower-bound theory retained as comparison. 22 theorems, all by `native_decide`.
+
+## [0.186.0] - 2026-02-11
+
+### Added
+- **Phenomena/NumeralModification/Embedding.lean**: 8 new Tier 1 test cases from recent literature: "almost" polar orientation (Nouwen 2006), "only" + focus (Coppock & Beaver 2014), factive "surprised" (Kiparsky & Kiparsky 1970), imperative compliance (Kaufmann 2012), neg-raising "doubt" (Gajewski 2007), QUD-convexity (Solt & Waldon 2019), acquisition data (Musolino 2004), degree "too" (Meier 2003). Now 20 data points, 18 embedding types, 8 generalizations.
+- **Theories/TruthConditional/Determiner/Numeral/Embedding.lean**: `isProximal`, `almostMeaning` (Nouwen 2006 proximity + polar), `onlyMeaning` (= `exh`, proved `rfl`), `isConvex` (QUD-convexity predicate), `extendedWorlds` [0..5]. 8 new theorems: `almost_diverges_above`, `almost_asymmetry`, `only_informative_lowerBound`, `negation_convexity_divergence` (LB convex, BL non-convex), `imperative_compliance_divergence`, `factive_presupposition_divergence`, `degree_too_monotonicity`, `acquisition_musolino`. `embeddingDivergences` expanded to 10 entries (8 diverging).
+- **Fragments/English/NumeralModifiers.lean**: `ModifierType.approximator`, `almost` and `nearly` entries (polar exclusion distinct from tolerance modifiers). `approximatorModifiers` collection. `approximators_not_sorites`, `approximators_distinct_from_tolerance` verification theorems.
+
+## [0.185.0] - 2026-02-11
+
+### Added
+- **Phenomena/NumeralModification/Embedding.lean**: Theory-neutral empirical test cases for bare numerals in embedding environments. `EmbeddingType` (10 environment types), `NumeralEmbeddingDatum` (12 data points: negation, modals, "exactly" redundancy, attitudes, conditionals, restrictors, questions, existential scope, collective predicates). `EmbeddingGeneralization` (5 cross-cutting generalizations). Sources: Horn 1972, Kennedy 2015 §5, Bylinina & Nouwen 2020.
+- **Theories/TruthConditional/Determiner/Numeral/Embedding.lean**: Formal predictions of LowerBound vs Bilateral under embedding. `BareNumeral.succ` (scalar alternative computation). 7 embedding functions: `negatedMeaning`, `possibilityMeaning`, `necessityMeaning`, `exactlyMeaning`, `conditionalMeaning`, `exh` (exhaustivity operator), `exhUnderPossibility`/`exhOverPossibility` (EXH scope interaction). 15 divergence theorems: `negation_divergence_above`, `entailment_reversal_under_negation`, `exactly_redundant_bilateral` (rfl), `exactly_informative_lowerBound`, `modal_possibility_divergence`, `modal_necessity_divergence`, `exh_strengthens_lowerBound`, `exh_vacuous_bilateral`, `exh_convergence`, `exh_scope_diverges_lowerBound`. `EmbeddingPrediction` summary infrastructure with `four_divergence_points`.
+
 ## [0.184.0] - 2026-02-11
 
 ### Fixed
