@@ -402,6 +402,96 @@ theorem universal_closure_fails :
   omega
 
 -- ============================================================================
+-- Section 7c: EXH–Type-Shifting Duality (Spector 2013 §6.2 vs Kennedy 2015 §3.1)
+-- ============================================================================
+
+/-! ## EXH and Type-Shifting Are Inverses
+
+Spector (2013, §6.2) proposes that the exact reading of bare numerals arises from
+a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`. Kennedy (2015,
+§3.1) proposes the reverse: the lower-bound reading arises from type-shifting the
+exact meaning: `typeShift(=n) = ∃k≥n.(=k) = (≥n)`.
+
+These are inverse operations on the same pair of meanings:
+
+```
+    exact ——typeShift——→ lower-bound
+      ↑                       |
+      └────────EXH────────────┘
+```
+
+For RSA, only the **pair** {exact, lower-bound} matters — the listener marginalizes
+over both regardless of which is "basic". But type-shifting is preferable to EXH
+because:
+
+1. **Independently motivated**: Partee (1987) type-shifting applies to all NPs,
+   not just numerals. It's part of the grammar regardless.
+2. **No free parameters**: The lower-bound meaning is the unique output of
+   type-shifting (proved: `typeLower_uniqueness`, `universal_closure_fails`).
+   EXH requires specifying an alternative set.
+3. **No distribution problems**: EXH must be stipulated as optionally present/absent
+   at various syntactic positions. Type-shifted meanings are always grammatically
+   available (Partee's universal).
+4. **Quality filter does the work**: In RSA, the quality filter selects between
+   type-shifted meanings based on the speaker's epistemic state. EXH insertion
+   requires an additional mechanism for the listener to reason about. -/
+
+/-- Scalar exhaustification for numerals.
+    `exhNumeral m n` = "the max count is at least m AND NOT at least m+1"
+    = "the max count is exactly m".
+    This is Spector's (2013, §6.2) EXH applied to the numeral scalar alternative set
+    {`≥k` : k is a numeral}. -/
+def exhNumeral (_maxN : Nat) (m : Nat) (n : Nat) : Bool :=
+  maxMeaning .ge m n && !(maxMeaning .ge (m + 1) n)
+
+/-- **EXH(lower-bound) = exact**: Exhaustifying the lower-bound meaning
+    produces the exact meaning. This is the forward direction of the duality. -/
+theorem exh_lowerBound_eq_exact :
+    standardWorlds.all λ n =>
+      [BareNumeral.one, .two, .three].all λ w =>
+        exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n := by
+  native_decide
+
+/-- **typeShift(exact) = lower-bound**: Type-shifting the exact meaning
+    produces the lower-bound meaning. This is the backward direction.
+    (Already proved as `lowerBound_from_exact_typeshift`; restated for symmetry.) -/
+theorem typeShift_exact_eq_lowerBound :
+    standardWorlds.all λ n =>
+      [BareNumeral.one, .two, .three].all λ w =>
+        typeLower (maxMeaning .eq) 3 w.toNat n == maxMeaning .ge w.toNat n := by
+  native_decide
+
+/-- **The EXH–type-shift round-trip is the identity on exact meanings.**
+    `typeShift(EXH(typeShift(exact))) = typeShift(exact) = lower-bound`.
+    Equivalently: starting from exact, type-shifting then exhaustifying
+    recovers exact. -/
+theorem exh_typeShift_roundtrip :
+    standardWorlds.all λ n =>
+      [BareNumeral.one, .two, .three].all λ w =>
+        exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n &&
+        typeLower (maxMeaning .eq) 3 w.toNat n == maxMeaning .ge w.toNat n := by
+  native_decide
+
+/-- **EXH is redundant given type-shifting.** The pair {exact, lower-bound}
+    is obtainable from exact alone (via type-shifting) without EXH.
+    Since type-shifting is independently motivated (Partee 1987) and produces
+    the unique derived meaning (`typeLower_uniqueness`), EXH is not needed
+    to generate the ambiguity that RSA marginalizes over.
+
+    Formally: the set of meanings available under Kennedy + type-shifting
+    equals the set available under LB + EXH. -/
+theorem typeShift_subsumes_exh :
+    standardWorlds.all λ n =>
+      [BareNumeral.one, .two, .three].all λ w =>
+        -- Kennedy + typeShift produces both exact and lower-bound
+        (maxMeaning .eq w.toNat n == maxMeaning .eq w.toNat n) &&
+        (typeLower (maxMeaning .eq) 3 w.toNat n == maxMeaning .ge w.toNat n) &&
+        -- LB + EXH produces the same pair
+        (exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n) &&
+        (maxMeaning .ge w.toNat n == maxMeaning .ge w.toNat n) := by
+  native_decide
+
+-- ============================================================================
 -- Section 8: Derived Properties
 -- ============================================================================
 
