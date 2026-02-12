@@ -179,6 +179,7 @@ inductive ConstraintType where
   | coordinate        -- Coordination blocks asymmetric dependency
   | subject           -- Subject position blocks dependency
   | sententialSubject -- Sentential subject blocks dependency
+  | mannerOfSpeaking  -- MoS verb complement backgrounds content (Lu, Pan & Degen 2025)
   deriving Repr, DecidableEq
 
 /-- Constraint strength classification (Szabolcsi 2006) -/
@@ -195,6 +196,41 @@ def constraintStrength : ConstraintType → ConstraintStrength
   | .coordinate => .strong          -- Strong (but ATB pattern ok)
   | .subject => .weak               -- Varies cross-linguistically
   | .sententialSubject => .strong
+  | .mannerOfSpeaking => .weak      -- Ameliorated by prosodic focus (Lu et al. 2025)
+
+/-- Source of an island constraint: what mechanism produces it.
+Distinguishes structural accounts (subjacency), processing accounts
+(memory load), and discourse accounts (information structure). -/
+inductive IslandSource where
+  /-- Syntactic: island follows from structural configuration (Ross 1967, Chomsky 1973) -/
+  | syntactic
+  /-- Processing: island is an artifact of memory/retrieval difficulty (Hofmeister & Sag 2010) -/
+  | processing
+  /-- Discourse: island arises from information-structural backgroundedness (Goldberg 2006, 2013;
+  Lu, Pan & Degen 2025) -/
+  | discourse
+  deriving Repr, DecidableEq, BEq
+
+/-- Classification of island constraints by source.
+Traditional islands are syntactic; MoS islands are discourse-based.
+Note: this classification is itself debated — Hofmeister & Sag (2010) argue that many
+"syntactic" islands are actually processing-based. See `Comparisons/Islands.lean`. -/
+def constraintSource : ConstraintType → IslandSource
+  | .embeddedQuestion  => .syntactic  -- but see H&S 2010 for processing account
+  | .complexNP         => .syntactic  -- but see H&S 2010 for processing account
+  | .adjunct           => .syntactic
+  | .coordinate        => .syntactic
+  | .subject           => .syntactic
+  | .sententialSubject => .syntactic
+  | .mannerOfSpeaking  => .discourse  -- Lu, Pan & Degen 2025
+
+/-- MoS islands are the only discourse-sourced island type currently formalized. -/
+theorem mos_is_discourse_island :
+    constraintSource .mannerOfSpeaking = .discourse := rfl
+
+/-- MoS islands are weak (ameliorable). -/
+theorem mos_is_weak :
+    constraintStrength .mannerOfSpeaking = .weak := rfl
 
 -- ============================================================================
 -- Processing Factors (Hofmeister & Sag 2010, §3)

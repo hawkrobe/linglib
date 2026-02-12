@@ -30,12 +30,16 @@ private def word_mary : Word := ⟨"Mary", .DET, { number := some .sg, person :=
 private def word_sleeps : Word := ⟨"sleeps", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 private def word_laughs : Word := ⟨"laughs", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 
-/-- Scale membership position -/
+/-- Scale membership position for closed-class expressions.
+
+Numerals are excluded: under lower-bound semantics they form an infinite
+scale (not representable as a finite `HornScale`), and under bilateral
+semantics they don't form a scale at all (Kennedy 2015). See
+`Theories/TruthConditional/Determiner/Numeral/Semantics.lean`. -/
 inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)
   | connective (pos : Connectives.ConnExpr)
   | modal (pos : Modals.ModalExpr)
-  | numeral (pos : Numerals.NumExpr)
   deriving Repr
 
 /-- Semantic lexical entry -/
@@ -65,13 +69,6 @@ def SemLexEntry.strongerAlternatives {m : Model} (e : SemLexEntry m) : List Stri
     (Core.Scales.strongerAlternatives Modals.modalScale pos).map λ
       | .possible => "might"
       | .necessary => "must"
-  | some (.numeral pos) =>
-    (Core.Scales.strongerAlternatives Numerals.numScale pos).map λ
-      | .one => "one"
-      | .two => "two"
-      | .three => "three"
-      | .four => "four"
-      | .five => "five"
 
 open ToyEntity
 open ToyLexicon

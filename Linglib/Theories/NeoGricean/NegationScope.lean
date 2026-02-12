@@ -30,8 +30,7 @@ With exact semantics, the asymmetry is unexplained:
 - Jespersen, O. (1917). Negation in English and Other Languages.
 -/
 
-import Linglib.Theories.TruthConditional.Determiner.Numeral.LowerBound
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Bilateral
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
 
 open TruthConditional.Determiner.Numeral
 

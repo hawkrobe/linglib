@@ -38,6 +38,7 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.NounCategorization
+import Linglib.Core.Roundness
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -72,6 +73,7 @@ import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
+import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Basque.Pronouns
@@ -102,6 +104,7 @@ import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
+import Linglib.Phenomena.ArgumentativeFraming.Data
 import Linglib.Phenomena.ActualityInferences.Data
 import Linglib.Phenomena.Aspect.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
@@ -155,10 +158,13 @@ import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
 import Linglib.Phenomena.Imprecision.InferencePreservation
 import Linglib.Phenomena.Imprecision.Numerals
+import Linglib.Phenomena.NumberUse.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Projection
 import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
+import Linglib.Phenomena.NumeralModification.ClausWalch2024
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
@@ -191,7 +197,9 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
+import Linglib.Phenomena.OutlookMarkers.Kubota2026
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.PersonMarkingTypology
 import Linglib.Phenomena.Quantification.Basic
@@ -234,6 +242,7 @@ import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
+import Linglib.Phenomena.WeakEvidenceEffect.Data
 
 -- Theories: CCG
 import Linglib.Theories.CCG.Core.Basic
@@ -273,6 +282,7 @@ import Linglib.Comparisons.Islands
 import Linglib.Comparisons.ScopeFreezing
 import Linglib.Comparisons.SDSandRSA
 import Linglib.Comparisons.Mueller2013
+import Linglib.Comparisons.NumeralSalience
 import Linglib.Comparisons.ThresholdSemantics
 import Linglib.Comparisons.ResultativeArgLicensing
 
@@ -408,14 +418,12 @@ import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.TruthConditional.Derivation.Scope
 import Linglib.Theories.TruthConditional.Derivation.TruthConditions
 import Linglib.Theories.TruthConditional.Determiner.Demonstrative.AhnZhu2025
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Bilateral
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Compare
-import Linglib.Theories.TruthConditional.Determiner.Numeral.LowerBound
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Theory
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
 import Linglib.Theories.TruthConditional.Determiner.Definite
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
 import Linglib.Theories.TruthConditional.Domain.Degree
 import Linglib.Theories.TruthConditional.Expressives.Basic
+import Linglib.Theories.TruthConditional.Expressives.OutlookMarker
 import Linglib.Theories.TruthConditional.Frames.Basic
 import Linglib.Theories.TruthConditional.Graded.BayesianSemantics
 import Linglib.Theories.TruthConditional.Graded.GradedProposition
@@ -441,6 +449,7 @@ import Linglib.Theories.TruthConditional.Sentence.Entailment.PolarityBuilder
 import Linglib.Theories.TruthConditional.Sentence.Entailment.PresuppositionPolarity
 import Linglib.Theories.TruthConditional.Sentence.Entailment.ScaleInteraction
 import Linglib.Theories.TruthConditional.Sentence.Entailment.StrawsonEntailment
+import Linglib.Theories.TruthConditional.Sentence.Focus.BackgroundedIslands
 import Linglib.Theories.TruthConditional.Sentence.Focus.DomainWidening
 import Linglib.Theories.TruthConditional.Sentence.Focus.Interpretation
 import Linglib.Theories.TruthConditional.Sentence.Focus.Particles
@@ -559,6 +568,8 @@ import Linglib.Theories.NeoGricean.Implementations.Spector2007
 import Linglib.Theories.NeoGricean.NegationScope
 import Linglib.Theories.NeoGricean.Presuppositions
 import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.NeoGricean.Constraints.NumericalExpressions
+import Linglib.Theories.NeoGricean.Constraints.Wang2025
 import Linglib.Theories.NeoGricean.ScalarImplicatures.Operations
 
 -- Theories: RSA
@@ -586,6 +597,8 @@ import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.RSA.Domains.QUD
 import Linglib.Theories.RSA.Domains.ReferenceGames
 import Linglib.Theories.RSA.Domains.Scope
+import Linglib.Theories.RSA.Extensions.ArgumentativeStrength
+import Linglib.Theories.RSA.Extensions.NoncooperativeCommunication
 import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.RSA.Extensions.InformationTheory.PhaseTransition
 import Linglib.Theories.RSA.Extensions.InformationTheory.RateDistortion
@@ -594,11 +607,13 @@ import Linglib.Theories.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Compositional
 import Linglib.Theories.RSA.Implementations.Alsop2024
+import Linglib.Theories.RSA.Implementations.BarnettEtAl2022
 import Linglib.Theories.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.RSA.Implementations.BergenGoodman2015
 import Linglib.Theories.RSA.Implementations.CausalCorrelation
 import Linglib.Theories.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.RSA.Implementations.CremersWilcoxSpector2023
+import Linglib.Theories.RSA.Implementations.CumminsFranke2021
 import Linglib.Theories.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.RSA.Implementations.Franke2011
 import Linglib.Theories.RSA.Implementations.FrankeBergen2020

@@ -1,5 +1,115 @@
 # Changelog
 
+## [0.184.0] - 2026-02-11
+
+### Fixed
+- **NeoGricean/Exhaustivity/Basic.lean**: Removed false `exhMX_unique_when_closed` (claimed all exhMX readings equivalent under conjunction closure — counterexample: ALT with distinct MC-sets under ∧-closure). Replaced with correct `exhOperators_coincide_under_closure` (exhIE = ⋁ readings, combining theorem9 + lemma3, fully proved) and `exhMX_unique_when_unique_MCset` (readings equivalent when MC-set is unique, trivially proved). `flat_singleton` and `flat_empty` fully proved (no sorry) via propext + funext.
+
+## [0.183.0] - 2026-02-11
+
+### Fixed
+- **NeoGricean/Exhaustivity/Basic.lean**: Replaced incorrectly stated `exhIE_eq_bigConj_exhMX` (claimed exhIE ≡ₚ ⋀ readings, but forward direction is false when MC-sets diverge) with `bigConj_exhMX_entails_exhIE` — correct one-directional entailment, fully proved (no sorry). FLAT operator upgraded from List-based to Set-based definition using total choice functions.
+- **NeoGricean/Constraints/Wang2025.lean**: Replaced vacuous `IC_violation_always_blocks` (concluded `¬P ∨ True`, trivially true by `right; trivial`) with meaningful theorem proving IC violation forces `.odd` status via `wangCheck`. Extracted `wangCheck` as named function for provability.
+- **Phenomena/Presupposition/Studies/Wang2025.lean**: Renamed `ContextCondition.partial_` (Lean keyword collision hack) to `ContextCondition.partialSupport`.
+
+## [0.182.0] - 2026-02-11
+
+### Added
+- **NeoGricean/Exhaustivity/Basic.lean**: `exhMX` operator (Wang 2025) — per-MC-set exhaustification completing the Spector triad. `exhMXReading`, `exhMXReadings`, `bigConj_exhMX_entails_exhIE` (⋀ readings ⊆ₚ exh_ie), `exhMW_eq_bigDisj_exhMX` (exh_mw = ⋁ exh_mx readings), `exhMXReading_entails_exhIE`, `exhMX_unique_when_closed`. FLAT operator: `flat`, `flat_singleton`, `flat_empty`.
+- **NeoGricean/Presuppositions.lean**: Wang (2025) Table 4.1 alternative structure classification. `AltStructure` (.deletion/.replacement/.none), `PragConstraint` (.IC/.FP/.MP) with `isViolable`, `constraintRanking`, `Obligatoriness` (.obligatory/.optional/.blocked), `PresupTriggerEntry`, `PresupTrigger.defaultAltStructure`.
+- **NeoGricean/Constraints/Wang2025.lean**: Full constraint evaluation module. `satisfiesIC`, `satisfiesFP`, `partialFP`, `mpPrefers`, `wangCheck`, `predictObligatoriness`. Key theorems: `deletion_alt_partial_resolution`, `no_alt_blocked_partial`, `full_cg_obligatory`, `no_cg_blocks`, `IC_violation_always_blocks`. K operator: `speakerK`. `FelicityCondition` instance for `WangInput`. CI bridge: `ciLift_felicitous_when_fp_holds`.
+- **TruthConditional/Expressives/Basic.lean**: CI bifurcation for de re presupposition (Wang & Buccola 2025). `ciLift` (PrProp → TwoDimProp bridge), `ciLift_atIssue`, `ciLift_ci`, `deRe_from_ciLift`, `ciLift_neg_preserves_presup`, `ciLift_roundtrip`.
+- **Phenomena/Presupposition/Studies/Wang2025.lean**: Experimental data. `ContextCondition` (.full/.partialSupport/.noSupport), `MandarinTrigger` (9 triggers), `Exp1Datum` (naturalness ratings), `Exp3Datum` (de re judgments). Key data: `ye_full/partial/none`, `jiu_full/partial/none`, `zhidao_full/partial/none`. Theorems: `ye_jiu_partial_diverge`, `obligatory_trigger_pattern`, `blocked_trigger_pattern`, `additive_deRe_available`.
+- **Fragments/Mandarin/Particles.lean**: 9 Mandarin presuppositional particle entries. `PresupParticle` structure linking hanzi/pinyin/gloss to `PresupTriggerEntry` and `MandarinTrigger`. Per-datum verification: `ye_deletion`, `jiu_no_alt`, `zhidao_replacement`, `obligatory_all_deletion`, `blocked_no_alt`.
+
+## [0.181.0] - 2026-02-11
+
+### Changed
+- **Core/Scales.lean**: Removed `NumExpr`, `numScaleLowerBound`, `NumeralAlternativeKind`, `numAlternatives` — numerals don't fit `HornScale` (infinite under lower-bound, non-monotonic under bilateral). Added docstring explaining why. Numeral alternative infrastructure lives in `Semantics.lean` (`NumeralAlternative`, `NumeralTheory.isStrongerThan`).
+- **Lexicon.lean**: Removed `ScaleMembership.numeral` constructor. `ScaleMembership` now covers only closed-class scales (quantifiers, connectives, modals).
+- **NeoGricean/ScalarImplicatures/Basic.lean**: Removed `.numeral` case from `getScaleInfo`.
+
+## [0.180.0] - 2026-02-11
+
+### Changed
+- **Numeral type unification & file consolidation**: Consolidated 5 files (`Theory.lean`, `LowerBound.lean`, `Bilateral.lean`, `Maximality.lean`, `Compare.lean`) into single `Semantics.lean`. `NumeralTheory` now parameterized by `bareRel : OrderingRel` (`.ge` for lower-bound, `.eq` for bilateral) instead of arbitrary `meaning` function — all numeral meanings flow through `maxMeaning rel m n`. Theory instances are one-liners. Grounding theorems (`atLeast_eq_lowerBound`, `bare_eq_bilateral`) become `rfl`. `BareNumeral` replaces duplicate `NumWord` type. Backward-compat aliases (`NumWord`, `DeFregean`, `Exact`, `lowerBoundMeaning`, `bilateralMeaning`) preserve all consumer APIs.
+- **CumminsFranke2021.lean**: Removed local `moreThanMeaning` definition, now uses canonical one from `Semantics.lean`. Grounding theorems rewritten against unified `maxMeaning`.
+- **NumeralModifiers.lean**: Import updated from `Maximality` to `Semantics`.
+- **NegationScope.lean**, **Operations.lean**, **GoodmanStuhlmuller2013.lean**: Import updates only.
+
+### Removed
+- `Theory.lean`, `LowerBound.lean`, `Bilateral.lean`, `Maximality.lean`, `Compare.lean` — all content consolidated into `Semantics.lean`.
+
+## [0.179.0] - 2026-02-11
+
+### Added
+- **Maximality.lean**: Kennedy (2015) unified modified numeral semantics. `OrderingRel` (=, >, <, ≥, ≤), `ModifierClass` (.classA/.classB), `BoundDirection` (.upper/.lower), `maxMeaning` (unified meaning function for all numeral expressions). Named specializations: `bareMeaning`, `moreThanMeaning`, `fewerThanMeaning`, `atLeastMeaning`, `atMostMeaning`. Grounding theorems: `bare_eq_bilateral_{one,two,three}` (= bilateral), `atLeast_eq_lowerBound_{one,two,three}` (≥ = lower-bound), `moreThan_eq_cumminsFranke` (> = C&F). Class A/B theorems: `classA_gt_excludes_bare`, `classB_ge_includes_bare`, `classB_entailed_by_bare`, `classA_not_entailed_by_bare`. Anti-Horn-scale: `bare_not_monotonic`, `numerals_not_horn_scalar`. `CardinalityDegree` HasDegree instance, `maxMeaning_{gt,ge}_from_degree`. `NumeralAlternative`, `lowerAlternatives`, `upperAlternatives`.
+- **ClausWalch2024.lean**: Empirical data on evaluative valence framing effects. `Modifier` (.exactly/.atMost/.upTo), `FramingCondition` (.standard/.reversed), `Exp1Datum` (truth-value judgments), `Exp2Datum` (framing endorsement rates). Key theorems: `atMost_reverses_framing`, `upTo_standard_framing`, `exactly_standard_framing`, `atMost_upTo_diverge`.
+
+### Changed
+- **NumeralModifiers.lean**: Added `ModifierType.bound`, `PragmaticFunction.boundSignal`, `EvaluativeValence` (.positive/.negative/.neutral). Extended `NumeralModifierEntry` with `boundDir`, `modClass`, `evaluativeValence`, `generatesIgnorance` (all with defaults). 6 new entries: `atLeast`, `atMost`, `moreThan`, `fewerThan`, `upTo`, `fromOn`. Collections: `boundModifiers`, `classAModifiers`, `classBModifiers`. Theorems: `classB_all_generate_ignorance`, `classA_no_ignorance`, `atMost_upTo_differ_only_in_valence`. Now imports Maximality.lean.
+- **Compare.lean**: Now imports Maximality.lean (transitively gets LowerBound + Bilateral). Added `classA_classB_diverge_on_bare_world`, `classB_strictly_weaker_than_bare`, `moreThan_eq_cumminsFranke_bridge`.
+- **NumeralSalience.lean**: Bridge 7 (evaluative valence → framing). Imports ClausWalch2024. `atMost_negative_predicts_reversal`, `upTo_positive_predicts_standard`, `valence_explains_framing_divergence`.
+- **Core/Scales.lean**: Renamed `numScale` → `numScaleLowerBound` with `abbrev numScale` for backward compat. Added docstring explaining that under bilateral semantics numerals are non-monotonic and do NOT form a Horn scale. Added `NumeralAlternativeKind` (.bare/.classA/.classB) and `numAlternatives` for Kennedy's alternative set structure.
+
+## [0.178.0] - 2026-02-11
+
+### Added
+- **Core/Roundness.lean**: Framework-agnostic k-ness infrastructure extracted to Core. `hasIntKness`, `has2_5ness`, `RoundnessProperties` (6-field struct), `roundnessScore` (0–6), `maxRoundnessScore`. `RoundnessGrade` enum (`.high`/`.moderate`/`.low`/`.none`) for shared score-binning. `contextualRoundnessScore` (base-relative divisibility properties) + `roundnessInContext` (Krifka 2007 granularity override). Per-datum verification: `roundness_100 = 6`, `roundness_7 = 0`, `roundness_50 = 4`.
+- **Woodin, Winter & Bhatt 2024** (NumberUse/WoodinEtAl2024.lean): Corpus frequency data. 6 `RoundnessCoefficient` β values (10-ness 4.46 > 2.5-ness 3.84 > ... > mult5 0.06), `hierarchy_ordering` theorem, `weightedRoundnessScore`, `Register` effect data. Bridges: `weighted_100_gt_50`, `weighted_50_gt_110`.
+- **Cummins 2015 OT constraints** (NeoGricean/Constraints/NumericalExpressions.lean): `QuantifierForm`, `NumeralCandidate`, `inferGranularity`. 4 constraint functions: `infoViolations`, `granularityViolations`, `qsimpViolations`, `nsalViolations` (= 6 - roundnessScore). `OTConstraint`, `defaultRanking` (INFO >> Gran >> QSIMP >> NSAL), `lexLessThan` + `harmonicallyBounds`, `optimalCandidate`. `enrichmentWidth` (predicts C&F 2021 pragmatic enrichment range via `RoundnessGrade`). `nsalAsRSACost` (normalized ℚ cost). Theorems: `nsal_is_complement`, `round_beats_nonround_nsal`, `rounder_wider_enrichment`, `round_cheaper_in_rsa`.
+- **Numeral Salience bridges** (Comparisons/NumeralSalience.lean): 6 cross-module bridges. NSAL↔RSA cost (`round_cheaper_in_rsa_bridge`, `maximally_round_free`), Woodin↔prior (`roundness_prior_monotone`), k-ness↔PrecisionMode (`roundness_grounds_precision_100/7`, `base10_round_implies_approximate` sorry), k-ness↔NumeralModifiers (`round_wider_halo`), k-ness↔C&F enrichment (`enrichment_100_wider_than_110`), OT↔RSA map (`ot_rsa_agree_round_preference`).
+
+### Changed
+- **Degree.lean**: Added `adaptiveBase` (uses `RoundnessGrade`), `adaptiveTolerance`, `haloWidth`, `inferPrecisionMode` — k-ness-derived adaptive pragmatic halo connecting to Lasersohn (1999), Krifka (2007), Kao et al. (2014). Import: `Linglib.Core.Roundness` (not Phenomena).
+- **Numerals.lean**: k-ness definitions extracted to `Core/Roundness.lean`. Retains `classifyRoundness`, datum types, and `coarse_implies_kness` bridge theorem. Deleted false `kness_refines_coarse` theorem (counterexample: n=15).
+- **NumericalExpressions.lean**: `harmonicallyBounds` refactored to use standalone `lexLessThan` (provable transitivity). `enrichmentWidth` uses `RoundnessGrade` match instead of duplicated score-binning.
+
+## [0.177.0] - 2026-02-11
+
+### Changed
+- **Unified multi-objective RSA speakers under `combined`/`combined3`**: All weighted speaker utilities now flow through `CombinedUtility.combined` or `combined3`.
+- **CombinedUtility.lean**: Added `betaToLam`/`lamToBeta` reparameterization bridge (additive β ↔ convex λ). `goalOriented_eq_scaled_combined` (key identity: `U+β·V = (1+β)·combined(β/(1+β), U, V)`), `goalOriented_same_ranking` (scaling preserves ordering), round-trip theorems.
+- **YoonEtAl2020.lean**: S1 refactored to use `combined phi socialScore infoScore cost`. S2 refactored to use `combined3 ω_inf ω_soc ω_pres ...`. Added `s1_uses_combined`, `s2_uses_combined3` bridge theorems.
+- **SumersEtAl2023.lean**: `combinedUtility` body refactored to use `combined params.lam uT uR cost`. Bridge theorems `combined_pure_truthfulness`/`combined_pure_relevance` now delegate to `combined_at_zero`/`combined_at_one`. Added `sumers_uses_combined`.
+- **NoncooperativeCommunication.lean**: `NoncooperativeRSAParams.β` reparameterized to `goalWeight ∈ [0,1]` (convex form). `fullModel` speaker side now uses `combined goalWeight uEpi uGoal` (was `goalOrientedUtility`). `barnettFitted` updated to `goalWeight := 226/326` (= β/(1+β) for β=2.26). Added `barnett_eq6_via_combined`.
+- **BarnettEtAl2022.lean**: Added `eq6_via_combined` theorem bridging additive Eq. 6 to convex `combined` form.
+- **NoncooperativeCommunication.lean**: Pragmatic vulnerability theorems (Cummins 2025 §4). `pragmatic_vulnerability`/`pragmatic_vulnerability_sym` (when L1 diverges from L0, vigilant posterior is strictly between them), `vigilant_mono_trust`/`vigilant_mono_trust_sym` (more trust monotonically pulls posterior toward L1), `no_vulnerability_when_equal` (L1=L0 ⇒ no exploitation possible). Quantitative exploitability bounds: `vigilant_deviation_exact` (deviation from L0 = τ·(L1-L0)), `vulnerability_gap_exact`, `exploitability_scales_as_tau_sq` (squared error ∝ τ²), `vigilant_error_decomposition`, `vigilant_error_when_l0_correct`, `optimal_vigilance`/`optimal_vigilance_in_range` (zero-error τ* = (truth-L0)/(L1-L0)). Backfire generalization conjecture: `backfire_generalization` (monotone L0 + goal-oriented speaker ⇒ ∃ non-maximal utterance where L1 reverses literal evidence), `barnett_backfire_instance` (sorry).
+
+## [0.176.0] - 2026-02-11
+
+### Changed
+- **CombinedUtility.lean**: `goalOrientedUtility` promoted from NoncooperativeCommunication to shared core (`U_epi + β · U_goal`). Theorems: `goalOriented_eq_combinedWeighted`, `goalOriented_cooperative`, `goalOriented_mono_beta`, `goalOriented_antimono_beta_neg`.
+- **BarnettEtAl2022.lean**: Namespace `RSA.BarnettEtAl2022` → `RSA.Implementations.BarnettEtAl2022`. Replaced `combinedPersuasiveUtility` with `abbrev eq6 := goalOrientedUtility` (→ CombinedUtility). Tighter bridges: `eq6_is_goalOriented`, `eq6_at_one`.
+- **CumminsFranke2021.lean**: Namespace `RSA.CumminsFranke2021` → `RSA.Implementations.CumminsFranke2021`.
+- **ArgumentativeStrength.lean**: Added `argStr_speaker_prefers_stronger` (goal-oriented speaker prefers higher argStr, → CombinedUtility.goalOrientedUtility).
+- **NoncooperativeCommunication.lean**: Removed local `goalOrientedUtility` duplicate (uses CombinedUtility). Updated Barnett bridges to use `eq6`. Removed duplicate `argStr_speaker_prefers_stronger` (uses ArgumentativeStrength).
+
+## [0.175.0] - 2026-02-11
+
+### Added
+- **Noncooperative Communication** (NoncooperativeCommunication.lean): Unified argumentative RSA framework following Cummins (2025). `goalOrientedUtility` generalizing both Barnett et al.'s persuasive RSA and C&F's argumentative strength as `combinedWeighted(1, β, U_epi, U_goal)`. `SpeakerOrientation` (.cooperative/.argumentative), `orientationOf`. Bridges: `barnett_is_goalOriented` (→ BarnettEtAl2022), `barnett_goalOriented_combinedWeighted` (transitive identity), `all_cooperative_at_zero` (all three agree at β=0), `bayesFactor_monotone_in_posterior` (C&F's ordinal measure monotone in Barnett's posterior), `positive_argStr_iff_posterior_above_prior` (→ ArgumentativeStrength), `argStr_speaker_prefers_stronger`. `MeaningLevel` taxonomy (.assertion/.implicature/.presupposition/.typicality) with `blameworthinessRank` (Mazzarella et al. 2018). `EpistemicVigilance` (Sperber et al. 2010): `vigilantPosterior`, `vigilant_is_combined` (→ CombinedUtility), `vigilant_convex`. `NoncooperativeRSAParams` (β, τ), `standardRSA`, `barnettFitted`, `fullModel` with `fullModel_standard`.
+
+## [0.174.0] - 2026-02-11
+
+### Added
+- **Barnett, Griffiths & Hawkins 2022** (BarnettEtAl2022.lean): Persuasive RSA framework extending speaker utility with goal state w*. `persuasiveUtility` (Eq. 4), `combinedPersuasiveUtility` (Eq. 6), `weakEvidenceOccurs` definition. Stick Contest domain (3 sticks from {1,...,5}, 10 worlds): `l0Longer`, `speakerProb`, `l1Longer` with exact ℚ computation. Key theorems: `weak_evidence_effect_s4` (positive evidence backfires at β=2), `strong_evidence_works_s5`, `beta_zero_literal` (β=0 recovers L0). Bridges: `combinedPersuasive_eq_combinedWeighted` (→ CombinedUtility), `argStr_positive_but_backfires` (→ ArgumentativeStrength).
+- **Weak Evidence Effect Data** (WeakEvidenceEffect/Data.lean): Stick Contest experimental design and results (n=723). `pragmatic_backfire` (m=34.7 < 50 for pragmatic group), `literal_no_backfire` (m=50.1), `groups_differ`. Model comparison Table 1: `rsa_speaker_dep_best_likelihood`, `rsa_speaker_dep_best_waic`. Fitted parameters: β̂=2.26, pragmatic group p̂_z=0.99 (J1), literal group p̂_z=0.1 (J0).
+
+## [0.173.0] - 2026-02-11
+
+### Added
+- **Argumentative Strength** (ArgumentativeStrength.lean): Merin (1999) log-likelihood ratio measure. `ArgumentativeGoal`, `bayesFactor`, `argStr` (C&F Eq. 17), `pragArgStr` (C&F Eq. 25), `hasPositiveArgStr`/`argumentativelyStronger` ordinal comparisons, `ArgumentativeDifficulty` (MS et al. 2024), `rationalHearerSemantic`/`rationalHearerPragmatic` (C&F Eqs. 27–28). Bridge theorems: `argStr_eq_pointwiseKL` (→ InformationTheory), `argStr_positive_iff` (ordinal characterization), `argStr_from_combined_at_one` (→ CombinedUtility).
+- **Cummins & Franke 2021** (CumminsFranke2021.lean): Conference registration scenario. `moreThanMeaning` with grounding theorems to `lowerBoundMeaning`. Semantic argStr computation: `moreThan110_semantically_stronger`. Pragmatic reversal: `wider_enrichment_weakens_argStr`. Exam scenario: `ExamStimulus`, `examDifficulty`, `truthfulQuantifiers`, `strongestTruthfulPositive` with weakening pattern verification (all→most→some). `quantifier_ordering_matches_scale` (→ Core.Scales).
+- **Argumentative Framing Data** (ArgumentativeFraming/Data.lean): `FramingDirection`, `QuantifierChoice`. C&F REF case study: 10 `TopMDatum` entries (examples 29–38), `h1_all_round`, `h1_all_truthful`, `h2_majority_preferred`. MS et al. Exp 1: `exp1_adjective_matches_condition`, `exp1_some_most_dominant`, difficulty-driven weakening. MS et al. Exp 2: `exp2_positive_bias`, `exp2_quant_numeral_most_common`.
+
+## [0.172.0] - 2026-02-11
+
+### Added
+- **Outlook Markers** (Kubota 2026): `OutlookMarker.lean` formalizing dual-layered secondary meaning (presuppositional + expressive-like). `StanceType` (.negative/.minimum/.contrary/.emphasis), `OutlookMeaning` with `toPrProp`/`toTwoDimProp` decomposition, `SecondaryMeaningClass` three-way typology (anaphoric presupposition / lexical precondition / discourse-sensitive), `TriggerStrength` (hard/soft), `SecondaryMeaningProperties` diagnostic profile. `ModalCompatibility` with `semete_rejects_epistemic`/`nanka_accepts_all_modals`. Key theorems: `outlook_shares_descriptiveIneffability`, `outlook_lacks_independence`, `outlook_lacks_nondisplaceability`, `outlook_requires_discourse_antecedent`, `outlook_allows_perspective_shift`, projection through negation for both layers.
+- **Japanese Outlook Marker Fragment** (Particles.lean): 13 `OutlookEntry` items — adverbs (*dōse*, *shosen*, *yahari*, *kekkyoku*, *masani*, *mushiro*, *kaette*, *yoppodo*, *semete*, *mashite*) and focus particles (*nanka*, *kurai*, *koso*). Per-entry stance verification theorems. `all_require_counterstance`, `semete_unique_modal_restriction`.
+- **Kubota2026 Phenomena** (OutlookMarkers/Kubota2026.lean): `FelicityDatum` (counterstance requirement: (37)–(39)), `DenialDatum` (descriptive ineffability: (40)–(41)), `PerspectiveShiftDatum` ((42)), `ModalInteractionDatum` ((45)–(46)). Bridge theorems: `semete_modal_matches_data`, `nanka_modal_matches_data`.
+
 ## [0.171.0] - 2026-02-11
 
 ### Added

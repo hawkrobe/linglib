@@ -22,7 +22,7 @@ knowledge state affects interpretation.
 
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Compare
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 

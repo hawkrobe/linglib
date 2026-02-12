@@ -7,7 +7,7 @@ stronger members entail weaker members. Scale ordering determines scalar implica
 ## Main definitions
 
 `HornScale`, `scalePosition`, `isWeaker`, `strongerAlternatives`, `quantScale`,
-`worldMeaning`, `connScale`, `modalScale`, `numScale`
+`worldMeaning`, `connScale`, `modalScale`
 
 ## References
 
@@ -203,25 +203,25 @@ theorem necessary_stronger_than_possible :
 
 end Modals
 
-namespace Numerals
+/-!
+### Numerals and Horn Scales
 
-inductive NumExpr where
-  | one | two | three | four | five
-  deriving DecidableEq, BEq, Repr
+Numerals are NOT represented as a `HornScale` here because:
 
-def numScale : HornScale NumExpr :=
-  ⟨[.one, .two, .three, .four, .five]⟩
+1. Under **lower-bound** semantics (Horn 1972), numerals do form a scale
+   (⟨1, 2, 3, ...⟩), but it is **infinite** — a finite `HornScale` list
+   can't represent it correctly ("five" would have no stronger alternatives).
 
-theorem higher_stronger_lowerbound :
-    isStronger numScale .five .one = true ∧
-    isStronger numScale .three .two = true := by
-  native_decide
+2. Under **bilateral** semantics (Kennedy 2015), numerals are non-monotonic
+   and do NOT form a Horn scale at all. The relevant alternatives are
+   {bare n, Class A n, Class B n}, not other numerals.
 
-theorem two_alternatives :
-    strongerAlternatives numScale .two = [.three, .four, .five] := by
-  native_decide
-
-end Numerals
+Both cases are handled properly in
+`Theories/TruthConditional/Determiner/Numeral/Semantics.lean`:
+- `NumeralTheory.isStrongerThan` computes strength for any theory
+- `NumeralAlternative` represents Kennedy's alternative sets
+- `lowerBound_monotonic` / `bilateral_not_monotonic` prove the key contrast
+-/
 
 def scalarImplicatures {α : Type} [BEq α] (s : HornScale α) (x : α) : List α :=
   strongerAlternatives s x

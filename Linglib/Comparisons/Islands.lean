@@ -1,19 +1,25 @@
 /-
-# Island Effects: Competence vs. Performance
+# Island Effects: Competence vs. Performance vs. Discourse
 
-Comparing how competence-based and performance-based accounts explain
-the gradient nature of island effects.
+Comparing how competence-based, performance-based, and discourse-based accounts
+explain the gradient nature of island effects.
 
 ## Accounts Compared
 
 1. **Competence** (Subjacency, CNPC, Barriers, MLC): categorical blocking
 2. **Performance** (Kluender, Deane, Hofmeister & Sag): gradient processing cost
+3. **Discourse** (Goldberg, Erteschik-Shir, Lu, Pan & Degen): information-structural
+   backgroundedness
 
-## Key Question
+## Key Questions
 
-Nonstructural manipulations (filler complexity, NP definiteness) dramatically
-alter island acceptability while leaving the island configuration intact.
-Which account predicts this?
+- Nonstructural manipulations (filler complexity, NP definiteness) dramatically
+  alter island acceptability while leaving the island configuration intact.
+  Which account predicts this? (H&S 2010 → Processing)
+
+- Prosodic focus on embedded objects ameliorates MoS islands; adding manner
+  adverbs to bridge verbs creates new islands. Which account predicts this?
+  (Lu et al. 2025 → Discourse)
 
 ## References
 
@@ -25,6 +31,8 @@ Which account predicts this?
 - Deane, P. (1991). Limits to attention: A cognitive theory of island phenomena.
 - Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
   Language 86(2):366–415.
+- Lu, J., Pan, D. & Degen, J. (2025). Evidence for a discourse account of
+  manner-of-speaking islands. Language 101(4):627–659.
 -/
 
 import Linglib.Phenomena.Islands.Data
@@ -144,14 +152,16 @@ theorem which_indef_vs_baseline_incomparable :
 /-- A nonstructural manipulation that changes island acceptability
 without altering the island configuration.
 
-Competence theories predict no effect (structure unchanged).
-Performance theories predict an effect (processing cost changes). -/
+Each of the three accounts (competence, processing, discourse) makes
+a prediction about whether the manipulation should affect acceptability. -/
 structure IslandManipulation where
   description : String
   /-- Does any competence theory predict an acceptability difference? -/
   competencePredictsDifference : Bool
   /-- Does the processing account predict a difference? -/
   processingPredictsDifference : Bool
+  /-- Does the discourse/backgroundedness account predict a difference? -/
+  discoursePredictsDifference : Bool
   /-- Is a difference actually observed? -/
   differenceObserved : Bool
   /-- Statistical significance (p-value description) -/
@@ -164,6 +174,7 @@ def fillerComplexityCNPC : IslandManipulation :=
   { description := "Filler complexity (which-N vs bare) in CNPC"
     competencePredictsDifference := false
     processingPredictsDifference := true
+    discoursePredictsDifference := false  -- filler complexity doesn't change QUD
     differenceObserved := true
     significance := "F1(1,20)=48.741, p<0.0001" }
 
@@ -173,6 +184,7 @@ def fillerComplexityWhIsland : IslandManipulation :=
   { description := "Filler complexity (which-N vs bare) in wh-islands"
     competencePredictsDifference := false
     processingPredictsDifference := true
+    discoursePredictsDifference := false  -- filler complexity doesn't change QUD
     differenceObserved := true
     significance := "F1(1,15)=15.964, p=0.001" }
 
@@ -182,6 +194,7 @@ def npTypeCNPC : IslandManipulation :=
   { description := "NP definiteness (def vs indef) in CNPC"
     competencePredictsDifference := false
     processingPredictsDifference := true
+    discoursePredictsDifference := false  -- NP type doesn't change QUD
     differenceObserved := true
     significance := "Marginal interaction with filler type" }
 
@@ -191,18 +204,55 @@ def fillerComplexityAdjunct : IslandManipulation :=
   { description := "Adjunct complexity (complex vs simple) in wh-islands"
     competencePredictsDifference := false
     processingPredictsDifference := true
+    discoursePredictsDifference := false  -- adjunct complexity doesn't change QUD
     differenceObserved := true
     significance := "t1(27)=3.484, p<0.01" }
+
+/-! ### MoS island manipulations (Lu, Pan & Degen 2025) -/
+
+/-- Prosodic focus on embedded object in MoS islands (Experiments 1, 2a, 3b).
+Focus changes information structure without changing syntax or processing load. -/
+def prosodicFocusMoS : IslandManipulation :=
+  { description := "Prosodic focus (embedded vs verb) in MoS islands"
+    competencePredictsDifference := false   -- syntax unchanged
+    processingPredictsDifference := false   -- processing load unchanged
+    discoursePredictsDifference := true     -- focus changes QUD → changes backgroundedness
+    differenceObserved := true
+    significance := "β=0.23, t=7.10, p<0.001 (Exp 1)" }
+
+/-- Say + manner adverb creates island (Experiment 3a).
+Adding an adverb doesn't change CP structure but adds manner weight. -/
+def sayAdverbIsland : IslandManipulation :=
+  { description := "Say+adverb vs say alone (MoS island creation)"
+    competencePredictsDifference := false   -- same CP structure ± adverb
+    processingPredictsDifference := false   -- no processing load difference
+    discoursePredictsDifference := true     -- manner adverb adds manner weight → QUD shift
+    differenceObserved := true
+    significance := "β=−0.24, t=−12.4, p<0.001 (Exp 3a)" }
+
+/-- Verb-frame frequency in MoS islands (all experiments).
+Frequency is the mechanism proposed by Liu et al. (2019, 2022). -/
+def frequencyMoS : IslandManipulation :=
+  { description := "Verb-frame frequency as predictor of MoS acceptability"
+    competencePredictsDifference := false   -- irrelevant to structure
+    processingPredictsDifference := true    -- frequency → surprisal → processing cost
+    discoursePredictsDifference := false    -- backgroundedness, not frequency, is causal
+    differenceObserved := false             -- n.s. in ALL experiments
+    significance := "β=−0.003, p=0.874 (Exp 1); all others n.s." }
 
 -- ============================================================================
 -- Accuracy Scoring
 -- ============================================================================
 
+/-- All manipulations: H&S 2010 + Lu et al. 2025. -/
 def allManipulations : List IslandManipulation := [
   fillerComplexityCNPC,
   fillerComplexityWhIsland,
   npTypeCNPC,
-  fillerComplexityAdjunct
+  fillerComplexityAdjunct,
+  prosodicFocusMoS,
+  sayAdverbIsland,
+  frequencyMoS
 ]
 
 /-- Processing correctly predicts the observed difference. -/
@@ -213,17 +263,35 @@ def processingCorrect (m : IslandManipulation) : Bool :=
 def competenceCorrect (m : IslandManipulation) : Bool :=
   m.differenceObserved == m.competencePredictsDifference
 
+/-- Discourse correctly predicts the observed (non-)difference. -/
+def discourseCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.discoursePredictsDifference
+
 def processingScore : Nat := allManipulations.filter processingCorrect |>.length
 def competenceScore : Nat := allManipulations.filter competenceCorrect |>.length
+def discourseScore : Nat := allManipulations.filter discourseCorrect |>.length
 
-/-- Processing predicts all 4 observed effects correctly. -/
-theorem processing_scores_4_of_4 :
+/-- Processing scores 4/7: correct on all 4 H&S manipulations,
+but misses prosodic focus, say+adverb, and frequency (predicts effect, none found). -/
+theorem processing_scores_4_of_7 :
     processingScore = 4 := by native_decide
 
-/-- Competence predicts 0 of 4 — it cannot distinguish any of the
-manipulated conditions because the island structure is unchanged. -/
-theorem competence_scores_0_of_4 :
-    competenceScore = 0 := by native_decide
+/-- Competence scores 1/7 — only the frequency null result
+(where it correctly predicts no effect). -/
+theorem competence_scores_1_of_7 :
+    competenceScore = 1 := by native_decide
+
+/-- Discourse scores 3/7: correct on prosodic focus, say+adverb, and frequency null.
+Misses the 4 H&S effects which are processing, not discourse. -/
+theorem discourse_scores_3_of_7 :
+    discourseScore = 3 := by native_decide
+
+/-- Processing and discourse are perfectly complementary: for every manipulation,
+exactly one of the two accounts is correct (XOR). This means they have full
+coverage (together 7/7) with zero overlap. -/
+theorem complementary_accounts :
+    allManipulations.all (fun m => processingCorrect m != discourseCorrect m) = true := by
+  native_decide
 
 -- ============================================================================
 -- Ordering Predictions (via shared infrastructure)
@@ -313,43 +381,51 @@ theorem complementary_coverage :
     (fgParams .topicalized).isIsland = true ∧
     (fgParams .whExclamative).isIsland = true ∧
     -- H&S's processing-based gradient effects apply to non-Sag island types
-    -- (CNPC = complexNP constraint, tested in Experiments 1 and 2)
     constraintStrength .complexNP = .strong ∧
-    -- Processing correctly predicts all 4 nonstructural manipulation effects
-    processingScore = 4 := by
-  refine ⟨rfl, rfl, rfl, ?_⟩; native_decide
+    -- Lu et al.'s discourse-based islands are a third mechanism
+    constraintSource .mannerOfSpeaking = .discourse := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- Implications
 -- ============================================================================
 
 /-!
-## Summary: Island Effects Comparison
+## Summary: Island Effects Three-Way Comparison
 
 ### Nonstructural manipulations of island acceptability
 
-| Manipulation | Competence | Processing | Observed |
-|---|---|---|---|
-| Filler complexity (CNPC) | No effect | Effect ✓ | p<0.0001 |
-| Filler complexity (wh-island) | No effect | Effect ✓ | p=0.001 |
-| NP definiteness (CNPC) | No effect | Effect ✓ | Marginal |
-| Adjunct complexity (wh-island) | No effect | Effect ✓ | p<0.01 |
+| Manipulation | Competence | Processing | Discourse | Observed |
+|---|---|---|---|---|
+| Filler complexity (CNPC) | No effect | Effect ✓ | No effect | p<0.0001 |
+| Filler complexity (wh-island) | No effect | Effect ✓ | No effect | p=0.001 |
+| NP definiteness (CNPC) | No effect | Effect ✓ | No effect | Marginal |
+| Adjunct complexity (wh-island) | No effect | Effect ✓ | No effect | p<0.01 |
+| Prosodic focus (MoS) | No effect | No effect | Effect ✓ | p<0.001 |
+| Say+adverb island | No effect | No effect | Effect ✓ | p<0.001 |
+| Verb-frame frequency (MoS) | No effect ✓ | Effect | No effect ✓ | n.s. |
 
-**Score**: Processing 4/4, Competence 0/4.
+**Score**: Processing 4/7, Discourse 3/7, Competence 1/7. Together: 7/7.
 
-### Key finding
+### Key findings
 
-The filler complexity paradox: more complex wh-phrases *improve* island
-acceptability. This is predicted by memory retrieval models (richer
-representations resist interference) but is inexplicable under any
-structural account, since the island configuration is identical.
+1. **Filler complexity paradox** (H&S 2010): more complex wh-phrases *improve*
+   island acceptability. Predicted by processing, not by competence or discourse.
 
-### Theoretical upshot (Hofmeister & Sag 2010, §9)
+2. **Prosodic amelioration** (Lu et al. 2025): focus on embedded object
+   ameliorates MoS islands. Predicted by discourse, not by competence or processing.
 
-Competence grammars should **overgenerate**: license filler-gap dependencies
-freely, without island-specific constraints. Processing factors (locality,
-referential load, clause boundaries, filler complexity) combine to create
-the gradient acceptability patterns observed.
+3. **Say+adverb replication** (Lu et al. 2025): adding manner adverbs to bridge
+   verb *say* creates new islands. Predicted by discourse alone.
+
+4. **Perfect complementarity**: processing (4/7) and discourse (3/7) cover
+   disjoint manipulations. Together they explain all 7 observed patterns.
+
+### Theoretical upshot
+
+Island effects arise from (at least) three distinct mechanisms:
+- **Grammar**: categorical blocking (topicalization, exclamatives — Sag 2010)
+- **Processing**: gradient difficulty from memory load (CNPC, wh-islands — H&S 2010)
+- **Discourse**: information-structural backgroundedness (MoS — Lu et al. 2025)
 
 This parallels the scope-freezing comparison (`Comparisons.ScopeFreezing`),
 where processing also outperforms grammar-only accounts on gradient data.
@@ -358,11 +434,37 @@ for weight-free ordinal comparison.
 
 ### Connection to Sag (2010)
 
-Sag's F-G typology (`Phenomena.FillerGap.Sag2010`) identifies two types of
-island: grammar-based (topicalization, exclamatives with `[GAP ⟨⟩]`) and
-processing-based (CNPC, wh-islands — gradient effects). The processing
-comparison here covers the latter; Sag's HPSG GAP restrictions cover the
-former. Together they provide a complete account.
+Sag's F-G typology (`Phenomena.FillerGap.Sag2010`) identifies grammar-based
+islands (topicalization, exclamatives with `[GAP ⟨⟩]`). H&S 2010 covers
+processing-based islands (CNPC, wh-islands). Lu et al. 2025 covers
+discourse-based islands (MoS). Together they provide a three-mechanism account.
 -/
+
+-- ============================================================================
+-- Connection to MoS Islands: A Third Type of Account
+-- ============================================================================
+
+/-! ### Manner-of-Speaking Islands (Lu, Pan & Degen 2025)
+
+Lu, Pan & Degen (2025) introduce a **discourse-based** account of island effects
+that complements both competence and processing accounts. MoS islands arise from
+information-structural backgroundedness, not syntactic configuration or processing
+cost. This is a third mechanism alongside grammar-based and processing-based islands.
+
+The three sources are now tracked by `constraintSource` in Islands.Data:
+- `.syntactic` → competence grammar (Ross 1967, Chomsky 1973)
+- `.processing` → performance/memory (Hofmeister & Sag 2010)
+- `.discourse` → information structure (Lu, Pan & Degen 2025)
+
+Together, these three mechanisms partition the space of island phenomena:
+1. Grammar-based: topicalization, exclamatives (Sag 2010)
+2. Processing-based: CNPC, wh-islands (H&S 2010) — gradient with filler complexity
+3. Discourse-based: MoS complements (Lu et al. 2025) — gradient with prosodic focus -/
+
+/-- MoS islands are discourse-sourced, distinct from syntactic/processing islands. -/
+theorem mos_distinct_from_traditional_islands :
+    constraintSource .mannerOfSpeaking = .discourse ∧
+    constraintSource .complexNP = .syntactic ∧
+    constraintSource .embeddedQuestion = .syntactic := ⟨rfl, rfl, rfl⟩
 
 end Comparisons.Islands

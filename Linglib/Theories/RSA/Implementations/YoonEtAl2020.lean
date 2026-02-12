@@ -33,6 +33,7 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
+import Linglib.Theories.RSA.Core.CombinedUtility
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Theories.TruthConditional.Domain.Degree
 import Linglib.Theories.TruthConditional.Core.Polarity
@@ -41,7 +42,7 @@ import Linglib.Core.Proposition
 namespace RSA.Implementations.YoonEtAl2020
 
 open Phenomena.Politeness.Studies.YoonEtAl2020
-open RSA RSA.Eval
+open RSA RSA.Eval RSA.CombinedUtility
 
 
 /-- Expected value under a distribution -/
@@ -100,8 +101,8 @@ def S1 (cfg : PolitenessConfig) (s : HeartState) (phi : ℚ) : List (Utterance �
     let infoScore := S1_informationalUtility w s
     let socialScore := S1_socialUtility w / 3  -- Normalize to [0, 1]
     let cost := (utteranceCost w : ℚ) * cfg.costScale / 3  -- Scaled cost
-    -- Combined utility (using multiplicative proxy for exp)
-    let combinedScore := phi * infoScore + (1 - phi) * socialScore - cost
+    -- combined φ socialScore infoScore cost = (1-φ)·social + φ·info - cost
+    let combinedScore := combined phi socialScore infoScore cost
     -- Softmax: exp(α · U) approximated by score^α for positive scores
     let softmaxScore := if combinedScore > 0 then powRat combinedScore cfg.alpha else 0
     (w, softmaxScore)
@@ -212,10 +213,8 @@ def S2_totalUtility (cfg : PolitenessConfig) (w : Utterance) (s : HeartState)
   let socialUtil := S2_socialUtility cfg w / 3  -- Normalize
   let presUtil := S2_presentationalUtility cfg w weights.phi
   let cost := (utteranceCost w : ℚ) * cfg.costScale / 3
-  weights.omega_inf * infoUtil +
-  weights.omega_soc * socialUtil +
-  weights.omega_pres * presUtil -
-  cost
+  combined3 weights.omega_inf weights.omega_soc weights.omega_pres
+    infoUtil socialUtil presUtil cost
 
 /--
 S2: Second-order polite speaker distribution.
@@ -424,5 +423,22 @@ theorem negation_is_vague :
     softNot (adjMeaning .terrible) .h2 > 90/100 ∧
     softNot (adjMeaning .terrible) .h3 > 90/100 := by
   native_decide
+
+-- ============================================================
+-- Bridge Theorems: S1 and S2 use CombinedUtility
+-- ============================================================
+
+/-- S1's utility is `combined φ socialScore infoScore cost`:
+`(1-φ)·social + φ·info - cost = φ·info + (1-φ)·social - cost`. -/
+theorem s1_uses_combined (phi socialScore infoScore cost : ℚ) :
+    combined phi socialScore infoScore cost =
+    phi * infoScore + (1 - phi) * socialScore - cost := by
+  unfold combined; ring
+
+/-- S2's utility is `combined3 ω_inf ω_soc ω_pres U_inf U_soc U_pres cost`. -/
+theorem s2_uses_combined3 (wInf wSoc wPres uInf uSoc uPres cost : ℚ) :
+    combined3 wInf wSoc wPres uInf uSoc uPres cost =
+    wInf * uInf + wSoc * uSoc + wPres * uPres - cost := by
+  unfold combined3; ring
 
 end RSA.Implementations.YoonEtAl2020

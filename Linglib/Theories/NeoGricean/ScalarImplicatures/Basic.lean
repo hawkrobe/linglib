@@ -412,7 +412,6 @@ def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker St
   | .quantifier _ => (quantifierSetString, quantifierCheckerString)
   | .connective _ => (connectiveSetString, connectiveCheckerString)
   | .modal _ => (connectiveSetString, connectiveCheckerString)  -- simplified for now
-  | .numeral _ => (quantifierSetString, quantifierCheckerString)  -- simplified for now
 
 /--
 Create a SentenceContext from a ContextPolarity.
