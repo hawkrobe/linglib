@@ -1843,4 +1843,220 @@ def ms_universal_restrictor : MaximizeStrengthExample :=
 def maximizeStrengthExamples : List MaximizeStrengthExample :=
   [ms_matrix_clause, ms_negation, ms_antecedent, ms_universal_restrictor]
 
+
+-- ============================================================================
+-- SECTION 7: exh_mx — Per-MC-Set Exhaustification (Wang 2025)
+-- ============================================================================
+
+/-!
+## exh_mx: The Third Exhaustification Operator
+
+Wang (2025) "Presupposition, Competition, and Coherence" introduces `exh_mx`,
+which yields one exhaustified proposition per maximal consistent subset (MC-set),
+rather than intersecting all MC-sets (as `exh_ie` does).
+
+When all MC-sets agree (i.e., ALT is closed under ∧), `exh_mx` = `exh_ie` = `exh_mw`
+(by Theorem 9). When MC-sets diverge, `exh_mx` produces *multiple readings*—one
+per MC-set—capturing ambiguity in presuppositional alternatives.
+
+### Key relationships:
+- `exh_mw` = ⋁{⋀E : E is MC-set} (Lemma 3 above)
+- `exh_ie` = ⋀(⋂ all MC-sets) (Definition 4 above)
+- `exh_mx` = one reading per MC-set: for each E, ⋀E
+
+### References
+- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 4.
+- Spector, B. (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
+-/
+
+section ExhMX
+
+variable {World : Type*} (ALT : Set (Prop' World)) (φ : Prop' World)
+
+/--
+An `exh_mx` reading for a specific MC-set E: the conjunction of E.
+
+Unlike `exh_ie` (which is the conjunction of the *intersection* of all MC-sets),
+`exh_mx` gives one reading per MC-set. When MC-sets disagree about which
+alternatives to exclude, `exh_mx` captures the resulting ambiguity.
+
+Wang (2025) Ch4: "exh_mx(ALT, φ, w) = φ(w) ∧ ∀q ∈ Max(φ, ALT)[¬q(w)]"
+where Max is a specific maximal consistent subset.
+-/
+def exhMXReading (E : Set (Prop' World)) : Prop' World :=
+  λ u => ∀ ψ ∈ E, ψ u
+
+/--
+The set of all `exh_mx` readings: one per MC-set.
+
+This is the *set of propositions*, not a single proposition.
+Each reading corresponds to a different way of consistently excluding alternatives.
+-/
+def exhMXReadings : Set (Prop' World) :=
+  {p | ∃ E, isMCSet ALT φ E ∧ p = exhMXReading E}
+
+/--
+The conjunction of all `exh_mx` readings entails `exh_ie`.
+
+Together with `exhMXReading_entails_exhIE` (each reading entails `exh_ie`),
+this gives the full picture of how `exh_ie` relates to `exh_mx` readings:
+
+    ⋀(readings) ⊆ₚ each reading ⊆ₚ exh_ie
+
+Note: the REVERSE direction (exhIE ⊆ₚ ⋀ readings) does NOT hold in general.
+When MC-sets diverge, an MC-set E may contain alternatives ψ ∉ IE.
+Satisfying all of IE (exhIE) does not guarantee satisfying all of E
+(a specific reading), because E may require excluding alternatives
+that other MC-sets include.
+-/
+theorem bigConj_exhMX_entails_exhIE (hne : ∃ E, isMCSet ALT φ E) :
+    (λ u => ∀ p ∈ exhMXReadings ALT φ, p u) ⊆ₚ exhIE ALT φ := by
+  intro u hall ψ hψIE
+  obtain ⟨E, hmc⟩ := hne
+  have hψE : ψ ∈ E := hψIE E hmc
+  have hreading : exhMXReading E ∈ exhMXReadings ALT φ := ⟨E, hmc, rfl⟩
+  exact hall (exhMXReading E) hreading ψ hψE
+
+/--
+Every `exh_mx` reading entails `exh_ie`.
+
+Since `exh_ie` is the intersection of all MC-sets and each `exh_mx` reading
+is a single MC-set, each reading is at least as strong as `exh_ie`.
+-/
+theorem exhMXReading_entails_exhIE (E : Set (Prop' World)) (hmc : isMCSet ALT φ E) :
+    exhMXReading E ⊆ₚ exhIE ALT φ := by
+  intro u hread ψ hψIE
+  exact hread ψ (hψIE E hmc)
+
+/--
+`exh_mw` is the disjunction of all `exh_mx` readings (Lemma 3 restated).
+
+This connects all three operators:
+- `exh_mw` = ⋁(exh_mx readings) (disjunction — some MC-set is satisfied)
+- `exh_ie` = ⋀(exh_mx readings) (conjunction — all MC-sets are satisfied)
+- When there is exactly one MC-set: `exh_mw` = `exh_ie` = `exh_mx`
+-/
+theorem exhMW_eq_bigDisj_exhMX :
+    exhMW ALT φ ≡ₚ (λ u => ∃ p ∈ exhMXReadings ALT φ, p u) := by
+  constructor
+  · intro u hmw
+    obtain ⟨E, hmc, hsat⟩ := (lemma2_exhMW_iff_satisfies_MCset ALT φ u).mp hmw
+    exact ⟨exhMXReading E, ⟨E, hmc, rfl⟩, hsat⟩
+  · intro u hex
+    obtain ⟨p, hp, hpu⟩ := hex
+    obtain ⟨E, hmc, rfl⟩ := hp
+    exact (lemma2_exhMW_iff_satisfies_MCset ALT φ u).mpr ⟨E, hmc, hpu⟩
+
+/--
+Under conjunction closure, all three exhaustification operators coincide:
+`exh_ie` = `exh_mw` = ⋁(`exh_mx` readings).
+
+This does NOT mean there is only one reading. When MC-sets diverge,
+individual readings remain distinct — but their disjunction equals `exh_ie`.
+
+Combines Theorem 9 (`exhMW ≡ₚ exhIE`) with Lemma 3 (`exhMW ≡ₚ ⋁ readings`).
+-/
+theorem exhOperators_coincide_under_closure (hclosed : closedUnderConj ALT) :
+    exhIE ALT φ ≡ₚ (λ u => ∃ p ∈ exhMXReadings ALT φ, p u) := by
+  have h9 := theorem9_main ALT φ hclosed
+  have hbig := exhMW_eq_bigDisj_exhMX ALT φ
+  exact ⟨λ u hie => hbig.1 u (h9.2 u hie), λ u hex => h9.1 u (hbig.2 u hex)⟩
+
+/--
+When there is a unique MC-set, all `exh_mx` readings are equivalent.
+
+MC-set uniqueness is a stronger condition than conjunction closure alone.
+It holds when ALT has additional structural properties (e.g., symmetric
+closure under both conjunction and disjunction, per Spector 2016).
+-/
+theorem exhMX_unique_when_unique_MCset
+    {p q : Prop' World}
+    (hp : p ∈ exhMXReadings ALT φ) (hq : q ∈ exhMXReadings ALT φ)
+    (huniq : ∀ E₁ E₂, isMCSet ALT φ E₁ → isMCSet ALT φ E₂ → E₁ = E₂) :
+    p ≡ₚ q := by
+  obtain ⟨E₁, hmc₁, rfl⟩ := hp
+  obtain ⟨E₂, hmc₂, rfl⟩ := hq
+  rw [huniq E₁ E₂ hmc₁ hmc₂]
+  exact ⟨λ _ h => h, λ _ h => h⟩
+
+end ExhMX
+
+
+-- ============================================================================
+-- SECTION 8: FLAT Operator (Wang 2025, Groenendijk & Stokhof 1984)
+-- ============================================================================
+
+/-!
+## FLAT: Collapsing Nested Alternative Sets
+
+Wang (2025) Ch4 defines the FLAT operator for collapsing nested alternative sets
+(sets of sets of propositions) into a flat set via cross-product conjunction.
+
+Given S = {A₁, A₂, ...} where each Aᵢ is a set of propositions,
+FLAT(S) = {⋀{f(Aᵢ) | i} | f is a choice function picking one from each Aᵢ}
+
+This is proved equivalent to Groenendijk & Stokhof's (1984) pointwise
+answerhood (Ans_PW).
+
+### References
+- Wang (2025). Presupposition, Competition, and Coherence. Ch. 4.
+- Groenendijk, J. & Stokhof, M. (1984). Studies on the Semantics of Questions.
+-/
+
+section FlatOperator
+
+variable {World : Type*}
+
+/--
+FLAT: Collapse a family of alternative sets into a flat set via cross-product
+conjunction. Each element of FLAT(S) is the conjunction of one choice from
+each alternative set in S.
+
+Wang (2025) Ch4: FLAT({A₁,...,Aₙ}) = {a₁ ∧ ... ∧ aₙ | aᵢ ∈ Aᵢ}
+
+Uses a total choice function restricted to S to avoid dependent types.
+-/
+def flat (S : Set (Set (Prop' World))) : Set (Prop' World) :=
+  {p | ∃ (f : Set (Prop' World) → Prop' World),
+    (∀ A ∈ S, f A ∈ A) ∧
+    p = λ u => ∀ A ∈ S, f A u}
+
+/--
+FLAT of a singleton is the set itself.
+-/
+theorem flat_singleton (A : Set (Prop' World)) :
+    flat {A} = A := by
+  ext p; constructor
+  · rintro ⟨f, hf, heq⟩
+    have key : p = f A := by
+      rw [heq]; funext u; apply propext; constructor
+      · intro h; exact h A rfl
+      · intro h B hB; rw [Set.mem_singleton_iff.mp hB]; exact h
+    rw [key]; exact hf A rfl
+  · intro hp
+    refine ⟨λ _ => p, λ B hB => ?_, ?_⟩
+    · rw [Set.mem_singleton_iff.mp hB]; exact hp
+    · funext u; apply propext; constructor
+      · intro h B _; exact h
+      · intro h; exact h A rfl
+
+/--
+FLAT of the empty family is the tautology set.
+-/
+theorem flat_empty : flat (∅ : Set (Set (Prop' World))) = {λ _ => True} := by
+  ext p; constructor
+  · rintro ⟨_, -, rfl⟩
+    show _ = λ _ => True
+    funext u; apply propext; constructor
+    · intro _ ; trivial
+    · intro _ B hB; exact absurd hB (by simp)
+  · intro (hp : p = λ _ => True)
+    refine ⟨λ _ _ => True, λ B hB => ?_, ?_⟩
+    · simp at hB
+    · rw [hp]; funext u; apply propext; constructor
+      · intro _ B hB; simp at hB
+      · intro _; trivial
+
+end FlatOperator
+
 end NeoGricean.Exhaustivity

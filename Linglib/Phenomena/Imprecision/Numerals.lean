@@ -1,3 +1,5 @@
+import Linglib.Core.Roundness
+
 /-
 # Numeral Imprecision: Empirical Data
 
@@ -390,5 +392,26 @@ def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
 
 def gameShowExamples : List GameShowDatum :=
   [gameShowPositive, gameShowNegative]
+
+-- ============================================================================
+-- Bridge: Coarse classifier ↔ k-ness model (Core.Roundness)
+-- ============================================================================
+
+/-- Coarse round → positive k-ness score.
+    If classifyRoundness n ≠ .exact, then n % 10 = 0, giving at least
+    multipleOf5 and multipleOf10, so roundnessScore ≥ 2. -/
+theorem coarse_implies_kness (n : Nat) (h : n > 0) (hc : classifyRoundness n ≠ .exact) :
+    Core.Roundness.roundnessScore n > 0 := by
+  unfold classifyRoundness at hc
+  have h10 : n % 10 = 0 := by
+    split at hc
+    · omega
+    · split at hc
+      · omega
+      · split at hc
+        · assumption
+        · exact absurd rfl hc
+  have := Core.Roundness.score_ge_two_of_div10 n h10
+  omega
 
 end Phenomena.Imprecision.Numerals

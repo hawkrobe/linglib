@@ -195,4 +195,120 @@ theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
 
 
+-- ============================================================================
+-- Wang (2025) Alternative Structure Classification
+-- ============================================================================
+
+/-!
+## Alternative Structure for Presupposition Triggers
+
+Wang (2025) Table 4.1 classifies presuppositional triggers by what
+non-presuppositional alternative they have. This determines their behavior
+under the IC >> FP >> MP constraint ranking.
+
+Three patterns:
+1. **Deletion alternatives**: trigger can be deleted (ye/also → ∅, you/again → ∅)
+2. **Replacement alternatives**: trigger has a specific lexical alternative
+   (zhidao/know → believe, buzai/no-longer → not)
+3. **No structural alternative**: no available alternative (jiu/only → ∅)
+
+This classification predicts obligatoriness:
+- Deletion/replacement alternatives → trigger can be optional or obligatory
+- No alternative → trigger is mandatorily omitted when presupposition only
+  partially holds
+
+### References
+- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 4, Table 4.1.
+-/
+
+/--
+Wang (2025) Table 4.1: How a presupposition trigger relates to its
+non-presuppositional alternative.
+-/
+inductive AltStructure where
+  /-- Alternative is obtained by deleting the trigger (ye/also → ∅, you/again → ∅) -/
+  | deletion
+  /-- Alternative is a specific lexical replacement (zhidao/know → believe) -/
+  | replacement
+  /-- No structural alternative available (jiu/only) -/
+  | none
+  deriving DecidableEq, Repr, BEq
+
+/--
+Wang (2025) pragmatic constraint ranking: IC >> FP >> MP.
+
+- IC (Internal Coherence): S_p's presupposition is consistent with its assertion.
+  Non-violable.
+- FP (Felicity Presupposition): S_p's presupposition is entailed by the CG.
+  Violable but ranked above MP.
+- MP (Maximize Presupposition): Prefer the presuppositional S_p over its
+  non-presuppositional alternative S when context supports it.
+  Violable.
+-/
+inductive PragConstraint where
+  /-- Internal Coherence: presupposition consistent with assertion (non-violable) -/
+  | IC
+  /-- Felicity Presupposition: CG entails presupposition (violable) -/
+  | FP
+  /-- Maximize Presupposition: prefer presuppositional form (violable) -/
+  | MP
+  deriving DecidableEq, Repr, BEq
+
+/-- IC is non-violable; FP and MP are violable. -/
+def PragConstraint.isViolable : PragConstraint → Bool
+  | .IC => false
+  | .FP => true
+  | .MP => true
+
+/-- The canonical constraint ranking: IC >> FP >> MP. -/
+def constraintRanking : List PragConstraint := [.IC, .FP, .MP]
+
+/--
+Obligatoriness pattern predicted by the alternative competition framework.
+
+Wang (2025) derives three patterns from the interaction of trigger type,
+alternative structure, and constraint ranking:
+1. Obligatory: trigger must be used when CG supports presupposition
+2. Optional: trigger may or may not be used
+3. Blocked: trigger must NOT be used (mandatorily omitted)
+-/
+inductive Obligatoriness where
+  /-- Trigger is obligatory when presupposition is fully entailed by CG -/
+  | obligatory
+  /-- Trigger is optional (either form is acceptable) -/
+  | optional
+  /-- Trigger is blocked (mandatorily omitted in this context) -/
+  | blocked
+  deriving DecidableEq, Repr, BEq
+
+/--
+A presupposition trigger entry with Wang (2025) alternative structure.
+
+Extends the basic trigger type with information about what non-presuppositional
+alternative exists, enabling the constraint-based competition analysis.
+-/
+structure PresupTriggerEntry where
+  /-- The trigger type (from existing classification) -/
+  trigger : PresupTrigger
+  /-- Alternative structure (Wang Table 4.1) -/
+  altStructure : AltStructure
+  /-- Lexical form of the alternative (if replacement) -/
+  altForm : Option String := .none
+  deriving Repr
+
+/--
+Assign alternative structure to standard trigger types.
+
+Default mapping based on cross-linguistic generalizations.
+Language-specific entries may override (see Fragments/Mandarin/).
+-/
+def PresupTrigger.defaultAltStructure : PresupTrigger → AltStructure
+  | .definite => .replacement    -- "the" → "a"
+  | .factive => .replacement     -- "know" → "believe"
+  | .changeOfState => .replacement -- "stop" → "not do"
+  | .iterative => .deletion      -- "again" → ∅
+  | .cleft => .none              -- no obvious alternative
+  | .aspectual => .replacement   -- "start" → "do"
+
+
 end NeoGricean.Presuppositions

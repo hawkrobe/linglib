@@ -1,31 +1,38 @@
 /-
 # English Numeral Modifiers
 
-Fragment entries for numeral modification expressions: "around", "between",
-"exactly", "approximately".
+Fragment entries for numeral modification expressions, covering:
+- **Tolerance modifiers**: "around", "approximately", "roughly"
+- **Interval modifiers**: "between ... and ..."
+- **Exactifiers**: "exactly", "precisely"
+- **Bound-setting modifiers**: "at least", "at most", "more than", "fewer than",
+  "up to", "from ... on"
 
-These modifiers interact with numeral imprecision (Phenomena/Imprecision/)
-and are formalized in RSA/Implementations/EgreEtAl2023.lean.
+The bound-setting modifiers are classified following Kennedy (2015):
+- Class A (strict: >, <): "more than", "fewer than" — no ignorance implicature
+- Class B (non-strict: ≥, ≤): "at least", "at most", "up to", "from...on" — ignorance
 
-## Entries
-
-- `around`: tolerance-based approximation (Égré et al. 2023)
-- `between`: interval-based specification
-- `exactly`: precision enforcer
-- `approximately`: explicit imprecision marker
+Evaluative valence (Blok 2015, Claus & Walch 2024) distinguishes "at most" (negative)
+from "up to" (positive), predicting divergent framing effects.
 
 ## References
 
 - Égré, P., Spector, B., Mortier, A., & Verheyen, S. (2023). On the optimality
   of vagueness. Linguistics and Philosophy, 46, 1101–1130.
+- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
+- Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
+- Claus, B. & Walch, V. (2024). Evaluative valence distinguishes at most from up to.
 - Krifka, M. (2007). Approximate interpretation of number words.
 - Solt, S. (2014). An alternative theory of imprecision.
 -/
 
 import Linglib.Core.Basic
+import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.NumeralModifiers
+
+open TruthConditional.Determiner.Numeral
 
 /--
 Semantic type of a numeral modifier.
@@ -34,11 +41,13 @@ Modifiers can be:
 - Tolerance-based: "around n" = λx. |n-x| ≤ y (with hidden tolerance y)
 - Interval-based: "between a b" = λx. a ≤ x ≤ b
 - Exactifier: "exactly n" = λx. x = n
+- Bound-setting: "at least n", "more than n", etc. (Kennedy 2015)
 -/
 inductive ModifierType where
   | tolerance    -- "around", "approximately", "roughly"
   | interval     -- "between ... and ..."
   | exactifier   -- "exactly", "precisely"
+  | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
   deriving Repr, DecidableEq, BEq
 
 /--
@@ -51,6 +60,19 @@ inductive PragmaticFunction where
   | peakedSignal    -- Signals peaked distribution (around, approximately)
   | flatSignal      -- Signals flat/uniform distribution (between)
   | pointSignal     -- Signals point distribution (exactly)
+  | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
+  deriving Repr, DecidableEq, BEq
+
+/-- Evaluative valence of a bound-setting modifier (Blok 2015, Claus & Walch 2024).
+
+Distinguishes modifiers with the same truth conditions but different framing:
+- "at most 100" (negative valence) → reversed framing (endorsed more in negative contexts)
+- "up to 100" (positive valence) → standard framing (endorsed more in positive contexts)
+-/
+inductive EvaluativeValence where
+  | positive   -- "up to", "from...on": invites positive evaluation
+  | negative   -- "at most": invites negative evaluation
+  | neutral    -- "at least", "more than", "fewer than": no evaluative bias
   deriving Repr, DecidableEq, BEq
 
 /-- Lexical entry for a numeral modifier. -/
@@ -69,9 +91,21 @@ structure NumeralModifierEntry where
   conveysShape : Bool
   /-- Can it license sorites chains? -/
   soritesSusceptible : Bool
+  /-- Bound direction (for bound-setting modifiers) -/
+  boundDir : Option BoundDirection := none
+  /-- Modifier class (for bound-setting modifiers) -/
+  modClass : Option ModifierClass := none
+  /-- Evaluative valence (Blok 2015 / Claus & Walch 2024) -/
+  evaluativeValence : EvaluativeValence := .neutral
+  /-- Does this modifier generate ignorance implicatures? -/
+  generatesIgnorance : Bool := false
   /-- Notes -/
   notes : String := ""
   deriving Repr, BEq
+
+-- ============================================================================
+-- Tolerance Modifiers (Égré et al. 2023)
+-- ============================================================================
 
 /--
 "around": tolerance-based approximation.
@@ -126,6 +160,10 @@ def roughly : NumeralModifierEntry :=
   , notes := "Informal register"
   }
 
+-- ============================================================================
+-- Interval Modifiers
+-- ============================================================================
+
 /--
 "between ... and ...": interval specification.
 
@@ -143,6 +181,10 @@ def between : NumeralModifierEntry :=
   , conveysShape := false   -- Only conveys support, not shape
   , soritesSusceptible := false
   }
+
+-- ============================================================================
+-- Exactifiers
+-- ============================================================================
 
 /--
 "exactly": precision enforcer.
@@ -175,6 +217,114 @@ def precisely : NumeralModifierEntry :=
   , conveysShape := false
   , soritesSusceptible := false
   , notes := "Formal register variant of 'exactly'"
+  }
+
+-- ============================================================================
+-- Bound-Setting Modifiers (Kennedy 2015)
+-- ============================================================================
+
+/-- "at least n": Class B lower bound (max ≥ n).
+
+Generates ignorance implicatures because compatible with the bare reading.
+Neutral evaluative valence. -/
+def atLeast : NumeralModifierEntry :=
+  { form := "at least"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .lower
+  , modClass := some .classB
+  , evaluativeValence := .neutral
+  , generatesIgnorance := true
+  }
+
+/-- "at most n": Class B upper bound (max ≤ n).
+
+Generates ignorance implicatures. NEGATIVE evaluative valence (Blok 2015):
+"at most" is endorsed more in negative contexts. Claus & Walch (2024) show
+this produces reversed framing effects. -/
+def atMost : NumeralModifierEntry :=
+  { form := "at most"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .upper
+  , modClass := some .classB
+  , evaluativeValence := .negative
+  , generatesIgnorance := true
+  }
+
+/-- "more than n": Class A lower bound (max > n).
+
+Does NOT generate ignorance implicatures (excludes the bare-numeral world).
+Neutral evaluative valence. -/
+def moreThan : NumeralModifierEntry :=
+  { form := "more than"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .lower
+  , modClass := some .classA
+  , evaluativeValence := .neutral
+  , generatesIgnorance := false
+  }
+
+/-- "fewer than n": Class A upper bound (max < n).
+
+Does NOT generate ignorance implicatures (excludes the bare-numeral world).
+Neutral evaluative valence. -/
+def fewerThan : NumeralModifierEntry :=
+  { form := "fewer than"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .upper
+  , modClass := some .classA
+  , evaluativeValence := .neutral
+  , generatesIgnorance := false
+  }
+
+/-- "up to n": Class B upper bound (max ≤ n).
+
+Same truth conditions as "at most n", but POSITIVE evaluative valence
+(Blok 2015). Claus & Walch (2024) show "up to" follows standard framing
+(endorsed more in positive contexts), unlike "at most". -/
+def upTo : NumeralModifierEntry :=
+  { form := "up to"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .upper
+  , modClass := some .classB
+  , evaluativeValence := .positive
+  , generatesIgnorance := true
+  }
+
+/-- "from n on": Class B lower bound (max ≥ n).
+
+Positive evaluative valence: invites positive evaluation of the quantity.
+Generates ignorance implicatures (compatible with bare reading). -/
+def fromOn : NumeralModifierEntry :=
+  { form := "from ... on"
+  , modType := .bound
+  , pragFunction := .boundSignal
+  , isVague := false
+  , conveysShape := false
+  , soritesSusceptible := false
+  , boundDir := some .lower
+  , modClass := some .classB
+  , evaluativeValence := .positive
+  , generatesIgnorance := true
   }
 
 -- ============================================================================
@@ -224,14 +374,23 @@ def intervalModifiers : List NumeralModifierEntry :=
 def exactifiers : List NumeralModifierEntry :=
   [exactly, precisely]
 
+def boundModifiers : List NumeralModifierEntry :=
+  [atLeast, atMost, moreThan, fewerThan, upTo, fromOn]
+
+def classAModifiers : List NumeralModifierEntry :=
+  [moreThan, fewerThan]
+
+def classBModifiers : List NumeralModifierEntry :=
+  [atLeast, atMost, upTo, fromOn]
+
 def allModifiers : List NumeralModifierEntry :=
-  toleranceModifiers ++ intervalModifiers ++ exactifiers
+  toleranceModifiers ++ intervalModifiers ++ exactifiers ++ boundModifiers
 
 def modifierScales : List ModifierScale :=
   [exactlyAroundScale, aroundBetweenScale]
 
 -- ============================================================================
--- Verification
+-- Verification: Original Properties
 -- ============================================================================
 
 /-- All tolerance modifiers convey shape information. -/
@@ -247,5 +406,39 @@ theorem only_tolerance_sorites :
     toleranceModifiers.all (·.soritesSusceptible) = true ∧
     (intervalModifiers ++ exactifiers).all (·.soritesSusceptible == false) = true := by
   constructor <;> native_decide
+
+-- ============================================================================
+-- Verification: Kennedy 2015 Class A/B Properties
+-- ============================================================================
+
+/-- All Class B modifiers generate ignorance implicatures. -/
+theorem classB_all_generate_ignorance :
+    classBModifiers.all (·.generatesIgnorance) = true := by native_decide
+
+/-- No Class A modifiers generate ignorance implicatures. -/
+theorem classA_no_ignorance :
+    classAModifiers.all (·.generatesIgnorance == false) = true := by native_decide
+
+/-- "at most" and "up to" differ only in evaluative valence.
+
+Same modType, modClass, boundDir, but different evaluativeValence.
+This is the key Blok (2015) / Claus & Walch (2024) observation. -/
+theorem atMost_upTo_differ_only_in_valence :
+    atMost.modType = upTo.modType ∧
+    atMost.modClass = upTo.modClass ∧
+    atMost.boundDir = upTo.boundDir ∧
+    atMost.evaluativeValence ≠ upTo.evaluativeValence := by
+  constructor; · native_decide
+  constructor; · native_decide
+  constructor; · native_decide
+  · native_decide
+
+/-- All bound modifiers are classified as bound type. -/
+theorem bound_modifiers_all_bound :
+    boundModifiers.all (·.modType == .bound) = true := by native_decide
+
+/-- No bound modifiers are vague. -/
+theorem bound_modifiers_not_vague :
+    boundModifiers.all (·.isVague == false) = true := by native_decide
 
 end Fragments.English.NumeralModifiers

@@ -56,6 +56,7 @@ This distinction explains why "not unhappy" != "happy":
 -/
 
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Roundness
 
 namespace TruthConditional.Domain.Degrees
 
@@ -586,5 +587,127 @@ end ModifierInstances
 
 -- Downtoners lower threshold: slightly(θ=5) → θ'=4 < 5
 #guard Nat.blt ((slightly 10).applyToThreshold (⟨⟨5, by omega⟩⟩ : Threshold 10) |>.toNat) 5
+
+-- ============================================================================
+-- Adaptive Pragmatic Halo (Woodin et al. 2024, Krifka 2007, Lasersohn 1999)
+-- ============================================================================
+
+/-!
+## Adaptive Rounding Base and Pragmatic Halo Width
+
+The fixed `base` parameter in `roundToNearest` and `isRoundNumber` above treats
+all numerals uniformly: 100 and 1000 both round to the nearest 10. But empirically,
+higher-magnitude and rounder numbers permit wider imprecision (Krifka 2007).
+
+Using `roundnessScore` from `Core.Roundness`, we derive:
+- `adaptiveBase`: rounding base scales with k-ness score
+- `haloWidth`: pragmatic halo width as a function of roundness
+- `inferPrecisionMode`: k-ness score grounds the binary exact/approximate distinction
+
+These connect to:
+- `roundToNearest` (line 314): `adaptiveBase` replaces fixed base
+- `PrecisionMode` (line 343): `inferPrecisionMode` derives from k-ness
+- Kao et al. 2014's `Goal.approxPrice`: grounded by `inferPrecisionMode`
+
+References:
+- Lasersohn (1999). Pragmatic halos. Language 75(3): 522-551.
+- Krifka (2007). Approximate interpretation of number words.
+- Kao et al. (2014). Nonliteral understanding of number words. PNAS.
+- Woodin, Winter & Bhatt (2024). Numeral frequency and roundness.
+-/
+
+open Core.Roundness in
+
+/--
+Adaptive rounding base: rounder numbers get a coarser base.
+
+Uses `RoundnessGrade` to avoid duplicating score-binning logic:
+- `.none` (e.g., 7): base 1 (no rounding slack)
+- `.low` (e.g., 110): base 5
+- `.moderate` (e.g., 50): base 10
+- `.high` (e.g., 100, 1000): base matching their magnitude
+
+This captures Woodin et al.'s magnitude effect: higher k-ness score
+correlates with larger acceptable deviations.
+-/
+def adaptiveBase (n : Nat) : ℚ :=
+  match Core.Roundness.roundnessGrade n with
+  | .high =>
+    if n % 1000 == 0 then 100
+    else 10
+  | .moderate => 10
+  | .low => 5
+  | .none => 1
+
+open Core.Roundness in
+
+/--
+Adaptive tolerance: scales a base tolerance by the roundness score.
+
+Rounder numbers permit more imprecision. A base tolerance of 5% becomes:
+- 5% for non-round (score 0)
+- up to 15% for maximally round (score 6)
+-/
+def adaptiveTolerance (n : Nat) (baseTol : ℚ) : ℚ :=
+  let score := Core.Roundness.roundnessScore n
+  baseTol * (1 + score / 6)
+
+open Core.Roundness in
+
+/--
+Pragmatic halo width as a function of roundness score.
+
+Lasersohn (1999): the pragmatic halo of an expression is the set of
+objects "close enough" to its literal denotation. For numerals, the
+halo width varies with roundness.
+
+Connects to `roundToNearest` above: `base` is now derived from roundness
+rather than being a constant.
+-/
+def haloWidth (n : Nat) : ℚ :=
+  let score := Core.Roundness.roundnessScore n
+  let magnitudeFactor : ℚ := if n ≥ 1000 then 50
+                              else if n ≥ 100 then 10
+                              else if n ≥ 10 then 5
+                              else 1
+  magnitudeFactor * score / 6
+
+open Core.Roundness in
+
+/--
+Infer precision mode from k-ness score.
+
+roundnessScore ≥ 2 → `.approximate` (pragmatic slack available)
+roundnessScore < 2 → `.exact` (precise reading required)
+
+This grounds Kao et al. (2014)'s binary `Goal.approxPrice` in the k-ness
+model: the `approxPrice` goal uses `Round(s, 10)`, which implicitly assumes
+the numeral is round enough for approximate interpretation. The k-ness score
+makes this condition explicit.
+-/
+def inferPrecisionMode (n : Nat) : PrecisionMode :=
+  if Core.Roundness.roundnessScore n ≥ 2 then .approximate
+  else .exact
+
+-- Verification
+
+#guard inferPrecisionMode 100 == .approximate  -- score 6 ≥ 2
+#guard inferPrecisionMode 50 == .approximate   -- score 4 ≥ 2
+#guard inferPrecisionMode 110 == .approximate  -- score 2 ≥ 2
+#guard inferPrecisionMode 7 == .exact          -- score 0 < 2
+#guard inferPrecisionMode 99 == .exact         -- score 0 < 2
+#guard inferPrecisionMode 15 == .exact         -- score 1 < 2
+
+/-- Multiples of 10 have adaptive base ≥ 5 (at least `.low` grade).
+    Multiples of 100 get `.moderate` or `.high` grade with base ≥ 10. -/
+theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
+    adaptiveBase n ≥ 5 := by
+  unfold adaptiveBase
+  have hs := Core.Roundness.score_ge_two_of_div10 n h10
+  split
+  · split <;> decide
+  · decide
+  · decide
+  · exact absurd ‹_› (Core.Roundness.grade_ne_none_of_score_ge_one n (by omega))
 
 end TruthConditional.Domain.Degrees

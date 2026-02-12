@@ -35,6 +35,7 @@ Key CI expressions:
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
+import Linglib.Core.Presupposition
 
 namespace TruthConditional.Expressives
 
@@ -314,5 +315,86 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
   | .honorific => ctx.speakerAttitudes target > 50  -- Respect required
   | .emotiveMarker => ctx.emotionalValence.natAbs > 30  -- Strong emotion
   | _ => true  -- Other types: context-independent
+
+-- ============================================================================
+-- CI Bifurcation for De Re Presupposition (Wang & Buccola 2025)
+-- ============================================================================
+
+/-!
+## CI Lift: Presupposition → Two-Dimensional Meaning
+
+Wang & Buccola (2025) analyze de re presupposition by bifurcating a
+presuppositional meaning into two dimensions using Potts' (2004) CI type system:
+
+- **At-issue**: the assertion component (identity function on the propositional content)
+- **CI**: the presupposition (projects to root, evaluated against CG)
+
+This derives de re readings: when a presuppositional expression appears under
+an attitude verb, the presupposition can be evaluated against the common ground
+(CG) rather than the attitude holder's beliefs, because it projects as CI content.
+
+### Bridge: PrProp ↔ TwoDimProp
+
+This provides a new cross-module connection between:
+- `Core.Presupposition.PrProp` (presupposition + assertion)
+- `TruthConditional.Expressives.TwoDimProp` (at-issue + CI)
+
+### References
+- Wang, S. & Buccola, B. (2025). De re presupposition via CI bifurcation.
+- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 5.
+- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
+-/
+
+/--
+CI lift: type-shift a presuppositional proposition into a two-dimensional meaning.
+
+The presupposition becomes CI content (projects universally), while the
+assertion becomes at-issue content (composes truth-functionally).
+
+This is the ⟦CI⟧ operator from Wang & Buccola (2025).
+-/
+def ciLift {W : Type*} (p : Core.Presupposition.PrProp W) : TwoDimProp W :=
+  { atIssue := p.assertion
+  , ci := p.presup }
+
+/--
+CI lift preserves the assertion as at-issue content.
+-/
+theorem ciLift_atIssue {W : Type*} (p : Core.Presupposition.PrProp W) :
+    (ciLift p).atIssue = p.assertion := rfl
+
+/--
+CI lift maps presupposition to CI dimension.
+-/
+theorem ciLift_ci {W : Type*} (p : Core.Presupposition.PrProp W) :
+    (ciLift p).ci = p.presup := rfl
+
+/--
+De re reading: when CG entails the presupposition, the CI dimension is satisfied
+at all CG worlds. This means the presupposition is resolved against the CG
+regardless of what is embedded under an attitude verb.
+-/
+theorem deRe_from_ciLift {W : Type*} (p : Core.Presupposition.PrProp W)
+    (cg : Core.Proposition.BProp W)
+    (h : ∀ w, cg w = true → p.presup w = true) :
+    ∀ w, cg w = true → (ciLift p).ci w = true :=
+  h
+
+/--
+CI lift composes with negation: negating a CI-lifted meaning negates the
+at-issue content but preserves the presupposition (as CI).
+
+This matches both Potts' CI projection and standard presupposition projection
+through negation.
+-/
+theorem ciLift_neg_preserves_presup {W : Type*} (p : Core.Presupposition.PrProp W) :
+    (TwoDimProp.neg (ciLift p)).ci = p.presup := rfl
+
+/--
+Round-trip: CI lift then extract components recovers the original PrProp.
+-/
+theorem ciLift_roundtrip {W : Type*} (p : Core.Presupposition.PrProp W) :
+    Core.Presupposition.PrProp.mk (ciLift p).ci (ciLift p).atIssue = p := by
+  cases p; rfl
 
 end TruthConditional.Expressives

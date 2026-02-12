@@ -298,7 +298,7 @@ def combinedUtility (params : Params) (u : Utterance) (w : WorldState)
   let uT := truthfulnessUtility u w
   let uR := relevanceUtility params u w ctx worlds prior
   let cost := params.costWeight * utteranceCost u
-  params.lam * uR + (1 - params.lam) * uT - cost
+  combined params.lam uT uR cost
 
 
 /-!
@@ -373,24 +373,26 @@ These connect to Comparisons/RelevanceTheories.lean for the deep theorems.
 
 /-- Combined model reduces to truthfulness when λ = 0.
 
-U_C(u|w,A) = U_T(u|w) when λ = 0 -/
+U_C(u|w,A) = U_T(u|w) when λ = 0.
+Delegates to `CombinedUtility.combined_at_zero`. -/
 theorem combined_pure_truthfulness (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
     let params := { defaultParams with lam := 0, costWeight := 0 }
     combinedUtility params u w ctx worlds prior = truthfulnessUtility u w := by
-  simp only [combinedUtility, truthfulnessUtility, utteranceCost]
-  simp only [mul_zero, zero_mul, sub_zero, zero_add, one_mul]
+  simp only [combinedUtility, utteranceCost, mul_zero]
+  exact combined_at_zero _ _
 
 /-- Combined model reduces to relevance when λ = 1.
 
-U_C(u|w,A) = U_R(u|w,A) when λ = 1 -/
+U_C(u|w,A) = U_R(u|w,A) when λ = 1.
+Delegates to `CombinedUtility.combined_at_one`. -/
 theorem combined_pure_relevance (u : Utterance) (w : WorldState)
     (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
     let params := { defaultParams with lam := 1, costWeight := 0 }
     combinedUtility params u w ctx worlds prior =
     relevanceUtility params u w ctx worlds prior := by
-  simp only [combinedUtility, truthfulnessUtility, utteranceCost]
-  simp only [mul_zero, zero_mul, sub_self, add_zero, one_mul, sub_zero]
+  simp only [combinedUtility, utteranceCost, mul_zero]
+  exact combined_at_one _ _
 
 /-- Truthfulness and relevance are independent objectives.
 
@@ -563,6 +565,18 @@ Theoretical implications:
 - Truthfulness is an independent constraint, not derived from relevance
 - The combined model explains loose talk and context-sensitivity
 -/
+
+/-- Sumers et al.'s combinedUtility is CombinedUtility.combined(λ, U_T, U_R, cost).
+
+This makes the shared `combined` theorems (`combined_at_zero`, `combined_at_one`,
+`combined_convex`, `combined_mono_A/B`) directly applicable. -/
+theorem sumers_uses_combined (params : Params) (u : Utterance) (w : WorldState)
+    (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
+    combinedUtility params u w ctx worlds prior =
+    combined params.lam (truthfulnessUtility u w)
+      (relevanceUtility params u w ctx worlds prior)
+      (params.costWeight * utteranceCost u) := by
+  unfold combinedUtility; rfl
 
 /-- The integrated model of truthfulness and relevance -/
 def integratedModel : String :=
