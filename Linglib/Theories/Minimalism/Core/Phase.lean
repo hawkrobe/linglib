@@ -39,7 +39,13 @@ namespace Minimalism
 /-- Identify phase heads from the formal category system.
 
     C and v are phase heads (Chomsky 2000, 2001).
-    This is DERIVED from `labelCat`, not stipulated. -/
+    This is DERIVED from `labelCat`, not stipulated.
+
+    **Voice/v* correspondence**: In the Kratzer/Schäfer framework,
+    agentive Voice = v*. But `Cat.Voice` can be either a phase head
+    (agentive) or not (anticausative). This flavor-level distinction
+    is tracked by `VoiceHead.phaseHead` in `Core/Voice.lean`, with
+    bridge theorems in `Phenomena/VoiceAppl.lean`. -/
 def isPhaseHead (so : SyntacticObject) : Bool :=
   match labelCat so with
   | some .C => true    -- CP phase

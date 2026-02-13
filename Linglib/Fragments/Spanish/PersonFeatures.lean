@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Agreement.PersonMarkingTypology
+import Linglib.Core.PersonCategory
 
 /-!
 # Person Feature Decomposition for Spanish Clitics
@@ -18,7 +18,7 @@ derived from the feature geometry, not stipulated per person.
 
 namespace Fragments.Spanish.PersonFeatures
 
-open Phenomena.Agreement.PersonMarkingTypology
+open Core.PersonCategory
 
 -- ============================================================================
 -- § 1: Feature Decomposition
