@@ -80,19 +80,28 @@ def les_dat : CliticEntry := { form := "les", person := .third, number := .Plur,
 def se_refl_pl : CliticEntry := { form := "se", person := .third, number := .Plur, case_ := .reflexive }
 
 -- ============================================================================
--- § 4: Syncretism
+-- § 4: Paradigm and Syncretism
 -- ============================================================================
 
+/-- The full clitic paradigm as a flat list. -/
+def paradigm : List CliticEntry :=
+  [ me_acc, me_dat, me_refl,
+    te_acc, te_dat, te_refl,
+    lo, la, le_dat, se_refl,
+    nos_acc, nos_dat, nos_refl,
+    los, las, les_dat, se_refl_pl ]
+
+/-- Look up the form for a given person, number, and case in the paradigm. -/
+def lookupForm (p : Person) (n : Number) (c : CliticCase) : Option String :=
+  (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map (·.form)
+
 /-- Are two clitic cases syncretic for a given person/number combination?
-    Syncretism means the surface forms are identical. -/
+    DERIVED from the paradigm data: syncretism holds iff the looked-up
+    forms are identical (and both exist). -/
 def isSyncretic (p : Person) (n : Number) (c1 c2 : CliticCase) : Bool :=
-  match p, n with
-  | .first, .Sing  => true   -- me = me = me (all three cases syncretic)
-  | .second, .Sing => true   -- te = te = te (all three cases syncretic)
-  | .first, .Plur  => true   -- nos = nos = nos (all three cases syncretic)
-  | .third, _      => match c1, c2 with   -- 3rd person: NEVER syncretic across cases
-                       | c, d => c == d    -- Only syncretic with itself
-  | _, _           => false  -- Conservative default
+  match lookupForm p n c1, lookupForm p n c2 with
+  | some f1, some f2 => f1 == f2
+  | _, _ => false
 
 /-- The set of person/number combinations where DAT and REFL are syncretic.
     This is the key condition for SE-optionality (Muñoz Pérez 2026). -/

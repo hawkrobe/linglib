@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.200.0] - 2026-02-13
+
+### Refactored (architectural cleanup of 0.199.0)
+- **Minimalism/Core/VerbalDecomposition.lean**: Extract VerbHead (vDO/vGO/vBE) and event composition predicates out of Applicative.lean into standalone module. Applicative.lean now contains only ApplType (high/low).
+- **Minimalism/Morphology/Fission.lean**: Parameterize over person type — generic `FissionRule` and `PFMarkingCondition` structures with no Fragment imports. Spanish instantiation moved to Bridge.lean.
+- **Core/PersonCategory.lean**: Extract PersonCategory type, predicates, and UD bridges out of Phenomena/Agreement/PersonMarkingTypology.lean into Core/. Fixes Fragment→Phenomena dependency violation.
+- **Fragments/Spanish/PersonFeatures.lean**: Import from Core.PersonCategory instead of Phenomena.Agreement.PersonMarkingTypology. Fixes dependency hierarchy violation.
+- **Fragments/Spanish/Clitics.lean**: Syncretism (`isSyncretic`, `datReflSyncretic`) now derived from paradigm entries via `lookupForm` instead of stipulated match.
+- **Phenomena/MunozPerez2026/Bridge.lean**: Now contains Spanish Fission instantiation (theory-specific, kept out of Fragments). Added Fission verification theorems (previously in Morphology/Fission.lean).
+- **Minimalism/Phenomena/VoiceAppl.lean**: Add Voice/Phase bridge theorems — agentive Voice = phase head, non-thematic = not. `phase_iff_theta` proves correlation across all canonical Voice heads.
+- **Minimalism/Core/Phase.lean**: Add Voice/v* correspondence documentation.
+
 ## [0.199.0] - 2026-02-13
 
 ### Added

@@ -41,7 +41,12 @@ namespace Minimalism.Phenomena.VoiceAppl
 -- ============================================================================
 
 /-- A simplified derivation record for testing Voice/Appl structure.
-    Tracks which heads are present and their properties. -/
+    Tracks which heads are present and their properties.
+
+    TODO: Replace with real `SyntacticObject` trees once the feature
+    system on `SimpleLI` can encode sub-eventive heads (vDO/vGO/vBE).
+    Currently these all map to `Cat.v`, losing the event-structural
+    distinctions that drive inchoative/causative predictions. -/
 structure VoiceApplDerivation where
   /-- Voice head (if present) -/
   voice : Option VoiceHead
@@ -196,5 +201,28 @@ theorem bake_is_high_appl :
 /-- Middle voice has no external argument and no semantics. -/
 theorem middle_no_external :
     predictsExternalArg middle_open = false := rfl
+
+-- ============================================================================
+-- § 5: Voice/Phase Bridge
+-- ============================================================================
+
+/-- Agentive Voice corresponds to traditional v* (phase head).
+    `isPhaseHead` in Phase.lean identifies phases via `Cat.v`, but in the
+    Kratzer/Schäfer framework, agentive Voice replaces v*. The `phaseHead`
+    field on `VoiceHead` tracks this distinction at the feature level. -/
+theorem agentive_voice_is_phase_head :
+    voiceAgent.phaseHead = true ∧ voiceCauser.phaseHead = true := ⟨rfl, rfl⟩
+
+/-- Non-thematic and expletive Voice are NOT phase heads.
+    Only θ-role-assigning Voice heads (agentive, causer) are phases. -/
+theorem nonthematic_voice_not_phase_head :
+    voiceAnticausative.phaseHead = false ∧ voiceMiddle.phaseHead = false := ⟨rfl, rfl⟩
+
+/-- Phase-head-ness correlates with θ-role assignment:
+    Voice is a phase head iff it assigns a θ-role. -/
+theorem phase_iff_theta (v : VoiceHead)
+    (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle) :
+    v.phaseHead = v.assignsTheta := by
+  rcases h with rfl | rfl | rfl | rfl <;> rfl
 
 end Minimalism.Phenomena.VoiceAppl
