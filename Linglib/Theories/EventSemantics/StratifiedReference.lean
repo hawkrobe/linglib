@@ -29,6 +29,7 @@ namespace EventSemantics.StratifiedReference
 
 open EventSemantics
 open EventSemantics.Mereology
+open _root_.Mereology
 open TruthConditional.Core.Time
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ViewpointAspect

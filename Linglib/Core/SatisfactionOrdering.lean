@@ -1,14 +1,14 @@
 import Mathlib.Data.Set.Basic
 
 /-!
-# Order Theory
+# Satisfaction Ordering
 
 Satisfaction-based orderings: ordering elements by how many criteria they satisfy.
 Used by Kratzer modal semantics (worlds by propositions) and Phillips-Brown
 desire semantics (propositions by desires).
 -/
 
-namespace Core.OrderTheory
+namespace Core.SatisfactionOrdering
 
 /-- Satisfaction-based ordering on type α by subset inclusion of satisfied criteria. -/
 structure SatisfactionOrdering (α : Type*) (Criterion : Type*) where
@@ -92,4 +92,4 @@ theorem equiv_trans (o : SatisfactionOrdering α Criterion) (a b c : α)
 
 end SatisfactionOrdering
 
-end Core.OrderTheory
+end Core.SatisfactionOrdering

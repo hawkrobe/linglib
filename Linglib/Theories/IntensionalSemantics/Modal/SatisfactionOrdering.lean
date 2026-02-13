@@ -1,19 +1,19 @@
-import Linglib.Core.OrderTheory
+import Linglib.Core.SatisfactionOrdering
 
 /-!
 # Satisfaction Ordering (Linguistic Instantiations)
 
-Linguistic applications of `Core.OrderTheory.SatisfactionOrdering`:
+Linguistic applications of `Core.SatisfactionOrdering.SatisfactionOrdering`:
 - Kratzer's world ordering (worlds by propositions)
 - Phillips-Brown's proposition ordering (propositions by desires)
 -/
 
 namespace IntensionalSemantics.Modal
 
-open Core.OrderTheory (SatisfactionOrdering)
+open Core.SatisfactionOrdering (SatisfactionOrdering)
 
 -- Re-export for backwards compatibility
-export Core.OrderTheory (SatisfactionOrdering)
+export Core.SatisfactionOrdering (SatisfactionOrdering)
 
 /-- Kratzer's world ordering: w satisfies p iff p(w) = true. -/
 def worldOrdering (World : Type*) (props : List (World → Bool)) :

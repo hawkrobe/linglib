@@ -39,6 +39,7 @@ import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
+import Linglib.Core.Mereology
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns

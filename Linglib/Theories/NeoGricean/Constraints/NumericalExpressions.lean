@@ -1,4 +1,5 @@
 import Linglib.Core.Roundness
+import Linglib.Core.SatisfactionOrdering
 import Linglib.Theories.NeoGricean.Core.Markedness
 import Mathlib.Data.Rat.Defs
 
@@ -294,5 +295,66 @@ def nsalAsRSACost (n : Nat) : ℚ :=
 /-- Round numerals are cheaper in RSA terms. -/
 theorem round_cheaper_in_rsa :
     nsalAsRSACost 100 < nsalAsRSACost 7 := by native_decide
+
+-- ============================================================================
+-- Bridge to SatisfactionOrdering
+-- ============================================================================
+
+/-- The four OT constraints as a criterion type. -/
+inductive NumeralConstraint where
+  | info
+  | granularity
+  | qsimp
+  | nsal
+  deriving Repr, DecidableEq, BEq
+
+/-- Coarse-grain a violation profile: a constraint is "satisfied" iff
+    it has 0 violations. This discards degree-of-violation information
+    but connects to SatisfactionOrdering's Bool-valued framework. -/
+def constraintSatisfied (v : ViolationProfile) : NumeralConstraint → Bool
+  | .info        => v.info == 0
+  | .granularity => v.granularity == 0
+  | .qsimp      => v.qsimp == 0
+  | .nsal       => v.nsal == 0
+
+open Core.SatisfactionOrdering
+
+/-- A SatisfactionOrdering over violation profiles using the four
+    Cummins (2015) constraints.
+
+    This coarse-grains the OT system: a candidate "satisfies" a
+    constraint iff it incurs 0 violations on that constraint.
+    The resulting ordering is weaker than OT's lexicographic ranking —
+    OT additionally discriminates by violation degree — but captures
+    the structural backbone: a candidate that satisfies a strict superset
+    of constraints is always OT-preferred. -/
+def cumminsOrdering : SatisfactionOrdering ViolationProfile NumeralConstraint :=
+  { satisfies := constraintSatisfied
+  , criteria := [.info, .granularity, .qsimp, .nsal] }
+
+/-- A candidate with zero violations everywhere is at-least-as-good
+    as any other under the satisfaction ordering. -/
+theorem zero_violations_best (v : ViolationProfile) :
+    cumminsOrdering.atLeastAsGood
+      { info := 0, granularity := 0, qsimp := 0, nsal := 0 }
+      v = true := by
+  unfold SatisfactionOrdering.atLeastAsGood SatisfactionOrdering.satisfiedBy
+    cumminsOrdering constraintSatisfied
+  simp
+
+/-- Bridge: zero violations harmonically bounds any profile with at
+    least one violation. This is the strongest case of the general
+    principle that satisfaction-ordering dominance implies OT dominance
+    when the superset constraint is the highest-ranked difference.
+
+    The converse fails: harmonicallyBounds can distinguish candidates
+    that satisfy the same set of constraints but differ in violation
+    degree (e.g., INFO violations 1 vs 3). -/
+theorem zero_bounds_any_violated (v : ViolationProfile)
+    (h : v.info > 0 ∨ v.granularity > 0 ∨ v.qsimp > 0 ∨ v.nsal > 0) :
+    harmonicallyBounds
+      { info := 0, granularity := 0, qsimp := 0, nsal := 0 } v = true := by
+  simp only [harmonicallyBounds, lexLessThan]
+  rcases h with h | h | h | h <;> simp_all <;> omega
 
 end NeoGricean.Constraints.NumericalExpressions
