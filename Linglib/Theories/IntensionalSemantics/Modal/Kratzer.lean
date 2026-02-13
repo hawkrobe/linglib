@@ -124,7 +124,7 @@ def strictlyBetter (A : List (BProp World)) (w z : World) : Bool :=
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
 
-open Core.OrderTheory
+open Core.SatisfactionOrdering
 
 /--
 Kratzer's world ordering as a `SatisfactionOrdering`.

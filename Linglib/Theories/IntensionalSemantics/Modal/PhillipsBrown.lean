@@ -176,9 +176,9 @@ def isCDistributive (semantics : List (BProp World) → BProp World → Bool)
   let existsSingle := answers.any λ a => semantics [a] p
   wholeQ == existsSingle
 
--- Connection to Core.OrderTheory
+-- Connection to Core.SatisfactionOrdering
 
-open Core.OrderTheory
+open Core.SatisfactionOrdering
 
 /-- Proposition ordering: a satisfies p iff a entails p. -/
 def propositionOrdering (GS : List (BProp World)) : SatisfactionOrdering (BProp World) (BProp World) where
@@ -214,7 +214,7 @@ def evalWant (self : BouleticFlavor) (w : World)
 
 /-- Preference ordering on propositions at world w. -/
 def preferenceOrdering (self : BouleticFlavor) (w : World) :
-    Core.OrderTheory.SatisfactionOrdering (BProp World) (BProp World) :=
+    Core.SatisfactionOrdering.SatisfactionOrdering (BProp World) (BProp World) :=
   PhillipsBrown.propositionOrdering (self.desires w)
 
 /-- Best answers according to S's desires at world w. -/

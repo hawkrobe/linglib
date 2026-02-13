@@ -40,6 +40,7 @@ Note: Overlap, ExtMeasure, and extMeasure_qua are in Mereology.lean (§10).
 
 import Linglib.Theories.EventSemantics.Mereology
 import Linglib.Theories.EventSemantics.StratifiedReference
+import Mathlib.Tactic.Linarith
 
 namespace EventSemantics.Krifka1998
 
@@ -107,12 +108,20 @@ def GUE (θ : α → β → Prop) : Prop :=
 -- § 2. Strict Incrementality (§3.2, eq. 51)
 -- ════════════════════════════════════════════════════
 
-/-- Strict Incrementality (SINC): the conjunction of MSO, UO, MSE, UE.
-    Krifka (1998) eq. (51): SINC(θ) = MSO(θ) ∧ UO(θ) ∧ MSE(θ) ∧ UE(θ).
+/-- Strict Incrementality (SINC): the conjunction of MSO, UO, MSE, UE
+    plus a non-degeneracy condition requiring extended entities.
+    Krifka (1998) eq. (51):
 
-    SINC guarantees a bijective correspondence between the part structure
-    of the object and the part structure of the event. This is the key
-    property of incremental-theme verbs like "eat", "build", "read". -/
+    SINC(θ) iff
+      (i)  MSO(θ) ∧ UO(θ) ∧ MSE(θ) ∧ UE(θ)
+      (ii) ∃x,y∈U_P ∃e,e'∈U_E [y < x ∧ e' < e ∧ θ(x,e) ∧ θ(y,e')]
+
+    Condition (i) guarantees a bijective correspondence between the part
+    structure of the object and the part structure of the event.
+    Condition (ii) ensures θ actually applies to extended entities (ones
+    with proper parts), ruling out degenerate cases where θ only relates
+    atoms. This is the key property of incremental-theme verbs like
+    "eat", "build", "read". -/
 structure SINC (θ : α → β → Prop) : Prop where
   /-- Proper subevents map to proper object parts. -/
   mso : MSO θ
@@ -122,6 +131,10 @@ structure SINC (θ : α → β → Prop) : Prop where
   mse : MSE θ
   /-- Each object part has a unique event counterpart. -/
   ue  : UE θ
+  /-- Non-degeneracy: θ applies to at least one extended entity pair.
+      Krifka (1998) eq. (51.ii): the relation must involve entities with
+      proper parts, not just atoms. -/
+  extended : ∃ (x y : α) (e e' : β), y < x ∧ e' < e ∧ θ x e ∧ θ y e'
 
 -- ════════════════════════════════════════════════════
 -- § 3. Derived Properties
@@ -243,22 +256,44 @@ def GRAD (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) : 
   ∀ (x y : α) (e e' : β), θ x e → θ y e' →
     μ_obj x < μ_obj y → μ_ev e < μ_ev e'
 
-/-- SINC + extensive measures → GRAD: strictly incremental themes with
-    extensive measures exhibit gradual change.
+/-- Measure proportionality: the SINC bijection preserves measure up to
+    a constant factor. For any θ-pair (x,e), the event measure equals
+    some constant c times the object measure: μ_ev(e) = c * μ_obj(x).
 
-    This requires the SINC bijection to preserve measure ordering across
-    independent (x,e) pairs — a model-theoretic consequence in CEM that
-    goes beyond the abstract lattice axioms. The key gap: SINC
-    establishes a bijection between parts of a GIVEN (x,e) pair, but GRAD
-    correlates measures across DIFFERENT pairs (x,e) and (y,e'). Closing
-    this requires CEM complementation + the measure-compatibility axiom
-    that the SINC bijection is measure-preserving. -/
+    This axiom captures the idealized "constant rate" of incremental-theme
+    verbs: eating twice as much food takes twice as long. SINC alone
+    constrains the part structure *within* a single (x,e) pair but says
+    nothing about how measures relate *across* independent pairs.
+    MeasureProportional bridges that gap.
+
+    Krifka (1989) implicitly assumes this when deriving GRAD from SINC
+    + extensive measures. -/
+structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) where
+  /-- The proportionality constant (rate). -/
+  rate : ℚ
+  /-- The rate is positive. -/
+  rate_pos : 0 < rate
+  /-- For any θ-pair, event measure = rate × object measure. -/
+  proportional : ∀ (x : α) (e : β), θ x e → μ_ev e = rate * μ_obj x
+
+/-- SINC + extensive measures + measure proportionality → GRAD.
+    Krifka (1989): strictly incremental themes with extensive measures
+    and a constant consumption rate exhibit gradual change.
+
+    Proof: if μ_ev(e) = c · μ_obj(x) and μ_ev(e') = c · μ_obj(y),
+    then μ_obj(x) < μ_obj(y) implies c · μ_obj(x) < c · μ_obj(y)
+    since c > 0, giving μ_ev(e) < μ_ev(e'). -/
 theorem grad_of_sinc {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
     (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ)
-    (_hSinc : SINC θ) [_hObj : ExtMeasure α μ_obj] [_hEv : ExtMeasure β μ_ev] :
+    (_hSinc : SINC θ) [_hObj : ExtMeasure α μ_obj] [_hEv : ExtMeasure β μ_ev]
+    (hProp : MeasureProportional θ μ_obj μ_ev) :
     GRAD θ μ_obj μ_ev := by
-  sorry
+  intro x y e e' hθx hθy hlt
+  rw [hProp.proportional x e hθx, hProp.proportional y e' hθy]
+  have hrate := hProp.rate_pos
+  linarith [mul_lt_mul_of_pos_left hlt hrate]
 
 -- ════════════════════════════════════════════════════
 -- § 7. Verb Annotations (Meaning Postulates)

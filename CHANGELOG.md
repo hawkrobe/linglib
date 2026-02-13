@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.198.0] - 2026-02-12
+
+### Added
+- **Core/Mereology.lean**: Extract 26 generic mereological definitions (AlgClosure, CUM, DIV, QUA, Atom, Overlap, ExtMeasure, QMOD, IsSumHom + theorems) from EventSemantics to framework-agnostic Core module.
+- **Core/SatisfactionOrdering.lean**: Rename from `OrderTheory.lean` — satisfaction-based orderings over Bool-valued criteria (Kratzer worlds, Phillips-Brown propositions).
+- **NumericalExpressions.lean**: Bridge OT constraints (Cummins 2015) to SatisfactionOrdering — `NumeralConstraint` enum, `constraintSatisfied` coarse-graining, `cumminsOrdering`, `zero_violations_best`/`zero_bounds_any_violated` theorems.
+
+### Changed
+- **EventSemantics/Krifka1998.lean**: Add non-degeneracy condition to SINC (Krifka eq. 51.ii `extended` field). Add `MeasureProportional` structure and prove `grad_of_sinc` (was sorry).
+- **EventSemantics/Mereology.lean**: Refactored to import Core/Mereology.lean, re-exports generic items, keeps only event-specific definitions (EventCEM, LexCum, RoleHom, Vendler bridges).
+- **Modal/Kratzer.lean**, **PhillipsBrown.lean**, **SatisfactionOrdering.lean**: Update imports/opens for OrderTheory → SatisfactionOrdering rename.
+
 ## [0.197.0] - 2026-02-12
 
 ### Changed
