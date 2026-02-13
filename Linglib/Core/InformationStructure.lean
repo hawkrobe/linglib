@@ -249,4 +249,37 @@ theorem foc_g_exclusion {α : Type} [BEq α] (domain : List α) (referent : α)
   | [_], h => simp at h
   | _ :: _ :: _, _ => simp
 
+/-! ## Polarity-Switch Contexts
+
+Turco, Braun & Dimroth (2014) distinguish two discourse contexts for polarity
+switches (negation → affirmation). The distinction is theory-neutral: it
+characterizes the discourse relation between the antecedent and the target
+utterance, independent of how languages mark the switch.
+
+- Klein (2008): contrast = different topic situations, compatible claims
+- Umbach (2004): correction = same topic situation, mutually exclusive claims -/
+
+/-- The discourse context in which a polarity switch (neg → affirm) occurs.
+    Crosslinguistically relevant: Dutch and German mark both contexts but with
+    different strategies (Turco, Braun & Dimroth 2014). -/
+inductive PolaritySwitchContext where
+  /-- Different topic situations, compatible claims (Klein 2008) -/
+  | contrast
+  /-- Same topic situation, mutually exclusive claims (Umbach 2004) -/
+  | correction
+  deriving DecidableEq, Repr, BEq
+
+/-- How a language marks polarity switches (neg → affirm).
+    Theory-neutral inventory: individual languages select a subset. -/
+inductive PolarityMarkingStrategy where
+  /-- Sentence-internal affirmative particle (e.g., Dutch *wel*) -/
+  | particle
+  /-- Pitch accent on the finite verb (Höhle 1992 Verum focus) -/
+  | verumFocus
+  /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
+  | other
+  /-- No overt polarity marking -/
+  | unmarked
+  deriving DecidableEq, Repr, BEq
+
 end Core.InformationStructure

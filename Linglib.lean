@@ -44,6 +44,7 @@ import Linglib.Core.PersonCategory
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
+import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.MeasurePhrases
@@ -61,6 +62,7 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
@@ -96,6 +98,7 @@ import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
 import Linglib.Phenomena.AlstottAravind2026.Data
+import Linglib.Phenomena.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.Examples
 import Linglib.Phenomena.AdditiveParticles.Data
 import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
@@ -186,6 +189,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Negation.Basic
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Phenomena.NonProjectivity.Data
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
@@ -429,6 +433,7 @@ import Linglib.Theories.Minimalism.Formal.Workspace
 import Linglib.Theories.Minimalism.Formal.XBar
 
 -- Theories: TruthConditional (extensional)
+import Linglib.Theories.TruthConditional.Adjective.Comparative
 import Linglib.Theories.TruthConditional.Adjective.Intensification
 import Linglib.Theories.TruthConditional.Adjective.Theory
 import Linglib.Theories.TruthConditional.Anaphora

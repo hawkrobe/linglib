@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.203.0] - 2026-02-13
+
+### Added
+- **Core/InformationStructure.lean**: `PolaritySwitchContext` (contrast vs correction; Klein 2008, Umbach 2004) and `PolarityMarkingStrategy` (particle, verumFocus, other, unmarked) — theory-neutral IS types for polarity-switch research
+- **Fragments/Dutch/Particles.lean**: Dutch affirmative particle *wel* (`PolarityParticleEntry`), sentence-internal, accented, both contexts. Per-entry `rfl` verification theorems
+- **Fragments/German/PolarityMarking.lean**: German Verum focus (Höhle 1992) and pre-utterance *doch* as `PolarityMarkingEntry`. Named "PolarityMarking" not "Particles" because German's strategy is non-particulate
+- **Phenomena/TurcoBraunDimroth2014/Data.lean**: Production strategy distributions (Fig. 2) and VF pitch range data (Fig. 6) from Turco, Braun & Dimroth 2014. Bridge theorems: `strategies_differ` (Dutch particle ≠ German VF), `dominant_strategies_both_marked`, `dutch_particle_internal_german_doch_not`. Verified: German zero sentence-internal particles (`rfl`), correction more prominent than contrast (`native_decide` on Rat)
+
+## [0.202.0] - 2026-02-13
+
+### Added
+- **Core/MeasurementScale.lean**: Refactored `maxOnScale` from TemporalConnectives into domain-general infrastructure. Added `maxOnScale_singleton` (proved), `isAmbidirectional` (Rett 2026, §3), and `maxOnScale_atLeast_singleton` bridge theorem
+- **Theories/TruthConditional/Adjective/Comparative.lean**: Comparative morpheme semantics via order-sensitive MAX (Schwarzschild 2008 / Rett 2026). `comparativeSem_eq_MAX` bridges direct comparison to MAX-based formulation via `maxOnScale_singleton`. Antonymy as scale reversal (`taller_shorter_antonymy`), ambidirectionality of comparatives, `comparative_than_DE` (universal quantification anti-monotonicity; Hoeksema 1983), manner implicature effects (Cépeda 2018)
+- **Theories/TruthConditional/Sentence/Tense/TemporalConnectives.lean**: Ambidirectionality theorems for *before* (closed interval hypothesis), *after* (not ambidirectional), *while* (not ambidirectional). Imports `maxOnScale` from MeasurementScale instead of defining locally
+- **Phenomena/Negation/ExpletiveNegation.lean**: High vs low EN typology (Greco 2018), cross-linguistic EN data from Jin & Koenig (2021) survey (50 languages for *before*, 39 for *fear*, 6+ for comparatives). `rett_generalization`: EN ↔ ambidirectionality verified exhaustively over all constructions (`cases c <;> rfl`). `licensesComparativeEN_iff_not_closed` connects scale boundedness to EN predictions (Kennedy & McNally 2005). Manner implicature data (French *avant que ne*, Italian comparative *non*) typed via `MannerEffect` from Comparative
+- Unified temporal and degree MAX under single `maxOnScale` operator (Rett 2026)
+
 ## [0.201.0] - 2026-02-13
 
 ### Added
