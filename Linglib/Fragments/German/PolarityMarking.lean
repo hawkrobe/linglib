@@ -30,23 +30,7 @@ German's strategy is non-particulate.
 
 namespace Fragments.German.PolarityMarking
 
-open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy)
-
-/-- A German polarity-marking strategy entry. -/
-structure PolarityMarkingEntry where
-  /-- Descriptive label -/
-  label : String
-  /-- What bears the prosodic prominence (if any) -/
-  prosodicTarget : Option String
-  /-- Whether the marker appears sentence-internally -/
-  sentenceInternal : Bool
-  /-- Available in contrast contexts -/
-  contrastOk : Bool
-  /-- Available in correction contexts -/
-  correctionOk : Bool
-  /-- The polarity-marking strategy category -/
-  strategy : PolarityMarkingStrategy
-  deriving Repr, DecidableEq, BEq
+open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 
 /-- Verum focus — pitch accent on the finite verb (Höhle 1992).
     Dominant strategy in German for neg→affirm switches in both contexts. -/
@@ -64,7 +48,7 @@ def verumFocus : PolarityMarkingEntry where
     within the VP/middle field. -/
 def dochPreUtterance : PolarityMarkingEntry where
   label := "doch (pre-utterance)"
-  prosodicTarget := none
+  form := some "doch"
   sentenceInternal := false
   contrastOk := false
   correctionOk := true
@@ -80,6 +64,7 @@ theorem vf_correctionOk : verumFocus.correctionOk = true := rfl
 theorem vf_strategy : verumFocus.strategy = .verumFocus := rfl
 
 -- Per-entry verification theorems: dochPreUtterance
+theorem doch_form : dochPreUtterance.form = some "doch" := rfl
 theorem doch_not_sentenceInternal : dochPreUtterance.sentenceInternal = false := rfl
 theorem doch_not_contrastOk : dochPreUtterance.contrastOk = false := rfl
 theorem doch_correctionOk : dochPreUtterance.correctionOk = true := rfl

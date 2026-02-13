@@ -1,11 +1,19 @@
 # Changelog
 
+## [0.203.1] - 2026-02-13
+
+### Refactored
+- **Core/InformationStructure.lean**: Unified `PolarityMarkingEntry` structure — particles, prosodic, and other strategies share one type with optional `form`/`prosodicTarget` fields. Dutch and German Fragment files now both instantiate the same structure, making cross-linguistic comparison structural rather than accidental
+- **Fragments/Dutch/Particles.lean**: `wel` now typed as `PolarityMarkingEntry` (was `PolarityParticleEntry`); dropped language-specific structure
+- **Fragments/German/PolarityMarking.lean**: `verumFocus`/`dochPreUtterance` now typed as `PolarityMarkingEntry` (was a separate German-specific structure)
+- **Phenomena/TurcoBraunDimroth2014/Data.lean**: `ProductionDatum.pctByStrategy : PolarityMarkingStrategy → Rat` replaces four named `Rat` fields — adding a strategy constructor now forces updating every datum. Dominant-strategy theorems universally quantified over strategies (`∀ s, s ≠ ... → ...`)
+
 ## [0.203.0] - 2026-02-13
 
 ### Added
 - **Core/InformationStructure.lean**: `PolaritySwitchContext` (contrast vs correction; Klein 2008, Umbach 2004) and `PolarityMarkingStrategy` (particle, verumFocus, other, unmarked) — theory-neutral IS types for polarity-switch research
-- **Fragments/Dutch/Particles.lean**: Dutch affirmative particle *wel* (`PolarityParticleEntry`), sentence-internal, accented, both contexts. Per-entry `rfl` verification theorems
-- **Fragments/German/PolarityMarking.lean**: German Verum focus (Höhle 1992) and pre-utterance *doch* as `PolarityMarkingEntry`. Named "PolarityMarking" not "Particles" because German's strategy is non-particulate
+- **Fragments/Dutch/Particles.lean**: Dutch affirmative particle *wel*, sentence-internal, accented, both contexts. Per-entry `rfl` verification theorems
+- **Fragments/German/PolarityMarking.lean**: German Verum focus (Höhle 1992) and pre-utterance *doch*. Named "PolarityMarking" not "Particles" because German's strategy is non-particulate
 - **Phenomena/TurcoBraunDimroth2014/Data.lean**: Production strategy distributions (Fig. 2) and VF pitch range data (Fig. 6) from Turco, Braun & Dimroth 2014. Bridge theorems: `strategies_differ` (Dutch particle ≠ German VF), `dominant_strategies_both_marked`, `dutch_particle_internal_german_doch_not`. Verified: German zero sentence-internal particles (`rfl`), correction more prominent than contrast (`native_decide` on Rat)
 
 ## [0.202.0] - 2026-02-13
