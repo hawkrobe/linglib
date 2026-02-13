@@ -53,7 +53,7 @@ import Linglib.Theories.RSA.Questions.Basic
 import Linglib.Theories.RSA.Questions.PolarQuestions
 import Mathlib.Tactic.Ring
 
-namespace Theories.Comparisons.Relevance
+namespace Comparisons.Relevance
 
 open QuestionSemantics
 open RSA.Questions
@@ -516,4 +516,4 @@ theorem unified_view :
     -- for partition-structured decision problems
     True := trivial
 
-end Theories.Comparisons.Relevance
+end Comparisons.Relevance

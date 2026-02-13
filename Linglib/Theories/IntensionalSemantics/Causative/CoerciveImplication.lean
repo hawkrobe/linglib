@@ -9,10 +9,10 @@ Y's choice was overridden.
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
-namespace Theories.NadathurLauer2020.CoerciveImplication
+namespace NadathurLauer2020.CoerciveImplication
 
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Sufficiency
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/
 inductive ActionType
@@ -169,4 +169,4 @@ theorem coercion_none_nonvolitional :
 
 end Examples
 
-end Theories.NadathurLauer2020.CoerciveImplication
+end NadathurLauer2020.CoerciveImplication

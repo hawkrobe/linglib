@@ -26,7 +26,7 @@ Key innovations:
 - Lücking & Ginzburg (2019, 2022). Dynamic Generalized Quantifiers.
 -/
 
-namespace Theories.DynamicSemantics.TTR
+namespace DynamicSemantics.TTR
 
 -- ============================================================================
 -- Chapter 7: Witness-based Quantification (Cooper 2023, §7.1–7.6)
@@ -725,4 +725,4 @@ end Ch7Theorems_contd
 
 end Ch7_WitnessQuantification
 
-end Theories.DynamicSemantics.TTR
+end DynamicSemantics.TTR

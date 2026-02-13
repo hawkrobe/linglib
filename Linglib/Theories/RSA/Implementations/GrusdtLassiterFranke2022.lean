@@ -55,7 +55,7 @@ import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 
 namespace RSA.GrusdtLassiterFranke2022
 
-open Theories.TruthConditional.Conditional.CausalBayesNet
+open IntensionalSemantics.Conditional.CausalBayesNet
 open RSA.Eval
 open IntensionalSemantics.Conditional.Assertability
 

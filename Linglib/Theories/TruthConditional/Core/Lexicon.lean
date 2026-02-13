@@ -15,13 +15,13 @@ Montague (1973)
 import Linglib.Core.Basic
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 
 namespace TruthConditional.Core
 
 open TruthConditional
 open TruthConditional.Determiner.Quantifier
-open Core.Scales
+open Core.Scale
 
 private def word_some : Word := ⟨"some", .DET, {}⟩
 private def word_every : Word := ⟨"every", .DET, { number := some .sg }⟩
@@ -56,17 +56,17 @@ def SemLexEntry.strongerAlternatives {m : Model} (e : SemLexEntry m) : List Stri
   match e.scaleMembership with
   | none => []
   | some (.quantifier pos) =>
-    (Core.Scales.strongerAlternatives Quantifiers.quantScale pos).map λ
+    (Core.Scale.strongerAlternatives Quantifiers.quantScale pos).map λ
       | .none_ => "no"
       | .some_ => "some"
       | .most => "most"
       | .all => "all"
   | some (.connective pos) =>
-    (Core.Scales.strongerAlternatives Connectives.connScale pos).map λ
+    (Core.Scale.strongerAlternatives Connectives.connScale pos).map λ
       | .or_ => "or"
       | .and_ => "and"
   | some (.modal pos) =>
-    (Core.Scales.strongerAlternatives Modals.modalScale pos).map λ
+    (Core.Scale.strongerAlternatives Modals.modalScale pos).map λ
       | .possible => "might"
       | .necessary => "must"
 

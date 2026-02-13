@@ -387,83 +387,6 @@ def probabilisticSoritesExamples : List ProbabilisticSoritesData :=
 
 
 /--
-Major theoretical positions on vagueness.
-
-This is a theory-neutral characterization of what each position claims.
-The phenomena above serve as test cases for these positions.
-
-Source: Keefe (2000), Williamson (1994)
--/
-inductive VaguenessTheoryType where
-  | epistemicism       -- Sharp boundaries exist but are unknowable
-  | supervaluationism  -- Truth = truth on all precisifications
-  | degreeTheory       -- Truth comes in degrees (fuzzy logic)
-  | contextualism      -- Vagueness = context-sensitivity
-  | nihilism           -- Vague predicates have no extension
-  deriving Repr, DecidableEq, BEq
-
-/--
-Data characterizing what each theory says about key phenomena.
-
-This allows us to track which theories predict which patterns.
-
-Source: Keefe (2000)
--/
-structure TheoryPredictionProfile where
-  theory : VaguenessTheoryType
-  hasSharpBoundaries : Bool
-  preservesClassicalLogic : Bool
-  allowsTruthValueGaps : Bool
-  allowsDegreesOfTruth : Bool
-  soritesResolution : String
-  higherOrderResponse : String
-  deriving Repr
-
-def epistemicismProfile : TheoryPredictionProfile :=
-  { theory := .epistemicism
-  , hasSharpBoundaries := true
-  , preservesClassicalLogic := true
-  , allowsTruthValueGaps := false
-  , allowsDegreesOfTruth := false
-  , soritesResolution := "One premise is false; we just don't know which"
-  , higherOrderResponse := "Sharp boundary exists; we don't know where"
-  }
-
-def supervaluationismProfile : TheoryPredictionProfile :=
-  { theory := .supervaluationism
-  , hasSharpBoundaries := false  -- no single boundary
-  , preservesClassicalLogic := true  -- globally
-  , allowsTruthValueGaps := true  -- borderline cases
-  , allowsDegreesOfTruth := false
-  , soritesResolution := "Induction premise is super-false (false on some precisification)"
-  , higherOrderResponse := "Problematic - precisifications may themselves be vague"
-  }
-
-def degreeTheoryProfile : TheoryPredictionProfile :=
-  { theory := .degreeTheory
-  , hasSharpBoundaries := false
-  , preservesClassicalLogic := false  -- LEM fails locally
-  , allowsTruthValueGaps := false
-  , allowsDegreesOfTruth := true
-  , soritesResolution := "Each step slightly lowers truth value; cumulative effect is large"
-  , higherOrderResponse := "Can iterate degrees: degree of being degree 0.5 tall"
-  }
-
-def contextualismProfile : TheoryPredictionProfile :=
-  { theory := .contextualism
-  , hasSharpBoundaries := true  -- in each context
-  , preservesClassicalLogic := true
-  , allowsTruthValueGaps := false
-  , allowsDegreesOfTruth := false
-  , soritesResolution := "Context shifts mid-argument, making it equivocal"
-  , higherOrderResponse := "Higher-order vagueness = higher-order context-sensitivity"
-  }
-
-def theoryProfiles : List TheoryPredictionProfile :=
-  [epistemicismProfile, supervaluationismProfile, degreeTheoryProfile, contextualismProfile]
-
-
-/--
 Formal constraints that any adequate theory of vagueness should satisfy.
 
 These are theory-neutral desiderata. A theory's success is measured
@@ -516,5 +439,108 @@ def higherOrderProblem : VaguenessDesideratum :=
 def desiderata : List VaguenessDesideratum :=
   [borderlineCasesExist, toleranceIntuition, soritesParadoxicality,
    penumbralPreservation, higherOrderProblem]
+
+
+/--
+Interest-relativity of vague extension.
+
+The extension of a vague gradable adjective can change when an agent's
+*interests* change, even if the precise measured property stays constant.
+This is evidence that the degrees of vague quantities incorporate
+information about interests, not just objective measurements.
+
+Source: Fara (2000, 2008), Dinis & Jacinto (2026) §5.3
+-/
+structure InterestRelativityDatum where
+  adjective : String
+  individual : String
+  preciseProperty : String
+  preciseValueUnchanged : Bool
+  interestsChanged : String
+  extensionBefore : Bool
+  extensionAfter : Bool
+  extensionFlipped : Bool
+  deriving Repr
+
+/-- Prince William / Charles III: as William ages, his interests shift
+    toward considering people with m hairs bald whom he previously didn't.
+    Charles III has the same number of hairs, but was bald∅ before and
+    isn't now — his baldness *degree* changed because degrees partially
+    reflect interests. -/
+def charlesIIIBaldness : InterestRelativityDatum :=
+  { adjective := "bald"
+  , individual := "Charles III"
+  , preciseProperty := "hair count"
+  , preciseValueUnchanged := true
+  , interestsChanged := "Prince William's interests shifted: previously considered m hairs not-bald, now considers m hairs bald"
+  , extensionBefore := true   -- was bald∅ at earlier context
+  , extensionAfter := false   -- no longer bald∅ at later context
+  , extensionFlipped := true  -- extension changed despite same hair count
+  }
+
+/-- Context-dependent expensiveness: same price, different interests. -/
+def houseExpensiveness : InterestRelativityDatum :=
+  { adjective := "expensive"
+  , individual := "$475,000 house"
+  , preciseProperty := "price"
+  , preciseValueUnchanged := true
+  , interestsChanged := "Buyer's budget increased from $400k to $600k"
+  , extensionBefore := true
+  , extensionAfter := false
+  , extensionFlipped := true
+  }
+
+def interestRelativityExamples : List InterestRelativityDatum :=
+  [charlesIIIBaldness, houseExpensiveness]
+
+
+/--
+Tolerance step non-uniformity.
+
+Not all tolerance steps feel equally acceptable.  In a Soritical sequence
+where adjacent elements differ by one precise unit (one hair, one mm,
+one dollar), some steps feel like negligible differences and others feel
+like significant jumps — even though the precise difference is identical.
+
+This is evidence that the *vague* difference between adjacent elements
+is not a simple function of the *precise* difference.
+
+Source: Fara (2000) on salient similarity, Dinis & Jacinto (2026) §6.1
+-/
+structure ToleranceStepDatum where
+  adjective : String
+  preciseDifference : String
+  /-- Steps near clear cases feel negligible -/
+  clearRegionAcceptance : String
+  /-- Steps near the threshold feel significant -/
+  thresholdRegionAcceptance : String
+  /-- Same precise difference, different perceived significance -/
+  nonUniform : Bool
+  deriving Repr
+
+/-- Baldness tolerance: removing one hair from someone with 100,000 hairs
+    feels negligible; removing one hair from someone near the "boundary"
+    can feel significant. -/
+def baldnessToleranceSteps : ToleranceStepDatum :=
+  { adjective := "bald"
+  , preciseDifference := "1 hair"
+  , clearRegionAcceptance := "Removing 1 hair from 100,000: clearly still not bald"
+  , thresholdRegionAcceptance := "Removing 1 hair near the boundary: judgment uncertain, step feels more significant"
+  , nonUniform := true
+  }
+
+/-- Height tolerance: 1mm difference between two clearly tall people
+    feels negligible; 1mm difference near the threshold feels more
+    significant. -/
+def heightToleranceSteps : ToleranceStepDatum :=
+  { adjective := "tall"
+  , preciseDifference := "1 mm"
+  , clearRegionAcceptance := "1mm less than 7'0\": still clearly tall"
+  , thresholdRegionAcceptance := "1mm less than 5'9\" threshold: judgment shifts more"
+  , nonUniform := true
+  }
+
+def toleranceStepExamples : List ToleranceStepDatum :=
+  [baldnessToleranceSteps, heightToleranceSteps]
 
 end Phenomena.Gradability.Vagueness

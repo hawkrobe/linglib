@@ -239,9 +239,9 @@ grade to all of his students. Kim is a professor."
 The QUD is good (we don't know Kim's grade). But "some" is needlessly
 weak: "all" is equally complex and semantically stronger.
 
-Connects to Core.Scales: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
+Connects to Core.Scale: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
 the Answer Condition is the same relationship captured by
-`Core.Scales.Quantifiers.entails .all .some_ = true`. -/
+`Core.Scale.Quantifiers.entails .all .some_ = true`. -/
 
 section NeedlesslyWeak
 

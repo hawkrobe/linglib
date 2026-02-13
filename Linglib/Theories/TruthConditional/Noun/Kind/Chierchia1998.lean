@@ -481,4 +481,61 @@ class effects), see:
 - `Phenomena/Generics/Data.lean` - generic sentence patterns
 -/
 
+-- ============================================================================
+-- Kind Formation via Equivalence Relations (Mendia 2020, Snyder 2026 §4.1)
+-- ============================================================================
+
+section KindFormation
+
+/-- An equivalence relation on atoms partitions them into subkinds. -/
+structure KindFormation (Atom : Type) where
+  /-- The salient equivalence relation -/
+  rel : Atom → Atom → Prop
+  /-- Must be an equivalence -/
+  isEquiv : Equivalence rel
+
+/-- Subkind relation: k₁ is a subkind of k₂ iff every
+    entity instantiating k₁ also instantiates k₂. -/
+def isSubkindOf {Atom : Type} (k₁ k₂ : Set Atom) : Prop :=
+  k₁ ⊆ k₂
+
+/-- Carlson's (1977) Disjointness Condition: subkinds induced by an
+    equivalence relation are pairwise disjoint in any context. -/
+theorem disjointness_condition {Atom : Type} [DecidableEq Atom]
+    (kf : KindFormation Atom) (a b : Atom) (h : ¬kf.rel a b) :
+    Disjoint {x | kf.rel a x} {x | kf.rel b x} := by
+  rw [Set.disjoint_iff]
+  intro x ⟨ha, hb⟩
+  have hxa : kf.rel x a := kf.isEquiv.symm ha
+  have hxb : kf.rel x b := kf.isEquiv.symm hb
+  have hab : kf.rel a b := kf.isEquiv.trans (kf.isEquiv.symm hxa) hxb
+  exact h hab
+
+/-- Number taxonomy: NUMBER has subkinds ℕ, ℤ, ℚ, ℝ, etc.
+    TWO has subkinds 2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ (Snyder §4.3). -/
+inductive NumberSystem where
+  | nat | int | rat | real
+  deriving DecidableEq, BEq, Repr
+
+instance : Fintype NumberSystem where
+  elems := {.nat, .int, .rat, .real}
+  complete := by intro x; cases x <;> simp
+
+/-- Two twos from different systems are distinct subkinds of TWO. -/
+def twoSubkinds : NumberSystem → NumberSystem → Prop := (· ≠ ·)
+
+/-- The four number systems. -/
+def NumberSystem.all : List NumberSystem := [.nat, .int, .rat, .real]
+
+/-- NUMBER has four subkinds (ℕ, ℤ, ℚ, ℝ).
+    This is what makes taxonomic predication ("two comes in several
+    varieties") felicitous: the kind TWO has genuinely distinct subkinds. -/
+theorem numberSystem_count : NumberSystem.all.length = 4 := rfl
+
+/-- All pairs of distinct number systems yield distinct subkinds. -/
+theorem twoSubkinds_of_ne (s₁ s₂ : NumberSystem) (h : s₁ ≠ s₂) :
+    twoSubkinds s₁ s₂ := h
+
+end KindFormation
+
 end TruthConditional.Noun.Kind.Chierchia1998

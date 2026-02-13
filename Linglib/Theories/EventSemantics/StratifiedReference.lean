@@ -25,10 +25,10 @@ a proper part along that dimension).
 import Linglib.Theories.EventSemantics.Mereology
 import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
 
-namespace Theories.EventSemantics.StratifiedReference
+namespace EventSemantics.StratifiedReference
 
-open Theories.EventSemantics
-open Theories.EventSemantics.Mereology
+open EventSemantics
+open EventSemantics.Mereology
 open TruthConditional.Core.Time
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ViewpointAspect
@@ -226,27 +226,6 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
 -- § 10. Aspect Bridge (SSR ↔ atelicity)
 -- ════════════════════════════════════════════════════
 
-/-- Champollion's (2017) central thesis, Ch. 4–5: an event predicate P
-    is compatible with temporal for-adverbials iff P has universal SSR.
-    This is the strata-based characterization of atelicity.
-
-    Forward direction: if P has SSR_univ, then P is atelic (compatible
-    with "for X time"). The converse also holds but is harder to formalize.
-
-    Stated as a bridge theorem connecting SSR to VendlerClass.telicity.
-    Uses sorry per CLAUDE.md convention (requires model-theoretic content). -/
-theorem ssr_characterizes_atelic_predicates
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {P : Ev Time → Prop} {c : VendlerClass}
-    (h_ssr : SSR_univ P) :
-    c.telicity = .atelic := by
-  -- TODO: This requires connecting the abstract SSR property to the
-  -- VendlerClass classification. The proof would go through showing that
-  -- SSR_univ implies the subinterval property, which is equivalent to
-  -- atelicity. The formal connection needs a model where VendlerClass
-  -- is assigned to P based on its mereological properties.
-  sorry
-
 /-- for-adverbials require SSR (Champollion 2017 §5.3, eq. 39/66).
     "John ran for an hour" is felicitous because "run" has SSR.
     "* John arrived for an hour" is infelicitous because "arrive" lacks SSR. -/
@@ -298,4 +277,4 @@ theorem in_adverbial_incompatible_with_ssr
   -- (qua_cum_incompatible).
   sorry
 
-end Theories.EventSemantics.StratifiedReference
+end EventSemantics.StratifiedReference

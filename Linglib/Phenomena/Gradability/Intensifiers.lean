@@ -22,26 +22,11 @@ This file records pure empirical data — no theoretical commitments.
 - Zwicky, A. M. (1970). Greek-letter variables and the Sanskrit ruki class.
 -/
 
+import Linglib.Theories.TruthConditional.Adjective.Intensification
+
 namespace Phenomena.Gradability.Intensifiers
 
--- Evaluative Valence
-
-/--
-Evaluative valence of the adjectival base.
-
-This is distinct from scalar polarity (positive/negative scale direction):
-- **positive**: the adjective denotes a good/desirable property (pleasant, nice)
-- **negative**: the adjective denotes a bad/undesirable property (horrible, terrible)
-- **neutral**: no inherent evaluative content (usual, possible)
-
-Nouwen (2024) argues that evaluative valence, not scalar polarity,
-determines the intensifier's degree class.
--/
-inductive EvaluativeValence where
-  | positive   -- pleasant, nice, decent
-  | negative   -- horrible, terrible, awful
-  | neutral    -- usual, possible (non-evaluative)
-  deriving Repr, DecidableEq, BEq
+open TruthConditional.Adjective.Intensification (EvaluativeValence)
 
 /--
 Intensifier degree class (Nouwen 2024, Figure 2).

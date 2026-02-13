@@ -33,7 +33,7 @@ Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
 ```lean
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
 
-open Theories.NadathurLauer2020.Examples
+open NadathurLauer2020.Examples
 
 -- Check if lightning is sufficient for fire
 #eval causallySufficient fireDynamics Situation.empty lightning fire
@@ -78,7 +78,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Integration
 import Linglib.Theories.IntensionalSemantics.Causative.GradedCausation
 import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 
-namespace Theories.NadathurLauer2020
+namespace NadathurLauer2020
 
 -- Re-export key definitions for convenience
 export Core.CausalModel (
@@ -112,4 +112,4 @@ theorem make_cause_truth_conditionally_distinct :
       makeSem dyn s c e ≠ causeSem dyn s c e :=
   Examples.make_cause_distinct
 
-end Theories.NadathurLauer2020
+end NadathurLauer2020

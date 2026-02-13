@@ -37,26 +37,23 @@ This asymmetry emerges from pragmatic inference, not stipulation.
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Distribution
+import Linglib.Core.MeasurementScale
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.TesslerGoodman2022
 
 open RSA.Eval
+open Core.Scale (Degree Threshold Degree.ofNat Degree.toNat Threshold.toNat
+  deg thr allDegrees allThresholds)
 
--- Domain: Heights (reuse from LassiterGoodman2017)
+-- Domain: Heights (backed by canonical Degree 10)
 
 /--
 Discretized height values (in inches, scaled).
 Heights range from "short" (0) to "tall" (10) in discrete steps.
+Now backed by the canonical `Degree 10` type with `LinearOrder` and `BoundedOrder`.
 -/
-inductive Height where
-  | h0 | h1 | h2 | h3 | h4 | h5 | h6 | h7 | h8 | h9 | h10
-  deriving Repr, DecidableEq, BEq, Fintype
-
-/-- Convert height to numeric value -/
-def Height.toNat : Height → Nat
-  | .h0 => 0 | .h1 => 1 | .h2 => 2 | .h3 => 3 | .h4 => 4
-  | .h5 => 5 | .h6 => 6 | .h7 => 7 | .h8 => 8 | .h9 => 9 | .h10 => 10
+abbrev Height := Degree 10
 
 -- Domain: Comparison Classes
 
@@ -114,54 +111,57 @@ inductive Utterance where
 Height prior for generic people (baseline).
 Normal distribution centered at h5.
 -/
-def personHeightPrior : Height → ℚ
-  | .h0 => 1    -- tails
-  | .h1 => 2
-  | .h2 => 5
-  | .h3 => 10
-  | .h4 => 15
-  | .h5 => 20   -- peak (mean)
-  | .h6 => 15
-  | .h7 => 10
-  | .h8 => 5
-  | .h9 => 2
-  | .h10 => 1   -- tails
+def personHeightPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 1    -- tails
+  | 1 => 2
+  | 2 => 5
+  | 3 => 10
+  | 4 => 15
+  | 5 => 20   -- peak (mean)
+  | 6 => 15
+  | 7 => 10
+  | 8 => 5
+  | 9 => 2
+  | _ => 1    -- tails
 
 /--
 Height prior for basketball players.
 Shifted RIGHT - basketball players are taller on average.
 Peak at h7 instead of h5.
 -/
-def basketballHeightPrior : Height → ℚ
-  | .h0 => 0
-  | .h1 => 0
-  | .h2 => 1
-  | .h3 => 2
-  | .h4 => 5
-  | .h5 => 10
-  | .h6 => 15
-  | .h7 => 20   -- peak shifted right
-  | .h8 => 15
-  | .h9 => 10
-  | .h10 => 5
+def basketballHeightPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 0
+  | 1 => 0
+  | 2 => 1
+  | 3 => 2
+  | 4 => 5
+  | 5 => 10
+  | 6 => 15
+  | 7 => 20   -- peak shifted right
+  | 8 => 15
+  | 9 => 10
+  | _ => 5
 
 /--
 Height prior for jockeys.
 Shifted LEFT - jockeys are shorter on average.
 Peak at h3 instead of h5.
 -/
-def jockeyHeightPrior : Height → ℚ
-  | .h0 => 5
-  | .h1 => 10
-  | .h2 => 15
-  | .h3 => 20   -- peak shifted left
-  | .h4 => 15
-  | .h5 => 10
-  | .h6 => 5
-  | .h7 => 2
-  | .h8 => 1
-  | .h9 => 0
-  | .h10 => 0
+def jockeyHeightPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 5
+  | 1 => 10
+  | 2 => 15
+  | 3 => 20   -- peak shifted left
+  | 4 => 15
+  | 5 => 10
+  | 6 => 5
+  | 7 => 2
+  | 8 => 1
+  | 9 => 0
+  | _ => 0
 
 /-- Height prior given kind: P(h | k) -/
 def heightPriorGivenKind (k : Kind) : Height → ℚ :=
@@ -265,6 +265,9 @@ instance : Fintype JointState := inferInstance
 instance : DecidableEq JointState := inferInstance
 instance : BEq JointState := inferInstance
 
+/-- All heights -/
+def allHeights : List Height := allDegrees 10
+
 /--
 L0: Literal listener distribution over heights given utterance and comparison class.
 
@@ -275,8 +278,7 @@ The literal listener:
 2. Weights by the kind-specific height prior
 -/
 def L0 (k : Kind) (c : ComparisonClass) (u : Utterance) : List (Height × ℚ) :=
-  let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  let scores := heights.map λ h =>
+  let scores := allHeights.map λ h =>
     let sem := if meaning u c k h then (1 : ℚ) else 0
     let prior := heightPriorGivenKind k h
     (h, sem * prior)
@@ -309,9 +311,8 @@ This is the key equation from the paper. The listener jointly infers:
 The comparison class inference is the novel contribution.
 -/
 def L1_joint (k : Kind) (u : Utterance) : List (JointState × ℚ) :=
-  let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
   let classes : List ComparisonClass := [.subordinate, .superordinate]
-  let pairs := heights.flatMap λ h => classes.map λ c => (h, c)
+  let pairs := allHeights.flatMap λ h => classes.map λ c => (h, c)
   let scores := pairs.map λ (h, c) =>
     let heightPrior := heightPriorGivenKind k h
     let classPrior := comparisonClassPrior k c
@@ -324,8 +325,7 @@ L1 marginal over heights: P_L1(h | u, k) = Σ_c P_L1(h, c | u, k)
 -/
 def L1_height (k : Kind) (u : Utterance) : List (Height × ℚ) :=
   let joint := L1_joint k u
-  let heights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
-  heights.map λ h =>
+  allHeights.map λ h =>
     let hScores := joint.filter (·.1.1 == h) |>.map (·.2)
     (h, RSA.Eval.sumScores hScores)
 
@@ -348,8 +348,8 @@ def L1_class (k : Kind) (u : Utterance) : List (ComparisonClass × ℚ) :=
 #eval L0 .basketballPlayer .superordinate .short -- short for a person
 
 -- S1 distributions
-#eval S1 .basketballPlayer .subordinate .h8      -- speaker with tall basketball player, comparing to BBall
-#eval S1 .basketballPlayer .superordinate .h8    -- speaker with tall basketball player, comparing to people
+#eval S1 .basketballPlayer .subordinate (deg 8)      -- speaker with tall basketball player, comparing to BBall
+#eval S1 .basketballPlayer .superordinate (deg 8)    -- speaker with tall basketball player, comparing to people
 
 -- L1 joint distributions (the key model output)
 #eval L1_joint .basketballPlayer .tall           -- "tall basketball player"
@@ -467,12 +467,12 @@ The comparison class inference follows the pattern:
 - UNEXPECTED adjective → SUBORDINATE comparison
 
 Basketball players: tall expected, short unexpected
-- "tall basketball player" → superordinate ✓
-- "short basketball player" → subordinate ✓
+- "tall basketball player" → superordinate
+- "short basketball player" → subordinate
 
 Jockeys: short expected, tall unexpected
-- "short jockey" → superordinate ✓
-- "tall jockey" → subordinate ✓
+- "short jockey" → superordinate
+- "tall jockey" → subordinate
 
 This pattern emerges from RSA reasoning about informativity.
 -/
@@ -498,8 +498,8 @@ Even though we're inferring superordinate comparison, hearing "tall"
 still shifts the height inference upward.
 -/
 theorem tall_basketball_height_shift :
-    RSA.Eval.getScore (L1_height .basketballPlayer .tall) .h8 >
-    RSA.Eval.getScore (L1_height .basketballPlayer .tall) .h3 := by
+    RSA.Eval.getScore (L1_height .basketballPlayer .tall) (deg 8) >
+    RSA.Eval.getScore (L1_height .basketballPlayer .tall) (deg 3) := by
   native_decide
 
 /--
@@ -508,8 +508,8 @@ theorem tall_basketball_height_shift :
 Hearing "short" shifts the height inference downward.
 -/
 theorem short_basketball_height_shift :
-    RSA.Eval.getScore (L1_height .basketballPlayer .short) .h3 >
-    RSA.Eval.getScore (L1_height .basketballPlayer .short) .h8 := by
+    RSA.Eval.getScore (L1_height .basketballPlayer .short) (deg 3) >
+    RSA.Eval.getScore (L1_height .basketballPlayer .short) (deg 8) := by
   native_decide
 
 -- Baseline: Generic "person"
@@ -580,8 +580,8 @@ This is because with subordinate comparison, h7 is NOT tall (threshold is 7),
 but with superordinate comparison, h7 IS tall (threshold is 5).
 -/
 theorem tall_more_informative_superordinate :
-    RSA.Eval.getScore (S1 .basketballPlayer .superordinate .h7) .tall >
-    RSA.Eval.getScore (S1 .basketballPlayer .subordinate .h7) .tall := by
+    RSA.Eval.getScore (S1 .basketballPlayer .superordinate (deg 7)) .tall >
+    RSA.Eval.getScore (S1 .basketballPlayer .subordinate (deg 7)) .tall := by
   native_decide
 
 /--
@@ -594,8 +594,8 @@ With subordinate: h5 < 7, so "short" applies
 With superordinate: h5 = 5, so "short" doesn't apply (h5 ≮ 5)
 -/
 theorem short_more_informative_subordinate :
-    RSA.Eval.getScore (S1 .basketballPlayer .subordinate .h5) .short >
-    RSA.Eval.getScore (S1 .basketballPlayer .superordinate .h5) .short := by
+    RSA.Eval.getScore (S1 .basketballPlayer .subordinate (deg 5)) .short >
+    RSA.Eval.getScore (S1 .basketballPlayer .superordinate (deg 5)) .short := by
   native_decide
 
 -- Connection to Lassiter & Goodman (2017)

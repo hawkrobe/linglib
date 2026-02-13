@@ -35,11 +35,11 @@ Extended Yoon et al. (2020) RSA with:
 - Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
-import Linglib.Theories.TruthConditional.Domain.Degree
+import Linglib.Theories.TruthConditional.Adjective.Theory
 
 namespace Phenomena.Politeness.Studies.MachinoEtAl2025
 
-open TruthConditional.Domain.Degrees (ModifierDirection DegreeModifier)
+open TruthConditional.Adjective (ModifierDirection DegreeModifier)
 
 -- ============================================================================
 -- Modifier Hierarchy

@@ -32,7 +32,7 @@ The treatment of epistemic "might":
 
 import Linglib.Theories.DynamicSemantics.Core.Basic
 
-namespace Theories.DynamicSemantics.UpdateSemantics
+namespace DynamicSemantics.UpdateSemantics
 
 open Classical
 
@@ -151,4 +151,4 @@ s accepts φ iff ⟦φ⟧(s) ≠ ∅
 def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
 
-end Theories.DynamicSemantics.UpdateSemantics
+end DynamicSemantics.UpdateSemantics

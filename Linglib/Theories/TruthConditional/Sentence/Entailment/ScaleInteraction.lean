@@ -5,12 +5,12 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 
 namespace TruthConditional.Sentence.Entailment.ScaleInteraction
 
 open TruthConditional.Sentence.Entailment
-open Core.Scales
+open Core.Scale
 
 /-- Scale reversal: UE alternatives of "some" are [most, all]; DE alternatives are [none]. -/
 theorem scale_alternatives_reverse :

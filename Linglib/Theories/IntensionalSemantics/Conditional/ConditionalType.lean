@@ -42,7 +42,7 @@ namespace IntensionalSemantics.Conditional
 
 open Core.Proposition
 open TruthConditional.Core.Polarity
-open Theories.DynamicSemantics.State
+open DynamicSemantics.State
 
 -- Conditional Type: HC vs PC
 

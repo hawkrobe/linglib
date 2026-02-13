@@ -57,7 +57,7 @@ open TruthConditional.Expressives
 open Core.Presupposition
 open Core.Proposition
 
-namespace Theories.TruthConditional.Sentence.Focus.KratzerSelkirk2020
+namespace TruthConditional.Sentence.Focus.KratzerSelkirk2020
 
 variable {W : Type*} {Entity : Type}
 
@@ -424,4 +424,4 @@ theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
     isAGiven aValue referent = true ∧ isGiven aValue referent = false := by
   exact ⟨[1, 2], 1, by native_decide, by native_decide⟩
 
-end Theories.TruthConditional.Sentence.Focus.KratzerSelkirk2020
+end TruthConditional.Sentence.Focus.KratzerSelkirk2020

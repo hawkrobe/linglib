@@ -42,7 +42,7 @@ import Linglib.Theories.IntensionalSemantics.Conditional.Basic
 namespace IntensionalSemantics.Conditional
 
 open Core.Proposition
-open Theories.DynamicSemantics.State
+open DynamicSemantics.State
 
 -- Left-Nested Conditional Structure
 

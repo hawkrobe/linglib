@@ -19,7 +19,7 @@ Fundamental results distinguishing dynamic from static semantics.
 import Linglib.Theories.DynamicSemantics.PLA.Update
 import Linglib.Theories.DynamicSemantics.PLA.Epistemic
 
-namespace Theories.DynamicSemantics.PLA
+namespace DynamicSemantics.PLA
 
 open Classical
 
@@ -178,4 +178,4 @@ theorem bathroom_domain_nonempty :
   left
   exact Finset.mem_insert_self 0 _
 
-end Theories.DynamicSemantics.PLA
+end DynamicSemantics.PLA

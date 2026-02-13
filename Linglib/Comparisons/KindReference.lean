@@ -52,7 +52,7 @@ import Linglib.Theories.TruthConditional.Noun.Kind.Dayal2004
 import Linglib.Theories.TruthConditional.Noun.Kind.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
-namespace Theories.Comparisons.KindReference
+namespace Comparisons.KindReference
 
 open TruthConditional.Noun.Kind.Carlson1977
 open TruthConditional.Noun.Kind.Chierchia1998
@@ -680,4 +680,4 @@ The key theorems from the theory files:
 See `Phenomena/KindReference/Data.lean` for the full scrambling dataset.
 -/
 
-end Theories.Comparisons.KindReference
+end Comparisons.KindReference

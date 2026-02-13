@@ -91,7 +91,130 @@ def precedes (i₁ i₂ : Interval Time) : Prop :=
 def meets (i₁ i₂ : Interval Time) : Prop :=
   i₁.finish = i₂.start
 
+-- ════════════════════════════════════════════════════
+-- § Open/Closed Interval Distinction (Rouillard 2026)
+-- ════════════════════════════════════════════════════
+
+/-- Whether an interval's boundary is included (closed) or excluded (open).
+    Rouillard (2026) §2.2.4: the distinction between closed and open times
+    is central to deriving the polarity sensitivity of G-TIAs.
+    Event runtimes are closed; PTSs are open intervals. -/
+inductive BoundaryType where
+  | closed  -- boundary moment included in the interval
+  | open_   -- boundary moment excluded from the interval
+  deriving DecidableEq, Repr, BEq
+
+/-- A generalized interval with specified boundary types.
+    Extends the basic `Interval` with open/closed annotations on each end.
+    Rouillard (2026) eq. (14a–b), (99a–b). -/
+structure GInterval (Time : Type*) [LE Time] where
+  /-- Left endpoint -/
+  left : Time
+  /-- Right endpoint -/
+  right : Time
+  /-- Left boundary type: closed [m or open ]m -/
+  leftType : BoundaryType
+  /-- Right boundary type: closed m] or open m[ -/
+  rightType : BoundaryType
+  /-- The endpoints are ordered -/
+  valid : left ≤ right
+
+namespace GInterval
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- A closed interval [m₁, m₂]: both endpoints included.
+    Rouillard (2026) eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
+def closed (i : Interval Time) : GInterval Time where
+  left := i.start
+  right := i.finish
+  leftType := .closed
+  rightType := .closed
+  valid := i.valid
+
+/-- An open interval ]m₁, m₂[: both endpoints excluded.
+    Rouillard (2026) eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
+def open_ (i : Interval Time) : GInterval Time where
+  left := i.start
+  right := i.finish
+  leftType := .open_
+  rightType := .open_
+  valid := i.valid
+
+/-- The o(t) operation: open counterpart of a time.
+    Rouillard (2026) eq. (99a): if t is open, o(t) = t; if t is closed,
+    o(t) is the open interval with the same endpoints.  -/
+def toOpen (gi : GInterval Time) : GInterval Time :=
+  { gi with leftType := .open_, rightType := .open_ }
+
+/-- The c(t) operation: closed counterpart of a time.
+    Rouillard (2026) eq. (99b): if t is closed, c(t) = t; if t is open,
+    c(t) adds the endpoints. -/
+def toClosed (gi : GInterval Time) : GInterval Time :=
+  { gi with leftType := .closed, rightType := .closed }
+
+/-- Is this interval closed (both boundaries included)? -/
+def isClosed (gi : GInterval Time) : Prop :=
+  gi.leftType = .closed ∧ gi.rightType = .closed
+
+/-- Is this interval open (both boundaries excluded)? -/
+def isOpen (gi : GInterval Time) : Prop :=
+  gi.leftType = .open_ ∧ gi.rightType = .open_
+
+/-- Containment for generalized intervals: m is in gi.
+    For closed endpoints, ≤ is used; for open endpoints, <. -/
+def gcontains (gi : GInterval Time) (m : Time) : Prop :=
+  (match gi.leftType with
+   | .closed => gi.left ≤ m
+   | .open_ => gi.left < m) ∧
+  (match gi.rightType with
+   | .closed => m ≤ gi.right
+   | .open_ => m < gi.right)
+
+/-- Generalized subinterval: gi₁ ⊆ gi₂ (every moment in gi₁ is in gi₂). -/
+def gsubinterval (gi₁ gi₂ : GInterval Time) : Prop :=
+  ∀ m : Time, gi₁.gcontains m → gi₂.gcontains m
+
+/-- Convert a closed GInterval back to the basic Interval type. -/
+def toInterval (gi : GInterval Time) : Interval Time where
+  start := gi.left
+  finish := gi.right
+  valid := gi.valid
+
+/-- The closed counterpart of an open interval is always closed. -/
+theorem toClosed_isClosed (gi : GInterval Time) : gi.toClosed.isClosed :=
+  ⟨rfl, rfl⟩
+
+/-- The open counterpart is always open. -/
+theorem toOpen_isOpen (gi : GInterval Time) : gi.toOpen.isOpen :=
+  ⟨rfl, rfl⟩
+
+/-- toClosed is idempotent. -/
+theorem toClosed_idempotent (gi : GInterval Time) :
+    gi.toClosed.toClosed = gi.toClosed := rfl
+
+/-- toOpen is idempotent. -/
+theorem toOpen_idempotent (gi : GInterval Time) :
+    gi.toOpen.toOpen = gi.toOpen := rfl
+
+end GInterval
+
 end Interval
+
+-- ════════════════════════════════════════════════════
+-- § Dense Time (Fox & Hackl 2006, Rouillard 2026)
+-- ════════════════════════════════════════════════════
+
+/-- Dense time is captured by Mathlib's `DenselyOrdered` typeclass:
+    ∀ m₁ m₂, m₁ < m₂ → ∃ m₃, m₁ < m₃ ∧ m₃ < m₂.
+
+    This is Rouillard (2026) eq. (8) and an instance of Fox & Hackl (2006)
+    Universal Density of Measurement (UDM). Instead of a custom class, we
+    use Mathlib's `DenselyOrdered` directly — ℚ and ℝ already have instances.
+
+    Crucial for G-TIA polarity sensitivity: ensures that no open interval
+    can be the smallest interval including a closed time. -/
+abbrev DenseTime (Time : Type*) [LinearOrder Time] := DenselyOrdered Time
 
 
 /--

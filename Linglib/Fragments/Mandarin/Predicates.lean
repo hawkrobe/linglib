@@ -9,7 +9,7 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 
 namespace Fragments.Mandarin.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType PreferentialBuilder AttitudeBuilder)
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
 
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/

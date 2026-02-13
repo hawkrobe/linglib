@@ -37,7 +37,7 @@ in `Fragments/English/Predicates/Verbal.lean` is **grounded** by
 - Karttunen, L. (1971). Implicative Verbs. Language 47(2), 340-358.
 -/
 
-namespace Theories.Nadathur2023.Implicative
+namespace Nadathur2023.Implicative
 
 open Core.CausalModel
 
@@ -208,4 +208,4 @@ theorem entailsComplement_positive :
 theorem entailsComplement_negative :
     ImplicativeBuilder.negative.entailsComplement = false := rfl
 
-end Theories.Nadathur2023.Implicative
+end Nadathur2023.Implicative

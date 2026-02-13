@@ -22,10 +22,12 @@ MSO, UO) combining into **strict incrementality (SINC)**, plus the
 3. Derived Properties (SINC → UP, ME, MO, CumTheta)
 4. VP Formation (§3.3, eq. 53)
 5. Telicity Theorems (§3.3) — THE PAYOFF
-6. Extensive Measure Functions (§2.2, eq. 7)
+6. GRAD: Gradual Change (Krifka 1989)
 7. Verb Annotations (Meaning Postulates)
 8. General Incrementality (§3.6, eq. 59)
 9. Bridge Theorems
+
+Note: Overlap, ExtMeasure, and extMeasure_qua are in Mereology.lean (§10).
 
 ## References
 
@@ -39,11 +41,10 @@ MSO, UO) combining into **strict incrementality (SINC)**, plus the
 import Linglib.Theories.EventSemantics.Mereology
 import Linglib.Theories.EventSemantics.StratifiedReference
 
-namespace Theories.EventSemantics.Krifka1998
+namespace EventSemantics.Krifka1998
 
-open Theories.EventSemantics
-open Theories.EventSemantics.Mereology
-open Theories.EventSemantics.ThematicRoles
+open EventSemantics
+open EventSemantics.Mereology
 open TruthConditional.Core.Time
 open TruthConditional.Verb.Aspect
 
@@ -52,11 +53,6 @@ open TruthConditional.Verb.Aspect
 -- ════════════════════════════════════════════════════
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-
-/-- Mereological overlap: x and y share a common part.
-    Krifka (1998) eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
-def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
-  ∃ z, z ≤ x ∧ z ≤ y
 
 /-- Uniqueness of Participant (UP): each event has at most one θ-filler.
     Krifka (1998) eq. (43): θ(x,e) ∧ θ(y,e) → x = y. -/
@@ -131,19 +127,11 @@ structure SINC (θ : α → β → Prop) : Prop where
 -- § 3. Derived Properties
 -- ════════════════════════════════════════════════════
 
-/-- UO implies UP under the assumption that θ-fillers are comparable.
-    Krifka (1998): UP says each event has at most one θ-filler.
-    UO says each subevent of an event has a unique subobject of the
-    outer object. UP does not follow from UO alone (UO is relativized
-    to an outer pair), but it does follow when combined with GUE:
-    if each object participates in at most one event, and each event
-    part has a unique object, then each event has a unique participant. -/
-theorem up_of_uo_gue {θ : α → β → Prop} (h : UO θ) (h_gue : GUE θ) : UP θ := by
-  -- TODO: Requires showing that GUE + UO yields unique fillers.
-  -- The gap is that UO is relativized to an outer (x,e) pair, so
-  -- two independent fillers x,y of the same e aren't directly
-  -- connected by UO's uniqueness clause without x ≤ y or y ≤ x.
-  sorry
+-- Note on UP vs UO + GUE: Krifka (1998) lists UP (eq. 43) as a
+-- separate property from the SINC components. UO is relativized to
+-- an outer (x,e) pair, so two independent fillers x,y of the same
+-- event e aren't directly connected by UO's uniqueness clause.
+-- UP must be assumed separately where needed (e.g., in `qua_propagation`).
 
 /-- MSE implies ME: weaken strict to non-strict.
     Krifka (1998): if proper parts map to proper subevents, then
@@ -173,18 +161,13 @@ theorem me_of_sinc {θ : α → β → Prop} (h : SINC θ) : ME θ :=
 theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
   mo_of_mso h.mso
 
-/-- SINC implies CumTheta: strictly incremental θ preserves sums.
-    Proof: Given θ(x,e) and θ(y,e'), we need θ(x⊔y, e⊔e').
-    By ME, every part of x maps to a subevent of e, and similarly for y/e'.
-    By MO, every subevent maps back. The sum e⊔e' covers all subevents,
-    so x⊔y is the θ-filler of e⊔e'.
-    This is a model-theoretic argument; we sorry it per convention. -/
-theorem cumTheta_of_sinc {θ : α → β → Prop} (h : SINC θ) : CumTheta θ := by
-  -- TODO: The full proof requires showing that the unique mapping properties
-  -- of SINC compose correctly under ⊔. The key insight is that UO + UE
-  -- together establish a bijection between object parts and event parts,
-  -- and this bijection extends to sums by the lattice structure.
-  sorry
+-- In CEM models, SINC implies CumTheta: the bijection between object
+-- parts and event parts extends to sums. However, CumTheta does not
+-- follow from SINC in arbitrary join semilattices (it requires CEM
+-- complementation to decompose sums). Following Krifka (1998), who
+-- lists CumTheta (eq. 44) as a separate property from SINC (eq. 51),
+-- we require CumTheta as a separate hypothesis where needed (see
+-- `sinc_cum_propagation`).
 
 -- ════════════════════════════════════════════════════
 -- § 4. VP Formation (§3.3, eq. 53)
@@ -249,30 +232,32 @@ theorem qua_propagation_sinc {θ : α → β → Prop} {OBJ : α → Prop}
   qua_propagation hUP hSinc.mso hQua
 
 -- ════════════════════════════════════════════════════
--- § 6. Extensive Measure Functions (§2.2, eq. 7)
+-- § 6. GRAD: Gradual Change (Krifka 1989)
 -- ════════════════════════════════════════════════════
 
-/-- Extensive measure function: additive over non-overlapping entities.
-    Krifka (1998) §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
-    Examples: weight, volume, number (cardinality). -/
-class ExtMeasure (α : Type*) [SemilatticeSup α] [PartialOrder α]
-    (μ : α → ℚ) : Prop where
-  /-- Additivity: μ is additive over non-overlapping entities. -/
-  additive : ∀ (x y : α), ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
-  /-- Positivity: every entity has positive measure. -/
-  positive : ∀ (x : α), 0 < μ x
+/-- Graduality (GRAD): more object measure entails more event measure.
+    Krifka (1989): GRAD(θ, μ_obj, μ_ev) ⇔ ∀x,y,e,e'. θ(x,e) ∧ θ(y,e') ∧
+    μ_obj(x) < μ_obj(y) → μ_ev(e) < μ_ev(e').
+    GRAD captures the intuition that eating more food takes more time. -/
+def GRAD (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) : Prop :=
+  ∀ (x y : α) (e e' : β), θ x e → θ y e' →
+    μ_obj x < μ_obj y → μ_ev e < μ_ev e'
 
-/-- Measure phrases create QUA predicates: {x : μ(x) = n} is QUA
-    whenever μ is an extensive measure.
-    Krifka (1998) §2.2: "two kilograms of flour" is QUA because
-    no proper part of a 2kg entity also weighs 2kg. -/
-theorem extMeasure_qua {α : Type*} [SemilatticeSup α] [PartialOrder α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) (hn : 0 < n) :
-    QUA (fun x => μ x = n) := by
-  intro x y hx hlt
-  -- If y < x, then x = y ⊔ z for some z with ¬Overlap y z (in CEM).
-  -- Then μ(x) = μ(y) + μ(z) > μ(y), so μ(y) < n, hence μ(y) ≠ n.
-  -- This requires complementation / CEM axioms beyond SemilatticeSup.
+/-- SINC + extensive measures → GRAD: strictly incremental themes with
+    extensive measures exhibit gradual change.
+
+    This requires the SINC bijection to preserve measure ordering across
+    independent (x,e) pairs — a model-theoretic consequence in CEM that
+    goes beyond the abstract lattice axioms. The key gap: SINC
+    establishes a bijection between parts of a GIVEN (x,e) pair, but GRAD
+    correlates measures across DIFFERENT pairs (x,e) and (y,e'). Closing
+    this requires CEM complementation + the measure-compatibility axiom
+    that the SINC bijection is measure-preserving. -/
+theorem grad_of_sinc {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ)
+    (_hSinc : SINC θ) [_hObj : ExtMeasure α μ_obj] [_hEv : ExtMeasure β μ_ev] :
+    GRAD θ μ_obj μ_ev := by
   sorry
 
 -- ════════════════════════════════════════════════════
@@ -340,32 +325,28 @@ inductive IncClosure (θ' : α → β → Prop) : α → β → Prop where
 def INC (θ : α → β → Prop) : Prop :=
   ∃ θ' : α → β → Prop, SINC θ' ∧ ∀ (x : α) (e : β), θ x e ↔ IncClosure θ' x e
 
-/-- SINC implies INC: a strictly incremental θ is trivially its own
-    closure (since SINC is closed under sums). -/
-theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) : INC θ := by
+/-- SINC + CumTheta implies INC: a strictly incremental θ that is
+    cumulative is trivially its own closure. CumTheta ensures the
+    reverse direction: IncClosure θ ⊆ θ. -/
+theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ) : INC θ := by
   exact ⟨θ, h, fun x e => ⟨fun hθ => IncClosure.base hθ, by
     intro hcl
-    -- Extracting from IncClosure requires knowing θ is closed under ⊔,
-    -- which follows from CumTheta of SINC. Model-theoretic step.
-    sorry⟩⟩
+    induction hcl with
+    | base h => exact h
+    | sum _ _ ih₁ ih₂ => exact hCum _ _ _ _ ih₁ ih₂⟩⟩
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- Bridge: CUM propagation via SINC (combines cumTheta_of_sinc + cum_propagation).
-    SINC(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ). -/
+/-- Bridge: CUM propagation via CumTheta + CUM(OBJ).
+    CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
+    In CEM models, SINC implies CumTheta, so this covers the
+    "SINC verb + CUM noun → CUM VP" case from Krifka (1998) §3.3. -/
 theorem sinc_cum_propagation {θ : α → β → Prop} {OBJ : α → Prop}
-    (hSinc : SINC θ) (hObj : CUM OBJ) :
-    CUM (VP θ OBJ) := by
-  -- SINC → CumTheta, but cumTheta_of_sinc is sorry'd.
-  -- Instead, prove directly using SINC components.
-  -- Given VP(e₁) via ⟨y₁, OBJ(y₁), θ(y₁,e₁)⟩ and VP(e₂) via ⟨y₂, OBJ(y₂), θ(y₂,e₂)⟩,
-  -- we need VP(e₁⊔e₂), i.e., ∃y. OBJ(y) ∧ θ(y, e₁⊔e₂).
-  -- Take y = y₁ ⊔ y₂. OBJ(y₁⊔y₂) by CUM(OBJ).
-  -- Need θ(y₁⊔y₂, e₁⊔e₂), which is CumTheta applied to SINC.
-  -- This ultimately requires cumTheta_of_sinc.
-  sorry
+    (hCumTheta : CumTheta θ) (hObj : CUM OBJ) :
+    CUM (VP θ OBJ) :=
+  cum_propagation hCumTheta hObj
 
 /-- Bridge: QUA propagation from SINC + UP (renamed for API). -/
 theorem sinc_qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
@@ -373,34 +354,9 @@ theorem sinc_qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
     QUA (VP θ OBJ) :=
   qua_propagation hUP hSinc.mso hQua
 
-/-- Bridge: QUA(VP) implies telic Vendler class.
-    Krifka (1998): quantized VP predicates correspond to telic eventualities.
-    Uses sorry: requires connecting mereological QUA to VendlerClass. -/
-theorem qua_vendler_telic {α : Type*} [PartialOrder α]
-    {P : α → Prop} {c : VendlerClass}
-    (hQua : QUA P) :
-    c.telicity = .telic := by
-  -- TODO: This bridges the abstract QUA property to Vendler classification.
-  -- QUA predicates lack the subinterval property, which is the hallmark
-  -- of telic predicates (achievements and accomplishments).
-  sorry
-
-/-- Bridge: CUM(VP) implies atelic Vendler class.
-    Krifka (1998): cumulative VP predicates correspond to atelic eventualities.
-    Uses sorry: requires connecting mereological CUM to VendlerClass. -/
-theorem cum_vendler_atelic {α : Type*} [SemilatticeSup α]
-    {P : α → Prop} {c : VendlerClass}
-    (hCum : CUM P) :
-    c.telicity = .atelic := by
-  -- TODO: This bridges the abstract CUM property to Vendler classification.
-  -- CUM predicates have the subinterval property (for non-trivial cases),
-  -- corresponding to states and activities.
-  sorry
-
 /-- Bridge: RoleHom (functional θ from Mereology.lean) implies CumTheta
     (relational θ). A sum-homomorphic function θ : β → α induces a
-    cumulative relation λ x e, θ(e) = x.
-    Uses sorry: needs the connection between functional and relational forms. -/
+    cumulative relation λ x e, θ(e) = x. -/
 theorem roleHom_implies_cumTheta
     {f : β → α} (hf : IsSumHom f) :
     CumTheta (fun (x : α) (e : β) => f e = x) := by
@@ -408,4 +364,4 @@ theorem roleHom_implies_cumTheta
   rw [← hx, ← hy]
   exact hf.map_sup e e'
 
-end Theories.EventSemantics.Krifka1998
+end EventSemantics.Krifka1998

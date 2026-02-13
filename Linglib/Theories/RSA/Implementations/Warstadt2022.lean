@@ -442,7 +442,7 @@ instance : Fintype QUD where
   elems := { .dogStatus }
   complete := λ q => by cases q <;> simp
 
-open Theories.DynamicSemantics.State in
+open DynamicSemantics.State in
 /--
 Discourse configuration for this model.
 

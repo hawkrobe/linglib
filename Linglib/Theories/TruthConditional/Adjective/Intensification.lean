@@ -28,15 +28,32 @@ The intensified positive form is the conjunction (intersection) of:
 - Lassiter, D. & Goodman, N. (2017). Adjectival vagueness.
 -/
 
-import Linglib.Theories.TruthConditional.Domain.Degree
 import Linglib.Theories.TruthConditional.Adjective.Theory
-import Linglib.Phenomena.Gradability.Intensifiers
 import Mathlib.Data.Rat.Defs
 
 namespace TruthConditional.Adjective.Intensification
 
-open TruthConditional.Domain.Degrees
-open Phenomena.Gradability.Intensifiers
+open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
+open TruthConditional.Adjective (positiveMeaning)
+
+-- Evaluative Valence (shared with Phenomena.Gradability.Intensifiers)
+
+/--
+Evaluative valence of an adjectival base.
+
+This is distinct from scalar polarity (positive/negative scale direction):
+- **positive**: the adjective denotes a good/desirable property (pleasant, nice)
+- **negative**: the adjective denotes a bad/undesirable property (horrible, terrible)
+- **neutral**: no inherent evaluative content (usual, possible)
+
+Nouwen (2024) argues that evaluative valence, not scalar polarity,
+determines the intensifier's degree class.
+-/
+inductive EvaluativeValence where
+  | positive   -- pleasant, nice, decent
+  | negative   -- horrible, terrible, awful
+  | neutral    -- usual, possible (non-evaluative)
+  deriving Repr, DecidableEq, BEq
 
 -- Evaluative Measure Functions
 

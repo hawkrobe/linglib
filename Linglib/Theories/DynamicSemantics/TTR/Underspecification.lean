@@ -56,7 +56,7 @@ formalizes the chapter's mechanisms at two levels:
 - Kanazawa (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
-namespace Theories.DynamicSemantics.TTR
+namespace DynamicSemantics.TTR
 
 -- ============================================================================
 -- Quantifier stores and plugged/unplugged content
@@ -1410,4 +1410,4 @@ theorem donkeyNeg_uses_localization :
 
 end NoDogCatchesCat
 
-end Theories.DynamicSemantics.TTR
+end DynamicSemantics.TTR

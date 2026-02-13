@@ -1,8 +1,8 @@
 import Linglib.Theories.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.RSA.Domains.Quantities
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
-import Linglib.Core.Scales
+import Linglib.Theories.TruthConditional.Numeral.Semantics
+import Linglib.Core.HornScale
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -33,7 +33,7 @@ namespace RSA.Implementations.CumminsFranke2021
 open RSA.ArgumentativeStrength
 open RSA.InformationTheory
 open RSA.Domains.Quantity
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 
 -- ============================================================
@@ -255,11 +255,11 @@ theorem fortytwo_allows_most :
 theorem eighteen_allows_some :
     strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ := by native_decide
 
-/-- The quantifier ordering matches the Horn scale from Core.Scales:
+/-- The quantifier ordering matches the Horn scale from Core.Scale:
 none < some < most < all -/
 theorem quantifier_ordering_matches_scale :
-    Core.Scales.Quantifiers.entails .all .most = true ∧
-    Core.Scales.Quantifiers.entails .most .some_ = true ∧
-    Core.Scales.Quantifiers.entails .some_ .none_ = false := by native_decide
+    Core.Scale.Quantifiers.entails .all .most = true ∧
+    Core.Scale.Quantifiers.entails .most .some_ = true ∧
+    Core.Scale.Quantifiers.entails .some_ .none_ = false := by native_decide
 
 end RSA.Implementations.CumminsFranke2021

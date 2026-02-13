@@ -33,11 +33,14 @@ Scalar adjectives have a free threshold variable:
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.Distribution
+import Linglib.Core.MeasurementScale
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.LassiterGoodman2017
 
 open RSA.Eval
+open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat
+  deg thr allDegrees allThresholds)
 
 -- Domain: Heights and Thresholds (Discretized)
 
@@ -46,29 +49,17 @@ Discretized height values (in inches, scaled).
 
 We use a discrete approximation to the continuous model in the paper.
 Heights range from "short" (0) to "tall" (10) in discrete steps.
+Now backed by the canonical `Degree 10` type with `LinearOrder` and `BoundedOrder`.
 -/
-inductive Height where
-  | h0 | h1 | h2 | h3 | h4 | h5 | h6 | h7 | h8 | h9 | h10
-  deriving Repr, DecidableEq, BEq, Fintype
-
-/-- Convert height to numeric value -/
-def Height.toNat : Height → Nat
-  | .h0 => 0 | .h1 => 1 | .h2 => 2 | .h3 => 3 | .h4 => 4
-  | .h5 => 5 | .h6 => 6 | .h7 => 7 | .h8 => 8 | .h9 => 9 | .h10 => 10
+abbrev Height := Degree 10
 
 /--
 Threshold values for "tall".
 
 The threshold θ determines the cutoff: x is tall iff height(x) > θ.
+Now backed by the canonical `Threshold 10` type.
 -/
-inductive Threshold where
-  | t0 | t1 | t2 | t3 | t4 | t5 | t6 | t7 | t8 | t9
-  deriving Repr, DecidableEq, BEq, Fintype
-
-/-- Convert threshold to numeric value -/
-def Threshold.toNat : Threshold → Nat
-  | .t0 => 0 | .t1 => 1 | .t2 => 2 | .t3 => 3 | .t4 => 4
-  | .t5 => 5 | .t6 => 6 | .t7 => 7 | .t8 => 8 | .t9 => 9
+abbrev Threshold := Core.Scale.Threshold 10
 
 -- Utterances
 
@@ -129,18 +120,19 @@ Height prior: approximates a normal distribution centered at h5.
 This models the reference class distribution (e.g., adult male heights).
 The paper uses a continuous normal; we discretize.
 -/
-def heightPrior : Height → ℚ
-  | .h0 => 1    -- tails
-  | .h1 => 2
-  | .h2 => 5
-  | .h3 => 10
-  | .h4 => 15
-  | .h5 => 20   -- peak (mean)
-  | .h6 => 15
-  | .h7 => 10
-  | .h8 => 5
-  | .h9 => 2
-  | .h10 => 1   -- tails
+def heightPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 1    -- tails
+  | 1 => 2
+  | 2 => 5
+  | 3 => 10
+  | 4 => 15
+  | 5 => 20   -- peak (mean)
+  | 6 => 15
+  | 7 => 10
+  | 8 => 5
+  | 9 => 2
+  | _ => 1    -- tails
 
 /--
 Threshold prior: uniform over all thresholds.
@@ -185,10 +177,10 @@ def defaultWordCost : ℚ := 1
 def allUtterances : List Utterance := [.tall, .short, .silent]
 
 /-- List of all heights -/
-def allHeights : List Height := [.h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9, .h10]
+def allHeights : List Height := allDegrees 10
 
 /-- List of all thresholds -/
-def allThresholds : List Threshold := [.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9]
+def allThresholds : List Threshold := Core.Scale.allThresholds 10
 
 /-- Run L0 for vague adjectives at a given threshold -/
 def runL0 (u : Utterance) (θ : Threshold) : List (Height × ℚ) :=
@@ -258,19 +250,19 @@ def L1_interp_withCost (cost : Utterance → ℚ) (discountFactor : ℚ)
 -- Compute RSA Distributions (Basic Model - No Costs)
 
 /-- L0 for "tall" at threshold t5 (middle threshold) -/
-def l0_tall_t5 : List (Height × ℚ) := runL0 .tall .t5
+def l0_tall_t5 : List (Height × ℚ) := runL0 .tall (thr 5)
 
 /-- L0 for "short" at threshold t5 -/
-def l0_short_t5 : List (Height × ℚ) := runL0 .short .t5
+def l0_short_t5 : List (Height × ℚ) := runL0 .short (thr 5)
 
 /-- S1 for height h8 (tall person) at threshold t5 -/
-def s1_h8_t5 : List (Utterance × ℚ) := runS1 .h8 .t5
+def s1_h8_t5 : List (Utterance × ℚ) := runS1 (deg 8) (thr 5)
 
 /-- S1 for height h2 (short person) at threshold t5 -/
-def s1_h2_t5 : List (Utterance × ℚ) := runS1 .h2 .t5
+def s1_h2_t5 : List (Utterance × ℚ) := runS1 (deg 2) (thr 5)
 
 /-- S1 for height h5 (borderline) at threshold t5 -/
-def s1_h5_t5 : List (Utterance × ℚ) := runS1 .h5 .t5
+def s1_h5_t5 : List (Utterance × ℚ) := runS1 (deg 5) (thr 5)
 
 /-- L1 joint distribution over (height, threshold) given "tall" -/
 def l1_joint_tall : List ((Height × Threshold) × ℚ) := runL1_joint .tall
@@ -291,11 +283,11 @@ def costDiscount : ℚ := 7/10
 
 /-- S1 with costs for height h8 (tall person) at threshold t5 -/
 def s1_cost_h8_t5 : List (Utterance × ℚ) :=
-  S1_withCost vagueAdjectiveCost costDiscount .t5 .h8
+  S1_withCost vagueAdjectiveCost costDiscount (thr 5) (deg 8)
 
 /-- S1 with costs for height h5 (borderline) at threshold t5 -/
 def s1_cost_h5_t5 : List (Utterance × ℚ) :=
-  S1_withCost vagueAdjectiveCost costDiscount .t5 .h5
+  S1_withCost vagueAdjectiveCost costDiscount (thr 5) (deg 5)
 
 /-- L1 marginal over heights given "tall" (with costs) -/
 def l1_height_tall_cost : List (Height × ℚ) :=
@@ -334,7 +326,7 @@ def l1_threshold_tall_cost : List (Threshold × ℚ) :=
 
 The paper shows (Fig. 5) that the height posterior shifts rightward. -/
 theorem tall_shifts_height_up :
-    RSA.Eval.getScore l1_height_tall .h8 > RSA.Eval.getScore l1_height_tall .h2 := by
+    RSA.Eval.getScore l1_height_tall (deg 8) > RSA.Eval.getScore l1_height_tall (deg 2) := by
   native_decide
 
 /-- In the basic model without utterance costs, lower thresholds are
@@ -342,15 +334,15 @@ monotonically preferred because they make "tall" more likely true.
 
 t0 > t5 > t9. -/
 theorem threshold_monotonic_basic :
-    RSA.Eval.getScore l1_threshold_tall .t0 > RSA.Eval.getScore l1_threshold_tall .t5 ∧
-    RSA.Eval.getScore l1_threshold_tall .t5 > RSA.Eval.getScore l1_threshold_tall .t9 := by
+    RSA.Eval.getScore l1_threshold_tall (thr 0) > RSA.Eval.getScore l1_threshold_tall (thr 5) ∧
+    RSA.Eval.getScore l1_threshold_tall (thr 5) > RSA.Eval.getScore l1_threshold_tall (thr 9) := by
   native_decide
 
 /-- At the inferred threshold, individuals near the boundary have
 intermediate probability of being "tall" (Section 4.4). -/
 theorem borderline_has_intermediate_prob :
-    RSA.Eval.getScore l1_height_tall Height.h5 > 0 ∧
-    RSA.Eval.getScore l1_height_tall Height.h5 < RSA.Eval.getScore l1_height_tall Height.h8 := by
+    RSA.Eval.getScore l1_height_tall (deg 5) > 0 ∧
+    RSA.Eval.getScore l1_height_tall (deg 5) < RSA.Eval.getScore l1_height_tall (deg 8) := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
 /-- A tall person (h8) is more likely called "tall" than "short".
@@ -369,9 +361,9 @@ Posterior: significantly higher.
 This captures the narrowing effect visible in Figure 5. -/
 theorem tall_concentrates_on_high_heights :
     -- High heights (h8, h9, h10) get more than 50% of posterior mass
-    RSA.Eval.getScore l1_height_tall .h8 +
-    RSA.Eval.getScore l1_height_tall .h9 +
-    RSA.Eval.getScore l1_height_tall .h10 > 1/2 := by
+    RSA.Eval.getScore l1_height_tall (deg 8) +
+    RSA.Eval.getScore l1_height_tall (deg 9) +
+    RSA.Eval.getScore l1_height_tall (deg 10) > 1/2 := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
 /-- Both extreme thresholds (t0 and t9) have lower probability than
@@ -382,14 +374,14 @@ some concentration away from extremes because very low thresholds
 make "tall" uninformative and very high thresholds are rarely
 consistent with observed usage. -/
 theorem extreme_thresholds_lower_than_middle :
-    RSA.Eval.getScore l1_threshold_tall .t9 < RSA.Eval.getScore l1_threshold_tall .t5 := by
+    RSA.Eval.getScore l1_threshold_tall (thr 9) < RSA.Eval.getScore l1_threshold_tall (thr 5) := by
   native_decide
 
 -- Main Theorems (Full Paper Model - With Costs)
 
 /-- The cost-sensitive model still correctly infers tall heights from "tall". -/
 theorem tall_shifts_height_up_cost :
-    RSA.Eval.getScore l1_height_tall_cost .h8 > RSA.Eval.getScore l1_height_tall_cost .h2 := by
+    RSA.Eval.getScore l1_height_tall_cost (deg 8) > RSA.Eval.getScore l1_height_tall_cost (deg 2) := by
   native_decide
 
 /-- Costs shift probability mass from low thresholds toward higher ones.
@@ -400,15 +392,15 @@ With costs: t9/t0 is larger (high thresholds gain relative probability).
 Costs penalize uninformative low thresholds where "tall" applies
 to almost everyone. -/
 theorem costs_increase_high_threshold_ratio :
-    RSA.Eval.getScore l1_threshold_tall_cost .t9 * RSA.Eval.getScore l1_threshold_tall .t0 >
-    RSA.Eval.getScore l1_threshold_tall .t9 * RSA.Eval.getScore l1_threshold_tall_cost .t0 := by
+    RSA.Eval.getScore l1_threshold_tall_cost (thr 9) * RSA.Eval.getScore l1_threshold_tall (thr 0) >
+    RSA.Eval.getScore l1_threshold_tall (thr 9) * RSA.Eval.getScore l1_threshold_tall_cost (thr 0) := by
   native_decide
 
 /-- Hearing "tall" assigns zero probability to the minimum height.
 No matter what threshold the listener infers, h0 cannot be "tall"
 because there is no threshold below 0. -/
 theorem tall_rules_out_minimum_height :
-    RSA.Eval.getScore l1_height_tall .h0 = 0 := by
+    RSA.Eval.getScore l1_height_tall (deg 0) = 0 := by
   native_decide
 
 /-- Given "tall", not all thresholds are equally likely.
@@ -418,14 +410,14 @@ even though the prior over thresholds is uniform.
 Pragmatic reasoning resolves threshold uncertainty even when
 semantics leaves it open. -/
 theorem threshold_posterior_nonuniform :
-    RSA.Eval.getScore l1_threshold_tall .t0 ≠ RSA.Eval.getScore l1_threshold_tall .t5 := by
+    RSA.Eval.getScore l1_threshold_tall (thr 0) ≠ RSA.Eval.getScore l1_threshold_tall (thr 5) := by
   native_decide
 
 /-- The cost-sensitive model still produces borderline cases with
 intermediate probability. -/
 theorem borderline_has_intermediate_prob_cost :
-    RSA.Eval.getScore l1_height_tall_cost .h5 > 0 ∧
-    RSA.Eval.getScore l1_height_tall_cost .h5 < RSA.Eval.getScore l1_height_tall_cost .h8 := by
+    RSA.Eval.getScore l1_height_tall_cost (deg 5) > 0 ∧
+    RSA.Eval.getScore l1_height_tall_cost (deg 5) < RSA.Eval.getScore l1_height_tall_cost (deg 8) := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
 -- Sweet Spot Characterization (Section 4.3)
@@ -473,7 +465,7 @@ This holds even without costs; it comes from the height prior alone.
 The paper: "the strength of the dispreference generated by u's low prior
 probability of truth outweighs the informativity preference" -/
 theorem high_threshold_penalized_by_prior :
-    RSA.Eval.getScore l1_threshold_tall .t9 < RSA.Eval.getScore l1_threshold_tall .t5 := by
+    RSA.Eval.getScore l1_threshold_tall (thr 9) < RSA.Eval.getScore l1_threshold_tall (thr 5) := by
   native_decide
 
 /-- Costs shift probability away from low thresholds toward higher ones,
@@ -483,8 +475,8 @@ uninformative, so speakers pay cost for nothing.
 Measured as: the ratio P(t_high)/P(t_low) increases with costs. -/
 theorem low_threshold_penalized_by_costs :
     -- Ratio t5/t0 is higher with costs than without
-    RSA.Eval.getScore l1_threshold_tall_cost .t5 * RSA.Eval.getScore l1_threshold_tall .t0 >
-    RSA.Eval.getScore l1_threshold_tall .t5 * RSA.Eval.getScore l1_threshold_tall_cost .t0 := by
+    RSA.Eval.getScore l1_threshold_tall_cost (thr 5) * RSA.Eval.getScore l1_threshold_tall (thr 0) >
+    RSA.Eval.getScore l1_threshold_tall (thr 5) * RSA.Eval.getScore l1_threshold_tall_cost (thr 0) := by
   native_decide
 
 /-- In the basic model (no costs), the lowest threshold has highest probability.
@@ -496,8 +488,8 @@ be rationalized if it increases the probability of the true answer
 considerably, and low values of θ_tall do not meet this requirement"
 -- but this rationalization requires costs. -/
 theorem baseline_lowest_threshold_wins :
-    RSA.Eval.getScore l1_threshold_tall .t0 > RSA.Eval.getScore l1_threshold_tall .t5 ∧
-    RSA.Eval.getScore l1_threshold_tall .t5 > RSA.Eval.getScore l1_threshold_tall .t9 := by
+    RSA.Eval.getScore l1_threshold_tall (thr 0) > RSA.Eval.getScore l1_threshold_tall (thr 5) ∧
+    RSA.Eval.getScore l1_threshold_tall (thr 5) > RSA.Eval.getScore l1_threshold_tall (thr 9) := by
   native_decide
 
 /-- Costs reduce the gap between low and middle thresholds,
@@ -507,8 +499,8 @@ gap_basic = P(t0) - P(t5) in basic model.
 gap_cost = P(t0) - P(t5) with costs.
 gap_basic > gap_cost. -/
 theorem costs_compress_threshold_distribution :
-    (RSA.Eval.getScore l1_threshold_tall .t0 - RSA.Eval.getScore l1_threshold_tall .t5) >
-    (RSA.Eval.getScore l1_threshold_tall_cost .t0 - RSA.Eval.getScore l1_threshold_tall_cost .t5) := by
+    (RSA.Eval.getScore l1_threshold_tall (thr 0) - RSA.Eval.getScore l1_threshold_tall (thr 5)) >
+    (RSA.Eval.getScore l1_threshold_tall_cost (thr 0) - RSA.Eval.getScore l1_threshold_tall_cost (thr 5)) := by
   native_decide
 
 -- Sweet Spot Existence Structure
@@ -541,10 +533,10 @@ Force 1 creates t9 < t5 (even without costs).
 Force 2 creates relative shift toward middle (with costs). -/
 theorem both_forces_present :
     -- Force 1: High θ penalized (t9 < t5, no costs needed)
-    RSA.Eval.getScore l1_threshold_tall .t9 < RSA.Eval.getScore l1_threshold_tall .t5 ∧
+    RSA.Eval.getScore l1_threshold_tall (thr 9) < RSA.Eval.getScore l1_threshold_tall (thr 5) ∧
     -- Force 2: Low θ penalized by costs (ratio shifts)
-    RSA.Eval.getScore l1_threshold_tall_cost .t5 * RSA.Eval.getScore l1_threshold_tall .t0 >
-    RSA.Eval.getScore l1_threshold_tall .t5 * RSA.Eval.getScore l1_threshold_tall_cost .t0 := by
+    RSA.Eval.getScore l1_threshold_tall_cost (thr 5) * RSA.Eval.getScore l1_threshold_tall (thr 0) >
+    RSA.Eval.getScore l1_threshold_tall (thr 5) * RSA.Eval.getScore l1_threshold_tall_cost (thr 0) := by
   native_decide
 
 /-- The sweet spot (if it exists) must be between the extremes.
@@ -554,10 +546,10 @@ cannot be at t0 or t9.
 t5 beats t9 (prior effect) and costs push t5 up relative to t0. -/
 theorem sweet_spot_bounded_away_from_extremes :
     -- t5 beats t9 (prior effect)
-    RSA.Eval.getScore l1_threshold_tall .t5 > RSA.Eval.getScore l1_threshold_tall .t9 ∧
+    RSA.Eval.getScore l1_threshold_tall (thr 5) > RSA.Eval.getScore l1_threshold_tall (thr 9) ∧
     -- With costs, t5 gains on t0
-    RSA.Eval.getScore l1_threshold_tall_cost .t5 / RSA.Eval.getScore l1_threshold_tall_cost .t0 >
-    RSA.Eval.getScore l1_threshold_tall .t5 / RSA.Eval.getScore l1_threshold_tall .t0 := by
+    RSA.Eval.getScore l1_threshold_tall_cost (thr 5) / RSA.Eval.getScore l1_threshold_tall_cost (thr 0) >
+    RSA.Eval.getScore l1_threshold_tall (thr 5) / RSA.Eval.getScore l1_threshold_tall (thr 0) := by
   native_decide
 
 -- Sweet Spot: What We Proved vs. Conjectured
@@ -637,18 +629,19 @@ The distribution is shifted right compared to the general population:
 - General population: peak at h5 (average height)
 - Basketball players: peak at h7 (taller on average)
 -/
-def basketballPrior : Height → ℚ
-  | .h0 => 0
-  | .h1 => 0
-  | .h2 => 1
-  | .h3 => 2
-  | .h4 => 5
-  | .h5 => 10
-  | .h6 => 15
-  | .h7 => 20   -- peak shifted to h7
-  | .h8 => 15
-  | .h9 => 10
-  | .h10 => 5
+def basketballPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 0
+  | 1 => 0
+  | 2 => 1
+  | 3 => 2
+  | 4 => 5
+  | 5 => 10
+  | 6 => 15
+  | 7 => 20   -- peak shifted to h7
+  | 8 => 15
+  | 9 => 10
+  | _ => 5
 
 /-- Run L1 joint for basketball scenario (shifted prior) -/
 def runL1_joint_basketball (u : Utterance) : List ((Height × Threshold) × ℚ) :=
@@ -684,8 +677,8 @@ Context-sensitivity emerges from pragmatic inference, not from
 stipulated lexical ambiguity. -/
 theorem context_sensitivity_shifts_threshold :
     -- Ratio t6/t3 is higher for basketball players than general population
-    RSA.Eval.getScore l1_threshold_tall_basketball .t6 * RSA.Eval.getScore l1_threshold_tall .t3 >
-    RSA.Eval.getScore l1_threshold_tall .t6 * RSA.Eval.getScore l1_threshold_tall_basketball .t3 := by
+    RSA.Eval.getScore l1_threshold_tall_basketball (thr 6) * RSA.Eval.getScore l1_threshold_tall (thr 3) >
+    RSA.Eval.getScore l1_threshold_tall (thr 6) * RSA.Eval.getScore l1_threshold_tall_basketball (thr 3) := by
   native_decide
 
 /-- When hearing "tall" about a basketball player vs. general population,
@@ -695,7 +688,7 @@ the inferred height is higher for basketball players.
 "Al is a tall man" (general population). -/
 theorem context_sensitivity_shifts_height :
     -- P(h8) is higher for basketball players given "tall"
-    RSA.Eval.getScore l1_height_tall_basketball .h8 > RSA.Eval.getScore l1_height_tall .h8 := by
+    RSA.Eval.getScore l1_height_tall_basketball (deg 8) > RSA.Eval.getScore l1_height_tall (deg 8) := by
   native_decide
 
 /-- The identical meaning function is used for both contexts.
@@ -709,7 +702,7 @@ h5 gets lower probability for basketball players because the
 theorem same_semantics_different_interpretation :
     -- P(h5 | "tall", basketball) < P(h5 | "tall", general)
     -- Because h5 is below the basketball "tall" threshold
-    RSA.Eval.getScore l1_height_tall_basketball .h5 < RSA.Eval.getScore l1_height_tall .h5 := by
+    RSA.Eval.getScore l1_height_tall_basketball (deg 5) < RSA.Eval.getScore l1_height_tall (deg 5) := by
   native_decide
 
 -- Sorites Tolerance (Section 5)
@@ -740,9 +733,9 @@ probability, but the cumulative effect over many steps is significant. -/
 theorem sorites_tolerance_adjacent :
     -- Adjacent heights have similar probabilities
     -- |P(h7) - P(h6)| and |P(h6) - P(h5)| are relatively small
-    let p7 := RSA.Eval.getScore l1_height_tall .h7
-    let p6 := RSA.Eval.getScore l1_height_tall .h6
-    let p5 := RSA.Eval.getScore l1_height_tall .h5
+    let p7 := RSA.Eval.getScore l1_height_tall (deg 7)
+    let p6 := RSA.Eval.getScore l1_height_tall (deg 6)
+    let p5 := RSA.Eval.getScore l1_height_tall (deg 5)
     -- Each step loses less than 25% of probability
     p6 > p7 * 3/4 ∧ p5 > p6 * 3/4 := by
   native_decide
@@ -755,7 +748,7 @@ the original claim. -/
 theorem sorites_accumulation :
     -- h10 is definitely tall, h5 is borderline
     -- The cumulative effect is large even though individual steps are small
-    RSA.Eval.getScore l1_height_tall .h10 > 2 * RSA.Eval.getScore l1_height_tall .h5 := by
+    RSA.Eval.getScore l1_height_tall (deg 10) > 2 * RSA.Eval.getScore l1_height_tall (deg 5) := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
 /-- The endpoints of the sorites are clear:
@@ -763,9 +756,9 @@ theorem sorites_accumulation :
 - Very short heights (h1) have low probability of being "tall" -/
 theorem sorites_clear_endpoints :
     -- h10 is clearly tall (high probability)
-    RSA.Eval.getScore l1_height_tall .h10 > 1/5 ∧
+    RSA.Eval.getScore l1_height_tall (deg 10) > 1/5 ∧
     -- h1 is clearly not tall (low probability)
-    RSA.Eval.getScore l1_height_tall .h1 < 1/20 := by
+    RSA.Eval.getScore l1_height_tall (deg 1) < 1/20 := by
   sorry -- TODO: Verify quantitative predictions after API migration
 
 -- Threshold vs Graded Semantics: Equivalence Conditions
@@ -818,8 +811,7 @@ chosen threshold, which equals the CDF of the threshold prior.
 -/
 def marginalizedThresholdMeaning (h : Height) : ℚ :=
   -- Count thresholds below h, divide by total thresholds
-  let belowCount := ([Threshold.t0, .t1, .t2, .t3, .t4, .t5, .t6, .t7, .t8, .t9].filter
-    λ θ => h.toNat > θ.toNat).length
+  let belowCount := (allThresholds.filter λ θ => h.toNat > θ.toNat).length
   belowCount / 10
 
 /-- With a uniform prior over thresholds, the marginalized threshold
@@ -828,23 +820,22 @@ semantics equals the graded semantics.
 Threshold semantics with uncertainty reduces to graded semantics
 after marginalization. -/
 theorem threshold_graded_equivalence :
-    ∀ h : Height, gradedTallness h = marginalizedThresholdMeaning h := by
-  intro h
-  cases h <;> native_decide
+    (allHeights.map λ h => gradedTallness h == marginalizedThresholdMeaning h).all id = true := by
+  native_decide
 
 /-- The degree of tallness increases with height. -/
 theorem graded_monotonic :
-    gradedTallness .h3 < gradedTallness .h5 ∧
-    gradedTallness .h5 < gradedTallness .h8 := by
+    gradedTallness (deg 3) < gradedTallness (deg 5) ∧
+    gradedTallness (deg 5) < gradedTallness (deg 8) := by
   native_decide
 
 /-- Every height has a non-trivial degree (except h0),
 capturing the "no sharp boundary" property of graded semantics. -/
 theorem graded_no_sharp_boundary :
-    gradedTallness .h1 > 0 ∧
-    gradedTallness .h1 < 1 ∧
-    gradedTallness .h9 > 0 ∧
-    gradedTallness .h9 < 1 := by
+    gradedTallness (deg 1) > 0 ∧
+    gradedTallness (deg 1) < 1 ∧
+    gradedTallness (deg 9) > 0 ∧
+    gradedTallness (deg 9) < 1 := by
   native_decide
 
 -- When Threshold and Graded Semantics Diverge
@@ -883,15 +874,15 @@ inference about the threshold variable.
 The L1 predictions differ between threshold semantics and graded semantics. -/
 theorem threshold_graded_rsa_diverge :
     -- The L1 predictions differ for some heights
-    RSA.Eval.getScore l1_height_tall .h7 ≠ RSA.Eval.getScore l1_height_tall_graded .h7 := by
+    RSA.Eval.getScore l1_height_tall (deg 7) ≠ RSA.Eval.getScore l1_height_tall_graded (deg 7) := by
   native_decide
 
 /-- At the extremes (very tall, very short), both models agree
 that h10 is more likely "tall" than h1. -/
 theorem threshold_graded_agree_extremes :
     -- Both models rank h10 > h1 for "tall"
-    RSA.Eval.getScore l1_height_tall .h10 > RSA.Eval.getScore l1_height_tall .h1 ∧
-    RSA.Eval.getScore l1_height_tall_graded .h10 > RSA.Eval.getScore l1_height_tall_graded .h1 := by
+    RSA.Eval.getScore l1_height_tall (deg 10) > RSA.Eval.getScore l1_height_tall (deg 1) ∧
+    RSA.Eval.getScore l1_height_tall_graded (deg 10) > RSA.Eval.getScore l1_height_tall_graded (deg 1) := by
   native_decide
 
 -- Threshold vs Graded: Summary

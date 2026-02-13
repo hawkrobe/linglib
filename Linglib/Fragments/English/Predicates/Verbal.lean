@@ -1,6 +1,7 @@
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
+import Linglib.Theories.TruthConditional.Measurement.Basic
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
@@ -16,6 +17,7 @@ namespace Fragments.English.Predicates.Verbal
 
 open Core.Presupposition
 open TruthConditional.Verb.ChangeOfState
+open TruthConditional.Measurement (Dimension)
 open IntensionalSemantics.Attitude.Doxastic (Veridicality)
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 
@@ -130,14 +132,14 @@ inductive PresupTriggerType where
   | softTrigger     -- Can be locally accommodated
   deriving DecidableEq, Repr, BEq
 
--- CausativeBuilder is imported from Theories.NadathurLauer2020.Builder
+-- CausativeBuilder is imported from NadathurLauer2020.Builder
 -- (via Causative.Basic). Like PreferentialBuilder for attitude verbs,
 -- it links lexical entries to their compositional semantics. Properties
 -- like "asserts sufficiency" are DERIVED from the builder via theorems.
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 -- ImplicativeBuilder follows the same pattern for implicative verbs (manage, fail).
-open Theories.Nadathur2023.Implicative (ImplicativeBuilder)
+open Nadathur2023.Implicative (ImplicativeBuilder)
 
 /--
 Complement type that the verb selects.
@@ -158,20 +160,6 @@ inductive ComplementType where
   | gerund          -- "-ing" VP
   | smallClause     -- "consider X happy"
   | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr, BEq
-
-/--
-Theta roles for argument structure.
--/
-inductive ThetaRole where
-  | agent       -- Volitional causer (John kicked the ball)
-  | patient     -- Affected entity (John kicked the ball)
-  | theme       -- Entity in a state/location (The book is on the table)
-  | experiencer -- Perceiver/cognizer (John knows that p)
-  | goal        -- Recipient/target (John gave Mary a book)
-  | source      -- Origin (John came from Paris)
-  | instrument  -- Means (John opened the door with a key)
-  | stimulus    -- Cause of experience (The noise frightened John)
   deriving DecidableEq, Repr, BEq
 
 /--
@@ -228,6 +216,10 @@ structure VerbEntry where
   verbClass : VerbClass
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
+  /-- For measure predicates: which dimension this verb selects for.
+      Determines *per*-phrase interpretation (Bale & Schwarz 2026):
+      simplex dimension → compositional, quotient → math speak. -/
+  selectsDimension : Option Dimension := none
 
   -- === Class-Specific Features ===
   /-- For CoS verbs: which type (cessation, inception, continuation)? -/
@@ -354,6 +346,53 @@ def put : VerbEntry where
   formPresPart := "putting"
   complementType := .np_pp
   subjectTheta := some .agent
+  objectTheta := some .theme
+  verbClass := .simple
+
+/-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026).
+
+Measure predicates relate entities to quantities in simplex dimensions.
+*Weigh* saturates weight: "This sample weighs thirteen grams [per milliliter]."
+The *per*-phrase here composes compositionally because *weigh* selects
+for a simplex dimension (mass). -/
+def weigh : VerbEntry where
+  form := "weigh"
+  form3sg := "weighs"
+  formPast := "weighed"
+  formPastPart := "weighed"
+  formPresPart := "weighing"
+  complementType := .np  -- NP measure phrase complement
+  subjectTheta := some .theme
+  objectTheta := some .theme  -- The measure phrase is thematic
+  verbClass := .simple
+  selectsDimension := some .mass
+
+/-- "cover" — motion/extent predicate selecting for distance (Bale & Schwarz 2026).
+
+*Cover* measures distance: "The train covered thirty miles [per hour]."
+Like *weigh*, the *per*-phrase composes compositionally because *cover*
+selects for a simplex dimension (distance). -/
+def cover : VerbEntry where
+  form := "cover"
+  form3sg := "covers"
+  formPast := "covered"
+  formPastPart := "covered"
+  formPresPart := "covering"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  verbClass := .simple
+  selectsDimension := some .distance
+
+/-- "measure" — general measurement predicate. -/
+def measure : VerbEntry where
+  form := "measure"
+  form3sg := "measures"
+  formPast := "measured"
+  formPastPart := "measured"
+  formPresPart := "measuring"
+  complementType := .np
+  subjectTheta := some .theme
   objectTheta := some .theme
   verbClass := .simple
 
@@ -1260,11 +1299,11 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
 /-! ## Causative grounding theorems
 
 These verify that the Fragment's causative annotations are consistent with
-the formal semantics in `Theories.NadathurLauer2020`. -/
+the formal semantics in `NadathurLauer2020`. -/
 
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
-open Theories.NadathurLauer2020.Sufficiency (makeSem)
-open Theories.NadathurLauer2020.Necessity (causeSem)
+open NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Sufficiency (makeSem)
+open NadathurLauer2020.Necessity (causeSem)
 
 /-- "make" uses sufficiency semantics: its truth conditions are
     computed by `makeSem`, not `causeSem`. -/
@@ -1362,9 +1401,9 @@ theorem lexical_causatives_differ_from_cause :
 /-! ## Implicative grounding theorems
 
 These verify that the Fragment's implicative annotations are consistent with
-the formal semantics in `Theories.Nadathur2023.Implicative`. -/
+the formal semantics in `Nadathur2023.Implicative`. -/
 
-open Theories.Nadathur2023.Implicative (ImplicativeBuilder manageSem failSem)
+open Nadathur2023.Implicative (ImplicativeBuilder manageSem failSem)
 
 /-- "manage" uses positive implicative semantics (`manageSem`). -/
 theorem manage_semantics_implicative :

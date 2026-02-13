@@ -42,7 +42,7 @@ From Horn (1984), Rett (2015):
 
 import Linglib.Theories.NeoGricean.Core.Basic
 import Linglib.Theories.NeoGricean.Core.Markedness
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 import Linglib.Theories.TruthConditional.Core.Derivation
 import Linglib.Phenomena.Gradability.Evaluativity
 import Mathlib.Data.Rat.Defs
@@ -119,14 +119,14 @@ def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List �
   h.members.filter (· != x)
 
 
-open Core.Scales.Quantifiers (QuantExpr)
-open Core.Scales.Connectives (ConnExpr)
-open Core.Scales.Modals (ModalExpr)
+open Core.Scale.Quantifiers (QuantExpr)
+open Core.Scale.Connectives (ConnExpr)
+open Core.Scale.Modals (ModalExpr)
 
 /--
 The quantifier Horn set: {some, most, all}
 
-Uses type-safe `QuantExpr` from Core.Scales.
+Uses type-safe `QuantExpr` from Core.Scale.
 Note: This is a SET, not an ordered scale. The ordering comes from
 sentence-level semantics, not from this data structure.
 -/
@@ -241,13 +241,13 @@ def strongerAlternatives {α : Type} [BEq α]
 /--
 Standard quantifier strength ordering (for UE contexts).
 
-Uses `QuantExpr.entails` from Core.Scales:
+Uses `QuantExpr.entails` from Core.Scale:
 - all > most > some (in terms of logical strength)
 - "all" entails "some", so "all" is stronger
 -/
 def quantifierStrengthUE (q1 q2 : QuantExpr) : Bool :=
   -- q1 is stronger than q2 iff q1 entails q2 (and they're different)
-  Core.Scales.Quantifiers.entails q1 q2 && q1 != q2
+  Core.Scale.Quantifiers.entails q1 q2 && q1 != q2
 
 /--
 Reversed quantifier strength (for DE contexts).
@@ -257,12 +257,12 @@ In DE context, "some" is stronger than "all" at sentence level.
 -/
 def quantifierStrengthDE (q1 q2 : QuantExpr) : Bool :=
   -- In DE, entailment reverses: q1 stronger iff q2 entails q1
-  Core.Scales.Quantifiers.entails q2 q1 && q1 != q2
+  Core.Scale.Quantifiers.entails q2 q1 && q1 != q2
 
 /--
 Entailment checker for quantifiers (type-safe).
 
-Grounded in Core.Scales.Quantifiers.entails.
+Grounded in Core.Scale.Quantifiers.entails.
 -/
 def quantifierChecker : EntailmentChecker QuantExpr :=
   { isStronger := λ pol q1 q2 =>
@@ -279,13 +279,13 @@ Connective strength in UE context.
 "and" is stronger than "or".
 -/
 def connectiveStrengthUE (c1 c2 : ConnExpr) : Bool :=
-  Core.Scales.Connectives.entails c1 c2 && c1 != c2
+  Core.Scale.Connectives.entails c1 c2 && c1 != c2
 
 /--
 Connective strength in DE context (reversed).
 -/
 def connectiveStrengthDE (c1 c2 : ConnExpr) : Bool :=
-  Core.Scales.Connectives.entails c2 c1 && c1 != c2
+  Core.Scale.Connectives.entails c2 c1 && c1 != c2
 
 /--
 Entailment checker for connectives (type-safe).
@@ -339,12 +339,12 @@ theorem context_determines_alternatives :
 
 
 /--
-Convert a HornScale (from Core.Scales) to a HornSet.
+Convert a HornScale (from Core.Scale) to a HornSet.
 
 This allows us to reuse the scale definitions while treating them
 as unordered sets. The ordering comes from the SentenceContext.
 -/
-def fromHornScale {α : Type} (scale : Core.Scales.HornScale α) : HornSet α :=
+def fromHornScale {α : Type} (scale : Core.Scale.HornScale α) : HornSet α :=
   ⟨scale.members⟩
 
 /--
@@ -438,8 +438,7 @@ M-alternatives are generated when:
 
 Returns `none` if no M-alternatives exist.
 -/
-def generateMAlternatives {max : Nat}
-    (adj1 adj2 : GradableAdjWithMorphology max)
+def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
     (construction : AdjectivalConstruction) : Option MAlternativeSet :=
   -- Only generate M-alternatives for polar-invariant constructions
   if polarVariance construction != .invariant then
@@ -461,9 +460,9 @@ def generateMAlternatives {max : Nat}
 /--
 Check if a form is the marked member of an M-alternative pair.
 -/
-def isMarkedInMAlternatives {max : Nat}
+def isMarkedInMAlternatives
     (form : String)
-    (adj1 adj2 : GradableAdjWithMorphology max)
+    (adj1 adj2 : GradableAdjWithMorphology)
     (construction : AdjectivalConstruction) : Bool :=
   match generateMAlternatives adj1 adj2 construction with
   | none => false
@@ -472,9 +471,9 @@ def isMarkedInMAlternatives {max : Nat}
 /--
 Get the M-alternative for a form (if any).
 -/
-def getMAlternative {max : Nat}
+def getMAlternative
     (form : String)
-    (adj1 adj2 : GradableAdjWithMorphology max)
+    (adj1 adj2 : GradableAdjWithMorphology)
     (construction : AdjectivalConstruction) : Option String :=
   match generateMAlternatives adj1 adj2 construction with
   | none => none
@@ -532,9 +531,9 @@ Generate all pragmatic alternatives (both Q and M) for a form.
 
 This is the unified entry point for alternative generation.
 -/
-def generateAllAlternatives {max : Nat}
+def generateAllAlternatives
     (form : String)
-    (adj1 adj2 : GradableAdjWithMorphology max)
+    (adj1 adj2 : GradableAdjWithMorphology)
     (construction : AdjectivalConstruction)
     (context : SentenceContext) : List PragmaticAlternative :=
   let mAlts := match getMAlternative form adj1 adj2 construction with

@@ -27,12 +27,12 @@ from "up to" (positive), predicting divergent framing effects.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.NumeralModifiers
 
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 /--
 Semantic type of a numeral modifier.

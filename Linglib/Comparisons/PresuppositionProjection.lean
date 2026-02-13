@@ -126,9 +126,9 @@ The CG interpretation connects directly to:
 - Lewis's (1979) scorekeeping (accommodation updates CG)
 - The intuition that presuppositions constrain felicitous contexts
 
-### Unified via Theories.DynamicSemantics.State
+### Unified via DynamicSemantics.State
 
-The `Theories.DynamicSemantics.State` module provides explicit types for F&B components.
+The `DynamicSemantics.State` module provides explicit types for F&B components.
 See `RSA.DiscourseIntegration` for credence functions that bridge these
 types to RSA computations.
 -/

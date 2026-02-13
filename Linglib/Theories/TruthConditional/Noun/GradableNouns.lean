@@ -10,36 +10,20 @@ follows from scale structure (min{d : small(d)} = d0, making "small" vacuous).
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
+import Linglib.Core.MeasurementScale
 
 namespace TruthConditional.Noun.GradableNouns
 
+open Core.Scale
 
-/-- A degree on a scale (discretized). -/
-inductive Degree where
-  | d0 | d1 | d2 | d3 | d4 | d5 | d6 | d7 | d8 | d9 | d10
-  deriving Repr, DecidableEq, BEq, Ord
+/-- Degree on a 0–10 scale, backed by the canonical `Degree 10` type. -/
+abbrev Degree := Core.Scale.Degree 10
 
-def Degree.toNat : Degree → Nat
-  | .d0 => 0 | .d1 => 1 | .d2 => 2 | .d3 => 3 | .d4 => 4
-  | .d5 => 5 | .d6 => 6 | .d7 => 7 | .d8 => 8 | .d9 => 9 | .d10 => 10
+/-- All degrees on the 0–10 scale. -/
+def allDegrees : List Degree := Core.Scale.allDegrees 10
 
-instance : LE Degree where
-  le d1 d2 := d1.toNat ≤ d2.toNat
-
-instance : LT Degree where
-  lt d1 d2 := d1.toNat < d2.toNat
-
-instance : DecidableRel (α := Degree) (· ≤ ·) :=
-  λ d1 d2 => inferInstanceAs (Decidable (d1.toNat ≤ d2.toNat))
-
-instance : DecidableRel (α := Degree) (· < ·) :=
-  λ d1 d2 => inferInstanceAs (Decidable (d1.toNat < d2.toNat))
-
-def allDegrees : List Degree := [.d0, .d1, .d2, .d3, .d4, .d5, .d6, .d7, .d8, .d9, .d10]
-
-/-- d0 is the minimum degree. -/
-theorem d0_is_minimum : ∀ d : Degree, Degree.d0 ≤ d := by
-  intro d; cases d <;> decide
+/-- d0 is the minimum degree (from BoundedOrder). -/
+theorem d0_is_minimum : ∀ d : Degree, deg 0 ≤ d := λ d => bot_le (a := d)
 
 
 /-- A gradable noun maps individuals to degrees: ⟦idiot⟧ = λx.ιd[x is d-idiotic]. -/
@@ -64,17 +48,15 @@ inductive SizePolarity where
 /-- Big: maps degrees to their "bigness" (identity on the degree scale). -/
 def bigness (d : Degree) : Degree := d
 
-/-- Small: inverted ordering (d0 maximally small, d10 minimally small). -/
+/-- Small: inverted ordering (0 maximally small, 10 minimally small). -/
 def smallness (d : Degree) : Degree :=
-  match d with
-  | .d0 => .d10 | .d1 => .d9 | .d2 => .d8 | .d3 => .d7 | .d4 => .d6
-  | .d5 => .d5 | .d6 => .d4 | .d7 => .d3 | .d8 => .d2 | .d9 => .d1 | .d10 => .d0
+  Core.Scale.Degree.ofNat 10 (10 - d.toNat)
 
 /-- Standard for "big" (contextual, typically middling). -/
-def bigStandard : Degree := .d5
+def bigStandard : Degree := deg 5
 
 /-- Standard for "small" (contextual). -/
-def smallStandard : Degree := .d5
+def smallStandard : Degree := deg 5
 
 /-- POS applied to size adjective: λd. standard(size) ≤ size(d). -/
 def posBig (d : Degree) : Bool := bigStandard ≤ bigness d
@@ -102,7 +84,7 @@ def measN {E : Type}
 def idiotNoun {E : Type} (measure : E → Degree) : GradableNoun E :=
   { name := "idiot"
   , measure := measure
-  , standard := .d3
+  , standard := deg 3
   }
 
 /-- "big idiot" = MEASN(idiot)(POS big). -/
@@ -115,16 +97,16 @@ def smallIdiot {E : Type} (noun : GradableNoun E) : E → Bool :=
 
 
 /-- Minimum degree satisfying "big" is d5. -/
-theorem min_big_is_d5 : minDegree posBig = some .d5 := by native_decide
+theorem min_big_is_d5 : minDegree posBig = some (deg 5) := by native_decide
 
 /-- Minimum degree satisfying "small" is d0 (the scale minimum). -/
-theorem min_small_is_d0 : minDegree posSmall = some .d0 := by native_decide
+theorem min_small_is_d0 : minDegree posSmall = some (deg 0) := by native_decide
 
 /-- d0 always satisfies smallness because it is maximally small. -/
-theorem d0_satisfies_small : posSmall .d0 = true := by native_decide
+theorem d0_satisfies_small : posSmall (deg 0) = true := by native_decide
 
 /-- d0 is the unique minimum for smallness. -/
-theorem d0_is_min_for_small : ∀ d : Degree, posSmall d → .d0 ≤ d := by
+theorem d0_is_min_for_small : ∀ d : Degree, posSmall d → deg 0 ≤ d := by
   intro d _
   exact d0_is_minimum d
 
@@ -137,13 +119,13 @@ theorem small_idiot_vacuous {E : Type} (noun : GradableNoun E) (x : E) :
     smallIdiot noun x = noun.pos x := by
   simp only [smallIdiot, measN, min_small_is_d0]
   simp only [GradableNoun.pos]
-  -- d0 ≤ noun.measure x is always true
-  have h : Degree.d0 ≤ noun.measure x := d0_is_minimum _
+  -- deg 0 ≤ noun.measure x is always true
+  have h : deg 0 ≤ noun.measure x := d0_is_minimum _
   simp only [h, true_and]
 
 /-- "big idiot" is more restrictive than just "idiot". -/
 theorem big_idiot_restrictive {E : Type} (noun : GradableNoun E)
-    (h : noun.standard < .d5) :
+    (h : noun.standard < deg 5) :
     ∀ x, bigIdiot noun x → noun.pos x := by
   intro x hbig
   simp only [bigIdiot, measN, min_big_is_d5, GradableNoun.pos] at *
@@ -162,9 +144,9 @@ inductive Person where
 
 /-- George: d8, Sarah: d4, Floyd: d1. -/
 def idiocyMeasure : Person → Degree
-  | .george => .d8
-  | .sarah => .d4
-  | .floyd => .d1
+  | .george => deg 8
+  | .sarah => deg 4
+  | .floyd => deg 1
 
 def exampleIdiot : GradableNoun Person := idiotNoun idiocyMeasure
 
@@ -212,7 +194,7 @@ def ThresholdPredicate.apply {E : Type} (p : ThresholdPredicate E) (x : E) : Boo
 def bigIdiotAsThreshold {E : Type} (measure : E → Degree) : ThresholdPredicate E :=
   { name := "big idiot"
   , measure := measure
-  , threshold := .d5
+  , threshold := deg 5
   }
 
 /-- bigIdiot = threshold predicate with theta = d5 (when standard <= d5). -/

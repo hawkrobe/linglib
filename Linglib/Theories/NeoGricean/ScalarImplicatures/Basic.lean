@@ -147,7 +147,7 @@ structure DisjunctionAnalysis where
   deriving Repr
 
 -- Note: connectiveCheckerString is defined in Alternatives.lean
--- It's grounded in Core.Scales.Connectives.entails
+-- It's grounded in Core.Scale.Connectives.entails
 
 /--
 Analyze a simple disjunction in UE context.
@@ -405,7 +405,7 @@ open TruthConditional.Core
 Map scale membership to the appropriate HornSet and EntailmentChecker.
 
 Uses string-based versions for interface with SemDeriv, but these
-are backed by type-safe implementations grounded in Core.Scales.
+are backed by type-safe implementations grounded in Core.Scale.
 -/
 def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
   match sm with

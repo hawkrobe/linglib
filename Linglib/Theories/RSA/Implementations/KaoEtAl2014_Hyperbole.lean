@@ -46,10 +46,14 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Domains.Degrees
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA.Eval RSA.Domains.Degrees TruthConditional.Domain.Degrees
+open RSA.Eval RSA.Domains.Degrees
+open Core.Scale (HasDegree)
+open TruthConditional.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
+open TruthConditional.Numeral.Precision (roundToNearest)
 
 -- Domain: Items, Prices, and Affects
 

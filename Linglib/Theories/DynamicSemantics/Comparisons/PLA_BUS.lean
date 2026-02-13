@@ -21,9 +21,9 @@ In BUS: ¬φ swaps positive/negative, so ¬¬φ = φ definitionally
 -- We import PLA (the "problem" side) and state BUS facts abstractly.
 import Linglib.Theories.DynamicSemantics.PLA.DeepTheorems
 
-namespace Theories.DynamicSemantics.Comparisons
+namespace DynamicSemantics.Comparisons
 
-open Theories.DynamicSemantics.PLA
+open DynamicSemantics.PLA
 
 
 /--
@@ -150,4 +150,4 @@ The structural difference in negation is the key:
 - BUS preserves them in the other dimension (structural swap)
 -/
 
-end Theories.DynamicSemantics.Comparisons
+end DynamicSemantics.Comparisons

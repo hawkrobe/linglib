@@ -15,9 +15,9 @@ Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences).
 
 import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
 
-namespace Theories.DynamicSemantics.IntensionalCDRT
+namespace DynamicSemantics.IntensionalCDRT
 
-open Theories.DynamicSemantics.Core
+open DynamicSemantics.Core
 
 
 namespace BilateralICDRT
@@ -222,4 +222,4 @@ def bathroomSentenceFull (p : PVar) (v : IVar) (domain : Set E)
 end BilateralICDRT
 
 
-end Theories.DynamicSemantics.IntensionalCDRT
+end DynamicSemantics.IntensionalCDRT

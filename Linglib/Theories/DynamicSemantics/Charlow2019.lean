@@ -14,7 +14,7 @@ are retained.
 
 import Linglib.Theories.DynamicSemantics.DPL.Basic
 
-namespace Theories.DynamicSemantics.Charlow2019
+namespace DynamicSemantics.Charlow2019
 
 open DPL
 
@@ -183,4 +183,4 @@ theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
 /-- Charlow's thesis: destructive update is not problematic. -/
 theorem charlow_thesis : True := trivial
 
-end Theories.DynamicSemantics.Charlow2019
+end DynamicSemantics.Charlow2019

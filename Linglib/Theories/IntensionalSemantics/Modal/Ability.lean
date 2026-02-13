@@ -40,7 +40,7 @@ does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
 - Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
 -/
 
-namespace Theories.Nadathur2023.Ability
+namespace Nadathur2023.Ability
 
 open Core.CausalModel
 open IntensionalSemantics.Attitude.Intensional (World allWorlds)
@@ -242,4 +242,4 @@ theorem ability_differs_from_implicative :
   }
   exact ⟨sc, .w0, by native_decide, by native_decide⟩
 
-end Theories.Nadathur2023.Ability
+end Nadathur2023.Ability

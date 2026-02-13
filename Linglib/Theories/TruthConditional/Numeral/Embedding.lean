@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 
 /-!
 # Numeral Embedding Semantics
@@ -39,7 +39,7 @@ sharply in embedded environments. All embedding functions are parameterized by
 - Meier, C. (2003). The meaning of too, enough, and so...that.
 -/
 
-namespace TruthConditional.Determiner.Numeral
+namespace TruthConditional.Numeral
 
 -- ============================================================================
 -- Section 1: BareNumeral Successor (for EXH alternatives)
@@ -534,4 +534,4 @@ theorem divergence_point_count :
     (embeddingDivergences.filter EmbeddingPrediction.diverges).length = 8 := by
   native_decide
 
-end TruthConditional.Determiner.Numeral
+end TruthConditional.Numeral

@@ -1,11 +1,11 @@
 import Linglib.Core.Roundness
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Phenomena.NumberUse.WoodinEtAl2024
-import Linglib.Theories.TruthConditional.Domain.Degree
+import Linglib.Theories.TruthConditional.Numeral.Precision
 import Linglib.Theories.NeoGricean.Constraints.NumericalExpressions
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Phenomena.NumeralModification.ClausWalch2024
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -52,7 +52,8 @@ namespace Comparisons.NumeralSalience
 open Core.Roundness
 open Phenomena.NumberUse.WoodinEtAl2024
 open NeoGricean.Constraints.NumericalExpressions
-open TruthConditional.Domain.Degrees
+open TruthConditional.Numeral.Precision
+open Core.Scale (HasDegree)
 
 -- ============================================================================
 -- Bridge 1: NSAL ↔ RSA cost
@@ -286,8 +287,9 @@ prove the two representations agree for all five `OrderingRel` variants.
 
 section Bridge8_Degree
 
-open TruthConditional.Determiner.Numeral
-open TruthConditional.Domain.Degrees
+open TruthConditional.Numeral
+open TruthConditional.Numeral.Precision
+open Core.Scale (HasDegree)
 
 /-- A type with a natural-number cardinality measure. -/
 instance CardinalityDegree : HasDegree Nat where
@@ -333,7 +335,7 @@ end Bridge8_Degree
 
 section Bridge9
 
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 /-- Run L1 for a numeral theory using RSA.Eval.
 
@@ -370,7 +372,7 @@ properties from `maxMeaning` rather than hand-rolled truth tables.
 
 section Bridge10
 
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 /-- Extended worlds for modified numeral RSA (0 through 5). -/
 def kennedyWorlds : List Nat := [0, 1, 2, 3, 4, 5]

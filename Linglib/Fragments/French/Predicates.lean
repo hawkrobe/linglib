@@ -19,8 +19,8 @@ despite being separate words.
 
 namespace Fragments.French.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType)
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType)
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-- faire — COMPACT causative (free morpheme).
 

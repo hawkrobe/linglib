@@ -32,9 +32,9 @@ In DPL:
 
 import Linglib.Theories.DynamicSemantics.Core.Update
 
-namespace Theories.DynamicSemantics.DPL
+namespace DynamicSemantics.DPL
 
-open Theories.DynamicSemantics.Core
+open DynamicSemantics.Core
 
 -- Placeholder: Full implementation TODO
 
@@ -126,4 +126,4 @@ theorem scope_extension {E : Type*} (x : Nat) (φ ψ : DPLRel E)
   · rintro ⟨k, ⟨d, hφ⟩, hψ⟩
     exact ⟨d, k, hφ, hψ⟩
 
-end Theories.DynamicSemantics.DPL
+end DynamicSemantics.DPL

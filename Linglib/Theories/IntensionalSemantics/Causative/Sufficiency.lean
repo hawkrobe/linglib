@@ -34,7 +34,7 @@ In other words: if we add C to the background, E necessarily follows.
 
 import Linglib.Core.CausalModel
 
-namespace Theories.NadathurLauer2020.Sufficiency
+namespace NadathurLauer2020.Sufficiency
 
 open Core.CausalModel
 export Core.CausalModel (causallySufficient)
@@ -86,4 +86,4 @@ theorem conjunctive_sufficient_with_other (a b c : Variable)
   -- With b=true in background, adding a triggers the law
   sorry  -- Requires showing the conjunctive law fires
 
-end Theories.NadathurLauer2020.Sufficiency
+end NadathurLauer2020.Sufficiency

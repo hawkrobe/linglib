@@ -1,3 +1,5 @@
+import Linglib.Core.MeasurementScale
+import Linglib.Theories.TruthConditional.Numeral.Precision
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
 
 /-!
@@ -39,7 +41,7 @@ Modified numerals are theory-independent — everyone agrees "more than 3" means
 - Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
 -/
 
-namespace TruthConditional.Determiner.Numeral
+namespace TruthConditional.Numeral
 
 -- ============================================================================
 -- Section 1: Ordering Relations and Modifier Classification
@@ -712,6 +714,7 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- intersection cardinality. This connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩)
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
+open TruthConditional.Determiner in
 /-- GQT "at least n" agrees with `maxMeaning .ge` on intersection cardinality. -/
 theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -719,6 +722,7 @@ theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     maxMeaning .ge n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
   rfl
 
+open TruthConditional.Determiner in
 /-- GQT "at most n" agrees with `maxMeaning .le` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -729,6 +733,7 @@ theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
 private theorem decide_eq_beq (a b : Nat) : decide (a = b) = (a == b) := by
   by_cases h : a = b <;> simp [h]
 
+open TruthConditional.Determiner in
 /-- GQT "exactly n" agrees with `maxMeaning .eq` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -780,4 +785,152 @@ theorem atMost_equal : atMostMeaning 3 3 = true := by native_decide
 theorem atMost_below : atMostMeaning 3 2 = true := by native_decide
 theorem atMost_above : atMostMeaning 3 4 = false := by native_decide
 
-end TruthConditional.Determiner.Numeral
+-- ============================================================================
+-- Section 14: Core.Scale Bridge Theorems
+-- ============================================================================
+
+/-! ### maxMeaning as ℕ-pullback of Core.Scale degree properties
+
+`maxMeaning` computes over `ℕ` independently — it works, but the degree
+properties in `Core.Scale` (`atLeastDeg`, `moreThanDeg`, etc.) are the
+canonical scale-level definitions. These bridge theorems prove that
+`maxMeaning` is the `Bool`/decidable restriction of Core.Scale degree
+properties, connecting ℕ-level computation to scale-level definitions.
+
+This means density predictions (`moreThan_noMaxInf`, `atLeast_hasMaxInf`)
+flow compositionally from `Core.Scale` through numeral semantics. -/
+
+open Core.Scale in
+/-- `maxMeaning .ge m n = true` iff `atLeastDeg id m n`. -/
+theorem maxMeaning_ge_iff_atLeastDeg (m n : ℕ) :
+    maxMeaning .ge m n = true ↔ atLeastDeg id m n := by
+  simp [maxMeaning, atLeastDeg]
+
+open Core.Scale in
+/-- `maxMeaning .gt m n = true` iff `moreThanDeg id m n`. -/
+theorem maxMeaning_gt_iff_moreThanDeg (m n : ℕ) :
+    maxMeaning .gt m n = true ↔ moreThanDeg id m n := by
+  simp [maxMeaning, moreThanDeg]
+
+open Core.Scale in
+/-- `maxMeaning .eq m n = true` iff `eqDeg id m n`. -/
+theorem maxMeaning_eq_iff_eqDeg (m n : ℕ) :
+    maxMeaning .eq m n = true ↔ eqDeg id m n := by
+  simp [maxMeaning, eqDeg]
+
+open Core.Scale in
+/-- `maxMeaning .le m n = true` iff `atMostDeg id m n`. -/
+theorem maxMeaning_le_iff_atMostDeg (m n : ℕ) :
+    maxMeaning .le m n = true ↔ atMostDeg id m n := by
+  simp [maxMeaning, atMostDeg]
+
+open Core.Scale in
+/-- `maxMeaning .lt m n = true` iff `lessThanDeg id m n`. -/
+theorem maxMeaning_lt_iff_lessThanDeg (m n : ℕ) :
+    maxMeaning .lt m n = true ↔ lessThanDeg id m n := by
+  simp [maxMeaning, lessThanDeg]
+
+-- ============================================================================
+-- Section 14: Numeral Expression Semantics (from HasDegree)
+-- ============================================================================
+
+open Core.Scale in
+
+/-- Literal/exact semantics for numeral expressions.
+    "six feet" is true of x iff μ_height(x) = 183. -/
+def numeralExact {E : Type} [HasDegree E] (stated : ℚ) (entity : E) : Bool :=
+  HasDegree.degree entity == stated
+
+open Core.Scale in
+
+/-- "At least n" semantics (lower-bound reading). -/
+def numeralAtLeast {E : Type} [HasDegree E] (threshold : ℚ) (entity : E) : Bool :=
+  HasDegree.degree entity ≥ threshold
+
+open Core.Scale in
+
+/-- Approximate match with tolerance (for vagueness/imprecision). -/
+def numeralApprox {E : Type} [HasDegree E] (stated : ℚ) (tolerance : ℚ) (entity : E) : Bool :=
+  let actual := HasDegree.degree entity
+  (stated - tolerance ≤ actual) && (actual ≤ stated + tolerance)
+
+-- ============================================================================
+-- Section 15: Measure Predicates (Compositional Sentence Semantics)
+-- ============================================================================
+
+open Core.Scale in
+
+/-- A measure predicate maps entities to degrees along some dimension. -/
+structure MeasurePredicate (E : Type) where
+  dimension : String
+  μ : E → ℚ
+
+open Core.Scale in
+
+/-- Construct a MeasurePredicate from a HasDegree instance -/
+def MeasurePredicate.fromHasDegree (E : Type) [HasDegree E] (dim : String) : MeasurePredicate E :=
+  { dimension := dim, μ := HasDegree.degree }
+
+/-- A degree phrase denotes a specific degree value.
+    "1000 dollars" denotes the degree 1000 (in dollar units). -/
+structure DegreePhrase where
+  value : ℚ
+  unit : String := ""
+  deriving Repr, DecidableEq, BEq
+
+/-- Construct a degree phrase from a rational number -/
+def DegreePhrase.ofRat (n : ℚ) (unit : String := "") : DegreePhrase :=
+  { value := n, unit := unit }
+
+/-- Construct a degree phrase from a natural number -/
+def DegreePhrase.ofNat (n : Nat) (unit : String := "") : DegreePhrase :=
+  { value := n, unit := unit }
+
+/-- Compositional semantics for measure sentences.
+    ⟦X measure-pred degree-phrase⟧ = μ(X) = d -/
+def measureSentence {E : Type} (pred : MeasurePredicate E) (entity : E) (deg : DegreePhrase) : Bool :=
+  pred.μ entity == deg.value
+
+open Core.Scale in
+
+/-- Compositional semantics using HasDegree directly. -/
+def measureSentence' {E : Type} [HasDegree E] (entity : E) (deg : DegreePhrase) : Bool :=
+  HasDegree.degree entity == deg.value
+
+-- Grounding Theorems
+
+open Core.Scale in
+
+/-- The compositional measure sentence semantics equals the simple numeral check. -/
+theorem measureSentence_eq_numeralExact {E : Type} [HasDegree E]
+    (entity : E) (deg : DegreePhrase) :
+    measureSentence' entity deg = numeralExact deg.value entity := rfl
+
+open Core.Scale in
+
+/-- MeasurePredicate.fromHasDegree produces the HasDegree measure function. -/
+theorem fromHasDegree_μ {E : Type} [HasDegree E] (dim : String) :
+    (MeasurePredicate.fromHasDegree E dim).μ = HasDegree.degree := rfl
+
+open Core.Scale in
+
+/-- Measure sentences compose correctly with HasDegree-derived predicates. -/
+theorem measureSentence_fromHasDegree {E : Type} [HasDegree E]
+    (dim : String) (entity : E) (deg : DegreePhrase) :
+    measureSentence (MeasurePredicate.fromHasDegree E dim) entity deg =
+    numeralExact deg.value entity := rfl
+
+-- ============================================================================
+-- Section 16: Numeral with Precision Mode
+-- ============================================================================
+
+open TruthConditional.Numeral.Precision in
+
+/-- Numeral semantics with precision mode.
+    "1000 dollars" under exact mode: true iff cost = 1000
+    "1000 dollars" under approximate mode: true iff Round(cost) = 1000 -/
+def numeralWithPrecision {E : Type} [Core.Scale.HasDegree E]
+    (stated : ℚ) (entity : E) (mode : PrecisionMode) (base : ℚ := 10) : Bool :=
+  matchesPrecision mode stated (Core.Scale.HasDegree.degree entity) base
+
+end TruthConditional.Numeral

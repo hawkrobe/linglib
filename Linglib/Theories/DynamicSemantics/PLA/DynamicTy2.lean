@@ -21,10 +21,10 @@ import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
 import Linglib.Theories.DynamicSemantics.Core.Translation
 import Linglib.Theories.DynamicSemantics.PLA.Semantics
 
-namespace Theories.DynamicSemantics.PLA
+namespace DynamicSemantics.PLA
 
-open Theories.DynamicSemantics.Core
-open Theories.DynamicSemantics.Core.DynamicTy2
+open DynamicSemantics.Core
+open DynamicSemantics.Core.DynamicTy2
 
 
 /--
@@ -197,4 +197,4 @@ theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignmen
     subst heq
     exact ⟨rfl, (formulaToCondition_eq_sat M φ g).mpr hsat⟩
 
-end Theories.DynamicSemantics.PLA
+end DynamicSemantics.PLA

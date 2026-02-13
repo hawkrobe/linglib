@@ -42,11 +42,11 @@ import Linglib.Theories.IntensionalSemantics.Causative.Builder
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Fragments.English.Predicates.Verbal
 
-namespace Theories.EventSemantics.ProtoRoles
+namespace EventSemantics.ProtoRoles
 
-open Theories.EventSemantics.Agentivity
-open Theories.EventSemantics.Krifka1998
-open Theories.NadathurLauer2020.Builder
+open EventSemantics.Agentivity
+open EventSemantics.Krifka1998
+open NadathurLauer2020.Builder
 open TruthConditional.Verb.ChangeOfState
 open Fragments.English.Predicates.Verbal
 
@@ -498,10 +498,10 @@ unified **scalar change** framework. Under this view:
 - changeOfState = change along a 2-point property scale
 - incrementalTheme = change measured by a path/extent scale
 
-To integrate: add `scaleType : Option ScaleType` to EntailmentProfile,
-where ScaleType refines the Bool fields with scalar structure. The Bool
+To integrate: add `scaleType : Option Boundedness` to EntailmentProfile,
+where Boundedness refines the Bool fields with scalar structure. The Bool
 fields remain as the decidable "does this entailment hold?" projection,
-while ScaleType captures the finer-grained scalar geometry.
+while Boundedness captures the finer-grained scalar geometry.
 -/
 
-end Theories.EventSemantics.ProtoRoles
+end EventSemantics.ProtoRoles

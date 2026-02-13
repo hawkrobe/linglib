@@ -27,7 +27,7 @@ transitive verbs.
 - Barwise (1989). The Situation in Logic.
 -/
 
-namespace Theories.DynamicSemantics.TTR
+namespace DynamicSemantics.TTR
 
 -- ============================================================================
 -- Layer 2: Semantics (Situations, Modality, Topoi)
@@ -1010,4 +1010,4 @@ theorem meaningPostulate_transfers_belief {Agent : Type} {ltm : LTM Agent}
     believe ltm a T₂ :=
   believe_closed_under_subtype hb mp.coerce
 
-end Theories.DynamicSemantics.TTR
+end DynamicSemantics.TTR
