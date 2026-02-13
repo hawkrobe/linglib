@@ -45,6 +45,8 @@ inductive EPSemanticType where
 def epSemanticType : Cat → EPSemanticType
   | .V | .N | .A | .P => .property       -- F0: property-denoting
   | .v                 => .intermediate   -- F1: event quantification domain
+  | .Voice             => .intermediate   -- F1: introduces external argument (Kratzer 1996)
+  | .Appl              => .intermediate   -- F1: introduces applied argument (Pylkkänen 2008)
   | .D                 => .entity         -- F1: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
   | .Fin               => .intermediate   -- F3: finiteness (Rizzi 1997)

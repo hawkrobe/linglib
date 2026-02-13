@@ -36,6 +36,8 @@ inductive Cat where
   | T     -- tense
   | C     -- complementizer
   | v     -- light verb
+  | Voice -- Voice head (Kratzer 1996; Schäfer 2008)
+  | Appl  -- Applicative head (Pylkkänen 2008; Cuervo 2003)
   | Fin   -- finiteness (Rizzi 1997 split-CP; allocutive probe in Magahi/Galician)
   | SA    -- speech act head (Speas & Tenny 2003; hosts speaker/addressee)
   deriving Repr, DecidableEq, Inhabited
