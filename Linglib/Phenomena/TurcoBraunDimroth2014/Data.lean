@@ -32,7 +32,7 @@ in contrast vs. correction contexts.
 
 namespace Phenomena.TurcoBraunDimroth2014
 
-open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy)
+open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 
@@ -44,19 +44,14 @@ inductive Language where
   | german
   deriving DecidableEq, Repr, BEq
 
-/-- A production-strategy distribution datum (percentages as rationals). -/
+/-- A production-strategy distribution datum (percentages as rationals).
+    The distribution is keyed by `PolarityMarkingStrategy`, so adding a
+    strategy constructor forces updating every datum. -/
 structure ProductionDatum where
   language : Language
   context : PolaritySwitchContext
-  /-- Percentage of trials using a sentence-internal particle -/
-  pctParticle : Rat
-  /-- Percentage of trials using Verum focus -/
-  pctVerumFocus : Rat
-  /-- Percentage of trials using other strategies -/
-  pctOther : Rat
-  /-- Percentage of trials with no overt polarity marking -/
-  pctUnmarked : Rat
-  deriving Repr, BEq
+  /-- Percentage of trials per strategy -/
+  pctByStrategy : PolarityMarkingStrategy → Rat
 
 /-- A prosodic prominence datum (pitch range in semitones). -/
 structure ProminenceDatum where
@@ -77,37 +72,41 @@ structure ProminenceDatum where
 def dutchContrast : ProductionDatum where
   language := .dutch
   context := .contrast
-  pctParticle := 88
-  pctVerumFocus := 0
-  pctOther := 5
-  pctUnmarked := 7
+  pctByStrategy
+    | .particle => 88
+    | .verumFocus => 0
+    | .other => 5
+    | .unmarked => 7
 
 /-- Dutch correction: 63% particle, 5% VF, 7% other, 25% unmarked -/
 def dutchCorrection : ProductionDatum where
   language := .dutch
   context := .correction
-  pctParticle := 63
-  pctVerumFocus := 5
-  pctOther := 7
-  pctUnmarked := 25
+  pctByStrategy
+    | .particle => 63
+    | .verumFocus => 5
+    | .other => 7
+    | .unmarked => 25
 
 /-- German contrast: 0% particle, 82% VF, 0% other, 18% unmarked -/
 def germanContrast : ProductionDatum where
   language := .german
   context := .contrast
-  pctParticle := 0
-  pctVerumFocus := 82
-  pctOther := 0
-  pctUnmarked := 18
+  pctByStrategy
+    | .particle => 0
+    | .verumFocus => 82
+    | .other => 0
+    | .unmarked => 18
 
 /-- German correction: 0% particle, 78% VF, 8% other, 14% unmarked -/
 def germanCorrection : ProductionDatum where
   language := .german
   context := .correction
-  pctParticle := 0
-  pctVerumFocus := 78
-  pctOther := 8
-  pctUnmarked := 14
+  pctByStrategy
+    | .particle => 0
+    | .verumFocus => 78
+    | .other => 8
+    | .unmarked => 14
 
 def allProductionData : List ProductionDatum :=
   [dutchContrast, dutchCorrection, germanContrast, germanCorrection]
@@ -134,35 +133,37 @@ def germanVFCorrection : ProminenceDatum where
 
 /-- Dutch dominant strategy is particles in contrast. -/
 theorem dutch_contrast_particle_dominant :
-    dutchContrast.pctParticle > dutchContrast.pctVerumFocus ∧
-    dutchContrast.pctParticle > dutchContrast.pctOther ∧
-    dutchContrast.pctParticle > dutchContrast.pctUnmarked := by native_decide
+    ∀ s, s ≠ PolarityMarkingStrategy.particle →
+      dutchContrast.pctByStrategy .particle > dutchContrast.pctByStrategy s := by
+  intro s hs; cases s <;> simp_all <;> native_decide
 
 /-- Dutch dominant strategy is particles in correction. -/
 theorem dutch_correction_particle_dominant :
-    dutchCorrection.pctParticle > dutchCorrection.pctVerumFocus ∧
-    dutchCorrection.pctParticle > dutchCorrection.pctOther ∧
-    dutchCorrection.pctParticle > dutchCorrection.pctUnmarked := by native_decide
+    ∀ s, s ≠ PolarityMarkingStrategy.particle →
+      dutchCorrection.pctByStrategy .particle > dutchCorrection.pctByStrategy s := by
+  intro s hs; cases s <;> simp_all <;> native_decide
 
 /-- German dominant strategy is Verum focus in contrast. -/
 theorem german_contrast_vf_dominant :
-    germanContrast.pctVerumFocus > germanContrast.pctParticle ∧
-    germanContrast.pctVerumFocus > germanContrast.pctOther ∧
-    germanContrast.pctVerumFocus > germanContrast.pctUnmarked := by native_decide
+    ∀ s, s ≠ PolarityMarkingStrategy.verumFocus →
+      germanContrast.pctByStrategy .verumFocus > germanContrast.pctByStrategy s := by
+  intro s hs; cases s <;> simp_all <;> native_decide
 
 /-- German dominant strategy is Verum focus in correction. -/
 theorem german_correction_vf_dominant :
-    germanCorrection.pctVerumFocus > germanCorrection.pctParticle ∧
-    germanCorrection.pctVerumFocus > germanCorrection.pctOther ∧
-    germanCorrection.pctVerumFocus > germanCorrection.pctUnmarked := by native_decide
+    ∀ s, s ≠ PolarityMarkingStrategy.verumFocus →
+      germanCorrection.pctByStrategy .verumFocus > germanCorrection.pctByStrategy s := by
+  intro s hs; cases s <;> simp_all <;> native_decide
 
 /-! ## Verification Theorems — German Zero Particles -/
 
 /-- German has zero sentence-internal particles in contrast. -/
-theorem german_contrast_no_particles : germanContrast.pctParticle = 0 := rfl
+theorem german_contrast_no_particles :
+    germanContrast.pctByStrategy .particle = 0 := rfl
 
 /-- German has zero sentence-internal particles in correction. -/
-theorem german_correction_no_particles : germanCorrection.pctParticle = 0 := rfl
+theorem german_correction_no_particles :
+    germanCorrection.pctByStrategy .particle = 0 := rfl
 
 /-! ## Verification Theorems — Prosodic Prominence -/
 

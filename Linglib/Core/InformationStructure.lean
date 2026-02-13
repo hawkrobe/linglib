@@ -282,4 +282,26 @@ inductive PolarityMarkingStrategy where
   | unmarked
   deriving DecidableEq, Repr, BEq
 
+/-- A cross-linguistic polarity-marking entry.
+
+    Unified structure for all strategies — particles (Dutch *wel*),
+    prosodic (German VF), or other. Language-specific Fragment files
+    instantiate this with appropriate optional fields. -/
+structure PolarityMarkingEntry where
+  /-- Descriptive label (e.g., "wel", "Verum focus", "doch (pre-utterance)") -/
+  label : String
+  /-- Surface form, if the strategy is a particle -/
+  form : Option String := none
+  /-- What bears prosodic prominence, if the strategy is prosodic -/
+  prosodicTarget : Option String := none
+  /-- Whether the marker appears sentence-internally (vs. pre-utterance) -/
+  sentenceInternal : Bool
+  /-- Available in contrast contexts (Klein 2008) -/
+  contrastOk : Bool
+  /-- Available in correction contexts (Umbach 2004) -/
+  correctionOk : Bool
+  /-- The polarity-marking strategy category -/
+  strategy : PolarityMarkingStrategy
+  deriving Repr, DecidableEq, BEq
+
 end Core.InformationStructure
