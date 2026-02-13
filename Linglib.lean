@@ -57,6 +57,7 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
+import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
@@ -88,11 +89,14 @@ import Linglib.Fragments.Galician.Pronouns
 import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
+import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
+import Linglib.Phenomena.AlstottAravind2026.Data
+import Linglib.Phenomena.TemporalConnectives.Examples
 import Linglib.Phenomena.AdditiveParticles.Data
 import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
@@ -299,6 +303,7 @@ import Linglib.Comparisons.ThresholdSemantics
 import Linglib.Comparisons.ResultativeArgLicensing
 import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.CausativeAlternation
+import Linglib.Comparisons.BeforeAfter
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
@@ -483,6 +488,7 @@ import Linglib.Theories.TruthConditional.Sentence.Presupposition.TonhauserDeriva
 import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
 import Linglib.Theories.TruthConditional.Sentence.Tense.TenseAspectComposition
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalAdverbials
+import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory

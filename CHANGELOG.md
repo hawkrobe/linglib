@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.201.0] - 2026-02-13
+
+### Added
+- **Theories/TruthConditional/Sentence/Tense/TemporalConnectives.lean**: Temporal connective semantics — Anscombe/Krifka under-specification vs Rett (2020) ambiguity for *before*/*after*. Both theories formalized over `timeTrace` (set of contained time points). INCHOAT (GLB) / COMPLET (LUB) coercion operators with scale-sensitive MAX
+- **Fragments/English/TemporalExpressions.lean** (renamed from TemporalConnectives): Temporal subordinating connectives (before, after, while) as `TemporalConnectiveEntry`; temporal adverbial modifiers (within, at) as separate `TemporalModifierEntry` type
+- **Fragments/Tagalog/TemporalConnectives.lean**: Tagalog *bago* ('before') aspect–reading data (PFV.NEUT → ≺ initial, AIA → ≺ final; Dell 1983, Rett 2020 §2.4)
+- **Comparisons/BeforeAfter.lean**: Under-specification vs ambiguity theory profiles and empirical discriminators
+- **Phenomena/AlstottAravind2026/Data.lean**: Processing data from 4 self-paced reading experiments with proper `Experiment` enum and `SpilloverRegion` type
+- **Phenomena/TemporalConnectives/Examples.lean**: Concrete truth-condition tests for 6 scenarios (4 positive, 2 negative) verifying Anscombe and Rett on ℕ time points, plus INCHOAT/COMPLET on concrete data
+- Proved: `inchoat_bridges_inception`, `complet_bridges_cessation`, `stative_denotation_subinterval_closed`, `timeTrace_stativeDenotation`, `timeTrace_accomplishmentDenotation`. 2 sorry's remain (Anscombe/Rett agreement on stative-before and telic-after)
+
 ## [0.200.0] - 2026-02-13
 
 ### Refactored (architectural cleanup of 0.199.0)
