@@ -49,16 +49,18 @@ structure CatFeatures where
     - v, T, C inherit [+V, -N] from V
     - D inherits [-V, +N] from N -/
 def catFeatures : Cat → CatFeatures
-  | .V   => ⟨true,  false⟩   -- [+V, -N]
-  | .v   => ⟨true,  false⟩   -- [+V, -N] (light verb)
-  | .T   => ⟨true,  false⟩   -- [+V, -N]
-  | .Fin => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
-  | .C   => ⟨true,  false⟩   -- [+V, -N]
-  | .SA  => ⟨true,  false⟩   -- [+V, -N] (Speas & Tenny 2003)
-  | .N   => ⟨false, true⟩    -- [-V, +N]
-  | .D   => ⟨false, true⟩    -- [-V, +N]
-  | .A   => ⟨true,  true⟩    -- [+V, +N]
-  | .P   => ⟨false, false⟩   -- [-V, -N]
+  | .V     => ⟨true,  false⟩   -- [+V, -N]
+  | .v     => ⟨true,  false⟩   -- [+V, -N] (light verb)
+  | .Voice => ⟨true,  false⟩   -- [+V, -N] (Kratzer 1996)
+  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (Pylkkänen 2008)
+  | .T     => ⟨true,  false⟩   -- [+V, -N]
+  | .Fin   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
+  | .C     => ⟨true,  false⟩   -- [+V, -N]
+  | .SA    => ⟨true,  false⟩   -- [+V, -N] (Speas & Tenny 2003)
+  | .N     => ⟨false, true⟩    -- [-V, +N]
+  | .D     => ⟨false, true⟩    -- [-V, +N]
+  | .A     => ⟨true,  true⟩    -- [+V, +N]
+  | .P     => ⟨false, false⟩   -- [-V, -N]
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: F-Value (Functional Level)
@@ -70,12 +72,13 @@ def catFeatures : Cat → CatFeatures
     - F2 = second functional layer (T) — tense/agreement
     - F3 = highest functional layer (C) — clause type/force -/
 def fValue : Cat → Nat
-  | .V | .N | .A | .P => 0   -- lexical (F0)
-  | .v | .D           => 1   -- first functional (F1)
-  | .T                => 2   -- second functional (F2)
-  | .Fin              => 3   -- finiteness (F3, Rizzi 1997 split-CP)
-  | .C                => 3   -- complementizer (F3)
-  | .SA               => 4   -- speech act (F4, Speas & Tenny 2003)
+  | .V | .N | .A | .P   => 0   -- lexical (F0)
+  | .v | .D | .Voice | .Appl
+                         => 1   -- first functional (F1)
+  | .T                   => 2   -- second functional (F2)
+  | .Fin                 => 3   -- finiteness (F3, Rizzi 1997 split-CP)
+  | .C                   => 3   -- complementizer (F3)
+  | .SA                  => 4   -- speech act (F4, Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 3: Category Consistency and Monotonicity
@@ -126,10 +129,10 @@ inductive CatFamily where
 /-- Map a category to its family.
     This determines which EP it can participate in. -/
 def catFamily : Cat → CatFamily
-  | .V | .v | .T | .Fin | .C | .SA => .verbal
-  | .N | .D                         => .nominal
-  | .A                              => .adjectival
-  | .P                              => .adpositional
+  | .V | .v | .Voice | .Appl | .T | .Fin | .C | .SA => .verbal
+  | .N | .D                                          => .nominal
+  | .A                                               => .adjectival
+  | .P                                               => .adpositional
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 6: Extended Projection Structure
@@ -251,7 +254,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .D ∨ c = .T ∨ c = .Fin ∨ c = .C ∨ c = .SA) := by
+    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Fin ∨ c = .C ∨ c = .SA) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency

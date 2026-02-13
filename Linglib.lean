@@ -87,6 +87,9 @@ import Linglib.Fragments.Galician.Pronouns
 import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
+import Linglib.Fragments.Spanish.Clitics
+import Linglib.Fragments.Spanish.Predicates
+import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
 import Linglib.Phenomena.AdditiveParticles.Data
@@ -128,6 +131,8 @@ import Linglib.Phenomena.ChangeOfState.Typology
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThin
+import Linglib.Phenomena.MunozPerez2026.Data
+import Linglib.Phenomena.MunozPerez2026.Bridge
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -292,6 +297,7 @@ import Linglib.Comparisons.NumeralSalience
 import Linglib.Comparisons.ThresholdSemantics
 import Linglib.Comparisons.ResultativeArgLicensing
 import Linglib.Comparisons.VaguenessTheories
+import Linglib.Comparisons.CausativeAlternation
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
@@ -404,6 +410,11 @@ import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Minimalism.Bridge.RelativeClauses
 import Linglib.Theories.Minimalism.Core.Structure
 import Linglib.Theories.Minimalism.Core.Basic
+import Linglib.Theories.Minimalism.Core.Voice
+import Linglib.Theories.Minimalism.Core.Applicative
+import Linglib.Theories.Minimalism.Bridge.EventStructureBridge
+import Linglib.Theories.Minimalism.Morphology.Fission
+import Linglib.Theories.Minimalism.Phenomena.VoiceAppl
 import Linglib.Theories.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Minimalism.Formal.MCB2023.Accessible
 import Linglib.Theories.Minimalism.Formal.MCB2023.BinaryOptimality

@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.199.0] - 2026-02-13
+
+### Added
+- **Minimalism/Core/Voice.lean**: Voice head flavors (Kratzer 1996; Schäfer 2008) — agentive, causer, nonThematic, expletive. Key claim: non-thematic Voice (anticausative SE) is semantically vacuous.
+- **Minimalism/Core/Applicative.lean**: Applicative types (Pylkkänen 2008 high/low) and Cuervo (2003) verbal decomposition (vDO, vGO, vBE). `isInchoative`, `isCausative` predicates.
+- **Minimalism/Bridge/EventStructureBridge.lean**: Maps R&L (1998) event structure templates to Cuervo's VerbHead decomposition. Proves accomplishment↔causative, achievement↔inchoative bridges.
+- **Minimalism/Morphology/Fission.lean**: Fission postsyntactic operation (Muñoz Pérez 2026). Derives stylistic applicative person restriction from [+PART, +SING] and inchoative structural context.
+- **Minimalism/Phenomena/VoiceAppl.lean**: Classic Voice/Appl derivation tests — transitive, anticausative, unaccusative, ditransitive (low Appl), benefactive (high Appl), middle voice.
+- **Fragments/Spanish/Clitics.lean**: Full Spanish clitic paradigm with syncretism data. DAT-REFL syncretism for 1SG/2SG drives SE-optionality.
+- **Fragments/Spanish/Predicates.lean**: 10 Spanish verbs classified by anticausative marking and event structure. Per-verb verification theorems.
+- **Fragments/Spanish/PersonFeatures.lean**: Bridges Cysouw PersonCategory to [±PART, ±AUTHOR, ±SING] feature decomposition. Derives Fission applicability.
+- **Phenomena/MunozPerez2026/Data.lean**: Grammaticality judgments — three-way synonymy, person restriction (1SG/2SG only), marking restriction (unmarked blocks LE).
+- **Phenomena/MunozPerez2026/Bridge.lean**: Derives all five predictions from infrastructure: person restriction from features, inchoative requirement from Fission context, marking restriction from fragment, SE-optionality from syncretism, synonymy from Voice vacuity.
+- **Comparisons/CausativeAlternation.lean**: Cross-theory bridge connecting semantic (production/dependence), event-structural (templates), syntactic (Voice/VerbHead), and empirical (ThickThin) layers of the causative alternation.
+
+### Changed
+- **Minimalism/Core/Basic.lean**: Add `Voice` and `Appl` constructors to `Cat`.
+- **Minimalism/Formal/ExtendedProjection/Basic.lean**: Voice and Appl get [+V, -N] features and F1 value. Updated `catFeatures`, `fValue`, `catFamily`, `fpos_iff_functional`.
+- **Minimalism/Formal/ExtendedProjection/Properties.lean**: Add Voice/Appl cases to `epSemanticType`.
+
 ## [0.198.0] - 2026-02-12
 
 ### Added
