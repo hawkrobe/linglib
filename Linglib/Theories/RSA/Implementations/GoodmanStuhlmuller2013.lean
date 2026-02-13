@@ -1,5 +1,5 @@
 import Linglib.Theories.RSA.Domains.Quantities
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 import Linglib.Theories.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
@@ -42,7 +42,7 @@ only utterance true at all believed worlds), and L1 reads this signal.
 namespace RSA.GoodmanStuhlmuller2013
 
 open RSA RSA.Domains.Quantity RSA.Eval
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 -- ============================================================================
 -- Section 1: Basic Scalar Implicature (Quantifiers)
@@ -221,7 +221,7 @@ end QuantifierKnowledgeState
 section KennedyNumerals
 
 open KnowledgeState
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 /-! ## Kennedy's Alternative Structure (Section 4.1)
 
@@ -545,7 +545,7 @@ end KennedyNumerals
 section Grounding
 
 open KnowledgeState
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 /-- Kennedy meaning derives from maxMeaning (not hand-rolled). -/
 theorem kennedy_meaning_from_maxMeaning (m : Nat) (u : KennedyUtt) (s : WorldState) :

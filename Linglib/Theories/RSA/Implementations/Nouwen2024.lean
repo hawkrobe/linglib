@@ -54,7 +54,9 @@ namespace RSA.Nouwen2024
 open RSA.Eval
 open RSA.LassiterGoodman2017 (Height Threshold allHeights allThresholds
   heightPrior thresholdPrior tallMeaning)
-open Phenomena.Gradability.Intensifiers (EvaluativeValence IntensifierClass)
+open Core.Scale (deg thr)
+open TruthConditional.Adjective.Intensification (EvaluativeValence)
+open Phenomena.Gradability.Intensifiers (IntensifierClass)
 
 -- Utterances
 
@@ -248,8 +250,8 @@ h8 gets more mass under "horribly warm" than under bare "warm",
 because the horrible evaluative measure favors extreme heights.
 -/
 theorem horribly_shifts_high :
-    RSA.Eval.getScore l1_height_horribly .h8 >
-    RSA.Eval.getScore l1_height_bare .h8 := by
+    RSA.Eval.getScore l1_height_horribly (deg 8) >
+    RSA.Eval.getScore l1_height_bare (deg 8) := by
   native_decide
 
 /--
@@ -259,10 +261,10 @@ Moderate heights (h5+h6) get more mass than extreme heights (h9+h10)
 under "pleasantly warm", because the pleasant measure favors the norm.
 -/
 theorem pleasantly_concentrates_moderate :
-    RSA.Eval.getScore l1_height_pleasantly .h5 +
-    RSA.Eval.getScore l1_height_pleasantly .h6 >
-    RSA.Eval.getScore l1_height_pleasantly .h9 +
-    RSA.Eval.getScore l1_height_pleasantly .h10 := by
+    RSA.Eval.getScore l1_height_pleasantly (deg 5) +
+    RSA.Eval.getScore l1_height_pleasantly (deg 6) >
+    RSA.Eval.getScore l1_height_pleasantly (deg 9) +
+    RSA.Eval.getScore l1_height_pleasantly (deg 10) := by
   native_decide
 
 /--
@@ -272,8 +274,8 @@ h9 gets more mass under "horribly warm" than under "pleasantly warm",
 reflecting the core Goldilocks asymmetry.
 -/
 theorem goldilocks_height_separation :
-    RSA.Eval.getScore l1_height_horribly .h9 >
-    RSA.Eval.getScore l1_height_pleasantly .h9 := by
+    RSA.Eval.getScore l1_height_horribly (deg 9) >
+    RSA.Eval.getScore l1_height_pleasantly (deg 9) := by
   native_decide
 
 -- Zwicky Vacuity
@@ -340,19 +342,19 @@ def utteranceCost : Utterance → ℚ
 Horrible measure assigns maximal value at scale maximum (degree 10).
 -/
 theorem horrible_max_at_h10 :
-    muHorrible .h10 = 5 := by native_decide
+    muHorrible (deg 10) = 5 := by native_decide
 
 /--
 Pleasant measure assigns maximal value at norm (degree 5).
 -/
 theorem pleasant_max_at_h5 :
-    muPleasant .h5 = 5 := by native_decide
+    muPleasant (deg 5) = 5 := by native_decide
 
 /--
 Horrible and pleasant measures are complementary:
 μ_horrible(h) + μ_pleasant(h) = norm for all h ≥ norm.
 -/
 theorem horrible_pleasant_complement :
-    muHorrible .h7 + muPleasant .h7 = 5 := by native_decide
+    muHorrible (deg 7) + muPleasant (deg 7) = 5 := by native_decide
 
 end RSA.Nouwen2024

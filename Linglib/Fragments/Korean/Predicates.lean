@@ -17,8 +17,8 @@ event is not entailed to have actually occurred.
 
 namespace Fragments.Korean.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType)
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType)
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-- 웃게 하다 "wus-ke ha-da" — smile-PURP do = "cause to smile".
 

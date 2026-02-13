@@ -1,171 +1,181 @@
-/-
-# Goodman & Stuhlmüller (2013) - Empirical Data
+import Linglib.Core.Empirical
+
+/-!
+# Goodman & Stuhlmuller (2013) — Empirical Data
 
 "Knowledge and Implicature: Modeling Language Understanding as Social Cognition"
 Topics in Cognitive Science 5(1): 173-184
 
-## Scalar Implicature
+## Paradigm
 
-Scalar implicature is a pragmatic inference where using a weaker term
-implicates the negation of stronger alternatives on the same scale.
+Three objects that may have a property. Speaker observes a subset (access = 1, 2,
+or 3) and makes a quantified or numeral statement. Listener divides $100 among
+world states (0-3 objects have property). Speaker access is common knowledge.
 
-Key example: "some" implicates "not all" (some-all scale)
+Trials with knowledgeability bet <= 70 excluded from primary analysis.
 
-## Background References
+## What Theories Predict About
 
-- Horn (1972). On the Semantic Properties of Logical Operators in English.
-- Grice (1975). Logic and Conversation.
+For each (word, access) condition, a theory should predict the listener's posterior
+over world states. The `BetComparison` data records whether bets on one state
+significantly exceeded bets on another — the observable that posteriors map to.
+
+## References
+
+- Goodman, N.D. & Stuhlmuller, A. (2013). Knowledge and Implicature.
+  *Topics in Cognitive Science* 5(1): 173-184.
 -/
-
-import Linglib.Core.Empirical
 
 namespace Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 
 open Phenomena
 
--- Study Metadata
+-- ============================================================================
+-- Metadata
+-- ============================================================================
 
-/-- Citation for this study -/
-def citation : String := "Goodman, N.D. & Stuhlmüller, A. (2013). Knowledge and Implicature: Modeling Language Understanding as Social Cognition. Topics in Cognitive Science 5(1): 173-184."
+def citation : String :=
+  "Goodman & Stuhlmuller (2013). Topics in Cognitive Science 5(1): 173-184."
 
-/-- Listener interpretation measure: behavioral comprehension -/
-def interpretationMeasure : MeasureSpec :=
-  { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
+def measure : MeasureSpec :=
+  { scale := .continuous, task := .forcedChoice, unit := "dollars (out of $100)" }
 
--- Scalar Implicature Data
+def nPerExperiment : Nat := 50
+def nObjects : Nat := 3
 
-/-- A Horn scale: ordered alternatives from weak to strong -/
-structure HornScale where
-  name : String
-  weakTerm : String
-  strongTerm : String
+-- ============================================================================
+-- Core Data: Pairwise Bet Comparisons
+-- ============================================================================
+
+/-- A pairwise comparison of bets on two world states in a condition.
+
+The key observable: did participants allocate significantly more money to
+world state `stateA` than to `stateB`? A theory that predicts the listener's
+posterior P(state | word, access) can be checked against this. -/
+structure BetComparison where
+  experiment : Nat
+  word : String
+  /-- How many of 3 objects the speaker observed -/
+  access : Nat
+  stateA : Nat
+  stateB : Nat
+  /-- Did bets on stateA significantly exceed bets on stateB? -/
+  aExceedsB : Bool
+  evidence : String
   deriving Repr
 
-/-- The canonical some/all scale -/
-def someAllScale : HornScale := {
-  name := "Quantifier Scale"
-  weakTerm := "some"
-  strongTerm := "all"
-}
+-- ============================================================================
+-- Experiment 1: "some" x access (N = 50)
+-- ============================================================================
 
-/-- A scalar implicature datum -/
-structure ScalarImplicatureDatum where
-  utterance : String
-  strongerAlternative : String
-  literalMeaning : String
-  implicatedMeaning : String
+/-- Access = 3: bets on state 2 > bets on state 3. -/
+def exp1_some_a3_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 3, stateA := 2, stateB := 3
+    aExceedsB := true, evidence := "t(43) = -10.2, p < .001" }
+
+/-- Access = 1: bets on state 2 did NOT exceed bets on state 3. -/
+def exp1_some_a1_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 1, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(31) = 0.77, p = .78" }
+
+/-- Access = 2: bets on state 2 did NOT exceed bets on state 3. -/
+def exp1_some_a2_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 2, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(28) = -0.82, p = .21" }
+
+/-- Bets on state 3 at access = 3 significantly lower than at access = 1. -/
+def exp1_a3_vs_a1_on_state3 : BetComparison :=
+  { experiment := 1, word := "some", access := 3, stateA := 3, stateB := 3
+    aExceedsB := false
+    evidence := "access 3 < access 1 on state 3: t(47) = -4.0, p < .001" }
+
+-- ============================================================================
+-- Experiment 2: number words x access (N = 50)
+-- ============================================================================
+
+-- "two"
+
+/-- "two", access = 3: bets on state 2 > bets on state 3. -/
+def exp2_two_a3_2v3 : BetComparison :=
+  { experiment := 2, word := "two", access := 3, stateA := 2, stateB := 3
+    aExceedsB := true, evidence := "t(43) = -10.2, p < .001" }
+
+/-- "two", access = 2: bets on state 2 did NOT exceed bets on state 3. -/
+def exp2_two_a2_2v3 : BetComparison :=
+  { experiment := 2, word := "two", access := 2, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(24) = 1.1, p = .87" }
+
+-- "one"
+
+/-- "one", access = 3: bets on state 1 > bets on state 2. -/
+def exp2_one_a3_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 3, stateA := 1, stateB := 2
+    aExceedsB := true, evidence := "t(42) = -13.1, p < .001" }
+
+/-- "one", access = 3: bets on state 1 > bets on state 3. -/
+def exp2_one_a3_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 3, stateA := 1, stateB := 3
+    aExceedsB := true, evidence := "t(42) = -17.1, p < .001" }
+
+/-- "one", access = 1: bets on state 1 did NOT exceed bets on state 2. -/
+def exp2_one_a1_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 1, stateA := 1, stateB := 2
+    aExceedsB := false, evidence := "t(24) = 1.9, p = .96" }
+
+/-- "one", access = 1: bets on state 1 did NOT exceed bets on state 3. -/
+def exp2_one_a1_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 1, stateA := 1, stateB := 3
+    aExceedsB := false, evidence := "t(24) = 3.2, p = 1.0" }
+
+/-- "one", access = 2: bets on state 1 > bets on state 3 (partial). -/
+def exp2_one_a2_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 2, stateA := 1, stateB := 3
+    aExceedsB := true, evidence := "t(25) = -3.9, p < .001" }
+
+/-- "one", access = 2: bets on state 1 did NOT exceed bets on state 2. -/
+def exp2_one_a2_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 2, stateA := 1, stateB := 2
+    aExceedsB := false, evidence := "t(25) = 1.5, p = .92" }
+
+-- ============================================================================
+-- Omnibus Effects
+-- ============================================================================
+
+structure OmnibusTest where
+  description : String
+  testType : String
+  statistic : Float
+  p : Float
   deriving Repr
 
-/-- The canonical "some" → "not all" example -/
-def someNotAll : ScalarImplicatureDatum := {
-  utterance := "Some of the students passed"
-  strongerAlternative := "All of the students passed"
-  literalMeaning := "At least one student passed (possibly all)"
-  implicatedMeaning := "Some but not all students passed"
-}
+def exp1_access_effect : OmnibusTest :=
+  { description := "Effect of access on bets on state 3"
+    testType := "one-way ANOVA, F(2, 102)", statistic := 10.18, p := 0.001 }
 
--- Knowledge State Data (Experiment 1 from the paper)
+def exp2_access_main : OmnibusTest :=
+  { description := "Main effect of access"
+    testType := "ANOVA, F(2, 205)", statistic := 6.57, p := 0.01 }
 
-/-- Speaker's perceptual access level -/
-structure AccessCondition where
-  objectsSeen : Nat
-  totalObjects : Nat
+def exp2_word_main : OmnibusTest :=
+  { description := "Main effect of word"
+    testType := "ANOVA, F(2, 205)", statistic := 269.8, p := 0.001 }
+
+def exp2_interaction : OmnibusTest :=
+  { description := "Word x access interaction"
+    testType := "ANOVA, F(1, 205)", statistic := 34.7, p := 0.001 }
+
+-- ============================================================================
+-- Manipulation Check
+-- ============================================================================
+
+structure KnowledgeabilityCheck where
+  access : Nat
+  meanBet : Float
+  sd : Float
   deriving Repr
 
-/-- The key experimental conditions from Experiment 1 -/
-def fullAccessCondition : AccessCondition := { objectsSeen := 3, totalObjects := 3 }
-def partialAccess2 : AccessCondition := { objectsSeen := 2, totalObjects := 3 }
-def partialAccess1 : AccessCondition := { objectsSeen := 1, totalObjects := 3 }
-
-/-- Experimental finding: implicature strength varies with access -/
-structure KnowledgeImplicatureDatum where
-  access : AccessCondition
-  utterance : String
-  implicatureStrength : String  -- "strong", "weak", "none"
-  empiricalNote : String
-  deriving Repr
-
-/-- Full access: strong implicature -/
-def fullAccessResult : KnowledgeImplicatureDatum := {
-  access := fullAccessCondition
-  utterance := "Some of the apples are red"
-  implicatureStrength := "strong"
-  empiricalNote := "Bets on 3 were less than bets on 2 (p < .001)"
-}
-
-/-- Partial access (1 object): no implicature -/
-def partialAccess1Result : KnowledgeImplicatureDatum := {
-  access := partialAccess1
-  utterance := "Some of the apples are red"
-  implicatureStrength := "none"
-  empiricalNote := "Bets on 2 did not exceed bets on 3 (p = .78)"
-}
-
--- The Core Empirical Phenomenon (Experiment 2: Number Words)
-
-/--
-**The Empirical Phenomenon**
-
-From Experiment 2: Number word interpretation varies with speaker access.
-- Full access + "two" → interpreted as "exactly 2"
-- Partial access + "two" → interpreted as "≥2" (weaker)
-
-This is CANCELLATION: the exact interpretation is canceled with partial knowledge.
--/
-structure ImplicatureCancellationPhenomenon where
-  /-- Cancellation was observed in the experiment -/
-  cancellation_observed : Bool
-  /-- Statistical significance -/
-  significant : Bool
-  /-- Citation -/
-  citation : String
-
-/-- The empirical finding from Experiment 2 -/
-def numberWordCancellation : ImplicatureCancellationPhenomenon := {
-  cancellation_observed := true
-  significant := true
-  citation := "Goodman & Stuhlmüller (2013), Experiment 2, p. 180"
-}
-
--- What This Phenomenon Requires of Semantic Theories
-
-/--
-**Semantic Constraint from Empirical Data**
-
-If cancellation is observed, then:
-1. An implicature must exist (something to cancel)
-2. The implicature must be PRAGMATIC, not semantic (otherwise can't vary)
-3. The literal meaning must be WEAKER than the pragmatic interpretation
-
-For number words:
-- Pragmatic: "two" → exactly 2
-- Literal must be: "two" → ≥2 (weaker, allows cancellation)
-- NOT: "two" → exactly 2 (no room for cancellation)
--/
-structure SemanticRequirement where
-  /-- Literal meaning must allow multiple states -/
-  requires_ambiguity : Bool
-  /-- Exact interpretation must emerge pragmatically -/
-  exact_is_pragmatic : Bool
-
-/-- What the cancellation phenomenon requires -/
-def cancellationRequires : SemanticRequirement := {
-  requires_ambiguity := true
-  exact_is_pragmatic := true
-}
-
-/--
-**The Inconsistency Claim**
-
-Any semantic theory where "two" literally means exactly 2 is
-INCONSISTENT with the observed cancellation phenomenon.
-
-This is because:
-- If literal meaning is already exact, there's no implicature
-- If there's no implicature, there's nothing to cancel
-- But cancellation IS observed
-- Contradiction
--/
-def exactSemanticsInconsistent : Bool := true
+def knowledge_a1 : KnowledgeabilityCheck := { access := 1, meanBet := 27.1, sd := 4.9 }
+def knowledge_a2 : KnowledgeabilityCheck := { access := 2, meanBet := 34.8, sd := 5.7 }
+def knowledge_a3 : KnowledgeabilityCheck := { access := 3, meanBet := 93.0, sd := 2.7 }
 
 end Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013

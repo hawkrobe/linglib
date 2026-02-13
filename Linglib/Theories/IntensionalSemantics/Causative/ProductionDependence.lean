@@ -40,12 +40,12 @@ d-causes without producing anything.
   Roots workshop, Universität Stuttgart.
 -/
 
-namespace Theories.MartinRoseNichols2025
+namespace MartinRoseNichols2025
 
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-! ## Causation Type
 
@@ -277,4 +277,4 @@ theorem production_is_direct :
 theorem dependence_not_necessarily_direct :
     productionEntailsDirectness .dependence = false := rfl
 
-end Theories.MartinRoseNichols2025
+end MartinRoseNichols2025

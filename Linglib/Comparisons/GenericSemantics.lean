@@ -24,7 +24,7 @@ import Linglib.Theories.TruthConditional.Noun.Kind.Generics
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Linarith
 
-namespace Theories.Comparisons.GenericSemantics
+namespace Comparisons.GenericSemantics
 
 open TruthConditional.Noun.Kind.Generics
 
@@ -198,4 +198,4 @@ See `Theories/RSA/Implementations/TesslerGoodman2019.lean` for the
 full RSA implementation with prevalence priors.
 -/
 
-end Theories.Comparisons.GenericSemantics
+end Comparisons.GenericSemantics

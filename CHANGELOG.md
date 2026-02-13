@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.197.0] - 2026-02-12
+
+### Changed
+- **Degree type unification**: Collapse four parallel degree types (`Height` in LG2017, `Height` in TG2022, `Degree` in GradableNouns, canonical `Degree max`) into one canonical `Degree max` / `Threshold max` from `Domain/Degree.lean`. Deletes ~120 lines of duplicate type definitions and boilerplate across 5 files.
+- **Domain/Degree.lean**: Add `Fintype` instances for `Degree`/`Threshold`, `Coe (Threshold max) (Degree max)` via `Fin.castSucc`, convenience constructors `deg`/`thr`. Replace `.toNat` cross-type comparisons with `LinearOrder` operators in `positiveMeaning`, `negativeMeaning`, `antonymMeaning`, `contradictoryNeg`, `contraryNeg`, `inGapRegion`, `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`.
+- **LassiterGoodman2017.lean**: `Height` and `Threshold` are now aliases for `Degree 10` and `Threshold 10`. Constructor patterns replaced with `match h.toNat with`.
+- **Nouwen2024.lean**: Updated to use `deg n` constructors from unified type.
+- **TesslerGoodman2022.lean**: `Height` now alias for `Degree 10`. Priors use `match h.toNat with`.
+- **GradableNouns.lean**: Local `Degree` inductive replaced with `Degree 10` from `Domain/Degree.lean`. `d0_is_minimum` derived from `BoundedOrder.bot_le`.
+
+## [0.196.0] - 2026-02-12
+
+### Changed
+- **Adjective/Theory.lean**: Remove phantom `max : Nat` parameter from `GradableAdjEntry` (no field used it). Remove `ScaleType` alias — use `Boundedness` directly from `Core.Scale`.
+- **Fragments/English/Predicates/Adjectival.lean**: Update `AdjectivalPredicateEntry` (no type parameter). Replace `.lowerClosed`/`.upperClosed` with `.lowerBounded`/`.upperBounded`.
+- **Fragments/English/Modifiers/Adjectives.lean**: `AdjModifierEntry.scaleType` now typed `Boundedness` directly. Replace `.lowerClosed`/`.upperClosed` with `.lowerBounded`/`.upperBounded`.
+- **Adjective/Intensification.lean**: Fix dependency violation — `EvaluativeValence` now defined here (in Theories/) instead of imported from Phenomena/. `Phenomena/Gradability/Intensifiers.lean` imports it from Theories/ (correct direction).
+- **Phenomena/Gradability/Vagueness.lean**: Move `VaguenessTheoryType`, `TheoryPredictionProfile`, and theory profiles to `Comparisons/VaguenessTheories.lean` (theory-comparative, not empirical data).
+
+## [0.195.0] - 2026-02-12
+
+### Added
+- **Core/MeasurementScale.lean**: `MLScale` — Dinis & Jacinto (2026) ML theory (Marginal and Large differences). Structure with 5 axioms over a `LinearOrder`, derived relations (`L`, `MarginalDiff`, `AtMostMarginal`, `LargeDiff`), and two proved theorems: `m_transitive` (M is transitive) and `m_bounded` (M between two M-related elements implies M to each). No sorry.
+- **Theories/TruthConditional/Adjective/Theory.lean**: `GradableMLScale` — combines `MIPDomain` with `MLScale` for the Marginality Scales Account. `marginalityPositive` — positive form requires degree *significantly* (L-related) greater than norm, not merely greater (R). `marginality_entails_standard` — marginality semantics strictly stronger than Kennedy (proved).
+- **Phenomena/Gradability/Vagueness.lean**: `InterestRelativityDatum` — extension of vague adjective changes when interests change despite identical precise property (Charles III / Prince William scenario). `ToleranceStepDatum` — tolerance steps feel non-uniform: same precise difference, different perceived significance depending on proximity to threshold.
+
 ## [0.194.0] - 2026-02-12
 
 ### Changed

@@ -16,13 +16,13 @@ import Linglib.Theories.TruthConditional.Core.Polarity
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Core.Lexicon
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 
 namespace TruthConditional.Core.Derivation
 
 open TruthConditional
 open TruthConditional.Core
-open Core.Scales
+open Core.Scale
 
 /-- Scalar item occurrence in a derivation -/
 structure ScalarOccurrence (m : Model) where

@@ -35,7 +35,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Core.CombinedUtility
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
-import Linglib.Theories.TruthConditional.Domain.Degree
+import Linglib.Core.MeasurementScale
 import Linglib.Theories.TruthConditional.Core.Polarity
 import Linglib.Core.Proposition
 

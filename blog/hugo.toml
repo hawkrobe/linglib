@@ -1,6 +1,6 @@
 baseURL = "https://hawkrobe.github.io/linglib/"
 languageCode = "en-us"
-title = "Linguistics in Lean"
+title = "LEANguistics"
 theme = "PaperMod"
 
 [params]
@@ -12,8 +12,8 @@ theme = "PaperMod"
   defaultTheme = "auto"
 
 [params.homeInfoParams]
-  Title = "Linguistics in Lean"
-  Content = "Development notes from Linglib — formalizing linguistic theories in Lean 4."
+  Title = "LEANguistics"
+  Content = "Development notes from Linglib."
 
 [[params.socialIcons]]
   name = "github"

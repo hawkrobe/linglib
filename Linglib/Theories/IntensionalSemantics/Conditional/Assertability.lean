@@ -26,7 +26,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace IntensionalSemantics.Conditional.Assertability
 
-open Theories.TruthConditional.Conditional.CausalBayesNet
+open IntensionalSemantics.Conditional.CausalBayesNet
 
 -- Conditional Probability
 

@@ -31,9 +31,9 @@ and distinct syntactic frames.
 
 import Linglib.Theories.EventSemantics.ProtoRoles
 
-namespace Theories.EventSemantics.EventStructure
+namespace EventSemantics.EventStructure
 
-open Theories.EventSemantics.ProtoRoles
+open EventSemantics.ProtoRoles
 open TruthConditional.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
@@ -184,4 +184,4 @@ theorem lexicalize_increases_agentivity :
 theorem lexicalized_is_full_agent :
     (Template.lexicalizeInstrument .motionContact).pAgentScore = 5 := by native_decide
 
-end Theories.EventSemantics.EventStructure
+end EventSemantics.EventStructure

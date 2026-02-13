@@ -27,7 +27,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
-namespace Theories.TruthConditional.Conditional.CausalBayesNet
+namespace IntensionalSemantics.Conditional.CausalBayesNet
 
 -- Causal Relations
 
@@ -353,4 +353,4 @@ structure DiscreteWorldSpace where
   /-- States are non-empty -/
   nonempty : states ≠ []
 
-end Theories.TruthConditional.Conditional.CausalBayesNet
+end IntensionalSemantics.Conditional.CausalBayesNet

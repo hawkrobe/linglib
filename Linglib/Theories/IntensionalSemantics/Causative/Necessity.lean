@@ -48,11 +48,11 @@ These can come apart in overdetermination cases:
 import Linglib.Core.CausalModel
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 
-namespace Theories.NadathurLauer2020.Necessity
+namespace NadathurLauer2020.Necessity
 
 open Core.CausalModel
 export Core.CausalModel (causallyNecessary)
-open Theories.NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Sufficiency
 
 /-- Semantics of "cause": effect occurred AND cause was necessary (N&L 2020 §5.2). -/
 def causeSem (dyn : CausalDynamics) (background : Situation)
@@ -146,4 +146,4 @@ theorem actual_cause_cause_occurred (dyn : CausalDynamics) (s : Situation)
   simp only [actuallyCaused, factuallyDeveloped, Bool.and_eq_true] at h
   exact h.1.1
 
-end Theories.NadathurLauer2020.Necessity
+end NadathurLauer2020.Necessity

@@ -37,7 +37,7 @@ Covers formalize "ways of thinking about" entities.
 
 import Linglib.Theories.DynamicSemantics.PLA.Epistemic
 
-namespace Theories.DynamicSemantics.PLA
+namespace DynamicSemantics.PLA
 
 open Classical
 
@@ -631,4 +631,4 @@ theorem know_factive (R : DoxAccessibility E) (M : Model E) (a : E) (φ : Formul
   simp only [Formula.know, Set.mem_setOf_eq] at hp
   exact hp.2.1
 
-end Theories.DynamicSemantics.PLA
+end DynamicSemantics.PLA

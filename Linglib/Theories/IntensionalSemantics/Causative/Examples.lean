@@ -36,11 +36,11 @@ Key results:
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
-namespace Theories.NadathurLauer2020.Examples
+namespace NadathurLauer2020.Examples
 
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
 
 -- Fire Scenario: Overdetermination
 
@@ -393,4 +393,4 @@ theorem make_cause_distinct :
   simp only [makeSem, causeSem, ne_eq]
   native_decide
 
-end Theories.NadathurLauer2020.Examples
+end NadathurLauer2020.Examples

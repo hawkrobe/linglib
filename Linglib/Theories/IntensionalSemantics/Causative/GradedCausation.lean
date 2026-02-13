@@ -47,13 +47,13 @@ import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication
 import Linglib.Theories.IntensionalSemantics.Causative.Builder
 
-namespace Theories.CaoWhiteLassiter2025
+namespace CaoWhiteLassiter2025
 
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
-open Theories.NadathurLauer2020.CoerciveImplication (ActionType)
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
+open NadathurLauer2020.CoerciveImplication (ActionType)
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-! ## The Three Measures (§2.2-2.4)
 
@@ -279,4 +279,4 @@ theorem alt_negative_effect :
     modelIMainEffects.alt < 0 := by
   simp [modelIMainEffects]; norm_num
 
-end Theories.CaoWhiteLassiter2025
+end CaoWhiteLassiter2025

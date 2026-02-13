@@ -27,8 +27,9 @@ import Linglib.Theories.TruthConditional.Adjective.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
 
-open TruthConditional.Adjective (ScaleType AntonymRelation)
-open TruthConditional.Domain.Degrees (NegationType)
+open TruthConditional.Adjective (AntonymRelation)
+open Core.Scale (Boundedness)
+open TruthConditional.Adjective (NegationType)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure
@@ -47,8 +48,8 @@ structure AdjModifierEntry where
   formComp : Option String := none
   /-- Superlative form -/
   formSuper : Option String := none
-  /-- Scale type (from Montague theory) -/
-  scaleType : ScaleType := .open_
+  /-- Scale boundedness (from Kennedy 2007) -/
+  scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
   dimension : String := ""
   /-- Antonym form (if any) -/
@@ -224,7 +225,7 @@ def wet : AdjModifierEntry :=
   { form := "wet"
   , formComp := some "wetter"
   , formSuper := some "wettest"
-  , scaleType := .lowerClosed
+  , scaleType := .lowerBounded
   , dimension := "wetness"
   , antonymForm := some "dry"
   , antonymRelation := some .contradictory }
@@ -233,7 +234,7 @@ def dry : AdjModifierEntry :=
   { form := "dry"
   , formComp := some "drier"
   , formSuper := some "driest"
-  , scaleType := .upperClosed
+  , scaleType := .upperBounded
   , dimension := "wetness"
   , antonymForm := some "wet"
   , antonymRelation := some .contradictory

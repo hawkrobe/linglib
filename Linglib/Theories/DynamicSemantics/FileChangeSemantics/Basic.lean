@@ -36,9 +36,9 @@ Heim's File Metaphor:
 
 import Linglib.Theories.DynamicSemantics.Core.Update
 
-namespace Theories.DynamicSemantics.FileChangeSemantics
+namespace DynamicSemantics.FileChangeSemantics
 
-open Theories.DynamicSemantics.Core
+open DynamicSemantics.Core
 open Classical
 
 -- File = InfoState
@@ -163,7 +163,7 @@ def requiresFamiliarity {W E : Type*} (f : File W E) (x : Nat) : Prop :=
 /-!
 ## Relation to DynamicSemantics.Core.Basic
 
-The `Theories.DynamicSemantics.Core.Basic` module provides the canonical infrastructure.
+The `DynamicSemantics.Core.Basic` module provides the canonical infrastructure.
 This module provides FCS-specific vocabulary as aliases:
 
 | This Module | DynamicSemantics.Core |
@@ -176,4 +176,4 @@ This module provides FCS-specific vocabulary as aliases:
 | updateProp | update |
 -/
 
-end Theories.DynamicSemantics.FileChangeSemantics
+end DynamicSemantics.FileChangeSemantics

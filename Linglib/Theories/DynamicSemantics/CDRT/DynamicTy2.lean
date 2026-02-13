@@ -12,9 +12,9 @@ The embedding is essentially definitional.
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
 import Linglib.Theories.DynamicSemantics.CDRT.Basic
 
-namespace Theories.DynamicSemantics.CDRT
+namespace DynamicSemantics.CDRT
 
-open Theories.DynamicSemantics.Core.DynamicTy2
+open DynamicSemantics.Core.DynamicTy2
 
 
 /-- CDRT Register = Dynamic Ty2 Assignment -/
@@ -67,4 +67,4 @@ theorem trueAt_eq_closure {E : Type*} (φ : DProp E) (i : Register E) :
     φ.true_at i ↔ closure (toDRS φ) i := by
   simp only [DProp.true_at, closure, toDRS]
 
-end Theories.DynamicSemantics.CDRT
+end DynamicSemantics.CDRT

@@ -54,7 +54,7 @@ open TruthConditional.Core
 open TruthConditional.Core.Derivation
 open TruthConditional.Core.Polarity (ContextPolarity)
 open TruthConditional.Determiner.Quantifier
-open Core.Scales
+open Core.Scale
 open NeoGricean.Exhaustivity
 
 /-

@@ -44,12 +44,12 @@ import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
-namespace Theories.NadathurLauer2020.Integration
+namespace NadathurLauer2020.Integration
 
 open Core.CausalModel
-open Theories.TruthConditional.Conditional.CausalBayesNet
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
+open IntensionalSemantics.Conditional.CausalBayesNet
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
 open IntensionalSemantics.Conditional.Assertability
 
 -- Bridge: Structural Model → Probabilistic Model
@@ -327,4 +327,4 @@ theorem single_cause_perfection (cause effect : Variable) :
   -- because there's no alternative path to the effect
   sorry
 
-end Theories.NadathurLauer2020.Integration
+end NadathurLauer2020.Integration

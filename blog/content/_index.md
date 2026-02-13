@@ -1,3 +1,3 @@
 ---
-title: "Linguistics in Lean"
+title: "LEANguistics"
 ---

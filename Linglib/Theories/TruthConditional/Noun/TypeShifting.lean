@@ -248,4 +248,29 @@ example : lower (m := toyModel) toyDomain (lift john_sem) = some john_sem := rfl
 
 end ToyExamples
 
+-- ============================================================================
+-- Snyder (2026) / Partee (1986) Type-Shifters
+-- ============================================================================
+
+section SnyderShifts
+
+/-- CARD: number → cardinality predicate (Snyder 2026, (6a)).
+    CARD = λn.λx. μ(x) = n. Turns a number into a predicate
+    on entities that have exactly n atomic parts. -/
+def CARD (μ : m.interpTy .e → Nat) (n : Nat) : m.interpTy Ty.et :=
+  fun x => decide (μ x = n)
+
+/-- PM: Predicate Modification (Heim & Kratzer 1998, (7a)).
+    PM = λP.λQ.λx. P(x) ∧ Q(x). Intersective modifier. -/
+def PM (P Q : m.interpTy Ty.et) : m.interpTy Ty.et :=
+  fun x => P x && Q x
+
+/-- NOM: Nominalization (Partee 1986, Chierchia 1984, (10a)).
+    Maps a property to its individual property correlate.
+    In the finite setting, returns the unique entity satisfying P if singleton. -/
+def NOM (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e) :=
+  iota domain P  -- NOM and iota coincide for singleton predicates
+
+end SnyderShifts
+
 end TruthConditional.Noun.TypeShifting

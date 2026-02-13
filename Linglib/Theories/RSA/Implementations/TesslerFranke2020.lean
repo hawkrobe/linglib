@@ -40,7 +40,9 @@ namespace RSA.TesslerFranke2020
 
 open RSA.Eval
 open RSA.Domains.Degrees
-open TruthConditional.Domain.Degrees
+open Core.Scale (Degree Degree.toNat Threshold.toNat deg thr allDegrees)
+open TruthConditional.Adjective (NegationType ThresholdPair
+  positiveMeaning' contradictoryNeg contraryNegMeaning notContraryNegMeaning inGapRegion)
 
 -- Domain: 5-point Happiness Scale
 

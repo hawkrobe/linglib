@@ -11,7 +11,7 @@ namespace Fragments.English.Predicates
 
 export Verbal (
   -- Types
-  VerbClass PresupTriggerType ComplementType ThetaRole ControlType VerbEntry
+  VerbClass PresupTriggerType ComplementType ControlType VerbEntry
   PreferentialBuilder
   -- Functions
   getCoSSemantics presupposesComplement isPresupTrigger

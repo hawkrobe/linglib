@@ -26,7 +26,7 @@ four binary properties:
 
 namespace Phenomena.Causatives.ThickThin
 
-open Theories.MartinRoseNichols2025
+open MartinRoseNichols2025
 
 /-- A single verb entry from Table 3. -/
 structure ThickThinEntry where

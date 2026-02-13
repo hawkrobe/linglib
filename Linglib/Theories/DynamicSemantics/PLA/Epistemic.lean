@@ -28,7 +28,7 @@ For de re/de dicto distinctions:
 
 import Linglib.Theories.DynamicSemantics.PLA.Update
 
-namespace Theories.DynamicSemantics.PLA
+namespace DynamicSemantics.PLA
 
 open Classical
 
@@ -334,4 +334,4 @@ See `IntensionalSemantics.Modal.Kratzer` for the full Kratzer framework with:
 - Galois connection (extension/intension duality)
 -/
 
-end Theories.DynamicSemantics.PLA
+end DynamicSemantics.PLA

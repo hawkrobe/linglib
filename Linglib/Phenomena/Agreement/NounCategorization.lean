@@ -40,7 +40,7 @@ classifier–number complementarity.
   `ClassifierType`, `SemanticParameter`, `NounCategorizationSystem`
 - **Classifier lexicons**: `Fragments.Mandarin.Classifiers`, `Fragments.Japanese.Classifiers`
 - **Noun entries**: `Fragments.{Mandarin,Japanese,French}.Nouns`
-- **Chierchia bridge**: `Theories.TruthConditional.Noun.Kind.Chierchia1998`
+- **Chierchia bridge**: `TruthConditional.Noun.Kind.Chierchia1998`
 
 ## References
 

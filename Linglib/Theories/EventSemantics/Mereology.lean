@@ -17,6 +17,8 @@ AlgClosure) are polymorphic over any semilattice, then specialized to events.
 7. Role Homomorphism (θ preserves ⊕)
 8. τ Homomorphism (runtime preserves ⊕)
 9. Bridges to existing types
+10. Overlap and Extensive Measures (Krifka 1998 §2.2)
+11. QMOD: Quantizing Modification (Krifka 1989)
 
 ## References
 
@@ -27,16 +29,15 @@ AlgClosure) are polymorphic over any semilattice, then specialized to events.
   quantification in event semantics.
 -/
 
+import Mathlib.Data.Rat.Defs
 import Mathlib.Order.Lattice
 import Mathlib.Order.Basic
 import Linglib.Theories.EventSemantics.Basic
-import Linglib.Theories.EventSemantics.ThematicRoles
 import Linglib.Theories.TruthConditional.Verb.Aspect
 
-namespace Theories.EventSemantics.Mereology
+namespace EventSemantics.Mereology
 
-open Theories.EventSemantics
-open Theories.EventSemantics.ThematicRoles
+open EventSemantics
 open TruthConditional.Core.Time
 open TruthConditional.Verb.Aspect
 
@@ -324,4 +325,56 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
   | base hp => exact hp
   | sum _ _ ih₁ ih₂ => exact AlgClosure.sum ih₁ ih₂
 
-end Theories.EventSemantics.Mereology
+-- ════════════════════════════════════════════════════
+-- § 10. Overlap and Extensive Measures (Krifka 1998 §2.2)
+-- ════════════════════════════════════════════════════
+
+/-- Mereological overlap: x and y share a common part.
+    Krifka (1998) eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
+def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
+  ∃ z, z ≤ x ∧ z ≤ y
+
+/-- Extensive measure function: additive over non-overlapping entities.
+    Krifka (1998) §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
+    Examples: weight, volume, number (cardinality). -/
+class ExtMeasure (α : Type*) [SemilatticeSup α]
+    (μ : α → ℚ) : Prop where
+  /-- Additivity: μ is additive over non-overlapping entities. -/
+  additive : ∀ (x y : α), ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
+  /-- Positivity: every entity has positive measure. -/
+  positive : ∀ (x : α), 0 < μ x
+  /-- Strict monotonicity: proper parts have strictly smaller measure.
+      In a CEM with complementation, this follows from additivity + positivity:
+      y < x implies x = y ⊔ z with ¬O(y,z), so μ(x) = μ(y) + μ(z) > μ(y).
+      We axiomatize it directly since `SemilatticeSup` lacks complementation. -/
+  strict_mono : ∀ (x y : α), y < x → μ y < μ x
+
+/-- Measure phrases create QUA predicates: {x : μ(x) = n} is QUA
+    whenever μ is an extensive measure.
+    Krifka (1998) §2.2: "two kilograms of flour" is QUA because
+    no proper part of a 2kg entity also weighs 2kg. -/
+theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) (_hn : 0 < n) :
+    QUA (fun x => μ x = n) := by
+  intro x y hx hlt hy
+  have hsm := hμ.strict_mono x y hlt
+  rw [hy, hx] at hsm
+  exact absurd hsm (Rat.not_lt.mpr Rat.le_refl)
+
+-- ════════════════════════════════════════════════════
+-- § 11. QMOD: Quantizing Modification (Krifka 1989)
+-- ════════════════════════════════════════════════════
+
+/-- Quantizing modification: intersect predicate R with a measure constraint.
+    Krifka (1989): QMOD(R, μ, n) = λx. R(x) ∧ μ(x) = n.
+    "three kilos of rice" = QMOD(rice, μ_kg, 3).
+    This is the operation that turns a CUM mass noun into a QUA measure phrase. -/
+def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
+  λ x => R x ∧ μ x = n
+
+/-- QMOD(R, μ, n) ⊆ R: quantizing modification restricts the base predicate. -/
+theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μTy}
+    {x : α} (h : QMOD R μ n x) : R x :=
+  h.1
+
+end EventSemantics.Mereology

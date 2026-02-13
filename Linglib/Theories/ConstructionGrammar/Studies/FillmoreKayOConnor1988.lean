@@ -1,6 +1,6 @@
 import Linglib.Theories.ConstructionGrammar.Basic
 import Linglib.Core.Presupposition
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
@@ -384,7 +384,7 @@ theorem almost_blocks_let_alone :
 /-! ### Bridge 3: Scalar model generalizes HornScale
 
 FKO1988's `ScalarModel` (n-dimensional, with monotonicity constraint)
-is a generalization of `Core.Scales.HornScale` (1-dimensional, linear).
+is a generalization of `Core.Scale.HornScale` (1-dimensional, linear).
 A 1D scalar model with a propositional function that respects the
 linear order is exactly a HornScale.
 

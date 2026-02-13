@@ -14,7 +14,7 @@ import Linglib.Core.Proposition
 import Linglib.Core.UD
 import Linglib.Core.Duality
 import Linglib.Core.Quantification
-import Linglib.Core.Scales
+import Linglib.Core.HornScale
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
 import Linglib.Core.Conjectures
@@ -44,6 +44,7 @@ import Linglib.Core.Roundness
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Fragments.English.Lexicon
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -165,7 +166,10 @@ import Linglib.Phenomena.Islands.Data
 import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
 import Linglib.Phenomena.NumeralModification.ClausWalch2024
+import Linglib.Phenomena.NumeralSemantics.Snyder2026
 import Linglib.Phenomena.NumeralModification.Embedding
+import Linglib.Phenomena.MeasurePhrases.BaleSchwarz2026
+import Linglib.Phenomena.MeasurePhrases.Scontras2014
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
@@ -286,6 +290,7 @@ import Linglib.Comparisons.Mueller2013
 import Linglib.Comparisons.NumeralSalience
 import Linglib.Comparisons.ThresholdSemantics
 import Linglib.Comparisons.ResultativeArgLicensing
+import Linglib.Comparisons.VaguenessTheories
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
@@ -419,11 +424,14 @@ import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.TruthConditional.Derivation.Scope
 import Linglib.Theories.TruthConditional.Derivation.TruthConditions
 import Linglib.Theories.TruthConditional.Determiner.Demonstrative.AhnZhu2025
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Embedding
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Measurement.Basic
+import Linglib.Theories.TruthConditional.Numeral.Embedding
+import Linglib.Theories.TruthConditional.Numeral.Polysemy
+import Linglib.Theories.TruthConditional.Numeral.Precision
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 import Linglib.Theories.TruthConditional.Determiner.Definite
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
-import Linglib.Theories.TruthConditional.Domain.Degree
+
 import Linglib.Theories.TruthConditional.Expressives.Basic
 import Linglib.Theories.TruthConditional.Expressives.OutlookMarker
 import Linglib.Theories.TruthConditional.Frames.Basic
@@ -472,8 +480,10 @@ import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
 -- Theories: EventSemantics (neo-Davidsonian)
 import Linglib.Theories.EventSemantics.Basic
 import Linglib.Theories.EventSemantics.ThematicRoles
+import Linglib.Theories.EventSemantics.ThematicRolesGrounding
 import Linglib.Theories.EventSemantics.Mereology
 import Linglib.Theories.EventSemantics.StratifiedReference
+import Linglib.Theories.EventSemantics.Krifka1989
 import Linglib.Theories.EventSemantics.Krifka1998
 import Linglib.Theories.EventSemantics.Agentivity
 import Linglib.Theories.EventSemantics.ProtoRoles
@@ -546,6 +556,7 @@ import Linglib.Theories.QuestionSemantics.PragmaticAnswerhood
 import Linglib.Theories.QuestionSemantics.ProbabilisticAnswerhood
 import Linglib.Theories.QuestionSemantics.ScopeReadings
 import Linglib.Theories.QuestionSemantics.SignalingGames
+import Linglib.Theories.QuestionSemantics.DegreeQuestion
 import Linglib.Theories.QuestionSemantics.VerumFocus
 
 -- Theories: NeoGricean

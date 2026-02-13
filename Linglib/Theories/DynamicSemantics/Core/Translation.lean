@@ -24,7 +24,7 @@ Core uses:
 
 import Linglib.Theories.DynamicSemantics.Core.Update
 
-namespace Theories.DynamicSemantics.Core
+namespace DynamicSemantics.Core
 
 
 /-- PLA-style possibility: assignment + witness sequence (no world) -/
@@ -145,4 +145,4 @@ Both PLA and Core can have bilateral variants.
 -/
 
 
-end Theories.DynamicSemantics.Core
+end DynamicSemantics.Core

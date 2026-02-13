@@ -15,9 +15,9 @@ Dynamic semantics with two update dimensions (positive and negative) that valida
 
 import Linglib.Theories.DynamicSemantics.Core.Bilateral
 
-namespace Theories.DynamicSemantics.BUS
+namespace DynamicSemantics.BUS
 
-open Theories.DynamicSemantics.Core
+open DynamicSemantics.Core
 
 export BilateralDen (atom neg conj disj exists_ existsFull forall_ pred1 pred2
   supports entails toPair ofPair toUnilateral)
@@ -78,9 +78,9 @@ end BUSDen
 namespace Compat
 
 /-- Backward compatibility alias. -/
-abbrev BilateralDen := Theories.DynamicSemantics.Core.BilateralDen
+abbrev BilateralDen := DynamicSemantics.Core.BilateralDen
 
 end Compat
 
 
-end Theories.DynamicSemantics.BUS
+end DynamicSemantics.BUS

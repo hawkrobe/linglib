@@ -15,15 +15,12 @@ Gradable adjectives raise several semantic questions:
 
 ## Architecture
 
-This module imports from `Fragments.Degrees` for the core types:
-- `Degree`: The underlying scale (height, happiness, etc.)
-- `Threshold`: Contextual cutoff for the positive form
+Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`.
+This module adds adjective-specific infrastructure:
 - `NegationType`: Contradictory vs. contrary antonyms
 - `ThresholdPair`: Two thresholds for contrary antonyms with gap
-
-The theory structure wraps these in Montague's framework:
-- Positive form: degree > θ
-- Antonym: either contradictory (degree ≤ θ) or contrary (degree < θ_neg)
+- Negation semantics functions
+- Degree modifiers (Kennedy & McNally 2005, Israel 2011)
 
 ## Comparison with ModalTheory
 
@@ -40,128 +37,244 @@ The theory structure wraps these in Montague's framework:
 - Lassiter, D. & Goodman, N. (2017). Adjectival vagueness in a Bayesian model.
 - Tessler, M. H. & Franke, M. (2020). Not unreasonable.
 - Cruse, D. A. (1986). Lexical Semantics.
+- Israel, M. (2011). The Grammar of Polarity.
 -/
 
-import Linglib.Theories.TruthConditional.Domain.Degree
 import Linglib.Theories.TruthConditional.Basic
+import Linglib.Core.MeasurementScale
 
 namespace TruthConditional.Adjective
 
-open TruthConditional.Domain.Degrees
+open Core.Scale (Boundedness Degree Threshold Degree.toNat Threshold.toNat
+  deg thr allDegrees allThresholds)
 
--- Adjective Scale Types
+-- ════════════════════════════════════════════════════
+-- Negation Types: Contradictory vs. Contrary
+-- ════════════════════════════════════════════════════
 
 /--
-Scale type for a gradable adjective.
+Types of negation for gradable adjectives.
 
-Following Kennedy (2007):
-- **Open**: No inherent minimum or maximum (tall, expensive)
-- **Lower closed**: Has a minimum, no maximum (wet, bent)
-- **Upper closed**: Has a maximum, no minimum (dry, straight)
-- **Closed**: Has both minimum and maximum (full, empty)
+**Contradictories** (e.g., "happy" / "not happy"):
+- Cannot both be true AND cannot both be false
+- Exactly one must hold for any degree
 
-Scale type affects:
-- Default threshold (minimum for lower-closed, standard for open)
-- Compatibility with degree modifiers ("completely full" vs *"completely tall")
+**Contraries** (e.g., "happy" / "unhappy"):
+- Cannot both be true BUT can both be false
+- Gap region where neither holds
+
+References:
+- Cruse (1986). Lexical Semantics.
+- Horn (1989). A Natural History of Negation.
+- Tessler & Franke (2020). Not unreasonable.
 -/
-inductive ScaleType where
-  | open_        -- tall, expensive (no inherent bounds)
-  | lowerClosed  -- wet, bent (minimum at 0)
-  | upperClosed  -- dry, straight (maximum at top)
-  | closed       -- full, empty (both bounds)
+inductive NegationType where
+  | contradictory
+  | contrary
   deriving Repr, DecidableEq, BEq
 
--- Antonym Relations
+-- Two-Threshold Model for Contrary Antonyms
 
 /--
-The relation between a positive form and its antonym.
+A threshold pair for contrary antonyms.
 
-Uses `NegationType` from `Fragments.Degrees`:
-- **Contradictory**: P and ¬P partition the space (no gap)
-- **Contrary**: P and Q can both be false (gap region)
-
-Example:
-- "tall" / "not tall" — contradictory (same threshold, flipped)
-- "tall" / "short" — typically contrary (different thresholds, gap)
-- "happy" / "unhappy" — contrary (polar opposites with gap)
-
-This matters because "not short" ≠ "tall" when the relation is contrary.
+For contrary pairs like happy/unhappy:
+- theta_pos: threshold for positive form (degree > theta_pos -> "happy")
+- theta_neg: threshold for negative form (degree < theta_neg -> "unhappy")
+- Constraint: theta_neg <= theta_pos (gap exists when theta_neg < theta_pos)
 -/
+structure ThresholdPair (max : Nat) where
+  pos : Threshold max
+  neg : Threshold max
+  gap_exists : neg ≤ pos := by decide
+  deriving Repr
+
+instance {n : Nat} (h : 0 < n := by omega) : Inhabited (ThresholdPair n) :=
+  ⟨{ pos := ⟨⟨0, h⟩⟩, neg := ⟨⟨0, h⟩⟩, gap_exists := le_refl _ }⟩
+
+instance {n : Nat} : BEq (ThresholdPair n) where
+  beq t1 t2 := t1.pos == t2.pos && t1.neg == t2.neg
+
+instance {n : Nat} : DecidableEq (ThresholdPair n) :=
+  λ t1 t2 =>
+    if hp : t1.pos = t2.pos then
+      if hn : t1.neg = t2.neg then
+        .isTrue (by
+          rcases t1 with ⟨p1, n1, g1⟩
+          rcases t2 with ⟨p2, n2, g2⟩
+          dsimp at hp hn
+          subst hp; subst hn
+          exact congrArg _ (proof_irrel g1 g2))
+      else
+        .isFalse (λ h => hn (congrArg ThresholdPair.neg h))
+    else
+      .isFalse (λ h => hp (congrArg ThresholdPair.pos h))
+
+-- ════════════════════════════════════════════════════
+-- Negation Semantics
+-- ════════════════════════════════════════════════════
+
+/-- Contradictory negation: "not happy" = degree ≤ theta. -/
+def contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+  d ≤ (θ : Degree max)
+
+/-- Contrary negation: "unhappy" = degree < theta_neg. -/
+def contraryNeg {max : Nat} (d : Degree max) (θ_neg : Threshold max) : Bool :=
+  d < (θ_neg : Degree max)
+
+/-- Check if a degree is in the gap region (neither positive nor negative). -/
+def inGapRegion {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
+  (tp.neg : Degree max) ≤ d && d ≤ (tp.pos : Degree max)
+
+/-- Positive meaning with two-threshold model: degree > theta_pos. -/
+def positiveMeaning' {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
+  (tp.pos : Degree max) < d
+
+/-- Negative meaning with contrary semantics: "unhappy" = degree < theta_neg. -/
+def contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
+  d < (tp.neg : Degree max)
+
+/-- Negation of contrary negative: "not unhappy" = degree >= theta_neg. -/
+def notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
+  (tp.neg : Degree max) ≤ d
+
+-- ════════════════════════════════════════════════════
+-- Single-Threshold Meaning Functions
+-- ════════════════════════════════════════════════════
+
+/-- Positive form: degree > threshold -/
+def positiveMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+  (t : Degree max) < d
+
+/-- Negative form: degree < threshold -/
+def negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+  d < (t : Degree max)
+
+/-- Antonym reverses the comparison -/
+def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+  d ≤ (t : Degree max)
+
+-- ════════════════════════════════════════════════════
+-- Degree Modifiers (Kennedy & McNally 2005; Israel 2011)
+-- ════════════════════════════════════════════════════
+
+/-- Degree modifier direction — same axis as NPI scalar direction. -/
+inductive ModifierDirection where
+  | amplifier   -- very, extremely: θ + δ → strengthens
+  | downtoner   -- slightly, kind of: θ - δ → attenuates
+  deriving DecidableEq, BEq, Repr
+
+/-- A degree modifier that shifts the threshold of a gradable predicate. -/
+structure DegreeModifier (max : Nat) where
+  form : String
+  direction : ModifierDirection
+  shift : Fin (max + 1)
+  rank : Nat
+  deriving Repr
+
+/-- Apply a modifier to a threshold. -/
+def DegreeModifier.applyToThreshold {max : Nat} (m : DegreeModifier max)
+    (θ : Threshold max) : Threshold max :=
+  have hθ := θ.value.isLt
+  have hm := m.shift.isLt
+  match m.direction with
+  | .amplifier =>
+    ⟨⟨min (θ.value.val + m.shift.val) (max - 1), by omega⟩⟩
+  | .downtoner =>
+    ⟨⟨θ.value.val - m.shift.val, by omega⟩⟩
+
+/-- A modified gradable predicate: degree(x) > M(θ). -/
+def modifiedMeaning {max : Nat} (m : DegreeModifier max)
+    (d : Degree max) (θ : Threshold max) : Bool :=
+  positiveMeaning d (m.applyToThreshold θ)
+
+-- Modifier Instances
+
+section ModifierInstances
+
+variable (max : Nat)
+
+/-- "slightly" — minimal downtoner -/
+def slightly (h : 1 ≤ max := by omega) : DegreeModifier max :=
+  { form := "slightly", direction := .downtoner
+  , shift := ⟨1, by omega⟩, rank := 1 }
+
+/-- "kind of" — moderate downtoner -/
+def kindOf (h : 2 ≤ max := by omega) : DegreeModifier max :=
+  { form := "kind of", direction := .downtoner
+  , shift := ⟨2, by omega⟩, rank := 2 }
+
+/-- "quite" — amplifier (AmE reading). -/
+def quite (h : 1 ≤ max := by omega) : DegreeModifier max :=
+  { form := "quite", direction := .amplifier
+  , shift := ⟨1, by omega⟩, rank := 1 }
+
+/-- "very" — strong amplifier -/
+def very (h : 2 ≤ max := by omega) : DegreeModifier max :=
+  { form := "very", direction := .amplifier
+  , shift := ⟨2, by omega⟩, rank := 2 }
+
+/-- "extremely" — maximal amplifier -/
+def extremely (h : 3 ≤ max := by omega) : DegreeModifier max :=
+  { form := "extremely", direction := .amplifier
+  , shift := ⟨3, by omega⟩, rank := 3 }
+
+end ModifierInstances
+
+-- Strength Hierarchy Verification
+
+#guard Nat.blt (quite 10).rank (very 10).rank
+#guard Nat.blt (very 10).rank (extremely 10).rank
+#guard Nat.blt (slightly 10).rank (kindOf 10).rank
+#guard Nat.blt 3 ((very 10).applyToThreshold (⟨⟨3, by omega⟩⟩ : Threshold 10) |>.toNat)
+#guard Nat.blt ((slightly 10).applyToThreshold (⟨⟨5, by omega⟩⟩ : Threshold 10) |>.toNat) 5
+
+-- ════════════════════════════════════════════════════
+-- Antonym Relations
+-- ════════════════════════════════════════════════════
+
+/-- The relation between a positive form and its antonym. -/
 abbrev AntonymRelation := NegationType
 
+-- ════════════════════════════════════════════════════
 -- Adjective Lexical Entry
+-- ════════════════════════════════════════════════════
 
 /--
 A gradable adjective lexical entry.
 
-Bundles:
-- Surface form ("tall", "happy")
-- Scale structure (what's being measured, bounds)
-- Antonym information (what's the antonym, what relation)
-
-The actual threshold is NOT part of the lexical entry — it's contextual.
-This is the key insight from Kennedy (2007): thresholds are supplied by context.
+Bundles surface form, scale structure, and antonym information.
+The actual threshold is NOT part of the lexical entry — it's contextual
+(Kennedy 2007).
 -/
-structure GradableAdjEntry (max : Nat) where
-  /-- Surface form -/
+structure GradableAdjEntry where
   form : String
-  /-- Scale type (open, closed, etc.) -/
-  scaleType : ScaleType
-  /-- Dimension being measured (for documentation) -/
+  scaleType : Boundedness
   dimension : String
-  /-- Antonym form (if any) -/
   antonymForm : Option String := none
-  /-- Relation to antonym (if any) -/
   antonymRelation : Option AntonymRelation := none
   deriving Repr
 
+-- ════════════════════════════════════════════════════
 -- Adjective Theory
+-- ════════════════════════════════════════════════════
 
 /--
 A semantic theory for gradable adjectives.
 
-Each theory specifies how to compute truth given:
-- A degree value (the entity's position on the scale)
-- Threshold parameter(s) (contextually determined)
-
-## Theories
-
 1. **Single threshold** (standard): "tall" = degree > θ
-   - Antonym uses same threshold: "short" = degree < θ or degree ≤ θ
-
-2. **Two threshold / Contrary** (Tessler & Franke):
-   - Positive: degree > θ_pos
-   - Antonym: degree < θ_neg where θ_neg < θ_pos
-   - Gap: θ_neg ≤ degree ≤ θ_pos
-
-The theory choice affects whether antonyms are contradictory or contrary.
+2. **Two threshold / Contrary** (Tessler & Franke): gap region
 -/
 structure AdjectiveTheory (max : Nat) where
-  /-- Name of the theory -/
   name : String
-  /-- Academic citation -/
   citation : String
-  /-- Does this theory support contrary antonyms (two thresholds)? -/
   supportsContrary : Bool
-  /-- Positive form meaning: given degree and threshold, is positive true? -/
   positiveMeaning : Degree max → Threshold max → Bool
-  /-- Contradictory antonym meaning (if not using contrary) -/
   contradictoryAntonym : Degree max → Threshold max → Bool
-  /-- Contrary antonym meaning (if supported) — uses ThresholdPair -/
   contraryAntonym : Degree max → ThresholdPair max → Bool := λ _ _ => false
 
 -- Standard Theory: Single Threshold
 
-/--
-Standard threshold semantics (Kennedy 2007, Lassiter & Goodman 2017).
-
-- Positive: degree > θ
-- Antonym (contradictory): degree ≤ θ
-
-This is appropriate when antonyms are true contradictories:
-- "tall" / "not tall" — no gap
-- But potentially misleading for "tall" / "short" if they're contrary
--/
 def standardTheory (max : Nat) : AdjectiveTheory max where
   name := "Standard Threshold"
   citation := "Kennedy (2007), Lassiter & Goodman (2017)"
@@ -171,15 +284,6 @@ def standardTheory (max : Nat) : AdjectiveTheory max where
 
 -- Contrary Theory: Two Thresholds
 
-/--
-Contrary antonym semantics (Tessler & Franke 2020).
-
-- Positive: degree > θ_pos
-- Antonym (contrary): degree < θ_neg
-- Gap: θ_neg ≤ degree ≤ θ_pos
-
-This captures polar opposite antonyms like "happy" / "unhappy".
--/
 def contraryTheory (max : Nat) : AdjectiveTheory max where
   name := "Contrary Antonyms (Two Threshold)"
   citation := "Tessler & Franke (2020), Cruse (1986)"
@@ -190,106 +294,101 @@ def contraryTheory (max : Nat) : AdjectiveTheory max where
 
 -- Derived Operations
 
-/--
-Check if a degree is in the gap region (for contrary theories).
-
-The gap is where both positive and antonym are false:
-- Not positive: degree ≤ θ_pos
-- Not contrary antonym: degree ≥ θ_neg
--/
 def AdjectiveTheory.inGap {max : Nat} (T : AdjectiveTheory max)
     (d : Degree max) (tp : ThresholdPair max) : Bool :=
   if T.supportsContrary then
     inGapRegion d tp
   else
-    false  -- No gap in contradictory theories
+    false
 
-/--
-Negated antonym meaning: "not unhappy".
-
-If antonym is contrary: ¬(degree < θ_neg) = degree ≥ θ_neg
-If antonym is contradictory: ¬(degree ≤ θ) = degree > θ (same as positive!)
--/
 def AdjectiveTheory.negatedAntonym {max : Nat} (T : AdjectiveTheory max)
     (d : Degree max) (tp : ThresholdPair max) : Bool :=
   if T.supportsContrary then
-    d.toNat ≥ tp.neg.toNat  -- Includes gap AND positive region
+    d.toNat ≥ tp.neg.toNat
   else
-    T.positiveMeaning d tp.pos  -- Collapses to positive
-
--- Lexical Entries
-
--- Concrete lexical entries (tall, short, happy, etc.) are defined in:
--- `Fragments/English/Predicates/Adjectival.lean`
---
--- This module provides only the theoretical infrastructure.
+    T.positiveMeaning d tp.pos
 
 -- Theorems
 
-/--
-Standard theory has no gap (by definition, supportsContrary = false).
--/
 theorem standard_no_gap : (standardTheory 4).supportsContrary = false := rfl
 
-/--
-Contrary theory supports gaps (by definition, supportsContrary = true).
--/
 theorem contrary_supports_gap : (contraryTheory 4).supportsContrary = true := rfl
 
-/--
-Example: degree 2 is in the gap for θ_neg = 2, θ_pos = 3.
--/
 def exampleDegree : Degree 4 := ⟨⟨2, by omega⟩⟩
 def exampleThresholds : ThresholdPair 4 :=
   { pos := ⟨⟨3, by omega⟩⟩, neg := ⟨⟨2, by omega⟩⟩, gap_exists := by decide }
 
 theorem example_in_gap : inGapRegion exampleDegree exampleThresholds = true := by native_decide
 
-/--
-In standard theory, negated antonym = positive (double negation cancels).
-This is because supportsContrary = false, so negatedAntonym falls through to positiveMeaning.
--/
 theorem standard_double_neg_cancels :
     (standardTheory 4).negatedAntonym exampleDegree exampleThresholds =
     (standardTheory 4).positiveMeaning exampleDegree exampleThresholds.pos := rfl
 
-/--
-In contrary theory, negated antonym ≠ positive (gap region differs).
-
-"not unhappy" covers gap, "happy" does not.
-Degree 2 with θ_neg = 2, θ_pos = 3: in gap, so "not unhappy" but not "happy"
--/
 theorem contrary_double_neg_differs :
     (contraryTheory 4).negatedAntonym exampleDegree exampleThresholds = true ∧
     (contraryTheory 4).positiveMeaning exampleDegree exampleThresholds.pos = false := by
   native_decide
 
--- Summary
+-- ════════════════════════════════════════════════════
+-- Marginality Scales Account (Dinis & Jacinto 2026)
+-- ════════════════════════════════════════════════════
 
-/-
-## Summary: Gradable Adjective Semantics
+open Core.Scale
 
-### Key Types (from Fragments.Degrees)
-- `Degree max`: Position on the scale
-- `Threshold max`: Contextual cutoff
-- `NegationType`: Contradictory vs. contrary
-- `ThresholdPair max`: Two thresholds for contrary antonyms
+structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
+    Core.Scale.MIPDomain α W where
+  ml : Core.Scale.MLScale α
 
-### Theories
-- `standardTheory`: Single threshold, contradictory antonyms
-- `contraryTheory`: Two thresholds, contrary antonyms with gap
+def marginalityPositive {α : Type*} [LinearOrder α]
+    (ml : Core.Scale.MLScale α) (norm degree : α) : Prop :=
+  ml.L norm degree
 
-### Results
-- `standard_no_gap`: No gap in standard theory
-- `contrary_has_gap`: Gap exists in contrary theory
-- `standard_double_neg_cancels`: "not short" = "tall" in standard
-- `contrary_double_neg_differs`: "not unhappy" ≠ "happy" in contrary
+theorem marginality_entails_standard {α : Type*} [LinearOrder α]
+    (ml : Core.Scale.MLScale α) (norm degree : α)
+    (h : marginalityPositive ml norm degree) : norm < degree :=
+  h.1
 
-### Usage
-Models importing gradable adjectives should:
-1. Import this module
-2. Choose a theory (standard vs contrary)
-3. Get grounded semantics from the theory's meaning functions
--/
+-- ════════════════════════════════════════════════════
+-- Degree ↔ MIPDomain Bridge
+-- ════════════════════════════════════════════════════
+
+/-! ### Connecting concrete `Degree max` to abstract `MIPDomain`
+
+`Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`),
+so the abstract theorems in `MeasurementScale.lean` apply directly to concrete
+RSA degree computations. -/
+
+def adjMIPDomain {max : Nat} {W : Type*} (μ : W → Degree max)
+    (entry : GradableAdjEntry) : MIPDomain (Degree max) W :=
+  MIPDomain.kennedyAdjective μ entry.scaleType
+
+theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
+    (entry : GradableAdjEntry) (h : entry.scaleType = .closed) :
+    (adjMIPDomain μ entry).licensed = true := by
+  simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
+        Boundedness.isLicensed]
+
+theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
+    (entry : GradableAdjEntry) (h : entry.scaleType = .open_) :
+    (adjMIPDomain μ entry).licensed = false := by
+  simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
+        Boundedness.isLicensed]
+
+theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
+    ∃ x : Degree max, x ≠ ⊤ := by
+  refine ⟨⟨⟨0, by omega⟩⟩, ?_⟩
+  intro heq
+  simp [Top.top, Fin.last, Degree.mk.injEq] at heq
+  omega
+
+theorem degree_admits_optimum {max : Nat} (h : 1 ≤ max) :
+    ∃ (P : Degree max → Prop),
+      (∀ x y : Degree max, x ≤ y → P x → P y) ∧
+      ¬ (∀ x y : Degree max, P x ↔ P y) :=
+  upperBound_admits_optimum (degree_nontrivial h)
+
+theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
+    (MIPDomain.kennedyNumeral μ).measure = μ :=
+  rfl
 
 end TruthConditional.Adjective

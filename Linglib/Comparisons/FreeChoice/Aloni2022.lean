@@ -37,7 +37,7 @@ import Linglib.Theories.DynamicSemantics.TeamSemantics
 
 namespace Comparisons.FreeChoice.Aloni2022
 
-open Theories.DynamicSemantics.TeamSemantics
+open DynamicSemantics.TeamSemantics
 
 -- ============================================================================
 -- PART 1: BSML Model Structure

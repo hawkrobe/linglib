@@ -71,22 +71,9 @@ open TruthConditional.Verb.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
 
-/-- A property is **maximally informative** at world w iff (a) P holds of x
-    at w, and (b) P holds of nothing else at w.
-    Rouillard (2026) eq. (75): max⊨(w, P) := the(λx. P(x)(w) ∧ ∀y[P(y)(w) → P(x) ⊨ P(y)]).
-    Simplified: x is max⊨ in P at w when P(x)(w) is true and entails all
-    other true members of P at w. -/
-def IsMaxInf {α : Type*} (P : α → W → Prop) (x : α) (w : W) : Prop :=
-  P x w ∧ ∀ y, P y w → (∀ w', P x w' → P y w')
-
-/-- A property **has** a maximally informative element at w. -/
-def HasMaxInf {α : Type*} (P : α → W → Prop) (w : W) : Prop :=
-  ∃ x, IsMaxInf P x w
-
-/-- Information collapse: no element is maximally informative at any world.
-    This is the hallmark of predicates that block TIAs. -/
-def InformationCollapse {α : Type*} (P : α → W → Prop) : Prop :=
-  ∀ w, ¬ HasMaxInf P w
+-- Re-export maximal informativity from Core.Scale (canonical definitions).
+-- Fox & Hackl (2007) §4 / Rouillard (2026) eq. (75).
+open Core.Scale (IsMaxInf HasMaxInf InformationCollapse)
 
 -- ════════════════════════════════════════════════════
 -- § 2. Scalarity (specialized to ℕ-indexed families)
@@ -142,6 +129,16 @@ theorem biscalar_constant_collapse (P : ℕ → W → Prop)
 structure MeasureFun (Time : Type*) [LinearOrder Time] where
   /-- The measure of an interval in some unit φ -/
   μ : Interval Time → ℕ
+  /-- Any interval can be extended to a superinterval with a given larger measure.
+      Rouillard (2026): temporal measure units (days, hours) are additive, so
+      any interval can be padded to achieve any target measure ≥ current. -/
+  extensible : ∀ (i : Interval Time) (m : ℕ), μ i ≤ m →
+    ∃ j : Interval Time, i.subinterval j ∧ μ j = m
+  /-- Any interval can be subdivided to a subinterval with a given smaller measure.
+      Rouillard (2026): temporal measure units are additive, so any interval
+      can be trimmed to achieve any target measure ≤ current. -/
+  subdivisible : ∀ (i : Interval Time) (m : ℕ), m ≤ μ i →
+    ∃ j : Interval Time, j.subinterval i ∧ μ j = m
 
 /-- Prior time span: the maximal interval right-bounded by t with measure n.
     Rouillard (2026) eq. (50):
@@ -260,18 +257,24 @@ def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
     Rouillard (2026) §4.1.1: the interaction of the subinterval property
     with E-TIAs results in information collapse.
 
-    Proof sketch: If P has SUB and e is a P-event in an n-day time,
-    then for any m-day time t' containing τ(e), every subinterval of
-    τ(e) included in t' also hosts a P-event (by SUB). For m < n,
-    there is a sub-interval of τ(e) with measure m hosting a P-event
-    (since τ(e) can be arbitrarily partitioned by SUB). So every n
-    yields the same set of worlds → constant function → no max⊨.
-    TODO: Full proof requires measure-theoretic density arguments
-    and an assumption that μ is additive over non-overlapping intervals. -/
+    Proof: For any world w where eTIAProperty holds at n, we show it holds
+    at m for arbitrary m. Given P-event e at w:
+    - If m ≤ μ(τ(e)): subdivide τ(e) to get j ⊆ τ(e) with μ(j) = m.
+      By SUB, ⟨j⟩ is a P-event. Since j ⊆ τ(e) ⊆ g1, j ⊆ g1.
+    - If m ≥ μ(τ(e)): extend τ(e) to get j ⊇ τ(e) with μ(j) = m.
+      Same event e works. -/
 theorem eTIA_atelic_collapse (P : EventPred W Time) (μ : MeasureFun Time)
     (g1 : Interval Time) (hSub : HasSubintervalProp P) :
-    Core.Scale.IsConstant (α := ℕ) (eTIAProperty P μ g1) :=
-  sorry
+    Core.Scale.IsConstant (α := ℕ) (eTIAProperty P μ g1) := by
+  suffices h : ∀ n m w, eTIAProperty P μ g1 n w → eTIAProperty P μ g1 m w from
+    fun n m w => ⟨h n m w, h m n w⟩
+  intro n m w ⟨_, _, e, hP, hg1, _⟩
+  rcases le_total m (μ.μ e.τ) with hle | hge
+  · obtain ⟨j, hj_sub, hj_μ⟩ := μ.subdivisible e.τ m hle
+    exact ⟨j, hj_μ, ⟨j⟩, hSub e w hP j hj_sub ⟨j⟩ rfl,
+      ⟨le_trans hg1.1 hj_sub.1, le_trans hj_sub.2 hg1.2⟩, ⟨le_refl _, le_refl _⟩⟩
+  · obtain ⟨j, hj_sup, hj_μ⟩ := μ.extensible e.τ m hge
+    exact ⟨j, hj_μ, e, hP, hg1, hj_sup⟩
 
 /-- **Quantized predicates yield upward scalar E-TIA properties**.
     Rouillard (2026) §4.1.1: when P is QUA (telic), the E-TIA property in
@@ -281,17 +284,16 @@ theorem eTIA_atelic_collapse (P : EventPred W Time) (μ : MeasureFun Time)
 
     This is the structural explanation for why E-TIAs are acceptable with
     telic VPs: there exists a unique maximally informative number.
-    Proof: If ∃e. P(e) ∧ μ(τ(e)) ≤ n, then also μ(τ(e)) ≤ m for m ≥ n,
-    since the same event e witnesses both. -/
+    Proof: The same event e works. Extend the containing time t (with
+    μ(t) = n) to j ⊇ t with μ(j) = m ≥ n via `MeasureFun.extensible`.
+    Since τ(e) ⊆ t ⊆ j, the witness transfers. -/
 theorem eTIA_telic_upwardScalar (P : EventPred W Time) (μ : MeasureFun Time)
     (g1 : Interval Time) :
     UpwardScalar (eTIAProperty P μ g1) := by
   intro n m hnm w ⟨t, hμ, e, hP, hg1, hsub⟩
-  -- The same event e works: we just need a larger time t' with μ(t') = m
-  -- that contains τ(e). Since any n-unit time can be extended to an m-unit
-  -- time (m ≥ n), the witness transfers.
-  -- TODO: Full proof needs measure extension lemma
-  sorry
+  obtain ⟨j, hj_sup, hj_μ⟩ := μ.extensible t m (by omega)
+  exact ⟨j, hj_μ, e, hP, hg1,
+    ⟨le_trans hj_sup.1 hsub.1, le_trans hsub.2 hj_sup.2⟩⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. G-TIA Polarity from Open Intervals
@@ -306,15 +308,15 @@ theorem eTIA_telic_upwardScalar (P : EventPred W Time) (μ : MeasureFun Time)
     This is the structural reason why G-TIAs in positive environments suffer
     information collapse: the G-TIA property is downward scalar with no minimum.
 
-    Proof sketch: Suppose o(pts(3,d,s)) includes a closed runtime [a,b].
-    Since the PTS is open, its LB m₁ < a. By density, ∃m₃ with m₁ < m₃ < a.
-    Then o(pts(n,d,s)) for some n < 3 also includes [a,b], since the open
-    interval ]m₃, s[ still contains [a,b]. So 3 is not maximally informative. -/
+    Proof: By density (`DenselyOrdered`), find m with pts_open.left < m <
+    runtime.start. The open interval ]m, pts_open.right[ still contains
+    runtime (m < runtime.start and runtime.finish ≤ pts_open.right) and
+    is strictly contained in pts_open (pts_open.left < m). -/
 theorem no_smallest_open_including_closed
     [DenselyOrdered Time]
     (runtime : Interval Time) -- closed event runtime
     (pts_open : Interval.GInterval Time) -- open PTS
-    (h_open : pts_open.isOpen)
+    (_h_open : pts_open.isOpen)
     (h_contains : runtime.subinterval pts_open.toInterval)
     (h_nontrivial : pts_open.left < runtime.start) :
     ∃ pts' : Interval.GInterval Time,
@@ -322,10 +324,14 @@ theorem no_smallest_open_including_closed
       runtime.subinterval pts'.toInterval ∧
       pts'.toInterval.subinterval pts_open.toInterval ∧
       pts'.left ≠ pts_open.left := by
-  -- By density (Mathlib's DenselyOrdered), find m between pts_open.left and runtime.start.
-  -- The new open interval ]m, pts_open.right[ still contains runtime and is
-  -- strictly smaller than pts_open, proving no smallest open PTS exists.
-  sorry
+  obtain ⟨m, hm_left, hm_right⟩ := DenselyOrdered.dense _ _ h_nontrivial
+  have hm_valid : m ≤ pts_open.right :=
+    le_trans (le_of_lt hm_right) (le_trans runtime.valid h_contains.2)
+  exact ⟨⟨m, pts_open.right, .open_, .open_, hm_valid⟩,
+    ⟨rfl, rfl⟩,
+    ⟨le_of_lt hm_right, h_contains.2⟩,
+    ⟨le_of_lt hm_left, le_refl _⟩,
+    hm_left.ne'⟩
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge: Kennedy Scales ↔ TIA Licensing
@@ -350,8 +356,8 @@ theorem no_smallest_open_including_closed
     | Interpretive Economy               | Maximal Informativity Principle       |
     | → maximize conventional meaning    | → maximize numeral contribution      |
 
-    Kennedy's `ScaleType.open_` maps to `Boundedness.open_` (= Krifka's DIV),
-    and Kennedy's `ScaleType.closed` maps to `Boundedness.closed` (= Krifka's QUA).
+    Kennedy's `Boundedness.open_` (= Krifka's DIV),
+    and Kennedy's `Boundedness.closed` (= Krifka's QUA).
 
     For G-TIAs, the relevant "scale" is the PTS: open PTSs behave like
     open scales (no inherent bound → no maximum standard), while closed
@@ -408,5 +414,64 @@ def PERF_open (p : IntervalPred W Time) : PointPred W Time :=
   -- semantics rather than structurally in PERF, since the basic Interval
   -- type is always closed. The semantic effect is captured in
   -- gTIAProperty and the no_smallest_open_including_closed theorem.
+
+-- ════════════════════════════════════════════════════
+-- § 11. Numeral Semantics Bridge
+-- ════════════════════════════════════════════════════
+
+/-! E-TIA expressions are upward monotone in the numeral (Rouillard 2026 §3):
+    "wrote a paper in three days" entails "wrote a paper in four days"
+    because τ(e) ⊑ t with |t| = 3 implies τ(e) ⊑ t' with |t'| = 4.
+
+    This upward monotonicity is a property of the *expression* "in n days"
+    (due to the containment semantics of *in*), NOT of the numeral itself.
+    The numeral "three" can be exact (Kennedy 2015 de-Fregean type-shift:
+    closed scale → Class B → exact meaning), and the expression is still
+    upward monotone because containment is monotone in the interval size.
+
+    Indeed, exact numerals are arguably REQUIRED: with LB numerals (|t| ≥ n),
+    ∃t. |t| ≥ n ∧ τ(e) ⊑ t is trivially true for any event (pick a large
+    enough interval). Only exact numerals (|t| = n) make "in n days"
+    informative: it then asserts |τ(e)| ≤ n.
+
+    The exact reading of the DURATION ("took exactly 3 days, not 2") arises
+    via scalar implicature over the upward-monotone expression, parallel to
+    Kennedy's analysis of "the glass is full" (endpoint standard + exactness). -/
+
+/-- E-TIA expressions are upward monotone in the numeral: if the event fits
+    in an n-unit time, it fits in an m-unit time for m ≥ n. This follows
+    from the containment semantics of *in* (τ(e) ⊑ t), not from the
+    numeral being lower-bounded. Compatible with Kennedy (2015) exact
+    numerals on closed scales. -/
+theorem eTIA_expression_upward_monotone (P : EventPred W Time) (μ : MeasureFun Time)
+    (g1 : Interval Time) (n m : ℕ) (hnm : n ≤ m) (w : W)
+    (h : eTIAProperty P μ g1 n w) :
+    eTIAProperty P μ g1 m w :=
+  eTIA_telic_upwardScalar P μ g1 n m hnm w h
+
+-- ════════════════════════════════════════════════════
+-- § 12. Mereology Bridge: DIV → Closed Subinterval Property
+-- ════════════════════════════════════════════════════
+
+/-! Rouillard's closed subinterval property (CSUB, eq. 111) is the temporal
+    analog of Krifka/Champollion's DIV (divisive reference). DIV says every
+    part of a P-entity is itself P; CSUB says the closed counterpart of every
+    subinterval of a P-event's runtime is itself a P-event's runtime.
+
+    The bridge: if an event predicate is DIV (in the mereological sense from
+    `Mereology.lean`), then it has the closed subinterval property (in the
+    temporal sense needed for G-TIA polarity). -/
+
+/-- DIV event predicates have the (plain) subinterval property.
+    If P is downward-closed under the part-of relation on events,
+    then any subinterval of a P-event's runtime that is itself some
+    event's runtime is a P-event's runtime. -/
+theorem div_implies_subintervalProp (P : EventPred W Time) :
+    (∀ (e₁ e₂ : Eventuality Time) (w : W),
+      P w e₁ → e₂.τ.subinterval e₁.τ → P w e₂) →
+    HasSubintervalProp P := by
+  intro hDiv e₁ w hP t hsub e₂ hτ
+  have : e₂.τ = t := by simp [Eventuality.τ]; exact hτ
+  exact hDiv e₁ e₂ w hP (this ▸ hsub)
 
 end TruthConditional.Sentence.MaximalInformativity

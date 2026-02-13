@@ -36,7 +36,7 @@ import Mathlib.Data.Finset.Union
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Basic
 
-namespace Theories.DynamicSemantics.PLA
+namespace DynamicSemantics.PLA
 
 open Classical
 
@@ -198,4 +198,4 @@ theorem Formula.resolve_no_pronouns (φ : Formula) (ρ : Resolution) :
   | conj φ ψ ih1 ih2 => simp [Formula.resolve, Formula.range, ih1, ih2]
   | exists_ i φ ih => exact ih
 
-end Theories.DynamicSemantics.PLA
+end DynamicSemantics.PLA

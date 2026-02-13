@@ -9,9 +9,9 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 
 namespace Fragments.Japanese.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ThetaRole ControlType PreferentialBuilder AttitudeBuilder)
+open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType PreferentialBuilder AttitudeBuilder)
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-- 楽しみ "tanosimi" — looking forward to (Class 1: positive, non-C-distributive). -/
 def tanosimi : VerbEntry where

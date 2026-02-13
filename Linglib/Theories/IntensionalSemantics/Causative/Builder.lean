@@ -31,11 +31,11 @@ not a causal-model property. Properties like "asserts sufficiency" or
   Cognitive Science 12, 49-100.
 -/
 
-namespace Theories.NadathurLauer2020.Builder
+namespace NadathurLauer2020.Builder
 
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
 
 /-- How a causative verb's semantics is built from causal model infrastructure.
 
@@ -251,4 +251,4 @@ theorem necessity_implies_causallyNecessary
   simp only [CausativeBuilder.toSemantics, causeSem, Bool.and_eq_true] at h
   exact h.2
 
-end Theories.NadathurLauer2020.Builder
+end NadathurLauer2020.Builder

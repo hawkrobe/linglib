@@ -7,8 +7,9 @@ Gradable adjective entries following Kennedy (2007). Scale type, dimension, anto
 
 namespace Fragments.English.Predicates.Adjectival
 
-open TruthConditional.Adjective (ScaleType AntonymRelation GradableAdjEntry)
-open TruthConditional.Domain.Degrees (NegationType)
+open TruthConditional.Adjective (AntonymRelation GradableAdjEntry)
+open Core.Scale (Boundedness)
+open TruthConditional.Adjective (NegationType)
 
 
 /--
@@ -16,14 +17,12 @@ An adjectival predicate entry.
 
 This is an alias for `GradableAdjEntry` from the Theory module, re-exported
 here for the Fragments organization.
-
-The `max` parameter is the scale maximum (for finite degree representations).
 -/
 abbrev AdjectivalPredicateEntry := GradableAdjEntry
 
 
 /-- "tall" — open scale, contrary to "short" -/
-def tall : AdjectivalPredicateEntry 10 where
+def tall : AdjectivalPredicateEntry where
   form := "tall"
   scaleType := .open_
   dimension := "height"
@@ -31,7 +30,7 @@ def tall : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "short" — open scale, contrary to "tall" -/
-def short : AdjectivalPredicateEntry 10 where
+def short : AdjectivalPredicateEntry where
   form := "short"
   scaleType := .open_
   dimension := "height"
@@ -46,7 +45,7 @@ Note: This is the 1-place adjectival predicate "x is happy".
 For the 2-place attitude predicate "x is happy that p", see
 `Theories/Montague/Lexicon/Attitudes/Preferential.lean`.
 -/
-def happy : AdjectivalPredicateEntry 10 where
+def happy : AdjectivalPredicateEntry where
   form := "happy"
   scaleType := .open_
   dimension := "happiness"
@@ -54,7 +53,7 @@ def happy : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "unhappy" — open scale, contrary to "happy" -/
-def unhappy : AdjectivalPredicateEntry 10 where
+def unhappy : AdjectivalPredicateEntry where
   form := "unhappy"
   scaleType := .open_
   dimension := "happiness"
@@ -62,7 +61,7 @@ def unhappy : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "sad" — open scale, contrary to "happy" (near-synonym of unhappy) -/
-def sad : AdjectivalPredicateEntry 10 where
+def sad : AdjectivalPredicateEntry where
   form := "sad"
   scaleType := .open_
   dimension := "happiness"
@@ -71,7 +70,7 @@ def sad : AdjectivalPredicateEntry 10 where
 
 
 /-- "full" — closed scale, contradictory to "empty" -/
-def full : AdjectivalPredicateEntry 10 where
+def full : AdjectivalPredicateEntry where
   form := "full"
   scaleType := .closed
   dimension := "fullness"
@@ -79,7 +78,7 @@ def full : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contradictory  -- Closed scales often contradictory
 
 /-- "empty" — closed scale, contradictory to "full" -/
-def empty : AdjectivalPredicateEntry 10 where
+def empty : AdjectivalPredicateEntry where
   form := "empty"
   scaleType := .closed
   dimension := "fullness"
@@ -88,7 +87,7 @@ def empty : AdjectivalPredicateEntry 10 where
 
 
 /-- "hot" — open scale, contrary to "cold" -/
-def hot : AdjectivalPredicateEntry 10 where
+def hot : AdjectivalPredicateEntry where
   form := "hot"
   scaleType := .open_
   dimension := "temperature"
@@ -96,7 +95,7 @@ def hot : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "cold" — open scale, contrary to "hot" -/
-def cold : AdjectivalPredicateEntry 10 where
+def cold : AdjectivalPredicateEntry where
   form := "cold"
   scaleType := .open_
   dimension := "temperature"
@@ -105,7 +104,7 @@ def cold : AdjectivalPredicateEntry 10 where
 
 
 /-- "expensive" — open scale, contrary to "cheap" -/
-def expensive : AdjectivalPredicateEntry 10 where
+def expensive : AdjectivalPredicateEntry where
   form := "expensive"
   scaleType := .open_
   dimension := "cost"
@@ -113,7 +112,7 @@ def expensive : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "cheap" — open scale, contrary to "expensive" -/
-def cheap : AdjectivalPredicateEntry 10 where
+def cheap : AdjectivalPredicateEntry where
   form := "cheap"
   scaleType := .open_
   dimension := "cost"
@@ -121,24 +120,24 @@ def cheap : AdjectivalPredicateEntry 10 where
   antonymRelation := some .contrary
 
 /-- "wet" — lower-closed scale (minimum at 0) -/
-def wet : AdjectivalPredicateEntry 10 where
+def wet : AdjectivalPredicateEntry where
   form := "wet"
-  scaleType := .lowerClosed
+  scaleType := .lowerBounded
   dimension := "wetness"
   antonymForm := some "dry"
   antonymRelation := some .contradictory
 
 /-- "dry" — upper-closed scale (maximum at top) -/
-def dry : AdjectivalPredicateEntry 10 where
+def dry : AdjectivalPredicateEntry where
   form := "dry"
-  scaleType := .upperClosed
+  scaleType := .upperBounded
   dimension := "wetness"
   antonymForm := some "wet"
   antonymRelation := some .contradictory
 
 
 /-- All adjectival predicate entries -/
-def allEntries : List (AdjectivalPredicateEntry 10) := [
+def allEntries : List (AdjectivalPredicateEntry) := [
   tall, short,
   happy, unhappy, sad,
   full, empty,
@@ -148,7 +147,7 @@ def allEntries : List (AdjectivalPredicateEntry 10) := [
 ]
 
 /-- Look up an entry by form -/
-def lookup (form : String) : Option (AdjectivalPredicateEntry 10) :=
+def lookup (form : String) : Option (AdjectivalPredicateEntry) :=
   allEntries.find? (·.form == form)
 
 end Fragments.English.Predicates.Adjectival

@@ -16,7 +16,7 @@ Horn (1972). On the Semantic Properties of Logical Operators in English.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Core.Scales
+namespace Core.Scale
 
 -- General Scale Infrastructure
 
@@ -252,4 +252,4 @@ theorem de_blocks_some_not_all :
     scalarAlternativesInContext Quantifiers.quantScale .all .downward = [.none_, .some_, .most] := by
   native_decide
 
-end Core.Scales
+end Core.Scale

@@ -30,7 +30,7 @@ import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
 
-namespace Theories.EventSemantics
+namespace EventSemantics
 
 open TruthConditional.Core.Time
 open TruthConditional.Verb.Aspect
@@ -247,4 +247,4 @@ theorem exampleRun_toEventuality_τ :
     exampleRun.toEventuality.τ = exampleRun.τ :=
   toEventuality_τ exampleRun
 
-end Theories.EventSemantics
+end EventSemantics

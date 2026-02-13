@@ -16,7 +16,7 @@ or false under all variable assignments. L-analytic sentences are ungrammatical.
 - von Fintel (1993). Exceptive constructions.
 -/
 
-namespace Theories.NeoGricean.Analyticity
+namespace NeoGricean.Analyticity
 
 /-- Semantic types in the Montagovian sense. -/
 inductive SemType where
@@ -358,4 +358,4 @@ def lAnalyticityExamples : List LAnalyticityExample :=
 -- Verify all predictions match
 #guard lAnalyticityExamples.all (·.predictionMatches)
 
-end Theories.NeoGricean.Analyticity
+end NeoGricean.Analyticity

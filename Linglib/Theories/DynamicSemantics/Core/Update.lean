@@ -16,7 +16,7 @@ Core update operations for dynamic semantics.
 
 import Linglib.Theories.DynamicSemantics.Core.Basic
 
-namespace Theories.DynamicSemantics.Core
+namespace DynamicSemantics.Core
 
 open InfoState
 open Classical
@@ -217,4 +217,4 @@ def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP W E
   λ s => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
 
-end Theories.DynamicSemantics.Core
+end DynamicSemantics.Core

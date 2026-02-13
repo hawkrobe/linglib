@@ -552,10 +552,10 @@ MMP applies when:
 
 When MMP applies, using the marked form implicates evaluativity.
 -/
-def applyMMP {max : Nat}
+def applyMMP
     (adjForm : String)
     (construction : AdjectivalConstruction)
-    (adj1 adj2 : GradableAdjWithMorphology max) : MMPDerivation :=
+    (adj1 adj2 : GradableAdjWithMorphology) : MMPDerivation :=
   -- Check if this form is marked in the pair
   let isMarked := isMarkedForm adjForm adj1 adj2
   -- Check if construction is polar-invariant
@@ -595,11 +595,11 @@ This structure records:
 4. Q/R implicature derivation
 5. Final evaluativity prediction
 -/
-structure LexiconGroundedDerivation (max : Nat) where
+structure LexiconGroundedDerivation where
   /-- The adjective entry with morphology -/
-  adjective : GradableAdjWithMorphology max
+  adjective : GradableAdjWithMorphology
   /-- The antonym entry with morphology -/
-  antonym : GradableAdjWithMorphology max
+  antonym : GradableAdjWithMorphology
   /-- The construction -/
   construction : AdjectivalConstruction
   /-- M-alternatives generated (if any) -/
@@ -623,11 +623,11 @@ It:
 4. Applies Q-implicature (positive) or MMP (equative/question)
 5. Returns a fully grounded derivation
 -/
-def deriveEvaluativityWithLexicon {max : Nat}
+def deriveEvaluativityWithLexicon
     (adjForm : String)
     (construction : AdjectivalConstruction)
-    (adj1 adj2 : GradableAdjWithMorphology max)
-    : LexiconGroundedDerivation max :=
+    (adj1 adj2 : GradableAdjWithMorphology)
+    : LexiconGroundedDerivation :=
   -- Find which entry corresponds to the form
   let (adj, ant) := if adj1.form == adjForm then (adj1, adj2) else (adj2, adj1)
   -- Generate M-alternatives

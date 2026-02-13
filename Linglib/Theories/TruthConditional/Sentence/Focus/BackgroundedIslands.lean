@@ -47,7 +47,7 @@ foregrounding it and backgrounding the other. We derive:
 
 open Core.InformationStructure
 
-namespace Theories.TruthConditional.Sentence.Focus.BackgroundedIslands
+namespace TruthConditional.Sentence.Focus.BackgroundedIslands
 
 /-! ## §1. Verb Decomposition (Erteschik-Shir 2007)
 
@@ -657,4 +657,4 @@ theorem mos_unique_discourse_source :
     constraintSource .sententialSubject = .syntactic := by
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Theories.TruthConditional.Sentence.Focus.BackgroundedIslands
+end TruthConditional.Sentence.Focus.BackgroundedIslands

@@ -50,12 +50,16 @@ def scenario := Degrees.tallShort 10
 -/
 
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.TruthConditional.Domain.Degree
+import Linglib.Theories.TruthConditional.Adjective.Theory
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Degrees
 
-open TruthConditional.Domain.Degrees
+open Core.Scale (Degree Threshold Degree.ofNat Degree.toNat Threshold.toNat
+  deg thr allDegrees allThresholds HasDegree)
+open TruthConditional.Adjective (positiveMeaning negativeMeaning)
+open TruthConditional.Numeral (numeralExact)
 
 -- Utterances
 

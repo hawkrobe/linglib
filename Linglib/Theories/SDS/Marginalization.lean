@@ -50,7 +50,7 @@ namespace SDS.Marginalization
 open SDS.Core
 open SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
-open Theories.TruthConditional.BayesianSemantics
+open TruthConditional.BayesianSemantics
 
 
 /-!

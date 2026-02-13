@@ -30,9 +30,9 @@ With exact semantics, the asymmetry is unexplained:
 - Jespersen, O. (1917). Negation in English and Other Languages.
 -/
 
-import Linglib.Theories.TruthConditional.Determiner.Numeral.Semantics
+import Linglib.Theories.TruthConditional.Numeral.Semantics
 
-open TruthConditional.Determiner.Numeral
+open TruthConditional.Numeral
 
 namespace NeoGricean
 

@@ -50,10 +50,10 @@ between functional head and root.
 
 import Linglib.Theories.EventSemantics.EventStructure
 
-namespace Theories.EventSemantics.RootTypology
+namespace EventSemantics.RootTypology
 
-open Theories.EventSemantics.EventStructure
-open Theories.EventSemantics.ProtoRoles
+open EventSemantics.EventStructure
+open EventSemantics.ProtoRoles
 open TruthConditional.Verb.ChangeOfState
 open TruthConditional.Verb.Aspect
 
@@ -550,4 +550,4 @@ theorem grand_unification (rt : RootType) :
     RootType.requiresBECOME, RootType.admitsBasicStative,
     verbalMarkedness, stativeMarkedness]
 
-end Theories.EventSemantics.RootTypology
+end EventSemantics.RootTypology

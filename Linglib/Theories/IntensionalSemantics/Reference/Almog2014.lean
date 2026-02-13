@@ -156,7 +156,7 @@ for Frege puzzles: two concepts can co-refer at the actual world but
 diverge in belief-accessible worlds. This is exactly the scenario where
 proper names have the same referent but different characters.
 
-See: `Theories.DynamicSemantics.PLA.hesperusPhosphorusScenario` -/
+See: `DynamicSemantics.PLA.hesperusPhosphorusScenario` -/
 theorem frege_puzzle_is_concept_divergence :
     True := trivial
 

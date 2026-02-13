@@ -37,7 +37,7 @@ dref's as functions taking info states as arguments."
 
 import Mathlib.Data.Set.Basic
 
-namespace Theories.DynamicSemantics.Core.DynamicTy2
+namespace DynamicSemantics.Core.DynamicTy2
 
 
 /-!
@@ -299,4 +299,4 @@ theorem dseq_closure (D₁ D₂ : DRS S) :
 end Theorems
 
 
-end Theories.DynamicSemantics.Core.DynamicTy2
+end DynamicSemantics.Core.DynamicTy2

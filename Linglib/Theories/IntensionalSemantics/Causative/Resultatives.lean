@@ -39,7 +39,7 @@ causative semantics infrastructure:
   causatives. Version 1, November 23, 2025.
 -/
 
-namespace Theories.Causative.Resultatives
+namespace Causative.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
@@ -47,11 +47,11 @@ open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ChangeOfState
 open Core.Interfaces
 open Core.CausalModel
-open Theories.NadathurLauer2020.Sufficiency
-open Theories.NadathurLauer2020.Necessity
-open Theories.NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Sufficiency
+open NadathurLauer2020.Necessity
+open NadathurLauer2020.Builder (CausativeBuilder)
 open Fragments.English.Predicates.Verbal (VerbEntry make cause)
-open Theories.MartinRoseNichols2025
+open MartinRoseNichols2025
 
 /-! ## Causal Dynamics (Nadathur & Lauer 2020; Baglini & Bar-Asher Siegal 2025)
 
@@ -536,4 +536,4 @@ theorem decomposition_reflects_transitivity :
     (decompose noncausativePropertyConstruction).length = 2 := by
   constructor <;> native_decide
 
-end Theories.Causative.Resultatives
+end Causative.Resultatives

@@ -35,7 +35,8 @@ import Mathlib.Data.Rat.Defs
 namespace NeoGricean.Markedness
 
 open TruthConditional.Adjective
-open TruthConditional.Domain.Degrees
+open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
+open TruthConditional.Adjective (NegationType ThresholdPair)
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 
@@ -82,7 +83,7 @@ Extends `GradableAdjEntry` with:
 - Morphological structure for markedness computation
 - Polarity indicator (positive vs negative pole)
 -/
-structure GradableAdjWithMorphology (max : Nat) extends GradableAdjEntry max where
+structure GradableAdjWithMorphology extends GradableAdjEntry where
   /-- Morphological structure -/
   morphology : Morphology
   /-- Is this the positive pole of the scale? -/
@@ -105,8 +106,8 @@ structure MarkednessCriterion where
   /-- Academic source -/
   citation : String
   /-- Compute which form is marked; returns the marked form -/
-  computeMarked : {max : Nat} → GradableAdjWithMorphology max →
-                   GradableAdjWithMorphology max → Option String
+  computeMarked : GradableAdjWithMorphology →
+                   GradableAdjWithMorphology → Option String
 
 /--
 Morphological complexity criterion.
@@ -184,23 +185,23 @@ Compute markedness using a list of criteria in priority order.
 
 Returns the first successful determination.
 -/
-def computeMarkedWithCriteria {max : Nat}
+def computeMarkedWithCriteria
     (criteria : List MarkednessCriterion)
-    (adj1 adj2 : GradableAdjWithMorphology max) : Option String :=
+    (adj1 adj2 : GradableAdjWithMorphology) : Option String :=
   criteria.findSome? (·.computeMarked adj1 adj2)
 
 /--
 Compute markedness using default criteria.
 -/
-def computeMarked {max : Nat}
-    (adj1 adj2 : GradableAdjWithMorphology max) : Option String :=
+def computeMarked
+    (adj1 adj2 : GradableAdjWithMorphology) : Option String :=
   computeMarkedWithCriteria defaultCriteria adj1 adj2
 
 /--
 Check if a specific form is the marked one in a pair.
 -/
-def isMarkedForm {max : Nat}
-    (form : String) (adj1 adj2 : GradableAdjWithMorphology max) : Bool :=
+def isMarkedForm
+    (form : String) (adj1 adj2 : GradableAdjWithMorphology) : Bool :=
   computeMarked adj1 adj2 == some form
 
 
@@ -215,9 +216,9 @@ This cost differential licenses manner implicatures:
 using the more costly form when a cheaper equivalent exists
 signals something extra.
 -/
-def productionCost {max : Nat}
+def productionCost
     (form : String)
-    (adj1 adj2 : GradableAdjWithMorphology max) : ℚ :=
+    (adj1 adj2 : GradableAdjWithMorphology) : ℚ :=
   if isMarkedForm form adj1 adj2 then 2 else 1
 
 /--
@@ -229,7 +230,7 @@ def costDifference : ℚ := 1
 /--
 "tall" with morphology: simple, positive pole
 -/
-def tall_with_morphology : GradableAdjWithMorphology 10 where
+def tall_with_morphology : GradableAdjWithMorphology where
   toGradableAdjEntry := tall
   morphology := simpleMorphology "tall"
   isPositivePole := true
@@ -237,7 +238,7 @@ def tall_with_morphology : GradableAdjWithMorphology 10 where
 /--
 "short" with morphology: simple, negative pole
 -/
-def short_with_morphology : GradableAdjWithMorphology 10 where
+def short_with_morphology : GradableAdjWithMorphology where
   toGradableAdjEntry := short
   morphology := simpleMorphology "short"
   isPositivePole := false
@@ -245,7 +246,7 @@ def short_with_morphology : GradableAdjWithMorphology 10 where
 /--
 "happy" with morphology: simple, positive pole
 -/
-def happy_with_morphology : GradableAdjWithMorphology 10 where
+def happy_with_morphology : GradableAdjWithMorphology where
   toGradableAdjEntry := happy
   morphology := simpleMorphology "happy"
   isPositivePole := true
@@ -253,7 +254,7 @@ def happy_with_morphology : GradableAdjWithMorphology 10 where
 /--
 "unhappy" with morphology: prefixed, negative pole
 -/
-def unhappy_with_morphology : GradableAdjWithMorphology 10 where
+def unhappy_with_morphology : GradableAdjWithMorphology where
   toGradableAdjEntry := unhappy
   morphology := prefixedMorphology "unhappy"
   isPositivePole := false

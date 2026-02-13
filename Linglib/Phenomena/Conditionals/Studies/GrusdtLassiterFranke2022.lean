@@ -35,7 +35,7 @@ import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
 namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 
 open Phenomena
-open Theories.TruthConditional.Conditional.CausalBayesNet
+open IntensionalSemantics.Conditional.CausalBayesNet
 
 -- Study Metadata
 
