@@ -31,6 +31,8 @@ import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.CausalModel
+import Linglib.Core.CausalInference
+import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
 import Linglib.Core.Context
@@ -40,6 +42,7 @@ import Linglib.Core.Definiteness
 import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
+import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 
 -- Fragments
@@ -58,7 +61,9 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
+import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalExpressions
+import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
@@ -73,6 +78,7 @@ import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
@@ -124,6 +130,9 @@ import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
+import Linglib.Phenomena.Charlow2021.Data
+import Linglib.Phenomena.Charlow2021.CumulativeReadings
+import Linglib.Phenomena.Cumming2026.Bridge
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
@@ -308,6 +317,8 @@ import Linglib.Comparisons.ResultativeArgLicensing
 import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.CausativeAlternation
 import Linglib.Comparisons.BeforeAfter
+import Linglib.Comparisons.CumulativeReadings
+import Linglib.Comparisons.TenseModalEvidentiality
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
@@ -336,48 +347,61 @@ import Linglib.Theories.DependencyGrammar.Phenomena.Inversion
 import Linglib.Theories.DependencyGrammar.Phenomena.LongDistance
 
 -- Theories: Dynamic Semantics
-import Linglib.Theories.DynamicSemantics.BUS.Basic
-import Linglib.Theories.DynamicSemantics.BUS.DynamicTy2
-import Linglib.Theories.DynamicSemantics.BUS.FreeChoice
-import Linglib.Theories.DynamicSemantics.Charlow2019
-import Linglib.Theories.DynamicSemantics.CDRT.Basic
-import Linglib.Theories.DynamicSemantics.CDRT.DynamicTy2
-import Linglib.Theories.DynamicSemantics.Comparisons.PLA_BUS
+-- Theories: Dynamic Semantics — Core
 import Linglib.Theories.DynamicSemantics.Core.Basic
-import Linglib.Theories.DynamicSemantics.Core.Bilateral
 import Linglib.Theories.DynamicSemantics.Core.CCP
 import Linglib.Theories.DynamicSemantics.Core.DiscourseRef
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
 import Linglib.Theories.DynamicSemantics.Core.Translation
 import Linglib.Theories.DynamicSemantics.Core.Update
-import Linglib.Theories.DynamicSemantics.DPL.Basic
-import Linglib.Theories.DynamicSemantics.DPL.DynamicTy2
-import Linglib.Theories.DynamicSemantics.DRT.Basic
-import Linglib.Theories.DynamicSemantics.FileChangeSemantics.Basic
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Connectives
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.MendesDerivations
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.PresuppositionWeakening
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Situations
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
-import Linglib.Theories.DynamicSemantics.PLA.Basic
-import Linglib.Theories.DynamicSemantics.PLA.Belief
-import Linglib.Theories.DynamicSemantics.PLA.DeepTheorems
-import Linglib.Theories.DynamicSemantics.PLA.DynamicTy2
-import Linglib.Theories.DynamicSemantics.PLA.Epistemic
-import Linglib.Theories.DynamicSemantics.PLA.Quantifiers
-import Linglib.Theories.DynamicSemantics.PLA.Semantics
-import Linglib.Theories.DynamicSemantics.PLA.Update
-import Linglib.Theories.DynamicSemantics.Probabilistic
+-- Theories: Dynamic Semantics — Effects
+import Linglib.Theories.DynamicSemantics.Effects.State.Basic
+import Linglib.Theories.DynamicSemantics.Effects.State.DPL
+import Linglib.Theories.DynamicSemantics.Effects.State.DPLBridge
+import Linglib.Theories.DynamicSemantics.Effects.State.DRT
+import Linglib.Theories.DynamicSemantics.Effects.Nondeterminism.Basic
+import Linglib.Theories.DynamicSemantics.Effects.Nondeterminism.Charlow2019
+import Linglib.Theories.DynamicSemantics.Effects.Nondeterminism.PointwiseUpdate
+import Linglib.Theories.DynamicSemantics.Effects.Continuation.Basic
+import Linglib.Theories.DynamicSemantics.Effects.Bilateral.Basic
+import Linglib.Theories.DynamicSemantics.Effects.Bilateral.FreeChoice
+import Linglib.Theories.DynamicSemantics.Effects.Probability.Basic
+import Linglib.Theories.DynamicSemantics.Effects.Epistemic.Basic
+-- Theories: Dynamic Semantics — Systems
+import Linglib.Theories.DynamicSemantics.Systems.BUS.Basic
+import Linglib.Theories.DynamicSemantics.Systems.BUS.DynamicTy2
+import Linglib.Theories.DynamicSemantics.Systems.CDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.CDRT.DynamicTy2
+import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.Basic
+import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.UpdateTheoretic
+import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.HigherOrder
+import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.SubtypePolymorphism
+import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.PostSuppositional
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Connectives
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.MendesDerivations
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.ModalDonkeyAnaphora
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.PresuppositionWeakening
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Situations
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Update
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Basic
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Belief
+import Linglib.Theories.DynamicSemantics.Systems.PLA.DeepTheorems
+import Linglib.Theories.DynamicSemantics.Systems.PLA.DynamicTy2
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Epistemic
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Quantifiers
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Semantics
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Update
+-- Theories: Dynamic Semantics — Comparisons & top-level
+import Linglib.Theories.DynamicSemantics.Comparisons.PLA_BUS
 import Linglib.Theories.DynamicSemantics.State
 import Linglib.Theories.DynamicSemantics.TeamSemantics
-import Linglib.Theories.DynamicSemantics.TTR.Core
-import Linglib.Theories.DynamicSemantics.TTR.Discourse
-import Linglib.Theories.DynamicSemantics.TTR.Modality
-import Linglib.Theories.DynamicSemantics.TTR.Quantification
-import Linglib.Theories.DynamicSemantics.TTR.Underspecification
-import Linglib.Theories.DynamicSemantics.UpdateSemantics.Basic
+-- Theories: TTR (Type Theory with Records)
+import Linglib.Theories.TTR.Core
+import Linglib.Theories.TTR.Discourse
+import Linglib.Theories.TTR.Modality
+import Linglib.Theories.TTR.Quantification
+import Linglib.Theories.TTR.Underspecification
 
 -- Theories: Construction Grammar
 import Linglib.Theories.ConstructionGrammar.Basic
@@ -493,6 +517,7 @@ import Linglib.Theories.TruthConditional.Sentence.Presupposition.TonhauserDeriva
 import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
 import Linglib.Theories.TruthConditional.Sentence.Tense.TenseAspectComposition
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalAdverbials
+import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Verb.Aspect
@@ -536,7 +561,6 @@ import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
 import Linglib.Theories.IntensionalSemantics.Causative.Resultatives
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Conditional.Basic
-import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
 import Linglib.Theories.IntensionalSemantics.Conditional.ConditionalType
 import Linglib.Theories.IntensionalSemantics.Conditional.Counterfactual
 import Linglib.Theories.IntensionalSemantics.Conditional.LeftNested

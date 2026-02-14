@@ -30,12 +30,12 @@ The paper presents three experiments testing the RSA model of conditionals.
 -/
 
 import Linglib.Core.Empirical
-import Linglib.Theories.IntensionalSemantics.Conditional.CausalBayesNet
+import Linglib.Core.CausalInference
 
 namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 
 open Phenomena
-open IntensionalSemantics.Conditional.CausalBayesNet
+open Core.CausalInference
 
 -- Study Metadata
 
