@@ -22,6 +22,8 @@ import Linglib.Core.CommonGround
 import Linglib.Core.Parse
 import Linglib.Core.Presupposition
 import Linglib.Core.ProductOfExperts
+import Linglib.Core.Partition
+import Linglib.Core.PolarityPartition
 import Linglib.Core.QUD
 import Linglib.Core.Interfaces.BindingSemantics
 import Linglib.Core.Interfaces.CoreferenceTheory
@@ -30,8 +32,9 @@ import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
-import Linglib.Core.CausalModel
-import Linglib.Core.CausalInference
+import Linglib.Core.Causation
+import Linglib.Core.NaturalLogic
+import Linglib.Core.DecisionTheory
 import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
@@ -44,6 +47,7 @@ import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
+import Linglib.Core.Morpheme
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -148,6 +152,7 @@ import Linglib.Phenomena.ChangeOfState.Typology
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThin
+import Linglib.Phenomena.Causatives.StructuralCausation
 import Linglib.Phenomena.MunozPerez2026.Data
 import Linglib.Phenomena.MunozPerez2026.Bridge
 import Linglib.Phenomena.Coordination.Data
@@ -204,6 +209,7 @@ import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
 import Linglib.Phenomena.Negation.CzechThreeWayNeg.Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Phenomena.Morphology.ZwickyPullum1983
 import Linglib.Phenomena.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -448,6 +454,7 @@ import Linglib.Theories.Minimalism.Core.Voice
 import Linglib.Theories.Minimalism.Core.Applicative
 import Linglib.Theories.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Minimalism.Morphology.Fission
+import Linglib.Theories.Morphology.Diagnostics.CliticVsAffix
 import Linglib.Theories.Minimalism.Phenomena.VoiceAppl
 import Linglib.Theories.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Minimalism.Formal.MCB2023.Accessible
@@ -681,6 +688,7 @@ import Linglib.Theories.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.RSA.Implementations.FrankGoodman2012
 import Linglib.Theories.RSA.Implementations.GoodmanStuhlmuller2013
 import Linglib.Theories.RSA.Implementations.GrusdtLassiterFranke2022
+import Linglib.Theories.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Theories.RSA.Implementations.HeKaiserIskarous2025

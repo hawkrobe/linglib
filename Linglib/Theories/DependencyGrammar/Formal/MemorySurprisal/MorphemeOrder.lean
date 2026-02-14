@@ -1,6 +1,7 @@
 import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Core.Morpheme
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
@@ -57,50 +58,7 @@ SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 namespace DepGrammar.MemorySurprisal.MorphemeOrder
 
 open DepGrammar.MemorySurprisal
-
--- ============================================================================
--- §1: Bybee (1985) Relevance Hierarchy
--- ============================================================================
-
-/-- Morpheme functional category (Bybee 1985). -/
-inductive MorphCategory where
-  | stem
-  | derivation    -- derives verbs from other categories (e.g., suru)
-  | valence       -- causative, applicative, reciprocal
-  | voice         -- passive, potential
-  | aspect        -- perfective, imperfective
-  | tense         -- past, future, present
-  | mood          -- desiderative, subjunctive, imperative
-  | negation      -- negation markers
-  | agreement     -- subject/object agreement, politeness
-  | nonfinite     -- nonfinite markers, interrogative/relative
-  deriving Repr, DecidableEq, BEq
-
-/-- Relevance rank: lower = closer to the stem (Bybee 1985).
-
-Stem = 0 (most relevant to verb meaning).
-Derivation = 1 (changes verb category).
-Valence = 2 (changes argument structure).
-...
-Agreement = 8 (least relevant to verb meaning). -/
-def relevanceRank : MorphCategory → Nat
-  | .stem       => 0
-  | .derivation => 1
-  | .valence    => 2
-  | .voice      => 3
-  | .aspect     => 4
-  | .tense      => 5
-  | .mood       => 6
-  | .negation   => 7
-  | .agreement  => 8
-  | .nonfinite  => 9
-
-/-- A morpheme ordering respects the relevance hierarchy if ranks
-are non-decreasing from stem outward. -/
-def respectsRelevanceHierarchy (slots : List MorphCategory) : Bool :=
-  let ranks := slots.map relevanceRank
-  let pairs := ranks.zip ranks.tail
-  pairs.all (λ (a, b) => a ≤ b)
+open Core.Morpheme (MorphCategory respectsRelevanceHierarchy)
 
 -- ============================================================================
 -- §2: Japanese Suffix Template (SI §4.1)
