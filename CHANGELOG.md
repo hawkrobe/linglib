@@ -1,5 +1,88 @@
 # Changelog
 
+## [0.212.0] - 2026-02-13
+
+### Refactored
+- **Renamed `Core/CounterfactualSpace.lean` → `Core/CausalInference.lean`**, namespace `Core.CounterfactualSpace` → `Core.CausalInference`. "Causal inference" better describes the unified module's scope (causal Bayes nets + counterfactual probability spaces + WorldState distributions)
+- **Absorbed `CausalBayesNet.lean` into `CausalInference.lean`**: `CausalRelation`, `NoisyOR`, `WorldState` (all derived probabilities, conditional probabilities, independence/correlation checks, constructors, examples, `IsValid`, all validity theorems, `law_of_total_probability`, `bayes_theorem`), `DiscreteWorldSpace`, `toCFProbSpace`/`toWorldState` bridges, `dynamicsToKernel`, `backtrackerCounterfactual`
+- **Deleted `CausalBayesNet.lean`**: All content moved to `CausalInference.lean`, eliminating the bridge pattern between the two files
+- **Counterfactual.lean**: Removed `CounterfactualSpaceBridge` section (`dynamicsToKernel`, `causalCounterfactual_eq_kernel`, `backtrackerCounterfactual` moved to CausalInference); removed CounterfactualSpace import
+- **Assertability.lean**: Removed `CounterfactualSpaceBridge` section (`assertabilityScore_eq_condOnF` absorbed); rewired import/open from CausalBayesNet to CausalInference
+- **Integration.lean**: Rewired import/open from CausalBayesNet to CausalInference
+- **RSA/GrusdtLassiterFranke2022.lean**: Rewired import/open from CausalBayesNet to CausalInference
+- **Phenomena/Conditionals/Studies/GrusdtLassiterFranke2022.lean**: Rewired import/open from CausalBayesNet to CausalInference
+
+### Fixed
+- **`worldState_pCGivenA_eq_condOnF`**: Previously `sorry`, now proved by co-locating `marginalF`/`condOnF`/`toCFProbSpace` in the same file — marginalF at `true` unfolds to `w.pA` by `ring`
+
+## [0.211.0] - 2026-02-13
+
+### Added
+- **Core/CounterfactualSpace.lean**: Counterfactual probability spaces (Park, Yang & Icard 2026) — `CFProbSpace` (joint distribution on ΩF × ΩCF), `FinCausalKernel`, `CFCausalSpace` with no-cross-world-effect axiom, `pointMassKernel`, marginals, conditioning, `backtrackerProb`/`interventionalProb` queries, `isIndependent`/`isSynchronized`/`isSymmetric` predicates. Marginal sum-to-one and nonneg theorems proved; `independent_cond_eq_marginal` and `synchronized_cond_point_mass` proved
+- **CausalBayesNet.lean**: `WorldState.toCFProbSpace` / `CFProbSpace.toWorldState` bridge revealing `WorldState` as degenerate `CFProbSpace Bool Bool`
+- **Counterfactual.lean**: `CausalDynamics.toKernel` bridge (deterministic model → point-mass kernel), `backtrackerCounterfactual` operator (new: condition on factual observation, read off counterfactual probability)
+- **Integration.lean**: `integration_factors_through_cfps` theorem showing the grounding chain factors through `CFProbSpace`
+- **Assertability.lean**: `assertabilityScore_eq_condOnF` theorem connecting assertability to `CFProbSpace` conditioning
+
+## [0.210.0] - 2026-02-13
+
+### Refactored
+- **DynamicSemantics/Core**: Unified CCP namespace by eliminating the 2-param `CCP W E` type from `Core/Update.lean`. `InfoState W E` is now an `abbrev` for `Set (Possibility W E)`, so `CCP (Possibility W E)` is definitionally the old `CCP W E`. Merged `CCPOps` namespace into `CCP` — `testNeg`/`testMight`/`testMust`/`testImpl` are now `CCP.neg`/`CCP.might`/`CCP.must`/`CCP.impl`. `Update.lean` imports `CCP.lean` and no longer defines its own CCP type or duplicated combinators. `Translation.lean` updated to use `CCP (Possibility Unit E)`. `Effects/State/Basic.lean` FCS and UpdateSemantics combinators now delegate to generic `CCP.*`; `State W` made `abbrev`. `Effects/Nondeterminism/Charlow2019.lean` `stateMight` delegates to `CCP.might`
+
+## [0.209.0] - 2026-02-13
+
+### Added
+- **Core/CCP.lean**: Generic test combinators in `CCPOps` namespace — `testNeg`, `testMight`, `testMust`, `testImpl` — as single source of truth for test-based dynamic operations on `CCP P`. `IsTest` proofs for all four, plus `testMight_eq_testNeg_testNeg` duality theorem. Docstring cross-references added to duplicated combinators in `Core/Update.lean`, `Effects/State/Basic.lean` (FCS + UpdateSemantics), and `Effects/Nondeterminism/Charlow2019.lean`
+
+## [0.208.0] - 2026-02-13
+
+### Refactored
+- **DynamicSemantics/**: Reorganized by computational effect rather than named theory. New three-tier structure: `Core/` (shared infrastructure), `Effects/` (one subdir per effect: State, Nondeterminism, Continuation, Bilateral, Probability, Epistemic), `Systems/` (named theories as effect combinations: PLA, BUS, CDRT, IntensionalCDRT, DynamicGQ). DPL and DRT moved to `Effects/State/`; Charlow2019 and PointwiseUpdate to `Effects/Nondeterminism/`; Bilateral to `Effects/Bilateral/`; FreeChoice moved from BUS to `Effects/Bilateral/`; Probabilistic to `Effects/Probability/`; NeoStalnakerian to `Effects/Epistemic/`. FileChangeSemantics and UpdateSemantics stubs absorbed into `Effects/State/Basic.lean`. No content changes — only file moves and import path rewrites
+- **TTR/**: Relocated from `DynamicSemantics/TTR/` to `Theories/TTR/` — TTR is a standalone framework like CCG or HPSG, not a dynamic semantics variant
+
+## [0.207.0] - 2026-02-13
+
+### Added
+- **Core/Continuation.lean**: General continuation monad (`Cont R A`, `pure`, `bind`, `map`, `lower`, `Tower`), monad laws (all `rfl`). Extracts pattern from `LiftedTypes.lean`
+- **Core/Mereology.lean**: `isMaximal`, `atomCount`, `cum_maximal_unique` (proved), `atomCount_sup_disjoint` (sorry'd). For Charlow 2021 M_v and cardinality operators
+- **DynamicSemantics/Core/PointwiseUpdate.lean**: Bridge between pointwise `DRS` and update-theoretic `StateCCP`. `liftPW` (Charlow's ↑), `lowerPW` (↓), round-trip and distributivity theorems (sorry'd)
+- **DynamicSemantics/DynamicGQ/Basic.lean**: Pointwise dynamic GQ operators — `Evar`, `Mvar`, `CardTest`, `sawDRS`, `exactlyN_pw`, `pseudoCumulative`/`cumulative` formulas (Charlow 2021 §2)
+- **DynamicSemantics/DynamicGQ/UpdateTheoretic.lean**: State-level dynamic GQ operators — `Evar_u`, `Mvar_u`, `CardTest_u`, `dseq_u`, `exactlyN_u`. `CardTest_u_distributive` proved; `Mvar_u_nondistributive` sorry'd (Charlow 2021 §6)
+- **DynamicSemantics/DynamicGQ/HigherOrder.lean**: Continuized dynamic GQs — `HODGQ`, `exactlyN_ho`, `liftGQ`, `lowerGQ`, `combineHO` (Charlow 2021 §3–4)
+- **DynamicSemantics/DynamicGQ/SubtypePolymorphism.lean**: `Completeness` (t/T), `subtypeOf`, `TypedDRS`, `cumulative_welltyped`, `pseudo_cumulative_illtyped` (both proved). Charlow 2021 §4
+- **DynamicSemantics/DynamicGQ/PostSuppositional.lean**: `PostSupp` (writer-like monad), `pure`, `bind`, `map`, `reify`, `trueAt`, `exactlyN_postsup` (Charlow 2021 §5)
+- **Phenomena/Charlow2021/Data.lean**: Scenario A/B finite models with `native_decide` verification of cumulative vs pseudo-cumulative reading predictions
+- **Phenomena/Charlow2021/CumulativeReadings.lean**: Bridge theorems connecting Data to DynamicGQ theory — `pointwise_overgenerates`, `update_correct`, `cumulative_strictly_stronger`
+- **Comparisons/CumulativeReadings.lean**: Three-way comparison of higher-order GQ, post-suppositional, and update-theoretic approaches to cumulative readings
+
+## [0.206.0] - 2026-02-13
+
+### Refactored
+- **Core/Evidence.lean**: Absorbed `EvidentialPerspective` from Evidential.lean (framework-agnostic type), added `EvidentialPerspective.isNonfuture`, renamed `toCausalRelation` → `toEvidentialPerspective`. Deleted `CausalRelation` (isomorphic to `EvidentialPerspective`), `isCausallyDownstream` (trivially-true constant), `all_sources_downstream`
+- **Theories/.../Evidential.lean**: Added `EPCondition` (5 values) and `UPCondition` (5 values) enums with `toConstraint` methods. Revised `TenseEvidentialParadigm` to store enum values instead of opaque lambdas; `isNonfuture` now derived from `ep.isNonfuture`. Added generic `EPCondition.nonfuture_implies_downstream` lemma (one proof, five cases). Parameterized `nonfutureMeaning` over `{W : Type*}`. Deleted `Language`, `UtterancePerspective`, `GramTense.isNonfuture`, `causallyDownstreamEvidence`, `futurateLicensed` (pure aliases), CausalModel import
+- **Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}.lean**: Replaced lambda EP/UP constraints with `EPCondition`/`UPCondition` enum values, removed `language`/`isNonfuture` fields
+- **Phenomena/Cumming2026/Bridge.lean**: Replaced 4 per-language grouped theorems with per-entry `isNonfuture` verification (7 theorems) + generic `nonfuture_downstream` master theorem + per-entry downstream corollaries (7 one-liners)
+- **Phenomena/Modality/EpistemicEvidentiality.lean**: Replaced `all_evidence_types_downstream` (used deleted `isCausallyDownstream`) with `all_evidence_types_nonfuture` using `toEvidentialPerspective.isNonfuture`
+
+## [0.205.0] - 2026-02-13
+
+### Added
+- **Core/Evidence.lean**: Canonical three-way `EvidentialSource` (direct, hearsay, inference), `CausalRelation` (downstream, contemporaneous, prospective), `toCausalRelation` mapping, `all_sources_downstream` universal theorem
+- **Fragments/English/Tense.lean**: English tense paradigm entries (Cumming 2026, Tables 20/22) — moved from Evidential.lean
+- **Fragments/Korean/Evidentials.lean**: Korean -te and -ney paradigm entries (Cumming 2026, Tables 18/19) — moved from Evidential.lean
+- **Fragments/Bulgarian/Evidentials.lean**: Bulgarian -l paradigm entries (Cumming 2026, Table 17) — moved from Evidential.lean
+- **Phenomena/Cumming2026/Bridge.lean**: Verification theorems relocated from Evidential.lean (`cross_linguistic_nonfuture_downstream`, `future_no_downstream`, `korean_te_ney_ep_diverge`) plus per-language downstream theorems
+
+### Refactored
+- **Theories/TruthConditional/Sentence/Tense/Evidential.lean**: Now theory-only (types + predicates). Paradigm data moved to Fragments/, verification to Phenomena/. Added `nonfutureMeaning` (presuppositional encoding via `PrProp`), `EvidentialPerspective.toCausalRelation` bridge to `Core.Evidence`, `causallyDownstreamEvidence` connecting to `CausalModel.factuallyDeveloped`, `futurateLicensed` replacing `futurateException` stub with `normalDevelopment`-based grounding
+- **Phenomena/Modality/EpistemicEvidentiality.lean**: Added `EvidenceType.toEvidentialSource` mapping VF&G's 4 types to Cumming's 3, `all_evidence_types_downstream` theorem
+
+## [0.204.0] - 2026-02-13
+
+### Added
+- **Theories/TruthConditional/Sentence/Tense/Evidential.lean**: Cumming (2026) tense evidential constraint — `EvidentialFrame` extends `ReichenbachFrame` with acquisition time A, `downstreamEvidence` (T ≤ A), `TenseEvidentialParadigm` row type. Paradigm data for English (Tables 20, 22), Bulgarian -l (Table 17), Korean -te (Table 18), Korean -ney (Table 19). Verification: `cross_linguistic_nonfuture_downstream` (all nonfuture entries entail T ≤ A), `future_no_downstream`, `korean_te_ney_ep_diverge` (EP and UP factorize independently)
+- **Comparisons/TenseModalEvidentiality.lean**: Bridge between Cumming's tense evidentiality and VF&G's kernel semantics. Dripping-raincoat scenario: `tense_modal_evidential_parallel` (downstream evidence co-occurs with must-defined), `direct_evidence_blocks_both` (direct evidence → kernel settles → must undefined, bare assertion used)
+
 ## [0.203.1] - 2026-02-13
 
 ### Refactored
