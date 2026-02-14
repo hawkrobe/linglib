@@ -24,8 +24,8 @@ Following Muskens (1996) CDRT:
 - Hofmann, L. (2025). Anaphoric accessibility with flat update.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Situations
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Situations
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.TruthConditional.Core.Time
 
 namespace DynamicSemantics.IntensionalCDRT.MendesDerivations

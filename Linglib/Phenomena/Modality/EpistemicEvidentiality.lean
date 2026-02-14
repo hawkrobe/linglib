@@ -1,3 +1,5 @@
+import Linglib.Core.Evidence
+
 /-!
 # Epistemic Evidentiality — Empirical Data
 
@@ -32,6 +34,8 @@ The placement of the bare prejacent is Karttunen's Problem:
 -/
 
 namespace Phenomena.Modality.EpistemicEvidentiality
+
+open Core.Evidence
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Datum Structures
@@ -427,5 +431,25 @@ theorem must_always_entails_prejacent :
     (the felicity restriction is specific to must, not to the content). -/
 theorem bare_always_felicitous :
     allMinimalPairs.all (λ d => d.bareFelicitous) = true := by native_decide
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- Bridge to Core.Evidence
+-- ════════════════════════════════════════════════════════════════════════════
+
+/-- Map VF&G's four-way evidence types to Cumming's three-way canonical
+    classification. Direct and elimination map to direct (both involve
+    the speaker's own epistemic access); indirect and reported map to
+    inference and hearsay respectively. -/
+def EvidenceType.toEvidentialSource : EvidenceType → EvidentialSource
+  | .direct => .direct
+  | .indirect => .inference
+  | .elimination => .direct
+  | .reported => .hearsay
+
+/-- All VF&G evidence types map to nonfuture evidential perspectives:
+    every source's perspective has `isNonfuture = true`. -/
+theorem all_evidence_types_nonfuture (e : EvidenceType) :
+    (e.toEvidentialSource).toEvidentialPerspective.isNonfuture = true := by
+  cases e <;> rfl
 
 end Phenomena.Modality.EpistemicEvidentiality

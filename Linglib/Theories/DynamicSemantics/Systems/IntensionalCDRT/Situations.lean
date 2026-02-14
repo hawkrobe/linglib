@@ -38,8 +38,8 @@ The mood operators from `Sentence/Mood/Basic.lean` have dynamic counterparts:
 - Muskens, R. (1996). Combining Montague semantics and discourse representation.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Update
 import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.IntensionalSemantics.Mood.Basic
 

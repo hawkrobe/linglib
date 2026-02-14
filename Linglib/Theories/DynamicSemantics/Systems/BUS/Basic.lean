@@ -13,7 +13,7 @@ Dynamic semantics with two update dimensions (positive and negative) that valida
 - Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. Semantics & Pragmatics 18.
 -/
 
-import Linglib.Theories.DynamicSemantics.Core.Bilateral
+import Linglib.Theories.DynamicSemantics.Effects.Bilateral.Basic
 
 namespace DynamicSemantics.BUS
 

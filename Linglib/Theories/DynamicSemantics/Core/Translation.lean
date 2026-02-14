@@ -106,13 +106,13 @@ def PLACCP (E : Type*) := PLAInfoState E → PLAInfoState E
 /--
 Lift PLA CCP to Core CCP.
 -/
-def PLACCP.toCoreCCP {E : Type*} (φ : PLACCP E) : CCP Unit E :=
+def PLACCP.toCoreCCP {E : Type*} (φ : PLACCP E) : CCP (Possibility Unit E) :=
   λ s => (φ (InfoState.toPLA s)).toCore
 
 /--
 Project Core CCP to PLA CCP (for Unit world).
 -/
-def CCP.toPLACCP {E : Type*} (φ : CCP Unit E) : PLACCP E :=
+def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit E)) : PLACCP E :=
   λ s => InfoState.toPLA (φ s.toCore)
 
 

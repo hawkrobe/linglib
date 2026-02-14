@@ -1,4 +1,4 @@
-import Linglib.Theories.DynamicSemantics.TTR.Discourse
+import Linglib.Theories.TTR.Discourse
 
 /-!
 # Type Theory with Records — Chapter 6: Modality and Intensionality without Possible Worlds

@@ -12,7 +12,7 @@ are retained.
 - Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
-import Linglib.Theories.DynamicSemantics.DPL.Basic
+import Linglib.Theories.DynamicSemantics.Effects.State.DPL
 
 namespace DynamicSemantics.Charlow2019
 
@@ -144,10 +144,12 @@ def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
 def stateDistNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
   λ s => {i ∈ s | φ {i} = ∅}
 
-open Classical in
-/-- Epistemic 'might' (27): non-distributive test on the whole state. -/
+/-- Epistemic 'might' (27): non-distributive test on the whole state.
+
+Delegates to `Core.CCP.might` at type `W × Assignment E`.
+-/
 noncomputable def stateMight {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
-  λ s => if (φ s).Nonempty then s else ∅
+  DynamicSemantics.Core.CCP.might φ
 
 /-- 'might' is non-distributive. -/
 theorem might_not_distributive :

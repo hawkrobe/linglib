@@ -1,11 +1,11 @@
 /-
 # Context Change Potentials
 
-Core update operations for dynamic semantics.
+Core update operations for dynamic semantics over `Possibility W E` states.
 
 ## Main definitions
 
-`CCP`, `update`, `randomAssign`, `seq`, `exists_`, `neg`, `impl`, `entails`
+`update`, `randomAssign`, `exists_`, `ofProp`, `ofPred1`, `ofPred2`
 
 ## References
 
@@ -15,43 +15,11 @@ Core update operations for dynamic semantics.
 -/
 
 import Linglib.Theories.DynamicSemantics.Core.Basic
+import Linglib.Theories.DynamicSemantics.Core.CCP
 
 namespace DynamicSemantics.Core
 
 open InfoState
-open Classical
-
-
-/-- Context Change Potential: state transformer. -/
-def CCP (W : Type*) (E : Type*) := InfoState W E → InfoState W E
-
-namespace CCP
-
-variable {W E : Type*}
-
-/-- Identity CCP (says nothing, changes nothing) -/
-def id : CCP W E := λ s => s
-
-/-- Absurd CCP (always returns empty state) -/
-def absurd : CCP W E := λ _ => ∅
-
-/-- Sequential composition: φ ; ψ -/
-def seq (φ ψ : CCP W E) : CCP W E := λ s => ψ (φ s)
-
-/-- Notation for sequential composition -/
-infixl:65 " ;; " => seq
-
-/-- Sequential composition is associative -/
-theorem seq_assoc (φ ψ χ : CCP W E) : (φ ;; ψ) ;; χ = φ ;; (ψ ;; χ) := rfl
-
-/-- Identity is left unit -/
-theorem id_seq (φ : CCP W E) : id ;; φ = φ := rfl
-
-/-- Identity is right unit -/
-theorem seq_id (φ : CCP W E) : φ ;; id = φ := rfl
-
-
-end CCP
 
 
 /-- Update state with proposition: keep only possibilities where φ holds. -/
@@ -160,61 +128,32 @@ end InfoState
 
 
 /-- Existential CCP: ∃x.φ introduces x then updates with φ. -/
-def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E) (φ : CCP W E) : CCP W E :=
-  λ s => φ (s.randomAssign x domain)
+def CCP.exists_ {W E : Type*} (x : Nat) (domain : Set E)
+    (φ : CCP (Possibility W E)) : CCP (Possibility W E) :=
+  λ (s : InfoState W E) => φ (s.randomAssign x domain)
 
 /-- Existential with full domain -/
-def CCP.existsFull {W E : Type*} (x : Nat) (φ : CCP W E) : CCP W E :=
-  λ s => φ (s.randomAssignFull x)
-
-
-/--
-Dynamic conjunction via sequencing.
-
-φ ∧ ψ ≡ φ ; ψ (update with φ, then with ψ)
--/
-def CCP.conj {W E : Type*} (φ ψ : CCP W E) : CCP W E := CCP.seq φ ψ
-
-/-- Dynamic negation (test-based, no DNE). -/
-def CCP.neg {W E : Type*} (φ : CCP W E) : CCP W E :=
-  λ s => if (φ s).Nonempty then ∅ else s
-
-/--
-Dynamic implication.
-
-φ → ψ tests whether updating with φ then ψ yields the same as updating with φ.
--/
-def CCP.impl {W E : Type*} (φ ψ : CCP W E) : CCP W E :=
-  λ s => if φ s ⊆ ψ (φ s) then s else ∅
-
-
-/-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
-def CCP.entails {W E : Type*} (φ ψ : CCP W E) : Prop :=
-  ∀ s : InfoState W E, (φ s).consistent → ψ (φ s) = φ s
-
-/-- Entailment is reflexive (CCP.id is the identity) -/
-theorem CCP.entails_id {W E : Type*} (φ : CCP W E) : CCP.entails φ CCP.id := by
-  intro s _
-  rfl
-
+def CCP.existsFull {W E : Type*} (x : Nat)
+    (φ : CCP (Possibility W E)) : CCP (Possibility W E) :=
+  λ (s : InfoState W E) => φ (s.randomAssignFull x)
 
 /--
 Lift a classical proposition to a CCP.
 -/
-def CCP.ofProp {W E : Type*} (φ : W → Bool) : CCP W E :=
-  λ s => s⟦φ⟧
+def CCP.ofProp {W E : Type*} (φ : W → Bool) : CCP (Possibility W E) :=
+  λ (s : InfoState W E) => s⟦φ⟧
 
 /--
 Lift a predicate on entities (via variable lookup).
 -/
-def CCP.ofPred1 {W E : Type*} (p : E → W → Bool) (x : Nat) : CCP W E :=
-  λ s => { poss ∈ s | p (poss.assignment x) poss.world }
+def CCP.ofPred1 {W E : Type*} (p : E → W → Bool) (x : Nat) : CCP (Possibility W E) :=
+  λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) poss.world }
 
 /--
 Lift a binary predicate.
 -/
-def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP W E :=
-  λ s => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
+def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP (Possibility W E) :=
+  λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
 
 end DynamicSemantics.Core

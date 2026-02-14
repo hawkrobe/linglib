@@ -10,7 +10,7 @@ The embedding is essentially definitional.
 -/
 
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
-import Linglib.Theories.DynamicSemantics.CDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.CDRT.Basic
 
 namespace DynamicSemantics.CDRT
 

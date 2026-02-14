@@ -35,8 +35,8 @@ The anaphoric relationship:
 - Roberts (1989). Modal subordination and pronominal anaphora.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Situations
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Situations
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Basic
 
 namespace DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
 

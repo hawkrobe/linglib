@@ -1,4 +1,4 @@
-import Linglib.Theories.DynamicSemantics.TTR.Quantification
+import Linglib.Theories.TTR.Quantification
 import Linglib.Theories.TruthConditional.Derivation.Scope
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference

@@ -19,8 +19,8 @@ Negation swaps dimensions, giving DNE definitionally.
 -/
 
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
-import Linglib.Theories.DynamicSemantics.Core.Bilateral
-import Linglib.Theories.DynamicSemantics.BUS.Basic
+import Linglib.Theories.DynamicSemantics.Effects.Bilateral.Basic
+import Linglib.Theories.DynamicSemantics.Systems.BUS.Basic
 
 namespace DynamicSemantics.BUS
 

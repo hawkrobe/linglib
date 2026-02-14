@@ -12,7 +12,7 @@ DPL relations ARE DRS meanings.
 -/
 
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
-import Linglib.Theories.DynamicSemantics.DPL.Basic
+import Linglib.Theories.DynamicSemantics.Effects.State.DPL
 
 namespace DynamicSemantics.DPL
 

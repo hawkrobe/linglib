@@ -1,4 +1,4 @@
-import Linglib.Theories.DynamicSemantics.TTR.Modality
+import Linglib.Theories.TTR.Modality
 import Linglib.Core.Quantification
 import Mathlib.Data.Finset.Card
 

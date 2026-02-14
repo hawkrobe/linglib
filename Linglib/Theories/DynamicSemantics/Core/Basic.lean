@@ -54,19 +54,7 @@ end Possibility
 
 
 /-- Information state: set of possibilities. -/
-def InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
-
-instance {W E : Type*} : Membership (Possibility W E) (InfoState W E) := Set.instMembership
-instance {W E : Type*} : EmptyCollection (InfoState W E) := Set.instEmptyCollection
-instance {W E : Type*} : HasSubset (InfoState W E) := Set.instHasSubset
-instance {W E : Type*} : HasSSubset (InfoState W E) := Set.instHasSSubset
-instance {W E : Type*} : Union (InfoState W E) := Set.instUnion
-instance {W E : Type*} : Inter (InfoState W E) := Set.instInter
-instance {W E : Type*} : SDiff (InfoState W E) := Set.instSDiff
-
-@[ext]
-theorem InfoState.ext {W E : Type*} {s t : InfoState W E} (h : ∀ p, p ∈ s ↔ p ∈ t) : s = t :=
-  Set.ext h
+abbrev InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
 
 namespace InfoState
 

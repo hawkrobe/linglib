@@ -35,7 +35,7 @@ Covers formalize "ways of thinking about" entities.
 - Kaplan, D. (1968). Quantifying In.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Epistemic
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Epistemic
 
 namespace DynamicSemantics.PLA
 
