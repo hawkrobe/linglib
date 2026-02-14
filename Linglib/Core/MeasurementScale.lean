@@ -382,6 +382,56 @@ theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W) (hw : moreTh
   · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
 
 -- ════════════════════════════════════════════════════
+-- § 6b. Order-Sensitive MAX (Rett 2026)
+-- ════════════════════════════════════════════════════
+
+/-! ### Scale-sensitive maximality operator
+
+Rett (2026, def. 1, adapting Rullmann 1995): MAX_R(X) picks the element(s)
+of X that R-dominate all other members. For the `<` scale this is the GLB
+(earliest / smallest), for `>` the LUB (latest / largest). The same operator
+underlies both temporal connectives (*before*/*after*) and degree comparatives.
+
+- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+-/
+
+/-- Order-sensitive maximality (Rett 2026, def. 1):
+    MAX_R(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → R x x' }.
+    Domain-general over any relation R and set X. -/
+def maxOnScale {α : Type*} (R : α → α → Prop) (X : Set α) : Set α :=
+  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → R x x' }
+
+/-- MAX on a singleton is that singleton: MAX_R({x}) = {x}.
+    The universal quantifier is vacuously satisfied. -/
+theorem maxOnScale_singleton {α : Type*} (R : α → α → Prop) (x : α) :
+    maxOnScale R {x} = {x} := by
+  ext y
+  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl, _⟩; rfl
+  · rintro rfl
+    exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
+
+/-- A scalar construction f is **ambidirectional** (Rett 2026, §3) iff
+    applying f to a set B and to its complement Bᶜ yields the same result,
+    because MAX picks the same informative boundary from both.
+    This is the mechanism behind expletive negation licensing: when
+    f(B) ↔ f(Bᶜ), negating B is truth-conditionally vacuous. -/
+def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
+  f B ↔ f Bᶜ
+
+/-- **Bridge**: `maxOnScale (· ≤ ·)` applied to the "at least" degree set
+    `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
+    value. This connects the relational MAX to `IsMaxInf`.
+
+    Proof sketch: μ(w) ∈ {d | d ≤ μ(w)} trivially. For any d ≤ μ(w) with
+    d ≠ μ(w), we have d < μ(w), so μ(w) ≤-dominates d (as μ(w) ≤ μ(w)).
+    Conversely, any d < μ(w) fails to ≤-dominate μ(w). -/
+theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
+    maxOnScale (· ≤ ·) { d : α | d ≤ μ w } = { μ w } := by
+  sorry
+
+-- ════════════════════════════════════════════════════
 -- § 7. "At most" Symmetry (Rouillard's direction)
 -- ════════════════════════════════════════════════════
 

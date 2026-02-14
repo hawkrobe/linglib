@@ -1,4 +1,4 @@
-import Linglib.Theories.DynamicSemantics.TTR.Core
+import Linglib.Theories.TTR.Core
 import Linglib.Theories.DynamicSemantics.Core.Basic
 
 /-!

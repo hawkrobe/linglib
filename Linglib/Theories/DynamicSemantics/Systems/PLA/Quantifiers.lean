@@ -47,7 +47,7 @@ to `Conservative` in Core — but typed for different downstream consumers.
 - Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Update
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Update
 import Mathlib.Data.Set.Card
 import Mathlib.Order.SetNotation
 

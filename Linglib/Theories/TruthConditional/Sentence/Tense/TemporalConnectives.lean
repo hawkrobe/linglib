@@ -1,3 +1,4 @@
+import Linglib.Core.MeasurementScale
 import Linglib.Theories.TruthConditional.Core.Time
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
@@ -51,6 +52,7 @@ open TruthConditional.Core.Time
 open TruthConditional.Core.Time.Interval
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ChangeOfState
+open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton)
 
 -- ============================================================================
 -- § 1: Sentence Denotations as Interval Sets
@@ -99,13 +101,6 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
 -- ============================================================================
 -- § 3: Rett (2020) Antonymy + Aspectual Coercion
 -- ============================================================================
-
-/-- Scale-sensitive maximality (Rett 2020, eq. 17, adapting Rullmann 1995).
-    MAX_R(X) = ιx[x ∈ X ∧ ∀x' ∈ X, x' ≠ x → x R x']
-    For the ≺ ("before") scale: picks the GLB (earliest point).
-    For the ≻ ("after") scale: picks the LUB (latest point). -/
-def maxOnScale (R : Time → Time → Prop) (X : Set Time) : Set Time :=
-  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → R x x' }
 
 /-- Rett's *before* (eq. 22a): ∃t ∈ times(A) [t ≺ MAX(times(B)_≺)].
     Some time in A precedes the maximal (on the ≺ scale) time of B. -/
@@ -275,6 +270,67 @@ theorem anscombe_rett_agree_telic_after_finish
     (A : SentDenotation Time) (i_B : Interval Time) :
     (Anscombe.after A (accomplishmentDenotation i_B) ↔
      Rett.after A (accomplishmentDenotation i_B)) := by
+  sorry
+
+-- ============================================================================
+-- § 7: Ambidirectionality (Rett 2026)
+-- ============================================================================
+
+/-! ### Expletive negation and ambidirectionality
+
+Rett (2026, §3) shows that *before* is **ambidirectional**: negating B
+in "A before B" doesn't change truth conditions, because MAX₍<₎ on B
+and MAX₍<₎ on ¬B share the starting-point bound (for telic B on a
+closed interval). This is why *before*-clauses license expletive
+negation cross-linguistically (Jin & Koenig 2021: 50 languages).
+
+*After* is NOT ambidirectional: negating B yields trivially-true truth
+conditions (A > −∞), so EN in *after*-clauses would be truth-conditionally
+distinct (uninformative).
+
+*While* requires total temporal overlap; ¬B fails when A overlaps B.
+
+- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+- Jin, M. & Koenig, J.-P. (2021). A cross-linguistic survey of expletive
+  negation. *Glossa* 6(1):25.
+-/
+
+/-- *Before* is ambidirectional on closed intervals (Rett 2026, §3.2):
+    when B is the time trace of a telic event — a closed interval [s, f] —
+    MAX₍<₎(B) and MAX₍<₎(Bᶜ) share s as their informative bound.
+
+    The critical hypothesis is that B is a **closed interval**: B = {t | s ≤ t ∧ t ≤ f}.
+    Without this, the theorem is false (e.g., for open or unbounded B,
+    MAX₍<₎(Bᶜ) may not share a bound with MAX₍<₎(B)).
+
+    Proof sketch: MAX₍<₎({t | s ≤ t ∧ t ≤ f}) = {s} because s is in B
+    and s < t' for all t' ∈ B with t' ≠ s. For Bᶜ = (−∞, s) ∪ (f, +∞),
+    MAX₍<₎(Bᶜ) depends on whether (−∞, s) is nonempty, but the infimum
+    of the right component f is > s, so "A before Bᶜ" ↔ "∃ t ∈ A, t < s"
+    ↔ "A before B". -/
+theorem before_ambidirectional (A : SentDenotation Time) (s f : Time) (hsf : s ≤ f) :
+    isAmbidirectional
+      (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· < ·) X, t < m)
+      { t | s ≤ t ∧ t ≤ f } := by
+  sorry
+
+/-- *After* is NOT ambidirectional (Rett 2026, §3.3): negating B in
+    "A after B" changes truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B).
+    For telic B = [s, f], MAX₍>₎(B) = {f}, but MAX₍>₎(¬B) on an
+    unbounded complement may be empty (no element >-dominates all others),
+    making "A after ¬B" trivially false, or — if it exists — yields a
+    different bound. Either way, truth conditions change. -/
+theorem after_not_ambidirectional :
+    ¬ ∀ (A : SentDenotation Time) (B : Set Time),
+      isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· > ·) X, t > m) B := by
+  sorry
+
+/-- *While* is not ambidirectional: "∀ t ∈ A, t ∈ B" and "∀ t ∈ A, t ∈ Bᶜ"
+    cannot both hold when A ∩ B is nonempty. So the construction is
+    truth-conditionally sensitive to the polarity of its argument. -/
+theorem while_not_ambidirectional :
+    ¬ ∀ (A B : Set Time),
+      isAmbidirectional (λ X => ∀ t ∈ A, t ∈ X) B := by
   sorry
 
 end TruthConditional.Sentence.Tense.TemporalConnectives

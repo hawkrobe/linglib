@@ -91,7 +91,7 @@ theorem atom_complementary (pred : W → Bool) (s : InfoState W E) :
   · intro h
     cases hp : pred p.world
     · right; exact ⟨h, by simp [hp]⟩
-    · left; exact ⟨h, hp⟩
+    · left; exact ⟨h, by simp [hp]⟩
 
 /-- Atomic positive and negative are disjoint -/
 theorem atom_disjoint (pred : W → Bool) (s : InfoState W E) :

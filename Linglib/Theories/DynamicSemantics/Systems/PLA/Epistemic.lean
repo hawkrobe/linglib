@@ -26,7 +26,7 @@ For de re/de dicto distinctions:
 - Veltman, F. (1996). Defaults in Update Semantics.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Update
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Update
 
 namespace DynamicSemantics.PLA
 

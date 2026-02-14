@@ -16,8 +16,8 @@ Fundamental results distinguishing dynamic from static semantics.
 - Heim (1982). The Semantics of Definite and Indefinite Noun Phrases.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Update
-import Linglib.Theories.DynamicSemantics.PLA.Epistemic
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Update
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Epistemic
 
 namespace DynamicSemantics.PLA
 

@@ -35,7 +35,7 @@ This allows indefinites to "scope out" while tracking their local context.
 - Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Basic
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Basic
 
 namespace DynamicSemantics.IntensionalCDRT
 

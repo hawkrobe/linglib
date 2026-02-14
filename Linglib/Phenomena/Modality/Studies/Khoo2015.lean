@@ -1,5 +1,5 @@
 import Linglib.Core.Empirical
-import Linglib.Theories.DynamicSemantics.NeoStalnakerian
+import Linglib.Theories.DynamicSemantics.Effects.Epistemic.Basic
 
 /-!
 # Khoo (2015): Modal Disagreements

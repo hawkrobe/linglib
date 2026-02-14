@@ -80,6 +80,54 @@ instance : Monoid (CCP P) where
 /-- seq_absurd: anything followed by absurd is absurd -/
 theorem seq_absurd (u : CCP P) : u ;; absurd = absurd := rfl
 
+/-- Dynamic conjunction: alias for sequential composition -/
+def conj (u v : CCP P) : CCP P := seq u v
+
+open Classical in
+/--
+Test-based negation: passes (returns input) iff φ yields ∅.
+
+This is the standard dynamic negation of Heim (1982), Veltman (1996):
+¬φ(s) = s if φ(s) = ∅, else ∅. Does not validate DNE.
+-/
+noncomputable def neg (φ : CCP P) : CCP P :=
+  λ s => if (φ s).Nonempty then ∅ else s
+
+open Classical in
+/--
+Compatibility test ("might"): passes iff φ yields a nonempty result.
+
+might(φ)(s) = s if φ(s) ≠ ∅, else ∅
+-/
+noncomputable def might (φ : CCP P) : CCP P :=
+  λ s => if (φ s).Nonempty then s else ∅
+
+open Classical in
+/--
+Full support test ("must"): passes iff φ returns input unchanged.
+
+must(φ)(s) = s if φ(s) = s, else ∅
+-/
+noncomputable def must (φ : CCP P) : CCP P :=
+  λ s => if φ s = s then s else ∅
+
+open Classical in
+/--
+Dynamic implication test: passes iff output of φ is preserved by ψ.
+
+impl(φ,ψ)(s) = s if φ(s) ⊆ ψ(φ(s)), else ∅
+-/
+noncomputable def impl (φ ψ : CCP P) : CCP P :=
+  λ s => if φ s ⊆ ψ (φ s) then s else ∅
+
+/-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
+def entails (φ ψ : CCP P) : Prop :=
+  ∀ s : InfoStateOf P, (φ s).Nonempty → ψ (φ s) = φ s
+
+/-- Entailment is reflexive -/
+theorem entails_id (φ : CCP P) : entails φ id := by
+  intro s _; rfl
+
 end CCP
 
 
@@ -118,6 +166,36 @@ theorem test_eliminative {P : Type*} (u : CCP P) (h : IsTest u) :
   cases h s with
   | inl heq => rw [heq] at hp; exact hp
   | inr hemp => rw [hemp] at hp; exact False.elim hp
+
+open Classical in
+theorem CCP.neg_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.neg φ) := by
+  intro s; simp only [CCP.neg]; split <;> simp
+
+open Classical in
+theorem CCP.might_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.might φ) := by
+  intro s; simp only [CCP.might]; split <;> simp
+
+open Classical in
+theorem CCP.must_isTest {P : Type*} (φ : CCP P) : IsTest (CCP.must φ) := by
+  intro s; unfold CCP.must; split <;> simp
+
+open Classical in
+theorem CCP.impl_isTest {P : Type*} (φ ψ : CCP P) : IsTest (CCP.impl φ ψ) := by
+  intro s; unfold CCP.impl; split <;> simp
+
+open Classical in
+/-- Duality: might φ = ¬(¬φ) -/
+theorem CCP.might_eq_neg_neg {P : Type*} (φ : CCP P) :
+    CCP.might φ = CCP.neg (CCP.neg φ) := by
+  funext s
+  simp only [CCP.might, CCP.neg]
+  split
+  · rw [if_neg Set.not_nonempty_empty]
+  · rename_i h
+    by_cases hs : s.Nonempty
+    · rw [if_pos hs]
+    · simp only [Set.not_nonempty_iff_eq_empty] at hs
+      rw [hs, if_neg Set.not_nonempty_empty]
 
 
 section GaloisContent

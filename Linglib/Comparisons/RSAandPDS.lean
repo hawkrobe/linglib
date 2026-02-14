@@ -28,7 +28,7 @@ posterior ← do
 In the probability monad, this is Bayesian conditioning via `observe`.
 -/
 
-import Linglib.Theories.DynamicSemantics.Probabilistic
+import Linglib.Theories.DynamicSemantics.Effects.Probability.Basic
 import Linglib.Theories.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic

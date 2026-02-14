@@ -23,7 +23,7 @@ Dekker shows three equivalent perspectives on dynamic meaning:
 - Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Semantics
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Semantics
 import Linglib.Theories.DynamicSemantics.Core.CCP
 
 namespace DynamicSemantics.PLA

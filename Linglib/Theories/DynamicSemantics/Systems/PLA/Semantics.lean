@@ -24,7 +24,7 @@ sequence ê such that M, g, ê ⊨ φ.
 - Dekker, P. (2012). Dynamic Semantics. Springer. Definition 3.
 -/
 
-import Linglib.Theories.DynamicSemantics.PLA.Basic
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Basic
 
 namespace DynamicSemantics.PLA
 

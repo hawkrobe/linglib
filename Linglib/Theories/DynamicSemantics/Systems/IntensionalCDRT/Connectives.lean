@@ -13,7 +13,7 @@ Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences).
 - Elliott & Sudo (2025). Free choice with anaphora. S&P 18.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Update
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Update
 
 namespace DynamicSemantics.IntensionalCDRT
 

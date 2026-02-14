@@ -31,8 +31,8 @@ The SF introduces modal displacement:
 - Beaver, D. (2001). Presupposition and Assertion in Dynamic Semantics.
 -/
 
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.Situations
-import Linglib.Theories.DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Situations
+import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.TruthConditional.Core.Time
 
 namespace DynamicSemantics.IntensionalCDRT.PresuppositionWeakening

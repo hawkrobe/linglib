@@ -19,7 +19,7 @@ This provides type-safe separation without magic numbers.
 
 import Linglib.Theories.DynamicSemantics.Core.DynamicTy2
 import Linglib.Theories.DynamicSemantics.Core.Translation
-import Linglib.Theories.DynamicSemantics.PLA.Semantics
+import Linglib.Theories.DynamicSemantics.Systems.PLA.Semantics
 
 namespace DynamicSemantics.PLA
 

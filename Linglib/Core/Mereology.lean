@@ -1,6 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Order.Lattice
 import Mathlib.Order.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Card
 
 /-!
 # Algebraic Mereology
@@ -246,5 +248,40 @@ def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α 
 theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μTy}
     {x : α} (h : QMOD R μ n x) : R x :=
   h.1
+
+-- ════════════════════════════════════════════════════
+-- § 7. Maximality and Atom Counting (Charlow 2021)
+-- ════════════════════════════════════════════════════
+
+/-- Maximal in P under ≤: x is in P and no proper extension of x is in P.
+    Used by Charlow (2021) for the M_v operator (mereological maximization). -/
+def isMaximal {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
+  P x ∧ ∀ (y : α), P y → x ≤ y → x = y
+
+/-- Count atoms below x, using classical decidability.
+    Used by Charlow (2021) for cardinality tests on plural individuals. -/
+noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
+    (x : α) : Nat :=
+  @Finset.card α (Finset.univ.filter (λ a => @decide (Atom a ∧ a ≤ x) (Classical.dec _)))
+
+/-- If P is CUM and x, y are both maximal in P, then x = y.
+    Cumulative predicates have at most one maximal element: the join of all P-elements. -/
+theorem cum_maximal_unique {α : Type*} [SemilatticeSup α]
+    {P : α → Prop} (hCum : CUM P)
+    {x y : α} (hx : isMaximal P x) (hy : isMaximal P y) : x = y := by
+  have hxy := hCum x y hx.1 hy.1
+  have hle_x : x ≤ x ⊔ y := le_sup_left
+  have hle_y : y ≤ x ⊔ y := le_sup_right
+  have heq_x : x = x ⊔ y := hx.2 (x ⊔ y) hxy hle_x
+  have heq_y : y = x ⊔ y := hy.2 (x ⊔ y) hxy hle_y
+  exact heq_x.trans heq_y.symm
+
+/-- Atom count is additive over non-overlapping sums.
+    TODO: Prove from extensivity of cardinality.  -/
+theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
+    [Fintype α]
+    {x y : α} (_hDisj : ¬ Overlap x y) :
+    atomCount α (x ⊔ y) = atomCount α x + atomCount α y := by
+  sorry
 
 end Mereology
