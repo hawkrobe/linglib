@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.213.0] - 2026-02-14
+
+### Added
+- **Core/Morpheme.lean**: Framework-agnostic morphological infrastructure — `MorphStatus` (freeWord/simpleClitic/specialClitic/inflAffix/derivAffix), `AttachmentSide`, `SelectionDegree`, `ParadigmCell`, `MorphCategory` (Bybee 1985 relevance hierarchy), `respectsRelevanceHierarchy`
+- **Theories/Morphology/Diagnostics/CliticVsAffix.lean**: Zwicky & Pullum (1983) six-criterion diagnostic framework — `CliticAffixProfile` structure, `affixScore`/`cliticScore`, `classify` (derives `MorphStatus` from profile), exhaustivity theorem
+- **Phenomena/Morphology/ZwickyPullum1983.lean**: English data for Z&P's argument that *-n't* is an inflectional affix — diagnostic profiles for simple clitics (*'s*, *'ve*, *'d*), inflectional affixes (*-ed*, *-s*, *-est*), and contracted negator (*-n't*); classification theorems (`nt_is_affix`, all six criteria unambiguous); paradigm gap verification (*mayn't*, *amn't*); morphophonological irregularity verification (*won't*, *can't*, *don't*, *shan't*, *mustn't*); semantic scope bridge to `IntensionalSemantics.Modal` (NOT(CAN(P)) vs MUST(NOT(P)) idiosyncrasy)
+- **AuxEntry**: `negForm` (contracted negative form from Z&P Table 1) and `negIrregular` (phonological irregularity flag) fields; negative forms for all 22 auxiliaries including paradigm gaps (*may*, *am*) and irregular forms (*won't*, *can't*, *don't*, *shan't*, *mustn't*); new semi-modal entries (`dare`/`need`/`ought`)
+
+### Refactored
+- **MorphemeOrder.lean**: `MorphCategory`, `relevanceRank`, `respectsRelevanceHierarchy` moved from `DepGrammar.MemorySurprisal.MorphemeOrder` to `Core.Morpheme` — Bybee's relevance hierarchy is a morphological universal, not specific to memory-surprisal theory
+
 ## [0.212.0] - 2026-02-13
 
 ### Refactored

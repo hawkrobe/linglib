@@ -90,61 +90,112 @@ structure AuxEntry where
   /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
+  /-- Contracted negative form with *-n't*, if it exists (Zwicky & Pullum 1983,
+      Table 1). `none` for paradigm gaps (*mayn't*, *amn't*). -/
+  negForm : Option String := none
+  /-- Phonological irregularity in the negative form (Z&P criterion C).
+      `true` when the contracted form cannot be derived by regular *-n't*
+      suffixation (e.g., *won't* ← *will*, *can't* ← *can*, *don't* ← *do*). -/
+  negIrregular : Bool := false
   deriving Repr, BEq
 
 -- Modals (no agreement). Modal meanings follow Kratzer (1981), Palmer (2001).
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
 
+-- Modals. Negative forms from Zwicky & Pullum 1983, Table 1.
 def can : AuxEntry where
   form := "can"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+  negForm := some "can't"; negIrregular := true   -- [kænt] not *[kænənt]
 def could : AuxEntry where
   form := "could"; auxType := .modal; past := true
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
+  negForm := some "couldn't"
 def will : AuxEntry where
   form := "will"; auxType := .modal
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
+  negForm := some "won't"; negIrregular := true    -- [wont] not *[wɪlnt]
 def would : AuxEntry where
   form := "would"; auxType := .modal; past := true
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
+  negForm := some "wouldn't"
 def shall : AuxEntry where
   form := "shall"; auxType := .modal
   modalMeaning := cp [.necessity] [.deontic]
+  negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
 def should : AuxEntry where
   form := "should"; auxType := .modal; past := true
   modalMeaning := cp [.necessity] [.deontic, .epistemic]
+  negForm := some "shouldn't"
 def may : AuxEntry where
   form := "may"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic]
+  negForm := none                                  -- *mayn't: paradigm gap
 def might : AuxEntry where
   form := "might"; auxType := .modal; past := true
   modalMeaning := cp [.possibility] [.epistemic]
+  negForm := some "mightn't"
 def must : AuxEntry where
   form := "must"; auxType := .modal
   modalMeaning := cp [.necessity] [.epistemic, .deontic, .circumstantial]
+  negForm := some "mustn't"; negIrregular := true  -- [t] deletion: [mʌsnt]
+
+-- Semi-modals (Z&P Table 1 rows o–q)
+def dare : AuxEntry where
+  form := "dare"; auxType := .modal
+  negForm := some "daren't"
+def need : AuxEntry where
+  form := "need"; auxType := .modal
+  negForm := some "needn't"
+def ought : AuxEntry where
+  form := "ought"; auxType := .modal
+  negForm := some "oughtn't"
 
 -- Do-support
-def do_ : AuxEntry := { form := "do", auxType := .doSupport, number := some .pl }
-def does : AuxEntry := { form := "does", auxType := .doSupport, person := some .third, number := some .sg }
-def did : AuxEntry := { form := "did", auxType := .doSupport, past := true }
+def do_ : AuxEntry where
+  form := "do"; auxType := .doSupport; number := some .pl
+  negForm := some "don't"; negIrregular := true    -- [dont] not *[dunt]
+def does : AuxEntry where
+  form := "does"; auxType := .doSupport; person := some .third; number := some .sg
+  negForm := some "doesn't"
+def did : AuxEntry where
+  form := "did"; auxType := .doSupport; past := true
+  negForm := some "didn't"
 
 -- Be
-def am : AuxEntry := { form := "am", auxType := .be, person := some .first, number := some .sg }
-def is : AuxEntry := { form := "is", auxType := .be, person := some .third, number := some .sg }
-def are : AuxEntry := { form := "are", auxType := .be, number := some .pl }
-def was : AuxEntry := { form := "was", auxType := .be, number := some .sg, past := true }
-def were : AuxEntry := { form := "were", auxType := .be, number := some .pl, past := true }
+def am : AuxEntry where
+  form := "am"; auxType := .be; person := some .first; number := some .sg
+  negForm := none                                  -- *amn't: paradigm gap
+def is_ : AuxEntry where
+  form := "is"; auxType := .be; person := some .third; number := some .sg
+  negForm := some "isn't"
+def are : AuxEntry where
+  form := "are"; auxType := .be; number := some .pl
+  negForm := some "aren't"
+def was : AuxEntry where
+  form := "was"; auxType := .be; number := some .sg; past := true
+  negForm := some "wasn't"
+def were : AuxEntry where
+  form := "were"; auxType := .be; number := some .pl; past := true
+  negForm := some "weren't"
 
 -- Have
-def have_ : AuxEntry := { form := "have", auxType := .have, number := some .pl }
-def has : AuxEntry := { form := "has", auxType := .have, person := some .third, number := some .sg }
-def had : AuxEntry := { form := "had", auxType := .have, past := true }
+def have_ : AuxEntry where
+  form := "have"; auxType := .have; number := some .pl
+  negForm := some "haven't"
+def has : AuxEntry where
+  form := "has"; auxType := .have; person := some .third; number := some .sg
+  negForm := some "hasn't"
+def had : AuxEntry where
+  form := "had"; auxType := .have; past := true
+  negForm := some "hadn't"
 
 def allAuxiliaries : List AuxEntry := [
   can, could, will, would, shall, should, may, might, must,
+  dare, need, ought,
   do_, does, did,
-  am, is, are, was, were,
+  am, is_, are, was, were,
   have_, has, had
 ]
 
