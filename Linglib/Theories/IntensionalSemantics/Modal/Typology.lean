@@ -194,6 +194,12 @@ structure ModalExpression where
   meaning : List ForceFlavor
   deriving Repr, BEq
 
+/-- Project to the shared modal item core. Register defaults to neutral
+    since typological surveys don't annotate register. -/
+def ModalExpression.toModalItem (e : ModalExpression) : Core.ModalLogic.ModalItem where
+  form := e.form
+  meaning := e.meaning
+
 /-- A language's modal inventory. -/
 structure ModalInventory where
   language : String

@@ -5,12 +5,13 @@ import Linglib.Fragments.English.FunctionWords
 # Modal Concord Bridge — Liu & Rotter (2025)
 
 Connects Liu & Rotter's empirical data to the English modal and adverb
-fragments and to Dieuleveut, Hsu & Bhatt (2025).
+fragments, the general concord infrastructure, and Dieuleveut, Hsu &
+Bhatt (2025).
 
-## Section A: Semantic overlap
+## Section A: Semantic overlap via ModalItem
 
-Each experimental aux-adverb pair shares modal force in the force-flavor
-space. This is the structural precondition for concord.
+Each experimental aux-adverb pair shares modal force when projected to
+the shared `ModalItem` type. This is the structural precondition for concord.
 
 ## Section B: Force determines commitment direction
 
@@ -20,70 +21,82 @@ necessity doubling strengthens, possibility doubling weakens.
 ## Section C: Connection to Dieuleveut et al. (2025)
 
 Both studies find that MC preserves modal force (single reading, not double).
-Dieuleveut et al. shows intermediate formality; Liu & Rotter adds the
-commitment and social meaning dimensions.
+
+## Section D: Cross-phenomenon concord
+
+Modal concord is an instance of the general concord pattern. Possibility MC
+patterns with negative concord (solidarity), necessity MC contrasts (competence).
 
 ## References
 
 * Liu & Rotter (2025). Non-redundant modal concord.
 * Dieuleveut, Hsu & Bhatt (2025). A Register Approach to Modal Non-Concord.
+* Zeijlstra (2004). Sentential Negation and Negative Concord.
+* Fiske, Cuddy, Glick & Xu (2002). A model of (often mixed) stereotype content.
 -/
 
 namespace Phenomena.ModalConcord.LiuRotter2025.Bridge
 
 open Phenomena.ModalConcord.LiuRotter2025
 open Fragments.English.FunctionWords
-open Core.ModalLogic (ModalForce ForceFlavor)
+open Core.ModalLogic (ModalForce ModalItem ConcordType)
+open Core.Register (SocialIndex)
 
-/-! ## Section A: Semantic overlap
+/-! ## Section A: Semantic overlap via ModalItem
 
-Each aux-adverb pair from the stimuli shares at least one ForceFlavor
-with the same force. This is the precondition for concord: two
-expressions must "agree" on force to undergo modal doubling. -/
-
-/-- Shared force between two modal meanings: at least one ForceFlavor
-    with matching force appears in both. -/
-def shareForce (m1 m2 : List ForceFlavor) : Bool :=
-  m1.any fun ff1 => m2.any fun ff2 => ff1.force == ff2.force
+Each aux-adverb pair from the stimuli shares force when projected to
+`ModalItem`. The `sharesForce` operation lives in `Core/ModalLogic.lean`
+and works generically across any modal items. -/
 
 -- Necessity pairs
 
 /-- *must* + *certainly* share necessity force. -/
 theorem must_certainly_share :
-    shareForce must.modalMeaning certainly.modalMeaning = true := by native_decide
+    must.toModalItem.sharesForce certainly.toModalItem = true := by native_decide
 
 /-- *should* + *definitely* share necessity force. -/
 theorem should_definitely_share :
-    shareForce should.modalMeaning definitely.modalMeaning = true := by native_decide
+    should.toModalItem.sharesForce definitely.toModalItem = true := by native_decide
 
 /-- *have to* + *necessarily* share necessity force. -/
 theorem haveTo_necessarily_share :
-    shareForce haveTo.modalMeaning necessarily.modalMeaning = true := by native_decide
+    haveTo.toModalItem.sharesForce necessarily.toModalItem = true := by native_decide
 
 -- Possibility pairs
 
 /-- *may* + *possibly* share possibility force. -/
 theorem may_possibly_share :
-    shareForce may.modalMeaning possibly.modalMeaning = true := by native_decide
+    may.toModalItem.sharesForce possibly.toModalItem = true := by native_decide
 
 /-- *might* + *perhaps* share possibility force. -/
 theorem might_perhaps_share :
-    shareForce might.modalMeaning perhaps.modalMeaning = true := by native_decide
+    might.toModalItem.sharesForce perhaps.toModalItem = true := by native_decide
 
 /-- *could* + *potentially* share possibility force. -/
 theorem could_potentially_share :
-    shareForce could.modalMeaning potentially.modalMeaning = true := by native_decide
+    could.toModalItem.sharesForce potentially.toModalItem = true := by native_decide
 
-/-- **All six stimulus pairs share force**: Every aux-adverb pairing
-    in the experiment satisfies the shared-force precondition. -/
+/-- **All six stimulus pairs share force**. -/
 theorem all_pairs_share_force :
-    shareForce must.modalMeaning certainly.modalMeaning = true ∧
-    shareForce should.modalMeaning definitely.modalMeaning = true ∧
-    shareForce haveTo.modalMeaning necessarily.modalMeaning = true ∧
-    shareForce may.modalMeaning possibly.modalMeaning = true ∧
-    shareForce might.modalMeaning perhaps.modalMeaning = true ∧
-    shareForce could.modalMeaning potentially.modalMeaning = true := by
+    must.toModalItem.sharesForce certainly.toModalItem = true ∧
+    should.toModalItem.sharesForce definitely.toModalItem = true ∧
+    haveTo.toModalItem.sharesForce necessarily.toModalItem = true ∧
+    may.toModalItem.sharesForce possibly.toModalItem = true ∧
+    might.toModalItem.sharesForce perhaps.toModalItem = true ∧
+    could.toModalItem.sharesForce potentially.toModalItem = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+-- Register variants
+
+/-- *must* (formal) and *certainly* (formal) are NOT register variants —
+    they share the same register level. Concord here is not register mixing
+    but force agreement between syntactically distinct categories. -/
+theorem must_certainly_same_register :
+    must.toModalItem.areRegisterVariants certainly.toModalItem = false := by native_decide
+
+/-- *may* (neutral) and *possibly* (neutral) are also not register variants. -/
+theorem may_possibly_same_register :
+    may.toModalItem.areRegisterVariants possibly.toModalItem = false := by native_decide
 
 /-! ## Section B: Force determines commitment direction
 
@@ -97,15 +110,13 @@ def concordStrengthens : ModalForce → Bool
   | .necessity  => true
   | .possibility => false
 
-/-- The data matches the force-based prediction for necessity:
-    necessity MC has higher commitment than necessity SM. -/
+/-- The data matches the force-based prediction for necessity. -/
 theorem necessity_matches_prediction :
     concordStrengthens .necessity = true ∧
     (commitmentRating necMC).mean > (commitmentRating necSM).mean :=
   ⟨rfl, necessity_mc_strengthens⟩
 
-/-- The data matches the force-based prediction for possibility:
-    possibility MC has lower commitment than possibility SM. -/
+/-- The data matches the force-based prediction for possibility. -/
 theorem possibility_matches_prediction :
     concordStrengthens .possibility = false ∧
     (commitmentRating posMC).mean < (commitmentRating posSM).mean :=
@@ -113,33 +124,77 @@ theorem possibility_matches_prediction :
 
 /-! ## Section C: Connection to Dieuleveut et al. (2025)
 
-Both studies agree that MC preserves modal force (single reading).
-Dieuleveut et al. (necessity only): *must have to* has intermediate
-formality and comparable meaning ratings to bare *must*.
-Liu & Rotter: extends to possibility, adds commitment + social meaning. -/
+Both studies agree that MC preserves modal force (single reading). -/
 
-/-- Both studies agree: necessity MC does not yield double necessity.
-    Dieuleveut: *must have to* meaning close to *must* (within 0.5).
-    Liu & Rotter: necessity MC commitment above midpoint. -/
+/-- Both studies: necessity MC yields single necessity. -/
 theorem both_studies_single_necessity :
-    -- Dieuleveut: must_have_to meaning close to must
     (Phenomena.ModalConcord.meaningRating .must).mean -
     (Phenomena.ModalConcord.meaningRating .mustHaveTo).mean < 1/2 ∧
-    -- Liu & Rotter: necessity MC above midpoint (single necessity)
     (commitmentRating necMC).mean > 4 := by
   constructor <;> native_decide
 
-/-- **Register and commitment are complementary diagnostics.**
-    Dieuleveut et al. finds MC has intermediate formality (register mixing).
-    Liu & Rotter finds MC shifts commitment (non-vacuous doubling).
-    Together: MC is neither purely register-driven nor purely semantic —
-    it has both a register signature and a commitment signature. -/
+/-- Register and commitment are complementary diagnostics. -/
 theorem complementary_diagnostics :
-    -- Dieuleveut: intermediate formality (register effect exists)
     (Phenomena.ModalConcord.formalityRating .haveTo).mean <
     (Phenomena.ModalConcord.formalityRating .mustHaveTo).mean ∧
-    -- Liu & Rotter: commitment shift (semantic effect exists)
     (commitmentRating necMC).mean ≠ (commitmentRating necSM).mean := by
   constructor <;> native_decide
+
+/-! ## Section D: Cross-phenomenon concord
+
+Modal concord is an instance of the general `ConcordType` from
+`Core/ModalLogic.lean`. The social indexation of MC depends on force:
+necessity MC → competence, possibility MC → solidarity. This connects
+to negative concord, which also indexes solidarity.
+
+The `socialIndex` mapping is defined here (not in Core) because it
+encodes an empirical claim from Liu & Rotter (2025) §4. -/
+
+/-- Social indexation of each concord type.
+    NC and MC possibility both index solidarity;
+    MC necessity indexes competence (Liu & Rotter 2025 §4). -/
+def socialIndex : ConcordType → SocialIndex
+  | .negation         => .solidarity
+  | .modalNecessity   => .competence
+  | .modalPossibility => .solidarity
+
+/-- Necessity MC is a competence-indexing concord phenomenon. -/
+theorem necessity_mc_competence :
+    socialIndex (ConcordType.fromModalForce .necessity) = .competence := rfl
+
+/-- Possibility MC is a solidarity-indexing concord phenomenon. -/
+theorem possibility_mc_solidarity :
+    socialIndex (ConcordType.fromModalForce .possibility) = .solidarity := rfl
+
+/-- **Possibility MC patterns with negative concord**: Both are
+    solidarity-indexing concord phenomena. This is the cross-phenomenon
+    generalization from Liu & Rotter (2025) §4. -/
+theorem possibility_mc_like_nc :
+    socialIndex (ConcordType.fromModalForce .possibility) =
+    socialIndex .negation := rfl
+
+/-- **Necessity MC contrasts with negative concord**. -/
+theorem necessity_mc_unlike_nc :
+    socialIndex (ConcordType.fromModalForce .necessity) ≠
+    socialIndex .negation := by decide
+
+/-- **Force determines social meaning**: Necessity and possibility
+    modal concord receive opposite social indexation. -/
+theorem force_determines_social_index :
+    socialIndex .modalNecessity ≠
+    socialIndex .modalPossibility := by decide
+
+/-- **Social meaning mirrors commitment direction**: The concord type's
+    social index aligns with the commitment data — competence-indexing
+    necessity MC strengthens commitment, solidarity-indexing possibility
+    MC weakens it. -/
+theorem social_index_aligns_with_commitment :
+    -- Necessity: competence index + strengthening
+    socialIndex (ConcordType.fromModalForce .necessity) = .competence ∧
+    (commitmentRating necMC).mean > (commitmentRating necSM).mean ∧
+    -- Possibility: solidarity index + weakening
+    socialIndex (ConcordType.fromModalForce .possibility) = .solidarity ∧
+    (commitmentRating posMC).mean < (commitmentRating posSM).mean := by
+  refine ⟨rfl, ?_, rfl, ?_⟩ <;> native_decide
 
 end Phenomena.ModalConcord.LiuRotter2025.Bridge

@@ -228,6 +228,12 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
     }
   }
 
+/-- Project to the shared modal item core (form + meaning + register). -/
+def AuxEntry.toModalItem (a : AuxEntry) : Core.ModalLogic.ModalItem where
+  form := a.form
+  meaning := a.modalMeaning
+  register := a.register
+
 end Auxiliaries
 
 -- ============================================================================
@@ -253,6 +259,12 @@ structure ModalAdvEntry where
 
 def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
   { form := a.form, cat := .ADV, features := {} }
+
+/-- Project to the shared modal item core (form + meaning + register). -/
+def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Core.ModalLogic.ModalItem where
+  form := a.form
+  meaning := a.modalMeaning
+  register := a.register
 
 private abbrev mcp := ForceFlavor.cartesianProduct
 
