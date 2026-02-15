@@ -262,12 +262,10 @@ import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.NounCategorizationBridge
 import Linglib.Phenomena.Agreement.PersonMarkingTypology
 import Linglib.Phenomena.Quantification.Basic
-import Linglib.Phenomena.Quantification.Numerals
-import Linglib.Phenomena.Quantification.ScopeFreezing
-import Linglib.Phenomena.Quantification.ScopeWordOrder
+import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.Quantification.ExamplesBridge
 import Linglib.Phenomena.Quantification.Typology
-import Linglib.Phenomena.Quantification.Universals
+import Linglib.Phenomena.Quantification.Bridge
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Questions.Basic

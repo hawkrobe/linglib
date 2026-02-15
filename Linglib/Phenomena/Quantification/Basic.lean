@@ -13,13 +13,10 @@ Quantifier scope and numeral semantics.
 - Solt (2014, 2018). Imprecise numerals.
 -/
 
-import Linglib.Phenomena.Quantification.ScopeFreezing
-import Linglib.Phenomena.Quantification.ScopeWordOrder
-import Linglib.Phenomena.Quantification.Numerals
+import Linglib.Phenomena.Quantification.Data
 
 namespace Phenomena.Quantification
 
-export ScopeFreezing (Availability FreezingContext)
-export Numerals (NumeralImprecisionDatum RoundnessLevel)
+export Data (Availability FreezingContext NumeralImprecisionDatum RoundnessLevel)
 
 end Phenomena.Quantification
