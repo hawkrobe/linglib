@@ -37,7 +37,7 @@ import Linglib.Theories.TruthConditional.Sentence.Tense.TenseAspectComposition
 
 namespace TruthConditional.Sentence.TemporalAdverbials
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.ViewpointAspect
 open TruthConditional.Sentence.TenseAspectComposition
 

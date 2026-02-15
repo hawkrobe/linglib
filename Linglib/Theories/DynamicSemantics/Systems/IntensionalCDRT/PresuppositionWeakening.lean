@@ -37,6 +37,7 @@ import Linglib.Theories.TruthConditional.Core.Time
 
 namespace DynamicSemantics.IntensionalCDRT.PresuppositionWeakening
 
+open Core.Time
 open TruthConditional.Core.Time
 open DynamicSemantics.IntensionalCDRT
 open DynamicSemantics.IntensionalCDRT.Situations

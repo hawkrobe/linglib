@@ -45,6 +45,7 @@ import Linglib.Theories.TruthConditional.Core.Time
 
 namespace IntensionalSemantics.Mood
 
+open Core.Time
 open TruthConditional.Core.Time
 
 

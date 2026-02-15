@@ -40,6 +40,7 @@ import Linglib.Theories.DynamicSemantics.Systems.IntensionalCDRT.Basic
 
 namespace DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
 
+open Core.Time
 open TruthConditional.Core.Time
 open IntensionalSemantics.Mood
 open DynamicSemantics.IntensionalCDRT

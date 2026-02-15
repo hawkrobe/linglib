@@ -14,11 +14,11 @@ projection; `KContext` is the full Kaplanian structure.
   Themes from Kaplan. Oxford University Press, §XVIII.
 -/
 
-import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Core.Time
 
 namespace Core.Context
 
-open TruthConditional.Core.Time (Situation)
+open Core.Time (Situation)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 

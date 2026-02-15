@@ -52,7 +52,8 @@ the canonical `EvidentialPerspective` classification in `Core.Evidence`.
 
 namespace TruthConditional.Sentence.Tense.Evidential
 
-open TruthConditional.Core.Time
+open Core.Time
+open Core.Reichenbach
 open TruthConditional.Sentence.Tense
 open Core.Evidence
 open Core.Presupposition

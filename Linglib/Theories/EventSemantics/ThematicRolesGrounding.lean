@@ -17,7 +17,7 @@ namespace EventSemantics.ThematicRoles.Grounding
 
 open EventSemantics
 open EventSemantics.ThematicRoles
-open TruthConditional.Core.Time
+open Core.Time
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

@@ -36,14 +36,14 @@ Equations (Knick & Sharf 2026):
 - Pancheva, R. (2003). The aspectual makeup of perfect participles.
 -/
 
-import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Core.Time
 import Linglib.Theories.TruthConditional.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § Interval Extensions (added to Interval namespace for dot notation)
 -- ════════════════════════════════════════════════════
 
-namespace TruthConditional.Core.Time.Interval
+namespace Core.Time.Interval
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -100,7 +100,7 @@ theorem finalSub_implies_sub (i₁ i₂ : Interval Time)
 theorem finalSubinterval_refl (i : Interval Time) : i.finalSubinterval i :=
   ⟨subinterval_refl i, rfl⟩
 
-end TruthConditional.Core.Time.Interval
+end Core.Time.Interval
 
 -- ════════════════════════════════════════════════════
 -- § Main Module
@@ -108,7 +108,7 @@ end TruthConditional.Core.Time.Interval
 
 namespace TruthConditional.Verb.ViewpointAspect
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
@@ -333,7 +333,7 @@ end TruthConditional.Verb.Aspect
 
 namespace TruthConditional.Verb.ViewpointAspect
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}

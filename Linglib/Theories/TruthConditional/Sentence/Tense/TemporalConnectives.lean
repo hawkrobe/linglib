@@ -1,5 +1,5 @@
 import Linglib.Core.MeasurementScale
-import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Core.Time
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
@@ -48,8 +48,8 @@ reference point is selected (all of B vs MAX of B).
 
 namespace TruthConditional.Sentence.Tense.TemporalConnectives
 
-open TruthConditional.Core.Time
-open TruthConditional.Core.Time.Interval
+open Core.Time
+open Core.Time.Interval
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton)
