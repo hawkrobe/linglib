@@ -6,13 +6,13 @@ CCG derivational structure determines available scope readings (Steedman 2000 Ch
 
 import Linglib.Theories.CCG.Core.Basic
 import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Phenomena.Quantification.ScopeWordOrder
+import Linglib.Phenomena.Quantification.Data
 
 namespace CCG.Scope
 
 open CCG
 open ScopeTheory
-open Phenomena.ScopeWordOrder
+open Phenomena.Quantification.Data
 
 /-- A scope-taking element in a CCG derivation. -/
 structure ScopeTaker where
@@ -91,7 +91,7 @@ def everyHorse_inverse : DerivStep :=
 
 -- Connection to Phenomena Data
 
-/-- Map Phenomena.ScopeWordOrder.VerbOrder to CCG derivation type. -/
+/-- Map Phenomena.Quantification.Data.VerbOrder to CCG derivation type. -/
 def verbOrderToDerivationType : VerbOrder → DerivationType
   | .verbRaising => .composed           -- Object + embedded verb via composition
   | .verbProjectionRaising => .directApp -- Matrix verb first, standard application

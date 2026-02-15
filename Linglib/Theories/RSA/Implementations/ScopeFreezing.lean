@@ -20,13 +20,13 @@ that strong world priors can override it.
 
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.TruthConditional.Derivation.Scope
-import Linglib.Phenomena.Quantification.ScopeFreezing
+import Linglib.Phenomena.Quantification.Data
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
 
 open TruthConditional.Derivation.Scope (ScopeConfig)
-open Phenomena.Quantification.ScopeFreezing
+open Phenomena.Quantification.Data
 
 -- Interpretation Prior from Grammar Parse
 
