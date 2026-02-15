@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.213.15] - 2026-02-15
+
+### Added
+- **Fragments/English/FunctionWords.lean**: `ModalAdvEntry` structure and 8 modal adverb entries (*certainly*, *definitely*, *necessarily*, *possibly*, *perhaps*, *maybe*, *probably*, *potentially*) with force-flavor meanings and register
+- **Phenomena/ModalConcord/LiuRotter2025.lean**: Liu & Rotter (2025) data — 2×2 FORCE × NUMBER speaker commitment ratings, 7 social meaning interaction effects, competence/warmth classification
+- **Phenomena/ModalConcord/LiuRotter2025Bridge.lean**: Bridge proving all 6 stimulus aux-adverb pairs share force, force predicts commitment direction, cross-reference to Dieuleveut et al.
+
 ## [0.213.14] - 2026-02-15
 
 ### Added

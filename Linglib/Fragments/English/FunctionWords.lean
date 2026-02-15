@@ -231,6 +231,73 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
 end Auxiliaries
 
 -- ============================================================================
+-- Modal Adverbs
+-- ============================================================================
+
+section ModalAdverbs
+open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+open Core.Register (Level)
+
+/-- Modal adverb entry: an adverb expressing modal force and flavor
+    without auxiliary morphology.
+
+    Modal adverbs participate in concord constructions where two modal
+    expressions yield a single-modality reading (Liu & Rotter 2025). -/
+structure ModalAdvEntry where
+  form : String
+  /-- Modal meaning in the force-flavor space. -/
+  modalMeaning : List ForceFlavor
+  /-- Register level. -/
+  register : Level := .neutral
+  deriving Repr, BEq
+
+def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
+  { form := a.form, cat := .ADV, features := {} }
+
+private abbrev mcp := ForceFlavor.cartesianProduct
+
+def certainly : ModalAdvEntry where
+  form := "certainly"
+  modalMeaning := mcp [.necessity] [.epistemic]
+  register := .formal
+
+def definitely : ModalAdvEntry where
+  form := "definitely"
+  modalMeaning := mcp [.necessity] [.epistemic, .deontic]
+
+def necessarily : ModalAdvEntry where
+  form := "necessarily"
+  modalMeaning := mcp [.necessity] [.epistemic, .circumstantial]
+  register := .formal
+
+def possibly : ModalAdvEntry where
+  form := "possibly"
+  modalMeaning := mcp [.possibility] [.epistemic]
+
+def perhaps : ModalAdvEntry where
+  form := "perhaps"
+  modalMeaning := mcp [.possibility] [.epistemic]
+  register := .formal
+
+def maybe : ModalAdvEntry where
+  form := "maybe"
+  modalMeaning := mcp [.possibility] [.epistemic]
+  register := .informal
+
+def probably : ModalAdvEntry where
+  form := "probably"
+  modalMeaning := mcp [.necessity] [.epistemic]
+
+def potentially : ModalAdvEntry where
+  form := "potentially"
+  modalMeaning := mcp [.possibility] [.circumstantial]
+
+def allModalAdverbs : List ModalAdvEntry :=
+  [certainly, definitely, necessarily, possibly, perhaps, maybe, probably, potentially]
+
+end ModalAdverbs
+
+-- ============================================================================
 -- Conjunctions
 -- ============================================================================
 
