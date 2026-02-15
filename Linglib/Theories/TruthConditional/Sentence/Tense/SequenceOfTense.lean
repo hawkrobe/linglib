@@ -1,6 +1,5 @@
 import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
 import Linglib.Core.Reichenbach
-import Linglib.Theories.IntensionalSemantics.Attitude.SituationDependent
 
 /-!
 # Sequence of Tense
@@ -246,6 +245,50 @@ theorem nonSOT_only_shifted :
 theorem nonSOT_no_simultaneous :
     .simultaneous ∉ availableReadings .absolute := by
   simp [availableReadings]
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Upper Limit Constraint (Abusch 1997)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Abusch's (1997) Upper Limit Constraint
+
+In intensional contexts, tense reference cannot exceed the local
+evaluation time. From branching futures: at the attitude event time,
+future branches diverge, so no time beyond the attitude time is
+accessible across all doxastic alternatives.
+
+ULC: embedded R' ≤ matrix E (= embedded P).
+-/
+
+/-- Abusch's (1997) Upper Limit Constraint.
+    In intensional contexts, the tense reference cannot exceed the
+    local evaluation time. -/
+abbrev upperLimitConstraint {Time : Type*} [LE Time]
+    (embeddedR : Time) (matrixE : Time) : Prop :=
+  embeddedR ≤ matrixE
+
+/-- The ULC blocks the forward-shifted reading.
+    If embedded R' must satisfy R' ≤ E_matrix (ULC) AND R' > E_matrix
+    (forward shift), contradiction. -/
+theorem ulc_blocks_forward_shift {Time : Type*} [LinearOrder Time]
+    (embeddedR matrixE : Time)
+    (h_ulc : upperLimitConstraint embeddedR matrixE)
+    (h_forward : embeddedR > matrixE) : False :=
+  not_lt.mpr h_ulc h_forward
+
+/-- Shifted reading satisfies ULC: R' < E_matrix → R' ≤ E_matrix. -/
+theorem shifted_satisfies_ulc {Time : Type*} [Preorder Time]
+    (embeddedR matrixE : Time) (h : embeddedR < matrixE) :
+    upperLimitConstraint embeddedR matrixE :=
+  le_of_lt h
+
+/-- Simultaneous reading satisfies ULC: R' = E_matrix → R' ≤ E_matrix. -/
+theorem simultaneous_satisfies_ulc {Time : Type*} [Preorder Time]
+    (embeddedR matrixE : Time) (h : embeddedR = matrixE) :
+    upperLimitConstraint embeddedR matrixE :=
+  le_of_eq h
 
 
 end TruthConditional.Sentence.Tense.SequenceOfTense
