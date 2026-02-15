@@ -1,5 +1,8 @@
 import Linglib.Core.QUD
 import Linglib.Core.DecisionTheory
+import Mathlib.Order.Partition.Finpartition
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.List.Nodup
 import Mathlib.Data.List.Perm.Subperm
 import Mathlib.Tactic.Ring
@@ -289,7 +292,7 @@ def isProperCoarsening (q q' : QUD M) (elements : List M) : Prop :=
 /-! ### Binary Partitions (Merin 1999) -/
 
 /-- Binary partition from a Boolean predicate. Two elements are equivalent
-iff the predicate gives the same value on both.
+ iff the predicate gives the same value on both.
 
 Binary partitions are the building blocks of coarsening: every proper
 coarsening can be decomposed into steps that merge exactly two cells,
@@ -366,6 +369,16 @@ theorem coarsestPreserving_universal (q q' : QUD M) (P : M → Bool)
   simp only [Bool.and_eq_true]
   exact ⟨hrefines w v h, by simp only [ofProject_sameAnswer, beq_iff_eq]; exact hpreserves w v h⟩
 
+/-! ### Finpartition from QUD -/
+
+/-- The `Finpartition` induced by a QUD over a `Fintype`.
+
+Uses Mathlib's `Finpartition.ofSetoid` — exhaustivity, disjointness, and
+non-emptiness of cells come for free from the `Finpartition` structure. -/
+def toFinpartition [Fintype M] [DecidableEq M] (q : QUD M) :
+    Finpartition (Finset.univ : Finset M) :=
+  Finpartition.ofSetoid q.toSetoid
+
 /-! ### EU Compositionality under Coarsening (Merin 1999, Central Theorem) -/
 
 open Core.DecisionTheory in
@@ -375,237 +388,37 @@ by the cell's probability.
 EU_Q(a) = Σ_{c ∈ cells(Q)} P(c) · EU(a | c)
 
 This is the partition-relative expected utility that Merin (1999) shows is
-compositional under coarsening. -/
-def partitionEU {A : Type*} (dp : DecisionProblem M A) (q : QUD M)
-    (worlds : List M) (a : A) : ℚ :=
-  let cells := q.toCells worlds
-  cells.foldl (fun acc cell =>
-    let cellWorlds := worlds.filter cell
-    let cellProb := cellWorlds.foldl (fun s w => s + dp.prior w) 0
-    let cellEU := conditionalEU dp cellWorlds a cell
-    acc + cellProb * cellEU
-  ) 0
+compositional under coarsening. Uses `Finpartition` for exhaustivity and
+disjointness, replacing ~200 lines of custom foldl arithmetic. -/
+def partitionEU [Fintype M] [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (q : QUD M) (a : A) : ℚ :=
+  q.toFinpartition.parts.sum (fun cell =>
+    cell.sum dp.prior * conditionalEU dp cell a)
 
-/-! #### Arithmetic helpers for EU compositionality -/
-
-private theorem foldl_add_shift' {α : Type*} (f : α → ℚ) (l : List α) (init : ℚ) :
-    l.foldl (fun acc w => acc + f w) init = init + l.foldl (fun acc w => acc + f w) 0 := by
-  induction l generalizing init with
-  | nil => simp
-  | cons x xs ih => simp only [List.foldl_cons]; rw [ih (init + f x), ih (0 + f x)]; ring
-
-private theorem foldl_add_eq_sum_map' {α : Type*} (f : α → ℚ) (l : List α) :
-    l.foldl (fun acc w => acc + f w) 0 = (l.map f).sum := by
-  induction l with
-  | nil => simp
-  | cons x xs ih =>
-    simp only [List.foldl_cons, List.map_cons, List.sum_cons]
-    rw [foldl_add_shift' f xs (0 + f x)]; simp only [zero_add]; rw [ih]
-
-private theorem mul_foldl_sum' {α : Type*} (c : ℚ) (f : α → ℚ) (l : List α) :
-    c * l.foldl (fun acc w => acc + f w) 0 =
-    l.foldl (fun acc w => acc + c * f w) 0 := by
-  rw [foldl_add_eq_sum_map' f, foldl_add_eq_sum_map' (fun w => c * f w)]
-  induction l with
-  | nil => simp
-  | cons x xs ih => simp only [List.map_cons, List.sum_cons]; rw [mul_add, ih]
-
-private theorem sum_nonneg_of_nonneg_priors {α : Type*}
-    (f : α → ℚ) (l : List α) (hf : ∀ w, f w ≥ 0) :
-    l.foldl (fun s w => s + f w) 0 ≥ 0 := by
-  rw [foldl_add_eq_sum_map']
-  induction l with
-  | nil => simp
-  | cons x xs ih => simp only [List.map_cons, List.sum_cons]; linarith [hf x]
-
-private theorem all_zero_of_nonneg_sum_zero {α : Type*}
-    (f : α → ℚ) (l : List α) (hf : ∀ w, f w ≥ 0)
-    (hsum : l.foldl (fun s w => s + f w) 0 = 0) :
-    ∀ w ∈ l, f w = 0 := by
-  induction l with
-  | nil => intro w hw; exact absurd hw List.not_mem_nil
-  | cons x xs ih =>
-    intro w hw
-    simp only [List.foldl_cons] at hsum
-    rw [foldl_add_shift' _ xs (0 + f x)] at hsum; simp only [zero_add] at hsum
-    have hx_nn := hf x
-    have hxs_nn := sum_nonneg_of_nonneg_priors f xs hf
-    have hx0 : f x = 0 := by linarith
-    have hxs0 : xs.foldl (fun s w => s + f w) 0 = 0 := by linarith
-    rcases List.mem_cons.mp hw with rfl | hmem
-    · exact hx0
-    · exact ih hxs0 w hmem
-
-private theorem weighted_sum_zero_of_weights_zero {α : Type*}
-    (f g : α → ℚ) (l : List α) (hzero : ∀ w ∈ l, f w = 0) :
-    l.foldl (fun acc w => acc + f w * g w) 0 = 0 := by
-  induction l with
-  | nil => simp
-  | cons x xs ih =>
-    simp only [List.foldl_cons]
-    rw [foldl_add_shift' _ xs (0 + f x * g x)]; simp only [zero_add]
-    rw [hzero x (List.Mem.head xs)]; simp only [zero_mul, zero_add]
-    exact ih (fun w hw => hzero w (.tail x hw))
-
-/-! #### Cell probability cancellation -/
+/-! #### Cell probability cancellation (Finset version) -/
 
 open Core.DecisionTheory in
-private theorem cellProb_mul_conditionalEU {A : Type*}
-    (dp : DecisionProblem M A) (cellWorlds : List M) (a : A) (cell : M → Bool)
-    (hfilt : cellWorlds.filter cell = cellWorlds)
+/-- Cell probability times conditional EU equals the raw weighted sum.
+
+For non-negative priors:
+- If `cellProb = 0`: all priors are 0, both sides vanish.
+- If `cellProb ≠ 0`: the `cellProb` cancels via `Finset.mul_sum` + `field_simp`. -/
+private theorem cellProb_mul_conditionalEU [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (cell : Finset M) (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    cellWorlds.foldl (fun s w => s + dp.prior w) 0 *
-      conditionalEU dp cellWorlds a cell =
-    cellWorlds.foldl (fun acc w => acc + dp.prior w * dp.utility w a) 0 := by
-  by_cases htot : cellWorlds.foldl (fun s w => s + dp.prior w) 0 = 0
-  · -- cellProb = 0: both sides are 0
-    rw [htot, zero_mul]
-    have hzero := all_zero_of_nonneg_sum_zero dp.prior cellWorlds hprior htot
-    exact (weighted_sum_zero_of_weights_zero dp.prior (dp.utility · a)
-      cellWorlds hzero).symm
-  · -- cellProb ≠ 0: cancel
-    simp only [conditionalEU, hfilt]
-    set cp := cellWorlds.foldl (fun s w => s + dp.prior w) 0
-    have hbeq : (cp == 0) = false := by
-      simp only [BEq.beq]; exact decide_eq_false htot
-    rw [hbeq]; simp only [Bool.false_eq_true, ↓reduceIte]
-    rw [mul_foldl_sum' cp (fun w => dp.prior w / cp * dp.utility w a)]
+    cell.sum dp.prior * conditionalEU dp cell a =
+    cell.sum (fun w => dp.prior w * dp.utility w a) := by
+  simp only [conditionalEU]
+  by_cases htot : cell.sum dp.prior = 0
+  · simp only [htot, ite_true, mul_zero]
+    symm; apply Finset.sum_eq_zero; intro w hw
+    have : dp.prior w ≤ cell.sum dp.prior :=
+      Finset.single_le_sum (fun x _ => hprior x) hw
+    have : dp.prior w = 0 := le_antisymm (by linarith) (hprior w)
+    simp [this]
+  · simp only [htot, ite_false]
+    rw [Finset.mul_sum]
     congr 1; ext w; field_simp
-
-/-! #### Partition sum decomposition -/
-
--- Whether w is covered by any representative in the list
-private def coveredByReps (q : QUD M) (reps : List M) : M → Bool :=
-  fun w => reps.any (fun r => q.sameAnswer r w)
-
--- Disjoint filter sum: when p, q are disjoint on l,
--- (l.filter p).sum + (l.filter q).sum = (l.filter (p || q)).sum
-private theorem disjoint_filter_foldl_add (f : M → ℚ) (p q : M → Bool) (l : List M)
-    (h_disj : ∀ w ∈ l, ¬(p w = true ∧ q w = true)) :
-    (l.filter p).foldl (fun s w => s + f w) 0 +
-    (l.filter q).foldl (fun s w => s + f w) 0 =
-    (l.filter (fun w => p w || q w)).foldl (fun s w => s + f w) 0 := by
-  induction l with
-  | nil => simp
-  | cons x xs ih =>
-    have ih' := ih (fun w hw => h_disj w (.tail x hw))
-    simp only [List.filter_cons]
-    have hx_disj := h_disj x (.head xs)
-    cases hp : p x <;> cases hq : q x
-    · -- p x = false, q x = false
-      simp only [Bool.false_or, ite_false]; exact ih'
-    · -- p x = false, q x = true: x goes to q-filter and (p||q)-filter
-      simp only [ite_false, ite_true, Bool.false_or, Bool.false_eq_true,
-                 ↓reduceIte, List.foldl_cons]
-      rw [foldl_add_shift' _ (xs.filter q) (0 + f x),
-          foldl_add_shift' _ (xs.filter (fun w => p w || q w)) (0 + f x)]
-      simp only [zero_add]
-      linarith [ih']
-    · -- p x = true, q x = false: x goes to p-filter and (p||q)-filter
-      simp only [ite_true, ite_false, Bool.true_or, Bool.false_eq_true,
-                 ↓reduceIte, List.foldl_cons]
-      rw [foldl_add_shift' _ (xs.filter p) (0 + f x),
-          foldl_add_shift' _ (xs.filter (fun w => p w || q w)) (0 + f x)]
-      simp only [zero_add]
-      linarith [ih']
-    · -- p x = true, q x = true: contradicts disjointness
-      exact absurd ⟨hp, hq⟩ hx_disj
-
--- Invariant: sum over reps = sum over covered worlds
-private theorem rep_sum_inv (f : M → ℚ) (q : QUD M) (worlds : List M) (reps : List M)
-    (hnodup : reps.Nodup)
-    (hpw : ∀ r1 ∈ reps, ∀ r2 ∈ reps, q.sameAnswer r1 r2 = true → r1 = r2) :
-    reps.foldl (fun acc rep =>
-      acc + (worlds.filter (fun w => q.sameAnswer rep w)).foldl
-        (fun s w => s + f w) 0) 0 =
-    (worlds.filter (coveredByReps q reps)).foldl (fun s w => s + f w) 0 := by
-  induction reps with
-  | nil =>
-    -- No reps: LHS = 0, RHS = filter by (fun _ => false) = [] → 0
-    simp only [List.foldl_nil]
-    suffices worlds.filter (coveredByReps q []) = [] by rw [this]; rfl
-    exact List.filter_eq_nil_iff.mpr (fun _ _ => by simp [coveredByReps, List.any_nil])
-  | cons r rs ih =>
-    simp only [List.foldl_cons]
-    rw [foldl_add_shift' (fun rep =>
-      (worlds.filter (fun w => q.sameAnswer rep w)).foldl (fun s w => s + f w) 0)
-      rs _]
-    simp only [zero_add]
-    -- IH: rs sum = covered-by-rs sum
-    have hnodup_rs : rs.Nodup := (List.nodup_cons.mp hnodup).2
-    have hr_notin : r ∉ rs := (List.nodup_cons.mp hnodup).1
-    have hpw_rs : ∀ r1 ∈ rs, ∀ r2 ∈ rs, q.sameAnswer r1 r2 = true → r1 = r2 :=
-      fun r1 h1 r2 h2 => hpw r1 (.tail r h1) r2 (.tail r h2)
-    rw [ih hnodup_rs hpw_rs]
-    -- Goal: filter-by-r sum + filter-by-coveredByReps-rs sum = filter-by-coveredByReps-(r::rs) sum
-    -- coveredByReps q (r :: rs) w = q.sameAnswer r w || coveredByReps q rs w
-    have hcov_cons : ∀ w, coveredByReps q (r :: rs) w =
-        (q.sameAnswer r w || coveredByReps q rs w) := by
-      intro w; simp [coveredByReps, List.any_cons]
-    conv_rhs => rw [show worlds.filter (coveredByReps q (r :: rs)) =
-      worlds.filter (fun w => q.sameAnswer r w || coveredByReps q rs w)
-      from List.filter_congr (fun w _ => hcov_cons w)]
-    -- Apply disjoint_filter_foldl_add
-    exact disjoint_filter_foldl_add f (fun w => q.sameAnswer r w)
-      (coveredByReps q rs) worlds (fun w _ ⟨hr_w, hcov_w⟩ => by
-        -- r covers w, and some r' ∈ rs covers w → r = r' → r ∈ rs → contradiction
-        obtain ⟨r', hr'_mem, hr'_eq⟩ := List.any_eq_true.mp hcov_w
-        have : q.sameAnswer r r' = true :=
-          q.trans r w r' hr_w (by rw [q.symm]; exact hr'_eq)
-        have : r = r' := hpw r (.head rs) r' (.tail r hr'_mem) this
-        exact hr_notin (this ▸ hr'_mem))
-
--- Filter by a predicate that holds everywhere = identity
-private theorem filter_eq_self_of_forall {α : Type*} (p : α → Bool) (l : List α)
-    (h : ∀ x ∈ l, p x = true) : l.filter p = l := by
-  induction l with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [List.filter_cons, h x (.head xs), ite_true]
-    exact congrArg (x :: ·) (ih (fun y hy => h y (.tail x hy)))
-
--- Main decomposition: sum over toCells = flat sum over worlds
-private theorem toCells_sum_decomp (f : M → ℚ) (q : QUD M) (worlds : List M) :
-    (q.toCells worlds).foldl (fun acc cell =>
-      acc + (worlds.filter cell).foldl (fun s w => s + f w) 0) 0 =
-    worlds.foldl (fun s w => s + f w) 0 := by
-  -- toCells = reps.map (fun rep => fun w => q.sameAnswer rep w)
-  unfold toCells
-  set reps := worlds.foldl (stepFn q) []
-  -- Convert foldl over map to foldl over reps
-  rw [show (reps.map (fun rep w => q.sameAnswer rep w)).foldl
-      (fun acc cell => acc + (worlds.filter cell).foldl (fun s w => s + f w) 0) 0 =
-    reps.foldl (fun acc rep =>
-      acc + (worlds.filter (fun w => q.sameAnswer rep w)).foldl
-        (fun s w => s + f w) 0) 0
-    from by rw [List.foldl_map]]
-  -- Apply rep_sum_inv
-  have hempty : ∀ r1 ∈ ([] : List M), ∀ r2 ∈ ([] : List M),
-      q.sameAnswer r1 r2 = true → r1 = r2 :=
-    fun _ h1 => absurd h1 List.not_mem_nil
-  have hnodup : reps.Nodup := repFold_nodup q worlds [] List.nodup_nil hempty
-  have hpw : ∀ r1 ∈ reps, ∀ r2 ∈ reps,
-      q.sameAnswer r1 r2 = true → r1 = r2 :=
-    repFold_pairwiseInequiv q worlds [] hempty
-  rw [rep_sum_inv f q worlds reps hnodup hpw]
-  -- Now: (worlds.filter (coveredByReps q reps)).foldl ... = worlds.foldl ...
-  -- By exhaustivity, every w ∈ worlds is covered
-  exact congrArg (fun l => l.foldl (fun s w => s + f w) 0)
-    (filter_eq_self_of_forall (coveredByReps q reps) worlds (fun w hw => by
-      obtain ⟨r, hr_mem, hr_eq⟩ := repFold_covers q worlds [] w hw
-      exact List.any_eq_true.mpr ⟨r, hr_mem, hr_eq⟩))
-
-/-! #### Filter idempotence for cells -/
-
-private theorem filter_filter_self {α : Type*} (p : α → Bool) (l : List α) :
-    (l.filter p).filter p = l.filter p := by
-  induction l with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [List.filter_cons]
-    cases hp : p x
-    · exact ih
-    · simp only [List.filter_cons, hp, ite_true]; exact congrArg (x :: ·) ih
 
 open Core.DecisionTheory in
 /-- Law of total expectation for partition-relative EU (Merin 1999).
@@ -613,124 +426,328 @@ open Core.DecisionTheory in
 The unconditional expected utility equals the partition-relative EU for
 any partition, because partitions are exhaustive and mutually exclusive.
 
-**Proof sketch**: For each cell c with `cellProb = Σ_{w∈c} prior(w)`:
-- If `cellProb ≠ 0`: `cellProb * conditionalEU(c)` =
-  `cellProb * Σ_{w∈c} (prior(w)/cellProb) * util(w,a)` =
-  `Σ_{w∈c} prior(w) * util(w,a)`.
-- If `cellProb = 0`: non-negativity of priors forces each `prior(w) = 0`
-  for `w ∈ c`, so `Σ prior(w) * util(w,a) = 0 = cellProb * conditionalEU(c)`.
-
-Then `partitionEU = Σ_c Σ_{w∈c} prior(w)*util(w,a) = Σ_w prior(w)*util(w,a)
-= expectedUtility`, using exhaustivity and mutual exclusivity of `toCells`.
+Uses `Finset.sum_biUnion` with `Finpartition.biUnion_parts` for the
+decomposition — disjointness and exhaustivity come free from the
+`Finpartition` structure.
 
 **Non-negativity is necessary**: with `prior(w1) = 1, prior(w2) = -1`,
 `utility(w1,a) = 1, utility(w2,a) = 0`, and a trivial partition,
 `expectedUtility = 1` but `cellProb = 0` forces `partitionEU = 0`. -/
-theorem eu_eq_partitionEU {A : Type*} (dp : DecisionProblem M A)
-    (worlds : List M) (a : A) (q : QUD M)
+theorem eu_eq_partitionEU [Fintype M] [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (a : A) (q : QUD M)
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    expectedUtility dp worlds a = partitionEU dp q worlds a := by
-  unfold expectedUtility partitionEU
-  set cells := q.toCells worlds
-  -- Step 1: Replace cellProb * conditionalEU with raw weighted sums in the foldl
-  suffices h : cells.foldl (fun acc cell =>
-      let cellWorlds := worlds.filter cell
-      let cellProb := cellWorlds.foldl (fun s w => s + dp.prior w) 0
-      let cellEU := conditionalEU dp cellWorlds a cell
-      acc + cellProb * cellEU) 0 =
-    cells.foldl (fun acc cell =>
-      acc + (worlds.filter cell).foldl
-        (fun s w => s + dp.prior w * dp.utility w a) 0) 0 by
-    rw [h]; exact (toCells_sum_decomp (fun w => dp.prior w * dp.utility w a) q worlds).symm
-  -- Step 2: The two foldls agree because each cell step produces the same value
-  have hcell_eq : ∀ (cell : M → Bool),
-      (worlds.filter cell).foldl (fun s w => s + dp.prior w) 0 *
-        conditionalEU dp (worlds.filter cell) a cell =
-      (worlds.filter cell).foldl (fun s w => s + dp.prior w * dp.utility w a) 0 :=
-    fun cell => cellProb_mul_conditionalEU dp (worlds.filter cell) a cell
-      (filter_filter_self cell worlds) hprior
-  -- Prove foldl equality by induction on cells, generalizing the accumulator
-  suffices ∀ init : ℚ,
-      cells.foldl (fun acc cell =>
-        let cellWorlds := worlds.filter cell
-        let cellProb := cellWorlds.foldl (fun s w => s + dp.prior w) 0
-        let cellEU := conditionalEU dp cellWorlds a cell
-        acc + cellProb * cellEU) init =
-      cells.foldl (fun acc cell =>
-        acc + (worlds.filter cell).foldl
-          (fun s w => s + dp.prior w * dp.utility w a) 0) init from this 0
-  intro init; induction cells generalizing init with
-  | nil => rfl
-  | cons c cs ih =>
-    simp only [List.foldl_cons]; rw [hcell_eq c]; exact ih _
+    expectedUtility dp a = partitionEU dp q a := by
+  simp only [expectedUtility, partitionEU]
+  set P := q.toFinpartition
+  -- Decompose ∑ w : M via Finpartition
+  conv_lhs => rw [show (Finset.univ : Finset M) = P.parts.biUnion id from P.biUnion_parts.symm]
+  rw [Finset.sum_biUnion P.supIndep.pairwiseDisjoint]
+  congr 1; ext cell
+  exact (cellProb_mul_conditionalEU dp cell a hprior).symm
 
 open Core.DecisionTheory in
 /-- Partition-relative EU is partition-independent (given non-negative priors).
 
 Any two partitions give the same partition-relative EU, because both
-equal the unconditional EU (`eu_eq_partitionEU`). The coarsening
-hypothesis `_hcoarse` is logically vacuous — included only for API
-compatibility with callers that think of this as "coarsening preserves EU." -/
-theorem coarsening_preserves_eu {A : Type*}
-    (dp : DecisionProblem M A) (q q' : QUD M)
-    (worlds : List M) (a : A)
+equal the unconditional EU (`eu_eq_partitionEU`). -/
+theorem coarsening_preserves_eu [Fintype M] [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (q q' : QUD M) (a : A)
     (_hcoarse : q.coarsens q')
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    partitionEU dp q worlds a = partitionEU dp q' worlds a :=
-  (eu_eq_partitionEU dp worlds a q hprior).symm.trans
-    (eu_eq_partitionEU dp worlds a q' hprior)
+    partitionEU dp q a = partitionEU dp q' a :=
+  (eu_eq_partitionEU dp a q hprior).symm.trans
+    (eu_eq_partitionEU dp a q' hprior)
 
 /-! ### Blackwell Ordering (Blackwell 1953) -/
 
+section BlackwellHelpers
+
+variable {α : Type*}
+
+private lemma foldl_max_mono_init (f : α → ℚ) (xs : List α) {a b : ℚ} (hab : a ≤ b) :
+    xs.foldl (fun best x => max best (f x)) a ≤
+    xs.foldl (fun best x => max best (f x)) b := by
+  induction xs generalizing a b with
+  | nil => exact hab
+  | cons x xs ih => exact ih (max_le_max_right (f x) hab)
+
+private lemma foldl_max_ge_init (f : α → ℚ) (xs : List α) (init : ℚ) :
+    xs.foldl (fun best x => max best (f x)) init ≥ init := by
+  induction xs generalizing init with
+  | nil => simp [List.foldl]
+  | cons x xs ih =>
+    simp only [List.foldl_cons]
+    exact le_trans (le_max_left _ _) (ih _)
+
+private lemma foldl_max_nonneg (f : α → ℚ) (xs : List α) :
+    0 ≤ xs.foldl (fun best x => max best (f x)) 0 :=
+  foldl_max_ge_init f xs 0
+
+private lemma le_foldl_max (f : α → ℚ) (xs : List α) {x : α} (hx : x ∈ xs) :
+    f x ≤ xs.foldl (fun best a => max best (f a)) 0 := by
+  induction xs with
+  | nil => simp at hx
+  | cons y ys ih =>
+    simp only [List.foldl_cons]
+    cases List.mem_cons.mp hx with
+    | inl h => rw [h]; exact le_trans (le_max_right _ _) (foldl_max_ge_init _ _ _)
+    | inr hys => exact le_trans (ih hys) (foldl_max_mono_init _ _ (le_max_left _ _))
+
+private lemma foldl_max_le_of_bound (f : α → ℚ) (xs : List α) {init B : ℚ}
+    (hinit : init ≤ B) (hf : ∀ a ∈ xs, f a ≤ B) :
+    xs.foldl (fun best a => max best (f a)) init ≤ B := by
+  induction xs generalizing init with
+  | nil => exact hinit
+  | cons x xs ih =>
+    simp only [List.foldl_cons]
+    have hx : x ∈ x :: xs := by simp
+    have hrest : ∀ a ∈ xs, a ∈ x :: xs := fun a ha => by simp [ha]
+    apply ih (max_le hinit (hf x hx))
+    intro a ha; exact hf a (hrest a ha)
+
+/-- Max of (f + g) ≤ max of f + max of g (sub-additivity of foldl-max). -/
+private lemma foldl_max_add_le (f g : α → ℚ) (actions : List α) :
+    actions.foldl (fun best a => max best (f a + g a)) 0 ≤
+    actions.foldl (fun best a => max best (f a)) 0 +
+    actions.foldl (fun best a => max best (g a)) 0 := by
+  apply foldl_max_le_of_bound
+  · linarith [foldl_max_nonneg f actions, foldl_max_nonneg g actions]
+  · intro a ha
+    linarith [le_foldl_max f actions ha, le_foldl_max g actions ha]
+
+end BlackwellHelpers
+
+/-! #### Finset-based partition cells -/
+
+/-- Partition cells of worlds under QUD q, as a Finset of Finsets.
+Each cell is the set of elements in worlds that are q-equivalent to some w. -/
+def toCellsFinset [DecidableEq M] (q : QUD M) (worlds : Finset M) : Finset (Finset M) :=
+  worlds.image (fun w => worlds.filter (fun v => q.sameAnswer w v))
+
+/-- Every world belongs to some cell in `toCellsFinset`. -/
+private lemma toCellsFinset_covers [DecidableEq M] (q : QUD M) (worlds : Finset M) :
+    (q.toCellsFinset worlds).biUnion id = worlds := by
+  ext w; simp only [Finset.mem_biUnion, id, toCellsFinset, Finset.mem_image]
+  constructor
+  · rintro ⟨cell, ⟨v, hv, rfl⟩, hw⟩; exact (Finset.mem_filter.mp hw).1
+  · intro hw
+    exact ⟨worlds.filter (fun v => q.sameAnswer w v),
+           ⟨w, hw, rfl⟩, Finset.mem_filter.mpr ⟨hw, q.refl w⟩⟩
+
+/-- Cells from `toCellsFinset` are pairwise disjoint. -/
+private lemma toCellsFinset_pairwiseDisjoint [DecidableEq M]
+    (q : QUD M) (worlds : Finset M) :
+    (q.toCellsFinset worlds : Set (Finset M)).PairwiseDisjoint id := by
+  intro c₁ hc₁ c₂ hc₂ hne
+  simp only [Function.onFun, id]
+  rw [Finset.disjoint_left]
+  intro v hv₁ hv₂
+  exfalso; apply hne
+  simp only [Finset.mem_coe, toCellsFinset, Finset.mem_image] at hc₁ hc₂
+  obtain ⟨w₁, _, rfl⟩ := hc₁; obtain ⟨w₂, _, rfl⟩ := hc₂
+  simp only [Finset.mem_filter] at hv₁ hv₂
+  have h12 : q.sameAnswer w₁ w₂ = true :=
+    q.trans w₁ v w₂ hv₁.2 (by rw [q.symm]; exact hv₂.2)
+  ext u; simp only [Finset.mem_filter]
+  exact ⟨fun ⟨hu, h1u⟩ => ⟨hu, q.trans w₂ w₁ u (by rw [q.symm]; exact h12) h1u⟩,
+         fun ⟨hu, h2u⟩ => ⟨hu, q.trans w₁ w₂ u h12 h2u⟩⟩
+
+/-- Under refinement, each fine cell is a subset of some coarse cell. -/
+private lemma fine_cell_sub_coarse_finset [DecidableEq M]
+    (q q' : QUD M) (worlds : Finset M) (hrefines : q ⊑ q')
+    (c : Finset M) (hc : c ∈ q.toCellsFinset worlds) :
+    ∃ c' ∈ q'.toCellsFinset worlds, c ⊆ c' := by
+  simp only [toCellsFinset, Finset.mem_image] at hc
+  obtain ⟨w, hw, rfl⟩ := hc
+  refine ⟨worlds.filter (fun v => q'.sameAnswer w v),
+         Finset.mem_image.mpr ⟨w, hw, rfl⟩, ?_⟩
+  intro v hv; simp only [Finset.mem_filter] at hv ⊢
+  exact ⟨hv.1, hrefines w v hv.2⟩
+
+/-- A coarse cell equals the union of fine cells within it. -/
+private lemma coarse_eq_biUnion_fine [DecidableEq M]
+    (q q' : QUD M) (worlds : Finset M) (hrefines : q ⊑ q')
+    (c' : Finset M) (hc' : c' ∈ q'.toCellsFinset worlds) :
+    c' = ((q.toCellsFinset worlds).filter (· ⊆ c')).biUnion id := by
+  simp only [toCellsFinset, Finset.mem_image] at hc'
+  obtain ⟨w', hw', rfl⟩ := hc'
+  ext v
+  constructor
+  · intro hv
+    simp only [Finset.mem_filter] at hv
+    rw [Finset.mem_biUnion]
+    refine ⟨worlds.filter (fun u => q.sameAnswer v u), ?_, ?_⟩
+    · rw [Finset.mem_filter]
+      constructor
+      · exact Finset.mem_image.mpr ⟨v, hv.1, rfl⟩
+      · intro u hu
+        simp only [Finset.mem_filter] at hu ⊢
+        exact ⟨hu.1, q'.trans w' v u hv.2 (hrefines v u hu.2)⟩
+    · simp only [id]; exact Finset.mem_filter.mpr ⟨hv.1, q.refl v⟩
+  · intro hv
+    rw [Finset.mem_biUnion] at hv
+    obtain ⟨cell, hcell, hv_in⟩ := hv
+    simp only [id] at hv_in
+    exact (Finset.mem_filter.mp hcell).2 hv_in
+
+/-- Fine cells within a coarse cell are pairwise disjoint (inherited from the
+fine partition being pairwise disjoint). -/
+private lemma fine_cells_in_coarse_pairwiseDisjoint [DecidableEq M]
+    (q : QUD M) (worlds : Finset M) (c' : Finset M) :
+    (((q.toCellsFinset worlds).filter (· ⊆ c')) : Set (Finset M)).PairwiseDisjoint id := by
+  intro a ha b hb hab
+  exact toCellsFinset_pairwiseDisjoint q worlds
+    (Finset.mem_of_mem_filter a ha) (Finset.mem_of_mem_filter b hb) hab
+
+/-! #### Finset-based partition value -/
+
 open Core.DecisionTheory in
-/-- The value of a decision problem under partition Q: the maximum expected
-utility achievable when the decision-maker learns which Q-cell obtains. -/
-def partitionValue {A : Type*} (dp : DecisionProblem M A)
-    (q : QUD M) (worlds : List M) (actions : List A) : ℚ :=
-  let cells := q.toCells worlds
-  cells.foldl (fun acc cell =>
-    let cellWorlds := worlds.filter cell
-    let cellProb := cellWorlds.foldl (fun s w => s + dp.prior w) 0
-    let bestEU := actions.foldl (fun best a =>
-      max best (conditionalEU dp cellWorlds a cell)) 0
-    acc + cellProb * bestEU
-  ) 0
+/-- The value of a decision problem under partition Q over a Finset of worlds.
+
+V_Q(D, W) = Σ_{c ∈ cells(Q,W)} max_a [Σ_{w∈c} p(w)·u(w,a)]
+
+Following Merin (1999, p. 264), this uses raw weighted sums directly
+rather than factoring through conditional EU. The equivalence
+`P(c) · max_a condEU(a,c) = max_a [Σ_{w∈c} p(w)·u(w,a)]` holds when
+priors are non-negative. The raw form makes Blackwell's theorem a
+direct application of sub-additivity. -/
+def partitionValue [DecidableEq M] {A : Type*} (dp : DecisionProblem M A)
+    (q : QUD M) (worlds : Finset M) (actions : List A) : ℚ :=
+  (q.toCellsFinset worlds).sum (fun cell =>
+    actions.foldl (fun best a => max best
+      (cell.sum (fun w => dp.prior w * dp.utility w a))) 0)
+
+/-! #### Sub-additivity of max -/
+
+/-- foldl-max with pointwise-equal inner functions gives equal results. -/
+private lemma foldl_max_congr {α : Type*} (g₁ g₂ : α → ℚ) (actions : List α)
+    (h : ∀ a, g₁ a = g₂ a) :
+    actions.foldl (fun best a => max best (g₁ a)) 0 =
+    actions.foldl (fun best a => max best (g₂ a)) 0 :=
+  congrArg (fun g => List.foldl (fun best a => max best (g a)) (0 : ℚ) actions) (funext h)
+
+/-- Sub-additivity of foldl-max over Finset.sum:
+max_a (S.sum (fun c => f c a)) ≤ S.sum (fun c => max_a (f c a)) -/
+private lemma foldl_max_finset_sum_le {α β : Type*} [DecidableEq β]
+    (f : β → α → ℚ) (S : Finset β) (actions : List α) :
+    actions.foldl (fun best a => max best (S.sum (fun c => f c a))) 0 ≤
+    S.sum (fun c => actions.foldl (fun best a => max best (f c a)) 0) := by
+  induction S using Finset.induction_on with
+  | empty =>
+    simp only [Finset.sum_empty]
+    have : ∀ (l : List α), l.foldl (fun best (_ : α) => max best (0 : ℚ)) 0 = 0 := by
+      intro l; induction l with
+      | nil => rfl
+      | cons _ _ ih => simp only [List.foldl_cons, max_self]; exact ih
+    linarith [this actions]
+  | @insert b T hb ih =>
+    simp only [Finset.sum_insert hb]
+    calc actions.foldl (fun best a => max best (f b a + T.sum (fun c => f c a))) 0
+        ≤ actions.foldl (fun best a => max best (f b a)) 0 +
+          actions.foldl (fun best a => max best (T.sum (fun c => f c a))) 0 :=
+            foldl_max_add_le (fun a => f b a) (fun a => T.sum (fun c => f c a)) actions
+      _ ≤ actions.foldl (fun best a => max best (f b a)) 0 +
+          T.sum (fun c => actions.foldl (fun best a => max best (f c a)) 0) := by linarith [ih]
+
+/-! #### Blackwell refinement theorem -/
+
+set_option maxHeartbeats 800000 in
+/-- Per-cell step: a coarse cell's raw value ≤ sum of its fine cells' raw values.
+Extracted as standalone lemma to keep elaboration context simple. -/
+private lemma coarse_cell_le_fine_sum [DecidableEq M] {A : Type*}
+    (dp : Core.DecisionTheory.DecisionProblem M A)
+    (q : QUD M) (worlds : Finset M) (actions : List A)
+    (c' : Finset M) (hdecomp : c' = ((q.toCellsFinset worlds).filter (· ⊆ c')).biUnion id)
+    (hdisj : ((q.toCellsFinset worlds).filter (· ⊆ c') : Set (Finset M)).PairwiseDisjoint id) :
+    actions.foldl (fun best a => max best
+      (c'.sum (fun w => dp.prior w * dp.utility w a))) 0 ≤
+    ((q.toCellsFinset worlds).filter (· ⊆ c')).sum (fun cell =>
+      actions.foldl (fun best a => max best
+        (cell.sum (fun w => dp.prior w * dp.utility w a))) 0) := by
+  set S := (q.toCellsFinset worlds).filter (· ⊆ c') with hS
+  -- Decompose c'.sum (p·u) into Σ_{c⊆c'} c.sum (p·u)
+  have hds : ∀ a, c'.sum (fun w => dp.prior w * dp.utility w a) =
+      S.sum (fun c => c.sum (fun w => dp.prior w * dp.utility w a)) := by
+    intro a; rw [hdecomp]
+    have h := Finset.sum_biUnion
+      (f := fun (w : M) => dp.prior w * dp.utility w a) hdisj
+    simp only [id] at h; exact h
+  -- foldl-max with equal inner ≤ sub-additive decomposition
+  have h1 := foldl_max_congr _ _ actions hds
+  have h2 := foldl_max_finset_sum_le
+    (fun c a => c.sum (fun w => dp.prior w * dp.utility w a)) S actions
+  linarith
 
 open Core.DecisionTheory in
 /-- Blackwell's theorem for partitions: finer partitions are always at least
-as valuable as coarser ones, for any decision problem with non-negative priors.
+as valuable as coarser ones, for any decision problem.
 
 V_Q(D) ≥ V_{Q'}(D) for all decision problems D, whenever Q ⊑ Q'.
 
-**Proof sketch** (Jensen's inequality for partitions): Each coarse cell c'
-is a union of fine cells c₁,...,cₖ. The fine partition chooses the best
-action within each cᵢ: `Σᵢ P(cᵢ) · max_a EU(a|cᵢ)`. The coarse partition
-chooses one action for all of c': `P(c') · max_a EU(a|c')`. Since
-`max_a EU(a|c') = max_a Σᵢ (P(cᵢ)/P(c')) · EU(a|cᵢ) ≤ Σᵢ (P(cᵢ)/P(c')) · max_a EU(a|cᵢ)`,
-multiplying by `P(c')` gives the result.
+**Proof** (Merin 1999, p. 264): Working directly with raw weighted sums
+`Σ_{w∈c} p(w)·u(w,a)`:
 
-Non-negativity is needed because negative `P(cᵢ)` would flip the inequality. -/
-theorem blackwell_refinement_value {A : Type*}
+1. Each coarse cell's sum decomposes into fine cells (`Finset.sum_biUnion`)
+2. Sub-additivity of max: `max_a(Σᵢ fᵢ(a)) ≤ Σᵢ max_a(fᵢ(a))`
+3. Regrouping: fine cells grouped by coarse cell = all fine cells -/
+theorem blackwell_refinement_value [DecidableEq M] {A : Type*}
     (dp : DecisionProblem M A) (q q' : QUD M)
-    (worlds : List M) (actions : List A)
+    (worlds : Finset M) (actions : List A)
     (hrefines : q ⊑ q')
-    (hprior : ∀ w, dp.prior w ≥ 0) :
+    (_hprior : ∀ w, dp.prior w ≥ 0) :
     partitionValue dp q worlds actions ≥ partitionValue dp q' worlds actions := by
-  sorry -- TODO: decompose coarse cells into fine cells, apply Jensen
+  -- Define per-cell value to ensure consistent terms
+  let V : Finset M → ℚ := fun cell =>
+    actions.foldl (fun best a => max best
+      (cell.sum (fun w => dp.prior w * dp.utility w a))) 0
+  -- partitionValue = (cells).sum V by definition
+  change (q.toCellsFinset worlds).sum V ≥ (q'.toCellsFinset worlds).sum V
+  -- Step 1: Each coarse cell's value ≤ sum of its fine cells' values
+  have hstep : (q'.toCellsFinset worlds).sum V ≤
+    (q'.toCellsFinset worlds).sum (fun c' =>
+      ((q.toCellsFinset worlds).filter (· ⊆ c')).sum V) :=
+    Finset.sum_le_sum (fun c' hc' =>
+      coarse_cell_le_fine_sum dp q worlds actions c'
+        (coarse_eq_biUnion_fine q q' worlds hrefines c' hc')
+        (fine_cells_in_coarse_pairwiseDisjoint q worlds c'))
+  -- Step 2: Regroup — Σ_{c'} Σ_{c⊆c'} V(c) = Σ_c V(c)
+  have hregroup : (q'.toCellsFinset worlds).sum (fun c' =>
+      ((q.toCellsFinset worlds).filter (· ⊆ c')).sum V) =
+    (q.toCellsFinset worlds).sum V := by
+    rw [← Finset.sum_biUnion (f := V)]
+    · congr 1
+      ext c; simp only [Finset.mem_biUnion, Finset.mem_filter]
+      exact ⟨fun ⟨_, _, hc, _⟩ => hc, fun hc =>
+        let ⟨c', hc', hsub⟩ := fine_cell_sub_coarse_finset q q' worlds hrefines c hc
+        ⟨c', hc', hc, hsub⟩⟩
+    · -- Fiber sets are pairwise disjoint (a fine cell can't be in two coarse groups)
+      intro c'₁ hc'₁ c'₂ hc'₂ hne
+      simp only [Function.onFun]
+      rw [Finset.disjoint_left]
+      intro c hc₁ hc₂
+      simp only [Finset.mem_filter] at hc₁ hc₂
+      have ⟨v, hv⟩ : c.Nonempty := by
+        simp only [toCellsFinset, Finset.mem_image] at hc₁
+        obtain ⟨w, hw, rfl⟩ := hc₁.1
+        exact ⟨w, Finset.mem_filter.mpr ⟨hw, q.refl w⟩⟩
+      exfalso; apply hne; by_contra hne'
+      exact Finset.disjoint_left.mp
+        (toCellsFinset_pairwiseDisjoint q' worlds hc'₁ hc'₂ hne')
+        (hc₁.2 hv) (hc₂.2 hv)
+  linarith [hregroup]
+
+/-! #### Blackwell characterization -/
 
 set_option maxHeartbeats 1600000 in
 open Core.DecisionTheory in
 /-- Helper: when q merges w,v but q' separates them, a witness DP achieves
 strictly higher value under q' than q.
 
-The DP uses uniform prior (1/2 each) with utility that rewards matching
-action to world: `utility(m, true) = 1` if m is in w's cell, 0 otherwise;
-`utility(m, false) = 1` if m is in v's cell, 0 otherwise.
-
-Under q (merged): best action gets EU = 1/2, so `partitionValue q = 1/2`.
-Under q' (separated): each cell's best action gets EU = 1, so
-`partitionValue q' = 1/2 · 1 + 1/2 · 1 = 1`. -/
-private theorem witness_dp_beats_merged (q q' : QUD M) (w v : M)
+The DP has uniform prior (1/2 each) with utility rewarding correct identification.
+Under q (merged cell {w,v}): best raw sum = max(1/2, 1/2) = 1/2.
+Under q' (separate cells {w}, {v}): each cell's best raw sum = 1/2, total = 1. -/
+private theorem witness_dp_beats_merged [DecidableEq M]
+    (q q' : QUD M) (w v : M)
     (hwv_q : q.sameAnswer w v = true)
     (hwv_q'f : q'.sameAnswer w v = false)
     (hvw_q'f : q'.sameAnswer v w = false) :
@@ -739,21 +756,41 @@ private theorem witness_dp_beats_merged (q q' : QUD M) (w v : M)
             if a then (if q'.sameAnswer w m then 1 else 0)
             else (if q'.sameAnswer v m then 1 else 0)
           prior := fun _ => (1 : ℚ) / 2 }
-        q [w, v] [true, false] ≥
+        q {w, v} [true, false] ≥
        partitionValue
         { utility := fun m a =>
             if a then (if q'.sameAnswer w m then 1 else 0)
             else (if q'.sameAnswer v m then 1 else 0)
           prior := fun _ => (1 : ℚ) / 2 }
-        q' [w, v] [true, false]) := by
-  simp only [partitionValue, toCells, conditionalEU,
-             List.foldl_cons, List.foldl_nil,
-             List.any_nil, List.any_cons, Bool.or_false, Bool.false_eq_true,
-             List.map_cons, List.map_nil,
-             List.filter_cons, List.filter_nil,
-             q.refl, q'.refl, hwv_q, hwv_q'f, hvw_q'f,
-             ite_true, ite_false, Bool.false_eq_true]
-  native_decide
+        q' {w, v} [true, false]) := by
+  have hwv : w ≠ v := by intro h; rw [h] at hwv_q'f; exact absurd (q'.refl v) (by simp [hwv_q'f])
+  have hvw_q : q.sameAnswer v w = true := by rw [q.symm]; exact hwv_q
+  -- The proof proceeds by unfolding to concrete rational arithmetic.
+  -- Under q: one merged cell {w,v}, best raw sum = max(1/2, 1/2) = 1/2
+  -- Under q': two cells {w},{v}, total = 1/2 + 1/2 = 1
+  -- So ¬(1/2 ≥ 1).
+  -- Step 1: Compute q-cells — both w,v map to {w,v}, so image = {{w,v}}
+  have hcells_q : q.toCellsFinset {w, v} = {{w, v}} := by
+    simp only [toCellsFinset, Finset.image_insert, Finset.image_singleton,
+               Finset.filter_insert, Finset.filter_singleton,
+               q.refl, hwv_q, hvw_q, ite_true,
+               Finset.insert_eq_of_mem (Finset.mem_singleton.mpr rfl)]
+  -- Step 2: Compute q'-cells — w maps to {w}, v maps to {v}
+  have hsingleton_ne : ({w} : Finset M) ≠ {v} := by
+    intro h; have := Finset.mem_singleton.mp (h ▸ Finset.mem_singleton.mpr rfl : w ∈ ({v} : Finset M))
+    exact hwv this
+  have hcells_q' : q'.toCellsFinset {w, v} = {{w}, {v}} := by
+    have hie : insert w (∅ : Finset M) = {w} := by ext x; simp
+    simp only [toCellsFinset, Finset.image_insert, Finset.image_singleton,
+               Finset.filter_insert, Finset.filter_singleton,
+               q'.refl, hwv_q'f, hvw_q'f, ite_true, ite_false, Bool.false_eq_true, hie]
+  have hnotmem : ({w} : Finset M) ∉ ({{v}} : Finset (Finset M)) :=
+    fun h => hsingleton_ne (Finset.mem_singleton.mp h)
+  -- Step 3: Compute the partition values
+  simp only [partitionValue, hcells_q, hcells_q', Finset.sum_singleton,
+             Finset.sum_insert hnotmem, Finset.sum_pair hwv,
+             q'.refl, hwv_q'f, hvw_q'f, ite_true]
+  norm_num
 
 set_option maxHeartbeats 1600000 in
 open Core.DecisionTheory in
@@ -766,18 +803,11 @@ partition refinement IS Blackwell ordering.
 
 **Proof** (contrapositive): Suppose `q` does not refine `q'`, i.e.,
 ∃ w v with `q.sameAnswer w v = true` but `q'.sameAnswer w v = false`.
-Construct a DP over `worlds = [w, v]` with two actions where distinguishing
-w from v matters: `utility(w, a₁) = 1, utility(w, a₂) = 0, utility(v, a₁) = 0,
-utility(v, a₂) = 1`, uniform prior `1/2`. Then q' can condition on {w} vs {v}
-and achieve value 1, while q cannot distinguish them and achieves value 1/2.
-So q' beats q on this DP, contradicting the hypothesis.
-
-**Note**: The hypothesis quantifies over *all* world lists (not a fixed one),
-which is necessary since the witness uses `worlds = [w, v]` for the specific
-w, v witnessing non-refinement. -/
-theorem blackwell_characterizes_refinement
+Construct a DP over `worlds = {w, v}` with two actions where distinguishing
+w from v matters. Then q' achieves value 1 while q achieves 1/2. -/
+theorem blackwell_characterizes_refinement [DecidableEq M]
     (q q' : QUD M)
-    (h : ∀ (worlds : List M) (A : Type) (dp : DecisionProblem M A) (actions : List A),
+    (h : ∀ (worlds : Finset M) (A : Type) (dp : DecisionProblem M A) (actions : List A),
       (∀ w, dp.prior w ≥ 0) →
       partitionValue dp q worlds actions ≥ partitionValue dp q' worlds actions) :
     q ⊑ q' := by
@@ -790,12 +820,255 @@ theorem blackwell_characterizes_refinement
   have hvw_q'f : q'.sameAnswer v w = false := by
     rw [q'.symm]; exact hwv_q'f
   exact witness_dp_beats_merged q q' w v hwv_q hwv_q'f hvw_q'f
-    (h [w, v] Bool
+    (h {w, v} Bool
       { utility := fun m a =>
           if a then (if q'.sameAnswer w m then 1 else 0)
           else (if q'.sameAnswer v m then 1 else 0)
         prior := fun _ => (1 : ℚ) / 2 }
       [true, false]
-      (by intro _; show (0 : ℚ) ≤ 1 / 2; native_decide))
+      (by intro _; norm_num))
+
+/-! #### Question Utility Bridge
+
+Connect list-based `questionUtility` (from `Core.DecisionTheory`) to
+Finset-based `partitionValue`. The algebraic identity:
+
+  questionUtility dp actions (q.toCells worlds)
+    = partitionValue dp q Finset.univ actions
+    - dpValue dp actions * (Finset.univ : Finset M).sum dp.prior
+
+under non-negative priors. Since `dpValue * totalPrior` is
+partition-independent, the Blackwell ordering on `partitionValue`
+transfers directly to `questionUtility`. -/
+
+section QuestionUtilityBridge
+
+variable {M : Type*}
+
+/-! ##### Arithmetic helpers -/
+
+/-- Scaling foldl-max by a non-negative constant. -/
+private lemma mul_foldl_max_eq {α : Type*} (c : ℚ) (hc : 0 ≤ c)
+    (f : α → ℚ) (xs : List α) (init : ℚ) :
+    c * xs.foldl (fun best a => max best (f a)) init =
+    xs.foldl (fun best a => max best (c * f a)) (c * init) := by
+  induction xs generalizing init with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.foldl_cons]
+    rw [ih (max init (f x)), mul_max_of_nonneg init (f x) hc]
+
+/-- foldl of addition can be shifted: init + Σ = foldl from init. -/
+private lemma foldl_add_shift {α : Type*} (f : α → ℚ) (init : ℚ) (xs : List α) :
+    xs.foldl (fun acc x => acc + f x) init = init + xs.foldl (fun acc x => acc + f x) 0 := by
+  induction xs generalizing init with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.foldl_cons]
+    rw [ih (init + f x), ih (0 + f x)]
+    ring
+
+/-- foldl of addition on a NoDup list = Finset.sum on its toFinset. -/
+private lemma foldl_add_eq_toFinset_sum [DecidableEq M]
+    (xs : List M) (f : M → ℚ) (hnd : xs.Nodup) :
+    xs.foldl (fun acc x => acc + f x) 0 = xs.toFinset.sum f := by
+  induction xs with
+  | nil => simp
+  | cons x xs ih =>
+    have hx := (List.nodup_cons.mp hnd).1
+    have hxs := (List.nodup_cons.mp hnd).2
+    simp only [List.foldl_cons, List.toFinset_cons, zero_add]
+    rw [foldl_add_shift f (f x) xs, ih hxs,
+        Finset.sum_insert (mt List.mem_toFinset.mp hx)]
+
+/-! ##### Cell correspondence -/
+
+/-- Map a representative to its equivalence class as a Finset. -/
+private def cellOfRep [Fintype M] [DecidableEq M] (q : QUD M) (rep : M) : Finset M :=
+  Finset.univ.filter (fun w => q.sameAnswer rep w)
+
+/-- cellOfRep maps representatives into toCellsFinset. -/
+private lemma cellOfRep_mem_toCellsFinset [Fintype M] [DecidableEq M]
+    (q : QUD M) (rep : M) :
+    cellOfRep q rep ∈ q.toCellsFinset Finset.univ := by
+  simp only [cellOfRep, toCellsFinset]
+  exact Finset.mem_image.mpr ⟨rep, Finset.mem_univ _, rfl⟩
+
+/-- cellOfRep is injective on pairwise-inequivalent representatives. -/
+private lemma cellOfRep_injOn [Fintype M] [DecidableEq M]
+    (q : QUD M) (reps : List M)
+    (hpw : ∀ r1 ∈ reps, ∀ r2 ∈ reps, q.sameAnswer r1 r2 = true → r1 = r2) :
+    (reps.toFinset : Set M).InjOn (cellOfRep q) := by
+  intro r1 hr1 r2 hr2 heq
+  have hr1' := List.mem_toFinset.mp hr1
+  have hr2' := List.mem_toFinset.mp hr2
+  simp only [cellOfRep] at heq
+  have : q.sameAnswer r1 r2 = true := by
+    have h := Finset.ext_iff.mp heq r2
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at h
+    exact h.mpr (q.refl r2)
+  exact hpw r1 hr1' r2 hr2' this
+
+/-- cellOfRep on representatives surjects onto toCellsFinset. -/
+private lemma cellOfRep_surjOn [Fintype M] [DecidableEq M]
+    (q : QUD M) (elements : List M) (hcov : elements = Finset.univ.val.toList) :
+    Set.SurjOn (cellOfRep q)
+      ((elements.foldl (stepFn q) []).toFinset : Set M)
+      (q.toCellsFinset Finset.univ : Set (Finset M)) := by
+  intro cell hcell
+  rw [Finset.mem_coe] at hcell
+  obtain ⟨w, _, rfl⟩ := Finset.mem_image.mp hcell
+  have hw : w ∈ elements := by
+    rw [hcov]; exact Multiset.mem_toList.mpr (Finset.mem_univ w)
+  obtain ⟨rep, hrep, hsa⟩ := repFold_covers q elements [] w hw
+  refine ⟨rep, List.mem_toFinset.mpr hrep, ?_⟩
+  simp only [cellOfRep]
+  ext u; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  constructor
+  · intro h; exact q.trans w rep u (by rw [q.symm]; exact hsa) h
+  · intro h; exact q.trans rep w u hsa h
+
+/-! ##### Per-cell equivalence -/
+
+open Core.DecisionTheory in
+/-- P(c) × valueAfterLearning(c) = the per-cell term in `partitionValue`. -/
+private theorem cellProb_mul_valueAfterLearning [DecidableEq M] {A : Type*} [DecidableEq A]
+    (dp : DecisionProblem M A) (cell : Finset M) (actions : List A)
+    (hprior : ∀ w, dp.prior w ≥ 0) :
+    cellProbability dp cell * valueAfterLearning dp actions cell =
+    actions.foldl (fun best a => max best
+      (cell.sum (fun w => dp.prior w * dp.utility w a))) 0 := by
+  unfold cellProbability valueAfterLearning
+  rw [mul_foldl_max_eq (cell.sum dp.prior)
+    (Finset.sum_nonneg (fun w _ => hprior w))
+    (fun a => conditionalEU dp cell a) actions 0, mul_zero]
+  have heq : ∀ a, cell.sum dp.prior * conditionalEU dp cell a =
+      cell.sum (fun w => dp.prior w * dp.utility w a) :=
+    fun a => cellProb_mul_conditionalEU dp cell a hprior
+  simp_rw [heq]
+
+/-! ##### Question utility as Finset sum
+
+The key conversion: `questionUtility` over `toCells` equals a `Finset.sum`
+over `toCellsFinset`. This bridges the List-based question semantics API
+to the Finset-based partition machinery. -/
+
+open Core.DecisionTheory in
+/-- `questionUtility` over `toCells` equals the corresponding `Finset.sum`
+over `toCellsFinset`.
+
+The proof uses the `cellOfRep` bijection between representatives
+(computed by `toCells`) and cells in `toCellsFinset`:
+1. Unfold `toCells` as `reps.map (fun rep => fun w => sameAnswer rep w)`
+2. Use `List.foldl_map` to pull the map into the accumulator
+3. Convert `NoDup`-list foldl to `Finset.sum` on `reps.toFinset`
+4. Reindex via `Finset.sum_nbij` using the `cellOfRep` bijection -/
+private theorem questionUtility_eq_finsetSum [Fintype M] [DecidableEq M]
+    {A : Type*} [DecidableEq A]
+    (dp : DecisionProblem M A) (q : QUD M) (actions : List A) :
+    questionUtility dp actions (q.toCells (Finset.univ.val.toList)) =
+    (q.toCellsFinset (Finset.univ : Finset M)).sum (fun cell =>
+      cellProbability dp cell * utilityValue dp actions cell) := by
+  -- Abbreviations
+  set elements := (Finset.univ : Finset M).val.toList with helements
+  set reps := elements.foldl (stepFn q) [] with hreps_def
+  set g : Finset M → ℚ := fun cell =>
+    cellProbability dp cell * utilityValue dp actions cell with hg_def
+
+  -- Step 1: unfold questionUtility and toCells
+  unfold questionUtility
+  show (reps.map (fun rep => fun w => q.sameAnswer rep w)).foldl
+    (fun acc cell =>
+      let cellSet := Finset.univ.filter (fun w => cell w = true)
+      acc + cellProbability dp cellSet * utilityValue dp actions cellSet) 0 =
+    (q.toCellsFinset Finset.univ).sum g
+
+  -- Step 2: use List.foldl_map to pull the map into the accumulator
+  rw [List.foldl_map]
+  -- Goal: reps.foldl (fun acc rep => ... (fun w => q.sameAnswer rep w) ...) 0 = ...
+
+  -- Step 3: simplify — for Bool b, (b = true) is the same as the Bool coercion
+  -- so Finset.univ.filter (fun w => q.sameAnswer rep w = true) = cellOfRep q rep
+  have hcell_eq : ∀ rep : M,
+      (fun cell =>
+        let cellSet := Finset.univ.filter (fun w => cell w = true)
+        cellProbability dp cellSet * utilityValue dp actions cellSet)
+        (fun w => q.sameAnswer rep w) = g (cellOfRep q rep) := by
+    intro rep; simp only [cellOfRep]; rfl
+  simp_rw [hcell_eq]
+
+  -- Step 4: convert NoDup-list foldl to Finset.sum
+  have hnd : reps.Nodup :=
+    repFold_nodup q elements [] List.nodup_nil
+      (fun _ h => nomatch h)
+  rw [foldl_add_eq_toFinset_sum reps (fun rep => g (cellOfRep q rep)) hnd]
+
+  -- Step 5: reindex via cellOfRep bijection
+  have hpw : ∀ r1 ∈ reps, ∀ r2 ∈ reps, q.sameAnswer r1 r2 = true → r1 = r2 :=
+    repFold_pairwiseInequiv q elements []
+      (fun _ h => nomatch h)
+  exact Finset.sum_nbij (cellOfRep q)
+    (fun rep _ => cellOfRep_mem_toCellsFinset q rep)
+    (cellOfRep_injOn q reps hpw)
+    (cellOfRep_surjOn q elements helements)
+    (fun _ _ => rfl)
+
+/-! ##### Cells partition Finset.univ -/
+
+/-- The sum of cell probabilities equals total prior (cells partition the universe). -/
+private theorem toCells_totalProb [Fintype M] [DecidableEq M] {A : Type*}
+    (dp : Core.DecisionTheory.DecisionProblem M A) (q : QUD M) :
+    (q.toCellsFinset (Finset.univ : Finset M)).sum
+      (fun cell => Core.DecisionTheory.cellProbability dp cell) =
+    (Finset.univ : Finset M).sum dp.prior := by
+  simp only [Core.DecisionTheory.cellProbability]
+  conv_rhs => rw [← toCellsFinset_covers q (Finset.univ : Finset M)]
+  exact (Finset.sum_biUnion (f := dp.prior)
+    (toCellsFinset_pairwiseDisjoint q (Finset.univ : Finset M))).symm
+
+/-! ##### Main bridge theorem -/
+
+open Core.DecisionTheory in
+/-- Blackwell ordering on `questionUtility` for QUD-derived questions.
+
+Refinement implies higher question utility (with non-negative priors).
+This is the key bridge theorem: it connects the proved
+`blackwell_refinement_value` (for `partitionValue`) to the list-based
+`questionUtility` used in question semantics.
+
+**Proof**: `questionUtility = partitionValue - dpValue × totalPrior`.
+Since `dpValue` and `totalPrior` are partition-independent, the ordering
+on `partitionValue` (from `blackwell_refinement_value`) transfers. -/
+theorem questionUtility_refinement_ge [Fintype M] [DecidableEq M]
+    {A : Type*} [DecidableEq A]
+    (dp : DecisionProblem M A) (q q' : QUD M) (actions : List A)
+    (hRefines : q ⊑ q') (hprior : ∀ w, dp.prior w ≥ 0) :
+    questionUtility dp actions (q.toCells (Finset.univ.val.toList)) ≥
+    questionUtility dp actions (q'.toCells (Finset.univ.val.toList)) := by
+  -- Convert both sides from foldl to Finset.sum
+  rw [questionUtility_eq_finsetSum dp q actions,
+      questionUtility_eq_finsetSum dp q' actions]
+  -- Expand utilityValue = valueAfterLearning - dpValue
+  simp only [utilityValue]
+  -- P(c) * (val(c) - dpValue) = P(c)*val(c) - P(c)*dpValue
+  simp_rw [mul_sub]
+  -- Σ (P(c)*val(c) - P(c)*dpValue) = Σ P(c)*val(c) - Σ P(c)*dpValue
+  rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib]
+  -- Factor dpValue out of the second sum: Σ P(c)*dpValue = dpValue * Σ P(c)
+  simp_rw [mul_comm (cellProbability dp _) (dpValue dp actions),
+           ← Finset.mul_sum]
+  -- Now both sides: Σ P(c)*val(c) - dpValue * totalPrior
+  -- totalPrior is the same for q and q' (cells partition the universe)
+  rw [toCells_totalProb dp q, toCells_totalProb dp q']
+  -- Remains: Σ_q P(c)*val(c) ≥ Σ_q' P(c)*val(c)
+  linarith [show (q.toCellsFinset (Finset.univ : Finset M)).sum
+      (fun cell => cellProbability dp cell * valueAfterLearning dp actions cell) ≥
+    (q'.toCellsFinset (Finset.univ : Finset M)).sum
+      (fun cell => cellProbability dp cell * valueAfterLearning dp actions cell) from by
+    -- Use cellProb_mul_valueAfterLearning to convert to partitionValue
+    simp_rw [cellProb_mul_valueAfterLearning dp _ actions hprior]
+    exact blackwell_refinement_value dp q q' Finset.univ actions hRefines hprior]
+
+end QuestionUtilityBridge
 
 end QUD
