@@ -1,5 +1,6 @@
 import Linglib.Theories.IntensionalSemantics.Modal.Typology
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Phenomena.Modality.GermanModalsBridge
 
 /-!
 # Cross-Linguistic Modal Typology
@@ -264,13 +265,14 @@ theorem english_size : english.size = 9 := by native_decide
 -- §10: Cross-Linguistic Summary
 -- ============================================================================
 
-/-- All nine inventories. -/
+/-- All ten inventories. -/
 def allInventories : List ModalInventory :=
-  [tlingit, javanese, gitksan, korean, greek, mandarin, dutch, hungarian, english]
+  [tlingit, javanese, gitksan, korean, greek, mandarin, dutch, hungarian, english,
+   Phenomena.Modality.GermanModalsBridge.german]
 
-/-- Seven of nine encoded languages have perfect IFF degree (1.0). -/
-theorem seven_of_nine_perfect_iff :
-    (allInventories.filter (·.allIFF)).length = 7 := by native_decide
+/-- Eight of ten encoded languages have perfect IFF degree (1.0). -/
+theorem eight_of_ten_perfect_iff :
+    (allInventories.filter (·.allIFF)).length = 8 := by native_decide
 
 /-- All nine languages have IFF degree ≥ 1/3 (the minimum is Greek at 1/3). -/
 theorem all_have_some_iff :
