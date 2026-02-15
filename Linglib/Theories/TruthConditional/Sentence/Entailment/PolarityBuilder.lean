@@ -1,16 +1,21 @@
-/-
-# Polarity Builder — Derived NPI Licensing from Monotonicity Proofs
+import Linglib.Theories.TruthConditional.Sentence.Entailment.StrawsonEntailment
+import Linglib.Core.NaturalLogic
+import Linglib.Fragments.English.PolarityItems
+import Linglib.Phenomena.Polarity.VonFintel1999
+
+/-!
+# Polarity Builder — Derived NPI Licensing from Entailment Signatures
 
 Bridge between the theory-neutral Fragment (`DEStrength`) and the formal
 monotonicity hierarchy (`IsDE`, `IsAntiAdditive`, `IsAntiMorphic`, `IsStrawsonDE`).
 
 ## Design principle
 
-A `MonotonicityProfile` bundles a context function with Bool flags recording
-which monotonicity properties have been proved. Licensing predictions are
-**derived** from which flags are set, not stipulated. This follows the
-`CausativeBuilder` pattern where force-dynamic mechanisms are named and
-properties derived via theorems.
+A `MonotonicityProfile` bundles a context with its Icard (2012) projectivity
+signature (`EntailmentSig`). All DE/AA/AM classification is **derived** from the
+signature via `EntailmentSig.toDEStrength` — no independent Bool flags. Only
+`isStrawsonDE` remains independent, since Strawson-DE (von Fintel 1999) is
+not captured by the standard entailment signature lattice.
 
 ## Key result
 
@@ -26,16 +31,13 @@ central insight, derived not stipulated.
   of polarity items on inferential judgments. Cognitive Science 45(6).
 -/
 
-import Linglib.Theories.TruthConditional.Sentence.Entailment.StrawsonEntailment
-import Linglib.Fragments.English.PolarityItems
-import Linglib.Phenomena.Polarity.VonFintel1999
-
 namespace TruthConditional.Sentence.Entailment.PolarityBuilder
 
 open TruthConditional.Sentence.Entailment
 open TruthConditional.Sentence.Entailment.AntiAdditivity
 open TruthConditional.Sentence.Entailment.StrawsonEntailment
 open TruthConditional.Core.Polarity
+open Core.NaturalLogic (EntailmentSig DEStrength strengthSufficient)
 open Fragments.English.PolarityItems
 open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
 
@@ -44,26 +46,21 @@ open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
 -- ============================================================================
 
 /--
-A context function bundled with flags recording its proved monotonicity
-properties.
+A context function bundled with its Icard (2012) entailment signature.
 
-Analogous to `CausativeBuilder` bundling force-dynamic mechanisms:
-the profile records available proofs, and licensing predictions are
-derived from which proofs are present.
+The `entSig` is the single source of truth for DE/AA/AM classification:
+Bool flags (`isDE`, `isAA`, `isAM`) are derived from the signature via
+`EntailmentSig.toDEStrength`, not stored independently.
 
-The Bool flags are set `true` when a proof exists; the proofs themselves
-live in separate verification theorems.
+`isStrawsonDE` remains an independent flag because Strawson-DE (von Fintel
+1999) is not captured by the standard entailment signature lattice.
 -/
 structure MonotonicityProfile where
   /-- Name for documentation -/
   name : String
-  /-- Is anti-morphic? (proved elsewhere) -/
-  isAM : Bool := false
-  /-- Is anti-additive? (proved elsewhere) -/
-  isAA : Bool := false
-  /-- Is classically DE? (proved elsewhere) -/
-  isDE : Bool := false
-  /-- Is Strawson-DE? (proved elsewhere) -/
+  /-- Icard (2012) entailment signature -/
+  entSig : EntailmentSig
+  /-- Is Strawson-DE? (independent of entSig) -/
   isStrawsonDE : Bool := false
   deriving Repr
 
@@ -71,21 +68,32 @@ structure MonotonicityProfile where
 -- Section 2: Derived Properties (NOT stipulated)
 -- ============================================================================
 
+/-- Derived: is the context DE (any DE strength)? -/
+def MonotonicityProfile.isDE (p : MonotonicityProfile) : Bool :=
+  (EntailmentSig.toDEStrength p.entSig).isSome
+
+/-- Derived: is the context anti-additive? -/
+def MonotonicityProfile.isAA (p : MonotonicityProfile) : Bool :=
+  match EntailmentSig.toDEStrength p.entSig with
+  | some .antiAdditive | some .antiMorphic => true
+  | _ => false
+
+/-- Derived: is the context anti-morphic? -/
+def MonotonicityProfile.isAM (p : MonotonicityProfile) : Bool :=
+  EntailmentSig.toDEStrength p.entSig == some DEStrength.antiMorphic
+
 /--
-Strongest DE level, derived from available proofs.
+Strongest DE level, derived from entSig.
 
 Maps to the Fragment's `DEStrength` enum. Strawson-DE is intentionally
 excluded: it doesn't correspond to a classical DE level.
 -/
 def MonotonicityProfile.strongestLevel (p : MonotonicityProfile) : Option DEStrength :=
-  if p.isAM then some .antiMorphic
-  else if p.isAA then some .antiAdditive
-  else if p.isDE then some .weak
-  else none
+  EntailmentSig.toDEStrength p.entSig
 
 /-- Does this profile have at least Strawson-DE? -/
 def MonotonicityProfile.isAtLeastStrawsonDE (p : MonotonicityProfile) : Bool :=
-  p.isAM || p.isAA || p.isDE || p.isStrawsonDE
+  p.isDE || p.isStrawsonDE
 
 /--
 Derived: licenses weak NPIs.
@@ -103,7 +111,13 @@ Requires anti-additive (Zwarts 1996). Strawson-DE and plain DE
 are insufficient for strong NPIs like "lift a finger".
 -/
 def MonotonicityProfile.licensesStrongNPI (p : MonotonicityProfile) : Bool :=
-  p.isAA || p.isAM
+  p.isAA
+
+/--
+Derive ContextPolarity from entSig.
+-/
+def MonotonicityProfile.contextPolarity (p : MonotonicityProfile) : ContextPolarity :=
+  EntailmentSig.toContextPolarity p.entSig
 
 -- ============================================================================
 -- Section 3: Smart Constructors (concrete profiles)
@@ -115,11 +129,7 @@ Negation profile: anti-morphic (strongest level).
 Negation licenses both weak and strong NPIs.
 -/
 def negationProfile : MonotonicityProfile :=
-  { name := "negation"
-  , isAM := true
-  , isAA := true
-  , isDE := true
-  , isStrawsonDE := true }
+  { name := "negation", entSig := .antiAddMult }
 
 /--
 "No student" profile: anti-additive.
@@ -127,10 +137,7 @@ def negationProfile : MonotonicityProfile :=
 "No student" licenses both weak and strong NPIs.
 -/
 def noStudentProfile : MonotonicityProfile :=
-  { name := "no_student"
-  , isAA := true
-  , isDE := true
-  , isStrawsonDE := true }
+  { name := "no_student", entSig := .antiAdd }
 
 /--
 "At most 2 students" profile: DE only.
@@ -138,20 +145,18 @@ def noStudentProfile : MonotonicityProfile :=
 "At most n" licenses weak NPIs but not strong NPIs.
 -/
 def atMost2Profile : MonotonicityProfile :=
-  { name := "atMost2_student"
-  , isDE := true
-  , isStrawsonDE := true }
+  { name := "atMost2_student", entSig := .anti }
 
 /--
 "Only" profile: Strawson-DE only (not classically DE).
 
 Von Fintel's central example: "only" is Strawson-DE but not DE.
 It licenses weak NPIs despite not being classically DE.
+`entSig` is `mono` (only is UE in its presupposition argument),
+but the key fact is it's Strawson-DE without being classically DE.
 -/
 def onlyProfile : MonotonicityProfile :=
-  { name := "only"
-  , isStrawsonDE := true }
-  -- Note: isDE = false, isAA = false — "only" is NOT classically DE
+  { name := "only", entSig := .mono, isStrawsonDE := true }
 
 -- ============================================================================
 -- Section 4: Bridge Theorems (per-context verification)
@@ -401,5 +406,52 @@ and the empirical datum records it as not classically DE.
 -/
 theorem vonFintel_only_not_de :
     onlyProfile.strongestLevel = none ∧ onlyNotDE.isClassicallyDE = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- Section 10: EntailmentSig ↔ Flag Agreement
+-- ============================================================================
+
+/-!
+### EntailmentSig-derived property verification
+
+All DE/AA/AM flags are now derived from entSig. Verify they produce
+the expected values for each profile.
+-/
+
+#guard negationProfile.isAM == true
+#guard negationProfile.isAA == true
+#guard negationProfile.isDE == true
+
+#guard noStudentProfile.isAM == false
+#guard noStudentProfile.isAA == true
+#guard noStudentProfile.isDE == true
+
+#guard atMost2Profile.isAM == false
+#guard atMost2Profile.isAA == false
+#guard atMost2Profile.isDE == true
+
+#guard onlyProfile.isAM == false
+#guard onlyProfile.isAA == false
+#guard onlyProfile.isDE == false
+
+/-- Negation: ◇⊟ → .downward, strongest = .antiMorphic -/
+theorem negation_entSig_agrees :
+    negationProfile.contextPolarity = .downward ∧
+    negationProfile.strongestLevel = some .antiMorphic := ⟨rfl, rfl⟩
+
+/-- "No student": ◇ → .downward, strongest = .antiAdditive -/
+theorem noStudent_entSig_agrees :
+    noStudentProfile.contextPolarity = .downward ∧
+    noStudentProfile.strongestLevel = some .antiAdditive := ⟨rfl, rfl⟩
+
+/-- "At most 2": − → .downward, strongest = .weak DE -/
+theorem atMost2_entSig_agrees :
+    atMost2Profile.contextPolarity = .downward ∧
+    atMost2Profile.strongestLevel = some .weak := ⟨rfl, rfl⟩
+
+/-- "Only": mono → .upward (not classically DE; Strawson-DE only) -/
+theorem only_entSig_agrees :
+    onlyProfile.contextPolarity = .upward ∧
+    onlyProfile.strongestLevel = none := ⟨rfl, rfl⟩
 
 end TruthConditional.Sentence.Entailment.PolarityBuilder

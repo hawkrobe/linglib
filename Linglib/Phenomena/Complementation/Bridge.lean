@@ -84,10 +84,10 @@ theorem discover_is_knowledge :
     deriveCTPClass discover = some .knowledge := by native_decide
 theorem notice_is_knowledge :
     deriveCTPClass notice = some .knowledge := by native_decide
-theorem remember_q_is_knowledge :
-    deriveCTPClass remember_q = some .knowledge := by native_decide
-theorem forget_q_is_knowledge :
-    deriveCTPClass forget_q = some .knowledge := by native_decide
+theorem remember_rog_is_knowledge :
+    deriveCTPClass remember_rog = some .knowledge := by native_decide
+theorem forget_rog_is_knowledge :
+    deriveCTPClass forget_rog = some .knowledge := by native_decide
 
 -- Perception CTPs
 theorem see_is_perception :
@@ -148,10 +148,10 @@ theorem make_is_manipulative :
     deriveCTPClass make = some .manipulative := by native_decide
 theorem let_is_manipulative :
     deriveCTPClass let_ = some .manipulative := by native_decide
-theorem have_causative_is_manipulative :
-    deriveCTPClass have_causative = some .manipulative := by native_decide
-theorem get_causative_is_manipulative :
-    deriveCTPClass get_causative = some .manipulative := by native_decide
+theorem have_caus_is_manipulative :
+    deriveCTPClass have_caus = some .manipulative := by native_decide
+theorem get_caus_is_manipulative :
+    deriveCTPClass get_caus = some .manipulative := by native_decide
 theorem force_is_manipulative :
     deriveCTPClass force = some .manipulative := by native_decide
 
@@ -221,16 +221,16 @@ so the comparison is only meaningful for question-taking verbs. -/
 /-- For question-embedding verbs with a CTP class, the CTP-based mapping
     matches the structural derivation from LeftPeriphery.lean.
 
-    This covers: know, discover, remember_q, forget_q (knowledge → responsive),
+    This covers: know, discover, remember_rog, forget_rog (knowledge → responsive),
     ask (utterance → rogativeSAP). -/
 theorem ctp_selection_consistent_know :
     ctpToDefaultSelectionClass .knowledge = deriveSelectionClass know := by native_decide
 theorem ctp_selection_consistent_discover :
     ctpToDefaultSelectionClass .knowledge = deriveSelectionClass discover := by native_decide
-theorem ctp_selection_consistent_remember_q :
-    ctpToDefaultSelectionClass .knowledge = deriveSelectionClass remember_q := by native_decide
-theorem ctp_selection_consistent_forget_q :
-    ctpToDefaultSelectionClass .knowledge = deriveSelectionClass forget_q := by native_decide
+theorem ctp_selection_consistent_remember_rog :
+    ctpToDefaultSelectionClass .knowledge = deriveSelectionClass remember_rog := by native_decide
+theorem ctp_selection_consistent_forget_rog :
+    ctpToDefaultSelectionClass .knowledge = deriveSelectionClass forget_rog := by native_decide
 theorem ctp_selection_consistent_ask :
     ctpToDefaultSelectionClass .utterance = deriveSelectionClass ask := by native_decide
 

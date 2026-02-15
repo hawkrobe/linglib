@@ -33,11 +33,13 @@ they introduce or retrieve temporal reference points.
 - Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
 -/
 
-import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Core.Time
+import Linglib.Core.Reichenbach
 
 namespace TruthConditional.Sentence.Tense
 
-open TruthConditional.Core.Time
+open Core.Time
+open Core.Reichenbach
 
 
 /--
@@ -155,24 +157,29 @@ def futSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTime
 
 
 /--
-Apply a tense to a Reichenbach frame, constraining R relative to S.
+Apply a tense to a Reichenbach frame, constraining R relative to P.
+Tense locates reference time relative to perspective time (Kiparsky 2002),
+not speech time. In root clauses P = S, so this reduces to the standard
+Reichenbach analysis. In SOT languages, embedded P shifts to the matrix
+event time, making the embedded tense relative.
 -/
 def applyTense {Time : Type*} [LinearOrder Time] (t : GramTense) (f : ReichenbachFrame Time) : Prop :=
   match t with
-  | .past => f.referenceTime < f.speechTime
-  | .present => f.referenceTime = f.speechTime
-  | .future => f.referenceTime > f.speechTime
+  | .past => f.referenceTime < f.perspectiveTime
+  | .present => f.referenceTime = f.perspectiveTime
+  | .future => f.referenceTime > f.perspectiveTime
 
 /--
 Check if a Reichenbach frame satisfies a given tense.
+Tense locates R relative to P (perspective time).
 -/
 def satisfiesTense {Time : Type*} [LinearOrder Time] [DecidableEq Time]
     [DecidableRel (α := Time) (· < ·)]
     (t : GramTense) (f : ReichenbachFrame Time) : Bool :=
   match t with
-  | .past => f.referenceTime < f.speechTime
-  | .present => f.referenceTime == f.speechTime
-  | .future => f.referenceTime > f.speechTime
+  | .past => f.referenceTime < f.perspectiveTime
+  | .present => f.referenceTime == f.perspectiveTime
+  | .future => f.referenceTime > f.perspectiveTime
 
 
 /--

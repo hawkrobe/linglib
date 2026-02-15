@@ -1,31 +1,33 @@
+import Linglib.Core.Basic
+
 /-!
-# Morpheme Infrastructure
+# Morphological Infrastructure
 
-Framework-agnostic types for morphological analysis: morpheme status,
-attachment mode, paradigm structure, and the Bybee (1985) relevance
-hierarchy.
+Framework-agnostic types for morphological analysis and compositional
+morphological rules.
 
-## Morpheme Status
+## Typological Classification
 
-The five-way classification of linguistic forms by their degree of
-syntactic independence and mode of combination (Zwicky & Pullum 1983,
-Zwicky 1977):
+- `AttachmentSide`: prefix, suffix, infix, circumfix
+- `SelectionDegree`: how restrictive a morpheme's host selection is
+- `MorphStatus`: free word / simple clitic / special clitic / affix
+- `ParadigmCell`: one cell in a morphological paradigm (form + features)
 
-| Status | Selection | Gaps | Idiosyncrasies | Example |
-|--------|-----------|------|----------------|---------|
-| Free word | — | — | — | English *not* |
-| Simple clitic | low | none | none | English *'s*, *'ve* |
-| Special clitic | varies | varies | varies | Romance pronominal clitics |
-| Inflectional affix | high | common | common | English *-ed*, *-s*, *-n't* |
-| Derivational affix | high | common | common | English *-ness*, *un-* |
+## Bybee (1985) Relevance Hierarchy
 
-## Bybee Relevance Hierarchy
-
-Morpheme functional categories ordered by semantic relevance to the
-stem (Bybee 1985). Categories closer to the stem are more relevant
-to verb meaning.
+`MorphCategory` classifies morpheme functional categories ordered by
+semantic relevance to the stem:
 
   stem < derivation < valence < voice < aspect < tense < mood < negation < agreement
+
+## Compositional Rules
+
+- `MorphRule σ`: a morphological rule carrying formal AND semantic effects
+- `Stem σ`: a lexical stem with its inflectional paradigm
+
+A `MorphRule σ` transforms a stem's surface form, morphosyntactic features,
+and meaning of type `σ` simultaneously. Rules where the semantic effect is
+`id` (e.g., verb agreement) are marked `isVacuous := true`.
 
 ## References
 
@@ -34,9 +36,11 @@ to verb meaning.
 - Zwicky, A. M. (1977). On Clitics. Indiana University Linguistics Club.
 - Zwicky, A. M. & Pullum, G. K. (1983). Cliticization vs. Inflection:
   English N'T. *Language* 59(3), 502–513.
+- Link, G. (1983). The logical analysis of plurals and mass terms.
+- Champollion, L. (2017). Parts of a Whole. OUP.
 -/
 
-namespace Core.Morpheme
+namespace Core.Morphology
 
 -- ============================================================================
 -- §1: Attachment Side
@@ -172,6 +176,8 @@ inductive MorphCategory where
   | negation      -- negation markers
   | agreement     -- subject/object agreement, politeness
   | nonfinite     -- nonfinite markers, interrogative/relative
+  | number        -- number marking on nouns (not verb agreement)
+  | degree        -- comparative/superlative on adjectives
   deriving Repr, DecidableEq, BEq
 
 /-- Relevance rank: lower = closer to the stem (Bybee 1985).
@@ -179,13 +185,24 @@ inductive MorphCategory where
 Stem = 0 (most relevant to verb meaning).
 Derivation = 1 (changes verb category).
 ...
-Agreement = 8 (least relevant to verb meaning). -/
+Agreement = 8 (least relevant to verb meaning).
+
+`number` on nouns is ranked 3 (same as voice): it changes the
+noun's denotation via Link (1983), unlike verb agreement which
+is semantically vacuous.
+
+`degree` on adjectives is ranked 5 (same as tense on verbs):
+comparative/superlative morphology compositionally modifies
+the adjective's interpretation, analogous to how tense modifies
+the verb's temporal reference. -/
 def MorphCategory.relevanceRank : MorphCategory → Nat
   | .stem       => 0
   | .derivation => 1
   | .valence    => 2
+  | .number     => 3
   | .voice      => 3
   | .aspect     => 4
+  | .degree     => 5
   | .tense      => 5
   | .mood       => 6
   | .negation   => 7
@@ -199,4 +216,56 @@ def respectsRelevanceHierarchy (slots : List MorphCategory) : Bool :=
   let pairs := ranks.zip ranks.tail
   pairs.all (λ (a, b) => a ≤ b)
 
-end Core.Morpheme
+-- ============================================================================
+-- §6: Morphological Rules with Semantic Effects
+-- ============================================================================
+
+/-- A morphological rule: carries formal AND semantic effects.
+
+    The type parameter `σ` is the meaning type, so this works uniformly
+    across `Bool`/`Frac`/`Float` semantic backends.
+
+    Design principle: `semEffect` can be `id` for semantically vacuous
+    morphology (e.g., verb agreement `-s`), making it explicit which
+    inflections carry semantic content and which don't. -/
+structure MorphRule (σ : Type) where
+  /-- Which morphological category this rule realizes -/
+  category : MorphCategory
+  /-- The feature value this rule realizes -/
+  value : String
+  /-- How the surface form changes -/
+  formRule : String → String
+  /-- How morphosyntactic features change -/
+  featureRule : Features → Features
+  /-- Semantic effect (identity if semantically vacuous) -/
+  semEffect : σ → σ
+  /-- Is this rule semantically vacuous? (agreement, etc.) -/
+  isVacuous : Bool := false
+
+/-- A lexical stem: a root meaning plus its morphological paradigm. -/
+structure Stem (σ : Type) where
+  /-- Base form (lemma) -/
+  lemma_ : String
+  /-- Syntactic category -/
+  cat : UD.UPOS
+  /-- Base morphosyntactic features -/
+  baseFeatures : Features := {}
+  /-- Available inflectional rules -/
+  paradigm : List (MorphRule σ)
+
+variable {σ : Type}
+
+/-- Apply a morphological rule to generate an inflected form + meaning. -/
+def Stem.inflect (s : Stem σ) (rule : MorphRule σ) (baseMeaning : σ) :
+    String × Features × σ :=
+  ( rule.formRule s.lemma_
+  , rule.featureRule s.baseFeatures
+  , rule.semEffect baseMeaning )
+
+/-- Generate all forms in the paradigm (base + inflected). -/
+def Stem.allForms (s : Stem σ) (baseMeaning : σ) :
+    List (String × Features × σ) :=
+  (s.lemma_, s.baseFeatures, baseMeaning) ::
+    s.paradigm.map (s.inflect · baseMeaning)
+
+end Core.Morphology

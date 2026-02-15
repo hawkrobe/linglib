@@ -8,11 +8,11 @@ Decision problems for polar questions, building on Van Rooy (2003).
 -/
 
 import Linglib.Theories.RSA.Questions.Basic
-import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Core.DecisionTheory
 
 namespace RSA.Questions
 
-open QuestionSemantics (DecisionProblem)
+open Core.DecisionTheory (DecisionProblem)
 
 /-- An item mentionable in a polar question response. -/
 structure Item where

@@ -1,4 +1,4 @@
-import Linglib.Core.CausalModel
+import Linglib.Core.Causation
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
@@ -28,7 +28,7 @@ does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
 
 | From | To | Via |
 |------|-----|-----|
-| `Core.CausalModel` | `Modal.Kratzer` | `AbilityScenario.background` |
+| `Core.Causation` | `Modal.Kratzer` | `AbilityScenario.background` |
 | `Causative.Sufficiency` | this file | `abilityAt = causallySufficient` |
 | `Modal.Kratzer` | this file | `toCircumstantialBase` |
 | `ViewpointAspect` | this file | `toKleinViewpoint` |
@@ -42,7 +42,7 @@ does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
 
 namespace Nadathur2023.Ability
 
-open Core.CausalModel
+open Core.Causation
 open IntensionalSemantics.Attitude.Intensional (World allWorlds)
 open IntensionalSemantics.Modal.Kratzer (ModalBase ConvBackground)
 open TruthConditional.Verb.ViewpointAspect (ViewpointType ViewpointAspectB)

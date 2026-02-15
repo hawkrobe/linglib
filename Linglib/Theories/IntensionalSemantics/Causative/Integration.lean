@@ -38,16 +38,14 @@ This module proves that:
 - Pearl (2000). Causality.
 -/
 
-import Linglib.Core.CausalModel
-import Linglib.Core.CausalInference
+import Linglib.Core.Causation
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
 namespace NadathurLauer2020.Integration
 
-open Core.CausalModel
-open Core.CausalInference
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open IntensionalSemantics.Conditional.Assertability
@@ -325,32 +323,6 @@ theorem single_cause_perfection (cause effect : Variable) :
   intro _h_suff
   -- In a single-cause model, if cause is sufficient then it's also necessary
   -- because there's no alternative path to the effect
-  sorry
-
--- Integration pipeline factors through CFProbSpace
-
-/-- The grounding chain factors through `CFProbSpace`.
-
-    The existing pipeline:
-    ```
-    CausalDynamics → DeterministicParams → WorldState → CausalRelation
-    ```
-    factors through `CFProbSpace Bool Bool`: the `WorldState` produced by
-    `situationToWorldState` is equivalent to a `CFProbSpace Bool Bool`,
-    and the `CausalRelation` inference operates on the same conditional
-    probabilities that `condOnF` computes.
-
-    The round-trip `ws.toCFProbSpace h |>.toWorldState` recovers the
-    original `WorldState` fields by definitional computation.
-
-    TODO: Proof blocked by let-binding in goal; the equalities hold by
-    definitional unfolding of `toCFProbSpace`/`toWorldState`. -/
-theorem integration_factors_through_cfps (dyn : CausalDynamics) (background : Situation)
-    (cause effect : Variable) (pCause : ℚ) (_hCause : 0 < pCause ∧ pCause ≤ 1) :
-    let ws := situationToWorldState dyn background cause effect pCause
-    ∀ (h : ws.IsValid),
-      let cfws := CFProbSpace.toWorldState (ws.toCFProbSpace h)
-      cfws.pA = ws.pA ∧ cfws.pC = ws.pC ∧ cfws.pAC = ws.pAC := by
   sorry
 
 end NadathurLauer2020.Integration

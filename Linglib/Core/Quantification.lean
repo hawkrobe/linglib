@@ -1,5 +1,6 @@
 import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
+import Linglib.Core.NaturalLogic
 
 /-!
 # Generalized Quantifier Properties
@@ -704,5 +705,67 @@ theorem scopeUpMono_rightContinuous (q : GQ α)
     (h : ScopeUpwardMono q) : RightContinuous q := by
   intro A B B₁ _ hB₁B _ hQ1 _
   exact h A B₁ B hB₁B hQ1
+
+
+-- ============================================================================
+-- §9 — Entailment Signature Bridge (Icard 2012, Table p.720)
+-- ============================================================================
+
+open Core.NaturalLogic (EntailmentSig ContextPolarity)
+
+/--
+Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
+the van Benthem (1984) double monotonicity classification.
+
+Returns `none` for signature pairs that don't correspond to a standard
+generalized quantifier pattern.
+-/
+def EntailmentSig.pairToDoubleMono : EntailmentSig → EntailmentSig → Option DoubleMono
+  -- some = (⊕, ⊕) → ↑MON↑
+  | .additive, .additive => some .upUp
+  -- every = (◇, ⊞) → ↓MON↑
+  | .antiAdd, .mult => some .downUp
+  -- not every = (⊕, ⊟) → ↑MON↓
+  | .additive, .antiMult => some .upDown
+  -- no = (◇, ◇) → ↓MON↓
+  | .antiAdd, .antiAdd => some .downDown
+  -- Other combinations: could extend, but these are the four standard ones
+  | _, _ => none
+
+-- DoubleMono bridge verification
+#guard EntailmentSig.pairToDoubleMono .additive .additive == some .upUp
+#guard EntailmentSig.pairToDoubleMono .antiAdd .mult == some .downUp
+#guard EntailmentSig.pairToDoubleMono .additive .antiMult == some .upDown
+#guard EntailmentSig.pairToDoubleMono .antiAdd .antiAdd == some .downDown
+
+/-- "every" has signature (◇, ⊞) = (antiAdd in restrictor, mult in scope). -/
+def everyEntailmentSig : EntailmentSig × EntailmentSig := (.antiAdd, .mult)
+
+/-- "some" has signature (⊕, ⊕) = (additive in both arguments). -/
+def someEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .additive)
+
+/-- "no" has signature (◇, ◇) = (antiAdd in both arguments). -/
+def noEntailmentSig : EntailmentSig × EntailmentSig := (.antiAdd, .antiAdd)
+
+/-- "not every" has signature (⊕, ⊟) = (additive in restrictor, antiMult in scope). -/
+def notEveryEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .antiMult)
+
+-- Verify quantifier ↔ DoubleMono agreement
+#guard EntailmentSig.pairToDoubleMono everyEntailmentSig.1 everyEntailmentSig.2 == some .downUp
+#guard EntailmentSig.pairToDoubleMono someEntailmentSig.1 someEntailmentSig.2 == some .upUp
+#guard EntailmentSig.pairToDoubleMono noEntailmentSig.1 noEntailmentSig.2 == some .downDown
+#guard EntailmentSig.pairToDoubleMono notEveryEntailmentSig.1 notEveryEntailmentSig.2 == some .upDown
+
+-- Verify quantifier ↔ ContextPolarity agreement for scope position
+#guard EntailmentSig.toContextPolarity everyEntailmentSig.2 == .upward     -- every scope is UE
+#guard EntailmentSig.toContextPolarity someEntailmentSig.2 == .upward      -- some scope is UE
+#guard EntailmentSig.toContextPolarity noEntailmentSig.2 == .downward      -- no scope is DE
+#guard EntailmentSig.toContextPolarity notEveryEntailmentSig.2 == .downward -- not-every scope is DE
+
+-- Verify quantifier ↔ ContextPolarity agreement for restrictor position
+#guard EntailmentSig.toContextPolarity everyEntailmentSig.1 == .downward   -- every restrictor is DE
+#guard EntailmentSig.toContextPolarity someEntailmentSig.1 == .upward      -- some restrictor is UE
+#guard EntailmentSig.toContextPolarity noEntailmentSig.1 == .downward      -- no restrictor is DE
+#guard EntailmentSig.toContextPolarity notEveryEntailmentSig.1 == .upward  -- not-every restrictor is UE
 
 end Core.Quantification

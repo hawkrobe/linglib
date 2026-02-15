@@ -1,12 +1,12 @@
 /-
 # Grounded Context Polarity
 
-This module provides comprehensive infrastructure for monotonicity/polarity
-in semantics and pragmatics.
+Semantic grounding for `ContextPolarity` (defined in `Core.NaturalLogic`)
+via Mathlib's `Monotone`/`Antitone` infrastructure.
 
 ## Contents
 
-1. ContextPolarity enum - Theory-neutral polarity marker (upward/downward)
+1. Re-export of `ContextPolarity` from `Core.NaturalLogic`
 2. IsUpwardEntailing/IsDownwardEntailing - Mathlib-based formal definitions
 3. Decidable test functions - For verification on finite models
 4. GroundedPolarity - Context + polarity + proof
@@ -27,6 +27,9 @@ Mathlib provides composition lemmas for free:
 - `Monotone.comp_antitone`: UE ∘ DE = DE
 - `Antitone.comp`: DE ∘ UE = DE
 
+The polarity composition rules are a homomorphic image of the
+`EntailmentSig` monoid — see `EntailmentSig.toContextPolarity_compose`.
+
 ## References
 
 - van Benthem (1986). Essays in Logical Semantics.
@@ -35,26 +38,15 @@ Mathlib provides composition lemmas for free:
 -/
 
 import Mathlib.Order.Monotone.Defs
+import Linglib.Core.NaturalLogic
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 
 namespace TruthConditional.Core.Polarity
 
+-- Re-export ContextPolarity so downstream `open TruthConditional.Core.Polarity (ContextPolarity)` works
+export Core.NaturalLogic (ContextPolarity)
+
 open TruthConditional.Sentence.Entailment
-
-
-/--
-Whether a context preserves or reverses entailment direction.
-
-Used by:
-- NeoGricean: determines which alternatives count as "stronger"
-- RSA: polarity-sensitive inference
-- Any theory computing scalar implicatures
--/
-inductive ContextPolarity where
-  | upward       -- Preserves entailment (stronger alternatives)
-  | downward     -- Reverses entailment (weaker alternatives become stronger)
-  | nonMonotonic -- Neither (e.g., "exactly n")
-  deriving DecidableEq, Repr
 
 
 /-
@@ -329,56 +321,49 @@ def negationPolarity : GroundedPolarity := mkDownward pnot pnot_isDownwardEntail
 
 
 /--
-Compose two polarities, with proof that the composition has the right property.
+Compose two grounded polarities, with proof that the composition has the
+right property.
 
-This is the key function for compositional polarity tracking through
-derivation trees.
+The case analysis mirrors `ContextPolarity.compose` (which is derived from the
+`EntailmentSig` monoid), but additionally carries Mathlib proof witnesses:
+- UE ∘ UE = UE via `Monotone.comp`
+- DE ∘ DE = UE via `Antitone.comp_antitone` (double negation!)
+- UE ∘ DE = DE via `Monotone.comp_antitone`
+- DE ∘ UE = DE via `Antitone.comp_monotone`
 -/
 def composePolarity (outer inner : GroundedPolarity) : GroundedPolarity :=
   match outer, inner with
-  | .ue ⟨f, hf⟩, .ue ⟨g, hg⟩ =>
-    -- UE ∘ UE = UE
-    .ue ⟨f ∘ g, ue_comp_ue hf hg⟩
-  | .ue ⟨f, hf⟩, .de ⟨g, hg⟩ =>
-    -- UE ∘ DE = DE
-    .de ⟨f ∘ g, ue_comp_de hf hg⟩
-  | .de ⟨f, hf⟩, .ue ⟨g, hg⟩ =>
-    -- DE ∘ UE = DE
-    .de ⟨f ∘ g, de_comp_ue hf hg⟩
-  | .de ⟨f, hf⟩, .de ⟨g, hg⟩ =>
-    -- DE ∘ DE = UE (double negation)
-    .ue ⟨f ∘ g, de_comp_de hf hg⟩
-
+  | .ue ⟨f, hf⟩, .ue ⟨g, hg⟩ => .ue ⟨f ∘ g, ue_comp_ue hf hg⟩
+  | .ue ⟨f, hf⟩, .de ⟨g, hg⟩ => .de ⟨f ∘ g, ue_comp_de hf hg⟩
+  | .de ⟨f, hf⟩, .ue ⟨g, hg⟩ => .de ⟨f ∘ g, de_comp_ue hf hg⟩
+  | .de ⟨f, hf⟩, .de ⟨g, hg⟩ => .ue ⟨f ∘ g, de_comp_de hf hg⟩
 
 /--
-Polarity composition table is correct.
+Grounded polarity composition agrees with `ContextPolarity.compose`.
 
-| Outer | Inner | Result |
-|-------|-------|--------|
-| UE    | UE    | UE     |
-| UE    | DE    | DE     |
-| DE    | UE    | DE     |
-| DE    | DE    | UE     |
-
-This is provable because `composePolarity` uses Mathlib's composition proofs.
+This connects the proof-carrying system to the algebraic system:
+the Mathlib composition lemmas produce the same polarity classification
+as the monoid-derived `ContextPolarity.compose`.
 -/
-theorem polarity_composition_table :
-    (composePolarity identityPolarity identityPolarity).toContextPolarity = .upward ∧
-    (composePolarity identityPolarity negationPolarity).toContextPolarity = .downward ∧
-    (composePolarity negationPolarity identityPolarity).toContextPolarity = .downward ∧
-    (composePolarity negationPolarity negationPolarity).toContextPolarity = .upward := by
-  simp only [composePolarity, identityPolarity, negationPolarity, mkUpward, mkDownward,
-             GroundedPolarity.toContextPolarity, and_self]
+theorem composePolarity_agrees (outer inner : GroundedPolarity) :
+    (composePolarity outer inner).toContextPolarity =
+    outer.toContextPolarity.compose inner.toContextPolarity := by
+  cases outer with
+  | ue o => cases inner with
+    | ue i => rfl
+    | de i => rfl
+  | de o => cases inner with
+    | ue i => rfl
+    | de i => rfl
 
 /--
-Double DE gives UE.
+Double DE gives UE (grounded version).
 
-This captures the linguistic insight: "It's not the case that no one..."
-creates a UE context for the embedded scalar item.
+"It's not the case that no one..." creates a UE context.
 -/
 theorem double_de_is_ue_grounded (f g : BProp World → BProp World) (hf : Antitone f) (hg : Antitone g) :
     (composePolarity (mkDownward f hf) (mkDownward g hg)).toContextPolarity = .upward := by
-  simp only [composePolarity, mkDownward, GroundedPolarity.toContextPolarity]
+  rfl
 
 
 /--

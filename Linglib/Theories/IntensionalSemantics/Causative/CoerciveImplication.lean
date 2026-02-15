@@ -11,7 +11,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 
 namespace NadathurLauer2020.CoerciveImplication
 
-open Core.CausalModel
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/

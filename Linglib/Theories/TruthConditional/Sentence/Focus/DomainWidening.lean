@@ -81,10 +81,9 @@ def answerable (ctx : DiscourseContext W) (q : QUD W) : Bool :=
   ctx.quality q && ctx.relevance q
 
 /-- `q1` is strictly wider than `q2` when `q2` refines `q1` but not vice versa.
-    A wider question has a coarser partition — fewer distinctions.
-    Uses `GSQuestion.refines` from Partition.lean. -/
+    A wider question has a coarser partition — fewer distinctions. -/
 def strictlyWider (q1 q2 : GSQuestion W) : Prop :=
-  GSQuestion.refines q2 q1 ∧ ¬ GSQuestion.refines q1 q2
+  QUD.refines q2 q1 ∧ ¬ QUD.refines q1 q2
 
 -- ============================================================================
 -- C. Widest Answerable Question

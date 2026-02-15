@@ -1,4 +1,5 @@
 import Linglib.Core.Basic
+import Linglib.Core.Morphology.Number
 import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-! # English Noun Lexicon Fragment
@@ -159,6 +160,24 @@ def NounEntry.toWordPl (n : NounEntry) : Word :=
     , countable := some n.countable
     }
   }
+
+/-- Convert a `NounEntry` to a morphological `Stem`.
+
+    Countable nouns get a plural rule; irregular plurals (man/men,
+    child/children) use a custom `formRule`. Mass nouns and proper
+    names have empty paradigms. -/
+def NounEntry.toStem {α : Type} (n : NounEntry) : Core.Morphology.Stem (α → Bool) :=
+  { lemma_ := n.formSg
+  , cat := if n.proper then .PROPN else .NOUN
+  , baseFeatures := { number := some .Sing
+                    , countable := if n.proper then none else some n.countable
+                    , person := if n.proper then some .third else none }
+  , paradigm :=
+      if n.countable && !n.proper then
+        let irregForm := n.formPl.bind λ pl =>
+          if pl == n.formSg ++ "s" then none else some pl
+        [Core.Morphology.Number.pluralNounRuleFlat (irregularForm := irregForm)]
+      else [] }
 
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.formSg == form || n.formPl == some form

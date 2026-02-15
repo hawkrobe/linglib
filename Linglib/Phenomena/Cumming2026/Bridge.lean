@@ -133,8 +133,8 @@ theorem nfutL_downstream (f : EvidentialFrame ℤ) :
     is either trivially true (English bare future) or imposes A < T
     (prospective), which is the opposite of T ≤ A. -/
 theorem future_no_downstream :
-    Fragments.English.Tense.future.epConstraint ⟨⟨10, 0, 5⟩, 0⟩ ∧
-    ¬ downstreamEvidence ⟨⟨10, 0, 5⟩, 0⟩ := by
+    Fragments.English.Tense.future.epConstraint ⟨⟨10, 10, 0, 5⟩, 0⟩ ∧
+    ¬ downstreamEvidence ⟨⟨10, 10, 0, 5⟩, 0⟩ := by
   refine ⟨trivial, ?_⟩
   simp [downstreamEvidence]
 
@@ -156,11 +156,11 @@ theorem korean_te_ney_ep_diverge :
       neyPresent.upConstraint f ∧ ¬ tePresent.upConstraint f) := by
   constructor
   · -- -te PRES with T < S (e.g., T = -1, S = 0, A = -1)
-    refine ⟨⟨⟨0, 0, -1⟩, -1⟩, ?_, ?_⟩
+    refine ⟨⟨⟨0, 0, 0, -1⟩, -1⟩, ?_, ?_⟩
     · show (-1 : ℤ) < 0; omega
     · show ¬ ((-1 : ℤ) = 0); omega
   · -- -ney PRES with T = S (e.g., T = 0, S = 0, A = 0)
-    refine ⟨⟨⟨0, 0, 0⟩, 0⟩, ?_, ?_⟩
+    refine ⟨⟨⟨0, 0, 0, 0⟩, 0⟩, ?_, ?_⟩
     · show (0 : ℤ) = 0; rfl
     · show ¬ ((0 : ℤ) < 0); omega
 

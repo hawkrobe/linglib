@@ -70,6 +70,7 @@ def raincoatK : Kernel := ⟨[wearingRaincoat]⟩
     R = 0, A = -1 (evidence acquired between event and speech). -/
 def raincoatFrame : EvidentialFrame ℤ where
   speechTime := 0
+  perspectiveTime := 0
   referenceTime := 0
   eventTime := -2
   acquisitionTime := -1
@@ -130,7 +131,7 @@ theorem direct_evidence_blocks_both :
     (kernelMust directK isRaining).presup .w0 = false ∧
     -- A direct-observation frame: T = A (saw the rain as it happened)
     let directFrame : EvidentialFrame ℤ :=
-      { speechTime := 0, referenceTime := 0, eventTime := -1, acquisitionTime := -1 }
+      { speechTime := 0, perspectiveTime := 0, referenceTime := 0, eventTime := -1, acquisitionTime := -1 }
     -- Downstream constraint trivially satisfied (T = A → T ≤ A)
     downstreamEvidence directFrame := by
   refine ⟨by native_decide, by native_decide, ?_⟩

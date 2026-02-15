@@ -367,7 +367,7 @@ theorem conj_assoc (lq1 lq2 lq3 : LiftedQuestion W) :
 If Q₁ and Q₂ have a common refinement (Q₁ * Q₂ = compose), then:
 conj (lift Q₁) (lift Q₂) is equivalent to lift (Q₁ * Q₂) for "refinement properties". -/
 theorem lift_conj_refinement (q1 q2 : GSQuestion W) :
-    let q12 := GSQuestion.compose q1 q2  -- compose = meet
+    let q12 := QUD.compose q1 q2  -- compose = meet
     ∀ P : QuestionProperty W,
       (∀ q q', q' ⊑ q → P q → P q') →  -- P is upward closed in refinement
       (conj (lift q1) (lift q2)) P → (lift q12) P := by

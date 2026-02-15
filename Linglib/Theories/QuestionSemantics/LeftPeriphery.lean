@@ -494,11 +494,11 @@ theorem investigate_is_rogativeCP :
 theorem depend_on_is_rogativeCP :
     fieldSelectionClass Fragments.English.Predicates.Verbal.depend_on = .rogativeCP := by native_decide
 
-theorem remember_q_is_responsive :
-    fieldSelectionClass Fragments.English.Predicates.Verbal.remember_q = .responsive := by native_decide
+theorem remember_rog_is_responsive :
+    fieldSelectionClass Fragments.English.Predicates.Verbal.remember_rog = .responsive := by native_decide
 
-theorem forget_q_is_responsive :
-    fieldSelectionClass Fragments.English.Predicates.Verbal.forget_q = .responsive := by native_decide
+theorem forget_rog_is_responsive :
+    fieldSelectionClass Fragments.English.Predicates.Verbal.forget_rog = .responsive := by native_decide
 
 theorem discover_is_responsive :
     fieldSelectionClass Fragments.English.Predicates.Verbal.discover = .responsive := by native_decide

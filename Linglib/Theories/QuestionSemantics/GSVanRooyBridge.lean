@@ -1,4 +1,4 @@
-import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Core.DecisionTheory
 import Linglib.Theories.QuestionSemantics.PragmaticAnswerhood
 import Linglib.Theories.QuestionSemantics.MentionSome
 import Linglib.Theories.QuestionSemantics.Polarity
@@ -35,6 +35,7 @@ This file establishes the formal connections between these approaches.
 
 namespace QuestionSemantics.Bridge
 
+open Core.DecisionTheory
 open QuestionSemantics
 open QuestionSemantics.MentionSome
 open QuestionSemantics.Polarity

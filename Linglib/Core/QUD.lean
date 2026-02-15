@@ -46,19 +46,7 @@ theorem isTransitive : ∀ m1 m2 m3,
 
 end EquivalenceProperties
 
-variable [BEq M]
-
-/-- The identity QUD: speaker wants to convey exact meaning -/
-def exact [LawfulBEq M] : QUD M where
-  sameAnswer m1 m2 := m1 == m2
-  refl m := beq_self_eq_true m
-  symm m1 m2 := by rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩
-  trans m1 m2 m3 h12 h23 := by
-    rw [beq_iff_eq] at *
-    exact h12.trans h23
-  name := "exact"
-
-/-- Trivial QUD: all meanings are equivalent (speaker doesn't care about this dimension) -/
+/-- Trivial QUD: all meanings are equivalent (speaker doesn't care about this dimension). -/
 def trivial : QUD M where
   sameAnswer _ _ := true
   refl _ := rfl
@@ -66,17 +54,7 @@ def trivial : QUD M where
   trans _ _ _ _ _ := rfl
   name := "trivial"
 
-/-- Build QUD from a projection function -/
-def ofProject {A : Type} [BEq A] [LawfulBEq A] (f : M → A) (name : String := "") : QUD M where
-  sameAnswer m1 m2 := f m1 == f m2
-  refl m := beq_self_eq_true (f m)
-  symm m1 m2 := by rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩
-  trans m1 m2 m3 h12 h23 := by
-    rw [beq_iff_eq] at *
-    exact h12.trans h23
-  name := name
-
-/-- Compose two QUDs: equivalent iff equivalent under both -/
+/-- Compose two QUDs: equivalent iff equivalent under both. -/
 def compose (q1 q2 : QUD M) : QUD M where
   sameAnswer m1 m2 := q1.sameAnswer m1 m2 && q2.sameAnswer m1 m2
   refl m := by simp [q1.refl, q2.refl]
@@ -89,29 +67,11 @@ def compose (q1 q2 : QUD M) : QUD M where
 instance : Mul (QUD M) where
   mul := compose
 
-section ProjectionTheorems
-
-variable {A : Type} [BEq A] [LawfulBEq A]
-
-/-- `sameAnswer` for projection QUD iff same image under `f`. -/
-theorem ofProject_sameAnswer_iff (f : M → A) (m1 m2 : M) :
-    (ofProject f).sameAnswer m1 m2 = true ↔ f m1 = f m2 := by
-  simp only [ofProject, beq_iff_eq]
-
-end ProjectionTheorems
-
 /-- The equivalence class (partition cell) of a meaning under a QUD. -/
 def cell (q : QUD M) (m : M) : Set M :=
   {m' : M | q.sameAnswer m m' = true}
 
-/-- For projection QUDs, cells are exactly fibers of the projection. -/
-theorem ofProject_cell_eq_fiber {A : Type} [BEq A] [LawfulBEq A] (f : M → A) (m : M) :
-    (ofProject f).cell m = {m' : M | f m' = f m} := by
-  ext m'
-  simp only [cell, Set.mem_setOf_eq, ofProject, beq_iff_eq]
-  exact eq_comm
-
-/-- Two meanings are in the same cell iff they have the same answer -/
+/-- Two meanings are in the same cell iff they have the same answer. -/
 theorem mem_cell_iff (q : QUD M) (m m' : M) :
     m' ∈ q.cell m ↔ q.sameAnswer m m' = true := by
   simp only [cell, Set.mem_setOf_eq]
@@ -131,6 +91,53 @@ def ofDecEq {α : Type*} [DecidableEq α] (project : M → α) (name : String :=
     rw [decide_eq_true_eq] at *
     exact h1.trans h2
   name := name
+
+/-- Build QUD from a projection function with `BEq`/`LawfulBEq` codomain.
+
+This is the primary constructor for QUDs over types with Boolean equality.
+`exact`, `binaryPartition`, and `PrecisionProjection.applyToQUD` all
+delegate to this. -/
+def ofProject {A : Type} [BEq A] [LawfulBEq A] (f : M → A) (name : String := "") : QUD M where
+  sameAnswer m1 m2 := f m1 == f m2
+  refl m := beq_self_eq_true (f m)
+  symm m1 m2 := by rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩
+  trans m1 m2 m3 h12 h23 := by
+    rw [beq_iff_eq] at *
+    exact h12.trans h23
+  name := name
+
+@[simp] theorem ofProject_sameAnswer {A : Type} [BEq A] [LawfulBEq A]
+    (f : M → A) (m1 m2 : M) :
+    (ofProject f).sameAnswer m1 m2 = (f m1 == f m2) := rfl
+
+/-- `sameAnswer` for projection QUD iff same image under `f`. -/
+theorem ofProject_sameAnswer_iff {A : Type} [BEq A] [LawfulBEq A]
+    (f : M → A) (m1 m2 : M) :
+    (ofProject f).sameAnswer m1 m2 = true ↔ f m1 = f m2 := by
+  simp only [ofProject_sameAnswer, beq_iff_eq]
+
+/-- For projection QUDs, cells are exactly fibers of the projection. -/
+theorem ofProject_cell_eq_fiber {A : Type} [BEq A] [LawfulBEq A] (f : M → A) (m : M) :
+    (ofProject f).cell m = {m' : M | f m' = f m} := by
+  ext m'
+  simp only [cell, Set.mem_setOf_eq, ofProject_sameAnswer, beq_iff_eq]
+  exact eq_comm
+
+section BEqConstructors
+variable [BEq M]
+
+/-- The identity QUD: speaker wants to convey exact meaning.
+Each meaning is its own equivalence class. -/
+def exact [LawfulBEq M] : QUD M where
+  sameAnswer m1 m2 := m1 == m2
+  refl m := beq_self_eq_true m
+  symm m1 m2 := by rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩
+  trans m1 m2 m3 h12 h23 := by
+    rw [beq_iff_eq] at *
+    exact h12.trans h23
+  name := "exact"
+
+end BEqConstructors
 
 end QUD
 
@@ -171,34 +178,9 @@ def roundTo (k : Nat) : PrecisionProjection Nat where
   round n := (n / k) * k
   name := s!"round{k}"
 
-/-- Compose precision with a QUD -/
+/-- Compose precision with a QUD. Delegates to `QUD.ofProject`. -/
 def applyToQUD {M N : Type} [BEq N] [LawfulBEq N]
-    (prec : PrecisionProjection N) (proj : M → N) : QUD M where
-  sameAnswer m1 m2 := prec.round (proj m1) == prec.round (proj m2)
-  refl m := beq_self_eq_true (prec.round (proj m))
-  symm m1 m2 := by rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]; exact ⟨Eq.symm, Eq.symm⟩
-  trans m1 m2 m3 h12 h23 := by
-    rw [beq_iff_eq] at *
-    exact h12.trans h23
-  name := prec.name
+    (prec : PrecisionProjection N) (proj : M → N) : QUD M :=
+  QUD.ofProject (prec.round ∘ proj) prec.name
 
 end PrecisionProjection
-
-namespace QUD
-
-variable {M : Type*}
-
-/-- Goal projection: are two meanings equivalent for the speaker's purpose? -/
-def goalEquiv (q : QUD M) (m1 m2 : M) : Bool := q.sameAnswer m1 m2
-
-/-- Goal equivalence is partition membership. -/
-theorem goalEquiv_iff_same_cell (q : QUD M) (m1 m2 : M) :
-    q.goalEquiv m1 m2 = true ↔ m2 ∈ q.cell m1 := by
-  simp only [goalEquiv, cell, Set.mem_setOf_eq]
-
-/-- For projection QUDs, goal equivalence iff same projection. -/
-theorem goalEquiv_ofProject_iff {A : Type} [BEq A] [LawfulBEq A] (f : M → A) (m1 m2 : M) :
-    (ofProject f).goalEquiv m1 m2 = true ↔ f m1 = f m2 := by
-  simp only [goalEquiv, ofProject, beq_iff_eq]
-
-end QUD

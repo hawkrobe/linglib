@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Verbs
 
 /-!
 # Turkish Predicate Lexicon Fragment
@@ -9,17 +9,29 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 
 namespace Fragments.Turkish.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType PreferentialBuilder AttitudeBuilder)
+open Core.Verbs
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
 open NadathurLauer2020.Builder (CausativeBuilder)
 
-/-- "kork-" — fear (Class 2: C-distributive, negative, takes questions with symmetric interpretation). -/
-def kork : VerbEntry where
+/-- Turkish verb entry: extends VerbCore with Turkish inflectional paradigm. -/
+structure TurkishVerbEntry extends VerbCore where
+  /-- Progressive form (-yor) -/
+  formProg : String
+  /-- Past form (-dı, -tı) -/
+  formPast : String
+  /-- Evidential form (-mış) -/
+  formEvidential : String
+  /-- Participle form (-an, -en) -/
+  formParticiple : String
+  deriving Repr, BEq
+
+/-- "kork-" — fear (Class 2: C-distributive, negative). -/
+def kork : TurkishVerbEntry where
   form := "kork-"
-  form3sg := "korkuyor"
+  formProg := "korkuyor"
   formPast := "korktu"
-  formPastPart := "korkmuş"
-  formPresPart := "korkan"
+  formEvidential := "korkmuş"
+  formParticiple := "korkan"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
@@ -28,12 +40,12 @@ def kork : VerbEntry where
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
 /-- "um-" — hope (Class 3: C-distributive, positive, anti-rogative). -/
-def um : VerbEntry where
+def um : TurkishVerbEntry where
   form := "um-"
-  form3sg := "umuyor"
+  formProg := "umuyor"
   formPast := "umdu"
-  formPastPart := "ummuş"
-  formPresPart := "uman"
+  formEvidential := "ummuş"
+  formParticiple := "uman"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
@@ -42,12 +54,12 @@ def um : VerbEntry where
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "merak et-" — wonder/be curious (rogative, non-preferential). -/
-def merakEt : VerbEntry where
+def merakEt : TurkishVerbEntry where
   form := "merak et-"
-  form3sg := "merak ediyor"
+  formProg := "merak ediyor"
   formPast := "merak etti"
-  formPastPart := "merak etmiş"
-  formPresPart := "merak eden"
+  formEvidential := "merak etmiş"
+  formParticiple := "merak eden"
   complementType := .question
   subjectTheta := some .experiencer
   passivizable := false
@@ -56,12 +68,12 @@ def merakEt : VerbEntry where
   takesQuestionBase := true
 
 /-- "endişelen-" — worry (Class 1: non-C-distributive). -/
-def endiselen : VerbEntry where
+def endiselen : TurkishVerbEntry where
   form := "endişelen-"
-  form3sg := "endişeleniyor"
+  formProg := "endişeleniyor"
   formPast := "endişelendi"
-  formPastPart := "endişelenmiş"
-  formPresPart := "endişelenen"
+  formEvidential := "endişelenmiş"
+  formParticiple := "endişelenen"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
@@ -75,29 +87,26 @@ Turkish morphological causative suffix -dür (Song 1996: COMPACT type).
 Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
 "Ali Hasan-ı öl-dür-dü" = "Ali killed Hasan" (öl 'die' + -dür CAUS) -/
 
-/-- öl-dür-mek — die-CAUS = "to kill" (morphological COMPACT causative).
-
-    Song (1996): Turkish *-dür* is a productive morphological causative
-    suffix creating COMPACT causatives. -/
-def ol_dur : VerbEntry where
+/-- öl-dür-mek — die-CAUS = "to kill" (morphological COMPACT causative). -/
+def ol_dur : TurkishVerbEntry where
   form := "öl-dür-mek"
-  form3sg := "öl-dür-ür"
+  formProg := "öl-dür-ür"
   formPast := "öl-dür-dü"
-  formPastPart := "öl-dür-müş"
-  formPresPart := "öl-dür-en"
-  complementType := .np  -- Fused: no separate complement clause
+  formEvidential := "öl-dür-müş"
+  formParticiple := "öl-dür-en"
+  complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
   causativeBuilder := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
-def yap_tir : VerbEntry where
+def yap_tir : TurkishVerbEntry where
   form := "yap-tır-mak"
-  form3sg := "yap-tır-ır"
+  formProg := "yap-tır-ır"
   formPast := "yap-tır-dı"
-  formPastPart := "yap-tır-mış"
-  formPresPart := "yap-tır-an"
+  formEvidential := "yap-tır-mış"
+  formParticiple := "yap-tır-an"
   complementType := .smallClause
   subjectTheta := some .agent
   objectTheta := some .patient
@@ -109,9 +118,9 @@ def yap_tir : VerbEntry where
 theorem ol_dur_is_make :
     ol_dur.causativeBuilder = some .make := rfl
 
-def allVerbs : List VerbEntry := [kork, um, merakEt, endiselen, ol_dur, yap_tir]
+def allVerbs : List TurkishVerbEntry := [kork, um, merakEt, endiselen, ol_dur, yap_tir]
 
-def lookup (form : String) : Option VerbEntry :=
+def lookup (form : String) : Option TurkishVerbEntry :=
   allVerbs.find? (·.form == form)
 
 end Fragments.Turkish.Predicates

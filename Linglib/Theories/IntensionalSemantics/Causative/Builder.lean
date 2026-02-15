@@ -33,7 +33,7 @@ not a causal-model property. Properties like "asserts sufficiency" or
 
 namespace NadathurLauer2020.Builder
 
-open Core.CausalModel
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 

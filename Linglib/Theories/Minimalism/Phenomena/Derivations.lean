@@ -176,7 +176,7 @@ example : john_sees_mary.phonYield = ["John", "sees", "Mary"] := rfl
 
 example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
 
-example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := rfl
+example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := by native_decide
 
 /-- Verify derivations are well-formed SyntacticObject structures. -/
 example : john_sleeps = merge johnSO sleepsSO := rfl
