@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.213.12] - 2026-02-15
+
+### Added
+- **Phenomena/Modality/PracticalReasoning.lean**: Teleological necessity (Kratzer §2.8) — "To get to Harlem, take the A train" scenario with goal and efficiency orderings
+- **Phenomena/Modality/InformationalBackgrounds.lean**: Non-realistic informational modal bases (Kratzer §2.3d) — weather report scenario, `isRealistic` proofs, evidence bridge
+- **Phenomena/Modality/DegreeCollapse.lean**: Modal strength as degree (Kratzer §2.5) — `modalStrength` definition, concrete rain scenario theorems, fully proved general theorems `strength_one_iff_necessity` and `strength_pos_iff_possibility`
+- **Theories/IntensionalSemantics/Modal/ProbabilityOrdering.lean**: Probability-to-ordering bridge (Kratzer §2.4) — `probToOrdering`, uniform/skewed assignments, ranking preservation
+- **Fragments/German/Predicates/Modal.lean**: German modal verb fragment — `GermanModalEntry` structure, 6 modals (können, dürfen, müssen, sollen, mögen, wollen)
+- **Phenomena/Modality/GermanModalsBridge.lean**: German modal typology bridge — `ModalInventory` from fragment, `german_all_iff` verified
+
+### Changed
+- **Phenomena/Modality/TypologyBridge.lean**: Add German as 10th language; rename `seven_of_nine_perfect_iff` → `eight_of_ten_perfect_iff`
+- **Linglib.lean**: Add 9 new imports for Kratzer Ch. 2 and ConditionalModality modules
+
 ## [0.213.11] - 2026-02-15
 
 ### Changed

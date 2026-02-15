@@ -84,6 +84,7 @@ import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
+import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
@@ -216,8 +217,15 @@ import Linglib.Phenomena.NumeralSemantics.Snyder2026Bridge
 import Linglib.Phenomena.NumeralModification.Embedding
 import Linglib.Phenomena.MeasurePhrases.BaleSchwarz2026Bridge
 import Linglib.Phenomena.MeasurePhrases.Scontras2014Bridge
+import Linglib.Phenomena.ConditionalModality.Data
+import Linglib.Phenomena.ConditionalModality.Bridge
 import Linglib.Phenomena.Modality.Basic
+import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.Modality.PracticalReasoning
+import Linglib.Phenomena.Modality.InformationalBackgrounds
+import Linglib.Phenomena.Modality.DegreeCollapse
+import Linglib.Phenomena.Modality.GermanModalsBridge
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
@@ -609,6 +617,7 @@ import Linglib.Theories.IntensionalSemantics.Modal.Disjunction
 import Linglib.Theories.IntensionalSemantics.Modal.BiasedPQ
 import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
 import Linglib.Theories.IntensionalSemantics.Modal.PhillipsBrown
+import Linglib.Theories.IntensionalSemantics.Modal.ProbabilityOrdering
 import Linglib.Theories.IntensionalSemantics.Modal.SatisfactionOrdering
 import Linglib.Theories.IntensionalSemantics.Modal.Ability
 import Linglib.Theories.IntensionalSemantics.Modal.Simple
