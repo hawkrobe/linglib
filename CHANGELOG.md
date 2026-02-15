@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.213.21] - 2026-02-15
+
+### Added
+- **Core/Partition.lean**: `toFinpartition` — construct Mathlib `Finpartition` from QUD via `Finpartition.ofSetoid`
+- **Core/Partition.lean**: Question Utility Bridge section — `questionUtility_eq_finsetSum` (list-based `questionUtility` = `Finset.sum` over `toCellsFinset` via `cellOfRep` bijection + `Finset.sum_nbij`), `questionUtility_refinement_ge` (QUD refinement implies `questionUtility` ordering under non-negative priors)
+- **Core/Partition.lean**: Helper infrastructure — `foldl_add_shift`, `foldl_add_eq_toFinset_sum` (NoDup list foldl = Finset.sum), `cellOfRep`/`cellOfRep_mem_toCellsFinset`/`cellOfRep_injOn`/`cellOfRep_surjOn`, `cellProb_mul_valueAfterLearning`, `toCells_totalProb`
+
+### Changed
+- **Core/Partition.lean**: `partitionEU` rewritten to use `Finpartition`-based cells instead of custom foldl arithmetic (~200 lines of manual decomposition lemmas replaced); `cellProb_mul_conditionalEU` simplified to use `Finset.sum`/`Finset.single_le_sum`/`field_simp`
+
 ## [0.213.20] - 2026-02-15
 
 ### Added
