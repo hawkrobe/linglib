@@ -10,6 +10,7 @@ Lexical entries for English closed-class function words:
 
 import Linglib.Core.Basic
 import Linglib.Core.ModalLogic
+import Linglib.Core.Register
 
 namespace Fragments.English.FunctionWords
 
@@ -70,6 +71,7 @@ def CompEntry.toWord (c : CompEntry) : Word :=
 
 section Auxiliaries
 open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+open Core.Register (Level)
 
 /-- Auxiliary type -/
 inductive AuxType where
@@ -92,6 +94,9 @@ structure AuxEntry where
   /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
+  /-- Register level (Dieuleveut, Hsu & Bhatt 2025). Formal items (*must*,
+      *shall*) vs informal items (*have to*) vs unmarked (*can*, *will*). -/
+  register : Level := .neutral
   /-- Contracted negative form with *-n't*, if it exists (Zwicky & Pullum 1983,
       Table 1). `none` for paradigm gaps (*mayn't*, *amn't*). -/
   negForm : Option String := none
@@ -125,6 +130,7 @@ def would : AuxEntry where
 def shall : AuxEntry where
   form := "shall"; auxType := .modal
   modalMeaning := cp [.necessity] [.deontic]
+  register := .formal
   negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
 def should : AuxEntry where
   form := "should"; auxType := .modal; tense := some .Past
@@ -141,7 +147,18 @@ def might : AuxEntry where
 def must : AuxEntry where
   form := "must"; auxType := .modal
   modalMeaning := cp [.necessity] [.epistemic, .deontic, .circumstantial]
+  register := .formal
   negForm := some "mustn't"; negIrregular := true  -- [t] deletion: [mʌsnt]
+
+-- Semi-modals and periphrastic modals
+
+/-- *Have to*: periphrastic deontic/circumstantial necessity.
+    Informal register variant of *must* (Dieuleveut, Hsu & Bhatt 2025).
+    Inflects unlike true modals: *has to*, *had to*, *having to*. -/
+def haveTo : AuxEntry where
+  form := "have to"; auxType := .modal
+  modalMeaning := cp [.necessity] [.deontic, .circumstantial]
+  register := .informal
 
 -- Semi-modals (Z&P Table 1 rows o–q)
 def dare : AuxEntry where
@@ -195,7 +212,7 @@ def had : AuxEntry where
 
 def allAuxiliaries : List AuxEntry := [
   can, could, will, would, shall, should, may, might, must,
-  dare, need, ought,
+  haveTo, dare, need, ought,
   do_, does, did,
   am, is_, are, was, were,
   have_, has, had
@@ -231,7 +248,7 @@ def nor : ConjEntry := { form := "nor" }
 def allConjunctions : List ConjEntry := [and_, or_, but, nor]
 
 def ConjEntry.toWord (c : ConjEntry) : Word :=
-  { form := c.form, cat := .SCONJ, features := {} }
+  { form := c.form, cat := if c.coordinating then .CCONJ else .SCONJ, features := {} }
 
 -- ============================================================================
 -- Discourse Particles (Focus-sensitive)

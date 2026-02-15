@@ -21,6 +21,7 @@ import Linglib.Core.Pronouns
 namespace Fragments.Korean.Pronouns
 
 open Core.Pronouns
+open Core.Register (Level)
 
 -- ============================================================================
 -- First Person
@@ -28,11 +29,11 @@ open Core.Pronouns
 
 /-- 나 *na* — 1sg plain. -/
 def na : PronounEntry :=
-  { form := "na", script := some "나", person := some .first, number := some .sg, formality := 0 }
+  { form := "na", script := some "나", person := some .first, number := some .sg, register := .informal }
 
 /-- 저 *jeo* — 1sg humble. -/
 def jeo : PronounEntry :=
-  { form := "jeo", script := some "저", person := some .first, number := some .sg, formality := 1 }
+  { form := "jeo", script := some "저", person := some .first, number := some .sg, register := .formal }
 
 /-- 우리 *uri* — 1pl. -/
 def uri : PronounEntry :=
@@ -44,11 +45,11 @@ def uri : PronounEntry :=
 
 /-- 너 *neo* — 2sg plain. -/
 def neo : PronounEntry :=
-  { form := "neo", script := some "너", person := some .second, number := some .sg, formality := 0 }
+  { form := "neo", script := some "너", person := some .second, number := some .sg, register := .informal }
 
 /-- 당신 *dangsin* — 2sg polite. -/
 def dangsin : PronounEntry :=
-  { form := "dangsin", script := some "당신", person := some .second, number := some .sg, formality := 1 }
+  { form := "dangsin", script := some "당신", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -81,11 +82,11 @@ def allPronouns : List PronounEntry :=
 
 /-- *-yo* polite particle (Portner, Pak & Zanuttini 2019). -/
 def yo : AllocutiveEntry :=
-  { form := "-yo", formality := 1, gloss := "POL" }
+  { form := "-yo", register := .neutral, gloss := "POL" }
 
 /-- *-(su)pnida* formal particle. -/
 def supnida : AllocutiveEntry :=
-  { form := "-(su)pnida", formality := 2, gloss := "FORM" }
+  { form := "-(su)pnida", register := .formal, gloss := "FORM" }
 
 def allAllocParticles : List AllocutiveEntry := [yo, supnida]
 
@@ -97,17 +98,17 @@ def allAllocParticles : List AllocutiveEntry := [yo, supnida]
 structure VerbForm where
   form : String
   gloss : String
-  formality : Nat
+  register : Level
   deriving Repr, BEq
 
 /-- 가 *ga* — "go" (plain/intimate). -/
-def ga : VerbForm := { form := "ga", gloss := "go.PLN", formality := 0 }
+def ga : VerbForm := { form := "ga", gloss := "go.PLN", register := .informal }
 
 /-- 가요 *gayo* — "go" (polite). -/
-def gayo : VerbForm := { form := "gayo", gloss := "go.POL", formality := 1 }
+def gayo : VerbForm := { form := "gayo", gloss := "go.POL", register := .neutral }
 
 /-- 갑니다 *gamnida* — "go" (formal). -/
-def gamnida : VerbForm := { form := "gamnida", gloss := "go.FORM", formality := 2 }
+def gamnida : VerbForm := { form := "gamnida", gloss := "go.FORM", register := .formal }
 
 -- ============================================================================
 -- Verification
@@ -124,21 +125,21 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .sg) = true ∧
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
-/-- 1st person has plain/humble formality distinction. -/
+/-- 1st person has plain/humble register distinction. -/
 theorem first_person_humble :
-    na.formality = 0 ∧ jeo.formality = 1 := ⟨rfl, rfl⟩
+    na.register = .informal ∧ jeo.register = .formal := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
 /-- Verb forms span all three speech levels. -/
 theorem verb_three_levels :
-    ga.formality = 0 ∧ gayo.formality = 1 ∧ gamnida.formality = 2 := ⟨rfl, rfl, rfl⟩
+    ga.register = .informal ∧ gayo.register = .neutral ∧ gamnida.register = .formal := ⟨rfl, rfl, rfl⟩
 
 end Fragments.Korean.Pronouns

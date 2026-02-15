@@ -2,44 +2,56 @@ import Linglib.Core.Empirical
 import Linglib.Fragments.English.Determiners
 
 /-!
-# Quantifier Semantic Universals — Empirical Findings
+# Quantifier Universals Bridge
 
-Empirical observations about the Barwise & Cooper (1981) semantic universals
-(conservativity, quantity/isomorphism closure, monotonicity) and their
-relationship to quantifier complexity.
+Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
+to the GQ property predicates in `Core.Quantification` and
+`Theories.TruthConditional.Determiner.Quantifier`.
+
+## Empirical phenomena verified
+
+1. **Conservativity** (Barwise & Cooper 1981, Conjecture 1): all six English
+   quantity words (no, few, some, half, most, every) satisfy CONSERV.
+2. **Quantity/isomorphism closure** (Mostowski 1957): all six satisfy QUANT.
+3. **Monotonicity–strength correlation** (B&C U7): strong determiners are
+   monotone; weak determiners partition into monotone and non-monotone ("half").
+4. **Weak ↔ there-insertion** (B&C Theorem C4, P&W Ch.6): weak determiners
+   (some, few, no) allow there-insertion; strong determiners (most, every) don't.
+5. **Symmetry ↔ weak** (P&W Ch.6 Fact 1): weak = symmetric, strong = not symmetric.
+6. **Positive-strong → scope-↑** (P&W Ch.6 Fact 7): positive-strong English
+   determiners are scope-upward-monotone.
+
+## Data structures
+
+- `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`:
+  van de Pol et al. (2023) LZ complexity effect sizes.
 
 ## Thread map
 
-- **Formal definitions**: `Core.Quantification` —
-  `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`.
-  `TruthConditional.Determiner.Quantifier` — `Quantity`, `SatisfiesUniversals`
-- **Proofs**: `every_conservative`, `some_conservative`, `most_conservative`,
-  `every_scope_up`, `some_scope_up`, `no_scope_down`
-- **Counterexample**: `m_not_conservative` (non-conservative quantifier)
+- **Formal definitions**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
+  `ScopeDownwardMono`, `QuantityInvariant`, `PositiveStrong`, `QSymmetric`
+- **Concrete denotations**: `TruthConditional.Determiner.Quantifier` —
+  `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
-- **Complexity conjecture**: `Core.Conjectures.simplicity_explains_universals`
-- **P&W Ch.4 Extension**: `Extension`, `extension_trivial`, `vanBenthem_cons_ext`.
-  FiniteModel spectator proofs: `every_ext_spectator`, `some_ext_spectator`,
-  `no_ext_spectator`, `most_ext_spectator`
-- **P&W Ch.6 symmetry**: `conserv_symm_iff_int`, `some_symmetric`, `no_symmetric`,
-  `every_not_symmetric`, `some_intersective`, `no_intersective`
-- **P&W Ch.6 strength**: `PositiveStrong`, `NegativeStrong`, `symm_not_positive_strong`,
-  `every_positive_strong`
-- **P&W Ch.5 anti-additivity**: `LeftAntiAdditive`, `every_laa`, `no_laa`
+- **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
+  `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
+- **Counting formula**: `Core.Quantification.conservativeQuantifierCount`
 
 ## References
 
 - Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
 - Mostowski, A. (1957). On a generalization of quantifiers.
+- Peters, S. & Westerståhl, D. (2006). Quantifiers in Language and Logic.
+- van Benthem, J. (1984). Questions About Quantifiers. J. Symbolic Logic 49(2).
 - van de Pol, I. et al. (2023). Quantifiers satisfying semantic universals have
   shorter minimal description length. Cognition 232, 105150.
 -/
 
-namespace Phenomena.Quantification.Universals
+namespace Phenomena.Quantification.Bridge
 
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
-open Core.Quantification (GQ Conservative QuantityInvariant LeftAntiAdditive
-  PositiveStrong ScopeUpwardMono QSymmetric Variety)
+open Core.Quantification (Conservative QuantityInvariant LeftAntiAdditive
+  PositiveStrong ScopeUpwardMono QSymmetric)
 open TruthConditional (Model)
 open TruthConditional.Determiner.Quantifier (FiniteModel)
 
@@ -315,38 +327,6 @@ theorem positive_strong_determiners_upward_monotone :
     simp [hfilt]
 
 -- ============================================================================
--- Van Benthem (1984) §3.2: Semantic Universals from Logic
--- ============================================================================
-
-/-- [sorry: mathematical] Van Benthem 1984 Thm 3.2.1: There are no asymmetric
-    quantifiers (satisfying CONSERV + QUANT + VAR).
-    Proof sketch: QAB → construct A' with A'∩A = B∩A such that QAA' and QA'A
-    (by QUANT), violating asymmetry. -/
-theorem no_asymmetric_quantifiers {α : Type} (q : GQ α)
-    (hCons : Conservative q) (hVar : Variety q)
-    (hQuant : QuantityInvariant q)
-    (hAsym : ∀ R S, q R S = true → q S R = false) : False := by
-  sorry
-
-/-- [sorry: mathematical] Van Benthem 1984 §3.2 + Zwarts: CONSERV + QUANT +
-    transitivity + irreflexivity + VAR leads to contradiction. -/
-theorem no_strict_partial_order_quantifiers {α : Type} (q : GQ α)
-    (hCons : Conservative q) (hVar : Variety q)
-    (hQuant : QuantityInvariant q)
-    (hTrans : ∀ R S T, q R S = true → q S T = true → q R T = true)
-    (hIrrefl : ∀ R, q R R = false) : False := by
-  sorry
-
-/-- [sorry: mathematical] Van Benthem 1984 Thm 3.2.3: No Euclidean quantifiers
-    satisfying CONSERV + QUANT + VAR exist.
-    Euclidean: QXY ∧ QXZ → QYZ collapses Q to trivial, contradicting VAR. -/
-theorem no_euclidean_quantifiers {α : Type} (q : GQ α)
-    (hCons : Conservative q) (hVar : Variety q)
-    (hQuant : QuantityInvariant q)
-    (hEuc : ∀ R S T, q R S = true → q R T = true → q S T = true) : False := by
-  sorry
-
--- ============================================================================
 -- Van Benthem (1984) §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
@@ -364,20 +344,4 @@ theorem no_euclidean_quantifiers {α : Type} (q : GQ α)
 
    TODO: State as a theorem characterizing the Square from inferential conditions. -/
 
--- ============================================================================
--- Van Benthem (1984) §5.4: Counting Quantifiers
--- ============================================================================
-
-/-- Van Benthem 1984 Thm 5.4: On a finite set with n individuals, there are
-    exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
-    The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
-def conservativeQuantifierCount (n : Nat) : Nat :=
-  2 ^ ((n + 1) * (n + 2) / 2)
-
-#eval conservativeQuantifierCount 0  -- 2 (always-true + always-false)
-#eval conservativeQuantifierCount 1  -- 8
-#eval conservativeQuantifierCount 2  -- 64
-#eval conservativeQuantifierCount 3  -- 1024
-#eval conservativeQuantifierCount 4  -- 32768
-
-end Phenomena.Quantification.Universals
+end Phenomena.Quantification.Bridge

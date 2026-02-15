@@ -147,4 +147,24 @@ theorem english_shifted_perspective_shifted :
     embeddedSickShifted.perspectiveTime = matrixSaid.eventTime := by native_decide
 
 
+/-- Hypothetical forward-shifted frame (for gap demonstration).
+    If past-under-past allowed forward shift, R' > E_matrix.
+    This frame is PREDICTED NOT TO EXIST as a reading. -/
+def embeddedSickForwardShifted : ReichenbachFrame ℤ where
+  speechTime := 0
+  perspectiveTime := -2   -- embedded P = matrix E
+  referenceTime := -1     -- R' = -1 > E_matrix = -2 (forward shifted!)
+  eventTime := -1         -- sick AFTER the saying
+
+/-- Forward-shifted: R' > matrix E (theory-neutral temporal fact). -/
+theorem forwardShifted_R_gt_matrix_E :
+    embeddedSickForwardShifted.referenceTime > matrixSaid.eventTime := by native_decide
+
+/-- Double access reading (Abusch 1997): present-under-past requires
+    overlap with BOTH matrix event time AND speech time.
+    Our frame: E' = 0 = S (sick at speech time), P' = -2 = E_matrix. -/
+theorem double_access_overlaps_speech :
+    embeddedSickPresent.eventTime = embeddedSickPresent.speechTime := by native_decide
+
+
 end Phenomena.SequenceOfTense

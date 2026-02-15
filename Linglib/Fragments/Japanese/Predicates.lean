@@ -35,7 +35,6 @@ def tanosimi : JapaneseVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.relevanceBased .positive))
 
@@ -49,7 +48,6 @@ def osore : JapaneseVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
@@ -63,7 +61,6 @@ def kitai : JapaneseVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
@@ -77,7 +74,6 @@ def shinpai : JapaneseVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
@@ -102,7 +98,6 @@ def ik_ase : JapaneseVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- 食べさせる "tabe-sase-ru" — eat-CAUS (ACC causee = make reading). -/
@@ -116,7 +111,6 @@ def tabe_sase : JapaneseVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- Japanese causative -(s)ase uses `.make` builder (direct causation reading). -/

@@ -35,7 +35,6 @@ def kork : TurkishVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
@@ -49,7 +48,6 @@ def um : TurkishVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
@@ -63,7 +61,6 @@ def merakEt : TurkishVerbEntry where
   complementType := .question
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   takesQuestionBase := true
 
@@ -77,7 +74,6 @@ def endiselen : TurkishVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
@@ -97,7 +93,6 @@ def ol_dur : TurkishVerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
@@ -111,7 +106,6 @@ def yap_tir : TurkishVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- Turkish causative *-dür* uses `.make` builder. -/

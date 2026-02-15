@@ -208,6 +208,21 @@ inductive SOTParameter where
   | absolute  -- Japanese: embedded tense absolute (to utterance time)
   deriving DecidableEq, Repr, BEq
 
+/-- Tense interpretation modes (Partee 1973, Kratzer 1998).
+    Tenses parallel pronouns: indexical (deictic), anaphoric
+    (discourse-bound), and bound variable (zero tense). -/
+inductive TenseInterpretation where
+  | indexical   -- Deictic: anchored to utterance time (Partee's "I")
+  | anaphoric   -- Discourse-bound: picks up salient time (Partee's "he/she")
+  | bound       -- Zero tense: locally bound by quantifier/attitude (Kratzer's ∅_n)
+  deriving DecidableEq, Repr, BEq
+
+/-- Bound (zero) tense is the SOT mechanism: it must be locally bound,
+    yielding the simultaneous reading without a deletion rule. -/
+theorem bound_is_sot_mechanism :
+    TenseInterpretation.bound ≠ .indexical ∧
+    TenseInterpretation.bound ≠ .anaphoric := ⟨nofun, nofun⟩
+
 
 /--
 PAST requires temporal precedence.

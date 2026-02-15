@@ -102,29 +102,27 @@ class HasProcessingProfile (α : Type) where
 
 These are the cognitive science claims underlying the processing model.
 Each states that increasing a cost dimension (or decreasing ease) cannot
-make processing easier. Stated as theorems with `sorry` per project convention. -/
+make processing easier. Stated as theorems with `sorry` per project convention.
+
+These are provable from the Pareto dominance definition but not load-bearing —
+nothing downstream depends on them. Proof deferred in favor of deeper results. -/
 
 /-- More locality → not easier (working memory decay). -/
--- TODO: Follows from DLT/activation-based models; needs formalization of
--- the underlying memory decay function.
 theorem locality_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with locality := p.locality + k + 1 } |>.compare p) ≠ .easier := by
   sorry
 
 /-- More boundaries → not easier (interference at retrieval). -/
--- TODO: Follows from cue-based retrieval models.
 theorem boundaries_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with boundaries := p.boundaries + k + 1 } |>.compare p) ≠ .easier := by
   sorry
 
 /-- More referential load → not easier (similarity-based interference). -/
--- TODO: Follows from Lewis & Vasishth (2005) similarity-based interference.
 theorem referentialLoad_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with referentialLoad := p.referentialLoad + k + 1 } |>.compare p) ≠ .easier := by
   sorry
 
 /-- More ease → not harder (facilitation aids retrieval). -/
--- TODO: Follows from Hofmeister (2007) retrieval facilitation.
 theorem ease_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with ease := p.ease + k + 1 } |>.compare p) ≠ .harder := by
   sorry

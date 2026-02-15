@@ -330,6 +330,13 @@ structure ForceFlavor where
   flavor : ModalFlavor
   deriving DecidableEq, BEq, Repr
 
+instance : LawfulBEq ForceFlavor where
+  eq_of_beq {a b} h := by
+    cases a with | mk f1 fl1 => cases b with | mk f2 fl2 =>
+    cases f1 <;> cases f2 <;> cases fl1 <;> cases fl2 <;>
+      first | rfl | exact absurd h (by decide)
+  rfl {a} := by cases a with | mk f fl => cases f <;> cases fl <;> decide
+
 instance : ToString ForceFlavor where
   toString ff := s!"({ff.force},{ff.flavor})"
 

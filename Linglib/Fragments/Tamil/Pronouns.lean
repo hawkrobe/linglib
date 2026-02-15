@@ -42,11 +42,11 @@ def naangaL : PronounEntry :=
 
 /-- *nii* — 2sg non-honorific. -/
 def nii : PronounEntry :=
-  { form := "nii", person := some .second, number := some .sg, formality := 0 }
+  { form := "nii", person := some .second, number := some .sg, register := .informal }
 
 /-- *niingaL* — 2sg honorific (also 2pl). -/
 def niingaL : PronounEntry :=
-  { form := "niingaL", person := some .second, number := some .sg, formality := 1 }
+  { form := "niingaL", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -62,7 +62,7 @@ def avaL : PronounEntry :=
 
 /-- *avar* — 3sg honorific. -/
 def avar : PronounEntry :=
-  { form := "avar", person := some .third, number := some .sg, formality := 1 }
+  { form := "avar", person := some .third, number := some .sg, register := .formal }
 
 /-- *avarkaL* — 3pl (human). -/
 def avarkaL : PronounEntry :=
@@ -83,11 +83,11 @@ def allPronouns : List PronounEntry :=
 
 /-- *-aay* non-honorific suffix. -/
 def suffNH : AllocutiveEntry :=
-  { form := "-aay", formality := 0, gloss := "2sg.NH" }
+  { form := "-aay", register := .informal, gloss := "2sg.NH" }
 
 /-- *-iingaL* honorific suffix. -/
 def suffH : AllocutiveEntry :=
-  { form := "-iingaL", formality := 1, gloss := "2sg.H" }
+  { form := "-iingaL", register := .formal, gloss := "2sg.H" }
 
 def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH]
 
@@ -114,13 +114,13 @@ theorem has_incl_excl :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
-/-- Allocutive markers match 2nd person pronoun formality levels. -/
+/-- Allocutive markers match 2nd person pronoun register levels. -/
 theorem markers_match_2p :
-    allAllocMarkers.map (·.formality) = secondPersonPronouns.map (·.formality) := rfl
+    allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
 
 end Fragments.Tamil.Pronouns

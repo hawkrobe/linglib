@@ -19,6 +19,7 @@ import Linglib.Core.Pronouns
 namespace Fragments.Galician.Pronouns
 
 open Core.Pronouns
+open Core.Register (Level)
 
 -- ============================================================================
 -- First Person
@@ -38,19 +39,19 @@ def nos : PronounEntry :=
 
 /-- *ti* — 2sg familiar (T form). -/
 def ti : PronounEntry :=
-  { form := "ti", person := some .second, number := some .sg, formality := 0 }
+  { form := "ti", person := some .second, number := some .sg, register := .informal }
 
 /-- *vostede* — 2sg formal (V form). -/
 def vostede : PronounEntry :=
-  { form := "vostede", person := some .second, number := some .sg, formality := 1 }
+  { form := "vostede", person := some .second, number := some .sg, register := .formal }
 
 /-- *vós* — 2pl familiar. -/
 def vos_pl : PronounEntry :=
-  { form := "vós", person := some .second, number := some .pl, formality := 0 }
+  { form := "vós", person := some .second, number := some .pl, register := .informal }
 
 /-- *vostedes* — 2pl formal. -/
 def vostedes : PronounEntry :=
-  { form := "vostedes", person := some .second, number := some .pl, formality := 1 }
+  { form := "vostedes", person := some .second, number := some .pl, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -87,7 +88,7 @@ def allPronouns : List PronounEntry :=
 
 /-- *che* — familiar dative clitic (2sg ethical dative). -/
 def che : AllocutiveEntry :=
-  { form := "che", formality := 0, gloss := "2sg.DAT.fam" }
+  { form := "che", register := .informal, gloss := "2sg.DAT.fam" }
 
 def allAllocClitics : List AllocutiveEntry := [che]
 
@@ -99,11 +100,11 @@ def allAllocClitics : List AllocutiveEntry := [che]
 structure VerbForm where
   form : String
   gloss : String
-  formality : Nat
+  register : Level
   deriving Repr, BEq
 
 /-- *vas* — "you go" (familiar, can host *che*). -/
-def vas : VerbForm := { form := "vas", gloss := "go.2sg.fam", formality := 0 }
+def vas : VerbForm := { form := "vas", gloss := "go.2sg.fam", register := .informal }
 
 -- ============================================================================
 -- Verification
@@ -124,16 +125,16 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
-/-- The allocutive clitic *che* is familiar-level. -/
-theorem che_is_familiar : che.formality = 0 := rfl
+/-- The allocutive clitic *che* is informal-level. -/
+theorem che_is_informal : che.register = .informal := rfl
 
 /-- 2pl preserves the T/V distinction (vós fam / vostedes form). -/
 theorem plural_tv :
-    vos_pl.formality = 0 ∧ vostedes.formality = 1 := ⟨rfl, rfl⟩
+    vos_pl.register = .informal ∧ vostedes.register = .formal := ⟨rfl, rfl⟩
 
 end Fragments.Galician.Pronouns

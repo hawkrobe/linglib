@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.213.14] - 2026-02-15
+
+### Added
+- **Core/Register.lean**: Sociolinguistic register type (`Level`: informal/neutral/formal) for pronoun and modal formality
+- **Phenomena/ModalConcord/**: Data and Bridge for Dieuleveut, Hsu & Bhatt (2025) modal non-concord experiments
+- **Phenomena/Quantification/Bridge.lean**: Replace deleted Universals.lean with Bridge file
+- **Core/Quantification.lean**: Van Benthem 1984 number-tree impossibility theorems (`no_asymmetric`, `no_strict_partial_order`, `no_euclidean`)
+- **SORRY_AUDIT.md**: Strategic analysis of all sorrys and axioms by role and difficulty
+
+### Changed
+- **Core/Pronouns.lean**: Replace `formality : Nat` with `register : Level` across `PronounEntry` and `AllocutiveEntry`
+- **Core/Verbs.lean**: Remove `VerbClass` enum — verb classification is now derived from primitive fields (factivity, opacity, speech-act status, etc.)
+- **Fragments/*/Pronouns.lean** (10 languages): Update all pronoun entries from `formality` to `register`
+- **Fragments/English/Predicates/Verbal.lean**: Remove `verbClass` usage, add `levinClass` and `rootProfile` to verb entries
+- **Fragments/*/Predicates.lean** (8 languages): Remove `verbClass` references
+- **Phenomena/Complementation/Bridge.lean**: Rewrite `deriveCTPClass` to use primitive verb fields instead of `VerbClass`
+- **Theories/QuestionSemantics/LeftPeriphery.lean**: Rewrite `deriveSelectionClass` to use primitive verb fields
+- **Theories/Minimalism/Phenomena/Allocutivity.lean**: Update formality→register bridge (`formalityToHonLevel` → `levelToHonLevel`)
+- **Fragments/English/FunctionWords.lean**: Add register field to aux entries
+
+### Removed
+- **Phenomena/Quantification/Universals.lean**: Consolidated into Bridge.lean
+- **Core/Verbs.lean**: `VerbClass` enum (replaced by derived classification)
+
 ## [0.213.13] - 2026-02-15
 
 ### Changed

@@ -27,7 +27,6 @@ def qidai : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.relevanceBased .positive)) }
 
@@ -37,7 +36,6 @@ def danxin : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased) }
 
@@ -47,7 +45,6 @@ def xiwang : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
@@ -57,7 +54,6 @@ def haipa : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
 
@@ -83,7 +79,6 @@ def yiwei : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   -- Doxastic non-veridical, but with exceptional postsupposition (see docs)
   attitudeBuilder := some (.doxastic .nonVeridical) }

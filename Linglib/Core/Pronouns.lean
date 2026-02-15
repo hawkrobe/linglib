@@ -1,4 +1,5 @@
 import Linglib.Core.Basic
+import Linglib.Core.Register
 
 /-!
 # Shared Pronoun and Allocutive Entry Types
@@ -11,7 +12,7 @@ shared across all Fragment/*/Pronouns.lean files.
 Covers the union of fields needed by all language fragments:
 - Core: form, person, number (all fragments)
 - Morphosyntactic: case_ (Galician, English)
-- Sociolinguistic: formality (all SA-based fragments)
+- Sociolinguistic: register (all SA-based fragments)
 - Orthographic: script (Korean hangul, Japanese kanji)
 
 ## AllocutiveEntry
@@ -27,6 +28,8 @@ clitics (Galician) that realize speaker-addressee agreement.
 
 namespace Core.Pronouns
 
+open Core.Register (Level)
+
 /-- Cross-linguistic pronoun entry.
 
 Covers personal pronouns across all Fragment languages. Language-specific
@@ -41,10 +44,10 @@ structure PronounEntry where
   number : Option Number := none
   /-- Grammatical case (UD.Case) -/
   case_ : Option Case := none
-  /-- Formality/honorific level. 0 = plain/familiar, higher = more formal.
-      Scale is language-specific (e.g., Hindi 0/1/2 = non-hon/hon/high-hon,
-      Tamil 0/1 = non-hon/hon). -/
-  formality : Nat := 0
+  /-- Register level (formality/honorifics). Binary T/V systems use
+      `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
+      Maithili, Korean) use all three levels. -/
+  register : Level := .informal
   /-- Native script form (hangul, kanji, Devanagari, etc.) -/
   script : Option String := none
   deriving Repr, BEq
@@ -56,8 +59,8 @@ agreement across all Fragment languages. -/
 structure AllocutiveEntry where
   /-- Surface form of the marker -/
   form : String
-  /-- Formality level (matching PronounEntry.formality scale) -/
-  formality : Nat
+  /-- Register level (matching PronounEntry.register scale) -/
+  register : Level
   /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
   gloss : String
   deriving Repr, BEq

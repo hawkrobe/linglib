@@ -62,7 +62,7 @@ structure SpanishVerbEntry extends VerbCore where
 
 /-- *abrir* "open" — marked anticausative, licenses stylistic LE. -/
 def abrir : SpanishVerbEntry :=
-  { form := "abrir", verbClass := .causative, complementType := .np,
+  { form := "abrir", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -70,7 +70,7 @@ def abrir : SpanishVerbEntry :=
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
     (exx. 7–8 in Muñoz Pérez 2026) -/
 def romper : SpanishVerbEntry :=
-  { form := "romper", verbClass := .causative, complementType := .np,
+  { form := "romper", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -78,7 +78,7 @@ def romper : SpanishVerbEntry :=
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
     (exx. 9–10) -/
 def hundir : SpanishVerbEntry :=
-  { form := "hundir", verbClass := .causative, complementType := .np,
+  { form := "hundir", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -86,7 +86,7 @@ def hundir : SpanishVerbEntry :=
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (exx. 11–12, unaccusative) -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", verbClass := .simple, complementType := .none,
+  { form := "caer", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
@@ -95,7 +95,7 @@ def caer : SpanishVerbEntry :=
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
     (exx. 13–14) -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", verbClass := .simple, complementType := .none,
+  { form := "morir", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
@@ -104,7 +104,7 @@ def morir : SpanishVerbEntry :=
 /-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
     (ex. 39a) -/
 def quebrar : SpanishVerbEntry :=
-  { form := "quebrar", verbClass := .causative, complementType := .np,
+  { form := "quebrar", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -112,7 +112,7 @@ def quebrar : SpanishVerbEntry :=
 /-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
     (ex. 40) -/
 def hervir : SpanishVerbEntry :=
-  { form := "hervir", verbClass := .causative, complementType := .np,
+  { form := "hervir", complementType := .np,
     anticausativeMarking := .optional,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -120,7 +120,7 @@ def hervir : SpanishVerbEntry :=
 /-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
     (exx. 15–16, psych verb) -/
 def olvidar : SpanishVerbEntry :=
-  { form := "olvidar", verbClass := .simple, complementType := .np,
+  { form := "olvidar", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
@@ -128,7 +128,7 @@ def olvidar : SpanishVerbEntry :=
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
     (exx. 17–18) -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", verbClass := .simple, complementType := .none,
+  { form := "ocurrir", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
@@ -137,7 +137,7 @@ def ocurrir : SpanishVerbEntry :=
 /-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
     (ex. 39b) -/
 def mejorar : SpanishVerbEntry :=
-  { form := "mejorar", verbClass := .causative, complementType := .np,
+  { form := "mejorar", complementType := .np,
     anticausativeMarking := .unmarked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := false }
@@ -147,7 +147,7 @@ def mejorar : SpanishVerbEntry :=
     implies unidirectional (linear, gash-like) separation. Incompatible with
     careful controlled action. Spalek & McNally (forthcoming, §3.2). -/
 def rasgar : SpanishVerbEntry :=
-  { form := "rasgar", verbClass := .causative, complementType := .np,
+  { form := "rasgar", complementType := .np,
     causativeBuilder := some .make,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],

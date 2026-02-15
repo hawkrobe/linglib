@@ -263,39 +263,34 @@ theorem particle_layer_predicts_embedding :
 /-! ## H1. Derive SelectionClass from VerbEntry
 
 Instead of classifying verbs by string matching (`classifyVerb "know" => .responsive`),
-we derive the selection class from the structural properties already encoded in
-each `VerbEntry`: `verbClass`, `complementType`, `attitudeBuilder`, `takesQuestionBase`.
+we derive the selection class from the primitive fields already encoded in
+each `VerbEntry`: `factivePresup`, `speechActVerb`, `opaqueContext`, `complementType`,
+`attitudeBuilder`, `takesQuestionBase`.
 -/
 
 open Fragments.English.Predicates.Verbal
 
 /-- Derive the left-peripheral selection class from a VerbEntry's structural
     properties. This replaces ad-hoc string-based classification with a
-    principled derivation from the verb's semantic and syntactic features.
+    principled derivation from the verb's primitive semantic fields.
 
     The logic:
-    - Factives/semifactives are responsive (knowledge-entailing)
+    - Factives are responsive (knowledge-entailing)
     - Non-veridical doxastic attitudes are uninterrogative
-    - Communication verbs that take questions are rogativeSAP (speech-act layer)
-    - Attitude verbs that take questions are rogativePerspP (perspective layer)
-    - Simple verbs that take questions are rogativeCP (CP layer only)
+    - Speech-act verbs that take questions are rogativeSAP (speech-act layer)
+    - Opaque-context verbs that take questions are rogativePerspP (perspective layer)
+    - Other question-taking verbs are rogativeCP (CP layer only)
     - Everything else is uninterrogative -/
 def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
   if v.complementType != .question && !v.takesQuestionBase then .uninterrogative
-  else match v.verbClass, v.attitudeBuilder with
-  | .factive, _ => .responsive
-  | .semifactive, _ => .responsive
-  | _, some (.doxastic .nonVeridical) => .uninterrogative
-  | .communication, _ =>
-      if v.complementType == .question then .rogativeSAP
-      else .uninterrogative
-  | .attitude, _ =>
-      if v.complementType == .question && v.takesQuestionBase then .rogativePerspP
-      else .uninterrogative
-  | .simple, _ =>
-      if v.complementType == .question then .rogativeCP
-      else .uninterrogative
-  | _, _ => .uninterrogative
+  else if v.factivePresup then .responsive
+  else match v.attitudeBuilder with
+  | some (.doxastic .nonVeridical) => .uninterrogative
+  | _ =>
+    if v.speechActVerb && v.complementType == .question then .rogativeSAP
+    else if v.opaqueContext && v.complementType == .question then .rogativePerspP
+    else if v.complementType == .question then .rogativeCP
+    else .uninterrogative
 
 /-- The structurally derived classification matches the manually-assigned
     string-based classification for all verbs in the embedding data. -/
@@ -405,26 +400,32 @@ predicates (entailsKnowledge, perspPConsistent). This shows the Boolean
 predicates are correct *because* they track the compositional story.
 -/
 
-/-- Factive/semifactive verb classes correspond to veridical doxastic predicates.
-    This is the structural link: verbClass determines veridicality. -/
-def verbClassIsVeridical (vc : VerbClass) : Bool :=
-  match vc with
-  | .factive => true
-  | .semifactive => true
-  | _ => false
+/-- Factive verbs correspond to veridical doxastic predicates.
+    This is the structural link: factivePresup determines veridicality. -/
+def verbEntryIsVeridical (v : VerbEntry) : Bool :=
+  v.factivePresup
 
 /-- The derived selection class assigns .responsive exactly to verbs whose
-    class is veridical (factive/semifactive) and which can embed questions.
-    This connects the structural derivation to the semantic one.
-
-    TODO: Proof requires case analysis on all VerbClass × AttitudeBuilder branches
-    of deriveSelectionClass. The key insight: only .factive and .semifactive branches
-    produce .responsive, and both have verbClassIsVeridical = true. -/
+    factivePresup is true and which can embed questions.
+    This connects the structural derivation to the semantic one. -/
 theorem responsive_iff_veridical_question_taker (v : VerbEntry)
     (hQ : v.complementType == .question || v.takesQuestionBase = true)
     (hClass : deriveSelectionClass v = .responsive) :
-    verbClassIsVeridical v.verbClass = true := by
-  sorry
+    verbEntryIsVeridical v = true := by
+  simp only [verbEntryIsVeridical]
+  unfold deriveSelectionClass at hClass
+  by_cases h1 : v.complementType != .question && !v.takesQuestionBase
+  · simp [h1] at hClass
+  · simp [h1] at hClass
+    by_cases h2 : v.factivePresup = true
+    · exact h2
+    · exfalso
+      simp [h2] at hClass
+      revert hClass
+      split <;> simp_all
+      split <;> simp_all
+      split <;> simp_all
+      split <;> simp_all
 
 /-- The Boolean `entailsKnowledge` agrees with the compositional story:
     responsive predicates entail knowledge (veridicality + box),
@@ -445,9 +446,8 @@ theorem boolean_tracks_compositional (cls : SelectionClass) :
 
 /-! ## I1. Field-based derivation
 
-Instead of routing through `verbClass` + `attitudeBuilder` (as `deriveSelectionClass`
-does), this derivation keys off the surface-level lexical fields directly:
-`factivePresup`, `takesQuestionBase`, `complementType`, `verbClass`, `opaqueContext`.
+This derivation keys off the surface-level lexical fields directly:
+`factivePresup`, `takesQuestionBase`, `complementType`, `speechActVerb`, `opaqueContext`.
 
 Each branch depends on a different field, so changing one field in the fragment
 breaks exactly one per-verb theorem below.
@@ -459,14 +459,14 @@ breaks exactly one per-verb theorem below.
     |-----------------|----------------------------------------------------------|
     | uninterrogative | !takesQuestionBase && complementType != .question         |
     | responsive      | factivePresup && takesQuestionBase                        |
-    | rogativeSAP     | complementType == .question && verbClass == .communication|
+    | rogativeSAP     | complementType == .question && speechActVerb              |
     | rogativePerspP  | complementType == .question && opaqueContext              |
     | rogativeCP      | complementType == .question (fallthrough)                 |
 -/
 def fieldSelectionClass (v : VerbEntry) : SelectionClass :=
   if !v.takesQuestionBase && v.complementType != .question then .uninterrogative
   else if v.factivePresup && v.takesQuestionBase then .responsive
-  else if v.complementType == .question && v.verbClass == .communication then .rogativeSAP
+  else if v.complementType == .question && v.speechActVerb then .rogativeSAP
   else if v.complementType == .question && v.opaqueContext then .rogativePerspP
   else if v.complementType == .question then .rogativeCP
   else .uninterrogative
