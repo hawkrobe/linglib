@@ -1,5 +1,4 @@
 import Linglib.Core.Empirical
-import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!

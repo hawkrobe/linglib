@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Verb.Aspect
+import Linglib.Core.Basic
 
 /-!
 # Be/Have Auxiliary Selection in European Perfects
@@ -26,8 +26,6 @@ in split-auxiliary languages.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Selection
-
-open TruthConditional.Verb.Aspect (VendlerClass)
 
 /-! ## Types -/
 
@@ -156,24 +154,5 @@ theorem italian_arrivare_matches_canonical :
 /-- English *arrive* breaks the canonical pattern (have-only system). -/
 theorem english_breaks_canonical :
     canonicalSelection englishArrive.transitivityClass ≠ englishArrive.selectedAux := by decide
-
-/-! ## Bridge to Aspect -/
-
-/-- Vendler's achievement class (telic, punctual) typically corresponds to
-    unaccusativity: canonical achievements are change-of-state verbs whose
-    subject is a theme/patient. -/
-def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
-  | .achievement    => .unaccusative
-  | .accomplishment => .transitive
-  | .activity       => .unergative
-  | .state          => .unergative
-
-/-- Achievements are typically unaccusative. -/
-theorem achievement_typically_unaccusative :
-    vendlerClassToTypicalTransitivity .achievement = .unaccusative := rfl
-
-/-- Achievements typically select *be* in split-auxiliary languages. -/
-theorem achievement_selects_be :
-    canonicalSelection (vendlerClassToTypicalTransitivity .achievement) = .be := rfl
 
 end Phenomena.AuxiliaryVerbs.Selection

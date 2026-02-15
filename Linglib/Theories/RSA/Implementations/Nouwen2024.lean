@@ -46,7 +46,7 @@ import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
 import Linglib.Theories.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.TruthConditional.Adjective.Intensification
-import Linglib.Phenomena.Gradability.Intensifiers
+import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Nouwen2024

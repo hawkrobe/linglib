@@ -1,5 +1,4 @@
 import Linglib.Core.Basic
-import Linglib.Theories.IntensionalSemantics.Modal.Kernel
 import Linglib.Fragments.Mandarin.QuestionParticles
 
 /-!
@@ -183,46 +182,5 @@ theorem unexpectedness_necessary :
 
 /-- 9 data points from 6 examples covering 4 conditions. -/
 theorem dataset_size : allData.length = 9 := by native_decide
-
--- ════════════════════════════════════════════════════════════════════════════
--- Bridge: Fragment Entry ↔ Empirical Data ↔ Kernel Theory
--- ════════════════════════════════════════════════════════════════════════════
-
-/-! Bridge theorems connecting the Mandarin nandao Fragment entry to the
-empirical generalizations above and to the Kernel-theoretic felicity
-predicate `nandaoFelicitous`. These break if the Fragment entry, the
-empirical data, or the theory change incompatibly. -/
-
-open Fragments.Mandarin.QuestionParticles (nandao)
-open IntensionalSemantics.Modal (Kernel Background nandaoFelicitous)
-open IntensionalSemantics.Attitude.Intensional (World)
-open Core.Proposition (BProp)
-
--- Fragment ↔ Data
-
-/-- The nandao Fragment entry's evidential bias requirement matches the
-empirical generalization: all felicitous nandao-Qs have evidential bias. -/
-theorem fragment_data_evidential :
-    nandao.requiresEvidentialBias = true ∧
-    (allData.filter (·.felicitous)).all (·.evidentialBias) = true :=
-  ⟨rfl, by native_decide⟩
-
-/-- The nandao Fragment entry correctly does NOT require epistemic bias,
-matching the empirical finding that some felicitous nandao-Qs lack it. -/
-theorem fragment_data_epistemic :
-    nandao.requiresEpistemicBias = false ∧
-    (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 :=
-  ⟨rfl, by native_decide⟩
-
--- Theory ↔ Data
-
-/-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
-Theory predicate to the Fragment's `requiresEvidentialBias = true` and
-the empirical generalization `evidential_bias_necessary`. -/
-theorem kernel_requires_evidence (k : Kernel) (u : Background) (φ : BProp World)
-    (h : nandaoFelicitous k u φ = true) :
-    k.evidenceSupports φ = true := by
-  simp only [nandaoFelicitous] at h
-  revert h; cases k.evidenceSupports φ <;> simp
 
 end Phenomena.Questions.NandaoQs

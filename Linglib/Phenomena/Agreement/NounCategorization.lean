@@ -4,7 +4,6 @@ import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
-import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
 
 /-!
 # Noun Categorization and Agreement Typology
@@ -53,7 +52,6 @@ classifier–number complementarity.
 namespace Phenomena.Agreement.NounCategorization
 
 open Core.NounCategorization
-open TruthConditional.Noun.Kind.Chierchia1998 (NominalMapping)
 
 -- ============================================================================
 -- Part I: Cross-Linguistic Typology
@@ -163,58 +161,6 @@ theorem japanese_inventory_from_fragment :
 theorem classifier_systems_have_default :
     mandarin.hasUnmarkedDefault = true ∧
     japanese.hasUnmarkedDefault = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- §5: Chierchia (1998) Nominal Mapping Parameter bridge
--- ============================================================================
-
-/-- Map NominalMapping to the expected classifier type.
-    [+arg, -pred] languages have numeral classifiers.
-    [-arg, +pred] languages have noun class/gender.
-    [+arg, +pred] languages (English/Germanic) lack a productive system. -/
-def nominalMappingToClassifierType : NominalMapping → Option ClassifierType
-  | .argOnly => some .numeralClassifier   -- Mandarin, Japanese
-  | .predOnly => some .nounClass          -- French, Italian
-  | .argAndPred => none                   -- English: no productive system
-
-/-- French mapping is [-arg, +pred] (Chierchia 1998). -/
-theorem french_mapping : Fragments.French.Nouns.frenchMapping = .predOnly := rfl
-
-/-- Mandarin mapping is [+arg, -pred] (Chierchia 1998). -/
-theorem mandarin_mapping : Fragments.Mandarin.Nouns.mandarinMapping = .argOnly := rfl
-
-/-- Japanese mapping is [+arg, -pred] (Chierchia 1998). -/
-theorem japanese_mapping : Fragments.Japanese.Nouns.japaneseMapping = .argOnly := rfl
-
-/-- The Chierchia-Aikhenvald bridge: [+arg, -pred] languages are numeral
-    classifier languages. This connects the semantic parameter (NominalMapping)
-    to the morphosyntactic typology (ClassifierType). -/
-theorem argOnly_implies_numeral_classifier :
-    nominalMappingToClassifierType .argOnly = some .numeralClassifier := rfl
-
-/-- [-arg, +pred] languages are noun class languages. -/
-theorem predOnly_implies_noun_class :
-    nominalMappingToClassifierType .predOnly = some .nounClass := rfl
-
-/-- [+arg, +pred] languages (English/Germanic) lack a productive noun
-    categorization system in Aikhenvald's sense. -/
-theorem argAndPred_no_system :
-    nominalMappingToClassifierType .argAndPred = none := rfl
-
-/-- Mandarin's actual classifier type matches the Chierchia prediction. -/
-theorem mandarin_chierchia_consistent :
-    some mandarin.classifierType =
-      nominalMappingToClassifierType Fragments.Mandarin.Nouns.mandarinMapping := rfl
-
-/-- Japanese's actual classifier type matches the Chierchia prediction. -/
-theorem japanese_chierchia_consistent :
-    some japanese.classifierType =
-      nominalMappingToClassifierType Fragments.Japanese.Nouns.japaneseMapping := rfl
-
-/-- French's actual classifier type matches the Chierchia prediction. -/
-theorem french_chierchia_consistent :
-    some french.classifierType =
-      nominalMappingToClassifierType Fragments.French.Nouns.frenchMapping := rfl
 
 -- ============================================================================
 -- §6: Cross-linguistic summary

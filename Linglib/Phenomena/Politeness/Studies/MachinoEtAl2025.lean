@@ -35,11 +35,7 @@ Extended Yoon et al. (2020) RSA with:
 - Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
-import Linglib.Theories.TruthConditional.Adjective.Theory
-
 namespace Phenomena.Politeness.Studies.MachinoEtAl2025
-
-open TruthConditional.Adjective (ModifierDirection DegreeModifier)
 
 -- ============================================================================
 -- Modifier Hierarchy
@@ -59,26 +55,6 @@ inductive Culture where
   | americanEnglish  -- AmE
   | britishEnglish   -- BrE
   deriving DecidableEq, BEq, Repr
-
-/-- Culture-specific modifier direction.
-    Key finding: "quite" differs across varieties. -/
-def modifierDirection : Culture → Modifier → ModifierDirection
-  | _, .slightly  => .downtoner
-  | _, .kindOf    => .downtoner
-  | .americanEnglish, .quite => .amplifier   -- AmE: "quite good" ≈ "very good"
-  | .britishEnglish, .quite  => .downtoner   -- BrE: "quite good" ≈ "fairly good"
-  | _, .very      => .amplifier
-  | _, .extremely => .amplifier
-
--- Verify cross-cultural difference for "quite"
-#guard modifierDirection .americanEnglish .quite == .amplifier
-#guard modifierDirection .britishEnglish .quite == .downtoner
-
--- Verify universal directions
-#guard modifierDirection .americanEnglish .slightly == .downtoner
-#guard modifierDirection .britishEnglish .slightly == .downtoner
-#guard modifierDirection .americanEnglish .very == .amplifier
-#guard modifierDirection .britishEnglish .very == .amplifier
 
 -- ============================================================================
 -- Strength Hierarchy
