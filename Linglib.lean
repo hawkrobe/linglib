@@ -33,6 +33,7 @@ import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.Causation
+import Linglib.Core.RootDimensions
 import Linglib.Core.Verbs
 import Linglib.Core.NaturalLogic
 import Linglib.Core.DecisionTheory
@@ -118,6 +119,7 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
+import Linglib.Phenomena.SpalekMcNally.Data
 import Linglib.Phenomena.AlstottAravind2026.Data
 import Linglib.Phenomena.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.ExamplesBridge

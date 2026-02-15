@@ -142,9 +142,29 @@ def mejorar : SpanishVerbEntry :=
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := false }
 
+/-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
+    Unlike English *tear*, *rasgar* requires flimsy/insubstantial patients and
+    implies unidirectional (linear, gash-like) separation. Incompatible with
+    careful controlled action. Spalek & McNally (forthcoming, §3.2). -/
+def rasgar : SpanishVerbEntry :=
+  { form := "rasgar", verbClass := .causative, complementType := .np,
+    causativeBuilder := some .make,
+    anticausativeMarking := .marked,
+    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    licensesStylLE := true,
+    levinClass := some .break_,
+    rootProfile := some {
+      forceMag := some [.low, .moderate]
+      forceDir := some [.unidirectional]
+      patientRob := some [.insubstantial, .flimsy]
+      resultType := some [.separation, .surfaceBreach]
+      agentControl := some [.incompatible, .neutral]
+    } }
+
 /-- All verb entries in the fragment. -/
 def allVerbs : List SpanishVerbEntry :=
-  [abrir, romper, hundir, caer, morir, quebrar, hervir, olvidar, ocurrir, mejorar]
+  [abrir, romper, hundir, caer, morir, quebrar, hervir, olvidar, ocurrir, mejorar,
+   rasgar]
 
 -- ============================================================================
 -- § 4: Per-Verb Verification

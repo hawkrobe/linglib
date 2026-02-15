@@ -669,7 +669,9 @@ def kill : VerbEntry := .mkRegular {
   verbClass := .causative
   causativeBuilder := some .make }
 
-/-- "break" — thick lexical causative (manner verb, Embick 2009 break-class). -/
+/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; Embick 2009 break-class).
+    Pure change-of-state verb: change in "material integrity" (Hale & Keyser 1987)
+    with no specification of how the change comes about (Levin 1993:242). -/
 def break_ : VerbEntry where
   form := "break"
   form3sg := "breaks"
@@ -682,6 +684,40 @@ def break_ : VerbEntry where
   unaccusative := false
   verbClass := .causative
   causativeBuilder := some .make
+  levinClass := some .break_
+  rootProfile := some {
+    forceMag := some [.moderate, .high]
+    forceDir := some [.omnidirectional]
+    patientRob := some [.moderate, .robust]
+    resultType := some [.fracture]
+    agentControl := some [.incompatible, .neutral]
+  }
+
+/-- "tear" — Levin 45.1 Break Verbs. Contrary-direction separation with force.
+    Unlike *break*, *tear* implies a specific directionality (bidirectional /
+    pulling apart) and is compatible with careful controlled action.
+    Patient restriction: any solid capable of irregular separation.
+    Spalek & McNally (forthcoming, §3.1–3.2). -/
+def tear_ : VerbEntry where
+  form := "tear"
+  form3sg := "tears"
+  formPast := "tore"
+  formPastPart := "torn"
+  formPresPart := "tearing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  unaccusative := false
+  verbClass := .causative
+  causativeBuilder := some .make
+  levinClass := some .break_
+  rootProfile := some {
+    forceMag := some [.moderate, .high]
+    forceDir := some [.bidirectional, .unidirectional]
+    patientRob := some [.flimsy, .moderate, .robust]
+    resultType := some [.separation]
+    agentControl := some [.neutral, .compatible]
+  }
 
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
 def burn : VerbEntry := .mkRegular {
@@ -884,7 +920,7 @@ def allVerbs : List VerbEntry := [
   make,
   let_, have_caus, get_caus, force,
   -- Lexical causatives (Martin, Rose & Nichols 2025)
-  kill, break_, burn, destroy, melt,
+  kill, break_, tear_, burn, destroy, melt,
   -- Communication
   say, tell, claim,
   -- Question-embedding (Dayal 2025)
