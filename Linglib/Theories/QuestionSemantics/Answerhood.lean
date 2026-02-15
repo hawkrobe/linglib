@@ -89,8 +89,8 @@ theorem wh_ans_determines_polar_ans {W E : Type*} [DecidableEq E]
 
 /-- Composed polar questions refine their components. -/
 theorem composed_polar_refines {W : Type*} (p1 p2 : W → Bool) :
-    GSQuestion.compose (polarQuestion p1) (polarQuestion p2) ⊑ polarQuestion p1 :=
-  GSQuestion.compose_refines_left _ _
+    QUD.compose (polarQuestion p1) (polarQuestion p2) ⊑ polarQuestion p1 :=
+  QUD.compose_refines_left _ _
 
 /-- Karttunen denotation: set of true answer-propositions at index w (de re). -/
 def karttunenDenotation {W E : Type*} [BEq W]

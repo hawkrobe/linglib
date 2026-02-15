@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Verbs
 
 /-!
 # French Predicate Lexicon Fragment
@@ -19,39 +19,42 @@ despite being separate words.
 
 namespace Fragments.French.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType)
+open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
 
-/-- faire — COMPACT causative (free morpheme).
+/-- French verb entry: extends VerbCore with French inflectional paradigm. -/
+structure FrenchVerbEntry extends VerbCore where
+  /-- 3sg present -/
+  form3sg : String
+  /-- Passé simple -/
+  formPasse : String
+  /-- Participe passé -/
+  formPartPasse : String
+  /-- Participe présent -/
+  formPartPres : String
+  deriving Repr, BEq
 
-    "faire + infinitive" forms a tight syntactic unit (Kayne 1975):
-    the causee is marked with *à* (dative) when the embedded verb is
-    transitive, and with accusative when intransitive.
-
-    Song (1996): COMPACT type, free morpheme realization. -/
-def faire : VerbEntry where
+/-- faire — COMPACT causative (free morpheme). -/
+def faire : FrenchVerbEntry where
   form := "faire"
   form3sg := "fait"
-  formPast := "fit"
-  formPastPart := "fait"
-  formPresPart := "faisant"
-  complementType := .smallClause  -- faire + bare infinitive
+  formPasse := "fit"
+  formPartPasse := "fait"
+  formPartPres := "faisant"
+  complementType := .smallClause
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
   causativeBuilder := some .make
 
-/-- laisser — permissive causative ("let").
-
-    "laisser + infinitive" = permissive causation (barrier removal).
-    "Je l'ai laissé partir" = "I let him leave" -/
-def laisser : VerbEntry where
+/-- laisser — permissive causative ("let"). -/
+def laisser : FrenchVerbEntry where
   form := "laisser"
   form3sg := "laisse"
-  formPast := "laissa"
-  formPastPart := "laissé"
-  formPresPart := "laissant"
+  formPasse := "laissa"
+  formPartPasse := "laissé"
+  formPartPres := "laissant"
   complementType := .smallClause
   subjectTheta := some .agent
   objectTheta := some .patient
@@ -71,9 +74,9 @@ theorem laisser_is_enable :
 theorem faire_laisser_different :
     faire.causativeBuilder ≠ laisser.causativeBuilder := by decide
 
-def allVerbs : List VerbEntry := [faire, laisser]
+def allVerbs : List FrenchVerbEntry := [faire, laisser]
 
-def lookup (form : String) : Option VerbEntry :=
+def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)
 
 end Fragments.French.Predicates

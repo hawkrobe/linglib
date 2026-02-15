@@ -1,191 +1,76 @@
-import Linglib.Core.Basic
-import Linglib.Core.Presupposition
-import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
-import Linglib.Theories.TruthConditional.Measurement.Basic
-import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
-import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
-import Linglib.Theories.IntensionalSemantics.Causative.Basic
-import Linglib.Theories.IntensionalSemantics.Causative.Implicative
+import Linglib.Core.Verbs
+import Linglib.Core.Morphology.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
 
-Verb lexical entries with morphology, argument structure, semantic class,
+English verb lexical entries with morphology, argument structure, semantic class,
 and links to compositional semantics (CoS, attitudes, causatives).
+
+Semantic types (`VerbClass`, `ComplementType`, `AttitudeBuilder`, etc.) and the
+cross-linguistic `VerbCore` structure live in `Core/Verbs.lean`. This file
+defines `VerbEntry extends VerbCore` with English-specific inflectional fields
+and provides smart constructors for regular verbs.
 -/
 
 namespace Fragments.English.Predicates.Verbal
 
-open Core.Presupposition
-open TruthConditional.Verb.ChangeOfState
-open TruthConditional.Measurement (Dimension)
-open IntensionalSemantics.Attitude.Doxastic (Veridicality)
-open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+-- Re-export Core.Verbs types so downstream files that open this namespace
+-- (e.g., `open Fragments.English.Predicates.Verbal (VerbClass ComplementType ...)`)
+-- continue to find them.
+export Core.Verbs (PreferentialBuilder AttitudeBuilder VerbClass PresupTriggerType
+  ComplementType ControlType VerbCore complementToValence)
 
-/--
-Which Montague predicate builder this verb uses.
-
-This links the Fragment entry to the compositional semantics in
-`IntensionalSemantics.Attitude.Preferential`. Properties like C-distributivity
-are DERIVED from the builder via theorems, not stipulated.
-
-- `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive (PROVED)
-- `uncertaintyBased`: Uses `worry` constructor → NOT C-distributive (PROVED)
-- `relevanceBased`: Uses `qidai` constructor → NOT C-distributive
-
-The connection to Montague is:
-- `degreeComparison .positive` → `Preferential.hope`, `Preferential.expect`, etc.
-- `degreeComparison .negative` → `Preferential.fear`, `Preferential.dread`
-- `uncertaintyBased` → `Preferential.worry`
-- `relevanceBased .positive` → `Preferential.qidai`
--/
-inductive PreferentialBuilder where
-  /-- Degree comparison semantics: ⟦x V Q⟧ = ∃p ∈ Q. μ(x,p) > θ. C-distributive. -/
-  | degreeComparison (valence : AttitudeValence)
-  /-- Uncertainty-based semantics (worry): involves global uncertainty. NOT C-distributive. -/
-  | uncertaintyBased
-  /-- Relevance-based semantics (qidai, care): involves resolution. NOT C-distributive. -/
-  | relevanceBased (valence : AttitudeValence)
-  deriving DecidableEq, Repr, BEq
-
-/-- Get the valence from the builder -/
-def PreferentialBuilder.valence : PreferentialBuilder → AttitudeValence
-  | .degreeComparison v => v
-  | .uncertaintyBased => .negative  -- worry is negative
-  | .relevanceBased v => v
-
-/--
-Unified builder for all attitude verbs, covering both doxastic (believe, know)
-and preferential (hope, fear) attitudes.
-
-This is the **minimal basis** from which theoretical properties are derived:
-1. **Doxastic attitudes**: Use accessibility relations (Hintikka semantics)
-2. **Preferential attitudes**: Use degree/uncertainty semantics (Villalta)
-
-Derived properties (in Theory layer):
-- C-distributivity: from PreferentialBuilder structure (Qing et al. 2025)
-- NVP class: from C-distributivity + valence
-- Parasitic on belief: from being preferential (Maier 2015)
-- Presupposition projection: from veridicality + attitude type (Heim 1992)
--/
-inductive AttitudeBuilder where
-  /-- Doxastic attitude (believe, know, think) with accessibility semantics -/
-  | doxastic (veridicality : Veridicality)
-  /-- Preferential attitude (hope, fear, worry) with degree/uncertainty semantics -/
-  | preferential (builder : PreferentialBuilder)
-  deriving DecidableEq, Repr, BEq
-
-/-- Get veridicality from an attitude builder -/
-def AttitudeBuilder.veridicality : AttitudeBuilder → Veridicality
-  | .doxastic v => v
-  | .preferential _ => .nonVeridical  -- Preferential attitudes are non-veridical
-
-/-- Is this a doxastic attitude? -/
-def AttitudeBuilder.isDoxastic : AttitudeBuilder → Bool
-  | .doxastic _ => true
-  | .preferential _ => false
-
-/-- Is this a preferential attitude? -/
-def AttitudeBuilder.isPreferential : AttitudeBuilder → Bool
-  | .doxastic _ => false
-  | .preferential _ => true
-
-/-- Get the preferential builder if this is a preferential attitude -/
-def AttitudeBuilder.getPreferentialBuilder : AttitudeBuilder → Option PreferentialBuilder
-  | .doxastic _ => none
-  | .preferential b => some b
-
-/-- Get valence for preferential attitudes -/
-def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
-  | .doxastic _ => none
-  | .preferential b => some b.valence
-
-/--
-Semantic class of verb.
-
-This classification determines what semantic machinery is needed:
-- Simple verbs just need a standard denotation
-- Factives need presupposition projection
-- CoS verbs need temporal/change structure
-- Attitudes need intensional semantics
-- Causatives need causal model semantics (Nadathur & Lauer 2020)
--/
-inductive VerbClass where
-  | simple          -- sleep, run, eat
-  | factive         -- know, regret, realize
-  | semifactive     -- discover, notice (weaker projection)
-  | changeOfState   -- stop, start, continue
-  | implicative     -- manage, fail, remember (to)
-  | attitude        -- believe, think, want
-  | perception      -- see, hear (ambiguous: factive or not)
-  | communication   -- say, tell, claim
-  | causative       -- cause, make (Nadathur & Lauer 2020)
-  deriving DecidableEq, Repr, BEq
-
-/--
-Presupposition trigger type (Tonhauser et al. 2013 classification).
-
-- Hard triggers: Always project (too, again, also)
-- Soft triggers: Context-sensitive projection (stop, know)
--/
-inductive PresupTriggerType where
-  | hardTrigger     -- Projective in all contexts
-  | softTrigger     -- Can be locally accommodated
-  deriving DecidableEq, Repr, BEq
-
--- CausativeBuilder is imported from NadathurLauer2020.Builder
--- (via Causative.Basic). Like PreferentialBuilder for attitude verbs,
--- it links lexical entries to their compositional semantics. Properties
--- like "asserts sufficiency" are DERIVED from the builder via theorems.
+open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
-
--- ImplicativeBuilder follows the same pattern for implicative verbs (manage, fail).
 open Nadathur2023.Implicative (ImplicativeBuilder)
 
+-- ════════════════════════════════════════════════════
+-- § English Morphophonological Rules
+-- ════════════════════════════════════════════════════
+
+private def isVowel (c : Char) : Bool :=
+  c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
+
+/-- Does the stem end in a consonant followed by 'y'? -/
+private def endsWithConsonantY (s : String) : Bool :=
+  match s.toList.reverse with
+  | 'y' :: c :: _ => !isVowel c
+  | _ => false
+
+/-- Does the stem end in a sibilant (sh, ch, ss, x, z)? -/
+private def endsWithSibilant (s : String) : Bool :=
+  s.endsWith "sh" || s.endsWith "ch" || s.endsWith "ss" ||
+  s.endsWith "x" || s.endsWith "z"
+
+/-- Compute regular 3sg present form. -/
+def regular3sg (stem : String) : String :=
+  if endsWithConsonantY stem then (stem.toList.dropLast ++ "ies".toList) |> String.ofList
+  else if endsWithSibilant stem then stem ++ "es"
+  else stem ++ "s"
+
+/-- Compute regular past tense / past participle form. -/
+def regularPast (stem : String) : String :=
+  if endsWithConsonantY stem then (stem.toList.dropLast ++ "ied".toList) |> String.ofList
+  else if stem.endsWith "e" then stem ++ "d"
+  else stem ++ "ed"
+
+/-- Compute regular present participle form. -/
+def regularPresPart (stem : String) : String :=
+  if stem.endsWith "e" && !stem.endsWith "ee" then
+    (stem.toList.dropLast ++ "ing".toList) |> String.ofList
+  else stem ++ "ing"
+
+-- ════════════════════════════════════════════════════
+-- § VerbEntry (extends VerbCore with English morphology)
+-- ════════════════════════════════════════════════════
+
 /--
-Complement type that the verb selects.
+A complete English lexical entry for a verb.
 
-- Finite: "that" clauses ("John knows that Mary left")
-- Infinitival: "to" complements ("John managed to leave")
-- Gerund: "-ing" complements ("John stopped smoking")
-- NP: Direct object ("John kicked the ball")
-- None: Intransitive ("John slept")
+Extends the cross-linguistic `VerbCore` (argument structure, semantic class,
+compositional links) with English-specific inflectional morphology.
 -/
-inductive ComplementType where
-  | none            -- Intransitive
-  | np              -- Transitive with NP object
-  | np_np           -- Ditransitive: "give X Y"
-  | np_pp           -- NP + PP: "put X on Y"
-  | finiteClause    -- "that" clause
-  | infinitival     -- "to" VP
-  | gerund          -- "-ing" VP
-  | smallClause     -- "consider X happy"
-  | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr, BEq
-
-/--
-Control type for verbs with infinitival complements.
--/
-inductive ControlType where
-  | subjectControl  -- "John tried to leave" (John = leaver)
-  | objectControl   -- "John persuaded Mary to leave" (Mary = leaver)
-  | raising         -- "John seems to be happy" (no theta role for matrix subject)
-  | none            -- Not applicable
-  deriving DecidableEq, Repr, BEq
-
-/--
-A complete lexical entry for a verb.
-
-Bundles all information needed for semantic/pragmatic analysis:
-- Surface form and basic morphology
-- Syntactic selection (complement type, valence)
-- Argument structure (theta roles, control)
-- Semantic class and presupposition behavior
-- Link to compositional semantics (CoS type, factivity, etc.)
--/
-structure VerbEntry where
-  -- === Morphology ===
-  /-- Citation form (infinitive) -/
-  form : String
+structure VerbEntry extends VerbCore where
   /-- Third person singular present (for agreement) -/
   form3sg : String
   /-- Past tense form -/
@@ -194,74 +79,30 @@ structure VerbEntry where
   formPastPart : String
   /-- Present participle / gerund -/
   formPresPart : String
-
-  -- === Argument Structure ===
-  /-- What complement does the verb select? -/
-  complementType : ComplementType
-  /-- Theta role of external argument (subject) -/
-  subjectTheta : Option ThetaRole := none
-  /-- Theta role of internal argument (object) -/
-  objectTheta : Option ThetaRole := none
-  /-- Theta role of second internal argument (indirect object) -/
-  object2Theta : Option ThetaRole := none
-  /-- Control type for infinitival complements -/
-  controlType : ControlType := .none
-  /-- Is the verb unaccusative? (subject is underlying object) -/
-  unaccusative : Bool := false
-  /-- Can the verb passivize? -/
-  passivizable : Bool := true
-
-  -- === Semantic Class ===
-  /-- Semantic verb class -/
-  verbClass : VerbClass
-  /-- Is the verb a presupposition trigger? -/
-  presupType : Option PresupTriggerType := none
-  /-- For measure predicates: which dimension this verb selects for.
-      Determines *per*-phrase interpretation (Bale & Schwarz 2026):
-      simplex dimension → compositional, quotient → math speak. -/
-  selectsDimension : Option Dimension := none
-
-  -- === Class-Specific Features ===
-  /-- For CoS verbs: which type (cessation, inception, continuation)? -/
-  cosType : Option CoSType := none
-  /-- For factive verbs: what does it presuppose about its complement? -/
-  factivePresup : Bool := false
-  /-- For implicative verbs: which semantic builder (links to compositional semantics). -/
-  implicativeBuilder : Option ImplicativeBuilder := none
-  /-- For causative verbs: which semantic builder (links to compositional semantics). -/
-  causativeBuilder : Option CausativeBuilder := none
-
-  -- === Intensionality ===
-  /-- Does the verb create an opaque context for its complement? -/
-  opaqueContext : Bool := false
-
-  -- === Attitude-Specific Properties ===
-  /-- Unified attitude builder covering doxastic and preferential attitudes.
-      Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
-  attitudeBuilder : Option AttitudeBuilder := none
-  /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
-  takesQuestionBase : Bool := false
+  /-- Are all inflected forms rule-predictable from the citation form? -/
+  isRegular : Bool := false
   deriving Repr, BEq
 
-/-- Veridicality is DERIVED from the attitude builder -/
-def VerbEntry.veridicality (v : VerbEntry) : Option Veridicality :=
-  v.attitudeBuilder.map (·.veridicality)
+/-- Construct a regular verb entry: inflected forms are computed from the
+    citation form via English morphophonological rules.
 
+    Usage:
+    ```
+    def kick : VerbEntry := .mkRegular {
+      form := "kick", complementType := .np, verbClass := .simple
+      subjectTheta := some .agent, objectTheta := some .patient }
+    ``` -/
+def VerbEntry.mkRegular (core : VerbCore) : VerbEntry :=
+  { toVerbCore := core
+    form3sg := regular3sg core.form
+    formPast := regularPast core.form
+    formPastPart := regularPast core.form
+    formPresPart := regularPresPart core.form
+    isRegular := true }
 
-/-- Is this verb a doxastic attitude? -/
-def VerbEntry.isDoxastic (v : VerbEntry) : Bool :=
-  v.attitudeBuilder.map (·.isDoxastic) |>.getD false
-
-/-- Is this verb a preferential attitude? -/
-def VerbEntry.isPreferential (v : VerbEntry) : Bool :=
-  v.attitudeBuilder.map (·.isPreferential) |>.getD false
-
-/-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
-def VerbEntry.preferentialValence (v : VerbEntry) : Option AttitudeValence :=
-  v.attitudeBuilder.bind (·.valence)
-
--- Note: VerbEntry.cDistributive, VerbEntry.nvpClass, and VerbEntry.takesQuestion
--- are derived properties defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Simple
+-- ════════════════════════════════════════════════════
 
 /-- "sleep" — intransitive, no presupposition -/
 def sleep : VerbEntry where
@@ -288,17 +129,13 @@ def run : VerbEntry where
   verbClass := .simple
 
 /-- "arrive" — unaccusative intransitive -/
-def arrive : VerbEntry where
+def arrive : VerbEntry := .mkRegular {
   form := "arrive"
-  form3sg := "arrives"
-  formPast := "arrived"
-  formPastPart := "arrived"
-  formPresPart := "arriving"
   complementType := .none
   subjectTheta := some .theme  -- Underlying object
   unaccusative := true
   passivizable := false
-  verbClass := .simple
+  verbClass := .simple }
 
 /-- "eat" — transitive, no presupposition -/
 def eat : VerbEntry where
@@ -313,16 +150,12 @@ def eat : VerbEntry where
   verbClass := .simple
 
 /-- "kick" — transitive -/
-def kick : VerbEntry where
+def kick : VerbEntry := .mkRegular {
   form := "kick"
-  form3sg := "kicks"
-  formPast := "kicked"
-  formPastPart := "kicked"
-  formPresPart := "kicking"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple
+  verbClass := .simple }
 
 /-- "give" — ditransitive -/
 def give : VerbEntry where
@@ -349,52 +182,31 @@ def put : VerbEntry where
   objectTheta := some .theme
   verbClass := .simple
 
-/-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026).
-
-Measure predicates relate entities to quantities in simplex dimensions.
-*Weigh* saturates weight: "This sample weighs thirteen grams [per milliliter]."
-The *per*-phrase here composes compositionally because *weigh* selects
-for a simplex dimension (mass). -/
-def weigh : VerbEntry where
+/-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026). -/
+def weigh : VerbEntry := .mkRegular {
   form := "weigh"
-  form3sg := "weighs"
-  formPast := "weighed"
-  formPastPart := "weighed"
-  formPresPart := "weighing"
-  complementType := .np  -- NP measure phrase complement
+  complementType := .np
   subjectTheta := some .theme
-  objectTheta := some .theme  -- The measure phrase is thematic
+  objectTheta := some .theme
   verbClass := .simple
-  selectsDimension := some .mass
+  selectsDimension := some .mass }
 
-/-- "cover" — motion/extent predicate selecting for distance (Bale & Schwarz 2026).
-
-*Cover* measures distance: "The train covered thirty miles [per hour]."
-Like *weigh*, the *per*-phrase composes compositionally because *cover*
-selects for a simplex dimension (distance). -/
-def cover : VerbEntry where
+/-- "cover" — motion/extent predicate selecting for distance (Bale & Schwarz 2026). -/
+def cover : VerbEntry := .mkRegular {
   form := "cover"
-  form3sg := "covers"
-  formPast := "covered"
-  formPastPart := "covered"
-  formPresPart := "covering"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .theme
   verbClass := .simple
-  selectsDimension := some .distance
+  selectsDimension := some .distance }
 
 /-- "measure" — general measurement predicate. -/
-def measure : VerbEntry where
+def measure : VerbEntry := .mkRegular {
   form := "measure"
-  form3sg := "measures"
-  formPast := "measured"
-  formPastPart := "measured"
-  formPresPart := "measuring"
   complementType := .np
   subjectTheta := some .theme
   objectTheta := some .theme
-  verbClass := .simple
+  verbClass := .simple }
 
 /-- "see" — transitive, can also embed clauses -/
 def see : VerbEntry where
@@ -403,11 +215,15 @@ def see : VerbEntry where
   formPast := "saw"
   formPastPart := "seen"
   formPresPart := "seeing"
-  complementType := .np  -- Can also take .finiteClause
+  complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
   verbClass := .perception
-  factivePresup := true  -- "see that p" presupposes p
+  factivePresup := true
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Factive / Semifactive
+-- ════════════════════════════════════════════════════
 
 /-- "know" — factive, presupposes complement is true -/
 def know : VerbEntry where
@@ -422,7 +238,7 @@ def know : VerbEntry where
   verbClass := .factive
   presupType := some .softTrigger
   factivePresup := true
-  takesQuestionBase := true  -- "know who/what/whether"
+  takesQuestionBase := true
 
 /-- "regret" — factive, presupposes complement is true -/
 def regret : VerbEntry where
@@ -439,47 +255,39 @@ def regret : VerbEntry where
   factivePresup := true
 
 /-- "realize" — factive, presupposes complement is true -/
-def realize : VerbEntry where
+def realize : VerbEntry := .mkRegular {
   form := "realize"
-  form3sg := "realizes"
-  formPast := "realized"
-  formPastPart := "realized"
-  formPresPart := "realizing"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .factive
   presupType := some .softTrigger
-  factivePresup := true
+  factivePresup := true }
 
 /-- "discover" — semifactive, weaker projection -/
-def discover : VerbEntry where
+def discover : VerbEntry := .mkRegular {
   form := "discover"
-  form3sg := "discovers"
-  formPast := "discovered"
-  formPastPart := "discovered"
-  formPresPart := "discovering"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .semifactive
   presupType := some .softTrigger
   factivePresup := true
-  takesQuestionBase := true
+  takesQuestionBase := true }
 
 /-- "notice" — semifactive -/
-def notice : VerbEntry where
+def notice : VerbEntry := .mkRegular {
   form := "notice"
-  form3sg := "notices"
-  formPast := "noticed"
-  formPastPart := "noticed"
-  formPresPart := "noticing"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .semifactive
   presupType := some .softTrigger
-  factivePresup := true
+  factivePresup := true }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Change of State
+-- ════════════════════════════════════════════════════
 
 /-- "stop" — CoS cessation, presupposes activity was happening -/
 def stop : VerbEntry where
@@ -512,19 +320,15 @@ def quit : VerbEntry where
   cosType := some .cessation
 
 /-- "start" — CoS inception, presupposes activity wasn't happening -/
-def start : VerbEntry where
+def start : VerbEntry := .mkRegular {
   form := "start"
-  form3sg := "starts"
-  formPast := "started"
-  formPastPart := "started"
-  formPresPart := "starting"
-  complementType := .gerund  -- Can also take .infinitival
+  complementType := .gerund
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
   verbClass := .changeOfState
   presupType := some .softTrigger
-  cosType := some .inception
+  cosType := some .inception }
 
 /-- "begin" — CoS inception -/
 def begin_ : VerbEntry where
@@ -542,19 +346,15 @@ def begin_ : VerbEntry where
   cosType := some .inception
 
 /-- "continue" — CoS continuation, presupposes activity was happening -/
-def continue_ : VerbEntry where
+def continue_ : VerbEntry := .mkRegular {
   form := "continue"
-  form3sg := "continues"
-  formPast := "continued"
-  formPastPart := "continued"
-  formPresPart := "continuing"
   complementType := .gerund
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
   verbClass := .changeOfState
   presupType := some .softTrigger
-  cosType := some .continuation
+  cosType := some .continuation }
 
 /-- "keep" — CoS continuation -/
 def keep : VerbEntry where
@@ -571,33 +371,29 @@ def keep : VerbEntry where
   presupType := some .softTrigger
   cosType := some .continuation
 
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Implicative / Control
+-- ════════════════════════════════════════════════════
+
 /-- "manage" — positive implicative: "managed to VP" entails "VP" -/
-def manage : VerbEntry where
+def manage : VerbEntry := .mkRegular {
   form := "manage"
-  form3sg := "manages"
-  formPast := "managed"
-  formPastPart := "managed"
-  formPresPart := "managing"
   complementType := .infinitival
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeBuilder := some .positive
+  implicativeBuilder := some .positive }
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
-def fail : VerbEntry where
+def fail : VerbEntry := .mkRegular {
   form := "fail"
-  form3sg := "fails"
-  formPast := "failed"
-  formPastPart := "failed"
-  formPresPart := "failing"
   complementType := .infinitival
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeBuilder := some .negative
+  implicativeBuilder := some .negative }
 
 /-- "try" — subject control, no entailment -/
 def try_ : VerbEntry where
@@ -613,45 +409,32 @@ def try_ : VerbEntry where
   verbClass := .simple
 
 /-- "persuade" — object control: "persuade X to VP" (X = agent of VP) -/
-def persuade : VerbEntry where
+def persuade : VerbEntry := .mkRegular {
   form := "persuade"
-  form3sg := "persuades"
-  formPast := "persuaded"
-  formPastPart := "persuaded"
-  formPresPart := "persuading"
   complementType := .infinitival
   subjectTheta := some .agent
-  objectTheta := some .experiencer  -- The persuadee
+  objectTheta := some .experiencer
   controlType := .objectControl
-  verbClass := .simple
+  verbClass := .simple }
 
-/-- "promise" — subject control with object: "promise X to VP" (subject = agent of VP) -/
-def promise : VerbEntry where
+/-- "promise" — subject control with object: "promise X to VP" -/
+def promise : VerbEntry := .mkRegular {
   form := "promise"
-  form3sg := "promises"
-  formPast := "promised"
-  formPastPart := "promised"
-  formPresPart := "promising"
   complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .goal
-  controlType := .subjectControl  -- Unusual: subject control despite object
-  verbClass := .simple
+  controlType := .subjectControl
+  verbClass := .simple }
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
-def remember : VerbEntry where
+def remember : VerbEntry := .mkRegular {
   form := "remember"
-  form3sg := "remembers"
-  formPast := "remembered"
-  formPastPart := "remembered"
-  formPresPart := "remembering"
   complementType := .infinitival
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
   verbClass := .implicative
-  implicativeBuilder := some .positive
-  -- Note: "remember that p" is factive, but "remember to VP" is implicative
+  implicativeBuilder := some .positive }
 
 /-- "forget" — negative implicative with infinitival -/
 def forget : VerbEntry where
@@ -666,22 +449,20 @@ def forget : VerbEntry where
   passivizable := false
   verbClass := .implicative
   implicativeBuilder := some .negative
-  -- Note: "forget that p" is factive
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Doxastic Attitude
+-- ════════════════════════════════════════════════════
 
 /-- "believe" — doxastic attitude verb, creates opaque context -/
-def believe : VerbEntry where
+def believe : VerbEntry := .mkRegular {
   form := "believe"
-  form3sg := "believes"
-  formPast := "believed"
-  formPastPart := "believed"
-  formPresPart := "believing"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Doxastic: accessibility-based semantics, non-veridical
-  attitudeBuilder := some (.doxastic .nonVeridical)
+  attitudeBuilder := some (.doxastic .nonVeridical) }
 
 /-- "think" — doxastic attitude verb -/
 def think : VerbEntry where
@@ -695,54 +476,42 @@ def think : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Doxastic: accessibility-based semantics, non-veridical
   attitudeBuilder := some (.doxastic .nonVeridical)
 
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Preferential Attitude
+-- ════════════════════════════════════════════════════
+
 /-- "want" — preferential attitude verb with infinitival complement -/
-def want : VerbEntry where
+def want : VerbEntry := .mkRegular {
   form := "want"
-  form3sg := "wants"
-  formPast := "wanted"
-  formPastPart := "wanted"
-  formPresPart := "wanting"
   complementType := .infinitival
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison positive → Class 3 (anti-rogative)
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative) -/
-def hope : VerbEntry where
+def hope : VerbEntry := .mkRegular {
   form := "hope"
-  form3sg := "hopes"
-  formPast := "hoped"
-  formPastPart := "hoped"
-  formPresPart := "hoping"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison positive → C-distributive (PROVED) → Class 3
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
-def expect : VerbEntry where
+def expect : VerbEntry := .mkRegular {
   form := "expect"
-  form3sg := "expects"
-  formPast := "expected"
-  formPastPart := "expected"
-  formPresPart := "expecting"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison positive → Class 3
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
 /-- "wish" — preferential attitude verb (Class 3: anti-rogative) -/
 def wish : VerbEntry where
@@ -756,38 +525,27 @@ def wish : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison positive → Class 3
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
-def fear : VerbEntry where
+def fear : VerbEntry := .mkRegular {
   form := "fear"
-  form3sg := "fears"
-  formPast := "feared"
-  formPastPart := "feared"
-  formPresPart := "fearing"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison negative → C-distributive (PROVED) → Class 2
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
 
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
-def dread : VerbEntry where
+def dread : VerbEntry := .mkRegular {
   form := "dread"
-  form3sg := "dreads"
-  formPast := "dreaded"
-  formPastPart := "dreaded"
-  formPresPart := "dreading"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: degree-comparison negative → Class 2
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
 
 /-- "worry" — preferential attitude verb (Class 1: takes questions, non-C-distributive) -/
 def worry : VerbEntry where
@@ -801,36 +559,34 @@ def worry : VerbEntry where
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  -- Preferential: uncertainty-based → NOT C-distributive (PROVED) → Class 1
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Raising
+-- ════════════════════════════════════════════════════
+
 /-- "seem" — raising verb (no theta role for subject) -/
-def seem : VerbEntry where
+def seem : VerbEntry := .mkRegular {
   form := "seem"
-  form3sg := "seems"
-  formPast := "seemed"
-  formPastPart := "seemed"
-  formPresPart := "seeming"
   complementType := .infinitival
-  subjectTheta := none  -- No theta role - raising
+  subjectTheta := none
   controlType := .raising
   passivizable := false
-  verbClass := .simple
+  verbClass := .simple }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Causative (Periphrastic)
+-- ════════════════════════════════════════════════════
 
 /-- "cause" — counterfactual dependence (necessity semantics) -/
-def cause : VerbEntry where
+def cause : VerbEntry := .mkRegular {
   form := "cause"
-  form3sg := "causes"
-  formPast := "caused"
-  formPastPart := "caused"
-  formPresPart := "causing"
-  complementType := .infinitival  -- "X caused Y to VP"
-  subjectTheta := some .agent     -- Causer (can also be event/stimulus)
-  objectTheta := some .patient    -- Causee
-  controlType := .objectControl   -- Y = agent of VP
+  complementType := .infinitival
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .cause
-  -- Semantics: NadathurLauer2020.Necessity.causeSem
+  causativeBuilder := some .cause }
 
 /-- "make" — direct sufficient guarantee -/
 def make : VerbEntry where
@@ -839,14 +595,12 @@ def make : VerbEntry where
   formPast := "made"
   formPastPart := "made"
   formPresPart := "making"
-  complementType := .smallClause  -- "X made Y VP" (bare infinitive)
-  subjectTheta := some .agent     -- Causer
-  objectTheta := some .patient    -- Causee
-  controlType := .objectControl   -- Y = agent of VP
+  complementType := .smallClause
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
   verbClass := .causative
   causativeBuilder := some .make
-  -- Semantics: NadathurLauer2020.Sufficiency.makeSem
-  -- Coercive implication when VP is volitional
 
 /-- "let" — permissive causative (barrier removal) -/
 def let_ : VerbEntry where
@@ -855,78 +609,68 @@ def let_ : VerbEntry where
   formPast := "let"
   formPastPart := "let"
   formPresPart := "letting"
-  complementType := .smallClause  -- "X let Y VP"
+  complementType := .smallClause
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .enable  -- Permissive = removing barrier (Wolff 2003)
+  causativeBuilder := some .enable
 
 /-- "have" — causative use (directive causation) -/
-def have_causative : VerbEntry where
+def have_caus : VerbEntry where
   form := "have"
   form3sg := "has"
   formPast := "had"
   formPastPart := "had"
   formPresPart := "having"
-  complementType := .smallClause  -- "X had Y VP"
+  complementType := .smallClause
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
   causativeBuilder := some .make
-  -- "Have" implies social/authority-based causation
+  senseTag := .causative
 
 /-- "get" — causative use (persuasive causation) -/
-def get_causative : VerbEntry where
+def get_caus : VerbEntry where
   form := "get"
   form3sg := "gets"
   formPast := "got"
   formPastPart := "gotten"
   formPresPart := "getting"
-  complementType := .infinitival  -- "X got Y to VP"
+  complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
   causativeBuilder := some .make
-  -- "Get" implies persuasive/indirect causation
+  senseTag := .causative
 
 /-- "force" — coercive causative (overcome resistance) -/
-def force : VerbEntry where
+def force : VerbEntry := .mkRegular {
   form := "force"
-  form3sg := "forces"
-  formPast := "forced"
-  formPastPart := "forced"
-  formPresPart := "forcing"
-  complementType := .infinitival  -- "X forced Y to VP"
+  complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
   verbClass := .causative
-  causativeBuilder := some .force
-  -- "Force" lexically encodes coercion (unlike pragmatic "make")
+  causativeBuilder := some .force }
 
-/-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type).
-    No manner specification: compatible with abstract/absence subjects
-    (Martin, Rose & Nichols 2025). -/
-def kill : VerbEntry where
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Lexical Causatives
+-- ════════════════════════════════════════════════════
+
+/-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type). -/
+def kill : VerbEntry := .mkRegular {
   form := "kill"
-  form3sg := "kills"
-  formPast := "killed"
-  formPastPart := "killed"
-  formPresPart := "killing"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
-  causativeBuilder := some .make  -- Lexical causatives are sufficient (COMPACT)
+  causativeBuilder := some .make }
 
-/-- "break" — thick lexical causative (manner verb, Embick 2009 break-class).
-    Root is event predicate: `break(e) ∧ cause(e,s)`.
-    Compatible with strong ASR (*break open*). Rejects abstract subjects
-    in physical sense (*#The lack of sealant broke the window*). -/
-def break_verb : VerbEntry where
+/-- "break" — thick lexical causative (manner verb, Embick 2009 break-class). -/
+def break_ : VerbEntry where
   form := "break"
   form3sg := "breaks"
   formPast := "broke"
@@ -935,67 +679,48 @@ def break_verb : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  unaccusative := false  -- Transitive causative use
+  unaccusative := false
   verbClass := .causative
   causativeBuilder := some .make
 
-/-- "burn" — thick lexical causative (manner = by fire/heat).
-    Encodes manner of causing: restricts subjects to heat/fire sources.
-    Compatible with strong ASR (*burn clean*).
-    Exception: occasionally found with omission subjects in corpora. -/
-def burn_verb : VerbEntry where
+/-- "burn" — thick lexical causative (manner = by fire/heat). -/
+def burn : VerbEntry := .mkRegular {
   form := "burn"
-  form3sg := "burns"
-  formPast := "burned"
-  formPastPart := "burned"
-  formPresPart := "burning"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
-  causativeBuilder := some .make
+  causativeBuilder := some .make }
 
-/-- "destroy" — thin lexical causative (result-only, no manner).
-    Compatible with abstract/absence subjects
-    (*The stock market crash destroyed Sam's life*). -/
-def destroy_verb : VerbEntry where
+/-- "destroy" — thin lexical causative (result-only, no manner). -/
+def destroy : VerbEntry := .mkRegular {
   form := "destroy"
-  form3sg := "destroys"
-  formPast := "destroyed"
-  formPastPart := "destroyed"
-  formPresPart := "destroying"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
-  causativeBuilder := some .make
+  causativeBuilder := some .make }
 
-/-- "melt" — thick lexical causative (manner = by heat).
-    Encodes manner: restricts subjects to heat sources.
-    Compatible with strong ASR. -/
-def melt_verb : VerbEntry where
+/-- "melt" — thick lexical causative (manner = by heat). -/
+def melt : VerbEntry := .mkRegular {
   form := "melt"
-  form3sg := "melts"
-  formPast := "melted"
-  formPastPart := "melted"
-  formPresPart := "melting"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
-  causativeBuilder := some .make
+  causativeBuilder := some .make }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Other
+-- ════════════════════════════════════════════════════
 
 /-- "devour" — transitive, no presupposition -/
-def devour : VerbEntry where
+def devour : VerbEntry := .mkRegular {
   form := "devour"
-  form3sg := "devours"
-  formPast := "devoured"
-  formPastPart := "devoured"
-  formPresPart := "devouring"
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple
+  verbClass := .simple }
 
 /-- "read" — transitive, no presupposition -/
 def read : VerbEntry where
@@ -1009,36 +734,36 @@ def read : VerbEntry where
   objectTheta := some .patient
   verbClass := .simple
 
-/-- "sweep" basic sense — motion + sustained contact, variable agentivity.
-    Rappaport Hovav & Levin (2024): underspecified for agentivity.
-    "The wind swept the deck" / "She swept the brush through her hair" -/
-def sweep_basic : VerbEntry where
+/-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
+def sweep : VerbEntry where
   form := "sweep"
   form3sg := "sweeps"
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
   complementType := .np
-  subjectTheta := none  -- Underspecified: could be agent OR stimulus/instrument
-  objectTheta := some .theme  -- Surface (force recipient)
+  subjectTheta := none
+  objectTheta := some .theme
   verbClass := .simple
   passivizable := true
 
-/-- "sweep" broom sense — obligatorily agentive, instrument lexicalized.
-    Rappaport Hovav & Levin (2024): motivated polysemy via instrument
-    lexicalization. "Matt swept the floor" / "I swept the sidewalk"
-    Entails: broom instrument, agentive subject, floor-like surface. -/
-def sweep_broom : VerbEntry where
+/-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
+def sweep_instr : VerbEntry where
   form := "sweep"
   form3sg := "sweeps"
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
   complementType := .np
-  subjectTheta := some .agent  -- Obligatorily agentive
-  objectTheta := some .theme   -- Floor-like surface
+  subjectTheta := some .agent
+  objectTheta := some .theme
   verbClass := .simple
   passivizable := true
+  senseTag := .instrumental
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Communication
+-- ════════════════════════════════════════════════════
 
 /-- "say" — communication verb, not factive -/
 def say : VerbEntry where
@@ -1061,106 +786,37 @@ def tell : VerbEntry where
   complementType := .finiteClause
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
-def claim : VerbEntry where
+def claim : VerbEntry := .mkRegular {
   form := "claim"
-  form3sg := "claims"
-  formPast := "claimed"
-  formPastPart := "claimed"
-  formPresPart := "claiming"
   verbClass := .communication
-  complementType := .finiteClause
+  complementType := .finiteClause }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Question-Embedding
+-- ════════════════════════════════════════════════════
 
 /-- "wonder" — embeds questions only -/
-def wonder : VerbEntry where
+def wonder : VerbEntry := .mkRegular {
   form := "wonder"
-  form3sg := "wonders"
-  formPast := "wondered"
-  formPastPart := "wondered"
-  formPresPart := "wondering"
   verbClass := .attitude
   complementType := .question
   takesQuestionBase := true
-  opaqueContext := true
+  opaqueContext := true }
 
 /-- "ask" — embeds questions -/
-def ask : VerbEntry where
+def ask : VerbEntry := .mkRegular {
   form := "ask"
-  form3sg := "asks"
-  formPast := "asked"
-  formPastPart := "asked"
-  formPresPart := "asking"
   verbClass := .communication
   complementType := .question
-  takesQuestionBase := true
+  takesQuestionBase := true }
 
-/--
-Get the CoS semantics for a verb (if it's a CoS verb).
-
-Returns `some (cosSemantics t P)` if the verb has a CoS type,
-where `P` is the activity predicate (complement denotation).
--/
-def getCoSSemantics {W : Type*} (v : VerbEntry) (P : W → Bool) :
-    Option (PrProp W) :=
-  v.cosType.map λ t => cosSemantics t P
-
-/--
-Does this verb presuppose its complement?
--/
-def presupposesComplement (v : VerbEntry) : Bool :=
-  v.factivePresup || v.cosType.isSome
-
-/--
-Is this verb a presupposition trigger?
--/
-def isPresupTrigger (v : VerbEntry) : Bool :=
-  v.presupType.isSome
-
-/--
-Is this verb a causative?
--/
-def isCausative (v : VerbEntry) : Bool :=
-  v.verbClass == .causative
-
-/-- Does this causative verb assert sufficiency (like "make")?
-
-    DERIVED from the builder: delegates to `CausativeBuilder.assertsSufficiency`. -/
-def assertsSufficiency (v : VerbEntry) : Bool :=
-  v.causativeBuilder.map (·.assertsSufficiency) |>.getD false
-
-/-- Does this causative verb assert necessity (like "cause")?
-
-    DERIVED from the builder: delegates to `CausativeBuilder.assertsNecessity`. -/
-def assertsNecessity (v : VerbEntry) : Bool :=
-  v.causativeBuilder.map (·.assertsNecessity) |>.getD false
-
-/-- Does success of this implicative verb entail the complement?
-
-    DERIVED from the builder: delegates to `ImplicativeBuilder.entailsComplement`.
-    Returns `some true` for positive implicatives (*manage*, *remember*),
-    `some false` for negative (*fail*, *forget*), `none` for non-implicatives. -/
-def VerbEntry.entailsComplement (v : VerbEntry) : Option Bool :=
-  v.implicativeBuilder.map (·.entailsComplement)
-
-/--
-Is this verb a preferential attitude predicate?
--/
-def isPreferentialAttitude (v : VerbEntry) : Bool :=
-  v.preferentialValence.isSome
-
--- Note: isAntiRogative and canEmbedQuestion are derived properties
--- defined in Theories/Montague/Verb/Attitude/BuilderProperties.lean
-
-/-- "investigate" — rogative, embeds interrogatives only, no embedded inversion -/
-def investigate : VerbEntry where
+/-- "investigate" — rogative, embeds interrogatives only -/
+def investigate : VerbEntry := .mkRegular {
   form := "investigate"
-  form3sg := "investigates"
-  formPast := "investigated"
-  formPastPart := "investigated"
-  formPresPart := "investigating"
   verbClass := .simple
   complementType := .question
   subjectTheta := some .agent
-  takesQuestionBase := true
+  takesQuestionBase := true }
 
 /-- "depend_on" — rogative, embeds interrogatives only (Dayal 2025: rogativeCP) -/
 def depend_on : VerbEntry where
@@ -1173,15 +829,9 @@ def depend_on : VerbEntry where
   complementType := .question
   takesQuestionBase := true
 
-/-- "remember" in factive/question-embedding sense:
-    "I remember who left" / "*I remember [was Henry a communist↑]"
-    Distinct from infinitival "remember to VP" (implicative). -/
-def remember_q : VerbEntry where
+/-- "remember" in factive/question-embedding sense. -/
+def remember_rog : VerbEntry := .mkRegular {
   form := "remember"
-  form3sg := "remembers"
-  formPast := "remembered"
-  formPastPart := "remembered"
-  formPresPart := "remembering"
   verbClass := .factive
   complementType := .finiteClause
   subjectTheta := some .experiencer
@@ -1189,11 +839,10 @@ def remember_q : VerbEntry where
   presupType := some .softTrigger
   factivePresup := true
   takesQuestionBase := true
+  senseTag := .rogative }
 
-/-- "forget" in factive/question-embedding sense:
-    "I have forgotten [did Ann get A's↑]" (McCloskey 2006)
-    Distinct from infinitival "forget to VP" (negative implicative). -/
-def forget_q : VerbEntry where
+/-- "forget" in factive/question-embedding sense. -/
+def forget_rog : VerbEntry where
   form := "forget"
   form3sg := "forgets"
   formPast := "forgot"
@@ -1206,13 +855,16 @@ def forget_q : VerbEntry where
   presupType := some .softTrigger
   factivePresup := true
   takesQuestionBase := true
+  senseTag := .rogative
 
-/--
-Get all verb entries as a list (for enumeration).
--/
+-- ════════════════════════════════════════════════════
+-- § Verb List and Lookup
+-- ════════════════════════════════════════════════════
+
+/-- Get all verb entries as a list (for enumeration). -/
 def allVerbs : List VerbEntry := [
   -- Simple
-  sleep, run, arrive, eat, kick, give, put, see, devour, read, sweep_basic, sweep_broom,
+  sleep, run, arrive, eat, kick, give, put, see, devour, read, sweep, sweep_instr,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State
@@ -1222,44 +874,34 @@ def allVerbs : List VerbEntry := [
   -- Doxastic Attitude
   believe, think,
   -- Preferential Attitude (Qing et al. 2025)
-  want, hope, expect, wish,     -- Class 3: anti-rogative (positive, C-dist, TSP)
-  fear, dread,                   -- Class 2: takes questions (negative, C-dist, no TSP)
-  worry,                         -- Class 1: takes questions (non-C-distributive)
+  want, hope, expect, wish,
+  fear, dread,
+  worry,
   -- Raising
   seem,
   -- Causative (Nadathur & Lauer 2020 + Wolff 2003)
-  cause,                         -- Counterfactual dependence (.cause)
-  make,                          -- Direct sufficient guarantee (.make)
-  let_, have_causative, get_causative, force,  -- enable/make/force builders
+  cause,
+  make,
+  let_, have_caus, get_caus, force,
   -- Lexical causatives (Martin, Rose & Nichols 2025)
-  kill, break_verb, burn_verb, destroy_verb, melt_verb,
+  kill, break_, burn, destroy, melt,
   -- Communication
   say, tell, claim,
   -- Question-embedding (Dayal 2025)
   wonder, ask, investigate, depend_on,
   -- Factive question-embedding senses
-  remember_q, forget_q
+  remember_rog, forget_rog
 ]
 
--- Note: antiRogativeVerbs and questionEmbeddingVerbs are defined in
--- Theories/Montague/Verb/Attitude/BuilderProperties.lean (require derived properties)
-
-/--
-Look up a verb entry by citation form.
--/
+/-- Look up a verb entry by citation form. -/
 def lookup (form : String) : Option VerbEntry :=
   allVerbs.find? (λ v => v.form == form)
 
-/-- Map complement type to syntactic valence. -/
-private def complementToValence : ComplementType → Valence
-  | .none => .intransitive
-  | .np => .transitive
-  | .np_np => .ditransitive
-  | _ => .transitive  -- Clause-embedding verbs are syntactically transitive
+-- ════════════════════════════════════════════════════
+-- § Word Conversion
+-- ════════════════════════════════════════════════════
 
-/--
-Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form.
--/
+/-- Convert a verb entry to a `Word` (from Core.Basic) in 3sg present form. -/
 def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
   , cat := .VERB
@@ -1272,9 +914,7 @@ def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
     }
   }
 
-/--
-Convert a verb entry to a `Word` in base/plural present form.
--/
+/-- Convert a verb entry to a `Word` in base/plural present form. -/
 def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
@@ -1284,9 +924,7 @@ def VerbEntry.toWordPl (v : VerbEntry) : Word :=
     }
   }
 
-/--
-Convert a verb entry to a `Word` in base/infinitive form.
--/
+/-- Convert a verb entry to a `Word` in base/infinitive form. -/
 def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
@@ -1296,41 +934,41 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
     }
   }
 
-/-! ## Causative grounding theorems
+-- ════════════════════════════════════════════════════
+-- § Causative Grounding Theorems
+-- ════════════════════════════════════════════════════
 
-These verify that the Fragment's causative annotations are consistent with
+/-! These verify that the Fragment's causative annotations are consistent with
 the formal semantics in `NadathurLauer2020`. -/
 
 open NadathurLauer2020.Builder (CausativeBuilder)
 open NadathurLauer2020.Sufficiency (makeSem)
 open NadathurLauer2020.Necessity (causeSem)
 
-/-- "make" uses sufficiency semantics: its truth conditions are
-    computed by `makeSem`, not `causeSem`. -/
+/-- "make" uses sufficiency semantics. -/
 theorem make_semantics :
     make.causativeBuilder.map CausativeBuilder.toSemantics = some makeSem := rfl
 
-/-- "cause" uses necessity semantics: its truth conditions are
-    computed by `causeSem`, not `makeSem`. -/
+/-- "cause" uses necessity semantics. -/
 theorem cause_semantics :
     cause.causativeBuilder.map CausativeBuilder.toSemantics = some causeSem := rfl
 
 /-- "make" asserts sufficiency — derived from its builder. -/
-theorem make_asserts_sufficiency : assertsSufficiency make = true := by native_decide
+theorem make_asserts_sufficiency : make.toVerbCore.assertsSufficiency = true := by native_decide
 
 /-- "cause" asserts necessity — derived from its builder. -/
-theorem cause_asserts_necessity : assertsNecessity cause = true := by native_decide
+theorem cause_asserts_necessity : cause.toVerbCore.assertsNecessity = true := by native_decide
 
 /-- "make" does NOT assert necessity. -/
-theorem make_not_necessity : assertsNecessity make = false := by native_decide
+theorem make_not_necessity : make.toVerbCore.assertsNecessity = false := by native_decide
 
 /-- "cause" does NOT assert sufficiency. -/
-theorem cause_not_sufficiency : assertsSufficiency cause = false := by native_decide
+theorem cause_not_sufficiency : cause.toVerbCore.assertsSufficiency = false := by native_decide
 
 /-- make-type verbs (make, have, get) share the `.make` builder. -/
 theorem make_type_verbs_share_semantics :
-    make.causativeBuilder = have_causative.causativeBuilder ∧
-    make.causativeBuilder = get_causative.causativeBuilder := ⟨rfl, rfl⟩
+    make.causativeBuilder = have_caus.causativeBuilder ∧
+    make.causativeBuilder = get_caus.causativeBuilder := ⟨rfl, rfl⟩
 
 /-- "force" is coercive — derived from its builder. -/
 theorem force_is_coercive :
@@ -1340,17 +978,16 @@ theorem force_is_coercive :
 theorem let_is_permissive :
     let_.causativeBuilder.map (·.isPermissive) = some true := rfl
 
-/-- All sufficiency-asserting causatives share the same truth conditions
-    despite having different builders (make, force, enable). -/
+/-- All sufficiency-asserting causatives share the same truth conditions. -/
 theorem sufficiency_verbs_share_truth_conditions :
     make.causativeBuilder.map CausativeBuilder.toSemantics =
     force.causativeBuilder.map CausativeBuilder.toSemantics ∧
     make.causativeBuilder.map CausativeBuilder.toSemantics =
     let_.causativeBuilder.map CausativeBuilder.toSemantics ∧
     make.causativeBuilder.map CausativeBuilder.toSemantics =
-    have_causative.causativeBuilder.map CausativeBuilder.toSemantics ∧
+    have_caus.causativeBuilder.map CausativeBuilder.toSemantics ∧
     make.causativeBuilder.map CausativeBuilder.toSemantics =
-    get_causative.causativeBuilder.map CausativeBuilder.toSemantics :=
+    get_caus.causativeBuilder.map CausativeBuilder.toSemantics :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
@@ -1360,48 +997,42 @@ theorem causative_builders_distinguished :
     force.causativeBuilder ≠ let_.causativeBuilder := by
   refine ⟨by decide, by decide, by decide⟩
 
-/-! ## Lexical causative theorems (Martin, Rose & Nichols 2025)
-
-Lexical causatives (kill, break, burn, destroy, melt) all use the `.make`
-builder (sufficiency semantics) because they are COMPACT causatives where
-cause and effect are fused — the cause guarantees the effect. -/
+/-! ## Lexical causative theorems (Martin, Rose & Nichols 2025) -/
 
 /-- All lexical causatives use the `.make` builder. -/
 theorem lexical_causatives_use_make :
     kill.causativeBuilder = some .make ∧
-    break_verb.causativeBuilder = some .make ∧
-    burn_verb.causativeBuilder = some .make ∧
-    destroy_verb.causativeBuilder = some .make ∧
-    melt_verb.causativeBuilder = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    break_.causativeBuilder = some .make ∧
+    burn.causativeBuilder = some .make ∧
+    destroy.causativeBuilder = some .make ∧
+    melt.causativeBuilder = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
 theorem lexical_causatives_assert_sufficiency :
-    assertsSufficiency kill = true ∧
-    assertsSufficiency break_verb = true ∧
-    assertsSufficiency burn_verb = true ∧
-    assertsSufficiency destroy_verb = true ∧
-    assertsSufficiency melt_verb = true := by
+    kill.toVerbCore.assertsSufficiency = true ∧
+    break_.toVerbCore.assertsSufficiency = true ∧
+    burn.toVerbCore.assertsSufficiency = true ∧
+    destroy.toVerbCore.assertsSufficiency = true ∧
+    melt.toVerbCore.assertsSufficiency = true := by
   refine ⟨by native_decide, by native_decide, by native_decide,
           by native_decide, by native_decide⟩
 
-/-- Lexical causatives share truth conditions with periphrastic "make".
-    Both thick (*break*) and thin (*kill*) map to `makeSem`. -/
+/-- Lexical causatives share truth conditions with periphrastic "make". -/
 theorem lexical_causatives_match_make :
     kill.causativeBuilder.map CausativeBuilder.toSemantics =
     make.causativeBuilder.map CausativeBuilder.toSemantics ∧
-    break_verb.causativeBuilder.map CausativeBuilder.toSemantics =
+    break_.causativeBuilder.map CausativeBuilder.toSemantics =
     make.causativeBuilder.map CausativeBuilder.toSemantics := ⟨rfl, rfl⟩
 
 /-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
 theorem lexical_causatives_differ_from_cause :
     kill.causativeBuilder ≠ cause.causativeBuilder ∧
-    break_verb.causativeBuilder ≠ cause.causativeBuilder := by
+    break_.causativeBuilder ≠ cause.causativeBuilder := by
   constructor <;> decide
 
-/-! ## Implicative grounding theorems
-
-These verify that the Fragment's implicative annotations are consistent with
-the formal semantics in `Nadathur2023.Implicative`. -/
+-- ════════════════════════════════════════════════════
+-- § Implicative Grounding Theorems
+-- ════════════════════════════════════════════════════
 
 open Nadathur2023.Implicative (ImplicativeBuilder manageSem failSem)
 
@@ -1417,18 +1048,58 @@ theorem fail_semantics_implicative :
 
 /-- "manage" entails the complement — derived from its builder. -/
 theorem manage_entails_complement_derived :
-    manage.entailsComplement = some true := by native_decide
+    manage.toVerbCore.entailsComplement = some true := by native_decide
 
 /-- "fail" entails NOT the complement — derived from its builder. -/
 theorem fail_entails_not_complement_derived :
-    fail.entailsComplement = some false := by native_decide
+    fail.toVerbCore.entailsComplement = some false := by native_decide
 
 /-- "remember" entails the complement — derived from its builder. -/
 theorem remember_entails_complement_derived :
-    remember.entailsComplement = some true := by native_decide
+    remember.toVerbCore.entailsComplement = some true := by native_decide
 
 /-- "forget" entails NOT the complement — derived from its builder. -/
 theorem forget_entails_not_complement_derived :
-    forget.entailsComplement = some false := by native_decide
+    forget.toVerbCore.entailsComplement = some false := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § Morphological Stem + Vacuity
+-- ════════════════════════════════════════════════════
+
+/-- Convert a `VerbEntry` to a morphological `Stem`.
+
+    All verb inflection is semantically vacuous at the word level:
+    tense/aspect semantics is compositional, handled by
+    `IntensionalSemantics`. The `isVacuous := true` flags make
+    this explicit. -/
+def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
+  { lemma_ := v.form
+  , cat := .VERB
+  , baseFeatures := { valence := some (complementToValence v.complementType)
+                    , vform := some .infinitive }
+  , paradigm :=
+    [ { category := .agreement, value := "3sg"
+      , formRule := λ _ => v.form3sg
+      , featureRule := λ f => { f with number := some .Sing
+                                     , person := some .third
+                                     , vform := some .finite }
+      , semEffect := id, isVacuous := true }
+    , { category := .tense, value := "past"
+      , formRule := λ _ => v.formPast
+      , featureRule := λ f => { f with vform := some .finite }
+      , semEffect := id, isVacuous := true }
+    , { category := .tense, value := "pastpart"
+      , formRule := λ _ => v.formPastPart
+      , featureRule := λ f => { f with vform := some .pastParticiple }
+      , semEffect := id, isVacuous := true }
+    , { category := .aspect, value := "prespart"
+      , formRule := λ _ => v.formPresPart
+      , featureRule := λ f => { f with vform := some .presParticiple }
+      , semEffect := id, isVacuous := true }
+    ] }
+
+/-- All verb inflectional rules are semantically vacuous. -/
+theorem VerbEntry.toStem_allVacuous {σ : Type} (v : VerbEntry) :
+    (v.toStem (σ := σ)).paradigm.all (·.isVacuous) = true := rfl
 
 end Fragments.English.Predicates.Verbal

@@ -32,12 +32,12 @@ In other words: if we add C to the background, E necessarily follows.
 - Nadathur & Lauer (2020), Section 5.1
 -/
 
-import Linglib.Core.CausalModel
+import Linglib.Core.Causation
 
 namespace NadathurLauer2020.Sufficiency
 
-open Core.CausalModel
-export Core.CausalModel (causallySufficient)
+open Core.Causation
+export Core.Causation (causallySufficient)
 
 /-- Semantics of "make": X was causally sufficient for Y (N&L 2020 §5.1). -/
 def makeSem (dyn : CausalDynamics) (background : Situation)

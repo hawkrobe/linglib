@@ -33,11 +33,14 @@ import Linglib.Core.Interfaces.CombinationSchema
 import Linglib.Core.Interfaces.FelicityCondition
 import Linglib.Core.Interfaces.SemanticStructure
 import Linglib.Core.Causation
+import Linglib.Core.Verbs
 import Linglib.Core.NaturalLogic
 import Linglib.Core.DecisionTheory
 import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
+import Linglib.Core.Time
+import Linglib.Core.Reichenbach
 import Linglib.Core.Context
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
@@ -47,7 +50,14 @@ import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
-import Linglib.Core.Morpheme
+import Linglib.Core.Morphology.MorphRule
+import Linglib.Core.Morphology.Degree
+import Linglib.Core.Morphology.Number
+import Linglib.Core.Morphology.ScaleFromParadigm
+import Linglib.Core.Morphology.StemToLex
+import Linglib.Core.Morphology.Tense
+import Linglib.Core.Morphology.Aspect
+import Linglib.Core.DiscourseRole
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -72,6 +82,7 @@ import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.German.PolarityMarking
+import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
@@ -137,6 +148,8 @@ import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Charlow2021.Data
 import Linglib.Phenomena.Charlow2021.CumulativeReadings
 import Linglib.Phenomena.Cumming2026.Bridge
+import Linglib.Phenomena.Lakoff1970.Data
+import Linglib.Phenomena.Lakoff1970.Bridge
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
@@ -209,6 +222,8 @@ import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
 import Linglib.Phenomena.Negation.CzechThreeWayNeg.Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Phenomena.Morphology.Composition
+import Linglib.Phenomena.Morphology.DegreeComposition
 import Linglib.Phenomena.Morphology.ZwickyPullum1983
 import Linglib.Phenomena.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
@@ -525,7 +540,9 @@ import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
 import Linglib.Theories.TruthConditional.Sentence.Tense.TenseAspectComposition
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalAdverbials
 import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
+import Linglib.Theories.TruthConditional.Sentence.Tense.Perspective
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
+import Linglib.Theories.TruthConditional.Sentence.Tense.PerfectPolysemy
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
@@ -545,6 +562,7 @@ import Linglib.Theories.EventSemantics.Agentivity
 import Linglib.Theories.EventSemantics.ProtoRoles
 import Linglib.Theories.EventSemantics.EventStructure
 import Linglib.Theories.EventSemantics.RootTypology
+import Linglib.Theories.EventSemantics.TemporalDecomposition
 
 -- Theories: IntensionalSemantics (possible-worlds semantics)
 import Linglib.Theories.IntensionalSemantics.Basic

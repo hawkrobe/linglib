@@ -35,12 +35,14 @@ Exceptional cases (yǐwéi's postsupposition) are handled HERE, not in Fragments
 -/
 
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
+import Linglib.Core.Verbs
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 
 namespace IntensionalSemantics.Attitude.ContrafactiveGap
 
 open IntensionalSemantics.Attitude.Doxastic
+open Core.Verbs
 open Fragments.English.Predicates.Verbal
 
 -- ============================================================================
@@ -53,7 +55,7 @@ Derive CG requirement from a VerbEntry's veridicality.
 This is the BRIDGE function that interprets Fragment data theoretically.
 The derivation lives HERE (Theory layer), not in Fragments.
 -/
-def deriveCGReqFromVerb (v : VerbEntry) : Option CGRequirement :=
+def deriveCGReqFromVerb (v : VerbCore) : Option CGRequirement :=
   v.veridicality.bind deriveCGRequirement
 
 /--
@@ -62,7 +64,7 @@ Get effective CG requirement for a verb, handling exceptions.
 For most verbs: derived from veridicality
 For yǐwéi: exceptional postsupposition ◇¬p (weak contrafactive)
 -/
-def effectiveCGReq (verbForm : String) (v : VerbEntry) : Option CGRequirement :=
+def effectiveCGReq (verbForm : String) (v : VerbCore) : Option CGRequirement :=
   if Fragments.Mandarin.Predicates.hasExceptionalPostsupposition verbForm then
     -- yǐwéi has exceptional postsupposition ◇¬p (weak contrafactive)
     some CGRequirement.weakContrafactive
@@ -92,7 +94,7 @@ theorem yiwei_is_exceptional :
 This captures Glass (2022, 2025): yǐwéi requires CG ◇ ¬p.
 -/
 theorem yiwei_effective_cg :
-    effectiveCGReq "yiwei" Fragments.Mandarin.Predicates.yiwei =
+    effectiveCGReq "yiwei" Fragments.Mandarin.Predicates.yiwei.toVerbCore =
     some CGRequirement.weakContrafactive := rfl
 
 /--
@@ -102,7 +104,7 @@ This proves the exception IS necessary: veridicality alone gives nothing,
 but yǐwéi actually has a weak contrafactive postsupposition.
 -/
 theorem yiwei_derived_cg_none :
-    deriveCGReqFromVerb Fragments.Mandarin.Predicates.yiwei = none := by
+    deriveCGReqFromVerb Fragments.Mandarin.Predicates.yiwei.toVerbCore = none := by
   native_decide
 
 /--
@@ -112,8 +114,8 @@ The exception provides something (weak contrafactive) that derivation doesn't (n
 If this theorem ever becomes FALSE, the exception is no longer needed.
 -/
 theorem yiwei_exception_justified :
-    deriveCGReqFromVerb Fragments.Mandarin.Predicates.yiwei ≠
-    effectiveCGReq "yiwei" Fragments.Mandarin.Predicates.yiwei := by
+    deriveCGReqFromVerb Fragments.Mandarin.Predicates.yiwei.toVerbCore ≠
+    effectiveCGReq "yiwei" Fragments.Mandarin.Predicates.yiwei.toVerbCore := by
   simp [deriveCGReqFromVerb, effectiveCGReq]
   native_decide
 
@@ -272,22 +274,22 @@ Valid means: either satisfies PLC or is not subject to PLC.
 -/
 theorem all_english_verbs_valid :
     englishAttitudeVerbs.all (fun v =>
-      deriveCGReqFromVerb v |>.map cgRequirementIsValid |>.getD true) = true := by
+      deriveCGReqFromVerb v.toVerbCore |>.map cgRequirementIsValid |>.getD true) = true := by
   native_decide
 
 -- English verbs: CG requirements are DERIVED from veridicality
 
 theorem believe_cg_none :
-    deriveCGReqFromVerb believe = none := by native_decide
+    deriveCGReqFromVerb believe.toVerbCore = none := by native_decide
 
 theorem think_cg_none :
-    deriveCGReqFromVerb think = none := by native_decide
+    deriveCGReqFromVerb think.toVerbCore = none := by native_decide
 
 theorem hope_cg_none :
-    deriveCGReqFromVerb hope = none := by native_decide
+    deriveCGReqFromVerb hope.toVerbCore = none := by native_decide
 
 theorem fear_cg_none :
-    deriveCGReqFromVerb fear = none := by native_decide
+    deriveCGReqFromVerb fear.toVerbCore = none := by native_decide
 
 /-!
 ## Handling yǐwéi's Exception

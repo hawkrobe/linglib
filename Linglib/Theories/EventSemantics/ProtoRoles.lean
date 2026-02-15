@@ -434,25 +434,25 @@ def sweepBroomSubjectProfile : EntailmentProfile :=
 
 /-- Variable agentivity = the broom sense has strictly more P-Agent
     entailments than the basic sense (Rappaport Hovav & Levin 2024 §4). -/
-theorem sweep_broom_more_agentive :
+theorem sweep_instr_more_agentive :
     sweepBroomSubjectProfile.pAgentScore >
     sweepBasicSubjectProfile.pAgentScore := by native_decide
 
 /-- Basic sweep passes the do-test (movement alone suffices). -/
-theorem sweep_basic_passes_doTest :
+theorem sweep_passes_doTest :
     passesDoTestFromProfile sweepBasicSubjectProfile = true := by native_decide
 
 /-- Broom sweep obligatorily passes the do-test (volition alone suffices). -/
-theorem sweep_broom_passes_doTest :
+theorem sweep_instr_passes_doTest :
     passesDoTestFromProfile sweepBroomSubjectProfile = true := by native_decide
 
 /-- Bridge: basic sweep subject theta is underspecified (none). -/
-theorem sweep_basic_underspecified :
-    Fragments.English.Predicates.Verbal.sweep_basic.subjectTheta = none := rfl
+theorem sweep_underspecified :
+    Fragments.English.Predicates.Verbal.sweep.subjectTheta = none := rfl
 
 /-- Bridge: broom sweep subject theta is agent (obligatory agentivity). -/
-theorem sweep_broom_agentive :
-    Fragments.English.Predicates.Verbal.sweep_broom.subjectTheta = some .agent := rfl
+theorem sweep_instr_agentive :
+    Fragments.English.Predicates.Verbal.sweep_instr.subjectTheta = some .agent := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 13. Effector / Force Recipient (Rappaport Hovav & Levin 2024)

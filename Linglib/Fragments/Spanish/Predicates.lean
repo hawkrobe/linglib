@@ -1,3 +1,4 @@
+import Linglib.Core.Verbs
 import Linglib.Theories.Minimalism.Core.Applicative
 
 /-!
@@ -23,6 +24,7 @@ structure (vGO ∧ vBE) that require SE-marking.
 namespace Fragments.Spanish.Predicates
 
 open Minimalism
+open Core.Verbs
 
 -- ============================================================================
 -- § 1: Anticausative Marking
@@ -39,10 +41,11 @@ inductive AnticausativeMarking where
 -- § 2: Verb Entry Structure
 -- ============================================================================
 
-/-- A Spanish verb with its causative alternation properties. -/
-structure SpanishVerbEntry where
-  /-- Citation form -/
-  form : String
+/-- A Spanish verb with its causative alternation properties.
+
+    Extends `VerbCore` with Spanish-specific fields for anticausative
+    marking and event-structural decomposition (Cuervo 2003). -/
+structure SpanishVerbEntry extends VerbCore where
   /-- How the anticausative is marked -/
   anticausativeMarking : AnticausativeMarking
   /-- Participates in causative/anticausative alternation -/
@@ -59,70 +62,83 @@ structure SpanishVerbEntry where
 
 /-- *abrir* "open" — marked anticausative, licenses stylistic LE. -/
 def abrir : SpanishVerbEntry :=
-  { form := "abrir", anticausativeMarking := .marked,
+  { form := "abrir", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
     (exx. 7–8 in Muñoz Pérez 2026) -/
 def romper : SpanishVerbEntry :=
-  { form := "romper", anticausativeMarking := .marked,
+  { form := "romper", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
     (exx. 9–10) -/
 def hundir : SpanishVerbEntry :=
-  { form := "hundir", anticausativeMarking := .marked,
+  { form := "hundir", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (exx. 11–12, unaccusative) -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", anticausativeMarking := .marked,
+  { form := "caer", verbClass := .simple, complementType := .none,
+    unaccusative := true,
+    anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
     (exx. 13–14) -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", anticausativeMarking := .marked,
+  { form := "morir", verbClass := .simple, complementType := .none,
+    unaccusative := true,
+    anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
     (ex. 39a) -/
 def quebrar : SpanishVerbEntry :=
-  { form := "quebrar", anticausativeMarking := .marked,
+  { form := "quebrar", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
     (ex. 40) -/
 def hervir : SpanishVerbEntry :=
-  { form := "hervir", anticausativeMarking := .optional,
+  { form := "hervir", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .optional,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
     (exx. 15–16, psych verb) -/
 def olvidar : SpanishVerbEntry :=
-  { form := "olvidar", anticausativeMarking := .marked,
+  { form := "olvidar", verbClass := .simple, complementType := .np,
+    anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
     (exx. 17–18) -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", anticausativeMarking := .marked,
+  { form := "ocurrir", verbClass := .simple, complementType := .none,
+    unaccusative := true,
+    anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
     licensesStylLE := true }
 
 /-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
     (ex. 39b) -/
 def mejorar : SpanishVerbEntry :=
-  { form := "mejorar", anticausativeMarking := .unmarked,
+  { form := "mejorar", verbClass := .causative, complementType := .np,
+    anticausativeMarking := .unmarked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := false }
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Morpheme
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Clitic vs. Affix Diagnostics (Zwicky & Pullum 1983)
@@ -30,7 +30,7 @@ scores affix-like on all six, despite the traditional clitic analysis.
 
 namespace Morphology.Diagnostics
 
-open Core.Morpheme (MorphStatus SelectionDegree)
+open Core.Morphology (MorphStatus SelectionDegree)
 
 -- ============================================================================
 -- §1: Diagnostic Profile

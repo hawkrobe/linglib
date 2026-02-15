@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.213.4] - 2026-02-14
+
+### Added
+- **Core/Time.lean**: Extract theory-neutral temporal infrastructure from `TruthConditional/Core/Time` — `TimeStructure`, `Interval` + all methods (point, contains, subinterval, overlaps, precedes, meets), `BoundaryType`/`GInterval` (Rouillard 2026 open/closed intervals), `DenseTime`, `Situation` + all methods, `TemporalRelation` + eval, `TimeStructure ℤ` instance + example constants
+- **Core/Reichenbach.lean**: Extract Reichenbach's temporal framework from `TruthConditional/Core/Time` — `ReichenbachFrame` (S, P, R, E times; Kiparsky 2002 perspective time P), `isPast`/`isPresent`/`isFuture` (R vs P), `isPerfective`/`isImperfective`/`isPerfect`/`isProspective` (E vs R), `isPast_simpleCase` theorem
+- **Core/Causation.lean**: Unified causal infrastructure replacing `CausalInference.lean` + `CausalModel.lean` — structural layer (Nadathur & Lauer 2020: `Variable`, `Situation`, `CausalLaw`, `CausalDynamics`, `normalDevelopment`, `intervene`, `causallyNecessary`/`causallySufficient`, `manipulates`) + probabilistic layer (Grusdt, Lassiter & Franke 2022: `WorldState`, `CausalRelation`, `NoisyOR`)
+- **Core/DecisionTheory.lean**: Promoted from `QuestionSemantics/DecisionTheory` — `DecisionProblem`, `expectedUtility`, `maximin`, mention-some/mention-all classification; usable by RSA, causal decision theory, explanation models without question-semantic dependencies
+- **Core/NaturalLogic.lean**: Natural logic relation algebra (Icard 2012) — 7 `NLRelation`s (≡, ⊑, ⊒, ^, |, ⌣, #), 9 `EntailmentSig`s, `join` (⋈), `compose` (∘), `project` ([]^φ); `PartialOrder` + `BoundedOrder` on relations, `Monoid` on signatures
+- **Core/Partition.lean**: Partition lattice on `QUD` — refinement ordering, coarsening, cell enumeration; Merin (1999) decision-theoretic characterization of negativity as proper coarsening
+- **Core/PolarityPartition.lean**: Bridge connecting `NaturalLogic` algebra to `Partition` lattice — `complements_same_partition`, DE contexts map refinements to coarsenings, double-complement identity
+- **Core/Verbs.lean**: Cross-linguistic verb infrastructure — `VerbCore` bundles argument structure, semantic class, complement type, control, attitude/causative builders; language-specific fragments extend with inflectional paradigms
+- **Core/Morphology/MorphRule.lean**: Compositional morphological rules (`MorphRule σ`) with formal AND semantic effects, `Stem σ` with inflectional paradigms, Bybee (1985) relevance hierarchy; replaces `Core/Morpheme.lean`
+- **Core/Morphology/Aspect.lean**: Aspect morphology rules (progressive, gerundive) — all `isVacuous := true`
+- **Core/Morphology/Number.lean**: Number morphology linking singular/plural to mereological structure (Link 1983); vacuous verb agreement
+- **Core/Morphology/StemToLex.lean**: Bridge from morphological stems to Montague-style semantic lexical entries
+- **Theories/EventSemantics/TemporalDecomposition.lean**: Subevent structure for telic predicates — `SubeventPhases` (activity + result traces), `TemporalDecomposition` (.simple/.complex), `DecomposedEv`; bridges `EventStructure.Template` to `ViewpointAspect`
+- **Theories/TruthConditional/Sentence/Tense/PerfectPolysemy.lean**: Kiparsky (2002) perfect polysemy — Perfect Time Span interaction with subevent structure via `TemporalDecomposition`
+- **Theories/RSA/Implementations/HardingGerstenbergIcard2025.lean**: Communication-first explanation account — utterances are "FACT because X=x", literal meaning is actual causation, decision problem is manipulation game; classic explanatory virtues emerge from pragmatic dynamics
+- **Fragments/German/Predicates.lean**: German causative and attitude verbs extending `VerbCore` with inflectional paradigm (3sg, Präteritum, Partizip II)
+- **Phenomena/Causatives/StructuralCausation.lean**: Verification of causal structures (preemption, prevention, enabling, double prevention, overdetermination)
+- **Phenomena/Morphology/Composition.lean**: Tests for morphological pipeline — regular/irregular plurals, mass nouns, verb agreement
+
+### Changed
+- **Theories/TruthConditional/Core/Time.lean**: Slimmed to theory-specific branching-time definitions only — `WorldHistory`, `historicalBase`, `HistoricalProperties`, `TProp`/`TBProp`, `liftProp`, `holdsAt`; all framework-agnostic infrastructure moved to Core/
+- **Theories/TruthConditional/Sentence/Tense/Basic.lean**: Tense now relates R to perspective time P (Kiparsky 2002), not speech time S; `applyTense`/`satisfiesTense` updated
+- **Theories/QuestionSemantics/DecisionTheory.lean**: Core decision theory promoted to `Core/DecisionTheory`; module now re-exports and adds question-specific extensions
+- **Theories/QuestionSemantics/Partition.lean**: Partition lattice promoted to `Core/Partition`; module now re-exports
+- **Theories/TruthConditional/Core/Polarity.lean**: Integrated `NaturalLogic` entailment signatures
+- **Theories/TruthConditional/Sentence/Entailment/AntiAdditivity.lean**: Extended with `NaturalLogic`-based anti-additivity characterization
+- **Theories/TruthConditional/Sentence/Entailment/PolarityBuilder.lean**: Extended with compositional polarity signature tracking
+- **Fragments/English/Predicates/Verbal.lean**: Overhauled to use `VerbCore`; all verb entries now carry argument structure, semantic class, and builder links
+- **Fragments/{French,Japanese,Korean,Mandarin,Spanish,Turkish}/Predicates.lean**: Extended to use `VerbCore` with language-specific inflectional paradigms
+
+### Deleted
+- **Core/CausalInference.lean**: Replaced by `Core/Causation.lean`
+- **Core/CausalModel.lean**: Absorbed into `Core/Causation.lean`
+- **Core/Morpheme.lean**: Replaced by `Core/Morphology/MorphRule.lean`
+
+## [0.213.3] - 2026-02-14
+
+### Added
+- **Core/Morphology/Tense.lean**: Morphological rules for tense marking — `TenseFormType` (`.synthetic` vs `.periphrastic`), five `MorphRule` constructors (`pastRule`, `presentRule`, `futureRule`, `periphrasticPastRule`, `periphrasticFutureRule`), all `isVacuous := true` since temporal semantics lives in the Theory layer; Lakoff's diagnostic: periphrastic forms block "false" tense interpretations
+- **Phenomena/Lakoff1970/Data.lean**: 11 grammaticality judgments from Lakoff (1970) §§1–5 — false tense (ex4a/6a/8a/9a), SOT/novelty (ex13a/13b), perfect/salience (ex22a/22b), will-deletion (ex27a/27b/25b); `TenseJudgment` structure with `TenseUseType` and `TenseFormType` fields; collection/counting verification theorems
+- **Phenomena/Lakoff1970/Bridge.lean**: Bridge theorems connecting Lakoff data to Theory predictions — per-datum form-type verification against Fragment entries, false-tense diagnostic (`falseTenseRequiresSynthetic`), temporal-perspective bridges (`false_past_is_temporally_present`, `false_past_classified_correctly`), novel-info/salience/will-deletion bridges, cross-cutting acceptability prediction (`grammatical_false_tense_all_synthetic`)
+
+### Changed
+- **Theories/.../Perspective.lean**: Added `TenseUse` (`.trueTense`/`.falseTense`), `classifyUse` (derives use type from `GramTense` + `TensePerspective` temporal relation), `falseTenseRequiresSynthetic` (Lakoff's periphrastic diagnostic); imports `Core/Morphology/Tense`
+- **Fragments/English/Tense.lean**: Added `TensePerspectiveEntry` extending `TenseEvidentialParadigm` with `gramTense` and `formType`; four new entries (`simplePastPerspective`, `simplePresentPerspective`, `usedTo`, `goingTo`); `allowsFalseTense` derived from `formType`; verification theorems for synthetic/periphrastic false-tense behavior
+
+## [0.213.2] - 2026-02-14
+
+### Added
+- **Core/Morphology/Degree.lean**: Comparative and superlative `MorphRule` constructors (`comparativeRule`, `superlativeRule`) — both `isVacuous := true` since degree semantics is compositional (handled by `TruthConditional/Adjective/Comparative.lean`); supports regular (`-er`/`-est`), irregular (`better`/`best`), and periphrastic (`more expensive`/`most expensive`) forms
+- **Core/Morphology/ScaleFromParadigm.lean**: Automatic Horn scale generation from adjective paradigms — `MorphScale` (positive/comparative/superlative triple), `adjectiveScale` (extracts degree scale from a `Stem`'s paradigm), `morphologicalAlternatives` (returns paradigm-mates as scalar alternatives), `MorphScale.toHornScale` (bridge to `Core/HornScale.lean`)
+- **`.degree` constructor on `MorphCategory`**: Relevance rank 5 (same as tense) — comparative/superlative morphology compositionally modifies the adjective's interpretation, analogous to tense on verbs
+- **`AdjModifierEntry.toStem`**: Converts adjective modifier entries to morphological stems with degree paradigms; all 18 entries in the English adjective fragment produce valid stems
+- **Phenomena/Morphology/DegreeComposition.lean**: Test suite for degree morphology — regular/irregular/periphrastic form generation, scale generation, morphological alternatives, Bybee relevance hierarchy bridge, semantic vacuity verification across all adjective entries
+
+## [0.213.1] - 2026-02-14
+
+### Added
+- **Core/DiscourseRole.lean**: Framework-agnostic discourse participant roles (`DiscourseRole`: speaker/addressee), `IllocutionaryMood` (declarative/interrogative/imperative/promissive), `epistemicAuthority` (maps mood to authoritative participant per Lakoff 1970), `resolveRole` (projects discourse role to entity via `KContext`)
+- **Theories/TruthConditional/Sentence/Tense/Perspective.lean**: Lakoff (1970) participant-sensitive tense — `TensePerspective` extends `EvidentialFrame` with `speakerSalience` and `hearerNovelty`; five Lakoff predicates: `falsePast` (past tense on present events lacking salience), `falseFuture`, `novelInfoPresent` (present survives under past matrix when content is new to hearer), `perfectRequiresSalience`, `willDeletion` (scheduled futures in present tense); bridge theorems connecting to `UPCondition.present` and `downstreamEvidence`
+
 ## [0.213.0] - 2026-02-14
 
 ### Added

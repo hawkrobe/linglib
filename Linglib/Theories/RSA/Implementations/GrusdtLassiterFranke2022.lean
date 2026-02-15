@@ -50,12 +50,12 @@ L0_conditional_meaning = conditionalSemantics
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.RSA.Core.Basic
 import Linglib.Theories.RSA.Core.Eval
-import Linglib.Core.CausalInference
+import Linglib.Core.Causation
 import Linglib.Theories.IntensionalSemantics.Conditional.Assertability
 
 namespace RSA.GrusdtLassiterFranke2022
 
-open Core.CausalInference
+open Core.Causation
 open RSA.Eval
 open IntensionalSemantics.Conditional.Assertability
 
@@ -534,7 +534,7 @@ S1 is unlikely to utter "if A then C" when A⊥C (independent).
 -/
 def missingLinkDispreferred : Bool :=
   -- An independent world state
-  let indepWs : WorldState := WorldState.independentExample
+  let indepWs : WorldState := WorldState.independent (1/2) (1/2)
   let s1 := S1 (indepWs, .Independent) .both
   -- Expect conditional to have low probability
   getScore s1 .conditional < getScore s1 .silence
@@ -665,7 +665,7 @@ simplicity. The semantic result (`perfection_not_semantic`) still holds.
 For the independent example world state, S1 assigns low probability to the conditional.
 -/
 def missingLinkS1Score : ℚ :=
-  let indepWs := WorldState.independentExample
+  let indepWs := WorldState.independent (1/2) (1/2)
   let s1 := S1 (indepWs, .Independent) .both
   getScore s1 .conditional
 
@@ -673,7 +673,7 @@ def missingLinkS1Score : ℚ :=
 **Silence is preferred to conditional for missing-link worlds**.
 -/
 theorem missing_link_silence_preferred :
-    let indepWs := WorldState.independentExample
+    let indepWs := WorldState.independent (1/2) (1/2)
     let s1 := S1 (indepWs, .Independent) .both
     getScore s1 .conditional ≤ getScore s1 .silence := by
   native_decide

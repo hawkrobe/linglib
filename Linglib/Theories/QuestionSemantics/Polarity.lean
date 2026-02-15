@@ -1,4 +1,5 @@
-import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Core.DecisionTheory
+import Linglib.Theories.QuestionSemantics.Partition
 import Linglib.Theories.TruthConditional.Core.Polarity
 
 /-!
@@ -49,6 +50,7 @@ Two sources of utility:
 
 namespace QuestionSemantics.Polarity
 
+open Core.DecisionTheory
 open QuestionSemantics
 
 -- Polar Question Types

@@ -46,7 +46,7 @@ open ConstructionGrammar.Studies.GoldbergJackendoff2004
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ChangeOfState
 open Core.Interfaces
-open Core.CausalModel
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open NadathurLauer2020.Builder (CausativeBuilder)

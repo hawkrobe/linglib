@@ -49,7 +49,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Builder
 
 namespace CaoWhiteLassiter2025
 
-open Core.CausalModel
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open NadathurLauer2020.CoerciveImplication (ActionType)

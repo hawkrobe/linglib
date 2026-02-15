@@ -21,12 +21,12 @@ This probabilistic semantics:
   communication with conditionals.
 -/
 
-import Linglib.Core.CausalInference
+import Linglib.Core.Causation
 import Mathlib.Data.Rat.Defs
 
 namespace IntensionalSemantics.Conditional.Assertability
 
-open Core.CausalInference
+open Core.Causation
 
 -- Conditional Probability
 

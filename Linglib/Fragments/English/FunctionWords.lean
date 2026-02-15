@@ -85,8 +85,10 @@ structure AuxEntry where
   /-- Person/number agreement -/
   person : Option Person := none
   number : Option Number := none
-  /-- Tense -/
-  past : Bool := false
+  /-- Morphological tense. `none` for base forms (modals like *can*, *will*).
+      Note: "past" modals (*could*, *would*) carry `Past` as a morphological
+      feature even when semantically non-past (counterfactual, polite). -/
+  tense : Option UD.Tense := none
   /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
@@ -109,7 +111,7 @@ def can : AuxEntry where
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
   negForm := some "can't"; negIrregular := true   -- [kænt] not *[kænənt]
 def could : AuxEntry where
-  form := "could"; auxType := .modal; past := true
+  form := "could"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
   negForm := some "couldn't"
 def will : AuxEntry where
@@ -117,7 +119,7 @@ def will : AuxEntry where
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
   negForm := some "won't"; negIrregular := true    -- [wont] not *[wɪlnt]
 def would : AuxEntry where
-  form := "would"; auxType := .modal; past := true
+  form := "would"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
   negForm := some "wouldn't"
 def shall : AuxEntry where
@@ -125,7 +127,7 @@ def shall : AuxEntry where
   modalMeaning := cp [.necessity] [.deontic]
   negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
 def should : AuxEntry where
-  form := "should"; auxType := .modal; past := true
+  form := "should"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.necessity] [.deontic, .epistemic]
   negForm := some "shouldn't"
 def may : AuxEntry where
@@ -133,7 +135,7 @@ def may : AuxEntry where
   modalMeaning := cp [.possibility] [.epistemic, .deontic]
   negForm := none                                  -- *mayn't: paradigm gap
 def might : AuxEntry where
-  form := "might"; auxType := .modal; past := true
+  form := "might"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.possibility] [.epistemic]
   negForm := some "mightn't"
 def must : AuxEntry where
@@ -160,7 +162,7 @@ def does : AuxEntry where
   form := "does"; auxType := .doSupport; person := some .third; number := some .sg
   negForm := some "doesn't"
 def did : AuxEntry where
-  form := "did"; auxType := .doSupport; past := true
+  form := "did"; auxType := .doSupport; tense := some .Past
   negForm := some "didn't"
 
 -- Be
@@ -174,10 +176,10 @@ def are : AuxEntry where
   form := "are"; auxType := .be; number := some .pl
   negForm := some "aren't"
 def was : AuxEntry where
-  form := "was"; auxType := .be; number := some .sg; past := true
+  form := "was"; auxType := .be; number := some .sg; tense := some .Past
   negForm := some "wasn't"
 def were : AuxEntry where
-  form := "were"; auxType := .be; number := some .pl; past := true
+  form := "were"; auxType := .be; number := some .pl; tense := some .Past
   negForm := some "weren't"
 
 -- Have
@@ -188,7 +190,7 @@ def has : AuxEntry where
   form := "has"; auxType := .have; person := some .third; number := some .sg
   negForm := some "hasn't"
 def had : AuxEntry where
-  form := "had"; auxType := .have; past := true
+  form := "had"; auxType := .have; tense := some .Past
   negForm := some "hadn't"
 
 def allAuxiliaries : List AuxEntry := [

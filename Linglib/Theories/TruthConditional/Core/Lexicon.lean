@@ -16,6 +16,7 @@ import Linglib.Core.Basic
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Theories.TruthConditional.Determiner.Quantifier
 import Linglib.Core.HornScale
+import Linglib.Core.Morphology.Number
 
 namespace TruthConditional.Core
 
@@ -125,17 +126,47 @@ def laughs_entry : SemLexEntry toyModel :=
   , denot := ToyLexicon.laughs_sem
   }
 
-def student_entry : SemLexEntry toyModel :=
-  { word := ⟨"student", .NOUN, { number := Option.some .sg }⟩
-  , ty := .e ⇒ .t
-  , denot := student_sem
-  }
+/-- Student noun stem: paradigm generates both sg and pl entries.
 
-def students_entry : SemLexEntry toyModel :=
-  { word := ⟨"students", .NOUN, { number := Option.some .pl }⟩
+    In the toy model (no mereological structure), the plural rule is
+    semantically flat (`semEffect := id`). In a model with Link-style
+    plurals, use `Number.pluralNounRule` with closure/atom predicates. -/
+def studentStem : Core.Morphology.Stem (toyModel.interpTy (.e ⇒ .t)) :=
+  { lemma_ := "student"
+  , cat := .NOUN
+  , baseFeatures := { number := some .Sing }
+  , paradigm := [Core.Morphology.Number.pluralNounRuleFlat] }
+
+private def studentPluralRule := Core.Morphology.Number.pluralNounRuleFlat (α := ToyEntity)
+
+/-- Singular "student" entry derived from stem. -/
+def student_entry : SemLexEntry toyModel :=
+  { word := { form := studentStem.lemma_
+            , cat := studentStem.cat
+            , features := studentStem.baseFeatures }
   , ty := .e ⇒ .t
-  , denot := student_sem
-  }
+  , denot := student_sem }
+
+/-- Plural "students" entry derived from stem via plural rule. -/
+def students_entry : SemLexEntry toyModel :=
+  { word := { form := studentPluralRule.formRule studentStem.lemma_
+            , cat := studentStem.cat
+            , features := studentPluralRule.featureRule studentStem.baseFeatures }
+  , ty := .e ⇒ .t
+  , denot := studentPluralRule.semEffect student_sem }
+
+/-- The stem-derived singular entry preserves the expected form and features. -/
+theorem student_entry_form : student_entry.word.form = "student" := rfl
+theorem student_entry_number : student_entry.word.features.number = some .Sing := rfl
+
+/-- The stem-derived plural entry produces the expected form and features. -/
+theorem students_entry_form : students_entry.word.form = "students" := rfl
+theorem students_entry_number : students_entry.word.features.number = some .Plur := rfl
+
+/-- In the toy model (flat plural semantics), both entries share the
+    same denotation since `pluralNounRuleFlat.semEffect = id`. -/
+theorem student_plural_flat_sem :
+    students_entry.denot = student_entry.denot := rfl
 
 def SemLexicon (m : Model) := String → Option (SemLexEntry m)
 

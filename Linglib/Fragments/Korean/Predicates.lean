@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Verbs
 
 /-!
 # Korean Predicate Lexicon Fragment
@@ -17,35 +17,28 @@ event is not entailed to have actually occurred.
 
 namespace Fragments.Korean.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType)
+open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
 
-/-- 웃게 하다 "wus-ke ha-da" — smile-PURP do = "cause to smile".
+/-- Korean verb entry: extends VerbCore with Korean inflectional paradigm. -/
+structure KoreanVerbEntry extends VerbCore where
+  /-- Declarative form (-ta) -/
+  formDecl : String
+  /-- Past form (-əss-ta) -/
+  formPast : String
+  /-- Adnominal form (-n) -/
+  formAdnom : String
+  /-- Progressive form (-go itta) -/
+  formProgressive : String
+  deriving Repr, BEq
 
-    Korean PURP-type causative (Song 1996). Non-implicative: the effect
-    (smiling) is not entailed to have occurred. Uses `.cause` builder
-    because the purposive structure asserts counterfactual dependence
-    rather than direct sufficient guarantee. -/
-def wus_ke_ha : VerbEntry where
+/-- 웃게 하다 "wus-ke ha-da" — smile-PURP do = "cause to smile". -/
+def wus_ke_ha : KoreanVerbEntry where
   form := "wus-ke ha-da"
-  form3sg := "wus-ke ha-n-da"
+  formDecl := "wus-ke ha-n-da"
   formPast := "wus-ke ha-əss-ta"
-  formPastPart := "wus-ke ha-n"
-  formPresPart := "wus-ke ha-go itta"
-  complementType := .infinitival  -- Purposive complement
-  subjectTheta := some .agent
-  objectTheta := some .patient
-  controlType := .objectControl
-  verbClass := .causative
-  causativeBuilder := some .cause  -- PURP = counterfactual/non-implicative
-
-/-- 읽게 하다 "ilk-ke ha-da" — read-PURP do = "cause to read". -/
-def ilk_ke_ha : VerbEntry where
-  form := "ilk-ke ha-da"
-  form3sg := "ilk-ke ha-n-da"
-  formPast := "ilk-ke ha-əss-ta"
-  formPastPart := "ilk-ke ha-n"
-  formPresPart := "ilk-ke ha-go itta"
+  formAdnom := "wus-ke ha-n"
+  formProgressive := "wus-ke ha-go itta"
   complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .patient
@@ -53,17 +46,28 @@ def ilk_ke_ha : VerbEntry where
   verbClass := .causative
   causativeBuilder := some .cause
 
-/-- 죽이다 "cwuk-i-da" — die-CAUS = "to kill" (lexical/morphological COMPACT).
+/-- 읽게 하다 "ilk-ke ha-da" — read-PURP do = "cause to read". -/
+def ilk_ke_ha : KoreanVerbEntry where
+  form := "ilk-ke ha-da"
+  formDecl := "ilk-ke ha-n-da"
+  formPast := "ilk-ke ha-əss-ta"
+  formAdnom := "ilk-ke ha-n"
+  formProgressive := "ilk-ke ha-go itta"
+  complementType := .infinitival
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  controlType := .objectControl
+  verbClass := .causative
+  causativeBuilder := some .cause
 
-    Unlike *-ke ha-*, the *-i-* causative is COMPACT and implicative:
-    the effect is entailed. Uses `.make` builder. -/
-def cwuk_i : VerbEntry where
+/-- 죽이다 "cwuk-i-da" — die-CAUS = "to kill" (lexical/morphological COMPACT). -/
+def cwuk_i : KoreanVerbEntry where
   form := "cwuk-i-da"
-  form3sg := "cwuk-i-n-da"
+  formDecl := "cwuk-i-n-da"
   formPast := "cwuk-yəss-ta"
-  formPastPart := "cwuk-i-n"
-  formPresPart := "cwuk-i-go itta"
-  complementType := .np  -- Fused: no separate complement clause
+  formAdnom := "cwuk-i-n"
+  formProgressive := "cwuk-i-go itta"
+  complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
   verbClass := .causative
@@ -77,14 +81,13 @@ theorem wus_ke_ha_is_cause :
 theorem cwuk_i_is_make :
     cwuk_i.causativeBuilder = some .make := rfl
 
-/-- The two Korean causative types use different builders,
-    reflecting the PURP vs COMPACT distinction (Song 1996). -/
+/-- The two Korean causative types use different builders. -/
 theorem purp_compact_different_builders :
     wus_ke_ha.causativeBuilder ≠ cwuk_i.causativeBuilder := by decide
 
-def allVerbs : List VerbEntry := [wus_ke_ha, ilk_ke_ha, cwuk_i]
+def allVerbs : List KoreanVerbEntry := [wus_ke_ha, ilk_ke_ha, cwuk_i]
 
-def lookup (form : String) : Option VerbEntry :=
+def lookup (form : String) : Option KoreanVerbEntry :=
   allVerbs.find? (·.form == form)
 
 end Fragments.Korean.Predicates

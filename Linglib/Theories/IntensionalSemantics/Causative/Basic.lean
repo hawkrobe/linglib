@@ -21,7 +21,7 @@ Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
 
 ## Module Structure
 
-- `Core.CausalModel`: Situations, causal laws, normal development
+- `Core.Causation`: Situations, causal laws, normal development
 - `Sufficiency`: Causal sufficiency, semantics of "make"
 - `Necessity`: Causal necessity, semantics of "cause"
 - `Examples`: Fire scenario, circuit, causal chains
@@ -68,7 +68,7 @@ open NadathurLauer2020.Examples
 -/
 
 -- Re-export all submodules
-import Linglib.Core.CausalModel
+import Linglib.Core.Causation
 import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
 import Linglib.Theories.IntensionalSemantics.Causative.Necessity
 import Linglib.Theories.IntensionalSemantics.Causative.Builder
@@ -81,7 +81,7 @@ import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 namespace NadathurLauer2020
 
 -- Re-export key definitions for convenience
-export Core.CausalModel (
+export Core.Causation (
   Variable mkVar
   Situation CausalLaw CausalDynamics
 )

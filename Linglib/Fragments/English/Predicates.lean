@@ -14,8 +14,6 @@ export Verbal (
   VerbClass PresupTriggerType ComplementType ControlType VerbEntry
   PreferentialBuilder
   -- Functions
-  getCoSSemantics presupposesComplement isPresupTrigger
-  isPreferentialAttitude
   allVerbs
 )
 

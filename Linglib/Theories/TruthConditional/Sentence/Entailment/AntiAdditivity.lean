@@ -5,11 +5,13 @@ Reference: Zwarts (1996), Chierchia (2013) section 1.4.3, Ladusaw (1980).
 
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Data.List.Basic
+import Linglib.Core.NaturalLogic
 import Linglib.Theories.TruthConditional.Sentence.Entailment.Basic
 import Linglib.Theories.TruthConditional.Core.Polarity
 
 namespace TruthConditional.Sentence.Entailment.AntiAdditivity
 
+open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
 open TruthConditional.Sentence.Entailment
 open TruthConditional.Core.Polarity
 open List (Sublist)
@@ -222,21 +224,6 @@ theorem atMost_not_antiAdditive :
 
 
 /--
-Strength of downward entailingness.
-
-Names the three levels of the Zwarts (1996) hierarchy:
-- `.weak` = DE only (licenses weak NPIs)
-- `.antiAdditive` = DE + right-to-left (licenses strong NPIs)
-- `.antiMorphic` = AA + De Morgan for ∧ (negation)
--/
-inductive DEStrength where
-  | weak           -- Plain DE (licenses weak NPIs)
-  | antiAdditive   -- DE + ∨-distributive (licenses strong NPIs)
-  | antiMorphic    -- Anti-additive + ∧-distributive (= negation)
-  deriving DecidableEq, BEq, Repr
-
-
-/--
 Weak NPI licensing: Requires DE context.
 
 Examples: ever, any (unstressed), alcun
@@ -282,27 +269,103 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 - "No one ever complained" — `no one` is AA (≥ weak) ✓
 -/
 
-/--
-Check if a context's strength is sufficient for an NPI.
-
-`contextStrength ≥ requiredStrength`
--/
-def strengthSufficient (contextStrength requiredStrength : DEStrength) : Bool :=
-  match requiredStrength, contextStrength with
-  | .weak, _ => true
-  | .antiAdditive, .weak => false
-  | .antiAdditive, _ => true
-  | .antiMorphic, .antiMorphic => true
-  | .antiMorphic, _ => false
-
--- Verify the licensing predictions
-#guard strengthSufficient .antiMorphic .weak      -- negation licenses weak NPIs
-#guard strengthSufficient .antiMorphic .antiAdditive  -- negation licenses strong NPIs
-#guard strengthSufficient .antiAdditive .weak     -- "no" licenses weak NPIs
-#guard strengthSufficient .antiAdditive .antiAdditive -- "no" licenses strong NPIs
-#guard strengthSufficient .weak .weak             -- "few" licenses weak NPIs
-#guard !strengthSufficient .weak .antiAdditive    -- "few" does NOT license strong NPIs
-
 end Definitions
+
+
+-- ============================================================================
+-- Section: Upward Entailing Duals (Icard 2012)
+-- ============================================================================
+
+section UEDuals
+
+/-- Additive: f(A ∨ B) = f(A) ∨ f(B) and f(⊤) = ⊤.
+    Dual of anti-additive. Preserved by "some" in both arguments. -/
+def IsAdditive (f : BProp World → BProp World) : Prop :=
+  (∀ p q : BProp World, ∀ w, f (por p q) w = (f p w || f q w)) ∧
+  (∀ w, f pAll w = true)
+
+/-- Multiplicative: f(A ∧ B) = f(A) ∧ f(B) and f(⊥) = ⊥.
+    Dual of anti-morphic's ∧-to-∨ clause. Preserved by "every" in scope. -/
+def IsMultiplicative (f : BProp World → BProp World) : Prop :=
+  (∀ p q : BProp World, ∀ w, f (pand p q) w = (f p w && f q w)) ∧
+  (∀ w, f pNone w = false)
+
+/-- Anti-multiplicative: f(A ∧ B) = f(A) ∨ f(B) and f(⊥) = ⊤.
+    Dual of anti-additive. Characteristic of "not every". -/
+def IsAntiMultiplicative (f : BProp World → BProp World) : Prop :=
+  (∀ p q : BProp World, ∀ w, f (pand p q) w = (f p w || f q w)) ∧
+  (∀ w, f pNone w = true)
+
+/-- Additive implies UE: f distributes over ∨ ⇒ f preserves entailment.
+    Proof mirrors `antiAdditive_implies_de`. -/
+theorem additive_implies_ue (f : BProp World → BProp World) (hAdd : IsAdditive f) :
+    IsUpwardEntailing f := by
+  intro p q hpq w
+  -- p ≤ q ⇒ p ∨ q = q pointwise
+  have h_por_eq : ∀ w', por p q w' = q w' := by
+    intro w'
+    have hpq_w := hpq w'
+    simp only [por, Core.Proposition.Decidable.por]
+    cases hp : p w' <;> cases hq : q w'
+    · rfl
+    · rfl
+    · simp only [hp, hq] at hpq_w
+      have : false = true := Bool.eq_true_of_true_le hpq_w
+      cases this
+    · rfl
+  have hAdd_w := hAdd.1 p q w
+  have h_feq : f (por p q) w = f q w := by
+    congr 1; funext w'; exact h_por_eq w'
+  rw [h_feq] at hAdd_w
+  -- f q w = f p w || f q w ⇒ f p w ≤ f q w
+  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+
+/-- Multiplicative implies UE. -/
+theorem multiplicative_implies_ue (f : BProp World → BProp World) (hMult : IsMultiplicative f) :
+    IsUpwardEntailing f := by
+  intro p q hpq w
+  -- p ≤ q ⇒ p ∧ q = p pointwise
+  have h_pand_eq : ∀ w', pand p q w' = p w' := by
+    intro w'
+    have hpq_w := hpq w'
+    simp only [pand, Core.Proposition.Decidable.pand]
+    cases hp : p w' <;> cases hq : q w'
+    · rfl
+    · rfl
+    · simp only [hp, hq] at hpq_w
+      have : false = true := Bool.eq_true_of_true_le hpq_w
+      cases this
+    · rfl
+  have hMult_w := hMult.1 p q w
+  have h_feq : f (pand p q) w = f p w := by
+    congr 1; funext w'; exact h_pand_eq w'
+  rw [h_feq] at hMult_w
+  -- f p w = f p w && f q w ⇒ f p w ≤ f q w
+  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+
+/-- Anti-multiplicative implies DE. -/
+theorem antiMultiplicative_implies_de (f : BProp World → BProp World) (hAM : IsAntiMultiplicative f) :
+    IsDownwardEntailing f := by
+  intro p q hpq w
+  -- p ≤ q ⇒ p ∧ q = p pointwise
+  have h_pand_eq : ∀ w', pand p q w' = p w' := by
+    intro w'
+    have hpq_w := hpq w'
+    simp only [pand, Core.Proposition.Decidable.pand]
+    cases hp : p w' <;> cases hq : q w'
+    · rfl
+    · rfl
+    · simp only [hp, hq] at hpq_w
+      have : false = true := Bool.eq_true_of_true_le hpq_w
+      cases this
+    · rfl
+  have hAM_w := hAM.1 p q w
+  have h_feq : f (pand p q) w = f p w := by
+    congr 1; funext w'; exact h_pand_eq w'
+  rw [h_feq] at hAM_w
+  -- f p w = f p w || f q w ⇒ f q w ≤ f p w
+  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+
+end UEDuals
 
 end TruthConditional.Sentence.Entailment.AntiAdditivity

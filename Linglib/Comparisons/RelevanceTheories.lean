@@ -44,7 +44,8 @@ U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 - Blackwell, D. (1953). Equivalent Comparisons of Experiments.
 -/
 
-import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Core.DecisionTheory
+import Linglib.Core.Partition
 import Linglib.Theories.QuestionSemantics.Partition
 import Linglib.Theories.QuestionSemantics.GSVanRooyBridge
 import Linglib.Theories.RSA.Core.Basic
@@ -55,6 +56,7 @@ import Mathlib.Tactic.Ring
 
 namespace Comparisons.Relevance
 
+open Core.DecisionTheory
 open QuestionSemantics
 open RSA.Questions
 open scoped GSQuestion  -- For ⊑ notation
@@ -209,7 +211,7 @@ theorem identity_qud_is_finest
     (q : GSQuestion W) :
     -- The exact (identity) question refines all others
     GSQuestion.exact (W := W) ⊑ q := by
-  exact GSQuestion.exact_refines_all q
+  exact QUD.exact_refines_all q
 
 
 /-!
@@ -244,15 +246,25 @@ def qudToDP {W : Type*}
 
 /-- Theorem 2: Any QUD can be recovered from some DP.
 
-QUD-based utility can be expressed as decision-theoretic utility.
+The induced DP respects the partition structure: worlds in the same cell
+have identical utility profiles. Combined with `QUD.eu_eq_partitionEU`
+(EU decomposes over any partition), this means the QUD's information
+structure IS the DP's information structure — they encode the same
+decision-relevant distinctions.
 -/
 theorem qud_as_decision_problem
     {W : Type*} [DecidableEq W]
     (q : GSQuestion W) (worlds : List W) :
-    -- There exists a DP that captures the QUD's information structure
+    -- There exists a DP that respects the partition:
+    -- same-cell worlds have identical utility profiles
     ∃ dp : DecisionProblem W Nat,
-      -- The DP has one action per cell
-      True := ⟨qudToDP q worlds, trivial⟩
+      ∀ w v : W, q.sameAnswer w v = true →
+        ∀ i : Nat, dp.utility w i = dp.utility v i := by
+  use qudToDP q worlds
+  intro w v hsame i
+  -- Each cell is q.sameAnswer rep · for some rep.
+  -- If q.sameAnswer w v, then by transitivity, cell(w) = cell(v) for all cells.
+  sorry
 
 /-- The converse: a DP with cell-structured utility induces a QUD.
 
@@ -294,15 +306,6 @@ This shows decision-theoretic semantics is strictly more expressive than
 partition semantics.
 -/
 
-/-- Theorem 3: DT is strictly more expressive than QUD.
-
-There exist decision problems that cannot be expressed as partitions.
--/
-theorem decision_theoretic_strictly_more_expressive :
-    -- Not all DPs correspond to partitions
-    -- (Existence claim - actual counterexample below)
-    True := trivial
-
 /-- Counterexample: Continuous utility DP.
 
 Consider W = ℚ (rational worlds), A = ℚ (rational actions).
@@ -314,18 +317,32 @@ def continuousUtilityDP : DecisionProblem ℚ ℚ where
   utility w a := -(abs (w - a))  -- Negative distance (higher = better)
   prior _ := 1
 
+/-- Theorem 3: DT is strictly more expressive than QUD.
+
+There exists a DP where every pair of distinct worlds has a different
+utility profile under some action. The induced QUD (`dpToQUD`) is the
+exact partition, but the DP's graded utility values carry more information
+than the partition's same/different distinction. Partitions are all-or-nothing;
+DPs can encode degrees.
+-/
+theorem decision_theoretic_strictly_more_expressive :
+    ∃ dp : DecisionProblem ℚ ℚ,
+      ∀ w v : ℚ, w ≠ v → ∃ a : ℚ, dp.utility w a ≠ dp.utility v a := by
+  use continuousUtilityDP
+  intro w v hne
+  -- Action a = w: U(w,w) = -|w-w| = 0, U(v,w) = -|v-w| ≠ 0 since v ≠ w
+  exact ⟨w, by simp [continuousUtilityDP]; sorry⟩
+
 /-- The continuous DP cannot be captured by any finite partition.
 
 Any partition groups some distinct worlds together, but the DP distinguishes
 all worlds (different optimal actions for each world).
 -/
 theorem continuous_dp_not_partition :
-    -- For any finite list of cells, the continuous DP distinguishes more
-    ∀ n : Nat, n > 0 →
-      -- The DP distinguishes infinitely many worlds, more than n cells can capture
-      True := by
-  intro n _
-  trivial
+    ∀ w v : ℚ, w ≠ v →
+      ∃ a : ℚ, continuousUtilityDP.utility w a ≠ continuousUtilityDP.utility v a := by
+  intro w v hne
+  exact ⟨w, by simp [continuousUtilityDP]; sorry⟩
 
 
 /-!
@@ -357,16 +374,19 @@ theorem rsa_is_decision_theoretic
   intro dp w
   simp [dp, identityDP]
 
-/-- Corollary: RSA and game-theoretic pragmatics are unified.
+/-- Corollary: RSA and game-theoretic pragmatics are unified via partition EU.
 
-What looks like "epistemic" communication in RSA is actually
-"decision-theoretic" communication for the accuracy goal.
--/
-theorem rsa_game_theoretic_unity :
-    -- RSA's log-likelihood utility
-    -- = Game-theoretic expected utility under identity DP
-    -- = Van Rooy's decision-theoretic question utility (for the accuracy goal)
-    True := trivial
+For any partition Q and any action a, unconditional EU equals
+partition-relative EU (`QUD.eu_eq_partitionEU`). RSA's informativity-
+maximizing speaker computes partition EU for the identity QUD;
+game-theoretic pragmatics computes partition EU for a goal-specific QUD.
+Same decomposition, different partitions. -/
+theorem rsa_game_theoretic_unity
+    {W : Type*}
+    (dp : DecisionProblem W W) (q : GSQuestion W)
+    (worlds : List W) (a : W) :
+    expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
+  QUD.eu_eq_partitionEU dp worlds a q
 
 
 /-!
@@ -423,7 +443,94 @@ theorem blackwell_unifies_relevance
     q ⊑ q' ↔ ∀ dp : DecisionProblem W A,
       questionUtility dp worlds actions (q.toQuestion worlds) >=
       questionUtility dp worlds actions (q'.toQuestion worlds) := by
-  exact blackwell_theorem q q' worlds actions hWorlds hActions
+  exact QuestionSemantics.Bridge.blackwell_full q q' worlds actions hWorlds hActions
+
+
+/-!
+## Partition-Level Foundations (Merin 1999)
+
+The Blackwell bridge above connects G&S refinement to question utility.
+Merin (1999) establishes the deeper partition-theoretic foundations in
+`Core.Partition`:
+
+1. **EU compositionality** (`QUD.eu_eq_partitionEU`): Expected utility equals
+   partition-relative EU for any partition, because cells are exhaustive and
+   mutually exclusive. This means the partition faithfully decomposes EU.
+
+2. **Coarsening preserves EU** (`QUD.coarsening_preserves_eu`): Coarsening
+   (merging cells) cannot change the total EU for a fixed action.
+
+3. **Blackwell = refinement** (`QUD.blackwell_characterizes_refinement`):
+   Q refines Q' iff Q is at least as valuable as Q' for every DP.
+
+Together these show that the QUD framework and the decision-theoretic framework
+are not independent approaches to relevance but the SAME theory expressed in
+different mathematical languages. The partition lattice IS the Blackwell lattice.
+
+This grounds Sumers et al.'s Theorem 2 (any QUD is some DP): the QUD partition
+structure decomposes EU additively, so the partition literally encodes the
+decision-relevant information structure.
+-/
+
+/-- Partition-level Blackwell: refinement implies greater partition value.
+
+This is `QUD.blackwell_refinement_value` from `Core.Partition`, restated
+at the question-semantics level. Since `GSQuestion = QUD`, the theorem
+applies directly. -/
+theorem partition_blackwell_refinement
+    {W A : Type*}
+    (dp : DecisionProblem W A) (q q' : GSQuestion W)
+    (worlds : List W) (actions : List A)
+    (hRefines : q ⊑ q') :
+    QUD.partitionValue dp q worlds actions ≥
+    QUD.partitionValue dp q' worlds actions :=
+  QUD.blackwell_refinement_value dp q q' worlds actions hRefines
+
+/-- The partition value ordering implies the question utility ordering.
+
+Since `questionUtility ≈ partitionValue - dpValue` and `dpValue` is
+partition-independent, the orderings coincide. This is why Blackwell
+works for both Merin's partition value and Van Rooy's question utility. -/
+theorem partitionValue_implies_questionUtility
+    {W A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (q q' : GSQuestion W)
+    (worlds : List W) (actions : List A)
+    (hRefines : q ⊑ q')
+    (hPartition : QUD.partitionValue dp q worlds actions ≥
+                  QUD.partitionValue dp q' worlds actions) :
+    questionUtility dp worlds actions (q.toQuestion worlds) ≥
+    questionUtility dp worlds actions (q'.toQuestion worlds) := by
+  sorry -- partitionValue = questionUtility + dpValue; dpValue cancels
+
+/-- EU compositionality grounds the QUD→DP direction (Sumers Theorem 2).
+
+`QUD.eu_eq_partitionEU` shows that computing EU through any partition gives
+the same answer as unconditional EU. The partition structure doesn't distort
+expected utility — it decomposes it faithfully. The QUD literally encodes
+the decision-relevant information structure of a DP.
+
+This is Merin's central theorem: EU is compositional under partitioning. -/
+theorem eu_compositional_grounding
+    {W : Type*}
+    (dp : DecisionProblem W W) (q : GSQuestion W)
+    (worlds : List W) (a : W) :
+    expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
+  QUD.eu_eq_partitionEU dp worlds a q
+
+/-- Coarsening preserves EU: merging partition cells cannot change total EU.
+
+This is the formal content of Merin's claim that partitions are
+decision-theoretically privileged. For a FIXED action, computing EU via
+a coarser partition gives the same answer. Only the VALUE of information
+(optimal action per cell) depends on partition fineness — the EU
+decomposition itself is invariant. -/
+theorem coarsening_preserves_eu_bridge
+    {W A : Type*}
+    (dp : DecisionProblem W A) (q q' : GSQuestion W)
+    (worlds : List W) (a : A)
+    (hCoarse : q.coarsens q') :
+    QUD.partitionEU dp q worlds a = QUD.partitionEU dp q' worlds a :=
+  QUD.coarsening_preserves_eu dp q q' worlds a hCoarse
 
 
 /-!
@@ -485,14 +592,23 @@ def approxMutualInformation {W : Type*} [DecidableEq W]
   let dp := identityDP worlds prior
   worlds.foldl (λ acc w => acc + prior w * dp.utility w w) 0
 
-/-- Theorem 12: QUD maximizes mutual information.
+/-- Theorem 12: The exact QUD maximizes partition value for any DP.
 
-Under log-loss (identity DP), this equals decision-theoretic relevance.
--/
-theorem qud_maximizes_mutual_information :
-    -- QUD partitions maximize mutual information between worlds and answers
-    -- Under identity DP, this equals decision-theoretic utility
-    True := trivial
+Under any decision problem, the finest partition (identity QUD) has the
+highest partition value (Blackwell). For the identity DP, partition value
+tracks mutual information: finer partitions allow more precise action
+selection, yielding higher expected accuracy.
+
+This is a direct corollary of `QUD.blackwell_refinement_value`: the exact
+partition refines all others (`QUD.exact_refines_all`), so its partition
+value dominates. -/
+theorem qud_maximizes_mutual_information
+    {W A : Type*} [BEq W] [LawfulBEq W]
+    (dp : DecisionProblem W A) (q : GSQuestion W)
+    (worlds : List W) (actions : List A) :
+    QUD.partitionValue dp (GSQuestion.exact (W := W)) worlds actions ≥
+    QUD.partitionValue dp q worlds actions :=
+  QUD.blackwell_refinement_value dp _ q worlds actions (QUD.exact_refines_all q)
 
 
 /-!
@@ -509,11 +625,26 @@ These are not competing theories but the same theory expressed in different
 mathematical languages. Blackwell's theorem translates between them.
 -/
 
-/-- The unified view: QUD and DT semantics are equivalent for partitions. -/
-theorem unified_view :
-    -- QUD semantics (partition-based)
-    -- = DT semantics (utility-based)
-    -- for partition-structured decision problems
-    True := trivial
+/-- The unified view: QUD refinement = Blackwell ordering = universal dominance.
+
+For any two partitions Q, Q' over a finite domain:
+- Q ⊑ Q' (semantic refinement)
+- iff ∀DP: partitionValue(Q) ≥ partitionValue(Q') (Blackwell)
+- iff ∀DP: questionUtility(Q) ≥ questionUtility(Q') (Van Rooy)
+
+Merin's partition lattice, Blackwell's experiment ordering, and
+Van Rooy's question utility agree on the ordering of information structures.
+This is why QUD semantics and decision-theoretic semantics are the same theory. -/
+theorem unified_view
+    {W : Type*}
+    (q q' : GSQuestion W) (worlds : List W) :
+    (q ⊑ q') ↔
+    (∀ (A : Type) (dp : DecisionProblem W A) (actions : List A),
+      QUD.partitionValue dp q worlds actions ≥
+      QUD.partitionValue dp q' worlds actions) := by
+  constructor
+  · intro h A dp actions
+    exact QUD.blackwell_refinement_value dp q q' worlds actions h
+  · exact QUD.blackwell_characterizes_refinement q q' worlds
 
 end Comparisons.Relevance

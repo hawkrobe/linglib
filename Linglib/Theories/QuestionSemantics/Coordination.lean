@@ -27,28 +27,28 @@ instance {W : Type*} : Add (GSQuestion W) where
 /-- Conjunction refines both operands. -/
 theorem conjGSQuestion_refines_left {W : Type*} (q1 q2 : GSQuestion W) :
     (q1 + q2) ⊑ q1 :=
-  GSQuestion.compose_refines_left q1 q2
+  QUD.compose_refines_left q1 q2
 
 theorem conjGSQuestion_refines_right {W : Type*} (q1 q2 : GSQuestion W) :
     (q1 + q2) ⊑ q2 :=
-  GSQuestion.compose_refines_right q1 q2
+  QUD.compose_refines_right q1 q2
 
 /-- Conjunction is commutative (up to equivalence). -/
 theorem conjGSQuestion_comm {W : Type*} (q1 q2 : GSQuestion W) (w v : W) :
     (q1 + q2).sameAnswer w v = (q2 + q1).sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose]
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose]
   exact Bool.and_comm _ _
 
 /-- Conjunction is associative. -/
 theorem conjGSQuestion_assoc {W : Type*} (q1 q2 q3 : GSQuestion W) (w v : W) :
     ((q1 + q2) + q3).sameAnswer w v = (q1 + (q2 + q3)).sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose]
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose]
   exact Bool.and_assoc _ _ _
 
 /-- The trivial question is the unit for conjunction. -/
 theorem conjGSQuestion_trivial_left {W : Type*} [BEq W] (q : GSQuestion W) (w v : W) :
     (GSQuestion.trivial + q).sameAnswer w v = q.sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose, GSQuestion.trivial,
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose, GSQuestion.trivial,
              QUD.trivial, QUD.compose, Bool.true_and]
 
 end Conjunction
@@ -93,7 +93,7 @@ theorem conj_is_meet {W : Type*} (q1 q2 q : GSQuestion W)
     (h1 : q ⊑ q1) (h2 : q ⊑ q2) :
     q ⊑ (q1 + q2) := by
   intro w v hq
-  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose,
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose,
              QUD.compose, Bool.and_eq_true]
   exact ⟨h1 w v hq, h2 w v hq⟩
 
@@ -102,7 +102,7 @@ theorem conj_monotone_left {W : Type*} (q1 q1' q2 : GSQuestion W)
     (h : q1 ⊑ q1') :
     (q1 + q2) ⊑ (q1' + q2) := by
   intro w v heq
-  simp only [HAdd.hAdd, Add.add, conjGSQuestion, GSQuestion.compose,
+  simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose,
              QUD.compose, Bool.and_eq_true] at *
   exact ⟨h w v heq.1, heq.2⟩
 

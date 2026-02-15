@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Verbs
 
 /-!
 # Mandarin Predicate Lexicon Fragment
@@ -9,64 +9,57 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 
 namespace Fragments.Mandarin.Predicates
 
-open Fragments.English.Predicates.Verbal (VerbEntry VerbClass ComplementType ControlType PreferentialBuilder AttitudeBuilder)
+open Core.Verbs
 open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
 
+/-- Mandarin verb entry: extends VerbCore with no inflectional morphology
+    (Mandarin is an isolating language). -/
+structure MandarinVerbEntry extends VerbCore where
+  deriving Repr, BEq
+
+/-- Smart constructor: sets only the citation form (no inflection). -/
+def MandarinVerbEntry.mk' (core : VerbCore) : MandarinVerbEntry :=
+  { toVerbCore := core }
+
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
-def qidai : VerbEntry where
+def qidai : MandarinVerbEntry := .mk' {
   form := "qidai"
-  form3sg := "qidai"
-  formPast := "qidai"
-  formPastPart := "qidai"
-  formPresPart := "qidai"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.relevanceBased .positive))
+  attitudeBuilder := some (.preferential (.relevanceBased .positive)) }
 
 /-- 担心 "danxin" — worry (Class 1: negative, non-C-distributive). -/
-def danxin : VerbEntry where
+def danxin : MandarinVerbEntry := .mk' {
   form := "danxin"
-  form3sg := "danxin"
-  formPast := "danxin"
-  formPastPart := "danxin"
-  formPresPart := "danxin"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased)
+  attitudeBuilder := some (.preferential .uncertaintyBased) }
 
 /-- 希望 "xiwang" — hope (Class 3: positive, C-distributive, anti-rogative). -/
-def xiwang : VerbEntry where
+def xiwang : MandarinVerbEntry := .mk' {
   form := "xiwang"
-  form3sg := "xiwang"
-  formPast := "xiwang"
-  formPastPart := "xiwang"
-  formPresPart := "xiwang"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
 /-- 害怕 "haipa" — fear (Class 2: negative, C-distributive, takes questions). -/
-def haipa : VerbEntry where
+def haipa : MandarinVerbEntry := .mk' {
   form := "haipa"
-  form3sg := "haipa"
-  formPast := "haipa"
-  formPastPart := "haipa"
-  formPresPart := "haipa"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
 
 /-!
 ## yǐwéi: Exceptional Postsupposition
@@ -85,19 +78,15 @@ Here we just flag the exceptional behavior.
 **Exceptional**: Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
 This cannot be derived from veridicality; see Glass (2022, 2025).
 -/
-def yiwei : VerbEntry where
+def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"
-  form3sg := "yiwei"
-  formPast := "yiwei"
-  formPastPart := "yiwei"
-  formPresPart := "yiwei"
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
   verbClass := .attitude
   opaqueContext := true
   -- Doxastic non-veridical, but with exceptional postsupposition (see docs)
-  attitudeBuilder := some (.doxastic .nonVeridical)
+  attitudeBuilder := some (.doxastic .nonVeridical) }
 
 /-- Does this verb have an exceptional postsupposition (not derivable from veridicality)?
 
@@ -107,9 +96,9 @@ happens in the Bridge layer (ContrafactiveGap.lean).
 def hasExceptionalPostsupposition (form : String) : Bool :=
   form == "yiwei"
 
-def allVerbs : List VerbEntry := [qidai, danxin, xiwang, haipa, yiwei]
+def allVerbs : List MandarinVerbEntry := [qidai, danxin, xiwang, haipa, yiwei]
 
-def lookup (form : String) : Option VerbEntry :=
+def lookup (form : String) : Option MandarinVerbEntry :=
   allVerbs.find? (·.form == form)
 
 end Fragments.Mandarin.Predicates

@@ -1,7 +1,7 @@
 import Linglib.Theories.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Fragments.Japanese.Predicates
-import Linglib.Core.Morpheme
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
@@ -58,7 +58,7 @@ SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 namespace DepGrammar.MemorySurprisal.MorphemeOrder
 
 open DepGrammar.MemorySurprisal
-open Core.Morpheme (MorphCategory respectsRelevanceHierarchy)
+open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
 
 -- ============================================================================
 -- §2: Japanese Suffix Template (SI §4.1)

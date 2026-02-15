@@ -42,7 +42,7 @@ d-causes without producing anything.
 
 namespace MartinRoseNichols2025
 
-open Core.CausalModel
+open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open NadathurLauer2020.Builder (CausativeBuilder)

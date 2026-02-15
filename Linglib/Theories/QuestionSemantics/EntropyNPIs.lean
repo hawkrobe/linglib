@@ -1,4 +1,4 @@
-import Linglib.Theories.QuestionSemantics.DecisionTheory
+import Linglib.Core.DecisionTheory
 import Linglib.Theories.QuestionSemantics.Partition
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -16,7 +16,7 @@ strength = entropy. NPIs are licensed when they increase entropy by reducing bia
 
 namespace QuestionSemantics.EntropyNPIs
 
-open QuestionSemantics
+open Core.DecisionTheory
 
 
 section ShannonEntropy
