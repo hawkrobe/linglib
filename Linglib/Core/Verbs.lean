@@ -1,5 +1,6 @@
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
+import Linglib.Core.RootDimensions
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
 import Linglib.Theories.TruthConditional.Measurement.Basic
 import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
@@ -33,6 +34,7 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 namespace Core.Verbs
 
 open Core.Presupposition
+-- LevinClass, RootProfile from Core.RootDimensions (root namespace)
 open TruthConditional.Verb.ChangeOfState
 open TruthConditional.Measurement (Dimension)
 open IntensionalSemantics.Attitude.Doxastic (Veridicality)
@@ -270,6 +272,12 @@ structure VerbCore where
   /-- Disambiguates entries that share a citation form.
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
+
+  -- === Root Content (Levin 1993; Spalek & McNally) ===
+  /-- Levin (1993) verb class (§§ 9–57). -/
+  levinClass : Option LevinClass := none
+  /-- Root-specific quality dimensions (within-class variation). -/
+  rootProfile : Option RootProfile := none
   deriving Repr, BEq
 
 /-- Veridicality is DERIVED from the attitude builder -/

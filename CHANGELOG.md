@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.213.7] - 2026-02-14
+
+### Added
+- **Core/RootDimensions.lean**: Root content framework grounded in Levin (1993) — `MeaningComponents` (6 binary class-defining features), `Range` constraint mechanism, 6 quality dimensions (force magnitude/direction from Talmy 1988/2000, patient robustness from Spalek & McNally, result type from Levin/Beavers & Koontz-Garboden 2020, volitionality/agent control from Dowty 1991), `RootProfile` with `overlaps`, full Levin class taxonomy (49 top-level classes from §§9–57)
+- **Phenomena/SpalekMcNally/Data.lean**: Bridge theorems for Spalek & McNally (forthcoming) — shared event structure (Levin class, causative builder, verb class), different root content (patient restrictions, force direction, agent control), root overlap theorem, translation data (P-ACTRES Tables 1–2), asymmetric translation preference theorems
+
+### Changed
+- **Core/Verbs.lean**: Added `levinClass` and `rootProfile` optional fields to `VerbCore`
+- **Fragments/English/Predicates/Verbal.lean**: Added `tear_` entry with full root profile; updated `break_` with Levin class and root profile
+- **Fragments/Spanish/Predicates.lean**: Added `rasgar` entry with root profile and causative builder
+
 ## [0.213.6] - 2026-02-14
 
 ### Changed
