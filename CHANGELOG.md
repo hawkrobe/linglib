@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.213.16] - 2026-02-15
+
+### Added
+- **Core/ModalLogic.lean**: `ModalItem` shared type unifying `AuxEntry`, `ModalAdvEntry`, `ModalExpression` — with `sharesForce`, `sharesFlavor`, `areRegisterVariants`; `ConcordType` enum (negation/modalNecessity/modalPossibility) with `fromModalForce`
+- **Core/Register.lean**: `SocialIndex` type (competence/solidarity) for social indexation of concord
+
+### Changed
+- **Fragments/English/FunctionWords.lean**: Add `.toModalItem` projections to `AuxEntry` and `ModalAdvEntry`
+- **Theories/IntensionalSemantics/Modal/Typology.lean**: Add `.toModalItem` projection to `ModalExpression`
+- **Phenomena/ModalConcord/LiuRotter2025Bridge.lean**: Refactor to use `ModalItem.sharesForce` from Core; add Section D with `socialIndex` mapping and cross-phenomenon concord theorems (possibility MC patterns with NC)
+
 ## [0.213.15] - 2026-02-15
 
 ### Added

@@ -96,4 +96,19 @@ def Level.toRat : Level → ℚ
     and split-register constructions (Dieuleveut et al. 2025). -/
 def areVariants (a b : Level) : Bool := a != b
 
+/-! ## Social indexation -/
+
+/-- Social indexation of grammatical doubling.
+
+    Concord phenomena carry social meaning along a competence/solidarity
+    axis (drawing on the competence/warmth dichotomy in social cognition;
+    Fiske, Cuddy, Glick & Xu 2002).
+
+    * `competence`: standard dialect, educated, formal, high-SES, confident.
+    * `solidarity`: non-standard, friendly, warm, in-group, casual. -/
+inductive SocialIndex where
+  | competence
+  | solidarity
+  deriving DecidableEq, BEq, Repr, Inhabited
+
 end Core.Register

@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Linglib.Core.Proposition
+import Linglib.Core.Register
 
 /-!
 # Modal Logic
@@ -351,5 +352,57 @@ theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 6 := by nati
 def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor) :
     List ForceFlavor :=
   fos.flatMap fun fo => fls.map fun fl => ⟨fo, fl⟩
+
+/-! ## Modal Item
+
+A shared type for any expression carrying modal meaning (auxiliary, adverb,
+or typological entry). Unifies the semantic core across syntactic categories. -/
+
+/-- A modal item: the shared core of any expression carrying modal meaning.
+
+    Unifies `AuxEntry.{form, modalMeaning, register}`,
+    `ModalAdvEntry.{form, modalMeaning, register}`, and
+    `ModalExpression.{form, meaning}` under a common type.
+
+    This enables generic operations (e.g., `sharesForce`, concord checks)
+    that work across syntactic categories. -/
+structure ModalItem where
+  form : String
+  meaning : List ForceFlavor
+  register : Core.Register.Level := .neutral
+  deriving Repr, BEq
+
+/-- Two modal items share force if at least one ForceFlavor pair in each
+    has the same force. This is the structural precondition for modal
+    concord (Liu & Rotter 2025, Geurts & Huitink 2006). -/
+def ModalItem.sharesForce (a b : ModalItem) : Bool :=
+  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.force == ff2.force
+
+/-- Two modal items share flavor if at least one ForceFlavor pair in each
+    has the same flavor. -/
+def ModalItem.sharesFlavor (a b : ModalItem) : Bool :=
+  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.flavor == ff2.flavor
+
+/-- Two modal items are register variants if they differ in register. -/
+def ModalItem.areRegisterVariants (a b : ModalItem) : Bool :=
+  Core.Register.areVariants a.register b.register
+
+/-! ## Concord Types
+
+Classification of concord phenomena by what logical type is doubled.
+Concord = grammatical doubling that yields a single reading rather
+than the compositionally expected doubled reading. -/
+
+/-- Classification of concord phenomena by what logical type is doubled. -/
+inductive ConcordType where
+  | negation           -- ¬¬ → ¬ (negative concord)
+  | modalNecessity     -- □□ → □ (necessity modal concord)
+  | modalPossibility   -- ◇◇ → ◇ (possibility modal concord)
+  deriving DecidableEq, BEq, Repr
+
+/-- Map modal force to the corresponding concord type. -/
+def ConcordType.fromModalForce : ModalForce → ConcordType
+  | .necessity  => .modalNecessity
+  | .possibility => .modalPossibility
 
 end Core.ModalLogic
