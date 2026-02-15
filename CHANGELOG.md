@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.213.13] - 2026-02-15
+
+### Changed
+- **Linglib/Core/Partition.lean**: Prove `eu_eq_partitionEU` (law of total expectation for partition-relative EU). Adds ~200 lines of infrastructure: foldl-sum arithmetic helpers, cell probability cancellation, disjoint filter sum decomposition, and the `toCells` partition sum decomposition. Only `blackwell_refinement_value` (Jensen's inequality) remains as sorry.
+
 ## [0.213.12] - 2026-02-15
 
 ### Added
