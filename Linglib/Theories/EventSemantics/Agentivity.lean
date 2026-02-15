@@ -34,7 +34,7 @@ This module formalizes the decomposition and connects it to:
 import Linglib.Theories.EventSemantics.ThematicRoles
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication
 import Linglib.Theories.IntensionalSemantics.Causative.Builder
-import Linglib.Phenomena.Aspect.Diagnostics
+import Linglib.Phenomena.Aspect.DiagnosticsBridge
 
 namespace EventSemantics.Agentivity
 

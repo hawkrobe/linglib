@@ -9,7 +9,7 @@ import Linglib.Theories.QuestionSemantics.LeftPeriphery
 import Linglib.Theories.QuestionSemantics.Polarity
 import Linglib.Theories.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
-import Linglib.Phenomena.Aspect.Diagnostics
+import Linglib.Phenomena.Aspect.DiagnosticsBridge
 
 /-!
 # Kay & Fillmore (1999): *What's X Doing Y?* Construction

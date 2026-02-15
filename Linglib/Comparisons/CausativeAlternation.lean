@@ -2,7 +2,7 @@ import Linglib.Theories.Minimalism.Core.Voice
 import Linglib.Theories.Minimalism.Core.Applicative
 import Linglib.Theories.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
-import Linglib.Phenomena.Causatives.ThickThin
+import Linglib.Phenomena.Causatives.ThickThinBridge
 
 /-!
 # Causative Alternation: Cross-Theory Bridge

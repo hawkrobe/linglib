@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.Ability
+import Mathlib.Data.List.Defs
 
 /-!
 # Actuality Inference Data (Cross-Linguistic)
@@ -28,7 +28,12 @@ complement, while those with **imperfective** aspect do not.
 
 namespace Phenomena.ActualityInferences
 
-open TruthConditional.Verb.ViewpointAspect (ViewpointAspectB)
+/-- Viewpoint aspect for actuality inference data: the binary
+    perfective/imperfective distinction. -/
+inductive ViewpointAspect where
+  | perfective
+  | imperfective
+  deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- A single cross-linguistic data point for actuality inferences. -/
 structure ActualityDatum where
@@ -37,7 +42,7 @@ structure ActualityDatum where
   /-- The modal form in that language -/
   modalForm : String
   /-- Viewpoint aspect of the sentence -/
-  aspect : ViewpointAspectB
+  aspect : ViewpointAspect
   /-- Does the complement entailment hold? -/
   complementEntailed : Bool
   /-- Example sentence gloss -/

@@ -1,5 +1,4 @@
 import Linglib.Core.Empirical
-import Linglib.Theories.DynamicSemantics.Effects.Epistemic.Basic
 
 /-!
 # Khoo (2015): Modal Disagreements
@@ -37,7 +36,6 @@ Khoo, J. (2015). Modal Disagreements. *Inquiry*, 58(5), 511-534.
 namespace Phenomena.Modality.Studies.Khoo2015
 
 open Phenomena
-open DynamicSemantics.NeoStalnakerian
 
 /-- Citation for this study. -/
 def citation : String :=
@@ -109,31 +107,5 @@ theorem modal_gap_large :
 /-- The rejection–falsity gap is small for control (< 1 point). -/
 theorem control_gap_small :
     meanRating ⟨.control, .false_⟩ - meanRating ⟨.control, .rejection⟩ < 1.0 := by native_decide
-
-/-! ## Bridge to Rudin (2025) NSF
-
-Rudin's NSF predicts this dissociation via `might_truth_acceptance_dissociate`:
-the assertor's might-claim can be true (she has p-worlds) while the rejector
-is simultaneously licensed to reject (he has no p-worlds). This is because
-truth depends on the assertor's information parameter while rejection depends
-on the rejector's. -/
-
-/-- The Mobster scenario has the structure predicted by the NSF:
-    Smith (assertor) has examined evidence consistent with Fat Tony being dead,
-    so his epistemic state contains p-worlds (p = "Fat Tony is dead").
-    Beth (rejector) knows Fat Tony is alive, so her epistemic state has no p-worlds.
-
-    The NSF predicts:
-    1. Smith's assertion is true (his state is in MI(might-p))
-    2. Beth's rejection is licensed (her state is not might-p-compatible)
-
-    This matches Khoo's finding: speakers reject the might-claim without
-    judging it false. -/
-theorem nsf_predicts_khoo_pattern
-    {W : Type*} (p : BProp W) (smith beth : List W)
-    (h_smith : smith.any p = true)
-    (h_beth : beth.any p = false) :
-    MI (mightSimple p) smith ∧ rejectionLicensed (mightSimple p) beth :=
-  might_truth_acceptance_dissociate p smith beth h_smith h_beth
 
 end Phenomena.Modality.Studies.Khoo2015

@@ -13,11 +13,8 @@ Perceptual difficulty predicts redundant modifier use. Material adjectives are h
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.RSA.Core.Noise
 
 namespace Phenomena.KursatDegen2021
-
-open RSA.Noise
 
 -- Property Types
 
@@ -169,21 +166,5 @@ structure MaterialParams where
   deriving Repr
 
 def hypotheticalMaterialParams : MaterialParams := {}
-
-/-- Map property types to discrimination values. -/
-def propertyToDiscrimination : PropertyType → ℚ
-  | .color => RSA.Noise.colorDiscrimination
-  | .size => RSA.Noise.sizeDiscrimination
-  | .material => RSA.Noise.materialDiscrimination
-
-/-- Verify discrimination ordering matches perceptual difficulty ordering -/
-theorem discrimination_matches_difficulty :
-    propertyToDiscrimination .color > propertyToDiscrimination .size ∧
-    propertyToDiscrimination .size > propertyToDiscrimination .material := by
-  exact RSA.Noise.discrimination_ordering
-
-#check (propertyToDiscrimination .color : ℚ)    -- 98/100
-#check (propertyToDiscrimination .size : ℚ)     -- 60/100
-#check (propertyToDiscrimination .material : ℚ) -- 40/100
 
 end Phenomena.KursatDegen2021

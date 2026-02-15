@@ -33,7 +33,6 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Turkish.Predicates
-import Linglib.Theories.IntensionalSemantics.Attitude.BuilderProperties
 
 namespace Phenomena.QingEtAl2025
 
