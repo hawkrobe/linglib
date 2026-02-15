@@ -108,13 +108,15 @@ Example:
 - "Not in the drawer" - satisfies P-ANS (eliminates some possibilities)
 - "In the study" - satisfies P-ANS AND is a proper mention-some answer
 
-The difference: only positive answers that mention actual locations work. -/
-theorem partialAnswer_includes_negative {W : Type*}
-    (q : GSQuestion W) (worlds : List W) (p : W -> Bool)
-    (_hPartial : partialAnswer p q worlds = true) :
-    -- Partial answer can be positive or negative
-    -- This theorem merely states the fact that P-ANS is too permissive
-    True := trivial
+The difference: only positive answers that mention actual locations work.
+This theorem witnesses a negative proposition that satisfies `partialAnswer`.
+[sorry: need concrete countermodel with worlds and question] -/
+theorem partialAnswer_includes_negative :
+    ∃ (W : Type) (q : GSQuestion W) (worlds : List W) (p : W → Bool),
+      partialAnswer p q worlds = true ∧
+      ¬ (worlds.any p = true ∧
+         worlds.all (λ w => p w == true) = true) := by
+  sorry
 
 
 /-!

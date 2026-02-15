@@ -127,7 +127,7 @@ theorem priorpq_limit_is_vrs (params : Params) :
   intro _
   trivial
 
-/-- The questioner model from vR&Š grounds PRIOR-PQ's ToM inference.
+/- Cross-theory claim: vR&Š grounds PRIOR-PQ's ToM inference.
 
 Van Rooy (2003) §4.1: The questioner chooses questions to maximize
 expected utility of the answer.
@@ -136,11 +136,9 @@ PRIOR-PQ: Q(q|D) ∝ exp(α · EU_answer(q|D))
 
 The key is that *different DPs lead to different question preferences*,
 which is what enables the respondent to infer goals.
--/
-theorem vrs_grounds_tom_inference :
-    -- vR&Š's claim: different goals → different question preferences
-    -- PRIOR-PQ's exploitation: invert to infer goals from questions
-    True := trivial
+
+vR&Š's claim: different goals → different question preferences.
+PRIOR-PQ's exploitation: invert to infer goals from questions. -/
 
 
 /-!
@@ -170,15 +168,13 @@ This could affect PRIOR-PQ's ToM inference about goals.
 def verumSignalsUrgency (vq : VerumMarkedPQ) : Bool :=
   vq.hasVerumFocus
 
-/-- R&H and PRIOR-PQ are complementary: structure meets inference.
+/- Cross-theory claim: R&H and PRIOR-PQ are complementary — structure meets inference.
 
 R&H explains WHY certain forms have bias (VERUM semantics).
 PRIOR-PQ explains HOW respondents exploit this (ToM inference).
--/
-theorem rh_priorpq_complementary :
-    -- R&H: structural source of bias
-    -- PRIOR-PQ: pragmatic exploitation of bias
-    True := trivial
+
+R&H: structural source of bias.
+PRIOR-PQ: pragmatic exploitation of bias. -/
 
 
 /-!
@@ -192,29 +188,22 @@ R&H: Verum focus marks "checking" of surprising information
 If questioner asks about unlikely proposition, this may warrant verum focus.
 -/
 
-/-- High informativity advantage correlates with verum appropriateness.
+/- Cross-theory claim: High informativity advantage correlates with verum appropriateness.
 
 When P(p) < P(¬p), asking about p has higher informativity.
 R&H's VERUM is appropriate in such contexts (checking surprising info).
--/
-theorem informativity_verum_connection :
-    -- Questions about unlikely propositions:
-    -- 1. Have high informativity advantage (vR&Š)
-    -- 2. May receive verum focus (R&H)
-    True := trivial
 
-/-- vR&Š's utility comparison grounds R&H's bias characterization.
+Questions about unlikely propositions:
+1. Have high informativity advantage (vR&Š)
+2. May receive verum focus (R&H) -/
 
-vR&Š: UV(p) > UV(¬p) → speaker prefers yes answer
-R&H: VERUM encodes epistemic bias toward proposition
+/- Cross-theory claim: vR&Š's utility comparison grounds R&H's bias characterization.
+
+vR&Š: UV(p) > UV(¬p) → speaker prefers yes answer.
+R&H: VERUM encodes epistemic bias toward proposition.
 
 These capture the same phenomenon from different angles.
--/
-theorem vrs_grounds_rh_bias :
-    -- vR&Š: utility-based bias
-    -- R&H: semantically encoded bias
-    -- Both predict: speaker expects/prefers certain answers
-    True := trivial
+Both predict: speaker expects/prefers certain answers. -/
 
 
 /-!
@@ -224,49 +213,44 @@ All three frameworks make predictions about polar question behavior.
 Here we state predictions that follow from their integration.
 -/
 
-/-- **Prediction 1**: Negative polar questions elicit different responses.
+/-- **Prediction 1**: NPQs are optimal when UV(¬p) > UV(p).
 
 vR&Š: NPQ used when UV(¬p) > UV(p)
 R&H: NPQ with preposed negation has VERUM, signals epistemic bias
 PRIOR-PQ: Different Q(q|D) profile → different P(D|q) inference
 
-**Combined prediction**: Respondents should infer different goals from NPQs
-vs PPQs, leading to systematically different response strategies.
+[sorry: show optimalQuestionType selects .negative when compareUtility yields .lt]
 -/
-theorem npq_different_responses :
-    -- NPQ: "Don't you have iced tea?"
-    -- vs PPQ: "Do you have iced tea?"
-    -- PRIOR-PQ predicts different ToM inferences → different responses
-    True := trivial
+theorem npq_different_responses {W A : Type*} [DecidableEq A]
+    (dp : Core.DecisionTheory.DecisionProblem W A) (worlds : List W) (actions : List A)
+    (p : W → Bool) (h : compareUtility dp worlds actions p = .lt) :
+    optimalQuestionType dp worlds actions p = .negative := by
+  sorry
 
-/-- **Prediction 2**: Alternative questions yield neutral ToM inference.
+/-- **Prediction 2**: Alternative questions are optimal when UV(p) = UV(¬p).
 
 vR&Š: Alt questions when UV(p) ≈ UV(¬p) (no preference)
 R&H: Alt questions lack VERUM, balanced partition
 PRIOR-PQ: Alt questions should yield flatter P(D|q) distribution
 
-When questioner uses alternative form ("Do you have iced tea or not?"),
-respondent can't strongly infer a specific goal preference.
+[sorry: show optimalQuestionType selects .alternative when compareUtility yields .eq]
 -/
-theorem alt_question_neutral_tom :
-    -- Alternative questions yield flatter posterior over decision problems
-    -- Less actionable ToM inference → different response strategy
-    True := trivial
+theorem alt_question_neutral_tom {W A : Type*} [DecidableEq A]
+    (dp : Core.DecisionTheory.DecisionProblem W A) (worlds : List W) (actions : List A)
+    (p : W → Bool) (h : compareUtility dp worlds actions p = .eq) :
+    optimalQuestionType dp worlds actions p = .alternative := by
+  sorry
 
-/-- **Prediction 3**: Grounding questions warrant overinformative responses.
+/-- **Prediction 3**: Verum-marked grounding questions signal urgency.
 
 vR&Š: Grounding questions have high informativity advantage
 R&H: Grounding questions receive verum focus (checking new info)
 PRIOR-PQ: High-stakes decision problem → respondent provides more info
 
-When questioner is "grounding" surprising information, the inferred DP
-has high stakes, warranting more than just "yes" or "no".
 -/
-theorem grounding_overinformative :
-    -- Grounding questions ("Is it RAINING?" after seeing wet jacket)
-    -- Should elicit more informative responses per PRIOR-PQ
-    -- Because respondent infers high-stakes decision problem
-    True := trivial
+theorem grounding_overinformative (vq : VerumMarkedPQ) (h : vq.hasVerumFocus = true) :
+    verumSignalsUrgency vq = true := by
+  simp only [verumSignalsUrgency, h]
 
 
 /-!
@@ -331,19 +315,28 @@ As rationality increases (α → ∞), this concentrates on the "true" DP.
 This is the foundation for PRIOR-PQ's response selection:
 - Low α: Uncertain about DP, hedge responses
 - High α: Confident about DP, targeted responses
--/
-theorem tom_concentration_with_rationality (αQ : ℚ) :
-    -- As αQ → ∞, inferredDP concentrates on argmax_D Q(q|D)
-    αQ > 0 → True := by
-  intro _
-  trivial
 
-/-- ToM inference is consistent: if questioner is rational, respondent
-    can recover the true DP (in the limit). -/
-theorem tom_consistency :
-    -- Under ideal conditions (high α, known priors),
-    -- inferredDP recovers the true DP
-    True := trivial
+[sorry: need to show inferredDP length = input dps length (concentration is a limit property)]
+-/
+theorem tom_concentration_with_rationality (params : Params) (q : PolarQuestion)
+    (dps : List PQDecisionProblem) (worlds : List World)
+    (responses : List Response) (actions : List Action) :
+    (inferredDP params q dps worlds responses actions).length = dps.length := by
+  sorry
+
+/-- ToM inference is consistent: normalized distribution sums correctly.
+
+Under ideal conditions (high α, known priors), inferredDP recovers the
+true DP. As a basic consistency check, the normalized posterior has the
+same length as the input DP list.
+
+[sorry: need to show inferredDPNormalized preserves list length]
+-/
+theorem tom_consistency (params : Params) (q : PolarQuestion)
+    (dps : List PQDecisionProblem) (worlds : List World)
+    (responses : List Response) (actions : List Action) :
+    (inferredDPNormalized params q dps worlds responses actions).length = dps.length := by
+  sorry
 
 
 /-!

@@ -38,9 +38,6 @@ def π {E S : Type} (P : Pred1 E S) (R : Pred2 E S) : Pred2 E S :=
 
 scoped notation "relationalizer(" P ", " R ")" => π P R
 
-theorem π_changes_type {E S : Type} (P : Pred1 E S) (R : Pred2 E S) :
-    True := trivial
-
 /-- Ex (Existential Closure): λR.λx. ∃y. R(x,y) -/
 def ExProp {E S : Type} (R : Pred2 E S) : E → S → Prop :=
   λ x s => ∃ y : E, R x y s = true
@@ -48,8 +45,6 @@ def ExProp {E S : Type} (R : Pred2 E S) : E → S → Prop :=
 noncomputable def ExDecidable {E S : Type} [Fintype E] [DecidableEq E]
     (R : Pred2 E S) : Pred1 E S :=
   λ x s => (Fintype.elems : Finset E).toList.any (λ y => R x y s)
-
-theorem Ex_changes_type {E S : Type} (R : Pred2 E S) : True := trivial
 
 /-- Semantic structure of possessive phrase -/
 structure PossessiveSemantics (E S : Type) where

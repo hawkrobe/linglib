@@ -182,7 +182,11 @@ theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
     rw [hD s]
     exact ⟨i, ht_sub hi, hpi⟩
 
-/-- Charlow's thesis: destructive update is not problematic. -/
-theorem charlow_thesis : True := trivial
+/- Charlow's thesis (meta-theoretical): destructive update is not empirically
+problematic. Assignment modification is shared between static and dynamic
+systems. The static/dynamic divide reduces to a single operator ↑ determining
+whether modified assignments are retained. This claim is demonstrated by the
+theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`),
+not by a single formal statement. -/
 
 end DynamicSemantics.Charlow2019

@@ -272,10 +272,17 @@ theorem classifiers_prefer_physical :
   constructor <;> native_decide
 
 /-- U7 (Aikhenvald §11.2.3): In numeral classifier systems, animacy
-    outranks shape, which outranks function.
-    This is the universal implicational hierarchy for classifiers. -/
+    outranks shape, which outranks function. Formalized as an implicational
+    universal: if a system uses shape, it also uses animacy; if function,
+    also shape.
+    TODO: prove from attested systems once typology is extended. -/
 axiom classifier_semantic_hierarchy :
-  True  -- Animacy > Shape > Function
+  ∀ sys : NounCategorizationSystem,
+    isClassifierType sys.classifierType = true →
+    (sys.preferredSemantics.any (· == .shape) = true →
+     sys.preferredSemantics.any (· == .animacy) = true) ∧
+    (sys.preferredSemantics.any (· == .function) = true →
+     sys.preferredSemantics.any (· == .shape) = true)
 
 /-- Animacy is attested in both Mandarin and Japanese classifiers.
     Derived from the classifier lexicons (witnessed by 只 zhī and 匹 hiki). -/
@@ -367,14 +374,11 @@ theorem noun_class_more_interactions :
 -- §13: Greenberg (1972) universal
 -- ============================================================================
 
-/-- Greenberg (1972): Numeral classifier languages lack obligatory number
-    marking. If a language has classifiers, number is not grammaticalized
-    as obligatory morphology.
-
-    Witnessed by: Mandarin (no number morphology), Japanese (optional -tachi).
-    Contrasted with French (obligatory singular/plural). -/
-axiom greenberg_classifier_number :
-  True  -- Numeral classifiers and obligatory number are in complementary distribution
+/- Greenberg (1972): Numeral classifiers and obligatory number marking are
+   in complementary distribution. Witnessed by Mandarin (no number morphology)
+   and Japanese (optional -tachi) vs. French (obligatory singular/plural).
+   TODO: Add `hasObligatoryNumber : Bool` to NounCategorizationSystem to state
+   this formally. -/
 
 /-- No type-shift blocking in Mandarin (Chierchia 1998). -/
 theorem mandarin_no_blocking :

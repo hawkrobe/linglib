@@ -156,10 +156,9 @@ theorem east_asian_have_dual_universal :
     [mandarin, japanese].all (λ inv =>
       inv.entries.any (·.qforce == .universal)) = true := by native_decide
 
-/-- Conservativity holds across all three languages (B&C Universal 1).
-    Proved for English in Quantifier.lean; conjectured universal. -/
-axiom conservativity_crosslinguistic :
-  ∀ inv ∈ allInventories, True
+/- Conservativity holds across all three languages (B&C Universal 1).
+   Proved for English in Quantifier.lean; conjectured universal.
+   TODO: State with real type once cross-linguistic GQ denotations are formalized. -/
 
 
 end Phenomena.Quantification.Typology

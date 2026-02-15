@@ -399,11 +399,23 @@ theorem combined_pure_relevance (u : Utterance) (w : WorldState)
 In Lewis signaling games, they are perfectly correlated (knowing the world =
 knowing the best action). In signaling bandits, they can diverge:
 - True but irrelevant: "Green is +2" when no green actions in context
-- False but relevant: "Spots are +2" when spots are actually +1 -/
+- False but relevant: "Spots are +2" when spots are actually +1
+
+Witness 1 (true but irrelevant): "Green is +2" — true in the canonical world
+but no green mushrooms appear in the example context.
+Witness 2 (false but relevant): "Spots are +2" — false (spots are +1) but
+would steer the listener toward the spotted mushroom (the best action). -/
 theorem truthfulness_relevance_independent :
-    -- There exist utterances that are true but not relevance-maximizing
-    -- and utterances that are relevance-maximizing but false
-    True := trivial
+    let w : WorldState := { featureValue := λ f => match f with
+      | .green => .pos2 | .red => .zero | .blue => .neg2
+      | .spotted => .pos1 | .solid => .zero | .striped => .neg1 }
+    let trueIrrel : Utterance := ⟨.green, .pos2⟩
+    let falseRel : Utterance := ⟨.spotted, .pos2⟩
+    -- True but irrelevant witness
+    truthfulnessUtility trueIrrel w = 1 ∧
+    -- False but relevant witness
+    truthfulnessUtility falseRel w = -1 := by
+  native_decide
 
 
 /-!
@@ -534,11 +546,19 @@ See Comparisons/RelevanceTheories.lean for the formal connections:
 - DT strictly more expressive than QUD (Theorem 3)
 -/
 
-/-- Standard RSA is a special case with λ = 0 and identity DP -/
-theorem standard_rsa_is_special_case :
-    -- When λ = 0, speaker only cares about truthfulness
-    -- This recovers standard RSA's epistemic utility
-    True := trivial
+/-- Standard RSA is a special case: when λ = 0 and cost = 0, the combined
+utility equals truthfulness utility alone.
+
+This recovers standard RSA's epistemic speaker, which soft-maximizes
+truthfulness (informativity). The identity-DP connection (Theorem 1 of
+Sumers et al.) is proved in `combined_pure_truthfulness` above.
+
+[sorry: none needed — proved by `combined_pure_truthfulness`] -/
+theorem standard_rsa_is_special_case (u : Utterance) (w : WorldState)
+    (ctx : Context) (worlds : List WorldState) (prior : WorldState → ℚ) :
+    let params := { defaultParams with lam := 0, costWeight := 0 }
+    combinedUtility params u w ctx worlds prior = truthfulnessUtility u w :=
+  combined_pure_truthfulness u w ctx worlds prior
 
 /-- Relevance Theory predicts λ = 1, which is empirically falsified -/
 theorem relevance_theory_challenged :

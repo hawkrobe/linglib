@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.213.6] - 2026-02-14
+
+### Changed
+- **Phenomena/Quantification/Universals.lean**: Replaced 10 vacuous `axiom ... : True` declarations with real types — `conservativity_universal` now asserts `Conservative (q.gqDenotation m)`, `quantity_universal` asserts `QuantityInvariant`, `positive_strong_determiners_upward_monotone` asserts `PositiveStrong → ScopeUpwardMono`; van Benthem impossibility theorems converted from axioms to `theorem ... := sorry`; removed `no_nonconservative_determiners` (merged into `conservativity_universal`); converted 3 unformalizeable claims to comments
+- **Phenomena/Quantification/Typology.lean**: Converted vacuous `conservativity_crosslinguistic` to comment
+- **Phenomena/Agreement/NounCategorization.lean**: Gave `classifier_semantic_hierarchy` real implicational type; converted `greenberg_classifier_number` to comment
+- **Phenomena/Coordination/Typology.lean**: Closed trivial sorry (goal was `True`)
+- **14 files across Comparisons/, Theories/, Phenomena/**: Replaced ~27 `theorem ... : True := trivial` placeholders with real types (with `sorry`), comments explaining what's needed, or actual proofs where possible; 2 vacuous theorems in Barker2011 deleted
+
+## [0.213.5] - 2026-02-14
+
+### Changed (Pattern C migration)
+- Renamed 58 Phenomena data/bridge files to enforce Theories→Fragments→Phenomena dependency discipline (see 0.213.5 commit)
+
 ## [0.213.4] - 2026-02-14
 
 ### Added

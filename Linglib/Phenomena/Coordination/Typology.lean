@@ -628,7 +628,7 @@ theorem predict_acquisition_asymmetry
     -- When MU is bound and all three strategies exist,
     -- J-MU should be predicted harder than J-only.
     -- (This is what Georgian shows and what no current theory derives.)
-    True := by
-  sorry
+    -- TODO: State a real prediction (e.g., J-MU processing cost > J-only cost)
+    True := trivial
 
 end Phenomena.Coordination.Typology

@@ -325,13 +325,17 @@ The ACI mechanism is grounded in:
 2. Fox & Katzir (2011): Formal alternatives are structurally constrained
 3. Gricean reasoning: Cooperative speakers maximize informativeness
 
-Given these, MCIs! derives ACIs compositionally.
+Given these, MCIs! derives ACIs compositionally: if the speaker used φ
+when a CI-stronger formal alternative ψ was available and relevant, the
+hearer infers the speaker believes the CI of ψ does not hold.
+[sorry: need world-level formalization of speaker belief inference]
 -/
 theorem aci_grounded_in_mcis {W : Type*}
     (φ ψ : TwoDimProp W)
     (h_ci_stronger : ciStrongerThan ψ φ)  -- ψ has stronger CI
-    (h_relevant : True)  -- ψ is contextually relevant (formal alternative)
-    : -- Then ACI arises: speaker believes ¬(CI of ψ)
-      True := trivial
+    (h_relevant : ∃ w : W, ψ.ci w = true)  -- ψ's CI is non-trivial (contextually relevant)
+    : -- Then ACI arises: there exists a world where ψ's CI holds but φ's does not
+      ∃ w : W, ψ.ci w = true ∧ φ.ci w = false := by
+  sorry
 
 end NeoGricean.ConventionalImplicatures
