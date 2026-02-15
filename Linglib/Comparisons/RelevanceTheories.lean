@@ -389,9 +389,10 @@ Same decomposition, different partitions. -/
 theorem rsa_game_theoretic_unity
     {W : Type*}
     (dp : DecisionProblem W W) (q : GSQuestion W)
-    (worlds : List W) (a : W) :
+    (worlds : List W) (a : W)
+    (hprior : ∀ w, dp.prior w ≥ 0) :
     expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
-  QUD.eu_eq_partitionEU dp worlds a q
+  QUD.eu_eq_partitionEU dp worlds a q hprior
 
 
 /-!
@@ -493,10 +494,11 @@ theorem partition_blackwell_refinement
     {W A : Type*}
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
     (worlds : List W) (actions : List A)
-    (hRefines : q ⊑ q') :
+    (hRefines : q ⊑ q')
+    (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp q worlds actions ≥
     QUD.partitionValue dp q' worlds actions :=
-  QUD.blackwell_refinement_value dp q q' worlds actions hRefines
+  QUD.blackwell_refinement_value dp q q' worlds actions hRefines hprior
 
 /-- The partition value ordering implies the question utility ordering.
 
@@ -525,9 +527,10 @@ This is Merin's central theorem: EU is compositional under partitioning. -/
 theorem eu_compositional_grounding
     {W : Type*}
     (dp : DecisionProblem W W) (q : GSQuestion W)
-    (worlds : List W) (a : W) :
+    (worlds : List W) (a : W)
+    (hprior : ∀ w, dp.prior w ≥ 0) :
     expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
-  QUD.eu_eq_partitionEU dp worlds a q
+  QUD.eu_eq_partitionEU dp worlds a q hprior
 
 /-- Coarsening preserves EU: merging partition cells cannot change total EU.
 
@@ -540,9 +543,10 @@ theorem coarsening_preserves_eu_bridge
     {W A : Type*}
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
     (worlds : List W) (a : A)
-    (hCoarse : q.coarsens q') :
+    (hCoarse : q.coarsens q')
+    (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionEU dp q worlds a = QUD.partitionEU dp q' worlds a :=
-  QUD.coarsening_preserves_eu dp q q' worlds a hCoarse
+  QUD.coarsening_preserves_eu dp q q' worlds a hCoarse hprior
 
 
 /-!
@@ -617,10 +621,11 @@ value dominates. -/
 theorem qud_maximizes_mutual_information
     {W A : Type*} [BEq W] [LawfulBEq W]
     (dp : DecisionProblem W A) (q : GSQuestion W)
-    (worlds : List W) (actions : List A) :
+    (worlds : List W) (actions : List A)
+    (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp (GSQuestion.exact (W := W)) worlds actions ≥
     QUD.partitionValue dp q worlds actions :=
-  QUD.blackwell_refinement_value dp _ q worlds actions (QUD.exact_refines_all q)
+  QUD.blackwell_refinement_value dp _ q worlds actions (QUD.exact_refines_all q) hprior
 
 
 /-!
@@ -639,24 +644,29 @@ mathematical languages. Blackwell's theorem translates between them.
 
 /-- The unified view: QUD refinement = Blackwell ordering = universal dominance.
 
-For any two partitions Q, Q' over a finite domain:
+For any two partitions Q, Q':
 - Q ⊑ Q' (semantic refinement)
-- iff ∀DP: partitionValue(Q) ≥ partitionValue(Q') (Blackwell)
-- iff ∀DP: questionUtility(Q) ≥ questionUtility(Q') (Van Rooy)
+- iff ∀ worlds, ∀DP: partitionValue(Q) ≥ partitionValue(Q') (Blackwell)
 
 Merin's partition lattice, Blackwell's experiment ordering, and
 Van Rooy's question utility agree on the ordering of information structures.
-This is why QUD semantics and decision-theoretic semantics are the same theory. -/
+This is why QUD semantics and decision-theoretic semantics are the same theory.
+
+**Note**: The Blackwell direction must quantify over *all* world lists, not
+just a fixed one, because the characterization proof constructs a specific
+2-element world list `[w, v]` as witness. -/
 theorem unified_view
     {W : Type*}
-    (q q' : GSQuestion W) (worlds : List W) :
+    (q q' : GSQuestion W) :
     (q ⊑ q') ↔
-    (∀ (A : Type) (dp : DecisionProblem W A) (actions : List A),
+    (∀ (worlds : List W) (A : Type) (dp : DecisionProblem W A) (actions : List A),
+      (∀ w, dp.prior w ≥ 0) →
       QUD.partitionValue dp q worlds actions ≥
       QUD.partitionValue dp q' worlds actions) := by
   constructor
-  · intro h A dp actions
-    exact QUD.blackwell_refinement_value dp q q' worlds actions h
-  · exact QUD.blackwell_characterizes_refinement q q' worlds
+  · intro h worlds A dp actions hprior
+    exact QUD.blackwell_refinement_value dp q q' worlds actions h hprior
+  · intro h
+    exact QUD.blackwell_characterizes_refinement q q' h
 
 end Comparisons.Relevance
