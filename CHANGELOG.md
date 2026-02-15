@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.213.9] - 2026-02-14
+
+### Added
+- **Theories/IntensionalSemantics/Attitude/SituationDependent.lean**: Situation-dependent attitude semantics (von Stechow 2009) — `SitProp`, `SitAccessRel`, `sitBoxAt`, `SitDoxasticPredicate`; backward-compat lifting operators (`liftProp`, `liftAccess`, `liftDoxastic`) with key theorem `sitBoxAt_lift_eq_boxAt` proving lifted operators recover classic Hintikka semantics; `temporallyBound` and `futureOriented` accessibility constraints for genuinely temporal attitudes
+- **Theories/TruthConditional/Sentence/Tense/SequenceOfTense.lean**: SOT mechanics connecting tense to attitude embedding — `embeddedFrame` (perspective time shift P' = E_matrix), `EmbeddedTenseReading` (.shifted/.simultaneous), `availableReadings` by `SOTParameter`; `simultaneousFrame`/`shiftedFrame` constructors; bridge theorems deriving past-under-past from Reichenbach analysis (`past_under_past_shifted_is_past`, `past_under_past_simultaneous_is_past`)
+- **Phenomena/SequenceOfTense/Data.lean**: Concrete Reichenbach frames for English SOT ("John said Mary was sick" — simultaneous and shifted readings) and Japanese non-SOT ("Taroo-wa ... to itta") with theory-neutral temporal fact theorems
+- **Phenomena/SequenceOfTense/Bridge.lean**: Bridge theorems connecting SOT data to theory — `satisfiesTense` verification, `simultaneousFrame`/`shiftedFrame` constructor matching, SOT parameter bridge (English vs Japanese), `composeTense` derivation
+
+### Changed
+- **Theories/TruthConditional/Determiner/Quantifier.lean**: Added `few_sem` (`|R∩S| < |R\S|`) and `half_sem` (`2*|R∩S| = |R|`) denotations; conservativity proofs (`few_conservative`, `half_conservative`); `few_scope_down` monotonicity proof; `nodup` field on `FiniteModel`; bijection-invariance infrastructure (`map_bij_perm`, `filter_length_bij_inv`, `all_bij_inv`, `any_bij_inv`)
+- **Fragments/English/Determiners.lean**: Replaced `sorry` in `gqDenotation` for `few`/`half`; added `few_conservative_bridge`, `half_conservative_bridge`
+- **Phenomena/Quantification/Universals.lean**: Converted 3 axioms to theorems — `conservativity_universal`, `quantity_universal` (Mostowski 1957 bijection-invariance), `positive_strong_determiners_upward_monotone` (P&W Ch.6)
+- **FiniteModel instances**: Added `nodup` field to all 6 instances (Quantifier.lean, ExamplesBridge.lean, Monotonicity.lean, IntensionalSemantics/Basic.lean, AlternativeGeneration.lean, MontagueExhaustivity.lean)
+- **Theories/IntensionalSemantics/Mood/Basic.lean**: Added `subj_temporal_anchor` theorem and docstring connecting SUBJ's situation introduction to attitude temporal shifting (both mechanisms introduce temporal anchors for embedded clauses)
+- **Theories/TruthConditional/Sentence/Tense/Basic.lean**: Added `composeTense` algebraic properties (`composeTense_present_left`, `composeTense_present_right`, `composeTense_past_idempotent`, `composeTense_future_idempotent`) with docstring pointing to `SequenceOfTense` for the derived version
+
 ## [0.213.8] - 2026-02-14
 
 ### Changed

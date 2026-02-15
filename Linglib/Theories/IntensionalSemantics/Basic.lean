@@ -230,6 +230,7 @@ def scalarModel : IntensionalModel := {
 instance scalarModelFinite : Determiner.Quantifier.FiniteModel scalarModel.base where
   elements := [.john, .mary, .pizza, .book]
   complete := λ x => by cases x <;> simp
+  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
 
 /--
 "Students" is a rigid property (doesn't vary by world).

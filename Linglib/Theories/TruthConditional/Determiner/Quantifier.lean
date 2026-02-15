@@ -1,5 +1,6 @@
 import Linglib.Theories.TruthConditional.Basic
 import Linglib.Core.Quantification
+import Mathlib.Data.List.Perm.Basic
 
 /-!
 # Generalized Quantifiers
@@ -46,10 +47,13 @@ open Core.Quantification
 
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
-/-- A model with a computable finite domain. -/
+/-- A model with a computable finite domain.
+    `nodup` ensures each entity appears exactly once, which is needed for
+    `QuantityInvariant` (bijection-invariance of filter-length–based quantifiers). -/
 class FiniteModel (m : Model) where
   elements : List m.Entity
   complete : ∀ x : m.Entity, x ∈ elements
+  nodup : elements.Nodup
 
 def every_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
   λ restrictor => λ scope =>
@@ -69,6 +73,21 @@ def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
     let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x)
     let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
     decide (inBoth.length > inROnly.length)
+
+/-- `⟦few⟧(R)(S) = |R ∩ S| < |R \ S|` — a minority of Rs are Ss.
+    Dual of `most_sem`: few(R,S) ↔ ¬most(R,S) ∧ ¬half(R,S). -/
+def few_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+  λ restrictor => λ scope =>
+    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x)
+    let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
+    decide (inBoth.length < inROnly.length)
+
+/-- `⟦half⟧(R)(S) = 2 * |R ∩ S| = |R|` — exactly half of Rs are Ss. -/
+def half_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+  λ restrictor => λ scope =>
+    let inR := FiniteModel.elements.filter restrictor |>.length
+    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
+    decide (2 * inBoth = inR)
 
 /-- `⟦at least n⟧(R)(S) = |R ∩ S| ≥ n` -/
 def at_least_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
@@ -91,6 +110,7 @@ def exactly_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
 instance : FiniteModel toyModel where
   elements := [.john, .mary, .pizza, .book]
   complete := λ x => by cases x <;> simp
+  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
 
 section ToyLexicon
 
@@ -156,6 +176,57 @@ section FiniteModelProofs
 
 variable {m : Model} [FiniteModel m]
 
+-- === Bijection invariance of filter length (for QuantityInvariant) ===
+
+/-- Bijection on a Nodup+complete list is a permutation of that list.
+    Key step for proving `QuantityInvariant` of cardinality-based quantifiers. -/
+private theorem map_bij_perm (f : m.Entity → m.Entity) (hBij : Function.Bijective f) :
+    (FiniteModel.elements.map f).Perm FiniteModel.elements := by
+  rw [List.perm_ext_iff_of_nodup
+    (FiniteModel.nodup.map hBij.injective) FiniteModel.nodup]
+  intro a; constructor
+  · intro h; exact FiniteModel.complete a
+  · intro _; rw [List.mem_map]; exact ⟨hBij.surjective a |>.choose, FiniteModel.complete _,
+      hBij.surjective a |>.choose_spec⟩
+
+/-- Filter length is invariant under bijective predicate substitution.
+    `|filter P elements| = |filter (P ∘ f) elements|` when f is a bijection. -/
+theorem filter_length_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
+    (P : m.Entity → Bool) :
+    (FiniteModel.elements.filter P).length =
+    (FiniteModel.elements.filter (P ∘ f)).length := by
+  have hPerm := map_bij_perm f hBij
+  have h1 : (FiniteModel.elements.filter P).length =
+      ((FiniteModel.elements.map f).filter P).length :=
+    (hPerm.filter P).length_eq.symm
+  rw [List.filter_map] at h1
+  rw [h1, List.length_map]
+
+/-- `all P elements = all (P ∘ f) elements` when f is a bijection on a
+    Nodup+complete domain. Both reduce to `∀ x, P x = true`. -/
+theorem all_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
+    (P : m.Entity → Bool) :
+    FiniteModel.elements.all P = FiniteModel.elements.all (P ∘ f) := by
+  apply Bool.eq_iff_iff.mpr
+  rw [List.all_eq_true, List.all_eq_true]
+  constructor
+  · intro h x hx; exact h (f x) (FiniteModel.complete _)
+  · intro h x hx
+    obtain ⟨y, rfl⟩ := hBij.surjective x
+    exact h y (FiniteModel.complete _)
+
+/-- `any P elements = any (P ∘ f) elements` when f is a bijection. -/
+theorem any_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
+    (P : m.Entity → Bool) :
+    FiniteModel.elements.any P = FiniteModel.elements.any (P ∘ f) := by
+  apply Bool.eq_iff_iff.mpr
+  rw [List.any_eq_true, List.any_eq_true]
+  constructor
+  · intro ⟨x, _, hP⟩
+    obtain ⟨y, rfl⟩ := hBij.surjective x
+    exact ⟨y, FiniteModel.complete _, hP⟩
+  · intro ⟨y, _, hP⟩; exact ⟨f y, FiniteModel.complete _, hP⟩
+
 -- === Conservativity proofs ===
 
 /-- `⟦every⟧` is conservative: `∀x. R(x) → S(x)` iff `∀x. R(x) → (R(x) ∧ S(x))`. -/
@@ -193,6 +264,18 @@ theorem most_conservative : Conservative (most_sem m) := by
   simp only [most_sem]
   simp_rw [bool_and_idem, bool_and_neg_idem]
 
+/-- `⟦few⟧` is conservative: the R-elements in S are the R-elements in R∩S. -/
+theorem few_conservative : Conservative (few_sem m) := by
+  intro R S
+  simp only [few_sem]
+  simp_rw [bool_and_idem, bool_and_neg_idem]
+
+/-- `⟦half⟧` is conservative: depends only on R ∩ S within R. -/
+theorem half_conservative : Conservative (half_sem m) := by
+  intro R S
+  simp only [half_sem]
+  simp_rw [bool_and_idem]
+
 -- === Scope monotonicity proofs ===
 
 /-- `⟦every⟧` is upward monotone in scope. -/
@@ -228,6 +311,41 @@ theorem no_scope_down : ScopeDownwardMono (no_sem m) := by
     cases hS : S x
     · rfl
     · exact absurd (hSS' x hS) (by simp [h])
+
+/-- If `p x = true → q x = true` for all x, then filter by p is a sublist
+    of filter by q, so its length is ≤. -/
+private theorem filter_length_le_of_imp {β : Type*} (l : List β) (p q : β → Bool)
+    (h : ∀ x, p x = true → q x = true) :
+    (l.filter p).length ≤ (l.filter q).length := by
+  induction l with
+  | nil => rfl
+  | cons a t ih =>
+    simp only [List.filter_cons]
+    split <;> split
+    · exact Nat.succ_le_succ ih
+    · rename_i hp hq; exact absurd (h a hp) (by simp [hq])
+    · exact Nat.le_succ_of_le ih
+    · exact ih
+
+/-- `⟦few⟧` is downward monotone in scope: if S ⊆ S' and few(R,S'),
+    then few(R,S). Fewer Ss among Rs means even fewer S-subsets. -/
+theorem few_scope_down : ScopeDownwardMono (few_sem m) := by
+  intro R S S' hSS' h
+  simp only [few_sem] at *
+  rw [decide_eq_true_eq] at *
+  have hFilter_sub : (FiniteModel.elements.filter (λ x => R x && S x)).length ≤
+      (FiniteModel.elements.filter (λ x => R x && S' x)).length :=
+    filter_length_le_of_imp _ _ _ (fun x hx => by
+      simp only [Bool.and_eq_true] at *; exact ⟨hx.1, hSS' x hx.2⟩)
+  have hFilter_sup : (FiniteModel.elements.filter (λ x => R x && !S' x)).length ≤
+      (FiniteModel.elements.filter (λ x => R x && !S x)).length :=
+    filter_length_le_of_imp _ _ _ (fun x hx => by
+      simp only [Bool.and_eq_true, Bool.not_eq_true'] at *
+      refine ⟨hx.1, ?_⟩
+      cases hS : S x
+      · rfl
+      · exact absurd (hSS' x hS) (by simp [hx.2]))
+  omega
 
 -- === Quantity / Isomorphism Closure (Mostowski 1957) ===
 

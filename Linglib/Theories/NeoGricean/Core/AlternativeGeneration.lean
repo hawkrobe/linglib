@@ -362,6 +362,7 @@ def studentModel : Model where
 instance : FiniteModel studentModel where
   elements := [.alice, .bob, .carol]
   complete := λ x => by cases x <;> simp
+  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
 
 /-- All entities are students -/
 def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true

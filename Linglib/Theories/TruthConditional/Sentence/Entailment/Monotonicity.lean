@@ -35,6 +35,7 @@ def entailmentModel : TruthConditional.Model :=
 instance : FiniteModel entailmentModel where
   elements := allWorlds
   complete := λ x => by cases x <;> simp [allWorlds]
+  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton, allWorlds]
 
 /-- "Every A is B" — delegates to canonical `every_sem`. -/
 abbrev every (a b : World → Bool) : Bool := every_sem entailmentModel a b

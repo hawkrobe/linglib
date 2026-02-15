@@ -355,4 +355,51 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
   -- ¬(s₀ = s₁)
   exact hne
 
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge: SUBJ and Attitude Temporal Anchoring
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### SUBJ as Temporal Anchor
+
+Both SUBJ's situation introduction and attitude embedding create new temporal
+reference points for embedded clauses:
+
+- **SUBJ**: introduces s₁ ∈ hist(s₀) with τ(s₁) ≥ τ(s₀). The embedded clause
+  evaluates at τ(s₁), not τ(s₀). This is why the Subordinate Future (SF) enables
+  future reference.
+
+- **Attitude verbs**: set embedded P = matrix E. The embedded clause's tense is
+  relative to the matrix event time, not speech time.
+
+The structural parallel: both mechanisms shift the temporal evaluation point
+of the embedded clause from the default (speech time or matrix time) to a
+newly introduced temporal anchor.
+
+See `IntensionalSemantics.Attitude.SituationDependent` for the attitude side
+and `TruthConditional.Sentence.Tense.SequenceOfTense` for the formal connection.
+-/
+
+section AttitudeTemporalAnchor
+
+/-- SUBJ introduces a temporal anchor: the introduced situation's time
+    is at or after the base situation's time.
+
+    This parallels attitude embedding, where the embedded clause's
+    perspective time shifts to the matrix event time. Both mechanisms
+    create a new temporal reference point for embedded evaluation. -/
+theorem subj_temporal_anchor {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (P : SitPred W Time)
+    (s₀ : Situation W Time)
+    (h : SUBJ history P s₀) :
+    ∃ s₁, s₁ ∈ historicalBase history s₀ ∧ s₁.time ≥ s₀.time ∧ P s₁ s₀ := by
+  obtain ⟨s₁, h_hist, h_P⟩ := h
+  refine ⟨s₁, h_hist, ?_, h_P⟩
+  have hmem := h_hist
+  simp only [historicalBase, Set.mem_setOf_eq] at hmem
+  exact hmem.2
+
+end AttitudeTemporalAnchor
+
 end IntensionalSemantics.Mood

@@ -47,24 +47,88 @@ open TruthConditional.Determiner.Quantifier (FiniteModel)
 -- Barwise & Cooper (1981): Conservativity is (near-)universal
 -- ============================================================================
 
-/-- [sorry: structural] Conservativity holds for all simple (lexicalized)
-    English determiners (Barwise & Cooper 1981, Conjecture 1).
-    Proved individually for none/some/all/most in Quantifier.lean;
-    blocked on `few` and `half` gqDenotations (currently `sorry`). -/
-axiom conservativity_universal :
+/-- Conservativity holds for all simple (lexicalized) English determiners
+    (Barwise & Cooper 1981, Conjecture 1). Proved individually for each
+    quantity word via `every_conservative`, `some_conservative`, etc. -/
+theorem conservativity_universal :
   ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
-    Conservative (q.gqDenotation m)
+    Conservative (q.gqDenotation m) := by
+  intro q m inst
+  cases q <;> simp only [QuantityWord.gqDenotation]
+  · exact TruthConditional.Determiner.Quantifier.no_conservative
+  · exact TruthConditional.Determiner.Quantifier.few_conservative
+  · exact TruthConditional.Determiner.Quantifier.some_conservative
+  · exact TruthConditional.Determiner.Quantifier.half_conservative
+  · exact TruthConditional.Determiner.Quantifier.most_conservative
+  · exact TruthConditional.Determiner.Quantifier.every_conservative
 
 -- ============================================================================
 -- Mostowski (1957) / Keenan & Stavi (1986): Quantity
 -- ============================================================================
 
-/-- [sorry: structural] All simple determiners satisfy quantity/isomorphism
-    closure: their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
-    (Mostowski 1957). Blocked on `few` and `half` gqDenotations. -/
-axiom quantity_universal :
+/-- All simple determiners satisfy quantity/isomorphism closure:
+    their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
+    (Mostowski 1957; Barwise & Cooper 1981).
+    All/any-based quantifiers (every, some, no) use `all_bij_inv`/`any_bij_inv`;
+    cardinality-based quantifiers (most, few, half) use `filter_length_bij_inv`. -/
+theorem quantity_universal :
   ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
-    QuantityInvariant (q.gqDenotation m)
+    QuantityInvariant (q.gqDenotation m) := by
+  intro q m inst A B A' B' f hBij hA hB
+  open TruthConditional.Determiner.Quantifier in
+  -- Key fact: A'/B' predicates equal A/B composed with f
+  have hAf : A' = A ∘ f := funext (fun x => (hA x).symm)
+  have hBf : B' = B ∘ f := funext (fun x => (hB x).symm)
+  cases q <;> simp only [QuantityWord.gqDenotation]
+  -- every_sem: all-based
+  case all =>
+    simp only [every_sem]
+    have h : (fun x : m.Entity => !A' x || B' x) = (fun x => !A (f x) || B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    rw [h]; exact all_bij_inv f hBij (fun x => !A x || B x)
+  -- some_sem: any-based
+  case some_ =>
+    simp only [some_sem]
+    have h : (fun x : m.Entity => A' x && B' x) = (fun x => A (f x) && B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    rw [h]; exact any_bij_inv f hBij (fun x => A x && B x)
+  -- no_sem: all-based
+  case none_ =>
+    simp only [no_sem]
+    have h : (fun x : m.Entity => !A' x || !B' x) = (fun x => !A (f x) || !B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    rw [h]; exact all_bij_inv f hBij (fun x => !A x || !B x)
+  -- most_sem: filter-length-based
+  case most =>
+    simp only [most_sem]
+    have hab : (fun x => A' x && B' x) = (fun x => A (f x) && B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    have hab' : (fun x => A' x && !B' x) = (fun x => A (f x) && !B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    simp only [hab, hab']
+    exact congrArg₂ (fun a b => decide (a > b))
+      (filter_length_bij_inv f hBij (fun x => A x && B x))
+      (filter_length_bij_inv f hBij (fun x => A x && !B x))
+  -- few_sem: filter-length-based
+  case few =>
+    simp only [few_sem]
+    have hab : (fun x => A' x && B' x) = (fun x => A (f x) && B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    have hab' : (fun x => A' x && !B' x) = (fun x => A (f x) && !B (f x)) :=
+      funext (fun x => by rw [← hA x, ← hB x])
+    simp only [hab, hab']
+    exact congrArg₂ (fun a b => decide (a < b))
+      (filter_length_bij_inv f hBij (fun x => A x && B x))
+      (filter_length_bij_inv f hBij (fun x => A x && !B x))
+  -- half_sem: filter-length-based
+  case half =>
+    simp only [half_sem]
+    have hA' : A' = (fun x => A (f x)) := funext (fun x => (hA x).symm)
+    have hB' : B' = (fun x => B (f x)) := funext (fun x => (hB x).symm)
+    simp only [hA', hB']
+    exact congrArg₂ (fun a b => decide (2 * a = b))
+      (filter_length_bij_inv f hBij (fun x => A x && B x))
+      (filter_length_bij_inv f hBij A)
 
 -- ============================================================================
 -- Extension (P&W Ch.4): Domain independence
@@ -141,16 +205,26 @@ theorem some_all_scale_upward :
 -- ============================================================================
 
 /-- U7 (B&C): Positive strong determiners are scope-upward-monotone.
-    Negative strong determiners are scope-downward-monotone. -/
-axiom strong_implies_monotone :
-  ∀ q : QuantityWord, q.entry.strength = .strong →
-    q.entry.monotonicity != .nonMonotone
+    Negative strong determiners are scope-downward-monotone.
+    Verified over the 6-word quantity scale. -/
+theorem strong_implies_monotone :
+    ∀ q : QuantityWord, q.entry.strength = .strong →
+      q.entry.monotonicity != .nonMonotone := by native_decide
 
 /-- U8 (B&C §4.9): Persistent determiners are weak and scope-upward-monotone.
-    "Some" is the canonical persistent quantifier (restrictor-upward-mono). -/
-axiom persistent_implies_weak_and_up :
-  ∀ q : QuantityWord, q.entry.strength = .weak →
-    q.entry.monotonicity == .increasing ∨ q.entry.monotonicity == .decreasing
+    "Some" is the canonical persistent quantifier (restrictor-upward-mono).
+
+    N.B. The original axiom stated `weak → increasing ∨ decreasing`, but this
+    is falsified by "half" (weak but non-monotone). The B&C claim is about
+    *persistent* determiners specifically, not all weak determiners.
+    Correct statement: all weak monotone determiners in the scale are either
+    increasing or decreasing (tautologically). The substantive claim (that
+    persistent ↔ weak ∧ upward-monotone) requires formalizing persistence. -/
+theorem weak_monotone_determiners :
+    ∀ q : QuantityWord, q.entry.strength = .weak →
+      q.entry.monotonicity = .nonMonotone ∨
+      q.entry.monotonicity = .increasing ∨
+      q.entry.monotonicity = .decreasing := by native_decide
 
 /-- Weak determiners allow there-insertion (B&C Theorem C4).
     "There are some/a/few/no cats" vs *"There is every/each cat". -/
@@ -193,15 +267,52 @@ theorem strong_not_symmetric :
 -- Peters & Westerståhl Ch.6 Fact 7: Positive-strong vs symmetric
 -- ============================================================================
 
-/-- [sorry: structural] Positive-strong determiners are scope-upward-monotone
-    (P&W Ch.6). "Every" and "most" are positive-strong. "No" is negative-strong.
-    Symmetric quantifiers cannot be positive-strong (`symm_not_positive_strong`).
-    Witnessed by `every_positive_strong` + `every_scope_up` in Quantifier.lean.
-    Blocked on `few`/`half` gqDenotations. -/
-axiom positive_strong_determiners_upward_monotone :
+/-- Positive-strong determiners are scope-upward-monotone (P&W Ch.6).
+    Only `all` (= `every_sem`) is genuinely positive-strong; for the rest,
+    `PositiveStrong` is vacuously false (contradicted by `R = λ _ => false`
+    or `R = λ _ => true`), making the implication trivially true. -/
+theorem positive_strong_determiners_upward_monotone :
   ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
     PositiveStrong (q.gqDenotation m) →
-    ScopeUpwardMono (q.gqDenotation m)
+    ScopeUpwardMono (q.gqDenotation m) := by
+  intro q m inst hPS
+  cases q
+  case all => exact TruthConditional.Determiner.Quantifier.every_scope_up
+  case some_ => exact TruthConditional.Determiner.Quantifier.some_scope_up
+  case most =>
+    exfalso; have := hPS (λ _ => false)
+    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.most_sem,
+      Bool.false_and, Bool.not_false, Bool.true_and, List.filter_false, List.filter_true,
+      List.length_nil, Nat.not_lt_zero, decide_false] at this
+    exact absurd this Bool.noConfusion
+  case few =>
+    exfalso; have := hPS (λ _ => false)
+    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.few_sem,
+      Bool.false_and, Bool.not_false, Bool.true_and, List.filter_false, List.filter_true,
+      List.length_nil, Nat.not_lt_zero, decide_false] at this
+    exact absurd this Bool.noConfusion
+  case none_ =>
+    intro R S S' hSS' _
+    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.no_sem] at *
+    rw [List.all_eq_true]
+    intro x hx
+    have h := hPS (λ _ => true)
+    simp only [TruthConditional.Determiner.Quantifier.no_sem] at h
+    rw [List.all_eq_true] at h
+    exact absurd (h x hx) Bool.noConfusion
+  case half =>
+    intro R S S' hSS' _
+    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.half_sem] at *
+    have h := hPS (λ _ => true)
+    simp only [TruthConditional.Determiner.Quantifier.half_sem,
+      Bool.true_and, List.filter_true] at h
+    rw [decide_eq_true_eq] at h
+    -- h : 2 * elements.length = elements.length, so elements.length = 0
+    have hlen : (FiniteModel.elements (m := m)).length = 0 := by omega
+    rw [decide_eq_true_eq]
+    have hfilt : ∀ (P : m.Entity → Bool), (FiniteModel.elements.filter P).length = 0 := by
+      intro P; exact Nat.eq_zero_of_le_zero (by rw [← hlen]; exact List.length_filter_le P _)
+    simp [hfilt]
 
 -- ============================================================================
 -- Van Benthem (1984) §3.2: Semantic Universals from Logic
