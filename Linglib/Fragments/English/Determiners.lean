@@ -489,8 +489,8 @@ def QuantityWord.gqDenotation (q : QuantityWord)
   | .some_ => some_sem m
   | .all   => every_sem m
   | .most  => most_sem m
-  | .few   => sorry -- TODO: "few" = below contextual threshold
-  | .half  => sorry -- TODO: "half" = |R∩S| = |R|/2
+  | .few   => few_sem m
+  | .half  => half_sem m
 
 -- ============================================================================
 -- Monotonicity bridges (gap G): enum value ∧ semantic property
@@ -552,6 +552,20 @@ theorem most_conservative_bridge :
     QuantityWord.gqDenotation .most m = most_sem m ∧
     Conservative (most_sem m) :=
   ⟨rfl, most_conservative⟩
+
+open Core.Quantification in
+/-- Few maps to `few_sem` and `few_sem` is conservative. -/
+theorem few_conservative_bridge :
+    QuantityWord.gqDenotation .few m = few_sem m ∧
+    Conservative (few_sem m) :=
+  ⟨rfl, few_conservative⟩
+
+open Core.Quantification in
+/-- Half maps to `half_sem` and `half_sem` is conservative. -/
+theorem half_conservative_bridge :
+    QuantityWord.gqDenotation .half m = half_sem m ∧
+    Conservative (half_sem m) :=
+  ⟨rfl, half_conservative⟩
 
 -- ============================================================================
 -- Symmetry bridges (gap G): weak ↔ symmetric (P&W Ch.6)

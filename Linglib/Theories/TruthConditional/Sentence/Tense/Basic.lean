@@ -282,4 +282,42 @@ example : FUT (raining Unit) ⟨(), 1⟩ ⟨(), 0⟩ := by
 
 end Examples
 
+-- ════════════════════════════════════════════════════════════════
+-- § composeTense Properties
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### composeTense Properties
+
+`composeTense` is a stipulative function defining how surface tenses compose
+under embedding. The following theorems establish its algebraic properties.
+
+For the DERIVED version — showing that composeTense matches the Reichenbach
+analysis with perspective shifting — see
+`TruthConditional.Sentence.Tense.SequenceOfTense`.
+-/
+
+/-- Present is transparent under composition (left):
+    composing with matrix present always yields the embedded tense.
+    This reflects present's semantics: R = P, so tense relative to
+    a present perspective is unchanged. -/
+theorem composeTense_present_left (t : GramTense) :
+    composeTense .present t = t := by cases t <;> rfl
+
+/-- Present is transparent under composition (right):
+    embedding present under any tense yields the matrix tense.
+    Embedded present = "at the matrix event time" = same tense
+    relative to speech time. -/
+theorem composeTense_present_right (t : GramTense) :
+    composeTense t .present = t := by cases t <;> rfl
+
+/-- Tense composition is idempotent for past: embedding past
+    arbitrarily deep under past still yields past. -/
+theorem composeTense_past_idempotent :
+    composeTense .past .past = .past := rfl
+
+/-- Tense composition is idempotent for future. -/
+theorem composeTense_future_idempotent :
+    composeTense .future .future = .future := rfl
+
 end TruthConditional.Sentence.Tense

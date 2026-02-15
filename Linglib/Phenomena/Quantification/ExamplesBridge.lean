@@ -51,6 +51,7 @@ def scenario : Model :=
 instance : FiniteModel scenario where
   elements := [.alice, .bob, .carol, .dave]
   complete := λ x => by cases x <;> simp
+  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
 
 def student : scenario.interpTy (.e ⇒ .t) :=
   λ x => match x with

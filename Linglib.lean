@@ -297,6 +297,8 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
+import Linglib.Phenomena.SequenceOfTense.Data
+import Linglib.Phenomena.SequenceOfTense.Bridge
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
@@ -555,6 +557,7 @@ import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
 import Linglib.Theories.TruthConditional.Sentence.Tense.Perspective
 import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
 import Linglib.Theories.TruthConditional.Sentence.Tense.PerfectPolysemy
+import Linglib.Theories.TruthConditional.Sentence.Tense.SequenceOfTense
 import Linglib.Theories.TruthConditional.Variables
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
@@ -585,6 +588,7 @@ import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
 import Linglib.Theories.IntensionalSemantics.Attitude.Intensional
 import Linglib.Theories.IntensionalSemantics.Attitude.Parasitic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
+import Linglib.Theories.IntensionalSemantics.Attitude.SituationDependent
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
 import Linglib.Theories.IntensionalSemantics.Causative.Builder
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication
