@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.213.8] - 2026-02-14
+
+### Changed
+- **Theories/QuestionSemantics/Answerhood.lean**: Closed all 11 sorrys — proved `wh_refines_polar` (G&S 1984 core result), `ans_answers`, `ans_completely_answers`, `complete_not_partial`, `gsToHamblin_recognizes_ans`, `partition_cells_are_hamblin_alternatives`, `nonrigid_may_fail_semantic`, `exhaustive_answers`; replaced false `karttunen_agrees_with_gs_for_unique_answer` with correct `gs_ans_implies_karttunen` + `karttunen_not_implies_gs`; added `karttunen_coordination_problem` (concrete cross-categorial failure); added foldl helper infrastructure (`foldl_reps_subset`, `foldl_acc_preserved`, `foldl_has_rep`, `foldl_reps_no_dup`, `foldl_nodup`, `filter_map_comm`, `nodup_filter_eq_singleton`)
+
 ## [0.213.7] - 2026-02-14
 
 ### Added
