@@ -6,7 +6,7 @@ import Linglib.Core.Morphology.MorphRule
 English verb lexical entries with morphology, argument structure, semantic class,
 and links to compositional semantics (CoS, attitudes, causatives).
 
-Semantic types (`VerbClass`, `ComplementType`, `AttitudeBuilder`, etc.) and the
+Semantic types (`ComplementType`, `AttitudeBuilder`, etc.) and the
 cross-linguistic `VerbCore` structure live in `Core/Verbs.lean`. This file
 defines `VerbEntry extends VerbCore` with English-specific inflectional fields
 and provides smart constructors for regular verbs.
@@ -15,9 +15,9 @@ and provides smart constructors for regular verbs.
 namespace Fragments.English.Predicates.Verbal
 
 -- Re-export Core.Verbs types so downstream files that open this namespace
--- (e.g., `open Fragments.English.Predicates.Verbal (VerbClass ComplementType ...)`)
+-- (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
-export Core.Verbs (PreferentialBuilder AttitudeBuilder VerbClass PresupTriggerType
+export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
   ComplementType ControlType VerbCore complementToValence)
 
 open Core.Verbs
@@ -89,7 +89,7 @@ structure VerbEntry extends VerbCore where
     Usage:
     ```
     def kick : VerbEntry := .mkRegular {
-      form := "kick", complementType := .np, verbClass := .simple
+      form := "kick", complementType := .np,
       subjectTheta := some .agent, objectTheta := some .patient }
     ``` -/
 def VerbEntry.mkRegular (core : VerbCore) : VerbEntry :=
@@ -114,7 +114,6 @@ def sleep : VerbEntry where
   complementType := .none
   subjectTheta := some .agent
   passivizable := false
-  verbClass := .simple
 
 /-- "run" — intransitive, no presupposition -/
 def run : VerbEntry where
@@ -126,7 +125,12 @@ def run : VerbEntry where
   complementType := .none
   subjectTheta := some .agent
   passivizable := false
-  verbClass := .simple
+  levinClass := some .mannerOfMotion
+  rootProfile := some {
+    forceMag := some [.moderate]
+    agentVolition := some [.volitional]
+    agentControl := some [.compatible]
+  }
 
 /-- "arrive" — unaccusative intransitive -/
 def arrive : VerbEntry := .mkRegular {
@@ -135,7 +139,7 @@ def arrive : VerbEntry := .mkRegular {
   subjectTheta := some .theme  -- Underlying object
   unaccusative := true
   passivizable := false
-  verbClass := .simple }
+  levinClass := some .inherentlyDirectedMotion }
 
 /-- "eat" — transitive, no presupposition -/
 def eat : VerbEntry where
@@ -147,7 +151,12 @@ def eat : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple
+  levinClass := some .eat
+  rootProfile := some {
+    forceMag := some [.low, .moderate]
+    agentVolition := some [.volitional]
+    agentControl := some [.compatible]
+  }
 
 /-- "kick" — transitive -/
 def kick : VerbEntry := .mkRegular {
@@ -155,7 +164,13 @@ def kick : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple }
+  levinClass := some .hit
+  rootProfile := some {
+    forceMag := some [.moderate, .high]
+    forceDir := some [.unidirectional]
+    agentVolition := some [.neutral, .volitional]
+    agentControl := some [.neutral, .compatible]
+  } }
 
 /-- "give" — ditransitive -/
 def give : VerbEntry where
@@ -168,7 +183,7 @@ def give : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .theme
   object2Theta := some .goal
-  verbClass := .simple
+  levinClass := some .give
 
 /-- "put" — locative -/
 def put : VerbEntry where
@@ -180,7 +195,7 @@ def put : VerbEntry where
   complementType := .np_pp
   subjectTheta := some .agent
   objectTheta := some .theme
-  verbClass := .simple
+  levinClass := some .put
 
 /-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026). -/
 def weigh : VerbEntry := .mkRegular {
@@ -188,8 +203,8 @@ def weigh : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .theme
   objectTheta := some .theme
-  verbClass := .simple
-  selectsDimension := some .mass }
+  selectsDimension := some .mass
+  levinClass := some .measure }
 
 /-- "cover" — motion/extent predicate selecting for distance (Bale & Schwarz 2026). -/
 def cover : VerbEntry := .mkRegular {
@@ -197,7 +212,6 @@ def cover : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .theme
-  verbClass := .simple
   selectsDimension := some .distance }
 
 /-- "measure" — general measurement predicate. -/
@@ -206,7 +220,7 @@ def measure : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .theme
   objectTheta := some .theme
-  verbClass := .simple }
+  levinClass := some .measure }
 
 /-- "see" — transitive, can also embed clauses -/
 def see : VerbEntry where
@@ -218,8 +232,8 @@ def see : VerbEntry where
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
-  verbClass := .perception
   factivePresup := true
+  levinClass := some .see
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Factive / Semifactive
@@ -235,7 +249,6 @@ def know : VerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .factive
   presupType := some .softTrigger
   factivePresup := true
   takesQuestionBase := true
@@ -250,7 +263,6 @@ def regret : VerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .factive
   presupType := some .softTrigger
   factivePresup := true
 
@@ -260,7 +272,6 @@ def realize : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .factive
   presupType := some .softTrigger
   factivePresup := true }
 
@@ -270,7 +281,6 @@ def discover : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .semifactive
   presupType := some .softTrigger
   factivePresup := true
   takesQuestionBase := true }
@@ -281,7 +291,6 @@ def notice : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .semifactive
   presupType := some .softTrigger
   factivePresup := true }
 
@@ -300,9 +309,9 @@ def stop : VerbEntry where
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
   cosType := some .cessation
+  levinClass := some .aspectual
 
 /-- "quit" — CoS cessation -/
 def quit : VerbEntry where
@@ -315,9 +324,9 @@ def quit : VerbEntry where
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
   cosType := some .cessation
+  levinClass := some .aspectual
 
 /-- "start" — CoS inception, presupposes activity wasn't happening -/
 def start : VerbEntry := .mkRegular {
@@ -326,9 +335,9 @@ def start : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
-  cosType := some .inception }
+  cosType := some .inception
+  levinClass := some .aspectual }
 
 /-- "begin" — CoS inception -/
 def begin_ : VerbEntry where
@@ -341,9 +350,9 @@ def begin_ : VerbEntry where
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
   cosType := some .inception
+  levinClass := some .aspectual
 
 /-- "continue" — CoS continuation, presupposes activity was happening -/
 def continue_ : VerbEntry := .mkRegular {
@@ -352,9 +361,9 @@ def continue_ : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
-  cosType := some .continuation }
+  cosType := some .continuation
+  levinClass := some .aspectual }
 
 /-- "keep" — CoS continuation -/
 def keep : VerbEntry where
@@ -367,9 +376,9 @@ def keep : VerbEntry where
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .changeOfState
   presupType := some .softTrigger
   cosType := some .continuation
+  levinClass := some .aspectual
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Implicative / Control
@@ -382,7 +391,6 @@ def manage : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .implicative
   implicativeBuilder := some .positive }
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
@@ -392,7 +400,6 @@ def fail : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .implicative
   implicativeBuilder := some .negative }
 
 /-- "try" — subject control, no entailment -/
@@ -406,7 +413,6 @@ def try_ : VerbEntry where
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
-  verbClass := .simple
 
 /-- "persuade" — object control: "persuade X to VP" (X = agent of VP) -/
 def persuade : VerbEntry := .mkRegular {
@@ -414,8 +420,7 @@ def persuade : VerbEntry := .mkRegular {
   complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .experiencer
-  controlType := .objectControl
-  verbClass := .simple }
+  controlType := .objectControl }
 
 /-- "promise" — subject control with object: "promise X to VP" -/
 def promise : VerbEntry := .mkRegular {
@@ -423,8 +428,7 @@ def promise : VerbEntry := .mkRegular {
   complementType := .infinitival
   subjectTheta := some .agent
   objectTheta := some .goal
-  controlType := .subjectControl
-  verbClass := .simple }
+  controlType := .subjectControl }
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : VerbEntry := .mkRegular {
@@ -433,7 +437,6 @@ def remember : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
-  verbClass := .implicative
   implicativeBuilder := some .positive }
 
 /-- "forget" — negative implicative with infinitival -/
@@ -447,7 +450,6 @@ def forget : VerbEntry where
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
-  verbClass := .implicative
   implicativeBuilder := some .negative
 
 -- ════════════════════════════════════════════════════
@@ -460,7 +462,6 @@ def believe : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.doxastic .nonVeridical) }
 
@@ -474,7 +475,6 @@ def think : VerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.doxastic .nonVeridical)
 
@@ -489,9 +489,9 @@ def want : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  levinClass := some .want }
 
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative) -/
 def hope : VerbEntry := .mkRegular {
@@ -499,7 +499,6 @@ def hope : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
@@ -509,7 +508,6 @@ def expect : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
@@ -523,9 +521,9 @@ def wish : VerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  levinClass := some .want
 
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
 def fear : VerbEntry := .mkRegular {
@@ -533,9 +531,9 @@ def fear : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  levinClass := some .admire }
 
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
 def dread : VerbEntry := .mkRegular {
@@ -543,9 +541,9 @@ def dread : VerbEntry := .mkRegular {
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
+  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  levinClass := some .admire }
 
 /-- "worry" — preferential attitude verb (Class 1: takes questions, non-C-distributive) -/
 def worry : VerbEntry where
@@ -557,7 +555,6 @@ def worry : VerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
@@ -571,8 +568,7 @@ def seem : VerbEntry := .mkRegular {
   complementType := .infinitival
   subjectTheta := none
   controlType := .raising
-  passivizable := false
-  verbClass := .simple }
+  passivizable := false }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Causative (Periphrastic)
@@ -585,8 +581,8 @@ def cause : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
-  causativeBuilder := some .cause }
+  causativeBuilder := some .cause
+  levinClass := some .engender }
 
 /-- "make" — direct sufficient guarantee -/
 def make : VerbEntry where
@@ -599,7 +595,6 @@ def make : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- "let" — permissive causative (barrier removal) -/
@@ -613,7 +608,6 @@ def let_ : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .enable
 
 /-- "have" — causative use (directive causation) -/
@@ -627,7 +621,6 @@ def have_caus : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
   senseTag := .causative
 
@@ -642,7 +635,6 @@ def get_caus : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
   senseTag := .causative
 
@@ -653,7 +645,6 @@ def force : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .force }
 
 -- ════════════════════════════════════════════════════
@@ -666,8 +657,13 @@ def kill : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
-  causativeBuilder := some .make }
+  causativeBuilder := some .make
+  levinClass := some .murder
+  rootProfile := some {
+    resultType := some [.totalDestruction]
+    agentVolition := some [.neutral, .volitional]
+    agentControl := some [.neutral, .compatible]
+  } }
 
 /-- "break" — thick lexical causative (Levin 45.1 Break Verbs; Embick 2009 break-class).
     Pure change-of-state verb: change in "material integrity" (Hale & Keyser 1987)
@@ -682,7 +678,6 @@ def break_ : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   unaccusative := false
-  verbClass := .causative
   causativeBuilder := some .make
   levinClass := some .break_
   rootProfile := some {
@@ -708,7 +703,6 @@ def tear_ : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   unaccusative := false
-  verbClass := .causative
   causativeBuilder := some .make
   levinClass := some .break_
   rootProfile := some {
@@ -725,8 +719,15 @@ def burn : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
-  causativeBuilder := some .make }
+  causativeBuilder := some .make
+  levinClass := some .otherCoS
+  rootProfile := some {
+    forceMag := some [.moderate, .high]
+    patientRob := some [.flimsy, .moderate, .robust]
+    resultType := some [.totalDestruction, .deformation]
+    agentVolition := some [.neutral, .volitional]
+    agentControl := some [.neutral, .compatible]
+  } }
 
 /-- "destroy" — thin lexical causative (result-only, no manner). -/
 def destroy : VerbEntry := .mkRegular {
@@ -734,8 +735,13 @@ def destroy : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
-  causativeBuilder := some .make }
+  causativeBuilder := some .make
+  levinClass := some .destroy
+  rootProfile := some {
+    resultType := some [.totalDestruction]
+    agentVolition := some [.neutral, .volitional]
+    agentControl := some [.neutral, .compatible]
+  } }
 
 /-- "melt" — thick lexical causative (manner = by heat). -/
 def melt : VerbEntry := .mkRegular {
@@ -743,8 +749,15 @@ def melt : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
-  causativeBuilder := some .make }
+  causativeBuilder := some .make
+  levinClass := some .otherCoS
+  rootProfile := some {
+    forceMag := some [.low, .moderate]
+    patientRob := some [.moderate, .robust]
+    resultType := some [.deformation]
+    agentVolition := some [.neutral, .volitional]
+    agentControl := some [.compatible]
+  } }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Other
@@ -756,7 +769,12 @@ def devour : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple }
+  levinClass := some .devour
+  rootProfile := some {
+    forceMag := some [.moderate, .high]
+    agentVolition := some [.volitional]
+    agentControl := some [.neutral]
+  } }
 
 /-- "read" — transitive, no presupposition -/
 def read : VerbEntry where
@@ -768,7 +786,6 @@ def read : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .simple
 
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : VerbEntry where
@@ -780,8 +797,14 @@ def sweep : VerbEntry where
   complementType := .np
   subjectTheta := none
   objectTheta := some .theme
-  verbClass := .simple
   passivizable := true
+  levinClass := some .wipe
+  rootProfile := some {
+    forceMag := some [.low, .moderate]
+    forceDir := some [.unidirectional]
+    agentVolition := some [.volitional]
+    agentControl := some [.compatible]
+  }
 
 /-- "sweep" instrument sense — obligatorily agentive, broom lexicalized. -/
 def sweep_instr : VerbEntry where
@@ -793,9 +816,15 @@ def sweep_instr : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .theme
-  verbClass := .simple
   passivizable := true
   senseTag := .instrumental
+  levinClass := some .wipe
+  rootProfile := some {
+    forceMag := some [.low, .moderate]
+    forceDir := some [.unidirectional]
+    agentVolition := some [.volitional]
+    agentControl := some [.compatible]
+  }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Communication
@@ -808,8 +837,9 @@ def say : VerbEntry where
   formPast := "said"
   formPastPart := "said"
   formPresPart := "saying"
-  verbClass := .communication
+  speechActVerb := true
   complementType := .finiteClause
+  levinClass := some .say
 
 /-- "tell" — communication verb with recipient -/
 def tell : VerbEntry where
@@ -818,14 +848,16 @@ def tell : VerbEntry where
   formPast := "told"
   formPastPart := "told"
   formPresPart := "telling"
-  verbClass := .communication
+  speechActVerb := true
   complementType := .finiteClause
+  levinClass := some .tell
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
 def claim : VerbEntry := .mkRegular {
   form := "claim"
-  verbClass := .communication
-  complementType := .finiteClause }
+  speechActVerb := true
+  complementType := .finiteClause
+  levinClass := some .say }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Question-Embedding
@@ -834,7 +866,6 @@ def claim : VerbEntry := .mkRegular {
 /-- "wonder" — embeds questions only -/
 def wonder : VerbEntry := .mkRegular {
   form := "wonder"
-  verbClass := .attitude
   complementType := .question
   takesQuestionBase := true
   opaqueContext := true }
@@ -842,17 +873,17 @@ def wonder : VerbEntry := .mkRegular {
 /-- "ask" — embeds questions -/
 def ask : VerbEntry := .mkRegular {
   form := "ask"
-  verbClass := .communication
+  speechActVerb := true
   complementType := .question
   takesQuestionBase := true }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : VerbEntry := .mkRegular {
   form := "investigate"
-  verbClass := .simple
   complementType := .question
   subjectTheta := some .agent
-  takesQuestionBase := true }
+  takesQuestionBase := true
+  levinClass := some .search }
 
 /-- "depend_on" — rogative, embeds interrogatives only (Dayal 2025: rogativeCP) -/
 def depend_on : VerbEntry where
@@ -861,14 +892,12 @@ def depend_on : VerbEntry where
   formPast := "depended on"
   formPastPart := "depended on"
   formPresPart := "depending on"
-  verbClass := .simple
   complementType := .question
   takesQuestionBase := true
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : VerbEntry := .mkRegular {
   form := "remember"
-  verbClass := .factive
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
@@ -884,7 +913,6 @@ def forget_rog : VerbEntry where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  verbClass := .factive
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false

@@ -37,15 +37,15 @@ def humSab : PronounEntry :=
 
 /-- *tõ* — 2sg non-honorific. -/
 def toN : PronounEntry :=
-  { form := "tõ", person := some .second, number := some .sg, formality := 0 }
+  { form := "tõ", person := some .second, number := some .sg, register := .informal }
 
 /-- *ahã* — 2sg honorific. -/
 def ahaN : PronounEntry :=
-  { form := "ahã", person := some .second, number := some .sg, formality := 1 }
+  { form := "ahã", person := some .second, number := some .sg, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
 def apne : PronounEntry :=
-  { form := "apne", person := some .second, number := some .sg, formality := 2 }
+  { form := "apne", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person (honorific-sensitive)
@@ -53,11 +53,11 @@ def apne : PronounEntry :=
 
 /-- *ũ* — 3sg non-honorific (distal). -/
 def uN : PronounEntry :=
-  { form := "ũ", person := some .third, number := some .sg, formality := 0 }
+  { form := "ũ", person := some .third, number := some .sg, register := .informal }
 
 /-- *o* — 3sg honorific. -/
 def o : PronounEntry :=
-  { form := "o", person := some .third, number := some .sg, formality := 1 }
+  { form := "o", person := some .third, number := some .sg, register := .neutral }
 
 /-- *ũ sab* — 3pl. -/
 def uNSab : PronounEntry :=
@@ -78,15 +78,15 @@ def allPronouns : List PronounEntry :=
 
 /-- Non-honorific finite suffix. -/
 def suffNH : AllocutiveEntry :=
-  { form := "-ah", formality := 0, gloss := "FIN.NH" }
+  { form := "-ah", register := .informal, gloss := "FIN.NH" }
 
 /-- Honorific finite suffix. -/
 def suffH : AllocutiveEntry :=
-  { form := "-thunh", formality := 1, gloss := "FIN.H" }
+  { form := "-thunh", register := .neutral, gloss := "FIN.H" }
 
 /-- High-honorific finite suffix. -/
 def suffHH : AllocutiveEntry :=
-  { form := "-lnhi", formality := 2, gloss := "FIN.HH" }
+  { form := "-lnhi", register := .formal, gloss := "FIN.HH" }
 
 def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
@@ -109,16 +109,16 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- Three-level formality distinction in 2nd person. -/
+/-- Three-level register distinction in 2nd person. -/
 theorem three_levels :
-    secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 /-- Allocutive markers have three levels matching 2nd person pronouns. -/
 theorem markers_three_levels :
-    allAllocMarkers.map (·.formality) = [0, 1, 2] := rfl
+    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-/-- 3rd person also has a formality distinction. -/
+/-- 3rd person also has a register distinction. -/
 theorem third_person_honorific :
-    uN.formality = 0 ∧ o.formality = 1 := ⟨rfl, rfl⟩
+    uN.register = .informal ∧ o.register = .neutral := ⟨rfl, rfl⟩
 
 end Fragments.Maithili.Pronouns

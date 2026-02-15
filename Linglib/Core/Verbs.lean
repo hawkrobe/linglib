@@ -10,9 +10,9 @@ import Linglib.Theories.IntensionalSemantics.Causative.Implicative
 
 /-! # Cross-Linguistic Verb Infrastructure
 
-Framework-agnostic types for verb semantics: verb class, complement type,
-control type, attitude/causative builders, and the `VerbCore` structure
-that bundles all semantic fields shared across languages.
+Framework-agnostic types for verb semantics: complement type, control type,
+attitude/causative builders, and the `VerbCore` structure that bundles all
+semantic fields shared across languages.
 
 English-specific morphology (3sg, past, participles) lives in
 `Fragments/English/Predicates/Verbal.lean`; other languages extend
@@ -22,8 +22,11 @@ English-specific morphology (3sg, past, participles) lives in
 
 `VerbCore` is the **semantic spine** of a verb entry. It carries:
 - Argument structure (theta roles, complement type, control)
-- Semantic class (simple, factive, causative, attitude, …)
+- Primitive semantic features (factivity, opacity, speech-act status, …)
 - Links to compositional semantics (attitude builder, causative builder, …)
+
+Verb classification (factive, causative, attitude, etc.) is DERIVED from
+these primitive fields, not stipulated as an enum.
 
 Language-specific fragments extend `VerbCore` with morphological fields:
 - English: `form3sg`, `formPast`, `formPastPart`, `formPresPart`
@@ -117,28 +120,6 @@ def AttitudeBuilder.getPreferentialBuilder : AttitudeBuilder → Option Preferen
 def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
   | .doxastic _ => none
   | .preferential b => some b.valence
-
-/--
-Semantic class of verb.
-
-This classification determines what semantic machinery is needed:
-- Simple verbs just need a standard denotation
-- Factives need presupposition projection
-- CoS verbs need temporal/change structure
-- Attitudes need intensional semantics
-- Causatives need causal model semantics (Nadathur & Lauer 2020)
--/
-inductive VerbClass where
-  | simple          -- sleep, run, eat
-  | factive         -- know, regret, realize
-  | semifactive     -- discover, notice (weaker projection)
-  | changeOfState   -- stop, start, continue
-  | implicative     -- manage, fail, remember (to)
-  | attitude        -- believe, think, want
-  | perception      -- see, hear (ambiguous: factive or not)
-  | communication   -- say, tell, claim
-  | causative       -- cause, make (Nadathur & Lauer 2020)
-  deriving DecidableEq, Repr, BEq
 
 /--
 Presupposition trigger type (Tonhauser et al. 2013 classification).
@@ -238,8 +219,10 @@ structure VerbCore where
   passivizable : Bool := true
 
   -- === Semantic Class ===
-  /-- Semantic verb class -/
-  verbClass : VerbClass
+  /-- Does the verb denote the performance of an illocutionary act?
+      True for speech-act verbs (say, tell, claim, ask). This is a genuine
+      semantic primitive that cannot be derived from other fields. -/
+  speechActVerb : Bool := false
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- For measure predicates: which dimension this verb selects for.
@@ -317,9 +300,9 @@ def VerbCore.presupposesComplement (v : VerbCore) : Bool :=
 def VerbCore.isPresupTrigger (v : VerbCore) : Bool :=
   v.presupType.isSome
 
-/-- Is this verb a causative? -/
+/-- Is this verb a causative? DERIVED from causativeBuilder. -/
 def VerbCore.isCausative (v : VerbCore) : Bool :=
-  v.verbClass == .causative
+  v.causativeBuilder.isSome
 
 /-- Does this causative verb assert sufficiency (like "make")?
 

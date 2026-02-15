@@ -37,36 +37,32 @@ open IntensionalSemantics.Mood
 CTPClass is DERIVED from existing VerbEntry fields — not added as a new field.
 This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
 
-/-- Derive Noonan's CTP class from a VerbEntry's structural properties.
+/-- Derive Noonan's CTP class from a VerbEntry's primitive fields.
 
-    The mapping uses `verbClass`, `complementType`, and `attitudeBuilder`:
-    - .factive → knowledge (know, regret, realize)
-    - .semifactive → knowledge (discover, notice)
-    - .perception → perception (see)
-    - .communication → utterance (say, tell)
-    - .changeOfState → phasal (stop, start, continue)
-    - .causative → manipulative (cause, make, force)
-    - .implicative → achievement (manage, fail)
-    - .attitude + doxastic → propAttitude (believe, think)
-    - .attitude + preferential positive → desiderative (want, hope)
-    - .attitude + preferential negative → propAttitude (fear: reacts to, doesn't desire)
-    - .attitude + preferential uncertaintyBased → propAttitude (worry)
+    The mapping uses `objectTheta`, `factivePresup`, `causativeBuilder`,
+    `implicativeBuilder`, `cosType`, `speechActVerb`, and `attitudeBuilder`:
+    - objectTheta == .stimulus → perception (see)
+    - factivePresup && no attitudeBuilder → knowledge (know, regret, realize)
+    - causativeBuilder.isSome → manipulative (cause, make, force)
+    - implicativeBuilder.isSome → achievement (manage, fail)
+    - cosType.isSome → phasal (stop, start, continue)
+    - speechActVerb → utterance (say, tell)
+    - attitudeBuilder doxastic → propAttitude (believe, think)
+    - attitudeBuilder preferential positive → desiderative (want, hope)
+    - attitudeBuilder preferential other → propAttitude (fear, worry)
     - Otherwise → none -/
 def deriveCTPClass (v : VerbEntry) : Option CTPClass :=
-  match v.verbClass, v.complementType, v.attitudeBuilder with
-  | .factive, _, _ => some .knowledge
-  | .semifactive, _, _ => some .knowledge
-  | .perception, _, _ => some .perception
-  | .communication, _, _ => some .utterance
-  | .changeOfState, _, _ => some .phasal
-  | .causative, _, _ => some .manipulative
-  | .implicative, _, _ => some .achievement
-  | .attitude, _, some (.doxastic _) => some .propAttitude
-  | .attitude, _, some (.preferential (.degreeComparison .positive)) => some .desiderative
-  | .attitude, _, some (.preferential (.degreeComparison .negative)) => some .propAttitude
-  | .attitude, _, some (.preferential .uncertaintyBased) => some .propAttitude
-  | .attitude, _, some (.preferential (.relevanceBased _)) => some .propAttitude
-  | _, _, _ => none
+  if v.objectTheta == some .stimulus then some .perception
+  else if v.factivePresup && v.attitudeBuilder.isNone then some .knowledge
+  else if v.causativeBuilder.isSome then some .manipulative
+  else if v.implicativeBuilder.isSome then some .achievement
+  else if v.cosType.isSome then some .phasal
+  else if v.speechActVerb then some .utterance
+  else match v.attitudeBuilder with
+  | some (.doxastic _) => some .propAttitude
+  | some (.preferential (.degreeComparison .positive)) => some .desiderative
+  | some (.preferential _) => some .propAttitude
+  | none => none
 
 /-! ## A2. Per-verb verification theorems
 
@@ -312,33 +308,32 @@ theorem clausal_complements_have_noonan_type :
 This is placed in Bridge.lean (not Verbal.lean) to avoid circular imports:
 it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern. -/
 
-/-- Derive mood selection from a VerbEntry's structural properties.
+/-- Derive mood selection from a VerbEntry's primitive fields.
 
     The logic:
-    - Attitude + preferential positive → subjunctive (want, hope)
-    - Attitude + preferential negative → indicative (fear: evaluates what IS)
-    - Attitude + preferential uncertainty → indicative (worry)
-    - Attitude + doxastic → indicative (believe, think)
-    - Factive/semifactive → indicative (know: presupposes truth)
-    - Perception → indicative (see: factive perception)
-    - Communication → moodNeutral (say: varies cross-linguistically)
-    - ChangeOfState → moodNeutral (stop: varies)
+    - Preferential positive attitude → subjunctive (want, hope)
+    - Preferential negative/uncertainty attitude → indicative (fear, worry)
+    - Doxastic attitude → indicative (believe, think)
+    - Factive → indicative (know: presupposes truth)
+    - Perception (objectTheta == .stimulus) → indicative (see)
+    - Speech-act verb → moodNeutral (say: varies cross-linguistically)
+    - Change-of-state → moodNeutral (stop: varies)
     - Causative → subjunctive (make: irrealis)
     - Implicative → moodNeutral (manage: varies)
-    - Simple → moodNeutral -/
+    - Otherwise → moodNeutral -/
 def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
-  match v.verbClass, v.attitudeBuilder with
-  | .attitude, some (.preferential (.degreeComparison .positive)) => .subjunctiveSelecting
-  | .attitude, some (.preferential _) => .indicativeSelecting
-  | .attitude, some (.doxastic _) => .indicativeSelecting
-  | .factive, _ => .indicativeSelecting
-  | .semifactive, _ => .indicativeSelecting
-  | .perception, _ => .indicativeSelecting
-  | .communication, _ => .moodNeutral
-  | .changeOfState, _ => .moodNeutral
-  | .causative, _ => .subjunctiveSelecting
-  | .implicative, _ => .moodNeutral
-  | _, _ => .moodNeutral
+  match v.attitudeBuilder with
+  | some (.preferential (.degreeComparison .positive)) => .subjunctiveSelecting
+  | some (.preferential _) => .indicativeSelecting
+  | some (.doxastic _) => .indicativeSelecting
+  | none =>
+    if v.factivePresup then .indicativeSelecting
+    else if v.objectTheta == some .stimulus then .indicativeSelecting
+    else if v.speechActVerb then .moodNeutral
+    else if v.cosType.isSome then .moodNeutral
+    else if v.causativeBuilder.isSome then .subjunctiveSelecting
+    else if v.implicativeBuilder.isSome then .moodNeutral
+    else .moodNeutral
 
 /-! ## E2. Per-verb mood selector verification -/
 

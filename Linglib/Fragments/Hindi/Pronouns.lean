@@ -37,15 +37,15 @@ def ham : PronounEntry :=
 
 /-- *tuu* — 2sg non-honorific (intimate/inferior). -/
 def tuu : PronounEntry :=
-  { form := "tuu", person := some .second, number := some .sg, formality := 0 }
+  { form := "tuu", person := some .second, number := some .sg, register := .informal }
 
 /-- *tum* — 2sg honorific (neutral). -/
 def tum : PronounEntry :=
-  { form := "tum", person := some .second, number := some .sg, formality := 1 }
+  { form := "tum", person := some .second, number := some .sg, register := .neutral }
 
 /-- *aap* — 2sg high-honorific (respectful). -/
 def aap : PronounEntry :=
-  { form := "aap", person := some .second, number := some .sg, formality := 2 }
+  { form := "aap", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person (demonstrative-based)
@@ -74,15 +74,15 @@ def allPronouns : List PronounEntry :=
 
 /-- *-aa* non-honorific imperative suffix (e.g., *jaa* "go!"). -/
 def suffNH : AllocutiveEntry :=
-  { form := "-aa", formality := 0, gloss := "IMP.NH" }
+  { form := "-aa", register := .informal, gloss := "IMP.NH" }
 
 /-- *-e* honorific imperative suffix (e.g., *jao* "go"). -/
 def suffH : AllocutiveEntry :=
-  { form := "-e", formality := 1, gloss := "IMP.H" }
+  { form := "-e", register := .neutral, gloss := "IMP.H" }
 
 /-- *-iye* high-honorific imperative suffix (e.g., *jaaiye* "please go"). -/
 def suffHH : AllocutiveEntry :=
-  { form := "-iye", formality := 2, gloss := "IMP.HH" }
+  { form := "-iye", register := .formal, gloss := "IMP.HH" }
 
 def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
@@ -105,12 +105,12 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- Three-level formality distinction in 2nd person. -/
+/-- Three-level register distinction in 2nd person. -/
 theorem three_levels :
-    secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 /-- Allocutive markers have three levels matching 2nd person pronouns. -/
 theorem markers_three_levels :
-    allAllocMarkers.map (·.formality) = [0, 1, 2] := rfl
+    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 end Fragments.Hindi.Pronouns

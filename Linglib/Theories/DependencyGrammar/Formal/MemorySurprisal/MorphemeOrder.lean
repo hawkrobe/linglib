@@ -234,11 +234,11 @@ theorem valence_is_innermost_functional :
 
 Japanese -(s)ase is classified as a morphological COMPACT causative in
 Song (1996). The `ik_ase` entry in `Fragments/Japanese/Predicates` confirms
-this: `verbClass = .causative` and `causativeBuilder = some .make`. -/
+this: `causativeBuilder = some .make`. -/
 
-/-- The Japanese -(s)ase causative entry has .causative verbClass. -/
+/-- The Japanese -(s)ase causative entry is causative (derived from causativeBuilder). -/
 theorem ik_ase_is_causative :
-    Fragments.Japanese.Predicates.ik_ase.verbClass = .causative := rfl
+    Fragments.Japanese.Predicates.ik_ase.causativeBuilder.isSome = true := rfl
 
 /-- Japanese -(s)ase uses the .make causative builder (direct causation). -/
 theorem ik_ase_is_make :

@@ -768,4 +768,133 @@ def notEveryEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .antiM
 #guard EntailmentSig.toContextPolarity noEntailmentSig.1 == .downward      -- no restrictor is DE
 #guard EntailmentSig.toContextPolarity notEveryEntailmentSig.1 == .upward  -- not-every restrictor is UE
 
+-- ============================================================================
+-- §10 Number-Tree Impossibility Theorems (Van Benthem 1984 §3.2)
+-- ============================================================================
+
+/-- Number-tree representation of a conservative, quantity-invariant GQ.
+    Under CONSERV + QUANT, a quantifier's truth value depends only on
+    `a = |A ∩ B|` and `b = |A \ B|` (van Benthem 1984 §2, "tree of numbers").
+    This is inherently cross-domain: any `(a, b)` pair is realizable in some
+    universe of size ≥ a + b. -/
+abbrev NumberTreeGQ := Nat → Nat → Bool
+
+namespace NumberTreeGQ
+
+/-- Variety for number-tree quantifiers: Q is non-trivial. -/
+def Variety (q : NumberTreeGQ) : Prop :=
+  (∃ a b, q a b = true) ∧ (∃ a b, q a b = false)
+
+/-- Van Benthem 1984 Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
+
+    On the number tree, asymmetry means: for all `a b c`,
+    `q(a, b) → ¬q(a, c)` — because `|A ∩ B| = a` and `|B \ A| = c` is free
+    (any `c` is realizable in a large enough universe).
+
+    Proof: Set `c = b`. Then `q(a, b) → ¬q(a, b)`, so `q` is identically
+    false. Contradicts Variety. -/
+theorem no_asymmetric (q : NumberTreeGQ) (hVar : q.Variety)
+    (hAsym : ∀ a b c, q a b = true → q a c = false) : False := by
+  obtain ⟨⟨a, b, hab⟩, _⟩ := hVar
+  exact absurd hab (Bool.eq_false_iff.mp (hAsym a b b hab))
+
+/-- Van Benthem 1984 §3.2 consequence: No strict partial order quantifiers.
+
+    On the number tree, irreflexivity is `∀ n, q(n, 0) = false` (since
+    `Q(A,A)` has `|A ∩ A| = n`, `|A \ A| = 0`). Transitivity (with C = A
+    in the 3-set diagram) gives: `q(a, b) ∧ q(a, c) → q(a+b, 0)`.
+
+    Proof: From transitivity, `q(a, b) → q(a, c) → q(a+b, 0)`.
+    From irreflexivity, `q(a+b, 0) = false`. So `q(a, b) → q(a, c) = false`
+    — number-tree asymmetry. Apply `no_asymmetric`. -/
+theorem no_strict_partial_order (q : NumberTreeGQ) (hVar : q.Variety)
+    (hIrrefl : ∀ n, q n 0 = false)
+    (hTrans : ∀ a b c, q a b = true → q a c = true → q (a + b) 0 = true) :
+    False := by
+  exact no_asymmetric q hVar (λ a b c hab => by
+    by_contra h
+    rw [Bool.not_eq_false] at h
+    have := hTrans a b c hab h
+    rw [hIrrefl] at this
+    exact absurd this (by decide))
+
+/-- Van Benthem 1984 Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
+
+    On the number tree (3-set Venn diagram with 7 free size parameters
+    `p, q, r, s, t, u` plus one more), the Euclidean property becomes:
+    `q(p+q_, r+s) ∧ q(p+r, q_+s) → q(p+t, q_+u)` for all `p q_ r s t u`.
+
+    Proof (4 steps):
+    1. From Variety witness `q(α, β) = true`, set `p=α, q_=0, r=0, s=β`:
+       `q(α+t, u)` for all `t, u`. So `q(a, b) = true` for `a ≥ α`.
+    2. If `α = 0`, step 1 gives `q ≡ true`, contradicting Variety.
+       If `α > 0`: pair `q(α, 2α)` and `q(2α, α)` (both from step 1)
+       with `p=0, q_=α, r=2α, s=0`: get `q(t, α+u)` for all `t, u`.
+       Combined: `q(a, b) = true` when `a ≥ α` or `b ≥ α`.
+    3. `q(0, α)` (from step 2) and `q(α, 0)` (from step 1) with
+       `p=0, q_=0, r=α, s=0`: get `q(t, u)` for all `t, u`.
+    4. Contradicts Variety. -/
+theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
+    (hEuc : ∀ p q_ r s t u,
+      q (p + q_) (r + s) = true → q (p + r) (q_ + s) = true →
+      q (p + t) (q_ + u) = true) : False := by
+  obtain ⟨⟨α, β, hαβ⟩, ⟨a₀, b₀, hFalse⟩⟩ := hVar
+  -- Step 1: q(α + t, u) for all t, u
+  -- Use hEuc with p=α, q_=0, r=0, s=β: q(α+0)(0+β) ∧ q(α+0)(0+β) → q(α+t)(0+u)
+  have step1 : ∀ t u, q (α + t) u = true := by
+    intro t u
+    have := hEuc α 0 0 β t u (by rwa [Nat.add_zero, Nat.zero_add])
+      (by rwa [Nat.add_zero, Nat.zero_add])
+    simpa [Nat.zero_add] using this
+  -- Step 3 (shortcut): q(α, 0) from step1 (t=0, u=0)
+  have qα0 : q α 0 = true := step1 0 0
+  -- If α = 0: step1 gives q(t, u) for all t, u → contradiction
+  by_cases hα : α = 0
+  · subst hα; simp only [Nat.zero_add] at step1; rw [step1] at hFalse; exact absurd hFalse (by decide)
+  -- α > 0
+  -- Step 2: q(t, α + u) for all t, u
+  -- q(α, β) is our witness. Use step1 to get q at larger first args.
+  -- q(2*α, α) from step1 (t = α, u = α)
+  have q_2α_α : q (2 * α) α = true := by
+    have := step1 α α; rwa [show α + α = 2 * α from by omega] at this
+  -- q(α, 2*α) via step1: need q(α + t', 2*α) — take t' = 0
+  have q_α_2α : q α (2 * α) = true := by
+    have := step1 0 (2 * α); rwa [Nat.add_zero] at this
+  -- Use hEuc with p=0, q_=α, r=2*α, s=0: q(0+α)(2α+0) ∧ q(0+2α)(α+0) → q(0+t)(α+u)
+  have step2 : ∀ t u, q t (α + u) = true := by
+    intro t u
+    have := hEuc 0 α (2 * α) 0 t u
+      (by rwa [Nat.zero_add, Nat.add_zero])
+      (by rwa [Nat.zero_add, Nat.add_zero])
+    simpa [Nat.zero_add] using this
+  -- Step 3: q(0, α) from step2 (t=0, u=0)
+  have q0α : q 0 α = true := by have := step2 0 0; rwa [Nat.add_zero] at this
+  -- Use hEuc with p=0, q_=0, r=α, s=0: q(0+0)(α+0) ∧ q(0+α)(0+0) → q(0+t)(0+u)
+  have step3 : ∀ t u, q t u = true := by
+    intro t u
+    have := hEuc 0 0 α 0 t u
+      (by rwa [Nat.zero_add, Nat.add_zero])
+      (by rwa [Nat.zero_add, Nat.add_zero])
+    simpa [Nat.zero_add] using this
+  -- Step 4: contradiction with Variety
+  rw [step3] at hFalse; exact absurd hFalse (by decide)
+
+end NumberTreeGQ
+
+-- ============================================================================
+-- §11 Counting Quantifiers (Van Benthem 1984 §5.4)
+-- ============================================================================
+
+/-- Van Benthem 1984 Thm 5.4: On a finite set with n individuals, there are
+    exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
+    The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
+def conservativeQuantifierCount (n : Nat) : Nat :=
+  2 ^ ((n + 1) * (n + 2) / 2)
+
+#eval conservativeQuantifierCount 0  -- 2 (always-true + always-false)
+#eval conservativeQuantifierCount 1  -- 8
+#eval conservativeQuantifierCount 2  -- 64
+#eval conservativeQuantifierCount 3  -- 1024
+#eval conservativeQuantifierCount 4  -- 32768
+
 end Core.Quantification

@@ -53,10 +53,10 @@ theorem shared_levin_class :
 theorem shared_causative_builder :
     tear_.causativeBuilder = rasgar.causativeBuilder := rfl
 
-/-- Both are causative verbs. -/
+/-- Both are causative verbs (derived from causativeBuilder). -/
 theorem both_causative :
-    tear_.verbClass = .causative ∧
-    rasgar.verbClass = .causative := ⟨rfl, rfl⟩
+    tear_.causativeBuilder = some .make ∧
+    rasgar.causativeBuilder = some .make := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 2. Different Root Content (§3.2)

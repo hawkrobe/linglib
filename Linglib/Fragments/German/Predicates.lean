@@ -56,7 +56,6 @@ def lassen : GermanVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .enable
 
 /-- *machen* — productive analytic causative.
@@ -70,7 +69,6 @@ def machen : GermanVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- *töten* — lexical COMPACT causative ("kill" = tot + -en).
@@ -83,7 +81,6 @@ def toeten : GermanVerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- *zerbrechen* — lexical COMPACT causative ("break").
@@ -96,7 +93,6 @@ def zerbrechen : GermanVerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
   causativeBuilder := some .make
 
 -- ============================================================================
@@ -112,7 +108,6 @@ def hoffen : GermanVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
@@ -125,7 +120,6 @@ def fuerchten : GermanVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
@@ -138,7 +132,6 @@ def befuerchten : GermanVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
 
@@ -151,7 +144,6 @@ def wuenschen : GermanVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
 
@@ -164,7 +156,6 @@ def sorgen : GermanVerbEntry where
   complementType := .finiteClause
   subjectTheta := some .experiencer
   passivizable := false
-  verbClass := .attitude
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
 

@@ -228,12 +228,12 @@ theorem hon_levels_ordered :
 -- Section E: Fragment Bridges
 -- ============================================================================
 
-/-- Convert fragment formality level to theory HonLevel.
-    0 → non-honorific, 1 → honorific, ≥2 → high-honorific. -/
-def formalityToHonLevel : Nat → HonLevel
-  | 0 => .nh
-  | 1 => .h
-  | _ => .hh
+/-- Convert register level to theory HonLevel.
+    informal → non-honorific, neutral → honorific, formal → high-honorific. -/
+def levelToHonLevel : Core.Register.Level → HonLevel
+  | .informal => .nh
+  | .neutral  => .h
+  | .formal   => .hh
 
 /-- Basque fragment has 2nd-person pronouns. -/
 theorem basque_fragment_has_2p :
@@ -241,7 +241,8 @@ theorem basque_fragment_has_2p :
 
 /-- Magahi fragment has three honorific levels. -/
 theorem magahi_fragment_three_levels :
-    Fragments.Magahi.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Magahi.Pronouns.secondPersonPronouns.map (·.register) =
+    [.informal, .neutral, .formal] := rfl
 
 /-- Korean fragment has 2nd-person pronouns. -/
 theorem korean_fragment_has_2p :
@@ -261,23 +262,25 @@ theorem galician_fragment_has_2p :
 
 /-- Hindi fragment has three honorific levels. -/
 theorem hindi_fragment_three_levels :
-    Fragments.Hindi.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Hindi.Pronouns.secondPersonPronouns.map (·.register) =
+    [.informal, .neutral, .formal] := rfl
 
 /-- Maithili fragment has three honorific levels. -/
 theorem maithili_fragment_three_levels :
-    Fragments.Maithili.Pronouns.secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    Fragments.Maithili.Pronouns.secondPersonPronouns.map (·.register) =
+    [.informal, .neutral, .formal] := rfl
 
 /-- Punjabi fragment has 2nd-person pronouns. -/
 theorem punjabi_fragment_has_2p :
     Fragments.Punjabi.Pronouns.secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- Formality bridge: 0 maps to non-honorific. -/
-theorem formality_0_nh : formalityToHonLevel 0 = .nh := rfl
+/-- Register bridge: informal maps to non-honorific. -/
+theorem informal_nh : levelToHonLevel .informal = .nh := rfl
 
-/-- Formality bridge: 1 maps to honorific. -/
-theorem formality_1_h : formalityToHonLevel 1 = .h := rfl
+/-- Register bridge: neutral maps to honorific. -/
+theorem neutral_h : levelToHonLevel .neutral = .h := rfl
 
-/-- Formality bridge: 2 maps to high-honorific. -/
-theorem formality_2_hh : formalityToHonLevel 2 = .hh := rfl
+/-- Register bridge: formal maps to high-honorific. -/
+theorem formal_hh : levelToHonLevel .formal = .hh := rfl
 
 end Minimalism.Phenomena.Allocutivity

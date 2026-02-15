@@ -22,6 +22,7 @@ import Linglib.Core.Pronouns
 namespace Fragments.Japanese.Pronouns
 
 open Core.Pronouns
+open Core.Register (Level)
 
 -- ============================================================================
 -- First Person
@@ -29,11 +30,11 @@ open Core.Pronouns
 
 /-- 私 *watashi* — 1sg neutral/polite. -/
 def watashi : PronounEntry :=
-  { form := "watashi", script := some "私", person := some .first, number := some .sg, formality := 1 }
+  { form := "watashi", script := some "私", person := some .first, number := some .sg, register := .formal }
 
 /-- 僕 *boku* — 1sg male informal. -/
 def boku : PronounEntry :=
-  { form := "boku", script := some "僕", person := some .first, number := some .sg, formality := 0 }
+  { form := "boku", script := some "僕", person := some .first, number := some .sg, register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
 def watashitachi : PronounEntry :=
@@ -45,11 +46,11 @@ def watashitachi : PronounEntry :=
 
 /-- 君 *kimi* — 2sg plain. -/
 def kimi : PronounEntry :=
-  { form := "kimi", script := some "君", person := some .second, number := some .sg, formality := 0 }
+  { form := "kimi", script := some "君", person := some .second, number := some .sg, register := .informal }
 
 /-- あなた *anata* — 2sg polite. -/
 def anata : PronounEntry :=
-  { form := "anata", script := some "あなた", person := some .second, number := some .sg, formality := 1 }
+  { form := "anata", script := some "あなた", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -82,7 +83,7 @@ def allPronouns : List PronounEntry :=
 
 /-- *-desu* polite copula / *-masu* polite verbal (Miyagawa 2012). -/
 def desuMasu : AllocutiveEntry :=
-  { form := "-desu/-masu", formality := 1, gloss := "POL" }
+  { form := "-desu/-masu", register := .formal, gloss := "POL" }
 
 def allAllocParticles : List AllocutiveEntry := [desuMasu]
 
@@ -94,14 +95,14 @@ def allAllocParticles : List AllocutiveEntry := [desuMasu]
 structure VerbForm where
   form : String
   gloss : String
-  formality : Nat
+  register : Level
   deriving Repr, BEq
 
 /-- 行く *iku* — "go" (plain). -/
-def iku : VerbForm := { form := "iku", gloss := "go.PLN", formality := 0 }
+def iku : VerbForm := { form := "iku", gloss := "go.PLN", register := .informal }
 
 /-- 行きます *ikimasu* — "go" (polite). -/
-def ikimasu : VerbForm := { form := "ikimasu", gloss := "go.POL", formality := 1 }
+def ikimasu : VerbForm := { form := "ikimasu", gloss := "go.POL", register := .formal }
 
 -- ============================================================================
 -- Verification
@@ -118,21 +119,21 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .sg) = true ∧
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
-/-- 1st person has register-based formality distinction. -/
+/-- 1st person has register-based distinction. -/
 theorem first_person_register :
-    boku.formality = 0 ∧ watashi.formality = 1 := ⟨rfl, rfl⟩
+    boku.register = .informal ∧ watashi.register = .formal := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
 /-- Verb forms span plain and polite levels. -/
-theorem verb_formality_span :
-    iku.formality = 0 ∧ ikimasu.formality = 1 := ⟨rfl, rfl⟩
+theorem verb_register_span :
+    iku.register = .informal ∧ ikimasu.register = .formal := ⟨rfl, rfl⟩
 
 end Fragments.Japanese.Pronouns

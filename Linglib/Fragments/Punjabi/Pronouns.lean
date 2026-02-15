@@ -36,11 +36,11 @@ def asiiN : PronounEntry :=
 
 /-- *tũ* — 2sg non-honorific. -/
 def tuN : PronounEntry :=
-  { form := "tũ", person := some .second, number := some .sg, formality := 0 }
+  { form := "tũ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tusii* — 2sg honorific (also 2pl). -/
 def tusii : PronounEntry :=
-  { form := "tusii", person := some .second, number := some .sg, formality := 1 }
+  { form := "tusii", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person (demonstrative-based)
@@ -69,11 +69,11 @@ def allPronouns : List PronounEntry :=
 
 /-- Non-honorific agreement suffix. -/
 def suffNH : AllocutiveEntry :=
-  { form := "-ẽ", formality := 0, gloss := "AGR.NH" }
+  { form := "-ẽ", register := .informal, gloss := "AGR.NH" }
 
 /-- Honorific agreement suffix. -/
 def suffH : AllocutiveEntry :=
-  { form := "-o", formality := 1, gloss := "AGR.H" }
+  { form := "-o", register := .formal, gloss := "AGR.H" }
 
 def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH]
 
@@ -96,14 +96,14 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
-/-- Allocutive markers match 2nd person pronoun formality levels. -/
+/-- Allocutive markers match 2nd person pronoun register levels. -/
 theorem markers_match_2p :
-    allAllocMarkers.map (·.formality) = secondPersonPronouns.map (·.formality) := rfl
+    allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
 
 /-- 3sg and 3pl share the same form (demonstrative-based). -/
 theorem third_person_homophony :

@@ -38,15 +38,15 @@ def humSab : PronounEntry :=
 
 /-- *tõ* — 2sg non-honorific. -/
 def toN : PronounEntry :=
-  { form := "tõ", person := some .second, number := some .sg, formality := 0 }
+  { form := "tõ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tũ* — 2sg honorific. -/
 def tuN : PronounEntry :=
-  { form := "tũ", person := some .second, number := some .sg, formality := 1 }
+  { form := "tũ", person := some .second, number := some .sg, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
 def apne : PronounEntry :=
-  { form := "apne", person := some .second, number := some .sg, formality := 2 }
+  { form := "apne", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
 -- Third Person (demonstrative-based)
@@ -79,15 +79,15 @@ def allPronouns : List PronounEntry :=
 
 /-- *-l* non-honorific past suffix (Alok 2020). -/
 def suffNH : AllocutiveEntry :=
-  { form := "-l", formality := 0, gloss := "PST.NH" }
+  { form := "-l", register := .informal, gloss := "PST.NH" }
 
 /-- *-lah* honorific past suffix. -/
 def suffH : AllocutiveEntry :=
-  { form := "-lah", formality := 1, gloss := "PST.H" }
+  { form := "-lah", register := .neutral, gloss := "PST.H" }
 
 /-- *-lnhi* high-honorific past suffix. -/
 def suffHH : AllocutiveEntry :=
-  { form := "-lnhi", formality := 2, gloss := "PST.HH" }
+  { form := "-lnhi", register := .formal, gloss := "PST.HH" }
 
 def allAllocMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
 
@@ -110,12 +110,12 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- Three-level formality distinction in 2nd person. -/
+/-- Three-level register distinction in 2nd person. -/
 theorem three_levels :
-    secondPersonPronouns.map (·.formality) = [0, 1, 2] := rfl
+    secondPersonPronouns.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 /-- Allocutive markers have three levels matching 2nd person pronouns. -/
 theorem markers_three_levels :
-    allAllocMarkers.map (·.formality) = [0, 1, 2] := rfl
+    allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
 end Fragments.Magahi.Pronouns

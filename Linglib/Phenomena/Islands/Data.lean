@@ -60,7 +60,7 @@ private def leave : Word := ⟨"leave", .VERB, { valence := some .intransitive, 
 private def before : Word := ⟨"before", .ADP, {}⟩
 private def because : Word := ⟨"because", .SCONJ, {}⟩
 private def books : Word := ⟨"books", .NOUN, { number := some .pl, countable := some true }⟩
-private def and_ : Word := ⟨"and", .SCONJ, {}⟩
+private def and_ : Word := ⟨"and", .CCONJ, {}⟩
 private def sell : Word := ⟨"sell", .VERB, { valence := some .transitive, number := some .pl }⟩
 private def do_ : Word := ⟨"do", .AUX, { number := some .pl }⟩
 private def the : Word := ⟨"the", .DET, {}⟩

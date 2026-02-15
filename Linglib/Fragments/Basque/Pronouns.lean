@@ -20,6 +20,7 @@ import Linglib.Core.Pronouns
 namespace Fragments.Basque.Pronouns
 
 open Core.Pronouns
+open Core.Register (Level)
 
 -- ============================================================================
 -- First Person
@@ -39,11 +40,11 @@ def gu : PronounEntry :=
 
 /-- *hi* — 2sg familiar (T form). -/
 def hi : PronounEntry :=
-  { form := "hi", person := some .second, number := some .sg, formality := 0 }
+  { form := "hi", person := some .second, number := some .sg, register := .informal }
 
 /-- *zu* — 2sg formal (V form). -/
 def zu : PronounEntry :=
-  { form := "zu", person := some .second, number := some .sg, formality := 1 }
+  { form := "zu", person := some .second, number := some .sg, register := .formal }
 
 /-- *zuek* — 2pl. -/
 def zuek : PronounEntry :=
@@ -76,11 +77,11 @@ def allPronouns : List PronounEntry :=
 
 /-- *-n* familiar allocutive suffix (Oyharçabal 1993). -/
 def allocFamiliar : AllocutiveEntry :=
-  { form := "-n", formality := 0, gloss := "2sg.familiar.alloc" }
+  { form := "-n", register := .informal, gloss := "2sg.familiar.alloc" }
 
 /-- *-zu* formal allocutive suffix. -/
 def allocFormal : AllocutiveEntry :=
-  { form := "-zu", formality := 1, gloss := "2sg.formal.alloc" }
+  { form := "-zu", register := .formal, gloss := "2sg.formal.alloc" }
 
 def allAllocMarkers : List AllocutiveEntry := [allocFamiliar, allocFormal]
 
@@ -92,14 +93,14 @@ def allAllocMarkers : List AllocutiveEntry := [allocFamiliar, allocFormal]
 structure VerbForm where
   form : String
   gloss : String
-  formality : Nat
+  register : Level
   deriving Repr, BEq
 
 /-- *duk* — "you have" (familiar). -/
-def duk : VerbForm := { form := "duk", gloss := "have.2sg.fam", formality := 0 }
+def duk : VerbForm := { form := "duk", gloss := "have.2sg.fam", register := .informal }
 
 /-- *duzu* — "you have" (formal). -/
-def duzu : VerbForm := { form := "duzu", gloss := "have.2sg.for", formality := 1 }
+def duzu : VerbForm := { form := "duzu", gloss := "have.2sg.for", register := .formal }
 
 -- ============================================================================
 -- Verification
@@ -120,13 +121,13 @@ theorem has_both_numbers :
 theorem second_person_all_2p :
     secondPersonPronouns.all (·.person == some .second) = true := rfl
 
-/-- The T/V formality distinction is present in 2nd person. -/
+/-- The T/V register distinction is present in 2nd person. -/
 theorem tv_distinction :
-    secondPersonPronouns.any (·.formality == 0) = true ∧
-    secondPersonPronouns.any (·.formality == 1) = true := ⟨rfl, rfl⟩
+    secondPersonPronouns.any (·.register == .informal) = true ∧
+    secondPersonPronouns.any (·.register == .formal) = true := ⟨rfl, rfl⟩
 
-/-- Verb forms have matching formality levels with 2nd person pronouns. -/
-theorem verb_formality_matches_pronouns :
-    duk.formality = hi.formality ∧ duzu.formality = zu.formality := ⟨rfl, rfl⟩
+/-- Verb forms have matching register levels with 2nd person pronouns. -/
+theorem verb_register_matches_pronouns :
+    duk.register = hi.register ∧ duzu.register = zu.register := ⟨rfl, rfl⟩
 
 end Fragments.Basque.Pronouns

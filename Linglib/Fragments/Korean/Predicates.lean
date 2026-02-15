@@ -43,7 +43,6 @@ def wus_ke_ha : KoreanVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .cause
 
 /-- 읽게 하다 "ilk-ke ha-da" — read-PURP do = "cause to read". -/
@@ -57,7 +56,6 @@ def ilk_ke_ha : KoreanVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .cause
 
 /-- 죽이다 "cwuk-i-da" — die-CAUS = "to kill" (lexical/morphological COMPACT). -/
@@ -70,7 +68,6 @@ def cwuk_i : KoreanVerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- Korean PURP-type *-ke ha-* uses `.cause` builder. -/

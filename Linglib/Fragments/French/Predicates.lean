@@ -45,7 +45,6 @@ def faire : FrenchVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .make
 
 /-- laisser — permissive causative ("let"). -/
@@ -59,7 +58,6 @@ def laisser : FrenchVerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
-  verbClass := .causative
   causativeBuilder := some .enable
 
 /-- French *faire* uses `.make` builder. -/

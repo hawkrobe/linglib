@@ -17,6 +17,7 @@ import Linglib.Core.Quantification
 import Linglib.Core.HornScale
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
+import Linglib.Core.Register
 import Linglib.Core.Conjectures
 import Linglib.Core.CommonGround
 import Linglib.Core.Parse
@@ -219,6 +220,8 @@ import Linglib.Phenomena.MeasurePhrases.BaleSchwarz2026Bridge
 import Linglib.Phenomena.MeasurePhrases.Scontras2014Bridge
 import Linglib.Phenomena.ConditionalModality.Data
 import Linglib.Phenomena.ConditionalModality.Bridge
+import Linglib.Phenomena.ModalConcord.Data
+import Linglib.Phenomena.ModalConcord.Bridge
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
