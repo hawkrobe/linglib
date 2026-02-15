@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.213.11] - 2026-02-15
+
+### Changed
+- **Theories/TruthConditional/Sentence/Tense/SequenceOfTense.lean**: Remove vestigial imports (`IntensionalSemantics.Attitude.SituationDependent`, `ViewpointAspect`) and relocate cross-framework aspect–tense pipeline section to Bridge; file is now purely intra-theory (Tense.Basic + Reichenbach)
+- **Phenomena/SequenceOfTense/Bridge.lean**: Receive relocated pipeline; add `evalPast_iff_PAST` and `evalPres_iff_toSitProp` proving point-level and situation-level tense operators agree via `toSitProp`; add Reichenbach–aspect correspondence (`matrixSaid_is_perfective`, `embeddedShifted_is_perfective`, `perfective_implies_aspect_assumption`)
+
 ## [0.213.9] - 2026-02-14
 
 ### Added
