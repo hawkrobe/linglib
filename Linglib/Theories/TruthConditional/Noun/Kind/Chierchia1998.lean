@@ -161,6 +161,7 @@ Key theorem: ∪(∩P) = P for mass/plural properties.
 
 Going down and then up returns the original property (for suitable P).
 -/
+-- TODO: _hMass should be a real mass-noun condition on P (cumulative reference / closure under ⊔)
 theorem up_down_id (P : Property World Atom) (_hMass : True) :
     ∀ k, down World Atom P = some k → up World Atom k = P := by
   sorry  -- Requires careful setup of the domain

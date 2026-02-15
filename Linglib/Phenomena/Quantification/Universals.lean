@@ -38,43 +38,46 @@ relationship to quantifier complexity.
 namespace Phenomena.Quantification.Universals
 
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
+open Core.Quantification (GQ Conservative QuantityInvariant LeftAntiAdditive
+  PositiveStrong ScopeUpwardMono QSymmetric Variety)
+open TruthConditional (Model)
+open TruthConditional.Determiner.Quantifier (FiniteModel)
 
 -- ============================================================================
 -- Barwise & Cooper (1981): Conservativity is (near-)universal
 -- ============================================================================
 
-/-- Conservativity holds for all simple (lexicalized) English determiners
-    (Barwise & Cooper 1981, Conjecture 1). -/
+/-- [sorry: structural] Conservativity holds for all simple (lexicalized)
+    English determiners (Barwise & Cooper 1981, Conjecture 1).
+    Proved individually for none/some/all/most in Quantifier.lean;
+    blocked on `few` and `half` gqDenotations (currently `sorry`). -/
 axiom conservativity_universal :
-  ∀ q : QuantityWord, q.entry.form ∈ ["none", "some", "all", "most", "few", "half"] →
-    True  -- Witnessed by proofs in Quantifier.lean for none/some/all/most
-
-/-- No attested natural language determiner violates conservativity
-    (Barwise & Cooper 1981, p. 185). The hypothetical "M" (|A| > |B|) is
-    conservative-violating but unattested. See `m_not_conservative`. -/
-axiom no_nonconservative_determiners : True
+  ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
+    Conservative (q.gqDenotation m)
 
 -- ============================================================================
 -- Mostowski (1957) / Keenan & Stavi (1986): Quantity
 -- ============================================================================
 
-/-- All simple determiners satisfy quantity/isomorphism closure:
-    their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
-    (Mostowski 1957). -/
-axiom quantity_universal : True
+/-- [sorry: structural] All simple determiners satisfy quantity/isomorphism
+    closure: their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
+    (Mostowski 1957). Blocked on `few` and `half` gqDenotations. -/
+axiom quantity_universal :
+  ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
+    QuantityInvariant (q.gqDenotation m)
 
 -- ============================================================================
 -- Extension (P&W Ch.4): Domain independence
 -- ============================================================================
 
-/-- Extension (EXT): all simple determiners are domain-independent.
-    For `GQ α`, this is a design theorem — our universe-free representation
-    automatically satisfies EXT. See `Core.Quantification.extension_trivial`.
+/- Extension (EXT): all simple determiners are domain-independent.
+   For `GQ α`, this is a design theorem — our universe-free representation
+   automatically satisfies EXT. See `Core.Quantification.extension_trivial`.
+   No axiom needed — it holds by construction.
 
-    EXT + CONS together yield the van Benthem (1984) characterization:
-    determiners can be represented as type ⟨1⟩ quantifiers that "live on"
-    their restrictor. See `Core.Quantification.vanBenthem_cons_ext`. -/
-axiom extension_universal : True  -- Witnessed by `extension_trivial`
+   EXT + CONS together yield the van Benthem (1984) characterization:
+   determiners can be represented as type ⟨1⟩ quantifiers that "live on"
+   their restrictor. See `Core.Quantification.vanBenthem_cons_ext`. -/
 
 -- ============================================================================
 -- Van de Pol et al. (2023): Simplicity and Universals
@@ -182,57 +185,73 @@ theorem strong_not_symmetric :
 -- Peters & Westerståhl Ch.5 §5.8-5.9: Left anti-additivity → NPI licensing
 -- ============================================================================
 
-/-- Left anti-additive determiners license NPIs (P&W §5.8).
-    "Every" and "no" are LAA. Cross-references: `every_laa`, `no_laa`. -/
-axiom laa_licenses_npis :
-  True  -- Witnessed by every_laa, no_laa in Quantifier.lean
+/- Left anti-additive determiners license NPIs (P&W §5.8).
+   LAA is formalized: see `every_laa`, `no_laa` in Quantifier.lean.
+   TODO: formalize NPI licensing as a predicate to state the connection. -/
 
 -- ============================================================================
 -- Peters & Westerståhl Ch.6 Fact 7: Positive-strong vs symmetric
 -- ============================================================================
 
-/-- Positive-strong quantifiers: Q(A,A) = true for all A (P&W Ch.6).
-    "Every" and "most" are positive-strong. "No" is negative-strong.
-    Symmetric quantifiers cannot be positive-strong (`symm_not_positive_strong`). -/
-axiom positive_strong_determiners_upward_monotone : True
+/-- [sorry: structural] Positive-strong determiners are scope-upward-monotone
+    (P&W Ch.6). "Every" and "most" are positive-strong. "No" is negative-strong.
+    Symmetric quantifiers cannot be positive-strong (`symm_not_positive_strong`).
+    Witnessed by `every_positive_strong` + `every_scope_up` in Quantifier.lean.
+    Blocked on `few`/`half` gqDenotations. -/
+axiom positive_strong_determiners_upward_monotone :
+  ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
+    PositiveStrong (q.gqDenotation m) →
+    ScopeUpwardMono (q.gqDenotation m)
 
 -- ============================================================================
 -- Van Benthem (1984) §3.2: Semantic Universals from Logic
 -- ============================================================================
 
-/-- Van Benthem 1984 Thm 3.2.1: There are no asymmetric quantifiers
-    (satisfying CONSERV + QUANT + VAR), except the empty one.
-    This is a logical impossibility, not just an empirical gap.
-    Proof sketch: as soon as QAB holds, one can construct A' with
-    A'∩A = B∩A such that QAA' and QA'A (by QUANT), violating asymmetry. -/
-axiom no_asymmetric_quantifiers : True
+/-- [sorry: mathematical] Van Benthem 1984 Thm 3.2.1: There are no asymmetric
+    quantifiers (satisfying CONSERV + QUANT + VAR).
+    Proof sketch: QAB → construct A' with A'∩A = B∩A such that QAA' and QA'A
+    (by QUANT), violating asymmetry. -/
+theorem no_asymmetric_quantifiers {α : Type} (q : GQ α)
+    (hCons : Conservative q) (hVar : Variety q)
+    (hQuant : QuantityInvariant q)
+    (hAsym : ∀ R S, q R S = true → q S R = false) : False := by
+  sorry
 
-/-- Van Benthem 1984 §3.2 + Zwarts: No human language has strict partial order
-    quantifiers (transitive + irreflexive). Follows from the fact that
-    CONSERV + QUANT + transitivity + irreflexivity + VAR leads to contradiction. -/
-axiom no_strict_partial_order_quantifiers : True
+/-- [sorry: mathematical] Van Benthem 1984 §3.2 + Zwarts: CONSERV + QUANT +
+    transitivity + irreflexivity + VAR leads to contradiction. -/
+theorem no_strict_partial_order_quantifiers {α : Type} (q : GQ α)
+    (hCons : Conservative q) (hVar : Variety q)
+    (hQuant : QuantityInvariant q)
+    (hTrans : ∀ R S T, q R S = true → q S T = true → q R T = true)
+    (hIrrefl : ∀ R, q R R = false) : False := by
+  sorry
 
-/-- Van Benthem 1984 Thm 3.2.3 (VAR): No Euclidean quantifiers exist.
-    Euclidean: QXY ∧ QXZ → QYZ. This would collapse Q to a trivial relation,
-    contradicting VAR. -/
-axiom no_euclidean_quantifiers : True
+/-- [sorry: mathematical] Van Benthem 1984 Thm 3.2.3: No Euclidean quantifiers
+    satisfying CONSERV + QUANT + VAR exist.
+    Euclidean: QXY ∧ QXZ → QYZ collapses Q to trivial, contradicting VAR. -/
+theorem no_euclidean_quantifiers {α : Type} (q : GQ α)
+    (hCons : Conservative q) (hVar : Variety q)
+    (hQuant : QuantityInvariant q)
+    (hEuc : ∀ R S T, q R S = true → q R T = true → q S T = true) : False := by
+  sorry
 
 -- ============================================================================
 -- Van Benthem (1984) §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
-/-- Van Benthem 1984 §3.3: Under VAR*, the Square of Opposition is completely
-    determined by inferential (relational) conditions:
-    - all: transitive + reflexive
-    - some: symmetric + quasi-reflexive
-    - no: symmetric + quasi-universal
-    - not all: almost-connected + irreflexive
+/- Van Benthem 1984 §3.3: Under VAR*, the Square of Opposition is completely
+   determined by inferential (relational) conditions:
+   - all: transitive + reflexive
+   - some: symmetric + quasi-reflexive
+   - no: symmetric + quasi-universal
+   - not all: almost-connected + irreflexive
 
-    Cross-references:
-    - `Core.Quantification.vanBenthem_refl_antisym_is_inclusion` (Thm 3.1.1)
-    - Bridge theorems in `Fragments.English.Determiners`:
-      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge` -/
-axiom aristotle_reversed_square : True
+   Cross-references:
+   - `Core.Quantification.vanBenthem_refl_antisym_is_inclusion` (Thm 3.1.1)
+   - Bridge theorems in `Fragments.English.Determiners`:
+     `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
+
+   TODO: State as a theorem characterizing the Square from inferential conditions. -/
 
 -- ============================================================================
 -- Van Benthem (1984) §5.4: Counting Quantifiers

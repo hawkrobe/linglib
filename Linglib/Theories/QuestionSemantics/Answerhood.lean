@@ -196,12 +196,20 @@ def deDictoAnswer {W E : Type*} [DecidableEq E]
     (description : W → E) (pred : E → W → Bool) : W → Bool :=
   λ w => pred (description w) w
 
-/-- Non-rigid descriptions may fail to be semantic answers (G&S 1984, p. 27). -/
+/-- Non-rigid descriptions may fail to be semantic answers (G&S 1984, p. 27).
+    A de dicto answer using a non-rigid description can hold at the index
+    but fail at another world in the same cell — witnessing that the
+    de dicto answer is not a semantic (partition-based) answer.
+    [sorry: need concrete countermodel] -/
 theorem nonrigid_may_fail_semantic {W E : Type*} [DecidableEq E]
     (domain : List E) (pred : E → W → Bool)
     (description : W → E)
     (hNonrigid : ∃ w v, description w ≠ description v) :
-    True := trivial
+    ∃ (q : GSQuestion W) (w v : W),
+      q.sameAnswer w v = true ∧
+      deDictoAnswer description pred w = true ∧
+      deDictoAnswer description pred v = false := by
+  sorry
 
 /-- Convert G&S question to Hamblin denotation. -/
 def gsToHamblin {W : Type*} (q : GSQuestion W) (worlds : List W) :

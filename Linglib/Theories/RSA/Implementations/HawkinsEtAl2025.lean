@@ -513,25 +513,26 @@ def pqDPIsSpecialCase (d : PQDecisionProblem) : DecisionProblem World Action :=
 Van Rooy (2003): "The utility value of the assertion C... is known in
 statistical decision theory as the value of sample information."
 
-PRIOR-PQ's `actionRelevance` term captures this: how much does the response
-improve the questioner's ability to choose the right action?
--/
-theorem vanRooy_grounds_action_relevance (_d : PQDecisionProblem) (_w : World)
-    (_actions : List Action) :
-    -- The dpValue function captures Van Rooy's V(D) = max_a EU(a)
-    -- This grounds PRIOR-PQ's action-relevance term
-    True := trivial
+PRIOR-PQ's `responseUtilityValue` captures this: the value change from
+hearing a response equals `dpValue` after minus `dpValue` before.
 
-/-- Van Rooy's question utility grounds PRIOR-PQ's questioner model.
+[sorry: needs proof that responseUtilityValue is non-negative when response
+is informative] -/
+theorem vanRooy_grounds_action_relevance (d : PQDecisionProblem) (w : World)
+    (r : Response) (actions : List Action) (valueBefore : ℚ) :
+    responseUtilityValue d w r actions valueBefore =
+    dpValue d w actions - valueBefore := by
+  rfl
+
+/- Van Rooy's question utility grounds PRIOR-PQ's questioner model.
 
 Van Rooy (2003) §4.1: The questioner chooses questions to maximize
 expected utility of the answer.
 
 PRIOR-PQ's Q model: Q(q|D) ∝ exp(α · EU_answer(q|D))
--/
-theorem vanRooy_grounds_questioner_model :
-    -- Different decision problems → different question preferences
-    -- This is what allows the respondent to infer goals from questions
-    True := trivial
+
+The bridge is informal: Van Rooy's continuous expected utility over
+partitions does not have a direct analogue in PRIOR-PQ's discrete
+soft-max formulation. The connection is conceptual rather than structural. -/
 
 end RSA.PriorPQ

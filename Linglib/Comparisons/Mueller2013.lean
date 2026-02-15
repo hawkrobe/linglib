@@ -251,12 +251,11 @@ and x= (looking left), which correspond directly to CCG's X/Y and X\Y.
 This formal correspondence is not yet formalized because directional MG
 is not in the codebase. -/
 
-/-- Placeholder: directional MG ≈ CCG (Stabler's =x ≈ X/Y, x= ≈ X\Y). -/
-theorem directional_mg_is_ccg : True := trivial
--- TODO: When directional MG is added, prove:
--- =x features ≈ forward slash (X/Y)
--- x= features ≈ backward slash (X\Y)
--- DMG derivation trees ≈ CCG derivation trees
+/- Placeholder: directional MG ≈ CCG (Stabler's =x ≈ X/Y, x= ≈ X\Y).
+   TODO: When directional MG is added, prove:
+   - =x features ≈ forward slash (X/Y)
+   - x= features ≈ backward slash (X\Y)
+   - DMG derivation trees ≈ CCG derivation trees -/
 
 /-! ## §7. Both Directions Right (§3)
 

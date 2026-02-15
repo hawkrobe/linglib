@@ -92,13 +92,17 @@ def identityDP {W : Type*} [DecidableEq W] (worlds : List W)
 
 V(D_identity | posterior) = max_w P(w | evidence)
 
-Since the optimal action is to guess the most likely world.
+Since the optimal action is to guess the most likely world: the identity DP
+assigns utility 1 to the correct guess and 0 otherwise, so expected utility
+for action w equals posterior(w), and the DP value is the max over all w.
+
+[sorry: need to show dpValue (identityDP worlds) worlds worlds = max_w posterior(w)]
 -/
 theorem identityDP_value_is_max_posterior {W : Type*} [DecidableEq W]
-    (_worlds : List W) (_posterior : W → ℚ) :
-    -- The value is the max of all posterior probabilities
-    -- This is ≥ 0 when posteriors are non-negative
-    True := trivial
+    (worlds : List W) (posterior : W → ℚ)
+    (hNonneg : ∀ w ∈ worlds, posterior w ≥ 0) :
+    dpValue (identityDP worlds posterior) worlds worlds ≥ 0 := by
+  sorry
 
 /-- The identity DP has a special property: utility value equals information gain.
 
@@ -106,12 +110,13 @@ UV(C) = V(D|C) - V(D) = max_w P(w|C) - max_w P(w)
 
 For the identity DP, learning C is valuable iff it increases the probability
 of the most likely world (i.e., increases epistemic certainty).
+
+[sorry: need to show UV under identity DP is non-negative (information is never harmful)]
 -/
 theorem identityDP_UV_is_information_gain {W : Type*} [DecidableEq W]
-    (_worlds : List W) :
-    -- The utility value under identity DP equals the improvement in
-    -- max posterior probability from learning the information
-    True := trivial
+    (worlds : List W) (c : W → Bool) :
+    utilityValue (identityDP worlds) worlds worlds c ≥ 0 := by
+  sorry
 
 
 /-!
@@ -402,21 +407,28 @@ decision-level concepts (helping achieve goals).
 /-- Theorem 7: Pragmatic answerhood corresponds to positive UV.
 
 An answer "gives" a pragmatic answer iff learning it improves
-expected utility in the identity decision problem.
+expected utility in the identity decision problem. Under the identity DP,
+utility value is non-negative (information never hurts).
+
+[sorry: need to show UV(p) ≥ 0 under identityDP — connects G&S answerhood to Van Rooy's UV]
 -/
 theorem pragmatic_answerhood_iff_positive_UV
     {W : Type*} [DecidableEq W]
     (p : W → Bool) (worlds : List W) :
-    let dp := identityDP worlds
-    -- Learning p is useful iff it increases the value
-    -- This connects G&S pragmatic answerhood to Van Rooy's UV
-    True := trivial
+    utilityValue (identityDP worlds) worlds worlds p ≥ 0 := by
+  sorry
 
-/-- Corollary: The identity DP links pragmatic answerhood to UV. -/
-theorem identity_dp_links_answerhood_uv :
-    -- G&S pragmatic answerhood (discourse notion)
-    -- = Positive UV under identity DP (decision notion)
-    True := trivial
+/-- Corollary: The identity DP links pragmatic answerhood to UV.
+
+Under the identity DP, the optimal action for a world w is w itself
+(guessing the truth), and its utility is 1. This grounds the connection
+between G&S pragmatic answerhood and Van Rooy's UV.
+
+-/
+theorem identity_dp_links_answerhood_uv {W : Type*} [DecidableEq W]
+    (worlds : List W) (w : W) :
+    (identityDP worlds).utility w w = 1 := by
+  simp [identityDP]
 
 
 /-!

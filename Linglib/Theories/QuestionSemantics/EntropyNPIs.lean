@@ -378,13 +378,19 @@ theorem wh_subject_is_de {W Entity : Type*}
     whQuestionEntails q' q (λ e he => hWider e (by sorry)) := by
   sorry
 
-/-- NPIs licensed in wh-subject position via standard DE reasoning -/
+/-- NPIs licensed in wh-subject position via standard DE reasoning.
+
+The NPI widens the domain (q'.domain ⊇ q.domain). In subject position this
+is downward-entailing: the wider question entails the narrower one, because
+every complete answer to the wider question determines an answer to the
+narrower question. This is witnessed by `whQuestionEntails`.
+
+[sorry: requires showing that domain inclusion implies answer determination] -/
 theorem npi_licensed_wh_subject {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain) :
-    -- NPI in subject widens domain → question with NPI entails question without
-    -- This is standard DE licensing
-    True := trivial
+    whQuestionEntails q' q hWider := by
+  sorry
 
 end BiasReduction
 

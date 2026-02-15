@@ -149,15 +149,18 @@ theorem deJure_implies_cg_agreement {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
   λ _ => rigid_isRigid e
 
-/-- Bridge to PLA/Belief `hesperusPhosphorusScenario`:
+/- Bridge to PLA/Belief `hesperusPhosphorusScenario`:
 
 Dekker's cover-relative belief framework (PLA) gives the formal mechanism
 for Frege puzzles: two concepts can co-refer at the actual world but
 diverge in belief-accessible worlds. This is exactly the scenario where
 proper names have the same referent but different characters.
 
+The bridge is informal: PLA uses cover-relative assignment functions while
+Almog's framework uses mechanism-based analysis. A formal connection would
+require unifying the representation of "mode of presentation" across
+both frameworks.
+
 See: `DynamicSemantics.PLA.hesperusPhosphorusScenario` -/
-theorem frege_puzzle_is_concept_divergence :
-    True := trivial
 
 end IntensionalSemantics.Reference.Almog2014

@@ -112,14 +112,14 @@ structure Concept (Word Entity : Type) where
   /-- The extension function: given a word, which entities satisfy it? -/
   extension : Word → Entity → Bool
 
-/--
-SDS and LU-RSA use the same structure: word-to-meaning mappings.
--/
-theorem concept_lexicon_structural_equivalence :
-    -- A Concept maps Word → Entity → Bool
-    -- A Lexicon maps Utterance → World → ℚ
-    -- These have the same shape: Word/Utterance → Domain → Value
-    True := trivial
+/- SDS and LU-RSA use the same structure: word-to-meaning mappings.
+
+A Concept maps Word → Entity → Bool, while a Lexicon maps
+Utterance → World → ℚ. These have the same shape
+(Word/Utterance → Domain → Value) but differ in the value type
+(Bool vs ℚ). The correspondence is conceptual — an SDS Concept
+can be lifted to a Lexicon via `boolToRat`, but this is a
+lossy embedding, not a structural isomorphism. -/
 
 
 /-!

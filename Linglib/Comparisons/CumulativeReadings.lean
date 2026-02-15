@@ -41,18 +41,18 @@ theorem subtype_blocks_pseudo :
     ¬ subtypeOf CardTest_type Mvar_type :=
   pseudo_cumulative_illtyped
 
-/-- Update semantics needs no subtyping, no Writer, no higher-order types:
-    the non-distributivity of M_v is automatic from the state-level definition.
-    This is a conceptual theorem — it asserts that `Mvar_u` is definable
-    purely from `StateCCP` without any continuation or post-suppositional
-    apparatus. (The type itself witnesses this.) -/
-theorem update_no_extra_stipulations : True := trivial
+/- Update semantics needs no subtyping, no Writer, no higher-order types:
+   the non-distributivity of M_v is automatic from the state-level definition.
+   `Mvar_u` is definable purely from `StateCCP` without any continuation or
+   post-suppositional apparatus. The type itself witnesses this. -/
 
 /-- Dependent indefinites (Charlow §7.2) need something beyond update semantics
     alone — either higher-order GQs or post-suppositions are needed.
-    TODO: Formalize the dependent-indefinite example. -/
-theorem dependent_indefinites_need_extra :
-    True := by  -- Placeholder for the full statement
-  trivial
+    Specifically, dependent indefinites cannot be typed as `StateCCP`.
+    [sorry: need to show dependent indefinite semantics is not expressible as StateCCP] -/
+theorem dependent_indefinites_need_extra {W E : Type*} :
+    ¬ ∀ (depIndef : DynamicSemantics.Charlow2019.StateCCP W E),
+      DynamicSemantics.Charlow2019.isDistributive depIndef := by
+  sorry
 
 end Comparisons.CumulativeReadings
