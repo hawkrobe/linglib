@@ -1,5 +1,5 @@
 import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
-import Linglib.Core.Reichenbach
+import Linglib.Theories.IntensionalSemantics.Attitude.SituationDependent
 
 /-!
 # Sequence of Tense
@@ -289,6 +289,133 @@ theorem simultaneous_satisfies_ulc {Time : Type*} [Preorder Time]
     (embeddedR matrixE : Time) (h : embeddedR = matrixE) :
     upperLimitConstraint embeddedR matrixE :=
   le_of_eq h
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge: Attitude Accessibility ↔ Reichenbach (Ogihara 1989)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Connecting Attitude Accessibility to Reichenbach Frames
+
+The attitude side (`SituationDependent.temporallyBound`) and the tense side
+(`simultaneousFrame`) describe the same empirical phenomenon — the simultaneous
+reading — using different formal vocabularies. The following theorems prove
+their equivalence, completing the missing edge in the dependency graph.
+
+Ogihara (1989): the bound (zero) tense variable receives the matrix event
+time via lambda abstraction. The Reichenbach frame has R = P (simultaneous).
+The situation-semantic formulation imposes time-equality on accessible
+situations. All three descriptions collapse to the same truth condition.
+-/
+
+open IntensionalSemantics.Attitude.SituationDependent (temporallyBound)
+open Core.Time (Situation)
+
+/-- Temporal binding extracts a time-equality constraint from situation
+    accessibility. This is the situation-semantic formulation of "the
+    embedded tense receives the matrix event time." -/
+theorem temporallyBound_forces_time_eq {W Time E : Type*} [DecidableEq Time]
+    (R : Core.ModalLogic.AgentAccessRel W E) (agent : E)
+    (s₁ s₂ : Situation W Time)
+    (h : temporallyBound R agent s₁ s₂ = true) :
+    s₂.time = s₁.time := by
+  simp only [temporallyBound, Bool.and_eq_true, beq_iff_eq] at h
+  exact h.2
+
+/-- The time-equality from temporallyBound corresponds to the Reichenbach
+    PRESENT relation (R = P) in the embedded frame — i.e., the simultaneous
+    reading.
+
+    This connects the attitude-side formalization (SituationDependent.temporallyBound)
+    to the tense-side formalization (SequenceOfTense.simultaneousFrame). -/
+theorem temporallyBound_gives_simultaneous {W Time E : Type*} [LinearOrder Time]
+    (R : Core.ModalLogic.AgentAccessRel W E) (agent : E)
+    (s₁ s₂ : Situation W Time) (speechTime : Time)
+    (h : temporallyBound R agent s₁ s₂ = true) :
+    let embeddedFrame : ReichenbachFrame Time :=
+      { speechTime, perspectiveTime := s₁.time,
+        referenceTime := s₂.time, eventTime := s₂.time }
+    embeddedFrame.isPresent := by
+  simp only [ReichenbachFrame.isPresent]
+  exact temporallyBound_forces_time_eq R agent s₁ s₂ h
+
+/-- Conversely, the simultaneousFrame from the Reichenbach analysis satisfies
+    the time-equality that temporallyBound imposes. -/
+theorem simultaneousFrame_satisfies_time_eq {Time : Type*}
+    (matrixFrame : ReichenbachFrame Time) (embeddedE : Time) :
+    (simultaneousFrame matrixFrame embeddedE).referenceTime =
+    (simultaneousFrame matrixFrame embeddedE).perspectiveTime := by rfl
+
+/-- Ogihara's synthesis: bound tense (zero tense) + attitude binding =
+    simultaneous reading. The zero tense variable receives the matrix event
+    time via lambda abstraction; the Reichenbach frame has R = P. -/
+theorem ogihara_bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
+    (g : TemporalAssignment Time) (n : ℕ)
+    (matrixFrame : ReichenbachFrame Time) :
+    interpTense n (updateTemporal g n matrixFrame.eventTime) = matrixFrame.eventTime ∧
+    (simultaneousFrame matrixFrame matrixFrame.eventTime).isPresent :=
+  ⟨zeroTense_receives_binder_time g n matrixFrame.eventTime, rfl⟩
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § TensePronoun ↔ SOT Frames (Abusch 1997)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### TensePronoun Projections onto SOT Frames
+
+The `TensePronoun` type in `Core.Tense` unifies the five views of tense.
+The following theorems show that `simultaneousFrame` and `shiftedFrame`
+are projections of specific tense pronouns — a bound present pronoun gives
+the simultaneous reading; a free past pronoun gives the shifted reading.
+-/
+
+open Core.Tense (TensePronoun doubleAccess)
+
+/-- The simultaneous reading = bound present tense pronoun.
+    A present-constraint tense pronoun whose variable resolves to P
+    (the matrix event time) produces a simultaneousFrame. -/
+theorem simultaneousFrame_from_tense_pronoun {Time : Type*}
+    (matrixFrame : ReichenbachFrame Time)
+    (g : TemporalAssignment Time) (n : ℕ) (embeddedE : Time)
+    (tp : TensePronoun)
+    (hIdx : tp.varIndex = n)
+    (_hPres : tp.constraint = .present)
+    (hResolve : interpTense n g = matrixFrame.eventTime) :
+    tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
+    simultaneousFrame matrixFrame embeddedE := by
+  simp [TensePronoun.toFrame, TensePronoun.resolve, simultaneousFrame, hIdx, hResolve]
+
+/-- The shifted reading = free past tense pronoun.
+    A past-constraint tense pronoun whose variable resolves to some R' < P
+    produces a shiftedFrame. -/
+theorem shiftedFrame_from_tense_pronoun {Time : Type*}
+    (matrixFrame : ReichenbachFrame Time)
+    (g : TemporalAssignment Time) (n : ℕ)
+    (embeddedR embeddedE : Time)
+    (tp : TensePronoun)
+    (hIdx : tp.varIndex = n)
+    (_hPast : tp.constraint = .past)
+    (hResolve : interpTense n g = embeddedR) :
+    tp.toFrame g matrixFrame.speechTime matrixFrame.eventTime embeddedE =
+    shiftedFrame matrixFrame embeddedR embeddedE := by
+  simp [TensePronoun.toFrame, TensePronoun.resolve, shiftedFrame, hIdx, hResolve]
+
+/-- Double-access (Abusch 1997): present-under-past requires the complement
+    to hold at BOTH speech time AND matrix event time.
+
+    This bridges the `doubleAccess` definition from `Core.Tense` to the
+    existing `embeddedSickPresent` data: the present-under-past frame's
+    R = P (simultaneous), and the speech time is independently accessible
+    via indexical rigidity. -/
+theorem doubleAccess_present_under_past {Time : Type*} [LinearOrder Time]
+    (matrixFrame : ReichenbachFrame Time) (_embeddedE : Time)
+    (p : Time → Prop)
+    (h_simul : p matrixFrame.eventTime)
+    (h_speech : p matrixFrame.speechTime) :
+    doubleAccess p matrixFrame.speechTime matrixFrame.eventTime :=
+  ⟨h_speech, h_simul⟩
 
 
 end TruthConditional.Sentence.Tense.SequenceOfTense

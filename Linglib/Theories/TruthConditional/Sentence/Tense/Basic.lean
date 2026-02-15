@@ -33,53 +33,19 @@ they introduce or retrieve temporal reference points.
 - Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
 -/
 
-import Linglib.Core.Time
-import Linglib.Core.Reichenbach
+import Linglib.Core.Tense
 
 namespace TruthConditional.Sentence.Tense
 
 open Core.Time
 open Core.Reichenbach
 
+export Core.Tense (GramTense SOTParameter TenseInterpretation SitProp
+  TemporalAssignment interpTense updateTemporal temporalLambdaAbs
+  situationToTemporal situation_temporal_commutes
+  zeroTense_receives_binder_time bound_is_sot_mechanism
+  TensePronoun doubleAccess)
 
-/--
-Grammatical tense: a temporal relation imposed by tense morphology.
-
-Following the Reichenbach/Klein tradition:
-- PAST: reference time before speech time
-- PRESENT: reference time overlaps speech time
-- FUTURE: reference time after speech time
--/
-inductive GramTense where
-  | past
-  | present
-  | future
-  deriving DecidableEq, Repr, BEq, Inhabited
-
-namespace GramTense
-
-/-- Convert tense to its corresponding temporal relation -/
-def toRelation : GramTense → TemporalRelation
-  | .past => .before
-  | .present => .overlapping
-  | .future => .after
-
-/-- The inverse relation (for "backwards" reference) -/
-def inverseRelation : GramTense → TemporalRelation
-  | .past => .after
-  | .present => .overlapping
-  | .future => .before
-
-end GramTense
-
-
-/--
-Type of situation-level propositions.
-
-A temporal predicate takes a situation and returns truth value.
-This is what tense operators modify.
--/
-abbrev SitProp (W Time : Type*) := Situation W Time → Prop
 
 /--
 Type of tense operators.
@@ -196,32 +162,18 @@ def composeTense : GramTense → GramTense → GramTense
   | .future, .present => .future
   | .future, .future => .future
 
-/--
-Sequence of Tenses (SOT) parameter.
 
-Languages differ in how embedded tense interacts with matrix tense:
-- **SOT languages** (English): Embedded tense is relative to matrix
-- **Non-SOT languages** (Japanese): Embedded tense is absolute
--/
-inductive SOTParameter where
-  | relative  -- English: embedded tense relative to matrix
-  | absolute  -- Japanese: embedded tense absolute (to utterance time)
-  deriving DecidableEq, Repr, BEq
+-- ════════════════════════════════════════════════════════════════
+-- § applyTense ↔ GramTense.constrains Bridge
+-- ════════════════════════════════════════════════════════════════
 
-/-- Tense interpretation modes (Partee 1973, Kratzer 1998).
-    Tenses parallel pronouns: indexical (deictic), anaphoric
-    (discourse-bound), and bound variable (zero tense). -/
-inductive TenseInterpretation where
-  | indexical   -- Deictic: anchored to utterance time (Partee's "I")
-  | anaphoric   -- Discourse-bound: picks up salient time (Partee's "he/she")
-  | bound       -- Zero tense: locally bound by quantifier/attitude (Kratzer's ∅_n)
-  deriving DecidableEq, Repr, BEq
-
-/-- Bound (zero) tense is the SOT mechanism: it must be locally bound,
-    yielding the simultaneous reading without a deletion rule. -/
-theorem bound_is_sot_mechanism :
-    TenseInterpretation.bound ≠ .indexical ∧
-    TenseInterpretation.bound ≠ .anaphoric := ⟨nofun, nofun⟩
+/-- `applyTense` is the Reichenbach-frame projection of `GramTense.constrains`:
+    applying a tense to a frame is equivalent to the tense's temporal constraint
+    on the frame's R and P. -/
+theorem applyTense_eq_constrains {Time : Type*} [LinearOrder Time]
+    (t : GramTense) (f : ReichenbachFrame Time) :
+    applyTense t f ↔ t.constrains f.referenceTime f.perspectiveTime := by
+  cases t <;> rfl
 
 
 /--

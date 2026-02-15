@@ -43,6 +43,7 @@ import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
 import Linglib.Core.Time
 import Linglib.Core.Reichenbach
+import Linglib.Core.Tense
 import Linglib.Core.Context
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
@@ -365,6 +366,7 @@ import Linglib.Comparisons.CausativeAlternation
 import Linglib.Comparisons.BeforeAfter
 import Linglib.Comparisons.CumulativeReadings
 import Linglib.Comparisons.TenseModalEvidentiality
+import Linglib.Comparisons.TensesAndPronouns
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
