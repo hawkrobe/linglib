@@ -45,6 +45,7 @@ import Linglib.Theories.IntensionalSemantics.Mood.Basic
 
 namespace DynamicSemantics.IntensionalCDRT.Situations
 
+open Core.Time
 open TruthConditional.Core.Time
 open IntensionalSemantics.Mood
 open DynamicSemantics.IntensionalCDRT

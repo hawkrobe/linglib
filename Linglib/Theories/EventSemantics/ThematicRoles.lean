@@ -26,7 +26,7 @@ import Linglib.Core.Basic
 namespace EventSemantics.ThematicRoles
 
 open EventSemantics
-open TruthConditional.Core.Time
+open Core.Time
 
 -- ════════════════════════════════════════════════════
 -- § 1. Thematic Relations

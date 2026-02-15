@@ -30,8 +30,8 @@ as intervals over ℕ, then verifies that `Anscombe.before`/`after` and
 
 namespace Phenomena.TemporalConnectives.Examples
 
-open TruthConditional.Core.Time
-open TruthConditional.Core.Time.Interval
+open Core.Time
+open Core.Time.Interval
 open TruthConditional.Sentence.Tense.TemporalConnectives
 
 -- ============================================================================

@@ -42,7 +42,7 @@ open EventSemantics
 open EventSemantics.ThematicRoles
 open NadathurLauer2020.CoerciveImplication
 open NadathurLauer2020.Builder
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 open Phenomena.Aspect.Diagnostics
 

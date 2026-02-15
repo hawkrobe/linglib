@@ -45,7 +45,7 @@ import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
 
 namespace TruthConditional.Sentence.TenseAspectComposition
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.ViewpointAspect
 
 variable {W Time : Type*} [LinearOrder Time]

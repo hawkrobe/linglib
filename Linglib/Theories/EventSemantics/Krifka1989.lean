@@ -35,7 +35,7 @@ open EventSemantics
 open EventSemantics.Mereology
 open EventSemantics.Krifka1998
 open EventSemantics.StratifiedReference
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 
 -- ════════════════════════════════════════════════════

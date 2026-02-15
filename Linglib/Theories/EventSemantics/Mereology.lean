@@ -31,7 +31,7 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 namespace EventSemantics.Mereology
 
 open EventSemantics
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 open _root_.Mereology
 

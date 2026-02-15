@@ -61,7 +61,7 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 
 namespace TruthConditional.Sentence.MaximalInformativity
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.ViewpointAspect
 open TruthConditional.Verb.Aspect
 

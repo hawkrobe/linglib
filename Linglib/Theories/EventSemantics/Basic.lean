@@ -26,13 +26,13 @@ later module.
 -/
 
 import Mathlib.Order.Basic
-import Linglib.Theories.TruthConditional.Core.Time
+import Linglib.Core.Time
 import Linglib.Theories.TruthConditional.Verb.Aspect
 import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
 
 namespace EventSemantics
 
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 open TruthConditional.Verb.ViewpointAspect
 

@@ -46,7 +46,7 @@ namespace EventSemantics.Krifka1998
 
 open EventSemantics
 open EventSemantics.Mereology
-open TruthConditional.Core.Time
+open Core.Time
 open TruthConditional.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
