@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.213.20] - 2026-02-15
+
+### Added
+- **Core/Tense.lean**: Unified tense pronoun architecture (Abusch 1997) — `TensePronoun` type unifying Priorean, Reichenbach, referential, Kaplan indexical, and attitude-binding views of tense; `GramTense.constrains` as the shared temporal ordering kernel; `doubleAccess` for present-under-past; bridge theorems (`bound_resolve_eq_binder`, `bound_present_simultaneous`, `indexical_present_at_speech`)
+- **Tense/Basic.lean**: `applyTense_eq_constrains` bridge connecting Reichenbach `applyTense` to `GramTense.constrains`
+- **SequenceOfTense.lean**: `TensePronoun` ↔ SOT frame bridges (`simultaneousFrame_from_tense_pronoun`, `shiftedFrame_from_tense_pronoun`, `doubleAccess_present_under_past`)
+
+### Changed
+- **Core/Tense.lean**: `GramTense`, `SOTParameter`, `TenseInterpretation`, `TemporalAssignment`, `interpTense`, `updateTemporal`, `temporalLambdaAbs`, `situationToTemporal`, `SitProp`, `bound_is_sot_mechanism`, `zeroTense_receives_binder_time` moved from `Tense/Basic.lean` to `Core/Tense.lean` — shared infrastructure now accessible to both `TruthConditional/` and `IntensionalSemantics/` without cross-tree imports
+- **Tense/Basic.lean**: Now imports `Core.Tense` and re-exports all moved names via `export` — zero downstream breakage
+- **TensesAndPronouns.lean**: Docstring updated to reference `TensePronoun` as the unifying type
+
+## [0.213.19] - 2026-02-15
+
+### Added
+- **Tense/Basic.lean**: `zeroTense_receives_binder_time` — Ogihara's zero tense mechanism: bound tense variable receives matrix event time
+- **SequenceOfTense.lean**: Ogihara bridge theorems (`temporallyBound_forces_time_eq`, `temporallyBound_gives_simultaneous`, `ogihara_bound_tense_simultaneous`) connecting attitude accessibility to Reichenbach frames
+- **TensesAndPronouns.lean**: § 7 Referential↔Priorean bridge (`referential_past_decomposition`, `bound_tense_receives_attitude_time`)
+
+### Changed
+- **Tense/Basic.lean**: Temporal variable infrastructure (`TemporalAssignment`, `interpTense`, `temporalLambdaAbs`, `updateTemporal`, `situationToTemporal`) moved here from Comparisons/TensesAndPronouns — these are tense theory definitions, not cross-theory comparisons
+- **TensesAndPronouns.lean**: Slimmed to genuine cross-theory observations (Kaplan, Elbourne, Partee-vs-Prior); now uses Tense/Basic exports
+- **SequenceOfTense.lean**: Added `SituationDependent` import for attitude↔tense bridge
+
+## [0.213.18] - 2026-02-15
+
+### Added
+- **Core/Intension.lean**: `ReferentialMode` (indexical/anaphoric/bound) — Partee's three-way classification as theory-neutral infrastructure; `VarAssignment`, `updateVar`, `lookupVar`, `varLambdaAbs` — generic variable assignment algebra
+- **Elbourne.lean**: `SitVarStatus.toReferentialModes`, `ReferentialMode.toSitVarStatus` bridge with round-trip theorem
+
+### Changed
+- **Tense/Basic.lean**: `TenseInterpretation` is now an alias for `Core.ReferentialMode.ReferentialMode` (same constructors, zero downstream breakage); added `SitProp` docstring noting Bool counterpart
+- **TensesAndPronouns.lean**: `TemporalAssignment`, `updateTemporal`, `interpTense`, `temporalLambdaAbs` now specialize `Core.VarAssignment` generics; `toSitVarStatus` uses `ReferentialMode.isFree`
+- **SituationDependent.lean**: Added `SitProp` docstring noting Prop counterpart
+
+## [0.213.17] - 2026-02-15
+
+### Added
+- **Comparisons/TensesAndPronouns.lean**: Partee (1973) structural analogy — temporal assignment functions, `interpTense`, `temporalLambdaAbs`, bridge to Kaplan's `opNow` and Elbourne's `SitVarStatus`, Partee vs Prior tension
+
 ## [0.213.16] - 2026-02-15
 
 ### Added
