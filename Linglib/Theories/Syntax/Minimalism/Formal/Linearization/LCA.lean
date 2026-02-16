@@ -93,8 +93,8 @@ theorem terminalNodes_sub_subterms {so t : SyntacticObject}
 /-- The root is always in its own subterms. -/
 theorem self_mem_subterms (so : SyntacticObject) : so ∈ subterms so := by
   cases so with
-  | leaf _ => exact List.mem_cons_self _ _
-  | node _ _ => exact List.mem_cons_self _ _
+  | leaf _ => exact List.mem_cons.mpr (Or.inl rfl)
+  | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
 
 -- ============================================================================
 -- Part 2: Boolean Containment (for decidability)
@@ -136,8 +136,8 @@ theorem contains_implies_containsB {x y : SyntacticObject}
     | node a b =>
       simp only [containsB, Bool.or_eq_true, beq_iff_eq]
       rcases himm with rfl | rfl
-      · exact Or.inr (Or.inl ih)
-      · exact Or.inr (Or.inr ih)
+      · exact Or.inl (Or.inr ih)
+      · exact Or.inr ih
 
 /-- Boolean and propositional containment are equivalent. -/
 theorem containsB_iff {x y : SyntacticObject} :
@@ -213,6 +213,12 @@ def linearize : SyntacticObject → List LIToken
 -- Part 5: Core Theorems — Specifier Precedes Head and Complement
 -- ============================================================================
 
+/-- Subterms of a three-leaf tree `node (leaf s) (node (leaf h) (leaf c))`. -/
+private theorem subterms_shc (s h c : LIToken) :
+    subterms (.node (.leaf s) (.node (.leaf h) (.leaf c))) =
+    [.node (.leaf s) (.node (.leaf h) (.leaf c)),
+     .leaf s, .node (.leaf h) (.leaf c), .leaf h, .leaf c] := rfl
+
 section SpecPrecedesHC
 
 variable (spec head compl : SyntacticObject)
@@ -240,64 +246,108 @@ theorem spec_cCommandsIn_compl
   ⟨.node head compl, spec_sisters_hc spec head compl hne_spec_hc,
    Or.inr (contains.imm _ _ (Or.inr rfl))⟩
 
-/-- In `root = node spec (node head compl)` where `spec` is a leaf,
+/-- In `root = node spec (node head compl)` where all three are leaves,
     `head` does NOT c-command `spec` within `root`.
 
-    `head`'s only sister within `root` is `compl` (co-daughters of
-    `node head compl`). For `head` to c-command `spec`, we'd need
-    `containsOrEq compl spec`, i.e., `compl = spec` or `compl` contains
-    `spec`. Since `spec` is a leaf distinct from `compl`, and leaves
-    cannot be contained in another leaf distinct from them, this fails
-    — provided `spec` is not a subterm of `compl`.
-
-    TODO: Complete the proof by enumerating all possible parents of `head`
-    in the tree and showing that none of their other daughters contain
-    `spec`. The key lemma needed: if `spec` is a subterm of one branch
-    and `head` is a subterm of a disjoint branch, then no sister of
-    `head` within the tree can contain `spec`. -/
+    Proof: enumerate all subterms of root. The only node that immediately
+    contains `head` is `node head compl`, whose other daughter is `compl`.
+    Since `compl ≠ spec` and leaves contain nothing, `containsOrEq compl spec`
+    fails. -/
 theorem head_not_cCommandsIn_spec
     (hspec_leaf : spec.isLeaf = true)
+    (hhead_leaf : head.isLeaf = true)
+    (hcompl_leaf : compl.isLeaf = true)
     (hne_sh : spec ≠ head)
     (hne_sc : spec ≠ compl)
     (hne_hc : head ≠ compl) :
     ¬cCommandsIn (.node spec (.node head compl)) head spec := by
-  sorry
+  obtain ⟨stok, rfl⟩ : ∃ t, spec = .leaf t := by
+    cases spec with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hspec_leaf
+  obtain ⟨htok, rfl⟩ : ∃ t, head = .leaf t := by
+    cases head with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hhead_leaf
+  obtain ⟨ctok, rfl⟩ : ∃ t, compl = .leaf t := by
+    cases compl with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hcompl_leaf
+  intro ⟨z, ⟨w, hw_mem, hw_h, hw_z, hne_hz⟩, hz_s⟩
+  rw [subterms_shc] at hw_mem
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hw_mem
+  rcases hw_mem with rfl | rfl | rfl | rfl | rfl
+  · -- w = root: head can't be a daughter of root
+    rcases hw_h with h | h
+    · exact hne_sh h.symm
+    · exact SyntacticObject.noConfusion h
+  · exact hw_h -- w = leaf stok: leaves don't immediately contain
+  · -- w = node (leaf htok) (leaf ctok): z must be the other daughter
+    rcases hw_z with rfl | rfl
+    · exact hne_hz rfl
+    · rcases hz_s with h | h
+      · exact hne_sc h.symm
+      · exact leaf_contains_nothing ctok _ h
+  · exact hw_h -- w = leaf htok
+  · exact hw_h -- w = leaf ctok
 
 /-- `spec` asymmetrically c-commands `head` within `root`. -/
 theorem spec_asymCCommandsIn_head
     (hspec_leaf : spec.isLeaf = true)
+    (hhead_leaf : head.isLeaf = true)
+    (hcompl_leaf : compl.isLeaf = true)
     (hne_sh : spec ≠ head)
     (hne_sc : spec ≠ compl)
     (hne_hc : head ≠ compl)
     (hne_spec_hc : spec ≠ .node head compl) :
     asymCCommandsIn (.node spec (.node head compl)) spec head :=
   ⟨spec_cCommandsIn_head spec head compl hne_spec_hc,
-   head_not_cCommandsIn_spec spec head compl hspec_leaf hne_sh hne_sc hne_hc⟩
+   head_not_cCommandsIn_spec spec head compl hspec_leaf hhead_leaf hcompl_leaf hne_sh hne_sc hne_hc⟩
 
-/-- `compl` does not c-command `spec` within `root` (parallel argument). -/
+/-- `compl` does not c-command `spec` within `root` (parallel to head). -/
 theorem compl_not_cCommandsIn_spec
     (hspec_leaf : spec.isLeaf = true)
+    (hhead_leaf : head.isLeaf = true)
+    (hcompl_leaf : compl.isLeaf = true)
     (hne_sh : spec ≠ head)
     (hne_sc : spec ≠ compl)
     (hne_hc : head ≠ compl) :
     ¬cCommandsIn (.node spec (.node head compl)) compl spec := by
-  sorry
+  obtain ⟨stok, rfl⟩ : ∃ t, spec = .leaf t := by
+    cases spec with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hspec_leaf
+  obtain ⟨htok, rfl⟩ : ∃ t, head = .leaf t := by
+    cases head with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hhead_leaf
+  obtain ⟨ctok, rfl⟩ : ∃ t, compl = .leaf t := by
+    cases compl with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hcompl_leaf
+  intro ⟨z, ⟨w, hw_mem, hw_c, hw_z, hne_cz⟩, hz_s⟩
+  rw [subterms_shc] at hw_mem
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hw_mem
+  rcases hw_mem with rfl | rfl | rfl | rfl | rfl
+  · -- w = root
+    rcases hw_c with h | h
+    · exact hne_sc h.symm
+    · exact SyntacticObject.noConfusion h
+  · exact hw_c
+  · -- w = node (leaf htok) (leaf ctok): z must be the other daughter
+    rcases hw_z with rfl | rfl
+    · rcases hz_s with h | h
+      · exact hne_sh h.symm
+      · exact leaf_contains_nothing htok _ h
+    · exact hne_cz rfl
+  · exact hw_c
+  · exact hw_c
 
 /-- `spec` asymmetrically c-commands `compl` within `root`. -/
 theorem spec_asymCCommandsIn_compl
     (hspec_leaf : spec.isLeaf = true)
+    (hhead_leaf : head.isLeaf = true)
+    (hcompl_leaf : compl.isLeaf = true)
     (hne_sh : spec ≠ head)
     (hne_sc : spec ≠ compl)
     (hne_hc : head ≠ compl)
     (hne_spec_hc : spec ≠ .node head compl) :
     asymCCommandsIn (.node spec (.node head compl)) spec compl :=
   ⟨spec_cCommandsIn_compl spec head compl hne_spec_hc,
-   compl_not_cCommandsIn_spec spec head compl hspec_leaf hne_sh hne_sc hne_hc⟩
+   compl_not_cCommandsIn_spec spec head compl hspec_leaf hhead_leaf hcompl_leaf hne_sh hne_sc hne_hc⟩
 
 /-- A leaf is in its own dominated terminals. -/
 private theorem leaf_mem_dominatedTerminals (tok : LIToken) :
     SyntacticObject.leaf tok ∈ dominatedTerminals (.leaf tok) :=
-  List.mem_cons_self _ _
+  List.mem_cons.mpr (Or.inl rfl)
 
 /-- **Specifier precedes head and complement under the LCA.**
     For `root = node spec (node head compl)` where all three are leaves,
@@ -331,7 +381,7 @@ theorem spec_precedes_head_complement
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
         (Or.inl (self_mem_subterms _))))))))
-  · exact spec_asymCCommandsIn_head _ _ _ rfl hne_sh hne_sc hne_hc hne_spec_hc
+  · exact spec_asymCCommandsIn_head _ _ _ rfl rfl rfl hne_sh hne_sc hne_hc hne_spec_hc
   · exact leaf_mem_dominatedTerminals stok
   · exact leaf_mem_dominatedTerminals htok
   -- spec precedes compl: membership in subterms
@@ -340,7 +390,7 @@ theorem spec_precedes_head_complement
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
         (Or.inr (self_mem_subterms _))))))))
-  · exact spec_asymCCommandsIn_compl _ _ _ rfl hne_sh hne_sc hne_hc hne_spec_hc
+  · exact spec_asymCCommandsIn_compl _ _ _ rfl rfl rfl hne_sh hne_sc hne_hc hne_spec_hc
   · exact leaf_mem_dominatedTerminals stok
   · exact leaf_mem_dominatedTerminals ctok
 
@@ -367,23 +417,66 @@ theorem head_cCommandsIn_b (head a b : SyntacticObject)
    Or.inr (contains.imm _ _ (Or.inr rfl))⟩
 
 /-- `a` does not c-command `head` within `root = node head (node a b)`.
-
-    TODO: Proof requires showing that `a`'s only sister in the tree is
-    `b`, and `containsOrEq b head` fails. -/
+    The only node containing `a` as a daughter is `node a b`, whose other
+    daughter `b` neither equals nor contains `head`. -/
 theorem a_not_cCommandsIn_head (head a b : SyntacticObject)
     (hhead_leaf : head.isLeaf = true)
+    (ha_leaf : a.isLeaf = true)
+    (hb_leaf : b.isLeaf = true)
     (hne_ha : head ≠ a) (hne_hb : head ≠ b)
     (hne_ab : a ≠ b) :
     ¬cCommandsIn (.node head (.node a b)) a head := by
-  sorry
+  obtain ⟨htok, rfl⟩ : ∃ t, head = .leaf t := by
+    cases head with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hhead_leaf
+  obtain ⟨atok, rfl⟩ : ∃ t, a = .leaf t := by
+    cases a with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at ha_leaf
+  obtain ⟨btok, rfl⟩ : ∃ t, b = .leaf t := by
+    cases b with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hb_leaf
+  intro ⟨z, ⟨w, hw_mem, hw_a, hw_z, hne_az⟩, hz_h⟩
+  rw [subterms_shc] at hw_mem
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hw_mem
+  rcases hw_mem with rfl | rfl | rfl | rfl | rfl
+  · rcases hw_a with h | h
+    · exact hne_ha h.symm
+    · exact SyntacticObject.noConfusion h
+  · exact hw_a
+  · rcases hw_z with rfl | rfl
+    · exact hne_az rfl
+    · rcases hz_h with h | h
+      · exact hne_hb h.symm
+      · exact leaf_contains_nothing btok _ h
+  · exact hw_a
+  · exact hw_a
 
-/-- `b` does not c-command `head` within `root` (parallel argument). -/
+/-- `b` does not c-command `head` within `root` (parallel to `a`). -/
 theorem b_not_cCommandsIn_head (head a b : SyntacticObject)
     (hhead_leaf : head.isLeaf = true)
+    (ha_leaf : a.isLeaf = true)
+    (hb_leaf : b.isLeaf = true)
     (hne_ha : head ≠ a) (hne_hb : head ≠ b)
     (hne_ab : a ≠ b) :
     ¬cCommandsIn (.node head (.node a b)) b head := by
-  sorry
+  obtain ⟨htok, rfl⟩ : ∃ t, head = .leaf t := by
+    cases head with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hhead_leaf
+  obtain ⟨atok, rfl⟩ : ∃ t, a = .leaf t := by
+    cases a with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at ha_leaf
+  obtain ⟨btok, rfl⟩ : ∃ t, b = .leaf t := by
+    cases b with | leaf t => exact ⟨t, rfl⟩ | node _ _ => simp [isLeaf] at hb_leaf
+  intro ⟨z, ⟨w, hw_mem, hw_b, hw_z, hne_bz⟩, hz_h⟩
+  rw [subterms_shc] at hw_mem
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hw_mem
+  rcases hw_mem with rfl | rfl | rfl | rfl | rfl
+  · rcases hw_b with h | h
+    · exact hne_hb h.symm
+    · exact SyntacticObject.noConfusion h
+  · exact hw_b
+  · rcases hw_z with rfl | rfl
+    · rcases hz_h with h | h
+      · exact hne_ha h.symm
+      · exact leaf_contains_nothing atok _ h
+    · exact hne_bz rfl
+  · exact hw_b
+  · exact hw_b
 
 /-- **Head precedes complement internals.** In `root = node head (node a b)`
     where all three are leaves, `head`'s terminal precedes the terminals of
@@ -415,7 +508,7 @@ theorem head_precedes_complement
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
         (Or.inl (self_mem_subterms _))))))))
   · exact ⟨head_cCommandsIn_a _ _ _ hne_h_ab,
-           a_not_cCommandsIn_head _ _ _ rfl hne_ha hne_hb hne_ab⟩
+           a_not_cCommandsIn_head _ _ _ rfl rfl rfl hne_ha hne_hb hne_ab⟩
   · exact leaf_mem_dominatedTerminals htok
   · exact leaf_mem_dominatedTerminals atok
   -- head precedes b
@@ -425,7 +518,7 @@ theorem head_precedes_complement
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
         (Or.inr (self_mem_subterms _))))))))
   · exact ⟨head_cCommandsIn_b _ _ _ hne_h_ab,
-           b_not_cCommandsIn_head _ _ _ rfl hne_ha hne_hb hne_ab⟩
+           b_not_cCommandsIn_head _ _ _ rfl rfl rfl hne_ha hne_hb hne_ab⟩
   · exact leaf_mem_dominatedTerminals htok
   · exact leaf_mem_dominatedTerminals btok
 
@@ -487,15 +580,14 @@ theorem adjunction_left_only
     heads project, so the complement of a head is always `node X Y`, not
     a bare leaf. -/
 theorem sister_terminals_unordered (a b : LIToken) (hne : a ≠ b) :
-    let root := SyntacticObject.node (.leaf a) (.leaf b)
-    ¬asymCCommandsIn root (.leaf a) (.leaf b) := by
+    ¬asymCCommandsIn (.node (.leaf a) (.leaf b)) (.leaf a) (.leaf b) := by
   intro ⟨_, hno⟩
   apply hno
-  exact ⟨.leaf a,
-    ⟨.node (.leaf a) (.leaf b), self_mem_subterms _,
-     Or.inr rfl, Or.inl rfl,
-     fun h => hne (by cases h; rfl)⟩,
-    Or.inl rfl⟩
+  refine ⟨.leaf a, ?_, Or.inl rfl⟩
+  refine ⟨.node (.leaf a) (.leaf b), self_mem_subterms _, Or.inr rfl, Or.inl rfl, ?_⟩
+  intro h
+  injection h with h'
+  exact hne h'.symm
 
 -- ============================================================================
 -- Part 9: Concrete Examples

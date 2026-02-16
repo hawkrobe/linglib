@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.215.1] - 2026-02-16
+
+### Added
+- **Theories/Syntax/Minimalism/Formal/Linearization/LCA.lean**: Kayne (1994) Linear Correspondence Axiom — `subterms`, `terminalNodes`, `dominatedTerminals` (Kayne's d function), tree-relative `areSistersIn`/`cCommandsIn`/`asymCCommandsIn` (needed because Basic.lean's tree-free `areSisters` makes asymmetric c-command trivially false), `lcaPrecedesIn`, `SatisfiesLCAIn`, `linearize`; `containsB`/`containsB_iff` (boolean decidable containment); theorems: `spec_precedes_head_complement` (S-H-C order), `head_precedes_complement` (head before complement internals), `no_right_specifier` (right specifiers ruled out), `adjunction_left_only` (head adjunction is left-adjunction), `sister_terminals_unordered` (sister-terminal limitation); concrete examples with `native_decide`
+
 ## [0.215.0] - 2026-02-16
 
 ### Changed
