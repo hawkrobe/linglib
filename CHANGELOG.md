@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.217.2] - 2026-02-16
+
+### Changed
+- **Theories/Pragmatics/RSA/Core/Convergence.lean**: Eliminated all 5 axioms. Replaced `rsa_speaker_maximizes_G_α` and `rsa_listener_maximizes_G_α` with proved theorems using Gibbs Variational Principle and Bayesian optimality from GibbsVariational.lean. KKT axioms (`kkt_sufficiency_for_concave_on_simplex`, `kkt_sufficiency_for_concave_on_positive`) deleted — bypassed entirely. `G_α_bounded` axiom converted to sorry with proof sketch. Fixed listener proof to handle zero-prior meanings via case splitting.
+- **Theories/Pragmatics/RSA/Core/GibbsVariational.lean**: Cleaned up unused variable warnings
+
 ## [0.217.0] - 2026-02-16
 
 ### Changed

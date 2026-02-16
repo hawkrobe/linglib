@@ -1,7 +1,7 @@
 # Sorry & Axiom Audit — Strategic Analysis
 
-**Generated**: 2026-02-14
-**Counts**: 278 sorry occurrences across 89 files; 21 axioms across 6 files
+**Generated**: 2026-02-14 (updated 2026-02-16)
+**Counts**: 278 sorry occurrences across 89 files; 11 axioms across 4 files
 
 This document analyzes every `sorry` and `axiom` in linglib by *strategic role* —
 what does each incomplete proof do for the project, and what would completing it
@@ -35,33 +35,30 @@ Each sorry also gets a **difficulty** rating:
 
 ---
 
-## §1: Axioms (21 across 6 files)
+## §1: Axioms (11 across 4 files)
 
 Axioms are the most important to audit — they are *assumed truths* that could
 silently make the entire system inconsistent if wrong.
 
-### 1.1 RSA Convergence (5 axioms) — `Theories/RSA/Core/Convergence.lean`
+### 1.1 RSA Convergence — `Theories/RSA/Core/Convergence.lean` ✅ RESOLVED
 
-These are the mathematical backbone of the RSA convergence proof (Zaslavsky et al. 2020).
+All 5 axioms eliminated:
 
-| Axiom | Type | Role | Difficulty | Notes |
-|-------|------|------|------------|-------|
-| `kkt_sufficiency_for_concave_on_simplex` | KKT optimality on simplex | Load-bearing | C | Standard convex optimization result; provable with enough Mathlib |
-| `kkt_sufficiency_for_concave_on_positive` | KKT on positive orthant | Load-bearing | C | Same, different domain |
-| `rsa_speaker_maximizes_G_α` | Speaker update is optimal | Load-bearing | C | Follows from KKT + concavity of G_α |
-| `rsa_listener_maximizes_G_α` | Listener update is optimal | Load-bearing | C | Same pattern |
-| `G_α_bounded` | G_α has an upper bound | Load-bearing | B | Entropy is bounded by log|U|; should be provable |
+| Former Axiom | Resolution |
+|-------|------------|
+| `kkt_sufficiency_for_concave_on_simplex` | **Deleted** — bypassed by Gibbs Variational Principle |
+| `kkt_sufficiency_for_concave_on_positive` | **Deleted** — bypassed by Bayesian optimality |
+| `rsa_speaker_maximizes_G_α` | **Proved** via `gibbs_variational` (Softmax/Basic.lean) |
+| `rsa_listener_maximizes_G_α` | **Proved** via `bayesian_maximizes` (GibbsVariational.lean) |
+| `G_α_bounded` | **Converted to sorry** with proof sketch (entropy ≤ log\|U\|) |
 
-**Assessment**: These 5 axioms are the *only* axioms needed for the RSA convergence
-theorem (`G_α_monotone`, `RSA_converges`). The convergence proof itself is *fully
-structured* — it chains speaker and listener optimality via `le_trans`. The axioms
-encapsulate the hard real analysis. This is a *good* use of axioms: the proof
-architecture is visible, and the assumed facts are standard results from convex
-optimization.
+The KKT axioms were the key bottleneck. Rather than formalizing KKT conditions for
+simplex-constrained optimization, we proved the RSA optimality results directly:
+- Speaker: softmax maximizes H(p) + α⟨p,s⟩ (Gibbs VP)
+- Listener: Bayesian posterior maximizes E_w[log L] (KL non-negativity)
 
-**Action**: Keep as axioms with clear docstrings. Optionally attempt KKT proof
-using Mathlib's `ConcaveOn` + `Finset.sum` API, but this is C-difficulty and
-low ROI unless targeting a formal methods audience.
+This bypasses KKT entirely and gives constructive proofs. The `G_α_bounded` axiom
+became a sorry with a clear proof path (entropy ≤ log|U|, utility ≤ 0).
 
 ### 1.2 Attitude Semantics (2 axioms) — `Theories/IntensionalSemantics/Attitude/CDistributivity.lean`
 

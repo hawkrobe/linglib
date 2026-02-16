@@ -139,14 +139,15 @@ theorem speakerSoftmax_mono (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M �
     speakerSoftmax S L m u₁ ≤ speakerSoftmax S L m u₂ :=
   Softmax.softmax_mono _ hα u₁ u₂ h
 
-/-- Pragmatic listener: L(m|u) ∝ P(m) · S(u|m).
+/-- Pragmatic listener score: L_score(m, u) = P(m) · S(u|m).
 
-    Uses the NORMALIZED speaker S(u|m) = normalize(Spk m)(u), so that the
-    listener weights match the weights in E_VL (which also normalizes the speaker).
-    This ensures the Bayesian listener update is optimal for G_α. -/
+    The speaker S(u|m) must already be a proper probability distribution
+    (non-negative, sums to 1). The listener does NOT renormalize the speaker.
+    This is correct because `speakerUpdate` returns `speakerSoftmax`, which is
+    already normalized by construction. -/
 noncomputable def listenerScore (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (u : S.U) (m : S.M) : ℝ :=
-  S.prior m * normalize (Spk m) u
+  S.prior m * Spk m u
 
 
 /-!
@@ -213,10 +214,14 @@ noncomputable def G_α (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
   H_S S Spk + S.α * E_VL S Spk L
 
 
-/-- One step of RSA dynamics: given listener L, compute optimal speaker. -/
-noncomputable def speakerUpdate (S : RSAScenarioR) (L : S.U → S.M → ℝ)
+/-- One step of RSA dynamics: given listener L, compute optimal speaker.
+
+    Returns the softmax distribution (already normalized, sums to 1, positive).
+    The speaker is responsible for normalizing its own output — the listener
+    does NOT renormalize. -/
+noncomputable def speakerUpdate (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ)
     (m : S.M) (u : S.U) : ℝ :=
-  speakerScore S L m u
+  speakerSoftmax S L m u
 
 /-- One step of RSA dynamics: given speaker S, compute optimal listener. -/
 noncomputable def listenerUpdate (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
@@ -229,17 +234,17 @@ structure RSAState (S : RSAScenarioR) where
   listener : S.U → S.M → ℝ
 
 /-- Initialize RSA from literal listener. -/
-noncomputable def initRSA (S : RSAScenarioR) : RSAState S where
-  speaker := λ m u => speakerScore S (L0 S) m u
+noncomputable def initRSA (S : RSAScenarioR) [Nonempty S.U] : RSAState S where
+  speaker := speakerSoftmax S (L0 S)
   listener := λ u m => normalize (λ m' => L0 S u m') m
 
 /-- One full step of RSA dynamics. -/
-noncomputable def stepRSA (S : RSAScenarioR) (state : RSAState S) : RSAState S where
+noncomputable def stepRSA (S : RSAScenarioR) [Nonempty S.U] (state : RSAState S) : RSAState S where
   speaker := speakerUpdate S state.listener
   listener := listenerUpdate S (speakerUpdate S state.listener)
 
 /-- RSA dynamics after n iterations. -/
-noncomputable def iterateRSA (S : RSAScenarioR) (n : ℕ) : RSAState S :=
+noncomputable def iterateRSA (S : RSAScenarioR) [Nonempty S.U] (n : ℕ) : RSAState S :=
   (stepRSA S)^[n] (initRSA S)
 
 
@@ -720,119 +725,201 @@ theorem rsa_speaker_satisfies_foc (S : RSAScenarioR) (L : S.U → S.M → ℝ)
   ring
 
 /-!
-### The KKT Gap
+### Replacing the KKT Axioms with Gibbs Variational Principle
 
-The standard convex optimization result needed is:
+The original formalization used KKT sufficiency axioms to establish that
+RSA updates maximize G_α. We now prove these directly using the
+Gibbs Variational Principle (proved in Softmax/Basic.lean):
 
-Theorem (KKT sufficiency for concave functions):
-If f is concave on a convex set K, and x* ∈ K satisfies the KKT conditions
-(gradient equals Lagrange multiplier times constraint gradient), then x* is
-a global maximum of f over K.
+- **Speaker**: softmax maximizes H(p) + α⟨p, s⟩ → gibbs_variational
+- **Listener**: Bayesian posterior maximizes E[log L] → bayesian_maximizes_expected_log
 
-Proof idea (not formalized):
-1. Concavity gives: f(y) ≤ f(x*) + ∇f(x*)·(y - x*)
-2. KKT on simplex: ∇f(x*) = λ·𝟙  (constant gradient)
-3. For feasible y: 𝟙·(y - x*) = Σy - Σx* = 1 - 1 = 0
-4. Therefore: f(y) ≤ f(x*) + λ·0 = f(x*)
-
-Mathlib does not directly provide this result. The pieces exist:
-- `ConcaveOn` provides the concavity inequality
-- `HasFDerivAt` provides derivatives
-- But connecting them to KKT for simplex constraints is not formalized
-
-For now, we state theorems with the conclusion as hypothesis where needed.
-A full formalization would require:
-1. Formalizing KKT conditions for simplex-constrained optimization
-2. Proving KKT sufficiency for concave objectives
-3. Verifying RSA updates satisfy KKT
-
-This is a significant formalization project beyond the scope of the current work.
+This bypasses KKT entirely and gives constructive proofs.
 -/
 
-/--
-AXIOM: KKT sufficiency for concave functions on the simplex.
+/-- Entropy equals sum of negMulLog for non-negative functions. -/
+private theorem entropy_eq_sum_negMulLog' {β : Type*} [Fintype β] (p : β → ℝ)
+    (_hp : ∀ i, 0 ≤ p i) : entropy p = ∑ i, Real.negMulLog (p i) := by
+  unfold entropy Real.negMulLog
+  simp only [neg_mul]
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  by_cases hpi : p i = 0
+  · simp only [hpi, Real.log_zero, mul_zero, neg_zero, ite_true]
+  · simp only [hpi, ↓reduceIte]
 
-This is a standard convex optimization result:
-If f is concave on the simplex Δ = {x | ∀i, x_i ≥ 0, Σx_i = 1}, and x* ∈ Δ
-satisfies the KKT first-order conditions, then x* is a global maximum.
+/-- normalize is identity on distributions summing to 1. -/
+private theorem normalize_of_sum_one' {β : Type*} [Fintype β] (f : β → ℝ)
+    (hsum : ∑ i, f i = 1) (a : β) : normalize f a = f a := by
+  unfold normalize Z
+  rw [hsum, if_neg one_ne_zero, div_one]
 
-Standard proof (not formalized in Mathlib):
+/-- When L > 0, speakerScore = exp(α · utility). -/
+private theorem speakerScore_eq_exp (S : RSAScenarioR) (L : S.U → S.M → ℝ)
+    (hL : ∀ u m, 0 < L u m) (m : S.M) (u : S.U) :
+    speakerScore S L m u = Real.exp (S.α * utility L m u) := by
+  unfold speakerScore
+  rw [if_neg (not_le.mpr (hL u m))]
+  unfold utility
+  rw [if_neg (not_le.mpr (hL u m))]
+  change (L u m) ^ S.α = Real.exp (S.α * Real.log (L u m))
+  rw [Real.rpow_def_of_pos (hL u m)]
+  congr 1; ring
+
+/-- When L > 0, normalize(speakerScore) = softmax(utility, α). -/
+private theorem normalize_speakerScore_eq_softmax (S : RSAScenarioR) [Nonempty S.U]
+    (L : S.U → S.M → ℝ) (hL : ∀ u m, 0 < L u m) (m : S.M) :
+    (fun u => normalize (speakerScore S L m) u) = Softmax.softmax (utility L m) S.α := by
+  ext u
+  have hscore : ∀ v, speakerScore S L m v = Real.exp (S.α * utility L m v) :=
+    fun v => speakerScore_eq_exp S L hL m v
+  have hZ_pos : 0 < ∑ v, speakerScore S L m v :=
+    Finset.sum_pos (fun v _ => hscore v ▸ Real.exp_pos _) Finset.univ_nonempty
+  simp only [normalize, Z, Softmax.softmax]
+  rw [if_neg (ne_of_gt hZ_pos)]
+  congr 1
+  · exact hscore u
+  · exact Finset.sum_congr rfl (fun v _ => hscore v)
+
+/-- G_α decomposes as a weighted sum of per-meaning objectives. -/
+private theorem G_α_decompose (S : RSAScenarioR) (Spk : S.M → S.U → ℝ) (L : S.U → S.M → ℝ) :
+    G_α S Spk L = ∑ m, S.prior m *
+      (entropy (fun u => normalize (Spk m) u) +
+       S.α * ∑ u, normalize (Spk m) u * utility L m u) := by
+  unfold G_α H_S E_VL
+  rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+  congr 1; ext m
+  rw [show ∑ u, S.prior m * normalize (Spk m) u * utility L m u =
+        S.prior m * ∑ u, normalize (Spk m) u * utility L m u by
+    simp only [mul_assoc]; rw [← Finset.mul_sum]]
+  ring
+
+/-- Sum of normalize equals 1 when Z > 0. -/
+private theorem normalize_sum_eq_one {β : Type*} [Fintype β] (f : β → ℝ)
+    (hZ : Z f ≠ 0) : ∑ i, normalize f i = 1 := by
+  unfold normalize
+  simp only [hZ, ↓reduceIte]
+  rw [← Finset.sum_div]
+  exact div_self hZ
+
+/-
+HISTORICAL NOTE: KKT sufficiency for concave functions on the simplex.
+
+This was originally axiomatized as the key missing piece. We now prove
+the RSA optimality results directly using the Gibbs Variational Principle
+and Bayesian optimality, bypassing KKT entirely. The axioms have been
+replaced with constructive proofs.
+
+The standard KKT argument (Boyd & Vandenberghe 2004, §5.5.3):
 1. Concavity: f(y) ≤ f(x*) + ∇f(x*)·(y - x*) for all y ∈ Δ
 2. KKT on simplex: ∇f(x*) = λ·𝟙 (constant gradient when optimal)
 3. Feasibility: 𝟙·(y - x*) = 1 - 1 = 0 for y, x* ∈ Δ
 4. Therefore: f(y) ≤ f(x*) for all feasible y
-
-We axiomatize this as it requires formalizing:
-- KKT conditions for inequality-constrained optimization
-- The simplex as a constraint set
-- Connecting ConcaveOn to first-order Taylor bounds
-
-References:
-- Boyd & Vandenberghe (2004) "Convex Optimization" Section 5.5.3
-- Zaslavsky et al. (2020) implicitly use this in their convergence proof
 -/
-axiom kkt_sufficiency_for_concave_on_simplex {α : Type*} [Fintype α]
-    {f : (α → ℝ) → ℝ} {x_star : α → ℝ}
-    (hconcave : ConcaveOn ℝ {x | (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1} f)
-    (hsum_star : ∑ i, x_star i = 1)
-    (hpos_star : ∀ i, 0 ≤ x_star i)
-    (hfoc : ∃ lam : ℝ, ∀ i, 0 < x_star i → deriv (f ∘ (λ t => Function.update x_star i t)) (x_star i) = lam) :
-    ∀ y : α → ℝ, (∀ i, 0 ≤ y i) → ∑ i, y i = 1 → f y ≤ f x_star
-
 /--
-AXIOM: KKT sufficiency for concave functions on the positive orthant.
+RSA Speaker Update is G_α-Optimal (Zaslavsky et al. Eq. 7).
 
-Similar to simplex case but for the domain {L | ∀ u m, 0 < L u m}.
-The RSA listener update L(m|u) ∝ prior(m) · S(u|m) satisfies KKT
-and G_α is concave in L.
+For fixed listener L, the normalized RSA speaker S(u|m) = softmax(utility(·,m), α)
+maximizes G_α over all valid speaker distributions.
+
+Proof: By the Gibbs Variational Principle (Softmax/Basic.lean), for each meaning m,
+softmax maximizes H(p) + α⟨p, s⟩. Since G_α decomposes as a weighted sum of
+per-meaning objectives, the pointwise maximum is also the global maximum.
 -/
-axiom kkt_sufficiency_for_concave_on_positive {β : Type*} [Fintype β]
-    {f : (β → ℝ) → ℝ} {x_star : β → ℝ}
-    (hconcave : ConcaveOn ℝ {x | ∀ i, 0 < x i} f)
-    (hpos_star : ∀ i, 0 < x_star i)
-    (hfoc : ∀ i, deriv (f ∘ (λ t => Function.update x_star i t)) (x_star i) = 0) :
-    ∀ y : β → ℝ, (∀ i, 0 < y i) → f y ≤ f x_star
-
-/--
-AXIOM: RSA Speaker Update is G_α-Optimal (Zaslavsky et al. Eq. 7).
-
-For fixed listener L, the RSA speaker update S(u|m) ∝ L(m|u)^α
-achieves the maximum of G_α over all valid speaker distributions.
-
-Justification:
-1. `G_α_concave_in_S`: G_α is concave in S on the simplex
-2. `rsa_speaker_satisfies_foc`: RSA speaker satisfies KKT first-order conditions
-3. Standard result: KKT + concave ⟹ global optimum
-
-The axiom bridges the type-theoretic gap between the abstract simplex
-optimization result and the specific RSA formulation with
-S.M → S.U → ℝ functions.
--/
-axiom rsa_speaker_maximizes_G_α (S : RSAScenarioR) (L : S.U → S.M → ℝ)
-    (hL : ∀ u m, 0 < L u m)
+theorem rsa_speaker_maximizes_G_α (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ)
+    (_hL : ∀ u m, 0 < L u m)
     (Spk' : S.M → S.U → ℝ)
     (hSpk'_sum : ∀ m, ∑ u, Spk' m u = 1)
     (hSpk'_nonneg : ∀ m u, 0 ≤ Spk' m u) :
-    G_α S Spk' L ≤ G_α S (speakerUpdate S L) L
+    G_α S Spk' L ≤ G_α S (speakerUpdate S L) L := by
+  rw [G_α_decompose, G_α_decompose]
+  apply Finset.sum_le_sum
+  intro m _
+  apply mul_le_mul_of_nonneg_left _ (S.prior_nonneg m)
+  -- LHS: normalize(Spk' m) = Spk' m (already on simplex)
+  have hn : ∀ u, normalize (Spk' m) u = Spk' m u :=
+    fun u => normalize_of_sum_one' _ (hSpk'_sum m) u
+  -- RHS: speakerUpdate = speakerSoftmax = softmax, already sums to 1,
+  -- so normalize is identity
+  have hn_upd : ∀ u, normalize (speakerUpdate S L m) u =
+      Softmax.softmax (utility L m) S.α u := by
+    intro u
+    exact normalize_of_sum_one' _ (speakerSoftmax_sum_one S L m) u
+  simp_rw [hn, hn_upd]
+  rw [entropy_eq_sum_negMulLog' _ (hSpk'_nonneg m),
+      entropy_eq_sum_negMulLog' _ (fun u => le_of_lt (Softmax.softmax_pos _ _ u))]
+  exact Softmax.gibbs_variational _ S.α _ (hSpk'_nonneg m) (hSpk'_sum m)
 
 /--
-AXIOM: RSA Listener Update is G_α-Optimal (Zaslavsky et al. Eq. 8).
+RSA Listener Update is G_α-Optimal (Zaslavsky et al. Eq. 8).
 
-For fixed speaker S, the RSA listener L(m|u) ∝ P(m) · S(u|m)
-achieves the maximum of G_α over all valid listener distributions.
+For fixed normalized speaker Spk, the Bayesian listener L(m|u) ∝ P(m)·Spk(u|m)
+maximizes G_α over all valid listener distributions.
 
-Justification:
-1. `G_α_concave_in_L`: G_α is concave in L on the positive orthant
-2. KKT conditions: ∂G_α/∂L(m,u) = α · P(m) · S(u|m) / L(m,u) - α · (normalization)
-   Setting to zero gives L(m|u) ∝ P(m) · S(u|m)
-3. Standard result: KKT + concave ⟹ global optimum
+Proof: Since H_S is fixed, we maximize E_VL = ∑_u ∑_m w_u(m)·log L(m|u)
+where w_u(m) = P(m)·S(u|m). By bayesian_maximizes_expected_log, for each u,
+the normalized w_u maximizes ∑_m (w/W)·log L. This normalized w_u equals
+listenerUpdate, so E_VL is maximized at the Bayesian posterior.
 -/
-axiom rsa_listener_maximizes_G_α (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
-    (hSpk : ∀ m u, 0 < Spk m u)
+theorem rsa_listener_maximizes_G_α (S : RSAScenarioR) [Nonempty S.U] (Spk : S.M → S.U → ℝ)
+    (hSpk_pos : ∀ m u, 0 < Spk m u)
+    (hSpk_sum : ∀ m, ∑ u, Spk m u = 1)
     (L' : S.U → S.M → ℝ)
     (hL'_sum : ∀ u, ∑ m, L' u m = 1)
     (hL'_pos : ∀ u m, 0 < L' u m) :
-    G_α S Spk L' ≤ G_α S Spk (listenerUpdate S Spk)
+    G_α S Spk L' ≤ G_α S Spk (listenerUpdate S Spk) := by
+  -- H_S is fixed; suffices to show α * E_VL(L') ≤ α * E_VL(listenerUpdate)
+  unfold G_α
+  suffices h : E_VL S Spk L' ≤ E_VL S Spk (listenerUpdate S Spk) by
+    linarith [S.α_nonneg, mul_le_mul_of_nonneg_left h S.α_nonneg]
+  -- Since Spk is normalized, normalize(Spk m) = Spk m
+  have hn_Spk : ∀ m u, normalize (Spk m) u = Spk m u :=
+    fun m u => normalize_of_sum_one' _ (hSpk_sum m) u
+  haveI : Nonempty S.M := by obtain ⟨m, _⟩ := S.prior_pos; exact ⟨m⟩
+  -- Swap sums in E_VL to get per-utterance decomposition
+  unfold E_VL
+  simp_rw [hn_Spk]
+  rw [Finset.sum_comm (f := fun m u => S.prior m * Spk m u * utility L' m u),
+      Finset.sum_comm (f := fun m u => S.prior m * Spk m u * utility (listenerUpdate S Spk) m u)]
+  apply Finset.sum_le_sum
+  intro u _
+  -- Weights for each u: w(m) = P(m) * Spk(m, u)
+  set w := fun m => S.prior m * Spk m u
+  have hw_nonneg : ∀ m, 0 ≤ w m :=
+    fun m => mul_nonneg (S.prior_nonneg m) (le_of_lt (hSpk_pos m u))
+  -- W = ∑ w > 0 (since ∃ m with P(m) > 0 and Spk > 0)
+  have hW_pos : 0 < ∑ m, w m := by
+    obtain ⟨m₀, hm₀⟩ := S.prior_pos
+    exact Finset.sum_pos' (fun m _ => hw_nonneg m) ⟨m₀, Finset.mem_univ _, mul_pos hm₀ (hSpk_pos m₀ u)⟩
+  -- listenerUpdate(u, m) = w(m) / W
+  have hLU_eq : ∀ m, listenerUpdate S Spk u m = w m / ∑ m', w m' := by
+    intro m
+    simp only [listenerUpdate, listenerScore, normalize, Z]
+    rw [if_neg (ne_of_gt hW_pos)]
+  -- utility(L', m, u) = log(L' u m) since L' > 0
+  have hutil_L' : ∀ m, utility L' m u = Real.log (L' u m) := by
+    intro m; unfold utility; rw [if_neg (not_le.mpr (hL'_pos u m))]
+  -- Per-term equality for listener utility, handling w m = 0
+  have hutil_LU : ∀ m, w m * utility (listenerUpdate S Spk) m u =
+      w m * Real.log (w m / ∑ m', w m') := by
+    intro m
+    by_cases hwm : w m = 0
+    · simp only [hwm, zero_mul]
+    · have hwm_pos : 0 < w m := lt_of_le_of_ne (hw_nonneg m) (Ne.symm hwm)
+      have hLU_pos : 0 < w m / ∑ m', w m' := div_pos hwm_pos hW_pos
+      congr 1
+      unfold utility
+      rw [if_neg (not_le.mpr (by rw [hLU_eq]; exact hLU_pos)), hLU_eq]
+  -- Goal: ∑ m, w m * utility L' m u ≤ ∑ m, w m * utility (listenerUpdate S Spk) m u
+  -- Transform to log form and apply bayesian_maximizes
+  calc ∑ m, w m * utility L' m u
+      = ∑ m, w m * Real.log (L' u m) := by congr 1; ext m; rw [hutil_L']
+    _ ≤ ∑ m, w m * Real.log (w m / ∑ m', w m') :=
+        RSA.GibbsVariational.bayesian_maximizes w hw_nonneg hW_pos
+          (fun m => L' u m) (fun m => hL'_pos u m) (hL'_sum u)
+    _ = ∑ m, w m * utility (listenerUpdate S Spk) m u := by
+        congr 1; ext m; exact (hutil_LU m).symm
 
 /--
 The RSA speaker update maximizes G_α (Zaslavsky et al. Eq. 7).
@@ -840,7 +927,7 @@ The RSA speaker update maximizes G_α (Zaslavsky et al. Eq. 7).
 For fixed listener L_{t-1}, the RSA speaker update S_t = argmax_S G_α[S, L_{t-1}].
 Follows directly from `rsa_speaker_maximizes_G_α`.
 -/
-theorem speaker_update_maximizes_G (S : RSAScenarioR) (L : S.U → S.M → ℝ)
+theorem speaker_update_maximizes_G (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M → ℝ)
     (hL : ∀ u m, 0 < L u m) :
     ∀ Spk', (∀ m, ∑ u, Spk' m u = 1) → (∀ m u, 0 ≤ Spk' m u) →
       G_α S Spk' L ≤ G_α S (speakerUpdate S L) L := by
@@ -850,15 +937,15 @@ theorem speaker_update_maximizes_G (S : RSAScenarioR) (L : S.U → S.M → ℝ)
 /--
 The RSA listener update maximizes G_α (Zaslavsky et al. Eq. 8).
 
-For fixed speaker S_t, the RSA listener update L_t = argmax_L G_α[S_t, L].
-Follows directly from `rsa_listener_maximizes_G_α`.
+For fixed normalized speaker S_t, the RSA listener update L_t = argmax_L G_α[S_t, L].
+Requires the speaker to be a valid distribution (sums to 1 per meaning).
 -/
-theorem listener_update_maximizes_G (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
-    (hSpk : ∀ m u, 0 < Spk m u) :
+theorem listener_update_maximizes_G (S : RSAScenarioR) [Nonempty S.U] (Spk : S.M → S.U → ℝ)
+    (hSpk_pos : ∀ m u, 0 < Spk m u) (hSpk_sum : ∀ m, ∑ u, Spk m u = 1) :
     ∀ L', (∀ u, ∑ m, L' u m = 1) → (∀ u m, 0 < L' u m) →
       G_α S Spk L' ≤ G_α S Spk (listenerUpdate S Spk) := by
   intro L' hL'_sum hL'_pos
-  exact rsa_listener_maximizes_G_α S Spk hSpk L' hL'_sum hL'_pos
+  exact rsa_listener_maximizes_G_α S Spk hSpk_pos hSpk_sum L' hL'_sum hL'_pos
 
 
 /--
@@ -879,12 +966,8 @@ theorem G_α_monotone (S : RSAScenarioR) [Nonempty S.U] (n : ℕ)
     (h_L_sum : ∀ t u, ∑ m, (iterateRSA S t).listener u m = 1) :
     G_α S (iterateRSA S n).speaker (iterateRSA S n).listener ≤
     G_α S (iterateRSA S (n+1)).speaker (iterateRSA S (n+1)).listener := by
-  -- Notation: state_n = iterateRSA n, state_{n+1} = iterateRSA (n+1)
   let state_n := iterateRSA S n
   let state_n1 := iterateRSA S (n+1)
-  -- Key: state_{n+1} = stepRSA state_n
-  -- So: state_{n+1}.speaker = speakerUpdate state_n.listener
-  --     state_{n+1}.listener = listenerUpdate state_{n+1}.speaker
   have hstep : state_n1 = stepRSA S state_n := Function.iterate_succ_apply' (stepRSA S) n _
   -- Step 1: G_α(S_n, L_n) ≤ G_α(S_{n+1}, L_n)  [speaker improved]
   have hSpk_nonneg : ∀ m u, 0 ≤ state_n.speaker m u :=
@@ -896,24 +979,14 @@ theorem G_α_monotone (S : RSAScenarioR) [Nonempty S.U] (n : ℕ)
     exact speaker_update_maximizes_G S state_n.listener (h_pos n)
       state_n.speaker (h_Spk_sum n) hSpk_nonneg
   -- Step 2: G_α(S_{n+1}, L_n) ≤ G_α(S_{n+1}, L_{n+1})  [listener improved]
-  -- Helper: speaker score is positive when listener probability is positive
-  have hScore_pos : ∀ m u, 0 < speakerScore S state_n.listener m u := by
-    intro m u
-    simp only [speakerScore]
-    have hLpos : 0 < state_n.listener u m := h_pos n u m
-    rw [if_neg (not_le.mpr hLpos)]
-    exact Real.rpow_pos_of_pos hLpos S.α
+  -- speakerUpdate = speakerSoftmax, which is positive by construction
   have hSpk'_pos : ∀ m u, 0 < state_n1.speaker m u := by
-    intro m u
-    rw [h_spk_eq]
-    -- speakerUpdate S L m u = speakerScore S L m u (by definition)
-    unfold speakerUpdate
-    exact hScore_pos m u
+    intro m u; rw [h_spk_eq]; exact speakerSoftmax_pos S state_n.listener m u
   have h_lis_eq : state_n1.listener = listenerUpdate S state_n1.speaker := by
     simp only [hstep, stepRSA]
   have h2 : G_α S state_n1.speaker state_n.listener ≤ G_α S state_n1.speaker state_n1.listener := by
     rw [h_lis_eq]
-    exact listener_update_maximizes_G S state_n1.speaker hSpk'_pos
+    exact listener_update_maximizes_G S state_n1.speaker hSpk'_pos (h_Spk_sum (n+1))
       state_n.listener (h_L_sum n) (h_pos n)
   exact le_trans h1 h2
 
@@ -947,20 +1020,6 @@ theorem RSA_converges (S : RSAScenarioR) [Nonempty S.U]
   sorry
 
 
-/--
-G_α is bounded above.
-
-Proof sketch:
-- H_S = weighted entropy ≤ log|U| (max entropy)
-- E_VL = expected log utility, bounded by log(max L value) for normalized listeners
-- G_α = H_S + α·E_VL is bounded above
-
-The exact bound depends on L. For RSA listener L(m|u) ∝ P(m)S(u|m),
-E_VL is bounded by the prior distribution's support.
--/
-axiom G_α_bounded (S : RSAScenarioR) : ∃ B : ℝ, ∀ Spk L,
-    (∀ m, ∑ u, Spk m u = 1) → (∀ m u, 0 ≤ Spk m u) → G_α S Spk L ≤ B
-
 /-- G_α is bounded above by log |U| when L is a probability distribution.
 
 The bound requires L to be a valid distribution (non-negative, sums to 1)
@@ -984,7 +1043,7 @@ theorem G_α_bounded_above (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
   sorry
 
 /-- Check if RSA has ε-converged. -/
-def εConverged (S : RSAScenarioR) (t : ℕ) (ε : ℝ) : Prop :=
+def εConverged (S : RSAScenarioR) [Nonempty S.U] (t : ℕ) (ε : ℝ) : Prop :=
   |G_α S (iterateRSA S (t+1)).speaker (iterateRSA S (t+1)).listener -
    G_α S (iterateRSA S t).speaker (iterateRSA S t).listener| < ε
 

@@ -56,7 +56,7 @@ noncomputable def klFinite (p q : ι → ℝ) : ℝ :=
 
 /-- When q > 0, each KL term can be written via klFun:
     p · log(p/q) = q · klFun(p/q) + (p - q) -/
-private theorem kl_term_eq_klFun {p_i q_i : ℝ} (hq : 0 < q_i) (hp : 0 ≤ p_i) :
+private theorem kl_term_eq_klFun {p_i q_i : ℝ} (hq : 0 < q_i) (_hp : 0 ≤ p_i) :
     (if p_i = 0 then (0 : ℝ) else p_i * log (p_i / q_i)) =
     q_i * klFun (p_i / q_i) + (p_i - q_i) := by
   by_cases hp0 : p_i = 0
@@ -153,7 +153,7 @@ theorem speakerObj_at_softmax [Nonempty ι] (v : ι → ℝ) (α : ℝ) :
                     = sᵤ · log Z   [since log s*ᵤ = α·vᵤ - log Z]
     - When sᵤ = 0: contributes 0 = 0 · log Z -/
 private theorem speakerObj_plus_kl [Nonempty ι] (v : ι → ℝ) (α : ℝ)
-    (s : ι → ℝ) (hs_nonneg : ∀ i, 0 ≤ s i) (hs_sum : ∑ i, s i = 1) :
+    (s : ι → ℝ) (_hs_nonneg : ∀ i, 0 ≤ s i) (hs_sum : ∑ i, s i = 1) :
     speakerObj v α s + klFinite s (softmax v α) = logSumExp v α := by
   unfold speakerObj klFinite logSumExp
   rw [← Finset.sum_add_distrib]
