@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.213.28] - 2026-02-15
+
+### Added
+- **Core/DecisionTheory.lean**: `maximinUtilityValue_monotone_cell` (MUV anti-monotone in cell containment), `questionMaximin_le_muv` (questionMaximin ≤ MUV of any member cell), `le_foldl_min` (made public); `securityLevel_le_utility`, `securityLevel_subset_ge`, `maximinValue_subset_ge`, foldl min/max helpers — full monotonicity infrastructure for maximin decision theory
+- **Core/Partition.lean**: `toCells_cell_nonempty` (each cell in toCells has a representative in elements), `toCells_nonempty` (toCells of nonempty list is nonempty), `toCells_fine_sub_coarse` (refinement implies fine cells are subsets of coarse cells)
+
+### Changed
+- **GSVanRooyBridge.lean**: `blackwell_maximin_forward` fully proved (was sorry) — refinement implies maximin dominance, via cell monotonicity + partition nonemptiness
+- **Core/DecisionTheory.lean**: Removed false `questionUtility_nonneg` (correct QUD-specific version in Partition.lean); fixed `maximinUtilityValue_nonneg` to require nonemptiness hypothesis; Lean 4.28 API compatibility fixes throughout
+- **QuestionSemantics/DecisionTheory.lean**: Updated re-export to match Core changes
+
 ## [0.213.27] - 2026-02-15
 
 ### Added

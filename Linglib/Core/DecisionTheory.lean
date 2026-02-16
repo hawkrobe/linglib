@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Tactic.Linarith
 
 /-!
 # Core Decision Theory
@@ -191,21 +192,6 @@ def questionUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     acc + prob * uv
   ) 0
 
-/-- Question utility is non-negative for partition-derived questions.
-
-Requires non-negative priors. The general statement for arbitrary `Question W`
-(which may not be a partition) is false — overlapping or non-covering cells
-can produce incorrect utility decompositions. The QUD-specific version is
-proved as `QUD.questionUtility_refinement_ge` applied with `q' = QUD.trivial`.
-
-TODO: State and prove QUD-specific version in `Core.Partition`. -/
-theorem questionUtility_nonneg {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
-    (q : Question W)
-    (hprior : ∀ w, dp.prior w ≥ 0) :
-    questionUtility dp actions q >= 0 := by
-  sorry -- Needs: q is a partition + totalPrior ≤ 1, or QUD-specific statement
-
 /-- MV(Q) = min_{q in Q} MV(q), maximin question value. -/
 def questionMaximin {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
@@ -216,12 +202,144 @@ def questionMaximin {W A : Type*} [DecidableEq A]
       min m (maximinUtilityValue dp worlds actions cell)
     ) (maximinUtilityValue dp worlds actions c)
 
-/-- Maximin value of information is always non-negative. -/
+/-! ### Maximin Monotonicity
+
+Security level and maximin value are anti-monotone in the world set:
+restricting to a subset can only improve worst-case guarantees.
+These lemmas support the Blackwell maximin forward theorem. -/
+
+/-- A lower bound of all values is ≤ foldl min. -/
+theorem le_foldl_min {α : Type*} (f : α → ℚ) (xs : List α) (init b : ℚ)
+    (hinit : b ≤ init) (hxs : ∀ x ∈ xs, b ≤ f x) :
+    b ≤ xs.foldl (λ m x => min m (f x)) init := by
+  induction xs generalizing init with
+  | nil => exact hinit
+  | cons x xs ih =>
+    apply ih (min init (f x))
+    · exact le_min hinit (hxs x List.mem_cons_self)
+    · intro y hy; exact hxs y (List.mem_cons_of_mem x hy)
+
+/-- foldl min is ≤ the initial value. -/
+private lemma foldl_min_le_init {α : Type*} (f : α → ℚ) (xs : List α) (init : ℚ) :
+    xs.foldl (λ m x => min m (f x)) init ≤ init := by
+  induction xs generalizing init with
+  | nil => exact le_refl _
+  | cons x xs ih => exact le_trans (ih _) (min_le_left _ _)
+
+/-- foldl min is ≤ f(x) for any x in the list. -/
+private lemma foldl_min_le_of_mem {α : Type*} (f : α → ℚ) (xs : List α) (init : ℚ)
+    {x : α} (hx : x ∈ xs) :
+    xs.foldl (λ m x => min m (f x)) init ≤ f x := by
+  induction xs generalizing init with
+  | nil => exact absurd hx List.not_mem_nil
+  | cons y ys ih =>
+    rcases List.mem_cons.mp hx with rfl | h
+    · show ys.foldl (fun m z => min m (f z)) (min init (f x)) ≤ f x
+      exact le_trans (foldl_min_le_init _ _ _) (min_le_right _ _)
+    · show ys.foldl (fun m z => min m (f z)) (min init (f y)) ≤ f x
+      exact ih _ h
+
+/-- Security level is ≤ the utility of any world in the list. -/
+theorem securityLevel_le_utility {W A : Type*}
+    (dp : DecisionProblem W A) (worlds : List W) (a : A)
+    {w : W} (hw : w ∈ worlds) :
+    securityLevel dp worlds a ≤ dp.utility w a := by
+  match worlds, hw with
+  | _ :: ws, hmem =>
+    simp only [securityLevel]
+    rcases List.mem_cons.mp hmem with rfl | h
+    · exact foldl_min_le_init _ _ _
+    · exact foldl_min_le_of_mem _ _ _ h
+
+/-- Security level on a subset ≥ security level on the superset.
+
+min over fewer elements ≥ min over more elements. -/
+theorem securityLevel_subset_ge {W A : Type*}
+    (dp : DecisionProblem W A) (L₁ L₂ : List W) (a : A)
+    (hne : L₁ ≠ []) (hsub : ∀ w ∈ L₁, w ∈ L₂) :
+    securityLevel dp L₁ a ≥ securityLevel dp L₂ a := by
+  match L₁, hne with
+  | w :: ws, _ =>
+    simp only [securityLevel, ge_iff_le]
+    apply le_foldl_min
+    · exact securityLevel_le_utility dp L₂ a (hsub w List.mem_cons_self)
+    · intro w' hw'
+      exact securityLevel_le_utility dp L₂ a (hsub w' (List.mem_cons_of_mem w hw'))
+
+/-- foldl max is monotone in both the init and the function. -/
+private lemma foldl_max_mono_fn {α : Type*} (f g : α → ℚ) (xs : List α)
+    (init_f init_g : ℚ) (hinit : init_f ≥ init_g)
+    (hfg : ∀ x ∈ xs, f x ≥ g x) :
+    xs.foldl (λ m x => max m (f x)) init_f ≥
+    xs.foldl (λ m x => max m (g x)) init_g := by
+  induction xs generalizing init_f init_g with
+  | nil => exact hinit
+  | cons x xs ih =>
+    apply ih
+    · have hx : x ∈ x :: xs := List.mem_cons_self
+      exact max_le_max hinit (hfg x hx)
+    · intro y hy; exact hfg y (List.mem_cons_of_mem x hy)
+
+/-- Maximin value on a subset ≥ maximin value on the superset.
+
+Since `securityLevel` increases on subsets (fewer worst cases), `maximinValue`
+(max over actions of security levels) also increases. -/
+theorem maximinValue_subset_ge {W A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (L₁ L₂ : List W) (actions : List A)
+    (hne : L₁ ≠ []) (hsub : ∀ w ∈ L₁, w ∈ L₂) :
+    maximinValue dp L₁ actions ≥ maximinValue dp L₂ actions := by
+  match actions with
+  | [] => show maximinValue _ _ [] ≥ maximinValue _ _ []; simp [maximinValue]
+  | a :: as =>
+    simp only [maximinValue]
+    exact foldl_max_mono_fn _ _ as _ _
+      (securityLevel_subset_ge dp L₁ L₂ a hne hsub)
+      (fun a' _ => securityLevel_subset_ge dp L₁ L₂ a' hne hsub)
+
+/-- Maximin utility value is monotone under cell containment:
+learning a more specific proposition (subset of worlds) gives higher MUV. -/
+theorem maximinUtilityValue_monotone_cell {W A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+    (c1 c2 : W → Bool) (hSub : ∀ w, c1 w = true → c2 w = true)
+    (hNe : worlds.filter c1 ≠ []) :
+    maximinUtilityValue dp worlds actions c1 ≥
+    maximinUtilityValue dp worlds actions c2 := by
+  unfold maximinUtilityValue maximinAfterLearning
+  have hFilterSub : ∀ w ∈ worlds.filter c1, w ∈ worlds.filter c2 := by
+    intro w hw; simp only [List.mem_filter] at hw ⊢; exact ⟨hw.1, hSub w hw.2⟩
+  linarith [maximinValue_subset_ge dp (worlds.filter c1) (worlds.filter c2)
+    actions hNe hFilterSub]
+
+/-- Maximin value of information is non-negative for nonempty cells.
+
+When the cell is nonempty, `worlds.filter c ⊆ worlds`, and the maximin over a
+subset considers fewer worst cases, so `maximinAfterLearning ≥ maximinValue`. -/
 theorem maximinUtilityValue_nonneg {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
-    (c : W -> Bool) :
+    (c : W -> Bool)
+    (hNonempty : ∃ w ∈ worlds, c w = true) :
     maximinUtilityValue dp worlds actions c >= 0 := by
-  sorry -- min over subset >= min over superset
+  unfold maximinUtilityValue maximinAfterLearning
+  have hne : worlds.filter c ≠ [] := by
+    obtain ⟨w, hw, hc⟩ := hNonempty
+    exact List.ne_nil_of_mem (List.mem_filter.mpr ⟨hw, hc⟩)
+  have hsub : ∀ w ∈ worlds.filter c, w ∈ worlds :=
+    fun w hw => (List.mem_filter.mp hw).1
+  linarith [maximinValue_subset_ge dp (worlds.filter c) worlds actions hne hsub]
+
+/-- The question maximin value is ≤ MUV of each cell in the question. -/
+theorem questionMaximin_le_muv {W A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+    (q : Question W) (cell : W → Bool) (hcell : cell ∈ q) :
+    questionMaximin dp worlds actions q ≤
+    maximinUtilityValue dp worlds actions cell := by
+  cases q with
+  | nil => exact absurd hcell List.not_mem_nil
+  | cons c cs =>
+    simp only [questionMaximin]
+    rcases List.mem_cons.mp hcell with rfl | h
+    · exact foldl_min_le_init _ _ _
+    · exact foldl_min_le_of_mem _ _ _ h
 
 /-! ### Special Decision Problems -/
 
