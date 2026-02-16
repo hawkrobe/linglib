@@ -329,6 +329,7 @@ def continuousUtilityDP : DecisionProblem ℚ ℚ where
   utility w a := -(abs (w - a))  -- Negative distance (higher = better)
   prior _ := 1
 
+set_option maxHeartbeats 400000 in
 /-- Theorem 3: DT is strictly more expressive than QUD.
 
 There exists a DP where every pair of distinct worlds has a different
@@ -343,8 +344,14 @@ theorem decision_theoretic_strictly_more_expressive :
   use continuousUtilityDP
   intro w v hne
   -- Action a = w: U(w,w) = -|w-w| = 0, U(v,w) = -|v-w| ≠ 0 since v ≠ w
-  exact ⟨w, by simp [continuousUtilityDP]; sorry⟩
+  refine ⟨w, ?_⟩
+  simp only [continuousUtilityDP, sub_self, abs_zero, neg_zero, ne_eq]
+  intro h
+  have : |v - w| = 0 := neg_eq_zero.mp h.symm
+  rw [abs_sub_comm] at this
+  exact hne (eq_of_abs_sub_eq_zero this)
 
+set_option maxHeartbeats 400000 in
 /-- The continuous DP cannot be captured by any finite partition.
 
 Any partition groups some distinct worlds together, but the DP distinguishes
@@ -354,7 +361,12 @@ theorem continuous_dp_not_partition :
     ∀ w v : ℚ, w ≠ v →
       ∃ a : ℚ, continuousUtilityDP.utility w a ≠ continuousUtilityDP.utility v a := by
   intro w v hne
-  exact ⟨w, by simp [continuousUtilityDP]; sorry⟩
+  refine ⟨w, ?_⟩
+  simp only [continuousUtilityDP, sub_self, abs_zero, neg_zero, ne_eq]
+  intro h
+  have : |v - w| = 0 := neg_eq_zero.mp h.symm
+  rw [abs_sub_comm] at this
+  exact hne (eq_of_abs_sub_eq_zero this)
 
 
 /-!
