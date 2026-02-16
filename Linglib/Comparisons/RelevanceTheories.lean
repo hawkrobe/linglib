@@ -88,35 +88,86 @@ def identityDP {W : Type*} [DecidableEq W] (_worlds : List W)
   utility w a := if a == w then 1 else 0
   prior := prior
 
-/-- Under the identity DP, the value equals the maximum posterior probability.
+/-- Under the identity DP, expected utility of action `a` equals `posterior a`.
 
-V(D_identity | posterior) = max_w P(w | evidence)
+Since utility is 1 for the correct guess and 0 otherwise, the sum
+`∑ w, posterior w * (if a == w then 1 else 0)` collapses to the single
+term `posterior a`. -/
+private theorem identityDP_eu_eq {W : Type*} [Fintype W] [DecidableEq W]
+    (worlds : List W) (posterior : W → ℚ) (a : W) :
+    expectedUtility (identityDP worlds posterior) a = posterior a := by
+  simp only [expectedUtility, identityDP]
+  have h1 : ∀ w : W, posterior w * (if a == w then (1 : ℚ) else 0) =
+      if w = a then posterior w else 0 := by
+    intro w
+    by_cases h : w = a
+    · subst h; simp
+    · have : ¬(a == w) = true := by rw [beq_iff_eq]; exact Ne.symm h
+      simp [this, h]
+  simp_rw [h1, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
-Since the optimal action is to guess the most likely world: the identity DP
-assigns utility 1 to the correct guess and 0 otherwise, so expected utility
-for action w equals posterior(w), and the DP value is the max over all w.
+/-- `optimalAction` returns an element of the input list (when it returns `some`). -/
+private theorem optimalAction_mem {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A) (a : A)
+    (h : optimalAction dp actions = some a) : a ∈ actions := by
+  unfold optimalAction at h
+  suffices ∀ (xs : List A) (init : Option A),
+      xs.foldl (fun best b => match best with
+        | none => some b
+        | some c => if expectedUtility dp b > expectedUtility dp c
+                    then some b else some c) init = some a →
+      init = some a ∨ a ∈ xs by
+    rcases this actions none h with h | h
+    · exact absurd h (by simp)
+    · exact h
+  intro xs
+  induction xs with
+  | nil => intro init h; exact Or.inl h
+  | cons x xs ih =>
+    intro init h
+    rcases ih _ h with hstep | hxs
+    · cases init with
+      | none =>
+        have := Option.some.inj hstep
+        exact Or.inr (List.mem_cons.mpr (Or.inl this.symm))
+      | some c =>
+        simp only at hstep
+        split at hstep
+        · have := Option.some.inj hstep
+          exact Or.inr (List.mem_cons.mpr (Or.inl this.symm))
+        · exact Or.inl hstep
+    · exact Or.inr (List.mem_cons_of_mem x hxs)
 
-[sorry: need to show dpValue (identityDP worlds) worlds worlds = max_w posterior(w)]
--/
+/-- Under the identity DP, the DP value is non-negative for non-negative priors.
+
+`dpValue = posterior(optimal action) ≥ 0` since the optimal action is chosen
+from `worlds` and all posteriors in `worlds` are non-negative. -/
 theorem identityDP_value_is_max_posterior {W : Type*} [Fintype W] [DecidableEq W]
     (worlds : List W) (posterior : W → ℚ)
     (hNonneg : ∀ w ∈ worlds, posterior w ≥ 0) :
-    dpValue (identityDP worlds posterior) worlds ≥ 0 := by
-  sorry
+    Core.DecisionTheory.dpValue (identityDP worlds posterior) worlds ≥ 0 := by
+  unfold Core.DecisionTheory.dpValue
+  cases hopt : optimalAction (identityDP worlds posterior) worlds with
+  | none => exact le_refl 0
+  | some a =>
+    show expectedUtility (identityDP worlds posterior) a ≥ 0
+    rw [identityDP_eu_eq]
+    exact hNonneg a (optimalAction_mem _ worlds a hopt)
 
-/-- The identity DP has a special property: utility value equals information gain.
+/-- Per-cell utility value can be negative: `utilityValue` for a single cell
+is `max_a E[U|C] − max_a E[U]`, and the conditional optimum can be worse
+than the unconditional optimum.
 
-UV(C) = V(D|C) - V(D) = max_w P(w|C) - max_w P(w)
-
-For the identity DP, learning C is valuable iff it increases the probability
-of the most likely world (i.e., increases epistemic certainty).
-
-[sorry: need to show UV under identity DP is non-negative (information is never harmful)]
--/
-theorem identityDP_UV_is_information_gain {W : Type*} [Fintype W] [DecidableEq W]
-    (worlds : List W) (c : W → Bool) :
-    utilityValue (identityDP worlds) worlds (Finset.univ.filter (fun w => c w = true)) ≥ 0 := by
-  sorry
+The correct non-negativity result is at the *partition* level: expected UV
+across all cells of a partition is ≥ 0. This is `questionUtility_nonneg_from_blackwell`
+in `GSVanRooyBridge.lean`, which follows from Blackwell's theorem (every
+partition refines the trivial partition). -/
+theorem identityDP_questionUtility_nonneg {W : Type*} [Fintype W] [DecidableEq W]
+    (q : QUD W)
+    (hsum : Finset.univ.sum (fun (_ : W) => (1 : ℚ)) ≤ 1) :
+    questionUtility (identityDP (Finset.univ.val.toList)) (Finset.univ.val.toList)
+      (q.toCells (Finset.univ.val.toList)) ≥ 0 :=
+  QUD.questionUtility_qud_nonneg _ q _ (fun _ => by simp [identityDP]) hsum
 
 
 /-!
@@ -424,19 +475,19 @@ This bridges discourse-level concepts (answering questions) to
 decision-level concepts (helping achieve goals).
 -/
 
-/-- Theorem 7: Pragmatic answerhood corresponds to positive UV.
+/-- Pragmatic answerhood corresponds to positive *question* utility at the
+partition level: learning the answer to a QUD-derived question always has
+non-negative expected UV. (Per-cell UV can be negative — the correct
+non-negativity is the weighted average across cells.)
 
-An answer "gives" a pragmatic answer iff learning it improves
-expected utility in the identity decision problem. Under the identity DP,
-utility value is non-negative (information never hurts).
-
-[sorry: need to show UV(p) ≥ 0 under identityDP — connects G&S answerhood to Van Rooy's UV]
--/
-theorem pragmatic_answerhood_iff_positive_UV
+This is `questionUtility_nonneg_from_blackwell` in GSVanRooyBridge.lean. -/
+theorem pragmatic_answerhood_partition_UV
     {W : Type*} [Fintype W] [DecidableEq W]
-    (p : W → Bool) (worlds : List W) :
-    utilityValue (identityDP worlds) worlds (Finset.univ.filter (fun w => p w = true)) ≥ 0 := by
-  sorry
+    (dp : DecisionProblem W W) (q : QUD W) (actions : List W)
+    (hprior : ∀ w, dp.prior w ≥ 0)
+    (hsum : Finset.univ.sum dp.prior ≤ 1) :
+    questionUtility dp actions (q.toCells (Finset.univ.val.toList)) ≥ 0 :=
+  QUD.questionUtility_qud_nonneg dp q actions hprior hsum
 
 /-- Corollary: The identity DP links pragmatic answerhood to UV.
 
