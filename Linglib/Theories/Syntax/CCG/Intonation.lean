@@ -29,7 +29,6 @@ Steedman (2000). The Syntactic Process, Chapter 5: Structure and Intonation.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
-import Linglib.Phenomena.Focus.Basic
 
 namespace CCG.Intonation
 

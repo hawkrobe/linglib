@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.216.1] - 2026-02-16
+
+### Added
+- **Theories/Pragmatics/RSA/Core/GibbsVariational.lean**: Gibbs Variational Principle and Bayesian optimality proved using Mathlib's `InformationTheory.KullbackLeibler.KLFun`. Zero sorrys. Key theorems: `kl_finite_nonneg` (via `klFun_nonneg`), `gibbs_maximizes` (softmax uniquely maximizes H(p) + α⟨p,s⟩), `bayesian_maximizes` (Bayesian posterior maximizes E[log L]).
+- **Theories/Pragmatics/RSA/Core/Softmax/Basic.lean**: KL divergence infrastructure and Gibbs VP proof (self-contained, not using Mathlib InformationTheory). `klFinite`, `kl_nonneg` (via log x ≤ x−1), `log_softmax`, `gibbs_variational`, `bayesian_maximizes_expected_log` — all fully proved, zero sorrys added.
+- **Theories/Pragmatics/DecisionTheoretic/Also.lean**: Also-implicature via DTS framework
+
+### Changed
+- **Theories/Pragmatics/RSA/Core/Convergence.lean**: Fixed normalization bug — `listenerUpdate` and `initRSA` now normalize listener distributions (previously returned unnormalized scores)
+- **Theories/Pragmatics/DTS/ → DecisionTheoretic/**: Renamed directory for clarity (DTS files retained as aliases)
+- **Dependency discipline**: Removed 3 Theories→Phenomena import violations (CCG/Intonation.lean, DependencyGrammar/Coordination.lean, DependencyGrammar/LongDistance.lean)
+
 ## [0.215.2] - 2026-02-16
 
 ### Changed

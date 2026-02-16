@@ -450,10 +450,11 @@ import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
 import Linglib.Theories.Semantics.Dynamic.State
 import Linglib.Theories.Semantics.Dynamic.TeamSemantics
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
-import Linglib.Theories.Pragmatics.DTS.Core
-import Linglib.Theories.Pragmatics.DTS.ScalarImplicature
-import Linglib.Theories.Pragmatics.DTS.But
-import Linglib.Theories.Pragmatics.DTS.Even
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
+import Linglib.Theories.Pragmatics.DecisionTheoretic.But
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
@@ -726,9 +727,11 @@ import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
+import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.MaxEntropy
+import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
 import Linglib.Theories.Pragmatics.RSA.Domains.LexicalAmbiguity

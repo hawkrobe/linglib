@@ -216,7 +216,7 @@ noncomputable def speakerUpdate (S : RSAScenarioR) (L : S.U → S.M → ℝ)
 /-- One step of RSA dynamics: given speaker S, compute optimal listener. -/
 noncomputable def listenerUpdate (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (u : S.U) (m : S.M) : ℝ :=
-  listenerScore S Spk u m
+  normalize (λ m' => listenerScore S Spk u m') m
 
 /-- RSA state: a speaker-listener pair. -/
 structure RSAState (S : RSAScenarioR) where
@@ -226,7 +226,7 @@ structure RSAState (S : RSAScenarioR) where
 /-- Initialize RSA from literal listener. -/
 noncomputable def initRSA (S : RSAScenarioR) : RSAState S where
   speaker := λ m u => speakerScore S (L0 S) m u
-  listener := λ u m => L0 S u m
+  listener := λ u m => normalize (λ m' => L0 S u m') m
 
 /-- One full step of RSA dynamics. -/
 noncomputable def stepRSA (S : RSAScenarioR) (state : RSAState S) : RSAState S where
