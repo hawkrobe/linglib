@@ -16,7 +16,7 @@ import Linglib.Core.Basic
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale
-import Linglib.Core.Morphology.Number
+import Linglib.Theories.Morphology.Number
 
 namespace Semantics.Montague
 

@@ -36,7 +36,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Montague.Derivation
-import Linglib.Core.Interfaces.ImplicatureTheory
+import Linglib.Core.Interface
 
 namespace NeoGricean.ScalarImplicatures
 

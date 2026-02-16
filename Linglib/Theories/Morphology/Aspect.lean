@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Core.MorphRule
 
 /-!
 # Aspect Morphology

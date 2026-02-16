@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Core.Morphology.Number
+import Linglib.Theories.Morphology.Number
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-! # English Noun Lexicon Fragment

@@ -23,8 +23,8 @@ Comparing how different theories explain scope freezing phenomena.
 - Scontras et al. (2017). Scope ambiguity processing.
 -/
 
-import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Core.ProcessingModel
+import Linglib.Core.Interface
+import Linglib.Theories.ProcessingModel
 import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.Quantification.Bridge_Minimalism
 import Linglib.Theories.Syntax.CCG.Scope

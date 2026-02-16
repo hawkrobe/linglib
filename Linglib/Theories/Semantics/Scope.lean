@@ -25,7 +25,7 @@ This module provides:
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Core.Interfaces.ScopeTheory
+import Linglib.Core.Interface
 
 namespace Semantics.Scope
 

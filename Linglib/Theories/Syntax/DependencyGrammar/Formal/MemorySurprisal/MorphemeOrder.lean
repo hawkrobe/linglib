@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Core.MorphRule
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)

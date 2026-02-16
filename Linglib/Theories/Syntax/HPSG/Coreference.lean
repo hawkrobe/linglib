@@ -8,7 +8,7 @@ Pollard & Sag (1994) Ch. 6, Sag, Wasow & Bender (2003) Ch. 5.
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interface
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg

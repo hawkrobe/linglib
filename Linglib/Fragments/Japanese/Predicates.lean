@@ -1,4 +1,4 @@
-import Linglib.Core.Verbs
+import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Japanese Predicate Lexicon Fragment
