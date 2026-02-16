@@ -44,7 +44,7 @@ RSA S1 (softmax)  ──α→∞──>  IBR S1 (argmax)  ────>  exhMW  
 
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Phenomena.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011

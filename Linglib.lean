@@ -330,17 +330,17 @@ import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Theories.Syntax.CCG.Bridge.Interface
 import Linglib.Theories.Syntax.CCG.Bridge.Homomorphism
 import Linglib.Theories.Syntax.CCG.Bridge.Derivation
-import Linglib.Theories.Syntax.CCG.Phenomena.Agreement
-import Linglib.Theories.Syntax.CCG.Phenomena.Coordination
-import Linglib.Theories.Syntax.CCG.Phenomena.CrossSerial
-import Linglib.Theories.Syntax.CCG.Phenomena.Derivations
-import Linglib.Theories.Syntax.CCG.Phenomena.Gapping
-import Linglib.Theories.Syntax.CCG.Phenomena.TruthConditions
+import Linglib.Phenomena.Syntax.CCG.Agreement
+import Linglib.Phenomena.Syntax.CCG.Coordination
+import Linglib.Phenomena.Syntax.CCG.CrossSerial
+import Linglib.Phenomena.Syntax.CCG.Derivations
+import Linglib.Phenomena.Syntax.CCG.Gapping
+import Linglib.Phenomena.Syntax.CCG.TruthConditions
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
 import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory
-import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
-import Linglib.Theories.Syntax.CCG.Phenomena.Scope
-import Linglib.Theories.Syntax.CCG.Phenomena.Intonation
+import Linglib.Phenomena.Syntax.CCG.Formal.GenerativeCapacity
+import Linglib.Phenomena.Syntax.CCG.Scope
+import Linglib.Phenomena.Syntax.CCG.Intonation
 
 -- Comparisons (cross-theory)
 import Linglib.Comparisons.CommandRelations
@@ -375,28 +375,28 @@ import Linglib.Comparisons.TenseTheories
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
+import Linglib.Phenomena.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.EnhancedDependencies
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.VPDivergence
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Government
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Ellipsis
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.Government
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.Ellipsis
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.Discontinuity
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.Islands
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.CrossLinguistic
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.Coordination
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.CRDC
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.Inversion
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.LongDistance
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.MemorySurprisal.CrossLinguistic
+import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
+import Linglib.Phenomena.Syntax.DependencyGrammar.Coordination
+import Linglib.Phenomena.Syntax.DependencyGrammar.Coreference
+import Linglib.Phenomena.Syntax.DependencyGrammar.CRDC
+import Linglib.Phenomena.Syntax.DependencyGrammar.Inversion
+import Linglib.Phenomena.Syntax.DependencyGrammar.LongDistance
 
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
@@ -458,23 +458,23 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
-import Linglib.Theories.Semantics.TypeTheoretic.Underspecification
+import Linglib.Phenomena.Semantics.TypeTheoretic.Underspecification
 
 -- Theories: Construction Grammar
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
-import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.KayFillmore1999
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Phenomena.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Phenomena.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Phenomena.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Phenomena.Syntax.ConstructionGrammar.Studies.KayFillmore1999
+import Linglib.Phenomena.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 -- Theories: HPSG
 import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Theories.Syntax.HPSG.Core.FromFragments
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
-import Linglib.Theories.Syntax.HPSG.Phenomena.Coreference
-import Linglib.Theories.Syntax.HPSG.Phenomena.Inversion
+import Linglib.Phenomena.Syntax.HPSG.Coreference
+import Linglib.Phenomena.Syntax.HPSG.Inversion
 
 -- Theories: Information Structure (now in Focus/)
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
@@ -483,19 +483,19 @@ import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Formal.Amalgamation
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Coreference
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Derivations
+import Linglib.Phenomena.Syntax.Minimalism.Coreference
+import Linglib.Phenomena.Syntax.Minimalism.Derivations
 import Linglib.Theories.Syntax.Minimalism.Core.FromFragments
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
-import Linglib.Theories.Syntax.Minimalism.Phenomena.HeadMovement.BulgarianLHM
-import Linglib.Theories.Syntax.Minimalism.Phenomena.HeadMovement.GermanicV2
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Allocutivity
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Inversion
-import Linglib.Theories.Syntax.Minimalism.Phenomena.SpeechActs
+import Linglib.Phenomena.Syntax.Minimalism.HeadMovement.BulgarianLHM
+import Linglib.Phenomena.Syntax.Minimalism.HeadMovement.GermanicV2
+import Linglib.Phenomena.Syntax.Minimalism.Allocutivity
+import Linglib.Phenomena.Syntax.Minimalism.Inversion
+import Linglib.Phenomena.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.MergeUnification
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Scope
+import Linglib.Phenomena.Syntax.Minimalism.Scope
 import Linglib.Theories.Syntax.Minimalism.Bridge.Interface
 import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.Bridge.RelativeClauses
@@ -503,10 +503,10 @@ import Linglib.Theories.Syntax.Minimalism.Core.Structure
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
-import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
+import Linglib.Phenomena.Syntax.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Syntax.Minimalism.Morphology.Fission
 import Linglib.Theories.Morphology.Diagnostics.CliticVsAffix
-import Linglib.Theories.Syntax.Minimalism.Phenomena.VoiceAppl
+import Linglib.Phenomena.Syntax.Minimalism.VoiceAppl
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.BinaryOptimality
@@ -527,7 +527,7 @@ import Linglib.Theories.Semantics.Compositional.Core.Lexicon
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 import Linglib.Theories.Semantics.Compositional.Core.Time
 import Linglib.Theories.Semantics.Compositional.Derivation.Scope
-import Linglib.Theories.Semantics.Compositional.Derivation.TruthConditions
+import Linglib.Phenomena.Semantics.Compositional.Derivation.TruthConditions
 import Linglib.Theories.Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Lexical.Numeral.Embedding
@@ -559,19 +559,19 @@ import Linglib.Theories.Semantics.Compositional.PTQ
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Monotonicity
-import Linglib.Theories.Semantics.Entailment.NegationTests
-import Linglib.Theories.Semantics.Entailment.PolarityBuilder
+import Linglib.Phenomena.Semantics.Entailment.NegationTests
+import Linglib.Phenomena.Semantics.Entailment.PolarityBuilder
 import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
-import Linglib.Theories.Semantics.Focus.BackgroundedIslands
-import Linglib.Theories.Semantics.Focus.DomainWidening
+import Linglib.Phenomena.Semantics.Focus.BackgroundedIslands
+import Linglib.Phenomena.Semantics.Focus.DomainWidening
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Particles
-import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Phenomena.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext
-import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
-import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
+import Linglib.Phenomena.Semantics.Presupposition.OntologicalPreconditions
+import Linglib.Phenomena.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
@@ -596,10 +596,10 @@ import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Krifka1998
-import Linglib.Theories.Semantics.Events.Agentivity
-import Linglib.Theories.Semantics.Events.ProtoRoles
-import Linglib.Theories.Semantics.Events.EventStructure
-import Linglib.Theories.Semantics.Events.RootTypology
+import Linglib.Phenomena.Semantics.Events.Agentivity
+import Linglib.Phenomena.Semantics.Events.ProtoRoles
+import Linglib.Phenomena.Semantics.Events.EventStructure
+import Linglib.Phenomena.Semantics.Events.RootTypology
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 -- Theories: Semantics.Intensional (possible-worlds semantics)
@@ -609,7 +609,7 @@ import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.ContrafactiveGap
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Theories.Semantics.Attitudes.Parasitic
+import Linglib.Phenomena.Semantics.Attitudes.Parasitic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.SituationDependent
 import Linglib.Theories.Semantics.Attitudes.NegRaising
@@ -623,7 +623,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.ProductionDependence
-import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Phenomena.Semantics.Causation.Resultatives
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
@@ -671,7 +671,7 @@ import Linglib.Theories.Semantics.Questions.EntropyNPIs
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Inquisitive
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Phenomena.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Questions.LiftedTypes
 import Linglib.Theories.Semantics.Questions.MentionSome
 import Linglib.Theories.Semantics.Questions.Partition
@@ -685,28 +685,28 @@ import Linglib.Theories.Semantics.Questions.VerumFocus
 
 -- Theories: NeoGricean
 import Linglib.Theories.Pragmatics.NeoGricean.Analyticity
-import Linglib.Theories.Pragmatics.NeoGricean.ConventionalImplicatures
-import Linglib.Theories.Pragmatics.NeoGricean.Core.AlternativeGeneration
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Linglib.Phenomena.Pragmatics.NeoGricean.ConventionalImplicatures
+import Linglib.Phenomena.Pragmatics.NeoGricean.Core.AlternativeGeneration
+import Linglib.Phenomena.Pragmatics.NeoGricean.Core.Alternatives
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
-import Linglib.Theories.Pragmatics.NeoGricean.Evaluativity
+import Linglib.Phenomena.Pragmatics.NeoGricean.Evaluativity
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Chierchia2004
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Chierchia2013
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCI
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
+import Linglib.Phenomena.Pragmatics.NeoGricean.Implementations.BarLevFox2020
+import Linglib.Phenomena.Pragmatics.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.MontagueExhaustivity
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Spector2007
 import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
-import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
-import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Phenomena.Pragmatics.NeoGricean.Presuppositions
+import Linglib.Phenomena.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
-import Linglib.Theories.Pragmatics.NeoGricean.Constraints.Wang2025
+import Linglib.Phenomena.Pragmatics.NeoGricean.Constraints.Wang2025
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Operations
 
 -- Theories: RSA
@@ -743,55 +743,55 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.Alsop2024
 import Linglib.Theories.Pragmatics.RSA.Implementations.BarnettEtAl2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
 import Linglib.Theories.Pragmatics.RSA.Implementations.CausalCorrelation
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Theories.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
-import Linglib.Theories.Pragmatics.RSA.Implementations.FrankeBergen2020
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.FrankGoodman2012
 import Linglib.Theories.Pragmatics.RSA.Implementations.GoodmanStuhlmuller2013
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
-import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.HeKaiserIskarous2025
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.HeKaiserIskarous2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Theories.Pragmatics.RSA.Implementations.LassiterGoodman2017
-import Linglib.Theories.Pragmatics.RSA.Implementations.Nouwen2024
-import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.Nouwen2024
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasPearl2021
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.ScontrasPearl2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerFranke2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
-import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.Warstadt2022
-import Linglib.Theories.Pragmatics.RSA.Implementations.YoonEtAl2020
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.YoonEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes
-import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
+import Linglib.Phenomena.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Conditionals
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
-import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
+import Linglib.Phenomena.Pragmatics.RSA.ScalarImplicatures.Hurford
 
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.Examples
-import Linglib.Theories.Semantics.Probabilistic.SDS.Humor
+import Linglib.Phenomena.Semantics.Probabilistic.SDS.Humor
 import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances

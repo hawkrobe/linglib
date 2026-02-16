@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Complementation.Typology
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Phenomena.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Mood.Basic
 
 /-! # Complementation Bridge Theorems
