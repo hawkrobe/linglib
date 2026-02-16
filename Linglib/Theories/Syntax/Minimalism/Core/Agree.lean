@@ -164,9 +164,9 @@ structure AgreeRelation where
   probeFeatures : FeatureBundle
   goalFeatures : FeatureBundle
 
-/-- The probe c-commands the goal -/
-def AgreeRelation.probeCommands (a : AgreeRelation) : Prop :=
-  cCommands a.probe a.goal
+/-- The probe c-commands the goal within a given tree -/
+def AgreeRelation.probeCommands (a : AgreeRelation) (root : SyntacticObject) : Prop :=
+  cCommandsIn root a.probe a.goal
 
 /-- The goal has the relevant valued feature -/
 def AgreeRelation.goalHasFeature (a : AgreeRelation) : Bool :=
@@ -176,31 +176,31 @@ def AgreeRelation.goalHasFeature (a : AgreeRelation) : Bool :=
 def AgreeRelation.probeNeedsFeature (a : AgreeRelation) : Bool :=
   hasUnvaluedFeature a.probeFeatures a.feature
 
-/-- Valid Agree: probe c-commands goal, probe has unvalued, goal has valued -/
-def validAgree (a : AgreeRelation) : Prop :=
-  a.probeCommands ∧
+/-- Valid Agree: probe c-commands goal (in tree), probe has unvalued, goal has valued -/
+def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
+  a.probeCommands root ∧
   a.probeNeedsFeature = true ∧
   a.goalHasFeature = true
 
 -- Part 5: Locality (Closest Goal)
 
-/-- X intervenes between probe and goal iff:
+/-- X intervenes between probe and goal (within tree `root`) iff:
     - probe c-commands X
     - X c-commands goal
     - X has a matching valued feature -/
-def intervenes (probe x goal : SyntacticObject)
+def intervenes (root : SyntacticObject) (probe x goal : SyntacticObject)
     (xFeatures : FeatureBundle) (ftype : FeatureVal) : Prop :=
-  cCommands probe x ∧
-  cCommands x goal ∧
+  cCommandsIn root probe x ∧
+  cCommandsIn root x goal ∧
   hasValuedFeature xFeatures ftype = true
 
 /-- Goal is the closest matching goal for probe -/
 def closestGoal (a : AgreeRelation) (root : SyntacticObject) : Prop :=
-  validAgree a ∧
+  validAgree a root ∧
   ¬∃ (x : SyntacticObject) (xFeats : FeatureBundle),
     isTermOf x root ∧
     x ≠ a.goal ∧
-    intervenes a.probe x a.goal xFeats a.feature
+    intervenes root a.probe x a.goal xFeats a.feature
 
 -- Part 6: Feature Valuation
 
@@ -413,12 +413,12 @@ def mkActiveGoal (goal : SyntacticObject) (feats : FeatureBundle) : Option Activ
 /-- Valid Agree with Activity Condition
 
     Agree requires:
-    1. Probe c-commands goal
+    1. Probe c-commands goal (within tree)
     2. Probe has unvalued feature
     3. Goal has matching valued feature
     4. Goal is ACTIVE (has some unvalued feature) -/
-def validAgreeWithActivity (a : AgreeRelation) : Prop :=
-  validAgree a ∧
+def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :=
+  validAgree a root ∧
   isActive a.goalFeatures = true
 
 -- Part 13: Multiple Agree
@@ -448,11 +448,11 @@ structure MultipleAgree where
   goalsHaveFeature : goals.all (λ ⟨_, gf⟩ => hasValuedFeature gf feature)
   deriving Repr
 
-/-- Is Multiple Agree valid? Each goal must be c-commanded by probe -/
-def MultipleAgree.isValid (ma : MultipleAgree) : Prop :=
+/-- Is Multiple Agree valid? Each goal must be c-commanded by probe (within tree) -/
+def MultipleAgree.isValid (ma : MultipleAgree) (root : SyntacticObject) : Prop :=
   hasUnvaluedFeature ma.probeFeatures ma.feature = true ∧
   ∀ (g : SyntacticObject × FeatureBundle), g ∈ ma.goals →
-    cCommands ma.probe g.1
+    cCommandsIn root ma.probe g.1
 
 /-- Apply Multiple Agree: value probe's feature, mark all goals -/
 def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
@@ -587,16 +587,16 @@ structure DefectiveElement where
   isDeficient : Bool  -- Simplified: mark as deficient
   deriving Repr
 
-/-- Does X defectively intervene between probe and goal?
+/-- Does X defectively intervene between probe and goal (within tree `root`)?
 
     X defectively intervenes if:
     - X is between probe and goal (c-command wise)
     - X has matching features
     - X is defective (can't be a full goal) -/
-def defectivelyIntervenes (probe x goal : SyntacticObject)
+def defectivelyIntervenes (root : SyntacticObject) (probe x goal : SyntacticObject)
     (xDef : DefectiveElement) (ftype : FeatureVal) : Prop :=
-  cCommands probe x ∧
-  cCommands x goal ∧
+  cCommandsIn root probe x ∧
+  cCommandsIn root x goal ∧
   xDef.so = x ∧
   xDef.isDeficient = true ∧
   -- X has a matching feature
@@ -609,8 +609,8 @@ def defectivelyIntervenes (probe x goal : SyntacticObject)
     Agree is blocked if the goal is inside a phase complement
     (and thus inaccessible under PIC). -/
 def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
-    (rel : AgreeRelation) : Prop :=
-  validAgree rel ∧
+    (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
+  validAgree rel root ∧
     ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
 
 /-- PIC-bounded Agree with Activity Condition.
@@ -618,8 +618,8 @@ def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
     The full Agree constraint: probe c-commands goal, feature matching holds,
     goal is active, AND no intervening phase boundary blocks the relation. -/
 def fullAgree (strength : PICStrength) (phases : List Phase)
-    (rel : AgreeRelation) : Prop :=
-  validAgreeWithActivity rel ∧
+    (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
+  validAgreeWithActivity rel root ∧
     ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
 
 end Minimalism

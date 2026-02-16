@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.215.2] - 2026-02-16
+
+### Changed
+- **Core/Basic.lean**: Replaced unsound tree-free `areSisters`/`cCommands` (sisterhood held for ALL distinct pairs via `node x y` witness) with tree-relative `areSistersIn`/`cCommandsIn`/`asymCCommandsIn` that restrict witnesses to subterms of a given root. Moved general utilities from LCA.lean: `subterms`, `terminalNodes` + theorems, `containsB`/`containsB_iff`, `linearize`. Added `LIToken.phonForm` and `phonYield_eq_linearize` connecting `phonYield` and `linearize`.
+- **Formal/Linearization/LCA.lean**: Unified 4 negative c-command proofs into `inner_not_cCommandsIn_outer`; unified 4 positive c-command theorems into `outer_cCommandsIn_inner_left`/`_right` (work for arbitrary SOs); unified `spec_precedes_head_complement` and `head_precedes_complement` into `outer_precedes_inner` (old names kept as aliases); removed `section SpecPrecedesHC` and redundant `hne_spec_hc` hypothesis (leaf ≠ node is derivable). LCA.lean reduced from 630 to 311 lines.
+- **Core/Agree.lean**: All c-command uses (`probeCommands`, `validAgree`, `intervenes`, `closestGoal`, `MultipleAgree.isValid`, `defectivelyIntervenes`, `validAgreeWithPIC`, `fullAgree`) now take a `root : SyntacticObject` parameter and use `cCommandsIn root` instead of the unsound tree-free `cCommands`.
+- **Formal/Constraints/HMC.lean**: `immediatelyCCommands` now uses `cCommandsIn root` (previously ignored its `_root` parameter). Amalgamation theorems updated accordingly.
+
 ## [0.215.1] - 2026-02-16
 
 ### Added

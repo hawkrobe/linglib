@@ -177,6 +177,29 @@ def SyntacticObject.phonYield : SyntacticObject → List String
     if phon.isEmpty then [] else [phon]
   | .node a b => a.phonYield ++ b.phonYield
 
+/-- Linearize a `SyntacticObject` by collecting leaf `LIToken`s in
+    left-to-right traversal order. -/
+def linearize : SyntacticObject → List LIToken
+  | .leaf tok => [tok]
+  | .node l r => linearize l ++ linearize r
+
+/-- Extract the phonological form from an LIToken. -/
+def LIToken.phonForm (tok : LIToken) : String :=
+  tok.item.features.head?.map (·.phonForm) |>.getD ""
+
+/-- phonYield and linearize agree: phonYield extracts the non-empty
+    phonological forms from the linearization. -/
+theorem phonYield_eq_linearize (so : SyntacticObject) :
+    so.phonYield = (linearize so).filterMap
+      (λ tok => let p := tok.phonForm; if p.isEmpty then none else some p) := by
+  induction so with
+  | leaf tok =>
+    simp only [SyntacticObject.phonYield, linearize, LIToken.phonForm]
+    simp only [List.filterMap_cons, List.filterMap_nil]
+    split <;> simp_all
+  | node a b iha ihb =>
+    simp only [SyntacticObject.phonYield, linearize, List.filterMap_append, iha, ihb]
+
 /-- Create a trace SO. Traces are leaves with a distinguished sentinel:
     cat = N, sel = [], phonForm = "", and id = index + 10000.
     This encoding is detectable via `isTrace`. -/
@@ -210,6 +233,51 @@ theorem leaf_node_relation (so : SyntacticObject) :
   | node a b iha ihb =>
     simp [SyntacticObject.leafCount, SyntacticObject.nodeCount]
     omega
+
+-- ============================================================================
+-- Subterm Enumeration
+-- ============================================================================
+
+/-- All nodes in a `SyntacticObject`, including the root itself. -/
+def subterms : SyntacticObject → List SyntacticObject
+  | so@(.leaf _) => [so]
+  | so@(.node l r) => so :: (subterms l ++ subterms r)
+
+/-- The terminal (leaf) nodes of a `SyntacticObject`. -/
+def terminalNodes : SyntacticObject → List SyntacticObject
+  | so@(.leaf _) => [so]
+  | .node l r => terminalNodes l ++ terminalNodes r
+
+/-- Every terminal node is a leaf. -/
+theorem terminalNodes_are_leaves {so t : SyntacticObject}
+    (h : t ∈ terminalNodes so) : t.isLeaf = true := by
+  induction so with
+  | leaf _ =>
+    simp only [terminalNodes] at h
+    exact List.mem_singleton.mp h ▸ rfl
+  | node l r ihl ihr =>
+    simp only [terminalNodes, List.mem_append] at h
+    exact h.elim ihl ihr
+
+/-- Every terminal is a subterm. -/
+theorem terminalNodes_sub_subterms {so t : SyntacticObject}
+    (h : t ∈ terminalNodes so) : t ∈ subterms so := by
+  induction so with
+  | leaf _ =>
+    simp only [terminalNodes] at h
+    simp only [subterms]
+    exact h
+  | node l r ihl ihr =>
+    simp only [terminalNodes, List.mem_append] at h
+    simp only [subterms, List.mem_cons, List.mem_append]
+    exact h.elim (fun h => Or.inr (Or.inl (ihl h)))
+                 (fun h => Or.inr (Or.inr (ihr h)))
+
+/-- The root is always in its own subterms. -/
+theorem self_mem_subterms (so : SyntacticObject) : so ∈ subterms so := by
+  cases so with
+  | leaf _ => exact List.mem_cons.mpr (Or.inl rfl)
+  | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
 
 -- ============================================================================
 -- Containment Relations
@@ -317,6 +385,52 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
   have hlt := contains_lt_nodeCount h
   exact Nat.lt_irrefl _ hlt
 
+-- Part 3c: Boolean Containment (for decidability)
+
+/-- Boolean containment check: does `x` (strictly) contain `y`? -/
+def containsB : SyntacticObject → SyntacticObject → Bool
+  | .leaf _, _ => false
+  | .node a b, y => a == y || b == y || containsB a y || containsB b y
+
+/-- `containsB` implies `contains`. -/
+theorem containsB_implies_contains {x y : SyntacticObject}
+    (h : containsB x y = true) : contains x y := by
+  induction x with
+  | leaf _ => simp [containsB] at h
+  | node a b iha ihb =>
+    simp only [containsB, Bool.or_eq_true, beq_iff_eq] at h
+    rcases h with ((rfl | rfl) | ha) | hb
+    · exact contains.imm _ _ (Or.inl rfl)
+    · exact contains.imm _ _ (Or.inr rfl)
+    · exact contains.trans _ _ a (Or.inl rfl) (iha ha)
+    · exact contains.trans _ _ b (Or.inr rfl) (ihb hb)
+
+/-- `contains` implies `containsB`. -/
+theorem contains_implies_containsB {x y : SyntacticObject}
+    (h : contains x y) : containsB x y = true := by
+  induction h with
+  | imm x y himm =>
+    cases x with
+    | leaf _ => exact absurd himm id
+    | node a b =>
+      simp only [containsB, Bool.or_eq_true, beq_iff_eq]
+      rcases himm with rfl | rfl
+      · exact Or.inl (Or.inl (Or.inl rfl))
+      · exact Or.inl (Or.inl (Or.inr rfl))
+  | trans x _ z himm _ ih =>
+    cases x with
+    | leaf _ => exact absurd himm id
+    | node a b =>
+      simp only [containsB, Bool.or_eq_true, beq_iff_eq]
+      rcases himm with rfl | rfl
+      · exact Or.inl (Or.inr ih)
+      · exact Or.inr ih
+
+/-- Boolean and propositional containment are equivalent. -/
+theorem containsB_iff {x y : SyntacticObject} :
+    containsB x y = true ↔ contains x y :=
+  ⟨containsB_implies_contains, contains_implies_containsB⟩
+
 -- Part 4: Membership in Derivation
 
 /-- X is a term of Y iff X = Y or Y contains X
@@ -354,40 +468,26 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
     · exact Or.inr hxy
     · exact Or.inr (contains_trans hxy hyz)
 
--- Part 6: Sisters
+-- Part 6: Tree-Relative Relations
+--
+-- The tree-free `areSisters` / `cCommands` definitions that were here
+-- previously are unsound: sisterhood holds for ANY pair of distinct SOs
+-- (witness: `node x y`), making asymmetric c-command trivially false.
+-- The tree-relative versions below restrict witnesses to subterms of a
+-- given root, correctly capturing structural asymmetries.
 
-/-- X and Y are sisters iff they are immediately contained in the same SO
+/-- X and Y are sisters IN tree `root`: they are distinct co-daughters of
+    some node that is a subterm of `root`. -/
+def areSistersIn (root x y : SyntacticObject) : Prop :=
+  ∃ z, z ∈ subterms root ∧ immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
-    "X and Y are sisters iff they are immediately contained in some SO Z" -/
-def areSisters (x y : SyntacticObject) : Prop :=
-  ∃ z, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+/-- X c-commands Y IN tree `root`: X has a sister (in `root`) that
+    contains-or-equals Y. -/
+def cCommandsIn (root x y : SyntacticObject) : Prop :=
+  ∃ z, areSistersIn root x z ∧ containsOrEq z y
 
-/-- If a node has daughters a and b, they are sisters -/
-theorem node_daughters_are_sisters (a b : SyntacticObject) (h : a ≠ b) :
-    areSisters a b := by
-  use .node a b
-  constructor
-  · simp [immediatelyContains]
-  constructor
-  · simp [immediatelyContains]
-  · exact h
-
--- Part 7: C-Command (Standard Definition)
-
-/-- X c-commands Y iff X's sister contains (or equals) Y
-
-    Standard syntactic relation. X c-commands everything in its sister's
-    projection. -/
-def cCommands (x y : SyntacticObject) : Prop :=
-  ∃ z, areSisters x z ∧ containsOrEq z y
-
-/-- A node c-commands its sister -/
-theorem ccommand_sister {x y : SyntacticObject} (h : areSisters x y) :
-    cCommands x y :=
-  ⟨y, h, Or.inl rfl⟩
-
--- C-command is not symmetric (in general)
--- This is expected: in {X, {Y, Z}}, X c-commands Y and Z,
--- but Y only c-commands Z (not X)
+/-- X asymmetrically c-commands Y in tree `root`. -/
+def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
+  cCommandsIn root x y ∧ ¬cCommandsIn root y x
 
 end Minimalism

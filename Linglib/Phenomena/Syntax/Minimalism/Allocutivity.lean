@@ -161,8 +161,8 @@ def HonP.level (hp : HonP) : HonLevel :=
 /-- AA validity reduces to `validAgree`: allocutive agreement is not special
     machinery — it IS phi-agreement between a functional head and a null
     addressee DP. -/
-theorem aa_is_agree (rel : AgreeRelation)
-    (hValid : validAgree rel) : validAgree rel := hValid
+theorem aa_is_agree (rel : AgreeRelation) (root : SyntacticObject)
+    (hValid : validAgree rel root) : validAgree rel root := hValid
 
 /-- SA-based allocutive agreement is root-only.
     Follows directly from SAP being the highest phase (Speas & Tenny 2003). -/
