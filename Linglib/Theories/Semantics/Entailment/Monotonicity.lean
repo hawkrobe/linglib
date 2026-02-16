@@ -5,13 +5,13 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
 import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 namespace Semantics.Entailment.Monotonicity
 
 open Semantics.Entailment
-open Semantics.Compositional.Core.Polarity (isUpwardEntailing isDownwardEntailing)
+open Semantics.Entailment.Polarity (isUpwardEntailing isDownwardEntailing)
 open Semantics.Lexical.Determiner.Quantifier
 
 section QuantifierSemantics
@@ -29,7 +29,7 @@ for arbitrary finite models).
 -/
 
 /-- The entailment World type, viewed as a Model entity domain. -/
-def entailmentModel : Semantics.Compositional.Model :=
+def entailmentModel : Semantics.Montague.Model :=
   { Entity := World, decEq := inferInstance }
 
 instance : FiniteModel entailmentModel where

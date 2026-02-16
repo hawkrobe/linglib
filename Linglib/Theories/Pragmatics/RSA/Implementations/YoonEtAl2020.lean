@@ -36,7 +36,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Core.MeasurementScale
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Core.Proposition
 
 namespace RSA.Implementations.YoonEtAl2020
@@ -333,7 +333,7 @@ theorem softNot_involutive : ∀ p : SoftProp, softNot (softNot p) = p := by
 /-- softNot is antitone (downward entailing).
 
 If `p s ≤ q s` for all states, then `softNot q s ≤ softNot p s`.
-This is the soft analog of `pnot_isDownwardEntailing` from Semantics.Compositional. -/
+This is the soft analog of `pnot_isDownwardEntailing` from Semantics.Montague. -/
 theorem softNot_antitone : ∀ p q : SoftProp,
     (∀ s, p s ≤ q s) → (∀ s, softNot q s ≤ softNot p s) := by
   intro p q hpq s
@@ -353,7 +353,7 @@ theorem negation_is_compositional :
 
 -- PART 9b: Connection to Montague's pnot
 
-open Semantics.Compositional.Core.Polarity in
+open Semantics.Entailment.Polarity in
 /-- softNot mirrors pnot structure.
 
 Both negation operators share the same algebraic structure:

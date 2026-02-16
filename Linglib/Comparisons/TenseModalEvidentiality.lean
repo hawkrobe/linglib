@@ -20,7 +20,7 @@ of the target event but not directly settling it.
 
 `EvidentialPerspective` (the three temporal orientations) lives in `Core.Evidence`;
 `EPCondition`/`UPCondition` (the five attested constraint shapes) live in
-`Theories/Semantics.Compositional/Sentence/Tense/Evidential.lean`.
+`Theories/Semantics.Montague/Sentence/Tense/Evidential.lean`.
 
 ## Concrete Scenario: Dripping Raincoat
 

@@ -59,7 +59,7 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 - Kennedy, C. (2007). Vagueness and grammar.
 -/
 
-namespace Semantics.Compositional.Sentence.MaximalInformativity
+namespace Semantics.Montague.Sentence.MaximalInformativity
 
 open Core.Time
 open Semantics.Lexical.Verb.ViewpointAspect
@@ -474,4 +474,4 @@ theorem div_implies_subintervalProp (P : EventPred W Time) :
   have : e₂.τ = t := by simp [Eventuality.τ]; exact hτ
   exact hDiv e₁ e₂ w hP (this ▸ hsub)
 
-end Semantics.Compositional.Sentence.MaximalInformativity
+end Semantics.Montague.Sentence.MaximalInformativity

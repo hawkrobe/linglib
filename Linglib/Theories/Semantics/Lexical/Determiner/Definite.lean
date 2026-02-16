@@ -37,7 +37,7 @@ with presuppositions:
 
 namespace Semantics.Lexical.Determiner.Definite
 
-open Semantics.Compositional (Model Ty toyModel ToyEntity)
+open Semantics.Montague (Model Ty toyModel ToyEntity)
 open Semantics.Lexical.Determiner.Quantifier (FiniteModel every_sem some_sem Ty.det)
 open Semantics.Lexical.Noun.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)

@@ -517,20 +517,20 @@ import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
 
--- Theories: Semantics.Compositional (extensional)
+-- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
-import Linglib.Theories.Semantics.Compositional.Anaphora
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Composition
-import Linglib.Theories.Semantics.Compositional.Conjunction
-import Linglib.Theories.Semantics.Compositional.Core.Derivation
-import Linglib.Theories.Semantics.Compositional.Core.Lexicon
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
-import Linglib.Theories.Semantics.Compositional.Core.Time
-import Linglib.Theories.Semantics.Compositional.Derivation.Scope
-import Linglib.Theories.Semantics.Compositional.Derivation.TruthConditions
+import Linglib.Theories.Semantics.Reference.Binding
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Composition
+import Linglib.Theories.Semantics.Montague.Conjunction
+import Linglib.Theories.Semantics.Montague.Derivation
+import Linglib.Theories.Semantics.Montague.Lexicon
+import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Theories.Semantics.Scope
+import Linglib.Phenomena.Entailment.Bridge_Montague_TruthConditions
 import Linglib.Theories.Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Lexical.Numeral.Embedding
@@ -545,9 +545,9 @@ import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Frames.Basic
 import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
-import Linglib.Theories.Semantics.Compositional.Interface.SemanticBackend
-import Linglib.Theories.Semantics.Compositional.Interface.SyntaxInterface
-import Linglib.Theories.Semantics.Compositional.Modification
+import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
+import Linglib.Theories.Semantics.SyntaxInterface
+import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
@@ -558,7 +558,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
 import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
 import Linglib.Theories.Semantics.Lexical.Particle.Additive
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Semantics.Compositional.PTQ
+import Linglib.Theories.Semantics.Montague.PTQ
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Monotonicity
@@ -584,7 +584,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
 import Linglib.Theories.Semantics.Tense.Declerck
-import Linglib.Theories.Semantics.Compositional.Variables
+import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Habituals

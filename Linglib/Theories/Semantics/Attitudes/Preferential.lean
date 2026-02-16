@@ -64,7 +64,7 @@ Question denotation (Hamblin: set of propositions).
 
 We use `List (BProp W)` as an extensional representation of question meanings.
 This is equivalent to the intensional `Hamblin.QuestionDen W := (W → Bool) → Bool`
-from `Semantics.Compositional.Questions.Hamblin`, but more convenient for computation.
+from `Semantics.Montague.Questions.Hamblin`, but more convenient for computation.
 
 The connection: a list `[p₁, p₂, ...]` represents the characteristic function
 `λ p. p ∈ {p₁, p₂, ...}`.

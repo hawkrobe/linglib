@@ -24,14 +24,14 @@ The type-shifting triangle between three NP semantic types:
   In Groenendijk et al. (eds.), Studies in Discourse Representation Theory.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Conjunction
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Conjunction
 import Mathlib.Order.Hom.BoundedLattice
 
 namespace Semantics.Lexical.Noun.TypeShifting
 
-open Semantics.Compositional (Model Ty toyModel ToyEntity)
-open Semantics.Compositional.Conjunction (typeRaise)
+open Semantics.Montague (Model Ty toyModel ToyEntity)
+open Semantics.Montague.Conjunction (typeRaise)
 
 variable {m : Model}
 
@@ -275,11 +275,11 @@ theorem roundtrip_changes_nonprincipal :
 
 section ToyExamples
 
-open Semantics.Compositional.ToyLexicon (john_sem)
+open Semantics.Montague.ToyLexicon (john_sem)
 
 private def toyDomain : List ToyEntity := [.john, .mary, .pizza, .book]
 
-example : lift (m := toyModel) john_sem Semantics.Compositional.ToyLexicon.sleeps_sem = true := rfl
+example : lift (m := toyModel) john_sem Semantics.Montague.ToyLexicon.sleeps_sem = true := rfl
 example : BE (m := toyModel) (lift john_sem) = ident john_sem :=
   BE_lift_eq_ident john_sem
 example : iota (m := toyModel) toyDomain (ident john_sem) = some john_sem := rfl

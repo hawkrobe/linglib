@@ -16,13 +16,13 @@ terminals and branching via the `SemanticStructure` interface.
 - Klein & Sag (1985). Type-Driven Translation.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Modification
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Core.Interfaces.SemanticStructure
 
-namespace Semantics.Compositional.Composition
+namespace Semantics.Montague.Composition
 
-open Semantics.Compositional Semantics.Compositional.Modification Core.Interfaces
+open Semantics.Montague Semantics.Montague.Modification Core.Interfaces
 
 structure TypedDenot (m : Model) where
   ty : Ty
@@ -194,4 +194,4 @@ theorem interpBinary_eq {m : Model} (d1 d2 : TypedDenot m) :
 
 end Properties
 
-end Semantics.Compositional.Composition
+end Semantics.Montague.Composition

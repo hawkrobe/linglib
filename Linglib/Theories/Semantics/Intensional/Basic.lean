@@ -40,16 +40,16 @@ L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
 - Gallin (1975) "Intensional and Higher-Order Modal Logic"
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Derivation
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Intension
 
 namespace Semantics.Intensional
 
-open Semantics.Compositional
-open Semantics.Compositional.Core.Derivation
-open Semantics.Compositional.Core
+open Semantics.Montague
+open Semantics.Montague.Derivation
+open Semantics.Montague
 
 -- Intensional Models
 

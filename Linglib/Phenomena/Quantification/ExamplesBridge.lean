@@ -10,7 +10,7 @@ predictions, and entailment patterns.
 
 The **scenario** (entities, predicates, truth assignments) is defined here
 in Phenomena — it is empirical data. The **compositional machinery**
-(Model, FiniteModel, GQ denotations) comes from Semantics.Compositional. The
+(Model, FiniteModel, GQ denotations) comes from Semantics.Montague. The
 **lexical entries** (strength, monotonicity) come from the Fragment.
 
 ## Test architecture
@@ -23,7 +23,7 @@ in Phenomena — it is empirical data. The **compositional machinery**
 
 namespace Phenomena.Quantification.Examples
 
-open Semantics.Compositional
+open Semantics.Montague
 open Semantics.Lexical.Determiner.Quantifier
 open Core.Quantification
 open Fragments.English.Determiners (QuantityWord Strength Monotonicity)

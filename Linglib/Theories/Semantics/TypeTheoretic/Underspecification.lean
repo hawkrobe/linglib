@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
-import Linglib.Theories.Semantics.Compositional.Derivation.Scope
+import Linglib.Theories.Semantics.Scope
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Core.Interfaces.BindingSemantics
@@ -205,7 +205,7 @@ def TwoQuantScope.inverseToUnderspec (s : TwoQuantScope E)
     Cooper (2023) Ch8 → Scontras & Pearl (2021) bridge:
     retrieval order corresponds to ScopeConfig.surface / .inverse. -/
 def TwoQuantScope.readingAt (s : TwoQuantScope E)
-    (sc : Semantics.Compositional.Derivation.Scope.ScopeConfig) : Type :=
+    (sc : Semantics.Scope.ScopeConfig) : Type :=
   match sc with
   | .surface => s.surfaceScope
   | .inverse => s.inverseScope
@@ -223,7 +223,7 @@ witness of 𝔖 comes from exactly one reading.
 This connects TTR's type-based underspecification to the `ScopeConfig`
 infrastructure used by Scontras & Pearl (2021) in the RSA implementation. -/
 
-open Semantics.Compositional.Derivation.Scope (ScopeConfig)
+open Semantics.Scope (ScopeConfig)
 
 /-- Forward direction: every witness of 𝔖 is tagged by a ScopeConfig. -/
 def TwoQuantScope.𝔖_to_tagged (s : TwoQuantScope E)

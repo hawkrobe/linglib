@@ -41,12 +41,12 @@ In CDRT (Muskens 1996), these operators compose dynamically:
 - Giannakidou, A. (1998). Polarity Sensitivity as (Non)Veridical Dependency.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Core.Time
+import Linglib.Theories.Semantics.Tense.BranchingTime
 
 namespace Semantics.Mood
 
 open Core.Time
-open Semantics.Compositional.Core.Time
+open Semantics.Tense.BranchingTime
 
 
 /--

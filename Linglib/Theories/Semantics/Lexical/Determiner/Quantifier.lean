@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Quantification
 import Mathlib.Data.List.Perm.Basic
 
@@ -30,7 +30,7 @@ the universals.
 
 `ScopeUpwardMono`/`ScopeDownwardMono` are equivalent to Mathlib's
 `Monotone`/`Antitone` (see `Core.Quantification.scopeUpMono_iff_monotone`),
-connecting to `Semantics.Compositional.Core.Polarity.IsUpwardEntailing = Monotone`.
+connecting to `Semantics.Entailment.Polarity.IsUpwardEntailing = Monotone`.
 
 ## References
 
@@ -42,7 +42,7 @@ connecting to `Semantics.Compositional.Core.Polarity.IsUpwardEntailing = Monoton
 
 namespace Semantics.Lexical.Determiner.Quantifier
 
-open Semantics.Compositional
+open Semantics.Montague
 open Core.Quantification
 
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)

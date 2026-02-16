@@ -13,7 +13,7 @@ For worked examples using this infrastructure, see:
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Proposition
 import Linglib.Core.Intension
 -- Re-export modular attitude theories
@@ -22,7 +22,7 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 
 namespace Semantics.Attitudes.Intensional
 
-open Semantics.Compositional
+open Semantics.Montague
 open Core.Proposition (World4 FiniteWorlds)
 
 /-- Canonical 4-world type for modal examples. Alias for `Core.Proposition.World4`. -/

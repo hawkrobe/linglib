@@ -46,7 +46,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
-namespace Semantics.Compositional.BayesianSemantics
+namespace Semantics.Montague.BayesianSemantics
 
 open Core.Proposition
 open Core.GradedProposition
@@ -292,4 +292,4 @@ def ParamPred.conj {E Θ₁ Θ₂ : Type*}
         _ = 1 := by simp [p.prior.mass_sum_one]
   }
 
-end Semantics.Compositional.BayesianSemantics
+end Semantics.Montague.BayesianSemantics

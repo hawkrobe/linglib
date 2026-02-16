@@ -23,7 +23,7 @@ unified type.
 
 ## Architecture
 
-This module lives in `Core/` because both `Theories/Semantics.Compositional/Sentence/Tense/`
+This module lives in `Core/` because both `Theories/Semantics.Montague/Sentence/Tense/`
 and `Theories/Semantics.Intensional/Attitude/` need the shared infrastructure
 (`GramTense`, `SOTParameter`, `TemporalAssignment`, etc.) without a cross-tree
 import.

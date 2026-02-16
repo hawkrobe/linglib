@@ -11,9 +11,9 @@ Conjunction and disjunction defined recursively over the type structure:
   In von Stechow et al. (eds.), Meaning, Use, and Interpretation. de Gruyter.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 
-namespace Semantics.Compositional
+namespace Semantics.Montague
 
 /-- A type is conjoinable if it "ends in `t`" (Definition 4). -/
 def Ty.isConjoinable : Ty → Bool
@@ -203,4 +203,4 @@ theorem forall_exists_duality {A : Type*} (domain : List A) (p : A → Bool) :
 
 end QUANT
 
-end Semantics.Compositional.Conjunction
+end Semantics.Montague.Conjunction

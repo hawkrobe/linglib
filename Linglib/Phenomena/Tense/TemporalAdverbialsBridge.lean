@@ -43,7 +43,7 @@ new theoretical machinery.
 namespace Phenomena.Tense.TemporalAdverbials.Rouillard2026
 
 open Semantics.Lexical.Verb.Aspect
-open Semantics.Compositional.Sentence.MaximalInformativity
+open Semantics.Montague.Sentence.MaximalInformativity
 open Core.Scale
 open Fragments.English.TemporalAdverbials
 

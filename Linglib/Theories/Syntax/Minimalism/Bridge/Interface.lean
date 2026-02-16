@@ -42,12 +42,12 @@ detected via `isTrace so`.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Semantics.Compositional.Variables
-import Linglib.Theories.Semantics.Compositional.Modification
+import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Theories.Semantics.Montague.Modification
 
 namespace Minimalism.Semantics
 
-open Semantics.Compositional Semantics.Compositional.Variables Semantics.Compositional.Modification
+open Semantics.Montague Semantics.Montague.Variables Semantics.Montague.Modification
 open Minimalism
 
 -- ============================================================================

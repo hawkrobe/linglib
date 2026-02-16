@@ -40,12 +40,12 @@ def scenario := Scope.everyNotScenario 3
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Semantics.Compositional.Derivation.Scope
+import Linglib.Theories.Semantics.Scope
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Scope
 
-open Semantics.Compositional.Derivation.Scope (ScopeConfig)
+open Semantics.Scope (ScopeConfig)
 
 -- Outcome Worlds
 

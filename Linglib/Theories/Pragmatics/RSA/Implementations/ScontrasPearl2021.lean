@@ -37,13 +37,13 @@ import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Parse
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
-import Linglib.Theories.Semantics.Compositional.Derivation.Scope
+import Linglib.Theories.Semantics.Scope
 
 namespace RSA.ScontrasPearl2021
 
 open ScontrasPearl2021
-open Semantics.Compositional.Scope
-open Semantics.Compositional.Derivation.Scope (ScopeConfig)
+open Semantics.Scope
+open Semantics.Scope (ScopeConfig)
 
 -- World-Parametric Meaning (RSA-specific)
 

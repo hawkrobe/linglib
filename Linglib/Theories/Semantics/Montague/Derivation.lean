@@ -12,16 +12,16 @@ Interface between syntax and pragmatics via `SemDeriv` bundles.
 Montague (1973)
 -/
 
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Lexicon
+import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale
 
-namespace Semantics.Compositional.Core.Derivation
+namespace Semantics.Montague.Derivation
 
-open Semantics.Compositional
-open Semantics.Compositional.Core
+open Semantics.Montague
+open Semantics.Montague
 open Core.Scale
 
 /-- Scalar item occurrence in a derivation -/
@@ -44,7 +44,7 @@ def SemDeriv.sentence {m : Model} (d : SemDeriv m) : String :=
 def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
   !d.scalarItems.isEmpty
 
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Entailment.Polarity (ContextPolarity)
 
 /-- Generate sentential alternatives by replacing scalar items -/
 def alternativeMeanings {m : Model} [Semantics.Lexical.Determiner.Quantifier.FiniteModel m]
@@ -112,11 +112,11 @@ theorem everyStudentLaughs_true : everyStudentLaughs.meaning = true := rfl
 class SemanticsProducer (SynDeriv : Type) (m : Model) where
   toDerivation : SynDeriv → SemDeriv m
 
-end Semantics.Compositional.Core.Derivation
+end Semantics.Montague.Derivation
 
 -- Backward compatibility aliases (excluding ContextPolarity which is now in Polarity.lean)
-namespace Semantics.Compositional.SemDeriv
-  export Semantics.Compositional.Core.Derivation (ScalarOccurrence SemDeriv Derivation
+namespace Semantics.Montague.SemDeriv
+  export Semantics.Montague.Derivation (ScalarOccurrence SemDeriv Derivation
     alternativeMeanings alternativeForms SemanticsProducer
     johnSleeps someStudentsSleep everyStudentSleeps someStudentsLaugh everyStudentLaughs)
-end Semantics.Compositional.SemDeriv
+end Semantics.Montague.SemDeriv

@@ -63,7 +63,7 @@ Scope-upward-monotone: if B ⊆ B' and Q(A,B), then Q(A,B').
 
 Equivalent to `∀ R, Monotone (q R)` under pointwise Bool ordering
 (see `scopeUpMono_iff_monotone`). This connects to
-`Semantics.Compositional.Core.Polarity.IsUpwardEntailing = Monotone`.
+`Semantics.Entailment.Polarity.IsUpwardEntailing = Monotone`.
 -/
 def ScopeUpwardMono (q : GQ α) : Prop :=
   ∀ (R S S' : α → Bool),

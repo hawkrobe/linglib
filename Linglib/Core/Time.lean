@@ -10,7 +10,7 @@ situations (world–time pairs), and concrete time instances.
 These definitions are used across truth-conditional semantics, event semantics,
 dynamic semantics, and intensional semantics. The theory-specific layer
 (branching time, temporal propositions) remains in
-`Theories/Semantics.Compositional/Core/Time`.
+`Theories/Semantics.Montague/Core/Time`.
 
 ## Key Concepts
 

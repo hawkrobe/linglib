@@ -29,10 +29,11 @@ import Mathlib.Topology.Order.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Field
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 
 namespace RSA.Convergence
 
-open Real Classical
+open Real Classical Finset
 
 
 /--
@@ -138,10 +139,14 @@ theorem speakerSoftmax_mono (S : RSAScenarioR) [Nonempty S.U] (L : S.U → S.M �
     speakerSoftmax S L m u₁ ≤ speakerSoftmax S L m u₂ :=
   Softmax.softmax_mono _ hα u₁ u₂ h
 
-/-- Pragmatic listener: L(m|u) ∝ P(m) · S(u|m) -/
+/-- Pragmatic listener: L(m|u) ∝ P(m) · S(u|m).
+
+    Uses the NORMALIZED speaker S(u|m) = normalize(Spk m)(u), so that the
+    listener weights match the weights in E_VL (which also normalizes the speaker).
+    This ensures the Bayesian listener update is optimal for G_α. -/
 noncomputable def listenerScore (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
     (u : S.U) (m : S.M) : ℝ :=
-  S.prior m * Spk m u
+  S.prior m * normalize (Spk m) u
 
 
 /-!

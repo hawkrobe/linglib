@@ -20,7 +20,7 @@ Reichenbach frames) lives in `Core.Time` and `Core.Reichenbach`.
 - Condoravdi, M. (2002). Temporal interpretation of modals.
 -/
 
-namespace Semantics.Compositional.Core.Time
+namespace Semantics.Tense.BranchingTime
 
 open _root_.Core.Time
 
@@ -106,4 +106,4 @@ A proposition holds at time t in world w.
 def holdsAt {W Time : Type*} (p : TProp W Time) (w : W) (t : Time) : Prop :=
   p ⟨w, t⟩
 
-end Semantics.Compositional.Core.Time
+end Semantics.Tense.BranchingTime

@@ -12,11 +12,11 @@ Connects Montague semantics to the RSA pragmatics interface via φ agreement fun
 Montague (1973), Goodman & Stuhlmüller (2013)
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 
-namespace Semantics.Compositional.Interface.SemanticBackend
+namespace Semantics.Montague.Interface.SemanticBackend
 
-open Semantics.Compositional
+open Semantics.Montague
 
 /-- Sentence with its denotation -/
 structure MontagueSentence where
@@ -59,10 +59,10 @@ theorem john_sleeps_phi : montaguePhi johnSleepsSent .actual = 1.0 := rfl
 theorem mary_sleeps_phi : montaguePhi marySleepsSent .actual = 0.0 := rfl
 theorem john_sees_mary_phi : montaguePhi johnSeesMary .actual = 1.0 := rfl
 
-end Semantics.Compositional.Interface.SemanticBackend
+end Semantics.Montague.Interface.SemanticBackend
 
 -- Backward compatibility (original namespace was just Montague)
-namespace Semantics.Compositional
-  export Semantics.Compositional.Interface.SemanticBackend (MontagueSentence ToyWorld evaluate montaguePhi
+namespace Semantics.Montague
+  export Semantics.Montague.Interface.SemanticBackend (MontagueSentence ToyWorld evaluate montaguePhi
     johnSleepsSent marySleepsSent johnSeesMary)
-end Semantics.Compositional
+end Semantics.Montague

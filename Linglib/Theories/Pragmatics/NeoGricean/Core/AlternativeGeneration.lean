@@ -41,18 +41,18 @@ Future extensions could handle:
 - Connectives (or/and scales)
 -/
 
-import Linglib.Theories.Semantics.Compositional.Core.Lexicon
-import Linglib.Theories.Semantics.Compositional.Core.Derivation
+import Linglib.Theories.Semantics.Montague.Lexicon
+import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
 import Mathlib.Data.Set.Basic
 
 namespace NeoGricean.AlternativeGeneration
 
-open Semantics.Compositional
-open Semantics.Compositional.Core
-open Semantics.Compositional.Core.Derivation
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Montague
+open Semantics.Montague
+open Semantics.Montague.Derivation
+open Semantics.Entailment.Polarity (ContextPolarity)
 open Semantics.Lexical.Determiner.Quantifier
 open Core.Scale
 open NeoGricean.Exhaustivity

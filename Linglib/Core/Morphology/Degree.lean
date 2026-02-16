@@ -8,7 +8,7 @@ on adjectives.
 
 Both rules are `isVacuous := true` because the semantic work
 (degree quantification, MAX operator) lives in the Theory layer
-(`Theories/Semantics.Compositional/Adjective/Comparative.lean`), not in
+(`Theories/Semantics.Montague/Adjective/Comparative.lean`), not in
 the morphological rule itself. The morphological rules handle only
 the formal side: surface form generation and feature marking.
 

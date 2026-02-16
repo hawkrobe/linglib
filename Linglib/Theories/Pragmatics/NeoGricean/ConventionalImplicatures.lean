@@ -49,12 +49,12 @@ c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ  (innocently excludable)
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace NeoGricean.ConventionalImplicatures
 
 open Semantics.Lexical.Expressives
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Entailment.Polarity (ContextPolarity)
 open NeoGricean (BeliefState)
 
 

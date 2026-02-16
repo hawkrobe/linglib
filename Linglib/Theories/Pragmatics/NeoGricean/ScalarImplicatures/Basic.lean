@@ -35,7 +35,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
 import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Derivation
+import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
@@ -45,7 +45,7 @@ namespace NeoGricean.ScalarImplicatures
 open NeoGricean.Alternatives
 open NeoGricean
 open NeoGricean.Exhaustivity
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Entailment.Polarity (ContextPolarity)
 open Phenomena.ScalarImplicatures
 
 
@@ -397,9 +397,9 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarI
 ```
 -/
 
-open Semantics.Compositional
-open Semantics.Compositional.SemDeriv
-open Semantics.Compositional.Core
+open Semantics.Montague
+open Semantics.Montague.SemDeriv
+open Semantics.Montague
 
 /--
 Map scale membership to the appropriate HornSet and EntailmentChecker.
@@ -458,7 +458,7 @@ Example: "some students sleep" via CCG
 Using the CCG derivation from CCG/Interpret.lean:
 -/
 def someStudentsSleep_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Compositional.SemDeriv.someStudentsSleep .upward
+  deriveFromDerivation Semantics.Montague.SemDeriv.someStudentsSleep .upward
 
 /--
 Theorem: "some students sleep" derives "not(all)"
@@ -483,7 +483,7 @@ Example: "every student sleeps" in UE
 "every" is at the top of the quantifier scale, so no stronger alternatives.
 -/
 def everyStudentsSleeps_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Compositional.SemDeriv.everyStudentSleeps .upward
+  deriveFromDerivation Semantics.Montague.SemDeriv.everyStudentSleeps .upward
 
 /--
 Theorem: "every student sleeps" has no implicatures
@@ -502,7 +502,7 @@ In a downward-entailing context (e.g., "No one thinks some students sleep"),
 the "not all" implicature is blocked.
 -/
 def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Compositional.SemDeriv.someStudentsSleep .downward
+  deriveFromDerivation Semantics.Montague.SemDeriv.someStudentsSleep .downward
 
 /--
 Theorem: "some" in DE has no "not all" implicature
@@ -1432,7 +1432,7 @@ namespace NeoGricean
 
 open Interfaces
 open NeoGricean.Alternatives
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Entailment.Polarity (ContextPolarity)
 
 /-- Marker type for the NeoGricean theory -/
 structure NeoGriceanTheory

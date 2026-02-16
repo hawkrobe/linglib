@@ -13,14 +13,14 @@ Montague (1973)
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale
 import Linglib.Core.Morphology.Number
 
-namespace Semantics.Compositional.Core
+namespace Semantics.Montague
 
-open Semantics.Compositional
+open Semantics.Montague
 open Semantics.Lexical.Determiner.Quantifier
 open Core.Scale
 
@@ -36,7 +36,7 @@ private def word_laughs : Word := ⟨"laughs", .VERB, { valence := some .intrans
 Numerals are excluded: under lower-bound semantics they form an infinite
 scale (not representable as a finite `HornScale`), and under bilateral
 semantics they don't form a scale at all (Kennedy 2015). See
-`Theories/Semantics.Compositional/Determiner/Numeral/Semantics.lean`. -/
+`Theories/Semantics.Montague/Determiner/Numeral/Semantics.lean`. -/
 inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)
   | connective (pos : Connectives.ConnExpr)
@@ -195,4 +195,4 @@ theorem some_is_scalar : some_entry.isScalar = true := rfl
 theorem every_is_scalar : every_entry.isScalar = true := rfl
 theorem john_not_scalar : john_entry.isScalar = false := rfl
 
-end Semantics.Compositional.Core
+end Semantics.Montague

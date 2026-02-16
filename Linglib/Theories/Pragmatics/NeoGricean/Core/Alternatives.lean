@@ -43,14 +43,14 @@ From Horn (1984), Rett (2015):
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Linglib.Core.HornScale
-import Linglib.Theories.Semantics.Compositional.Core.Derivation
+import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Phenomena.Gradability.Evaluativity
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
 
--- Use shared ContextPolarity from Semantics.Compositional.Core.Polarity
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+-- Use shared ContextPolarity from Semantics.Entailment.Polarity
+open Semantics.Entailment.Polarity (ContextPolarity)
 open NeoGricean.Markedness
 open Phenomena.Gradability.Evaluativity
 
@@ -153,7 +153,7 @@ def numeralSet : HornSet String :=
   ⟨["one", "two", "three", "four", "five"]⟩
 
 
--- Note: ContextPolarity is imported from Semantics.Compositional.SemDeriv
+-- Note: ContextPolarity is imported from Semantics.Montague.SemDeriv
 -- with constructors .upward and .downward
 
 /--

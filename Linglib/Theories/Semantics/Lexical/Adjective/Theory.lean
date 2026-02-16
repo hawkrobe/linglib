@@ -40,7 +40,7 @@ This module adds adjective-specific infrastructure:
 - Israel, M. (2011). The Grammar of Polarity.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.MeasurementScale
 
 namespace Semantics.Lexical.Adjective

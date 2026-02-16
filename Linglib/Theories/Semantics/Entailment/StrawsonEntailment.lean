@@ -26,13 +26,13 @@ AM < AA < DE < Strawson-DE (weakest level of negative strength)
 import Mathlib.Order.Monotone.Defs
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Core.Presupposition
 
 namespace Semantics.Entailment.StrawsonEntailment
 
 open Semantics.Entailment
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
 
 -- ============================================================================
