@@ -5,7 +5,7 @@ theme = "PaperMod"
 
 [params]
   description = "Development log for Linglib, a Lean 4 library for formal linguistics"
-  ShowReadingTime = true
+  ShowReadingTime = false
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = true

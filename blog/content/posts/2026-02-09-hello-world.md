@@ -1,7 +1,7 @@
 ---
 title: "A Tour of Linglib"
 date: 2026-02-09
-summary: "Linguistic theories don't accumulate — each paper re-derives what it needs in its own notation. Linglib is a Lean 4 library that makes linguistic infrastructure cumulative and machine-checkable, with an architecture that treats empirical data as first-class citizens."
+summary: "Introducing Linglib, a Lean 4 library for cumulative, machine-checkable formal linguistics."
 tags: ["vision", "formalization", "RSA", "Montague", "architecture"]
 ---
 
