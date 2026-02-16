@@ -19,7 +19,7 @@ export Core.DecisionTheory (
   conditionalEU valueAfterLearning utilityValue cellProbability
   securityLevel maximinValue conditionalSecurityLevel
   maximinAfterLearning maximinUtilityValue
-  questionUtility questionUtility_nonneg
+  questionUtility
   questionMaximin maximinUtilityValue_nonneg
   Question
   resolves resolvingAnswers isMentionSome isMentionAll

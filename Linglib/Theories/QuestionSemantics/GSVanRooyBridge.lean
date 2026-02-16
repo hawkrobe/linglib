@@ -88,11 +88,11 @@ with a fixed `A` of cardinality < 2, the hypothesis is vacuously true
 (questionUtility with one action is partition-independent) but the
 conclusion may be false.
 
-TODO: Bridge from `questionUtility` at `Finset.univ` to `partitionValue`
-at arbitrary `Finset`, then apply `QUD.blackwell_characterizes_refinement`.
-Approach: for arbitrary `worlds` and `dp`, construct `dp'` with prior
-zeroed outside `worlds`; then `questionUtility dp' q Finset.univ` relates
-to `partitionValue dp q worlds` via the algebraic decomposition. -/
+Proved via three bridges: `partitionValue_ge_of_questionUtility_ge` converts
+`questionUtility` ordering to `partitionValue` on `Finset.univ`;
+`partitionValue_restrict_support` restricts to arbitrary `worlds`;
+`partitionValue_congr_on_worlds` transfers between the zeroed-out DP
+and the original. -/
 theorem blackwell_dominance_refinement {W : Type*} [Fintype W] [DecidableEq W]
     (q q' : GSQuestion W)
     (hDominates : ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : List A),
@@ -100,7 +100,30 @@ theorem blackwell_dominance_refinement {W : Type*} [Fintype W] [DecidableEq W]
       questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
       questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList))) :
     q ⊑ q' := by
-  sorry
+  apply QUD.blackwell_characterizes_refinement
+  intro worlds A dp actions hprior
+  letI : DecidableEq A := Classical.decEq A
+  -- Construct dp' with prior zeroed outside worlds
+  let dp' : DecisionProblem W A :=
+    { prior := fun w => if w ∈ worlds then dp.prior w else 0
+      utility := dp.utility }
+  have hprior' : ∀ w, dp'.prior w ≥ 0 := by
+    intro w; simp only [dp']; split_ifs <;> [exact hprior w; linarith]
+  have hsupp : ∀ w, w ∉ worlds → dp'.prior w = 0 := by
+    intro w hw; simp only [dp']; simp [hw]
+  -- Step 1: questionUtility ordering for dp' (from hypothesis)
+  have hQU := hDominates A dp' actions hprior'
+  -- Step 2: Convert to partitionValue ordering on Finset.univ
+  have hPV_univ := QUD.partitionValue_ge_of_questionUtility_ge dp' q q' actions hprior' hQU
+  -- Step 3: Restrict from Finset.univ to worlds
+  rw [QUD.partitionValue_restrict_support dp' q worlds actions hsupp,
+      QUD.partitionValue_restrict_support dp' q' worlds actions hsupp] at hPV_univ
+  -- Step 4: dp' agrees with dp on worlds, so partitionValue is the same
+  rw [QUD.partitionValue_congr_on_worlds dp' dp q worlds actions
+        (fun w hw => ⟨by simp [dp', hw], fun _ => rfl⟩),
+      QUD.partitionValue_congr_on_worlds dp' dp q' worlds actions
+        (fun w hw => ⟨by simp [dp', hw], fun _ => rfl⟩)] at hPV_univ
+  exact hPV_univ
 
 /-- Blackwell's Theorem (full characterization).
 
@@ -119,18 +142,53 @@ theorem blackwell_full {W : Type*} [Fintype W] [DecidableEq W]
   · intro hDom
     exact blackwell_dominance_refinement q q' hDom
 
-/-- Blackwell generalizes to maximin (pessimistic) criterion.
+/-- Blackwell forward direction for maximin: refinement implies maximin dominance.
 
-The theorem holds not just for expected utility but for ANY "reasonable"
-decision criterion. This shows G&S semantics is robust. -/
-theorem blackwell_maximin {W A : Type*} [DecidableEq A] [DecidableEq W]
+The biconditional is FALSE with fixed action type `A`: if `|A| < 2`,
+`questionMaximin` is partition-independent so dominance holds vacuously
+but refinement may fail. Only the forward direction is correct for fixed `A`.
+
+TODO: Each fine cell c' ⊆ c (coarse). The maximin over c' considers
+fewer worst cases → min over subset ≥ min over superset. -/
+theorem blackwell_maximin_forward {W A : Type*} [DecidableEq A] [DecidableEq W]
     (q q' : GSQuestion W) (worlds : List W) (actions : List A)
-    (hWorlds : worlds.length > 0) (hActions : actions.length > 0) :
-    q ⊑ q' <->
+    (hRefines : q ⊑ q') :
     ∀ dp : DecisionProblem W A,
       questionMaximin dp worlds actions (q.toQuestion worlds) >=
       questionMaximin dp worlds actions (q'.toQuestion worlds) := by
-  sorry
+  intro dp
+  simp only [GSQuestion.toQuestion]
+  -- Key: for each fine cell, MUV ≥ questionMaximin of coarse partition
+  have key : ∀ cell ∈ q.toCells worlds,
+      maximinUtilityValue dp worlds actions cell ≥
+      questionMaximin dp worlds actions (q'.toCells worlds) := by
+    intro cell hcell
+    -- 1. Find containing coarse cell
+    obtain ⟨cell', hcell', hcontains⟩ :=
+      QUD.toCells_fine_sub_coarse q q' worlds hRefines cell hcell
+    -- 2. Filter nonemptiness: cell has a representative
+    obtain ⟨w, hw, hcw⟩ := QUD.toCells_cell_nonempty q worlds cell hcell
+    have hne : worlds.filter cell ≠ [] :=
+      List.ne_nil_of_mem (List.mem_filter.mpr ⟨hw, hcw⟩)
+    -- 3. MUV(fine) ≥ MUV(coarse) ≥ questionMaximin(coarse)
+    calc maximinUtilityValue dp worlds actions cell
+        ≥ maximinUtilityValue dp worlds actions cell' :=
+          maximinUtilityValue_monotone_cell dp worlds actions cell cell' hcontains hne
+      _ ≥ questionMaximin dp worlds actions (q'.toCells worlds) :=
+          questionMaximin_le_muv dp worlds actions (q'.toCells worlds) cell' hcell'
+  -- Case split on worlds to handle empty case
+  cases worlds with
+  | nil => simp [QUD.toCells, questionMaximin]
+  | cons w ws =>
+    -- toCells of nonempty worlds is nonempty
+    obtain ⟨c, cs, hq⟩ : ∃ c cs, q.toCells (w :: ws) = c :: cs := by
+      match hne : q.toCells (w :: ws) with
+      | c :: cs => exact ⟨c, cs, rfl⟩
+      | [] => exact absurd hne (QUD.toCells_nonempty q w ws)
+    simp only [questionMaximin, hq]
+    exact le_foldl_min _ _ _ _
+      (key c (hq ▸ List.mem_cons_self))
+      (fun cell hcell => key cell (hq ▸ List.mem_cons_of_mem c hcell))
 
 
 /-!
@@ -155,22 +213,6 @@ def hasMentionSomeStructure {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (q : Question W) : Bool :=
   (resolvingAnswers dp worlds actions q).length > 1
-
-/-- G&S's human-concern licensing implies Van Rooy's mention-some structure.
-
-If a question is licensed for mention-some by a human concern (practical goal),
-then there exists a decision problem where multiple cells resolve.
-
-**Note**: The hypothesis `_hLicensed` is vacuous (reflexivity). This should
-be reformulated with a substantive hypothesis about the licensing condition. -/
-theorem humanConcern_implies_mentionSomeDP {W E : Type*} [DecidableEq E]
-    (msi : MentionSomeInterrogative W E)
-    (goal : String)
-    (_hLicensed : MentionSomeLicensor.humanConcern goal = MentionSomeLicensor.humanConcern goal) :
-    -- There exists a DP with mention-some structure
-    ∃ (A : Type) (_ : DecidableEq A) (dp : DecisionProblem W A) (actions : List A) (worlds : List W),
-      hasMentionSomeStructure dp worlds actions (msi.whDomain.map λ x => λ w => msi.abstract w x) := by
-  sorry
 
 /-- Van Rooy's mention-some structure implies G&S mention-some is appropriate.
 
@@ -223,69 +265,46 @@ theorem canonicalMentionSomeDP_has_structure {W : Type*} [DecidableEq W]
     List.length_map, decide_eq_true_eq]
   exact hMultiple
 
+/-- Any mention-some interrogative with multiple satisfiers has mention-some structure.
+
+This is the substantive bridge: when multiple entities satisfy the wh-restriction,
+the canonical mention-some DP (go/don't-go with utility for reaching any satisfier)
+has mention-some structure. This replaces the vacuous `humanConcern_implies_mentionSomeDP`
+whose hypothesis (`rfl`) carried no content.
+
+The key insight is that G&S's "human concern" licensing boils down to the
+existence of a satisfier-based DP with mention-some structure. -/
+theorem mentionSome_multiple_satisfiers {W : Type*} [DecidableEq W]
+    (satisfies : W → Bool) (worlds : List W)
+    (hMultiple : (worlds.filter satisfies).length > 1) :
+    hasMentionSomeStructure (canonicalMentionSomeDP satisfies) worlds [true, false]
+      (worlds.filter satisfies |>.map fun w => (· == w)) = true :=
+  canonicalMentionSomeDP_has_structure satisfies worlds hMultiple
+
 
 /-!
-## Pragmatic Answerhood and Utility
+## Question Utility Non-negativity from Blackwell
 
-G&S Ch.IV: P "gives a pragmatic answer" to Q in J iff P∩J ⊆ some cell of J/Q.
+Any QUD-derived question has non-negative `questionUtility`. This follows
+from Blackwell: every QUD refines `QUD.trivial` (which has utility 0),
+so by `questionUtility_refinement_ge`, the utility is ≥ 0.
 
-Van Rooy: An answer has positive utility value iff learning it improves
-expected decision quality.
-
-**Conjecture**: These notions coincide under the right correspondence
-between information sets J and decision problems.
-
-The information set J encodes what the questioner knows. This constrains
-the relevant decision problems to those consistent with J.
+This is the correct replacement for the false pragmatic answerhood ↔ utility
+theorems that were here previously. Those theorems claimed an equivalence between
+G&S's `givesPragmaticAnswer` and `utilityValue` for consistent DPs, but
+`utilityValue` on an arbitrary `Finset.filter` doesn't connect to
+`givesPragmaticAnswer` (which tests partition cell containment, not utility).
 -/
 
-/-- A decision problem is consistent with information set J if the prior
-assigns positive probability only to worlds in J. -/
-def dpConsistentWithInfoSet {W A : Type*}
-    (dp : DecisionProblem W A) (j : InfoSet W) (worlds : List W) : Bool :=
-  worlds.all λ w => dp.prior w > 0 → j w
+/-- Question utility is non-negative for QUD-derived questions with proper priors.
 
-/-- Pragmatic answerhood implies positive utility for consistent DPs.
-
-If P gives a pragmatic answer to Q in J, then for any DP consistent with J,
-learning P has non-negative utility value. -/
-theorem pragmaticAnswer_implies_nonnegUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
-    (worlds : List W) (actions : List A)
-    (hAnswer : givesPragmaticAnswer p q j worlds = true)
-    (dp : DecisionProblem W A)
-    (hConsistent : dpConsistentWithInfoSet dp j worlds = true) :
-    utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) >= 0 := by
-  sorry
-
-/-- Positive utility implies pragmatic answerhood (converse direction).
-
-If learning P has positive utility for some DP consistent with J,
-then P gives a pragmatic answer to Q in J. -/
-theorem positiveUtility_implies_pragmaticAnswer {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
-    (worlds : List W) (actions : List A)
-    (dp : DecisionProblem W A)
-    (hConsistent : dpConsistentWithInfoSet dp j worlds = true)
-    (hPositive : utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) > 0) :
-    givesPragmaticAnswer p q j worlds = true := by
-  sorry
-
-/-- Full characterization: Pragmatic answerhood <-> Non-trivial utility.
-
-P gives a pragmatic answer in J iff P has positive utility for some
-DP consistent with J (and doesn't have negative utility for any). -/
-theorem pragmaticAnswer_iff_utility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
-    (worlds : List W) (actions : List A) :
-    givesPragmaticAnswer p q j worlds = true <->
-    (∃ dp : DecisionProblem W A,
-      dpConsistentWithInfoSet dp j worlds = true ∧
-      utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) > 0) ∧
-    (∀ dp : DecisionProblem W A,
-      dpConsistentWithInfoSet dp j worlds = true →
-      utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) >= 0) := by
-  sorry
+Corollary of `QUD.questionUtility_qud_nonneg` proved in `Core.Partition`. -/
+theorem questionUtility_nonneg_from_blackwell {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (q : QUD W) (actions : List A)
+    (hprior : ∀ w, dp.prior w ≥ 0)
+    (hsum : Finset.univ.sum dp.prior ≤ 1) :
+    questionUtility dp actions (q.toCells (Finset.univ.val.toList)) ≥ 0 :=
+  QUD.questionUtility_qud_nonneg dp q actions hprior hsum
 
 
 /-!
