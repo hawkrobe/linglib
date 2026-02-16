@@ -513,6 +513,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
+import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
 
 -- Theories: Semantics.Compositional (extensional)
 import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
