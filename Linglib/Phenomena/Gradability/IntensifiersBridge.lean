@@ -22,7 +22,7 @@ This file records pure empirical data — no theoretical commitments.
 - Zwicky, A. M. (1970). Greek-letter variables and the Sanskrit ruki class.
 -/
 
-import Linglib.Theories.TruthConditional.Adjective.Intensification
+import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 
 namespace Phenomena.Gradability.Intensifiers
 

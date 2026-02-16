@@ -69,10 +69,10 @@ Qing/Warstadt argue "common ground" is appropriate because:
 - Lewis (1979). Scorekeeping in a Language Game.
 -/
 
-import Linglib.Theories.RSA.Implementations.QingEtAl2016
-import Linglib.Theories.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Theories.RSA.Implementations.Warstadt2022
-import Linglib.Theories.DynamicSemantics.State
+import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
+import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
+import Linglib.Theories.Pragmatics.RSA.Implementations.Warstadt2022
+import Linglib.Theories.Semantics.Dynamic.State
 
 namespace Comparisons.PresuppositionProjection
 

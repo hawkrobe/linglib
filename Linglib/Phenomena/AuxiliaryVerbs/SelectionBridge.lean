@@ -1,5 +1,5 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.TruthConditional.Verb.Aspect
+import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Bridge: Auxiliary Selection × Vendler Aspect Classes

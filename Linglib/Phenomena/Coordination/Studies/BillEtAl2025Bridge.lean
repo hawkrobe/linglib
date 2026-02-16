@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
-import Linglib.Theories.TruthConditional.Conjunction
+import Linglib.Theories.Semantics.Compositional.Conjunction
 
 /-!
 # Bridge: Bill et al. (2025) × TruthConditional Conjunction

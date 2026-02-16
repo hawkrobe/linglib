@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
+import Linglib.Theories.Semantics.Causation.ProductionDependence
 
 /-!
 # Thick vs Thin Causative Verb Data (Martin, Rose & Nichols 2025)

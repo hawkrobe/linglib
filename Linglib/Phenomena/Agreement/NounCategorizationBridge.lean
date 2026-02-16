@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Agreement.NounCategorization
-import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Bridge: Noun Categorization × Chierchia (1998) Nominal Mapping Parameter

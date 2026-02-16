@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.BiasedPQ
+import Linglib.Theories.Semantics.Modality.BiasedPQ
 import Linglib.Phenomena.Questions.Typology
 
 /-!

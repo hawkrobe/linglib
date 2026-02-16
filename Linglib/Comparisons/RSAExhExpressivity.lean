@@ -52,9 +52,9 @@ These are different propositions. Standard RSA gives one answer.
 - Champollion, Alsop & Grosu (2019). Free choice as scope-dependent interpretation.
 -/
 
-import Linglib.Theories.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.RSA.Core.Basic
-import Linglib.Theories.RSA.Implementations.Franke2011
+import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 namespace Comparisons.RSAExhExpressivity
 

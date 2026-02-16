@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.TruthConditional.Determiner.Quantifier
+import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.Linarith

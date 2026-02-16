@@ -38,8 +38,8 @@ Geurts & Pouscoulous (2009) verification task: 34% SI rate
 -/
 
 import Linglib.Core.Interfaces.ImplicatureTheory
-import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
-import Linglib.Theories.RSA.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 
 namespace Comparisons.Implicature
 

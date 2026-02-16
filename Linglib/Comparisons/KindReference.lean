@@ -46,10 +46,10 @@ Carlson 1977 (bare plurals = proper names of kinds)
 - Le Bruyn, B. & de Swart, H. (2022). Exceptional wide scope of bare nominals.
 -/
 
-import Linglib.Theories.TruthConditional.Noun.Kind.Carlson1977
-import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
-import Linglib.Theories.TruthConditional.Noun.Kind.Dayal2004
-import Linglib.Theories.TruthConditional.Noun.Kind.Krifka2004
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
 namespace Comparisons.KindReference

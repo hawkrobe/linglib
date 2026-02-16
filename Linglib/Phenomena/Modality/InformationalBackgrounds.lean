@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Evidence
 
 /-!

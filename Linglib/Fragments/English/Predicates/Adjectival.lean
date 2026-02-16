@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Adjective.Theory
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-! # Adjectival Predicate Lexicon Fragment
 

@@ -1,6 +1,6 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.Basic
-import Linglib.Theories.IntensionalSemantics.Reference.KaplanLD
-import Linglib.Theories.IntensionalSemantics.SituationSemantics.Elbourne
+import Linglib.Theories.Semantics.Tense.Compositional
+import Linglib.Theories.Semantics.Reference.KaplanLD
+import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Core.Intension
 
 /-!

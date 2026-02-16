@@ -1,7 +1,7 @@
-import Linglib.Theories.Minimalism.Core.Voice
-import Linglib.Theories.Minimalism.Core.Applicative
-import Linglib.Theories.Minimalism.Bridge.EventStructureBridge
-import Linglib.Theories.IntensionalSemantics.Causative.ProductionDependence
+import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
+import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Phenomena.Causatives.ThickThinBridge
 
 /-!

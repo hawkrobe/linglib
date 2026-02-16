@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Modality.Studies.Khoo2015
-import Linglib.Theories.DynamicSemantics.Effects.Epistemic.Basic
+import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
 
 /-!
 # Bridge: Khoo (2015) × Neo-Stalnakerian Framework

@@ -1,11 +1,11 @@
 import Linglib.Core.Roundness
-import Linglib.Theories.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Phenomena.NumberUse.WoodinEtAl2024
-import Linglib.Theories.TruthConditional.Numeral.Precision
-import Linglib.Theories.NeoGricean.Constraints.NumericalExpressions
+import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Phenomena.NumeralModification.ClausWalch2024
-import Linglib.Theories.TruthConditional.Numeral.Semantics
+import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 /-!

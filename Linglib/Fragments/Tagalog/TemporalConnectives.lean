@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!

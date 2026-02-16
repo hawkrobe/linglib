@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.Typology
+import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Fragments.German.Predicates.Modal
 
 /-!

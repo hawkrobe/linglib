@@ -22,7 +22,7 @@ The theory in `Theories/Montague/Plural/Distributivity.lean` predicts:
   distributivity and maximality. Semantics & Pragmatics 18.
 -/
 
-import Linglib.Theories.TruthConditional.Plural.Distributivity
+import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 
 namespace Phenomena.Plurals.Studies.HaslingerEtAl2025
 

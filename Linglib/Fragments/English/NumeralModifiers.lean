@@ -27,7 +27,7 @@ from "up to" (positive), predicting divergent framing effects.
 -/
 
 import Linglib.Core.Basic
-import Linglib.Theories.TruthConditional.Numeral.Semantics
+import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.NumeralModifiers

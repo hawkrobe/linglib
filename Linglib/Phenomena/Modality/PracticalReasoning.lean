@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Practical Reasoning — Kratzer 2012 §2.8

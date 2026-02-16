@@ -1,6 +1,6 @@
-import Linglib.Theories.ConstructionGrammar.Studies.GoldbergJackendoff2004
-import Linglib.Theories.Minimalism.Formal.Workspace
-import Linglib.Theories.DependencyGrammar.Core.Basic
+import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 
 /-!
 # Cross-Theory Comparison: Resultative Argument Licensing

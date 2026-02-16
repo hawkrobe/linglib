@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
+import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!

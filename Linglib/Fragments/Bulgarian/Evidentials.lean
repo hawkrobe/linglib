@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
+import Linglib.Theories.Semantics.Tense.Evidential
 
 /-!
 # Bulgarian Evidential Fragment (Cumming 2026)

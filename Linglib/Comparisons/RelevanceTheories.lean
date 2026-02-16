@@ -46,12 +46,12 @@ U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 
 import Linglib.Core.DecisionTheory
 import Linglib.Core.Partition
-import Linglib.Theories.QuestionSemantics.Partition
-import Linglib.Theories.QuestionSemantics.GSVanRooyBridge
-import Linglib.Theories.RSA.Core.Basic
-import Linglib.Theories.RSA.Core.CombinedUtility
-import Linglib.Theories.RSA.Questions.Basic
-import Linglib.Theories.RSA.Questions.PolarQuestions
+import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
+import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
+import Linglib.Theories.Pragmatics.RSA.Questions.Basic
+import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Mathlib.Tactic.Ring
 
 namespace Comparisons.Relevance

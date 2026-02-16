@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
-import Linglib.Theories.RSA.Core.Noise
+import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 /-!
 # Bridge: Kursat & Degen (2021) × RSA Noise Model

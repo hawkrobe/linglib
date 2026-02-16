@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.214.0] - 2026-02-15
+
+### Changed
+- **Theories/ directory reorganization**: Restructured the entire `Theories/` directory into `Syntax/`, `Semantics/`, `Pragmatics/`, and `Morphology/` top-level categories. Dissolved `TruthConditional/` (72 files) and `IntensionalSemantics/` (56 files) into coherent domain-specific directories under `Semantics/` (Compositional, Intensional, Modality, Conditionals, Attitudes, Tense, Questions, Reference, Causation, Focus, Presupposition, Entailment, Mood, Lexical, Probabilistic, Dynamic, Events, TypeTheoretic). Moved syntax frameworks (Minimalism, HPSG, CCG, DependencyGrammar, ConstructionGrammar) under `Syntax/`. Moved pragmatic frameworks (RSA, NeoGricean, DTS) under `Pragmatics/`. ~414 files moved, ~1200 import statements rewritten.
+
 ## [0.213.31] - 2026-02-15
 
 ### Added

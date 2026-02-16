@@ -1,5 +1,5 @@
-import Linglib.Theories.IntensionalSemantics.Causative.Sufficiency
-import Linglib.Theories.IntensionalSemantics.Causative.Necessity
+import Linglib.Theories.Semantics.Causation.Sufficiency
+import Linglib.Theories.Semantics.Causation.Necessity
 
 /-!
 # Structural Causation Tests

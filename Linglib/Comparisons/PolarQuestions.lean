@@ -46,10 +46,10 @@ All three frameworks share the insight that question choice is informative:
 -/
 
 import Linglib.Core.DecisionTheory
-import Linglib.Theories.QuestionSemantics.Polarity
-import Linglib.Theories.QuestionSemantics.VerumFocus
-import Linglib.Theories.RSA.Questions.PolarQuestions
-import Linglib.Theories.RSA.Questions.ResponseSelection
+import Linglib.Theories.Semantics.Questions.Polarity
+import Linglib.Theories.Semantics.Questions.VerumFocus
+import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
+import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection
 
 namespace Comparisons.PolarQuestions
 

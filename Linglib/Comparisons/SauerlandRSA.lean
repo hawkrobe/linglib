@@ -44,8 +44,8 @@ probability to ψ-worlds (due to interaction with other alternatives).
 - Goodman, N. D. & Frank, M. C. (2016). Pragmatic language interpretation as probabilistic inference.
 -/
 
-import Linglib.Theories.RSA.Core.Basic
-import Linglib.Theories.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Core.Proposition
 import Mathlib.Data.Rat.Defs
 

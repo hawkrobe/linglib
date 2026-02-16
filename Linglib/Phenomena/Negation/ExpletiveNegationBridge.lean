@@ -1,5 +1,5 @@
-import Linglib.Theories.TruthConditional.Adjective.Comparative
-import Linglib.Theories.TruthConditional.Sentence.Tense.TemporalConnectives
+import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
+import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Fragments.English.Modifiers.Adjectives
 
