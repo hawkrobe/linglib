@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.218.3] - 2026-02-16
+
+### Changed
+- Flattened `Theories/Morphology/Diagnostics/CliticVsAffix.lean` → `Theories/Morphology/CliticVsAffix.lean`
+- Moved `Theories/Syntax/Minimalism/Morphology/Fission.lean` → `Theories/Morphology/DM/Fission.lean`
+
+## [0.218.2] - 2026-02-16
+
+### Changed
+- Moved `ProcessingModel.lean` back to `Core/` (framework-agnostic infrastructure)
+
 ## [0.218.1] - 2026-02-16
 
 ### Changed
