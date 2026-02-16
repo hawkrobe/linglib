@@ -46,7 +46,7 @@ and `Theories/Comparisons/GenericSemantics.lean` for the formal comparison.
 
 import Mathlib.Data.Rat.Defs
 
-namespace TruthConditional.Noun.Kind.Generics
+namespace Semantics.Lexical.Noun.Kind.Generics
 
 -- Core Types
 
@@ -314,4 +314,4 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 - `Phenomena/KindReference/Data.lean` - kind-level predicates, cross-linguistic patterns
 -/
 
-end TruthConditional.Noun.Kind.Generics
+end Semantics.Lexical.Noun.Kind.Generics

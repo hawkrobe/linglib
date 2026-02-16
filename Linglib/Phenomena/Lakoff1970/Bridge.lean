@@ -27,8 +27,8 @@ namespace Phenomena.Lakoff1970.Bridge
 
 open Phenomena.Lakoff1970.Data
 open Fragments.English.Tense
-open TruthConditional.Sentence.Tense.Perspective
-open TruthConditional.Sentence.Tense
+open Semantics.Tense.Perspective
+open Semantics.Tense
 open Core.Morphology.Tense
 
 -- ════════════════════════════════════════════════════

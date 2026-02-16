@@ -49,8 +49,8 @@ import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
 
--- Use shared ContextPolarity from TruthConditional.Core.Polarity
-open TruthConditional.Core.Polarity (ContextPolarity)
+-- Use shared ContextPolarity from Semantics.Compositional.Core.Polarity
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
 open NeoGricean.Markedness
 open Phenomena.Gradability.Evaluativity
 
@@ -153,7 +153,7 @@ def numeralSet : HornSet String :=
   ⟨["one", "two", "three", "four", "five"]⟩
 
 
--- Note: ContextPolarity is imported from TruthConditional.SemDeriv
+-- Note: ContextPolarity is imported from Semantics.Compositional.SemDeriv
 -- with constructors .upward and .downward
 
 /--

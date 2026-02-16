@@ -27,11 +27,11 @@ import Linglib.Core.Context
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.KaplanLD
 
-namespace IntensionalSemantics.Reference.Demonstratives
+namespace Semantics.Reference.Demonstratives
 
 open Core.Intension (Intension rigid IsRigid rigid_isRigid)
 open Core.Context (KContext)
-open IntensionalSemantics.Reference.Basic (ReferringExpression isDirectlyReferential
+open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential
   RefMechanism)
 
 /-! ## Demonstrations -/
@@ -163,4 +163,4 @@ Demonstrations connect to RSA reference games:
 The full formalization of this bridge lives in `RSA/Domains/ReferenceGames.lean`.
 -/
 
-end IntensionalSemantics.Reference.Demonstratives
+end Semantics.Reference.Demonstratives

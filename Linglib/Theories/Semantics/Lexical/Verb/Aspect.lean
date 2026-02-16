@@ -8,7 +8,7 @@ Aspectual shifts (telicize, atelicize, duratize) model compositional coercion.
 - Smith, C. (1991). The Parameter of Aspect.
 -/
 
-namespace TruthConditional.Verb.Aspect
+namespace Semantics.Lexical.Verb.Aspect
 
 section Features
 
@@ -231,4 +231,4 @@ theorem homogeneous_iff_atelic (p : AspectualProfile) :
 
 end Homogeneity
 
-end TruthConditional.Verb.Aspect
+end Semantics.Lexical.Verb.Aspect

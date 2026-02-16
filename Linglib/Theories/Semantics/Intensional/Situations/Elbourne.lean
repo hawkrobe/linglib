@@ -48,14 +48,14 @@ unifies:
 - Schwarz, F. (2009). Two Types of Definites in Natural Language.
 -/
 
-namespace IntensionalSemantics.SituationSemantics.Elbourne
+namespace Semantics.Intensional.Situations.Elbourne
 
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType ArticleType Definiteness
   demonstrativePresupType)
-open TruthConditional.Determiner.Definite (the_uniq_w DiscourseContext
+open Semantics.Lexical.Determiner.Definite (the_uniq_w DiscourseContext
   the_fam qforceToPresupType qforceToDefiniteness)
-open IntensionalSemantics.Reference.Donnellan (definitePrProp
+open Semantics.Reference.Donnellan (definitePrProp
   attributiveContent UseMode)
 open Fragments.English.Determiners (QForce QuantifierEntry)
 open Fragments.English.Pronouns (PronounType PronounEntry)
@@ -771,4 +771,4 @@ theorem sitVarStatus_roundtrip (s : SitVarStatus) :
   cases s <;> simp [SitVarStatus.toReferentialModes] at hm <;>
     rcases hm with rfl | rfl <;> rfl
 
-end IntensionalSemantics.SituationSemantics.Elbourne
+end Semantics.Intensional.Situations.Elbourne

@@ -37,7 +37,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 
-namespace TruthConditional.Expressives
+namespace Semantics.Lexical.Expressives
 
 open Core.Proposition
 
@@ -337,7 +337,7 @@ an attitude verb, the presupposition can be evaluated against the common ground
 
 This provides a new cross-module connection between:
 - `Core.Presupposition.PrProp` (presupposition + assertion)
-- `TruthConditional.Expressives.TwoDimProp` (at-issue + CI)
+- `Semantics.Lexical.Expressives.TwoDimProp` (at-issue + CI)
 
 ### References
 - Wang, S. & Buccola, B. (2025). De re presupposition via CI bifurcation.
@@ -397,4 +397,4 @@ theorem ciLift_roundtrip {W : Type*} (p : Core.Presupposition.PrProp W) :
     Core.Presupposition.PrProp.mk (ciLift p).ci (ciLift p).atIssue = p := by
   cases p; rfl
 
-end TruthConditional.Expressives
+end Semantics.Lexical.Expressives

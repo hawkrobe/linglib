@@ -25,14 +25,14 @@ a proper part along that dimension).
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
-namespace EventSemantics.StratifiedReference
+namespace Semantics.Events.StratifiedReference
 
-open EventSemantics
-open EventSemantics.Mereology
+open Semantics.Events
+open Semantics.Events.Mereology
 open _root_.Mereology
 open Core.Time
-open TruthConditional.Verb.Aspect
-open TruthConditional.Verb.ViewpointAspect
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Lexical.Verb.ViewpointAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Stratified Reference (eq. 62)
@@ -278,4 +278,4 @@ theorem in_adverbial_incompatible_with_ssr
   -- (qua_cum_incompatible).
   sorry
 
-end EventSemantics.StratifiedReference
+end Semantics.Events.StratifiedReference

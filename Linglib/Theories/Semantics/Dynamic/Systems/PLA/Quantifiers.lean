@@ -51,7 +51,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update
 import Mathlib.Data.Set.Card
 import Mathlib.Order.SetNotation
 
-namespace DynamicSemantics.PLA
+namespace Semantics.Dynamic.PLA
 
 open Classical
 
@@ -362,4 +362,4 @@ theorem universal_no_export (M : Model E) (x : VarIdx) (φ : Formula)
     Formula.forallGQ M x φ s ⊆ s :=
   gqUpdate_eliminative M GQRel.every x (Formula.atom "⊤" []) φ s
 
-end DynamicSemantics.PLA
+end Semantics.Dynamic.PLA

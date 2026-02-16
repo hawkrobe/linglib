@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Modality.Kernel
 
 Connects the nandao-Q felicity data in `Phenomena.Questions.NandaoQs` to
 the Mandarin Fragment entry and to the Kernel-theoretic felicity predicate
-`nandaoFelicitous` from `Theories.IntensionalSemantics.Modal.Kernel`.
+`nandaoFelicitous` from `Theories.Semantics.Modality.Kernel`.
 
 ## Predictions verified
 
@@ -26,8 +26,8 @@ namespace Phenomena.Questions.NandaoQs.Bridge
 
 open Phenomena.Questions.NandaoQs
 open Fragments.Mandarin.QuestionParticles (nandao)
-open IntensionalSemantics.Modal (Kernel Background nandaoFelicitous)
-open IntensionalSemantics.Attitude.Intensional (World)
+open Semantics.Modality (Kernel Background nandaoFelicitous)
+open Semantics.Attitudes.Intensional (World)
 open Core.Proposition (BProp)
 
 -- Fragment ↔ Data

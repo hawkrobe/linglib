@@ -38,12 +38,12 @@ via res movement, just as DPs can scope out of attitude complements.
 - Sharvit, Y. (2003). Trying to be progressive. *NELS 33*.
 -/
 
-namespace IntensionalSemantics.Tense.Abusch
+namespace Semantics.Tense.Abusch
 
 open Core.Tense
 open Core.Reichenbach
 open Core.Time
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -205,4 +205,4 @@ def Abusch : TenseTheory where
   simultaneousMechanism := "bound variable receives matrix event time"
 
 
-end IntensionalSemantics.Tense.Abusch
+end Semantics.Tense.Abusch

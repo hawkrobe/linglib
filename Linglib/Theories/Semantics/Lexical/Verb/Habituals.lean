@@ -11,7 +11,7 @@ with observable frequency > θ, where θ is pragmatically inferred (Tessler & Go
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 
-namespace TruthConditional.Verb.Habituals
+namespace Semantics.Lexical.Verb.Habituals
 
 section Core
 
@@ -163,4 +163,4 @@ def habAsThreshold : ThresholdQuantifier :=
 
 end Examples
 
-end TruthConditional.Verb.Habituals
+end Semantics.Lexical.Verb.Habituals

@@ -22,10 +22,10 @@ possible* (Observation 5). Kernel semantics resolves this because *can't φ* =
 - von Fintel, K. & Gillies, A. (2021). Still going strong. NLS 29:91–113.
 -/
 
-namespace IntensionalSemantics.Modal
+namespace Semantics.Modality
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional
+open Semantics.Modality.Kratzer
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
@@ -432,4 +432,4 @@ theorem nandao_mastermind_bridge :
     (kernelMust mastermindK blue).presup .w0 = true ∧
     !directlySettlesExplicit mastermindK blue = true := by native_decide
 
-end IntensionalSemantics.Modal
+end Semantics.Modality

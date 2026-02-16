@@ -39,11 +39,11 @@ but share properties of both — specifically:
 - Farkas, D. & K. Bruce (2010). On reacting to assertions and polar questions. *JoS* 27.
 -/
 
-namespace TruthConditional.Expressives.OutlookMarker
+namespace Semantics.Lexical.Expressives.OutlookMarker
 
 open Core.Presupposition (PrProp)
 open Core.ModalLogic (ModalFlavor)
-open TruthConditional.Expressives (TwoDimProp CIExprProperties)
+open Semantics.Lexical.Expressives (TwoDimProp CIExprProperties)
 
 
 /-! ## Stance Classification -/
@@ -375,4 +375,4 @@ theorem stance_projects_through_neg {W : Type*} (om : OutlookMeaning W) :
     (TwoDimProp.neg om.toTwoDimProp).ci = om.counterstance := rfl
 
 
-end TruthConditional.Expressives.OutlookMarker
+end Semantics.Lexical.Expressives.OutlookMarker

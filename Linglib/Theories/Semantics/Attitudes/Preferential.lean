@@ -52,10 +52,10 @@ import Linglib.Core.Proposition
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Questions.Hamblin
 
-namespace IntensionalSemantics.Attitude.Preferential
+namespace Semantics.Attitudes.Preferential
 
 open Core.Proposition
-open IntensionalSemantics.Attitude.CDistributivity (IsCDistributive degreeComparison_isCDistributive
+open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDistributive
                       degreeComparisonProp degreeComparisonQuestion)
 -- Basic Types
 
@@ -64,7 +64,7 @@ Question denotation (Hamblin: set of propositions).
 
 We use `List (BProp W)` as an extensional representation of question meanings.
 This is equivalent to the intensional `Hamblin.QuestionDen W := (W → Bool) → Bool`
-from `TruthConditional.Questions.Hamblin`, but more convenient for computation.
+from `Semantics.Compositional.Questions.Hamblin`, but more convenient for computation.
 
 The connection: a list `[p₁, p₂, ...]` represents the characteristic function
 `λ p. p ∈ {p₁, p₂, ...}`.
@@ -85,7 +85,7 @@ abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 ## Grounding in Hamblin Semantics
 
 Questions are **alternative sets** (Hamblin 1973). Our `QuestionDen W` is the
-extensional representation of `QuestionSemantics.Hamblin.QuestionDen W`.
+extensional representation of `Semantics.Questions.Hamblin.QuestionDen W`.
 
 ### Why This Matters for TSP
 
@@ -129,7 +129,7 @@ Convert our extensional question representation to Hamblin's intensional one.
 Note: Equality of propositions is checked extensionally over a finite world list.
 -/
 def toHamblin {W : Type*} [BEq W] (Q : QuestionDen W) (worlds : List W) :
-    QuestionSemantics.Hamblin.QuestionDen W :=
+    Semantics.Questions.Hamblin.QuestionDen W :=
   λ p => Q.any λ q => worlds.all λ w => p w == q w
 
 /--
@@ -138,7 +138,7 @@ Convert Hamblin's intensional representation to our extensional one.
 Given a Hamblin question and a list of candidate propositions, returns
 those propositions that are answers to the question.
 -/
-def fromHamblin {W : Type*} (hamblinQ : QuestionSemantics.Hamblin.QuestionDen W)
+def fromHamblin {W : Type*} (hamblinQ : Semantics.Questions.Hamblin.QuestionDen W)
     (candidates : List (BProp W)) : QuestionDen W :=
   candidates.filter hamblinQ
 
@@ -993,4 +993,4 @@ with positive valence (TSP) and non-veridicality, this yields triviality.
 it is veridical — the truth requirement breaks the triviality derivation.
 -/
 
-end IntensionalSemantics.Attitude.Preferential
+end Semantics.Attitudes.Preferential

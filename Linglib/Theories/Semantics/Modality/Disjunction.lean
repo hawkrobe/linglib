@@ -40,7 +40,7 @@ Three innovations over Zimmermann:
 import Linglib.Core.Proposition
 import Linglib.Core.Presupposition
 
-namespace IntensionalSemantics.Modal.Disjunction
+namespace Semantics.Modality.Disjunction
 
 open Core.Proposition
 open Core.Presupposition
@@ -281,4 +281,4 @@ theorem mayHereOrThere_fc_there :
   native_decide
 
 
-end IntensionalSemantics.Modal.Disjunction
+end Semantics.Modality.Disjunction

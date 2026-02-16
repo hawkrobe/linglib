@@ -22,7 +22,7 @@ Empirical observations on Japanese outlook markers from Kubota (2026).
 namespace Phenomena.OutlookMarkers.Kubota2026
 
 open Fragments.Japanese.OutlookMarkers
-open TruthConditional.Expressives.OutlookMarker
+open Semantics.Lexical.Expressives.OutlookMarker
 
 
 /-! ## Felicity Judgments

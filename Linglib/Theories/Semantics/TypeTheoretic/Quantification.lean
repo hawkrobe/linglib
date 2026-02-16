@@ -26,7 +26,7 @@ Key innovations:
 - Lücking & Ginzburg (2019, 2022). Dynamic Generalized Quantifiers.
 -/
 
-namespace DynamicSemantics.TTR
+namespace Semantics.TypeTheoretic
 
 -- ============================================================================
 -- Chapter 7: Witness-based Quantification (Cooper 2023, §7.1–7.6)
@@ -512,10 +512,10 @@ end ConservativityTheorems
 /-! #### Bridge: witness quantification ↔ extensional truth
 
 Cooper's witness-based quantifiers (type-theoretic) compute the same
-truth values as the extensional denotations in TruthConditional/Quantifier.
+truth values as the extensional denotations in Semantics.Compositional/Quantifier.
 This bridges the three layers of quantification:
   Core.Quantification (logical properties) ← proved via conservativity above
-  TruthConditional (extensional denotations) ← proved via equivalence below
+  Semantics.Compositional (extensional denotations) ← proved via equivalence below
   TTR (witness-based)                        ← definitions above -/
 
 section WitnessExtensionalBridge
@@ -725,4 +725,4 @@ end Ch7Theorems_contd
 
 end Ch7_WitnessQuantification
 
-end DynamicSemantics.TTR
+end Semantics.TypeTheoretic

@@ -39,7 +39,7 @@ BilateralDen W E = {
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 import Mathlib.Algebra.Group.Defs
 
-namespace DynamicSemantics.Core
+namespace Semantics.Dynamic.Core
 
 
 /--
@@ -291,4 +291,4 @@ instance : InvolutiveNeg (BilateralDen W E) where
 end BilateralDen
 
 
-end DynamicSemantics.Core
+end Semantics.Dynamic.Core

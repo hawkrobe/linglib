@@ -31,7 +31,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
 import Linglib.Core.QUD
 
-namespace TruthConditional.Plural.Distributivity
+namespace Semantics.Lexical.Plural.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
@@ -709,4 +709,4 @@ def classifyOperator (forcesDistributivity : Bool) (usesTolerance : Bool)
   | false, false => .nonDistMax
   | false, true => .nonDistNonMax
 
-end TruthConditional.Plural.Distributivity
+end Semantics.Lexical.Plural.Distributivity

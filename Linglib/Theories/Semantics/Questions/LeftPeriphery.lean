@@ -30,7 +30,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Questions.Embedding
 import Linglib.Phenomena.Questions.Typology
 
-namespace QuestionSemantics.LeftPeriphery
+namespace Semantics.Questions.LeftPeriphery
 
 open Phenomena.Questions.Embedding
 
@@ -310,8 +310,8 @@ PerspP introduces a not-at-issue presupposition: the perspectival center
 `Answerhood.lean`.
 -/
 
-open IntensionalSemantics.Attitude.Doxastic
-open QuestionSemantics.Answerhood
+open Semantics.Attitudes.Doxastic
+open Semantics.Questions.Answerhood
 
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
@@ -613,4 +613,4 @@ theorem veridical_model_blocks_perspP {W E : Type*}
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
 
-end QuestionSemantics.LeftPeriphery
+end Semantics.Questions.LeftPeriphery

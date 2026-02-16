@@ -18,7 +18,7 @@ goals, as in Yoon et al. 2020 for politeness).
 * `Core.Pronouns.PronounEntry.register`: pronoun register (T/V/honorific)
 * `Core.Pronouns.AllocutiveEntry.register`: allocutive marker register
 * `Fragments.English.FunctionWords.AuxEntry.register`: modal register
-* `TruthConditional.Expressives.CIContext.formality`: context formality (ℚ)
+* `Semantics.Lexical.Expressives.CIContext.formality`: context formality (ℚ)
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
 Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.

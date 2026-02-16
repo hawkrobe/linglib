@@ -15,10 +15,10 @@ import Linglib.Core.Proposition
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Mathlib.Order.Basic
 
-namespace IntensionalSemantics.Modal.Kratzer
+namespace Semantics.Modality.Kratzer
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal (ModalTheory ModalForce Proposition allWorlds')
+open Semantics.Attitudes.Intensional
+open Semantics.Modality (ModalTheory ModalForce Proposition allWorlds')
 
 /-- Convert to list of worlds where proposition holds. -/
 def propExtension (p : BProp World) : List World :=
@@ -746,4 +746,4 @@ theorem kratzer_isNormal (params : KratzerParams) : (KratzerTheory params).isNor
 theorem kratzerMinimal_isNormal : KratzerMinimal.isNormal :=
   kratzer_isNormal minimalParams
 
-end IntensionalSemantics.Modal.Kratzer
+end Semantics.Modality.Kratzer

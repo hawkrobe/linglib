@@ -28,9 +28,9 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
 
-open TruthConditional.Adjective (AntonymRelation)
+open Semantics.Lexical.Adjective (AntonymRelation)
 open Core.Scale (Boundedness)
-open TruthConditional.Adjective (NegationType)
+open Semantics.Lexical.Adjective (NegationType)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure

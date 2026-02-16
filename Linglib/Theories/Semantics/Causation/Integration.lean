@@ -48,7 +48,7 @@ namespace NadathurLauer2020.Integration
 open Core.Causation
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
-open IntensionalSemantics.Conditional.Assertability
+open Semantics.Conditionals.Assertability
 
 -- Bridge: Structural Model → Probabilistic Model
 

@@ -27,12 +27,12 @@ import Linglib.Theories.Semantics.Compositional.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Interfaces.ScopeTheory
 
-namespace TruthConditional.Derivation.Scope
+namespace Semantics.Compositional.Derivation.Scope
 
 open ScopeTheory
 
-open TruthConditional
-open TruthConditional.Determiner.Quantifier
+open Semantics.Compositional
+open Semantics.Lexical.Determiner.Quantifier
 
 -- Scope Configurations
 
@@ -115,7 +115,7 @@ structure ScopedForm where
 
 /-- Get available scopes as abstract ScopeReadings -/
 def ScopedForm.toAvailableScopes (f : ScopedForm) : AvailableScopes :=
-  TruthConditional.Derivation.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
+  Semantics.Compositional.Derivation.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
 
 /-- Marker type for Montague scope theory -/
 def MontagueScopeTheory : Type := Unit
@@ -137,10 +137,10 @@ def scopeYieldsTrue {m : Model}
     (d : ScopeDerivation m .t) (s : ScopeConfig) : Bool :=
   d.meaningAt s
 
-end TruthConditional.Derivation.Scope
+end Semantics.Compositional.Derivation.Scope
 
 -- Backward compatibility aliases
-namespace TruthConditional.Scope
-  export TruthConditional.Derivation.Scope (ScopeConfig QNScope toQNScope ScopeDerivation
+namespace Semantics.Compositional.Scope
+  export Semantics.Compositional.Derivation.Scope (ScopeConfig QNScope toQNScope ScopeDerivation
     ScopedForm MontagueScopeTheory allScopeConfigs allQNScopes scopeYieldsTrue)
-end TruthConditional.Scope
+end Semantics.Compositional.Scope

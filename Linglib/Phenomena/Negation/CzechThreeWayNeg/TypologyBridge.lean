@@ -22,7 +22,7 @@ Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 
 namespace Phenomena.Negation.CzechThreeWayNeg
 
-open IntensionalSemantics.Modal.BiasedPQ
+open Semantics.Modality.BiasedPQ
 
 -- ============================================================================
 -- §7: Bridge to Romero (2024) PQ Typology

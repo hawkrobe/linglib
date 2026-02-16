@@ -26,7 +26,7 @@ import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 
 namespace Phenomena.Plurals.Studies.HaslingerEtAl2025
 
-open TruthConditional.Plural.Distributivity (DistMaxClass)
+open Semantics.Lexical.Plural.Distributivity (DistMaxClass)
 
 -- German Distributive Lexical Items
 

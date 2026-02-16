@@ -20,7 +20,7 @@ theoretical vocabularies.
 
 For the full tense theory comparison (Abusch, Von Stechow, Kratzer,
 Ogihara, Klecha, Deal, Sharvit, Zeijlstra, Wurmbrand), see
-`Comparisons/TenseTheories.lean` and `Theories/IntensionalSemantics/Tense/`.
+`Comparisons/TenseTheories.lean` and `Theories/Semantics.Intensional/Tense/`.
 
 ## The Analogy
 
@@ -39,7 +39,7 @@ don't quantify.
 ## Structural Parallel to Variables.lean
 
 The definitions here are the temporal counterparts of H&K (1998) entity
-variable infrastructure in `TruthConditional.Variables`. Both are
+variable infrastructure in `Semantics.Compositional.Variables`. Both are
 instantiations of the generic `Core.VarAssignment` infrastructure:
 
 | Generic (Core.VarAssignment)     | Entity (Variables.lean)    | Temporal (this file)      |
@@ -65,10 +65,10 @@ referential mechanism operates over different domains.
 
 namespace Comparisons.Partee1973
 
-open TruthConditional.Sentence.Tense (TenseInterpretation TemporalAssignment
+open Semantics.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
-open IntensionalSemantics.Reference.KaplanLD (opNow)
-open IntensionalSemantics.SituationSemantics.Elbourne (SitVarStatus)
+open Semantics.Reference.KaplanLD (opNow)
+open Semantics.Intensional.Situations.Elbourne (SitVarStatus)
 open Core.Time (Situation)
 open Core.ReferentialMode (ReferentialMode)
 

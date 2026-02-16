@@ -14,7 +14,7 @@ strength = entropy. NPIs are licensed when they increase entropy by reducing bia
 - Kadmon & Landman (1993). Any.
 -/
 
-namespace QuestionSemantics.EntropyNPIs
+namespace Semantics.Questions.EntropyNPIs
 
 open Core.DecisionTheory
 
@@ -410,4 +410,4 @@ theorem npi_licensed_wh_subject {W Entity : Type*}
 
 end BiasReduction
 
-end QuestionSemantics.EntropyNPIs
+end Semantics.Questions.EntropyNPIs

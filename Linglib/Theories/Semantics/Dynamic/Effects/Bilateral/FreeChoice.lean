@@ -40,9 +40,9 @@ BUS + Modal Disjunction:
 
 import Linglib.Theories.Semantics.Dynamic.Systems.BUS.Basic
 
-namespace DynamicSemantics.BUS.FreeChoice
+namespace Semantics.Dynamic.BUS.FreeChoice
 
-open DynamicSemantics.Core
+open Semantics.Dynamic.Core
 open Classical
 
 
@@ -269,4 +269,4 @@ def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
   , x := 0 }
 
 
-end DynamicSemantics.BUS.FreeChoice
+end Semantics.Dynamic.BUS.FreeChoice

@@ -26,7 +26,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 
 namespace Phenomena.Gradability.Intensifiers
 
-open TruthConditional.Adjective.Intensification (EvaluativeValence)
+open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
 
 /--
 Intensifier degree class (Nouwen 2024, Figure 2).

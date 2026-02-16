@@ -24,10 +24,10 @@ import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Core.ModalLogic
 import Linglib.Core.Context
 
-namespace IntensionalSemantics.Reference.Kaplan
+namespace Semantics.Reference.Kaplan
 
 open Core.Intension (Intension rigid IsRigid rigid_isRigid)
-open IntensionalSemantics.Reference.Basic
+open Semantics.Reference.Basic
 open Core.Context (KContext)
 
 /-! ## Indexicals -/
@@ -144,4 +144,4 @@ theorem i_am_here_now_logically_true {W E : Type*}
     ∀ c : Context W E, here c c.agent c.world = true :=
   hCtx
 
-end IntensionalSemantics.Reference.Kaplan
+end Semantics.Reference.Kaplan

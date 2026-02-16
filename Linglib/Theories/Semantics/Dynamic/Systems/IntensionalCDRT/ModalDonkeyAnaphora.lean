@@ -38,14 +38,14 @@ The anaphoric relationship:
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Basic
 
-namespace DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
+namespace Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
 open Core.Time
-open TruthConditional.Core.Time
-open IntensionalSemantics.Mood
-open DynamicSemantics.IntensionalCDRT
-open DynamicSemantics.IntensionalCDRT.Situations
-open DynamicSemantics.Core
+open Semantics.Compositional.Core.Time
+open Semantics.Mood
+open Semantics.Dynamic.IntensionalCDRT
+open Semantics.Dynamic.IntensionalCDRT.Situations
+open Semantics.Dynamic.Core
 
 
 /--
@@ -346,4 +346,4 @@ theorem donkey_accessibility_transitive {W Time : Type*}
   exact h₂.trans h₁
 
 
-end DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
+end Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora

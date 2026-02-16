@@ -7,7 +7,7 @@ import Mathlib.Data.List.Basic
 Core types for question semantics shared across theoretical approaches.
 -/
 
-namespace QuestionSemantics
+namespace Semantics.Questions
 
 /-- Partition-based question: list of mutually exclusive proposition cells. -/
 abbrev Question (W : Type*) := List (W -> Bool)
@@ -71,4 +71,4 @@ def pimplies {W : Type*} (p q : W -> Bool) : W -> Bool := λ w => !p w || q w
 def entails {W : Type*} (p q : W -> Bool) (worlds : List W) : Bool :=
   worlds.all λ w => !p w || q w
 
-end QuestionSemantics
+end Semantics.Questions

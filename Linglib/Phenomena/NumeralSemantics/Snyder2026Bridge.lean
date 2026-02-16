@@ -21,7 +21,7 @@ directly generates all nine. Any theory must explain how the others arise.
 
 namespace Phenomena.NumeralSemantics.Snyder2026
 
-open TruthConditional.Numeral.Polysemy (SemanticFunction)
+open Semantics.Lexical.Numeral.Polysemy (SemanticFunction)
 
 -- ============================================================================
 -- Section 1: The Nine Semantic Functions (Snyder (1a-f), (76g-j))

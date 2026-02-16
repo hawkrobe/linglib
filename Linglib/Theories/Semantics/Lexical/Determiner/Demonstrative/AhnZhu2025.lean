@@ -36,7 +36,7 @@ is not just notational — it's the structural basis for bridging.
 - Barker, C. (2011). Possessives and relational nouns.
 -/
 
-namespace TruthConditional.Determiner.Demonstrative.AhnZhu2025
+namespace Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
 
 
 /--
@@ -408,7 +408,7 @@ This section shows how Ahn & Zhu's analysis DERIVES from Barker's framework.
 Rather than re-proving everything, we show the correspondence.
 -/
 
-open TruthConditional.Noun.Relational.Barker2011
+open Semantics.Lexical.Noun.Relational.Barker2011
 
 /--
 **Connection Theorem 1**: Our local π matches Barker's π.
@@ -418,7 +418,7 @@ This shows the two formalizations are compatible.
 theorem local_pi_matches_barker {E S : Type}
     (P : E → S → Bool) (R : E → E → S → Bool) (z x : E) (s : S) :
     (relationalizer (.pred1 P) R).toPred2 z x s =
-    TruthConditional.Noun.Relational.Barker2011.π P R z x s := rfl
+    Semantics.Lexical.Noun.Relational.Barker2011.π P R z x s := rfl
 
 /--
 **Connection Theorem 2**: Bridging licensing derives from Barker's framework.
@@ -431,7 +431,7 @@ theorem bridging_from_barker {E S : Type}
     -- Barker: π creates a Pred2 (has relatum slot)
     -- Ahn & Zhu: na applies π, so na creates a relatum slot
     -- Therefore: na enables bridging
-    TruthConditional.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true := rfl
+    Semantics.Lexical.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true := rfl
 
 /--
 **The Derivation Chain**:
@@ -447,9 +447,9 @@ applied to Mandarin demonstratives.
 -/
 theorem derivation_chain {E S : Type} :
     -- Step 1-2: From Barker - π application means relatum slot exists
-    TruthConditional.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true ∧
+    Semantics.Lexical.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true ∧
     -- Step 3-5: Na uses π, so na enables bridging
-    TruthConditional.Noun.Relational.Barker2011.canFillRelatum .noRelation = false := ⟨rfl, rfl⟩
+    Semantics.Lexical.Noun.Relational.Barker2011.canFillRelatum .noRelation = false := ⟨rfl, rfl⟩
 
 /-!
 ## What Makes This Cumulative
@@ -463,4 +463,4 @@ This is how a library grows cumulatively: later work builds on earlier work,
 creating a web of interconnected results rather than isolated modules.
 -/
 
-end TruthConditional.Determiner.Demonstrative.AhnZhu2025
+end Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025

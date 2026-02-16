@@ -41,7 +41,7 @@ Modified numerals are theory-independent — everyone agrees "more than 3" means
 - Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
 -/
 
-namespace TruthConditional.Numeral
+namespace Semantics.Lexical.Numeral
 
 -- ============================================================================
 -- Section 1: Ordering Relations and Modifier Classification
@@ -714,7 +714,7 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- intersection cardinality. This connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩)
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
-open TruthConditional.Determiner in
+open Semantics.Compositional Semantics.Lexical.Determiner in
 /-- GQT "at least n" agrees with `maxMeaning .ge` on intersection cardinality. -/
 theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -722,7 +722,7 @@ theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     maxMeaning .ge n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
   rfl
 
-open TruthConditional.Determiner in
+open Semantics.Compositional Semantics.Lexical.Determiner in
 /-- GQT "at most n" agrees with `maxMeaning .le` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -733,7 +733,7 @@ theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
 private theorem decide_eq_beq (a b : Nat) : decide (a = b) = (a == b) := by
   by_cases h : a = b <;> simp [h]
 
-open TruthConditional.Determiner in
+open Semantics.Compositional Semantics.Lexical.Determiner in
 /-- GQT "exactly n" agrees with `maxMeaning .eq` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -924,7 +924,7 @@ theorem measureSentence_fromHasDegree {E : Type} [HasDegree E]
 -- Section 16: Numeral with Precision Mode
 -- ============================================================================
 
-open TruthConditional.Numeral.Precision in
+open Semantics.Lexical.Numeral.Precision in
 
 /-- Numeral semantics with precision mode.
     "1000 dollars" under exact mode: true iff cost = 1000
@@ -933,4 +933,4 @@ def numeralWithPrecision {E : Type} [Core.Scale.HasDegree E]
     (stated : ℚ) (entity : E) (mode : PrecisionMode) (base : ℚ := 10) : Bool :=
   matchesPrecision mode stated (Core.Scale.HasDegree.degree entity) base
 
-end TruthConditional.Numeral
+end Semantics.Lexical.Numeral

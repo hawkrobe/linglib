@@ -39,7 +39,7 @@ namespace CCG.Equivalence
 
 open CCG
 open CCG.Combinators
-open TruthConditional
+open Semantics.Compositional
 
 -- Semantic Equivalence
 

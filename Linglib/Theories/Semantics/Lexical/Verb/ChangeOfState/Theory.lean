@@ -37,7 +37,7 @@ This maps directly to `PrProp` from `Core.Presupposition`:
 
 import Linglib.Core.Presupposition
 
-namespace TruthConditional.Verb.ChangeOfState
+namespace Semantics.Lexical.Verb.ChangeOfState
 
 open Core.Presupposition
 
@@ -305,4 +305,4 @@ compositional semantics. The `cosSemantics` function provides the
 grounding for downstream pragmatic reasoning.
 -/
 
-end TruthConditional.Verb.ChangeOfState
+end Semantics.Lexical.Verb.ChangeOfState

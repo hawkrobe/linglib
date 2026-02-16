@@ -8,7 +8,7 @@ on adjectives.
 
 Both rules are `isVacuous := true` because the semantic work
 (degree quantification, MAX operator) lives in the Theory layer
-(`Theories/TruthConditional/Adjective/Comparative.lean`), not in
+(`Theories/Semantics.Compositional/Adjective/Comparative.lean`), not in
 the morphological rule itself. The morphological rules handle only
 the formal side: surface form generation and feature marking.
 
@@ -33,7 +33,7 @@ namespace Core.Morphology.Degree
 
     Semantically vacuous at the morphological level — comparative
     semantics (degree quantification) is handled compositionally
-    by `TruthConditional.Adjective.Comparative`. -/
+    by `Semantics.Lexical.Adjective.Comparative`. -/
 def comparativeRule (σ : Type) (irregularForm : Option String := none) : MorphRule σ :=
   { category := .degree
   , value := "comp"

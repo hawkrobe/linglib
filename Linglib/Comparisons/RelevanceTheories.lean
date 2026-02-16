@@ -57,7 +57,7 @@ import Mathlib.Tactic.Ring
 namespace Comparisons.Relevance
 
 open Core.DecisionTheory
-open QuestionSemantics
+open Semantics.Questions
 open RSA.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
@@ -529,7 +529,7 @@ theorem blackwell_unifies_relevance
       (∀ w, dp.prior w ≥ 0) →
       questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
       questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) := by
-  exact QuestionSemantics.Bridge.blackwell_full q q'
+  exact Semantics.Questions.Bridge.blackwell_full q q'
 
 
 /-!

@@ -20,7 +20,7 @@ Table 17. The -l participle interacts with tense to encode evidential perspectiv
 
 namespace Fragments.Bulgarian.Evidentials
 
-open TruthConditional.Sentence.Tense.Evidential
+open Semantics.Tense.Evidential
 
 /-- Bulgarian NFUT + -l: T ≤ A (downstream), T ≤ S (nonfuture). -/
 def nfutL : TenseEvidentialParadigm where

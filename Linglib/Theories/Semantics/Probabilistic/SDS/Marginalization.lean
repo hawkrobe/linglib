@@ -45,12 +45,12 @@ import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 
-namespace SDS.Marginalization
+namespace Semantics.Probabilistic.SDS.Marginalization
 
-open SDS.Core
-open SDS.ThresholdInstances
+open Semantics.Probabilistic.SDS.Core
+open Semantics.Probabilistic.SDS.ThresholdInstances
 open Comparisons.ThresholdSemantics
-open TruthConditional.BayesianSemantics
+open Semantics.Compositional.BayesianSemantics
 
 
 /-!
@@ -190,7 +190,7 @@ instance {U W : Type} : SDSConstraintSystem (LURSAInducedSDS U W) (Lexicon U W) 
   scenarioFactor ind L := ind.lexPrior L
 
 /--
-LU-RSA has trivial selectional factors when viewed as SDS.
+LU-RSA has trivial selectional factors when viewed as Semantics.Probabilistic.SDS.
 -/
 theorem lursa_trivial_selectional {U W : Type} (ind : LURSAInducedSDS U W)
     (L : Lexicon U W) :
@@ -287,7 +287,7 @@ structure SDSPackage where
   sys : System
 
 /--
-Structure representing an LU-RSA scenario packaged for translation to SDS.
+Structure representing an LU-RSA scenario packaged for translation to Semantics.Probabilistic.SDS.
 -/
 structure LURSAPackage where
   /-- Utterance type -/
@@ -416,4 +416,4 @@ SDS extends LU-RSA with **factored priors**:
 - `SDSandRSA`: This module extends that correspondence formally
 -/
 
-end SDS.Marginalization
+end Semantics.Probabilistic.SDS.Marginalization

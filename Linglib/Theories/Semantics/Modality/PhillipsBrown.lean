@@ -10,15 +10,15 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 
-namespace IntensionalSemantics.Modal.PhillipsBrown
+namespace Semantics.Modality.PhillipsBrown
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal.Kratzer
-open QuestionSemantics.Hamblin
+open Semantics.Attitudes.Intensional
+open Semantics.Modality.Kratzer
+open Semantics.Questions.Hamblin
 
 /-- p entails q iff every p-world is a q-world. -/
 def propEntails (p q : BProp World) : Bool :=
-  IntensionalSemantics.Modal.propEntails allWorlds p q
+  Semantics.Modality.propEntails allWorlds p q
 
 /-- Propositions overlap iff they share at least one world. -/
 def propOverlap (p q : BProp World) : Bool :=
@@ -197,15 +197,15 @@ theorem satisfiedBy_eq_generic (GS : List (BProp World)) (a : BProp World) :
 def propositionPreorder (GS : List (BProp World)) : Preorder (BProp World) :=
   (propositionOrdering GS).toPreorder
 
-end IntensionalSemantics.Modal.PhillipsBrown
+end Semantics.Modality.PhillipsBrown
 
 -- BouleticFlavor Extension: Question-Based Desire Semantics
 
-namespace IntensionalSemantics.Modal.Kratzer.BouleticFlavor
+namespace Semantics.Modality.Kratzer.BouleticFlavor
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal.Kratzer
-open IntensionalSemantics.Modal.PhillipsBrown
+open Semantics.Attitudes.Intensional
+open Semantics.Modality.Kratzer
+open Semantics.Modality.PhillipsBrown
 
 /-- Question-based desire: ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
 def evalWant (self : BouleticFlavor) (w : World)
@@ -227,12 +227,12 @@ def liveAnswers (_self : BouleticFlavor) (question : List (BProp World)) (belS :
     List (BProp World) :=
   questionRelativeBelief question belS
 
-end IntensionalSemantics.Modal.Kratzer.BouleticFlavor
+end Semantics.Modality.Kratzer.BouleticFlavor
 
-namespace IntensionalSemantics.Modal.PhillipsBrown
+namespace Semantics.Modality.PhillipsBrown
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional
+open Semantics.Modality.Kratzer
 
 /--
 **Theorem: BouleticFlavor.evalWant = wantQuestionBased.**
@@ -287,4 +287,4 @@ theorem empty_bouletic_indifferent (w : World) (a a' : BProp World) :
 | Best | `bestWorlds` | `bestAnswers` | `best` |
 -/
 
-end IntensionalSemantics.Modal.PhillipsBrown
+end Semantics.Modality.PhillipsBrown

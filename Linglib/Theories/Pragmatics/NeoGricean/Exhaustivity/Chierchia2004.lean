@@ -137,7 +137,7 @@ theorem krifkaRule_satisfies_strength (φ : Prop' World) (ALT : Set (Prop' World
     This reverses entailment: strengthening the argument weakens the result.
 
     Note: This is the `World → Prop` version, paralleling `IsDownwardEntailing`
-    (`Antitone`) from `TruthConditional.Core.Polarity` which uses `World → Bool`. -/
+    (`Antitone`) from `Semantics.Compositional.Core.Polarity` which uses `World → Bool`. -/
 def IsDE (f : Prop' World → Prop' World) : Prop :=
   ∀ φ ψ : Prop' World, (φ ⊆ₚ ψ) → (f ψ ⊆ₚ f φ)
 

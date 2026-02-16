@@ -30,11 +30,11 @@ import Linglib.Core.Time
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
-namespace EventSemantics
+namespace Semantics.Events
 
 open Core.Time
-open TruthConditional.Verb.Aspect
-open TruthConditional.Verb.ViewpointAspect
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Lexical.Verb.ViewpointAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Sort (Bach 1986)
@@ -247,4 +247,4 @@ theorem exampleRun_toEventuality_τ :
     exampleRun.toEventuality.τ = exampleRun.τ :=
   toEventuality_τ exampleRun
 
-end EventSemantics
+end Semantics.Events

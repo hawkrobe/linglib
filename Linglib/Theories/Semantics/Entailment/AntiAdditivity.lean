@@ -9,11 +9,11 @@ import Linglib.Core.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 
-namespace TruthConditional.Sentence.Entailment.AntiAdditivity
+namespace Semantics.Entailment.AntiAdditivity
 
 open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
-open TruthConditional.Sentence.Entailment
-open TruthConditional.Core.Polarity
+open Semantics.Entailment
+open Semantics.Compositional.Core.Polarity
 open List (Sublist)
 
 
@@ -368,4 +368,4 @@ theorem antiMultiplicative_implies_de (f : BProp World → BProp World) (hAM : I
 
 end UEDuals
 
-end TruthConditional.Sentence.Entailment.AntiAdditivity
+end Semantics.Entailment.AntiAdditivity

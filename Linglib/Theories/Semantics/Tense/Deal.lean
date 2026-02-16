@@ -29,11 +29,11 @@ temporal tense (subject to ULC) from counterfactual tense (exempt from ULC).
   *Linguistic Inquiry* 31(2): 231-270.
 -/
 
-namespace IntensionalSemantics.Tense.Deal
+namespace Semantics.Tense.Deal
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -144,4 +144,4 @@ def Deal : TenseTheory where
   simultaneousMechanism := "not primary focus (inherits from base tense theory)"
 
 
-end IntensionalSemantics.Tense.Deal
+end Semantics.Tense.Deal

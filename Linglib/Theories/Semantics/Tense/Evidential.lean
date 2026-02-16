@@ -50,11 +50,11 @@ the canonical `EvidentialPerspective` classification in `Core.Evidence`.
 - Reichenbach, H. (1947). *Elements of Symbolic Logic*.
 -/
 
-namespace TruthConditional.Sentence.Tense.Evidential
+namespace Semantics.Tense.Evidential
 
 open Core.Time
 open Core.Reichenbach
-open TruthConditional.Sentence.Tense
+open Semantics.Tense
 open Core.Evidence
 open Core.Presupposition
 
@@ -220,4 +220,4 @@ def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PrProp W
 theorem nonfutureMeaning_presup {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) (w : W) :
     (nonfutureMeaning f p).presup w = decide (f.eventTime ≤ f.acquisitionTime) := rfl
 
-end TruthConditional.Sentence.Tense.Evidential
+end Semantics.Tense.Evidential

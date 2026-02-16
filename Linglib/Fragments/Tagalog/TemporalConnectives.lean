@@ -23,7 +23,7 @@ overt aspect markers in Tagalog.
 
 namespace Fragments.Tagalog.TemporalConnectives
 
-open TruthConditional.Verb.ViewpointAspect
+open Semantics.Lexical.Verb.ViewpointAspect
 open Fragments.English.TemporalExpressions (Reading)
 
 -- ============================================================================

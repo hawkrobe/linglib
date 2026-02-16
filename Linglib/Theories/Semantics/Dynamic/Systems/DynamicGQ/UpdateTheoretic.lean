@@ -23,9 +23,9 @@ produces cumulative readings automatically.
   §6, equations 74–82.
 -/
 
-namespace DynamicSemantics.DynamicGQ.UpdateTheoretic
+namespace Semantics.Dynamic.DynamicGQ.UpdateTheoretic
 
-open DynamicSemantics.Charlow2019
+open Semantics.Dynamic.Charlow2019
 open Mereology
 
 variable {W E : Type*}
@@ -97,4 +97,4 @@ theorem exactlyN_u_cumulative [PartialOrder E] [Fintype E] :
     ¬ isDistributive (exactlyN_u (W := W) (E := E) v P n) := by
   sorry
 
-end DynamicSemantics.DynamicGQ.UpdateTheoretic
+end Semantics.Dynamic.DynamicGQ.UpdateTheoretic

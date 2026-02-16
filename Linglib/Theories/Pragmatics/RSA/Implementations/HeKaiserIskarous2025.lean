@@ -389,7 +389,7 @@ This bridges the two notions:
 
 Negative sentences contain negation → DE context.
 -/
-def toContextPolarity : Polarity → TruthConditional.Core.Polarity.ContextPolarity
+def toContextPolarity : Polarity → Semantics.Compositional.Core.Polarity.ContextPolarity
   | .positive => .upward
   | .negative => .downward
   | .null => .upward
@@ -415,7 +415,7 @@ where `neg` is Montague's sentence-level negation operator.
 
 section CompositionalGrounding
 
-open TruthConditional
+open Semantics.Compositional
 
 /--
 A simple model for part-whole relations.
@@ -466,7 +466,7 @@ theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
 
 -- Connecting to Polarity Machinery (with proven DE property)
 
-open TruthConditional.Core.Polarity
+open Semantics.Compositional.Core.Polarity
 open Core.Proposition
 
 /--

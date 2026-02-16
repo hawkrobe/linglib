@@ -8,10 +8,10 @@ import Linglib.Theories.Semantics.Compositional.Core.Polarity
 import Linglib.Core.Proposition
 import Linglib.Phenomena.Negation.Basic
 
-namespace TruthConditional.Sentence.Entailment.NegationTests
+namespace Semantics.Entailment.NegationTests
 
-open TruthConditional.Sentence.Entailment
-open TruthConditional.Core.Polarity
+open Semantics.Entailment
+open Semantics.Compositional.Core.Polarity
 open Phenomena.Negation
 open Core.Proposition
 
@@ -77,4 +77,4 @@ theorem all_predictions_match :
 
 end DEVerification
 
-end TruthConditional.Sentence.Entailment.NegationTests
+end Semantics.Entailment.NegationTests

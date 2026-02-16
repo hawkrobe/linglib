@@ -28,7 +28,7 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 namespace Comparisons.CumulativeReadings
 
 open Phenomena.Charlow2021.Data
-open DynamicSemantics.DynamicGQ.SubtypePolymorphism
+open Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 
 /-- All three approaches derive the cumulative reading for Scenario A. -/
 theorem all_three_cumulative_scenarioA :
@@ -51,8 +51,8 @@ theorem subtype_blocks_pseudo :
     Specifically, dependent indefinites cannot be typed as `StateCCP`.
     [sorry: need to show dependent indefinite semantics is not expressible as StateCCP] -/
 theorem dependent_indefinites_need_extra {W E : Type*} :
-    ¬ ∀ (depIndef : DynamicSemantics.Charlow2019.StateCCP W E),
-      DynamicSemantics.Charlow2019.isDistributive depIndef := by
+    ¬ ∀ (depIndef : Semantics.Dynamic.Charlow2019.StateCCP W E),
+      Semantics.Dynamic.Charlow2019.isDistributive depIndef := by
   sorry
 
 end Comparisons.CumulativeReadings

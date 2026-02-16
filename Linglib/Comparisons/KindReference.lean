@@ -54,10 +54,10 @@ import Linglib.Phenomena.Generics.KindReference
 
 namespace Comparisons.KindReference
 
-open TruthConditional.Noun.Kind.Carlson1977
-open TruthConditional.Noun.Kind.Chierchia1998
-open TruthConditional.Noun.Kind.Dayal2004
-open TruthConditional.Noun.Kind.Krifka2004
+open Semantics.Lexical.Noun.Kind.Carlson1977
+open Semantics.Lexical.Noun.Kind.Chierchia1998
+open Semantics.Lexical.Noun.Kind.Dayal2004
+open Semantics.Lexical.Noun.Kind.Krifka2004
 open Phenomena.Generics.KindReference
 
 -- Carlson 1977: The Foundation

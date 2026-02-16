@@ -53,9 +53,9 @@ import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection
 
 namespace Comparisons.PolarQuestions
 
-open QuestionSemantics
-open QuestionSemantics.Polarity
-open QuestionSemantics.VerumFocus
+open Semantics.Questions
+open Semantics.Questions.Polarity
+open Semantics.Questions.VerumFocus
 open RSA.Questions
 
 
@@ -225,7 +225,7 @@ theorem npq_different_responses {W A : Type*} [Fintype W] [DecidableEq W] [Decid
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
     (p : W → Bool) (h : compareUtility dp actions p = .lt) :
     optimalQuestionType dp actions p = .negative := by
-  simp only [QuestionSemantics.Polarity.optimalQuestionType, h]
+  simp only [Semantics.Questions.Polarity.optimalQuestionType, h]
 
 /-- **Prediction 2**: Alternative questions are optimal when UV(p) = UV(¬p).
 
@@ -239,7 +239,7 @@ theorem alt_question_neutral_tom {W A : Type*} [Fintype W] [DecidableEq W] [Deci
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
     (p : W → Bool) (h : compareUtility dp actions p = .eq) :
     optimalQuestionType dp actions p = .alternative := by
-  simp only [QuestionSemantics.Polarity.optimalQuestionType, h]
+  simp only [Semantics.Questions.Polarity.optimalQuestionType, h]
 
 /-- **Prediction 3**: Verum-marked grounding questions signal urgency.
 

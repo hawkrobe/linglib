@@ -29,14 +29,14 @@ thematic role properties in `Krifka1998.lean` to provide:
 - Scontras, G. (2014). *The Semantics of Measurement*. Harvard dissertation.
 -/
 
-namespace EventSemantics.Krifka1989
+namespace Semantics.Events.Krifka1989
 
-open EventSemantics
-open EventSemantics.Mereology
-open EventSemantics.Krifka1998
-open EventSemantics.StratifiedReference
+open Semantics.Events
+open Semantics.Events.Mereology
+open Semantics.Events.Krifka1998
+open Semantics.Events.StratifiedReference
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nominal Reference Properties
@@ -197,16 +197,16 @@ the quantizing effect that Krifka's telicity transfer chain requires. -/
     and positivity. This bridges Scontras's measurement framework to
     Krifka's mereological telicity machinery. -/
 def MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
-    (μ : TruthConditional.Measurement.MeasureFn E) : Prop :=
+    (μ : Semantics.Probabilistic.Measurement.MeasureFn E) : Prop :=
   ExtMeasure E μ.apply
 
 /-- When a measure term uses the default exact relation (= n), `applyNumeral n`
     checks μ(x) == n. This is the Boolean analog of Krifka's QMOD.
     Stated for the default-rel constructor to ensure definitional equality. -/
 theorem measureTerm_default_applyNumeral_eq
-    {E : Type*} (μ : TruthConditional.Measurement.MeasureFn E)
+    {E : Type*} (μ : Semantics.Probabilistic.Measurement.MeasureFn E)
     (n : ℚ) (x : E) :
-    ({ measureFn := μ } : TruthConditional.Measurement.MeasureTermSem E).applyNumeral n x
+    ({ measureFn := μ } : Semantics.Probabilistic.Measurement.MeasureTermSem E).applyNumeral n x
       = (μ.apply x == n) := rfl
 
 /-- When a `MeasureFn` is extensive (in Krifka's sense), QMOD with that
@@ -214,11 +214,11 @@ theorem measureTerm_default_applyNumeral_eq
     This bridges Scontras's `MeasureFn` to Krifka's telicity machinery. -/
 theorem extensive_measureFn_qmod_qua
     {E : Type*} [inst : SemilatticeSup E]
-    {μ : TruthConditional.Measurement.MeasureFn E}
+    {μ : Semantics.Probabilistic.Measurement.MeasureFn E}
     (hExt : MeasureFn.IsExtensive μ)
     {R : E → Prop} {n : ℚ} (hn : 0 < n) :
     QUA (QMOD R μ.apply n) := by
   have : @ExtMeasure E inst μ.apply := hExt
   exact @qmod_qua E inst _ _ this n hn
 
-end EventSemantics.Krifka1989
+end Semantics.Events.Krifka1989

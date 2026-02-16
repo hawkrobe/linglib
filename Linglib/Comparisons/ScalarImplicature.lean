@@ -45,7 +45,7 @@ namespace Comparisons.ScalarImplicature
 
 open NeoGricean.ScalarImplicatures
 open RSA.ScalarImplicatures
-open TruthConditional.SemDeriv
+open Semantics.Compositional.SemDeriv
 
 
 /-

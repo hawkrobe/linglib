@@ -36,14 +36,14 @@ import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Builder
 import Linglib.Phenomena.Aspect.DiagnosticsBridge
 
-namespace EventSemantics.Agentivity
+namespace Semantics.Events.Agentivity
 
-open EventSemantics
-open EventSemantics.ThematicRoles
+open Semantics.Events
+open Semantics.Events.ThematicRoles
 open NadathurLauer2020.CoerciveImplication
 open NadathurLauer2020.Builder
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 open Phenomena.Aspect.Diagnostics
 
 -- ════════════════════════════════════════════════════
@@ -355,4 +355,4 @@ theorem doTest_agrees_imperative_for_dynamic_durative (c : VendlerClass)
   cases c <;> simp_all [doTestPrediction, imperativePrediction,
     VendlerClass.dynamicity, VendlerClass.duration]
 
-end EventSemantics.Agentivity
+end Semantics.Events.Agentivity

@@ -28,12 +28,12 @@ that must be checked against the local temporal anchor.
   In Klein & Li (eds.), *The Expression of Time*, 129-166.
 -/
 
-namespace IntensionalSemantics.Tense.VonStechow
+namespace Semantics.Tense.VonStechow
 
 open Core.Tense
 open Core.Reichenbach
 open Core.Time
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -154,4 +154,4 @@ def VonStechow : TenseTheory where
   simultaneousMechanism := "[PRES] feature checked against matrix event time"
 
 
-end IntensionalSemantics.Tense.VonStechow
+end Semantics.Tense.VonStechow

@@ -7,7 +7,7 @@ Morphological rules for aspect marking on verbs.
 
 All rules are `isVacuous := true` because the semantic work (event structure,
 progressive, perfective) lives in the Theory layer
-(`Theories/TruthConditional/Verb/Aspect/`), not in the morphological rule itself.
+(`Theories/Semantics.Compositional/Verb/Aspect/`), not in the morphological rule itself.
 
 ## References
 

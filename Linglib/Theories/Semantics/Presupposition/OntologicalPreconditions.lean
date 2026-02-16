@@ -44,11 +44,11 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Phenomena.Presupposition.Diagnostics
 
-namespace TruthConditional.Sentence.Presupposition.OntologicalPreconditions
+namespace Semantics.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
-open TruthConditional.Verb.ChangeOfState
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Lexical.Verb.Aspect
 open Phenomena.Presupposition.Diagnostics
 
 
@@ -503,4 +503,4 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
       | .continuation => .atelic := by
   cases t <;> rfl
 
-end TruthConditional.Sentence.Presupposition.OntologicalPreconditions
+end Semantics.Presupposition.OntologicalPreconditions

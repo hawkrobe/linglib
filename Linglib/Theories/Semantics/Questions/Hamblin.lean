@@ -31,7 +31,7 @@ generalized conjunction:
 - Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
 -/
 
-namespace QuestionSemantics.Hamblin
+namespace Semantics.Questions.Hamblin
 
 -- Hamblin Question Denotations
 
@@ -121,4 +121,4 @@ the characteristic functions of its cells.
 See `Partition.lean` for the G&S partition semantics.
 -/
 
-end QuestionSemantics.Hamblin
+end Semantics.Questions.Hamblin

@@ -25,7 +25,7 @@ Single Axis of Variability (SAV) universal from cross-linguistic modal typology.
 * Imel, Guo, & Steinert-Threlkeld (2026). An Efficient Communication Analysis of Modal Typology.
 -/
 
-namespace IntensionalSemantics.Modal.Typology
+namespace Semantics.Modality.Typology
 
 open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
 
@@ -254,7 +254,7 @@ with fixed force and contextually variable flavors produces a meaning
 Variable-force modals (e.g., Gitksan ima'a) produce
 `cartesianProduct forces [flavor]`, also satisfying both. -/
 
-open IntensionalSemantics.Modal.Kratzer (KratzerParams)
+open Semantics.Modality.Kratzer (KratzerParams)
 
 /-- A flavor assignment maps each typological `ModalFlavor` to a
     Kratzer parameterization (modal base + ordering source). -/
@@ -263,13 +263,13 @@ structure FlavorAssignment where
 
 /-- Canonical assignment from the standard Kratzer flavor structures. -/
 def canonicalAssignment
-    (epist : IntensionalSemantics.Modal.Kratzer.EpistemicFlavor)
-    (deont : IntensionalSemantics.Modal.Kratzer.DeonticFlavor)
-    (teleo : IntensionalSemantics.Modal.Kratzer.TeleologicalFlavor) :
+    (epist : Semantics.Modality.Kratzer.EpistemicFlavor)
+    (deont : Semantics.Modality.Kratzer.DeonticFlavor)
+    (teleo : Semantics.Modality.Kratzer.TeleologicalFlavor) :
     FlavorAssignment where
   assign
     | .epistemic => epist.toKratzerParams
     | .deontic => deont.toKratzerParams
     | .circumstantial => teleo.toKratzerParams
 
-end IntensionalSemantics.Modal.Typology
+end Semantics.Modality.Typology

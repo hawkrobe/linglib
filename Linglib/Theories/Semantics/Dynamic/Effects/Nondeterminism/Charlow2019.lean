@@ -14,7 +14,7 @@ are retained.
 
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL
 
-namespace DynamicSemantics.Charlow2019
+namespace Semantics.Dynamic.Charlow2019
 
 open DPL
 
@@ -149,7 +149,7 @@ def stateDistNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
 Delegates to `Core.CCP.might` at type `W × Assignment E`.
 -/
 noncomputable def stateMight {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
-  DynamicSemantics.Core.CCP.might φ
+  Semantics.Dynamic.Core.CCP.might φ
 
 /-- 'might' is non-distributive. -/
 theorem might_not_distributive :
@@ -189,4 +189,4 @@ whether modified assignments are retained. This claim is demonstrated by the
 theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`),
 not by a single formal statement. -/
 
-end DynamicSemantics.Charlow2019
+end Semantics.Dynamic.Charlow2019

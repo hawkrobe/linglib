@@ -49,8 +49,8 @@ import Linglib.Theories.Semantics.Probabilistic.Frames.Basic
 namespace RSA.Domains.LexicalAmbiguity
 
 open Core.ProductOfExperts
-open TruthConditional.Verb.SelectionalPreferences
-open TruthConditional.Frames
+open Semantics.Lexical.Verb.SelectionalPreferences
+open Semantics.Probabilistic.Frames
 
 -- Helper Functions
 

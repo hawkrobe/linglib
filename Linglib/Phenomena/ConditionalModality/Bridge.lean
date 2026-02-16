@@ -24,8 +24,8 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 
 namespace Phenomena.ConditionalModality
 
-open IntensionalSemantics.Attitude.Intensional (World)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World)
+open Semantics.Modality.Kratzer
 
 /-! ## Section A: Conditional parameter derivations (§2.9) -/
 

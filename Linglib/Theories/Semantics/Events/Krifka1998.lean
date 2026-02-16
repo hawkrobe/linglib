@@ -42,12 +42,12 @@ import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
 import Mathlib.Tactic.Linarith
 
-namespace EventSemantics.Krifka1998
+namespace Semantics.Events.Krifka1998
 
-open EventSemantics
-open EventSemantics.Mereology
+open Semantics.Events
+open Semantics.Events.Mereology
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Thematic Role Properties (§3.2, eq. 43–52)
@@ -399,4 +399,4 @@ theorem roleHom_implies_cumTheta
   rw [← hx, ← hy]
   exact hf.map_sup e e'
 
-end EventSemantics.Krifka1998
+end Semantics.Events.Krifka1998

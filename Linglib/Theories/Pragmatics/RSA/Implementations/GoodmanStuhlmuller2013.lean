@@ -42,7 +42,7 @@ only utterance true at all believed worlds), and L1 reads this signal.
 namespace RSA.GoodmanStuhlmuller2013
 
 open RSA RSA.Domains.Quantity RSA.Eval
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 -- ============================================================================
 -- Section 1: Basic Scalar Implicature (Quantifiers)
@@ -221,7 +221,7 @@ end QuantifierKnowledgeState
 section KennedyNumerals
 
 open KnowledgeState
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 /-! ## Kennedy's Alternative Structure (Section 4.1)
 
@@ -545,7 +545,7 @@ end KennedyNumerals
 section Grounding
 
 open KnowledgeState
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 /-- Kennedy meaning derives from maxMeaning (not hand-rolled). -/
 theorem kennedy_meaning_from_maxMeaning (m : Nat) (u : KennedyUtt) (s : WorldState) :

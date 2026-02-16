@@ -15,7 +15,7 @@ Common types for dynamic semantic theories.
 
 import Mathlib.Data.Set.Basic
 
-namespace DynamicSemantics.Core
+namespace Semantics.Dynamic.Core
 
 
 /-- A possibility: world paired with variable assignment. -/
@@ -179,4 +179,4 @@ theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
 end InfoState
 
 
-end DynamicSemantics.Core
+end Semantics.Dynamic.Core

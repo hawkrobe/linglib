@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 Connects the auxiliary selection data in
 `Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
-classification from `Theories.TruthConditional.Verb.Aspect`.
+classification from `Theories.Semantics.Lexical.Verb.Aspect`.
 
 ## Predictions verified
 
@@ -22,7 +22,7 @@ classification from `Theories.TruthConditional.Verb.Aspect`.
 
 namespace Phenomena.AuxiliaryVerbs.Selection.Bridge
 
-open TruthConditional.Verb.Aspect (VendlerClass)
+open Semantics.Lexical.Verb.Aspect (VendlerClass)
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to

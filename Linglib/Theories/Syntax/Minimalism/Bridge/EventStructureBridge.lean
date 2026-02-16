@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Events.EventStructure
 
 Connects Rappaport Hovav & Levin's (1998) event structure templates to
 Cuervo's (2003) syntactic verb head decomposition. This bridges the
-semantic layer (EventSemantics/EventStructure) to the syntactic layer
+semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 (Minimalism/Core/Applicative).
 
 ## Key Mapping
@@ -27,7 +27,7 @@ semantic layer (EventSemantics/EventStructure) to the syntactic layer
 
 namespace Minimalism.Bridge
 
-open EventSemantics.EventStructure
+open Semantics.Events.EventStructure
 open Minimalism
 
 -- ============================================================================

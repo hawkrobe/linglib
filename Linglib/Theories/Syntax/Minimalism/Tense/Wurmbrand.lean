@@ -40,7 +40,7 @@ namespace Minimalism.Tense.Wurmbrand
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -18,10 +18,10 @@ import Linglib.Theories.Semantics.Compositional.Core.Lexicon
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale
 
-namespace TruthConditional.Core.Derivation
+namespace Semantics.Compositional.Core.Derivation
 
-open TruthConditional
-open TruthConditional.Core
+open Semantics.Compositional
+open Semantics.Compositional.Core
 open Core.Scale
 
 /-- Scalar item occurrence in a derivation -/
@@ -44,10 +44,10 @@ def SemDeriv.sentence {m : Model} (d : SemDeriv m) : String :=
 def SemDeriv.hasScalarItems {m : Model} (d : SemDeriv m) : Bool :=
   !d.scalarItems.isEmpty
 
-open TruthConditional.Core.Polarity (ContextPolarity)
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
 
 /-- Generate sentential alternatives by replacing scalar items -/
-def alternativeMeanings {m : Model} [Determiner.Quantifier.FiniteModel m]
+def alternativeMeanings {m : Model} [Semantics.Lexical.Determiner.Quantifier.FiniteModel m]
     (d : SemDeriv m)
     (_ctx : ContextPolarity)
     : List (m.interpTy d.ty) :=
@@ -65,7 +65,7 @@ def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
       d.surface.set occ.position altForm
 
 open ToyLexicon
-open Determiner.Quantifier
+open Semantics.Lexical.Determiner.Quantifier
 
 def johnSleeps : SemDeriv toyModel :=
   { surface := ["John", "sleeps"]
@@ -112,11 +112,11 @@ theorem everyStudentLaughs_true : everyStudentLaughs.meaning = true := rfl
 class SemanticsProducer (SynDeriv : Type) (m : Model) where
   toDerivation : SynDeriv → SemDeriv m
 
-end TruthConditional.Core.Derivation
+end Semantics.Compositional.Core.Derivation
 
 -- Backward compatibility aliases (excluding ContextPolarity which is now in Polarity.lean)
-namespace TruthConditional.SemDeriv
-  export TruthConditional.Core.Derivation (ScalarOccurrence SemDeriv Derivation
+namespace Semantics.Compositional.SemDeriv
+  export Semantics.Compositional.Core.Derivation (ScalarOccurrence SemDeriv Derivation
     alternativeMeanings alternativeForms SemanticsProducer
     johnSleeps someStudentsSleep everyStudentSleeps someStudentsLaugh everyStudentLaughs)
-end TruthConditional.SemDeriv
+end Semantics.Compositional.SemDeriv

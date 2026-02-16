@@ -20,10 +20,10 @@ LOWER (Barker & Shan 2014).
 - Barker, C. & Shan, C. (2014). *Continuations and Natural Language*. OUP.
 -/
 
-namespace DynamicSemantics.DynamicGQ.HigherOrder
+namespace Semantics.Dynamic.DynamicGQ.HigherOrder
 
-open DynamicSemantics.Core.DynamicTy2
-open DynamicSemantics.DynamicGQ.Basic
+open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.DynamicGQ.Basic
 open Core.Continuation
 open Mereology
 
@@ -67,4 +67,4 @@ theorem ho_cumulative_derivation [AssignmentStructure S E] [PartialOrder E] [Fin
       (CardTest v 3) := by
   sorry
 
-end DynamicSemantics.DynamicGQ.HigherOrder
+end Semantics.Dynamic.DynamicGQ.HigherOrder

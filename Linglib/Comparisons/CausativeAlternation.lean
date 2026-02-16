@@ -9,9 +9,9 @@ import Linglib.Phenomena.Causatives.ThickThinBridge
 
 Connects four independent formalizations of the causative alternation:
 
-1. **Semantic** (`IntensionalSemantics/Causative/`): CausativeBuilder,
+1. **Semantic** (`Semantics.Intensional/Causative/`): CausativeBuilder,
    production/dependence distinction
-2. **Event-structural** (`EventSemantics/EventStructure`): Templates
+2. **Event-structural** (`Semantics.Events/EventStructure`): Templates
    (accomplishment vs achievement)
 3. **Syntactic** (`Minimalism/Core/Voice + Applicative`): VoiceFlavor
    (agentive vs nonThematic) + VerbHead (vDO, vGO, vBE)
@@ -38,7 +38,7 @@ namespace Comparisons.CausativeAlternation
 
 open Minimalism
 open Minimalism.Bridge
-open EventSemantics.EventStructure
+open Semantics.Events.EventStructure
 open MartinRoseNichols2025
 open Phenomena.Causatives.ThickThin
 

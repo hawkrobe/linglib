@@ -14,9 +14,9 @@ DPL relations ARE DRS meanings.
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL
 
-namespace DynamicSemantics.DPL
+namespace Semantics.Dynamic.DPL
 
-open DynamicSemantics.Core.DynamicTy2
+open Semantics.Dynamic.Core.DynamicTy2
 
 
 /-- DPL assignment type = Dynamic Ty2 S parameter -/
@@ -72,4 +72,4 @@ theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
   -- The definitions are definitionally equal (just variable renaming)
   rfl
 
-end DynamicSemantics.DPL
+end Semantics.Dynamic.DPL

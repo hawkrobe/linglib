@@ -44,14 +44,14 @@ see `Comparisons/Partee1973.lean`.
 
 namespace Comparisons.TenseTheories
 
-open IntensionalSemantics.Tense
-open IntensionalSemantics.Tense.Abusch (Abusch)
-open IntensionalSemantics.Tense.VonStechow (VonStechow)
-open IntensionalSemantics.Tense.Kratzer (KratzerTense)
-open IntensionalSemantics.Tense.Ogihara (Ogihara)
-open IntensionalSemantics.Tense.Klecha (Klecha)
-open IntensionalSemantics.Tense.Deal (Deal)
-open IntensionalSemantics.Tense.Sharvit (Sharvit)
+open Semantics.Tense
+open Semantics.Tense.Abusch (Abusch)
+open Semantics.Tense.VonStechow (VonStechow)
+open Semantics.Tense.Kratzer (KratzerTense)
+open Semantics.Tense.Ogihara (Ogihara)
+open Semantics.Tense.Klecha (Klecha)
+open Semantics.Tense.Deal (Deal)
+open Semantics.Tense.Sharvit (Sharvit)
 open Minimalism.Tense.Zeijlstra (Zeijlstra)
 open Minimalism.Tense.Wurmbrand (Wurmbrand)
 open Core.Reichenbach

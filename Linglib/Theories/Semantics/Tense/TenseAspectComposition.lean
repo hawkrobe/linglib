@@ -43,10 +43,10 @@ lightweight tense evaluation operators that close the gap.
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 import Linglib.Theories.Semantics.Tense.Compositional
 
-namespace TruthConditional.Sentence.TenseAspectComposition
+namespace Semantics.TenseAspectComposition
 
 open Core.Time
-open TruthConditional.Verb.ViewpointAspect
+open Semantics.Lexical.Verb.ViewpointAspect
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -263,4 +263,4 @@ theorem earlier_lb_not_weaker_impf :
   simp only [LB, Eventuality.τ] at hLB hS1
   omega
 
-end TruthConditional.Sentence.TenseAspectComposition
+end Semantics.TenseAspectComposition

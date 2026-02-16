@@ -56,7 +56,7 @@ formalizes the chapter's mechanisms at two levels:
 - Kanazawa (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
-namespace DynamicSemantics.TTR
+namespace Semantics.TypeTheoretic
 
 -- ============================================================================
 -- Quantifier stores and plugged/unplugged content
@@ -205,7 +205,7 @@ def TwoQuantScope.inverseToUnderspec (s : TwoQuantScope E)
     Cooper (2023) Ch8 → Scontras & Pearl (2021) bridge:
     retrieval order corresponds to ScopeConfig.surface / .inverse. -/
 def TwoQuantScope.readingAt (s : TwoQuantScope E)
-    (sc : TruthConditional.Derivation.Scope.ScopeConfig) : Type :=
+    (sc : Semantics.Compositional.Derivation.Scope.ScopeConfig) : Type :=
   match sc with
   | .surface => s.surfaceScope
   | .inverse => s.inverseScope
@@ -223,7 +223,7 @@ witness of 𝔖 comes from exactly one reading.
 This connects TTR's type-based underspecification to the `ScopeConfig`
 infrastructure used by Scontras & Pearl (2021) in the RSA implementation. -/
 
-open TruthConditional.Derivation.Scope (ScopeConfig)
+open Semantics.Compositional.Derivation.Scope (ScopeConfig)
 
 /-- Forward direction: every witness of 𝔖 is tagged by a ScopeConfig. -/
 def TwoQuantScope.𝔖_to_tagged (s : TwoQuantScope E)
@@ -1410,4 +1410,4 @@ theorem donkeyNeg_uses_localization :
 
 end NoDogCatchesCat
 
-end DynamicSemantics.TTR
+end Semantics.TypeTheoretic

@@ -37,7 +37,7 @@ stated globally but oddness persists in embedded constituents.
 - Heim, I. (1991). Artikel und Definitheit.
 -/
 
-namespace QuestionSemantics.EconomyOddness
+namespace Semantics.Questions.EconomyOddness
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Core K&S Definitions
@@ -366,7 +366,7 @@ In DE restrictor, "some" picks out MORE professors → stronger universal.
 The entailment direction reverses: ⟦some⟧_DE ⊆ ⟦all⟧_DE.
 So "all" becomes needlessly weak (opposite of UE).
 
-Connects to TruthConditional/Sentence/Entailment/Monotonicity.lean:
+Connects to Semantics.Compositional/Sentence/Entailment/Monotonicity.lean:
 the reversal here is the same phenomenon as `every_restr_DE`. -/
 
 section DEReversal
@@ -596,4 +596,4 @@ theorem compose_open_context :
 
 end Composability
 
-end QuestionSemantics.EconomyOddness
+end Semantics.Questions.EconomyOddness

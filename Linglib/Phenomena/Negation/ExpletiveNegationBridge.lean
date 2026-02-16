@@ -48,7 +48,7 @@ Two types of EN with different syntactic positions and licensing:
 namespace Phenomena.Negation.ExpletiveNegation
 
 open Core.Scale (Boundedness isAmbidirectional)
-open TruthConditional.Adjective.Comparative (MannerEffect)
+open Semantics.Lexical.Adjective.Comparative (MannerEffect)
 open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 
 -- ════════════════════════════════════════════════════

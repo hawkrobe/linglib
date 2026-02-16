@@ -68,7 +68,7 @@ quantity calculus but are not compositionally derivable.
 - Bale, A. & Schwarz, B. (2026). Natural language and external conventions.
 -/
 
-namespace TruthConditional.Measurement
+namespace Semantics.Probabilistic.Measurement
 
 -- ============================================================================
 -- § 1. Physical Dimensions
@@ -464,4 +464,4 @@ theorem density_components :
 theorem speed_components :
     QuotientDimension.speed.components = (.distance, .time) := rfl
 
-end TruthConditional.Measurement
+end Semantics.Probabilistic.Measurement

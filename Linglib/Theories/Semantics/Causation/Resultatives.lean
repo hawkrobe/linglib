@@ -43,8 +43,8 @@ namespace Causative.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
-open TruthConditional.Verb.Aspect
-open TruthConditional.Verb.ChangeOfState
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Lexical.Verb.ChangeOfState
 open Core.Interfaces
 open Core.Causation
 open NadathurLauer2020.Sufficiency

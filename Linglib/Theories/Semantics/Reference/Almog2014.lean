@@ -28,12 +28,12 @@ import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Core.Conjectures
 
-namespace IntensionalSemantics.Reference.Almog2014
+namespace Semantics.Reference.Almog2014
 
-open IntensionalSemantics.Reference.Basic (RefMechanism ReferringExpression properName
+open Semantics.Reference.Basic (RefMechanism ReferringExpression properName
   isDirectlyReferential)
-open IntensionalSemantics.Reference.Kaplan (SingularProposition indexical)
-open IntensionalSemantics.Reference.Donnellan (UseMode referentialExpression)
+open Semantics.Reference.Kaplan (SingularProposition indexical)
+open Semantics.Reference.Donnellan (UseMode referentialExpression)
 open Core.Intension (Intension rigid IsRigid rigid_isRigid)
 
 /-! ## Independence of the Three Mechanisms -/
@@ -100,7 +100,7 @@ like proper names (type e, no scope interaction). In Almog's taxonomy,
 this means bare plurals employ the *designation* mechanism: the kind is
 rigidly designated.
 
-See: `TruthConditional.Noun.Kind.Carlson1977.bare_plural_rigid_designator` -/
+See: `Semantics.Lexical.Noun.Kind.Carlson1977.bare_plural_rigid_designator` -/
 theorem bare_plural_uses_designation :
     RefMechanism.designation ∈ [RefMechanism.designation, RefMechanism.singularProp] :=
   List.Mem.head _
@@ -113,7 +113,7 @@ embed *singular propositions* (structured content), and
 ⟨Superman, can-fly⟩ ≠ ⟨Clark, can-fly⟩ because Superman ≠ Clark as
 *modes of presentation*, even though they co-refer.
 
-See: `IntensionalSemantics.Attitude.Doxastic.substitutionMayFail` -/
+See: `Semantics.Attitudes.Doxastic.substitutionMayFail` -/
 theorem opacity_from_structured_propositions {W E : Type*} :
     ∀ (a b : E) (P : E → W → Bool), a ≠ b →
     SingularProposition.mk a P ≠ SingularProposition.mk b P := by
@@ -161,6 +161,6 @@ Almog's framework uses mechanism-based analysis. A formal connection would
 require unifying the representation of "mode of presentation" across
 both frameworks.
 
-See: `DynamicSemantics.PLA.hesperusPhosphorusScenario` -/
+See: `Semantics.Dynamic.PLA.hesperusPhosphorusScenario` -/
 
-end IntensionalSemantics.Reference.Almog2014
+end Semantics.Reference.Almog2014

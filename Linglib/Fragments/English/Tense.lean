@@ -33,7 +33,7 @@ evidential constraints to Lakoff's false-tense diagnostic.
 
 namespace Fragments.English.Tense
 
-open TruthConditional.Sentence.Tense.Evidential
+open Semantics.Tense.Evidential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Table 20: Simple Past, Present Progressive, Future
@@ -95,8 +95,8 @@ def nonfutureEntries : List TenseEvidentialParadigm :=
 -- § 4. Tense Perspective Entries (Lakoff 1970)
 -- ════════════════════════════════════════════════════
 
-open TruthConditional.Sentence.Tense
-open TruthConditional.Sentence.Tense.Perspective
+open Semantics.Tense
+open Semantics.Tense.Perspective
 open Core.Morphology.Tense
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions:

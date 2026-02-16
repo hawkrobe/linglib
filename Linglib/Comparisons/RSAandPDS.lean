@@ -35,7 +35,7 @@ import Mathlib.Data.Fintype.Basic
 
 namespace Comparisons.RSAandPDS
 
-open DynamicSemantics.Probabilistic
+open Semantics.Dynamic.Probabilistic
 
 
 /-!

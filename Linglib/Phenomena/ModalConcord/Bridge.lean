@@ -47,7 +47,7 @@ open Phenomena.ModalConcord
 open Fragments.English.FunctionWords
 open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
 open Core.Register (Level areVariants)
-open IntensionalSemantics.Modal.Typology (satisfiesIFF satisfiesSAV)
+open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
 
 /-! ## Section A: Semantic equivalence in the fragment -/
 

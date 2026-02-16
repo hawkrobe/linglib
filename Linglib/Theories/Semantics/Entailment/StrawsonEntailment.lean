@@ -29,11 +29,11 @@ import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 import Linglib.Core.Presupposition
 
-namespace TruthConditional.Sentence.Entailment.StrawsonEntailment
+namespace Semantics.Entailment.StrawsonEntailment
 
-open TruthConditional.Sentence.Entailment
-open TruthConditional.Core.Polarity
-open TruthConditional.Sentence.Entailment.AntiAdditivity
+open Semantics.Entailment
+open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.AntiAdditivity
 
 -- ============================================================================
 -- Section 1: Core Definitions
@@ -421,4 +421,4 @@ theorem strawsonDE_strictly_weaker_than_DE :
          onlyFull_isStrawsonDE _,
          onlyFull_not_de⟩
 
-end TruthConditional.Sentence.Entailment.StrawsonEntailment
+end Semantics.Entailment.StrawsonEntailment

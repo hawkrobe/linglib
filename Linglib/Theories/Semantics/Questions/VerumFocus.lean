@@ -38,9 +38,9 @@ In short: "It is for sure that we should add p to the CG."
 import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Core.CommonGround
 
-namespace QuestionSemantics.VerumFocus
+namespace Semantics.Questions.VerumFocus
 
-open QuestionSemantics
+open Semantics.Questions
 
 -- Part 1: Epistemic and Conversational States
 
@@ -319,4 +319,4 @@ Implicature: Speaker believes John doesn't drink
 -/
 def exampleNI : NegQuestionLF Unit := .niLF (λ () => true)
 
-end QuestionSemantics.VerumFocus
+end Semantics.Questions.VerumFocus

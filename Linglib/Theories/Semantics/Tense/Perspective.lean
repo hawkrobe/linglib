@@ -32,10 +32,10 @@ frame and adds the participant-psychological layer on top.
 - Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
-namespace TruthConditional.Sentence.Tense.Perspective
+namespace Semantics.Tense.Perspective
 
-open TruthConditional.Sentence.Tense.Evidential
-open TruthConditional.Sentence.Tense
+open Semantics.Tense.Evidential
+open Semantics.Tense
 
 -- ════════════════════════════════════════════════════
 -- § 1. Tense Perspective Frame
@@ -155,4 +155,4 @@ theorem salience_with_downstream (f : TensePerspective ℤ)
     f.speakerSalience = true ∧ downstreamEvidence f.toEvidentialFrame :=
   ⟨h_sal, h_down⟩
 
-end TruthConditional.Sentence.Tense.Perspective
+end Semantics.Tense.Perspective

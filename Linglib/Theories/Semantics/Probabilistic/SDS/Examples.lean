@@ -26,9 +26,9 @@ The relative strengths determine interpretation.
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 
-namespace SDS.Examples
+namespace Semantics.Probabilistic.SDS.Examples
 
-open SDS.Core
+open Semantics.Probabilistic.SDS.Core
 
 -- Shared Types for Disambiguation Examples
 
@@ -566,4 +566,4 @@ Where:
 - The product is normalized over all concepts
 -/
 
-end SDS.Examples
+end Semantics.Probabilistic.SDS.Examples

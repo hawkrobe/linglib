@@ -42,12 +42,12 @@ import Linglib.Theories.Semantics.Causation.Builder
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Fragments.English.Predicates.Verbal
 
-namespace EventSemantics.ProtoRoles
+namespace Semantics.Events.ProtoRoles
 
-open EventSemantics.Agentivity
-open EventSemantics.Krifka1998
+open Semantics.Events.Agentivity
+open Semantics.Events.Krifka1998
 open NadathurLauer2020.Builder
-open TruthConditional.Verb.ChangeOfState
+open Semantics.Lexical.Verb.ChangeOfState
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
@@ -504,4 +504,4 @@ fields remain as the decidable "does this entailment hold?" projection,
 while Boundedness captures the finer-grained scalar geometry.
 -/
 
-end EventSemantics.ProtoRoles
+end Semantics.Events.ProtoRoles

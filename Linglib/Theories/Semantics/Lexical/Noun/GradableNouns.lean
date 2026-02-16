@@ -12,7 +12,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Core.MeasurementScale
 
-namespace TruthConditional.Noun.GradableNouns
+namespace Semantics.Lexical.Noun.GradableNouns
 
 open Core.Scale
 
@@ -206,4 +206,4 @@ theorem bigIdiot_is_threshold_example :
 
 end ThresholdPattern
 
-end TruthConditional.Noun.GradableNouns
+end Semantics.Lexical.Noun.GradableNouns

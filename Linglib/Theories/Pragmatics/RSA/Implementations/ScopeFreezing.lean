@@ -25,7 +25,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
 
-open TruthConditional.Derivation.Scope (ScopeConfig)
+open Semantics.Compositional.Derivation.Scope (ScopeConfig)
 open Phenomena.Quantification.Data
 
 -- Interpretation Prior from Grammar Parse

@@ -36,11 +36,11 @@ situation-dependent types natively, with backward-compat wrappers.
   *The Expression of Time*, 129–166.
 -/
 
-namespace IntensionalSemantics.Attitude.SituationDependent
+namespace Semantics.Attitudes.SituationDependent
 
 open Core.Time
 open Core.ModalLogic (AgentAccessRel)
-open IntensionalSemantics.Attitude.Doxastic
+open Semantics.Attitudes.Doxastic
   (Veridicality DoxasticPredicate boxAt veridicalityHolds)
 
 
@@ -57,7 +57,7 @@ open IntensionalSemantics.Attitude.Doxastic
     attitude verbs that support temporal interpretation.
 
     Note: a Prop-valued counterpart exists at
-    `TruthConditional.Sentence.Tense.SitProp` for proof-level
+    `Semantics.Tense.SitProp` for proof-level
     temporal reasoning. The split follows the `Prop'`/`BProp`
     pattern in `Core/Proposition.lean`. -/
 abbrev SitProp (W Time : Type*) := Situation W Time → Bool
@@ -281,7 +281,7 @@ For example, an attitude verb might impose:
 These constraints are what make sequence-of-tense work: they tie the
 embedded clause's temporal interpretation to the matrix event time.
 
-See `TruthConditional.Sentence.Tense.SequenceOfTense` for the formal
+See `Semantics.Tense.SequenceOfTense` for the formal
 connection between these temporal constraints and SOT readings.
 -/
 
@@ -300,4 +300,4 @@ def futureOriented {W Time E : Type*} [LE Time] [DecidableRel (α := Time) (· �
   λ agent s₁ s₂ => R agent s₁.world s₂.world && decide (s₁.time ≤ s₂.time)
 
 
-end IntensionalSemantics.Attitude.SituationDependent
+end Semantics.Attitudes.SituationDependent

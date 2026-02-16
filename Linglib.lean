@@ -514,7 +514,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 
--- Theories: TruthConditional (extensional)
+-- Theories: Semantics.Compositional (extensional)
 import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
@@ -587,7 +587,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Habituals
 import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
--- Theories: EventSemantics (neo-Davidsonian)
+-- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.ThematicRolesGrounding
@@ -601,7 +601,7 @@ import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Theories.Semantics.Events.RootTypology
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
--- Theories: IntensionalSemantics (possible-worlds semantics)
+-- Theories: Semantics.Intensional (possible-worlds semantics)
 import Linglib.Theories.Semantics.Intensional.Basic
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
@@ -660,7 +660,7 @@ import Linglib.Theories.Semantics.Tense.Sharvit
 import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
 import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 
--- Theories: QuestionSemantics
+-- Theories: Semantics.Questions
 import Linglib.Theories.Semantics.Questions.Answerhood
 import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Coordination

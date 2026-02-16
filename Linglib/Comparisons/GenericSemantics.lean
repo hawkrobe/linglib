@@ -26,7 +26,7 @@ import Mathlib.Tactic.Linarith
 
 namespace Comparisons.GenericSemantics
 
-open TruthConditional.Noun.Kind.Generics
+open Semantics.Lexical.Noun.Kind.Generics
 
 -- Helper Lemmas for Rational Arithmetic
 

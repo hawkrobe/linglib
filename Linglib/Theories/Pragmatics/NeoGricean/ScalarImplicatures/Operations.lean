@@ -39,7 +39,7 @@ Exact theory: Operations are anomalous (no implicature exists)
 
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 namespace NeoGricean
 

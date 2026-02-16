@@ -93,13 +93,13 @@ import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
-namespace TruthConditional.Sentence.Presupposition.TonhauserDerivation
+namespace Semantics.Presupposition.TonhauserDerivation
 
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
-open TruthConditional.Sentence.Presupposition.LocalContext
-open TruthConditional.Sentence.Presupposition.BeliefEmbedding
+open Semantics.Presupposition.LocalContext
+open Semantics.Presupposition.BeliefEmbedding
 open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
@@ -520,4 +520,4 @@ But the *trigger-specific* SCF and OLE values are currently stipulated in
 derivation would require formalizing accommodation and discourse structure.
 -/
 
-end TruthConditional.Sentence.Presupposition.TonhauserDerivation
+end Semantics.Presupposition.TonhauserDerivation

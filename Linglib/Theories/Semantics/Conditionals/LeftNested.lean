@@ -39,10 +39,10 @@ that can be genuinely supposed without prior discourse.
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Basic
 
-namespace IntensionalSemantics.Conditional
+namespace Semantics.Conditionals
 
 open Core.Proposition
-open DynamicSemantics.State
+open Semantics.Dynamic.State
 
 -- Left-Nested Conditional Structure
 
@@ -383,4 +383,4 @@ object) inherently requires discourse anchoring to be supposed. This explains:
 4. Why modal/generic LNCs allow HC readings
 -/
 
-end IntensionalSemantics.Conditional
+end Semantics.Conditionals

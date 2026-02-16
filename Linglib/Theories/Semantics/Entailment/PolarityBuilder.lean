@@ -31,12 +31,12 @@ central insight, derived not stipulated.
   of polarity items on inferential judgments. Cognitive Science 45(6).
 -/
 
-namespace TruthConditional.Sentence.Entailment.PolarityBuilder
+namespace Semantics.Entailment.PolarityBuilder
 
-open TruthConditional.Sentence.Entailment
-open TruthConditional.Sentence.Entailment.AntiAdditivity
-open TruthConditional.Sentence.Entailment.StrawsonEntailment
-open TruthConditional.Core.Polarity
+open Semantics.Entailment
+open Semantics.Entailment.AntiAdditivity
+open Semantics.Entailment.StrawsonEntailment
+open Semantics.Compositional.Core.Polarity
 open Core.NaturalLogic (EntailmentSig DEStrength strengthSufficient)
 open Fragments.English.PolarityItems
 open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
@@ -454,4 +454,4 @@ theorem only_entSig_agrees :
     onlyProfile.contextPolarity = .upward ∧
     onlyProfile.strongestLevel = none := ⟨rfl, rfl⟩
 
-end TruthConditional.Sentence.Entailment.PolarityBuilder
+end Semantics.Entailment.PolarityBuilder

@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 Connects the cross-cultural intensifier data in
 `Phenomena.Politeness.Studies.MachinoEtAl2025` to the modifier
-direction classification from `Theories.TruthConditional.Adjective.Theory`.
+direction classification from `Theories.Semantics.Lexical.Adjective.Theory`.
 
 ## Predictions verified
 
@@ -21,7 +21,7 @@ direction classification from `Theories.TruthConditional.Adjective.Theory`.
 
 namespace Phenomena.Politeness.Studies.MachinoEtAl2025.Bridge
 
-open TruthConditional.Adjective (ModifierDirection)
+open Semantics.Lexical.Adjective (ModifierDirection)
 open Phenomena.Politeness.Studies.MachinoEtAl2025
 
 /-- Culture-specific modifier direction.

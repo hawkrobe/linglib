@@ -31,7 +31,7 @@ properties and bias profiles.
 
 namespace Fragments.Mandarin.QuestionParticles
 
-open IntensionalSemantics.Modal.BiasedPQ (OriginalBias ContextualEvidence)
+open Semantics.Modality.BiasedPQ (OriginalBias ContextualEvidence)
 open Phenomena.Questions.Typology (QParticleLayer)
 
 /-- A Mandarin interrogative particle entry. -/

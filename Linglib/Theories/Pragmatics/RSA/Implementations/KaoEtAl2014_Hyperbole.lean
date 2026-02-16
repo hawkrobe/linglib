@@ -52,8 +52,8 @@ namespace RSA.KaoEtAl2014_Hyperbole
 
 open RSA.Eval RSA.Domains.Degrees
 open Core.Scale (HasDegree)
-open TruthConditional.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
-open TruthConditional.Numeral.Precision (roundToNearest)
+open Semantics.Lexical.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
+open Semantics.Lexical.Numeral.Precision (roundToNearest)
 
 -- Domain: Items, Prices, and Affects
 
@@ -196,7 +196,7 @@ We derive this compositionally:
 The world prior P_S(X) gives the probability of different price states
 for different items, which is crucial for hyperbole interpretation.
 
-This is grounded in TruthConditional.Domain.Degrees infrastructure.
+This is grounded in Semantics.Compositional.Domain.Degrees infrastructure.
 -/
 
 /--

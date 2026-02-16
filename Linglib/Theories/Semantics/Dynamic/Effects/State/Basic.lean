@@ -35,9 +35,9 @@ Heim's File Metaphor:
   Definiteness. In Bäuerle et al. (eds.), Meaning, Use, and Interpretation.
 -/
 
-namespace DynamicSemantics.FileChangeSemantics
+namespace Semantics.Dynamic.FileChangeSemantics
 
-open DynamicSemantics.Core
+open Semantics.Dynamic.Core
 open Classical
 
 /--
@@ -151,12 +151,12 @@ def requiresFamiliarity {W E : Type*} (f : File W E) (x : Nat) : Prop :=
   f.familiar x
 
 /-!
-### Relation to DynamicSemantics.Core.Basic
+### Relation to Semantics.Dynamic.Core.Basic
 
-The `DynamicSemantics.Core.Basic` module provides the canonical infrastructure.
+The `Semantics.Dynamic.Core.Basic` module provides the canonical infrastructure.
 This module provides FCS-specific vocabulary as aliases:
 
-| This Module | DynamicSemantics.Core |
+| This Module | Semantics.Dynamic.Core |
 |-------------|----------------------|
 | File | InfoState |
 | FileCard | Possibility |
@@ -166,7 +166,7 @@ This module provides FCS-specific vocabulary as aliases:
 | updateProp | update |
 -/
 
-end DynamicSemantics.FileChangeSemantics
+end Semantics.Dynamic.FileChangeSemantics
 
 
 /-!
@@ -185,7 +185,7 @@ In Update Semantics:
 - Veltman, F. (1996). Defaults in Update Semantics. Journal of Philosophical Logic 25:221-261.
 -/
 
-namespace DynamicSemantics.UpdateSemantics
+namespace Semantics.Dynamic.UpdateSemantics
 
 open Classical
 
@@ -290,4 +290,4 @@ s accepts φ iff ⟦φ⟧(s) ≠ ∅
 def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
 
-end DynamicSemantics.UpdateSemantics
+end Semantics.Dynamic.UpdateSemantics

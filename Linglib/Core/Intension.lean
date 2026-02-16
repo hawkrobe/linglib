@@ -4,7 +4,7 @@
 Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, and evaluation.
 
-These primitives are shared by `IntensionalSemantics/`, `TruthConditional/`,
+These primitives are shared by `Semantics.Intensional/`, `Semantics.Compositional/`,
 and `RSA/` — any module that needs world-parameterized meanings.
 
 ## References

@@ -41,7 +41,7 @@ See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Proposition
 
-namespace TruthConditional.Sentence.FocusParticles
+namespace Semantics.FocusParticles
 
 variable {World Entity : Type}
 
@@ -246,4 +246,4 @@ The "least likely" intuition becomes:
 making them more informative, hence preferred."
 -/
 
-end TruthConditional.Sentence.FocusParticles
+end Semantics.FocusParticles

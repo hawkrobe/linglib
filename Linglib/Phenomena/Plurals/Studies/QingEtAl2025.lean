@@ -145,7 +145,7 @@ We can verify that predictions match observations:
 
 ```lean
 -- From Theory (BuilderProperties.lean), derived from Fragment entry:
-IntensionalSemantics.Attitude.BuilderProperties.AttitudeBuilder.nvpClass hope.attitudeBuilder = some .class3_cDist_positive
+Semantics.Attitudes.BuilderProperties.AttitudeBuilder.nvpClass hope.attitudeBuilder = some .class3_cDist_positive
 -- This predicts: canTakeQuestion = false
 
 -- From Phenomena/QingEtAl2025/Data.lean:

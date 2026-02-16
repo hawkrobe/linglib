@@ -17,7 +17,7 @@ import Linglib.Fragments.English.Tense
 
 Per-theory × per-phenomenon derivation theorems connecting the empirical
 data in `Data.lean` to the nine tense theories in
-`Theories/IntensionalSemantics/Tense/` and `Theories/Minimalism/Tense/`.
+`Theories/Semantics.Intensional/Tense/` and `Theories/Minimalism/Tense/`.
 
 Also absorbs the former `Phenomena/SequenceOfTense/Bridge.lean` content:
 frame verification, constructor matching, SOT parameter bridges, aspect
@@ -40,8 +40,8 @@ namespace Phenomena.Tense.Bridge
 open Core.Reichenbach
 open Core.Tense
 open Phenomena.Tense
-open TruthConditional.Sentence.Tense (satisfiesTense SOTParameter)
-open IntensionalSemantics.Tense
+open Semantics.Tense (satisfiesTense SOTParameter)
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -317,8 +317,8 @@ theorem shifted_satisfies_ulc :
 -- § Aspect-Tense Pipeline
 -- ════════════════════════════════════════════════════════════════
 
-open TruthConditional.Sentence.Tense (PAST SitProp)
-open TruthConditional.Verb.ViewpointAspect (perfSimple EventPred PointPred)
+open Semantics.Tense (PAST SitProp)
+open Semantics.Lexical.Verb.ViewpointAspect (perfSimple EventPred PointPred)
 
 /-- The compositional pipeline from aspect to tense is well-typed. -/
 theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
@@ -332,7 +332,7 @@ theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
 -- § evalPast ↔ PAST Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open TruthConditional.Sentence.TenseAspectComposition (evalPast evalPres)
+open Semantics.TenseAspectComposition (evalPast evalPres)
 
 /-- `evalPast` agrees with `PAST` via `toSitProp`. -/
 theorem evalPast_iff_PAST {W Time : Type*} [LinearOrder Time]
@@ -371,7 +371,7 @@ theorem perfective_implies_aspect_assumption
 -- § Per-Theory Derivations: Abusch
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Abusch
+open Semantics.Tense.Abusch
 
 /-- Abusch derives the simultaneous data frame via binding. -/
 theorem abusch_derives_embeddedSickSimultaneous :
@@ -388,7 +388,7 @@ theorem abusch_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Von Stechow
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.VonStechow
+open Semantics.Tense.VonStechow
 
 /-- Von Stechow derives the simultaneous frame via [PRES] feature. -/
 theorem vonStechow_derives_embeddedSickSimultaneous :
@@ -405,7 +405,7 @@ theorem vonStechow_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Kratzer
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Kratzer
+open Semantics.Tense.Kratzer
 
 /-- Kratzer derives the simultaneous frame via SOT deletion. -/
 theorem kratzer_derives_embeddedSickSimultaneous :
@@ -422,7 +422,7 @@ theorem kratzer_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Ogihara
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Ogihara
+open Semantics.Tense.Ogihara
 
 /-- Ogihara derives the simultaneous frame via zero tense. -/
 theorem ogihara_derives_embeddedSickSimultaneous
@@ -436,7 +436,7 @@ theorem ogihara_derives_embeddedSickSimultaneous
 -- § Per-Theory Derivations: Klecha
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Klecha
+open Semantics.Tense.Klecha
 
 /-- Klecha derives the modal-past data: past tense checked against
     modal eval time. -/
@@ -449,7 +449,7 @@ theorem klecha_derives_modalPast :
 -- § Per-Theory Derivations: Deal
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Deal
+open Semantics.Tense.Deal
 
 /-- Deal derives the counterfactual frame: past morphology with
     present reference, via modal distance rather than temporal
@@ -514,7 +514,7 @@ theorem wurmbrand_classifies_triedToLeave :
 -- § Per-Theory Derivations: Sharvit
 -- ════════════════════════════════════════════════════════════════
 
-open IntensionalSemantics.Tense.Sharvit
+open Semantics.Tense.Sharvit
 
 /-- Sharvit derives the indirect question simultaneous reading:
     the simultaneous tense in "John asked who was sick" locates

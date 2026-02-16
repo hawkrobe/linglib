@@ -30,7 +30,7 @@ import Linglib.Theories.Semantics.Intensional.Basic
 
 namespace RSA.Intensional
 
-open IntensionalSemantics
+open Semantics.Intensional
 
 -- Propositional Derivations (type t only)
 

@@ -47,11 +47,11 @@ Given resolved question RQ and antecedent ANT:
 - Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
-namespace TruthConditional.Particle.Additive
+namespace Semantics.Lexical.Particle.Additive
 
-open QuestionSemantics
-open QuestionSemantics.Inquisitive
-open QuestionSemantics.ProbabilisticAnswerhood
+open Semantics.Questions
+open Semantics.Questions.Inquisitive
+open Semantics.Questions.ProbabilisticAnswerhood
 
 -- Additive Particle Types
 
@@ -572,4 +572,4 @@ noncomputable def AdditiveExample.verify {W : Type*} [Fintype W]
     (ex : AdditiveExample W) : Bool :=
   tooFelicitous ex.context ex.prejacent == ex.expectedFelicitous
 
-end TruthConditional.Particle.Additive
+end Semantics.Lexical.Particle.Additive

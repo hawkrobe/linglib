@@ -16,7 +16,7 @@ import Linglib.Theories.Semantics.Compositional.Basic
 namespace CCG.Combinators
 
 open CCG
-open TruthConditional
+open Semantics.Compositional
 
 section Combinators
 

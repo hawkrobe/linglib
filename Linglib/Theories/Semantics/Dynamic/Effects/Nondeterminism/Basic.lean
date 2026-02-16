@@ -18,9 +18,9 @@ are sets of possible values rather than single values.
 - `Charlow2019`: StateCCP, distributivity for nondeterministic dynamic semantics
 -/
 
-namespace DynamicSemantics.Effects.Nondeterminism
+namespace Semantics.Dynamic.Effects.Nondeterminism
 
-open DynamicSemantics.Core
+open Semantics.Dynamic.Core
 
 /--
 A nondeterministic meaning: produces a set of possible outputs.
@@ -58,4 +58,4 @@ with respect to some ordering. Used for cumulative readings.
 def NDMeaning.maximize {α β : Type*} (m : NDMeaning α β) (better : β → β → Prop) : NDMeaning α β :=
   λ a => { b ∈ m a | ∀ b' ∈ m a, ¬better b b' }
 
-end DynamicSemantics.Effects.Nondeterminism
+end Semantics.Dynamic.Effects.Nondeterminism

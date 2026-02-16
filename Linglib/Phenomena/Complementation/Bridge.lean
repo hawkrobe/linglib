@@ -25,8 +25,8 @@ namespace Phenomena.Complementation.Bridge
 
 open Phenomena.Complementation.Typology
 open Fragments.English.Predicates.Verbal
-open QuestionSemantics.LeftPeriphery
-open IntensionalSemantics.Mood
+open Semantics.Questions.LeftPeriphery
+open Semantics.Mood
 
 -- ============================================================================
 -- A. Bridge 1: CTPClass ↔ VerbEntry

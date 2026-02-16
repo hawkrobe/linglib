@@ -7,9 +7,9 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Core.HornScale
 
-namespace TruthConditional.Sentence.Entailment.ScaleInteraction
+namespace Semantics.Entailment.ScaleInteraction
 
-open TruthConditional.Sentence.Entailment
+open Semantics.Entailment
 open Core.Scale
 
 /-- Scale reversal: UE alternatives of "some" are [most, all]; DE alternatives are [none]. -/
@@ -27,4 +27,4 @@ theorem de_blocks_scalar_implicature :
   native_decide
 
 
-end TruthConditional.Sentence.Entailment.ScaleInteraction
+end Semantics.Entailment.ScaleInteraction

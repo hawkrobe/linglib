@@ -42,7 +42,7 @@ import Linglib.Theories.Semantics.Attitudes.Intensional
 
 namespace RSA.AttitudeEmbedding
 
-open IntensionalSemantics.Attitude.Intensional
+open Semantics.Attitudes.Intensional
 
 -- World Structure for Belief Contexts
 

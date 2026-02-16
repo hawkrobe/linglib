@@ -23,8 +23,8 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.8.
 
 namespace Phenomena.Modality.PracticalReasoning
 
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer
 open Core.ModalLogic (ModalFlavor)
 
 /-! ## Propositions -/

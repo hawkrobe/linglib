@@ -1134,7 +1134,7 @@ theorem forget_entails_not_complement_derived :
 
     All verb inflection is semantically vacuous at the word level:
     tense/aspect semantics is compositional, handled by
-    `IntensionalSemantics`. The `isVacuous := true` flags make
+    `Semantics.Intensional`. The `isVacuous := true` flags make
     this explicit. -/
 def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
   { lemma_ := v.form

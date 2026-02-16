@@ -34,7 +34,7 @@ open ConstructionGrammar
 open Core.Presupposition
 open Core.CommonGround
 open Core.Proposition
-open TruthConditional.Expressives
+open Semantics.Lexical.Expressives
 
 /-! ## Section 1: PAL Construction definitions -/
 
@@ -171,7 +171,7 @@ def palPresupposition (W : Type*) (situationType : BProp W) : PrProp W :=
 - CI: speaker presupposes shared familiarity with the situation type
 
 This connects PAL semantics to the existing `TwoDimProp` from
-`TruthConditional.Expressives.Basic`. -/
+`Semantics.Lexical.Expressives.Basic`. -/
 def palTwoDim (W : Type*) (atIssue : BProp W) (familiar : BProp W) :
     TwoDimProp W :=
   { atIssue := atIssue

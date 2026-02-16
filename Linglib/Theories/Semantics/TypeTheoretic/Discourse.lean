@@ -33,7 +33,7 @@ Discourse-level infrastructure for TTR (Cooper 2023, Chapters 2, 4, 5):
 - Partee (1973). Some structural analogies between tenses and pronouns.
 -/
 
-namespace DynamicSemantics.TTR
+namespace Semantics.TypeTheoretic
 
 -- ============================================================================
 -- Signs & Illocutionary Force (§2.5–2.6)
@@ -158,15 +158,15 @@ theorem integrate_comm_eq_cg_add {W SignT : Type}
     (utt : SignT) (p : Core.Proposition.BProp W) :
     (s.integrate utt (p :: s.commitments)).toCG = s.toCG.add p := rfl
 
-/-! ## Bridge to DynamicSemantics.Core.InfoState -/
+/-! ## Bridge to Semantics.Dynamic.Core.InfoState -/
 
 /-- TTR's InfoState tracks discourse state via agenda/commitments.
-DynamicSemantics.Core.InfoState tracks possibilities (world + assignment).
+Semantics.Dynamic.Core.InfoState tracks possibilities (world + assignment).
 Bridge: a TTR InfoState with BProp commitments induces a Core InfoState
 by filtering possibilities that satisfy all commitments. -/
 def InfoState.toCoreInfoState {W E SignT : Type}
     (s : InfoState SignT (List (Core.Proposition.BProp W))) :
-    Set (_root_.DynamicSemantics.Core.Possibility W E) :=
+    Set (_root_.Semantics.Dynamic.Core.Possibility W E) :=
   { p | s.commitments.Forall (· p.world) }
 
 -- ============================================================================
@@ -809,4 +809,4 @@ theorem passenger_individuation :
 
 end FramePhenomena
 
-end DynamicSemantics.TTR
+end Semantics.TypeTheoretic

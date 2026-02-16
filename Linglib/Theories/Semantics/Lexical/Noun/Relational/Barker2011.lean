@@ -15,7 +15,7 @@ Barker's type-shifting analysis: π relationalizes sortals, Ex detransitivizes r
 Barker (2011), Partee (1997), Vikner & Jensen (2002), Ahn & Zhu (2025)
 -/
 
-namespace TruthConditional.Noun.Relational.Barker2011
+namespace Semantics.Lexical.Noun.Relational.Barker2011
 
 
 /-- One-place predicates: E → S → Bool -/
@@ -254,4 +254,4 @@ theorem possessive_individual_eval {E : Type} (b : E) :
       Core.Quantification.individual b P = P b := by
   intro P; rfl
 
-end TruthConditional.Noun.Relational.Barker2011
+end Semantics.Lexical.Noun.Relational.Barker2011

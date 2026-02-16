@@ -46,12 +46,12 @@ reference point is selected (all of B vs MAX of B).
 - Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
 -/
 
-namespace TruthConditional.Sentence.Tense.TemporalConnectives
+namespace Semantics.Tense.TemporalConnectives
 
 open Core.Time
 open Core.Time.Interval
-open TruthConditional.Verb.Aspect
-open TruthConditional.Verb.ChangeOfState
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Lexical.Verb.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton)
 
 -- ============================================================================
@@ -338,4 +338,4 @@ theorem while_not_ambidirectional [Inhabited Time] :
   have rhs := this.mp lhs (default : Time) rfl
   exact absurd rfl rhs
 
-end TruthConditional.Sentence.Tense.TemporalConnectives
+end Semantics.Tense.TemporalConnectives

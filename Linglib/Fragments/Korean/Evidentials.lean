@@ -23,7 +23,7 @@ This EP/UP factorization is verified in `Phenomena/Cumming2026/Bridge.lean`.
 
 namespace Fragments.Korean.Evidentials
 
-open TruthConditional.Sentence.Tense.Evidential
+open Semantics.Tense.Evidential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Korean -te (Table 18)

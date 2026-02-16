@@ -27,7 +27,7 @@ transitive verbs.
 - Barwise (1989). The Situation in Logic.
 -/
 
-namespace DynamicSemantics.TTR
+namespace Semantics.TypeTheoretic
 
 -- ============================================================================
 -- Layer 2: Semantics (Situations, Modality, Topoi)
@@ -657,7 +657,7 @@ TTR's know = believe ∧ IsTrue mirrors the standard doxastic classification:
 - `believe` is non-veridical (believe p ↛ p)
 
 This is the abstract pattern that connects to `Doxastic.veridical` in
-`Theories/IntensionalSemantics/Attitude/Doxastic.lean`. The full bridge
+`Theories/Semantics.Intensional/Attitude/Doxastic.lean`. The full bridge
 (importing Doxastic) is deferred to a future `Theories/TTR/` module. -/
 
 /-- know is exactly believe + veridicality: the two components are independent. -/
@@ -1010,4 +1010,4 @@ theorem meaningPostulate_transfers_belief {Agent : Type} {ltm : LTM Agent}
     believe ltm a T₂ :=
   believe_closed_under_subtype hb mp.coerce
 
-end DynamicSemantics.TTR
+end Semantics.TypeTheoretic

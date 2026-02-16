@@ -35,14 +35,14 @@ with presuppositions:
 - Donnellan, K. (1966). Reference and Definite Descriptions. Phil. Review.
 -/
 
-namespace TruthConditional.Determiner.Definite
+namespace Semantics.Lexical.Determiner.Definite
 
-open TruthConditional (Model Ty toyModel ToyEntity)
-open TruthConditional.Determiner.Quantifier (FiniteModel every_sem some_sem Ty.det)
-open TruthConditional.Noun.TypeShifting (iota lift)
+open Semantics.Compositional (Model Ty toyModel ToyEntity)
+open Semantics.Lexical.Determiner.Quantifier (FiniteModel every_sem some_sem Ty.det)
+open Semantics.Lexical.Noun.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType Definiteness)
-open IntensionalSemantics.Reference.Donnellan (definitePrProp attributiveContent)
+open Semantics.Reference.Donnellan (definitePrProp attributiveContent)
 
 -- ============================================================================
 -- §1: Uniqueness-Based Definite (Weak Article)
@@ -245,4 +245,4 @@ def qforceToDefiniteness : QForce → Definiteness
   | .negative     => .indefinite -- "no" is existential (negative)
   | .proportional => .indefinite -- "most" is proportional (no presupposition)
 
-end TruthConditional.Determiner.Definite
+end Semantics.Lexical.Determiner.Definite

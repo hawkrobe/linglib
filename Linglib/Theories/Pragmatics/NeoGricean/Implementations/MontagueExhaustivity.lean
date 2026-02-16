@@ -26,7 +26,7 @@ import Mathlib.Tactic.FinCases
 
 namespace NeoGricean.MontagueExhaustivity
 
-open TruthConditional TruthConditional.Determiner.Quantifier
+open Semantics.Compositional Semantics.Lexical.Determiner.Quantifier
 open NeoGricean.Exhaustivity
 
 /-

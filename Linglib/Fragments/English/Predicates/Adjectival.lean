@@ -7,9 +7,9 @@ Gradable adjective entries following Kennedy (2007). Scale type, dimension, anto
 
 namespace Fragments.English.Predicates.Adjectival
 
-open TruthConditional.Adjective (AntonymRelation GradableAdjEntry)
+open Semantics.Lexical.Adjective (AntonymRelation GradableAdjEntry)
 open Core.Scale (Boundedness)
-open TruthConditional.Adjective (NegationType)
+open Semantics.Lexical.Adjective (NegationType)
 
 
 /--

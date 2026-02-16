@@ -28,7 +28,7 @@ For de re/de dicto distinctions:
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update
 
-namespace DynamicSemantics.PLA
+namespace Semantics.Dynamic.PLA
 
 open Classical
 
@@ -284,7 +284,7 @@ def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 ## Relationship to Kratzer (1981) Modal Semantics
 
 PLA's epistemic operators share deep structure with Kratzer's modal semantics
-from `IntensionalSemantics.Modal.Kratzer`. Both frameworks implement:
+from `Semantics.Modality.Kratzer`. Both frameworks implement:
 
 ### Common Pattern: Necessity as Universal Quantification
 
@@ -327,11 +327,11 @@ The relationship can be made precise: if we "freeze" the assignment and
 witness sequence, PLA's support relation reduces to Kratzer-style necessity
 over the remaining possibilities.
 
-See `IntensionalSemantics.Modal.Kratzer` for the full Kratzer framework with:
+See `Semantics.Modality.Kratzer` for the full Kratzer framework with:
 - Modal base and ordering source
 - Preorder on worlds (`kratzerPreorder`)
 - Frame correspondence theorems (T, D, 4, B, 5 axioms)
 - Galois connection (extension/intension duality)
 -/
 
-end DynamicSemantics.PLA
+end Semantics.Dynamic.PLA

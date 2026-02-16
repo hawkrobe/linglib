@@ -10,7 +10,7 @@ knowledge to the speaker, interrogatives to the addressee. This module provides
 the infrastructure; `Tense/Perspective.lean` builds Lakoff's constraints on top.
 
 Existing framework-specific types (`PRole` in Minimalism/SpeechActs, `Participant`
-in DynamicSemantics/State) encode configurational or update-theoretic commitments.
+in Semantics.Dynamic/State) encode configurational or update-theoretic commitments.
 `DiscourseRole` is the agnostic version: just speaker vs addressee, resolved
 against a Kaplanian context.
 
@@ -26,7 +26,7 @@ namespace Core.Discourse
 open Core.Context
 
 /-- The two fundamental discourse participants. `.addressee` matches
-    `KContext.addressee` (not `.listener` as in DynamicSemantics). -/
+    `KContext.addressee` (not `.listener` as in Semantics.Dynamic). -/
 inductive DiscourseRole where
   | speaker
   | addressee

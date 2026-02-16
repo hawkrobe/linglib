@@ -17,12 +17,12 @@ Reichenbach frame analysis.
 ## Core Embedding Infrastructure
 
 The embedding infrastructure (embedded frames, SOT readings, upper limit
-constraint) lives in `Theories/IntensionalSemantics/Tense/Basic.lean`.
+constraint) lives in `Theories/Semantics.Intensional/Tense/Basic.lean`.
 This file provides the bridge between that infrastructure and the
 truth-conditional tense operators.
 
 For the full six-theory comparison (Abusch, Von Stechow, Kratzer, Ogihara,
-Klecha, Deal), see `Theories/IntensionalSemantics/Tense/` and
+Klecha, Deal), see `Theories/Semantics.Intensional/Tense/` and
 `Comparisons/TenseTheories.lean`.
 
 ## References
@@ -34,11 +34,11 @@ Klecha, Deal), see `Theories/IntensionalSemantics/Tense/` and
 - Von Stechow, A. (2009). Tenses in compositional semantics.
 -/
 
-namespace TruthConditional.Sentence.Tense.SequenceOfTense
+namespace Semantics.Tense.SequenceOfTense
 
 open Core.Reichenbach
-open TruthConditional.Sentence.Tense (applyTense)
-open IntensionalSemantics.Tense (embeddedFrame simultaneousFrame)
+open Semantics.Tense (applyTense)
+open Semantics.Tense (embeddedFrame simultaneousFrame)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -93,7 +93,7 @@ The situation-semantic formulation imposes time-equality on accessible
 situations. All three descriptions collapse to the same truth condition.
 -/
 
-open IntensionalSemantics.Attitude.SituationDependent (temporallyBound)
+open Semantics.Attitudes.SituationDependent (temporallyBound)
 open Core.Time (Situation)
 
 /-- Temporal binding extracts a time-equality constraint from situation
@@ -125,4 +125,4 @@ theorem temporallyBound_gives_simultaneous {W Time E : Type*} [LinearOrder Time]
   exact temporallyBound_forces_time_eq R agent s₁ s₂ h
 
 
-end TruthConditional.Sentence.Tense.SequenceOfTense
+end Semantics.Tense.SequenceOfTense

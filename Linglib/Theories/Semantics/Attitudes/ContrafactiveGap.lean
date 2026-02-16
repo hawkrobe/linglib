@@ -39,9 +39,9 @@ import Linglib.Core.Verbs
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 
-namespace IntensionalSemantics.Attitude.ContrafactiveGap
+namespace Semantics.Attitudes.ContrafactiveGap
 
-open IntensionalSemantics.Attitude.Doxastic
+open Semantics.Attitudes.Doxastic
 open Core.Verbs
 open Fragments.English.Predicates.Verbal
 
@@ -315,4 +315,4 @@ some general principle (e.g., a new veridicality category), then:
 The system enforces: **derive what you can, stipulate only what you must**.
 -/
 
-end IntensionalSemantics.Attitude.ContrafactiveGap
+end Semantics.Attitudes.ContrafactiveGap

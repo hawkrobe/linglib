@@ -57,7 +57,7 @@ Dependency chain:
 
 namespace Phenomena.MeasurePhrases.Scontras2014
 
-open TruthConditional.Measurement (QuantizingNounClass ContainerReading predictsQU)
+open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading predictsQU)
 open Fragments.English.MeasurePhrases
 
 -- ============================================================================

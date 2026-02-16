@@ -33,7 +33,7 @@ namespace RSA.Implementations.CumminsFranke2021
 open RSA.ArgumentativeStrength
 open RSA.InformationTheory
 open RSA.Domains.Quantity
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 
 -- ============================================================

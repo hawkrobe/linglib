@@ -44,7 +44,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 
 namespace RSA.DiscourseIntegration
 
-open DynamicSemantics.State
+open Semantics.Dynamic.State
 open Core.Proposition
 
 

@@ -55,12 +55,12 @@ import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
-namespace TruthConditional.Sentence.Presupposition.BeliefEmbedding
+namespace Semantics.Presupposition.BeliefEmbedding
 
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
-open TruthConditional.Sentence.Presupposition.LocalContext
+open Semantics.Presupposition.LocalContext
 open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
@@ -336,4 +336,4 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     ContextSet.entails (blc.atWorld w_star) p.presup := by
   simp [presupFiltered, beliefToLocalCtx]
 
-end TruthConditional.Sentence.Presupposition.BeliefEmbedding
+end Semantics.Presupposition.BeliefEmbedding

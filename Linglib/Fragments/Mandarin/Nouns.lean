@@ -20,7 +20,7 @@ namespace Fragments.Mandarin.Nouns
 
 open Core.NounCategorization (ClassifierEntry)
 open Fragments.Mandarin.Classifiers
-open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Mandarin noun.
 

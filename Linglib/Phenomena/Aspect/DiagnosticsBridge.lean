@@ -49,7 +49,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 namespace Phenomena.Aspect.Diagnostics
 
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- Diagnostic Results
 

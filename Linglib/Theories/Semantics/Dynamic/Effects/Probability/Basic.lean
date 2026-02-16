@@ -30,7 +30,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Linglib.Core.Proposition
 
-namespace DynamicSemantics.Probabilistic
+namespace Semantics.Dynamic.Probabilistic
 
 /-!
 ## The Probability Monad
@@ -398,4 +398,4 @@ theorem probProp_false {ι : Type} [Fintype ι] (mass : ι → ℚ) :
   have h : ∀ i, mass i * (if false then 1 else 0) = 0 := λ i => by simp
   simp only [h, Finset.sum_const_zero]
 
-end DynamicSemantics.Probabilistic
+end Semantics.Dynamic.Probabilistic

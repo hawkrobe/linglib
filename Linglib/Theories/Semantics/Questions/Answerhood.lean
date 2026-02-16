@@ -11,9 +11,9 @@ The ANS operator and the answerhood thesis (Groenendijk & Stokhof 1984, Ch. I).
 - Bennett & Belnap (1990). Conditional Assertion and Restricted Quantification.
 -/
 
-namespace QuestionSemantics.Answerhood
+namespace Semantics.Questions.Answerhood
 
-open QuestionSemantics
+open Semantics.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
 /-- ANS(Q, i) = cell of Q's partition containing i (G&S 1984, p. 14-15). -/
@@ -568,4 +568,4 @@ theorem refinement_iff_answer_transfer {W : Type*} (q1 q2 : GSQuestion W) :
   ⟨λ h => refinement_transfers_answers q1 q2 h,
    λ h => answer_transfer_implies_refinement q1 q2 h⟩
 
-end QuestionSemantics.Answerhood
+end Semantics.Questions.Answerhood

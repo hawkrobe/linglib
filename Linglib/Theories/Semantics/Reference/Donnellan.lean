@@ -28,11 +28,11 @@ content that varies across worlds.
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Core.Presupposition
 
-namespace IntensionalSemantics.Reference.Donnellan
+namespace Semantics.Reference.Donnellan
 
 open Core.Intension (Intension rigid IsRigid rigid_isRigid)
 open Core.Presupposition (PrProp)
-open IntensionalSemantics.Reference.Basic
+open Semantics.Reference.Basic
 
 /-! ## Use Modes -/
 
@@ -166,4 +166,4 @@ theorem attributive_is_pointwise_iota {W E : Type*} (domain : List E)
      | [e] => some e
      | _ => none) := rfl
 
-end IntensionalSemantics.Reference.Donnellan
+end Semantics.Reference.Donnellan

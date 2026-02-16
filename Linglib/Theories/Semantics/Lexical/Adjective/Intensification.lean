@@ -31,10 +31,10 @@ The intensified positive form is the conjunction (intersection) of:
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 
-namespace TruthConditional.Adjective.Intensification
+namespace Semantics.Lexical.Adjective.Intensification
 
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open TruthConditional.Adjective (positiveMeaning)
+open Semantics.Lexical.Adjective (positiveMeaning)
 
 -- Evaluative Valence (shared with Phenomena.Gradability.Intensifiers)
 
@@ -195,4 +195,4 @@ theorem positive_valence_norm_peak :
     (muPleasant 10).mu 5 ≥ (muPleasant 10).mu 10 :=
   ⟨rfl, muPleasant_peaks_at_norm_10⟩
 
-end TruthConditional.Adjective.Intensification
+end Semantics.Lexical.Adjective.Intensification

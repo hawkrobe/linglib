@@ -84,7 +84,7 @@ end VForm
 /-- Theta roles for argument structure (Dowty 1991, Parsons 1990).
     Language-independent semantic categories classifying the relationship
     between a verb's arguments and the event it describes. Used by both
-    Theory-layer modules (EventSemantics.ThematicRoles) and Fragment-layer
+    Theory-layer modules (Semantics.Events.ThematicRoles) and Fragment-layer
     modules (English/Korean/Japanese/... Predicates). -/
 inductive ThetaRole where
   | agent       -- Volitional causer (John kicked the ball)

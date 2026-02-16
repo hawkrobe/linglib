@@ -8,7 +8,7 @@ import Mathlib.Tactic.Linarith
 Theory-neutral decision-theoretic infrastructure: decision problems, expected
 utility, maximin, and mention-some/mention-all classification.
 
-Promoted from `Theories.QuestionSemantics.DecisionTheory` so that any module
+Promoted from `Theories.Semantics.Questions.DecisionTheory` so that any module
 (RSA, causal decision theory, explanation models) can use decision problems
 without pulling in question-semantic types.
 

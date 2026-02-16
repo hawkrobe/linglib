@@ -15,9 +15,9 @@ Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 5.
 
 import Linglib.Theories.Semantics.Compositional.Basic
 
-namespace TruthConditional.Variables
+namespace Semantics.Compositional.Variables
 
-open TruthConditional
+open Semantics.Compositional
 
 /-- Assignment function: maps variable indices to entities. -/
 @[ext]
@@ -129,4 +129,4 @@ theorem sleeps_lambda_eq : sleeps_lambda g₀ = sleeps_sem := by
 
 end Examples
 
-end TruthConditional.Variables
+end Semantics.Compositional.Variables

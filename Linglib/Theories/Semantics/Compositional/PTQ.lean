@@ -13,7 +13,7 @@ the homomorphism between natural language syntax and model-theoretic semantics.
 
 ## Note on Types
 
-This module uses the canonical `TruthConditional.Ty` type system. Intensions are
+This module uses the canonical `Semantics.Compositional.Ty` type system. Intensions are
 represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 ## References
@@ -25,9 +25,9 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 import Linglib.Theories.Semantics.Compositional.Basic
 import Mathlib.Data.Set.Basic
 
-namespace TruthConditional.PTQ
+namespace Semantics.Compositional.PTQ
 
-open TruthConditional
+open Semantics.Compositional
 
 -- Section 1: Types (IL - Intensional Logic)
 
@@ -40,7 +40,7 @@ The set of types is the smallest set Y such that:
 - If a, b ∈ Y then ⟨a, b⟩ ∈ Y (functions)
 - If a ∈ Y then ⟨s, a⟩ ∈ Y (intensions)
 
-We use the canonical `TruthConditional.Ty` which has:
+We use the canonical `Semantics.Compositional.Ty` which has:
 - `.e` : entities
 - `.t` : truth values
 - `.s` : possible worlds
@@ -131,7 +131,7 @@ theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭�
 /--
 Intensional Model
 
-A PTQ model uses the canonical `TruthConditional.Model` which includes:
+A PTQ model uses the canonical `Semantics.Compositional.Model` which includes:
 - `Entity` : domain of entities
 - `World` : possible worlds (indices)
 -/
@@ -457,4 +457,4 @@ def Derivation.cat : Derivation → Cat
   | .quantIn _ _ _ => .t
 
 
-end TruthConditional.PTQ
+end Semantics.Compositional.PTQ

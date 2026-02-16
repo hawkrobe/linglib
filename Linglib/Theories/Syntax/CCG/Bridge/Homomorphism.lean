@@ -26,7 +26,7 @@ namespace CCG.Homomorphism
 
 open CCG
 open CCG.Combinators
-open TruthConditional
+open Semantics.Compositional
 
 -- Well-Typed Derivations
 

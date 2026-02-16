@@ -10,7 +10,7 @@ Integrates with Erk & Herbelot (2024) Product of Experts for disambiguation.
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.ProductOfExperts
 
-namespace TruthConditional.Verb.SelectionalPreferences
+namespace Semantics.Lexical.Verb.SelectionalPreferences
 
 open Core.ProductOfExperts
 
@@ -257,4 +257,4 @@ example : sleepSoftened .human = 1 := rfl
 
 end SoftConstraints
 
-end TruthConditional.Verb.SelectionalPreferences
+end Semantics.Lexical.Verb.SelectionalPreferences

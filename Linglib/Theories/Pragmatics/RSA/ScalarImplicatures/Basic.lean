@@ -26,9 +26,9 @@ import Linglib.Core.Interfaces.ImplicatureTheory
 namespace RSA.ScalarImplicatures
 
 open RSA RSA.Domains.Quantity
-open TruthConditional
-open TruthConditional.SemDeriv
-open TruthConditional.Core
+open Semantics.Compositional
+open Semantics.Compositional.SemDeriv
+open Semantics.Compositional.Core
 
 
 /-

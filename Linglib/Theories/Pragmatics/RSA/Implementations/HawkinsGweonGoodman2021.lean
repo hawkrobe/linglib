@@ -323,7 +323,7 @@ that denotes a characteristic function of type `e → t`:
 Composing via predicate modification:
   ⟦blue checked square⟧ = λx. blue(x) ∧ checked(x) ∧ square(x)
 
-This is exactly TruthConditional.Modification.intersectiveMod applied iteratively.
+This is exactly Semantics.Compositional.Modification.intersectiveMod applied iteratively.
 
 ## Reference
 
@@ -333,7 +333,7 @@ This is exactly TruthConditional.Modification.intersectiveMod applied iterativel
 
 namespace MontaguGrounding
 
-open TruthConditional.Modification
+open Semantics.Compositional.Modification
 
 /-- Feature predicates are Montague-style intersective adjectives (e → t).
 
@@ -350,7 +350,7 @@ Compositionally derived utterance denotation.
 
 An utterance mentions some subset of {shape, color, texture}.
 The denotation is the conjunction of all mentioned feature predicates,
-using `predMod` from TruthConditional.Modification:
+using `predMod` from Semantics.Compositional.Modification:
 
   ⟦blue checked square⟧ = predMod (predMod ⟦blue⟧ ⟦checked⟧) ⟦square⟧
                         = λx. blue(x) ∧ checked(x) ∧ square(x)
@@ -373,7 +373,7 @@ def directDenotation (u : Utterance) (targetFeatures : ObjectFeatures) : Object 
 /-- **Grounding theorem**: Direct denotation equals compositional derivation.
 
 The ad-hoc semantics in utteranceApplies are exactly what we get from
-applying predicate modification (from TruthConditional.Modification) to individual
+applying predicate modification (from Semantics.Compositional.Modification) to individual
 feature predicates.
 -/
 theorem grounding_compositional_equals_direct (u : Utterance) (tf : ObjectFeatures) (o : Object) :

@@ -47,7 +47,7 @@ import Linglib.Theories.Semantics.Compositional.Modification
 
 namespace Minimalism.Semantics
 
-open TruthConditional TruthConditional.Variables TruthConditional.Modification
+open Semantics.Compositional Semantics.Compositional.Variables Semantics.Compositional.Modification
 open Minimalism
 
 -- ============================================================================

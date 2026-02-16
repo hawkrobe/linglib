@@ -8,11 +8,11 @@ import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
-namespace TruthConditional.Sentence.Entailment.Monotonicity
+namespace Semantics.Entailment.Monotonicity
 
-open TruthConditional.Sentence.Entailment
-open TruthConditional.Core.Polarity (isUpwardEntailing isDownwardEntailing)
-open TruthConditional.Determiner.Quantifier
+open Semantics.Entailment
+open Semantics.Compositional.Core.Polarity (isUpwardEntailing isDownwardEntailing)
+open Semantics.Lexical.Determiner.Quantifier
 
 section QuantifierSemantics
 
@@ -20,7 +20,7 @@ section QuantifierSemantics
 
 The 4-element `World` type used in the entailment domain doubles as an
 entity domain. We create a `Model` + `FiniteModel` instance so that the
-canonical GQ denotations from `TruthConditional.Determiner.Quantifier`
+canonical GQ denotations from `Semantics.Lexical.Determiner.Quantifier`
 (`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
 
 This bridges the entailment-testing infrastructure (finite, decidable)
@@ -29,7 +29,7 @@ for arbitrary finite models).
 -/
 
 /-- The entailment World type, viewed as a Model entity domain. -/
-def entailmentModel : TruthConditional.Model :=
+def entailmentModel : Semantics.Compositional.Model :=
   { Entity := World, decEq := inferInstance }
 
 instance : FiniteModel entailmentModel where
@@ -85,4 +85,4 @@ theorem every_restr_DE : isDownwardEntailing every_restr testCases = true := by
 
 end QuantifierSemantics
 
-end TruthConditional.Sentence.Entailment.Monotonicity
+end Semantics.Entailment.Monotonicity

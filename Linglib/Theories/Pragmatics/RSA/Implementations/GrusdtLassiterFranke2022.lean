@@ -35,7 +35,7 @@ likely phrases (likely A, likely C, etc.)
 ## Grounding
 
 The meaning of conditionals is grounded in the assertability condition from
-`IntensionalSemantics.Conditional.Assertability`:
+`Semantics.Conditionals.Assertability`:
 
 ```
 L0_conditional_meaning = conditionalSemantics
@@ -57,7 +57,7 @@ namespace RSA.GrusdtLassiterFranke2022
 
 open Core.Causation
 open RSA.Eval
-open IntensionalSemantics.Conditional.Assertability
+open Semantics.Conditionals.Assertability
 
 -- Utterance Types
 
@@ -164,7 +164,7 @@ def softConjunctionSemantics (ws : WorldState) : ℚ :=
   ws.pAC
 
 /--
-Conditional semantics: P(C|A) > θ (from IntensionalSemantics.Conditional.Assertability)
+Conditional semantics: P(C|A) > θ (from Semantics.Conditionals.Assertability)
 
 This is the grounding: we use the assertability condition directly.
 -/
@@ -417,7 +417,7 @@ def L1_causalRelation (u : Utterance) (α : ℕ := 1) : List (CausalRelation × 
 **Grounding Theorem**: L0 conditional meaning equals Montague assertability.
 
 The RSA model's literal listener interprets conditionals using the
-assertability condition from `IntensionalSemantics.Conditional.Assertability`.
+assertability condition from `Semantics.Conditionals.Assertability`.
 
 This proves that the RSA model is grounded in compositional semantics.
 -/
@@ -628,7 +628,7 @@ theorem semantics_causal_independent (u : Utterance) (ws : WorldState)
 The material conditional p → q does NOT entail the perfected reading ¬p → ¬q.
 This is a semantic fact: there exist worlds where (p → q) is true but (¬p → ¬q) is false.
 
-See `IntensionalSemantics.Conditional.Basic.perfection_not_entailed` for the proof.
+See `Semantics.Conditionals.Basic.perfection_not_entailed` for the proof.
 -/
 theorem perfection_not_semantic : ∃ (ws : WorldState),
     conditionalSemantics ws conditionalThreshold = 1 ∧
@@ -801,7 +801,7 @@ theorem model_demonstrates :
    the causal relation that L1 infers.
 
 3. **Grounding in Assertability**: The conditional semantics is exactly
-   the assertability condition from IntensionalSemantics.Conditional.
+   the assertability condition from Semantics.Conditionals.
 
 ## References
 

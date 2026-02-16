@@ -43,10 +43,10 @@ In CDRT (Muskens 1996), these operators compose dynamically:
 
 import Linglib.Theories.Semantics.Compositional.Core.Time
 
-namespace IntensionalSemantics.Mood
+namespace Semantics.Mood
 
 open Core.Time
-open TruthConditional.Core.Time
+open Semantics.Compositional.Core.Time
 
 
 /--
@@ -376,8 +376,8 @@ The structural parallel: both mechanisms shift the temporal evaluation point
 of the embedded clause from the default (speech time or matrix time) to a
 newly introduced temporal anchor.
 
-See `IntensionalSemantics.Attitude.SituationDependent` for the attitude side
-and `TruthConditional.Sentence.Tense.SequenceOfTense` for the formal connection.
+See `Semantics.Attitudes.SituationDependent` for the attitude side
+and `Semantics.Tense.SequenceOfTense` for the formal connection.
 -/
 
 section AttitudeTemporalAnchor
@@ -402,4 +402,4 @@ theorem subj_temporal_anchor {W Time : Type*} [LE Time]
 
 end AttitudeTemporalAnchor
 
-end IntensionalSemantics.Mood
+end Semantics.Mood

@@ -59,7 +59,7 @@ import Linglib.Theories.Semantics.Compositional.Core.Derivation
 namespace NeoGricean.FoxSpector2018
 
 open NeoGricean.Exhaustivity
-open TruthConditional.Core.Polarity (ContextPolarity)
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
 
 -- SECTION 2: HURFORD'S CONSTRAINT
 

@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Determiners
 
 Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
-`Theories.TruthConditional.Determiner.Quantifier`.
+`Theories.Semantics.Lexical.Determiner.Quantifier`.
 
 ## Empirical phenomena verified
 
@@ -30,7 +30,7 @@ to the GQ property predicates in `Core.Quantification` and
 
 - **Formal definitions**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
   `ScopeDownwardMono`, `QuantityInvariant`, `PositiveStrong`, `QSymmetric`
-- **Concrete denotations**: `TruthConditional.Determiner.Quantifier` —
+- **Concrete denotations**: `Semantics.Lexical.Determiner.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
 - **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
@@ -52,8 +52,8 @@ namespace Phenomena.Quantification.Bridge
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
 open Core.Quantification (Conservative QuantityInvariant LeftAntiAdditive
   PositiveStrong ScopeUpwardMono QSymmetric)
-open TruthConditional (Model)
-open TruthConditional.Determiner.Quantifier (FiniteModel)
+open Semantics.Compositional (Model)
+open Semantics.Lexical.Determiner.Quantifier (FiniteModel)
 
 -- ============================================================================
 -- Barwise & Cooper (1981): Conservativity is (near-)universal
@@ -67,12 +67,12 @@ theorem conservativity_universal :
     Conservative (q.gqDenotation m) := by
   intro q m inst
   cases q <;> simp only [QuantityWord.gqDenotation]
-  · exact TruthConditional.Determiner.Quantifier.no_conservative
-  · exact TruthConditional.Determiner.Quantifier.few_conservative
-  · exact TruthConditional.Determiner.Quantifier.some_conservative
-  · exact TruthConditional.Determiner.Quantifier.half_conservative
-  · exact TruthConditional.Determiner.Quantifier.most_conservative
-  · exact TruthConditional.Determiner.Quantifier.every_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.no_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.few_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.some_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.half_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.most_conservative
+  · exact Semantics.Lexical.Determiner.Quantifier.every_conservative
 
 -- ============================================================================
 -- Mostowski (1957) / Keenan & Stavi (1986): Quantity
@@ -87,7 +87,7 @@ theorem quantity_universal :
   ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
     QuantityInvariant (q.gqDenotation m) := by
   intro q m inst A B A' B' f hBij hA hB
-  open TruthConditional.Determiner.Quantifier in
+  open Semantics.Lexical.Determiner.Quantifier in
   -- Key fact: A'/B' predicates equal A/B composed with f
   have hAf : A' = A ∘ f := funext (fun x => (hA x).symm)
   have hBf : B' = B ∘ f := funext (fun x => (hB x).symm)
@@ -289,34 +289,34 @@ theorem positive_strong_determiners_upward_monotone :
     ScopeUpwardMono (q.gqDenotation m) := by
   intro q m inst hPS
   cases q
-  case all => exact TruthConditional.Determiner.Quantifier.every_scope_up
-  case some_ => exact TruthConditional.Determiner.Quantifier.some_scope_up
+  case all => exact Semantics.Lexical.Determiner.Quantifier.every_scope_up
+  case some_ => exact Semantics.Lexical.Determiner.Quantifier.some_scope_up
   case most =>
     exfalso; have := hPS (λ _ => false)
-    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.most_sem,
+    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.most_sem,
       Bool.false_and, Bool.not_false, Bool.true_and, List.filter_false, List.filter_true,
       List.length_nil, Nat.not_lt_zero, decide_false] at this
     exact absurd this Bool.noConfusion
   case few =>
     exfalso; have := hPS (λ _ => false)
-    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.few_sem,
+    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.few_sem,
       Bool.false_and, Bool.not_false, Bool.true_and, List.filter_false, List.filter_true,
       List.length_nil, Nat.not_lt_zero, decide_false] at this
     exact absurd this Bool.noConfusion
   case none_ =>
     intro R S S' hSS' _
-    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.no_sem] at *
+    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.no_sem] at *
     rw [List.all_eq_true]
     intro x hx
     have h := hPS (λ _ => true)
-    simp only [TruthConditional.Determiner.Quantifier.no_sem] at h
+    simp only [Semantics.Lexical.Determiner.Quantifier.no_sem] at h
     rw [List.all_eq_true] at h
     exact absurd (h x hx) Bool.noConfusion
   case half =>
     intro R S S' hSS' _
-    simp only [QuantityWord.gqDenotation, TruthConditional.Determiner.Quantifier.half_sem] at *
+    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.half_sem] at *
     have h := hPS (λ _ => true)
-    simp only [TruthConditional.Determiner.Quantifier.half_sem,
+    simp only [Semantics.Lexical.Determiner.Quantifier.half_sem,
       Bool.true_and, List.filter_true] at h
     rw [decide_eq_true_eq] at h
     -- h : 2 * elements.length = elements.length, so elements.length = 0

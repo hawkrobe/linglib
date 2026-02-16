@@ -26,7 +26,7 @@ Dekker shows three equivalent perspectives on dynamic meaning:
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
-namespace DynamicSemantics.PLA
+namespace Semantics.Dynamic.PLA
 
 -- We use Core.CCP infrastructure directly via qualified names
 
@@ -531,4 +531,4 @@ theorem dynamicEntails_weakening {E : Type*} [Nonempty E] (M : Model E)
   hent s
 
 
-end DynamicSemantics.PLA
+end Semantics.Dynamic.PLA

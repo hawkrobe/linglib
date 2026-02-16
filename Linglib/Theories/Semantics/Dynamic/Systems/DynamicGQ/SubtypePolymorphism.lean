@@ -20,7 +20,7 @@ tests scope outside M_v.
   §4, equations 40–46.
 -/
 
-namespace DynamicSemantics.DynamicGQ.SubtypePolymorphism
+namespace Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 
 /-- Completeness level: `incomplete` (t) or `complete` (T).
     Incomplete meanings await further composition (e.g., a cardinality test).
@@ -78,4 +78,4 @@ theorem pseudo_cumulative_illtyped :
     ¬ subtypeOf CardTest_type Mvar_type := by
   simp [CardTest_type, Mvar_type, subtypeOf]
 
-end DynamicSemantics.DynamicGQ.SubtypePolymorphism
+end Semantics.Dynamic.DynamicGQ.SubtypePolymorphism

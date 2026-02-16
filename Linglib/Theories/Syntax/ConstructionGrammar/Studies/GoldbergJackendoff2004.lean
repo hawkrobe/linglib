@@ -31,7 +31,7 @@ Family of Constructions. Language, 80(3), 532–568.
 namespace ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 open ConstructionGrammar
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 /-! ## Core types -/
 

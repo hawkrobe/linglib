@@ -122,7 +122,7 @@ The three mechanisms of direct reference (designation, singular proposition,
 referential use) are empirically independent: natural language supplies
 expressions exercising every non-empty subset.
 
-See `IntensionalSemantics.Reference.Almog2014.IndependenceWitness` for
+See `Semantics.Reference.Almog2014.IndependenceWitness` for
 the formal content. -/
 
 /-- Almog's independence thesis: for any two of the three mechanisms,
@@ -187,7 +187,7 @@ representations.
 - Quantity (isomorphism closure): depends only on cardinalities
 - Monotonicity: upward or downward monotone in scope
 
-Formal content: `TruthConditional.Determiner.Quantifier.SatisfiesUniversals`
+Formal content: `Semantics.Lexical.Determiner.Quantifier.SatisfiesUniversals`
 -/
 
 /-- Quantifiers satisfying the B&C semantic universals have strictly lower

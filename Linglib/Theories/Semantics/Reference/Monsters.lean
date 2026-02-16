@@ -29,7 +29,7 @@ this with indexical shift under attitude verbs in Amharic and Zazaki.
 import Linglib.Core.Context
 import Linglib.Core.Intension
 
-namespace IntensionalSemantics.Reference.Monsters
+namespace Semantics.Reference.Monsters
 
 open Core.Intension (Intension IsRigid)
 
@@ -222,4 +222,4 @@ def englishTemporalShift : SchlenkerCounterexample :=
   , description := "'yesterday' can shift to the day before the reported " ++
       "speech act under attitude verbs" }
 
-end IntensionalSemantics.Reference.Monsters
+end Semantics.Reference.Monsters

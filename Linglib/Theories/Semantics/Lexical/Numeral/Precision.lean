@@ -16,7 +16,7 @@ are interpreted precisely. This is the "pragmatic halo" effect.
 - Woodin, Winter & Bhatt (2024). Numeral frequency and roundness.
 -/
 
-namespace TruthConditional.Numeral.Precision
+namespace Semantics.Lexical.Numeral.Precision
 
 /-- Precision mode for numeral interpretation (Kao et al. 2014). -/
 inductive PrecisionMode where
@@ -113,4 +113,4 @@ theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
   · decide
   · exact absurd ‹_› (Core.Roundness.grade_ne_none_of_score_ge_one n (by omega))
 
-end TruthConditional.Numeral.Precision
+end Semantics.Lexical.Numeral.Precision

@@ -35,13 +35,13 @@ import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Compositional.Core.Time
 
-namespace DynamicSemantics.IntensionalCDRT.PresuppositionWeakening
+namespace Semantics.Dynamic.IntensionalCDRT.PresuppositionWeakening
 
 open Core.Time
-open TruthConditional.Core.Time
-open DynamicSemantics.IntensionalCDRT
-open DynamicSemantics.IntensionalCDRT.Situations
-open DynamicSemantics.IntensionalCDRT.ModalDonkeyAnaphora
+open Semantics.Compositional.Core.Time
+open Semantics.Dynamic.IntensionalCDRT
+open Semantics.Dynamic.IntensionalCDRT.Situations
+open Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
 
 /--
@@ -341,4 +341,4 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
-end DynamicSemantics.IntensionalCDRT.PresuppositionWeakening
+end Semantics.Dynamic.IntensionalCDRT.PresuppositionWeakening

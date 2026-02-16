@@ -17,7 +17,7 @@ Core update operations for dynamic semantics over `Possibility W E` states.
 import Linglib.Theories.Semantics.Dynamic.Core.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
-namespace DynamicSemantics.Core
+namespace Semantics.Dynamic.Core
 
 open InfoState
 
@@ -156,4 +156,4 @@ def CCP.ofPred2 {W E : Type*} (p : E → E → W → Bool) (x y : Nat) : CCP (Po
   λ (s : InfoState W E) => { poss ∈ s | p (poss.assignment x) (poss.assignment y) poss.world }
 
 
-end DynamicSemantics.Core
+end Semantics.Dynamic.Core

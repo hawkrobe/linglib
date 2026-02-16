@@ -6,7 +6,7 @@ import Linglib.Core.Reichenbach
 # Tense Theory Infrastructure: Shared Types
 
 Shared types and infrastructure for the tense theories formalized in
-`IntensionalSemantics/Tense/` (Abusch 1997, Von Stechow 2009, Kratzer 1998,
+`Semantics.Intensional/Tense/` (Abusch 1997, Von Stechow 2009, Kratzer 1998,
 Ogihara 1996, Klecha 2016, Deal 2020, Sharvit 2003) and
 `Minimalism/Tense/` (Zeijlstra 2012, Wurmbrand 2014).
 
@@ -38,7 +38,7 @@ of a derivation theorem in that theory's file.
 - Wurmbrand, S. (2014). Tense and aspect in English infinitives.
 -/
 
-namespace IntensionalSemantics.Tense
+namespace Semantics.Tense
 
 open Core.Tense
 open Core.Time
@@ -510,4 +510,4 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
   ⟨zeroTense_receives_binder_time g n matrixFrame.eventTime, rfl⟩
 
 
-end IntensionalSemantics.Tense
+end Semantics.Tense

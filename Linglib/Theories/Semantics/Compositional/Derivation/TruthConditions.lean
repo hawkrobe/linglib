@@ -15,9 +15,9 @@ Montague (1973)
 import Linglib.Theories.Semantics.Compositional.Basic
 import Linglib.Phenomena.Entailment.Basic
 
-namespace TruthConditional.Derivation.TruthConditions
+namespace Semantics.Compositional.Derivation.TruthConditions
 
-open TruthConditional
+open Semantics.Compositional
 open ToyLexicon
 open Phenomena.Entailment
 
@@ -62,12 +62,12 @@ theorem john_sleeps_isTrue : isTrue toyModel (interpSV toyModel john_sem sleeps_
 theorem john_sees_mary_isTrue : isTrue toyModel (interpSVO toyModel john_sem sees_sem mary_sem) := rfl
 theorem john_eats_pizza_isTrue : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
 
-end TruthConditional.Derivation.TruthConditions
+end Semantics.Compositional.Derivation.TruthConditions
 
 -- Backward compatibility alias
-namespace TruthConditional.Derivations
-  export TruthConditional.Derivation.TruthConditions (john_sleeps mary_not_sleeps john_laughs mary_laughs
+namespace Semantics.Compositional.Derivations
+  export Semantics.Compositional.Derivation.TruthConditions (john_sleeps mary_not_sleeps john_laughs mary_laughs
     john_sees_mary mary_sees_john john_not_sees_john john_eats_pizza john_not_eats_mary
     mary_eats_pizza john_reads_book captures_john_sleeps captures_mary_sleeps
     captures_intransitive_contrast captures_transitive_seeing)
-end TruthConditional.Derivations
+end Semantics.Compositional.Derivations
