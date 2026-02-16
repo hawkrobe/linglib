@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Slovenian Question Particles
@@ -25,7 +25,7 @@ Incompatible with DeclPQs (Šimík 2024 ex. 28).
 
 namespace Fragments.Slovenian.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Slovenian interrogative particle entry. -/
 structure QParticleEntry where

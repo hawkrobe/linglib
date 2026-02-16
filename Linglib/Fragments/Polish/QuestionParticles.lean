@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Polish Question Particles
@@ -24,7 +24,7 @@ Lexical entries for Polish interrogative particles.
 
 namespace Fragments.Polish.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Polish interrogative particle entry. -/
 structure QParticleEntry where

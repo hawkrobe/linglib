@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.218.0] - 2026-02-16
+
+### Changed
+- **Dependency discipline fully enforced**: 0 violations in Theories→Phenomena and Fragments→Phenomena directions
+- Rewired all imports for the 11 bridge files moved in 0.217.6 (old Theories/ paths → new Phenomena/ paths)
+- Extracted `AdjectivalConstruction` to `Theories/Semantics/Lexical/Adjective/Theory.lean` (was in `Phenomena/Gradability/Evaluativity.lean`); fixes NeoGricean Alternatives + Evaluativity violations
+- Extracted `QParticleLayer` to `Theories/Semantics/Questions/QParticleLayer.lean` (was in `Phenomena/Questions/Typology.lean`); fixes 9 Fragment QuestionParticles violations
+- Extracted `NegPosition`, `Diagnostic`, `licenses` to `Theories/Semantics/Polarity/CzechNegation.lean` (was in `Phenomena/Negation/CzechThreeWayNeg.lean`); fixes Czech Fragment violations
+- Moved `MandarinTrigger` to `Fragments/Mandarin/Particles.lean` (was in `Phenomena/Presupposition/Studies/Wang2025.lean`)
+
 ## [0.217.6] - 2026-02-16
 
 ### Changed

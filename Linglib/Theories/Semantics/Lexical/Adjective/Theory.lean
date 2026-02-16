@@ -391,4 +391,26 @@ theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
     (MIPDomain.kennedyNumeral μ).measure = μ :=
   rfl
 
+-- ════════════════════════════════════════════════════
+-- Adjectival Construction Types
+-- ════════════════════════════════════════════════════
+
+/-- Adjectival construction type (positive, comparative, equative, etc.).
+Used by evaluativity analyses to track which constructions trigger evaluative readings. -/
+inductive AdjectivalConstruction where
+  | positive
+  | comparative
+  | equative
+  | measurePhrase
+  | degreeQuestion
+  deriving Repr, DecidableEq, BEq
+
+instance : ToString AdjectivalConstruction where
+  toString
+    | .positive => "positive"
+    | .comparative => "comparative"
+    | .equative => "equative"
+    | .measurePhrase => "measurePhrase"
+    | .degreeQuestion => "degreeQuestion"
+
 end Semantics.Lexical.Adjective
