@@ -30,6 +30,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Field
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
+import Mathlib.Topology.Order.MonotoneConvergence
 
 namespace RSA.Convergence
 
@@ -54,6 +55,7 @@ structure RSAScenarioR where
   prior : M → ℝ
   prior_nonneg : ∀ m, 0 ≤ prior m
   prior_pos : ∃ m, 0 < prior m
+  prior_sum : ∑ m, prior m = 1
   /-- Lexicon: applicability of utterance to meaning -/
   lexicon : U → M → ℝ
   lexicon_nonneg : ∀ u m, 0 ≤ lexicon u m
@@ -990,6 +992,107 @@ theorem G_α_monotone (S : RSAScenarioR) [Nonempty S.U] (n : ℕ)
       state_n.listener (h_L_sum n) (h_pos n)
   exact le_trans h1 h2
 
+/-- Utility is non-positive when L is a probability distribution. -/
+private theorem utility_nonpos {S : RSAScenarioR} (L : S.U → S.M → ℝ)
+    (hL_sum : ∀ u, ∑ m, L u m = 1) (hL_pos : ∀ u m, 0 ≤ L u m)
+    (m : S.M) (u : S.U) : utility L m u ≤ 0 := by
+  unfold utility
+  split_ifs with h
+  · exact le_refl 0
+  · push_neg at h
+    exact Real.log_nonpos (le_of_lt h) (by
+      calc L u m ≤ ∑ m', L u m' :=
+            Finset.single_le_sum (fun m' _ => hL_pos u m') (Finset.mem_univ m)
+        _ = 1 := hL_sum u)
+
+/-- E_VL is non-positive when L is a probability distribution. -/
+private theorem E_VL_nonpos (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
+    (L : S.U → S.M → ℝ)
+    (hSpk : ∀ m, ∑ u, Spk m u = 1) (hSpk_pos : ∀ m u, 0 ≤ Spk m u)
+    (hL_sum : ∀ u, ∑ m, L u m = 1) (hL_pos : ∀ u m, 0 ≤ L u m) :
+    E_VL S Spk L ≤ 0 := by
+  unfold E_VL
+  apply Finset.sum_nonpos; intro m _
+  apply Finset.sum_nonpos; intro u _
+  have hn : normalize (Spk m) u = Spk m u := normalize_of_sum_one' _ (hSpk m) u
+  rw [hn]
+  exact mul_nonpos_of_nonneg_of_nonpos
+    (mul_nonneg (S.prior_nonneg m) (hSpk_pos m u))
+    (utility_nonpos L hL_sum hL_pos m u)
+
+/-- Entropy of a probability distribution is at most log of the support size.
+    Proof via KL(p ‖ uniform) ≥ 0. -/
+private theorem entropy_le_log_card {β : Type*} [Fintype β] [Nonempty β]
+    (p : β → ℝ) (hp : ∀ i, 0 ≤ p i) (hsum : ∑ i, p i = 1) :
+    entropy p ≤ Real.log (Fintype.card β) := by
+  have hn_pos : (0 : ℝ) < Fintype.card β := Nat.cast_pos.mpr Fintype.card_pos
+  -- KL(p ‖ uniform) ≥ 0
+  let q : β → ℝ := fun _ => 1 / Fintype.card β
+  have hq_pos : ∀ i, 0 < q i := fun _ => div_pos one_pos hn_pos
+  have hq_sum : ∑ i, q i = 1 := by
+    simp only [q, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    exact mul_div_cancel₀ 1 (ne_of_gt hn_pos)
+  have hkl := RSA.GibbsVariational.kl_finite_nonneg p q hq_pos hp (by rw [hsum, hq_sum])
+  -- Show klFinite p q = -entropy p + log |β|
+  suffices hsuff : RSA.GibbsVariational.klFinite p q = -entropy p + Real.log (Fintype.card β) by
+    linarith
+  unfold RSA.GibbsVariational.klFinite entropy
+  simp only [neg_neg]
+  have hterm : ∀ i, (if p i = 0 then (0 : ℝ) else p i * log (p i / q i)) =
+      (if p i = 0 then 0 else p i * log (p i)) + p i * log (Fintype.card β) := by
+    intro i
+    by_cases hi : p i = 0
+    · simp [hi]
+    · simp only [hi, ↓reduceIte]
+      have hpi_pos : 0 < p i := lt_of_le_of_ne (hp i) (Ne.symm hi)
+      rw [Real.log_div (ne_of_gt hpi_pos) (ne_of_gt (hq_pos i))]
+      have hlog_q : log (q i) = -log (Fintype.card β : ℝ) := by
+        simp only [q, one_div, Real.log_inv]
+      rw [hlog_q]; ring
+  rw [Finset.sum_congr rfl (fun i _ => hterm i)]
+  rw [Finset.sum_add_distrib]
+  congr 1
+  rw [← Finset.sum_mul, hsum, one_mul]
+
+/-- G_α is bounded above by log |U| when L is a probability distribution.
+
+The bound requires L to be a valid distribution (non-negative, sums to 1)
+because the utility function `log(L u m)` is non-positive when L u m ∈ (0, 1],
+making E_VL ≤ 0 and thus G_α ≤ H_S ≤ log |U|.
+
+Without hypotheses on L, the bound fails: if L u m > 1 for some u, m,
+then utility = log(L u m) > 0, and E_VL can be arbitrarily large. -/
+theorem G_α_bounded_above (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
+    (L : S.U → S.M → ℝ)
+    (hSpk : ∀ m, ∑ u, Spk m u = 1) (hSpk_pos : ∀ m u, 0 ≤ Spk m u)
+    (hL_sum : ∀ u, ∑ m, L u m = 1) (hL_pos : ∀ u m, 0 ≤ L u m)
+    (hα_pos : 0 ≤ S.α) :
+    G_α S Spk L ≤ log (Fintype.card S.U) + S.α * 0 := by
+  simp only [mul_zero, add_zero]
+  -- Derive Nonempty S.U from the fact that ∑ u, Spk m u = 1 ≠ 0
+  haveI : Nonempty S.U := by
+    obtain ⟨m, _⟩ := S.prior_pos
+    by_contra h; rw [not_nonempty_iff] at h
+    have := hSpk m; simp [Finset.eq_empty_of_isEmpty] at this
+  unfold G_α
+  -- E_VL ≤ 0, so α * E_VL ≤ 0
+  have hEVL : E_VL S Spk L ≤ 0 := E_VL_nonpos S Spk L hSpk hSpk_pos hL_sum hL_pos
+  have hαEVL : S.α * E_VL S Spk L ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hα_pos hEVL
+  -- H_S ≤ log |U|
+  have hHS : H_S S Spk ≤ log (Fintype.card S.U) := by
+    unfold H_S
+    calc ∑ m, S.prior m * entropy (fun u => normalize (Spk m) u)
+        ≤ ∑ m, S.prior m * log (Fintype.card S.U) := by
+          apply Finset.sum_le_sum; intro m _
+          apply mul_le_mul_of_nonneg_left _ (S.prior_nonneg m)
+          have hn : ∀ u, normalize (Spk m) u = Spk m u :=
+            fun u => normalize_of_sum_one' _ (hSpk m) u
+          simp_rw [hn]
+          exact entropy_le_log_card _ (hSpk_pos m) (hSpk m)
+      _ = log (Fintype.card S.U) := by
+          rw [← Finset.sum_mul, S.prior_sum, one_mul]
+  linarith
+
 /--
 Corollary: RSA Converges (Zaslavsky et al. Footnote 1).
 
@@ -1010,37 +1113,19 @@ theorem RSA_converges (S : RSAScenarioR) [Nonempty S.U]
       (λ n => G_α S (iterateRSA S n).speaker (iterateRSA S n).listener)
       Filter.atTop
       (nhds L) := by
-  -- Proof: Monotone bounded sequences converge (Monotone Convergence Theorem)
-  -- 1. Monotonicity: from G_α_monotone
-  -- 2. Bounded above: from G_α_bounded
-  -- 3. Apply tendsto_atTop_iSup
-  --
-  -- Technical gap: Need to show the sequence is monotone using the inductive step
-  -- This follows from G_α_monotone but requires careful bookkeeping
-  sorry
-
-
-/-- G_α is bounded above by log |U| when L is a probability distribution.
-
-The bound requires L to be a valid distribution (non-negative, sums to 1)
-because the utility function `log(L u m)` is non-positive when L u m ∈ (0, 1],
-making E_VL ≤ 0 and thus G_α ≤ H_S ≤ log |U|.
-
-Without hypotheses on L, the bound fails: if L u m > 1 for some u, m,
-then utility = log(L u m) > 0, and E_VL can be arbitrarily large. -/
-theorem G_α_bounded_above (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
-    (L : S.U → S.M → ℝ)
-    (hSpk : ∀ m, ∑ u, Spk m u = 1) (hSpk_pos : ∀ m u, 0 ≤ Spk m u)
-    (hL_sum : ∀ u, ∑ m, L u m = 1) (hL_pos : ∀ u m, 0 ≤ L u m)
-    (hα_pos : 0 ≤ S.α) :
-    G_α S Spk L ≤ log (Fintype.card S.U) + S.α * 0 := by
-  -- Proof strategy:
-  -- 1. H_S ≤ log |U| (maximum entropy of distribution over |U| outcomes)
-  -- 2. L u m ∈ [0, 1] (from hL_sum + hL_pos), so log(L u m) ≤ 0
-  -- 3. Therefore utility L m u ≤ 0 for all m, u
-  -- 4. E_VL ≤ 0 (weighted sum of non-positive terms with non-negative weights)
-  -- 5. G_α = H_S + α · E_VL ≤ H_S + α · 0 ≤ log |U|
-  sorry
+  set f := fun n => G_α S (iterateRSA S n).speaker (iterateRSA S n).listener
+  -- Monotonicity: f n ≤ f (n+1) from G_α_monotone
+  have hmono : Monotone f := monotone_nat_of_le_succ fun n =>
+    G_α_monotone S n h_pos h_Spk_pos h_Spk_sum h_L_sum
+  -- Bounded above by log |U|
+  have hbdd : BddAbove (Set.range f) := by
+    use log (Fintype.card S.U)
+    rintro _ ⟨n, rfl⟩
+    have := G_α_bounded_above S _ _ (h_Spk_sum n)
+      (fun m u => le_of_lt (h_Spk_pos n m u)) (h_L_sum n)
+      (fun u m => le_of_lt (h_pos n u m)) S.α_nonneg
+    linarith
+  exact ⟨⨆ n, f n, tendsto_atTop_ciSup hmono hbdd⟩
 
 /-- Check if RSA has ε-converged. -/
 def εConverged (S : RSAScenarioR) [Nonempty S.U] (t : ℕ) (ε : ℝ) : Prop :=
@@ -1054,12 +1139,20 @@ theorem eventually_εConverged (S : RSAScenarioR) [Nonempty S.U] (ε : ℝ) (hε
     (h_Spk_sum : ∀ t m, ∑ u, (iterateRSA S t).speaker m u = 1)
     (h_L_sum : ∀ t u, ∑ m, (iterateRSA S t).listener u m = 1) :
     ∃ T, ∀ t, T ≤ t → εConverged S t ε := by
-  -- Proof: Convergent sequences are Cauchy, so differences become small
-  -- 1. From RSA_converges, the sequence converges to some limit L
-  -- 2. f(n+1) - f(n) → L - L = 0 as n → ∞
-  -- 3. By Metric.tendsto_atTop, for any ε > 0, eventually |f(n+1) - f(n)| < ε
-  --
-  -- Technical gap: The subtraction of limits and bookkeeping
-  sorry
+  obtain ⟨L_val, hL⟩ := RSA_converges S h_pos h_Spk_pos h_Spk_sum h_L_sum
+  set f := fun n => G_α S (iterateRSA S n).speaker (iterateRSA S n).listener
+  -- f(n+1) → L_val
+  have hL1 : Filter.Tendsto (fun n => f (n + 1)) Filter.atTop (nhds L_val) :=
+    hL.comp (Filter.tendsto_add_atTop_nat 1)
+  -- f(n+1) - f(n) → 0
+  have hdiff : Filter.Tendsto (fun n => f (n + 1) - f n) Filter.atTop (nhds 0) := by
+    have := hL1.sub hL; simp only [sub_self] at this; exact this
+  -- ε-δ: ∀ ε > 0, ∃ N, ∀ n ≥ N, dist (f(n+1) - f(n)) 0 < ε
+  rw [Metric.tendsto_atTop] at hdiff
+  obtain ⟨T, hT⟩ := hdiff ε hε
+  exact ⟨T, fun t ht => by
+    have := hT t ht
+    simp only [Real.dist_eq, sub_zero] at this
+    exact this⟩
 
 end RSA.Convergence
