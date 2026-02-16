@@ -110,12 +110,12 @@ def applyExh {World : Type*} (op : ExhOperator) (ALT : Set (Prop' World))
 /-- When ALT is closed under conjunction, both operators agree.
     This is Theorem 9 from Spector (2016). -/
 theorem ie_eq_mw_when_closed {World : Type*} (ALT : Set (Prop' World)) (φ : Prop' World)
-    (hclosed : ∀ ψ₁ ψ₂, ψ₁ ∈ ALT → ψ₂ ∈ ALT → (ψ₁ ∧ₚ ψ₂) ∈ ALT) :
+    (hclosed : closedUnderConj ALT) :
     applyExh .IE ALT φ = applyExh .MW ALT φ := by
   simp only [applyExh]
-  -- This follows from theorem9_main in Basic.lean
-  -- For now, we state it as the connection point
-  sorry -- TODO: Connect to theorem9_main
+  have h := theorem9_main ALT φ hclosed
+  funext w
+  exact propext ⟨h.2 w, h.1 w⟩
 
 
 /-- Alternatives can vary by EXH position.
