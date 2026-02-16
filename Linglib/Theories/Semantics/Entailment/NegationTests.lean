@@ -4,14 +4,14 @@ from `Phenomena.Negation.Basic`. Tests DE, not-UE, and DE-comp-DE = UE.
 -/
 
 import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Core.Proposition
 import Linglib.Phenomena.Negation.Basic
 
 namespace Semantics.Entailment.NegationTests
 
 open Semantics.Entailment
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open Phenomena.Negation
 open Core.Proposition
 

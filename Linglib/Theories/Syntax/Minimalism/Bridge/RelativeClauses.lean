@@ -39,7 +39,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 namespace Minimalism.Bridge.RelativeClauses
 
-open Semantics.Compositional Semantics.Compositional.Variables Semantics.Compositional.Modification
+open Semantics.Montague Semantics.Montague.Variables Semantics.Montague.Modification
 open Minimalism.Semantics
 open Minimalism
 

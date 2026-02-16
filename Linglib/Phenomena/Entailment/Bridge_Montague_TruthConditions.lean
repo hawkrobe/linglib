@@ -12,12 +12,12 @@ None (theorem-only module)
 Montague (1973)
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Phenomena.Entailment.Basic
 
-namespace Semantics.Compositional.Derivation.TruthConditions
+namespace Semantics.Montague.TruthConditions
 
-open Semantics.Compositional
+open Semantics.Montague
 open ToyLexicon
 open Phenomena.Entailment
 
@@ -62,12 +62,12 @@ theorem john_sleeps_isTrue : isTrue toyModel (interpSV toyModel john_sem sleeps_
 theorem john_sees_mary_isTrue : isTrue toyModel (interpSVO toyModel john_sem sees_sem mary_sem) := rfl
 theorem john_eats_pizza_isTrue : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
 
-end Semantics.Compositional.Derivation.TruthConditions
+end Semantics.Montague.TruthConditions
 
 -- Backward compatibility alias
-namespace Semantics.Compositional.Derivations
-  export Semantics.Compositional.Derivation.TruthConditions (john_sleeps mary_not_sleeps john_laughs mary_laughs
+namespace Semantics.Montague.Derivations
+  export Semantics.Montague.TruthConditions (john_sleeps mary_not_sleeps john_laughs mary_laughs
     john_sees_mary mary_sees_john john_not_sees_john john_eats_pizza john_not_eats_mary
     mary_eats_pizza john_reads_book captures_john_sleeps captures_mary_sleeps
     captures_intransitive_contrast captures_transitive_seeing)
-end Semantics.Compositional.Derivations
+end Semantics.Montague.Derivations

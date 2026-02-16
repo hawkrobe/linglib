@@ -27,7 +27,7 @@ Connects the graded roundness model (k-ness) to five existing modules:
 Phenomena.Imprecision.Numerals (k-ness core)
     ↑              ↑                ↑
     |              |                |
-Phenomena.        NeoGricean.       Semantics.Compositional.
+Phenomena.        NeoGricean.       Semantics.Montague.
 NumberUse.        Constraints.      Domain.Degree
 WoodinEtAl2024    NumericalExprs    (extended)
     ↑              ↑                ↑

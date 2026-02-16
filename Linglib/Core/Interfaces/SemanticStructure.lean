@@ -2,7 +2,7 @@
 # Semantic Structure Interfaces
 
 Typeclasses defining what compositional semantics needs from syntax.
-Parameterized over an arbitrary type system `T` — Semantics.Compositional instantiates
+Parameterized over an arbitrary type system `T` — Semantics.Montague instantiates
 with `Ty`, but other theories can supply their own.
 -/
 

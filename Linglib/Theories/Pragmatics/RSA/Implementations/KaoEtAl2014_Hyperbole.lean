@@ -196,7 +196,7 @@ We derive this compositionally:
 The world prior P_S(X) gives the probability of different price states
 for different items, which is crucial for hyperbole interpretation.
 
-This is grounded in Semantics.Compositional.Domain.Degrees infrastructure.
+This is grounded in Semantics.Montague.Domain.Degrees infrastructure.
 -/
 
 /--

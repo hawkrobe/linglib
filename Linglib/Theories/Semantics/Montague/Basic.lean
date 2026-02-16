@@ -19,7 +19,7 @@ import Linglib.Core.Proposition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
-namespace Semantics.Compositional
+namespace Semantics.Montague
 
 /-- Semantic types (Montague's type theory). -/
 inductive Ty where
@@ -260,4 +260,4 @@ def IntensionalProp.exists {Entity World : Type}
 
 end IntensionalTypes
 
-end Semantics.Compositional
+end Semantics.Montague

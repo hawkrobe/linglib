@@ -366,7 +366,7 @@ In DE restrictor, "some" picks out MORE professors → stronger universal.
 The entailment direction reverses: ⟦some⟧_DE ⊆ ⟦all⟧_DE.
 So "all" becomes needlessly weak (opposite of UE).
 
-Connects to Semantics.Compositional/Sentence/Entailment/Monotonicity.lean:
+Connects to Semantics.Montague/Sentence/Entailment/Monotonicity.lean:
 the reversal here is the same phenomenon as `every_restr_DE`. -/
 
 section DEReversal

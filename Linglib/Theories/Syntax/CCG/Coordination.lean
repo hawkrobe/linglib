@@ -40,7 +40,7 @@ import Linglib.Phenomena.Coordination.Data
 namespace Phenomena.Coordination
 
 open CCG
-open Semantics.Compositional
+open Semantics.Montague
 
 -- Empirical Fact 1: Non-constituent coordination is GRAMMATICAL
 

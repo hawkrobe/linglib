@@ -36,7 +36,7 @@ namespace Semantics.Entailment.PolarityBuilder
 open Semantics.Entailment
 open Semantics.Entailment.AntiAdditivity
 open Semantics.Entailment.StrawsonEntailment
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open Core.NaturalLogic (EntailmentSig DEStrength strengthSufficient)
 open Fragments.English.PolarityItems
 open Phenomena.Polarity.VonFintel1999 (onlyNotDE)

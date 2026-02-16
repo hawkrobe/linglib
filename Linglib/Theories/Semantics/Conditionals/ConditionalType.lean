@@ -35,13 +35,13 @@ This explains why PCs block NPIs despite being semantically DE!
 
 import Linglib.Theories.Semantics.Dynamic.State
 import Linglib.Core.Proposition
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 namespace Semantics.Conditionals
 
 open Core.Proposition
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open Semantics.Dynamic.State
 
 -- Conditional Type: HC vs PC

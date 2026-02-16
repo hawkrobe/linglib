@@ -31,7 +31,7 @@ This file uses the unified RSA infrastructure:
 
 ## Grounding
 
-Connects to `Semantics.Compositional.Quantifiers` for threshold semantics.
+Connects to `Semantics.Montague.Quantifiers` for threshold semantics.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Eval

@@ -1,11 +1,11 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Theories.Semantics.Compositional.Core.Lexicon
+import Linglib.Theories.Semantics.Montague.Lexicon
 
 /-!
 # Stem-to-Lexicon Bridge
 
 Connects morphological stems (`Core.Morphology.Stem`) to semantic lexical
-entries (`Semantics.Compositional.Core.SemLexEntry`). A `SemStem` pairs a
+entries (`Semantics.Montague.SemLexEntry`). A `SemStem` pairs a
 morphological paradigm with a Montague-style type and base denotation;
 `SemStem.allEntries` auto-generates one `SemLexEntry` per paradigm cell.
 
@@ -16,8 +16,8 @@ sharing `student_sem`).
 
 namespace Core.Morphology
 
-open Semantics.Compositional.Core (SemLexEntry ScaleMembership)
-open Semantics.Compositional (Model Ty)
+open Semantics.Montague (SemLexEntry ScaleMembership)
+open Semantics.Montague (Model Ty)
 
 /-- A semantic stem: pairs morphological structure with Montague-style
     type and denotation. This is what researchers define in fragments.
@@ -63,7 +63,7 @@ def SemStem.allEntries {m : Model} (s : SemStem m) : List (SemLexEntry m) :=
   s.base :: s.morph.paradigm.map s.inflect
 
 /-- Build a `SemLexicon` from a list of `SemStem`s (auto-expanding paradigms). -/
-def buildLexicon (m : Model) (stems : List (SemStem m)) : Semantics.Compositional.Core.SemLexicon m :=
+def buildLexicon (m : Model) (stems : List (SemStem m)) : Semantics.Montague.SemLexicon m :=
   λ form =>
     stems.findSome? λ stem =>
       (stem.allEntries).find? λ entry => entry.word.form == form

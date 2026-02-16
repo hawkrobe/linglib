@@ -36,14 +36,14 @@ This module provides NeoGricean-specific infrastructure:
 -/
 
 import Linglib.Core.Presupposition
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Phenomena.Presupposition.Basic
 
 namespace NeoGricean.Presuppositions
 
 open Core.Presupposition
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open NeoGricean
 open Phenomena.Presupposition
 

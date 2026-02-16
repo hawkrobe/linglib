@@ -41,9 +41,9 @@ import Mathlib.Order.Monotone.Defs
 import Linglib.Core.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
 
-namespace Semantics.Compositional.Core.Polarity
+namespace Semantics.Entailment.Polarity
 
--- Re-export ContextPolarity so downstream `open Semantics.Compositional.Core.Polarity (ContextPolarity)` works
+-- Re-export ContextPolarity so downstream `open Semantics.Entailment.Polarity (ContextPolarity)` works
 export Core.NaturalLogic (ContextPolarity)
 
 open Semantics.Entailment
@@ -398,4 +398,4 @@ theorem implicature_allowed_double_negation :
   simp [implicatureAllowed, composePolarity, negationPolarity, mkDownward,
         GroundedPolarity.toContextPolarity]
 
-end Semantics.Compositional.Core.Polarity
+end Semantics.Entailment.Polarity

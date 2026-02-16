@@ -10,15 +10,15 @@ with the continuation approach (Barker & Shan 2014).
 - Barker & Shan (2014). Continuations and Natural Language. Ch. 15.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
-import Linglib.Theories.Semantics.Compositional.Variables
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Interfaces.BindingSemantics
 
-namespace Semantics.Compositional.Anaphora
+namespace Semantics.Reference.Binding
 
-open Semantics.Compositional
-open Semantics.Compositional.Variables
+open Semantics.Montague
+open Semantics.Montague.Variables
 open Interfaces.BindingSemantics
 
 
@@ -188,4 +188,4 @@ end VPEllipsis
 
 end Continuations
 
-end Semantics.Compositional.Anaphora
+end Semantics.Reference.Binding

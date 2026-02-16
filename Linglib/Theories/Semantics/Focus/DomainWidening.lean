@@ -24,7 +24,7 @@ import Linglib.Core.QUD
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Phenomena.Focus.Exclusives
 
-namespace Semantics.Compositional.Sentence.DomainWidening
+namespace Semantics.Montague.Sentence.DomainWidening
 
 open Phenomena.Focus.Exclusives
 open Semantics.Questions
@@ -238,4 +238,4 @@ theorem all_flavors_one_entry :
   intro d _
   exact ⟨associatedSource d.flavor, d.contextType, rfl, rfl⟩
 
-end Semantics.Compositional.Sentence.DomainWidening
+end Semantics.Montague.Sentence.DomainWidening

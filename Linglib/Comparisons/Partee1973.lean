@@ -39,7 +39,7 @@ don't quantify.
 ## Structural Parallel to Variables.lean
 
 The definitions here are the temporal counterparts of H&K (1998) entity
-variable infrastructure in `Semantics.Compositional.Variables`. Both are
+variable infrastructure in `Semantics.Montague.Variables`. Both are
 instantiations of the generic `Core.VarAssignment` infrastructure:
 
 | Generic (Core.VarAssignment)     | Entity (Variables.lean)    | Temporal (this file)      |

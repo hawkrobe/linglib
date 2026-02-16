@@ -52,7 +52,7 @@ namespace Phenomena.Quantification.Bridge
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
 open Core.Quantification (Conservative QuantityInvariant LeftAntiAdditive
   PositiveStrong ScopeUpwardMono QSymmetric)
-open Semantics.Compositional (Model)
+open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier (FiniteModel)
 
 -- ============================================================================

@@ -12,11 +12,11 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 Montague (1973)
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 
-namespace Semantics.Compositional.Interface.SyntaxInterface
+namespace Semantics.Montague.Interface.SyntaxInterface
 
-open Semantics.Compositional
+open Semantics.Montague
 
 /-- Type assignment maps syntactic categories to semantic types -/
 structure TypeAssignment (SynCat : Type) where
@@ -40,9 +40,9 @@ structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat
   trueIn : Deriv → Model → Bool
   entails : Deriv → Deriv → Model → Bool
 
-end Semantics.Compositional.Interface.SyntaxInterface
+end Semantics.Montague.Interface.SyntaxInterface
 
 -- Backward compatibility alias
-namespace Semantics.Compositional.SyntaxInterface
-  export Semantics.Compositional.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
-end Semantics.Compositional.SyntaxInterface
+namespace Semantics.Montague.SyntaxInterface
+  export Semantics.Montague.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
+end Semantics.Montague.SyntaxInterface

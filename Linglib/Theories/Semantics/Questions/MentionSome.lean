@@ -431,13 +431,13 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
 
 
 /-!
-## Grounding in Semantics.Compositional.Quantifiers
+## Grounding in Semantics.Montague.Quantifiers
 
 Per CLAUDE.md, RSA/derived semantics should be grounded in Montague semantics.
 The existential in I-MS corresponds to Montague's existential quantifier.
 
 The I-MS rule uses: ∃x[β'(x) ∧ ...]
-This ∃ is the same existential quantifier from Semantics.Compositional.Quantifiers.existsSome.
+This ∃ is the same existential quantifier from Semantics.Montague.Quantifiers.existsSome.
 -/
 
 /-- The existential quantifier used in I-MS is Montague's ∃.
@@ -448,6 +448,6 @@ def mentionSomeUsesMontagueExistential : Bool := true
 
 -- TODO: Full compositional grounding requires proving the ∃ in
 -- MentionSomeInterrogative.applyToProperty matches
--- Semantics.Compositional.Quantifiers.existsSome
+-- Semantics.Montague.Quantifiers.existsSome
 
 end Semantics.Questions.MentionSome

@@ -13,11 +13,11 @@ Provides assignment functions, modified assignments, pronoun interpretation, and
 Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 5.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 
-namespace Semantics.Compositional.Variables
+namespace Semantics.Montague.Variables
 
-open Semantics.Compositional
+open Semantics.Montague
 
 /-- Assignment function: maps variable indices to entities. -/
 @[ext]
@@ -129,4 +129,4 @@ theorem sleeps_lambda_eq : sleeps_lambda g₀ = sleeps_sem := by
 
 end Examples
 
-end Semantics.Compositional.Variables
+end Semantics.Montague.Variables

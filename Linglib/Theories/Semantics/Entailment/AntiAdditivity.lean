@@ -7,13 +7,13 @@ import Mathlib.Order.Monotone.Defs
 import Mathlib.Data.List.Basic
 import Linglib.Core.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace Semantics.Entailment.AntiAdditivity
 
 open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
 open Semantics.Entailment
-open Semantics.Compositional.Core.Polarity
+open Semantics.Entailment.Polarity
 open List (Sublist)
 
 

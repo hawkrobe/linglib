@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.217.0] - 2026-02-16
+
+### Changed
+- **Theories/Semantics/Compositional/ → Montague/**: Renamed to reflect Montague architecture identity. 8 core files stay (Basic, Composition, Variables, Modification, Conjunction, PTQ, Lexicon, Derivation); 7 domain-specific files relocated: Anaphora→Reference/Binding, Core/Polarity→Entailment/Polarity, Core/Time→Tense/BranchingTime, Derivation/Scope→Scope, Derivation/TruthConditions→Phenomena/Entailment/Bridge_Montague_TruthConditions, Interface/SemanticBackend→Pragmatics/RSA/Core/SemanticBackend, Interface/SyntaxInterface→Semantics/SyntaxInterface. Core/ and Derivation/ subdirectories eliminated.
+
 ## [0.216.1] - 2026-02-16
 
 ### Added

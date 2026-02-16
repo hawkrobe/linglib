@@ -307,7 +307,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
   h w hw
 
 -- ============================================================================
--- I. Aspect bridge (Semantics.Compositional/Verb/Aspect.lean + Diagnostics)
+-- I. Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics)
 -- ============================================================================
 
 open Semantics.Lexical.Verb.Aspect
@@ -328,7 +328,7 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
 -- J. Domain widening bridge (Focus/DomainWidening.lean)
 -- ============================================================================
 
-open Semantics.Compositional.Sentence.DomainWidening
+open Semantics.Montague.Sentence.DomainWidening
 
 /-- WXDY's incredulity arises from a normative expectation violation:
 the situation violates what the speaker considers normal/appropriate.

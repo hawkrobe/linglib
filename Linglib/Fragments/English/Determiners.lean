@@ -473,7 +473,7 @@ def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.Double
   | _      => none
 
 section CanonicalGQDenotations
-open Semantics.Compositional (Model)
+open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier
 
 variable {m : Model} [FiniteModel m]
@@ -581,7 +581,7 @@ open Core.Quantification in
 theorem none_symmetry_bridge : none_.strength = .weak ∧
     QSymmetric (no_sem m) := ⟨rfl, no_symmetric⟩
 
-open Core.Quantification Semantics.Compositional in
+open Core.Quantification Semantics.Montague in
 /-- Every: strong and NOT symmetric. -/
 theorem every_not_symmetric_bridge : every.strength = .strong ∧
     ¬QSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩

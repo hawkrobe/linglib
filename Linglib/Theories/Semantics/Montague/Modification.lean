@@ -19,12 +19,12 @@ valid for intersective adjectives only.
 - Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 4.
 -/
 
-import Linglib.Theories.Semantics.Compositional.Basic
+import Linglib.Theories.Semantics.Montague.Basic
 import Mathlib.Data.Set.Basic
 
-namespace Semantics.Compositional.Modification
+namespace Semantics.Montague.Modification
 
-open Semantics.Compositional
+open Semantics.Montague
 
 section Generic
 
@@ -245,4 +245,4 @@ theorem canPM_spec (ty₁ ty₂ : Ty) :
 
 end TypeDriven
 
-end Semantics.Compositional.Modification
+end Semantics.Montague.Modification

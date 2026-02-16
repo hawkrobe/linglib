@@ -33,12 +33,12 @@ The SF introduces modal displacement:
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.ModalDonkeyAnaphora
-import Linglib.Theories.Semantics.Compositional.Core.Time
+import Linglib.Theories.Semantics.Tense.BranchingTime
 
 namespace Semantics.Dynamic.IntensionalCDRT.PresuppositionWeakening
 
 open Core.Time
-open Semantics.Compositional.Core.Time
+open Semantics.Tense.BranchingTime
 open Semantics.Dynamic.IntensionalCDRT
 open Semantics.Dynamic.IntensionalCDRT.Situations
 open Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora

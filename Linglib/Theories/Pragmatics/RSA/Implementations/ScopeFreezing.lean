@@ -19,13 +19,13 @@ that strong world priors can override it.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Semantics.Compositional.Derivation.Scope
+import Linglib.Theories.Semantics.Scope
 import Linglib.Phenomena.Quantification.Data
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
 
-open Semantics.Compositional.Derivation.Scope (ScopeConfig)
+open Semantics.Scope (ScopeConfig)
 open Phenomena.Quantification.Data
 
 -- Interpretation Prior from Grammar Parse

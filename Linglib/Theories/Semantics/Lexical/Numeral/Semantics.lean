@@ -714,7 +714,7 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- intersection cardinality. This connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩)
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
-open Semantics.Compositional Semantics.Lexical.Determiner in
+open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "at least n" agrees with `maxMeaning .ge` on intersection cardinality. -/
 theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -722,7 +722,7 @@ theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     maxMeaning .ge n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
   rfl
 
-open Semantics.Compositional Semantics.Lexical.Determiner in
+open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "at most n" agrees with `maxMeaning .le` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
@@ -733,7 +733,7 @@ theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
 private theorem decide_eq_beq (a b : Nat) : decide (a = b) = (a == b) := by
   by_cases h : a = b <;> simp [h]
 
-open Semantics.Compositional Semantics.Lexical.Determiner in
+open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "exactly n" agrees with `maxMeaning .eq` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :

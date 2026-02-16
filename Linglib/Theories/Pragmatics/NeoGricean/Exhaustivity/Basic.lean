@@ -40,12 +40,12 @@ import Mathlib.Order.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Powerset
-import Linglib.Theories.Semantics.Compositional.Core.Polarity
+import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace NeoGricean.Exhaustivity
 
 -- Re-export ContextPolarity from the consolidated polarity module
-open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Entailment.Polarity (ContextPolarity)
 
 -- SECTION 2.1: Definitions (Spector p.6-8)
 

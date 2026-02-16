@@ -15,7 +15,7 @@ import Linglib.Theories.Semantics.Attitudes.Intensional
 
 namespace Phenomena.Attitudes.IntensionalExamples
 
-open Semantics.Compositional
+open Semantics.Montague
 open Semantics.Attitudes.Intensional
 
 /-- A small domain for examples -/
