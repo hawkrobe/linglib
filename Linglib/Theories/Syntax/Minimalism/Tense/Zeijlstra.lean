@@ -47,7 +47,7 @@ namespace Minimalism.Tense.Zeijlstra
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 open Minimalism (FeatureVal GramFeature)
 
 

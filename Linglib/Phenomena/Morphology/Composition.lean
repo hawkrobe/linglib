@@ -236,7 +236,7 @@ theorem plural_affix_semantic_agreement :
 /-- The past tense `-ed` affix is classified as inflectional by
     Zwicky's diagnostics. In the MorphRule framework, verb tense
     inflection is vacuous at the *word* level (tense semantics is
-    compositional, handled by IntensionalSemantics). This is NOT
+    compositional, handled by Semantics.Intensional). This is NOT
     a disagreement: Zwicky's `hasSemanticIdiosyncrasies` tracks
     *compositionality failures* (like "last" ≠ "most late"), while
     MorphRule.isVacuous tracks whether the *regular* semantic

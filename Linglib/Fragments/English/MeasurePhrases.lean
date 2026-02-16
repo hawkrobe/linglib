@@ -13,7 +13,7 @@ This fragment provides the English-specific data layer for measurement:
 ## Architecture
 
 Theory types (`Dimension`, `MeasureFn`, `MeasureTermSem`) live in
-`TruthConditional.Measurement.Basic`. This file provides English lexical
+`Semantics.Probabilistic.Measurement.Basic`. This file provides English lexical
 entries — pure data typed by those theory types, following the
 Theories → Fragments dependency discipline.
 
@@ -27,7 +27,7 @@ Theories → Fragments dependency discipline.
 
 namespace Fragments.English.MeasurePhrases
 
-open TruthConditional.Measurement (Dimension QuotientDimension DimensionType)
+open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionType)
 
 -- ============================================================================
 -- § 1. Measure Term Entries
@@ -36,7 +36,7 @@ open TruthConditional.Measurement (Dimension QuotientDimension DimensionType)
 /-- A measure term entry: an English noun that names a specific measure function.
 
 This is the Fragment-level data for measure terms. The Theory-level semantics
-(`MeasureTermSem`) is in `TruthConditional.Measurement.Basic`. -/
+(`MeasureTermSem`) is in `Semantics.Probabilistic.Measurement.Basic`. -/
 structure MeasureTermEntry where
   /-- Surface form (e.g., "gram", "milliliter", "mile"). -/
   form : String
@@ -74,7 +74,7 @@ def allMeasureTerms : List MeasureTermEntry :=
 -- § 2. Quantizing Noun Entries (Scontras 2014, Ch. 3)
 -- ============================================================================
 
-open TruthConditional.Measurement (QuantizingNounClass ContainerReading)
+open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading)
 
 /-- A quantizing noun entry: an English noun that turns a mass term into a
 countable expression.

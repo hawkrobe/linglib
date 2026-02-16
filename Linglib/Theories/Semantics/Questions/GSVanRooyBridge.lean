@@ -33,12 +33,12 @@ This file establishes the formal connections between these approaches.
 - Blackwell (1953). Equivalent Comparisons of Experiments.
 -/
 
-namespace QuestionSemantics.Bridge
+namespace Semantics.Questions.Bridge
 
 open Core.DecisionTheory
-open QuestionSemantics
-open QuestionSemantics.MentionSome
-open QuestionSemantics.Polarity
+open Semantics.Questions
+open Semantics.Questions.MentionSome
+open Semantics.Questions.Polarity
 open scoped GSQuestion  -- For ⊑ notation
 
 
@@ -630,4 +630,4 @@ theorem completeInfoDP_requires_exhaustive {W : Type*} [DecidableEq W]
   simp [hwne.symm] at h1
   norm_num at h1
 
-end QuestionSemantics.Bridge
+end Semantics.Questions.Bridge

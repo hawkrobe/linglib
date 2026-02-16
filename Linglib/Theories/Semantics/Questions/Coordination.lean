@@ -10,9 +10,9 @@ Q1 ^ Q2 = meet (coarsest common refinement), Q1 v Q2 = join (finest common coars
 - Szabolcsi (1997). Ways of Scope Taking.
 -/
 
-namespace QuestionSemantics.Coordination
+namespace Semantics.Questions.Coordination
 
-open QuestionSemantics
+open Semantics.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
 section Conjunction
@@ -229,4 +229,4 @@ def inheritsMentionSome {W : Type*}
 
 end MentionSomeCoord
 
-end QuestionSemantics.Coordination
+end Semantics.Questions.Coordination

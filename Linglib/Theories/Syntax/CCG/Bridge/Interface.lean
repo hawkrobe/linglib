@@ -21,7 +21,7 @@ import Linglib.Theories.Semantics.Compositional.Conjunction
 
 namespace CCG
 
-open TruthConditional
+open Semantics.Compositional
 
 -- Combinators (defined locally to avoid circular import)
 
@@ -428,7 +428,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
   | .coord d1 d2 => do
       -- Coordination: X and X → X
       -- Semantic rule: generalized conjunction (Partee & Rooth 1983)
-      -- Uses TruthConditional.Conjunction.genConj for uniform type-driven coordination
+      -- Uses Semantics.Compositional.Conjunction.genConj for uniform type-driven coordination
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then

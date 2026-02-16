@@ -43,7 +43,7 @@ This module adds adjective-specific infrastructure:
 import Linglib.Theories.Semantics.Compositional.Basic
 import Linglib.Core.MeasurementScale
 
-namespace TruthConditional.Adjective
+namespace Semantics.Lexical.Adjective
 
 open Core.Scale (Boundedness Degree Threshold Degree.toNat Threshold.toNat
   deg thr allDegrees allThresholds)
@@ -391,4 +391,4 @@ theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
     (MIPDomain.kennedyNumeral μ).measure = μ :=
   rfl
 
-end TruthConditional.Adjective
+end Semantics.Lexical.Adjective

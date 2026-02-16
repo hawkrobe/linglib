@@ -32,12 +32,12 @@ import Linglib.Core.Intension
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.KaplanLD
 
-namespace IntensionalSemantics.Reference.Kripke
+namespace Semantics.Reference.Kripke
 
 open Core.Intension (Intension IsRigid rigid rigid_isRigid CoRefer CoExtensional
   rigid_identity_necessary varying_not_rigid rigid_neq_nonrigid)
-open IntensionalSemantics.Reference.Basic (properName isDirectlyReferential)
-open IntensionalSemantics.Reference.KaplanLD (dthatW dthatW_isRigid)
+open Semantics.Reference.Basic (properName isDirectlyReferential)
+open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
 
 /-! ## De Re and De Dicto
 
@@ -225,4 +225,4 @@ theorem rigid_stronglyRigid {W E : Type*} {exists_ : E → W → Prop}
     IsStronglyRigid exists_ (rigid (W := W) e) :=
   ⟨rigid_isRigid e, hExists⟩
 
-end IntensionalSemantics.Reference.Kripke
+end Semantics.Reference.Kripke

@@ -45,7 +45,7 @@ import Linglib.Theories.Semantics.Compositional.Core.Polarity
 namespace NeoGricean.Exhaustivity
 
 -- Re-export ContextPolarity from the consolidated polarity module
-open TruthConditional.Core.Polarity (ContextPolarity)
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
 
 -- SECTION 2.1: Definitions (Spector p.6-8)
 
@@ -1662,7 +1662,7 @@ This principle unifies several phenomena:
 -- 7.1: Context Polarity
 -- ----------------------------------------------------------------------------
 
--- ContextPolarity is imported from TruthConditional.Sentence.Entailment.Polarity
+-- ContextPolarity is imported from Semantics.Entailment.Polarity
 -- with constructors: .upward, .downward, .nonMonotonic
 
 /--

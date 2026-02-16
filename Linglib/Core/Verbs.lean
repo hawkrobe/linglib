@@ -38,16 +38,16 @@ namespace Core.Verbs
 
 open Core.Presupposition
 -- LevinClass, RootProfile from Core.RootDimensions (root namespace)
-open TruthConditional.Verb.ChangeOfState
-open TruthConditional.Measurement (Dimension)
-open IntensionalSemantics.Attitude.Doxastic (Veridicality)
-open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Probabilistic.Measurement (Dimension)
+open Semantics.Attitudes.Doxastic (Veridicality)
+open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 
 /--
 Which Montague predicate builder this verb uses.
 
 This links the Fragment entry to the compositional semantics in
-`IntensionalSemantics.Attitude.Preferential`. Properties like C-distributivity
+`Semantics.Attitudes.Preferential`. Properties like C-distributivity
 are DERIVED from the builder via theorems, not stipulated.
 
 - `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive (PROVED)
@@ -280,7 +280,7 @@ def VerbCore.preferentialValence (v : VerbCore) : Option AttitudeValence :=
   v.attitudeBuilder.bind (·.valence)
 
 -- Note: VerbCore.cDistributive, VerbCore.nvpClass, and VerbCore.takesQuestion
--- are derived properties defined in Theories/IntensionalSemantics/Attitude/BuilderProperties.lean
+-- are derived properties defined in Theories/Semantics.Intensional/Attitude/BuilderProperties.lean
 
 /--
 Get the CoS semantics for a verb (if it's a CoS verb).

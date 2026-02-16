@@ -37,10 +37,10 @@ The difference is in how the threshold is determined:
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Comparisons.ThresholdSemantics
 
-namespace SDS.ThresholdInstances
+namespace Semantics.Probabilistic.SDS.ThresholdInstances
 
 open Comparisons.ThresholdSemantics
-open SDS.Core
+open Semantics.Probabilistic.SDS.Core
 
 -- Threshold Support: Discretized [0,1]
 
@@ -66,7 +66,7 @@ The soft meaning E[1_{height(x) ≥ θ}] emerges from marginalization.
 -/
 
 /--
-Entity-instantiated gradable adjective for SDS.
+Entity-instantiated gradable adjective for Semantics.Probabilistic.SDS.
 
 We curry the entity into the system so that selectional factors can depend on it.
 -/
@@ -164,7 +164,7 @@ def genericSoftTruthSDS (gen : GenericPredicate) : ℚ :=
   SDSConstraintSystem.softTruth gen λ θ => gen.prevalence ≥ θ
 
 /--
-Compute holds for a gradable noun via SDS.
+Compute holds for a gradable noun via Semantics.Probabilistic.SDS.
 
 Since the scenario is trivial and support is a single point,
 this reduces to a simple Boolean check.
@@ -252,4 +252,4 @@ Alternative: Have `selectionalFactor : α → Entity → Θ → ℚ`
 We chose currying to keep the typeclass simpler.
 -/
 
-end SDS.ThresholdInstances
+end Semantics.Probabilistic.SDS.ThresholdInstances

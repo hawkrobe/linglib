@@ -45,7 +45,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Scope
 
-open TruthConditional.Derivation.Scope (ScopeConfig)
+open Semantics.Compositional.Derivation.Scope (ScopeConfig)
 
 -- Outcome Worlds
 

@@ -28,7 +28,7 @@ epistemic *in the same way* that assertion is.
 - Kratzer, A. (1981/1991). The notional category of modality / Modality.
 -/
 
-namespace DynamicSemantics.NeoStalnakerian
+namespace Semantics.Dynamic.NeoStalnakerian
 
 open Core.Proposition
 open Core.CommonGround
@@ -280,8 +280,8 @@ end SimpleVersion
 
 section OrderingVersion
 
-open IntensionalSemantics.Modal.Kratzer
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Epistemic state (ordering version): a modal base (set of worlds)
     paired with an ordering source (set of propositions ranking those worlds).
@@ -583,8 +583,8 @@ end OrderingVersion
 
 section RelationalSemantics
 
-open IntensionalSemantics.Modal.Kratzer
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Relational semantics for might (Kratzer 1977):
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ f_i(w), p(w') = true,
@@ -745,4 +745,4 @@ theorem might_truth_acceptance_dissociate
 
 end TruthAcceptance
 
-end DynamicSemantics.NeoStalnakerian
+end Semantics.Dynamic.NeoStalnakerian

@@ -43,7 +43,7 @@ import Linglib.Phenomena.Presupposition.Basic
 namespace NeoGricean.Presuppositions
 
 open Core.Presupposition
-open TruthConditional.Core.Polarity
+open Semantics.Compositional.Core.Polarity
 open NeoGricean
 open Phenomena.Presupposition
 

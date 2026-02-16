@@ -30,7 +30,7 @@ This module provides question-specific constructors and interpretation.
 - Groenendijk & Stokhof (1997). Questions. Handbook of Logic and Language.
 -/
 
-namespace QuestionSemantics
+namespace Semantics.Questions
 
 /-- A G&S-style question is exactly a QUD: an equivalence relation on worlds.
 
@@ -133,4 +133,4 @@ theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
     ↓reduceIte, List.map_cons, List.map_nil, List.length_cons, List.length_nil]
   omega
 
-end QuestionSemantics
+end Semantics.Questions

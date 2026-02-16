@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 Connects the cross-linguistic noun categorization typology in
 `Phenomena.Agreement.NounCategorization` to the Nominal Mapping
-Parameter from `Theories.TruthConditional.Noun.Kind.Chierchia1998`.
+Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 
 ## Predictions verified
 
@@ -23,7 +23,7 @@ Parameter from `Theories.TruthConditional.Noun.Kind.Chierchia1998`.
 namespace Phenomena.Agreement.NounCategorization.Bridge
 
 open Core.NounCategorization
-open TruthConditional.Noun.Kind.Chierchia1998 (NominalMapping)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
 open Phenomena.Agreement.NounCategorization
 
 /-- Map NominalMapping to the expected classifier type.

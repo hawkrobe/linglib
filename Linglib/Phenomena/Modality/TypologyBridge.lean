@@ -31,7 +31,7 @@ https://clmbr.shane.st/modal-typology/
 namespace Phenomena.Modality.Typology
 
 open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
-open IntensionalSemantics.Modal.Typology (ModalExpression ModalInventory satisfiesIFF)
+open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
 
 /-! ## Abbreviations for the six meaning points -/
 
@@ -108,14 +108,14 @@ theorem gitksan_size : gitksan.size = 5 := by native_decide
 /-- Gitksan's variable-force epistemic modals satisfy both SAV and IFF:
     {poss, nec} × {epistemic} varies on force only (single flavor). -/
 theorem gitksan_ima_sav :
-    IntensionalSemantics.Modal.Typology.satisfiesSAV [pe, ne] = true := by native_decide
+    Semantics.Modality.Typology.satisfiesSAV [pe, ne] = true := by native_decide
 
 theorem gitksan_ima_is_iff :
     satisfiesIFF [pe, ne] = true := by native_decide
 
 /-- Greek's Prepei violates SAV: it varies on both force and flavor axes. -/
 theorem prepei_not_sav :
-    IntensionalSemantics.Modal.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
+    Semantics.Modality.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
 -- §4: Korean (Koreanic) — Uegaki et al. (2025)

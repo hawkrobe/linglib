@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
 
 Connects the modal disagreement data in `Phenomena.Modality.Studies.Khoo2015`
 to predictions from Rudin's (2025) Neo-Stalnakerian Framework formalized in
-`Theories.DynamicSemantics.Effects.Epistemic.Basic`.
+`Theories.Semantics.Dynamic.Effects.Epistemic.Basic`.
 
 ## Predictions verified
 
@@ -20,7 +20,7 @@ to predictions from Rudin's (2025) Neo-Stalnakerian Framework formalized in
 
 namespace Phenomena.Modality.Studies.Khoo2015.Bridge
 
-open DynamicSemantics.NeoStalnakerian
+open Semantics.Dynamic.NeoStalnakerian
 
 /-- The Mobster scenario has the structure predicted by the NSF:
     Smith (assertor) has examined evidence consistent with Fat Tony being dead,

@@ -21,8 +21,8 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 
 namespace Phenomena.ConditionalModality
 
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer
 
 /-! ## Atemporal propositions -/
 

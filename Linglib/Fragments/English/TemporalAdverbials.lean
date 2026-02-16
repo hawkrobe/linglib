@@ -30,7 +30,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 namespace Fragments.English.TemporalAdverbials
 
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ============================================================================
 -- TIA Classification

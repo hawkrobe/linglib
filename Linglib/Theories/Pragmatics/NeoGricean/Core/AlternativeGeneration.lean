@@ -49,11 +49,11 @@ import Mathlib.Data.Set.Basic
 
 namespace NeoGricean.AlternativeGeneration
 
-open TruthConditional
-open TruthConditional.Core
-open TruthConditional.Core.Derivation
-open TruthConditional.Core.Polarity (ContextPolarity)
-open TruthConditional.Determiner.Quantifier
+open Semantics.Compositional
+open Semantics.Compositional.Core
+open Semantics.Compositional.Core.Derivation
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
+open Semantics.Lexical.Determiner.Quantifier
 open Core.Scale
 open NeoGricean.Exhaustivity
 

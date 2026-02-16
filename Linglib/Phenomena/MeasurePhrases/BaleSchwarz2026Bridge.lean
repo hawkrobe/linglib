@@ -54,7 +54,7 @@ Two tests distinguish compositional from non-compositional *per*-phrases:
 namespace Phenomena.MeasurePhrases.BaleSchwarz2026
 
 open Phenomena
-open TruthConditional.Measurement (Dimension QuotientDimension DimensionType)
+open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionType)
 open Fragments.English.MeasurePhrases (PerInterpretation)
 
 -- ============================================================================

@@ -38,11 +38,11 @@ import Linglib.Core.Proposition
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
-namespace IntensionalSemantics.Conditional
+namespace Semantics.Conditionals
 
 open Core.Proposition
-open TruthConditional.Core.Polarity
-open DynamicSemantics.State
+open Semantics.Compositional.Core.Polarity
+open Semantics.Dynamic.State
 
 -- Conditional Type: HC vs PC
 
@@ -421,4 +421,4 @@ This explains the apparent paradox that PCs block NPIs despite being
 semantically DE: NPI licensing requires BOTH DE + uncertain status.
 -/
 
-end IntensionalSemantics.Conditional
+end Semantics.Conditionals

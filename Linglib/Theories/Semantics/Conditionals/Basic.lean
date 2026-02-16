@@ -31,7 +31,7 @@ conditionals assert high conditional probability, not material implication.
 
 import Linglib.Core.Proposition
 
-namespace IntensionalSemantics.Conditional
+namespace Semantics.Conditionals
 
 open Core.Proposition
 
@@ -433,4 +433,4 @@ The RSA model then explains pragmatic phenomena (conditional perfection,
 missing-link infelicity) through reasoning about assertability.
 -/
 
-end IntensionalSemantics.Conditional
+end Semantics.Conditionals

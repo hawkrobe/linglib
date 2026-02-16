@@ -58,8 +58,8 @@ namespace RSA.Domains.Degrees
 
 open Core.Scale (Degree Threshold Degree.ofNat Degree.toNat Threshold.toNat
   deg thr allDegrees allThresholds HasDegree)
-open TruthConditional.Adjective (positiveMeaning negativeMeaning)
-open TruthConditional.Numeral (numeralExact)
+open Semantics.Lexical.Adjective (positiveMeaning negativeMeaning)
+open Semantics.Lexical.Numeral (numeralExact)
 
 -- Utterances
 

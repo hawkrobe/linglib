@@ -24,7 +24,7 @@ This probabilistic semantics:
 import Linglib.Core.Causation
 import Mathlib.Data.Rat.Defs
 
-namespace IntensionalSemantics.Conditional.Assertability
+namespace Semantics.Conditionals.Assertability
 
 open Core.Causation
 
@@ -321,4 +321,4 @@ theorem correlation_strength_zero_iff_independent (ws : WorldState) (hA : 0 < ws
     -- h : ws.pAC = ws.pA * ws.pC
     rw [h, mul_comm, mul_div_assoc, div_self hA_ne, mul_one]
 
-end IntensionalSemantics.Conditional.Assertability
+end Semantics.Conditionals.Assertability

@@ -28,7 +28,7 @@ import Linglib.Core.Intension
 import Linglib.Core.Proposition
 import Linglib.Core.Context
 
-namespace IntensionalSemantics.Reference.Basic
+namespace Semantics.Reference.Basic
 
 open Core.Intension (Intension rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
   rigid_identity_necessary)
@@ -166,4 +166,4 @@ def Context.toKContext {W E P T : Type*} (c : Context W E) (addr : E) (p : P) (t
     Core.Context.KContext W E P T :=
   ⟨c.agent, addr, c.world, t, p⟩
 
-end IntensionalSemantics.Reference.Basic
+end Semantics.Reference.Basic

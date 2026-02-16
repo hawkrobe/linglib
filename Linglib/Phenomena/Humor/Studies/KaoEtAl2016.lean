@@ -19,7 +19,7 @@ The paper's model is structurally similar to SDS:
 - Both combine multiple evidence sources (words → meanings vs selectional × scenario)
 - "Distinctiveness" ≈ SDS conflict (different sources prefer different interpretations)
 
-See `Comparisons.SDS.Humor` for the formal correspondence.
+See `Comparisons.Semantics.Probabilistic.SDS.Humor` for the formal correspondence.
 
 ## Data
 
@@ -266,7 +266,7 @@ The distinctiveness measure captures the same intuition as SDS conflict detectio
 In Kao's model: different words → different meanings
 In SDS: selectional vs scenario → different concepts
 
-See `Comparisons.SDS.Humor` for formal correspondence.
+See `Comparisons.Semantics.Probabilistic.SDS.Humor` for formal correspondence.
 -/
 
 end Phenomena.Humor.Studies.KaoEtAl2016

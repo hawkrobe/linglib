@@ -60,7 +60,7 @@ Carlson connects this to bare plural interpretation:
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
-namespace TruthConditional.Noun.Kind.Carlson1977
+namespace Semantics.Lexical.Noun.Kind.Carlson1977
 
 -- Ontology: Individuals, Kinds, Stages
 
@@ -521,4 +521,4 @@ example (k : Entity) (P : Entity → Bool) :
   Not: ∃y[R(y,DOGS) ∧ Max believes ate-sponge(y)]
 -/
 
-end TruthConditional.Noun.Kind.Carlson1977
+end Semantics.Lexical.Noun.Kind.Carlson1977

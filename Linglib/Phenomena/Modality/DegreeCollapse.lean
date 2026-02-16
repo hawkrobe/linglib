@@ -20,8 +20,8 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.5.
 
 namespace Phenomena.Modality.DegreeCollapse
 
-open IntensionalSemantics.Attitude.Intensional (World)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World)
+open Semantics.Modality.Kratzer
 open Phenomena.ConditionalModality
 
 /-! ## Modal strength as a rational degree -/

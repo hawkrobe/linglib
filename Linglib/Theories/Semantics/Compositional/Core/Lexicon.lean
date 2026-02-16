@@ -18,10 +18,10 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale
 import Linglib.Core.Morphology.Number
 
-namespace TruthConditional.Core
+namespace Semantics.Compositional.Core
 
-open TruthConditional
-open TruthConditional.Determiner.Quantifier
+open Semantics.Compositional
+open Semantics.Lexical.Determiner.Quantifier
 open Core.Scale
 
 private def word_some : Word := ⟨"some", .DET, {}⟩
@@ -36,7 +36,7 @@ private def word_laughs : Word := ⟨"laughs", .VERB, { valence := some .intrans
 Numerals are excluded: under lower-bound semantics they form an infinite
 scale (not representable as a finite `HornScale`), and under bilateral
 semantics they don't form a scale at all (Kennedy 2015). See
-`Theories/TruthConditional/Determiner/Numeral/Semantics.lean`. -/
+`Theories/Semantics.Compositional/Determiner/Numeral/Semantics.lean`. -/
 inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)
   | connective (pos : Connectives.ConnExpr)
@@ -195,4 +195,4 @@ theorem some_is_scalar : some_entry.isScalar = true := rfl
 theorem every_is_scalar : every_entry.isScalar = true := rfl
 theorem john_not_scalar : john_entry.isScalar = false := rfl
 
-end TruthConditional.Core
+end Semantics.Compositional.Core

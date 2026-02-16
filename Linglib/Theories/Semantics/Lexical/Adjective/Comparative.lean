@@ -46,7 +46,7 @@ explains why comparatives license expletive negation cross-linguistically.
 - Krifka, M. (2010b). *Before* and *after* without coercion. *NLLT* 28.
 -/
 
-namespace TruthConditional.Adjective.Comparative
+namespace Semantics.Lexical.Adjective.Comparative
 
 open Core.Scale (Boundedness maxOnScale maxOnScale_singleton isAmbidirectional)
 
@@ -222,4 +222,4 @@ structure MannerEffect where
 def enEvaluativeEffect : MannerEffect :=
   { evaluative := true, atypical := false }
 
-end TruthConditional.Adjective.Comparative
+end Semantics.Lexical.Adjective.Comparative

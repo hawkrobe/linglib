@@ -15,8 +15,8 @@ import Linglib.Theories.Semantics.Attitudes.Intensional
 
 namespace Phenomena.Attitudes.IntensionalExamples
 
-open TruthConditional
-open IntensionalSemantics.Attitude.Intensional
+open Semantics.Compositional
+open Semantics.Attitudes.Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where
@@ -159,7 +159,7 @@ theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) 
 
 The `morningStar`/`eveningStar` individual concepts defined above are
 *Fregean concepts* (world-dependent). In contrast, proper names in
-`IntensionalSemantics.Reference.Basic` are *Kripkean rigid designators*.
+`Semantics.Reference.Basic` are *Kripkean rigid designators*.
 
 This section makes the distinction explicit, connecting the existing
 Hesperus/Phosphorus examples to the direct reference framework. -/

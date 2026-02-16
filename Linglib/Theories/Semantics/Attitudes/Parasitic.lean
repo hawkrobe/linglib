@@ -43,12 +43,12 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 
-namespace IntensionalSemantics.Attitude.Parasitic
+namespace Semantics.Attitudes.Parasitic
 
 open Core.Presupposition
-open IntensionalSemantics.Attitude.Doxastic
-open IntensionalSemantics.Attitude.Preferential
-open TruthConditional.Sentence.Presupposition.BeliefEmbedding
+open Semantics.Attitudes.Doxastic
+open Semantics.Attitudes.Preferential
+open Semantics.Presupposition.BeliefEmbedding
 
 
 /--
@@ -318,4 +318,4 @@ def standardAnalysis {W E : Type*} (believe : DoxasticPredicate W E) :
   , parasiticAttitudes := [.hope, .fear, .imagine, .dream, .wish, .expect]
   , useDoxasticAccessibility := true }
 
-end IntensionalSemantics.Attitude.Parasitic
+end Semantics.Attitudes.Parasitic

@@ -20,9 +20,9 @@ import Linglib.Theories.Semantics.Compositional.Basic
 import Linglib.Theories.Semantics.Compositional.Modification
 import Linglib.Core.Interfaces.SemanticStructure
 
-namespace TruthConditional.Composition
+namespace Semantics.Compositional.Composition
 
-open TruthConditional TruthConditional.Modification Core.Interfaces
+open Semantics.Compositional Semantics.Compositional.Modification Core.Interfaces
 
 structure TypedDenot (m : Model) where
   ty : Ty
@@ -194,4 +194,4 @@ theorem interpBinary_eq {m : Model} (d1 d2 : TypedDenot m) :
 
 end Properties
 
-end TruthConditional.Composition
+end Semantics.Compositional.Composition

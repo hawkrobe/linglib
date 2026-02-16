@@ -9,7 +9,7 @@ English NP structure. Bare plurals/mass nouns OK, bare singulars blocked (Chierc
 
 namespace Fragments.English.Nouns
 
-open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 
 /-- A lexical entry for an English noun. -/

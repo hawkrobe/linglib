@@ -48,10 +48,10 @@ Two sources of utility:
 - Büring & Gunlogson (2000). Aren't positive and negative polar questions the same?
 -/
 
-namespace QuestionSemantics.Polarity
+namespace Semantics.Questions.Polarity
 
 open Core.DecisionTheory
-open QuestionSemantics
+open Semantics.Questions
 
 -- Polar Question Types
 
@@ -360,7 +360,7 @@ In an upward-entailing context, stronger propositions are preferred.
 PPQ prefers the positive answer when it's more useful/informative.
 
 This connects question pragmatics to scalar implicature contexts. -/
-def questionPolarity (qtype : PolarQuestionType) : Option TruthConditional.Core.Polarity.ContextPolarity :=
+def questionPolarity (qtype : PolarQuestionType) : Option Semantics.Compositional.Core.Polarity.ContextPolarity :=
   match qtype with
   | .positive => some .upward    -- Positive proposition is "marked"
   | .negative => some .downward  -- Negative proposition is "marked"
@@ -433,4 +433,4 @@ If accepting q causes large belief revision, double-checking has high utility. -
 def groundingUtility {W : Type*} (gq : GroundingQuestion W) : ℚ :=
   gq.posteriorProb - gq.priorProb
 
-end QuestionSemantics.Polarity
+end Semantics.Questions.Polarity

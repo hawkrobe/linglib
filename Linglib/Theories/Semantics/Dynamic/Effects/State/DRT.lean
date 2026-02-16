@@ -32,7 +32,7 @@ Referent x is accessible from position p iff:
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic
 
-namespace DynamicSemantics.DRT
+namespace Semantics.Dynamic.DRT
 
 -- Placeholder: Full implementation TODO
 
@@ -103,4 +103,4 @@ Simplified version checking conditions hold.
 def DRS.satisfies {E : Type*} (k : DRS E) (f : Embedding E) : Prop :=
   ∀ cond ∈ k.conditions, cond f
 
-end DynamicSemantics.DRT
+end Semantics.Dynamic.DRT

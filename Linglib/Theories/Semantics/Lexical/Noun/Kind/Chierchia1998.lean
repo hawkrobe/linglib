@@ -38,7 +38,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 
-namespace TruthConditional.Noun.Kind.Chierchia1998
+namespace Semantics.Lexical.Noun.Kind.Chierchia1998
 
 -- Domain Structure (Link's Semilattice)
 
@@ -539,4 +539,4 @@ theorem twoSubkinds_of_ne (s₁ s₂ : NumberSystem) (h : s₁ ≠ s₂) :
 
 end KindFormation
 
-end TruthConditional.Noun.Kind.Chierchia1998
+end Semantics.Lexical.Noun.Kind.Chierchia1998

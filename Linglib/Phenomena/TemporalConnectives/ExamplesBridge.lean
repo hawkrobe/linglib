@@ -32,7 +32,7 @@ namespace Phenomena.TemporalConnectives.Examples
 
 open Core.Time
 open Core.Time.Interval
-open TruthConditional.Sentence.Tense.TemporalConnectives
+open Semantics.Tense.TemporalConnectives
 
 -- ============================================================================
 -- § 1: Concrete Intervals

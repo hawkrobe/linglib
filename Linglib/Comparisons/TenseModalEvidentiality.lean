@@ -20,7 +20,7 @@ of the target event but not directly settling it.
 
 `EvidentialPerspective` (the three temporal orientations) lives in `Core.Evidence`;
 `EPCondition`/`UPCondition` (the five attested constraint shapes) live in
-`Theories/TruthConditional/Sentence/Tense/Evidential.lean`.
+`Theories/Semantics.Compositional/Sentence/Tense/Evidential.lean`.
 
 ## Concrete Scenario: Dripping Raincoat
 
@@ -37,9 +37,9 @@ and the kernel {wearingRaincoat} doesn't settle isRaining.
 
 namespace Comparisons.TenseModalEvidentiality
 
-open TruthConditional.Sentence.Tense.Evidential
-open IntensionalSemantics.Modal
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
+open Semantics.Tense.Evidential
+open Semantics.Modality
+open Semantics.Attitudes.Intensional (World allWorlds)
 open Core.Proposition (World4 BProp)
 
 -- ════════════════════════════════════════════════════

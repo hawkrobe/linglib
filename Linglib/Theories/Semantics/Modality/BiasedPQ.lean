@@ -48,10 +48,10 @@ for Czech.
   In B. Gehrke & R. Šimík (eds.), Topics in the semantics of Slavic languages. Language Science Press.
 -/
 
-namespace IntensionalSemantics.Modal.BiasedPQ
+namespace Semantics.Modality.BiasedPQ
 
-open IntensionalSemantics.Modal.Kratzer
-open IntensionalSemantics.Attitude.Intensional
+open Semantics.Modality.Kratzer
+open Semantics.Attitudes.Intensional
 open Core.CommonGround
 open Core.Proposition
 
@@ -439,4 +439,4 @@ inductive EvidentialBiasStrength where
   | none_   -- Outer: FALSUM, not □_ev-based
   deriving DecidableEq, BEq, Repr
 
-end IntensionalSemantics.Modal.BiasedPQ
+end Semantics.Modality.BiasedPQ

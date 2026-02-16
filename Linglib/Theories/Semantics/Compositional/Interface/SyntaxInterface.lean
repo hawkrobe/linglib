@@ -14,9 +14,9 @@ Montague (1973)
 
 import Linglib.Theories.Semantics.Compositional.Basic
 
-namespace TruthConditional.Interface.SyntaxInterface
+namespace Semantics.Compositional.Interface.SyntaxInterface
 
-open TruthConditional
+open Semantics.Compositional
 
 /-- Type assignment maps syntactic categories to semantic types -/
 structure TypeAssignment (SynCat : Type) where
@@ -40,9 +40,9 @@ structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat
   trueIn : Deriv → Model → Bool
   entails : Deriv → Deriv → Model → Bool
 
-end TruthConditional.Interface.SyntaxInterface
+end Semantics.Compositional.Interface.SyntaxInterface
 
 -- Backward compatibility alias
-namespace TruthConditional.SyntaxInterface
-  export TruthConditional.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
-end TruthConditional.SyntaxInterface
+namespace Semantics.Compositional.SyntaxInterface
+  export Semantics.Compositional.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
+end Semantics.Compositional.SyntaxInterface

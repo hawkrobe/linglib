@@ -31,7 +31,7 @@ import Linglib.Core.Proposition
 import Linglib.Core.ModalLogic
 import Linglib.Theories.Semantics.Questions.Hamblin
 
-namespace IntensionalSemantics.Attitude.Doxastic
+namespace Semantics.Attitudes.Doxastic
 
 open Core.Proposition
 
@@ -718,4 +718,4 @@ pragmatic inference about speaker knowledge, not true local computation.
 See `RSA/Implementations/GoodmanStuhlmuller2013.lean` for the RSA treatment.
 -/
 
-end IntensionalSemantics.Attitude.Doxastic
+end Semantics.Attitudes.Doxastic

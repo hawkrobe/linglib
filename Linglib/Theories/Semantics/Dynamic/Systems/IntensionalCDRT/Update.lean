@@ -37,7 +37,7 @@ This allows indefinites to "scope out" while tracking their local context.
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Basic
 
-namespace DynamicSemantics.IntensionalCDRT
+namespace Semantics.Dynamic.IntensionalCDRT
 
 open Core
 
@@ -306,4 +306,4 @@ def BilateralICDRT.exists_ {W E : Type*}
         (g', gw.2) ∉ body.positive (extendContext c v domain) }
 
 
-end DynamicSemantics.IntensionalCDRT
+end Semantics.Dynamic.IntensionalCDRT

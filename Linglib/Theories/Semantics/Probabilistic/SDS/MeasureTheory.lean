@@ -38,7 +38,7 @@ SDSConstraintSystem (discrete, ℚ)     SDSMeasureSystem (continuous, ℝ)
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 
-namespace SDS.MeasureTheory
+namespace Semantics.Probabilistic.SDS.MeasureTheory
 
 -- Continuous SDS: Measure-Theoretic Version (Placeholder)
 
@@ -258,4 +258,4 @@ This is a **placeholder module**. Full implementation requires:
 4. Numerical computation via Mathlib's analysis
 -/
 
-end SDS.MeasureTheory
+end Semantics.Probabilistic.SDS.MeasureTheory

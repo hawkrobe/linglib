@@ -409,14 +409,14 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
 #eval someMostAllScale.alternatives .some_  -- [most, all]
 
 -- ============================================================================
--- Canonical GQ Denotations (from TruthConditional.Determiner.Quantifier)
+-- Canonical GQ Denotations (from Semantics.Lexical.Determiner.Quantifier)
 -- ============================================================================
 
 /-!
 ## Compositional Generalized Quantifier Semantics
 
 The **single source of truth** for model-theoretic GQ denotations is
-`TruthConditional.Determiner.Quantifier`. This section re-exports those
+`Semantics.Lexical.Determiner.Quantifier`. This section re-exports those
 denotations and connects them to the `QuantityWord` scale.
 
 ### Thread map
@@ -425,7 +425,7 @@ From a `QuantityWord` you can reach:
 - **Compositional denotations**: `QuantityWord.gqDenotation` → `every_sem`, `some_sem`, etc.
 - **Semantic universals** (B&C 1981): `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`
   — all in `Core.Quantification`. `Quantity`, `SatisfiesUniversals` in
-  `TruthConditional.Determiner.Quantifier`
+  `Semantics.Lexical.Determiner.Quantifier`
 - **Proved properties**: `every_conservative`, `some_scope_up`, `no_scope_down`, etc.
 - **Duality operations** (B&C §4.11): `Core.Quantification.outerNeg`, `innerNeg`, `dualQ`
   with `outerNeg_up_to_down`, `outerNeg_down_to_up`, `innerNeg_up_to_down` (C9)
@@ -435,7 +435,7 @@ From a `QuantityWord` you can reach:
 - **Threshold semantics**: `QuantityWord.gqtMeaning` (scalar GQT representation)
 - **Prototype semantics**: `QuantityWord.ptMeaning` (gradient PT representation)
 - **RSA domains**: `RSA.Domains.Quantity` (pragmatic reasoning over quantity scales)
-- **Monotonicity**: `TruthConditional.Sentence.Entailment.Monotonicity` (polarity)
+- **Monotonicity**: `Semantics.Entailment.Monotonicity` (polarity)
 - **Complexity**: `Core.Conjectures.simplicity_explains_universals` (van de Pol et al. 2023)
 -/
 
@@ -473,15 +473,15 @@ def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.Double
   | _      => none
 
 section CanonicalGQDenotations
-open TruthConditional (Model)
-open TruthConditional.Determiner.Quantifier
+open Semantics.Compositional (Model)
+open Semantics.Lexical.Determiner.Quantifier
 
 variable {m : Model} [FiniteModel m]
 
 /-- Map quantity words to their canonical model-theoretic GQ denotation.
     These are the compositional `(e→t) → ((e→t) → t)` meanings from
     Montague/Barwise & Cooper, proved conservative and monotone in
-    `TruthConditional.Determiner.Quantifier`. -/
+    `Semantics.Lexical.Determiner.Quantifier`. -/
 def QuantityWord.gqDenotation (q : QuantityWord)
     (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
   match q with
@@ -581,7 +581,7 @@ open Core.Quantification in
 theorem none_symmetry_bridge : none_.strength = .weak ∧
     QSymmetric (no_sem m) := ⟨rfl, no_symmetric⟩
 
-open Core.Quantification TruthConditional in
+open Core.Quantification Semantics.Compositional in
 /-- Every: strong and NOT symmetric. -/
 theorem every_not_symmetric_bridge : every.strength = .strong ∧
     ¬QSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩

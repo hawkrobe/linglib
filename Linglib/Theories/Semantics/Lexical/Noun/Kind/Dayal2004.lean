@@ -40,9 +40,9 @@ denotation type. Singular morphology requires that instances are
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
-namespace TruthConditional.Noun.Kind.Dayal2004
+namespace Semantics.Lexical.Noun.Kind.Dayal2004
 
-open TruthConditional.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple Individual Kind Property
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple Individual Kind Property
                               NounType downDefinedFor)
 
 variable (World Atom : Type)
@@ -628,4 +628,4 @@ theorem meaning_preservation_derives_kind_preference :
 - `Phenomena/KindReference/Data.lean` - cross-linguistic patterns, singular kinds, scopelessness
 -/
 
-end TruthConditional.Noun.Kind.Dayal2004
+end Semantics.Lexical.Noun.Kind.Dayal2004

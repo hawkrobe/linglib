@@ -48,7 +48,7 @@ open Phenomena.Modality.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
-open DynamicSemantics.BUS.FreeChoice
+open Semantics.Dynamic.BUS.FreeChoice
 open Comparisons.FreeChoice.Aloni2022
 
 -- ============================================================================
@@ -249,7 +249,7 @@ Aloni (2022) derives FC **semantically** using team semantics.
 
 /-- Aloni BSML: DNE holds definitionally -/
 theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (φ : BSMLFormula W) (t : DynamicSemantics.TeamSemantics.Team W) (worlds : List W) :
+    (φ : BSMLFormula W) (t : Semantics.Dynamic.TeamSemantics.Team W) (worlds : List W) :
     Aloni2022.support M worlds (.neg (.neg φ)) t = Aloni2022.support M worlds φ t :=
   Aloni2022.dne_support M φ t worlds
 

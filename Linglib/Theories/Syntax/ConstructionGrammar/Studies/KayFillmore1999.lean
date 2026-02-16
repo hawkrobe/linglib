@@ -36,12 +36,12 @@ The two readings are distinguished by the PerspectiveP layer (Dayal 2025):
 |---|--------|--------|
 | 1 | `Core/Presupposition` | WXDY presupposes the embedded proposition |
 | 2 | `Expressives/Basic` | Incredulity is CI content (projects through negation) |
-| 3 | `QuestionSemantics/Hamblin` | Literal = standard `which`; incredulity = degenerate Q |
-| 4 | `QuestionSemantics/LeftPeriphery` | PerspP disambiguates the two readings |
+| 3 | `Semantics.Questions/Hamblin` | Literal = standard `which`; incredulity = degenerate Q |
+| 4 | `Semantics.Questions/LeftPeriphery` | PerspP disambiguates the two readings |
 | 5 | `Core/CommonGround` | Presupposition requires CG entailment |
 | 6 | `Verb/Aspect` | Progressive requirement (durative ∧ dynamic) |
 | 7 | `Focus/DomainWidening` | Incongruity = normative expectation violation |
-| 8 | `QuestionSemantics/Polarity` | Incredulity = rhetorical question |
+| 8 | `Semantics.Questions/Polarity` | Incredulity = rhetorical question |
 | 9 | `FKO1988` | WXDY is a formal idiom; sibling to Incredulity Response |
 | 10 | `Phenomena/KayFillmore1999` | Per-datum verification |
 
@@ -172,7 +172,7 @@ theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Bool) :
 -- E. Two-dimensional semantics bridge (Expressives/Basic.lean)
 -- ============================================================================
 
-open TruthConditional.Expressives
+open Semantics.Lexical.Expressives
 
 /-- WXDY on the incredulity reading has two-dimensional meaning:
 - At-issue: the embedded proposition (there's a fly in my soup)
@@ -211,10 +211,10 @@ theorem wxdy_ci_independent {W : Type*}
   exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 -- ============================================================================
--- F. Hamblin question semantics bridge (QuestionSemantics/Hamblin.lean)
+-- F. Hamblin question semantics bridge (Semantics.Questions/Hamblin.lean)
 -- ============================================================================
 
-open QuestionSemantics.Hamblin
+open Semantics.Questions.Hamblin
 
 /-- Literal reading: standard wh-question "which activity is X engaged in?"
 Delegates to `Hamblin.which` over a domain of activities. -/
@@ -243,10 +243,10 @@ theorem literal_is_genuine_question {W E : Type*} [BEq W]
     wxdyLiteralQ activities pred worlds = which activities pred worlds := rfl
 
 -- ============================================================================
--- G. Left Periphery bridge (QuestionSemantics/LeftPeriphery.lean) — DEEPEST BRIDGE
+-- G. Left Periphery bridge (Semantics.Questions/LeftPeriphery.lean) — DEEPEST BRIDGE
 -- ============================================================================
 
-open QuestionSemantics.LeftPeriphery
+open Semantics.Questions.LeftPeriphery
 
 /-- WXDY has a +WH feature on C (it is syntactically interrogative). -/
 def wxdyWHFeature : WHFeature := .plusWH
@@ -266,7 +266,7 @@ Therefore PerspP is blocked, and the utterance is NOT a genuine question.
 
 Delegates to `responsive_contradicts_perspP_comp` from LeftPeriphery.lean. -/
 theorem wxdy_incredulity_blocks_perspP {W : Type*}
-    (q : QuestionSemantics.GSQuestion W) (w : W) :
+    (q : Semantics.Questions.GSQuestion W) (w : W) :
     perspPPresupComp (wxdyIncredulitySpeakerModel w) q w = false :=
   responsive_contradicts_perspP_comp q w
 
@@ -275,7 +275,7 @@ PerspP presupposition is satisfied → genuine question.
 
 Delegates to `rogative_allows_perspP_comp` from LeftPeriphery.lean. -/
 theorem wxdy_literal_allows_perspP {W : Type*}
-    (q : QuestionSemantics.GSQuestion W) (w : W) :
+    (q : Semantics.Questions.GSQuestion W) (w : W) :
     perspPPresupComp ignorantModel q w = true :=
   rogative_allows_perspP_comp q w
 
@@ -286,7 +286,7 @@ theorem wxdy_literal_allows_perspP {W : Type*}
 This is the deepest bridge: the form–function mismatch of WXDY is
 *derived* from the PerspP mechanism, not stipulated. -/
 theorem perspP_disambiguates_wxdy {W : Type*}
-    (q : QuestionSemantics.GSQuestion W) (w : W) :
+    (q : Semantics.Questions.GSQuestion W) (w : W) :
     perspPPresupComp (wxdyIncredulitySpeakerModel w) q w = false ∧
     perspPPresupComp ignorantModel q w = true :=
   ⟨wxdy_incredulity_blocks_perspP q w, wxdy_literal_allows_perspP q w⟩
@@ -307,10 +307,10 @@ theorem wxdy_presup_requires_cg {W : Type*}
   h w hw
 
 -- ============================================================================
--- I. Aspect bridge (TruthConditional/Verb/Aspect.lean + Diagnostics)
+-- I. Aspect bridge (Semantics.Compositional/Verb/Aspect.lean + Diagnostics)
 -- ============================================================================
 
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 open Phenomena.Aspect.Diagnostics
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates
@@ -328,7 +328,7 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
 -- J. Domain widening bridge (Focus/DomainWidening.lean)
 -- ============================================================================
 
-open TruthConditional.Sentence.DomainWidening
+open Semantics.Compositional.Sentence.DomainWidening
 
 /-- WXDY's incredulity arises from a normative expectation violation:
 the situation violates what the speaker considers normal/appropriate.
@@ -345,10 +345,10 @@ theorem wxdy_incongruity_is_counterexpectational :
     wxdyAlternativeSource = associatedSource .counterexpectational := rfl
 
 -- ============================================================================
--- K. Polarity / rhetorical question bridge (QuestionSemantics/Polarity.lean)
+-- K. Polarity / rhetorical question bridge (Semantics.Questions/Polarity.lean)
 -- ============================================================================
 
-open QuestionSemantics.Polarity
+open Semantics.Questions.Polarity
 
 /-- WXDY on the incredulity reading is a rhetorical question:
 - The speaker presupposes the positive answer (the situation obtains)

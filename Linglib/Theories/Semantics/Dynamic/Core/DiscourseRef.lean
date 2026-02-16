@@ -38,7 +38,7 @@ This separation enables anaphora to indefinites under negation:
 import Linglib.Theories.Semantics.Dynamic.Core.Basic
 import Mathlib.Data.Fintype.Basic
 
-namespace DynamicSemantics.Core
+namespace Semantics.Dynamic.Core
 
 
 /--
@@ -282,4 +282,4 @@ def accessibleIn {W E : Type*} (e : E) (p : Set W) (dref : W → Entity E) : Pro
   ∀ w ∈ p, dref w = .some e
 
 
-end DynamicSemantics.Core
+end Semantics.Dynamic.Core

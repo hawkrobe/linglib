@@ -25,7 +25,7 @@ Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics 
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
 
-namespace DynamicSemantics.Core
+namespace Semantics.Dynamic.Core
 
 
 /--
@@ -331,4 +331,4 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
   exact ⟨h hp.1, hp.2⟩
 
 
-end DynamicSemantics.Core
+end Semantics.Dynamic.Core

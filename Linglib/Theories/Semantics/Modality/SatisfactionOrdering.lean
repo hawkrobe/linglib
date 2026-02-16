@@ -8,7 +8,7 @@ Linguistic applications of `Core.SatisfactionOrdering.SatisfactionOrdering`:
 - Phillips-Brown's proposition ordering (propositions by desires)
 -/
 
-namespace IntensionalSemantics.Modal
+namespace Semantics.Modality
 
 open Core.SatisfactionOrdering (SatisfactionOrdering)
 
@@ -32,4 +32,4 @@ def propositionOrdering (World : Type*) [BEq World] (worlds : List World)
 def propEntails {World : Type*} (worlds : List World) (a p : World → Bool) : Bool :=
   worlds.all λ w => !a w || p w
 
-end IntensionalSemantics.Modal
+end Semantics.Modality

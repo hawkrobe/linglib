@@ -32,7 +32,7 @@ With exact semantics, the asymmetry is unexplained:
 
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 namespace NeoGricean
 

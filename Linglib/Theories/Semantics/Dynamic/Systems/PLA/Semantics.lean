@@ -26,7 +26,7 @@ sequence ê such that M, g, ê ⊨ φ.
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Basic
 
-namespace DynamicSemantics.PLA
+namespace Semantics.Dynamic.PLA
 
 open Classical
 
@@ -243,4 +243,4 @@ example : (exManWalkedIn.resolve exResolution).range = ∅ :=
 
 end Examples
 
-end DynamicSemantics.PLA
+end Semantics.Dynamic.PLA

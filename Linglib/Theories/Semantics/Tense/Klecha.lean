@@ -31,11 +31,11 @@ update this index just as attitude verbs do.
   *Semantics and Pragmatics* 9(9): 1-55.
 -/
 
-namespace IntensionalSemantics.Tense.Klecha
+namespace Semantics.Tense.Klecha
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -129,4 +129,4 @@ def Klecha : TenseTheory where
   simultaneousMechanism := "not primary focus (inherits from base tense theory)"
 
 
-end IntensionalSemantics.Tense.Klecha
+end Semantics.Tense.Klecha

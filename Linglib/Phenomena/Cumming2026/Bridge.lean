@@ -26,7 +26,7 @@ predictions.
 
 namespace Phenomena.Cumming2026.Bridge
 
-open TruthConditional.Sentence.Tense.Evidential
+open Semantics.Tense.Evidential
 open Fragments.English.Tense
 open Fragments.Korean.Evidentials
 open Fragments.Bulgarian.Evidentials

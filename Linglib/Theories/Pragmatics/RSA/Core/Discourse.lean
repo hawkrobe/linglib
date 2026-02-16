@@ -24,7 +24,7 @@ import Linglib.Theories.Semantics.Dynamic.State
 
 namespace RSA
 
-open DynamicSemantics.State
+open Semantics.Dynamic.State
 
 -- QUD Configuration
 

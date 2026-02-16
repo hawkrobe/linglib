@@ -55,7 +55,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 namespace RSA.QingEtAl2016
 
 open RSA.Eval
-open TruthConditional.Verb.ChangeOfState
+open Semantics.Lexical.Verb.ChangeOfState
 
 
 /--

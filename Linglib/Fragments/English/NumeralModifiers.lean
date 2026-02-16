@@ -32,7 +32,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.NumeralModifiers
 
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 /--
 Semantic type of a numeral modifier.

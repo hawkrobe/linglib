@@ -22,10 +22,10 @@ import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BUS.Basic
 
-namespace DynamicSemantics.BUS
+namespace Semantics.Dynamic.BUS
 
-open DynamicSemantics.Core
-open DynamicSemantics.Core.DynamicTy2
+open Semantics.Dynamic.Core
+open Semantics.Dynamic.Core.DynamicTy2
 
 
 /--
@@ -133,4 +133,4 @@ theorem bseq_positive_assoc {S : Type*} (D₁ D₂ D₃ : BilateralDRS S) :
   · intro ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩; exact ⟨h', hD₁, h, hD₂, hD₃⟩
   · intro ⟨h', hD₁, h, hD₂, hD₃⟩; exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
 
-end DynamicSemantics.BUS
+end Semantics.Dynamic.BUS

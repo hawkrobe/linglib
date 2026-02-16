@@ -7,7 +7,7 @@ Morphological rules for tense marking on verbs.
 
 All rules are `isVacuous := true` because the semantic work (temporal
 constraints, Reichenbach frames) lives in the Theory layer
-(`Theories/TruthConditional/Sentence/Tense/Basic.lean`), not in
+(`Theories/Semantics.Compositional/Sentence/Tense/Basic.lean`), not in
 the morphological rule itself.
 
 ## Synthetic vs Periphrastic

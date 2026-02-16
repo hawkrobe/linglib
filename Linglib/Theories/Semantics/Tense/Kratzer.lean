@@ -31,11 +31,11 @@ and simultaneous readings) but differ on what "past" means:
   *SALT VIII*, 92-110.
 -/
 
-namespace IntensionalSemantics.Tense.Kratzer
+namespace Semantics.Tense.Kratzer
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -126,4 +126,4 @@ theorem kratzer_uses_deletion :
     KratzerTense.hasSOTDeletion = true := rfl
 
 
-end IntensionalSemantics.Tense.Kratzer
+end Semantics.Tense.Kratzer

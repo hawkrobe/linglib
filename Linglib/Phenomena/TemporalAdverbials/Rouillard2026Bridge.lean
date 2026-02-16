@@ -42,8 +42,8 @@ new theoretical machinery.
 
 namespace Phenomena.TemporalAdverbials.Rouillard2026
 
-open TruthConditional.Verb.Aspect
-open TruthConditional.Sentence.MaximalInformativity
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Compositional.Sentence.MaximalInformativity
 open Core.Scale
 open Fragments.English.TemporalAdverbials
 

@@ -31,10 +31,10 @@ and distinct syntactic frames.
 
 import Linglib.Theories.Semantics.Events.ProtoRoles
 
-namespace EventSemantics.EventStructure
+namespace Semantics.Events.EventStructure
 
-open EventSemantics.ProtoRoles
-open TruthConditional.Verb.Aspect
+open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Structure Primitives (R&L 1998 + 2024)
@@ -184,4 +184,4 @@ theorem lexicalize_increases_agentivity :
 theorem lexicalized_is_full_agent :
     (Template.lexicalizeInstrument .motionContact).pAgentScore = 5 := by native_decide
 
-end EventSemantics.EventStructure
+end Semantics.Events.EventStructure

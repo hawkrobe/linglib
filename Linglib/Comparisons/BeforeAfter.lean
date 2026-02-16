@@ -36,7 +36,7 @@ scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
 
 namespace Comparisons.BeforeAfter
 
-open TruthConditional.Sentence.Tense.TemporalConnectives
+open Semantics.Tense.TemporalConnectives
 open Fragments.English.TemporalExpressions
 
 -- ============================================================================

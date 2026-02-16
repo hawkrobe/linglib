@@ -51,7 +51,7 @@ remain distinct (`groundhog` ≠ `woodchuck` even if co-extensional).
 - Montague (1973). The Proper Treatment of Quantification.
 -/
 
-namespace DynamicSemantics.TTR
+namespace Semantics.TypeTheoretic
 
 -- ============================================================================
 -- Types, Records, Judgments
@@ -909,4 +909,4 @@ theorem dudamelSentence_is_existWitness :
 
 end DerivationPhenomena
 
-end DynamicSemantics.TTR
+end Semantics.TypeTheoretic

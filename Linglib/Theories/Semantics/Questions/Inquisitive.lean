@@ -39,9 +39,9 @@ probabilistic answerhood in `ProbabilisticAnswerhood.lean`.
 - Groenendijk & Roelofsen (2009). Inquisitive Semantics and Pragmatics.
 -/
 
-namespace QuestionSemantics.Inquisitive
+namespace Semantics.Questions.Inquisitive
 
-open QuestionSemantics
+open Semantics.Questions
 
 -- Information States
 
@@ -254,4 +254,4 @@ theorem empty_not_inquisitive {W : Type*} :
 theorem ofPartition_preserves_cells {W : Type*} (q : GSQuestion W) (worlds : List W) :
     (Issue.ofPartition q worlds).numAlternatives = (q.toCells worlds).length := rfl
 
-end QuestionSemantics.Inquisitive
+end Semantics.Questions.Inquisitive

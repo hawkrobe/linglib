@@ -16,7 +16,7 @@ The 6 properties (ordered by frequency effect, Woodin et al. 2024):
 6. Multiple of 5 (β = 0.06) — weakest predictor
 
 This module lives in Core because both Phenomena (empirical data) and
-Theories (TruthConditional, NeoGricean, RSA) depend on the roundness
+Theories (Semantics.Compositional, NeoGricean, RSA) depend on the roundness
 score, avoiding a cross-layer Theories→Phenomena import.
 
 ## References

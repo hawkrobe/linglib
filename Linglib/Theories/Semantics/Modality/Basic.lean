@@ -11,9 +11,9 @@ semantics with Simple/Kripke (1963) primitive-accessibility semantics.
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.ModalLogic
 
-namespace IntensionalSemantics.Modal
+namespace Semantics.Modality
 
-open IntensionalSemantics.Attitude.Intensional
+open Semantics.Attitudes.Intensional
 
 section CoreTypes
 
@@ -117,4 +117,4 @@ def triviallyFalse : Proposition := λ _ => false
 
 end TestPropositions
 
-end IntensionalSemantics.Modal
+end Semantics.Modality

@@ -27,7 +27,7 @@ Connects the graded roundness model (k-ness) to five existing modules:
 Phenomena.Imprecision.Numerals (k-ness core)
     ↑              ↑                ↑
     |              |                |
-Phenomena.        NeoGricean.       TruthConditional.
+Phenomena.        NeoGricean.       Semantics.Compositional.
 NumberUse.        Constraints.      Domain.Degree
 WoodinEtAl2024    NumericalExprs    (extended)
     ↑              ↑                ↑
@@ -52,7 +52,7 @@ namespace Comparisons.NumeralSalience
 open Core.Roundness
 open Phenomena.NumberUse.WoodinEtAl2024
 open NeoGricean.Constraints.NumericalExpressions
-open TruthConditional.Numeral.Precision
+open Semantics.Lexical.Numeral.Precision
 open Core.Scale (HasDegree)
 
 -- ============================================================================
@@ -287,8 +287,8 @@ prove the two representations agree for all five `OrderingRel` variants.
 
 section Bridge8_Degree
 
-open TruthConditional.Numeral
-open TruthConditional.Numeral.Precision
+open Semantics.Lexical.Numeral
+open Semantics.Lexical.Numeral.Precision
 open Core.Scale (HasDegree)
 
 /-- A type with a natural-number cardinality measure. -/
@@ -335,7 +335,7 @@ end Bridge8_Degree
 
 section Bridge9
 
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 /-- Run L1 for a numeral theory using RSA.Eval.
 
@@ -372,7 +372,7 @@ properties from `maxMeaning` rather than hand-rolled truth tables.
 
 section Bridge10
 
-open TruthConditional.Numeral
+open Semantics.Lexical.Numeral
 
 /-- Extended worlds for modified numeral RSA (0 through 5). -/
 def kennedyWorlds : List Nat := [0, 1, 2, 3, 4, 5]

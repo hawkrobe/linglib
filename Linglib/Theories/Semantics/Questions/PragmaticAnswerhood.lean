@@ -34,7 +34,7 @@ Then:
 - Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. IV.
 -/
 
-namespace QuestionSemantics
+namespace Semantics.Questions
 
 -- Information Sets
 
@@ -358,4 +358,4 @@ theorem diverse_audience_prefers_semantic {W E : Type*} [DecidableEq E]
 
 -- W is implicit in TermDenotation, InfoSet, etc.
 
-end QuestionSemantics
+end Semantics.Questions

@@ -43,13 +43,13 @@ import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Update
 import Linglib.Theories.Semantics.Compositional.Core.Time
 import Linglib.Theories.Semantics.Mood.Basic
 
-namespace DynamicSemantics.IntensionalCDRT.Situations
+namespace Semantics.Dynamic.IntensionalCDRT.Situations
 
 open Core.Time
-open TruthConditional.Core.Time
-open IntensionalSemantics.Mood
-open DynamicSemantics.IntensionalCDRT
-open DynamicSemantics.Core
+open Semantics.Compositional.Core.Time
+open Semantics.Mood
+open Semantics.Dynamic.IntensionalCDRT
+open Semantics.Dynamic.Core
 
 
 /--
@@ -608,4 +608,4 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
     exact h_ans
 
 
-end DynamicSemantics.IntensionalCDRT.Situations
+end Semantics.Dynamic.IntensionalCDRT.Situations

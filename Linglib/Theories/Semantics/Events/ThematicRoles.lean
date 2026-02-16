@@ -23,9 +23,9 @@ to events (Parsons 1990). This module provides:
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Core.Basic
 
-namespace EventSemantics.ThematicRoles
+namespace Semantics.Events.ThematicRoles
 
-open EventSemantics
+open Semantics.Events
 open Core.Time
 
 -- ════════════════════════════════════════════════════
@@ -207,4 +207,4 @@ theorem modify_assoc {Time : Type*} [LE Time]
   exact propext ⟨λ ⟨⟨hp, hm1⟩, hm2⟩ => ⟨hp, hm1, hm2⟩,
                 λ ⟨hp, hm1, hm2⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
-end EventSemantics.ThematicRoles
+end Semantics.Events.ThematicRoles

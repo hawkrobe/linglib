@@ -13,10 +13,10 @@ Separated from `ThematicRoles.lean` to keep the Theory layer free of
 Fragment imports (Theories → Fragments dependency discipline).
 -/
 
-namespace EventSemantics.ThematicRoles.Grounding
+namespace Semantics.Events.ThematicRoles.Grounding
 
-open EventSemantics
-open EventSemantics.ThematicRoles
+open Semantics.Events
+open Semantics.Events.ThematicRoles
 open Core.Time
 open Fragments.English.Predicates.Verbal
 
@@ -112,4 +112,4 @@ theorem john_kicked_mary :
     transitiveLogicalForm kickPred exampleFrame .john .mary := by
   exact ⟨exampleRun, rfl, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-end EventSemantics.ThematicRoles.Grounding
+end Semantics.Events.ThematicRoles.Grounding

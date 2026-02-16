@@ -37,7 +37,7 @@ This is NOT C-distributive because worry-about-Q involves global uncertainty.
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Proposition
 
-namespace IntensionalSemantics.Attitude.CDistributivity
+namespace Semantics.Attitudes.CDistributivity
 
 -- Basic Types
 
@@ -301,4 +301,4 @@ This transforms the Qing et al. (2025) analysis from an encoding to a derivation
 - The classification into NVP classes has genuine explanatory force
 -/
 
-end IntensionalSemantics.Attitude.CDistributivity
+end Semantics.Attitudes.CDistributivity

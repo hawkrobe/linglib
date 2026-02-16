@@ -20,9 +20,9 @@ import Linglib.Core.Intension
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 
-namespace IntensionalSemantics.Attitude.Intensional
+namespace Semantics.Attitudes.Intensional
 
-open TruthConditional
+open Semantics.Compositional
 open Core.Proposition (World4 FiniteWorlds)
 
 /-- Canonical 4-world type for modal examples. Alias for `Core.Proposition.World4`. -/
@@ -78,4 +78,4 @@ theorem up_eq_rigid {m : IModel} {τ : Ty} (x : m.interpTy τ) :
 theorem down_eq_evalAt {m : IModel} {τ : Ty} (f : m.interpTy (Ty.intens τ)) (w : World) :
     down f w = Core.Intension.evalAt f w := rfl
 
-end IntensionalSemantics.Attitude.Intensional
+end Semantics.Attitudes.Intensional

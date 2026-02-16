@@ -28,7 +28,7 @@ Kind readings require topic position.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
-namespace TruthConditional.Noun.Kind.Krifka2004
+namespace Semantics.Lexical.Noun.Kind.Krifka2004
 
 -- Type System: Properties with Number Arguments
 
@@ -268,4 +268,4 @@ theorem krifka_position_sensitive
     : krifkaDerivScrambled domain prop vp =
       existsShiftApply domain prop (KrifkaVP.neg vp) := rfl
 
-end TruthConditional.Noun.Kind.Krifka2004
+end Semantics.Lexical.Noun.Kind.Krifka2004

@@ -50,12 +50,12 @@ between functional head and root.
 
 import Linglib.Theories.Semantics.Events.EventStructure
 
-namespace EventSemantics.RootTypology
+namespace Semantics.Events.RootTypology
 
-open EventSemantics.EventStructure
-open EventSemantics.ProtoRoles
-open TruthConditional.Verb.ChangeOfState
-open TruthConditional.Verb.Aspect
+open Semantics.Events.EventStructure
+open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Type Classification (Beavers et al. 2021 §3.1)
@@ -550,4 +550,4 @@ theorem grand_unification (rt : RootType) :
     RootType.requiresBECOME, RootType.admitsBasicStative,
     verbalMarkedness, stativeMarkedness]
 
-end EventSemantics.RootTypology
+end Semantics.Events.RootTypology

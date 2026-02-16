@@ -23,8 +23,8 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.3d.
 
 namespace Phenomena.Modality.InformationalBackgrounds
 
-open IntensionalSemantics.Attitude.Intensional (World)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World)
+open Semantics.Modality.Kratzer
 open Core.Evidence
 
 /-! ## Propositions -/

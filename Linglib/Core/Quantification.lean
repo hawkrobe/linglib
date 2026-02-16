@@ -13,7 +13,7 @@ a restrictor and a scope to a truth value. The properties defined here
 are purely logical — they hold at the `Bool`-function level and require
 no model infrastructure.
 
-The theory-specific module `TruthConditional.Determiner.Quantifier` defines
+The theory-specific module `Semantics.Lexical.Determiner.Quantifier` defines
 concrete denotations (`every_sem`, `some_sem`, etc.) and proves they satisfy
 these properties. `m.interpTy Ty.det` is definitionally `GQ m.Entity`, so
 all definitions here apply directly.
@@ -63,7 +63,7 @@ Scope-upward-monotone: if B ⊆ B' and Q(A,B), then Q(A,B').
 
 Equivalent to `∀ R, Monotone (q R)` under pointwise Bool ordering
 (see `scopeUpMono_iff_monotone`). This connects to
-`TruthConditional.Core.Polarity.IsUpwardEntailing = Monotone`.
+`Semantics.Compositional.Core.Polarity.IsUpwardEntailing = Monotone`.
 -/
 def ScopeUpwardMono (q : GQ α) : Prop :=
   ∀ (R S S' : α → Bool),
@@ -217,7 +217,7 @@ def Filtrating (q : GQ α) : Prop :=
     Boolean pattern, not on which specific elements satisfy A and B.
     This is the model-agnostic formulation of Mostowski (1957).
 
-    The model-specific version in `TruthConditional.Determiner.Quantifier.Quantity`
+    The model-specific version in `Semantics.Lexical.Determiner.Quantifier.Quantity`
     uses cardinalities directly, which requires `FiniteModel`. This version
     captures the same intuition without model infrastructure.
 

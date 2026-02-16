@@ -80,6 +80,7 @@ are in `Bridge.lean`.
 namespace Phenomena.Tense
 
 open Core.Reichenbach
+open Core.Time (SituationBoundedness BoundedFrame TimeSphere)
 open Core.Tense
 
 
@@ -1244,17 +1245,10 @@ theorem hadLeft_is_perfect :
 
     Declerck (1991) ch. 3 §1.2. -/
 
-/-- Aspectual boundedness of a situation: bounded (telic/perfective)
-    or unbounded (atelic/imperfective). -/
-inductive SituationBoundedness where
-  | bounded    -- telic / perfective / closed
-  | unbounded  -- atelic / imperfective / open
-  deriving DecidableEq, Repr, BEq
-
-/-- A situation paired with its boundedness classification. -/
-structure BoundedFrame where
-  frame : ReichenbachFrame ℤ
-  boundedness : SituationBoundedness
+-- SituationBoundedness and BoundedFrame are defined in Core/Time.lean.
+-- We alias BoundedFrame here for backward compatibility.
+/-- Concrete bounded frame for tense phenomena. -/
+abbrev BoundedFrame := Core.Time.BoundedFrame (ReichenbachFrame ℤ)
 
 /-- "He arrived." — bounded (achievement). -/
 def arrivedBounded : BoundedFrame where

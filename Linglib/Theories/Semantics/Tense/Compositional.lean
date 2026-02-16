@@ -35,7 +35,7 @@ they introduce or retrieve temporal reference points.
 
 import Linglib.Core.Tense
 
-namespace TruthConditional.Sentence.Tense
+namespace Semantics.Tense
 
 open Core.Time
 open Core.Reichenbach
@@ -262,8 +262,8 @@ under embedding. The following theorems establish its algebraic properties.
 
 For the DERIVED version — showing that composeTense matches the Reichenbach
 analysis with perspective shifting — see
-`IntensionalSemantics.Tense` (in `IS/Tense/Basic.lean`) and the TC↔IS bridge
-in `TruthConditional.Sentence.Tense.SequenceOfTense`.
+`Semantics.Tense` (in `IS/Tense/Basic.lean`) and the TC↔IS bridge
+in `Semantics.Tense.SequenceOfTense`.
 -/
 
 /-- Present is transparent under composition (left):
@@ -289,4 +289,4 @@ theorem composeTense_past_idempotent :
 theorem composeTense_future_idempotent :
     composeTense .future .future = .future := rfl
 
-end TruthConditional.Sentence.Tense
+end Semantics.Tense

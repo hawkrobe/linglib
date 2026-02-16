@@ -43,9 +43,9 @@ does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
 namespace Nadathur2023.Ability
 
 open Core.Causation
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
-open IntensionalSemantics.Modal.Kratzer (ModalBase ConvBackground)
-open TruthConditional.Verb.ViewpointAspect (ViewpointType ViewpointAspectB)
+open Semantics.Attitudes.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer (ModalBase ConvBackground)
+open Semantics.Lexical.Verb.ViewpointAspect (ViewpointType ViewpointAspectB)
 
 -- ════════════════════════════════════════════════════
 -- Ability Scenario
@@ -135,7 +135,7 @@ def toCircumstantialBase (sc : AbilityScenario) : ModalBase :=
     IS circumstantial possibility, where the "circumstances" are
     the causal structure. -/
 def abilityAsKratzerPossibility (sc : AbilityScenario) (w : World) : Bool :=
-  IntensionalSemantics.Modal.Kratzer.simplePossibility
+  Semantics.Modality.Kratzer.simplePossibility
     (toCircumstantialBase sc)
     (λ w' => complementActualized sc w')
     w

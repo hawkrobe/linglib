@@ -20,9 +20,9 @@ from different quantifiers compose independently.
 - Brasoveanu, A. (2012). Modified numerals as post-suppositions.
 -/
 
-namespace DynamicSemantics.DynamicGQ.PostSuppositional
+namespace Semantics.Dynamic.DynamicGQ.PostSuppositional
 
-open DynamicSemantics.Core.DynamicTy2
+open Semantics.Dynamic.Core.DynamicTy2
 
 variable {S : Type*}
 
@@ -100,4 +100,4 @@ theorem postsup_cumulative {S E : Type*} [AssignmentStructure S E]
     True := by
   intro _ _ _ _; trivial
 
-end DynamicSemantics.DynamicGQ.PostSuppositional
+end Semantics.Dynamic.DynamicGQ.PostSuppositional

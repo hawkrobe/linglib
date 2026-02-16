@@ -45,11 +45,11 @@ includes cases where p is false, so strengthening to know(¬p) would require
 - Gajewski, J. (2007). Neg-raising and polarity.
 -/
 
-namespace IntensionalSemantics.Attitude.NegRaising
+namespace Semantics.Attitudes.NegRaising
 
 open Core.Proposition (BProp)
 open Core.SquareOfOpposition (Square SquareRelations)
-open IntensionalSemantics.Attitude.Doxastic
+open Semantics.Attitudes.Doxastic
   (DoxasticPredicate Veridicality boxAt diaAt AccessRel)
 
 -- ============================================================================
@@ -198,4 +198,4 @@ theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
   ⟨doxasticSquare_contradAO R agent worlds p w,
    doxasticSquare_contradEI R agent worlds p w⟩
 
-end IntensionalSemantics.Attitude.NegRaising
+end Semantics.Attitudes.NegRaising

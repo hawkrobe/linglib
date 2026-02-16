@@ -24,10 +24,10 @@ import Linglib.Core.QUD
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Phenomena.Focus.Exclusives
 
-namespace TruthConditional.Sentence.DomainWidening
+namespace Semantics.Compositional.Sentence.DomainWidening
 
 open Phenomena.Focus.Exclusives
-open QuestionSemantics
+open Semantics.Questions
 
 -- ============================================================================
 -- A. Alternative Source
@@ -238,4 +238,4 @@ theorem all_flavors_one_entry :
   intro d _
   exact ⟨associatedSource d.flavor, d.contextType, rfl, rfl⟩
 
-end TruthConditional.Sentence.DomainWidening
+end Semantics.Compositional.Sentence.DomainWidening

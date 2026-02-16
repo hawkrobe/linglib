@@ -28,15 +28,15 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 - Bach, E. (1986). The algebra of events.
 -/
 
-namespace EventSemantics.Mereology
+namespace Semantics.Events.Mereology
 
-open EventSemantics
+open Semantics.Events
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 open _root_.Mereology
 
 -- Re-export Core.Mereology definitions in this namespace so that
--- existing `open EventSemantics.Mereology` continues to work.
+-- existing `open Semantics.Events.Mereology` continues to work.
 export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   algClosure_cum subset_algClosure qua_cum_incompatible atom_qua
   div_closed_under_le cum_qua_disjoint algClosure_of_mem
@@ -154,4 +154,4 @@ theorem vendlerClass_telic_implies_qua_intent
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-end EventSemantics.Mereology
+end Semantics.Events.Mereology

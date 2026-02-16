@@ -28,10 +28,10 @@ temporally simple. This module makes that structure explicit via
 - Pustejovsky, J. (1991). The syntax of event structure.
 -/
 
-namespace EventSemantics
+namespace Semantics.Events
 
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Subevent Phases
@@ -171,4 +171,4 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
     (r : Interval Time) :
     (TemporalDecomposition.simple r).activityPhase = none := rfl
 
-end EventSemantics
+end Semantics.Events

@@ -56,11 +56,11 @@ are available in embedded clauses, producing optional SOT:
   In R. Binnick (ed.), *The Oxford Handbook of Tense and Aspect*.
 -/
 
-namespace IntensionalSemantics.Tense.Sharvit
+namespace Semantics.Tense.Sharvit
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -250,4 +250,4 @@ def Sharvit : TenseTheory where
   simultaneousMechanism := "simultaneous tense with its own semantics (not deletion/zero/binding)"
 
 
-end IntensionalSemantics.Tense.Sharvit
+end Semantics.Tense.Sharvit

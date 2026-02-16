@@ -10,7 +10,7 @@ C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 namespace Fragments.Japanese.Predicates
 
 open Core.Verbs
-open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
+open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-- Japanese verb entry: extends VerbCore with Japanese inflectional paradigm. -/

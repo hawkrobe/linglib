@@ -15,10 +15,10 @@ import Linglib.Theories.Semantics.Compositional.Variables
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Interfaces.BindingSemantics
 
-namespace TruthConditional.Anaphora
+namespace Semantics.Compositional.Anaphora
 
-open TruthConditional
-open TruthConditional.Variables
+open Semantics.Compositional
+open Semantics.Compositional.Variables
 open Interfaces.BindingSemantics
 
 
@@ -188,4 +188,4 @@ end VPEllipsis
 
 end Continuations
 
-end TruthConditional.Anaphora
+end Semantics.Compositional.Anaphora

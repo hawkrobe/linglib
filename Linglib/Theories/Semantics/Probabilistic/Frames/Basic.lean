@@ -41,7 +41,7 @@ Scenarios can be modeled in RSA as:
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.ProductOfExperts
 
-namespace TruthConditional.Frames
+namespace Semantics.Probabilistic.Frames
 
 
 /-!
@@ -351,4 +351,4 @@ def scenarioGoalFilter {Concept Scenario : Type} [BEq Scenario]
     (targetScenario : Scenario) : ScenarioWorld Concept Scenario → Bool :=
   λ w => w.scenario == targetScenario
 
-end TruthConditional.Frames
+end Semantics.Probabilistic.Frames

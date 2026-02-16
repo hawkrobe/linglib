@@ -39,10 +39,10 @@ This file breaks the cycle by importing both and defining the derivations.
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Attitudes.Preferential
 
-namespace IntensionalSemantics.Attitude.BuilderProperties
+namespace Semantics.Attitudes.BuilderProperties
 
 open Fragments.English.Predicates.Verbal (PreferentialBuilder AttitudeBuilder)
-open IntensionalSemantics.Attitude.Preferential (AttitudeValence NVPClass)
+open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
 -- C-Distributivity from Semantic Builder
 
@@ -207,4 +207,4 @@ theorem qidai_builder_class1 :
     PreferentialBuilder.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
   native_decide
 
-end IntensionalSemantics.Attitude.BuilderProperties
+end Semantics.Attitudes.BuilderProperties

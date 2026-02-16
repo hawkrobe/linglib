@@ -42,11 +42,11 @@ Different individuals can give different complete answers.
 - Dayal (2016). Questions. MIT Press.
 -/
 
-namespace QuestionSemantics.ScopeReadings
+namespace Semantics.Questions.ScopeReadings
 
-open QuestionSemantics
-open QuestionSemantics.Coordination
-open QuestionSemantics.MentionSome
+open Semantics.Questions
+open Semantics.Questions.Coordination
+open Semantics.Questions.MentionSome
 open scoped GSQuestion  -- For ⊑ notation
 
 
@@ -498,4 +498,4 @@ def predictPairList (factors : PairListFactors) : Bool :=
   let focusOK := factors.contrastiveFocus
   verbOK && (defOK || focusOK)
 
-end QuestionSemantics.ScopeReadings
+end Semantics.Questions.ScopeReadings

@@ -28,10 +28,10 @@ import Linglib.Theories.Semantics.Compositional.Basic
 import Linglib.Theories.Semantics.Compositional.Conjunction
 import Mathlib.Order.Hom.BoundedLattice
 
-namespace TruthConditional.Noun.TypeShifting
+namespace Semantics.Lexical.Noun.TypeShifting
 
-open TruthConditional (Model Ty toyModel ToyEntity)
-open TruthConditional.Conjunction (typeRaise)
+open Semantics.Compositional (Model Ty toyModel ToyEntity)
+open Semantics.Compositional.Conjunction (typeRaise)
 
 variable {m : Model}
 
@@ -275,11 +275,11 @@ theorem roundtrip_changes_nonprincipal :
 
 section ToyExamples
 
-open TruthConditional.ToyLexicon (john_sem)
+open Semantics.Compositional.ToyLexicon (john_sem)
 
 private def toyDomain : List ToyEntity := [.john, .mary, .pizza, .book]
 
-example : lift (m := toyModel) john_sem TruthConditional.ToyLexicon.sleeps_sem = true := rfl
+example : lift (m := toyModel) john_sem Semantics.Compositional.ToyLexicon.sleeps_sem = true := rfl
 example : BE (m := toyModel) (lift john_sem) = ident john_sem :=
   BE_lift_eq_ident john_sem
 example : iota (m := toyModel) toyDomain (ident john_sem) = some john_sem := rfl
@@ -312,4 +312,4 @@ def NOM (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e)
 
 end SnyderShifts
 
-end TruthConditional.Noun.TypeShifting
+end Semantics.Lexical.Noun.TypeShifting

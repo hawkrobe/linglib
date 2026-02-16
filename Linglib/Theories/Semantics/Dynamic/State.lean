@@ -42,7 +42,7 @@ import Linglib.Core.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 
-namespace DynamicSemantics.State
+namespace Semantics.Dynamic.State
 
 open Core.Proposition
 open Core.CommonGround
@@ -415,4 +415,4 @@ def forCG {D : Type} [Fintype D] [DecidableEq D]
 
 end DiscourseConfig
 
-end DynamicSemantics.State
+end Semantics.Dynamic.State

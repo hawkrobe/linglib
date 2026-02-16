@@ -103,7 +103,7 @@ express the speaker's evaluative stance toward that counterstance.
 
 namespace Fragments.Japanese.OutlookMarkers
 
-open TruthConditional.Expressives.OutlookMarker
+open Semantics.Lexical.Expressives.OutlookMarker
 
 /-- Syntactic category of an outlook marker. -/
 inductive OutlookCat where

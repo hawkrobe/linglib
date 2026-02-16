@@ -29,11 +29,11 @@ about the source: ambiguity (Ogihara) vs deletion (Kratzer).
 - Ogihara, T. (1989). Temporal reference in English and Japanese. PhD thesis.
 -/
 
-namespace IntensionalSemantics.Tense.Ogihara
+namespace Semantics.Tense.Ogihara
 
 open Core.Tense
 open Core.Reichenbach
-open IntensionalSemantics.Tense
+open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -128,4 +128,4 @@ theorem ogihara_ambiguity_vs_deletion :
   ⟨nofun, rfl⟩
 
 
-end IntensionalSemantics.Tense.Ogihara
+end Semantics.Tense.Ogihara

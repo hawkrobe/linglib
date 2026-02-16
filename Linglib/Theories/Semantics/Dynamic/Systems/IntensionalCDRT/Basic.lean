@@ -20,9 +20,9 @@ import Linglib.Theories.Semantics.Dynamic.Core.Update
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Mathlib.Data.Set.Basic
 
-namespace DynamicSemantics.IntensionalCDRT
+namespace Semantics.Dynamic.IntensionalCDRT
 
-open DynamicSemantics.Core
+open Semantics.Dynamic.Core
 
 -- ICDRT-specific Notation
 
@@ -121,4 +121,4 @@ def initial [Nonempty W] : CommitmentSet W E where
 end CommitmentSet
 
 
-end DynamicSemantics.IntensionalCDRT
+end Semantics.Dynamic.IntensionalCDRT

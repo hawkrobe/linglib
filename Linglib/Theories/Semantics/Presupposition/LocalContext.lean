@@ -41,7 +41,7 @@ For a sentence S with embedded clause φ at position i:
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
 
-namespace TruthConditional.Sentence.Presupposition.LocalContext
+namespace Semantics.Presupposition.LocalContext
 
 open Core.Presupposition
 open Core.Proposition
@@ -250,4 +250,4 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     · simp
     · simp [himp ha]
 
-end TruthConditional.Sentence.Presupposition.LocalContext
+end Semantics.Presupposition.LocalContext

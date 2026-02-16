@@ -11,9 +11,9 @@ Accessibility is a primitive relation, unlike Kratzer's derived approach.
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Core.ModalLogic
 
-namespace IntensionalSemantics.Modal
+namespace Semantics.Modality
 
-open IntensionalSemantics.Attitude.Intensional
+open Semantics.Attitudes.Intensional
 open Core.ModalLogic (Refl Serial Trans Symm Eucl)
 
 /-- Construct a simple modal theory from accessibility relation R. -/
@@ -273,4 +273,4 @@ theorem simple_K_axiom (R : World → World → Bool) :
 
 end KAxiom
 
-end IntensionalSemantics.Modal
+end Semantics.Modality

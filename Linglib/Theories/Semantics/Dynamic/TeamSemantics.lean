@@ -36,7 +36,7 @@ This module provides general infrastructure. Specific applications:
 
 import Mathlib.Data.Set.Basic
 
-namespace DynamicSemantics.TeamSemantics
+namespace Semantics.Dynamic.TeamSemantics
 
 
 /--
@@ -274,4 +274,4 @@ def Entails {W : Type*} (φ ψ : BilateralFormula W) (worlds : List W) : Prop :=
 
 notation:50 φ " ⊨ₜ " ψ => Entails φ ψ
 
-end DynamicSemantics.TeamSemantics
+end Semantics.Dynamic.TeamSemantics

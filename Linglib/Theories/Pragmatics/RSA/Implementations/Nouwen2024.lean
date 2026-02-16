@@ -55,7 +55,7 @@ open RSA.Eval
 open RSA.LassiterGoodman2017 (Height Threshold allHeights allThresholds
   heightPrior thresholdPrior tallMeaning)
 open Core.Scale (deg thr)
-open TruthConditional.Adjective.Intensification (EvaluativeValence)
+open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
 open Phenomena.Gradability.Intensifiers (IntensifierClass)
 
 -- Utterances

@@ -22,10 +22,10 @@ Cumulative readings require non-distributive M_v, which lives only in `StateCCP`
 - Muskens, R. (1996). Combining Montague Semantics and Discourse Representation.
 -/
 
-namespace DynamicSemantics.Core.PointwiseUpdate
+namespace Semantics.Dynamic.Core.PointwiseUpdate
 
-open DynamicSemantics.Core.DynamicTy2
-open DynamicSemantics.Charlow2019
+open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Charlow2019
 
 variable {W E : Type*}
 
@@ -98,4 +98,4 @@ theorem liftPW_lowerPW_not_id :
     ∃ (K : StateCCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
   sorry
 
-end DynamicSemantics.Core.PointwiseUpdate
+end Semantics.Dynamic.Core.PointwiseUpdate

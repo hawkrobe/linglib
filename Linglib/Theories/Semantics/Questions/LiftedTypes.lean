@@ -87,9 +87,9 @@ enabling non-local effects while maintaining compositional, left-to-right evalua
 - Barker & Shan (2014). Continuations and Natural Language. OUP.
 -/
 
-namespace QuestionSemantics.LiftedTypes
+namespace Semantics.Questions.LiftedTypes
 
-open QuestionSemantics
+open Semantics.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
 -- Core Definitions
@@ -425,4 +425,4 @@ end LiftedQuestion
 scoped infixl:65 " ⊔ " => LiftedQuestion.disj
 scoped infixl:70 " ⊓ " => LiftedQuestion.conj
 
-end QuestionSemantics.LiftedTypes
+end Semantics.Questions.LiftedTypes

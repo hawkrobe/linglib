@@ -6,7 +6,7 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 
 import Linglib.Core.Proposition
 
-namespace TruthConditional.Sentence.Entailment
+namespace Semantics.Entailment
 
 section FiniteWorldSemantics
 
@@ -75,4 +75,4 @@ theorem p01_entails_p012 : entails p01 p012 = true := by native_decide
 
 end TestPropositions
 
-end TruthConditional.Sentence.Entailment
+end Semantics.Entailment

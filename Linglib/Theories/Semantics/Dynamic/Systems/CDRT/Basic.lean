@@ -37,7 +37,7 @@ Instead of DRS boxes, CDRT uses:
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic
 
-namespace DynamicSemantics.CDRT
+namespace Semantics.Dynamic.CDRT
 
 -- Core Types
 
@@ -148,4 +148,4 @@ Dynamic entailment: φ entails ψ if ψ is true after φ.
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
   ∀ i o, φ i o → ψ.true_at o
 
-end DynamicSemantics.CDRT
+end Semantics.Dynamic.CDRT

@@ -42,8 +42,8 @@ import Linglib.Theories.Semantics.Compositional.Derivation.Scope
 namespace RSA.ScontrasPearl2021
 
 open ScontrasPearl2021
-open TruthConditional.Scope
-open TruthConditional.Derivation.Scope (ScopeConfig)
+open Semantics.Compositional.Scope
+open Semantics.Compositional.Derivation.Scope (ScopeConfig)
 
 -- World-Parametric Meaning (RSA-specific)
 

@@ -39,7 +39,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 namespace Minimalism.Bridge.RelativeClauses
 
-open TruthConditional TruthConditional.Variables TruthConditional.Modification
+open Semantics.Compositional Semantics.Compositional.Variables Semantics.Compositional.Modification
 open Minimalism.Semantics
 open Minimalism
 

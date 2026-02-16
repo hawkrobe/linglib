@@ -22,10 +22,10 @@ maximal probability.
 Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.4.
 -/
 
-namespace IntensionalSemantics.Modal.ProbabilityOrdering
+namespace Semantics.Modality.ProbabilityOrdering
 
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
+open Semantics.Modality.Kratzer
 
 /-! ## Probability assignment -/
 
@@ -91,4 +91,4 @@ theorem prob_necessity_at_best (p : BProp World) (w : World)
   simp only [List.all_cons, List.all_nil, Bool.and_true]
   exact hp
 
-end IntensionalSemantics.Modal.ProbabilityOrdering
+end Semantics.Modality.ProbabilityOrdering

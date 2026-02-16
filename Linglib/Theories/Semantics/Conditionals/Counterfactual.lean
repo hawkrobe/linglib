@@ -45,9 +45,9 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Core.Causation
 import Linglib.Core.Duality
 
-namespace IntensionalSemantics.Conditional.Counterfactual
+namespace Semantics.Conditionals.Counterfactual
 
-open IntensionalSemantics.Conditional
+open Semantics.Conditionals
 open Core.Causation
 
 
@@ -694,4 +694,4 @@ theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     causalCounterfactual dyn s cause effect =
     Core.Causation.developsToTrue dyn (s.extend cause true) effect := rfl
 
-end IntensionalSemantics.Conditional.Counterfactual
+end Semantics.Conditionals.Counterfactual

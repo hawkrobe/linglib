@@ -24,9 +24,9 @@ system can only derive pseudo-cumulative.
 - Brasoveanu, A. (2007). *Structured Nominal and Modal Reference*.
 -/
 
-namespace DynamicSemantics.DynamicGQ.Basic
+namespace Semantics.Dynamic.DynamicGQ.Basic
 
-open DynamicSemantics.Core.DynamicTy2
+open Semantics.Dynamic.Core.DynamicTy2
 open Mereology
 
 variable {S E : Type*}
@@ -77,4 +77,4 @@ def cumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (CardTest u 5))
     (CardTest v 3)
 
-end DynamicSemantics.DynamicGQ.Basic
+end Semantics.Dynamic.DynamicGQ.Basic

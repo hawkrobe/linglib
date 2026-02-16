@@ -10,7 +10,7 @@ situations (world–time pairs), and concrete time instances.
 These definitions are used across truth-conditional semantics, event semantics,
 dynamic semantics, and intensional semantics. The theory-specific layer
 (branching time, temporal propositions) remains in
-`Theories/TruthConditional/Core/Time`.
+`Theories/Semantics.Compositional/Core/Time`.
 
 ## Key Concepts
 
@@ -269,6 +269,48 @@ def contemporaneous (s₁ s₂ : Situation W Time) : Prop :=
 end Situation
 
 
+-- ════════════════════════════════════════════════════
+-- § Time-Spheres (Declerck 1991)
+-- ════════════════════════════════════════════════════
+
+/-- The two time-spheres of English (Declerck 1991 ch. 2 §3).
+
+    The tense system partitions linguistic time into two spheres:
+    - **past**: wholly before t₀, containing the preterit, past perfect,
+      conditional, and conditional perfect
+    - **present**: includes t₀, containing the present, present perfect,
+      future, and future perfect
+
+    This is a conceptual partition, not a temporal relation: both "I visited
+    Paris" and "I have visited Paris" can refer to the same objective event,
+    but differ in time-sphere membership. -/
+inductive TimeSphere where
+  | past     -- wholly before t₀
+  | present  -- includes t₀
+  deriving DecidableEq, Repr, BEq
+
+/-- Aspectual boundedness of a situation (Declerck 1991 ch. 3 §1.2).
+
+    Whether a situation is conceptualized as having inherent boundaries:
+    - **bounded**: telic / perfective / closed (achievements, accomplishments)
+    - **unbounded**: atelic / imperfective / open (activities, states)
+
+    Governs Declerck's Principle of Unmarked Temporal Interpretation (PUTI):
+    bounded + bounded → sequential; unbounded + unbounded → simultaneous;
+    mixed → temporal inclusion. -/
+inductive SituationBoundedness where
+  | bounded    -- telic / perfective / closed
+  | unbounded  -- atelic / imperfective / open
+  deriving DecidableEq, Repr, BEq
+
+/-- A temporal frame paired with its boundedness classification.
+    Polymorphic over the frame type to avoid coupling Core/Time to Core/Reichenbach.
+    Instantiate with `ReichenbachFrame ℤ` for concrete tense analysis. -/
+structure BoundedFrame (Frame : Type*) where
+  frame : Frame
+  boundedness : SituationBoundedness
+
+
 /--
 Temporal relation type for tense operators.
 
@@ -280,11 +322,13 @@ inductive TemporalRelation where
   | overlapping -- t₁ ◦ t₂ (simplified to equality for points)
   | notAfter    -- t₁ ≤ t₂
   | notBefore   -- t₁ ≥ t₂
+  | includes    -- t₁ ⊇ t₂ (t₁ contains t₂; Declerck 1991 ch. 6 §1.2)
   deriving DecidableEq, Repr, BEq
 
 namespace TemporalRelation
 
-/-- Evaluate a temporal relation on two times -/
+/-- Evaluate a temporal relation on two times.
+    For point times, `includes` reduces to equality. -/
 def eval {Time : Type*} [LinearOrder Time] :
     TemporalRelation → Time → Time → Prop
   | .before, t₁, t₂ => t₁ < t₂
@@ -292,6 +336,7 @@ def eval {Time : Type*} [LinearOrder Time] :
   | .overlapping, t₁, t₂ => t₁ = t₂
   | .notAfter, t₁, t₂ => t₁ ≤ t₂
   | .notBefore, t₁, t₂ => t₁ ≥ t₂
+  | .includes, t₁, t₂ => t₁ = t₂  -- degenerates for points; see Interval.subinterval
 
 /-- Decidable evaluation -/
 def evalB {Time : Type*} [LinearOrder Time] [DecidableEq Time]
@@ -302,6 +347,12 @@ def evalB {Time : Type*} [LinearOrder Time] [DecidableEq Time]
   | .overlapping, t₁, t₂ => t₁ == t₂
   | .notAfter, t₁, t₂ => t₁ ≤ t₂
   | .notBefore, t₁, t₂ => t₁ ≥ t₂
+  | .includes, t₁, t₂ => t₁ == t₂
+
+/-- For point times, includes is equivalent to overlapping. -/
+theorem includes_eq_overlapping_points {Time : Type*} [LinearOrder Time]
+    (t₁ t₂ : Time) :
+    eval .includes t₁ t₂ ↔ eval .overlapping t₁ t₂ := Iff.rfl
 
 end TemporalRelation
 

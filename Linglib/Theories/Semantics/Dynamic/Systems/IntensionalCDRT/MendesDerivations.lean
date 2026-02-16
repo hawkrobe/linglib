@@ -28,12 +28,12 @@ import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Compositional.Core.Time
 
-namespace DynamicSemantics.IntensionalCDRT.MendesDerivations
+namespace Semantics.Dynamic.IntensionalCDRT.MendesDerivations
 
 open Core.Time
-open TruthConditional.Core.Time
-open DynamicSemantics.IntensionalCDRT
-open DynamicSemantics.IntensionalCDRT.Situations
+open Semantics.Compositional.Core.Time
+open Semantics.Dynamic.IntensionalCDRT
+open Semantics.Dynamic.IntensionalCDRT.Situations
 
 
 /--
@@ -438,4 +438,4 @@ theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
   · trivial
 
 
-end DynamicSemantics.IntensionalCDRT.MendesDerivations
+end Semantics.Dynamic.IntensionalCDRT.MendesDerivations

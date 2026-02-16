@@ -19,9 +19,9 @@ import Linglib.Theories.Semantics.Compositional.Core.Lexicon
 namespace CCG.Interpret
 
 open CCG
-open TruthConditional
-open TruthConditional.SemDeriv
--- Qualified names avoid SemLexEntry conflict between TruthConditional.Core and CCG.Semantics
+open Semantics.Compositional
+open Semantics.Compositional.SemDeriv
+-- Qualified names avoid SemLexEntry conflict between Semantics.Compositional.Core and CCG.Semantics
 
 -- Extract Words from Derivation
 
@@ -39,8 +39,8 @@ def getWords : DerivStep → List String
 -- Identify Scalar Items
 
 /-- Check if a word form is a scalar item and return its lexical entry -/
-def getScalarEntry (form : String) : Option (TruthConditional.Core.SemLexEntry toyModel) :=
-  match TruthConditional.Core.toyLexicon form with
+def getScalarEntry (form : String) : Option (Semantics.Compositional.Core.SemLexEntry toyModel) :=
+  match Semantics.Compositional.Core.toyLexicon form with
   | some entry => if entry.isScalar then Option.some entry else none
   | none => none
 
@@ -97,7 +97,7 @@ def some_student_sleeps_sem : Derivation toyModel :=
   toDerivation
     ccg_some_student_sleeps
     .t
-    (Determiner.Quantifier.some_sem toyModel Determiner.Quantifier.student_sem ToyLexicon.sleeps_sem)
+    (Semantics.Lexical.Determiner.Quantifier.some_sem toyModel Semantics.Lexical.Determiner.Quantifier.student_sem ToyLexicon.sleeps_sem)
 
 -- Verification
 

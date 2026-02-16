@@ -60,7 +60,7 @@ open Core.ModalLogic (AccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
 open Interfaces (FelicityStatus FelicityResult FelicityCondition)
 open NeoGricean.Presuppositions (AltStructure PragConstraint Obligatoriness)
-open TruthConditional.Expressives (ciLift)
+open Semantics.Lexical.Expressives (ciLift)
 
 
 -- ============================================================================

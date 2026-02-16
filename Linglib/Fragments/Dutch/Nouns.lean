@@ -13,7 +13,7 @@ still be kind-referring, supporting Krifka (2004) over Chierchia (1998).
 
 namespace Fragments.Dutch.Nouns
 
-open TruthConditional.Noun.Kind.Chierchia1998 (BlockingPrinciple)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 /-- A lexical entry for a Dutch noun. -/
 structure NounEntry where

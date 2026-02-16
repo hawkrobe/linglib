@@ -31,11 +31,11 @@ import Linglib.Core.Presupposition
 import Linglib.Core.Proposition
 import Linglib.Theories.Semantics.Compositional.Core.Polarity
 
-namespace TruthConditional.Sentence.Entailment.PresuppositionPolarity
+namespace Semantics.Entailment.PresuppositionPolarity
 
 open Core.Presupposition
-open TruthConditional.Core.Polarity
-open TruthConditional.Core.Polarity
+open Semantics.Compositional.Core.Polarity
+open Semantics.Compositional.Core.Polarity
 
 variable {W : Type*}
 
@@ -152,4 +152,4 @@ inductive QuantifierProjection where
   deriving DecidableEq, Repr
 
 
-end TruthConditional.Sentence.Entailment.PresuppositionPolarity
+end Semantics.Entailment.PresuppositionPolarity

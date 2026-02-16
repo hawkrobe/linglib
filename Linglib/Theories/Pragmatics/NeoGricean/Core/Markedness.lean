@@ -34,9 +34,9 @@ import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Markedness
 
-open TruthConditional.Adjective
+open Semantics.Lexical.Adjective
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open TruthConditional.Adjective (NegationType ThresholdPair)
+open Semantics.Lexical.Adjective (NegationType ThresholdPair)
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 

@@ -33,7 +33,7 @@ Partee type-shifting.
 - Mendia, J. A. (2020). One more comparative: a novel argument for degree abstraction.
 -/
 
-namespace TruthConditional.Numeral.Polysemy
+namespace Semantics.Lexical.Numeral.Polysemy
 
 /-- The three polymorphic analyses of number words (Snyder §2, §5). -/
 inductive PolymorphicAnalysis where
@@ -81,11 +81,11 @@ def contextualistPath : SemanticFunction → DerivationPath
 
 /-- Close appositive semantics: ⟦the N₁ N₂⟧ = ιx[N₁(x) ∧ N₂(x)] (Snyder §5.2, (16b)).
     N₁ functions as intersective modifier via IDENT, N₂ is the numeral predicate. -/
-def closeAppositive {m : TruthConditional.Model}
+def closeAppositive {m : Semantics.Compositional.Model}
     (domain : List m.Entity)
-    (n1 n2 : m.interpTy TruthConditional.Ty.et)
+    (n1 n2 : m.interpTy Semantics.Compositional.Ty.et)
     : Option (m.interpTy .e) :=
-  TruthConditional.Noun.TypeShifting.iota domain (fun x => n1 x && n2 x)
+  Semantics.Lexical.Noun.TypeShifting.iota domain (fun x => n1 x && n2 x)
 
 /-- Specificational copula: ⟦be⟧ = λx.λy_i. ∨y_i = x (Romero 2005, (34)).
     Maps individual concepts to their actual present values. -/
@@ -121,4 +121,4 @@ theorem taxonomic_supported :
     contextualistPath .taxonomic = .iotaFromPred ∧
     Noun.Kind.Chierchia1998.NumberSystem.all.length ≥ 2 := ⟨rfl, by native_decide⟩
 
-end TruthConditional.Numeral.Polysemy
+end Semantics.Lexical.Numeral.Polysemy

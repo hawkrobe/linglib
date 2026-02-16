@@ -20,7 +20,7 @@ result given the near-universal prior assumption that it is a clitic.
 ## Semantic scope bridge (criterion D)
 
 The scope irregularity of negation with modals provides a bridge to
-`IntensionalSemantics.Modal`: *can't* means NOT(CAN(P)) but *mustn't*
+`Semantics.Modality`: *can't* means NOT(CAN(P)) but *mustn't*
 means MUST(NOT(P)). This non-compositional scope behavior is characteristic
 of inflectional affixes, not clitics.
 
@@ -240,12 +240,12 @@ if *-n't* is an affix, it forms a lexical unit with the auxiliary, and
 lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
-We formalize this using `IntensionalSemantics.Modal.ModalTheory`. -/
+We formalize this using `Semantics.Modality.ModalTheory`. -/
 
 section ScopeBridge
 
-open IntensionalSemantics.Modal
-open IntensionalSemantics.Attitude.Intensional (World allWorlds)
+open Semantics.Modality
+open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Scope of negation relative to a modal operator. -/
 inductive NegModalScope where

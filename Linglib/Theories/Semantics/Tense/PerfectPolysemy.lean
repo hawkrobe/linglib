@@ -40,13 +40,13 @@ This module integrates:
   the form and meaning of the Perfect.
 -/
 
-namespace TruthConditional.Sentence.Tense.PerfectPolysemy
+namespace Semantics.Tense.PerfectPolysemy
 
 open Core.Time
 open Core.Reichenbach
-open TruthConditional.Verb.Aspect
-open TruthConditional.Verb.ViewpointAspect
-open EventSemantics
+open Semantics.Lexical.Verb.Aspect
+open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Events
 
 -- ════════════════════════════════════════════════════
 -- § 1. Perfect Readings (Kiparsky 2002)
@@ -227,7 +227,7 @@ asserted. Wh-extraction from presupposed content is blocked (Szabolcsi & Zwarts
 (the eating is presupposed, so "what" cannot extract from it).
 
 TODO: Full formalization requires bridging to presupposition semantics
-(Core.Presupposition) and question semantics (QuestionSemantics). -/
+(Core.Presupposition) and question semantics (Semantics.Questions). -/
 
 /-- The resultative reading splits the event into presupposed (activity) and
     asserted (result state) content. -/
@@ -247,4 +247,4 @@ theorem wh_targets_assertion (split : ResultativeContentSplit Prop) :
     -- filter requires the presupposition module for full formalization.)
     split.assertedResult = split.assertedResult := rfl
 
-end TruthConditional.Sentence.Tense.PerfectPolysemy
+end Semantics.Tense.PerfectPolysemy

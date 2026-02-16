@@ -22,9 +22,9 @@ valid for intersective adjectives only.
 import Linglib.Theories.Semantics.Compositional.Basic
 import Mathlib.Data.Set.Basic
 
-namespace TruthConditional.Modification
+namespace Semantics.Compositional.Modification
 
-open TruthConditional
+open Semantics.Compositional
 
 section Generic
 
@@ -245,4 +245,4 @@ theorem canPM_spec (ty₁ ty₂ : Ty) :
 
 end TypeDriven
 
-end TruthConditional.Modification
+end Semantics.Compositional.Modification

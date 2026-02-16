@@ -15,7 +15,7 @@ Reference: Kratzer, A. (1981). The Notional Category of Modality.
 
 namespace Phenomena.Modality.GermanModalsBridge
 
-open IntensionalSemantics.Modal.Typology (ModalInventory satisfiesIFF)
+open Semantics.Modality.Typology (ModalInventory satisfiesIFF)
 open Fragments.German.Predicates.Modal (GermanModalEntry allModals)
 
 /-- German modal inventory, derived from the Fragment (single source of truth). -/

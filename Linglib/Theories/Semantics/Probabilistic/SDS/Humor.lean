@@ -35,10 +35,10 @@ import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.Examples
 import Linglib.Phenomena.Humor.Studies.KaoEtAl2016
 
-namespace SDS.Humor
+namespace Semantics.Probabilistic.SDS.Humor
 
-open SDS.Core
-open SDS.Examples
+open Semantics.Probabilistic.SDS.Core
+open Semantics.Probabilistic.SDS.Examples
 open Phenomena.Humor.Studies.KaoEtAl2016
 
 -- Structural Correspondence
@@ -573,4 +573,4 @@ Both frameworks formalize the same intuition:
 - Raskin (1985). Semantic mechanisms of humor. (Script opposition theory)
 -/
 
-end SDS.Humor
+end Semantics.Probabilistic.SDS.Humor

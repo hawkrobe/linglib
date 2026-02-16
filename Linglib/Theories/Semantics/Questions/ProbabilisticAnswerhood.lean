@@ -41,10 +41,10 @@ Probabilistic answerhood generalizes the mention-some/mention-all distinction:
 - Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
 -/
 
-namespace QuestionSemantics.ProbabilisticAnswerhood
+namespace Semantics.Questions.ProbabilisticAnswerhood
 
-open QuestionSemantics
-open QuestionSemantics.Inquisitive
+open Semantics.Questions
+open Semantics.Questions.Inquisitive
 
 -- Conditional Probability Infrastructure
 
@@ -318,4 +318,4 @@ theorem strongerEvidence_is_positive {W : Type*} [Fintype W]
   simp only [evidencesMoreStrongly, decide_eq_true_eq] at h
   exact h
 
-end QuestionSemantics.ProbabilisticAnswerhood
+end Semantics.Questions.ProbabilisticAnswerhood

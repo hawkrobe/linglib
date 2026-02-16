@@ -30,7 +30,7 @@ the universals.
 
 `ScopeUpwardMono`/`ScopeDownwardMono` are equivalent to Mathlib's
 `Monotone`/`Antitone` (see `Core.Quantification.scopeUpMono_iff_monotone`),
-connecting to `TruthConditional.Core.Polarity.IsUpwardEntailing = Monotone`.
+connecting to `Semantics.Compositional.Core.Polarity.IsUpwardEntailing = Monotone`.
 
 ## References
 
@@ -40,9 +40,9 @@ connecting to `TruthConditional.Core.Polarity.IsUpwardEntailing = Monotone`.
   shorter minimal description length. Cognition 232, 105150.
 -/
 
-namespace TruthConditional.Determiner.Quantifier
+namespace Semantics.Lexical.Determiner.Quantifier
 
-open TruthConditional
+open Semantics.Compositional
 open Core.Quantification
 
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
@@ -745,4 +745,4 @@ theorem every_filtrating : Filtrating (every_sem m) := by
 
 end FiniteModelProofs
 
-end TruthConditional.Determiner.Quantifier
+end Semantics.Lexical.Determiner.Quantifier

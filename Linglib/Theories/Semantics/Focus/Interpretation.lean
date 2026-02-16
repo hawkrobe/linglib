@@ -38,7 +38,7 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 open Core.Alternatives
 open Core.InformationStructure
 
-namespace TruthConditional.Sentence.FocusInterpretation
+namespace Semantics.FocusInterpretation
 
 -- Focus Semantic Values (Rooth 1985, 1992)
 
@@ -78,7 +78,7 @@ def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) �
     This is the foundation of Q-A congruence: the focus value of an answer
     should equal (or be a superset of) the question denotation. -/
 theorem hamblin_is_focus_type (W : Type*) :
-    QuestionSemantics.Hamblin.QuestionDen W = ((W → Bool) → Bool) := rfl
+    Semantics.Questions.Hamblin.QuestionDen W = ((W → Bool) → Bool) := rfl
 
 -- Question-Answer Congruence
 
@@ -92,13 +92,13 @@ theorem hamblin_is_focus_type (W : Type*) :
     - A: "FRED ate the beans" has ⟦A⟧f = {λw. ate(x, beans, w) | x ∈ D}
     - Congruent iff ⟦A⟧f = ⟦Q⟧ -/
 def qaCongruent {W : Type*} (answerFocus : PropFocusValue W)
-    (question : QuestionSemantics.Hamblin.QuestionDen W) : Prop :=
+    (question : Semantics.Questions.Hamblin.QuestionDen W) : Prop :=
   answerFocus = question
 
 /-- Weaker Q-A congruence: question alternatives are a subset of answer focus.
     This handles cases where the answer may introduce additional alternatives. -/
 def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
-    (question : QuestionSemantics.Hamblin.QuestionDen W) : Prop :=
+    (question : Semantics.Questions.Hamblin.QuestionDen W) : Prop :=
   ∀ p, question p → answerFocus p
 
 -- FIP Applications (Rooth §2)
@@ -140,4 +140,4 @@ See:
 - `Theories/Montague/Particle/Additive.lean` for semantic analysis
 -/
 
-end TruthConditional.Sentence.FocusInterpretation
+end Semantics.FocusInterpretation

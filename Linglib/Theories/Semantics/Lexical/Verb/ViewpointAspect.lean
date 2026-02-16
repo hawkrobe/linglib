@@ -106,10 +106,10 @@ end Core.Time.Interval
 -- § Main Module
 -- ════════════════════════════════════════════════════
 
-namespace TruthConditional.Verb.ViewpointAspect
+namespace Semantics.Lexical.Verb.ViewpointAspect
 
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
@@ -315,9 +315,9 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
 -- § Vendler Class Compatibility
 -- ════════════════════════════════════════════════════
 
-end TruthConditional.Verb.ViewpointAspect
+end Semantics.Lexical.Verb.ViewpointAspect
 
-namespace TruthConditional.Verb.Aspect
+namespace Semantics.Lexical.Verb.Aspect
 
 /-- States and activities naturally pair with IMPF (homogeneous). -/
 def VendlerClass.naturallyImperfective : VendlerClass → Bool
@@ -329,12 +329,12 @@ def VendlerClass.naturallyPerfective : VendlerClass → Bool
   | .state | .activity => false
   | .achievement | .accomplishment => true
 
-end TruthConditional.Verb.Aspect
+end Semantics.Lexical.Verb.Aspect
 
-namespace TruthConditional.Verb.ViewpointAspect
+namespace Semantics.Lexical.Verb.ViewpointAspect
 
 open Core.Time
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 
@@ -482,4 +482,4 @@ def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
 def PointPred.toSitProp (p : PointPred W Time) : Situation W Time → Prop :=
   λ s => p s.world s.time
 
-end TruthConditional.Verb.ViewpointAspect
+end Semantics.Lexical.Verb.ViewpointAspect

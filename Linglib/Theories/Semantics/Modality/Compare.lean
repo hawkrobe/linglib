@@ -11,10 +11,10 @@ when the ordering source is non-empty.
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Modality.Simple
 
-namespace IntensionalSemantics.Modal
+namespace Semantics.Modality
 
-open IntensionalSemantics.Attitude.Intensional
-open IntensionalSemantics.Modal.Kratzer
+open Semantics.Attitudes.Intensional
+open Semantics.Modality.Kratzer
 
 section ComparisonFunctions
 
@@ -113,4 +113,4 @@ theorem agree_on_trivially_false_necessity :
 
 end SpecificExamples
 
-end IntensionalSemantics.Modal
+end Semantics.Modality

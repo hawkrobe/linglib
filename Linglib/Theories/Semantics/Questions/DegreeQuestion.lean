@@ -52,7 +52,7 @@ and discrete–dense divergence theorems are in `Core.Scale` (§ 6 of
 - Link, G. (1983). The logical analysis of plurals and mass terms.
 -/
 
-namespace QuestionSemantics.DegreeQuestion
+namespace Semantics.Questions.DegreeQuestion
 
 open Core.Scale
 open Core.ModalLogic (ModalForce)
@@ -159,4 +159,4 @@ def obviatesMaxViolation : ModalForce → Bool
 theorem necessity_obviates : obviatesMaxViolation .necessity = true := rfl
 theorem possibility_fails : obviatesMaxViolation .possibility = false := rfl
 
-end QuestionSemantics.DegreeQuestion
+end Semantics.Questions.DegreeQuestion

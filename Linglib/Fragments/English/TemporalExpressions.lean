@@ -25,7 +25,7 @@ but the coercion operators (INCHOAT, COMPLET) compose differently in each.
 
 namespace Fragments.English.TemporalExpressions
 
-open TruthConditional.Verb.Aspect
+open Semantics.Lexical.Verb.Aspect
 
 -- ============================================================================
 -- § 1: Shared Types

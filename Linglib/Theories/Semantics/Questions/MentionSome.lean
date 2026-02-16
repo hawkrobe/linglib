@@ -61,9 +61,9 @@ Mention-some is licensed by:
 - Belnap (1982). Questions and Answers in Montague Grammar.
 -/
 
-namespace QuestionSemantics.MentionSome
+namespace Semantics.Questions.MentionSome
 
-open QuestionSemantics
+open Semantics.Questions
 
 
 /-!
@@ -431,13 +431,13 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
 
 
 /-!
-## Grounding in TruthConditional.Quantifiers
+## Grounding in Semantics.Compositional.Quantifiers
 
 Per CLAUDE.md, RSA/derived semantics should be grounded in Montague semantics.
 The existential in I-MS corresponds to Montague's existential quantifier.
 
 The I-MS rule uses: ∃x[β'(x) ∧ ...]
-This ∃ is the same existential quantifier from TruthConditional.Quantifiers.existsSome.
+This ∃ is the same existential quantifier from Semantics.Compositional.Quantifiers.existsSome.
 -/
 
 /-- The existential quantifier used in I-MS is Montague's ∃.
@@ -448,6 +448,6 @@ def mentionSomeUsesMontagueExistential : Bool := true
 
 -- TODO: Full compositional grounding requires proving the ∃ in
 -- MentionSomeInterrogative.applyToProperty matches
--- TruthConditional.Quantifiers.existsSome
+-- Semantics.Compositional.Quantifiers.existsSome
 
-end QuestionSemantics.MentionSome
+end Semantics.Questions.MentionSome

@@ -13,7 +13,7 @@ Conjunction and disjunction defined recursively over the type structure:
 
 import Linglib.Theories.Semantics.Compositional.Basic
 
-namespace TruthConditional
+namespace Semantics.Compositional
 
 /-- A type is conjoinable if it "ends in `t`" (Definition 4). -/
 def Ty.isConjoinable : Ty → Bool
@@ -203,4 +203,4 @@ theorem forall_exists_duality {A : Type*} (domain : List A) (p : A → Bool) :
 
 end QUANT
 
-end TruthConditional.Conjunction
+end Semantics.Compositional.Conjunction

@@ -53,8 +53,8 @@ import Linglib.Theories.Semantics.Compositional.Core.Polarity
 
 namespace NeoGricean.ConventionalImplicatures
 
-open TruthConditional.Expressives
-open TruthConditional.Core.Polarity (ContextPolarity)
+open Semantics.Lexical.Expressives
+open Semantics.Compositional.Core.Polarity (ContextPolarity)
 open NeoGricean (BeliefState)
 
 

@@ -23,8 +23,8 @@ unified type.
 
 ## Architecture
 
-This module lives in `Core/` because both `Theories/TruthConditional/Sentence/Tense/`
-and `Theories/IntensionalSemantics/Attitude/` need the shared infrastructure
+This module lives in `Core/` because both `Theories/Semantics.Compositional/Sentence/Tense/`
+and `Theories/Semantics.Intensional/Attitude/` need the shared infrastructure
 (`GramTense`, `SOTParameter`, `TemporalAssignment`, etc.) without a cross-tree
 import.
 
@@ -197,7 +197,7 @@ A temporal predicate takes a situation and returns truth value.
 This is what tense operators modify.
 
 Note: a Bool-valued counterpart exists at
-`IntensionalSemantics.Attitude.SituationDependent.SitProp` for
+`Semantics.Attitudes.SituationDependent.SitProp` for
 computational RSA evaluation. The split follows the `Prop'`/`BProp`
 pattern in `Core/Proposition.lean`.
 -/

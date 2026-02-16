@@ -9,7 +9,7 @@ This module demonstrates the complete CCG → Montague pipeline:
 ## The Pipeline
 
 ```
-CCG.DerivStep                    TruthConditional.Ty
+CCG.DerivStep                    Semantics.Compositional.Ty
 ├── john_sleeps : DerivStep      ├── catToTy S = t (Bool)
 └── .interp toySemLexicon        └── meaning : Bool
     ↓
@@ -25,7 +25,7 @@ import Linglib.Phenomena.Entailment.Basic
 namespace CCG.TruthConditions
 
 open CCG
-open TruthConditional
+open Semantics.Compositional
 open Phenomena.Entailment
 
 -- CCG Derivations for Test Sentences

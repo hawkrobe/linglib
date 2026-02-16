@@ -45,11 +45,11 @@ import Linglib.Theories.Semantics.Compositional.Core.Derivation
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Intension
 
-namespace IntensionalSemantics
+namespace Semantics.Intensional
 
-open TruthConditional
-open TruthConditional.Core.Derivation
-open TruthConditional.Core
+open Semantics.Compositional
+open Semantics.Compositional.Core.Derivation
+open Semantics.Compositional.Core
 
 -- Intensional Models
 
@@ -83,11 +83,11 @@ def Intension (m : IntensionalModel) (τ : Ty) : Type :=
 /-- A proposition is an intension of type t (World → Bool) -/
 def Proposition (m : IntensionalModel) : Type := m.World → Bool
 
-/-- IntensionalSemantics.Proposition equals Core.Proposition.BProp. -/
+/-- Semantics.Intensional.Proposition equals Core.Proposition.BProp. -/
 theorem proposition_eq_bprop (m : IntensionalModel) :
     Proposition m = Core.Proposition.BProp m.World := rfl
 
-/-- IntensionalSemantics.Intension .t equals Core.Intension.Intension W Bool. -/
+/-- Semantics.Intensional.Intension .t equals Core.Intension.Intension W Bool. -/
 theorem intension_t_eq_core (m : IntensionalModel) :
     Intension m .t = Core.Intension.Intension m.World Bool := rfl
 
@@ -176,7 +176,7 @@ def varying {m : IntensionalModel} {τ : Ty}
 
 -- Intensional Semantics for Quantifiers
 
-open Determiner.Quantifier in
+open Semantics.Lexical.Determiner.Quantifier in
 /--
 "Some" with world-varying property: ∃x. P(w)(x) ∧ Q(w)(x)
 -/
@@ -184,7 +184,7 @@ def someIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
   λ w => FiniteModel.elements.any λ x => P w x && Q w x
 
-open Determiner.Quantifier in
+open Semantics.Lexical.Determiner.Quantifier in
 /--
 "Every" with world-varying property: ∀x. P(w)(x) → Q(w)(x)
 -/
@@ -192,7 +192,7 @@ def everyIntensional {m : IntensionalModel} [FiniteModel m.base]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
   λ w => FiniteModel.elements.all λ x => !P w x || Q w x
 
-open Determiner.Quantifier in
+open Semantics.Lexical.Determiner.Quantifier in
 /--
 "No" with world-varying property: ¬∃x. P(w)(x) ∧ Q(w)(x)
 -/
@@ -227,7 +227,7 @@ def scalarModel : IntensionalModel := {
 }
 
 /-- FiniteModel instance for scalarModel.base -/
-instance scalarModelFinite : Determiner.Quantifier.FiniteModel scalarModel.base where
+instance scalarModelFinite : Semantics.Lexical.Determiner.Quantifier.FiniteModel scalarModel.base where
   elements := [.john, .mary, .pizza, .book]
   complete := λ x => by cases x <;> simp
   nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
@@ -237,7 +237,7 @@ instance scalarModelFinite : Determiner.Quantifier.FiniteModel scalarModel.base 
 In the toy model, John and Mary are students.
 -/
 def students_rigid : PropertyIntension scalarModel :=
-  λ _ => Determiner.Quantifier.student_sem
+  λ _ => Semantics.Lexical.Determiner.Quantifier.student_sem
 
 /--
 "Sleep" varies by world:
@@ -346,4 +346,4 @@ theorem phi_def {m : IntensionalModel} (d : IntensionalDerivation m)
     (h : d.ty = .t) (w : m.World) :
     phi d h w = d.trueAt h w := rfl
 
-end IntensionalSemantics
+end Semantics.Intensional
