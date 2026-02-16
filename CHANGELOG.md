@@ -8,7 +8,7 @@
 - Flattened `Core/Morphology/MorphRule.lean` → `Core/MorphRule.lean`
 - Moved `Core/Verbs.lean` → `Theories/Semantics/Lexical/Verb/VerbEntry.lean`
 - Removed `Theories/Pragmatics/RSA/Implementations/CausalCorrelation.lean`
-- Fixed bibliography entries: Tessler & Franke (2019 PsyArXiv, not 2020 JoS), Scontras & Tonhauser (2025 SuB proceedings), Barnett et al. (2022 article type), Tessler & Goodman (2022 issue number)
+- Fixed ~30 bibliography entries after manual verification against publisher sites: corrected hallucinated titles (Scontras & Tonhauser 2025, Martin et al. 2025, Ahn & Zhu 2025, Cao et al. 2025, Warstadt 2022), wrong author names (Alsop, Cremers et al., Haslinger et al., Harding et al., Grusdt et al.), wrong journals (Sumers et al. 2024, Cummins & Franke 2021, Nouwen 2024, Franke & Bergen 2020), and wrong years (Ciardelli et al. 2018, Hintikka 1962, Krifka 2003). Removed unverifiable Goodwin et al. (2025) entry and CausalCorrelation.lean
 - Rewired imports across ~40 files
 
 ## [0.218.0] - 2026-02-16

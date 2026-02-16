@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.Builder
 
 /-!
-# Production vs Dependence Causation (Martin, Rose & Nichols 2025)
+# Burning Facts: Thick and Thin Causatives (Martin, Rose & Nichols 2025)
 
 Two concepts of CAUSE underlie lexical causative verb semantics:
 

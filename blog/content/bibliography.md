@@ -6,10 +6,10 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 
 ## Pragmatics — Rational Speech Acts
 
-**Alsop, S.** (2024). The Pragmatics of Free Choice Any. *Semantics and Pragmatics*.\
+**Alsop, A.** (2024). The Pragmatics of Free Choice Any. *Glossa: a journal of general linguistics, 9(1)*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/Alsop2024.lean)
 
-**Barnett, S. A., Griffiths, T. L. & Hawkins, R. D.** (2022). A Pragmatic Account of the Weak Evidence Effect. *Proceedings of the Annual Meeting of the Cognitive Science Society, 44*.\
+**Barnett, S. A., Griffiths, T. L. & Hawkins, R. D.** (2022). A Pragmatic Account of the Weak Evidence Effect. *Open Mind, 6, 169–182*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean)
 
 **Beller, A. & Gerstenberg, T.** (2025). Causation, Meaning, and Communication. *Psychological Review*.\
@@ -21,13 +21,13 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 **Bergen, L., Levy, R. & Goodman, N. D.** (2016). Pragmatic Reasoning through Semantic Inference. *Semantics and Pragmatics, 9(20), 1–83*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/LexicalUncertainty/Basic.lean)
 
-**Champollion, L., Alsop, S. & Grosu, I.** (2019). Free Choice Disjunction as a Rational Speech Act. *Proceedings of SALT, 29, 238–257*.\
+**Champollion, L., Alsop, A. & Grosu, I.** (2019). Free Choice Disjunction as a Rational Speech Act. *Proceedings of SALT, 29, 238–257*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean)
 
-**Cremers, A., Wilcox, E. & Spector, B.** (2023). Exhaustivity and Anti-Exhaustivity in the RSA Framework. *Semantics and Pragmatics*.\
+**Cremers, A., Wilcox, E. G. & Spector, B.** (2023). Exhaustivity and Anti-Exhaustivity in the RSA Framework: Testing the Effect of Prior Beliefs. *Cognitive Science, 47(5), e13286*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/CremersWilcoxSpector2023.lean)
 
-**Cummins, C. & Franke, M.** (2021). Argumentative Strength of Numerical Quantity Expressions. *Linguistics and Philosophy*.\
+**Cummins, C. & Franke, M.** (2021). Rational Interpretation of Numerical Quantity in Argumentative Contexts. *Frontiers in Communication, 6, 662027*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/CumminsFranke2021.lean)
 
 **Degen, J., Hawkins, R. D., Graf, C., Kreiss, E. & Goodman, N. D.** (2020). When Redundancy Is Useful: A Bayesian Approach to “Overinformative” Referring Expressions. *Psychological Review, 127(4), 591–621*.\
@@ -40,7 +40,7 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 **Franke, M.** (2011). Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation. *Semantics and Pragmatics, 4(1), 1–82*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)
 
-**Franke, M. & Bergen, L.** (2020). Theory-Driven Statistical Modeling for Semantics and Pragmatics. *Language, Cognition and Neuroscience, 35(8), 1011–1028*.\
+**Franke, M. & Bergen, L.** (2020). Theory-Driven Statistical Modeling for Semantics and Pragmatics: A Case Study on Grammatically Generated Implicature Readings. *Language, 96(2), e77–e96*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/FrankeBergen2020.lean)
 
 **Goodman, N. D. & Frank, M. C.** (2016). Pragmatic Language Interpretation as Probabilistic Inference. *Trends in Cognitive Sciences, 20(11), 818–829*.\
@@ -50,20 +50,17 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)\
 cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)
 
-**Goodwin, G. P., Gershman, S. J. & Ullman, T. D.** (2025). Causal Inference from Correlational Statements. *Cognition*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/CausalCorrelation.lean)
-
-**Grusdt, F., Lassiter, D. & Franke, M.** (2022). Probabilistic Modeling of Rational Communication with Conditionals. *Proceedings of the Annual Meeting of the Cognitive Science Society, 44*.\
+**Grusdt, B., Lassiter, D. & Franke, M.** (2022). Probabilistic Modeling of Rational Communication with Conditionals. *Semantics and Pragmatics, 15, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GrusdtLassiterFranke2022.lean)
 
-**Harding, J., Gerstenberg, T. & Icard, T.** (2025). A Communication-First Account of Explanation. *Cognitive Science*.\
+**Harding, J., Gerstenberg, T. & Icard, T.** (2025). A Communication-First Account of Explanation. *arXiv:2505.03732*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HardingGerstenbergIcard2025.lean)
-
-**Hawkins, R. D., Bohn, M., Degen, J., Goodman, N. D., Peloquin, B. & Frank, M. C.** (2025). Relevant Answers to Polar Questions. *Philosophical Transactions of the Royal Society B, 380, 20230505*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/HawkinsEtAl2025.lean)
 
 **Hawkins, R. D., Gweon, H. & Goodman, N. D.** (2021). The Division of Labor in Communication: Speakers Help Listeners Account for Asymmetries in Visual Perspective. *Cognitive Science, 45, e12926*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HawkinsGweonGoodman2021.lean)
+
+**Hawkins, R. D., Tsvilodub, P., Bergey, C. A., Goodman, N. D. & Franke, M.** (2025). Relevant Answers to Polar Questions. *Philosophical Transactions of the Royal Society B: Biological Sciences, 380(1932)*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/HawkinsEtAl2025.lean)
 
 **He, M., Kaiser, E. & Iskarous, K.** (2025). Modeling Sentence Polarity Asymmetries: Fuzzy Interpretations in a Possibly Wonky World. *Proceedings of the Society for Computation in Linguistics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean)
@@ -77,7 +74,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/LassiterGoodman2017.lean)
 
-**Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Linguistics and Philosophy*.\
+**Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/Nouwen2024.lean)
 
 **Potts, C., Lassiter, D., Levy, R. & Frank, M. C.** (2016). Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty. *Journal of Semantics, 33(4), 755–802*.\
@@ -86,22 +83,22 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Qing, C., Goodman, N. D. & Lassiter, D.** (2016). A Rational Speech-Act Model of Projective Content. *Proceedings of the Annual Meeting of the Cognitive Science Society, 38*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean)
 
-**Scontras, G. & Pearl, L.** (2021). When Pragmatics Matters More for Truth-Value Judgments. *Glossa, 6(1), 110*.\
+**Scontras, G. & Pearl, L. S.** (2021). When Pragmatics Matters More for Truth-Value Judgments: An Investigation of Quantifier Scope Ambiguity. *Glossa, 6(1), 110*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
 
-**Scontras, G. & Tonhauser, J.** (2025). The Semantics and Pragmatics of Gradable Predicates. *Semantics and Pragmatics*.\
+**Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)
 
-**Sumers, T. R., Hawkins, R. D., Ho, M. K., Griffiths, T. L. & Hadfield-Menell, D.** (2023). Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility. *Cognitive Science*.\
+**Sumers, T. R., Ho, M. K., Griffiths, T. L. & Hawkins, R. D.** (2024). Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility. *Psychological Review, 131(1), 194*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
 
-**Tessler, M. H. & Franke, M.** (2020). Not Unreasonable: Carving Vague Dimensions with Contraries and Contradictions. *Journal of Semantics, 37(4), 531–575*.\
+**Tessler, M. H. & Franke, M.** (2019). Not Unreasonable: Why Two Negatives Don't Make a Positive. *PsyArXiv*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean)
 
 **Tessler, M. H. & Goodman, N. D.** (2019). The Language of Generalization. *Psychological Review, 126(3), 395–436*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean)
 
-**Tessler, M. H. & Goodman, N. D.** (2022). Warm (for Winter): Inferring Comparison Classes in Communication. *Cognitive Science, 46(9), e13095*.\
+**Tessler, M. H. & Goodman, N. D.** (2022). Warm (for Winter): Inferring Comparison Classes in Communication. *Cognitive Science, 46(3), e13095*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean)
 
 **van Tiel, B., Franke, M. & Sauerland, U.** (2021). Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification. *Proceedings of the National Academy of Sciences, 118(9), e2005453118*.\
@@ -110,7 +107,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Waldon, B. & Degen, J.** (2021). Modeling Cross-Linguistic Production of Referring Expressions. *Proceedings of the Society for Computation in Linguistics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/WaldonDegen2021.lean)
 
-**Warstadt, A.** (2022). Presupposition Accommodation through Pragmatic Inference. *Proceedings of SALT, 32*.\
+**Warstadt, A.** (2022). Presupposition Triggering Reflects Pragmatic Reasoning about Utterance Utility. *Proceedings of the Amsterdam Colloquium, 451–458*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Warstadt2022.lean)
 
 **Yoon, E. J., Tessler, M. H., Goodman, N. D. & Frank, M. C.** (2020). Polite Speech Emerges From Competing Social Goals. *Open Mind, 4, 71–87*.\
@@ -119,7 +116,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Zaslavsky, N., Hu, J. & Levy, R.** (2020). A Rate-Distortion View of Human Pragmatic Reasoning. *arXiv:2005.06641*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean)
 
-**Égré, P., Spector, B., Mortier, A. & Verheyen, S.** (2023). On the Optimality of Vagueness: 'Around', 'Between', and the Sorites. *Linguistics and Philosophy, 46, 1101–1130*.\
+**Égré, P., Spector, B., Mortier, A. & Verheyen, S.** (2023). On the Optimality of Vagueness: “Around”, “Between” and the Gricean Maxims. *Linguistics and Philosophy, 46(5), 1075–1130*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/EgreEtAl2023.lean)
 
 ## Pragmatics — NeoGricean / Exhaustivity
@@ -170,7 +167,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Montague, R.** (1973). The Proper Treatment of Quantification in Ordinary English. *Approaches to Natural Language*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/PTQ.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/Basic.lean)
 
-**van de Pol, I., Steinert-Threlkeld, S. & Szymanik, J.** (2023). Quantifiers Satisfying Semantic Universals Have Shorter Minimal Description Length. *Cognition, 232, 105150*.\
+**van de Pol, I., Lodder, P., van Maanen, L., Steinert-Threlkeld, S. & Szymanik, J.** (2023). Quantifiers Satisfying Semantic Universals Have Shorter Minimal Description Length. *Cognition, 232, 105150*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Quantifier.lean)
 
 ## Semantics — Modality & Conditionals
@@ -189,13 +186,13 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 
 ## Semantics — Reference & Attitudes
 
-**Ahn, D. & Zhu, Y.** (2025). Demonstratives and Relational Nouns. *Semantics and Pragmatics*.\
+**Ahn, D. & Zhu, Z.** (2025). A Bridge to Definiteness: Identifying Unique and Relational Definites through Bridging. *Natural Language Semantics, 1–52*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Demonstrative/AhnZhu2025.lean)
 
 **Donnellan, K.** (1966). Reference and Definite Descriptions. *Philosophical Review, 75(3), 281–304*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Donnellan.lean)
 
-**Hintikka, J.** (1969). Knowledge and Belief. *Cornell University Press*.\
+**Hintikka, J.** (1962). Knowledge and Belief. *Cornell University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)
 
 **Kaplan, D.** (1989). Demonstratives. *Themes from Kaplan*.\
@@ -209,16 +206,16 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Kratzer, A. & Selkirk, E.** (2020). Deconstructing Information Structure. *Glossa, 5(1), 113*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
 
-**Kratzer, A. & Shimoyama, J.** (2002). Indeterminate Pronouns: The View from Japanese. *Proceedings of SALT, 12*.\
+**Kratzer, A. & Shimoyama, J.** (2017). Indeterminate Pronouns: The View from Japanese. *Contrastiveness in Information Structure, Alternatives and Scalar Implicatures, 123–143*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean)
 
 ## Semantics — Causation
 
-**** (2025). Production vs Dependence Causation in Lexical Causative Verb Semantics. *Natural Language and Linguistic Theory*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/ProductionDependence.lean)
-
-**Cao, X., White, A. S. & Lassiter, D.** (2025). Graded Causative Verb Semantics. *Cognitive Science*.\
+**Cao, A., White, A. S. & Lassiter, D.** (2025). Cause, Make, and Force as Graded Causatives. *Experiments in Linguistic Meaning, 3, 88–103*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/GradedCausation.lean)
+
+**Martin, F., Rose, D. & Nichols, S.** (2025). Burning Facts: Thick and Thin Causatives.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/ProductionDependence.lean)
 
 ## Semantics — Tense & Aspect
 
@@ -228,7 +225,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Deal, A. R.** (2020). A Theory of Indexical Shift: Meaning, Grammar, and Crosslinguistic Variation. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Deal.lean)
 
-**Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(8), 1–55*.\
+**Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(9), 1–55*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
 
 **Kratzer, A.** (1998). More Structural Analogies between Pronouns and Tenses. *Proceedings of SALT, 8*.\
@@ -257,13 +254,13 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Carlson, G.** (1977). Reference to Kinds in English. *PhD dissertation, University of Massachusetts Amherst*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)
 
-**Chierchia, G.** (1998). Reference to Kinds Across Languages. *Natural Language Semantics, 6(4), 339–405*.\
+**Chierchia, G.** (1998). Reference to Kinds across Language. *Natural Language Semantics, 6(4), 339–405*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean)
 
 **Dayal, V.** (2004). Number Marking and (In)definiteness in Kind Terms. *Linguistics and Philosophy, 27(4), 393–450*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Dayal2004.lean)
 
-**Haslinger, N., Rosina, E., Schmitt, V. & Wurm, A.** (2025). On the Relation between Distributivity and Maximality. *Semantics and Pragmatics, 18*.\
+**Haslinger, N., Rosina, E. E., Schmitt, V. & Wurm, V.** (2025). On the Relation between Distributivity and Maximality. *Semantics and Pragmatics, 18*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Plural/Distributivity.lean)
 
 **Kennedy, C.** (2007). Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives. *Linguistics and Philosophy, 30(1), 1–45*.\
@@ -278,12 +275,12 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Krifka, M.** (1998). The Origins of Telicity. *Events and Grammar*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/Krifka1998.lean)
 
-**Krifka, M.** (2004). Bare NPs: Kind-Referring, Indefinites, Both, or Neither?. *Proceedings of SALT, 13*.\
+**Krifka, M.** (2003). Bare NPs: Kind-Referring, Indefinites, Both, or Neither?. *Proceedings of SALT, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean)
 
 ## Semantics — Questions
 
-**Ciardelli, I., Groenendijk, J. & Roelofsen, F.** (2019). Inquisitive Semantics. *Oxford University Press*.\
+**Ciardelli, I., Groenendijk, J. & Roelofsen, F.** (2018). Inquisitive Semantics. *Oxford University Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)
 
 **Groenendijk, J. & Stokhof, M.** (1984). Studies on the Semantics of Questions and the Pragmatics of Answers. *PhD dissertation, University of Amsterdam*.\
