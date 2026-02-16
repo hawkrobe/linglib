@@ -95,17 +95,17 @@ For goal-based utility: UV(p) = P(g|p) - P(g)
 For informativity: UV(p) = inf(p) = -log P(p)
 
 We use a general definition: improvement in expected utility after conditioning. -/
-def answerUtility {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def answerUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : ℚ :=
-  utilityValue dp worlds actions p
+  utilityValue dp actions (Finset.univ.filter (fun w => p w = true))
 
 /-- Compare utility of positive vs negative answer. -/
-def compareUtility {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def compareUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : Ordering :=
-  let uvPos := answerUtility dp worlds actions p
-  let uvNeg := answerUtility dp worlds actions (pnot p)
+  let uvPos := answerUtility dp actions p
+  let uvNeg := answerUtility dp actions (pnot p)
   if uvPos > uvNeg then .gt
   else if uvPos < uvNeg then .lt
   else .eq
@@ -117,20 +117,20 @@ def compareUtility {W A : Type*} [DecidableEq A]
 - PPQ if UV(q) > UV(¬q)
 - NPQ if UV(¬q) > UV(q)
 - Alt if UV(q) ≈ UV(¬q) -/
-def optimalQuestionType {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def optimalQuestionType {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : PolarQuestionType :=
-  match compareUtility dp worlds actions p with
+  match compareUtility dp actions p with
   | .gt => .positive
   | .lt => .negative
   | .eq => .alternative
 
 /-- Threshold-based comparison (for approximate equality). -/
-def optimalQuestionTypeWithThreshold {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def optimalQuestionTypeWithThreshold {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) (threshold : ℚ) : PolarQuestionType :=
-  let uvPos := answerUtility dp worlds actions p
-  let uvNeg := answerUtility dp worlds actions (pnot p)
+  let uvPos := answerUtility dp actions p
+  let uvNeg := answerUtility dp actions (pnot p)
   let diff := uvPos - uvNeg
   if diff > threshold then .positive
   else if diff < -threshold then .negative
@@ -254,10 +254,10 @@ theorem request_disprefers_alt (use : QuestionUse) :
 NPQ (?¬q) requires UV(¬q) > UV(q), which can happen when:
 1. Goal is reached by ¬q being true (medical diagnosis, ecological quiz)
 2. Prior strongly favors q, so ¬q is more informative (tag questions) -/
-def npqAppropriate {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def npqAppropriate {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : Bool :=
-  compareUtility dp worlds actions p == .lt
+  compareUtility dp actions p == .lt
 
 /-- Example: Medical diagnosis questions.
 
@@ -288,11 +288,11 @@ UV(q) ≈ UV(¬q) signals:
 1. No preference for one answer over the other
 2. Genuine information seeking without bias
 3. Higher urgency (explicit enumeration of alternatives) -/
-def altAppropriate {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def altAppropriate {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) (threshold : ℚ) : Bool :=
-  let uvPos := answerUtility dp worlds actions p
-  let uvNeg := answerUtility dp worlds actions (pnot p)
+  let uvPos := answerUtility dp actions p
+  let uvNeg := answerUtility dp actions (pnot p)
   let diff := uvPos - uvNeg
   -- Check if |diff| < threshold using rational comparison
   ((-threshold) < diff) && (diff < threshold)

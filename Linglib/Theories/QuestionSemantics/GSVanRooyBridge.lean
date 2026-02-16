@@ -65,41 +65,59 @@ matters. Then Q' beats Q on this DP.
 
 /-- Blackwell's Theorem: Refinement implies dominance for expected utility.
 
-If Q refines Q', then Q is at least as useful as Q' for ANY decision problem.
-This is the "easy direction" of Blackwell. -/
-theorem blackwell_refinement_dominance_EU {W A : Type*} [DecidableEq A]
-    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
+If Q refines Q', then Q is at least as useful as Q' for ANY decision problem
+with non-negative priors. This is the "easy direction" of Blackwell.
+
+Proved via `QUD.questionUtility_refinement_ge` from `Core.Partition`. -/
+theorem blackwell_refinement_dominance_EU {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (q q' : GSQuestion W) (actions : List A)
     (hRefines : q ⊑ q') :
-    ∀ dp : DecisionProblem W A,
-      questionUtility dp worlds actions (q.toQuestion worlds) >=
-      questionUtility dp worlds actions (q'.toQuestion worlds) := by
-  sorry
+    ∀ dp : DecisionProblem W A, (∀ w, dp.prior w ≥ 0) →
+      questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
+      questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) := by
+  intro dp hprior
+  exact QUD.questionUtility_refinement_ge dp q q' actions hRefines hprior
 
 /-- Blackwell's Theorem: Dominance implies refinement.
 
-If Q dominates Q' for ALL decision problems, then Q refines Q'.
-This is the "hard direction"—proved by contraposition. -/
-theorem blackwell_dominance_refinement {W A : Type*} [DecidableEq A] [DecidableEq W]
-    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
-    (hDominates : ∀ dp : DecisionProblem W A,
-      questionUtility dp worlds actions (q.toQuestion worlds) >=
-      questionUtility dp worlds actions (q'.toQuestion worlds)) :
+If Q dominates Q' for ALL decision problems (varying action type, action set,
+and utility function, with non-negative priors), then Q refines Q'.
+
+The hypothesis must quantify over all action types `A`, not a fixed one:
+with a fixed `A` of cardinality < 2, the hypothesis is vacuously true
+(questionUtility with one action is partition-independent) but the
+conclusion may be false.
+
+TODO: Bridge from `questionUtility` at `Finset.univ` to `partitionValue`
+at arbitrary `Finset`, then apply `QUD.blackwell_characterizes_refinement`.
+Approach: for arbitrary `worlds` and `dp`, construct `dp'` with prior
+zeroed outside `worlds`; then `questionUtility dp' q Finset.univ` relates
+to `partitionValue dp q worlds` via the algebraic decomposition. -/
+theorem blackwell_dominance_refinement {W : Type*} [Fintype W] [DecidableEq W]
+    (q q' : GSQuestion W)
+    (hDominates : ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : List A),
+      (∀ w, dp.prior w ≥ 0) →
+      questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
+      questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList))) :
     q ⊑ q' := by
   sorry
 
 /-- Blackwell's Theorem (full characterization).
 
-Semantic refinement <-> Universal pragmatic dominance. -/
-theorem blackwell_full {W A : Type*} [DecidableEq A] [DecidableEq W]
-    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
-    (hWorlds : worlds.length > 0) (hActions : actions.length > 0) :
-    q ⊑ q' <->
-    ∀ dp : DecisionProblem W A,
-      questionUtility dp worlds actions (q.toQuestion worlds) >=
-      questionUtility dp worlds actions (q'.toQuestion worlds) := by
+Semantic refinement ↔ universal pragmatic dominance (for non-negative priors).
+The RHS quantifies over ALL action types and action sets. -/
+theorem blackwell_full {W : Type*} [Fintype W] [DecidableEq W]
+    (q q' : GSQuestion W) :
+    q ⊑ q' ↔
+    ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : List A),
+      (∀ w, dp.prior w ≥ 0) →
+      questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
+      questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) := by
   constructor
-  · exact blackwell_refinement_dominance_EU q q' worlds actions
-  · exact blackwell_dominance_refinement q q' worlds actions
+  · intro hRefines A _ dp actions hprior
+    exact blackwell_refinement_dominance_EU q q' actions hRefines dp hprior
+  · intro hDom
+    exact blackwell_dominance_refinement q q' hDom
 
 /-- Blackwell generalizes to maximin (pessimistic) criterion.
 
@@ -141,7 +159,10 @@ def hasMentionSomeStructure {W A : Type*} [DecidableEq A]
 /-- G&S's human-concern licensing implies Van Rooy's mention-some structure.
 
 If a question is licensed for mention-some by a human concern (practical goal),
-then there exists a decision problem where multiple cells resolve. -/
+then there exists a decision problem where multiple cells resolve.
+
+**Note**: The hypothesis `_hLicensed` is vacuous (reflexivity). This should
+be reformulated with a substantive hypothesis about the licensing condition. -/
 theorem humanConcern_implies_mentionSomeDP {W E : Type*} [DecidableEq E]
     (msi : MentionSomeInterrogative W E)
     (goal : String)
@@ -183,7 +204,24 @@ theorem canonicalMentionSomeDP_has_structure {W : Type*} [DecidableEq W]
     let dp := canonicalMentionSomeDP satisfies
     let q : Question W := worlds.filter satisfies |>.map λ w => (· == w)
     hasMentionSomeStructure dp worlds [true, false] q = true := by
-  sorry
+  simp only [hasMentionSomeStructure, canonicalMentionSomeDP]
+  -- All cells resolve, so resolvingAnswers = q
+  have hAllResolve : ∀ c ∈ (worlds.filter satisfies |>.map λ w => (· == w)),
+      resolves (mentionSomeDP satisfies) worlds [true, false] c = true := by
+    intro c hc
+    simp only [List.mem_map] at hc
+    obtain ⟨w, hw, rfl⟩ := hc
+    have hsat := (List.mem_filter.mp hw).2
+    unfold resolves
+    simp only [List.any_eq_true, List.all_eq_true, List.mem_filter, decide_eq_true_eq]
+    -- Witness: action true dominates
+    refine ⟨true, by simp, fun b _ v ⟨_, hv⟩ => ?_⟩
+    have := beq_iff_eq.mp hv; subst this
+    simp only [mentionSomeDP, hsat, Bool.true_and]
+    cases b <;> simp
+  simp only [resolvingAnswers, List.filter_eq_self.mpr hAllResolve,
+    List.length_map, decide_eq_true_eq]
+  exact hMultiple
 
 
 /-!
@@ -211,25 +249,25 @@ def dpConsistentWithInfoSet {W A : Type*}
 
 If P gives a pragmatic answer to Q in J, then for any DP consistent with J,
 learning P has non-negative utility value. -/
-theorem pragmaticAnswer_implies_nonnegUtility {W A : Type*} [DecidableEq A]
+theorem pragmaticAnswer_implies_nonnegUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
     (worlds : List W) (actions : List A)
     (hAnswer : givesPragmaticAnswer p q j worlds = true)
     (dp : DecisionProblem W A)
     (hConsistent : dpConsistentWithInfoSet dp j worlds = true) :
-    utilityValue dp worlds actions p >= 0 := by
+    utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) >= 0 := by
   sorry
 
 /-- Positive utility implies pragmatic answerhood (converse direction).
 
 If learning P has positive utility for some DP consistent with J,
 then P gives a pragmatic answer to Q in J. -/
-theorem positiveUtility_implies_pragmaticAnswer {W A : Type*} [DecidableEq A]
+theorem positiveUtility_implies_pragmaticAnswer {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
     (worlds : List W) (actions : List A)
     (dp : DecisionProblem W A)
     (hConsistent : dpConsistentWithInfoSet dp j worlds = true)
-    (hPositive : utilityValue dp worlds actions p > 0) :
+    (hPositive : utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) > 0) :
     givesPragmaticAnswer p q j worlds = true := by
   sorry
 
@@ -237,16 +275,16 @@ theorem positiveUtility_implies_pragmaticAnswer {W A : Type*} [DecidableEq A]
 
 P gives a pragmatic answer in J iff P has positive utility for some
 DP consistent with J (and doesn't have negative utility for any). -/
-theorem pragmaticAnswer_iff_utility {W A : Type*} [DecidableEq A]
+theorem pragmaticAnswer_iff_utility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W)
     (worlds : List W) (actions : List A) :
     givesPragmaticAnswer p q j worlds = true <->
     (∃ dp : DecisionProblem W A,
       dpConsistentWithInfoSet dp j worlds = true ∧
-      utilityValue dp worlds actions p > 0) ∧
+      utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) > 0) ∧
     (∀ dp : DecisionProblem W A,
       dpConsistentWithInfoSet dp j worlds = true →
-      utilityValue dp worlds actions p >= 0) := by
+      utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) >= 0) := by
   sorry
 
 
@@ -271,16 +309,6 @@ def requiresExhaustive {W A : Type*} [DecidableEq A]
   -- No single cell resolves the DP
   q.all λ cell => !resolves dp worlds actions cell
 
-/-- Complete information DP always requires exhaustive answers.
-
-When the goal is to know the exact world state, no partial answer suffices. -/
-theorem completeInfoDP_requires_exhaustive {W : Type*} [DecidableEq W]
-    (worlds : List W) (hMultiple : worlds.length > 1) :
-    let dp := completeInformationDP (W := W)
-    let q := exactQuestion worlds
-    requiresExhaustive dp worlds worlds q = true := by
-  sorry
-
 /-- Mention-some DPs don't require exhaustive answers.
 
 When any satisfier achieves the goal, partial answers work. -/
@@ -292,20 +320,22 @@ theorem mentionSomeDP_not_exhaustive {W : Type*} [DecidableEq W]
     requiresExhaustive dp worlds [true, false] q = false := by
   -- The satisfies cell resolves the DP (true dominates false in satisfying worlds)
   -- so not all cells fail to resolve, hence requiresExhaustive = false
-  sorry
-
-/-- Exhaustivity is monotone in refinement.
-
-If Q requires exhaustive answers and Q' refines Q, then Q' also requires
-exhaustive answers. Finer questions are at least as demanding. -/
-theorem exhaustive_monotone {W A : Type*} [DecidableEq A]
-    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
-    (dp : DecisionProblem W A)
-    (hRefines : q' ⊑ q)
-    (hExh : requiresExhaustive dp worlds actions (q.toQuestion worlds) = true) :
-    requiresExhaustive dp worlds actions (q'.toQuestion worlds) = true := by
-  sorry
-
+  show requiresExhaustive (mentionSomeDP satisfies) worlds [true, false]
+    [satisfies, fun w => !satisfies w] = false
+  -- Key: the `satisfies` cell resolves because action `true` dominates.
+  -- For w with satisfies w = true: utility(w, true) = 1 >= utility(w, b) for any b.
+  -- So !resolves ... satisfies = false, making the List.all false.
+  simp only [requiresExhaustive, List.all_cons, List.all_nil, Bool.and_true,
+    Bool.and_eq_false_iff]
+  left
+  simp only [Bool.not_eq_false']
+  simp only [resolves, List.any_cons, List.any_nil, Bool.or_false,
+    List.all_cons, List.all_nil, Bool.and_true]
+  simp only [Bool.or_eq_true_iff]
+  left
+  simp only [Bool.and_eq_true_iff, List.all_eq_true, List.mem_filter, and_imp]
+  exact ⟨fun w _ hw => by simp [mentionSomeDP, hw],
+         fun w _ hw => by simp [mentionSomeDP, hw]⟩
 
 /-!
 ## Polar Question Choice is Utility-Maximizing
@@ -322,64 +352,66 @@ success given the speaker's goals.
 -/
 
 /-- Utility of positive answer exceeds negative. -/
-def positiveMoreUseful {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def positiveMoreUseful {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : Bool :=
-  utilityValue dp worlds actions p > utilityValue dp worlds actions (λ w => !p w)
+  utilityValue dp actions (Finset.univ.filter (fun w => p w = true)) >
+    utilityValue dp actions (Finset.univ.filter (fun w => (!p w) = true))
 
 /-- Utility of negative answer exceeds positive. -/
-def negativeMoreUseful {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def negativeMoreUseful {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : Bool :=
-  utilityValue dp worlds actions (λ w => !p w) > utilityValue dp worlds actions p
+  utilityValue dp actions (Finset.univ.filter (fun w => (!p w) = true)) >
+    utilityValue dp actions (Finset.univ.filter (fun w => p w = true))
 
 /-- Utilities are approximately equal. -/
-def utilitiesBalanced {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def utilitiesBalanced {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) (epsilon : ℚ) : Bool :=
-  let uvPos := utilityValue dp worlds actions p
-  let uvNeg := utilityValue dp worlds actions (λ w => !p w)
+  let uvPos := utilityValue dp actions (Finset.univ.filter (fun w => p w = true))
+  let uvNeg := utilityValue dp actions (Finset.univ.filter (fun w => (!p w) = true))
   let diff := uvPos - uvNeg
   ((-epsilon) ≤ diff) && (diff ≤ epsilon)
 
 /-- Optimal question type given utility structure. -/
-def optimalPolarType {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+def optimalPolarType {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool) : PolarQuestionType :=
-  if positiveMoreUseful dp worlds actions p then .positive
-  else if negativeMoreUseful dp worlds actions p then .negative
+  if positiveMoreUseful dp actions p then .positive
+  else if negativeMoreUseful dp actions p then .negative
   else .alternative
 
 /-- PPQ is optimal when positive answer is more useful.
 
 Van Rooy & Šafářová: Use PPQ (?p) when UV(p) > UV(¬p). -/
-theorem ppq_optimal_when_positive_useful {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+theorem ppq_optimal_when_positive_useful {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool)
-    (hPos : positiveMoreUseful dp worlds actions p = true) :
-    optimalPolarType dp worlds actions p = .positive := by
+    (hPos : positiveMoreUseful dp actions p = true) :
+    optimalPolarType dp actions p = .positive := by
   simp [optimalPolarType, hPos]
 
 /-- NPQ is optimal when negative answer is more useful.
 
 Van Rooy & Šafářová: Use NPQ (?¬p) when UV(¬p) > UV(p). -/
-theorem npq_optimal_when_negative_useful {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+theorem npq_optimal_when_negative_useful {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool)
-    (hNeg : negativeMoreUseful dp worlds actions p = true)
-    (hNotPos : positiveMoreUseful dp worlds actions p = false) :
-    optimalPolarType dp worlds actions p = .negative := by
+    (hNeg : negativeMoreUseful dp actions p = true)
+    (hNotPos : positiveMoreUseful dp actions p = false) :
+    optimalPolarType dp actions p = .negative := by
   simp [optimalPolarType, hNotPos, hNeg]
 
 /-- Alt-Q is optimal when utilities are balanced.
 
 Van Rooy & Šafářová: Use Alt (?p∨¬p) when UV(p) ≈ UV(¬p). -/
-theorem alt_optimal_when_balanced {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
+theorem alt_optimal_when_balanced {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
     (p : W -> Bool)
-    (hNotPos : positiveMoreUseful dp worlds actions p = false)
-    (hNotNeg : negativeMoreUseful dp worlds actions p = false) :
-    optimalPolarType dp worlds actions p = .alternative := by
+    (hNotPos : positiveMoreUseful dp actions p = false)
+    (hNotNeg : negativeMoreUseful dp actions p = false) :
+    optimalPolarType dp actions p = .alternative := by
   simp [optimalPolarType, hNotPos, hNotNeg]
 
 
@@ -398,10 +430,10 @@ def questionResolves {W A : Type*} [DecidableEq A]
     (q : Question W) : Bool :=
   q.all λ cell => resolves dp worlds actions cell
 
-/-- Helper: If action a dominates in a superset, it dominates in any subset.
+/-- Helper: If some action dominates in a superset, it dominates in any subset.
 
-Key lemma for refinement_preserves_resolution: dominance on a set S
-implies dominance on any subset S' ⊆ S. -/
+Key lemma for refinement_preserves_resolution: if C resolves DP (some action
+dominates on C) and C' ⊆ C, then C' also resolves DP (same witness). -/
 theorem resolves_subset {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
     (c c' : W -> Bool)
@@ -411,20 +443,19 @@ theorem resolves_subset {W A : Type*} [DecidableEq A]
   unfold resolves at *
   cases actions with
   | nil => rfl
-  | cons a rest =>
-    -- Need to show: rest.all (λ b => (worlds.filter c').all (λ w => ...))
-    simp only [List.all_eq_true] at *
-    intro b hb w hw
-    -- w ∈ worlds.filter c' means w ∈ worlds ∧ c' w = true
+  | cons _ _ =>
+    -- hResolves: ∃ a ∈ actions, a dominates all others on worlds.filter c
+    -- Goal: ∃ a ∈ actions, a dominates all others on worlds.filter c'
+    -- Same witness works: c' ⊆ c means fewer worlds to check
+    simp only [List.any_eq_true, List.all_eq_true] at *
+    obtain ⟨dom, hdom_mem, hdom⟩ := hResolves
+    refine ⟨dom, hdom_mem, λ b hb w hw => ?_⟩
     simp only [List.mem_filter] at hw
-    -- Since c' w = true and hSubset, we have c w = true
     have hcw : c w = true := hSubset w hw.2
-    -- So w ∈ worlds.filter c
     have hw_in_c : w ∈ worlds.filter c := by
       simp only [List.mem_filter]
       exact ⟨hw.1, hcw⟩
-    -- Apply hResolves
-    exact hResolves b hb w hw_in_c
+    exact hdom b hb w hw_in_c
 
 /-- Refinement preserves resolution.
 
@@ -433,36 +464,151 @@ If Q resolves DP and Q' refines Q, then Q' also resolves DP.
 theorem refinement_preserves_resolution {W A : Type*} [DecidableEq A]
     (q q' : GSQuestion W) (worlds : List W) (actions : List A)
     (dp : DecisionProblem W A)
-    (_hRefines : q' ⊑ q)
-    (_hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
+    (hRefines : q' ⊑ q)
+    (hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
     questionResolves dp worlds actions (q'.toQuestion worlds) = true := by
-  -- Each cell c' of q' is contained in some cell c of q.
-  -- Connect refinement to cell inclusion via resolves_subset.
-  sorry -- Need to show cell inclusion from refinement, then apply resolves_subset
+  -- Each fine cell c' of q' is contained in some coarse cell c of q.
+  -- c resolves (hResolves), so c' resolves (resolves_subset).
+  simp only [questionResolves, GSQuestion.toQuestion] at *
+  simp only [List.all_eq_true] at *
+  intro c' hc'
+  obtain ⟨c, hc_mem, hc_sub⟩ := QUD.toCells_fine_sub_coarse q' q worlds hRefines c' hc'
+  exact resolves_subset dp worlds actions c c' hc_sub (hResolves c hc_mem)
+
+/-- Exhaustivity is anti-monotone in refinement.
+
+If Q' refines Q and Q' requires exhaustive answers (no fine cell resolves),
+then Q also requires exhaustive answers (no coarse cell resolves).
+
+Proof idea: For each coarse cell c of Q, pick any fine cell c' ⊆ c (exists
+by refinement). c' doesn't resolve (by hypothesis). By contrapositive of
+`resolves_subset` (smaller doesn't resolve → bigger doesn't resolve), c
+doesn't resolve either.
+
+The converse is FALSE. Counterexample: W = {w1, w2}, actions = {a, b},
+U(w1,a)=1, U(w1,b)=0, U(w2,a)=0, U(w2,b)=1. Coarse cell {w1,w2} doesn't resolve
+(neither dominates), but fine cells {w1}, {w2} each resolve. -/
+theorem exhaustive_antimonotone {W A : Type*} [DecidableEq A]
+    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
+    (dp : DecisionProblem W A)
+    (hRefines : q' ⊑ q)
+    (hExh : requiresExhaustive dp worlds actions (q'.toQuestion worlds) = true) :
+    requiresExhaustive dp worlds actions (q.toQuestion worlds) = true := by
+  simp only [requiresExhaustive, GSQuestion.toQuestion] at *
+  simp only [List.all_eq_true, Bool.not_eq_true'] at *
+  intro c hc
+  obtain ⟨c', hc'_mem, hc'_sub⟩ := QUD.toCells_coarse_contains_fine q q' worlds hRefines c hc
+  have hc'_nr := hExh c' hc'_mem
+  by_contra habs
+  have hrc : resolves dp worlds actions c = true := by
+    cases h : resolves dp worlds actions c with
+    | true => rfl
+    | false => exact absurd h habs
+  have h_contra := resolves_subset dp worlds actions c c' hc'_sub hrc
+  simp [hc'_nr] at h_contra
+
+/-- The converse of `exhaustive_antimonotone` is FALSE.
+
+Counterexample: W = {w1, w2}, actions = {go, stay},
+U(w1, go)=1, U(w1, stay)=0, U(w2, go)=0, U(w2, stay)=1.
+Coarse cell {w1, w2} doesn't resolve (neither action dominates),
+but fine cells {w1}, {w2} each resolve. -/
+private inductive ExhW | w1 | w2 deriving DecidableEq, Repr
+
+private def exhaustiveCounterexDP : DecisionProblem ExhW Bool where
+  utility w a := match w, a with
+    | .w1, true  => 1 | .w1, false => 0
+    | .w2, true  => 0 | .w2, false => 1
+  prior _ := 1
+
+/-- Coarse (trivial) question requires exhaustive for the counterex DP. -/
+example : requiresExhaustive exhaustiveCounterexDP [.w1, .w2] [true, false]
+    [fun _ => true] = true := by native_decide
+
+/-- Fine (exact) question does NOT require exhaustive — each cell resolves. -/
+example : requiresExhaustive exhaustiveCounterexDP [.w1, .w2] [true, false]
+    [fun w => w == ExhW.w1, fun w => w == ExhW.w2] = false := by native_decide
 
 /-- The trivial question resolves only trivial DPs.
 
-If the trivial question (one cell) resolves DP, the DP is trivial
-(one action dominates regardless of world). -/
+If the trivial question (one cell = all worlds) resolves DP, the DP is trivial:
+some action dominates all others on all worlds. -/
 theorem trivial_resolves_only_trivial {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)
-    (_hResolves : questionResolves dp worlds actions [λ _ => true] = true) :
-    -- One action dominates unconditionally
+    (hNonempty : actions ≠ [])
+    (hResolves : questionResolves dp worlds actions [λ _ => true] = true) :
     ∃ a ∈ actions, actions.all λ b =>
       worlds.all λ w => dp.utility w a >= dp.utility w b := by
-  -- The trivial cell (λ _ => true) covers all worlds.
-  -- If it resolves, the first action dominates all others unconditionally.
-  -- This follows from: worlds.filter (λ _ => true) = worlds
-  sorry
+  simp only [questionResolves, List.all_cons, List.all_nil, Bool.and_true] at hResolves
+  unfold resolves at hResolves
+  have hfilt : worlds.filter (fun (_ : W) => true) = worlds :=
+    List.filter_eq_self.mpr (fun _ _ => rfl)
+  rw [hfilt] at hResolves
+  cases h : actions with
+  | nil => exact absurd h hNonempty
+  | cons a rest =>
+    rw [h] at hResolves
+    exact List.any_eq_true.mp hResolves
 
-/-- The exact question resolves all DPs.
+/-- The exact question resolves all DPs (with world-indexed actions).
 
-The maximally fine partition always determines optimal action
-(assuming actions are world-indexed). -/
+The maximally fine partition always determines optimal action: in each
+singleton cell {wᵢ}, action wᵢ dominates all others (utility 1 vs 0).
+
+Now correct after fixing `resolves` to existential (Van Rooy 2003, p.736). -/
 theorem exact_resolves_all {W : Type*} [DecidableEq W]
     (worlds : List W) (hNonempty : worlds.length > 0) :
     let dp := completeInformationDP (W := W)
     questionResolves dp worlds worlds (exactQuestion worlds) = true := by
-  sorry
+  obtain ⟨x, xs, rfl⟩ : ∃ x xs, worlds = x :: xs := by
+    cases worlds with | nil => simp at hNonempty | cons x xs => exact ⟨x, xs, rfl⟩
+  simp only [questionResolves, exactQuestion, List.all_eq_true, List.mem_map]
+  rintro _ ⟨w, hw, rfl⟩
+  -- Each singleton cell resolves: action w dominates
+  unfold resolves completeInformationDP
+  simp only [List.any_eq_true, List.all_eq_true, List.mem_filter, decide_eq_true_eq]
+  refine ⟨w, hw, fun b _ v ⟨_, hv⟩ => ?_⟩
+  have := (beq_iff_eq.mp hv).symm; subst this
+  simp only [beq_self_eq_true, ite_true]
+  split <;> norm_num
+
+/-- The trivial question doesn't resolve the complete information DP.
+
+When the goal is to know the exact world state, a single cell covering all
+worlds cannot resolve the DP: for any candidate action a, there exists
+w ≠ a with U(w, a) = 0 < 1 = U(w, w). Requires ≥2 distinct worlds. -/
+theorem completeInfoDP_requires_exhaustive {W : Type*} [DecidableEq W]
+    (worlds : List W) (hMultiple : worlds.length > 1) (hNodup : worlds.Nodup) :
+    requiresExhaustive completeInformationDP worlds worlds [fun _ => true] = true := by
+  -- Suffices to show the trivial cell doesn't resolve
+  suffices h : resolves completeInformationDP worlds worlds (fun _ => true) = false by
+    simp [requiresExhaustive, h]
+  -- By contradiction: if it resolves, some action dominates on all worlds
+  by_contra habs
+  have hres : resolves completeInformationDP worlds worlds (fun _ => true) = true := by
+    cases h : resolves completeInformationDP worlds worlds (fun _ => true) with
+    | true => rfl
+    | false => exact absurd h habs
+  have hne : worlds ≠ [] := by intro h; rw [h] at hMultiple; simp at hMultiple
+  have hqr : questionResolves completeInformationDP worlds worlds [fun _ => true] = true := by
+    simp [questionResolves, hres]
+  obtain ⟨a, ha, hdom⟩ := trivial_resolves_only_trivial
+    completeInformationDP worlds worlds hne hqr
+  simp only [List.all_eq_true, decide_eq_true_eq] at hdom
+  -- Find w ∈ worlds with w ≠ a
+  obtain ⟨x, xs, rfl⟩ : ∃ x xs, worlds = x :: xs := by
+    cases worlds with | nil => simp at hMultiple | cons x xs => exact ⟨x, xs, rfl⟩
+  have hxs_ne : xs ≠ [] := by intro h; rw [h] at hMultiple; simp at hMultiple
+  have hxne : x ∉ xs := (List.nodup_cons.mp hNodup).1
+  obtain ⟨w, hw, hwne⟩ : ∃ w ∈ (x :: xs), w ≠ a := by
+    by_cases hax : a = x
+    · obtain ⟨y, hy⟩ := List.exists_mem_of_ne_nil xs hxs_ne
+      exact ⟨y, .tail x hy, by rintro rfl; exact hxne (hax ▸ hy)⟩
+    · exact ⟨x, List.Mem.head xs, fun h => hax h.symm⟩
+  -- At w: utility(w, a) = 0 but utility(w, w) = 1
+  have h1 := hdom w hw w hw
+  simp only [completeInformationDP, beq_iff_eq] at h1
+  simp [hwne.symm] at h1
+  norm_num at h1
 
 end QuestionSemantics.Bridge

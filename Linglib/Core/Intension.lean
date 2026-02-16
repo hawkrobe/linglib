@@ -128,3 +128,86 @@ theorem rigid_stableChar_constant {C W τ : Type*} [Inhabited C]
     _ = char c₂ w₂ := congrFun (hStable c₁ c₂) w₂
 
 end Core.Intension
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Referential Mode (Partee 1973)
+-- ════════════════════════════════════════════════════════════════
+
+namespace Core.ReferentialMode
+
+/-- Partee's (1973) three-way interpretive classification for referential
+    expressions. Applies uniformly to pronouns (entity variables) and
+    tenses (temporal variables).
+
+    | Mode      | Pronouns                 | Tenses                         |
+    |-----------|--------------------------|--------------------------------|
+    | indexical | "I" → agent of context   | present → speech time          |
+    | anaphoric | "he" → salient individual| past → salient narrative time  |
+    | bound     | "his" in ∀x...his...     | tense in "whenever...is..."    |
+
+    Elbourne (2013) collapses this to a two-way free/bound distinction
+    (`SitVarStatus`); `isFree` provides the coarsening. -/
+inductive ReferentialMode where
+  /-- Anchored to utterance context (Kaplan's "I", Partee's deictic tense) -/
+  | indexical
+  /-- Resolved by discourse salience (3rd-person "he", narrative past) -/
+  | anaphoric
+  /-- Bound by a c-commanding operator (∀x...his..., whenever...is...) -/
+  | bound
+  deriving DecidableEq, Repr, BEq
+
+/-- Coarsen to a two-way free/bound classification.
+    Indexical and anaphoric are both "free" — they differ only in how the
+    free variable is pragmatically resolved (utterance context vs. discourse
+    salience). -/
+def ReferentialMode.isFree : ReferentialMode → Bool
+  | .indexical | .anaphoric => true
+  | .bound => false
+
+end Core.ReferentialMode
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Generic Variable Assignment (Partee 1973, Heim & Kratzer 1998)
+-- ════════════════════════════════════════════════════════════════
+
+namespace Core.VarAssignment
+
+/-- Generic variable assignment: maps indices to values in domain `D`.
+    Instantiate with `D = Entity` for pronoun interpretation (H&K 1998)
+    or `D = Time` for temporal variable interpretation (Partee 1973). -/
+abbrev VarAssignment (D : Type*) := ℕ → D
+
+/-- Modified assignment g[n ↦ d]: update index `n` to value `d`. -/
+def updateVar {D : Type*} (g : VarAssignment D) (n : ℕ) (d : D) : VarAssignment D :=
+  λ i => if i = n then d else g i
+
+/-- Variable denotation: ⟦xₙ⟧^g = g(n). -/
+def lookupVar {D : Type*} (n : ℕ) (g : VarAssignment D) : D := g n
+
+/-- Lambda abstraction over variable `n`: bind a variable in `body`. -/
+def varLambdaAbs {D α : Type*} (n : ℕ) (body : VarAssignment D → α) :
+    VarAssignment D → D → α :=
+  λ g d => body (updateVar g n d)
+
+@[simp]
+theorem update_lookup_same {D : Type*} (g : VarAssignment D) (n : ℕ) (d : D) :
+    lookupVar n (updateVar g n d) = d := by
+  simp [lookupVar, updateVar]
+
+@[simp]
+theorem update_lookup_other {D : Type*} (g : VarAssignment D)
+    (n i : ℕ) (d : D) (h : i ≠ n) :
+    lookupVar i (updateVar g n d) = lookupVar i g := by
+  simp [lookupVar, updateVar, h]
+
+theorem update_update_same {D : Type*} (g : VarAssignment D) (n : ℕ) (d₁ d₂ : D) :
+    updateVar (updateVar g n d₁) n d₂ = updateVar g n d₂ := by
+  funext i; simp [updateVar]; split_ifs <;> rfl
+
+theorem update_self {D : Type*} (g : VarAssignment D) (n : ℕ) :
+    updateVar g n (g n) = g := by
+  funext i; simp only [updateVar]; split_ifs with h <;> simp [h]
+
+end Core.VarAssignment

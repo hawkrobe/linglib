@@ -309,8 +309,8 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
-import Linglib.Phenomena.SequenceOfTense.Data
-import Linglib.Phenomena.SequenceOfTense.Bridge
+import Linglib.Phenomena.Tense.Data
+import Linglib.Phenomena.Tense.Bridge
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
@@ -366,7 +366,8 @@ import Linglib.Comparisons.CausativeAlternation
 import Linglib.Comparisons.BeforeAfter
 import Linglib.Comparisons.CumulativeReadings
 import Linglib.Comparisons.TenseModalEvidentiality
-import Linglib.Comparisons.TensesAndPronouns
+import Linglib.Comparisons.Partee1973
+import Linglib.Comparisons.TenseTheories
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.DependencyGrammar.Core.Basic
@@ -639,6 +640,16 @@ import Linglib.Theories.IntensionalSemantics.Reference.KaplanLD
 import Linglib.Theories.IntensionalSemantics.Reference.Monsters
 import Linglib.Theories.IntensionalSemantics.Reference.Kripke
 import Linglib.Theories.IntensionalSemantics.SituationSemantics.Elbourne
+import Linglib.Theories.IntensionalSemantics.Tense.Basic
+import Linglib.Theories.IntensionalSemantics.Tense.Abusch
+import Linglib.Theories.IntensionalSemantics.Tense.VonStechow
+import Linglib.Theories.IntensionalSemantics.Tense.Kratzer
+import Linglib.Theories.IntensionalSemantics.Tense.Ogihara
+import Linglib.Theories.IntensionalSemantics.Tense.Klecha
+import Linglib.Theories.IntensionalSemantics.Tense.Deal
+import Linglib.Theories.IntensionalSemantics.Tense.Sharvit
+import Linglib.Theories.Minimalism.Tense.Zeijlstra
+import Linglib.Theories.Minimalism.Tense.Wurmbrand
 
 -- Theories: QuestionSemantics
 import Linglib.Theories.QuestionSemantics.Answerhood

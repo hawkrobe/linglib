@@ -225,6 +225,11 @@ structure TensePronoun where
   varIndex : ℕ
   constraint : GramTense
   mode : TenseInterpretation
+  /-- Index of the evaluation time variable in the temporal assignment.
+      Default 0 = speech time slot. Under embedding, attitude verbs update
+      this index to point at the matrix event time (Von Stechow 2009).
+      Klecha (2016): modals can also shift the eval time index. -/
+  evalTimeIndex : ℕ := 0
   deriving DecidableEq, Repr, BEq
 
 namespace TensePronoun
@@ -258,6 +263,37 @@ end TensePronoun
 -- ════════════════════════════════════════════════════════════════
 -- § TensePronoun Bridge Theorems
 -- ════════════════════════════════════════════════════════════════
+
+/-- Resolve the evaluation time from the assignment.
+    In root clauses (evalTimeIndex = 0, g(0) = speech time), this is speech time.
+    Under embedding, the attitude verb updates the assignment so that
+    g(evalTimeIndex) = matrix event time. -/
+def TensePronoun.evalTime {Time : Type*} (tp : TensePronoun)
+    (g : TemporalAssignment Time) : Time :=
+  interpTense tp.evalTimeIndex g
+
+/-- Full presupposition: the tense constraint checked against the resolved
+    evaluation time (not just a bare perspective time parameter).
+    This makes the eval time compositionally determined rather than stipulated. -/
+def TensePronoun.fullPresupposition {Time : Type*} [LinearOrder Time]
+    (tp : TensePronoun) (g : TemporalAssignment Time) : Prop :=
+  tp.constraint.constrains (tp.resolve g) (tp.evalTime g)
+
+/-- When evalTimeIndex = 0 and g(0) = speechTime, the evaluation time is speech time.
+    This is the root-clause default: tense is checked against speech time. -/
+theorem evalTime_root_is_speech {Time : Type*}
+    (tp : TensePronoun) (g : TemporalAssignment Time) (speechTime : Time)
+    (hEval : tp.evalTimeIndex = 0) (hRoot : g 0 = speechTime) :
+    tp.evalTime g = speechTime := by
+  simp [TensePronoun.evalTime, interpTense, lookupVar, hEval, hRoot]
+
+/-- Updating the eval time index gives Von Stechow's perspective shift:
+    the embedded tense is now checked against a different time (the matrix
+    event time). This is how attitude verbs "transmit" their event time. -/
+theorem evalTime_shifts_under_embedding {Time : Type*}
+    (tp : TensePronoun) (g : TemporalAssignment Time) (matrixEventTime : Time) :
+    tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
+  update_lookup_same g tp.evalTimeIndex matrixEventTime
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}

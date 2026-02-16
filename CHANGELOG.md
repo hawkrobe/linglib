@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.213.24] - 2026-02-15
+
+### Added
+- **Theories/Minimalism/Tense/Zeijlstra.lean**: Zeijlstra (2012) SOT as upward Agree — `TenseFeatureStatus`, `TenseHead`, `UpwardAgree`, `SOTAgreeConfig`, derivation theorems for simultaneous/shifted via [uPAST]/[iPAST], SOT-Negative Concord parallel, bridge to Minimalism Agree infrastructure
+- **Theories/Minimalism/Tense/Wurmbrand.lean**: Wurmbrand (2014) infinitival tense — three-way `InfinitivalTenseClass` (future irrealis / propositional / restructuring), `WollDecomposition` (*will* = PRES + *woll*), `TemporalOrientation`, verb classifications (want, believe, try)
+- **Theories/IntensionalSemantics/Tense/Sharvit.lean**: Sharvit (2003) simultaneous tense — `SimultaneousTense`, `IndirectQuestionTense`, `EmbeddedPresentUnderFuture`, `HebrewSOTChoice`, `RCSimultaneousTense`, derivation theorems for indirect question SOT and embedded present puzzle
+- **IntensionalSemantics/Tense/Basic.lean**: 5 new `TensePhenomenon` constructors (`embeddedPresentPuzzle`, `lifetimeEffects`, `fakePast`, `optionalSOT`, `dependentVsIndependentTense`); `hasAgreeBasedSOT` field on `TenseTheory` (default `false`, backward-compatible); `isExtended` classifier; updated `phenomenon_coverage` theorem
+- **Phenomena/Tense/Data.lean**: 5 new data frames — `matrixWillSay`/`embeddedPresentUnderFuture` (embedded present puzzle), `lifetimeAristotle` (lifetime effects), `fakePastSubjunctive` (fake past), `optionalSOTPastForm`/`optionalSOTPresentForm` (optional SOT), `decidedToLeave`/`believesToBeSick`/`triedToLeave` (Wurmbrand classification)
+- **Phenomena/Tense/Bridge.lean**: Per-theory derivation theorems for Zeijlstra, Wurmbrand, Sharvit, and Deal (fake past)
+- **Comparisons/TenseTheories.lean**: Updated to 9 theories — `five_simultaneous_mechanisms`, `only_syntactic_theories_use_agree`, `only_sharvit_has_simultaneous_tense`, `semantic_vs_syntactic_divide`, updated `no_single_theory_covers_all` and `minimal_cover`
+
+### Changed
+- **Comparisons/TensesAndPronouns.lean** renamed to **Comparisons/Partee1973.lean** — clearer name; `TenseTheories.lean` scope note cross-references it
+
+## [0.213.23] - 2026-02-15
+
+### Changed
+- **IntensionalSemantics/Tense/Basic.lean**: Extracted embedding infrastructure (`embeddedFrame`, `simultaneousFrame`, `shiftedFrame`, `upperLimitConstraint`, `EmbeddedTenseReading`, `availableReadings`, SOT reading theorems, ULC theorems, TensePronoun ↔ SOT frame projections) from `TruthConditional/Sentence/Tense/SequenceOfTense.lean` into the intensional semantics layer where it conceptually belongs
+- **TruthConditional/Sentence/Tense/SequenceOfTense.lean**: Reduced to a thin TC↔IS bridge file — retains only `applyTense`↔`embeddedFrame` and `temporallyBound`↔Reichenbach bridge theorems
+- **Theory files** (Abusch, VonStechow, Kratzer, Ogihara, Deal): Dropped SequenceOfTense import — all embedding infrastructure now comes from `IS/Tense/Basic.lean`
+- **Phenomena/Tense/Bridge.lean**: Updated opens to reference `IntensionalSemantics.Tense` namespace
+
+## [0.213.22] - 2026-02-15
+
+### Added
+- **Theories/IntensionalSemantics/Tense/**: New directory with six tense theory formalizations — Abusch (1997), Von Stechow (2009), Kratzer (1998), Ogihara (1996), Klecha (2016), Deal (2020) — each with compositional semantics, derivation theorems, and identity cards
+- **IntensionalSemantics/Tense/Basic.lean**: Shared infrastructure — `TensePhenomenon` (11 phenomena), `TenseTheory` identity card, `AttitudeTemporalSemantics`
+- **IntensionalSemantics/Tense/Abusch.lean**: Temporal de re (`TemporalDeRe`), relation transmission, ULC, derivation theorems for shifted/simultaneous/double-access/de re
+- **IntensionalSemantics/Tense/VonStechow.lean**: Feature checking (`checkTenseFeature`), perspective shift, RC tense derivation
+- **IntensionalSemantics/Tense/Kratzer.lean**: SOT deletion (`sotDeletionApplicable`, `applyDeletion`), deletion-vs-ambiguity distinction
+- **IntensionalSemantics/Tense/Ogihara.lean**: Ambiguous past (`OgiharaPastReading`), zero tense semantics
+- **IntensionalSemantics/Tense/Klecha.lean**: Modal eval time shift (`modalEvalTimeShift`), modal-tense interaction
+- **IntensionalSemantics/Tense/Deal.lean**: Counterfactual distance (`PastMorphologyUse`, `CounterfactualDistance`), refined ULC
+- **Phenomena/Tense/Data.lean**: Unified tense phenomena data (absorbs SOT + 5 new phenomena: future-under-past, RC tense, modal-tense, counterfactual, temporal de re)
+- **Phenomena/Tense/Bridge.lean**: Per-theory × per-phenomenon derivation theorems, aspect-tense pipeline, ULC bridges
+- **Comparisons/TenseTheories.lean**: Cross-cutting comparison — convergence, three simultaneous mechanisms, divergence, `no_single_theory_covers_all`, `minimal_cover`
+- **Core/Tense.lean**: `evalTimeIndex` field on `TensePronoun` (default 0, backward-compatible); `evalTime`, `fullPresupposition` definitions; `evalTime_root_is_speech`, `evalTime_shifts_under_embedding` theorems
+- **IntensionalSemantics/Tense/Basic.lean**: 7 eventual-target phenomena added to `TensePhenomenon` (SOT in indirect questions, FID, historical present, perfect interactions, future-oriented complements, adjunct clause tense, indexical tense shift) with `isEventualTarget` classifier
+- **Phenomena/Tense/Data.lean**: Data frames for all 7 eventual targets — `matrixAsked`/`indirectQSimultaneous`/`indirectQShifted` (SOT in questions), `fidWalked`/`fidGardenBeautiful` (FID), `historicalPresent` (narrative present), `pluperfectShifted` (perfect interactions), `wantedToLeave` (future-oriented), `adjunctBeforeLeft`/`matrixWasHappy` (adjunct tense), `indexicalShiftPresent` (Amharic-type shift)
+
+### Changed
+- **Phenomena/SequenceOfTense/**: Absorbed into `Phenomena/Tense/` (files deleted)
+- **TensesAndPronouns.lean**: Cross-reference to new tense theory infrastructure
+- **SequenceOfTense.lean**: Docstring cross-referencing `IntensionalSemantics/Tense/`
+- **Tense/Basic.lean**: Export list updated with `evalTime_root_is_speech`, `evalTime_shifts_under_embedding`
+
 ## [0.213.21] - 2026-02-15
 
 ### Added
