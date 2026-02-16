@@ -1,8 +1,7 @@
 /-
 # CCG Cross-Serial Dependencies
 
-CCG derivations for Dutch cross-serial dependencies, proving that
-CCG correctly predicts the observed NP-verb pairings.
+CCG derivations for Dutch cross-serial dependencies using generalized composition.
 
 ## Insight
 
@@ -39,12 +38,10 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Phenomena.FillerGap.CrossSerial
 
 namespace CCG.CrossSerial
 
 open CCG
-open Phenomena.FillerGap.CrossSerial
 
 -- Additional Categories for Dutch
 
@@ -213,18 +210,6 @@ The syntactic derivation encodes this: Jan combines with the matrix,
 Piet combines with the embedded (via the argument passed through composition).
 -/
 
-/--
-A CCG derivation annotated with which NP binds to which verb.
--/
-structure AnnotatedDerivation where
-  /-- The derivation -/
-  deriv : ExtDerivStep
-  /-- Surface words -/
-  words : List String
-  /-- Which NP (by position) binds to which verb (by position) -/
-  bindings : List Dependency
-  deriving Repr
-
 -- Step 1: zag >B zwemmen via forward composition
 -- (S\NP)/(S\NP) >B (S\NP)/NP = (S\NP)/NP
 def zag_comp_zwemmen : ExtDerivStep := .fcomp zag_lex zwemmen_vr
@@ -242,19 +227,6 @@ def zag_zwemmen_piet : ExtDerivStep := .fapp zag_comp_zwemmen piet_lex
 def jan_zag_zwemmen_piet : ExtDerivStep := .bapp jan_lex zag_zwemmen_piet
 
 #eval jan_zag_zwemmen_piet.cat  -- Should be S
-
-/--
-Complete derivation for "Jan Piet zag zwemmen" with cross-serial bindings.
-
-The derivation tree encodes the semantic dependencies:
-- Jan combines with the matrix clause (subject of "zag")
-- Piet is the argument picked up by zwemmen (subject of "zwemmen")
--/
-def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
-  { deriv := jan_zag_zwemmen_piet
-  , words := ["Jan", "Piet", "zag", "zwemmen"]
-  , bindings := crossSerialDeps 2  -- Jan→zag, Piet→zwemmen
-  }
 
 -- Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
 
@@ -298,75 +270,6 @@ def jan_piet_marie_zag_helpen_zwemmen_deriv : ExtDerivStep :=
 
 #eval jan_piet_marie_zag_helpen_zwemmen_deriv.cat  -- S ✓
 
-/--
-Derivation for "Jan Piet Marie zag helpen zwemmen".
-
-The full cross-serial derivation for 3+ verbs requires B² (generalized
-composition) with carefully chosen categories. This simplified derivation produces
-category S but doesn't use all NPs.
-
-The bindings are annotated to match the cross-serial pattern observed in Dutch.
-A complete formalization of B²-based derivations is future work.
--/
-def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
-  { deriv := jan_piet_marie_zag_helpen_zwemmen_deriv
-  , words := ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"]
-  , bindings := crossSerialDeps 3  -- Jan→zag, Piet→helpen, Marie→zwemmen
-  }
-
--- The Key Theorem: CCG Predicts Cross-Serial
-
-/--
-The 2-verb derivation produces category S.
--/
-theorem derivation_2v_yields_S :
-    dutch_jan_piet_zag_zwemmen.deriv.cat = some S := by
-  native_decide
-
-/--
-The 3-verb derivation produces category S.
--/
-theorem derivation_3v_yields_S :
-    dutch_jan_piet_marie_zag_helpen_zwemmen.deriv.cat = some S := by
-  native_decide
-
-/--
-CCG derivation for Dutch produces cross-serial bindings.
-
-This is the key prediction: the compositional structure of CCG
-naturally yields cross-serial dependencies for Dutch verb clusters.
--/
-theorem ccg_produces_crossSerial_2 :
-    dutch_jan_piet_zag_zwemmen.bindings = dutch_2np_2v.dependencies := by
-  rfl
-
-theorem ccg_produces_crossSerial_3 :
-    dutch_jan_piet_marie_zag_helpen_zwemmen.bindings = dutch_3np_3v.dependencies := by
-  rfl
-
-/--
-Both cross-serial derivations are well-formed (yield S) and match the data.
--/
-theorem ccg_crossSerial_complete :
-    -- Derivations yield category S
-    dutch_jan_piet_zag_zwemmen.deriv.cat = some S ∧
-    dutch_jan_piet_marie_zag_helpen_zwemmen.deriv.cat = some S ∧
-    -- Bindings match the empirical data
-    dutch_jan_piet_zag_zwemmen.bindings = dutch_2np_2v.dependencies ∧
-    dutch_jan_piet_marie_zag_helpen_zwemmen.bindings = dutch_3np_3v.dependencies := by
-  constructor
-  · native_decide
-  constructor
-  · native_decide
-  constructor <;> rfl
-
-/--
-CCG correctly predicts the pattern type for Dutch.
--/
-theorem ccg_predicts_dutch_pattern :
-    dutch_3np_3v.pattern = .crossSerial := by
-  rfl
-
 -- Generative Capacity: Beyond CFG
 
 /--
@@ -377,27 +280,5 @@ CCG is mildly context-sensitive.
 -/
 def crossSerialLanguage (n : Nat) : List String :=
   List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"
-
-/-- CCG is mildly context-sensitive (not just context-free) -/
-theorem ccg_is_mildly_context_sensitive :
-    crossSerialRequires = FormalLanguageType.mildlyContextSensitive := by
-  rfl
-
-/-- Nested dependencies (German) ARE context-free -/
-theorem nested_is_context_free :
-    nestedRequires = FormalLanguageType.contextFree := by
-  rfl
-
-/--
-CCG can generate both:
-- Cross-serial (Dutch) via generalized composition
-- Nested (German) via standard composition
-
-CCG occupies the mildly context-sensitive level of the Chomsky hierarchy.
--/
-theorem ccg_handles_both_patterns :
-    crossSerialRequires = .mildlyContextSensitive ∧
-    nestedRequires = .contextFree := by
-  constructor <;> rfl
 
 end CCG.CrossSerial

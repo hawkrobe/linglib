@@ -8,7 +8,6 @@ import Linglib.Core.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Anaphora.Coreference
 
 namespace DepGrammar.Nominal
 
@@ -60,18 +59,6 @@ def phiAgree (w1 w2 : Word) : Bool :=
     else
       true
   personMatch && numberMatch && genderMatch
-
--- ============================================================================
--- Phenomena Capture (parameterized by grammaticality predicate)
--- ============================================================================
-
-/-- Check if a grammaticality predicate captures a minimal pair. -/
-def capturesMinimalPair (grammatical : List Word → Bool) (pair : MinimalPair) : Bool :=
-  grammatical pair.grammatical && !grammatical pair.ungrammatical
-
-/-- Check if a grammaticality predicate captures all pairs in a PhenomenonData. -/
-def capturesPhenomenonData (grammatical : List Word → Bool) (phenom : PhenomenonData) : Bool :=
-  phenom.pairs.all (capturesMinimalPair grammatical)
 
 -- ============================================================================
 -- Shared Test Words (from Fragments, used by Coreference.lean and CRDC.lean)

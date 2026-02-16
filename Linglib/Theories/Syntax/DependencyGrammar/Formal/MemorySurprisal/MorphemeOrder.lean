@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
-import Linglib.Phenomena.Causatives.Typology
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Core.Morphology.MorphRule
 
@@ -243,14 +242,6 @@ theorem ik_ase_is_causative :
 /-- Japanese -(s)ase uses the .make causative builder (direct causation). -/
 theorem ik_ase_is_make :
     Fragments.Japanese.Predicates.ik_ase.causativeBuilder = some .make := rfl
-
-/-- Song (1996) classifies Japanese -(s)ase as COMPACT.
-
-The COMPACT type subsumes morphological causatives like Japanese -(s)ase,
-Turkish -dür, and also lexical causatives like English *kill*.
-This is consistent with the slot being valence (innermost). -/
-theorem japanese_causative_is_compact :
-    Phenomena.Causatives.Typology.japaneseAse.constructionType = .compact := by native_decide
 
 /-! ### Bridge: Relevance hierarchy ↔ Information locality
 

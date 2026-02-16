@@ -1,8 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Presupposition
 import Linglib.Core.HornScale
-import Linglib.Phenomena.Polarity.NPIs
-import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
 /-!
 # Fillmore, Kay & O'Connor (1988): Let Alone
@@ -335,53 +333,7 @@ def claim_quantity_relevance_conflict : Prop :=
 theorem claim_quantity_relevance_conflict_holds :
     claim_quantity_relevance_conflict := rfl
 
-/-! ## Section 8: Bridges to existing infrastructure -/
-
-/-! ### Bridge 1: NPI triggers → Polarity.NPIs.LicensingContext
-
-FKO1988's NPI trigger inventory (§2.2.4) maps onto the licensing contexts
-already catalogued in `Phenomena.Polarity.NPIs`. This bridge makes that
-mapping explicit: each FKO trigger type corresponds to a known NPI
-licensing context. -/
-
-open Phenomena.Polarity.NPIs in
-/-- Map FKO1988 *let alone* NPI triggers to Polarity.NPIs licensing contexts. -/
-def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
-  | .simpleNegation         => .sententialNegation
-  | .tooComplementation     => .tooAdjective
-  | .comparisonOfInequality => .comparativeThan
-  | .onlyDeterminer         => .onlyFocus
-  | .minimalAttainment      => .sententialNegation  -- "barely" ≈ negation
-  | .conditionalSurprise    => .conditional
-  | .failureVerb            => .sententialNegation   -- "fail" ≈ implicit negation
-  | .anyoneWhod             => .universalRestrictor
-
-open Phenomena.Polarity.NPIs in
-/-- Every FKO trigger maps to a known NPI licensing context.
-This verifies that FKO's *let alone* data is consistent with Ladusaw's
-generalization: *let alone* appears in DE environments. -/
-theorem all_triggers_are_known_contexts :
-    ∀ t : LetAloneNPITrigger, ∃ c : LicensingContext, npiTriggerToContext t = c :=
-  λ t => ⟨npiTriggerToContext t, rfl⟩
-
-/-! ### Bridge 2: FKO Phenomena data ↔ NPI theory
-
-The phenomena file records that *barely* licenses *let alone* (ex.115)
-while *almost* does not (ex.113). This matches the Polarity.NPIs
-classification: *barely* is a syntactic negative polarity trigger,
-*almost* is not. -/
-
-open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
-/-- *barely* licenses *let alone* in the phenomena data. -/
-theorem barely_licenses_let_alone :
-    ex115.judgment = Judgment.grammatical := rfl
-
-open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
-/-- *almost* does NOT license *let alone* in the phenomena data. -/
-theorem almost_blocks_let_alone :
-    ex113.judgment = Judgment.ungrammatical := rfl
-
-/-! ### Bridge 3: Scalar model generalizes HornScale
+/-! ### Scalar model generalizes HornScale
 
 FKO1988's `ScalarModel` (n-dimensional, with monotonicity constraint)
 is a generalization of `Core.Scale.HornScale` (1-dimensional, linear).

@@ -33,11 +33,10 @@ S1 probability reflects speaker rationality:
 
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Phenomena.ScalarImplicatures.Basic
 
 namespace RSA.Hurford
 
-open LURSA Phenomena.ScalarImplicatures RSA.Eval
+open LURSA RSA.Eval
 
 
 /--
@@ -319,29 +318,6 @@ theorem hurford_model_captures_rescue :
     someOrAllTrueWorlds_base = someTrueWorlds_base := by
   native_decide
 
-/--
-RSA prediction: disjunction is felicitous iff informative under some lexicon.
-
-For "some or all":
-- Under L_refined, the disjunction covers {someNotAll, all_}
-- "some" alone only covers {someNotAll}
-- So the disjunction is informative, predicted felicitous.
--/
-def rsaPredictsFelicitous_someOrAll : Bool :=
-  -- Felicitous iff disjunction is informative under some lexicon
-  someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length
-
-/--
-RSA prediction matches empirical data for "some or all".
-
-The model predicts "some or all" is felicitous (disjunction informative under
-refined lexicon), matching the empirical judgment in Data.lean.
--/
-theorem rsa_matches_data_someOrAll :
-    rsaPredictsFelicitous_someOrAll = someOrAll.felicitous := by
-  native_decide
-
-
 /-
 For "American or Californian", there's no exhaustification that breaks the
 entailment. Californian ALWAYS entails American — it's a fixed hyponymy relation,
@@ -410,26 +386,5 @@ For hyponymy, the disjunction is always redundant -- no rescue possible.
 theorem hyponym_always_redundant :
     americanOrCalifornianTrueWorlds = americanTrueWorlds := by
   native_decide
-
-/--
-RSA prediction: "American or Californian" is not felicitous.
-
-Since there's no lexicon under which the disjunction is informative,
-RSA predicts this is infelicitous.
--/
-def rsaPredictsFelicitous_americanCalifornian : Bool :=
-  -- Would need disjunction to be informative under some lexicon.
-  -- But with only one lexicon and fixed hyponymy, it's always redundant.
-  americanOrCalifornianTrueWorlds.length > americanTrueWorlds.length
-
-/--
-RSA prediction matches empirical data for "American or Californian".
-
-RSA predicts infelicity (disjunction always redundant), matching the empirical judgment.
--/
-theorem rsa_matches_data_americanCalifornian :
-    rsaPredictsFelicitous_americanCalifornian = americanCalifornian.felicitous := by
-  native_decide
-
 
 end RSA.Hurford

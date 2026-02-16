@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
-import Linglib.Phenomena.WordOrder.NonProjectivity
 
 /-!
 # Mildly Non-Projective Dependency Structures
@@ -482,40 +481,7 @@ theorem not_wellNested_witness :
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §10: Empirical Data Verification
--- (Data in Phenomena/NonProjectivity/Data.lean)
--- ============================================================================
-
-/-- Well-nestedness covers ≥99% of both treebanks (K&N 2006 Table 1). -/
-theorem wellNested_near_universal :
-    Phenomena.pdt.wellNested ≥ 9900 ∧ Phenomena.ddt.wellNested ≥ 9900 := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Gap degree ≤ 1 covers ≥99% of both treebanks. -/
-theorem gapDeg_leq1_sufficient :
-    Phenomena.pdt.gapDeg0 + Phenomena.pdt.gapDeg1 ≥ 9900 ∧
-    Phenomena.ddt.gapDeg0 + Phenomena.ddt.gapDeg1 ≥ 9900 := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Planarity covers far less than well-nestedness. -/
-theorem planarity_insufficient :
-    Phenomena.pdt.planar < Phenomena.pdt.wellNested ∧
-    Phenomena.ddt.planar < Phenomena.ddt.wellNested := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages
-    (Kuhlmann 2013 Tables 3-4). -/
-theorem fanout2_good_coverage :
-    Phenomena.arabic.treesLostFanout2 ≤ 1 ∧
-    Phenomena.czech.treesLostFanout2 * 100 / Phenomena.czech.totalTrees < 1 ∧
-    Phenomena.danish.treesLostFanout2 * 100 / Phenomena.danish.totalTrees < 1 ∧
-    Phenomena.slovene.treesLostFanout2 * 100 / Phenomena.slovene.totalTrees < 1 ∧
-    Phenomena.turkish.treesLostFanout2 * 100 / Phenomena.turkish.totalTrees < 1 := by
-  exact ⟨by native_decide, by native_decide, by native_decide,
-         by native_decide, by native_decide⟩
-
--- ============================================================================
--- §11: Bridge Theorems
+-- §10: Bridge Theorems
 -- ============================================================================
 
 /-- Non-projective dependencies → gap degree ≥ 1.

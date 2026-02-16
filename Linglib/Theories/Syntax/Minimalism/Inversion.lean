@@ -20,7 +20,6 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Syntax.Minimalism.Core.Structure
-import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 namespace Minimalism
 

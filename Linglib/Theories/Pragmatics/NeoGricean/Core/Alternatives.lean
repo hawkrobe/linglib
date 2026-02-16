@@ -484,49 +484,6 @@ def getMAlternative
 
 
 /--
-M-alternatives exist in equative constructions.
--/
-theorem equative_has_m_alternatives :
-    (generateMAlternatives tall_with_morphology short_with_morphology .equative).isSome = true := by
-  native_decide
-
-/--
-M-alternatives exist in degree question constructions.
--/
-theorem question_has_m_alternatives :
-    (generateMAlternatives tall_with_morphology short_with_morphology .degreeQuestion).isSome = true := by
-  native_decide
-
-/--
-M-alternatives do NOT exist in comparative constructions.
--/
-theorem comparative_no_m_alternatives :
-    (generateMAlternatives tall_with_morphology short_with_morphology .comparative).isNone = true := by
-  native_decide
-
-/--
-M-alternatives do NOT exist in positive constructions.
--/
-theorem positive_no_m_alternatives :
-    (generateMAlternatives tall_with_morphology short_with_morphology .positive).isNone = true := by
-  native_decide
-
-/--
-"short" is the marked member in equative M-alternatives.
--/
-theorem short_is_marked_in_equative :
-    isMarkedInMAlternatives "short" tall_with_morphology short_with_morphology .equative = true := by
-  native_decide
-
-/--
-"tall" is NOT the marked member in equative M-alternatives.
--/
-theorem tall_is_not_marked_in_equative :
-    isMarkedInMAlternatives "tall" tall_with_morphology short_with_morphology .equative = false := by
-  native_decide
-
-
-/--
 Generate all pragmatic alternatives (both Q and M) for a form.
 
 This is the unified entry point for alternative generation.
@@ -571,7 +528,6 @@ def alternativeComparison : String :=
 Q-alternatives generate 'not all' from 'some' (informativity competition).
 M-alternatives generate evaluativity from marked forms (cost competition).
 "
-
 
 
 end NeoGricean.Alternatives

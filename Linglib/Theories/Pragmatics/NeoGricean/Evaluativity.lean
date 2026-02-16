@@ -230,24 +230,6 @@ def deriveEvaluativity (c : AdjectivalConstruction) (p : Polarity) : Evaluativit
 
 
 /--
-Convert our derivation's evaluativity prediction to the phenomena format.
--/
-def predictedStatus (d : EvaluativityDerivation) : EvaluativityStatus :=
-  if d.isEvaluative then .evaluative else .nonEvaluative
-
-/--
-Check if prediction matches empirical datum.
--/
-def predictionMatches (d : EvaluativityDerivation) (datum : EvaluativityDatum) : Bool :=
-  -- Handle the special cases
-  match datum.status with
-  | .ungrammatical => true  -- Can't check ungrammatical cases
-  | .markedOnly => d.polarity == .negative && d.isEvaluative
-  | .evaluative => d.isEvaluative
-  | .nonEvaluative => !d.isEvaluative
-
-
-/--
 All predictions for positive-polar adjectives.
 -/
 def positivePolarPredictions : List EvaluativityDerivation :=
@@ -357,49 +339,6 @@ theorem manner_requires_marked_and_invariant :
       (polarVariance c = .invariant ∧ p = .negative) := by
   intro c p h
   cases c <;> cases p <;> simp [evaluativitySource, polarVariance] at h ⊢
-
-
-/--
-**Theorem: Predictions match positive_tall datum**
--/
-theorem matches_positive_tall :
-    predictionMatches (deriveEvaluativity .positive .positive) positive_tall = true := by
-  native_decide
-
-/--
-**Theorem: Predictions match comparative_tall datum**
--/
-theorem matches_comparative_tall :
-    predictionMatches (deriveEvaluativity .comparative .positive) comparative_tall = true := by
-  native_decide
-
-/--
-**Theorem: Predictions match equative_tall datum**
--/
-theorem matches_equative_tall :
-    predictionMatches (deriveEvaluativity .equative .positive) equative_tall = true := by
-  native_decide
-
-/--
-**Theorem: Predictions match equative_short datum**
--/
-theorem matches_equative_short :
-    predictionMatches (deriveEvaluativity .equative .negative) equative_short = true := by
-  native_decide
-
-/--
-**Theorem: Predictions match question_tall datum**
--/
-theorem matches_question_tall :
-    predictionMatches (deriveEvaluativity .degreeQuestion .positive) question_tall = true := by
-  native_decide
-
-/--
-**Theorem: Predictions match question_short datum**
--/
-theorem matches_question_short :
-    predictionMatches (deriveEvaluativity .degreeQuestion .negative) question_short = true := by
-  native_decide
 
 
 /--
@@ -1069,10 +1008,7 @@ theorem complete_derivation_as_tall_as :
 - `grounded_matches_simple_*`: Lexicon-grounded matches simple derivation
 
 ### Predictions Match Data
-All predictions match the empirical data from `Evaluativity.lean`:
-- `matches_positive_tall`, `matches_comparative_tall`
-- `matches_equative_tall`, `matches_equative_short`
-- `matches_question_tall`, `matches_question_short`
+Prediction-matching theorems are in `Phenomena/Gradability/Bridge_NeoGricean_Evaluativity.lean`.
 
 ### Connection to Other Modules
 - Uses `AdjectivalConstruction` from `Phenomena/Semantics/Evaluativity.lean`

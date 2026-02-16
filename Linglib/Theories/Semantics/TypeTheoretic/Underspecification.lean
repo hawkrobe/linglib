@@ -1,7 +1,5 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 import Linglib.Theories.Semantics.Scope
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Core.Interfaces.BindingSemantics
 
 /-!
@@ -34,17 +32,15 @@ formalizes the chapter's mechanisms at two levels:
 
 1. `tagged_roundtrip` — 𝔖 witnesses ↔ ScopeConfig
 2. `localization_is_purification` — 𝔏 = 𝔓 (Ch8 ↔ Ch7)
-3. `reflexive_predicts_binding` — ℜ predicts Binding Conditions A/B
-4. `reflexivize₈_agrees_with_simple` — full ℜ₈ ↔ simplified ℜ
-5. `twoQuant_embeds_in_closure` — TwoQuantScope.𝔖 embeds in UnderspecClosure₈
-6. `donkeyNeg_uses_localization` — negation donkey uses 𝔏
+3. `reflexivize₈_agrees_with_simple` — full ℜ₈ ↔ simplified ℜ
+4. `twoQuant_embeds_in_closure` — TwoQuantScope.𝔖 embeds in UnderspecClosure₈
+5. `donkeyNeg_uses_localization` — negation donkey uses 𝔏
 
 ## Key connections
 
 - `QStore.isPlugged` bridges to `Parametric.trivial` (no pending scope)
 - Scope witnesses bridge to `ParticularWC_Exist` / `existPQ` (Ch7)
 - `TwoQuantScope.𝔖` bridges to `ScopeConfig` (Scontras & Pearl 2021)
-- `reflexivize` bridges to `CoreferencePattern` (Phenomena)
 - `localizeConditional` derives the correct strong donkey reading
 - `crossSententialResolve` bridges discourse merge to pronoun resolution
 
@@ -657,60 +653,6 @@ def localizeUniv_implies_conditional {E : Type} (P : PPpty E)
 end DonkeyAnaphora
 
 -- ============================================================================
--- Bridge: TTR donkey predictions → Phenomena/Anaphora/DonkeyAnaphora
--- ============================================================================
-
-/-! ### Per-datum verification: TTR predictions match empirical data
-
-Connect the TTR localization analysis to the theory-neutral donkey
-anaphora data in `Phenomena.Anaphora.DonkeyAnaphora`. Each theorem
-verifies one data point: the empirical datum records a reading as
-available, and TTR produces a witness for that reading.
-
-Changing a Ppty (e.g., making `beats` asymmetric) will break exactly
-the theorems whose empirical predictions depend on it. -/
-
-section PhenomenaBridge
-
-open Phenomena.Anaphora.DonkeyAnaphora
-
-/-- Geach donkey: weak reading available — TTR predicts ✓.
-    `geachDonkey.weakReading = true` and TTR produces a weak (𝔏) witness
-    for both farmers in the scenario. -/
-theorem geach_weak_available :
-    geachDonkey.weakReading = true ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer1) ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer2) :=
-  ⟨rfl, ⟨farmer1_weak_donkey⟩, ⟨farmer2_weak_donkey⟩⟩
-
-/-- Geach donkey: strong reading available — TTR predicts ✓.
-    `geachDonkey.strongReading = true` and TTR produces a conditional
-    strong witness for both farmers. -/
-theorem geach_strong_available :
-    geachDonkey.strongReading = true ∧
-    Nonempty (strongDonkeyConditional .farmer1) ∧
-    Nonempty (strongDonkeyConditional .farmer2) :=
-  ⟨rfl, ⟨farmer1_strong_conditional⟩, ⟨farmer2_strong_conditional⟩⟩
-
-/-- Geach donkey: bound reading — TTR confirms the pronoun depends on
-    the indefinite via parametric background (the donkey is the Bg). -/
-theorem geach_bound_reading :
-    geachDonkey.boundReading = true ∧
-    farmerOwnsBeatsDonkey.Bg = DonkeyBg :=
-  ⟨rfl, rfl⟩
-
-/-- Strong dominant: both readings TTR-available (consistent with
-    `strongDominant` recording both as available with strong preferred). -/
-theorem strongDominant_readings_available :
-    strongDominant.strongAvailable = true ∧
-    strongDominant.weakAvailable = true ∧
-    Nonempty (strongDonkeyConditional .farmer1) ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer1) :=
-  ⟨rfl, rfl, ⟨farmer1_strong_conditional⟩, ⟨farmer1_weak_donkey⟩⟩
-
-end PhenomenaBridge
-
--- ============================================================================
 -- Binding Theory: ℜ and anaphoric resolution
 -- ============================================================================
 
@@ -881,81 +823,6 @@ end BindingPhenomenon
 -- ============================================================================
 -- Bridge: TTR binding → Phenomena/Anaphora/Coreference (bridge theorem 3)
 -- ============================================================================
-
-/-! ### Per-datum verification: binding predictions match coreference data
-
-Connect TTR's ℜ and anaphoric resolution to the theory-neutral binding
-data in `Phenomena.Anaphora.Coreference`.
-
-Cooper (2023) Ch8 §8.3 gives a type-theoretic account of Chomsky's (1981)
-binding conditions:
-- **Condition A** (reflexives must be locally bound): ℜ forces argument identity
-- **Condition B** (pronouns must be locally free): @_{i,j} with disjoint reference
-- **Complementary distribution**: ℜ vs @_{i,j} for the same position
-
-Each theorem verifies one empirical pattern from `Coreference.lean`.
-Changing `reflexivize` or `anaphoricResolve` will break these bridges. -/
-
-section CoreferenceBridge
-
-/-- TTR's ℜ predicts Binding Condition A:
-    reflexives require a local antecedent because ℜ forces argument
-    identity within the local clause.
-    Cooper Ch8, eq (84) + (88): ℜ at VP level binds reflexive to subject.
-    Matches `reflexivePattern` from Phenomena. -/
-theorem reflexive_predicts_condA :
-    reflexivePattern.requiresAntecedent = true ∧
-    reflexivePattern.antecedentDomain = some .local_ ∧
-    (∀ (R : BindInd → BindInd → Type) (x : BindInd), ℜ R x = R x x) :=
-  ⟨rfl, rfl, fun _ _ => rfl⟩
-
-/-- TTR predicts Binding Condition B:
-    pronouns allow disjoint reference via @_{i,j} resolution with a
-    constant function (the assignment provides the referent from
-    non-local context). Cooper Ch8, eq (28).
-    Matches `pronounPattern` from Phenomena. -/
-theorem pronoun_predicts_condB :
-    pronounPattern.requiresAntecedent = false ∧
-    pronounPattern.antecedentDomain = some .nonlocal ∧
-    (∀ (y x : BindInd),
-      anaphoricResolve likeParam (fun _ => y) x = like₈ x y) :=
-  ⟨rfl, rfl, fun _ _ => rfl⟩
-
-/-- Complementary distribution: reflexive and pronoun are predicted
-    by different TTR mechanisms (ℜ vs @_{i,j}).
-    Cooper Ch8, eqs (67)–(73): "Sam likes him" is NOT appropriate for
-    "Sam likes himself" — ℜ must be used instead.
-    Matches `complementaryDistributionData` from Phenomena. -/
-theorem complementary_distribution_predicted :
-    reflexivePattern.anaphorType = .reflexive ∧
-    pronounPattern.anaphorType = .pronoun ∧
-    Nonempty (ℜ like₈ .sam) ∧
-    Nonempty (anaphoricResolve likeParam (fun _ => BindInd.bill) .sam) :=
-  ⟨rfl, rfl, ⟨samLikesHimself⟩, ⟨samLikesBill⟩⟩
-
-/-- The main bridge theorem (bridge theorem 3):
-    TTR's reflexivization predicts the binding data.
-
-    1. ℜ forces local coreference (Condition A): Cooper eq (84)
-    2. @_{i,j} resolution allows disjoint reference (Condition B): Cooper eq (28)
-    3. The empirical coreference patterns match: Chomsky (1981)
-    4. ℜ = anaphoricResolve with id: reflexivization is a special case -/
-theorem reflexive_predicts_binding :
-    -- ℜ forces identity (Condition A)
-    (∀ (R : BindInd → BindInd → Type) (x : BindInd), ℜ R x = R x x) ∧
-    -- Pronoun resolution allows distinct arguments (Condition B)
-    (∀ (y x : BindInd),
-      anaphoricResolve likeParam (fun _ => y) x = like₈ x y) ∧
-    -- ℜ is a special case of anaphoric resolution
-    (anaphoricResolve likeParam id = ℜ like₈) ∧
-    -- Matches empirical coreference patterns
-    reflexivePattern.requiresAntecedent = true ∧
-    pronounPattern.requiresAntecedent = false ∧
-    reflexivePattern.antecedentDomain = some .local_ ∧
-    pronounPattern.antecedentDomain = some .nonlocal :=
-  ⟨fun _ _ => rfl, fun _ _ => rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-end CoreferenceBridge
 
 -- ============================================================================
 -- Bridge: TTR binding → Core/Interfaces/BindingSemantics

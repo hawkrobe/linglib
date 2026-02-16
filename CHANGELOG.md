@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.217.3] - 2026-02-16
+
+### Changed
+- **Dependency discipline**: Moved bridge code from 50 Theories/ files into 55 new Phenomena/ bridge files, eliminating Theories→Phenomena import violations. Theory files now contain only pure theory (types, operators, predicates); all code that imports both Theories/ and Phenomena/ data lives in Phenomena/ bridge files. Net effect: −4373 lines from Theories/, redistributed to Phenomena/.
+- **Linglib.lean**: Removed duplicate `GibbsVariational` import
+
+### Added
+- **55 Phenomena bridge files** across 20 phenomenon categories: Anaphora (5), Aspect (1), Causatives (1), Constructions (2), Coordination (1), Ellipsis (4), Entailment (1), FillerGap (4), Gradability (3), Imprecision (1), Modality (3), Polarity (1), Politeness (1), Presupposition (5), Quantification (5), Questions (2), ScalarImplicatures (6), WordOrder (7), AdditiveParticles (1), Negation (1)
+- **Phenomena/Tense/Cumming2026/Bridge.lean**: Cumming (2026) tense bridge
+- **Phenomena/Tense/Lakoff1970/Data.lean**: Lakoff (1970) tense data
+- **Phenomena/Aspect/Studies/AlstottAravind2026.lean**: Alstott & Aravind (2026) aspect study
+- **Phenomena/Imprecision/Studies/LassiterGoodman2017.lean**: Lassiter & Goodman (2017) imprecision data
+- **Phenomena/AdditiveParticles/Studies/TurcoBraunDimroth2014.lean**: Turco, Braun & Dimroth (2014) additive particle data
+- **Phenomena/Negation/Studies/StankovaSimik2024.lean**: Stanková & Šimík (2024) negation data
+- **Theories/Pragmatics/RSA/PhaseTransition.lean**: RSA phase transition analysis
+
 ## [0.217.2] - 2026-02-16
 
 ### Changed

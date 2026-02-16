@@ -29,7 +29,6 @@ that IE cannot assign FALSE to.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Phenomena.Modality.FreeChoice
 
 namespace NeoGricean.FreeChoice
 
@@ -402,38 +401,6 @@ theorem simple_exclusive_or :
     right; left; simp [propA, propB]
   · -- both
     right; right; simp [propA, propB]
-
--- SECTION 9: Connection to Phenomena Data
-
-/-!
-## Connection to Empirical Data
-
-The theory predicts the patterns in `Phenomena.FreeChoice.Data`:
-
-1. **Free Choice Permission** (`coffeeOrTea`):
-   - ◇(coffee ∨ tea) → ◇coffee ∧ ◇tea
-   - Derived by Exh^{IE+II}
-
-2. **Ross's Paradox** (`postOrBurn`):
-   - ◇post ⊢ ◇(post ∨ burn) semantically
-   - But ◇(post ∨ burn) → ◇post ∧ ◇burn pragmatically
-   - The pragmatic inference is NOT entailed by the premise!
-
-3. **Cancellability** (`explicitCancellation`):
-   - "You may have coffee or tea, but I don't know which"
-   - The implicature can be cancelled → it's pragmatic (II), not semantic
--/
-
-/-- Free choice is predicted for permission sentences -/
-theorem predicts_free_choice_permission :
-    ∀ w, exhIEII fcALT fcPrejacent w → permA w ∧ permB w :=
-  free_choice
-
-/-- The inference is pragmatic (not a semantic entailment) -/
-theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
-
-/-- The inference is captured by our pragmatic theory -/
-theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
 -- Summary
 

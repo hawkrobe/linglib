@@ -1,10 +1,9 @@
 /-
 # CCG Analysis of Gapping
 
-CCG derivations for gapping constructions, proving that:
+CCG categories for gapping constructions, proving that:
 1. The "gapped" right conjunct IS a constituent (via type-raising + composition)
 2. Gapping direction follows from lexical verb categories
-3. Ross's generalization emerges from the Principles of Consistency and Inheritance
 
 ## Insight (Steedman 2000, Chapter 7)
 
@@ -33,12 +32,10 @@ Hence: forward gapping in SVO/VSO, backward gapping in SOV.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Phenomena.Ellipsis.Gapping
 
 namespace CCG.Gapping
 
 open CCG
-open Phenomena.Ellipsis.Gapping
 
 -- Gapped Conjunct Categories
 
@@ -72,68 +69,14 @@ T/(T\NP) - combines with verbs to the RIGHT.
 -/
 def ForwardRaisedNP : Cat := S / (S \ NP)
 
--- Word Order and Gapping Direction
-
 /--
-Can arguments type-raise to backward categories (T\(T/NP))?
-This requires VSO/SVO verbs in the language.
+The potential backward-gapped conjunct would need category S/((S\NP)/NP).
+But this requires forward composition of forward type-raised NPs.
+English doesn't license T/(T\NP) categories.
 -/
-def hasBackwardRaising : WordOrder → Bool
-  | .VSO => true
-  | .SVO => true
-  | .VOS => true
-  | _ => false
+def BackwardGappedTV : Cat := S / ((S \ NP) / NP)
 
-/--
-Can arguments type-raise to forward categories (T/(T\NP))?
-This requires SOV/OVS verbs in the language.
--/
-def hasForwardRaising : WordOrder → Bool
-  | .SOV => true
-  | .OVS => true
-  | .OSV => true
-  | _ => false
-
-/--
-Gapping direction follows from available type-raised categories.
-
-Forward gapping: gapped conjunct is leftward-looking (needs verb to left)
-  -> requires backward type-raising (T\(T/NP))
-  -> requires VSO/SVO verbs
-
-Backward gapping: gapped conjunct is rightward-looking (needs verb to right)
-  -> requires forward type-raising (T/(T\NP))
-  -> requires SOV verbs
--/
-def predictedGappingPattern (order : WordOrder) : GappingPattern :=
-  ⟨hasBackwardRaising order, hasForwardRaising order⟩
-
--- Ross's Generalization from CCG Principles
-
-/--
-Ross's generalization emerges from CCG's Principles of Consistency and Inheritance.
-
-The gapped conjunct's directionality is determined by:
-1. What type-raised categories are available (from verb categories)
-2. What composition rules preserve those directions
-
-This follows from the grammar rather than being stipulated.
--/
-theorem ross_from_ccg_principles :
-    ∀ order : WordOrder,
-      predictedGappingPattern order = rossOriginal order := by
-  intro order
-  cases order <;> rfl
-
-/--
-SVO patterns with VSO (forward gapping), not SOV (backward gapping).
-
-This is because SVO verbs ((S\NP)/NP) allow backward type-raising,
-which produces leftward-looking gapped constituents.
--/
-theorem svo_patterns_with_vso :
-    predictedGappingPattern .SVO = predictedGappingPattern .VSO := by
-  rfl
+-- Gapped Conjunct Directionality
 
 /--
 The Principle of Inheritance ensures composed functions inherit directionality.
@@ -146,26 +89,6 @@ Hence it can only combine with a verb to its left.
 -/
 theorem inheritance_determines_gapping :
     GappedTV = S \ ((S / NP) / NP) := rfl
-
--- Why Backward Gapping Fails in English
-
-/--
-English has no SOV verb category, so forward type-raising is not available.
-
-Without T/(T\NP), we cannot build a rightward-looking gapped conjunct.
-Hence "*Warren, potatoes and Dexter ate bread" is ungrammatical.
--/
-theorem no_backward_gapping_in_english :
-    hasForwardRaising .SVO = false := rfl
-
-/--
-The potential backward-gapped conjunct would need category S/((S\NP)/NP).
-But this requires forward composition of forward type-raised NPs.
-English doesn't license T/(T\NP) categories.
--/
-def BackwardGappedTV : Cat := S / ((S \ NP) / NP)
-
--- Gapped Conjunct Directionality
 
 /--
 The gapped conjunct S\((S/NP)/NP) is leftward-looking.
@@ -189,22 +112,6 @@ theorem backward_gapped_tv_is_rightward :
     match BackwardGappedTV with
     | .rslash _ _ => true
     | _ => false := rfl
-
--- Dutch: Both Directions
-
-/--
-Dutch has both VSO main verbs and SOV subordinate verbs.
-Therefore, Dutch licenses both type-raising directions.
--/
-def dutchProfile : WordOrderProfile := dutch
-
-/--
-Dutch allows both forward and backward gapping.
--/
-theorem dutch_allows_both_gapping :
-    (rossRevised dutchProfile).allowsForward = true ∧
-    (rossRevised dutchProfile).allowsBackward = true := by
-  constructor <;> rfl
 
 -- Stripping as Special Case
 

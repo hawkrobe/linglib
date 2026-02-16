@@ -42,7 +42,6 @@ Dayal parse (strong): O_ExhDA(∃x[O_σA(◇O_ALT(take(x)))])
 
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Phenomena.Modality.FreeChoice
 
 namespace RSA.FCIAny
 
@@ -576,34 +575,6 @@ theorem both_derive_free_choice :
   constructor
   · exact RSA.FreeChoice.fci_derived
   · exact exclusiveness_derived
-
--- SECTION 9: Connection to Phenomena Data
-
-/-!
-## Connection to Phenomena
-
-The model predicts the patterns in `Phenomena.Modality.FreeChoice.Data`:
-
-1. **FCI Any** (`anyClass`, `anyFruit`):
-   - "You may take any class" → permission for each class specifically
-   - Derived: L1 assigns ~100% to exclusiveness states
-
-2. **Robustness to priors**:
-   - Exclusiveness holds even with unfavorable priors
-   - Parallels FCI robustness in disjunction
-
-3. **Not-every is cancelable**:
-   - "You may take any class (in fact, you must take all of them)"
-   - The "not every" inference can be cancelled, unlike exclusiveness
--/
-
-/-- Free choice *any* is predicted for permission sentences -/
-theorem predicts_fci_any :
-    Phenomena.Modality.FreeChoice.anyClass.exclusivenessArises = true := rfl
-
-/-- Exclusiveness is robust to priors (as recorded in the data) -/
-theorem predicts_robustness :
-    Phenomena.Modality.FreeChoice.anyClass.robustToPriors = true := rfl
 
 -- SECTION 10: Additional Predictions
 
