@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.217.4] - 2026-02-16
+
+### Added
+- **blog/data/references.bib**: Centralized BibTeX bibliography (102 entries) as single source of truth for all references
+- **blog/scripts/gen_bibliography.py**: BibTeX→Markdown generator with `@cite{key}` cross-referencing from Lean docstrings
+- **blog/scripts/verify_bibliography.py**: Verification script that checks entries against Semantic Scholar API
+- **blog/content/bibliography.md**: Generated bibliography page on the Hugo blog
+- **Bibliography nav entry** in `hugo.toml` between Roadmap and API Docs
+- 12 new DOIs added after Semantic Scholar verification (fox-2007, phillips-brown-2025, von-stechow-2009, kratzer-1998, krifka-2004, krifka-1989, krifka-1998, haslinger-etal-2025, montague-1973, marcolli-chomsky-berwick-2023, waldon-degen-2021, hamblin-1973)
+
+### Fixed
+- **klecha-2016**: Corrected DOI from `10.3765/sp.9.9` to `10.3765/sp.9.8` (wrong article number)
+
 ## [0.217.3] - 2026-02-16
 
 ### Changed
