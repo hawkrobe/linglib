@@ -6,13 +6,11 @@ CCG derivational structure determines available scope readings (Steedman 2000 Ch
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Phenomena.Quantification.Data
 
 namespace CCG.Scope
 
 open CCG
 open ScopeTheory
-open Phenomena.Quantification.Data
 
 /-- A scope-taking element in a CCG derivation. -/
 structure ScopeTaker where
@@ -88,23 +86,5 @@ def everyHorse_inverse : DerivStep :=
 
 #eval analyzeDerivation everyHorse_surface  -- directApp
 #eval analyzeDerivation everyHorse_inverse  -- composed
-
--- Connection to Phenomena Data
-
-/-- Map Phenomena.Quantification.Data.VerbOrder to CCG derivation type. -/
-def verbOrderToDerivationType : VerbOrder → DerivationType
-  | .verbRaising => .composed           -- Object + embedded verb via composition
-  | .verbProjectionRaising => .directApp -- Matrix verb first, standard application
-
-/-- Helper to convert ScopeAvailability to BinaryScopeAvailability. -/
-def ScopeAvailability.toBinaryScopeAvailability : ScopeAvailability → BinaryScopeAvailability
-  | .surfaceOnly => .surfaceOnly
-  | .ambiguous => .ambiguous
-
-/-- CCG prediction matches observed scope availability. -/
-theorem ccg_predicts_verb_raising_scope (vo : VerbOrder) :
-    derivationTypeToAvailability (verbOrderToDerivationType vo) =
-    ScopeAvailability.toBinaryScopeAvailability (wordOrderToAvailability vo) := by
-  cases vo <;> rfl
 
 end CCG.Scope

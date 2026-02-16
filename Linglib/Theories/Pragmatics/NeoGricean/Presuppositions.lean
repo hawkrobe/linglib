@@ -20,7 +20,7 @@ to the core presupposition projection from Core.Presupposition.
 ## Architecture
 
 Theory-neutral examples (King, factive verbs, etc.) are in:
-  `Phenomena.Presuppositions.Data`
+  `Phenomena.Presupposition.Basic`
 
 This module provides NeoGricean-specific infrastructure:
   - Trigger types for alternative generation
@@ -38,14 +38,11 @@ This module provides NeoGricean-specific infrastructure:
 import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-import Linglib.Phenomena.Presupposition.Basic
-
 namespace NeoGricean.Presuppositions
 
 open Core.Presupposition
 open Semantics.Entailment.Polarity
 open NeoGricean
-open Phenomena.Presupposition
 
 
 /--
@@ -140,42 +137,6 @@ structure ExhWithPresup (W : Type*) where
 
 
 /--
-Wrap the King example from Phenomena for NeoGricean use.
-
-This creates a PresupDerivation from the theory-neutral King example,
-adding trigger information for SI computation.
--/
-def kingBaldDerivation : PresupDerivation KingWorld :=
-  { meaning := kingBald
-  , triggers := [⟨0, .definite⟩]  -- "the" at position 0
-  , polarity := .upward
-  , surface := ["the", "king", "is", "bald"]
-  }
-
-/--
-The conditional "If the king exists, the king is bald" as a derivation.
-
-Note: No presupposition triggers project because filtering eliminates them.
--/
-def ifKingThenBaldDerivation : PresupDerivation KingWorld :=
-  { meaning := ifKingThenBald
-  , triggers := []  -- Presupposition filtered out
-  , polarity := .upward
-  , surface := ["if", "the", "king", "exists", ",", "the", "king", "is", "bald"]
-  }
-
-/--
-Factive verb example as a derivation.
--/
-def johnKnowsRainingDerivation : PresupDerivation RainWorld :=
-  { meaning := johnKnowsRaining
-  , triggers := [⟨1, .factive⟩]  -- "knows" at position 1
-  , polarity := .upward
-  , surface := ["John", "knows", "that", "it's", "raining"]
-  }
-
-
-/--
 In a felicitous context, SI computation can proceed.
 
 This is the precondition for applying the Standard Recipe when
@@ -183,16 +144,6 @@ presuppositions are involved.
 -/
 theorem si_proceeds_when_felicitous {W : Type*} (p : PrProp W) (w : W)
     (h : p.presup w = true) : siRequiresPresup p w := h
-
-/--
-Filtering affects which triggers are relevant for SI.
-
-When a presupposition is filtered (locally satisfied), the corresponding
-trigger no longer contributes to global presupposition, and alternatives
-involving that trigger may behave differently.
--/
-theorem filtering_removes_trigger :
-    ifKingThenBaldDerivation.triggers = [] := rfl
 
 
 -- ============================================================================

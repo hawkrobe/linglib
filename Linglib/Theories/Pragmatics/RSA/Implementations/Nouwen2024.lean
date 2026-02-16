@@ -46,7 +46,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Implementations.LassiterGoodman2017
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
-import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.Nouwen2024
@@ -56,8 +55,6 @@ open RSA.LassiterGoodman2017 (Height Threshold allHeights allThresholds
   heightPrior thresholdPrior tallMeaning)
 open Core.Scale (deg thr)
 open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
-open Phenomena.Gradability.Intensifiers (IntensifierClass)
-
 -- Utterances
 
 /--

@@ -27,12 +27,10 @@ predictions, motivating the richer structure in the full model.
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.ScalarImplicatures.Basic
 
 namespace RSA.EmbeddedScalars
 
 open RSA.Eval LURSA
-open Phenomena.ScalarImplicatures
 
 
 /--
@@ -345,23 +343,6 @@ Our simplified model demonstrates the architecture but doesn't derive
 the full empirical pattern. The existence proof is in Potts et al. (2016)
 with their richer model structure.
 -/
-
-
-/--
-**Connection to empirical pattern**.
-
-The empirical data (Geurts 2010) shows:
-- DE: implicature blocked (global preferred)
-- UE: implicature arises (local preferred)
-
-Our simple LU model predicts the opposite.
-The full Potts et al. model derives the correct pattern.
--/
-theorem empirical_pattern_documented :
-    -- Empirical: DE blocks, UE allows
-    someAllBlocking.implicatureInDE = false ∧
-    someAllBlocking.implicatureInUE = true := by
-  native_decide
 
 
 /-

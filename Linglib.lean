@@ -731,7 +731,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.MaxEntropy
-import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
 import Linglib.Theories.Pragmatics.RSA.Domains.LexicalAmbiguity

@@ -42,14 +42,12 @@ and thus can't be "allowed for" independently.
 import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
-import Linglib.Phenomena.Presupposition.Diagnostics
 
 namespace Semantics.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Lexical.Verb.Aspect
-open Phenomena.Presupposition.Diagnostics
 
 
 variable {W : Type*}
@@ -360,48 +358,6 @@ theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
     -- Assertion is negated
     (negative e).assertion w = !(affirmative e).assertion w := by
   constructor <;> rfl
-
-
-/-
-## Why "Allows For" Identifies Preconditions
-
-The "allows for" test works because:
-
-1. "S allows for C" is acceptable when C is compatible with S but not entailed
-2. Preconditions are independent facts that the event depends on
-3. Since preconditions are prior to the event, they can be elaborated
-4. "John stopped smoking allows for him to have been a heavy smoker" ✓
-
-## Why "Results In" Identifies Consequences
-
-The "results in" test works because:
-
-1. "S results in C" is acceptable when C follows from S
-2. Consequences are states that the event brings about
-3. Since consequences follow from occurrence, they "result from" it
-4. "John stopped smoking results in him no longer smoking" ✓
-
-## Cross-Classification
-
-- Preconditions: pass "allows for", fail "results in", project
-- Consequences: pass "results in", fail "allows for", don't project
-
-This is exactly the pattern in `Phenomena.Presupposition.Diagnostics`.
--/
-
-/--
-The theory predicts the empirical pattern: preconditions ↔ projection.
-
-Content that is a precondition (passes "allows for") should project.
-Content that is a consequence (passes "results in") should not project.
--/
-def theoryPredictsPattern : Bool :=
-  -- Prior state: is precondition, passes "allows for", projects
-  stopPattern.priorPassesAllowsFor == true &&
-  priorStateProjection.projectsThroughNegation == true &&
-  -- Result state: is consequence, fails "allows for", doesn't project
-  stopPattern.resultFailsAllowsFor == true &&
-  resultStateProjection.projectsThroughNegation == false
 
 
 /--

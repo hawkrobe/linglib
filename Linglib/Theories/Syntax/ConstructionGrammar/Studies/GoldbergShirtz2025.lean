@@ -2,7 +2,6 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 
 /-!
 # Goldberg & Shirtz (2025): PAL Constructions — Theoretical Analysis
@@ -221,34 +220,5 @@ def claim_pal_presupposes_familiarity : Prop :=
 /-- Claim 2 holds by definition of palPresupposition. -/
 theorem claim_pal_presupposes_familiarity_holds :
     claim_pal_presupposes_familiarity := λ _ _ => rfl
-
-/-- **Claim 3**: PALs produce rhetorical effects (wit, sarcasm).
-
-Supported by Studies 2 (wittiness) and 3 (sarcasm):
-PALs are judged wittier and more sarcastic than paraphrases.
-
-We record this as the empirical observation that effect sizes are positive
-and significant across both studies. -/
-def claim_rhetorical_effects : Prop :=
-  _root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.study2.beta > 0 ∧
-  _root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.study3.beta > 0
-
-/-- Claim 3 holds: β > 0 in both Studies 2 and 3. -/
-theorem claim_rhetorical_effects_holds : claim_rhetorical_effects := by
-  unfold claim_rhetorical_effects
-  constructor <;> native_decide
-
-/-- **Claim 4**: PAL-like constructions exist in unrelated language families.
-
-Attested in Germanic (German, Dutch, Afrikaans), Turkic (Turkish),
-Semitic (Hebrew), and Romance (Brazilian Portuguese). -/
-def claim_crosslinguistic : Prop :=
-  (_root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.crossLinguisticData.map
-    (·.family)).eraseDups.length ≥ 3
-
-/-- Claim 4 holds: 4 distinct families attested. -/
-theorem claim_crosslinguistic_holds : claim_crosslinguistic := by
-  unfold claim_crosslinguistic
-  native_decide
 
 end ConstructionGrammar.Studies.GoldbergShirtz2025

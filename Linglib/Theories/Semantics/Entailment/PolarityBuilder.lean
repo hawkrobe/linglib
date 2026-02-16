@@ -1,7 +1,6 @@
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Core.NaturalLogic
 import Linglib.Fragments.English.PolarityItems
-import Linglib.Phenomena.Polarity.VonFintel1999
 
 /-!
 # Polarity Builder — Derived NPI Licensing from Entailment Signatures
@@ -39,7 +38,6 @@ open Semantics.Entailment.StrawsonEntailment
 open Semantics.Entailment.Polarity
 open Core.NaturalLogic (EntailmentSig DEStrength strengthSufficient)
 open Fragments.English.PolarityItems
-open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
 
 -- ============================================================================
 -- Section 1: MonotonicityProfile
@@ -397,15 +395,6 @@ theorem strength_builder_full_agreement :
     (strengthSufficient .antiAdditive .antiAdditive = noStudentProfile.licensesStrongNPI) ∧
     (strengthSufficient .weak .antiAdditive = false ∧
      atMost2Profile.licensesStrongNPI = false) := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ### VonFintel (1999) empirical bridge -/
-
-/--
-Von Fintel's empirical observation, derived: "only" has no classical DE level
-and the empirical datum records it as not classically DE.
--/
-theorem vonFintel_only_not_de :
-    onlyProfile.strongestLevel = none ∧ onlyNotDE.isClassicallyDE = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- Section 10: EntailmentSig ↔ Flag Agreement

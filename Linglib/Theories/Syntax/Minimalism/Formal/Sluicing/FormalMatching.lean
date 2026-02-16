@@ -32,12 +32,10 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
-import Linglib.Phenomena.Ellipsis.Sluicing
 
 namespace Minimalism.Sluicing
 
 open Minimalism
-open Phenomena.Ellipsis.Sluicing
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 1: Argument Domain
@@ -268,72 +266,5 @@ theorem single_pair_matches (hp : HeadPair) :
   simp only [lexicallyIdentical_refl, ite_true]
   unfold matchHeadPairs
   decide
-
--- ═══════════════════════════════════════════════════════════════
--- Part 6: Bridge to Empirical Data
--- ═══════════════════════════════════════════════════════════════
-
-/-- SIC prediction for basic sluicing:
-    "Someone left, but I don't know who"
-    Antecedent vP and ellipsis vP should have identical head pairs
-    (same verb, same argument structure). -/
-def basicSluicePrediction : String :=
-  let datum := basicSluice
-  s!"SIC predicts '{datum.sentence}' is grammatical: " ++
-  s!"antecedent '{datum.antecedent}' and ellipsis '{datum.elided}' " ++
-  s!"share the same verb → same head pairs in argument domain"
-
-/-- SIC prediction for German case matching:
-    Case is assigned within the argument domain (by V at F0),
-    so the wh-phrase must bear the case that V assigns.
-    Mismatched case = different head-complement relation = SIC violation. -/
-def casePrediction : String :=
-  let match_ := germanCaseMatch
-  let mismatch := germanCaseMismatch
-  s!"Case match ({match_.whPhraseCase}): grammatical={match_.grammatical}. " ++
-  s!"Case mismatch ({mismatch.whPhraseCase} vs {mismatch.innerAntecedentCase}): " ++
-  s!"grammatical={mismatch.grammatical}. " ++
-  s!"SIC explains: case reflects head-complement structure in argument domain."
-
-/-- The Anand et al. analysis maps grammaticality judgments from
-    Phenomena/Ellipsis/Sluicing.lean to SIC predictions:
-
-    | Datum | SIC Prediction | Matches? |
-    |-------|---------------|----------|
-    | basicSluice | Licensed (same verb) | Yes |
-    | germanCaseMatch | Licensed (same case = same structure) | Yes |
-    | germanCaseMismatch | Not licensed (different case = different structure) | Yes |
-    | Voice mismatch | Licensed (voice outside arg domain) | Yes | -/
-def sicPredictionsSummary : String :=
-  "SIC predictions match all empirical data in Phenomena/Ellipsis/Sluicing.lean"
-
--- ═══════════════════════════════════════════════════════════════
--- Part 7: Eval Tests
--- ═══════════════════════════════════════════════════════════════
-
--- Head pair matching
-#eval lexicallyIdentical ⟨.V, .D, 1⟩ ⟨.V, .D, 2⟩  -- true (same cats, different tokens)
-#eval lexicallyIdentical ⟨.V, .D, 1⟩ ⟨.V, .N, 1⟩  -- false (different complement)
-
--- Structural identity
-#eval structurallyIdentical [⟨.V, .D, 0⟩] [⟨.V, .D, 0⟩]  -- true
-#eval structurallyIdentical [⟨.V, .D, 0⟩] [⟨.V, .N, 0⟩]  -- false
-#eval structurallyIdentical [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩] [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩]  -- true
-#eval structurallyIdentical [⟨.V, .D, 0⟩] [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩]  -- false (different count)
-
--- Argument domain filtering
-#eval argumentDomainSpine .C fullVerbalEP  -- [V, v] (F0 and F1 only)
-#eval argumentDomainSpine .V fullVerbalEP  -- [V] (small clause: only F0)
-
--- Sluicing license
-#eval (SluicingLicense.mk [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩] [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩] .C .C).isLicensed
-  -- true: same head pairs
-
-#eval (SluicingLicense.mk [⟨.V, .D, 0⟩, ⟨.v, .V, 0⟩] [⟨.V, .N, 0⟩, ⟨.v, .V, 0⟩] .C .C).isLicensed
-  -- false: V selects D vs N → different complement
-
--- Bridge to empirical data
-#eval basicSluicePrediction
-#eval casePrediction
 
 end Minimalism.Sluicing

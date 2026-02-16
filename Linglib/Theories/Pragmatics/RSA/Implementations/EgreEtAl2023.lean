@@ -19,8 +19,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Phenomena.Imprecision.Numerals
-import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Linarith
@@ -514,27 +512,13 @@ theorem l0_preserves_bir_ranking :
     getScore l0_around3 .v1 > getScore l0_around3 .v0 := by
   native_decide
 
--- ============================================================================
--- Bridge Theorems: BIR ↔ Closed Form ↔ Phenomena
--- ============================================================================
+-- BIR ↔ Closed Form
 
 /-- BIR posterior matches closed-form for each value (n=3). -/
 theorem bir_matches_closed_form :
     ∀ v : Value,
     getScore l0_around3 v = birClosedForm 3 v.toNat := by
   intro v; cases v <;> native_decide
-
-/-- Closed form matches Phenomena datum for center: P(x=20 | around 20) = 21/441. -/
-theorem closed_form_matches_phenomena_center :
-    birClosedForm 20 20 =
-    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_center.expectedProb := by
-  native_decide
-
-/-- Closed form matches Phenomena datum for offset: P(x=15 | around 20) = 16/441. -/
-theorem closed_form_matches_phenomena_offset5 :
-    birClosedForm 20 15 =
-    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_offset5.expectedProb := by
-  native_decide
 
 -- Eval
 

@@ -16,13 +16,10 @@ compositional lexical uncertainty. Journal of Semantics.
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
 
 namespace RSA.PottsLU
 
 open RSA.Eval LURSA
-open Phenomena.ScalarImplicatures
 
 
 /-- Outcome for a single player (N/S/A). -/
@@ -278,17 +275,6 @@ theorem potts_model_derives_de_ue_asymmetry :
 -- NOTE: Paper uses λ=0.1 (nearly uniform speaker). Our α=1 is more rational;
 -- qualitative predictions match but exact replication needs ℚ-valued exponentiation.
 
-theorem potts_model_de_prediction :
-    -- Empirical: DE blocks embedded implicature
-    someAllBlocking.implicatureInDE = false := by
-  native_decide
-
-theorem potts_model_ue_prediction :
-    -- Empirical: UE allows embedded implicature
-    someAllBlocking.implicatureInUE = true := by
-  native_decide
-
-
 /-- Pretty-print L₁ distribution -/
 def showL1 (u : Utterance) : List (String × ℚ) :=
   (l1Worlds u).map λ (w, p) => (toString (repr w), p)
@@ -358,38 +344,5 @@ theorem two_lexicon_pred_model_succeeds_ue :
     pLocalUE_reduced > pGlobalOnlyUE_reduced := by
   native_decide
 
-
-/-- Simplified model (2 lexica, 3 worlds) gives inverted predictions. -/
-theorem simplified_model_fails :
-    -- DE: local wins (wrong - should be global)
-    EmbeddedScalars.pLexRefined > EmbeddedScalars.pLexBase ∧
-    -- UE: global wins (wrong - should be local)
-    EmbeddedScalars.pLexBaseUE > EmbeddedScalars.pLexRefinedUE :=
-  EmbeddedScalars.simple_lu_model_limitation
-
-/-- Full model succeeds where simplified fails. -/
-theorem full_model_succeeds_simplified_fails :
-    -- Full model: correct predictions
-    (pGlobalDE > pLocalOnlyDE) ∧
-    (pLocalUE > pGlobalOnlyUE) ∧
-    -- Simplified model: inverted predictions
-    (EmbeddedScalars.pLexRefined > EmbeddedScalars.pLexBase) ∧
-    (EmbeddedScalars.pLexBaseUE > EmbeddedScalars.pLexRefinedUE) := by
-  exact ⟨potts_model_derives_de_blocking,
-         potts_model_derives_ue_implicature,
-         EmbeddedScalars.simple_lu_model_limitation.1,
-         EmbeddedScalars.simple_lu_model_limitation.2⟩
-
-/-- Rich world space (10 classes) is the critical factor; 3-world model fails. -/
-theorem world_space_is_critical :
-    -- Simplified (3 worlds): fails
-    (EmbeddedScalars.pLexRefined > EmbeddedScalars.pLexBase) ∧
-    -- 2-Lexicon + 10 worlds: succeeds
-    (pGlobalDE_reduced > pLocalOnlyDE_reduced) ∧
-    -- Full Potts (10 worlds): succeeds
-    (pGlobalDE > pLocalOnlyDE) := by
-  exact ⟨EmbeddedScalars.simple_lu_model_limitation.1,
-         two_lexicon_pred_model_succeeds_de,
-         potts_model_derives_de_blocking⟩
 
 end RSA.PottsLU

@@ -3,26 +3,15 @@ import Linglib.Theories.Syntax.Minimalism.Core.FromFragments
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
-import Linglib.Phenomena.WordOrder.Basic
-import Linglib.Phenomena.ArgumentStructure.Subcategorization
 
 /-
-# Minimalist Derivations for Phenomena
+# Minimalist Derivations
 
-This module connects Minimalist Program derivations to empirical phenomena data.
-It uses the Fragments lexicon and shows that grammatical sentences can be built
-via formal Merge (from SyntacticObjects.lean).
-
-## Grounding
-
-Derivations here correspond to grammatical sentences in:
-- `Phenomena.WordOrder.data` - SVO word order
-- `Phenomena.ArgumentStructure.Subcategorization.data` - argument structure
+Minimalist Program derivations using the Fragments lexicon, showing that
+grammatical sentences can be built via formal Merge (from SyntacticObjects.lean).
 
 ## Architecture
 
-  Phenomena/                        →  Theory-neutral data (strings + judgments)
-          ↓
   Fragments/English/...             →  Lexical entries (VerbEntry, PronounEntry, etc.)
           ↓
   Theories/Minimalism/FromFragments →  Interpretation: Entry → SyntacticObject
@@ -31,9 +20,6 @@ Derivations here correspond to grammatical sentences in:
 -/
 
 namespace Minimalism.Phenomena.Derivations
-
-open Phenomena.WordOrder
-open Phenomena.ArgumentStructure.Subcategorization
 
 open Minimalism
 open Minimalism.Core.FromFragments
@@ -143,48 +129,5 @@ def john_gives_mary_book : SyntacticObject :=
   merge johnSO v_mary_book
 
 end Subcategorization
-
--- ============================================================================
--- Grounding: Connection to Theory-Neutral Phenomena Data
--- ============================================================================
-
-section Grounding
-
-/-- The derivations model the grammatical SVO sentences from WordOrder.data -/
-theorem models_svo_word_order :
-    Phenomena.WordOrder.data.pairs.any (·.grammatical == "John sees Mary") := by
-  native_decide
-
-/-- The derivations model grammatical subcategorization patterns -/
-theorem models_intransitive :
-    Phenomena.ArgumentStructure.Subcategorization.data.pairs.any
-      (·.grammatical == "John sleeps") := by
-  native_decide
-
-theorem models_transitive :
-    Phenomena.ArgumentStructure.Subcategorization.data.pairs.any
-      (·.grammatical == "John devours pizza") := by
-  native_decide
-
-theorem models_ditransitive :
-    Phenomena.ArgumentStructure.Subcategorization.data.pairs.any
-      (·.grammatical == "John gives Mary book") := by
-  native_decide
-
-/-- Verify the phonological yield of a derivation matches expected word order -/
-example : john_sees_mary.phonYield = ["John", "sees", "Mary"] := rfl
-
-example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
-
-example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := by native_decide
-
-/-- Verify derivations are well-formed SyntacticObject structures. -/
-example : john_sleeps = merge johnSO sleepsSO := rfl
-example : john_devours_pizza =
-    merge johnSO (merge devoursSO pizzaSO) := rfl
-example : mary_sees_john =
-    merge marySO (merge seesSO johnSO) := rfl
-
-end Grounding
 
 end Minimalism.Phenomena.Derivations

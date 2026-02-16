@@ -42,11 +42,8 @@ From Harizanov (Section 5.1.2, p.35-36):
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
-import Linglib.Phenomena.WordOrder.VerbPosition
 
 namespace Minimalism.Phenomena.HeadMovement.GermanicV2
-
-open Phenomena.WordOrderAlternations.VerbPosition
 
 /-! ## Part 1: The Lexicon
 
@@ -243,30 +240,5 @@ theorem v2_mover_stays_minimal :
 - MUST respect HMC
 - Results in morphological fusion
 -/
-
--- Grounding: Connection to Theory-Neutral Phenomena Data
-
-/-- The Minimalist analysis models the V2 root clause from the phenomena data. -/
-theorem models_root_clause :
-    germanExample.rootClause = "Diesen Film haben die Kinder gesehen" := rfl
-
-/-- The analysis captures V2 requirement in root clauses. -/
-theorem captures_v2_requirement :
-    germanExample.v2InRoot = true := rfl
-
-/-- The analysis captures verb-final order in embedded clauses. -/
-theorem captures_verb_final_embedded :
-    germanExample.verbFinalInEmbedded = true := rfl
-
-/-- The derivation produces V2 order: finite verb precedes subject.
-    The verb is in C position (left daughter of root CP). -/
-theorem derivation_yields_v2_order :
-    cpV2.isNode ∧
-    (match cpV2 with
-     | .node left _ => left = theFiniteVerb
-     | .leaf _ => False) := by
-  constructor
-  · rfl
-  · rfl
 
 end Minimalism.Phenomena.HeadMovement.GermanicV2

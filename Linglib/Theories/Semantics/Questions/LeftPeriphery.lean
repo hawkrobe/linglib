@@ -27,12 +27,8 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Answerhood
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Questions.Embedding
-import Linglib.Phenomena.Questions.Typology
 
 namespace Semantics.Questions.LeftPeriphery
-
-open Phenomena.Questions.Embedding
 
 -- ============================================================================
 -- A. Clause-type feature
@@ -117,6 +113,13 @@ def allowsQuasiSub (cls : SelectionClass) (negated questioned : Bool) : Bool :=
   | .responsive =>             -- DERIVED: depends on semantic consistency
       perspPConsistent cls negated questioned
 
+/-- The structurally distinct ways an interrogative clause can be embedded. -/
+inductive EmbedType where
+  | subordination      -- "knows whether S left" / "knows who S saw"
+  | quasiSubordination -- "wants to know [did S leave↑]" (embedded inversion)
+  | quotation          -- asked, "Did S leave?" (full quotation)
+  deriving DecidableEq, Repr, BEq
+
 /-- Full embedding prediction. -/
 def allowsEmbedding (cls : SelectionClass) (et : EmbedType)
     (negated questioned : Bool) : Bool :=
@@ -180,10 +183,10 @@ theorem responsive_shifts_under_question :
     allowsQuasiSub .responsive false true = true := rfl
 
 -- ============================================================================
--- F. Verification against empirical data
+-- F. Verb string classification
 -- ============================================================================
 
-/-- Classify each empirical datum from Phenomena.Questions.Embedding. -/
+/-- Classify each verb by string to a selection class. -/
 def classifyVerb : String → SelectionClass
   | "investigate" => .rogativeCP
   | "depend on"   => .rogativeCP
@@ -193,71 +196,14 @@ def classifyVerb : String → SelectionClass
   | "believe"     => .uninterrogative
   | _             => .uninterrogative
 
-/-- The theory correctly predicts all embedding judgments from the data. -/
-theorem theory_predicts_embedding :
-    ∀ d ∈ allEmbeddingData,
-      allowsEmbedding (classifyVerb d.verb) .subordination false false = d.subordination ∧
-      allowsEmbedding (classifyVerb d.verb) .quasiSubordination false false = d.quasiSubordination ∧
-      allowsEmbedding (classifyVerb d.verb) .quotation false false = d.quotation := by
-  intro d hd
-  simp [allEmbeddingData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [allowsEmbedding, allowsQuasiSub, perspPConsistent, effectiveKnowledge,
-          entailsKnowledge, classifyVerb,
-          investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
-
-/-- Shiftiness predictions match McCloskey's data for remember (responsive). -/
-theorem shiftiness_predicted :
-    allowsQuasiSub .responsive remember_bare.negated remember_bare.questioned
-      = remember_bare.quasiSubOk ∧
-    allowsQuasiSub .responsive remember_negated.negated remember_negated.questioned
-      = remember_negated.quasiSubOk ∧
-    allowsQuasiSub .responsive remember_questioned.negated remember_questioned.questioned
-      = remember_questioned.quasiSubOk := by
-  simp [allowsQuasiSub, perspPConsistent, effectiveKnowledge, entailsKnowledge,
-        remember_bare, remember_negated, remember_questioned]
-
--- ============================================================================
--- G. Cross-linguistic predictions
--- ============================================================================
-
-open Phenomena.Questions.Typology
-
 /-- Classify Hindi-Urdu verbs from the cross-linguistic shiftiness data. -/
 def classifyCrossLingVerb : String → SelectionClass
   | "ja:n-na: ca:h-na: (want to know)" => .rogativePerspP
   | "ja:n-na: (know)" => .responsive
   | _ => .responsive
 
-/-- Hindi-Urdu shiftiness follows the same derivation as English:
-    responsive predicates reject quasi-sub in bare form, allow under
-    negation/questioning. The theory predicts ALL cross-linguistic data. -/
-theorem cross_linguistic_shiftiness_predicted :
-    ∀ d ∈ allCrossLingShiftinessData,
-      allowsQuasiSub (classifyCrossLingVerb d.verb) d.negated d.questioned
-        = d.quasiSubOk := by
-  intro d hd
-  simp [allCrossLingShiftinessData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp [allowsQuasiSub, perspPConsistent, effectiveKnowledge, entailsKnowledge,
-          classifyCrossLingVerb,
-          hindi_urdu_want_to_know, hindi_urdu_know_bare,
-          hindi_urdu_know_negated, hindi_urdu_know_questioned]
-
-/-- Q-particle embedding follows from which left-peripheral layer they occupy.
-    CP-layer particles appear in subordination; PerspP and SAP particles do not. -/
-theorem particle_layer_predicts_embedding :
-    ∀ d ∈ allQParticleData,
-      (d.layer = .cp → d.inSubordinated = true) ∧
-      (d.layer = .perspP → d.inSubordinated = false) ∧
-      (d.layer = .sap → d.inQuasiSub = false) := by
-  intro d hd
-  simp [allQParticleData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick]
-
 -- ============================================================================
--- H. Compositional grounding
+-- G. Compositional grounding
 -- ============================================================================
 
 /-! ## H1. Derive SelectionClass from VerbEntry

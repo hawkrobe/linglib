@@ -1,7 +1,6 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
-import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Islands as Constraints on Rising Catenae
@@ -36,9 +35,6 @@ different ways:
 - → `Discontinuity.lean`: islands block the formation of risen catenae
 - → `Catena.lean`: island material forms catenae (proven), uses `isCatena`
 - → `LongDistance.lean`: maps to `IslandType` (4 shared types + 5 new)
-- → `Phenomena/Islands/Data.lean`: maps to `ConstraintType` and connects to
-  Hofmeister & Sag (2010) gradience data
-
 ## References
 
 - Osborne, T. (2019). *A Dependency Grammar of English*, Ch 9.
@@ -260,15 +256,6 @@ def toLongDistanceIslandType :
   | .adjunct    => some .adjunct
   | .subject    => some .subject
   | _           => none  -- leftBranch, specifiedNP, whIsland, rightRoof, pStranding, piedPiping are new
-
-/-- **Bridge → Phenomena/Islands/Data.lean**: Map `OsborneIslandType` to
-    `ConstraintType` for the shared types. -/
-def toPhenomenaConstraintType :
-    OsborneIslandType → Option ConstraintType
-  | .adjunct       => some .adjunct
-  | .subject       => some .subject
-  | .whIsland      => some .embeddedQuestion
-  | _              => none
 
 /-- **Bridge → Discontinuity.lean**: islands constrain the formation of risen
     catenae. All island violation examples contain risen catenae (proven above),

@@ -8,7 +8,6 @@ Pollard & Sag (1994) Ch. 6, Sag, Wasow & Bender (2003) Ch. 5.
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Core.Interfaces.CoreferenceTheory
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
@@ -198,7 +197,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
   | some clause => !pronounLocallyFree clause
 
 -- ============================================================================
--- Part 7: Tests - Matching Phenomena/Coreference/Data.lean
+-- Tests
 -- ============================================================================
 
 -- reflexiveCoreferenceData pairs:
@@ -228,7 +227,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 #eval pronounCoreferenceBlocked [mary, sees, her]           -- true ✓
 
 -- ============================================================================
--- Part 8: Capturing the Phenomena Data
+-- Capturing Phenomena Data
 -- ============================================================================
 
 /-- Check if HPSG correctly predicts a minimal pair for coreference
@@ -243,45 +242,30 @@ def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
   phenom.pairs.all capturesCoreferenceMinimalPair
 
 -- ============================================================================
--- Part 9: Theorems - HPSG Captures Imported Phenomena
+-- Per-Pair Verification
 -- ============================================================================
 
-/-- HPSG captures reflexiveCoreferenceData -/
-theorem captures_reflexive_coreference :
-    capturesCoreferenceData reflexiveCoreferenceData = true := by
-  native_decide
-
-/-- HPSG captures complementaryDistributionData -/
-theorem captures_complementary_distribution :
-    capturesCoreferenceData complementaryDistributionData = true := by
-  native_decide
-
-/-- HPSG captures pronominalDisjointReferenceData -/
-theorem captures_pronominal_disjoint_reference :
-    capturesCoreferenceData pronominalDisjointReferenceData = true := by
-  native_decide
-
-/-- Check each pair individually for reflexiveCoreferenceData -/
+/-- Check each pair individually for reflexive coreference -/
 theorem reflexive_pairs_captured :
-    -- Pair 1: john sees himself ✓ vs himself sees john ✗
+    -- Pair 1: john sees himself vs himself sees john
     (grammaticalForCoreference [john, sees, himself] = true ∧
      grammaticalForCoreference [himself, sees, john] = false) ∧
-    -- Pair 2: mary sees herself ✓ vs herself sees mary ✗
+    -- Pair 2: mary sees herself vs herself sees mary
     (grammaticalForCoreference [mary, sees, herself] = true ∧
      grammaticalForCoreference [herself, sees, mary] = false) ∧
-    -- Pair 3: they see themselves ✓ vs themselves see them ✗
+    -- Pair 3: they see themselves vs themselves see them
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [themselves, see, them] = false) ∧
-    -- Pair 4: agreement - john sees himself ✓ vs john sees herself ✗
+    -- Pair 4: agreement - john sees himself vs john sees herself
     (grammaticalForCoreference [john, sees, himself] = true ∧
      grammaticalForCoreference [john, sees, herself] = false) ∧
-    -- Pair 5: agreement - they see themselves ✓ vs they see himself ✗
+    -- Pair 5: agreement - they see themselves vs they see himself
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
 -- ============================================================================
--- Part 10: HPSG Grammar Configuration
+-- HPSG Grammar Configuration
 -- ============================================================================
 
 /-- HPSG coreference configuration -/
@@ -293,7 +277,7 @@ structure HPSGCoreferenceGrammar where
 def defaultGrammar : HPSGCoreferenceGrammar := {}
 
 -- ============================================================================
--- Part 11: Theoretical Notes
+-- Theoretical Notes
 -- ============================================================================
 
 /-
@@ -327,7 +311,7 @@ The difference is in the mechanism:
 -/
 
 -- ============================================================================
--- Part 12: CoreferenceTheory Interface Implementation
+-- CoreferenceTheory Interface Implementation
 -- ============================================================================
 
 /-- Marker type for HPSG as a coreference theory -/

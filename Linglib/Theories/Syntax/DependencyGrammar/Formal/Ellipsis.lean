@@ -1,6 +1,5 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
-import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!
 # Ellipsis as Catena-Targeting
@@ -19,7 +18,6 @@ not a constituent — making catenae essential.
 ## Bridges
 
 - → `Catena.lean`: uses `isCatena`, `isConstituent` for proofs
-- → `Phenomena/Ellipsis/Gapping.lean`: maps taxonomy to Gapping.EllipsisType
 
 ## References
 
@@ -174,35 +172,7 @@ theorem fragment_elided_not_constituent :
     isConstituent fragmentTree.deps 2 fragmentElided = false := by native_decide
 
 -- ============================================================================
--- §4: Bridge to Phenomena/Ellipsis/
--- ============================================================================
-
-/-- Map DG ellipsis types to Phenomena's Gapping.EllipsisType.
-    Not all DG types have Phenomena equivalents (sluicing/fragmentAnswer don't). -/
-def toGappingEllipsisType :
-    EllipsisType → Option Phenomena.Ellipsis.Gapping.EllipsisType
-  | .vpEllipsis => some .vpEllipsis
-  | .gapping => some .gapping
-  | .stripping => some .stripping
-  | .sluicing => some .sluicing
-  | .pseudogapping => none  -- No Phenomena equivalent
-  | .fragmentAnswer => none  -- No Phenomena equivalent
-
-/-- Gapping (from Phenomena) is a special case of catena-ellipsis.
-    The verb alone is elided — always a singleton catena. -/
-theorem catena_ellipsis_subsumes_gapping :
-    toGappingEllipsisType .gapping = some .gapping := rfl
-
-/-- Gapping always elides a non-constituent catena: the verb alone is a
-    catena (trivially) but never a constituent (its subtree includes
-    subject and object). -/
-theorem gapping_always_catena_not_constituent :
-    isCatena gappingTree.deps gappingElided = true ∧
-    isConstituent gappingTree.deps 3 gappingElided = false := by
-  constructor <;> native_decide
-
--- ============================================================================
--- §5: Osborne's Generalization
+-- §4: Osborne's Generalization
 -- ============================================================================
 
 /-- Osborne (2019, Ch 12): All five types of ellipsis target catenae.

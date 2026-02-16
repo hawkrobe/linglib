@@ -38,7 +38,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.ChainComparison
 import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.VanTielEtAl2021
@@ -297,35 +296,6 @@ theorem gqt_some_grounded : threshold .some_ = 1 := by native_decide
 
 NOTE: The threshold for "all" in GQT equals the total set size. -/
 theorem gqt_all_grounded : threshold .all = totalSetSize := by native_decide
-
--- Connection to Phenomena Data
-
-/-- Convert our QuantityWord to Phenomena type -/
-def toDataWord : QuantityWord → Phenomena.VanTielEtAl2021.QuantityWord
-  | .none_ => .none_
-  | .few   => .few
-  | .some_ => .some_
-  | .half  => .half
-  | .most  => .most
-  | .all   => .all
-
-/-- Our monotonicity matches empirical classification for clear cases.
-
-Note: "half" is classified as nonMonotone in our three-way system but as
-"increasing" in the binary empirical classification. This is because the
-empirical classification only distinguishes licensing upward vs downward
-inferences, while we add a third category for non-monotonic quantifiers.
--/
-theorem monotonicity_matches_data_increasing (q : QuantityWord) :
-    q ≠ .half →
-    (monotonicity q = .increasing) ↔
-    (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .increasing) := by
-  cases q <;> native_decide
-
-theorem monotonicity_matches_data_decreasing (q : QuantityWord) :
-    (monotonicity q = .decreasing) ↔
-    (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .decreasing) := by
-  cases q <;> native_decide
 
 -- Pragmatic Competition Beyond Entailment
 

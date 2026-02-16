@@ -53,7 +53,6 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Presupposition.LocalContext
-import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 namespace Semantics.Presupposition.BeliefEmbedding
 
@@ -61,7 +60,6 @@ open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
 open Semantics.Presupposition.LocalContext
-open Phenomena.Presupposition.ProjectiveContent
 
 variable {W : Type*} {Agent : Type*}
 
@@ -135,27 +133,6 @@ attitude holder's beliefs.
 -/
 def presupAttributedToHolder (blc : BeliefLocalCtx W Agent) (p : PrProp W) : Prop :=
   ∀ w_star, blc.globalCtx w_star → ContextSet.entails (blc.atWorld w_star) p.presup
-
-
-/--
-Determines whether a projective trigger's content shifts to the attitude
-holder's perspective under belief embedding.
-
-OLE = yes: Content shifts to attitude holder (computed from their beliefs)
-OLE = no: Content remains attributed to speaker (no perspective shift)
--/
-def shiftsUnderBelief : ProjectiveClass → Bool
-  | .classA => true   -- OLE = yes
-  | .classB => false  -- OLE = no
-  | .classC => true   -- OLE = yes
-  | .classD => false  -- OLE = no
-
-/--
-OLE status matches shift behavior.
--/
-theorem ole_matches_shift (c : ProjectiveClass) :
-    shiftsUnderBelief c = true ↔ c.ole = .obligatory := by
-  cases c <;> simp [shiftsUnderBelief, ProjectiveClass.ole]
 
 
 /--
@@ -283,35 +260,6 @@ def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
     (expressiverContent : BProp W) : Prop :=
   -- The content must be entailed by the global (speaker's) context
   ContextSet.entails globalCtx expressiverContent
-
-
-/--
-The Schlenker local context machinery derives the OLE
-predictions from Tonhauser et al. (2013).
-
-For any trigger:
-- If OLE=yes (Class A, C): Local context under belief = attitude holder's beliefs
-- If OLE=no (Class B, D): Local context under belief = global context (speaker)
-
-This explains why "stop" presuppositions shift to attitude holders but
-"damn" expressives don't.
--/
-theorem ole_from_local_contexts (trigger : ProjectiveTrigger) :
-    shiftsUnderBelief trigger.toClass = true ↔
-    trigger.toClass.ole = .obligatory := by
-  exact ole_matches_shift trigger.toClass
-
-/--
-Class C triggers (stop, know, only) have OLE=yes.
--/
-example : ProjectiveTrigger.stop_prestate.toClass.ole = .obligatory := rfl
-example : ProjectiveTrigger.know_complement.toClass.ole = .obligatory := rfl
-
-/--
-Class B triggers (expressives, appositives) have OLE=no.
--/
-example : ProjectiveTrigger.expressive.toClass.ole = .notObligatory := rfl
-example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 
 
 /--

@@ -41,11 +41,8 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
-import Linglib.Phenomena.WordOrder.VerbPosition
 
 namespace Minimalism.Phenomena.HeadMovement.BulgarianLHM
-
-open Phenomena.WordOrderAlternations.VerbPosition
 
 /-! ## Part 1: The Lexicon
 
@@ -279,27 +276,5 @@ theorem bulgarian_lhm_is_head_to_spec :
 theorem bulgarian_lhm_violates_hmc_positional :
     violatesHMC_positional bulgarianLHM tpAfterLHM derivedSpecPosition :=
   head_to_spec_violates_hmc_positional bulgarianLHM_h2s_positional
-
--- Grounding: Connection to Theory-Neutral Phenomena Data
-
-/-- The Minimalist analysis models the fronted order from the phenomena data. -/
-theorem models_fronted_order :
-    bulgarianExample.fronted = "Pročeli bjaha studentite statijata" := rfl
-
-/-- The Minimalist analysis correctly captures that both orders are grammatical.
-    The unfronted order would be derived without the LHM operation. -/
-theorem captures_alternation :
-    bulgarianExample.bothGrammatical = true := rfl
-
-/-- The derivation produces the participle-initial order (V precedes Aux). -/
-theorem derivation_yields_fronted_order :
-    -- The mover (participle) is in specifier position (left daughter of root)
-    tpAfterLHM.isNode ∧
-    (match tpAfterLHM with
-     | .node left _ => left = theVerb
-     | .leaf _ => False) := by
-  constructor
-  · rfl
-  · rfl
 
 end Minimalism.Phenomena.HeadMovement.BulgarianLHM

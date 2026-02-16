@@ -39,7 +39,6 @@ The two interpretation functions represent optional exhaustification (Fox 2007):
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Phenomena.Modality.FreeChoice
 
 namespace RSA.FreeChoice
 
@@ -341,35 +340,6 @@ The semantic uncertainty (I₁ vs I₂) creates an **avoidance pattern**:
 
 This asymmetry drives the free choice inference.
 -/
-
--- SECTION 9: Connection to Phenomena Data
-
-/-!
-## Connection to Empirical Data
-
-The model predicts the patterns in `Phenomena.FreeChoice.Data`:
-
-1. **Free Choice Permission** (`coffeeOrTea`):
-   - "You may have coffee or tea" → "You may have coffee AND you may have tea"
-   - Derived: L1 assigns ~100% to FCI states
-
-2. **Exclusivity Cancelability**:
-   - EI ("not both") is sensitive to world knowledge
-   - FCI is robust across priors
-
-3. **Ross's Paradox** (`postOrBurn`):
-   - "Post the letter" semantically entails "Post or burn"
-   - But pragmatically, adding "or burn" triggers free choice
-   - The asymmetry comes from the alternative structure
--/
-
-/-- Free choice is predicted -/
-theorem predicts_free_choice :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
-
-/-- The inference is not semantic -/
-theorem fc_not_semantic :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
 
 -- SECTION 10: Comparison with Other Approaches
 
