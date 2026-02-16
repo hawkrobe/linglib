@@ -1,3 +1,5 @@
+import Linglib.Theories.Semantics.Polarity.CzechNegation
+
 /-!
 # Czech Three-Way Negation in Polar Questions
 
@@ -17,10 +19,11 @@ syntactic/prosodic encoding (word order and focus).
 
 ## Module Structure
 
-This file contains the core three-way distinction: `NegPosition`, `Diagnostic`,
-`licenses`, per-cell verification, and scope generalizations. Cross-linguistic
-bridges to Romero (2024), Šimík (2024), verb position, and bias profiles are
-in `CzechThreeWayNeg.Typology`.
+This file contains per-cell verification theorems and scope generalizations.
+The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
+`Theories.Semantics.Polarity.CzechNegation`. Cross-linguistic bridges to
+Romero (2024), Šimík (2024), verb position, and bias profiles are in
+`CzechThreeWayNeg.Typology`.
 
 ## References
 
@@ -30,70 +33,7 @@ in `CzechThreeWayNeg.Typology`.
 
 namespace Phenomena.Negation.CzechThreeWayNeg
 
--- ============================================================================
--- §1: Three-Way Negation Position
--- ============================================================================
-
-/-- The three LF positions for negation in Czech PQs (Staňková 2026 §3, ex. 16).
-
-  [CP ... [PolP ne-    [ModP ne-     [TP ne-    ]]]]
-              OUTER          MEDIAL       INNER
--/
-inductive NegPosition where
-  /-- Inner negation: in TP, propositional ¬p. Narrow scope.
-      Licenses NCIs by Agree, licenses NPIs. Standard sentential negation. -/
-  | inner
-  /-- Medial negation: in ModP, scopes over □_ev. Wide scope but syntactically low.
-      Non-propositional: part of evidential bias presupposition. -/
-  | medial
-  /-- Outer negation: in PolP, FALSUM operator. Widest scope.
-      Maps to high negation (VSO word order). Obligatorily focused. -/
-  | outer
-  deriving DecidableEq, BEq, Repr
-
--- ============================================================================
--- §2: Diagnostic Items
--- ============================================================================
-
-/-- Diagnostics that distinguish the three negation readings (Table 1). -/
-inductive Diagnostic where
-  /-- ne- outscopes a PPI like *nějaký* 'some.DET.PPI' -/
-  | ppiOutscoping
-  /-- Negative concord item like *žádný* 'no.DET.NCI' is licensed -/
-  | nciLicensed
-  /-- Particle *náhodou* 'by chance' is compatible -/
-  | nahodou
-  /-- Particle *ještě* 'yet/still' is compatible (with telic predicates + neg) -/
-  | jeste
-  /-- Particle *fakt* 'really' is compatible -/
-  | fakt
-  deriving DecidableEq, BEq, Repr
-
--- ============================================================================
--- §3: Table 1 — Compatibility Matrix
--- ============================================================================
-
-/-- Table 1 from Staňková (2026 §3): compatibility of each negation reading
-with polarity items and particles.
-
-This is the core empirical fingerprint: each negation position has a unique
-Boolean signature across the five diagnostics. -/
-def licenses : NegPosition → Diagnostic → Bool
-  | .outer,  .ppiOutscoping => true
-  | .outer,  .nciLicensed   => false
-  | .outer,  .nahodou       => true
-  | .outer,  .jeste         => false
-  | .outer,  .fakt          => false
-  | .medial, .ppiOutscoping => true
-  | .medial, .nciLicensed   => false
-  | .medial, .nahodou       => false
-  | .medial, .jeste         => false
-  | .medial, .fakt          => true
-  | .inner,  .ppiOutscoping => false
-  | .inner,  .nciLicensed   => true
-  | .inner,  .nahodou       => false
-  | .inner,  .jeste         => true
-  | .inner,  .fakt          => true
+open Semantics.Polarity.CzechNegation
 
 -- ============================================================================
 -- §4: Per-Cell Verification Theorems

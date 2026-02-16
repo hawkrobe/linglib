@@ -1,39 +1,26 @@
-/-
+import Mathlib.Data.Rat.Defs
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+
+/-!
 # Evaluativity: Empirical Patterns
 
-Evaluativity distribution across adjectival constructions. Positive constructions are evaluative, comparatives are not, equatives show asymmetry.
+Evaluativity distribution across adjectival constructions. Positive constructions
+are evaluative, comparatives are not, equatives show asymmetry.
 
 ## Main definitions
 
-`AdjectivalConstruction`, `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
+`EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
+
+`AdjectivalConstruction` is defined in `Theories.Semantics.Lexical.Adjective.Theory`.
 
 ## References
 
 - Rett (2015), Kennedy (2007), Bierwisch (1989)
 -/
 
-import Mathlib.Data.Rat.Defs
-
 namespace Phenomena.Gradability.Evaluativity
 
--- Construction Types
-
-/-- Adjectival construction type. -/
-inductive AdjectivalConstruction where
-  | positive
-  | comparative
-  | equative
-  | measurePhrase
-  | degreeQuestion
-  deriving Repr, DecidableEq, BEq
-
-instance : ToString AdjectivalConstruction where
-  toString
-    | .positive => "positive"
-    | .comparative => "comparative"
-    | .equative => "equative"
-    | .measurePhrase => "measurePhrase"
-    | .degreeQuestion => "degreeQuestion"
+open Semantics.Lexical.Adjective (AdjectivalConstruction)
 
 -- Evaluativity Judgments
 

@@ -1,4 +1,5 @@
 import Linglib.Core.Interfaces.FelicityCondition
+import Linglib.Fragments.Mandarin.Particles
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -32,25 +33,13 @@ can be resolved de re (against CG) vs. de dicto (against attitude holder's belie
 namespace Phenomena.Presupposition.Studies.Wang2025
 
 open Interfaces (FelicityStatus)
+open Fragments.Mandarin.Particles (MandarinTrigger)
 
 /-- Context condition for presupposition support. -/
 inductive ContextCondition where
   | full        -- CG fully entails the presupposition
   | partialSupport  -- CG partially entails the presupposition
   | noSupport   -- CG does not support the presupposition
-  deriving DecidableEq, Repr, BEq
-
-/-- Mandarin presupposition triggers studied in Experiments 1-2. -/
-inductive MandarinTrigger where
-  | ye     -- 也 'also' (additive)
-  | you    -- 又 'again' (repetitive)
-  | reng   -- 仍 'still' (continuative)
-  | jiu    -- 就 'only' (exclusive)
-  | zhidao -- 知道 'know' (factive)
-  | buzai  -- 不再 'no longer' (cessative)
-  | kaishi -- 开始 'start' (inchoative)
-  | faner  -- 反而 'instead' (contrastive)
-  | er     -- 而 'instead' (contrastive, weaker)
   deriving DecidableEq, Repr, BEq
 
 /-- A single naturalness judgment datum (Experiment 1). -/

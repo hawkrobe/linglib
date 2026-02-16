@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Macedonian Question Particles
@@ -28,7 +28,7 @@ Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 namespace Fragments.Macedonian.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Macedonian interrogative particle entry. -/
 structure QParticleEntry where

@@ -42,7 +42,7 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
-import Linglib.Phenomena.Gradability.Evaluativity
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
 import Mathlib.Data.Rat.Defs
 
@@ -51,7 +51,7 @@ namespace NeoGricean.Evaluativity
 open NeoGricean
 open NeoGricean.Markedness
 open NeoGricean.Alternatives
-open Phenomena.Gradability.Evaluativity
+open Semantics.Lexical.Adjective (AdjectivalConstruction)
 open RSA.Domains.Degrees
 open Semantics.Lexical.Adjective
 

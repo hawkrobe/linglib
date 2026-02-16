@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Ukrainian Question Particles
@@ -24,7 +24,7 @@ Lexical entries for Ukrainian interrogative particles.
 
 namespace Fragments.Ukrainian.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Ukrainian interrogative particle entry. -/
 structure QParticleEntry where

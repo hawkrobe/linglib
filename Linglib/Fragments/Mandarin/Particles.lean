@@ -1,5 +1,4 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
-import Linglib.Phenomena.Presupposition.Studies.Wang2025
 
 /-!
 # Mandarin Presuppositional Particles
@@ -37,7 +36,19 @@ experimental data (Wang 2025 Experiments 1-3).
 namespace Fragments.Mandarin.Particles
 
 open NeoGricean.Presuppositions (PresupTrigger AltStructure PresupTriggerEntry)
-open Phenomena.Presupposition.Studies.Wang2025 (MandarinTrigger)
+
+/-- Mandarin presupposition triggers studied in Wang (2025) Experiments 1-2. -/
+inductive MandarinTrigger where
+  | ye     -- 也 'also' (additive)
+  | you    -- 又 'again' (repetitive)
+  | reng   -- 仍 'still' (continuative)
+  | jiu    -- 就 'only' (exclusive)
+  | zhidao -- 知道 'know' (factive)
+  | buzai  -- 不再 'no longer' (cessative)
+  | kaishi -- 开始 'start' (inchoative)
+  | faner  -- 反而 'instead' (contrastive)
+  | er     -- 而 'instead' (contrastive, weaker)
+  deriving DecidableEq, Repr, BEq
 
 /--
 A Mandarin presuppositional particle entry.

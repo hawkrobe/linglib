@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Bulgarian Question Particles
@@ -26,7 +26,7 @@ Lexical entries for Bulgarian interrogative particles.
 
 namespace Fragments.Bulgarian.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Bulgarian interrogative particle entry. -/
 structure QParticleEntry where

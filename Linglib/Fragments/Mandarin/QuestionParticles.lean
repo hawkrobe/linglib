@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.BiasedPQ
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Mandarin Question Particles
@@ -32,7 +32,7 @@ properties and bias profiles.
 namespace Fragments.Mandarin.QuestionParticles
 
 open Semantics.Modality.BiasedPQ (OriginalBias ContextualEvidence)
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Mandarin interrogative particle entry. -/
 structure QuestionParticleEntry where

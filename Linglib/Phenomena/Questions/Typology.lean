@@ -1,3 +1,5 @@
+import Linglib.Theories.Semantics.Questions.QParticleLayer
+
 /-
 # Cross-Linguistic Data on the Interrogative Left Periphery
 
@@ -25,16 +27,11 @@ following Dayal (2025). The three-point left-peripheral structure
 
 namespace Phenomena.Questions.Typology
 
+open Semantics.Questions (QParticleLayer)
+
 -- ============================================================================
 -- A. Q-particle typology (Dayal 2025: §1.3)
 -- ============================================================================
-
-/-- Where in the left periphery a Q-particle resides. -/
-inductive QParticleLayer where
-  | cp      -- Clause-typing particle: obligatory in subordinated interrogatives
-  | perspP  -- Polar question particle (PQP): matrix + quasi-subordinated, not subordinated
-  | sap     -- Meta question particle (MQP): matrix + quotation only
-  deriving DecidableEq, Repr, BEq
 
 /-- A Q-particle datum. -/
 structure QParticleDatum where

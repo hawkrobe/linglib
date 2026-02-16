@@ -1,0 +1,19 @@
+/-!
+# Q-Particle Layer Type
+
+Where in the left periphery a Q-particle resides (Dayal 2025).
+
+Extracted from `Phenomena.Questions.Typology` so that Fragment files
+can reference the type without importing empirical data.
+-/
+
+namespace Semantics.Questions
+
+/-- Where in the left periphery a Q-particle resides. -/
+inductive QParticleLayer where
+  | cp      -- Clause-typing particle: obligatory in subordinated interrogatives
+  | perspP  -- Polar question particle (PQP): matrix + quasi-subordinated, not subordinated
+  | sap     -- Meta question particle (MQP): matrix + quotation only
+  deriving DecidableEq, Repr, BEq
+
+end Semantics.Questions

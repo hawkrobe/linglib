@@ -44,7 +44,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Linglib.Core.HornScale
 import Linglib.Theories.Semantics.Montague.Derivation
-import Linglib.Phenomena.Gradability.Evaluativity
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 
 namespace NeoGricean.Alternatives
@@ -52,7 +52,7 @@ namespace NeoGricean.Alternatives
 -- Use shared ContextPolarity from Semantics.Entailment.Polarity
 open Semantics.Entailment.Polarity (ContextPolarity)
 open NeoGricean.Markedness
-open Phenomena.Gradability.Evaluativity
+open Semantics.Lexical.Adjective (AdjectivalConstruction)
 
 
 /--

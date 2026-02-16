@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
+import Linglib.Theories.Semantics.Polarity.CzechNegation
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
@@ -20,13 +21,13 @@ Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 - Repp, S. (2013). Common ground management. In Beyond Expressives.
 -/
 
-namespace Phenomena.Negation.CzechThreeWayNeg
+-- ============================================================================
+-- §7: NegPosition dot-notation extensions (must be in NegPosition's namespace)
+-- ============================================================================
 
 open Semantics.Modality.BiasedPQ
 
--- ============================================================================
--- §7: Bridge to Romero (2024) PQ Typology
--- ============================================================================
+namespace Semantics.Polarity.CzechNegation
 
 /-- Map Czech negation positions to Romero's PQ form typology.
 
@@ -41,16 +42,6 @@ def NegPosition.toPQForm : NegPosition → PQForm
   | .medial => .LoNQ  -- SVO, low negation (ambiguous with inner)
   | .outer  => .HiNQ  -- VSO, high negation
 
-/-- Outer negation maps to HiNQ (high negation = interrogative word order). -/
-theorem outer_is_hiNQ : NegPosition.outer.toPQForm = .HiNQ := rfl
-
-/-- Inner and medial both map to LoNQ (low negation = declarative word order).
-Czech low negation PQs are ambiguous between inner and medial readings,
-distinguished by polarity items and particles (Table 1). -/
-theorem inner_medial_are_loNQ :
-    NegPosition.inner.toPQForm = .LoNQ ∧
-    NegPosition.medial.toPQForm = .LoNQ := ⟨rfl, rfl⟩
-
 /-- Map Czech negation positions to Romero's evidential bias strength.
 
 Inner negation: strong contextual evidence bias (□_ev > ¬, must be ¬p).
@@ -60,6 +51,33 @@ def NegPosition.biasStrength : NegPosition → EvidentialBiasStrength
   | .inner  => .strong
   | .medial => .weak
   | .outer  => .none_
+
+/-- Whether the negation position requires obligatory focus.
+
+Only outer negation (FALSUM) is obligatorily focused — it targets discourse
+polarity and generates alternatives on whether p is or isn't in the CG
+(Staňková §3.2, §4). -/
+def NegPosition.requiresFocus : NegPosition → Bool
+  | .outer  => true
+  | .medial => false
+  | .inner  => false
+
+end Semantics.Polarity.CzechNegation
+
+namespace Phenomena.Negation.CzechThreeWayNeg
+
+open Semantics.Polarity.CzechNegation
+open Semantics.Modality.BiasedPQ
+
+/-- Outer negation maps to HiNQ (high negation = interrogative word order). -/
+theorem outer_is_hiNQ : NegPosition.outer.toPQForm = .HiNQ := rfl
+
+/-- Inner and medial both map to LoNQ (low negation = declarative word order).
+Czech low negation PQs are ambiguous between inner and medial readings,
+distinguished by polarity items and particles (Table 1). -/
+theorem inner_medial_are_loNQ :
+    NegPosition.inner.toPQForm = .LoNQ ∧
+    NegPosition.medial.toPQForm = .LoNQ := ⟨rfl, rfl⟩
 
 theorem inner_strong_bias : NegPosition.inner.biasStrength = .strong := rfl
 theorem medial_weak_bias : NegPosition.medial.biasStrength = .weak := rfl
@@ -94,16 +112,6 @@ theorem czech_outer_matches_romero_evidence :
 -- §8: Bridge to Focus / Information Structure
 -- ============================================================================
 
-/-- Whether the negation position requires obligatory focus.
-
-Only outer negation (FALSUM) is obligatorily focused — it targets discourse
-polarity and generates alternatives on whether p is or isn't in the CG
-(Staňková §3.2, §4). -/
-def NegPosition.requiresFocus : NegPosition → Bool
-  | .outer  => true
-  | .medial => false
-  | .inner  => false
-
 theorem only_outer_requires_focus :
     (∀ p : NegPosition, p.requiresFocus = true → p = .outer) := by
   intro p h; cases p <;> simp_all [NegPosition.requiresFocus]
@@ -134,6 +142,11 @@ inductive VerbPosition where
   | nonV1
   deriving DecidableEq, BEq, Repr
 
+end Phenomena.Negation.CzechThreeWayNeg
+
+namespace Semantics.Polarity.CzechNegation
+open Phenomena.Negation.CzechThreeWayNeg (VerbPosition)
+
 /-- Map negation positions to verb position.
 
 Inner/medial → nonV1 (declarative SVO).
@@ -142,6 +155,12 @@ def NegPosition.toVerbPosition : NegPosition → VerbPosition
   | .inner  => .nonV1
   | .medial => .nonV1
   | .outer  => .v1
+
+end Semantics.Polarity.CzechNegation
+
+namespace Phenomena.Negation.CzechThreeWayNeg
+open Semantics.Polarity.CzechNegation
+open Semantics.Modality.BiasedPQ
 
 /-- A Czech PQ negation example with its reading and Romero classification. -/
 structure CzechNegDatum where
@@ -401,6 +420,11 @@ def CzechPQForm.toPQForm : CzechPQForm → PQForm
 theorem interNPQ_is_hiNQ : CzechPQForm.interNPQ.toPQForm = .HiNQ := rfl
 theorem declNPQ_is_loNQ : CzechPQForm.declNPQ.toPQForm = .LoNQ := rfl
 
+end Phenomena.Negation.CzechThreeWayNeg
+
+namespace Semantics.Polarity.CzechNegation
+open Phenomena.Negation.CzechThreeWayNeg (CzechPQForm)
+
 /-- Map negation positions to Czech PQ forms.
 
 Inner/medial → DeclNPQ (SVO, negative).
@@ -409,6 +433,12 @@ def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
   | .inner  => .declNPQ
   | .medial => .declNPQ
   | .outer  => .interNPQ
+
+end Semantics.Polarity.CzechNegation
+
+namespace Phenomena.Negation.CzechThreeWayNeg
+open Semantics.Polarity.CzechNegation
+open Semantics.Modality.BiasedPQ
 
 /-- The CzechPQForm → PQForm mapping is consistent with NegPosition → PQForm. -/
 theorem czechPQForm_consistent_with_pqForm :

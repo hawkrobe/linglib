@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # German Question Particles
@@ -34,7 +34,7 @@ it merely signals informational need.
 
 namespace Fragments.German.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A German interrogative/flavoring particle entry. -/
 structure QParticleEntry where

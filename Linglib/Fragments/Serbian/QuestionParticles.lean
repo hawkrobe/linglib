@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Serbian Question Particles
@@ -27,7 +27,7 @@ PQ repertoire among Slavic languages (Todorović 2023).
 
 namespace Fragments.Serbian.QuestionParticles
 
-open Phenomena.Questions.Typology (QParticleLayer)
+open Semantics.Questions (QParticleLayer)
 
 /-- A Serbian interrogative particle entry. -/
 structure QParticleEntry where
