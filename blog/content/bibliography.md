@@ -101,7 +101,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Tessler, M. H. & Goodman, N. D.** (2019). The Language of Generalization. *Psychological Review, 126(3), 395–436*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean)
 
-**Tessler, M. H. & Goodman, N. D.** (2022). Warm (for Winter): Inferring Comparison Classes in Communication. *Unpublished manuscript*.\
+**Tessler, M. H. & Goodman, N. D.** (2022). Warm (for Winter): Inferring Comparison Classes in Communication. *Cognitive Science, 46(9), e13095*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean)
 
 **van Tiel, B., Franke, M. & Sauerland, U.** (2021). Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification. *Proceedings of the National Academy of Sciences, 118(9), e2005453118*.\
@@ -228,7 +228,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 **Deal, A. R.** (2020). A Theory of Indexical Shift: Meaning, Grammar, and Crosslinguistic Variation. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Deal.lean)
 
-**Klecha, P.** (2016). Modality and Embedded Temporal Interpretation. *Semantics and Pragmatics, 9(9), 1–55*.\
+**Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(8), 1–55*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
 
 **Kratzer, A.** (1998). More Structural Analogies between Pronouns and Tenses. *Proceedings of SALT, 8*.\
