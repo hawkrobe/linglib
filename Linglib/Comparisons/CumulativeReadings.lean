@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
 import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.HigherOrder
 import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.SubtypePolymorphism
 import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.PostSuppositional
-import Linglib.Phenomena.Charlow2021.Data
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-!
 # Three-Way Comparison: Cumulative Readings
@@ -27,7 +27,7 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 
 namespace Comparisons.CumulativeReadings
 
-open Phenomena.Charlow2021.Data
+open Phenomena.Plurals.Studies.Charlow2021.Data
 open Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 
 /-- All three approaches derive the cumulative reading for Scenario A. -/

@@ -31,7 +31,7 @@ in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
   Journal of Slavic Linguistics 33. Proceedings of FASL 32.
 -/
 
-namespace Phenomena.StankovaSimik2024.Data
+namespace Phenomena.Negation.Studies.StankovaSimik2024.Data
 
 open Phenomena.Negation.CzechThreeWayNeg
 
@@ -375,4 +375,4 @@ def copakExperiment : ExperimentMetadata :=
   , platform := "L-Rex"
   , citation := "Staňková & Šimík 2024, §6.2" }
 
-end Phenomena.StankovaSimik2024.Data
+end Phenomena.Negation.Studies.StankovaSimik2024.Data

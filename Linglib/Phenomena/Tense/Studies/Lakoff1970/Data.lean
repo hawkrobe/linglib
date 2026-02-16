@@ -24,7 +24,7 @@ by phenomenon.
 - Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
 -/
 
-namespace Phenomena.Lakoff1970.Data
+namespace Phenomena.Tense.Studies.Lakoff1970.Data
 
 open Core.Morphology.Tense
 
@@ -198,4 +198,4 @@ theorem periphrastic_count : periphrasticJudgments.length = 2 := rfl
 theorem false_periphrastic_ungrammatical :
     (falseTenseJudgments.filter (·.formType == .periphrastic)).length = 1 := rfl
 
-end Phenomena.Lakoff1970.Data
+end Phenomena.Tense.Studies.Lakoff1970.Data

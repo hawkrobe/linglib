@@ -1,4 +1,4 @@
-import Linglib.Phenomena.MunozPerez2026.Data
+import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Morphology.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
@@ -36,7 +36,7 @@ because Fission is a Minimalist/DM operation — Fragments stay theory-neutral.
 - Muñoz Pérez, C. (2026). Stylistic applicatives. *Glossa* 11(1).
 -/
 
-namespace Phenomena.MunozPerez2026.Bridge
+namespace Phenomena.Causatives.Studies.MunozPerez2026.Bridge
 
 open Minimalism
 open Minimalism.Morphology
@@ -251,4 +251,4 @@ theorem olvidar_inchoative : isInchoative olvidar.verbHead = true := by native_d
 theorem ocurrir_inchoative : isInchoative ocurrir.verbHead = true := by native_decide
 theorem mejorar_inchoative : isInchoative mejorar.verbHead = true := by native_decide
 
-end Phenomena.MunozPerez2026.Bridge
+end Phenomena.Causatives.Studies.MunozPerez2026.Bridge

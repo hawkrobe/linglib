@@ -36,7 +36,7 @@ patient restrictions, separation geometry, and agent control.
   *rasgar*, and lexical equivalence. *Linguistics in Contrast*.
 -/
 
-namespace Phenomena.SpalekMcNally
+namespace Phenomena.ChangeOfState.Studies.SpalekMcNally
 
 open Fragments.English.Predicates.Verbal
 open Fragments.Spanish.Predicates
@@ -136,4 +136,4 @@ theorem tear_preferred_for_rasgar :
     (rasgarToEnglish.filter (·.targetVerb == "rend")).head!.instances := by
   native_decide
 
-end Phenomena.SpalekMcNally
+end Phenomena.ChangeOfState.Studies.SpalekMcNally

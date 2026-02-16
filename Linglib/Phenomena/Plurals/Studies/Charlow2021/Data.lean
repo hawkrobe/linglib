@@ -27,7 +27,7 @@ in Scenario B, matching the cumulative reading.
   Figure 1, §1.
 -/
 
-namespace Phenomena.Charlow2021.Data
+namespace Phenomena.Plurals.Studies.Charlow2021.Data
 
 -- ════════════════════════════════════════════════════
 -- § Scenario A: 3 boys, 5 movies
@@ -137,4 +137,4 @@ theorem scenarioB_cumulative_false :
 theorem scenarioB_pseudo_true :
     pseudoCumulativeReading scenarioB_saw allBoys4 allMovies6 3 5 = true := by native_decide
 
-end Phenomena.Charlow2021.Data
+end Phenomena.Plurals.Studies.Charlow2021.Data
