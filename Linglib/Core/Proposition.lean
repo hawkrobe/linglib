@@ -258,16 +258,16 @@ def filter (W : Type*) [FiniteWorlds W] (p : BProp W) : List W :=
 Bridges the Mathlib `Fintype` convention (used by 26+ RSA files) to
 the linglib `FiniteWorlds` convention (used by 47+ files). -/
 noncomputable def ofFintype {W : Type*} [Fintype W] [DecidableEq W] : FiniteWorlds W where
-  worlds := Fintype.elems.val.toList.eraseDups
-  -- TODO: prove completeness from Fintype.complete + List.mem_eraseDups
-  complete := sorry
+  worlds := Fintype.elems.val.toList.dedup
+  complete := fun w => List.mem_dedup.mpr
+    (Multiset.mem_toList.mpr (Finset.mem_val.mpr (Fintype.complete w)))
 
 /-- Convert a `FiniteWorlds` instance to `Fintype`.
 Bridges in the other direction: linglib `FiniteWorlds` → Mathlib `Fintype`.
-TODO: The `Nodup` obligation requires deduplication; the membership proof
-follows from `FiniteWorlds.complete`. -/
-noncomputable def toFintype {W : Type*} [fw : FiniteWorlds W] : Fintype W :=
-  sorry
+Uses `classical` for `DecidableEq` needed by `List.toFinset`. -/
+noncomputable def toFintype {W : Type*} [fw : FiniteWorlds W] : Fintype W := by
+  classical
+  exact ⟨fw.worlds.toFinset, fun w => List.mem_toFinset.mpr (fw.complete w)⟩
 
 end FiniteWorlds
 

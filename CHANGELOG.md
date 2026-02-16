@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.213.30] - 2026-02-15
+
+### Changed
+- **Core/ProcessingModel.lean**: Proved all 4 monotonicity theorems (`locality_monotone`, `boundaries_monotone`, `referentialLoad_monotone`, `ease_monotone`) — Pareto dominance prevents easier/harder classification when a single dimension worsens/improves
+- **Core/Proposition.lean**: Proved `FiniteWorlds.ofFintype` and `FiniteWorlds.toFintype` — complete bridge between Mathlib `Fintype` and linglib `FiniteWorlds` conventions
+
+## [0.213.29] - 2026-02-15
+
+### Added
+- **Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021.lean**: Meyer & Feiman (2021) "Composing Alternatives" — `ProcessProfile` (ALT-GEN × ALT-NEG decomposition), `ScalarItemClass` (quantifier/numeral/FC), `PrimingExperiment` (6 experiments), `TheoreticalPosition` falsification; connects to existing Horn scale data and FC phenomena
+- **Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021Bridge.lean**: Per-experiment verification theorems (`all_experiments_match`), falsification theorems (`exactly_one_survives`), connections to Hurford rescue (offline ALT-GEN enables immediate exhaustification), connections to FC phenomena (innocentInclusion vs exhaustification), `all_profiles_distinct`
+
 ## [0.213.28] - 2026-02-15
 
 ### Added
