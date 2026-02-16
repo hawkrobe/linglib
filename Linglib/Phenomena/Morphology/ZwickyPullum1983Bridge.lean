@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Diagnostics.CliticVsAffix
+import Linglib.Theories.Morphology.CliticVsAffix
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Semantics.Modality.Basic
 

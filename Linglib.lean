@@ -500,8 +500,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
-import Linglib.Theories.Syntax.Minimalism.Morphology.Fission
-import Linglib.Theories.Morphology.Diagnostics.CliticVsAffix
+import Linglib.Theories.Morphology.DM.Fission
+import Linglib.Theories.Morphology.CliticVsAffix
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
