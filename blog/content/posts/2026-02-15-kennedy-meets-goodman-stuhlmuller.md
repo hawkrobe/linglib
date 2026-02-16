@@ -1,4 +1,9 @@
-# How Speaker Knowledge Shapes Numeral Meaning: Type-Shifting Resolves the Kennedy--Goodman & Stuhlmuller Puzzle
+---
+title: "How Speaker Knowledge Shapes Numeral Meaning: Type-Shifting Resolves the Kennedy--Goodman & Stuhlmuller Puzzle"
+date: 2026-02-15
+summary: "Kennedy's exact semantics for numerals seems incompatible with Goodman & Stuhlmuller's knowledge-sensitivity findings — but Kennedy's own type-shifting analysis, treated as interpretation ambiguity within RSA, resolves the tension without modifying either framework."
+tags: ["numerals", "RSA", "Kennedy", "type-shifting", "Partee", "knowledge", "quality-filter"]
+---
 
 ## 1. Introduction
 

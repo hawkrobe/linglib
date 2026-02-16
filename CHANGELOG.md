@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.213.25] - 2026-02-15
+
+### Changed
+- **blog**: Rewrite hello-world post with cumulative-science framing; revise generalized quantifiers post; move Kennedy-meets-G&S post from `docs/blog/` to Hugo blog
+
 ## [0.213.24] - 2026-02-15
 
 ### Added
