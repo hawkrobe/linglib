@@ -9,6 +9,7 @@ with observable frequency > θ, where θ is pragmatically inferred (Tessler & Go
 -/
 
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Linarith
 
 namespace TruthConditional.Verb.Habituals
 
@@ -81,7 +82,13 @@ def thresholdHabitual
     : Bool :=
   frequency occasions activity > threshold
 
-/-- For any HAB configuration, there exists a matching threshold giving the same truth value. -/
+/-- For any HAB configuration, there exists a matching threshold giving the same truth value.
+
+    Proof sketch: both sides are `Bool`, so we case-split. When HAB = true, pick
+    θ = frequency − 1 (any value beats its predecessor); when HAB = false, pick
+    θ = frequency (strict self-comparison is false). This is an expressiveness result:
+    threshold semantics can simulate any HAB outcome, though not vice versa (it loses
+    the characteristic-occasion structure). -/
 theorem hab_reduces_to_threshold
     (occasions : List Occasion)
     (characteristic : Characteristic)
@@ -89,7 +96,17 @@ theorem hab_reduces_to_threshold
     (_hNonEmpty : occasions.length > 0)
     : ∃ θ : ℚ, traditionalHAB occasions characteristic activity =
                thresholdHabitual occasions activity θ := by
-  sorry
+  let f := frequency occasions activity
+  cases h : traditionalHAB occasions characteristic activity
+  · -- HAB = false: pick θ = frequency (frequency > frequency is false by irreflexivity)
+    refine ⟨f, ?_⟩
+    show false = decide (f > f)
+    rw [decide_eq_false (not_lt.mpr (le_refl (α := ℚ) f))]
+  · -- HAB = true: pick θ = frequency - 1 (frequency > frequency - 1 since 0 < 1)
+    refine ⟨f - 1, ?_⟩
+    show true = decide (f > f - 1)
+    have hgt : f > f - 1 := by linarith
+    rw [decide_eq_true hgt]
 
 /-- Activity types with different frequency expectations. -/
 inductive ActivityType where

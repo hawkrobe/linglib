@@ -98,6 +98,11 @@ def normalize {α : Type} (dist : List (α × ℚ)) : List (α × ℚ) :=
   dist.map λ (x, s) =>
     (x, if total ≠ 0 then s / total else 0)
 
+/-- Normalization preserves list length. -/
+@[simp] theorem normalize_length {α : Type} (dist : List (α × ℚ)) :
+    (normalize dist).length = dist.length := by
+  simp only [normalize, List.length_map]
+
 /-- Marginalize a joint distribution by projecting onto a component -/
 def marginalize {α β : Type} [BEq β] (dist : List (α × ℚ)) (proj : α → β) : List (β × ℚ) :=
   let projected := dist.map λ (x, s) => (proj x, s)

@@ -86,6 +86,12 @@ def softmax (α : ℚ) (utilities : List ℚ) : List ℚ :=
   if total == 0 then utilities.map (λ _ => 0)
   else scores.map (λ s => s / total)
 
+/-- Softmax preserves list length. -/
+@[simp] theorem softmax_length (α : ℚ) (utilities : List ℚ) :
+    (softmax α utilities).length = utilities.length := by
+  simp only [softmax]
+  split_ifs <;> simp only [List.length_map]
+
 /-- Softmax with α=0 gives uniform distribution. -/
 theorem softmax_uniform_limit (utilities : List ℚ) (hne : utilities.length > 0) :
     softmax 0 utilities = utilities.map (λ _ => 1 / utilities.length) := by

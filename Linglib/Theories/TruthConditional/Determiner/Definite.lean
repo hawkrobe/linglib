@@ -180,7 +180,38 @@ theorem the_is_every_on_singletons (m : Model) [FiniteModel m]
     (e : m.Entity)
     (h_singleton : FiniteModel.elements.filter restrictor = [e]) :
     every_sem m restrictor scope = scope e := by
-  sorry
+  simp only [every_sem]
+  have h_restr : restrictor e = true := by
+    have : e ∈ FiniteModel.elements.filter restrictor := by
+      rw [h_singleton]; exact .head _
+    exact (List.mem_filter.mp this).2
+  have h_unique : ∀ x ∈ (@FiniteModel.elements m _), restrictor x = true → x = e := by
+    intro x hx hr
+    have hmem : x ∈ FiniteModel.elements.filter restrictor := List.mem_filter.mpr ⟨hx, hr⟩
+    rw [h_singleton] at hmem
+    cases hmem with
+    | head => rfl
+    | tail _ h => nomatch h
+  cases hse : scope e with
+  | false =>
+    -- e ∈ elements and (!restrictor e || scope e) = false, so all must be false
+    cases h : FiniteModel.elements.all (fun x => !restrictor x || scope x) with
+    | false => rfl
+    | true =>
+      exfalso
+      have h1 := List.all_eq_true.mp h e (FiniteModel.complete e)
+      rw [h_restr, hse] at h1
+      exact Bool.noConfusion h1
+  | true =>
+    have hall : FiniteModel.elements.all (fun x => !restrictor x || scope x) = true := by
+      rw [List.all_eq_true]
+      intro x hx
+      cases hr : restrictor x with
+      | false => rfl
+      | true =>
+        have hxe := h_unique x hx hr
+        rw [congrArg scope hxe, hse]; rfl
+    rw [hall]
 
 -- ============================================================================
 -- §6: Bridge to Fragments/English/Determiners.lean

@@ -333,9 +333,11 @@ hearer infers the speaker believes the CI of ψ does not hold.
 theorem aci_grounded_in_mcis {W : Type*}
     (φ ψ : TwoDimProp W)
     (h_ci_stronger : ciStrongerThan ψ φ)  -- ψ has stronger CI
-    (h_relevant : ∃ w : W, ψ.ci w = true)  -- ψ's CI is non-trivial (contextually relevant)
-    : -- Then ACI arises: there exists a world where ψ's CI holds but φ's does not
-      ∃ w : W, ψ.ci w = true ∧ φ.ci w = false := by
-  sorry
+    (_h_relevant : ∃ w : W, ψ.ci w = true)  -- ψ's CI is non-trivial (contextually relevant)
+    : -- Then ACI arises: there exists a world where φ's CI holds but ψ's does not.
+      -- The speaker used φ (weaker) when ψ (stronger) was available, so the hearer
+      -- infers ψ's additional CI content does not hold in some world.
+      ∃ w : W, φ.ci w = true ∧ ψ.ci w = false :=
+  h_ci_stronger.2
 
 end NeoGricean.ConventionalImplicatures

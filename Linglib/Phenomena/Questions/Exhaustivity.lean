@@ -175,12 +175,14 @@ def universalTerm : TermTypeExhDatum :=
 def termTypeExamples : List TermTypeExhDatum :=
   [singularDefinite, pluralDefinite, indefiniteTerm, universalTerm]
 
-/-- Verify term type exhaustivity matches data.
-    (Placeholder - would need actual data consistency proofs)
--/
-theorem termType_exhaustivity_consistent (d : TermTypeExhDatum) :
-    d.termType.exhaustive = true → d.exhaustive = true ∨ d.termType = .indefinite := by
-  sorry
+/-- Data consistency: for each concrete datum, if the term type predicts exhaustivity
+    then the datum confirms it, and if the term type is non-exhaustive then so is the datum.
+
+    This is a per-datum verification over our G&S 1984 examples, not a universal claim
+    (arbitrary `TermTypeExhDatum` values can violate any pattern). -/
+theorem termType_exhaustivity_data_consistent :
+    termTypeExamples.all (λ d => d.termType.exhaustive == d.exhaustive) = true := by
+  native_decide
 
 
 /-- Some languages have overt markers for non-exhaustive answers.

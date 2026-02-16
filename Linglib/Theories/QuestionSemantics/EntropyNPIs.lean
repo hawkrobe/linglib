@@ -334,9 +334,19 @@ def npiLicensed {W : Type*} (prior : W → ℚ) (worlds : List W)
 **The Grand Unification**: NPI licensing follows the same principle
 for assertions and questions—maximize strength under current polarity/bias.
 
-For assertions: DE context → wider domain is more informative → NPI licensed
+For assertions: DE context → wider domain under negation is MORE informative → NPI licensed
 For questions: Negative bias → wider domain increases entropy → NPI licensed
--/
+
+**Status**: False as originally stated. `npiLicensed` computes assertion strength on
+the positive form (`posWithNPI`), but in DE contexts the assertion is negated, and
+wider scope under negation = stronger claim. The definition needs to compare
+NEGATED strengths for the assertion case. The question case (negative bias → higher
+entropy) is plausible but requires showing that widening produces a more balanced
+partition. A corrected version would:
+1. For assertions: compare `assertionStrength prior worlds e.negWithNPI` vs `e.negWithoutNPI`
+2. For questions: add a negative-bias hypothesis
+
+[sorry: requires redesigning `npiLicensed` to use negated forms for assertions] -/
 theorem unified_npi_licensing {W : Type*}
     (prior : W → ℚ) (worlds : List W) (e : NPIQuestionEffect W)
     (act : SpeechAct)
@@ -371,27 +381,32 @@ def whQuestionEntails {W Entity : Type*}
   -- Every complete answer to q gives a complete answer to q'
   True  -- Simplified
 
-/-- Domain widening in wh-subject position is DE -/
+/-- Domain widening in wh-subject position is DE.
+
+Note: `whQuestionEntails` is currently simplified to `True`. Once it receives
+a proper definition (every complete answer to q determines an answer to q'),
+this theorem will require showing that domain inclusion implies answer
+determination. -/
 theorem wh_subject_is_de {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain)
-    (hStrictlyWider : ∃ e, e ∈ q'.domain ∧ e ∉ q.domain) :
-    whQuestionEntails q' q (λ e he => hWider e (by sorry)) := by
-  sorry
+    (_hStrictlyWider : ∃ e, e ∈ q'.domain ∧ e ∉ q.domain) :
+    whQuestionEntails q' q hWider :=
+  trivial
 
 /-- NPIs licensed in wh-subject position via standard DE reasoning.
 
 The NPI widens the domain (q'.domain ⊇ q.domain). In subject position this
 is downward-entailing: the wider question entails the narrower one, because
 every complete answer to the wider question determines an answer to the
-narrower question. This is witnessed by `whQuestionEntails`.
+narrower question.
 
-[sorry: requires showing that domain inclusion implies answer determination] -/
+Note: currently vacuous since `whQuestionEntails` is simplified to `True`. -/
 theorem npi_licensed_wh_subject {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain) :
-    whQuestionEntails q' q hWider := by
-  sorry
+    whQuestionEntails q' q hWider :=
+  trivial
 
 end BiasReduction
 

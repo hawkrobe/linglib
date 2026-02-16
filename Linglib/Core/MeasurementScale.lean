@@ -420,16 +420,25 @@ theorem maxOnScale_singleton {α : Type*} (R : α → α → Prop) (x : α) :
 def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
 
-/-- **Bridge**: `maxOnScale (· ≤ ·)` applied to the "at least" degree set
+/-- **Bridge**: `maxOnScale (· ≥ ·)` applied to the "at least" degree set
     `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
     value. This connects the relational MAX to `IsMaxInf`.
 
-    Proof sketch: μ(w) ∈ {d | d ≤ μ(w)} trivially. For any d ≤ μ(w) with
-    d ≠ μ(w), we have d < μ(w), so μ(w) ≤-dominates d (as μ(w) ≤ μ(w)).
-    Conversely, any d < μ(w) fails to ≤-dominate μ(w). -/
+    The convention: `maxOnScale R X` picks elements x ∈ X with `R x x'` for
+    all other x'. With `R = (· ≥ ·)`, this picks elements ≥ all others,
+    i.e., the maximum. -/
 theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
-    maxOnScale (· ≤ ·) { d : α | d ≤ μ w } = { μ w } := by
-  sorry
+    maxOnScale (· ≥ ·) { d : α | d ≤ μ w } = { μ w } := by
+  ext x
+  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff, ge_iff_le]
+  constructor
+  · rintro ⟨hx, hdom⟩
+    by_contra hne
+    have hlt : x < μ w := lt_of_le_of_ne hx hne
+    have := hdom (μ w) (le_refl _) (Ne.symm hne)
+    exact not_le.mpr hlt this
+  · rintro rfl
+    exact ⟨le_refl _, fun x' hx' hne => le_of_lt (lt_of_le_of_ne hx' hne)⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. "At most" Symmetry (Rouillard's direction)
