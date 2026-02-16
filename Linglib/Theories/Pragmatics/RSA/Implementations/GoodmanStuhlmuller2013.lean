@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Goodman & Stuhlmuller (2013): Knowledge and Implicature
+# Goodman & Stuhlmuller (2013): Knowledge and Implicature @cite{goodman-stuhlmuller-2013}
 
 Topics in Cognitive Science 5(1): 173-184
 

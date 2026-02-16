@@ -33,6 +33,10 @@ theme = "PaperMod"
     url = "/roadmap/"
     weight = 30
   [[menu.main]]
+    name = "Bibliography"
+    url = "/bibliography/"
+    weight = 35
+  [[menu.main]]
     name = "API Docs"
     url = "/docs/"
     weight = 40

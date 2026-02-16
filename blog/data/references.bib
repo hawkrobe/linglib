@@ -1,0 +1,1303 @@
+% Linglib Bibliography — BibTeX source of truth
+%
+% Custom fields used by gen_bibliography.py:
+%   subfield  = section grouping (mirrors Theories/ tree)
+%   role      = formalized | cited | foundational
+%   sources   = semicolon-separated Lean file paths (relative to Linglib/)
+%
+% Subfield values:
+%   pragmatics/rsa, pragmatics/neogricean, pragmatics/dts,
+%   semantics/compositional, semantics/modality, semantics/reference,
+%   semantics/focus, semantics/causation, semantics/tense,
+%   semantics/lexical, semantics/questions, semantics/presupposition,
+%   semantics/dynamic, syntax, comparative
+%
+% When adding entries:
+%   1. Use the standard BibTeX entry type (@article, @inproceedings, @book, etc.)
+%   2. Key format: lastname-lastname-year (lowercase, hyphenated)
+%   3. Always include doi or url when available — validate against the actual
+%      publication to avoid hallucinated metadata
+%   4. After editing, run: python blog/scripts/gen_bibliography.py
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  pragmatics/rsa
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{frank-goodman-2012,
+  author    = {Frank, Michael C. and Goodman, Noah D.},
+  year      = {2012},
+  title     = {Predicting Pragmatic Reasoning in Language Games},
+  journal   = {Science},
+  volume    = {336},
+  number    = {6084},
+  pages     = {998},
+  doi       = {10.1126/science.1218633},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/FrankGoodman2012.lean}
+}
+
+@article{goodman-stuhlmuller-2013,
+  author    = {Goodman, Noah D. and Stuhlm{\"u}ller, Andreas},
+  year      = {2013},
+  title     = {Knowledge and Implicature: Modeling Language Understanding as Social Cognition},
+  journal   = {Topics in Cognitive Science},
+  volume    = {5},
+  number    = {1},
+  pages     = {173--184},
+  doi       = {10.1111/tops.12007},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean}
+}
+
+@article{goodman-frank-2016,
+  author    = {Goodman, Noah D. and Frank, Michael C.},
+  year      = {2016},
+  title     = {Pragmatic Language Interpretation as Probabilistic Inference},
+  journal   = {Trends in Cognitive Sciences},
+  volume    = {20},
+  number    = {11},
+  pages     = {818--829},
+  doi       = {10.1016/j.tics.2016.08.005},
+  subfield  = {pragmatics/rsa},
+  role      = {foundational},
+  sources   = {Theories/Pragmatics/RSA/Core/Basic.lean}
+}
+
+@article{franke-2011,
+  author    = {Franke, Michael},
+  year      = {2011},
+  title     = {Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation},
+  journal   = {Semantics and Pragmatics},
+  volume    = {4},
+  number    = {1},
+  pages     = {1--82},
+  doi       = {10.3765/sp.4.1},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/Franke2011.lean}
+}
+
+@article{bergen-goodman-2015,
+  author    = {Bergen, Leon and Goodman, Noah D.},
+  year      = {2015},
+  title     = {The Strategic Use of Noise in Pragmatic Reasoning},
+  journal   = {Topics in Cognitive Science},
+  volume    = {7},
+  number    = {2},
+  pages     = {336--350},
+  doi       = {10.1111/tops.12144},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/BergenGoodman2015.lean}
+}
+
+@article{bergen-levy-goodman-2016,
+  author    = {Bergen, Leon and Levy, Roger and Goodman, Noah D.},
+  year      = {2016},
+  title     = {Pragmatic Reasoning through Semantic Inference},
+  journal   = {Semantics and Pragmatics},
+  volume    = {9},
+  number    = {20},
+  pages     = {1--83},
+  doi       = {10.3765/sp.9.20},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Extensions/LexicalUncertainty/Basic.lean}
+}
+
+@article{kao-etal-2014-hyperbole,
+  author    = {Kao, Justine T. and Wu, Jean Y. and Bergen, Leon and Goodman, Noah D.},
+  year      = {2014},
+  title     = {Nonliteral Understanding of Number Words},
+  journal   = {Proceedings of the National Academy of Sciences},
+  volume    = {111},
+  number    = {33},
+  pages     = {12002--12007},
+  doi       = {10.1073/pnas.1407479111},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean}
+}
+
+@inproceedings{kao-etal-2014-metaphor,
+  author    = {Kao, Justine T. and Bergen, Leon and Goodman, Noah D.},
+  year      = {2014},
+  title     = {Formalizing the Pragmatics of Metaphor Understanding},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  volume    = {36},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean}
+}
+
+@article{lassiter-goodman-2017,
+  author    = {Lassiter, Daniel and Goodman, Noah D.},
+  year      = {2017},
+  title     = {Adjectival Vagueness in a {B}ayesian Model of Interpretation},
+  journal   = {Synthese},
+  volume    = {194},
+  number    = {10},
+  pages     = {3801--3836},
+  doi       = {10.1007/s11229-015-0786-1},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/LassiterGoodman2017.lean}
+}
+
+@article{tessler-franke-2020,
+  author    = {Tessler, Michael Henry and Franke, Michael},
+  year      = {2020},
+  title     = {Not Unreasonable: Carving Vague Dimensions with Contraries and Contradictions},
+  journal   = {Journal of Semantics},
+  volume    = {37},
+  number    = {4},
+  pages     = {531--575},
+  doi       = {10.1093/jos/ffaa009},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean}
+}
+
+@article{tessler-goodman-2019,
+  author    = {Tessler, Michael Henry and Goodman, Noah D.},
+  year      = {2019},
+  title     = {The Language of Generalization},
+  journal   = {Psychological Review},
+  volume    = {126},
+  number    = {3},
+  pages     = {395--436},
+  doi       = {10.1037/rev0000142},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean}
+}
+
+@unpublished{tessler-goodman-2022,
+  author    = {Tessler, Michael Henry and Goodman, Noah D.},
+  year      = {2022},
+  title     = {Warm (for Winter): Inferring Comparison Classes in Communication},
+  note      = {Unpublished manuscript},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean}
+}
+
+@article{scontras-tonhauser-2025,
+  author    = {Scontras, Gregory and Tonhauser, Judith},
+  year      = {2025},
+  title     = {The Semantics and Pragmatics of Gradable Predicates},
+  journal   = {Semantics and Pragmatics},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean}
+}
+
+@inproceedings{qing-goodman-lassiter-2016,
+  author    = {Qing, Ciyang and Goodman, Noah D. and Lassiter, Daniel},
+  year      = {2016},
+  title     = {A Rational Speech-Act Model of Projective Content},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  volume    = {38},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean}
+}
+
+@inproceedings{barnett-griffiths-hawkins-2022,
+  author    = {Barnett, Samuel A. and Griffiths, Thomas L. and Hawkins, Robert D.},
+  year      = {2022},
+  title     = {A Pragmatic Account of the Weak Evidence Effect},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  volume    = {44},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean}
+}
+
+@article{beller-gerstenberg-2025,
+  author    = {Beller, Ari and Gerstenberg, Tobias},
+  year      = {2025},
+  title     = {Causation, Meaning, and Communication},
+  journal   = {Psychological Review},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/BellerGerstenberg2025.lean}
+}
+
+@article{cummins-franke-2021,
+  author    = {Cummins, Chris and Franke, Michael},
+  year      = {2021},
+  title     = {Argumentative Strength of Numerical Quantity Expressions},
+  journal   = {Linguistics and Philosophy},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/CumminsFranke2021.lean}
+}
+
+@article{degen-etal-2020,
+  author    = {Degen, Judith and Hawkins, Robert D. and Graf, Caroline and Kreiss, Elisa and Goodman, Noah D.},
+  year      = {2020},
+  title     = {When Redundancy Is Useful: A {B}ayesian Approach to ``Overinformative'' Referring Expressions},
+  journal   = {Psychological Review},
+  volume    = {127},
+  number    = {4},
+  pages     = {591--621},
+  doi       = {10.1037/rev0000186},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/DegenEtAl2020.lean}
+}
+
+@inproceedings{grusdt-lassiter-franke-2022,
+  author    = {Grusdt, Fausto and Lassiter, Daniel and Franke, Michael},
+  year      = {2022},
+  title     = {Probabilistic Modeling of Rational Communication with Conditionals},
+  booktitle = {Proceedings of the Annual Meeting of the Cognitive Science Society},
+  volume    = {44},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/GrusdtLassiterFranke2022.lean}
+}
+
+@article{harding-gerstenberg-icard-2025,
+  author    = {Harding, Jack and Gerstenberg, Tobias and Icard, Thomas},
+  year      = {2025},
+  title     = {A Communication-First Account of Explanation},
+  journal   = {Cognitive Science},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/HardingGerstenbergIcard2025.lean}
+}
+
+@article{hawkins-gweon-goodman-2021,
+  author    = {Hawkins, Robert D. and Gweon, Hyowon and Goodman, Noah D.},
+  year      = {2021},
+  title     = {The Division of Labor in Communication: Speakers Help Listeners Account for Asymmetries in Visual Perspective},
+  journal   = {Cognitive Science},
+  volume    = {45},
+  pages     = {e12926},
+  doi       = {10.1111/cogs.12926},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/HawkinsGweonGoodman2021.lean}
+}
+
+@article{sumers-etal-2023,
+  author    = {Sumers, Theodore R. and Hawkins, Robert D. and Ho, Mark K. and Griffiths, Thomas L. and Hadfield-Menell, Dylan},
+  year      = {2023},
+  title     = {Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility},
+  journal   = {Cognitive Science},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean}
+}
+
+@inproceedings{waldon-degen-2021,
+  author    = {Waldon, Brandon and Degen, Judith},
+  year      = {2021},
+  title     = {Modeling Cross-Linguistic Production of Referring Expressions},
+  booktitle = {Proceedings of the Society for Computation in Linguistics},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/WaldonDegen2021.lean}
+}
+
+@inproceedings{warstadt-2022,
+  author    = {Warstadt, Alex},
+  year      = {2022},
+  title     = {Presupposition Accommodation through Pragmatic Inference},
+  booktitle = {Proceedings of SALT},
+  volume    = {32},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/Warstadt2022.lean}
+}
+
+@article{yoon-etal-2020,
+  author    = {Yoon, Erica J. and Tessler, Michael Henry and Goodman, Noah D. and Frank, Michael C.},
+  year      = {2020},
+  title     = {Polite Speech Emerges From Competing Social Goals},
+  journal   = {Open Mind},
+  volume    = {4},
+  pages     = {71--87},
+  doi       = {10.1162/opmi_a_00035},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/YoonEtAl2020.lean}
+}
+
+@article{scontras-pearl-2021,
+  author    = {Scontras, Gregory and Pearl, Lisa},
+  year      = {2021},
+  title     = {When Pragmatics Matters More for Truth-Value Judgments},
+  journal   = {Glossa},
+  volume    = {6},
+  number    = {1},
+  pages     = {110},
+  doi       = {10.16995/glossa.5724},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean}
+}
+
+@article{van-tiel-franke-sauerland-2021,
+  author    = {van Tiel, Bob and Franke, Michael and Sauerland, Uli},
+  year      = {2021},
+  title     = {Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification},
+  journal   = {Proceedings of the National Academy of Sciences},
+  volume    = {118},
+  number    = {9},
+  pages     = {e2005453118},
+  doi       = {10.1073/pnas.2005453118},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/VanTielEtAl2021.lean}
+}
+
+@article{alsop-2024,
+  author    = {Alsop, Simon},
+  year      = {2024},
+  title     = {The Pragmatics of Free Choice Any},
+  journal   = {Semantics and Pragmatics},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/Alsop2024.lean}
+}
+
+@inproceedings{champollion-alsop-grosu-2019,
+  author    = {Champollion, Lucas and Alsop, Simon and Grosu, Ioana},
+  year      = {2019},
+  title     = {Free Choice Disjunction as a Rational Speech Act},
+  booktitle = {Proceedings of SALT},
+  volume    = {29},
+  pages     = {238--257},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean}
+}
+
+@article{cremers-wilcox-spector-2023,
+  author    = {Cremers, Alexandre and Wilcox, Ethan and Spector, Benjamin},
+  year      = {2023},
+  title     = {Exhaustivity and Anti-Exhaustivity in the {RSA} Framework},
+  journal   = {Semantics and Pragmatics},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/CremersWilcoxSpector2023.lean}
+}
+
+@article{egre-etal-2023,
+  author    = {{\'E}gr{\'e}, Paul and Spector, Benjamin and Mortier, Adrien and Verheyen, Steven},
+  year      = {2023},
+  title     = {On the Optimality of Vagueness: 'Around', 'Between', and the Sorites},
+  journal   = {Linguistics and Philosophy},
+  volume    = {46},
+  pages     = {1101--1130},
+  doi       = {10.1007/s10988-022-09378-2},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/EgreEtAl2023.lean}
+}
+
+@article{franke-bergen-2020,
+  author    = {Franke, Michael and Bergen, Leon},
+  year      = {2020},
+  title     = {Theory-Driven Statistical Modeling for Semantics and Pragmatics},
+  journal   = {Language, Cognition and Neuroscience},
+  volume    = {35},
+  number    = {8},
+  pages     = {1011--1028},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/FrankeBergen2020.lean}
+}
+
+@article{hawkins-etal-2025,
+  author    = {Hawkins, Robert D. and Bohn, Manuel and Degen, Judith and Goodman, Noah D. and Peloquin, Ben and Frank, Michael C.},
+  year      = {2025},
+  title     = {Relevant Answers to Polar Questions},
+  journal   = {Philosophical Transactions of the Royal Society B},
+  volume    = {380},
+  pages     = {20230505},
+  doi       = {10.1098/rstb.2023.0505},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/HawkinsEtAl2025.lean}
+}
+
+@inproceedings{he-kaiser-iskarous-2025,
+  author    = {He, Muyi and Kaiser, Elsi and Iskarous, Khalil},
+  year      = {2025},
+  title     = {Modeling Sentence Polarity Asymmetries: Fuzzy Interpretations in a Possibly Wonky World},
+  booktitle = {Proceedings of the Society for Computation in Linguistics},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean}
+}
+
+@article{nouwen-2024,
+  author    = {Nouwen, Rick},
+  year      = {2024},
+  title     = {The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers},
+  journal   = {Linguistics and Philosophy},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/Nouwen2024.lean}
+}
+
+@article{potts-etal-2016,
+  author    = {Potts, Christopher and Lassiter, Daniel and Levy, Roger and Frank, Michael C.},
+  year      = {2016},
+  title     = {Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty},
+  journal   = {Journal of Semantics},
+  volume    = {33},
+  number    = {4},
+  pages     = {755--802},
+  doi       = {10.1093/jos/ffv012},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Phenomena/Pragmatics/RSA/Implementations/PottsEtAl2016.lean}
+}
+
+@misc{zaslavsky-hu-levy-2020,
+  author    = {Zaslavsky, Noga and Hu, Jennifer and Levy, Roger},
+  year      = {2020},
+  title     = {A Rate-Distortion View of Human Pragmatic Reasoning},
+  howpublished = {arXiv:2005.06641},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean}
+}
+
+@article{goodwin-etal-2025,
+  author    = {Goodwin, Geoffrey P. and Gershman, Samuel J. and Ullman, Tomer D.},
+  year      = {2025},
+  title     = {Causal Inference from Correlational Statements},
+  journal   = {Cognition},
+  subfield  = {pragmatics/rsa},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/RSA/Implementations/CausalCorrelation.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  pragmatics/neogricean
+% ══════════════════════════════════════════════════════════════════════════════
+
+@incollection{chierchia-2004,
+  author    = {Chierchia, Gennaro},
+  year      = {2004},
+  title     = {Scalar Implicatures, Polarity Phenomena, and the Syntax/Pragmatics Interface},
+  booktitle = {Structures and Beyond},
+  editor    = {Belletti, Adriana},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Exhaustivity/Chierchia2004.lean}
+}
+
+@book{chierchia-2013,
+  author    = {Chierchia, Gennaro},
+  year      = {2013},
+  title     = {Logic in Grammar: Polarity, Free Choice, and Intervention},
+  publisher = {Oxford University Press},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Exhaustivity/Chierchia2013.lean}
+}
+
+@inproceedings{spector-2007,
+  author    = {Spector, Benjamin},
+  year      = {2007},
+  title     = {Scalar Implicatures: Exhaustivity and {G}ricean Reasoning},
+  booktitle = {Proceedings of the ESSLLI 2003 Student Session (revised 2007)},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Implementations/Spector2007.lean}
+}
+
+@article{sauerland-2004,
+  author    = {Sauerland, Uli},
+  year      = {2004},
+  title     = {Scalar Implicatures in Complex Sentences},
+  journal   = {Linguistics and Philosophy},
+  volume    = {27},
+  number    = {3},
+  pages     = {367--391},
+  doi       = {10.1023/B:LING.0000023378.71748.db},
+  subfield  = {pragmatics/neogricean},
+  role      = {cited},
+  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Attitudes.lean}
+}
+
+@incollection{fox-2007,
+  author    = {Fox, Danny},
+  year      = {2007},
+  title     = {Free Choice and the Theory of Scalar Implicatures},
+  booktitle = {Presupposition and Implicature in Compositional Semantics},
+  editor    = {Sauerland, Uli and Stateva, Penka},
+  publisher = {Palgrave Macmillan},
+  subfield  = {pragmatics/neogricean},
+  role      = {cited},
+  sources   = {Theories/Pragmatics/RSA/Core/CompositionalRSA.lean}
+}
+
+@incollection{chierchia-fox-spector-2012,
+  author    = {Chierchia, Gennaro and Fox, Danny and Spector, Benjamin},
+  year      = {2012},
+  title     = {Scalar Implicature as a Grammatical Phenomenon},
+  booktitle = {Semantics: An International Handbook},
+  editor    = {Maienborn, Claudia and von Heusinger, Klaus and Portner, Paul},
+  volume    = {3},
+  subfield  = {pragmatics/neogricean},
+  role      = {cited},
+  sources   = {Theories/Pragmatics/RSA/Core/CompositionalRSA.lean}
+}
+
+@book{geurts-2010,
+  author    = {Geurts, Bart},
+  year      = {2010},
+  title     = {Quantity Implicatures},
+  publisher = {Cambridge University Press},
+  subfield  = {pragmatics/neogricean},
+  role      = {cited},
+  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Conditionals.lean}
+}
+
+@article{fox-spector-2018,
+  author    = {Fox, Danny and Spector, Benjamin},
+  year      = {2018},
+  title     = {Economy and Embedded Exhaustification},
+  journal   = {Natural Language Semantics},
+  volume    = {26},
+  pages     = {1--50},
+  doi       = {10.1007/s11050-017-9139-6},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Implementations/FoxSpector2018.lean}
+}
+
+@article{bar-lev-fox-2020,
+  author    = {Bar-Lev, Moshe E. and Fox, Danny},
+  year      = {2020},
+  title     = {Free Choice, Simplification, and Innocent Inclusion},
+  journal   = {Natural Language Semantics},
+  volume    = {28},
+  pages     = {175--223},
+  doi       = {10.1007/s11050-020-09162-y},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Implementations/BarLevFox2020.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  pragmatics/dts
+% ══════════════════════════════════════════════════════════════════════════════
+
+@incollection{merin-1999,
+  author    = {Merin, Arthur},
+  year      = {1999},
+  title     = {Information, Relevance, and Social Decisionmaking},
+  booktitle = {Logic, Language, and Computation},
+  editor    = {Moss, Lawrence and Ginzburg, Jonathan and de Rijke, Maarten},
+  volume    = {2},
+  subfield  = {pragmatics/dts},
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/DTS/Core.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/compositional
+% ══════════════════════════════════════════════════════════════════════════════
+
+@incollection{montague-1973,
+  author    = {Montague, Richard},
+  year      = {1973},
+  title     = {The Proper Treatment of Quantification in Ordinary {E}nglish},
+  booktitle = {Approaches to Natural Language},
+  editor    = {Hintikka, Jaakko and Moravcsik, Julius and Suppes, Patrick},
+  publisher = {D. Reidel},
+  subfield  = {semantics/compositional},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Montague/PTQ.lean; Theories/Semantics/Montague/Basic.lean}
+}
+
+@article{barwise-cooper-1981,
+  author    = {Barwise, Jon and Cooper, Robin},
+  year      = {1981},
+  title     = {Generalized Quantifiers and Natural Language},
+  journal   = {Linguistics and Philosophy},
+  volume    = {4},
+  number    = {2},
+  pages     = {159--219},
+  doi       = {10.1007/BF00350139},
+  subfield  = {semantics/compositional},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Lexical/Determiner/Quantifier.lean}
+}
+
+@article{keenan-stavi-1986,
+  author    = {Keenan, Edward and Stavi, Jonathan},
+  year      = {1986},
+  title     = {A Semantic Characterization of Natural Language Determiners},
+  journal   = {Linguistics and Philosophy},
+  volume    = {9},
+  number    = {3},
+  pages     = {253--326},
+  doi       = {10.1007/BF00630273},
+  subfield  = {semantics/compositional},
+  role      = {cited},
+  sources   = {Theories/Semantics/Lexical/Determiner/Quantifier.lean}
+}
+
+@article{van-de-pol-etal-2023,
+  author    = {van de Pol, Iris and Steinert-Threlkeld, Shane and Szymanik, Jakub},
+  year      = {2023},
+  title     = {Quantifiers Satisfying Semantic Universals Have Shorter Minimal Description Length},
+  journal   = {Cognition},
+  volume    = {232},
+  pages     = {105150},
+  doi       = {10.1016/j.cognition.2022.105150},
+  subfield  = {semantics/compositional},
+  role      = {cited},
+  sources   = {Theories/Semantics/Lexical/Determiner/Quantifier.lean}
+}
+
+@incollection{link-1983,
+  author    = {Link, Godehard},
+  year      = {1983},
+  title     = {The Logical Analysis of Plurals and Mass Terms},
+  booktitle = {Meaning, Use and Interpretation of Language},
+  editor    = {B{\"a}uerle, Rainer and Schwarze, Christoph and von Stechow, Arnim},
+  publisher = {de Gruyter},
+  subfield  = {semantics/compositional},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Lexical/Plural/Distributivity.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/modality
+% ══════════════════════════════════════════════════════════════════════════════
+
+@incollection{kratzer-1981,
+  author    = {Kratzer, Angelika},
+  year      = {1981},
+  title     = {The Notional Category of Modality},
+  booktitle = {Words, Worlds, and Contexts},
+  editor    = {Eikmeyer, Hans-J{\"u}rgen and Rieser, Hannes},
+  publisher = {de Gruyter},
+  pages     = {38--74},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Modality/Kratzer.lean}
+}
+
+@book{kratzer-2012,
+  author    = {Kratzer, Angelika},
+  year      = {2012},
+  title     = {Modals and Conditionals},
+  publisher = {Oxford University Press},
+  subfield  = {semantics/modality},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Modality/Kratzer.lean}
+}
+
+@article{phillips-brown-2025,
+  author    = {Phillips-Brown, Milo},
+  year      = {2025},
+  title     = {Some-Things-Considered Desire},
+  journal   = {Semantics and Pragmatics},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Modality/PhillipsBrown.lean}
+}
+
+@article{aloni-2022,
+  author    = {Aloni, Maria},
+  year      = {2022},
+  title     = {Logic and Conversation: The Case of Free Choice},
+  journal   = {Semantics and Pragmatics},
+  volume    = {15},
+  doi       = {10.3765/sp.15.5},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  sources   = {Comparisons/FreeChoice/Aloni2022.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/reference
+% ══════════════════════════════════════════════════════════════════════════════
+
+@incollection{kaplan-1989,
+  author    = {Kaplan, David},
+  year      = {1989},
+  title     = {Demonstratives},
+  booktitle = {Themes from Kaplan},
+  editor    = {Almog, Joseph and Perry, John and Wettstein, Howard},
+  publisher = {Oxford University Press},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Reference/Kaplan.lean; Theories/Semantics/Reference/KaplanLD.lean}
+}
+
+@book{kripke-1980,
+  author    = {Kripke, Saul},
+  year      = {1980},
+  title     = {Naming and Necessity},
+  publisher = {Harvard University Press},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Reference/Kripke.lean}
+}
+
+@article{donnellan-1966,
+  author    = {Donnellan, Keith},
+  year      = {1966},
+  title     = {Reference and Definite Descriptions},
+  journal   = {Philosophical Review},
+  volume    = {75},
+  number    = {3},
+  pages     = {281--304},
+  doi       = {10.2307/2183143},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Reference/Donnellan.lean}
+}
+
+@book{hintikka-1969,
+  author    = {Hintikka, Jaakko},
+  year      = {1969},
+  title     = {Knowledge and Belief},
+  publisher = {Cornell University Press},
+  subfield  = {semantics/reference},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Attitudes/Doxastic.lean}
+}
+
+@article{ahn-zhu-2025,
+  author    = {Ahn, Dorothy and Zhu, Yi},
+  year      = {2025},
+  title     = {Demonstratives and Relational Nouns},
+  journal   = {Semantics and Pragmatics},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Determiner/Demonstrative/AhnZhu2025.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/focus
+% ══════════════════════════════════════════════════════════════════════════════
+
+@inproceedings{kratzer-shimoyama-2002,
+  author    = {Kratzer, Angelika and Shimoyama, Junko},
+  year      = {2002},
+  title     = {Indeterminate Pronouns: The View from {J}apanese},
+  booktitle = {Proceedings of SALT},
+  volume    = {12},
+  subfield  = {semantics/focus},
+  role      = {cited},
+  sources   = {Theories/Semantics/Questions/Hamblin.lean}
+}
+
+@article{kratzer-selkirk-2020,
+  author    = {Kratzer, Angelika and Selkirk, Elisabeth},
+  year      = {2020},
+  title     = {Deconstructing Information Structure},
+  journal   = {Glossa},
+  volume    = {5},
+  number    = {1},
+  pages     = {113},
+  doi       = {10.5334/gjgl.968},
+  subfield  = {semantics/focus},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Focus/KratzerSelkirk2020.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/causation
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{martin-rose-nichols-2025,
+  author    = {Martin, Fabienne and Rose, Fran{\c{c}}oise and Nichols, Leah},
+  year      = {2025},
+  title     = {Production vs Dependence Causation in Lexical Causative Verb Semantics},
+  journal   = {Natural Language and Linguistic Theory},
+  subfield  = {semantics/causation},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Causation/ProductionDependence.lean}
+}
+
+@article{cao-white-lassiter-2025,
+  author    = {Cao, Xiaoan and White, Aaron Steven and Lassiter, Daniel},
+  year      = {2025},
+  title     = {Graded Causative Verb Semantics},
+  journal   = {Cognitive Science},
+  subfield  = {semantics/causation},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Causation/GradedCausation.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/tense
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{partee-1973,
+  author    = {Partee, Barbara},
+  year      = {1973},
+  title     = {Some Structural Analogies between Tenses and Pronouns in {E}nglish},
+  journal   = {Journal of Philosophy},
+  volume    = {70},
+  number    = {18},
+  pages     = {601--609},
+  doi       = {10.2307/2025024},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Comparisons/Partee1973.lean}
+}
+
+@article{abusch-1997,
+  author    = {Abusch, Dorit},
+  year      = {1997},
+  title     = {Sequence of Tense and Temporal De Re},
+  journal   = {Linguistics and Philosophy},
+  volume    = {20},
+  number    = {1},
+  pages     = {1--50},
+  doi       = {10.1023/A:1005331423820},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/Abusch.lean}
+}
+
+@incollection{von-stechow-2009,
+  author    = {von Stechow, Arnim},
+  year      = {2009},
+  title     = {Tenses in Compositional Semantics},
+  booktitle = {The Expression of Time},
+  editor    = {Klein, Wolfgang and Li, Ping},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/VonStechow.lean}
+}
+
+@book{ogihara-1996,
+  author    = {Ogihara, Toshiyuki},
+  year      = {1996},
+  title     = {Tense, Attitudes, and Scope},
+  publisher = {Kluwer Academic Publishers},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/Ogihara.lean}
+}
+
+@inproceedings{kratzer-1998,
+  author    = {Kratzer, Angelika},
+  year      = {1998},
+  title     = {More Structural Analogies between Pronouns and Tenses},
+  booktitle = {Proceedings of SALT},
+  volume    = {8},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/Kratzer.lean}
+}
+
+@article{klecha-2016,
+  author    = {Klecha, Peter},
+  year      = {2016},
+  title     = {Modality and Embedded Temporal Interpretation},
+  journal   = {Semantics and Pragmatics},
+  volume    = {9},
+  number    = {9},
+  pages     = {1--55},
+  doi       = {10.3765/sp.9.9},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/Klecha.lean}
+}
+
+@book{deal-2020,
+  author    = {Deal, Amy Rose},
+  year      = {2020},
+  title     = {A Theory of Indexical Shift: Meaning, Grammar, and Crosslinguistic Variation},
+  publisher = {MIT Press},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Tense/Deal.lean}
+}
+
+@article{wurmbrand-2014,
+  author    = {Wurmbrand, Susi},
+  year      = {2014},
+  title     = {Tense and Aspect in {E}nglish Infinitives},
+  journal   = {Linguistic Inquiry},
+  volume    = {45},
+  number    = {3},
+  pages     = {403--447},
+  doi       = {10.1162/LING_a_00161},
+  subfield  = {semantics/tense},
+  role      = {formalized},
+  sources   = {Theories/Syntax/Minimalism/Tense/Wurmbrand.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/lexical
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{kennedy-2007,
+  author    = {Kennedy, Christopher},
+  year      = {2007},
+  title     = {Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives},
+  journal   = {Linguistics and Philosophy},
+  volume    = {30},
+  number    = {1},
+  pages     = {1--45},
+  doi       = {10.1007/s10988-006-9008-0},
+  subfield  = {semantics/lexical},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Lexical/Adjective/Theory.lean}
+}
+
+@article{kennedy-mcnally-2005,
+  author    = {Kennedy, Christopher and McNally, Louise},
+  year      = {2005},
+  title     = {Scale Structure, Degree Modification, and the Semantics of Gradable Predicates},
+  journal   = {Language},
+  volume    = {81},
+  number    = {2},
+  pages     = {345--381},
+  doi       = {10.1353/lan.2005.0071},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Theories/Semantics/Lexical/Adjective/Theory.lean}
+}
+
+@incollection{barker-2011,
+  author    = {Barker, Chris},
+  year      = {2011},
+  title     = {Possessives and Relational Nouns},
+  booktitle = {Semantics: An International Handbook},
+  editor    = {Maienborn, Claudia and von Heusinger, Klaus and Portner, Paul},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Noun/Relational/Barker2011.lean}
+}
+
+@phdthesis{carlson-1977,
+  author    = {Carlson, Gregory},
+  year      = {1977},
+  title     = {Reference to Kinds in {E}nglish},
+  school    = {University of Massachusetts Amherst},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean}
+}
+
+@article{chierchia-1998,
+  author    = {Chierchia, Gennaro},
+  year      = {1998},
+  title     = {Reference to Kinds Across Languages},
+  journal   = {Natural Language Semantics},
+  volume    = {6},
+  number    = {4},
+  pages     = {339--405},
+  doi       = {10.1023/A:1008324218506},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean}
+}
+
+@article{dayal-2004,
+  author    = {Dayal, Veneeta},
+  year      = {2004},
+  title     = {Number Marking and (In)definiteness in Kind Terms},
+  journal   = {Linguistics and Philosophy},
+  volume    = {27},
+  number    = {4},
+  pages     = {393--450},
+  doi       = {10.1023/B:LING.0000024420.80324.67},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Noun/Kind/Dayal2004.lean}
+}
+
+@inproceedings{krifka-2004,
+  author    = {Krifka, Manfred},
+  year      = {2004},
+  title     = {Bare NPs: Kind-Referring, Indefinites, Both, or Neither?},
+  booktitle = {Proceedings of SALT},
+  volume    = {13},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean}
+}
+
+@incollection{krifka-1989,
+  author    = {Krifka, Manfred},
+  year      = {1989},
+  title     = {Nominal Reference, Temporal Constitution and Quantification in Event Semantics},
+  booktitle = {Semantics and Contextual Expression},
+  editor    = {Bartsch, Renate and van Benthem, Johan and van Emde Boas, Peter},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Events/Krifka1989.lean}
+}
+
+@incollection{krifka-1998,
+  author    = {Krifka, Manfred},
+  year      = {1998},
+  title     = {The Origins of Telicity},
+  booktitle = {Events and Grammar},
+  editor    = {Rothstein, Susan},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Events/Krifka1998.lean}
+}
+
+@article{kriz-spector-2021,
+  author    = {Kri{\v{z}}, Manuel and Spector, Benjamin},
+  year      = {2021},
+  title     = {Interpreting Plural Predication: Homogeneity and Non-Maximality},
+  journal   = {Linguistics and Philosophy},
+  volume    = {44},
+  pages     = {1131--1178},
+  doi       = {10.1007/s10988-020-09311-w},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Plural/Distributivity.lean}
+}
+
+@article{haslinger-etal-2025,
+  author    = {Haslinger, Nina and Rosina, Eva and Schmitt, Viola and Wurm, Andreas},
+  year      = {2025},
+  title     = {On the Relation between Distributivity and Maximality},
+  journal   = {Semantics and Pragmatics},
+  volume    = {18},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Theories/Semantics/Lexical/Plural/Distributivity.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/questions
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{hamblin-1973,
+  author    = {Hamblin, Charles Leonard},
+  year      = {1973},
+  title     = {Questions in {M}ontague {E}nglish},
+  journal   = {Foundations of Language},
+  volume    = {10},
+  number    = {1},
+  pages     = {41--53},
+  subfield  = {semantics/questions},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Questions/Hamblin.lean}
+}
+
+@article{karttunen-1977,
+  author    = {Karttunen, Lauri},
+  year      = {1977},
+  title     = {Syntax and Semantics of Questions},
+  journal   = {Linguistics and Philosophy},
+  volume    = {1},
+  number    = {1},
+  pages     = {3--44},
+  doi       = {10.1007/BF00351935},
+  subfield  = {semantics/questions},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Questions/Hamblin.lean}
+}
+
+@phdthesis{groenendijk-stokhof-1984,
+  author    = {Groenendijk, Jeroen and Stokhof, Martin},
+  year      = {1984},
+  title     = {Studies on the Semantics of Questions and the Pragmatics of Answers},
+  school    = {University of Amsterdam},
+  subfield  = {semantics/questions},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Questions/Partition.lean}
+}
+
+@book{ciardelli-groenendijk-roelofsen-2019,
+  author    = {Ciardelli, Ivano and Groenendijk, Jeroen and Roelofsen, Floris},
+  year      = {2019},
+  title     = {Inquisitive Semantics},
+  publisher = {Oxford University Press},
+  subfield  = {semantics/questions},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Questions/Inquisitive.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/presupposition
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{heim-1992,
+  author    = {Heim, Irene},
+  year      = {1992},
+  title     = {Presupposition Projection and the Semantics of Attitude Verbs},
+  journal   = {Journal of Semantics},
+  volume    = {9},
+  number    = {3},
+  pages     = {183--221},
+  doi       = {10.1093/jos/9.3.183},
+  subfield  = {semantics/presupposition},
+  role      = {cited},
+  sources   = {Theories/Semantics/Attitudes/Doxastic.lean}
+}
+
+@article{von-fintel-1999,
+  author    = {von Fintel, Kai},
+  year      = {1999},
+  title     = {NPI Licensing, {S}trawson Entailment, and Context Dependency},
+  journal   = {Journal of Semantics},
+  volume    = {16},
+  number    = {2},
+  pages     = {97--148},
+  doi       = {10.1093/jos/16.2.97},
+  subfield  = {semantics/presupposition},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Entailment/StrawsonEntailment.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/dynamic
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{groenendijk-stokhof-1991,
+  author    = {Groenendijk, Jeroen and Stokhof, Martin},
+  year      = {1991},
+  title     = {Dynamic Predicate Logic},
+  journal   = {Linguistics and Philosophy},
+  volume    = {14},
+  number    = {1},
+  pages     = {39--100},
+  doi       = {10.1007/BF00628304},
+  subfield  = {semantics/dynamic},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Dynamic/Effects/Nondeterminism/Charlow2019.lean}
+}
+
+@article{charlow-2019,
+  author    = {Charlow, Simon},
+  year      = {2019},
+  title     = {Where Is the Destructive Update Problem?},
+  journal   = {Semantics and Pragmatics},
+  volume    = {12},
+  number    = {10},
+  pages     = {1--24},
+  doi       = {10.3765/sp.12.10},
+  subfield  = {semantics/dynamic},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Dynamic/Effects/Nondeterminism/Charlow2019.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  syntax
+% ══════════════════════════════════════════════════════════════════════════════
+
+@book{chomsky-1995,
+  author    = {Chomsky, Noam},
+  year      = {1995},
+  title     = {The Minimalist Program},
+  publisher = {MIT Press},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Theories/Syntax/Minimalism/Core/Basic.lean}
+}
+
+@book{steedman-2000,
+  author    = {Steedman, Mark},
+  year      = {2000},
+  title     = {The Syntactic Process},
+  publisher = {MIT Press},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Theories/Syntax/CCG/Core/Basic.lean}
+}
+
+@book{pollard-sag-1994,
+  author    = {Pollard, Carl and Sag, Ivan A.},
+  year      = {1994},
+  title     = {Head-Driven Phrase Structure Grammar},
+  publisher = {University of Chicago Press},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Theories/Syntax/HPSG/Core/Basic.lean}
+}
+
+@book{kayne-1994,
+  author    = {Kayne, Richard S.},
+  year      = {1994},
+  title     = {The Antisymmetry of Syntax},
+  publisher = {MIT Press},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Theories/Syntax/Minimalism/Formal/Linearization/LCA.lean}
+}
+
+@book{goldberg-1995,
+  author    = {Goldberg, Adele E.},
+  year      = {1995},
+  title     = {Constructions: A Construction Grammar Approach to Argument Structure},
+  publisher = {University of Chicago Press},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Theories/Syntax/ConstructionGrammar/Basic.lean}
+}
+
+@misc{marcolli-chomsky-berwick-2023,
+  author    = {Marcolli, Matilde and Chomsky, Noam and Berwick, Robert C.},
+  year      = {2023},
+  title     = {Mathematical Structure of Syntactic Merge},
+  howpublished = {arXiv:2305.18278},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean}
+}
+
+@article{zeijlstra-2012,
+  author    = {Zeijlstra, Hedde},
+  year      = {2012},
+  title     = {There Is Only One Way to Agree},
+  journal   = {The Linguistic Review},
+  volume    = {29},
+  number    = {3},
+  pages     = {491--539},
+  doi       = {10.1515/tlr-2012-0017},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Theories/Syntax/Minimalism/Tense/Zeijlstra.lean}
+}
+
+@article{hahn-degen-futrell-2021,
+  author    = {Hahn, Michael and Degen, Judith and Futrell, Richard},
+  year      = {2021},
+  title     = {Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal},
+  journal   = {Psychological Review},
+  volume    = {128},
+  number    = {4},
+  pages     = {726--756},
+  doi       = {10.1037/rev0000269},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  comparative
+% ══════════════════════════════════════════════════════════════════════════════
+
+@article{mueller-2013,
+  author    = {M{\"u}ller, Stefan},
+  year      = {2013},
+  title     = {Unifying Everything: Some Remarks on Simpler Syntax, Construction Grammar, Minimalism, and {HPSG}},
+  journal   = {Language},
+  volume    = {89},
+  number    = {4},
+  pages     = {920--950},
+  doi       = {10.1353/lan.2013.0061},
+  subfield  = {comparative},
+  role      = {formalized},
+  sources   = {Comparisons/Mueller2013.lean}
+}
