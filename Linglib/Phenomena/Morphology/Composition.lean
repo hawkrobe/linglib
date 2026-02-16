@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Number
+import Linglib.Theories.Morphology.Exponence
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge

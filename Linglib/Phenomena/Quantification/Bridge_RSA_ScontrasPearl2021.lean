@@ -145,17 +145,8 @@ theorem rsa_and_empirical_agree :
     (Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .two) := by
   native_decide
 
-/-- Empirical data type for the scope ambiguity phenomenon:
-the ordering from the experiment. -/
-structure ScopeEmpiricalOrdering where
-  /-- Did more people say true for 0-horses than 1-horse? -/
-  zeroGtOne : Bool
-  /-- Did more people say true for 1-horse than 2-horses? -/
-  oneGtTwo : Bool
-  deriving Repr
-
 /-- Empirical data from Scontras & Pearl 2021 -/
-def empiricalOrdering : ScopeEmpiricalOrdering :=
+def empiricalOrdering : RSA.ScontrasPearl2021.ScopeEmpiricalOrdering :=
   { zeroGtOne := Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .zero > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one
   , oneGtTwo := Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .two }
 

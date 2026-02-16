@@ -387,4 +387,18 @@ theorem hyponym_always_redundant :
     americanOrCalifornianTrueWorlds = americanTrueWorlds := by
   native_decide
 
+/--
+RSA predicts "some or all" is felicitous: the disjunction is informative
+under the refined lexicon (exh(some) = some-but-not-all).
+-/
+def rsaPredictsFelicitous_someOrAll : Bool :=
+  someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length
+
+/--
+RSA predicts "American or Californian" is infelicitous: the disjunction
+is always redundant (no lexicon refinement breaks the entailment).
+-/
+def rsaPredictsFelicitous_americanCalifornian : Bool :=
+  !(americanOrCalifornianTrueWorlds == americanTrueWorlds)
+
 end RSA.Hurford

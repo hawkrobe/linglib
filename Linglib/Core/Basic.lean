@@ -196,6 +196,17 @@ structure PhenomenonData where
   pairs : List MinimalPair
   generalization : String
 
+/-- Check if a grammaticality predicate captures a minimal pair.
+
+    Captures the pair iff the predicate accepts the grammatical sentence
+    and rejects the ungrammatical sentence. -/
+def capturesMinimalPairBy (pred : List Word → Bool) (pair : MinimalPair) : Bool :=
+  pred pair.grammatical && !pred pair.ungrammatical
+
+/-- Check if a grammaticality predicate captures all minimal pairs in a phenomenon dataset. -/
+def capturesPhenomenonData (pred : List Word → Bool) (phenom : PhenomenonData) : Bool :=
+  phenom.pairs.all (capturesMinimalPairBy pred)
+
 /-- A grammar captures a minimal pair if it derives the good one and blocks the bad one -/
 def Grammar.capturesPair (G : Type) [Grammar G] (g : G) (pair : MinimalPair) : Prop :=
   Grammar.derives g pair.grammatical pair.clauseType ∧
