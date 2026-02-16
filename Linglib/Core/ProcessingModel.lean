@@ -110,22 +110,41 @@ nothing downstream depends on them. Proof deferred in favor of deeper results. -
 /-- More locality → not easier (working memory decay). -/
 theorem locality_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with locality := p.locality + k + 1 } |>.compare p) ≠ .easier := by
-  sorry
+  unfold ProcessingProfile.compare
+  simp only [List.any]
+  -- The locality dimension has a.locality > b.locality, so anyWorse = true,
+  -- which prevents the result from being .easier
+  have h : ¬(p.locality + k + 1 < p.locality) := by omega
+  simp [Ord.compare, compareOfLessAndEq, h]
+  split <;> simp_all
 
 /-- More boundaries → not easier (interference at retrieval). -/
 theorem boundaries_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with boundaries := p.boundaries + k + 1 } |>.compare p) ≠ .easier := by
-  sorry
+  unfold ProcessingProfile.compare
+  simp only [List.any]
+  have h : ¬(p.boundaries + k + 1 < p.boundaries) := by omega
+  simp [Ord.compare, compareOfLessAndEq, h]
+  split <;> simp_all
 
 /-- More referential load → not easier (similarity-based interference). -/
 theorem referentialLoad_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with referentialLoad := p.referentialLoad + k + 1 } |>.compare p) ≠ .easier := by
-  sorry
+  unfold ProcessingProfile.compare
+  simp only [List.any]
+  have h : ¬(p.referentialLoad + k + 1 < p.referentialLoad) := by omega
+  simp [Ord.compare, compareOfLessAndEq, h]
+  split <;> simp_all
 
 /-- More ease → not harder (facilitation aids retrieval). -/
 theorem ease_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with ease := p.ease + k + 1 } |>.compare p) ≠ .harder := by
-  sorry
+  unfold ProcessingProfile.compare
+  simp only [List.any]
+  -- ease is inverted: compare b.ease a.ease, so more ease → .lt (better)
+  have h1 : p.ease < p.ease + k + 1 := by omega
+  have h2 : ¬(p.ease + k + 1 < p.ease) := by omega
+  simp [Ord.compare, compareOfLessAndEq, h1, h2]
 
 -- ============================================================================
 -- Ordering Verification
