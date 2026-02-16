@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.217.5] - 2026-02-16
+
+### Changed
+- **Theories/Pragmatics/RSA/Core/Convergence.lean**: Proved all 3 remaining sorrys. `G_α_bounded_above` via entropy ≤ log|U| (from KL(p‖uniform) ≥ 0) + E_VL ≤ 0 (utility nonpositive for distributions). `RSA_converges` via Monotone Convergence Theorem (`monotone_nat_of_le_succ` + `tendsto_atTop_ciSup`). `eventually_εConverged` via convergent ⇒ Cauchy. Added `prior_sum` field to `RSAScenarioR`. Zero sorrys remain.
+
 ## [0.217.4] - 2026-02-16
 
 ### Added
