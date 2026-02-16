@@ -30,13 +30,14 @@ namespace Minimalism
 -- Part 1: Immediate C-Command for Heads
 -- ============================================================================
 
-/-- X immediately c-commands Y iff X c-commands Y and there is no Z
-    such that X c-commands Z and Z c-commands Y
+/-- X immediately c-commands Y within tree `root` iff X c-commands Y
+    (in `root`) and there is no Z such that X c-commands Z and Z
+    c-commands Y (in `root`).
 
     This is the "closest" c-command relation. -/
-def immediatelyCCommands (x y _root : SyntacticObject) : Prop :=
-  cCommands x y ∧
-  ¬∃ z, z ≠ x ∧ z ≠ y ∧ cCommands x z ∧ cCommands z y
+def immediatelyCCommands (x y root : SyntacticObject) : Prop :=
+  cCommandsIn root x y ∧
+  ¬∃ z, z ≠ x ∧ z ≠ y ∧ cCommandsIn root x z ∧ cCommandsIn root z y
 
 -- ============================================================================
 -- Part 2: Head Movement Constraint
@@ -202,7 +203,7 @@ structure Amalgamation where
     This is what distinguishes Amalgamation from syntactic head movement,
     which can skip intervening heads (as shown by Bulgarian LHM and V2). -/
 theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
-    ¬∃ z, z ≠ a.host ∧ z ≠ a.target ∧ cCommands a.host z ∧ cCommands z a.target := by
+    ¬∃ z, z ≠ a.host ∧ z ≠ a.target ∧ cCommandsIn root a.host z ∧ cCommandsIn root z a.target := by
   have h := a.is_local root
   unfold immediatelyCCommands at h
   exact h.2
@@ -219,8 +220,8 @@ theorem intervener_rules_out_amalgamation
     (host target intervener root : SyntacticObject)
     (h_neq_host : intervener ≠ host)
     (h_neq_target : intervener ≠ target)
-    (h_host_cmd : cCommands host intervener)
-    (h_int_cmd : cCommands intervener target) :
+    (h_host_cmd : cCommandsIn root host intervener)
+    (h_int_cmd : cCommandsIn root intervener target) :
     ¬∃ (a : Amalgamation), a.host = host ∧ a.target = target := by
   intro ⟨a, hHost, hTarget⟩
   have hLocal := a.is_local root
@@ -230,9 +231,9 @@ theorem intervener_rules_out_amalgamation
   subst hHost hTarget
   exact ⟨h_neq_host, h_neq_target, h_host_cmd, h_int_cmd⟩
 
-/-- Amalgamation respects locality (the host c-commands the target) -/
+/-- Amalgamation respects locality (the host c-commands the target within `root`) -/
 theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticObject) :
-    cCommands a.host a.target := by
+    cCommandsIn root a.host a.target := by
   have h := a.is_local root
   unfold immediatelyCCommands at h
   exact h.1
