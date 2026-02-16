@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ConditionalModality.Data
+import Linglib.Phenomena.Modality.ConditionalModality.Data
 import Mathlib.Data.Rat.Cast.Order
 
 /-!
@@ -22,7 +22,7 @@ namespace Phenomena.Modality.DegreeCollapse
 
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
-open Phenomena.ConditionalModality
+open Phenomena.Modality.ConditionalModality
 
 /-! ## Modal strength as a rational degree -/
 

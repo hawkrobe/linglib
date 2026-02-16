@@ -1,6 +1,6 @@
 import Linglib.Core.QUD
 import Linglib.Core.InformationStructure
-import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Backgrounded Constituents Are Islands

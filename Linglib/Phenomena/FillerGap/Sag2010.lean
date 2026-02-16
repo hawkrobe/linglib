@@ -20,7 +20,7 @@ a common filler–gap structure but differ systematically along 7 parameters.
 - Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
 -/
 
-import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.FillerGap.Islands.Data
 
 namespace Phenomena.FillerGap.Sag2010
 

@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Phenomena.Syntax.DependencyGrammar.LongDistance
-import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Islands as Constraints on Rising Catenae

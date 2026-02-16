@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
-import Linglib.Phenomena.NonProjectivity.Data
+import Linglib.Phenomena.WordOrder.NonProjectivity
 
 /-!
 # Mildly Non-Projective Dependency Structures
