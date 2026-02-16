@@ -221,10 +221,10 @@ PRIOR-PQ: Different Q(q|D) profile → different P(D|q) inference
 
 [sorry: show optimalQuestionType selects .negative when compareUtility yields .lt]
 -/
-theorem npq_different_responses {W A : Type*} [DecidableEq A]
-    (dp : Core.DecisionTheory.DecisionProblem W A) (worlds : List W) (actions : List A)
-    (p : W → Bool) (h : compareUtility dp worlds actions p = .lt) :
-    optimalQuestionType dp worlds actions p = .negative := by
+theorem npq_different_responses {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
+    (p : W → Bool) (h : compareUtility dp actions p = .lt) :
+    optimalQuestionType dp actions p = .negative := by
   sorry
 
 /-- **Prediction 2**: Alternative questions are optimal when UV(p) = UV(¬p).
@@ -235,10 +235,10 @@ PRIOR-PQ: Alt questions should yield flatter P(D|q) distribution
 
 [sorry: show optimalQuestionType selects .alternative when compareUtility yields .eq]
 -/
-theorem alt_question_neutral_tom {W A : Type*} [DecidableEq A]
-    (dp : Core.DecisionTheory.DecisionProblem W A) (worlds : List W) (actions : List A)
-    (p : W → Bool) (h : compareUtility dp worlds actions p = .eq) :
-    optimalQuestionType dp worlds actions p = .alternative := by
+theorem alt_question_neutral_tom {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
+    (p : W → Bool) (h : compareUtility dp actions p = .eq) :
+    optimalQuestionType dp actions p = .alternative := by
   sorry
 
 /-- **Prediction 3**: Verum-marked grounding questions signal urgency.

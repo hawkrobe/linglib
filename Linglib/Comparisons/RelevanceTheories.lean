@@ -83,7 +83,7 @@ Choosing action w is equivalent to guessing "the true world is w".
 
 D_identity = ⟨W, W, U, π⟩ where U(w, a) = 1 if a = w, else 0
 -/
-def identityDP {W : Type*} [DecidableEq W] (worlds : List W)
+def identityDP {W : Type*} [DecidableEq W] (_worlds : List W)
     (prior : W → ℚ := λ _ => 1) : DecisionProblem W W where
   utility w a := if a == w then 1 else 0
   prior := prior
@@ -98,10 +98,10 @@ for action w equals posterior(w), and the DP value is the max over all w.
 
 [sorry: need to show dpValue (identityDP worlds) worlds worlds = max_w posterior(w)]
 -/
-theorem identityDP_value_is_max_posterior {W : Type*} [DecidableEq W]
+theorem identityDP_value_is_max_posterior {W : Type*} [Fintype W] [DecidableEq W]
     (worlds : List W) (posterior : W → ℚ)
     (hNonneg : ∀ w ∈ worlds, posterior w ≥ 0) :
-    dpValue (identityDP worlds posterior) worlds worlds ≥ 0 := by
+    dpValue (identityDP worlds posterior) worlds ≥ 0 := by
   sorry
 
 /-- The identity DP has a special property: utility value equals information gain.
@@ -113,9 +113,9 @@ of the most likely world (i.e., increases epistemic certainty).
 
 [sorry: need to show UV under identity DP is non-negative (information is never harmful)]
 -/
-theorem identityDP_UV_is_information_gain {W : Type*} [DecidableEq W]
+theorem identityDP_UV_is_information_gain {W : Type*} [Fintype W] [DecidableEq W]
     (worlds : List W) (c : W → Bool) :
-    utilityValue (identityDP worlds) worlds worlds c ≥ 0 := by
+    utilityValue (identityDP worlds) worlds (Finset.univ.filter (fun w => c w = true)) ≥ 0 := by
   sorry
 
 
@@ -269,7 +269,14 @@ theorem qud_as_decision_problem
   intro w v hsame i
   -- Each cell is q.sameAnswer rep · for some rep.
   -- If q.sameAnswer w v, then by transitivity, cell(w) = cell(v) for all cells.
-  sorry
+  simp only [qudToDP]
+  cases h : (q.toCells worlds)[i]? with
+  | none => rfl
+  | some cell =>
+    have hmem : cell ∈ q.toCells worlds := by
+      exact List.mem_of_getElem? h
+    have := QUD.toCells_sameAnswer_eq q worlds cell hmem w v hsame
+    simp [this]
 
 /-- The converse: a DP with cell-structured utility induces a QUD.
 
@@ -387,12 +394,12 @@ maximizing speaker computes partition EU for the identity QUD;
 game-theoretic pragmatics computes partition EU for a goal-specific QUD.
 Same decomposition, different partitions. -/
 theorem rsa_game_theoretic_unity
-    {W : Type*}
+    {W : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem W W) (q : GSQuestion W)
-    (worlds : List W) (a : W)
+    (a : W)
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
-  QUD.eu_eq_partitionEU dp worlds a q hprior
+    expectedUtility dp a = QUD.partitionEU dp q a :=
+  QUD.eu_eq_partitionEU dp a q hprior
 
 
 /-!
@@ -414,9 +421,9 @@ utility value is non-negative (information never hurts).
 [sorry: need to show UV(p) ≥ 0 under identityDP — connects G&S answerhood to Van Rooy's UV]
 -/
 theorem pragmatic_answerhood_iff_positive_UV
-    {W : Type*} [DecidableEq W]
+    {W : Type*} [Fintype W] [DecidableEq W]
     (p : W → Bool) (worlds : List W) :
-    utilityValue (identityDP worlds) worlds worlds p ≥ 0 := by
+    utilityValue (identityDP worlds) worlds (Finset.univ.filter (fun w => p w = true)) ≥ 0 := by
   sorry
 
 /-- Corollary: The identity DP links pragmatic answerhood to UV.
@@ -448,15 +455,18 @@ The empirical success of both theories follows from agreement on
 the fundamental ordering of question informativity.
 -/
 
-/-- Blackwell's theorem holds for both QUD and DT formulations. -/
+/-- Blackwell's theorem holds for both QUD and DT formulations.
+
+Refinement ↔ universal dominance, quantifying over ALL action types. -/
 theorem blackwell_unifies_relevance
-    {W A : Type*} [DecidableEq A] [DecidableEq W]
-    (q q' : GSQuestion W) (worlds : List W) (actions : List A)
-    (hWorlds : worlds.length > 0) (hActions : actions.length > 0) :
-    q ⊑ q' ↔ ∀ dp : DecisionProblem W A,
-      questionUtility dp worlds actions (q.toQuestion worlds) >=
-      questionUtility dp worlds actions (q'.toQuestion worlds) := by
-  exact QuestionSemantics.Bridge.blackwell_full q q' worlds actions hWorlds hActions
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (q q' : GSQuestion W) :
+    q ⊑ q' ↔
+    ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : List A),
+      (∀ w, dp.prior w ≥ 0) →
+      questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
+      questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) := by
+  exact QuestionSemantics.Bridge.blackwell_full q q'
 
 
 /-!
@@ -491,9 +501,9 @@ This is `QUD.blackwell_refinement_value` from `Core.Partition`, restated
 at the question-semantics level. Since `GSQuestion = QUD`, the theorem
 applies directly. -/
 theorem partition_blackwell_refinement
-    {W A : Type*}
+    {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
-    (worlds : List W) (actions : List A)
+    (worlds : Finset W) (actions : List A)
     (hRefines : q ⊑ q')
     (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp q worlds actions ≥
@@ -502,19 +512,21 @@ theorem partition_blackwell_refinement
 
 /-- The partition value ordering implies the question utility ordering.
 
-Since `questionUtility ≈ partitionValue - dpValue` and `dpValue` is
-partition-independent, the orderings coincide. This is why Blackwell
-works for both Merin's partition value and Van Rooy's question utility. -/
+Since `questionUtility = partitionValue - dpValue × totalPrior` and `dpValue`
+is partition-independent, the orderings coincide. This is why Blackwell
+works for both Merin's partition value and Van Rooy's question utility.
+
+Proved via `QUD.questionUtility_refinement_ge` from `Core.Partition`,
+which establishes the algebraic decomposition directly. -/
 theorem partitionValue_implies_questionUtility
-    {W A : Type*} [DecidableEq A]
+    {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
-    (worlds : List W) (actions : List A)
+    (actions : List A)
     (hRefines : q ⊑ q')
-    (hPartition : QUD.partitionValue dp q worlds actions ≥
-                  QUD.partitionValue dp q' worlds actions) :
-    questionUtility dp worlds actions (q.toQuestion worlds) ≥
-    questionUtility dp worlds actions (q'.toQuestion worlds) := by
-  sorry -- partitionValue = questionUtility + dpValue; dpValue cancels
+    (hprior : ∀ w, dp.prior w ≥ 0) :
+    questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) ≥
+    questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) :=
+  QUD.questionUtility_refinement_ge dp q q' actions hRefines hprior
 
 /-- EU compositionality grounds the QUD→DP direction (Sumers Theorem 2).
 
@@ -525,12 +537,12 @@ the decision-relevant information structure of a DP.
 
 This is Merin's central theorem: EU is compositional under partitioning. -/
 theorem eu_compositional_grounding
-    {W : Type*}
+    {W : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem W W) (q : GSQuestion W)
-    (worlds : List W) (a : W)
+    (a : W)
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    expectedUtility dp worlds a = QUD.partitionEU dp q worlds a :=
-  QUD.eu_eq_partitionEU dp worlds a q hprior
+    expectedUtility dp a = QUD.partitionEU dp q a :=
+  QUD.eu_eq_partitionEU dp a q hprior
 
 /-- Coarsening preserves EU: merging partition cells cannot change total EU.
 
@@ -540,13 +552,13 @@ a coarser partition gives the same answer. Only the VALUE of information
 (optimal action per cell) depends on partition fineness — the EU
 decomposition itself is invariant. -/
 theorem coarsening_preserves_eu_bridge
-    {W A : Type*}
+    {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
-    (worlds : List W) (a : A)
+    (a : A)
     (hCoarse : q.coarsens q')
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    QUD.partitionEU dp q worlds a = QUD.partitionEU dp q' worlds a :=
-  QUD.coarsening_preserves_eu dp q q' worlds a hCoarse hprior
+    QUD.partitionEU dp q a = QUD.partitionEU dp q' a :=
+  QUD.coarsening_preserves_eu dp q q' a hCoarse hprior
 
 
 /-!
@@ -619,9 +631,9 @@ This is a direct corollary of `QUD.blackwell_refinement_value`: the exact
 partition refines all others (`QUD.exact_refines_all`), so its partition
 value dominates. -/
 theorem qud_maximizes_mutual_information
-    {W A : Type*} [BEq W] [LawfulBEq W]
+    {W A : Type*} [DecidableEq W] [BEq W] [LawfulBEq W]
     (dp : DecisionProblem W A) (q : GSQuestion W)
-    (worlds : List W) (actions : List A)
+    (worlds : Finset W) (actions : List A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp (GSQuestion.exact (W := W)) worlds actions ≥
     QUD.partitionValue dp q worlds actions :=
@@ -656,10 +668,10 @@ This is why QUD semantics and decision-theoretic semantics are the same theory.
 just a fixed one, because the characterization proof constructs a specific
 2-element world list `[w, v]` as witness. -/
 theorem unified_view
-    {W : Type*}
+    {W : Type*} [DecidableEq W]
     (q q' : GSQuestion W) :
     (q ⊑ q') ↔
-    (∀ (worlds : List W) (A : Type) (dp : DecisionProblem W A) (actions : List A),
+    (∀ (worlds : Finset W) (A : Type) (dp : DecisionProblem W A) (actions : List A),
       (∀ w, dp.prior w ≥ 0) →
       QUD.partitionValue dp q worlds actions ≥
       QUD.partitionValue dp q' worlds actions) := by

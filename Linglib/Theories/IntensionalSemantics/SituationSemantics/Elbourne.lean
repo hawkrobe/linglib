@@ -1,5 +1,6 @@
 import Linglib.Core.Presupposition
 import Linglib.Core.Definiteness
+import Linglib.Core.Intension
 import Linglib.Theories.TruthConditional.Determiner.Definite
 import Linglib.Theories.IntensionalSemantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners
@@ -743,5 +744,31 @@ theorem qud_refinement_monotone
     (hs₂ : qudRelevantSituation F leDecide q₂ w hw s₂) :
     F.le s₁ s₂ := by
   sorry
+
+-- ============================================================================
+-- §16: Bridge to ReferentialMode (Partee 1973, Core/Intension.lean)
+-- ============================================================================
+
+open Core.ReferentialMode (ReferentialMode)
+
+/-- Expand Elbourne's two-way classification to Partee's three-way.
+    Free situation variables correspond to either indexical or anaphoric
+    interpretation; bound corresponds to bound. -/
+def SitVarStatus.toReferentialModes : SitVarStatus → List ReferentialMode
+  | .free  => [.indexical, .anaphoric]
+  | .bound => [.bound]
+
+/-- Collapse Partee's three-way classification to Elbourne's two-way.
+    Uses `ReferentialMode.isFree` for the coarsening. -/
+def ReferentialMode.toSitVarStatus : ReferentialMode → SitVarStatus :=
+  λ m => if m.isFree then .free else .bound
+
+/-- Round-trip: collapsing then expanding recovers the original status
+    (as a member of the expanded list). -/
+theorem sitVarStatus_roundtrip (s : SitVarStatus) :
+    ∀ m ∈ s.toReferentialModes, ReferentialMode.toSitVarStatus m = s := by
+  intro m hm
+  cases s <;> simp [SitVarStatus.toReferentialModes] at hm <;>
+    rcases hm with rfl | rfl <;> rfl
 
 end IntensionalSemantics.SituationSemantics.Elbourne

@@ -48,12 +48,18 @@ open IntensionalSemantics.Attitude.Doxastic
 -- § Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- Situation-dependent proposition type (von Stechow's s(it)).
+/-- Situation-dependent proposition type (von Stechow's s(it), Bool-valued
+    for computational RSA evaluation).
 
     Where standard propositions are `W → Bool` (sets of worlds),
     situation-dependent propositions are `Situation W Time → Bool`
     (sets of world–time pairs). This is the complement type for
-    attitude verbs that support temporal interpretation. -/
+    attitude verbs that support temporal interpretation.
+
+    Note: a Prop-valued counterpart exists at
+    `TruthConditional.Sentence.Tense.SitProp` for proof-level
+    temporal reasoning. The split follows the `Prop'`/`BProp`
+    pattern in `Core/Proposition.lean`. -/
 abbrev SitProp (W Time : Type*) := Situation W Time → Bool
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') | ...}.

@@ -276,6 +276,65 @@ theorem refines_numCells_ge (q q' : QUD M) (elements : List M) :
         (q.trans r1 (f r2 hr2) r2 (by rw [q.symm]; exact hc1) (hf_cover r2 hr2))))
     (fun x hx => by simp only [g, dif_pos hx]; exact hf_mem x hx)
 
+/-- Cells of a QUD respect the equivalence relation: equivalent worlds
+agree on cell membership. If `q.sameAnswer w v = true`, then for any cell
+in `q.toCells worlds`, `cell w = cell v`. -/
+theorem toCells_sameAnswer_eq (q : QUD M) (worlds : List M) (cell : M → Bool)
+    (hcell : cell ∈ q.toCells worlds) (w v : M) (hsame : q.sameAnswer w v = true) :
+    cell w = cell v := by
+  simp only [toCells, List.mem_map] at hcell
+  obtain ⟨rep, _, rfl⟩ := hcell
+  have hvw : q.sameAnswer v w = true := by rw [q.symm]; exact hsame
+  cases hrepw : q.sameAnswer rep w <;> cases hrepv : q.sameAnswer rep v
+  · simp [hrepw, hrepv]
+  · exact absurd (q.trans rep v w hrepv hvw) (by simp [hrepw])
+  · exact absurd (q.trans rep w v hrepw hsame) (by simp [hrepv])
+  · simp [hrepw, hrepv]
+
+/-- Each fine cell is contained in some coarse cell (w.r.t. `toCells`).
+
+If `q` refines `q'` (`q ⊑ q'`, finer partition), then for every fine cell
+`c` of `q`, there exists a coarse cell of `q'` containing it. -/
+theorem toCells_fine_sub_coarse (q q' : QUD M)
+    (worlds : List M) (hRefines : q ⊑ q')
+    (c : M → Bool) (hc : c ∈ q.toCells worlds) :
+    ∃ c' ∈ q'.toCells worlds, ∀ w, c w = true → c' w = true := by
+  simp only [toCells, List.mem_map] at hc ⊢
+  obtain ⟨rep, hrep_mem, rfl⟩ := hc
+  have hrep_worlds : rep ∈ worlds := by
+    rcases mem_repFold_sub q worlds [] rep hrep_mem with h | h
+    · exact absurd h List.not_mem_nil
+    · exact h
+  obtain ⟨rep', hrep'_mem, hrep'_eq⟩ := repFold_covers q' worlds [] rep hrep_worlds
+  refine ⟨fun w => q'.sameAnswer rep' w, ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
+  have h1 : q'.sameAnswer rep' w = true :=
+    q'.trans rep' rep w hrep'_eq (hRefines rep w hw)
+  exact h1
+
+/-- Each coarse cell contains some fine cell (w.r.t. `toCells`).
+
+If `q'` refines `q` (`q' ⊑ q`, finer partition), then for every coarse cell
+`c` of `q`, there exists a fine cell of `q'` contained in it. -/
+theorem toCells_coarse_contains_fine (q q' : QUD M)
+    (worlds : List M) (hRefines : q' ⊑ q)
+    (c : M → Bool) (hc : c ∈ q.toCells worlds) :
+    ∃ c' ∈ q'.toCells worlds, ∀ w, c' w = true → c w = true := by
+  simp only [toCells, List.mem_map] at hc ⊢
+  obtain ⟨rep, hrep_mem, rfl⟩ := hc
+  have hrep_worlds : rep ∈ worlds := by
+    rcases mem_repFold_sub q worlds [] rep hrep_mem with h | h
+    · exact absurd h List.not_mem_nil
+    · exact h
+  obtain ⟨rep', hrep'_mem, hrep'_eq⟩ := repFold_covers q' worlds [] rep hrep_worlds
+  refine ⟨fun w => q'.sameAnswer rep' w, ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
+  -- hw : q'.sameAnswer rep' w = true
+  -- Need: q.sameAnswer rep w = true
+  -- By symmetry + transitivity: q'.sameAnswer rep w = true
+  have h1 : q'.sameAnswer rep rep' = true := by rw [q'.symm]; exact hrep'_eq
+  have h2 : q'.sameAnswer rep w = true := q'.trans rep rep' w h1 hw
+  -- By refinement: q' ⊑ q
+  exact hRefines rep w h2
+
 /-! ### Proper Coarsening (Merin 1999) -/
 
 /-- Q is a proper coarsening of Q' over a finite domain iff Q coarsens Q'
@@ -1068,6 +1127,129 @@ theorem questionUtility_refinement_ge [Fintype M] [DecidableEq M]
     -- Use cellProb_mul_valueAfterLearning to convert to partitionValue
     simp_rw [cellProb_mul_valueAfterLearning dp _ actions hprior]
     exact blackwell_refinement_value dp q q' Finset.univ actions hRefines hprior]
+
+/-! ##### Partition value restricted to prior support
+
+When priors are zero outside a subset S, the partition value over the full
+universe equals the partition value over S. This bridges from `questionUtility`
+(which operates over `Finset.univ`) to `partitionValue` over arbitrary
+world sets (needed by `blackwell_characterizes_refinement`). -/
+
+open Core.DecisionTheory in
+/-- Per-cell value depends only on worlds with nonzero prior.
+
+If priors are zero outside S, the raw weighted sum over `cell` equals
+the raw weighted sum over `cell ∩ S`. -/
+private lemma cell_value_restrict_support [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (cell S : Finset M) (a : A)
+    (hsupp : ∀ w, w ∉ S → dp.prior w = 0) :
+    cell.sum (fun w => dp.prior w * dp.utility w a) =
+    (cell ∩ S).sum (fun w => dp.prior w * dp.utility w a) := by
+  have hsplit : cell.sum (fun w => dp.prior w * dp.utility w a) =
+      (cell \ S).sum (fun w => dp.prior w * dp.utility w a) +
+      (cell ∩ S).sum (fun w => dp.prior w * dp.utility w a) := by
+    rw [← Finset.sum_union (Finset.disjoint_sdiff_inter cell S),
+        Finset.sdiff_union_inter]
+  rw [hsplit]
+  suffices h : (cell \ S).sum (fun w => dp.prior w * dp.utility w a) = 0 by linarith
+  apply Finset.sum_eq_zero; intro w hw
+  simp only [Finset.mem_sdiff] at hw
+  rw [hsupp w hw.2, zero_mul]
+
+open Core.DecisionTheory in
+/-- Partition value restricted to prior support.
+
+When priors are zero outside S, `partitionValue` over `Finset.univ` equals
+`partitionValue` over S. Cells not intersecting S contribute zero (all priors
+are 0). Cells intersecting S have the same per-cell value as the S-restricted
+cells. The bijection between nonempty-in-S cells and `toCellsFinset S`
+reindexes the sum. -/
+theorem partitionValue_restrict_support [Fintype M] [DecidableEq M] {A : Type*}
+    (dp : DecisionProblem M A) (q : QUD M) (S : Finset M) (actions : List A)
+    (hsupp : ∀ w, w ∉ S → dp.prior w = 0) :
+    partitionValue dp q Finset.univ actions = partitionValue dp q S actions := by
+  -- Per-cell value function
+  set V : Finset M → ℚ := fun cell =>
+    actions.foldl (fun best a => max best
+      (cell.sum (fun w => dp.prior w * dp.utility w a))) 0
+  change (q.toCellsFinset Finset.univ).sum V = (q.toCellsFinset S).sum V
+  -- Step 1: For each cell c of Finset.univ, V(c) = V(c ∩ S)
+  have hV_restrict : ∀ c ∈ q.toCellsFinset Finset.univ, V c = V (c ∩ S) := by
+    intro c _; simp only [V]
+    congr 1; ext _ a_act
+    exact cell_value_restrict_support dp c S a_act hsupp
+  -- Step 2: Split Finset.univ cells into those intersecting S and those not
+  have hsplit : (q.toCellsFinset Finset.univ).sum V =
+      ((q.toCellsFinset Finset.univ).filter (fun c => (c ∩ S).Nonempty)).sum V +
+      ((q.toCellsFinset Finset.univ).filter (fun c => ¬(c ∩ S).Nonempty)).sum V := by
+    rw [← Finset.sum_filter_add_sum_filter_not]
+  rw [hsplit]
+  -- Empty cells contribute 0
+  have hempty : ((q.toCellsFinset Finset.univ).filter (fun c => ¬(c ∩ S).Nonempty)).sum V = 0 := by
+    apply Finset.sum_eq_zero; intro c hc
+    simp only [Finset.mem_filter, Finset.not_nonempty_iff_eq_empty] at hc
+    have hV0 : V c = V (c ∩ S) := hV_restrict c hc.1
+    show V c = 0
+    rw [hV0, hc.2]; simp only [V, Finset.sum_empty]
+    clear hV_restrict hsplit hV0 hc
+    induction actions with
+    | nil => rfl
+    | cons _ _ ih => simp only [List.foldl_cons, max_self]; exact ih
+  rw [hempty, add_zero]
+  -- Now show the nonempty-intersection cells biject with toCellsFinset S
+  -- with matching values V(c) = V(c ∩ S) = V(d)
+  -- Map: c ↦ c ∩ S
+  apply Finset.sum_nbij (fun c => c ∩ S)
+  · -- Maps into toCellsFinset S
+    intro c hc
+    simp only [Finset.mem_filter] at hc
+    obtain ⟨hcm, hne⟩ := hc
+    obtain ⟨w, _, rfl⟩ := Finset.mem_image.mp hcm
+    simp only [toCellsFinset]
+    obtain ⟨v, hv⟩ := hne
+    have hvS : v ∈ S := (Finset.mem_inter.mp hv).2
+    have hwv : q.sameAnswer w v = true :=
+      (Finset.mem_filter.mp (Finset.mem_inter.mp hv).1).2
+    exact Finset.mem_image.mpr ⟨v, hvS, by
+      ext u; constructor
+      · intro hu
+        have ⟨hfu, hsu⟩ := Finset.mem_inter.mp hu
+        have hwu := (Finset.mem_filter.mp hfu).2
+        exact Finset.mem_filter.mpr ⟨hsu, q.trans v w u (by rw [q.symm]; exact hwv) hwu⟩
+      · intro hu
+        have hmf := Finset.mem_filter.mp hu
+        exact Finset.mem_inter.mpr
+          ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ _, q.trans w v u hwv hmf.1⟩, hmf.2⟩⟩
+  · -- Injective
+    intro c1 hc1 c2 hc2 heq
+    obtain ⟨hc1m, hne1⟩ := Finset.mem_filter.mp hc1
+    obtain ⟨hc2m, _⟩ := Finset.mem_filter.mp hc2
+    obtain ⟨w1, _, rfl⟩ := Finset.mem_image.mp hc1m
+    obtain ⟨w2, _, rfl⟩ := Finset.mem_image.mp hc2m
+    obtain ⟨v, hv⟩ := hne1
+    -- v ∈ c1 ∩ S, so v ∈ c2 ∩ S by heq (beta-reduce for ▸)
+    have heq' : (Finset.univ.filter (fun u => q.sameAnswer w1 u)) ∩ S =
+        (Finset.univ.filter (fun u => q.sameAnswer w2 u)) ∩ S := heq
+    have hv2 : v ∈ (Finset.univ.filter (fun u => q.sameAnswer w2 u)) ∩ S := heq' ▸ hv
+    have h1v := (Finset.mem_filter.mp (Finset.mem_inter.mp hv).1).2
+    have h2v := (Finset.mem_filter.mp (Finset.mem_inter.mp hv2).1).2
+    have h12 : q.sameAnswer w1 w2 = true :=
+      q.trans w1 v w2 h1v (by rw [q.symm]; exact h2v)
+    ext u; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact ⟨fun h => q.trans w2 w1 u (by rw [q.symm]; exact h12) h,
+           fun h => q.trans w1 w2 u h12 h⟩
+  · -- Surjective
+    intro d hd
+    obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hd
+    refine ⟨Finset.univ.filter (fun v => q.sameAnswer w v), ?_, ?_⟩
+    · exact Finset.mem_filter.mpr
+        ⟨Finset.mem_image.mpr ⟨w, Finset.mem_univ _, rfl⟩,
+         ⟨w, Finset.mem_inter.mpr ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ _, q.refl w⟩, hw⟩⟩⟩
+    · ext u; simp only [Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and]
+      exact ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
+  · -- Values match: V(c) = V(c ∩ S)
+    intro c hc; simp only [Finset.mem_filter] at hc
+    exact hV_restrict c hc.1
 
 end QuestionUtilityBridge
 

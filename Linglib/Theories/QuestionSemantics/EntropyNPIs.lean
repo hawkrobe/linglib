@@ -160,22 +160,23 @@ def epistemicDP {W : Type*} (q : Question W) : DecisionProblem W (W → Bool) wh
   prior _ := 1  -- Uniform; will be normalized
 
 /-- For epistemic DPs, question utility reduces to entropy -/
-theorem questionUtility_eq_entropy_for_epistemic {W : Type*} [DecidableEq (W → Bool)]
-    (prior : W → ℚ) (worlds : List W) (q : Question W) :
+theorem questionUtility_eq_entropy_for_epistemic {W : Type*} [Fintype W] [DecidableEq W]
+    [DecidableEq (W → Bool)]
+    (prior : W → ℚ) (q : Question W) :
     let dp := epistemicDP q
     let dpWithPrior : DecisionProblem W (W → Bool) := { dp with prior := prior }
-    questionUtility dpWithPrior worlds q q =
-    questionEntropy prior worlds q := by
+    questionUtility dpWithPrior q q =
+    questionEntropy prior (Finset.univ.toList) q := by
   sorry
 
 /-- General result: E(Q) ≤ EUV(Q) for any decision problem.
 
 Entropy is the minimum expected utility across all DPs.
 This is because the epistemic DP is the "hardest" one. -/
-theorem entropy_leq_expected_utility {W A : Type*} [DecidableEq A]
-    (prior : W → ℚ) (worlds : List W) (actions : List A)
+theorem entropy_leq_expected_utility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (prior : W → ℚ) (actions : List A)
     (q : Question W) (dp : DecisionProblem W A) :
-    questionEntropy prior worlds q ≤ questionUtility dp worlds actions q := by
+    questionEntropy prior (Finset.univ.toList) q ≤ questionUtility dp actions q := by
   sorry
 
 

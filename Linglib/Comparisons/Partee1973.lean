@@ -13,9 +13,14 @@ lookup, lambda abstraction).
 
 The unifying type for all five views of tense is `Core.Tense.TensePronoun`
 (Abusch 1997): a variable index + a presupposed temporal constraint + a
-binding mode. The bridges in this file — `referential_past_decomposition`,
-`indexical_tense_matches_opNow`, `toSitVarStatus` — are projections of
-`TensePronoun` onto specific theoretical vocabularies.
+binding mode + an eval time index (Klecha 2016). The bridges in this file —
+`referential_past_decomposition`, `indexical_tense_matches_opNow`,
+`toSitVarStatus` — are projections of `TensePronoun` onto specific
+theoretical vocabularies.
+
+For the full tense theory comparison (Abusch, Von Stechow, Kratzer,
+Ogihara, Klecha, Deal, Sharvit, Zeijlstra, Wurmbrand), see
+`Comparisons/TenseTheories.lean` and `Theories/IntensionalSemantics/Tense/`.
 
 ## The Analogy
 
@@ -58,7 +63,7 @@ referential mechanism operates over different domains.
 - Elbourne, P. (2013). Definite Descriptions. OUP.
 -/
 
-namespace Comparisons.TensesAndPronouns
+namespace Comparisons.Partee1973
 
 open TruthConditional.Sentence.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
@@ -203,4 +208,4 @@ theorem bound_tense_receives_attitude_time {Time α : Type*}
     body (updateTemporal g n attitudeEventTime) := by rfl
 
 
-end Comparisons.TensesAndPronouns
+end Comparisons.Partee1973

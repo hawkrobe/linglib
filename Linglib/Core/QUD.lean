@@ -46,6 +46,21 @@ theorem isTransitive : ∀ m1 m2 m3,
 
 end EquivalenceProperties
 
+/-- Convert QUD's equivalence relation to a Mathlib `Setoid`.
+
+This enables `Finpartition.ofSetoid` for partition-based expected utility
+decomposition, replacing ~200 lines of custom foldl arithmetic. -/
+def toSetoid (q : QUD M) : Setoid M where
+  r := λ a b => q.sameAnswer a b = true
+  iseqv := {
+    refl := λ a => q.refl a
+    symm := λ {a b} h => by rw [q.symm] at h; exact h
+    trans := λ {a b c} h1 h2 => q.trans a b c h1 h2
+  }
+
+instance decidableRel_toSetoid (q : QUD M) : DecidableRel q.toSetoid.r :=
+  λ a b => inferInstanceAs (Decidable (q.sameAnswer a b = true))
+
 /-- Trivial QUD: all meanings are equivalent (speaker doesn't care about this dimension). -/
 def trivial : QUD M where
   sameAnswer _ _ := true

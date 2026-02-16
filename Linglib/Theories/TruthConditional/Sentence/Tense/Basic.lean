@@ -44,7 +44,8 @@ export Core.Tense (GramTense SOTParameter TenseInterpretation SitProp
   TemporalAssignment interpTense updateTemporal temporalLambdaAbs
   situationToTemporal situation_temporal_commutes
   zeroTense_receives_binder_time bound_is_sot_mechanism
-  TensePronoun doubleAccess)
+  TensePronoun doubleAccess
+  evalTime_root_is_speech evalTime_shifts_under_embedding)
 
 
 /--
@@ -261,7 +262,8 @@ under embedding. The following theorems establish its algebraic properties.
 
 For the DERIVED version — showing that composeTense matches the Reichenbach
 analysis with perspective shifting — see
-`TruthConditional.Sentence.Tense.SequenceOfTense`.
+`IntensionalSemantics.Tense` (in `IS/Tense/Basic.lean`) and the TC↔IS bridge
+in `TruthConditional.Sentence.Tense.SequenceOfTense`.
 -/
 
 /-- Present is transparent under composition (left):
