@@ -27,7 +27,7 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
   nature of anticausative SE. *Glossa* 11(1).
 -/
 
-namespace Phenomena.MunozPerez2026.Data
+namespace Phenomena.Causatives.Studies.MunozPerez2026.Data
 
 -- ============================================================================
 -- § 1: Acceptability Data Types
@@ -153,4 +153,4 @@ theorem marking_restriction :
     hervir_le.acceptability == .grammatical &&
     mejorar_le.acceptability == .ungrammatical) = true := rfl
 
-end Phenomena.MunozPerez2026.Data
+end Phenomena.Causatives.Studies.MunozPerez2026.Data

@@ -123,9 +123,9 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
-import Linglib.Phenomena.SpalekMcNally.Data
-import Linglib.Phenomena.AlstottAravind2026.Data
-import Linglib.Phenomena.TurcoBraunDimroth2014.Data
+import Linglib.Phenomena.ChangeOfState.Studies.SpalekMcNally.Data
+import Linglib.Phenomena.Aspect.Studies.AlstottAravind2026.Data
+import Linglib.Phenomena.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.ExamplesBridge
 import Linglib.Phenomena.AdditiveParticles.Data
 import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
@@ -152,11 +152,11 @@ import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.SelectionBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
-import Linglib.Phenomena.Charlow2021.Data
-import Linglib.Phenomena.Charlow2021.CumulativeReadingsBridge
-import Linglib.Phenomena.Cumming2026.Bridge
-import Linglib.Phenomena.Lakoff1970.Data
-import Linglib.Phenomena.Lakoff1970.Bridge
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadingsBridge
+import Linglib.Phenomena.Tense.Studies.Cumming2026.Bridge
+import Linglib.Phenomena.Tense.Studies.Lakoff1970.Data
+import Linglib.Phenomena.Tense.Studies.Lakoff1970.Bridge
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
@@ -173,8 +173,8 @@ import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThinBridge
 import Linglib.Phenomena.Causatives.StructuralCausationBridge
-import Linglib.Phenomena.MunozPerez2026.Data
-import Linglib.Phenomena.MunozPerez2026.Bridge
+import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
+import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Bridge
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
@@ -247,7 +247,7 @@ import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Morphology.Composition
 import Linglib.Phenomena.Morphology.DegreeComposition
 import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
-import Linglib.Phenomena.StankovaSimik2024.Data
+import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality

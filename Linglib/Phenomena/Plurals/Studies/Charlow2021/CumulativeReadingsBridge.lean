@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Charlow2021.Data
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate
 
@@ -16,9 +16,9 @@ Verifies that:
 - Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
 -/
 
-namespace Phenomena.Charlow2021.CumulativeReadings
+namespace Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
 
-open Phenomena.Charlow2021.Data
+open Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-- The pointwise system overgenerates: it predicts Scenario B is TRUE
     under the pseudo-cumulative reading.
@@ -47,4 +47,4 @@ theorem cumulative_strictly_stronger :
     (pseudoCumulativeReading scenarioB_saw allBoys4 allMovies6 3 5 = true) :=
   ⟨scenarioB_cumulative_false, scenarioB_pseudo_true⟩
 
-end Phenomena.Charlow2021.CumulativeReadings
+end Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
