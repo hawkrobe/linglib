@@ -128,6 +128,9 @@ def isExhaustive {W : Type*} (_q : GSQuestion W) : Bool := true
 answering requires saying "yes" or "no", not "I don't know". -/
 theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
     (polarQuestion p).numCells [w] <= 2 := by
-  sorry -- At most 2 cells
+  unfold polarQuestion GSQuestion.ofPredicate QUD.numCells QUD.toCells
+  simp only [List.foldl_cons, List.foldl_nil, List.any_nil, Bool.false_eq_true,
+    ↓reduceIte, List.map_cons, List.map_nil, List.length_cons, List.length_nil]
+  omega
 
 end QuestionSemantics
