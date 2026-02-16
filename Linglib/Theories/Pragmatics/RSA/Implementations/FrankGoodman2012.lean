@@ -1,5 +1,5 @@
 /-
-# Frank & Goodman (2012)
+# Frank & Goodman (2012) @cite{frank-goodman-2012}
 
 "Predicting Pragmatic Reasoning in Language Games"
 Science 336(6084): 998
