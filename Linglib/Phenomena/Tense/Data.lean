@@ -80,7 +80,7 @@ are in `Bridge.lean`.
 namespace Phenomena.Tense
 
 open Core.Reichenbach
-open Core.Time (SituationBoundedness BoundedFrame TimeSphere)
+open Core.Time (SituationBoundedness)
 open Core.Tense
 
 
@@ -1245,10 +1245,10 @@ theorem hadLeft_is_perfect :
 
     Declerck (1991) ch. 3 §1.2. -/
 
--- SituationBoundedness and BoundedFrame are defined in Core/Time.lean.
--- We alias BoundedFrame here for backward compatibility.
-/-- Concrete bounded frame for tense phenomena. -/
-abbrev BoundedFrame := Core.Time.BoundedFrame (ReichenbachFrame ℤ)
+/-- A Reichenbach frame paired with its aspectual boundedness. -/
+structure BoundedFrame where
+  frame : ReichenbachFrame ℤ
+  boundedness : SituationBoundedness
 
 /-- "He arrived." — bounded (achievement). -/
 def arrivedBounded : BoundedFrame where
@@ -1364,12 +1364,12 @@ theorem perfect_is_perfect :
     perfectVisitedParis.isPerfect := by
   simp only [ReichenbachFrame.isPerfect, perfectVisitedParis]; omega
 
-/-- Present perfect: R = P (present time-sphere). -/
-theorem perfect_present_timeSphere :
+/-- Present perfect: R = P (present orientation). -/
+theorem perfect_isPresent :
     perfectVisitedParis.isPresent := rfl
 
-/-- Preterit: E = R (perfective) and R < P (past time-sphere). -/
-theorem preterit_past_timeSphere :
+/-- Preterit: R < P (past orientation). -/
+theorem preterit_isPast :
     preteritVisitedParis.isPast := by
   simp only [ReichenbachFrame.isPast, preteritVisitedParis]; omega
 

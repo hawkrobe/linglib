@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.214.1] - 2026-02-16
+
+### Added
+- **Theories/Semantics/Tense/Declerck.lean**: Declerck (1991) tense theory — TO-chain architecture (`DeclercianSchema`, `TOLink`), all eight English tense schemata (preterit, present, present perfect, past perfect, future, future perfect, conditional, conditional perfect), `TimeSphere` classification, bridge theorems to `ReichenbachFrame` (with structural `eventTime_eq_refTime` invariant), temporal vagueness proofs for future perfect and conditional
+- **Core/Time.lean**: `SituationBoundedness` (bounded/unbounded; Smith 1991, Depraetere 1995)
+
+### Changed
+- **Phenomena/Tense/Data.lean**: `SituationBoundedness` imported from `Core/Time.lean`; local `BoundedFrame` simplified to a plain struct (removed polymorphism); tense-sphere theorems renamed to theory-neutral names (`preterit_isPast`, `perfect_isPresent`)
+
 ## [0.214.0] - 2026-02-15
 
 ### Changed
