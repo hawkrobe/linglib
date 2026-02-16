@@ -35,7 +35,7 @@ explain the gradient nature of island effects.
   manner-of-speaking islands. Language 101(4):627–659.
 -/
 
-import Linglib.Phenomena.Islands.Data
+import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Sag2010
 import Linglib.Core.ProcessingModel
 

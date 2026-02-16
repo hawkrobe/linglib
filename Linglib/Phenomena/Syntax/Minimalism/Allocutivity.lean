@@ -35,7 +35,7 @@ head (Fin or SA) and a null addressee DP.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
-import Linglib.Phenomena.Honorifics.Data
+import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
@@ -49,7 +49,7 @@ import Linglib.Fragments.Punjabi.Pronouns
 namespace Minimalism.Phenomena.Allocutivity
 
 open Minimalism
-open Phenomena.Honorifics
+open Phenomena.Politeness.Honorifics
 
 -- ============================================================================
 -- Section A: Allocutive Agree

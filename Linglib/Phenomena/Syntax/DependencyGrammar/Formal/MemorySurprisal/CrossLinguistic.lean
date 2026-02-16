@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
-import Linglib.Phenomena.DependencyLength.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.FutrellEtAl2020
 import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
 /-!
@@ -31,7 +31,7 @@ AUC values computed from <https://github.com/m-hahn/memory-surprisal>
 namespace DepGrammar.MemorySurprisal.CrossLinguistic
 
 open Phenomena.WordOrder.HahnDegenFutrell2021
-open Phenomena.DependencyLength.FutrellEtAl2020
+open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
 
 -- ============================================================================
 -- Core Result
@@ -67,7 +67,7 @@ efficiency. -/
 
 /-- ISO codes appearing in Futrell et al. (2020)'s 32-language dataset. -/
 def futrellIsoCodes : List String :=
-  Phenomena.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
+  Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
 
 /-- ISO codes appearing in Hahn et al. (2021)'s 54-language dataset. -/
 def hahnIsoCodes : List String :=

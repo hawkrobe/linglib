@@ -1,6 +1,6 @@
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
-import Linglib.Phenomena.DependencyLength.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.FutrellEtAl2020
 
 /-!
 # Gradient Word-Order Measures (Levshina, Namboodiripad et al. 2023)
@@ -322,7 +322,7 @@ theorem high_so_entropy_implies_high_branch_entropy :
 
 -- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)
 
-private def futrellLanguages := Phenomena.DependencyLength.FutrellEtAl2020.languages
+private def futrellLanguages := Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages
 
 /-- Shared languages between gradient profiles and Futrell et al.'s DLM dataset. -/
 def shared_gradient_futrell_isoCodes : List String :=

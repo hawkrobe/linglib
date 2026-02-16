@@ -33,13 +33,13 @@ These are equivalent when we identify:
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.Examples
-import Linglib.Phenomena.Humor.Studies.KaoEtAl2016
+import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 
 namespace Semantics.Probabilistic.SDS.Humor
 
 open Semantics.Probabilistic.SDS.Core
 open Semantics.Probabilistic.SDS.Examples
-open Phenomena.Humor.Studies.KaoEtAl2016
+open Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 
 -- Structural Correspondence
 

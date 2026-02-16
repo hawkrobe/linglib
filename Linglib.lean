@@ -123,10 +123,10 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 
 -- Phenomena
-import Linglib.Phenomena.ChangeOfState.Studies.SpalekMcNally.Data
+import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.Aspect.Studies.AlstottAravind2026.Data
 import Linglib.Phenomena.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
-import Linglib.Phenomena.TemporalConnectives.ExamplesBridge
+import Linglib.Phenomena.Tense.TemporalConnectivesBridge
 import Linglib.Phenomena.AdditiveParticles.Data
 import Linglib.Phenomena.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
@@ -144,8 +144,8 @@ import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
-import Linglib.Phenomena.ArgumentativeFraming.Data
-import Linglib.Phenomena.ActualityInferences.Data
+import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
+import Linglib.Phenomena.Modality.ActualityInferences
 import Linglib.Phenomena.Aspect.DiagnosticsBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
@@ -168,7 +168,7 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Resultatives.Data
-import Linglib.Phenomena.ChangeOfState.Typology
+import Linglib.Phenomena.Causatives.ChangeOfStateTypology
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThinBridge
@@ -179,7 +179,7 @@ import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
 import Linglib.Phenomena.Coordination.Typology
-import Linglib.Phenomena.DependencyLength.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
@@ -203,29 +203,29 @@ import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021Bridge
 import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Linglib.Phenomena.Gradability.Vagueness
-import Linglib.Phenomena.Humor.Studies.KaoEtAl2016
+import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
 import Linglib.Phenomena.Imprecision.InferencePreservation
 import Linglib.Phenomena.Imprecision.Numerals
-import Linglib.Phenomena.NumberUse.WoodinEtAl2024
+import Linglib.Phenomena.Numerals.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Projection
-import Linglib.Phenomena.Islands.Data
-import Linglib.Phenomena.Islands.MannerOfSpeaking
-import Linglib.Phenomena.Metaphor.Studies.KaoBergenGoodman2014
-import Linglib.Phenomena.NumeralModification.ClausWalch2024
-import Linglib.Phenomena.NumeralSemantics.Snyder2026Bridge
-import Linglib.Phenomena.NumeralModification.Embedding
-import Linglib.Phenomena.MeasurePhrases.BaleSchwarz2026Bridge
-import Linglib.Phenomena.MeasurePhrases.Scontras2014Bridge
-import Linglib.Phenomena.ConditionalModality.Data
-import Linglib.Phenomena.ConditionalModality.Bridge
-import Linglib.Phenomena.ModalConcord.Data
-import Linglib.Phenomena.ModalConcord.Bridge
-import Linglib.Phenomena.ModalConcord.LiuRotter2025
-import Linglib.Phenomena.ModalConcord.LiuRotter2025Bridge
+import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
+import Linglib.Phenomena.Nonliteral.Metaphor.Studies.KaoBergenGoodman2014
+import Linglib.Phenomena.Numerals.ClausWalch2024
+import Linglib.Phenomena.Numerals.Snyder2026Bridge
+import Linglib.Phenomena.Numerals.Embedding
+import Linglib.Phenomena.Quantification.MeasurePhrases.BaleSchwarz2026Bridge
+import Linglib.Phenomena.Quantification.MeasurePhrases.Scontras2014Bridge
+import Linglib.Phenomena.Modality.ConditionalModality.Data
+import Linglib.Phenomena.Modality.ConditionalModality.Bridge
+import Linglib.Phenomena.Modality.ModalConcord.Data
+import Linglib.Phenomena.Modality.ModalConcord.Bridge
+import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
+import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025Bridge
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
@@ -239,7 +239,7 @@ import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
 import Linglib.Phenomena.Modality.TypologyBridge
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.ExpletiveNegationBridge
-import Linglib.Phenomena.NonProjectivity.Data
+import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
 import Linglib.Phenomena.Negation.CzechThreeWayNeg.TypologyBridge
@@ -259,7 +259,7 @@ import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.VonFintel1999
-import Linglib.Phenomena.Honorifics.Data
+import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025Bridge
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
@@ -272,7 +272,7 @@ import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
-import Linglib.Phenomena.OutlookMarkers.Kubota2026
+import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.NounCategorizationBridge
 import Linglib.Phenomena.Agreement.PersonMarkingTypology
@@ -320,8 +320,8 @@ import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
-import Linglib.Phenomena.TemporalAdverbials.Rouillard2026Bridge
-import Linglib.Phenomena.WeakEvidenceEffect.Data
+import Linglib.Phenomena.Tense.TemporalAdverbialsBridge
+import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
