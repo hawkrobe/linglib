@@ -49,12 +49,9 @@ import Linglib.Core.Mereology
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
-import Linglib.Theories.Morphology.Degree
-import Linglib.Theories.Morphology.Number
+import Linglib.Theories.Morphology.Exponence
 import Linglib.Theories.Morphology.ScaleFromParadigm
 import Linglib.Theories.Morphology.StemToLex
-import Linglib.Theories.Morphology.Tense
-import Linglib.Theories.Morphology.Aspect
 import Linglib.Core.DiscourseRole
 
 -- Fragments

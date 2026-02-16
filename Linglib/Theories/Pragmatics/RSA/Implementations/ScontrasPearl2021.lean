@@ -407,4 +407,19 @@ theorem uses_scope_not_exh_parses :
     scopeParsesList.length = 2 := by
   native_decide
 
+/-- Empirical data type for scope ordering predictions. -/
+structure ScopeEmpiricalOrdering where
+  /-- Does RSA predict more probability for 0-horses than 1-horse? -/
+  zeroGtOne : Bool
+  /-- Does RSA predict more probability for 1-horse than 2-horses? -/
+  oneGtTwo : Bool
+  deriving Repr
+
+/-- RSA prediction for the scope ambiguity ordering.
+
+    Computed from the L1 world distribution: P(w=0) > P(w=1) > P(w=2). -/
+def rsaPrediction : ScopeEmpiricalOrdering :=
+  { zeroGtOne := getWorldScore 0 > getWorldScore 1
+  , oneGtTwo := getWorldScore 1 > getWorldScore 2 }
+
 end RSA.ScontrasPearl2021

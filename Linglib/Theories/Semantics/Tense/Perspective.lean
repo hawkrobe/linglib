@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Core.DiscourseRole
 import Linglib.Core.Context
-import Linglib.Theories.Morphology.Tense
+import Linglib.Theories.Morphology.Exponence
 
 /-!
 # Tense and Participant Perspective (Lakoff 1970)

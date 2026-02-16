@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Degree
+import Linglib.Theories.Morphology.Exponence
 import Linglib.Theories.Morphology.ScaleFromParadigm
 import Linglib.Fragments.English.Modifiers.Adjectives
 

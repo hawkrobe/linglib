@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.218.4] - 2026-02-16
+
+### Changed
+- Merged `Theories/Morphology/{Tense,Aspect,Number,Degree}.lean` → `Theories/Morphology/Exponence.lean`
+
 ## [0.218.3] - 2026-02-16
 
 ### Changed
