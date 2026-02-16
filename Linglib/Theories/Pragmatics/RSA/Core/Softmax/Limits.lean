@@ -205,13 +205,48 @@ noncomputable def maxEntropy (ι : Type*) [Fintype ι] : ℝ :=
 /-- As α → 0, entropy of softmax approaches maximum. -/
 theorem entropy_tendsto_max [Nonempty ι] (s : ι → ℝ) :
     Tendsto (λ α => entropy (softmax s α)) (𝓝 0) (𝓝 (maxEntropy ι)) := by
-  sorry
+  -- entropy ∘ softmax is continuous in α, so the limit equals the value at α = 0
+  have hval : entropy (softmax s 0) = maxEntropy ι := by
+    unfold entropy maxEntropy
+    simp_rw [softmax_zero s]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, one_div,
+               Real.log_inv, neg_neg]
+    have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+    field_simp
+  rw [← hval]
+  apply Continuous.tendsto
+  -- entropy(softmax s α) = -∑ i, softmax(i) * log(softmax(i))
+  -- Each softmax component is continuous in α, and x * log x is continuous
+  unfold entropy
+  apply Continuous.neg; apply continuous_finset_sum; intro i _
+  have hcont_sm : Continuous (fun α => softmax s α i) := by
+    simp only [softmax]
+    exact (continuous_exp.comp (continuous_mul_right (s i))).div
+      (continuous_finset_sum _ (fun j _ => continuous_exp.comp (continuous_mul_right (s j))))
+      (fun α => partitionFn_ne_zero s α)
+  have hcont_log : Continuous (fun α => Real.log (softmax s α i)) :=
+    Real.continuousOn_log.comp_continuous hcont_sm (fun α => ne_of_gt (softmax_pos s α i))
+  exact hcont_sm.mul hcont_log
 
 /-- As α → ∞ (with unique max), entropy approaches 0. -/
 theorem entropy_tendsto_zero [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) :
     Tendsto (λ α => entropy (softmax s α)) atTop (𝓝 0) := by
-  sorry
+  -- entropy p = ∑ i, negMulLog(p i), and negMulLog is continuous
+  -- softmax(i) → (if i = i_max then 1 else 0), negMulLog(0) = negMulLog(1) = 0
+  -- So each term → 0, and the finite sum → 0
+  have hrewrite : (fun α => entropy (softmax s α)) =
+      fun α => ∑ i, Real.negMulLog (softmax s α i) := by
+    ext α; unfold entropy Real.negMulLog
+    simp only [neg_mul, Finset.sum_neg_distrib, neg_neg]
+  rw [hrewrite, show (0 : ℝ) = ∑ _i : ι, (0 : ℝ) from by simp]
+  apply tendsto_finset_sum; intro i _
+  -- negMulLog(softmax s α i) → negMulLog(limit_i) = 0
+  have hlim := tendsto_softmax_infty_unique_max s i_max h_unique i
+  have hval : Real.negMulLog (if i = i_max then 1 else 0) = 0 := by
+    split_ifs <;> simp
+  rw [← hval]
+  exact (Real.continuous_negMulLog.tendsto _).comp hlim
 
 /-- Exponential rate of concentration. -/
 theorem softmax_exponential_decay [Nonempty ι] (s : ι → ℝ)

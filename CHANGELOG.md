@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.217.6] - 2026-02-16
+
+### Changed
+- **Theories/Pragmatics/RSA/Core/Softmax/Limits.lean**: Proved `entropy_tendsto_max` (α → 0: entropy → log|U| via continuity of softmax + x·log x) and `entropy_tendsto_zero` (α → ∞: entropy → 0 via negMulLog continuity + pointwise softmax convergence). Zero sorrys remain in Limits.lean.
+- **Theories/Pragmatics/NeoGricean/Exhaustivity/Interface.lean**: Proved `ie_eq_mw_when_closed` (Spector Theorem 9: exhIE = exhMW under conjunction closure) by connecting to `theorem9_main` via propext. Changed hypothesis from binary to `closedUnderConj`. Zero sorrys remain.
+
 ## [0.217.5] - 2026-02-16
 
 ### Changed
