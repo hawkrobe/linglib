@@ -20,7 +20,7 @@ making the observable "prevalence" sufficient.
 - Lassiter, D. & Goodman, N. D. (2017). Adjectival vagueness in a Bayesian model.
 -/
 
-import Linglib.Theories.TruthConditional.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.Linarith
 

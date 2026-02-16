@@ -42,12 +42,12 @@ RSA S1 (softmax)  ──α→∞──>  IBR S1 (argmax)  ────>  exhMW  
 - Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
 -/
 
-import Linglib.Theories.RSA.ScalarImplicatures.Basic
-import Linglib.Theories.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
+import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interfaces.ImplicatureTheory
-import Linglib.Theories.RSA.Core.Eval
-import Linglib.Theories.RSA.Implementations.Franke2011
+import Linglib.Theories.Pragmatics.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 namespace Comparisons.RSANeoGricean
 

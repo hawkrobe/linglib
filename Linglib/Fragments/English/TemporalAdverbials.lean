@@ -26,7 +26,7 @@ acceptability judgments.
 - von Fintel, K. & Iatridou, S. (2019). Since since.
 -/
 
-import Linglib.Theories.TruthConditional.Verb.Aspect
+import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 namespace Fragments.English.TemporalAdverbials
 

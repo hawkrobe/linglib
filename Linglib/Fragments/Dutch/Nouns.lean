@@ -1,5 +1,5 @@
 import Linglib.Core.Basic
-import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Dutch Noun Lexicon Fragment

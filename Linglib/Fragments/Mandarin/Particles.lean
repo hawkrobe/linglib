@@ -1,4 +1,4 @@
-import Linglib.Theories.NeoGricean.Presuppositions
+import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 
 /-!

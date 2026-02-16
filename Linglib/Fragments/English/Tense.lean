@@ -1,5 +1,5 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
-import Linglib.Theories.TruthConditional.Sentence.Tense.Perspective
+import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Theories.Semantics.Tense.Perspective
 
 /-!
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)

@@ -1,12 +1,12 @@
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
 import Linglib.Core.RootDimensions
-import Linglib.Theories.TruthConditional.Verb.ChangeOfState.Theory
-import Linglib.Theories.TruthConditional.Measurement.Basic
-import Linglib.Theories.IntensionalSemantics.Attitude.Doxastic
-import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
-import Linglib.Theories.IntensionalSemantics.Causative.Basic
-import Linglib.Theories.IntensionalSemantics.Causative.Implicative
+import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Attitudes.Doxastic
+import Linglib.Theories.Semantics.Attitudes.Preferential
+import Linglib.Theories.Semantics.Causation.Basic
+import Linglib.Theories.Semantics.Causation.Implicative
 
 /-! # Cross-Linguistic Verb Infrastructure
 

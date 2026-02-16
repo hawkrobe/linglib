@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
-import Linglib.Theories.IntensionalSemantics.Modal.BiasedPQ
+import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology

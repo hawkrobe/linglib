@@ -1,12 +1,12 @@
-import Linglib.Theories.IntensionalSemantics.Tense.Abusch
-import Linglib.Theories.IntensionalSemantics.Tense.VonStechow
-import Linglib.Theories.IntensionalSemantics.Tense.Kratzer
-import Linglib.Theories.IntensionalSemantics.Tense.Ogihara
-import Linglib.Theories.IntensionalSemantics.Tense.Klecha
-import Linglib.Theories.IntensionalSemantics.Tense.Deal
-import Linglib.Theories.IntensionalSemantics.Tense.Sharvit
-import Linglib.Theories.Minimalism.Tense.Zeijlstra
-import Linglib.Theories.Minimalism.Tense.Wurmbrand
+import Linglib.Theories.Semantics.Tense.Abusch
+import Linglib.Theories.Semantics.Tense.VonStechow
+import Linglib.Theories.Semantics.Tense.Kratzer
+import Linglib.Theories.Semantics.Tense.Ogihara
+import Linglib.Theories.Semantics.Tense.Klecha
+import Linglib.Theories.Semantics.Tense.Deal
+import Linglib.Theories.Semantics.Tense.Sharvit
+import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
+import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 
 /-!
 # Tense Theories: Cross-Cutting Comparison

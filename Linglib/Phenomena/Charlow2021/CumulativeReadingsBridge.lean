@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Charlow2021.Data
-import Linglib.Theories.DynamicSemantics.Systems.DynamicGQ.UpdateTheoretic
-import Linglib.Theories.DynamicSemantics.Effects.Nondeterminism.PointwiseUpdate
+import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
+import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate
 
 /-!
 # Charlow 2021: Cumulative Readings Bridge

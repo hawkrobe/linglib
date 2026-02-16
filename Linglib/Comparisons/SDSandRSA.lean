@@ -69,8 +69,8 @@ The pragmatic listener:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Theories.RSA.Core.Distribution
+import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 
 namespace Comparisons.SDSandRSA
 

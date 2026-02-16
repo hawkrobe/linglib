@@ -1,7 +1,7 @@
 import Linglib.Core.Basic
 import Linglib.Core.NounCategorization
 import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Theories.TruthConditional.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Japanese Noun Lexicon Fragment

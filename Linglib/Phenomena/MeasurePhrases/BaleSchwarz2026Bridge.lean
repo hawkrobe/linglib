@@ -1,5 +1,5 @@
 import Linglib.Core.Empirical
-import Linglib.Theories.TruthConditional.Measurement.Basic
+import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!

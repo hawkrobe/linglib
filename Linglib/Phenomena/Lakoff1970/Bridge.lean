@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Lakoff1970.Data
 import Linglib.Fragments.English.Tense
-import Linglib.Theories.TruthConditional.Sentence.Tense.Perspective
+import Linglib.Theories.Semantics.Tense.Perspective
 
 /-!
 # Lakoff (1970) Bridge Theorems

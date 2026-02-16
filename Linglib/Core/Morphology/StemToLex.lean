@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Theories.TruthConditional.Core.Lexicon
+import Linglib.Theories.Semantics.Compositional.Core.Lexicon
 
 /-!
 # Stem-to-Lexicon Bridge

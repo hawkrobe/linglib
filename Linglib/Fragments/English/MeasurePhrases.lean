@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Measurement.Basic
+import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment

@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Numeral.Polysemy
+import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 
 /-!
 # Snyder (2026): Number Word Polysemy Data

@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.Diagnostics.CliticVsAffix
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.IntensionalSemantics.Modal.Basic
+import Linglib.Theories.Semantics.Modality.Basic
 
 /-!
 # Zwicky & Pullum 1983: Cliticization vs. Inflection

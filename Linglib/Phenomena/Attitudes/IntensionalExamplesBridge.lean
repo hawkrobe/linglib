@@ -11,7 +11,7 @@ These examples use the infrastructure from `Theories/Montague/Verb/Attitude/Inte
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
-import Linglib.Theories.IntensionalSemantics.Attitude.Intensional
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 namespace Phenomena.Attitudes.IntensionalExamples
 

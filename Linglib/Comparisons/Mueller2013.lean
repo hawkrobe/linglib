@@ -1,11 +1,11 @@
 import Linglib.Core.Interfaces.CombinationSchema
-import Linglib.Theories.Minimalism.Bridge.CombinationSchemata
-import Linglib.Theories.Minimalism.Core.Labeling
-import Linglib.Theories.HPSG.Core.HeadFiller
-import Linglib.Theories.HPSG.Core.LexicalRules
-import Linglib.Theories.CCG.Core.Basic
-import Linglib.Theories.DependencyGrammar.Formal.NonProjective
-import Linglib.Theories.ConstructionGrammar.ArgumentStructure
+import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
+import Linglib.Theories.Syntax.Minimalism.Core.Labeling
+import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
+import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
+import Linglib.Theories.Syntax.CCG.Core.Basic
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 
 /-!
 # Müller (2013): Unifying Everything

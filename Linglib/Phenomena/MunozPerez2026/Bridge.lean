@@ -1,6 +1,6 @@
 import Linglib.Phenomena.MunozPerez2026.Data
-import Linglib.Theories.Minimalism.Core.Voice
-import Linglib.Theories.Minimalism.Morphology.Fission
+import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Morphology.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics

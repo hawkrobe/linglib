@@ -45,7 +45,7 @@ The classic tests from Vendler (1957) and Dowty (1979):
 - Rothstein, S. (2004). Structuring Events.
 -/
 
-import Linglib.Theories.TruthConditional.Verb.Aspect
+import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 namespace Phenomena.Aspect.Diagnostics
 

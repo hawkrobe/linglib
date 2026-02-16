@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.MaximalInformativity
+import Linglib.Theories.Semantics.Tense.MaximalInformativity
 import Linglib.Core.MeasurementScale
 import Linglib.Fragments.English.TemporalAdverbials
 

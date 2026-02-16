@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Sentence.Tense.Evidential
+import Linglib.Theories.Semantics.Tense.Evidential
 
 /-!
 # Korean Evidential Fragment (Cumming 2026)

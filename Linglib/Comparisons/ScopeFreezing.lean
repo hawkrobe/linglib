@@ -26,8 +26,8 @@ Comparing how different theories explain scope freezing phenomena.
 import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.ProcessingModel
 import Linglib.Phenomena.Quantification.Data
-import Linglib.Theories.Minimalism.Phenomena.Scope
-import Linglib.Theories.CCG.Phenomena.Scope
+import Linglib.Theories.Syntax.Minimalism.Phenomena.Scope
+import Linglib.Theories.Syntax.CCG.Phenomena.Scope
 
 namespace Comparisons.ScopeFreezing
 

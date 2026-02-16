@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Questions.NandaoQs
-import Linglib.Theories.IntensionalSemantics.Modal.Kernel
+import Linglib.Theories.Semantics.Modality.Kernel
 
 /-!
 # Bridge: Nandao-Qs × Kernel Theory / Fragment Entry

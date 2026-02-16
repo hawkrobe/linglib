@@ -1,4 +1,4 @@
-import Linglib.Theories.TruthConditional.Expressives.OutlookMarker
+import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles

@@ -1,4 +1,4 @@
-import Linglib.Theories.IntensionalSemantics.Modal.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Conditional Modality Data — Rain and Wet Streets (Kratzer 2012 §2.9)

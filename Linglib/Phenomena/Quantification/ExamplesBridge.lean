@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Determiners
-import Linglib.Theories.TruthConditional.Determiner.Quantifier
+import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 /-!
 # Basic Quantifier Examples
