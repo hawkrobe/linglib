@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 

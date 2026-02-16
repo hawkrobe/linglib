@@ -38,7 +38,7 @@ allowing RSA's L0 to evaluate the Montague meaning in each world.
 See docs/ROADMAP.md for future work on this.
 -/
 
-import Linglib.Phenomena.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 
 namespace Comparisons.ScalarImplicature

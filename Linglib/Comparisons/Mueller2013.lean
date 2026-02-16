@@ -4,8 +4,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Phenomena.Syntax.DependencyGrammar.Formal.NonProjective
-import Linglib.Phenomena.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 
 /-!
 # Müller (2013): Unifying Everything
