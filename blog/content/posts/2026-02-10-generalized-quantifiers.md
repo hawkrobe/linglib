@@ -1,7 +1,7 @@
 ---
 title: "Generalized Quantifiers as a Case Study in Cross-Module Verification"
 date: 2026-02-10
-summary: "How Barwise & Cooper's generalized quantifier theory threads through all three layers of Linglib — from abstract properties to lexical entries to scalar implicature predictions — and what the formalization reveals about the convergence of independent characterizations."
+summary: "Tracing generalized quantifier theory from abstract properties through lexical entries to RSA predictions."
 tags: ["quantifiers", "GQ", "Barwise-Cooper", "formalization", "RSA", "architecture"]
 ---
 
