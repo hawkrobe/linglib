@@ -213,4 +213,48 @@ def monotonicity_strongest_predictor
   effect is_monotone ∧
     (effect is_conservative → effect is_quantity → True)
 
+/-! ## O-Corner Gap
+
+Natural languages systematically lexicalize three corners of the Square of
+Opposition but leave the O-corner (particular negative) unlexicalized:
+
+| Corner | Quantifier | Modal | Lexicalized? |
+|--------|-----------|-------|--------------|
+| A      | every     | must  | ✓            |
+| E      | no        | can't | ✓            |
+| I      | some      | can   | ✓            |
+| O      | not-every | —     | ✗            |
+
+The O-corner is always expressed periphrastically (outer negation of A:
+"not every", "doesn't have to"). Horn (2001) argues this gap is
+pragmatically explained: the scalar implicature of I (some → not all)
+recovers O's content, making a dedicated lexical item for O redundant.
+
+See `Core.SquareOfOpposition` for the formal square infrastructure.
+See `NeoGricean.ScalarImplicatures` for the some → not-all derivation.
+-/
+
+/-- The O-corner of the Square of Opposition is systematically not
+lexicalized in natural languages. A, E, I have dedicated lexical items
+(every/no/some, must/can't/can) but O is expressed only as ¬A. -/
+def o_corner_gap (Corner : Type*) (lexicalized : Corner → Prop)
+    (A E I O : Corner) : Prop :=
+  lexicalized A ∧ lexicalized E ∧ lexicalized I ∧ ¬lexicalized O
+
+/-- The pragmatic explanation for the O-corner gap: scalar implicature
+of the I-corner recovers the O-corner's content, making lexicalization
+of O redundant.
+
+Using the weak scalar term (I = "some") implicates the negation of
+the strong term (¬A = "not all" = O). Since O is always recoverable
+from I via Gricean reasoning, there is no communicative pressure to
+lexicalize it.
+
+Reference: Horn (2001), A Natural History of Negation, §4.5. -/
+def o_corner_pragmatic_explanation
+    (Utt : Type*) (meaning : Utt → Prop)
+    (I_utt : Utt) (O_content : Prop)
+    (_scalar_implicature_of_I : meaning I_utt → O_content) : Prop :=
+  meaning I_utt → O_content
+
 end Core.Conjectures

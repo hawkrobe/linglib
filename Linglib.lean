@@ -14,6 +14,7 @@ import Linglib.Core.Proposition
 import Linglib.Core.UD
 import Linglib.Core.Duality
 import Linglib.Core.Quantification
+import Linglib.Core.SquareOfOpposition
 import Linglib.Core.HornScale
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
@@ -603,6 +604,7 @@ import Linglib.Theories.IntensionalSemantics.Attitude.Intensional
 import Linglib.Theories.IntensionalSemantics.Attitude.Parasitic
 import Linglib.Theories.IntensionalSemantics.Attitude.Preferential
 import Linglib.Theories.IntensionalSemantics.Attitude.SituationDependent
+import Linglib.Theories.IntensionalSemantics.Attitude.NegRaising
 import Linglib.Theories.IntensionalSemantics.Causative.Basic
 import Linglib.Theories.IntensionalSemantics.Causative.Builder
 import Linglib.Theories.IntensionalSemantics.Causative.CoerciveImplication

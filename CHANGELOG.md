@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.213.27] - 2026-02-15
+
+### Added
+- **Core/SquareOfOpposition.lean**: Square of Opposition as first-class algebraic object — `Square`, `SquareOps`, `SquareRelations`, `Square.fromOps`, `Square.fromBox`, `Square.fromGQOps`; contradiction diagonal theorems (`fromBox_contradAO`, `fromBox_contradEI`); connection to `outerNeg`/`innerNeg`/`dualQ`; subalternation = Horn-scale ordering
+- **Core/Conjectures.lean**: O-corner gap conjecture — `o_corner_gap` (A/E/I lexicalized, O not), `o_corner_pragmatic_explanation` (scalar implicature of I recovers O)
+- **Attitude/NegRaising.lean**: Neg-raising as O→E pragmatic strengthening in the doxastic square — `NegRaisingPredicate`, `doxasticSquare`, `negRaisesAt`, `negRaisingAvailable`; `believeNR`/`thinkNR` (neg-raising), `knowNR` (non-neg-raising); `doxasticSquare_contradAO`/`doxasticSquare_contradEI` proved; `negRaising_iff_nonVeridical`
+
+## [0.213.26] - 2026-02-15
+
+### Added
+- **Core/Partition.lean**: `partitionValue_ge_of_questionUtility_ge` (bridge from `questionUtility` ordering to `partitionValue` ordering on `Finset.univ`), `partitionValue_congr_on_worlds` (partition value depends only on DP within worlds), `questionUtility_qud_nonneg` (QUD-derived question utility is non-negative under `totalProb ≤ 1`, proved via Blackwell + case split on dpValue sign)
+- **Core/Partition.lean**: Helper infrastructure — `foldl_max_ge_opt_aux`/`foldl_max_ge_optVal` (partition-value foldl dominates dpValue), `trivial_toCellsFinset_univ` (trivial QUD has one cell)
+- **GSVanRooyBridge.lean**: `blackwell_dominance_refinement` proved (dominance → refinement, the hard direction of Blackwell, via `partitionValue_restrict_support` + `partitionValue_congr_on_worlds` + `blackwell_characterizes_refinement`); `blackwell_full` now fully proved; `questionUtility_nonneg_from_blackwell` proved as corollary of `questionUtility_qud_nonneg`; `mentionSome_multiple_satisfiers` (substantive replacement for vacuous `humanConcern_implies_mentionSomeDP`)
+
+### Changed
+- **GSVanRooyBridge.lean**: `blackwell_maximin` reformulated to forward-only `blackwell_maximin_forward` (biconditional was false with fixed action type); 3 false pragmatic answerhood theorems (`pragmaticAnswer_implies_nonnegUtility`, `positiveUtility_implies_pragmaticAnswer`, `pragmaticAnswer_iff_utility`) deleted and replaced with correct `questionUtility_nonneg_from_blackwell`
+
+### Fixed
+- **Core/Partition.lean**: Three build errors in `partitionValue_restrict_support` — `congr_arg` for `max` wrapper in `cell_value_restrict_support`, `DecidablePred` for filter predicate, conjunction order in `Finset.mem_filter` destructuring
+
 ## [0.213.25] - 2026-02-15
 
 ### Changed
