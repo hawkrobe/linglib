@@ -34,7 +34,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.NaturalLogic
 import Linglib.Core.DecisionTheory
 import Linglib.Core.Evidence
-import Linglib.Theories.ProcessingModel
+import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
 import Linglib.Core.Time
 import Linglib.Core.Reichenbach

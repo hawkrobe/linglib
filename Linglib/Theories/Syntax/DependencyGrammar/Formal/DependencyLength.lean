@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
-import Linglib.Theories.ProcessingModel
+import Linglib.Core.ProcessingModel
 
 /-!
 # Dependency Length Minimization
