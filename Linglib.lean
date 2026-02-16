@@ -580,6 +580,7 @@ import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
+import Linglib.Theories.Semantics.Tense.Declerck
 import Linglib.Theories.Semantics.Compositional.Variables
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
