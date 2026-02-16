@@ -328,9 +328,14 @@ theorem after_not_ambidirectional :
 /-- *While* is not ambidirectional: "∀ t ∈ A, t ∈ B" and "∀ t ∈ A, t ∈ Bᶜ"
     cannot both hold when A ∩ B is nonempty. So the construction is
     truth-conditionally sensitive to the polarity of its argument. -/
-theorem while_not_ambidirectional :
+theorem while_not_ambidirectional [Inhabited Time] :
     ¬ ∀ (A B : Set Time),
       isAmbidirectional (λ X => ∀ t ∈ A, t ∈ X) B := by
-  sorry
+  intro h
+  have := h {default} {default}
+  simp only [isAmbidirectional] at this
+  have lhs : ∀ t ∈ ({default} : Set Time), t ∈ ({default} : Set Time) := fun _ h => h
+  have rhs := this.mp lhs (default : Time) rfl
+  exact absurd rfl rhs
 
 end TruthConditional.Sentence.Tense.TemporalConnectives

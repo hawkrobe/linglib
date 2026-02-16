@@ -107,15 +107,54 @@ def iota (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e
 def A (domain : List m.Entity) (P : m.interpTy Ty.et) : m.interpTy Ty.ett :=
   fun Q => domain.any (fun x => P x && Q x)
 
-theorem lower_lift (domain : List m.Entity) (j : m.interpTy .e) :
-    lower domain (lift j) = some j := by
-  simp only [lower, lift]
-  sorry -- TODO: requires showing domain.filter yields [j] when j appears once
+/-- Helper: for a nodup list, filtering for equality gives a singleton or empty. -/
+private theorem filter_decEq_of_mem (domain : List m.Entity) (j : m.Entity)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    domain.filter (fun k => @decide (j = k) (m.decEq j k)) = [j] := by
+  induction domain with
+  | nil => nomatch hmem
+  | cons hd tl ih =>
+    have ⟨hd_nmem, tl_nd⟩ := List.nodup_cons.mp hnd
+    have filter_tl_nil : ∀ (hj : j ∈ tl → False),
+        tl.filter (fun k => @decide (j = k) (m.decEq j k)) = [] := by
+      intro hj
+      rw [List.filter_eq_nil_iff]
+      intro k hk hdec
+      have hne : j ≠ k := fun heq => hj (heq ▸ hk)
+      have hf : @decide (j = k) (m.decEq j k) = false := by
+        cases m.decEq j k with | isTrue h => exact absurd h hne | isFalse _ => rfl
+      rw [hf] at hdec; exact Bool.noConfusion hdec
+    cases hmem with
+    | head =>
+      have hdec : @decide (j = j) (m.decEq j j) = true := by
+        cases m.decEq j j with | isTrue _ => rfl | isFalse h => exact absurd rfl h
+      rw [List.filter_cons, if_pos hdec, filter_tl_nil hd_nmem]
+    | tail _ hmem' =>
+      have hne : ¬ (j = hd) := fun heq => hd_nmem (heq ▸ hmem')
+      have hdec : ¬ (@decide (j = hd) (m.decEq j hd) = true) := by
+        cases m.decEq j hd with | isTrue h => exact absurd h hne | isFalse _ => exact Bool.noConfusion
+      rw [List.filter_cons, if_neg hdec]
+      exact ih hmem' tl_nd
 
-theorem iota_ident (domain : List m.Entity) (j : m.interpTy .e) :
+/-- `lower ∘ lift = some` on the domain (Partee's round-trip).
+
+    Requires `j ∈ domain` (j must be in the model) and `domain.Nodup`
+    (no duplicates, ensuring unique filter result). -/
+theorem lower_lift (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    lower domain (lift j) = some j := by
+  unfold lower lift
+  erw [filter_decEq_of_mem domain j hmem hnd]
+
+/-- `iota ∘ ident = some` on the domain (Partee's round-trip).
+
+    The `ident` predicate picks out exactly `j`, so `iota` returns `j`
+    when `j` is the unique satisfier (guaranteed by `Nodup`). -/
+theorem iota_ident (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
     iota domain (ident j) = some j := by
-  simp only [iota, ident]
-  sorry -- TODO: analogous
+  unfold iota ident
+  erw [filter_decEq_of_mem domain j hmem hnd]
 
 end PartialShifts
 

@@ -168,8 +168,8 @@ def functionallyDependent {W : Type*} (q1 q2 : GSQuestion W) (worlds : List W) :
 theorem functional_dep_gives_pairlist {W : Type*}
     (q1 q2 : GSQuestion W) (worlds : List W)
     (h : functionallyDependent q1 q2 worlds = true) :
-    (q1 + q2).numCells worlds >= q1.numCells worlds := by
-  sorry -- Conjunction can only increase cell count
+    (q1 + q2).numCells worlds >= q1.numCells worlds :=
+  QUD.refines_numCells_ge _ _ _ (conjGSQuestion_refines_left q1 q2)
 
 end MultipleWh
 
@@ -184,12 +184,36 @@ def pairListAsConjunction {W E : Type*} [BEq W]
   | [] => GSQuestion.trivial
   | e :: es => es.foldl (λ acc e' => acc + questionFor e') (questionFor e)
 
+/-- Helper: foldl conjunction refines the initial accumulator. -/
+private theorem foldl_conj_refines_init {W E : Type*}
+    (es : List E) (init : GSQuestion W) (questionFor : E → GSQuestion W) :
+    es.foldl (λ acc e' => acc + questionFor e') init ⊑ init := by
+  induction es generalizing init with
+  | nil => exact λ _ _ h => h
+  | cons e' rest ih =>
+    exact QUD.refines_trans (ih _) (conjGSQuestion_refines_left _ _)
+
+/-- Helper: foldl conjunction refines questionFor e' for each e' in the list. -/
+private theorem foldl_conj_refines_elem {W E : Type*}
+    (es : List E) (init : GSQuestion W) (questionFor : E → GSQuestion W)
+    (e : E) (hIn : e ∈ es) :
+    es.foldl (λ acc e' => acc + questionFor e') init ⊑ questionFor e := by
+  induction es generalizing init with
+  | nil => nomatch hIn
+  | cons e' rest ih =>
+    cases hIn with
+    | head => exact QUD.refines_trans (foldl_conj_refines_init rest _ _)
+                (conjGSQuestion_refines_right _ _)
+    | tail _ hIn' => exact ih _ hIn'
+
 /-- The pair-list reading refines any individual question. -/
 theorem pairList_refines_individual {W E : Type*} [BEq W]
     (quantDomain : List E) (questionFor : E -> GSQuestion W) (e : E)
     (hIn : e ∈ quantDomain) :
     (pairListAsConjunction quantDomain questionFor) ⊑ (questionFor e) := by
-  sorry -- Conjunction of all questions refines each individual
+  match quantDomain, hIn with
+  | _ :: es, .head _ => exact foldl_conj_refines_init es _ questionFor
+  | e₀ :: es, .tail _ hIn' => exact foldl_conj_refines_elem es (questionFor e₀) questionFor e hIn'
 
 end QuantifierInteraction
 

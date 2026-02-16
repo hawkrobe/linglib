@@ -68,6 +68,7 @@ C = 1 - H(ε)  -- for binary symmetric channel with error rate ε
 -/
 
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 namespace RSA.Noise
@@ -157,15 +158,31 @@ theorem easier_higher_discrimination :
     difficultyToDiscrimination .easy > difficultyToDiscrimination .hard := by
   native_decide
 
-/-- Product discrimination is monotone in the gap: larger match-mismatch gap → larger product. -/
+/-- Product discrimination is monotone: when match scores are individually
+    at least as large AND the gap is at least as large, the weighted
+    product is at least as large.
+
+    The gap condition alone is insufficient — counterexample:
+    match₁=0, match₂=10, mismatch₁=0, mismatch₂=11, sizeMatch=100, sizeMismatch=1.
+    Gap: 0 ≥ -1 ✓, but 0·100-0·1=0 < 10·100-11·1=989. -/
 theorem product_discrimination_monotone
     (match₁ mismatch₁ match₂ mismatch₂ : ℚ)
     (sizeMatch sizeMismatch : ℚ)
     (h_gap : match₁ - mismatch₁ ≥ match₂ - mismatch₂)
+    (h_match_mono : match₁ ≥ match₂)
     (h_size_nonneg : sizeMatch ≥ 0 ∧ sizeMismatch ≥ 0)
     (h_size_order : sizeMatch ≥ sizeMismatch) :
     match₁ * sizeMatch - mismatch₁ * sizeMismatch ≥
     match₂ * sizeMatch - mismatch₂ * sizeMismatch := by
-  sorry
+  have key : match₁ * sizeMatch - mismatch₁ * sizeMismatch -
+      (match₂ * sizeMatch - mismatch₂ * sizeMismatch) =
+      (match₁ - match₂) * (sizeMatch - sizeMismatch) +
+      ((match₁ - match₂) - (mismatch₁ - mismatch₂)) * sizeMismatch := by ring
+  have h1 : (0 : ℚ) ≤ match₁ - match₂ := by linarith
+  have h2 : (0 : ℚ) ≤ sizeMatch - sizeMismatch := by linarith
+  have h3 : (0 : ℚ) ≤ (match₁ - match₂) - (mismatch₁ - mismatch₂) := by linarith
+  have h_sum := add_nonneg (mul_nonneg h1 h2) (mul_nonneg h3 h_size_nonneg.2)
+  rw [← key] at h_sum
+  linarith
 
 end RSA.Noise

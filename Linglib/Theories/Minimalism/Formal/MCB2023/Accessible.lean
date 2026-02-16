@@ -172,8 +172,8 @@ private theorem length_filter_bne_of_count_one {α : Type*} [DecidableEq α]
     simp only [List.filter]
     by_cases heq : hd = x
     · -- hd = x: this element is filtered out
-      have hbne_false : (hd != x) = false := by simp [bne_iff_ne, heq]
-      simp only [hbne_false, ite_false]
+      have hbne_false : (hd != x) = false := by simp [heq]
+      simp only [hbne_false]
       -- count (hd :: tl) x = 1, hd = x, so tl.count x = 0
       have hc' : tl.count x = 0 := by
         rw [heq] at hc
@@ -183,14 +183,14 @@ private theorem length_filter_bne_of_count_one {α : Type*} [DecidableEq α]
       have hfilt : tl.filter (· != x) = tl := by
         rw [List.filter_eq_self]
         intro a ha
-        simp only [bne_iff_ne, ne_eq, decide_eq_true_eq]
+        simp only [bne_iff_ne, ne_eq]
         intro heqa; subst heqa
         exact absurd (List.count_pos_iff.mpr ha) (by omega)
       rw [hfilt]
       simp [List.length]
     · -- hd ≠ x: this element is kept
-      have hbne_true : (hd != x) = true := by simp [bne_iff_ne, heq]
-      simp only [hbne_true, ite_true, List.length_cons]
+      have hbne_true : (hd != x) = true := by simp [heq]
+      simp only [hbne_true, List.length_cons]
       have hx' : x ∈ tl := by
         rcases List.mem_cons.mp hx with rfl | h
         · exact absurd rfl heq
@@ -215,14 +215,50 @@ def emWorkspace (T₁ T₂ : SyntacticObject) (F : List SyntacticObject) : List 
 def imWorkspace (T β : SyntacticObject) (F : List SyntacticObject) : List SyntacticObject :=
   merge β T :: F.filter (· != T)
 
+/-- Filtering out x preserves the count of y when x ≠ y. -/
+private theorem count_filter_bne_of_ne {α : Type*} [DecidableEq α]
+    (L : List α) (x y : α) (hne : x ≠ y) :
+    (L.filter (· != x)).count y = L.count y := by
+  induction L with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.filter]
+    by_cases heq : hd = x
+    · simp only [show (hd != x) = false from by simp [heq]]
+      rw [List.count_cons]; simp [beq_iff_eq, heq ▸ hne, ih]
+    · simp only [show (hd != x) = true from by simp [heq]]
+      rw [List.count_cons, List.count_cons, ih]
+
+/-- Filtering out x preserves membership of y when x ≠ y. -/
+private theorem mem_filter_bne_of_ne {α : Type*} [DecidableEq α]
+    (L : List α) (x y : α) (hne : x ≠ y) (hy : y ∈ L) :
+    y ∈ L.filter (· != x) := by
+  rw [List.mem_filter]
+  exact ⟨hy, by simp [bne_iff_ne, Ne.symm hne]⟩
+
 /-- EM: b₀ decreases by 1 (two components become one) -/
 theorem em_b0_decreases (T₁ T₂ : SyntacticObject)
     (hT₁ : T₁ ∈ F) (hT₂ : T₂ ∈ F) (hne : T₁ ≠ T₂)
     (huniq₁ : F.count T₁ = 1) (huniq₂ : F.count T₂ = 1) :
     b₀ (emWorkspace T₁ T₂ F) = b₀ F - 1 := by
-  -- TODO: Double filter removes T₁ and T₂ (each with count 1), cons adds merge back.
-  -- Requires showing filter preserves count of distinct elements.
-  sorry
+  -- merge T₁ T₂ = node T₁ T₂ is strictly larger than T₂ (and T₁)
+  have hne_merge₂ : merge T₁ T₂ ≠ T₂ := by
+    intro heq; have := congrArg sizeOf heq; simp [merge] at this
+  have hne_merge₁ : merge T₁ T₂ ≠ T₁ := by
+    intro heq; have := congrArg sizeOf heq; simp [merge] at this; omega
+  simp only [emWorkspace, b₀]
+  -- Unfold the outer filter on the cons cell
+  rw [List.filter_cons,
+      if_pos (by simp [bne_iff_ne, hne_merge₂]), List.length_cons]
+  -- Now goal: 1 + ((F.filter (· != T₁)).filter (· != T₂)).length = F.length - 1
+  have h1 := length_filter_bne_of_count_one F T₁ hT₁ huniq₁
+  have hT₂' := mem_filter_bne_of_ne F T₁ T₂ hne hT₂
+  have hc₂' : (F.filter (· != T₁)).count T₂ = 1 := by
+    rw [count_filter_bne_of_ne F T₁ T₂ hne]; exact huniq₂
+  have h2 := length_filter_bne_of_count_one (F.filter (· != T₁)) T₂ hT₂' hc₂'
+  have hlen₁ : F.length ≥ 1 := List.length_pos_of_mem hT₁
+  have hlen₂ : (F.filter (· != T₁)).length ≥ 1 := List.length_pos_of_mem hT₂'
+  omega
 
 /-- EM: accessible terms increase by 2 (new root adds one for each child subtree
     plus the root itself, but the children's accessible terms are preserved) -/

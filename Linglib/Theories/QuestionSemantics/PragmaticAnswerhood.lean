@@ -136,24 +136,39 @@ theorem isPragmaticAnswer_implies_gives {W : Type*}
 G&S 1984, p. 355: "Semantic answers are the answers one is to address to a
 questioner who has no factual information at all."
 
-When the information set is total (J = I), pragmatic answerhood reduces
-to semantic answerhood. -/
+When the information set is total (J = I) and P is non-vacuous,
+pragmatic answerhood reduces to semantic answerhood.
+
+The non-emptiness hypothesis is required because `givesPragmaticAnswer`
+demands `P ∩ J ≠ ∅` while `answers` does not — a vacuous (everywhere-false)
+proposition vacuously "answers" semantically (by material implication) but
+fails pragmatic answerhood. -/
 theorem semantic_is_pragmatic_limit {W : Type*}
-    (p : W -> Bool) (q : GSQuestion W) (worlds : List W) :
+    (p : W -> Bool) (q : GSQuestion W) (worlds : List W)
+    (hNonEmpty : worlds.any p = true) :
     givesPragmaticAnswer p q totalIgnorance worlds =
     answers p (q.toQuestion worlds) worlds := by
   sorry
 
-/-- More information can only help: if P gives a pragmatic answer in J,
-it gives a pragmatic answer in any J' ⊆ J.
+/-- Reducing the information set cannot make a non-answer into an answer.
 
-G&S 1984, p. 355 (paraphrased): Reducing the information set cannot
-make a non-answer into an answer, but can make an answer into a non-answer. -/
-theorem pragmaticAnswer_monotone_down {W : Type*}
+G&S 1984, p. 355: "Reducing the information set cannot make a non-answer
+into an answer, but can make an answer into a non-answer."
+
+If P gives a pragmatic answer in J' ⊆ J (with more information), then P
+also gives a pragmatic answer in J (with less information). More information
+restricts the pool of possible answers; less information only expands it.
+
+Note: the CONVERSE is false — P may answer in J but fail in J' ⊆ J because
+P ∩ J' may be empty or may straddle cell boundaries in the finer partition J'/Q.
+
+[sorry: proof requires showing that non-emptiness and cell containment
+are upward-monotone properties of the information set] -/
+theorem pragmaticAnswer_monotone_up {W : Type*}
     (p : W -> Bool) (q : GSQuestion W) (j j' : InfoSet W) (worlds : List W)
     (hSubset : forall w, j' w = true -> j w = true) :
-    givesPragmaticAnswer p q j worlds = true ->
-    givesPragmaticAnswer p q j' worlds = true := by
+    givesPragmaticAnswer p q j' worlds = true ->
+    givesPragmaticAnswer p q j worlds = true := by
   sorry
 
 -- Pragmatic Term Properties

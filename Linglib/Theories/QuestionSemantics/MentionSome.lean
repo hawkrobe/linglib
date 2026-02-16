@@ -115,8 +115,11 @@ theorem partialAnswer_includes_negative :
     ∃ (W : Type) (q : GSQuestion W) (worlds : List W) (p : W → Bool),
       partialAnswer p q worlds = true ∧
       ¬ (worlds.any p = true ∧
-         worlds.all (λ w => p w == true) = true) := by
-  sorry
+         worlds.all (λ w => p w == true) = true) :=
+  -- Witness: 3 worlds, identity partition, p true at 0,1 but not 2
+  -- p overlaps with the question (worlds 0,1 in different cells) but doesn't cover all worlds
+  ⟨Fin 3, QUD.ofProject id, [0, 1, 2], fun w => decide (w.val < 2),
+    by native_decide, by native_decide⟩
 
 
 /-!

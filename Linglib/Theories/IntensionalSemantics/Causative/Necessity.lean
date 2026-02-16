@@ -85,13 +85,7 @@ theorem sufficiency_not_implies_necessity :
   let dyn := CausalDynamics.disjunctiveCausation a b c
   let s := Situation.empty.extend b true  -- b is already present
   use dyn, s, a, c
-  constructor
-  · -- a is sufficient (a → c)
-    simp only [causallySufficient]
-    sorry  -- a triggers its law
-  · -- a is NOT necessary (b would cause c anyway)
-    simp only [causallyNecessary]
-    sorry  -- Without a, b still causes c
+  exact ⟨by native_decide, by native_decide⟩
 
 /-- Necessity does NOT imply sufficiency (conjunctive causes). -/
 theorem necessity_not_implies_sufficiency :
@@ -105,13 +99,7 @@ theorem necessity_not_implies_sufficiency :
   let dyn := CausalDynamics.conjunctiveCausation a b c
   let s := Situation.empty.extend b true  -- b is present
   use dyn, s, a, c
-  constructor
-  · -- a is necessary (without a, the conjunctive law doesn't fire)
-    simp only [causallyNecessary]
-    sorry
-  · -- a is NOT sufficient in empty background (needs b too)
-    simp only [causallySufficient]
-    sorry
+  exact ⟨by native_decide, by native_decide⟩
 
 /-- INUS cause (Mackie): insufficient but necessary part of an
     unnecessary but sufficient condition. -/

@@ -80,7 +80,11 @@ def exactlyN_postsup {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [F
 theorem PostSupp.bind_left_id {S A B : Type*} (a : A) (f : A → PostSupp S B) :
     PostSupp.bind (PostSupp.pure a) f = f a := by
   simp only [PostSupp.bind, PostSupp.pure]
-  sorry -- Requires showing test True is left identity for dseq
+  -- dseq (test fun _ => True) (f a).postsup = (f a).postsup
+  -- because ∃ h, (i = h ∧ True) ∧ D h j  ↔  D i j
+  have : dseq (test λ _ => True) (f a).postsup = (f a).postsup := by
+    funext i j; simp [dseq, test]
+  simp [this]
 
 /-- Reify of a pure post-supposition recovers the original DRS
     (modulo the trivial True test). -/

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.213.31] - 2026-02-15
+
+### Added
+- **Theories/DTS/Core.lean**: Decision-Theoretic Semantics core (Merin 1999) — `Issue`, `DTSContext`, `condProb`, `bayesFactor`, `posRelevant`/`negRelevant`/`irrelevant`, `CIP`, `pxor`; Corollary 3 (sign reversal), Fact 5 (CIP multiplicativity), Theorem 6b (XOR counterexample via `native_decide`)
+- **Theories/DTS/ScalarImplicature.lean**: DTS scalar implicature — `sgnRelevance` (PSM), `upwardCone`/`downwardCone`, `ScalarInterpretation`; Predictions 1–2 (conjunction dominates disjunction)
+- **Theories/DTS/But.lean**: DTS "but" semantics — `butFelicitous` (Hypothesis 4), `NNIR` (Def. 10), `defaultBut`; Theorems 8–10 (CIP + contrariness → unexpectedness), Corollary 11 (Harris universal)
+- **Theories/DTS/Even.lean**: DTS "even" semantics — `evenFelicitous` (Hypothesis 5); Prediction 3 (`but_even_incompatible` proved via `linarith`)
+
 ## [0.213.30] - 2026-02-15
 
 ### Changed

@@ -385,17 +385,23 @@ A lifted question "refines" another if it entails the other's properties. -/
 def liftedRefines (lq1 lq2 : LiftedQuestion W) : Prop :=
   ∀ P, lq2 P → lq1 P
 
-/-- Lifting preserves refinement.
+/-- Lifting preserves refinement for refinement-monotone properties.
 
-If Q ⊑ Q' at core level, then lift(Q) refines lift(Q') at lifted level. -/
-theorem lift_preserves_refinement (q q' : GSQuestion W) (h : q ⊑ q') :
-    liftedRefines (lift q) (lift q') := by
-  intro P hP'
+Since `lift q = λ P => P q`, the unrestricted `liftedRefines (lift q) (lift q')`
+reduces to `∀ P, P q' → P q`, which is Leibniz equality — much stronger
+than partition refinement. The correct version restricts to properties
+that are monotone under refinement (finer partitions inherit them).
+
+Counterexample for the unrestricted version: let P = "has exactly 1 cell".
+The trivial partition q' satisfies P, but the identity partition q
+(which refines q') does not. -/
+theorem lift_preserves_refinement (q q' : GSQuestion W) (h : q ⊑ q')
+    (P : QuestionProperty W)
+    (hMono : ∀ q₁ q₂, q₁ ⊑ q₂ → P q₂ → P q₁)
+    (hP' : (lift q') P) :
+    (lift q) P := by
   simp only [lift] at *
-  -- P holds of q', and q refines q'
-  -- We need: refinement-respecting properties transfer
-  -- This is not automatic; it depends on P being "semantic"
-  sorry
+  exact hMono q q' h hP'
 
 -- Answerhood in Lifted Types
 

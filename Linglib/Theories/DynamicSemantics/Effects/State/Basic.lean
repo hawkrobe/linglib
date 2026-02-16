@@ -266,10 +266,9 @@ But "it might not be raining and it's raining" can succeed:
 the might test passes on the initial state, then learning eliminates ¬rain worlds.
 
 TODO: Prove by exhibiting a state with both p-worlds and ¬p-worlds.
-Needs `Nontrivial W` (and classical decidability): for empty or singleton W,
-no state has both p-worlds and ¬p-worlds, making the second conjunct unsatisfiable.
--/
-theorem might_order_matters {W : Type*} :
+Requires `Nontrivial W`: for empty or singleton W, no state has both
+p-worlds and ¬p-worlds, making the second conjunct unsatisfiable. -/
+theorem might_order_matters {W : Type*} [Nontrivial W] :
     ∃ (p : W → Bool) (s : State W),
       Update.conj (Update.prop p) (Update.might (Update.prop λ w => !p w)) s = ∅ ∧
       (Update.conj (Update.might (Update.prop λ w => !p w)) (Update.prop p) s).Nonempty := by

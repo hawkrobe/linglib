@@ -307,6 +307,8 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
+import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
+import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021Bridge
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
@@ -446,6 +448,11 @@ import Linglib.Theories.DynamicSemantics.Systems.PLA.Update
 import Linglib.Theories.DynamicSemantics.Comparisons.PLA_BUS
 import Linglib.Theories.DynamicSemantics.State
 import Linglib.Theories.DynamicSemantics.TeamSemantics
+-- Theories: Decision-Theoretic Semantics (Merin 1999)
+import Linglib.Theories.DTS.Core
+import Linglib.Theories.DTS.ScalarImplicature
+import Linglib.Theories.DTS.But
+import Linglib.Theories.DTS.Even
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Theories.TTR.Core
 import Linglib.Theories.TTR.Discourse

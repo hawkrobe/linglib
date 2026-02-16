@@ -956,14 +956,26 @@ E_VL is bounded by the prior distribution's support.
 axiom G_α_bounded (S : RSAScenarioR) : ∃ B : ℝ, ∀ Spk L,
     (∀ m, ∑ u, Spk m u = 1) → (∀ m u, 0 ≤ Spk m u) → G_α S Spk L ≤ B
 
-/-- G_α is bounded above by log |U| (simplified statement). -/
+/-- G_α is bounded above by log |U| when L is a probability distribution.
+
+The bound requires L to be a valid distribution (non-negative, sums to 1)
+because the utility function `log(L u m)` is non-positive when L u m ∈ (0, 1],
+making E_VL ≤ 0 and thus G_α ≤ H_S ≤ log |U|.
+
+Without hypotheses on L, the bound fails: if L u m > 1 for some u, m,
+then utility = log(L u m) > 0, and E_VL can be arbitrarily large. -/
 theorem G_α_bounded_above (S : RSAScenarioR) (Spk : S.M → S.U → ℝ)
-    (L : S.U → S.M → ℝ) (hSpk : ∀ m, ∑ u, Spk m u = 1) (hSpk_pos : ∀ m u, 0 ≤ Spk m u) :
+    (L : S.U → S.M → ℝ)
+    (hSpk : ∀ m, ∑ u, Spk m u = 1) (hSpk_pos : ∀ m u, 0 ≤ Spk m u)
+    (hL_sum : ∀ u, ∑ m, L u m = 1) (hL_pos : ∀ u m, 0 ≤ L u m)
+    (hα_pos : 0 ≤ S.α) :
     G_α S Spk L ≤ log (Fintype.card S.U) + S.α * 0 := by
-  -- This is a simplification; full proof uses entropy bound + utility bound
-  have ⟨B, hB⟩ := G_α_bounded S
-  -- The RHS is log|U| which is actually the entropy bound
-  -- Full proof would show H_S ≤ log|U| and E_VL ≤ 0 for standard RSA utility
+  -- Proof strategy:
+  -- 1. H_S ≤ log |U| (maximum entropy of distribution over |U| outcomes)
+  -- 2. L u m ∈ [0, 1] (from hL_sum + hL_pos), so log(L u m) ≤ 0
+  -- 3. Therefore utility L m u ≤ 0 for all m, u
+  -- 4. E_VL ≤ 0 (weighted sum of non-positive terms with non-negative weights)
+  -- 5. G_α = H_S + α · E_VL ≤ H_S + α · 0 ≤ log |U|
   sorry
 
 /-- Check if RSA has ε-converged. -/

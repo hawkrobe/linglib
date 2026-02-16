@@ -621,11 +621,12 @@ Non-veridical predicates don't entail their complement.
 
 There exist cases where x believes p but p is false.
 -/
-theorem nonVeridical_not_entails {W E : Type*}
+theorem nonVeridical_not_entails {W E : Type*} [Inhabited W] [Inhabited E]
     (V : DoxasticPredicate W E) (hV : V.veridicality = .nonVeridical) :
     ∃ (agent : E) (p : W → Bool) (w : W) (worlds : List W),
       V.holdsAt agent p w worlds = true ∧ p w = false :=
-  sorry  -- Requires concrete model to exhibit
+  -- Use empty worlds list: boxAt is vacuously true, p w can be false
+  ⟨default, fun _ => false, default, [], by simp [DoxasticPredicate.holdsAt, hV, veridicalityHolds, boxAt]⟩
 
 /--
 Doxastic predicates are closed under known implication.

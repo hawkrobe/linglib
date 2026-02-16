@@ -225,7 +225,7 @@ theorem npq_different_responses {W A : Type*} [Fintype W] [DecidableEq W] [Decid
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
     (p : W → Bool) (h : compareUtility dp actions p = .lt) :
     optimalQuestionType dp actions p = .negative := by
-  sorry
+  simp only [QuestionSemantics.Polarity.optimalQuestionType, h]
 
 /-- **Prediction 2**: Alternative questions are optimal when UV(p) = UV(¬p).
 
@@ -239,7 +239,7 @@ theorem alt_question_neutral_tom {W A : Type*} [Fintype W] [DecidableEq W] [Deci
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
     (p : W → Bool) (h : compareUtility dp actions p = .eq) :
     optimalQuestionType dp actions p = .alternative := by
-  sorry
+  simp only [QuestionSemantics.Polarity.optimalQuestionType, h]
 
 /-- **Prediction 3**: Verum-marked grounding questions signal urgency.
 
@@ -322,7 +322,7 @@ theorem tom_concentration_with_rationality (params : Params) (q : PolarQuestion)
     (dps : List PQDecisionProblem) (worlds : List World)
     (responses : List Response) (actions : List Action) :
     (inferredDP params q dps worlds responses actions).length = dps.length := by
-  sorry
+  simp only [inferredDP, List.length_map, List.length_zip, softmax_length, Nat.min_self]
 
 /-- ToM inference is consistent: normalized distribution sums correctly.
 
@@ -336,7 +336,8 @@ theorem tom_consistency (params : Params) (q : PolarQuestion)
     (dps : List PQDecisionProblem) (worlds : List World)
     (responses : List Response) (actions : List Action) :
     (inferredDPNormalized params q dps worlds responses actions).length = dps.length := by
-  sorry
+  simp only [inferredDPNormalized, RSA.Eval.normalize_length, inferredDP, List.length_map,
+    List.length_zip, softmax_length, Nat.min_self]
 
 
 /-!
