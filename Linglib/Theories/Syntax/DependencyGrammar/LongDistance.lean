@@ -15,7 +15,6 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
-import Linglib.Phenomena.FillerGap.LongDistance
 
 namespace DepGrammar.LongDistance
 

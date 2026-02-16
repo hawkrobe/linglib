@@ -16,7 +16,6 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
-import Linglib.Phenomena.Coordination.Data
 
 namespace DepGrammar.Coordination
 
