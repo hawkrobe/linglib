@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.ProcessingModel
+import Linglib.Core.ProcessingModel
 
 /-!
 # Memory-Surprisal Trade-off Framework

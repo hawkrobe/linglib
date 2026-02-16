@@ -37,7 +37,7 @@ explain the gradient nature of island effects.
 
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Sag2010
-import Linglib.Theories.ProcessingModel
+import Linglib.Core.ProcessingModel
 
 namespace Comparisons.Islands
 

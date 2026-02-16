@@ -6,7 +6,6 @@
 - Consolidated `Core/Interfaces/` (7 files) → `Core/Interface.lean` (single file)
 - Moved `Core/Morphology/{Aspect,Degree,Number,ScaleFromParadigm,StemToLex,Tense}.lean` → `Theories/Morphology/`
 - Flattened `Core/Morphology/MorphRule.lean` → `Core/MorphRule.lean`
-- Moved `Core/ProcessingModel.lean` → `Theories/ProcessingModel.lean`
 - Moved `Core/Verbs.lean` → `Theories/Semantics/Lexical/Verb/VerbEntry.lean`
 - Removed `Theories/Pragmatics/RSA/Implementations/CausalCorrelation.lean`
 - Fixed bibliography entries: Tessler & Franke (2019 PsyArXiv, not 2020 JoS), Scontras & Tonhauser (2025 SuB proceedings), Barnett et al. (2022 article type), Tessler & Goodman (2022 issue number)
