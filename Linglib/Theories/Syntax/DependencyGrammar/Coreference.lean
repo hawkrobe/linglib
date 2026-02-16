@@ -6,7 +6,7 @@ References: Hudson (1990) Ch. 6, Gibson (2025) Ch. 7.
 -/
 
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
-import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interface
 
 namespace DepGrammar.Coreference
 

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 import Linglib.Theories.Semantics.Scope
-import Linglib.Core.Interfaces.BindingSemantics
+import Linglib.Core.Interface
 
 /-!
 # Type Theory with Records — Chapter 8: Type-Based Underspecification

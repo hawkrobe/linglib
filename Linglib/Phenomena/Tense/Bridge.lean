@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Tense.Sharvit
 import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
 import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
-import Linglib.Core.Morphology.Tense
+import Linglib.Theories.Morphology.Tense
 import Linglib.Fragments.English.Tense
 
 /-!

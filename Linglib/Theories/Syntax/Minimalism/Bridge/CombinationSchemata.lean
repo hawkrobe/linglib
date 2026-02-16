@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
-import Linglib.Core.Interfaces.CombinationSchema
+import Linglib.Core.Interface
 
 /-!
 # Classification of Merge into Three Combination Schemata

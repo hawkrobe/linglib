@@ -1,5 +1,5 @@
-import Linglib.Core.Morphology.Degree
-import Linglib.Core.Morphology.ScaleFromParadigm
+import Linglib.Theories.Morphology.Degree
+import Linglib.Theories.Morphology.ScaleFromParadigm
 import Linglib.Fragments.English.Modifiers.Adjectives
 
 /-!

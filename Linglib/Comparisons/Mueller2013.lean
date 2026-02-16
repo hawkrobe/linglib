@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.CombinationSchema
+import Linglib.Core.Interface
 import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller

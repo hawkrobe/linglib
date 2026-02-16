@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.FelicityCondition
+import Linglib.Core.Interface
 import Linglib.Fragments.Mandarin.Particles
 import Mathlib.Data.Rat.Defs
 

@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Core.Interfaces.CombinationSchema
+import Linglib.Core.Interface
 
 /-!
 # Argument Structure Constructions

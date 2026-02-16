@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.Tense
+import Linglib.Theories.Morphology.Tense
 
 /-!
 # Lakoff (1970) Grammaticality Judgments

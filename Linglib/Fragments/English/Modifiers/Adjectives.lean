@@ -23,7 +23,7 @@ Both share scale type and antonym information, but serve different grammatical f
 -/
 
 import Linglib.Core.Basic
-import Linglib.Core.Morphology.Degree
+import Linglib.Theories.Morphology.Degree
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 namespace Fragments.English.Modifiers.Adjectives

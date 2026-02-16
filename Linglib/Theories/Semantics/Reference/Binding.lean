@@ -13,7 +13,7 @@ with the continuation approach (Barker & Shan 2014).
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Core.Interfaces.BindingSemantics
+import Linglib.Core.Interface
 
 namespace Semantics.Reference.Binding
 

@@ -35,7 +35,7 @@ Exceptional cases (yǐwéi's postsupposition) are handled HERE, not in Fragments
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Core.Verbs
+import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 

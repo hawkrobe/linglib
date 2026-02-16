@@ -18,7 +18,7 @@ terminals and branching via the `SemanticStructure` interface.
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Modification
-import Linglib.Core.Interfaces.SemanticStructure
+import Linglib.Core.Interface
 
 namespace Semantics.Montague.Composition
 

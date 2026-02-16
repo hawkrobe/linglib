@@ -1,7 +1,7 @@
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Core.ModalLogic
-import Linglib.Core.Interfaces.FelicityCondition
+import Linglib.Core.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
