@@ -43,10 +43,10 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Theories.Syntax.Minimalism.Phenomena.Coreference
-import Linglib.Theories.Syntax.HPSG.Phenomena.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.Phenomena.CRDC
+import Linglib.Phenomena.Syntax.Minimalism.Coreference
+import Linglib.Phenomena.Syntax.HPSG.Coreference
+import Linglib.Phenomena.Syntax.DependencyGrammar.Coreference
+import Linglib.Phenomena.Syntax.DependencyGrammar.CRDC
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic

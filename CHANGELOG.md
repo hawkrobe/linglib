@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.215.0] - 2026-02-16
+
+### Changed
+- **Theories→Phenomena dependency enforcement**: Moved 86 files out of `Theories/` that violated the `Theories → Fragments → Phenomena` dependency discipline (importing from `Phenomena/`). Files moved to `Phenomena/Syntax/`, `Phenomena/Semantics/`, and `Phenomena/Pragmatics/` preserving their relative structure. Includes RSA paper implementations, NeoGricean bridge files, syntax framework bridge files (CCG, HPSG, Minimalism, DependencyGrammar, ConstructionGrammar), and semantics bridge files (Events, Focus, Presupposition, Entailment, Questions, TypeTheoretic). Full transitive closure computed to ensure no Theories/ file transitively depends on Phenomena/. Zero remaining violations.
+
 ## [0.214.1] - 2026-02-16
 
 ### Added

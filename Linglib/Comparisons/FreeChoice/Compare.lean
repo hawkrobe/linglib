@@ -35,9 +35,9 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 - Fox (2007). Free choice and the theory of scalar implicatures.
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
+import Linglib.Phenomena.Pragmatics.NeoGricean.Implementations.BarLevFox2020
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
+import Linglib.Phenomena.Pragmatics.RSA.Implementations.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
 import Linglib.Comparisons.FreeChoice.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
