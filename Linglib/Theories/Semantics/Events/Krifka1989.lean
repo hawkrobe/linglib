@@ -242,9 +242,9 @@ def krifkaGRADSquare
     (hProp : MeasureProportional θ μ_obj (durationMeasure len)) :
     GRADSquare θ μ_obj (fun e => e.runtime) len :=
   { laxComm := hProp
-    sinc := hSinc
-    objExtensive := hObjExt
-    evExtensive := hEvExt }
+    ext₁ := hObjExt
+    ext₂ := hEvExt
+    sinc := hSinc }
 
 /-- Named lax commutativity for the canonical case:
     `len(e.runtime) = rate * μ_obj(x)` for θ-pairs. -/

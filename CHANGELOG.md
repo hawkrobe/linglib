@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.219.15] - 2026-02-17
+
+### Added
+- `Core/Path.lean`: Spatial path infrastructure — `Path` type (directed trajectory between locations), `PathShape` enum (bounded/unbounded/source PP classification from Zwarts 2005), and `PathShape.toBoundedness` bridge to `Core.Scale.Boundedness`
+- `Events/SpatialTrace.lean`: Spatial trace function σ — the third Krifka/Zwarts dimension alongside τ (temporal) and θ (object)
+  - `SpatialTrace` class: σ as sum homomorphism from events to paths
+  - `instIsSumHomσ`: `IsSumHom` instance for σ (parallels `instIsSumHomRuntime` for τ)
+  - `σ_mereoDim`: injective σ is a `MereoDim` (enables QUA pullback)
+  - `bounded_path_telic`: QUA path predicate → QUA VP (Zwarts 2005: bounded PP → telic VP)
+  - `unbounded_path_atelic`: CUM path predicate → CUM VP (unbounded PP → atelic VP)
+  - `pathShapeToTelicity`: PathShape → Telicity bridge
+  - `telicity_boundedness_agree`: telicity ↔ scale licensing agreement
+  - `LevinClass.pathSpec`: motion verb path annotations (inherently directed → bounded, leave → source, manner-of-motion → neutral)
+
+## [0.219.14] - 2026-02-17
+
+### Changed
+- Factor `LaxMeasureSquare` out of `GRADSquare`: general mereological square (proportional extensive measures + MereoDim + QUA pullback) now lives in `Core/MereoDim.lean` §10; `GRADSquare` extends it with SINC only
+- Move `MeasureProportional` from `Krifka1998.lean` to `Core/MereoDim.lean` §9 (general proportionality structure, not SINC-specific)
+- Redefine `GRADSquare extends LaxMeasureSquare` in `Krifka1998.lean`; derived theorems delegate to `toLaxMeasureSquare`
+
+### Added
+- `LaxMeasureSquare` in `Core/MereoDim.lean` §10: lax commutative square of mereological dimensions with `ExtMeasure` on both arms
+- `LaxMeasureSquare.laxCommutativity`: the defining equation `μ₂(f(e)) = rate * μ₁(x)` for R-pairs
+- `LaxMeasureSquare.mereoDim₁`/`mereoDim₂`: both arms are `MereoDim`
+- `LaxMeasureSquare.qua_pullback₂`: QUA pullback through the composed path
+
 ## [0.219.13] - 2026-02-17
 
 ### Changed

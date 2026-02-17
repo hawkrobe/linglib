@@ -48,6 +48,7 @@ import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.MereoDim
+import Linglib.Core.Path
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
@@ -619,6 +620,7 @@ import Linglib.Theories.Semantics.Events.Agentivity
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Theories.Semantics.Events.RootTypology
+import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 -- Theories: Semantics.Intensional (possible-worlds semantics)

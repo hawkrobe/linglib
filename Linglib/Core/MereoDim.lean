@@ -17,7 +17,7 @@ This file bridges them:
 - **Constructor bridge** (§2): `ExtMeasure` → `MIPDomain`
 - **Structural support** (§3–4): `singleton_qua` ↔ `.closed`, CUM sum extensibility
 
-## The GRAD square (lax commutativity)
+## The lax measure square
 
 The Krifka (1989/1998) linking theory involves two dimension chains:
 
@@ -28,8 +28,9 @@ Events →τ Times    →dur ℚ     (temporal dimension)
 
 These form a square that commutes *laxly*: the two paths Events → ℚ need not
 agree pointwise, but they are related by a proportionality constant (the "rate"
-of gradual change). This is captured by `MeasureProportional.rate` in
-`Events/Krifka1998.lean`.
+of gradual change). This is captured by `MeasureProportional` (§9) and
+`LaxMeasureSquare` (§10) below. The SINC-specific extension `GRADSquare`
+lives in `Events/Krifka1998.lean`.
 
 ## References
 
@@ -270,5 +271,99 @@ theorem qua_pullback_mereoDim_comp {α β γ : Type*}
     {P : γ → Prop} (hP : QUA P) :
     QUA (P ∘ d₂ ∘ d₁) :=
   qua_pullback (hd₂.comp hd₁).toStrictMono hP
+
+-- ════════════════════════════════════════════════════
+-- § 9. Measure Proportionality
+-- ════════════════════════════════════════════════════
+
+/-- Measure proportionality: two measure functions are proportional on pairs
+    related by a relation R. For any R-pair (x,e), μ₂(e) = rate * μ₁(x)
+    for some positive constant `rate`.
+
+    This captures the idealized "constant rate" linking two dimensions:
+    measuring x is proportional to measuring e whenever R relates them.
+    For instance, in Krifka's (1989) telicity theory, eating twice as much
+    food takes twice as long, so the object measure and event duration are
+    proportional on θ-related pairs. -/
+structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (R : α → β → Prop) (μ₁ : α → ℚ) (μ₂ : β → ℚ) where
+  /-- The proportionality constant (rate). -/
+  rate : ℚ
+  /-- The rate is positive. -/
+  rate_pos : 0 < rate
+  /-- For any R-pair, μ₂(e) = rate × μ₁(x). -/
+  proportional : ∀ (x : α) (e : β), R x e → μ₂ e = rate * μ₁ x
+
+-- ════════════════════════════════════════════════════
+-- § 10. Lax Measure Square
+-- ════════════════════════════════════════════════════
+
+/-- A lax commutative square of mereological dimensions:
+
+    ```
+    α →R γ →f β →μ₂ ℚ        (composed path: μ₂ ∘ f)
+    α →──── μ₁ ────→ ℚ       (direct path)
+    ```
+
+    The two paths α → ℚ commute *laxly*: they don't agree pointwise,
+    but are proportional on R-related pairs (via `MeasureProportional`).
+    Both paths are required to be extensive measures (`ExtMeasure`),
+    making them `MereoDim` morphisms that support QUA pullback.
+
+    This is the general mereological square; `GRADSquare` in Krifka1998
+    extends it with strict incrementality (SINC) to derive GRAD. -/
+structure LaxMeasureSquare {α β γ : Type*}
+    [SemilatticeSup α] [SemilatticeSup γ]
+    (R : α → γ → Prop) (μ₁ : α → ℚ)
+    (f : γ → β) (μ₂ : β → ℚ) where
+  /-- Lax commutativity: μ₂(f(e)) = rate * μ₁(x) for R-pairs. -/
+  laxComm : MeasureProportional R μ₁ (μ₂ ∘ f)
+  /-- First arm is an extensive measure. -/
+  ext₁ : ExtMeasure α μ₁
+  /-- Second arm (composed path) is an extensive measure. -/
+  ext₂ : ExtMeasure γ (μ₂ ∘ f)
+
+/-- The defining equation of the lax measure square: for any R-pair (x,e),
+    μ₂(f(e)) = rate * μ₁(x). -/
+theorem LaxMeasureSquare.laxCommutativity {α β γ : Type*}
+    [SemilatticeSup α] [SemilatticeSup γ]
+    {R : α → γ → Prop} {μ₁ : α → ℚ}
+    {f : γ → β} {μ₂ : β → ℚ}
+    (sq : LaxMeasureSquare R μ₁ f μ₂)
+    {x : α} {e : γ} (hR : R x e) :
+    μ₂ (f e) = sq.laxComm.rate * μ₁ x :=
+  sq.laxComm.proportional x e hR
+
+/-- The first arm (direct path) is a `MereoDim` (via ExtMeasure). -/
+theorem LaxMeasureSquare.mereoDim₁ {α β γ : Type*}
+    [SemilatticeSup α] [SemilatticeSup γ]
+    {R : α → γ → Prop} {μ₁ : α → ℚ}
+    {f : γ → β} {μ₂ : β → ℚ}
+    (sq : LaxMeasureSquare R μ₁ f μ₂) :
+    MereoDim μ₁ := by
+  haveI := sq.ext₁
+  exact instMereoDimOfExtMeasure
+
+/-- The second arm (composed path) is a `MereoDim` (via ExtMeasure). -/
+theorem LaxMeasureSquare.mereoDim₂ {α β γ : Type*}
+    [SemilatticeSup α] [SemilatticeSup γ]
+    {R : α → γ → Prop} {μ₁ : α → ℚ}
+    {f : γ → β} {μ₂ : β → ℚ}
+    (sq : LaxMeasureSquare R μ₁ f μ₂) :
+    MereoDim (μ₂ ∘ f) := by
+  haveI := sq.ext₂
+  exact instMereoDimOfExtMeasure
+
+/-- QUA pullback through the composed path: QUA on ℚ pulls back to
+    QUA on γ via the composed measure `μ₂ ∘ f`. -/
+theorem LaxMeasureSquare.qua_pullback₂ {α β γ : Type*}
+    [SemilatticeSup α] [SemilatticeSup γ]
+    {R : α → γ → Prop} {μ₁ : α → ℚ}
+    {f : γ → β} {μ₂ : β → ℚ}
+    (sq : LaxMeasureSquare R μ₁ f μ₂)
+    {P : ℚ → Prop} (hP : QUA P) :
+    QUA (P ∘ μ₂ ∘ f) := by
+  haveI := sq.ext₂
+  exact qua_pullback_mereoDim hP
 
 end Mereology
