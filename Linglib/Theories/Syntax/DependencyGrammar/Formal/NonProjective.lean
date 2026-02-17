@@ -445,8 +445,67 @@ theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     (projection deps root) (projection_nonempty deps root)
     (projection_chain' deps root)
 
+/-- From `linked = true`, extract the witnessing edge and direction. -/
+private theorem linked_exists {deps : List Dependency} {a c : Nat}
+    (h : linked deps a c = true) :
+    ∃ e ∈ deps, (e.headIdx = a ∧ e.depIdx = c) ∨ (e.headIdx = c ∧ e.depIdx = a) := by
+  simp only [linked, List.any_eq_true, Bool.or_eq_true, Bool.and_eq_true,
+             beq_iff_eq] at h
+  obtain ⟨e, he_mem, (⟨h1, h2⟩ | ⟨h1, h2⟩)⟩ := h
+  · exact ⟨e, he_mem, Or.inl ⟨h1, h2⟩⟩
+  · exact ⟨e, he_mem, Or.inr ⟨h1, h2⟩⟩
+
+/-- From `isProjective = true`, the projection of any node in range is an interval. -/
+private theorem projective_interval {t : DepTree} (hproj : isProjective t = true)
+    (i : Nat) (hi : i < t.words.length) :
+    isInterval (projection t.deps i) = true := by
+  simp only [isProjective, List.all_eq_true, List.mem_range, decide_eq_true_eq] at hproj
+  exact hproj i hi
+
+/-- From `hasUniqueHeads = true`, if a node c has any incoming edge, then
+    all incoming edges have the same head. (The edge existence implies
+    c ≠ root, since root has in-degree 0 under `hasUniqueHeads`.) -/
+private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
+    (hwf : hasUniqueHeads t = true) {c : Nat} (hc : c < t.words.length)
+    {e₁ e₂ : Dependency} (he₁ : e₁ ∈ t.deps) (he₂ : e₂ ∈ t.deps)
+    (hd₁ : e₁.depIdx = c) (hd₂ : e₂.depIdx = c) :
+    e₁.headIdx = e₂.headIdx := by
+  -- Both edges are in the filter for c
+  have hf₁ : e₁ ∈ t.deps.filter (·.depIdx == c) :=
+    List.mem_filter.mpr ⟨he₁, beq_iff_eq.mpr hd₁⟩
+  have hf₂ : e₂ ∈ t.deps.filter (·.depIdx == c) :=
+    List.mem_filter.mpr ⟨he₂, beq_iff_eq.mpr hd₂⟩
+  -- Extract from hasUniqueHeads: if c = root then count = 0 else count = 1
+  have hspec : (if c = t.rootIdx then
+      (t.deps.filter (·.depIdx == c)).length == 0
+    else (t.deps.filter (·.depIdx == c)).length == 1) = true := by
+    have hwf' := hwf
+    unfold hasUniqueHeads at hwf'
+    have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
+        (List.range ((List.range t.words.length |>.map fun i =>
+          (t.deps.filter (·.depIdx == i)).length).length)).zip
+          (List.range t.words.length |>.map fun i =>
+            (t.deps.filter (·.depIdx == i)).length) := by
+      rw [List.mem_iff_getElem]
+      simp only [List.length_zip, List.length_range, List.length_map]
+      exact ⟨c, by omega, by simp [List.getElem_zip, List.getElem_range, List.getElem_map]⟩
+    have h := (List.all_eq_true.mp hwf') _ hmem
+    simp only [beq_iff_eq] at h
+    exact h
+  -- c ≠ rootIdx: root has 0 incoming edges, but e₁ is incoming for c
+  have hroot : c ≠ t.rootIdx := by
+    intro heq
+    rw [if_pos heq, beq_iff_eq] at hspec
+    exact absurd hspec (by have := List.length_pos_of_mem hf₁; omega)
+  -- Filter has length 1 (non-root node with unique heads)
+  rw [if_neg hroot, beq_iff_eq] at hspec
+  -- Singleton list: both e₁ and e₂ must equal the single element
+  obtain ⟨x, hx⟩ := List.length_eq_one_iff.mp hspec
+  rw [hx] at hf₁ hf₂
+  rw [List.eq_of_mem_singleton hf₁, List.eq_of_mem_singleton hf₂]
+
 /-- **Projective ⊂ planar** (for well-formed trees): every projective tree
-    with unique heads is planar.
+    with unique heads and no cycles is planar.
     (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges)
 
     The `hasUniqueHeads` precondition is necessary: without it, a node can
@@ -457,16 +516,97 @@ theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     (0,1), (0,2), (1,2), (1,3). Node 2 has two heads (0 and 1).
     All projections are intervals, but linked(0,2) and linked(1,3) cross.
 
+    The `isAcyclic` precondition is necessary: without it, `hasUniqueHeads`
+    allows cycles (e.g., edges (1,2),(2,1) with root=0), and the dominance
+    antisymmetry argument fails.
+
     Proof: by contrapositive. If ¬planar, there exist a < b < c < d with
     edges linking a–c and b–d. Each edge endpoint pair shares a projection
     (the head's). Projectivity makes that projection an interval. The interval
     containing {a, c} must contain b; the interval containing {b, d} must
-    contain c. With unique heads, this creates a cycle in the parent-pointer
-    chain, which is impossible in an acyclic tree. -/
+    contain c. With unique heads, `dominates_to_parent` lifts the intermediate
+    dominance to the other edge's head, creating a dominance cycle v→w→v.
+    By `dominates_antisymm` (acyclicity), v = w, contradicting v < w. -/
 theorem projective_implies_planar (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h : isProjective t = true) : t.isPlanar = true := by
-  sorry
+    (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
+    (hproj : isProjective t = true) : t.isPlanar = true := by
+  by_contra h_np
+  -- Extract crossing: ∃ a b c d with a < b < c < d, linked edges
+  simp only [DepTree.isPlanar] at h_np
+  simp at h_np
+  obtain ⟨a, ha_lt, b, hb_lt, c, hc_lt, d, hd_lt,
+          hab, hbc, hcd, hlink_ac, hlink_bd⟩ := h_np
+  -- Extract edges from linked
+  obtain ⟨e₁, he₁_mem, he₁_dir⟩ := linked_exists hlink_ac
+  obtain ⟨e₂, he₂_mem, he₂_dir⟩ := linked_exists hlink_bd
+  -- Helper: from unique_parent, all edges into node have the same head
+  have mk_parent : ∀ {node head : Nat}, node < t.words.length →
+      ∀ (e_ref : Dependency), e_ref ∈ t.deps → e_ref.headIdx = head →
+      e_ref.depIdx = node → ∀ dep ∈ t.deps, dep.depIdx = node → dep.headIdx = head :=
+    fun hnode e_ref he_ref_mem hh_ref hd_ref dep hdep hdep_node =>
+      (unique_parent_of_hasUniqueHeads hwf hnode he_ref_mem hdep hd_ref hdep_node).symm.trans hh_ref
+  -- Case split on head of edge (a,c) × head of edge (b,d)
+  rcases he₁_dir with ⟨hh₁, hd₁⟩ | ⟨hh₁, hd₁⟩ <;>
+  rcases he₂_dir with ⟨hh₂, hd₂⟩ | ⟨hh₂, hd₂⟩
+  · -- Case (head=a, dep=c) × (head=b, dep=d)
+    have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
+    have hd_in_b := child_mem_projection t.deps b d ⟨e₂, he₂_mem, hh₂, hd₂⟩
+    have hint_a := projective_interval hproj a ha_lt
+    have hint_b := projective_interval hproj b hb_lt
+    have hb_in_a := interval_mem_between _ (projection_chain' t.deps a) hint_a
+      a b c (root_mem_projection t.deps a) hc_in_a hab hbc
+    have hc_in_b := interval_mem_between _ (projection_chain' t.deps b) hint_b
+      b c d (root_mem_projection t.deps b) hd_in_b hbc hcd
+    have h_a_dom_b := dominates_of_mem_projection hb_in_a
+    have h_b_dom_c := dominates_of_mem_projection hc_in_b
+    have h_c_parent := mk_parent hc_lt e₁ he₁_mem hh₁ hd₁
+    have h_b_dom_a := dominates_to_parent h_b_dom_c (Nat.ne_of_lt hbc) h_c_parent
+    exact absurd (dominates_antisymm t hwf hacyc a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
+  · -- Case (head=a, dep=c) × (head=d, dep=b)
+    have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
+    have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
+    have hint_a := projective_interval hproj a ha_lt
+    have hint_d := projective_interval hproj d hd_lt
+    have hb_in_a := interval_mem_between _ (projection_chain' t.deps a) hint_a
+      a b c (root_mem_projection t.deps a) hc_in_a hab hbc
+    have hc_in_d := interval_mem_between _ (projection_chain' t.deps d) hint_d
+      b c d hb_in_d (root_mem_projection t.deps d) hbc hcd
+    have h_a_dom_b := dominates_of_mem_projection hb_in_a
+    have h_d_dom_c := dominates_of_mem_projection hc_in_d
+    have h_c_parent := mk_parent hc_lt e₁ he₁_mem hh₁ hd₁
+    have h_b_parent : ∀ dep ∈ t.deps, dep.depIdx = b → dep.headIdx = d :=
+      mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
+    have h_d_dom_a := dominates_to_parent h_d_dom_c (Nat.ne_of_lt hcd).symm h_c_parent
+    have h_a_dom_d := dominates_to_parent h_a_dom_b (Nat.ne_of_lt hab) h_b_parent
+    exact absurd (dominates_antisymm t hwf hacyc a d h_a_dom_d h_d_dom_a)
+      (Nat.ne_of_lt (Nat.lt_trans (Nat.lt_trans hab hbc) hcd))
+  · -- Case (head=c, dep=a) × (head=b, dep=d)
+    have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
+    have hd_in_b := child_mem_projection t.deps b d ⟨e₂, he₂_mem, hh₂, hd₂⟩
+    have hint_c := projective_interval hproj c hc_lt
+    have hint_b := projective_interval hproj b hb_lt
+    have hb_in_c := interval_mem_between _ (projection_chain' t.deps c) hint_c
+      a b c ha_in_c (root_mem_projection t.deps c) hab hbc
+    have hc_in_b := interval_mem_between _ (projection_chain' t.deps b) hint_b
+      b c d (root_mem_projection t.deps b) hd_in_b hbc hcd
+    have h_c_dom_b := dominates_of_mem_projection hb_in_c
+    have h_b_dom_c := dominates_of_mem_projection hc_in_b
+    exact absurd (dominates_antisymm t hwf hacyc b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
+  · -- Case (head=c, dep=a) × (head=d, dep=b)
+    have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
+    have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
+    have hint_c := projective_interval hproj c hc_lt
+    have hint_d := projective_interval hproj d hd_lt
+    have hb_in_c := interval_mem_between _ (projection_chain' t.deps c) hint_c
+      a b c ha_in_c (root_mem_projection t.deps c) hab hbc
+    have hc_in_d := interval_mem_between _ (projection_chain' t.deps d) hint_d
+      b c d hb_in_d (root_mem_projection t.deps d) hbc hcd
+    have h_c_dom_b := dominates_of_mem_projection hb_in_c
+    have h_d_dom_c := dominates_of_mem_projection hc_in_d
+    have h_b_parent : ∀ dep ∈ t.deps, dep.depIdx = b → dep.headIdx = d :=
+      mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
+    have h_c_dom_d := dominates_to_parent h_c_dom_b (Nat.ne_of_lt hbc).symm h_b_parent
+    exact absurd (dominates_antisymm t hwf hacyc c d h_c_dom_d h_d_dom_c) (Nat.ne_of_lt hcd)
 
 /-- **Planar ⊂ well-nested** (for well-formed trees): every planar tree
     with unique heads is well-nested.
@@ -482,7 +622,7 @@ theorem projective_implies_planar (t : DepTree)
     The parent edges connecting l₂ to v and r₁ to u must cross (one spans
     the region containing the other's endpoint), contradicting planarity. -/
 theorem planar_implies_wellNested (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
+    (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
     (h : t.isPlanar = true) : t.isWellNested = true := by
   sorry
 
