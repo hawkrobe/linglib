@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.219.13] - 2026-02-17
+
+### Changed
+- Close `iterParent_chain_bound` sorry in `DG/Core/Basic.lean`: pigeonhole-based proof that parent-pointer chains of length > n revisit a node, using `nodup_bound` and `ofFn_nodup_of_injective`
+- Close `dominates_antisymm` sorry in `DG/Core/Basic.lean`: full proof that dominance is antisymmetric in well-formed trees (unique heads + acyclic + bounded depIdx)
+- Improve `planar_implies_wellNested` docstring in `NonProjective.lean` with detailed proof sketch identifying required infrastructure (projection disjointness, subtree connectivity, discrete IVT)
+
+### Added
+- Parent-pointer tracing infrastructure in `DG/Core/Basic.lean`: `parentOf_uh`, `iterParent_uh`, `iterParent_add_uh`, `follow_visited_uh`, `follow_step_uh`, `follow_no_parent_uh`, `follow_false_mono`, `follow_false_mono_gen`, `follow_false_of_chain_revisit`, `follow_false_of_cycle`, `isAcyclic_follow_uh`, `parentOf_eq_find_uh`, `parentOf_of_edge_uh`, `dominates_iterParent_uh`, `dominates_depIdx_lt`, `iterParent_chain_lt`
+- `nodup_bound`: pigeonhole principle for bounded nodup lists
+- `ofFn_nodup_of_injective`: `List.ofFn` of injective function is nodup
+
 ## [0.219.12] - 2026-02-17
 
 ### Added
