@@ -1,15 +1,16 @@
-import Mathlib.Probability.ProbabilityMassFunction.Basic
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Rat.Cast.Defs
-import Mathlib.Data.ENNReal.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Algebra.Field.Basic
+import Mathlib.Tactic.FieldSimp
 
 /-!
 # Distribution
 
 Typed probability distributions with compile-time guarantees.
+
+The Mathlib PMF bridge (`toPMF`) lives in `DistributionPMF` to keep
+heavy imports (`ProbabilityMassFunction`, `ENNReal`) out of the main RSA
+import chain (~110 downstream files).
 -/
 
 /-- Exact probability distribution over a finite type using rational arithmetic. -/
@@ -100,23 +101,12 @@ def pure (x : α) [DecidableEq α] : ExactDist α where
   nonneg y := by
     split_ifs
     · exact le_of_lt one_pos
-    · exact le_refl 0
+    · exact le_refl (0 : ℚ)
   sum_one := by
     rw [Fintype.sum_eq_single x]
     · simp only [ite_true]
     · intro y hne
       simp only [hne, ite_false]
-
-/-- Convert ExactDist to Mathlib's PMF. Noncomputable; use for proofs. -/
-noncomputable def toPMF (d : ExactDist α) : PMF α :=
-  PMF.ofFintype (λ x => ENNReal.ofReal (d.mass x : ℝ)) (by
-    simp only [← ENNReal.ofReal_sum_of_nonneg (λ x _ => Rat.cast_nonneg.mpr (d.nonneg x))]
-    simp only [← Rat.cast_sum, d.sum_one, Rat.cast_one, ENNReal.ofReal_one])
-
-/-- PMF probability agrees with ExactDist probability. -/
-theorem toPMF_apply (d : ExactDist α) (x : α) :
-    d.toPMF x = ENNReal.ofReal (d.mass x : ℝ) := by
-  simp only [toPMF, PMF.ofFintype_apply]
 
 end ExactDist
 
