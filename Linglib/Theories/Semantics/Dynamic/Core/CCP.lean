@@ -331,4 +331,95 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
   exact ⟨h hp.1, hp.2⟩
 
 
+-- ═══ Assignment & State Infrastructure ═══
+
+/-- Variable assignment: function from indices to entities. -/
+abbrev Assignment (E : Type*) := Nat → E
+
+namespace Assignment
+
+/-- Assignment update g[n↦d]. -/
+def update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
+  λ m => if m = n then d else g m
+
+@[simp] theorem update_at {E : Type*} (g : Assignment E) (n : Nat) (d : E) :
+    (g.update n d) n = d := by simp [update]
+
+@[simp] theorem update_ne {E : Type*} (g : Assignment E) {n m : Nat} (d : E) (h : m ≠ n) :
+    (g.update n d) m = g m := by simp [update, h]
+
+theorem update_overwrite {E : Type*} (g : Assignment E) (n : Nat) (x y : E) :
+    (g.update n x).update n y = g.update n y := by
+  funext m; simp [update]; split <;> rfl
+
+theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E) (h : n ≠ m) :
+    (g.update n x).update m y = (g.update m y).update n x := by
+  funext k; simp [update]; by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
+
+end Assignment
+
+/-- State: set of world-assignment pairs. -/
+abbrev State (W E : Type*) := Set (W × Assignment E)
+
+/-- State-level CCP: context change potential over world-assignment states.
+    Definitionally equal to `CCP (W × Assignment E)`, so all CCP infrastructure
+    (monoid, neg, might, tests, entailment, Galois connection) applies. -/
+abbrev StateCCP (W E : Type*) := CCP (W × Assignment E)
+
+-- ═══ Distributivity ═══
+
+/-- A CCP is distributive when it processes each element of the input independently:
+    φ(s) = ⋃_{i∈s} φ({i}). -/
+def IsDistributive {P : Type*} (φ : CCP P) : Prop :=
+  ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
+
+/-- `updateFromSat` is always distributive: it filters per-element. -/
+theorem updateFromSat_isDistributive {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+    IsDistributive (updateFromSat sat ψ) := by
+  intro s; ext p; simp only [updateFromSat, Set.mem_setOf_eq]
+  constructor
+  · intro ⟨hp, hsat⟩; exact ⟨p, hp, ⟨rfl, hsat⟩⟩
+  · rintro ⟨i, hi, hpi, hsat⟩; cases hpi; exact ⟨hi, hsat⟩
+
+/-- `CCP.might` is not distributive: the whole-context test can pass while
+    individual-element tests fail.
+
+    Witness: P = Bool, φ keeps only `true`.
+    `might φ {true, false} = {true, false}` (whole-context test passes),
+    but per-singleton: `might φ {false} = ∅` (test fails on false-only context).
+    So `false` is in the whole-context result but not the distributive union. -/
+theorem might_not_isDistributive :
+    ∃ (P : Type) (φ : CCP P), ¬IsDistributive (CCP.might φ) := by
+  use Bool
+  let φ : CCP Bool := λ s => {p ∈ s | p = true}
+  use φ
+  intro hD
+  let s : Set Bool := {true, false}
+  have hφ_nonempty : (φ s).Nonempty := by
+    refine ⟨true, ?_, rfl⟩
+    show true ∈ s
+    exact Or.inl rfl
+  have hmem : false ∈ CCP.might φ s := by
+    simp only [CCP.might, hφ_nonempty, ↓reduceIte]
+    show false ∈ s
+    exact Or.inr rfl
+  rw [hD s] at hmem
+  obtain ⟨i, hi, hmem_i⟩ := hmem
+  simp only [CCP.might] at hmem_i
+  split at hmem_i
+  · next hne =>
+    cases hi with
+    | inl h =>
+      subst h
+      have : false ∈ ({true} : Set Bool) := hmem_i
+      change false = true at this
+      exact absurd this (by decide)
+    | inr h =>
+      subst h
+      obtain ⟨x, hx_mem, hx_val⟩ := hne
+      change x = false at hx_mem
+      subst hx_mem
+      exact absurd hx_val (by decide)
+  · exact hmem_i
+
 end Semantics.Dynamic.Core

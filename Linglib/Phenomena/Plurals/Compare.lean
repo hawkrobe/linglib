@@ -51,8 +51,8 @@ theorem subtype_blocks_pseudo :
     Specifically, dependent indefinites cannot be typed as `StateCCP`.
     [sorry: need to show dependent indefinite semantics is not expressible as StateCCP] -/
 theorem dependent_indefinites_need_extra {W E : Type*} :
-    ¬ ∀ (depIndef : Semantics.Dynamic.Charlow2019.StateCCP W E),
-      Semantics.Dynamic.Charlow2019.isDistributive depIndef := by
+    ¬ ∀ (depIndef : Semantics.Dynamic.Core.StateCCP W E),
+      Semantics.Dynamic.Core.IsDistributive depIndef := by
   sorry
 
 end Phenomena.Plurals.Compare

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.Charlow2019
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 /-!
 # Pointwise ↔ Update-Theoretic Bridge
@@ -25,7 +25,7 @@ Cumulative readings require non-distributive M_v, which lives only in `StateCCP`
 namespace Semantics.Dynamic.Core.PointwiseUpdate
 
 open Semantics.Dynamic.Core.DynamicTy2
-open Semantics.Dynamic.Charlow2019
+open Semantics.Dynamic.Core
 
 variable {W E : Type*}
 
@@ -79,7 +79,7 @@ theorem liftPW_injective [Nonempty W] (D₁ D₂ : DRS (Assignment E))
     matching world `p.1 = q.1`. This is exactly the singleton decomposition
     `(↑D)(s) = ⋃_{i∈s} (↑D)({i})`, which is the definition of distributivity. -/
 theorem liftPW_preserves_distributive (D : DRS (Assignment E)) :
-    isDistributive (liftPW (W := W) D) := by
+    IsDistributive (liftPW (W := W) D) := by
   intro s; ext p
   constructor
   · intro hp

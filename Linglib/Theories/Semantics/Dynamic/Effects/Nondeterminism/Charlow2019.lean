@@ -13,33 +13,12 @@ are retained.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 namespace Semantics.Dynamic.Charlow2019
 
 open DPL
-
-abbrev Assignment (E : Type*) := Nat → E
-
-/-- Assignment update g[n↦d]. -/
-def Assignment.update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
-  λ m => if m = n then d else g m
-
-@[simp] theorem update_at {E : Type*} (g : Assignment E) (n : Nat) (d : E) :
-    (g.update n d) n = d := by simp [Assignment.update]
-
-@[simp] theorem update_ne {E : Type*} (g : Assignment E) {n m : Nat} (d : E) (h : m ≠ n) :
-    (g.update n d) m = g m := by simp [Assignment.update, h]
-
-/-- Overwrite: (g[n↦x])[n↦y] = g[n↦y] (§3). -/
-theorem update_overwrite {E : Type*} (g : Assignment E) (n : Nat) (x y : E) :
-    (g.update n x).update n y = g.update n y := by
-  funext m; simp [Assignment.update]; split <;> rfl
-
-/-- Non-overlapping updates commute. -/
-theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E) (h : n ≠ m) :
-    (g.update n x).update m y = (g.update m y).update n x := by
-  funext k; simp [Assignment.update]
-  by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
+open Semantics.Dynamic.Core
 
 /-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
 def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=
@@ -126,16 +105,6 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
             e₁, ?_, by simp⟩
     funext n; dsimp [h, g, Assignment.update]; split <;> rfl
 
-/-- A state: set of world-assignment pairs. -/
-abbrev State (W E : Type*) := Set (W × Assignment E)
-
-/-- State-level meaning (context change potential). -/
-abbrev StateCCP (W E : Type*) := State W E → State W E
-
-/-- Distributive: ⟦φ⟧s = ⋃_{i∈s} ⟦φ⟧{i} (Charlow's (25)). -/
-def isDistributive {W E : Type*} (φ : StateCCP W E) : Prop :=
-  ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
-
 /-- Non-distributive negation (28): removes from s points that survive φ. -/
 def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
   λ s => {i ∈ s | i ∉ φ s}
@@ -143,54 +112,6 @@ def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
 /-- Distributive negation (29): tests each point individually. -/
 def stateDistNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
   λ s => {i ∈ s | φ {i} = ∅}
-
-/-- Epistemic 'might' (27): non-distributive test on the whole state.
-
-Delegates to `Core.CCP.might` at type `W × Assignment E`.
--/
-noncomputable def stateMight {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
-  Semantics.Dynamic.Core.CCP.might φ
-
-/-- 'might' is non-distributive.
-
-    Witness: `W = Bool`, `E = Unit`, `φ` keeps only true-world pairs.
-    `stateMight φ {(true,g),(false,g)} = {(true,g),(false,g)}` (whole-context test passes),
-    but per-singleton: `stateMight φ {(false,g)} = ∅` (test fails on false-only context).
-    So `(false,g)` is in the whole-context result but not the distributive union. -/
-theorem might_not_distributive :
-    ∃ (W E : Type) (φ : StateCCP W E), ¬isDistributive (stateMight φ) := by
-  use Bool, Unit
-  let φ : StateCCP Bool Unit := λ s => {p ∈ s | p.1 = true}
-  use φ
-  intro hD
-  let g : Assignment Unit := λ _ => ()
-  let s : State Bool Unit := {(true, g), (false, g)}
-  have hφ_nonempty : (φ s).Nonempty := by
-    refine ⟨(true, g), ?_, rfl⟩
-    show (true, g) ∈ s
-    exact Or.inl rfl
-  have hmem : (false, g) ∈ stateMight φ s := by
-    simp only [stateMight, Semantics.Dynamic.Core.CCP.might, hφ_nonempty, ↓reduceIte]
-    show (false, g) ∈ s
-    exact Or.inr rfl
-  rw [hD s] at hmem
-  obtain ⟨i, hi, hmem_i⟩ := hmem
-  simp only [stateMight, Semantics.Dynamic.Core.CCP.might] at hmem_i
-  split at hmem_i
-  · next hne =>
-    cases hi with
-    | inl h =>
-      subst h
-      have : (false, g) ∈ ({(true, g)} : Set _) := hmem_i
-      change (false, g) = (true, g) at this
-      exact absurd (congr_arg Prod.fst this) (by decide)
-    | inr h =>
-      subst h
-      obtain ⟨x, hx_mem, hx_fst⟩ := hne
-      change x = (false, g) at hx_mem
-      subst hx_mem
-      exact absurd hx_fst (by decide)
-  · exact hmem_i
 
 /-- Partition by assignment: groups points sharing the same assignment (Charlow's (35)). -/
 def partByAssignment {W E : Type*} (s : State W E) : Set (State W E) :=
@@ -202,7 +123,7 @@ def anaphoricallyDistributive {W E : Type*} (φ : StateCCP W E) : Prop :=
 
 /-- Every distributive meaning is anaphorically distributive. -/
 theorem distributive_implies_anaphoric {W E : Type*} (φ : StateCCP W E) :
-    isDistributive φ → anaphoricallyDistributive φ := by
+    IsDistributive φ → anaphoricallyDistributive φ := by
   intro hD s
   ext p; simp only [Set.mem_setOf_eq]
   constructor
