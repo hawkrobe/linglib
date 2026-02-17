@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.219.5] - 2026-02-17
+
+### Changed
+- Close `mem_projection_of_dominates` sorry: prove forward bridge Dominates → BFS membership
+- Prove `dominates_iff_mem_projection`: full bidirectional bridge between Prop-level dominance and BFS projection
+- Add BFS infrastructure: `go_mono_fuel`, `filter_split_at_node`, `go_children_complete`, `projection_closed_under_children`, `filter_length_le_of_imp`
+
+## [0.219.4] - 2026-02-17
+
+### Added
+- Formalize Tsilia, Zhao & Sharvit (2026) "Tense and Perspective": presuppositional tense theory
+- Add `Theories/Semantics/Tense/TsiliaEtAl2026.lean`: tense presuppositions, OP_π, ⌈then⌉ presupposition, PrProp bridge
+- Create tense→presupposition import edge (`Core.Presupposition`)
+- Add `thenPresentIncompatibility` to `TensePhenomenon`, `hasPresuppositionalTense` to `TenseTheory`
+- Add cross-linguistic `ThenAdverb` Fragment entries for 7 languages (English, German, Mandarin, Japanese, Greek, Russian, Hebrew)
+- Extend `Comparisons/TenseTheories.lean` with presuppositional comparison (10 theories)
+
+### Changed
+- Rename `Perspective.lean` → `ParticipantPerspective.lean` to disambiguate participant perspective (Lakoff 1970) from temporal perspective (π)
+- Refactor `ThenPresentBridge.lean`: move `ThenAdverb` type to `Basic.lean`, move per-language entries to Fragment files
+
+## [0.219.3] - 2026-02-17
+
+### Added
+- Formalize Zhao (2026) cross-domain parallels: ATOM-DIST, degree events, then-present puzzle
+- Add `Core/AtomicDistributivity.lean`: domain-parameterized ATOM-DIST_α (Zhao Def. 5.3), EvQuant, antiAtomDistLicensed
+- Add `Theories/Semantics/Events/DegreeEvents.lean`: DegreeEv with degree trace τ_d, ComparisonRole ([STD], [TAR], [DIFF])
+- Add `Fragments/Mandarin/AspectComparison.lean`: cross-domain particles le, guo, mei-you with NOT-ATOM-DIST_α licensing
+- Add `Phenomena/Aspect/CrossDomainBridge.lean`: VendlerClass ↔ ATOM-DIST_t bridge, le licensing prediction
+- Add `Phenomena/Tense/ThenPresentBridge.lean`: then-present incompatibility theorem via Kiparsky's perspective parameter
+
 ## [0.219.2] - 2026-02-17
 
 ### Fixed
