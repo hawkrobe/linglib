@@ -50,7 +50,7 @@ structure Variable where
   name : String
   deriving DecidableEq, Hashable, Repr, BEq, Inhabited
 
-@[simp] theorem Variable.beq_def (a b : Variable) :
+theorem Variable.beq_def (a b : Variable) :
     (a == b) = decide (a = b) := by
   cases a with | mk na =>
   cases b with | mk nb =>

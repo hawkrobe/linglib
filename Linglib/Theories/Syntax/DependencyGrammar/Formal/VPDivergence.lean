@@ -90,8 +90,12 @@ theorem exists_catena_not_constituent
     isCatena deps [v] = true ∧ ¬ (projection deps v = [v]) := by
   constructor
   · exact singleton_isCatena deps v
-  · -- projection(v) ≠ [v] because w ∈ projection(v)
-    sorry
+  · -- projection(v) ≠ [v] because w ∈ projection(v) and w ≠ v
+    intro heq
+    have hw : w ∈ projection deps v := child_mem_projection deps v w hedge
+    rw [heq] at hw
+    simp at hw
+    exact hvw hw.symm
 
 -- ============================================================================
 -- Section 2: Minimal PSTree Type
