@@ -126,6 +126,12 @@ import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Attitudes.IntensionalExamplesBridge
 import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.Bridging
+import Linglib.Phenomena.Anaphora.Bridge_DG_CRDC
+import Linglib.Phenomena.Anaphora.Bridge_DG_Coreference
+import Linglib.Phenomena.Anaphora.Bridge_DG_Nominal
+import Linglib.Phenomena.Anaphora.Bridge_HPSG
+import Linglib.Phenomena.Anaphora.Bridge_Minimalism
+import Linglib.Phenomena.Anaphora.Bridge_TypeTheoretic
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -322,12 +328,12 @@ import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Theories.Syntax.CCG.Bridge.Interface
 import Linglib.Theories.Syntax.CCG.Bridge.Homomorphism
 import Linglib.Theories.Syntax.CCG.Bridge.Derivation
-import Linglib.Phenomena.Syntax.CCG.Bridge_CCG_Agreement
-import Linglib.Phenomena.Syntax.CCG.Bridge_CCG_Coordination
+import Linglib.Phenomena.Agreement.Bridge_CCG
+import Linglib.Phenomena.Coordination.Bridge_CCG
 import Linglib.Theories.Syntax.CCG.CrossSerial
-import Linglib.Phenomena.Syntax.CCG.Bridge_CCG_Derivations
+import Linglib.Phenomena.WordOrder.Bridge_CCG_Derivations
 import Linglib.Theories.Syntax.CCG.Gapping
-import Linglib.Phenomena.Syntax.CCG.Bridge_CCG_TruthConditions
+import Linglib.Phenomena.Entailment.Bridge_CCG
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
 import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
@@ -382,12 +388,12 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
-import Linglib.Phenomena.Syntax.DependencyGrammar.Bridge_DG_MemorySurprisal
+import Linglib.Phenomena.WordOrder.Bridge_DG_MemorySurprisal
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.Syntax.DependencyGrammar.Bridge_DG_Inversion
+import Linglib.Phenomena.WordOrder.Bridge_DG_Inversion
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 -- Theories: Dynamic Semantics
@@ -458,7 +464,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Phenomena.Syntax.ConstructionGrammar.Bridge_CxG_KayFillmore1999
+import Linglib.Phenomena.Constructions.Bridge_CxG_KayFillmore1999
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 -- Theories: HPSG
@@ -482,7 +488,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.FromFragments
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
-import Linglib.Phenomena.Syntax.Minimalism.Bridge_Minimalism_Allocutivity
+import Linglib.Phenomena.Politeness.Bridge_Minimalism_Allocutivity
 import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
@@ -553,14 +559,14 @@ import Linglib.Theories.Semantics.Montague.PTQ
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Monotonicity
-import Linglib.Phenomena.Semantics.Entailment.Bridge_Entailment_NegationTests
+import Linglib.Phenomena.Entailment.Bridge_Entailment_NegationTests
 import Linglib.Theories.Semantics.Entailment.PolarityBuilder
 import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Polarity.CzechNegation
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
-import Linglib.Phenomena.Semantics.Focus.Bridge_Focus_DomainWidening
+import Linglib.Phenomena.Focus.Bridge_Focus_DomainWidening
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
