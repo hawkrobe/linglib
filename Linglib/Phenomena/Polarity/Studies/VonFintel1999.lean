@@ -17,7 +17,7 @@ classically downward entailing. Von Fintel's Strawson-DE explains why,
 but the data here is pre-theoretical.
 -/
 
-namespace Phenomena.Polarity.VonFintel1999
+namespace Phenomena.Polarity.Studies.VonFintel1999
 
 -- ============================================================================
 -- Datum Structure
@@ -216,4 +216,4 @@ def notClassicallyDEExamples : List StrawsonDEDatum :=
 -- This is the empirical puzzle that Strawson-DE resolves
 #guard npiLicensingExamples.all (λ d => d.grammatical && !d.isClassicallyDE)
 
-end Phenomena.Polarity.VonFintel1999
+end Phenomena.Polarity.Studies.VonFintel1999

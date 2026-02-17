@@ -55,7 +55,7 @@ Dependency chain:
   "semantic parameter."
 -/
 
-namespace Phenomena.Quantification.MeasurePhrases.Scontras2014
+namespace Phenomena.Quantification.Scontras2014
 
 open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading predictsQU)
 open Fragments.English.MeasurePhrases
@@ -329,4 +329,4 @@ theorem locative_context_yields_not_QU :
       predictsQU d.noun.nounClass (some d.forcedReading) = false := by
   simp [allDisambiguations]; decide
 
-end Phenomena.Quantification.MeasurePhrases.Scontras2014
+end Phenomena.Quantification.Scontras2014

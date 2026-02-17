@@ -30,7 +30,7 @@ Vagueness arises from degree semantics + threshold uncertainty:
 - Lassiter, D. & Goodman, N. (2017). Adjectival vagueness in a Bayesian model.
 -/
 
-import Linglib.Phenomena.Gradability.Basic
+import Linglib.Phenomena.Gradability.Data
 
 namespace Phenomena.Gradability.Vagueness
 

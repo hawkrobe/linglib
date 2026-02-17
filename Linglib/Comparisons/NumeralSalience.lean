@@ -1,10 +1,10 @@
 import Linglib.Core.Roundness
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Phenomena.Numerals.WoodinEtAl2024
+import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
 import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Phenomena.Numerals.ClausWalch2024
+import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
@@ -50,7 +50,7 @@ WoodinEtAl2024    NumericalExprs    (extended)
 namespace Comparisons.NumeralSalience
 
 open Core.Roundness
-open Phenomena.Numerals.WoodinEtAl2024
+open Phenomena.Numerals.Studies.WoodinEtAl2024
 open NeoGricean.Constraints.NumericalExpressions
 open Semantics.Lexical.Numeral.Precision
 open Core.Scale (HasDegree)
@@ -235,7 +235,7 @@ The prediction: negative valence → reversed framing, positive/neutral → stan
 section Bridge7
 
 open Fragments.English.NumeralModifiers
-open Phenomena.Numerals.ClausWalch2024
+open Phenomena.Numerals.Studies.ClausWalch2024
 
 /-- "at most" has negative evaluative valence, which predicts reversed framing.
 

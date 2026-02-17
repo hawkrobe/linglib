@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Modality.ConditionalModality.Data
+import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
 import Mathlib.Data.Rat.Cast.Order
 
 /-!

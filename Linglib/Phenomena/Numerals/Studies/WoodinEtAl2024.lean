@@ -26,7 +26,7 @@ interacts with communicative goals.
   turn-taking points.
 -/
 
-namespace Phenomena.Numerals.WoodinEtAl2024
+namespace Phenomena.Numerals.Studies.WoodinEtAl2024
 
 open Core.Roundness
 
@@ -151,4 +151,4 @@ def nonInformationalEffect : RegisterEffectDatum :=
   , notes := "Fiction/conversation show weaker roundness effects; approximate use less marked"
   }
 
-end Phenomena.Numerals.WoodinEtAl2024
+end Phenomena.Numerals.Studies.WoodinEtAl2024

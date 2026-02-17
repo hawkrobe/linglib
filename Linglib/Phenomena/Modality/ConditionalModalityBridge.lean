@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Modality.ConditionalModality.Data
+import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
 
 /-!
 # Conditional Modality Bridge — Kratzer 2012 §2.9 Derivations

@@ -177,7 +177,7 @@ import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
 import Linglib.Phenomena.Coordination.Typology
 import Linglib.Phenomena.Coordination.Conjectures
-import Linglib.Phenomena.WordOrder.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
@@ -194,7 +194,7 @@ import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Gradability.Adjectives
-import Linglib.Phenomena.Gradability.Basic
+import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Evaluativity
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
@@ -207,19 +207,19 @@ import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
 import Linglib.Phenomena.Imprecision.InferencePreservation
 import Linglib.Phenomena.Imprecision.Numerals
-import Linglib.Phenomena.Numerals.WoodinEtAl2024
+import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Projection
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.Nonliteral.Metaphor.Studies.KaoBergenGoodman2014
-import Linglib.Phenomena.Numerals.ClausWalch2024
+import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
 import Linglib.Phenomena.Numerals.Embedding
-import Linglib.Phenomena.Quantification.MeasurePhrases.BaleSchwarz2026Bridge
-import Linglib.Phenomena.Quantification.MeasurePhrases.Scontras2014Bridge
-import Linglib.Phenomena.Modality.ConditionalModality.Data
-import Linglib.Phenomena.Modality.ConditionalModality.Bridge
+import Linglib.Phenomena.Quantification.BaleSchwarz2026Bridge
+import Linglib.Phenomena.Quantification.Scontras2014Bridge
+import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
+import Linglib.Phenomena.Modality.ConditionalModalityBridge
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Phenomena.Modality.ModalConcord.Bridge
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
@@ -240,7 +240,7 @@ import Linglib.Phenomena.Negation.ExpletiveNegationBridge
 import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.CzechThreeWayNeg
-import Linglib.Phenomena.Negation.CzechThreeWayNeg.TypologyBridge
+import Linglib.Phenomena.Negation.CzechThreeWayNegTypologyBridge
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Morphology.Composition
 import Linglib.Phenomena.Morphology.DegreeComposition
@@ -256,7 +256,7 @@ import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
-import Linglib.Phenomena.Polarity.VonFintel1999
+import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025Bridge
@@ -317,7 +317,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.Gradience
-import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
+import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Tense.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 

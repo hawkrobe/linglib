@@ -36,7 +36,7 @@ explain the gradient nature of island effects.
 -/
 
 import Linglib.Phenomena.FillerGap.Islands.Data
-import Linglib.Phenomena.FillerGap.Sag2010
+import Linglib.Phenomena.FillerGap.Studies.Sag2010
 import Linglib.Core.ProcessingModel
 
 namespace Comparisons.Islands
@@ -355,11 +355,11 @@ GAP restrictions, not universal Subjacency. This means:
 This is exactly the division of labor the processing comparison reveals:
 grammar determines structural possibility, processing determines ease.
 
-The Sag 2010 F-G typology (`Phenomena.FillerGap.Sag2010`) classifies which
+The Sag 2010 F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) classifies which
 constructions are islands. The processing model explains **within-island**
 gradient effects (filler complexity, NP type). -/
 
-open Phenomena.FillerGap.Sag2010
+open Phenomena.FillerGap.Studies.Sag2010
 
 /-- Sag's two island constructions are a proper subset of all F-G types.
 The non-island types (interrogative, relative, the-clause) freely permit
@@ -434,7 +434,7 @@ for weight-free ordinal comparison.
 
 ### Connection to Sag (2010)
 
-Sag's F-G typology (`Phenomena.FillerGap.Sag2010`) identifies grammar-based
+Sag's F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) identifies grammar-based
 islands (topicalization, exclamatives with `[GAP ⟨⟩]`). H&S 2010 covers
 processing-based islands (CNPC, wh-islands). Lu et al. 2025 covers
 discourse-based islands (MoS). Together they provide a three-mechanism account.

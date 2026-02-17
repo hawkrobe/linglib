@@ -21,7 +21,7 @@ teleological necessity.
 Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.8.
 -/
 
-namespace Phenomena.Modality.PracticalReasoning
+namespace Phenomena.Modality.PracticalReasoningBridge
 
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer
@@ -89,4 +89,4 @@ theorem efficiency_refines (w : World) :
 theorem harlem_uses_teleological :
     TeleologicalFlavor.flavorTag = ModalFlavor.circumstantial := rfl
 
-end Phenomena.Modality.PracticalReasoning
+end Phenomena.Modality.PracticalReasoningBridge
