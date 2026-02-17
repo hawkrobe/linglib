@@ -537,7 +537,7 @@ import Linglib.Theories.Semantics.Probabilistic.Frames.Basic
 import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
-import Linglib.Theories.Semantics.SyntaxInterface
+import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
