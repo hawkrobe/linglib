@@ -445,34 +445,46 @@ theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     (projection deps root) (projection_nonempty deps root)
     (projection_chain' deps root)
 
-/-- **Projective ⊂ planar**: every projective tree is planar.
+/-- **Projective ⊂ planar** (for well-formed trees): every projective tree
+    with unique heads is planar.
     (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges)
 
-    Proof approach: if d₁ = (a, c) and d₂ = (b, d) with a < b < c < d cross,
-    then b is in π(a) but not adjacent to a's other dependents — contradicting
-    that π(a) is an interval containing both a and c but not all of [a..c].
-    Formalizing this requires relating edge spans to projection membership. -/
-theorem projective_implies_planar (t : DepTree)
-    (h : isProjective t = true) : t.isPlanar = true := by
-  sorry -- TODO: Requires `projection_subset_dominates` (x ∈ projection v → Dominates v x)
-        -- to show that b ∉ projection(a) when b is not dominated by a.
-        -- Proof by contrapositive: ¬planar → crossing edges (a,c) (b,d) with a<b<c<d
-        -- → if projection(b) is interval [b..d], it contains c, but c is only
-        -- dominated by a (not b) in a tree → contradiction with interval property.
+    The `hasUniqueHeads` precondition is necessary: without it, a node can
+    have two heads, and the resulting multi-headed graph can be projective
+    (all projections are intervals) yet non-planar (edges cross).
 
-/-- **Planar ⊂ well-nested**: every planar tree is well-nested.
-    A graph with interleaving subtrees cannot be drawn without crossing edges.
+    **Counterexample without `hasUniqueHeads`**: 4 nodes, edges
+    (0,1), (0,2), (1,2), (1,3). Node 2 has two heads (0 and 1).
+    All projections are intervals, but linked(0,2) and linked(1,3) cross.
+
+    Proof: by contrapositive. If ¬planar, there exist a < b < c < d with
+    edges linking a–c and b–d. Each edge endpoint pair shares a projection
+    (the head's). Projectivity makes that projection an interval. The interval
+    containing {a, c} must contain b; the interval containing {b, d} must
+    contain c. With unique heads, this creates a cycle in the parent-pointer
+    chain, which is impossible in an acyclic tree. -/
+theorem projective_implies_planar (t : DepTree)
+    (hwf : hasUniqueHeads t = true)
+    (h : isProjective t = true) : t.isPlanar = true := by
+  sorry
+
+/-- **Planar ⊂ well-nested** (for well-formed trees): every planar tree
+    with unique heads is well-nested.
     (Kuhlmann & Nivre 2006, §3.5)
 
-    Proof approach: if π(u) and π(v) interleave with l₁ < l₂ < r₁ < r₂,
-    there must be edges on the path from l₂ to v and from r₁ to u that cross,
-    contradicting planarity. -/
+    The `hasUniqueHeads` precondition ensures the dependency structure is
+    a tree, so that disjoint nodes have disjoint projections.
+
+    Proof: by contrapositive. If ¬wellNested, there exist disjoint nodes
+    u, v with interleaving projections: l₁ ∈ π(u), l₂ ∈ π(v), r₁ ∈ π(u),
+    r₂ ∈ π(v) with l₁ < l₂ < r₁ < r₂. With unique heads, projections of
+    disjoint nodes are disjoint sets (each node has a unique path to root).
+    The parent edges connecting l₂ to v and r₁ to u must cross (one spans
+    the region containing the other's endpoint), contradicting planarity. -/
 theorem planar_implies_wellNested (t : DepTree)
+    (hwf : hasUniqueHeads t = true)
     (h : t.isPlanar = true) : t.isWellNested = true := by
-  sorry -- TODO: Requires Prop-level `Dominates` (via Relation.ReflTransGen) +
-        -- `projection_subset_dominates` to show that interleaving projections
-        -- force crossing paths in the tree. Substantially harder than
-        -- projective_implies_planar because dominance paths must cross.
+  sorry
 
 /-- Dutch cross-serial witnesses the gap: non-projective yet well-nested.
     (Kuhlmann & Nivre 2006, §4: 99.89% of treebank data is well-nested) -/

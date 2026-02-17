@@ -286,9 +286,19 @@ theorem hmc_violation_diagnostic (root : SyntacticObject)
   intro h
   cases h
 
--- Placeholder predicates for diagnostic properties
-def hasMultiplePronunciations (_x _root : SyntacticObject) : Prop := sorry
-def isComplexMorphologicalWord (_x : SyntacticObject) : Prop := sorry
+/-- An SO `x` has multiple pronunciations in `root` if `x` appears more than
+    once as a subterm of `root`. Under copy theory, Internal Merge creates
+    copies; verb doubling = multiple copies pronounced. -/
+def hasMultiplePronunciations (x root : SyntacticObject) : Prop :=
+  ((subterms root).filter (· == x)).length > 1
+
+/-- An SO is a complex morphological word if it is a leaf whose `LexicalItem`
+    has more than one feature bundle (i.e., was produced by `LexicalItem.combine`
+    during head-to-head amalgamation). -/
+def isComplexMorphologicalWord (x : SyntacticObject) : Prop :=
+  match x with
+  | .leaf tok => tok.item.isComplex = true
+  | .node _ _ => False
 
 /-- Verb doubling (multiple copies pronounced) implies syntactic movement -/
 axiom verb_doubling_implies_syntactic :

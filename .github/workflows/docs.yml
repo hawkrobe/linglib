@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,8 +50,38 @@ jobs:
       - name: Build project
         run: lake build
 
-      - name: Build documentation
-        run: lake build Linglib:docs
+      - name: Build documentation (Linglib only, skip Mathlib)
+        run: |
+          # Build doc-gen4 executable
+          lake build doc-gen4
+
+          BUILD=.lake/build
+          DOCGEN="$BUILD/bin/doc-gen4"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          COMMIT="${{ github.sha }}"
+          SRC_URI="$REPO_URL/blob/$COMMIT"
+
+          # Bib prepass (--none if no bib file)
+          if [ -f docs/references.bib ]; then
+            $DOCGEN bibPrepass --build "$BUILD" docs/references.bib
+          elif [ -f docs/references.json ]; then
+            $DOCGEN bibPrepass --build "$BUILD" --json docs/references.json
+          else
+            $DOCGEN bibPrepass --build "$BUILD" --none
+          fi
+
+          # Generate docs for each Linglib module only (skip Mathlib/Init/Std/Lean)
+          find Linglib -name '*.lean' | sort | while read -r f; do
+            mod=$(echo "$f" | sed 's|/|.|g; s|\.lean$||')
+            echo "  doc: $mod"
+            $DOCGEN single --build "$BUILD" "$mod" "$SRC_URI/$f" || true
+          done
+
+          # Generate core docs for Init only (needed for basic type links)
+          $DOCGEN genCore --build "$BUILD" Init || true
+
+          # Build the search index
+          $DOCGEN index --build "$BUILD"
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3

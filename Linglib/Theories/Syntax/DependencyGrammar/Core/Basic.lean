@@ -206,12 +206,16 @@ private theorem root_mem_go (deps : List Dependency) (root : Nat) :
   rw [this]; simp only [projection.go, List.contains_nil]
   exact go_visited_subset deps _ _ _ root (List.mem_cons.mpr (Or.inl rfl))
 
+/-- root is always in its own projection. -/
+theorem root_mem_projection (deps : List Dependency) (root : Nat) :
+    root ∈ projection deps root := by
+  unfold projection
+  exact (List.mergeSort_perm _ (· ≤ ·)).mem_iff.mpr (root_mem_go deps root)
+
 /-- The output of `projection` is non-empty (root is always included). -/
 theorem projection_nonempty (deps : List Dependency) (root : Nat) :
     projection deps root ≠ [] := by
-  unfold projection; intro h
-  have hmem := (List.mergeSort_perm _ (· ≤ ·)).mem_iff.mpr (root_mem_go deps root)
-  rw [h] at hmem; simp at hmem
+  intro h; have := root_mem_projection deps root; rw [h] at this; simp at this
 
 /-- BFS with empty queue returns visited unchanged. -/
 private theorem go_empty_queue (deps : List Dependency)
@@ -499,6 +503,75 @@ theorem blocks_length_eq_gaps_length_succ (ls : List Nat)
     · have hba : b = a + 1 := by omega
       simp only [hgap, ↓reduceIte]
       rw [blocks_length_cons_succ a b rest hba, ih hb_ne]
+
+/-- For a strictly increasing interval list, every integer in [head!, getLast!]
+    is a member. Proof by induction: isInterval + chain forces consecutive
+    elements (b = a + 1), so each integer in the range appears. -/
+theorem interval_mem_of_range : (l : List Nat) → l ≠ [] →
+    l.IsChain (· < ·) → isInterval l = true →
+    (x : Nat) → l.head! ≤ x → x ≤ l.getLast! → x ∈ l
+  | [], hne, _, _, _, _, _ => absurd rfl hne
+  | [a], _, _, _, x, hge, hle => by
+    simp [List.head!, List.getLast!] at hge hle
+    exact List.mem_cons.mpr (Or.inl (by omega))
+  | a :: b :: rest, _, hchain, hint, x, hge, hle => by
+    have hlast_eq : (a :: b :: rest).getLast! = (b :: rest).getLast! := by simp [List.getLast!]
+    have hlen : (a :: b :: rest).length = rest.length + 2 := by simp [List.length_cons]
+    have hab : a < b := by
+      have := hchain; simp [List.IsChain] at this; exact this.1
+    have hchain_tl : (b :: rest).IsChain (· < ·) := by
+      have := hchain; simp [List.IsChain] at this; exact this.2
+    have hp := (isInterval_iff_eq a b rest).mp hint
+    rw [hlast_eq, hlen] at hp
+    have hge_b := chain_getLast_ge b rest hchain_tl
+    have hba : b = a + 1 := by omega
+    have hint_tl : isInterval (b :: rest) = true := by
+      match rest, hchain_tl with
+      | [], _ => simp [isInterval]
+      | c :: rest', hchain' =>
+        rw [isInterval_iff_eq]
+        simp only [List.length_cons] at hp ⊢; omega
+    simp [List.head!] at hge
+    by_cases hxa : x = a
+    · subst hxa; exact List.mem_cons.mpr (Or.inl rfl)
+    · have hxb : (b :: rest).head! ≤ x := by simp [List.head!]; omega
+      have hle' : x ≤ (b :: rest).getLast! := by rwa [← hlast_eq]
+      exact List.mem_cons.mpr (Or.inr (interval_mem_of_range (b :: rest) (List.cons_ne_nil _ _) hchain_tl hint_tl x hxb hle'))
+
+/-- In a strictly increasing list, head! ≤ every element. -/
+private theorem head_le_of_chain (l : List Nat) (hpw : l.Pairwise (· < ·))
+    (y : Nat) (hy : y ∈ l) : l.head! ≤ y := by
+  match l, hpw with
+  | x :: rest, hpw' =>
+    simp [List.head!]
+    rcases List.mem_cons.mp hy with rfl | hmem
+    · exact Nat.le_refl _
+    · exact Nat.le_of_lt ((List.pairwise_cons.mp hpw').1 y hmem)
+
+/-- In a strictly increasing list, every element ≤ getLast!. -/
+private theorem le_getLast_of_chain : (l : List Nat) → l.Pairwise (· < ·) →
+    (y : Nat) → y ∈ l → y ≤ l.getLast!
+  | [a], _, y, hy => by
+    simp [List.getLast!]; exact List.mem_cons.mp hy |>.elim (by omega) (by simp)
+  | a :: b :: rest, hpw, y, hy => by
+    have hlast : (a :: b :: rest).getLast! = (b :: rest).getLast! := by simp [List.getLast!]
+    rw [hlast]
+    rcases List.mem_cons.mp hy with rfl | hmem
+    · have := (List.pairwise_cons.mp hpw).1 _ (getLast!_mem_cons b rest)
+      omega
+    · exact le_getLast_of_chain (b :: rest) (List.pairwise_cons.mp hpw).2 y hmem
+
+/-- If a strictly increasing interval list contains `a` and `c` with
+    `a < b < c`, then it contains `b`. -/
+theorem interval_mem_between (l : List Nat)
+    (hchain : l.IsChain (· < ·)) (hint : isInterval l = true)
+    (a b c : Nat) (ha : a ∈ l) (hc : c ∈ l) (hab : a < b) (hbc : b < c) :
+    b ∈ l := by
+  have hpw := List.isChain_iff_pairwise.mp hchain
+  have hne : l ≠ [] := by intro h; rw [h] at ha; simp at ha
+  apply interval_mem_of_range l hne hchain hint
+  · exact Nat.le_trans (head_le_of_chain l hpw a ha) (Nat.le_of_lt hab)
+  · exact Nat.le_trans (Nat.le_of_lt hbc) (le_getLast_of_chain l hpw c hc)
 
 end Projection
 
