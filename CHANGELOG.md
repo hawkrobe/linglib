@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.218.24] - 2026-02-16
+
+### Changed
+- **Variable BEq is now lawful by construction**: derive `BEq` from `DecidableEq` instead of from `String.BEq`, eliminating `Variable.beq_def` theorem entirely (`(a == b) = decide (a = b)` is now `rfl`)
+- Move `Situation.extend_hasValue_same/diff` to Core/Causation.lean as `@[simp]` lemmas
+- Move `Situation.trueLE` ordering and `isPositiveDynamics` to Core/Causation.lean for reuse across Sufficiency, Necessity, and Ability modules
+- Remove `Variable.beq_def` from all simp sets (no longer needed with lawful-by-construction BEq)
+
 ## [0.218.23] - 2026-02-16
 
 ### Fixed

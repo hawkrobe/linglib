@@ -48,21 +48,13 @@ namespace Core.Causation
     Variables are named entities whose values are determined by causal laws. -/
 structure Variable where
   name : String
-  deriving DecidableEq, Hashable, Repr, BEq, Inhabited
+  deriving DecidableEq, Hashable, Repr, Inhabited
 
-theorem Variable.beq_def (a b : Variable) :
-    (a == b) = decide (a = b) := by
-  cases a with | mk na =>
-  cases b with | mk nb =>
-  show @BEq.beq String (@instBEqOfDecidableEq String instDecidableEqString) na nb = _
-  simp only [instBEqOfDecidableEq]
-  by_cases h : na = nb
-  · subst h; simp
-  · simp [h, show ¬(Variable.mk na = Variable.mk nb) from fun h' => h (Variable.mk.inj h')]
+instance : BEq Variable where beq a b := decide (a = b)
 
 instance : LawfulBEq Variable where
-  eq_of_beq {a b} h := by simp [Variable.beq_def] at h; exact h
-  rfl {a} := by simp [Variable.beq_def]
+  eq_of_beq h := of_decide_eq_true h
+  rfl := decide_eq_true rfl
 
 instance : ToString Variable where
   toString v := v.name
@@ -109,7 +101,31 @@ def merge (s1 s2 : Situation) : Situation :=
 
 instance : Inhabited Situation := ⟨Situation.empty⟩
 
+/-- Extending at `v` and querying `v` returns whether the values match. -/
+@[simp] theorem extend_hasValue_same (s : Situation) (v : Variable) (val bval : Bool) :
+    (s.extend v val).hasValue v bval = (val == bval) := by
+  simp [hasValue, extend]
+
+/-- Extending at `v` doesn't affect queries at a different variable `w`. -/
+@[simp] theorem extend_hasValue_diff (s : Situation) (v w : Variable) (val bval : Bool)
+    (h : w ≠ v) : (s.extend v val).hasValue w bval = s.hasValue w bval := by
+  simp [hasValue, extend, h]
+
 end Situation
+
+-- True-subset ordering on situations
+
+/-- s₁ ⊑ s₂ in the true-content ordering: every variable `true` in s₁
+    is also `true` in s₂. This is the natural preorder for reasoning about
+    monotonicity of positive causal dynamics. -/
+def Situation.trueLE (s₁ s₂ : Situation) : Prop :=
+  ∀ v, s₁.hasValue v true = true → s₂.hasValue v true = true
+
+theorem Situation.trueLE_refl (s : Situation) : s.trueLE s := fun _ hv => hv
+
+theorem Situation.trueLE_trans {s₁ s₂ s₃ : Situation}
+    (h₁₂ : s₁.trueLE s₂) (h₂₃ : s₂.trueLE s₃) : s₁.trueLE s₃ :=
+  fun v hv => h₂₃ v (h₁₂ v hv)
 
 -- Causal Laws (Def 10)
 
@@ -180,6 +196,16 @@ def causalChain (a b c : Variable) : CausalDynamics :=
   ⟨[CausalLaw.simple a b, CausalLaw.simple b c]⟩
 
 end CausalDynamics
+
+/-- A dynamics is **positive** if all preconditions require `true` and all
+    effect values are `true`. Positive dynamics have no inhibitory connections:
+    causes can only enable effects, never block them.
+
+    This is the key structural condition for monotonicity results: in positive
+    dynamics, adding `true` values to a situation can only enable more laws,
+    never block them. -/
+def isPositiveDynamics (dyn : CausalDynamics) : Bool :=
+  dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue)
 
 -- Normal Causal Development (Def 15)
 
