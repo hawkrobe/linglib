@@ -298,28 +298,64 @@ def mustntScope : ContractedNegScope where
 theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by
   decide
 
+/-- Kripke model with non-trivial accessibility: w0 sees {w1, w2}.
+
+This suffices to separate ¬◇P from ◇¬P and ¬□P from □¬P:
+at w0 with P true at w1 and false at w2, both accessible worlds
+disagree, making ◇P and ◇¬P both true while ¬◇P is false. -/
+private def kripkeT : ModalTheory where
+  name := "Kripke countermodel"
+  citation := ""
+  eval := λ force p w =>
+    match force, w with
+    | .necessity, .w0 => p .w1 && p .w2
+    | .necessity, .w1 => p .w1
+    | .necessity, .w2 => p .w2
+    | .necessity, .w3 => p .w3
+    | .possibility, .w0 => p .w1 || p .w2
+    | .possibility, .w1 => p .w1
+    | .possibility, .w2 => p .w2
+    | .possibility, .w3 => p .w3
+
+/-- Duality holds for Kripke models by De Morgan on the accessibility set. -/
+private theorem kripkeT_normal : kripkeT.isNormal := by
+  intro p w
+  simp only [ModalTheory.dualityHolds, ModalTheory.necessity, ModalTheory.possibility, kripkeT]
+  cases w <;> cases hp1 : p .w1 <;> cases hp2 : p .w2 <;> cases hp3 : p .w3 <;> rfl
+
+/-- Witness proposition: true at w0/w1, false at w2/w3. -/
+private def witnessP : Proposition := λ w =>
+  match w with | .w0 | .w1 => true | .w2 | .w3 => false
+
 /-- NOT(CAN(P)) and CAN(NOT(P)) are not equivalent in general.
 
-There exist models where something is not possible, but the negation
-of the proposition is not necessary — i.e., ¬◇P ≠ ◇¬P. -/
-theorem neg_over_poss_ne_poss_over_neg (T : ModalTheory)
-    (h : T.isNormal) :
+There exists a normal modal theory where ¬◇P ≠ ◇¬P: when w0
+accesses worlds where P differs, ◇P and ◇¬P are both true, so
+¬◇P = false but ◇¬P = true. -/
+theorem neg_over_poss_ne_poss_over_neg :
+    ∃ (T : ModalTheory), T.isNormal ∧
     ¬(∀ (p : Proposition) (w : World),
       evalNegOverModal T .possibility p w =
       evalModalOverNeg T .possibility p w) := by
-  sorry  -- TODO: construct a countermodel; requires finding
-         -- a ModalTheory instance where ¬◇p ≠ ◇¬p at some world
+  refine ⟨kripkeT, kripkeT_normal, ?_⟩
+  intro h
+  have := h witnessP .w0
+  simp [evalNegOverModal, evalModalOverNeg, kripkeT, witnessP] at this
 
 /-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
 
-¬□P ≠ □¬P: failing to be necessary is weaker than being necessarily false. -/
-theorem neg_over_nec_ne_nec_over_neg (T : ModalTheory)
-    (h : T.isNormal) :
+There exists a normal modal theory where ¬□P ≠ □¬P: failing to be
+necessary (¬□P = true when P fails at w2) is weaker than being
+necessarily false (□¬P = false when P holds at w1). -/
+theorem neg_over_nec_ne_nec_over_neg :
+    ∃ (T : ModalTheory), T.isNormal ∧
     ¬(∀ (p : Proposition) (w : World),
       evalNegOverModal T .necessity p w =
       evalModalOverNeg T .necessity p w) := by
-  sorry  -- TODO: construct a countermodel; requires finding
-         -- a ModalTheory instance where ¬□p ≠ □¬p at some world
+  refine ⟨kripkeT, kripkeT_normal, ?_⟩
+  intro h
+  have := h witnessP .w0
+  simp [evalNegOverModal, evalModalOverNeg, kripkeT, witnessP] at this
 
 end ScopeBridge
 

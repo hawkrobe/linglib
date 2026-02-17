@@ -332,9 +332,24 @@ theorem sds_conflict_iff_different_argmax
     (∃ c1 c2, listArgmax sys.concepts sys.selectional = some c1 ∧
               listArgmax sys.concepts sys.scenario = some c2 ∧
               c1 != c2) := by
-  -- This follows from the definition of hasConflict
-  -- The proof requires careful case analysis on the Option types
-  sorry
+  constructor
+  · intro h
+    unfold hasConflict at h
+    simp only [SDSConstraintSystem.paramSupport, SDSConstraintSystem.selectionalFactor,
+               SDSConstraintSystem.scenarioFactor] at h
+    -- generalize replaces the listArgmax terms in both goal and h
+    generalize listArgmax sys.concepts sys.selectional = selMax at h ⊢
+    generalize listArgmax sys.concepts sys.scenario = scenMax at h ⊢
+    match selMax, scenMax with
+    | some c1, some c2 => exact ⟨c1, c2, rfl, rfl, h⟩
+    | some _, none => exact absurd h Bool.false_ne_true
+    | none, some _ => exact absurd h Bool.false_ne_true
+    | none, none => exact absurd h Bool.false_ne_true
+  · intro ⟨c1, c2, hsel, hscen, hne⟩
+    unfold hasConflict
+    simp only [SDSConstraintSystem.paramSupport, SDSConstraintSystem.selectionalFactor,
+               SDSConstraintSystem.scenarioFactor, hsel, hscen]
+    exact hne
 
 -- Proof Sketch: What Would a Full Formalization Require?
 
