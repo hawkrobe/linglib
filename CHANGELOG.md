@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.218.16] - 2026-02-16
+
+### Fixed
+- Close `softmax_uniform_limit` sorry: prove α=0 softmax yields uniform distribution (fix Nat/ℚ division in statement)
+
 ## [0.218.15] - 2026-02-16
 
 ### Fixed

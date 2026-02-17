@@ -92,11 +92,26 @@ def softmax (α : ℚ) (utilities : List ℚ) : List ℚ :=
   simp only [softmax]
   split_ifs <;> simp only [List.length_map]
 
+/-- Sum of n ones is n (generalized over accumulator for foldl). -/
+private theorem foldl_add_ones (acc : ℚ) :
+    ∀ (l : List ℚ), (l.map fun _ => (1 : ℚ)).foldl (· + ·) acc = acc + ↑l.length
+  | [] => by simp
+  | _ :: l => by
+    simp only [List.map_cons, List.foldl_cons, List.length_cons, Nat.cast_succ]
+    rw [foldl_add_ones (acc + 1) l]; ring
+
 /-- Softmax with α=0 gives uniform distribution. -/
 theorem softmax_uniform_limit (utilities : List ℚ) (hne : utilities.length > 0) :
-    softmax 0 utilities = utilities.map (λ _ => 1 / utilities.length) := by
-  simp only [softmax]
-  sorry
+    softmax 0 utilities = utilities.map (λ _ => (1 : ℚ) / ↑utilities.length) := by
+  simp only [softmax, zero_mul, add_zero, max_eq_right zero_le_one]
+  have hsum : RSA.Eval.sumScores (utilities.map fun _ => (1 : ℚ)) = ↑utilities.length := by
+    simp only [RSA.Eval.sumScores]
+    exact (foldl_add_ones 0 utilities).trans (by simp)
+  rw [hsum]
+  have hne' : (↑utilities.length : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+  split_ifs with h
+  · exact absurd (beq_iff_eq.mp h) hne'
+  · simp only [List.map_map, Function.comp_def]
 
 /-- Higher α concentrates softmax on highest utility. -/
 theorem softmax_concentration (alpha1 alpha2 : ℚ) (utilities : List ℚ)
