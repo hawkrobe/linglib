@@ -41,7 +41,7 @@ See docs/ROADMAP.md for future work on this.
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 
-namespace Comparisons.ScalarImplicature
+namespace Phenomena.ScalarImplicatures.CompareAgreement
 
 open NeoGricean.ScalarImplicatures
 open RSA.ScalarImplicatures
@@ -143,4 +143,4 @@ The frameworks differ in mechanism but agree on predictions:
 - RSA: Probabilistic (degree of preference)
 -/
 
-end Comparisons.ScalarImplicature
+end Phenomena.ScalarImplicatures.CompareAgreement

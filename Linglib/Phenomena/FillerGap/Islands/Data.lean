@@ -250,7 +250,7 @@ This challenges every categorical island constraint proposed:
 - Barriers (Chomsky 1986)
 - Minimal Link Condition (Chomsky 1995)
 
-See `Comparisons.Islands` for the competence vs. performance comparison.
+See `Phenomena.FillerGap.Compare` for the competence vs. performance comparison.
 -/
 
 /-- Processing factors that independently contribute to the difficulty of

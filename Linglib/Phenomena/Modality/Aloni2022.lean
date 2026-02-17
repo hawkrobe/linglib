@@ -35,7 +35,7 @@ BSML derives free choice inferences SEMANTICALLY via:
 
 import Linglib.Theories.Semantics.Dynamic.TeamSemantics
 
-namespace Comparisons.FreeChoice.Aloni2022
+namespace Phenomena.Modality.Aloni2022
 
 open Semantics.Dynamic.TeamSemantics
 
@@ -912,4 +912,4 @@ structure with BUS but uses static team semantics rather than dynamic updates.
 - Aloni, Anttila & Yang (2024). State-based Modal Logics for Free Choice.
 -/
 
-end Comparisons.FreeChoice.Aloni2022
+end Phenomena.Modality.Aloni2022

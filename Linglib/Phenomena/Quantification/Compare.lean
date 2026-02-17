@@ -29,7 +29,7 @@ import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.Quantification.MinimalismBridge
 import Linglib.Theories.Syntax.CCG.Scope
 
-namespace Comparisons.ScopeFreezing
+namespace Phenomena.Quantification.Compare
 
 open ScopeTheory
 open ProcessingModel
@@ -397,4 +397,4 @@ Controlled experiments comparing:
 - Cross-linguistic patterns
 -/
 
-end Comparisons.ScopeFreezing
+end Phenomena.Quantification.Compare

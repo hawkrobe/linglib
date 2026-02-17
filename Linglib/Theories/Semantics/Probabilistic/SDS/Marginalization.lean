@@ -49,7 +49,7 @@ namespace Semantics.Probabilistic.SDS.Marginalization
 
 open Semantics.Probabilistic.SDS.Core
 open Semantics.Probabilistic.SDS.ThresholdInstances
-open Comparisons.ThresholdSemantics
+open Semantics.Probabilistic.SDS.ThresholdSemantics
 open Semantics.Montague.BayesianSemantics
 
 

@@ -74,7 +74,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.Warstadt2022
 import Linglib.Theories.Semantics.Dynamic.State
 
-namespace Comparisons.PresuppositionProjection
+namespace Phenomena.Presupposition.Compare
 
 
 /-!
@@ -716,4 +716,4 @@ with **two** latent variables (speaker beliefs AND common ground) and see
 if they can come apart.
 -/
 
-end Comparisons.PresuppositionProjection
+end Phenomena.Presupposition.Compare

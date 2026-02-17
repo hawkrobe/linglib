@@ -39,17 +39,17 @@ import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
-import Linglib.Comparisons.FreeChoice.Aloni2022
+import Linglib.Phenomena.Modality.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
 
-namespace Comparisons.FreeChoice
+namespace Phenomena.Modality.CompareFC
 
 open Phenomena.Modality.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
-open Comparisons.FreeChoice.Aloni2022
+open Phenomena.Modality.Aloni2022
 
 -- ============================================================================
 -- SECTION 1: The Free Choice Puzzle
@@ -605,4 +605,4 @@ Each theory contributes something unique:
 - **Elliott & Sudo**: Anaphora + bilateral structure
 -/
 
-end Comparisons.FreeChoice
+end Phenomena.Modality.CompareFC

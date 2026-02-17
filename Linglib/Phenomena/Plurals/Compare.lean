@@ -25,7 +25,7 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 - Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
 -/
 
-namespace Comparisons.CumulativeReadings
+namespace Phenomena.Plurals.Compare
 
 open Phenomena.Plurals.Studies.Charlow2021.Data
 open Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
@@ -55,4 +55,4 @@ theorem dependent_indefinites_need_extra {W E : Type*} :
       Semantics.Dynamic.Charlow2019.isDistributive depIndef := by
   sorry
 
-end Comparisons.CumulativeReadings
+end Phenomena.Plurals.Compare
