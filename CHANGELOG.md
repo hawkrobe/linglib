@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.219.9] - 2026-02-17
+
+### Added
+- MeasurementScale bridge in `Core/Dimension.lean` §9–12: connect Mereology ↔ MeasurementScale pillars
+- `quaBoundedness`/`cumBoundedness`: mereological annotations mapping QUA → `Boundedness.closed`, CUM → `Boundedness.open_`
+- `extMeasure_kennedyMIP`/`extMeasure_rouillardMIP`: ExtMeasure → MIPDomain constructors
+- `singleton_qua_closed`/`extMeasure_singleton_closed`: singleton QUA ↔ closed scale bridge
+- `cum_sum_exceeds`/`cum_sum_exceeds_both`: CUM sum extensibility (mechanism behind open scales)
+- Re-export MeasurementScale bridge theorems via `Events.Mereology`
+
 ## [0.219.8] - 2026-02-17
 
 ### Added
