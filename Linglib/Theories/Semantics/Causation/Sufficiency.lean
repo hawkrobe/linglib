@@ -48,18 +48,6 @@ def makeSem (dyn : CausalDynamics) (background : Situation)
 -- § Positive Dynamics: monotonicity condition
 -- ============================================================
 
-/-- A dynamics is **positive** if all preconditions require `true` and all
-    effect values are `true`. Positive dynamics have no inhibitory connections:
-    causes can only enable effects, never block them.
-
-    This is the necessary condition for sufficiency monotonicity. Without it,
-    adding a variable set to `true` can break sufficiency via:
-    - Negative preconditions (`v = false`): the new value blocks a law
-    - Inhibitory effects (`effectValue = false`): the new value activates
-      a law that overrides the effect with `false` -/
-def isPositiveDynamics (dyn : CausalDynamics) : Bool :=
-  dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue)
-
 /-- Standard constructors produce positive dynamics. -/
 theorem simple_isPositive (a b : Variable) :
     isPositiveDynamics ⟨[CausalLaw.simple a b]⟩ = true := rfl
@@ -77,33 +65,20 @@ theorem chain_isPositive (a b c : Variable) :
 -- § True-subset ordering on situations
 -- ============================================================
 
-/-- s₁ ⊑ s₂: every variable `true` in s₁ is also `true` in s₂. -/
-private def trueLE (s₁ s₂ : Situation) : Prop :=
-  ∀ v, s₁.hasValue v true = true → s₂.hasValue v true = true
+-- trueLE, Situation.trueLE_refl, Situation.trueLE_trans, Situation.extend_hasValue_same/diff
+-- are defined in Core.Causation
 
-private theorem trueLE_refl (s : Situation) : trueLE s s := fun _ hv => hv
-
-private theorem trueLE_trans {s₁ s₂ s₃ : Situation}
-    (h₁₂ : trueLE s₁ s₂) (h₂₃ : trueLE s₂ s₃) : trueLE s₁ s₃ :=
-  fun v hv => h₂₃ v (h₁₂ v hv)
+/-- Local abbreviation for readability. -/
+private abbrev trueLE := Situation.trueLE
 
 private theorem extend_trueLE_extend (s : Situation) (c1 c2 : Variable) :
     trueLE (s.extend c1 true) ((s.extend c2 true).extend c1 true) := by
   intro v hv
-  simp only [Situation.hasValue, Situation.extend, Variable.beq_def, decide_eq_true_eq] at *
-  split_ifs at hv ⊢ <;> simp_all
-
--- ============================================================
--- § Helper lemmas for extend/hasValue interaction
--- ============================================================
-
-private theorem extend_hasValue_same (s : Situation) (v : Variable) (val bval : Bool) :
-    (s.extend v val).hasValue v bval = (val == bval) := by
-  simp [Situation.hasValue, Situation.extend, Variable.beq_def, decide_eq_true_eq]
-
-private theorem extend_hasValue_diff (s : Situation) (v w : Variable) (val bval : Bool)
-    (h : w ≠ v) : (s.extend v val).hasValue w bval = s.hasValue w bval := by
-  simp [Situation.hasValue, Situation.extend, Variable.beq_def, decide_eq_true_eq, h]
+  by_cases h1 : v = c1
+  · subst h1; simp
+  · by_cases h2 : v = c2
+    · subst h2; simp [h1]
+    · simp [h1, h2] at hv ⊢; exact hv
 
 -- ============================================================
 -- § Per-law monotonicity lemmas
@@ -132,8 +107,8 @@ private theorem positive_law_apply_trueLE
   · have hMet₂ := positive_preconditions_monotone law s₁ s₂ hPosPrec hLE hMet₁
     simp only [hMet₁, ↓reduceIte] at hv; simp only [hMet₂, ↓reduceIte]
     by_cases he : v = law.effect
-    · subst he; rw [extend_hasValue_same]; simp [hPosEff]
-    · rw [extend_hasValue_diff _ _ _ _ _ he] at hv ⊢
+    · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
+    · rw [Situation.extend_hasValue_diff _ _ _ _ _ he] at hv ⊢
       exact hLE v hv
   · have h₁ : law.preconditionsMet s₁ = false := by
       cases h : law.preconditionsMet s₁ <;> simp_all
@@ -141,8 +116,8 @@ private theorem positive_law_apply_trueLE
     by_cases hMet₂ : law.preconditionsMet s₂ = true
     · simp only [hMet₂, ↓reduceIte]
       by_cases he : v = law.effect
-      · subst he; rw [extend_hasValue_same]; simp [hPosEff]
-      · rw [extend_hasValue_diff _ _ _ _ _ he]; exact hLE v hv
+      · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
+      · rw [Situation.extend_hasValue_diff _ _ _ _ _ he]; exact hLE v hv
     · have h₂ : law.preconditionsMet s₂ = false := by
         cases h : law.preconditionsMet s₂ <;> simp_all
       simp only [h₂]; exact hLE v hv
@@ -155,8 +130,8 @@ private theorem positive_law_apply_grows
   by_cases hMet : law.preconditionsMet s = true
   · simp only [hMet, ↓reduceIte]
     by_cases he : v = law.effect
-    · subst he; rw [extend_hasValue_same]; simp [hPosEff]
-    · rw [extend_hasValue_diff _ _ _ _ _ he]; exact hv
+    · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
+    · rw [Situation.extend_hasValue_diff _ _ _ _ _ he]; exact hv
   · have : law.preconditionsMet s = false := by
       cases h : law.preconditionsMet s <;> simp_all
     simp only [this]; exact hv
@@ -177,7 +152,7 @@ private theorem positive_law_apply_absorbed
       have hMet₂ := positive_preconditions_monotone law s₁ s₂ hPosPrec hLE hMet₁
       simp only [hMet₂, Bool.not_true, Bool.false_or] at hFixLaw
       rw [hPosEff] at hFixLaw; exact hFixLaw
-    · rw [extend_hasValue_diff _ _ _ _ _ he] at hv; exact hLE v hv
+    · rw [Situation.extend_hasValue_diff _ _ _ _ _ he] at hv; exact hLE v hv
   · have : law.preconditionsMet s₁ = false := by
       cases h : law.preconditionsMet s₁ <;> simp_all
     simp only [this] at hv; exact hLE v hv
@@ -204,10 +179,10 @@ private theorem positive_foldl_grows
     (hPos : laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true) :
     trueLE s (laws.foldl (fun s' law => law.apply s') s) := by
   induction laws generalizing s with
-  | nil => exact trueLE_refl s
+  | nil => exact Situation.trueLE_refl s
   | cons law rest ih =>
     simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    exact trueLE_trans
+    exact Situation.trueLE_trans
       (positive_law_apply_grows law s hPos.1.2) (ih (law.apply s) hPos.2)
 
 private theorem positive_foldl_absorbed
@@ -252,7 +227,7 @@ private theorem positive_normalDevelopment_grows
     (hPos : isPositiveDynamics dyn = true) :
     trueLE s (normalDevelopment dyn s fuel) := by
   induction fuel generalizing s with
-  | zero => exact trueLE_refl s
+  | zero => exact Situation.trueLE_refl s
   | succ n ih =>
     simp only [normalDevelopment]
     have hGrow := positive_applyLawsOnce_grows dyn s hPos
@@ -260,7 +235,7 @@ private theorem positive_normalDevelopment_grows
     · simp only [hFix, ↓reduceIte]; exact hGrow
     · have : isFixpoint dyn (applyLawsOnce dyn s) = false := by
         cases h : isFixpoint dyn (applyLawsOnce dyn s) <;> simp_all
-      simp only [this]; exact trueLE_trans hGrow (ih (applyLawsOnce dyn s))
+      simp only [this]; exact Situation.trueLE_trans hGrow (ih (applyLawsOnce dyn s))
 
 private theorem fixpoint_absorbs
     (dyn : CausalDynamics) (s₁ s₂ : Situation) (fuel : Nat)
@@ -293,7 +268,7 @@ private theorem positive_normalDevelopment_trueLE
     · have h₂ : isFixpoint dyn (applyLawsOnce dyn s₂) = false := by
         cases h : isFixpoint dyn (applyLawsOnce dyn s₂) <;> simp_all
       simp only [hFix₁, h₂, ↓reduceIte]
-      exact trueLE_trans hLE'
+      exact Situation.trueLE_trans hLE'
         (positive_normalDevelopment_grows dyn (applyLawsOnce dyn s₂) n hPos)
     · have h₁ : isFixpoint dyn (applyLawsOnce dyn s₁) = false := by
         cases h : isFixpoint dyn (applyLawsOnce dyn s₁) <;> simp_all
@@ -349,15 +324,14 @@ theorem disjunctive_each_sufficient (a b c : Variable) (_ha : a ≠ b) :
     simp only [dyn, s, isFixpoint, applyLawsOnce, CausalDynamics.disjunctiveCausation,
       CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
       List.all, Situation.hasValue, Situation.extend, Situation.empty,
-      Variable.beq_def, decide_eq_true_eq, Bool.and_eq_true, Bool.not_eq_true',
-      Bool.or_eq_true]
+      Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all
   change (normalDevelopment dyn s 100).hasValue c true = true
   rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.disjunctiveCausation,
     CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
     List.all, Situation.hasValue, Situation.extend, Situation.empty,
-    Variable.beq_def, decide_eq_true_eq]
+]
   split_ifs <;> simp_all
 
 /-- In conjunctive causation (A ∧ B → C), neither alone is sufficient. -/
@@ -372,15 +346,14 @@ theorem conjunctive_neither_sufficient_alone (a b c : Variable)
     simp only [dyn, s, isFixpoint, applyLawsOnce, CausalDynamics.conjunctiveCausation,
       CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
       List.all, Situation.hasValue, Situation.extend, Situation.empty,
-      Variable.beq_def, decide_eq_true_eq, Bool.and_eq_true, Bool.not_eq_true',
-      Bool.or_eq_true]
+      Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all [Ne.symm _ha, Ne.symm _hac]
   change (normalDevelopment dyn s 100).hasValue c true = false
   rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.conjunctiveCausation,
     CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
     List.all, Situation.hasValue, Situation.extend, Situation.empty,
-    Variable.beq_def, decide_eq_true_eq]
+]
   split_ifs <;> simp_all [Ne.symm _ha, Ne.symm _hac]
 
 /-- In conjunctive causation, A is sufficient when B is in the background. -/
@@ -396,15 +369,14 @@ theorem conjunctive_sufficient_with_other (a b c : Variable)
     simp only [dyn, s, isFixpoint, applyLawsOnce, CausalDynamics.conjunctiveCausation,
       CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
       List.all, Situation.hasValue, Situation.extend, Situation.empty,
-      Variable.beq_def, decide_eq_true_eq, Bool.and_eq_true, Bool.not_eq_true',
-      Bool.or_eq_true]
+      Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all [Ne.symm _ha]
   change (normalDevelopment dyn s 100).hasValue c true = true
   rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.conjunctiveCausation,
     CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
     List.all, Situation.hasValue, Situation.extend, Situation.empty,
-    Variable.beq_def, decide_eq_true_eq]
+]
   split_ifs <;> simp_all [Ne.symm _ha]
 
 end NadathurLauer2020.Sufficiency

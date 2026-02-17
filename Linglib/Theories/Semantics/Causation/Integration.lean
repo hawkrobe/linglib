@@ -335,15 +335,13 @@ theorem single_cause_perfection (cause effect : Variable) :
     simp only [dyn, background, isFixpoint, applyLawsOnce,
       CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
       List.all, Situation.hasValue, Situation.extend, Situation.empty,
-      Variable.beq_def, decide_eq_true_eq, Bool.and_eq_true, Bool.not_eq_true',
-      Bool.or_eq_true]
+      Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     simp
   rw [show (100 : Nat) = 99 + 1 from rfl,
       normalDevelopment_fixpoint_after_one _ _ hfix]
   simp only [dyn, background, applyLawsOnce,
     CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-    List.all, Situation.hasValue, Situation.extend, Situation.empty,
-    Variable.beq_def, decide_eq_true_eq]
+    List.all, Situation.hasValue, Situation.extend, Situation.empty]
   by_cases h : effect = cause <;> simp [h]
 
 end NadathurLauer2020.Integration
