@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 import Linglib.Core.MeasurementScale
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Lassiter & Goodman (2017) — Threshold RSA for Vague Adjectives

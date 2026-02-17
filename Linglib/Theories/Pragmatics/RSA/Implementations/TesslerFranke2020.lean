@@ -35,6 +35,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.TesslerFranke2020
 

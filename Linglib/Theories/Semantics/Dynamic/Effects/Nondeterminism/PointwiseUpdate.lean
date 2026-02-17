@@ -92,10 +92,31 @@ theorem liftPW_preserves_distributive (D : DRS (Assignment E)) :
     cases hq; exact ⟨i, hi, h1, h2⟩
 
 /-- ↑↓ ≠ id: there exist irreducibly update-theoretic meanings K such that
-    liftPW (lowerPW K w₀) ≠ K. Non-distributive meanings are the key examples.
-    TODO: Exhibit a 2-element context where M_v differs. -/
-theorem liftPW_lowerPW_not_id :
+    liftPW (lowerPW K w₀) ≠ K.
+
+    The simplest witness is `K _ = {(w₀, g₀)}` (constant function ignoring
+    input). Then `K ∅ = {(w₀, g₀)}`, but `liftPW (lowerPW K w₀) ∅ = ∅`
+    because ↑ has no input pairs to draw from.
+
+    Requires `Nonempty W` and `Nonempty E` to construct the witness. -/
+theorem liftPW_lowerPW_not_id [Nonempty W] [Nonempty E] :
     ∃ (K : StateCCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
-  sorry
+  let w₀ : W := Classical.arbitrary W
+  let g₀ : Assignment E := λ _ => Classical.arbitrary E
+  let K : StateCCP W E := λ _ => {(w₀, g₀)}
+  use K, w₀
+  intro heq
+  -- liftPW (lowerPW K w₀) ∅ = ∅ (no input pairs to draw from)
+  have h₁ : liftPW (lowerPW K w₀) ∅ = (∅ : State W E) := by
+    ext p; simp only [liftPW, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    rintro ⟨q, hq, _, _⟩; exact hq
+  -- But K ∅ = {(w₀, g₀)} ≠ ∅
+  have h₂ : K ∅ = ({(w₀, g₀)} : State W E) := rfl
+  rw [heq] at h₁
+  rw [h₂] at h₁
+  -- h₁ : {(w₀, g₀)} = ∅, but singletons are nonempty
+  have : (w₀, g₀) ∈ ({(w₀, g₀)} : State W E) := rfl
+  rw [h₁] at this
+  exact this
 
 end Semantics.Dynamic.Core.PointwiseUpdate

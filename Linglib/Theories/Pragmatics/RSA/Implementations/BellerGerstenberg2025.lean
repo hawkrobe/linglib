@@ -19,6 +19,7 @@ how-causation (H), and sufficient-causation (S).
 
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Causation
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity

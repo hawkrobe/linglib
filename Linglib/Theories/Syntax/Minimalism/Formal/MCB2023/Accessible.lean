@@ -203,6 +203,59 @@ private theorem length_filter_bne_of_count_one {α : Type*} [DecidableEq α]
       have hlen_pos : tl.length ≥ 1 := List.length_pos_of_mem hx'
       omega
 
+/-- An element of a Nat list is ≤ the list's sum -/
+private theorem mem_le_sum {L : List Nat} {x : Nat} (hx : x ∈ L) : x ≤ L.sum := by
+  induction L with
+  | nil => simp at hx
+  | cons hd tl ih =>
+    simp only [List.sum_cons]
+    rcases List.mem_cons.mp hx with rfl | h
+    · omega
+    · have := ih h; omega
+
+/-- Filtering out a unique element reduces the mapped sum by f(x).
+    Uses Nat subtraction so requires the ≤ side condition. -/
+private theorem sum_map_filter_bne_of_count_one {α : Type*} [DecidableEq α]
+    (L : List α) (x : α) (f : α → Nat) (hx : x ∈ L) (hc : L.count x = 1) :
+    (L.map f).sum = ((L.filter (· != x)).map f).sum + f x := by
+  induction L with
+  | nil => simp at hx
+  | cons hd tl ih =>
+    simp only [List.filter, List.map_cons, List.sum_cons]
+    by_cases heq : hd = x
+    · have hbne_false : (hd != x) = false := by simp [heq]
+      simp only [hbne_false, ite_false]
+      have hc' : tl.count x = 0 := by
+        rw [heq] at hc; simp only [List.count_cons_self] at hc; omega
+      have hfilt : tl.filter (· != x) = tl := by
+        rw [List.filter_eq_self]
+        intro a ha; simp only [bne_iff_ne, ne_eq]
+        intro heqa; subst heqa
+        exact absurd (List.count_pos_iff.mpr ha) (by omega)
+      rw [hfilt, heq]; omega
+    · have hbne_true : (hd != x) = true := by simp [heq]
+      simp only [hbne_true, ite_true, List.map_cons, List.sum_cons]
+      have hx' : x ∈ tl := by
+        rcases List.mem_cons.mp hx with rfl | h
+        · exact absurd rfl heq
+        · exact h
+      have hc' : tl.count x = 1 := by
+        rw [List.count_cons] at hc; simp [beq_iff_eq, heq] at hc; exact hc
+      have := ih hx' hc'
+      omega
+
+/-- numVertices of a cons list -/
+private theorem numVertices_cons (t : SyntacticObject) (ts : List SyntacticObject) :
+    numVertices (t :: ts) = t.nodeCount + numVertices ts := by
+  simp [numVertices, List.map_cons, List.sum_cons]
+
+/-- Filtering out a unique element from a forest reduces numVertices by that element's nodeCount -/
+private theorem numVertices_filter_bne {F : List SyntacticObject} {T : SyntacticObject}
+    (hT : T ∈ F) (huniq : F.count T = 1) :
+    numVertices F = numVertices (F.filter (· != T)) + T.nodeCount := by
+  simp only [numVertices]
+  exact sum_map_filter_bne_of_count_one F T (·.nodeCount) hT huniq
+
 section Counting
 
 variable {F : List SyntacticObject}
@@ -266,10 +319,25 @@ theorem em_acc_increases (T₁ T₂ : SyntacticObject)
     (hT₁ : T₁ ∈ F) (hT₂ : T₂ ∈ F) (hne : T₁ ≠ T₂)
     (huniq₁ : F.count T₁ = 1) (huniq₂ : F.count T₂ = 1) :
     numAcc (emWorkspace T₁ T₂ F) = numAcc F + 1 := by
-  -- TODO: merge(T₁,T₂) has nodeCount = 1 + T₁.nodeCount + T₂.nodeCount,
-  -- so #Acc gains the new root's accessible term. The +1 comes from the
-  -- single new internal node at the root of merge.
-  sorry
+  rw [numAcc_eq_numVertices, numAcc_eq_numVertices]
+  -- emWorkspace = merge T₁ T₂ :: (F.filter (· != T₁)).filter (· != T₂)
+  -- numVertices of cons = head.nodeCount + numVertices tail
+  have hne_merge₂ : merge T₁ T₂ ≠ T₂ := by
+    intro heq; have := congrArg sizeOf heq; simp [merge] at this
+  simp only [emWorkspace]
+  rw [List.filter_cons, if_pos (by simp [bne_iff_ne, hne_merge₂])]
+  rw [numVertices_cons]
+  simp only [merge, SyntacticObject.nodeCount]
+  -- Now: 1 + T₁.nodeCount + T₂.nodeCount + numVertices(double-filtered) = numVertices F + 1
+  -- Step 1: numVertices F = numVertices(F \ T₁) + T₁.nodeCount
+  have h1 := numVertices_filter_bne hT₁ huniq₁
+  -- Step 2: T₂ survives filtering T₁
+  have hT₂' := mem_filter_bne_of_ne F T₁ T₂ hne hT₂
+  have hc₂' : (F.filter (· != T₁)).count T₂ = 1 := by
+    rw [count_filter_bne_of_ne F T₁ T₂ hne]; exact huniq₂
+  -- Step 3: numVertices(F \ T₁) = numVertices(F \ T₁ \ T₂) + T₂.nodeCount
+  have h2 := numVertices_filter_bne hT₂' hc₂'
+  omega
 
 /-- EM: σ increases by 1 (Δb₀ = -1, Δ#Acc = +1, net = 0... but σ = b₀ + #Acc
     so Δσ = -1 + 1 = 0 — actually MCB2023 Table says Δσ = +1 for EM.
@@ -280,9 +348,12 @@ theorem em_wsSize_change (T₁ T₂ : SyntacticObject)
     (hT₁ : T₁ ∈ F) (hT₂ : T₂ ∈ F) (hne : T₁ ≠ T₂)
     (huniq₁ : F.count T₁ = 1) (huniq₂ : F.count T₂ = 1) :
     wsSize (emWorkspace T₁ T₂ F) = wsSize F := by
-  -- TODO: σ = b₀ + #Acc. Under EM, b₀ decreases by 1 and #Acc increases by 1.
-  -- Net change is 0 (or +1 depending on exact accessible term definition).
-  sorry
+  simp only [wsSize]
+  have hb := em_b0_decreases T₁ T₂ hT₁ hT₂ hne huniq₁ huniq₂
+  have ha := em_acc_increases T₁ T₂ hT₁ hT₂ hne huniq₁ huniq₂
+  simp only [b₀] at hb ⊢
+  have hlen_pos : F.length ≥ 1 := List.length_pos_of_mem hT₁
+  omega
 
 /-- IM: b₀ preserved (same number of components) -/
 theorem im_b0_preserved (T β : SyntacticObject)
@@ -294,22 +365,39 @@ theorem im_b0_preserved (T β : SyntacticObject)
   have hlen_pos : F.length ≥ 1 := List.length_pos_of_mem hT
   omega
 
-/-- IM: accessible terms preserved -/
-theorem im_acc_preserved (T β : SyntacticObject)
-    (hT : T ∈ F) (hβT : contains T β)
-    (huniq : F.count T = 1) :
-    numAcc (imWorkspace T β F) = numAcc F + 1 := by
-  -- TODO: merge(β,T) has one more internal node than T (the new root),
-  -- so #Acc increases by 1.
-  sorry
+/-- IM: accessible terms increase by 1 + β.nodeCount.
 
-/-- IM: σ̂ preserved -/
-theorem im_wsSizeAlt_preserved (T β : SyntacticObject)
+    merge(β, T) = .node β T has nodeCount = 1 + β.nodeCount + T.nodeCount.
+    Since T is replaced in the forest, the net change in numVertices (= numAcc)
+    is 1 + β.nodeCount. Note: β's subtree is duplicated (it remains inside T
+    and also appears as a new child of the root). In MCB2023's sharing model
+    β would not be duplicated and the change would be just +1; here we track
+    the tree-copy semantics faithfully. -/
+theorem im_acc_change (T β : SyntacticObject)
     (hT : T ∈ F) (hβT : contains T β)
     (huniq : F.count T = 1) :
-    wsSizeAlt (imWorkspace T β F) = wsSizeAlt F + 1 := by
-  -- TODO: Same argument as σ.
-  sorry
+    numAcc (imWorkspace T β F) = numAcc F + 1 + β.nodeCount := by
+  rw [numAcc_eq_numVertices, numAcc_eq_numVertices]
+  simp only [imWorkspace]
+  rw [numVertices_cons]
+  simp only [merge, SyntacticObject.nodeCount]
+  have h1 := numVertices_filter_bne hT huniq
+  omega
+
+/-- IM: σ̂ increases by 1 + β.nodeCount.
+
+    wsSizeAlt = b₀ + numVertices. Under IM, b₀ is preserved and
+    numVertices increases by 1 + β.nodeCount (see `im_acc_change`). -/
+theorem im_wsSizeAlt_change (T β : SyntacticObject)
+    (hT : T ∈ F) (hβT : contains T β)
+    (huniq : F.count T = 1) :
+    wsSizeAlt (imWorkspace T β F) = wsSizeAlt F + 1 + β.nodeCount := by
+  simp only [wsSizeAlt]
+  have hb := im_b0_preserved T β hT hβT huniq
+  have ha : numVertices (imWorkspace T β F) = numVertices F + 1 + β.nodeCount := by
+    rw [← numAcc_eq_numVertices, ← numAcc_eq_numVertices]
+    exact im_acc_change T β hT hβT huniq
+  omega
 
 end Counting
 
@@ -346,19 +434,21 @@ theorem sideward_violates_b0 (sm : SidewardMerge) (F : List SyntacticObject) :
 The counting characterization aligns with the order-theoretic partition
 from MergeUnification.lean. -/
 
-/-- When α and β are incomparable (EM case), merge combines two separate components -/
+/-- When α and β are incomparable (EM case), merge reduces component count by 1.
+    Requires uniqueness of α and β in F (each appears exactly once). -/
 theorem em_counting_from_trichotomy (α β : SyntacticObject) (F : List SyntacticObject)
     (h : ¬contains α β ∧ ¬contains β α) (hne : α ≠ β)
-    (hα : α ∈ F) (hβ : β ∈ F) :
-    b₀ (emWorkspace α β F) < b₀ F ∨ b₀ (emWorkspace α β F) = b₀ F - 1 := by
-  -- TODO: follows from em_b0_decreases
-  sorry
+    (hα : α ∈ F) (hβ : β ∈ F)
+    (huniqα : F.count α = 1) (huniqβ : F.count β = 1) :
+    b₀ (emWorkspace α β F) = b₀ F - 1 :=
+  em_b0_decreases α β hα hβ hne huniqα huniqβ
 
-/-- When one contains the other (IM case), merge preserves component count -/
+/-- When one contains the other (IM case), merge preserves component count.
+    Requires uniqueness of α in F. -/
 theorem im_counting_from_trichotomy (α β : SyntacticObject) (F : List SyntacticObject)
-    (h : contains α β) (hα : α ∈ F) :
-    b₀ (imWorkspace α β F) = b₀ F := by
-  -- TODO: follows from im_b0_preserved
-  sorry
+    (h : contains α β) (hα : α ∈ F)
+    (huniq : F.count α = 1) :
+    b₀ (imWorkspace α β F) = b₀ F :=
+  im_b0_preserved α β hα h huniq
 
 end Minimalism

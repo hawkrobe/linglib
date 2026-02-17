@@ -47,6 +47,7 @@ makes one answer pragmatically odd.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.QuestionEmbedding
 

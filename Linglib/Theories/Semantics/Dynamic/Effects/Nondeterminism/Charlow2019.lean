@@ -151,10 +151,46 @@ Delegates to `Core.CCP.might` at type `W × Assignment E`.
 noncomputable def stateMight {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
   Semantics.Dynamic.Core.CCP.might φ
 
-/-- 'might' is non-distributive. -/
+/-- 'might' is non-distributive.
+
+    Witness: `W = Bool`, `E = Unit`, `φ` keeps only true-world pairs.
+    `stateMight φ {(true,g),(false,g)} = {(true,g),(false,g)}` (whole-context test passes),
+    but per-singleton: `stateMight φ {(false,g)} = ∅` (test fails on false-only context).
+    So `(false,g)` is in the whole-context result but not the distributive union. -/
 theorem might_not_distributive :
     ∃ (W E : Type) (φ : StateCCP W E), ¬isDistributive (stateMight φ) := by
-  sorry
+  use Bool, Unit
+  let φ : StateCCP Bool Unit := λ s => {p ∈ s | p.1 = true}
+  use φ
+  intro hD
+  let g : Assignment Unit := λ _ => ()
+  let s : State Bool Unit := {(true, g), (false, g)}
+  have hφ_nonempty : (φ s).Nonempty := by
+    refine ⟨(true, g), ?_, rfl⟩
+    show (true, g) ∈ s
+    exact Or.inl rfl
+  have hmem : (false, g) ∈ stateMight φ s := by
+    simp only [stateMight, Semantics.Dynamic.Core.CCP.might, hφ_nonempty, ↓reduceIte]
+    show (false, g) ∈ s
+    exact Or.inr rfl
+  rw [hD s] at hmem
+  obtain ⟨i, hi, hmem_i⟩ := hmem
+  simp only [stateMight, Semantics.Dynamic.Core.CCP.might] at hmem_i
+  split at hmem_i
+  · next hne =>
+    cases hi with
+    | inl h =>
+      subst h
+      have : (false, g) ∈ ({(true, g)} : Set _) := hmem_i
+      change (false, g) = (true, g) at this
+      exact absurd (congr_arg Prod.fst this) (by decide)
+    | inr h =>
+      subst h
+      obtain ⟨x, hx_mem, hx_fst⟩ := hne
+      change x = (false, g) at hx_mem
+      subst hx_mem
+      exact absurd hx_fst (by decide)
+  · exact hmem_i
 
 /-- Partition by assignment: groups points sharing the same assignment (Charlow's (35)). -/
 def partByAssignment {W E : Type*} (s : State W E) : Set (State W E) :=

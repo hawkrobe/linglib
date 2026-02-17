@@ -172,9 +172,12 @@ theorem necessity_implies_pCGivenNotA_zero (dyn : CausalDynamics) (background : 
     (cause effect : Variable) (pCause : ℚ) (hCause : 0 ≤ pCause ∧ pCause < 1)
     (h_nec : causallyNecessary dyn background cause effect = true) :
     (situationToWorldState dyn background cause effect pCause).pCGivenNotA = 0 := by
-  -- Complex proof involving conditional probability calculation
-  -- When cause is necessary, P(C|¬A) = 0 because effect can't occur without cause
-  sorry
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, WorldState.pCGivenNotA, WorldState.pNotAC,
+             DeterministicParams.toConditionals, h_nec, Bool.not_true]
+  have hNotA_pos : (0 : ℚ) < 1 - pCause := by linarith [hCause.2]
+  simp only [gt_iff_lt, hNotA_pos, ↓reduceIte]
+  norm_num
 
 -- Causal Inference Connection
 

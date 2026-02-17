@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.218.17] - 2026-02-16
+
+### Fixed
+- Fix remaining Lean 4.28 build failures: add `Mathlib.Tactic.DeriveFintype` (9 files), `Mathlib.Tactic.Ring` (2 files)
+- Commit all unstaged changes from previous sessions
+
 ## [0.218.16] - 2026-02-16
 
 ### Fixed
