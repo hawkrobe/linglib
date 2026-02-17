@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.218.25] - 2026-02-16
+
+### Fixed
+- Close `hasMultiplePronunciations` sorry in Amalgamation.lean: define via `subterms` count (copy theory — multiple occurrences = verb doubling)
+- Close `isComplexMorphologicalWord` sorry in Amalgamation.lean: define via `LexicalItem.isComplex` on leaf tokens
+- Fix `projective_implies_planar` and `planar_implies_wellNested` in NonProjective.lean: add required `hasUniqueHeads` hypothesis (original statements were false without it; counterexample: 4-node multi-headed graph)
+- Add `root_mem_projection`, `interval_mem_of_range`, `interval_mem_between` lemmas to DG/Core/Basic.lean (discrete IVT for sorted interval lists)
+- Improve sorry documentation for `isCatena_iff_IsCatena` in Catena.lean with detailed proof sketch and identified blockers
+
 ## [0.218.24] - 2026-02-16
 
 ### Changed

@@ -359,11 +359,30 @@ theorem IsCatena_singleton {n : Nat} (G : SimpleGraph (Fin n)) (v : Fin n) :
 
 /-- The computable `isCatena` agrees with the Prop-level `IsCatena`.
 
-    TODO: The forward direction requires showing BFS explores exactly the
-    connected component of the start node in the induced subgraph. The key
-    steps are: (1) BFS invariant: visited ∪ queue contains all reachable
-    nodes; (2) BFS terminates with visited = component; (3) component = full
-    set iff preconnected. -/
+    ## Proof Sketch
+
+    **Forward** (`isCatena = true → IsCatena`): BFS from the start node
+    reaches all nodes in the list, so for any two nodes u, v in the set,
+    there is a BFS path u → ... → v using only edges within the set.
+    Each BFS step corresponds to a `SimpleGraph.Walk` step in the induced
+    subgraph, giving `SimpleGraph.Reachable u v`, hence `Preconnected`.
+
+    **Backward** (`IsCatena → isCatena = true`): `Preconnected` gives
+    `Reachable start v` for every v in the set. Each `Walk` step is an
+    edge in the induced subgraph, which corresponds to a dependency edge
+    with both endpoints in `allowed`. BFS will therefore discover v.
+
+    ## Blockers
+
+    Formalizing this requires a BFS correctness proof for `bfsReachable`:
+    - **Soundness**: every node in `bfsReachable` output is reachable via
+      edges within `allowed` from `start`
+    - **Completeness**: every node reachable via edges within `allowed`
+      from `start` appears in `bfsReachable` output
+    - **Bridge**: `bfsReachable` edge steps correspond to `SimpleGraph.Adj`
+      in `depsToSimpleGraph` restricted to the node set
+
+    Low downstream value: all current catena theorems use `native_decide`. -/
 theorem isCatena_iff_IsCatena {n : Nat} (deps : List Dependency)
     (nodes : List Nat) (hbounds : ∀ i ∈ nodes, i < n) (hnodup : nodes.Nodup) :
     isCatena deps nodes = true ↔
