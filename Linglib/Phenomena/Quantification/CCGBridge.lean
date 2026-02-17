@@ -17,7 +17,7 @@ based on verb order (verb raising vs. verb projection raising).
 - Haegeman & van Riemsdijk (1986) West Flemish
 -/
 
-namespace Phenomena.Quantification.Bridge_CCG
+namespace Phenomena.Quantification.CCGBridge
 
 open CCG
 open CCG.Scope
@@ -40,4 +40,4 @@ theorem ccg_predicts_verb_raising_scope (vo : VerbOrder) :
     ScopeAvailability.toBinaryScopeAvailability (wordOrderToAvailability vo) := by
   cases vo <;> rfl
 
-end Phenomena.Quantification.Bridge_CCG
+end Phenomena.Quantification.CCGBridge

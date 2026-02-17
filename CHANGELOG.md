@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.218.19] - 2026-02-16
+
+### Changed
+- Standardize bridge file naming: rename 65 `Bridge_*` prefix files to `*Bridge` suffix convention (Lean/Mathlib style)
+
 ## [0.218.18] - 2026-02-16
 
 ### Changed

@@ -14,7 +14,7 @@ empirical verb position data in `Phenomena.WordOrder.VerbPosition`.
 - `captures_verb_final_embedded`: Verb-final in embedded clauses is captured
 -/
 
-namespace Phenomena.WordOrder.Bridge_Minimalism_GermanicV2
+namespace Phenomena.WordOrder.Minimalism_GermanicV2Bridge
 
 open Phenomena.WordOrderAlternations.VerbPosition
 
@@ -30,4 +30,4 @@ theorem captures_v2_requirement :
 theorem captures_verb_final_embedded :
     germanExample.verbFinalInEmbedded = true := rfl
 
-end Phenomena.WordOrder.Bridge_Minimalism_GermanicV2
+end Phenomena.WordOrder.Minimalism_GermanicV2Bridge

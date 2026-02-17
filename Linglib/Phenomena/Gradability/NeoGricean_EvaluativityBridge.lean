@@ -18,7 +18,7 @@ empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
 - Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
-namespace Phenomena.Gradability.Bridge_NeoGricean_Evaluativity
+namespace Phenomena.Gradability.NeoGricean_EvaluativityBridge
 
 open NeoGricean.Evaluativity
 open Phenomena.Gradability.Evaluativity
@@ -85,4 +85,4 @@ theorem matches_question_short :
   native_decide
 
 
-end Phenomena.Gradability.Bridge_NeoGricean_Evaluativity
+end Phenomena.Gradability.NeoGricean_EvaluativityBridge

@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Entailment.Bridge_Montague_TruthConditions
+import Linglib.Phenomena.Entailment.Montague_TruthConditionsBridge
 import Linglib.Phenomena.Entailment.Basic
 
 /-!
@@ -16,7 +16,7 @@ the empirical judgment for a specific sentence.
 -/
 
 
-namespace Phenomena.Entailment.Bridge_Compositional
+namespace Phenomena.Entailment.CompositionalBridge
 
 open Semantics.Montague
 open ToyLexicon
@@ -40,4 +40,4 @@ theorem captures_transitive_seeing :
     apply (apply sees_sem john_sem) john_sem = johnSeesJohnFalse.judgedTrue := by
   constructor <;> rfl
 
-end Phenomena.Entailment.Bridge_Compositional
+end Phenomena.Entailment.CompositionalBridge

@@ -17,7 +17,7 @@ mild context-sensitivity.
 - Bresnan et al. (1982) "Cross-serial dependencies in Dutch"
 -/
 
-namespace Phenomena.FillerGap.Bridge_CCG_CrossSerial
+namespace Phenomena.FillerGap.CCG_CrossSerialBridge
 
 open CCG
 open CCG.CrossSerial
@@ -127,4 +127,4 @@ theorem ccg_handles_both_patterns :
     nestedRequires = .contextFree := by
   constructor <;> rfl
 
-end Phenomena.FillerGap.Bridge_CCG_CrossSerial
+end Phenomena.FillerGap.CCG_CrossSerialBridge

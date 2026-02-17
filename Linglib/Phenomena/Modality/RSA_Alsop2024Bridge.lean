@@ -14,7 +14,7 @@ data in `Phenomena.Modality.FreeChoice`.
 -/
 
 
-namespace Phenomena.Modality.Bridge_RSA_Alsop2024
+namespace Phenomena.Modality.RSA_Alsop2024Bridge
 
 /-!
 ## Connection to Phenomena
@@ -42,4 +42,4 @@ theorem predicts_fci_any :
 theorem predicts_robustness :
     Phenomena.Modality.FreeChoice.anyClass.robustToPriors = true := rfl
 
-end Phenomena.Modality.Bridge_RSA_Alsop2024
+end Phenomena.Modality.RSA_Alsop2024Bridge

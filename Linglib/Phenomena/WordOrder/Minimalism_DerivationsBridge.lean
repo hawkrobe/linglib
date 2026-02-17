@@ -16,7 +16,7 @@ subcategorization data.
 - `models_ditransitive`: Models ditransitive patterns
 -/
 
-namespace Phenomena.WordOrder.Bridge_Minimalism_Derivations
+namespace Phenomena.WordOrder.Minimalism_DerivationsBridge
 
 open Minimalism.Phenomena.Derivations
 
@@ -48,4 +48,4 @@ example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
 
 example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := by native_decide
 
-end Phenomena.WordOrder.Bridge_Minimalism_Derivations
+end Phenomena.WordOrder.Minimalism_DerivationsBridge

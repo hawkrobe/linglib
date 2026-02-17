@@ -15,7 +15,7 @@ in `Phenomena.Quantification.Data`.
 - `configFromExample`, `predictAvailability`, `correctlyPredicts`: Per-datum predictions
 -/
 
-namespace Phenomena.Quantification.Bridge_Minimalism
+namespace Phenomena.Quantification.MinimalismBridge
 
 open ScopeTheory
 open Phenomena.Quantification.Data
@@ -140,4 +140,4 @@ theorem baseline_is_ambiguous :
 | Attitude | Clause boundary |
 -/
 
-end Phenomena.Quantification.Bridge_Minimalism
+end Phenomena.Quantification.MinimalismBridge

@@ -17,7 +17,7 @@ we derive both properties from the formal model.
 -/
 
 
-namespace Phenomena.FillerGap.Bridge_BackgroundedIslands
+namespace Phenomena.FillerGap.BackgroundedIslandsBridge
 
 open Semantics.Focus.BackgroundedIslands
 open Core.InformationStructure
@@ -70,4 +70,4 @@ theorem mos_unique_discourse_source :
     constraintSource .sententialSubject = .syntactic := by
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.FillerGap.Bridge_BackgroundedIslands
+end Phenomena.FillerGap.BackgroundedIslandsBridge

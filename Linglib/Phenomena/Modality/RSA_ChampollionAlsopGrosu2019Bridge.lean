@@ -14,7 +14,7 @@ to empirical data in `Phenomena.Modality.FreeChoice`.
 -/
 
 
-namespace Phenomena.Modality.Bridge_RSA_ChampollionAlsopGrosu2019
+namespace Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge
 
 /-!
 ## Connection to Empirical Data
@@ -43,4 +43,4 @@ theorem predicts_free_choice :
 theorem fc_not_semantic :
     Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
 
-end Phenomena.Modality.Bridge_RSA_ChampollionAlsopGrosu2019
+end Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge

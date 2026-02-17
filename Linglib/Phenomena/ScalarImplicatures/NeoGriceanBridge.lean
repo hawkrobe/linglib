@@ -22,7 +22,7 @@ Geurts & Pouscoulous (2009) and the basic scalar implicature phenomena.
 - Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-namespace Phenomena.ScalarImplicatures.Bridge_NeoGricean
+namespace Phenomena.ScalarImplicatures.NeoGriceanBridge
 
 open NeoGricean.ScalarImplicatures
 open NeoGricean.Alternatives
@@ -290,4 +290,4 @@ theorem bothThenOr_prediction_matches_data :
   · intro _; exact bothThenOr_not_predicted_felicitous
 
 
-end Phenomena.ScalarImplicatures.Bridge_NeoGricean
+end Phenomena.ScalarImplicatures.NeoGriceanBridge

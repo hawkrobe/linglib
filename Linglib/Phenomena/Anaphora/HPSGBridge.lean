@@ -15,7 +15,7 @@ coreference data in `Phenomena.Anaphora.Coreference`.
 - `reflexive_pairs_captured`: Per-pair verification
 -/
 
-namespace Phenomena.Anaphora.Bridge_HPSG
+namespace Phenomena.Anaphora.HPSGBridge
 
 open HPSG.Coreference
 
@@ -75,4 +75,4 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
-end Phenomena.Anaphora.Bridge_HPSG
+end Phenomena.Anaphora.HPSGBridge

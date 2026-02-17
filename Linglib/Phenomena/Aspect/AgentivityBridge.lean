@@ -18,7 +18,7 @@ and is marginal for others.
 -/
 
 
-namespace Phenomena.Aspect.Bridge_Agentivity
+namespace Phenomena.Aspect.AgentivityBridge
 
 open Semantics.Lexical.Verb.Aspect
 open Phenomena.Aspect.Diagnostics
@@ -70,4 +70,4 @@ theorem doTest_agrees_imperative_for_dynamic_durative (c : VendlerClass)
   cases c <;> simp_all [doTestPrediction, imperativePrediction,
     VendlerClass.dynamicity, VendlerClass.duration]
 
-end Phenomena.Aspect.Bridge_Agentivity
+end Phenomena.Aspect.AgentivityBridge

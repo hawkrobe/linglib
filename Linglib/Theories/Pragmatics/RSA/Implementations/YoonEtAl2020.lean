@@ -45,7 +45,7 @@ This file previously contained the full Yoon et al. (2020) RSA implementation.
 All definitions and theorems depend on Phenomena types (HeartState, Utterance, SoftProp,
 adjMeaning, utteranceSemantics, PolitenessConfig, InferredWeights, GoalCondition, etc.)
 and have been moved to
-`Linglib.Phenomena.Politeness.Bridge_RSA_YoonEtAl2020`.
+`Linglib.Phenomena.Politeness.RSA_YoonEtAl2020Bridge`.
 -/
 
 end RSA.Implementations.YoonEtAl2020

@@ -11,7 +11,7 @@ The theory predicts that preconditions (which project) pass "allows for"
 and consequences (which don't project) pass "results in".
 -/
 
-namespace Phenomena.Presupposition.Bridge_OntologicalPreconditions
+namespace Phenomena.Presupposition.OntologicalPreconditionsBridge
 
 open Phenomena.Presupposition.Diagnostics
 
@@ -29,4 +29,4 @@ def theoryPredictsPattern : Bool :=
   stopPattern.resultFailsAllowsFor == true &&
   resultStateProjection.projectsThroughNegation == false
 
-end Phenomena.Presupposition.Bridge_OntologicalPreconditions
+end Phenomena.Presupposition.OntologicalPreconditionsBridge
