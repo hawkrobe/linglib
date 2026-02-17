@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Exponence
+import Linglib.Theories.Morphology.Core.Exponence
 
 /-!
 # Lakoff (1970) Grammaticality Judgments

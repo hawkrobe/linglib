@@ -49,8 +49,8 @@ import Linglib.Core.Mereology
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
-import Linglib.Theories.Morphology.Exponence
-import Linglib.Theories.Morphology.ScaleFromParadigm
+import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.DiscourseRole
 
@@ -498,7 +498,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Morphology.DM.Fission
-import Linglib.Theories.Morphology.CliticVsAffix
+import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible

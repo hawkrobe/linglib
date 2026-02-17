@@ -1,5 +1,5 @@
-import Linglib.Theories.Morphology.Exponence
-import Linglib.Theories.Morphology.ScaleFromParadigm
+import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Fragments.English.Modifiers.Adjectives
 
 /-!
