@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Theories.Semantics.Tense.Perspective
+import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
 /-!
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)
@@ -96,7 +96,7 @@ def nonfutureEntries : List TenseEvidentialParadigm :=
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense
-open Semantics.Tense.Perspective
+open Semantics.Tense.ParticipantPerspective
 open Core.Morphology.Tense
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions:

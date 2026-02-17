@@ -37,6 +37,7 @@ import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
 import Linglib.Core.Time
+import Linglib.Core.AtomicDistributivity
 import Linglib.Core.Reichenbach
 import Linglib.Core.Tense
 import Linglib.Core.Context
@@ -71,15 +72,19 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.Tense
+import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.Georgian.Coordination
+import Linglib.Fragments.Greek.TemporalDeictic
+import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.French.Nouns
@@ -91,12 +96,15 @@ import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.Predicates
+import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Particles
+import Linglib.Fragments.Mandarin.TemporalDeictic
+import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Basque.Pronouns
@@ -108,6 +116,7 @@ import Linglib.Fragments.Galician.Pronouns
 import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
+import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
@@ -144,6 +153,7 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Compare
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferences
+import Linglib.Phenomena.Aspect.CrossDomainBridge
 import Linglib.Phenomena.Aspect.DiagnosticsBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
@@ -326,6 +336,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.Tense.Data
 import Linglib.Phenomena.Tense.Bridge
+import Linglib.Phenomena.Tense.ThenPresentBridge
 import Linglib.Phenomena.Tense.Compare
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
@@ -579,7 +590,8 @@ import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Theories.Semantics.Tense.Perspective
+import Linglib.Theories.Semantics.Tense.ParticipantPerspective
+import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
@@ -593,6 +605,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
+import Linglib.Theories.Semantics.Events.DegreeEvents
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.ThematicRolesGrounding
 import Linglib.Theories.Semantics.Events.Mereology

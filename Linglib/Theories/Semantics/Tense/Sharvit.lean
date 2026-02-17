@@ -239,7 +239,11 @@ theorem sharvit_derives_rc_tense {Time : Type*}
 -- § Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Sharvit (2003) identity card. -/
+/-- Sharvit (2003) identity card.
+
+    Sharvit (2003) does not treat tenses as presupposition triggers;
+    the presuppositional extension is Tsilia, Zhao & Sharvit (2026),
+    formalized in `TsiliaEtAl2026.lean`. -/
 def Sharvit : TenseTheory where
   name := "Sharvit 2003"
   citation := "Sharvit, Y. (2003). Embedded tense and universal grammar. LI 34(4): 669-681."
@@ -247,6 +251,7 @@ def Sharvit : TenseTheory where
   hasULC := false
   hasZeroTense := false
   hasSOTDeletion := false
+  hasPresuppositionalTense := false
   simultaneousMechanism := "simultaneous tense with its own semantics (not deletion/zero/binding)"
 
 

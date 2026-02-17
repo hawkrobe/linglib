@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Tense.Studies.Lakoff1970.Data
 import Linglib.Fragments.English.Tense
-import Linglib.Theories.Semantics.Tense.Perspective
+import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
 /-!
 # Lakoff (1970) Bridge Theorems
@@ -27,7 +27,7 @@ namespace Phenomena.Tense.Studies.Lakoff1970.Bridge
 
 open Phenomena.Tense.Studies.Lakoff1970.Data
 open Fragments.English.Tense
-open Semantics.Tense.Perspective
+open Semantics.Tense.ParticipantPerspective
 open Semantics.Tense
 open Core.Morphology.Tense
 
