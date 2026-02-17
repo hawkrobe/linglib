@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.219.16] - 2026-02-17
+
+### Added
+- `Core/DimensionBridge.lean`: Theory-neutral cross-dimension bridge with three levels of unification
+  - `MereoTag` enum (qua/cum): binary mereological classification shared across all four frameworks
+  - `LicensingPipeline` typeclass: maps any classification type to `Boundedness`, with `universal` theorem proving framework-independent licensing
+  - `LicensingPipeline` instances: `Boundedness`, `MereoTag`, `BoundaryType` (theory-neutral)
+  - `DimensionChain` structure: first-class two-leg pipeline Source →f Inter →μ Measure with `MereoDim` on both legs
+  - `DimensionChain.composed`, `qua_transfer`, `qua_transfer_leg₁`, `qua_transfer_leg₂`: generic QUA pullback through chains
+  - `cum_exceeds_source`: CUM + fresh incomparable element → strictly larger measure (structural "CUM → open scale")
+  - `cum_measure_unbounded`: CUM + disjoint fresh supply with minimum measure δ → measurement unbounded (proved via Archimedean ℚ; original `¬ y ≤ x` hypothesis strengthened to `¬ Overlap x y ∧ δ ≤ μ y` after discovering convergent-increment counterexample)
+  - `boundaryTypeToBoundedness`, `four_frameworks_agree`, `sumHom_qua_pullback_pattern`/`sumHom_cum_pullback_pattern`, named licensing theorems
+- `Events/DimensionBridge.lean`: Theory-specific commutativity diamond + concrete dimension chains
+  - `LicensingPipeline` instances: `Telicity`, `VendlerClass`, `PathShape`
+  - `vendler_comm`, `pathShape_comm`: commutativity squares (two paths to Boundedness agree)
+  - `commutativity_diamond`: all six classification paths converge at same licensing prediction
+  - `temporalChain`, `spatialChain`, `objectChain`: concrete `DimensionChain` instantiations for τ/σ/θ
+  - `temporal_qua_licensed`, `spatial_qua_licensed`, `object_qua_licensed`: end-to-end QUA transfer
+  - `dimension_irrelevance`: licensing depends only on QUA/CUM, not on which dimension chain
+
 ## [0.219.15] - 2026-02-17
 
 ### Added
