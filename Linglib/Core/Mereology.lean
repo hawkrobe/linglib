@@ -3,6 +3,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
+import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 
 /-!
 # Algebraic Mereology
@@ -21,6 +22,12 @@ with part-whole structure.
 4. Sum Homomorphism
 5. Overlap and Extensive Measures (Krifka 1998 §2.2)
 6. QMOD: Quantizing Modification (Krifka 1989)
+7. Maximality and Atom Counting (Charlow 2021)
+8. QUA/CUM Pullback (contravariant functoriality)
+9. ExtMeasure → StrictMono Bridge
+10. IsSumHom + Injective → StrictMono
+11. Functional QUA propagation
+12. CUM/QUA Pullback Interaction
 
 ## References
 
@@ -283,5 +290,164 @@ theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
     {x y : α} (_hDisj : ¬ Overlap x y) :
     atomCount α (x ⊔ y) = atomCount α x + atomCount α y := by
   sorry
+
+-- ════════════════════════════════════════════════════
+-- § 8. QUA/CUM Pullback (contravariant functoriality)
+-- ════════════════════════════════════════════════════
+
+/-- QUA pullback along strictly monotone maps.
+
+    If `d : α → β` is strictly monotone and `P` is quantized over `β`,
+    then `P ∘ d` is quantized over `α`. This is the general theorem
+    subsuming both `extMeasure_qua` (where d = μ) and the functional
+    version of `qua_propagation` (where d = θ as a function).
+
+    Categorically: QUA is a contravariant functor from the category of
+    partially ordered types with StrictMono morphisms to Prop.
+
+    The relational `qua_propagation` in Krifka1998.lean (using MSO + UP
+    on a binary relation θ) is genuinely different — it operates on
+    relations, not functions. Both coexist: the functional case is a
+    special case of this theorem. -/
+theorem qua_pullback {α β : Type*} [PartialOrder α] [PartialOrder β]
+    {d : α → β} (hd : StrictMono d)
+    {P : β → Prop} (hP : QUA P) :
+    QUA (P ∘ d) :=
+  fun _x _y hx hlt hy => hP _ _ hx (hd hlt) hy
+
+/-- CUM pullback along sum homomorphisms.
+
+    If `d : α → β` is a sum homomorphism and `P` is cumulative over `β`,
+    then `P ∘ d` is cumulative over `α`. Wrapper for `IsSumHom.cum_preimage`,
+    named for symmetry with `qua_pullback`.
+
+    Categorically: CUM is a contravariant functor from the category of
+    join semilattices with IsSumHom morphisms to Prop. -/
+theorem cum_pullback {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    {d : α → β} (hd : IsSumHom d)
+    {P : β → Prop} (hP : CUM P) :
+    CUM (P ∘ d) :=
+  hd.cum_preimage hP
+
+-- ════════════════════════════════════════════════════
+-- § 9. ExtMeasure → StrictMono Bridge
+-- ════════════════════════════════════════════════════
+
+/-- Extract `StrictMono` from an extensive measure.
+    `ExtMeasure.strict_mono` axiomatizes that proper parts have strictly
+    smaller measure; this is exactly `StrictMono μ`. -/
+theorem extMeasure_strictMono {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} (hμ : ExtMeasure α μ) : StrictMono μ :=
+  fun _a _b hab => hμ.strict_mono _ _ hab
+
+/-- Singleton predicates are quantized on any partial order.
+    `{x | x = n}` is QUA because `y < n → y ≠ n` (by irreflexivity
+    of `<` after substitution).
+
+    This generalizes `atom_qua`, which required `Atom x`. The Atom
+    hypothesis is unnecessary for singletons. -/
+theorem singleton_qua {α : Type*} [PartialOrder α]
+    (n : α) : QUA (· = n) := by
+  intro x y hx hlt hy
+  subst hx; subst hy
+  exact absurd hlt (lt_irrefl _)
+
+/-- `extMeasure_qua` derived from `qua_pullback` + `singleton_qua`.
+    This shows that `extMeasure_qua` is a special case of QUA pullback:
+
+      {x | μ(x) = n} = (· = n) ∘ μ
+
+    and QUA pulls back along the StrictMono map μ.
+
+    Note: unlike the original `extMeasure_qua`, this derivation does not
+    require `0 < n`. The positivity hypothesis was an artifact of the
+    direct proof; the pullback route is strictly more general.
+
+    The original `extMeasure_qua` is preserved for backward compatibility. -/
+theorem extMeasure_qua' {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
+    QUA (fun x => μ x = n) :=
+  qua_pullback (extMeasure_strictMono hμ) (singleton_qua n)
+
+/-- QUA pullback composes: if `d₁ : α → β` and `d₂ : β → γ` are both
+    StrictMono, then `QUA P → QUA (P ∘ d₂ ∘ d₁)`.
+
+    This captures the Krifka dimension chain:
+      Events →θ Entities →μ ℚ
+    where θ extracts the incremental theme and μ measures it. The
+    composition `μ ∘ θ` is StrictMono, so QUA predicates on ℚ
+    (measure phrases like "two kilograms") pull back to QUA predicates
+    on Events (telic VPs like "eat two kilograms of flour"). -/
+theorem qua_pullback_comp {α β γ : Type*}
+    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
+    {d₁ : α → β} {d₂ : β → γ}
+    (hd₁ : StrictMono d₁) (hd₂ : StrictMono d₂)
+    {P : γ → Prop} (hP : QUA P) :
+    QUA (P ∘ d₂ ∘ d₁) :=
+  qua_pullback hd₁ (qua_pullback hd₂ hP)
+
+-- ════════════════════════════════════════════════════
+-- § 10. IsSumHom + Injective → StrictMono
+-- ════════════════════════════════════════════════════
+
+/-- A sum homomorphism that is injective is strictly monotone.
+
+    `IsSumHom.monotone` gives `Monotone f` (x ≤ y → f(x) ≤ f(y)).
+    Adding injectivity strengthens this: x < y means x ≤ y ∧ x ≠ y,
+    so f(x) ≤ f(y) ∧ f(x) ≠ f(y), i.e., f(x) < f(y).
+
+    This bridges `IsSumHom` (the CUM pullback morphism class) to
+    `StrictMono` (the QUA pullback morphism class): an injective sum
+    homomorphism supports both CUM and QUA pullback.
+
+    Linguistically: a sum-homomorphic thematic role that is also
+    injective (unique participant assignment, Krifka's UE/UO
+    conditions) supports telicity transfer via `qua_pullback`. -/
+theorem IsSumHom.strictMono_of_injective {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} (hf : IsSumHom f) (hinj : Function.Injective f) :
+    StrictMono f := by
+  intro x y hlt
+  exact lt_of_le_of_ne (hf.monotone hlt.le) (fun h => hlt.ne (hinj h))
+
+-- ════════════════════════════════════════════════════
+-- § 11. Functional QUA propagation
+-- ════════════════════════════════════════════════════
+
+/-- QUA propagation through an injective sum homomorphism.
+
+    When the relational θ in Krifka's `qua_propagation` (Krifka1998.lean)
+    is actually a function `f` with `IsSumHom` + injectivity, the
+    relational proof (needing UP + MSO) reduces to functional
+    `qua_pullback` via `StrictMono`.
+
+    This is the functional special case of Krifka (1998) §3.3:
+    SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ), where θ is a function
+    rather than a relation, and SINC reduces to IsSumHom + Injective.
+
+    See also: `qua_propagation` in Krifka1998.lean for the relational
+    version using UP + MSO + UO. -/
+theorem qua_of_injective_sumHom {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} (hf : IsSumHom f) (hinj : Function.Injective f)
+    {P : β → Prop} (hP : QUA P) :
+    QUA (P ∘ f) :=
+  qua_pullback (hf.strictMono_of_injective hinj) hP
+
+-- ════════════════════════════════════════════════════
+-- § 12. CUM/QUA Pullback Interaction
+-- ════════════════════════════════════════════════════
+
+/-- CUM/QUA incompatibility is preserved through composition.
+
+    If P ∘ f has two distinct witnesses x ≠ y, then P ∘ f cannot be
+    both CUM and QUA. This is `cum_qua_disjoint` instantiated to the
+    composed predicate. -/
+theorem cum_qua_dimension_disjoint {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} {P : β → Prop}
+    {x y : α} (hx : (P ∘ f) x) (hy : (P ∘ f) y) (hne : x ≠ y) :
+    ¬ (CUM (P ∘ f) ∧ QUA (P ∘ f)) :=
+  cum_qua_disjoint ⟨x, y, hx, hy, hne⟩
 
 end Mereology

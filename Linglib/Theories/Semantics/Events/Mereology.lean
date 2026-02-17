@@ -1,5 +1,5 @@
 import Linglib.Core.Mereology
-import Linglib.Core.Dimension
+import Linglib.Core.MereoDim
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
@@ -38,6 +38,7 @@ open _root_.Mereology
 
 -- Re-export Core.Mereology definitions in this namespace so that
 -- existing `open Semantics.Events.Mereology` continues to work.
+-- §1–12 from Core/Mereology.lean (base algebra + pullback + bridges):
 export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   algClosure_cum subset_algClosure qua_cum_incompatible atom_qua
   div_closed_under_le cum_qua_disjoint algClosure_of_mem
@@ -45,8 +46,10 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   IsSumHom Overlap ExtMeasure extMeasure_qua
   QMOD qmod_sub
   qua_pullback cum_pullback extMeasure_strictMono singleton_qua
+  extMeasure_qua' qua_pullback_comp
   IsSumHom.strictMono_of_injective qua_of_injective_sumHom
   cum_qua_dimension_disjoint
+  -- §1–4 from Core/MereoDim.lean (Mereology ↔ MeasurementScale bridge):
   quaBoundedness cumBoundedness
   qua_boundedness_licensed cum_boundedness_blocked
   extMeasure_kennedyMIP extMeasure_rouillardMIP
