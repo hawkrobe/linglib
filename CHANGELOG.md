@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.218.22] - 2026-02-16
+
+### Fixed
+- Add `LawfulBEq Variable` instance and `Variable.beq_def` simp lemma to Core/Causation.lean
+- Close 3 sorry's in Causation/Sufficiency.lean: `disjunctive_each_sufficient`, `conjunctive_neither_sufficient_alone`, `conjunctive_sufficient_with_other` via normalDevelopment fixpoint proofs
+- Close `single_cause_perfection` sorry in Causation/Integration.lean: sufficiency implies necessity in single-cause models
+- Close `pump_breaks_anbncndn` sorry in FormalLanguageTheory.lean: pumping down {aⁿbⁿcⁿdⁿ} breaks symbol count equality via contiguity argument (.a and .d separated by 2p positions)
+- Close `anbnc_not_pumpable` sorry in FormalLanguageTheory.lean: {aⁿbⁿcⁿ} is not context-free via 3-symbol pumping lemma with 8 helper lemmas
+- Add `LawfulBEq ThreeSymbol` instance for 3-symbol pumping proof
+
 ## [0.218.21] - 2026-02-16
 
 ### Fixed

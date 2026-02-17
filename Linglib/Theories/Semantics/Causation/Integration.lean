@@ -323,9 +323,27 @@ theorem single_cause_perfection (cause effect : Variable) :
     let background := Situation.empty.extend cause true
     causallySufficient dyn Situation.empty cause effect = true →
     causallyNecessary dyn background cause effect = true := by
-  intro _h_suff
-  -- In a single-cause model, if cause is sufficient then it's also necessary
-  -- because there's no alternative path to the effect
-  sorry
+  intro dyn background _h_suff
+  simp only [causallyNecessary]
+  -- The goal involves normalDevelopment with default fuel
+  have hfuel : normalDevelopment dyn (background.extend cause false) =
+      normalDevelopment dyn (background.extend cause false) 100 := rfl
+  rw [hfuel]
+  -- Setting cause=false means the law (cause→effect) can't fire
+  -- So effect stays undetermined → necessity holds
+  have hfix : isFixpoint dyn (applyLawsOnce dyn (background.extend cause false)) = true := by
+    simp only [dyn, background, isFixpoint, applyLawsOnce,
+      CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
+      List.all, Situation.hasValue, Situation.extend, Situation.empty,
+      Variable.beq_def, decide_eq_true_eq, Bool.and_eq_true, Bool.not_eq_true',
+      Bool.or_eq_true]
+    simp
+  rw [show (100 : Nat) = 99 + 1 from rfl,
+      normalDevelopment_fixpoint_after_one _ _ hfix]
+  simp only [dyn, background, applyLawsOnce,
+    CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
+    List.all, Situation.hasValue, Situation.extend, Situation.empty,
+    Variable.beq_def, decide_eq_true_eq]
+  by_cases h : effect = cause <;> simp [h]
 
 end NadathurLauer2020.Integration
