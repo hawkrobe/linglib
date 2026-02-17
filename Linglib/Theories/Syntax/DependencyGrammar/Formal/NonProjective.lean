@@ -529,6 +529,7 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
     By `dominates_antisymm` (acyclicity), v = w, contradicting v < w. -/
 theorem projective_implies_planar (t : DepTree)
     (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
+    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     (hproj : isProjective t = true) : t.isPlanar = true := by
   by_contra h_np
   -- Extract crossing: ∃ a b c d with a < b < c < d, linked edges
@@ -561,7 +562,7 @@ theorem projective_implies_planar (t : DepTree)
     have h_b_dom_c := dominates_of_mem_projection hc_in_b
     have h_c_parent := mk_parent hc_lt e₁ he₁_mem hh₁ hd₁
     have h_b_dom_a := dominates_to_parent h_b_dom_c (Nat.ne_of_lt hbc) h_c_parent
-    exact absurd (dominates_antisymm t hwf hacyc a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
+    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
   · -- Case (head=a, dep=c) × (head=d, dep=b)
     have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
     have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
@@ -578,7 +579,7 @@ theorem projective_implies_planar (t : DepTree)
       mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
     have h_d_dom_a := dominates_to_parent h_d_dom_c (Nat.ne_of_lt hcd).symm h_c_parent
     have h_a_dom_d := dominates_to_parent h_a_dom_b (Nat.ne_of_lt hab) h_b_parent
-    exact absurd (dominates_antisymm t hwf hacyc a d h_a_dom_d h_d_dom_a)
+    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf a d h_a_dom_d h_d_dom_a)
       (Nat.ne_of_lt (Nat.lt_trans (Nat.lt_trans hab hbc) hcd))
   · -- Case (head=c, dep=a) × (head=b, dep=d)
     have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
@@ -591,7 +592,7 @@ theorem projective_implies_planar (t : DepTree)
       b c d (root_mem_projection t.deps b) hd_in_b hbc hcd
     have h_c_dom_b := dominates_of_mem_projection hb_in_c
     have h_b_dom_c := dominates_of_mem_projection hc_in_b
-    exact absurd (dominates_antisymm t hwf hacyc b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
+    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
   · -- Case (head=c, dep=a) × (head=d, dep=b)
     have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
     have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
@@ -606,7 +607,7 @@ theorem projective_implies_planar (t : DepTree)
     have h_b_parent : ∀ dep ∈ t.deps, dep.depIdx = b → dep.headIdx = d :=
       mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
     have h_c_dom_d := dominates_to_parent h_c_dom_b (Nat.ne_of_lt hbc).symm h_b_parent
-    exact absurd (dominates_antisymm t hwf hacyc c d h_c_dom_d h_d_dom_c) (Nat.ne_of_lt hcd)
+    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf c d h_c_dom_d h_d_dom_c) (Nat.ne_of_lt hcd)
 
 /-- **Planar ⊂ well-nested** (for well-formed trees): every planar tree
     with unique heads is well-nested.
@@ -615,14 +616,25 @@ theorem projective_implies_planar (t : DepTree)
     The `hasUniqueHeads` precondition ensures the dependency structure is
     a tree, so that disjoint nodes have disjoint projections.
 
-    Proof: by contrapositive. If ¬wellNested, there exist disjoint nodes
+    TODO: Proof by contrapositive. If ¬wellNested, extract disjoint nodes
     u, v with interleaving projections: l₁ ∈ π(u), l₂ ∈ π(v), r₁ ∈ π(u),
-    r₂ ∈ π(v) with l₁ < l₂ < r₁ < r₂. With unique heads, projections of
-    disjoint nodes are disjoint sets (each node has a unique path to root).
-    The parent edges connecting l₂ to v and r₁ to u must cross (one spans
-    the region containing the other's endpoint), contradicting planarity. -/
+    r₂ ∈ π(v) with l₁ < l₂ < r₁ < r₂. With unique heads + acyclicity,
+    projections of disjoint nodes are disjoint sets (if x ∈ π(u) ∩ π(v),
+    the unique parent chain from x reaches both u and v, so one dominates
+    the other, contradicting disjointness). Then show ¬isPlanar by finding
+    two crossing edges from π(u) and π(v). This requires:
+    1. `projection_disjoint_of_disjoint`: π(u) ∩ π(v) = ∅ when disjoint
+       (provable via `dominates_iterParent_uh` + `iterParent_add_uh`)
+    2. Connectivity of projections: if a, b ∈ π(u), there exists a path
+       a → ... → b within π(u) (chain of parent-child edges)
+    3. Discrete IVT: on a path within π(u) from l₁ to r₁, since l₂ ∉ π(u)
+       and l₁ < l₂ < r₁, some edge (x, y) has x < l₂ < y. Similarly for
+       π(v) and r₁. The two spanning edges must cross.
+    Infrastructure (2) and (3) require formalizing undirected tree paths,
+    which is not yet available. -/
 theorem planar_implies_wellNested (t : DepTree)
     (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
+    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     (h : t.isPlanar = true) : t.isWellNested = true := by
   sorry
 
