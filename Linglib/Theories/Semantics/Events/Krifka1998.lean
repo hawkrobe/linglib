@@ -225,7 +225,13 @@ theorem cum_propagation {θ : α → β → Prop} {OBJ : α → Prop}
     We must show ¬VP(e'). Suppose for contradiction VP(e') via
     ⟨z, OBJ(z), θ(z,e')⟩. By UP, z = y' for any other filler of e'.
     By MSO, ∃ y' < y with θ(y',e'). By UP, z = y'.
-    So OBJ(y') with y' < y. But QUA(OBJ) says ¬OBJ(y'). Contradiction. -/
+    So OBJ(y') with y' < y. But QUA(OBJ) says ¬OBJ(y'). Contradiction.
+
+    **Functional case**: When θ is a function (not a relation) with
+    `IsSumHom` + `Function.Injective`, this reduces to
+    `qua_of_injective_sumHom` in `Core/Dimension.lean` via
+    `qua_pullback`. The relational UP + MSO conditions collapse to
+    functional injectivity + monotonicity. -/
 theorem qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
     (hUP : UP θ) (hMSO : MSO θ) (hQua : QUA OBJ) :
     QUA (VP θ OBJ) := by
@@ -391,7 +397,12 @@ theorem sinc_qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
 
 /-- Bridge: RoleHom (functional θ from Mereology.lean) implies CumTheta
     (relational θ). A sum-homomorphic function θ : β → α induces a
-    cumulative relation λ x e, θ(e) = x. -/
+    cumulative relation λ x e, θ(e) = x.
+
+    With injectivity, we additionally get `StrictMono` via
+    `IsSumHom.strictMono_of_injective` (Core/Dimension.lean §6),
+    which enables `qua_of_injective_sumHom` — the functional
+    QUA propagation theorem. -/
 theorem roleHom_implies_cumTheta
     {f : β → α} (hf : IsSumHom f) :
     CumTheta (fun (x : α) (e : β) => f e = x) := by

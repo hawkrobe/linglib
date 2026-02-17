@@ -231,4 +231,48 @@ theorem homogeneous_iff_atelic (p : AspectualProfile) :
 
 end Homogeneity
 
+section AtomicDistributivity
+
+/-- Whether a VendlerClass predicts ATOM-DIST_t (Zhao 2026, Def. 5.3).
+    States satisfy ATOM-DIST_t (distribute over temporal subintervals);
+    dynamic classes do not. Stricter than `isHomogeneous`: activities are
+    homogeneous but fail ATOM-DIST_t.
+
+    - Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
+      Semantics of Degree and Time. MIT dissertation, Ch. 5. -/
+def VendlerClass.predictsAtomDist : VendlerClass → Bool
+  | .state => true
+  | .activity | .achievement | .accomplishment => false
+
+/-- ATOM-DIST_t prediction coincides with stative dynamicity. -/
+theorem predictsAtomDist_iff_stative (c : VendlerClass) :
+    c.predictsAtomDist = true ↔ c.dynamicity = .stative := by
+  cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity]
+
+/-- States predict ATOM-DIST_t holds. -/
+theorem state_predictsAtomDist :
+    VendlerClass.state.predictsAtomDist = true := rfl
+
+/-- All dynamic classes predict ATOM-DIST_t failure. -/
+theorem dynamic_predictsAtomDist_false (c : VendlerClass)
+    (h : c.dynamicity = .dynamic) :
+    c.predictsAtomDist = false := by
+  cases c <;> simp_all [VendlerClass.dynamicity, VendlerClass.predictsAtomDist]
+
+/-- ATOM-DIST_t implies homogeneity (but not vice versa).
+    Activities are homogeneous but do NOT satisfy ATOM-DIST_t — this is
+    Zhao's point: ATOM-DIST_t discriminates states from activities, while
+    the classical subinterval property does not. -/
+theorem atomDist_implies_homogeneous (c : VendlerClass)
+    (h : c.predictsAtomDist = true) :
+    c.toProfile.isHomogeneous = true := by
+  cases c <;> simp_all [VendlerClass.predictsAtomDist]; rfl
+
+/-- ATOM-DIST_t prediction is the negation of dynamicity = .dynamic. -/
+theorem predictsAtomDist_iff_not_dynamic (c : VendlerClass) :
+    (c.predictsAtomDist = false) ↔ (c.dynamicity = .dynamic) := by
+  cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity]
+
+end AtomicDistributivity
+
 end Semantics.Lexical.Verb.Aspect

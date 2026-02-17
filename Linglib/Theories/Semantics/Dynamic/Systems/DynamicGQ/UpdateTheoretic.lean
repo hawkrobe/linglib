@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.Charlow2019
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Linglib.Core.Mereology
 
 /-!
@@ -25,7 +25,7 @@ produces cumulative readings automatically.
 
 namespace Semantics.Dynamic.DynamicGQ.UpdateTheoretic
 
-open Semantics.Dynamic.Charlow2019
+open Semantics.Dynamic.Core
 open Mereology
 
 variable {W E : Type*}
@@ -70,13 +70,13 @@ def exactlyN_u (v : Nat) (P : E → Prop) (n : Nat) [PartialOrder E] [Fintype E]
     TODO: Prove by exhibiting a 2-element context where per-element
     maximization differs from whole-context maximization. -/
 theorem Mvar_u_nondistributive [PartialOrder E] :
-    ∃ (v : Nat) (K : StateCCP W E), ¬ isDistributive (Mvar_u v K) := by
+    ∃ (v : Nat) (K : StateCCP W E), ¬ IsDistributive (Mvar_u v K) := by
   sorry
 
 /-- Cardinality tests ARE distributive: they only inspect one pair at a time. -/
 theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     (v : Nat) (n : Nat) :
-    isDistributive (CardTest_u (W := W) (E := E) v n) := by
+    IsDistributive (CardTest_u (W := W) (E := E) v n) := by
   intro s
   ext p
   simp only [CardTest_u, Set.mem_setOf_eq, Set.mem_sep_iff]
@@ -94,7 +94,7 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     TODO: Formalize. -/
 theorem exactlyN_u_cumulative [PartialOrder E] [Fintype E] :
     ∀ (v : Nat) (P : E → Prop) (n : Nat),
-    ¬ isDistributive (exactlyN_u (W := W) (E := E) v P n) := by
+    ¬ IsDistributive (exactlyN_u (W := W) (E := E) v P n) := by
   sorry
 
 end Semantics.Dynamic.DynamicGQ.UpdateTheoretic

@@ -1,4 +1,5 @@
 import Linglib.Core.Mereology
+import Linglib.Core.Dimension
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
@@ -42,7 +43,10 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   div_closed_under_le cum_qua_disjoint algClosure_of_mem
   algClosure_mono algClosure_idempotent
   IsSumHom Overlap ExtMeasure extMeasure_qua
-  QMOD qmod_sub)
+  QMOD qmod_sub
+  qua_pullback cum_pullback extMeasure_strictMono singleton_qua
+  IsSumHom.strictMono_of_injective qua_of_injective_sumHom
+  cum_qua_dimension_disjoint)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event CEM (Classical Extensional Mereology)

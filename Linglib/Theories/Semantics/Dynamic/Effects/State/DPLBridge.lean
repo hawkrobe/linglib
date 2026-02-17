@@ -13,21 +13,19 @@ DPL relations ARE DRS meanings.
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 namespace Semantics.Dynamic.DPL
 
 open Semantics.Dynamic.Core.DynamicTy2
-
-
-/-- DPL assignment type = Dynamic Ty2 S parameter -/
-abbrev Assignment (E : Type*) := Nat → E
+open Semantics.Dynamic.Core
 
 /-- DPL dref: projection function for variable n -/
 def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := λ g => g n
 
-/-- Functional update -/
-def extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
-  λ m => if m = n then e else g m
+/-- DPL extend is Assignment.update. -/
+abbrev extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
+  g.update n e
 
 theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
     dref n (extend g n e) = e := by simp [dref, extend]

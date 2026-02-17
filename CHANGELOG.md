@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.219.8] - 2026-02-17
+
+### Added
+- `IsSumHom.strictMono_of_injective`: bridge from IsSumHom + Injective to StrictMono (Dimension.lean §6)
+- `qua_of_injective_sumHom`: functional QUA propagation as `qua_pullback` instance (Dimension.lean §7)
+- `cum_qua_dimension_disjoint`: CUM/QUA incompatibility preserved through dimension maps (Dimension.lean §8)
+- Docstring cross-references in Krifka1998.lean linking relational `qua_propagation` to functional `qua_pullback`
+- Re-export new dimension theorems via `Events.Mereology`
+
+## [0.219.7] - 2026-02-17
+
+### Added
+- Add `Core/Dimension.lean`: mereological dimension infrastructure — QUA and CUM as contravariant functors on Mereo^op
+- `qua_pullback`: QUA pullback along StrictMono maps (general theorem subsuming `extMeasure_qua`)
+- `cum_pullback`: CUM pullback along IsSumHom maps (wrapper for `IsSumHom.cum_preimage`)
+- `extMeasure_strictMono`: bridge from ExtMeasure to StrictMono
+- `singleton_qua`: singletons are QUA on any PartialOrder (generalizes `atom_qua`)
+- `extMeasure_qua'`: derive `extMeasure_qua` as corollary of `qua_pullback` (no positivity hypothesis needed)
+- `qua_pullback_comp`: composition principle for QUA pullback (Krifka dimension chains)
+- Re-export dimension theorems via `Events.Mereology`
+
 ## [0.219.6] - 2026-02-17
 
 ### Added
