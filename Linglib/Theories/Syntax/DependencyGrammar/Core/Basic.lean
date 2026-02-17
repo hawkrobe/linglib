@@ -648,17 +648,182 @@ theorem dominates_of_mem_projection {deps : List Dependency} {v x : Nat}
   · exact nomatch habs
   · exact List.mem_singleton.mp hq ▸ hdom
 
-/-- Forward bridge: dominance implies BFS membership.
+/-- Fuel monotonicity: more fuel never loses BFS results. -/
+private theorem go_mono_fuel (deps : List Dependency)
+    (queue visited : List Nat) (f k : Nat) (x : Nat)
+    (hx : x ∈ projection.go deps queue visited f) :
+    x ∈ projection.go deps queue visited (f + k) := by
+  induction f generalizing queue visited with
+  | zero =>
+    simpa [Nat.zero_add] using go_visited_subset deps queue visited k x hx
+  | succ f' ih =>
+    match queue with
+    | [] =>
+      rw [go_empty_queue] at hx; rw [go_empty_queue]; exact hx
+    | node :: rest =>
+      simp only [projection.go] at hx
+      rw [Nat.add_right_comm]; simp only [projection.go]
+      split at hx <;> split
+      · exact ih rest visited hx
+      · rename_i h1 h2; exact absurd h1 h2
+      · rename_i h1 h2; exact absurd h2 h1
+      · exact ih (rest ++ _) (node :: visited) hx
 
-    Proof: strengthen to "if w ∈ π(r) and edge (w, c), then c ∈ π(r)."
-    Then induction on the Dominates derivation pulls each child into π(r).
+/-- If predicate `p` implies `q` on all list elements, then `filter p` is no longer than `filter q`. -/
+private theorem filter_length_le_of_imp {α : Type*} (l : List α) (p q : α → Bool)
+    (h : ∀ x ∈ l, p x = true → q x = true) :
+    (l.filter p).length ≤ (l.filter q).length := by
+  induction l with
+  | nil => exact Nat.le_refl _
+  | cons a as ih =>
+    have ih' := ih (fun x hx => h x (List.mem_cons.mpr (Or.inr hx)))
+    simp only [List.filter]
+    cases hp : p a <;> cases hq : q a
+    · exact ih'
+    · exact Nat.le_succ_of_le ih'
+    · exact absurd (h a (List.mem_cons.mpr (Or.inl rfl)) hp)
+        (by rw [hq]; exact Bool.noConfusion)
+    · simp only [List.length_cons]; exact Nat.succ_le_succ ih'
 
-    TODO: the key sublemma `projection_closed_under_children` requires
-    BFS fuel arithmetic. This sorry blocks `projection_transitive` and
-    `projective_implies_planar` for now. -/
+/-- The old filter (not in visited) splits into: the new filter (not in node::visited)
+    plus deps with headIdx == node. Key identity for the bfsPot invariant. -/
+private theorem filter_split_at_node (deps : List Dependency)
+    (visited : List Nat) (node : Nat)
+    (hcont : visited.contains node = false) :
+    (deps.filter (fun d => !(visited.contains d.headIdx))).length =
+      (deps.filter (fun d => !((node :: visited).contains d.headIdx))).length +
+      (deps.filter (fun d => d.headIdx == node)).length := by
+  induction deps with
+  | nil => rfl
+  | cons d ds ih =>
+    simp only [List.filter]
+    cases hv : visited.contains d.headIdx <;> cases hdn : (d.headIdx == node)
+    · -- headIdx ∉ visited, headIdx ≠ node: in old filter and new filter, not in node filter
+      have : (node :: visited).contains d.headIdx = false := by
+        simp only [List.contains_cons, hv, hdn, Bool.false_or]
+      simp only [hv, hdn, this, Bool.not_false, Bool.not_true, List.length_cons]; omega
+    · -- headIdx ∉ visited, headIdx = node: in old filter and node filter, not in new filter
+      have : (node :: visited).contains d.headIdx = true := by
+        simp only [List.contains_cons, hdn, Bool.true_or]
+      simp only [hv, hdn, this, Bool.not_false, Bool.not_true, List.length_cons]; omega
+    · -- headIdx ∈ visited, headIdx ≠ node: not in any filter
+      have : (node :: visited).contains d.headIdx = true := by
+        simp only [List.contains_cons, hv, Bool.or_true]
+      simp only [hv, hdn, this, Bool.not_false, Bool.not_true]; exact ih
+    · -- headIdx ∈ visited, headIdx = node: impossible (node ∉ visited but d.headIdx = node ∈ visited)
+      have := beq_iff_eq.mp hdn
+      rw [this] at hv; exact absurd hv (by rw [hcont]; exact Bool.noConfusion)
+
+/-- BFS potential: deps whose headIdx hasn't been visited + queue length.
+    Decreases by exactly 1 each BFS step. -/
+private abbrev bfsPot (deps : List Dependency) (queue visited : List Nat) : Nat :=
+  (deps.filter (fun d => !(visited.contains d.headIdx))).length + queue.length
+
+/-- BFS closure under children: if `w` ends up in the BFS output (wasn't in
+    initial visited) and `c` is a child of `w`, then `c` is also in the output,
+    provided fuel ≥ bfsPot + 1.
+
+    The fuel bound is an invariant of BFS: each step decreases bfsPot by 1
+    and consumes 1 fuel, so `fuel ≥ bfsPot + 1` is preserved across steps. -/
+private theorem go_children_complete (deps : List Dependency)
+    (queue visited : List Nat) (fuel : Nat) (w c : Nat)
+    (hw : w ∈ projection.go deps queue visited fuel)
+    (hw_not_vis : w ∉ visited)
+    (hc : c ∈ (deps.filter (fun d => d.headIdx == w)).map (fun d => d.depIdx))
+    (hfuel : fuel ≥ bfsPot deps queue visited + 1) :
+    c ∈ projection.go deps queue visited fuel := by
+  induction fuel generalizing queue visited with
+  | zero => exact absurd (by simpa [projection.go] using hw) hw_not_vis
+  | succ fuel' ih =>
+    match queue with
+    | [] => exact absurd (by simpa [projection.go] using hw) hw_not_vis
+    | node :: rest =>
+      simp only [projection.go] at hw ⊢
+      by_cases hcont : (visited.contains node) = true
+      · -- Skip: node ∈ visited. Queue shrinks by 1, filter unchanged → bfsPot decreases.
+        simp only [hcont, ↓reduceIte] at hw ⊢
+        apply ih rest visited hw hw_not_vis
+        -- bfsPot (node :: rest) = bfsPot rest + 1 (same filter, queue shrinks by 1)
+        have hstep : bfsPot deps (node :: rest) visited = bfsPot deps rest visited + 1 := by
+          simp [bfsPot, List.length_cons, Nat.add_assoc]
+        omega
+      · -- Process: node ∉ visited
+        have hcont_f : visited.contains node = false := by
+          cases h : visited.contains node
+          · rfl
+          · exact absurd h hcont
+        simp only [hcont, ↓reduceIte] at hw ⊢
+        by_cases hwn : w = node
+        · -- w IS the node being processed: c enters the queue
+          subst hwn
+          set children_node := (deps.filter (fun d => d.headIdx == w)).map (fun d => d.depIdx)
+          obtain ⟨pfx, sfx, hpfx⟩ := List.append_of_mem
+            (List.mem_append.mpr (Or.inr hc) : c ∈ rest ++ children_node)
+          rw [hpfx]
+          apply go_mem_of_queue deps pfx c sfx (w :: visited) fuel'
+          have hpfx_bound : pfx.length < rest.length + children_node.length := by
+            have := congrArg List.length hpfx
+            simp [List.length_append, List.length_cons] at this; omega
+          have hclen : children_node.length ≤
+              (deps.filter (fun d => !(visited.contains d.headIdx))).length := by
+            simp only [children_node, List.length_map]
+            apply filter_length_le_of_imp
+            intro d _ hd
+            have heq : d.headIdx = w := beq_iff_eq.mp hd
+            simp only [heq, hcont_f, Bool.not_false]
+          -- Expand bfsPot to connect filter length, rest length, and fuel
+          have hbfs : bfsPot deps (w :: rest) visited =
+              (deps.filter (fun d => !(visited.contains d.headIdx))).length +
+              rest.length + 1 := rfl
+          omega
+        · -- w ≠ node: IH on recursive call
+          have hw_not_vis' : w ∉ (node :: visited) := by
+            simp only [List.mem_cons, not_or]; exact ⟨hwn, hw_not_vis⟩
+          apply ih (rest ++ _) (node :: visited) hw hw_not_vis'
+          -- bfsPot decreases by exactly 1: the filter loses deps with headIdx == node,
+          -- but queue gains exactly those deps' depIdx values, minus the removed front.
+          have hsplit := filter_split_at_node deps visited node hcont_f
+          have hstep : bfsPot deps (node :: rest) visited =
+              bfsPot deps (rest ++ (deps.filter (fun d => d.headIdx == node)).map
+                (fun d => d.depIdx)) (node :: visited) + 1 := by
+            simp only [bfsPot, List.length_append, List.length_cons, List.length_map]
+            omega
+          omega
+
+/-- Projection is closed under children: if `w ∈ projection deps r` and
+    `(w, c)` is a dependency edge, then `c ∈ projection deps r`. -/
+theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
+    (hw : w ∈ projection deps r)
+    (hedge : ∃ d ∈ deps, d.headIdx = w ∧ d.depIdx = c) :
+    c ∈ projection deps r := by
+  unfold projection at hw ⊢
+  rw [List.mem_mergeSort] at hw ⊢
+  have hc_child : c ∈ (deps.filter (fun d => d.headIdx == w)).map (fun d => d.depIdx) := by
+    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+    exact List.mem_map.mpr ⟨d, List.mem_filter.mpr ⟨hd_mem, by simp [hd_head]⟩, hd_dep⟩
+  apply go_children_complete deps [r] [] _ w c hw (fun h => nomatch h) hc_child
+  -- bfsPot deps [r] [] = deps.length + 1 (filter is trivially all of deps since visited = [])
+  have hfilt : (deps.filter (fun d => !(([] : List Nat).contains d.headIdx))).length
+      = deps.length := by
+    congr 1; apply List.filter_eq_self.mpr; intro d _; simp [List.contains_nil]
+  simp only [bfsPot, List.length_cons, List.length_nil, hfilt]
+  have : deps.length ≤ deps.length * (deps.length + 1) :=
+    Nat.le_mul_of_pos_right _ (Nat.succ_pos _)
+  omega
+
+/-- If `w ∈ projection deps r` and `Dominates deps w x`, then `x ∈ projection deps r`. -/
+private theorem mem_projection_of_dominated_member (deps : List Dependency)
+    {r w x : Nat} (hw : w ∈ projection deps r) (h : Dominates deps w x) :
+    x ∈ projection deps r := by
+  induction h with
+  | refl => exact hw
+  | step _ w' _ hedge _ ih =>
+    exact ih (projection_closed_under_children deps r _ w' hw hedge)
+
+/-- Forward bridge: dominance implies BFS membership. -/
 theorem mem_projection_of_dominates {deps : List Dependency} {v x : Nat}
-    (h : Dominates deps v x) : x ∈ projection deps v := by
-  sorry
+    (h : Dominates deps v x) : x ∈ projection deps v :=
+  mem_projection_of_dominated_member deps (root_mem_projection deps v) h
 
 /-- **Bridge theorem**: BFS projection membership ↔ Prop-level dominance. -/
 theorem dominates_iff_mem_projection (deps : List Dependency) (v x : Nat) :
