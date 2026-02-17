@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.219.11] - 2026-02-17
+
+### Added
+- `MereoDim` typeclass in `Core/MereoDim.lean` §5: morphism class of Mereo^op wrapping `StrictMono` for typeclass dispatch
+- `instMereoDimOfExtMeasure`: automatic `MereoDim` instance for any `ExtMeasure` (§6)
+- `MereoDim.ofInjSumHom`: manual constructor from `IsSumHom` + `Injective` (§6)
+- `MereoDim.comp`: composition theorem for dimension chains (§7)
+- `qua_pullback_mereoDim`/`qua_pullback_mereoDim_comp`: typeclass-dispatched QUA pullback (§8)
+- `instIsSumHomRuntime`: `IsSumHom` instance for τ in `Events/Mereology.lean`, enabling automatic `cum_pullback`
+- Re-export MereoDim typeclass and pullback theorems via `Events.Mereology`
+
 ## [0.219.10] - 2026-02-17
 
 ### Changed

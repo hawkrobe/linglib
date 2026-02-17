@@ -53,7 +53,10 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   quaBoundedness cumBoundedness
   qua_boundedness_licensed cum_boundedness_blocked
   extMeasure_kennedyMIP extMeasure_rouillardMIP
-  cum_sum_exceeds cum_sum_exceeds_both)
+  cum_sum_exceeds cum_sum_exceeds_both
+  -- §5–8 from Core/MereoDim.lean (MereoDim typeclass):
+  MereoDim instMereoDimOfExtMeasure MereoDim.ofInjSumHom MereoDim.comp
+  qua_pullback_mereoDim qua_pullback_mereoDim_comp)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event CEM (Classical Extensional Mereology)
@@ -141,6 +144,16 @@ theorem τ_is_sum_hom (Time : Type*) [LinearOrder Time] [cem : EventCEM Time] :
       (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂).runtime =
       @SemilatticeSup.sup _ cem.intervalSemilatticeSup e₁.runtime e₂.runtime :=
   cem.τ_hom
+
+/-- τ (runtime extraction) as an `IsSumHom` instance, derived from `EventCEM.τ_hom`.
+    Enables `cum_pullback` to work automatically for τ without manually
+    threading the sum-homomorphism proof. -/
+noncomputable instance instIsSumHomRuntime (Time : Type*) [LinearOrder Time]
+    [cem : EventCEM Time] :
+    @IsSumHom _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
+      (fun e => e.runtime) :=
+  @IsSumHom.mk _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
+    (fun e => e.runtime) (fun e₁ e₂ => cem.τ_hom e₁ e₂)
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridges to Existing Types
