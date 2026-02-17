@@ -126,7 +126,7 @@ This is a testable prediction distinguishing RD-RSA from naive RSA.
 
 For α < 1, expected utility may decrease during RSA iterations.
 -/
-theorem utility_can_decrease (S : RSAScenarioR) (hα : S.α < 1) :
+theorem utility_can_decrease (S : RSAScenarioR) [Nonempty S.U] (hα : S.α < 1) :
     ∃ n, E_VL S (iterateRSA S (n+1)).speaker (iterateRSA S (n+1)).listener <
          E_VL S (iterateRSA S n).speaker (iterateRSA S n).listener := by
   sorry -- Existence proof via graded lexicon counterexample

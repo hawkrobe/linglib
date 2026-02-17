@@ -520,7 +520,7 @@ import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
-import Linglib.Theories.Semantics.Scope
+import Linglib.Theories.Semantics.Montague.Scope
 import Linglib.Phenomena.Entailment.Bridge_Montague_TruthConditions
 import Linglib.Theories.Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
