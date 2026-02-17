@@ -765,8 +765,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.HeKaiserIskarous2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Metaphor
-import Linglib.Theories.Pragmatics.RSA.Implementations.LassiterGoodman2017
-import Linglib.Theories.Pragmatics.RSA.Implementations.Nouwen2024
+import Linglib.Phenomena.Gradability.Bridge_RSA_Nouwen2024
 import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasPearl2021
