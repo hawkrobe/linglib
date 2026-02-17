@@ -51,7 +51,7 @@ import Linglib.Theories.Semantics.Questions.VerumFocus
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection
 
-namespace Comparisons.PolarQuestions
+namespace Phenomena.Questions.Compare
 
 open Semantics.Questions
 open Semantics.Questions.Polarity
@@ -413,4 +413,4 @@ theorem balanced_leads_to_hedged_responses (model : IntegratedModel) :
 def unifiedTheory : String :=
   "vR&Š (question choice) + R&H (bias encoding) + PRIOR-PQ (response selection)"
 
-end Comparisons.PolarQuestions
+end Phenomena.Questions.Compare

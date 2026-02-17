@@ -34,7 +34,7 @@ Connects four independent formalizations of the causative alternation:
 - Martin, Rose & Nichols (2025). Burning facts: thick and thin causatives.
 -/
 
-namespace Comparisons.CausativeAlternation
+namespace Phenomena.Causatives.Compare
 
 open Minimalism
 open Minimalism.Bridge
@@ -123,4 +123,4 @@ theorem break_alternation :
 theorem cut_no_anticausative :
     cut.alternating = false ∧ cut.thick = true := ⟨rfl, rfl⟩
 
-end Comparisons.CausativeAlternation
+end Phenomena.Causatives.Compare

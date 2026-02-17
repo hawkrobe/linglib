@@ -54,103 +54,14 @@ These are different propositions. Standard RSA gives one answer.
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 namespace Comparisons.RSAExhExpressivity
 
 open NeoGricean.Exhaustivity
 open RSA.IBR
-
--- SECTION 1: The Embedded SI Scenario
-
-/-!
-## The "Every Student Read Some Book" Scenario
-
-We model a simple scenario with 2 students (Alice, Bob) and consider
-whether each read "some" or "all" books.
-
-Worlds (4 total):
-- w_SS: Alice some, Bob some (neither read all)
-- w_SA: Alice some, Bob all
-- w_AS: Alice all, Bob some
-- w_AA: Alice all, Bob all
-
-Key observation:
-- Global SI: excludes only w_AA (at least one didn't read all)
-- Local SI: excludes w_SA, w_AS, w_AA (each read some but not all)
-- Standard RSA: gives ONE answer, can't distinguish these
--/
-
-/-- World states for the embedded SI scenario.
-    Each student either read "some but not all" (S) or "all" (A). -/
-inductive EmbeddedSIWorld where
-  | SS : EmbeddedSIWorld  -- Alice: some, Bob: some
-  | SA : EmbeddedSIWorld  -- Alice: some, Bob: all
-  | AS : EmbeddedSIWorld  -- Alice: all, Bob: some
-  | AA : EmbeddedSIWorld  -- Alice: all, Bob: all
-  deriving DecidableEq, Fintype, Repr, BEq
-
-/-- Messages in the embedded SI scenario -/
-inductive EmbeddedSIMessage where
-  | everySome : EmbeddedSIMessage  -- "Every student read some book"
-  | everyAll  : EmbeddedSIMessage  -- "Every student read all books"
-  deriving DecidableEq, Fintype, Repr, BEq
-
-/-- Literal meaning: when is each message true?
-    - "every some" is true in all worlds (some ⊆ all)
-    - "every all" is true only in AA -/
-def embeddedMeaning : EmbeddedSIMessage → EmbeddedSIWorld → Bool
-  | .everySome, _ => true      -- "some" true everywhere
-  | .everyAll, .AA => true     -- "all" true only when both read all
-  | .everyAll, _ => false
-
--- SECTION 2: EXH at Different Scope Positions
-
-/-!
-## EXH Scope Positions
-
-Global EXH: EXH scopes over the entire sentence
-  EXH [every x. some(x)] = every x. some(x) ∧ ¬(every x. all(x))
-
-Local EXH: EXH scopes under the universal quantifier
-  every x. [EXH some(x)] = every x. [some(x) ∧ ¬all(x)]
-
-The key difference:
-- Global: "not everyone read all" - allows w_SA, w_AS
-- Local: "everyone read some-but-not-all" - only allows w_SS
--/
-
-/-- Scope position for EXH -/
-inductive ExhScope where
-  | global : ExhScope  -- EXH > ∀
-  | local_ : ExhScope  -- ∀ > EXH
-  deriving DecidableEq, Repr
-
-/-- Truth conditions under global EXH:
-    "every student read some" ∧ ¬"every student read all"
-
-    True at: SS, SA, AS (not AA) -/
-def globalExhMeaning : EmbeddedSIWorld → Bool
-  | .SS => true   -- some ∧ ¬all: ✓
-  | .SA => true   -- some ∧ ¬all: ✓ (Bob read all, but not everyone)
-  | .AS => true   -- some ∧ ¬all: ✓ (Alice read all, but not everyone)
-  | .AA => false  -- some ∧ ¬all: ✗ (everyone read all)
-
-/-- Truth conditions under local EXH:
-    "every student [read some but not all]"
-
-    True at: SS only -/
-def localExhMeaning : EmbeddedSIWorld → Bool
-  | .SS => true   -- both read some-but-not-all: ✓
-  | .SA => false  -- Bob read all: ✗
-  | .AS => false  -- Alice read all: ✗
-  | .AA => false  -- both read all: ✗
-
-/-- EXH-with-scope: meaning depends on scope position -/
-def exhScopedMeaning (scope : ExhScope) : EmbeddedSIWorld → Bool :=
-  match scope with
-  | .global => globalExhMeaning
-  | .local_ => localExhMeaning
+open RSA.Core.EmbeddedSI
 
 -- SECTION 3: Standard RSA (Scope-Blind)
 

@@ -141,6 +141,7 @@ import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
+import Linglib.Phenomena.ArgumentStructure.Compare
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferences
 import Linglib.Phenomena.Aspect.DiagnosticsBridge
@@ -172,6 +173,7 @@ import Linglib.Phenomena.Causatives.ThickThinBridge
 import Linglib.Phenomena.Causatives.StructuralCausationBridge
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Bridge
+import Linglib.Phenomena.Causatives.Compare
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
@@ -193,6 +195,7 @@ import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
+import Linglib.Phenomena.Generics.Compare
 import Linglib.Phenomena.Gradability.Adjectives
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
@@ -212,10 +215,12 @@ import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Projection
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
+import Linglib.Phenomena.FillerGap.Compare
 import Linglib.Phenomena.Nonliteral.Metaphor.Studies.KaoBergenGoodman2014
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
 import Linglib.Phenomena.Numerals.Embedding
+import Linglib.Phenomena.Numerals.Compare
 import Linglib.Phenomena.Quantification.BaleSchwarz2026Bridge
 import Linglib.Phenomena.Quantification.Scontras2014Bridge
 import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
@@ -235,6 +240,8 @@ import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
 import Linglib.Phenomena.Modality.TypologyBridge
+import Linglib.Phenomena.Modality.Aloni2022
+import Linglib.Phenomena.Modality.CompareFC
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.ExpletiveNegationBridge
 import Linglib.Phenomena.WordOrder.NonProjectivity
@@ -251,6 +258,7 @@ import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025Bridge
 import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
+import Linglib.Phenomena.Plurals.Compare
 import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
@@ -270,6 +278,7 @@ import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
+import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.NounCategorizationBridge
@@ -281,6 +290,7 @@ import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Bridge
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
+import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
 import Linglib.Phenomena.Questions.Embedding
@@ -298,6 +308,7 @@ import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
+import Linglib.Phenomena.Questions.Compare
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
@@ -312,6 +323,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.Tense.Data
 import Linglib.Phenomena.Tense.Bridge
+import Linglib.Phenomena.Tense.Compare
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
@@ -320,6 +332,8 @@ import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Tense.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
+import Linglib.Phenomena.ScalarImplicatures.Compare
+import Linglib.Phenomena.ScalarImplicatures.CompareAgreement
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -340,35 +354,20 @@ import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
 
--- Comparisons (cross-theory)
+-- Comparisons (pure metatheory)
 import Linglib.Comparisons.CommandRelations
-import Linglib.Comparisons.FreeChoice.Aloni2022
-import Linglib.Comparisons.FreeChoice.Compare
 import Linglib.Comparisons.GenericSemantics
-import Linglib.Comparisons.Implicature
-import Linglib.Comparisons.KindReference
-import Linglib.Comparisons.PolarQuestions
-import Linglib.Comparisons.PresuppositionProjection
+import Linglib.Comparisons.Mueller2013
+import Linglib.Comparisons.Partee1973
 import Linglib.Comparisons.RelevanceTheories
 import Linglib.Comparisons.RSAandPDS
 import Linglib.Comparisons.RSAExhExpressivity
 import Linglib.Comparisons.RSANeoGricean
 import Linglib.Comparisons.SauerlandRSA
-import Linglib.Comparisons.ScalarImplicature
-import Linglib.Comparisons.Islands
-import Linglib.Comparisons.ScopeFreezing
 import Linglib.Comparisons.SDSandRSA
-import Linglib.Comparisons.Mueller2013
-import Linglib.Comparisons.NumeralSalience
-import Linglib.Comparisons.ThresholdSemantics
-import Linglib.Comparisons.ResultativeArgLicensing
-import Linglib.Comparisons.VaguenessTheories
-import Linglib.Comparisons.CausativeAlternation
-import Linglib.Comparisons.BeforeAfter
-import Linglib.Comparisons.CumulativeReadings
 import Linglib.Comparisons.TenseModalEvidentiality
-import Linglib.Comparisons.Partee1973
 import Linglib.Comparisons.TenseTheories
+import Linglib.Comparisons.VaguenessTheories
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
@@ -720,6 +719,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA
 import Linglib.Theories.Pragmatics.RSA.Core.Convergence
 import Linglib.Theories.Pragmatics.RSA.Core.Discourse
 import Linglib.Theories.Pragmatics.RSA.Core.DiscourseIntegration
+import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.Intensional
 import Linglib.Theories.Pragmatics.RSA.Core.Model
@@ -796,4 +796,5 @@ import Linglib.Phenomena.Nonliteral.Humor.SDS_KaoEtAl2016Bridge
 import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
+import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdSemantics
 

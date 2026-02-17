@@ -33,7 +33,7 @@ WoodinEtAl2024    NumericalExprs    (extended)
     ↑              ↑                ↑
     +--------------+-------+--------+
                            |
-               Comparisons.NumeralSalience (this file)
+               Phenomena.Numerals.Compare (this file)
 ```
 
 ## References
@@ -47,7 +47,7 @@ WoodinEtAl2024    NumericalExprs    (extended)
 - Blok (2015). The semantics and pragmatics of directional numeral modifiers.
 -/
 
-namespace Comparisons.NumeralSalience
+namespace Phenomena.Numerals.Compare
 
 open Core.Roundness
 open Phenomena.Numerals.Studies.WoodinEtAl2024
@@ -452,4 +452,4 @@ theorem upper_classB_strengthened_below_bare :
 
 end Bridge10
 
-end Comparisons.NumeralSalience
+end Phenomena.Numerals.Compare

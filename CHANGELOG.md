@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.219.0] - 2026-02-16
+
+### Changed
+- **Reorganize Comparisons/ directory**: Comparisons/ now contains only pure metatheory (13 files); 14 phenomenon-anchored comparison files moved to `Phenomena/{Category}/Compare.lean`
+- Move `ThresholdSemantics.lean` from Comparisons/ to `Theories/Semantics/Probabilistic/SDS/` (was a dependency violation: Theories/ imported from Comparisons/)
+- Extract `EmbeddedSI.lean` (shared types: `EmbeddedSIWorld`, `EmbeddedSIMessage`, `embeddedMeaning`, `ExhScope`, `globalExhMeaning`, `localExhMeaning`) into `Theories/Pragmatics/RSA/Core/` to fix dependency violation where `CompositionalRSA.lean` imported from Comparisons/
+- Update `RSAExhExpressivity.lean` to import extracted types from `RSA.Core.EmbeddedSI`
+- Update `CompositionalRSA.lean` to import `RSA.Core.EmbeddedSI` instead of `Comparisons.RSAExhExpressivity`
+- Files moved: `ScalarImplicature` → `ScalarImplicatures/CompareAgreement`, `Implicature` → `ScalarImplicatures/Compare`, `CausativeAlternation` → `Causatives/Compare`, `BeforeAfter` → `Tense/Compare`, `ScopeFreezing` → `Quantification/Compare`, `CumulativeReadings` → `Plurals/Compare`, `Islands` → `FillerGap/Compare`, `NumeralSalience` → `Numerals/Compare`, `PolarQuestions` → `Questions/Compare`, `KindReference` → `Generics/Compare`, `FreeChoice/Compare` → `Modality/CompareFC`, `FreeChoice/Aloni2022` → `Modality/Aloni2022`, `PresuppositionProjection` → `Presupposition/Compare`, `ResultativeArgLicensing` → `ArgumentStructure/Compare`
+- Update all namespaces, imports, and cross-references in moved files and consumers
+
 ## [0.218.25] - 2026-02-16
 
 ### Fixed

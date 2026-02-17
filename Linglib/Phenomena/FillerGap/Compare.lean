@@ -39,7 +39,7 @@ import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Studies.Sag2010
 import Linglib.Core.ProcessingModel
 
-namespace Comparisons.Islands
+namespace Phenomena.FillerGap.Compare
 
 open ProcessingModel
 
@@ -427,7 +427,7 @@ Island effects arise from (at least) three distinct mechanisms:
 - **Processing**: gradient difficulty from memory load (CNPC, wh-islands — H&S 2010)
 - **Discourse**: information-structural backgroundedness (MoS — Lu et al. 2025)
 
-This parallels the scope-freezing comparison (`Comparisons.ScopeFreezing`),
+This parallels the scope-freezing comparison (`Phenomena.Quantification.Compare`),
 where processing also outperforms grammar-only accounts on gradient data.
 Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
 for weight-free ordinal comparison.
@@ -467,4 +467,4 @@ theorem mos_distinct_from_traditional_islands :
     constraintSource .complexNP = .syntactic ∧
     constraintSource .embeddedQuestion = .syntactic := ⟨rfl, rfl, rfl⟩
 
-end Comparisons.Islands
+end Phenomena.FillerGap.Compare

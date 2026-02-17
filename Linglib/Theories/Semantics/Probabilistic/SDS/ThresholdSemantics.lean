@@ -44,7 +44,7 @@ This parallels the positive/negative adjective asymmetry in degree semantics.
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 
-namespace Comparisons.ThresholdSemantics
+namespace Semantics.Probabilistic.SDS.ThresholdSemantics
 
 -- Abstract Threshold Predicate
 
@@ -276,4 +276,4 @@ theorem min_negative (θ : ℚ) (hθ : 0 ≤ θ) :
    - Nouns: no prior needed (θ fixed by grammar)
 -/
 
-end Comparisons.ThresholdSemantics
+end Semantics.Probabilistic.SDS.ThresholdSemantics

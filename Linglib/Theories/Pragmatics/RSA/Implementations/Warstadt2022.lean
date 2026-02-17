@@ -412,7 +412,7 @@ Both models can be seen as special cases of a more general theory:
 - L1 performs joint inference over (world, X)
 - Different X interpretations give different theories
 
-See `Comparisons.PresuppositionProjection` for formal comparison.
+See `Phenomena.Presupposition.Compare` for formal comparison.
 -/
 
 

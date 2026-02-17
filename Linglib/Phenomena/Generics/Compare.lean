@@ -52,7 +52,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
-namespace Comparisons.KindReference
+namespace Phenomena.Generics.Compare
 
 open Semantics.Lexical.Noun.Kind.Carlson1977
 open Semantics.Lexical.Noun.Kind.Chierchia1998
@@ -680,4 +680,4 @@ The key theorems from the theory files:
 See `Phenomena/KindReference/Data.lean` for the full scrambling dataset.
 -/
 
-end Comparisons.KindReference
+end Phenomena.Generics.Compare
