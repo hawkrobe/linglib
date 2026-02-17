@@ -199,4 +199,76 @@ theorem cum_sum_exceeds_both {α : Type*} [SemilatticeSup α]
     intro heq; exact hyx (heq ▸ le_sup_right)
   exact hμ.strict_mono _ _ (lt_of_le_of_ne hle hne)
 
+-- ════════════════════════════════════════════════════
+-- § 5. MereoDim Typeclass
+-- ════════════════════════════════════════════════════
+
+/-- Morphism class of Mereo^op: the category of partially ordered types
+    with strictly monotone maps. A `MereoDim d` instance witnesses that
+    `d` is a mereological dimension — a map along which QUA pulls back.
+
+    Unifies three sources of `StrictMono`:
+    - `ExtMeasure` (via `extMeasure_strictMono`)
+    - `IsSumHom` + `Injective` (via `strictMono_of_injective`)
+    - Compositions of the above (Krifka dimension chains) -/
+class MereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
+    (d : α → β) : Prop where
+  /-- The underlying strict monotonicity proof. -/
+  toStrictMono : StrictMono d
+
+-- ════════════════════════════════════════════════════
+-- § 6. MereoDim Instances and Constructors
+-- ════════════════════════════════════════════════════
+
+/-- Any `ExtMeasure` is automatically a `MereoDim`: extensive measures
+    are strictly monotone by `extMeasure_strictMono`. -/
+instance instMereoDimOfExtMeasure {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} [hμ : ExtMeasure α μ] : MereoDim μ :=
+  ⟨extMeasure_strictMono hμ⟩
+
+/-- An injective sum homomorphism is a `MereoDim`. Not an instance because
+    `Function.Injective` is not inferrable by typeclass search. -/
+def MereoDim.ofInjSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} [hf : IsSumHom f] (hinj : Function.Injective f) : MereoDim f :=
+  ⟨hf.strictMono_of_injective hinj⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. MereoDim Composition
+-- ════════════════════════════════════════════════════
+
+/-- Composition of `MereoDim` morphisms. Captures Krifka's dimension
+    chains: `Events →θ Entities →μ ℚ` gives `MereoDim (μ ∘ θ)` when
+    both components are `MereoDim`.
+
+    Stated as a theorem (not an instance) to avoid typeclass inference
+    loops from decomposing arbitrary composed functions. -/
+theorem MereoDim.comp {α β γ : Type*}
+    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
+    {f : β → γ} {g : α → β} (hf : MereoDim f) (hg : MereoDim g) :
+    MereoDim (f ∘ g) :=
+  ⟨hf.toStrictMono.comp hg.toStrictMono⟩
+
+-- ════════════════════════════════════════════════════
+-- § 8. MereoDim QUA Pullback
+-- ════════════════════════════════════════════════════
+
+/-- QUA pullback via `MereoDim`: typeclass-dispatched version of
+    `qua_pullback`. When `[MereoDim d]` is available (automatically
+    for any `ExtMeasure`), QUA pulls back without manual `StrictMono`
+    threading. -/
+theorem qua_pullback_mereoDim {α β : Type*} [PartialOrder α] [PartialOrder β]
+    {d : α → β} [hd : MereoDim d] {P : β → Prop} (hP : QUA P) :
+    QUA (P ∘ d) :=
+  qua_pullback hd.toStrictMono hP
+
+/-- QUA pullback along a composed dimension chain. Given two `MereoDim`
+    morphisms `d₁ : α → β` and `d₂ : β → γ`, QUA on γ pulls back to
+    QUA on α through the chain `d₂ ∘ d₁`. -/
+theorem qua_pullback_mereoDim_comp {α β γ : Type*}
+    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
+    {d₁ : α → β} {d₂ : β → γ} (hd₁ : MereoDim d₁) (hd₂ : MereoDim d₂)
+    {P : γ → Prop} (hP : QUA P) :
+    QUA (P ∘ d₂ ∘ d₁) :=
+  qua_pullback (hd₂.comp hd₁).toStrictMono hP
+
 end Mereology
