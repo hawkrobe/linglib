@@ -46,7 +46,11 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   QMOD qmod_sub
   qua_pullback cum_pullback extMeasure_strictMono singleton_qua
   IsSumHom.strictMono_of_injective qua_of_injective_sumHom
-  cum_qua_dimension_disjoint)
+  cum_qua_dimension_disjoint
+  quaBoundedness cumBoundedness
+  qua_boundedness_licensed cum_boundedness_blocked
+  extMeasure_kennedyMIP extMeasure_rouillardMIP
+  cum_sum_exceeds cum_sum_exceeds_both)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event CEM (Classical Extensional Mereology)
