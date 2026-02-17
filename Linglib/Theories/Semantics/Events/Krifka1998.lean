@@ -229,7 +229,7 @@ theorem cum_propagation {θ : α → β → Prop} {OBJ : α → Prop}
 
     **Functional case**: When θ is a function (not a relation) with
     `IsSumHom` + `Function.Injective`, this reduces to
-    `qua_of_injective_sumHom` in `Core/Dimension.lean` via
+    `qua_of_injective_sumHom` in `Core/Mereology.lean` via
     `qua_pullback`. The relational UP + MSO conditions collapse to
     functional injectivity + monotonicity. -/
 theorem qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
@@ -400,7 +400,7 @@ theorem sinc_qua_propagation {θ : α → β → Prop} {OBJ : α → Prop}
     cumulative relation λ x e, θ(e) = x.
 
     With injectivity, we additionally get `StrictMono` via
-    `IsSumHom.strictMono_of_injective` (Core/Dimension.lean §6),
+    `IsSumHom.strictMono_of_injective` (Core/Mereology.lean §10),
     which enables `qua_of_injective_sumHom` — the functional
     QUA propagation theorem. -/
 theorem roleHom_implies_cumTheta

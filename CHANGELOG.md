@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.219.10] - 2026-02-17
+
+### Changed
+- Merge pullback theorems (qua_pullback, cum_pullback, singleton_qua, extMeasure_strictMono, IsSumHom.strictMono_of_injective, etc.) from `Core/Dimension.lean` into `Core/Mereology.lean` §8–12
+- Rename `Core/Dimension.lean` → `Core/MereoDim.lean`: home for the mereological dimension category (Mereology ↔ MeasurementScale bridge, future MereoDim/JoinDim/ExtDim typeclasses)
+- Simplify `Events/Mereology.lean` re-export block with section comments
+
 ## [0.219.9] - 2026-02-17
 
 ### Added

@@ -47,7 +47,7 @@ import Linglib.Core.Definiteness
 import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
-import Linglib.Core.Dimension
+import Linglib.Core.MereoDim
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
