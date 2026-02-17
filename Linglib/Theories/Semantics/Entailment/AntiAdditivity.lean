@@ -207,20 +207,53 @@ theorem atMost_isDE_scope : IsDE atMost2_student := by
   exact Nat.le_trans len_le h
 
 /--
+"At most 1 student ___" with fixed restrictor.
+
+Using `atMost 1` (not 2) because with only 2 students in p01,
+`atMost 2` is trivially always true and hence vacuously anti-additive.
+-/
+def atMost1_student : BProp World → BProp World :=
+  λ scope => λ _ => atMost 1 p01 scope
+
+/-- "At most 1" is still DE (the DE proof generalizes to any n). -/
+theorem atMost1_isDE_scope : IsDE atMost1_student := by
+  intro p q hpq
+  intro w
+  simp only [atMost1_student, atMost]
+  intro h
+  have subset : ∀ x, (p01 x && p x) = true → (p01 x && q x) = true := by
+    intro x hx
+    simp only [Bool.and_eq_true] at hx ⊢
+    exact ⟨hx.1, hpq x hx.2⟩
+  have len_le : (allWorlds.filter λ w => p01 w && p w).length ≤
+                (allWorlds.filter λ w => p01 w && q w).length := by
+    have hsub : Sublist (allWorlds.filter λ w => p01 w && p w)
+                        (allWorlds.filter λ w => p01 w && q w) :=
+      List.monotone_filter_right allWorlds subset
+    exact Sublist.length_le hsub
+  simp only [decide_eq_true_eq] at h ⊢
+  exact Nat.le_trans len_le h
+
+/--
 "At most n" is not anti-additive (counterexample).
 
-The right-to-left direction fails:
-- "At most 5 smoke" ∧ "At most 5 drink" does NOT imply "At most 5 smoke or drink"
+The right-to-left direction of anti-additivity fails:
+- "At most 1 student smokes" ∧ "At most 1 student drinks"
+  does NOT imply "At most 1 student smokes or drinks"
 
-Chierchia's example: 4 smoke, 3 different drink → 7 total smoke-or-drink.
-
-Note: Our 4-world model is too small to demonstrate this concretely with the
-current p01 restrictor (which has only 2 students), so we leave this as `sorry`.
-The mathematical fact is well-established in the literature.
+Counterexample: let p = {w0} (only w0 smokes), q = {w1} (only w1 drinks).
+Then p01 ∩ p = {w0} (1 ≤ 1 ✓), p01 ∩ q = {w1} (1 ≤ 1 ✓),
+but p01 ∩ (p ∨ q) = {w0, w1} (2 > 1 ✗).
 -/
 theorem atMost_not_antiAdditive :
-    ¬IsAntiAdditive atMost2_student := by
-  sorry
+    ¬IsAntiAdditive atMost1_student := by
+  intro h
+  -- Witness: p = w0 only, q = w1 only
+  have := h p0 (λ w => w == .w1) .w0
+  simp only [atMost1_student, atMost, por, Core.Proposition.Decidable.por,
+             p0, p01, allWorlds] at this
+  -- After reducing, this gives false = true
+  exact absurd this (by native_decide)
 
 
 /--

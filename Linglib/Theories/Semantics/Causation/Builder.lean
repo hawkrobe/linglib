@@ -226,8 +226,19 @@ theorem make_enable_distinguished_by_permissivity :
 theorem assertsSufficiency_iff_makeSem (b : CausativeBuilder) :
     b.assertsSufficiency = true ↔ b.toSemantics = makeSem := by
   cases b <;> constructor <;> simp_all [CausativeBuilder.assertsSufficiency, CausativeBuilder.toSemantics]
-  · sorry  -- cause: need causeSem ≠ makeSem (have witness in builders_truth_conditionally_distinct)
-  · sorry  -- prevent: need preventSem ≠ makeSem
+  · -- cause: causeSem ≠ makeSem (witnessed by overdetermination scenario)
+    intro h
+    have ⟨dyn, s, c, e, hne⟩ := builders_truth_conditionally_distinct
+    simp only [CausativeBuilder.toSemantics, h] at hne
+    exact absurd rfl hne
+  · -- prevent: preventSem ≠ makeSem (same witness: fire still happens with preventer)
+    intro h
+    have : preventSem (CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"))
+           (Situation.empty.extend (mkVar "b") true) (mkVar "a") (mkVar "c") =
+           makeSem (CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"))
+           (Situation.empty.extend (mkVar "b") true) (mkVar "a") (mkVar "c") :=
+      congrFun (congrFun (congrFun (congrFun h _) _) _) _
+    revert this; native_decide
 
 /-- When a sufficiency builder's semantics holds, the cause is
     causally sufficient for the effect.
