@@ -343,7 +343,7 @@ intermediate probability of being "tall" (Section 4.4). -/
 theorem borderline_has_intermediate_prob :
     RSA.Eval.getScore l1_height_tall (deg 5) > 0 ∧
     RSA.Eval.getScore l1_height_tall (deg 5) < RSA.Eval.getScore l1_height_tall (deg 8) := by
-  sorry -- TODO: Verify quantitative predictions after API migration
+  native_decide
 
 /-- A tall person (h8) is more likely called "tall" than "short".
 A short person (h2) is more likely called "short" than "tall". -/
@@ -364,7 +364,7 @@ theorem tall_concentrates_on_high_heights :
     RSA.Eval.getScore l1_height_tall (deg 8) +
     RSA.Eval.getScore l1_height_tall (deg 9) +
     RSA.Eval.getScore l1_height_tall (deg 10) > 1/2 := by
-  sorry -- TODO: Verify quantitative predictions after API migration
+  native_decide
 
 /-- Both extreme thresholds (t0 and t9) have lower probability than
 middle thresholds (t3, t4, t5) in the basic model.
@@ -418,7 +418,7 @@ intermediate probability. -/
 theorem borderline_has_intermediate_prob_cost :
     RSA.Eval.getScore l1_height_tall_cost (deg 5) > 0 ∧
     RSA.Eval.getScore l1_height_tall_cost (deg 5) < RSA.Eval.getScore l1_height_tall_cost (deg 8) := by
-  sorry -- TODO: Verify quantitative predictions after API migration
+  native_decide
 
 -- Sweet Spot Characterization (Section 4.3)
 
