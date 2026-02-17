@@ -35,7 +35,7 @@ AUC values from <https://github.com/m-hahn/memory-surprisal>
   128(4):726–756.
 -/
 
-namespace Phenomena.WordOrder.HahnDegenFutrell2021
+namespace Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 
 -- ============================================================================
 -- Data Structure
@@ -346,4 +346,4 @@ theorem slovak_lowest_g :
 theorem most_efficient_fully_optimized :
     (efficientLanguages.filter (·.gMean1000 = 1000)).length ≥ 40 := by native_decide
 
-end Phenomena.WordOrder.HahnDegenFutrell2021
+end Phenomena.WordOrder.Studies.HahnDegenFutrell2021

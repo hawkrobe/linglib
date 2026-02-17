@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
-import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
-import Linglib.Phenomena.WordOrder.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
+import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
 /-!
@@ -30,7 +30,7 @@ AUC values computed from <https://github.com/m-hahn/memory-surprisal>
 
 namespace DepGrammar.MemorySurprisal.CrossLinguistic
 
-open Phenomena.WordOrder.HahnDegenFutrell2021
+open Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
 
 -- ============================================================================

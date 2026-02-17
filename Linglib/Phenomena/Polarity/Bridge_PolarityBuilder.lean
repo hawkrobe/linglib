@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Entailment.PolarityBuilder
-import Linglib.Phenomena.Polarity.VonFintel1999
+import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 
 /-!
 # Bridge: PolarityBuilder → Polarity Phenomena
@@ -25,7 +25,7 @@ namespace Phenomena.Polarity.Bridge_PolarityBuilder
 
 open Semantics.Entailment.PolarityBuilder
 open Fragments.English.PolarityItems
-open Phenomena.Polarity.VonFintel1999 (onlyNotDE)
+open Phenomena.Polarity.Studies.VonFintel1999 (onlyNotDE)
 
 -- ============================================================================
 -- Fragment ↔ Builder Cross-Layer Agreement

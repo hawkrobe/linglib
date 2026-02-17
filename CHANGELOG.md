@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.218.18] - 2026-02-16
+
+### Changed
+- Phenomena migration: move 7 author-named files into Studies/ subdirectories (Sag2010, FutrellEtAl2020, HahnDegenFutrell2021, ClausWalch2024, WoodinEtAl2024, HuangSpelkeSnedeker2013, VonFintel1999)
+- Flatten MeasurePhrases/ into Quantification/, ConditionalModality/ into Modality/, CzechThreeWayNeg/ into Negation/
+- Rename Gradability/Basic.lean → Data.lean
+- Fix mislabeled files: add Bridge suffix to PracticalReasoning, InformationalBackgrounds, ConditionalModality Data
+- Remove orphaned Tense/Cumming2026/ and Tense/Lakoff1970/ duplicates
+
 ## [0.218.17] - 2026-02-16
 
 ### Fixed

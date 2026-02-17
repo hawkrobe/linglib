@@ -51,7 +51,7 @@ Two tests distinguish compositional from non-compositional *per*-phrases:
 - Davidson, D. (1979). Quotation. *Theory and Decision* 11(1), 27--40.
 -/
 
-namespace Phenomena.Quantification.MeasurePhrases.BaleSchwarz2026
+namespace Phenomena.Quantification.BaleSchwarz2026
 
 open Phenomena
 open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionType)
@@ -286,4 +286,4 @@ theorem diagnostic_biconditional :
       (ex.allowsSubstitution = true ↔ ex.dimType = .quotient) := by
   simp [allExamples]; decide
 
-end Phenomena.Quantification.MeasurePhrases.BaleSchwarz2026
+end Phenomena.Quantification.BaleSchwarz2026

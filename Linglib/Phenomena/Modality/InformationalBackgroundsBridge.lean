@@ -21,7 +21,7 @@ may not be in ∩f(w) if the report is wrong at that world.
 Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.3d.
 -/
 
-namespace Phenomena.Modality.InformationalBackgrounds
+namespace Phenomena.Modality.InformationalBackgroundsBridge
 
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
@@ -94,4 +94,4 @@ def reportEvidence : EvidentialSource := .hearsay
 theorem report_is_retrospective :
     reportEvidence.toEvidentialPerspective = .retrospective := rfl
 
-end Phenomena.Modality.InformationalBackgrounds
+end Phenomena.Modality.InformationalBackgroundsBridge

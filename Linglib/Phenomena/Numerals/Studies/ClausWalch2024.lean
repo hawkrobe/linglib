@@ -34,7 +34,7 @@ This reversal is predicted by Blok's (2015) evaluative valence distinction:
 - Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
 -/
 
-namespace Phenomena.Numerals.ClausWalch2024
+namespace Phenomena.Numerals.Studies.ClausWalch2024
 
 -- ============================================================================
 -- Shared Types
@@ -200,4 +200,4 @@ theorem atMost_upTo_diverge :
   constructor; · native_decide
   constructor <;> native_decide
 
-end Phenomena.Numerals.ClausWalch2024
+end Phenomena.Numerals.Studies.ClausWalch2024

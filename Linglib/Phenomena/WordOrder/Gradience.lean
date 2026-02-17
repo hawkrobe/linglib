@@ -1,6 +1,6 @@
 import Linglib.Phenomena.WordOrder.Typology
-import Linglib.Phenomena.WordOrder.HahnDegenFutrell2021
-import Linglib.Phenomena.WordOrder.FutrellEtAl2020
+import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
+import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 
 /-!
 # Gradient Word-Order Measures (Levshina, Namboodiripad et al. 2023)
@@ -39,6 +39,7 @@ Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, Panova & Stoynova
 namespace Phenomena.WordOrder.Gradience
 
 open Phenomena.WordOrder.Typology
+open Phenomena.WordOrder.Studies
 
 -- ============================================================================
 -- §1: Gradient Measures on Existing CrossTab Data
