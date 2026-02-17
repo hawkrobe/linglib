@@ -9,6 +9,7 @@
 - Close `pump_breaks_anbncndn` sorry in FormalLanguageTheory.lean: pumping down {aⁿbⁿcⁿdⁿ} breaks symbol count equality via contiguity argument (.a and .d separated by 2p positions)
 - Close `anbnc_not_pumpable` sorry in FormalLanguageTheory.lean: {aⁿbⁿcⁿ} is not context-free via 3-symbol pumping lemma with 8 helper lemmas
 - Add `LawfulBEq ThreeSymbol` instance for 3-symbol pumping proof
+- Close 3 sorry's in HarmonicOrder.lean: `chain_tdl_ge_span` (triangle inequality via foldl_min_assoc), `monotone_ascending_achieves_span`, `consecutive_tdl` (via List.range' induction)
 
 ## [0.218.21] - 2026-02-16
 

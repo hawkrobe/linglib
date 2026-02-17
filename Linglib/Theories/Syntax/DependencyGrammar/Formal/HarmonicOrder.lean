@@ -83,33 +83,172 @@ def listSpan (l : List Nat) : Nat :=
     mx - mn
 
 -- ============================================================================
--- §1a: Core Chain TDL Theorems
+-- §1a: foldl Helpers for listSpan Reasoning
+-- ============================================================================
+
+private theorem foldl_max_comm (l : List Nat) (a : Nat) :
+    List.foldl max a l = max a (List.foldl max 0 l) := by
+  induction l generalizing a with
+  | nil => simp
+  | cons b rest ih =>
+    simp only [List.foldl]
+    rw [show max 0 b = b by omega, ih (max a b), ih b]; omega
+
+private theorem lmax_cons (a : Nat) (l : List Nat) :
+    List.foldl max 0 (a :: l) = max a (List.foldl max 0 l) := by
+  simp only [List.foldl]
+  rw [show max 0 a = a by omega]; exact foldl_max_comm l a
+
+private theorem head_le_lmax (b : Nat) (rest : List Nat) :
+    b ≤ List.foldl max 0 (b :: rest) := by
+  rw [lmax_cons]; omega
+
+private theorem foldl_min_le_init (l : List Nat) (init : Nat) :
+    List.foldl min init l ≤ init := by
+  induction l generalizing init with
+  | nil => simp
+  | cons a rest ih =>
+    simp only [List.foldl]
+    calc List.foldl min (min init a) rest
+        ≤ min init a := ih (min init a)
+      _ ≤ init := by omega
+
+/-- Associativity of `min` through `foldl`: key lemma connecting
+    `listSpan` of `a :: l` to `listSpan` of `l`. -/
+private theorem foldl_min_assoc (l : List Nat) (a b : Nat) :
+    List.foldl min (min a b) l = min a (List.foldl min b l) := by
+  induction l generalizing a b with
+  | nil => simp
+  | cons c rest ih =>
+    simp only [List.foldl]
+    rw [show min (min a b) c = min a (min b c) by omega]
+    exact ih a (min b c)
+
+private theorem isAscending_cons2 (a b : Nat) (rest : List Nat)
+    (h : isAscending (a :: b :: rest) = true) :
+    a ≤ b ∧ isAscending (b :: rest) = true := by
+  simp only [isAscending, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact h
+
+private theorem ascending_all_ge_head (a : Nat) (l : List Nat)
+    (h : isAscending (a :: l) = true) :
+    ∀ x ∈ l, a ≤ x := by
+  induction l with
+  | nil => simp
+  | cons b rest ih =>
+    intro x hx
+    have ⟨hab, hrest⟩ := isAscending_cons2 a b rest h
+    rcases List.mem_cons.mp hx with heq | hxr
+    · omega
+    · have : isAscending (a :: rest) = true := by
+        cases rest with
+        | nil => simp [isAscending]
+        | cons c rs =>
+          have ⟨hbc, hcrs⟩ := isAscending_cons2 b c rs hrest
+          simp only [isAscending, Bool.and_eq_true, decide_eq_true_eq]
+          exact ⟨by omega, hcrs⟩
+      exact ih this x hxr
+
+private theorem foldl_min_of_le_all (l : List Nat) (a : Nat)
+    (h : ∀ x ∈ l, a ≤ x) :
+    List.foldl min a l = a := by
+  induction l generalizing a with
+  | nil => simp
+  | cons b rest ih =>
+    simp only [List.foldl]
+    have hab : a ≤ b := h b (List.mem_cons.mpr (Or.inl rfl))
+    rw [show min a b = a by omega]
+    exact ih a (fun x hx => h x (List.mem_cons.mpr (Or.inr hx)))
+
+-- ============================================================================
+-- §1b: Core Chain TDL Theorems
 -- ============================================================================
 
 /-- Triangle inequality for chains: total dep length ≥ span.
-
-    Proof sketch: by induction on the list. For a :: b :: rest,
-    chainTDL = |a-b| + chainTDL(b :: rest) ≥ |a-b| + span(b::rest)
-    ≥ span(a :: b :: rest) by the triangle inequality on Nat.
-
-    TODO: Full induction proof requires auxiliary lemmas about how
-    foldl min/max interact with consing. -/
+    By induction: `|a-b| + span(b::rest) ≥ span(a::b::rest)` reduces to
+    arithmetic on `max`/`min` given `m ≤ b ≤ M` (head is between min and max
+    of the tail). -/
 theorem chain_tdl_ge_span (l : List Nat) :
     chainTDL l ≥ listSpan l := by
-  sorry
+  induction l with
+  | nil => simp [chainTDL, listSpan]
+  | cons a rest ih =>
+    match rest with
+    | [] => simp [chainTDL, listSpan, List.foldl]
+    | b :: rest' =>
+      simp only [chainTDL]
+      have ihval : chainTDL (b :: rest') ≥ listSpan (b :: rest') := ih
+      suffices hsuff : max a b - min a b + listSpan (b :: rest') ≥
+          listSpan (a :: b :: rest') by omega
+      simp only [listSpan]
+      set M' := List.foldl max 0 (b :: rest')
+      rw [show List.foldl max 0 (a :: b :: rest') = max a M' from lmax_cons a (b :: rest')]
+      have h_lmin_full : List.foldl min (max a M') (a :: b :: rest') =
+          min a (List.foldl min b rest') := by
+        simp only [List.foldl]
+        rw [show min (max a M') a = a by omega]
+        exact foldl_min_assoc rest' a b
+      have h_lmin_tail : List.foldl min M' (b :: rest') =
+          min M' (List.foldl min b rest') := by
+        simp only [List.foldl]
+        exact foldl_min_assoc rest' M' b
+      rw [h_lmin_full, h_lmin_tail]
+      set m := List.foldl min b rest'
+      have hm_le_b : m ≤ b := foldl_min_le_init rest' b
+      have hb_le_M : b ≤ M' := head_le_lmax b rest'
+      rw [show min M' m = m by omega]
+      omega
 
 /-- Monotone (ascending) chain achieves TDL = span.
-
-    For [a, a+1, ..., a+k], each consecutive difference is exactly the
-    step size, and they sum to max - min = span. -/
+    For ascending lists, each step contributes exactly `b - a` and the
+    span decomposes as `(b - a) + span(tail)`. -/
 theorem monotone_ascending_achieves_span (l : List Nat) (h : isAscending l = true) :
     chainTDL l = listSpan l := by
-  sorry
+  induction l with
+  | nil => simp [chainTDL, listSpan]
+  | cons a rest ih =>
+    match rest, h with
+    | [], _ => simp [chainTDL, listSpan, List.foldl]
+    | b :: rest', h =>
+      have ⟨hab, hrest⟩ := isAscending_cons2 a b rest' h
+      simp only [chainTDL]
+      rw [show max a b - min a b = b - a by omega, ih hrest]
+      simp only [listSpan]
+      set M' := List.foldl max 0 (b :: rest')
+      rw [show List.foldl max 0 (a :: b :: rest') = max a M' from lmax_cons a (b :: rest')]
+      have hMb : M' ≥ b := head_le_lmax b rest'
+      rw [show max a M' = M' by omega]
+      have hall : ∀ x ∈ b :: rest', a ≤ x := ascending_all_ge_head a (b :: rest') h
+      have hball : ∀ x ∈ rest', b ≤ x :=
+        fun x hx => ascending_all_ge_head b rest' hrest x hx
+      have h_lmin_abr : List.foldl min M' (a :: b :: rest') = a := by
+        simp only [List.foldl]
+        rw [show min M' a = a by omega]
+        exact foldl_min_of_le_all (b :: rest') a hall
+      have h_lmin_br : List.foldl min M' (b :: rest') = b := by
+        simp only [List.foldl]
+        rw [show min M' b = b by omega]
+        exact foldl_min_of_le_all rest' b hball
+      rw [h_lmin_abr, h_lmin_br]
+      omega
+
+private theorem chainTDL_range' (s n : Nat) :
+    chainTDL (List.range' s (n + 1)) = n := by
+  induction n generalizing s with
+  | zero => simp [List.range', chainTDL]
+  | succ k ih =>
+    show chainTDL (s :: List.range' (s + 1) (k + 1)) = k + 1
+    show chainTDL (s :: (s + 1) :: List.range' (s + 1 + 1) k) = k + 1
+    simp only [chainTDL]
+    rw [show max s (s + 1) - min s (s + 1) = 1 by omega]
+    rw [show (s + 1) :: List.range' (s + 1 + 1) k = List.range' (s + 1) (k + 1) from rfl]
+    rw [ih (s + 1)]; omega
 
 /-- The consecutive sequence [0, 1, ..., k] has chainTDL = k. -/
 theorem consecutive_tdl (k : Nat) :
     chainTDL (List.range (k + 1)) = k := by
-  sorry
+  rw [List.range_eq_range']
+  exact chainTDL_range' 0 k
 
 -- Concrete verifications for small k
 example : chainTDL [0, 1, 2] = 2 := by native_decide
