@@ -155,19 +155,24 @@ def interveningSubtreeNodes (t : DepTree) (headPos depPos : Nat) : Nat :=
   let members := subtreeMembers t depPos
   members.filter (λ m => lo < m && m < hi) |>.length
 
-/-- Dependency length = 1 + intervening nodes from dep's subtree.
+/-- Dependency length ≥ 1 + intervening subtree nodes.
 
-    This is the structural theorem connecting DLM to tree topology.
-    In a well-formed projective tree, the only nodes between h and d
-    are subtree members of d (projectivity ensures no crossing arcs).
+    `depLength` counts ALL positions between head and dependent (= |h − d|).
+    `interveningSubtreeNodes` counts only dep's subtree members in that interval.
+    The gap is filled by siblings' subtrees placed between h and d.
 
-    TODO: Proof requires formalizing projectivity constraints and
-    showing that in a projective tree, only subtree-of-d nodes can
-    appear in the (h,d) interval. -/
-theorem dep_length_eq_one_plus_intervening (t : DepTree) (d : Dependency)
+    The original equality `depLength = 1 + interveningSubtreeNodes` (Gibson 2025,
+    Ch. 5.3) holds only when d's subtree is the SOLE occupant of the interval
+    (h, d) — i.e., no sibling subtrees intervene. That special case is exactly
+    the harmonic-order scenario demonstrated concretely in §4 below. -/
+theorem dep_length_ge_one_plus_intervening (t : DepTree) (d : Dependency)
     (hd : d ∈ t.deps)
     (hne : d.headIdx ≠ d.depIdx) :
-    depLength d = 1 + interveningSubtreeNodes t d.headIdx d.depIdx := by
+    depLength d ≥ 1 + interveningSubtreeNodes t d.headIdx d.depIdx := by
+  -- depLength = |h - d| ≥ 1 (since h ≠ d).
+  -- interveningSubtreeNodes counts a subset of the |h - d| - 1 positions
+  -- strictly between h and d, so interveningSubtreeNodes ≤ |h - d| - 1,
+  -- giving |h - d| ≥ 1 + interveningSubtreeNodes.
   sorry
 
 -- ============================================================================
@@ -185,13 +190,30 @@ can freely violate the head-direction generalization without DLM cost. -/
 def isLeaf (t : DepTree) (idx : Nat) : Bool :=
   t.deps.all (·.headIdx != idx)
 
+/-- If no dependency has headIdx = root, then projection returns [root].
+    BFS from root visits only root (no outgoing edges).
+    Delegates to `projection_of_no_children` from Core.Basic. -/
+private theorem projection_of_leaf (deps : List Dependency) (root : Nat)
+    (h : deps.all (fun d => !(d.headIdx == root)) = true) :
+    projection deps root = [root] := by
+  apply projection_of_no_children
+  induction deps with
+  | nil => rfl
+  | cons d ds ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at h
+    simp only [List.filter_cons]
+    have hne : (d.headIdx == root) = false := by
+      simp only [Bool.not_eq_true'] at h; exact h.1
+    simp only [hne, Bool.false_eq_true, ↓reduceIte]
+    exact ih h.2
+
 /-- A leaf has no subtree members. -/
 theorem leaf_no_subtree_members (t : DepTree) (idx : Nat)
     (h : isLeaf t idx = true) :
     subtreeMembers t idx = [] := by
-  simp [subtreeMembers, isLeaf] at *
-  -- The direct deps filter returns [], so go [] [] fuel = []
-  sorry
+  unfold subtreeMembers
+  rw [projection_of_leaf t.deps idx h]
+  simp [List.filter, bne, beq_self_eq_true]
 
 /-- A leaf has 0 intervening nodes for any head position.
 
@@ -200,7 +222,9 @@ theorem leaf_no_subtree_members (t : DepTree) (idx : Nat)
 theorem leaf_no_intervening (t : DepTree) (headPos depPos : Nat)
     (h : isLeaf t depPos = true) :
     interveningSubtreeNodes t headPos depPos = 0 := by
-  sorry
+  unfold interveningSubtreeNodes
+  rw [leaf_no_subtree_members t depPos h]
+  simp
 
 /-- Bridge to `single_dep_direction_irrelevant` from DependencyLength.lean:
     a single (leaf) dependency has the same length regardless of direction.

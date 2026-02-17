@@ -213,6 +213,30 @@ theorem projection_nonempty (deps : List Dependency) (root : Nat) :
   have hmem := (List.mergeSort_perm _ (· ≤ ·)).mem_iff.mpr (root_mem_go deps root)
   rw [h] at hmem; simp at hmem
 
+/-- BFS with empty queue returns visited unchanged. -/
+private theorem go_empty_queue (deps : List Dependency)
+    (visited : List Nat) (fuel : Nat) :
+    projection.go deps [] visited fuel = visited := by
+  cases fuel <;> rfl
+
+/-- Projection of a node with no outgoing edges is just [root].
+
+    Key step: BFS from root finds no children, so only root is visited.
+    Used by `leaf_no_subtree_members` in HarmonicOrder.lean. -/
+theorem projection_of_no_children (deps : List Dependency) (idx : Nat)
+    (h : deps.filter (fun d => d.headIdx == idx) = []) :
+    projection deps idx = [idx] := by
+  unfold projection
+  have : deps.length * (deps.length + 1) + 2 =
+      (deps.length * (deps.length + 1) + 1) + 1 := by omega
+  rw [this]
+  simp only [projection.go, List.contains_nil]
+  -- children = deps.filter (·.headIdx == idx) |>.map (·.depIdx)
+  -- By h, filter = [], so children = [], so go ([] ++ []) [idx] fuel'
+  simp only [h, List.map_nil, List.append_nil]
+  rw [go_empty_queue]
+  exact List.mergeSort_singleton idx
+
 -- ============================================================================
 -- List Helper Lemmas (for hierarchy theorem proofs)
 -- ============================================================================
