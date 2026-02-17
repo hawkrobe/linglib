@@ -238,6 +238,103 @@ theorem projection_of_no_children (deps : List Dependency) (idx : Nat)
   exact List.mergeSort_singleton idx
 
 -- ============================================================================
+-- BFS Queue Membership Lemmas (for child_mem_projection)
+-- ============================================================================
+
+/-- BFS queue invariant: if x appears after |pfx| elements in the queue,
+    x ends up in the result, provided fuel ≥ |pfx| + 1.
+
+    Each BFS step removes the queue head (by processing or skipping),
+    so x advances toward the front. When x reaches the front (pfx = []),
+    it is either already visited (stays in result) or gets added to visited. -/
+private theorem go_mem_of_queue (deps : List Dependency)
+    (pfx : List Nat) (x : Nat) (sfx visited : List Nat) (fuel : Nat)
+    (hfuel : fuel ≥ pfx.length + 1) :
+    x ∈ projection.go deps (pfx ++ x :: sfx) visited fuel := by
+  induction pfx generalizing sfx visited fuel with
+  | nil =>
+    simp only [List.nil_append]
+    obtain ⟨fuel', rfl⟩ : ∃ k, fuel = k + 1 := ⟨fuel - 1, by omega⟩
+    simp only [projection.go]
+    split
+    · rename_i hc
+      have : x ∈ visited := by
+        simp only [List.contains_eq_any_beq, List.any_eq_true] at hc
+        obtain ⟨y, hy, hbeq⟩ := hc
+        rwa [show y = x from (beq_iff_eq.mp hbeq).symm] at hy
+      exact go_visited_subset deps sfx visited fuel' x this
+    · exact go_visited_subset deps (sfx ++ _) (x :: visited) fuel' x
+        (List.mem_cons.mpr (Or.inl rfl))
+  | cons y ys ih =>
+    obtain ⟨fuel', rfl⟩ : ∃ k, fuel = k + 1 := ⟨fuel - 1, by omega⟩
+    simp only [List.cons_append, projection.go]
+    split
+    · exact ih sfx visited fuel' (by simp only [List.length_cons] at hfuel; omega)
+    · have : (ys ++ x :: sfx) ++ (deps.filter (·.headIdx == y) |>.map (·.depIdx))
+          = ys ++ x :: (sfx ++ (deps.filter (·.headIdx == y) |>.map (·.depIdx))) := by
+        simp only [List.append_assoc, List.cons_append]
+      rw [this]
+      exact ih (sfx ++ _) (y :: visited) fuel'
+        (by simp only [List.length_cons] at hfuel; omega)
+
+/-- The output of `projection` is a list with no duplicates.
+    Follows from BFS visiting each node at most once (`go_nodup`), composed
+    with the fact that `mergeSort` preserves the multiset (hence Nodup). -/
+theorem projection_nodup (deps : List Dependency) (root : Nat) :
+    (projection deps root).Nodup := by
+  unfold projection
+  set goResult := projection.go deps [root] [] (deps.length * (deps.length + 1) + 2)
+  have hnodup_go : goResult.Nodup := go_nodup deps [root] [] _ List.nodup_nil
+  exact (List.mergeSort_perm goResult (· ≤ ·)).nodup_iff.mpr hnodup_go
+
+/-- If (v, w) is a dependency edge, then w ∈ projection deps v.
+    Proof: BFS from v processes v first (adding children to queue),
+    w is a child of v (by the edge), so w enters the queue and is processed. -/
+theorem child_mem_projection (deps : List Dependency) (v w : Nat)
+    (hedge : ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) :
+    w ∈ projection deps v := by
+  unfold projection
+  set goResult := projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
+  -- Suffices to show w ∈ goResult (membership preserved by mergeSort)
+  suffices h : w ∈ goResult from
+    (List.mergeSort_perm goResult (· ≤ ·)).mem_iff.mpr h
+  -- Unfold one BFS step: go processes v, adding children to queue
+  show w ∈ projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
+  have hfuel_rw : deps.length * (deps.length + 1) + 2 =
+      (deps.length * (deps.length + 1) + 1) + 1 := by omega
+  rw [hfuel_rw]
+  simp only [projection.go, List.contains_nil]
+  -- State: go children [v] fuel' where children = filter/map, w ∈ children
+  set children := deps.filter (·.headIdx == v) |>.map (·.depIdx) with children_def
+  simp only [List.nil_append]
+  -- Prove w ∈ children
+  have hw_children : w ∈ children := by
+    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+    exact List.mem_map.mpr ⟨d, List.mem_filter.mpr ⟨hd_mem, by simp [hd_head]⟩, hd_dep⟩
+  -- Case split: w = v (trivially in visited) or w ≠ v (use go_mem_of_queue)
+  by_cases hvw : w = v
+  · exact go_visited_subset deps children [v]
+      (deps.length * (deps.length + 1) + 1) w (by simp [hvw])
+  · obtain ⟨s, t, hst⟩ := List.append_of_mem hw_children
+    rw [hst]
+    apply go_mem_of_queue deps s w t [v]
+      (deps.length * (deps.length + 1) + 1)
+    -- Need: fuel ≥ s.length + 1
+    have hplen : s.length < children.length := by
+      have : children.length = s.length + 1 + t.length := by
+        rw [hst, List.length_append, List.length_cons]; omega
+      omega
+    have hclen : children.length ≤ deps.length := by
+      simp only [children_def, List.length_map]
+      exact List.length_filter_le _ _
+    -- deps.length ≤ deps.length * (deps.length + 1) + 1
+    have hmul : deps.length ≤ deps.length * (deps.length + 1) + 1 := by
+      calc deps.length = deps.length * 1 := (Nat.mul_one _).symm
+        _ ≤ deps.length * (deps.length + 1) := Nat.mul_le_mul_left _ (by omega)
+        _ ≤ deps.length * (deps.length + 1) + 1 := Nat.le_succ _
+    omega
+
+-- ============================================================================
 -- List Helper Lemmas (for hierarchy theorem proofs)
 -- ============================================================================
 
@@ -257,6 +354,36 @@ private theorem chain_getLast_ge (a : Nat) (rest : List Nat)
       simp [List.getLast!]
     rw [hlast]
     simp only [List.length_cons]
+    omega
+
+/-- getLast! of a nonempty list is a member of that list. -/
+private theorem getLast!_mem_cons (a : Nat) (rest : List Nat) :
+    (a :: rest).getLast! ∈ (a :: rest) := by
+  induction rest generalizing a with
+  | nil => simp [List.getLast!]
+  | cons b rest' ih =>
+    have : (a :: b :: rest').getLast! = (b :: rest').getLast! := by simp [List.getLast!]
+    rw [this]; exact .tail _ (ih b)
+
+/-- A strictly increasing list of Nats with all elements in (lo, hi)
+    has length ≤ hi - lo - 1. Proof: the head ≥ lo + 1, the last ≤ hi - 1,
+    and `chain_getLast_ge` gives last ≥ head + (length - 1), so
+    lo + 1 + (length - 1) ≤ hi - 1, giving length ≤ hi - lo - 1. -/
+theorem chain_length_le_range (l : List Nat) (lo hi : Nat)
+    (hchain : l.IsChain (· < ·))
+    (hbounds : ∀ x ∈ l, lo < x ∧ x < hi) :
+    l.length ≤ hi - lo - 1 := by
+  induction hchain with
+  | nil => simp
+  | singleton a =>
+    have ⟨halo, hahi⟩ := hbounds a (.head _)
+    simp only [List.length_cons, List.length_nil]; omega
+  | @cons_cons a b rest hab hchain _ =>
+    have ⟨halo, _⟩ := hbounds a (.head _)
+    have hlast_bound : (a :: b :: rest).getLast! < hi := by
+      exact (hbounds _ (getLast!_mem_cons a (b :: rest))).2
+    have hge := chain_getLast_ge a (b :: rest) (.cons_cons hab hchain)
+    simp only [List.length_cons] at hge ⊢
     omega
 
 /-- isInterval for a list with ≥ 2 elements reduces to an arithmetic check. -/

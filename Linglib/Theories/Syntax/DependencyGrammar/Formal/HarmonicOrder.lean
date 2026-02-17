@@ -308,11 +308,30 @@ theorem dep_length_ge_one_plus_intervening (t : DepTree) (d : Dependency)
     (hd : d ∈ t.deps)
     (hne : d.headIdx ≠ d.depIdx) :
     depLength d ≥ 1 + interveningSubtreeNodes t d.headIdx d.depIdx := by
-  -- depLength = |h - d| ≥ 1 (since h ≠ d).
-  -- interveningSubtreeNodes counts a subset of the |h - d| - 1 positions
-  -- strictly between h and d, so interveningSubtreeNodes ≤ |h - d| - 1,
-  -- giving |h - d| ≥ 1 + interveningSubtreeNodes.
-  sorry
+  -- depLength = hi - lo, interveningSubtreeNodes = |filtered list in (lo, hi)|
+  -- The filtered list is strictly increasing (sublist of projection chain)
+  -- and bounded by (lo, hi), so its length ≤ hi - lo - 1.
+  simp only [depLength, interveningSubtreeNodes, subtreeMembers]
+  -- Goal: max h dp - min h dp ≥ 1 + (filtered list).length
+  set lo := min d.headIdx d.depIdx with lo_def
+  set hi := max d.headIdx d.depIdx with hi_def
+  set filtered := ((projection t.deps d.depIdx).filter (· != d.depIdx)).filter
+    (fun m => lo < m && m < hi) with filtered_def
+  have hlo_hi : lo < hi := by simp only [lo_def, hi_def]; omega
+  -- filtered is chain < (double filter of projection, which is chain <)
+  have hchain_proj := projection_chain' t.deps d.depIdx
+  have hpw_proj := List.isChain_iff_pairwise.mp hchain_proj
+  have hpw_filtered : filtered.Pairwise (· < ·) :=
+    (hpw_proj.filter _).filter _
+  have hchain_filtered : filtered.IsChain (· < ·) :=
+    List.isChain_iff_pairwise.mpr hpw_filtered
+  -- All elements of filtered satisfy lo < x ∧ x < hi
+  have hbounds : ∀ x ∈ filtered, lo < x ∧ x < hi := by
+    intro x hx
+    simp only [filtered_def, List.mem_filter, Bool.and_eq_true, decide_eq_true_eq] at hx
+    exact ⟨hx.2.1, hx.2.2⟩
+  have hlen := chain_length_le_range filtered lo hi hchain_filtered hbounds
+  omega
 
 -- ============================================================================
 -- §3: Single-Word Exception

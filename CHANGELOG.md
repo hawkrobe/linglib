@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.218.23] - 2026-02-16
+
+### Fixed
+- Close `sufficiency_monotone_positive` sorry in Causation/Sufficiency.lean: monotonicity of causal sufficiency for positive dynamics via trueLE ordering on situations, with 15 supporting lemmas
+- Add `isPositiveDynamics` predicate and positivity proofs for all standard constructors (simple, conjunctive, disjunctive, chain)
+- Remove `@[simp]` from `Variable.beq_def` to fix simp loop
+- Close `dep_length_ge_one_plus_intervening` sorry in HarmonicOrder.lean via `chain_length_le_range` + `Pairwise.filter`
+- Close `exists_catena_not_constituent` sorry in VPDivergence.lean via `child_mem_projection`
+- Add BFS infrastructure to DG/Core/Basic.lean: `go_mem_of_queue`, `projection_nodup`, `child_mem_projection`, `getLast!_mem_cons`, `chain_length_le_range`
+- Improve sorry documentation for `projective_implies_planar` and `planar_implies_wellNested` in NonProjective.lean
+
 ## [0.218.22] - 2026-02-16
 
 ### Fixed

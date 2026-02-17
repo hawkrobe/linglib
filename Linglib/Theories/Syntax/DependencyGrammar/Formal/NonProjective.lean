@@ -454,7 +454,11 @@ theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     Formalizing this requires relating edge spans to projection membership. -/
 theorem projective_implies_planar (t : DepTree)
     (h : isProjective t = true) : t.isPlanar = true := by
-  sorry -- TODO: requires edge_in_projection lemma linking deps to projections
+  sorry -- TODO: Requires `projection_subset_dominates` (x ∈ projection v → Dominates v x)
+        -- to show that b ∉ projection(a) when b is not dominated by a.
+        -- Proof by contrapositive: ¬planar → crossing edges (a,c) (b,d) with a<b<c<d
+        -- → if projection(b) is interval [b..d], it contains c, but c is only
+        -- dominated by a (not b) in a tree → contradiction with interval property.
 
 /-- **Planar ⊂ well-nested**: every planar tree is well-nested.
     A graph with interleaving subtrees cannot be drawn without crossing edges.
@@ -465,7 +469,10 @@ theorem projective_implies_planar (t : DepTree)
     contradicting planarity. -/
 theorem planar_implies_wellNested (t : DepTree)
     (h : t.isPlanar = true) : t.isWellNested = true := by
-  sorry -- TODO: requires projection_subset lemma relating dominance to projection
+  sorry -- TODO: Requires Prop-level `Dominates` (via Relation.ReflTransGen) +
+        -- `projection_subset_dominates` to show that interleaving projections
+        -- force crossing paths in the tree. Substantially harder than
+        -- projective_implies_planar because dominance paths must cross.
 
 /-- Dutch cross-serial witnesses the gap: non-projective yet well-nested.
     (Kuhlmann & Nivre 2006, §4: 99.89% of treebank data is well-nested) -/
