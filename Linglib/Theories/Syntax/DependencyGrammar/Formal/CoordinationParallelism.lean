@@ -254,14 +254,7 @@ theorem gapping_is_catena_ellipsis :
     Catena.isCatena Ellipsis.gappingTree.deps [0] = true := by
   constructor <;> native_decide
 
-/-- **Bridge → Phenomena/Ellipsis/Gapping.lean**: forward sharing corresponds
-    to forward gapping (verb retained in first conjunct), backward sharing
-    corresponds to backward gapping (verb retained in last conjunct). -/
-theorem sharing_direction_matches_gapping :
-    -- Forward sharing: verb overt in first conjunct (like English forward gapping)
-    (Phenomena.Ellipsis.Gapping.rossOriginal .SVO).allowsForward = true ∧
-    -- Backward sharing: possible in SOV (like backward gapping)
-    (Phenomena.Ellipsis.Gapping.rossOriginal .SOV).allowsBackward = true := by
-  constructor <;> rfl
+-- Bridge → Phenomena/Ellipsis/Gapping.lean: sharing direction ↔ gapping direction
+-- is proven in Phenomena/Ellipsis/Bridge_DG_CoordinationParallelism.lean
 
 end DepGrammar.CoordinationParallelism

@@ -36,7 +36,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Parse
-import Linglib.Theories.Semantics.Scope
+import Linglib.Theories.Semantics.Montague.Scope
 
 namespace RSA.ScontrasPearl2021
 

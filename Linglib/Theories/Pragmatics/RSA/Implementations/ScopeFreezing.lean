@@ -19,7 +19,7 @@ that strong world priors can override it.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Semantics.Scope
+import Linglib.Theories.Semantics.Montague.Scope
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
