@@ -5,15 +5,16 @@ import Linglib.Theories.Semantics.Tense.Ogihara
 import Linglib.Theories.Semantics.Tense.Klecha
 import Linglib.Theories.Semantics.Tense.Deal
 import Linglib.Theories.Semantics.Tense.Sharvit
+import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
 import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
 import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 
 /-!
 # Tense Theories: Cross-Cutting Comparison
 
-Comparison matrix for nine tense theories:
+Comparison matrix for ten tense theories:
 - Semantic: Abusch (1997), Von Stechow (2009), Kratzer (1998), Ogihara (1996),
-  Klecha (2016), Deal (2020), Sharvit (2003)
+  Klecha (2016), Deal (2020), Sharvit (2003), Tsilia, Zhao & Sharvit (2026)
 - Syntactic: Zeijlstra (2012), Wurmbrand (2014)
 
 Verdicts are **assembled from derivation theorems** proved in each theory's
@@ -52,6 +53,7 @@ open Semantics.Tense.Ogihara (Ogihara)
 open Semantics.Tense.Klecha (Klecha)
 open Semantics.Tense.Deal (Deal)
 open Semantics.Tense.Sharvit (Sharvit)
+open Semantics.Tense.TsiliaEtAl2026 (TsiliaEtAl2026)
 open Minimalism.Tense.Zeijlstra (Zeijlstra)
 open Minimalism.Tense.Wurmbrand (Wurmbrand)
 open Core.Reichenbach
@@ -320,6 +322,41 @@ theorem semantic_vs_syntactic_divide :
     (Zeijlstra.hasTemporalDeRe = false ∧ Zeijlstra.hasULC = false) ∧
     (Wurmbrand.hasTemporalDeRe = false ∧ Wurmbrand.hasULC = false) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7. Presuppositional Tense and Then-Present Incompatibility
+-- ════════════════════════════════════════════════════════════════
+
+/-- Only Tsilia, Zhao & Sharvit (2026) treats tenses as presupposition
+    triggers. All other theories have `hasPresuppositionalTense = false`. -/
+theorem only_tsilia_has_presuppositional_tense :
+    TsiliaEtAl2026.hasPresuppositionalTense = true ∧
+    Abusch.hasPresuppositionalTense = false ∧
+    VonStechow.hasPresuppositionalTense = false ∧
+    KratzerTense.hasPresuppositionalTense = false ∧
+    Ogihara.hasPresuppositionalTense = false ∧
+    Klecha.hasPresuppositionalTense = false ∧
+    Deal.hasPresuppositionalTense = false ∧
+    Sharvit.hasPresuppositionalTense = false ∧
+    Zeijlstra.hasPresuppositionalTense = false ∧
+    Wurmbrand.hasPresuppositionalTense = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- All ten theories are distinct. -/
+theorem all_ten_theories_distinct :
+    Abusch.name ≠ VonStechow.name ∧
+    VonStechow.name ≠ KratzerTense.name ∧
+    KratzerTense.name ≠ Ogihara.name ∧
+    Ogihara.name ≠ Klecha.name ∧
+    Klecha.name ≠ Deal.name ∧
+    Deal.name ≠ Sharvit.name ∧
+    Sharvit.name ≠ TsiliaEtAl2026.name ∧
+    TsiliaEtAl2026.name ≠ Zeijlstra.name ∧
+    Zeijlstra.name ≠ Wurmbrand.name := by
+  simp [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
+        Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
 
 
 end Comparisons.TenseTheories

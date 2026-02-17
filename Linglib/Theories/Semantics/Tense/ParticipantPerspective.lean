@@ -6,6 +6,11 @@ import Linglib.Theories.Morphology.Core.Exponence
 /-!
 # Tense and Participant Perspective (Lakoff 1970)
 
+**Participant perspective** (Lakoff 1970) — psychological salience and hearer
+novelty — is distinct from **temporal perspective** (Kiparsky's π / Tsilia,
+Zhao & Sharvit 2026), which concerns the tense anchor point. This module
+handles the former; `TsiliaEtAl2026.lean` handles the latter.
+
 Lakoff (1970) "Tense and Its Relation to Participants" argues that tense
 selection is sensitive to speaker/hearer epistemic states, not just temporal
 ordering. The chipmunk *IS* still there, but the speaker uses past tense
@@ -32,7 +37,7 @@ frame and adds the participant-psychological layer on top.
 - Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
-namespace Semantics.Tense.Perspective
+namespace Semantics.Tense.ParticipantPerspective
 
 open Semantics.Tense.Evidential
 open Semantics.Tense
@@ -155,4 +160,4 @@ theorem salience_with_downstream (f : TensePerspective ℤ)
     f.speakerSalience = true ∧ downstreamEvidence f.toEvidentialFrame :=
   ⟨h_sal, h_down⟩
 
-end Semantics.Tense.Perspective
+end Semantics.Tense.ParticipantPerspective

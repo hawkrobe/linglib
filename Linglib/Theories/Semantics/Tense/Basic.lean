@@ -49,7 +49,7 @@ open Core.Reichenbach
 -- § TensePhenomenon
 -- ════════════════════════════════════════════════════════════════
 
-/-- The 23 temporal phenomena that distinguish tense theories.
+/-- The 24 temporal phenomena that distinguish tense theories.
 
     Each phenomenon represents an empirical domain where theories
     make different predictions or use different mechanisms. The
@@ -57,8 +57,9 @@ open Core.Reichenbach
     theory proves for each phenomenon.
 
     The first 11 are the core comparison set. The next 7 are eventual
-    targets documented with data frames. The final 5 are added for
-    Zeijlstra (2012), Wurmbrand (2014), and Sharvit (2003) coverage. -/
+    targets documented with data frames. The final 6 are added for
+    Zeijlstra (2012), Wurmbrand (2014), Sharvit (2003), and
+    Tsilia, Zhao & Sharvit (2026) coverage. -/
 inductive TensePhenomenon where
   -- Core comparison set (11)
   /-- "John said Mary was sick" — shifted reading (sick before saying) -/
@@ -121,6 +122,10 @@ inductive TensePhenomenon where
   /-- Wurmbrand (2014): three-way classification of infinitival tense
       (future irrealis / propositional / restructuring) -/
   | dependentVsIndependentTense
+  /-- Temporal "then" is incompatible with shifted present but compatible
+      with deleted tense — derived from tense presuppositions anchored to π
+      (Tsilia, Zhao & Sharvit 2026) -/
+  | thenPresentIncompatibility
   deriving DecidableEq, Repr, BEq, Inhabited
 
 
@@ -152,6 +157,8 @@ structure TenseTheory where
   hasSOTDeletion : Bool
   /-- Does the theory use syntactic Agree for SOT (Zeijlstra 2012)? -/
   hasAgreeBasedSOT : Bool := false
+  /-- Does the theory treat tenses as presupposition triggers? -/
+  hasPresuppositionalTense : Bool := false
   /-- How the theory derives the simultaneous reading -/
   simultaneousMechanism : String
   deriving Repr
@@ -226,6 +233,7 @@ def TensePhenomenon.isExtended : TensePhenomenon → Bool
   | .fakePast => true
   | .optionalSOT => true
   | .dependentVsIndependentTense => true
+  | .thenPresentIncompatibility => true
   | _ => false
 
 /-- Every phenomenon falls into exactly one of the five categories. -/
@@ -508,6 +516,25 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
     interpTense n (updateTemporal g n matrixFrame.eventTime) = matrixFrame.eventTime ∧
     (simultaneousFrame matrixFrame matrixFrame.eventTime).isPresent :=
   ⟨zeroTense_receives_binder_time g n matrixFrame.eventTime, rfl⟩
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § ThenAdverb
+-- ════════════════════════════════════════════════════════════════
+
+/-- A "then"-type temporal adverb.
+    Cross-linguistically, "then" shifts the perspective time P away
+    from the speech time S (Zhao 2026, Tsilia, Zhao & Sharvit 2026). -/
+structure ThenAdverb where
+  /-- Language name -/
+  language : String
+  /-- Surface form -/
+  form : String
+  /-- English gloss -/
+  gloss : String
+  /-- "then" shifts P away from S: P ≠ S after "then" applies. -/
+  shiftsPerspective : Bool
+  deriving Repr, DecidableEq, BEq
 
 
 end Semantics.Tense
