@@ -180,11 +180,9 @@ probability of w, specifically, those w in which C is true."
 -/
 def projectionOfC_world (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
   -- Get L1 distribution over worlds GIVEN the QUD
-  let worldDist := RSA.Eval.L1_world_givenGoal
-    allUtterances allWorlds [()] [()] allBeliefStates allQUDs
-    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
-    (worldPrior pC) (λ _ => 1) (λ _ => 1) beliefStatePrior (λ _ => 1)
-    speakerCredence qudProject (λ _ => 0) alpha u q
+  let worldDist := RSA.Eval.projectionL1_world
+    allUtterances allWorlds allBeliefStates allQUDs
+    literalMeaning (worldPrior pC) beliefStatePrior speakerCredence qudProject alpha u q
   -- Sum probability of worlds where C is true
   worldDist.foldl (λ acc (w, p) =>
     if w.c then acc + p else acc) 0
@@ -197,11 +195,9 @@ the marginal posterior probability of A, specifically those A that entail C."
 -/
 def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
   -- Get L1 distribution over belief states GIVEN the QUD
-  let beliefDist := RSA.Eval.L1_beliefState_givenGoal
-    allUtterances allWorlds [()] [()] allBeliefStates allQUDs
-    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
-    (worldPrior pC) (λ _ => 1) (λ _ => 1) beliefStatePrior (λ _ => 1)
-    speakerCredence qudProject (λ _ => 0) alpha u q
+  let beliefDist := RSA.Eval.projectionL1_context
+    allUtterances allWorlds allBeliefStates allQUDs
+    literalMeaning (worldPrior pC) beliefStatePrior speakerCredence qudProject alpha u q
   -- Sum probability of states that assume C
   beliefDist.foldl (λ acc (a, p) =>
     if assumesC a then acc + p else acc) 0

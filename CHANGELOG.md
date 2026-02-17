@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.219.1] - 2026-02-17
+
+### Changed
+- **Revise Warstadt (2022) formalization**: Replace invented possessive example with paper's actual green card (Table 1) and family-genus-species (Table 2) examples, following Data/Bridge pattern
+- Add `Phenomena/Presupposition/Studies/Warstadt2022.lean` (theory-neutral data: GCWorld, FGSWorld, truth conditions, priors, QUDs)
+- Add `Phenomena/Presupposition/RSA_Warstadt2022Bridge.lean` (RSA computation, predictions, PrProp connection)
+- Delete old `Theories/Pragmatics/RSA/Implementations/Warstadt2022.lean`
+- Add `projectionL1_context` and `projectionL1_world` helpers to `RSA.Eval` to reduce boilerplate in projection models
+- Simplify call sites in QingEtAl2016, ScontrasTonhauser2025, and Warstadt bridge
+- Align bridge file namespaces to file locations (`Phenomena.Presupposition.Warstadt2022Bridge`, `Phenomena.Presupposition.HeKaiserIskarous2025Bridge`)
+- Delete empty HKI stub from `Theories/Pragmatics/RSA/Implementations/`
+- Update Compare.lean imports and docstrings for new Warstadt domain
+
+### Fixed
+- Fix doc-gen4 CI: use `lake exe doc-gen4` instead of hardcoded binary path
+
 ## [0.219.0] - 2026-02-16
 
 ### Changed

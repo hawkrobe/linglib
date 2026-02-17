@@ -12,8 +12,8 @@ Connects the RSA polarity asymmetry models for He, Kaiser & Iskarous (2025)
 to empirical data in `Phenomena.Presupposition.Studies.HeKaiserIskarous2025`.
 
 The entire RSA model for this paper consumes Phenomena types (HKIState,
-HKIUtterance, HKIConfig, etc.), so all model code lives here rather than in
-`Theories/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean`.
+HKIUtterance, HKIConfig, etc.), so all model code lives here in the
+Phenomena layer following the Data/Bridge pattern.
 
 ## Models Implemented
 
@@ -31,7 +31,7 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 
-namespace RSA.Implementations.HeKaiserIskarous2025
+namespace Phenomena.Presupposition.HeKaiserIskarous2025Bridge
 
 open Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 open RSA.Eval
@@ -558,4 +558,4 @@ The He et al. model is now grounded in Montague semantics:
 This connects the RSA pragmatic model to compositional formal semantics.
 -/
 
-end RSA.Implementations.HeKaiserIskarous2025
+end Phenomena.Presupposition.HeKaiserIskarous2025Bridge

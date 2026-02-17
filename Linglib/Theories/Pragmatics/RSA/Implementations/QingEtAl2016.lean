@@ -249,11 +249,9 @@ How likely is it that "John smoked" is established in the common ground
 after hearing the utterance?
 -/
 def projectionOfPast (u : Utterance) (q : QUD) (α : ℕ := 6) : ℚ :=
-  let contextDist := RSA.Eval.L1_beliefState_givenGoal
-    allUtterances allWorlds [()] [()] allContextSets allQUDs
-    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
-    contextCredence qudProject (λ _ => 0) α u q
+  let contextDist := RSA.Eval.projectionL1_context
+    allUtterances allWorlds allContextSets allQUDs
+    literalMeaning worldPrior contextPrior contextCredence qudProject α u q
   -- Sum probability of context sets that entail +past
   contextDist.foldl (λ acc (c, p) =>
     match c with
