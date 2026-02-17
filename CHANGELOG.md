@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.218.15] - 2026-02-16
+
+### Fixed
+- HigherOrder.lean: restore `saw'` relation via tower-type GQs (`TowerGQ`), replacing vacuous `HODGQ`-based theorem with substantive derivation matching `cumulative` from Basic.lean
+- Analyticity.lean: add von Fintel nonemptiness presupposition to `butExceptive`, close `someBut_LContradiction` sorry (was provably false without it), complete `everyBut_not_LAnalytic` proof
+
 ## [0.218.13] - 2026-02-16
 
 ### Fixed
