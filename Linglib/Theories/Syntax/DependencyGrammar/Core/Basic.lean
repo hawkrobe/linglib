@@ -573,6 +573,98 @@ theorem interval_mem_between (l : List Nat)
   · exact Nat.le_trans (head_le_of_chain l hpw a ha) (Nat.le_of_lt hab)
   · exact Nat.le_trans (Nat.le_of_lt hbc) (le_getLast_of_chain l hpw c hc)
 
+-- ============================================================================
+-- Prop-level Dominance (for mathematical proofs about projections)
+-- ============================================================================
+
+/-- Prop-level dominance: `Dominates deps v x` iff v transitively dominates x
+    via dependency edges (head → dep). Defined as the reflexive-transitive
+    closure of the parent relation. -/
+inductive Dominates (deps : List Dependency) : Nat → Nat → Prop where
+  | refl : (v : Nat) → Dominates deps v v
+  | step : (v w x : Nat) → (∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) →
+           Dominates deps w x → Dominates deps v x
+
+/-- Dominance is transitive. -/
+theorem Dominates.trans {deps : List Dependency} {u v w : Nat}
+    (huv : Dominates deps u v) (hvw : Dominates deps v w) :
+    Dominates deps u w := by
+  induction huv with
+  | refl => exact hvw
+  | step v' w' _ hedge _ ih => exact .step v' w' w hedge (ih hvw)
+
+/-- If there is a direct edge (v, w), then v dominates w. -/
+theorem Dominates.edge {deps : List Dependency} {v w : Nat}
+    (h : ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) :
+    Dominates deps v w :=
+  .step v w w h (.refl w)
+
+/-- BFS soundness: every node in the BFS output is either in the initial
+    visited set or dominated by some node in the initial queue. -/
+private theorem go_dominates_of_mem (deps : List Dependency)
+    (queue visited : List Nat) (fuel : Nat) :
+    ∀ x ∈ projection.go deps queue visited fuel,
+      x ∈ visited ∨ ∃ q ∈ queue, Dominates deps q x := by
+  induction fuel generalizing queue visited with
+  | zero => intro x hx; exact Or.inl hx
+  | succ fuel' ih =>
+    match queue with
+    | [] => intro x hx; exact Or.inl hx
+    | node :: rest =>
+      intro x hx
+      simp only [projection.go] at hx
+      split at hx
+      · -- node ∈ visited: skip
+        rename_i hcontains
+        rcases ih rest visited x hx with h | ⟨q, hq, hdom⟩
+        · exact Or.inl h
+        · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hq), hdom⟩
+      · -- node ∉ visited: process
+        rename_i hnotcontains
+        rcases ih (rest ++ (deps.filter (·.headIdx == node) |>.map (·.depIdx)))
+          (node :: visited) x hx with h | ⟨q, hq, hdom⟩
+        · -- x ∈ node :: visited
+          rcases List.mem_cons.mp h with rfl | hv
+          · exact Or.inr ⟨x, List.mem_cons.mpr (Or.inl rfl), Dominates.refl x⟩
+          · exact Or.inl hv
+        · -- q ∈ rest ++ children
+          rcases List.mem_append.mp hq with hr | hc
+          · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hr), hdom⟩
+          · -- q ∈ children: edge (node, q)
+            have hq_child : ∃ d ∈ deps, d.headIdx = node ∧ d.depIdx = q := by
+              obtain ⟨d, hd_filter, hd_dep⟩ := List.mem_map.mp hc
+              obtain ⟨hd_mem, hd_head⟩ := List.mem_filter.mp hd_filter
+              exact ⟨d, hd_mem, beq_iff_eq.mp hd_head, hd_dep⟩
+            exact Or.inr ⟨node, List.mem_cons.mpr (Or.inl rfl),
+              Dominates.step node q x hq_child hdom⟩
+
+/-- Backward bridge: BFS membership implies dominance. -/
+theorem dominates_of_mem_projection {deps : List Dependency} {v x : Nat}
+    (h : x ∈ projection deps v) : Dominates deps v x := by
+  have hx_go : x ∈ projection.go deps [v] [] (deps.length * (deps.length + 1) + 2) := by
+    simp only [projection, List.mem_mergeSort] at h
+    exact h
+  rcases go_dominates_of_mem deps [v] [] _ x hx_go with habs | ⟨q, hq, hdom⟩
+  · exact nomatch habs
+  · exact List.mem_singleton.mp hq ▸ hdom
+
+/-- Forward bridge: dominance implies BFS membership.
+
+    Proof: strengthen to "if w ∈ π(r) and edge (w, c), then c ∈ π(r)."
+    Then induction on the Dominates derivation pulls each child into π(r).
+
+    TODO: the key sublemma `projection_closed_under_children` requires
+    BFS fuel arithmetic. This sorry blocks `projection_transitive` and
+    `projective_implies_planar` for now. -/
+theorem mem_projection_of_dominates {deps : List Dependency} {v x : Nat}
+    (h : Dominates deps v x) : x ∈ projection deps v := by
+  sorry
+
+/-- **Bridge theorem**: BFS projection membership ↔ Prop-level dominance. -/
+theorem dominates_iff_mem_projection (deps : List Dependency) (v x : Nat) :
+    Dominates deps v x ↔ x ∈ projection deps v :=
+  ⟨mem_projection_of_dominates, dominates_of_mem_projection⟩
+
 end Projection
 
 -- ============================================================================
@@ -715,6 +807,216 @@ def isProjective (t : DepTree) : Bool :=
     isInterval (projection t.deps i)
 
 end WellFormedness
+
+-- ============================================================================
+-- Dominance Properties Under Unique Heads
+-- ============================================================================
+
+section DominanceUnderUniqueHeads
+
+/-- In a tree with unique heads, the unique head of a non-root node. -/
+private def uniqueHead (t : DepTree) (x : Nat) : Option Nat :=
+  (t.deps.filter (·.depIdx == x)).head?.map (·.headIdx)
+
+/-- With unique heads and acyclicity, the depth (distance to root) of any
+    node is well-defined and finite. Following the unique head pointer from
+    any node terminates at the root. -/
+private def depth (t : DepTree) (x : Nat) (fuel : Nat) : Nat :=
+  match fuel with
+  | 0 => 0
+  | fuel' + 1 =>
+    if x == t.rootIdx then 0
+    else match t.deps.find? (·.depIdx == x) with
+    | some d => depth t d.headIdx fuel' + 1
+    | none => 0
+
+/-- Adding one unit of fuel increases depth by at most 1. -/
+private theorem depth_fuel_step (t : DepTree) (x : Nat) (k : Nat) :
+    depth t x (k + 1) ≤ depth t x k + 1 := by
+  induction k generalizing x with
+  | zero =>
+    simp only [depth]
+    split <;> (try split) <;> omega
+  | succ k' ih =>
+    -- Unfold depth exactly one level on both sides via `change`
+    show depth t x (k' + 1 + 1) ≤ depth t x (k' + 1) + 1
+    change (if (x == t.rootIdx) = true then 0
+            else match t.deps.find? (·.depIdx == x) with
+            | some d => depth t d.headIdx (k' + 1) + 1
+            | none => 0)
+           ≤
+           (if (x == t.rootIdx) = true then 0
+            else match t.deps.find? (·.depIdx == x) with
+            | some d => depth t d.headIdx k' + 1
+            | none => 0) + 1
+    by_cases hroot : (x == t.rootIdx) = true
+    · simp [hroot]
+    · rw [if_neg hroot, if_neg hroot]
+      cases hfind : t.deps.find? (·.depIdx == x) with
+      | none => simp
+      | some d => exact Nat.add_le_add_right (ih d.headIdx) 1
+
+/-- Extract from `hasUniqueHeads` for a specific node index: root has 0 incoming
+    edges, non-root nodes have exactly 1. -/
+private theorem hasUniqueHeads_count (t : DepTree)
+    (hwf : hasUniqueHeads t = true) (c : Nat) (hc : c < t.words.length) :
+    (if c = t.rootIdx then
+      (t.deps.filter (·.depIdx == c)).length == 0
+    else
+      (t.deps.filter (·.depIdx == c)).length == 1) = true := by
+  unfold hasUniqueHeads at hwf
+  have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
+    (List.range (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
+      (List.range t.words.length)).length).zip
+      (List.map (λ i => (List.filter (·.depIdx == i) t.deps).length)
+        (List.range t.words.length)) := by
+    rw [List.mem_iff_getElem]
+    simp only [List.length_zip, List.length_range, List.length_map]
+    exact ⟨c, by omega, by simp [List.getElem_zip, List.getElem_range, List.getElem_map]⟩
+  have h := (List.all_eq_true.mp hwf) _ hmem
+  simp only [beq_iff_eq] at h
+  exact h
+
+/-- One dominance step: if edge (u, p) and `hasUniqueHeads`, then
+    `depth u ≤ depth p` (with any fuel ≥ 1).
+
+    Under `hasUniqueHeads`, `p ≠ rootIdx` and `find? (·.depIdx == p)` returns
+    an edge with head = u. So `depth p (k+1) = depth u k + 1 ≥ depth u (k+1)`
+    by `depth_fuel_step`. -/
+private theorem depth_le_of_edge (t : DepTree)
+    (hwf : hasUniqueHeads t = true) {u p : Nat}
+    (hp_lt : p < t.words.length)
+    (hedge : ∃ d ∈ t.deps, d.headIdx = u ∧ d.depIdx = p)
+    (k : Nat) : depth t u (k + 1) ≤ depth t p (k + 1) := by
+  obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+  have hspec := hasUniqueHeads_count t hwf p hp_lt
+  -- p ≠ rootIdx: root has 0 incoming edges, but d is incoming to p
+  have hp_ne_root : p ≠ t.rootIdx := by
+    intro hp_eq
+    rw [if_pos hp_eq, beq_iff_eq] at hspec
+    have : d ∈ t.deps.filter (·.depIdx == p) :=
+      List.mem_filter.mpr ⟨hd_mem, beq_iff_eq.mpr hd_dep⟩
+    have := List.length_pos_of_mem this
+    omega
+  rw [if_neg hp_ne_root, beq_iff_eq] at hspec
+  -- filter has exactly 1 element; d is it
+  obtain ⟨e, he_eq⟩ := List.length_eq_one_iff.mp hspec
+  have hd_filter : d ∈ t.deps.filter (·.depIdx == p) :=
+    List.mem_filter.mpr ⟨hd_mem, beq_iff_eq.mpr hd_dep⟩
+  rw [he_eq] at hd_filter
+  have hd_eq_e := List.eq_of_mem_singleton hd_filter
+  -- find? returns some edge (since d has matching depIdx)
+  have hfind_some : (t.deps.find? (·.depIdx == p)).isSome = true :=
+    List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
+  obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
+  -- f has depIdx = p and f ∈ t.deps
+  have hf_dep : f.depIdx = p := by
+    have := List.find?_some hf_find; exact beq_iff_eq.mp this
+  have hf_mem : f ∈ t.deps := List.mem_of_find?_eq_some hf_find
+  -- f is in the filter, which is [e], so f = e = d
+  have hf_filter : f ∈ t.deps.filter (·.depIdx == p) :=
+    List.mem_filter.mpr ⟨hf_mem, beq_iff_eq.mpr hf_dep⟩
+  rw [he_eq] at hf_filter
+  have hf_eq_e := List.eq_of_mem_singleton hf_filter
+  -- f.headIdx = u
+  have hf_head : f.headIdx = u := by
+    rw [hf_eq_e, ← hd_eq_e]; exact hd_head
+  -- Unfold depth t p (k+1): since p ≠ rootIdx and find? = some f
+  have hp_ne : ¬((p == t.rootIdx) = true) := by
+    intro h; exact hp_ne_root (beq_iff_eq.mp h)
+  have h_depth_p : depth t p (k + 1) = depth t u k + 1 := by
+    change (if (p == t.rootIdx) = true then 0
+            else match t.deps.find? (·.depIdx == p) with
+            | some d => depth t d.headIdx k + 1
+            | none => 0) = depth t u k + 1
+    simp only [if_neg hp_ne, hf_find, hf_head]
+  rw [h_depth_p]
+  exact depth_fuel_step t u k
+
+/-- If `Dominates v w`, then `depth v ≤ depth w` (non-strict).
+
+    Each dominance step uses `depth_le_of_edge` + `depth_fuel_step`.
+    Non-strict inequality suffices when combined with strict inequality
+    for the proper-ancestor case (see `dominates_antisymm`). -/
+private theorem dominates_depth_le (t : DepTree)
+    (hwf : hasUniqueHeads t = true)
+    (h_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    {v w : Nat} (h : Dominates t.deps v w) :
+    depth t v t.words.length ≤ depth t w t.words.length := by
+  induction h with
+  | refl => exact Nat.le_refl _
+  | step v w' x hedge dom_w'_x ih =>
+    obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+    have hw'_lt : w' < t.words.length := hd_dep ▸ h_wf d hd_mem
+    have hk : t.words.length - 1 + 1 = t.words.length := by omega
+    have h1 : depth t v (t.words.length - 1 + 1) ≤
+              depth t w' (t.words.length - 1 + 1) :=
+      depth_le_of_edge t hwf hw'_lt ⟨d, hd_mem, hd_head, hd_dep⟩ _
+    rw [hk] at h1
+    exact Nat.le_trans h1 ih
+
+/-- In a well-formed tree (unique heads + acyclic), dominance is antisymmetric:
+    if v dominates w and w dominates v, then v = w.
+
+    ## Proof approach (direct cycle extraction)
+
+    By contradiction: assume v ≠ w.
+
+    From `Dominates w v` (w ≠ v): there's a parent-pointer chain v → p₁ → ... → w.
+    From `Dominates v w` (v ≠ w): there's a parent-pointer chain w → q₁ → ... → v.
+    Combined: the parent-pointer path from v traces v → p₁ → ... → w → q₁ → ... → v.
+
+    Under `hasUniqueHeads`, `follow v [] (n+1)` traces exactly this path. When it
+    reaches v again, `v ∈ visited`, so `follow` returns `false`. This contradicts
+    `isAcyclic = true` (which ensures `follow v [] (n+1) = true`).
+
+    ## Required infrastructure
+
+    1. **`follow_of_edge`**: Under `hasUniqueHeads`, if edge(u, p) with `p ∉ visited`:
+       `follow p visited (fuel+1) = follow u (p :: visited) fuel`.
+    2. **`follow_revisit`**: If `v ∈ visited`, then `follow v visited (fuel+1) = false`.
+    3. **`follow_chain`**: If `Dominates v w` (v ≠ w) and no intermediate node
+       is in `visited`, then `follow w visited fuel` eventually reaches v and adds
+       all intermediate nodes to `visited`. (Induction on `Dominates`.)
+    4. **`isAcyclic_follow`**: `isAcyclic t = true` → `follow v [] (n+1) = true`
+       for `v < n`. (Direct extraction from `List.all_eq_true`.) -/
+theorem dominates_antisymm (t : DepTree)
+    (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
+    (v w : Nat) (hvw : Dominates t.deps v w) (hwv : Dominates t.deps w v) :
+    v = w := by
+  sorry -- See proof approach above; needs follow_of_edge / follow_chain lemmas
+        -- When proving: add `h_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length`
+        -- parameter (needed by dominates_depth_le for the strict inequality path)
+
+/-- If v dominates c (with v ≠ c) and every edge into c has head = a,
+    then v dominates a.
+
+    **Key proof technique**: induction on the `Dominates` derivation.
+    The last edge in the path v → ... → c terminates at c, so its head
+    endpoint must be c's unique parent a. Dropping this last edge gives
+    v dominates a.
+
+    Used in `projective_implies_planar` to extract dominance cycles from
+    crossing edges under unique heads. -/
+theorem dominates_to_parent {deps : List Dependency} {v c a : Nat}
+    (hdom : Dominates deps v c) (hne : v ≠ c)
+    (hparent : ∀ d ∈ deps, d.depIdx = c → d.headIdx = a) :
+    Dominates deps v a := by
+  induction hdom with
+  | refl => exact absurd rfl hne
+  | step u w x hedge hdom_wc ih =>
+    -- edge(u, w) and Dominates deps w x, need Dominates deps u a
+    -- x is the target node (= c from original statement)
+    by_cases hw_eq_x : w = x
+    · -- w = x: edge(u, x), so u = a by unique parent
+      obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
+      have hu_eq_a : u = a := by
+        rw [← hd_head]; exact hparent d hd_mem (hw_eq_x ▸ hd_dep)
+      exact hu_eq_a ▸ Dominates.refl u
+    · -- w ≠ x: by IH, Dominates deps w a; then step gives Dominates deps u a
+      exact Dominates.step u w a hedge (ih hw_eq_x hparent)
+
+end DominanceUnderUniqueHeads
 
 section AgreementChecking
 

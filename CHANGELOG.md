@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.219.2] - 2026-02-17
+
+### Fixed
+- Close `depth_fuel_step`, `depth_le_of_edge`, `dominates_depth_le` sorrys in DG/Core/Basic.lean
+- Add `hasUniqueHeads_count` helper theorem extracting per-node count predicate from `hasUniqueHeads`
+- Close `unique_parent_of_hasUniqueHeads` sorry in NonProjective.lean
+- Close `projective_implies_planar` proof (4-case analysis using interval lemmas + dominance antisymmetry)
+- Add `.gitignore` entry for `scratch/` test directory
+- Improve `dominates_antisymm` sorry documentation with concrete `follow`-based proof approach
+
 ## [0.219.1] - 2026-02-17
 
 ### Changed
