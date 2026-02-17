@@ -266,4 +266,59 @@ def whyNegationIsDoxastic : String :=
   "In the semantics of interrogatives, negation has no role of its own. " ++
   "This opens the possibility to use negation to mark doxastic attitudes."
 
+-- ═══════════════════════════════════════════════════════════════════════
+-- Turkish Polar Questions and Modal Answers (Turk, Hirsch & İnce 2026)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! Turk, Hirsch & İnce (2026) observe that deontic modal answers are
+    infelicitous responses to Turkish polar questions formed with *mI*.
+
+    "Ali uyuyor mu?" ("Does Ali sleep?")
+    → "Evet" / "Hayır" — felicitous (polar answer)
+    → "Ali uyumalı" ("Ali must sleep") — infelicitous (modal answer)
+
+    This is unexpected under Rooth-style type-theoretic alternative
+    computation, where □p has the same type as p and should be an
+    alternative. Fox & Katzir (2011) category match explains why:
+    *mI* is a particle (PART), modals are auxiliaries (AUX), so
+    category match excludes □p from the alternative set. -/
+
+/-- "Ali uyuyor mu?" → "Evet" (yes) — felicitous. -/
+def turkishPolar_yes : QAPair where
+  question := "Ali uyuyor mu?"
+  answer := "Evet"
+  questionType := .polar
+  completeness := .exhaustive
+  form := .taciturn
+  felicitous := true
+  source := "Turk, Hirsch & İnce (2026)"
+
+/-- "Ali uyuyor mu?" → "Hayır" (no) — felicitous. -/
+def turkishPolar_no : QAPair where
+  question := "Ali uyuyor mu?"
+  answer := "Hayır"
+  questionType := .polar
+  completeness := .exhaustive
+  form := .taciturn
+  felicitous := true
+  source := "Turk, Hirsch & İnce (2026)"
+
+/-- "Ali uyuyor mu?" → "Ali uyumalı" (Ali must sleep) — infelicitous.
+    A deontic modal answer does not address the polar question. -/
+def turkishPolar_must : QAPair where
+  question := "Ali uyuyor mu?"
+  answer := "Ali uyumalı"
+  questionType := .polar
+  completeness := .incomplete
+  form := .sentential
+  felicitous := false
+  source := "Turk, Hirsch & İnce (2026)"
+
+def turkishPolarExamples : List QAPair :=
+  [turkishPolar_yes, turkishPolar_no, turkishPolar_must]
+
+/-- Modal answers are infelicitous to Turkish polar questions. -/
+theorem turkishPolar_modal_infelicitous :
+    turkishPolar_must.felicitous = false := rfl
+
 end Phenomena.Questions.PolarAnswers

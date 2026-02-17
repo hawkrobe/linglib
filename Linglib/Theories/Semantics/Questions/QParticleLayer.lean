@@ -14,6 +14,7 @@ inductive QParticleLayer where
   | cp      -- Clause-typing particle: obligatory in subordinated interrogatives
   | perspP  -- Polar question particle (PQP): matrix + quasi-subordinated, not subordinated
   | sap     -- Meta question particle (MQP): matrix + quotation only
+  | polP    -- Clause-internal polarity head (Turkish mI; Turk, Hirsch & İnce 2026)
   deriving DecidableEq, Repr, BEq
 
 end Semantics.Questions

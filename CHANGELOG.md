@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.219.6] - 2026-02-17
+
+### Added
+- Formalize Turk, Hirsch & İnce (2026) category match constraint for Turkish polar questions
+- Add `CatItem` and `categoryMatchAlts`/`typeTheoAlts` to `Core/Alternatives.lean`, grounded in `UD.UPOS`
+- Add `QParticleLayer.polP` for clause-internal polarity heads
+- Add `Fragments/Turkish/QuestionParticles.lean`: Turkish *mI* particle entry (UPOS `PART`, layer `polP`)
+- Add Turkish polar QA-pair judgments to `Phenomena/Questions/PolarAnswers.lean`
+- Add `Phenomena/Questions/Studies/TurkHirschInce2026Bridge.lean`: finite 4-world scenario proving type-theoretic alternatives over-generate (admit □p) while UPOS category match yields correct {p, ¬p}
+
 ## [0.219.5] - 2026-02-17
 
 ### Changed

@@ -1,3 +1,5 @@
+import Linglib.Core.UD
+
 /-
 # Core.Alternatives
 
@@ -74,5 +76,34 @@ structure AltMeaning (α : Type) where
     its O-value (no alternatives evoked). -/
 def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
   { oValue := x, aValue := [x] }
+
+-- Category-Gated Alternatives (Fox & Katzir 2011)
+
+/-- A denotation tagged with its UPOS category.
+    Pairs a semantic value with a UD part-of-speech tag, enabling
+    category-gated alternative computation (Fox & Katzir 2011).
+
+    Fox & Katzir argue that Rooth's (1985/1992) type-theoretic
+    alternative computation (D_τ) over-generates: any expression of the
+    same semantic type counts as an alternative. Category match restricts
+    alternatives to expressions sharing the same UPOS tag. -/
+structure CatItem (α : Type) where
+  /-- The UPOS category of this lexical item -/
+  cat : UD.UPOS
+  /-- The semantic denotation -/
+  den : α
+  deriving Repr
+
+/-- Category-match alternatives: only denotations with the same UPOS tag
+    count as alternatives (Fox & Katzir 2011).
+
+    This is strictly more restrictive than Rooth's D_τ computation. -/
+def categoryMatchAlts {α : Type} (target : UD.UPOS) (lexicon : List (CatItem α)) : List α :=
+  (lexicon.filter (·.cat == target)).map (·.den)
+
+/-- Type-theoretic alternatives: all denotations regardless of category
+    (Rooth 1985/1992 D_τ computation). -/
+def typeTheoAlts {α : Type} (lexicon : List (CatItem α)) : List α :=
+  lexicon.map (·.den)
 
 end Core.Alternatives
