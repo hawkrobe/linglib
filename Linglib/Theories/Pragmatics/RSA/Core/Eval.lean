@@ -647,6 +647,54 @@ def mentalStateL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q]     (ut
     (λ _ _ => φ) worldPrior (λ _ => 1) (λ _ => 1) beliefStatePrior goalPrior
     speakerCredence goalProject cost α u
 
+-- Projection-Specific Helpers (Qing 2016, S&T 2025, Warstadt 2022)
+
+/--
+L1 context/belief-state marginal for projection scenarios.
+
+Wraps `L1_beliefState_givenGoal` for models where the latent variable is a
+context set (subset of worlds) and the semantics is Boolean.
+Used by Qing et al. (2016), Scontras & Tonhauser (2025), Warstadt (2022).
+-/
+def projectionL1_context {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q]
+    (utterances : List U) (worlds : List W)
+    (contexts : List A) (goals : List Q)
+    (meaning : U → W → Bool)
+    (worldPrior : W → ℚ)
+    (contextPrior : A → ℚ)
+    (compatible : A → W → ℚ)
+    (goalProject : Q → W → W → Bool)
+    (α : ℕ)
+    (u : U) (q : Q)
+    : List (A × ℚ) :=
+  L1_beliefState_givenGoal
+    utterances worlds [()] [()] contexts goals
+    (λ _ _ u' w => if meaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    compatible goalProject (λ _ => 0) α u q
+
+/--
+L1 world marginal for projection scenarios.
+
+Wraps `L1_world_givenGoal` with the same simplifications as `projectionL1_context`.
+-/
+def projectionL1_world {U W A Q : Type} [BEq U] [BEq W] [BEq A] [BEq Q]
+    (utterances : List U) (worlds : List W)
+    (contexts : List A) (goals : List Q)
+    (meaning : U → W → Bool)
+    (worldPrior : W → ℚ)
+    (contextPrior : A → ℚ)
+    (compatible : A → W → ℚ)
+    (goalProject : Q → W → W → Bool)
+    (α : ℕ)
+    (u : U) (q : Q)
+    : List (W × ℚ) :=
+  L1_world_givenGoal
+    utterances worlds [()] [()] contexts goals
+    (λ _ _ u' w => if meaning u' w then 1 else 0)
+    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
+    compatible goalProject (λ _ => 0) α u q
+
 /--
 L1 for lexical uncertainty scenarios (lexicon varies).
 -/

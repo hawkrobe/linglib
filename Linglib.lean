@@ -277,7 +277,10 @@ import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
+import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
+import Linglib.Phenomena.Presupposition.RSA_HeKaiserIskarous2025Bridge
+import Linglib.Phenomena.Presupposition.RSA_Warstadt2022Bridge
 import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
@@ -762,7 +765,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.HeKaiserIskarous2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Phenomena.Gradability.RSA_Nouwen2024Bridge
@@ -777,7 +779,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.Warstadt2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.YoonEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions

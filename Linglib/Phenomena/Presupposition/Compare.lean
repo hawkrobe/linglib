@@ -10,7 +10,7 @@ Three influential RSA approaches to presupposition projection are
 |-------|---------------------|--------|
 | Qing et al. (2016) | "context set" C | Change-of-state verbs |
 | Scontras & Tonhauser (2025) | "private assumptions" A | Factives (know/think) |
-| Warstadt (2022) | "context" C | Possessives |
+| Warstadt (2022) | "context set" C | Genus-species |
 
 S&T footnote 10 explicitly acknowledges this equivalence:
 > "Qing et al. (2016) call these subsets the 'common ground,' but we think
@@ -71,7 +71,7 @@ Qing/Warstadt argue "common ground" is appropriate because:
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Theories.Pragmatics.RSA.Implementations.Warstadt2022
+import Linglib.Phenomena.Presupposition.RSA_Warstadt2022Bridge
 import Linglib.Theories.Semantics.Dynamic.State
 
 namespace Phenomena.Presupposition.Compare
@@ -95,7 +95,7 @@ discourse state framework. F&B decompose discourse state into:
 | Model | Latent Variable | F&B Component | What L1 Infers |
 |-------|-----------------|---------------|----------------|
 | S&T 2025 | BeliefState | dcS | Speaker's private assumptions |
-| Warstadt 2022 | Context | cg | Common ground |
+| Warstadt 2022 | Context set | cg | Common ground |
 | Qing 2016 | ContextSet | cg | Common ground |
 
 ### The Mathematical Identity
@@ -163,13 +163,13 @@ RSAScenario with:
 - **Domain**: Factives (know/think)
 - **Measure**: P(C-true ∈ A | "knows C")
 
-### Warstadt 2022 (our implementation)
+### Warstadt 2022
 
-- **World**: ⟨maryHasDog, dogIsSick⟩
-- **Context**: Which presuppositions are in common ground
-- **Constraint**: w compatible with context (same structure)
-- **Domain**: Possessive presuppositions
-- **Measure**: P(hasDog ∈ CG | "Mary's dog is sick")
+- **World**: GCWorld (usCitizen, gcHolder, nonUS)
+- **Context**: Subsets of worlds (common ground)
+- **Constraint**: w compatible with context (membership function)
+- **Domain**: Genus-species presuppositions (green card, athlete hierarchy)
+- **Measure**: P(non-US ∈ context | "not green card", QUD)
 
 All three use the `BeliefState` slot in RSAScenario for their latent variable.
 -/
@@ -210,10 +210,10 @@ def scontrasTonhauser2025 : ModelApplication where
 /-- Warstadt 2022 -/
 def warstadt2022 : ModelApplication where
   paper := "Warstadt (2022)"
-  latentVariableName := "Context"
-  interpretation := "Common ground state"
-  domain := "Possessive presuppositions (Mary's dog)"
-  exploresQUD := false  -- Single QUD in their examples
+  latentVariableName := "Context set C"
+  interpretation := "Common ground (subsets of worlds)"
+  domain := "Genus-species presuppositions (green card, athlete hierarchy)"
+  exploresQUD := true  -- Two QUDs: needVisa, freeDrink
 
 
 /-!
@@ -228,9 +228,9 @@ becomes more likely after hearing a presuppositional utterance.
 - For non-factives: projection ≈ prior (no entailment)
 
 ### Warstadt
-- `accommodationStrength` measures P(presup ∈ CG | utterance)
-- For presuppositional: accommodation > prior
-- For non-presuppositional: accommodation ≈ prior
+- `gcGenusInference` measures P(non-US ∈ context | utterance, QUD)
+- Under visa QUD: genus inference > prior (accommodation)
+- Under free-drink QUD: genus inference ≈ prior (no accommodation)
 -/
 
 /--
@@ -389,7 +389,7 @@ def allPapersEquivalent : List ProjectionModel := [
 
 1. **Presuppositional > Non-presuppositional**
    - Both predict stronger belief update for presuppositional variants
-   - "Mary's dog is sick" > "Mary has a sick dog"
+   - "not green card" under visa QUD > "not green card" under free-drink QUD
 
 2. **Prior Sensitivity**
    - Both predict that higher priors reduce the update
@@ -420,8 +420,8 @@ def allPapersEquivalent : List ProjectionModel := [
 
 **Experiment**: Manipulate whether listener has independent evidence for presup.
 
-- Setup: "Mary's dog is sick" with/without prior context "Mary has a pet"
-- Measure: How strongly do participants believe Mary has a dog?
+- Setup: "Tom doesn't have a green card" under visa vs free-drink QUDs
+- Measure: How strongly do participants infer Tom is a non-US citizen?
 
 - S&T prediction: No difference (speaker belief inference unchanged)
 - Warstadt prediction: Smaller accommodation when prior established
@@ -455,7 +455,7 @@ Lewis's scorekeeping: Accommodation adds presupposed content to CG.
 
 Neither model currently handles local context effects:
 
-- "If Mary has a dog, Mary's dog is sick" - presupposition is locally satisfied
+- "If Tom is non-US, Tom doesn't have a green card" - presupposition locally satisfied
 - Would need extension to model embedding environments
 
 ### Gradient Projection (Degen & Tonhauser 2021)
@@ -491,7 +491,7 @@ Qing et al. (2016), Scontras & Tonhauser (2025), and Warstadt (2022) are
 |-------|-----------------|----------------|--------|
 | Qing 2016 | Context set C | Common ground | Change-of-state |
 | S&T 2025 | Assumptions A | Speaker beliefs | Factives |
-| Warstadt 2022 | Context | Common ground | Possessives |
+| Warstadt 2022 | Context set C | Common ground | Genus-species |
 
 The math: `L1(w, C | u) ∝ S1(u | w, C) · P(w) · P(C)`
 
@@ -517,7 +517,7 @@ The only differences are domain-specific (world states, utterances, QUDs).
 All three domains from the literature are now implemented:
 - ✅ Qing et al. (2016): Change-of-state verbs (`QingEtAl2016.lean`)
 - ✅ Scontras & Tonhauser (2025): Factives (`ScontrasTonhauser2025.lean`)
-- ✅ Warstadt (2022): Possessives (`Warstadt2022.lean`)
+- ✅ Warstadt (2022): Genus-species (`RSA_Warstadt2022Bridge.lean`)
 
 ### Future Work
 
@@ -536,7 +536,7 @@ We now have implementations for all three domains from the literature:
 
 1. **QingEtAl2016**: Change-of-state verbs ("stopped smoking")
 2. **ScontrasTonhauser2025**: Factives ("knows that C")
-3. **Warstadt2022**: Possessives ("Mary's dog is sick")
+3. **Warstadt2022**: Genus-species ("Tom doesn't have a green card")
 
 All three use the **same RSA computation** with domain-specific types.
 -/
@@ -574,12 +574,12 @@ def stInstance : UnifiedProjectionInstance where
 /-- Warstadt 2022 instance -/
 def warstadtInstance : UnifiedProjectionInstance where
   name := "Warstadt (2022)"
-  domain := "Possessive presuppositions"
-  exampleUtterance := "Mary's dog is sick"
-  presupposition := "Mary has a dog"
-  worldType := "⟨maryHasDog : Bool, dogIsSick : Bool⟩"
-  latentType := "Context (CG state)"
-  measureName := "accommodationStrength"
+  domain := "Genus-species presuppositions"
+  exampleUtterance := "Tom doesn't have a green card"
+  presupposition := "Tom is a non-US citizen"
+  worldType := "GCWorld (usCitizen, gcHolder, nonUS)"
+  latentType := "GCContext (subset of worlds)"
+  measureName := "gcGenusInference"
 
 /-- All three instances -/
 def allInstances : List UnifiedProjectionInstance :=
@@ -640,11 +640,11 @@ Where:
 
 | Parameter | S&T 2025 | Warstadt 2022 |
 |-----------|----------|---------------|
-| `World` | ⟨BEL, C⟩ | ⟨hasDog, dogSick⟩ |
-| `BeliefState` | Speaker assumptions A | Context C |
-| `speakerCredence` | w ∈ A | w compatible with C |
-| `Utterance` | know/think × pos/neg | presup/non-presup |
-| `Goal` | BEL? / C? | dogStatus |
+| `World` | ⟨BEL, C⟩ | GCWorld (usCitizen, gcHolder, nonUS) |
+| `BeliefState` | Speaker assumptions A | GCContext (subset of worlds) |
+| `speakerCredence` | w ∈ A | w ∈ C (gcCompatible) |
+| `Utterance` | know/think × pos/neg | us/notUS/greenCard/notGreenCard/silence |
+| `Goal` | BEL? / C? | needVisa / freeDrink |
 
 But the **computation** (L0 → S1 → L1 with marginalization) is identical.
 -/
@@ -708,7 +708,7 @@ when given the same parameters. This means:
 2. **The RSAScenario API correctly unifies** these approaches—we don't need
    separate machinery for "BToM projection" vs "accommodation."
 
-3. **Domain differences** (factives vs possessives vs change-of-state) are
+3. **Domain differences** (factives vs genus-species vs change-of-state) are
    orthogonal to the projection mechanism.
 
 The only way to create testable differences would be to extend the model

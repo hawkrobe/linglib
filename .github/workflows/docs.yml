@@ -56,7 +56,7 @@ jobs:
           lake build doc-gen4
 
           BUILD=.lake/build
-          DOCGEN="$BUILD/bin/doc-gen4"
+          DOCGEN="lake exe doc-gen4"
           REPO_URL="https://github.com/${{ github.repository }}"
           COMMIT="${{ github.sha }}"
           SRC_URI="$REPO_URL/blob/$COMMIT"
