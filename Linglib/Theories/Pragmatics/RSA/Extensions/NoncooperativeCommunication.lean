@@ -161,11 +161,16 @@ theorem positive_argStr_iff_posterior_above_prior
     (hPrior1 : prior < 1) :
     hasPositiveArgStr pG pNotG ↔
     pG * prior / (pG * prior + pNotG * (1 - prior)) > prior := by
-  -- Cross-multiply using 0 < pG*prior + pNotG*(1-prior).
-  -- Both directions reduce to (pG - pNotG) * prior * (1-prior) > 0
-  -- which holds iff pG > pNotG (hasPositiveArgStr), using prior ∈ (0,1).
-  -- TODO: needs a Mathlib lemma for `a < b / c ↔ a * c < b` for ℚ
-  sorry
+  have h1p : 0 < 1 - prior := by linarith
+  have hd : 0 < pG * prior + pNotG * (1 - prior) := by nlinarith
+  simp only [hasPositiveArgStr, gt_iff_lt]
+  rw [lt_div_iff₀ hd]
+  constructor
+  · intro h; nlinarith [mul_pos hPrior h1p]
+  · intro h
+    by_contra hle
+    push_neg at hle
+    nlinarith [mul_pos hPrior h1p]
 
 -- argStr_speaker_prefers_stronger is now in RSA.ArgumentativeStrength,
 -- available via `open` above. It shows that a goal-oriented speaker (β > 0)
@@ -522,7 +527,7 @@ theorem optimal_vigilance_in_range (truth l0Post l1Post : ℚ)
   have hpos : 0 < l1Post - l0Post := sub_pos.mpr hne
   constructor
   · exact div_nonneg (sub_nonneg.mpr hlo) (le_of_lt hpos)
-  · rw [div_le_one hpos]; linarith
+  · rw [div_le_iff₀ hpos, one_mul]; linarith
 
 
 -- ============================================================
@@ -598,8 +603,8 @@ TODO: Prove via Fin 5 ↔ Stick correspondence and the existing
 BarnettEtAl2022 theorems. -/
 theorem barnett_backfire_instance :
     backfire_generalization 5 (by omega)
-      (![1/6, 1/3, 1/3, 1/2, 2/3])   -- l0_goal (l0Longer for s1..s5)
-      (![1/6, 1/3, 1/3, 7/20, 2/3])  -- l1_goal (placeholder, exact values TBD)
+      (fun i : Fin 5 => match i with | ⟨0, _⟩ => 1/6 | ⟨1, _⟩ => 1/3 | ⟨2, _⟩ => 1/3 | ⟨3, _⟩ => 1/2 | ⟨4, _⟩ => 2/3 | ⟨n+5, h⟩ => absurd h (by omega))
+      (fun i : Fin 5 => match i with | ⟨0, _⟩ => 1/6 | ⟨1, _⟩ => 1/3 | ⟨2, _⟩ => 1/3 | ⟨3, _⟩ => 7/20 | ⟨4, _⟩ => 2/3 | ⟨n+5, h⟩ => absurd h (by omega))
       (2/5) :=                         -- prior (priorLonger)
   sorry
 

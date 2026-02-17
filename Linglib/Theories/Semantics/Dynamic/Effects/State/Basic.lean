@@ -265,14 +265,34 @@ after learning rain, the might-not-rain test fails (no ¬rain worlds remain).
 But "it might not be raining and it's raining" can succeed:
 the might test passes on the initial state, then learning eliminates ¬rain worlds.
 
-TODO: Prove by exhibiting a state with both p-worlds and ¬p-worlds.
 Requires `Nontrivial W`: for empty or singleton W, no state has both
 p-worlds and ¬p-worlds, making the second conjunct unsatisfiable. -/
 theorem might_order_matters {W : Type*} [Nontrivial W] :
     ∃ (p : W → Bool) (s : State W),
       Update.conj (Update.prop p) (Update.might (Update.prop λ w => !p w)) s = ∅ ∧
       (Update.conj (Update.might (Update.prop λ w => !p w)) (Update.prop p) s).Nonempty := by
-  sorry
+  obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
+  let p : W → Bool := fun w => decide (w = w₁)
+  use p, {w₁, w₂}
+  have hp_w₁ : p w₁ = true := by simp [p]
+  have hp_w₂ : p w₂ = false := by simp [p, hne.symm]
+  have hnp_w₁ : (!p w₁) = false := by simp [hp_w₁]
+  have hnp_w₂ : (!p w₂) = true := by simp [hp_w₂]
+  constructor
+  · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ = false
+    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
+    have h_not_nonempty : ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | p w = true} |
+        (!p w) = true}).Nonempty := by
+      intro ⟨w, hw_mem, hw_np⟩
+      have hw_p : p w = true := hw_mem.2
+      simp [hw_p] at hw_np
+    simp only [h_not_nonempty, ↓reduceIte]
+  · -- "might(not p) and p" succeeds: might test passes on {w₁, w₂}, then p keeps w₁
+    simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
+    have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | (!p w) = true}).Nonempty := by
+      exact ⟨w₂, Or.inr rfl, hnp_w₂⟩
+    simp only [h_nonempty, ↓reduceIte]
+    exact ⟨w₁, ⟨Or.inl rfl, hp_w₁⟩⟩
 
 /--
 State s supports φ iff updating with φ doesn't change s.

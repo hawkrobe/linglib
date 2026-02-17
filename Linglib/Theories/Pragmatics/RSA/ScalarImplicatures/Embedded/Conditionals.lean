@@ -36,6 +36,7 @@ RSA should prefer the more informative global interpretation.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
+import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.ConditionalEmbedding
 

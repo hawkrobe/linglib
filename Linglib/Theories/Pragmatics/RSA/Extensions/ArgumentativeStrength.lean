@@ -160,10 +160,8 @@ theorem argStr_positive_iff (pGivenG pGivenNotG : ℚ)
   unfold hasPositiveArgStr bayesFactor
   simp [ne_of_gt hNotG]
   constructor
-  · intro h
-    rwa [one_lt_div hNotG]
-  · intro h
-    rwa [one_lt_div hNotG] at h
+  · exact fun h => lt_div_iff₀ hNotG |>.mpr (by linarith)
+  · exact fun h => by have := (lt_div_iff₀ hNotG).mp h; linarith
 
 /-- When λ=1 in CombinedUtility.combined, utility reduces to pure U_B.
 If U_B is argumentative strength, this connects combined utility to argStr.

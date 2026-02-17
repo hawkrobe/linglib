@@ -39,6 +39,7 @@ With attitude verbs:
 
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.AttitudeEmbedding
 

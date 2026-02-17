@@ -41,6 +41,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.BasicQ
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Ring
 
 namespace RSA.InformationTheory
 

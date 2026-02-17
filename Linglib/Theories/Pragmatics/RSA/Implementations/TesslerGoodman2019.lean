@@ -33,6 +33,7 @@ Same 50% prevalence, different judgments:
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.TesslerGoodman2019
 
