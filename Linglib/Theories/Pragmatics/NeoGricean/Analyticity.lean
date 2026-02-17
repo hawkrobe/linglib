@@ -201,9 +201,12 @@ theorem everyXisY_not_LAnalytic [Inhabited Entity] :
     have := hContra assignment
     exact this (λ _ _ => trivial)
 
-/-- Von Fintel's but-exceptive semantics. -/
+/-- Von Fintel's but-exceptive semantics.
+    The first conjunct is the presupposition that the exception set C is
+    nonempty (von Fintel 1993: "but X" presupposes X is non-vacuous). -/
 def butExceptive (D : (Entity → Prop) → (Entity → Prop) → Prop)
     (A C P : Entity → Prop) : Prop :=
+  (∃ x, C x) ∧
   D (λ x => A x ∧ ¬C x) P ∧
   ∀ S : Entity → Prop, D (λ x => A x ∧ ¬S x) P → (∀ x, C x → S x)
 
@@ -214,15 +217,17 @@ def someButSkeleton (Entity : Type*) : LogicalSkeleton Entity where
   interpret := λ assignment =>
     butExceptive (someD Entity) (assignment ⟨0, by omega⟩) (assignment ⟨1, by omega⟩) (assignment ⟨2, by omega⟩)
 
-/-- "*Some X but Y Zs" is L-contradictory (hence ungrammatical). -/
+/-- "*Some X but Y Zs" is L-contradictory (hence ungrammatical).
+
+    Proof: assume the but-exceptive holds with nonempty C. The first conjunct
+    gives a witness x ∈ A ∩ P. Instantiate minimality with S = ∅: since
+    some(A ∩ E)(P) holds (via x), all of C must be in ∅. But C is nonempty
+    by presupposition — contradiction. -/
 theorem someBut_LContradiction : (someButSkeleton Entity).isLContradiction := by
   intro assignment
   simp only [someButSkeleton, butExceptive, someD]
-  intro ⟨⟨x, ⟨hAx, hNotCx⟩, hPx⟩, hMin⟩
-  -- The witness x satisfies A (slot 0) and P (slot 2) but not C (slot 1)
-  -- For upward-monotone "some", any witness works for
-  -- the empty exception set, which contradicts minimality of C when C ≠ ∅
-  sorry  -- Full proof requires careful case analysis
+  intro ⟨⟨c, hCc⟩, ⟨x, ⟨hAx, _⟩, hPx⟩, hMin⟩
+  exact hMin (λ _ => False) ⟨x, ⟨hAx, id⟩, hPx⟩ c hCc
 
 /-- Skeleton for "Every X but Y Zs" -/
 def everyButSkeleton (Entity : Type*) : LogicalSkeleton Entity where
@@ -237,23 +242,37 @@ theorem everyBut_not_LAnalytic [Inhabited Entity] [DecidableEq Entity]
     ¬(everyButSkeleton Entity).isLAnalytic := by
   intro h
   rcases h with hTaut | hContra
-  · -- Not a tautology: empty exception doesn't work
-    simp only [LogicalSkeleton.isLTautology, everyButSkeleton, butExceptive, everyD] at hTaut
-    -- Assignment where the but-clause fails
-    obtain ⟨a, b, hab⟩ := h2
-    let assignment : Fin 3 → Entity → Prop := λ i x =>
+  · -- Not a tautology: assignment A=full, C={a}, P=full makes but-clause false
+    obtain ⟨a, _, _⟩ := h2
+    simp only [LogicalSkeleton.isLTautology, everyButSkeleton] at hTaut
+    have h := hTaut (λ i x =>
       match i with
-      | 0 => True     -- A = full domain
-      | 1 => x = a    -- C = {a}
-      | 2 => True     -- P = full domain
-    have := hTaut assignment
-    simp only [assignment] at this
-    -- First conjunct: ∀x. x ≠ a → True, which is true
-    -- Second conjunct: ∀S. (∀x. x ≠ s → True) → (x = a → S x)
-    -- Taking S = ∅: ∀x. True → (x = a → False), need a = a → False
-    sorry
-  · -- Not a contradiction: valid assignments exist
-    sorry
+      | ⟨0, _⟩ => True     -- A = full domain
+      | ⟨1, _⟩ => x = a    -- C = {a}
+      | ⟨2, _⟩ => True     -- P = full domain
+      | _ => True)
+    simp only [butExceptive, everyD] at h
+    obtain ⟨_, _, hMin⟩ := h
+    -- Minimality with S = ∅: (∀x, True ∧ ¬False → True) → (∀x, x = a → False)
+    exact hMin (λ _ => False) (λ _ _ => trivial) a rfl
+  · -- Not a contradiction: assignment A=full, C={a}, P=(≠a) makes but-clause true
+    obtain ⟨a, _, _⟩ := h2
+    simp only [LogicalSkeleton.isLContradiction, everyButSkeleton] at hContra
+    have h := hContra (λ i x =>
+      match i with
+      | ⟨0, _⟩ => True     -- A = full domain
+      | ⟨1, _⟩ => x = a    -- C = {a}
+      | ⟨2, _⟩ => x ≠ a    -- P = {x | x ≠ a}
+      | _ => True)
+    apply h
+    simp only [butExceptive, everyD]
+    refine ⟨⟨a, rfl⟩, ?_, ?_⟩
+    · -- First conjunct: ∀x, True ∧ x ≠ a → x ≠ a
+      exact λ _ hna => hna.2
+    · -- Minimality: ∀S, (∀x, x ∉ S → x ≠ a) → (∀x, x = a → S x)
+      intro S hS x hxa
+      by_contra hns
+      exact absurd hxa (hS x ⟨trivial, hns⟩)
 
 /-- Grammatical status for L-analyticity predictions. -/
 inductive GrammaticalStatus where
