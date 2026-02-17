@@ -56,7 +56,12 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   cum_sum_exceeds cum_sum_exceeds_both
   -- §5–8 from Core/MereoDim.lean (MereoDim typeclass):
   MereoDim instMereoDimOfExtMeasure MereoDim.ofInjSumHom MereoDim.comp
-  qua_pullback_mereoDim qua_pullback_mereoDim_comp)
+  qua_pullback_mereoDim qua_pullback_mereoDim_comp
+  -- §9–10 from Core/MereoDim.lean (MeasureProportional + LaxMeasureSquare):
+  MeasureProportional LaxMeasureSquare
+  LaxMeasureSquare.laxCommutativity
+  LaxMeasureSquare.mereoDim₁ LaxMeasureSquare.mereoDim₂
+  LaxMeasureSquare.qua_pullback₂)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event CEM (Classical Extensional Mereology)

@@ -23,7 +23,7 @@ MSO, UO) combining into **strict incrementality (SINC)**, plus the
 4. VP Formation (§3.3, eq. 53)
 5. Telicity Theorems (§3.3) — THE PAYOFF
 6. GRAD: Gradual Change (Krifka 1989)
-6b. GRAD Square: Lax Commutative Diagram
+6b. GRAD Square: SINC Extension of LaxMeasureSquare
 7. Verb Annotations (Meaning Postulates)
 8. General Incrementality (§3.6, eq. 59)
 9. Bridge Theorems
@@ -263,27 +263,6 @@ def GRAD (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) : 
   ∀ (x y : α) (e e' : β), θ x e → θ y e' →
     μ_obj x < μ_obj y → μ_ev e < μ_ev e'
 
-/-- Measure proportionality: the SINC bijection preserves measure up to
-    a constant factor. For any θ-pair (x,e), the event measure equals
-    some constant c times the object measure: μ_ev(e) = c * μ_obj(x).
-
-    This axiom captures the idealized "constant rate" of incremental-theme
-    verbs: eating twice as much food takes twice as long. SINC alone
-    constrains the part structure *within* a single (x,e) pair but says
-    nothing about how measures relate *across* independent pairs.
-    MeasureProportional bridges that gap.
-
-    Krifka (1989) implicitly assumes this when deriving GRAD from SINC
-    + extensive measures. -/
-structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) where
-  /-- The proportionality constant (rate). -/
-  rate : ℚ
-  /-- The rate is positive. -/
-  rate_pos : 0 < rate
-  /-- For any θ-pair, event measure = rate × object measure. -/
-  proportional : ∀ (x : α) (e : β), θ x e → μ_ev e = rate * μ_obj x
-
 /-- SINC + extensive measures + measure proportionality → GRAD.
     Krifka (1989): strictly incremental themes with extensive measures
     and a constant consumption rate exhibit gradual change.
@@ -303,31 +282,20 @@ theorem grad_of_sinc {α β : Type*}
   linarith [mul_lt_mul_of_pos_left hlt hrate]
 
 -- ════════════════════════════════════════════════════
--- § 6b. GRAD Square: Lax Commutative Diagram
+-- § 6b. GRAD Square: SINC Extension of LaxMeasureSquare
 -- ════════════════════════════════════════════════════
 
-/-- The GRAD square bundles the two dimension chains from events to ℚ:
-    ```
-    α →θ γ →(dur ∘ τ_fn) ℚ       (temporal dimension)
-    α →────→ μ_obj ────→ ℚ       (object dimension)
-    ```
-    "Lax commutativity" means `dur(τ_fn(e)) = rate * μ_obj(x)` for all
-    θ-pairs (x,e), encoded via `MeasureProportional`.
-
-    Including `sinc`, `objExtensive`, and `evExtensive` makes the derived
-    theorems (GRAD, MereoDim, QUA pullback) self-contained. -/
+/-- The GRAD square extends `LaxMeasureSquare` with strict incrementality
+    (SINC), enabling the derivation of GRAD (gradual change). The non-SINC
+    theorems (MereoDim, QUA pullback, lax commutativity) are inherited from
+    `LaxMeasureSquare`. -/
 structure GRADSquare {α β γ : Type*}
     [SemilatticeSup α] [SemilatticeSup γ]
     (θ : α → γ → Prop) (μ_obj : α → ℚ)
-    (τ_fn : γ → β) (dur : β → ℚ) where
-  /-- Lax commutativity: dur(τ_fn(e)) = rate * μ_obj(x) for θ-pairs. -/
-  laxComm : MeasureProportional θ μ_obj (dur ∘ τ_fn)
+    (τ_fn : γ → β) (dur : β → ℚ)
+    extends LaxMeasureSquare θ μ_obj τ_fn dur where
   /-- Strict incrementality of the thematic role. -/
   sinc : SINC θ
-  /-- Object measure is extensive. -/
-  objExtensive : ExtMeasure α μ_obj
-  /-- Event measure (composed path) is extensive. -/
-  evExtensive : ExtMeasure γ (dur ∘ τ_fn)
 
 /-- The defining equation of the GRAD square: for any θ-pair (x,e),
     the temporal measure equals the rate times the object measure. -/
@@ -338,7 +306,7 @@ theorem GRADSquare.laxCommutativity {α β γ : Type*}
     (sq : GRADSquare θ μ_obj τ_fn dur)
     {x : α} {e : γ} (hθ : θ x e) :
     dur (τ_fn e) = sq.laxComm.rate * μ_obj x :=
-  sq.laxComm.proportional x e hθ
+  sq.toLaxMeasureSquare.laxCommutativity hθ
 
 /-- GRAD follows from the square via `grad_of_sinc`. -/
 theorem GRADSquare.grad {α β γ : Type*}
@@ -347,8 +315,8 @@ theorem GRADSquare.grad {α β γ : Type*}
     {τ_fn : γ → β} {dur : β → ℚ}
     (sq : GRADSquare θ μ_obj τ_fn dur) :
     GRAD θ μ_obj (dur ∘ τ_fn) := by
-  haveI := sq.objExtensive
-  haveI := sq.evExtensive
+  haveI := sq.ext₁
+  haveI := sq.ext₂
   exact grad_of_sinc θ μ_obj (dur ∘ τ_fn) sq.sinc sq.laxComm
 
 /-- The object arm is a MereoDim (via ExtMeasure). -/
@@ -357,9 +325,8 @@ theorem GRADSquare.objMereoDim {α β γ : Type*}
     {θ : α → γ → Prop} {μ_obj : α → ℚ}
     {τ_fn : γ → β} {dur : β → ℚ}
     (sq : GRADSquare θ μ_obj τ_fn dur) :
-    MereoDim μ_obj := by
-  haveI := sq.objExtensive
-  exact instMereoDimOfExtMeasure
+    MereoDim μ_obj :=
+  sq.toLaxMeasureSquare.mereoDim₁
 
 /-- The temporal arm (composed path) is a MereoDim (via ExtMeasure). -/
 theorem GRADSquare.evMereoDim {α β γ : Type*}
@@ -367,9 +334,8 @@ theorem GRADSquare.evMereoDim {α β γ : Type*}
     {θ : α → γ → Prop} {μ_obj : α → ℚ}
     {τ_fn : γ → β} {dur : β → ℚ}
     (sq : GRADSquare θ μ_obj τ_fn dur) :
-    MereoDim (dur ∘ τ_fn) := by
-  haveI := sq.evExtensive
-  exact instMereoDimOfExtMeasure
+    MereoDim (dur ∘ τ_fn) :=
+  sq.toLaxMeasureSquare.mereoDim₂
 
 /-- QUA pullback through the temporal path: QUA on ℚ pulls back to
     QUA on events via the composed measure `dur ∘ τ_fn`. -/
@@ -379,9 +345,8 @@ theorem GRADSquare.qua_pullback_ev {α β γ : Type*}
     {τ_fn : γ → β} {dur : β → ℚ}
     (sq : GRADSquare θ μ_obj τ_fn dur)
     {P : ℚ → Prop} (hP : QUA P) :
-    QUA (P ∘ dur ∘ τ_fn) := by
-  haveI := sq.evMereoDim
-  exact qua_pullback_mereoDim hP
+    QUA (P ∘ dur ∘ τ_fn) :=
+  sq.toLaxMeasureSquare.qua_pullback₂ hP
 
 -- ════════════════════════════════════════════════════
 -- § 7. Verb Annotations (Meaning Postulates)
