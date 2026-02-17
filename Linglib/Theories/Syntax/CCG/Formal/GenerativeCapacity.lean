@@ -110,15 +110,7 @@ theorem ccg_generates_cross_serial_language :
       isInLanguage_anbncndn w = true ∧
       w = makeString_anbncndn n := by
   intro n
-  use makeString_anbncndn n
-  constructor
-  · -- Show makeString_anbncndn n is in the language
-    induction n with
-    | zero => rfl
-    | succ n ih =>
-      simp only [makeString_anbncndn, isInLanguage_anbncndn]
-      sorry  -- Needs case analysis
-  · rfl
+  exact ⟨makeString_anbncndn n, makeString_in_language n, rfl⟩
 
 -- CCG ⊃ CFG (Strictly)
 
@@ -126,31 +118,13 @@ theorem ccg_generates_cross_serial_language :
 CCG is strictly more expressive than CFG.
 
 1. CCG generates {aⁿbⁿcⁿdⁿ} (via generalized composition)
-2. {aⁿbⁿcⁿdⁿ} is not context-free (pumping lemma)
+2. {aⁿbⁿcⁿdⁿ} lacks the CFL pumping property (hence is not context-free)
 3. Therefore: CCG can generate languages that CFG cannot
 -/
 theorem ccg_strictly_more_expressive_than_cfg :
-    -- CCG generates a language that is not context-free
     (∀ n : Nat, isInLanguage_anbncndn (makeString_anbncndn n) = true) ∧
-    -- That language is not context-free
-    ¬∃ (p : Nat), p > 0 ∧
-      ∀ w : FourString, isInLanguage_anbncndn w = true → w.length ≥ p →
-        ∀ u v x y z : FourString,
-          w = u ++ v ++ x ++ y ++ z →
-          (v ++ x ++ y).length ≤ p →
-          (v.length + y.length) ≥ 1 →
-          ∀ i : Nat, isInLanguage_anbncndn (u ++ List.flatten (List.replicate i v) ++ x ++
-                                           List.flatten (List.replicate i y) ++ z) = true := by
-  constructor
-  · -- CCG generates the pattern
-    intro n
-    induction n with
-    | zero => rfl
-    | succ n ih =>
-      simp only [makeString_anbncndn, isInLanguage_anbncndn]
-      sorry
-  · -- The language is not context-free
-    exact anbncndn_not_context_free
+    ¬ HasPumpingProperty4 isInLanguage_anbncndn :=
+  ⟨makeString_in_language, anbncndn_not_pumpable⟩
 
 -- Connection to Existing CCG Infrastructure
 

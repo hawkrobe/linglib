@@ -41,9 +41,10 @@ def makeString_anbncndn (n : Nat) : FourString :=
 #eval isInLanguage_anbncndn [.a, .b, .c]
 #eval isInLanguage_anbncndn [.a, .a, .b, .c, .c, .d]
 
-/-- Pumping lemma for CFLs (axiom since full proof requires formalizing CFGs). -/
-axiom pumping_lemma_for_cfl :
-    ∀ (inLang : FourString → Bool),
+/-- The CFL pumping property for languages over FourSymbol.
+    Every context-free language has this property (pumping lemma).
+    Showing a language lacks it proves it's not context-free. -/
+def HasPumpingProperty4 (inLang : FourString → Bool) : Prop :=
     ∃ p : Nat, p > 0 ∧
     ∀ w : FourString, inLang w = true → w.length ≥ p →
       ∃ u v x y z : FourString,
@@ -53,7 +54,21 @@ axiom pumping_lemma_for_cfl :
         ∀ i : Nat, inLang (u ++ List.flatten (List.replicate i v) ++ x ++
                           List.flatten (List.replicate i y) ++ z) = true
 
-/-- Pumping breaks membership in {aⁿbⁿcⁿdⁿ}: |vxy| ≤ p spans ≤2 symbol types. -/
+/-- makeString_anbncndn n is always in the language {aⁿbⁿcⁿdⁿ}.
+    TODO: needs auxiliary lemmas about filter distributing over append
+    and filter on replicate for distinct FourSymbol values. -/
+theorem makeString_in_language (n : Nat) :
+    isInLanguage_anbncndn (makeString_anbncndn n) = true := by
+  cases n with
+  | zero => rfl
+  | succ k => sorry
+
+/-- Pumping breaks membership in {aⁿbⁿcⁿdⁿ}: for any decomposition of aᵖbᵖcᵖdᵖ
+    into uvxyz with |vxy| ≤ p and |vy| ≥ 1, pumping at i=0 breaks membership.
+
+    Key insight: |vxy| ≤ p means vxy spans ≤ 2 of the 4 symbol blocks (each of
+    length p). Removing vy (i=0) reduces counts of ≤ 2 symbol types by ≥ 1 total,
+    creating an imbalance — so the pumped-down string is not in {aⁿbⁿcⁿdⁿ}. -/
 theorem pump_breaks_anbncndn (p : Nat) (hp : p > 0) :
     let w := makeString_anbncndn p
     ∀ u v x y z : FourString,
@@ -66,25 +81,22 @@ theorem pump_breaks_anbncndn (p : Nat) (hp : p > 0) :
   use 0
   sorry
 
-/-- {aⁿbⁿcⁿdⁿ} is NOT context-free (pumping lemma contradiction). -/
-theorem anbncndn_not_context_free :
-    ¬∃ (p : Nat), p > 0 ∧
-      ∀ w : FourString, isInLanguage_anbncndn w = true → w.length ≥ p →
-        ∀ u v x y z : FourString,
-          w = u ++ v ++ x ++ y ++ z →
-          (v ++ x ++ y).length ≤ p →
-          (v.length + y.length) ≥ 1 →
-          ∀ i : Nat, isInLanguage_anbncndn (u ++ List.flatten (List.replicate i v) ++ x ++
-                                           List.flatten (List.replicate i y) ++ z) = true := by
+/-- {aⁿbⁿcⁿdⁿ} does NOT have the CFL pumping property, hence is not context-free.
+
+    Proof: for any pumping constant p, the word aᵖbᵖcᵖdᵖ ∈ L witnesses failure.
+    By `pump_breaks_anbncndn`, every valid decomposition can be pumped down (i=0)
+    to break membership, contradicting the pumping property's ∀ i guarantee. -/
+theorem anbncndn_not_pumpable :
+    ¬ HasPumpingProperty4 isInLanguage_anbncndn := by
   intro ⟨p, hp, hpump⟩
-  let w := makeString_anbncndn p
-  have hw_in : isInLanguage_anbncndn w = true := by
-    simp only [w, makeString_anbncndn, isInLanguage_anbncndn]
-    sorry
-  have hw_len : w.length ≥ p := by
-    simp only [w, makeString_anbncndn, List.length_append, List.length_replicate]
-    omega
-  sorry
+  have hw_in := makeString_in_language p
+  have hw_len : (makeString_anbncndn p).length ≥ p := by
+    simp only [makeString_anbncndn, List.length_append, List.length_replicate]; omega
+  obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ := hpump _ hw_in hw_len
+  obtain ⟨i, hbreak⟩ := pump_breaks_anbncndn p hp u v x y z hw hvxy hvy
+  have h := hall i
+  rw [hbreak] at h
+  exact absurd h (by decide)
 
 /-- Alphabet for {aⁿbⁿcⁿ}. -/
 inductive ThreeSymbol where
@@ -108,16 +120,21 @@ def makeString_anbnc (n : Nat) : List ThreeSymbol :=
 
 #eval isInLanguage_anbnc (makeString_anbnc 3)
 
-/-- {aⁿbⁿcⁿ} is NOT context-free. -/
-theorem anbnc_not_context_free :
-    ¬∃ (p : Nat), p > 0 ∧
-      ∀ w : List ThreeSymbol, isInLanguage_anbnc w = true → w.length ≥ p →
-        ∀ u v x y z,
-          w = u ++ v ++ x ++ y ++ z →
-          (v ++ x ++ y).length ≤ p →
-          (v.length + y.length) ≥ 1 →
-          ∀ i : Nat, isInLanguage_anbnc (u ++ List.flatten (List.replicate i v) ++ x ++
-                                         List.flatten (List.replicate i y) ++ z) = true := by
+/-- The CFL pumping property for languages over ThreeSymbol. -/
+def HasPumpingProperty3 (inLang : List ThreeSymbol → Bool) : Prop :=
+    ∃ p : Nat, p > 0 ∧
+    ∀ w : List ThreeSymbol, inLang w = true → w.length ≥ p →
+      ∃ u v x y z : List ThreeSymbol,
+        w = u ++ v ++ x ++ y ++ z ∧
+        (v ++ x ++ y).length ≤ p ∧
+        (v.length + y.length) ≥ 1 ∧
+        ∀ i : Nat, inLang (u ++ List.flatten (List.replicate i v) ++ x ++
+                           List.flatten (List.replicate i y) ++ z) = true
+
+/-- {aⁿbⁿcⁿ} does NOT have the CFL pumping property, hence is not context-free.
+    Same argument as the four-symbol case: aᵖbᵖcᵖ witnesses failure. -/
+theorem anbnc_not_pumpable :
+    ¬ HasPumpingProperty3 isInLanguage_anbnc := by
   sorry
 
 /-- A formalism is mildly context-sensitive if it generates CFLs plus some non-CFLs. -/

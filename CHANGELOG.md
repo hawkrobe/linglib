@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.218.20] - 2026-02-16
+
+### Fixed
+- Fix pumping lemma: replace unsound axiom with `HasPumpingProperty4` def, fix ∀→∃ quantifier in `anbncndn_not_pumpable`
+- Strengthen `dep_length_eq_one_plus_intervening` to `dep_length_ge_one_plus_intervening` (= → ≥, equality only holds without sibling subtrees)
+- Close `leaf_no_subtree_members` and `leaf_no_intervening` sorrys via new `projection_of_no_children` lemma
+- Fix `projection_of_leaf` Lean 4.28 breakage (`ite_false` simp regression), delegate to `projection_of_no_children`
+- Fix bibliography source links for moved RSA implementation files
+
 ## [0.218.19] - 2026-02-16
 
 ### Changed

@@ -7,7 +7,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 ## Pragmatics — Rational Speech Acts
 
 **Alsop, A.** (2024). The Pragmatics of Free Choice Any. *Glossa: a journal of general linguistics, 9(1)*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/Alsop2024.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Alsop2024.lean)
 
 **Barnett, S. A., Griffiths, T. L. & Hawkins, R. D.** (2022). A Pragmatic Account of the Weak Evidence Effect. *Open Mind, 6, 169–182*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean)
@@ -22,10 +22,10 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/LexicalUncertainty/Basic.lean)
 
 **Champollion, L., Alsop, A. & Grosu, I.** (2019). Free Choice Disjunction as a Rational Speech Act. *Proceedings of SALT, 29, 238–257*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean)
 
 **Cremers, A., Wilcox, E. G. & Spector, B.** (2023). Exhaustivity and Anti-Exhaustivity in the RSA Framework: Testing the Effect of Prior Beliefs. *Cognitive Science, 47(5), e13286*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/CremersWilcoxSpector2023.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/CremersWilcoxSpector2023.lean)
 
 **Cummins, C. & Franke, M.** (2021). Rational Interpretation of Numerical Quantity in Argumentative Contexts. *Frontiers in Communication, 6, 662027*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/CumminsFranke2021.lean)
@@ -41,7 +41,7 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)
 
 **Franke, M. & Bergen, L.** (2020). Theory-Driven Statistical Modeling for Semantics and Pragmatics: A Case Study on Grammatically Generated Implicature Readings. *Language, 96(2), e77–e96*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/FrankeBergen2020.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/FrankeBergen2020.lean)
 
 **Goodman, N. D. & Frank, M. C.** (2016). Pragmatic Language Interpretation as Probabilistic Inference. *Trends in Cognitive Sciences, 20(11), 818–829*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Core/Basic.lean)
@@ -60,10 +60,10 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HawkinsGweonGoodman2021.lean)
 
 **Hawkins, R. D., Tsvilodub, P., Bergey, C. A., Goodman, N. D. & Franke, M.** (2025). Relevant Answers to Polar Questions. *Philosophical Transactions of the Royal Society B: Biological Sciences, 380(1932)*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/HawkinsEtAl2025.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HawkinsEtAl2025.lean)
 
 **He, M., Kaiser, E. & Iskarous, K.** (2025). Modeling Sentence Polarity Asymmetries: Fuzzy Interpretations in a Possibly Wonky World. *Proceedings of the Society for Computation in Linguistics*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean)
 
 **Kao, J. T., Bergen, L. & Goodman, N. D.** (2014). Formalizing the Pragmatics of Metaphor Understanding. *Proceedings of the Annual Meeting of the Cognitive Science Society, 36*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)
@@ -72,19 +72,19 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/LassiterGoodman2017.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/LassiterGoodman2017.lean)
 
 **Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Semantics and Pragmatics*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/Nouwen2024.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/RSA_Nouwen2024Bridge.lean)
 
 **Potts, C., Lassiter, D., Levy, R. & Frank, M. C.** (2016). Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty. *Journal of Semantics, 33(4), 755–802*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)
 
 **Qing, C., Goodman, N. D. & Lassiter, D.** (2016). A Rational Speech-Act Model of Projective Content. *Proceedings of the Annual Meeting of the Cognitive Science Society, 38*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean)
 
 **Scontras, G. & Pearl, L. S.** (2021). When Pragmatics Matters More for Truth-Value Judgments: An Investigation of Quantifier Scope Ambiguity. *Glossa, 6(1), 110*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
 
 **Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)
@@ -102,7 +102,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean)
 
 **van Tiel, B., Franke, M. & Sauerland, U.** (2021). Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification. *Proceedings of the National Academy of Sciences, 118(9), e2005453118*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/VanTielEtAl2021.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/VanTielEtAl2021.lean)
 
 **Waldon, B. & Degen, J.** (2021). Modeling Cross-Linguistic Production of Referring Expressions. *Proceedings of the Society for Computation in Linguistics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/WaldonDegen2021.lean)
@@ -111,13 +111,13 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Warstadt2022.lean)
 
 **Yoon, E. J., Tessler, M. H., Goodman, N. D. & Frank, M. C.** (2020). Polite Speech Emerges From Competing Social Goals. *Open Mind, 4, 71–87*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/YoonEtAl2020.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/YoonEtAl2020.lean)
 
 **Zaslavsky, N., Hu, J. & Levy, R.** (2020). A Rate-Distortion View of Human Pragmatic Reasoning. *arXiv:2005.06641*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean)
 
 **Égré, P., Spector, B., Mortier, A. & Verheyen, S.** (2023). On the Optimality of Vagueness: “Around”, “Between” and the Gricean Maxims. *Linguistics and Philosophy, 46(5), 1075–1130*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Pragmatics/RSA/Implementations/EgreEtAl2023.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/EgreEtAl2023.lean)
 
 ## Pragmatics — NeoGricean / Exhaustivity
 
@@ -151,7 +151,7 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 ## Pragmatics — Decision-Theoretic Semantics
 
 **Merin, A.** (1999). Information, Relevance, and Social Decisionmaking. *Logic, Language, and Computation, 2*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/DTS/Core.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/DecisionTheoretic/Core.lean)
 
 ## Semantics — Compositional / Montague
 
