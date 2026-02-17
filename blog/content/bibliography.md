@@ -108,7 +108,8 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/WaldonDegen2021.lean)
 
 **Warstadt, A.** (2022). Presupposition Triggering Reflects Pragmatic Reasoning about Utterance Utility. *Proceedings of the Amsterdam Colloquium, 451–458*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Warstadt2022.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Warstadt2022.lean, Phenomena/Presupposition/RSA_Warstadt2022Bridge.lean)\
+cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Warstadt2022.lean)
 
 **Yoon, E. J., Tessler, M. H., Goodman, N. D. & Frank, M. C.** (2020). Polite Speech Emerges From Competing Social Goals. *Open Mind, 4, 71–87*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/YoonEtAl2020.lean)
