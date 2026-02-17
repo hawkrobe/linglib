@@ -13,6 +13,10 @@ inductive FourSymbol where
   | a | b | c | d
   deriving DecidableEq, Repr, BEq
 
+instance : LawfulBEq FourSymbol where
+  eq_of_beq {x y} h := by cases x <;> cases y <;> first | rfl | exact absurd h (by decide)
+  rfl {x} := by cases x <;> decide
+
 abbrev FourString := List FourSymbol
 
 /-- The language {aⁿbⁿcⁿdⁿ | n ≥ 0}, modeling Dutch cross-serial dependencies. -/
@@ -54,14 +58,38 @@ def HasPumpingProperty4 (inLang : FourString → Bool) : Prop :=
         ∀ i : Nat, inLang (u ++ List.flatten (List.replicate i v) ++ x ++
                           List.flatten (List.replicate i y) ++ z) = true
 
-/-- makeString_anbncndn n is always in the language {aⁿbⁿcⁿdⁿ}.
-    TODO: needs auxiliary lemmas about filter distributing over append
-    and filter on replicate for distinct FourSymbol values. -/
+/-- Unfold `isInLanguage_anbncndn` on a nonempty string. -/
+private theorem isInLang_nonempty (w : FourString) (h : w ≠ []) :
+    isInLanguage_anbncndn w = (
+      let na := (w.filter (· == .a)).length
+      let nb := (w.filter (· == .b)).length
+      let nc := (w.filter (· == .c)).length
+      let nd := (w.filter (· == .d)).length
+      na == nb && nb == nc && nc == nd &&
+      w == List.replicate na .a ++ List.replicate nb .b ++
+           List.replicate nc .c ++ List.replicate nd .d) := by
+  unfold isInLanguage_anbncndn
+  match w, h with
+  | _ :: _, _ => rfl
+
+/-- Each symbol's filter count in makeString equals n. -/
+private theorem filter_count (n : Nat) (s : FourSymbol) :
+    ((makeString_anbncndn n).filter (· == s)).length = n := by
+  simp only [makeString_anbncndn, List.filter_append, List.filter_replicate, List.length_append]
+  cases s <;> simp (config := { decide := true })
+
+/-- makeString_anbncndn n is always in the language {aⁿbⁿcⁿdⁿ}. -/
 theorem makeString_in_language (n : Nat) :
     isInLanguage_anbncndn (makeString_anbncndn n) = true := by
   cases n with
   | zero => rfl
-  | succ k => sorry
+  | succ k =>
+    have hne : makeString_anbncndn (k + 1) ≠ [] := by
+      simp [makeString_anbncndn, List.replicate_succ]
+    rw [isInLang_nonempty _ hne]
+    simp only [filter_count, beq_self_eq_true, Bool.and_self, Bool.true_and]
+    change (makeString_anbncndn (k + 1) == makeString_anbncndn (k + 1)) = true
+    exact beq_self_eq_true _
 
 /-- Pumping breaks membership in {aⁿbⁿcⁿdⁿ}: for any decomposition of aᵖbᵖcᵖdᵖ
     into uvxyz with |vxy| ≤ p and |vy| ≥ 1, pumping at i=0 breaks membership.

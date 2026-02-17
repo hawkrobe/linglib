@@ -111,6 +111,37 @@ def isConnected (deps : List Dependency) (nodes : List Nat) : Bool :=
 def isCatena (deps : List Dependency) (nodes : List Nat) : Bool :=
   !nodes.isEmpty && isConnected deps nodes
 
+/-- Elements already in visited remain in the BFS result. -/
+private theorem mem_go_of_mem_visited (deps : List Dependency) (allowed : List Nat)
+    (queue visited : List Nat) (fuel : Nat) (x : Nat) (hx : x ∈ visited) :
+    x ∈ bfsReachable.go deps allowed queue visited fuel := by
+  induction fuel generalizing queue visited with
+  | zero => exact hx
+  | succ f ih =>
+    match queue with
+    | [] => exact hx
+    | node :: rest =>
+      show x ∈ bfsReachable.go deps allowed (node :: rest) visited (f + 1)
+      unfold bfsReachable.go
+      split
+      · exact ih rest visited hx
+      · exact ih _ _ (List.mem_cons_of_mem _ hx)
+
+/-- Any singleton is a catena: non-empty and trivially connected. -/
+theorem singleton_isCatena (deps : List Dependency) (v : Nat) :
+    isCatena deps [v] = true := by
+  unfold isCatena isConnected
+  simp only [List.isEmpty_cons, Bool.not_false, Bool.true_and,
+             List.all_cons, List.all_nil, Bool.and_true]
+  -- Goal: (bfsReachable deps [v] v).contains v
+  -- BFS starts with queue=[v], visited=[]. First step adds v to visited.
+  show (bfsReachable deps [v] v).contains v = true
+  unfold bfsReachable bfsReachable.go
+  simp only [List.contains_nil, Bool.false_eq_true, ↓reduceIte]
+  -- v is now in visited=[v]. Need: (go ... (v :: []) ...).contains v
+  exact List.elem_eq_true_of_mem
+    (mem_go_of_mem_visited _ _ _ _ _ v List.mem_cons_self)
+
 /-- Convenience: check catena on a DepTree directly. -/
 def DepTree.isCatena' (t : DepTree) (nodes : List Nat) : Bool :=
   Catena.isCatena t.deps nodes

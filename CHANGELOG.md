@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.218.21] - 2026-02-16
+
+### Fixed
+- Close `makeString_in_language` sorry (filter/replicate helper lemmas + `LawfulBEq FourSymbol`)
+- Add `singleton_isCatena` theorem + `mem_go_of_mem_visited` BFS helper to Catena.lean
+- Fix `exists_catena_not_constituent` statement: remove vacuous `SimpleGraph` parameter, use Bool-level `isCatena`
+
 ## [0.218.20] - 2026-02-16
 
 ### Fixed
