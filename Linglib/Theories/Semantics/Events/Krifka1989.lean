@@ -18,6 +18,7 @@ thematic role properties in `Krifka1998.lean` to provide:
 4. **Unified telicity transfer chain**: the full Krifka 1989 story connecting
    nominal reference → VP aspect (§4)
 5. **Bridge to Scontras's measurement framework** (§5)
+6. **GRAD Square Instantiation**: canonical `GRADSquare` for the Krifka event structure (§6)
 
 ## References
 
@@ -220,5 +221,40 @@ theorem extensive_measureFn_qmod_qua
     QUA (QMOD R μ.apply n) := by
   have : @ExtMeasure E inst μ.apply := hExt
   exact @qmod_qua E inst _ _ this n hn
+
+-- ════════════════════════════════════════════════════
+-- § 6. GRAD Square Instantiation
+-- ════════════════════════════════════════════════════
+
+/-- `durationMeasure len = len ∘ (fun e => e.runtime)` by definition. -/
+theorem durationMeasure_eq_comp {Time : Type*} [LinearOrder Time]
+    (len : Interval Time → ℚ) :
+    durationMeasure len = len ∘ (fun (e : Ev Time) => e.runtime) := rfl
+
+/-- Constructor for the GRAD square in the Krifka event structure case:
+    `Entity →θ Ev Time →runtime Interval Time →len ℚ`. -/
+def krifkaGRADSquare
+    {Entity Time : Type*}
+    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Ev Time)]
+    (θ : Entity → Ev Time → Prop) (μ_obj : Entity → ℚ) (len : Interval Time → ℚ)
+    (hSinc : SINC θ) (hObjExt : ExtMeasure Entity μ_obj)
+    (hEvExt : ExtMeasure (Ev Time) (durationMeasure len))
+    (hProp : MeasureProportional θ μ_obj (durationMeasure len)) :
+    GRADSquare θ μ_obj (fun e => e.runtime) len :=
+  { laxComm := hProp
+    sinc := hSinc
+    objExtensive := hObjExt
+    evExtensive := hEvExt }
+
+/-- Named lax commutativity for the canonical case:
+    `len(e.runtime) = rate * μ_obj(x)` for θ-pairs. -/
+theorem krifka_lax_commutativity
+    {Entity Time : Type*}
+    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Ev Time)]
+    {θ : Entity → Ev Time → Prop} {μ_obj : Entity → ℚ} {len : Interval Time → ℚ}
+    (sq : GRADSquare θ μ_obj (fun e => e.runtime) len)
+    {x : Entity} {e : Ev Time} (hθ : θ x e) :
+    len e.runtime = sq.laxComm.rate * μ_obj x :=
+  sq.laxCommutativity hθ
 
 end Semantics.Events.Krifka1989

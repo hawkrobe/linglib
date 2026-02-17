@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.219.12] - 2026-02-17
+
+### Added
+- `GRADSquare` structure in `Krifka1998.lean` §6b: bundles lax commutative diagram (two dimension chains Events→ℚ via object and temporal paths) with SINC + extensive measures
+- `GRADSquare.laxCommutativity`: the defining equation `dur(τ(e)) = rate * μ_obj(x)` for θ-pairs
+- `GRADSquare.grad`: GRAD derived self-contained from the square
+- `GRADSquare.objMereoDim`/`evMereoDim`: both arms are `MereoDim`
+- `GRADSquare.qua_pullback_ev`: QUA pullback through the temporal path
+- `krifkaGRADSquare`: canonical instantiation for `Ev Time` in `Krifka1989.lean` §6
+- `durationMeasure_eq_comp`, `krifka_lax_commutativity`: helpers for the canonical case
+
 ## [0.219.11] - 2026-02-17
 
 ### Added
