@@ -50,6 +50,20 @@ structure Variable where
   name : String
   deriving DecidableEq, Hashable, Repr, BEq, Inhabited
 
+@[simp] theorem Variable.beq_def (a b : Variable) :
+    (a == b) = decide (a = b) := by
+  cases a with | mk na =>
+  cases b with | mk nb =>
+  show @BEq.beq String (@instBEqOfDecidableEq String instDecidableEqString) na nb = _
+  simp only [instBEqOfDecidableEq]
+  by_cases h : na = nb
+  · subst h; simp
+  · simp [h, show ¬(Variable.mk na = Variable.mk nb) from fun h' => h (Variable.mk.inj h')]
+
+instance : LawfulBEq Variable where
+  eq_of_beq {a b} h := by simp [Variable.beq_def] at h; exact h
+  rfl {a} := by simp [Variable.beq_def]
+
 instance : ToString Variable where
   toString v := v.name
 
