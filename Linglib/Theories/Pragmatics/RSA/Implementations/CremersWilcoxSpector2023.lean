@@ -24,7 +24,7 @@ namespace RSA.Implementations.CremersWilcoxSpector2023
 This file previously contained the full CWS2023 RSA implementation.
 All definitions and theorems depend on Phenomena types (CWSConfig, CWSWorld,
 CWSUtterance, etc.) and have been moved to
-`Linglib.Phenomena.ScalarImplicatures.Bridge_RSA_CremersWilcoxSpector2023`.
+`Linglib.Phenomena.ScalarImplicatures.RSA_CremersWilcoxSpector2023Bridge`.
 -/
 
 end RSA.Implementations.CremersWilcoxSpector2023

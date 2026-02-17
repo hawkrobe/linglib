@@ -19,7 +19,7 @@ Proves that:
 - Maling (1972) "On 'Gapping and the order of constituents'"
 -/
 
-namespace Phenomena.Ellipsis.Bridge_CCG_Gapping
+namespace Phenomena.Ellipsis.CCG_GappingBridge
 
 open CCG
 open CCG.Gapping
@@ -113,4 +113,4 @@ theorem dutch_allows_both_gapping :
     (rossRevised dutchProfile).allowsBackward = true := by
   constructor <;> rfl
 
-end Phenomena.Ellipsis.Bridge_CCG_Gapping
+end Phenomena.Ellipsis.CCG_GappingBridge

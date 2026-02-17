@@ -17,7 +17,7 @@ Tests that the M-alternative framework correctly identifies:
 - Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
-namespace Phenomena.Gradability.Bridge_NeoGricean_Alternatives
+namespace Phenomena.Gradability.NeoGricean_AlternativesBridge
 
 open NeoGricean.Alternatives
 open NeoGricean.Markedness
@@ -66,4 +66,4 @@ theorem tall_is_not_marked_in_equative :
   native_decide
 
 
-end Phenomena.Gradability.Bridge_NeoGricean_Alternatives
+end Phenomena.Gradability.NeoGricean_AlternativesBridge

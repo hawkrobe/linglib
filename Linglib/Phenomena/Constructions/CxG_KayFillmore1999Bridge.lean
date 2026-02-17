@@ -3,7 +3,7 @@ import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
-import Linglib.Phenomena.Focus.Bridge_Focus_DomainWidening
+import Linglib.Phenomena.Focus.Focus_DomainWideningBridge
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Questions.Polarity

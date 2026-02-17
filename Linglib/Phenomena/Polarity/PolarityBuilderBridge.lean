@@ -21,7 +21,7 @@ context–item pairs.
 -/
 
 
-namespace Phenomena.Polarity.Bridge_PolarityBuilder
+namespace Phenomena.Polarity.PolarityBuilderBridge
 
 open Semantics.Entailment.PolarityBuilder
 open Fragments.English.PolarityItems
@@ -80,4 +80,4 @@ and the empirical datum records it as not classically DE.
 theorem vonFintel_only_not_de :
     onlyProfile.strongestLevel = none ∧ onlyNotDE.isClassicallyDE = false := ⟨rfl, rfl⟩
 
-end Phenomena.Polarity.Bridge_PolarityBuilder
+end Phenomena.Polarity.PolarityBuilderBridge

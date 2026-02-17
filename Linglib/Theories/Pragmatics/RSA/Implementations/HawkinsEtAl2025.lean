@@ -45,7 +45,7 @@ namespace RSA.PriorPQ
 This file previously contained the full Hawkins et al. (2025) PRIOR-PQ RSA implementation.
 All definitions and theorems depend on Phenomena types (ResponseType, cs1/cs2/cs3 data,
 etc.) and have been moved to
-`Linglib.Phenomena.Questions.Bridge_RSA_HawkinsEtAl2025`.
+`Linglib.Phenomena.Questions.RSA_HawkinsEtAl2025Bridge`.
 -/
 
 end RSA.PriorPQ

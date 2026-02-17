@@ -40,7 +40,7 @@ namespace RSA.Implementations.HeKaiserIskarous2025
 This file previously contained the full He, Kaiser & Iskarous (2025) RSA implementation.
 All definitions and theorems depend on Phenomena types (HKIConfig, HKIState, HKIUtterance,
 literalTruth, utteranceCost, FuzzyParams, WorldType, Polarity, etc.) and have been moved to
-`Linglib.Phenomena.Presupposition.Bridge_RSA_HeKaiserIskarous2025`.
+`Linglib.Phenomena.Presupposition.RSA_HeKaiserIskarous2025Bridge`.
 -/
 
 end RSA.Implementations.HeKaiserIskarous2025

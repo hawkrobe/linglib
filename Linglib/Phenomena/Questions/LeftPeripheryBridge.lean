@@ -20,7 +20,7 @@ cross-linguistic Q-particle predictions.
 - McCloskey, J. (2006). Questions and questioning in a local English.
 -/
 
-namespace Phenomena.Questions.Bridge_LeftPeriphery
+namespace Phenomena.Questions.LeftPeripheryBridge
 
 open Semantics.Questions.LeftPeriphery
 open Phenomena.Questions.Embedding
@@ -123,4 +123,4 @@ theorem classifyVerb_agrees_with_selectionClass :
     classifyVerb "depend on" = fieldSelectionClass Fragments.English.Predicates.Verbal.depend_on ∧
     classifyVerb "believe" = fieldSelectionClass Fragments.English.Predicates.Verbal.believe := by native_decide
 
-end Phenomena.Questions.Bridge_LeftPeriphery
+end Phenomena.Questions.LeftPeripheryBridge

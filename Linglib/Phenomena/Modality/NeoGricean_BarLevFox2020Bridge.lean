@@ -17,7 +17,7 @@ Exh^{IE+II}) rather than a semantic entailment, matching the empirical data.
 -/
 
 
-namespace Phenomena.Modality.Bridge_NeoGricean_BarLevFox2020
+namespace Phenomena.Modality.NeoGricean_BarLevFox2020Bridge
 
 open NeoGricean.FreeChoice
 
@@ -27,4 +27,4 @@ theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEn
 /-- The inference is captured by our pragmatic theory -/
 theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
-end Phenomena.Modality.Bridge_NeoGricean_BarLevFox2020
+end Phenomena.Modality.NeoGricean_BarLevFox2020Bridge

@@ -70,7 +70,7 @@ def categoryToSymbol (isArg : Bool) (pos : Nat) : FourSymbol :=
 
     Used here for the generative capacity proof; the full
     `AnnotatedDerivation` with binding information is in the
-    bridge file `Phenomena.FillerGap.Bridge_CCG_CrossSerial`. -/
+    bridge file `Phenomena.FillerGap.CCG_CrossSerialBridge`. -/
 structure SimpleAnnotatedDerivation where
   /-- The derivation -/
   deriv : CCG.CrossSerial.ExtDerivStep

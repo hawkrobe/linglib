@@ -14,7 +14,7 @@ formalization to empirical sluicing data in `Phenomena.Ellipsis.Sluicing`.
 - `sicPredictionsSummary`: Summary of all SIC predictions
 -/
 
-namespace Phenomena.Ellipsis.Bridge_Minimalism_Sluicing
+namespace Phenomena.Ellipsis.Minimalism_SluicingBridge
 
 open Minimalism.Sluicing
 open Phenomena.Ellipsis.Sluicing
@@ -56,4 +56,4 @@ def sicPredictionsSummary : String :=
 #eval basicSluicePrediction
 #eval casePrediction
 
-end Phenomena.Ellipsis.Bridge_Minimalism_Sluicing
+end Phenomena.Ellipsis.Minimalism_SluicingBridge

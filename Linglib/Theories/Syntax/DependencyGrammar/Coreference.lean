@@ -155,7 +155,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 
 -- Phenomenon data verification (capturesCoreferenceData, reflexiveCoreferenceData,
 -- complementaryDistributionData, pronominalDisjointReferenceData) is in the bridge
--- file: Phenomena/Anaphora/Bridge_DG_Coreference.lean
+-- file: Phenomena.Anaphora.DG_CoreferenceBridge.lean
 
 -- ============================================================================
 -- Part 10: Dependency Grammar Configuration

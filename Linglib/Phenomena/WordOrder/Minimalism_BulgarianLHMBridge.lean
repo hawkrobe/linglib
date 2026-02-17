@@ -13,7 +13,7 @@ empirical verb position data in `Phenomena.WordOrder.VerbPosition`.
 - `captures_alternation`: Both orders are correctly predicted as grammatical
 -/
 
-namespace Phenomena.WordOrder.Bridge_Minimalism_BulgarianLHM
+namespace Phenomena.WordOrder.Minimalism_BulgarianLHMBridge
 
 open Phenomena.WordOrderAlternations.VerbPosition
 
@@ -26,4 +26,4 @@ theorem models_fronted_order :
 theorem captures_alternation :
     bulgarianExample.bothGrammatical = true := rfl
 
-end Phenomena.WordOrder.Bridge_Minimalism_BulgarianLHM
+end Phenomena.WordOrder.Minimalism_BulgarianLHMBridge

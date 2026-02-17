@@ -15,7 +15,7 @@ to empirical data in `Phenomena.Imprecision.Studies.EgreEtAl2023`.
 -/
 
 
-namespace Phenomena.Imprecision.Bridge_RSA_EgreEtAl2023
+namespace Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
 
 open RSA.EgreEtAl2023
 
@@ -31,4 +31,4 @@ theorem closed_form_matches_phenomena_offset5 :
     Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_offset5.expectedProb := by
   native_decide
 
-end Phenomena.Imprecision.Bridge_RSA_EgreEtAl2023
+end Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
