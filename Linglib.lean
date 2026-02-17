@@ -51,7 +51,7 @@ import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
 import Linglib.Theories.Morphology.Exponence
 import Linglib.Theories.Morphology.ScaleFromParadigm
-import Linglib.Theories.Morphology.StemToLex
+import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.DiscourseRole
 
 -- Fragments
