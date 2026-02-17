@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.218.13] - 2026-02-16
+
+### Fixed
+- Fix build failures from Lean 4 v4.28.0-rc1 API changes
+  - Distribution.lean: add missing `Mathlib.Algebra.Order.BigOperators.Group.Finset` import
+  - PragmaticAnswerhood.lean: adapt to implicit `List.mem_cons_self` args, switch `eraseDups` → Mathlib `dedup` (with `nodup_dedup`/`mem_dedup`), fix `Nat.ble_eq` → `decide_eq_true`
+  - RSA Basic.lean: replace `linarith` with `exact add_nonneg` for cost nonnegativity
+- Close two `sorry`s in Builder.lean (`assertsSufficiency_iff_makeSem`)
+- Close `sorry` in AntiAdditivity.lean (`atMost_not_antiAdditive`) with concrete counterexample using `atMost 1`
+
 ## [0.218.4] - 2026-02-16
 
 ### Changed

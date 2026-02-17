@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Partition
+import Mathlib.Data.List.Dedup
 
 /-!
 # Questions/PragmaticAnswerhood.lean
@@ -204,7 +205,7 @@ def pragmaticallyDefinite {W E : Type*} [DecidableEq E]
     (t : TermDenotation W E) (j : InfoSet W) (worlds : List W) : Bool :=
   let jWorlds := worlds.filter j
   let denotations := jWorlds.map t
-  denotations.eraseDups.length <= 1
+  denotations.dedup.length <= 1
 
 /-- A nodup list whose elements are all equal has at most one element. -/
 private theorem nodup_all_eq_length_le_one {α : Type*}
@@ -214,10 +215,10 @@ private theorem nodup_all_eq_length_le_one {α : Type*}
   | [] => simp
   | [_] => simp
   | x :: y :: _ =>
-    have := h x (List.mem_cons_self _ _)
-    have := h y (List.mem_cons_of_mem _ (List.mem_cons_self _ _))
-    subst_vars
-    exact absurd (List.mem_cons_self a _) (List.nodup_cons.mp hnd).1
+    have hx := h x List.mem_cons_self
+    have hy := h y (List.mem_cons_of_mem _ List.mem_cons_self)
+    subst hx; subst hy
+    exact absurd List.mem_cons_self (List.nodup_cons.mp hnd).1
 
 /-- Pragmatic rigidity implies pragmatic definiteness. -/
 theorem pragmaticallyRigid_implies_definite {W E : Type*} [DecidableEq E]
@@ -239,11 +240,11 @@ theorem pragmaticallyRigid_implies_definite {W E : Type*} [DecidableEq E]
       rcases hx with rfl | ⟨v, hv, rfl⟩
       · rfl
       · exact (beq_iff_eq.mp (h v hv)).symm
-    -- eraseDups produces a nodup list with same membership
-    have hnd := List.nodup_eraseDups (t w :: ws.map t)
-    have hmem : ∀ x ∈ (t w :: ws.map t).eraseDups, x = t w :=
-      fun x hx => hall x (List.mem_eraseDups.mp hx)
-    exact Nat.ble_eq.mpr (nodup_all_eq_length_le_one _ hnd (t w) hmem)
+    -- dedup produces a nodup list with same membership
+    have hnd := List.nodup_dedup (t w :: ws.map t)
+    have hmem : ∀ x ∈ (t w :: ws.map t).dedup, x = t w :=
+      fun x hx => hall x (List.mem_dedup.mp hx)
+    exact decide_eq_true (nodup_all_eq_length_le_one _ hnd (t w) hmem)
 
 /-- Semantic rigidity implies pragmatic rigidity (for any J). -/
 theorem semanticallyRigid_implies_pragmaticallyRigid {W E : Type*} [DecidableEq E]

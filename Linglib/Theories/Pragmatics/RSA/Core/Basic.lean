@@ -447,8 +447,7 @@ def S1 (w : W)
       | some d => exact d.nonneg w
     · apply div_nonneg (by norm_num : (0 : ℚ) ≤ 1)
       apply pow_nonneg
-      have := S.cost_nonneg u
-      linarith
+      exact add_nonneg (by norm_num : (0 : ℚ) ≤ 1) (S.cost_nonneg u)
   tryNormalize scores hnonneg
 
 /-- L1 marginal P(w|u) summing over all latent variables. -/
@@ -671,8 +670,7 @@ def S1_fromL1S0 (w : W)
       | some d => exact d.nonneg w
     · apply div_nonneg (by norm_num : (0 : ℚ) ≤ 1)
       apply pow_nonneg
-      have := S.cost_nonneg u
-      linarith
+      exact add_nonneg (by norm_num : (0 : ℚ) ≤ 1) (S.cost_nonneg u)
   tryNormalize scores hnonneg
 
 -- Unified API with ChainVariant (Primary Interface)
