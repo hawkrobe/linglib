@@ -49,10 +49,15 @@ def epSemanticType : Cat → EPSemanticType
   | .Appl              => .intermediate   -- F1: introduces applied argument (Pylkkänen 2008)
   | .D                 => .entity         -- F1: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
+  | .Neg               => .intermediate   -- F2: negation (Pollock 1989)
+  | .Mod               => .intermediate   -- F2: modality (Cinque 1999)
+  | .Pol               => .intermediate   -- F2: polarity (Laka 1990)
   | .Foc               => .intermediate   -- F4: focus (Rizzi 1997 split-CP)
   | .Top               => .intermediate   -- F5: topic (Rizzi 1997 split-CP)
+  | .Rel               => .intermediate   -- F5: relative (Rizzi 2001)
   | .Fin               => .intermediate   -- F3: finiteness (Rizzi 1997)
   | .C                 => .proposition    -- F6: proposition (force)
+  | .Force             => .proposition    -- F6: force (Rizzi 1997 split-CP)
   | .SA                => .proposition    -- F7: speech act (Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
@@ -139,7 +144,8 @@ def isTruncated (spine : List Cat) : Bool :=
     - DP (F1) denotes e (entity), not ⟨e,t⟩ -/
 def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
-  | .C | .Fin | .Foc | .Top | .SA | .T => .v  -- clausal functional heads → vP is argument domain
+  | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA
+  | .T | .Neg | .Mod | .Pol => .v  -- clausal functional heads → vP is argument domain
   | _       => topCat  -- small clause / lexical head → the SC itself is argument domain
 
 /-- Is a category within the argument domain of a given top category?
@@ -270,35 +276,5 @@ theorem t_internal_to_fin : isEPInternal .T .Fin = true := by decide
 /-- Fin and Foc are NOT perfect projections of each other: F3 ≠ F4.
     Before the fValue fix, both had fValue 3 and this was incorrectly true. -/
 theorem fin_foc_not_perfect : perfectProjection .Fin .Foc = false := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- Part 9: Eval Tests
--- ═══════════════════════════════════════════════════════════════
-
--- Semantic types
-#eval epSemanticType .V  -- property
-#eval epSemanticType .v  -- intermediate
-#eval epSemanticType .T  -- intermediate
-#eval epSemanticType .C  -- proposition
-#eval epSemanticType .D  -- entity
-
--- EP-internal/external
-#eval isEPInternal .V .v  -- true (VP is complement of vP)
-#eval isEPInternal .N .D  -- true (NP is complement of DP)
-#eval isEPExternal .D .v  -- true (DP is specifier of vP)
-
--- Argument domain
-#eval argumentDomainCat .C  -- v (argument domain of CP = vP)
-#eval argumentDomainCat .T  -- v (argument domain of TP = vP)
-#eval argumentDomainCat .V  -- V (small clause: arg domain = itself)
-
--- Truncation
-#eval isTruncated smallClauseVerbalEP  -- true
-#eval isTruncated fullVerbalEP         -- false
-#eval isTruncated infinitivalEP        -- true
-
--- Theta
-#eval canAssignTheta .V  -- true
-#eval canAssignTheta .T  -- false
 
 end Minimalism

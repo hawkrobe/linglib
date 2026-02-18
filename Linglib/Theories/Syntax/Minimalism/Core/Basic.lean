@@ -38,8 +38,15 @@ inductive Cat where
   | v     -- light verb
   | Voice -- Voice head (Kratzer 1996; Schäfer 2008)
   | Appl  -- Applicative head (Pylkkänen 2008; Cuervo 2003)
+  | Foc   -- focus (Rizzi 1997 split-CP; hosts [FoC] feature, triggers A-bar movement)
+  | Top   -- topic (Rizzi 1997 split-CP; hosts [G]/givenness, topic fronting)
   | Fin   -- finiteness (Rizzi 1997 split-CP; allocutive probe in Magahi/Galician)
   | SA    -- speech act head (Speas & Tenny 2003; hosts speaker/addressee)
+  | Force -- force (Rizzi 1997 split-CP; clause-typing [decl]/[interrog])
+  | Neg   -- negation (Pollock 1989; Zanuttini 1997; hosts [±neg])
+  | Mod   -- modality (Cinque 1999; modal auxiliaries)
+  | Rel   -- relative (Rizzi 2001; relativization feature)
+  | Pol   -- polarity (Laka 1990; ΣP for affirmation/negation)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Selectional stack consumed left-to-right -/

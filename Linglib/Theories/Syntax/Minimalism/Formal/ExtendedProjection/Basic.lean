@@ -59,6 +59,11 @@ def catFeatures : Cat → CatFeatures
   | .Fin   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
   | .C     => ⟨true,  false⟩   -- [+V, -N]
   | .SA    => ⟨true,  false⟩   -- [+V, -N] (Speas & Tenny 2003)
+  | .Force => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
+  | .Neg   => ⟨true,  false⟩   -- [+V, -N] (Pollock 1989)
+  | .Mod   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
+  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 2001)
+  | .Pol   => ⟨true,  false⟩   -- [+V, -N] (Laka 1990)
   | .N     => ⟨false, true⟩    -- [-V, +N]
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .A     => ⟨true,  true⟩    -- [+V, +N]
@@ -83,15 +88,14 @@ def catFeatures : Cat → CatFeatures
     this refinement: Grimshaw's macro-levels are preserved (F0–F2 unchanged)
     while the C-domain is spread to capture the cartographic hierarchy. -/
 def fValue : Cat → Nat
-  | .V | .N | .A | .P   => 0   -- lexical (F0)
-  | .v | .D | .Voice | .Appl
-                         => 1   -- first functional (F1)
-  | .T                   => 2   -- second functional (F2)
-  | .Fin                 => 3   -- finiteness (F3, Rizzi 1997 split-CP)
-  | .Foc                 => 4   -- focus (F4, Rizzi 1997 split-CP)
-  | .Top                 => 5   -- topic (F5, Rizzi 1997 split-CP)
-  | .C                   => 6   -- complementizer (F6)
-  | .SA                  => 7   -- speech act (F7, Speas & Tenny 2003)
+  | .V | .N | .A | .P          => 0   -- lexical (F0)
+  | .v | .D | .Voice | .Appl   => 1   -- first functional (F1)
+  | .T | .Neg | .Mod | .Pol    => 2   -- inflectional domain (F2)
+  | .Fin                        => 3   -- finiteness (F3, Rizzi 1997 split-CP)
+  | .Foc                        => 4   -- focus (F4, Rizzi 1997 split-CP)
+  | .Top | .Rel                 => 5   -- topic field (F5, Rizzi 1997/2001)
+  | .C | .Force                 => 6   -- complementizer/force (F6)
+  | .SA                         => 7   -- speech act (F7, Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 3: Category Consistency and Monotonicity
@@ -142,10 +146,11 @@ inductive CatFamily where
 /-- Map a category to its family.
     This determines which EP it can participate in. -/
 def catFamily : Cat → CatFamily
-  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA => .verbal
-  | .N | .D                                          => .nominal
-  | .A                                               => .adjectival
-  | .P                                               => .adpositional
+  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
+  | .Force | .Neg | .Mod | .Rel | .Pol => .verbal
+  | .N | .D                            => .nominal
+  | .A                                 => .adjectival
+  | .P                                 => .adpositional
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 6: Extended Projection Structure
@@ -267,7 +272,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA) := by
+    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency
@@ -308,42 +313,7 @@ theorem fhead_extends_projection :
     isFHead .v ∧ isFHead .D ∧ isFHead .T ∧ isFHead .C := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 8: Eval Tests
--- ═══════════════════════════════════════════════════════════════
-
--- Category features
-#eval catFeatures .V   -- { plusV := true, plusN := false }
-#eval catFeatures .N   -- { plusV := false, plusN := true }
-#eval catFeatures .A   -- { plusV := true, plusN := true }
-
--- F-values
-#eval fValue .V    -- 0
-#eval fValue .v    -- 1
-#eval fValue .T    -- 2
-#eval fValue .Fin  -- 3
-#eval fValue .Foc  -- 4
-#eval fValue .Top  -- 5
-#eval fValue .C    -- 6
-#eval fValue .SA   -- 7
-
--- Category consistency
-#eval categoryConsistent .V .T  -- true (both [+V, -N])
-#eval categoryConsistent .V .N  -- false (different features)
-#eval categoryConsistent .N .D  -- true (both [-V, +N])
-
--- Family
-#eval catFamily .V  -- verbal
-#eval catFamily .T  -- verbal
-#eval catFamily .N  -- nominal
-#eval catFamily .D  -- nominal
-
--- EP chain checks
-#eval allCategoryConsistent [Cat.V, Cat.v, Cat.T, Cat.C]  -- true
-#eval allFMonotone [Cat.V, Cat.v, Cat.T, Cat.C]           -- true
-#eval allCategoryConsistent [Cat.V, Cat.D]                 -- false (V ≠ D family)
-
--- ═══════════════════════════════════════════════════════════════
--- Part 9: Split-CP Extended Projection (Rizzi 1997)
+-- Part 8: Split-CP Extended Projection (Rizzi 1997)
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The verbal EP spine with Rizzi's (1997) split-CP layer:
@@ -368,9 +338,40 @@ theorem splitCP_ep_monotone :
 theorem reverse_splitCP_not_monotone :
     allFMonotone [Cat.Top, Cat.Foc, Cat.Fin] = false := by decide
 
--- Split-CP eval tests
-#eval allCategoryConsistent splitCPVerbalEP  -- true
-#eval allFMonotone splitCPVerbalEP           -- true
-#eval allFMonotone [Cat.Top, Cat.Foc, Cat.Fin]  -- false (correctly!)
+/-- Verbal EP with NegP: V → v → Neg → T → Fin → C.
+    Represents a clause with an IP-internal negation layer. -/
+def negVerbalEP : List Cat := [.V, .v, .Neg, .T, .Fin, .C]
+
+/-- The verbal EP with NegP is category-consistent. -/
+theorem neg_verbal_ep_consistent :
+    allCategoryConsistent negVerbalEP = true := by decide
+
+/-- The verbal EP with NegP is F-monotone: 0 ≤ 1 ≤ 2 ≤ 2 ≤ 3 ≤ 6. -/
+theorem neg_verbal_ep_monotone :
+    allFMonotone negVerbalEP = true := by decide
+
+/-- Full Rizzi left periphery: V → v → T → Fin → Foc → Top → Force.
+    Force is the clause-typing head when the CP is fully split. -/
+def fullRizziLP : List Cat := [.V, .v, .T, .Fin, .Foc, .Top, .Force]
+
+/-- The full Rizzi left periphery is category-consistent. -/
+theorem fullRizziLP_consistent :
+    allCategoryConsistent fullRizziLP = true := by decide
+
+/-- The full Rizzi left periphery is F-monotone. -/
+theorem fullRizziLP_monotone :
+    allFMonotone fullRizziLP = true := by decide
+
+/-- Force and C have the same fValue (they're the same position when unsplit). -/
+theorem force_equals_c_fvalue : fValue .Force = fValue .C := by decide
+
+/-- Neg is in the inflectional domain (same F-level as T). -/
+theorem neg_in_inflectional_domain : fValue .Neg = fValue .T := by decide
+
+/-- New functional heads are all in the verbal family. -/
+theorem new_heads_verbal :
+    catFamily .Force = .verbal ∧ catFamily .Neg = .verbal ∧
+    catFamily .Mod = .verbal ∧ catFamily .Rel = .verbal ∧
+    catFamily .Pol = .verbal := by decide
 
 end Minimalism
