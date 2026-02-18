@@ -10,13 +10,14 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Core.ProductOfExperts
-import Linglib.Theories.Pragmatics.RSA.Domains.ReferenceGames
 import Mathlib.Data.Rat.Defs
 
 namespace RSA.ContinuousSemantics
 
-/-- Reuse colors from Fragment library -/
-abbrev Color := RSA.Domains.ReferenceGame.Color
+/-- Colors for reference game objects. -/
+inductive Color where
+  | blue | green | red | yellow | purple | orange
+  deriving DecidableEq, BEq, Repr
 
 /-- Size categories -/
 inductive Size where

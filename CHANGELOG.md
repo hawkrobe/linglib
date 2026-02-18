@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.222.7] - 2026-02-18
+
+### Removed
+- Delete `RSA/Domains/ReferenceGames.lean` — redundant domain abstraction layer; implementations define their own types
+- Inline `Color` type in `DegenEtAl2020.lean`, drop vestigial import from `WaldonDegen2021.lean`
+- Fix stale docstring references in `Almog2014.lean`, `Demonstratives.lean`
+
 ## [0.222.6] - 2026-02-18
 
 ### Changed

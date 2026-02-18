@@ -44,9 +44,6 @@ This implementation connects to the broader RSA ecosystem:
 - **Noise theory**: The lexContinuous function instantiates the unified
   noise channel from `RSA.Core.Noise`. See `lexContinuous_as_noiseChannel`.
 
-- **Reference games**: Uses the reference game infrastructure from
-  `Linglib.Fragments.ReferenceGames`.
-
 - **Word order**: Captures cross-linguistic variation in adjective ordering
   (prenominal English vs postnominal Spanish).
 
@@ -60,7 +57,6 @@ This implementation connects to the broader RSA ecosystem:
 
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
-import Linglib.Theories.Pragmatics.RSA.Domains.ReferenceGames
 
 namespace RSA.Implementations.WaldonDegen2021
 

@@ -133,7 +133,7 @@ This mirrors Donnellan's distinction:
 - L0's `literalListener` ≈ attributive use (description → referent)
 - S1's `pragmaticSpeaker` ≈ referential use (referent → description)
 
-See: `RSA.Domains.ReferenceGames` -/
+See: `RSA.FrankGoodman2012` for a reference game implementation. -/
 theorem l0_attributive_s1_referential :
     UseMode.attributive ≠ UseMode.referential := by
   intro h; cases h

@@ -160,7 +160,7 @@ Demonstrations connect to RSA reference games:
 - S1 (pragmatic speaker) ≈ referential interpretation (chooses expression
   to single out the intended referent)
 
-The full formalization of this bridge lives in `RSA/Domains/ReferenceGames.lean`.
+See `RSA.FrankGoodman2012` for a reference game implementation.
 -/
 
 end Semantics.Reference.Demonstratives
