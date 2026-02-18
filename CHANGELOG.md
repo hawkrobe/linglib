@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.221.3] - 2026-02-17
+
+### Added
+- Add `Fragments/Tigrinya/ClausePrefixes.lean` — four clausal prefix entries (zɨ-, kɨ-, kəmzi-, ʔay-...-n) with head categories, clause types, agreement properties, and discontinuity marking
+- Add `Phenomena/Complementation/Studies/Cacchioli2025/Data.lean` — empirical data: co-occurrence restrictions, verb class selection, agreement asymmetry
+- Add `Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean` — bridge theorems connecting Fragment entries to EP hierarchy (fValue ordering), CTPClass selection, and circumfix realization
+- Prove `prefixes_distinct_flevels`: Neg(2) < Fin(3) < Rel(5) < Force(6)
+- Prove `all_cooccurrences_ungrammatical`: complementary distribution of prefixes
+- Prove `all_prefixes_verbal`: all four heads in the verbal extended projection
+
 ## [0.221.2] - 2026-02-17
 
 ### Added
