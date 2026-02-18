@@ -181,6 +181,9 @@ import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
 import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025.SelectionBridge
+import Linglib.Phenomena.Complementation.Studies.Cacchioli2025.Data
+import Linglib.Phenomena.Complementation.Studies.Cacchioli2025.Bridge
+import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
