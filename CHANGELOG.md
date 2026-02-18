@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.219.17] - 2026-02-17
+
+### Changed
+- Close last DG sorry: prove `planar_implies_wellNested` (Kuhlmann & Nivre 2006, Theorem 1) — planar trees with unique heads are well-nested
+  - `escape_gives_crossing`: parent chain walking + discrete IVT to find boundary-crossing edges
+  - `interleaving_not_planar`: interleaving disjoint projections force crossing edges (6-case analysis on spanning edge intervals)
+  - `crossing_edges_not_planar`: 4-point crossing witness implies ¬planar
+  - `dominates_comparable`: two ancestors of the same node are comparable under dominance
+  - `projection_disjoint_of_disjoint`: disjoint nodes have disjoint projections
+  - `exists_spanning_edge`, `exists_spanning_edge_down`, `exists_spanning_edge_up`: induction on dominance to find linked edges spanning a position
+  - `find_exit_step`, `find_entry_step`: discrete IVT helpers
+  - `linked_symm_val`, `disjoint_symm`: symmetry lemmas
+- Make `parentOf_uh`, `iterParent_uh`, `parentOf_of_edge_uh`, `dominates_iterParent_uh`, `iterParent_chain_bound` public in `Basic.lean`
+- Remove unused `isAcyclic` hypothesis from `planar_implies_wellNested` — proof only requires `hasUniqueHeads`
+
 ## [0.219.16] - 2026-02-17
 
 ### Added
