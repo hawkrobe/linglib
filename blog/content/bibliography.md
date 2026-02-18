@@ -87,7 +87,8 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
 
 **Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)\
+cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean), [ScontrasTonhauser2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)
 
 **Sumers, T. R., Ho, M. K., Griffiths, T. L. & Hawkins, R. D.** (2024). Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility. *Psychological Review, 131(1), 194*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
@@ -238,6 +239,10 @@ cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 **Partee, B.** (1973). Some Structural Analogies between Tenses and Pronouns in English. *Journal of Philosophy, 70(18), 601–609*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/Partee1973.lean)
 
+**Tsilia, D., Zhao, Z. & Sharvit, Y.** (2026). Tense and Perspective. *Manuscript*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)\
+cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean), [TsiliaEtAl2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)
+
 **von Stechow, A.** (2009). Tenses in Compositional Semantics. *The Expression of Time*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/VonStechow.lean)
 
@@ -310,6 +315,10 @@ cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Nondeterminism/Charlow2019.lean)
 
 ## Syntax
+
+**Cacchioli, G.** (2025). The Syntax of Clausal Prefixes in Tigrinya. *PhD dissertation, Université de Gen\`eve*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean)\
+cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean)
 
 **Chomsky, N.** (1995). The Minimalist Program. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean)

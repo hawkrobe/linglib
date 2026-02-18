@@ -7,6 +7,7 @@ Provides `RSAScenario`, `RSA.L0/S0/S1/L1_world`, and smart constructors.
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.FinEnum
+import Linglib.Core.BToM
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 
 section ChainVariant
@@ -450,46 +451,182 @@ def S1 (w : W)
       exact add_nonneg (by norm_num : (0 : ℚ) ≤ 1) (S.cost_nonneg u)
   tryNormalize scores hnonneg
 
+-- Factored Score Functions
+--
+-- S1_score extracts the S1 distribution lookup as a top-level function.
+-- L1 scores are then defined as BToM marginals via toBToM,
+-- making RSA's L1 inference an instance of BToM observer inference
+-- by construction (not by proving equivalence after the fact).
+
+/-- S1 score as a total function (extracts from Option ExactDist).
+    Returns 0 when S1 returns `none` (all scores zero). -/
+def S1_score (w : W) (i : S.Interp) (l : S.Lexicon)
+    (a : S.BeliefState) (q : S.Goal) (u : U) : ℚ :=
+  match S1 S w i l a q with
+  | some d => d.mass u
+  | none => 0
+
+theorem S1_score_nonneg (w : W) (i : S.Interp) (l : S.Lexicon)
+    (a : S.BeliefState) (q : S.Goal) (u : U) :
+    0 ≤ S1_score S w i l a q u := by
+  simp only [S1_score]
+  cases h : S1 S w i l a q with
+  | none => simp
+  | some d => exact d.nonneg u
+
+-- BToM Grounding
+--
+-- RSA's L1 listener is an instance of BToM observer inference:
+-- the listener inverts the speaker's generative model to jointly infer
+-- the speaker's private state (Interp × Lexicon × BeliefState), goals,
+-- and the world. L1's marginal posteriors ARE BToM marginals.
+--
+-- This is the same structure as Convergence.lean's stepRSA:
+--   speakerUpdate = BToM agent step (softmax action selection)
+--   listenerUpdate = BToM observer step (Bayesian inversion)
+-- and Zaslavsky et al. (2020) prove this alternation converges.
+
+/-- Packed private speaker state: all non-world latent variables.
+    In BToM terms, this is the "belief" component of the generative model —
+    the agent's epistemic state that the observer infers. -/
+abbrev PackedBelief := S.Interp × S.Lexicon × S.BeliefState
+
+/-- Every RSAScenario gives rise to a BToM model (Baker et al. 2017).
+
+    The mapping:
+    - **Action** = Utterance (what the speaker says)
+    - **Belief** = PackedBelief (Interp × Lexicon × BeliefState)
+    - **Desire** = Goal/QUD (communicative intention)
+    - **actionModel** = S1 (pragmatic speaker policy)
+
+    L1's computation then inherits BToM's marginal posteriors:
+    - `worldMarginal` = L1 world inference
+    - `desireMarginal` = L1 goal inference
+    - `beliefMarginal` = L1 packed-belief inference -/
+def toBToM : Core.BToM.BToMModel U (PackedBelief S) S.Goal W where
+  actionModel := fun u (i, l, a) q w => S1_score S w i l a q u
+  beliefPrior := fun (i, l, a) =>
+    S.interpPrior i * S.lexiconPrior l * S.beliefStatePrior a
+  desirePrior := S.goalPrior
+  worldPrior := S.worldPrior
+
+/-- The BToM joint score for a specific configuration of all latent variables.
+    This is the fundamental object: P(u | packed_belief, goal, w) · P(packed_belief) · P(goal) · P(w).
+    All L1 marginals are sums over this joint. -/
+def L1_joint_score (u : U) (w : W) (i : S.Interp) (l : S.Lexicon)
+    (a : S.BeliefState) (q : S.Goal) : ℚ :=
+  (toBToM S).jointScore u (i, l, a) q w
+
+theorem L1_joint_score_nonneg (u : U) (w : W) (i : S.Interp) (l : S.Lexicon)
+    (a : S.BeliefState) (q : S.Goal) :
+    0 ≤ L1_joint_score S u w i l a q := by
+  simp only [L1_joint_score, Core.BToM.BToMModel.jointScore, toBToM]
+  apply mul_nonneg
+  apply mul_nonneg
+  apply mul_nonneg
+  · exact S1_score_nonneg S w i l a q u
+  · exact mul_nonneg (mul_nonneg (S.interpPrior_nonneg i) (S.lexiconPrior_nonneg l))
+      (S.beliefStatePrior_nonneg a)
+  · exact S.goalPrior_nonneg q
+  · exact S.worldPrior_nonneg w
+
+/-- Unnormalized L1 world score: marginalize the BToM joint over all
+    latent variables except the world. -/
+def L1_world_score (u : U) (w : W) : ℚ :=
+  ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
+    L1_joint_score S u w i l a q
+
+theorem L1_world_score_nonneg (u : U) (w : W) :
+    0 ≤ L1_world_score S u w := by
+  apply Finset.sum_nonneg; intro i _
+  apply Finset.sum_nonneg; intro l _
+  apply Finset.sum_nonneg; intro a _
+  apply Finset.sum_nonneg; intro q _
+  exact L1_joint_score_nonneg S u w i l a q
+
+/-- Unnormalized L1 belief-state score: marginalize the BToM joint over
+    world, Interp, Lexicon, and Goal, retaining only BeliefState. -/
+def L1_beliefState_score (u : U) (a : S.BeliefState) : ℚ :=
+  ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ q : S.Goal,
+    L1_joint_score S u w i l a q
+
+theorem L1_beliefState_score_nonneg (u : U) (a : S.BeliefState) :
+    0 ≤ L1_beliefState_score S u a := by
+  apply Finset.sum_nonneg; intro w _
+  apply Finset.sum_nonneg; intro i _
+  apply Finset.sum_nonneg; intro l _
+  apply Finset.sum_nonneg; intro q _
+  exact L1_joint_score_nonneg S u w i l a q
+
+/-- Unnormalized L1 goal score: marginalize the BToM joint over
+    world, Interp, Lexicon, and BeliefState, retaining only Goal. -/
+def L1_goal_score (u : U) (q : S.Goal) : ℚ :=
+  ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
+    L1_joint_score S u w i l a q
+
+theorem L1_goal_score_nonneg (u : U) (q : S.Goal) :
+    0 ≤ L1_goal_score S u q := by
+  apply Finset.sum_nonneg; intro w _
+  apply Finset.sum_nonneg; intro i _
+  apply Finset.sum_nonneg; intro l _
+  apply Finset.sum_nonneg; intro a _
+  exact L1_joint_score_nonneg S u w i l a q
+
+-- BToM Marginal Equivalence
+--
+-- RSA's L1 score functions ARE BToM marginal posteriors. These theorems
+-- make the connection explicit, allowing all BToM algebraic machinery
+-- (factoring, etc.) to apply directly to RSA's L1 inference.
+
+/-- L1 world score equals BToM world marginal.
+    RSA's world inference IS BToM world-marginal inference by construction. -/
+theorem L1_world_score_eq_worldMarginal (u : U) (w : W) :
+    L1_world_score S u w = (toBToM S).worldMarginal u w := by
+  simp only [L1_world_score, L1_joint_score, Core.BToM.BToMModel.worldMarginal,
+             Fintype.sum_prod_type]
+
+/-- L1 goal score equals BToM desire marginal.
+    RSA's QUD inference IS BToM desire-marginal inference. -/
+theorem L1_goal_score_eq_desireMarginal (u : U) (q : S.Goal) :
+    L1_goal_score S u q = (toBToM S).desireMarginal u q := by
+  simp only [L1_goal_score, L1_joint_score, Core.BToM.BToMModel.desireMarginal,
+             Fintype.sum_prod_type]
+  rw [Finset.sum_comm]
+  congr 1; ext i; rw [Finset.sum_comm]
+  congr 1; ext l; exact Finset.sum_comm
+
+/-- L1 belief-state score equals BToM belief marginal, further marginalized
+    over Interp and Lexicon (which BToM packs into the belief component). -/
+theorem L1_beliefState_score_eq_beliefMarginal (u : U) (a : S.BeliefState) :
+    L1_beliefState_score S u a =
+    ∑ i : S.Interp, ∑ l : S.Lexicon, (toBToM S).beliefMarginal u (i, l, a) := by
+  simp only [L1_beliefState_score, L1_joint_score, Core.BToM.BToMModel.beliefMarginal]
+  rw [Finset.sum_comm]
+  congr 1; ext i; rw [Finset.sum_comm]
+  congr 1; ext l; exact Finset.sum_comm
+
+/-- The world prior factors out of L1's world inference (Bayes' rule).
+    Corollary of `BToMModel.worldMarginal_eq` via `L1_world_score_eq_worldMarginal`. -/
+theorem L1_world_score_factors (u : U) (w : W) :
+    L1_world_score S u w =
+    S.worldPrior w * ∑ b : PackedBelief S, ∑ q : S.Goal,
+      (toBToM S).actionModel u b q w * (toBToM S).beliefPrior b *
+      (toBToM S).desirePrior q := by
+  rw [L1_world_score_eq_worldMarginal]
+  exact (toBToM S).worldMarginal_eq u w
+
+-- L1 Marginals (via BToM score functions)
+
 /-- L1 marginal P(w|u) summing over all latent variables. -/
 def L1_world (u : U) : Option (ExactDist W) :=
-  let scores := λ w =>
-    ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
-      let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
-                        S.beliefStatePrior a * S.goalPrior q
-      let s1Score := match S1 S w i l a q with
-        | some d => d.mass u
-        | none => 0
-      priorScore * s1Score
-  let hnonneg : ∀ w, 0 ≤ scores w := λ w => by
-    apply Finset.sum_nonneg; intro i _
-    apply Finset.sum_nonneg; intro l _
-    apply Finset.sum_nonneg; intro a _
-    apply Finset.sum_nonneg; intro q _
-    apply mul_nonneg
-    · apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      · exact S.worldPrior_nonneg w
-      · exact S.interpPrior_nonneg i
-      · exact S.lexiconPrior_nonneg l
-      · exact S.beliefStatePrior_nonneg a
-      · exact S.goalPrior_nonneg q
-    · cases h : S1 S w i l a q with
-      | none => simp
-      | some d => exact d.nonneg u
-  tryNormalize scores hnonneg
+  tryNormalize (L1_world_score S u) (L1_world_score_nonneg S u)
 
 /-- L1 marginal over interpretations. -/
 def L1_interp (u : U) : Option (ExactDist S.Interp) :=
   let scores := λ i =>
     ∑ w : W, ∑ l : S.Lexicon, ∑ a : S.BeliefState, ∑ q : S.Goal,
-      let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
-                        S.beliefStatePrior a * S.goalPrior q
-      let s1Score := match S1 S w i l a q with
-        | some d => d.mass u
-        | none => 0
-      priorScore * s1Score
+      S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
+      S.beliefStatePrior a * S.goalPrior q * S1_score S w i l a q u
   let hnonneg : ∀ i, 0 ≤ scores i := λ i => by
     apply Finset.sum_nonneg; intro w _
     apply Finset.sum_nonneg; intro l _
@@ -505,70 +642,16 @@ def L1_interp (u : U) : Option (ExactDist S.Interp) :=
       · exact S.lexiconPrior_nonneg l
       · exact S.beliefStatePrior_nonneg a
       · exact S.goalPrior_nonneg q
-    · cases h : S1 S w i l a q with
-      | none => simp
-      | some d => exact d.nonneg u
+    · exact S1_score_nonneg S w i l a q u
   tryNormalize scores hnonneg
 
 /-- L1 marginal over belief states. -/
 def L1_beliefState (u : U) : Option (ExactDist S.BeliefState) :=
-  let scores := λ a =>
-    ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ q : S.Goal,
-      let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
-                        S.beliefStatePrior a * S.goalPrior q
-      let s1Score := match S1 S w i l a q with
-        | some d => d.mass u
-        | none => 0
-      priorScore * s1Score
-  let hnonneg : ∀ a, 0 ≤ scores a := λ a => by
-    apply Finset.sum_nonneg; intro w _
-    apply Finset.sum_nonneg; intro i _
-    apply Finset.sum_nonneg; intro l _
-    apply Finset.sum_nonneg; intro q _
-    apply mul_nonneg
-    · apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      · exact S.worldPrior_nonneg w
-      · exact S.interpPrior_nonneg i
-      · exact S.lexiconPrior_nonneg l
-      · exact S.beliefStatePrior_nonneg a
-      · exact S.goalPrior_nonneg q
-    · cases h : S1 S w i l a q with
-      | none => simp
-      | some d => exact d.nonneg u
-  tryNormalize scores hnonneg
+  tryNormalize (L1_beliefState_score S u) (L1_beliefState_score_nonneg S u)
 
 /-- L1 marginal over goals. -/
 def L1_goal (u : U) : Option (ExactDist S.Goal) :=
-  let scores := λ q =>
-    ∑ w : W, ∑ i : S.Interp, ∑ l : S.Lexicon, ∑ a : S.BeliefState,
-      let priorScore := S.worldPrior w * S.interpPrior i * S.lexiconPrior l *
-                        S.beliefStatePrior a * S.goalPrior q
-      let s1Score := match S1 S w i l a q with
-        | some d => d.mass u
-        | none => 0
-      priorScore * s1Score
-  let hnonneg : ∀ q, 0 ≤ scores q := λ q => by
-    apply Finset.sum_nonneg; intro w _
-    apply Finset.sum_nonneg; intro i _
-    apply Finset.sum_nonneg; intro l _
-    apply Finset.sum_nonneg; intro a _
-    apply mul_nonneg
-    · apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      apply mul_nonneg
-      · exact S.worldPrior_nonneg w
-      · exact S.interpPrior_nonneg i
-      · exact S.lexiconPrior_nonneg l
-      · exact S.beliefStatePrior_nonneg a
-      · exact S.goalPrior_nonneg q
-    · cases h : S1 S w i l a q with
-      | none => simp
-      | some d => exact d.nonneg u
-  tryNormalize scores hnonneg
+  tryNormalize (L1_goal_score S u) (L1_goal_score_nonneg S u)
 
 /-- L1 over worlds conditioned on specific goal. -/
 def L1_world_givenGoal (u : U) (q : S.Goal)

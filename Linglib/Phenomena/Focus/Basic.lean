@@ -17,16 +17,11 @@ Empirical data on focus interpretation effects (association with focus, contrast
 -/
 
 import Linglib.Core.Basic
+import Linglib.Core.InformationStructure
+
+open Core.InformationStructure (FIPApplication)
 
 namespace Phenomena.Focus.Basic
-
-/-- FIP application type (Rooth 1992). -/
-inductive FIPApplication where
-  | focusingAdverb
-  | contrast
-  | scalarImplicature
-  | qaCongruence
-  deriving DecidableEq, Repr, BEq
 
 /-- Focus phenomenon datum (CAPS marks prosodic prominence). -/
 structure FocusDatum where

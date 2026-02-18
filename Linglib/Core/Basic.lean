@@ -111,6 +111,14 @@ inductive Valence where
   | copular       -- be (takes predicate)
   deriving Repr, DecidableEq, Inhabited
 
+/-- Head direction of a syntactic construction.
+    Used for word-order typology (Dryer 1992, Greenberg 1963) and
+    constraints like FOFC (Biberauer, Holmberg & Roberts 2014). -/
+inductive HeadDirection where
+  | headInitial  -- head precedes complement (VO, preposition, head-initial FocP, ...)
+  | headFinal    -- head follows complement (OV, postposition, head-final FocP, ...)
+  deriving Repr, DecidableEq, BEq
+
 /-- Clause types - determines constraints on word order. -/
 inductive ClauseType where
   | declarative

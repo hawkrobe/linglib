@@ -1,10 +1,116 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Eval
 
-/-! # Scontras & Tonhauser (2025)
+-- Generic Attitude Verb Infrastructure
+--
+-- World-dimension typeclasses and generic verb semantics used by
+-- BToM-style RSA models. Currently S&T25-specific; will be refactored
+-- to a shared location when a second attitude-verb model needs them.
+
+namespace RSA.BToM
+
+/-- World type has a complement dimension (C: whether the complement is true). -/
+class HasComplement (W : Type*) where
+  c : W → Bool
+
+/-- World type has a belief dimension (BEL: whether the holder believes C). -/
+class HasBelief (W : Type*) where
+  bel : W → Bool
+
+/-- World type has an antecedent dimension (A: whether the conditional antecedent holds). -/
+class HasAntecedent (W : Type*) where
+  a : W → Bool
+
+variable {W : Type*}
+
+/-- Factive positive: "X knows C" = BEL ∧ C (veridical). -/
+def factivePos [HasBelief W] [HasComplement W] (w : W) : Bool :=
+  HasBelief.bel w && HasComplement.c w
+
+/-- Factive negative: "X doesn't know C" = ¬(BEL ∧ C). -/
+def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
+  !(HasBelief.bel w && HasComplement.c w)
+
+/-- Non-factive positive: "X thinks C" = BEL (non-veridical). -/
+def nonFactivePos [HasBelief W] (w : W) : Bool :=
+  HasBelief.bel w
+
+/-- Non-factive negative: "X doesn't think C" = ¬BEL. -/
+def nonFactiveNeg [HasBelief W] (w : W) : Bool :=
+  !HasBelief.bel w
+
+/-- Factive positive entails C (the defining property of factivity). -/
+theorem factivePos_entails_c [HasBelief W] [HasComplement W] (w : W) :
+    factivePos w = true → HasComplement.c w = true := by
+  simp only [factivePos, Bool.and_eq_true]
+  intro ⟨_, h⟩; exact h
+
+/-- Factive positive entails BEL. -/
+theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W) :
+    factivePos w = true → HasBelief.bel w = true := by
+  simp only [factivePos, Bool.and_eq_true]
+  intro ⟨h, _⟩; exact h
+
+/-- Non-factive does NOT entail C (given a world where BEL ∧ ¬C is possible). -/
+theorem nonFactivePos_not_entails_c [HasBelief W] [HasComplement W]
+    (h : ∃ w : W, HasBelief.bel w = true ∧ HasComplement.c w = false) :
+    ∃ w, nonFactivePos (W := W) w = true ∧ HasComplement.c w = false := by
+  obtain ⟨w, hb, hc⟩ := h; exact ⟨w, hb, hc⟩
+
+/-- Know entails think (factivity is stronger than belief). -/
+theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W) :
+    factivePos w = true → nonFactivePos w = true := by
+  simp only [factivePos, nonFactivePos, Bool.and_eq_true]
+  intro ⟨h, _⟩; exact h
+
+/-- QUD for BToM models: question about belief or complement truth. -/
+inductive QUD where
+  | bel   -- "Does X believe C?"
+  | c     -- "Is C true?"
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- All QUDs. -/
+def allQUDs : List QUD := [.bel, .c]
+
+/-- QUD equivalence: two worlds agree on the relevant dimension. -/
+def qudProject [HasBelief W] [HasComplement W] : QUD → W → W → Bool
+  | .bel, w1, w2 => HasBelief.bel w1 == HasBelief.bel w2
+  | .c, w1, w2 => HasComplement.c w1 == HasComplement.c w2
+
+/-- Whether a belief state (given as membership over worlds) entails C.
+    A speaker "assumes C" iff C holds at every world they consider possible. -/
+def assumesComplement [HasComplement W] (membership : W → Bool) (allWorlds : List W) : Bool :=
+  allWorlds.all λ w => !membership w || HasComplement.c w
+
+/-- Material conditional operator: ⟦if⟧ = λp.λq.λw. ¬p(w) ∨ q(w). -/
+def condOp (antecedent consequent : W → Bool) : W → Bool :=
+  λ w => !antecedent w || consequent w
+
+/-- Composed "if A, X knows C". -/
+def composeCondFactive [HasAntecedent W] [HasBelief W] [HasComplement W] : W → Bool :=
+  condOp (HasAntecedent.a) (factivePos)
+
+/-- Composed "if A, X thinks C". -/
+def composeCondNonFactive [HasAntecedent W] [HasBelief W] : W → Bool :=
+  condOp (HasAntecedent.a) (nonFactivePos)
+
+/-- Composed "if A, X doesn't know C". -/
+def composeCondFactiveNeg [HasAntecedent W] [HasBelief W] [HasComplement W] : W → Bool :=
+  condOp (HasAntecedent.a) (factiveNeg)
+
+/-- Composed "if A, X doesn't think C". -/
+def composeCondNonFactiveNeg [HasAntecedent W] [HasBelief W] : W → Bool :=
+  condOp (HasAntecedent.a) (nonFactiveNeg)
+
+end RSA.BToM
+
+/-! # Scontras & Tonhauser (2025) @cite{scontras-tonhauser-2025}
 
 Projection emerges from RSA over speaker's private assumptions, not lexical
 presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
+
+This is a BToM model (Baker et al. 2017): L1 inverts S1's generative model
+to jointly infer the speaker's belief state and the world state.
 -/
 
 namespace RSA.ScontrasTonhauser2025
@@ -242,5 +348,31 @@ def prediction_qud_effect (pC : ℚ) (u : Utterance) : Bool :=
 -- #eval prediction_prior_effect .knowPos .bel
 -- #eval prediction_qud_effect (1/2) .knowPos
 
+
+-- BToM Typeclass Instances
+
+instance : RSA.BToM.HasComplement WorldState where c := WorldState.c
+instance : RSA.BToM.HasBelief WorldState where bel := WorldState.bel
+
+/-- The literal meaning of "know" agrees with the generic factive semantics. -/
+theorem know_is_factive : ∀ w : WorldState,
+    literalMeaning .knowPos w = RSA.BToM.factivePos w := by
+  intro ⟨_, _⟩; rfl
+
+/-- The literal meaning of "think" agrees with the generic non-factive semantics. -/
+theorem think_is_nonFactive : ∀ w : WorldState,
+    literalMeaning .thinkPos w = RSA.BToM.nonFactivePos w := by
+  intro ⟨_, _⟩; rfl
+
+/-- The local QUD projection agrees with the generic BToM projection. -/
+theorem qud_matches_btom : ∀ (q : QUD) (w1 w2 : WorldState),
+    qudProject q w1 w2 = RSA.BToM.qudProject (W := WorldState)
+      (match q with | .bel => .bel | .c => .c) w1 w2 := by
+  intro q ⟨_, _⟩ ⟨_, _⟩; cases q <;> rfl
+
+/-- The `assumesC` predicate agrees with the generic `assumesComplement`. -/
+theorem assumesC_matches_generic : ∀ bs : BeliefState,
+    assumesC bs = RSA.BToM.assumesComplement (speakerCredenceBool bs) allWorlds := by
+  intro bs; cases bs <;> native_decide
 
 end RSA.ScontrasTonhauser2025

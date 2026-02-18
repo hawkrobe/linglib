@@ -4,7 +4,7 @@ import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
-# Cacchioli (2025) — Bridge Theorems
+# Cacchioli (2025) — Bridge Theorems @cite{cacchioli-2025}
 
 Connects Tigrinya clausal prefix data (Data.lean) and Fragment entries
 (ClausePrefixes.lean) to the Minimalist extended projection hierarchy

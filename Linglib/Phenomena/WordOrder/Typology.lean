@@ -41,11 +41,7 @@ namespace Phenomena.WordOrder.Typology
 -- Types
 -- ============================================================================
 
-/-- Head direction of a construction type (VO vs OV, Prep vs Post, etc.). -/
-inductive HeadDirection where
-  | headInitial  -- VO, preposition, pre-subordinator, pre-relative clause
-  | headFinal    -- OV, postposition, post-subordinator, post-relative clause
-  deriving Repr, DecidableEq, BEq
+-- HeadDirection is defined in Core.Basic (imported transitively)
 
 /-- A single cell in a 2×2 alignment table.
     `dir1` is the direction for the first construction (verb-object order),
