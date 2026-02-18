@@ -971,6 +971,13 @@ def isProjective (t : DepTree) : Bool :=
   List.range t.words.length |>.all λ i =>
     isInterval (projection t.deps i)
 
+/-- Bundled well-formedness: unique heads + valid index bounds.
+    Collects the three hypotheses that most dominance/planarity theorems need. -/
+structure DepTree.WF (t : DepTree) : Prop where
+  uniqueHeads : hasUniqueHeads t = true
+  depIdx_lt : ∀ d ∈ t.deps, d.depIdx < t.words.length
+  headIdx_lt : ∀ d ∈ t.deps, d.headIdx < t.words.length
+
 end WellFormedness
 
 -- ============================================================================
@@ -1295,8 +1302,7 @@ private theorem parentOf_eq_find_uh (t : DepTree) (x : Nat) {dep : Dependency}
 
 /-- Under unique heads, if edge(v, c) exists, then `parentOf c = v`. -/
 theorem parentOf_of_edge_uh (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF)
     {v c : Nat} (hedge : ∃ d ∈ t.deps, d.headIdx = v ∧ d.depIdx = c) :
     parentOf_uh t c = v := by
   obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
@@ -1308,8 +1314,8 @@ theorem parentOf_of_edge_uh (t : DepTree)
   have hf_dep : f.depIdx = c := by
     have h := @List.find?_some _ (fun d => d.depIdx == c) f t.deps hf_find
     exact (beq_iff_eq (α := Nat)).mp h
-  have hc_lt := hd_dep ▸ h_dep_wf d hd_mem
-  have hspec := hasUniqueHeads_count t hwf c hc_lt
+  have hc_lt := hd_dep ▸ hwf.depIdx_lt d hd_mem
+  have hspec := hasUniqueHeads_count t hwf.uniqueHeads c hc_lt
   have hc_ne_root : c ≠ t.rootIdx := by
     intro heq; rw [if_pos heq, beq_iff_eq] at hspec
     have : d ∈ t.deps.filter (·.depIdx == c) :=
@@ -1331,8 +1337,7 @@ theorem parentOf_of_edge_uh (t : DepTree)
 /-- Under unique heads, `Dominates v w` with v ≠ w implies the iterParent chain
     from w reaches v, with valid parent edges at each step. -/
 theorem dominates_iterParent_uh (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF)
     {v w : Nat} (hdom : Dominates t.deps v w) (hne : v ≠ w) :
     ∃ k : Nat, k > 0 ∧ iterParent_uh t w k = v ∧
       (∀ i, i < k → ∃ dep, t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
@@ -1343,7 +1348,7 @@ theorem dominates_iterParent_uh (t : DepTree)
     by_cases hc_eq : c = x
     · -- One step: edge(u, c). parentOf c = u.
       subst hc_eq
-      have hpo := parentOf_of_edge_uh t hwf h_dep_wf hedge
+      have hpo := parentOf_of_edge_uh t hwf hedge
       refine ⟨1, by omega, ?_, ?_⟩
       · show parentOf_uh t c = u; exact hpo
       · intro i hi
@@ -1356,7 +1361,7 @@ theorem dominates_iterParent_uh (t : DepTree)
         exact ⟨f, hf_find, (parentOf_eq_find_uh t c hf_find).symm⟩
     · -- Multiple steps: by IH, ∃ k, iterParent x k = c
       obtain ⟨k, hk, hiter, hchain⟩ := ih hc_eq
-      have hpo := parentOf_of_edge_uh t hwf h_dep_wf hedge
+      have hpo := parentOf_of_edge_uh t hwf hedge
       refine ⟨k + 1, by omega, ?_, ?_⟩
       · show parentOf_uh t (iterParent_uh t x k) = u
         rw [hiter, hpo]
@@ -1550,14 +1555,13 @@ theorem iterParent_chain_bound (t : DepTree)
     `isAcyclic.follow` detects it (returning `false`), contradicting
     `isAcyclic = true`. -/
 theorem dominates_antisymm (t : DepTree)
-    (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF) (hacyc : isAcyclic t = true)
     (v w : Nat) (hvw : Dominates t.deps v w) (hwv : Dominates t.deps w v) :
     v = w := by
   by_contra hne
   -- Extract iterParent chains from both directions
-  obtain ⟨k₁, hk₁, hiter₁, hchain₁⟩ := dominates_iterParent_uh t hwf h_dep_wf hwv (Ne.symm hne)
-  obtain ⟨k₂, hk₂, hiter₂, hchain₂⟩ := dominates_iterParent_uh t hwf h_dep_wf hvw hne
+  obtain ⟨k₁, hk₁, hiter₁, hchain₁⟩ := dominates_iterParent_uh t hwf hwv (Ne.symm hne)
+  obtain ⟨k₂, hk₂, hiter₂, hchain₂⟩ := dominates_iterParent_uh t hwf hvw hne
   -- Combined cycle: iterParent(v, k₁+k₂) = v
   have hcycle : iterParent_uh t v (k₁ + k₂) = v := by
     rw [iterParent_add_uh, hiter₁, hiter₂]
@@ -1575,8 +1579,8 @@ theorem dominates_antisymm (t : DepTree)
       obtain ⟨dep, h1, h2⟩ := hchain₂ (i - k₁) (by omega)
       exact ⟨dep, hshift ▸ h1, by rw [hshift']; exact h2⟩
   -- Detect the cycle via follow
-  have hv_lt : v < t.words.length := dominates_depIdx_lt t h_dep_wf hwv (Ne.symm hne)
-  have hbound := iterParent_chain_bound t hacyc h_dep_wf v (k₁ + k₂) hfull_chain hv_lt
+  have hv_lt : v < t.words.length := dominates_depIdx_lt t hwf.depIdx_lt hwv (Ne.symm hne)
+  have hbound := iterParent_chain_bound t hacyc hwf.depIdx_lt v (k₁ + k₂) hfull_chain hv_lt
   have hfalse := follow_false_of_cycle t v (k₁ + k₂ - 1) (t.words.length + 1)
     (by omega)
     (by intro i hi; exact hfull_chain i (by omega))

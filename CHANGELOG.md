@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.219.18] - 2026-02-17
+
+### Changed
+- Add `DepTree.WF` structure bundling `uniqueHeads`, `depIdx_lt`, `headIdx_lt` — reduces hypothesis threading in DG proofs
+- Refactor `parentOf_of_edge_uh`, `dominates_iterParent_uh`, `dominates_antisymm`, `dominates_comparable`, `projection_disjoint_of_disjoint`, `escape_gives_crossing`, `interleaving_not_planar`, `planar_implies_wellNested`, `projective_implies_planar` to use `DepTree.WF`
+- Extract `iterParent_chain_mem_projection` and `iterParent_chain_linked` from inline `have` blocks in `escape_gives_crossing` to standalone private theorems
+- Delete unused `dominates_parent_step` and `dominates_has_incoming`
+- Remove `Bool.not_eq_false_eq_true` helper; use `simp` + case split instead
+
 ## [0.219.17] - 2026-02-17
 
 ### Changed

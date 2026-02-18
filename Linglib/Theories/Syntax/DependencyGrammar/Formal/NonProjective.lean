@@ -471,7 +471,7 @@ private theorem projective_interval {t : DepTree} (hproj : isProjective t = true
     all incoming edges have the same head. (The edge existence implies
     c ≠ root, since root has in-degree 0 under `hasUniqueHeads`.) -/
 private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
-    (hwf : hasUniqueHeads t = true) {c : Nat} (hc : c < t.words.length)
+    (hwf : t.WF) {c : Nat} (hc : c < t.words.length)
     {e₁ e₂ : Dependency} (he₁ : e₁ ∈ t.deps) (he₂ : e₂ ∈ t.deps)
     (hd₁ : e₁.depIdx = c) (hd₂ : e₂.depIdx = c) :
     e₁.headIdx = e₂.headIdx := by
@@ -484,7 +484,7 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
   have hspec : (if c = t.rootIdx then
       (t.deps.filter (·.depIdx == c)).length == 0
     else (t.deps.filter (·.depIdx == c)).length == 1) = true := by
-    have hwf' := hwf
+    have hwf' := hwf.uniqueHeads
     unfold hasUniqueHeads at hwf'
     have hmem : (c, (t.deps.filter (·.depIdx == c)).length) ∈
         (List.range ((List.range t.words.length |>.map fun i =>
@@ -533,8 +533,7 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
     dominance to the other edge's head, creating a dominance cycle v→w→v.
     By `dominates_antisymm` (acyclicity), v = w, contradicting v < w. -/
 theorem projective_implies_planar (t : DepTree)
-    (hwf : hasUniqueHeads t = true) (hacyc : isAcyclic t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF) (hacyc : isAcyclic t = true)
     (hproj : isProjective t = true) : t.isPlanar = true := by
   by_contra h_np
   -- Extract crossing: ∃ a b c d with a < b < c < d, linked edges
@@ -567,7 +566,7 @@ theorem projective_implies_planar (t : DepTree)
     have h_b_dom_c := dominates_of_mem_projection hc_in_b
     have h_c_parent := mk_parent hc_lt e₁ he₁_mem hh₁ hd₁
     have h_b_dom_a := dominates_to_parent h_b_dom_c (Nat.ne_of_lt hbc) h_c_parent
-    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
+    exact absurd (dominates_antisymm t hwf hacyc a b h_a_dom_b h_b_dom_a) (Nat.ne_of_lt hab)
   · -- Case (head=a, dep=c) × (head=d, dep=b)
     have hc_in_a := child_mem_projection t.deps a c ⟨e₁, he₁_mem, hh₁, hd₁⟩
     have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
@@ -584,7 +583,7 @@ theorem projective_implies_planar (t : DepTree)
       mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
     have h_d_dom_a := dominates_to_parent h_d_dom_c (Nat.ne_of_lt hcd).symm h_c_parent
     have h_a_dom_d := dominates_to_parent h_a_dom_b (Nat.ne_of_lt hab) h_b_parent
-    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf a d h_a_dom_d h_d_dom_a)
+    exact absurd (dominates_antisymm t hwf hacyc a d h_a_dom_d h_d_dom_a)
       (Nat.ne_of_lt (Nat.lt_trans (Nat.lt_trans hab hbc) hcd))
   · -- Case (head=c, dep=a) × (head=b, dep=d)
     have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
@@ -597,7 +596,7 @@ theorem projective_implies_planar (t : DepTree)
       b c d (root_mem_projection t.deps b) hd_in_b hbc hcd
     have h_c_dom_b := dominates_of_mem_projection hb_in_c
     have h_b_dom_c := dominates_of_mem_projection hc_in_b
-    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
+    exact absurd (dominates_antisymm t hwf hacyc b c h_b_dom_c h_c_dom_b) (Nat.ne_of_lt hbc)
   · -- Case (head=c, dep=a) × (head=d, dep=b)
     have ha_in_c := child_mem_projection t.deps c a ⟨e₁, he₁_mem, hh₁, hd₁⟩
     have hb_in_d := child_mem_projection t.deps d b ⟨e₂, he₂_mem, hh₂, hd₂⟩
@@ -612,7 +611,7 @@ theorem projective_implies_planar (t : DepTree)
     have h_b_parent : ∀ dep ∈ t.deps, dep.depIdx = b → dep.headIdx = d :=
       mk_parent hb_lt e₂ he₂_mem hh₂ hd₂
     have h_c_dom_d := dominates_to_parent h_c_dom_b (Nat.ne_of_lt hbc).symm h_b_parent
-    exact absurd (dominates_antisymm t hwf hacyc h_dep_wf c d h_c_dom_d h_d_dom_c) (Nat.ne_of_lt hcd)
+    exact absurd (dominates_antisymm t hwf hacyc c d h_c_dom_d h_d_dom_c) (Nat.ne_of_lt hcd)
 
 -- ============================================================================
 -- §9a: Infrastructure for planar_implies_wellNested
@@ -626,8 +625,7 @@ theorem projective_implies_planar (t : DepTree)
     extends to v. If u dominates w, `dominates_to_parent` lifts to v
     (since v is w's unique parent). -/
 private theorem dominates_comparable (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF)
     {u v x : Nat} (hux : Dominates t.deps u x) (hvx : Dominates t.deps v x) :
     Dominates t.deps u v ∨ Dominates t.deps v u := by
   induction hvx with
@@ -637,7 +635,7 @@ private theorem dominates_comparable (t : DepTree)
     · by_cases huw_eq : u = w
       · subst huw_eq; exact Or.inr (Dominates.edge hedge)
       · obtain ⟨e, he_mem, he_head, he_dep⟩ := hedge
-        have hw_lt : w < t.words.length := he_dep ▸ h_dep_wf e he_mem
+        have hw_lt : w < t.words.length := he_dep ▸ hwf.depIdx_lt e he_mem
         have hparent : ∀ d ∈ t.deps, d.depIdx = w → d.headIdx = v' := by
           intro d hd hd_dep_eq
           have h := unique_parent_of_hasUniqueHeads hwf hw_lt he_mem hd he_dep hd_dep_eq
@@ -652,45 +650,15 @@ private theorem dominates_comparable (t : DepTree)
     `dominates_comparable`, one dominates the other — contradicting
     the disjointness assumption. -/
 private theorem projection_disjoint_of_disjoint (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
+    (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {x : Nat} (hxu : x ∈ projection t.deps u) (hxv : x ∈ projection t.deps v) :
     False := by
   simp only [disjoint, Bool.and_eq_true] at hdisj
-  rcases dominates_comparable t hwf h_dep_wf
+  rcases dominates_comparable t hwf
     (dominates_of_mem_projection hxu) (dominates_of_mem_projection hxv) with huv | hvu
   · have := mem_projection_of_dominates huv; simp_all
   · have := mem_projection_of_dominates hvu; simp_all
-
-/-- If Dominates(u, x) with u ≠ x, then x has an incoming edge in deps. -/
-private theorem dominates_has_incoming {deps : List Dependency} {u x : Nat}
-    (h : Dominates deps u x) (hne : u ≠ x) :
-    ∃ d ∈ deps, d.depIdx = x := by
-  induction h with
-  | refl => exact absurd rfl hne
-  | step _ w y hedge _ ih =>
-    by_cases hw : w = y
-    · obtain ⟨d, hd, _, hd_dep⟩ := hedge; exact ⟨d, hd, hw ▸ hd_dep⟩
-    · exact ih hw
-
-/-- Under unique heads, if u dominates x and x ≠ u, then x has a unique
-    parent p with edge(p, x) and Dominates(u, p). -/
-private theorem dominates_parent_step (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
-    {u x : Nat} (hdom : Dominates t.deps u x) (hne : x ≠ u) :
-    ∃ p, ∃ e ∈ t.deps, e.headIdx = p ∧ e.depIdx = x ∧
-      Dominates t.deps u p ∧ p ∈ projection t.deps u := by
-  obtain ⟨d, hd_mem, hd_dep⟩ := dominates_has_incoming hdom (Ne.symm hne)
-  set p := d.headIdx with hp_def
-  have hparent : ∀ d' ∈ t.deps, d'.depIdx = x → d'.headIdx = p := by
-    intro d' hd' hd'_dep
-    have hx_lt : x < t.words.length := hd_dep ▸ h_dep_wf d hd_mem
-    have h := unique_parent_of_hasUniqueHeads hwf hx_lt hd_mem hd' hd_dep hd'_dep
-    rw [hp_def]; exact h.symm
-  have hdom_p := dominates_to_parent hdom (Ne.symm hne) hparent
-  exact ⟨p, d, hd_mem, rfl, hd_dep, hdom_p, mem_projection_of_dominates hdom_p⟩
 
 /-- If root dominates x with root ≥ k and x < k, there's a linked edge
     in π(root) that spans k (one endpoint < k, the other ≥ k). -/
@@ -845,6 +813,52 @@ private theorem linked_symm_val {deps : List Dependency} {a b : Nat}
   obtain ⟨d, hd_mem, hd⟩ := h
   exact ⟨d, hd_mem, hd.symm⟩
 
+/-- Every element of the iterParent chain from w to u (= iterParent w k)
+    belongs to π(u). Proved by descending induction: u ∈ π(u) by root membership,
+    and each step down is a parent-child edge within π(u). -/
+private theorem iterParent_chain_mem_projection (t : DepTree)
+    {u w : Nat} {k : Nat} (hiter : iterParent_uh t w k = u)
+    (hchain : ∀ i, i < k → ∃ dep,
+      t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
+      dep.headIdx = iterParent_uh t w (i + 1))
+    (i : Nat) (hi : i ≤ k) :
+    iterParent_uh t w i ∈ projection t.deps u := by
+  suffices h : ∀ j, j ≤ k →
+      iterParent_uh t w (k - j) ∈ projection t.deps u by
+    have := h (k - i) (by omega)
+    rwa [show k - (k - i) = i from by omega] at this
+  intro j hj
+  induction j with
+  | zero => rw [Nat.sub_zero, hiter]; exact root_mem_projection t.deps u
+  | succ n ih =>
+    have hprev := ih (by omega)
+    obtain ⟨dep, hdep_find, hdep_head⟩ := hchain (k - (n + 1)) (by omega)
+    have hdep_mem := List.mem_of_find?_eq_some hdep_find
+    have hdep_pred := List.find?_some hdep_find
+    have hdep_dep : dep.depIdx = iterParent_uh t w (k - (n + 1)) :=
+      beq_iff_eq.mp hdep_pred
+    have h_shift : k - (n + 1) + 1 = k - n := by omega
+    exact projection_closed_under_children t.deps u
+      (iterParent_uh t w (k - n)) (iterParent_uh t w (k - (n + 1)))
+      hprev ⟨dep, hdep_mem, h_shift ▸ hdep_head, hdep_dep⟩
+
+/-- Consecutive elements of the iterParent chain are linked by a dependency edge. -/
+private theorem iterParent_chain_linked {t : DepTree}
+    {w : Nat} {k : Nat}
+    (hchain : ∀ i, i < k → ∃ dep,
+      t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
+      dep.headIdx = iterParent_uh t w (i + 1))
+    (i : Nat) (hi : i < k) :
+    linked t.deps (iterParent_uh t w i) (iterParent_uh t w (i + 1)) = true := by
+  obtain ⟨dep, hdep_find, hdep_head⟩ := hchain i hi
+  have hdep_mem := List.mem_of_find?_eq_some hdep_find
+  have hdep_pred := List.find?_some hdep_find
+  have hdep_dep : dep.depIdx = iterParent_uh t w i :=
+    beq_iff_eq.mp hdep_pred
+  simp only [linked, List.any_eq_true, Bool.or_eq_true,
+             Bool.and_eq_true, beq_iff_eq]
+  exact ⟨dep, hdep_mem, Or.inr ⟨hdep_head, hdep_dep⟩⟩
+
 /-- If x ∈ π(u) lies strictly inside an interval (lo, hi) where
     linked(lo, hi) is from a disjoint projection π(v), and there exists
     an element z ∈ π(u) outside the interval, then there must be
@@ -854,9 +868,7 @@ private theorem linked_symm_val {deps : List Dependency} {a b : Nat}
     produce an edge crossing the boundary of (lo, hi). That edge crosses
     linked(lo, hi), witnessing non-planarity. -/
 private theorem escape_gives_crossing (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
-    (h_head_wf : ∀ d ∈ t.deps, d.headIdx < t.words.length)
+    (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {lo hi : Nat} (hlo_hi : lo < hi)
     (hlink_v : linked t.deps lo hi = true)
@@ -868,63 +880,20 @@ private theorem escape_gives_crossing (t : DepTree)
   -- Disjointness: elements of π(u) avoid lo and hi
   have ne_lo : ∀ w, w ∈ projection t.deps u → w ≠ lo := by
     intro w hw heq; subst heq
-    exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hw hlo_mem
+    exact projection_disjoint_of_disjoint t hwf hdisj hw hlo_mem
   have ne_hi : ∀ w, w ∈ projection t.deps u → w ≠ hi := by
     intro w hw heq; subst heq
-    exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hw hhi_mem
+    exact projection_disjoint_of_disjoint t hwf hdisj hw hhi_mem
   -- Boundary-crossing helper: given a inside (lo,hi), b outside, linked(a,b)
   have boundary_crossing : ∀ a b : Nat,
       lo < a → a < hi → (b < lo ∨ hi < b) →
       linked t.deps a b = true → t.isPlanar = false := by
     intro a b ha_lo ha_hi hb_out hab
     rcases hb_out with hb | hb
-    · exact crossing_edges_not_planar t h_head_wf h_dep_wf hb ha_lo ha_hi
+    · exact crossing_edges_not_planar t hwf.headIdx_lt hwf.depIdx_lt hb ha_lo ha_hi
         (linked_symm_val hab) hlink_v
-    · exact crossing_edges_not_planar t h_head_wf h_dep_wf ha_lo ha_hi hb
+    · exact crossing_edges_not_planar t hwf.headIdx_lt hwf.depIdx_lt ha_lo ha_hi hb
         hlink_v hab
-  -- Chain membership: iterParent chain element at index i is in π(u)
-  have chain_mem : ∀ (w : Nat) (k : Nat) (hiter : iterParent_uh t w k = u)
-      (hchain : ∀ i, i < k → ∃ dep,
-        t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
-        dep.headIdx = iterParent_uh t w (i + 1))
-      (i : Nat) (hi : i ≤ k),
-      iterParent_uh t w i ∈ projection t.deps u := by
-    intro w k hiter hchain i hi
-    -- Descending induction: prove for k-j by induction on j, then specialize
-    suffices h : ∀ j, j ≤ k →
-        iterParent_uh t w (k - j) ∈ projection t.deps u by
-      have := h (k - i) (by omega)
-      rwa [show k - (k - i) = i from by omega] at this
-    intro j hj
-    induction j with
-    | zero => rw [Nat.sub_zero, hiter]; exact root_mem_projection t.deps u
-    | succ n ih =>
-      have hprev := ih (by omega)
-      obtain ⟨dep, hdep_find, hdep_head⟩ := hchain (k - (n + 1)) (by omega)
-      have hdep_mem := List.mem_of_find?_eq_some hdep_find
-      have hdep_pred := List.find?_some hdep_find
-      have hdep_dep : dep.depIdx = iterParent_uh t w (k - (n + 1)) :=
-        beq_iff_eq.mp hdep_pred
-      have h_shift : k - (n + 1) + 1 = k - n := by omega
-      exact projection_closed_under_children t.deps u
-        (iterParent_uh t w (k - n)) (iterParent_uh t w (k - (n + 1)))
-        hprev ⟨dep, hdep_mem, h_shift ▸ hdep_head, hdep_dep⟩
-  -- Chain linked: consecutive chain elements are linked
-  have chain_linked : ∀ (w : Nat) (k : Nat)
-      (hchain : ∀ i, i < k → ∃ dep,
-        t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
-        dep.headIdx = iterParent_uh t w (i + 1))
-      (i : Nat) (hi : i < k),
-      linked t.deps (iterParent_uh t w i) (iterParent_uh t w (i + 1)) = true := by
-    intro w k hchain i hi
-    obtain ⟨dep, hdep_find, hdep_head⟩ := hchain i hi
-    have hdep_mem := List.mem_of_find?_eq_some hdep_find
-    have hdep_pred := List.find?_some hdep_find
-    have hdep_dep : dep.depIdx = iterParent_uh t w i :=
-      beq_iff_eq.mp hdep_pred
-    simp only [linked, List.any_eq_true, Bool.or_eq_true,
-               Bool.and_eq_true, beq_iff_eq]
-    exact ⟨dep, hdep_mem, Or.inr ⟨hdep_head, hdep_dep⟩⟩
   -- "inside (lo,hi)" predicate for chain elements
   let P (w : Nat) (i : Nat) : Prop :=
     lo < iterParent_uh t w i ∧ iterParent_uh t w i < hi
@@ -936,19 +905,18 @@ private theorem escape_gives_crossing (t : DepTree)
       (i : Nat) (hik : i ≤ k) (hnp : ¬P w i),
       iterParent_uh t w i < lo ∨ hi < iterParent_uh t w i := by
     intro w k hiter hchain i hik hnp
-    have hmem := chain_mem w k hiter hchain i hik
+    have hmem := iterParent_chain_mem_projection t hiter hchain i hik
     have hne_lo := ne_lo _ hmem
     have hne_hi := ne_hi _ hmem
     by_contra hc; push_neg at hc
     exact hnp ⟨by omega, by omega⟩
   -- Case split on u's position relative to (lo, hi)
-  have hu_mem := root_mem_projection t.deps u
   by_cases hu_inside : lo < u ∧ u < hi
   · -- u is inside (lo, hi): use chain from z (outside) to u (inside)
     have hz_ne_u : z ≠ u := by
       intro h; subst h; rcases hz_out with h | h <;> omega
     obtain ⟨k, hk_pos, hiter_k, hchain_k⟩ :=
-      dominates_iterParent_uh t hwf h_dep_wf (dominates_of_mem_projection hz_mem) hz_ne_u.symm
+      dominates_iterParent_uh t hwf (dominates_of_mem_projection hz_mem) hz_ne_u.symm
     have h0_out : ¬P z 0 := by
       simp only [P, iterParent_uh]
       rcases hz_out with h | h <;> omega
@@ -959,13 +927,13 @@ private theorem escape_gives_crossing (t : DepTree)
     simp only [P] at hj1_in
     have hj_out' := not_inside_is_outside z k hiter_k hchain_k j (by omega) hj_out
     exact boundary_crossing (iterParent_uh t z (j + 1)) (iterParent_uh t z j)
-      hj1_in.1 hj1_in.2 hj_out' (linked_symm_val (chain_linked z k hchain_k j hj_lt))
+      hj1_in.1 hj1_in.2 hj_out' (linked_symm_val (iterParent_chain_linked hchain_k j hj_lt))
   · -- u is outside (lo, hi): use chain from x (inside) to u (outside)
     push_neg at hu_inside
     have hx_ne_u : x ≠ u := by
       intro h; subst h; exact hu_inside hx_lo hx_hi
     obtain ⟨k, hk_pos, hiter_k, hchain_k⟩ :=
-      dominates_iterParent_uh t hwf h_dep_wf (dominates_of_mem_projection hx_mem) hx_ne_u.symm
+      dominates_iterParent_uh t hwf (dominates_of_mem_projection hx_mem) hx_ne_u.symm
     have h0_in : P x 0 := by
       simp only [P, iterParent_uh]; exact ⟨hx_lo, hx_hi⟩
     have hk_out : ¬P x k := by
@@ -975,7 +943,7 @@ private theorem escape_gives_crossing (t : DepTree)
     simp only [P] at hj_in
     have hj1_out' := not_inside_is_outside x k hiter_k hchain_k (j + 1) (by omega) hj1_out
     exact boundary_crossing (iterParent_uh t x j) (iterParent_uh t x (j + 1))
-      hj_in.1 hj_in.2 hj1_out' (chain_linked x k hchain_k j hj_lt)
+      hj_in.1 hj_in.2 hj1_out' (iterParent_chain_linked hchain_k j hj_lt)
 
 /-- Core lemma: interleaving projections of disjoint subtrees witness
     non-planarity. If l₁, r₁ ∈ π(u) and l₂, r₂ ∈ π(v) with
@@ -985,9 +953,7 @@ private theorem escape_gives_crossing (t : DepTree)
     the resulting edges must cross (possibly via the escape lemma for
     containment cases). -/
 private theorem interleaving_not_planar (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
-    (h_head_wf : ∀ d ∈ t.deps, d.headIdx < t.words.length)
+    (hwf : t.WF)
     {u v : Nat} (hdisj : disjoint t.deps u v = true)
     {l₁ l₂ r₁ r₂ : Nat}
     (hl₁ : l₁ ∈ projection t.deps u) (hr₁ : r₁ ∈ projection t.deps u)
@@ -1001,7 +967,7 @@ private theorem interleaving_not_planar (t : DepTree)
   have hc₂_gt : r₁ < c₂ := by
     rcases Nat.eq_or_lt_of_le hc₂_ge with heq | hlt
     · exfalso; rw [← heq] at hc₂_mem
-      exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hr₁ hc₂_mem
+      exact projection_disjoint_of_disjoint t hwf hdisj hr₁ hc₂_mem
     · exact hlt
   -- Step 2: Spanning edge from π(u) across l₂
   obtain ⟨p₁, c₁, hlink₁, hp₁_mem, hc₁_mem, hp₁_lt, hc₁_ge⟩ :=
@@ -1011,7 +977,7 @@ private theorem interleaving_not_planar (t : DepTree)
     have : p₁ ≤ l₂ := by omega
     rcases Nat.eq_or_lt_of_le this with heq | hlt
     · exfalso; rw [heq] at hp₁_mem
-      exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hp₁_mem hl₂
+      exact projection_disjoint_of_disjoint t hwf hdisj hp₁_mem hl₂
     · exact hlt
   have hc₁_gt_l₂ : l₂ < c₁ := by omega
   -- Now: linked(p₁, c₁) from π(u) with p₁ < l₂ < c₁
@@ -1024,17 +990,17 @@ private theorem interleaving_not_planar (t : DepTree)
     · -- p₁ < p₂ < c₁
       by_cases hbd : c₁ < c₂
       · -- p₁ < p₂ < c₁ < c₂: CROSSING ✓
-        exact crossing_edges_not_planar t h_head_wf h_dep_wf hac hpc hbd hlink₁ hlink₂
+        exact crossing_edges_not_planar t hwf.headIdx_lt hwf.depIdx_lt hac hpc hbd hlink₁ hlink₂
       · -- c₁ ≥ c₂: containment [p₂, c₂] ⊆ [p₁, c₁]
         -- r₁ ∈ π(u) ∩ (p₂, c₂): use escape lemma
         have hc₁_ge_c₂ : c₂ ≤ c₁ := by omega
         have hc₂_ne : c₂ ≠ c₁ := by
           intro heq; rw [← heq] at hc₁_mem
-          exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hc₁_mem hc₂_mem
+          exact projection_disjoint_of_disjoint t hwf hdisj hc₁_mem hc₂_mem
         have hc₁_gt_c₂ : c₂ < c₁ := by omega
         -- r₁ ∈ π(u), p₂ < r₁ < c₂: r₁ is inside the π(v) edge interval
         -- Outside witness: p₁ ∈ π(u) with p₁ < p₂ (from hac)
-        exact escape_gives_crossing t hwf h_dep_wf h_head_wf hdisj
+        exact escape_gives_crossing t hwf hdisj
           (by omega : p₂ < c₂) hlink₂ hp₂_mem hc₂_mem
           hr₁ hp₂_lt hc₂_gt hp₁_mem (Or.inl (by omega : p₁ < p₂))
     · -- p₂ ≤ p₁: disjoint gives p₂ < p₁ or p₁ < p₂
@@ -1042,7 +1008,7 @@ private theorem interleaving_not_planar (t : DepTree)
         have : p₂ ≤ p₁ := by omega
         rcases Nat.eq_or_lt_of_le this with heq | hlt
         · exfalso; rw [heq] at hp₂_mem
-          exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hp₁_mem hp₂_mem
+          exact projection_disjoint_of_disjoint t hwf hdisj hp₁_mem hp₂_mem
         · exact hlt
       -- p₂ < p₁ < c₁ and p₂ < c₂
       by_cases hbd : c₂ < c₁
@@ -1050,12 +1016,12 @@ private theorem interleaving_not_planar (t : DepTree)
         -- p₁ < l₂ < r₁ < c₂, so p₁ < c₂
         have hp₁_lt_c₂ : p₁ < c₂ := by omega
         -- CROSSING: p₂ < p₁ < c₂ < c₁, linked(p₂, c₂) and linked(p₁, c₁)
-        exact crossing_edges_not_planar t h_head_wf h_dep_wf hp₂_lt_p₁ hp₁_lt_c₂ hbd hlink₂ hlink₁
+        exact crossing_edges_not_planar t hwf.headIdx_lt hwf.depIdx_lt hp₂_lt_p₁ hp₁_lt_c₂ hbd hlink₂ hlink₁
       · -- c₁ ≤ c₂: containment [p₁, c₁] ⊆ [p₂, c₂]
         -- Swap perspective: l₂ ∈ π(v) is inside the π(u) edge (p₁, c₁)
         -- Outside witness: p₂ ∈ π(v) with p₂ < p₁
         have hc₂_ge_c₁ : c₁ ≤ c₂ := by omega
-        exact escape_gives_crossing t hwf h_dep_wf h_head_wf
+        exact escape_gives_crossing t hwf
           (disjoint_symm hdisj)
           (by omega : p₁ < c₁) hlink₁ hp₁_mem hc₁_mem
           hl₂ hp₁_lt_l₂ hc₁_gt_l₂ hp₂_mem (Or.inl hp₂_lt_p₁)
@@ -1066,38 +1032,38 @@ private theorem interleaving_not_planar (t : DepTree)
     have hc₁_lt_p₂ : c₁ < p₂ := by
       rcases Nat.eq_or_lt_of_le hc₁_le_p₂ with heq | hlt
       · exfalso; rw [← heq] at hp₂_mem
-        exact projection_disjoint_of_disjoint t hwf h_dep_wf hdisj hc₁_mem hp₂_mem
+        exact projection_disjoint_of_disjoint t hwf hdisj hc₁_mem hp₂_mem
       · exact hlt
     -- Now: p₁ < c₁ < p₂ < c₂, all from disjoint projections.
     -- r₁ ∈ π(u) with p₂ < r₁ < c₂: r₁ inside the π(v) edge
     -- Outside witness: c₁ ∈ π(u) with c₁ < p₂
-    exact escape_gives_crossing t hwf h_dep_wf h_head_wf hdisj
+    exact escape_gives_crossing t hwf hdisj
       (by omega : p₂ < c₂) hlink₂ hp₂_mem hc₂_mem
       hr₁ hp₂_lt hc₂_gt hc₁_mem (Or.inl hc₁_lt_p₂)
 
 /-- **Planar ⊂ well-nested** (for well-formed trees): every planar tree
-    with unique heads and no cycles is well-nested.
+    with unique heads is well-nested.
     (Kuhlmann & Nivre 2006, Theorem 1)
 
     Proof: by contrapositive. If ¬wellNested, there exist disjoint subtrees
     u, v whose projections interleave: l₁ < l₂ < r₁ < r₂ with l₁, r₁ ∈ π(u)
     and l₂, r₂ ∈ π(v). By `interleaving_not_planar`, this forces crossing
     edges, contradicting planarity. -/
-private theorem Bool.not_eq_false_eq_true {b : Bool} (h : (!b) = false) : b = true := by
-  cases b <;> simp_all
-
 theorem planar_implies_wellNested (t : DepTree)
-    (hwf : hasUniqueHeads t = true)
-    (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
-    (h_head_wf : ∀ d ∈ t.deps, d.headIdx < t.words.length)
+    (hwf : t.WF)
     (hplanar : t.isPlanar = true) : t.isWellNested = true := by
   -- Contrapositive: extract interleaving from ¬wellNested, derive ¬planar
   by_contra h_nwn
   have h_false : t.isWellNested = false := by
-    match h : t.isWellNested with | true => exfalso; exact h_nwn h | false => rfl
-  clear h_nwn
-  simp only [DepTree.isWellNested] at h_false
-  have h_any := Bool.not_eq_false_eq_true h_false
+    cases h : t.isWellNested with | true => exact absurd h h_nwn | false => rfl
+  simp only [DepTree.isWellNested, Bool.not_eq_true'] at h_false
+  have h_any : (List.range t.words.length |>.any fun u =>
+    List.range t.words.length |>.any fun v =>
+      u != v && disjoint t.deps u v &&
+      projectionsInterleave (projection t.deps u) (projection t.deps v)) = true := by
+    cases h : (List.range t.words.length |>.any _) with
+    | true => rfl
+    | false => simp [h] at h_false
   rw [List.any_eq_true] at h_any
   obtain ⟨u, _, h_u⟩ := h_any
   rw [List.any_eq_true] at h_u
@@ -1115,7 +1081,7 @@ theorem planar_implies_wellNested (t : DepTree)
   obtain ⟨r₂, hr₂, hords⟩ := h_rest3
   simp only [Bool.and_eq_true, decide_eq_true_eq] at hords
   obtain ⟨⟨h1, h2⟩, h3⟩ := hords
-  have h_not_planar := interleaving_not_planar t hwf h_dep_wf h_head_wf
+  have h_not_planar := interleaving_not_planar t hwf
     hdisj hl₁ hr₁ hl₂ hr₂ ⟨h1, h2, h3⟩
   rw [hplanar] at h_not_planar; exact absurd h_not_planar (by decide)
 
