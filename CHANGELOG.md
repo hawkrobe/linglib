@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.222.0] - 2026-02-17
+
+### Added
+- Add `Core/BToM.lean` — Bayesian Theory of Mind (Baker et al. 2017) generative model with joint score, world/belief/desire marginals, and world-marginal factoring theorem
+- Add `Comparisons/ProjectionMechanisms.lean` — comparison of compositional filtering (Heim 1983, Schlenker 2009) vs RSA BToM (Scontras & Tonhauser 2025) for presupposition projection
+- Add `Fragments/Yoruba/FocusParticles.lean` — Yorùbá focus particles across dialects (ni, ín) with head-direction contrast and FOFC relevance
+- Add `Phenomena/Conditionals/Studies/EvcenBaleBarner2026/` — conditional perfection data and bridge (QUD effects, speaker knowledge, exhaustification)
+- Add `Theories/Semantics/Conditionals/Exhaustivity.lean` — answer-level exhaustification account of conditional perfection (von Fintel 2001)
+- Add generic attitude verb infrastructure in `RSA.BToM` namespace (HasComplement, HasBelief, HasAntecedent typeclasses; factive/non-factive verb semantics; condOp)
+
+### Changed
+- Ground RSA L1 in BToM: `L1_world`, `L1_beliefState`, `L1_goal` now defined via BToM marginals with equivalence theorems (`L1_world_score_eq_worldMarginal`, `L1_goal_score_eq_desireMarginal`, `L1_beliefState_score_eq_beliefMarginal`)
+- Factor S1 into `S1_score` total function; add `toBToM`, `L1_joint_score`, `L1_world_score`, `L1_beliefState_score`, `L1_goal_score` as BToM-grounded score functions
+- Prove `L1_world_score_factors`: world prior factors out of L1's world inference (Bayes' rule corollary)
+- Move `HeadDirection` from `Phenomena/WordOrder/Typology.lean` to `Core/Basic.lean`
+- Move `FIPApplication` from `Phenomena/Focus/Basic.lean` and `Theories/Semantics/Focus/Interpretation.lean` to `Core/InformationStructure.lean`
+- Add BToM bridge theorems for Scontras & Tonhauser 2025 (`know_is_factive`, `think_is_nonFactive`, `qud_matches_btom`, `assumesC_matches_generic`)
+- Add `@cite` tags to Cacchioli 2025 and Scontras & Tonhauser 2025
+- Update bibliography with Cacchioli 2025 and Tsilia, Zhao & Sharvit 2026
+
 ## [0.221.3] - 2026-02-17
 
 ### Added

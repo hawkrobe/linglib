@@ -304,4 +304,25 @@ structure PolarityMarkingEntry where
   strategy : PolarityMarkingStrategy
   deriving Repr, DecidableEq, BEq
 
+/-! ## Focus Interpretation Principle Applications (Rooth 1992 §2)
+
+Four domains in which focus alternatives interact with context.
+Defined here (rather than in `Theories/Semantics/Focus/` or
+`Phenomena/Focus/`) because it is a theory-neutral classification
+used by both layers. -/
+
+/-- Application type for the Focus Interpretation Principle.
+    Rooth (1992) §2 identifies four domains where focus semantic
+    values constrain interpretation. -/
+inductive FIPApplication where
+  /-- Focusing adverbs: only, even, also -/
+  | focusingAdverb
+  /-- Contrast/parallelism in discourse -/
+  | contrast
+  /-- Scalar implicature computation -/
+  | scalarImplicature
+  /-- Question-answer congruence -/
+  | qaCongruence
+  deriving DecidableEq, Repr, BEq
+
 end Core.InformationStructure

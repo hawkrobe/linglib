@@ -102,18 +102,7 @@ def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
   ∀ p, question p → answerFocus p
 
 -- FIP Applications (Rooth §2)
-
-/-- Application type for the Focus Interpretation Principle -/
-inductive FIPApplication where
-  /-- Focusing adverbs: only, even, also -/
-  | focusingAdverb
-  /-- Contrast/parallelism in discourse -/
-  | contrast
-  /-- Scalar implicature computation -/
-  | scalarImplicature
-  /-- Question-answer congruence -/
-  | qaCongruence
-  deriving DecidableEq, Repr, BEq
+-- FIPApplication is defined in Core.InformationStructure (opened above)
 
 /-- Description of each FIP application -/
 def FIPApplication.description : FIPApplication → String

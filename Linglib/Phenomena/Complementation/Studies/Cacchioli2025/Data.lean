@@ -1,7 +1,7 @@
 import Linglib.Core.Basic
 
 /-!
-# Cacchioli (2025) — Empirical Data
+# Cacchioli (2025) — Empirical Data @cite{cacchioli-2025}
 
 Pure empirical data from Cacchioli (2025) "The Syntax of Clausal Prefixes
 in Tigrinya." No theory imports — this file contains only observed patterns,
