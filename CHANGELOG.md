@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.222.8] - 2026-02-18
+
+### Changed
+- Close all 3 remaining `sorry` instances in Aloni 2022 BSML formalization: `enriched_support_implies_nonempty` (disj case), `narrowScopeFC`, `wideScopeFC`
+- Add infrastructure lemmas for split/subteam membership, singleton witnesses, indisputability transfer
+
 ## [0.222.7] - 2026-02-18
 
 ### Removed
