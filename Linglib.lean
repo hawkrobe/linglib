@@ -54,6 +54,7 @@ import Linglib.Core.DimensionBridge
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
+import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
