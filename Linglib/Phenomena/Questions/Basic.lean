@@ -1,4 +1,6 @@
-/-
+import Linglib.Core.Basic
+
+/-!
 # Questions: Basic Types and Shared Infrastructure
 
 Theory-neutral types for question-answer phenomena.
@@ -14,14 +16,31 @@ namespace Phenomena.Questions
 
 -- Question Types
 
-/-- Classification of question types -/
+/-- Classification of question types by answer form.
+
+    Note: this classifies the *form* of the question and expected answer,
+    not the semantic type of the wh-phrase. For semantic type (entity,
+    degree, reason, etc.), see `Core.WhSemanticType`. -/
 inductive QuestionType where
   | polar           -- Yes/no questions: "Did John leave?"
   | whSingular      -- Singular wh: "Who left?"
   | whPlural        -- Plural wh: "Which students left?"
   | alternative     -- Alternative: "Did John or Mary leave?"
-  | whyHow          -- Reason/manner: "Why/How did John leave?"
+  | whReason        -- Reason: "Why did John leave?"
+  | whManner        -- Manner: "How did John leave?"
   deriving DecidableEq, Repr
+
+/-- The semantic type of the wh-phrase, when the question is a wh-question.
+    Returns `none` for polar and alternative questions. For `whSingular`
+    and `whPlural`, the semantic type depends on the specific wh-word used,
+    so we default to `entity` — the caller should refine if needed. -/
+def QuestionType.whSemanticType : QuestionType → Option WhSemanticType
+  | .polar      => none
+  | .alternative => none
+  | .whSingular => some .entity   -- default; could be temporal, locative, etc.
+  | .whPlural   => some .entity
+  | .whReason   => some .reason
+  | .whManner   => some .manner
 
 /-- Answer completeness -/
 inductive AnswerCompleteness where

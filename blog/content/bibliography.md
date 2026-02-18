@@ -336,6 +336,10 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 
 ## Syntax
 
+**Anand, P., Hardt, D. & McCloskey, J.** (2021). The Santa Cruz Sluicing Data Set. *Language, 97(1), e68–e88*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Basic.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean)
+
 **Cacchioli, G.** (2025). The Syntax of Clausal Prefixes in Tigrinya. *PhD dissertation, Université de Gen\`eve*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean)\
 cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean)

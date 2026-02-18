@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.222.2] - 2026-02-17
+
+### Added
+- Add `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/` — corpus data (4,700 sluices) and SIC bridge theorems connecting empirical mismatch distributions to argument domain predictions
+- Add `WhSemanticType` to `Core/Basic.lean` — 7-way wh-phrase taxonomy (entity, degree, reason, manner, temporal, locative, classificatory) motivated by Santa Cruz Sluicing Corpus
+- Add `assignedCase : Option UD.Case` to `HeadPair` in `FormalMatching.lean`, closing the case-matching gap: dative ≠ accusative now blocks `structurallyIdentical`
+- Add case mismatch theorems to `FormalMatching.lean` (`case_mismatch_not_identical`, `case_mismatch_blocks_sluicing`, `case_match_licenses_sluicing`)
+- Add AHM2021 bibliography entry with `@cite` cross-reference
+
+### Changed
+- Split `QuestionType.whyHow` into `.whReason` and `.whManner` with `whSemanticType` mapping
+- Delete `Phenomena/Ellipsis/Minimalism_SluicingBridge.lean` (fake string-returning bridge); real SIC bridge theorems now live in `Studies/AnandHardtMcCloskey2021/Bridge.lean`
+
 ## [0.222.0] - 2026-02-17
 
 ### Added
