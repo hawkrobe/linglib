@@ -1125,13 +1125,13 @@ private theorem dominates_depth_le (t : DepTree)
 -- ============================================================================
 
 /-- The unique parent of node x (follows `find?` on depIdx). Returns x if no parent. -/
-private def parentOf_uh (t : DepTree) (x : Nat) : Nat :=
+def parentOf_uh (t : DepTree) (x : Nat) : Nat :=
   match t.deps.find? (fun d => d.depIdx == x) with
   | some d => d.headIdx
   | none => x
 
 /-- Iterate parentOf k times. -/
-private def iterParent_uh (t : DepTree) (x : Nat) : Nat → Nat
+def iterParent_uh (t : DepTree) (x : Nat) : Nat → Nat
   | 0 => x
   | k + 1 => parentOf_uh t (iterParent_uh t x k)
 
@@ -1294,7 +1294,7 @@ private theorem parentOf_eq_find_uh (t : DepTree) (x : Nat) {dep : Dependency}
   simp [parentOf_uh, hfind]
 
 /-- Under unique heads, if edge(v, c) exists, then `parentOf c = v`. -/
-private theorem parentOf_of_edge_uh (t : DepTree)
+theorem parentOf_of_edge_uh (t : DepTree)
     (hwf : hasUniqueHeads t = true)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {v c : Nat} (hedge : ∃ d ∈ t.deps, d.headIdx = v ∧ d.depIdx = c) :
@@ -1330,7 +1330,7 @@ private theorem parentOf_of_edge_uh (t : DepTree)
 
 /-- Under unique heads, `Dominates v w` with v ≠ w implies the iterParent chain
     from w reaches v, with valid parent edges at each step. -/
-private theorem dominates_iterParent_uh (t : DepTree)
+theorem dominates_iterParent_uh (t : DepTree)
     (hwf : hasUniqueHeads t = true)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {v w : Nat} (hdom : Dominates t.deps v w) (hne : v ≠ w) :
@@ -1461,7 +1461,7 @@ private theorem ofFn_nodup_of_injective {α : Type*} [DecidableEq α] {n : Nat}
     of length `j - i ≤ n`, detectable by `follow_false_of_cycle` with fuel
     `n + 1 ≥ j - i + 1`. But `isAcyclic = true`, contradiction.
     Then `nodup_bound` gives `n + 1 ≤ n`, contradiction. -/
-private theorem iterParent_chain_bound (t : DepTree)
+theorem iterParent_chain_bound (t : DepTree)
     (hacyc : isAcyclic t = true)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     (start : Nat) (k : Nat)
