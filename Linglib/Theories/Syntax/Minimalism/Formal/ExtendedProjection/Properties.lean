@@ -49,9 +49,11 @@ def epSemanticType : Cat → EPSemanticType
   | .Appl              => .intermediate   -- F1: introduces applied argument (Pylkkänen 2008)
   | .D                 => .entity         -- F1: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
+  | .Foc               => .intermediate   -- F4: focus (Rizzi 1997 split-CP)
+  | .Top               => .intermediate   -- F5: topic (Rizzi 1997 split-CP)
   | .Fin               => .intermediate   -- F3: finiteness (Rizzi 1997)
-  | .C                 => .proposition    -- F3: proposition (force)
-  | .SA                => .proposition    -- F4: speech act (Speas & Tenny 2003)
+  | .C                 => .proposition    -- F6: proposition (force)
+  | .SA                => .proposition    -- F7: speech act (Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: Generalized Theta Criterion
@@ -137,8 +139,8 @@ def isTruncated (spine : List Cat) : Bool :=
     - DP (F1) denotes e (entity), not ⟨e,t⟩ -/
 def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
-  | .C | .T => .v     -- full/infinitival clause → vP is argument domain
-  | _       => topCat  -- small clause → the SC itself is argument domain
+  | .C | .Fin | .Foc | .Top | .SA | .T => .v  -- clausal functional heads → vP is argument domain
+  | _       => topCat  -- small clause / lexical head → the SC itself is argument domain
 
 /-- Is a category within the argument domain of a given top category?
     The argument domain includes all F-levels ≤ the boundary. -/
@@ -237,7 +239,40 @@ theorem lexical_heads_assign_theta :
     canAssignTheta .A = true ∧ canAssignTheta .P = true := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 7: Eval Tests
+-- Part 7: Well-Formedness of Split-CP Spines
+-- ═══════════════════════════════════════════════════════════════
+
+/-- The split-CP spine is well-formed (consistent and monotone). -/
+theorem splitCP_ep_wellformed :
+    allCategoryConsistent splitCPVerbalEP = true ∧
+    allFMonotone splitCPVerbalEP = true := by decide
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 8: Split-CP EP-Internal Relations
+-- ═══════════════════════════════════════════════════════════════
+
+/-- Fin is EP-internal to Foc: same [+V,-N], F3 < F4.
+    The IP/CP boundary (Fin) is properly dominated by focus. -/
+theorem fin_internal_to_foc : isEPInternal .Fin .Foc = true := by decide
+
+/-- Foc is EP-internal to Top: same [+V,-N], F4 < F5.
+    Focus is below topic in the C-domain hierarchy. -/
+theorem foc_internal_to_top : isEPInternal .Foc .Top = true := by decide
+
+/-- Top is EP-internal to C: same [+V,-N], F5 < F6.
+    Topic is below the complementizer (= Force in unsplit contexts). -/
+theorem top_internal_to_c : isEPInternal .Top .C = true := by decide
+
+/-- T is EP-internal to Fin: same [+V,-N], F2 < F3.
+    Tense is properly dominated by finiteness. -/
+theorem t_internal_to_fin : isEPInternal .T .Fin = true := by decide
+
+/-- Fin and Foc are NOT perfect projections of each other: F3 ≠ F4.
+    Before the fValue fix, both had fValue 3 and this was incorrectly true. -/
+theorem fin_foc_not_perfect : perfectProjection .Fin .Foc = false := by decide
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 9: Eval Tests
 -- ═══════════════════════════════════════════════════════════════
 
 -- Semantic types

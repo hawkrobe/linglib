@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.220.0] - 2026-02-17
+
+### Changed
+- Fix fValue collapse in split-CP: Fin(3), Foc(4), Top(5), C(6), SA(7) — previously Fin/Foc/Top/C all mapped to 3, making the formalization unable to distinguish well-formed C-domain orderings from pathological ones
+- Add split-CP verbal EP spine `splitCPVerbalEP` with consistency and monotonicity theorems
+- Add split-CP EP-internal relation theorems: `fin_internal_to_foc`, `foc_internal_to_top`, `top_internal_to_c`, `t_internal_to_fin`
+- Add `fin_foc_not_perfect` and `reverse_splitCP_not_monotone` — negative results that were incorrectly positive before the fix
+- Update SpeechActs.lean fValue comments to reflect new values
+
 ## [0.219.18] - 2026-02-17
 
 ### Changed

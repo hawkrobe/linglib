@@ -54,6 +54,8 @@ def catFeatures : Cat → CatFeatures
   | .Voice => ⟨true,  false⟩   -- [+V, -N] (Kratzer 1996)
   | .Appl  => ⟨true,  false⟩   -- [+V, -N] (Pylkkänen 2008)
   | .T     => ⟨true,  false⟩   -- [+V, -N]
+  | .Foc   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
+  | .Top   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
   | .Fin   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
   | .C     => ⟨true,  false⟩   -- [+V, -N]
   | .SA    => ⟨true,  false⟩   -- [+V, -N] (Speas & Tenny 2003)
@@ -70,15 +72,26 @@ def catFeatures : Cat → CatFeatures
     - F0 = lexical (V, N, A, P) — content heads
     - F1 = first functional layer (v, D) — close functional shell
     - F2 = second functional layer (T) — tense/agreement
-    - F3 = highest functional layer (C) — clause type/force -/
+    - F3 = finiteness (Fin) — Rizzi 1997 split-CP, boundary of IP/CP
+    - F4 = focus (Foc) — Rizzi 1997 split-CP
+    - F5 = topic (Top) — Rizzi 1997 split-CP
+    - F6 = complementizer/force (C) — clause type
+    - F7 = speech act (SA) — Speas & Tenny 2003
+
+    Within Grimshaw's original F3, Rizzi (1997) provides strict internal
+    ordering: Fin < Foc < Top < C (= Force). The fValues here encode
+    this refinement: Grimshaw's macro-levels are preserved (F0–F2 unchanged)
+    while the C-domain is spread to capture the cartographic hierarchy. -/
 def fValue : Cat → Nat
   | .V | .N | .A | .P   => 0   -- lexical (F0)
   | .v | .D | .Voice | .Appl
                          => 1   -- first functional (F1)
   | .T                   => 2   -- second functional (F2)
   | .Fin                 => 3   -- finiteness (F3, Rizzi 1997 split-CP)
-  | .C                   => 3   -- complementizer (F3)
-  | .SA                  => 4   -- speech act (F4, Speas & Tenny 2003)
+  | .Foc                 => 4   -- focus (F4, Rizzi 1997 split-CP)
+  | .Top                 => 5   -- topic (F5, Rizzi 1997 split-CP)
+  | .C                   => 6   -- complementizer (F6)
+  | .SA                  => 7   -- speech act (F7, Speas & Tenny 2003)
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 3: Category Consistency and Monotonicity
@@ -129,7 +142,7 @@ inductive CatFamily where
 /-- Map a category to its family.
     This determines which EP it can participate in. -/
 def catFamily : Cat → CatFamily
-  | .V | .v | .Voice | .Appl | .T | .Fin | .C | .SA => .verbal
+  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA => .verbal
   | .N | .D                                          => .nominal
   | .A                                               => .adjectival
   | .P                                               => .adpositional
@@ -254,7 +267,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Fin ∨ c = .C ∨ c = .SA) := by
+    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency
@@ -304,10 +317,14 @@ theorem fhead_extends_projection :
 #eval catFeatures .A   -- { plusV := true, plusN := true }
 
 -- F-values
-#eval fValue .V  -- 0
-#eval fValue .v  -- 1
-#eval fValue .T  -- 2
-#eval fValue .C  -- 3
+#eval fValue .V    -- 0
+#eval fValue .v    -- 1
+#eval fValue .T    -- 2
+#eval fValue .Fin  -- 3
+#eval fValue .Foc  -- 4
+#eval fValue .Top  -- 5
+#eval fValue .C    -- 6
+#eval fValue .SA   -- 7
 
 -- Category consistency
 #eval categoryConsistent .V .T  -- true (both [+V, -N])
@@ -324,5 +341,36 @@ theorem fhead_extends_projection :
 #eval allCategoryConsistent [Cat.V, Cat.v, Cat.T, Cat.C]  -- true
 #eval allFMonotone [Cat.V, Cat.v, Cat.T, Cat.C]           -- true
 #eval allCategoryConsistent [Cat.V, Cat.D]                 -- false (V ≠ D family)
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 9: Split-CP Extended Projection (Rizzi 1997)
+-- ═══════════════════════════════════════════════════════════════
+
+/-- The verbal EP spine with Rizzi's (1997) split-CP layer:
+    V → v → T → Fin → Foc → Top → C.
+    Fin is the boundary between IP and CP; Foc and Top are
+    discourse-related projections between Fin and C (= Force). -/
+def splitCPVerbalEP : List Cat := [.V, .v, .T, .Fin, .Foc, .Top, .C]
+
+/-- The split-CP spine is category-consistent: all heads share [+V, -N]. -/
+theorem splitCP_ep_consistent :
+    allCategoryConsistent splitCPVerbalEP = true := by decide
+
+/-- The split-CP spine is F-monotone: 0 ≤ 1 ≤ 2 ≤ 3 ≤ 4 ≤ 5 ≤ 6.
+    This is the key payoff of the fValue fix — before the fix, Fin/Foc/Top/C
+    all had fValue 3, so any permutation would trivially pass. -/
+theorem splitCP_ep_monotone :
+    allFMonotone splitCPVerbalEP = true := by decide
+
+/-- The reverse split-CP ordering [Top, Foc, Fin] is NOT monotone.
+    This correctly rules out pathological orderings that the collapsed
+    fValues (all = 3) would have accepted. -/
+theorem reverse_splitCP_not_monotone :
+    allFMonotone [Cat.Top, Cat.Foc, Cat.Fin] = false := by decide
+
+-- Split-CP eval tests
+#eval allCategoryConsistent splitCPVerbalEP  -- true
+#eval allFMonotone splitCPVerbalEP           -- true
+#eval allFMonotone [Cat.Top, Cat.Foc, Cat.Fin]  -- false (correctly!)
 
 end Minimalism

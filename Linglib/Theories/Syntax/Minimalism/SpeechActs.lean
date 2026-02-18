@@ -19,7 +19,7 @@ c-commands content.
 - **Phase.lean**: `isSAPhaseHead` — SAP is highest phase
 - **Allocutivity.lean**: `sa_based_aa_root_only` — root-only from SAP phase
 - **LeftPeriphery.lean**: `rogativeSAP` — "ask" selects full SAP with P-roles
-- **ExtendedProjection/Basic.lean**: `fValue .SA = 4` > `fValue .C = 3`
+- **ExtendedProjection/Basic.lean**: `fValue .SA = 7` > `fValue .C = 6`
 - **RSA/YoonEtAl2020**: HEARER (structural) ↔ addressee in social utility
 
 ## References
@@ -179,7 +179,7 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 theorem sa_phase_derivation_final :
     isSAPhaseHead (mkLeaf .SA [] 0) = true := rfl
 
--- E10: SA in the EP hierarchy — fValue .SA = 4 > fValue .C = 3.
+-- E10: SA in the EP hierarchy — fValue .SA = 7 > fValue .C = 6.
 --      SA dominates CP in the extended projection.
 --      (The inequality is proved here; the values are in ExtendedProjection/Basic.lean.)
 theorem sa_above_c_in_ep :
