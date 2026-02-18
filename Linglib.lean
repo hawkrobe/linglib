@@ -772,7 +772,6 @@ import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
 import Linglib.Theories.Pragmatics.RSA.Domains.LexicalAmbiguity
 import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
 import Linglib.Theories.Pragmatics.RSA.Domains.QUD
-import Linglib.Theories.Pragmatics.RSA.Domains.ReferenceGames
 import Linglib.Theories.Pragmatics.RSA.Domains.Scope
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Extensions.NoncooperativeCommunication
