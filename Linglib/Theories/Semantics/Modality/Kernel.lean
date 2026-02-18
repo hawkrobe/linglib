@@ -124,12 +124,150 @@ def settlesByPartition (k : Kernel) (φ : BProp World) : Bool :=
   let sK := kernelPartition k
   sK.all λ cell => cell.all φ || cell.all (λ w => !φ w)
 
-/-- Implementation 1 ⊆ Implementation 2. -/
-theorem explicit_implies_partition (k : Kernel) (φ : BProp World)
-    (_h : directlySettlesExplicit k φ = true) :
-    settlesByPartition k φ = true := by
-  sorry -- Requires showing refine along any X ∈ K that entails/excludes φ
-  -- produces cells uniformly within/outside ⟦φ⟧.
+/-- B_K ⊆ ⟦X⟧ for each X ∈ K: every world in the modal base belongs
+    to each kernel proposition's extension. -/
+private theorem mem_propExtension_of_propIntersection
+    {x : BProp World} {props : List (BProp World)}
+    (hx : x ∈ props) {w : World} (hw : w ∈ propIntersection props) :
+    w ∈ propExtension x := by
+  simp only [propExtension, propIntersection, List.mem_filter, List.all_eq_true] at hw ⊢
+  exact ⟨hw.1, hw.2 x hx⟩
+
+/-- What both implementations share: settling implies entailment.
+    If K directly settles φ (Implementation 1), then B_K ⊆ ⟦φ⟧ or B_K ⊆ ⟦¬φ⟧.
+    If X ∈ K entails φ then B_K ⊆ X ⊆ ⟦φ⟧; if X excludes φ then
+    B_K ⊆ X ⊆ ⟦¬φ⟧. -/
+theorem explicit_implies_entailment (k : Kernel) (φ : BProp World)
+    (h : directlySettlesExplicit k φ = true) :
+    k.followsFrom φ = true ∨ k.followsFrom (λ w => !φ w) = true := by
+  unfold directlySettlesExplicit at h
+  obtain ⟨x, hx_mem, hx⟩ := List.any_eq_true.mp h
+  simp only [Bool.or_eq_true] at hx
+  unfold Kernel.followsFrom
+  cases hx with
+  | inl h_ent =>
+    left
+    exact List.all_eq_true.mpr λ w hw =>
+      List.all_eq_true.mp h_ent w (mem_propExtension_of_propIntersection hx_mem hw)
+  | inr h_exc =>
+    right
+    exact List.all_eq_true.mpr λ w hw => by
+      have hw_ext := mem_propExtension_of_propIntersection hx_mem hw
+      cases hφ : φ w with
+      | false => rfl
+      | true =>
+        exfalso
+        have := List.any_eq_true.mpr ⟨w, hw_ext, hφ⟩
+        simp [this] at h_exc
+
+/-- Two worlds are co-located in a partition if some cell contains both. -/
+private def CoLocated (partition : List (List World)) (w v : World) : Prop :=
+  ∃ cell ∈ partition, w ∈ cell ∧ v ∈ cell
+
+/-- Refining preserves co-location for worlds that agree on the proposition. -/
+private theorem refine_preserves_colocated
+    (partition : List (List World)) (p : BProp World)
+    {w v : World} (h : CoLocated partition w v) (h_agree : p w = p v) :
+    CoLocated (refine partition p) w v := by
+  obtain ⟨cell, h_cell, hw, hv⟩ := h
+  unfold refine
+  cases hp : p w with
+  | true =>
+    have hpv : p v = true := h_agree ▸ hp
+    refine ⟨cell.filter p, ?_, List.mem_filter.mpr ⟨hw, hp⟩, List.mem_filter.mpr ⟨hv, hpv⟩⟩
+    exact List.mem_flatMap.mpr ⟨cell, h_cell, List.mem_filter.mpr
+      ⟨.head _, decide_eq_true_iff.mpr
+        (List.length_pos_of_mem (List.mem_filter.mpr ⟨hw, hp⟩))⟩⟩
+  | false =>
+    have hpv : p v = false := h_agree ▸ hp
+    refine ⟨cell.filter (λ w => !p w), ?_,
+      List.mem_filter.mpr ⟨hw, by simp [hp]⟩, List.mem_filter.mpr ⟨hv, by simp [hpv]⟩⟩
+    exact List.mem_flatMap.mpr ⟨cell, h_cell, List.mem_filter.mpr
+      ⟨.tail _ (.head _), decide_eq_true_iff.mpr
+        (List.length_pos_of_mem (List.mem_filter.mpr ⟨hw, by simp [hp]⟩))⟩⟩
+
+/-- Folding refine over a list of propositions preserves co-location for
+    worlds that agree on all propositions in the list. -/
+private theorem foldl_refine_preserves_colocated
+    (props : List (BProp World)) (partition : List (List World))
+    {w v : World} (h : CoLocated partition w v)
+    (h_agree : ∀ p ∈ props, p w = p v) :
+    CoLocated (props.foldl refine partition) w v := by
+  induction props generalizing partition with
+  | nil => exact h
+  | cons p ps ih =>
+    simp only [List.foldl_cons]
+    exact ih (refine partition p)
+      (refine_preserves_colocated partition p h (h_agree p (.head _)))
+      (λ q hq => h_agree q (.tail _ hq))
+
+/-- Co-located worlds in a settled partition have the same φ-value. -/
+private theorem colocated_same_phi
+    (partition : List (List World)) (φ : BProp World)
+    (h_settled : partition.all
+      (λ cell => cell.all φ || cell.all (λ w => !φ w)) = true)
+    {w v : World} (h_coloc : CoLocated partition w v) :
+    φ w = φ v := by
+  obtain ⟨cell, h_cell, hw, hv⟩ := h_coloc
+  have h_uniform := List.all_eq_true.mp h_settled cell h_cell
+  simp only [Bool.or_eq_true] at h_uniform
+  cases h_uniform with
+  | inl h_all_phi =>
+    have := List.all_eq_true.mp h_all_phi w hw
+    have := List.all_eq_true.mp h_all_phi v hv
+    simp_all
+  | inr h_all_neg =>
+    have hw_neg := List.all_eq_true.mp h_all_neg w hw
+    have hv_neg := List.all_eq_true.mp h_all_neg v hv
+    simp only [Bool.not_eq_true'] at hw_neg hv_neg
+    simp [hw_neg, hv_neg]
+
+/-- Partition settling implies entailment: if S_K settles φ then
+    B_K ⊆ ⟦φ⟧ or B_K ⊆ ⟦¬φ⟧. All worlds in B_K agree on every X ∈ K
+    (they all satisfy every X), so they occupy a single cell of S_K.
+    If that cell is φ-uniform, B_K inherits the uniformity. -/
+theorem partition_implies_entailment (k : Kernel) (φ : BProp World)
+    (h : settlesByPartition k φ = true) :
+    k.followsFrom φ = true ∨ k.followsFrom (λ w => !φ w) = true := by
+  unfold settlesByPartition at h
+  unfold Kernel.followsFrom followsFrom
+  cases h_bk : propIntersection k.props with
+  | nil => left; simp
+  | cons w₀ ws =>
+    have hw₀_bk : w₀ ∈ propIntersection k.props := h_bk ▸ .head _
+    have hw₀_all : w₀ ∈ allWorlds := by
+      simp only [propIntersection, List.mem_filter] at hw₀_bk; exact hw₀_bk.1
+    have hw₀_props : k.props.all (λ p => p w₀) = true := by
+      simp only [propIntersection, List.mem_filter] at hw₀_bk; exact hw₀_bk.2
+    cases hφ : φ w₀ with
+    | true =>
+      left; rw [← h_bk]
+      exact List.all_eq_true.mpr λ w hw => by
+        have hw_props : k.props.all (λ p => p w) = true := by
+          simp only [propIntersection, List.mem_filter] at hw; exact hw.2
+        have h_agree : ∀ p ∈ k.props, p w₀ = p w := λ p hp => by
+          have := List.all_eq_true.mp hw₀_props p hp
+          have := List.all_eq_true.mp hw_props p hp; simp_all
+        have h_coloc := foldl_refine_preserves_colocated k.props [allWorlds]
+          ⟨allWorlds, .head _, hw₀_all, by
+            simp only [propIntersection, List.mem_filter] at hw; exact hw.1⟩
+          h_agree
+        have h_same := colocated_same_phi (kernelPartition k) φ h h_coloc
+        unfold kernelPartition at h_same; rw [← h_same, hφ]
+    | false =>
+      right; rw [← h_bk]
+      exact List.all_eq_true.mpr λ w hw => by
+        have hw_props : k.props.all (λ p => p w) = true := by
+          simp only [propIntersection, List.mem_filter] at hw; exact hw.2
+        have h_agree : ∀ p ∈ k.props, p w₀ = p w := λ p hp => by
+          have := List.all_eq_true.mp hw₀_props p hp
+          have := List.all_eq_true.mp hw_props p hp; simp_all
+        have h_coloc := foldl_refine_preserves_colocated k.props [allWorlds]
+          ⟨allWorlds, .head _, hw₀_all, by
+            simp only [propIntersection, List.mem_filter] at hw; exact hw.1⟩
+          h_agree
+        have h_same := colocated_same_phi (kernelPartition k) φ h h_coloc
+        unfold kernelPartition at h_same; simp [← h_same, hφ]
 
 /-! ## Modal operators (VF&G 2010 Defs 5–6) -/
 
@@ -232,6 +370,40 @@ theorem mastermind_might_red_undefined :
 
 theorem mastermind_redOrBlue_settled :
     directlySettlesExplicit mastermindK redOrBlue = true := by native_decide
+
+/-! ## Non-equivalence of the two implementations (VF&G 2010 §7, p. 379)
+
+The explicit and partition-based implementations of "directly settles" are
+non-equivalent. Implementation 1 settles supersets of K-propositions that
+Implementation 2 misses; Implementation 2 settles propositions determined
+jointly by K-propositions that no single proposition settles. Both, however,
+imply entailment (see `explicit_implies_entailment` and
+`partition_implies_entailment` above). -/
+
+/-- Counterexample (Impl 1 ↛ Impl 2): K = {red}, φ = redOrBlue.
+    red ⊆ redOrBlue so Impl 1 settles, but S_K = {{w0},{w1,w2,w3}}
+    and the cell {w1,w2,w3} straddles redOrBlue. -/
+theorem explicit_not_implies_partition :
+    ∃ (k : Kernel) (φ : BProp World),
+      directlySettlesExplicit k φ = true ∧ settlesByPartition k φ = false :=
+  ⟨⟨[red]⟩, redOrBlue, by native_decide, by native_decide⟩
+
+/-- Counterexample (Impl 2 ↛ Impl 1): K = mastermindK, φ = blue.
+    No single X ∈ K entails or excludes blue, but S_K = {{w0},{w1},{w2,w3}}
+    resolves blue into a union of cells. -/
+theorem partition_not_implies_explicit :
+    ∃ (k : Kernel) (φ : BProp World),
+      settlesByPartition k φ = true ∧ directlySettlesExplicit k φ = false :=
+  ⟨mastermindK, blue, by native_decide, by native_decide⟩
+
+/-- Entailment does not imply partition settling: B_K ⊆ ⟦φ⟧ does not
+    guarantee S_K settles φ. Same witness as explicit_not_implies_partition:
+    K = {red} entails redOrBlue (B_K = {w0} ⊆ ⟦redOrBlue⟧) but the partition
+    cell {w1,w2,w3} straddles redOrBlue. -/
+theorem entailment_not_implies_partition :
+    ∃ (k : Kernel) (φ : BProp World),
+      k.followsFrom φ = true ∧ settlesByPartition k φ = false :=
+  ⟨⟨[red]⟩, redOrBlue, by native_decide, by native_decide⟩
 
 /-! ## Deep theorems (VF&G 2010) -/
 
