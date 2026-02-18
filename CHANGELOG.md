@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.222.9] - 2026-02-18
+
+### Changed
+- Refactor BSML: split theory code out of `Phenomena/Modality/Aloni2022.lean` into `Theories/Semantics/Dynamic/Systems/BSML/Basic.lean` (core types, support/anti-support) and `FreeChoice.lean` (enrichment, FC theorems)
+- Drop phantom type parameter `W` from `BSMLFormula`; bundle `worlds : List W` into `BSMLModel`; drop `worlds` parameter from `support`/`antiSupport` signatures
+- Move `Phenomena/Modality/CompareFC.lean` to `Comparisons/FreeChoice.lean`
+- Clean dead code from `TeamSemantics.lean` (remove `BilateralFormula`, `TeamPartition`, `supports`/`antiSupports`, `TeamProp`, `liftProp`, `isFlat`, `Entails`)
+- Slim `Aloni2022.lean` to bridge file (concrete models, formulas, #eval checks only)
+
 ## [0.222.8] - 2026-02-18
 
 ### Changed
