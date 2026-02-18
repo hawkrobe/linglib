@@ -34,6 +34,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.NaturalLogic
 import Linglib.Core.DecisionTheory
 import Linglib.Core.RationalAction
+import Linglib.Core.UtilityTheory
 import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives

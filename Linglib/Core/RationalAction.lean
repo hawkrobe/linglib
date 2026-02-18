@@ -146,7 +146,7 @@ theorem RationalAction.policy_ratio (ra : RationalAction S A) (s : S) (a₁ a₂
 
 /-- Choice probability from a subset: `pChoice(a, T) = score(a) / Σ_{b∈T} score(b)`.
     Returns 0 if `a ∉ T` or the subset total is 0. -/
-noncomputable def RationalAction.pChoice (ra : RationalAction S A) (s : S)
+noncomputable def RationalAction.pChoice [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) : ℝ :=
   if a ∈ T then
     let subTotal := ∑ b ∈ T, ra.score s b
@@ -154,12 +154,12 @@ noncomputable def RationalAction.pChoice (ra : RationalAction S A) (s : S)
   else 0
 
 /-- `pChoice` on the full set equals `policy`. -/
-theorem RationalAction.pChoice_univ (ra : RationalAction S A) (s : S) (a : A) :
+theorem RationalAction.pChoice_univ [DecidableEq A] (ra : RationalAction S A) (s : S) (a : A) :
     ra.pChoice s Finset.univ a = ra.policy s a := by
   simp only [pChoice, Finset.mem_univ, ↓reduceIte, policy, totalScore]
 
 /-- `pChoice` is non-negative. -/
-theorem RationalAction.pChoice_nonneg (ra : RationalAction S A) (s : S)
+theorem RationalAction.pChoice_nonneg [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) :
     0 ≤ ra.pChoice s T a := by
   simp only [pChoice]
@@ -172,7 +172,7 @@ theorem RationalAction.pChoice_nonneg (ra : RationalAction S A) (s : S)
   · exact le_refl 0
 
 /-- `pChoice` sums to 1 over the subset when the subset total is nonzero. -/
-theorem RationalAction.pChoice_sum_eq_one (ra : RationalAction S A) (s : S)
+theorem RationalAction.pChoice_sum_eq_one [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (hT : ∑ b ∈ T, ra.score s b ≠ 0) :
     ∑ a ∈ T, ra.pChoice s T a = 1 := by
   simp only [pChoice]
@@ -187,7 +187,7 @@ theorem RationalAction.pChoice_sum_eq_one (ra : RationalAction S A) (s : S)
 /-- IIA core: the ratio of `pChoice` values in any subset equals the score ratio.
     For `a₁, a₂ ∈ T` with `score(a₂) > 0`:
     `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (Luce 1959, Axiom 1). -/
-theorem RationalAction.pChoice_ratio (ra : RationalAction S A) (s : S)
+theorem RationalAction.pChoice_ratio [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
     ra.pChoice s T a₁ * ra.score s a₂ = ra.pChoice s T a₂ * ra.score s a₁ := by
   simp only [pChoice, h₁, h₂, ↓reduceIte]
@@ -195,36 +195,44 @@ theorem RationalAction.pChoice_ratio (ra : RationalAction S A) (s : S)
   · simp
   · next hne => field_simp
 
+/-- Helper: `pChoice` value for `a ∈ T` with nonzero total. -/
+private theorem RationalAction.pChoice_mem [DecidableEq A] (ra : RationalAction S A) (s : S)
+    (T : Finset A) (a : A) (ha : a ∈ T) (hT : ∑ b ∈ T, ra.score s b ≠ 0) :
+    ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
+  simp only [pChoice, ha, hT, ↓reduceIte]
+
 /-- IIA (Luce 1959, Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
     Choice probability from a subset is the conditional probability. -/
-theorem RationalAction.iia (ra : RationalAction S A) (s : S)
+theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
     (S' T : Finset A) (hST : S' ⊆ T)
     (a : A) (ha : a ∈ S')
     (hS_pos : ∑ b ∈ S', ra.score s b ≠ 0)
     (hT_pos : ∑ b ∈ T, ra.score s b ≠ 0) :
     ra.pChoice s S' a = ra.pChoice s T a / ∑ b ∈ S', ra.pChoice s T b := by
-  simp only [pChoice, ha, ↓reduceIte, hS_pos, hT_pos]
-  have hmem : ∀ b ∈ S', b ∈ T := fun b hb => hST hb
-  have hsum_simp : ∑ b ∈ S', (if b ∈ T then if ∑ c ∈ T, ra.score s c = 0 then 0
-      else ra.score s b / ∑ c ∈ T, ra.score s c else 0) =
-      ∑ b ∈ S', (ra.score s b / ∑ c ∈ T, ra.score s c) := by
-    apply Finset.sum_congr rfl
-    intro b hb; simp [hmem b hb, hT_pos]
-  rw [hsum_simp, ← Finset.sum_div]
+  rw [ra.pChoice_mem s S' a ha hS_pos, ra.pChoice_mem s T a (hST ha) hT_pos]
+  have hsum : ∑ b ∈ S', ra.pChoice s T b =
+      (∑ b ∈ S', ra.score s b) / ∑ c ∈ T, ra.score s c := by
+    have : ∀ b ∈ S', ra.pChoice s T b = ra.score s b / ∑ c ∈ T, ra.score s c :=
+      fun b hb => ra.pChoice_mem s T b (hST hb) hT_pos
+    rw [Finset.sum_congr rfl this, Finset.sum_div]
+  rw [hsum]
   field_simp
 
 /-- Product rule (Luce 1959, Theorem 1):
     `P(a, T) = P(a, S) · P(S, T)` for `a ∈ S ⊆ T`,
     where `P(S, T) = Σ_{b∈S} score(b) / Σ_{b∈T} score(b)`. -/
-theorem RationalAction.product_rule (ra : RationalAction S A) (s : S)
+theorem RationalAction.product_rule [DecidableEq A] (ra : RationalAction S A) (s : S)
     (S' T : Finset A) (hST : S' ⊆ T)
     (a : A) (ha : a ∈ S')
     (hS_pos : ∑ b ∈ S', ra.score s b ≠ 0)
     (hT_pos : ∑ b ∈ T, ra.score s b ≠ 0) :
     ra.pChoice s T a =
-    ra.pChoice s S' a * (∑ b ∈ S', ra.score s b / ∑ b ∈ T, ra.score s b) := by
-  simp only [pChoice, ha, hST ha, ↓reduceIte, hS_pos, hT_pos]
-  field_simp
+    ra.pChoice s S' a * ((∑ b ∈ S', ra.score s b) / ∑ b ∈ T, ra.score s b) := by
+  rw [ra.pChoice_mem s T a (hST ha) hT_pos, ra.pChoice_mem s S' a ha hS_pos]
+  have hS_ne : (∑ b ∈ S', ra.score s b) ≠ 0 := hS_pos
+  rw [div_mul_div_comm, show ra.score s a * ∑ b ∈ S', ra.score s b =
+      (∑ b ∈ S', ra.score s b) * ra.score s a from mul_comm _ _,
+      mul_div_mul_left _ _ hS_ne]
 
 /-- Scale all scores by a positive constant `k`. -/
 noncomputable def RationalAction.scaleBy (ra : RationalAction S A) (k : ℝ) (hk : 0 < k) :
@@ -236,21 +244,12 @@ noncomputable def RationalAction.scaleBy (ra : RationalAction S A) (k : ℝ) (hk
 theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     (k : ℝ) (hk : 0 < k) :
     (ra.scaleBy k hk).policy s a = ra.policy s a := by
-  simp only [policy, scaleBy, totalScore]
+  simp only [policy, scaleBy, totalScore, ← Finset.mul_sum]
   have hk_ne : k ≠ 0 := ne_of_gt hk
-  simp only [← Finset.mul_sum]
-  split
-  · next h =>
-    have : ra.totalScore s = 0 := by
-      simp only [totalScore]
-      rcases mul_eq_zero.mp h with hk0 | hs0
-      · exact absurd hk0 hk_ne
-      · exact hs0
-    simp [policy, this]
-  · next hne =>
-    have hne' : ra.totalScore s ≠ 0 := by
-      simp only [totalScore]
-      intro h; exact hne (by simp [← Finset.mul_sum, h])
+  by_cases hs0 : ∑ a' : A, ra.score s a' = 0
+  · simp [hs0]
+  · have hne : k * ∑ a' : A, ra.score s a' ≠ 0 := mul_ne_zero hk_ne hs0
+    simp [hs0, hne]
     field_simp
 
 /-- Uniqueness (forward direction, Luce 1959, Theorem 4):
@@ -261,9 +260,7 @@ theorem RationalAction.policy_eq_of_proportional (ra ra' : RationalAction S A) (
     ra'.policy s a = ra.policy s a := by
   simp only [policy, totalScore]
   have hk_ne : k ≠ 0 := ne_of_gt hk
-  conv_lhs => rw [show ∑ a' : A, ra'.score s a' = k * ∑ a' : A, ra.score s a' from by
-    simp_rw [h, Finset.mul_sum]]
-  rw [h]
+  simp_rw [h, ← Finset.mul_sum]
   by_cases hs0 : ∑ a' : A, ra.score s a' = 0
   · simp [hs0]
   · have hne : k * ∑ a' : A, ra.score s a' ≠ 0 := mul_ne_zero hk_ne hs0
@@ -699,11 +696,39 @@ theorem shannonEntropy_nonneg (p : ι → ℝ)
     have hlog : log (p i) ≤ 0 := log_nonpos (le_of_lt hp_pos) hp_le
     exact mul_nonpos_of_nonneg_of_nonpos (le_of_lt hp_pos) hlog
 
-/-- Maximum entropy is achieved by uniform distribution. -/
+/-- Maximum entropy is achieved by uniform distribution.
+
+Proof: KL(p ‖ uniform) ≥ 0, and KL(p ‖ uniform) = log n - H(p). -/
 theorem shannonEntropy_le_log_card (p : ι → ℝ)
     (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     shannonEntropy p ≤ log (Fintype.card ι) := by
-  sorry
+  -- Use KL(p ‖ uniform) ≥ 0
+  set n := (Fintype.card ι : ℝ) with hn_def
+  have hn_pos : 0 < n := Nat.cast_pos.mpr Fintype.card_pos
+  have hn_ne : n ≠ 0 := ne_of_gt hn_pos
+  set q : ι → ℝ := λ _ => 1 / n with hq_def
+  have hq_pos : ∀ i, 0 < q i := fun _ => by simp [hq_def]; positivity
+  have hq_sum : ∑ i, q i = 1 := by
+    simp only [hq_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hn_def]
+    field_simp
+  have hkl := kl_nonneg' hp_nonneg hq_pos hp_sum hq_sum
+  -- KL(p ‖ q) = -H(p) - Σ pᵢ log(1/n) = -H(p) + log n
+  suffices h : klFinite p q = -shannonEntropy p + log n by linarith
+  simp only [klFinite, shannonEntropy]
+  -- Each term: if p=0 then 0 else p*log(p/q) = (if p=0 then 0 else p*log p) + p*log n
+  have hterm : ∀ i, (if p i = 0 then (0 : ℝ) else p i * log (p i / q i)) =
+      (if p i = 0 then (0 : ℝ) else p i * log (p i)) + p i * log n := by
+    intro i
+    by_cases hp0 : p i = 0
+    · simp [hp0]
+    · simp only [hp0, ↓reduceIte]
+      have hq_ne : q i ≠ 0 := ne_of_gt (hq_pos i)
+      rw [log_div hp0 hq_ne]
+      have : log (q i) = -log n := by
+        simp only [hq_def, log_div one_ne_zero hn_ne, log_one, zero_sub]
+      rw [this]; ring
+  simp_rw [hterm]
+  rw [Finset.sum_add_distrib, ← Finset.sum_mul, hp_sum, one_mul, neg_neg]
 
 /-- Entropy of uniform distribution. -/
 theorem shannonEntropy_uniform :
@@ -763,18 +788,117 @@ theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- Fact 5: Softmax maximizes the entropy-regularized objective. -/
+omit [Nonempty ι] in
+/-- Shannon entropy equals sum of negMulLog for distributions. -/
+private theorem shannonEntropy_eq_negMulLog (p : ι → ℝ)
+    (_hp_nonneg : ∀ i, 0 ≤ p i) :
+    shannonEntropy p = ∑ i, Real.negMulLog (p i) := by
+  simp only [shannonEntropy, Real.negMulLog]
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  by_cases hp0 : p i = 0
+  · simp [hp0]
+  · simp only [hp0, ↓reduceIte, neg_mul]
+
+/-- Fact 5: Softmax maximizes the entropy-regularized objective.
+
+Proof: `gibbs_variational` gives `H(p) + α⟨p,s⟩ ≤ H(q) + α⟨q,s⟩`;
+dividing by `α > 0` yields the result. -/
 theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     entropyRegObjective s α p ≤ entropyRegObjective s α (softmax s α) := by
-  sorry
+  simp only [entropyRegObjective]
+  have hgibbs := gibbs_variational s α p hp_nonneg hp_sum
+  -- Rewrite Shannon entropy as sum of negMulLog
+  rw [shannonEntropy_eq_negMulLog p hp_nonneg,
+      shannonEntropy_eq_negMulLog (softmax s α) (fun i => softmax_nonneg s α i)]
+  -- gibbs_variational: Σ negMulLog(pᵢ) + α Σ pᵢsᵢ ≤ Σ negMulLog(qᵢ) + α Σ qᵢsᵢ
+  -- We need: Σ pᵢsᵢ + (1/α)(Σ negMulLog(pᵢ)) ≤ Σ qᵢsᵢ + (1/α)(Σ negMulLog(qᵢ))
+  -- This follows from dividing by α > 0
+  have hα_ne : α ≠ 0 := ne_of_gt hα
+  -- gibbs_variational: H(p)+α⟨p,s⟩ ≤ H(q)+α⟨q,s⟩, divide by α > 0
+  have h := div_le_div_of_nonneg_right hgibbs (le_of_lt hα)
+  simp only [add_div, mul_div_cancel_left₀ _ hα_ne] at h
+  -- h : Σ negMulLog(pᵢ) / α + Σ pᵢsᵢ ≤ Σ negMulLog(qᵢ) / α + Σ qᵢsᵢ
+  -- Convert div to 1/α * to match entropyRegObjective
+  simp only [div_eq_inv_mul] at h
+  rw [show (α⁻¹ : ℝ) = 1 / α from by ring] at h
+  linarith
 
-/-- Softmax is the unique maximizer. -/
+omit [Nonempty ι] in
+/-- KL divergence zero implies distributions are equal (when q > 0 and sums match). -/
+private theorem kl_eq_zero_imp_eq (p q : ι → ℝ) (hq_pos : ∀ i, 0 < q i)
+    (hp_nonneg : ∀ i, 0 ≤ p i) (hsum : ∑ i, p i = ∑ i, q i)
+    (hkl : klFinite p q = 0) :
+    p = q := by
+  rw [kl_eq_sum_klFun p q hq_pos hp_nonneg hsum] at hkl
+  funext i
+  have hpi_div_qi_nonneg : 0 ≤ p i / q i := div_nonneg (hp_nonneg i) (le_of_lt (hq_pos i))
+  have hqi_pos : 0 < q i := hq_pos i
+  have hqi_nonneg : 0 ≤ q i := le_of_lt hqi_pos
+  -- Each term q_i * klFun(p_i/q_i) ≥ 0 and their sum = 0
+  have hterm_nonneg : ∀ j, 0 ≤ q j * InformationTheory.klFun (p j / q j) := by
+    intro j; exact mul_nonneg (le_of_lt (hq_pos j))
+      (InformationTheory.klFun_nonneg (div_nonneg (hp_nonneg j) (le_of_lt (hq_pos j))))
+  have hterm_zero : q i * InformationTheory.klFun (p i / q i) = 0 := by
+    have hsz := Finset.sum_eq_zero_iff_of_nonneg (fun j _ => hterm_nonneg j) |>.mp hkl
+    exact hsz i (Finset.mem_univ i)
+  -- q_i > 0 so klFun(p_i/q_i) = 0, hence p_i/q_i = 1
+  rcases mul_eq_zero.mp hterm_zero with hq0 | hkl0
+  · exact absurd hq0 (ne_of_gt hqi_pos)
+  · rw [InformationTheory.klFun_eq_zero_iff hpi_div_qi_nonneg] at hkl0
+    exact div_eq_one_iff_eq (ne_of_gt hqi_pos) |>.mp hkl0
+
+/-- Softmax is the unique maximizer.
+
+Proof: equality in the objective ⟹ KL(p ‖ softmax) = 0 (via `speakerObj_plus_kl`),
+hence p = softmax (via `kl_eq_zero_imp_eq`). -/
 theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1)
     (h_max : entropyRegObjective s α p = entropyRegObjective s α (softmax s α)) :
     p = softmax s α := by
-  sorry
+  set q := softmax s α with hq_def
+  have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos s α i
+  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one s α
+  -- From speakerObj_plus_kl: speakerObj(p) + KL(p ‖ q) = logSumExp = speakerObj(q) + 0
+  have h_p := speakerObj_plus_kl s α p hp_nonneg hp_sum
+  have h_q := speakerObj_plus_kl s α q (fun i => le_of_lt (hq_pos i)) hq_sum
+  -- KL(q ‖ q) = 0
+  have hkl_self : klFinite q q = 0 := by
+    simp only [klFinite]
+    apply Finset.sum_eq_zero
+    intro i _
+    have hne : q i ≠ 0 := ne_of_gt (hq_pos i)
+    simp [hne]
+  rw [hkl_self, add_zero] at h_q
+  -- So KL(p ‖ q) = logSumExp - speakerObj(p) = speakerObj(q) - speakerObj(p)
+  have hkl_val : klFinite p q = speakerObj s α q - speakerObj s α p := by linarith
+  -- entropyRegObjective equality means speakerObj equality (up to rescaling)
+  -- entropyRegObjective = Σ p*s + (1/α) * H(p)
+  -- speakerObj = Σ negMulLog(p) + α * Σ p*s  (i.e. H(p) + α⟨p,s⟩ but per-element)
+  -- We showed: entropyRegObj(p) = (1/α) * speakerObj(p)
+  have hobj_eq : speakerObj s α p = speakerObj s α q := by
+    -- entropyRegObjective = Σ p*s + (1/α)*H(p) = (1/α)(H(p) + α Σ p*s) = (1/α)*speakerObj
+    have hα_ne' : α ≠ 0 := ne_of_gt hα
+    have hconv : ∀ r : ι → ℝ, (∀ i, 0 ≤ r i) →
+        entropyRegObjective s α r = (1 / α) * speakerObj s α r := by
+      intro r hr_nn
+      simp only [entropyRegObjective, speakerObj]
+      rw [shannonEntropy_eq_negMulLog r hr_nn, Finset.mul_sum, ← Finset.sum_add_distrib,
+          Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      field_simp
+      ring
+    have h1 := hconv p hp_nonneg
+    have h2 := hconv q (fun i => le_of_lt (hq_pos i))
+    have hα_ne : (1 : ℝ) / α ≠ 0 := by positivity
+    rw [h1, h2] at h_max
+    exact mul_left_cancel₀ hα_ne h_max
+  -- Therefore KL(p ‖ q) = 0
+  have hkl_zero : klFinite p q = 0 := by linarith
+  exact kl_eq_zero_imp_eq p q hq_pos hp_nonneg (by rw [hp_sum, hq_sum]) hkl_zero
 
 /-- Free energy (from statistical mechanics). -/
 noncomputable def freeEnergy (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
@@ -789,12 +913,20 @@ theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
   simp only [entropyRegObjective] at h
   linarith
 
-/-- The log-partition function is convex in α. -/
+/-- The log-partition function is convex in α.
+
+TODO: Proof sketch — second derivative is variance of s under softmax(s, α),
+which is ≥ 0. Requires Hölder's inequality or the second-derivative test
+for finite sums, which is not currently available in Mathlib in usable form. -/
 theorem logSumExp_convex (s : ι → ℝ) :
     ConvexOn ℝ Set.univ (λ α => logSumExp s α) := by
   sorry
 
-/-- Derivative of log-partition gives expected value. -/
+/-- Derivative of log-partition gives expected value.
+
+TODO: Proof sketch — `d/dα log(Σ exp(α sᵢ)) = Σ sᵢ exp(α sᵢ) / Σ exp(α sⱼ)`.
+Requires `HasDerivAt` for `log ∘ Σ exp(α · sᵢ)` via chain rule and `hasDerivAt_exp`,
+then `hasDerivAt_finset_sum`. Doable but involved; lower priority. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     deriv (λ α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
   sorry
