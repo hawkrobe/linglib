@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.221.2] - 2026-02-17
+
+### Added
+- Add `Theories/Morphology/Core/Circumfix.lean` — theory-neutral `CircumfixExponence` structure for discontinuous morphology (prefix + stem + suffix)
+- Bridge theorems connecting to `AttachmentSide.circumfix` from Core/MorphRule
+- German past participle `ge-...-t` example with surface form verification
+
 ## [0.221.1] - 2026-02-17
 
 ### Added
