@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.223.1] - 2026-02-18
+
+### Added
+- Formalize Luce (1959) Choice Axiom (IIA) in `Core/RationalAction.lean` §1a: constant ratio rule, subset choice (`pChoice`), IIA theorem, product rule, scale invariance, proportional-scores uniqueness
+- New `Core/UtilityTheory.lean`: Luce Chapter 3 gamble choice theory — decomposition axiom, monotonicity axiom, event equivalence classes, scale decomposition, RSA utility decomposition bridge
+
+### Changed
+- Close 3 `sorry`s in `Core/RationalAction.lean`: `shannonEntropy_le_log_card` (via KL(p‖uniform) ≥ 0), `softmax_maximizes_entropyReg` (via Gibbs VP / α), `softmax_unique_maximizer` (via KL = 0 ⟹ p = q using `klFun_eq_zero_iff`)
+- Add helper lemmas: `shannonEntropy_eq_negMulLog`, `kl_eq_zero_imp_eq`
+- Improve proof sketches for remaining `sorry`s (`logSumExp_convex`, `deriv_logSumExp`)
+
 ## [0.223.0] - 2026-02-18
 
 ### Changed
