@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.221.0] - 2026-02-17
+
+### Added
+- Add `Force`, `Neg`, `Mod`, `Rel`, `Pol` to `Cat` — five new functional heads for cartographic syntax
+  - Force (Rizzi 1997): clause-typing head, fValue 6 (same as C when unsplit)
+  - Neg (Pollock 1989; Zanuttini 1997): negation head, fValue 2 (IP-internal)
+  - Mod (Cinque 1999): modality head, fValue 2 (IP-internal)
+  - Rel (Rizzi 2001): relativization head, fValue 5 (topic field)
+  - Pol (Laka 1990): polarity head, fValue 2 (IP-internal)
+- Add `negVerbalEP` and `fullRizziLP` EP spines with consistency/monotonicity theorems
+- Add `force_equals_c_fvalue`, `neg_in_inflectional_domain`, `new_heads_verbal` theorems
+- Update `catFeatures`, `fValue`, `catFamily`, `epSemanticType`, `argumentDomainCat` for new heads
+
+### Changed
+- Remove `#eval` test sections from ExtendedProjection/Basic.lean and Properties.lean — all checks are now theorems
+
 ## [0.220.0] - 2026-02-17
 
 ### Changed
