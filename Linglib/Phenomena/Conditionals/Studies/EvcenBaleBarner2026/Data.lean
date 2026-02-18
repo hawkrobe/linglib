@@ -2,7 +2,7 @@ import Linglib.Core.Empirical
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Evcen, Bale & Barner (2026) — Conditional Perfection Data
+# Evcen, Bale & Barner (2026) — Conditional Perfection Data @cite{evcen-bale-barner-2026}
 
 Theory-neutral empirical data on conditional perfection from three experiments
 by Evcen, Bale & Barner (2026).

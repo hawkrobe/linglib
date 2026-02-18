@@ -9,6 +9,10 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 **Alsop, A.** (2024). The Pragmatics of Free Choice Any. *Glossa: a journal of general linguistics, 9(1)*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Alsop2024.lean)
 
+**Baker, C. L., Jara-Ettinger, J., Saxe, R. & Tenenbaum, J. B.** (2017). Rational Quantitative Attribution of Beliefs, Desires and Percepts in Human Mentalizing. *Nature Human Behaviour, 1, 0064*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/BToM.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
+cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean), [BToM](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/BToM.lean)
+
 **Barnett, S. A., Griffiths, T. L. & Hawkins, R. D.** (2022). A Pragmatic Account of the Weak Evidence Effect. *Open Mind, 6, 169–182*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean)
 
@@ -205,6 +209,10 @@ cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 
 ## Semantics — Focus & Information Structure
 
+**Aremu, D.** (2026). Focus Sensitivity in Mabia and Yoruboid. *PhD dissertation, Goethe University Frankfurt*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Yoruba/FocusParticles.lean)\
+cited in: [FocusParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Yoruba/FocusParticles.lean)
+
 **Kratzer, A. & Selkirk, E.** (2020). Deconstructing Information Structure. *Glossa, 5(1), 113*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
 
@@ -248,6 +256,10 @@ cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Ling
 
 **Wurmbrand, S.** (2014). Tense and Aspect in English Infinitives. *Linguistic Inquiry, 45(3), 403–447*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Tense/Wurmbrand.lean)
+
+**Zhao, Z.** (2026). Cross-Linguistic and Cross-Domain Parallels in the Semantics of Degree and Time. *PhD dissertation, Massachusetts Institute of Technology*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Aspect/CrossDomainBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean)\
+cited in: [AtomicDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean), [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean), [CrossDomainBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Aspect/CrossDomainBridge.lean), [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean), [DegreeEvents](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean)
 
 ## Semantics — Lexical (Adjectives, Nouns, Plurals, Events)
 
@@ -300,8 +312,16 @@ cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Ling
 
 ## Semantics — Presupposition & Entailment
 
+**Heim, I.** (1983). On the Projection Problem for Presuppositions. *Proceedings of the West Coast Conference on Formal Linguistics, 2, 114–125*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
+cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)
+
 **Heim, I.** (1992). Presupposition Projection and the Semantics of Attitude Verbs. *Journal of Semantics, 9(3), 183–221*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)
+
+**Schlenker, P.** (2009). Local Contexts. *Semantics and Pragmatics, 2, 1–78*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
+cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)
 
 **von Fintel, K.** (1999). NPI Licensing, Strawson Entailment, and Context Dependency. *Journal of Semantics, 16(2), 97–148*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)
