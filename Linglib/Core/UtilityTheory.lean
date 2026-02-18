@@ -17,11 +17,13 @@ This module formalizes:
 2. **Decomposition Axiom** (Axiom 2): When outcomes are fixed, choice between gambles
    depends only on the events.
 3. **Monotonicity Axiom** (Axiom 3): Preferred outcome + preferred event → preferred gamble.
-4. **Three equivalence classes** (Theorem 12): Events partition into favorable, neutral,
-   and unfavorable classes.
-5. **Scale decomposition** (§3.D): `v(aρb) = w(a,b) · φ(ρ)` — gamble value factors
+4. **Luce ratio scales** (§2a): The Luce choice axiom applied to event and gamble
+   choice functions, providing ratio-scale representations `Q(ρ,σ) = v(ρ)/(v(ρ)+v(σ))`.
+5. **Three equivalence classes** (Theorem 12): Under the Luce choice axiom, events
+   classified as neutral relative to a reference are indifferent: Q(ρ,σ) = ½.
+6. **Scale decomposition** (§3.D): `v(aρb) = w(a,b) · φ(ρ)` — gamble value factors
    into outcome value × event weight.
-6. **RSA bridge**: RSA's additive utility structure `utility = informativity - cost`
+7. **RSA bridge**: RSA's additive utility structure `utility = informativity - cost`
    follows from Luce's decomposition in log-space.
 
 ## References
@@ -113,6 +115,26 @@ structure MonotonicityAxiom (P : GambleChoiceFn Outcome)
     P.prob ⟨a, ρ, b⟩ ⟨b, σ, a⟩ ≥ 1/2
 
 -- ============================================================================
+-- §2a. Luce Ratio Scales for Choice Functions
+-- ============================================================================
+
+/-- A Luce ratio scale for an event choice function: Q(ρ,σ) = v(ρ)/(v(ρ)+v(σ))
+    for some positive scoring function v. This is the event-level analog of the
+    Luce choice rule from `RationalAction`. -/
+structure EventLuceScale (Q : EventChoiceFn) where
+  v : Event → ℝ
+  v_pos : ∀ ρ, 0 < v ρ
+  luce_rule : ∀ ρ σ, Q.prob ρ σ = v ρ / (v ρ + v σ)
+
+/-- A Luce ratio scale for a gamble choice function: P(g₁,g₂) = v(g₁)/(v(g₁)+v(g₂))
+    for some positive scoring function v. This is the gamble-level Luce choice axiom
+    (Luce 1959, Chapter 1 applied to gamble alternatives). -/
+structure GambleLuceScale (P : GambleChoiceFn Outcome) where
+  v : Gamble Outcome → ℝ
+  v_pos : ∀ g, 0 < v g
+  luce_rule : ∀ g₁ g₂, P.prob g₁ g₂ = v g₁ / (v g₁ + v g₂)
+
+-- ============================================================================
 -- §3. Event Equivalence Classes (Theorem 12)
 -- ============================================================================
 
@@ -132,16 +154,116 @@ noncomputable def classifyEvent (Q : EventChoiceFn) (ref : Event) (ρ : Event) :
   else if Q.prob ρ ref < 1/2 then .unfavorable
   else .neutral
 
-/-- **Three equivalence classes theorem** (Luce 1959, Theorem 12):
-    Under the decomposition and monotonicity axioms, events partition into
-    exactly three equivalence classes: favorable, neutral, and unfavorable.
+/-- Extract Q.prob ρ ref = 1/2 from neutral classification. -/
+private lemma neutral_imp_prob_eq_half (Q : EventChoiceFn) (ref ρ : Event)
+    (h : classifyEvent Q ref ρ = .neutral) : Q.prob ρ ref = 1/2 := by
+  have h1 : ¬(Q.prob ρ ref > 1/2) := by
+    intro hgt; unfold classifyEvent at h; rw [if_pos hgt] at h; exact absurd h (by decide)
+  have h2 : ¬(Q.prob ρ ref < 1/2) := by
+    intro hlt; unfold classifyEvent at h; rw [if_neg h1, if_pos hlt] at h
+    exact absurd h (by decide)
+  linarith [not_lt.mp h1, not_lt.mp h2]
 
-    Events within the same class have Q(ρ, σ) = ½ (indifference).
-    Between classes: favorable > neutral > unfavorable. -/
-theorem threeClasses (Q : EventChoiceFn) (ref : Event) (ρ σ : Event)
-    (hclass : classifyEvent Q ref ρ = classifyEvent Q ref σ) :
+set_option linter.unusedTactic false in
+set_option linter.unreachableTactic false in
+/-- Extract Q.prob ρ ref > 1/2 from favorable classification. -/
+private lemma favorable_imp_gt_half (Q : EventChoiceFn) (ref ρ : Event)
+    (h : classifyEvent Q ref ρ = .favorable) : Q.prob ρ ref > 1/2 := by
+  unfold classifyEvent at h
+  split_ifs at h with h1
+  · exact h1
+  all_goals exact absurd h (by decide)
+
+/-- Extract Q.prob ρ ref < 1/2 from unfavorable classification. -/
+private lemma unfavorable_imp_lt_half (Q : EventChoiceFn) (ref ρ : Event)
+    (h : classifyEvent Q ref ρ = .unfavorable) : Q.prob ρ ref < 1/2 := by
+  by_contra h2; push_neg at h2
+  by_cases h1 : Q.prob ρ ref > 1/2
+  · unfold classifyEvent at h; rw [if_pos h1] at h; exact absurd h (by decide)
+  · unfold classifyEvent at h; rw [if_neg h1, if_neg (not_lt_of_ge h2)] at h
+    exact absurd h (by decide)
+
+/-- Under a Luce scale, Q(ρ,σ) = 1/2 iff v(ρ) = v(σ). -/
+private lemma luce_eq_half_iff {Q : EventChoiceFn} (hScale : EventLuceScale Q)
+    (ρ σ : Event) : Q.prob ρ σ = 1/2 ↔ hScale.v ρ = hScale.v σ := by
+  rw [hScale.luce_rule]
+  constructor
+  · intro h
+    have hne : hScale.v ρ + hScale.v σ ≠ 0 := by
+      linarith [hScale.v_pos ρ, hScale.v_pos σ]
+    rw [div_eq_iff hne] at h; linarith
+  · intro h
+    have hne : hScale.v ρ + hScale.v σ ≠ 0 := by
+      linarith [hScale.v_pos ρ, hScale.v_pos σ]
+    rw [div_eq_iff hne, h]; ring
+
+/-- **Neutral class indifference** (Luce 1959, Theorem 12):
+    Under the Luce choice axiom, events classified as neutral relative to a
+    reference event are indifferent to each other: Q(ρ, σ) = ½.
+
+    If v(ρ) = v(ref) (neutral) and v(σ) = v(ref) (neutral), then v(ρ) = v(σ),
+    hence Q(ρ,σ) = v(ρ)/(v(ρ)+v(σ)) = ½.
+
+    Note: For favorable and unfavorable events, same-class membership does NOT
+    imply indifference — events within these classes can have different v-values
+    and thus Q(ρ,σ) ≠ ½. See `favorable_over_unfavorable` for the between-class
+    ordering. -/
+theorem threeClasses (Q : EventChoiceFn) (hScale : EventLuceScale Q)
+    (ref : Event) (ρ σ : Event)
+    (hρ : classifyEvent Q ref ρ = .neutral)
+    (hσ : classifyEvent Q ref σ = .neutral) :
     Q.prob ρ σ = 1/2 := by
-  sorry -- TODO: requires transitivity of preference + decomposition axiom interaction
+  have hv_ρ := (luce_eq_half_iff hScale ρ ref).mp (neutral_imp_prob_eq_half Q ref ρ hρ)
+  have hv_σ := (luce_eq_half_iff hScale σ ref).mp (neutral_imp_prob_eq_half Q ref σ hσ)
+  exact (luce_eq_half_iff hScale ρ σ).mpr (by linarith)
+
+/-- Between-class ordering: favorable events are preferred over unfavorable events.
+    If v(ρ) > v(ref) (favorable) and v(σ) < v(ref) (unfavorable),
+    then v(ρ) > v(σ), hence Q(ρ,σ) > ½. -/
+theorem favorable_over_unfavorable (Q : EventChoiceFn) (hScale : EventLuceScale Q)
+    (ref : Event) (ρ σ : Event)
+    (hρ : classifyEvent Q ref ρ = .favorable)
+    (hσ : classifyEvent Q ref σ = .unfavorable) :
+    Q.prob ρ σ > 1/2 := by
+  suffices h : hScale.v σ < hScale.v ρ by
+    rw [hScale.luce_rule, gt_iff_lt,
+        lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v σ from
+          by linarith [hScale.v_pos ρ, hScale.v_pos σ])]
+    linarith
+  have h1 : hScale.v ref < hScale.v ρ := by
+    have := favorable_imp_gt_half Q ref ρ hρ
+    rw [hScale.luce_rule, gt_iff_lt,
+        lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v ref from
+          by linarith [hScale.v_pos ρ, hScale.v_pos ref])] at this
+    linarith
+  have h2 : hScale.v σ < hScale.v ref := by
+    have := unfavorable_imp_lt_half Q ref σ hσ
+    rw [hScale.luce_rule,
+        div_lt_iff₀ (show (0 : ℝ) < hScale.v σ + hScale.v ref from
+          by linarith [hScale.v_pos σ, hScale.v_pos ref])] at this
+    linarith
+  linarith
+
+/-- Between-class ordering: favorable events are preferred over neutral events. -/
+theorem favorable_over_neutral (Q : EventChoiceFn) (hScale : EventLuceScale Q)
+    (ref : Event) (ρ σ : Event)
+    (hρ : classifyEvent Q ref ρ = .favorable)
+    (hσ : classifyEvent Q ref σ = .neutral) :
+    Q.prob ρ σ > 1/2 := by
+  suffices h : hScale.v σ < hScale.v ρ by
+    rw [hScale.luce_rule, gt_iff_lt,
+        lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v σ from
+          by linarith [hScale.v_pos ρ, hScale.v_pos σ])]
+    linarith
+  have h1 : hScale.v ref < hScale.v ρ := by
+    have := favorable_imp_gt_half Q ref ρ hρ
+    rw [hScale.luce_rule, gt_iff_lt,
+        lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v ref from
+          by linarith [hScale.v_pos ρ, hScale.v_pos ref])] at this
+    linarith
+  have h2 : hScale.v σ = hScale.v ref :=
+    (luce_eq_half_iff hScale σ ref).mp (neutral_imp_prob_eq_half Q ref σ hσ)
+  linarith
 
 -- ============================================================================
 -- §4. Scale Decomposition
@@ -167,19 +289,81 @@ noncomputable def ScaleDecomposition.gambleValue (sd : ScaleDecomposition Outcom
     (g : Gamble Outcome) : ℝ :=
   sd.outcomeValue g.win g.lose * sd.eventWeight g.event
 
+/-- Algebraic fact: equal fractions x/(x+y) imply equal ratios x/y.
+    From x₁/(x₁+y₁) = x₂/(x₂+y₂), cross-multiplying gives
+    x₁·y₂ = x₂·y₁, hence x₁/y₁ = x₂/y₂. -/
+private lemma ratio_eq_of_frac_eq {x₁ y₁ x₂ y₂ : ℝ}
+    (_hx₁ : 0 < x₁) (hy₁ : 0 < y₁) (_hx₂ : 0 < x₂) (hy₂ : 0 < y₂)
+    (h : x₁ / (x₁ + y₁) = x₂ / (x₂ + y₂)) :
+    x₁ / y₁ = x₂ / y₂ := by
+  have h1 : x₁ + y₁ ≠ 0 := by linarith
+  have h2 : x₂ + y₂ ≠ 0 := by linarith
+  rw [div_eq_div_iff h1 h2] at h
+  rw [div_eq_div_iff (ne_of_gt hy₁) (ne_of_gt hy₂)]
+  nlinarith
+
+omit [DecidableEq Outcome] in
+/-- The ratio v(a₁,ρ,b₁)/v(a₁,σ,b₁) is independent of outcomes (a₁,b₁).
+    Both ratios equal Q(ρ,σ)/Q(σ,ρ) via the decomposition axiom + Luce scale. -/
+private lemma ratio_independent (P : GambleChoiceFn Outcome) (hLuce : GambleLuceScale P)
+    (hDecomp : DecompositionAxiom P)
+    (a₁ b₁ a₂ b₂ : Outcome) (ρ σ : Event) :
+    hLuce.v ⟨a₁, ρ, b₁⟩ / hLuce.v ⟨a₁, σ, b₁⟩ =
+    hLuce.v ⟨a₂, ρ, b₂⟩ / hLuce.v ⟨a₂, σ, b₂⟩ := by
+  apply ratio_eq_of_frac_eq (hLuce.v_pos _) (hLuce.v_pos _) (hLuce.v_pos _) (hLuce.v_pos _)
+  rw [← hLuce.luce_rule, ← hLuce.luce_rule, hDecomp.decomp, hDecomp.decomp]
+
+omit [DecidableEq Outcome] in
+/-- The Luce scale value factors multiplicatively:
+    v(g) = v(g.win, ρ₀, g.lose) · v(a₀, g.event, b₀) / v(a₀, ρ₀, b₀).
+    This is the core step of the decomposition: the ratio v(g)/v(g.win,ρ₀,g.lose)
+    depends only on the event (not on outcomes), so it can be factored out. -/
+private lemma v_eq_product (P : GambleChoiceFn Outcome) (hLuce : GambleLuceScale P)
+    (hDecomp : DecompositionAxiom P) (ρ₀ : Event) (a₀ b₀ : Outcome)
+    (g : Gamble Outcome) :
+    hLuce.v g = hLuce.v ⟨g.win, ρ₀, g.lose⟩ *
+      (hLuce.v ⟨a₀, g.event, b₀⟩ / hLuce.v ⟨a₀, ρ₀, b₀⟩) := by
+  have hratio := ratio_independent P hLuce hDecomp g.win g.lose a₀ b₀ g.event ρ₀
+  -- hratio : v(g) / v(g.win,ρ₀,g.lose) = v(a₀,g.event,b₀) / v(a₀,ρ₀,b₀)
+  have hne : hLuce.v ⟨g.win, ρ₀, g.lose⟩ ≠ 0 := ne_of_gt (hLuce.v_pos _)
+  have hne' : hLuce.v ⟨a₀, ρ₀, b₀⟩ ≠ 0 := ne_of_gt (hLuce.v_pos _)
+  field_simp at hratio ⊢
+  nlinarith
+
+omit [DecidableEq Outcome] in
 /-- **Scale decomposition theorem** (Luce 1959, §3.D):
-    Under Axioms 1–3, the choice probability for gambles can be represented as
-    a Luce choice rule with scores that factor as `v(aρb) = w(a,b) · φ(ρ)`. -/
+    Under the Luce choice axiom and the decomposition axiom, the choice
+    probability for gambles can be represented as a Luce choice rule with
+    scores that factor as `v(aρb) = w(a,b) · φ(ρ)`.
+
+    The construction: fix a reference event ρ₀ and reference outcomes a₀, b₀.
+    - `w(a,b) := v(a,ρ₀,b)` (gamble value with reference event)
+    - `φ(ρ) := v(a₀,ρ,b₀) / v(a₀,ρ₀,b₀)` (event weight normalized by reference)
+
+    The decomposition axiom ensures that v(g)/v(g.win,ρ₀,g.lose) depends only
+    on the event, so v(g) = w(g.win,g.lose) · φ(g.event). -/
 theorem scaleDecomposition (P : GambleChoiceFn Outcome)
-    (_hDecomp : DecompositionAxiom P)
-    (_outcomeChoice : OutcomeChoiceFn Outcome)
-    (_eventChoice : EventChoiceFn)
-    (_hMono : MonotonicityAxiom P _outcomeChoice _eventChoice) :
+    (hDecomp : DecompositionAxiom P)
+    (hLuce : GambleLuceScale P)
+    (ρ₀ : Event) (a₀ b₀ : Outcome) :
     ∃ sd : ScaleDecomposition Outcome,
       ∀ g₁ g₂ : Gamble Outcome,
         sd.gambleValue g₁ + sd.gambleValue g₂ > 0 →
         P.prob g₁ g₂ = sd.gambleValue g₁ / (sd.gambleValue g₁ + sd.gambleValue g₂) := by
-  sorry -- TODO: full proof requires constructing w and φ from Q and P
+  refine ⟨{
+    outcomeValue := λ a b => hLuce.v ⟨a, ρ₀, b⟩,
+    eventWeight := λ ρ => hLuce.v ⟨a₀, ρ, b₀⟩ / hLuce.v ⟨a₀, ρ₀, b₀⟩,
+    outcomeValue_nonneg := λ a b => le_of_lt (hLuce.v_pos _),
+    eventWeight_nonneg := λ ρ => div_nonneg (le_of_lt (hLuce.v_pos _))
+      (le_of_lt (hLuce.v_pos _)),
+  }, ?_⟩
+  intro g₁ g₂ _
+  simp only [ScaleDecomposition.gambleValue]
+  -- Each gamble value equals v(g) by the factoring lemma
+  have hv1 := v_eq_product P hLuce hDecomp ρ₀ a₀ b₀ g₁
+  have hv2 := v_eq_product P hLuce hDecomp ρ₀ a₀ b₀ g₂
+  -- Rewrite the products back to v(g), then apply Luce rule
+  rw [← hv1, ← hv2, ← hLuce.luce_rule]
 
 -- ============================================================================
 -- §5. Bridge to RSA Utility Decomposition
