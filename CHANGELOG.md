@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.222.4] - 2026-02-18
+
+### Added
+- Add `Phenomena/WordOrder/Studies/ArnoldEtAl2000Bridge.lean` — bridge theorems deriving structural limitations of three competing ordering accounts from their own definitions:
+  - DLM (`totalDepLength`) is discourse-blind by `rfl` (word-invariance)
+  - Pure-discourse model (`DiscourseStatus → Nat`) cannot reproduce the 4-way gradient shift rate
+  - CCG `ShiftFeature` conflates 4 empirically distinct weight classes into 2 (pigeonhole)
+
+## [0.222.3] - 2026-02-18
+
+### Added
+- Add `Phenomena/WordOrder/Studies/ArnoldEtAl2000.lean` — corpus data from Arnold, Wasow, Losongco & Ginstrom (2000) "Heaviness vs. Newness": dative alternation (N=637), NP shift (N=307), Table 1 mean NP lengths, gradient shift rates by word count, logistic regression factor results, `DiscourseStatus` bridge
+
 ## [0.222.2] - 2026-02-17
 
 ### Added
