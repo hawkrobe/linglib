@@ -346,6 +346,46 @@ private lemma and_true_right {a b : Bool} (h : a && b = true) : b = true := by
 private lemma and_true_split {a b : Bool} (h : a && b = true) : a = true ∧ b = true := by
   cases a <;> cases b <;> simp_all
 
+/-- Elements of an allSubsets sublist are in the original list -/
+private lemma mem_of_mem_allSubsets {α : Type*} (l sub : List α)
+    (hsub : sub ∈ allSubsets l) : ∀ x ∈ sub, x ∈ l := by
+  induction l generalizing sub with
+  | nil => simp [allSubsets] at hsub; subst hsub; simp
+  | cons a as ih =>
+    simp only [allSubsets, List.mem_append] at hsub
+    intro x hx
+    cases hsub with
+    | inl h => exact List.mem_cons.mpr (Or.inr (ih _ h x hx))
+    | inr h =>
+      obtain ⟨sub', hmem, rfl⟩ := List.mem_map.mp h
+      cases hx with
+      | head => exact List.mem_cons.mpr (Or.inl rfl)
+      | tail _ hx => exact List.mem_cons.mpr (Or.inr (ih _ hmem x hx))
+
+/-- Members of a split's left part are in the original team -/
+private lemma split_left_mem {W : Type*} [DecidableEq W]
+    (t t1 t2 : Team W) (worlds : List W)
+    (hmem : (t1, t2) ∈ generateSplits t worlds)
+    (v : W) (ht1v : t1 v = true) : t v = true := by
+  simp only [generateSplits, List.mem_map] at hmem
+  obtain ⟨left, hleft, heq⟩ := hmem
+  have ht1_eq : t1 = Team.ofList left := (Prod.ext_iff.mp heq).1.symm
+  rw [ht1_eq] at ht1v
+  simp only [Team.ofList] at ht1v
+  have hv_in_left : v ∈ left := List.mem_of_elem_eq_true ht1v
+  have hv_in_toList := mem_of_mem_allSubsets _ _ hleft v hv_in_left
+  simp only [Team.toList, List.mem_filter] at hv_in_toList
+  exact hv_in_toList.2
+
+/-- If a split part is non-empty, the original team is non-empty -/
+private lemma split_nonempty {W : Type*} [DecidableEq W]
+    (t t1 t2 : Team W) (worlds : List W)
+    (hmem : (t1, t2) ∈ generateSplits t worlds)
+    (hne : t1.isNonEmpty worlds = true) : t.isNonEmpty worlds = true := by
+  simp only [Team.isNonEmpty, List.any_eq_true] at hne ⊢
+  obtain ⟨v, hv, ht1v⟩ := hne
+  exact ⟨v, hv, split_left_mem t t1 t2 worlds hmem v ht1v⟩
+
 /-- If an enriched formula (other than NE) is supported, the team is non-empty.
 
     For atoms, negation, and modals this follows from the top-level NE conjunct.
@@ -355,7 +395,7 @@ theorem enriched_support_implies_nonempty {W : Type*} [DecidableEq W] (M : BSMLM
     (φ : BSMLFormula W) (t : Team W) (worlds : List W)
     (h : support M worlds (enrich φ) t = true) :
     t.isNonEmpty worlds = true := by
-  induction φ with
+  induction φ generalizing t with
   | ne => exact h
   | atom p =>
       simp only [enrich, support] at h
@@ -371,11 +411,11 @@ theorem enriched_support_implies_nonempty {W : Type*} [DecidableEq W] (M : BSMLM
       revert h; cases support M worlds (enrich ψ₁) t <;> simp
   | disj ψ₁ ψ₂ ih₁ _ =>
       -- enrich (.disj ψ₁ ψ₂) = .disj (enrich ψ₁) (enrich ψ₂) (definitional)
-      -- By contradiction: if t is empty, generateSplits produces only (∅, ∅),
-      -- and support (enrich ψ₁) ∅ = false (by IH contrapositive), so the
-      -- any returns false, contradicting h.
-      -- TODO: formalize the empty-team contradiction argument
-      sorry
+      -- Extract the split, apply IH to get t₁ non-empty, propagate through split.
+      unfold enrich at h; unfold support at h
+      obtain ⟨⟨t1, t2⟩, hmem, hsupp⟩ := List.any_eq_true.mp h
+      simp only [Bool.and_eq_true] at hsupp
+      exact split_nonempty t t1 t2 worlds hmem (ih₁ t1 hsupp.1)
   | poss ψ _ =>
       simp only [enrich, support] at h
       cases hB : t.isNonEmpty worlds <;> simp_all
@@ -582,6 +622,171 @@ private lemma antiSupport_poss_weaken {W : Type*} [DecidableEq W]
   ) h
 
 -- ============================================================================
+-- PART 6f: Infrastructure for Positive Free Choice Proofs
+-- ============================================================================
+
+/-- The empty list is always in allSubsets -/
+private lemma nil_mem_allSubsets {α : Type*} (l : List α) : [] ∈ allSubsets l := by
+  induction l with
+  | nil => simp [allSubsets]
+  | cons _ as ih => simp only [allSubsets, List.mem_append]; left; exact ih
+
+/-- A singleton is in allSubsets when the element is in the list -/
+private lemma singleton_mem_allSubsets {α : Type*} [DecidableEq α] (l : List α) (x : α)
+    (hx : x ∈ l) : [x] ∈ allSubsets l := by
+  induction l with
+  | nil => simp at hx
+  | cons a as ih =>
+    simp only [allSubsets, List.mem_append]
+    cases hx with
+    | head => right; exact List.mem_map.mpr ⟨[], nil_mem_allSubsets as, rfl⟩
+    | tail _ hx => left; exact ih hx
+
+/-- Members of a split's right part are in the original team -/
+private lemma split_right_mem {W : Type*} [DecidableEq W]
+    (t t1 t2 : Team W) (worlds : List W)
+    (hmem : (t1, t2) ∈ generateSplits t worlds)
+    (v : W) (ht2v : t2 v = true) : t v = true := by
+  simp only [generateSplits, List.mem_map] at hmem
+  obtain ⟨left, _, heq⟩ := hmem
+  have ht2_eq : t2 = (λ w => t w && !(Team.ofList left w)) := (Prod.ext_iff.mp heq).2.symm
+  rw [ht2_eq] at ht2v
+  simp only [Bool.and_eq_true] at ht2v; exact ht2v.1
+
+/-- Members of a subteam are in the original team -/
+private lemma subteam_mem {W : Type*} [DecidableEq W]
+    (t s : Team W) (worlds : List W)
+    (hs : s ∈ generateSubteams t worlds)
+    (v : W) (hsv : s v = true) : t v = true := by
+  simp only [generateSubteams, List.mem_map] at hs
+  obtain ⟨sub, hsub, rfl⟩ := hs
+  simp only [Team.ofList] at hsv
+  have hv_in_sub : v ∈ sub := List.mem_of_elem_eq_true hsv
+  have hv_in_toList := mem_of_mem_allSubsets _ _ hsub v hv_in_sub
+  simp only [Team.toList, List.mem_filter] at hv_in_toList
+  exact hv_in_toList.2
+
+/-- A singleton team for v is in generateSubteams when v is in the team -/
+private lemma singleton_in_generateSubteams {W : Type*} [DecidableEq W]
+    (t : Team W) (worlds : List W) (v : W)
+    (hv : v ∈ worlds) (htv : t v = true) :
+    Team.ofList [v] ∈ generateSubteams t worlds := by
+  simp only [generateSubteams, List.mem_map]
+  exact ⟨[v], singleton_mem_allSubsets _ v
+    (by simp [Team.toList, List.mem_filter, hv, htv]), rfl⟩
+
+/-- Singleton team is non-empty -/
+private lemma singleton_isNonEmpty {W : Type*} [DecidableEq W]
+    (v : W) (worlds : List W) (hv : v ∈ worlds) :
+    (Team.ofList [v]).isNonEmpty worlds = true := by
+  simp only [Team.isNonEmpty, List.any_eq_true]
+  exact ⟨v, hv, by simp [Team.ofList]⟩
+
+/-- Singleton team supports an atom when the valuation holds at that world -/
+private lemma singleton_support_atom {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (p : String) (v : W) (worlds : List W)
+    (hv : v ∈ worlds) (hval : M.valuation p v = true) :
+    support M worlds (.atom p) (Team.ofList [v]) = true := by
+  unfold support Team.all
+  apply List.all_eq_true.mpr
+  intro w hw
+  cases hm : Team.ofList [v] w
+  · simp
+  · simp only [Bool.not_true, Bool.false_or]
+    simp only [Team.ofList] at hm
+    have hv_eq := List.mem_of_elem_eq_true hm
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hv_eq
+    subst hv_eq; exact hval
+
+/-- If v is accessible from w and satisfies atom p, the ◇p subteams.any condition holds
+    (via singleton subteam witness) -/
+private lemma poss_atom_witness {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (p : String) (worlds : List W) (w v : W)
+    (hv : v ∈ worlds) (hacc : M.access w v = true) (hval : M.valuation p v = true) :
+    (generateSubteams (M.access w) worlds).any
+      (λ t' => t'.isNonEmpty worlds && support M worlds (.atom p) t') = true := by
+  apply List.any_eq_true.mpr
+  refine ⟨Team.ofList [v],
+    singleton_in_generateSubteams (M.access w) worlds v hv hacc, ?_⟩
+  simp only [Bool.and_eq_true]
+  exact ⟨singleton_isNonEmpty v worlds hv, singleton_support_atom M p v worlds hv hval⟩
+
+/-- From s ⊨ (atom p) ∧ NE, extract a world witness with membership and valuation -/
+private lemma atom_witness_of_enriched_conj {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (p : String) (s : Team W) (worlds : List W)
+    (h : support M worlds (.conj (.atom p) .ne) s = true) :
+    ∃ v ∈ worlds, s v = true ∧ M.valuation p v = true := by
+  unfold support at h
+  simp only [Bool.and_eq_true] at h
+  have hs := h.1; have hne_raw := h.2
+  unfold support at hne_raw
+  simp only [Team.isNonEmpty, List.any_eq_true] at hne_raw
+  obtain ⟨v, hv, hsv⟩ := hne_raw
+  refine ⟨v, hv, hsv, ?_⟩
+  unfold support Team.all at hs
+  simp only [List.all_eq_true] at hs
+  have := hs v hv
+  simp only [hsv, Bool.not_true, Bool.false_or] at this
+  exact this
+
+/-- From s ⊨ (a ∧ NE) ∨ (b ∧ NE), extract witnesses for both atoms in s.
+    The split gives s₁ ⊨ a ∧ NE and s₂ ⊨ b ∧ NE; witnesses are lifted to s
+    via split membership. -/
+private lemma both_witnesses_of_enriched_disj {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (a b : String) (s : Team W) (worlds : List W)
+    (h : support M worlds (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne)) s = true) :
+    (∃ va ∈ worlds, s va = true ∧ M.valuation a va = true) ∧
+    (∃ vb ∈ worlds, s vb = true ∧ M.valuation b vb = true) := by
+  unfold support at h
+  obtain ⟨⟨s1, s2⟩, hsplit, hboth⟩ := List.any_eq_true.mp h
+  simp only [Bool.and_eq_true] at hboth
+  obtain ⟨va, hva_w, hva_s1, hva_val⟩ := atom_witness_of_enriched_conj M a s1 worlds hboth.1
+  obtain ⟨vb, hvb_w, hvb_s2, hvb_val⟩ := atom_witness_of_enriched_conj M b s2 worlds hboth.2
+  exact ⟨⟨va, hva_w, split_left_mem s s1 s2 worlds hsplit va hva_s1, hva_val⟩,
+         ⟨vb, hvb_w, split_right_mem s s1 s2 worlds hsplit vb hvb_s2, hvb_val⟩⟩
+
+/-- Team.beq gives pointwise equality -/
+private lemma team_beq_apply {W : Type*} (t1 t2 : Team W) (worlds : List W) (w : W)
+    (hbeq : t1.beq t2 worlds = true) (hw : w ∈ worlds) : t1 w = t2 w := by
+  unfold Team.beq at hbeq
+  simp only [List.all_eq_true] at hbeq
+  exact beq_iff_eq.mp (hbeq w hw)
+
+/-- Indisputability transfers accessibility: if w₁, w₂ ∈ t and R is indisputable,
+    then M.access w₁ v = true → M.access w₂ v = true -/
+private lemma indisputable_access_transfer {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (t : Team W) (worlds : List W) (w₁ w₂ v : W)
+    (hInd : M.isIndisputable t worlds = true)
+    (hw₁ : w₁ ∈ worlds) (htw₁ : t w₁ = true)
+    (hw₂ : w₂ ∈ worlds) (htw₂ : t w₂ = true)
+    (hv : v ∈ worlds)
+    (hacc : M.access w₁ v = true) :
+    M.access w₂ v = true := by
+  unfold BSMLModel.isIndisputable at hInd
+  have hw₁_mem : w₁ ∈ t.toList worlds := by
+    simp [Team.toList, List.mem_filter, hw₁, htw₁]
+  have hw₂_mem : w₂ ∈ t.toList worlds := by
+    simp [Team.toList, List.mem_filter, hw₂, htw₂]
+  cases hmem : t.toList worlds with
+  | nil => rw [hmem] at hw₁_mem; simp at hw₁_mem
+  | cons w rest =>
+    rw [hmem] at hw₁_mem hw₂_mem hInd
+    simp only [List.all_eq_true] at hInd
+    have hbeq₁ : (M.access w).beq (M.access w₁) worlds = true := by
+      cases hw₁_mem with
+      | head =>
+        unfold Team.beq; simp only [List.all_eq_true]; intro w' _; exact beq_self_eq_true _
+      | tail _ h => exact hInd w₁ h
+    have hbeq₂ : (M.access w).beq (M.access w₂) worlds = true := by
+      cases hw₂_mem with
+      | head =>
+        unfold Team.beq; simp only [List.all_eq_true]; intro w' _; exact beq_self_eq_true _
+      | tail _ h => exact hInd w₂ h
+    rw [← team_beq_apply _ _ worlds v hbeq₂ hv,
+        team_beq_apply _ _ worlds v hbeq₁ hv]
+    exact hacc
+
+-- ============================================================================
 -- PART 7: Free Choice Theorems
 -- ============================================================================
 
@@ -649,13 +854,42 @@ theorem narrowScopeFC {W : Type*} [DecidableEq W] (M : BSMLModel W)
     (h : support M worlds (enrich (.poss (.disj (.atom a) (.atom b)))) t = true) :
     support M worlds (.poss (.atom a)) t = true ∧
     support M worlds (.poss (.atom b)) t = true := by
-  -- [◇(a ∨ b)]⁺ = ◇([a]⁺ ∨ [b]⁺) ∧ NE = ◇((a ∧ NE) ∨ (b ∧ NE)) ∧ NE
-  -- For each w ∈ t, ∃ non-empty s ⊆ σ(w) with s ⊨ (a ∧ NE) ∨ (b ∧ NE)
-  -- Split gives s₁ ⊨ a ∧ NE (hence s₁ ⊨ a, s₁ non-empty, s₁ ⊆ σ(w))
-  -- s₁ witnesses ◇a; similarly s₂ witnesses ◇b.
-  -- TODO: formalize the subteam-membership argument connecting
-  -- generateSplits to generateSubteams
-  sorry
+  simp only [enrich] at h
+  unfold support at h
+  have hPoss : support M worlds
+    (.poss (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne))) t = true := by
+    revert h; cases support M worlds _ t <;> simp
+  unfold support at hPoss ⊢
+  unfold Team.all at hPoss ⊢
+  constructor
+  · apply List.all_eq_true.mpr
+    intro w hw
+    have hfw := (List.all_eq_true.mp hPoss) w hw
+    cases ht : t w
+    · simp
+    · simp only [ht, Bool.not_true, Bool.false_or] at hfw ⊢
+      obtain ⟨s, hs_mem, hs_supp⟩ := List.any_eq_true.mp hfw
+      have hsupp : support M worlds
+          (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne)) s = true := by
+        revert hs_supp; cases support M worlds _ s <;> simp_all
+      obtain ⟨⟨va, hva_w, hva_s, hva_val⟩, _⟩ :=
+        both_witnesses_of_enriched_disj M a b s worlds hsupp
+      have hva_acc := subteam_mem (M.access w) s worlds hs_mem va hva_s
+      exact poss_atom_witness M a worlds w va hva_w hva_acc hva_val
+  · apply List.all_eq_true.mpr
+    intro w hw
+    have hfw := (List.all_eq_true.mp hPoss) w hw
+    cases ht : t w
+    · simp
+    · simp only [ht, Bool.not_true, Bool.false_or] at hfw ⊢
+      obtain ⟨s, hs_mem, hs_supp⟩ := List.any_eq_true.mp hfw
+      have hsupp : support M worlds
+          (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne)) s = true := by
+        revert hs_supp; cases support M worlds _ s <;> simp_all
+      obtain ⟨_, ⟨vb, hvb_w, hvb_s, hvb_val⟩⟩ :=
+        both_witnesses_of_enriched_disj M a b s worlds hsupp
+      have hvb_acc := subteam_mem (M.access w) s worlds hs_mem vb hvb_s
+      exact poss_atom_witness M b worlds w vb hvb_w hvb_acc hvb_val
 
 /--
 Wide-scope Free Choice: [◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β (for atomic α, β with indisputable R)
@@ -670,12 +904,63 @@ theorem wideScopeFC {W : Type*} [DecidableEq W] (M : BSMLModel W)
     (h : support M worlds (enrich (.disj (.poss (.atom a)) (.poss (.atom b)))) t = true) :
     support M worlds (.poss (.atom a)) t = true ∧
     support M worlds (.poss (.atom b)) t = true := by
-  -- [◇a ∨ ◇b]⁺ = [◇a]⁺ ∨ [◇b]⁺ = (◇(a ∧ NE) ∧ NE) ∨ (◇(b ∧ NE) ∧ NE)
-  -- Split: t₁ ⊨ ◇(a ∧ NE) ∧ NE, t₂ ⊨ ◇(b ∧ NE) ∧ NE
-  -- t₁ ⊨ ◇(a ∧ NE): ∀w ∈ t₁, ∃ non-empty s ⊆ σ(w) with s ⊨ a ∧ NE, so s ⊨ a
-  -- By indisputability, σ(w) = σ(v) for all w, v ∈ t, so the same witness works
-  -- TODO: formalize indisputability extension
-  sorry
+  simp only [enrich] at h
+  -- Extract the split: t₁ ⊨ ◇(a ∧ NE) ∧ NE, t₂ ⊨ ◇(b ∧ NE) ∧ NE
+  unfold support at h
+  obtain ⟨⟨t1, t2⟩, hsplit, hboth⟩ := List.any_eq_true.mp h
+  simp only [Bool.and_eq_true] at hboth
+  obtain ⟨ht1_full, ht2_full⟩ := hboth
+  unfold support at ht1_full ht2_full
+  simp only [Bool.and_eq_true] at ht1_full ht2_full
+  obtain ⟨ht1_poss, ht1_ne_raw⟩ := ht1_full
+  obtain ⟨ht2_poss, ht2_ne_raw⟩ := ht2_full
+  unfold support at ht1_ne_raw ht2_ne_raw
+  -- Pick w₁ ∈ t₁, w₂ ∈ t₂ (from non-emptiness)
+  simp only [Team.isNonEmpty, List.any_eq_true] at ht1_ne_raw ht2_ne_raw
+  obtain ⟨w₁, hw₁_w, htw₁⟩ := ht1_ne_raw
+  obtain ⟨w₂, hw₂_w, htw₂⟩ := ht2_ne_raw
+  have htw₁_t : t w₁ = true := split_left_mem t t1 t2 worlds hsplit w₁ htw₁
+  have htw₂_t : t w₂ = true := split_right_mem t t1 t2 worlds hsplit w₂ htw₂
+  -- From ◇(a ∧ NE) at w₁: extract accessible va with M.valuation a va
+  unfold support Team.all at ht1_poss
+  have hw₁_entry := (List.all_eq_true.mp ht1_poss) w₁ hw₁_w
+  simp only [htw₁, Bool.not_true, Bool.false_or] at hw₁_entry
+  obtain ⟨s_a, hs_a_mem, hs_a_supp⟩ := List.any_eq_true.mp hw₁_entry
+  have hs_a_support : support M worlds (.conj (.atom a) .ne) s_a = true := by
+    revert hs_a_supp; cases support M worlds _ s_a <;> simp_all
+  obtain ⟨va, hva_w, hva_sa, hva_val⟩ := atom_witness_of_enriched_conj M a s_a worlds hs_a_support
+  have hva_acc_w₁ : M.access w₁ va = true :=
+    subteam_mem (M.access w₁) s_a worlds hs_a_mem va hva_sa
+  -- From ◇(b ∧ NE) at w₂: extract accessible vb with M.valuation b vb
+  unfold support Team.all at ht2_poss
+  have hw₂_entry := (List.all_eq_true.mp ht2_poss) w₂ hw₂_w
+  simp only [htw₂, Bool.not_true, Bool.false_or] at hw₂_entry
+  obtain ⟨s_b, hs_b_mem, hs_b_supp⟩ := List.any_eq_true.mp hw₂_entry
+  have hs_b_support : support M worlds (.conj (.atom b) .ne) s_b = true := by
+    revert hs_b_supp; cases support M worlds _ s_b <;> simp_all
+  obtain ⟨vb, hvb_w, hvb_sb, hvb_val⟩ := atom_witness_of_enriched_conj M b s_b worlds hs_b_support
+  have hvb_acc_w₂ : M.access w₂ vb = true :=
+    subteam_mem (M.access w₂) s_b worlds hs_b_mem vb hvb_sb
+  -- Prove both ◇a and ◇b for all of t using indisputability
+  unfold support
+  unfold Team.all
+  constructor
+  · apply List.all_eq_true.mpr
+    intro w hw
+    cases htw : t w
+    · simp
+    · simp only [Bool.not_true, Bool.false_or]
+      exact poss_atom_witness M a worlds w va hva_w
+        (indisputable_access_transfer M t worlds w₁ w va hInd hw₁_w htw₁_t hw htw hva_w hva_acc_w₁)
+        hva_val
+  · apply List.all_eq_true.mpr
+    intro w hw
+    cases htw : t w
+    · simp
+    · simp only [Bool.not_true, Bool.false_or]
+      exact poss_atom_witness M b worlds w vb hvb_w
+        (indisputable_access_transfer M t worlds w₂ w vb hInd hw₂_w htw₂_t hw htw hvb_w hvb_acc_w₂)
+        hvb_val
 
 /--
 Dual Prohibition: [¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β (for atomic α, β)
