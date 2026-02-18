@@ -1,6 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Mathlib.Data.Rat.Defs
 
@@ -177,19 +176,6 @@ def l1Longer (u : Stick) (β : ℕ) : ℚ :=
 -- ============================================================
 -- Section 4: Verification — Weak Evidence Effect
 -- ============================================================
-
--- L0 values: L0(longer|u) is monotone in stick length
--- s1: 1/6, s2: 1/3, s3: 1/3, s4: 1/2, s5: 2/3
-#eval l0Longer .s1  -- 1/6
-#eval l0Longer .s4  -- 1/2
-#eval l0Longer .s5  -- 2/3
-
--- At β=0: pragmatic listener = literal listener (no persuasion)
-#eval l1Longer .s4 0  -- should equal l0Longer .s4 = 1/2
-
--- At β=2: weak evidence effect emerges
-#eval l1Longer .s4 2  -- should be < 2/5 (prior)
-#eval l1Longer .s5 2  -- should be > 2/5 (strong evidence works)
 
 /-- Stick 4 is positive evidence for "longer" under the literal listener -/
 theorem s4_positive_under_l0 : l0Longer .s4 > priorLonger := by native_decide

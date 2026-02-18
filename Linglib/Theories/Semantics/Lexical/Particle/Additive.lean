@@ -89,7 +89,7 @@ structure AdditiveContext (W : Type*) [Fintype W] where
   /-- The antecedent proposition (ANT) - what was just established -/
   antecedent : W → Bool
   /-- Prior probability distribution over worlds -/
-  prior : ExactDist W
+  prior : Prior W
   /-- The actual world (for truth evaluation) -/
   actualWorld : Option W := none
 
@@ -98,7 +98,7 @@ namespace AdditiveContext
 variable {W : Type*} [Fintype W]
 
 /-- Create a context from a polar question. -/
-def fromPolar (p : W → Bool) (ant : W → Bool) (prior : ExactDist W) :
+def fromPolar (p : W → Bool) (ant : W → Bool) (prior : Prior W) :
     AdditiveContext W :=
   { resolvedQuestion := Issue.polar p
   , antecedent := ant
@@ -106,7 +106,7 @@ def fromPolar (p : W → Bool) (ant : W → Bool) (prior : ExactDist W) :
 
 /-- Create a context from a list of alternatives. -/
 def fromAlternatives (alts : List (InfoState W)) (ant : W → Bool)
-    (prior : ExactDist W) : AdditiveContext W :=
+    (prior : Prior W) : AdditiveContext W :=
   { resolvedQuestion := Issue.ofAlternatives alts
   , antecedent := ant
   , prior := prior }
@@ -150,7 +150,7 @@ def nonTrivialityConditionWith {W : Type*}
 This is a maximality condition: π should be minimal in some sense.
 We approximate this by checking that π is informative. -/
 def maximalityCondition {W : Type*} [Fintype W]
-    (prejacent : W → Bool) (prior : ExactDist W) : Bool :=
+    (prejacent : W → Bool) (prior : Prior W) : Bool :=
   -- π should have positive probability (informative)
   probOfProp prior prejacent > 0 &&
   -- π shouldn't be a tautology
@@ -453,14 +453,14 @@ P(A | B ∧ C) = P(A | B).
 When π is independent of all alternatives given ANT, π provides no
 additional evidence - it's irrelevant to the question at hand. -/
 def conditionallyIndependent {W : Type*} [Fintype W]
-    (p1 p2 target : W → Bool) (prior : ExactDist W) : Prop :=
+    (p1 p2 target : W → Bool) (prior : Prior W) : Prop :=
   let pBoth := λ w => p1 w && p2 w
   conditionalProb prior pBoth target = conditionalProb prior p1 target
 
 /-- π is evidentially irrelevant to Q given ANT if π doesn't change the
 probability of any alternative when we already know ANT. -/
 def evidentiallyIrrelevant {W : Type*} [Fintype W]
-    (ant prejacent : W → Bool) (q : Issue W) (prior : ExactDist W) : Prop :=
+    (ant prejacent : W → Bool) (q : Issue W) (prior : Prior W) : Prop :=
   ∀ alt ∈ q.alternatives, conditionallyIndependent ant prejacent alt prior
 
 /-- **Theorem: Cumulative Evidence Necessity**

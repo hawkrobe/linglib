@@ -7,7 +7,7 @@ Building blocks for RSA scope ambiguity scenarios.
 
 - `Outcome n`: World with n entities satisfying the predicate
 - `ScopeReading`: Surface vs inverse scope interpretations
-- `ScopeScenario`: Builder for ambiguous scope RSA scenarios
+- `scopeMeaning`: Truth conditions under different readings
 
 ## The Pattern
 
@@ -17,20 +17,8 @@ Scope ambiguity involves:
 3. **Meaning**: Truth conditions vary by interpretation
 
 Example: "Every horse didn't jump"
-- Surface (∀>¬): "No horse jumped" - true only at w0
-- Inverse (¬>∀): "Not every horse jumped" - true at w0, w1, ..., w(n-1)
-
-## Usage
-
-```lean
-import Linglib.Theories.Pragmatics.RSA.Domains.Scope
-
--- "Every X didn't VP" with 3 entities
-def scenario := Scope.everyNotScenario 3
-
-#eval RSAL.L1_world scenario .everyNot
--- Infers both world and interpretation
-```
+- Surface (forall > not): "No horse jumped" - true only at w0
+- Inverse (not > forall): "Not every horse jumped" - true at w0, w1, ..., w(n-1)
 
 ## References
 
@@ -39,9 +27,7 @@ def scenario := Scope.everyNotScenario 3
 - May, R. (1985). Logical Form: Its Structure and Derivation.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Semantics.Montague.Scope
-import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Scope
 
@@ -88,24 +74,24 @@ def allReadings : List Reading := [.surface, .inverse]
 /--
 Truth conditions for "Every X didn't VP" under different scope readings.
 
-- Surface (∀>¬): "For every X, X didn't VP" = none VP'd
-- Inverse (¬>∀): "Not every X VP'd" = at least one didn't VP
+- Surface (forall > not): "For every X, X didn't VP" = none VP'd
+- Inverse (not > forall): "Not every X VP'd" = at least one didn't VP
 -/
 def everyNotMeaning (n : Nat) (reading : Reading) (w : Outcome n) : Bool :=
   match reading with
-  | .surface => w.count.val == 0        -- ∀>¬: none VP'd
-  | .inverse => w.count.val < n         -- ¬>∀: not all VP'd
+  | .surface => w.count.val == 0        -- forall > not: none VP'd
+  | .inverse => w.count.val < n         -- not > forall: not all VP'd
 
 /--
 Truth conditions for "Some X didn't VP" under different scope readings.
 
-- Surface (∃>¬): "Some X didn't VP" = at least one didn't
-- Inverse (¬>∃): "It's not the case that some X VP'd" = none VP'd
+- Surface (exists > not): "Some X didn't VP" = at least one didn't
+- Inverse (not > exists): "It's not the case that some X VP'd" = none VP'd
 -/
 def someNotMeaning (n : Nat) (reading : Reading) (w : Outcome n) : Bool :=
   match reading with
-  | .surface => w.count.val < n         -- ∃>¬: some didn't
-  | .inverse => w.count.val == 0        -- ¬>∃: none VP'd
+  | .surface => w.count.val < n         -- exists > not: some didn't
+  | .inverse => w.count.val == 0        -- not > exists: none VP'd
 
 -- Utterances
 
@@ -121,75 +107,5 @@ def scopeMeaning (n : Nat) (reading : Reading) (w : Outcome n) : ScopeUtt → Bo
   | .everyNot => everyNotMeaning n reading w
   | .someNot => someNotMeaning n reading w
   | .null => true
-
--- Scenario Builders
-
-/--
-Run L1 inference for "Every X didn't VP" with n entities.
-
-Returns joint distribution over (Outcome, Reading) pairs.
--/
-def everyNotL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
-  RSA.Eval.basicL1
-    [ScopeUtt.everyNot, .null]
-    jointWorlds
-    (λ utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
-    (λ _ => 1) 1 (λ _ => 0) u
-
-/--
-Run L1 inference for full scope scenario with both "every...not" and "some...not".
--/
-def fullL1 (n : Nat) (u : ScopeUtt) : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
-  RSA.Eval.basicL1
-    [ScopeUtt.everyNot, .someNot, .null]
-    jointWorlds
-    (λ utt (w, reading) => boolToRat (scopeMeaning n reading w utt))
-    (λ _ => 1) 1 (λ _ => 0) u
-
-/--
-Generic scope scenario runner.
-
-Takes a custom meaning function for flexibility.
--/
-def runL1 {U : Type} [BEq U] [DecidableEq U]
-    (utterances : List U)
-    (n : Nat)
-    (meaning : Reading → Outcome n → U → Bool)
-    (worldPrior : Outcome n → ℚ := λ _ => 1)
-    (readingPrior : Reading → ℚ := λ _ => 1)
-    (u : U)
-    : List ((Outcome n × Reading) × ℚ) :=
-  let jointWorlds := (allOutcomes n).flatMap λ w => allReadings.map λ r => (w, r)
-  RSA.Eval.basicL1 utterances jointWorlds
-    (λ utt (w, reading) => boolToRat (meaning reading w utt))
-    (λ (w, r) => worldPrior w * readingPrior r) 1 (λ _ => 0) u
-
--- Convenience: RSA Computations
-
-/-- L1 marginal over worlds -/
-def l1_world (n : Nat) (u : ScopeUtt) : List (Outcome n × ℚ) :=
-  let joint := everyNotL1 n u
-  RSA.Eval.marginalize joint Prod.fst
-
-/-- L1 marginal over interpretations -/
-def l1_interp (n : Nat) (u : ScopeUtt) : List (Reading × ℚ) :=
-  let joint := everyNotL1 n u
-  RSA.Eval.marginalize joint Prod.snd
-
--- Examples
-
--- "Every horse didn't jump" with 3 horses
-#eval l1_world 3 .everyNot
--- Expect: w0 highest (only surface-true world)
-
-#eval l1_interp 3 .everyNot
--- Expect: inverse has some probability (partial worlds possible)
-
--- Truth conditions check
-#eval everyNotMeaning 3 .surface (Outcome.none 3)  -- true
-#eval everyNotMeaning 3 .surface (Outcome.some 3 1)  -- false
-#eval everyNotMeaning 3 .inverse (Outcome.some 3 1)  -- true
 
 end RSA.Domains.Scope

@@ -29,8 +29,6 @@ Extends RSA with **resource-rational perspective-taking**:
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Semantics.Montague.Modification
 
 namespace HawkinsGweonGoodman2021
@@ -403,14 +401,14 @@ theorem semantics_grounded :
   intro u target o
   simp [utteranceApplies, utteranceDenotation, MontaguGrounding.directDenotation]
 
--- PART 10b: Asymmetric Case via Unified API (speakerCredence)
+-- PART 10b: Asymmetric Case via Unified API
 
 /-!
 ## Asymmetric Case via Unified API
 
-The full perspective-taking case (w_S = 1) maps directly to `RSAScenario.mentalState`:
+The full perspective-taking case (w_S = 1) maps to RSAConfig with latent variables:
 
-- **BeliefState** = Speaker's visual access (which objects they see)
+- **Latent** = Speaker's visual access (which objects they see)
 - **World** = Full context (visible objects + hidden object features)
 - **speakerCredence** = P(world | speaker's visual access)
 
@@ -451,29 +449,6 @@ def worldMeaning (u : Utterance) (world : WorldState) : ℚ :=
   let allObjects := hiddenObj :: world.visible
   -- Returns 1 if utterance uniquely picks out target, scaled by 1/|extension|
   literalListenerProb u world.target.features world.target allObjects
-
-/-- L1 from RSA.Eval API for asymmetric perspective-taking case -/
-def l1_asymmetric_unified (visible : List Object) (target : Object) (u : Utterance)
-    : List (WorldState × ℚ) :=
-  let worlds := allWorldStates visible target
-  let accessStates := [⟨visible, target⟩]
-  RSA.Eval.L1_world allUtterances worlds [()] [()] accessStates [()]
-    (λ _ _ u' w => worldMeaning u' w)
-    (λ _ => 1)  -- world prior
-    (λ _ => 1)  -- interp prior
-    (λ _ => 1)  -- lexicon prior
-    (λ _ => 1)  -- belief state prior
-    (λ _ => 1)  -- goal prior
-    visualAccessCredence
-    (λ _ w1 w2 => w1 == w2)  -- identity goal projection
-    (λ u' => (utteranceCost u' : ℚ) / 10)
-    1  -- α = 1
-    u
-
-/-- Verify unified API computes -/
-theorem unified_asymmetric_computes :
-    (l1_asymmetric_unified exampleVisible exampleTarget shapeOnly).length > 0 := by
-  native_decide
 
 /--
 **Grounding**: The unified API's `worldMeaning` computes the same listener probability

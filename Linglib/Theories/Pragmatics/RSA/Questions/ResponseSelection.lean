@@ -1,9 +1,19 @@
-/-
-Response selection models for polar questions (PRIOR-PQ).
+import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
+
+/-!
+# Response Selection Models for Polar Questions (PRIOR-PQ) (Stub)
 
 R0 (literal respondent) selects uniformly among true, safe responses.
 R1 (pragmatic respondent) uses ToM to infer the questioner's decision problem,
-then soft-maximizes (1-β)·informativity + β·actionRelevance - w_c·cost.
+then soft-maximizes (1-beta) * informativity + beta * actionRelevance - w_c * cost.
+
+## Status
+
+The ℚ-based RSA evaluation infrastructure (RSA.Eval, RSA.Eval.sumScores,
+RSA.Eval.normalize, RSA.Eval.getScore) has been removed. Type definitions
+and structural properties (Response, R1UtilityComponents) are preserved.
+RSA computations (R0, R1, softmax, inferredDP) need to be re-implemented
+using the new RSAConfig framework.
 
 ## References
 
@@ -11,13 +21,7 @@ then soft-maximizes (1-β)·informativity + β·actionRelevance - w_c·cost.
 - Van Rooy, R. (2003). Questioning to Resolve Decision Problems.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-
 namespace RSA.Questions
-
-open RSA.Eval
 
 /-- Response to a polar question: taciturn, with-mention, or exhaustive. -/
 inductive Response where
@@ -99,63 +103,13 @@ def informativity (r : Response) (w : World) (responses : List Response) : ℚ :
   else if responseTruth r w then 1 / trueResponses.length
   else 0
 
-def klInformativity (_r : Response) (responses : List Response) : ℚ :=
-  1 / responses.length
-
-/-- π_R1^{D|q}(D) ∝ Q(q|D) · π_R1^D(D): ToM inference of questioner's DP. -/
-def inferredDP (params : Params) (_q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action)
-    : List (PQDecisionProblem × ℚ) :=
-  let likelihoods := dps.map λ d =>
-    let qUtil := dpExpectedValue d worlds actions
-    (d, qUtil)
-  let probs := softmax params.αQ (likelihoods.map (·.2))
-  (dps.zip probs).map λ (d, p) => (d, p * dpPrior dps d)
-
-def inferredDPNormalized (params : Params) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action)
-    : List (PQDecisionProblem × ℚ) :=
-  normalize (inferredDP params q dps worlds responses actions)
-
-/-- Value of DP after hearing response in world w. -/
-def valueAfterResponse (d : PQDecisionProblem) (w : World) (r : Response)
-    (actions : List Action) : ℚ :=
-  if responseTruth r w then dpValue d w actions else 0
-
-/-- E_D[V(D | r, q)]: action relevance under inferred DP distribution. -/
-def actionRelevance (_params : Params) (r : Response) (w : World)
-    (dpDist : List (PQDecisionProblem × ℚ)) (actions : List Action) : ℚ :=
-  dpDist.foldl (λ acc (d, prob) =>
-    acc + prob * valueAfterResponse d w r actions
-  ) 0
-
-/-- R1 utility: U_R1(r | w, q) = (1-β)·inf + β·AR - w_c·C(r). -/
-def r1Utility (params : Params) (r : Response) (w : World)
-    (dpDist : List (PQDecisionProblem × ℚ)) (responses : List Response)
-    (actions : List Action) : ℚ :=
-  let info := informativity r w responses
-  let relevance := actionRelevance params r w dpDist actions
-  let cost := params.costWeight * responseCost r
-  (1 - params.β) * info + params.β * relevance - cost
-
-/-- R1 distribution: R1(r | w, q) ∝ exp(α_R · U_R1(r | w, q)). -/
-def r1Dist (params : Params) (w : World) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action)
-    : List (Response × ℚ) :=
-  let dpDist := inferredDPNormalized params q dps worlds responses actions
-  let utilities := responses.map λ r =>
-    r1Utility params r w dpDist responses actions
-  let probs := softmax params.αR utilities
-  responses.zip probs
-
-def r1Prob (params : Params) (w : World) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action)
-    (r : Response) : ℚ :=
-  getScore (r1Dist params w q dps worlds responses actions) r
+/-- R1 utility decomposition into components. -/
+structure R1UtilityComponents where
+  informativity : ℚ
+  actionRelevance : ℚ
+  cost : ℚ
+  total : ℚ
+  deriving Repr
 
 theorem higher_utility_preferred (i1 i2 : Item) (h : i1.utility > i2.utility) :
     i1.utility > i2.utility := h
@@ -169,45 +123,5 @@ theorem taciturn_minimal_cost :
 
 theorem taciturn_yes_minimal_cost :
     responseCost (.taciturn true) = 1 := rfl
-
-theorem questions_informative (params : Params) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action) :
-    inferredDP params q dps worlds responses actions =
-    inferredDP params q dps worlds responses actions := rfl
-
-/-- R1 utility decomposition into components. -/
-structure R1UtilityComponents where
-  informativity : ℚ
-  actionRelevance : ℚ
-  cost : ℚ
-  total : ℚ
-  deriving Repr
-
-def r1UtilityWithComponents (params : Params) (r : Response) (w : World)
-    (dpDist : List (PQDecisionProblem × ℚ)) (responses : List Response)
-    (actions : List Action) : R1UtilityComponents :=
-  let info := informativity r w responses
-  let relevance := actionRelevance params r w dpDist actions
-  let cost := params.costWeight * responseCost r
-  let total := (1 - params.β) * info + params.β * relevance - cost
-  { informativity := info
-  , actionRelevance := relevance
-  , cost := cost
-  , total := total }
-
-theorem utility_components_sum (params : Params) (r : Response) (w : World)
-    (dpDist : List (PQDecisionProblem × ℚ)) (responses : List Response)
-    (actions : List Action) :
-    let c := r1UtilityWithComponents params r w dpDist responses actions
-    c.total = (1 - params.β) * c.informativity + params.β * c.actionRelevance - c.cost := by
-  simp [r1UtilityWithComponents]
-
-/-- `valueAfterResponse` captures Van Rooy's V(D|C). -/
-theorem vanRooy_grounds_action_relevance (d : PQDecisionProblem) (w : World)
-    (r : Response) (actions : List Action) :
-    valueAfterResponse d w r actions =
-    (if responseTruth r w then dpValue d w actions else 0) := by
-  rfl
 
 end RSA.Questions

@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Semantics.Montague.Scope
+import Mathlib.Data.Rat.Defs
+
+/-!
 # RSA Model for Scope Freezing
 
 RSA model showing that "frozen" scope readings can be rescued by world priors.
@@ -14,13 +17,9 @@ RSA model showing that "frozen" scope readings can be rescued by world priors.
 Grammar theories say: frozen = grammatically impossible (categorical)
 RSA says: frozen = strongly dispreferred (gradient, rescuable by context)
 
-This module takes the grammar-derived interpretation prior and shows
-that strong world priors can override it.
+This module provides the domain types and meaning functions for the
+scope freezing RSA model.
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Semantics.Montague.Scope
-import Mathlib.Data.Rat.Defs
 
 namespace RSA.ScopeFreezing
 
@@ -36,11 +35,11 @@ inductive World where
 
 def allWorlds : List World := [.w0, .w1, .w2]
 
-/-- Surface (∃>∀) truth conditions -/
+/-- Surface (exists>forall) truth conditions -/
 def surfaceTrue : World → Bool
   | .w2 => true | _ => false
 
-/-- Inverse (∀>∃) truth conditions -/
+/-- Inverse (forall>exists) truth conditions -/
 def inverseTrue : World → Bool
   | .w1 | .w2 => true | _ => false
 
@@ -59,20 +58,6 @@ def allScopes : List ScopeConfig := [.surface, .inverse]
 
 def uttMeaning (s : ScopeConfig) (u : Utterance) (w : World) : Bool :=
   match u with | .null => true | .target => meaning s w
-
-def l1Interp (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : List (ScopeConfig × ℚ) :=
-  let tuples := allWorlds.flatMap λ w => allScopes.map λ s => (w, s)
-  let scores := tuples.map λ (w, s) =>
-    let s1 := RSA.Eval.S1 allUtterances allWorlds
-      (λ s' _ u' w' => boolToRat (uttMeaning s' u' w'))
-      worldPrior (λ _ _ => 1) (λ _ w1 w2 => w1 == w2) (λ _ => 0) 1 w s () () ()
-    ((w, s), worldPrior w * interpPrior s * RSA.Eval.getScore s1 .target)
-  let normalized := RSA.Eval.normalize scores
-  allScopes.map λ s =>
-    (s, normalized.filter (λ ((_, s'), _) => s' == s) |>.map (·.2) |> RSA.Eval.sumScores)
-
-def getInverseProb (worldPrior : World → ℚ) (interpPrior : ScopeConfig → ℚ) : ℚ :=
-  RSA.Eval.getScore (l1Interp worldPrior interpPrior) .inverse
 
 -- Priors
 

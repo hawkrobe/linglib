@@ -1,5 +1,4 @@
 import Linglib.Core.Roundness
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
@@ -7,6 +6,7 @@ import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Rat.Cast.Order
 
 /-!
 # Bridge Theorems: Numeral Salience across Frameworks
@@ -20,6 +20,14 @@ Connects the graded roundness model (k-ness) to five existing modules:
 5. **k-ness ↔ C&F enrichment**: wider enrichment for rounder numerals
 6. **OT ↔ RSA parameter map**: constraint-to-parameter correspondence
 7. **Evaluative valence ↔ framing**: Claus & Walch (2024) framing predictions
+8. **maxMeaning ↔ HasDegree**: degree bridge theorems
+
+## Status
+
+RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat, getScore) has been
+removed. Bridges 1-8 are preserved (they do not depend on RSA.Eval).
+Bridges 9-10 (NumeralTheory.runL1, Kennedy alternative sets through RSA L1)
+have been removed pending reimplementation with the new RSAConfig framework.
 
 ## Architecture
 
@@ -330,126 +338,30 @@ theorem maxMeaning_le_from_degree (m n : Nat) :
 end Bridge8_Degree
 
 -- ============================================================================
--- Bridge 9: NumeralTheory ↔ RSA L1 (moved from Semantics.lean)
--- ============================================================================
-
-section Bridge9
-
-open Semantics.Lexical.Numeral
-
-/-- Run L1 for a numeral theory using RSA.Eval.
-
-This is the cross-theory bridge connecting truth-conditional numeral semantics
-(`NumeralTheory.meaning`) to RSA pragmatic inference (`RSA.Eval.basicL1`). -/
-def NumeralTheory.runL1 (T : NumeralTheory) (w : BareNumeral) : List (Nat × ℚ) :=
-  RSA.Eval.basicL1 T.utterances T.worlds
-    (λ u n => boolToRat (T.meaning u n)) (λ _ => 1) 1 (λ _ => 0) w
-
-end Bridge9
-
--- ============================================================================
--- Bridge 10: Kennedy Alternative Sets ↔ RSA
+-- Bridge 9: NumeralTheory ↔ RSA L1 (removed)
 -- ============================================================================
 
 /-!
-### Kennedy Alternatives through RSA
+### Bridge 9: NumeralTheory ↔ RSA L1
 
-Kennedy (2015) argues that numeral alternatives are NOT the traditional Horn
-scale ⟨1, 2, 3, ...⟩ but rather sets organized by modifier class:
-
-- Lower alternatives for n: `{bare n, more than n, at least n}`
-- Upper alternatives for n: `{bare n, fewer than n, at most n}`
-
-Class A (strict: >, <) and Class B (non-strict: ≥, ≤) have different
-pragmatic behavior because of their structural relationship to bare numerals:
-
-- Class B overlaps with bare → competes → gets pragmatically strengthened
-- Class A is disjoint from bare → complementary → no competition
-
-We connect these alternatives directly to RSA, deriving the pragmatic
-properties from `maxMeaning` rather than hand-rolled truth tables.
+RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat) has been removed.
+`NumeralTheory.runL1` needs reimplementation with the new RSAConfig framework.
 -/
 
-section Bridge10
+-- ============================================================================
+-- Bridge 10: Kennedy Alternative Sets ↔ RSA (removed)
+-- ============================================================================
 
-open Semantics.Lexical.Numeral
+/-!
+### Bridge 10: Kennedy Alternative Sets through RSA
 
-/-- Extended worlds for modified numeral RSA (0 through 5). -/
-def kennedyWorlds : List Nat := [0, 1, 2, 3, 4, 5]
-
-/-- Run L1 over Kennedy's lower alternatives for numeral n.
-
-Uses `NumeralAlternative.meaning` (derived from `maxMeaning`) as the
-semantic function, with Kennedy's structured alternative set `{bare n, >n, ≥n}`. -/
-def kennedyLowerL1 (n : Nat) (alt : NumeralAlternative) : List (Nat × ℚ) :=
-  RSA.Eval.basicL1 (lowerAlternatives n) kennedyWorlds
-    (λ u w => boolToRat (u.meaning w)) (λ _ => 1) 1 (λ _ => 0) alt
-
-/-- Run L1 over Kennedy's upper alternatives for numeral n. -/
-def kennedyUpperL1 (n : Nat) (alt : NumeralAlternative) : List (Nat × ℚ) :=
-  RSA.Eval.basicL1 (upperAlternatives n) kennedyWorlds
-    (λ u w => boolToRat (u.meaning w)) (λ _ => 1) 1 (λ _ => 0) alt
-
-/-- Helper: extract the score for a specific world from an L1 distribution. -/
-def scoreAt (dist : List (Nat × ℚ)) (w : Nat) : ℚ :=
-  match dist.find? (·.1 == w) with
-  | some (_, p) => p
-  | none => 0
-
--- Class A vs Class B: the key asymmetry
-
-/-- Class B "at least 3" competes with "bare 3" at world 3.
-
-Both are true at w=3, so RSA pragmatic competition means L1 hearing "at least 3"
-shifts probability AWAY from w=3 (because the speaker would have said "bare 3"
-if they meant exactly 3). This is Kennedy's explanation of why "at least" implies
-speaker uncertainty. -/
-theorem classB_competition_at_boundary :
-    -- L1 hearing "bare 3": assigns high probability to w=3
-    scoreAt (kennedyLowerL1 3 (.bare 3)) 3 >
-    -- L1 hearing "at least 3": assigns lower probability to w=3
-    scoreAt (kennedyLowerL1 3 (.modified .ge 3)) 3 := by native_decide
-
-/-- Class A "more than 3" does NOT compete with "bare 3" at w=3.
-
-"More than 3" is false at w=3, so there's no competition with "bare 3".
-L1 hearing "more than 3" distributes over {4, 5, ...} without needing to
-consider the bare alternative at w=3. -/
-theorem classA_no_competition_at_boundary :
-    -- "more than 3" assigns 0 probability to w=3
-    scoreAt (kennedyLowerL1 3 (.modified .gt 3)) 3 = 0 := by native_decide
-
-/-- "Bare 3" through Kennedy alternatives: L1 assigns all mass to w=3.
-
-With Kennedy alternatives (not just the numeral scale), the bare numeral
-is maximally informative for its exact world. -/
-theorem bare_peaked_with_kennedy_alternatives :
-    scoreAt (kennedyLowerL1 3 (.bare 3)) 3 = 1 := by native_decide
-
-/-- Class B "at least 3" gets pragmatically strengthened: L1 infers w > 3.
-
-Because "bare 3" would have been used for w=3, L1 hearing "at least 3"
-infers higher worlds. The probability of w=4 exceeds w=3. -/
-theorem classB_strengthened_above_bare :
-    scoreAt (kennedyLowerL1 3 (.modified .ge 3)) 4 >
-    scoreAt (kennedyLowerL1 3 (.modified .ge 3)) 3 := by native_decide
-
--- Upper alternatives mirror
-
-/-- Upper Class B "at most 3" competes with "bare 3" at boundary. -/
-theorem upper_classB_competition :
-    scoreAt (kennedyUpperL1 3 (.bare 3)) 3 >
-    scoreAt (kennedyUpperL1 3 (.modified .le 3)) 3 := by native_decide
-
-/-- Upper Class A "fewer than 3" assigns 0 to w=3. -/
-theorem upper_classA_no_competition :
-    scoreAt (kennedyUpperL1 3 (.modified .lt 3)) 3 = 0 := by native_decide
-
-/-- Upper Class B "at most 3" strengthened below: L1 infers w < 3. -/
-theorem upper_classB_strengthened_below_bare :
-    scoreAt (kennedyUpperL1 3 (.modified .le 3)) 2 >
-    scoreAt (kennedyUpperL1 3 (.modified .le 3)) 3 := by native_decide
-
-end Bridge10
+RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat, getScore) has been
+removed. `kennedyLowerL1`, `kennedyUpperL1`, and all Kennedy alternative set
+theorems (classB_competition_at_boundary, classA_no_competition_at_boundary,
+bare_peaked_with_kennedy_alternatives, classB_strengthened_above_bare,
+upper_classB_competition, upper_classA_no_competition,
+upper_classB_strengthened_below_bare) need reimplementation with the new
+RSAConfig framework.
+-/
 
 end Phenomena.Numerals.Compare

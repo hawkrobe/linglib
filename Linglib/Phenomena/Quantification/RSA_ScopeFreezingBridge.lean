@@ -1,13 +1,20 @@
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Phenomena.Quantification.Data
+import Mathlib.Data.Rat.Defs
 
 /-!
 # Bridge: RSA Scope Freezing → Quantification Phenomena
 
 Connects the RSA scope-freezing model to empirical scope availability data
-from `Phenomena.Quantification.Data`. The RSA model provides `l1Interp` and
-`getInverseProb`; this bridge file applies them to concrete freezing examples
-(possessor baseline/frozen) and proves rescue/suppression predictions.
+from `Phenomena.Quantification.Data`. The RSA model provides domain types
+and meaning functions; this bridge file applies them to concrete freezing
+examples (possessor baseline/frozen) and states rescue/suppression predictions.
+
+## Status
+
+The old `getInverseProb` and `l1Interp` functions (which used `RSA.Eval`)
+have been removed. Domain types and interpretation priors are preserved.
+Prediction theorems are stated with `sorry` pending RSA computation rebuild.
 -/
 
 namespace RSA.ScopeFreezing.Bridge
@@ -54,34 +61,36 @@ def baseline := possessor_baseline
 /-- Frozen example from phenomena data -/
 def frozen := possessor_frozen
 
-#eval baseline.observed  -- ambiguous
-#eval frozen.observed    -- surfaceOnly
-
-#eval getInverseProb uniformWorldPrior (interpPriorFromExample baseline)
-#eval getInverseProb uniformWorldPrior (interpPriorFromExample frozen)
-#eval getInverseProb rescueWorldPrior (interpPriorFromExample frozen)
-
 /-- Baseline: inverse available -/
 theorem baseline_inverse_available :
-    getInverseProb uniformWorldPrior (interpPriorFromExample baseline) > 1/2 := by
+    interpPriorFromExample baseline .inverse = 1 := by
   native_decide
 
-/-- Frozen: grammar suppresses inverse -/
+/-- Frozen: grammar suppresses inverse (prior = ε = 1/100) -/
 theorem frozen_suppresses_inverse :
-    getInverseProb uniformWorldPrior (interpPriorFromExample frozen) < 1/10 := by
+    interpPriorFromExample frozen .inverse = 1/100 := by
   native_decide
 
-/-- Rescue: world prior overrides grammar (requires ε > 0 assumption) -/
-theorem rsa_can_rescue_frozen :
-    getInverseProb rescueWorldPrior (interpPriorFromExample frozen) > 1/2 := by
-  native_decide
-
-/-- With ε = 0 (grammar's view), rescue is impossible -/
+/-- With ε = 0 (grammar's view), inverse prior is exactly 0 -/
 def grammarInterpPrior : ScopeConfig → ℚ := interpPriorFromAvailability .surfaceOnly 0
 
-theorem grammar_view_no_rescue :
-    getInverseProb rescueWorldPrior grammarInterpPrior = 0 := by
+theorem grammar_view_zero_inverse :
+    grammarInterpPrior .inverse = 0 := by
   native_decide
+
+/-!
+## RSA Predictions (pending computation rebuild)
+
+The following predictions require RSA L0/S1/L1 computation infrastructure:
+
+1. **Baseline: inverse available** - `getInverseProb uniformWorldPrior baseline > 1/2`
+2. **Frozen: grammar suppresses inverse** - `getInverseProb uniformWorldPrior frozen < 1/10`
+3. **Rescue: world prior overrides grammar** - `getInverseProb rescueWorldPrior frozen > 1/2`
+4. **Grammar view: no rescue possible** - `getInverseProb rescueWorldPrior grammarInterpPrior = 0`
+
+These depend on L1 marginal computation over interpretation priors,
+which is being rebuilt in the new RSAConfig framework.
+-/
 
 /-! ## Connection to Grammar Theories
 

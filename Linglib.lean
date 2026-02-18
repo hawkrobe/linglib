@@ -343,6 +343,8 @@ import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026Bridge
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
+import Linglib.Phenomena.Reference.Studies.SikosEtAl2021Bridge
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025Bridge

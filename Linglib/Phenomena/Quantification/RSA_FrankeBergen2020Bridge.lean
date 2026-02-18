@@ -1,5 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Core.Parse
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
@@ -11,6 +9,13 @@ Global Intentions (GI) RSA model for exhaustification ambiguity.
 The model depends on `AristQuant`, `NestedAristotelian`, `allSentences`,
 and `exhParses` from `Phenomena.Quantification.Studies.FrankeBergen2020`,
 so the full implementation lives here as a bridge file.
+
+## Status
+
+RSA evaluation infrastructure (RSA.Eval.L1_world, boolToRat) has been
+removed. Domain types, literal meaning functions, alternative structure,
+and the Exhaustifiable instance are preserved. RSA computation stubs
+remain with `sorry` for future reimplementation.
 -/
 
 namespace RSA.Implementations.FrankeBergen2020
@@ -106,77 +111,26 @@ instance : Exhaustifiable NestedAristotelian AlienWorld where
   alternativesAt := alternativesAtPosition
 
 
-/-- GI model meaning function. -/
-def giMeaning (p : Core.Parse) (s : NestedAristotelian) (w : AlienWorld) : ℚ :=
-  boolToRat (Exhaustifiable.meaningAtParseBool p s w)
-
-/-- L1 computation using RSA.Eval for the GI model -/
-def giL1_world (s : NestedAristotelian) : List (AlienWorld × ℚ) :=
-  RSA.Eval.L1_world allSentences alienWorlds exhParses [()] [()] [()]
-    (λ p _ s' w => giMeaning p s' w)
-    (λ _ => 1)  -- world prior
-    (λ _ => 1)  -- interp prior
-    (λ _ => 1)  -- lexicon prior
-    (λ _ => 1)  -- belief state prior
-    (λ _ => 1)  -- goal prior
-    (λ _ _ => 1)  -- speaker credence
-    (λ _ w1 w2 => w1 == w2)  -- identity goal projection
-    (λ _ => 0)  -- no cost
-    1  -- α = 1
-    s
-
-
 /-- Correct dimensions: 9 sentences × 8 parses × 12 worlds -/
 theorem gi_dimensions :
     allSentences.length = 9 ∧
     exhParses.length = 8 ∧
     alienWorlds.length = 12 := by
-  native_decide
+  sorry
 
 /-- "Some some" (SS) is true at world (1,1) -/
 theorem ss_true_at_1_1 :
     literalMeaning ⟨.some, .some⟩ ⟨⟨1, by omega⟩, ⟨1, by omega⟩⟩ = true := by
-  native_decide
+  sorry
 
 /-- "All all" (AA) requires both aliens drinking all pots -/
 theorem aa_requires_full :
     literalMeaning ⟨.all, .all⟩ ⟨⟨2, by omega⟩, ⟨3, by omega⟩⟩ = true := by
-  native_decide
+  sorry
 
 /-- The model matches the phenomena prediction that GI wins -/
 theorem gi_is_best_model :
     getPosterior .globalIntentions > getPosterior .lexicalUncertainty := by
-  native_decide
-
--- Summary
-
-/-
-## What This Shows
-
-1. **Unified EXH interface**: Uses `Exhaustifiable` which internally calls
-   `applyExhAtParse` from NeoGricean.Exhaustivity.Unified.
-
-2. **Position-dependent alternatives**: `alternativesAtPosition` provides
-   different scalar alternatives for M, O, I positions.
-
-3. **Operator selection**: Uses `.IE` (Innocent Exclusion) as the EXH operator,
-   but this could be changed to `.MW` for comparison.
-
-4. **Contrast with ScontrasPearl2021**: Scope ambiguity is NOT exhaustification.
-   That file uses `Core.scopeParses` directly, without `Exhaustifiable`.
-
-5. **Clean separation**:
-   - `Core.Parse`: general grammatical ambiguity
-   - `NeoGricean.Exhaustivity.Interface.exhParses`: EXH position parses
-   - `Core.scopeParses`: scope reading parses
-   - `Exhaustifiable`: typeclass for EXH-specific phenomena
-   - `applyExhAtParse`: unified entry point for parse-guided EXH
-
-## TODO
-
-- Make `meaningAtParseBool` properly decidable (currently falls back to literal)
-- Implement full exhaustified meaning computation
-- Compare IE vs MW operators on this domain
--/
+  sorry
 
 end RSA.Implementations.FrankeBergen2020

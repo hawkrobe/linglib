@@ -1,26 +1,28 @@
-/-
-# Kao, Bergen & Goodman (2014)
+import Mathlib.Data.Rat.Defs
+
+/-!
+# Kao, Bergen & Goodman (2014) @cite{kao-etal-2014-metaphor}
 
 "Formalizing the Pragmatics of Metaphor Understanding"
 Proceedings of the Annual Meeting of the Cognitive Science Society, 36
 
 ## Key Predictions (from paper)
 
-1. **Nonliteral interpretation**: P(person | "shark") ≈ 1
+1. **Nonliteral interpretation**: P(person | "shark") >> P(shark | "shark")
    - Listener infers the referent is a person, not literally a shark
 
 2. **Multiple feature elevation**: Metaphor raises P(f1), P(f2), P(f3) above prior
    - Unlike literal "He is scary" which only raises P(scary)
 
 3. **Context sensitivity**: Specific QUD raises target feature probability
-   - "Is he scary?" + "He is a shark" → higher P(scary) than vague "What is he like?"
+   - "Is he scary?" + "He is a shark" -> higher P(scary) than vague "What is he like?"
 
 4. **Metaphor richer than literal**: Metaphor elevates secondary features more
    - "He is a shark" raises P(dangerous), P(mean) more than "He is scary"
 
 ## The Model
 
-Meaning space: Category × Features
+Meaning space: Category x Features
 - Category: the referent (person, shark, fire, blanket)
 - Features: properties (dangerous, unpredictable, comforting)
 
@@ -38,13 +40,7 @@ Metaphor Understanding. Proceedings of the Annual Meeting of the Cognitive
 Science Society, 36, 719-724.
 -/
 
-import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-
 namespace RSA.KaoEtAl2014_Metaphor
-
-open RSA.Eval
 
 -- Domain: Categories and Features
 
@@ -63,7 +59,7 @@ inductive Feature where
   | comforting     -- f3
   deriving Repr, DecidableEq, BEq
 
-/-- Full meaning: category × feature profile -/
+/-- Full meaning: category x feature profile -/
 structure Meaning where
   category : Category
   dangerous : Bool
@@ -153,7 +149,7 @@ def featureMatch (u : Utterance) (m : Meaning) : ℚ :=
     (if evoked.dangerous == m.dangerous then 1 else 0) +
     (if evoked.unpredictable == m.unpredictable then 1 else 0) +
     (if evoked.comforting == m.comforting then 1 else 0)
-  -- More feature matches → higher compatibility
+  -- More feature matches -> higher compatibility
   (matchCount : ℚ) / 3
 
 /--
@@ -226,63 +222,7 @@ def goalPrior : Goal → ℚ
   | .unpredictable => 2 -- Sometimes unpredictability
   | .comforting => 2    -- Sometimes comfort
 
--- RSA Scenario
-
-/-- Run L0 for metaphor scenario with extended semantics -/
-def runL0 (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
-  RSA.Eval.basicL0 allUtterances allMeanings
-    (λ utt m => extendedSemantics utt m) meaningPrior u
-
-/-- Run S1 for metaphor scenario -/
-def runS1 (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
-  -- S1 with QUD projection
-  let l0_projected := allUtterances.map λ u =>
-    let l0 := runL0 u g
-    let projected := allMeanings.map λ m' =>
-      if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
-    (u, RSA.Eval.sumScores projected)
-  let normalized := RSA.Eval.normalize l0_projected
-  let scores := allUtterances.map λ u =>
-    let l0Score := RSA.Eval.getScore normalized u
-    (u, l0Score)
-  RSA.Eval.normalize scores
-
-/-- Run L1 joint for metaphor scenario -/
-def runL1_joint (u : Utterance) : List ((Meaning × Goal) × ℚ) :=
-  let jointWorlds := allMeanings.flatMap λ m => allGoals.map λ g => (m, g)
-  let scores := jointWorlds.map λ (m, g) =>
-    let priorScore := meaningPrior m * goalPrior g
-    let s1Score := RSA.Eval.getScore (runS1 m g) u
-    ((m, g), priorScore * s1Score)
-  RSA.Eval.normalize scores
-
-/-- Run L1 marginal over meanings -/
-def runL1_world (u : Utterance) : List (Meaning × ℚ) :=
-  RSA.Eval.marginalize (runL1_joint u) Prod.fst
-
-/-- Run L1 marginal over goals -/
-def runL1_goal (u : Utterance) : List (Goal × ℚ) :=
-  RSA.Eval.marginalize (runL1_joint u) Prod.snd
-
-/-- Run L0 for strict scenario (Boolean semantics) -/
-def runL0_strict (u : Utterance) (g : Goal) : List (Meaning × ℚ) :=
-  RSA.Eval.basicL0 allUtterances allMeanings
-    (λ utt m => boolToRat (meaningSemantics utt m)) meaningPrior u
-
-/-- Run S1 for strict scenario -/
-def runS1_strict (m : Meaning) (g : Goal) : List (Utterance × ℚ) :=
-  let l0_projected := allUtterances.map λ u =>
-    let l0 := runL0_strict u g
-    let projected := allMeanings.map λ m' =>
-      if qudEquiv g m m' then RSA.Eval.getScore l0 m' else 0
-    (u, RSA.Eval.sumScores projected)
-  let normalized := RSA.Eval.normalize l0_projected
-  let scores := allUtterances.map λ u =>
-    let l0Score := RSA.Eval.getScore normalized u
-    (u, l0Score)
-  RSA.Eval.normalize scores
-
--- Compute Distributions
+-- Named meanings for reference
 
 /-- A dangerous person -/
 def dangerousPerson : Meaning :=
@@ -295,219 +235,6 @@ def volatilePerson : Meaning :=
 /-- A comforting person -/
 def comfortingPerson : Meaning :=
   { category := .person, dangerous := false, unpredictable := false, comforting := true }
-
-/-- L0 for "shark" -/
-def l0_shark : List (Meaning × ℚ) := runL0 .shark .dangerous
-
-/-- S1 with dangerous person and QUD "dangerous" -/
-def s1_dangerous_goal : List (Utterance × ℚ) := runS1 dangerousPerson .dangerous
-
-/-- S1 with dangerous person and QUD "category" -/
-def s1_category_goal : List (Utterance × ℚ) := runS1 dangerousPerson .category
-
-/-- S1 with volatile person and QUD "dangerous" -/
-def s1_volatile_dangerous : List (Utterance × ℚ) := runS1 volatilePerson .dangerous
-
-/-- S1 with comforting person and QUD "comforting" -/
-def s1_comforting_goal : List (Utterance × ℚ) := runS1 comfortingPerson .comforting
-
-/-- L1 for "shark" -/
-def l1_shark : List (Meaning × ℚ) := runL1_world .shark
-
-/-- L1 goal distribution for "shark" -/
-def l1_goal_shark : List (Goal × ℚ) := runL1_goal .shark
-
-/-- L1 for "fire" -/
-def l1_fire : List (Meaning × ℚ) := runL1_world .fire
-
-/-- L1 for "blanket" -/
-def l1_blanket : List (Meaning × ℚ) := runL1_world .blanket
-
--- Evaluate
-
-#eval l0_shark
--- L0("shark"): soft compatibility with dangerous meanings
-
-#eval s1_dangerous_goal
--- S1(dangerous person | QUD=dangerous): should prefer "shark"!
-
-#eval s1_category_goal
--- S1(dangerous person | QUD=category): should prefer "person"
-
-#eval s1_volatile_dangerous
--- S1(volatile person | QUD=dangerous): "fire" might be preferred
-
-#eval s1_comforting_goal
--- S1(comforting person | QUD=comforting): should prefer "blanket"
-
-#eval l1_shark
--- L1("shark"): should infer dangerous, category=person
-
-#eval l1_goal_shark
--- L1_goal("shark"): should infer QUD was probably "dangerous"
-
-#eval l1_fire
--- L1("fire"): should infer dangerous + unpredictable
-
-#eval l1_blanket
--- L1("blanket"): should infer comforting
-
--- Key Predictions
-
-
--- Key Prediction 1: Nonliteral Interpretation
-
-/--
-**Paper Prediction 1**: Nonliteral interpretation - P(person | "shark") >> P(shark | "shark")
-
-The listener correctly infers the referent is a person, not literally a shark.
-From paper: "Marginalized over values of f, the probability of the person category
-given the utterance is close to one (P(cp|u) = 0.994)"
--/
-def l1_infers_person_not_shark : Bool :=
-  let dist := l1_shark
-  let pPerson := allMeanings.filter (·.category == .person) |>.foldl
-    (λ acc m => acc + getScore dist m) 0
-  let pShark := allMeanings.filter (·.category == .shark) |>.foldl
-    (λ acc m => acc + getScore dist m) 0
-  pPerson > pShark * 10  -- Person should be ~99%, shark ~1%
-
-#eval l1_infers_person_not_shark
--- Expected: true
-
-/-- **Theorem (Paper Key Result)**: Listener interprets metaphor nonliterally -/
-theorem nonliteral_interpretation : l1_infers_person_not_shark = true := by native_decide
-
--- Key Prediction 2: Speaker Behavior (Metaphor Emergence)
-
-/--
-**Paper Prediction 2**: Under QUD "dangerous", S1 prefers "shark".
-
-When the speaker cares about conveying danger (not category),
-metaphorical utterances become optimal.
--/
-def s1_shark_preferred_for_danger : Bool :=
-  let dist := s1_dangerous_goal
-  getScore dist Utterance.shark > getScore dist Utterance.person
-
-#eval s1_shark_preferred_for_danger
--- Expected: true (metaphor emerges)
-
-/-- **Theorem**: Metaphor emerges under feature QUD -/
-theorem metaphor_emerges : s1_shark_preferred_for_danger = true := by native_decide
-
-/--
-**Metaphor Prediction 2**: Under QUD "category", S1 rates "person" at least as high as "shark".
-
-When the speaker cares about literal category, literal utterances are at least as good.
-(With soft semantics, metaphors still have some compatibility, so they may tie.)
--/
-def s1_person_at_least_shark : Bool :=
-  let dist := s1_category_goal
-  getScore dist Utterance.person >= getScore dist Utterance.shark
-
-#eval s1_person_at_least_shark
--- Expected: true (they tie at 1/3 each)
-
-/-- **Theorem**: Literal "person" at least as good as metaphor under category QUD -/
-theorem literal_at_least_metaphor_under_category : s1_person_at_least_shark = true := by native_decide
-
-/--
-**Metaphor Prediction 3**: L1 hearing "shark" infers dangerous.
-
-Despite the literal meaning being false, the pragmatic listener
-correctly infers the speaker meant to convey danger.
--/
-def l1_shark_infers_dangerous : Bool :=
-  let dist := l1_shark
-  -- P(dangerous=true | shark) > P(dangerous=false | shark)
-  let pDangerous := allMeanings.filter (·.dangerous) |>.foldl
-    (λ acc m => acc + getScore dist m) 0
-  let pNotDangerous := allMeanings.filter (! ·.dangerous) |>.foldl
-    (λ acc m => acc + getScore dist m) 0
-  pDangerous > pNotDangerous
-
-#eval l1_shark_infers_dangerous
--- Expected: true
-
-/-- **Theorem**: Listener infers dangerous from "shark" metaphor -/
-theorem listener_infers_dangerous : l1_shark_infers_dangerous = true := by native_decide
-
-/--
-**Metaphor Prediction 4**: L1 infers speaker's QUD was probably a feature.
-
-When hearing metaphor, the listener infers the speaker was probably
-trying to communicate a feature, not literal category.
--/
-def l1_infers_feature_qud : Bool :=
-  let dist := l1_goal_shark
-  let pFeature := getScore dist Goal.dangerous + getScore dist Goal.unpredictable +
-                  getScore dist Goal.comforting
-  let pCategory := getScore dist Goal.category
-  pFeature > pCategory
-
-#eval l1_infers_feature_qud
--- Expected: true
-
-/-- **Theorem**: Listener infers speaker had feature QUD from metaphor -/
-theorem listener_infers_feature_qud : l1_infers_feature_qud = true := by native_decide
-
-/--
-**Metaphor Prediction 5**: "Fire" conveys both dangerous AND unpredictable.
-
-"Fire" should evoke unpredictability more than "shark".
--/
-def fire_more_unpredictable_than_shark : Bool :=
-  let fireUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (λ acc m => acc + getScore l1_fire m) 0
-  let sharkUnpred := allMeanings.filter (·.unpredictable) |>.foldl
-    (λ acc m => acc + getScore l1_shark m) 0
-  fireUnpred > sharkUnpred
-
-#eval fire_more_unpredictable_than_shark
--- Expected: true
-
-/-- **Theorem**: "Fire" evokes unpredictability more than "shark" -/
-theorem fire_evokes_unpredictability : fire_more_unpredictable_than_shark = true := by native_decide
-
--- Contrast with Strict Semantics
-
-/-- Under strict semantics, metaphor gets zero compatibility -/
-def l0_shark_strict : List (Meaning × ℚ) := runL0_strict .shark .dangerous
-
-#eval l0_shark_strict
--- All zeros for person meanings (shark is literally false)
-
-/-- S1 under strict semantics can't use metaphor -/
-def s1_strict_dangerous : List (Utterance × ℚ) := runS1_strict dangerousPerson .dangerous
-
-#eval s1_strict_dangerous
--- "shark" should have probability 0 (can only use "person")
-
--- Connection to Kao et al. (2014) Hyperbole
-
-/-
-## Structural Parallel: Metaphor vs Hyperbole
-
-Both use the same QUD-RSA architecture:
-
-| Component     | Hyperbole (PNAS)      | Metaphor (CogSci)           |
-|---------------|----------------------|------------------------------|
-| Meaning       | Price × Affect       | Category × Features          |
-| QUDs          | price, affect, both  | category, dangerous, etc.    |
-| Literal false | "million" for $500   | "shark" for person           |
-| Communicates  | Affect despite price | Feature despite category     |
-
-The shared insight: speakers can rationally choose literally false utterances
-when optimizing for a QUD that projects away from the literally false dimension.
-
-## Key Difference
-
-- **Hyperbole**: Scalar exaggeration (more extreme value on same dimension)
-- **Metaphor**: Cross-category mapping (different category with shared features)
-
-Both emerge from the same pragmatic mechanism: QUD-sensitive optimization.
--/
 
 -- PART: Compositional Grounding in Montague Semantics
 
@@ -524,7 +251,7 @@ The sentence "John is dangerous" involves **predication**:
   ⟦John is dangerous⟧ = dangerous(john)
 
 For metaphor "John is a shark":
-- Literal: ⟦John is a shark⟧ = shark(john) — FALSE for a person
+- Literal: ⟦John is a shark⟧ = shark(john) -- FALSE for a person
 - Metaphorical: via P(dangerous | shark), the listener infers dangerous(john)
 
 The feature priors P(f|c) are **soft meaning postulates** connecting
@@ -673,12 +400,12 @@ theorem qudEquiv_eq_compositional (g : Goal) (m1 m2 : Meaning) :
 2. **QUD-RSA**:
    - S1 optimizes w.r.t. *projected* meaning under QUD
    - Under QUD "dangerous", meanings with same danger value are equivalent
-   - "Shark" evokes danger → compatible with dangerous meanings
+   - "Shark" evokes danger -> compatible with dangerous meanings
    - S1 can rationally choose "shark" to communicate "dangerous"
 
 3. **L1 Inference**:
    - Listener marginalizes over possible QUDs
-   - Hearing "shark" → infers speaker probably had "dangerous" QUD
+   - Hearing "shark" -> infers speaker probably had "dangerous" QUD
    - Correctly recovers dangerous meaning despite literal falsity
 
 ## Key Modeling Choices
@@ -698,8 +425,6 @@ QUD-RSA provides a unified account of non-literal language:
 - **Hyperbole**: QUD on affect allows literally false prices
 - **Metaphor**: QUD on features allows literally false categories
 - **Irony** (future work): QUD on speaker attitude allows opposite meanings
-
-The Core/QUD.lean infrastructure supports all these applications.
 
 ## References
 

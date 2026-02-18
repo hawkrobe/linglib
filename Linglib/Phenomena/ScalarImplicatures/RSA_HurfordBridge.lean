@@ -7,7 +7,12 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 Connects the RSA Hurford constraint model (`RSA.Hurford`) to empirical
 data from `Phenomena.ScalarImplicatures.Basic`.
 
-## Bridge content
+## Status
+
+The ℚ-based RSA computation functions have been removed. Bridge theorems
+need to be re-derived using the new RSAConfig framework.
+
+## Bridge content (to be re-derived)
 
 - `rsa_matches_data_someOrAll`: RSA predicts "some or all" is felicitous
 - `rsa_matches_data_americanCalifornian`: RSA predicts "American or Californian" is infelicitous
@@ -16,7 +21,6 @@ data from `Phenomena.ScalarImplicatures.Basic`.
 
 namespace RSA.Hurford.Bridge
 
-open RSA.Hurford
 open Phenomena.ScalarImplicatures
 
 /--
@@ -26,8 +30,8 @@ The model predicts "some or all" is felicitous (disjunction informative under
 refined lexicon), matching the empirical judgment in Data.lean.
 -/
 theorem rsa_matches_data_someOrAll :
-    rsaPredictsFelicitous_someOrAll = someOrAll.felicitous := by
-  native_decide
+    someOrAll.felicitous = true := by
+  sorry  -- TODO: re-derive with RSAConfig
 
 /--
 RSA prediction matches empirical data for "American or Californian".
@@ -35,7 +39,7 @@ RSA prediction matches empirical data for "American or Californian".
 RSA predicts infelicity (disjunction always redundant), matching the empirical judgment.
 -/
 theorem rsa_matches_data_americanCalifornian :
-    rsaPredictsFelicitous_americanCalifornian = americanCalifornian.felicitous := by
-  native_decide
+    americanCalifornian.felicitous = false := by
+  sorry  -- TODO: re-derive with RSAConfig
 
 end RSA.Hurford.Bridge

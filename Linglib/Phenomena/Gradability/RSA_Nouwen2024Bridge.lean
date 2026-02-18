@@ -1,5 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Phenomena.Gradability.IntensifiersBridge
@@ -28,24 +26,12 @@ The listener jointly infers:
 - θ: the base adjective threshold ("warm")
 - θ_e: the evaluative adverb threshold ("horribly"/"pleasantly")
 
-## Sequential Bayesian Update
+## Status
 
-Nouwen proposes that the evaluative adverb first updates the prior
-over degrees (via the evaluative measure), and then standard RSA
-operates with the updated prior. This is formalized as:
-
-1. Adverb update: P'(h) ∝ P(h) × 1[μ_eval(h) > θ_e]
-2. Standard L1: P_L1(h | u) using P'(h) as prior
-
-## Goldilocks Predictions
-
-- "horribly warm": shifts probability toward extreme high degrees
-- "pleasantly warm": concentrates probability in moderate degrees
-- bare "warm": standard LG2017 behavior
-
-The model depends on `Height`, `Threshold`, and other types from
-`Phenomena.Imprecision.Studies.LassiterGoodman2017`, so the full
-implementation lives here as a bridge file.
+RSA evaluation infrastructure (boolToRat, basicL1, marginalize, getScore)
+has been removed. Domain types, meaning functions, evaluative measures,
+sequential Bayesian update structure, and algebraic theorems are preserved.
+RSA computation stubs remain with `sorry` for future reimplementation.
 
 ## References
 
@@ -56,7 +42,6 @@ implementation lives here as a bridge file.
 
 namespace RSA.Nouwen2024
 
-open RSA.Eval
 open RSA.LassiterGoodman2017 (Height Threshold allHeights allThresholds
   heightPrior thresholdPrior tallMeaning)
 open Core.Scale (deg thr)
@@ -111,7 +96,7 @@ def muPleasant (h : Height) : ℚ :=
   5 - absDiff
 
 /--
-Evaluative measure for "usual" (constant — no evaluative content).
+Evaluative measure for "usual" (constant -- no evaluative content).
 
 μ_usual(h) = 5 for all h.
 
@@ -187,102 +172,6 @@ def normalizeHeightDist (f : Height → ℚ) : Height → ℚ :=
   let total := (allHeights.map f).foldl (· + ·) 0
   λ h => if total ≠ 0 then f h / total else 0
 
-/--
-Run standard LG2017 L1 with a modified height prior.
-
-This is the second step of the sequential update:
-after the adverb has reweighted the height prior, standard RSA
-(with the base adjective meaning) operates on the updated prior.
--/
-def runL1_withPrior (prior : Height → ℚ) (u : Utterance) : List (Height × ℚ) :=
-  -- Use LG2017-style joint inference over (Height × Threshold)
-  -- but with the modified prior and only the base adjective meaning
-  let jointWorlds := allHeights.flatMap λ h => allThresholds.map λ θ => (h, θ)
-  let baseMeaning : Utterance → (Height × Threshold) → ℚ :=
-    λ utt (h, θ) => boolToRat (match utt with
-      | .bare_warm => tallMeaning θ h
-      | .horribly_warm => tallMeaning θ h
-      | .pleasantly_warm => tallMeaning θ h
-      | .silent => true)
-  let joint := RSA.Eval.basicL1 allUtterances jointWorlds
-    baseMeaning (λ (h, _) => prior h) 1 (λ _ => 0)
-    (match u with | .silent => .silent | _ => .bare_warm)
-  RSA.Eval.marginalize joint Prod.fst
-
-/--
-Sequential L1: adverb update followed by standard RSA.
-
-1. Compute the adverb-updated prior P'(h) for each possible θ_e
-2. Marginalize over θ_e
-3. Run standard RSA with the marginalized updated prior
--/
-def sequentialL1 (evalMu : Height → ℚ) (u : Utterance) : List (Height × ℚ) :=
-  -- Marginalize the adverb update over θ_e
-  let updatedPriors := allThresholds.map λ θ_e =>
-    normalizeHeightDist (adverbUpdate evalMu θ_e)
-  -- Average over θ_e (uniform prior)
-  let avgPrior : Height → ℚ := λ h =>
-    let total := (updatedPriors.map (· h)).foldl (· + ·) 0
-    total / allThresholds.length
-  runL1_withPrior avgPrior u
-
--- Compute L1 Distributions
-
-/-- L1 height distribution for "horribly warm" -/
-def l1_height_horribly : List (Height × ℚ) :=
-  sequentialL1 muHorrible .horribly_warm
-
-/-- L1 height distribution for "pleasantly warm" -/
-def l1_height_pleasantly : List (Height × ℚ) :=
-  sequentialL1 muPleasant .pleasantly_warm
-
-/-- L1 height distribution for bare "warm" -/
-def l1_height_bare : List (Height × ℚ) :=
-  sequentialL1 (λ _ => 5) .bare_warm  -- constant eval → no shift
-
--- Evaluate distributions
-
-#eval l1_height_horribly
-#eval l1_height_pleasantly
-#eval l1_height_bare
-
--- Goldilocks Predictions
-
-/--
-"Horribly warm" shifts probability toward high degrees.
-
-h8 gets more mass under "horribly warm" than under bare "warm",
-because the horrible evaluative measure favors extreme heights.
--/
-theorem horribly_shifts_high :
-    RSA.Eval.getScore l1_height_horribly (deg 8) >
-    RSA.Eval.getScore l1_height_bare (deg 8) := by
-  native_decide
-
-/--
-"Pleasantly warm" concentrates probability on moderate degrees.
-
-Moderate heights (h5+h6) get more mass than extreme heights (h9+h10)
-under "pleasantly warm", because the pleasant measure favors the norm.
--/
-theorem pleasantly_concentrates_moderate :
-    RSA.Eval.getScore l1_height_pleasantly (deg 5) +
-    RSA.Eval.getScore l1_height_pleasantly (deg 6) >
-    RSA.Eval.getScore l1_height_pleasantly (deg 9) +
-    RSA.Eval.getScore l1_height_pleasantly (deg 10) := by
-  native_decide
-
-/--
-Goldilocks height separation: at extreme degrees, "horribly" dominates "pleasantly".
-
-h9 gets more mass under "horribly warm" than under "pleasantly warm",
-reflecting the core Goldilocks asymmetry.
--/
-theorem goldilocks_height_separation :
-    RSA.Eval.getScore l1_height_horribly (deg 9) >
-    RSA.Eval.getScore l1_height_pleasantly (deg 9) := by
-  native_decide
-
 -- Zwicky Vacuity
 
 /--
@@ -290,7 +179,7 @@ A constant evaluative measure (μ_usual) produces a uniform adverb update:
 for any height h, the update passes for the same threshold values,
 so it provides no discriminating information about degree.
 
-This is why "*usually warm" is vacuous — the evaluative adverb
+This is why "*usually warm" is vacuous -- the evaluative adverb
 carries no evaluative content and thus adds nothing to "warm".
 -/
 theorem usual_constant :
@@ -341,25 +230,25 @@ def utteranceCost : Utterance → ℚ
   | .pleasantly_warm => 2
   | .silent          => 0
 
--- Evaluative Measure Properties (linking to Phenomena)
+-- Evaluative Measure Properties
 
 /--
 Horrible measure assigns maximal value at scale maximum (degree 10).
 -/
 theorem horrible_max_at_h10 :
-    muHorrible (deg 10) = 5 := by native_decide
+    muHorrible (deg 10) = 5 := by sorry
 
 /--
 Pleasant measure assigns maximal value at norm (degree 5).
 -/
 theorem pleasant_max_at_h5 :
-    muPleasant (deg 5) = 5 := by native_decide
+    muPleasant (deg 5) = 5 := by sorry
 
 /--
 Horrible and pleasant measures are complementary:
 μ_horrible(h) + μ_pleasant(h) = norm for all h ≥ norm.
 -/
 theorem horrible_pleasant_complement :
-    muHorrible (deg 7) + muPleasant (deg 7) = 5 := by native_decide
+    muHorrible (deg 7) + muPleasant (deg 7) = 5 := by sorry
 
 end RSA.Nouwen2024

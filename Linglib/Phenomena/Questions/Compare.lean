@@ -310,34 +310,13 @@ P(D|q) ∝ Q(q|D) · P(D)
 As rationality increases (α → ∞), this concentrates on the "true" DP.
 -/
 
-/-- As rationality increases, ToM inference concentrates on true DP.
+/-!
+### ToM Inference Properties (Removed)
 
-This is the foundation for PRIOR-PQ's response selection:
-- Low α: Uncertain about DP, hedge responses
-- High α: Confident about DP, targeted responses
-
-[sorry: need to show inferredDP length = input dps length (concentration is a limit property)]
+RSA evaluation infrastructure (RSA.Eval.normalize, inferredDP, inferredDPNormalized,
+softmax) has been removed. The `tom_concentration_with_rationality` and
+`tom_consistency` theorems need reimplementation with the new RSAConfig framework.
 -/
-theorem tom_concentration_with_rationality (params : Params) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action) :
-    (inferredDP params q dps worlds responses actions).length = dps.length := by
-  simp only [inferredDP, List.length_map, List.length_zip, softmax_length, Nat.min_self]
-
-/-- ToM inference is consistent: normalized distribution sums correctly.
-
-Under ideal conditions (high α, known priors), inferredDP recovers the
-true DP. As a basic consistency check, the normalized posterior has the
-same length as the input DP list.
-
-[sorry: need to show inferredDPNormalized preserves list length]
--/
-theorem tom_consistency (params : Params) (q : PolarQuestion)
-    (dps : List PQDecisionProblem) (worlds : List World)
-    (responses : List Response) (actions : List Action) :
-    (inferredDPNormalized params q dps worlds responses actions).length = dps.length := by
-  simp only [inferredDPNormalized, RSA.Eval.normalize_length, inferredDP, List.length_map,
-    List.length_zip, softmax_length, Nat.min_self]
 
 
 /-!

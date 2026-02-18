@@ -46,12 +46,11 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interface
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 namespace Comparisons.RSANeoGricean
 
-open RSA NeoGricean RSA.Eval
+open RSA NeoGricean
 
 -- Directional Agreement: Both Favor "Not All" for "Some"
 
@@ -162,24 +161,14 @@ structure RSAExhLimit (G : InterpGame) where
   /-- Under closure, exhMW = exhIE (Spector Theorem 9) -/
   exhMW_to_exhIE : True  -- See Spector2007.lean
 
-/--
-Agreement between RSA (in the limit) and NeoGricean.
+/-!
+### LimitAgreement (Removed)
 
-Now grounded in the proved limit theorem rather than being conjectural.
+The `LimitAgreement` structure that paired an `RSAScenario` with a
+`StandardRecipeResult` has been removed. The old `RSAScenario` type
+has been replaced by `RSAConfig`. Agreement between RSA and NeoGricean
+is demonstrated through the limit theorem and structural comparisons below.
 -/
-structure LimitAgreement (U W : Type) [BEq U] [BEq W] [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W] where
-  /-- RSA scenario -/
-  rsaScenario : RSAScenario U W
-  /-- NeoGricean analysis -/
-  neoAnalysis : StandardRecipeResult
-  /-- The utterance being analyzed -/
-  utterance : String
-  /-- RSA's favored world (highest L1 probability) -/
-  rsaFavoredWorld : W
-  /-- NeoGricean's predicted interpretation -/
-  neoGriceanPrediction : List String
-  /-- Agreement property: RSA's favored world matches NeoGricean's prediction -/
-  agreement : neoGriceanPrediction.length > 0
 
 -- Ordinal Agreement: Ranking Worlds
 

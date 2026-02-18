@@ -9,7 +9,6 @@ how-causation (H), and sufficient-causation (S).
 - `CausalExpression`
 - `CausalWorld`
 - `expressionMeaning`
-- `scenario`
 
 ## References
 
@@ -17,14 +16,15 @@ how-causation (H), and sufficient-causation (S).
   Psychological Review.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.DeriveFintype
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Linglib.Core.Causation
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 
 namespace RSA.BellerGerstenberg2025
+
+open RSA Real
 
 
 /-- Causal expressions in English for describing causation. -/
@@ -35,10 +35,7 @@ inductive CausalExpression
   | madeNoDifference
   deriving DecidableEq, BEq, Repr, Inhabited, Fintype
 
-/-- FinEnum instance for computable enumeration -/
-instance : FinEnum CausalExpression :=
-  FinEnum.ofList [.affected, .enabled, .caused, .madeNoDifference]
-    (λ x => by cases x <;> simp)
+instance : Nonempty CausalExpression := ⟨.affected⟩
 
 instance : ToString CausalExpression where
   toString
@@ -102,11 +99,7 @@ instance : Fintype CausalWorld where
     simp only [Finset.mem_insert, Finset.mem_singleton, CausalWorld.mk.injEq]
     cases w <;> cases h <;> cases s <;> simp
 
-/-- FinEnum instance for computable enumeration -/
-instance : FinEnum CausalWorld :=
-  FinEnum.ofList allCausalWorlds (λ ⟨w, h, s⟩ => by
-    simp only [allCausalWorlds, List.mem_cons, CausalWorld.mk.injEq]
-    cases w <;> cases h <;> cases s <;> simp)
+instance : Nonempty CausalWorld := ⟨⟨false, false, false⟩⟩
 
 
 /--
@@ -124,50 +117,29 @@ def expressionMeaning (cw : CausalWorld) : CausalExpression → Bool
   | .caused => cw.how && (cw.whether || cw.sufficient)
   | .madeNoDifference => !cw.whether && !cw.how && !cw.sufficient
 
-/-- Truth in a world as rational (for RSA φ function) -/
-def expressionMeaningRat (cw : CausalWorld) (u : CausalExpression) : ℚ :=
-  boolToRat (expressionMeaning cw u)
 
+-- ============================================================================
+-- RSAConfig
+-- ============================================================================
 
-/--
-RSA scenario for causal expression choice.
+/-- Belief-based speaker utility for causal expression choice. -/
+noncomputable def beliefBasedUtility : SpeakerUtility CausalExpression CausalWorld where
+  s1Score l0 α _w u := rpow (l0 u _w) α
+  s1Score_nonneg _ _α _w u hl _ := rpow_nonneg (hl u _w) _α
 
-The speaker observes a causal world (W, H, S values) and chooses an
-expression. The listener hears the expression and infers the world.
--/
-def scenario : RSAScenario CausalExpression CausalWorld :=
-  RSAScenario.basicBool
-    (satisfies := λ cw u => expressionMeaning cw u)
-    (prior := λ _ => 1)
-    (prior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
-    (cost := λ _ => 0)
-    (cost_nonneg := λ _ => le_refl 0)
-    (utterancePrior := λ _ => 1)
-    (utterancePrior_nonneg := λ _ => le_refl 0 |> λ _ => by norm_num)
+/-- RSAConfig for causal expression choice.
 
-/-- Default scenario with uniform prior over causal worlds -/
-def defaultScenario : RSAScenario CausalExpression CausalWorld := scenario
-
-
-/-!
-## FinEnum-Based Evaluation
-
-With FinEnum instances for CausalExpression and CausalWorld, we can use
-the RSA.evalL0/evalS1/evalL1 functions directly. These take explicit type
-equalities that are resolved by `rfl` since the scenario is built with basicBool.
--/
-
-/-- L0: Literal listener given expression -/
-def runL0 (u : CausalExpression) : List (CausalWorld × ℚ) :=
-  scenario.evalL0 u
-
-/-- S1: Pragmatic speaker given world -/
-def runS1 (cw : CausalWorld) : List (CausalExpression × ℚ) :=
-  scenario.evalS1 cw
-
-/-- L1: Pragmatic listener given expression -/
-def runL1 (u : CausalExpression) : List (CausalWorld × ℚ) :=
-  scenario.evalL1 u
+Meaning: Boolean expression semantics (1 if expression applies, 0 otherwise).
+World prior: uniform over causal worlds.
+Speaker utility: belief-based (rpow). -/
+noncomputable def cfg : RSAConfig CausalExpression CausalWorld where
+  meaning _ u cw := if expressionMeaning cw u then 1 else 0
+  meaning_nonneg _ _ _ := by split <;> positivity
+  latentPrior_nonneg _ := by positivity
+  worldPrior_nonneg _ := by positivity
+  α := 1
+  α_pos := one_pos
+  speakerUtility := beliefBasedUtility
 
 
 /--
@@ -260,17 +232,19 @@ theorem none_world_only_negative :
   decide
 
 
-#eval runL0 .caused   -- Worlds where "caused" is literally true
-#eval runL0 .enabled  -- Worlds where "enabled" is literally true
+-- ============================================================================
+-- RSA Predictions (sorry'd — require noncomputable reasoning)
+-- ============================================================================
 
-#eval runS1 world_full    -- What speaker says in full causation world
-#eval runS1 world_W_only  -- What speaker says when only W is true
-#eval runS1 world_H_only  -- What speaker says when only H is true
+/-- In full causation world, S1 prefers "caused" (most informative). -/
+theorem s1_full_prefers_caused :
+    cfg.S1 () world_full .caused > cfg.S1 () world_full .enabled := by
+  sorry -- TODO: prove via rpow monotonicity over L0 posteriors
 
-#eval runL1 .caused   -- Listener inference from "caused"
-#eval runL1 .enabled  -- Listener inference from "enabled"
-
--- Summary
+/-- L1 hearing "caused" infers H is likely true. -/
+theorem l1_caused_infers_how :
+    cfg.L1 .caused world_caused > cfg.L1 .caused world_W_only := by
+  sorry -- TODO: prove via Bayesian inversion
 
 /-!
 ## How RSA Derives Causal Expression Pragmatics

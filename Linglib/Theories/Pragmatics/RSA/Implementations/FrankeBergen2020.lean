@@ -22,8 +22,6 @@ which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 - Phenomena data in: Linglib.Phenomena.FrankeBergen2020.Data
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Core.Parse
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 

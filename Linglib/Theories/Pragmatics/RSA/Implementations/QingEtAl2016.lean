@@ -1,5 +1,8 @@
-/-
-# Qing, Goodman & Lassiter (2016): RSA Projective Content Model
+import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Mathlib.Data.Rat.Defs
+
+/-!
+# Qing, Goodman & Lassiter (2016): RSA Projective Content Model @cite{qing-etal-2016}
 
 "A rational speech-act model of projective content"
 Proceedings of the Annual Meeting of the Cognitive Science Society, 38.
@@ -15,7 +18,7 @@ common ground). Projection emerges because:
 
 1. "John didn't stop smoking" is under-informative in the full universe
 2. But it's informative if the listener assumes the speaker has taken
-   "John smoked in the past" for granted (i.e., +past ∈ C)
+   "John smoked in the past" for granted (i.e., +past in C)
 3. L1 infers that C = +past best explains the utterance
 
 ## Domain: Change-of-State Verbs
@@ -34,7 +37,7 @@ Context sets:
 
 ## Predictions
 
-1. "John didn't stop smoking" → P(+past ∈ C | utterance) > prior
+1. "John didn't stop smoking" -> P(+past in C | utterance) > prior
    (presupposition projects through negation)
 
 2. QUD sensitivity: projection is stronger when QUD = now?
@@ -48,20 +51,15 @@ Context sets:
 - Warstadt (2022). Presupposition accommodation through pragmatic inference.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-
 namespace RSA.QingEtAl2016
 
-open RSA.Eval
 open Semantics.Lexical.Verb.ChangeOfState
 
 
 /--
 World state: John's smoking status at two time points.
 
-Following Qing et al., a world is a pair ⟨past, now⟩ where:
+Following Qing et al., a world is a pair (past, now) where:
 - past: John smoked in the past
 - now: John smokes now
 -/
@@ -123,10 +121,6 @@ def compatibleBool (c : ContextSet) (w : WorldState) : Bool :=
   | .pastFalseNowTrue => !w.past && w.now
   | .pastFalseNowFalse => !w.past && !w.now
   | .universe => true
-
-/-- Credence function for RSA computation -/
-def contextCredence (c : ContextSet) (w : WorldState) : ℚ :=
-  boolToRat (compatibleBool c w)
 
 
 /--
@@ -193,7 +187,7 @@ asserts negation of current state.
 Note: The Montague CoS module defines semantics over a single predicate P,
 while our worlds have separate past/now fields. The correspondence is:
 - "stopped smoking" = prior state held (past=true), current state doesn't (now=false)
-- This matches cessation: presup P, assert ¬P
+- This matches cessation: presup P, assert not-P
 -/
 theorem stopped_follows_cos_pattern (w : WorldState) :
     literalMeaning .stoppedSmoking w = (w.past && !w.now) := rfl
@@ -242,72 +236,6 @@ def contextPrior : ContextSet → ℚ
   | .universe => 1         -- No assumptions
 
 
-/--
-Projection strength: P(+past ∈ C | utterance, QUD)
-
-How likely is it that "John smoked" is established in the common ground
-after hearing the utterance?
--/
-def projectionOfPast (u : Utterance) (q : QUD) (α : ℕ := 6) : ℚ :=
-  let contextDist := RSA.Eval.projectionL1_context
-    allUtterances allWorlds allContextSets allQUDs
-    literalMeaning worldPrior contextPrior contextCredence qudProject α u q
-  -- Sum probability of context sets that entail +past
-  contextDist.foldl (λ acc (c, p) =>
-    match c with
-    | .pastTrue | .pastTrueNowTrue | .pastTrueNowFalse => acc + p
-    | _ => acc) 0
-
-/--
-Projection shift: Change from prior probability.
-
-projectionShift(u) = P(+past | u) - P(+past)
--/
-def projectionShift (u : Utterance) (q : QUD) (α : ℕ := 6) : ℚ :=
-  projectionOfPast u q α - (1 / 2)  -- Prior is roughly 0.5
-
-/--
-World posterior: P(w | utterance, QUD)
--/
-def L1_world (u : Utterance) (q : QUD) (α : ℕ := 6) : List (WorldState × ℚ) :=
-  RSA.Eval.L1_world_givenGoal
-    allUtterances allWorlds [()] [()] allContextSets allQUDs
-    (λ _ _ u' w => if literalMeaning u' w then 1 else 0)
-    worldPrior (λ _ => 1) (λ _ => 1) contextPrior (λ _ => 1)
-    contextCredence qudProject (λ _ => 0) α u q
-
-
-/--
-Prediction 1: "John didn't stop smoking" projects "John smoked".
-
-Under QUD = nowQ (the default), hearing "John didn't stop smoking"
-increases P(+past ∈ CG).
--/
-def prediction_projection_under_negation (α : ℕ := 6) : Bool :=
-  projectionShift .notStoppedSmoking .nowQ α > 0
-
-/--
-Prediction 2: QUD affects projection strength.
-
-When QUD = pastQ (the past is at-issue), projection is weaker.
-When QUD = nowQ (the past is not at-issue), projection is stronger.
--/
-def prediction_qud_effect (α : ℕ := 6) : Bool :=
-  projectionOfPast .notStoppedSmoking .nowQ α >
-  projectionOfPast .notStoppedSmoking .pastQ α
-
-/--
-Prediction 3: Presuppositional utterances project more strongly than
-non-presuppositional ones.
-
-"John didn't stop smoking" projects more strongly than "John doesn't smoke"
-because the CoS verb presupposes the prior state.
--/
-def prediction_presup_vs_nonpresup (α : ℕ := 6) : Bool :=
-  projectionOfPast .notStoppedSmoking .nowQ α >
-  projectionOfPast .doesntSmoke .nowQ α
-
-
 /-!
 ## Connection to S&T (2025) and Warstadt (2022)
 
@@ -316,19 +244,19 @@ mathematical structure as S&T and Warstadt:
 
 | Component | Qing 2016 | S&T 2025 | Warstadt 2022 |
 |-----------|-----------|----------|---------------|
-| World | ⟨past, now⟩ | ⟨BEL, C⟩ | ⟨hasDog, sick⟩ |
+| World | (past, now) | (BEL, C) | (hasDog, sick) |
 | Latent var | ContextSet | BeliefState | Context |
 | Constraint | compatibleBool | speakerCredenceBool | compatibleBool |
 | Measure | projectionOfPast | projectionOfC | accommodationStrength |
 
-All three use `L1_beliefState_givenGoal` with the latent variable
-in the `BeliefState` slot. The differences are purely domain-specific.
+All three use the latent variable in the `BeliefState` slot. The differences
+are purely domain-specific.
 
 ### The Unified Equation
 
 All three implement:
 ```
-L1(w, C | u, Q) ∝ S1(u | w, C, Q) · P(w) · P(C)
+L1(w, C | u, Q) proportional-to S1(u | w, C, Q) * P(w) * P(C)
 ```
 
 Where:

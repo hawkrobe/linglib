@@ -37,6 +37,14 @@ The categorical result is the limit as α → ∞.
 Secondary K¬ψ is blocked in Sauerland iff RSA's L1 assigns positive
 probability to ψ-worlds (due to interaction with other alternatives).
 
+## Status
+
+RSA evaluation infrastructure (RSA.Eval.L1_world, boolToRat, getScore) has been
+removed. Epistemic logic framework (EpistemicState, knows, possible, duality,
+blocking), domain types (DisjWorld, DisjUtterance, disjMeaning), and structural
+theorems are preserved. RSA L1 computation (disjL1, p_both) and graded
+exclusivity theorems remain with `sorry` for future reimplementation.
+
 ## References
 
 - Sauerland, U. (2004). Scalar implicatures in complex sentences. L&P 27:367-391.
@@ -44,8 +52,6 @@ probability to ψ-worlds (due to interaction with other alternatives).
 - Goodman, N. D. & Frank, M. C. (2016). Pragmatic language interpretation as probabilistic inference.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Core.Proposition
 import Mathlib.Data.Rat.Defs
 
@@ -240,91 +246,24 @@ def disjMeaning : DisjUtterance → DisjWorld → Bool
   | .AandB, .both => true
   | .AandB, _ => false
 
-/--
-L1 world distribution for disjunction with given α (using RSA.Eval).
+
+/-!
+## RSA Graded Exclusivity (Stubs)
+
+RSA evaluation infrastructure (RSA.Eval.L1_world, boolToRat, getScore) has been
+removed. The RSA L1 computation (disjL1) and graded exclusivity theorems
+need reimplementation with the new RSAConfig framework.
+
+The key results to reimplement:
+- `rsa_disjunction_graded_exclusivity`: L1("A or B") assigns higher probability
+  to exclusive worlds (onlyA, onlyB) than inclusive (both)
+- `rsa_both_has_positive_probability`: RSA assigns positive (but lower)
+  probability to "both" world (unlike Sauerland's categorical K¬(A∧B))
+- `p_both_decreases_with_alpha`: As α increases, P(both) decreases,
+  approaching Sauerland's categorical framework in the limit
+- `sauerland_is_rsa_limit`: Sauerland's categorical framework is the α → ∞
+  limit of RSA
 -/
-def disjL1 (α : ℕ := 1) (u : DisjUtterance) : List (DisjWorld × ℚ) :=
-  let utts := [AorB, A, B, AandB]
-  let worlds := [onlyA, onlyB, both]
-  let φ := λ (u : DisjUtterance) (w : DisjWorld) => boolToRat (disjMeaning u w)
-  RSA.Eval.L1_world utts worlds [()] [()] [()] [()]
-    (λ _ _ => φ) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1) (λ _ => 1)
-    (λ _ _ => 1) (λ _ w w' => w == w') (λ _ => 0) α u
-
--- Inspect L1 probabilities:
--- #eval disjL1 1 AorB
--- Result: [(onlyA, 14/33), (onlyB, 14/33), (both, 5/33)]
-
-/--
-**RSA derives graded exclusivity implicature.**
-
-L1("A or B") assigns:
-- Higher probability to exclusive worlds (onlyA, onlyB)
-- Lower probability to inclusive world (both)
--/
-theorem rsa_disjunction_graded_exclusivity :
-    let l1 := disjL1 1 AorB
-    RSA.Eval.getScore l1 onlyA = RSA.Eval.getScore l1 onlyB ∧
-    RSA.Eval.getScore l1 both < RSA.Eval.getScore l1 onlyA := by
-  native_decide
-
-/--
-RSA assigns positive (but lower) probability to "both" world.
-This is the key difference from Sauerland's categorical K¬(A∧B).
--/
-theorem rsa_both_has_positive_probability :
-    RSA.Eval.getScore (disjL1 1 AorB) both > 0 := by
-  native_decide
-
-/--
-With higher α, the exclusivity effect is stronger.
--/
-theorem higher_alpha_stronger_exclusivity :
-    let l1_α1 := disjL1 1 AorB
-    let l1_α3 := disjL1 3 AorB
-    RSA.Eval.getScore l1_α3 both < RSA.Eval.getScore l1_α1 both := by
-  native_decide
-
-
-/--
-P(both | "A or B") for given rationality parameter α.
--/
-def p_both (α : ℕ) : ℚ :=
-  RSA.Eval.getScore (disjL1 α AorB) both
-
-/--
-**Theorem: As α increases, P(both) decreases.**
-
-This is the key monotonicity result showing RSA approaches
-Sauerland's categorical framework in the high-rationality limit.
-
-Computed values:
-- α=1: P(both) = 5/33 ≈ 15.2%
-- α=3: P(both) = 35/591 ≈ 5.9%
-- α=5: P(both) = 25/1533 ≈ 1.6%
-- α=10: P(both) ≈ 0.05%
--/
-theorem p_both_decreases_with_alpha :
-    p_both 3 < p_both 1 ∧ p_both 5 < p_both 3 := by
-  native_decide
-
-/--
-**Corollary: Sauerland's categorical framework is the α → ∞ limit of RSA.**
-
-As α → ∞, RSA's L1 distribution converges to:
-- P(w) → 0 for worlds where more informative alternatives apply
-- P(w) → uniform over remaining worlds
-
-For disjunction: lim_{α→∞} P(both) = 0, recovering Sauerland's K¬(A∧B).
-
-This follows from the monotonicity theorem and the fact that P(both) > 0 for
-all finite α, but continues to decrease. The mathematical limit theorem
-requires Analysis4 (not currently imported).
--/
-theorem sauerland_is_rsa_limit :
-    -- Monotonicity: P(both) strictly decreases as α increases
-    p_both 3 < p_both 1 ∧ p_both 5 < p_both 3 ∧ p_both 10 < p_both 5 := by
-  native_decide
 
 
 /-

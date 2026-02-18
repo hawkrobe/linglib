@@ -1,14 +1,24 @@
-/-
-Decision problems for polar questions, building on Van Rooy (2003).
+import Linglib.Theories.Pragmatics.RSA.Questions.Basic
+import Linglib.Core.DecisionTheory
+
+/-!
+# Decision Problems for Polar Questions (Stub)
+
+Building on Van Rooy (2003), this module defines decision problems for polar questions.
+
+## Status
+
+The ℚ-based RSA evaluation infrastructure (RSA.Eval.sumScores) has been removed.
+Type definitions and structural properties (Item, World, PolarQuestion,
+PQDecisionProblem, decision problem constructors) are preserved.
+The `dpExpectedValue` computation that depended on `RSA.Eval.sumScores` has been
+re-implemented with a local helper.
 
 ## References
 
 - Van Rooy, R. (2003). Questioning to Resolve Decision Problems. L&P 26.
 - Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Questions.Basic
-import Linglib.Core.DecisionTheory
 
 namespace RSA.Questions
 
@@ -49,7 +59,7 @@ instance : BEq Action where
     | .leave, .leave => true
     | _, _ => false
 
-/-- Decision problem for polar questions. Specializes Van Rooy's D = ⟨W, A, U, π⟩
+/-- Decision problem for polar questions. Specializes Van Rooy's D = <W, A, U, pi>
 with binary utility (goal satisfied or not). -/
 structure PQDecisionProblem where
   goalSatisfied : World → Action → Bool
@@ -69,9 +79,12 @@ def dpValue (d : PQDecisionProblem) (w : World) (actions : List Action) : ℚ :=
   let utilities := actions.map λ a => if d.goalSatisfied w a then (1 : ℚ) else 0
   utilities.foldl max 0
 
+/-- Sum of rational scores. -/
+private def sumScores (l : List ℚ) : ℚ := l.foldl (· + ·) 0
+
 /-- Expected value of a decision problem across worlds. -/
 def dpExpectedValue (d : PQDecisionProblem) (worlds : List World) (actions : List Action) : ℚ :=
-  let total := RSA.Eval.sumScores (worlds.map d.prior)
+  let total := sumScores (worlds.map d.prior)
   if total == 0 then 0
   else
     let ev := worlds.foldl (λ acc w =>
@@ -97,7 +110,7 @@ theorem utilityValue_nonneg (d : PQDecisionProblem) (w : World)
   simp only [responseUtilityValue, dpValueAfterLearning]
   exact sub_nonneg.mpr hValid
 
-/-- EUV(Q) = Σ_{q∈Q} P(q) × UV(q) (Van Rooy 2003 §4.1). -/
+/-- EUV(Q) = Sigma_{q in Q} P(q) x UV(q) (Van Rooy 2003 section 4.1). -/
 def questionUtility (params : Params) (d : PQDecisionProblem)
     (_q : PolarQuestion) (worlds : List World)
     (responseValues : List (World → ℚ))

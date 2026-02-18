@@ -14,7 +14,6 @@ RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
@@ -781,27 +780,6 @@ RSA uses softmax instead of argmax:
 As the rationality parameter α → ∞, softmax becomes argmax.
 This connects the probabilistic RSA model to the deterministic IBR model.
 -/
-
-/-- Convert interpretation game to RSA scenario.
-    Note: This assumes the game has non-negative priors. -/
-def toRSAScenario (G : InterpGame) (α : ℕ)
-    (hPrior : ∀ s, 0 ≤ G.prior s) : RSAScenario G.Message G.State where
-  φ := λ _ _ m s => if G.meaning m s then 1 else 0
-  goalProject := λ _ s s' => s == s'
-  worldPrior := G.prior
-  α := α
-  φ_nonneg := λ _ _ _ _ => by split <;> decide
-  worldPrior_nonneg := hPrior
-
-/-- RSA S1 probability for message given state (rational version) -/
-def rsaS1Prob (G : InterpGame) (α : ℕ) (s : G.State) (m : G.Message) : ℚ :=
-  -- Simplified: (L0(s|m))^α normalized
-  let l0 := if G.meaning m s then (G.informativity m) else 0
-  let score := l0 ^ α
-  let total := Finset.univ.sum λ m' =>
-    let l0' := if G.meaning m' s then (G.informativity m') else 0
-    l0' ^ α
-  if total == 0 then 0 else score / total
 
 /-- Floor score for false messages. Uses -log(|State|) - 1, which is always
     below the minimum possible log-informativity for any true message. -/
