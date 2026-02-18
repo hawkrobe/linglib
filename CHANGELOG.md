@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.223.0] - 2026-02-18
+
+### Changed
+- **Remove entire ℚ-based RSA system**: delete RSAScenario, RSA.Eval, ExactDist, RationalPower, and all ℚ-valued RSA computation infrastructure (~15,000 lines removed across 95 files)
+- **New RSA API**: RSAConfig (ℝ-valued, pluggable SpeakerUtility) + RationalAction (Luce choice) are now the sole RSA infrastructure
+- Gut Core/Basic.lean, Eval.lean, Distribution.lean, BasicQ.lean, Model.lean, Convergence.lean and 9 other core stubs to thin re-exports of Config.lean
+- Rewrite all ~30 RSA implementation files against new API (domain types and meaning functions preserved, RSA computation results sorry'd)
+- Rewrite all RSA domain files (Quantities, Degrees, QUD, Scope) removing ℚ computation
+- Gut all RSA extension files (InformationTheory, LexicalUncertainty, ArgumentativeStrength, ScalarImplicatures, Questions)
+- Update all phenomena bridges and comparison files to remove old API dependencies
+- Replace ExactDist with Prior (W → ℚ) in ProbabilisticAnswerhood and Additive particle semantics
+- Fix SumersEtAl2023 decide→norm_num for ℚ comparisons
+
+## [0.222.10] - 2026-02-18
+
+### Added
+- Formalize Sikos et al. (2021) "Reevaluating pragmatic reasoning in language games" — critique of RSA's empirical value in reference games
+- Data file: experimental design, model fit comparisons (baseline ≈ RSA across 3 experiments), context type taxonomy
+- Bridge file: structural model relationships (baseline = L0, L1 = L0 in trivial contexts, L1 ≠ L0 in solvable contexts)
+- Metric sensitivity analysis: prove that 8/12 items in FG2012's context are trivially predicted (L0 = L1), so correlation-based evaluation is structurally insensitive to pragmatic effects — the metric is too coarse to distinguish models, regardless of human behavior
+
 ## [0.222.9] - 2026-02-18
 
 ### Changed

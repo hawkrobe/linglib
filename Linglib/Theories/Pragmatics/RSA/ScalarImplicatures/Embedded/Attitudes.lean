@@ -1,4 +1,8 @@
-/-
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Tactic.DeriveFintype
+
+/-!
 # RSA Attitude Verb Embedding
 
 Models scalar implicatures embedded under attitude verbs like "believe".
@@ -36,10 +40,6 @@ With attitude verbs:
 - Sauerland (2004). Scalar implicatures in complex sentences.
 - Chierchia, Fox & Spector (2012). Scalar implicature as a grammatical phenomenon.
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Semantics.Attitudes.Intensional
-import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.AttitudeEmbedding
 
@@ -210,46 +210,6 @@ theorem global_local_differ_at_all_belief :
     believesSomeMeaning .global ⟨.allO, .allO⟩ ≠
     believesSomeMeaning .local_ ⟨.allO, .allO⟩ := by decide
 
--- Contrast with DE Contexts
-
-/-
-## Why Attitude Verbs Differ from DE Contexts
-
-In DE contexts like "No one solved some problems":
-- Global: ¬∃x[solved(x, some)] = "No one solved any"
-- Local: ¬∃x[solved(x, some-but-not-all)] = "No one solved some-but-not-all"
-
-The local interpretation is WEAKER (true in more worlds) because negation
-reverses entailment. RSA prefers the stronger (more informative) global.
-
-In attitude contexts like "John believes some students passed":
-- Global: believe(John, ∃x[passed(x)]) = "John believes ≥1 passed"
-- Local: believe(John, ∃x[passed(x) ∧ ¬all]) = "John believes some-not-all"
-
-Neither interpretation is strictly stronger! They're incomparable:
-- Global is true when John believes all (local is false)
-- Local entails a stronger belief content
-
-Since neither dominates, RSA doesn't force one interpretation.
-Both are pragmatically available.
--/
-
-/--
-Worlds where global is true but local is false.
--/
-def globalNotLocal : List BeliefWorld :=
-  attitudeWorlds.filter (λ w => believesSomeMeaning .global w && !believesSomeMeaning .local_ w)
-
-/--
-Worlds where local is true but global is false: NONE!
-Local entails global for "believes some".
--/
-def localNotGlobal : List BeliefWorld :=
-  attitudeWorlds.filter (λ w => believesSomeMeaning .local_ w && !believesSomeMeaning .global w)
-
-#eval globalNotLocal  -- Worlds where John believes all
-#eval localNotGlobal  -- Empty: local entails global
-
 /--
 Local entails global for attitude embedding (unlike DE contexts).
 -/
@@ -270,21 +230,6 @@ theorem global_not_entails_local :
   decide
 
 -- Semantic Grounding
-
-/-
-## Grounding: Connection to Montague Attitude Semantics
-
-The stipulated meanings in `believesSomeMeaning` should correspond to
-compositional evaluation using Hintikka/Montague belief semantics:
-
-⟦John believes φ⟧(w) = ∀w' ∈ Dox(John, w). ⟦φ⟧(w') = true
-
-Where Dox(John, w) is the set of worlds compatible with John's beliefs at w.
-
-Our BeliefWorld structure encodes John's doxastic state directly:
-- `johnBelieves : StudentOutcome` specifies what John's belief worlds look like
-- This determines which embedded propositions John believes
--/
 
 /--
 Semantic grounding for "some students passed" as a proposition.
@@ -365,48 +310,5 @@ theorem local_entails_global_grounded :
   rw [local_grounded] at h
   rw [global_grounded]
   exact prop_entailment w.johnBelieves h
-
--- Summary
-
-/-
-## Results
-
-1. **Attitude verbs allow both interpretations** because neither is strictly
-   more informative than the other (from the perspective of what the speaker
-   is claiming about the world).
-
-2. **Local entails global** for the embedded proposition: if John believes
-   some-but-not-all, he believes some.
-
-3. **Global doesn't entail local**: John could believe all passed, which
-   satisfies global but not local.
-
-4. **This differs from DE contexts** where global is strictly more informative
-   and thus preferred by RSA.
-
-## Grounding
-
-The stipulated meanings are now proven equivalent to compositional semantics:
-- `global_grounded`: global = somePassedProp(johnBelieves)
-- `local_grounded`: local = someNotAllPassedProp(johnBelieves)
-- `local_entails_global_grounded`: entailment follows from semantics
-
-## Connection to Full RSA Model
-
-A complete RSA model would:
-1. Have a prior over worlds (beliefs about what John believes)
-2. Marginalize over lexica (weak vs strong "some")
-3. Compute L1 probabilities for both interpretations
-
-The prediction: both interpretations should receive non-negligible probability,
-unlike DE contexts where global dominates.
-
-## Future Work
-
-- Implement full RSA computation for attitude embedding
-- Compare with experimental data on interpretation preferences
-- Extend to other attitude verbs (know, want, doubt)
-- Handle embedded questions ("John knows which students passed")
--/
 
 end RSA.AttitudeEmbedding

@@ -29,9 +29,9 @@ In the probability monad, this is Bayesian conditioning via `observe`.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Effects.Probability.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.Ring
 
 namespace Comparisons.RSAandPDS
 
@@ -226,33 +226,12 @@ end ThresholdAdjective
 
 
 /-!
-## Constructing RSAScenario from Boolean Semantics
+## Constructing RSAConfig from Boolean Semantics
 
-This shows that the existing RSAScenario framework with graded φ : U → W → ℚ
-can be constructed from Boolean L0 via marginalization.
+The `BooleanRSA.toRSAScenario` definition that converted Boolean RSA to the old
+`RSAScenario` type has been removed. Boolean RSA should be constructed using
+`RSAConfig` from `RSA.Core.Config` instead.
 -/
-
-/--
-Convert Boolean RSA to standard RSA scenario.
-
-The graded φ is derived from Boolean L0: φ(u, w) = 1 if L0(u,w), else 0.
--/
-def BooleanRSA.toRSAScenario (rsa : BooleanRSA) : RSAScenario rsa.Utterance rsa.World where
-  -- Boolean semantics: φ returns 1 for true, 0 for false
-  φ := λ _ _ u w => if rsa.L0 u w then 1 else 0
-  goalProject := λ _ _ _ => true
-  speakerCredence := λ _ _ => 1
-  worldPrior := rsa.worldPrior
-  α := 1
-  cost := λ _ => 0
-  worldPrior_nonneg := rsa.worldPrior_nonneg
-  interpPrior_nonneg := λ _ => by decide
-  lexiconPrior_nonneg := λ _ => by decide
-  beliefStatePrior_nonneg := λ _ => by decide
-  goalPrior_nonneg := λ _ => by decide
-  speakerCredence_nonneg := λ _ _ => by decide
-  φ_nonneg := λ _ _ _ _ => by split_ifs <;> decide
-  cost_nonneg := λ _ => by decide
 
 
 /-!
@@ -329,7 +308,8 @@ def L0_weight (u : rsa.Utterance) (w : rsa.World) : ℚ :=
 theorem L0_filters (u : rsa.Utterance) (w : rsa.World) :
     rsa.literal u w = false → rsa.L0_weight u w = 0 := by
   intro h
-  simp only [L0_weight, h, Bool.false_eq_true, ↓reduceIte, mul_zero]
+  unfold L0_weight
+  simp [h]
 
 /-!
 ### S1: Pragmatic Speaker
@@ -419,9 +399,9 @@ end MonadicRSA
 
 
 /-!
-## Structural Correspondence: RSAScenario ↔ Monadic RSA
+## Structural Correspondence: RSA ↔ Monadic RSA
 
-The existing `RSAScenario.L0` computes (from Basic.lean:429):
+The RSA L0 computes:
 ```
 scores w = worldPrior w * φ i l u w * speakerCredence a w
 ```
@@ -436,7 +416,7 @@ L0 u := do
 
 ### The Correspondence Table
 
-| RSAScenario | Monadic Operation | PDS Concept |
+| RSA | Monadic Operation | PDS Concept |
 |-------------|-------------------|-------------|
 | `L0 scores w = prior w * φ u w` | `observe (φ u w)` | Conditioning |
 | `S1 scores u = φ u w * utility^α` | `choose (utility)` | Softmax sampling |
@@ -480,7 +460,7 @@ theorem L0_true_prior (rsa : BooleanRSA) (u : rsa.Utterance) (w : rsa.World) :
 /-!
 ### S1 Structure
 
-S1 in RSAScenario (Basic.lean:465-471):
+S1 in RSA:
 ```
 scores u = φ(u,w) * L0_projected(w|u)^α / (1 + cost(u))^α
 ```
@@ -502,7 +482,7 @@ theorem S1_utility_weighted (rsa : MonadicRSA) (w : rsa.World) (u : rsa.Utteranc
 /-!
 ### L1 Structure
 
-L1 in RSAScenario (Basic.lean:493-501):
+L1 in RSA:
 ```
 scores w = Σ_{i,l,a,q} priors(w,i,l,a,q) * S1(u | w,i,l,a,q)
 ```
@@ -524,7 +504,7 @@ L1 u := do
 /--
 L1 sums over latent variables.
 
-The Σ structure in RSAScenario.L1_world is marginalization.
+The summation structure in RSA L1 is marginalization.
 -/
 theorem L1_is_marginalization :
     -- L1 computes: Σ_latents prior(latents) * S1(u | latents)

@@ -1,6 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -21,7 +20,7 @@ S1 probability 0. For uniform L0, exp(E_b[ln L0]) reduces to:
 - **Quality filter**: utterance must be true at ALL worlds with positive belief mass
 - **Informativity**: score = 1/|compatible worlds|
 
-This is implemented via the core `RSA.Eval.ksS1` / `RSA.Eval.ksL1` functions.
+The RSA chain (L0 → S1 → L1) is defined via `RSAConfig` in Core.Config.
 
 ## Numeral Semantics: Kennedy (2015) as Primary
 
@@ -41,8 +40,21 @@ only utterance true at all believed worlds), and L1 reads this signal.
 
 namespace RSA.GoodmanStuhlmuller2013
 
-open RSA RSA.Domains.Quantity RSA.Eval
+open RSA.Domains.Quantity
 open Semantics.Lexical.Numeral
+
+-- Local helpers (replacing removed RSA.Eval)
+
+private def sumScores (xs : List ℚ) : ℚ := xs.foldl (· + ·) 0
+
+private def normalize {α : Type} [BEq α] (xs : List (α × ℚ)) : List (α × ℚ) :=
+  let total := sumScores (xs.map Prod.snd)
+  if total > 0 then xs.map (fun (a, s) => (a, s / total)) else xs
+
+private def getScore {α : Type} [BEq α] (xs : List (α × ℚ)) (a : α) : ℚ :=
+  match xs.find? (fun p => p.1 == a) with
+  | some (_, s) => s
+  | none => 0
 
 -- ============================================================================
 -- Section 1: Basic Scalar Implicature (Quantifiers)
@@ -50,32 +62,56 @@ open Semantics.Lexical.Numeral
 
 section BasicImplicature
 
-/-- 3-person quantity domain from Domains.Quantity -/
-def threePerson : Domain 3 := standard 3
+-- Local basic RSA chain for 3-person quantity domain
 
-def l0_some : List (Fin 4 × ℚ) := l0 threePerson .some_
-def l1_some : List (Fin 4 × ℚ) := l1 threePerson .some_
-def s1_w3 : List (Utterance × ℚ) := s1 threePerson (wAll (n := 3))
-def s1_w1 : List (Utterance × ℚ) := s1 threePerson (w1 (n := 3))
+private def allWorlds3 : List (Fin 4) := List.finRange 4
+
+/-- Basic L0: uniform over compatible worlds. -/
+private def basicL0 (u : Utterance) : List (Fin 4 × ℚ) :=
+  let compat := allWorlds3.filter (meaning 3 u)
+  if compat.length > 0 then
+    compat.map (fun w => (w, 1 / compat.length))
+  else []
+
+/-- Basic S1: informativity-based speaker. -/
+private def basicS1 (w : Fin 4) : List (Utterance × ℚ) :=
+  let scores := allUtterances.map (fun u =>
+    let compat := allWorlds3.filter (meaning 3 u)
+    let score : ℚ := if meaning 3 u w && compat.length > 0
+      then 1 / compat.length else 0
+    (u, score))
+  normalize scores
+
+/-- Basic L1: Bayesian listener reasoning about S1. -/
+private def basicL1 (u : Utterance) : List (Fin 4 × ℚ) :=
+  let scores := allWorlds3.map (fun w =>
+    let s1score := getScore (basicS1 w) u
+    (w, s1score))
+  normalize scores
+
+def l0_some : List (Fin 4 × ℚ) := basicL0 .some_
+def l1_some : List (Fin 4 × ℚ) := basicL1 .some_
+def s1_w3 : List (Utterance × ℚ) := basicS1 (wAll (n := 3))
+def s1_w1 : List (Utterance × ℚ) := basicS1 (w1 (n := 3))
 
 /-- L1("some") prefers w1 (some but not all) over w3 (all). -/
 theorem scalar_implicature :
-    RSA.Eval.getScore l1_some (w1 (n := 3)) > RSA.Eval.getScore l1_some (wAll (n := 3)) := by
+    getScore l1_some (w1 (n := 3)) > getScore l1_some (wAll (n := 3)) := by
   native_decide
 
 /-- L0 assigns equal mass to w1 and w3 -- no implicature at literal level. -/
 theorem l0_no_implicature :
-    RSA.Eval.getScore l0_some (w1 (n := 3)) = RSA.Eval.getScore l0_some (wAll (n := 3)) := by
+    getScore l0_some (w1 (n := 3)) = getScore l0_some (wAll (n := 3)) := by
   native_decide
 
 /-- In w3, speaker prefers "all" over "some". -/
 theorem s1_prefers_all_in_w3 :
-    RSA.Eval.getScore s1_w3 .all > RSA.Eval.getScore s1_w3 .some_ := by
+    getScore s1_w3 .all > getScore s1_w3 .some_ := by
   native_decide
 
 /-- In w1, speaker uses "some" and not "all". -/
 theorem s1_uses_some_in_w1 :
-    RSA.Eval.getScore s1_w1 .some_ > 0 ∧ RSA.Eval.getScore s1_w1 .all = 0 := by
+    getScore s1_w1 .some_ > 0 ∧ getScore s1_w1 .all = 0 := by
   native_decide
 
 /-- Quantifier meaning derives from Montague (not stipulated). -/
@@ -140,7 +176,7 @@ def obsProb (o : Observation) (a : Access) (s : WorldState) : ℚ :=
 /-- Speaker's belief state given observation (Bayesian update via hypergeometric) -/
 def speakerBelief (o : Observation) (s : WorldState) : ℚ :=
   let numerator := obsProb o o.access s
-  let totalScore := RSA.Eval.sumScores (allWorldStates.map (obsProb o o.access))
+  let totalScore := sumScores (allWorldStates.map (obsProb o o.access))
   if totalScore > 0 then numerator / totalScore else 0
 
 -- ============================================================================
@@ -150,7 +186,6 @@ def speakerBelief (o : Observation) (s : WorldState) : ℚ :=
 /-! Generic knowledge-sensitive RSA chain, parameterized by meaning function
 and utterance list. Instantiated for both quantifiers and numerals.
 
-Uses the core `RSA.Eval.ksL1` chain with quality-filtered S1 (G&S 2013 Eq. 2-3).
 The quality filter implements log-utility: U(w;u) = ln P_lex(u|w), where ln(0) = -∞
 kills any utterance false at a world the speaker considers possible. For uniform L0,
 this reduces to: pass quality filter, then score by 1/|compat(u)| (informativity). -/
@@ -163,12 +198,32 @@ def L0_param {U : Type} (meaning : U → WorldState → Bool)
     1 / compat.length
   else 0
 
-/-- Knowledge-state L1 via unified core.
+/-- Knowledge-sensitive S1: quality-filtered speaker.
+    S1(u|belief) ∝ 1/|compat(u)| if u is true at ALL worlds with positive belief mass,
+    0 otherwise (quality filter). -/
+private def ksS1 {U : Type} [BEq U] (allUtts : List U)
+    (meaning : U → WorldState → Bool) (belief : WorldState → ℚ)
+    : List (U × ℚ) :=
+  let scores := allUtts.map (fun u =>
+    -- Quality filter: u must be true at every world in belief support
+    let qualityOk := allWorldStates.all (fun s => !(belief s > 0) || meaning u s)
+    let compat := allWorldStates.filter (meaning u)
+    let score : ℚ := if qualityOk && compat.length > 0 then 1 / compat.length else 0
+    (u, score))
+  normalize scores
+
+/-- Knowledge-state L1 via local chain.
     L1(s|u,a) ∝ prior(s) × Σ_o P(o|a,s) × ksS1(u|belief_o). -/
 def L1_scores {U : Type} [BEq U] (meaning : U → WorldState → Bool) (allUtts : List U)
     (u : U) (a : Access) : List (WorldState × ℚ) :=
-  RSA.Eval.ksL1 allUtts allWorldStates (observationsFor a)
-    meaning (λ _ => 1) (obsProb · a) speakerBelief u
+  let scores := allWorldStates.map (fun s =>
+    let obss := observationsFor a
+    let s1Sum := obss.foldl (fun acc o =>
+      let pObs := obsProb o a s
+      let s1score := getScore (ksS1 allUtts meaning (speakerBelief o)) u
+      acc + pObs * s1score) 0
+    (s, s1Sum))
+  normalize scores
 
 end KnowledgeState
 
@@ -206,8 +261,7 @@ theorem implicature_canceled_access1 :
 
 /-- Basic and knowledge-state RSA agree on full-access implicature. -/
 theorem models_consistent_on_implicature :
-    (RSA.Eval.getScore (l1 threePerson .some_) (w1 (n := 3)) >
-     RSA.Eval.getScore (l1 threePerson .some_) (wAll (n := 3)))
+    (getScore l1_some (w1 (n := 3)) > getScore l1_some (wAll (n := 3)))
     ↔
     (getScore (l1q .some_ .a3) .s1 > getScore (l1q .some_ .a3) .s3) := by
   constructor <;> intro _ <;> native_decide
@@ -437,7 +491,7 @@ believed worlds. The quality filter kills such utterances. -/
 Old buggy E[L0] allowed this with nonzero probability. -/
 theorem quality_blocks_moreThan_uncertain :
     let o : Observation := ⟨2, .a2⟩
-    getScore (RSA.Eval.ksS1 allKennedyUtts allWorldStates
+    getScore (ksS1 allKennedyUtts
       (kennedyMeaning 2) (speakerBelief o)) .moreThan = 0 := by
   native_decide
 
@@ -445,7 +499,7 @@ theorem quality_blocks_moreThan_uncertain :
 Only "at least two" survives quality. -/
 theorem quality_blocks_bare_uncertain :
     let o : Observation := ⟨2, .a2⟩
-    getScore (RSA.Eval.ksS1 allKennedyUtts allWorldStates
+    getScore (ksS1 allKennedyUtts
       (kennedyMeaning 2) (speakerBelief o)) .bare = 0 := by
   native_decide
 
@@ -453,7 +507,7 @@ theorem quality_blocks_bare_uncertain :
 This derives Kennedy's ignorance implicature from RSA. -/
 theorem only_atLeast_survives_uncertain :
     let o : Observation := ⟨2, .a2⟩
-    getScore (RSA.Eval.ksS1 allKennedyUtts allWorldStates
+    getScore (ksS1 allKennedyUtts
       (kennedyMeaning 2) (speakerBelief o)) .atLeast > 0 := by
   native_decide
 
@@ -498,42 +552,57 @@ def kennedyMeaningInterp (m : Nat) (interp : KennedyInterp)
   | .moreThan, s => maxMeaning .gt m s.toNat
   | .atLeast, s  => maxMeaning .ge m s.toNat
 
-/-- Kennedy L1 with interpretation ambiguity via unified `ksL1Interp`.
-    Uses the core infrastructure that every RSA model should use:
-    the interpretation space is a standard latent variable, not a special case. -/
+/-- Kennedy L1 with interpretation ambiguity.
+    L1(s|u,a) ∝ prior(s) × Σ_i interpPrior(i) × Σ_o P(o|a,s) × ksS1(u|belief_o, meaning_i).
+    The interpretation space is a standard latent variable. -/
 def l1ka (u : KennedyUtt) (a : Access)
     (interpPrior : KennedyInterp → ℚ := λ _ => 1)
     : List (WorldState × ℚ) :=
-  RSA.Eval.ksL1Interp allKennedyUtts allWorldStates (observationsFor a) allKennedyInterps
-    (kennedyMeaningInterp 2) (λ _ => 1) (obsProb · a) speakerBelief interpPrior u
+  let scores := allWorldStates.map (fun s =>
+    let interpSum := allKennedyInterps.foldl (fun acc interp =>
+      let obss := observationsFor a
+      let s1Sum := obss.foldl (fun acc2 o =>
+        let pObs := obsProb o a s
+        let s1score := getScore (ksS1 allKennedyUtts (kennedyMeaningInterp 2 interp) (speakerBelief o)) u
+        acc2 + pObs * s1score) 0
+      acc + interpPrior interp * s1Sum) 0
+    (s, interpSum))
+  normalize scores
 
 /-- Which interpretation does L1 select? Joint distribution over (world, interp). -/
-def l1ka_interp (u : KennedyUtt) (a : Access) :=
-  RSA.Eval.ksL1InterpMarginal allKennedyUtts allWorldStates (observationsFor a) allKennedyInterps
-    (kennedyMeaningInterp 2) (λ _ => 1) (obsProb · a) speakerBelief (λ _ => 1) u
+def l1ka_interp (u : KennedyUtt) (a : Access) : List ((WorldState × KennedyInterp) × ℚ) :=
+  let pairs := allWorldStates.flatMap (fun s => allKennedyInterps.map (fun i => (s, i)))
+  let scores := pairs.map (fun (s, interp) =>
+    let obss := observationsFor a
+    let s1Sum := obss.foldl (fun acc o =>
+      let pObs := obsProb o a s
+      let s1score := getScore (ksS1 allKennedyUtts (kennedyMeaningInterp 2 interp) (speakerBelief o)) u
+      acc + pObs * s1score) 0
+    ((s, interp), s1Sum))
+  normalize scores
 
 -- Key predictions
 
 /-- Full access, bare "two": exact reading (s2 >> s3).
     Speaker knows the world, can commit to exact interp, so L1 selects exact. -/
 theorem kennedy_ambig_bare_full_exact :
-    RSA.Eval.getScore (l1ka .bare .a3) .s2 >
-    RSA.Eval.getScore (l1ka .bare .a3) .s3 := by
+    getScore (l1ka .bare .a3) .s2 >
+    getScore (l1ka .bare .a3) .s3 := by
   native_decide
 
 /-- Partial access, bare "two": lower-bound reading (s3 gets substantial mass).
     Exact interp has quality risk → lower-bound interp preferred → s3 viable.
     This is the G&S Experiment 2 finding derived from Kennedy + type-shifting. -/
 theorem kennedy_ambig_bare_partial_lowerbound :
-    RSA.Eval.getScore (l1ka .bare .a2) .s3 > 0 := by
+    getScore (l1ka .bare .a2) .s3 > 0 := by
   native_decide
 
 /-- The lower-bound effect: s3 mass increases from full to partial access.
     Under full access, exact interp dominates → s3 ≈ 0.
     Under partial access, lower-bound interp contributes → s3 > 0. -/
 theorem kennedy_ambig_exactness_weakens :
-    RSA.Eval.getScore (l1ka .bare .a2) .s3 >
-    RSA.Eval.getScore (l1ka .bare .a3) .s3 := by
+    getScore (l1ka .bare .a2) .s3 >
+    getScore (l1ka .bare .a3) .s3 := by
   native_decide
 
 end KennedyNumerals

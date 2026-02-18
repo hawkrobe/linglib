@@ -1,11 +1,14 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
+import Mathlib.Data.Rat.Defs
 
--- Generic Attitude Verb Infrastructure
---
--- World-dimension typeclasses and generic verb semantics used by
--- BToM-style RSA models. Currently S&T25-specific; will be refactored
--- to a shared location when a second attitude-verb model needs them.
+/-!
+# Scontras & Tonhauser (2025) @cite{scontras-tonhauser-2025}
+
+Projection emerges from RSA over speaker's private assumptions, not lexical
+presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
+
+This is a BToM model (Baker et al. 2017): L1 inverts S1's generative model
+to jointly infer the speaker's belief state and the world state.
+-/
 
 namespace RSA.BToM
 
@@ -27,7 +30,7 @@ variable {W : Type*}
 def factivePos [HasBelief W] [HasComplement W] (w : W) : Bool :=
   HasBelief.bel w && HasComplement.c w
 
-/-- Factive negative: "X doesn't know C" = ¬(BEL ∧ C). -/
+/-- Factive negative: "X doesn't know C" = not(BEL ∧ C). -/
 def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
   !(HasBelief.bel w && HasComplement.c w)
 
@@ -35,7 +38,7 @@ def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
 def nonFactivePos [HasBelief W] (w : W) : Bool :=
   HasBelief.bel w
 
-/-- Non-factive negative: "X doesn't think C" = ¬BEL. -/
+/-- Non-factive negative: "X doesn't think C" = not-BEL. -/
 def nonFactiveNeg [HasBelief W] (w : W) : Bool :=
   !HasBelief.bel w
 
@@ -51,7 +54,7 @@ theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W) :
   simp only [factivePos, Bool.and_eq_true]
   intro ⟨h, _⟩; exact h
 
-/-- Non-factive does NOT entail C (given a world where BEL ∧ ¬C is possible). -/
+/-- Non-factive does NOT entail C (given a world where BEL ∧ not-C is possible). -/
 theorem nonFactivePos_not_entails_c [HasBelief W] [HasComplement W]
     (h : ∃ w : W, HasBelief.bel w = true ∧ HasComplement.c w = false) :
     ∃ w, nonFactivePos (W := W) w = true ∧ HasComplement.c w = false := by
@@ -82,7 +85,7 @@ def qudProject [HasBelief W] [HasComplement W] : QUD → W → W → Bool
 def assumesComplement [HasComplement W] (membership : W → Bool) (allWorlds : List W) : Bool :=
   allWorlds.all λ w => !membership w || HasComplement.c w
 
-/-- Material conditional operator: ⟦if⟧ = λp.λq.λw. ¬p(w) ∨ q(w). -/
+/-- Material conditional operator: ⟦if⟧ = λp.λq.λw. not-p(w) ∨ q(w). -/
 def condOp (antecedent consequent : W → Bool) : W → Bool :=
   λ w => !antecedent w || consequent w
 
@@ -104,22 +107,13 @@ def composeCondNonFactiveNeg [HasAntecedent W] [HasBelief W] : W → Bool :=
 
 end RSA.BToM
 
-/-! # Scontras & Tonhauser (2025) @cite{scontras-tonhauser-2025}
-
-Projection emerges from RSA over speaker's private assumptions, not lexical
-presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
-
-This is a BToM model (Baker et al. 2017): L1 inverts S1's generative model
-to jointly infer the speaker's belief state and the world state.
--/
-
 namespace RSA.ScontrasTonhauser2025
 
 
 /--
 World state: tracks belief and complement truth.
 
-⟨BEL, C⟩ where:
+(BEL, C) where:
 - BEL: Cole believes the complement
 - C: The complement is actually true
 -/
@@ -206,14 +200,14 @@ In the paper, A ranges over all non-empty subsets of W.
 -/
 inductive BeliefState where
   | all           -- Speaker considers all worlds possible
-  | cTrue         -- Speaker assumes C is true: {⟨1,1⟩, ⟨0,1⟩}
-  | cFalse        -- Speaker assumes C is false: {⟨1,0⟩, ⟨0,0⟩}
-  | belTrue       -- Speaker assumes Cole believes: {⟨1,1⟩, ⟨1,0⟩}
-  | belFalse      -- Speaker assumes Cole doesn't believe: {⟨0,1⟩, ⟨0,0⟩}
-  | cTrueBelTrue  -- {⟨1,1⟩}
-  | cTrueBelFalse -- {⟨0,1⟩}
-  | cFalseBelTrue -- {⟨1,0⟩}
-  | cFalseBelFalse -- {⟨0,0⟩}
+  | cTrue         -- Speaker assumes C is true: {(1,1), (0,1)}
+  | cFalse        -- Speaker assumes C is false: {(1,0), (0,0)}
+  | belTrue       -- Speaker assumes Cole believes: {(1,1), (1,0)}
+  | belFalse      -- Speaker assumes Cole doesn't believe: {(0,1), (0,0)}
+  | cTrueBelTrue  -- {(1,1)}
+  | cTrueBelFalse -- {(0,1)}
+  | cFalseBelTrue -- {(1,0)}
+  | cFalseBelFalse -- {(0,0)}
   deriving DecidableEq, Repr, BEq, Inhabited
 
 def allBeliefStates : List BeliefState := [
@@ -235,9 +229,6 @@ def speakerCredenceBool : BeliefState → WorldState → Bool
   | .cFalseBelTrue, w => !w.c && w.bel
   | .cFalseBelFalse, w => !w.c && !w.bel
 
-def speakerCredence : BeliefState → WorldState → ℚ :=
-  λ a w => boolToRat (speakerCredenceBool a w)
-
 /--
 Whether C is true in all worlds of the belief state.
 This is what it means for C to be "assumed" by the speaker.
@@ -252,7 +243,7 @@ def assumesC : BeliefState → Bool
 /--
 World prior parameterized by P(C).
 
-P(BEL, C) = P(BEL | C) · P(C)
+P(BEL, C) = P(BEL | C) * P(C)
 
 We assume P(BEL | C) is uniform for simplicity.
 -/
@@ -262,91 +253,19 @@ def worldPrior (pC : ℚ) : WorldState → ℚ
 
 /--
 Belief state prior following Section 4 of Scontras & Tonhauser (2025):
-- Knowledge of C is 4× as likely as knowledge of BEL
-- Full knowledge (singletons) is 0.5× as likely as knowledge of BEL
-- No beliefs (all) is 0.5× as likely as singletons
+- Knowledge of C is 4x as likely as knowledge of BEL
+- Full knowledge (singletons) is 0.5x as likely as knowledge of BEL
+- No beliefs (all) is 0.5x as likely as singletons
 
 This captures that speakers more often have knowledge about C than about BEL.
 -/
 def beliefStatePrior : BeliefState → ℚ
   | .all => 1/4           -- No beliefs: 0.25 (half of singletons)
-  | .cTrue => 4           -- Knowledge of C: 4× base
-  | .cFalse => 4          -- Knowledge of C: 4× base
+  | .cTrue => 4           -- Knowledge of C: 4x base
+  | .cFalse => 4          -- Knowledge of C: 4x base
   | .belTrue => 1         -- Knowledge of BEL: 1 (base)
   | .belFalse => 1        -- Knowledge of BEL: 1 (base)
   | _ => 1/2              -- Singletons: 0.5 (half of knowledge of BEL)
-
-
-/--
-Projection strength (world-based): P(C=true | utterance, QUD)
-
-This is the PRIMARY measure used in the paper (Section 3.1, footnote 11):
-"We evaluate the predictions of our model based on the marginal posterior
-probability of w, specifically, those w in which C is true."
--/
-def projectionOfC_world (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
-  -- Get L1 distribution over worlds GIVEN the QUD
-  let worldDist := RSA.Eval.projectionL1_world
-    allUtterances allWorlds allBeliefStates allQUDs
-    literalMeaning (worldPrior pC) beliefStatePrior speakerCredence qudProject alpha u q
-  -- Sum probability of worlds where C is true
-  worldDist.foldl (λ acc (w, p) =>
-    if w.c then acc + p else acc) 0
-
-/--
-Projection strength (belief-based): P(speaker assumes C | utterance, QUD)
-
-Alternative measure (footnote 11): "if we evaluated its predictions based on
-the marginal posterior probability of A, specifically those A that entail C."
--/
-def projectionOfC_belief (pC : ℚ) (u : Utterance) (q : QUD) (alpha : ℕ := 10) : ℚ :=
-  -- Get L1 distribution over belief states GIVEN the QUD
-  let beliefDist := RSA.Eval.projectionL1_context
-    allUtterances allWorlds allBeliefStates allQUDs
-    literalMeaning (worldPrior pC) beliefStatePrior speakerCredence qudProject alpha u q
-  -- Sum probability of states that assume C
-  beliefDist.foldl (λ acc (a, p) =>
-    if assumesC a then acc + p else acc) 0
-
-/-- Default projection function uses world-based measure (as in paper). -/
-def projectionOfC (pC : ℚ) (u : Utterance) (q : QUD) : ℚ :=
-  projectionOfC_world pC u q
-
-
-/--
-**Prediction (a)**: "know" projects more strongly than "think".
-
-The entailment in "know" biases L1 toward belief states where C is true.
-
-NOTE: The paper measures projection for NEGATED utterances ("doesn't know C",
-"doesn't think C") because negation tests whether the complement projects.
--/
-def prediction_know_gt_think (pC : ℚ) (q : QUD) : Bool :=
-  projectionOfC pC .knowNeg q > projectionOfC pC .thinkNeg q
-
-/--
-**Prediction (b)**: Higher prior → stronger projection.
-
-When P(C) is high, listener more readily infers speaker assumes C.
--/
-def prediction_prior_effect (u : Utterance) (q : QUD) : Bool :=
-  -- Projection with high prior > projection with low prior
-  projectionOfC (3/4) u q > projectionOfC (1/4) u q
-
-/--
-**Prediction (c)**: C-at-issue → weaker projection.
-
-When QUD = C?, the complement is at-issue, so less projection.
--/
-def prediction_qud_effect (pC : ℚ) (u : Utterance) : Bool :=
-  -- Projection under BEL? > projection under C?
-  projectionOfC pC u .bel > projectionOfC pC u .c
-
-
--- Uncomment to evaluate predictions
--- #eval prediction_know_gt_think (1/2) .bel
--- #eval prediction_prior_effect .knowPos .bel
--- #eval prediction_qud_effect (1/2) .knowPos
 
 
 -- BToM Typeclass Instances
@@ -373,6 +292,6 @@ theorem qud_matches_btom : ∀ (q : QUD) (w1 w2 : WorldState),
 /-- The `assumesC` predicate agrees with the generic `assumesComplement`. -/
 theorem assumesC_matches_generic : ∀ bs : BeliefState,
     assumesC bs = RSA.BToM.assumesComplement (speakerCredenceBool bs) allWorlds := by
-  intro bs; cases bs <;> native_decide
+  intro bs; cases bs <;> decide
 
 end RSA.ScontrasTonhauser2025

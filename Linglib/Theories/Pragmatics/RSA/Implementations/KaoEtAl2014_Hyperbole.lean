@@ -1,5 +1,8 @@
-/-
-# Kao et al. (2014)
+import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
+import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+
+/-!
+# Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
 
 "Nonliteral understanding of number words"
 PNAS 111(33): 12002-12007
@@ -42,15 +45,9 @@ The literal meaning of "fifty dollars" is `numeralExact 50 price` - the price eq
   "Nonliteral understanding of number words." PNAS 111(33): 12002-12007.
 -/
 
-import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA.Eval RSA.Domains.Degrees
+open RSA.Domains.Degrees
 open Core.Scale (HasDegree)
 open Semantics.Lexical.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
 open Semantics.Lexical.Numeral.Precision (roundToNearest)
@@ -397,8 +394,6 @@ def allMeaningsForItem (item : Item) : List Meaning :=
 def allPrices : List Price := allPricesForItem .electricKettle
 def allMeanings : List Meaning := allMeaningsForItem .electricKettle
 
--- RSA Scenario
-
 /-- Goal prior for hyperbole scenario -/
 def goalPrior : Goal → ℚ
   | .price => 1
@@ -410,153 +405,41 @@ def goalPrior : Goal → ℚ
 /-- Uniform goal prior for strict scenario -/
 def uniformGoalPrior : Goal → ℚ := λ _ => 1
 
--- Compute Distributions
-
 -- Helper: construct a kettle at a given price
 def kettle (p : PriceLevel) : Price := { item := .electricKettle, price := p }
 
-/-- L0 for a QUD scenario -/
-def qudL0 (u : Utterance) (q : Goal) : List (Meaning × ℚ) :=
-  RSA.Eval.L0 allUtterances allMeanings (λ _ _ => extendedSemantics)
-    priceAffectPrior (λ _ _ => 1) u () () () q
-
-/-- S1 for a QUD scenario -/
-def qudS1 (m : Meaning) (q : Goal) : List (Utterance × ℚ) :=
-  RSA.Eval.S1 allUtterances allMeanings (λ _ _ => extendedSemantics)
-    priceAffectPrior (λ _ _ => 1) qudEquiv (λ _ => 0) 1 m () () () q
-
-/-- L1 world distribution for QUD scenario -/
-def qudL1_world (u : Utterance) : List (Meaning × ℚ) :=
-  RSA.Eval.qudL1_world allUtterances allMeanings allGoals
-    extendedSemantics priceAffectPrior goalPrior qudEquiv 1 (λ _ => 0) u
-
-/-- L1 goal distribution for QUD scenario -/
-def qudL1_goal (u : Utterance) : List (Goal × ℚ) :=
-  RSA.Eval.L1_goal allUtterances allMeanings [()] [()] [()] allGoals
-    (λ _ _ => extendedSemantics) priceAffectPrior (λ _ => 1) (λ _ => 1) (λ _ => 1) goalPrior
-    (λ _ _ => 1) qudEquiv (λ _ => 0) 1 u
-
-/-- L0 for "fifty dollars" -/
-def l0_fifty : List (Meaning × ℚ) := qudL0 Utterance.fifty Goal.price
-
-/-- L0 for "million dollars" -/
-def l0_million : List (Meaning × ℚ) := qudL0 Utterance.million Goal.price
-
-/-- S1 with meaning (kettle at $500, annoyed) and QUD "affect" -/
-def s1_p500_annoyed_affect : List (Utterance × ℚ) :=
-  qudS1 (kettle .p500, Affect.annoyed) Goal.valence
-
-/-- S1 with meaning (kettle at $500, annoyed) and QUD "price" -/
-def s1_p500_annoyed_price : List (Utterance × ℚ) :=
-  qudS1 (kettle .p500, Affect.annoyed) Goal.price
-
-/-- L1 for "million dollars" -/
-def l1_million : List (Meaning × ℚ) := qudL1_world Utterance.million
-
-/-- L1 goal distribution for "million dollars" -/
-def l1_goal_million : List (Goal × ℚ) := qudL1_goal Utterance.million
-
--- Evaluate
-
-#eval l0_fifty
--- L0("fifty"): should prefer (p50, *) meanings
-
-#eval l0_million
--- L0("million"): soft compatibility with high-affect meanings
-
-#eval s1_p500_annoyed_affect
--- S1(p500, annoyed | QUD=affect): should use hyperbole!
-
-#eval s1_p500_annoyed_price
--- S1(p500, annoyed | QUD=price): should prefer "fiveHundred"
-
-#eval l1_million
--- L1("million"): should infer high affect, uncertain price
-
-#eval l1_goal_million
--- L1_goal("million"): should infer QUD was probably "affect"
-
--- Key Predictions
-
-
-/--
-**Hyperbole Prediction 1**: Under QUD "affect", S1 prefers hyperbole.
-
-When the speaker cares about conveying affect (not exact price),
-hyperbolic utterances become optimal.
--/
-def s1_hyperbole_optimal : Bool :=
-  -- For (p500, annoyed), S1 under "affect" QUD prefers "million" over literal "fiveHundred"
-  let dist := s1_p500_annoyed_affect
-  getScore dist Utterance.million > getScore dist Utterance.fiveHundred
-
-#eval s1_hyperbole_optimal
--- Expected: true (hyperbole emerges)
-
-/--
-**Hyperbole Prediction 2**: Under QUD "price", S1 prefers literal.
-
-When the speaker cares about exact price, they use the literal utterance.
--/
-def s1_literal_under_price : Bool :=
-  let dist := s1_p500_annoyed_price
-  getScore dist Utterance.fiveHundred > getScore dist Utterance.million
-
-#eval s1_literal_under_price
--- Expected: true
-
-/--
-**Hyperbole Prediction 3**: L1 hearing "million" infers high affect.
-
-Despite the literal meaning being false, the pragmatic listener
-correctly infers the speaker meant to convey strong affect.
--/
-def l1_infers_affect : Bool :=
-  let dist := l1_million
-  -- P(annoyed | million) + P(amazed | million) > P(neutral | million)
-  let pAnnoyed := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.annoyed)) 0
-  let pAmazed := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.amazed)) 0
-  let pNeutral := allPrices.foldl (λ acc p => acc + getScore dist (p, Affect.neutral)) 0
-  pAnnoyed + pAmazed > pNeutral
-
-#eval l1_infers_affect
--- Expected: true
-
-/--
-**Hyperbole Prediction 4**: L1 infers speaker's QUD was "affect".
-
-When hearing hyperbole, the listener infers the speaker was probably
-trying to communicate affect, not exact price.
--/
-def l1_infers_affect_qud : Bool :=
-  let dist := l1_goal_million
-  getScore dist Goal.valence > getScore dist Goal.price
-
-#eval l1_infers_affect_qud
--- Expected: true
-
--- Contrast with Strict Semantics
-
 /-- Strict (Boolean) semantics -/
-def strictSemantics (u : Utterance) (m : Meaning) : ℚ :=
-  boolToRat (meaningSemantics u m)
+def strictSemantics (u : Utterance) (m : Meaning) : Bool :=
+  meaningSemantics u m
 
-/-- Under strict semantics, "million" gets zero probability -/
-def l0_million_strict : List (Meaning × ℚ) :=
-  RSA.Eval.L0 allUtterances allMeanings (λ _ _ => strictSemantics)
-    priceAffectPrior (λ _ _ => 1) Utterance.million () () () Goal.price
+-- Fintype instances for domain types
 
-#eval l0_million_strict
--- All zeros (million is literally false for all meanings)
+instance : Fintype Utterance where
+  elems := {.fifty, .fiveHundred, .tenThousand, .million}
+  complete := fun x => by cases x <;> simp
 
-/-- S1 under strict semantics can't use hyperbole -/
-def s1_strict_p500_annoyed_affect : List (Utterance × ℚ) :=
-  RSA.Eval.S1 allUtterances allMeanings (λ _ _ => strictSemantics)
-    priceAffectPrior (λ _ _ => 1) qudEquiv (λ _ => 0) 1
-    (kettle .p500, Affect.annoyed) () () () Goal.valence
+instance : Fintype Item where
+  elems := {.electricKettle, .laptop, .watch}
+  complete := fun x => by cases x <;> simp
 
-#eval s1_strict_p500_annoyed_affect
--- "million" should have probability 0
+instance : Fintype PriceLevel where
+  elems := {.p50, .p500, .p10000}
+  complete := fun x => by cases x <;> simp
+
+instance : Fintype Price where
+  elems :=
+    { ⟨.electricKettle, .p50⟩, ⟨.electricKettle, .p500⟩, ⟨.electricKettle, .p10000⟩,
+      ⟨.laptop, .p50⟩, ⟨.laptop, .p500⟩, ⟨.laptop, .p10000⟩,
+      ⟨.watch, .p50⟩, ⟨.watch, .p500⟩, ⟨.watch, .p10000⟩ }
+  complete := fun ⟨i, p⟩ => by cases i <;> cases p <;> simp
+
+instance : Fintype Affect where
+  elems := {.neutral, .annoyed, .amazed}
+  complete := fun x => by cases x <;> simp
+
+instance : Fintype Goal where
+  elems := {.price, .valence, .priceValence, .approxPrice, .approxPriceValence}
+  complete := fun x => by cases x <;> simp
 
 -- Summary
 

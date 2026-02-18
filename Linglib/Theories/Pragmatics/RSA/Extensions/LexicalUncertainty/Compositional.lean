@@ -1,7 +1,8 @@
-/-
-# Linglib.Core.CompositionalLU
+import Mathlib.Data.Rat.Defs
+import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
-Compositional Lexical Uncertainty for embedded implicatures.
+/-!
+# Compositional Lexical Uncertainty for Embedded Implicatures
 
 ## Architecture
 
@@ -29,13 +30,17 @@ predicts no difference from the weaker disjunct. But:
 
 Compositional LU derives this by tracking which refinements are available.
 
-Reference: Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic inference"
--/
+## Status
 
-import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+The ℚ-based RSA evaluation infrastructure (RSA.Eval, boolToRat) has been removed.
+Type definitions and structural properties (CompUtt, AtomicLexicon, CompLUScenario)
+are preserved. RSA computations need to be re-implemented using the new RSAConfig
+framework.
+
+## Reference
+
+Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic inference"
+-/
 
 -- Compositional Utterance Structure
 
@@ -143,53 +148,6 @@ structure CompLUScenario where
 
 attribute [instance] CompLUScenario.atomBEq CompLUScenario.worldBEq
 
--- Compositional LU-RSA Computations
-
-namespace CompLURSA
-
-/--
-L₀ given a specific atomic lexicon.
-
-P(w | u, L) ∝ P(w) · ⟦u⟧_L(w)
-
-The meaning is computed compositionally from atomic meanings.
--/
-def L0_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
-    (u : CompUtt S.Atom) : List (S.World × ℚ) :=
-  let scores := S.worlds.map λ w =>
-    (w, S.worldPrior w * boolToRat (L.interpret u w))
-  RSA.Eval.normalize scores
-
-/--
-S₁ given a specific atomic lexicon.
-
-P(u | w, L) ∝ L₀(w | u, L)
--/
-def S1_given (S : CompLUScenario) (L : AtomicLexicon S.Atom S.World)
-    (w : S.World) : List (CompUtt S.Atom × ℚ) :=
-  let scores := S.utterances.map λ u => (u, (RSA.Eval.getScore (L0_given S L u) w) ^ S.α)
-  RSA.Eval.normalize scores
-
-/--
-L₁ with compositional lexical uncertainty.
-
-P(w | u) ∝ P(w) · Σ_L P(L) · S₁(u | w, L)
-
-The listener marginalizes over refined ATOMIC lexica.
--/
-def L1 (S : CompLUScenario) (u : CompUtt S.Atom) : List (S.World × ℚ) :=
-  let scores := S.worlds.map λ w =>
-    let lexSum := S.lexica.foldl (init := (0 : ℚ)) λ acc L =>
-      acc + S.lexPrior L * RSA.Eval.getScore (S1_given S L w) u
-    (w, S.worldPrior w * lexSum)
-  RSA.Eval.normalize scores
-
-/-- Get L₁ probability for a specific world -/
-def L1_prob (S : CompLUScenario) (u : CompUtt S.Atom) (w : S.World) : ℚ :=
-  RSA.Eval.getScore (L1 S u) w
-
-end CompLURSA
-
 -- Non-Convex Disjunction Scenario Builder
 
 /--
@@ -226,7 +184,6 @@ For "two": can refine to {2}, {3}, {2,3}
 For "three": only {3} (already maximally specific)
 -/
 def numeralRefinedLexica : List (AtomicLexicon NumeralAtom ThreePointWorld) :=
-  -- Just a few key refinements for illustration
   [
     -- L₁: Unrefined (base)
     numeralBaseLexicon,

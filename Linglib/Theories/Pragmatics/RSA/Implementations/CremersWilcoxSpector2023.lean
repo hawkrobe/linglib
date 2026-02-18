@@ -15,8 +15,7 @@ Cremers, A., Wilcox, E., & Spector, B. (2023). Exhaustivity and Anti-Exhaustivit
 in the RSA Framework. Semantics & Pragmatics.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 namespace RSA.Implementations.CremersWilcoxSpector2023
 

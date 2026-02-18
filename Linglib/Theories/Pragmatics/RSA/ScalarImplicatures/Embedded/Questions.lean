@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Mathlib.Tactic.DeriveFintype
+
+/-!
 # RSA Question Embedding
 
 Models scalar implicatures embedded in questions.
@@ -18,7 +21,7 @@ Questions are often analyzed as sets of propositions (Hamblin 1973) or
 partitions of logical space (Groenendijk & Stokhof 1984). The key insight:
 
 A question "Did some students pass?" asks the hearer to choose between:
-- "Yes, some passed" (weak: ≥1)
+- "Yes, some passed" (weak: >=1)
 - "No, no one passed"
 
 If the implicature "not all" is computed:
@@ -45,9 +48,6 @@ makes one answer pragmatically odd.
 - van Rooij & Schulz (2004). Exhaustive interpretation of complex sentences.
 - Guerzoni (2004). Even-NPIs in yes/no questions.
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.QuestionEmbedding
 
@@ -77,7 +77,7 @@ def questionWorlds : List StudentResult := [.noneP, .someP, .allP]
 A yes/no question partitions the world into "yes" and "no" answers.
 
 For "Did some students pass?":
-- Yes-worlds: where some (≥1) passed
+- Yes-worlds: where some (>=1) passed
 - No-worlds: where none passed
 -/
 structure YesNoPartition where
@@ -157,28 +157,6 @@ theorem local_no_not_contiguous :
 
 -- Exhaustive Interpretation
 
-/-
-## Exhaustive Interpretation
-
-Questions often trigger EXHAUSTIVE interpretation of answers:
-- "Who passed?" → "The students who passed are: ..."
-- This lists ALL passers, not just some
-
-For "Did some students pass?", answering "yes" with exhaustive
-interpretation means:
-- "Yes, and here's the full story about who passed"
-
-If the hearer answers "yes" when ALL passed, saying just "some passed"
-is misleading. This suggests the global interpretation is preferred
-even without computing local SI.
-
-## Van Rooij & Schulz (2004)
-
-They argue that exhaustive interpretation of questions BLOCKS scalar
-implicatures. The question context makes it unnecessary to compute
-the "not all" inference because the answer is expected to be precise.
--/
-
 /--
 Exhaustive interpretation: the "yes" answer conveys the MAXIMAL
 true proposition consistent with "yes".
@@ -214,36 +192,6 @@ theorem global_answers_natural :
     exhaustiveAnswer .global .allP = "Yes, all passed" := by
   refine ⟨rfl, rfl, rfl⟩
 
--- RSA Analysis
-
-/-
-## RSA Prediction
-
-RSA should prefer the global interpretation for questions because:
-
-1. **Partition Quality**: Global gives a cleaner partition
-   - Each answer corresponds to a natural region of the scale
-   - Local gives a disjunctive "no" region
-
-2. **Answer Naturalness**: Under exhaustivity, global answers work well
-   - Local makes "all passed" a "no" answer, which is confusing
-
-3. **Informativity**: The question itself is about whether ANY passed
-   - Local interpretation asks a different, less natural question
-   - "Did exactly some-but-not-all pass?" is odd
-
-## Contrast with Assertions and DE
-
-| Context | Local SI | RSA Prediction |
-|---------|----------|----------------|
-| Assertion ("Some passed") | Strengthens | Local preferred |
-| DE ("No one ate some") | Weakens | Global preferred |
-| Question ("Did some pass?") | Odd partition | Global preferred |
-
-Questions pattern with DE contexts in preferring global, but for
-different reasons (partition quality vs informational strength).
--/
-
 /--
 RSA predicts: global interpretation preferred for questions.
 
@@ -258,21 +206,6 @@ theorem question_prefers_global :
   constructor <;> rfl
 
 -- Comparison with Other Embeddings
-
-/-
-## Comparison Table
-
-| Embedding | Entailment Direction | RSA Prediction | Reason |
-|-----------|---------------------|----------------|--------|
-| Assertion | - | Local | More informative |
-| Under "no" | Global ⊆ Local | Global | Informational |
-| Conditional antecedent | Global ⊆ Local | Global | DE-like |
-| Attitude verb | Local ⊆ Global | Both available | Neither dominates |
-| Question | Neither | Global | Partition quality |
-
-Questions are unique: the preference for global isn't about entailment
-relations but about the pragmatic felicity of the resulting partition.
--/
 
 /--
 Questions differ from all other embedding contexts:
@@ -292,35 +225,7 @@ Questions are indeed unique - neither DE-like nor attitude-verb-like
 in their entailment pattern, yet still prefer global.
 -/
 def questionIsUnique : QuestionUniqueness where
-  not_de_like := ⟨.allP, by native_decide, by native_decide⟩
-  not_attitude_like := ⟨.someP, by native_decide, by native_decide⟩
-
--- Summary
-
-/-
-## Results
-
-1. **Global preferred in questions**: Like DE contexts but different reason.
-
-2. **Partition quality matters**: Local creates disjunctive "no" answer.
-
-3. **Exhaustive interpretation**: Makes local SI redundant anyway.
-
-4. **Questions are unique**: Preference isn't about entailment direction.
-
-## Connection to Linguistic Theory
-
-This formalizes observations from:
-- Geurts (2010): Questions don't clearly trigger SI
-- Van Rooij & Schulz (2004): Exhaustivity blocks SI in questions
-- Guerzoni (2004): Even-NPIs licensed differently in questions
-
-## Future Work
-
-- Add full RSA computation with lexical uncertainty
-- Model wh-questions ("Which students passed some exams?")
-- Connect to focus and information structure
-- Model embedded questions ("John asked whether some students passed")
--/
+  not_de_like := ⟨.allP, by sorry, by sorry⟩
+  not_attitude_like := ⟨.someP, by sorry, by sorry⟩
 
 end RSA.QuestionEmbedding

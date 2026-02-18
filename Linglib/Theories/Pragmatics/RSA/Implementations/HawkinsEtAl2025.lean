@@ -34,9 +34,6 @@ Hawkins et al. (2025):  Decision Problem ← Inferred from Question
 ```
 -/
 
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.List.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Core.DecisionTheory
 
 namespace RSA.PriorPQ

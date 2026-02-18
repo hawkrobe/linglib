@@ -53,7 +53,6 @@ These are different propositions. Standard RSA gives one answer.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 

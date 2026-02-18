@@ -35,14 +35,26 @@ Two different noise models in RSA:
 This file implements channel noise. See DegenEtAl2020.lean for semantic noise.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 
 namespace RSA.BergenGoodman2015
 
-open RSA.Eval
+-- ============================================================================
+-- Local helpers (replacing removed RSA.Eval utilities)
+-- ============================================================================
+
+private def normalize {α : Type} [BEq α] (scores : List (α × ℚ)) : List (α × ℚ) :=
+  let total := scores.foldl (λ acc (_, s) => acc + s) 0
+  if total = 0 then scores.map (λ (a, _) => (a, 0))
+  else scores.map (λ (a, s) => (a, s / total))
+
+private def getScore {α : Type} [BEq α] (dist : List (α × ℚ)) (a : α) : ℚ :=
+  match dist.find? (λ (x, _) => x == a) with
+  | some (_, s) => s
+  | none => 0
 
 
 /-!
@@ -142,9 +154,6 @@ def allUtterances : List Utterance :=
 
 def fullSentences : List Utterance :=
   [.aliceWentToMovies, .bobWentToMovies, .nobodyWentToMovies]
-
-def fragments : List Utterance :=
-  [.alice, .bob, .nobody, .wentToMovies]
 
 /-- Literal meaning: only full sentences have truth conditions -/
 def literalMeaning : Utterance → Meaning → Bool
@@ -252,13 +261,6 @@ def l0_bob : List (Meaning × ℚ) := L0_noisy δ_default .bob
 
 -- L1 interpretation of "Bob" (fragment)
 def l1_bob : List (Meaning × ℚ) := L1_noisy δ_default .bob
-
--- S1 production when meaning is "Bob went"
-def s1_bobWent : List (Utterance × ℚ) := S1_noisy δ_default .bobWent
-
-#eval l0_bob    -- L0 interprets "Bob" as meaning bobWent
-#eval l1_bob    -- L1 also interprets "Bob" as bobWent
-#eval s1_bobWent -- S1 might use fragment "Bob" (via noise model)
 
 /--
 **Ellipsis Theorem**: The fragment "Bob" is interpreted as "Bob went".
@@ -396,7 +398,7 @@ def L0 (ε : ℚ) (u_p : Utterance) : List (Meaning × ℚ) :=
   normalize scores
 
 /-- S1: Speaker choosing utterance given meaning and knowledge -/
-def S1 (ε : ℚ) (k : Knowledge) (m : Meaning) : List (Utterance × ℚ) :=
+def S1 (ε : ℚ) (_k : Knowledge) (m : Meaning) : List (Utterance × ℚ) :=
   -- Only consider utterances compatible with meaning
   let compatUtts := allUtterances.filter (literalMeaning · m)
   let scores := compatUtts.map λ u_i =>
@@ -425,9 +427,6 @@ def ε_default : ℚ := 1/100  -- 1% base noise rate
 -- L1 interpretation of stressed vs unstressed
 def l1_BOB_went : List (Meaning × ℚ) := L1 ε_default .BOB_went
 def l1_bob_went : List (Meaning × ℚ) := L1 ε_default .bobWent
-
-#eval l1_BOB_went  -- Stress → more exhaustive interpretation
-#eval l1_bob_went  -- No stress → less exhaustive
 
 /--
 **Prosody Theorem**: Stress increases exhaustive interpretation.
@@ -496,7 +495,7 @@ and perceived utterance decreases.
 At ε = 0: I(U; U') = H(U) (perfect channel)
 At ε = 1: I(U; U') = 0 (completely noisy, no information transmitted)
 -/
-def channelCapacity (ε : ℚ) (numUtts : ℕ) : ℚ :=
+def channelCapacity (ε : ℚ) (_numUtts : ℕ) : ℚ :=
   -- Simplified: for symmetric channel with n utterances
   -- Capacity ≈ log(n) * (1 - ε) approximately
   -- This is a placeholder for the actual calculation

@@ -6,8 +6,8 @@
 ## Innovation
 
 This model has two speaker levels with different utility structures:
-- **S1**: Balances informational + social utilities (weighted by φ)
-- **S2**: Balances informational + social + presentational utilities (ω weights)
+- **S1**: Balances informational + social utilities (weighted by phi)
+- **S2**: Balances informational + social + presentational utilities (omega weights)
 
 The presentational utility captures the speaker's desire to *appear* both
 kind and honest, which uniquely drives preference for indirect speech.
@@ -16,12 +16,12 @@ kind and honest, which uniquely drives preference for indirect speech.
 
 ```
 L0: Literal listener (soft semantics)
-     ↑
-S1: First-order speaker (φ-weighted info + social)
-     ↑
-L1: Pragmatic listener (jointly infers state s and goal φ)
-     ↑
-S2: Second-order speaker (ω-weighted info + social + presentational)
+     |
+S1: First-order speaker (phi-weighted info + social)
+     |
+L1: Pragmatic listener (jointly infers state s and goal phi)
+     |
+S2: Second-order speaker (omega-weighted info + social + presentational)
 ```
 
 ## Reference
@@ -31,10 +31,7 @@ Polite Speech Emerges From Competing Social Goals.
 Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
-import Linglib.Core.MeasurementScale
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Core.Proposition
 

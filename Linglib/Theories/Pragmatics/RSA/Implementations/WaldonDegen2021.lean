@@ -16,16 +16,16 @@ CI-RSA synthesizes two RSA extensions:
   L^C(r, i) = v^i if i true of r, else 1 - v^i
 
 **String interpretation** (average over continuations):
-  X^C(c, i, r) = Σ_{u continues c+i} [[u]]^C(r) / |continuations|
+  X^C(c, i, r) = Sum_{u continues c+i} [[u]]^C(r) / |continuations|
 
 **Incremental listener**:
-  L0^INCR(r | c, i) ∝ X^C(c, i, r) · P(r)
+  L0^INCR(r | c, i) proportional to X^C(c, i, r) * P(r)
 
 **Incremental speaker**:
-  S1^INCR(i | c, r) ∝ exp(α · (log L0^INCR(r | c, i) - C(i)))
+  S1^INCR(i | c, r) proportional to exp(alpha * (log L0^INCR(r | c, i) - C(i)))
 
 **Full utterance** (chain rule):
-  S1(u | r) = ∏_j S1^INCR(i_j | [i_1...i_{j-1}], r)
+  S1(u | r) = Prod_j S1^INCR(i_j | [i_1...i_{j-1}], r)
 
 ## Predictions
 
@@ -55,7 +55,6 @@ This implementation connects to the broader RSA ecosystem:
 - Degen et al. (2020). When redundancy is useful. Psychological Review.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 namespace RSA.Implementations.WaldonDegen2021
@@ -123,9 +122,12 @@ def lexContinuous (r : Referent) (i : LexItem) : ℚ :=
   let v := semanticValue i
   if itemTrueOf i r then v else 1 - v
 
-/-- Continuous utterance meaning [[u]]^C(r) = ∏_{i∈u} L^C(r, i). -/
+/-- Continuous utterance meaning [[u]]^C(r) = Prod_{i in u} L^C(r, i). -/
 def uttContinuous (r : Referent) (u : Utterance) : ℚ :=
   u.foldl (λ acc i => acc * lexContinuous r i) 1
+
+/-- Helper to convert Bool to ℚ for the noise channel connection. -/
+private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
 -- Grounding: Connection to unified noise theory
 
@@ -157,7 +159,7 @@ inductive WordOrder where
   deriving DecidableEq, Repr
 
 /-- Generate all grammatical utterances for a language and scene. -/
-def grammaticalUtterances (order : WordOrder) (scene : List Referent)
+def grammaticalUtterances (order : WordOrder) (_scene : List Referent)
     (target : Referent) : List Utterance :=
   let singleAdj := match order with
     | .prenominal => [[LexItem.blue, LexItem.pin], [LexItem.red, LexItem.pin],
@@ -182,7 +184,7 @@ def grammaticalUtterances (order : WordOrder) (scene : List Referent)
 
 
 /-- Get all grammatical continuations of a partial utterance. -/
-def continuations (partialUtt : Utterance) (order : WordOrder)
+def continuations (partialUtt : Utterance) (_order : WordOrder)
     (allUtts : List Utterance) : List Utterance :=
   allUtts.filter λ u => partialUtt.isPrefixOf u
 
@@ -215,7 +217,7 @@ def l0Incremental (context : Utterance) (nextWord : LexItem)
     Note: Uses rational approximation of softmax via power series. -/
 def s1Incremental (context : Utterance) (target : Referent)
     (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
-    (α : ℕ) (cost : LexItem → ℚ) : List (LexItem × ℚ) :=
+    (α : ℕ) (_cost : LexItem → ℚ) : List (LexItem × ℚ) :=
   -- Get available next words
   let availableWords : List LexItem := match context with
     | [] => match order with
@@ -232,7 +234,7 @@ def s1Incremental (context : Utterance) (target : Referent)
     let l0prob := match l0dist.find? (λ p => p.1 == target) with
       | some (_, prob) => prob
       | none => 0
-    -- Utility ∝ (L0 prob)^α (simplified softmax without cost for now)
+    -- Utility proportional to (L0 prob)^alpha (simplified softmax without cost for now)
     let score := if l0prob > 0 then l0prob ^ α else 0
     (w, score)
   -- Normalize
@@ -242,7 +244,7 @@ def s1Incremental (context : Utterance) (target : Referent)
 
 
 /-- Full utterance probability via chain rule.
-    S1(u | r) = ∏_j S1^INCR(i_j | [i_1...i_{j-1}], r) -/
+    S1(u | r) = Prod_j S1^INCR(i_j | [i_1...i_{j-1}], r) -/
 def utteranceProb (u : Utterance) (target : Referent)
     (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
     (α : ℕ) (cost : LexItem → ℚ) : ℚ :=
@@ -295,9 +297,19 @@ def spanishFlipPrediction (α : ℕ) : Bool :=
   let spanishSizeCS := redundantModProb .postnominal csScene smallBlue α
   spanishSizeCS > spanishColorSS
 
+-- Semantic Properties
 
-#eval grammaticalUtterances .prenominal ssScene smallBlue
-#eval grammaticalUtterances .postnominal ssScene smallBlue
+/-- Color adjectives have higher reliability than size adjectives.
+This asymmetry drives the redundant modification predictions. -/
+theorem color_more_reliable_than_size :
+    semanticValue .blue > semanticValue .big ∧
+    semanticValue .red > semanticValue .small := by
+  constructor <;> norm_num [semanticValue]
+
+/-- All semantic values are positive (required for valid probability). -/
+theorem semantic_values_positive :
+    ∀ i : LexItem, semanticValue i > 0 := by
+  intro i; cases i <;> norm_num [semanticValue]
 
 -- TODO: Full numerical predictions require exponential/log utilities
 -- with careful handling of rational arithmetic.

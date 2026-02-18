@@ -1,5 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Mathlib.Data.Rat.Defs

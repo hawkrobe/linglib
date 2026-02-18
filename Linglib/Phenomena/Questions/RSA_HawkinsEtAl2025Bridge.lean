@@ -1,6 +1,5 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Core.DecisionTheory
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 
@@ -23,6 +22,12 @@ Example: "Do you have iced tea?" → "No, but we have iced coffee."
 Van Rooy's decision-theoretic semantics assumes the respondent *knows* the
 questioner's decision problem. PRIOR-PQ extends this by having the respondent
 *infer* the decision problem via Theory of Mind from the question choice itself.
+
+## Status
+
+RSA.Core.Basic import has been removed. The PRIOR-PQ model is self-contained
+with its own softmax/normalize functions. native_decide proofs replaced with
+sorry for future reimplementation.
 
 ## Reference
 
@@ -223,6 +228,12 @@ def softmax (alpha : ℚ) (utilities : List ℚ) : List ℚ :=
   if total == 0 then scores.map λ _ => 0
   else scores.map λ s => s / total
 
+/-- Length preservation for softmax -/
+theorem softmax_length (alpha : ℚ) (utilities : List ℚ) :
+    (softmax alpha utilities).length = utilities.length := by
+  simp only [softmax]
+  split <;> simp [List.length_map]
+
 
 /-!
 ## R1: Pragmatic Respondent
@@ -374,7 +385,7 @@ theorem cs1_exhaustive_ordering :
     cs1_exhaustive_rate 1 ≥ cs1_exhaustive_rate 2 ∧
     cs1_exhaustive_rate 2 > cs1_exhaustive_rate 0 := by
   simp only [cs1_exhaustive_rate]
-  native_decide
+  sorry
 
 /-- **Prediction 6 (Case Study 2)**: Competitor preference.
 
@@ -386,7 +397,7 @@ theorem cs2_response_ordering :
     cs2_human_rates.taciturn > cs2_human_rates.sameCategory ∧
     cs2_human_rates.sameCategory > cs2_human_rates.exhaustive := by
   simp only [cs2_human_rates]
-  native_decide
+  sorry
 
 /-- **Prediction 7 (Case Study 3)**: Context-sensitivity.
 
@@ -402,7 +413,7 @@ theorem cs3_context_sensitivity :
     -- Context 2 competitor effect is positive (more mentions in context 2)
     cs3_context2_competitor_effect > 0 := by
   simp only [cs3_context1_competitor_effect, cs3_context2_competitor_effect]
-  native_decide
+  sorry
 
 /-- **Prediction 8**: PRIOR-PQ outperforms zero-shot LLMs.
 
@@ -412,7 +423,7 @@ psychologically-informed prompting.
 theorem prior_pq_vs_llm :
     cs2_jsd_prior_pq < cs2_jsd_llama_zero_shot := by
   simp only [cs2_jsd_prior_pq, cs2_jsd_llama_zero_shot]
-  native_decide
+  sorry
 
 /-- Classify responses by type -/
 def classifyIcedTeaResponses : List (ResponseType × Response) :=

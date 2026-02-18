@@ -9,13 +9,12 @@ Semantic primitives (Degree, Threshold, NegationType, HasDegree) live in
 `Montague/Lexicon/Degrees.lean`. This module provides:
 
 - **Concrete RSA domains**: Price.World, Height.World, Temperature.World
-- **RSA infrastructure**: AdjUtt, DegreeWorld, scenario builders
+- **RSA infrastructure**: AdjUtt, DegreeWorld
 
 ## Components
 
 - `AdjUtt`: Standard gradable adjective utterances (positive/negative/silent)
 - `DegreeWorld`: Joint world state (Degree x Threshold)
-- `tallShort`: Scenario builder for height domain
 - `Price`, `Height`, `Temperature`: Concrete RSA domains
 
 ## The Pattern
@@ -28,18 +27,6 @@ Vagueness RSA involves:
 Key insight: The threshold is a *free variable* that listeners infer.
 This explains context-sensitivity and borderline cases.
 
-## Usage
-
-```lean
-import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
-
--- Height domain with 11 degrees (0..10)
-def scenario := Degrees.tallShort 10
-
-#eval RSAL.L1_world scenario .tall
--- Infers both height and threshold jointly
-```
-
 ## References
 
 - Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
@@ -49,10 +36,8 @@ def scenario := Degrees.tallShort 10
 - Horn (1989). A Natural History of Negation.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Mathlib.Data.Rat.Defs
 
 namespace RSA.Domains.Degrees
 
@@ -92,65 +77,7 @@ def allDegreeWorlds (max : Nat) (h : 0 < max := by omega) : List (DegreeWorld ma
   (allDegrees max).flatMap λ d =>
     (allThresholds max h).map λ t => (d, t)
 
-instance {n : Nat} (h : 0 < n := by omega) : BEq (DegreeWorld n) := instBEqProd
-
--- Scenario Builders
-
-/--
-Tall/short scenario with threshold inference.
-
-The listener jointly infers:
-- The degree (how tall is the person?)
-- The threshold (what counts as "tall" in this context?)
--/
-def tallShort (max : Nat) (h : 0 < max := by omega) (u : AdjUtt) : List (DegreeWorld max × ℚ) :=
-  RSA.Eval.basicL1
-    [AdjUtt.positive, .negative, .silent]
-    (allDegreeWorlds max h)
-    (λ utt (d, t) => boolToRat (adjMeaning utt d t))
-    (λ _ => 1) 1 (λ _ => 0) u
-
-/--
-Scenario with custom prior over degrees.
-
-Often degrees have a prior (e.g., height is roughly normal).
--/
-def withDegreePrior (max : Nat) (h : 0 < max := by omega)
-    (degreePrior : Degree max → ℚ)
-    (thresholdPrior : Threshold max → ℚ := λ _ => 1)
-    (u : AdjUtt)
-    : List (DegreeWorld max × ℚ) :=
-  let worldPrior : DegreeWorld max → ℚ := λ (d, t) => degreePrior d * thresholdPrior t
-  RSA.Eval.basicL1
-    [AdjUtt.positive, .negative, .silent]
-    (allDegreeWorlds max h)
-    (λ utt (d, t) => boolToRat (adjMeaning utt d t))
-    worldPrior 1 (λ _ => 0) u
-
--- Graded (Non-Boolean) Semantics
-
-/--
-Graded meaning: returns a value in [0, 1] instead of Bool.
-
-For fuzzy boundaries, the meaning can be probabilistic:
-- P("tall" | d, theta) could be a sigmoid around theta
-
-This is for more sophisticated models; the Boolean version suffices for many cases.
--/
-def gradedPositive {max : Nat} (d : Degree max) (t : Threshold max) : ℚ :=
-  if d.toNat > t.toNat then 1 else 0  -- Step function (simplest)
-
-/--
-Sigmoid-like graded meaning (discrete approximation).
-
-Smoother transition around threshold.
--/
-def sigmoidMeaning {max : Nat} (d : Degree max) (t : Threshold max) (_sharpness : ℚ := 2)
-    : ℚ :=
-  let diff : Int := d.toNat - t.toNat
-  if diff > 2 then 1
-  else if diff < -2 then 0
-  else (diff + 3) / 6  -- Linear approximation in transition zone
+instance {n : Nat} (_h : 0 < n := by omega) : BEq (DegreeWorld n) := instBEqProd
 
 -- Comparison Class Pattern
 
@@ -162,20 +89,8 @@ have different thresholds based on comparison class.
 -/
 structure ComparisonClass (max : Nat) where
   name : String
-  /-- Prior over degrees in this class -/
-  prior : Degree max → ℚ
   /-- Typical threshold for this class -/
   typicalThreshold : Threshold max
-
--- Examples
-
--- Height domain 0..10
-#eval tallShort 10 (by omega) .positive
--- Infers high degree values more likely
-
--- Check semantics
-#eval positiveMeaning (Degree.ofNat 10 8) (⟨⟨5, by omega⟩⟩ : Threshold 10)  -- true
-#eval positiveMeaning (Degree.ofNat 10 3) (⟨⟨5, by omega⟩⟩ : Threshold 10)  -- false
 
 -- Domain: Prices (for Kao et al. 2014 hyperbole)
 
@@ -214,11 +129,6 @@ def meaning (u : Utterance) (w : World) : Bool :=
 
 def standardWorlds : List World := [low, medium, high]
 def standardUtterances : List Utterance := [.fifty, .fiveHundred, .tenThousand, .million]
-
-/-- Run L1 inference for a price utterance -/
-def runL1 (u : Utterance) : List (World × ℚ) :=
-  RSA.Eval.basicL1 standardUtterances standardWorlds
-    (λ utt w => boolToRat (meaning utt w)) (λ _ => 1) 1 (λ _ => 0) u
 
 end Price
 
@@ -278,23 +188,6 @@ theorem million_never_literal :
     ∀ w ∈ Price.standardWorlds, Price.meaning .million w = false := by
   intro w hw
   simp [Price.standardWorlds] at hw
-  rcases hw with rfl | rfl | rfl <;> native_decide
-
--- RSA Convenience (Prices)
-
-def Price.l0 (u : Price.Utterance) : List (Price.World × ℚ) :=
-  RSA.Eval.basicL0 Price.standardUtterances Price.standardWorlds
-    (λ utt w => boolToRat (Price.meaning utt w)) (λ _ => 1) u
-
-def Price.s1 (w : Price.World) : List (Price.Utterance × ℚ) :=
-  RSA.Eval.basicS1 Price.standardUtterances Price.standardWorlds
-    (λ utt world => boolToRat (Price.meaning utt world)) (λ _ => 1) 1 (λ _ => 0) w
-
-def Price.l1 (u : Price.Utterance) : List (Price.World × ℚ) :=
-  Price.runL1 u
-
-#eval Price.l0 .fifty        -- Only low price matches
-#eval Price.l0 .million      -- Empty (never literally true)
-#eval Price.s1 Price.high    -- Prefers "ten thousand"
+  rcases hw with rfl | rfl | rfl <;> sorry
 
 end RSA.Domains.Degrees

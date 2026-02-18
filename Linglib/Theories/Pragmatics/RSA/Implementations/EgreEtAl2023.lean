@@ -15,8 +15,6 @@ private distributions. The LU limitation (Appendix A) proves standard
 LU models cannot derive the triangular shape.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Mathlib.Data.Rat.Defs
@@ -26,7 +24,44 @@ import Mathlib.Tactic.NormNum
 
 namespace RSA.EgreEtAl2023
 
-open RSA.Eval
+-- Local helpers (replacing removed RSA.Eval)
+
+private def sumScores (xs : List ℚ) : ℚ := xs.foldl (· + ·) 0
+
+private def normalize {α : Type} [BEq α] (xs : List (α × ℚ)) : List (α × ℚ) :=
+  let total := sumScores (xs.map Prod.snd)
+  if total > 0 then xs.map (fun (a, s) => (a, s / total)) else xs
+
+private def getScore {α : Type} [BEq α] (xs : List (α × ℚ)) (a : α) : ℚ :=
+  match xs.find? (fun p => p.1 == a) with
+  | some (_, s) => s
+  | none => 0
+
+private def marginalize {α β : Type} [BEq β] (xs : List (α × ℚ)) (proj : α → β)
+    : List (β × ℚ) :=
+  xs.foldl (fun acc (a, s) =>
+    let b := proj a
+    match acc.find? (fun p => p.1 == b) with
+    | some _ => acc.map (fun (b', s') => if b' == b then (b', s' + s) else (b', s'))
+    | none => acc ++ [(b, s)]) []
+
+/-- KL divergence: D_KL(P || Q) = Σ_x P(x) · log(P(x)/Q(x)). -/
+private def klDivergence {α : Type} [BEq α]
+    (p q : List (α × ℚ)) : ℚ :=
+  p.foldl (fun acc (x, px) =>
+    let qx := getScore q x
+    if px > 0 && qx > 0
+    then acc + px * RSA.InformationTheory.log2Approx (px / qx)
+    else acc) 0
+
+private def ratToFloat (q : ℚ) : Float :=
+  let numFloat : Float := if q.num ≥ 0 then q.num.natAbs.toFloat else -q.num.natAbs.toFloat
+  numFloat / q.den.toFloat
+
+private def floatToRat (f : Float) : ℚ :=
+  let scaled := (f * 1000000).round
+  let n : Int := if scaled ≥ 0 then scaled.toUInt64.toNat else -((-scaled).toUInt64.toNat)
+  (n : ℚ) / 1000000
 
 -- Domain: {0,...,6} centered on 3, small enough for native_decide
 
@@ -233,7 +268,7 @@ def speakerBelief (observed : Value) : List (Value × ℚ) :=
 /-- Speaker utility: U(m, o) = -D_KL(P_o || L⁰_m). -/
 def speakerUtility (observed : Value) (l0 : List (Value × ℚ)) : ℚ :=
   let belief := speakerBelief observed
-  0 - RSA.InformationTheory.klDivergence belief l0
+  0 - klDivergence belief l0
 
 /-- For a speaker who observed 3, "around 3" has better utility than
 "between 0 6" (same support, but flat). This is the paper's key result:
@@ -280,7 +315,7 @@ theorem weak_quality_preserved_by_same_support
 /-- SoftMax(x_k, x, λ) = exp(λx_k) / Σ_j exp(λx_j). -/
 def softMaxScore (utilities : List ℚ) (k : Nat) (alpha : ℚ) : ℚ :=
   let exps := utilities.map (fun u =>
-    RSA.Eval.floatToRat (Float.exp (RSA.Eval.ratToFloat (alpha * u))))
+    floatToRat (Float.exp (ratToFloat (alpha * u))))
   let total := exps.foldl (· + ·) 0
   match exps[k]? with
   | some e => if total > 0 then e / total else 0
@@ -315,11 +350,11 @@ def U1 {W M I : Type} [BEq W]
 
 /-- Local softmax: exp(α·u_k) / Σ_j exp(α·u_j). -/
 private def softmaxLocal (α : ℚ) (utilities : List ℚ) : List ℚ :=
-  let αF := RSA.Eval.ratToFloat α
-  let exps := utilities.map λ u => Float.exp (αF * RSA.Eval.ratToFloat u)
+  let αF := ratToFloat α
+  let exps := utilities.map λ u => Float.exp (αF * ratToFloat u)
   let total := exps.foldl (· + ·) 0.0
   if total > 0 then
-    exps.map λ e => RSA.Eval.floatToRat (e / total)
+    exps.map λ e => floatToRat (e / total)
   else
     utilities.map λ _ => 0
 
@@ -519,16 +554,5 @@ theorem bir_matches_closed_form :
     ∀ v : Value,
     getScore l0_around3 v = birClosedForm 3 v.toNat := by
   intro v; cases v <;> native_decide
-
--- Eval
-
-#eval l0_around3
-#eval l0_between1_5
-#eval l0_between2_4
-#eval l0_exactly3
-#eval l0_tolerance_around3
-#eval wir_around3
-#eval! speakerUtility .v3 l0_around3
-#eval! speakerUtility .v3 l0_between0_6
 
 end RSA.EgreEtAl2023

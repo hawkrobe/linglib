@@ -1,6 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Core.HornScale
 import Mathlib.Data.Rat.Defs
@@ -221,12 +220,6 @@ def truthfulQuantifiers (s : ExamStimulus) : List ExtUtterance :=
   let result := if s.nCorrect * 2 > s.nTotal then result ++ [.most] else result
   let result := if s.nCorrect = s.nTotal then result ++ [.all] else result
   result
-
-/-- The exam domain with nTotal items is an instance of the extended quantity domain.
-
-Both use Fin (n+1) worlds with the same semantics for none/some/most/all. -/
-def examToExtDomain (nTotal : Nat) : ExtDomain nTotal :=
-  extStandard nTotal
 
 /-- As difficulty increases (proportion moves away from extremes),
 the strongest truthful quantifier weakens: all → most → some.

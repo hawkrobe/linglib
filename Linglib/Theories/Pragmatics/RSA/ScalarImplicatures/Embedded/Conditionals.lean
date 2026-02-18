@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Mathlib.Tactic.DeriveFintype
+
+/-!
 # RSA Conditional Antecedent Embedding
 
 Models scalar implicatures embedded in conditional antecedents.
@@ -34,9 +37,6 @@ RSA should prefer the more informative global interpretation.
 - Chierchia (2004). Scalar implicatures, polarity phenomena.
 - von Fintel (1999). NPI licensing, Strawson-entailment, and context dependency.
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.ConditionalEmbedding
 
@@ -200,13 +200,7 @@ theorem global_entails_local :
     ∀ w : CondWorld, conditionalMeaning .global w = true →
       conditionalMeaning .local_ w = true := by
   intro ⟨students, professor⟩ h
-  cases students <;> cases professor
-  case noneP.unhappy => native_decide
-  case noneP.happy => native_decide
-  case someP.unhappy => exact absurd h (by native_decide)
-  case someP.happy => native_decide
-  case allP.unhappy => exact absurd h (by native_decide)
-  case allP.happy => native_decide
+  cases students <;> cases professor <;> first | rfl | exact absurd h (by decide) | decide
 
 /--
 Local does NOT entail Global.
@@ -219,15 +213,6 @@ theorem local_not_entails_global :
       conditionalMeaning .global w = false := by
   use ⟨.allP, .unhappy⟩
   decide
-
-/--
-Worlds where global and local differ.
--/
-def globalLocalDiffer : List CondWorld :=
-  condWorlds.filter (λ w =>
-    conditionalMeaning .global w != conditionalMeaning .local_ w)
-
-#eval globalLocalDiffer  -- Should be: allP + unhappy
 
 /--
 The conditional antecedent is DE: weakening the antecedent strengthens the conditional.
@@ -243,42 +228,7 @@ theorem conditional_antecedent_is_DE :
     ∀ w : CondWorld, (!somePassed w || profHappy w) = true →
       (!allPassed w || profHappy w) = true := by
   intro ⟨students, professor⟩ h
-  cases students <;> cases professor
-  case noneP.unhappy => native_decide
-  case noneP.happy => native_decide
-  case someP.unhappy => exact absurd h (by native_decide)
-  case someP.happy => native_decide
-  case allP.unhappy => exact absurd h (by native_decide)
-  case allP.happy => native_decide
-
--- RSA Prediction
-
-/-
-## RSA Analysis
-
-Since Global ENTAILS Local:
-- Global is strictly more informative (rules out more worlds)
-- RSA prefers more informative utterances
-- Therefore: RSA predicts Global interpretation preferred
-
-This matches the DE blocking pattern:
-- Conditional antecedent = DE context
-- Local SI would weaken the overall sentence
-- Global interpretation is informationally stronger
-- RSA derives preference for Global
-
-## Contrast with Attitude Verbs
-
-For attitude verbs:
-- Local entails Global (opposite direction!)
-- Neither is strictly more informative overall
-- Both interpretations available
-
-For conditionals (like "no one"):
-- Global entails Local
-- Global is more informative
-- Global preferred
--/
+  cases students <;> cases professor <;> first | rfl | exact absurd h (by decide) | decide
 
 /--
 RSA predicts: in conditional antecedents, global is preferred over local.
@@ -293,33 +243,5 @@ theorem conditional_like_de_context :
   · exact global_entails_local
   · use ⟨.allP, .unhappy⟩
     decide
-
--- Summary
-
-/-
-## Results
-
-1. **Conditional antecedents are DE**: Strengthening the antecedent weakens
-   the conditional (contraposition).
-
-2. **Global entails Local**: "If some passed, happy" → "If some-not-all passed, happy"
-
-3. **RSA predicts Global preferred**: More informative interpretation wins.
-
-4. **Same pattern as "no one"**: Both are DE contexts with same prediction.
-
-## Connection to Linguistic Theory
-
-This formalizes the observation that:
-- Scalar implicatures are blocked in conditional antecedents
-- "If some passed..." typically means "if any passed..."
-- The "not all" inference is blocked, just like under negation
-
-## Future Work
-
-- Add full RSA computation with lexical uncertainty
-- Compare predictions to experimental data
-- Extend to other DE environments (restrictors of "every", etc.)
--/
 
 end RSA.ConditionalEmbedding

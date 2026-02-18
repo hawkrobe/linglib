@@ -48,7 +48,6 @@ import Linglib.Core.DecisionTheory
 import Linglib.Core.Partition
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
@@ -636,7 +635,7 @@ U_combined(u|w,A) = λ·U_relevance + (1-λ)·U_truthfulness + C(u)
 - 0 < λ < 1: Weighted combination
 -/
 
-/-- Theorem 5: Combined model endpoints (uses combinedUtility from RSA.Questions.Basic).
+/-- Theorem 5: Combined model endpoints (uses combined from RSA.CombinedUtility).
 
 The combined model reduces to pure truthfulness when lam=0
 and pure relevance when lam=1.
@@ -646,8 +645,8 @@ We re-export the reference here for the unified view.
 -/
 theorem combined_model_endpoints_relevance
     (truthfulness relevance : ℚ) :
-    combinedUtility 0 truthfulness relevance = truthfulness ∧
-    combinedUtility 1 truthfulness relevance = relevance :=
+    RSA.CombinedUtility.combined 0 truthfulness relevance = truthfulness ∧
+    RSA.CombinedUtility.combined 1 truthfulness relevance = relevance :=
   RSA.CombinedUtility.combined_endpoints truthfulness relevance
 
 

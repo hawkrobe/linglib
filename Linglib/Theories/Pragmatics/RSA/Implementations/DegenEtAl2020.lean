@@ -1,16 +1,15 @@
-/-
-Degen, Hawkins, Graf, Kreiss & Goodman (2020).
-*When redundancy is useful*. Psychological Review 127(4).
-
-cs-RSA: continuous semantics (φ ∈ [0,1]) explains "overinformative" referring expressions
-via asymmetric noise across feature types (color reliable, size noisy).
--/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Core.ProductOfExperts
-import Mathlib.Data.Rat.Defs
+
+/-!
+# Degen, Hawkins, Graf, Kreiss & Goodman (2020)
+
+*When redundancy is useful*. Psychological Review 127(4).
+
+cs-RSA: continuous semantics (phi in [0,1]) explains "overinformative" referring expressions
+via asymmetric noise across feature types (color reliable, size noisy).
+-/
 
 namespace RSA.ContinuousSemantics
 
@@ -118,7 +117,7 @@ def materialParams : SemanticParams :=
   -- Discrimination = 0.40 (lower than size's 0.60)
   }
 
-/-- Continuous semantic value φ(u, o) = φ_type × φ_color × φ_size ∈ [0, 1].
+/-- Continuous semantic value phi(u, o) = phi_type * phi_color * phi_size in [0, 1].
 Product of Experts: each feature acts as an independent noisy channel. -/
 def φ (params : SemanticParams) (u : ReferringExpression) (o : Object) : ℚ :=
   let typeVal := match u.nominal with
@@ -132,7 +131,7 @@ def φ (params : SemanticParams) (u : ReferringExpression) (o : Object) : ℚ :=
     | some s => if s == o.size then params.sizeMatch else params.sizeMismatch
   typeVal * colorVal * sizeVal
 
-/-- φ is the unnormalized PoE of three feature experts. -/
+/-- phi is the unnormalized PoE of three feature experts. -/
 theorem φ_is_product_of_experts (params : SemanticParams)
     (u : ReferringExpression) (o : Object) :
     φ params u o = Core.ProductOfExperts.unnormalizedProduct
@@ -154,32 +153,6 @@ def utteranceCost (u : ReferringExpression) : ℚ :=
   let color := if u.colorAdj.isSome then 1 else 0
   let size := if u.sizeAdj.isSome then 1 else 0
   nominal + color + size
-
-structure CSRSAParams where
-  utterances : List ReferringExpression
-  objects : List Object
-  params : SemanticParams := defaultParams
-  α : ℕ := 1
-  costWeight : ℚ := 1/10
-
-def csRSAScenario
-    (utterances : List ReferringExpression)
-    (objects : List Object)
-    (params : SemanticParams := defaultParams)
-    (α : ℕ := 1)
-    (costWeight : ℚ := 1/10) : CSRSAParams :=
-  { utterances, objects, params, α, costWeight }
-
-/-- Compute S1 distribution for a cs-RSA scenario -/
-def csRSA_S1 (scenario : CSRSAParams) (target : Object) : List (ReferringExpression × ℚ) :=
-  RSA.Eval.basicS1
-    scenario.utterances
-    scenario.objects
-    (λ u w => φ scenario.params u w)
-    (λ _ => 1)  -- Uniform object prior
-    scenario.α
-    (λ u => scenario.costWeight * utteranceCost u)
-    target
 
 /-- Scene 1: Color-sufficient discrimination (blue pin vs red pin) -/
 def scene1_objects : List Object := [
@@ -225,90 +198,12 @@ def bananaUtterances : List ReferringExpression := [
   RE.withColor .banana .blue
 ]
 
-/-- cs-RSA scenario for Scene 1 -/
-def csScenario1 := csRSAScenario pinUtterances scene1_objects
-
-/-- cs-RSA scenario for Scene 2 -/
-def csScenario2 := csRSAScenario pinUtterances scene2_objects
-
-/-- cs-RSA scenario for Scene 3 -/
-def csScenario3 := csRSAScenario pinUtterances scene3_objects
-
-/-- cs-RSA scenario for banana typicality -/
-def csScenario4 := csRSAScenario bananaUtterances scene4_objects
-
--- Scene 1: Color-sufficient (blue pin among blue & red pins)
+-- Scene targets
 def target1 : Object := ⟨.pin, .blue, .small⟩
-
-/-- S1 distribution for target in Scene 1 -/
-def s1_scene1 : List (ReferringExpression × ℚ) :=
-  csRSA_S1 csScenario1 target1
-
--- Scene 2: Size-sufficient (small pin among small & large pins)
 def target2 : Object := ⟨.pin, .blue, .small⟩
 
-/-- S1 distribution for target in Scene 2 -/
-def s1_scene2 : List (ReferringExpression × ℚ) :=
-  csRSA_S1 csScenario2 target2
-
--- Scene 4: Typicality (typical yellow vs atypical blue)
 def target4_typical : Object := ⟨.banana, .yellow, .medium⟩
 def target4_atypical : Object := ⟨.banana, .blue, .medium⟩
-
-/-- S1 for typical banana -/
-def s1_typical_banana : List (ReferringExpression × ℚ) :=
-  csRSA_S1 csScenario4 target4_typical
-
-/-- S1 for atypical banana -/
-def s1_atypical_banana : List (ReferringExpression × ℚ) :=
-  csRSA_S1 csScenario4 target4_atypical
-
-#eval s1_scene1  -- Color-sufficient scene
-#eval s1_scene2  -- Size-sufficient scene
-#eval s1_typical_banana   -- Typical banana (should use bare more)
-#eval s1_atypical_banana  -- Atypical banana (should use color more)
-
-/-- In Scene 1 (color-sufficient), "blue pin" has nonzero S1 probability -/
-theorem scene1_blue_pin_nonzero :
-    RSA.Eval.getScore s1_scene1 (RE.withColor .pin .blue) > 0 := by
-  native_decide
-
-/-- In Scene 2 (size-sufficient), "small pin" has nonzero S1 probability -/
-theorem scene2_small_pin_nonzero :
-    RSA.Eval.getScore s1_scene2 (RE.withSize .pin .small) > 0 := by
-  native_decide
-
-/-- For atypical banana, color mention gets higher probability than bare nominal -/
-theorem atypical_banana_prefers_color :
-    RSA.Eval.getScore s1_atypical_banana (RE.withColor .banana .blue) >
-    RSA.Eval.getScore s1_atypical_banana (RE.bare .banana) := by
-  native_decide
-
-/-- Boolean semantics: φ ∈ {0, 1}, for comparison with cs-RSA. -/
-def booleanParams : SemanticParams :=
-  { colorMatch := 1
-  , colorMismatch := 0
-  , sizeMatch := 1
-  , sizeMismatch := 0
-  , typeMatch := 1
-  , typeMismatch := 0 }
-
-/-- Boolean RSA scenario for Scene 1 -/
-def boolScenario1 := csRSAScenario pinUtterances scene1_objects booleanParams
-
-/-- Boolean RSA scenario for Scene 2 -/
-def boolScenario2 := csRSAScenario pinUtterances scene2_objects booleanParams
-
-/-- S1 with Boolean semantics for Scene 1 -/
-def s1_bool_scene1 : List (ReferringExpression × ℚ) :=
-  csRSA_S1 boolScenario1 target1
-
-/-- S1 with Boolean semantics for Scene 2 -/
-def s1_bool_scene2 : List (ReferringExpression × ℚ) :=
-  csRSA_S1 boolScenario2 target2
-
-#eval s1_bool_scene1  -- Boolean Scene 1
-#eval s1_bool_scene2  -- Boolean Scene 2
 
 /-- P(size mentioned | color sufficient): size overmodification rate. -/
 def colorOvermodificationRate (s1dist : List (ReferringExpression × ℚ)) : ℚ :=
@@ -322,9 +217,6 @@ def sizeOvermodificationRate (s1dist : List (ReferringExpression × ℚ)) : ℚ 
   s1dist.foldl (λ acc (re, p) =>
     if re.colorAdj.isSome then acc + p else acc) 0
 
-#eval colorOvermodificationRate s1_scene1  -- Color-sufficient → size overmodification
-#eval sizeOvermodificationRate s1_scene2   -- Size-sufficient → color overmodification
-
 /-- High-variation scene: 3 sizes. Predicts more redundant modification. -/
 def scene_high_variation : List Object := [
   ⟨.pin, .blue, .small⟩,   -- Target
@@ -332,15 +224,7 @@ def scene_high_variation : List Object := [
   ⟨.pin, .blue, .large⟩    -- Distractor 2
 ]
 
-def csScenario_high_var := csRSAScenario pinUtterances scene_high_variation
-
-def s1_high_var : List (ReferringExpression × ℚ) :=
-  csRSA_S1 csScenario_high_var ⟨.pin, .blue, .small⟩
-
-#eval s1_high_var
-#eval colorOvermodificationRate s1_high_var  -- Should be higher than s1_scene2
-
--- Decomposition: cs-RSA = Boolean semantics × independent noise channels
+-- Decomposition: cs-RSA = Boolean semantics * independent noise channels
 def noiseChannel := RSA.Noise.noiseChannel
 
 /-- Boolean type feature value. -/
@@ -361,10 +245,6 @@ def booleanSizeVal (u : ReferringExpression) (o : Object) : ℚ :=
   | none => 1
   | some s => if s == o.size then 1 else 0
 
--- Use theorems from RSA.Noise
-#check RSA.Noise.noiseChannel_one
-#check RSA.Noise.noiseChannel_zero
-
 /-- Product of {0,1}-valued rationals is {0,1}-valued. -/
 theorem mul_mem_zero_one {a b : ℚ} (ha : a ∈ ({0, 1} : Set ℚ)) (hb : b ∈ ({0, 1} : Set ℚ)) :
     a * b ∈ ({0, 1} : Set ℚ) := by
@@ -378,6 +258,15 @@ theorem feature_channel_is_noisy_boolean
     onMatch * (if isMatch then 1 else 0) +
     onMismatch * (if isMatch then 0 else 1) := by
   cases isMatch <;> simp
+
+/-- Boolean semantics is the zero-noise limit of cs-RSA. -/
+def booleanParams : SemanticParams :=
+  { colorMatch := 1
+  , colorMismatch := 0
+  , sizeMatch := 1
+  , sizeMismatch := 0
+  , typeMatch := 1
+  , typeMismatch := 0 }
 
 /-- Boolean semantics is the zero-noise limit of cs-RSA. -/
 theorem boolean_is_zero_noise_limit (u : ReferringExpression) (o : Object) :
@@ -395,7 +284,7 @@ theorem boolean_is_zero_noise_limit (u : ReferringExpression) (o : Object) :
     | none => simp [Set.mem_insert_iff]
     | some s => simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; split_ifs <;> simp
 
-/-- Degen decomposition (specified features): φ = Π noiseChannel(booleanVal). -/
+/-- Degen decomposition (specified features): phi = product noiseChannel(booleanVal). -/
 theorem degen_is_boolean_times_noise_specified
     (params : SemanticParams)
     (u : ReferringExpression) (o : Object)
