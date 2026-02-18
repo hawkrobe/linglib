@@ -33,6 +33,7 @@ import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.NaturalLogic
 import Linglib.Core.DecisionTheory
+import Linglib.Core.RationalAction
 import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Alternatives
@@ -264,8 +265,10 @@ import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
 import Linglib.Phenomena.Modality.TypologyBridge
+import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
+import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Aloni2022
-import Linglib.Phenomena.Modality.CompareFC
+import Linglib.Comparisons.FreeChoice
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.ExpletiveNegationBridge
 import Linglib.Phenomena.WordOrder.NonProjectivity
@@ -341,6 +344,8 @@ import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025Bridge
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
@@ -752,6 +757,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.BasicQ
 import Linglib.Theories.Pragmatics.RSA.Core.ChainComparison
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA
 import Linglib.Theories.Pragmatics.RSA.Core.Convergence
 import Linglib.Theories.Pragmatics.RSA.Core.Discourse
@@ -763,6 +769,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
+import Linglib.Theories.Pragmatics.RSA.Core.SpeakerUtility
 import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits

@@ -1,4 +1,12 @@
-/-
+import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
+import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
+import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
+import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
+import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
+import Linglib.Phenomena.Modality.Aloni2022
+import Linglib.Phenomena.Modality.FreeChoice
+
+/-!
 # Free Choice: Theory Comparison
 
 Comparing how different theories derive free choice inferences.
@@ -19,12 +27,6 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 4. **Aloni (2022)**: BSML - Bilateral State-based Modal Logic (team semantics)
 5. **Elliott & Sudo (2025)**: BUS - Bilateral Update Semantics (dynamic)
 
-## Key Questions
-
-1. Do the theories make the same predictions?
-2. Where do they diverge?
-3. How do they explain related phenomena (EI cancelability, negation)?
-
 ## References
 
 - Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion. NLS.
@@ -35,20 +37,14 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 - Fox (2007). Free choice and the theory of scalar implicatures.
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
-import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
-import Linglib.Phenomena.Modality.Aloni2022
-import Linglib.Phenomena.Modality.FreeChoice
-
-namespace Phenomena.Modality.CompareFC
+namespace Comparisons.FreeChoice
 
 open Phenomena.Modality.FreeChoice
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
+open Semantics.Dynamic.BSML
 open Phenomena.Modality.Aloni2022
 
 -- ============================================================================
@@ -239,19 +235,18 @@ Aloni (2022) derives FC **semantically** using team semantics.
 
 -- Verify BSML narrow-scope FC computationally
 #eval
-  let enriched := Aloni2022.enrich Aloni2022.mayHaveCoffeeOrTea
-  let t := Aloni2022.freeChoiceTeam
-  let ws := Aloni2022.permissionWorlds
-  let supEnriched := Aloni2022.support Aloni2022.deonticModel ws enriched t
-  let supCoffee := Aloni2022.support Aloni2022.deonticModel ws Aloni2022.mayCoffee t
-  let supTea := Aloni2022.support Aloni2022.deonticModel ws Aloni2022.mayTea t
+  let enriched := enrich mayHaveCoffeeOrTea
+  let t := freeChoiceTeam
+  let supEnriched := support deonticModel enriched t
+  let supCoffee := support deonticModel mayCoffee t
+  let supTea := support deonticModel mayTea t
   (supEnriched, supCoffee, supTea)  -- (true, true, true)
 
 /-- Aloni BSML: DNE holds definitionally -/
 theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (φ : BSMLFormula W) (t : Semantics.Dynamic.TeamSemantics.Team W) (worlds : List W) :
-    Aloni2022.support M worlds (.neg (.neg φ)) t = Aloni2022.support M worlds φ t :=
-  Aloni2022.dne_support M φ t worlds
+    (φ : BSMLFormula) (t : Semantics.Dynamic.TeamSemantics.Team W) :
+    support M (.neg (.neg φ)) t = support M φ t :=
+  dne_support M φ t
 
 -- ============================================================================
 -- SECTION 3d: Elliott & Sudo (2025) - Bilateral Update Semantics
@@ -605,4 +600,4 @@ Each theory contributes something unique:
 - **Elliott & Sudo**: Anaphora + bilateral structure
 -/
 
-end Phenomena.Modality.CompareFC
+end Comparisons.FreeChoice
