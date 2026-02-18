@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.223.2] - 2026-02-18
+
+### Changed
+- Close 2 `sorry`s in `Core/UtilityTheory.lean`: `threeClasses` (Luce Theorem 12, neutral class indifference) and `scaleDecomposition` (§3.D multiplicative factoring v(aρb) = w(a,b) · φ(ρ))
+- Add `EventLuceScale`, `GambleLuceScale` ratio scale structures
+- Add helper lemmas: `luce_eq_half_iff`, `ratio_eq_of_frac_eq`, `ratio_independent`, `v_eq_product`
+- Add between-class ordering theorems: `favorable_over_unfavorable`, `favorable_over_neutral`
+- Correct `threeClasses` statement: restrict to neutral class (same-class indifference is false for favorable/unfavorable)
+
 ## [0.223.1] - 2026-02-18
 
 ### Added
