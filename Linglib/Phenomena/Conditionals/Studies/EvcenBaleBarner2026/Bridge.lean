@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
-# Evcen, Bale & Barner (2026) — Bridge
+# Evcen, Bale & Barner (2026) — Bridge @cite{evcen-bale-barner-2026}
 
 Connects the experimental findings of Evcen, Bale & Barner (2026) to the
 answer-level exhaustification theory of conditional perfection (von Fintel 2001)

@@ -4,7 +4,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
 
 /-!
-# Bayesian Theory of Mind (BToM) @cite{baker-jaraettinger-saxe-tenenbaum-2017}
+# Bayesian Theory of Mind (BToM) @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
 
 General framework for inverse rational agent models.
 
