@@ -14,7 +14,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
 
 namespace DepGrammar.LongDistance
 

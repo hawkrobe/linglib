@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
 
 /-!
 # Mildly Non-Projective Dependency Structures

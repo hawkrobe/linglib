@@ -48,7 +48,9 @@ import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.MereoDim
+import Linglib.Core.BToM
 import Linglib.Core.Path
+import Linglib.Core.DimensionBridge
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
@@ -173,6 +175,8 @@ import Linglib.Phenomena.Conditionals.LeftNested
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
+import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
+import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
 import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
@@ -386,9 +390,12 @@ import Linglib.Comparisons.SDSandRSA
 import Linglib.Comparisons.TenseModalEvidentiality
 import Linglib.Comparisons.TenseTheories
 import Linglib.Comparisons.VaguenessTheories
+import Linglib.Comparisons.ProjectionMechanisms
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
 import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
@@ -621,6 +628,7 @@ import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Theories.Semantics.Events.RootTypology
 import Linglib.Theories.Semantics.Events.SpatialTrace
+import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 -- Theories: Semantics.Intensional (possible-worlds semantics)
@@ -649,6 +657,7 @@ import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Theories.Semantics.Modality.Compare
@@ -734,6 +743,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Operations
 -- Theories: RSA
 import Linglib.Theories.Pragmatics.RSA.Core.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.BasicQ
+import Linglib.Theories.Pragmatics.RSA.Core.BToM
 import Linglib.Theories.Pragmatics.RSA.Core.ChainComparison
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA

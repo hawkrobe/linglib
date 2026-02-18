@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 
 /-!
 # VP Divergence: DG vs PSG Constituency
