@@ -72,6 +72,10 @@ inductive FeatureVal where
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
   | hon : HonLevel → FeatureVal      -- [iHON] (Alok & Bhalla 2026)
+  | finite : Bool → FeatureVal       -- [±finite] (Fin head, Rizzi 1997)
+  | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
+  | neg : Bool → FeatureVal          -- [±neg] (NegP, Pollock 1989)
+  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, Rizzi 2001)
   deriving Repr, DecidableEq
 
 /-- A grammatical feature: either valued or unvalued
@@ -112,6 +116,10 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   | .epp _, .epp _ => true
   | .tense _, .tense _ => true
   | .hon _, .hon _ => true
+  | .finite _, .finite _ => true
+  | .factive _, .factive _ => true
+  | .neg _, .neg _ => true
+  | .rel _, .rel _ => true
   | _, _ => false
 
 -- Part 2: Feature Bundles on Syntactic Objects
@@ -621,5 +629,42 @@ def fullAgree (strength : PICStrength) (phases : List Phase)
     (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
   validAgreeWithActivity rel root ∧
     ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
+
+-- Part 17: Clause-Typing Agree Configurations
+
+/-- Fin-Agree: Fin probes for [±finite] on its complement (TP).
+    The Fin head in Rizzi's (1997) split-CP checks whether its complement
+    is finite (indicative/realis) or non-finite (subjunctive/irrealis). -/
+def finAgreeFeatures (isFinite : Bool) : FeatureBundle :=
+  [.unvalued (.finite isFinite)]
+
+/-- Force-Fin-Agree: Force/C probes for clause-type features on Fin.
+    In the split-CP, Force selects Fin via Agree, checking features like
+    [±factive] that determine the clause's discourse function. -/
+def forceFinAgreeFeatures (isFactive : Bool) : FeatureBundle :=
+  [.unvalued (.factive isFactive)]
+
+/-- Neg-Agree: Neg probes for [±neg], licensing sentential negation.
+    In Pollock's (1989) split-IP, NegP hosts the negation feature. -/
+def negAgreeFeatures : FeatureBundle :=
+  [.unvalued (.neg true)]
+
+/-- Rel-Agree: Rel probes for [±rel], licensing relative clause formation.
+    In Rizzi's (2001) extension, the Rel head types the clause as relative. -/
+def relAgreeFeatures : FeatureBundle :=
+  [.unvalued (.rel true)]
+
+/-- Clause-typing features match correctly. -/
+theorem finite_features_match :
+    featuresMatch (.unvalued (.finite true)) (.valued (.finite true)) = true := rfl
+
+theorem factive_features_match :
+    featuresMatch (.unvalued (.factive true)) (.valued (.factive false)) = true := rfl
+
+theorem neg_features_match :
+    featuresMatch (.unvalued (.neg true)) (.valued (.neg true)) = true := rfl
+
+theorem rel_features_match :
+    featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
 
 end Minimalism

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.221.1] - 2026-02-17
+
+### Added
+- Add `finite`, `factive`, `neg`, `rel` to `FeatureVal` — clause-typing features for Rizzi's (1997) split-CP and Pollock's (1989) split-IP
+- Add `finAgreeFeatures`, `forceFinAgreeFeatures`, `negAgreeFeatures`, `relAgreeFeatures` — Agree configurations for clause-typing
+- Add `Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean` — bridges CTPClass (Noonan 2007) to FeatureVal via `ctpToFiniteness` and `ctpToFactivity`
+- Prove `irrealis_always_nonfinite`: irrealis CTP classes always select [-finite]
+
 ## [0.221.0] - 2026-02-17
 
 ### Added
