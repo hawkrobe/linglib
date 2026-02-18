@@ -78,7 +78,10 @@ def argumentDomainSpine (topCat : Cat) : List Cat → List Cat :=
     between antecedent and ellipsis site.
 
     Anand et al. (2025) Definition 5: Two heads are lexically identical
-    iff they have the same category AND complement category. -/
+    iff they have the same category AND complement category. Case is
+    included because it is assigned within the argument domain: a V that
+    assigns dative is structurally distinct from one that assigns
+    accusative (Merchant 2001, Anand et al. 2021 §5.5). -/
 structure HeadPair where
   /-- The category of the head -/
   head : Cat
@@ -86,6 +89,9 @@ structure HeadPair where
   complement : Cat
   /-- Lexical identity token (from LIToken.id) for identity tracking -/
   headId : Nat := 0
+  /-- Case assigned by the head to its complement, when relevant.
+      `none` for head pairs where case is not assigned (e.g., v–V). -/
+  assignedCase : Option UD.Case := none
   deriving Repr, DecidableEq, BEq
 
 /-- Extract head pairs from a syntactic object, restricted to heads
@@ -106,13 +112,13 @@ partial def extractHeadPairs (so : SyntacticObject) (topCat : Cat) : List HeadPa
         let hid := match a.getLIToken with
                    | some tok => tok.id
                    | none => 0
-        ⟨catA, catB, hid⟩ :: pairsBelow
+        ⟨catA, catB, hid, none⟩ :: pairsBelow
       else if selectsB b a && isInArgumentDomain catB topCat then
         -- b selects a: b is head, a is complement
         let hid := match b.getLIToken with
                    | some tok => tok.id
                    | none => 0
-        ⟨catB, catA, hid⟩ :: pairsBelow
+        ⟨catB, catA, hid, none⟩ :: pairsBelow
       else
         pairsBelow
     | _, _ => pairsBelow
@@ -123,12 +129,22 @@ partial def extractHeadPairs (so : SyntacticObject) (topCat : Cat) : List HeadPa
 
 /-- Lexical identity of head pairs (Anand et al. 2025, Def 5):
     Two head pairs are lexically identical iff they have the same
-    head category and complement category.
+    head category, complement category, and assigned case (when both
+    specify case).
 
-    Note: This ignores `headId` — lexical identity is about
-    categorical structure, not token identity. -/
+    Case matching follows from the SIC because case is assigned within
+    the argument domain: if the head assigns different case, the
+    head-complement relationship is structurally distinct.
+
+    Note: `headId` is ignored — lexical identity is about structural
+    properties, not token identity. When either side has `assignedCase
+    = none`, case is not checked (the head pair does not involve case
+    assignment, e.g., v selecting VP). -/
 def lexicallyIdentical (hp1 hp2 : HeadPair) : Bool :=
-  hp1.head == hp2.head && hp1.complement == hp2.complement
+  hp1.head == hp2.head && hp1.complement == hp2.complement &&
+  match hp1.assignedCase, hp2.assignedCase with
+  | some c1, some c2 => c1 == c2
+  | _, _ => true
 
 /-- Remove the first element matching a predicate from a list.
     Returns `none` if no match found, `some remaining` otherwise. -/
@@ -245,11 +261,17 @@ theorem small_clause_smaller_argdomain :
 theorem cat_beq_refl (c : Cat) : (c == c) = true := by
   cases c <;> decide
 
+/-- BEq on UD.Case is reflexive. -/
+private theorem ud_case_beq_refl (c : UD.Case) : (c == c) = true := by
+  cases c <;> decide
+
 /-- Lexical identity is reflexive for any head pair. -/
 theorem lexicallyIdentical_refl (hp : HeadPair) :
     lexicallyIdentical hp hp = true := by
-  unfold lexicallyIdentical
-  simp
+  simp only [lexicallyIdentical, beq_self_eq_true, Bool.true_and, Bool.and_self]
+  cases hp.assignedCase with
+  | none => rfl
+  | some c => exact ud_case_beq_refl c
 
 /-- Empty argument domains are trivially structurally identical. -/
 theorem empty_domains_identical :
@@ -266,5 +288,41 @@ theorem single_pair_matches (hp : HeadPair) :
   simp only [lexicallyIdentical_refl, ite_true]
   unfold matchHeadPairs
   decide
+
+-- Case matching
+
+/-- Case mismatch blocks lexical identity: a V–D pair assigning dative
+    is not lexically identical to one assigning accusative. -/
+theorem case_mismatch_not_identical :
+    lexicallyIdentical ⟨.V, .D, 0, some .Dat⟩ ⟨.V, .D, 0, some .Acc⟩ = false := by
+  native_decide
+
+/-- Case match preserves lexical identity. -/
+theorem case_match_identical :
+    lexicallyIdentical ⟨.V, .D, 0, some .Dat⟩ ⟨.V, .D, 0, some .Dat⟩ = true := by
+  native_decide
+
+/-- When no case is specified (e.g., v–V), identity depends only on
+    categories. -/
+theorem no_case_identity :
+    lexicallyIdentical ⟨.v, .V, 0, none⟩ ⟨.v, .V, 0, none⟩ = true := by
+  native_decide
+
+/-- Case mismatch blocks structural identity even when all other head
+    pairs match. This is the formal basis of the German case-matching
+    data (Merchant 2001): "wem" (dat) matches "jemandem" (dat), but
+    "wen" (acc) does not. -/
+theorem case_mismatch_blocks_sluicing :
+    structurallyIdentical
+      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩]
+      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Acc⟩] = false := by
+  native_decide
+
+/-- Same case → structural identity holds → sluicing licensed. -/
+theorem case_match_licenses_sluicing :
+    structurallyIdentical
+      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩]
+      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩] = true := by
+  native_decide
 
 end Minimalism.Sluicing

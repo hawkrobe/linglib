@@ -127,6 +127,20 @@ inductive ClauseType where
   | echo                -- no inversion even in matrix position
   deriving Repr, DecidableEq
 
+/-- Semantic type of a wh-phrase, classifying what domain the wh-word
+    ranges over. The taxonomy is empirically motivated by distributional
+    patterns in the Santa Cruz Sluicing Corpus (Anand, Hardt & McCloskey
+    2021), where these types show radically different frequencies. -/
+inductive WhSemanticType where
+  | entity          -- who, what, which N — ranges over individuals
+  | degree          -- how much, how many, how ADJ — ranges over degrees
+  | reason          -- why — ranges over reasons/causes
+  | manner          -- how — ranges over manners
+  | temporal        -- when — ranges over times
+  | locative        -- where — ranges over locations
+  | classificatory  -- what kind of, what sort of — ranges over kinds
+  deriving DecidableEq, BEq, Repr, Inhabited
+
 -- ============================================================================
 -- Feature Bundle and Word
 -- ============================================================================

@@ -205,6 +205,8 @@ import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Data
+import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Bridge
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
