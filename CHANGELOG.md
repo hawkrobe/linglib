@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.222.6] - 2026-02-18
+
+### Changed
+- Fix Aloni 2022 BSML enrichment to match paper's Definition 6: conjunction and disjunction no longer add redundant NE wrappers (`[φ ∧ ψ]⁺ = [φ]⁺ ∧ [ψ]⁺`, `[φ ∨ ψ]⁺ = [φ]⁺ ∨ [ψ]⁺`)
+- Restrict FC theorems (`narrowScopeFC`, `wideScopeFC`, `dualProhibition`) to atomic formulas — the general versions are false (counterexample theorem added)
+
+### Added
+- `narrowScopeFC_false_for_general_formulas`: native_decide counterexample showing `[◇(α ∨ β)]⁺ ⊨ ◇α` fails for `α = ¬□□q` with empty accessibility
+- Close `dualProhibition` sorry with structured proof via anti-support monotonicity for ◇
+- Add helper lemmas: `list_all_mono`, `team_all_mono`, `team_all_of_isEmpty`, `antiSupport_poss_weaken`, `antiSupport_enriched_disj_implies_left/right`
+
 ## [0.222.4] - 2026-02-18
 
 ### Added

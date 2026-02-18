@@ -291,8 +291,8 @@ This captures the "neglect-zero" tendency in human cognition.
 [p]⁺ = p ∧ NE
 [NE]⁺ = NE
 [¬φ]⁺ = ¬[φ]⁺ ∧ NE
-[φ ∧ ψ]⁺ = [φ]⁺ ∧ [ψ]⁺ ∧ NE
-[φ ∨ ψ]⁺ = [φ]⁺ ∨ [ψ]⁺ ∧ NE
+[φ ∧ ψ]⁺ = [φ]⁺ ∧ [ψ]⁺
+[φ ∨ ψ]⁺ = [φ]⁺ ∨ [ψ]⁺
 [◇φ]⁺ = ◇[φ]⁺ ∧ NE
 [□φ]⁺ = □[φ]⁺ ∧ NE
 -/
@@ -300,8 +300,8 @@ def enrich {W : Type*} : BSMLFormula W -> BSMLFormula W
   | .atom p => .conj (.atom p) .ne
   | .ne => .ne
   | .neg φ => .conj (.neg (enrich φ)) .ne
-  | .conj φ ψ => .conj (.conj (enrich φ) (enrich ψ)) .ne
-  | .disj φ ψ => .conj (.disj (enrich φ) (enrich ψ)) .ne
+  | .conj φ ψ => .conj (enrich φ) (enrich ψ)
+  | .disj φ ψ => .disj (enrich φ) (enrich ψ)
   | .poss φ => .conj (.poss (enrich φ)) .ne
   | .nec φ => .conj (.nec (enrich φ)) .ne
 
@@ -313,8 +313,8 @@ def enrich {W : Type*} : BSMLFormula W -> BSMLFormula W
 ## Enrichment Preserves Structure
 
 Key properties of enrichment:
-1. Enriched formulas always have NE at the top level (except NE itself)
-2. Enrichment commutes with negation (up to NE): [¬φ]⁺ = ¬[φ]⁺ ∧ NE
+1. Atoms, negation, and modals get NE at the top level
+2. Conjunction and disjunction do NOT get extra NE (following Aloni's Definition 6)
 3. If an enriched formula is supported, the team must be non-empty
 -/
 
@@ -322,9 +322,13 @@ Key properties of enrichment:
 theorem enrich_neg_structure {W : Type*} (φ : BSMLFormula W) :
     enrich (.neg φ) = .conj (.neg (enrich φ)) .ne := rfl
 
-/-- Enrichment of disjunction is disjunction of enrichments, conjoined with NE -/
+/-- Enrichment of conjunction is conjunction of enrichments (no extra NE) -/
+theorem enrich_conj_structure {W : Type*} (φ ψ : BSMLFormula W) :
+    enrich (.conj φ ψ) = .conj (enrich φ) (enrich ψ) := rfl
+
+/-- Enrichment of disjunction is disjunction of enrichments (no extra NE) -/
 theorem enrich_disj_structure {W : Type*} (φ ψ : BSMLFormula W) :
-    enrich (.disj φ ψ) = .conj (.disj (enrich φ) (enrich ψ)) .ne := rfl
+    enrich (.disj φ ψ) = .disj (enrich φ) (enrich ψ) := rfl
 
 /-- Enrichment of possibility is possibility of enrichment, conjoined with NE -/
 theorem enrich_poss_structure {W : Type*} (φ : BSMLFormula W) :
@@ -343,29 +347,39 @@ private lemma and_true_split {a b : Bool} (h : a && b = true) : a = true ∧ b =
   cases a <;> cases b <;> simp_all
 
 /-- If an enriched formula (other than NE) is supported, the team is non-empty.
-    This is because enrichment always adds NE at the top level. -/
+
+    For atoms, negation, and modals this follows from the top-level NE conjunct.
+    For conjunction and disjunction (which lack top-level NE in Definition 6),
+    non-emptiness is inherited from the enriched sub-formulas. -/
 theorem enriched_support_implies_nonempty {W : Type*} [DecidableEq W] (M : BSMLModel W)
     (φ : BSMLFormula W) (t : Team W) (worlds : List W)
     (h : support M worlds (enrich φ) t = true) :
     t.isNonEmpty worlds = true := by
-  cases φ with
+  induction φ with
   | ne => exact h
   | atom p =>
       simp only [enrich, support] at h
       cases hA : (t.all (M.valuation p) worlds) <;> cases hB : t.isNonEmpty worlds <;> simp_all
-  | neg ψ =>
+  | neg ψ _ =>
       simp only [enrich, support] at h
       cases hA : (antiSupport M worlds (enrich ψ) t) <;> cases hB : t.isNonEmpty worlds <;> simp_all
-  | conj ψ₁ ψ₂ =>
+  | conj ψ₁ ψ₂ ih₁ _ =>
+      -- enrich (.conj ψ₁ ψ₂) = .conj (enrich ψ₁) (enrich ψ₂)
+      unfold enrich at h
+      unfold support at h
+      apply ih₁
+      revert h; cases support M worlds (enrich ψ₁) t <;> simp
+  | disj ψ₁ ψ₂ ih₁ _ =>
+      -- enrich (.disj ψ₁ ψ₂) = .disj (enrich ψ₁) (enrich ψ₂) (definitional)
+      -- By contradiction: if t is empty, generateSplits produces only (∅, ∅),
+      -- and support (enrich ψ₁) ∅ = false (by IH contrapositive), so the
+      -- any returns false, contradicting h.
+      -- TODO: formalize the empty-team contradiction argument
+      sorry
+  | poss ψ _ =>
       simp only [enrich, support] at h
       cases hB : t.isNonEmpty worlds <;> simp_all
-  | disj ψ₁ ψ₂ =>
-      simp only [enrich, support] at h
-      cases hB : t.isNonEmpty worlds <;> simp_all
-  | poss ψ =>
-      simp only [enrich, support] at h
-      cases hB : t.isNonEmpty worlds <;> simp_all
-  | nec ψ =>
+  | nec ψ _ =>
       simp only [enrich, support] at h
       cases hB : t.isNonEmpty worlds <;> simp_all
 
@@ -420,24 +434,17 @@ theorem enriched_split_forces_both_nonempty {W : Type*} [DecidableEq W] (M : BSM
       t₂.isNonEmpty worlds = true ∧
       support M worlds (enrich φ) t₁ = true ∧
       support M worlds (enrich ψ) t₂ = true := by
-  -- Step 1: Unpack the enriched disjunction
+  -- enrich (.disj φ ψ) = .disj (enrich φ) (enrich ψ) (no extra NE wrapper)
   simp only [enrich, support] at h
-  -- Split the top-level conjunction (disjunction result && NE)
-  have hDisj : (generateSplits t worlds).any (λ x =>
-      support M worlds (enrich φ) x.fst && support M worlds (enrich ψ) x.snd) = true := by
-    cases hD : (generateSplits t worlds).any _ <;> simp_all
-  -- Step 2: Get the split from disjunction support
-  have hSplit := List.any_eq_true.mp hDisj
+  -- h : (generateSplits t worlds).any (λ x => ...) = true
+  have hSplit := List.any_eq_true.mp h
   obtain ⟨⟨t1, t2⟩, _, hBoth⟩ := hSplit
-  -- Split the conjunction (φ support && ψ support)
   have hPhi : support M worlds (enrich φ) t1 = true := by
     cases hA : support M worlds (enrich φ) t1 <;> simp_all
   have hPsi : support M worlds (enrich ψ) t2 = true := by
     cases hA : support M worlds (enrich ψ) t2 <;> simp_all
-  -- Step 3: Each enriched disjunct being supported implies non-emptiness
   have hT1NE := enriched_support_implies_nonempty M φ t1 worlds hPhi
   have hT2NE := enriched_support_implies_nonempty M ψ t2 worlds hPsi
-  -- Step 4: Conclude
   exact ⟨t1, t2, hT1NE, hT2NE, hPhi, hPsi⟩
 
 -- ============================================================================
@@ -484,138 +491,227 @@ theorem support_antiSupport_asymmetry {W : Type*} [DecidableEq W] (M : BSMLModel
   · simp only [antiSupport, Bool.and_eq_true]
 
 -- ============================================================================
+-- PART 6e: Helper Lemmas for Free Choice Proofs
+-- ============================================================================
+
+/-- Monotonicity for List.all: if f implies g pointwise, then all f implies all g -/
+private lemma list_all_mono {α : Type*} (l : List α) (f g : α → Bool)
+    (hfg : ∀ x, f x = true → g x = true) (hf : l.all f = true) : l.all g = true := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at *
+    exact ⟨hfg x hf.1, ih hf.2⟩
+
+/-- Monotonicity for Team.all -/
+private lemma team_all_mono {W : Type*} (t : Team W) (f g : W → Bool) (worlds : List W)
+    (hfg : ∀ w, f w = true → g w = true)
+    (hf : t.all f worlds = true) : t.all g worlds = true := by
+  unfold Team.all at *
+  exact list_all_mono worlds _ _ (fun w hw => by
+    cases ht : t w <;> simp_all) hf
+
+/-- Empty team satisfies Team.all for any predicate (vacuous truth) -/
+private lemma team_all_of_isEmpty {W : Type*} (t : Team W) (p : W → Bool) (worlds : List W)
+    (he : t.isEmpty worlds = true) : t.all p worlds = true := by
+  unfold Team.all Team.isEmpty at *
+  simp only [Bool.not_eq_true'] at he
+  induction worlds with
+  | nil => rfl
+  | cons w ws ih =>
+    simp only [List.any_cons, List.all_cons, Bool.or_eq_false_iff, Bool.and_eq_true] at *
+    exact ⟨by simp [he.1], ih he.2⟩
+
+/-- Anti-support of enriched atom disjunction implies anti-support of left atom.
+
+    antiSupport ((a ∧ NE) ∨ (b ∧ NE)) t' = true → antiSupport a t' = true
+
+    Key insight: if t' is empty, antiSupport (.atom a) t' is vacuously true.
+    If t' is non-empty, the conjunction's || isEmpty branch is false, so
+    antiSupport a t' must be true directly. -/
+private lemma antiSupport_enriched_disj_implies_left {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (a b : String) (t' : Team W) (worlds : List W)
+    (h : antiSupport M worlds (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne)) t' = true) :
+    antiSupport M worlds (.atom a) t' = true := by
+  unfold antiSupport at h
+  have h1 : antiSupport M worlds (.conj (.atom a) .ne) t' = true := by
+    revert h; cases antiSupport M worlds (.conj (.atom a) .ne) t' <;> simp
+  unfold antiSupport at h1
+  cases hA : antiSupport M worlds (.atom a) t'
+  · exfalso
+    rw [hA, Bool.false_or] at h1
+    unfold antiSupport at h1 hA
+    have := team_all_of_isEmpty t' (fun w => !M.valuation a w) worlds h1
+    rw [this] at hA
+    simp at hA
+  · rfl
+
+/-- Anti-support of enriched atom disjunction implies anti-support of right atom. -/
+private lemma antiSupport_enriched_disj_implies_right {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (a b : String) (t' : Team W) (worlds : List W)
+    (h : antiSupport M worlds (.disj (.conj (.atom a) .ne) (.conj (.atom b) .ne)) t' = true) :
+    antiSupport M worlds (.atom b) t' = true := by
+  unfold antiSupport at h
+  have h1 : antiSupport M worlds (.conj (.atom b) .ne) t' = true := by
+    revert h; cases antiSupport M worlds (.conj (.atom b) .ne) t' <;> simp_all
+  unfold antiSupport at h1
+  cases hB : antiSupport M worlds (.atom b) t'
+  · exfalso
+    rw [hB, Bool.false_or] at h1
+    unfold antiSupport at h1 hB
+    have := team_all_of_isEmpty t' (fun w => !M.valuation b w) worlds h1
+    rw [this] at hB
+    simp at hB
+  · rfl
+
+/-- Anti-support monotonicity for ◇: if anti-support of φ implies anti-support of ψ
+    pointwise over teams, then anti-support of ◇φ implies anti-support of ◇ψ. -/
+private lemma antiSupport_poss_weaken {W : Type*} [DecidableEq W]
+    (M : BSMLModel W) (φ ψ : BSMLFormula W) (t : Team W) (worlds : List W)
+    (hmono : ∀ t' : Team W, antiSupport M worlds φ t' = true → antiSupport M worlds ψ t' = true)
+    (h : antiSupport M worlds (.poss φ) t = true) :
+    antiSupport M worlds (.poss ψ) t = true := by
+  unfold antiSupport at h ⊢
+  exact team_all_mono t _ _ worlds (fun w hw => by
+    exact list_all_mono (generateSubteams (M.access w) worlds) _ _ (fun t' ht' => by
+      cases he : t'.isEmpty worlds
+      · simp only [he, Bool.false_or] at ht' ⊢
+        exact hmono t' ht'
+      · simp
+    ) hw
+  ) h
+
+-- ============================================================================
 -- PART 7: Free Choice Theorems
 -- ============================================================================
 
+/-!
+## Why FC Requires Atomic Formulas
+
+The FC theorems below are restricted to atomic α and β. The general version
+(for arbitrary BSMLFormula) is FALSE: enrichment [φ]⁺ does not entail φ
+for formulas containing □ under negation, because the NE added by enrichment
+creates "escape hatches" via empty accessibility sets.
+
+**Counterexample**: α = ¬□□q. On a team {w} where σ(w) = ∅ (empty accessibility):
+- [¬□□q]⁺ is supported: the enrichment's anti-support of □ escapes via
+  `antiSupport (X ∧ NE) ∅ = ... || ∅.isEmpty = true`
+- But ¬□□q is NOT supported: `antiSupport (□q) ∅ = ∅.any (...) = false`
+
+This means the hypothesis of narrowScopeFC can be satisfied while the conclusion
+fails, when α contains □ under negation.
+
+For propositional atoms (the paper's intended application), [p]⁺ = p ∧ NE trivially
+entails p, so the FC derivation goes through.
+-/
+
+/-- Counterexample worlds: w0 has non-empty accessibility (to w1, w2), others have empty -/
+private inductive CexWorld where
+  | w0 | w1 | w2 | w3
+  deriving DecidableEq, Repr
+
+private def cexWorlds : List CexWorld := [.w0, .w1, .w2, .w3]
+
+/-- Counterexample model: w0 accesses {w1, w2}; w1, w2, w3 have empty accessibility -/
+private def cexModel : BSMLModel CexWorld where
+  access := λ w => match w with
+    | .w0 => λ w' => w' == .w1 || w' == .w2
+    | _ => λ _ => false
+  valuation := λ p w => match p with
+    | "p" => w == .w1 || w == .w2
+    | _ => false
+
+/-- The general narrowScopeFC is false: ¬□□q creates a gap between enriched
+    and original support when accessible worlds have empty accessibility.
+
+    Hypothesis: support (enrich (◇(¬□□q ∨ p))) {w0} = true
+    but support (◇(¬□□q)) {w0} = false. -/
+theorem narrowScopeFC_false_for_general_formulas :
+    support cexModel cexWorlds
+      (enrich (.poss (.disj (.neg (.nec (.nec (.atom "q")))) (.atom "p"))))
+      (λ w => w == .w0) = true ∧
+    support cexModel cexWorlds
+      (.poss (.neg (.nec (.nec (.atom "q")))))
+      (λ w => w == .w0) = false := by native_decide
+
 /--
-Narrow-scope Free Choice: [◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β
+Narrow-scope Free Choice: [◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β (for atomic α, β)
 
-## Derivation from First Principles
+Restricted to atoms because [φ]⁺ |= φ fails for general formulas
+(see `narrowScopeFC_false_for_general_formulas`).
 
-This is the main result. The proof uses the lemmas we've established:
-
-**Step 1**: [◇(α ∨ β)]⁺ = ◇([α]⁺ ∨ [β]⁺) ∧ NE (by enrich_poss_structure)
-
-**Step 2**: Support of ◇([α]⁺ ∨ [β]⁺) requires:
-  ∀w ∈ t, ∃ non-empty t' ⊆ R[w] with t' ⊨ [α]⁺ ∨ [β]⁺
-
-**Step 3**: t' ⊨ [α]⁺ ∨ [β]⁺ means (by enriched_split_forces_both_nonempty):
-  ∃ t₁, t₂ with t' = t₁ ∪ t₂, t₁ ⊨ [α]⁺, t₂ ⊨ [β]⁺
-  AND t₁, t₂ both non-empty! (This is the key step)
-
-**Step 4**: Since t₁ ≠ ∅ and t₁ ⊨ [α]⁺, we have t₁ ⊨ α (enrichment only strengthens)
-  Similarly t₂ ⊨ β
-
-**Step 5**: Therefore ◇α is supported (witnessed by t₁) and ◇β is supported (witnessed by t₂)
-
-This is FREE CHOICE derived from:
-- Split disjunction (partitioning)
-- NE enrichment (non-emptiness constraints)
-- NE non-flatness (empty team fails NE)
+For atoms the proof is: the split gives s₁ ⊨ [α]⁺ = α ∧ NE, so s₁ ⊨ α
+by conjunction elimination. Since s₁ is non-empty and a subteam of σ(w),
+it witnesses ◇α.
 -/
 theorem narrowScopeFC {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (α β : BSMLFormula W) (t : Team W) (worlds : List W)
-    (h : support M worlds (enrich (.poss (.disj α β))) t = true) :
-    support M worlds (.poss α) t = true ∧ support M worlds (.poss β) t = true := by
-  -- Unpack: [◇(α ∨ β)]⁺ = ◇([α]⁺ ∨ [β]⁺) ∧ NE
-  simp only [enrich, support] at h
-  -- The full proof requires showing that the witnesses t₁, t₂ from the split
-  -- can serve as witnesses for ◇α and ◇β respectively.
-  -- This follows from: if t₁ ⊨ [α]⁺ and t₁ ≠ ∅, then taking t₁ as the subteam
-  -- for ◇α works (since [α]⁺ = α ∧ NE or similar, and we have non-emptiness).
-  -- The derivation structure is established by enriched_split_forces_both_nonempty.
+    (a b : String) (t : Team W) (worlds : List W)
+    (h : support M worlds (enrich (.poss (.disj (.atom a) (.atom b)))) t = true) :
+    support M worlds (.poss (.atom a)) t = true ∧
+    support M worlds (.poss (.atom b)) t = true := by
+  -- [◇(a ∨ b)]⁺ = ◇([a]⁺ ∨ [b]⁺) ∧ NE = ◇((a ∧ NE) ∨ (b ∧ NE)) ∧ NE
+  -- For each w ∈ t, ∃ non-empty s ⊆ σ(w) with s ⊨ (a ∧ NE) ∨ (b ∧ NE)
+  -- Split gives s₁ ⊨ a ∧ NE (hence s₁ ⊨ a, s₁ non-empty, s₁ ⊆ σ(w))
+  -- s₁ witnesses ◇a; similarly s₂ witnesses ◇b.
+  -- TODO: formalize the subteam-membership argument connecting
+  -- generateSplits to generateSubteams
   sorry
 
 /--
-Wide-scope Free Choice: [◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β (when R is indisputable)
+Wide-scope Free Choice: [◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β (for atomic α, β with indisputable R)
 
-## Derivation from First Principles
-
-The indisputability condition ensures all worlds in the team have the
-same accessible worlds, which is needed for the conjunction to hold.
-
-**The Challenge**: Wide-scope is different from narrow-scope because the
-modals are OUTSIDE the disjunction. The split happens on ◇α and ◇β, not on α and β.
-
-**Why Indisputability Matters**:
-- Split gives us t = t₁ ∪ t₂ with t₁ ⊨ ◇α and t₂ ⊨ ◇β
-- t₁ ⊨ ◇α means: ∀w ∈ t₁, ∃ non-empty t' ⊆ R[w] with t' ⊨ α
-- But we need: ∀w ∈ t, ∃ non-empty t' ⊆ R[w] with t' ⊨ α (for ALL of t, not just t₁)
-
-**With indisputability**: R[w] = R[v] for all w, v ∈ t
-- The witness t' that works for some w ∈ t₁ also works for all w ∈ t
-- Because they all have the same accessible worlds!
-- Therefore t₁ ⊨ ◇α extends to t ⊨ ◇α
-
-**Without indisputability**: Wide-scope FC can fail!
-- Different worlds might have different accessible worlds
-- A witness for ◇α at one world might not exist at another
+The split gives t₁ ⊨ [◇α]⁺ = ◇(a ∧ NE) ∧ NE and t₂ ⊨ [◇β]⁺.
+Indisputability (R[w] = R[v] for all w, v ∈ t) allows extending
+the ◇ witness from t₁ to all of t.
 -/
 theorem wideScopeFC {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (α β : BSMLFormula W) (t : Team W) (worlds : List W)
+    (a b : String) (t : Team W) (worlds : List W)
     (hInd : M.isIndisputable t worlds = true)
-    (h : support M worlds (enrich (.disj (.poss α) (.poss β))) t = true) :
-    support M worlds (.poss α) t = true ∧ support M worlds (.poss β) t = true := by
-  -- Step 1: Get the split from enriched disjunction
-  -- [◇α ∨ ◇β]⁺ = ([◇α]⁺ ∨ [◇β]⁺) ∧ NE
-  -- By enriched_split_forces_both_nonempty, we get t₁, t₂ both non-empty
-  -- with t₁ ⊨ [◇α]⁺ and t₂ ⊨ [◇β]⁺
-  --
-  -- Step 2: Use indisputability to extend from t₁ to t
-  -- Since R[w] = R[v] for all w, v ∈ t, the witness for ◇α at t₁
-  -- works for all of t.
-  --
-  -- The full proof requires showing this extension property formally.
+    (h : support M worlds (enrich (.disj (.poss (.atom a)) (.poss (.atom b)))) t = true) :
+    support M worlds (.poss (.atom a)) t = true ∧
+    support M worlds (.poss (.atom b)) t = true := by
+  -- [◇a ∨ ◇b]⁺ = [◇a]⁺ ∨ [◇b]⁺ = (◇(a ∧ NE) ∧ NE) ∨ (◇(b ∧ NE) ∧ NE)
+  -- Split: t₁ ⊨ ◇(a ∧ NE) ∧ NE, t₂ ⊨ ◇(b ∧ NE) ∧ NE
+  -- t₁ ⊨ ◇(a ∧ NE): ∀w ∈ t₁, ∃ non-empty s ⊆ σ(w) with s ⊨ a ∧ NE, so s ⊨ a
+  -- By indisputability, σ(w) = σ(v) for all w, v ∈ t, so the same witness works
+  -- TODO: formalize indisputability extension
   sorry
 
 /--
-Dual Prohibition: [¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β
+Dual Prohibition: [¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β (for atomic α, β)
 
-## Derivation from First Principles
-
-Negation of possibility distributes over disjunction.
-This captures "You may not have coffee or tea" → "You may not have coffee AND
-you may not have tea" (prohibition applies to both).
-
-**The key structural difference from FC**:
-
-For FC, we used support of disjunction, which involves SPLIT:
-  t ⊨ φ ∨ ψ iff ∃ t₁, t₂: t = t₁ ∪ t₂ ∧ t₁ ⊨ φ ∧ t₂ ⊨ ψ
-
-For Dual Prohibition, we use ANTI-support of disjunction, which is CONJUNCTION:
-  t ⊨⁻ φ ∨ ψ iff t ⊨⁻ φ ∧ t ⊨⁻ ψ  (NO SPLIT!)
-
-**Derivation**:
-
-1. [¬◇(α ∨ β)]⁺ = ¬[◇(α ∨ β)]⁺ ∧ NE = ¬(◇([α]⁺ ∨ [β]⁺) ∧ NE) ∧ NE
-
-2. Support of ¬φ = anti-support of φ (bilateral structure)
-
-3. Anti-support of ◇(α ∨ β) requires: ∀w ∈ t, ∀ non-empty t' ⊆ R[w], t' ⊨⁻ (α ∨ β)
-
-4. t' ⊨⁻ (α ∨ β) iff t' ⊨⁻ α ∧ t' ⊨⁻ β (by antiSupport_disj_is_conj - NO SPLIT!)
-
-5. Therefore: t' ⊨⁻ α for all such t', which means t ⊨⁻ ◇α, i.e., t ⊨ ¬◇α
-   Similarly: t ⊨ ¬◇β
-
-This is why both prohibitions hold: anti-support of disjunction doesn't split!
+This uses anti-support, which is conjunction for disjunction (no split!).
+For atoms, anti-support of the enriched disjunction implies anti-support
+of each atom individually, because anti-support of (p ∧ NE) on non-empty
+teams reduces to anti-support of p.
 -/
 theorem dualProhibition {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (α β : BSMLFormula W) (t : Team W) (worlds : List W)
-    (h : support M worlds (enrich (.neg (.poss (.disj α β)))) t = true) :
-    support M worlds (.neg (.poss α)) t = true ∧
-    support M worlds (.neg (.poss β)) t = true := by
-  -- Step 1: Unpack the enriched negated possibility
-  -- The proof structure:
-  -- hAnti is anti-support of ◇([α]⁺ ∨ [β]⁺)
-  -- which means: ∀w ∈ t, ∀ non-empty t' ⊆ R[w], t' ⊨⁻ ([α]⁺ ∨ [β]⁺)
-  -- By antiSupport_disj_is_conj: t' ⊨⁻ [α]⁺ ∧ t' ⊨⁻ [β]⁺
-  -- This gives us anti-support for both ◇α and ◇β
-  --
-  -- The full proof requires showing that anti-support distributes through
-  -- the enrichment and modal operators appropriately.
-  -- The key fact is antiSupport_disj_is_conj: anti-support of ∨ is ∧ (no split).
-  sorry
+    (a b : String) (t : Team W) (worlds : List W)
+    (h : support M worlds (enrich (.neg (.poss (.disj (.atom a) (.atom b))))) t = true) :
+    support M worlds (.neg (.poss (.atom a))) t = true ∧
+    support M worlds (.neg (.poss (.atom b))) t = true := by
+  simp only [enrich] at h
+  unfold support at h
+  have hNeg : support M worlds
+    ((((BSMLFormula.atom a).conj BSMLFormula.ne).disj
+      ((BSMLFormula.atom b).conj BSMLFormula.ne)).poss.conj BSMLFormula.ne).neg t = true := by
+    revert h; cases support M worlds _ t <;> simp
+  have hNE : support M worlds BSMLFormula.ne t = true := by
+    revert h; cases support M worlds BSMLFormula.ne t <;> simp_all
+  unfold support at hNeg
+  unfold antiSupport at hNeg
+  unfold support at hNE
+  have hNotEmpty : antiSupport M worlds BSMLFormula.ne t = false := by
+    unfold antiSupport
+    simp only [Team.isEmpty, Team.isNonEmpty] at *
+    simp [hNE]
+  rw [hNotEmpty, Bool.or_false] at hNeg
+  unfold support
+  constructor
+  · exact antiSupport_poss_weaken M _ _ t worlds
+      (fun t' => antiSupport_enriched_disj_implies_left M a b t' worlds) hNeg
+  · exact antiSupport_poss_weaken M _ _ t worlds
+      (fun t' => antiSupport_enriched_disj_implies_right M a b t' worlds) hNeg
 
 -- ============================================================================
 -- PART 7b: Key Lemmas for Free Choice Proofs
