@@ -65,26 +65,6 @@ def kratzerToSystemW (A : List (BProp World)) : EpistemicSystemW World :=
   halpernSystemW (kratzerWorldGe A) (kratzerWorldGe_refl A)
 
 -- ══════════════════════════════════════════════════════════════════════
--- §2. FinAddMeasure → RSA prior (definition, no sorry)
--- ══════════════════════════════════════════════════════════════════════
-
-/-- Extract a world prior from a finitely additive measure by
-    evaluating μ on singletons: prior(w) = μ({w}).
-
-    This bridges the epistemic likelihood representation theorem
-    to RSA's `worldPrior` field. The resulting function maps each
-    world to a non-negative rational, suitable for use as an
-    unnormalized RSA prior. -/
-noncomputable def FinAddMeasure.toWorldPrior (m : FinAddMeasure World) :
-    World → ℚ :=
-  fun w => m.mu {w}
-
-/-- Singleton measures are non-negative. -/
-theorem toWorldPrior_nonneg (m : FinAddMeasure World) (w : World) :
-    0 ≤ FinAddMeasure.toWorldPrior m w :=
-  m.nonneg {w}
-
--- ══════════════════════════════════════════════════════════════════════
 -- §3. The Kratzer–RSA pipeline (conjectures, sorry)
 -- ══════════════════════════════════════════════════════════════════════
 
@@ -133,13 +113,17 @@ open Semantics.Modality.ProbabilityOrdering in
     ordering: P(w) ≥ P(z) ↔ μ({w}) ≥ μ({z}).
 
     This conjecture makes precise what "consistent" means: the
-    probability ordering is preserved through the pipeline. -/
+    probability ordering is preserved through the pipeline.
+
+    Note: `probToOrdering` is world-independent (`probToOrdering_const`),
+    so the choice of evaluation world `w₀` is arbitrary. -/
 theorem prob_ordering_roundtrip
     (P : ProbAssignment)
+    (w₀ : World)
     (hPos : ∀ w, 0 < P w)
     (hFA : ∀ (A B : Set World),
-      (kratzerToSystemW ((probToOrdering P) .w0)).ge A B ∨
-      (kratzerToSystemW ((probToOrdering P) .w0)).ge B A) :
+      (kratzerToSystemW ((probToOrdering P) w₀)).ge A B ∨
+      (kratzerToSystemW ((probToOrdering P) w₀)).ge B A) :
     ∃ (prior : World → ℚ),
       (∀ w, 0 ≤ prior w) ∧
       (∀ w z : World, P w ≥ P z → prior w ≥ prior z) :=

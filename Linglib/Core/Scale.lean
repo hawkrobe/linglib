@@ -1193,6 +1193,21 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
     rw [hmuA, hmuB]
     exact add_le_add_iff_right (m.mu (A ∩ B))
 
+/-- Extract a world prior from a finitely additive measure by
+    evaluating μ on singletons: prior(w) = μ({w}).
+
+    This bridges the epistemic likelihood representation theorem
+    to RSA's `worldPrior` field. The resulting function maps each
+    world to a non-negative rational, suitable for use as an
+    unnormalized prior. -/
+noncomputable def toWorldPrior (m : FinAddMeasure W) : W → ℚ :=
+  fun w => m.mu {w}
+
+/-- Singleton measures are non-negative. -/
+theorem toWorldPrior_nonneg (m : FinAddMeasure W) (w : W) :
+    0 ≤ m.toWorldPrior w :=
+  m.nonneg {w}
+
 end FinAddMeasure
 
 -- ── World-Ordering Semantics ────────────────────
