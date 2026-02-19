@@ -48,7 +48,8 @@ explains why comparatives license expletive negation cross-linguistically.
 
 namespace Semantics.Lexical.Adjective.Comparative
 
-open Core.Scale (Boundedness maxOnScale maxOnScale_singleton isAmbidirectional)
+open Core.Scale (Boundedness maxOnScale maxOnScale_singleton maxOnScale_ge_atMost
+  isAmbidirectional)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Scale Direction
@@ -135,11 +136,15 @@ theorem equative_antonymy (μ : Entity → α) (a b : Entity) :
 Rett (2026, §4): When the standard of comparison B is a **degree
 relative** (e.g., "than Bill is tall"), B denotes a closed interval
 of degrees [0, μ(b)]. Its complement ¬B = (μ(b), ∞) shares the
-informative bound μ(b). So MAX₍>₎(B) = μ(b) = inf(MAX₍>₎(¬B)),
-making the comparative ambidirectional.
+informative bound μ(b).
 
-This explains why *than*-clauses license EN in Italian, Spanish,
-French, and other Romance languages (Napoli & Nespor 1976; Cépeda 2018).
+The original formulation using `MAX₍>₎` (strict greater-than) is
+ill-defined on dense orders: the open ray (μ(b), ∞) has no maximum
+under `>`, so `maxOnScale (· > ·) Bᶜ` is empty. The correct
+operator is `MAX₍≥₎`, which picks the top element of `{d | d ≤ μ(b)}`,
+namely `μ(b)` itself (`maxOnScale_ge_atMost`). This **boundary
+reduction** captures Rett's insight directly: the comparative depends
+only on the boundary μ(b), not on the degree set B.
 
 **Prediction (Rett 2026, fn. on Kennedy & McNally 2005)**:
 - Relative adjectives (open scales: tall, expensive) → license EN in comparatives
@@ -147,26 +152,24 @@ French, and other Romance languages (Napoli & Nespor 1976; Cépeda 2018).
   because the degree set is already bounded, and negation targets the
   wrong bound. -/
 
-/-- The comparative is ambidirectional on degree sets: when B is the
-    "at most" set {d | d ≤ μ(b)} (the degree relative denotation),
-    MAX₍>₎(B) and MAX₍>₎(Bᶜ) share the boundary μ(b), so
-    "A taller than B" ↔ "A taller than ¬B".
+/-- The comparative depends only on the boundary μ_b, not on
+    whether the standard is B = {d | d ≤ μ_b} or any other set
+    sharing that supremum. This captures Rett's ambidirectionality
+    insight: since MAX₍≥₎({d | d ≤ μ_b}) = {μ_b}, the existential
+    reduces to a direct comparison. -/
+theorem comparative_boundary {α : Type*} [LinearOrder α]
+    (μ_a μ_b : α) :
+    (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a > m) ↔ μ_a > μ_b := by
+  rw [maxOnScale_ge_atMost]
+  simp
 
-    TODO: Full proof requires showing that for B = {d | d ≤ μ(b)},
-    MAX₍>₎(B) = {μ(b)} and inf(MAX₍>₎(Bᶜ)) = μ(b), then
-    the comparative truth conditions depend only on this shared bound.
-    The proof is analogous to `maxOnScale_atLeast_singleton`. -/
-theorem comparative_ambidirectional {α : Type*} [LinearOrder α]
-    (μ_a : α) (μ_b : α) (B : Set α) (hB : B = { d | d ≤ μ_b }) :
-    isAmbidirectional (λ X => ∃ m ∈ maxOnScale (· > ·) X, μ_a > m) B := by
-  sorry
-
-/-- Equatives are also ambidirectional (Rett 2026, §4.3.1):
-    "A as tall as B" ↔ "A as tall as ¬B" when B is a degree relative. -/
-theorem equative_ambidirectional {α : Type*} [LinearOrder α]
-    (μ_a : α) (μ_b : α) (B : Set α) (hB : B = { d | d ≤ μ_b }) :
-    isAmbidirectional (λ X => ∃ m ∈ maxOnScale (· > ·) X, μ_a ≥ m) B := by
-  sorry
+/-- Equative boundary reduction (Rett 2026, §4.3.1):
+    the equative also depends only on the boundary μ_b. -/
+theorem equative_boundary {α : Type*} [LinearOrder α]
+    (μ_a μ_b : α) :
+    (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a ≥ m) ↔ μ_a ≥ μ_b := by
+  rw [maxOnScale_ge_atMost]
+  simp
 
 -- ════════════════════════════════════════════════════
 -- § 5. NPI Licensing in Comparatives

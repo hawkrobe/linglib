@@ -1,4 +1,4 @@
-import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Information-Theoretic Primitives (ℚ-valued)
@@ -49,7 +49,7 @@ def entropy {α : Type} [BEq α] (dist : List (α × ℚ)) : ℚ :=
   let terms := dist.map λ (_, p) =>
     if p ≤ 0 then 0
     else -p * log2Approx p
-  terms.foldl (· + ·) 0
+  terms.sum
 
 /-- Mutual information I(X;Y) = H(X) + H(Y) - H(X,Y).
 

@@ -1,6 +1,5 @@
 import Linglib.Core.InformationTheory
 import Linglib.Core.MorphRule
-import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # The Low Conditional Entropy Conjecture @cite{ackerman-malouf-2013}
@@ -159,7 +158,7 @@ def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℚ :=
   let cells := List.finRange n
   let pairs := cells.flatMap λ ci => (cells.filter (· != ci)).map λ cj => (ci, cj)
   let total := pairs.map λ (ci, cj) => conditionalCellEntropy ps ci cj
-  let sum := total.foldl (· + ·) 0
+  let sum := total.sum
   let numPairs := n * (n - 1)
   if numPairs == 0 then 0 else sum / numPairs
 
@@ -197,15 +196,13 @@ def isTransparent {n : Nat} (ps : ParadigmSystem n) : Prop :=
   ∀ (ci cj : Fin n), ci ≠ cj → isImplicative ps ci cj
 
 /-- Transparent paradigm systems have I-complexity = 0. -/
-private lemma foldl_add_zero_of_forall_zero {l : List ℚ}
-    (h : ∀ x ∈ l, x = 0) : l.foldl (· + ·) 0 = 0 := by
+private lemma sum_eq_zero_of_forall_zero {l : List ℚ}
+    (h : ∀ x ∈ l, x = 0) : l.sum = 0 := by
   induction l with
   | nil => rfl
   | cons a as ih =>
-    change as.foldl (· + ·) (0 + a) = 0
-    have ha : a = 0 := h a (.head as)
-    rw [ha, add_zero]
-    exact ih (fun y hy => h y (.tail a hy))
+    simp only [List.sum_cons]
+    rw [h a (.head as), ih (fun y hy => h y (.tail a hy)), add_zero]
 
 theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n)
     (h : isTransparent ps) : iComplexity ps = 0 := by
@@ -218,7 +215,7 @@ theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n)
     obtain ⟨⟨ci, cj⟩, ⟨w, _, f, ⟨_, hfne⟩, hpair⟩, rfl⟩ := hx
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpair
     exact h w f (by intro heq; simp [heq] at hfne)
-  have hfold := foldl_add_zero_of_forall_zero hall
+  have hfold := sum_eq_zero_of_forall_zero hall
   simp only [iComplexity]
   simp only [hfold]; split <;> simp
 
