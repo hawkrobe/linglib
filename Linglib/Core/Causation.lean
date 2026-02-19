@@ -163,6 +163,26 @@ def simple (cause effect : Variable) : CausalLaw :=
 def conjunctive (cause1 cause2 effect : Variable) : CausalLaw :=
   { preconditions := [(cause1, true), (cause2, true)], effect := effect }
 
+/-- If preconditions are not met, applying the law is a no-op.
+    Avoids leaving stuck `if false = true then …` terms in goals. -/
+@[simp] theorem apply_of_not_met {law : CausalLaw} {s : Situation}
+    (h : law.preconditionsMet s = false) : law.apply s = s := by
+  unfold apply; rw [h]; rfl
+
+/-- If preconditions are met, applying the law extends the situation. -/
+@[simp] theorem apply_of_met {law : CausalLaw} {s : Situation}
+    (h : law.preconditionsMet s = true) :
+    law.apply s = s.extend law.effect law.effectValue := by
+  unfold apply; rw [h]; rfl
+
+/-- The effect variable of a simple law. -/
+@[simp] theorem simple_effect (c e : Variable) :
+    (simple c e).effect = e := rfl
+
+/-- The effect value of a simple law (always `true`). -/
+@[simp] theorem simple_effectValue (c e : Variable) :
+    (simple c e).effectValue = true := rfl
+
 end CausalLaw
 
 -- Causal Dynamics
@@ -246,6 +266,15 @@ theorem normalDevelopment_fixpoint_after_one (dyn : CausalDynamics) (s : Situati
     (h : isFixpoint dyn (applyLawsOnce dyn s) = true) :
     normalDevelopment dyn s (fuel + 1) = applyLawsOnce dyn s := by
   simp [h]
+
+/-- If the first round is not a fixpoint but the second is,
+    normalDevelopment returns the second-round result. -/
+theorem normalDevelopment_fixpoint_after_two (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
+    (h1 : isFixpoint dyn (applyLawsOnce dyn s) = false)
+    (h2 : isFixpoint dyn (applyLawsOnce dyn (applyLawsOnce dyn s)) = true) :
+    normalDevelopment dyn s (fuel + 2) =
+      applyLawsOnce dyn (applyLawsOnce dyn s) := by
+  simp [h1, h2]
 
 /-- Empty dynamics: any situation is a fixpoint. -/
 theorem empty_dynamics_fixpoint (s : Situation) :
