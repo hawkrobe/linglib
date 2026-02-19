@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.30] - 2026-02-19
+
+### Added
+- `blog/scripts/gen_map.py`: Auto-generate map data from Lean import graph (nodes, edges, tiers, positions, descriptions)
+- `blog/static/js/map-data.js`: Generated data file consumed by the interactive map page
+- `blog/content/map.md`: Interactive "Map of Formal Linguistics" page, now loads auto-generated data instead of hardcoded constants
+
 ## [0.224.29] - 2026-02-19
 
 ### Added
