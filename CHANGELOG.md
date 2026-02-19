@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.224.13] - 2026-02-19
+
+### Changed
+- Close 3 Scale.lean sorrys: `inducedGe_axiomT` (monotonicity via union-diff decomposition), `toSystemFA.bottom` (μ(∅)=0 from additivity), `toSystemFA.additive` (qualitative additivity via diff-inter decomposition with `conv_lhs`)
+
+## [0.224.12] - 2026-02-19
+
+### Added
+- Add `Linglib/Core/Interval/` module: `QInterval.lean` (rational interval arithmetic with ℝ containment), `PadeExp.lean` (Padé approximant for exp), `RpowInterval.lean` (real power intervals)
+- Close `divPos_containsReal` and `divNonnegPos_containsReal` sorrys in QInterval.lean: division monotonicity via calc chains
+
+### Fixed
+- Commit untracked `Linglib/Core/Interval/` directory and update `Linglib.lean` imports (fixes CI)
+
 ## [0.224.11] - 2026-02-19
 
 ### Changed

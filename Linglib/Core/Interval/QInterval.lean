@@ -1,0 +1,293 @@
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+
+set_option autoImplicit false
+
+/-!
+# QInterval — Rational Interval Arithmetic with ℝ Containment
+
+Closed intervals `[lo, hi]` over ℚ, with proofs that arithmetic operations
+preserve ℝ containment. This is the foundation for the `rsa_decide` tactic:
+
+1. Reify an ℝ expression into a tree of `QInterval` operations
+2. Evaluate the tree to get a concrete `[lo, hi]` (computable ℚ)
+3. Check separation `b.hi < a.lo` (decidable on ℚ)
+4. Conclude `a > b` on ℝ via `gt_of_separated`
+-/
+
+namespace Linglib.Interval
+
+/-- A closed rational interval [lo, hi]. -/
+structure QInterval where
+  lo : ℚ
+  hi : ℚ
+  valid : lo ≤ hi
+  deriving Repr
+
+namespace QInterval
+
+-- ============================================================================
+-- Containment
+-- ============================================================================
+
+/-- The interval contains a real number x: lo ≤ x ≤ hi (via ℚ → ℝ cast). -/
+def containsReal (I : QInterval) (x : ℝ) : Prop :=
+  (↑I.lo : ℝ) ≤ x ∧ x ≤ (↑I.hi : ℝ)
+
+-- ============================================================================
+-- Point Interval
+-- ============================================================================
+
+/-- Zero-width interval [q, q]. -/
+def exact (q : ℚ) : QInterval where
+  lo := q
+  hi := q
+  valid := le_refl q
+
+theorem exact_containsReal (q : ℚ) : (exact q).containsReal (↑q : ℝ) :=
+  ⟨le_refl _, le_refl _⟩
+
+/-- Containment for natural number literals cast via `Nat.cast`.
+    `@Nat.cast ℝ _ n` is definitionally equal to `@OfNat.ofNat ℝ n _`,
+    so this lemma matches goals with ℝ numeric literals. -/
+theorem exact_natCast_containsReal (n : ℕ) :
+    (exact (↑n : ℚ)).containsReal (↑n : ℝ) := by
+  simp only [containsReal, exact]
+  constructor <;> exact_mod_cast le_refl (↑n : ℚ)
+
+-- ============================================================================
+-- Addition
+-- ============================================================================
+
+/-- Interval addition: [a.lo + b.lo, a.hi + b.hi]. -/
+def add (a b : QInterval) : QInterval where
+  lo := a.lo + b.lo
+  hi := a.hi + b.hi
+  valid := add_le_add a.valid b.valid
+
+theorem add_containsReal {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.add b).containsReal (x + y) := by
+  simp only [add, containsReal]
+  push_cast
+  exact ⟨add_le_add hx.1 hy.1, add_le_add hx.2 hy.2⟩
+
+-- ============================================================================
+-- Negation
+-- ============================================================================
+
+/-- Interval negation: [-hi, -lo]. -/
+def neg (a : QInterval) : QInterval where
+  lo := -a.hi
+  hi := -a.lo
+  valid := neg_le_neg a.valid
+
+theorem neg_containsReal {a : QInterval} {x : ℝ}
+    (hx : a.containsReal x) : (a.neg).containsReal (-x) := by
+  simp only [neg, containsReal]
+  push_cast
+  exact ⟨neg_le_neg hx.2, neg_le_neg hx.1⟩
+
+-- ============================================================================
+-- Subtraction
+-- ============================================================================
+
+/-- Interval subtraction: a - b = a + (-b). -/
+def sub (a b : QInterval) : QInterval := a.add b.neg
+
+theorem sub_containsReal {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.sub b).containsReal (x - y) := by
+  show (a.add b.neg).containsReal (x + (-y))
+  exact add_containsReal hx (neg_containsReal hy)
+
+-- ============================================================================
+-- Multiplication (nonneg case)
+-- ============================================================================
+
+/-- Multiplication for nonneg intervals: [a.lo*b.lo, a.hi*b.hi]. -/
+def mulNonneg (a b : QInterval) (ha : 0 ≤ a.lo) (hb : 0 ≤ b.lo) : QInterval where
+  lo := a.lo * b.lo
+  hi := a.hi * b.hi
+  valid := mul_le_mul a.valid b.valid hb (le_trans ha a.valid)
+
+theorem mulNonneg_containsReal {a b : QInterval} {x y : ℝ}
+    (ha : 0 ≤ a.lo) (hb : 0 ≤ b.lo)
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.mulNonneg b ha hb).containsReal (x * y) := by
+  have hx_nn : (0 : ℝ) ≤ x := le_trans (by exact_mod_cast ha) hx.1
+  have hy_nn : (0 : ℝ) ≤ y := le_trans (by exact_mod_cast hb) hy.1
+  have hahi_nn : (0 : ℝ) ≤ ↑a.hi := le_trans hx_nn hx.2
+  have hblo_nn : (0 : ℝ) ≤ ↑b.lo := by exact_mod_cast hb
+  simp only [mulNonneg, containsReal]
+  push_cast
+  exact ⟨mul_le_mul hx.1 hy.1 hblo_nn hx_nn,
+         mul_le_mul hx.2 hy.2 hy_nn hahi_nn⟩
+
+-- ============================================================================
+-- Division by positive interval
+-- ============================================================================
+
+/-- Division of nonneg by positive: [a.lo/b.hi, a.hi/b.lo].
+    Requires 0 ≤ a.lo for monotonicity. -/
+def divPos (a b : QInterval) (ha : 0 ≤ a.lo) (hb_pos : 0 < b.lo) : QInterval where
+  lo := a.lo / b.hi
+  hi := a.hi / b.lo
+  valid := by
+    have hbhi_pos : 0 < b.hi := lt_of_lt_of_le hb_pos b.valid
+    -- a.lo/b.hi ≤ a.hi/b.hi ≤ a.hi/b.lo
+    calc a.lo / b.hi ≤ a.hi / b.hi :=
+          div_le_div_of_nonneg_right a.valid (le_of_lt hbhi_pos)
+      _ ≤ a.hi / b.lo := by
+          apply div_le_div_of_nonneg_left (le_trans ha a.valid) hb_pos b.valid
+
+theorem divPos_containsReal {a b : QInterval} {x y : ℝ}
+    (ha : 0 ≤ a.lo) (hb_pos : 0 < b.lo)
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.divPos b ha hb_pos).containsReal (x / y) := by
+  simp only [divPos, containsReal]
+  push_cast
+  have hx_nn : (0 : ℝ) ≤ x := le_trans (by exact_mod_cast ha) hx.1
+  have hy_pos : (0 : ℝ) < y := lt_of_lt_of_le (by exact_mod_cast hb_pos) hy.1
+  have hbhi_pos : (0 : ℝ) < ↑b.hi := by exact_mod_cast lt_of_lt_of_le hb_pos b.valid
+  have hblo_pos : (0 : ℝ) < ↑b.lo := by exact_mod_cast hb_pos
+  have hahi_nn : (0 : ℝ) ≤ ↑a.hi := le_trans hx_nn hx.2
+  exact ⟨calc (↑a.lo : ℝ) / ↑b.hi ≤ x / ↑b.hi :=
+              div_le_div_of_nonneg_right hx.1 (le_of_lt hbhi_pos)
+            _ ≤ x / y :=
+              div_le_div_of_nonneg_left hx_nn hy_pos hy.2,
+        calc x / y ≤ (↑a.hi : ℝ) / y :=
+              div_le_div_of_nonneg_right hx.2 (le_of_lt hy_pos)
+            _ ≤ ↑a.hi / ↑b.lo :=
+              div_le_div_of_nonneg_left hahi_nn hblo_pos hy.1⟩
+
+-- ============================================================================
+-- Division of nonneg by positive
+-- ============================================================================
+
+/-- Division of a nonneg interval by a positive interval.
+    For 0 ≤ a and 0 < b: a/b ∈ [a.lo/b.hi, a.hi/b.lo]. -/
+def divNonnegPos (a b : QInterval) (ha : 0 ≤ a.lo) (hb : 0 < b.lo) : QInterval where
+  lo := a.lo / b.hi
+  hi := a.hi / b.lo
+  valid := by
+    have hbhi_pos : 0 < b.hi := lt_of_lt_of_le hb b.valid
+    calc a.lo / b.hi ≤ a.hi / b.hi :=
+          div_le_div_of_nonneg_right a.valid (le_of_lt hbhi_pos)
+      _ ≤ a.hi / b.lo := by
+          apply div_le_div_of_nonneg_left (le_trans ha a.valid) hb b.valid
+
+theorem divNonnegPos_containsReal {a b : QInterval} {x y : ℝ}
+    (ha : 0 ≤ a.lo) (hb : 0 < b.lo)
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.divNonnegPos b ha hb).containsReal (x / y) := by
+  simp only [divNonnegPos, containsReal]
+  push_cast
+  have hx_nn : (0 : ℝ) ≤ x := le_trans (by exact_mod_cast ha) hx.1
+  have hy_pos : (0 : ℝ) < y := lt_of_lt_of_le (by exact_mod_cast hb) hy.1
+  have hbhi_pos : (0 : ℝ) < ↑b.hi := by exact_mod_cast lt_of_lt_of_le hb b.valid
+  have hblo_pos : (0 : ℝ) < ↑b.lo := by exact_mod_cast hb
+  have hahi_nn : (0 : ℝ) ≤ ↑a.hi := le_trans hx_nn hx.2
+  exact ⟨calc (↑a.lo : ℝ) / ↑b.hi ≤ x / ↑b.hi :=
+              div_le_div_of_nonneg_right hx.1 (le_of_lt hbhi_pos)
+            _ ≤ x / y :=
+              div_le_div_of_nonneg_left hx_nn hy_pos hy.2,
+        calc x / y ≤ (↑a.hi : ℝ) / y :=
+              div_le_div_of_nonneg_right hx.2 (le_of_lt hy_pos)
+            _ ≤ ↑a.hi / ↑b.lo :=
+              div_le_div_of_nonneg_left hahi_nn hblo_pos hy.1⟩
+
+-- ============================================================================
+-- Scale by nonneg constant
+-- ============================================================================
+
+/-- Scale interval by a nonneg rational: [q*a.lo, q*a.hi]. -/
+def scaleNonneg (q : ℚ) (a : QInterval) (hq : 0 ≤ q) : QInterval where
+  lo := q * a.lo
+  hi := q * a.hi
+  valid := mul_le_mul_of_nonneg_left a.valid hq
+
+theorem scaleNonneg_containsReal {q : ℚ} {a : QInterval} {x : ℝ}
+    (hq : 0 ≤ q) (hx : a.containsReal x) :
+    (scaleNonneg q a hq).containsReal (↑q * x) := by
+  have hq_r : (0 : ℝ) ≤ ↑q := by exact_mod_cast hq
+  simp only [scaleNonneg, containsReal]
+  push_cast
+  exact ⟨mul_le_mul_of_nonneg_left hx.1 hq_r, mul_le_mul_of_nonneg_left hx.2 hq_r⟩
+
+-- ============================================================================
+-- Folded sum
+-- ============================================================================
+
+/-- Sum a list of intervals via fold. -/
+def sum : List QInterval → QInterval
+  | [] => exact 0
+  | [x] => x
+  | x :: xs => x.add (sum xs)
+
+-- ============================================================================
+-- Separation and Ordering
+-- ============================================================================
+
+/-- Check that `a.lo > b.hi` (decidable on ℚ). -/
+def separated (a b : QInterval) : Bool := b.hi < a.lo
+
+/-- **Key theorem**: interval separation implies ℝ strict ordering. -/
+theorem gt_of_separated {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y)
+    (hsep : b.hi < a.lo) : x > y :=
+  calc x ≥ ↑a.lo := hx.1
+    _ > ↑b.hi := by exact_mod_cast hsep
+    _ ≥ y := hy.2
+
+/-- Interval separation implies ≥. -/
+theorem ge_of_le_lo {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y)
+    (hge : b.hi ≤ a.lo) : x ≥ y :=
+  calc x ≥ ↑a.lo := hx.1
+    _ ≥ ↑b.hi := by exact_mod_cast hge
+    _ ≥ y := hy.2
+
+/-- Two exact intervals at the same point imply equality. -/
+theorem eq_of_exact {q : ℚ} {x y : ℝ}
+    (hx : (exact q).containsReal x) (hy : (exact q).containsReal y) :
+    x = y := by
+  have hx_eq : x = ↑q := le_antisymm hx.2 hx.1
+  have hy_eq : y = ↑q := le_antisymm hy.2 hy.1
+  linarith
+
+-- ============================================================================
+-- Conditional (if-then-else support)
+-- ============================================================================
+
+/-- If the condition is known false, take the else branch. -/
+theorem ite_neg_containsReal {c : Prop} [Decidable c] {I : QInterval} {x y : ℝ}
+    (hc : ¬c) (hy : I.containsReal y) :
+    I.containsReal (if c then x else y) := by
+  simp [hc, hy]
+
+/-- If the condition is known true, take the then branch. -/
+theorem ite_pos_containsReal {c : Prop} [Decidable c] {I : QInterval} {x y : ℝ}
+    (hc : c) (hx : I.containsReal x) :
+    I.containsReal (if c then x else y) := by
+  simp [hc, hx]
+
+-- ============================================================================
+-- Nonzero detection
+-- ============================================================================
+
+/-- If an interval has positive lower bound, the contained value is positive. -/
+theorem pos_of_lo_pos {a : QInterval} {x : ℝ}
+    (hx : a.containsReal x) (hlo : 0 < a.lo) : 0 < x :=
+  lt_of_lt_of_le (by exact_mod_cast hlo) hx.1
+
+/-- If an interval has positive lower bound, the contained value is nonzero. -/
+theorem ne_zero_of_lo_pos {a : QInterval} {x : ℝ}
+    (hx : a.containsReal x) (hlo : 0 < a.lo) : x ≠ 0 :=
+  ne_of_gt (pos_of_lo_pos hx hlo)
+
+end QInterval
+
+end Linglib.Interval
