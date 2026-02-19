@@ -90,7 +90,7 @@ structure PositiveDynamics where
 def PositiveDynamics.cl (pd : PositiveDynamics) : Situation →o Situation where
   toFun s := normalDevelopment pd.dynamics s pd.fuel
   monotone' := fun {_a} {_b} (h : Situation.trueLE _ _) =>
-    NadathurLauer2020.Sufficiency.normalDevelopment_trueLE_positive
+    normalDevelopment_trueLE_positive
       pd.dynamics _ _ pd.fuel pd.positive h
 
 -- ════════════════════════════════════════════════════
@@ -112,7 +112,7 @@ def PositiveDynamics.cl (pd : PositiveDynamics) : Situation →o Situation where
 def PositiveDynamics.closureOp (pd : PositiveDynamics) :
     ClosureOperator Situation where
   toOrderHom := pd.cl
-  le_closure' s := NadathurLauer2020.Sufficiency.positive_normalDevelopment_grows
+  le_closure' s := positive_normalDevelopment_grows
     pd.dynamics s pd.fuel pd.positive
   idempotent' _s := by
     -- TODO: prove via (1) normalDevelopment reaches fixpoint for positive dynamics,

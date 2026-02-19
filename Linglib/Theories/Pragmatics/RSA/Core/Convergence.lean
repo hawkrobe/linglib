@@ -1,6 +1,4 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 
 /-!
 # RSA Convergence Theory (Stub)

@@ -99,7 +99,7 @@ window.MAP_DATA = {
     {
       "id": "Sufficiency",
       "root": "closure",
-      "x": 470,
+      "x": 441,
       "y": 206,
       "tier": "derived",
       "file": "Causation/Sufficiency.lean",
@@ -108,8 +108,8 @@ window.MAP_DATA = {
     {
       "id": "Necessity",
       "root": "closure",
-      "x": 441,
-      "y": 293,
+      "x": 498,
+      "y": 206,
       "tier": "derived",
       "file": "Causation/Necessity.lean",
       "desc": "Causal necessity semantics for the verb \"cause\" based on"
@@ -117,7 +117,7 @@ window.MAP_DATA = {
     {
       "id": "Implicative",
       "root": "closure",
-      "x": 498,
+      "x": 441,
       "y": 293,
       "tier": "derived",
       "file": "Causation/Implicative.lean",
@@ -126,7 +126,7 @@ window.MAP_DATA = {
     {
       "id": "Ability",
       "root": "closure",
-      "x": 441,
+      "x": 470,
       "y": 380,
       "tier": "bridge",
       "file": "Modality/Ability.lean",
@@ -136,7 +136,7 @@ window.MAP_DATA = {
       "id": "GradedCaus",
       "root": "closure",
       "x": 498,
-      "y": 380,
+      "y": 293,
       "tier": "derived",
       "file": "Causation/GradedCausation.lean",
       "desc": "Causative verbs *cause*, *make*, and *force* encode not just sufficiency"
@@ -153,7 +153,7 @@ window.MAP_DATA = {
     {
       "id": "UtilityTheory",
       "root": "luce",
-      "x": 797,
+      "x": 813,
       "y": 250,
       "tier": "derived",
       "file": "Core/UtilityTheory.lean",
@@ -162,38 +162,20 @@ window.MAP_DATA = {
     {
       "id": "RSAConfig",
       "root": "luce",
-      "x": 845,
+      "x": 876,
       "y": 250,
       "tier": "derived",
       "file": "RSA/Core/Config.lean",
       "desc": "A streamlined RSA configuration grounded in rational action theory."
     },
     {
-      "id": "Softmax",
-      "root": "luce",
-      "x": 892,
-      "y": 250,
-      "tier": "derived",
-      "file": "RSA/Core/Softmax/Basic.lean",
-      "desc": "This file re-exports softmax definitions and theorems from\u2026"
-    },
-    {
-      "id": "Gibbs",
-      "root": "luce",
-      "x": 813,
-      "y": 380,
-      "tier": "derived",
-      "file": "RSA/Core/GibbsVariational.lean",
-      "desc": "This file re-exports Gibbs variational and Bayesian optimality results from"
-    },
-    {
       "id": "RSAImpl",
       "root": "luce",
-      "x": 876,
+      "x": 845,
       "y": 380,
       "tier": "derived",
       "file": "RSA/Implementations/*",
-      "desc": "32 paper implementations"
+      "desc": "33 paper implementations"
     },
     {
       "id": "Proposition",
@@ -357,11 +339,6 @@ window.MAP_DATA = {
       "type": "dep"
     },
     {
-      "f": "Sufficiency",
-      "t": "Necessity",
-      "type": "dep"
-    },
-    {
       "f": "Causation",
       "t": "Implicative",
       "type": "dep"
@@ -408,13 +385,14 @@ window.MAP_DATA = {
     },
     {
       "f": "RationalAction",
-      "t": "Softmax",
+      "t": "RSAImpl",
       "type": "dep"
     },
     {
-      "f": "Softmax",
-      "t": "Gibbs",
-      "type": "dep"
+      "f": "Necessity",
+      "t": "RSAImpl",
+      "type": "bridge",
+      "label": "Beller & Gerstenberg 2025"
     },
     {
       "f": "RSAConfig",
@@ -422,14 +400,10 @@ window.MAP_DATA = {
       "type": "dep"
     },
     {
-      "f": "DecisionTheory",
+      "f": "Scale",
       "t": "RSAImpl",
-      "type": "bridge"
-    },
-    {
-      "f": "Proposition",
-      "t": "RSAImpl",
-      "type": "bridge"
+      "type": "bridge",
+      "label": "Lassiter & Goodman 2017"
     },
     {
       "f": "Causation",
@@ -443,21 +417,14 @@ window.MAP_DATA = {
       "label": "Beller & Gerstenberg 2025"
     },
     {
-      "f": "Necessity",
+      "f": "Proposition",
       "t": "RSAImpl",
-      "type": "bridge",
-      "label": "Beller & Gerstenberg 2025"
+      "type": "bridge"
     },
     {
-      "f": "Scale",
+      "f": "DecisionTheory",
       "t": "RSAImpl",
-      "type": "bridge",
-      "label": "Lassiter & Goodman 2017"
-    },
-    {
-      "f": "Softmax",
-      "t": "RSAImpl",
-      "type": "dep"
+      "type": "bridge"
     },
     {
       "f": "Proposition",

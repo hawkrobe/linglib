@@ -25,14 +25,10 @@ theme = "PaperMod"
     url = "/posts/"
     weight = 10
   [[menu.main]]
-    name = "Overview"
-    url = "/overview/"
-    weight = 20
-  [[menu.main]]
-    name = "Roadmap"
-    url = "/roadmap/"
-    weight = 30
-  [[menu.main]]
+    name = "Map"
+    url = "/map/"
+    weight = 15
+[[menu.main]]
     name = "Bibliography"
     url = "/bibliography/"
     weight = 35
@@ -40,6 +36,9 @@ theme = "PaperMod"
     name = "API Docs"
     url = "/docs/"
     weight = 40
+
+[markup.goldmark.renderer]
+  unsafe = true
 
 [outputs]
   home = ["HTML", "RSS"]

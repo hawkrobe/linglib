@@ -66,22 +66,22 @@ open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
 
 /-! For positive dynamics, `normalDevelopment` satisfies the three closure
     operator axioms. The inflationary and monotonicity properties are proved
-    in `Sufficiency.lean`; we package them here and add the fixpoint return. -/
+    in `Core/Causation.lean`; we package them here and add the fixpoint return. -/
 
 /-- Monotone: if `s₁ ⊑ s₂`, then `cl(s₁) ⊑ cl(s₂)`.
-    Imported from `Sufficiency.lean`. -/
+    Imported from `Core/Causation.lean`. -/
 theorem closure_monotone (dyn : CausalDynamics) (s₁ s₂ : Situation)
     (hPos : isPositiveDynamics dyn = true) (hLE : Situation.trueLE s₁ s₂)
     (fuel : Nat := 100) :
     Situation.trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) :=
-  NadathurLauer2020.Sufficiency.normalDevelopment_trueLE_positive dyn s₁ s₂ fuel hPos hLE
+  normalDevelopment_trueLE_positive dyn s₁ s₂ fuel hPos hLE
 
 /-- Inflationary: every truth in `s` is preserved by normal development.
-    Imported from `Sufficiency.lean`. -/
+    Imported from `Core/Causation.lean`. -/
 theorem closure_inflationary (dyn : CausalDynamics) (s : Situation)
     (hPos : isPositiveDynamics dyn = true) (fuel : Nat := 100) :
     Situation.trueLE s (normalDevelopment dyn s fuel) :=
-  NadathurLauer2020.Sufficiency.positive_normalDevelopment_grows dyn s fuel hPos
+  positive_normalDevelopment_grows dyn s fuel hPos
 
 /-- Fixpoint return: if the first round of law application reaches a fixpoint,
     `normalDevelopment` returns that result. -/

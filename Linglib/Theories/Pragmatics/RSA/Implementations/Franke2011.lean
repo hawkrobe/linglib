@@ -15,7 +15,6 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 
 namespace RSA.IBR
@@ -797,7 +796,7 @@ noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Messag
   -- Score = log(informativity) for true messages, floor for false
   let score := λ m =>
     if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
-  Softmax.softmax score α
+  Core.softmax score α
 
 /-- RSA S1 equals softmax over log-informativity.
 
@@ -805,7 +804,7 @@ This is the key observation: RSA speaker choice is softmax with
 scores = log(informativity of message).
 -/
 theorem rsaS1_eq_softmax (G : InterpGame) [Nonempty G.Message] (α : ℝ) (s : G.State) :
-    rsaS1Real G α s = Softmax.softmax
+    rsaS1Real G α s = Core.softmax
       (λ m => if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G) α := rfl
 
 /-- As α → ∞, RSA S1 concentrates on optimal messages (IBR S1).
