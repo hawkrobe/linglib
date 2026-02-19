@@ -256,51 +256,50 @@ theorem ppi_increases_entropy_when_positively_biased {W : Type*} [Fintype W]
 
 
 /-!
-## Connecting Entropy to Utility (Section 5.3)
+## Entropy Properties
 
-Van Rooy shows that entropy is a special case of expected utility value:
+Non-negativity and reduction to binary entropy.
 
-When the decision problem is "find out which answer is true",
-the utility of a question equals its entropy.
-
-This grounds the entropy measure in decision theory.
-
-TODO: The bridge between ℝ-valued `questionEntropy` and ℚ-valued `questionUtility`
-from `Core.DecisionTheory` requires a coercion layer. Left as sorry pending a
-unified ℝ-valued decision theory or explicit cast infrastructure.
+Note: Van Rooy (2003, Section 5.3) shows that entropy equals expected utility
+for the log-scoring decision problem, grounding the entropy measure in decision
+theory. A formal bridge to the ℚ-valued `questionUtility` in `Core.DecisionTheory`
+requires ℝ-valued decision theory infrastructure.
 -/
 
-/-- The "epistemic" decision problem: goal is to learn the true answer. -/
-def epistemicDP' {W : Type*} (_q : Question W) : DecisionProblem W (W → Bool) where
-  utility w a := if a w then 1 else 0
-  prior _ := 1
+/-- Question entropy is non-negative when cell probabilities are in [0, 1].
 
-/-- For epistemic DPs, question utility reduces to entropy.
+Each cell contributes `negMulLog(P(c)) ≥ 0` by `negMulLog_nonneg`, and the
+foldl sum of non-negative terms is non-negative. -/
+theorem questionEntropy_nonneg {W : Type*} [Fintype W] (prior : W → ℝ)
+    (q : Question W)
+    (hBound : ∀ c ∈ q, 0 ≤ cellProb prior c ∧ cellProb prior c ≤ 1) :
+    0 ≤ questionEntropy prior q := by
+  unfold questionEntropy
+  suffices h : ∀ (cs : List (W → Bool)) (init : ℝ), (∀ c ∈ cs, 0 ≤ cellProb prior c ∧ cellProb prior c ≤ 1) →
+      0 ≤ init →
+      0 ≤ cs.foldl (λ acc cell => acc + negMulLog (cellProb prior cell)) init from
+    h q 0 hBound le_rfl
+  intro cs
+  induction cs with
+  | nil => intro init _ h; exact h
+  | cons c cs ih =>
+    intro init hcs hinit
+    simp only [List.foldl_cons]
+    apply ih _ (λ c' hc' => hcs c' (List.mem_cons_of_mem c hc'))
+    have hnn := negMulLog_nonneg (hcs c List.mem_cons_self).1 (hcs c List.mem_cons_self).2
+    linarith
 
-TODO: Requires bridging ℚ-valued `questionUtility` with ℝ-valued `questionEntropy`.
-The ℚ → ℝ coercion exists but the proof needs to show the structural correspondence
-between foldl-based entropy and Finset-based expected utility. -/
-theorem questionUtility_eq_entropy_for_epistemic {W : Type*} [Fintype W] [DecidableEq W]
-    [DecidableEq (W → Bool)]
-    (prior : W → ℚ) (q : Question W) :
-    let dp := epistemicDP' q
-    let dpWithPrior : DecisionProblem W (W → Bool) := { dp with prior := prior }
-    (questionUtility dpWithPrior q q : ℝ) =
-    questionEntropy (fun w => (prior w : ℝ)) q := by
-  sorry
+/-- For binary partitions, question entropy reduces to the binary entropy function.
 
-/-- General result: E(Q) ≤ EUV(Q) for any decision problem.
-
-Entropy is the minimum expected utility across all DPs.
-This is because the epistemic DP is the "hardest" one.
-
-TODO: Abstract decision-theoretic bound. Requires ℚ/ℝ bridge. -/
-theorem entropy_leq_expected_utility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (prior : W → ℝ) (actions : List A)
-    (q : Question W) (dp : DecisionProblem W A)
-    (hPriorNN : ∀ w, 0 ≤ prior w) :
-    questionEntropy prior q ≤ (questionUtility dp actions q : ℚ) := by
-  sorry
+`H([pos, neg]) = binaryEntropy(P(pos))` when `P(pos) + P(neg) = 1`. -/
+theorem questionEntropy_binary {W : Type*} [Fintype W] (prior : W → ℝ)
+    (pos neg : W → Bool)
+    (hPartition : cellProb prior pos + cellProb prior neg = 1) :
+    questionEntropy prior [pos, neg] = binaryEntropy (cellProb prior pos) := by
+  unfold questionEntropy binaryEntropy
+  simp only [List.foldl_cons, List.foldl_nil, zero_add]
+  have hNeg : cellProb prior neg = 1 - cellProb prior pos := by linarith
+  rw [hNeg]
 
 
 /-!
@@ -576,13 +575,15 @@ inductive SpeechAct where
   | assertion : SpeechAct
   | question : SpeechAct
 
-/-- Strength for assertions: negMulLog of probability (self-information).
+/-- Strength for assertions: surprisal = −log P(φ).
 
+Van Rooy (2003): informativity of an assertion is its surprisal, `-log P(φ)`.
 In DE contexts, the assertion is negated, so strength should be computed on the
-negated form. -/
+negated form. Surprisal is strictly decreasing for `P > 0`, so narrower
+propositions (lower probability) have higher informativity. -/
 noncomputable def assertionStrength {W : Type*} [Fintype W] (prior : W → ℝ)
     (p : W → Bool) : ℝ :=
-  negMulLog (cellProb prior p)
+  -Real.log (cellProb prior p)
 
 /-- Strength for questions: entropy. -/
 noncomputable def questionStrength {W : Type*} [Fintype W] (prior : W → ℝ)
@@ -615,24 +616,51 @@ def npiLicensed {W : Type*} [Fintype W] (prior : W → ℝ)
       questionStrength prior e.questionWithNPI ≥
       questionStrength prior e.questionWithoutNPI
 
+/-- NPI assertion licensing in DE contexts: wider domain under negation narrows
+the negated proposition, making it more informative (higher surprisal).
+
+Proof: Since `cellProb negWithNPI ≤ cellProb negWithoutNPI` and `-log` is
+order-reversing on `(0, ∞)`, the narrower negation has higher surprisal. -/
+theorem npi_assertion_licensed_de {W : Type*} [Fintype W]
+    (prior : W → ℝ) (e : NPIQuestionEffect W)
+    (hNarrowsNeg : cellProb prior e.negWithNPI ≤ cellProb prior e.negWithoutNPI)
+    (hNegPos : 0 < cellProb prior e.negWithNPI) :
+    assertionStrength prior e.negWithNPI ≥ assertionStrength prior e.negWithoutNPI := by
+  unfold assertionStrength
+  have h := Real.log_le_log hNegPos hNarrowsNeg
+  linarith
+
 /--
 **The Grand Unification**: NPI licensing follows the same principle
 for assertions and questions—maximize strength under current polarity/bias.
 
-For assertions: DE context → wider domain under negation is MORE informative → NPI licensed
-For questions: Negative bias → wider domain increases entropy → NPI licensed
+For assertions: DE context → wider domain under negation is MORE informative → NPI licensed.
+  Wider positive domain ⟹ narrower negation ⟹ lower P(neg) ⟹ higher surprisal.
+For questions: Negative bias → wider domain increases entropy → NPI licensed.
 
-TODO: The question case requires the full `npi_increases_entropy_when_negatively_biased`
-proof. The assertion case follows from monotonicity of `negMulLog` on `[0, 1]`:
-narrower negation has lower probability, and `negMulLog` is increasing on `[0, 1/e]`,
-but the relationship is subtle. -/
+The hypotheses suffice for both cases:
+- **Assertion**: `hNegPos` and `hWider` + partition give `cellProb neg↓ ≤ cellProb neg`,
+  then `npi_assertion_licensed_de` applies.
+- **Question**: `npi_increases_entropy_when_negatively_biased` applies directly. -/
 theorem unified_npi_licensing {W : Type*} [Fintype W]
     (prior : W → ℝ) (e : NPIQuestionEffect W)
     (act : SpeechAct)
     (hPriorNN : ∀ w, 0 ≤ prior w)
-    (hNegativePolarityOrBias : Bool := false) :
-    npiLicensed prior act e hNegativePolarityOrBias := by
-  sorry
+    (hPartW : cellProb prior e.posWithoutNPI + cellProb prior e.negWithoutNPI = 1)
+    (hPartN : cellProb prior e.posWithNPI + cellProb prior e.negWithNPI = 1)
+    (hBiased : cellProb prior e.posWithoutNPI < 1 / 2)
+    (hWider : cellProb prior e.posWithNPI ≥ cellProb prior e.posWithoutNPI)
+    (hBoundedWidening : cellProb prior e.posWithNPI ≤ 1 - cellProb prior e.posWithoutNPI)
+    (hNegPos : 0 < cellProb prior e.negWithNPI) :
+    npiLicensed prior act e false := by
+  cases act with
+  | assertion =>
+    simp only [npiLicensed]
+    exact npi_assertion_licensed_de prior e (by linarith) hNegPos
+  | question =>
+    simp only [npiLicensed, questionStrength]
+    exact npi_increases_entropy_when_negatively_biased prior e hPriorNN hPartW hPartN
+      hBiased hWider hBoundedWidening
 
 
 /-!
