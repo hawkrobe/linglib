@@ -3,6 +3,8 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
+import Linglib.Core.Interval.ReflectInterval
+import Linglib.Core.RationalAction
 
 set_option autoImplicit false
 
@@ -671,6 +673,398 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
 private def reify (e : Expr) : MetaM RResult := reifyCore e maxReifyDepth
 
 -- ============================================================================
+-- Reflection-Based Reifier (RExpr)
+-- ============================================================================
+
+/-- Result of reifying an ℝ expression into an RExpr value. -/
+private structure RExprResult where
+  /-- RExpr expression (Lean Expr of type RExpr). -/
+  rexpr : Expr
+  /-- Evaluated lower bound (tracked in MetaM for early separation check). -/
+  lo : ℚ
+  /-- Evaluated upper bound. -/
+  hi : ℚ
+
+/-- Build RExpr.nat n -/
+private def mkRExprNat (n : ℕ) : MetaM Expr :=
+  mkAppM ``RExpr.nat #[mkRawNatLit n]
+
+/-- Build RExpr.add a b -/
+private def mkRExprAdd (a b : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.add #[a, b]
+
+/-- Build RExpr.mul a b -/
+private def mkRExprMul (a b : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.mul #[a, b]
+
+/-- Build RExpr.div a b -/
+private def mkRExprDiv (a b : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.div #[a, b]
+
+/-- Build RExpr.neg a -/
+private def mkRExprNeg (a : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.neg #[a]
+
+/-- Build RExpr.sub a b -/
+private def mkRExprSub (a b : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.sub #[a, b]
+
+/-- Build RExpr.rexp a -/
+private def mkRExprExp (a : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.rexp #[a]
+
+/-- Build RExpr.rlog a -/
+private def mkRExprLog (a : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.rlog #[a]
+
+/-- Build RExpr.rpow a n -/
+private def mkRExprRpow (a : Expr) (n : ℕ) : MetaM Expr :=
+  mkAppM ``RExpr.rpow #[a, mkRawNatLit n]
+
+/-- Build RExpr.inv a -/
+private def mkRExprInv (a : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.inv #[a]
+
+/-- Build RExpr.iteZero cond thenBr elseBr -/
+private def mkRExprIteZero (c t e : Expr) : MetaM Expr :=
+  mkAppM ``RExpr.iteZero #[c, t, e]
+
+/-- Meta-level interval evaluation (mirrors RExpr.eval for early checks). -/
+private def metaEvalMul (a b : RExprResult) : ℚ × ℚ :=
+  if a.lo == 0 && a.hi == 0 then (0, 0)
+  else if b.lo == 0 && b.hi == 0 then (0, 0)
+  else if a.lo ≥ 0 && b.lo ≥ 0 then (a.lo * b.lo, a.hi * b.hi)
+  else
+    let c00 := a.lo * b.lo; let c01 := a.lo * b.hi
+    let c10 := a.hi * b.lo; let c11 := a.hi * b.hi
+    (min (min c00 c01) (min c10 c11), max (max c00 c01) (max c10 c11))
+
+/-- Core reflection reifier: ℝ expression → RExpr + meta-level bounds.
+
+Mirrors `reifyCore` but produces `RExpr` constructors (data) instead of
+`QInterval` proof terms. The result is used with `RExpr.gt_of_eval_separated`
+and `native_decide` for kernel-efficient verification. -/
+private partial def reifyRExprCore (e : Expr) (depth : ℕ) : MetaM RExprResult := do
+  if depth == 0 then
+    throwError "rsa_decide [reflect]: max reification depth on: {← ppExpr e}"
+
+  -- Let binding: substitute
+  if e.isLet then
+    return ← reifyRExprCore (e.letBody!.instantiate1 e.letValue!) (depth - 1)
+
+  -- Natural literal: @OfNat.ofNat ℝ n _
+  if let some n := getOfNat? e then
+    let rexpr ← mkRExprNat n
+    return { rexpr, lo := n, hi := n }
+
+  let fn := e.getAppFn
+  let args := e.getAppArgs
+
+  -- Addition: @HAdd.hAdd ℝ ℝ ℝ _ a b
+  if isAppOfMin e ``HAdd.hAdd 6 then
+    let ra ← reifyRExprCore args[4]! (depth - 1)
+    let rb ← reifyRExprCore args[5]! (depth - 1)
+    let rexpr ← mkRExprAdd ra.rexpr rb.rexpr
+    return { rexpr, lo := ra.lo + rb.lo, hi := ra.hi + rb.hi }
+
+  -- Addition: @Add.add ℝ _ a b
+  if isAppOfMin e ``Add.add 4 then
+    let ra ← reifyRExprCore args[2]! (depth - 1)
+    let rb ← reifyRExprCore args[3]! (depth - 1)
+    let rexpr ← mkRExprAdd ra.rexpr rb.rexpr
+    return { rexpr, lo := ra.lo + rb.lo, hi := ra.hi + rb.hi }
+
+  -- Multiplication: @HMul.hMul ℝ ℝ ℝ _ a b
+  if isAppOfMin e ``HMul.hMul 6 then
+    let ra ← reifyRExprCore args[4]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      let rb_rexpr ← reifyRExprCore args[5]! (depth - 1)
+      let rexpr ← mkRExprMul ra.rexpr rb_rexpr.rexpr
+      return { rexpr, lo := 0, hi := 0 }
+    let rb ← reifyRExprCore args[5]! (depth - 1)
+    let rexpr ← mkRExprMul ra.rexpr rb.rexpr
+    let (lo, hi) := metaEvalMul ra rb
+    return { rexpr, lo, hi }
+
+  -- Multiplication: @Mul.mul ℝ _ a b
+  if isAppOfMin e ``Mul.mul 4 then
+    let ra ← reifyRExprCore args[2]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      let rb_rexpr ← reifyRExprCore args[3]! (depth - 1)
+      let rexpr ← mkRExprMul ra.rexpr rb_rexpr.rexpr
+      return { rexpr, lo := 0, hi := 0 }
+    let rb ← reifyRExprCore args[3]! (depth - 1)
+    let rexpr ← mkRExprMul ra.rexpr rb.rexpr
+    let (lo, hi) := metaEvalMul ra rb
+    return { rexpr, lo, hi }
+
+  -- Division: @HDiv.hDiv ℝ ℝ ℝ _ a b
+  if isAppOfMin e ``HDiv.hDiv 6 then
+    let ra ← reifyRExprCore args[4]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      let rb_rexpr ← reifyRExprCore args[5]! (depth - 1)
+      let rexpr ← mkRExprDiv ra.rexpr rb_rexpr.rexpr
+      return { rexpr, lo := 0, hi := 0 }
+    let rb ← reifyRExprCore args[5]! (depth - 1)
+    let rexpr ← mkRExprDiv ra.rexpr rb.rexpr
+    if ra.lo ≥ 0 && rb.lo > 0 then
+      return { rexpr, lo := ra.lo / rb.hi, hi := ra.hi / rb.lo }
+    return { rexpr, lo := -1, hi := 1 }  -- conservative
+
+  -- Division: @Div.div ℝ _ a b
+  if isAppOfMin e ``Div.div 4 then
+    let ra ← reifyRExprCore args[2]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      let rb_rexpr ← reifyRExprCore args[3]! (depth - 1)
+      let rexpr ← mkRExprDiv ra.rexpr rb_rexpr.rexpr
+      return { rexpr, lo := 0, hi := 0 }
+    let rb ← reifyRExprCore args[3]! (depth - 1)
+    let rexpr ← mkRExprDiv ra.rexpr rb.rexpr
+    if ra.lo ≥ 0 && rb.lo > 0 then
+      return { rexpr, lo := ra.lo / rb.hi, hi := ra.hi / rb.lo }
+    return { rexpr, lo := -1, hi := 1 }
+
+  -- Negation: @Neg.neg ℝ _ a
+  if isAppOfMin e ``Neg.neg 3 then
+    let ra ← reifyRExprCore args[2]! (depth - 1)
+    let rexpr ← mkRExprNeg ra.rexpr
+    return { rexpr, lo := -ra.hi, hi := -ra.lo }
+
+  -- Subtraction: @HSub.hSub ℝ ℝ ℝ _ a b
+  if isAppOfMin e ``HSub.hSub 6 then
+    let ra ← reifyRExprCore args[4]! (depth - 1)
+    let rb ← reifyRExprCore args[5]! (depth - 1)
+    let rexpr ← mkRExprSub ra.rexpr rb.rexpr
+    return { rexpr, lo := ra.lo - rb.hi, hi := ra.hi - rb.lo }
+
+  -- Subtraction: @Sub.sub ℝ _ a b
+  if isAppOfMin e ``Sub.sub 4 then
+    let ra ← reifyRExprCore args[2]! (depth - 1)
+    let rb ← reifyRExprCore args[3]! (depth - 1)
+    let rexpr ← mkRExprSub ra.rexpr rb.rexpr
+    return { rexpr, lo := ra.lo - rb.hi, hi := ra.hi - rb.lo }
+
+  -- Real.rpow: @Real.rpow base exp
+  if fn.isConstOf ``Real.rpow && args.size ≥ 2 then
+    let base := args[0]!
+    let exp := args[1]!
+    if let some n ← resolveNat? exp then
+      let rb ← reifyRExprCore base (depth - 1)
+      let rexpr ← mkRExprRpow rb.rexpr n
+      if n == 0 then return { rexpr, lo := 1, hi := 1 }
+      if rb.lo ≥ 0 then return { rexpr, lo := rb.lo ^ n, hi := rb.hi ^ n }
+      return { rexpr, lo := 0, hi := max (rb.lo.num.natAbs ^ n) (rb.hi ^ n) }
+    if let some e' ← unfoldDefinition? e then
+      return ← reifyRExprCore e' (depth - 1)
+    throwError "rsa_decide [reflect]: rpow with non-natural exponent"
+
+  -- Real.exp
+  if fn.isConstOf ``Real.exp && args.size ≥ 1 then
+    let ra ← reifyRExprCore args[0]! (depth - 1)
+    let rexpr ← mkRExprExp ra.rexpr
+    let elo := (Linglib.Interval.expPoint ra.lo).lo
+    let ehi := (Linglib.Interval.expPoint ra.hi).hi
+    return { rexpr, lo := elo, hi := ehi }
+
+  -- Real.log
+  if fn.isConstOf ``Real.log && args.size ≥ 1 then
+    let ra ← reifyRExprCore args[0]! (depth - 1)
+    let rexpr ← mkRExprLog ra.rexpr
+    if ra.lo > 0 then
+      let llo := (evalLogPoint ra.lo).1
+      let lhi := (evalLogPoint ra.hi).2
+      return { rexpr, lo := llo, hi := lhi }
+    else
+      return { rexpr, lo := -1000, hi := 1000 }
+
+  -- If-then-else: @ite ℝ cond dec thenBr elseBr
+  if fn.isConstOf ``ite && args.size ≥ 5 then
+    let cond := args[1]!
+    let thenBr := args[3]!
+    let elseBr := args[4]!
+    if cond.isAppOfArity ``Eq 3 then
+      let cArgs := cond.getAppArgs
+      let lhsC := cArgs[1]!
+      let rhsC := cArgs[2]!
+      if let some 0 := getOfNat? rhsC then
+        let rl ← reifyRExprCore lhsC (depth - 1)
+        if rl.lo > 0 then
+          -- cond is false (x ≠ 0) → else branch
+          let re ← reifyRExprCore elseBr (depth - 1)
+          let rexpr ← mkRExprIteZero rl.rexpr (← mkRExprNat 0) re.rexpr
+          -- Note: iteZero uses cond as first arg, then=second, else=third.
+          -- When cond > 0, eval takes the else branch.
+          return { rexpr := rexpr, lo := re.lo, hi := re.hi }
+        else if rl.lo == 0 && rl.hi == 0 then
+          -- cond is true (x = 0) → then branch
+          let rt ← reifyRExprCore thenBr (depth - 1)
+          let rexpr ← mkRExprIteZero rl.rexpr rt.rexpr (← mkRExprNat 0)
+          return { rexpr := rexpr, lo := rt.lo, hi := rt.hi }
+        else
+          throwError "rsa_decide [reflect]: cannot decide ite (interval [{rl.lo}, {rl.hi}])"
+    -- Other conditions: try whnf
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← reifyRExprCore e' (depth - 1)
+    throwError "rsa_decide [reflect]: unsupported ite condition: {← ppExpr cond}"
+
+  -- Decidable.rec (from whnf'd ite)
+  if fn.isConstOf ``Decidable.rec && args.size ≥ 5 then
+    let prop := args[0]!
+    let isFalseBr := args[2]!
+    let isTrueBr := args[3]!
+    if prop.isAppOfArity ``Eq 3 then
+      let propArgs := prop.getAppArgs
+      let lhsC := propArgs[1]!
+      let rhsC := propArgs[2]!
+      if let some 0 := getOfNat? rhsC then
+        let rl ← reifyRExprCore lhsC (depth - 1)
+        if rl.lo > 0 then
+          -- x ≠ 0 → isFalse branch (= else)
+          -- Use mkSorry for the dummy proof: only needed to beta-reduce the lambda,
+          -- not part of the final proof term (which uses RExpr.iteZero + native_decide)
+          let negProp ← mkAppM ``Not #[prop]
+          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
+          let elseBody := (Expr.app isFalseBr dummyProof).headBeta
+          let re ← reifyRExprCore elseBody (depth - 1)
+          let rexpr ← mkRExprIteZero rl.rexpr (← mkRExprNat 0) re.rexpr
+          return { rexpr := rexpr, lo := re.lo, hi := re.hi }
+        else if rl.lo == 0 && rl.hi == 0 then
+          -- x = 0 → isTrue branch (= then)
+          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
+          let thenBody := (Expr.app isTrueBr dummyProof).headBeta
+          let rt ← reifyRExprCore thenBody (depth - 1)
+          let rexpr ← mkRExprIteZero rl.rexpr rt.rexpr (← mkRExprNat 0)
+          return { rexpr := rexpr, lo := rt.lo, hi := rt.hi }
+
+  -- Fast-path for summation forms
+  let fnName := fn.constName?
+  if fnName == some ``Finset.sum ||
+     fnName == some ``Multiset.sum ||
+     fnName == some ``Multiset.fold ||
+     fnName == some ``List.foldr ||
+     fnName == some ``List.foldl ||
+     fnName == some ``List.sum ||
+     fnName == some ``Quot.lift then
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← reifyRExprCore e' (depth - 1)
+
+  -- Default: try unfolding one definition
+  if let some e' ← unfoldDefinition? e then
+    return ← reifyRExprCore e'.headBeta (depth - 1)
+
+  -- whnf fallback
+  let e' ← whnf e
+  if !e.equal e' then
+    return ← reifyRExprCore e' (depth - 1)
+
+  -- Tertiary: detect numeric literals via isDefEq
+  let eType ← inferType e
+  if eType.isConstOf ``Real then
+    for n in ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List ℕ) do
+      let nE := mkRawNatLit n
+      let target ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, nE, none]
+      let isEq ← withNewMCtxDepth do
+        try isDefEq e target catch _ => return false
+      if isEq then
+        let rexpr ← mkRExprNat n
+        return { rexpr, lo := n, hi := n }
+
+  -- Quaternary: detect binary ops via isDefEq
+  if args.size ≥ 2 then
+    let a := args[args.size - 2]!
+    let b := args[args.size - 1]!
+    let isAdd ← withNewMCtxDepth do
+      try isDefEq e (← mkAppM ``HAdd.hAdd #[a, b]) catch _ => return false
+    if isAdd then
+      let ra ← reifyRExprCore a (depth - 1)
+      let rb ← reifyRExprCore b (depth - 1)
+      let rexpr ← mkRExprAdd ra.rexpr rb.rexpr
+      return { rexpr, lo := ra.lo + rb.lo, hi := ra.hi + rb.hi }
+    let isMul ← withNewMCtxDepth do
+      try isDefEq e (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
+    if isMul then
+      let ra ← reifyRExprCore a (depth - 1)
+      let rb ← reifyRExprCore b (depth - 1)
+      let rexpr ← mkRExprMul ra.rexpr rb.rexpr
+      let (lo, hi) := metaEvalMul ra rb
+      return { rexpr, lo, hi }
+    let isDiv ← withNewMCtxDepth do
+      try isDefEq e (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
+    if isDiv then
+      let ra ← reifyRExprCore a (depth - 1)
+      let rb ← reifyRExprCore b (depth - 1)
+      let rexpr ← mkRExprDiv ra.rexpr rb.rexpr
+      if ra.lo ≥ 0 && rb.lo > 0 then
+        return { rexpr, lo := ra.lo / rb.hi, hi := ra.hi / rb.lo }
+      return { rexpr, lo := -1, hi := 1 }
+
+  -- Detect exp/log/inv/rpow via isDefEq
+  if eType.isConstOf ``Real then
+    let expMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        if ← isDefEq e (← mkAppM ``Real.exp #[argM]) then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := expMatch then
+      let ra ← reifyRExprCore arg (depth - 1)
+      let rexpr ← mkRExprExp ra.rexpr
+      let elo := (Linglib.Interval.expPoint ra.lo).lo
+      let ehi := (Linglib.Interval.expPoint ra.hi).hi
+      return { rexpr, lo := elo, hi := ehi }
+    let logMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        if ← isDefEq e (← mkAppM ``Real.log #[argM]) then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := logMatch then
+      let ra ← reifyRExprCore arg (depth - 1)
+      let rexpr ← mkRExprLog ra.rexpr
+      if ra.lo > 0 then
+        return { rexpr, lo := (evalLogPoint ra.lo).1, hi := (evalLogPoint ra.hi).2 }
+      return { rexpr, lo := -1000, hi := 1000 }
+    let invMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        if ← isDefEq e (← mkAppM ``Inv.inv #[argM]) then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := invMatch then
+      let ra ← reifyRExprCore arg (depth - 1)
+      let rexpr ← mkRExprInv ra.rexpr
+      if ra.lo > 0 then
+        return { rexpr, lo := 1 / ra.hi, hi := 1 / ra.lo }
+      return { rexpr, lo := -1, hi := 1 }
+
+  if eType.isConstOf ``Real then
+    let rpowMatch ← withNewMCtxDepth do
+      try
+        let baseM ← mkFreshExprMVar (mkConst ``Real)
+        let expM ← mkFreshExprMVar (mkConst ``Real)
+        if ← isDefEq e (← mkAppM ``Real.rpow #[baseM, expM]) then
+          return some (← instantiateMVars baseM, ← instantiateMVars expM)
+        else return none
+      catch _ => return none
+    if let some (base, exp) := rpowMatch then
+      if let some n ← resolveNat? exp then
+        let rb ← reifyRExprCore base (depth - 1)
+        let rexpr ← mkRExprRpow rb.rexpr n
+        if n == 0 then return { rexpr, lo := 1, hi := 1 }
+        if rb.lo ≥ 0 then return { rexpr, lo := rb.lo ^ n, hi := rb.hi ^ n }
+        return { rexpr, lo := 0, hi := 1 }
+
+  throwError "rsa_decide [reflect]: cannot reify: {← ppExpr e}"
+
+/-- Reify an ℝ expression into an RExpr. -/
+private def reifyRExpr (e : Expr) : MetaM RExprResult := reifyRExprCore e maxReifyDepth
+
+-- ============================================================================
 -- Main Tactic
 -- ============================================================================
 
@@ -695,6 +1089,20 @@ private def assignProof (goal : MVarId) (proof : Expr) : TacticM Unit := do
       try evalTactic (← `(tactic| push_cast at *; assumption))
       catch _ => evalTactic (← `(tactic| norm_cast at *; assumption))
 
+/-- Try to extract (ra, s, a) from an expression that unfolds to
+    `RationalAction.policy ra s a`. Unfolds up to 5 levels. -/
+private def extractPolicy? (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 5 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``Core.RationalAction.policy && args.size ≥ 6 then
+      return some (args[3]!, args[4]!, args[5]!)  -- ra, s, a
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
 /-- `rsa_decide` proves ℝ comparison goals via interval arithmetic.
     For decidable goals (ℚ, Bool, Fin), dispatches to `native_decide`. -/
 elab "rsa_decide" : tactic => do
@@ -714,6 +1122,47 @@ elab "rsa_decide" : tactic => do
   if fn.isConstOf ``GT.gt && args.size ≥ 4 then
     let lhs := args[2]!
     let rhs := args[3]!
+
+    -- Primary path: proof by reflection via RExpr + native_decide.
+    -- Reifies both sides into RExpr values, then:
+    --   1. native_decide evaluates the interval separation in compiled code
+    --   2. Kernel verifies only eval_sound + native_decide (no Nat.cast reductions)
+    try
+      let rl ← reifyRExpr lhs
+      let rr ← reifyRExpr rhs
+      logInfo m!"rsa_decide [reflect]: meta-level bounds: lhs ∈ [{rl.lo}, {rl.hi}], rhs ∈ [{rr.lo}, {rr.hi}]"
+      -- Build separation type: rhs.eval.hi < lhs.eval.lo
+      let rhsEval ← mkAppM ``RExpr.eval #[rr.rexpr]
+      let lhsEval ← mkAppM ``RExpr.eval #[rl.rexpr]
+      let sepType ← mkAppM ``LT.lt
+        #[← mkAppM ``QInterval.hi #[rhsEval],
+          ← mkAppM ``QInterval.lo #[lhsEval]]
+      -- Create metavar for separation proof and close with native_decide
+      let sepMVar ← mkFreshExprMVar sepType
+      let savedGoals ← getGoals
+      setGoals [sepMVar.mvarId!]
+      evalTactic (← `(tactic| native_decide))
+      setGoals savedGoals
+      -- Build full proof: gt_of_eval_separated lhs_rexpr rhs_rexpr sep_proof
+      let proof ← mkAppM ``Linglib.Interval.RExpr.gt_of_eval_separated
+        #[rl.rexpr, rr.rexpr, sepMVar]
+      -- Assign proof. RExpr.denote uses Nat.cast while goals use OfNat.ofNat;
+      -- unfold denote first, then bridge the cast mismatch.
+      let proofType ← inferType proof
+      let goalType ← goal.getType
+      if ← isDefEq proofType goalType then
+        goal.assign proof
+      else
+        let goalWithH ← goal.assert `h_rsa proofType proof
+        let (_, finalGoal) ← goalWithH.intro1
+        setGoals [finalGoal]
+        evalTactic (← `(tactic| simp only [Linglib.Interval.RExpr.denote] at *))
+        evalTactic (← `(tactic| assumption_mod_cast))
+      return
+    catch e =>
+      logInfo m!"rsa_decide [reflect]: reflection failed ({e.toMessageData}), trying standard path"
+
+    -- Fallback: old Expr-based approach
     let rl ← reify lhs
     let rr ← reify rhs
     if rr.hi < rl.lo then

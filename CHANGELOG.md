@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.224.33] - 2026-02-19
+
+### Added
+- `Core/Interval/ReflectInterval.lean`: Proof-by-reflection for interval arithmetic — reified `RExpr` type with `denote`, `eval`, and `eval_sound`, enabling `rsa_decide` to use `native_decide` on compiled interval bounds
+- `Core/LuceChoice.lean`: Generic Luce choice rule parameterized over ordered fields, with IIA and scale invariance
+- `Phenomena/Ellipsis/VPEllipsis.lean`: VP ellipsis empirical data (voice mismatch tolerance, Merchant 2013)
+- `RationalAction.policy_gt_of_score_gt`: Strict policy monotonicity lemma for `rsa_decide` denominator elimination
+- `Tactics/RSADecide.lean`: Reflection-based `RExpr` reifier for `rsa_decide`, replacing Expr-based approach
+
+### Changed
+- Consolidate `Core/DimensionBridge.lean` into `Core/MereoDim.lean` (§12 DimensionChain) and `Semantics/Events/DimensionBridge.lean`
+
+### Removed
+- `Core/DimensionBridge.lean` (contents moved to MereoDim and Events/DimensionBridge)
+
 ## [0.224.31] - 2026-02-19
 
 ### Changed

@@ -1,4 +1,5 @@
-import Linglib.Core.DimensionBridge
+import Linglib.Core.MereoDim
+import Linglib.Core.Time
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
 
@@ -7,7 +8,8 @@ import Linglib.Theories.Semantics.Tense.MaximalInformativity
 
 Theory-specific commutativity squares, `LicensingPipeline` instances, concrete
 dimension chain instantiations, and end-to-end licensing theorems. Builds on
-the theory-neutral infrastructure in `Core/DimensionBridge.lean`.
+the theory-neutral infrastructure in `Core/MereoDim.lean`, `Core/Time.lean`,
+`Core/Path.lean`, and `Core/Scale.lean`.
 
 ## Three Levels of Unification
 
@@ -42,7 +44,7 @@ open Semantics.Events.Mereology
 open Semantics.Montague.Sentence.MaximalInformativity
 open Core.Scale
 open Core.Path
-open Core.DimensionBridge
+open Core.Time
 open Mereology
 
 namespace Semantics.Events.DimensionBridge
@@ -97,10 +99,10 @@ theorem mereoTag_boundedness_qua : MereoTag.qua.toBoundedness = .closed := rfl
 theorem mereoTag_boundedness_cum : MereoTag.cum.toBoundedness = .open_ := rfl
 
 /-- BoundaryType.closed = Boundedness.closed. -/
-theorem boundaryType_closed : boundaryTypeToBoundedness .closed = .closed := rfl
+theorem boundaryType_closed : Interval.BoundaryType.toBoundedness .closed = .closed := rfl
 
 /-- BoundaryType.open_ = Boundedness.open_. -/
-theorem boundaryType_open : boundaryTypeToBoundedness .open_ = .open_ := rfl
+theorem boundaryType_open : Interval.BoundaryType.toBoundedness .open_ = .open_ := rfl
 
 /-- The full commutativity diamond: every path through the classification
     diagram produces the same licensing prediction. -/
