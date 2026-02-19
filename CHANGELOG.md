@@ -9,6 +9,12 @@
 - Migrate `FrankGoodman2012`, `BellerGerstenberg2025`, `QingFranke2013` to inline `s1Score`
 - Rewrite `KaoEtAl2014_Hyperbole` from scratch matching the paper: 10 price states (round/sharp pairs), binary affect, 5 QUD goals, `s1Score` as `exp(α·(ln L0_proj - C(u)))`, differential utterance cost (C(sharp)/C(round) = 3.4), 4 sorry'd theorems (hyperbole, literal inference, QUD inference, pragmatic halo)
 
+## [0.224.15] - 2026-02-19
+
+### Changed
+- Close `axiomA_iff_fa` sorry in Scale.lean: Axiom A ↔ finite additivity via set-algebraic decomposition (`(A∪C)\(B∪C) = A\B` when disjoint; `(A\B)∪(A∩B) = A`)
+- Close `transparent_iComplexity_zero` sorry in LCEC.lean: transparent paradigm systems have I-complexity = 0, via `foldl_add_zero_of_forall_zero` helper and list membership decomposition
+
 ## [0.224.13] - 2026-02-19
 
 ### Changed

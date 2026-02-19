@@ -1233,8 +1233,45 @@ theorem w_characterizes_halpern {W : Type*} (sys : EpistemicSystemW W) :
 theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
     EpistemicAxiom.A ge ↔
     (∀ A B C : Set W, (∀ x, x ∈ A → x ∉ C) → (∀ x, x ∈ B → x ∉ C) →
-      (ge A B ↔ ge (A ∪ C) (B ∪ C))) :=
-  sorry -- Set algebra: both directions require decomposition identities
+      (ge A B ↔ ge (A ∪ C) (B ∪ C))) := by
+  constructor
+  · -- A → FA
+    intro hA A B C hAC hBC
+    -- Axiom A on both sides reduces to the same diffs
+    have h1 := hA A B
+    have h2 := hA (A ∪ C) (B ∪ C)
+    -- (A ∪ C) \ (B ∪ C) = A \ B when A ∩ C = ∅
+    have hd1 : (A ∪ C) \ (B ∪ C) = A \ B := by
+      ext x; simp only [Set.mem_diff, Set.mem_union]
+      constructor
+      · rintro ⟨hx | hx, hnx⟩
+        · exact ⟨hx, fun hb => hnx (Or.inl hb)⟩
+        · exact absurd (Or.inr hx) hnx
+      · rintro ⟨hxA, hxnB⟩
+        exact ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩
+    -- (B ∪ C) \ (A ∪ C) = B \ A when B ∩ C = ∅
+    have hd2 : (B ∪ C) \ (A ∪ C) = B \ A := by
+      ext x; simp only [Set.mem_diff, Set.mem_union]
+      constructor
+      · rintro ⟨hx | hx, hnx⟩
+        · exact ⟨hx, fun ha => hnx (Or.inl ha)⟩
+        · exact absurd (Or.inr hx) hnx
+      · rintro ⟨hxB, hxnA⟩
+        exact ⟨Or.inl hxB, fun h => h.elim hxnA (hBC x hxB)⟩
+    rw [hd1, hd2] at h2
+    exact h1.trans h2.symm
+  · -- FA → A: take C = A ∩ B
+    intro hFA A B
+    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B :=
+      fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB
+    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B :=
+      fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA
+    have hA_eq : (A \ B) ∪ (A ∩ B) = A := Set.diff_union_inter A B
+    have hB_eq : (B \ A) ∪ (A ∩ B) = B := by
+      rw [Set.inter_comm]; exact Set.diff_union_inter B A
+    have h := hFA (A \ B) (B \ A) (A ∩ B) hdA hdB
+    rw [hA_eq, hB_eq] at h
+    exact h.symm
 
 -- ── EpistemicTag + Five Frameworks ──────────────
 

@@ -1,5 +1,6 @@
 import Linglib.Core.InformationTheory
 import Linglib.Core.MorphRule
+import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # The Low Conditional Entropy Conjecture @cite{ackerman-malouf-2013}
@@ -196,9 +197,30 @@ def isTransparent {n : Nat} (ps : ParadigmSystem n) : Prop :=
   ∀ (ci cj : Fin n), ci ≠ cj → isImplicative ps ci cj
 
 /-- Transparent paradigm systems have I-complexity = 0. -/
+private lemma foldl_add_zero_of_forall_zero {l : List ℚ}
+    (h : ∀ x ∈ l, x = 0) : l.foldl (· + ·) 0 = 0 := by
+  induction l with
+  | nil => rfl
+  | cons a as ih =>
+    change as.foldl (· + ·) (0 + a) = 0
+    have ha : a = 0 := h a (.head as)
+    rw [ha, add_zero]
+    exact ih (fun y hy => h y (.tail a hy))
+
 theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n)
     (h : isTransparent ps) : iComplexity ps = 0 := by
-  sorry -- TODO: follows from all conditionalCellEntropy terms being 0
+  have hall : ∀ x ∈ ((List.finRange n).flatMap fun ci =>
+      ((List.finRange n).filter (· != ci)).map fun cj =>
+      (ci, cj)).map (fun x => conditionalCellEntropy ps x.1 x.2),
+      x = 0 := by
+    intro x hx
+    simp only [List.mem_map, List.mem_flatMap, List.mem_filter] at hx
+    obtain ⟨⟨ci, cj⟩, ⟨w, _, f, ⟨_, hfne⟩, hpair⟩, rfl⟩ := hx
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpair
+    exact h w f (by intro heq; simp [heq] at hfne)
+  have hfold := foldl_add_zero_of_forall_zero hall
+  simp only [iComplexity]
+  simp only [hfold]; split <;> simp
 
 -- ============================================================================
 -- §6. Connections to Core.MorphRule
