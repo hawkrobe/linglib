@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.223.4] - 2026-02-18
+
+### Changed
+- Close 3 `sorry`s in `Theories/Semantics/Tense/TemporalConnectives.lean`:
+  - `anscombe_rett_agree_stative_before_start`: Anscombe and Rett agree on stative *before*-start (maxOnScale picks i_B.start as minimum)
+  - `after_not_ambidirectional`: *after* is NOT ambidirectional (add `∃ a b, a < b` hypothesis; fails for trivial time types)
+  - Fix `anscombe_rett_agree_telic_after_finish` → `rett_implies_anscombe_telic_after_finish`: the ↔ was false (Anscombe only needs *some* B-time before A; Rett needs A after B's finish); prove the correct → direction
+- Update `before_ambidirectional` sorry comment: theorem is false for general `LinearOrder Time` (MAX₍<₎(Bᶜ) ≠ MAX₍<₎(B) for bounded/discrete time types; requires Rett 2026 reanalysis)
+
 ## [0.223.3] - 2026-02-18
 
 ### Changed

@@ -121,7 +121,9 @@ theorem theories_distinct : anscombeProfile.theory ≠ rettProfile.theory := by 
 
     The theory-level agreement proofs for the unambiguous cases (scenarios 1, 4)
     are in `TemporalConnectives.anscombe_rett_agree_stative_before_start` and
-    `anscombe_rett_agree_telic_after_finish`. -/
+    `rett_implies_anscombe_telic_after_finish` (one-directional: the ↔ is
+    false because Anscombe only requires some B-time to precede A, while
+    Rett requires A after B's finish). -/
 theorem stative_before_default_is_start :
     before_.defaultReading = .beforeStart := rfl
 

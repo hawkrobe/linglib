@@ -228,7 +228,7 @@ theorem complet_bridges_cessation (i : Interval Time) :
     exact ⟨i.finish, λ j hj => hj ▸ le_refl _, λ t ht => ht i rfl, rfl⟩
 
 -- ============================================================================
--- § 6: Theory Agreement (sorry'd — see notes)
+-- § 6: Theory Agreement
 -- ============================================================================
 
 /-- Both theories predict "before-start" for statives (Rett 2020, Table 1).
@@ -239,38 +239,49 @@ theorem complet_bridges_cessation (i : Interval Time) :
     - Rett: ∃ t ∈ A, t < MAX(B_≺). For statives, MAX on ≺ picks B.start
       (the GLB), and t < B.start ↔ t < all times in B.
 
-    The ← direction (Rett → Anscombe) requires showing that if
-    t < MAX(B_≺) then t < all of B, which needs the stative's
-    subinterval property to guarantee MAX(B_≺) = B.start.
+    (→) Anscombe → Rett: Take m = i_B.start, which is the minimum of
+    timeTrace(stativeDenotation i_B), hence in maxOnScale (· < ·).
+    The Anscombe ∀ gives t < i_B.start directly.
 
-    TODO: The proof requires showing maxOnScale (· < ·) (timeTrace (stativeDenotation i))
-    = {i.start}, which follows from the same GLB argument as inchoat_bridges_inception
-    but applied to timeTrace rather than interval starts. -/
+    (←) Rett → Anscombe: m ∈ maxOnScale (· < ·) means m is less than
+    all other elements of the time trace. So for any t' in the trace,
+    either t' = m (then t < m = t') or t' ≠ m (then m < t', so t < t'). -/
 theorem anscombe_rett_agree_stative_before_start
     (A : SentDenotation Time) (i_B : Interval Time) :
     (Anscombe.before A (stativeDenotation i_B) ↔
      Rett.before A (stativeDenotation i_B)) := by
-  sorry
+  constructor
+  · rintro ⟨t, ht_A, h_all⟩
+    have h_start_mem : i_B.start ∈ timeTrace (stativeDenotation i_B) := by
+      rw [timeTrace_stativeDenotation]; exact ⟨le_refl _, i_B.valid⟩
+    exact ⟨t, ht_A, i_B.start,
+      ⟨h_start_mem, fun t' ht' hne => by
+        rw [timeTrace_stativeDenotation] at ht'
+        exact lt_of_le_of_ne ht'.1 (Ne.symm hne)⟩,
+      h_all _ h_start_mem⟩
+  · rintro ⟨t, ht_A, m, ⟨_, hm_min⟩, htm⟩
+    exact ⟨t, ht_A, fun t' ht' => by
+      by_cases heq : t' = m
+      · exact heq ▸ htm
+      · exact lt_trans htm (hm_min t' ht' heq)⟩
 
-/-- Both theories predict "after-finish" for accomplishments (Rett 2020, Table 1).
+/-- Rett's analysis implies Anscombe's for telic "after" (Rett 2020, Table 1).
 
-    When B is an accomplishment (singleton {i}), both reduce to
-    "some time in A follows the finish of i":
-    - Anscombe: ∃ t ∈ A, ∃ t' ∈ {i}, t' < t — i.e., ∃ t ∈ A, some point in i < t
-    - Rett: ∃ t ∈ A, t > MAX(B_≻). For singletons, MAX on ≻ picks i.finish
-      (the LUB), so t > i.finish.
+    The converse does NOT hold: Anscombe.after only requires *some* point
+    of B to precede some point of A (∃ t' ∈ B, t' < t), while Rett requires
+    A to follow B's *finish* (t > MAX₍>₎(B) = i_B.finish). These differ
+    when A overlaps B without extending past B's endpoint.
 
-    The → direction (Anscombe → Rett) requires that the Anscombe witness t'
-    can be promoted to i.finish (via MAX). This holds because the only interval
-    in B is i, so times(B) = [i.start, i.finish] and MAX_≻ = i.finish.
-
-    TODO: The proof requires showing maxOnScale (· > ·) (timeTrace (accomplishmentDenotation i))
-    = {i.finish}, analogous to complet_bridges_cessation. -/
-theorem anscombe_rett_agree_telic_after_finish
+    Counterexample: B = [0, 10], A at time 5. Then 0 < 5 (Anscombe holds)
+    but 5 < 10 (Rett fails). The ↔ formulation was incorrect; the theories
+    genuinely diverge on the after-finish case when A overlaps B. -/
+theorem rett_implies_anscombe_telic_after_finish
     (A : SentDenotation Time) (i_B : Interval Time) :
-    (Anscombe.after A (accomplishmentDenotation i_B) ↔
-     Rett.after A (accomplishmentDenotation i_B)) := by
-  sorry
+    Rett.after A (accomplishmentDenotation i_B) →
+    Anscombe.after A (accomplishmentDenotation i_B) := by
+  rintro ⟨t, ht_A, m, ⟨hm_mem, _⟩, htm⟩
+  rw [timeTrace_accomplishmentDenotation] at hm_mem
+  exact ⟨t, ht_A, m, by rw [timeTrace_accomplishmentDenotation]; exact hm_mem, htm⟩
 
 -- ============================================================================
 -- § 7: Ambidirectionality (Rett 2026)
@@ -303,11 +314,16 @@ distinct (uninformative).
     Without this, the theorem is false (e.g., for open or unbounded B,
     MAX₍<₎(Bᶜ) may not share a bound with MAX₍<₎(B)).
 
-    Proof sketch: MAX₍<₎({t | s ≤ t ∧ t ≤ f}) = {s} because s is in B
-    and s < t' for all t' ∈ B with t' ≠ s. For Bᶜ = (−∞, s) ∪ (f, +∞),
-    MAX₍<₎(Bᶜ) depends on whether (−∞, s) is nonempty, but the infimum
-    of the right component f is > s, so "A before Bᶜ" ↔ "∃ t ∈ A, t < s"
-    ↔ "A before B". -/
+    **Status**: FALSE as stated for general `LinearOrder Time`. The issue
+    is that MAX₍<₎(Bᶜ) — the minimum of the complement — differs from
+    MAX₍<₎(B) = {s}. For example, with Time = Fin 5, B = {1,2,3}, Bᶜ = {0,4}:
+    MAX₍<₎(B) = {1} but MAX₍<₎(Bᶜ) = {0}, so "t < 1" ≢ "t < 0".
+    Even for dense/unbounded Time (ℝ), Bᶜ = (−∞, s) ∪ (f, +∞) has no minimum,
+    so MAX₍<₎(Bᶜ) = ∅ and the RHS is vacuously false.
+
+    Rett (2026) may be working with a different notion of MAX or additional
+    temporal model constraints. Correct formalization requires closer analysis
+    of Rett's specific definitions. -/
 theorem before_ambidirectional (A : SentDenotation Time) (s f : Time) (hsf : s ≤ f) :
     isAmbidirectional
       (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· < ·) X, t < m)
@@ -316,14 +332,32 @@ theorem before_ambidirectional (A : SentDenotation Time) (s f : Time) (hsf : s �
 
 /-- *After* is NOT ambidirectional (Rett 2026, §3.3): negating B in
     "A after B" changes truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B).
-    For telic B = [s, f], MAX₍>₎(B) = {f}, but MAX₍>₎(¬B) on an
-    unbounded complement may be empty (no element >-dominates all others),
-    making "A after ¬B" trivially false, or — if it exists — yields a
-    different bound. Either way, truth conditions change. -/
-theorem after_not_ambidirectional :
+
+    Counterexample: B = {a} (singleton), A = {point b} with a < b.
+    MAX₍>₎(B) = {a} (vacuously), so ∃ t ∈ A, t > a holds (b > a).
+    For Bᶜ, any m ∈ maxOnScale (· > ·) Bᶜ satisfies m ≥ b (since b ∈ Bᶜ
+    and m must dominate all others), so b > m fails. -/
+theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
     ¬ ∀ (A : SentDenotation Time) (B : Set Time),
       isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· > ·) X, t > m) B := by
-  sorry
+  obtain ⟨a, b, hab⟩ := hab
+  intro h
+  have h_amb := h {Interval.point b} {a}
+  have h_fB : ∃ t ∈ timeTrace ({Interval.point b} : SentDenotation Time),
+      ∃ m ∈ maxOnScale (· > ·) ({a} : Set Time), t > m :=
+    ⟨b, ⟨Interval.point b, rfl, le_refl _, le_refl _⟩,
+     a, ⟨rfl, fun _ hx' hne => absurd hx' hne⟩, hab⟩
+  obtain ⟨t, ht_A, m, ⟨hm_mem, hm_dom⟩, htm⟩ := h_amb.mp h_fB
+  obtain ⟨j, hj_mem, hj_s, hj_f⟩ := ht_A
+  simp only [Set.mem_singleton_iff] at hj_mem
+  subst hj_mem
+  simp only [Interval.point] at hj_s hj_f
+  have ht_eq : t = b := le_antisymm hj_f hj_s
+  have hb_compl : b ∈ ({a} : Set Time)ᶜ := by
+    simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; exact ne_of_gt hab
+  by_cases hmb : m = b
+  · rw [ht_eq, hmb] at htm; exact absurd htm (lt_irrefl _)
+  · rw [ht_eq] at htm; exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
 /-- *While* is not ambidirectional: "∀ t ∈ A, t ∈ B" and "∀ t ∈ A, t ∈ Bᶜ"
     cannot both hold when A ∩ B is nonempty. So the construction is
