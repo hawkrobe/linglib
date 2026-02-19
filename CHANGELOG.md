@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.224.26] - 2026-02-19
+
+### Changed
+- Refactor `EntropyNPIs.lean` from ℚ-based `informativity`/`questionEntropy` to ℝ-valued `Real.negMulLog` from Mathlib, with `Fintype`-based cell probability sums
+- Drop `informativity` entirely; `negMulLog` is the per-cell entropy contribution
+- Replace list-based `worlds.filter` with `cellProb` via `Finset.sum`
+
+### Added
+- `binaryEntropy`, `binaryEntropy_le_half`: binary entropy function and its maximum at ½ via `concaveOn_negMulLog`
+- `binaryEntropy_mono_of_closer_to_half`: binary entropy is monotone on [0, ½], proved via double application of `concaveOn_negMulLog` with convex combination parameter `t = (q-p)/(1-2p)`
+- `entropy_maximal_equiprobable`: equiprobable binary questions maximize entropy
+- `settled_entropy_zero`, `kl_strengthens_implies_higher_entropy`: settled questions have zero entropy; non-settled have positive
+- `stressed_any_achieves_kl_strengthening`: stressed "any" achieves K&L strengthening when negative cell has positive probability
+- `npi_increases_entropy_when_negatively_biased`, `ppi_increases_entropy_when_positively_biased`: domain widening increases entropy when question is biased toward the widened polarity
+- `strong_npi_creates_rhetorical`: strong NPI bounding cell probability by ε bounds entropy by `binaryEntropy(ε)`
+
+### Fixed
+- Close 6 sorrys in EntropyNPIs (9 → 3); remaining 3 are ℚ/ℝ bridge theorems
+
 ## [0.224.25] - 2026-02-19
 
 ### Added
