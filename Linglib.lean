@@ -52,7 +52,6 @@ import Linglib.Core.Mereology
 import Linglib.Core.MereoDim
 import Linglib.Core.BToM
 import Linglib.Core.Path
-import Linglib.Core.DimensionBridge
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
@@ -62,6 +61,10 @@ import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.DiscourseRole
+import Linglib.Core.Interval.QInterval
+import Linglib.Core.Interval.PadeExp
+import Linglib.Core.Interval.RpowInterval
+import Linglib.Tactics.RSADecide
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -777,6 +780,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
+import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.SpeakerUtility
 import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic

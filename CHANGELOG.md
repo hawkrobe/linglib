@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.7] - 2026-02-18
+
+### Added
+- `rsa_decide` Finset.sum fast-path: detect summation head constants and call
+  `whnf` directly, saving ~3-5 depth per sum element (critical for |W| ≥ 10)
+- `RSAConfig.qud` smart constructor: separates base semantics from QUD
+  projection, sets `Latent := QUD` with composable `qudProject` function
+- `RSA.Priors` module: `jointPrior`, `uniformPrior` combinators with
+  non-negativity proofs for building priors over product spaces
+
 ## [0.224.6] - 2026-02-18
 
 ### Changed
