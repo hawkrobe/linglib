@@ -283,13 +283,39 @@ theorem cum_maximal_unique {α : Type*} [SemilatticeSup α]
   have heq_y : y = x ⊔ y := hy.2 (x ⊔ y) hxy hle_y
   exact heq_x.trans heq_y.symm
 
-/-- Atom count is additive over non-overlapping sums.
-    TODO: Prove from extensivity of cardinality.  -/
+/-- Atom count is additive over non-overlapping sums, provided atoms are
+    join-prime (i.e., `a ≤ x ⊔ y → a ≤ x ∨ a ≤ y` for atoms `a`).
+    Join-primality holds in distributive lattices but fails in general
+    semilattices (e.g., the M₃ lattice). -/
 theorem atomCount_sup_disjoint (α : Type*) [SemilatticeSup α]
     [Fintype α]
-    {x y : α} (_hDisj : ¬ Overlap x y) :
+    (hJP : ∀ (a : α), Atom a → ∀ (u v : α), a ≤ u ⊔ v → a ≤ u ∨ a ≤ v)
+    {x y : α} (hDisj : ¬ Overlap x y) :
     atomCount α (x ⊔ y) = atomCount α x + atomCount α y := by
-  sorry
+  classical
+  unfold atomCount
+  have hdisj : Disjoint
+      (Finset.univ.filter (fun a => @decide (Atom a ∧ a ≤ x) (Classical.dec _)))
+      (Finset.univ.filter (fun a => @decide (Atom a ∧ a ≤ y) (Classical.dec _))) := by
+    apply Finset.disjoint_left.mpr
+    intro a ha_x ha_y
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, decide_eq_true_eq] at ha_x ha_y
+    exact hDisj ⟨a, ha_x.2, ha_y.2⟩
+  have heq : (Finset.univ.filter (fun a => @decide (Atom a ∧ a ≤ x ⊔ y) (Classical.dec _)))
+      = (Finset.univ.filter (fun a => @decide (Atom a ∧ a ≤ x) (Classical.dec _)))
+      ∪ (Finset.univ.filter (fun a => @decide (Atom a ∧ a ≤ y) (Classical.dec _))) := by
+    ext a
+    simp only [Finset.mem_filter, Finset.mem_union, Finset.mem_univ, true_and, decide_eq_true_eq]
+    constructor
+    · rintro ⟨hatom, hle⟩
+      rcases hJP a hatom x y hle with h | h
+      · exact Or.inl ⟨hatom, h⟩
+      · exact Or.inr ⟨hatom, h⟩
+    · rintro (⟨hatom, hle⟩ | ⟨hatom, hle⟩)
+      · exact ⟨hatom, le_trans hle le_sup_left⟩
+      · exact ⟨hatom, le_trans hle le_sup_right⟩
+  rw [heq]
+  exact Finset.card_union_of_disjoint hdisj
 
 -- ════════════════════════════════════════════════════
 -- § 8. QUA/CUM Pullback (contravariant functoriality)
