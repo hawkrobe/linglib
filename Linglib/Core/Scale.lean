@@ -614,6 +614,12 @@ theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
   · rintro rfl
     exact ⟨le_refl _, fun x' hx' hne => le_of_lt (lt_of_le_of_ne hx' hne)⟩
 
+/-- MAX₍≥₎ on {d | d ≤ b} is {b}. Corollary of `maxOnScale_atLeast_singleton`
+    with `μ = id`. Used by the comparative boundary theorems. -/
+theorem maxOnScale_ge_atMost (b : α) :
+    maxOnScale (· ≥ ·) {d | d ≤ b} = {b} :=
+  maxOnScale_atLeast_singleton id b
+
 -- ════════════════════════════════════════════════════
 -- § 7. "At most" Symmetry (Rouillard's direction)
 -- ════════════════════════════════════════════════════
@@ -1063,30 +1069,34 @@ References:
 
 -- ── Axioms (Table 1) ────────────────────────────
 
+namespace EpistemicAxiom
+
 /-- Axiom R: reflexivity — A ≿ A. -/
-def EpistemicAxiom.R {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def R {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A, ge A A
 
 /-- Axiom T: monotonicity — A ⊆ B → B ≿ A. -/
-def EpistemicAxiom.T {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def T {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, A ⊆ B → ge B A
 
 /-- Axiom F: Ω ≿ ∅ — tautology is at least as likely as contradiction. -/
-def EpistemicAxiom.F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ge Set.univ ∅
 
 /-- Axiom S: supplementation — A ≿ B → Bᶜ ≿ Aᶜ. -/
-def EpistemicAxiom.S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B → ge Bᶜ Aᶜ
 
 /-- Axiom A: qualitative additivity — A ≿ B ↔ (A \ B) ≿ (B \ A).
     The comparative likelihood factors through disjoint parts. -/
-def EpistemicAxiom.A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B ↔ ge (A \ B) (B \ A)
 
 /-- Axiom J: join — A ≿ C ∧ B ≿ C ∧ A ∩ B = ∅ → A ∪ B ≿ C. -/
-def EpistemicAxiom.J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B C, ge A C → ge B C → (∀ x, x ∈ A → x ∉ B) → ge (A ∪ B) C
+
+end EpistemicAxiom
 
 -- ── Logic Hierarchy ─────────────────────────────
 

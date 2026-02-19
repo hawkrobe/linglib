@@ -9,6 +9,15 @@
 - Migrate `FrankGoodman2012`, `BellerGerstenberg2025`, `QingFranke2013` to inline `s1Score`
 - Rewrite `KaoEtAl2014_Hyperbole` from scratch matching the paper: 10 price states (round/sharp pairs), binary affect, 5 QUD goals, `s1Score` as `exp(α·(ln L0_proj - C(u)))`, differential utterance cost (C(sharp)/C(round) = 3.4), 4 sorry'd theorems (hyperbole, literal inference, QUD inference, pragmatic halo)
 
+## [0.224.16] - 2026-02-19
+
+### Changed
+- Delete duplicate `divNonnegPos`/`divNonnegPos_containsReal` from QInterval.lean (identical to `divPos`)
+- Namespace `EpistemicAxiom` definitions in Scale.lean (wrap 6 dotted-name defs in proper namespace block)
+- Upgrade InformationTheory.lean import from `Mathlib.Data.Rat.Defs` to `Mathlib.Algebra.Order.Ring.Rat`; remove workaround import from LCEC.lean
+- Replace `foldl (· + ·) 0` with `List.sum` in `entropy` and `iComplexity`
+- Fix false ambidirectionality theorems in Comparative.lean: replace `sorry`'d `comparative_ambidirectional`/`equative_ambidirectional` (ill-defined `(· > ·)` MAX on dense orders) with proved `comparative_boundary`/`equative_boundary` using `(· ≥ ·)` MAX via new `maxOnScale_ge_atMost` lemma
+
 ## [0.224.15] - 2026-02-19
 
 ### Changed

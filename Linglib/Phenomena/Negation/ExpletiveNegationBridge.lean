@@ -158,7 +158,7 @@ The ambidirectionality classification is derived from:
 - `before_ambidirectional` (TemporalConnectives.lean)
 - `after_not_ambidirectional` (TemporalConnectives.lean)
 - `while_not_ambidirectional` (TemporalConnectives.lean)
-- `comparative_ambidirectional` (Comparative.lean)
+- `comparative_boundary` (Comparative.lean)
 For *until* and *fear*, the classification follows from the same
 structural argument as *before* (shared endpoint / shared possibility). -/
 
@@ -186,7 +186,7 @@ inductive ENConstruction where
       (cf. `while_not_ambidirectional`)
     - `until`: ambidirectional — shares endpoint structure with *before*
     - `comparative`: ambidirectional on degree relatives
-      (cf. `comparative_ambidirectional` in Comparative.lean)
+      (cf. `comparative_boundary` in Comparative.lean)
     - `fear`: ambidirectional — *fear p* and *fear ¬p* share the
       worry-worthy possibility (Rett 2026, §7) -/
 def ENConstruction.isAmbidirectional : ENConstruction → Bool
