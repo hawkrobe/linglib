@@ -1,5 +1,6 @@
-import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 
 /-!
 # Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
@@ -7,57 +8,68 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 "Nonliteral understanding of number words"
 PNAS 111(33): 12002-12007
 
-This paper models hyperbole using QUD-sensitive RSA. The key insight is that
-speakers may use literally false utterances to convey *affective* information.
-
 ## The Model
 
-Meaning space: Price × Affect
-- Price: the actual cost (e.g., $50, $500, $10000)
-- Affect: the emotional state (e.g., annoyed, neutral)
+The key insight is that speakers may use literally false utterances to convey
+*affective* information when the listener is uncertain about the speaker's
+communicative goal.
 
-QUDs (communicative goals):
-- "price": speaker wants listener to infer exact price
-- "affect": speaker wants listener to infer affect (not necessarily exact price)
-- "both": speaker wants listener to infer both
+Meaning space: PriceState × Affect
+- PriceState: S = {50, 51, 500, 501, 1000, 1001, 5000, 5001, 10000, 10001}
+- Affect: A = {0, 1} (binary: no affect / with affect)
+- Utterances: U = S (the speaker can say any price)
 
-The QUD-sensitive speaker (S1) optimizes informativity w.r.t. the *projected* meaning.
-When QUD = "affect", a literally false but affectively-appropriate utterance can be optimal.
+The speaker S1 optimizes informativity w.r.t. a projected meaning under
+a communicative goal g, following:
 
-## Example: "It cost a million dollars"
+    S1(u|s,a,g) ∝ exp(α · [ln L0(g(s,a)|u) - C(u)])           [Eq. 5,7]
 
-If true price = $500 and affect = "annoyed":
-- Under QUD "price": this utterance is bad (literally false)
-- Under QUD "affect": this utterance is good (conveys "annoyed" despite false price)
+where g composes a precision projection f (exact vs approximate) with a
+relevance projection r (price, affect, or both), yielding 5 distinct goals.
 
-L1 marginalizes over QUDs, recovering that the speaker was probably:
-- Talking about something expensive (true affect)
-- NOT meaning the literal price (unlikely QUD was "price")
+L0 is purely literal (Eq. 9):
+
+    L0(s,a|u) = P_A(a|s) if s = u, 0 otherwise
+
+The pragmatic listener L1 marginalizes over goals (Eq. 10):
+
+    L1(s,a|u) ∝ P_S(s) · P_A(a|s) · Σ_g P_G(g) · S1(u|s,a,g)
+
+## Two phenomena derived
+
+1. **Hyperbole**: "The kettle cost $10,000" when the true price is $50.
+   Under the valence QUD, S1 can rationally choose a false price to
+   communicate affect (expensive → annoyed).
+
+2. **Pragmatic halo**: Round numbers ("500") are interpreted less precisely
+   than sharp numbers ("501"). Driven by differential utterance cost:
+   C(round) < C(sharp), fitted to data (best fit ratio 3.4).
 
 ## Grounding
 
-Price semantics is grounded in the `HasDegree` typeclass from `Fragments/Degrees.lean`.
-The literal meaning of "fifty dollars" is `numeralExact 50 price` - the price equals $50.
+Price semantics is grounded in the `HasDegree` typeclass. The literal
+meaning of "fifty dollars" is `numeralExact 50 price` — the price equals $50.
 
 ## References
 
-- Kao, Justine T., Jean Y. Wu, Leon Bergen, and Noah D. Goodman. (2014).
-  "Nonliteral understanding of number words." PNAS 111(33): 12002-12007.
+- Kao, Wu, Bergen & Goodman (2014). Nonliteral understanding of number words.
+  PNAS 111(33): 12002-12007.
 -/
 
 namespace RSA.KaoEtAl2014_Hyperbole
 
-open RSA.Domains.Degrees
 open Core.Scale (HasDegree)
 open Semantics.Lexical.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
-open Semantics.Lexical.Numeral.Precision (roundToNearest)
+open Semantics.Lexical.Numeral.Precision (roundToNearest isRoundNumber)
+open Real (exp log exp_pos)
 
--- Domain: Items, Prices, and Affects
+-- ============================================================================
+-- Domain Types
+-- ============================================================================
 
-/--
-Item types from the paper.
+/-- Item types from the paper (Experiments 3a/3b).
 
-The paper uses three everyday items with distinct price distributions:
+Three everyday items with distinct price distributions:
 - Electric kettles: typically cheap ($50-$100)
 - Laptops: moderate range ($500-$2000)
 - Watches: highly variable ($50-$10000+)
@@ -68,114 +80,130 @@ inductive Item where
   | watch
   deriving Repr, DecidableEq, BEq
 
-/-- Price levels (simplified from continuous) -/
-inductive PriceLevel where
-  | p50      -- $50 (low)
-  | p500     -- $500 (medium)
-  | p10000   -- $10,000 (high)
+/-- Price states S = {50, 51, 500, 501, 1000, 1001, 5000, 5001, 10000, 10001}.
+
+Round/sharp pairs: each base price has a "sharp" neighbor (+1).
+The round/sharp distinction drives pragmatic halo via differential
+utterance cost. -/
+inductive PriceState where
+  | s50 | s51 | s500 | s501 | s1000 | s1001 | s5000 | s5001 | s10000 | s10001
   deriving Repr, DecidableEq, BEq
 
-/-- Map PriceLevel to its numerical value -/
-def PriceLevel.value : PriceLevel → ℚ
-  | .p50 => 50
-  | .p500 => 500
-  | .p10000 => 10000
+/-- Map PriceState to its numerical value. -/
+def PriceState.value : PriceState → ℚ
+  | .s50 => 50 | .s51 => 51
+  | .s500 => 500 | .s501 => 501
+  | .s1000 => 1000 | .s1001 => 1001
+  | .s5000 => 5000 | .s5001 => 5001
+  | .s10000 => 10000 | .s10001 => 10001
 
-/--
-A world state: an item with its actual price.
+/-- PriceState implements HasDegree via its dollar value. -/
+instance : HasDegree PriceState where
+  degree := PriceState.value
 
-This is what the speaker knows and the listener is trying to infer.
--/
-structure Price where
-  item : Item
-  price : PriceLevel
-  deriving Repr, DecidableEq, BEq
-
-/-- The cost of a Price world is just its price level's value -/
-def Price.cost (p : Price) : ℚ := p.price.value
-
-/-- Price implements HasDegree via its cost -/
-instance : HasDegree Price where
-  degree := Price.cost
-
-/-- Affect states -/
+/-- Affect: binary (0 = no affect, 1 = with affect).
+The paper binarizes for simplicity (p. 12006). -/
 inductive Affect where
-  | neutral
-  | annoyed
-  | amazed
+  | none | notable
   deriving Repr, DecidableEq, BEq
 
-/-- Full meaning: price × affect -/
-abbrev Meaning := Price × Affect
+/-- Full meaning: price state × affect. -/
+abbrev World := PriceState × Affect
 
-instance : BEq Meaning := instBEqProd
+/-- Communicative goals.
 
-/-- Utterances (number expressions) -/
-inductive Utterance where
-  | fifty       -- "fifty dollars"
-  | fiveHundred -- "five hundred dollars"
-  | tenThousand -- "ten thousand dollars"
-  | million     -- "a million dollars" (hyperbolic)
-  deriving Repr, DecidableEq, BEq
+The paper composes two projection types:
+- Relevance: r_s (price), r_a (affect), r_{s,a} (both)
+- Precision: f_e (exact), f_a (approximate = round)
 
-/-- Map Utterance to its stated value -/
-def Utterance.value : Utterance → ℚ
-  | .fifty => 50
-  | .fiveHundred => 500
-  | .tenThousand => 10000
-  | .million => 1000000
-
-/--
-QUD / Communicative goal (from Kao et al. 2014).
-
-The speaker's goal determines what information they're trying to convey:
-
-1. **price**: Exact price only (literal communication)
-2. **valence**: Affect/emotion only (hyperbole-friendly)
-3. **priceValence**: Both exact price AND affect
-4. **approxPrice**: Approximate price (rounded, with pragmatic slack)
-5. **approxPriceValence**: Approximate price AND affect
-
-The approximate goals use rounding: f_a(s) = Round(s, 10).
-This is the key to pragmatic halo - "1001" under approxPrice is equivalent to "1000".
--/
+This gives 3 × 2 = 6 combinations, but r_a ∘ f_e ≡ r_a ∘ f_a
+(rounding doesn't affect affect), yielding 5 distinct goals. -/
 inductive Goal where
-  | price            -- exact price only
-  | valence          -- affect/valence only
-  | priceValence     -- both exact price and valence
-  | approxPrice      -- approximate (rounded) price only
-  | approxPriceValence -- approximate price and valence
+  | price            -- r_s ∘ f_e: exact price only
+  | valence          -- r_a: affect only
+  | priceValence     -- r_{s,a} ∘ f_e: both exact price and affect
+  | approxPrice      -- r_s ∘ f_a: approximate (rounded) price only
+  | approxPriceValence -- r_{s,a} ∘ f_a: approximate price and affect
   deriving Repr, DecidableEq, BEq
 
--- World Prior P_S (Item-Specific Price Distributions)
+-- ============================================================================
+-- Fintype Instances
+-- ============================================================================
 
-/--
-Price prior P_S from Experiment 3a.
+instance : Fintype PriceState where
+  elems := {.s50, .s51, .s500, .s501, .s1000, .s1001, .s5000, .s5001, .s10000, .s10001}
+  complete := fun x => by cases x <;> simp
 
-Different items have different typical price distributions:
-- Electric kettles: typically cheap, $50 most likely
-- Laptops: moderate, $500 most likely
-- Watches: variable, moderate prices common
+instance : Fintype Affect where
+  elems := {.none, .notable}
+  complete := fun x => by cases x <;> simp
 
-These priors are crucial for hyperbole: "1000 dollars" for a kettle
-is much more likely to be hyperbolic than for a laptop.
--/
-def pricePrior (p : Price) : ℚ :=
-  match p.item, p.price with
-  -- Electric kettle: cheap items, high price is unlikely
-  | .electricKettle, .p50 => 8
-  | .electricKettle, .p500 => 2
-  | .electricKettle, .p10000 => 1
-  -- Laptop: moderate prices typical
-  | .laptop, .p50 => 1
-  | .laptop, .p500 => 6
-  | .laptop, .p10000 => 3
-  -- Watch: highly variable
-  | .watch, .p50 => 3
-  | .watch, .p500 => 4
-  | .watch, .p10000 => 3
+instance : Fintype Goal where
+  elems := {.price, .valence, .priceValence, .approxPrice, .approxPriceValence}
+  complete := fun x => by cases x <;> simp
 
+instance : Fintype Item where
+  elems := {.electricKettle, .laptop, .watch}
+  complete := fun x => by cases x <;> simp
+
+-- ============================================================================
+-- Priors (Experiments 3a/3b)
+-- ============================================================================
+
+/-- Price prior P_S from Experiment 3a.
+
+Item-parametric: different items have different typical price distributions.
+These are crucial for hyperbole — "10,000 dollars" for a kettle is much more
+likely to be hyperbolic than for a laptop.
+
+Sharp variants get the same prior as their round neighbors (the paper
+collapses round/sharp for hyperbole analysis). -/
+def pricePrior (item : Item) : PriceState → ℝ
+  | .s50 | .s51       => match item with | .electricKettle => 8 | .laptop => 1 | .watch => 3
+  | .s500 | .s501      => match item with | .electricKettle => 2 | .laptop => 6 | .watch => 4
+  | .s1000 | .s1001    => match item with | .electricKettle => 1 | .laptop => 4 | .watch => 3
+  | .s5000 | .s5001    => match item with | .electricKettle => 1 | .laptop => 3 | .watch => 3
+  | .s10000 | .s10001  => match item with | .electricKettle => 1 | .laptop => 2 | .watch => 3
+
+/-- Affect prior P_A(a|s) from Experiment 3b.
+
+The probability of having affect a given price state s.
+Higher prices → more likely to think the item is too expensive.
+
+The paper focuses on the affect of "too expensive" because hyperbole
+is more commonly used for negative attitudes. -/
+def affectPrior : PriceState → Affect → ℝ
+  | .s50,    .none => 9   | .s50,    .notable => 1
+  | .s51,    .none => 9   | .s51,    .notable => 1
+  | .s500,   .none => 5   | .s500,   .notable => 5
+  | .s501,   .none => 5   | .s501,   .notable => 5
+  | .s1000,  .none => 3   | .s1000,  .notable => 7
+  | .s1001,  .none => 3   | .s1001,  .notable => 7
+  | .s5000,  .none => 2   | .s5000,  .notable => 8
+  | .s5001,  .none => 2   | .s5001,  .notable => 8
+  | .s10000, .none => 1   | .s10000, .notable => 9
+  | .s10001, .none => 1   | .s10001, .notable => 9
+
+-- ============================================================================
+-- Utterance Cost
+-- ============================================================================
+
+/-- Whether a price state is a round number (divisible by 10). -/
+def PriceState.isRound : PriceState → Bool
+  | .s50 | .s500 | .s1000 | .s5000 | .s10000 => true
+  | .s51 | .s501 | .s1001 | .s5001 | .s10001 => false
+
+/-- Utterance cost C(u).
+
+C(u) = 1 for round numbers. The sharp/round cost ratio is a free
+parameter fitted to data; best fit is 3.4 (p. 12007).
+So C(sharp) = 3.4, C(round) = 1. -/
+noncomputable def cost : PriceState → ℝ
+  | u => if u.isRound then 1 else (17 : ℝ) / 5  -- 3.4 = 17/5
+
+-- ============================================================================
 -- Compositional Literal Semantics
+-- ============================================================================
 
 /-!
 ## Deriving "The X cost u dollars"
@@ -186,298 +214,193 @@ The utterances in this model are full sentences of the form:
 We derive this compositionally:
 
 1. **X** (e.g., "the electric kettle") denotes an item in a price state
-2. **"cost"** is a measure predicate: cost : Price → ℚ
+2. **"cost"** is a measure predicate: cost : PriceState → ℚ
 3. **"u dollars"** is a degree phrase denoting degree u
 4. **Composition**: ⟦The X cost u dollars⟧ = cost(X) = u
 
-The world prior P_S(X) gives the probability of different price states
-for different items, which is crucial for hyperbole interpretation.
-
-This is grounded in Semantics.Montague.Domain.Degrees infrastructure.
+This is grounded in Semantics.Lexical.Numeral infrastructure.
 -/
 
-/--
-The "cost" measure predicate.
+/-- The "cost" measure predicate: ⟦cost⟧ = λx. price(x). -/
+def costPredicate : MeasurePredicate PriceState :=
+  MeasurePredicate.fromHasDegree PriceState "price (USD)"
 
-⟦cost⟧ = λx. price(x)
+/-- Compositional literal semantics for "The X cost u dollars".
+⟦The X cost u dollars⟧ = cost(X) = u -/
+def literalCompositional (u : PriceState) (world : PriceState) : Bool :=
+  measureSentence costPredicate world (DegreePhrase.ofRat u.value "dollars")
 
-This is the denotation of "cost" as a measure verb that maps
-an item (in a price state) to its price in dollars.
--/
-def costPredicate : MeasurePredicate Price :=
-  MeasurePredicate.fromHasDegree Price "price (USD)"
-
-/--
-Convert an utterance to its degree phrase denotation.
-
-⟦"fifty dollars"⟧ = DegreePhrase(50, "dollars")
-⟦"a million dollars"⟧ = DegreePhrase(1000000, "dollars")
--/
-def Utterance.toDegreePhrase (u : Utterance) : DegreePhrase :=
-  DegreePhrase.ofRat u.value "dollars"
-
-/--
-Compositional literal semantics for "The X cost u dollars".
-
-⟦The X cost u dollars⟧ = cost(X) = u
-
-Given:
-- X : Price (the item in its actual price state, e.g., kettle at $500)
-- u : Utterance (the stated price, e.g., "a million dollars")
-
-The sentence is true iff the item's actual cost equals the stated amount.
-
-This derives the truth conditions compositionally:
-- costPredicate.μ : Price → ℚ (the measure function)
-- u.toDegreePhrase.value : ℚ (the stated degree)
-- measureSentence composes them: μ(X) = u
--/
-def literalCompositional (u : Utterance) (world : Price) : Bool :=
-  measureSentence costPredicate world u.toDegreePhrase
-
-/--
-Simple literal semantics (equivalent, for convenience).
--/
-def literal (u : Utterance) (world : Price) : Bool :=
+/-- Simple literal semantics (equivalent, for convenience). -/
+def literal (u : PriceState) (world : PriceState) : Bool :=
   numeralExact u.value world
 
-/--
-**Grounding theorem**: Compositional and simple semantics are equivalent.
-
-This shows that the compositional derivation produces the same truth
-conditions as the direct `numeralExact` check.
--/
-theorem literal_eq_compositional (u : Utterance) (world : Price) :
+/-- **Grounding**: Compositional and simple semantics are equivalent. -/
+theorem literal_eq_compositional (u world : PriceState) :
     literal u world = literalCompositional u world := rfl
 
-/--
-**Grounding theorem**: Literal semantics decomposes into measure function and degree.
-
-  ⟦The X cost u dollars⟧ = (cost(X) == u)
-                        = (HasDegree.degree X == Utterance.value u)
--/
-theorem literal_uses_degree (u : Utterance) (world : Price) :
+/-- **Grounding**: Literal semantics decomposes into HasDegree. -/
+theorem literal_uses_degree (u world : PriceState) :
     literal u world = (HasDegree.degree world == u.value) := rfl
 
-/--
-**Grounding theorem**: The cost predicate IS the HasDegree instance.
--/
+/-- **Grounding**: The cost predicate IS the HasDegree instance. -/
 theorem costPredicate_is_hasDegree :
     costPredicate.μ = HasDegree.degree := rfl
 
-/--
-**Grounding theorem**: Cost equals the price level's dollar value.
--/
-theorem cost_is_price_value (world : Price) :
-    costPredicate.μ world = world.price.value := rfl
+/-- **Grounding**: Cost equals the price state's dollar value. -/
+theorem cost_is_price_value (s : PriceState) :
+    costPredicate.μ s = s.value := rfl
 
-/--
-Full meaning semantics: utterance is true if it matches the price component.
-(Affect doesn't affect truth conditions directly - it's inferred pragmatically.)
--/
-def meaningSemantics (u : Utterance) (m : Meaning) : Bool :=
-  literal u m.1
+-- ============================================================================
+-- L0: Literal Listener (Eq. 9)
+-- ============================================================================
 
--- Affect Prior P_A (Experiment 3b)
+/-- L0(s,a|u) = P_A(a|s) if s = u, 0 otherwise.
 
-/--
-Affect prior P_A(a|s) from Experiment 3b.
+L0 is purely literal — it checks if the utterance matches the price state,
+then distributes over affect using the affect prior P_A.
+The QUD does NOT enter at L0. -/
+def meaning (_q : Goal) (u : PriceState) (w : World) : ℝ :=
+  if u == w.1 then affectPrior w.1 w.2 else 0
 
-The probability of having affect a given price state s.
-Higher prices → more likely to have strong affect (annoyed/amazed).
+-- ============================================================================
+-- QUD Projection (Eq. 6)
+-- ============================================================================
 
-This is independent of item type in the paper's model.
--/
-def affectPrior (p : Price) (a : Affect) : ℚ :=
-  match p.price, a with
-  | .p50, .neutral => 8
-  | .p50, .annoyed => 1
-  | .p50, .amazed => 1
-  | .p500, .neutral => 3
-  | .p500, .annoyed => 5
-  | .p500, .amazed => 2
-  | .p10000, .neutral => 1
-  | .p10000, .annoyed => 5
-  | .p10000, .amazed => 4
+/-- Round a price state to its nearest round neighbor. -/
+def PriceState.round : PriceState → PriceState
+  | .s50 | .s51 => .s50
+  | .s500 | .s501 => .s500
+  | .s1000 | .s1001 => .s1000
+  | .s5000 | .s5001 => .s5000
+  | .s10000 | .s10001 => .s10000
 
-/--
-Combined world + affect prior: P_S(s) × P_A(a|s)
+/-- QUD projection: L0(g(s,a)|u) = Σ_{g(s',a')=g(s,a)} L0(s',a'|u).
 
-This is the prior over full meanings (price state × affect).
--/
-def priceAffectPrior (m : Meaning) : ℚ :=
-  pricePrior m.1 * affectPrior m.1 m.2
+This is Eq. 6 from the paper. The projection sums L0 over all (s',a')
+in the same equivalence class as (s,a) under goal g.
 
-/--
-Utterance "arousal" - how emotionally charged is the utterance?
+Implemented as explicit pattern matching for rsa_decide compatibility. -/
+def qudProject : Goal → (World → ℝ) → World → ℝ
+  | .price, f, (s, _) =>
+      -- Same exact price, both affects
+      f (s, .none) + f (s, .notable)
+  | .valence, f, (_, a) =>
+      -- Same affect, all prices
+      f (.s50, a) + f (.s51, a) + f (.s500, a) + f (.s501, a) +
+      f (.s1000, a) + f (.s1001, a) + f (.s5000, a) + f (.s5001, a) +
+      f (.s10000, a) + f (.s10001, a)
+  | .priceValence, f, w =>
+      -- Same exact price AND affect (identity projection)
+      f w
+  | .approxPrice, f, (s, _) =>
+      -- Same rounded price, both affects
+      let r := s.round
+      f (r, .none) + f (r, .notable) +
+      (if r == s then 0 else f (s, .none) + f (s, .notable))
+  | .approxPriceValence, f, (s, a) =>
+      -- Same rounded price AND same affect
+      let r := s.round
+      f (r, a) + (if r == s then 0 else f (s, a))
 
-Higher numbers are more emotionally evocative.
-"Million" is maximally arousing (hyperbole).
--/
-def utteranceArousal : Utterance → ℚ
-  | .fifty => 1
-  | .fiveHundred => 2
-  | .tenThousand => 4
-  | .million => 10
+-- ============================================================================
+-- RSAConfig (Eqs. 5, 7, 9, 10)
+-- ============================================================================
 
-/--
-Extended semantics: includes affect compatibility.
+/-- The Kao et al. (2014) hyperbole RSA model.
 
-An utterance is "compatible" with a meaning if:
-1. It's literally true of the price, OR
-2. It has high arousal and meaning has strong affect
+Item-parametric: different items have different price priors P_S,
+leading to different hyperbole patterns.
 
-This allows hyperbolic utterances to be somewhat compatible with
-high-affect meanings even when literally false.
--/
-def extendedSemantics (u : Utterance) (m : Meaning) : ℚ :=
-  if literal u m.1 then 1
-  else
-    -- Soft penalty for literal falsity, reduced by arousal match
-    match m.2 with
-    | .neutral => 0  -- Hyperbole requires affect
-    | .annoyed => utteranceArousal u / 20  -- Some compatibility
-    | .amazed => utteranceArousal u / 20
+S1 score follows the paper's Eqs. 5 and 7:
 
--- QUD Projection and Equivalence
+    S1(u|s,a,g) ∝ exp(α · [ln L0(g(s,a)|u) - C(u)])
 
-/--
-Round a price to the nearest base (default 10).
+rsa_decide performs the analytic simplification at evaluation time. -/
+noncomputable def cfg (item : Item) :
+    RSA.RSAConfig PriceState World where
+  Latent := Goal
+  meaning := meaning
+  meaning_nonneg := by
+    intro q u ⟨s, a⟩; simp only [meaning]
+    split <;> (try exact le_refl 0)
+    cases s <;> cases a <;> simp [affectPrior]
+  s1Score l0 α q w u :=
+    exp (α * (log (qudProject q (l0 u) w) - cost u))
+  s1Score_nonneg _ _ _ _ _ _ _ := le_of_lt (exp_pos _)
+  α := 1
+  α_pos := one_pos
+  worldPrior := fun ⟨s, a⟩ => pricePrior item s * affectPrior s a
+  latentPrior_nonneg _ := by positivity
+  worldPrior_nonneg := by
+    intro ⟨s, a⟩; apply mul_nonneg
+    · cases item <;> cases s <;> simp [pricePrior]
+    · cases s <;> cases a <;> simp [affectPrior]
 
-This implements f_a from the paper: f_a(s) = Round(s).
-"51" and "50" both round to 50, so they're equivalent under approxPrice.
--/
-def roundPrice (p : Price) (base : ℚ := 10) : ℚ :=
-  roundToNearest p.cost base
+-- ============================================================================
+-- Theorems
+-- ============================================================================
 
-/--
-Check if two prices are equivalent under rounding.
--/
-def priceRoundingEquiv (p1 p2 : Price) (base : ℚ := 10) : Bool :=
-  roundPrice p1 base == roundPrice p2 base
+noncomputable abbrev kettleCfg := cfg .electricKettle
 
-/--
-QUD equivalence: when are two meanings "the same" for a given goal?
+/-- Hyperbole: L1 hearing "$10,000" for a kettle infers notable affect
+    over no affect, at the most likely price ($50). -/
+theorem hyperbole_notable_affect :
+    kettleCfg.L1 .s10000 (.s50, .notable) >
+    kettleCfg.L1 .s10000 (.s50, .none) := by
+  sorry -- rsa_decide
 
-This is the projection function from the paper:
-- price: exact price match (f_e)
-- valence: same affect only
-- priceValence: exact price AND same affect
-- approxPrice: rounded price match (f_a)
-- approxPriceValence: rounded price AND same affect
--/
-def qudEquiv : Goal → Meaning → Meaning → Bool
-  | .price, m1, m2 => m1.1.cost == m2.1.cost           -- Exact price
-  | .valence, m1, m2 => m1.2 == m2.2                   -- Same affect only
-  | .priceValence, m1, m2 => m1 == m2                  -- Both exact
-  | .approxPrice, m1, m2 => priceRoundingEquiv m1.1 m2.1  -- Rounded price
-  | .approxPriceValence, m1, m2 =>                     -- Rounded price + affect
-      priceRoundingEquiv m1.1 m2.1 && m1.2 == m2.2
+/-- Literal: L1 hearing "$50" infers $50 > $500 price. -/
+theorem literal_infers_price :
+    kettleCfg.L1 .s50 (.s50, .none) >
+    kettleCfg.L1 .s50 (.s500, .none) := by
+  sorry -- rsa_decide
 
--- Enumerations
+/-- QUD inference: "$10,000" → valence QUD more likely than price QUD. -/
+theorem hyperbole_valence_qud :
+    kettleCfg.L1_latent .s10000 .valence >
+    kettleCfg.L1_latent .s10000 .price := by
+  sorry -- rsa_decide
 
-def allUtterances : List Utterance := [.fifty, .fiveHundred, .tenThousand, .million]
-def allPriceLevels : List PriceLevel := [.p50, .p500, .p10000]
-def allItems : List Item := [.electricKettle, .laptop, .watch]
-def allAffects : List Affect := [.neutral, .annoyed, .amazed]
-def allGoals : List Goal := [.price, .valence, .priceValence, .approxPrice, .approxPriceValence]
+/-- Pragmatic halo: sharp "$501" is interpreted more exactly than round "$500".
+    Measured by comparing exact interpretation probability. -/
+theorem halo_sharp_more_exact :
+    kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
+    kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) := by
+  sorry -- rsa_decide
 
-/-- All price states for a given item -/
-def allPricesForItem (item : Item) : List Price :=
-  allPriceLevels.map λ p => { item := item, price := p }
-
-/-- All meanings for a given item -/
-def allMeaningsForItem (item : Item) : List Meaning :=
-  (allPricesForItem item).flatMap λ p => allAffects.map λ a => (p, a)
-
--- For the main scenario, we focus on electric kettles (where hyperbole is most striking)
-def allPrices : List Price := allPricesForItem .electricKettle
-def allMeanings : List Meaning := allMeaningsForItem .electricKettle
-
-/-- Goal prior for hyperbole scenario -/
-def goalPrior : Goal → ℚ
-  | .price => 1
-  | .valence => 3           -- Bias toward valence QUD (common in conversation)
-  | .priceValence => 1
-  | .approxPrice => 2       -- Approximate price QUD fairly common
-  | .approxPriceValence => 2
-
-/-- Uniform goal prior for strict scenario -/
-def uniformGoalPrior : Goal → ℚ := λ _ => 1
-
--- Helper: construct a kettle at a given price
-def kettle (p : PriceLevel) : Price := { item := .electricKettle, price := p }
-
-/-- Strict (Boolean) semantics -/
-def strictSemantics (u : Utterance) (m : Meaning) : Bool :=
-  meaningSemantics u m
-
--- Fintype instances for domain types
-
-instance : Fintype Utterance where
-  elems := {.fifty, .fiveHundred, .tenThousand, .million}
-  complete := fun x => by cases x <;> simp
-
-instance : Fintype Item where
-  elems := {.electricKettle, .laptop, .watch}
-  complete := fun x => by cases x <;> simp
-
-instance : Fintype PriceLevel where
-  elems := {.p50, .p500, .p10000}
-  complete := fun x => by cases x <;> simp
-
-instance : Fintype Price where
-  elems :=
-    { ⟨.electricKettle, .p50⟩, ⟨.electricKettle, .p500⟩, ⟨.electricKettle, .p10000⟩,
-      ⟨.laptop, .p50⟩, ⟨.laptop, .p500⟩, ⟨.laptop, .p10000⟩,
-      ⟨.watch, .p50⟩, ⟨.watch, .p500⟩, ⟨.watch, .p10000⟩ }
-  complete := fun ⟨i, p⟩ => by cases i <;> cases p <;> simp
-
-instance : Fintype Affect where
-  elems := {.neutral, .annoyed, .amazed}
-  complete := fun x => by cases x <;> simp
-
-instance : Fintype Goal where
-  elems := {.price, .valence, .priceValence, .approxPrice, .approxPriceValence}
-  complete := fun x => by cases x <;> simp
-
+-- ============================================================================
 -- Summary
+-- ============================================================================
 
 /-
 ## How QUD-RSA Derives Hyperbole
 
 1. **Standard RSA** (without QUDs):
    - L0 assigns 0 probability to literally false utterances
-   - S1 never chooses hyperbolic utterances
+   - S1 never chooses hyperbolic utterances (log 0 = -∞)
    - Hyperbole can't emerge
 
-2. **QUD-RSA**:
-   - S1 optimizes w.r.t. *projected* meaning under QUD
-   - Under QUD "affect", meanings with same affect are equivalent
-   - "Million" evokes high arousal → compatible with high-affect meanings
-   - S1 can rationally choose "million" to communicate "annoyed"
+2. **QUD-RSA** (this model):
+   - S1 optimizes informativity w.r.t. *projected* meaning under QUD
+   - Under QUD "valence", meanings with same affect are equivalent
+   - L0(g(s,a)|u) sums over the equivalence class, so even literally
+     false utterances can have positive projected L0 if they share the
+     affect dimension with true meanings
+   - S1 can rationally choose "10,000" to communicate "notable affect"
 
 3. **L1 Inference**:
-   - Listener marginalizes over possible QUDs
-   - Hearing "million" → infers speaker probably had "affect" QUD
+   - Listener marginalizes over possible QUDs (uniform P_G)
+   - Hearing "10,000" for a kettle → infers speaker probably had
+     "valence" QUD (not "price", since $10,000 kettle is implausible)
    - Correctly recovers high-affect meaning despite literal falsity
 
-## Key Modeling Choices
+## How Differential Cost Derives Pragmatic Halo
 
-1. **Extended semantics**: Allows soft compatibility between
-   hyperbolic utterances and high-affect meanings
-
-2. **Arousal**: Captures that "million" is more emotionally evocative
-   than "fifty", even when both are literally false
-
-3. **QUD prior**: Biased toward "affect" QUD, reflecting that
-   affective communication is common in everyday speech
-
-## References
-
-- Kao et al. (2014). Nonliteral understanding of number words. PNAS.
-- Roberts (2012). Information structure in discourse.
-- Kao & Goodman (2015). Let's talk (ironically) about the weather.
+- Round numbers: C(round) = 1 (easy to produce)
+- Sharp numbers: C(sharp) = 3.4 (costly to produce)
+- Under approxPrice QUD, "500" and "501" convey the same information
+- But "501" is costlier, so a speaker choosing "501" must have the
+  exact price QUD → listener interprets "501" more precisely than "500"
 -/
 
 end RSA.KaoEtAl2014_Hyperbole

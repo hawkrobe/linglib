@@ -9,10 +9,10 @@ Decomposes sums via `add_nonneg` (and products via `mul_nonneg`), then
 closes leaf goals by applying forall-quantified non-negativity hypotheses
 from the local context.
 
-Typical usage at `RSAConfig.qud` call sites:
+Typical usage at QUD-based RSAConfig construction sites:
 ```
-qudProject_nonneg := by
-  intro q f w hf; cases q <;> simp [myProject] <;> nonneg_of_forall
+s1Score_nonneg := by
+  intro l0 α q w u hl _; cases q <;> simp [qudProject] <;> nonneg_of_forall
 ```
 -/
 

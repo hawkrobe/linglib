@@ -37,6 +37,7 @@ When α = 1, S1(u|w) ∝ L0(w|u), which is the original F&G formulation.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Tactics.RSADecide
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 namespace RSA.FrankGoodman2012
@@ -94,19 +95,6 @@ def utt_square : Feature := .square
 def utt_circle : Feature := .circle
 
 -- ============================================================================
--- Speaker Utility: Belief-Based (rpow)
--- ============================================================================
-
-/-- Belief-based speaker utility: score = L0(w|u)^α.
-
-Uses rpow so that false utterances (L0 = 0) get score 0, not 1.
-This is the correct formulation of Frank & Goodman (2012):
-S1(u|w) ∝ L0(w|u)^α, where α is the rationality parameter. -/
-noncomputable def beliefBasedUtility : SpeakerUtility Feature Object where
-  s1Score l0 α _w u := rpow (l0 u _w) α
-  s1Score_nonneg _ _α _w u hl _ := rpow_nonneg (hl u _w) _α
-
--- ============================================================================
 -- RSAConfig: The Reference Game
 -- ============================================================================
 
@@ -115,16 +103,17 @@ noncomputable def beliefBasedUtility : SpeakerUtility Feature Object where
 - Meaning: Boolean feature semantics (1 if feature applies, 0 otherwise)
 - World prior: uniform
 - α = 1 (standard rationality)
-- Speaker utility: belief-based (rpow)
+- S1 score: belief-based (rpow): score = L0(w|u)^α
 - No latent variables (Unit) -/
 noncomputable def cfg : RSAConfig Feature Object where
   meaning _ u w := if u.appliesTo w then 1 else 0
   meaning_nonneg _ _ _ := by split <;> positivity
-  latentPrior_nonneg _ := by positivity
-  worldPrior_nonneg _ := by positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
   α := 1
   α_pos := one_pos
-  speakerUtility := beliefBasedUtility
+  latentPrior_nonneg _ := by positivity
+  worldPrior_nonneg _ := by positivity
 
 -- ============================================================================
 -- Derived Agents
@@ -153,22 +142,22 @@ they would have said "green" (uniquely identifying). Saying "square"
 signals they probably mean blue_square. -/
 theorem reference_game_inference :
     cfg.L1 utt_square .blue_square > cfg.L1 utt_square .green_square := by
-  sorry -- TODO: prove via rpow monotonicity
+  rsa_decide
 
 /-- At literal level L0, squares are equally likely. -/
 theorem l0_squares_equal :
     cfg.L0 () utt_square .blue_square = cfg.L0 () utt_square .green_square := by
-  sorry -- TODO: prove via meaning symmetry
+  rsa_decide
 
 /-- Speaker in green_square world prefers "green" over "square". -/
 theorem s1_green_prefers_green :
     cfg.S1 () .green_square utt_green > cfg.S1 () .green_square utt_square := by
-  sorry -- TODO: prove via rpow monotonicity
+  rsa_decide
 
 /-- Speaker in blue_square world: "blue" and "square" are equally informative. -/
 theorem s1_blue_square_equal :
     cfg.S1 () .blue_square utt_blue = cfg.S1 () .blue_square utt_square := by
-  sorry -- TODO: prove via L0 symmetry
+  rsa_decide
 
 -- ============================================================================
 -- Structural Properties
