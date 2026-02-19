@@ -116,17 +116,17 @@ theorem gi_dimensions :
     allSentences.length = 9 ∧
     exhParses.length = 8 ∧
     alienWorlds.length = 12 := by
-  sorry
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- "Some some" (SS) is true at world (1,1) -/
 theorem ss_true_at_1_1 :
     literalMeaning ⟨.some, .some⟩ ⟨⟨1, by omega⟩, ⟨1, by omega⟩⟩ = true := by
-  sorry
+  native_decide
 
 /-- "All all" (AA) requires both aliens drinking all pots -/
 theorem aa_requires_full :
     literalMeaning ⟨.all, .all⟩ ⟨⟨2, by omega⟩, ⟨3, by omega⟩⟩ = true := by
-  sorry
+  native_decide
 
 /-- The model matches the phenomena prediction that GI wins -/
 theorem gi_is_best_model :

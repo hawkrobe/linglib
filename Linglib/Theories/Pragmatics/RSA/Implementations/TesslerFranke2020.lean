@@ -139,7 +139,7 @@ With the positive threshold at 3, no degree in the gap region (2-3)
 satisfies the positive meaning. -/
 theorem happy_excludes_gap_semantically :
     ∀ d : HappinessDegree, isInGap d = true → meaning .contrary .happy d = false := by
-  sorry
+  native_decide
 
 /-- "not unhappy" with contrary lexicon includes the gap region.
 
@@ -147,7 +147,7 @@ With contrary negation, "unhappy" = degree < 2, so "not unhappy" = degree >= 2.
 Degrees 2 and 3 are in the gap AND satisfy "not unhappy". -/
 theorem not_unhappy_includes_gap_semantically :
     ∃ d : HappinessDegree, isInGap d = true ∧ meaning .contrary .notUnhappy d = true := by
-  sorry
+  native_decide
 
 /-- THE KEY INSIGHT: "not unhappy" != "happy" because "not unhappy" covers
 the gap region while "happy" does not.
@@ -161,7 +161,7 @@ This semantic difference drives the pragmatic distinction via RSA. -/
 theorem not_unhappy_differs_from_happy_semantically :
     (∃ d : HappinessDegree, meaning .contrary .notUnhappy d = true ∧
                              meaning .contrary .happy d = false) := by
-  sorry
+  native_decide
 
 -- Summary
 

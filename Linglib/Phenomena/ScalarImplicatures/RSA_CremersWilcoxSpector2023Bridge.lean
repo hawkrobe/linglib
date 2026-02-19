@@ -47,19 +47,19 @@ def wonkyGoalProject : WonkyGoal → CWSWorld → CWSWorld → Bool
 
 
 /-- Verify utterance count -/
-theorem utterance_count : allUtterances.length = 3 := by sorry
+theorem utterance_count : allUtterances.length = 3 := rfl
 
 /-- Verify world count -/
-theorem world_count : allWorlds.length = 2 := by sorry
+theorem world_count : allWorlds.length = 2 := rfl
 
 /-- Verify parse count -/
-theorem parse_count : allParses.length = 2 := by sorry
+theorem parse_count : allParses.length = 2 := rfl
 
 /-- Verify lexica count -/
-theorem lexica_count : allLexica.length = 4 := by sorry
+theorem lexica_count : allLexica.length = 4 := rfl
 
 /-- Verify wonky goals count -/
-theorem wonky_goals_count : allWonkyGoals.length = 2 := by sorry
+theorem wonky_goals_count : allWonkyGoals.length = 2 := rfl
 
 
 /-- EXH meaning is only true in w_a.

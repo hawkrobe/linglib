@@ -1,6 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 
 /-!
 # Bridge: RSA Scope Ambiguity → Phenomena (Scontras & Pearl 2021)
@@ -60,7 +61,7 @@ def typedScopes : List ScopeConfig :=
 theorem rsa_and_empirical_agree :
     (Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .zero > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one) ∧
     (Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .one > Phenomena.Quantification.Studies.ScontrasPearl2021.getResult .two) := by
-  sorry
+  native_decide
 
 /-- Ordering of typed distributions matches empirical data.
 
@@ -68,13 +69,13 @@ P(zero) > P(one) > P(two)
 matches empirical 92% > 59% > 18% -/
 theorem typed_ordering_matches_empirical :
     (9 : ℚ)/13 > (4 : ℚ)/13 ∧ (4 : ℚ)/13 > 0 := by
-  sorry
+  constructor <;> norm_num
 
 /-- Inverse scope preference in typed distributions.
 
 P(inverse) = 8/13 > P(surface) = 5/13 -/
 theorem typed_inverse_preference :
     (8 : ℚ)/13 > (5 : ℚ)/13 := by
-  sorry
+  norm_num
 
 end RSA.ScontrasPearl2021.Bridge

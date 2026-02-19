@@ -236,19 +236,19 @@ def utteranceCost : Utterance → ℚ
 Horrible measure assigns maximal value at scale maximum (degree 10).
 -/
 theorem horrible_max_at_h10 :
-    muHorrible (deg 10) = 5 := by sorry
+    muHorrible (deg 10) = 5 := by native_decide
 
 /--
 Pleasant measure assigns maximal value at norm (degree 5).
 -/
 theorem pleasant_max_at_h5 :
-    muPleasant (deg 5) = 5 := by sorry
+    muPleasant (deg 5) = 5 := by native_decide
 
 /--
 Horrible and pleasant measures are complementary:
 μ_horrible(h) + μ_pleasant(h) = norm for all h ≥ norm.
 -/
 theorem horrible_pleasant_complement :
-    muHorrible (deg 7) + muPleasant (deg 7) = 5 := by sorry
+    muHorrible (deg 7) + muPleasant (deg 7) = 5 := by native_decide
 
 end RSA.Nouwen2024

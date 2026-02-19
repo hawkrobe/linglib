@@ -605,7 +605,12 @@ theorem barnett_backfire_instance :
     backfire_generalization 5 (by omega)
       (fun i : Fin 5 => match i with | ⟨0, _⟩ => 1/6 | ⟨1, _⟩ => 1/3 | ⟨2, _⟩ => 1/3 | ⟨3, _⟩ => 1/2 | ⟨4, _⟩ => 2/3 | ⟨n+5, h⟩ => absurd h (by omega))
       (fun i : Fin 5 => match i with | ⟨0, _⟩ => 1/6 | ⟨1, _⟩ => 1/3 | ⟨2, _⟩ => 1/3 | ⟨3, _⟩ => 7/20 | ⟨4, _⟩ => 2/3 | ⟨n+5, h⟩ => absurd h (by omega))
-      (2/5) :=                         -- prior (priorLonger)
-  sorry
+      (2/5) := by                       -- prior (priorLonger)
+  unfold backfire_generalization
+  intro _ _
+  refine ⟨⟨3, by omega⟩, ?_, ?_, ?_⟩
+  · norm_num
+  · norm_num
+  · norm_num
 
 end RSA.NoncooperativeCommunication

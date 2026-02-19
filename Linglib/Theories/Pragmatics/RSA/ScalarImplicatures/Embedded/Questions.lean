@@ -225,7 +225,7 @@ Questions are indeed unique - neither DE-like nor attitude-verb-like
 in their entailment pattern, yet still prefer global.
 -/
 def questionIsUnique : QuestionUniqueness where
-  not_de_like := ⟨.allP, by sorry, by sorry⟩
-  not_attitude_like := ⟨.someP, by sorry, by sorry⟩
+  not_de_like := ⟨.allP, by native_decide, by native_decide⟩
+  not_attitude_like := ⟨.someP, by native_decide, by native_decide⟩
 
 end RSA.QuestionEmbedding

@@ -122,20 +122,21 @@ The threshold semantics correspond to:
 
 /-- "some" threshold matches Montague's existential: count >= 1 -/
 theorem some_matches_montague :
-    threshold .some_ = 1 := by sorry
+    threshold .some_ = 1 := by native_decide
 
 /-- "all" threshold matches Montague's universal: count = total -/
 theorem all_matches_montague :
-    threshold .all = totalSetSize := by sorry
+    threshold .all = totalSetSize := by native_decide
 
 /-- "most" threshold > half matches Montague's most_sem -/
 theorem most_above_half :
-    threshold .most > totalSetSize / 2 := by sorry
+    threshold .most > totalSetSize / 2 := by native_decide
 
 /-- "some" and "few" have opposite monotonicity (no entailment) -/
 theorem some_few_opposite_monotonicity :
     monotonicity .some_ = .increasing ∧
-    monotonicity .few = .decreasing := by sorry
+    monotonicity .few = .decreasing := by
+  exact ⟨rfl, rfl⟩
 
 -- Summary
 

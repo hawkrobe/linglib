@@ -394,7 +394,7 @@ def conflictDegree (w : AmbiguousWord) (ctx : DisambiguationContext) : ℚ :=
   | _, _ => 0
 
 -- The astronomer/star example should show high conflict
-example : hasConflict star astronomerMarriedContext = true := by sorry
+example : hasConflict star astronomerMarriedContext = true := by native_decide
 
 
 /-!
