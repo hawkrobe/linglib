@@ -111,6 +111,19 @@ theorem bayesian_maximizes_expected_log [Nonempty ι] (w : ι → ℝ)
     (L : ι → ℝ) (hL_pos : ∀ i, 0 < L i) (hL_sum : ∑ i, L i = 1) :
     ∑ i, (w i / ∑ j, w j) * Real.log (L i) ≤
     ∑ i, (w i / ∑ j, w j) * Real.log (w i / ∑ j, w j) := by
-  sorry -- TODO: derive from Core.bayesian_maximizes (different formulation)
+  have h := Core.bayesian_maximizes w hw_nonneg hw_sum_pos L hL_pos hL_sum
+  -- h : ∑ i, w i * log (L i) ≤ ∑ i, w i * log (w i / ∑ j, w j)
+  -- Divide both sides by C = ∑ j, w j > 0
+  have hC_pos := hw_sum_pos
+  have hC_ne : (∑ j, w j) ≠ 0 := ne_of_gt hC_pos
+  -- Rewrite: ∑ (w i / C) * f i = (1 / C) * ∑ w i * f i
+  have factor : ∀ (f : ι → ℝ),
+      ∑ i, (w i / ∑ j, w j) * f i = (∑ i, w i * f i) / ∑ j, w j := by
+    intro f
+    rw [Finset.sum_div]
+    apply Finset.sum_congr rfl; intro i _
+    rw [div_mul_eq_mul_div]
+  rw [factor, factor]
+  exact div_le_div_of_nonneg_right h (le_of_lt hC_pos)
 
 end Softmax
