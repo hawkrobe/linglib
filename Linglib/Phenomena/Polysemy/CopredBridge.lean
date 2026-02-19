@@ -64,13 +64,13 @@ def ulysses : PhysObj × Info := ⟨⟨400⟩, ⟨"Ulysses"⟩⟩
 def threeBooks : List (PhysObj × Info) := [hamlet1, hamlet2, ulysses]
 
 /-- Physical individuation: count by PhysObj (weight distinguishes copies). -/
-instance : ∀ x y, Decidable (bookDot.individuation.rel x y) :=
+instance : ∀ x y, Decidable (bookDot.individuation.r x y) :=
   λ x y => inferInstanceAs (Decidable (x.1 = y.1))
 
 /-- Informational individuation: count by Info (title). -/
 def infoDot : DotType PhysObj Info := DotType.byAspect₂
 
-instance : ∀ x y, Decidable (infoDot.individuation.rel x y) :=
+instance : ∀ x y, Decidable (infoDot.individuation.r x y) :=
   λ x y => inferInstanceAs (Decidable (x.2 = y.2))
 
 /-- Under physical individuation: 3 distinct objects. -/
