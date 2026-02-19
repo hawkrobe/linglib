@@ -131,13 +131,27 @@ theorem single_pathway_sufficiency_implies_necessity
     let dyn := CausalDynamics.mk [CausalLaw.simple c e]
     causallySufficient dyn Situation.empty c e = true →
     causallyNecessary dyn Situation.empty c e = true := by
-  intro h
-  simp only [causallySufficient, causallyNecessary] at *
-  sorry -- TODO: Requires showing that in (Situation.empty.extend c false),
-        -- the law CausalLaw.simple c e doesn't fire (c=false, law needs c=true),
-        -- so normalDevelopment leaves e undetermined. Then c≠e ensures
-        -- e is none (not some true) in the result. The proof requires
-        -- connecting Variable's BEq to ≠ through derived DecidableEq.
+  intro dyn _
+  -- The law c→e doesn't fire when c=false, so normalDevelopment returns the input unchanged.
+  -- Since c≠e, e is absent in the input, so hasValue e true = false.
+  have hdyn : dyn = CausalDynamics.mk [CausalLaw.simple c e] := rfl
+  set s := Situation.empty.extend c false with hs_def
+  have hprec : CausalLaw.preconditionsMet (CausalLaw.simple c e) s = false := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_def, Situation.extend_hasValue_same]
+  have happly : applyLawsOnce dyn s = s := by
+    simp [applyLawsOnce, hdyn, List.foldl_cons, List.foldl_nil, CausalLaw.apply, hprec]
+  have hfix : isFixpoint dyn s = true := by
+    simp [isFixpoint, hdyn, List.all_cons, List.all_nil, hprec]
+  have hdev : normalDevelopment dyn s = s := by
+    show normalDevelopment dyn s 100 = s
+    rw [show (100 : Nat) = 99 + 1 from rfl]
+    rw [normalDevelopment_fixpoint_after_one _ _ (by rw [happly]; exact hfix)]
+    exact happly
+  have hval : s.hasValue e true = false := by
+    rw [hs_def, Situation.extend_hasValue_diff _ _ _ _ _ (Ne.symm hne)]
+    simp [Situation.hasValue, Situation.empty]
+  show (!(normalDevelopment dyn s).hasValue e true) = true
+  rw [hdev, hval]; rfl
 
 /-- Concrete instance of the single-pathway entailment, fully proved.
 

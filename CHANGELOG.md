@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.224.0] - 2026-02-18
+
+### Changed
+- Close 4 sorries across Causation and Distributivity modules
+- `redundant_cause_not_necessary` (Necessity.lean): add `hne : c1 ≠ c2` and `hPos : isPositiveDynamics` hypotheses; prove via `Situation.trueLE` and `normalDevelopment_trueLE_positive` monotonicity
+- `single_pathway_sufficiency_implies_necessity` (ProductionDependence.lean): prove P-CAUSE → D-CAUSE in single-pathway models by showing the only law doesn't fire when cause=false
+- `falseOnAll_full_iff_noneSatisfy`, `pluralTruthValue_eq_candidateSemantics` (Distributivity.lean): fix `fullCandidateSet` to exclude empty sub-pluralities, prove both theorems using singleton witnesses
+- Add public `normalDevelopment_trueLE_positive` wrapper (Sufficiency.lean) for cross-file monotonicity proofs
+
 ## [0.223.9] - 2026-02-18
 
 ### Changed

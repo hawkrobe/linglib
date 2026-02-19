@@ -349,7 +349,7 @@ Full candidate set: all sub-plurality propositions.
 This is the set S from K&S (2021) before relevance filtering.
 -/
 def fullCandidateSet (P : Atom → W → Bool) (x : Finset Atom) : Set (BProp W) :=
-  { candidateProp P z | z ∈ x.powerset }
+  { p | ∃ z ∈ x.powerset, z.Nonempty ∧ p = candidateProp P z }
 
 /--
 Candidate set parameterized by tolerance.
@@ -400,18 +400,16 @@ theorem identity_candidateSet_eq_singleton (P : Atom → W → Bool) (x : Finset
     exact ⟨x, Finset.Subset.refl x, rfl, hp⟩
 
 /--
-Theorem: With full tolerance, the candidate set is exactly fullCandidateSet.
+Theorem: With full tolerance, fullCandidateSet (nonempty sub-pluralities) is
+contained in the full-tolerance candidate set.
 -/
-theorem full_candidateSet_eq_full (P : Atom → W → Bool) (x : Finset Atom) :
-    candidateSet P Tolerance.full x = fullCandidateSet P x := by
-  ext p
-  simp only [candidateSet, fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset,
-             Tolerance.full, decide_eq_true_iff]
-  constructor
-  · intro ⟨z, hz_mem, _, hp⟩
-    exact ⟨z, hz_mem, hp.symm⟩
-  · intro ⟨z, hz_mem, hp⟩
-    exact ⟨z, hz_mem, hz_mem, hp.symm⟩
+theorem fullCandidateSet_subset_candidateSet_full (P : Atom → W → Bool) (x : Finset Atom) :
+    fullCandidateSet P x ⊆ candidateSet P Tolerance.full x := by
+  intro p hp
+  simp only [fullCandidateSet, Set.mem_setOf_eq] at hp
+  obtain ⟨z, hz_mem, _, hp⟩ := hp
+  simp only [candidateSet, Set.mem_setOf_eq]
+  exact ⟨z, hz_mem, by simp [Tolerance.full, Finset.mem_powerset.mp hz_mem], hp⟩
 
 /--
 Theorem: trueOnAll for the full candidate set iff all atoms satisfy P.
@@ -425,17 +423,17 @@ theorem trueOnAll_full_iff_allSatisfy (P : Atom → W → Bool) (x : Finset Atom
     intro h
     simp only [allSatisfy, decide_eq_true_eq]
     intro a ha
-    -- The singleton {a} is in fullCandidateSet
+    -- The singleton {a} is in fullCandidateSet (nonempty!)
     have hsing : candidateProp P {a} ∈ fullCandidateSet P x := by
       simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset]
-      exact ⟨{a}, Finset.singleton_subset_iff.mpr ha, rfl⟩
+      exact ⟨{a}, Finset.singleton_subset_iff.mpr ha, ⟨a, Finset.mem_singleton.mpr rfl⟩, rfl⟩
     have := h (candidateProp P {a}) hsing
     simp only [candidateProp, decide_eq_true_eq, Finset.mem_singleton, forall_eq] at this
     exact this
   · -- (←): If all atoms satisfy P, then all candidates are true
     intro h p hp
     simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset] at hp
-    obtain ⟨z, hz, rfl⟩ := hp
+    obtain ⟨z, hz, _, rfl⟩ := hp
     simp only [candidateProp, decide_eq_true_eq]
     intro a ha
     simp only [allSatisfy, decide_eq_true_eq] at h
@@ -444,19 +442,34 @@ theorem trueOnAll_full_iff_allSatisfy (P : Atom → W → Bool) (x : Finset Atom
 /--
 Theorem: falseOnAll for full candidates iff no atom satisfies P.
 
-Known issue: This theorem is currently unprovable because `fullCandidateSet`
-includes the empty sub-plurality `∅`, and `candidateProp P ∅ w = true` vacuously
-for all w. Therefore `falseOnAll (fullCandidateSet P x) w` is always `False`.
-
-TODO: Fix `fullCandidateSet` to exclude empty sub-pluralities (which have no
-linguistic interpretation). Then the proof follows by:
 - (→): Singleton candidates {a} false → each P(a) fails.
 - (←): No P(a) holds → for any nonempty z ⊆ x, some atom in z fails P.
 -/
 theorem falseOnAll_full_iff_noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (hne : x.Nonempty) :
     falseOnAll (fullCandidateSet P x) w ↔ noneSatisfy P x w = true := by
-  sorry
+  constructor
+  · -- (→): If all nonempty candidates false, then no atom satisfies P
+    intro h
+    simp only [noneSatisfy, decide_eq_true_eq]
+    intro a ha
+    have hsing : candidateProp P {a} ∈ fullCandidateSet P x := by
+      simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset]
+      exact ⟨{a}, Finset.singleton_subset_iff.mpr ha, ⟨a, Finset.mem_singleton.mpr rfl⟩, rfl⟩
+    have hf := h (candidateProp P {a}) hsing
+    simp only [candidateProp, Finset.mem_singleton, forall_eq] at hf
+    cases hP : P a w <;> simp_all
+  · -- (←): If no atom satisfies P, then all nonempty candidates are false
+    intro h p hp
+    simp only [fullCandidateSet, Set.mem_setOf_eq, Finset.mem_powerset] at hp
+    obtain ⟨z, hz, hzne, rfl⟩ := hp
+    simp only [candidateProp]
+    rw [decide_eq_false_iff_not]
+    intro hall
+    obtain ⟨a, ha⟩ := hzne
+    simp only [noneSatisfy, decide_eq_true_eq] at h
+    have := h a (hz ha)
+    exact absurd (hall a ha) (by simp [this])
 
 /--
 Main Theorem: The trivalent semantics matches the candidate interpretation framework.
@@ -470,14 +483,8 @@ This is the central correspondence theorem of K&S (2021), showing that the
 simple trivalent semantics (based on all/some/none) coincides with the more
 sophisticated "truth on all readings" approach.
 
-Known issue: The `.false` and `.gap` cases are blocked by the same empty
-candidate issue as `falseOnAll_full_iff_noneSatisfy`: `fullCandidateSet` includes
-`candidateProp P ∅` which is vacuously true, so `falseOnAll` is always `False`
-and `gapOnCandidates` is trivially satisfied on the true-witness side.
-
-TODO: Fix `fullCandidateSet` to exclude empty sub-pluralities, then prove:
 - TRUE: via `trueOnAll_full_iff_allSatisfy` + `pluralTruthValue_eq_true_iff`
-- FALSE: via corrected `falseOnAll_full_iff_noneSatisfy` + `pluralTruthValue_eq_false_iff`
+- FALSE: via `falseOnAll_full_iff_noneSatisfy` + `pluralTruthValue_eq_false_iff`
 - GAP: singleton witnesses for both true and false candidates
 -/
 theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Bool) (x : Finset Atom) (w : W)
@@ -485,7 +492,59 @@ theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Bool) (x : Fi
     (pluralTruthValue P x w = .true ↔ trueOnAll (fullCandidateSet P x) w) ∧
     (pluralTruthValue P x w = .false ↔ falseOnAll (fullCandidateSet P x) w) ∧
     (pluralTruthValue P x w = .gap ↔ gapOnCandidates (fullCandidateSet P x) w) := by
-  sorry
+  refine ⟨?_, ?_, ?_⟩
+  · -- .true ↔ trueOnAll
+    rw [pluralTruthValue_eq_true_iff, trueOnAll_full_iff_allSatisfy]
+  · -- .false ↔ falseOnAll
+    rw [pluralTruthValue_eq_false_iff, falseOnAll_full_iff_noneSatisfy P x w hne]
+    constructor
+    · intro ⟨_, h⟩; exact h
+    · intro h
+      refine ⟨?_, h⟩
+      simp only [allSatisfy, noneSatisfy, decide_eq_true_eq, decide_eq_false_iff_not] at h ⊢
+      push_neg
+      obtain ⟨a, ha⟩ := hne
+      exact ⟨a, ha, by simp [h a ha]⟩
+  · -- .gap ↔ gapOnCandidates
+    rw [pluralTruthValue_eq_gap_iff]
+    constructor
+    · -- →: neither all nor none → true and false witnesses
+      intro ⟨hNotAll, hNotNone⟩
+      simp only [allSatisfy, noneSatisfy, decide_eq_false_iff_not] at hNotAll hNotNone
+      push_neg at hNotAll hNotNone
+      obtain ⟨a, ha, hPa⟩ := hNotAll
+      obtain ⟨b, hb, hPb⟩ := hNotNone
+      constructor
+      · -- ∃ true candidate: singleton {b} where P b w = true
+        refine ⟨candidateProp P {b}, ?_, ?_⟩
+        · exact ⟨{b}, Finset.mem_powerset.mpr (Finset.singleton_subset_iff.mpr hb),
+                 ⟨b, Finset.mem_singleton.mpr rfl⟩, rfl⟩
+        · simp only [candidateProp, decide_eq_true_eq, Finset.mem_singleton, forall_eq]
+          cases hP : P b w <;> simp_all
+      · -- ∃ false candidate: singleton {a} where P a w = false
+        refine ⟨candidateProp P {a}, ?_, ?_⟩
+        · exact ⟨{a}, Finset.mem_powerset.mpr (Finset.singleton_subset_iff.mpr ha),
+                 ⟨a, Finset.mem_singleton.mpr rfl⟩, rfl⟩
+        · simp only [candidateProp, decide_eq_false_iff_not, Finset.mem_singleton, forall_eq]
+          cases hP : P a w <;> simp_all
+    · -- ←: true and false witnesses → neither all nor none
+      intro ⟨⟨pt, hpt_mem, hpt_true⟩, ⟨pf, hpf_mem, hpf_false⟩⟩
+      constructor
+      · -- allSatisfy = false: from false candidate, find atom where P fails
+        obtain ⟨z, hz, hzne, rfl⟩ := hpf_mem
+        simp only [candidateProp, decide_eq_false_iff_not] at hpf_false
+        push_neg at hpf_false
+        obtain ⟨a, ha, hPa⟩ := hpf_false
+        simp only [allSatisfy, decide_eq_false_iff_not]
+        push_neg
+        exact ⟨a, Finset.mem_powerset.mp hz ha, by cases h : P a w <;> simp_all⟩
+      · -- noneSatisfy = false: from true candidate, find atom where P holds
+        obtain ⟨z, hz, hzne, rfl⟩ := hpt_mem
+        simp only [candidateProp, decide_eq_true_eq] at hpt_true
+        obtain ⟨a, ha⟩ := hzne
+        simp only [noneSatisfy, decide_eq_false_iff_not]
+        push_neg
+        exact ⟨a, Finset.mem_powerset.mp hz ha, by cases h : P a w <;> simp_all [hpt_true a ha]⟩
 
 end KrizSpector
 
