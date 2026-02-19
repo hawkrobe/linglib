@@ -785,7 +785,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Distribution
 import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
-import Linglib.Theories.Pragmatics.RSA.Core.SpeakerUtility
 import Linglib.Theories.Pragmatics.RSA.Core.GibbsVariational
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
