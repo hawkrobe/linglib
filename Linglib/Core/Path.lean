@@ -1,4 +1,5 @@
 import Linglib.Core.Scale
+import Linglib.Tactics.OntSort
 
 /-!
 # Spatial Path Infrastructure
@@ -44,7 +45,7 @@ set_option linter.dupNamespace false in
     Parallels `Core.Time.Interval` for the temporal domain. Unlike
     intervals, paths have no `valid : source ≤ goal` constraint
     because spatial locations lack a canonical linear ordering. -/
-structure Path (Loc : Type*) where
+@[ont_sort] structure Path (Loc : Type*) where
   /-- Starting location of the path. -/
   source : Loc
   /-- Ending location of the path. -/
@@ -99,5 +100,17 @@ theorem source_path_licensed :
     the path set is unbounded, corresponding to an open scale. -/
 theorem unbounded_path_blocked :
     PathShape.unbounded.toBoundedness.isLicensed = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. Named Licensing Theorems (Zwarts)
+-- ════════════════════════════════════════════════════
+
+/-- Zwarts: bounded path → closed → licensed. -/
+theorem zwarts_bounded_licensed :
+    (PathShape.bounded.toBoundedness).isLicensed = true := rfl
+
+/-- Zwarts: unbounded path → open → blocked. -/
+theorem zwarts_unbounded_blocked :
+    (PathShape.unbounded.toBoundedness).isLicensed = false := rfl
 
 end Core.Path

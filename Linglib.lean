@@ -50,6 +50,7 @@ import Linglib.Core.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.MereoDim
+import Linglib.Core.ContentIndividual
 import Linglib.Core.BToM
 import Linglib.Core.Path
 import Linglib.Core.Continuation
@@ -66,6 +67,7 @@ import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSADecide
+import Linglib.Tactics.OntSort
 
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
@@ -659,6 +661,7 @@ import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Intensional.Basic
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
+import Linglib.Theories.Semantics.Attitudes.ContentComposition
 import Linglib.Theories.Semantics.Attitudes.ContrafactiveGap
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Intensional

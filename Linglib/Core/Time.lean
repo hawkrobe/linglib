@@ -1,5 +1,7 @@
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
+import Linglib.Core.Scale
+import Linglib.Tactics.OntSort
 
 /-!
 # Theory-Neutral Temporal Infrastructure
@@ -48,7 +50,7 @@ Temporal interval: a pair of times [start, end].
 
 Following standard interval semantics (Allen 1983, Kamp & Reyle 1993).
 -/
-structure Interval (Time : Type*) [LE Time] where
+@[ont_sort] structure Interval (Time : Type*) [LE Time] where
   start : Time
   finish : Time
   valid : start ≤ finish
@@ -223,7 +225,7 @@ Following Kratzer's situation semantics:
 
 We model situations as world-time pairs, abstracting from spatial extent.
 -/
-structure Situation (W Time : Type*) where
+@[ont_sort] structure Situation (W Time : Type*) where
   /-- The world this situation is part of -/
   world : W
   /-- The temporal coordinate of the situation -/
@@ -343,5 +345,28 @@ def todayZ : ℤ := 0
 
 /-- Example: tomorrow (t = 1) -/
 def tomorrowZ : ℤ := 1
+
+-- ════════════════════════════════════════════════════
+-- § BoundaryType → Boundedness Bridge (Interval Generalization)
+-- ════════════════════════════════════════════════════
+
+/-- Interval boundary type maps to scale boundedness.
+    Rouillard (2026): closed runtimes correspond to closed scales (licensed);
+    open PTSs correspond to open scales (blocked/information collapse).
+    This is the "interval generalization": `BoundaryType.closed`/`.open_`
+    in `Core/Time` is isomorphic to `Boundedness.closed`/`.open_` in
+    `Core/MeasurementScale`. -/
+def Interval.BoundaryType.toBoundedness : Interval.BoundaryType → Core.Scale.Boundedness
+  | .closed => .closed
+  | .open_ => .open_
+
+theorem closedBoundary_licensed :
+    (Interval.BoundaryType.toBoundedness .closed).isLicensed = true := rfl
+
+theorem openBoundary_blocked :
+    (Interval.BoundaryType.toBoundedness .open_).isLicensed = false := rfl
+
+instance : Core.Scale.LicensingPipeline Interval.BoundaryType where
+  toBoundedness := Interval.BoundaryType.toBoundedness
 
 end Core.Time

@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
+import Linglib.Tactics.OntSort
 
 /-!
 # Basic Question Types
@@ -10,7 +11,7 @@ Core types for question semantics shared across theoretical approaches.
 namespace Semantics.Questions
 
 /-- Partition-based question: list of mutually exclusive proposition cells. -/
-abbrev Question (W : Type*) := List (W -> Bool)
+@[ont_sort] abbrev Question (W : Type*) := List (W -> Bool)
 
 /-- Answer: proposition as characteristic function on worlds. -/
 abbrev Answer (W : Type*) := W -> Bool

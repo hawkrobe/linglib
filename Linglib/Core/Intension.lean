@@ -15,11 +15,12 @@ and `RSA/` — any module that needs world-parameterized meanings.
 -/
 
 import Linglib.Core.Proposition
+import Linglib.Tactics.OntSort
 
 namespace Core.Intension
 
 /-- An intension of type τ over indices W: a function from worlds to extensions. -/
-abbrev Intension (W : Type*) (τ : Type*) := W → τ
+@[ont_sort] abbrev Intension (W : Type*) (τ : Type*) := W → τ
 
 /-- A rigid designator: an intension that returns the same value at every world. -/
 def rigid {W τ : Type*} (x : τ) : Intension W τ := λ _ => x
