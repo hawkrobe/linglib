@@ -8,16 +8,18 @@ frames (Petersen 2007, Löbner 2014, Osswald & Kallmeyer 2018) and
 TTR record types (Cooper 2023) are "notational variants" for
 representing structured propositions.
 
-This module formalizes that equivalence:
+The central observation: a Lean `structure` *is* a typed frame.
+Each field name is an attribute; each field type is the attribute's
+value type. No separate "frame" infrastructure is needed — the
+equivalence is definitional.
 
-1. A `TypedFrame` is a finite collection of typed attributes
-2. Every typed frame embeds into a TTR record (Lean structure)
-3. The propositional content (truth = inhabitation) is preserved
+This module makes the equivalence explicit with `Frame2`, a minimal
+frame with named attributes and typed values, and proves it embeds
+into `SimpleRecordType2` (a TTR record type) with preserved truth.
 
-The key point: linglib's existing `Probabilistic/Scenarios/` models a
-*different* tradition — probabilistic scenario semantics (Erk & Herbelot 2024).
-The typed-frame tradition formalized here is structural, not distributional,
-and is equivalent to TTR record types.
+linglib's existing `Probabilistic/Scenarios/` models a *different*
+tradition — probabilistic scenario semantics (Erk & Herbelot 2024).
+The typed-frame tradition here is structural, not distributional.
 
 ## References
 
@@ -31,34 +33,16 @@ and is equivalent to TTR record types.
 
 namespace Semantics.TypeTheoretic
 
-/-! ## Typed frames
+/-! ## Frames as named record types
 
-A typed frame is a structure with named, typed attributes.
-Following Petersen (2007), a frame assigns typed values to attributes.
-This is isomorphic to a TTR record type where labels are attribute
-names and field types are attribute types. -/
+A frame is a record with named, typed attributes. In Lean, every
+`structure` is already a frame: field names are attributes, field
+types are value types. We define `Frame2` to make the frame/record
+correspondence explicit for proofs. -/
 
-/-- An attribute in a typed frame: a named, typed slot.
-Petersen (2007): attributes are functional — each attribute has
-exactly one value of the specified type. -/
-structure Attribute where
-  /-- The attribute name (e.g., "agent", "theme", "color") -/
-  name : String
-  /-- The type of values this attribute takes -/
-  valueType : Type
-
-/-- A typed frame: a collection of attributes with values.
-This is a frame *instance* (filled frame), not a frame type.
-
-A frame type would be `List Attribute` (specifying names and types
-but not values). A frame instance provides values for each attribute. -/
-structure TypedFrame where
-  /-- The attributes of this frame -/
-  attrs : List Attribute
-  /-- Values for each attribute (indexed by position) -/
-  values : (i : Fin attrs.length) → (attrs.get i).valueType
-
-/-- A simple two-attribute frame (the common case for linguistic examples). -/
+/-- A two-attribute frame: the common case for linguistic examples.
+Frame attributes carry names (unlike raw `SimpleRecordType2`),
+making the frame/record correspondence concrete. -/
 structure Frame2 (A₁ A₂ : Type) where
   /-- Name of the first attribute -/
   attr₁Name : String
@@ -71,23 +55,24 @@ structure Frame2 (A₁ A₂ : Type) where
 
 /-! ## Frame ↔ Record Type equivalence
 
-A `Frame2 A₁ A₂` is isomorphic to `SimpleRecordType2 A₁ A₂`.
-The attribute names are the TTR labels; the value types are the
-field types. This is the formal content of "frames and record types
-are notational variants." -/
+A `Frame2 A₁ A₂` is isomorphic to `SimpleRecordType2 A₁ A₂`
+(modulo the attribute names, which are metadata). The attribute
+names are the TTR labels; the value types are the field types.
+This is the formal content of "frames and record types are
+notational variants." -/
 
-/-- Every two-attribute frame can be viewed as a simple record type. -/
+/-- Every frame can be viewed as a simple record type. -/
 def Frame2.toRecord {A₁ A₂ : Type} (f : Frame2 A₁ A₂) :
     SimpleRecordType2 A₁ A₂ :=
   ⟨f.val₁, f.val₂⟩
 
-/-- Every simple record type can be viewed as a two-attribute frame. -/
+/-- Every simple record type can be viewed as a frame. -/
 def Frame2.fromRecord {A₁ A₂ : Type}
     (name₁ name₂ : String) (r : SimpleRecordType2 A₁ A₂) :
     Frame2 A₁ A₂ :=
   ⟨name₁, r.fst, name₂, r.snd⟩
 
-/-- The roundtrip preserves values: frame → record → frame recovers values. -/
+/-- The roundtrip preserves values. -/
 theorem frame2_record_roundtrip_values {A₁ A₂ : Type} (f : Frame2 A₁ A₂) :
     let r := f.toRecord
     let f' := Frame2.fromRecord f.attr₁Name f.attr₂Name r
@@ -97,10 +82,7 @@ theorem frame2_record_roundtrip_values {A₁ A₂ : Type} (f : Frame2 A₁ A₂)
 /-! ## Frame-based propositions
 
 A frame is "true" when it has a witness — an instance with values
-for all attributes. This is exactly TTR's `IsTrue T = Nonempty T`.
-
-The equivalence: a frame type is propositionally true iff the
-corresponding record type is inhabited. -/
+for all attributes. This is exactly TTR's `IsTrue T = Nonempty T`. -/
 
 /-- A frame *type* (unfilled frame): specifies attribute types
 without providing values. True iff fillable. -/

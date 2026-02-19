@@ -1,12 +1,20 @@
 # Changelog
 
+## [0.224.21] - 2026-02-19
+
+### Changed
+- Refactor `IndividuationCriterion`: use `Equivalence` instead of separate `refl`/`symm`/`trans` fields; add `toSetoid` bridge
+- Replace `ComplexType` alias with `DotType` struct bundling aspect types with their individuation criterion (the book's point: individuation is part of the lexical specification, not external)
+- Add `IType.meet`/`IType.join` to `Core.lean`: compose carriers and names so intensional identity propagates through type operations; add `IType.meet_true_iff`, `IType.join_true_iff`
+- Simplify `FrameBridge.lean`: drop `TypedFrame`/`Attribute` (Lean structures *are* typed frames); keep `Frame2`/`FrameType2` for explicit proofs
+
 ## [0.224.20] - 2026-02-19
 
 ### Added
-- New `TypeTheoretic/Copredication.lean`: complex types (dot types as TTR meet types), copredication operator, `IndividuationCriterion` with counting, `individuation_can_diverge` theorem (Chatzikyriakidis et al. 2025 §3)
+- New `TypeTheoretic/Copredication.lean`: dot types with individuation, copredication operator, `IndividuationCriterion` with counting, `individuation_can_diverge` theorem (Chatzikyriakidis et al. 2025 §3)
 - New `TypeTheoretic/FrameBridge.lean`: typed attribute-value frames, `Frame2 ↔ SimpleRecordType2` roundtrip, `frame_truth_eq_record_truth` equivalence, `frame_structure_matters` (Chatzikyriakidis et al. 2025 §2–3)
 - New `Phenomena/Polysemy/Data.lean`: copredication empirical data (book, lunch, newspaper examples; counting datum from Gotham 2017)
-- New `Phenomena/Polysemy/CopredBridge.lean`: `Book = ComplexType PhysObj Info`, `physical_count = 3`, `informational_count = 2`, `counting_matches_datum`
+- New `Phenomena/Polysemy/CopredBridge.lean`: `DotType PhysObj Info` with `physical_count = 3`, `informational_count = 2`, `counting_matches_datum`
 - New `Phenomena/Attitudes/IntentionalIdentity/Data.lean`: Geach's Hob-Nob puzzle, Edelberg's spy variant
 - New `Phenomena/Attitudes/IntentionalIdentity/Bridge.lean`: TTR solution via shared `IType` across agents, `witch_need_not_exist`, `intensional_distinction_enables_ii`
 - Proposition granularity hierarchy in `TypeTheoretic/Core.lean`: `prop_collapses_intensional_distinctions`, `ttr_strictly_finer_than_worlds`
