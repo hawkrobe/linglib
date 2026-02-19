@@ -915,12 +915,59 @@ theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
 
 /-- The log-partition function is convex in α.
 
-TODO: Proof sketch — second derivative is variance of s under softmax(s, α),
-which is ≥ 0. Requires Hölder's inequality or the second-derivative test
-for finite sums, which is not currently available in Mathlib in usable form. -/
+Proof: By Hölder's inequality. For `0 < a, b` with `a + b = 1`:
+  `∑ exp(x·sᵢ)^a · exp(y·sᵢ)^b ≤ (∑ exp(x·sᵢ))^a · (∑ exp(y·sᵢ))^b`
+Since `exp(x·sᵢ)^a · exp(y·sᵢ)^b = exp((ax+by)·sᵢ)`, taking logs gives
+  `logSumExp(s, ax+by) ≤ a·logSumExp(s, x) + b·logSumExp(s, y)`. -/
 theorem logSumExp_convex (s : ι → ℝ) :
     ConvexOn ℝ Set.univ (λ α => logSumExp s α) := by
-  sorry
+  constructor
+  · exact convex_univ
+  · intro x _ y _ a b ha hb hab
+    simp only [smul_eq_mul]
+    unfold logSumExp
+    -- Edge cases: a = 0 or b = 0
+    rcases eq_or_lt_of_le ha with rfl | ha_pos
+    · simp [show b = 1 from by linarith]
+    rcases eq_or_lt_of_le hb with rfl | hb_pos
+    · simp [show a = 1 from by linarith]
+    -- Main case: 0 < a, 0 < b, a + b = 1
+    -- Key step: exp((ax+by)·sᵢ) = exp(x·sᵢ)^a · exp(y·sᵢ)^b
+    have hexp_split : ∀ i, exp ((a * x + b * y) * s i) =
+        (exp (x * s i)) ^ a * (exp (y * s i)) ^ b := by
+      intro i
+      rw [← exp_mul, ← exp_mul]
+      rw [show (a * x + b * y) * s i = x * s i * a + y * s i * b from by ring]
+      rw [exp_add]
+    -- Apply Hölder with p = 1/a, q = 1/b
+    have hpq : a⁻¹.HolderConjugate b⁻¹ := HolderConjugate.inv_inv ha_pos hb_pos hab
+    have holder := Real.inner_le_Lp_mul_Lq_of_nonneg (s := Finset.univ (α := ι)) hpq
+      (f := fun i => (exp (x * s i)) ^ a)
+      (g := fun i => (exp (y * s i)) ^ b)
+      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) a)
+      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) b)
+    -- Simplify Hölder LHS: ∑ exp(x·sᵢ)^a · exp(y·sᵢ)^b = ∑ exp((ax+by)·sᵢ)
+    conv at holder => lhs; arg 2; ext i; rw [← hexp_split]
+    -- Simplify Hölder RHS powers: (exp(x·sᵢ)^a)^(1/a) = exp(x·sᵢ), etc.
+    have ha_ne : a ≠ 0 := ne_of_gt ha_pos
+    have hb_ne : b ≠ 0 := ne_of_gt hb_pos
+    have hsimp_f : ∀ i, ((exp (x * s i)) ^ a) ^ a⁻¹ = exp (x * s i) := by
+      intro i
+      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ ha_ne, rpow_one]
+    have hsimp_g : ∀ i, ((exp (y * s i)) ^ b) ^ b⁻¹ = exp (y * s i) := by
+      intro i
+      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ hb_ne, rpow_one]
+    simp_rw [hsimp_f, hsimp_g] at holder
+    -- The RHS of holder uses (1 / a⁻¹) and (1 / b⁻¹); simplify to a and b
+    simp only [one_div, inv_inv] at holder
+    -- Take log of both sides (both are positive)
+    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i) := partitionFn_pos s x
+    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i) := partitionFn_pos s y
+    have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j) := partitionFn_pos s (a * x + b * y)
+    have hlog_le := log_le_log hZ_mid holder
+    rw [log_mul (ne_of_gt (rpow_pos_of_pos hZ_x a)) (ne_of_gt (rpow_pos_of_pos hZ_y b)),
+        log_rpow hZ_x, log_rpow hZ_y] at hlog_le
+    linarith
 
 /-- Derivative of log-partition gives expected value.
 
@@ -939,7 +986,7 @@ theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     have h1 : HasDerivAt (fun a => a * s j) (1 * s j) α :=
       (hasDerivAt_id α).mul_const (s j)
     have h2 := (Real.hasDerivAt_exp (α * s j)).comp α h1
-    simp only [Function.comp, one_mul] at h2
+    simp only [one_mul] at h2
     exact h2
   -- Derivative of the sum
   have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j))
