@@ -148,4 +148,22 @@ Dynamic entailment: φ entails ψ if ψ is true after φ.
 def DProp.entails {E : Type*} (φ ψ : DProp E) : Prop :=
   ∀ i o, φ i o → ψ.true_at o
 
+-- General reduction lemmas for DProp constructors
+
+/-- The output of a negated DProp always equals the input register. -/
+theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : Register E}
+    (h : DProp.neg φ i o) : o = i := h.1.symm
+
+/-- `DProp.impl` is true at `i` iff every antecedent extension satisfies the consequent. -/
+theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : Register E) :
+    DProp.true_at (DProp.impl φ ψ) i ↔ ∀ k, φ i k → DProp.true_at ψ k := by
+  simp only [DProp.true_at, DProp.impl]
+  exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
+
+/-- A static DProp is true at `i` iff its static content holds. -/
+theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : Register E) :
+    DProp.true_at (DProp.ofStatic p) i ↔ p i := by
+  simp only [DProp.true_at, DProp.ofStatic]
+  exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
+
 end Semantics.Dynamic.CDRT
