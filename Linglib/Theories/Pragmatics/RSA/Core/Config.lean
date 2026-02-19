@@ -176,4 +176,45 @@ noncomputable def L1_latent (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) : ℝ
 
 end RSAConfig
 
+-- ============================================================================
+-- Smart Constructors
+-- ============================================================================
+
+/-- QUD-based RSA configuration.
+
+Separates base semantics from QUD projection. The user provides:
+- `baseMeaning : U → W → ℝ` — literal semantics (QUD-independent)
+- `qudProject : QUD → (W → ℝ) → W → ℝ` — how QUDs transform world-level functions
+
+The constructed RSAConfig sets `Latent := QUD` and
+`meaning q u w := qudProject q (baseMeaning u) w`.
+
+`qudProject` is user-supplied (not auto-derived from an equivalence relation)
+because `rsa_decide`'s `ite` handler only supports `@Eq ℝ x 0` conditions,
+not Bool conditions. User-supplied pattern matching unfolds cleanly. -/
+noncomputable def RSAConfig.qud
+    {U W : Type*} [Fintype U] [Fintype W]
+    {QUD : Type} [Fintype QUD]
+    (baseMeaning : U → W → ℝ)
+    (baseMeaning_nonneg : ∀ u w, 0 ≤ baseMeaning u w)
+    (qudProject : QUD → (W → ℝ) → W → ℝ)
+    (qudProject_nonneg : ∀ q f w, (∀ w', 0 ≤ f w') → 0 ≤ qudProject q f w)
+    (qudPrior : QUD → ℝ)
+    (qudPrior_nonneg : ∀ q, 0 ≤ qudPrior q)
+    (worldPrior : W → ℝ)
+    (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w)
+    (α : ℝ)
+    (α_pos : 0 < α)
+    (speakerUtility : SpeakerUtility U W) : RSAConfig U W where
+  Latent := QUD
+  meaning q u w := qudProject q (baseMeaning u) w
+  meaning_nonneg q u w := qudProject_nonneg q _ w (baseMeaning_nonneg u)
+  latentPrior := qudPrior
+  latentPrior_nonneg := qudPrior_nonneg
+  worldPrior := worldPrior
+  worldPrior_nonneg := worldPrior_nonneg
+  α := α
+  α_pos := α_pos
+  speakerUtility := speakerUtility
+
 end RSA
