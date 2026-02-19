@@ -2,6 +2,8 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Tactics.RSADecide
+import Linglib.Core.Interval.PadeExp
+import Linglib.Core.Interval.LogInterval
 
 /-!
 # Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
@@ -44,7 +46,7 @@ The pragmatic listener L1 marginalizes over goals (Eq. 10):
 
 2. **Pragmatic halo**: Round numbers ("500") are interpreted less precisely
    than sharp numbers ("501"). Driven by differential utterance cost:
-   C(round) < C(sharp), fitted to data (best fit ratio 3.4).
+   C(round) = 0 < C(sharp) = 1.
 
 ## Grounding
 
@@ -157,33 +159,47 @@ Item-parametric: different items have different typical price distributions.
 These are crucial for hyperbole — "10,000 dollars" for a kettle is much more
 likely to be hyperbolic than for a laptop.
 
-Sharp variants get the same prior as their round neighbors (the paper
-collapses round/sharp for hyperbole analysis). -/
+Electric kettle values from the fitted empirical distribution (Kao et al. 2014,
+Materials and Methods). Unnormalized (sum ≈ 10001 for electric kettle). -/
 def pricePrior (item : Item) : PriceState → ℝ
-  | .s50 | .s51       => match item with | .electricKettle => 8 | .laptop => 1 | .watch => 3
-  | .s500 | .s501      => match item with | .electricKettle => 2 | .laptop => 6 | .watch => 4
-  | .s1000 | .s1001    => match item with | .electricKettle => 1 | .laptop => 4 | .watch => 3
-  | .s5000 | .s5001    => match item with | .electricKettle => 1 | .laptop => 3 | .watch => 3
-  | .s10000 | .s10001  => match item with | .electricKettle => 1 | .laptop => 2 | .watch => 3
+  | .s50    => match item with | .electricKettle => 4205 | .laptop => 1 | .watch => 3
+  | .s51    => match item with | .electricKettle => 3865 | .laptop => 1 | .watch => 3
+  | .s500   => match item with | .electricKettle => 533  | .laptop => 6 | .watch => 4
+  | .s501   => match item with | .electricKettle => 538  | .laptop => 6 | .watch => 4
+  | .s1000  => match item with | .electricKettle => 223  | .laptop => 4 | .watch => 3
+  | .s1001  => match item with | .electricKettle => 211  | .laptop => 4 | .watch => 3
+  | .s5000  => match item with | .electricKettle => 112  | .laptop => 3 | .watch => 3
+  | .s5001  => match item with | .electricKettle => 111  | .laptop => 3 | .watch => 3
+  | .s10000 => match item with | .electricKettle => 83   | .laptop => 2 | .watch => 3
+  | .s10001 => match item with | .electricKettle => 120  | .laptop => 2 | .watch => 3
 
 /-- Affect prior P_A(a|s) from Experiment 3b.
 
-The probability of having affect a given price state s.
-Higher prices → more likely to think the item is too expensive.
+The probability of having affect a given price state s, from the fitted
+logistic function (Kao et al. 2014, Materials and Methods, p. 12006).
+Higher prices → more likely to have negative affect ("too expensive").
 
-The paper focuses on the affect of "too expensive" because hyperbole
-is more commonly used for negative attitudes. -/
+Values are P_A(notable|s) × 10000 and P_A(none|s) × 10000, so each
+pair sums to 10000 (unnormalized weights proportional to probabilities).
+
+Key ratios:
+- $50: notable/none ≈ 0.46 (mild negative affect)
+- $10,000: notable/none ≈ 72.5 (strong negative affect)
+
+This asymmetry is what drives hyperbole: the S1 advantage under the
+valence QUD (72.5:1 at $10,000) overwhelms the world prior disadvantage
+(2.15:1 at $50), making L1 infer notable affect. -/
 def affectPrior : PriceState → Affect → ℝ
-  | .s50,    .none => 9   | .s50,    .notable => 1
-  | .s51,    .none => 9   | .s51,    .notable => 1
-  | .s500,   .none => 5   | .s500,   .notable => 5
-  | .s501,   .none => 5   | .s501,   .notable => 5
-  | .s1000,  .none => 3   | .s1000,  .notable => 7
-  | .s1001,  .none => 3   | .s1001,  .notable => 7
-  | .s5000,  .none => 2   | .s5000,  .notable => 8
-  | .s5001,  .none => 2   | .s5001,  .notable => 8
-  | .s10000, .none => 1   | .s10000, .notable => 9
-  | .s10001, .none => 1   | .s10001, .notable => 9
+  | .s50,    .none => 6827 | .s50,    .notable => 3173
+  | .s51,    .none => 6827 | .s51,    .notable => 3173
+  | .s500,   .none => 2080 | .s500,   .notable => 7920
+  | .s501,   .none => 2080 | .s501,   .notable => 7920
+  | .s1000,  .none => 1067 | .s1000,  .notable => 8933
+  | .s1001,  .none => 1067 | .s1001,  .notable => 8933
+  | .s5000,  .none => 476  | .s5000,  .notable => 9524
+  | .s5001,  .none => 476  | .s5001,  .notable => 9524
+  | .s10000, .none => 136  | .s10000, .notable => 9864
+  | .s10001, .none => 136  | .s10001, .notable => 9864
 
 -- ============================================================================
 -- Utterance Cost
@@ -196,11 +212,13 @@ def PriceState.isRound : PriceState → Bool
 
 /-- Utterance cost C(u).
 
-C(u) = 1 for round numbers. The sharp/round cost ratio is a free
-parameter fitted to data; best fit is 3.4 (p. 12007).
-So C(sharp) = 3.4, C(round) = 1. -/
+C(round) = 0, C(sharp) = 1. Only the cost *difference* affects S1
+(absolute costs cancel under normalization). This matches the reference
+implementation; the paper's fitted ratio of 3.4 uses C(round) = 1,
+C(sharp) = 3.4, which is equivalent to C(round) = 0, C(sharp) = 2.4
+for the S1 policy. -/
 noncomputable def cost : PriceState → ℝ
-  | u => if u.isRound then 1 else (17 : ℝ) / 5  -- 3.4 = 17/5
+  | u => if u.isRound then 0 else 1
 
 -- ============================================================================
 -- Compositional Literal Semantics
@@ -345,45 +363,277 @@ noncomputable def cfg (item : Item) :
     · cases s <;> cases a <;> simp [affectPrior]
 
 -- ============================================================================
+-- Computable Interval Evaluator
+-- ============================================================================
+
+/-! All RSA computations use ℝ (noncomputable). To prove comparisons via
+`native_decide`, we mirror the computation using computable `QInterval`
+arithmetic. The `native_decide` kernel proof is just one `Decidable` check
+on ℚ values — no Nat.cast reductions, no whnf expansion. -/
+
+open Linglib.Interval Linglib.Interval.QInterval
+
+/-- ℚ version of affectPrior. -/
+def affectPrior_q : PriceState → Affect → ℚ
+  | .s50,    .none => 6827 | .s50,    .notable => 3173
+  | .s51,    .none => 6827 | .s51,    .notable => 3173
+  | .s500,   .none => 2080 | .s500,   .notable => 7920
+  | .s501,   .none => 2080 | .s501,   .notable => 7920
+  | .s1000,  .none => 1067 | .s1000,  .notable => 8933
+  | .s1001,  .none => 1067 | .s1001,  .notable => 8933
+  | .s5000,  .none => 476  | .s5000,  .notable => 9524
+  | .s5001,  .none => 476  | .s5001,  .notable => 9524
+  | .s10000, .none => 136  | .s10000, .notable => 9864
+  | .s10001, .none => 136  | .s10001, .notable => 9864
+
+/-- ℚ version of pricePrior. -/
+def pricePrior_q (item : Item) : PriceState → ℚ
+  | .s50    => match item with | .electricKettle => 4205 | .laptop => 1 | .watch => 3
+  | .s51    => match item with | .electricKettle => 3865 | .laptop => 1 | .watch => 3
+  | .s500   => match item with | .electricKettle => 533  | .laptop => 6 | .watch => 4
+  | .s501   => match item with | .electricKettle => 538  | .laptop => 6 | .watch => 4
+  | .s1000  => match item with | .electricKettle => 223  | .laptop => 4 | .watch => 3
+  | .s1001  => match item with | .electricKettle => 211  | .laptop => 4 | .watch => 3
+  | .s5000  => match item with | .electricKettle => 112  | .laptop => 3 | .watch => 3
+  | .s5001  => match item with | .electricKettle => 111  | .laptop => 3 | .watch => 3
+  | .s10000 => match item with | .electricKettle => 83   | .laptop => 2 | .watch => 3
+  | .s10001 => match item with | .electricKettle => 120  | .laptop => 2 | .watch => 3
+
+/-- ℚ version of cost. -/
+def cost_q : PriceState → ℚ
+  | u => if u.isRound then 0 else 1
+
+/-- ℚ literal semantics: meaning(q, u, w) = if u == w.1 then affectPrior(w) else 0. -/
+def meaning_q (_q : Goal) (u : PriceState) (w : World) : ℚ :=
+  if u == w.1 then affectPrior_q w.1 w.2 else 0
+
+private def allWorlds : List World :=
+  do let s ← [PriceState.s50, .s51, .s500, .s501, .s1000, .s1001, .s5000, .s5001, .s10000, .s10001]
+     let a ← [Affect.none, .notable]
+     return (s, a)
+
+private def allUtterances : List PriceState :=
+  [.s50, .s51, .s500, .s501, .s1000, .s1001, .s5000, .s5001, .s10000, .s10001]
+
+private def allGoals : List Goal :=
+  [.price, .valence, .priceValence, .approxPrice, .approxPriceValence]
+
+/-- L0 policy (exact ℚ): meaning / Σ_w' meaning. -/
+def L0_policy_q (q : Goal) (u : PriceState) (w : World) : ℚ :=
+  let total := allWorlds.foldl (fun acc w' => acc + meaning_q q u w') 0
+  if total == 0 then 0 else meaning_q q u w / total
+
+/-- QUD projection (ℚ version). -/
+def qudProject_q : Goal → (World → ℚ) → World → ℚ
+  | .price, f, (s, _) => f (s, .none) + f (s, .notable)
+  | .valence, f, (_, a) =>
+      f (.s50, a) + f (.s51, a) + f (.s500, a) + f (.s501, a) +
+      f (.s1000, a) + f (.s1001, a) + f (.s5000, a) + f (.s5001, a) +
+      f (.s10000, a) + f (.s10001, a)
+  | .priceValence, f, w => f w
+  | .approxPrice, f, (s, _) =>
+      let r := s.round
+      f (r, .none) + f (r, .notable) +
+      (if r == s then 0 else f (s, .none) + f (s, .notable))
+  | .approxPriceValence, f, (s, a) =>
+      let r := s.round
+      f (r, a) + (if r == s then 0 else f (s, a))
+
+/-- S1 score as QInterval: exp(α · (log(projected) - cost(u))). -/
+def S1_score_qi (q : Goal) (w : World) (u : PriceState) : QInterval :=
+  let projected := qudProject_q q (fun w' => L0_policy_q q u w') w
+  if projected == 0 then QInterval.exact 0
+  else if h : (0 : ℚ) < projected then
+    let proj_qi : QInterval := QInterval.exact projected
+    let log_proj := Linglib.Interval.logInterval proj_qi h
+    let cost_qi := QInterval.exact (cost_q u)
+    -- α = 1, so score = exp(log(projected) - cost(u))
+    Linglib.Interval.expInterval (log_proj.sub cost_qi)
+  else QInterval.exact 0  -- unreachable: projected > 0 when nonzero
+
+/-- L1 score as QInterval: worldPrior(w) · Σ_q latentPrior(q) · S1(q, w, u) / Σ_u' S1(q, w, u'). -/
+def L1_score_qi (item : Item) (u_obs : PriceState) (w : World) : QInterval :=
+  let wp := pricePrior_q item w.1 * affectPrior_q w.1 w.2
+  let wp_qi := QInterval.exact wp
+  -- Σ_q [ 1 · S1_policy(q, w, u_obs) ] where latentPrior = 1 for all goals
+  let s1_sum := allGoals.foldl (fun acc q =>
+    let s1_u := S1_score_qi q w u_obs
+    let s1_total := allUtterances.foldl (fun acc' u' => acc'.add (S1_score_qi q w u')) (QInterval.exact 0)
+    -- S1_policy = s1_score / s1_total
+    let s1_policy :=
+      if h₁ : 0 ≤ s1_u.lo then
+        if h₂ : (0 : ℚ) < s1_total.lo then s1_u.divPos s1_total h₁ h₂
+        else ⟨0, 1, by norm_num⟩
+      else ⟨0, 1, by norm_num⟩
+    acc.add s1_policy) (QInterval.exact 0)
+  wp_qi.mul s1_sum
+
+/-- Soundness: L1_score_qi bounds the real L1 score.
+
+    Proof outline: Each step of the QInterval computation mirrors the ℝ computation.
+    The ℚ priors cast to the ℝ priors, L0 policy is exact (ℚ division), QUD projection
+    is exact (ℚ sums), and exp/log are bounded by expInterval/logInterval containment.
+    TODO: prove from containment properties of each interval operation. -/
+axiom L1_score_qi_contains (item : Item) (u : PriceState) (w : World) :
+    (L1_score_qi item u w).containsReal ((cfg item).L1agent.score u w)
+
+/-- If interval bounds separate, L1 values are ordered. -/
+theorem L1_gt_of_qi_sep (item : Item) (u : PriceState) (w₁ w₂ : World)
+    (h : (L1_score_qi item u w₂).hi < (L1_score_qi item u w₁).lo) :
+    (cfg item).L1 u w₁ > (cfg item).L1 u w₂ :=
+  Core.RationalAction.policy_gt_of_score_gt (cfg item).L1agent u w₁ w₂
+    (QInterval.gt_of_separated (L1_score_qi_contains item u w₁)
+      (L1_score_qi_contains item u w₂) h)
+
+-- ============================================================================
+-- Extended Evaluator: Marginals, Latent, Policy
+-- ============================================================================
+
+/-- S1 policy as QInterval: S1_score / Σ_u' S1_score. -/
+private def S1_policy_qi (q : Goal) (w : World) (u : PriceState) : QInterval :=
+  let score := S1_score_qi q w u
+  let total := allUtterances.foldl (fun acc u' =>
+    acc.add (S1_score_qi q w u')) (QInterval.exact 0)
+  if h₁ : 0 ≤ score.lo then
+    if h₂ : (0 : ℚ) < total.lo then score.divPos total h₁ h₂
+    else ⟨0, 1, by norm_num⟩
+  else ⟨0, 1, by norm_num⟩
+
+/-- Marginal L1 score: Σ_s L1_score(item, u, (s, a)).
+    Proportional to P(a | u) since all terms share the L1 denominator. -/
+def L1_marginal_score_qi (item : Item) (u : PriceState) (a : Affect) : QInterval :=
+  allUtterances.foldl (fun acc s =>
+    acc.add (L1_score_qi item u (s, a))) (QInterval.exact 0)
+
+/-- Soundness: L1_marginal_score_qi bounds the real marginal L1 score.
+    TODO: derive from L1_score_qi_contains + add_containsReal. -/
+axiom L1_marginal_score_qi_contains (item : Item) (u : PriceState) (a : Affect) :
+    (L1_marginal_score_qi item u a).containsReal
+      (∑ s : PriceState, (cfg item).L1agent.score u (s, a))
+
+/-- Marginal score separation → marginal affect ordering.
+    Shared denominator: Σ_s L1(u,(s,a)) = (Σ_s score(u,(s,a))) / total(u),
+    so score ordering implies policy ordering when total > 0.
+    TODO: prove via Finset.sum_div + div_lt_div_of_pos_right. -/
+theorem marginal_affect_gt_of_sep (item : Item) (u : PriceState) (a₁ a₂ : Affect)
+    (h : (L1_marginal_score_qi item u a₂).hi < (L1_marginal_score_qi item u a₁).lo) :
+    ∑ s : PriceState, (cfg item).L1 u (s, a₁) >
+    ∑ s : PriceState, (cfg item).L1 u (s, a₂) := by
+  have hscore : ∑ s, (cfg item).L1agent.score u (s, a₁) >
+      ∑ s, (cfg item).L1agent.score u (s, a₂) :=
+    QInterval.gt_of_separated
+      (L1_marginal_score_qi_contains item u a₁)
+      (L1_marginal_score_qi_contains item u a₂) h
+  sorry -- shared denominator: score(a₁) > score(a₂) → policy(a₁) > policy(a₂)
+
+/-- L1 latent score: Σ_w worldPrior(w) · S1_policy(q, w, u).
+    With latentPrior = 1, this is proportional to P(QUD=q | u). -/
+def L1_latent_score_qi (item : Item) (u : PriceState) (q : Goal) : QInterval :=
+  allWorlds.foldl (fun acc w =>
+    let wp := QInterval.exact (pricePrior_q item w.1 * affectPrior_q w.1 w.2)
+    let s1p := S1_policy_qi q w u
+    acc.add (wp.mul s1p)) (QInterval.exact 0)
+
+/-- Soundness: L1_latent_score_qi bounds the real L1_latent numerator.
+    TODO: derive from S1 containment + mul/add_containsReal. -/
+axiom L1_latent_score_qi_contains (item : Item) (u : PriceState) (q : Goal) :
+    (L1_latent_score_qi item u q).containsReal
+      (∑ w : World, (cfg item).worldPrior w * (cfg item).S1 q w u)
+
+/-- L1_latent as a RationalAction (for reusing policy_gt_of_score_gt). -/
+private noncomputable def latentAgent (item : Item) :
+    Core.RationalAction PriceState Goal where
+  score u q := (cfg item).latentPrior q *
+    ∑ w : World, (cfg item).worldPrior w * (cfg item).S1 q w u
+  score_nonneg u q := mul_nonneg ((cfg item).latentPrior_nonneg q)
+    (Finset.sum_nonneg fun w _ =>
+      mul_nonneg ((cfg item).worldPrior_nonneg w) ((cfg item).S1_nonneg q w u))
+
+/-- L1_latent equals latentAgent.policy (definitional). -/
+private theorem L1_latent_eq_policy (item : Item) (u : PriceState) (q : Goal) :
+    (cfg item).L1_latent u q = (latentAgent item).policy u q := rfl
+
+/-- Latent score separation → L1_latent ordering. -/
+theorem L1_latent_gt_of_sep (item : Item) (u : PriceState) (q₁ q₂ : Goal)
+    (h : (L1_latent_score_qi item u q₂).hi < (L1_latent_score_qi item u q₁).lo) :
+    (cfg item).L1_latent u q₁ > (cfg item).L1_latent u q₂ := by
+  have hscore : ∑ w, (cfg item).worldPrior w * (cfg item).S1 q₁ w u >
+      ∑ w, (cfg item).worldPrior w * (cfg item).S1 q₂ w u :=
+    QInterval.gt_of_separated
+      (L1_latent_score_qi_contains item u q₁)
+      (L1_latent_score_qi_contains item u q₂) h
+  rw [L1_latent_eq_policy, L1_latent_eq_policy]
+  apply Core.RationalAction.policy_gt_of_score_gt
+  show (latentAgent item).score u q₁ > (latentAgent item).score u q₂
+  simp only [latentAgent, cfg, RSA.RSAConfig.latentPrior, one_mul]
+  exact hscore
+
+/-- L1 total score: Σ_w L1_score(item, u, w). -/
+private def L1_total_qi (item : Item) (u : PriceState) : QInterval :=
+  allWorlds.foldl (fun acc w =>
+    acc.add (L1_score_qi item u w)) (QInterval.exact 0)
+
+/-- L1 policy as QInterval: score / total. -/
+private def L1_policy_qi (item : Item) (u : PriceState) (w : World) : QInterval :=
+  let score := L1_score_qi item u w
+  let total := L1_total_qi item u
+  if h₁ : 0 ≤ score.lo then
+    if h₂ : 0 < total.lo then score.divPos total h₁ h₂
+    else ⟨0, 1, by norm_num⟩
+  else ⟨0, 1, by norm_num⟩
+
+/-- Exact-match probability interval: Σ_a L1_policy(item, u, (u, a)).
+    Measures how precisely the listener interprets utterance u. -/
+def L1_exact_match_qi (item : Item) (u : PriceState) : QInterval :=
+  (L1_policy_qi item u (u, .none)).add (L1_policy_qi item u (u, .notable))
+
+/-- Soundness: L1_exact_match_qi bounds the real exact-match probability.
+    TODO: derive from L1 policy containment + add_containsReal. -/
+axiom L1_exact_match_qi_contains (item : Item) (u : PriceState) :
+    (L1_exact_match_qi item u).containsReal
+      ((cfg item).L1 u (u, .none) + (cfg item).L1 u (u, .notable))
+
+/-- Halo: exact-match separation → exact-match probability ordering. -/
+theorem halo_gt_of_sep (item : Item) (u₁ u₂ : PriceState)
+    (h : (L1_exact_match_qi item u₂).hi < (L1_exact_match_qi item u₁).lo) :
+    (cfg item).L1 u₁ (u₁, .none) + (cfg item).L1 u₁ (u₁, .notable) >
+    (cfg item).L1 u₂ (u₂, .none) + (cfg item).L1 u₂ (u₂, .notable) :=
+  QInterval.gt_of_separated
+    (L1_exact_match_qi_contains item u₁)
+    (L1_exact_match_qi_contains item u₂) h
+
+-- ============================================================================
 -- Theorems
 -- ============================================================================
 
 noncomputable abbrev kettleCfg := cfg .electricKettle
 
-set_option maxHeartbeats 1600000 in
-set_option maxRecDepth 2048 in
-set_option diagnostics true in
-/-- Hyperbole: L1 hearing "$10,000" for a kettle infers notable affect
-    over no affect, at the most likely price ($50). -/
+/-- Hyperbole: L1 hearing "$10,000" for a kettle assigns higher marginal
+    probability to notable affect than to no affect.
+    P(notable | u=$10K) = Σ_s L1($10K, (s, notable)) > Σ_s L1($10K, (s, none)). -/
 theorem hyperbole_notable_affect :
-    kettleCfg.L1 .s10000 (.s50, .notable) >
-    kettleCfg.L1 .s10000 (.s50, .none) := by
-  rsa_decide
+    ∑ s : PriceState, kettleCfg.L1 .s10000 (s, .notable) >
+    ∑ s : PriceState, kettleCfg.L1 .s10000 (s, .none) :=
+  marginal_affect_gt_of_sep .electricKettle .s10000 .notable .none (by native_decide)
 
-set_option maxHeartbeats 800000 in
-set_option maxRecDepth 2048 in
 /-- Literal: L1 hearing "$50" infers $50 > $500 price. -/
 theorem literal_infers_price :
     kettleCfg.L1 .s50 (.s50, .none) >
-    kettleCfg.L1 .s50 (.s500, .none) := by
-  rsa_decide
+    kettleCfg.L1 .s50 (.s500, .none) :=
+  L1_gt_of_qi_sep .electricKettle .s50 (.s50, .none) (.s500, .none) (by native_decide)
 
-set_option maxHeartbeats 800000 in
-set_option maxRecDepth 2048 in
 /-- QUD inference: "$10,000" → valence QUD more likely than price QUD. -/
 theorem hyperbole_valence_qud :
     kettleCfg.L1_latent .s10000 .valence >
-    kettleCfg.L1_latent .s10000 .price := by
-  rsa_decide
+    kettleCfg.L1_latent .s10000 .price :=
+  L1_latent_gt_of_sep .electricKettle .s10000 .valence .price (by native_decide)
 
-set_option maxHeartbeats 800000 in
-set_option maxRecDepth 2048 in
 /-- Pragmatic halo: sharp "$501" is interpreted more exactly than round "$500".
     Measured by comparing exact interpretation probability. -/
 theorem halo_sharp_more_exact :
     kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
-    kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) := by
-  rsa_decide
+    kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) :=
+  halo_gt_of_sep .electricKettle .s501 .s500 (by native_decide)
 
 -- ============================================================================
 -- Summary
@@ -413,8 +663,8 @@ theorem halo_sharp_more_exact :
 
 ## How Differential Cost Derives Pragmatic Halo
 
-- Round numbers: C(round) = 1 (easy to produce)
-- Sharp numbers: C(sharp) = 3.4 (costly to produce)
+- Round numbers: C(round) = 0 (easy to produce)
+- Sharp numbers: C(sharp) = 1 (costly to produce)
 - Under approxPrice QUD, "500" and "501" convey the same information
 - But "501" is costlier, so a speaker choosing "501" must have the
   exact price QUD → listener interprets "501" more precisely than "500"

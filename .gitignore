@@ -28,3 +28,7 @@ CLAUDE.md
 
 # Scratch/test files
 /scratch/
+
+# Hugo build artifacts
+blog/.hugo_build.lock
+blog/public/
