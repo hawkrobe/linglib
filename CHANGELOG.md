@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.223.6] - 2026-02-18
+
+### Changed
+- Close `before_ambidirectional` sorry → `before_preEvent_ambidirectional` in `TemporalConnectives.lean`: *before* is truth-conditionally insensitive to event polarity (Rett 2026, §5.2)
+- Define `preEventDenotation`: pre-event complement of [s, f] as stative denotation of [bot, s], capturing Rett's stipulation that only pre-event runtimes are relevant
+- Add `complet_stative`: COMPLET on stative denotations extracts the finish point (mirrors `complet_bridges_cessation`)
+- Add `timeTrace_stative_closedInterval`, `maxOnScale_lt_stative`, `timeTrace_complet_preEvent`, `maxOnScale_lt_complet_preEvent`: building-block lemmas connecting stative/COMPLET traces to MAX₍<₎ singletons
+- Proof chain: both `stativeDenotation i_B` and `COMPLET(preEvent)` share MAX₍<₎ = {i_B.start}, so `before_determined_by_max` gives the ↔
+- Remove false `before_ambidirectional` (used `isAmbidirectional` with full Bᶜ, which fails for dense/discrete time)
+
 ## [0.223.5] - 2026-02-18
 
 ### Changed

@@ -345,29 +345,87 @@ theorem rett_before_closedTrace_eq (A B : SentDenotation Time) (s f : Time) (hsf
   · rintro ⟨t, ht, m, rfl, htm⟩; exact ⟨t, ht, htm⟩
   · rintro ⟨t, ht, htm⟩; exact ⟨t, ht, s, rfl, htm⟩
 
-/-- *Before* is ambidirectional w.r.t. the **pre-event complement** (Rett 2026, §5.2).
+/-- COMPLET on a stative denotation extracts the finish point, just as it
+    does for accomplishment denotations (`complet_bridges_cessation`).
 
-    Rett's argument: for B = [s, f], the pre-event complement is (−∞, s].
-    Both B and the pre-event complement share s as their MAX₍<₎ element,
-    so `Rett.before A B ↔ Rett.before A (preEvent B)`.
+    For `stativeDenotation i`, the maximal member is i itself (reflexivity
+    of `subinterval`), so the LUB of finish times is `i.finish`. -/
+theorem complet_stative (i : Interval Time) :
+    COMPLET (stativeDenotation i) = { j | j = Interval.point i.finish } := by
+  ext k
+  simp only [COMPLET, stativeDenotation, Set.mem_setOf_eq, subinterval]
+  constructor
+  · rintro ⟨telos, h_ub, h_lub, rfl⟩
+    have h1 : i.finish ≤ telos := h_ub i ⟨le_refl _, le_refl _⟩
+    have h2 : telos ≤ i.finish := h_lub i.finish (fun j ⟨_, hjf⟩ => hjf)
+    exact congrArg Interval.point (le_antisymm h2 h1)
+  · rintro rfl
+    exact ⟨i.finish, fun j ⟨_, hjf⟩ => hjf, fun t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
-    **Status**: sorry. The formalization requires:
-    1. A definition of `preEventComplement` capturing Rett's stipulation
-       that only pre-event runtimes are relevant
-    2. A proof that `maxOnScale (· < ·) (preEvent [s,f]) = {s}`, which
-       requires the pre-event complement to be closed at s (i.e., (−∞, s]
-       rather than the open (−∞, s))
-    3. Temporal model constraints ensuring the pre-event complement is
-       non-empty and closed at the boundary
+/-- The pre-event complement of an event interval [s, f] (Rett 2026, §5.1):
+    the stative denotation of times from `bot` to `s`, modeling the pre-event
+    runtime of the negated event.
 
-    The original `isAmbidirectional` formulation (using full Bᶜ) is false:
-    Bᶜ = (−∞, s) ∪ (f, +∞) has MAX₍<₎ = ∅ for dense Time (no minimum
-    in an open set), and MAX₍<₎ = {min(Bᶜ)} ≠ {s} for discrete Time. -/
-theorem before_ambidirectional (A : SentDenotation Time) (s f : Time) (hsf : s ≤ f) :
-    isAmbidirectional
-      (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· < ·) X, t < m)
-      { t | s ≤ t ∧ t ≤ f } := by
-  sorry
+    Rett stipulates that only pre-event runtimes (not post-event) are relevant
+    for temporal relations with embedded negation. The parameter `bot` is the
+    temporal lower bound; the key property is that the interval's **finish**
+    is `i.start`, making `i.start` the shared boundary point. -/
+def preEventDenotation (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+    SentDenotation Time :=
+  stativeDenotation ⟨bot, i.start, hbot⟩
+
+/-- The time trace of a stative denotation is the closed interval [start, finish].
+    Unfolds `contains` from `timeTrace_stativeDenotation`. -/
+theorem timeTrace_stative_closedInterval (i : Interval Time) :
+    timeTrace (stativeDenotation i) = { t | i.start ≤ t ∧ t ≤ i.finish } := by
+  rw [timeTrace_stativeDenotation]; ext; simp [contains]
+
+/-- MAX₍<₎ of a stative denotation's time trace is {start}. -/
+theorem maxOnScale_lt_stative (i : Interval Time) :
+    maxOnScale (· < ·) (timeTrace (stativeDenotation i)) = {i.start} := by
+  rw [timeTrace_stative_closedInterval, maxOnScale_lt_closedInterval _ _ i.valid]
+
+/-- The time trace of `COMPLET(preEventDenotation bot i)` is the degenerate
+    interval `{i.start}`. COMPLET extracts the finish of the pre-event interval
+    (which is `i.start`), yielding a point denotation at the boundary. -/
+theorem timeTrace_complet_preEvent (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+    timeTrace (COMPLET (preEventDenotation bot i hbot)) =
+    { t | i.start ≤ t ∧ t ≤ i.start } := by
+  unfold preEventDenotation
+  rw [complet_stative]
+  show timeTrace (accomplishmentDenotation (Interval.point i.start)) = _
+  rw [timeTrace_accomplishmentDenotation]
+  ext; simp [contains, point]
+
+/-- MAX₍<₎ of the COMPLET of a pre-event denotation is {start}. -/
+theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
+    maxOnScale (· < ·) (timeTrace (COMPLET (preEventDenotation bot i hbot))) =
+    {i.start} := by
+  rw [timeTrace_complet_preEvent, maxOnScale_lt_closedInterval _ _ (le_refl _)]
+
+/-- *Before* is truth-conditionally insensitive to event polarity (Rett 2026, §5.2).
+
+    For a stative event B with interval `i_B = [s, f]` and any pre-event
+    complement ending at s:
+
+    - `Rett.before A (stativeDenotation i_B)` reduces to `∃ t ∈ A, t < s`
+      because MAX₍<₎([s, f]) = {s} (the minimum of the event's time trace).
+
+    - `Rett.before A (COMPLET(preEvent))` also reduces to `∃ t ∈ A, t < s`
+      because COMPLET extracts the finish of the pre-event interval (= s),
+      yielding a point denotation at s, whose MAX₍<₎ is trivially {s}.
+
+    Both select the same boundary point s through different mechanisms:
+    the original uses the default *before*-start reading (MAX₍<₎),
+    while the negated version requires COMPLET coercion to extract the
+    end of the pre-event interval. This is why expletive negation in
+    *before*-clauses is truth-conditionally vacuous. -/
+theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : Interval Time)
+    (bot : Time) (hbot : bot ≤ i_B.start) :
+    Rett.before A (stativeDenotation i_B) ↔
+    Rett.before A (COMPLET (preEventDenotation bot i_B hbot)) := by
+  apply before_determined_by_max
+  rw [maxOnScale_lt_stative, maxOnScale_lt_complet_preEvent]
 
 /-- *After* is NOT ambidirectional (Rett 2026, §3.3): negating B in
     "A after B" changes truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B).
