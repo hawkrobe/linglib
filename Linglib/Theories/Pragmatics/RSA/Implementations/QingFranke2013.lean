@@ -37,9 +37,9 @@ additional degree of freedom for fitting listener data.
 ## API Stress Test
 
 This file tests that `RSAConfig` supports:
-1. Different `SpeakerUtility` instances (belief vs action goals)
+1. Different `s1Score` functions (belief vs action goals)
 2. Different `meaning` functions (uniform vs salience-weighted L0)
-3. Utterance cost incorporated into `SpeakerUtility`
+3. Utterance cost incorporated into `s1Score`
 4. Different `worldPrior` for the listener
 5. Composable extensions (action-oriented listener via softmax over L1)
 
@@ -129,18 +129,28 @@ def adjCost (c : ℝ) : Utterance → ℝ
 
 Uses rpow so that false utterances (L0 = 0) correctly get score 0.
 Equivalent to exp(α · (log L0(w|u) - cost(u))) when L0 > 0. (Q&F Eq. 10) -/
-noncomputable def beliefGoal (cost : Utterance → ℝ) : SpeakerUtility Utterance Object where
-  s1Score l0 α w u := rpow (l0 u w) α * exp (-α * cost u)
-  s1Score_nonneg _ α w u hl _ :=
+noncomputable def beliefGoalScore (cost : Utterance → ℝ) :
+    (Utterance → Object → ℝ) → ℝ → Unit → Object → Utterance → ℝ :=
+  fun l0 α _ w u => rpow (l0 u w) α * exp (-α * cost u)
+
+theorem beliefGoalScore_nonneg (cost : Utterance → ℝ) :
+    ∀ (l0 : Utterance → Object → ℝ) (α : ℝ) (l : Unit) (w : Object) (u : Utterance),
+    (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ beliefGoalScore cost l0 α l w u :=
+  fun _ α _ w u hl _ =>
     mul_nonneg (rpow_nonneg (hl u w) α) (le_of_lt (exp_pos _))
 
 /-- Action-oriented S1 score with cost: exp(α · (L0(w|u) - cost(u))).
 
 The speaker maximizes the listener's raw probability of choosing the correct
 referent, rather than log-probability. (Q&F Eq. 9) -/
-noncomputable def actionGoal (cost : Utterance → ℝ) : SpeakerUtility Utterance Object where
-  s1Score l0 α w u := exp (α * (l0 u w - cost u))
-  s1Score_nonneg _ _ _ _ _ _ := le_of_lt (exp_pos _)
+noncomputable def actionGoalScore (cost : Utterance → ℝ) :
+    (Utterance → Object → ℝ) → ℝ → Unit → Object → Utterance → ℝ :=
+  fun l0 α _ w u => exp (α * (l0 u w - cost u))
+
+theorem actionGoalScore_nonneg (cost : Utterance → ℝ) :
+    ∀ (l0 : Utterance → Object → ℝ) (α : ℝ) (l : Unit) (w : Object) (u : Utterance),
+    (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ actionGoalScore cost l0 α l w u :=
+  fun _ _ _ _ _ _ _ => le_of_lt (exp_pos _)
 
 -- ============================================================================
 -- Parametric RSAConfig Constructor
@@ -149,7 +159,7 @@ noncomputable def actionGoal (cost : Utterance → ℝ) : SpeakerUtility Utteran
 /-- Construct a Q&F RSAConfig from:
 
 - `speakerPrior`: what the speaker believes about L0's prior (1 = uniform, salience = S)
-- `goal`: what the speaker optimizes (beliefGoal or actionGoal)
+- `s1`: S1 scoring rule (beliefGoalScore or actionGoalScore)
 - `listenerPrior`: what L1 uses as world prior (1 = uniform, salience = S)
 
 The speaker's belief dimension and the listener's prior are independent—
@@ -157,7 +167,9 @@ the speaker may assume a uniform L0 while the listener uses salience, or
 vice versa. This decoupling is a key feature of the RSAConfig API. -/
 noncomputable def mkConfig
     (speakerPrior : Object → ℝ) (sp_nonneg : ∀ w, 0 ≤ speakerPrior w)
-    (goal : SpeakerUtility Utterance Object)
+    (s1 : (Utterance → Object → ℝ) → ℝ → Unit → Object → Utterance → ℝ)
+    (s1_nn : ∀ (l0 : Utterance → Object → ℝ) (α : ℝ) (l : Unit) (w : Object) (u : Utterance),
+      (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ s1 l0 α l w u)
     (listenerPrior : Object → ℝ) (lp_nonneg : ∀ w, 0 ≤ listenerPrior w)
     (αS : ℝ) (hα : 0 < αS) : RSAConfig Utterance Object where
   meaning _ u w := if u.appliesTo w then speakerPrior w else 0
@@ -165,11 +177,12 @@ noncomputable def mkConfig
     split
     · exact sp_nonneg w
     · exact le_refl 0
+  s1Score := s1
+  s1Score_nonneg := s1_nn
   worldPrior := listenerPrior
   worldPrior_nonneg := lp_nonneg
   α := αS
   α_pos := hα
-  speakerUtility := goal
   latentPrior_nonneg _ := by positivity
 
 -- ============================================================================
@@ -188,7 +201,8 @@ This is standard RSA (Frank & Goodman 2012) with utterance costs.
 S1 score = L0(w|u)^α · exp(-α · cost(u)), where L0 is uniform. -/
 noncomputable def σ_bU (αS : ℝ) (hα : 0 < αS) (cost : Utterance → ℝ) :
     RSAConfig Utterance Object :=
-  mkConfig uniformPrior uniformPrior_nonneg (beliefGoal cost)
+  mkConfig uniformPrior uniformPrior_nonneg
+    (beliefGoalScore cost) (beliefGoalScore_nonneg cost)
     uniformPrior uniformPrior_nonneg αS hα
 
 /-- σ_{aU}: Action-oriented speaker, uniform L0.
@@ -196,7 +210,8 @@ noncomputable def σ_bU (αS : ℝ) (hα : 0 < αS) (cost : Utterance → ℝ) :
 S1 score = exp(α · (L0(w|u) - cost(u))), where L0 is uniform. -/
 noncomputable def σ_aU (αS : ℝ) (hα : 0 < αS) (cost : Utterance → ℝ) :
     RSAConfig Utterance Object :=
-  mkConfig uniformPrior uniformPrior_nonneg (actionGoal cost)
+  mkConfig uniformPrior uniformPrior_nonneg
+    (actionGoalScore cost) (actionGoalScore_nonneg cost)
     uniformPrior uniformPrior_nonneg αS hα
 
 /-- σ_{bS}: Belief-oriented speaker, salience-weighted L0.
@@ -206,7 +221,8 @@ L0(t|m) ∝ S(t) · ⟦m⟧(t). Speaker score = L0(w|u)^α · exp(-α · cost). 
 noncomputable def σ_bS (αS : ℝ) (hα : 0 < αS) (cost : Utterance → ℝ)
     (sal : Object → ℝ) (sal_nn : ∀ w, 0 ≤ sal w) :
     RSAConfig Utterance Object :=
-  mkConfig sal sal_nn (beliefGoal cost)
+  mkConfig sal sal_nn
+    (beliefGoalScore cost) (beliefGoalScore_nonneg cost)
     uniformPrior uniformPrior_nonneg αS hα
 
 /-- σ_{aS}: Action-oriented speaker, salience-weighted L0.
@@ -215,7 +231,8 @@ Same salience-weighted L0 as σ_{bS}, but speaker score = exp(α · (L0(w|u) - c
 noncomputable def σ_aS (αS : ℝ) (hα : 0 < αS) (cost : Utterance → ℝ)
     (sal : Object → ℝ) (sal_nn : ∀ w, 0 ≤ sal w) :
     RSAConfig Utterance Object :=
-  mkConfig sal sal_nn (actionGoal cost)
+  mkConfig sal sal_nn
+    (actionGoalScore cost) (actionGoalScore_nonneg cost)
     uniformPrior uniformPrior_nonneg αS hα
 
 -- ============================================================================
@@ -336,7 +353,8 @@ bothShared (green circle), even though pragmatics alone would favor
 bothShared. This is because uniqueColor is much more salient (139 vs 30
 in the salience condition), overriding the pragmatic signal. -/
 theorem listener_circle_with_salience (αS : ℝ) (hα : 0 < αS) :
-    let cfg := mkConfig uniformPrior uniformPrior_nonneg (beliefGoal (adjCost 0))
+    let cfg := mkConfig uniformPrior uniformPrior_nonneg
+                 (beliefGoalScore (adjCost 0)) (beliefGoalScore_nonneg (adjCost 0))
                  empiricalSalience empiricalSalience_nonneg αS hα
     cfg.L1 .sharedShapeWord .uniqueColor >
     cfg.L1 .sharedShapeWord .bothShared := by
@@ -369,15 +387,15 @@ theorem L1_action_amplifies (cfg : RSAConfig Utterance Object)
 /-
 ## Summary: What this file tests about the RSAConfig API
 
-1. **Pluggable SpeakerUtility**: `beliefGoal` and `actionGoal` are different
-   `SpeakerUtility` instances, plugged into the same RSAConfig structure.
+1. **Pluggable s1Score**: `beliefGoalScore` and `actionGoalScore` are different
+   scoring functions, plugged into the same RSAConfig structure via `s1Score`.
    The API is agnostic to what the speaker optimizes.
 
 2. **Meaning encodes speaker belief**: The speaker's assumption about L0
    (uniform vs salience-weighted) is captured by the `meaning` function.
    No separate "speaker belief" field is needed.
 
-3. **Cost inside SpeakerUtility**: Utterance cost is part of the speaker's
+3. **Cost inside s1Score**: Utterance cost is part of the speaker's
    score function, not a separate RSAConfig field. This is clean because
    cost IS part of what the speaker optimizes.
 

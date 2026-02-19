@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.224.14] - 2026-02-19
+
+### Changed
+- Redesign RSAConfig API: replace `speakerUtility : SpeakerUtility U W` with inline `s1Score` field taking a `Latent` parameter, so latent variables (QUDs, lexicons) can enter at S1 rather than being forced into `meaning`
+- Delete `SpeakerUtility.lean` and its import from `Linglib.lean`
+- Drop `.qud` smart constructor — each paper constructs `RSAConfig` directly
+- Migrate `FrankGoodman2012`, `BellerGerstenberg2025`, `QingFranke2013` to inline `s1Score`
+- Rewrite `KaoEtAl2014_Hyperbole` from scratch matching the paper: 10 price states (round/sharp pairs), binary affect, 5 QUD goals, `s1Score` as `exp(α·(ln L0_proj - C(u)))`, differential utterance cost (C(sharp)/C(round) = 3.4), 4 sorry'd theorems (hyperbole, literal inference, QUD inference, pragmatic halo)
+
 ## [0.224.13] - 2026-02-19
 
 ### Changed

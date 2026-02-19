@@ -1,4 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.Core.SpeakerUtility
 import Linglib.Core.RationalAction
 
 /-!
@@ -7,7 +6,7 @@ import Linglib.Core.RationalAction
 A streamlined RSA configuration grounded in rational action theory. Each RSA
 model decomposes into two orthogonal dimensions:
 
-1. **What the agent optimizes** — the scoring rule (`SpeakerUtility`)
+1. **What the agent optimizes** — the scoring rule (`s1Score`)
 2. **What the observer marginalizes over** — the latent structure (`Latent`)
 
 ## Architecture
@@ -15,17 +14,30 @@ model decomposes into two orthogonal dimensions:
 All three RSA levels are `RationalAction` instances:
 
     L0agent(l) : RationalAction U W    score(u, w) = meaning(l, u, w)
-    S1agent(l) : RationalAction W U    score(w, u) = s1Score(L0.policy, α, w, u)
+    S1agent(l) : RationalAction W U    score(w, u) = s1Score(L0.policy, α, l, w, u)
     L1agent    : RationalAction U W    score(u, w) = prior(w) · Σ_l prior(l) · S1(u|w,l)
 
 L0 scores are just the meaning function — any prior the paper wants in L0
 is baked into `meaning`. The empirical `worldPrior` (object salience, base
 rates) enters only at L1, keeping L0 fixed under iterated updates.
 
-S1 scores are computed by the pluggable `SpeakerUtility`:
-- Belief-based (F&G 2012): score = L0(w|u)^α (via rpow; rpow(0,α)=0)
-- Action-based (Q&F 2013): score = exp(α · L0(w|u))
-- With cost: score = pureScore · exp(-α · cost(u))
+Latent variables (QUDs, lexicons, thresholds) can enter at two levels:
+- **L0 (meaning)**: e.g., lexical uncertainty (Bergen et al. 2016)
+- **S1 (s1Score)**: e.g., QUD projection (Kao et al. 2014)
+
+The `s1Score` field takes the latent variable `l` so each paper can specify
+exactly where its latent variables enter:
+
+| Model | meaning uses latent? | s1Score uses latent? |
+|-------|---------------------|---------------------|
+| Frank & Goodman 2012 | no (Unit) | no (Unit) |
+| Kao et al. 2014 (QUD) | no (ignores q) | yes (cell aggregation) |
+| Bergen et al. 2016 (lex) | yes (lexicon) | no (standard rpow) |
+
+S1 score examples:
+- Belief-based (F&G 2012): score = rpow(L0(w|u), α). rpow(0,α)=0.
+- Action-based (Q&F 2013): score = exp(α · (L0(w|u) - cost(u)))
+- QUD-based (Kao et al. 2014): score = exp(α · (ln L0(g(s,a)|u) - C(u)))
 
 ## References
 
@@ -33,6 +45,7 @@ S1 scores are computed by the pluggable `SpeakerUtility`:
 - Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
 - Baker, Saxe & Tenenbaum (2009). Action Understanding as Inverse Planning.
 - Qing & Franke (2013). Variations on a Bayesian Theme.
+- Kao et al. (2014). Nonliteral Understanding of Number Words.
 -/
 
 namespace RSA
@@ -46,13 +59,17 @@ open BigOperators Core
 /-- Unified RSA configuration.
 
 Two orthogonal choices determine the model:
-1. `speakerUtility` — what S1 computes (pluggable `SpeakerUtility`)
+1. `s1Score` — what S1 computes (inline scoring rule)
 2. `Latent` — what L1 marginalizes over (generic type, default `Unit`)
 
-S1 is a RationalAction whose score is computed by `speakerUtility.s1Score`.
+S1 is a RationalAction whose score is computed by `s1Score`.
 The score function absorbs α, so S1 is not restricted to softmax form —
 e.g., belief-based utility uses `rpow(L0, α)` which correctly zeros out
-false utterances (rpow(0, α) = 0 for α > 0). -/
+false utterances (rpow(0, α) = 0 for α > 0).
+
+The `s1Score` field takes a `Latent` parameter so that latent variables
+can enter at the S1 level (e.g., QUD projection in Kao et al. 2014)
+rather than being forced into `meaning`. -/
 structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   /-- Latent variable type (default Unit for basic scenarios). -/
   Latent : Type := Unit
@@ -64,6 +81,25 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   meaning : Latent → U → W → ℝ
   /-- Meaning values are non-negative. -/
   meaning_nonneg : ∀ l u w, 0 ≤ meaning l u w
+  /-- S1 scoring rule: computes the pragmatic speaker's score.
+
+      Takes L0's normalized posterior, the rationality parameter α,
+      a latent variable value, the world, and the utterance.
+      Returns a non-negative score. S1's policy is Luce choice:
+      S1(u|w,l) = s1Score(L0, α, l, w, u) / Σ_u' s1Score(L0, α, l, w, u').
+
+      Examples:
+      - Belief-based: `fun l0 α _ w u => rpow (l0 u w) α`
+      - Action-based: `fun l0 α _ w u => exp (α * (l0 u w - cost u))`
+      - QUD-based: `fun l0 α q w u => exp (α * (Real.log (qudProject q (l0 u) w) - cost u))` -/
+  s1Score : (U → W → ℝ) → ℝ → Latent → W → U → ℝ
+  /-- S1 scores are non-negative when L0 is non-negative and α > 0. -/
+  s1Score_nonneg : ∀ (l0 : U → W → ℝ) (α : ℝ) (l : Latent) (w : W) (u : U),
+    (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ s1Score l0 α l w u
+  /-- Rationality parameter α > 0. -/
+  α : ℝ
+  /-- Rationality is positive. -/
+  α_pos : 0 < α
   /-- Prior over latent variables (unnormalized). -/
   latentPrior : Latent → ℝ := fun _ => 1
   /-- Latent prior is non-negative. -/
@@ -74,12 +110,6 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   worldPrior : W → ℝ := fun _ => 1
   /-- World prior is non-negative. -/
   worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w
-  /-- Rationality parameter α > 0. -/
-  α : ℝ
-  /-- Rationality is positive. -/
-  α_pos : 0 < α
-  /-- Speaker utility function: what S1 computes. Each paper provides its own. -/
-  speakerUtility : SpeakerUtility U W
 
 attribute [instance] RSAConfig.latentFintype
 
@@ -114,20 +144,20 @@ noncomputable def L0 (cfg : RSAConfig U W) (l : cfg.Latent) (u : U) (w : W) : �
 
 /-- S1 as a RationalAction.
 
-S1's score is computed by `speakerUtility.s1Score`, which takes L0's
-normalized posterior and the rationality parameter α. The score function
-is pluggable — different papers provide different scoring rules:
+S1's score is computed by `s1Score`, which takes L0's normalized posterior,
+the rationality parameter α, and the latent variable value. The score
+function is pluggable — different papers provide different scoring rules:
 
 - Belief-based: score = rpow(L0(w|u), α). Correct: rpow(0, α) = 0.
 - Action-based: score = exp(α · L0(w|u)).
-- With cost: score multiplied by exp(-α · cost(u)).
+- QUD-based: score = rpow(qudProject(q, L0(u), w), α).
 
-All softmax properties (S1 ∝ exp(α · U)) are special cases when
-the score function happens to be exponential. -/
+The latent parameter `l` enters `s1Score` so that latent variables like
+QUDs can affect S1 scoring without being forced into L0's meaning. -/
 noncomputable def S1agent (cfg : RSAConfig U W) (l : cfg.Latent) :
     RationalAction W U where
-  score w u := cfg.speakerUtility.s1Score (cfg.L0agent l).policy cfg.α w u
-  score_nonneg _ _ := cfg.speakerUtility.s1Score_nonneg _ _ _ _
+  score w u := cfg.s1Score (cfg.L0agent l).policy cfg.α l w u
+  score_nonneg _ _ := cfg.s1Score_nonneg _ _ _ _ _
     (fun u' w' => (cfg.L0agent l).policy_nonneg u' w') cfg.α_pos
 
 /-- S1 policy: P(u|w, l) = s1Score(L0, α, w, u) / Σ_u' s1Score(L0, α, w, u'). -/
@@ -175,46 +205,5 @@ noncomputable def L1_latent (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) : ℝ
   if total = 0 then 0 else score / total
 
 end RSAConfig
-
--- ============================================================================
--- Smart Constructors
--- ============================================================================
-
-/-- QUD-based RSA configuration.
-
-Separates base semantics from QUD projection. The user provides:
-- `baseMeaning : U → W → ℝ` — literal semantics (QUD-independent)
-- `qudProject : QUD → (W → ℝ) → W → ℝ` — how QUDs transform world-level functions
-
-The constructed RSAConfig sets `Latent := QUD` and
-`meaning q u w := qudProject q (baseMeaning u) w`.
-
-`qudProject` is user-supplied (not auto-derived from an equivalence relation)
-because `rsa_decide`'s `ite` handler only supports `@Eq ℝ x 0` conditions,
-not Bool conditions. User-supplied pattern matching unfolds cleanly. -/
-noncomputable def RSAConfig.qud
-    {U W : Type*} [Fintype U] [Fintype W]
-    {QUD : Type} [Fintype QUD]
-    (baseMeaning : U → W → ℝ)
-    (baseMeaning_nonneg : ∀ u w, 0 ≤ baseMeaning u w)
-    (qudProject : QUD → (W → ℝ) → W → ℝ)
-    (qudProject_nonneg : ∀ q f w, (∀ w', 0 ≤ f w') → 0 ≤ qudProject q f w)
-    (qudPrior : QUD → ℝ)
-    (qudPrior_nonneg : ∀ q, 0 ≤ qudPrior q)
-    (worldPrior : W → ℝ)
-    (worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w)
-    (α : ℝ)
-    (α_pos : 0 < α)
-    (speakerUtility : SpeakerUtility U W) : RSAConfig U W where
-  Latent := QUD
-  meaning q u w := qudProject q (baseMeaning u) w
-  meaning_nonneg q u w := qudProject_nonneg q _ w (baseMeaning_nonneg u)
-  latentPrior := qudPrior
-  latentPrior_nonneg := qudPrior_nonneg
-  worldPrior := worldPrior
-  worldPrior_nonneg := worldPrior_nonneg
-  α := α
-  α_pos := α_pos
-  speakerUtility := speakerUtility
 
 end RSA
