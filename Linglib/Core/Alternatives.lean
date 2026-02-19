@@ -1,4 +1,5 @@
 import Linglib.Core.UD
+import Linglib.Tactics.OntSort
 
 /-
 # Core.Alternatives
@@ -34,7 +35,7 @@ In focus semantics, every expression has:
 
 The alternatives are determined by what's focused/contrasted.
 -/
-structure Alternatives (α : Type) where
+@[ont_sort] structure Alternatives (α : Type) where
   /-- The actual/chosen value -/
   actual : α
   /-- The set of alternatives (including actual) -/

@@ -27,6 +27,7 @@ later module.
 
 import Mathlib.Order.Basic
 import Linglib.Core.Time
+import Linglib.Tactics.OntSort
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
@@ -53,7 +54,7 @@ inductive EventSort where
 
 /-- An event: a temporal individual with ontological sort (Parsons 1990).
     Events have interval-valued runtimes, following Krifka (1989). -/
-structure Ev (Time : Type*) [LE Time] where
+@[ont_sort] structure Ev (Time : Type*) [LE Time] where
   /-- The temporal extent of this event -/
   runtime : Interval Time
   /-- Ontological sort: action or state -/
@@ -214,6 +215,41 @@ def existsClosureW {W Time : Type*} [LE Time] (P : EvPredW W Time) : W → Prop 
 /-- Example: a running event from time 1 to 5. -/
 def exampleRun : Ev ℤ :=
   ⟨⟨1, 5, by omega⟩, .action⟩
+
+-- ════════════════════════════════════════════════════
+-- § 9. Manners (Liefke 2024 §4.3; Dik 1975; Alexeyenko 2015)
+-- ════════════════════════════════════════════════════
+
+/-- A manner: the "how" of an event, individuated as an equivalence class
+    of events under a similarity relation.
+
+    Liefke (2024): manners are the ontological category ranged over by
+    *how* in "How did John run?" and modified by manner adverbs (*quickly*,
+    *carefully*). They are to events what properties are to individuals.
+
+    Formally, a manner is a predicate on events that picks out a similarity
+    class — all events sharing a characteristic quality. Two events e₁, e₂
+    have the same manner w.r.t. M iff M(e₁) ∧ M(e₂).
+
+    References:
+    - Dik, S. (1975). The semantic representation of manner adverbials.
+    - Alexeyenko, S. (2015). The syntax and semantics of manner modification.
+    - Umbach, C. et al. (2022). Manner reference and similarity.
+    - Liefke, K. (2024). Natural Language Ontology, §4.3. -/
+@[ont_sort] structure Manner (Time : Type*) [LE Time] where
+  /-- The characteristic predicate: which events exhibit this manner -/
+  exhibits : Ev Time → Prop
+
+/-- The manner of an event under a similarity criterion.
+    `mannerOf sim e` gives the manner class of `e` under `sim`. -/
+def mannerOf {Time : Type*} [LE Time]
+    (sim : Ev Time → Ev Time → Prop) (e : Ev Time) : Manner Time :=
+  ⟨sim e⟩
+
+/-- Two events share a manner iff both satisfy the manner predicate. -/
+def Manner.sharedBy {Time : Type*} [LE Time]
+    (m : Manner Time) (e₁ e₂ : Ev Time) : Prop :=
+  m.exhibits e₁ ∧ m.exhibits e₂
 
 /-- Example: a knowing state from time 0 to 10. -/
 def exampleKnow : Ev ℤ :=

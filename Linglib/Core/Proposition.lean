@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Monotone.Basic
+import Linglib.Tactics.OntSort
 
 /-!
 # Proposition
@@ -13,10 +14,10 @@ Theory-neutral infrastructure for modeling propositions in formal semantics.
 namespace Core.Proposition
 
 /-- Classical propositions: sets of worlds (standard formal semantics). -/
-abbrev Prop' (W : Type*) := W → Prop
+@[ont_sort] abbrev Prop' (W : Type*) := W → Prop
 
 /-- Decidable propositions: for computation. -/
-abbrev BProp (W : Type*) := W → Bool
+@[ont_sort] abbrev BProp (W : Type*) := W → Bool
 
 /-- Coercion from decidable to classical propositions. -/
 instance bpropToProp' (W : Type*) : Coe (BProp W) (Prop' W) where

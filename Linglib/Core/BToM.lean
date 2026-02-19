@@ -143,4 +143,13 @@ def BToMModel.desireMarginal (m : BToMModel A B D W) (a : A) (d : D) : ℚ :=
 
 end OtherMarginals
 
+/-!
+## Connection to Content Individuals
+
+BToM's type parameters (Belief, Desire) correspond to content individuals
+(Kratzer 2006) — see `Core.ContentIndividual` for the ontological sort.
+A `BToMModel` can be instantiated with `ContentIndividual W` as the Belief
+type, making the observer's posterior a distribution over content individuals.
+-/
+
 end Core.BToM

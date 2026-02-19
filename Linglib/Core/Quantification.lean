@@ -1,6 +1,7 @@
 import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
 import Linglib.Core.NaturalLogic
+import Linglib.Tactics.OntSort
 
 /-!
 # Generalized Quantifier Properties
@@ -37,7 +38,7 @@ all definitions here apply directly.
 namespace Core.Quantification
 
 /-- Generalized quantifier denotation: restrictor → scope → truth value. -/
-abbrev GQ (α : Type*) := (α → Bool) → (α → Bool) → Bool
+@[ont_sort] abbrev GQ (α : Type*) := (α → Bool) → (α → Bool) → Bool
 
 variable {α : Type*}
 

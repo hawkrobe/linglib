@@ -6,6 +6,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Fin.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
+import Linglib.Tactics.OntSort
 
 /-!
 # Scales
@@ -192,7 +193,7 @@ end LicensingPipeline
 
     Krantz et al. (1971): a comparative scale is an ordered set with
     enough structure to support qualitative comparison. -/
-structure ComparativeScale (α : Type*) [Preorder α] where
+@[ont_sort] structure ComparativeScale (α : Type*) [Preorder α] where
   /-- Scale boundedness classification -/
   boundedness : Boundedness
 

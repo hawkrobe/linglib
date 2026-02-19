@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
+import Linglib.Tactics.OntSort
 
 /-!
 # Degree Events (Zhao 2026, Ch. 4) @cite{zhao-2026}
@@ -30,7 +31,7 @@ open Semantics.Events
 /-- A degree event: an event with both temporal and degree traces.
     Extends the standard `Ev` (which has temporal trace τ_i = runtime)
     with a degree trace τ_d. -/
-structure DegreeEv (Time Deg : Type*) [LE Time] [LE Deg] where
+@[ont_sort] structure DegreeEv (Time Deg : Type*) [LE Time] [LE Deg] where
   /-- The underlying temporal event -/
   base : Ev Time
   /-- Degree trace: the interval on the degree scale spanned by this event -/
