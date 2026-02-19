@@ -131,7 +131,55 @@ def Boundedness.ofType (hasTop : Bool) (hasBot : Bool) : Boundedness :=
   | false, false => .open_
 
 -- ════════════════════════════════════════════════════
--- § 1b. Comparative Scale (Root Algebraic Structure)
+-- § 1b. MereoTag + LicensingPipeline
+-- ════════════════════════════════════════════════════
+
+/-- Binary mereological classification: the shared abstraction underlying
+    all four licensing frameworks (Kennedy, Rouillard, Krifka, Zwarts). -/
+inductive MereoTag where
+  | qua  -- quantized / bounded / telic / closed
+  | cum  -- cumulative / unbounded / atelic / open
+  deriving DecidableEq, BEq, Repr
+
+def MereoTag.toBoundedness : MereoTag → Boundedness
+  | .qua => .closed
+  | .cum => .open_
+
+/-- A licensing pipeline: any type whose elements can be classified into
+    scale boundedness. Kennedy, Rouillard, Krifka, and Zwarts all
+    instantiate this with different source types but the same target.
+
+    Core instances (`Boundedness`, `MereoTag`) live here. Domain-specific
+    instances (`Telicity`, `VendlerClass`, `PathShape`, `BoundaryType`)
+    live in their respective theory/bridge files. -/
+class LicensingPipeline (α : Type*) where
+  toBoundedness : α → Boundedness
+
+namespace LicensingPipeline
+
+variable {α : Type*} [LicensingPipeline α]
+
+def isLicensed (a : α) : Bool :=
+  (toBoundedness a).isLicensed
+
+instance : LicensingPipeline Boundedness where
+  toBoundedness := id
+
+instance : LicensingPipeline MereoTag where
+  toBoundedness := MereoTag.toBoundedness
+
+/-- The universal licensing theorem: any two pipeline inputs that map to
+    the same Boundedness yield the same licensing prediction, regardless
+    of which framework they come from. -/
+theorem universal {α β : Type*} [LicensingPipeline α] [LicensingPipeline β]
+    (a : α) (b : β) (h : toBoundedness a = toBoundedness b) :
+    isLicensed a = isLicensed b := by
+  simp only [isLicensed, h]
+
+end LicensingPipeline
+
+-- ════════════════════════════════════════════════════
+-- § 1c. Comparative Scale (Root Algebraic Structure)
 -- ════════════════════════════════════════════════════
 
 /-- A comparative scale: a boundedness classification on a preorder.

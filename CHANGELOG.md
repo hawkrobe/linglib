@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.3] - 2026-02-18
+
+### Changed
+- Move `MereoTag`, `LicensingPipeline` typeclass, and `universal` licensing theorem from `Core/DimensionBridge.lean` to `Core/Scale.lean` — these are generic scale-theoretic concepts, not dimension-specific infrastructure
+- `BoundaryType` instance stays in `DimensionBridge` (depends on `Core/Time`)
+
 ## [0.224.2] - 2026-02-18
 
 ### Changed
