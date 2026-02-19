@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.34] - 2026-02-19
+
+### Changed
+- `KaoEtAl2014_Hyperbole.lean`: Replace toy priors with fitted empirical distributions from paper; add QInterval-based computable evaluator for `native_decide` proofs; sorry one marginal-affect lemma pending shared-denominator proof
+
+### Added
+- `.gitignore`: Hugo build artifacts (`blog/.hugo_build.lock`, `blog/public/`)
+
 ## [0.224.33] - 2026-02-19
 
 ### Added
