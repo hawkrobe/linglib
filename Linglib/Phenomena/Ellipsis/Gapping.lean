@@ -315,4 +315,42 @@ theorem mixed_allows_both :
     (rossRevised dutch).allowsBackward = true := by
   constructor <;> rfl
 
+-- ============================================================================
+-- Identity Conditions (AHM 2025)
+-- ============================================================================
+
+/-- Does this ellipsis type require syntactic identity (SIC)?
+    AHM 2025: sluicing and gapping require structural matching;
+    VP ellipsis does not. -/
+def requiresSyntacticIdentity : EllipsisType → Bool
+  | .sluicing => true
+  | .gapping => true
+  | .stripping => true
+  | .vpEllipsis => false
+
+/-- Does this ellipsis type require semantic identity (e-GIVENness)?
+    AHM 2025: all ellipsis types require e-GIVENness. -/
+def requiresSemanticIdentity : EllipsisType → Bool
+  | _ => true
+
+/-- Sluicing requires both semantic and syntactic identity. -/
+theorem sluicing_requires_both :
+    requiresSemanticIdentity .sluicing = true ∧
+    requiresSyntacticIdentity .sluicing = true :=
+  ⟨rfl, rfl⟩
+
+/-- VP ellipsis requires semantic identity but not syntactic identity. -/
+theorem vpe_semantic_only :
+    requiresSemanticIdentity .vpEllipsis = true ∧
+    requiresSyntacticIdentity .vpEllipsis = false :=
+  ⟨rfl, rfl⟩
+
+/-- VP ellipsis tolerates voice mismatches because it lacks the SIC.
+    Since VPE has no syntactic identity requirement, voice flavor
+    differences (agentive vs nonThematic) are irrelevant — only
+    e-GIVENness (semantic identity) must hold. -/
+theorem vpe_voice_mismatch_explained :
+    requiresSyntacticIdentity .vpEllipsis = false :=
+  rfl
+
 end Phenomena.Ellipsis.Gapping

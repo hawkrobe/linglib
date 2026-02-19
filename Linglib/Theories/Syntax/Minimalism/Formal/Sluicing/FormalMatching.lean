@@ -20,7 +20,7 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 
 ## Predictions
 
-- **Voice mismatch**: Voice head is above vP → outside argument domain → no SIC violation
+- **Voice mismatch**: v[agentive] ≠ v[nonThematic] within argument domain → SIC violation (AHM 2025)
 - **Case matching**: Case is assigned within the argument domain → must match
 - **Small clause antecedents**: Smaller argument domain → more permissive matching
 
@@ -32,6 +32,7 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 namespace Minimalism.Sluicing
 
@@ -92,6 +93,10 @@ structure HeadPair where
   /-- Case assigned by the head to its complement, when relevant.
       `none` for head pairs where case is not assigned (e.g., v–V). -/
   assignedCase : Option UD.Case := none
+  /-- Voice flavor of the head (agentive, nonThematic, etc.), when relevant.
+      Distinguishes active v[agentive] from passive v[nonThematic] within
+      the argument domain (AHM 2025). -/
+  voiceFlavor : Option VoiceFlavor := none
   deriving Repr, DecidableEq, BEq
 
 /-- Extract head pairs from a syntactic object, restricted to heads
@@ -112,13 +117,13 @@ partial def extractHeadPairs (so : SyntacticObject) (topCat : Cat) : List HeadPa
         let hid := match a.getLIToken with
                    | some tok => tok.id
                    | none => 0
-        ⟨catA, catB, hid, none⟩ :: pairsBelow
+        ⟨catA, catB, hid, none, none⟩ :: pairsBelow
       else if selectsB b a && isInArgumentDomain catB topCat then
         -- b selects a: b is head, a is complement
         let hid := match b.getLIToken with
                    | some tok => tok.id
                    | none => 0
-        ⟨catB, catA, hid, none⟩ :: pairsBelow
+        ⟨catB, catA, hid, none, none⟩ :: pairsBelow
       else
         pairsBelow
     | _, _ => pairsBelow
@@ -142,9 +147,12 @@ partial def extractHeadPairs (so : SyntacticObject) (topCat : Cat) : List HeadPa
     assignment, e.g., v selecting VP). -/
 def lexicallyIdentical (hp1 hp2 : HeadPair) : Bool :=
   hp1.head == hp2.head && hp1.complement == hp2.complement &&
-  match hp1.assignedCase, hp2.assignedCase with
+  (match hp1.assignedCase, hp2.assignedCase with
   | some c1, some c2 => c1 == c2
-  | _, _ => true
+  | _, _ => true) &&
+  (match hp1.voiceFlavor, hp2.voiceFlavor with
+  | some v1, some v2 => v1 == v2
+  | _, _ => true)
 
 /-- Remove the first element matching a predicate from a list.
     Returns `none` if no match found, `some remaining` otherwise. -/
@@ -206,17 +214,13 @@ def mkSluicingLicense (antecedent ellipsis : SyntacticObject)
 -- Part 5: Bridge Theorems — SIC Predictions
 -- ═══════════════════════════════════════════════════════════════
 
--- Voice Mismatch
+-- Voice Mismatch Resolution (AHM 2025)
 
-/-- Voice/T heads are outside the argument domain of a full clause.
-    Since the argument domain boundary is vP (F1), and T is F2,
-    T is excluded from the argument domain.
-
-    This explains why voice mismatches don't block sluicing:
-    the Voice head (above v) is outside the argument domain,
-    so it's not part of the head pairs that must match. -/
-theorem voice_mismatch_outside_argdomain :
-    fValue .T > fValue .v := by decide
+/-- Voice is within the argument domain (F1, same level as v).
+    AHM 2025: voice mismatches ARE blocked by the SIC because
+    v[agentive] ≠ v[nonThematic] within the argument domain. -/
+theorem voice_flavor_in_argdomain :
+    isInArgumentDomain .Voice .C = true := by decide
 
 /-- T is not within the argument domain of a CP. -/
 theorem t_outside_argdomain :
@@ -225,6 +229,27 @@ theorem t_outside_argdomain :
 /-- C is not within the argument domain. -/
 theorem c_outside_argdomain :
     isInArgumentDomain .C .C = false := by decide
+
+/-- Head pairs for an active (agentive) transitive vP.
+    v[agentive] selects VP, V selects DP. -/
+def activeVP : List HeadPair :=
+  [⟨.v, .V, 0, none, some .agentive⟩, ⟨.V, .D, 0, none, none⟩]
+
+/-- Head pairs for a passive (non-thematic) transitive vP.
+    v[nonThematic] selects VP, V selects DP. -/
+def passiveVP : List HeadPair :=
+  [⟨.v, .V, 0, none, some .nonThematic⟩, ⟨.V, .D, 0, none, none⟩]
+
+/-- Voice mismatch blocks sluicing: active v[agentive] ≠ passive v[nonThematic]
+    within the argument domain (AHM 2025). -/
+theorem voice_mismatch_blocks_sluicing :
+    structurallyIdentical activeVP passiveVP = false := by
+  native_decide
+
+/-- Same voice licenses sluicing: active→active is structurally identical. -/
+theorem voice_match_licenses_sluicing :
+    structurallyIdentical activeVP activeVP = true := by
+  native_decide
 
 -- Argument domain boundaries
 
@@ -265,13 +290,21 @@ theorem cat_beq_refl (c : Cat) : (c == c) = true := by
 private theorem ud_case_beq_refl (c : UD.Case) : (c == c) = true := by
   cases c <;> decide
 
+/-- BEq on VoiceFlavor is reflexive. -/
+private theorem voiceFlavor_beq_refl (v : VoiceFlavor) : (v == v) = true := by
+  cases v <;> decide
+
 /-- Lexical identity is reflexive for any head pair. -/
 theorem lexicallyIdentical_refl (hp : HeadPair) :
     lexicallyIdentical hp hp = true := by
-  simp only [lexicallyIdentical, beq_self_eq_true, Bool.true_and, Bool.and_self]
-  cases hp.assignedCase with
-  | none => rfl
-  | some c => exact ud_case_beq_refl c
+  simp only [lexicallyIdentical, beq_self_eq_true, Bool.true_and, Bool.and_self,
+             Bool.and_eq_true]
+  exact ⟨by cases hp.assignedCase with
+           | none => rfl
+           | some c => exact ud_case_beq_refl c,
+         by cases hp.voiceFlavor with
+           | none => rfl
+           | some v => exact voiceFlavor_beq_refl v⟩
 
 /-- Empty argument domains are trivially structurally identical. -/
 theorem empty_domains_identical :
@@ -294,18 +327,18 @@ theorem single_pair_matches (hp : HeadPair) :
 /-- Case mismatch blocks lexical identity: a V–D pair assigning dative
     is not lexically identical to one assigning accusative. -/
 theorem case_mismatch_not_identical :
-    lexicallyIdentical ⟨.V, .D, 0, some .Dat⟩ ⟨.V, .D, 0, some .Acc⟩ = false := by
+    lexicallyIdentical ⟨.V, .D, 0, some .Dat, none⟩ ⟨.V, .D, 0, some .Acc, none⟩ = false := by
   native_decide
 
 /-- Case match preserves lexical identity. -/
 theorem case_match_identical :
-    lexicallyIdentical ⟨.V, .D, 0, some .Dat⟩ ⟨.V, .D, 0, some .Dat⟩ = true := by
+    lexicallyIdentical ⟨.V, .D, 0, some .Dat, none⟩ ⟨.V, .D, 0, some .Dat, none⟩ = true := by
   native_decide
 
 /-- When no case is specified (e.g., v–V), identity depends only on
     categories. -/
 theorem no_case_identity :
-    lexicallyIdentical ⟨.v, .V, 0, none⟩ ⟨.v, .V, 0, none⟩ = true := by
+    lexicallyIdentical ⟨.v, .V, 0, none, none⟩ ⟨.v, .V, 0, none, none⟩ = true := by
   native_decide
 
 /-- Case mismatch blocks structural identity even when all other head
@@ -314,15 +347,44 @@ theorem no_case_identity :
     "wen" (acc) does not. -/
 theorem case_mismatch_blocks_sluicing :
     structurallyIdentical
-      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩]
-      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Acc⟩] = false := by
+      [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Dat, none⟩]
+      [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Acc, none⟩] = false := by
   native_decide
 
 /-- Same case → structural identity holds → sluicing licensed. -/
 theorem case_match_licenses_sluicing :
     structurallyIdentical
-      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩]
-      [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩] = true := by
+      [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Dat, none⟩]
+      [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Dat, none⟩] = true := by
   native_decide
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 6: e-GIVENness (Merchant 2001)
+-- ═══════════════════════════════════════════════════════════════
+
+/-- e-GIVENness: the semantic identity condition for ellipsis (Merchant 2001).
+    The antecedent entails the F-closure of the ellipsis site and vice versa.
+    F-closure existentially binds all F-marked (focused) material. -/
+structure EGivenness (Prop' : Type) where
+  /-- The antecedent proposition -/
+  antecedent : Prop'
+  /-- The ellipsis site proposition -/
+  ellipsisSite : Prop'
+  /-- F-closure: existentially bind all F-marked material -/
+  fClosure : Prop' → Prop'
+  /-- Entailment relation -/
+  entails : Prop' → Prop' → Prop
+  /-- Forward: antecedent entails F-closure of ellipsis site -/
+  forward : entails antecedent (fClosure ellipsisSite)
+  /-- Backward: ellipsis site entails F-closure of antecedent -/
+  backward : entails ellipsisSite (fClosure antecedent)
+
+/-- Full ellipsis license: semantic identity (e-GIVENness) + optional SIC.
+    Sluicing requires both; VP ellipsis requires only e-GIVENness (AHM 2025). -/
+structure EllipsisLicense (Prop' : Type) where
+  /-- Semantic identity: e-GIVENness (required for all ellipsis) -/
+  semantic : EGivenness Prop'
+  /-- Syntactic identity: SIC (required for sluicing, not for VPE) -/
+  syntactic : Option SluicingLicense := none
 
 end Minimalism.Sluicing
