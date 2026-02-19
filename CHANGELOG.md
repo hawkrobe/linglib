@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.224.5] - 2026-02-18
+
+### Added
+- Formalize Holliday & Icard (2013) epistemic comparative likelihood in `Core/Scale.lean` (§ 14):
+  axiom hierarchy (W ⊂ F ⊂ FA), measure semantics (`FinAddMeasure`), world-ordering semantics
+  (Halpern lift), representation theorems, `axiomA_iff_fa` bridge, `EpistemicTag` + `LicensingPipeline`
+- `five_frameworks_agree`: extend four-framework licensing agreement to five (Kennedy, Rouillard, Krifka, Zwarts, Holliday–Icard)
+- Add `holliday-icard-2013` to bibliography
+
+## [0.224.4] - 2026-02-18
+
+### Changed
+- Dissolve `Core/DimensionBridge.lean`: move all remaining content to natural homes
+  - BoundaryType bridge + LicensingPipeline instance → `Core/Time.lean`
+  - DimensionChain, deep bridge, pullback patterns, Krifka licensing → `Core/MereoDim.lean`
+  - Zwarts licensing theorems → `Core/Path.lean`
+  - `four_frameworks_agree` → `Core/Scale.lean` (MIPDomain namespace)
+- Update `Events/DimensionBridge.lean` imports and namespace opens
+
+### Removed
+- `Core/DimensionBridge.lean` — all content co-located with defining types
+
 ## [0.224.3] - 2026-02-18
 
 ### Changed
