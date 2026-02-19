@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.36] - 2026-02-19
+
+### Added
+- `Tactics/RSAPredict.lean`: Level-aware `rsa_predict` tactic — reifies S1 scores individually via RExpr to prevent exponential blowup on nested models (L0→S1→L1); handles product-type worlds, large ℝ literals, and latent variable marginalization
+- `Core/Interval/Combinators.lean`: Generic QInterval combinators (`qi_sum_map`, `qi_normalize`, `qi_nonneg_mul`, `qi_softmax`) for compositional interval evaluation
+- `Theories/Pragmatics/RSA/Core/Verified.lean`: Generic QInterval evaluators for each RSA level with bridge theorems (`L1_gt_of_score_sep`, `L1_latent_gt_of_score_sep`) reducing L1 policy ordering to interval separation checks
+
 ## [0.224.35] - 2026-02-19
 
 ### Fixed
