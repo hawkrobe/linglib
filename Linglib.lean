@@ -65,6 +65,7 @@ import Linglib.Core.DiscourseRole
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
+import Linglib.Core.Interval.LogInterval
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSADecide
 import Linglib.Tactics.OntSort
@@ -416,6 +417,7 @@ import Linglib.Comparisons.TenseModalEvidentiality
 import Linglib.Comparisons.TenseTheories
 import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.ProjectionMechanisms
+import Linglib.Comparisons.KratzerEpistemicRSA
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
