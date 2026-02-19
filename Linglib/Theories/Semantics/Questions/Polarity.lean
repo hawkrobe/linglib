@@ -165,17 +165,113 @@ def goalProbAdvantage {W : Type*}
   let pgGivenNotP := conditionalGoalProb goal prior worlds (pnot p)
   pgGivenP - pgGivenNotP
 
+-- Helper lemmas for request_forces_ppq
+
+private theorem foldl_add_zero_init {W : Type*} (l : List W) (f : W → ℚ)
+    (hf : ∀ w ∈ l, f w = 0) (init : ℚ) :
+    l.foldl (fun acc w => acc + f w) init = init := by
+  induction l generalizing init with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.foldl]
+    rw [hf hd (List.mem_cons.mpr (.inl rfl)), add_zero]
+    exact ih (fun w hw => hf w (List.mem_cons.mpr (.inr hw))) init
+
+private theorem p_false_of_mem_filter_pnot {W : Type*} (p : W → Bool) (worlds : List W)
+    (w : W) (hw : w ∈ worlds.filter (pnot p)) : p w = false := by
+  have := (List.mem_filter.mp hw).2
+  simp only [pnot, Bool.not_eq_true'] at this
+  exact this
+
+private theorem conditionalGoalProb_goal_negCondition_eq_zero {W : Type*}
+    (p : W → Bool) (prior : W → ℚ) (worlds : List W) :
+    conditionalGoalProb p prior worlds (pnot p) = 0 := by
+  unfold conditionalGoalProb
+  simp only []
+  split
+  · rfl
+  · apply foldl_add_zero_init
+    intro w hw
+    have := p_false_of_mem_filter_pnot p worlds w hw
+    simp [this]
+
+private theorem foldl_div_factor_gen {W : Type*} (l : List W) (f : W → ℚ)
+    (t : ℚ) (init : ℚ) :
+    l.foldl (fun acc w => acc + f w / t) (init / t) =
+    (l.foldl (fun acc w => acc + f w) init) / t := by
+  induction l generalizing init with
+  | nil => simp [List.foldl]
+  | cons hd tl ih =>
+    simp only [List.foldl]
+    rw [show init / t + f hd / t = (init + f hd) / t from (add_div init (f hd) t).symm]
+    exact ih (init + f hd)
+
+private theorem foldl_div_factor {W : Type*} (l : List W) (f : W → ℚ) (t : ℚ) :
+    l.foldl (fun acc w => acc + f w / t) 0 =
+    l.foldl (fun acc w => acc + f w) 0 / t := by
+  have := foldl_div_factor_gen l f t 0
+  rwa [zero_div] at this
+
+private theorem foldl_congr_mem {W : Type*} (l : List W)
+    (f g : ℚ → W → ℚ) (init : ℚ)
+    (h : ∀ w ∈ l, ∀ acc : ℚ, f acc w = g acc w) :
+    l.foldl f init = l.foldl g init := by
+  induction l generalizing init with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.foldl]
+    rw [h hd (List.mem_cons.mpr (.inl rfl)) init]
+    exact ih (g init hd) (fun w hw acc => h w (List.mem_cons.mpr (.inr hw)) acc)
+
+private theorem foldl_filter_goal_eq_div {W : Type*} (p : W → Bool) (prior : W → ℚ)
+    (worlds : List W) (t : ℚ) :
+    (worlds.filter p).foldl
+      (fun acc w => acc + if p w = true then prior w / t else 0) 0 =
+    (worlds.filter p).foldl (fun acc w => acc + prior w) 0 / t := by
+  rw [show (worlds.filter p).foldl
+      (fun acc w => acc + if p w = true then prior w / t else 0) 0 =
+    (worlds.filter p).foldl (fun acc w => acc + prior w / t) 0 from by
+    apply foldl_congr_mem
+    intro w hw acc
+    have hp : p w = true := (List.mem_filter.mp hw).2
+    simp [hp]]
+  exact foldl_div_factor _ _ _
+
+private theorem conditionalGoalProb_self_nonneg {W : Type*}
+    (p : W → Bool) (prior : W → ℚ) (worlds : List W) :
+    conditionalGoalProb p prior worlds p ≥ 0 := by
+  unfold conditionalGoalProb
+  simp only []
+  split
+  · exact le_refl _
+  · rename_i h
+    rw [foldl_filter_goal_eq_div]
+    have hne : (worlds.filter p).foldl (fun acc w => acc + prior w) 0 ≠ 0 := by
+      intro heq
+      exact h (by simp [BEq.beq, heq])
+    rw [div_self hne]
+    exact le_of_lt one_pos
+
 /-- When goal = questioned proposition, PPQ is always optimal.
 
 For requests like "Will you marry me?", g = q, so:
 - P(g|q) = P(q|q) = 1
 - P(g|¬q) = P(q|¬q) = 0
-Thus UV(q) > UV(¬q) necessarily. -/
+Thus UV(q) > UV(¬q) necessarily.
+
+Proof: `conditionalGoalProb p prior worlds (pnot p) = 0` because filtering by ¬p
+means all remaining worlds have p = false, so the goal p is never satisfied.
+And `conditionalGoalProb p prior worlds p ≥ 0` because it equals either 0
+(when totalProb = 0) or totalProb/totalProb = 1 (when totalProb ≠ 0). -/
 theorem request_forces_ppq {W : Type*}
     (p : W -> Bool) (prior : W -> ℚ) (worlds : List W)
-    (hNonempty : worlds.length > 0) :
+    (_hNonempty : worlds.length > 0) :
     goalProbAdvantage p prior worlds p >= 0 := by
-  sorry -- P(p|p) = 1 >= P(p|¬p) = 0
+  unfold goalProbAdvantage
+  simp only []
+  rw [conditionalGoalProb_goal_negCondition_eq_zero]
+  simp only [sub_zero]
+  exact conditionalGoalProb_self_nonneg p prior worlds
 
 -- Special Cases: Informativity-Based Utility
 
@@ -272,13 +368,20 @@ def medicalDiagnosisDP {W : Type*}
 
 /-- For tag questions like "John isn't bad, is he?":
 The speaker takes the declarative as likely true, making the tag's
-positive prop (that John IS bad) low probability, hence informative. -/
+positive prop (that John IS bad) low probability, hence informative.
+
+**Note**: This requires the tag proposition to have positive probability.
+Without this, the `surprisal` approximation assigns a constant 1000 to
+prob=0 propositions, which can be exceeded by `1/prob - 1` for very small
+positive probabilities (counterexample: P(tag)=0, P(¬tag)=1/2000 gives
+surprisal(tag)=1000 < surprisal(¬tag)=1999). -/
 def tagQuestionInformativity {W : Type*} (prior : W -> ℚ) (worlds : List W)
-    (declarative tag : W -> Bool)
-    (hDeclarativeIsNotTag : ∀ w, declarative w = !tag w)
-    (hDeclarativeLikely : positiveIsLessLikely prior worlds tag) :
+    (_declarative tag : W -> Bool)
+    (_hDeclarativeIsNotTag : ∀ w, _declarative w = !tag w)
+    (_hDeclarativeLikely : positiveIsLessLikely prior worlds tag)
+    (_hPosProb : worlds.foldl (λ acc w => acc + if tag w then prior w else 0) 0 > 0) :
     informativenessAdvantage prior worlds tag > 0 := by
-  sorry -- If tag is less likely, it's more informative
+  sorry -- TODO: show 1/P(tag) - 1 > 1/P(¬tag) - 1 when 0 < P(tag) < P(¬tag)
 
 -- Alternative Questions
 
@@ -395,12 +498,19 @@ theorem rhetorical_requires_polar {W : Type*} (_rq : RhetoricalQuestion W) :
 
 Speaker signals: "I have new evidence for q, even though I believed ¬q"
 This makes q surprising (high surprisal), thus high informativity.
-PPQ highlights this surprising-if-true proposition. -/
+PPQ highlights this surprising-if-true proposition.
+
+**Note**: This requires p to have positive probability. Without this,
+the `surprisal` approximation assigns a constant 1000 to prob=0,
+which can be exceeded by `1/prob - 1` for very small positive probabilities
+(counterexample: P(p)=0, P(¬p)=1/2000 gives surprisal(p)=1000 but
+surprisal(¬p)=1999, yielding informativenessAdvantage = -999). -/
 def rhetoricalUsePPQ {W : Type*}
     (prior : W -> ℚ) (worlds : List W) (p : W -> Bool)
-    (hPriorFavorsNegative : positiveIsLessLikely prior worlds p) :
+    (_hPriorFavorsNegative : positiveIsLessLikely prior worlds p)
+    (_hPosProb : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0) :
     informativenessAdvantage prior worlds p > 0 := by
-  sorry -- If p is less likely, learning p is more informative
+  sorry -- TODO: show 1/P(p) - 1 > 1/P(¬p) - 1 when 0 < P(p) < P(¬p)
 
 -- Grounding Questions
 
