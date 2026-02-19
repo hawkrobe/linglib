@@ -119,26 +119,49 @@ def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
     exact h1.trans h2
 
 /-- Build individual question for a specific universal element. -/
-def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E] [DecidableEq (List E)]
+def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E]
     (plq : PairListQuestion W E) (y : E) : GSQuestion W where
   sameAnswer w v :=
-    decide (plq.whDomain.filter (λ x => plq.relation w y x) =
-            plq.whDomain.filter (λ x => plq.relation v y x))
-  refl w := by simp [decide_eq_true_iff]
-  symm w v := by simp [decide_eq_decide]; exact eq_comm
-  trans w v x hwv hvx := by
-    simp only [decide_eq_true_iff] at *
-    exact hvx ▸ hwv
+    plq.whDomain.all λ x => plq.relation w y x == plq.relation v y x
+  refl w := by
+    simp only [List.all_eq_true]
+    intro x _; exact beq_self_eq_true _
+  symm w v := by
+    congr 1; funext x
+    cases plq.relation w y x <;> cases plq.relation v y x <;> rfl
+  trans w v u hwv hvu := by
+    simp only [List.all_eq_true, beq_iff_eq] at *
+    intro x hx; exact (hwv x hx).trans (hvu x hx)
+
+/-- Helper: foldl of GSQuestion conjunction decomposes into init && all. -/
+private theorem foldl_conj_sameAnswer {W E : Type*}
+    (f : E → GSQuestion W) (es : List E) (init : GSQuestion W) (w v : W) :
+    (es.foldl (λ acc e' => acc + f e') init).sameAnswer w v =
+    (init.sameAnswer w v && es.all (λ e' => (f e').sameAnswer w v)) := by
+  induction es generalizing init with
+  | nil => simp
+  | cons e' rest ih =>
+    simp only [List.foldl_cons]
+    rw [ih]
+    simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose, List.all_cons]
+    rw [Bool.and_assoc]
 
 /-- A pair-list question is equivalent to a conjunction of individual questions.
 
 ∀y. ?x. R(y,x) = ∧_{y∈Y} ?x. R(y,x)
 
-Note: The formal statement requires universe matching; see pairListAsConjunction. -/
-theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [DecidableEq (List E)] [BEq W]
-    (plq : PairListQuestion W E) :
-    plq.toGSQuestion = pairListAsConjunction plq.universalDomain plq.individualQuestion := by
-  sorry -- The partition induced by pair-list = conjunction of individual questions
+The partition induced by the pair-list question agrees pointwise with the
+conjunction of per-element individual questions. -/
+theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [BEq W]
+    (plq : PairListQuestion W E) (w v : W) :
+    plq.toGSQuestion.sameAnswer w v =
+    (pairListAsConjunction plq.universalDomain plq.individualQuestion).sameAnswer w v := by
+  simp only [PairListQuestion.toGSQuestion, pairListAsConjunction]
+  match plq.universalDomain with
+  | [] => simp [GSQuestion.trivial, QUD.trivial]
+  | e :: es =>
+    rw [foldl_conj_sameAnswer]
+    simp only [PairListQuestion.individualQuestion, List.all_cons]
 
 /-- Number of cells in pair-list: can be up to |X|^|Y| (exponential).
 

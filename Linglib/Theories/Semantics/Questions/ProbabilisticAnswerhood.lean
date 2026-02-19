@@ -222,21 +222,40 @@ def isUniformOver {W : Type*} [Fintype W] [DecidableEq W]
     let prob := prior w
     ws.all λ v => prior v == prob
 
-/-- Under uniform priors, positive propositions raise alternative probability.
+/-- Entailing an alternative guarantees probabilistic answerhood.
 
-This connects probabilistic answerhood to classical partial answerhood.
-If P is consistent with alternative A (P ∩ A ≠ ∅) and P rules out some
-worlds outside A, then P raises A's probability. -/
-theorem probAnswers_when_consistent {W : Type*} [Fintype W] [DecidableEq W]
+If P entails some alternative A (every P-world is an A-world) and A is not
+already certain, then learning P raises A's probability to 1, which exceeds
+the prior P(A) < 1. This gives probAnswers (not just relevance).
+
+Note: the weaker condition of mere consistency (P ∩ A ≠ ∅) does NOT suffice —
+a proposition balanced across alternatives (e.g., W={0,1,2,3}, Q={{0,1},{2,3}},
+P={0,2}) can be consistent with every alternative without changing any
+conditional probability. -/
+theorem probAnswers_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
     (p : W → Bool) (q : Issue W) (prior : Prior W)
-    (_hUniform : isUniformOver prior (Fintype.elems.toList) = true)
-    (_hConsistent : q.alternatives.any λ alt =>
-      Fintype.elems.toList.any λ w => p w && alt w) :
-    -- If P is consistent with some alternative and has positive probability
-    probOfProp prior p > 0 →
-    -- Then P is at least relevant to Q
-    relevant p q prior = true := by
-  sorry
+    (alt : W → Bool)
+    (hAltMem : alt ∈ q.alternatives)
+    (hEntails : ∀ w, p w = true → alt w = true)
+    (hPosP : probOfProp prior p > 0)
+    (hNotCertain : probOfState prior alt < 1) :
+    probAnswers p q prior = true := by
+  simp only [probAnswers, List.any_eq_true, decide_eq_true_eq]
+  refine ⟨alt, hAltMem, ?_⟩
+  -- Show conditionalProb prior p alt = 1
+  have hConj : probOfProp prior (λ w => p w && alt w) = probOfProp prior p := by
+    unfold probOfProp
+    congr 1; funext w
+    cases hp : p w with
+    | false => simp [hp]
+    | true => simp [hp, hEntails w hp]
+  have hCond : conditionalProb prior p alt = 1 := by
+    unfold conditionalProb
+    simp only [gt_iff_lt, hPosP, ↓reduceIte, hConj]
+    exact div_self (ne_of_gt hPosP)
+  -- conditionalProb = 1 > probOfState prior alt
+  rw [hCond]
+  exact hNotCertain
 
 -- Combined Evidence (for Additive Particles)
 
@@ -303,7 +322,7 @@ theorem probAnswers_implies_relevant {W : Type*} [Fintype W]
   simp only [List.any_eq_true, decide_eq_true_eq] at *
   obtain ⟨alt, hmem, hgt⟩ := h
   refine ⟨alt, hmem, ?_⟩
-  simp only [bne_iff_ne, ne_eq, decide_eq_true_eq]
+  simp only [bne_iff_ne, ne_eq]
   exact ne_of_gt hgt
 
 /-- Stronger evidence is positive evidence.
