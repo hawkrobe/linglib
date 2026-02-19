@@ -26,8 +26,9 @@ the full chain:
    outside (T, Mod, C — may differ). The corpus confirms both directions:
    0 argument structure mismatches, 129 tense + 394 modal mismatches.
 
-3. **The voice puzzle** (§3): The SIC predicts voice mismatches are licit,
-   yet the corpus shows zero. This gap is theoretically significant.
+3. **Voice mismatch resolution** (§3): AHM 2025 resolves the voice puzzle:
+   v[agentive] ≠ v[nonThematic] within the argument domain, so the SIC
+   correctly blocks voice mismatches. The 0 corpus count is predicted.
 
 4. **Corpus distributions** (§4): Sprouting dominates, *why* dominates.
 
@@ -57,11 +58,11 @@ open Phenomena.Ellipsis.Sluicing
 /-- Head pairs for a simple transitive vP: v selects V, V selects D.
     This is the argument domain structure of "someone left" / "John ate
     something" — any clause with a single verb and a DP argument. -/
-def transitiveVP : List HeadPair := [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, none⟩]
+def transitiveVP : List HeadPair := [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, none, none⟩]
 
 /-- Head pairs for an intransitive vP: v selects V only.
     Used for the antecedent of sprouting examples like "John left." -/
-def intransitiveVP : List HeadPair := [⟨.v, .V, 0, none⟩]
+def intransitiveVP : List HeadPair := [⟨.v, .V, 0, none, none⟩]
 
 /-- SIC licenses basic sluicing: "Someone left, but I don't know who."
 
@@ -101,12 +102,12 @@ theorem sic_predicts_objectSluice :
 /-- Head pairs for a dative-assigning transitive vP.
     V assigns dative case to its DP complement (e.g., German *helfen*). -/
 def dativeVP : List HeadPair :=
-  [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Dat⟩]
+  [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Dat, none⟩]
 
 /-- Head pairs for an accusative-assigning transitive vP.
     V assigns accusative case to its DP complement (e.g., German *sehen*). -/
 def accusativeVP : List HeadPair :=
-  [⟨.v, .V, 0, none⟩, ⟨.V, .D, 0, some .Acc⟩]
+  [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Acc, none⟩]
 
 /-- Same-case head pairs are structurally identical (case match OK). -/
 theorem case_match_licensed :
@@ -179,27 +180,34 @@ theorem sic_partition_confirmed :
   ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 -- ============================================================================
--- § 3: The Voice Puzzle
+-- § 3: Voice Mismatch Resolution (AHM 2025)
 -- ============================================================================
 
-/-- The voice mismatch puzzle: the SIC predicts voice mismatches are licit
-    (Voice/T heads are outside the argument domain), yet the corpus
-    contains zero.
+-- AHM 2025 resolves the voice puzzle: voice mismatches are correctly
+-- blocked by the SIC because active v[agentive] ≠ passive v[nonThematic]
+-- within the argument domain (v is F1, inside vP). The 0 corpus count
+-- is predicted, not puzzling.
 
-    This asymmetry is striking because tense and modality — at the same
-    structural level (outside vP) — show abundant mismatches. The gap
-    between "permitted by the grammar" and "attested in use" suggests
-    either:
-    (a) additional pragmatic/processing constraints on sluicing, or
-    (b) the SIC is too permissive for voice.
+/-- Head pairs for an active transitive vP with voice flavor. -/
+def activeTransitiveVP : List HeadPair :=
+  [⟨.v, .V, 0, none, some .agentive⟩, ⟨.V, .D, 0, none, none⟩]
 
-    The contrast with VP ellipsis is sharp: Merchant (2013) shows voice
-    mismatches are freely attested under VP ellipsis. -/
-theorem voice_permitted_but_absent :
-    isInArgumentDomain .T .C = false ∧
-    MismatchDimension.corpusCount .tense > 0 ∧
+/-- Head pairs for a passive transitive vP with voice flavor. -/
+def passiveTransitiveVP : List HeadPair :=
+  [⟨.v, .V, 0, none, some .nonThematic⟩, ⟨.V, .D, 0, none, none⟩]
+
+/-- The SIC correctly blocks voice mismatches in sluicing: active
+    v[agentive] ≠ passive v[nonThematic], and both are within the
+    argument domain (F1 ≤ F1). The corpus confirms: 0 voice mismatches.
+
+    This resolves the voice puzzle from the earlier analysis. The puzzle
+    arose from treating voice as outside the argument domain (like T/Mod),
+    but AHM 2025 shows that voice flavor is encoded on v, which IS inside
+    the argument domain. -/
+theorem voice_correctly_blocked :
+    structurallyIdentical activeTransitiveVP passiveTransitiveVP = false ∧
     MismatchDimension.corpusCount .voice = 0 :=
-  ⟨by decide, by native_decide, rfl⟩
+  ⟨by native_decide, rfl⟩
 
 -- ============================================================================
 -- § 4: Corpus Distributions
