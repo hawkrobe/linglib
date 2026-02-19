@@ -5,6 +5,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Fin.Basic
 import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 
 /-!
 # Scales
@@ -32,8 +33,9 @@ MereoScale   EpistemicScale          │
 
 **Objects**: `ComparativeScale α` — a preorder with boundedness classification.
 
-**Morphisms**: `ScaleMorphism` — monotone maps between comparative scales.
-  Generalizes `MereoDim` (which is `StrictMono` = injective scale morphism).
+**Morphisms**: `Monotone` (from Mathlib) — the categorical morphisms are just
+  monotone maps between preorders. `MereoDim` (= `StrictMono`) is the injective
+  subcategory.
 
 **Enriched subcategory**: `AdditiveScale α` — comparative scale with join and
   finite additivity (FA). Two independent instances:
@@ -132,20 +134,17 @@ def Boundedness.ofType (hasTop : Bool) (hasBot : Bool) : Boundedness :=
 -- § 1b. Comparative Scale (Root Algebraic Structure)
 -- ════════════════════════════════════════════════════
 
-/-- A comparative scale: a preorder with a boundedness classification.
+/-- A comparative scale: a boundedness classification on a preorder.
     This is the root object in the category of scales. All scale-based
     reasoning in linglib (degree semantics, mereological measurement,
     epistemic comparison) factors through this structure.
 
+    The ordering comes from the ambient `[Preorder α]` — no redundant
+    `le`/`le_refl`/`le_trans` fields. Morphisms are Mathlib's `Monotone`.
+
     Krantz et al. (1971): a comparative scale is an ordered set with
     enough structure to support qualitative comparison. -/
-structure ComparativeScale (α : Type*) where
-  /-- The ordering relation -/
-  le : α → α → Prop
-  /-- Reflexivity -/
-  le_refl : ∀ (x : α), le x x
-  /-- Transitivity -/
-  le_trans : ∀ (x y z : α), le x y → le y z → le x z
+structure ComparativeScale (α : Type*) [Preorder α] where
   /-- Scale boundedness classification -/
   boundedness : Boundedness
 
@@ -161,82 +160,24 @@ structure AdditiveScale (α : Type*) [SemilatticeSup α] extends ComparativeScal
   /-- Disjointness predicate -/
   disjoint : α → α → Prop
   /-- Finite additivity: disjoint augmentation preserves order.
-      Join is Mathlib's `⊔` from `SemilatticeSup`. -/
+      Both `≤` and `⊔` come from the ambient `SemilatticeSup`. -/
   fa : ∀ (x y z : α), disjoint x z → disjoint y z →
-    (le x y ↔ le (x ⊔ z) (y ⊔ z))
-
-/-- A scale morphism: a monotone map between comparative scales.
-    Generalizes `MereoDim` (= injective scale morphism = `StrictMono`). -/
-def ScaleMorphism {α β : Type*}
-    (S₁ : ComparativeScale α) (S₂ : ComparativeScale β)
-    (f : α → β) : Prop :=
-  ∀ (x y : α), S₁.le x y → S₂.le (f x) (f y)
+    (x ≤ y ↔ x ⊔ z ≤ y ⊔ z)
 
 namespace ComparativeScale
 
-/-- Lift a Mathlib `Preorder` to a `ComparativeScale`. -/
-def ofPreorder (α : Type*) [Preorder α] (b : Boundedness) :
-    ComparativeScale α where
-  le := (· ≤ ·)
-  le_refl := _root_.le_refl
-  le_trans := fun _ _ _ => _root_.le_trans
-  boundedness := b
-
-/-- Lift a Mathlib `LinearOrder` to a `ComparativeScale`. -/
-def ofLinearOrder (α : Type*) [LinearOrder α] (b : Boundedness) :
-    ComparativeScale α :=
-  ofPreorder α b
-
 /-- Licensing prediction from the underlying boundedness. -/
-def isLicensed {α : Type*} (S : ComparativeScale α) : Bool :=
+def isLicensed {α : Type*} [Preorder α] (S : ComparativeScale α) : Bool :=
   S.boundedness.isLicensed
 
 end ComparativeScale
 
--- ── Morphism theorems (categorical structure) ────
-
-namespace ScaleMorphism
-
-/-- Identity is a scale morphism. -/
-theorem id {α : Type*} (S : ComparativeScale α) :
-    ScaleMorphism S S _root_.id :=
-  fun _ _ h => h
-
-/-- Composition of scale morphisms is a scale morphism. -/
-theorem comp {α β γ : Type*}
-    {S₁ : ComparativeScale α} {S₂ : ComparativeScale β} {S₃ : ComparativeScale γ}
-    {g : β → γ} {f : α → β}
-    (hg : ScaleMorphism S₂ S₃ g) (hf : ScaleMorphism S₁ S₂ f) :
-    ScaleMorphism S₁ S₃ (g ∘ f) :=
-  fun x y h => hg _ _ (hf x y h)
-
-/-- A constant map is a scale morphism (into any scale). -/
-theorem const {α β : Type*}
-    (S₁ : ComparativeScale α) (S₂ : ComparativeScale β) (b : β) :
-    ScaleMorphism S₁ S₂ (fun _ => b) :=
-  fun _ _ _ => S₂.le_refl b
-
-/-- Every `Monotone` function between preorders is a scale morphism.
-    This is the bridge from Mathlib's order theory into the categorical
-    framework: any monotone map lifts to a `ScaleMorphism`. -/
-theorem ofMonotone {α β : Type*}
-    [Preorder α] [Preorder β] {f : α → β}
-    (hf : Monotone f) (b₁ b₂ : Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
-                  (ComparativeScale.ofPreorder β b₂) f :=
-  fun _ _ hxy => hf hxy
-
-/-- Every `StrictMono` function is a scale morphism (since `StrictMono → Monotone`).
-    This connects `MereoDim` (strictly monotone maps between partial orders)
-    to the categorical framework. -/
-theorem ofStrictMono {α β : Type*}
-    [PartialOrder α] [Preorder β] {f : α → β}
-    (hf : StrictMono f) (b₁ b₂ : Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
-                  (ComparativeScale.ofPreorder β b₂) f :=
-  ofMonotone hf.monotone b₁ b₂
-
-end ScaleMorphism
+/-- An additive scale is representable if there exists a monotone additive
+    function into (ℚ, ≤). -/
+def AdditiveScale.IsRepresentable {α : Type*} [SemilatticeSup α]
+    (S : AdditiveScale α) : Prop :=
+  ∃ (μ : α → ℚ), Monotone μ ∧
+    ∀ (x y : α), S.disjoint x y → μ (x ⊔ y) = μ x + μ y
 
 -- ════════════════════════════════════════════════════
 -- § 2. Measurement Scales (via Mathlib)
@@ -393,6 +334,22 @@ theorem lowerBound_admits_optimum [OrderBot α] (h_nontrivial : ∃ x : α, x �
   · rw [hy] at hxy; exact le_antisymm hxy bot_le
   · obtain ⟨x, hx⟩ := h_nontrivial
     exact hx ((h x ⊥).mpr rfl)
+
+/-- Boundedness is necessary for licensing: on a scale with no upper bound
+    and no lower bound, there exists a monotone family with no optimum.
+    Contrapositive: if every monotone family admits an optimum, the scale
+    has a bound. -/
+theorem open_scale_unlicensable [NoMaxOrder α] [NoMinOrder α]
+    (h : ∃ x y : α, x ≠ y) :
+    ∃ (P : α → Prop), (∀ x y, x ≤ y → P x → P y) ∧ ¬ (∀ x y, P x ↔ P y) ∧
+      ∀ x, P x → ∃ y, x < y ∧ P y := by
+  obtain ⟨x₀, _, _⟩ := h
+  refine ⟨(x₀ ≤ ·), fun a b hab ha => le_trans ha hab, ?_, fun x hx => ?_⟩
+  · intro hconst
+    obtain ⟨z, hz⟩ := NoMinOrder.exists_lt x₀
+    exact absurd ((hconst z x₀).mpr (le_refl x₀)) (not_le.mpr hz)
+  · obtain ⟨y, hy⟩ := NoMaxOrder.exists_gt x
+    exact ⟨y, hy, le_trans hx (le_of_lt hy)⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Licensing Predictions (Data-Level)
@@ -691,26 +648,22 @@ def blocked (d : MIPDomain α W) : Bool := !d.licensed
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
 def kennedyNumeral (μ : W → α) : MIPDomain α W :=
-  { ComparativeScale.ofLinearOrder α .closed with
-    measure := μ, degProp := atLeastDeg μ }
+  { boundedness := .closed, measure := μ, degProp := atLeastDeg μ }
 
 /-- Kennedy (2007) gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
 def kennedyAdjective (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { ComparativeScale.ofLinearOrder α b with
-    measure := μ, degProp := atLeastDeg μ }
+  { boundedness := b, measure := μ, degProp := atLeastDeg μ }
 
 /-- Rouillard (2026) E-TIA domain: event runtime ≤ interval size.
     Boundedness determined by Vendler class (telic → closed, atelic → open). -/
 def rouillardETIA (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { ComparativeScale.ofLinearOrder α b with
-    measure := μ, degProp := atMostDeg μ }
+  { boundedness := b, measure := μ, degProp := atMostDeg μ }
 
 /-- Rouillard (2026) G-TIA domain: PTS extent on open intervals.
     Always open → always blocked (information collapse). -/
 def rouillardGTIA (μ : W → α) : MIPDomain α W :=
-  { ComparativeScale.ofLinearOrder α .open_ with
-    measure := μ, degProp := atMostDeg μ }
+  { boundedness := .open_, measure := μ, degProp := atMostDeg μ }
 
 -- ── Licensing Theorems ──────────────────────────────
 

@@ -16,8 +16,7 @@ This file bridges them at four levels:
 - **Annotation bridge** (§1): QUA ↔ `Boundedness.closed`, CUM ↔ `Boundedness.open_`
 - **Constructor bridge** (§2): `ExtMeasure` → `MIPDomain`
 - **Structural bridge** (§3–4): `singleton_qua` ↔ `.closed`, CUM sum extensibility
-- **Categorical bridge** (§11): `MereoDim` → `ScaleMorphism`, `ExtMeasure` → additive
-  representation morphism into (ℚ, ≤)
+- **Categorical bridge** (§11): `MereoDim` → `Monotone`, `ExtMeasure` → `Monotone μ`
 
 ## The lax measure square
 
@@ -95,8 +94,7 @@ theorem cum_boundedness_blocked : cumBoundedness.isLicensed = false := rfl
 def extMeasure_kennedyMIP {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
     Core.Scale.MIPDomain ℚ α :=
-  { Core.Scale.ComparativeScale.ofLinearOrder ℚ b with
-    measure := μ, degProp := Core.Scale.atLeastDeg μ }
+  { boundedness := b, measure := μ, degProp := Core.Scale.atLeastDeg μ }
 
 /-- An extensive measure induces a Rouillard-style MIP domain.
 
@@ -106,8 +104,7 @@ def extMeasure_kennedyMIP {α : Type*} [SemilatticeSup α]
 def extMeasure_rouillardMIP {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
     Core.Scale.MIPDomain ℚ α :=
-  { Core.Scale.ComparativeScale.ofLinearOrder ℚ b with
-    measure := μ, degProp := Core.Scale.atMostDeg μ }
+  { boundedness := b, measure := μ, degProp := Core.Scale.atMostDeg μ }
 
 /-- QUA predicates yield licensed Kennedy MIPDomains. -/
 theorem qua_kennedyMIP_licensed {α : Type*} [SemilatticeSup α]
@@ -371,114 +368,63 @@ theorem LaxMeasureSquare.qua_pullback₂ {α β γ : Type*}
   exact qua_pullback_mereoDim hP
 
 -- ════════════════════════════════════════════════════
--- § 11. MereoDim ↔ ScaleMorphism Bridge
+-- § 11. MereoDim ↔ Monotone Bridge
 -- ════════════════════════════════════════════════════
 
 /-! ### The categorical connection
 
-`MereoDim` is a *strengthened* `ScaleMorphism`: it requires `StrictMono`
-(injective monotone map between partial orders), while `ScaleMorphism`
-requires only `Monotone` (between preorders). The relationship is:
+`MereoDim` is a strengthened morphism: it requires `StrictMono`
+(injective monotone map between partial orders), while the categorical
+morphism of comparative scales is `Monotone` (between preorders).
 
 ```
-ScaleMorphism  ⊇  MereoDim  =  injective ScaleMorphism (on partial orders)
+Monotone  ⊇  MereoDim  =  injective Monotone (on partial orders)
 ```
 
-The bridge theorems below make this precise and connect every piece of the
-mereological pipeline to the categorical framework in `Core/Scale.lean`:
+The bridge theorems below make this precise:
 
-1. Every `MereoDim` is a `ScaleMorphism` (`mereoDim_scaleMorphism`)
-2. Every `ExtMeasure μ` gives a `ScaleMorphism` from domain to (ℚ, ≤)
-   (`extMeasure_scaleMorphism`)
-3. Composition of `MereoDim`s equals composition of `ScaleMorphism`s
-   (`mereoDim_comp_eq_scaleMorphism_comp`)
+1. Every `MereoDim` is `Monotone` (`mereoDim_monotone`)
+2. Every `ExtMeasure μ` gives `Monotone μ` (`extMeasure_monotone`)
+3. `IsSumHom f → Monotone f` (`IsSumHom.monotone`, already in `Mereology.lean`)
+
+The forgetful functor from AdditiveScale morphisms (IsSumHom) to
+ComparativeScale morphisms (Monotone) is just `IsSumHom.monotone`.
 
 Together with the boundedness annotations (§1: QUA → `.closed`, CUM → `.open_`)
-and the `MIPDomain` constructors (§2), these theorems show that the entire
-mereological pipeline factors through `ComparativeScale`:
+and the `MIPDomain` constructors (§2), the entire mereological pipeline
+factors through `ComparativeScale`:
 
 ```
   (α, ≤)  ——MereoDim d——→  (β, ≤)  ——ExtMeasure μ——→  (ℚ, ≤)
      ↓                        ↓                          ↓
 ComparativeScale b₁      ComparativeScale b₂     ComparativeScale .closed
-     └────── ScaleMorphism ──────┘                       │
-                └──────────── ScaleMorphism ─────────────┘
+     └─────── Monotone ───────┘                          │
+                └──────────── Monotone ──────────────────┘
 ```
 -/
 
-open Core.Scale in
-/-- Every `MereoDim d` is a `ScaleMorphism` between the preorder-derived
-    comparative scales. This is the fundamental categorical connection:
-    the mereological dimension pipeline is a subcategory of the category
-    of comparative scales.
-
-    The `MereoDim` constraint is strictly stronger (it requires `StrictMono`,
-    hence injectivity on partial orders), but every `StrictMono` map is
-    `Monotone`, hence a `ScaleMorphism`. -/
-theorem mereoDim_scaleMorphism {α β : Type*}
+/-- Every `MereoDim d` is `Monotone`: the forgetful map from the category
+    of partial orders with strict monotone maps to the category of
+    preorders with monotone maps. -/
+theorem mereoDim_monotone {α β : Type*}
     [PartialOrder α] [PartialOrder β]
-    {d : α → β} (hd : MereoDim d) (b₁ b₂ : Core.Scale.Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
-                  (ComparativeScale.ofPreorder β b₂) d :=
-  ScaleMorphism.ofStrictMono hd.toStrictMono b₁ b₂
+    {d : α → β} (hd : MereoDim d) :
+    Monotone d :=
+  hd.toStrictMono.monotone
 
-open Core.Scale in
-/-- Every `ExtMeasure μ` is a `ScaleMorphism` from the mereological domain
-    to (ℚ, ≤). This is the "additive representation morphism" in the
-    commutative diagram: the arrow from `MereoScale` to (ℚ, ≤).
+/-- Every `ExtMeasure μ` gives a monotone map to (ℚ, ≤). -/
+theorem extMeasure_monotone {α : Type*} [SemilatticeSup α]
+    {μ : α → ℚ} (hμ : ExtMeasure α μ) :
+    Monotone μ :=
+  (extMeasure_strictMono hμ).monotone
 
-    The measure function μ : α → ℚ is strictly monotone (by `ExtMeasure`),
-    hence monotone, hence a scale morphism. -/
-theorem extMeasure_scaleMorphism {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} (hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b)
-                  (ComparativeScale.ofPreorder ℚ .closed) μ :=
-  ScaleMorphism.ofStrictMono (extMeasure_strictMono hμ) b .closed
-
-open Core.Scale in
-/-- Composition of `MereoDim` morphisms is a composed `ScaleMorphism`.
-    This theorem witnesses that the two notions of composition agree:
-    `MereoDim.comp` (mereological) and `ScaleMorphism.comp` (categorical)
-    produce the same result. -/
-theorem mereoDim_comp_eq_scaleMorphism_comp {α β γ : Type*}
-    [PartialOrder α] [PartialOrder β] [PartialOrder γ]
-    {f : β → γ} {g : α → β} (hf : MereoDim f) (hg : MereoDim g)
-    (b₁ b₂ b₃ : Core.Scale.Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
-                  (ComparativeScale.ofPreorder γ b₃) (f ∘ g) :=
-  ScaleMorphism.comp
-    (mereoDim_scaleMorphism hf b₂ b₃)
-    (mereoDim_scaleMorphism hg b₁ b₂)
-
-open Core.Scale in
-/-- The full dimension chain (domain →d codomain →μ ℚ) is a composed
-    `ScaleMorphism`. This connects `DimensionChain` (in `DimensionBridge`)
-    to the categorical framework: each Krifka dimension chain
-    (Events →θ Entities →μ ℚ) is a composition of `ScaleMorphism`s. -/
-theorem dimension_chain_scaleMorphism {α β : Type*}
-    [PartialOrder α] [SemilatticeSup β]
-    {d : α → β} (hd : MereoDim d)
-    {μ : β → ℚ} (hμ : ExtMeasure β μ)
-    (b : Core.Scale.Boundedness) :
-    ScaleMorphism (ComparativeScale.ofPreorder α b)
-                  (ComparativeScale.ofPreorder ℚ .closed) (μ ∘ d) :=
-  ScaleMorphism.comp
-    (extMeasure_scaleMorphism hμ (ComparativeScale.ofPreorder β b).boundedness)
-    (mereoDim_scaleMorphism hd b (ComparativeScale.ofPreorder β b).boundedness)
-
-open Core.Scale in
 /-- **Boundedness coherence**: the mereological classification (QUA → `.closed`,
-    CUM → `.open_`) is the *same* classification used by `ComparativeScale`.
-    This is not a coincidence — both are tracking the same property (whether
-    the scale has an inherent endpoint).
-
-    Spelled out: a `MereoDim` from a QUA domain produces a `.closed`
-    `ComparativeScale`, and a `MereoDim` from a CUM domain produces an
-    `.open_` `ComparativeScale`. The `MIPDomain` constructors (§2)
-    then derive the licensing prediction from this shared classification. -/
+    CUM → `.open_`) is definitional — `ComparativeScale` is now just a
+    boundedness tag on an ambient preorder, so the classification is stored
+    directly as the `boundedness` field. -/
 theorem qua_cum_boundedness_coherence :
-    quaBoundedness = (ComparativeScale.ofPreorder ℚ quaBoundedness).boundedness ∧
-    cumBoundedness = (ComparativeScale.ofPreorder ℚ cumBoundedness).boundedness :=
+    quaBoundedness = Core.Scale.Boundedness.closed ∧
+    cumBoundedness = Core.Scale.Boundedness.open_ :=
   ⟨rfl, rfl⟩
 
 end Mereology

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.224.2] - 2026-02-18
+
+### Changed
+- Simplify `ComparativeScale` from 4 fields (`le`, `le_refl`, `le_trans`, `boundedness`) to 1 field (`boundedness`), with ordering from ambient `[Preorder α]`
+- Fix `AdditiveScale.fa` to use `≤`/`⊔` from ambient `SemilatticeSup` instead of bundled `le`, eliminating coherence gap with Mathlib's ordering
+- Delete `ScaleMorphism` and its namespace — categorical morphisms are just Mathlib's `Monotone`
+- Delete `ComparativeScale.ofPreorder`/`ofLinearOrder` (now trivial `⟨b⟩`)
+- Simplify `MIPDomain` constructors to `{ boundedness := b, ... }`
+- Replace `MereoDim ↔ ScaleMorphism` bridge (§11) with `MereoDim ↔ Monotone` bridge: `mereoDim_monotone`, `extMeasure_monotone`
+
+### Added
+- `AdditiveScale.IsRepresentable`: representation theorem for additive scales (monotone additive function into ℚ)
+- `open_scale_unlicensable`: boundedness necessity theorem — open scales always have monotone families with no optimum
+
 ## [0.224.1] - 2026-02-18
 
 ### Added

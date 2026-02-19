@@ -366,13 +366,13 @@ theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .closed) :
     (adjMIPDomain μ entry).licensed = true := by
   simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
-        Boundedness.isLicensed, ComparativeScale.ofLinearOrder, ComparativeScale.ofPreorder]
+        Boundedness.isLicensed]
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .open_) :
     (adjMIPDomain μ entry).licensed = false := by
   simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
-        Boundedness.isLicensed, ComparativeScale.ofLinearOrder, ComparativeScale.ofPreorder]
+        Boundedness.isLicensed]
 
 theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
     ∃ x : Degree max, x ≠ ⊤ := by
