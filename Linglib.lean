@@ -149,6 +149,8 @@ import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.Case
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Attitudes.IntensionalExamplesBridge
+import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
+import Linglib.Phenomena.Attitudes.IntentionalIdentity.Bridge
 import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.DG_CRDCBridge
@@ -308,6 +310,8 @@ import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025Bridge
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
+import Linglib.Phenomena.Polysemy.Data
+import Linglib.Phenomena.Polysemy.CopredBridge
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
@@ -505,7 +509,9 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Theories.Semantics.TypeTheoretic.Core
+import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
+import Linglib.Theories.Semantics.TypeTheoretic.FrameBridge
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 import Linglib.Theories.Semantics.TypeTheoretic.Underspecification
@@ -591,7 +597,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
-import Linglib.Theories.Semantics.Probabilistic.Frames.Basic
+import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend

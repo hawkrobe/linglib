@@ -1,7 +1,7 @@
 /-
-# Semantic Frames and Scenarios
+# Semantic Scenarios and Distributional Frames
 
-Frame-based constraints for meaning in context.
+Probabilistic scenario constraints for meaning in context.
 
 ## Overview
 
@@ -41,7 +41,7 @@ Scenarios can be modeled in RSA as:
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.ProductOfExperts
 
-namespace Semantics.Probabilistic.Frames
+namespace Semantics.Probabilistic.Scenarios
 
 
 /-!
@@ -351,4 +351,4 @@ def scenarioGoalFilter {Concept Scenario : Type} [BEq Scenario]
     (targetScenario : Scenario) : ScenarioWorld Concept Scenario → Bool :=
   λ w => w.scenario == targetScenario
 
-end Semantics.Probabilistic.Frames
+end Semantics.Probabilistic.Scenarios

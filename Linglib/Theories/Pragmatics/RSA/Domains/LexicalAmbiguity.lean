@@ -44,13 +44,13 @@ Lexical ambiguity maps to Lexical Uncertainty RSA:
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.ProductOfExperts
 import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences
-import Linglib.Theories.Semantics.Probabilistic.Frames.Basic
+import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 
 namespace RSA.Domains.LexicalAmbiguity
 
 open Core.ProductOfExperts
 open Semantics.Lexical.Verb.SelectionalPreferences
-open Semantics.Probabilistic.Frames
+open Semantics.Probabilistic.Scenarios
 
 -- Helper Functions
 
