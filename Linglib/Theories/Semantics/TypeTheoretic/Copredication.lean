@@ -15,8 +15,12 @@ works via projection (Prod.fst / Prod.snd = meetSubtypeLeft/Right).
 The non-trivial contribution is *individuation*: when we count
 "three books were mastered and burned," do we count physical
 volumes or informational contents? A `DotType` bundles two aspect
-types with an `IndividuationCriterion` — an equivalence relation
-determining what counts as "one."
+types with a `Setoid` — an equivalence relation determining what
+counts as "one."
+
+We use `Setoid` directly (passed as a value, not via instance
+resolution) since a single type may need multiple individuation
+criteria (physical vs. informational individuation of books).
 
 ## References
 
@@ -55,64 +59,42 @@ theorem copredicate_factors {A₁ A₂ : Type}
     copredicate P Q x ↔ copred₁ P x ∧ copred₂ Q x :=
   Iff.rfl
 
-/-! ## Individuation criteria
-
-An individuation criterion is an equivalence relation determining
-when two objects count as "the same" for purposes of counting.
-
-Structurally identical to `Setoid` but used as a value rather than
-a typeclass, since a single type may have multiple individuation
-criteria (e.g., physical vs. informational individuation of books). -/
-
-/-- An individuation criterion: an equivalence relation determining
-what counts as "one" object. -/
-structure IndividuationCriterion (α : Type) where
-  /-- When two objects count as the same individual -/
-  rel : α → α → Prop
-  /-- The relation is an equivalence -/
-  equiv : Equivalence rel
-
-/-- Convert to a Setoid when needed for Mathlib interop. -/
-def IndividuationCriterion.toSetoid {α : Type} (ic : IndividuationCriterion α) :
-    Setoid α :=
-  ⟨ic.rel, ic.equiv⟩
-
 /-! ## Dot types
 
-A dot type bundles two aspect types with an individuation criterion.
+A dot type bundles two aspect types with a `Setoid` for individuation.
 The individuation is part of the lexical specification — "book" =
 ⟨PhysObj, Info, individuate by volume⟩ — not just the raw product type.
 
 Values of a dot type are pairs `A₁ × A₂` (= `MeetType A₁ A₂`). -/
 
 /-- A dot type: a polysemous type with two aspects and an individuation
-criterion. The individuation determines counting under copredication.
-Chatzikyriakidis et al. (2025) §3. -/
+criterion (a `Setoid`). The individuation determines counting under
+copredication. Chatzikyriakidis et al. (2025) §3. -/
 structure DotType (A₁ A₂ : Type) where
   /-- How to individuate objects of this complex type -/
-  individuation : IndividuationCriterion (A₁ × A₂)
+  individuation : Setoid (A₁ × A₂)
 
 /-- Individuate by the first aspect.
 "book" individuated physically: two copies of Hamlet count as two. -/
 def DotType.byAspect₁ {A₁ A₂ : Type} [DecidableEq A₁] : DotType A₁ A₂ where
   individuation :=
-    { rel := λ x y => x.1 = y.1
-      equiv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
+    { r := λ x y => x.1 = y.1
+      iseqv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
 
 /-- Individuate by the second aspect.
 "book" individuated informationally: two copies of Hamlet count as one. -/
 def DotType.byAspect₂ {A₁ A₂ : Type} [DecidableEq A₂] : DotType A₁ A₂ where
   individuation :=
-    { rel := λ x y => x.2 = y.2
-      equiv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
+    { r := λ x y => x.2 = y.2
+      iseqv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
 
-/-- Count distinct individuals in a list under an individuation criterion.
+/-- Count distinct individuals in a list under a `Setoid`.
 Uses a simple quadratic distinctness check (fine for finite linguistic examples). -/
-def countDistinct {α : Type} (ic : IndividuationCriterion α)
-    [∀ x y, Decidable (ic.rel x y)]
+def countDistinct {α : Type} (s : Setoid α)
+    [∀ x y, Decidable (s.r x y)]
     (xs : List α) : Nat :=
   xs.foldl (λ (seen : List α) x =>
-    if seen.any (λ s => decide (ic.rel s x)) then seen else x :: seen
+    if seen.any (λ e => decide (s.r e x)) then seen else x :: seen
   ) [] |>.length
 
 /-- Different individuation criteria can yield different counts
@@ -121,11 +103,10 @@ Chatzikyriakidis et al. (2025) §3's counting puzzle. -/
 theorem individuation_can_diverge :
     ∃ (A₁ A₂ : Type) (_ : DecidableEq A₁) (_ : DecidableEq A₂)
       (xs : List (A₁ × A₂))
-      (_ : ∀ x y, Decidable ((@DotType.byAspect₁ A₁ A₂ _).individuation.rel x y))
-      (_ : ∀ x y, Decidable ((@DotType.byAspect₂ A₁ A₂ _).individuation.rel x y)),
+      (_ : ∀ x y, Decidable ((@DotType.byAspect₁ A₁ A₂ _).individuation.r x y))
+      (_ : ∀ x y, Decidable ((@DotType.byAspect₂ A₁ A₂ _).individuation.r x y)),
       countDistinct (@DotType.byAspect₁ A₁ A₂ _).individuation xs ≠
       countDistinct (@DotType.byAspect₂ A₁ A₂ _).individuation xs := by
-  -- Two physical volumes, one informational content
   refine ⟨Bool, Bool, inferInstance, inferInstance,
     [(true, true), (false, true)],
     λ (x : Bool × Bool) (y : Bool × Bool) => inferInstanceAs (Decidable (x.1 = y.1)),

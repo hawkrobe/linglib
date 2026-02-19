@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.22] - 2026-02-19
+
+### Changed
+- Collapse `IndividuationCriterion` into `Setoid`: `DotType` now holds `Setoid (A₁ × A₂)` directly instead of a custom struct; `countDistinct` takes `Setoid α`; all field references `.rel`/`.equiv` → `.r`/`.iseqv`
+
 ## [0.224.21] - 2026-02-19
 
 ### Changed
