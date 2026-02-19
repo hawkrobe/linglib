@@ -64,6 +64,7 @@ import Linglib.Core.DiscourseRole
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
+import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSADecide
 
 -- Fragments

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.9] - 2026-02-18
+
+### Added
+- `nonneg_of_forall` tactic: closes `0 ≤ f a₁ + ⋯ + f aₙ` given `∀ x, 0 ≤ f x`
+  in context, decomposing via `add_nonneg`/`mul_nonneg` then applying local hypotheses
+
 ## [0.224.8] - 2026-02-18
 
 ### Changed
