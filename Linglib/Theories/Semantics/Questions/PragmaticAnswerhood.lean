@@ -121,6 +121,42 @@ def givesPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
     worlds.all λ w => pInJ w -> cell w
   nonEmpty && contained
 
+/-- Elements of the foldl-built representative list come from the input list. -/
+private theorem foldl_reps_mem {W : Type*} (equiv : W → W → Bool)
+    (l : List W) :
+    ∀ (init : List W) (r : W),
+    r ∈ l.foldl (fun acc w =>
+      if acc.any (fun r => equiv r w) then acc else w :: acc) init →
+    r ∈ init ∨ r ∈ l := by
+  induction l with
+  | nil => intro _ _ h; exact Or.inl h
+  | cons w ws ih =>
+    intro init r h
+    simp only [List.foldl_cons] at h
+    split_ifs at h
+    · rcases ih init r h with h | h
+      · exact Or.inl h
+      · exact Or.inr (List.mem_cons_of_mem _ h)
+    · rcases ih (w :: init) r h with h | h
+      · rcases List.mem_cons.mp h with rfl | h
+        · exact Or.inr (List.mem_cons.mpr (Or.inl rfl))
+        · exact Or.inl h
+      · exact Or.inr (List.mem_cons_of_mem _ h)
+
+/-- Every cell produced by restrictedCells has a witness in `worlds`. -/
+private theorem restrictedCells_inhabited {W : Type*}
+    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
+    ∀ cell ∈ q.restrictedCells j worlds, ∃ w ∈ worlds, cell w = true := by
+  intro cell hcell
+  simp only [GSQuestion.restrictedCells, List.mem_map] at hcell
+  obtain ⟨rep, hrep_mem, rfl⟩ := hcell
+  have hrep_jw : rep ∈ worlds.filter j := by
+    rcases foldl_reps_mem q.sameAnswer (worlds.filter j) [] rep hrep_mem with h | h
+    · simp at h
+    · exact h
+  obtain ⟨hrep_w, hj_rep⟩ := List.mem_filter.mp hrep_jw
+  exact ⟨rep, hrep_w, by simp [hj_rep, q.refl]⟩
+
 /-- Giving a pragmatic answer is weaker than being a pragmatic answer.
 
 G&S 1984, p. 352: "If P is a pragmatic answer, then P gives a pragmatic answer." -/
@@ -128,7 +164,13 @@ theorem isPragmaticAnswer_implies_gives {W : Type*}
     (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
     isPragmaticAnswer p q j worlds = true ->
     givesPragmaticAnswer p q j worlds = true := by
-  sorry
+  simp only [isPragmaticAnswer, givesPragmaticAnswer, Bool.and_eq_true,
+    List.any_eq_true, List.all_eq_true, beq_iff_eq, decide_eq_true_eq]
+  rintro ⟨cell, hcell_mem, hcell_eq⟩
+  obtain ⟨w, hw, hcw⟩ := restrictedCells_inhabited q j worlds cell hcell_mem
+  refine ⟨⟨w, hw, ?_⟩, cell, hcell_mem, fun w' hw' h => ?_⟩
+  · rw [hcell_eq w hw]; exact hcw
+  · rw [← hcell_eq w' hw']; exact h
 
 -- Semantic ↔ Pragmatic Connection
 

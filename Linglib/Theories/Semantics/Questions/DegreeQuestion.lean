@@ -34,7 +34,7 @@ when φ describes an open set on a dense scale (no infimum/supremum).
 The *new* content beyond `Core.Scale` (which provides degree properties
 `atLeastDeg`, `moreThanDeg`, etc. and their HasMaxInf/density theorems):
 
-1. **Negative islands**: negation of an upward-monotone property on a dense
+1. **Negative islands**: negation of a downward-monotone property on a dense
    scale yields an open complement with no max⊨ element
 2. **Modal obviation**: ∀-modals rescue maximality violations, ∃-modals don't
 3. **Monotonicity preservation** through modals
@@ -75,34 +75,38 @@ def negatedDegreeProp (φ : α → W → Prop) : α → W → Prop :=
     "*How much does John not weigh?" is unacceptable because on a dense
     scale, the negated set {d | ¬φ(d)(w)} has no maximally informative element.
 
-    Setup: φ is upward monotone (e.g., "weighs ≥ d"). At world w, there is
-    a boundary below which φ holds and above which it fails. Density ensures
-    that for any d in the negated set, there exists d' strictly between the
-    boundary and d that is also in the negated set — and ¬φ(d) does not
-    entail ¬φ(d'), because in a world where the boundary moves up past d'
-    (but stays below d), ¬φ(d) still holds but ¬φ(d') fails.
+    Setup: φ is downward monotone (e.g., "weighs ≥ d": smaller thresholds
+    are easier to satisfy). At world w, there is a boundary below which φ
+    holds and above which it fails. Density ensures that for any d in the
+    negated set, there exists d' strictly between the boundary and d — and
+    ¬φ(d) does not entail ¬φ(d'), because in a world where the boundary
+    sits between d' and d, ¬φ(d) holds but ¬φ(d') fails.
 
-    The proof requires constructing witness worlds; the key mathematical
-    fact is that open intervals in dense orders have no minimum. -/
+    The `hWitness` hypothesis plays the role of `hSurj` in `moreThan_noMaxInf`:
+    it guarantees enough worlds exist to separate degrees. For the concrete
+    case φ = atLeastDeg μ, this follows from surjectivity of μ. -/
 theorem negativeIsland_noAnswer [DenselyOrdered α]
     (φ : α → W → Prop)
-    (_hMono : IsUpwardMonotone φ)
+    (_hMono : IsDownwardMonotone φ)
     (w : W) (boundary : α)
     (hBelow : ∀ d, d ≤ boundary → φ d w)
-    (hAbove : ∀ d, boundary < d → ¬ φ d w) :
+    (hAbove : ∀ d, boundary < d → ¬ φ d w)
+    (hWitness : ∀ a b, a < b → ∃ w', φ a w' ∧ ¬ φ b w') :
     ¬ HasMaxInf (negatedDegreeProp φ) w := by
   intro ⟨x, hx_neg, hx_ent⟩
   have hx_above : boundary < x := by
     by_contra h
     push_neg at h
     exact hx_neg (hBelow x h)
+  -- By density, find z strictly between boundary and x
   obtain ⟨z, hz_above, hz_below⟩ := DenselyOrdered.dense boundary x hx_above
   have hz_neg : negatedDegreeProp φ z w := hAbove z hz_above
-  -- x is max⊨, so ¬φ(x) entails ¬φ(z) across all worlds.
-  -- But in a world where the boundary sits between z and x,
-  -- ¬φ(x) holds while ¬φ(z) may fail.
-  -- Completing this requires constructing such a witness world.
-  sorry -- TODO: requires witness world with boundary between z and x
+  -- x is max⊨, so ¬φ(x) entails ¬φ(z) across all worlds
+  have hx_ent_z := hx_ent z hz_neg
+  -- But hWitness gives a world where φ(z) holds and φ(x) fails
+  obtain ⟨w', hw'_z, hw'_x⟩ := hWitness z x hz_below
+  -- At w': ¬φ(x)(w') → ¬φ(z)(w') by entailment, but φ(z)(w') holds
+  exact hx_ent_z w' hw'_x hw'_z
 
 -- ════════════════════════════════════════════════════
 -- § 2. Modal Obviation (Fox & Hackl 2007 §§2.3, 3.4)
