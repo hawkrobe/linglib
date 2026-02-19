@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 /-!
 # Copredication Bridge @cite{chatzikyriakidis-etal-2025}
 
-Bridge theorems connecting copredication data to the TTR complex-type
+Bridge theorems connecting copredication data to the TTR dot-type
 infrastructure. We model the "book" examples from §3 of
 Chatzikyriakidis et al. (2025) and prove that:
 
@@ -22,7 +22,7 @@ namespace Phenomena.Polysemy.Bridge
 
 open Semantics.TypeTheoretic
 
-/-! ## Book as a complex type -/
+/-! ## Book as a dot type -/
 
 /-- Physical-object aspect of a book. -/
 structure PhysObj where
@@ -34,8 +34,9 @@ structure Info where
   title : String
   deriving Repr, DecidableEq
 
-/-- A book is a complex type: physical object × informational content. -/
-abbrev Book := ComplexType PhysObj Info
+/-- "book" as a dot type: physical × informational, individuated physically.
+Gotham (2017): the default criterion for "book" counts physical volumes. -/
+def bookDot : DotType PhysObj Info := DotType.byAspect₁
 
 /-- "heavy": a predicate on the physical aspect. -/
 def heavy (threshold : Nat) (p : PhysObj) : Prop := p.weight > threshold
@@ -45,7 +46,7 @@ def interesting (_i : Info) : Prop := True  -- stipulated for the example
 
 /-- "The book is heavy and interesting" is well-typed copredication.
 This is the formal content of bookHeavyInteresting from Data.lean. -/
-theorem book_heavy_and_interesting (b : Book) (h : b.aspect₁.weight > 500) :
+theorem book_heavy_and_interesting (b : PhysObj × Info) (h : b.1.weight > 500) :
     copredicate (heavy 500) interesting b :=
   ⟨h, trivial⟩
 
@@ -56,39 +57,41 @@ Two physical copies of one novel, plus one copy of a different novel.
 Physical count = 3, informational count = 2. -/
 
 /-- Three books: two copies of "Hamlet" and one of "Ulysses". -/
-def hamlet1 : Book := ⟨⟨200⟩, ⟨"Hamlet"⟩⟩
-def hamlet2 : Book := ⟨⟨210⟩, ⟨"Hamlet"⟩⟩  -- different physical copy
-def ulysses : Book := ⟨⟨400⟩, ⟨"Ulysses"⟩⟩
+def hamlet1 : PhysObj × Info := ⟨⟨200⟩, ⟨"Hamlet"⟩⟩
+def hamlet2 : PhysObj × Info := ⟨⟨210⟩, ⟨"Hamlet"⟩⟩  -- different physical copy
+def ulysses : PhysObj × Info := ⟨⟨400⟩, ⟨"Ulysses"⟩⟩
 
-def threeBooks : List Book := [hamlet1, hamlet2, ulysses]
+def threeBooks : List (PhysObj × Info) := [hamlet1, hamlet2, ulysses]
 
 /-- Physical individuation: count by PhysObj (weight distinguishes copies). -/
-instance : ∀ x y, Decidable ((@individuateBy₁ PhysObj Info _).sameIndividual x y) :=
+instance : ∀ x y, Decidable (bookDot.individuation.rel x y) :=
   λ x y => inferInstanceAs (Decidable (x.1 = y.1))
 
 /-- Informational individuation: count by Info (title). -/
-instance : ∀ x y, Decidable ((@individuateBy₂ PhysObj Info _).sameIndividual x y) :=
+def infoDot : DotType PhysObj Info := DotType.byAspect₂
+
+instance : ∀ x y, Decidable (infoDot.individuation.rel x y) :=
   λ x y => inferInstanceAs (Decidable (x.2 = y.2))
 
 /-- Under physical individuation: 3 distinct objects. -/
-theorem physical_count : countDistinct individuateBy₁ threeBooks = 3 := by
+theorem physical_count : countDistinct bookDot.individuation threeBooks = 3 := by
   native_decide
 
 /-- Under informational individuation: 2 distinct contents. -/
-theorem informational_count : countDistinct individuateBy₂ threeBooks = 2 := by
+theorem informational_count : countDistinct infoDot.individuation threeBooks = 2 := by
   native_decide
 
 /-- The counting datum from Data.lean is reproduced.
 This bridges the empirical datum to the TTR formalization. -/
 theorem counting_matches_datum :
-    countDistinct individuateBy₁ threeBooks = masteredAndBurned.physicalCount ∧
-    countDistinct individuateBy₂ threeBooks = masteredAndBurned.informationalCount := by
+    countDistinct bookDot.individuation threeBooks = masteredAndBurned.physicalCount ∧
+    countDistinct infoDot.individuation threeBooks = masteredAndBurned.informationalCount := by
   exact ⟨physical_count, informational_count⟩
 
 /-- Counts diverge, as predicted by the datum. -/
 theorem counts_diverge :
-    countDistinct individuateBy₁ threeBooks ≠
-    countDistinct individuateBy₂ threeBooks := by
+    countDistinct bookDot.individuation threeBooks ≠
+    countDistinct infoDot.individuation threeBooks := by
   native_decide
 
 end Phenomena.Polysemy.Bridge

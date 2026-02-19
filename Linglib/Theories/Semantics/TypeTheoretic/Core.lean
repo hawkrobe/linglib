@@ -101,6 +101,18 @@ def IType.extEquiv (T₁ T₂ : IType) : Prop := Nonempty (T₁.carrier ≃ T₂
 /-- Two ITypes are intensionally identical when both name and carrier match. -/
 def IType.intEq (T₁ T₂ : IType) : Prop := T₁ = T₂
 
+/-- Meet of intensional types: compose carriers and names.
+Intensional identity is preserved through meet, so compositional
+expressions built from distinct atomic types remain distinct. -/
+def IType.meet (T₁ T₂ : IType) : IType where
+  carrier := T₁.carrier × T₂.carrier
+  name := T₁.name ++ " ∧ " ++ T₂.name
+
+/-- Join of intensional types: sum carriers and compose names. -/
+def IType.join (T₁ T₂ : IType) : IType where
+  carrier := Sum T₁.carrier T₂.carrier
+  name := T₁.name ++ " ∨ " ++ T₂.name
+
 /-- Core TTR thesis: extensional equivalence does not entail intensional identity.
 This is the formal content of Cooper's claim that types are not sets. -/
 theorem ext_equiv_not_implies_int_eq :
@@ -246,6 +258,17 @@ abbrev IsFalse (T : Type) : Prop := IsEmpty T
 theorem true_false_exclusive (T : Type) : ¬ (IsTrue T ∧ IsFalse T) := by
   intro ⟨⟨t⟩, hE⟩
   exact hE.false t
+
+/-- IType.meet truth = conjunction of component truth. -/
+theorem IType.meet_true_iff (T₁ T₂ : IType) :
+    IsTrue (T₁.meet T₂).carrier ↔ IsTrue T₁.carrier ∧ IsTrue T₂.carrier :=
+  ⟨λ ⟨(a, b)⟩ => ⟨⟨a⟩, ⟨b⟩⟩, λ ⟨⟨a⟩, ⟨b⟩⟩ => ⟨(a, b)⟩⟩
+
+/-- IType.join truth = disjunction of component truth. -/
+theorem IType.join_true_iff (T₁ T₂ : IType) :
+    IsTrue (T₁.join T₂).carrier ↔ IsTrue T₁.carrier ∨ IsTrue T₂.carrier :=
+  ⟨λ ⟨s⟩ => match s with | .inl a => Or.inl ⟨a⟩ | .inr b => Or.inr ⟨b⟩,
+   λ h => h.elim (λ ⟨a⟩ => ⟨Sum.inl a⟩) (λ ⟨b⟩ => ⟨Sum.inr b⟩)⟩
 
 /-- Subtypes preserve truth: if T₁ ⊑ T₂ and T₁ is true, then T₂ is true. -/
 theorem subtype_preserves_truth {T₁ T₂ : Type} [h : SubtypeOf T₁ T₂]
