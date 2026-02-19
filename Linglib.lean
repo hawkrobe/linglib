@@ -56,6 +56,7 @@ import Linglib.Core.DimensionBridge
 import Linglib.Core.Continuation
 import Linglib.Core.PersonCategory
 import Linglib.Core.MorphRule
+import Linglib.Core.InformationTheory
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
@@ -207,6 +208,7 @@ import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Phenomena.Ellipsis.VPEllipsis
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Data
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Bridge
 import Linglib.Phenomena.Entailment.Basic
@@ -280,6 +282,8 @@ import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Morphology.Composition
 import Linglib.Phenomena.Morphology.DegreeComposition
 import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
+import Linglib.Phenomena.Morphology.Typology
+import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013.Bridge
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -544,6 +548,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.Core.CliticVsAffix
+import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
