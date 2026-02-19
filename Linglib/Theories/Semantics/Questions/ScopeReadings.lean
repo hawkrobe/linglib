@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Coordination
+import Linglib.Theories.Semantics.Questions.LiftedTypes
 import Linglib.Theories.Semantics.Questions.MentionSome
 
 /-!
@@ -143,7 +144,7 @@ private theorem foldl_conj_sameAnswer {W E : Type*}
   | cons e' rest ih =>
     simp only [List.foldl_cons]
     rw [ih]
-    simp only [HAdd.hAdd, Add.add, conjGSQuestion, QUD.compose, List.all_cons]
+    simp only [HAdd.hAdd, Add.add, QUD.compose, List.all_cons]
     rw [Bool.and_assoc]
 
 /-- A pair-list question is equivalent to a conjunction of individual questions.
@@ -417,31 +418,6 @@ See MentionSome.lean for full G&S Section 5 treatment:
 - Embedded mention-some under "know"/"wonder"
 - Verb licensing (why "depends" blocks mention-some)
 -/
-
-/-- A question has mention-some reading when partial answers suffice. -/
-structure MentionSomeQuestion (W : Type*) where
-  /-- The underlying question -/
-  question : GSQuestion W
-  /-- Is mention-some licensed? -/
-  mentionSome : Bool
-  /-- Why mention-some is licensed -/
-  explanation : String
-
-/-- Wide scope existential can create mention-some-like readings.
-
-If the question is parameterized by an existential, answering for
-ANY witness can suffice, mimicking mention-some.
-
-Note: We use the narrow scope GSQuestion here for compatibility with
-MentionSomeQuestion, but the semantics is that mention-some is licensed
-due to the wide-scope existential interpretation. For the true wide-scope
-semantics as a LiftedQuestion, use `eq.wideScope` directly. -/
-def existentialCreatesMentionSome {W E : Type} [DecidableEq E] [DecidableEq (List E)]
-    (eq : ExistentialQuestion W E) : MentionSomeQuestion W :=
-  { question := eq.narrowScope
-  , mentionSome := true
-  , explanation := "Wide-scope existential: answer for any witness suffices"
-  }
 
 /-- Convert an ExistentialQuestion to a MentionSomeInterrogative.
 

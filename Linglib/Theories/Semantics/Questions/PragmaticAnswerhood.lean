@@ -37,60 +37,6 @@ Then:
 
 namespace Semantics.Questions
 
--- Information Sets
-
-/-- An information set J ⊆ I represents what the questioner knows.
-J is the set of indices compatible with the questioner's factual knowledge.
-
-G&S 1984, p. 350: "One may argue that using an information set to represent
-the questioner's informational state involves idealizations. [...] We think
-these idealizations are harmless." -/
-abbrev InfoSet (W : Type*) := W -> Bool
-
-/-- The total information set (no factual knowledge). -/
-def totalIgnorance {W : Type*} : InfoSet W := λ _ => true
-
-/-- Check if a world is in the information set -/
-def InfoSet.contains {W : Type*} (j : InfoSet W) (w : W) : Bool := j w
-
-/-- Intersection of a proposition with an information set -/
-def InfoSet.intersect {W : Type*} (j : InfoSet W) (p : W -> Bool) : W -> Bool :=
-  λ w => j w && p w
-
--- Restricted Partition (J/Q)
-
-/-- Two worlds are J/Q-equivalent: both in J and Q-equivalent.
-
-G&S 1984, p. 351: "J/Q = {P ∩ J : P ∈ I/Q, P ∩ J ≠ ∅}"
-
-Note: This is not a full equivalence relation on all W (fails refl for w ∉ J),
-but is well-defined on the worlds in J. -/
-def GSQuestion.equivInJ {W : Type*} (q : GSQuestion W) (j : InfoSet W)
-    (w v : W) : Bool :=
-  j w && j v && q.equiv w v
-
-/-- The restricted cells as a list of characteristic functions.
-
-These are the cells of the partition J/Q: each cell P' is some P ∩ J
-where P is a cell of I/Q and P ∩ J ≠ ∅. -/
-def GSQuestion.restrictedCells {W : Type*} (q : GSQuestion W) (j : InfoSet W)
-    (worlds : List W) : List (W -> Bool) :=
-  let jWorlds := worlds.filter j
-  -- Build cells from representatives in J
-  let reps := jWorlds.foldl (λ acc w =>
-    if acc.any λ r => q.equiv r w then acc else w :: acc) []
-  -- Each cell is the intersection of the original cell with J
-  reps.map λ rep => λ w => j w && q.equiv rep w
-
-/-- Q is a question in J iff the restricted partition has at least 2 cells.
-
-G&S 1984, p. 352: "Q is a question in J iff ∃X∃Y: X,Y ∈ J/Q ∧ X ≠ Y" -/
-def GSQuestion.isQuestionIn {W : Type*} (q : GSQuestion W) (j : InfoSet W)
-    (worlds : List W) : Bool :=
-  (q.restrictedCells j worlds).length >= 2
-
--- Pragmatic Answerhood
-
 /-- P **is** a pragmatic answer to Q in J iff P ∩ J is exactly a cell of J/Q.
 
 G&S 1984, p. 352: "P is a pragmatic answer to Q in J iff P ∩ J ∈ J/Q"
@@ -120,92 +66,6 @@ def givesPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
   let contained := cells.any λ cell =>
     worlds.all λ w => pInJ w -> cell w
   nonEmpty && contained
-
-/-- Elements of the foldl-built representative list come from the input list. -/
-private theorem foldl_reps_mem {W : Type*} (equiv : W → W → Bool)
-    (l : List W) :
-    ∀ (init : List W) (r : W),
-    r ∈ l.foldl (fun acc w =>
-      if acc.any (fun r => equiv r w) then acc else w :: acc) init →
-    r ∈ init ∨ r ∈ l := by
-  induction l with
-  | nil => intro _ _ h; exact Or.inl h
-  | cons w ws ih =>
-    intro init r h
-    simp only [List.foldl_cons] at h
-    split_ifs at h
-    · rcases ih init r h with h | h
-      · exact Or.inl h
-      · exact Or.inr (List.mem_cons_of_mem _ h)
-    · rcases ih (w :: init) r h with h | h
-      · rcases List.mem_cons.mp h with rfl | h
-        · exact Or.inr (List.mem_cons.mpr (Or.inl rfl))
-        · exact Or.inl h
-      · exact Or.inr (List.mem_cons_of_mem _ h)
-
-/-- Every J-world is Q-equivalent to some representative in restrictedCells.
-
-This is the covering property: the foldl in restrictedCells produces reps
-such that every input element is equivalent to some rep. -/
-private theorem restrictedCells_cover {W : Type*}
-    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) (w : W)
-    (hw : w ∈ worlds.filter j) :
-    ∃ cell ∈ q.restrictedCells j worlds, cell w = true := by
-  simp only [GSQuestion.restrictedCells, List.mem_map]
-  -- Suffices to find a rep in the foldl output with q.equiv rep w
-  suffices h : ∃ rep ∈ (worlds.filter j).foldl (fun acc w' =>
-      if acc.any (fun r => q.equiv r w') then acc else w' :: acc) [],
-      q.equiv rep w = true by
-    obtain ⟨rep, hrep, hequiv⟩ := h
-    exact ⟨fun w' => j w' && q.equiv rep w', ⟨rep, hrep, rfl⟩,
-           by rw [Bool.and_eq_true]; exact ⟨(List.mem_filter.mp hw).2, hequiv⟩⟩
-  -- Prove covering by induction on the foldl
-  set l := worlds.filter j with hl_def
-  suffices gen : ∀ init : List W,
-      w ∈ l ∨ init.any (fun r => q.equiv r w) = true →
-      ∃ rep ∈ l.foldl (fun acc w' =>
-          if acc.any (fun r => q.equiv r w') then acc else w' :: acc) init,
-        q.equiv rep w = true from
-    gen [] (Or.inl hw)
-  induction l with
-  | nil =>
-    intro init h
-    simp only [List.foldl_nil]
-    rcases h with h | h
-    · exact absurd h List.not_mem_nil
-    · exact List.any_eq_true.mp h
-  | cons w' rest ih =>
-    intro init h
-    simp only [List.foldl_cons]
-    split_ifs with hcover
-    · -- w' already covered by init
-      apply ih
-      rcases h with h | h
-      · rcases List.mem_cons.mp h with rfl | hmem
-        · exact Or.inr (by simp only [List.any_eq_true] at hcover ⊢; exact hcover)
-        · exact Or.inl hmem
-      · exact Or.inr h
-    · -- w' not covered; w' :: init
-      apply ih
-      rcases h with h | h
-      · rcases List.mem_cons.mp h with rfl | hmem
-        · exact Or.inr (by simp only [List.any_cons, q.refl, Bool.true_or])
-        · exact Or.inl hmem
-      · exact Or.inr (by simp only [List.any_cons, h, Bool.or_true])
-
-/-- Every cell produced by restrictedCells has a witness in `worlds`. -/
-private theorem restrictedCells_inhabited {W : Type*}
-    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
-    ∀ cell ∈ q.restrictedCells j worlds, ∃ w ∈ worlds, cell w = true := by
-  intro cell hcell
-  simp only [GSQuestion.restrictedCells, List.mem_map] at hcell
-  obtain ⟨rep, hrep_mem, rfl⟩ := hcell
-  have hrep_jw : rep ∈ worlds.filter j := by
-    rcases foldl_reps_mem q.sameAnswer (worlds.filter j) [] rep hrep_mem with h | h
-    · simp at h
-    · exact h
-  obtain ⟨hrep_w, hj_rep⟩ := List.mem_filter.mp hrep_jw
-  exact ⟨rep, hrep_w, by simp [hj_rep, q.refl]⟩
 
 /-- Giving a pragmatic answer is weaker than being a pragmatic answer.
 
@@ -543,30 +403,6 @@ theorem nonExhaustive_witness {W E : Type} [DecidableEq E]
     simp only [List.all_eq_true, beq_iff_eq]
     exact hall
   simp [hExh] at hNotExh
-
--- False Propositions, True Pragmatic Answers
-
-/-- G&S 1984, p. 360: A FALSE proposition can give a TRUE pragmatic answer.
-
-This happens when the questioner has false beliefs that nevertheless
-lead them to correctly identify the referent.
-
-Example: "Who won the Tour de France in 1980?"
-Answer: "The one who won in 1979"
-False proposition (Hinault won 1979, Zoetemelk won 1980),
-but if the questioner wrongly believes Zoetemelk won 1979,
-they correctly conclude Zoetemelk won 1980.
-
-This theorem merely states that such situations exist; see
-Phenomena/Questions/PragmaticAnswerhood.lean for concrete examples. -/
-theorem false_proposition_true_pragmatic_answer {W : Type*}
-    (p : W -> Bool) (_q : GSQuestion W) (_j : InfoSet W) (_worlds : List W)
-    (actual : W) (_hActual : _j actual = true) :
-    -- p is false at actual world
-    p actual = false ->
-    -- But p can still give a pragmatic answer in J
-    -- (there exist such p, q, j where this holds)
-    True := λ _ => trivial
 
 -- Institutional vs Ordinary Question-Answering
 

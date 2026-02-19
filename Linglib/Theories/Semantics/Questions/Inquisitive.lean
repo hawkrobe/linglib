@@ -149,12 +149,12 @@ def absurd : Issue W := { alternatives := [absurdState] }
 
 /-- A mention-some issue has multiple alternatives (non-singleton).
 
-In mention-some questions, any one of the alternatives suffices as an answer.
-Example: "Where can I buy coffee?" - answered by any single coffee location.
+Mention-some questions are exactly inquisitive issues: multiple alternatives
+each suffice as a complete answer. Example: "Where can I buy coffee?" is
+answered by any single coffee location.
 
 Thomas (2026) uses this to characterize partial answerhood. -/
-def isMentionSome (q : Issue W) : Bool :=
-  q.alternatives.length > 1
+def isMentionSome (q : Issue W) : Bool := q.isInquisitive
 
 /-- A mention-all issue has a single alternative (singleton).
 
@@ -253,5 +253,18 @@ theorem empty_not_inquisitive {W : Type*} :
 /-- Partition-derived issues preserve cell count as alternative count. -/
 theorem ofPartition_preserves_cells {W : Type*} (q : GSQuestion W) (worlds : List W) :
     (Issue.ofPartition q worlds).numAlternatives = (q.toCells worlds).length := rfl
+
+-- GSQuestion ↔ Issue Bridge
+
+/-- Convert a GSQuestion to an Issue via its partition cells.
+
+This is a convenience method wrapping `Issue.ofPartition`. The alternatives
+of the resulting issue correspond exactly to the cells of the partition. -/
+def toIssue {W : Type*} (q : GSQuestion W) (worlds : List W) : Issue W :=
+  Issue.ofPartition q worlds
+
+/-- The alternatives of `toIssue` are exactly the partition cells. -/
+theorem toIssue_alternatives {W : Type*} (q : GSQuestion W) (worlds : List W) :
+    (toIssue q worlds).alternatives = q.toCells worlds := rfl
 
 end Semantics.Questions.Inquisitive

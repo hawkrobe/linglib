@@ -71,8 +71,11 @@ def conditionalProb {W : Type*} [Fintype W]
 
 /-- Probability of an info state being actual.
 
-P(σ) = probability that the actual world is in σ. -/
-def probOfState {W : Type*} [Fintype W]
+P(σ) = probability that the actual world is in σ.
+
+This is identical to `probOfProp` — a convenience alias using info state
+vocabulary rather than proposition vocabulary. -/
+abbrev probOfState {W : Type*} [Fintype W]
     (prior : Prior W) (σ : InfoState W) : ℚ :=
   probOfProp prior σ
 
@@ -338,5 +341,18 @@ theorem strongerEvidence_is_positive {W : Type*} [Fintype W]
   intro h
   simp only [evidencesMoreStrongly, decide_eq_true_eq] at h
   exact h
+
+/-!
+## ℚ↔ℝ Probability Bridge
+
+ProbabilisticAnswerhood uses `Prior W := W → ℚ` (exact rational arithmetic),
+while EntropyNPIs uses `W → ℝ` (for Mathlib's `negMulLog`/`Real.log`). To
+connect the two, cast via `fun w => (prior w : ℝ)`. The identity
+`probOfProp prior φ` cast to `ℝ` equals `∑ w, if φ w then (prior w : ℝ) else 0`
+follows from `Rat.cast_sum`.
+
+A formal bridge theorem (`probOfProp_cast_eq_cellProb`) is deferred until
+both modules share an import of `Mathlib.Data.Real.Basic`.
+-/
 
 end Semantics.Questions.ProbabilisticAnswerhood

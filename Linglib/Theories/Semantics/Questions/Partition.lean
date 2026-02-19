@@ -133,4 +133,123 @@ theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
     ↓reduceIte, List.map_cons, List.map_nil, List.length_cons, List.length_nil]
   omega
 
+-- Information Sets
+
+/-- An information set J ⊆ I represents what the questioner knows.
+J is the set of indices compatible with the questioner's factual knowledge.
+
+G&S 1984, p. 350: "One may argue that using an information set to represent
+the questioner's informational state involves idealizations. [...] We think
+these idealizations are harmless." -/
+abbrev InfoSet (W : Type*) := W → Bool
+
+/-- The total information set (no factual knowledge). -/
+def totalIgnorance {W : Type*} : InfoSet W := λ _ => true
+
+/-- Check if a world is in the information set. -/
+def InfoSet.contains {W : Type*} (j : InfoSet W) (w : W) : Bool := j w
+
+/-- Intersection of a proposition with an information set. -/
+def InfoSet.intersect {W : Type*} (j : InfoSet W) (p : W → Bool) : W → Bool :=
+  λ w => j w && p w
+
+-- Restricted Partition (J/Q)
+
+/-- The restricted cells as a list of characteristic functions.
+
+These are the cells of the partition J/Q: each cell P' is some P ∩ J
+where P is a cell of I/Q and P ∩ J ≠ ∅.
+
+Moved from PragmaticAnswerhood: this is a general partition operation
+useful beyond pragmatic answerhood (e.g., for computing pragmatic
+exhaustivity, or for the GSQuestion↔Issue bridge). -/
+def GSQuestion.restrictedCells {W : Type*} (q : GSQuestion W) (j : InfoSet W)
+    (worlds : List W) : List (W → Bool) :=
+  let jWorlds := worlds.filter j
+  let reps := jWorlds.foldl (λ acc w =>
+    if acc.any λ r => q.equiv r w then acc else w :: acc) []
+  reps.map λ rep => λ w => j w && q.equiv rep w
+
+/-- Elements of the foldl-built representative list come from the input list. -/
+theorem foldl_reps_mem {W : Type*} (equiv : W → W → Bool)
+    (l : List W) :
+    ∀ (init : List W) (r : W),
+    r ∈ l.foldl (fun acc w =>
+      if acc.any (fun r => equiv r w) then acc else w :: acc) init →
+    r ∈ init ∨ r ∈ l := by
+  induction l with
+  | nil => intro _ _ h; exact Or.inl h
+  | cons w ws ih =>
+    intro init r h
+    simp only [List.foldl_cons] at h
+    split_ifs at h
+    · rcases ih init r h with h | h
+      · exact Or.inl h
+      · exact Or.inr (List.mem_cons_of_mem _ h)
+    · rcases ih (w :: init) r h with h | h
+      · rcases List.mem_cons.mp h with rfl | h
+        · exact Or.inr (List.mem_cons.mpr (Or.inl rfl))
+        · exact Or.inl h
+      · exact Or.inr (List.mem_cons_of_mem _ h)
+
+/-- Every J-world is Q-equivalent to some representative in restrictedCells.
+
+This is the covering property: the foldl in restrictedCells produces reps
+such that every input element is equivalent to some rep. -/
+theorem restrictedCells_cover {W : Type*}
+    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) (w : W)
+    (hw : w ∈ worlds.filter j) :
+    ∃ cell ∈ q.restrictedCells j worlds, cell w = true := by
+  simp only [GSQuestion.restrictedCells, List.mem_map]
+  suffices h : ∃ rep ∈ (worlds.filter j).foldl (fun acc w' =>
+      if acc.any (fun r => q.equiv r w') then acc else w' :: acc) [],
+      q.equiv rep w = true by
+    obtain ⟨rep, hrep, hequiv⟩ := h
+    exact ⟨fun w' => j w' && q.equiv rep w', ⟨rep, hrep, rfl⟩,
+           by rw [Bool.and_eq_true]; exact ⟨(List.mem_filter.mp hw).2, hequiv⟩⟩
+  set l := worlds.filter j with hl_def
+  suffices gen : ∀ init : List W,
+      w ∈ l ∨ init.any (fun r => q.equiv r w) = true →
+      ∃ rep ∈ l.foldl (fun acc w' =>
+          if acc.any (fun r => q.equiv r w') then acc else w' :: acc) init,
+        q.equiv rep w = true from
+    gen [] (Or.inl hw)
+  induction l with
+  | nil =>
+    intro init h
+    simp only [List.foldl_nil]
+    rcases h with h | h
+    · exact absurd h List.not_mem_nil
+    · exact List.any_eq_true.mp h
+  | cons w' rest ih =>
+    intro init h
+    simp only [List.foldl_cons]
+    split_ifs with hcover
+    · apply ih
+      rcases h with h | h
+      · rcases List.mem_cons.mp h with rfl | hmem
+        · exact Or.inr (by simp only [List.any_eq_true] at hcover ⊢; exact hcover)
+        · exact Or.inl hmem
+      · exact Or.inr h
+    · apply ih
+      rcases h with h | h
+      · rcases List.mem_cons.mp h with rfl | hmem
+        · exact Or.inr (by simp only [List.any_cons, q.refl, Bool.true_or])
+        · exact Or.inl hmem
+      · exact Or.inr (by simp only [List.any_cons, h, Bool.or_true])
+
+/-- Every cell produced by restrictedCells has a witness in `worlds`. -/
+theorem restrictedCells_inhabited {W : Type*}
+    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
+    ∀ cell ∈ q.restrictedCells j worlds, ∃ w ∈ worlds, cell w = true := by
+  intro cell hcell
+  simp only [GSQuestion.restrictedCells, List.mem_map] at hcell
+  obtain ⟨rep, hrep_mem, rfl⟩ := hcell
+  have hrep_jw : rep ∈ worlds.filter j := by
+    rcases foldl_reps_mem q.sameAnswer (worlds.filter j) [] rep hrep_mem with h | h
+    · simp at h
+    · exact h
+  obtain ⟨hrep_w, hj_rep⟩ := List.mem_filter.mp hrep_jw
+  exact ⟨rep, hrep_w, by simp [hj_rep, q.refl]⟩
+
 end Semantics.Questions

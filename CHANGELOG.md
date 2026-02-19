@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.224.31] - 2026-02-19
+
+### Changed
+- Inline `conjGSQuestion` wrapper: `Add (GSQuestion W)` now points directly at `QUD.compose`; rename theorems to `compose_comm`/`compose_assoc`/`compose_trivial_left`
+- Fix `isMentionSome` duplication in `Inquisitive.lean`: delegate to `isInquisitive` instead of duplicating body
+- Move `InfoSet`, `totalIgnorance`, `restrictedCells`, `foldl_reps_mem`, `restrictedCells_cover`, `restrictedCells_inhabited` from `PragmaticAnswerhood.lean` to `Partition.lean` (general partition infrastructure, not pragmatics-specific); make helpers public
+- Fix `whQuestionEntails` placeholder in `EntropyNPIs.lean`: replace `True` with proper predicate-agreement definition; prove `wh_subject_is_de` and `npi_licensed_wh_subject` from it
+- Replace stub structures with real theorems in `Coordination.lean`: `functionallyDependent` with converse theorem, `conjoin` with refinement proof, `sluice_inherits_resolution`
+- Document `probOfState` as `abbrev` of `probOfProp`; add ℚ↔ℝ bridge docstring in `ProbabilisticAnswerhood.lean`
+- Add `toIssue`/`toIssue_alternatives` GSQuestion→Issue bridge in `Inquisitive.lean`
+
+### Removed
+- `DecisionTheory.lean` re-export shim (no downstream consumers)
+- Dead code: `EmbeddedCoordination`, `Sluice` struct, duplicate `alternativeQuestion`, `alternative_vs_polar` (proved `True`), `conjunctionIsMentionAll`/`inheritsMentionSome`, `MentionSomeQuestion`/`existentialCreatesMentionSome`, `GSQuestion.equivInJ`/`isQuestionIn`, `false_proposition_true_pragmatic_answer` (proved `True`)
+
 ## [0.224.30] - 2026-02-19
 
 ### Added
