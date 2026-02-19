@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.223.7] - 2026-02-18
+
+### Changed
+- Close `request_forces_ppq` sorry in `Questions/Polarity.lean`: when goal = questioned proposition, goalProbAdvantage ≥ 0 (requests force PPQ)
+- Proof: P(g|¬p) = 0 (filtering by ¬p yields no p-worlds) and P(g|p) ∈ {0, 1} ≥ 0
+- Add 8 private helper lemmas: `foldl_add_zero_init`, `p_false_of_mem_filter_pnot`, `conditionalGoalProb_goal_negCondition_eq_zero`, `foldl_div_factor{,_gen}`, `foldl_congr_mem`, `foldl_filter_goal_eq_div`, `conditionalGoalProb_self_nonneg`
+- Fix `tagQuestionInformativity` and `rhetoricalUsePPQ`: add positive-probability hypothesis (original statements were false — counterexample: P(p)=0, P(¬p)=1/2000 gives surprisal(p)=1000 < surprisal(¬p)=1999)
+
 ## [0.223.6] - 2026-02-18
 
 ### Changed
