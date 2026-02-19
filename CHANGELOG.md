@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.224.28] - 2026-02-19
+
+### Changed
+- Replace false `probAnswers_when_consistent` with `probAnswers_when_entailing` — consistency doesn't guarantee probability increase, but entailment gives conditional probability 1
+- Replace false `nonExhaustive_incomplete_answer` with `nonExhaustive_witness` — polar questions have ≤2 cells, so the original conclusion was unprovable
+- Fix `pragmaticAnswer_monotone_up` by adding `hPinJ'` (P ⊆ J') hypothesis and proving via `restrictedCells_cover` + transitivity
+- Fix `exhaustive_rigid_gives_complete_answer` by adding non-emptiness hypothesis
+- Fix `pairList_as_conjunction` by switching `individualQuestion` to `all beq` pattern and proving pointwise `sameAnswer` equality
+
+### Added
+- `restrictedCells_cover`: every J-world belongs to some cell of J/Q (key helper for pragmatic answerhood proofs)
+- `foldl_conj_sameAnswer`: foldl of question conjunction distributes over `sameAnswer`
+
+### Fixed
+- Close 5 sorrys across Question semantics (ProbabilisticAnswerhood 1, ScopeReadings 1, PragmaticAnswerhood 3)
+
 ## [0.224.27] - 2026-02-19
 
 ### Changed

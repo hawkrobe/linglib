@@ -143,6 +143,56 @@ private theorem foldl_reps_mem {W : Type*} (equiv : W → W → Bool)
         · exact Or.inl h
       · exact Or.inr (List.mem_cons_of_mem _ h)
 
+/-- Every J-world is Q-equivalent to some representative in restrictedCells.
+
+This is the covering property: the foldl in restrictedCells produces reps
+such that every input element is equivalent to some rep. -/
+private theorem restrictedCells_cover {W : Type*}
+    (q : GSQuestion W) (j : InfoSet W) (worlds : List W) (w : W)
+    (hw : w ∈ worlds.filter j) :
+    ∃ cell ∈ q.restrictedCells j worlds, cell w = true := by
+  simp only [GSQuestion.restrictedCells, List.mem_map]
+  -- Suffices to find a rep in the foldl output with q.equiv rep w
+  suffices h : ∃ rep ∈ (worlds.filter j).foldl (fun acc w' =>
+      if acc.any (fun r => q.equiv r w') then acc else w' :: acc) [],
+      q.equiv rep w = true by
+    obtain ⟨rep, hrep, hequiv⟩ := h
+    exact ⟨fun w' => j w' && q.equiv rep w', ⟨rep, hrep, rfl⟩,
+           by rw [Bool.and_eq_true]; exact ⟨(List.mem_filter.mp hw).2, hequiv⟩⟩
+  -- Prove covering by induction on the foldl
+  set l := worlds.filter j with hl_def
+  suffices gen : ∀ init : List W,
+      w ∈ l ∨ init.any (fun r => q.equiv r w) = true →
+      ∃ rep ∈ l.foldl (fun acc w' =>
+          if acc.any (fun r => q.equiv r w') then acc else w' :: acc) init,
+        q.equiv rep w = true from
+    gen [] (Or.inl hw)
+  induction l with
+  | nil =>
+    intro init h
+    simp only [List.foldl_nil]
+    rcases h with h | h
+    · exact absurd h List.not_mem_nil
+    · exact List.any_eq_true.mp h
+  | cons w' rest ih =>
+    intro init h
+    simp only [List.foldl_cons]
+    split_ifs with hcover
+    · -- w' already covered by init
+      apply ih
+      rcases h with h | h
+      · rcases List.mem_cons.mp h with rfl | hmem
+        · exact Or.inr (by simp only [List.any_eq_true] at hcover ⊢; exact hcover)
+        · exact Or.inl hmem
+      · exact Or.inr h
+    · -- w' not covered; w' :: init
+      apply ih
+      rcases h with h | h
+      · rcases List.mem_cons.mp h with rfl | hmem
+        · exact Or.inr (by simp only [List.any_cons, q.refl, Bool.true_or])
+        · exact Or.inl hmem
+      · exact Or.inr (by simp only [List.any_cons, h, Bool.or_true])
+
 /-- Every cell produced by restrictedCells has a witness in `worlds`. -/
 private theorem restrictedCells_inhabited {W : Type*}
     (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
@@ -211,26 +261,77 @@ theorem semantic_is_pragmatic_limit {W : Type*}
              intersect_totalIgnorance, restrictedCells_totalIgnorance,
              hNonEmpty, Bool.true_and]
 
-/-- Reducing the information set cannot make a non-answer into an answer.
+/-- Upward monotonicity of pragmatic answerhood for propositions within J'.
+
+If P gives a pragmatic answer in J' ⊆ J, and P is entirely within J'
+(every P-world is a J'-world), then P also gives a pragmatic answer in J.
+
+The hypothesis `hPinJ'` is essential: without it, expanding J can introduce
+new P-worlds that fall into different cells, breaking containment. For
+example: W={a,b,c}, Q partitions {a}|{b}|{c}, J'={a,b}, J={a,b,c}, P={a,c}.
+P gives an answer in J' (P∩J'={a} ⊆ cell {a}) but not in J (P∩J={a,c}
+straddles cells).
 
 G&S 1984, p. 355: "Reducing the information set cannot make a non-answer
-into an answer, but can make an answer into a non-answer."
-
-If P gives a pragmatic answer in J' ⊆ J (with more information), then P
-also gives a pragmatic answer in J (with less information). More information
-restricts the pool of possible answers; less information only expands it.
-
-Note: the CONVERSE is false — P may answer in J but fail in J' ⊆ J because
-P ∩ J' may be empty or may straddle cell boundaries in the finer partition J'/Q.
-
-[sorry: proof requires showing that non-emptiness and cell containment
-are upward-monotone properties of the information set] -/
+into an answer." This holds when P represents the answerer's evidence,
+which is naturally contained in the current information set. -/
 theorem pragmaticAnswer_monotone_up {W : Type*}
     (p : W -> Bool) (q : GSQuestion W) (j j' : InfoSet W) (worlds : List W)
-    (hSubset : forall w, j' w = true -> j w = true) :
-    givesPragmaticAnswer p q j' worlds = true ->
+    (hSubset : ∀ w, j' w = true → j w = true)
+    (hPinJ' : ∀ w, p w = true → j' w = true) :
+    givesPragmaticAnswer p q j' worlds = true →
     givesPragmaticAnswer p q j worlds = true := by
-  sorry
+  intro h
+  -- Key insight: with hPinJ', j.intersect p = j'.intersect p = p
+  -- (on worlds where p holds: j w = j' w = true; where p fails: both intersections = false)
+  have hpInJ_eq : ∀ w, (j.intersect p) w = (j'.intersect p) w := by
+    intro w
+    simp only [InfoSet.intersect]
+    cases hp : p w with
+    | false => simp
+    | true => simp [hPinJ' w hp, hSubset w (hPinJ' w hp)]
+  simp only [givesPragmaticAnswer, Bool.and_eq_true] at h ⊢
+  obtain ⟨hNonEmpty, hContained⟩ := h
+  constructor
+  · -- Non-emptiness: transfer via hpInJ_eq
+    rw [show worlds.any (j.intersect p) = worlds.any (j'.intersect p) from by
+      congr 1; funext w; exact hpInJ_eq w]
+    exact hNonEmpty
+  · -- Containment: find a J-cell containing P∩J
+    simp only [List.any_eq_true, List.all_eq_true, decide_eq_true_eq] at hContained ⊢
+    obtain ⟨cell', hcell'_mem, hcell'_sub⟩ := hContained
+    -- cell' is built from a representative rep' in J'-reps
+    simp only [GSQuestion.restrictedCells, List.mem_map] at hcell'_mem
+    obtain ⟨rep', hrep'_mem, hrep'_eq⟩ := hcell'_mem
+    -- rep' is in worlds.filter j' (by foldl_reps_mem), hence in worlds.filter j
+    have hrep'_in_j' :=
+      (foldl_reps_mem q.sameAnswer (worlds.filter j') [] rep' hrep'_mem).elim
+        (fun h => absurd h List.not_mem_nil) id
+    have ⟨hrep'_worlds, hj'_rep'⟩ := List.mem_filter.mp hrep'_in_j'
+    have hrep'_in_j : rep' ∈ worlds.filter j :=
+      List.mem_filter.mpr ⟨hrep'_worlds, hSubset rep' hj'_rep'⟩
+    -- Get a J-cell covering rep'
+    obtain ⟨cell, hcell_mem, hcell_rep'⟩ := restrictedCells_cover q j worlds rep' hrep'_in_j
+    -- Decompose cell to get its representative
+    have hcell_mem' := hcell_mem
+    simp only [GSQuestion.restrictedCells, List.mem_map] at hcell_mem'
+    obtain ⟨rep, _hrep, hrep_eq⟩ := hcell_mem'
+    refine ⟨cell, hcell_mem, ?_⟩
+    intro w hw hpInJ_w
+    rw [← hrep_eq]
+    simp only [InfoSet.intersect, Bool.and_eq_true] at hpInJ_w
+    rw [← hrep_eq] at hcell_rep'
+    simp only [Bool.and_eq_true] at hcell_rep' ⊢
+    constructor
+    · exact hpInJ_w.1
+    · -- q.equiv rep w by transitivity: q.equiv rep rep' ∧ q.equiv rep' w → q.equiv rep w
+      have hpInJ'_w : (j'.intersect p) w = true := by
+        simp only [InfoSet.intersect, Bool.and_eq_true]
+        exact ⟨hPinJ' w hpInJ_w.2, hpInJ_w.2⟩
+      have hcell'_w := hcell'_sub w hw hpInJ'_w
+      rw [← hrep'_eq] at hcell'_w
+      simp only [Bool.and_eq_true] at hcell'_w
+      exact q.trans rep rep' w hcell_rep'.2 hcell'_w.2
 
 -- Pragmatic Term Properties
 
@@ -288,11 +389,11 @@ theorem pragmaticallyRigid_implies_definite {W E : Type*} [DecidableEq E]
   unfold pragmaticallyRigid pragmaticallyDefinite
   intro h
   match hjw : worlds.filter j with
-  | [] => simp [hjw]
+  | [] => simp
   | w :: ws =>
     rw [hjw] at h
     simp only [List.all_eq_true] at h
-    simp only [hjw, List.map_cons]
+    simp only [List.map_cons]
     -- All elements of ws.map t equal t w
     have hall : ∀ x ∈ (t w :: ws.map t), x = t w := by
       intro x hx
@@ -325,7 +426,7 @@ theorem semanticallyRigid_implies_pragmaticallyRigid {W E : Type*} [DecidableEq 
   -- Extract the "all have same denotation" property from h
   match hwlds : worlds with
   | [] => -- worlds is empty, so filter j is empty too
-    simp [hwlds]
+    simp
   | w :: ws =>
     simp only [List.all_eq_true, beq_iff_eq] at h
     -- h : ∀ v ∈ ws, t w = t v  (i.e., all elements agree with t w)
@@ -371,31 +472,77 @@ def pragmaticallyExhaustive {W E : Type*} [DecidableEq E]
 /-- G&S Theorem (12): If a term t is exhaustive and rigid, then t(a) is a
 complete answer to "?x.P(x)" in any information set J.
 
-This is the core result connecting term properties to answerhood. -/
+This is the core result connecting term properties to answerhood.
+
+Note: non-emptiness is required — if no J-world satisfies the predicate,
+the proposition P∩J is empty and cannot be a pragmatic answer. -/
 theorem exhaustive_rigid_gives_complete_answer {W E : Type} [DecidableEq E]
     (t : TermDenotation W E) (predicate : W -> E -> Bool)
     (j : InfoSet W) (worlds : List W)
-    (hExh : pragmaticallyExhaustive t predicate j worlds = true)
-    (hRigid : pragmaticallyRigid t j worlds = true) :
+    (_hExh : pragmaticallyExhaustive t predicate j worlds = true)
+    (_hRigid : pragmaticallyRigid t j worlds = true)
+    (hNonEmpty : worlds.any (λ w => j w && predicate w (t w)) = true) :
     -- The answer "t(a)" completely answers the question in J
     let answerProp := λ w => predicate w (t w)
     let q := GSQuestion.ofPredicate answerProp
     givesPragmaticAnswer answerProp q j worlds = true := by
-  sorry
+  -- For q = ofPredicate answerProp, cells partition J by answerProp value.
+  -- P∩J = {w : j w ∧ answerProp w} IS the "true" cell itself, so containment is trivial.
+  set q := GSQuestion.ofPredicate (λ w => predicate w (t w))
+  simp only [givesPragmaticAnswer, Bool.and_eq_true]
+  constructor
+  · -- Non-emptiness
+    exact hNonEmpty
+  · -- Containment: P∩J ⊆ the cell of some representative with answerProp = true
+    simp only [List.any_eq_true, List.all_eq_true, decide_eq_true_eq]
+    -- Get witness w₀ from hNonEmpty
+    obtain ⟨w₀, hw₀, hw₀_prop⟩ := List.any_eq_true.mp hNonEmpty
+    rw [Bool.and_eq_true] at hw₀_prop
+    obtain ⟨hj₀, hap₀⟩ := hw₀_prop
+    -- w₀ is in some cell of J/Q
+    obtain ⟨cell, hcell_mem, hcell_w₀⟩ :=
+      restrictedCells_cover q j worlds w₀ (List.mem_filter.mpr ⟨hw₀, hj₀⟩)
+    -- This cell contains all of P∩J (since q = ofPredicate answerProp)
+    refine ⟨cell, hcell_mem, ?_⟩
+    intro w _hw hpInJ
+    simp only [InfoSet.intersect, Bool.and_eq_true] at hpInJ
+    -- cell w₀ = true means j w₀ && q.equiv rep w₀ = true for some rep
+    -- Since q = ofPredicate, q.equiv rep w₀ means answerProp rep = answerProp w₀ = true
+    -- For any w with answerProp w = true: q.equiv rep w = (answerProp rep == answerProp w) = true
+    -- So cell w = j w && q.equiv rep w = true (since j w = true from hpInJ)
+    simp only [GSQuestion.restrictedCells, List.mem_map] at hcell_mem
+    obtain ⟨rep, _hrep, rfl⟩ := hcell_mem
+    simp only [Bool.and_eq_true] at hcell_w₀ ⊢
+    simp only [q, GSQuestion.equiv, GSQuestion.ofPredicate, QUD.ofProject_sameAnswer,
+               beq_iff_eq] at hcell_w₀ ⊢
+    exact ⟨hpInJ.1, (hcell_w₀.2.trans hap₀).trans hpInJ.2.symm⟩
 
-/-- G&S Theorem (17): If a term t is not exhaustive, then t(a) does NOT
-give a complete answer.
+/-- G&S Theorem (17): Non-exhaustive terms cannot completely answer the
+ORIGINAL question Q (not the derived binary question ofPredicate answerProp).
 
-Non-exhaustive terms can only partially answer. -/
-theorem nonExhaustive_incomplete_answer {W E : Type} [DecidableEq E]
-    (t : TermDenotation W E) (predicate : W -> E -> Bool)
+Note: The original formalization used q = ofPredicate answerProp, which
+has at most 2 cells and makes answerProp trivially match the "true" cell.
+This rendered the theorem vacuously false. The correct G&S claim involves
+an independently given question Q that is FINER than the binary partition,
+but formalizing this requires additional infrastructure connecting term
+exhaustiveness to general question partitions.
+
+Instead, we prove a related fact: if a term is not exhaustive, then there
+exist J-worlds where the term's denotation does not accurately reflect
+the extension of the predicate. -/
+theorem nonExhaustive_witness {W E : Type} [DecidableEq E]
+    (t : TermDenotation W E) (predicate : W → E → Bool)
     (j : InfoSet W) (worlds : List W)
     (hNotExh : pragmaticallyExhaustive t predicate j worlds = false) :
-    -- t(a) cannot be a (strict) pragmatic answer
-    let answerProp := λ w => predicate w (t w)
-    let q := GSQuestion.ofPredicate answerProp
-    isPragmaticAnswer answerProp q j worlds = false := by
-  sorry
+    ∃ w ∈ worlds.filter j,
+      predicate w (t w) ≠ (worlds.filter j).all (λ v => predicate v (t w)) := by
+  by_contra hall
+  push_neg at hall
+  have hExh : pragmaticallyExhaustive t predicate j worlds = true := by
+    unfold pragmaticallyExhaustive
+    simp only [List.all_eq_true, beq_iff_eq]
+    exact hall
+  simp [hExh] at hNotExh
 
 -- False Propositions, True Pragmatic Answers
 
