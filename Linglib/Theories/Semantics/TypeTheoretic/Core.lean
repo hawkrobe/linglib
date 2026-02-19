@@ -909,4 +909,58 @@ theorem dudamelSentence_is_existWitness :
 
 end DerivationPhenomena
 
+-- ============================================================================
+-- Proposition Granularity Hierarchy
+-- ============================================================================
+
+/-! ## Proposition granularity: Prop' W vs TTR types
+
+Chatzikyriakidis et al. (2025) §2 argue that the choice of proposition
+type determines what distinctions a semantic theory can make. We formalize
+the granularity hierarchy:
+
+  `IType` (finest) > `Type` (medium) > `Prop' W` (coarsest)
+
+- `Prop' W` identifies all propositions with the same truth conditions
+- TTR types distinguish propositions that are merely co-extensional
+- `IType` adds intensional identity (name-based distinction)
+
+The key consequence: attitude verbs that need to distinguish Hesperus-beliefs
+from Phosphorus-beliefs cannot use `Prop' W` — they need `IType`. -/
+
+/-- Possible-worlds propositions collapse TTR distinctions:
+two ITypes with different names but same carrier map to the same Prop.
+This is why Prop' W is too coarse for attitude reports. -/
+theorem prop_collapses_intensional_distinctions (W : Type*) :
+    ∃ T₁ T₂ : IType,
+      -- Intensionally distinct in TTR
+      ¬ T₁.intEq T₂ ∧
+      -- But indistinguishable as Prop' W propositions
+      -- (both map to the same truth value at every world)
+      (∀ (embed : IType → Core.Proposition.Prop' W),
+        (∀ T w, embed T w ↔ Nonempty T.carrier) →
+        ∀ w, embed T₁ w ↔ embed T₂ w) := by
+  refine ⟨⟨Unit, "hesperus_rises"⟩, ⟨Unit, "phosphorus_rises"⟩,
+    by simp [IType.intEq], λ embed hembed w => ?_⟩
+  -- Both carriers are Unit, so Nonempty T₁.carrier ↔ Nonempty T₂.carrier
+  constructor
+  · intro h; exact (hembed ⟨Unit, "phosphorus_rises"⟩ w).mpr
+      ((hembed ⟨Unit, "hesperus_rises"⟩ w).mp h)
+  · intro h; exact (hembed ⟨Unit, "hesperus_rises"⟩ w).mpr
+      ((hembed ⟨Unit, "phosphorus_rises"⟩ w).mp h)
+
+/-- TTR types are strictly finer than Prop' W:
+there exist types that TTR distinguishes but Prop' W cannot.
+(This is `ext_equiv_not_implies_int_eq` restated in terms of the
+granularity hierarchy.) -/
+theorem ttr_strictly_finer_than_worlds :
+    -- TTR can distinguish types that are co-extensional
+    (∃ T₁ T₂ : IType, T₁.extEquiv T₂ ∧ ¬ T₁.intEq T₂) ∧
+    -- But Prop' identifies co-extensional propositions
+    (∀ (W : Type) (p q : Core.Proposition.Prop' W),
+      Core.Proposition.Classical.equiv W p q → ∀ w, p w ↔ q w) :=
+  ⟨⟨⟨Unit, "groundhog"⟩, ⟨Unit, "woodchuck"⟩,
+    ⟨Equiv.refl Unit⟩, by simp [IType.intEq]⟩,
+   λ _ _ _ ⟨hpq, hqp⟩ w => ⟨hpq w, hqp w⟩⟩
+
 end Semantics.TypeTheoretic
