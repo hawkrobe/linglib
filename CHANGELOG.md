@@ -4,10 +4,10 @@
 
 ### Changed
 - Close all 3 `sorry`s in `Questions/Polarity.lean`: `request_forces_ppq` (0.223.7), `tagQuestionInformativity`, `rhetoricalUsePPQ`
-- Add `informativenessAdvantage_pos`: core theorem that if `0 < P(p) < 1` and `P(p) < P(¬p)`, then `surprisal(p) > surprisal(¬p)`
-- Proof by case split on `P(¬p) ≥ 1`: if yes, `surprisal(¬p) = 0` and `1/P(p) - 1 > 0`; if no, `1/P(p) - 1/P(¬p) = (P(¬p) - P(p)) / (P(p) · P(¬p)) > 0`
-- Add helper lemmas: `surprisal_eq_inv_sub`, `surprisal_eq_zero_of_ge`, `lt_of_positiveIsLessLikely`, `pnot_fold_eq`
-- Fix `tagQuestionInformativity` and `rhetoricalUsePPQ` statements: add `hSubOne : P(p) < 1` hypothesis (needed because when both probs ≥ 1, both surprisals are 0)
+- Simplify `surprisal` approximation: remove broken `prob=0 → 1000` cap and `prob≥1 → 0` guard; use `1/prob - 1` unconditionally (monotone for all `prob > 0`), with a guard only for ℚ's `1/0 = 0`
+- Add `informativenessAdvantage_pos`: if `P(p) > 0` and `P(p) < P(¬p)`, then `surprisal(p) > surprisal(¬p)`, via `1/a - 1/b = (b-a)/(ab) > 0`
+- Add helper lemmas: `surprisal_eq_inv_sub`, `lt_of_positiveIsLessLikely`, `pnot_fold_eq`
+- `tagQuestionInformativity` and `rhetoricalUsePPQ` now need only `hPosProb` (no `hSubOne`)
 
 ## [0.223.8] - 2026-02-18
 

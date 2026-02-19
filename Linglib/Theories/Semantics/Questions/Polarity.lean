@@ -281,14 +281,14 @@ inf(q) = -log P(q)
 
 Higher surprisal = lower probability = more informative if true.
 
-Note: We approximate log with a rational function for computability. -/
+We approximate with `1/prob - 1`, which is monotonically decreasing in `prob`
+for all `prob > 0` (like `-log`), equals 0 at `prob = 1`, and is positive
+for `prob < 1`. The `prob = 0` guard handles ℚ's `1/0 = 0` convention. -/
 def surprisal {W : Type*} (prior : W -> ℚ) (worlds : List W)
     (p : W -> Bool) : ℚ :=
   let prob := worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0
-  -- Approximation: surprisal ∝ 1/prob (for small probabilities)
-  if prob == 0 then 1000  -- Very surprising
-  else if prob >= 1 then 0  -- Not surprising
-  else 1 / prob - 1  -- Monotonic in -log(prob)
+  if prob == 0 then 0  -- Guard: 1/0 = 0 in ℚ, not meaningful as surprisal
+  else 1 / prob - 1
 
 /-- For informativity: UV(q) > UV(¬q) iff P(q) < P(¬q).
 
@@ -370,23 +370,9 @@ def medicalDiagnosisDP {W : Type*}
 
 private theorem surprisal_eq_inv_sub {W : Type*}
     (prior : W → ℚ) (worlds : List W) (p : W → Bool)
-    (hpos : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0)
-    (hlt1 : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 < 1) :
+    (hpos : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0) :
     surprisal prior worlds p =
       1 / worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 - 1 := by
-  unfold surprisal
-  simp only []
-  split
-  · rename_i h; exfalso; exact absurd (beq_iff_eq.mp h ▸ hpos) (lt_irrefl _)
-  · split
-    · rename_i _ h; exfalso; linarith
-    · rfl
-
-private theorem surprisal_eq_zero_of_ge {W : Type*}
-    (prior : W → ℚ) (worlds : List W) (p : W → Bool)
-    (hpos : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0)
-    (_hge : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 ≥ 1) :
-    surprisal prior worlds p = 0 := by
   unfold surprisal
   simp only []
   split
@@ -410,66 +396,42 @@ set_option maxHeartbeats 800000 in
 private theorem informativenessAdvantage_pos {W : Type*}
     (prior : W → ℚ) (worlds : List W) (p : W → Bool)
     (hLessLikely : positiveIsLessLikely prior worlds p)
-    (hPosProb : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0)
-    (hSubOne : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 < 1) :
+    (hPosProb : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0) :
     informativenessAdvantage prior worlds p > 0 := by
   let a := worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0
   let b := worlds.foldl (λ acc w => acc + if !(p w) then prior w else 0) 0
   have ha_pos : a > 0 := hPosProb
-  have ha_lt1 : a < 1 := hSubOne
   have hlt : a < b := lt_of_positiveIsLessLikely prior worlds p hLessLikely
   have hb_pos : b > 0 := lt_trans ha_pos hlt
-  have hsurp_p : surprisal prior worlds p = 1 / a - 1 :=
-    surprisal_eq_inv_sub prior worlds p ha_pos ha_lt1
   have hfold_eq := pnot_fold_eq prior worlds p
+  have hsurp_p : surprisal prior worlds p = 1 / a - 1 :=
+    surprisal_eq_inv_sub prior worlds p ha_pos
+  have hsurp_np : surprisal prior worlds (pnot p) = 1 / b - 1 := by
+    have h1 : worlds.foldl (λ acc w => acc + if (pnot p) w then prior w else 0) 0 > 0 := by
+      rw [hfold_eq]; exact hb_pos
+    rw [surprisal_eq_inv_sub prior worlds (pnot p) h1, hfold_eq]
   unfold informativenessAdvantage
-  rw [hsurp_p]
-  by_cases hb1 : b ≥ 1
-  · have hsurp_np : surprisal prior worlds (pnot p) = 0 := by
-      have h1 : worlds.foldl (λ acc w => acc + if (pnot p) w then prior w else 0) 0 > 0 := by
-        rw [hfold_eq]; exact hb_pos
-      have h2 : worlds.foldl (λ acc w => acc + if (pnot p) w then prior w else 0) 0 ≥ 1 := by
-        rw [hfold_eq]; exact hb1
-      exact surprisal_eq_zero_of_ge prior worlds (pnot p) h1 h2
-    rw [hsurp_np, sub_zero]
-    show 0 < 1 / a - 1
-    have ha_ne : a ≠ 0 := ne_of_gt ha_pos
-    have : 1 / a - 1 = (1 - a) / a := by field_simp
-    rw [this]
-    exact div_pos (by linarith) ha_pos
-  · push_neg at hb1
-    have hsurp_np : surprisal prior worlds (pnot p) = 1 / b - 1 := by
-      have h1 : worlds.foldl (λ acc w => acc + if (pnot p) w then prior w else 0) 0 > 0 := by
-        rw [hfold_eq]; exact hb_pos
-      have h2 : worlds.foldl (λ acc w => acc + if (pnot p) w then prior w else 0) 0 < 1 := by
-        rw [hfold_eq]; exact hb1
-      rw [surprisal_eq_inv_sub prior worlds (pnot p) h1 h2, hfold_eq]
-    rw [hsurp_np]
-    have ha_ne : a ≠ 0 := ne_of_gt ha_pos
-    have hb_ne : b ≠ 0 := ne_of_gt hb_pos
-    have hab_pos : a * b > 0 := mul_pos ha_pos hb_pos
-    rw [show 1 / a - 1 - (1 / b - 1) = 1 / a - 1 / b from by ring]
-    rw [div_sub_div _ _ ha_ne hb_ne]
-    exact div_pos (by linarith) hab_pos
+  rw [hsurp_p, hsurp_np]
+  -- Goal: 1/a - 1 - (1/b - 1) > 0, i.e., (b - a) / (a * b) > 0
+  have ha_ne : a ≠ 0 := ne_of_gt ha_pos
+  have hb_ne : b ≠ 0 := ne_of_gt hb_pos
+  rw [show 1 / a - 1 - (1 / b - 1) = 1 / a - 1 / b from by ring]
+  rw [div_sub_div _ _ ha_ne hb_ne]
+  exact div_pos (by linarith) (mul_pos ha_pos hb_pos)
 
 /-- For tag questions like "John isn't bad, is he?":
 The speaker takes the declarative as likely true, making the tag's
 positive prop (that John IS bad) low probability, hence informative.
 
-Requires positive probability strictly less than 1 for the tag proposition.
-Without `hPosProb`, the `surprisal` approximation assigns a constant 1000
-to prob=0, which can be exceeded by `1/prob - 1` for very small positive
-probabilities (counterexample: P(tag)=0, P(¬tag)=1/2000 gives
-surprisal(tag)=1000 < surprisal(¬tag)=1999). Without `hSubOne`, both
-probabilities can be ≥ 1 with surprisal 0, giving advantage = 0. -/
+Requires positive probability for the tag proposition (so the `1/prob - 1`
+surprisal approximation is well-defined). -/
 def tagQuestionInformativity {W : Type*} (prior : W -> ℚ) (worlds : List W)
     (_declarative tag : W -> Bool)
     (_hDeclarativeIsNotTag : ∀ w, _declarative w = !tag w)
     (hDeclarativeLikely : positiveIsLessLikely prior worlds tag)
-    (hPosProb : worlds.foldl (λ acc w => acc + if tag w then prior w else 0) 0 > 0)
-    (hSubOne : worlds.foldl (λ acc w => acc + if tag w then prior w else 0) 0 < 1) :
+    (hPosProb : worlds.foldl (λ acc w => acc + if tag w then prior w else 0) 0 > 0) :
     informativenessAdvantage prior worlds tag > 0 :=
-  informativenessAdvantage_pos prior worlds tag hDeclarativeLikely hPosProb hSubOne
+  informativenessAdvantage_pos prior worlds tag hDeclarativeLikely hPosProb
 
 -- Alternative Questions
 
@@ -588,15 +550,13 @@ Speaker signals: "I have new evidence for q, even though I believed ¬q"
 This makes q surprising (high surprisal), thus high informativity.
 PPQ highlights this surprising-if-true proposition.
 
-Requires `0 < P(p) < 1`. See `tagQuestionInformativity` docstring for
-why both bounds are necessary given the `surprisal` approximation. -/
+Requires `P(p) > 0` so surprisal is well-defined. -/
 def rhetoricalUsePPQ {W : Type*}
     (prior : W -> ℚ) (worlds : List W) (p : W -> Bool)
     (hPriorFavorsNegative : positiveIsLessLikely prior worlds p)
-    (hPosProb : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0)
-    (hSubOne : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 < 1) :
+    (hPosProb : worlds.foldl (λ acc w => acc + if p w then prior w else 0) 0 > 0) :
     informativenessAdvantage prior worlds p > 0 :=
-  informativenessAdvantage_pos prior worlds p hPriorFavorsNegative hPosProb hSubOne
+  informativenessAdvantage_pos prior worlds p hPriorFavorsNegative hPosProb
 
 -- Grounding Questions
 
