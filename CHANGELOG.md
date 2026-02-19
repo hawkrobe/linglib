@@ -14,9 +14,13 @@
 ### Added
 - Formalize Ackerman & Malouf (2013) Low Conditional Entropy Conjecture (LCEC)
 - Add `Core/InformationTheory.lean`: factor ℚ-valued entropy, conditional entropy, mutual information out of RSA into domain-agnostic Core module
-- Add `Theories/Morphology/WP/LCEC.lean`: `ParadigmSystem`, `InflectionClass`, `cellEntropy`, `conditionalCellEntropy`, `iComplexity`, `eComplexity`, LCEC predicate, implicative relations, `fromStems` bridge to `Core.MorphRule`
-- Add `Phenomena/Morphology/Studies/AckermanMalouf2013/Data.lean`: cross-linguistic paradigm complexity data for 10 typologically diverse languages (Tables 2-3)
-- Add `Phenomena/Morphology/Studies/AckermanMalouf2013/Bridge.lean`: per-language LCEC verification, E/I-complexity dissociation theorems, Mazatec case study, synonymy avoidance subsumption
+- Add `Theories/Morphology/WP/LCEC.lean`: `ParadigmSystem` (single-list entries), `InflectionClass`, `cellEntropy`, `conditionalCellEntropy`, `iComplexity`, `eComplexity`, LCEC predicate, implicative relations, `groupBySum` helper, `fromStems` bridge to `Core.MorphRule`
+- Add `Phenomena/Morphology/Typology.lean`: `LanguageData` type + cross-linguistic paradigm complexity data for 10 typologically diverse languages (Ackerman & Malouf 2013, Tables 2-3)
+- Add `Phenomena/Morphology/Studies/AckermanMalouf2013/Bridge.lean`: per-language LCEC verification, E/I-complexity dissociation theorems, Mazatec case study
+
+### Changed
+- Refactor `RSA/Extensions/InformationTheory/Basic.lean` to re-export from `Core.InformationTheory` via `export`, keeping `RSALevel` in RSA namespace
+- Remove empty `Theories/Morphology/W&P/` directory (replaced by `WP/`)
 
 ### Changed
 - Refactor `RSA/Extensions/InformationTheory/Basic.lean` to re-export from `Core.InformationTheory` via `export`, keeping `RSALevel` in RSA namespace
