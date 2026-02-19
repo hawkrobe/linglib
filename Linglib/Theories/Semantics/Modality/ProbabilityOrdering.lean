@@ -40,6 +40,12 @@ abbrev ProbAssignment := World → ℚ
 def probToOrdering (prob : ProbAssignment) : OrderingSource := λ _ =>
   allWorlds.map λ v => (λ w => decide (prob w ≥ prob v))
 
+/-- `probToOrdering` is world-independent: the ordering source is the
+    same regardless of which evaluation world is chosen. -/
+theorem probToOrdering_const (prob : ProbAssignment) (w w' : World) :
+    probToOrdering prob w = probToOrdering prob w' :=
+  rfl
+
 /-! ## Concrete example -/
 
 /-- A skewed probability assignment: P(w0) > P(w1) > P(w2) > P(w3). -/
