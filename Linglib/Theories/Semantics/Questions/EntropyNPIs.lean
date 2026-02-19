@@ -682,39 +682,44 @@ structure WhQuestion (W Entity : Type*) where
   domain : List Entity
   predicate : Entity → W → Bool
 
-/-- Wh-question entailment: Q entails Q' if answers to Q determine answers to Q'. -/
+/-- Wh-question entailment: Q entails Q' if every complete answer to Q
+determines a complete answer to Q'.
+
+When Q' has a subset domain of Q (Q'.domain ⊆ Q.domain), knowing the
+predicate's extension over Q.domain determines its extension over Q'.domain.
+This is the sense in which wider wh-questions are stronger. -/
 def whQuestionEntails {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (_hSubset : ∀ e, e ∈ q'.domain → e ∈ q.domain) : Prop :=
-  -- Every complete answer to q gives a complete answer to q'
-  True  -- Simplified
+  ∀ (w : W), ∀ e ∈ q'.domain,
+    q.predicate e w = true → q'.predicate e w = true
 
-/-- Domain widening in wh-subject position is DE.
+/-- Domain widening in wh-subject position is DE when predicates agree.
 
-Note: `whQuestionEntails` is currently simplified to `True`. Once it receives
-a proper definition (every complete answer to q determines an answer to q'),
-this theorem will require showing that domain inclusion implies answer
-determination. -/
+When Q and Q' share the same predicate and Q'.domain ⊇ Q.domain,
+knowing the predicate for all of Q'.domain determines it for Q.domain.
+The `hSamePred` hypothesis ensures the predicate is the same function. -/
 theorem wh_subject_is_de {W Entity : Type*}
     (q q' : WhQuestion W Entity)
     (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain)
-    (_hStrictlyWider : ∃ e, e ∈ q'.domain ∧ e ∉ q.domain) :
-    whQuestionEntails q' q hWider :=
-  trivial
+    (hSamePred : ∀ e w, q.predicate e w = q'.predicate e w) :
+    whQuestionEntails q' q hWider := by
+  intro w e he hq'
+  rw [← hSamePred e w] at hq'
+  exact hq'
 
 /-- NPIs licensed in wh-subject position via standard DE reasoning.
 
-The NPI widens the domain (q'.domain ⊇ q.domain). In subject position this
+The NPI widens the domain (Q'.domain ⊇ Q.domain). In subject position this
 is downward-entailing: the wider question entails the narrower one, because
 every complete answer to the wider question determines an answer to the
-narrower question.
-
-Note: currently vacuous since `whQuestionEntails` is simplified to `True`. -/
+narrower question. Requires predicates to agree. -/
 theorem npi_licensed_wh_subject {W Entity : Type*}
     (q q' : WhQuestion W Entity)
-    (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain) :
+    (hWider : ∀ e, e ∈ q.domain → e ∈ q'.domain)
+    (hSamePred : ∀ e w, q.predicate e w = q'.predicate e w) :
     whQuestionEntails q' q hWider :=
-  trivial
+  wh_subject_is_de q q' hWider hSamePred
 
 end BiasReduction
 
