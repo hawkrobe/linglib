@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.18] - 2026-02-19
+
+### Added
+- State completeness direction of Holliday & Icard (2013) Theorems 6–7 in Scale.lean (`theorem6_completeness`, `theorem7_completeness`; both sorry)
+- Add `FinAddMeasure.toWorldPrior`: extract world prior from measure via singletons μ({w}), with `toWorldPrior_nonneg` lemma
+- Add `probToOrdering_const` to ProbabilityOrdering.lean: `probToOrdering` is world-independent (proof by `rfl`)
+- New `Linglib/Comparisons/KratzerEpistemicRSA.lean`: Kratzer–Epistemic–RSA bridge tracing the dependency chain from Kratzer ordering sources through l-lifting, EpistemicSystemW/FA, representation theorems, to RSA worldPrior. §1 `kratzerToSystemW` and §2 (uses `toWorldPrior`) are sorry-free definitions; §3 `kratzer_to_rsa_prior` and §4 `prob_ordering_roundtrip` are conjectures (sorry)
+
 ## [0.224.14] - 2026-02-19
 
 ### Changed
