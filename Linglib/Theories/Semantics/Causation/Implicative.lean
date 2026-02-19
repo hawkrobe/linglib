@@ -208,4 +208,91 @@ theorem entailsComplement_positive :
 theorem entailsComplement_negative :
     ImplicativeBuilder.negative.entailsComplement = false := rfl
 
+-- ════════════════════════════════════════════════════
+-- Karttunen's Full Verb Classification (Nadathur 2023, Chapter 3)
+-- ════════════════════════════════════════════════════
+
+/-- Directionality of complement entailment (Karttunen 1971).
+
+    - **oneWay**: entailment only in the affirmative ("be able to VP" + PFV → VP)
+    - **twoWay**: entailment in both affirmative and negative
+      ("manage to VP" → VP; "not manage to VP" → ¬VP) -/
+inductive Directionality where
+  | oneWay    -- only affirmative entailment (ability, enough)
+  | twoWay    -- both affirmative and negative (manage, fail)
+  deriving DecidableEq, Repr, BEq
+
+/-- Full classification of complement-entailing verbs (Karttunen 1971; Nadathur 2023).
+
+    The three parameters:
+    - **polarity**: positive (manage: success → complement true) vs
+      negative (fail: success → complement false)
+    - **directionality**: one-way vs two-way complement entailment
+    - **aspectGoverned**: whether aspect modulates the entailment (true for
+      ability modals & enough/too; false for lexical implicatives like manage) -/
+structure ImplicativeClass where
+  /-- Positive (manage, force) or negative (fail, prevent) polarity -/
+  polarity : ImplicativeBuilder
+  /-- One-way (ability) or two-way (manage) entailment -/
+  directionality : Directionality
+  /-- Does aspect govern the actuality inference? -/
+  aspectGoverned : Bool
+  deriving DecidableEq, Repr, BEq
+
+-- Instances for standard verb classes
+
+/-- *manage*: two-way positive, not aspect-governed.
+    "managed to VP" → VP; "didn't manage to VP" → ¬VP. -/
+def ImplicativeClass.manage : ImplicativeClass :=
+  { polarity := .positive, directionality := .twoWay, aspectGoverned := false }
+
+/-- *fail*: two-way negative, not aspect-governed.
+    "failed to VP" → ¬VP; "didn't fail to VP" → VP. -/
+def ImplicativeClass.fail : ImplicativeClass :=
+  { polarity := .negative, directionality := .twoWay, aspectGoverned := false }
+
+/-- *be able*: one-way positive, aspect-governed.
+    "was able to VP" (PFV) → VP; "was able to VP" (IMPF) ↛ VP. -/
+def ImplicativeClass.ability : ImplicativeClass :=
+  { polarity := .positive, directionality := .oneWay, aspectGoverned := true }
+
+/-- *enough to VP*: one-way positive, aspect-governed.
+    "was Adj enough to VP" (PFV) → VP. Same pattern as ability. -/
+def ImplicativeClass.enough : ImplicativeClass :=
+  { polarity := .positive, directionality := .oneWay, aspectGoverned := true }
+
+/-- *too Adj to VP*: one-way negative, aspect-governed.
+    "was too Adj to VP" (PFV) → ¬VP. -/
+def ImplicativeClass.too : ImplicativeClass :=
+  { polarity := .negative, directionality := .oneWay, aspectGoverned := true }
+
+-- Classification theorems
+
+/-- Manage and fail differ only in polarity. -/
+theorem manage_fail_polarity :
+    ImplicativeClass.manage.directionality = ImplicativeClass.fail.directionality ∧
+    ImplicativeClass.manage.aspectGoverned = ImplicativeClass.fail.aspectGoverned ∧
+    ImplicativeClass.manage.polarity ≠ ImplicativeClass.fail.polarity := by
+  exact ⟨rfl, rfl, by decide⟩
+
+/-- Ability and manage differ: ability is aspect-governed and one-way. -/
+theorem ability_vs_manage :
+    ImplicativeClass.ability.aspectGoverned = true ∧
+    ImplicativeClass.manage.aspectGoverned = false ∧
+    ImplicativeClass.ability.directionality = .oneWay ∧
+    ImplicativeClass.manage.directionality = .twoWay := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Enough and too share aspect-governance but differ in polarity. -/
+theorem enough_too_polarity :
+    ImplicativeClass.enough.aspectGoverned = ImplicativeClass.too.aspectGoverned ∧
+    ImplicativeClass.enough.directionality = ImplicativeClass.too.directionality ∧
+    ImplicativeClass.enough.polarity ≠ ImplicativeClass.too.polarity := by
+  exact ⟨rfl, rfl, by decide⟩
+
+/-- Ability and enough have the same classification: both are one-way,
+    positive, aspect-governed. This is the book's unification claim. -/
+theorem ability_eq_enough :
+    ImplicativeClass.ability = ImplicativeClass.enough := rfl
+
 end Nadathur2023.Implicative

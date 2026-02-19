@@ -77,6 +77,9 @@ import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.GradedCausation
 import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Theories.Semantics.Causation.CausalVerb
+import Linglib.Theories.Semantics.Causation.CausalClosure
+import Linglib.Theories.Semantics.Causation.DegreeCausation
 
 namespace NadathurLauer2020
 

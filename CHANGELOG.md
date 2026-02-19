@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.224.29] - 2026-02-19
+
+### Added
+- `CausalVerb.lean`: Unified CausalFrame abstraction (Nadathur 2023) bridging implicative verbs, ability modals, and degree constructions through a single parameterized frame with actualization modes
+- `CausalClosure.lean`: `normalDevelopment` as Mathlib `ClosureOperator` on `(Situation, trueLE)` for positive dynamics; sufficiency = closure membership
+- `DegreeCausation.lean`: Degree constructions (*enough/too*) as CausalFrame instances with aspectual actualization
+- `algClosureOp`: Mathlib `ClosureOperator (α → Prop)` instance for mereological `AlgClosure`, grounding `subset_algClosure`/`algClosure_mono`/`algClosure_idempotent` in Mathlib
+- `IsSumHom.toSupHom` / `SupHom.toIsSumHom`: Bidirectional bridge between linglib's `IsSumHom` and Mathlib's bundled `SupHom` (SLat hom-set)
+- `GaloisConnection.gc`: Mathlib `GaloisConnection` instance for `extension`/`intension` via `OrderDual`, grounding the hand-proved `galois_connection` theorem
+
+### Changed
+- Make `positive_normalDevelopment_grows` public in `Sufficiency.lean` (was private, needed for closure operator axioms)
+- Extend `Implicative.lean` with `ImplicativeScenario` structure and `manageSem`/`failSem` semantics
+- Extend `Ability.lean` with `AbilityScenario` and aspectual modulation (`abilityWithAspect`)
+
 ## [0.224.28] - 2026-02-19
 
 ### Changed
