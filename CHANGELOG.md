@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.223.5] - 2026-02-18
+
+### Changed
+- Fix Rett (2026) citation: preprint/ms., not *Language* (4 files)
+- Add `maxOnScale_lt_closedInterval`, `maxOnScale_gt_closedInterval` to `Core/MeasurementScale.lean`: MAX₍<₎ and MAX₍>₎ on closed intervals are singletons
+- Add `before_determined_by_max`, `rett_before_closedTrace_eq` to `TemporalConnectives.lean`: *before* truth conditions depend only on MAX₍<₎ of B's time trace; reduce to t < s for closed-interval traces
+- Rewrite `before_ambidirectional` sorry analysis: Rett's argument uses pre-event complement (not full Bᶜ), shared informative bounds at boundary point; `isAmbidirectional` with full complement is false
+- Fix `while_not_ambidirectional` unused section variable lint
+
 ## [0.223.4] - 2026-02-18
 
 ### Changed

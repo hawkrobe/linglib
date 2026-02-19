@@ -392,7 +392,7 @@ of X that R-dominate all other members. For the `<` scale this is the GLB
 (earliest / smallest), for `>` the LUB (latest / largest). The same operator
 underlies both temporal connectives (*before*/*after*) and degree comparatives.
 
-- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
 /-- Order-sensitive maximality (Rett 2026, def. 1):
@@ -411,6 +411,41 @@ theorem maxOnScale_singleton {α : Type*} (R : α → α → Prop) (x : α) :
   · rintro ⟨rfl, _⟩; rfl
   · rintro rfl
     exact ⟨rfl, fun x' hx' hne => absurd hx' hne⟩
+
+/-- MAX₍<₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{s}`.
+    The minimum element s R-dominates all others on the `<` scale.
+    Dual: MAX₍>₎ on the same interval is `{f}`. -/
+theorem maxOnScale_lt_closedInterval {α : Type*} [LinearOrder α]
+    (s f : α) (hsf : s ≤ f) :
+    maxOnScale (· < ·) { x : α | s ≤ x ∧ x ≤ f } = {s} := by
+  ext x
+  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨⟨hxs, _⟩, hdom⟩
+    by_contra hne
+    have : s < x := lt_of_le_of_ne hxs (Ne.symm hne)
+    have := hdom s ⟨le_refl _, hsf⟩ (ne_of_lt ‹s < x›)
+    exact absurd ‹s < x› (not_lt.mpr (le_of_lt this))
+  · rintro rfl
+    exact ⟨⟨le_refl _, hsf⟩, fun x' ⟨hx's, _⟩ hne =>
+      lt_of_le_of_ne hx's (Ne.symm hne)⟩
+
+/-- MAX₍>₎ on a closed interval `{x | s ≤ x ∧ x ≤ f}` is the singleton `{f}`.
+    The maximum element R-dominates all others on the `>` scale. -/
+theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
+    (s f : α) (hsf : s ≤ f) :
+    maxOnScale (· > ·) { x : α | s ≤ x ∧ x ≤ f } = {f} := by
+  ext x
+  simp only [maxOnScale, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨⟨_, hxf⟩, hdom⟩
+    by_contra hne
+    have : x < f := lt_of_le_of_ne hxf hne
+    have := hdom f ⟨hsf, le_refl _⟩ (ne_of_gt ‹x < f›)
+    exact absurd ‹x < f› (not_lt.mpr (le_of_lt this))
+  · rintro rfl
+    exact ⟨⟨hsf, le_refl _⟩, fun x' ⟨_, hx'f⟩ hne =>
+      lt_of_le_of_ne hx'f hne⟩
 
 /-- A scalar construction f is **ambidirectional** (Rett 2026, §3) iff
     applying f to a set B and to its complement Bᶜ yields the same result,

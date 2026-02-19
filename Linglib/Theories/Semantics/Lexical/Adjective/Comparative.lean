@@ -36,7 +36,7 @@ explains why comparatives license expletive negation cross-linguistically.
 
 ## References
 
-- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 - Schwarzschild, R. (2008). The semantics of comparatives.
 - Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 - Hoeksema, J. (1983). Negative polarity and the comparative.
