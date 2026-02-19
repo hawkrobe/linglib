@@ -286,6 +286,15 @@ private theorem positive_normalDevelopment_trueLE
 -- § Main monotonicity theorem
 -- ============================================================
 
+/-- For positive dynamics, normalDevelopment is monotone in the trueLE ordering.
+    If s₁ ⊑ s₂ (every true in s₁ is true in s₂), then
+    normalDevelopment(s₁) ⊑ normalDevelopment(s₂). -/
+theorem normalDevelopment_trueLE_positive (dyn : CausalDynamics) (s₁ s₂ : Situation) (fuel : Nat)
+    (hPos : isPositiveDynamics dyn = true)
+    (hLE : Situation.trueLE s₁ s₂) :
+    Situation.trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) :=
+  positive_normalDevelopment_trueLE dyn s₁ s₂ fuel hPos hLE
+
 /-- **Sufficiency is monotone for positive dynamics.**
 
     In causal models with no inhibitory connections (all preconditions require

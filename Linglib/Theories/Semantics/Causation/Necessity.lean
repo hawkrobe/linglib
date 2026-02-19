@@ -63,15 +63,47 @@ def causeSem (dyn : CausalDynamics) (background : Situation)
   developed.hasValue effectEvent true &&
   causallyNecessary dyn background causeEvent effectEvent
 
-/-- An alternative sufficient cause makes the original unnecessary. -/
+/-- An alternative sufficient cause makes the original unnecessary.
+
+    Requires positive dynamics (no inhibitory connections) and c1 ≠ c2: in positive
+    dynamics, setting c1 = false doesn't trigger new laws, so the sufficient
+    alternative c2 still fires the effect. Without positivity, a law with
+    precondition (c1, false) could inhibit the effect. -/
 theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
     (c1 c2 effect : Variable)
+    (hne : c1 ≠ c2)
+    (hPos : isPositiveDynamics dyn = true)
     (h_c2_present : s.hasValue c2 true = true)
     (h_c2_sufficient : causallySufficient dyn (s.remove c1) c2 effect = true) :
     causallyNecessary dyn s c1 effect = false := by
-  simp only [causallyNecessary, causallySufficient] at *
-  -- Without c1, c2 still causes effect
-  sorry  -- Requires showing c2 fires even without c1
+  -- Suffices to show effect develops to true even without c1
+  suffices h : (normalDevelopment dyn (s.extend c1 false)).hasValue effect true = true by
+    show (!(normalDevelopment dyn (s.extend c1 false)).hasValue effect true) = false
+    rw [h]; rfl
+  simp only [causallySufficient] at h_c2_sufficient
+  -- Key: trueLE ((s.remove c1).extend c2 true) (s.extend c1 false)
+  -- In positive dynamics, c1=false vs c1=none makes no difference (no inhibitory laws),
+  -- and c2 is true in both situations.
+  have hLE : Situation.trueLE ((s.remove c1).extend c2 true) (s.extend c1 false) := by
+    intro v hv
+    by_cases hvc1 : v = c1
+    · -- v = c1: after remove, c1 is none → hasValue c1 true = false, contradiction
+      rw [hvc1] at hv
+      rw [Situation.extend_hasValue_diff _ _ _ _ _ hne] at hv
+      simp [Situation.hasValue, Situation.remove] at hv
+    · by_cases hvc2 : v = c2
+      · rw [hvc2]
+        rw [Situation.extend_hasValue_diff _ _ _ _ _ (Ne.symm hne)]
+        exact h_c2_present
+      · -- v ≠ c1, v ≠ c2: remove c1 doesn't affect v
+        rw [Situation.extend_hasValue_diff _ _ _ _ _ hvc2] at hv
+        rw [Situation.extend_hasValue_diff _ _ _ _ _ hvc1]
+        have hbeq : (v == c1) = false := by
+          rw [show (v == c1) = decide (v = c1) from rfl]
+          exact decide_eq_false hvc1
+        simp only [Situation.hasValue, Situation.remove, hbeq] at hv ⊢
+        exact hv
+  exact normalDevelopment_trueLE_positive dyn _ _ 100 hPos hLE effect h_c2_sufficient
 
 /-- Sufficiency does NOT imply necessity (overdetermination). -/
 theorem sufficiency_not_implies_necessity :
