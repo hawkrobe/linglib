@@ -33,7 +33,7 @@ Two types of EN with different syntactic positions and licensing:
 
 ## References
 
-- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 - Jin, M. & Koenig, J.-P. (2021). A cross-linguistic survey of expletive
   negation. *Glossa* 6(1):25.
 - Greco, C. (2018). Negative Polarity Items and Expletive Negation.

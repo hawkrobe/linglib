@@ -52,7 +52,8 @@ open Core.Time
 open Core.Time.Interval
 open Semantics.Lexical.Verb.Aspect
 open Semantics.Lexical.Verb.ChangeOfState
-open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton)
+open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
+  maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
 
 -- ============================================================================
 -- § 1: Sentence Denotations as Interval Sets
@@ -289,41 +290,79 @@ theorem rett_implies_anscombe_telic_after_finish
 
 /-! ### Expletive negation and ambidirectionality
 
-Rett (2026, §3) shows that *before* is **ambidirectional**: negating B
-in "A before B" doesn't change truth conditions, because MAX₍<₎ on B
-and MAX₍<₎ on ¬B share the starting-point bound (for telic B on a
-closed interval). This is why *before*-clauses license expletive
-negation cross-linguistically (Jin & Koenig 2021: 50 languages).
+Rett (2026, §5) shows that *before* is **ambidirectional**: negating B
+in "A before B" doesn't change truth conditions. This is why
+*before*-clauses license expletive negation cross-linguistically
+(Jin & Koenig 2021: 50 languages).
 
-*After* is NOT ambidirectional: negating B yields trivially-true truth
-conditions (A > −∞), so EN in *after*-clauses would be truth-conditionally
-distinct (uninformative).
+The mechanism (Rett 2026, §5.2): for B = [s, f], both B and its
+**pre-event complement** (−∞, s] share s as their "most informative
+closed bound" on the < scale. The *before* construction relates A only
+to this bound, so negating B is truth-conditionally vacuous.
+
+Crucially, Rett's argument uses the **pre-event complement** (times
+before B starts), not the full set-theoretic complement Bᶜ. She
+explicitly stipulates (§5.1) that only pre-event runtimes of negative
+events are relevant for temporal relations with embedded negation.
+The full complement Bᶜ = (−∞, s) ∪ (f, +∞) has MAX₍<₎ = ∅ for dense
+orders (no minimum in an open set), so `isAmbidirectional` with Bᶜ
+is false in general.
+
+*After* is NOT ambidirectional: negating B shifts the relevant bound,
+so EN in *after*-clauses would be truth-conditionally distinct.
 
 *While* requires total temporal overlap; ¬B fails when A overlaps B.
 
-- Rett, J. (2026). Semantic ambivalence and expletive negation. *Language*.
+- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 - Jin, M. & Koenig, J.-P. (2021). A cross-linguistic survey of expletive
   negation. *Glossa* 6(1):25.
 -/
 
-/-- *Before* is ambidirectional on closed intervals (Rett 2026, §3.2):
-    when B is the time trace of a telic event — a closed interval [s, f] —
-    MAX₍<₎(B) and MAX₍<₎(Bᶜ) share s as their informative bound.
+/-- *Before* truth conditions depend only on MAX₍<₎ of B's time trace:
+    if two denotations have the same `maxOnScale (· < ·)` on their time
+    traces, then `Rett.before` gives the same truth conditions.
 
-    The critical hypothesis is that B is a **closed interval**: B = {t | s ≤ t ∧ t ≤ f}.
-    Without this, the theorem is false (e.g., for open or unbounded B,
-    MAX₍<₎(Bᶜ) may not share a bound with MAX₍<₎(B)).
+    This is the structural basis of Rett's (2026) ambidirectionality
+    argument: *before* is insensitive to negation iff B and the
+    pre-event complement of B share the same MAX₍<₎ on their time traces. -/
+theorem before_determined_by_max (A B₁ B₂ : SentDenotation Time)
+    (h : maxOnScale (· < ·) (timeTrace B₁) = maxOnScale (· < ·) (timeTrace B₂)) :
+    Rett.before A B₁ ↔ Rett.before A B₂ := by
+  constructor <;> rintro ⟨t, ht, m, hm, htm⟩ <;> exact ⟨t, ht, m, h ▸ hm, htm⟩
 
-    **Status**: FALSE as stated for general `LinearOrder Time`. The issue
-    is that MAX₍<₎(Bᶜ) — the minimum of the complement — differs from
-    MAX₍<₎(B) = {s}. For example, with Time = Fin 5, B = {1,2,3}, Bᶜ = {0,4}:
-    MAX₍<₎(B) = {1} but MAX₍<₎(Bᶜ) = {0}, so "t < 1" ≢ "t < 0".
-    Even for dense/unbounded Time (ℝ), Bᶜ = (−∞, s) ∪ (f, +∞) has no minimum,
-    so MAX₍<₎(Bᶜ) = ∅ and the RHS is vacuously false.
+/-- When B's time trace is a closed interval [s, f], Rett.before reduces to
+    "∃ t ∈ A, t < s". This is because MAX₍<₎([s,f]) = {s}
+    (by `maxOnScale_lt_closedInterval`).
 
-    Rett (2026) may be working with a different notion of MAX or additional
-    temporal model constraints. Correct formalization requires closer analysis
-    of Rett's specific definitions. -/
+    Applied to stative/accomplishment denotations via `timeTrace_stativeDenotation`
+    or `timeTrace_accomplishmentDenotation`. -/
+theorem rett_before_closedTrace_eq (A B : SentDenotation Time) (s f : Time) (hsf : s ≤ f)
+    (htrace : timeTrace B = { t | s ≤ t ∧ t ≤ f }) :
+    Rett.before A B ↔ ∃ t ∈ timeTrace A, t < s := by
+  unfold Rett.before
+  rw [htrace, maxOnScale_lt_closedInterval s f hsf]
+  constructor
+  · rintro ⟨t, ht, m, rfl, htm⟩; exact ⟨t, ht, htm⟩
+  · rintro ⟨t, ht, htm⟩; exact ⟨t, ht, s, rfl, htm⟩
+
+/-- *Before* is ambidirectional w.r.t. the **pre-event complement** (Rett 2026, §5.2).
+
+    Rett's argument: for B = [s, f], the pre-event complement is (−∞, s].
+    Both B and the pre-event complement share s as their MAX₍<₎ element,
+    so `Rett.before A B ↔ Rett.before A (preEvent B)`.
+
+    **Status**: sorry. The formalization requires:
+    1. A definition of `preEventComplement` capturing Rett's stipulation
+       that only pre-event runtimes are relevant
+    2. A proof that `maxOnScale (· < ·) (preEvent [s,f]) = {s}`, which
+       requires the pre-event complement to be closed at s (i.e., (−∞, s]
+       rather than the open (−∞, s))
+    3. Temporal model constraints ensuring the pre-event complement is
+       non-empty and closed at the boundary
+
+    The original `isAmbidirectional` formulation (using full Bᶜ) is false:
+    Bᶜ = (−∞, s) ∪ (f, +∞) has MAX₍<₎ = ∅ for dense Time (no minimum
+    in an open set), and MAX₍<₎ = {min(Bᶜ)} ≠ {s} for discrete Time. -/
 theorem before_ambidirectional (A : SentDenotation Time) (s f : Time) (hsf : s ≤ f) :
     isAmbidirectional
       (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale (· < ·) X, t < m)
@@ -359,6 +398,7 @@ theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
   · rw [ht_eq, hmb] at htm; exact absurd htm (lt_irrefl _)
   · rw [ht_eq] at htm; exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
+omit [LinearOrder Time] in
 /-- *While* is not ambidirectional: "∀ t ∈ A, t ∈ B" and "∀ t ∈ A, t ∈ Bᶜ"
     cannot both hold when A ∩ B is nonempty. So the construction is
     truth-conditionally sensitive to the polarity of its argument. -/
