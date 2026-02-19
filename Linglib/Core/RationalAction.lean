@@ -108,6 +108,23 @@ theorem RationalAction.policy_monotone (ra : RationalAction S A) (s : S)
       lt_of_le_of_ne (ra.totalScore_nonneg s) (Ne.symm hne)
     exact div_le_div_of_nonneg_right h (le_of_lt hpos)
 
+/-- Strict policy monotonicity: strictly higher score → strictly higher probability.
+
+    Used by `rsa_decide` to eliminate shared denominator computations: when
+    comparing `policy s a₁ > policy s a₂` (same state), it suffices to show
+    `score s a₁ > score s a₂`, skipping the expensive `totalScore` computation
+    in the proof term. -/
+theorem RationalAction.policy_gt_of_score_gt (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) (hgt : ra.score s a₁ > ra.score s a₂) :
+    ra.policy s a₁ > ra.policy s a₂ := by
+  have ha₁_pos : 0 < ra.score s a₁ :=
+    lt_of_le_of_lt (ra.score_nonneg s a₂) hgt
+  have htot_pos : 0 < ra.totalScore s :=
+    lt_of_lt_of_le ha₁_pos
+      (Finset.single_le_sum (fun a _ => ra.score_nonneg s a) (Finset.mem_univ a₁))
+  simp only [policy, ne_of_gt htot_pos, ↓reduceIte]
+  exact div_lt_div_of_pos_right hgt htot_pos
+
 -- ============================================================================
 -- §1a. Luce's Choice Axiom (IIA)
 -- ============================================================================
