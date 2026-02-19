@@ -279,7 +279,7 @@ def gradedMeaning (u : Utterance) (h : Height) : ℚ :=
 theorem graded_monotonic :
     gradedTallness (deg 3) < gradedTallness (deg 5) ∧
     gradedTallness (deg 5) < gradedTallness (deg 8) := by
-  sorry
+  native_decide
 
 /-- Every height has a non-trivial degree (except h0),
 capturing the "no sharp boundary" property of graded semantics. -/
@@ -288,6 +288,6 @@ theorem graded_no_sharp_boundary :
     gradedTallness (deg 1) < 1 ∧
     gradedTallness (deg 9) > 0 ∧
     gradedTallness (deg 9) < 1 := by
-  sorry
+  native_decide
 
 end RSA.LassiterGoodman2017

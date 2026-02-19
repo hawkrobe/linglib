@@ -127,7 +127,7 @@ critique is that FG2012's stimuli are dominated by such items. -/
 
 /-- "blue" uniquely identifies blue_square in the trivial context. -/
 theorem trivial_blue_unique :
-    isTrivial trivialCtx (.color .blue) = true := by sorry
+    isTrivial trivialCtx (.color .blue) = true := by native_decide
 
 
 /-! ### 3. In solvable contexts, L1 ≠ L0
@@ -139,18 +139,18 @@ different predictions from L0 for ambiguous utterances.
 
 /-- "square" is ambiguous in the solvable context (matches 2 objects). -/
 theorem solvable_square_ambiguous :
-    isTrivial solvableCtx (.shape .square) = false := by sorry
+    isTrivial solvableCtx (.shape .square) = false := by native_decide
 
 
 /-! ### 4. Context classification verification -/
 
 /-- The trivial context has all utterances trivially predicted. -/
 theorem trivial_ctx_all_trivial :
-    trivialUtts.all (isTrivial trivialCtx) = true := by sorry
+    trivialUtts.all (isTrivial trivialCtx) = true := by native_decide
 
 /-- The solvable context has non-trivial utterances. -/
 theorem solvable_ctx_has_nontrivial :
     (solvableUtts.filter (λ u => !isTrivial solvableCtx u)).length > 0 := by
-  sorry
+  native_decide
 
 end Phenomena.Reference.Studies.SikosEtAl2021Bridge

@@ -111,18 +111,18 @@ def wonkyGoalProject : WorldType → HKIState → HKIState → Bool
 /-- Standard scenario has correct dimensions -/
 theorem standard_dimensions :
     allUtterances.length = 3 ∧
-    allStates.length = 2 := by
-  constructor <;> sorry
+    allStates.length = 2 :=
+  ⟨rfl, rfl⟩
 
 /-- wonkyRSA has 2 goals (normal, wonky) -/
 theorem wonky_dimensions :
-    allWorldTypes.length = 2 := by
-  sorry
+    allWorldTypes.length = 2 :=
+  rfl
 
 /-- Negative utterances have higher cost in our model -/
 theorem neg_higher_cost :
     utteranceCost .uNeg > utteranceCost .uPos := by
-  sorry
+  native_decide
 
 /-- fuzzyRSA with low prior: positive utterance becomes less reliable.
 
@@ -131,15 +131,15 @@ theorem neg_higher_cost :
 theorem fuzzy_low_prior_effect :
     fuzzyMeaning lowPriorConfig .uPos .pos <
     fuzzyMeaning highPriorConfig .uPos .pos := by
-  sorry
+  native_decide
 
 /-- Negative interpretation is constant regardless of prior.
 
     This reflects the "inherent" presupposition trigger of negation. -/
 theorem neg_interpretation_constant :
     fuzzyMeaning lowPriorConfig .uNeg .neg =
-    fuzzyMeaning highPriorConfig .uNeg .neg := by
-  sorry
+    fuzzyMeaning highPriorConfig .uNeg .neg :=
+  rfl
 
 /--
 Map He et al.'s sentence polarity to compositional context polarity.
@@ -157,7 +157,8 @@ def toContextPolarity : Polarity → Semantics.Entailment.Polarity.ContextPolari
 
 /-- Cost aligns with UE/DE distinction: DE costs more -/
 theorem cost_reflects_polarity :
-    utteranceCost .uPos < utteranceCost .uNeg := by sorry
+    utteranceCost .uPos < utteranceCost .uNeg := by
+  native_decide
 
 
 /-

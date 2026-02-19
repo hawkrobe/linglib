@@ -97,7 +97,7 @@ theorem negation_reverses_goodness_order :
     -- So "not amazing" is less good than "not good" at h3
     softNot (adjMeaning .amazing) .h3 < softNot (adjMeaning .good) .h3 := by
   intro _
-  sorry
+  native_decide
 
 /-- Applying softNot twice returns the original semantics.
 This mirrors `pnot_pnot_isUpwardEntailing` (DE ∘ DE = UE). -/
@@ -119,7 +119,7 @@ theorem negation_shifts_compatibility :
     -- "not terrible" (compositionally derived) peaks away from h0
     softNot (adjMeaning .terrible) .h0 < softNot (adjMeaning .terrible) .h3 := by
   intro _
-  sorry
+  native_decide
 
 /-- Negation is informationally weaker.
 
@@ -133,19 +133,19 @@ theorem negation_is_vague :
     softNot (adjMeaning .terrible) .h1 > 90/100 ∧
     softNot (adjMeaning .terrible) .h2 > 90/100 ∧
     softNot (adjMeaning .terrible) .h3 > 90/100 := by
-  sorry
+  native_decide
 
 -- Data Verification
 
 /-- All utterances are covered -/
-theorem utterances_complete : allUtterances.length = 8 := by sorry
+theorem utterances_complete : allUtterances.length = 8 := rfl
 
 /-- All states are covered -/
-theorem states_complete : allHeartStates.length = 4 := by sorry
+theorem states_complete : allHeartStates.length = 4 := rfl
 
 /-- Negation costs more than direct speech -/
 theorem negation_costlier :
-    utteranceCost .notTerrible > utteranceCost .terrible := by sorry
+    utteranceCost .notTerrible > utteranceCost .terrible := by native_decide
 
 /-- Soft semantics: "terrible" is highly compatible with 0 hearts -/
 theorem terrible_h0_compatible :

@@ -111,7 +111,7 @@ def softGenericMeaning (p : Prevalence) : ℚ := p.toRat
 more thresholds are exceeded. -/
 theorem generic_monotone_prevalence :
     ∀ θ : Threshold, genericMeaning θ .p10 = true := by
-  sorry
+  native_decide
 
 /-- Soft generic meaning equals 0 for prevalence 0. -/
 theorem soft_meaning_zero : softGenericMeaning .p0 = 0 := by decide

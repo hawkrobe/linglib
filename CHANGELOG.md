@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.224.19] - 2026-02-19
+
+### Changed
+- Close 49 sorrys across 15 files via `native_decide`, `norm_num`, and `rfl`:
+  - SikosEtAl2021Bridge (3): context classification theorems
+  - NoncooperativeCommunication (1): `barnett_backfire_instance`
+  - SumersEtAl2023 (4): reward examples, truthfulness/relevance independence
+  - ScontrasPearl2021Bridge (3): empirical ordering, typed distribution ordering, inverse preference
+  - HeKaiserIskarous2025Bridge (6): dimensions, cost, fuzzy interpretation, polarity
+  - CremersWilcoxSpector2023Bridge (5): domain counts (utterances, worlds, parses, lexica, goals)
+  - Nouwen2024Bridge (3): evaluative measure properties (horrible/pleasant)
+  - YoonEtAl2020Bridge (6): softNot properties, negation vagueness, domain counts, cost
+  - FrankeBergen2020Bridge (3): dimensions, literal meaning checks
+  - VanTielEtAl2021 (4): Montague grounding (threshold/monotonicity)
+  - LassiterGoodman2017 (2): graded tallness monotonicity and boundary
+  - LexicalAmbiguity (1): astronomer/star conflict example
+  - TesslerGoodman2019 (1): generic monotone prevalence
+  - TesslerFranke2020 (3): gap semantics (happy/not-unhappy distinction)
+  - Embedded/Questions (4): question uniqueness witnesses
+
 ## [0.224.18] - 2026-02-19
 
 ### Added

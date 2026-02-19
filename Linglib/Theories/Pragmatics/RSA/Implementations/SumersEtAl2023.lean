@@ -275,9 +275,9 @@ def exampleContext : Context :=
     ] }
 
 /-- Verify reward calculations for example context -/
-example : reward (makeMushroom .red .spotted) canonicalWorld = 1 := by sorry
-example : reward (makeMushroom .red .solid) canonicalWorld = 0 := by sorry
-example : reward (makeMushroom .blue .striped) canonicalWorld = -3 := by sorry
+example : reward (makeMushroom .red .spotted) canonicalWorld = 1 := by native_decide
+example : reward (makeMushroom .red .solid) canonicalWorld = 0 := by native_decide
+example : reward (makeMushroom .blue .striped) canonicalWorld = -3 := by native_decide
 
 /-- True utterance in canonical world -/
 def trueUtterance : Utterance := ⟨.spotted, .pos1⟩
@@ -334,7 +334,7 @@ theorem truthfulness_relevance_independent :
     truthfulnessUtility trueIrrel w = 1 ∧
     -- False but relevant witness
     truthfulnessUtility falseRel w = -1 := by
-  sorry
+  exact ⟨rfl, rfl⟩
 
 
 /-!
