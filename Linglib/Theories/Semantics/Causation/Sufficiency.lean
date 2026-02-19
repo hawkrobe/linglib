@@ -219,7 +219,10 @@ private theorem positive_applyLawsOnce_absorbed
     trueLE (applyLawsOnce dyn s₁) s₂ :=
   positive_foldl_absorbed dyn.laws s₁ s₂ hPos hLE hFix
 
-private theorem positive_normalDevelopment_grows
+/-- For positive dynamics, normal development is **inflationary** (extensive):
+    every truth in `s` is preserved. This is one of the three closure-operator
+    axioms. Used by `CausalClosure.lean` to build the `ClosureOperator` instance. -/
+theorem positive_normalDevelopment_grows
     (dyn : CausalDynamics) (s : Situation) (fuel : Nat)
     (hPos : isPositiveDynamics dyn = true) :
     trueLE s (normalDevelopment dyn s fuel) := by

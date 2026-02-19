@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Monotone.Basic
 import Linglib.Tactics.OntSort
+import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # Proposition
@@ -358,6 +359,21 @@ theorem closure_expanding' {W : Type*} (A : Set (Prop' W)) :
     A ⊆ intension (extension A) := by
   intro p hp w hw
   exact hw p hp
+
+open OrderDual in
+/-- **Mathlib Galois connection** between `Set (Prop' W)` and `(Set W)ᵒᵈ`.
+
+    Since `extension` and `intension` are both antitone, the adjunction
+    lives between `Set (Prop' W)` and the **order dual** of `Set W`:
+    `l = toDual ∘ extension`, `u = intension ∘ ofDual`.
+
+    The GC condition `l A ≤ᵒᵈ b ↔ A ≤ u b` unfolds to exactly the
+    hand-proved `galois_connection`: `Ws ⊆ ext(A) ↔ A ⊆ int(Ws)`. -/
+def gc {W : Type*} :
+    _root_.GaloisConnection
+      (toDual ∘ extension (W := W))
+      (intension ∘ ofDual) :=
+  fun A b => galois_connection A (ofDual b)
 
 /-- Extension (List-based): compute worlds where all propositions hold. -/
 def extensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List W :=

@@ -4,6 +4,8 @@ import Mathlib.Order.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
+import Mathlib.Order.Closure
+import Mathlib.Order.Hom.Lattice
 
 /-!
 # Algebraic Mereology
@@ -168,6 +170,26 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
   | base hp => exact hp
   | sum _ _ ih₁ ih₂ => exact AlgClosure.sum ih₁ ih₂
 
+/-- `AlgClosure` is a **closure operator** on the predicate lattice `(α → Prop, ⊆)`.
+
+    The three axioms — extensive, monotone, idempotent — are grounded
+    in Mathlib's `ClosureOperator`. This is the mereological analog
+    of `CausalClosure.PositiveDynamics.closureOp`: both are monads
+    on **Pos** (the category of posets and monotone maps).
+
+    - `subset_algClosure` → `le_closure'` (extensive)
+    - `algClosure_mono` → `monotone'` (monotone)
+    - `algClosure_idempotent` + `subset_algClosure` → `idempotent'` -/
+def algClosureOp {α : Type*} [SemilatticeSup α] :
+    ClosureOperator (α → Prop) where
+  toOrderHom := {
+    toFun := AlgClosure
+    monotone' := fun {_a} {_b} hab => algClosure_mono (fun x hx => hab x hx)
+  }
+  le_closure' := fun _P _x hPx => subset_algClosure hPx
+  idempotent' := fun P => funext fun x =>
+    propext ⟨algClosure_idempotent x, fun h => subset_algClosure h⟩
+
 -- ════════════════════════════════════════════════════
 -- § 4. Sum Homomorphism
 -- ════════════════════════════════════════════════════
@@ -179,6 +201,21 @@ class IsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (f : α → β) : Prop where
   /-- f preserves binary join. -/
   map_sup : ∀ (x y : α), f (x ⊔ y) = f x ⊔ f y
+
+/-- Convert an `IsSumHom` witness to Mathlib's bundled `SupHom`.
+
+    This grounds linglib's unbundled `IsSumHom` typeclass in Mathlib's
+    bundled `SupHom α β`, the hom-set in **SLat** (join semilattices
+    with join-preserving maps). -/
+def IsSumHom.toSupHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    {f : α → β} (hf : IsSumHom f) : SupHom α β where
+  toFun := f
+  map_sup' := hf.map_sup
+
+/-- Every Mathlib `SupHom` satisfies `IsSumHom`. -/
+def SupHom.toIsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (f : SupHom α β) : IsSumHom f.toFun where
+  map_sup := f.map_sup'
 
 /-- Sum homomorphisms are order-preserving (monotone).
     If x ≤ y then f(x) ≤ f(y). -/
