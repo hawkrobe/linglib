@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.224.27] - 2026-02-19
+
+### Changed
+- Fix `assertionStrength` from `negMulLog(P)` (weighted self-information) to `-log(P)` (surprisal), matching van Rooy (2003)'s informativity measure
+- Replace false `questionUtility_eq_entropy_for_epistemic` (0/1 utility ≠ entropy) with `questionEntropy_nonneg`
+- Replace ill-typed `entropy_leq_expected_utility` (ℝ ≤ ℚ) with `questionEntropy_binary`
+
+### Added
+- `questionEntropy_nonneg`: entropy is non-negative for valid cell probabilities
+- `questionEntropy_binary`: for binary partitions, `questionEntropy = binaryEntropy(P(pos))`
+- `npi_assertion_licensed_de`: NPI narrows negation → higher surprisal, via `Real.log_le_log`
+- `unified_npi_licensing`: NPI licensing for both assertions (surprisal monotonicity) and questions (entropy increase) under DE/negative-bias polarity
+
+### Fixed
+- Close remaining 3 sorrys in EntropyNPIs (3 → 0); file is now sorry-free
+
 ## [0.224.26] - 2026-02-19
 
 ### Changed
