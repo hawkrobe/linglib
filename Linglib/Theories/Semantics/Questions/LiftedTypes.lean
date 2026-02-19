@@ -372,10 +372,7 @@ theorem lift_conj_refinement (q1 q2 : GSQuestion W) :
       (∀ q q', q' ⊑ q → P q → P q') →  -- P is upward closed in refinement
       (conj (lift q1) (lift q2)) P → (lift q12) P := by
   intro q12 P hMono hConj
-  simp only [conj, lift] at hConj
-  -- q1 * q2 refines both q1 and q2
-  -- So if P holds of both and P is monotone, P holds of q1 * q2
-  sorry  -- Requires showing q12 ⊑ q1 and using monotonicity
+  exact hMono q1 q12 (QUD.compose_refines_left q1 q2) hConj.1
 
 -- Connection to Core Questions
 
