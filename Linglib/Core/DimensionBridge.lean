@@ -1,5 +1,5 @@
 import Linglib.Core.MereoDim
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Linglib.Core.Time
 import Linglib.Core.Path
 import Mathlib.Algebra.Order.Archimedean.Basic

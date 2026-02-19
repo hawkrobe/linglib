@@ -1,4 +1,4 @@
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 
 /-!
 # Spatial Path Infrastructure

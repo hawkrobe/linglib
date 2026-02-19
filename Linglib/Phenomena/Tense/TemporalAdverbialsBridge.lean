@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Linglib.Fragments.English.TemporalAdverbials
 
 /-!

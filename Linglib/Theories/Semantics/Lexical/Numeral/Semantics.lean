@@ -1,4 +1,4 @@
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 

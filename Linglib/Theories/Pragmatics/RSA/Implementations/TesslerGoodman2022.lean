@@ -34,7 +34,7 @@ Why? RSA reasoning:
 This asymmetry emerges from pragmatic inference, not stipulation.
 -/
 
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.TesslerGoodman2022

@@ -7,44 +7,64 @@ import Mathlib.Order.Fin.Basic
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Measurement Scales
+# Scales
 
-Abstract measurement scale infrastructure shared by degree semantics
-(Kennedy 2007: gradable adjectives) and temporal measurement (Krifka 1989,
-Rouillard 2026: temporal *in*-adverbials).
+Root algebraic infrastructure for all scale-based reasoning in linglib.
 
-## The Shared Pattern
+## Categorical Structure
 
-Both Kennedy's adjective scales and Rouillard's temporal measurement exhibit
-the same abstract structure:
+The file defines a category of scales with two levels of enrichment:
 
-1. A **linearly ordered domain** of scalar values (degrees, durations)
-2. A **boundedness** classification (open vs. closed, bounded vs. unbounded)
-3. A **density** property (dense ordering, inherited from ℝ via Mathlib)
-4. An **informativity licensing** pattern: a grammatical element (degree
-   modifier, temporal adverbial) is felicitous iff a scalar parameter
-   can be **maximally informative** on the scale
+```
+                    ComparativeScale (α, ≤, boundedness)
+                    ╱              ╲
+          (+ join, ⊥, FA)    (linear, μ)
+              ╱                      ╲
+      AdditiveScale              MIPDomain
+        ╱        ╲                    │
+MereoScale   EpistemicScale          │
+    │              │                  │
+    │  additive    │  additive        │  μ
+    │  representation  representation │
+    ▼              ▼                  ▼
+                  (ℚ, ≤)
+```
 
-## The Isomorphism
+**Objects**: `ComparativeScale α` — a preorder with boundedness classification.
+
+**Morphisms**: `ScaleMorphism` — monotone maps between comparative scales.
+  Generalizes `MereoDim` (which is `StrictMono` = injective scale morphism).
+
+**Enriched subcategory**: `AdditiveScale α` — comparative scale with join and
+  finite additivity (FA). Two independent instances:
+  - Mereological: `ExtMeasure.additive` (Krifka 1989)
+  - Epistemic: probability measure (Holliday & Icard 2013)
+
+**Linear specialization**: `MIPDomain` — comparative scale with a linear order
+  and measure function. Instances: Kennedy adjectives, Rouillard TIAs.
+
+The commutative diagram: both additive arms (mereological, epistemic) land in
+(ℚ, ≤) via additive representation morphisms. The MIP arm also lands in (ℚ, ≤)
+via measure functions. All three paths factor through `ComparativeScale`.
+
+## Measurement Scales
+
+Below the root structures, the file provides measurement scale infrastructure
+shared by degree semantics (Kennedy 2007) and temporal measurement (Krifka 1989,
+Rouillard 2026):
 
 | Kennedy (Adjectives)                | Rouillard (TIAs)                     |
 |-------------------------------------|--------------------------------------|
 | Degree scale                        | Duration measurement domain          |
-| Scale value (degree d)              | Temporal measure (μ(t) = n)          |
 | Open scale (tall, expensive)        | Atelic VP / DIV predicate            |
-| → no inherent bound → no standard   | → no max⊨ → information collapse    |
 | → "??completely tall"               | → "*was sick in three days"          |
 | Closed scale (full, empty)          | Telic VP / QUA predicate             |
-| → inherent bound → standard exists  | → max⊨ exists → upward scalar       |
 | → "completely full" ✓               | → "wrote a paper in three days" ✓   |
 | Interpretive Economy (Kennedy 2007) | MIP (Rouillard 2026)                 |
-| "Maximize conventional meaning"     | "Maximize numeral contribution"      |
 
-The isomorphism is realized structurally: both domains use `Boundedness` to
-classify their scales at the lexical/data level, and `Boundedness.isLicensed`
-derives the licensing prediction from the classification. Actual scale types
-encode boundedness via Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`,
-`NoMinOrder`), and licensing theorems are proved directly from these typeclasses.
+Both domains use `Boundedness` to classify scales, and `Boundedness.isLicensed`
+derives the licensing prediction. Actual scale types encode boundedness via
+Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`, `NoMinOrder`).
 
 ## References
 
@@ -52,6 +72,9 @@ encode boundedness via Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`
 - Krifka, M. (1989). Nominal reference, temporal constitution.
 - Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
 - Fox, D. & Hackl, M. (2006). The universal density of measurement.
+- Holliday, W. & Icard, T. (2013). Measure semantics and qualitative semantics
+  for epistemic modals.
+- Krantz, D. et al. (1971). Foundations of measurement, Vol. 1.
 -/
 
 namespace Core.Scale
@@ -104,6 +127,116 @@ def Boundedness.ofType (hasTop : Bool) (hasBot : Bool) : Boundedness :=
   | true, false => .upperBounded
   | false, true => .lowerBounded
   | false, false => .open_
+
+-- ════════════════════════════════════════════════════
+-- § 1b. Comparative Scale (Root Algebraic Structure)
+-- ════════════════════════════════════════════════════
+
+/-- A comparative scale: a preorder with a boundedness classification.
+    This is the root object in the category of scales. All scale-based
+    reasoning in linglib (degree semantics, mereological measurement,
+    epistemic comparison) factors through this structure.
+
+    Krantz et al. (1971): a comparative scale is an ordered set with
+    enough structure to support qualitative comparison. -/
+structure ComparativeScale (α : Type*) where
+  /-- The ordering relation -/
+  le : α → α → Prop
+  /-- Reflexivity -/
+  le_refl : ∀ (x : α), le x x
+  /-- Transitivity -/
+  le_trans : ∀ (x y z : α), le x y → le y z → le x z
+  /-- Scale boundedness classification -/
+  boundedness : Boundedness
+
+/-- An additive scale: a comparative scale enriched with join and finite
+    additivity (FA). Two independent instances exist in linglib:
+    - Mereological: `ExtMeasure.additive` (Krifka 1989)
+    - Epistemic: probability FA (Holliday & Icard 2013)
+
+    The FA axiom says disjoint augmentation preserves order: if z is
+    disjoint from both x and y, then x ≤ y ↔ x ⊔ z ≤ y ⊔ z. This
+    is the qualitative content of additive representation. -/
+structure AdditiveScale (α : Type*) [SemilatticeSup α] extends ComparativeScale α where
+  /-- Disjointness predicate -/
+  disjoint : α → α → Prop
+  /-- Finite additivity: disjoint augmentation preserves order.
+      Join is Mathlib's `⊔` from `SemilatticeSup`. -/
+  fa : ∀ (x y z : α), disjoint x z → disjoint y z →
+    (le x y ↔ le (x ⊔ z) (y ⊔ z))
+
+/-- A scale morphism: a monotone map between comparative scales.
+    Generalizes `MereoDim` (= injective scale morphism = `StrictMono`). -/
+def ScaleMorphism {α β : Type*}
+    (S₁ : ComparativeScale α) (S₂ : ComparativeScale β)
+    (f : α → β) : Prop :=
+  ∀ (x y : α), S₁.le x y → S₂.le (f x) (f y)
+
+namespace ComparativeScale
+
+/-- Lift a Mathlib `Preorder` to a `ComparativeScale`. -/
+def ofPreorder (α : Type*) [Preorder α] (b : Boundedness) :
+    ComparativeScale α where
+  le := (· ≤ ·)
+  le_refl := _root_.le_refl
+  le_trans := fun _ _ _ => _root_.le_trans
+  boundedness := b
+
+/-- Lift a Mathlib `LinearOrder` to a `ComparativeScale`. -/
+def ofLinearOrder (α : Type*) [LinearOrder α] (b : Boundedness) :
+    ComparativeScale α :=
+  ofPreorder α b
+
+/-- Licensing prediction from the underlying boundedness. -/
+def isLicensed {α : Type*} (S : ComparativeScale α) : Bool :=
+  S.boundedness.isLicensed
+
+end ComparativeScale
+
+-- ── Morphism theorems (categorical structure) ────
+
+namespace ScaleMorphism
+
+/-- Identity is a scale morphism. -/
+theorem id {α : Type*} (S : ComparativeScale α) :
+    ScaleMorphism S S _root_.id :=
+  fun _ _ h => h
+
+/-- Composition of scale morphisms is a scale morphism. -/
+theorem comp {α β γ : Type*}
+    {S₁ : ComparativeScale α} {S₂ : ComparativeScale β} {S₃ : ComparativeScale γ}
+    {g : β → γ} {f : α → β}
+    (hg : ScaleMorphism S₂ S₃ g) (hf : ScaleMorphism S₁ S₂ f) :
+    ScaleMorphism S₁ S₃ (g ∘ f) :=
+  fun x y h => hg _ _ (hf x y h)
+
+/-- A constant map is a scale morphism (into any scale). -/
+theorem const {α β : Type*}
+    (S₁ : ComparativeScale α) (S₂ : ComparativeScale β) (b : β) :
+    ScaleMorphism S₁ S₂ (fun _ => b) :=
+  fun _ _ _ => S₂.le_refl b
+
+/-- Every `Monotone` function between preorders is a scale morphism.
+    This is the bridge from Mathlib's order theory into the categorical
+    framework: any monotone map lifts to a `ScaleMorphism`. -/
+theorem ofMonotone {α β : Type*}
+    [Preorder α] [Preorder β] {f : α → β}
+    (hf : Monotone f) (b₁ b₂ : Boundedness) :
+    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
+                  (ComparativeScale.ofPreorder β b₂) f :=
+  fun _ _ hxy => hf hxy
+
+/-- Every `StrictMono` function is a scale morphism (since `StrictMono → Monotone`).
+    This connects `MereoDim` (strictly monotone maps between partial orders)
+    to the categorical framework. -/
+theorem ofStrictMono {α β : Type*}
+    [PartialOrder α] [Preorder β] {f : α → β}
+    (hf : StrictMono f) (b₁ b₂ : Boundedness) :
+    ScaleMorphism (ComparativeScale.ofPreorder α b₁)
+                  (ComparativeScale.ofPreorder β b₂) f :=
+  ofMonotone hf.monotone b₁ b₂
+
+end ScaleMorphism
 
 -- ════════════════════════════════════════════════════
 -- § 2. Measurement Scales (via Mathlib)
@@ -536,13 +669,11 @@ mechanism — it IS the MIP applied to "at least n". -/
     Given a measure function μ and a degree property P, the MIP determines
     licensing based on the scale's boundedness. Both Kennedy's Interpretive
     Economy and Rouillard's MIP are instances. -/
-structure MIPDomain (α : Type*) [LinearOrder α] (W : Type*) where
+structure MIPDomain (α : Type*) [LinearOrder α] (W : Type*) extends ComparativeScale α where
   /-- Measure function from worlds/events to scale values -/
   measure : W → α
   /-- Degree property: P(d, w) iff measure at w relates to threshold d -/
   degProp : α → W → Prop
-  /-- Scale boundedness -/
-  boundedness : Boundedness
 
 namespace MIPDomain
 
@@ -560,22 +691,26 @@ def blocked (d : MIPDomain α W) : Bool := !d.licensed
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
 def kennedyNumeral (μ : W → α) : MIPDomain α W :=
-  { measure := μ, degProp := atLeastDeg μ, boundedness := .closed }
+  { ComparativeScale.ofLinearOrder α .closed with
+    measure := μ, degProp := atLeastDeg μ }
 
 /-- Kennedy (2007) gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
 def kennedyAdjective (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { measure := μ, degProp := atLeastDeg μ, boundedness := b }
+  { ComparativeScale.ofLinearOrder α b with
+    measure := μ, degProp := atLeastDeg μ }
 
 /-- Rouillard (2026) E-TIA domain: event runtime ≤ interval size.
     Boundedness determined by Vendler class (telic → closed, atelic → open). -/
 def rouillardETIA (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { measure := μ, degProp := atMostDeg μ, boundedness := b }
+  { ComparativeScale.ofLinearOrder α b with
+    measure := μ, degProp := atMostDeg μ }
 
 /-- Rouillard (2026) G-TIA domain: PTS extent on open intervals.
     Always open → always blocked (information collapse). -/
 def rouillardGTIA (μ : W → α) : MIPDomain α W :=
-  { measure := μ, degProp := atMostDeg μ, boundedness := .open_ }
+  { ComparativeScale.ofLinearOrder α .open_ with
+    measure := μ, degProp := atMostDeg μ }
 
 -- ── Licensing Theorems ──────────────────────────────
 
