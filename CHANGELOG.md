@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.223.3] - 2026-02-18
+
+### Changed
+- Close `superlative_isStrawsonDE` sorry in `Theories/Semantics/Entailment/StrawsonEntailment.lean`: superlatives are Strawson downward-entailing (von Fintel 1999)
+- Fix and close `atomCount_sup_disjoint` sorry in `Core/Mereology.lean`: add join-primality hypothesis (atoms must be join-prime for additivity to hold; the original statement was false for general `SemilatticeSup`, e.g. M₃ lattice)
+
 ## [0.223.2] - 2026-02-18
 
 ### Changed

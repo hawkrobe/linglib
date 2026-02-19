@@ -357,14 +357,50 @@ When the presupposition is met (subject satisfies the restriction P),
 if P ⊆ Q, then "tallest who Q" entails "tallest who P" — the subject's
 rank can only improve by narrowing the comparison class.
 
-TODO: Full proof requires careful handling of the degree ordering.
-The key insight is that restricting the comparison class (P ⊆ Q means
-fewer competitors in P) preserves or improves the subject's rank.
+Proof strategy: Part 1 (existential) follows from the presupposition.
+Part 2 (universal) case-splits on whether any non-subject satisfies P:
+if not, the disjunct `¬C(P)` is trivially true; if so, monotonicity
+gives `C(Q)`, and the pointwise fact for Q transfers to P via `p ≤ q`.
 -/
 theorem superlative_isStrawsonDE (subject : World → Bool) :
     IsStrawsonDE (superlativeAssert subject)
       (superlativePresup subject) := by
-  sorry
+  intro p q hpq ⟨wx, hsubj_wx, hp_wx⟩ w
+  simp only [superlativeAssert]
+  intro h
+  simp only [Bool.and_eq_true] at h ⊢
+  obtain ⟨h_any_q, h_all_q⟩ := h
+  refine ⟨?_, ?_⟩
+  -- Part 1: ∃ y ∈ allWorlds, subject y ∧ p y — from presupposition
+  · have hmem : wx ∈ allWorlds := by cases wx <;> simp [allWorlds]
+    exact List.any_eq_true.mpr ⟨wx, hmem, by simp [hsubj_wx, hp_wx]⟩
+  -- Part 2: ∀ y, subject y ∨ ¬(p y) ∨ ¬C(p)
+  · apply List.all_eq_true.mpr
+    intro y hy
+    simp only [Bool.or_eq_true, Bool.not_eq_true']
+    by_cases hCp : (allWorlds.any fun z => !(subject z) && p z) = true
+    · -- C(p) holds: some non-subject satisfies p. By p ≤ q, C(q) holds too.
+      have hCq : (allWorlds.any fun z => !(subject z) && q z) = true := by
+        obtain ⟨z, hz_mem, hz_val⟩ := List.any_eq_true.mp hCp
+        simp only [Bool.and_eq_true, Bool.not_eq_true'] at hz_val
+        exact List.any_eq_true.mpr ⟨z, hz_mem, by
+          simp only [Bool.and_eq_true, Bool.not_eq_true']
+          exact ⟨hz_val.1, le_antisymm le_top (hz_val.2 ▸ hpq z)⟩⟩
+      -- With C(q) true, h_all_q gives: subject y ∨ ¬(q y) for each y
+      have h_y_q := List.all_eq_true.mp h_all_q y hy
+      simp only [Bool.or_eq_true, Bool.not_eq_true'] at h_y_q
+      left
+      rcases h_y_q with h_inner | h_false
+      · rcases h_inner with h | h
+        · left; exact h
+        · -- q y = false, and p ≤ q, so p y = false
+          right
+          by_cases hp : p y = true
+          · exact absurd (le_antisymm le_top (hp ▸ hpq y)) (by rw [h]; decide)
+          · exact Bool.eq_false_iff.mpr hp
+      · exact absurd hCq (by rw [h_false]; decide)
+    · -- C(p) is false: no non-subject satisfies p — third disjunct holds
+      right; exact Bool.eq_false_iff.mpr hCp
 
 -- ============================================================================
 -- Section 6: Bridge Theorems
