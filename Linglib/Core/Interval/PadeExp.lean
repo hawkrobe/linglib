@@ -20,11 +20,6 @@ For large |x|:
   2. Compute exp(x/2^k) via Padé
   3. Square k times: exp(x) = exp(x/2^k)^(2^k)
 
-## Key optimization for RSA
-
-Most RSA utilities compute `exp(α · log p)` = `p^α`. When α is a natural
-number, this is exact ℚ arithmetic — no Padé error at all. The Padé
-approximant is only needed for `exp(α · cost)` when cost ≠ 0.
 -/
 
 namespace Linglib.Interval
@@ -107,12 +102,63 @@ def reductionSteps (q : ℚ) : ℕ :=
   if q.num.natAbs ≤ q.den then 0
   else Nat.log 2 q.num.natAbs - Nat.log 2 q.den + 1
 
-/-- Repeated squaring of a nonneg interval. -/
-def repeatedSq : QInterval → ℕ → QInterval
-  | I, 0 => I
-  | I, n + 1 =>
-    have h : 0 ≤ (repeatedSq I n).lo := by sorry -- TODO: exp intervals are nonneg
-    repeatedSq I n |>.mulNonneg (repeatedSq I n) h h
+/-- Repeated squaring of a nonneg interval (carries nonneg proof with value). -/
+private def repeatedSqCore (I : QInterval) (n : ℕ) (h : 0 ≤ I.lo) :
+    { J : QInterval // 0 ≤ J.lo } :=
+  match n with
+  | 0 => ⟨I, h⟩
+  | n + 1 =>
+    let ⟨prev, hprev⟩ := repeatedSqCore I n h
+    ⟨prev.mulNonneg prev hprev hprev, mul_nonneg hprev hprev⟩
+
+/-- Repeated squaring of a nonneg interval.
+    Squares I a total of n times: repeatedSq I 0 = I, repeatedSq I (n+1) = (repeatedSq I n)². -/
+def repeatedSq (I : QInterval) (n : ℕ) (h : 0 ≤ I.lo) : QInterval :=
+  (repeatedSqCore I n h).val
+
+theorem repeatedSq_nonneg (I : QInterval) (n : ℕ) (h : 0 ≤ I.lo) :
+    0 ≤ (repeatedSq I n h).lo :=
+  (repeatedSqCore I n h).property
+
+-- ============================================================================
+-- expPoint: Point interval for exp(q) at arbitrary rational q
+-- ============================================================================
+
+/-- Point interval containing exp(q) for arbitrary rational q.
+
+    Strategy: reduce q → q' = q/2^k with |q'| ≤ 1 via `reductionSteps`,
+    compute exp(q') via Padé [4/4], then square k times since exp(q) = exp(q')^(2^k).
+
+    The nonneg guard on `small.lo` is always true by construction:
+    padeExp(q') ≈ exp(q') ≥ exp(-1) ≈ 0.368 >> padeErrorBound = 2.5×10⁻⁷. -/
+def expPoint (q : ℚ) : QInterval :=
+  let k := reductionSteps q
+  let q' := q / (2 ^ k : ℚ)
+  let approx := padeExp q'
+  let small : QInterval :=
+    ⟨approx - padeErrorBound, approx + padeErrorBound,
+     by simp only [padeErrorBound]; linarith⟩
+  if h : 0 ≤ small.lo then
+    repeatedSq small k h
+  else
+    -- Unreachable: padeExp(q') ≈ exp(q') ≥ exp(-1) ≈ 0.368 >> padeErrorBound.
+    -- Sound fallback: exp(q) ∈ (0, 3^|num(q)|] since e < 3.
+    ⟨0, (3 : ℚ) ^ q.num.natAbs,
+     le_of_lt (pow_pos (by norm_num : (0 : ℚ) < 3) _)⟩
+
+/-- Containment theorem for expPoint.
+
+    Proof sketch: `reductionSteps q` gives k with |q/2^k| ≤ 1. Padé approximation
+    gives an interval containing exp(q/2^k). Repeated squaring preserves containment
+    since exp(q) = exp(q/2^k)^(2^k). Requires:
+    - `reductionSteps` spec (q/2^k ∈ [-1,1])
+    - `pade_error_bound` (Padé accuracy on [-1,1])
+    - `padeDen > 0` on [-1,1]
+    - Repeated squaring preserves containment via `Real.exp_nat_mul`
+
+    TODO: prove from the above ingredients. -/
+axiom expPoint_containsReal (q : ℚ) :
+    (expPoint q).containsReal (Real.exp (↑q : ℝ))
 
 -- ============================================================================
 -- Main entry point
@@ -120,23 +166,30 @@ def repeatedSq : QInterval → ℕ → QInterval
 
 /-- Interval containing exp(x) for x in rational interval I.
 
-    For the zero-cost RSA case (the majority), this function is never called —
-    the tactic handles exp(0) = 1 directly.
+    Uses monotonicity of exp: for x ∈ [lo, hi],
+      exp(lo) ≤ exp(x) ≤ exp(hi)
+    so exp(x) ∈ [expPoint(lo).lo, expPoint(hi).hi]. -/
+def expInterval (I : QInterval) : QInterval where
+  lo := (expPoint I.lo).lo
+  hi := (expPoint I.hi).hi
+  valid := by
+    have hlo := expPoint_containsReal I.lo
+    have hhi := expPoint_containsReal I.hi
+    have hmon : Real.exp (↑I.lo : ℝ) ≤ Real.exp (↑I.hi : ℝ) :=
+      Real.exp_le_exp_of_le (by exact_mod_cast I.valid)
+    have h : (↑(expPoint I.lo).lo : ℝ) ≤ ↑(expPoint I.hi).hi :=
+      le_trans (le_trans hlo.1 hmon) hhi.2
+    exact_mod_cast h
 
-    For nonzero cost, uses argument reduction + Padé + repeated squaring. -/
-def expInterval (I : QInterval) : QInterval :=
-  -- Simplified: use Padé on midpoint with width for error
-  -- Full implementation would do argument reduction
-  let mid := (I.lo + I.hi) / 2
-  let halfWidth := (I.hi - I.lo) / 2
-  -- For now, just return a wide interval based on crude bounds
-  -- exp(x) ∈ [exp(lo), exp(hi)] and we bound these via Padé
-  sorry -- TODO: implement full argument reduction pipeline
-
-/-- Containment theorem for expInterval.
-    TODO: prove from expPointSmall + monotonicity of exp. -/
-axiom expInterval_containsReal {I : QInterval} {x : ℝ}
+/-- Containment theorem for expInterval: monotonicity of exp + expPoint containment. -/
+theorem expInterval_containsReal {I : QInterval} {x : ℝ}
     (hx : I.containsReal x) :
-    (expInterval I).containsReal (Real.exp x)
+    (expInterval I).containsReal (Real.exp x) := by
+  simp only [expInterval, QInterval.containsReal]
+  have hlo := expPoint_containsReal I.lo
+  have hhi := expPoint_containsReal I.hi
+  constructor
+  · exact le_trans hlo.1 (Real.exp_le_exp_of_le hx.1)
+  · exact le_trans (Real.exp_le_exp_of_le hx.2) hhi.2
 
 end Linglib.Interval

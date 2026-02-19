@@ -49,9 +49,25 @@ def exact (q : ℚ) : QInterval where
 theorem exact_containsReal (q : ℚ) : (exact q).containsReal (↑q : ℝ) :=
   ⟨le_refl _, le_refl _⟩
 
-/-- Containment for natural number literals cast via `Nat.cast`.
-    `@Nat.cast ℝ _ n` is definitionally equal to `@OfNat.ofNat ℝ n _`,
-    so this lemma matches goals with ℝ numeric literals. -/
+/-- Containment for `(0 : ℝ)`. Uses the literal `0` so the proof type mentions
+    `@OfNat.ofNat ℝ 0 _` (= `@Zero.zero ℝ _`), matching expressions directly. -/
+theorem exact_zero_containsReal :
+    (exact (0 : ℚ)).containsReal (0 : ℝ) := by
+  simp only [containsReal, exact]
+  constructor <;> exact_mod_cast le_refl (0 : ℚ)
+
+/-- Containment for `(1 : ℝ)`. Uses the literal `1` so the proof type mentions
+    `@OfNat.ofNat ℝ 1 _` (= `@One.one ℝ _`), avoiding the `Nat.cast 1 = 0 + 1`
+    mismatch that breaks nested proof terms. -/
+theorem exact_one_containsReal :
+    (exact (1 : ℚ)).containsReal (1 : ℝ) := by
+  simp only [containsReal, exact]
+  constructor <;> exact_mod_cast le_refl (1 : ℚ)
+
+/-- Containment for natural number literals ≥ 2 cast via `Nat.cast`.
+    For n ≥ 2, `@OfNat.ofNat ℝ n _` is definitionally equal to `@Nat.cast ℝ _ n`
+    (via Mathlib's `instOfNat`). For n = 0, 1, use `exact_zero_containsReal` /
+    `exact_one_containsReal` instead (since `Nat.cast 1 ≢ OfNat.ofNat 1`). -/
 theorem exact_natCast_containsReal (n : ℕ) :
     (exact (↑n : ℚ)).containsReal (↑n : ℝ) := by
   simp only [containsReal, exact]
@@ -164,6 +180,35 @@ theorem divPos_containsReal {a b : QInterval} {x y : ℝ}
               div_le_div_of_nonneg_left hahi_nn hblo_pos hy.1⟩
 
 -- ============================================================================
+-- General multiplication (4-corner method)
+-- ============================================================================
+
+/-- General interval multiplication via 4-corner method.
+    For intervals [a, b] and [c, d], the product interval is
+    [min(ac, ad, bc, bd), max(ac, ad, bc, bd)].
+    Handles arbitrary signs (unlike `mulNonneg` which requires both nonneg). -/
+def mul (a b : QInterval) : QInterval where
+  lo := min (min (a.lo * b.lo) (a.lo * b.hi)) (min (a.hi * b.lo) (a.hi * b.hi))
+  hi := max (max (a.lo * b.lo) (a.lo * b.hi)) (max (a.hi * b.lo) (a.hi * b.hi))
+  valid :=
+    calc min (min (a.lo * b.lo) (a.lo * b.hi)) (min (a.hi * b.lo) (a.hi * b.hi))
+        ≤ a.lo * b.lo := min_le_of_left_le (min_le_left _ _)
+      _ ≤ max (a.lo * b.lo) (a.lo * b.hi) := le_max_left _ _
+      _ ≤ max (max (a.lo * b.lo) (a.lo * b.hi)) (max (a.hi * b.lo) (a.hi * b.hi)) :=
+          le_max_left _ _
+
+/-- Containment for general interval multiplication.
+
+    Proof sketch: for `a.lo ≤ x ≤ a.hi` and `b.lo ≤ y ≤ b.hi`, `x*y` is
+    bilinear in (x,y) on the rectangle, so its extrema occur at the 4 corners.
+    Thus `min(corners) ≤ x*y ≤ max(corners)`.
+
+    TODO: prove from bilinear extrema or case analysis on signs. -/
+axiom mul_containsReal {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y) :
+    (a.mul b).containsReal (x * y)
+
+-- ============================================================================
 -- Scale by nonneg constant
 -- ============================================================================
 
@@ -238,6 +283,25 @@ theorem ite_pos_containsReal {c : Prop} [Decidable c] {I : QInterval} {x y : ℝ
     I.containsReal (if c then x else y) := by
   simp [hc, hx]
 
+/-- Decidable.rec with condition known true → take the isTrue branch.
+    Handles the case where `ite` has been unfolded to `Decidable.rec` by whnf. -/
+theorem decidable_rec_pos_containsReal {p : Prop} {inst : Decidable p}
+    {I : QInterval} (f : ¬p → ℝ) (g : p → ℝ) (hc : p)
+    (hx : I.containsReal (g hc)) :
+    I.containsReal (@Decidable.rec p (fun _ => ℝ) f g inst) := by
+  cases inst with
+  | isTrue _ => exact hx
+  | isFalse h => exact absurd hc h
+
+/-- Decidable.rec with condition known false → take the isFalse branch. -/
+theorem decidable_rec_neg_containsReal {p : Prop} {inst : Decidable p}
+    {I : QInterval} (f : ¬p → ℝ) (g : p → ℝ) (hnc : ¬p)
+    (hy : I.containsReal (f hnc)) :
+    I.containsReal (@Decidable.rec p (fun _ => ℝ) f g inst) := by
+  cases inst with
+  | isTrue h => exact absurd h hnc
+  | isFalse _ => exact hy
+
 -- ============================================================================
 -- Nonzero detection
 -- ============================================================================
@@ -251,6 +315,58 @@ theorem pos_of_lo_pos {a : QInterval} {x : ℝ}
 theorem ne_zero_of_lo_pos {a : QInterval} {x : ℝ}
     (hx : a.containsReal x) (hlo : 0 < a.lo) : x ≠ 0 :=
   ne_of_gt (pos_of_lo_pos hx hlo)
+
+-- ============================================================================
+-- Inverse (positive case)
+-- ============================================================================
+
+/-- Inverse of a positive interval: [1/hi, 1/lo]. -/
+def invPos (a : QInterval) (ha : 0 < a.lo) : QInterval where
+  lo := 1 / a.hi
+  hi := 1 / a.lo
+  valid := div_le_div_of_nonneg_left (by norm_num : (0 : ℚ) ≤ 1) ha a.valid
+
+theorem invPos_containsReal {a : QInterval} {x : ℝ}
+    (ha : 0 < a.lo) (hx : a.containsReal x) :
+    (invPos a ha).containsReal (x⁻¹) := by
+  simp only [invPos, containsReal]
+  push_cast
+  have hx_pos : (0 : ℝ) < x := lt_of_lt_of_le (by exact_mod_cast ha) hx.1
+  rw [one_div, one_div]
+  exact ⟨inv_anti₀ hx_pos hx.2, inv_anti₀ (by exact_mod_cast ha) hx.1⟩
+
+/-- If an interval has lo = 0 and hi = 0, the contained value equals zero. -/
+theorem eq_zero_of_bounds {a : QInterval} {x : ℝ}
+    (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) : x = 0 := by
+  have h1 := hx.1; have h2 := hx.2
+  rw [hlo] at h1; rw [hhi] at h2
+  simp at h1 h2
+  linarith
+
+-- ============================================================================
+-- Zero short-circuit for multiplication
+-- ============================================================================
+
+/-- If x is in a zero interval, x * y is in the zero interval. -/
+theorem zero_mul_containsReal {a : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
+    (exact 0).containsReal (x * y) := by
+  have := eq_zero_of_bounds hx hlo hhi
+  subst this; simp [exact, containsReal]
+
+/-- If y is in a zero interval, x * y is in the zero interval. -/
+theorem mul_zero_containsReal {b : QInterval} {x y : ℝ}
+    (hy : b.containsReal y) (hlo : b.lo = 0) (hhi : b.hi = 0) :
+    (exact 0).containsReal (x * y) := by
+  have := eq_zero_of_bounds hy hlo hhi
+  subst this; simp [exact, containsReal]
+
+/-- If x is in a zero interval, x / y is in the zero interval. -/
+theorem zero_div_containsReal {a : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
+    (exact 0).containsReal (x / y) := by
+  have := eq_zero_of_bounds hx hlo hhi
+  subst this; simp [exact, containsReal]
 
 end QInterval
 

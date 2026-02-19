@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.224.25] - 2026-02-19
+
+### Added
+- `QInterval.exact_zero_containsReal`, `exact_one_containsReal`: specialized containment lemmas for 0 and 1 that use `OfNat.ofNat` instead of `Nat.cast`, fixing kernel type mismatches in nested proof terms (`Nat.cast 1 = 0 + 1 ≢ OfNat.ofNat 1 = One.one`)
+- `QInterval.decidable_rec_pos/neg_containsReal`: handle `ite` unfolded to `Decidable.rec` by whnf
+- `QInterval.invPos`, `invPos_containsReal`: inverse of positive intervals
+- `QInterval.eq_zero_of_bounds`, `zero_mul_containsReal`, `mul_zero_containsReal`, `zero_div_containsReal`: zero short-circuit lemmas
+- `QInterval.mul`, `mul_containsReal` (axiom): general 4-corner interval multiplication
+- `rsa_decide`: exp/log reification via `expInterval`/`logInterval`, let-binding handler, Decidable.rec handler, Inv.inv handler, zero short-circuiting for `*` and `/`
+- `LogInterval.lean`: log interval arithmetic via bisection inversion of exp
+
+### Fixed
+- `rsa_decide` natural literal handler uses `exact_zero/one_containsReal` for n=0,1 to avoid `Nat.cast` vs `OfNat.ofNat` kernel mismatch that broke nested ite proof construction
+
 ## [0.224.22] - 2026-02-19
 
 ### Changed

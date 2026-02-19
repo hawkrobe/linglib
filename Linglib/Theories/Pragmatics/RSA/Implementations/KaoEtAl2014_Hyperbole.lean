@@ -1,6 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Tactics.RSADecide
 
 /-!
 # Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
@@ -325,8 +326,15 @@ noncomputable def cfg (item : Item) :
     split <;> (try exact le_refl 0)
     cases s <;> cases a <;> simp [affectPrior]
   s1Score l0 α q w u :=
-    exp (α * (log (qudProject q (l0 u) w) - cost u))
-  s1Score_nonneg _ _ _ _ _ _ _ := le_of_lt (exp_pos _)
+    -- Guard: when L0 projected probability is 0, score is 0 (= exp(-∞) in the paper).
+    -- Without this, Real.log 0 = 0 (Lean convention) gives incorrect positive scores.
+    let projected := qudProject q (l0 u) w
+    if projected = 0 then 0
+    else exp (α * (log projected - cost u))
+  s1Score_nonneg _ _ _ _ _ _ _ := by
+    simp only; split
+    · exact le_refl 0
+    · exact le_of_lt (exp_pos _)
   α := 1
   α_pos := one_pos
   worldPrior := fun ⟨s, a⟩ => pricePrior item s * affectPrior s a
@@ -342,31 +350,40 @@ noncomputable def cfg (item : Item) :
 
 noncomputable abbrev kettleCfg := cfg .electricKettle
 
+set_option maxHeartbeats 1600000 in
+set_option maxRecDepth 2048 in
+set_option diagnostics true in
 /-- Hyperbole: L1 hearing "$10,000" for a kettle infers notable affect
     over no affect, at the most likely price ($50). -/
 theorem hyperbole_notable_affect :
     kettleCfg.L1 .s10000 (.s50, .notable) >
     kettleCfg.L1 .s10000 (.s50, .none) := by
-  sorry -- rsa_decide
+  rsa_decide
 
+set_option maxHeartbeats 800000 in
+set_option maxRecDepth 2048 in
 /-- Literal: L1 hearing "$50" infers $50 > $500 price. -/
 theorem literal_infers_price :
     kettleCfg.L1 .s50 (.s50, .none) >
     kettleCfg.L1 .s50 (.s500, .none) := by
-  sorry -- rsa_decide
+  rsa_decide
 
+set_option maxHeartbeats 800000 in
+set_option maxRecDepth 2048 in
 /-- QUD inference: "$10,000" → valence QUD more likely than price QUD. -/
 theorem hyperbole_valence_qud :
     kettleCfg.L1_latent .s10000 .valence >
     kettleCfg.L1_latent .s10000 .price := by
-  sorry -- rsa_decide
+  rsa_decide
 
+set_option maxHeartbeats 800000 in
+set_option maxRecDepth 2048 in
 /-- Pragmatic halo: sharp "$501" is interpreted more exactly than round "$500".
     Measured by comparing exact interpretation probability. -/
 theorem halo_sharp_more_exact :
     kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
     kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) := by
-  sorry -- rsa_decide
+  rsa_decide
 
 -- ============================================================================
 -- Summary

@@ -2,6 +2,7 @@ import Lean
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
+import Linglib.Core.Interval.LogInterval
 
 set_option autoImplicit false
 
@@ -100,6 +101,47 @@ private def mkLo (I : Expr) : MetaM Expr := mkAppM ``QInterval.lo #[I]
 /-- Construct `QInterval.hi I`. -/
 private def mkHi (I : Expr) : MetaM Expr := mkAppM ``QInterval.hi #[I]
 
+/-- Evaluate log(q) at meta level for q > 0. -/
+private def evalLogPoint (q : ℚ) : ℚ × ℚ :=
+  if h : 0 < q then
+    let I := Linglib.Interval.logPoint q h
+    (I.lo, I.hi)
+  else (0, 0)
+
+-- ============================================================================
+-- Zero Short-Circuit Helpers
+-- ============================================================================
+
+/-- Build a zero result for x * y when x is known to be zero. -/
+private def mkZeroMulResult (ra : RResult) (rhsExpr : Expr) : MetaM RResult := do
+  let hlo ← mkDecideProof (← mkAppM ``Eq #[← mkLo ra.interval, ← mkNatCastRat 0])
+  let hhi ← mkDecideProof (← mkAppM ``Eq #[← mkHi ra.interval, ← mkNatCastRat 0])
+  let zeroE ← mkNatCastRat 0
+  let interval ← mkAppM ``QInterval.exact #[zeroE]
+  let proof ← mkAppOptM ``QInterval.zero_mul_containsReal
+    #[none, none, some rhsExpr, some ra.proof, some hlo, some hhi]
+  return { interval, proof, lo := 0, hi := 0 }
+
+/-- Build a zero result for x / y when x is known to be zero. -/
+private def mkZeroDivResult (ra : RResult) (rhsExpr : Expr) : MetaM RResult := do
+  let hlo ← mkDecideProof (← mkAppM ``Eq #[← mkLo ra.interval, ← mkNatCastRat 0])
+  let hhi ← mkDecideProof (← mkAppM ``Eq #[← mkHi ra.interval, ← mkNatCastRat 0])
+  let zeroE ← mkNatCastRat 0
+  let interval ← mkAppM ``QInterval.exact #[zeroE]
+  let proof ← mkAppOptM ``QInterval.zero_div_containsReal
+    #[none, none, some rhsExpr, some ra.proof, some hlo, some hhi]
+  return { interval, proof, lo := 0, hi := 0 }
+
+/-- Build a zero result for x * y when y is known to be zero. -/
+private def mkMulZeroResult (lhsExpr : Expr) (rb : RResult) : MetaM RResult := do
+  let hlo ← mkDecideProof (← mkAppM ``Eq #[← mkLo rb.interval, ← mkNatCastRat 0])
+  let hhi ← mkDecideProof (← mkAppM ``Eq #[← mkHi rb.interval, ← mkNatCastRat 0])
+  let zeroE ← mkNatCastRat 0
+  let interval ← mkAppM ``QInterval.exact #[zeroE]
+  let proof ← mkAppOptM ``QInterval.mul_zero_containsReal
+    #[none, some lhsExpr, none, some rb.proof, some hlo, some hhi]
+  return { interval, proof, lo := 0, hi := 0 }
+
 -- ============================================================================
 -- The Reifier
 -- ============================================================================
@@ -111,11 +153,13 @@ private def maxReifyDepth : ℕ := 200
 Recognized patterns:
 - Natural literals: `@OfNat.ofNat ℝ n _` → `exact (n : ℚ)`
 - Addition: `HAdd.hAdd` or `Add.add` → `add`
-- Multiplication (nonneg): `HMul.hMul` or `Mul.mul` → `mulNonneg`
+- Multiplication: `HMul.hMul` or `Mul.mul` → `mulNonneg` (both nonneg) or `mul` (general)
 - Division (nonneg/pos): `HDiv.hDiv` or `Div.div` → `divPos`
 - Negation: `Neg.neg` → `neg`
 - Subtraction: `HSub.hSub` or `Sub.sub` → `sub`
 - Real.rpow with natural exponent → `rpowNat`
+- Real.exp → `expInterval`
+- Real.log (positive interval) → `logInterval`
 - If-then-else: `if x = 0 then a else b` → branch selection
 - Unknown: try `unfoldDefinition?`, then `whnf` -/
 private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
@@ -125,13 +169,24 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
   -- Match BEFORE whnf to catch HAdd, HMul, etc. before they unfold to Real internals.
 
   -- Natural literal: @OfNat.ofNat ℝ n _
+  -- Use exact_zero/one_containsReal for n=0,1 to avoid Nat.cast vs OfNat.ofNat
+  -- mismatch (Nat.cast 1 = 0 + 1 ≢ OfNat.ofNat 1 = One.one in Lean 4).
   if let some n := getOfNat? e then
     let q : ℚ := n
     let nE := mkRawNatLit n
     let qE ← mkNatCastRat n
     let interval ← mkAppM ``QInterval.exact #[qE]
-    let proof ← mkAppM ``QInterval.exact_natCast_containsReal #[nE]
+    let proof ← match n with
+      | 0 => mkAppM ``QInterval.exact_zero_containsReal #[]
+      | 1 => mkAppM ``QInterval.exact_one_containsReal #[]
+      | _ => mkAppM ``QInterval.exact_natCast_containsReal #[nE]
     return { interval, proof, lo := q, hi := q }
+
+  -- Let binding: substitute the bound value into the body before whnf.
+  -- This prevents whnf from reducing `let x := v in if x = 0 then ...`
+  -- all the way to Decidable.rec, letting the ite handler catch it instead.
+  if e.isLet then
+    return ← reifyCore (e.letBody!.instantiate1 e.letValue!) (depth - 1)
 
   let fn := e.getAppFn
   let args := e.getAppArgs
@@ -155,7 +210,13 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
   -- Multiplication: @HMul.hMul ℝ ℝ ℝ _ a b (6 args)
   if isAppOfMin e ``HMul.hMul 6 then
     let ra ← reifyCore args[4]! (depth - 1)
+    -- Zero short-circuit: 0 * y = 0
+    if ra.lo == 0 && ra.hi == 0 then
+      return ← mkZeroMulResult ra args[5]!
     let rb ← reifyCore args[5]! (depth - 1)
+    -- Zero short-circuit: x * 0 = 0
+    if rb.lo == 0 && rb.hi == 0 then
+      return ← mkMulZeroResult args[4]! rb
     if ra.lo ≥ 0 && rb.lo ≥ 0 then
       let z ← mkRatZero
       let ha ← mkDecideProof (← mkAppM ``LE.le #[z, ← mkLo ra.interval])
@@ -164,12 +225,23 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
       let proof ← mkAppM ``QInterval.mulNonneg_containsReal #[ha, hb, ra.proof, rb.proof]
       return { interval, proof, lo := ra.lo * rb.lo, hi := ra.hi * rb.hi }
     else
-      throwError "rsa_decide: multiplication with negative intervals not supported"
+      -- General multiplication: 4-corner method
+      let interval ← mkAppM ``QInterval.mul #[ra.interval, rb.interval]
+      let proof ← mkAppM ``QInterval.mul_containsReal #[ra.proof, rb.proof]
+      let c00 := ra.lo * rb.lo; let c01 := ra.lo * rb.hi
+      let c10 := ra.hi * rb.lo; let c11 := ra.hi * rb.hi
+      let lo := min (min c00 c01) (min c10 c11)
+      let hi := max (max c00 c01) (max c10 c11)
+      return { interval, proof, lo, hi }
 
   -- Multiplication: @Mul.mul ℝ _ a b (4 args) — from whnf/reduce
   if isAppOfMin e ``Mul.mul 4 then
     let ra ← reifyCore args[2]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      return ← mkZeroMulResult ra args[3]!
     let rb ← reifyCore args[3]! (depth - 1)
+    if rb.lo == 0 && rb.hi == 0 then
+      return ← mkMulZeroResult args[2]! rb
     if ra.lo ≥ 0 && rb.lo ≥ 0 then
       let z ← mkRatZero
       let ha ← mkDecideProof (← mkAppM ``LE.le #[z, ← mkLo ra.interval])
@@ -178,11 +250,20 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
       let proof ← mkAppM ``QInterval.mulNonneg_containsReal #[ha, hb, ra.proof, rb.proof]
       return { interval, proof, lo := ra.lo * rb.lo, hi := ra.hi * rb.hi }
     else
-      throwError "rsa_decide: multiplication with negative intervals not supported"
+      -- General multiplication: 4-corner method
+      let interval ← mkAppM ``QInterval.mul #[ra.interval, rb.interval]
+      let proof ← mkAppM ``QInterval.mul_containsReal #[ra.proof, rb.proof]
+      let c00 := ra.lo * rb.lo; let c01 := ra.lo * rb.hi
+      let c10 := ra.hi * rb.lo; let c11 := ra.hi * rb.hi
+      let lo := min (min c00 c01) (min c10 c11)
+      let hi := max (max c00 c01) (max c10 c11)
+      return { interval, proof, lo, hi }
 
   -- Division: @HDiv.hDiv ℝ ℝ ℝ _ a b (6 args)
   if isAppOfMin e ``HDiv.hDiv 6 then
     let ra ← reifyCore args[4]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      return ← mkZeroDivResult ra args[5]!
     let rb ← reifyCore args[5]! (depth - 1)
     if ra.lo ≥ 0 && rb.lo > 0 then
       let z ← mkRatZero
@@ -197,6 +278,8 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
   -- Division: @Div.div ℝ _ a b (4 args) — from whnf/reduce
   if isAppOfMin e ``Div.div 4 then
     let ra ← reifyCore args[2]! (depth - 1)
+    if ra.lo == 0 && ra.hi == 0 then
+      return ← mkZeroDivResult ra args[3]!
     let rb ← reifyCore args[3]! (depth - 1)
     if ra.lo ≥ 0 && rb.lo > 0 then
       let z ← mkRatZero
@@ -268,6 +351,31 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
       return ← reifyCore e' (depth - 1)
     throwError "rsa_decide: rpow with non-natural exponent not supported"
 
+  -- Real.exp: @Real.exp x
+  if fn.isConstOf ``Real.exp && args.size ≥ 1 then
+    let arg := args[0]!
+    let ra ← reifyCore arg (depth - 1)
+    let interval ← mkAppM ``Linglib.Interval.expInterval #[ra.interval]
+    let proof ← mkAppM ``Linglib.Interval.expInterval_containsReal #[ra.proof]
+    let elo := (Linglib.Interval.expPoint ra.lo).lo
+    let ehi := (Linglib.Interval.expPoint ra.hi).hi
+    return { interval, proof, lo := elo, hi := ehi }
+
+  -- Real.log: @Real.log x
+  if fn.isConstOf ``Real.log && args.size ≥ 1 then
+    let arg := args[0]!
+    let ra ← reifyCore arg (depth - 1)
+    if ra.lo > 0 then
+      let z ← mkRatZero
+      let hlo ← mkDecideProof (← mkAppM ``LT.lt #[z, ← mkLo ra.interval])
+      let interval ← mkAppM ``Linglib.Interval.logInterval #[ra.interval, hlo]
+      let proof ← mkAppM ``Linglib.Interval.logInterval_containsReal #[hlo, ra.proof]
+      let llo := (evalLogPoint ra.lo).1
+      let lhi := (evalLogPoint ra.hi).2
+      return { interval, proof, lo := llo, hi := lhi }
+    else
+      throwError "rsa_decide: log of non-positive interval [{ra.lo}, {ra.hi}]"
+
   -- If-then-else: @ite ℝ cond dec thenBr elseBr
   if fn.isConstOf ``ite && args.size ≥ 5 then
     let cond := args[1]!
@@ -288,18 +396,69 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
           let hpos ← mkAppM ``QInterval.pos_of_lo_pos #[rl.proof, hlo]
           let hne ← mkAppM ``ne_of_gt #[hpos]
           let rElse ← reifyCore elseBr (depth - 1)
-          -- x (thenBr) is implicit and can't be inferred bottom-up; provide explicitly
           let proof ← mkAppOptM ``QInterval.ite_neg_containsReal
             #[none, none, none, some thenBr, none, some hne, some rElse.proof]
           return { rElse with proof }
         else if rl.lo == 0 && rl.hi == 0 then
           -- lhsC = 0 → condition true → take then branch
-          -- TODO: construct equality proof
-          throwError "rsa_decide: ite with zero totalScore not yet supported"
+          let hlo ← mkDecideProof (← mkAppM ``Eq #[← mkLo rl.interval, ← mkNatCastRat 0])
+          let hhi ← mkDecideProof (← mkAppM ``Eq #[← mkHi rl.interval, ← mkNatCastRat 0])
+          let heq ← mkAppM ``QInterval.eq_zero_of_bounds #[rl.proof, hlo, hhi]
+          let rThen ← reifyCore thenBr (depth - 1)
+          let proof ← mkAppOptM ``QInterval.ite_pos_containsReal
+            #[none, none, none, none, some elseBr, some heq, some rThen.proof]
+          return { rThen with proof }
         else
           throwError "rsa_decide: cannot determine ite (interval [{rl.lo}, {rl.hi}])"
-    -- Unrecognized condition shape
+    -- Other conditions (Bool, decidable): try whnf to evaluate the branch
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← reifyCore e' (depth - 1)
     throwError "rsa_decide: unsupported ite condition: {← ppExpr cond}"
+
+  -- Decidable.rec: catches ite that was reduced to its definition by whnf.
+  -- @Decidable.rec {p} {motive} (isFalse : ¬p → T) (isTrue : p → T) (inst)
+  -- isFalse = else branch, isTrue = then branch (reversed from ite order).
+  if fn.isConstOf ``Decidable.rec && args.size ≥ 5 then
+    let prop := args[0]!
+    let isFalseBr := args[2]!
+    let isTrueBr := args[3]!
+    let inst := args[4]!
+    if prop.isAppOfArity ``Eq 3 then
+      let propArgs := prop.getAppArgs
+      let lhsC := propArgs[1]!
+      let rhsC := propArgs[2]!
+      if let some 0 := getOfNat? rhsC then
+        let rl ← reifyCore lhsC (depth - 1)
+        -- Cast the proof to reference the original lhsC (same reason as ite handler)
+        let expectedType ← mkAppM ``QInterval.containsReal #[rl.interval, lhsC]
+        let rl_proof ← mkExpectedTypeHint rl.proof expectedType
+        if rl.lo > 0 then
+          -- lhsC > 0 → condition false → take isFalse branch (the else branch)
+          let z ← mkRatZero
+          let hlo ← mkDecideProof (← mkAppM ``LT.lt #[z, ← mkLo rl.interval])
+          let hpos ← mkAppM ``QInterval.pos_of_lo_pos #[rl_proof, hlo]
+          let hne ← mkAppM ``ne_of_gt #[hpos]
+          -- Apply isFalseBr to hne to get else body, beta-reduce
+          let elseBody := (Expr.app isFalseBr hne).headBeta
+          let rElse ← reifyCore elseBody (depth - 1)
+          -- Use decidable_rec_neg_containsReal via mkAppN (bypass meta-level type
+          -- checking for the interval and proof arguments)
+          let proof := mkAppN (mkConst ``QInterval.decidable_rec_neg_containsReal [])
+            #[prop, inst, rElse.interval, isFalseBr, isTrueBr, hne, rElse.proof]
+          return { rElse with proof }
+        else if rl.lo == 0 && rl.hi == 0 then
+          -- lhsC = 0 → condition true → take isTrue branch (the then branch)
+          let hlo ← mkDecideProof (← mkAppM ``Eq #[← mkLo rl.interval, ← mkNatCastRat 0])
+          let hhi ← mkDecideProof (← mkAppM ``Eq #[← mkHi rl.interval, ← mkNatCastRat 0])
+          let heq ← mkAppM ``QInterval.eq_zero_of_bounds #[rl_proof, hlo, hhi]
+          -- Apply isTrueBr to heq to get then body, beta-reduce
+          let thenBody := (Expr.app isTrueBr heq).headBeta
+          let rThen ← reifyCore thenBody (depth - 1)
+          -- Use decidable_rec_pos_containsReal via mkAppN (same reason as above)
+          let proof := mkAppN (mkConst ``QInterval.decidable_rec_pos_containsReal [])
+            #[prop, inst, rThen.interval, isFalseBr, isTrueBr, heq, rThen.proof]
+          return { rThen with proof }
 
   -- Fast-path for summation forms: whnf directly to skip the
   -- Finset.sum → Multiset.sum → Quot.lift → List.foldr unfold chain.
@@ -341,7 +500,10 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
         let q : ℚ := n
         let qE ← mkNatCastRat n
         let interval ← mkAppM ``QInterval.exact #[qE]
-        let proof ← mkAppM ``QInterval.exact_natCast_containsReal #[nE]
+        let proof ← match n with
+          | 0 => mkAppM ``QInterval.exact_zero_containsReal #[]
+          | 1 => mkAppM ``QInterval.exact_one_containsReal #[]
+          | _ => mkAppM ``QInterval.exact_natCast_containsReal #[nE]
         return { interval, proof, lo := q, hi := q }
 
   -- Quaternary fallback: detect internal binary operations (Real.add✝, Real.mul✝, etc.)
@@ -364,7 +526,11 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
       try isDefEq e (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
     if isMul then
       let ra ← reifyCore a (depth - 1)
+      if ra.lo == 0 && ra.hi == 0 then
+        return ← mkZeroMulResult ra b
       let rb ← reifyCore b (depth - 1)
+      if rb.lo == 0 && rb.hi == 0 then
+        return ← mkMulZeroResult a rb
       if ra.lo ≥ 0 && rb.lo ≥ 0 then
         let z ← mkRatZero
         let ha ← mkDecideProof (← mkAppM ``LE.le #[z, ← mkLo ra.interval])
@@ -373,12 +539,20 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
         let proof ← mkAppM ``QInterval.mulNonneg_containsReal #[ha, hb, ra.proof, rb.proof]
         return { interval, proof, lo := ra.lo * rb.lo, hi := ra.hi * rb.hi }
       else
-        throwError "rsa_decide: multiplication with negative intervals not supported"
+        let interval ← mkAppM ``QInterval.mul #[ra.interval, rb.interval]
+        let proof ← mkAppM ``QInterval.mul_containsReal #[ra.proof, rb.proof]
+        let c00 := ra.lo * rb.lo; let c01 := ra.lo * rb.hi
+        let c10 := ra.hi * rb.lo; let c11 := ra.hi * rb.hi
+        let lo := min (min c00 c01) (min c10 c11)
+        let hi := max (max c00 c01) (max c10 c11)
+        return { interval, proof, lo, hi }
     -- Division
     let isDiv ← withNewMCtxDepth do
       try isDefEq e (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
     if isDiv then
       let ra ← reifyCore a (depth - 1)
+      if ra.lo == 0 && ra.hi == 0 then
+        return ← mkZeroDivResult ra b
       let rb ← reifyCore b (depth - 1)
       if ra.lo ≥ 0 && rb.lo > 0 then
         let z ← mkRatZero
@@ -390,9 +564,69 @@ private partial def reifyCore (e : Expr) (depth : ℕ) : MetaM RResult := do
       else
         throwError "rsa_decide: division requires nonneg numerator and positive denominator"
 
+  -- Detect Real.exp / Real.log via isDefEq with metavariables.
+  -- Handles internal forms after whnf reduction.
+  let eType ← inferType e
+  if eType.isConstOf ``Real then
+    -- Real.exp
+    let expMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        let expE ← mkAppM ``Real.exp #[argM]
+        if ← isDefEq e expE then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := expMatch then
+      let ra ← reifyCore arg (depth - 1)
+      let interval ← mkAppM ``Linglib.Interval.expInterval #[ra.interval]
+      let proof ← mkAppM ``Linglib.Interval.expInterval_containsReal #[ra.proof]
+      let elo := (Linglib.Interval.expPoint ra.lo).lo
+      let ehi := (Linglib.Interval.expPoint ra.hi).hi
+      return { interval, proof, lo := elo, hi := ehi }
+    -- Real.log
+    let logMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        let logE ← mkAppM ``Real.log #[argM]
+        if ← isDefEq e logE then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := logMatch then
+      let ra ← reifyCore arg (depth - 1)
+      if ra.lo > 0 then
+        let z ← mkRatZero
+        let hlo ← mkDecideProof (← mkAppM ``LT.lt #[z, ← mkLo ra.interval])
+        let interval ← mkAppM ``Linglib.Interval.logInterval #[ra.interval, hlo]
+        let proof ← mkAppM ``Linglib.Interval.logInterval_containsReal #[hlo, ra.proof]
+        let llo := (evalLogPoint ra.lo).1
+        let lhi := (evalLogPoint ra.hi).2
+        return { interval, proof, lo := llo, hi := lhi }
+      else
+        throwError "rsa_decide: log of non-positive interval [{ra.lo}, {ra.hi}]"
+    -- Inv.inv: x⁻¹ (appears after whnf as private Real.inv'✝)
+    let invMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        let invE ← mkAppM ``Inv.inv #[argM]
+        if ← isDefEq e invE then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := invMatch then
+      let ra ← reifyCore arg (depth - 1)
+      if ra.lo > 0 then
+        let z ← mkRatZero
+        let hlo ← mkDecideProof (← mkAppM ``LT.lt #[z, ← mkLo ra.interval])
+        let interval ← mkAppM ``QInterval.invPos #[ra.interval, hlo]
+        let proof ← mkAppM ``QInterval.invPos_containsReal #[hlo, ra.proof]
+        return { interval, proof, lo := 1 / ra.hi, hi := 1 / ra.lo }
+      else
+        throwError "rsa_decide: inverse of non-positive interval [{ra.lo}, {ra.hi}]"
+
   -- Detect Real.rpow via isDefEq with metavariables.
   -- Handles NNReal internal forms like `(toNNReal(x) ^ y).val` (from unfolded rpow).
-  let eType ← inferType e
   if eType.isConstOf ``Real then
     let rpowMatch ← withNewMCtxDepth do
       try
