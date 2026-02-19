@@ -373,23 +373,128 @@ theorem tea_no_independent_source :
       drinkingVar teaRemovalVar = false := by
   native_decide
 
+set_option maxHeartbeats 800000 in
 /-- For a chain a → b → c, an active independent source for b disrupts
     `completesForEffect` for a → c. The independent source fires b
     even with a=false, so a is not necessary. -/
 theorem independent_source_disrupts_tightness
-    (cause intermediate effect : Variable)
+    (cause intermediate effect indepSrc : Variable)
     (hci : cause ≠ intermediate) (hce : cause ≠ effect)
-    (hie : intermediate ≠ effect) :
+    (hie : intermediate ≠ effect)
+    (hsc : indepSrc ≠ cause) (hsi : indepSrc ≠ intermediate)
+    (hse : indepSrc ≠ effect) :
     let chain := CausalDynamics.causalChain cause intermediate effect
     completesForEffect chain Situation.empty cause effect = true →
-    let indepSrc := mkVar "indep_source"
     let withIndep : CausalDynamics :=
-      ⟨chain.laws ++ [CausalLaw.simple indepSrc intermediate]⟩
+      ⟨[CausalLaw.simple cause intermediate,
+        CausalLaw.simple intermediate effect,
+        CausalLaw.simple indepSrc intermediate]⟩
     let bg := Situation.empty.extend indepSrc true
     completesForEffect withIndep bg cause effect = false := by
-  sorry -- TODO: Requires connecting Variable's BEq to ≠ through
-        -- DecidableEq, then showing normalDevelopment propagates the
-        -- independent source through the chain even when cause=false.
+  intro chain _ withIndep bg
+  -- Necessity fails: indepSrc → intermediate → effect fires even without cause
+  simp only [completesForEffect, Bool.and_eq_false_iff]
+  right; unfold causallyNecessary; dsimp only
+  suffices h : (normalDevelopment withIndep
+      ((bg.extend cause true).extend cause false)).hasValue effect true = true by
+    rw [h]; rfl
+  set s := (bg.extend cause true).extend cause false
+  -- HasValue facts for s (counterfactual situation with cause=false)
+  have hs_c : s.hasValue cause true = false := by simp [s, bg]
+  have hs_i : s.hasValue intermediate true = false := by
+    simp only [s, bg, Situation.hasValue, Situation.extend, Situation.empty]
+    split_ifs <;> simp_all [Ne.symm hci, Ne.symm hsi]
+  have hs_d : s.hasValue indepSrc true = true := by simp [s, bg, hsc]
+  have hs_e : s.hasValue effect true = false := by
+    simp only [s, bg, Situation.hasValue, Situation.extend, Situation.empty]
+    split_ifs <;> simp_all [Ne.symm hce, Ne.symm hse]
+  -- Round 1: only indepSrc→intermediate fires (cause=false, intermediate=false)
+  have hp1 : (CausalLaw.simple cause intermediate).preconditionsMet s = false := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_c]
+  have hp2 : (CausalLaw.simple intermediate effect).preconditionsMet s = false := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_i]
+  have hp3 : (CausalLaw.simple indepSrc intermediate).preconditionsMet s = true := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_d]
+  have hround1 : applyLawsOnce withIndep s = s.extend intermediate true := by
+    simp only [applyLawsOnce, withIndep, List.foldl_cons, List.foldl_nil]
+    rw [CausalLaw.apply_of_not_met hp1, CausalLaw.apply_of_not_met hp2,
+        CausalLaw.apply_of_met hp3]
+    simp [CausalLaw.simple]
+  -- HasValue facts for s1 := s.extend intermediate true
+  have hs1_i : (s.extend intermediate true).hasValue intermediate true = true := by
+    simp [Situation.extend_hasValue_same]
+  have hs1_c : (s.extend intermediate true).hasValue cause true = false := by
+    rw [Situation.extend_hasValue_diff s intermediate cause true true hci]; exact hs_c
+  have hs1_d : (s.extend intermediate true).hasValue indepSrc true = true := by
+    rw [Situation.extend_hasValue_diff s intermediate indepSrc true true hsi]; exact hs_d
+  have hs1_e : (s.extend intermediate true).hasValue effect true = false := by
+    rw [Situation.extend_hasValue_diff s intermediate effect true true (Ne.symm hie)]
+    exact hs_e
+  -- Not fixpoint after round 1 (intermediate→effect can fire)
+  have hnfix : isFixpoint withIndep (applyLawsOnce withIndep s) = false := by
+    rw [hround1]
+    simp only [isFixpoint, withIndep, List.all_cons, List.all_nil, Bool.and_true,
+      CausalLaw.preconditionsMet, CausalLaw.simple,
+      List.all_cons, List.all_nil, Bool.and_true,
+      hs1_c, hs1_i, hs1_d, hs1_e]; decide
+  -- Round 2: intermediate→effect fires, indepSrc→intermediate is redundant
+  have hp2_1 : (CausalLaw.simple cause intermediate).preconditionsMet
+      (s.extend intermediate true) = false := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1_c]
+  have hp2_2 : (CausalLaw.simple intermediate effect).preconditionsMet
+      (s.extend intermediate true) = true := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1_i]
+  have hs1e_d : ((s.extend intermediate true).extend effect true).hasValue
+      indepSrc true = true := by
+    rw [Situation.extend_hasValue_diff (s.extend intermediate true) effect indepSrc
+        true true hse]
+    exact hs1_d
+  have hp2_3 : (CausalLaw.simple indepSrc intermediate).preconditionsMet
+      ((s.extend intermediate true).extend effect true) = true := by
+    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1e_d]
+  have hround2 : applyLawsOnce withIndep (s.extend intermediate true) =
+      ((s.extend intermediate true).extend effect true).extend intermediate true := by
+    simp only [applyLawsOnce, withIndep, List.foldl_cons, List.foldl_nil]
+    rw [CausalLaw.apply_of_not_met hp2_1, CausalLaw.apply_of_met hp2_2]
+    simp only [CausalLaw.simple_effect, CausalLaw.simple_effectValue]
+    rw [CausalLaw.apply_of_met hp2_3]
+    simp [CausalLaw.simple]
+  -- HasValue facts for s2 (fixpoint situation)
+  have hs2_i : (((s.extend intermediate true).extend effect true).extend
+      intermediate true).hasValue intermediate true = true := by
+    simp [Situation.extend_hasValue_same]
+  have hs2_e : (((s.extend intermediate true).extend effect true).extend
+      intermediate true).hasValue effect true = true := by
+    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
+        intermediate effect true true (Ne.symm hie)]
+    simp [Situation.extend_hasValue_same]
+  have hs2_c : (((s.extend intermediate true).extend effect true).extend
+      intermediate true).hasValue cause true = false := by
+    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
+        intermediate cause true true hci,
+      Situation.extend_hasValue_diff (s.extend intermediate true) effect cause true true hce]
+    exact hs1_c
+  have hs2_d : (((s.extend intermediate true).extend effect true).extend
+      intermediate true).hasValue indepSrc true = true := by
+    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
+        intermediate indepSrc true true hsi,
+      Situation.extend_hasValue_diff (s.extend intermediate true) effect indepSrc
+        true true hse]
+    exact hs1_d
+  -- IS fixpoint after round 2 (all effects already set)
+  have hfix : isFixpoint withIndep (applyLawsOnce withIndep
+      (applyLawsOnce withIndep s)) = true := by
+    rw [hround1, hround2]
+    simp only [isFixpoint, withIndep, List.all_cons, List.all_nil, Bool.and_true,
+      CausalLaw.preconditionsMet, CausalLaw.simple,
+      List.all_cons, List.all_nil, Bool.and_true,
+      hs2_c, hs2_i, hs2_d, hs2_e]; decide
+  -- normalDevelopment reaches round 2 result; effect is true
+  change (normalDevelopment withIndep s 100).hasValue effect true = true
+  rw [show (100 : Nat) = 98 + 2 from rfl,
+      normalDevelopment_fixpoint_after_two _ _ hnfix hfix,
+      hround1, hround2]
+  exact hs2_e
 
 /-- Concrete witness: passive chain tight, active chain not tight. -/
 theorem independent_source_disrupts_tightness_concrete :

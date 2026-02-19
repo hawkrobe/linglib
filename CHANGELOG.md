@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.6] - 2026-02-18
+
+### Changed
+- Close `independent_source_disrupts_tightness` sorry in `Resultatives.lean`:
+  parametric proof that an independent energy source disrupts causal necessity,
+  using manual foldl expansion with pre-computed `hasValue` facts
+- Add `CausalLaw.apply_of_met`, `apply_of_not_met`, `simple_effect`,
+  `simple_effectValue` simp lemmas to `Core/Causation.lean` — avoids stuck
+  `if false = true then …` terms when reasoning about causal law application
+
 ## [0.224.5] - 2026-02-18
 
 ### Added
