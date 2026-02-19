@@ -267,15 +267,11 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     with SSR for non-trivial predicates. -/
 theorem in_adverbial_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    [PartialOrder (Ev Time)]
     {P : Ev Time → Prop}
     (hQua : QUA P)
     {e₁ e₂ : Ev Time} (he₁ : P e₁) (he₂ : P e₂) (hne : e₁ ≠ e₂) :
     ¬ SSR_univ P := by
-  -- TODO: requires showing QUA ∧ SSR_univ is contradictory for non-trivial P.
-  -- The key insight: SSR_univ implies CUM (ssr_univ_implies_cum), and
-  -- CUM + QUA is contradictory for predicates with ≥ 2 elements
-  -- (qua_cum_incompatible).
-  sorry
+  intro hSSR
+  exact qua_cum_incompatible hQua he₁ he₂ hne (ssr_univ_implies_cum hSSR)
 
 end Semantics.Events.StratifiedReference
