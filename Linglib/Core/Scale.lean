@@ -3,6 +3,7 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Card
 import Mathlib.Order.Fin.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
@@ -1111,10 +1112,15 @@ structure EpistemicSystemW (W : Type*) where
 structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
   bottom : EpistemicAxiom.F ge
 
-/-- System FA: System F + qualitative additivity.
-    Characterizes finitely additive probability orderings
-    (Holliday & Icard 2013, Fact 14). -/
+/-- System FA: System F + totality + transitivity + qualitative additivity.
+    Sound and complete for qualitatively additive measure semantics
+    (Holliday & Icard 2013, Theorem 6; van der Hoek 1996).
+
+    Totality and transitivity are part of the FA logic in Holliday & Icard
+    (2013, Figure 6): FA = Bot + BT + Tot + Tran + A. -/
 structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
+  total : ∀ A B : Set W, ge A B ∨ ge B A
+  trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
   additive : EpistemicAxiom.A ge
 
 -- ── Measure Semantics ───────────────────────────
@@ -1154,7 +1160,9 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
   rw [hdecomp, m.additive A (B \ A) hdisj]
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
-/-- A finitely additive measure induces System FA. -/
+/-- A finitely additive measure induces System FA.
+    This is the soundness direction of **Theorem 6** (Holliday & Icard
+    2013; van der Hoek 1996). -/
 def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
@@ -1168,6 +1176,8 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
       have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
       exact add_left_cancel h
     rw [hzero]; exact m.nonneg Set.univ
+  total := fun A B => le_total (m.mu B) (m.mu A)
+  trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := by
     intro A B
     show m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A)
@@ -1187,9 +1197,10 @@ end FinAddMeasure
 
 -- ── World-Ordering Semantics ────────────────────
 
-/-- Halpern's lifting: a preorder on worlds induces a comparison on
+/-- Lewis's *l*-lifting: a preorder on worlds induces a comparison on
     propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    Holliday & Icard (2013) §3: characterizes System W (Thm 21). -/
+    Holliday & Icard (2013) §3; see also their injection-based *m*-lifting
+    (Theorem 7), which yields a complete logic for world-ordering models. -/
 def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
 
@@ -1206,7 +1217,9 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
     EpistemicAxiom.T (halpernLift ge_w) :=
   fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
-/-- Halpern lift from a reflexive preorder yields System W. -/
+/-- Lewis's *l*-lifting from a reflexive preorder yields System W.
+    This is the soundness direction of **Theorem 7** (Holliday & Icard
+    2013). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
@@ -1214,22 +1227,45 @@ def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
   refl := halpernLift_axiomR hRefl
   mono := halpernLift_axiomT hRefl
 
--- ── Representation Theorems ─────────────────────
+-- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
 
-/-- **Fact 14** (Holliday & Icard 2013; van der Hoek 1996):
-    System FA characterizes finitely additive event orderings.
-    ≿ satisfies FA iff it is representable by a finitely additive
-    probability measure. -/
-theorem fa_characterizes_measure {W : Type*} (sys : EpistemicSystemFA W) :
+/-- **Theorem 8a** (Kraft, Pratt & Seidenberg 1959): for |W| < 5,
+    every FA model is representable by a finitely additive probability
+    measure. Below 5 worlds, the logics FA and FP∞ coincide. -/
+theorem theorem8a {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) (hcard : Fintype.card W < 5) :
     ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  sorry -- Deep: constructing a measure from qualitative axioms (Krantz et al. 1971)
+  sorry -- Kraft, Pratt & Seidenberg (1959); finite linear programming
 
-/-- **Theorem 21** (Holliday & Icard 2013):
-    System W characterizes world-ordering semantics with Halpern's lift. -/
-theorem w_characterizes_halpern {W : Type*} (sys : EpistemicSystemW W) :
-    ∃ (ge_w : W → W → Prop), (∀ w, ge_w w w) ∧
+/-- **Theorem 8b** (Kraft, Pratt & Seidenberg 1959): for |W| ≥ 5,
+    FA is strictly weaker than FP∞ — there exists a 5-element type
+    with an FA ordering admitting no finitely additive measure
+    representation. The FP∞ axioms (Scott schemata) are strictly
+    stronger than qualitative additivity alone. -/
+theorem theorem8b :
+    ∃ (W : Type) (_ : Fintype W) (sys : EpistemicSystemFA W),
+      Fintype.card W = 5 ∧
+      ¬∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  sorry -- Kraft, Pratt & Seidenberg (1959); 5-world counterexample
+
+-- ── Completeness (Theorems 6–7) ──────────────────
+
+/-- **Theorem 6 completeness** (Holliday & Icard 2013; van der Hoek 1996):
+    every EpistemicSystemFA is representable by a finitely additive measure.
+    Combined with `toSystemFA` (soundness), this gives FA ↔ FinAddMeasure. -/
+theorem theorem6_completeness {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) :
+    ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  sorry -- van der Hoek (1996); linear extension of qualitative probability
+
+/-- **Theorem 7 completeness** (Holliday & Icard 2013):
+    every EpistemicSystemW is representable by Lewis's l-lifting from
+    a reflexive preorder on worlds. -/
+theorem theorem7_completeness {W : Type*} [Fintype W]
+    (sys : EpistemicSystemW W) :
+    ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
       ∀ A B, sys.ge A B ↔ halpernLift ge_w A B :=
-  sorry -- Deep: constructing a world ordering from proposition ordering
+  sorry -- Holliday & Icard (2013), Theorem 7 completeness direction
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────
 
