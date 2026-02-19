@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.11] - 2026-02-19
+
+### Changed
+- Close `deriv_logSumExp` sorry: derivative of log-partition function via `HasDerivAt.fun_sum`, chain rule, and algebra
+- Close `in_adverbial_incompatible_with_ssr` sorry: QUA + SSR_univ contradiction via `qua_cum_incompatible` (modulo `ssr_univ_implies_cum`); remove redundant `[PartialOrder (Ev Time)]` instance
+- Close `semantic_is_pragmatic_limit` sorry: pragmatic answerhood reduces to semantic answerhood when J = totalIgnorance, with helper lemmas `filter_totalIgnorance`, `intersect_totalIgnorance`, `restrictedCells_totalIgnorance`
+
 ## [0.224.9] - 2026-02-18
 
 ### Added

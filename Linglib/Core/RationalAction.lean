@@ -929,7 +929,27 @@ Requires `HasDerivAt` for `log ∘ Σ exp(α · sᵢ)` via chain rule and `hasDe
 then `hasDerivAt_finset_sum`. Doable but involved; lower priority. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     deriv (λ α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
-  sorry
+  simp only [logSumExp, softmax]
+  have hZ_pos : 0 < ∑ j : ι, exp (α * s j) := partitionFn_pos s α
+  have hZ_ne : (∑ j : ι, exp (α * s j)) ≠ 0 := ne_of_gt hZ_pos
+  -- Derivative of each exp(α * s j) w.r.t. α
+  have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j))
+      (exp (α * s j) * s j) α := by
+    intro j
+    have h1 : HasDerivAt (fun a => a * s j) (1 * s j) α :=
+      (hasDerivAt_id α).mul_const (s j)
+    have h2 := (Real.hasDerivAt_exp (α * s j)).comp α h1
+    simp only [Function.comp, one_mul] at h2
+    exact h2
+  -- Derivative of the sum
+  have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j))
+      (∑ j : ι, exp (α * s j) * s j) α :=
+    HasDerivAt.fun_sum fun j _ => hexp j
+  -- Derivative of log(sum) via chain rule, then extract
+  rw [(hsum.log hZ_ne).deriv, Finset.sum_div]
+  apply Finset.sum_congr rfl
+  intro i _
+  ring
 
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)

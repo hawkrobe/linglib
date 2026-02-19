@@ -186,12 +186,30 @@ The non-emptiness hypothesis is required because `givesPragmaticAnswer`
 demands `P ∩ J ≠ ∅` while `answers` does not — a vacuous (everywhere-false)
 proposition vacuously "answers" semantically (by material implication) but
 fails pragmatic answerhood. -/
+private theorem filter_totalIgnorance {W : Type*} (l : List W) :
+    l.filter totalIgnorance = l := by
+  induction l with
+  | nil => rfl
+  | cons w ws ih => simp only [List.filter_cons, totalIgnorance, ↓reduceIte, ih]
+
+private theorem intersect_totalIgnorance {W : Type*} (p : W → Bool) :
+    totalIgnorance.intersect p = p := by
+  funext w; simp [InfoSet.intersect, totalIgnorance]
+
+private theorem restrictedCells_totalIgnorance {W : Type*}
+    (q : GSQuestion W) (worlds : List W) :
+    q.restrictedCells totalIgnorance worlds = q.toCells worlds := by
+  simp only [GSQuestion.restrictedCells, QUD.toCells, GSQuestion.equiv,
+             filter_totalIgnorance, totalIgnorance, Bool.true_and]
+
 theorem semantic_is_pragmatic_limit {W : Type*}
     (p : W -> Bool) (q : GSQuestion W) (worlds : List W)
     (hNonEmpty : worlds.any p = true) :
     givesPragmaticAnswer p q totalIgnorance worlds =
     answers p (q.toQuestion worlds) worlds := by
-  sorry
+  simp only [givesPragmaticAnswer, answers, GSQuestion.toQuestion,
+             intersect_totalIgnorance, restrictedCells_totalIgnorance,
+             hNonEmpty, Bool.true_and]
 
 /-- Reducing the information set cannot make a non-answer into an answer.
 
