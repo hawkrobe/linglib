@@ -46,13 +46,11 @@ These can come apart in overdetermination cases:
 -/
 
 import Linglib.Core.Causation
-import Linglib.Theories.Semantics.Causation.Sufficiency
 
 namespace NadathurLauer2020.Necessity
 
 open Core.Causation
 export Core.Causation (causallyNecessary)
-open NadathurLauer2020.Sufficiency
 
 /-- Semantics of "cause": effect occurred AND cause was necessary (N&L 2020 §5.2). -/
 def causeSem (dyn : CausalDynamics) (background : Situation)

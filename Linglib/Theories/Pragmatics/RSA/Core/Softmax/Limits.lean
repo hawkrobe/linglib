@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
+import Linglib.Core.RationalAction
 import Mathlib.Order.Filter.Basic
 import Mathlib.Topology.Order.Basic
 import Mathlib.Topology.Order.Real
@@ -14,7 +14,7 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 
 namespace Softmax
 
-open Real BigOperators Finset Filter Topology
+open Core Real BigOperators Finset Filter Topology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
@@ -169,7 +169,7 @@ theorem tendsto_softmax_neg_infty_unique_min [Nonempty ι] (s : ι → ℝ)
   have hconv : ∀ α, softmax s α = softmax (λ j => -s j) (-α) := by
     intro α
     funext j
-    unfold softmax Core.softmax
+    unfold Core.softmax
     congr 1
     · congr 1; ring
     · apply Finset.sum_congr rfl; intro k _; congr 1; ring

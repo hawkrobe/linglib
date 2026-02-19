@@ -53,8 +53,6 @@ NODES = [
     {"id": "RationalAction", "root": "luce",      "file_path": "Core/RationalAction.lean"},
     {"id": "UtilityTheory",  "root": "luce",      "file_path": "Core/UtilityTheory.lean"},
     {"id": "RSAConfig",      "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Core/Config.lean"},
-    {"id": "Softmax",        "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Core/Softmax/Basic.lean"},
-    {"id": "Gibbs",          "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Core/GibbsVariational.lean"},
     {"id": "RSAImpl",        "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Implementations/*"},
     # Proposition cluster
     {"id": "Proposition",    "root": "proposition", "file_path": "Core/Proposition.lean"},

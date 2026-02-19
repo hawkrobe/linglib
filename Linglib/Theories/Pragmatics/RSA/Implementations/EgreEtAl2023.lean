@@ -15,7 +15,7 @@ private distributions. The LU limitation (Appendix A) proves standard
 LU models cannot derive the triangular shape.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Basic
+import Linglib.Core.RationalAction
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
@@ -324,7 +324,7 @@ def softMaxScore (utilities : List ℚ) (k : Nat) (alpha : ℚ) : ℚ :=
 def translateUtilities (utils : List ℚ) (a : ℚ) : List ℚ :=
   utils.map (· + a)
 
--- (A-5) SoftMax translation invariance: see `Softmax.softmax_add_const` in Core.
+-- (A-5) SoftMax translation invariance: see `Core.softmax_add_const` in Core.
 
 /-- K(o₁,o₂): utility difference constant, independent of m and i (Core Lemma A-6). -/
 def utilityDifferenceConstant {W : Type} [BEq W]
@@ -436,16 +436,16 @@ theorem core_lemma_A6 {W M I : Type} [Fintype W]
       weighted_sum_shift d₁ d₂ f (c m₂ i₂) h_sum]
 
 /-- (A-7) Same support → S¹ equal over ℝ: when utility vectors differ by a constant,
-softmax is invariant by `Softmax.softmax_add_const`.
+softmax is invariant by `Core.softmax_add_const`.
 
 By A-6, U¹(·, d₂, i) = U¹(·, d₁, i) + K for some constant K.
 By A-5 (translation invariance), softmax(u + K, α) = softmax(u, α). -/
 theorem same_support_implies_equal_S1 {M : Type} [Fintype M]
     (u₁ u₂ : M → ℝ) (α : ℝ) (h_shift : ∃ K, ∀ m, u₂ m = u₁ m + K) :
-    Softmax.softmax u₂ α = Softmax.softmax u₁ α := by
+    Core.softmax u₂ α = Core.softmax u₁ α := by
   obtain ⟨K, hK⟩ := h_shift
   have : u₂ = fun m => u₁ m + K := funext hK
-  rw [this, Softmax.softmax_add_const]
+  rw [this, Core.softmax_add_const]
 
 /-- (A-8) LU Limitation over ℝ: same support → Sⁿ(m|o₁) = Sⁿ(m|o₂) for all n ≥ 1.
 At level 1, this is a direct corollary of A-7. The paper's full inductive argument
@@ -454,7 +454,7 @@ which are equal by inductive hypothesis, so Uⁿ differs by a constant, so Sⁿ 
 equal by softmax translation invariance. -/
 theorem lu_limitation {M : Type} [Fintype M]
     (u₁ u₂ : M → ℝ) (α : ℝ) (h_shift : ∃ K, ∀ m, u₂ m = u₁ m + K) :
-    Softmax.softmax u₂ α = Softmax.softmax u₁ α :=
+    Core.softmax u₂ α = Core.softmax u₁ α :=
   same_support_implies_equal_S1 u₁ u₂ α h_shift
 
 -- ============================================================================
