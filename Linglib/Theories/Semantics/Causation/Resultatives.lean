@@ -424,11 +424,11 @@ theorem independent_source_disrupts_tightness
   have hs1_i : (s.extend intermediate true).hasValue intermediate true = true := by
     simp [Situation.extend_hasValue_same]
   have hs1_c : (s.extend intermediate true).hasValue cause true = false := by
-    rw [Situation.extend_hasValue_diff s intermediate cause true true hci]; exact hs_c
+    rw [Situation.extend_hasValue_diff hci]; exact hs_c
   have hs1_d : (s.extend intermediate true).hasValue indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff s intermediate indepSrc true true hsi]; exact hs_d
+    rw [Situation.extend_hasValue_diff hsi]; exact hs_d
   have hs1_e : (s.extend intermediate true).hasValue effect true = false := by
-    rw [Situation.extend_hasValue_diff s intermediate effect true true (Ne.symm hie)]
+    rw [Situation.extend_hasValue_diff (Ne.symm hie)]
     exact hs_e
   -- Not fixpoint after round 1 (intermediate→effect can fire)
   have hnfix : isFixpoint withIndep (applyLawsOnce withIndep s) = false := by
@@ -446,8 +446,7 @@ theorem independent_source_disrupts_tightness
     simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1_i]
   have hs1e_d : ((s.extend intermediate true).extend effect true).hasValue
       indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff (s.extend intermediate true) effect indepSrc
-        true true hse]
+    rw [Situation.extend_hasValue_diff hse]
     exact hs1_d
   have hp2_3 : (CausalLaw.simple indepSrc intermediate).preconditionsMet
       ((s.extend intermediate true).extend effect true) = true := by
@@ -465,21 +464,17 @@ theorem independent_source_disrupts_tightness
     simp [Situation.extend_hasValue_same]
   have hs2_e : (((s.extend intermediate true).extend effect true).extend
       intermediate true).hasValue effect true = true := by
-    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
-        intermediate effect true true (Ne.symm hie)]
+    rw [Situation.extend_hasValue_diff (Ne.symm hie)]
     simp [Situation.extend_hasValue_same]
   have hs2_c : (((s.extend intermediate true).extend effect true).extend
       intermediate true).hasValue cause true = false := by
-    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
-        intermediate cause true true hci,
-      Situation.extend_hasValue_diff (s.extend intermediate true) effect cause true true hce]
+    rw [Situation.extend_hasValue_diff hci,
+      Situation.extend_hasValue_diff hce]
     exact hs1_c
   have hs2_d : (((s.extend intermediate true).extend effect true).extend
       intermediate true).hasValue indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff ((s.extend intermediate true).extend effect true)
-        intermediate indepSrc true true hsi,
-      Situation.extend_hasValue_diff (s.extend intermediate true) effect indepSrc
-        true true hse]
+    rw [Situation.extend_hasValue_diff hsi,
+      Situation.extend_hasValue_diff hse]
     exact hs1_d
   -- IS fixpoint after round 2 (all effects already set)
   have hfix : isFixpoint withIndep (applyLawsOnce withIndep

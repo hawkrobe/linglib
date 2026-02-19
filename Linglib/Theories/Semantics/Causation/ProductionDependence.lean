@@ -148,7 +148,7 @@ theorem single_pathway_sufficiency_implies_necessity
     rw [normalDevelopment_fixpoint_after_one _ _ (by rw [happly]; exact hfix)]
     exact happly
   have hval : s.hasValue e true = false := by
-    rw [hs_def, Situation.extend_hasValue_diff _ _ _ _ _ (Ne.symm hne)]
+    rw [hs_def, Situation.extend_hasValue_diff (Ne.symm hne)]
     simp [Situation.hasValue, Situation.empty]
   show (!(normalDevelopment dyn s).hasValue e true) = true
   rw [hdev, hval]; rfl

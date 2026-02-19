@@ -102,12 +102,12 @@ def merge (s1 s2 : Situation) : Situation :=
 instance : Inhabited Situation := ⟨Situation.empty⟩
 
 /-- Extending at `v` and querying `v` returns whether the values match. -/
-@[simp] theorem extend_hasValue_same (s : Situation) (v : Variable) (val bval : Bool) :
+@[simp] theorem extend_hasValue_same {s : Situation} {v : Variable} {val bval : Bool} :
     (s.extend v val).hasValue v bval = (val == bval) := by
   simp [hasValue, extend]
 
 /-- Extending at `v` doesn't affect queries at a different variable `w`. -/
-@[simp] theorem extend_hasValue_diff (s : Situation) (v w : Variable) (val bval : Bool)
+@[simp] theorem extend_hasValue_diff {s : Situation} {v w : Variable} {val bval : Bool}
     (h : w ≠ v) : (s.extend v val).hasValue w bval = s.hasValue w bval := by
   simp [hasValue, extend, h]
 
@@ -150,7 +150,7 @@ def preconditionsMet (law : CausalLaw) (s : Situation) : Bool :=
 
 /-- Apply a law to a situation (if preconditions met, set effect). -/
 def apply (law : CausalLaw) (s : Situation) : Situation :=
-  if law.preconditionsMet s then
+  bif law.preconditionsMet s then
     s.extend law.effect law.effectValue
   else
     s
@@ -249,7 +249,7 @@ def normalDevelopment (dyn : CausalDynamics) (s : Situation)
   | 0 => s
   | n + 1 =>
     let s' := applyLawsOnce dyn s
-    if isFixpoint dyn s' then s'
+    bif isFixpoint dyn s' then s'
     else normalDevelopment dyn s' n
 
 -- Fixpoint Theorems
@@ -258,7 +258,19 @@ def normalDevelopment (dyn : CausalDynamics) (s : Situation)
 @[simp] theorem normalDevelopment_succ (dyn : CausalDynamics) (s : Situation) (n : Nat) :
     normalDevelopment dyn s (n + 1) =
       let s' := applyLawsOnce dyn s
-      if isFixpoint dyn s' then s' else normalDevelopment dyn s' n := rfl
+      bif isFixpoint dyn s' then s' else normalDevelopment dyn s' n := rfl
+
+/-- If the first round reaches a fixpoint, normalDevelopment returns it. -/
+theorem normalDevelopment_succ_fix {dyn : CausalDynamics} {s : Situation} {n : Nat}
+    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) :
+    normalDevelopment dyn s (n + 1) = applyLawsOnce dyn s := by
+  simp [h]
+
+/-- If the first round is NOT a fixpoint, normalDevelopment recurses. -/
+theorem normalDevelopment_succ_step {dyn : CausalDynamics} {s : Situation} {n : Nat}
+    (h : isFixpoint dyn (applyLawsOnce dyn s) = false) :
+    normalDevelopment dyn s (n + 1) = normalDevelopment dyn (applyLawsOnce dyn s) n := by
+  simp [h]
 
 /-- If the result of one round of law application is a fixpoint,
     normalDevelopment returns that result. -/
@@ -276,6 +288,25 @@ theorem normalDevelopment_fixpoint_after_two (dyn : CausalDynamics) (s : Situati
       applyLawsOnce dyn (applyLawsOnce dyn s) := by
   simp [h1, h2]
 
+/-- General fixpoint theorem: if `applyLawsOnce` reaches a fixpoint after
+    exactly `n + 1` rounds, then `normalDevelopment` with sufficient fuel
+    returns `(applyLawsOnce dyn)^[n + 1] s`.
+
+    `_after_one` and `_after_two` are special cases for `n = 0` and `n = 1`. -/
+theorem normalDevelopment_fixpoint_at (dyn : CausalDynamics) (s : Situation)
+    (n : Nat) {fuel : Nat}
+    (hnfix : ∀ k, k < n → isFixpoint dyn ((applyLawsOnce dyn)^[k + 1] s) = false)
+    (hfix : isFixpoint dyn ((applyLawsOnce dyn)^[n + 1] s) = true) :
+    normalDevelopment dyn s (fuel + n + 1) = (applyLawsOnce dyn)^[n + 1] s := by
+  induction n generalizing s with
+  | zero => exact normalDevelopment_succ_fix hfix
+  | succ m ih =>
+    rw [show fuel + (m + 1) + 1 = (fuel + m + 1) + 1 from by omega,
+        normalDevelopment_succ_step (hnfix 0 (Nat.zero_lt_succ m))]
+    exact ih (applyLawsOnce dyn s)
+      (fun k hk => hnfix (k + 1) (by omega))
+      hfix
+
 /-- Empty dynamics: any situation is a fixpoint. -/
 theorem empty_dynamics_fixpoint (s : Situation) :
     isFixpoint CausalDynamics.empty s = true := by
@@ -290,7 +321,7 @@ theorem empty_dynamics_unchanged (s : Situation) (fuel : Nat) :
   | zero => rfl
   | succ n _ =>
     simp only [normalDevelopment, applyLawsOnce, CausalDynamics.empty, List.foldl_nil,
-               isFixpoint, List.all_eq_true]
+               isFixpoint]
     simp
 
 -- Convenience Functions

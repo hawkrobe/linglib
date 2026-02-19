@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.8] - 2026-02-18
+
+### Changed
+- Refactor `Core/Causation.lean`: use `bif` for Bool branches, make `extend_hasValue_same/diff` params implicit, add `normalDevelopment_succ_fix`, `normalDevelopment_succ_step`, and general `normalDevelopment_fixpoint_at` theorem
+- Update `Necessity.lean`, `ProductionDependence.lean`, `Resultatives.lean`: use implicit-param versions of `extend_hasValue_diff`
+- Refactor `Sufficiency.lean`: replace `simp only [normalDevelopment]` with `rw [normalDevelopment_succ_fix/step]`, replace `simp only [hMet, ↓reduceIte]` with `rw [apply_of_met/not_met]`
+
 ## [0.224.7] - 2026-02-18
 
 ### Added

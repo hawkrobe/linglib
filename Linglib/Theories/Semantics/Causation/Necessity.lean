@@ -89,15 +89,15 @@ theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
     by_cases hvc1 : v = c1
     · -- v = c1: after remove, c1 is none → hasValue c1 true = false, contradiction
       rw [hvc1] at hv
-      rw [Situation.extend_hasValue_diff _ _ _ _ _ hne] at hv
+      rw [Situation.extend_hasValue_diff hne] at hv
       simp [Situation.hasValue, Situation.remove] at hv
     · by_cases hvc2 : v = c2
       · rw [hvc2]
-        rw [Situation.extend_hasValue_diff _ _ _ _ _ (Ne.symm hne)]
+        rw [Situation.extend_hasValue_diff (Ne.symm hne)]
         exact h_c2_present
       · -- v ≠ c1, v ≠ c2: remove c1 doesn't affect v
-        rw [Situation.extend_hasValue_diff _ _ _ _ _ hvc2] at hv
-        rw [Situation.extend_hasValue_diff _ _ _ _ _ hvc1]
+        rw [Situation.extend_hasValue_diff hvc2] at hv
+        rw [Situation.extend_hasValue_diff hvc1]
         have hbeq : (v == c1) = false := by
           rw [show (v == c1) = decide (v = c1) from rfl]
           exact decide_eq_false hvc1
