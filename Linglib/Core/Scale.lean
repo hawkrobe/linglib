@@ -1137,7 +1137,12 @@ theorem inducedGe_axiomR (m : FinAddMeasure W) :
     A ⊆ B → B = A ∪ (B \ A) → μ(B) = μ(A) + μ(B \ A) ≥ μ(A). -/
 theorem inducedGe_axiomT (m : FinAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
-  sorry -- TODO: Set.union_diff_cancel, disjointness of A and B \ A
+  intro A B hAB
+  show m.mu B ≥ m.mu A
+  have hdecomp : B = A ∪ (B \ A) := (Set.union_diff_cancel hAB).symm
+  have hdisj : ∀ x, x ∈ A → x ∉ B \ A := fun x hx ⟨_, hna⟩ => hna hx
+  rw [hdecomp, m.additive A (B \ A) hdisj]
+  exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
 /-- A finitely additive measure induces System FA. -/
 def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
@@ -1146,11 +1151,27 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   mono := m.inducedGe_axiomT
   bottom := by
     show m.mu Set.univ ≥ m.mu ∅
-    sorry -- TODO: mu(∅) = 0 from additivity (∅ ∪ ∅ = ∅), then 1 ≥ 0
+    have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
+      m.additive ∅ ∅ (fun x hx => hx.elim)
+    simp only [Set.empty_union] at hempty
+    have hzero : m.mu ∅ = 0 := by
+      have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
+      exact add_left_cancel h
+    rw [hzero]; exact m.nonneg Set.univ
   additive := by
     intro A B
     show m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A)
-    sorry -- TODO: A = (A \ B) ∪ (A ∩ B), additivity decomposition
+    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B := fun x ⟨_, hxnb⟩ ⟨_, hxb⟩ => hxnb hxb
+    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B := fun x ⟨_, hxna⟩ ⟨hxa, _⟩ => hxna hxa
+    have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
+      conv_lhs => rw [(Set.diff_union_inter A B).symm]
+      exact m.additive _ _ hdA
+    have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
+      conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
+        rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
+      exact m.additive _ _ hdB
+    rw [hmuA, hmuB]
+    exact add_le_add_iff_right (m.mu (A ∩ B))
 
 end FinAddMeasure
 
