@@ -1,4 +1,4 @@
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod

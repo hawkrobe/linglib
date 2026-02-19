@@ -1,4 +1,4 @@
-import Linglib.Core.MeasurementScale
+import Linglib.Core.Scale
 import Linglib.Core.Time
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory

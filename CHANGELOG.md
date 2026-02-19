@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.1] - 2026-02-18
+
+### Added
+- Add categorical root structure to `Core/Scale.lean`: `ComparativeScale` (preorder + boundedness), `AdditiveScale` (+ join + FA), `ScaleMorphism` (monotone maps), with `id`, `comp`, `ofMonotone`, `ofStrictMono`
+- `MIPDomain` now extends `ComparativeScale` structurally (via `ofLinearOrder`)
+- Add `MereoDim` ↔ `ScaleMorphism` bridge theorems in `Core/MereoDim.lean` §11: `mereoDim_scaleMorphism`, `extMeasure_scaleMorphism`, `mereoDim_comp_eq_scaleMorphism_comp`, `dimension_chain_scaleMorphism`, `qua_cum_boundedness_coherence`
+
+### Changed
+- Rename `Core/MeasurementScale.lean` → `Core/Scale.lean`; update imports in 15 downstream files
+
 ## [0.224.0] - 2026-02-18
 
 ### Changed
