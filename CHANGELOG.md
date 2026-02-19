@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.35] - 2026-02-19
+
+### Fixed
+- `blog/hugo.toml`: Add `params.author` to fix Hugo build error (`site.Author` removed in newer Hugo versions)
+
 ## [0.224.34] - 2026-02-19
 
 ### Changed
