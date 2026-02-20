@@ -1055,7 +1055,8 @@ This fills the `EpistemicScale` arm of the categorical diagram (§ 0).
 |--------|----------------|------------------------------------|
 | W      | R, T           | World-ordering + Halpern lift      |
 | F      | R, T, F        | + bottom element                   |
-| FA     | R, T, F, A     | Finitely additive measures         |
+| FA     | R, T, F, A     | Qualitatively additive measures    |
+| FP∞    | R, T, F, A, Sc | Finitely additive measures         |
 
 **Bridge**: Axiom A (epistemic qualitative additivity) and `AdditiveScale.fa`
 (mereological finite additivity) are algebraically equivalent — both express
@@ -1113,8 +1114,10 @@ structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
   bottom : EpistemicAxiom.F ge
 
 /-- System FA: System F + totality + transitivity + qualitative additivity.
-    Sound and complete for qualitatively additive measure semantics
+    Sound and complete for **qualitatively additive** measure semantics
     (Holliday & Icard 2013, Theorem 6; van der Hoek 1996).
+    Strictly weaker than FP∞ (finitely additive measures) for |W| ≥ 5
+    (Kraft, Pratt & Seidenberg 1959, Theorem 8).
 
     Totality and transitivity are part of the FA logic in Holliday & Icard
     (2013, Figure 6): FA = Bot + BT + Tot + Tran + A. -/
@@ -1210,6 +1213,57 @@ theorem toWorldPrior_nonneg (m : FinAddMeasure W) (w : W) :
 
 end FinAddMeasure
 
+-- ── Qualitatively Additive Measures ──────────────
+
+/-- A qualitatively additive measure on subsets of W.
+    Unlike `FinAddMeasure`, this does NOT require μ(A ∪ B) = μ(A) + μ(B)
+    for disjoint A, B. Instead it requires the weaker **qualitative additivity**
+    condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
+
+    Holliday & Icard (2013) Theorem 6: System FA is sound and complete
+    with respect to qualitatively additive measure models. -/
+structure QualAddMeasure (W : Type*) where
+  /-- The measure function -/
+  mu : Set W → ℚ
+  /-- Non-negativity -/
+  nonneg : ∀ A, 0 ≤ mu A
+  /-- Normalization -/
+  total : mu Set.univ = 1
+  /-- Qualitative additivity: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A) -/
+  qualAdd : ∀ A B, mu A ≥ mu B ↔ mu (A \ B) ≥ mu (B \ A)
+
+namespace QualAddMeasure
+
+variable {W : Type*}
+
+/-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
+def inducedGe (m : QualAddMeasure W) (A B : Set W) : Prop :=
+  m.mu A ≥ m.mu B
+
+end QualAddMeasure
+
+/-- Every finitely additive measure is qualitatively additive.
+    Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
+    so μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A). -/
+noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : QualAddMeasure W where
+  mu := m.mu
+  nonneg := m.nonneg
+  total := m.total
+  qualAdd := fun A B => by
+    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B :=
+      fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB
+    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B :=
+      fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA
+    have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
+      conv_lhs => rw [show A = (A \ B) ∪ (A ∩ B) from (Set.diff_union_inter A B).symm]
+      exact m.additive _ _ hdA
+    have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
+      conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
+        rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
+      exact m.additive _ _ hdB
+    rw [hmuA, hmuB]
+    exact add_le_add_iff_right (m.mu (A ∩ B))
+
 -- ── World-Ordering Semantics ────────────────────
 
 /-- Lewis's *l*-lifting: a preorder on worlds induces a comparison on
@@ -1233,8 +1287,8 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
   fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
 /-- Lewis's *l*-lifting from a reflexive preorder yields System W.
-    This is the soundness direction of **Theorem 7** (Holliday & Icard
-    2013). -/
+    Soundness direction: world-ordering models with the l-lifting
+    validate System W (Halpern 2003; Holliday & Icard 2013 §3). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
@@ -1265,22 +1319,34 @@ theorem theorem8b :
 
 -- ── Completeness (Theorems 6–7) ──────────────────
 
-/-- **Theorem 6 completeness** (Holliday & Icard 2013; van der Hoek 1996):
-    every EpistemicSystemFA is representable by a finitely additive measure.
-    Combined with `toSystemFA` (soundness), this gives FA ↔ FinAddMeasure. -/
+/-- **Theorem 6 completeness** (Holliday & Icard 2013, Theorem 6; van der Hoek 1996):
+    every EpistemicSystemFA is representable by a **qualitatively additive** measure.
+    Combined with `toSystemFA` (soundness), this gives FA ↔ QualAddMeasure.
+
+    Note: this is NOT about finitely additive measures (`FinAddMeasure`).
+    FA is strictly weaker than FP∞ for |W| ≥ 5 (Theorem 8, KPS 1959):
+    there exist FA orderings with no finitely additive measure representation.
+    See `theorem8b`. -/
 theorem theorem6_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
-    ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+    ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   sorry -- van der Hoek (1996); linear extension of qualitative probability
 
-/-- **Theorem 7 completeness** (Holliday & Icard 2013):
-    every EpistemicSystemW is representable by Lewis's l-lifting from
-    a reflexive preorder on worlds. -/
+/-- **Theorem 2 completeness** (Halpern 2003; Holliday & Icard 2013 §3):
+    every system satisfying R, T, BT, Tran, J, Mon (System WJR) is
+    representable by Lewis's l-lifting from a reflexive preorder on worlds.
+
+    Note: the current hypothesis asks only for `EpistemicSystemW` (R + T),
+    which is weaker than WJR. The full completeness result requires
+    additional axioms (join, transitivity, monotonicity). This is left
+    as `sorry` pending the formalization of System WJR.
+
+    (The paper's Theorem 7 is about the *m*-lifting, not the l-lifting.) -/
 theorem theorem7_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemW W) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
       ∀ A B, sys.ge A B ↔ halpernLift ge_w A B :=
-  sorry -- Holliday & Icard (2013), Theorem 7 completeness direction
+  sorry -- Halpern (2003); requires WJR axioms for completeness
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────
 

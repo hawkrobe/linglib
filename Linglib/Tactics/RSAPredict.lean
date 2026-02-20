@@ -167,20 +167,35 @@ private partial def findEmbeddedNat (e : Expr) (depth : ℕ := 15) : Option ℕ 
 
 private def maxDepth : ℕ := 200
 
+/-- Memoization cache for reifyToRExpr, keyed on Expr structural hash. -/
+private abbrev ReifyCache := IO.Ref (Std.HashMap UInt64 (Expr × MetaBounds))
+/-- Store result in cache and return it. -/
+private def cacheReturn (cache : ReifyCache) (key : UInt64) (result : Expr × MetaBounds) :
+    MetaM (Expr × MetaBounds) := do
+  cache.modify fun m => m.insert key result
+  return result
+
 /-- Simplified RExpr reifier for rsa_predict.
-    Produces RExpr values + meta-level bounds. -/
-private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaBounds) := do
+    Produces RExpr values + meta-level bounds.
+    Uses a hash-keyed cache to avoid redundant reification of shared subexpressions. -/
+private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
+    MetaM (Expr × MetaBounds) := do
   if depth == 0 then
     throwError "rsa_predict: max reification depth on: {← ppExpr e}"
 
   -- Let binding: substitute
   if e.isLet then
-    return ← reifyToRExpr (e.letBody!.instantiate1 e.letValue!) (depth - 1)
+    return ← reifyToRExpr cache (e.letBody!.instantiate1 e.letValue!) (depth - 1)
+
+  -- Cache lookup
+  let key := hash e
+  if let some result := (← cache.get).get? key then
+    return result
 
   -- Natural literal
   if let some n := getOfNat?' e then
     let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
-    return (rexpr, ⟨n, n⟩)
+    return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
 
   let fn := e.getAppFn
   let args := e.getAppArgs
@@ -191,100 +206,98 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
   if fn.isConstOf ``Real.ofCauchy then
     if let some n := findEmbeddedNat e then
       let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
-      return (rexpr, ⟨n, n⟩)
+      return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
 
   -- Addition: @HAdd.hAdd ℝ ℝ ℝ _ a b
   if isAppOfMin' e ``HAdd.hAdd 6 then
-    let (ra, ba) ← reifyToRExpr args[4]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[5]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[4]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[5]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.add #[ra, rb]
-    return (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
+    return ← cacheReturn cache key (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
 
   if isAppOfMin' e ``Add.add 4 then
-    let (ra, ba) ← reifyToRExpr args[2]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[3]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[2]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[3]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.add #[ra, rb]
-    return (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
+    return ← cacheReturn cache key (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
 
   -- Multiplication
   if isAppOfMin' e ``HMul.hMul 6 then
-    let (ra, ba) ← reifyToRExpr args[4]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[5]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[4]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[5]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.mul #[ra, rb]
-    let m := metaEvalMul' ba bb
-    return (rexpr, m)
+    return ← cacheReturn cache key (rexpr, metaEvalMul' ba bb)
 
   if isAppOfMin' e ``Mul.mul 4 then
-    let (ra, ba) ← reifyToRExpr args[2]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[3]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[2]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[3]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.mul #[ra, rb]
-    let m := metaEvalMul' ba bb
-    return (rexpr, m)
+    return ← cacheReturn cache key (rexpr, metaEvalMul' ba bb)
 
   -- Division
   if isAppOfMin' e ``HDiv.hDiv 6 then
-    let (ra, ba) ← reifyToRExpr args[4]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[5]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[4]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[5]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.div #[ra, rb]
     let bounds := if ba.lo ≥ 0 && bb.lo > 0 then ⟨ba.lo / bb.hi, ba.hi / bb.lo⟩
                   else ⟨-1, 1⟩
-    return (rexpr, bounds)
+    return ← cacheReturn cache key (rexpr, bounds)
 
   if isAppOfMin' e ``Div.div 4 then
-    let (ra, ba) ← reifyToRExpr args[2]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[3]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[2]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[3]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.div #[ra, rb]
     let bounds := if ba.lo ≥ 0 && bb.lo > 0 then ⟨ba.lo / bb.hi, ba.hi / bb.lo⟩
                   else ⟨-1, 1⟩
-    return (rexpr, bounds)
+    return ← cacheReturn cache key (rexpr, bounds)
 
   -- Negation
   if isAppOfMin' e ``Neg.neg 3 then
-    let (ra, ba) ← reifyToRExpr args[2]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[2]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.neg #[ra]
-    return (rexpr, ⟨-ba.hi, -ba.lo⟩)
+    return ← cacheReturn cache key (rexpr, ⟨-ba.hi, -ba.lo⟩)
 
   -- Subtraction
   if isAppOfMin' e ``HSub.hSub 6 then
-    let (ra, ba) ← reifyToRExpr args[4]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[5]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[4]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[5]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.sub #[ra, rb]
-    return (rexpr, ⟨ba.lo - bb.hi, ba.hi - bb.lo⟩)
+    return ← cacheReturn cache key (rexpr, ⟨ba.lo - bb.hi, ba.hi - bb.lo⟩)
 
   if isAppOfMin' e ``Sub.sub 4 then
-    let (ra, ba) ← reifyToRExpr args[2]! (depth - 1)
-    let (rb, bb) ← reifyToRExpr args[3]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[2]! (depth - 1)
+    let (rb, bb) ← reifyToRExpr cache args[3]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.sub #[ra, rb]
-    return (rexpr, ⟨ba.lo - bb.hi, ba.hi - bb.lo⟩)
+    return ← cacheReturn cache key (rexpr, ⟨ba.lo - bb.hi, ba.hi - bb.lo⟩)
 
   -- Real.rpow
   if fn.isConstOf ``Real.rpow && args.size ≥ 2 then
     if let some n ← resolveNat?' args[1]! then
-      let (rb, bb) ← reifyToRExpr args[0]! (depth - 1)
+      let (rb, bb) ← reifyToRExpr cache args[0]! (depth - 1)
       let rexpr ← mkAppM ``RExpr.rpow #[rb, mkRawNatLit n]
       let bounds := if n == 0 then ⟨1, 1⟩
                     else if bb.lo ≥ 0 then ⟨bb.lo ^ n, bb.hi ^ n⟩
                     else ⟨0, 1⟩
-      return (rexpr, bounds)
+      return ← cacheReturn cache key (rexpr, bounds)
     if let some e' ← unfoldDefinition? e then
-      return ← reifyToRExpr e' (depth - 1)
+      return ← reifyToRExpr cache e' (depth - 1)
 
   -- Real.exp
   if fn.isConstOf ``Real.exp && args.size ≥ 1 then
-    let (ra, ba) ← reifyToRExpr args[0]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.rexp #[ra]
     let elo := (Linglib.Interval.expPoint ba.lo).lo
     let ehi := (Linglib.Interval.expPoint ba.hi).hi
-    return (rexpr, ⟨elo, ehi⟩)
+    return ← cacheReturn cache key (rexpr, ⟨elo, ehi⟩)
 
   -- Real.log
   if fn.isConstOf ``Real.log && args.size ≥ 1 then
-    let (ra, ba) ← reifyToRExpr args[0]! (depth - 1)
+    let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.rlog #[ra]
     let bounds := if ba.lo > 0 then
                     ⟨(evalLogPoint' ba.lo).1, (evalLogPoint' ba.hi).2⟩
                   else ⟨-1000, 1000⟩
-    return (rexpr, bounds)
+    return ← cacheReturn cache key (rexpr, bounds)
 
   -- If-then-else
   if fn.isConstOf ``ite && args.size ≥ 5 then
@@ -296,15 +309,15 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
       let rhsC := cArgs[2]!
       if let some 0 := getOfNat?' rhsC then
         let lhsC := cArgs[1]!
-        let (rc, bc) ← reifyToRExpr lhsC (depth - 1)
+        let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
         if bc.lo > 0 then
-          let (re, be) ← reifyToRExpr elseBr (depth - 1)
+          let (re, be) ← reifyToRExpr cache elseBr (depth - 1)
           let rexpr ← mkAppM ``RExpr.iteZero #[rc, ← mkAppM ``RExpr.nat #[mkRawNatLit 0], re]
-          return (rexpr, be)
+          return ← cacheReturn cache key (rexpr, be)
         else if bc.lo == 0 && bc.hi == 0 then
-          let (rt, bt) ← reifyToRExpr thenBr (depth - 1)
+          let (rt, bt) ← reifyToRExpr cache thenBr (depth - 1)
           let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, ← mkAppM ``RExpr.nat #[mkRawNatLit 0]]
-          return (rexpr, bt)
+          return ← cacheReturn cache key (rexpr, bt)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
       -- Handles common RSA pattern `if (u == w.1) then ... else 0` which produces
       -- `ite ((u == w.1) = true) ...`. Cheap Bool whnf avoids expensive full-expr whnf.
@@ -316,12 +329,12 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
         let rhsIsTrue := rhsVal.isConstOf ``Bool.true
         let rhsIsFalse := rhsVal.isConstOf ``Bool.false
         if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
-          return ← reifyToRExpr thenBr (depth - 1)
+          return ← reifyToRExpr cache thenBr (depth - 1)
         else if (lhsIsTrue && rhsIsFalse) || (lhsIsFalse && rhsIsTrue) then
-          return ← reifyToRExpr elseBr (depth - 1)
+          return ← reifyToRExpr cache elseBr (depth - 1)
     let e' ← whnf e
     if !e.equal e' then
-      return ← reifyToRExpr e' (depth - 1)
+      return ← reifyToRExpr cache e' (depth - 1)
     throwError "rsa_predict: unsupported ite condition: {← ppExpr cond}"
 
   -- Decidable.rec (from whnf'd ite)
@@ -334,20 +347,20 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
       let lhsC := propArgs[1]!
       let rhsC := propArgs[2]!
       if let some 0 := getOfNat?' rhsC then
-        let (rc, bc) ← reifyToRExpr lhsC (depth - 1)
+        let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
         if bc.lo > 0 then
           let negProp ← mkAppM ``Not #[prop]
           let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
           let elseBody := (Expr.app isFalseBr dummyProof).headBeta
-          let (re, be) ← reifyToRExpr elseBody (depth - 1)
+          let (re, be) ← reifyToRExpr cache elseBody (depth - 1)
           let rexpr ← mkAppM ``RExpr.iteZero #[rc, ← mkAppM ``RExpr.nat #[mkRawNatLit 0], re]
-          return (rexpr, be)
+          return ← cacheReturn cache key (rexpr, be)
         else if bc.lo == 0 && bc.hi == 0 then
           let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
           let thenBody := (Expr.app isTrueBr dummyProof).headBeta
-          let (rt, bt) ← reifyToRExpr thenBody (depth - 1)
+          let (rt, bt) ← reifyToRExpr cache thenBody (depth - 1)
           let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, ← mkAppM ``RExpr.nat #[mkRawNatLit 0]]
-          return (rexpr, bt)
+          return ← cacheReturn cache key (rexpr, bt)
 
   -- Fast-path for summation forms
   let fnName := fn.constName?
@@ -360,22 +373,22 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
      fnName == some ``Quot.lift then
     let e' ← whnf e
     if !e.equal e' then
-      return ← reifyToRExpr e' (depth - 1)
+      return ← reifyToRExpr cache e' (depth - 1)
 
   -- Default: unfold one definition, headBeta
   if let some e' ← unfoldDefinition? e then
-    return ← reifyToRExpr e'.headBeta (depth - 1)
+    return ← reifyToRExpr cache e'.headBeta (depth - 1)
 
   -- Reducible whnf: does iota (case splits) but stops at OfNat.ofNat
   -- This prevents whnf from reducing OfNat.ofNat ℝ n _ to the Cauchy form
   let eR ← withReducible do whnf e
   if !e.equal eR then
-    return ← reifyToRExpr eR (depth - 1)
+    return ← reifyToRExpr cache eR (depth - 1)
 
   -- Full whnf fallback
   let e' ← whnf e
   if !e.equal e' then
-    return ← reifyToRExpr e' (depth - 1)
+    return ← reifyToRExpr cache e' (depth - 1)
 
   -- Tertiary: detect numeric literals via isDefEq (small) or findEmbeddedNat (large)
   let eType ← inferType e
@@ -387,7 +400,7 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
         try isDefEq e target catch _ => return false
       if isEq then
         let rexpr ← mkAppM ``RExpr.nat #[nE]
-        return (rexpr, ⟨n, n⟩)
+        return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
 
   -- Quaternary: detect binary ops via isDefEq
   if args.size ≥ 2 then
@@ -396,26 +409,26 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
     let isAdd ← withNewMCtxDepth do
       try isDefEq e (← mkAppM ``HAdd.hAdd #[a, b]) catch _ => return false
     if isAdd then
-      let (ra, ba) ← reifyToRExpr a (depth - 1)
-      let (rb, bb) ← reifyToRExpr b (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache a (depth - 1)
+      let (rb, bb) ← reifyToRExpr cache b (depth - 1)
       let rexpr ← mkAppM ``RExpr.add #[ra, rb]
-      return (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
+      return ← cacheReturn cache key (rexpr, ⟨ba.lo + bb.lo, ba.hi + bb.hi⟩)
     let isMul ← withNewMCtxDepth do
       try isDefEq e (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
     if isMul then
-      let (ra, ba) ← reifyToRExpr a (depth - 1)
-      let (rb, bb) ← reifyToRExpr b (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache a (depth - 1)
+      let (rb, bb) ← reifyToRExpr cache b (depth - 1)
       let rexpr ← mkAppM ``RExpr.mul #[ra, rb]
-      return (rexpr, metaEvalMul' ba bb)
+      return ← cacheReturn cache key (rexpr, metaEvalMul' ba bb)
     let isDiv ← withNewMCtxDepth do
       try isDefEq e (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
     if isDiv then
-      let (ra, ba) ← reifyToRExpr a (depth - 1)
-      let (rb, bb) ← reifyToRExpr b (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache a (depth - 1)
+      let (rb, bb) ← reifyToRExpr cache b (depth - 1)
       let rexpr ← mkAppM ``RExpr.div #[ra, rb]
       let bounds := if ba.lo ≥ 0 && bb.lo > 0 then ⟨ba.lo / bb.hi, ba.hi / bb.lo⟩
                     else ⟨-1, 1⟩
-      return (rexpr, bounds)
+      return ← cacheReturn cache key (rexpr, bounds)
 
   -- Detect exp/log via isDefEq
   if eType.isConstOf ``Real then
@@ -427,11 +440,11 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
         else return none
       catch _ => return none
     if let some arg := expMatch then
-      let (ra, ba) ← reifyToRExpr arg (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
       let rexpr ← mkAppM ``RExpr.rexp #[ra]
       let elo := (Linglib.Interval.expPoint ba.lo).lo
       let ehi := (Linglib.Interval.expPoint ba.hi).hi
-      return (rexpr, ⟨elo, ehi⟩)
+      return ← cacheReturn cache key (rexpr, ⟨elo, ehi⟩)
     let logMatch ← withNewMCtxDepth do
       try
         let argM ← mkFreshExprMVar (mkConst ``Real)
@@ -440,12 +453,12 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
         else return none
       catch _ => return none
     if let some arg := logMatch then
-      let (ra, ba) ← reifyToRExpr arg (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
       let rexpr ← mkAppM ``RExpr.rlog #[ra]
       let bounds := if ba.lo > 0 then
                       ⟨(evalLogPoint' ba.lo).1, (evalLogPoint' ba.hi).2⟩
                     else ⟨-1000, 1000⟩
-      return (rexpr, bounds)
+      return ← cacheReturn cache key (rexpr, bounds)
     let invMatch ← withNewMCtxDepth do
       try
         let argM ← mkFreshExprMVar (mkConst ``Real)
@@ -454,10 +467,10 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
         else return none
       catch _ => return none
     if let some arg := invMatch then
-      let (ra, ba) ← reifyToRExpr arg (depth - 1)
+      let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
       let rexpr ← mkAppM ``RExpr.inv #[ra]
       let bounds := if ba.lo > 0 then ⟨1 / ba.hi, 1 / ba.lo⟩ else ⟨-1, 1⟩
-      return (rexpr, bounds)
+      return ← cacheReturn cache key (rexpr, bounds)
 
   -- Detect exp/log/inv/rpow via isDefEq (handles internal forms after whnf)
   if eType.isConstOf ``Real then
@@ -471,12 +484,12 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
       catch _ => return none
     if let some (base, exp) := rpowMatch then
       if let some n ← resolveNat?' exp then
-        let (rb, bb) ← reifyToRExpr base (depth - 1)
+        let (rb, bb) ← reifyToRExpr cache base (depth - 1)
         let rexpr ← mkAppM ``RExpr.rpow #[rb, mkRawNatLit n]
         let bounds := if n == 0 then ⟨1, 1⟩
                       else if bb.lo ≥ 0 then ⟨bb.lo ^ n, bb.hi ^ n⟩
                       else ⟨0, 1⟩
-        return (rexpr, bounds)
+        return ← cacheReturn cache key (rexpr, bounds)
 
   throwError "rsa_predict: cannot reify: {← ppExpr e} (depth: {depth})"
 
@@ -709,6 +722,7 @@ private def buildIteFn (T : Expr) (entries : Array (Expr × Expr))
 private def buildS1ScoreTable (cfg : Expr) (U W L : Expr)
     (allL : Array Expr) (allW : Array Expr) (allU : Array Expr) :
     MetaM (Expr × Array (Expr × Expr × Expr × MetaBounds)) := do
+  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
   let mut entries : Array (Expr × Expr × Expr × Expr × MetaBounds) := (#[] : Array _)
   let total := allL.size * allW.size * allU.size
   logInfo m!"rsa_predict: reifying {total} S1 scores..."
@@ -719,7 +733,7 @@ private def buildS1ScoreTable (cfg : Expr) (U W L : Expr)
     for w in allW do
       for u in allU do
         let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
-        let (rexpr, bounds) ← reifyToRExpr scoreExpr maxDepth
+        let (rexpr, bounds) ← reifyToRExpr reifyCache scoreExpr maxDepth
         -- Pre-evaluate to concrete QInterval from MetaBounds at meta time.
         -- This eliminates all exp/log Padé computation from native_decide.
         let evali ← mkQIntervalFromBounds bounds.lo bounds.hi
@@ -880,6 +894,7 @@ elab "rsa_predict" : tactic => do
   logInfo m!"rsa_predict: extracted worldPrior and latentPrior ℚ values"
 
   -- Reify S1 scores → MetaBounds (no Expr function needed)
+  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
   let mut s1Bounds : Array MetaBounds := #[]
   let total := allLElems.size * allWElems.size * allUElems.size
   logInfo m!"rsa_predict: reifying {total} S1 scores..."
@@ -889,14 +904,16 @@ elab "rsa_predict" : tactic => do
     for w in allWElems do
       for u in allUElems do
         let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
-        let (_, b) ← reifyToRExpr scoreExpr maxDepth
+        let (_, b) ← reifyToRExpr reifyCache scoreExpr maxDepth
         s1Bounds := s1Bounds.push b
         count := count + 1
         if count % 100 = 0 then
-          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
+          let cacheSize := (← reifyCache.get).size
+          logInfo m!"rsa_predict: ... {count}/{total} scores reified (cache size: {cacheSize})"
 
+  let cacheSize := (← reifyCache.get).size
   let nonZero := s1Bounds.filter fun b => !(b.lo == 0 && b.hi == 0)
-  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores"
+  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores (final cache size: {cacheSize})"
 
   -- Find target indices
   let uIdx ← findElemIdx allUElems u
