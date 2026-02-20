@@ -122,16 +122,16 @@ theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : BProp W)
     (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
     (hNonzero' : condProb ctx.prior b (Decidable.pnot W ctx.issue.topic) ≠ 0)
     (hABNonzero : condProb ctx.prior (Decidable.pand W a b)
-      (Decidable.pnot W ctx.issue.topic) ≠ 0) :
+      (Decidable.pnot W ctx.issue.topic) ≠ 0)
+    (hPrior : ∀ w, ctx.prior w ≥ 0) :
     bayesFactor ctx (Decidable.pand W a b) > bayesFactor ctx a ∧
     bayesFactor ctx (Decidable.pand W a b) >
       bayesFactor ctx (Decidable.por W a b) := by
-  have hConj := conjunction_dominates_conjuncts ctx a b hcip hPosA hPosB
-    hNonzero hNonzero' hABNonzero
+  have hFull := conjunction_dominates_disjunction ctx a b hcip hPosA hPosB
+    hNonzero hNonzero' hABNonzero hPrior
   constructor
-  · exact lt_of_le_of_lt (le_max_left _ _) hConj
-  -- TODO: Disjunction ordering requires inclusion-exclusion on condProb.
-  · sorry
+  · exact lt_of_le_of_lt (le_max_left _ _) hFull.1
+  · exact lt_trans hFull.2.1 hFull.1
 
 end Predictions
 

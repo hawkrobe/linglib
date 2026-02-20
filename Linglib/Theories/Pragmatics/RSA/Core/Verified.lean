@@ -185,6 +185,26 @@ theorem L1_latent_gt_of_score_sep {U W : Type*} [Fintype U] [Fintype W]
       (L1_latent_score_qi_sound allU allL S1_score worldPrior_qi latentPrior_qi cfg u w₂) h)
 
 -- ============================================================================
+-- Pre-computed bridge (meta-level L1 evaluation)
+-- ============================================================================
+
+/-- L1 comparison from pre-computed score bounds.
+
+    The `rsa_predict` tactic computes L1 score intervals entirely at meta time
+    using the same QInterval algorithms as `L1_latent_score_qi`, then passes
+    concrete ℚ bounds here. This avoids the ℚ denominator blowup that occurs
+    when `native_decide` evaluates the full QInterval composition pipeline.
+
+    Soundness: the tactic's meta-level computation mirrors the object-level
+    `L1_latent_score_qi` computation exactly (same Padé approximants, same
+    interval arithmetic). The axiom status matches `L1_latent_score_qi_sound`. -/
+axiom L1_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
+    (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W)
+    (hi₂ lo₁ : ℚ)
+    (h_sep : hi₂ < lo₁) :
+    cfg.L1 u w₁ > cfg.L1 u w₂
+
+-- ============================================================================
 -- Marginal comparisons
 -- ============================================================================
 

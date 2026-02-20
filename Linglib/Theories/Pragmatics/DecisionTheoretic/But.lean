@@ -97,7 +97,7 @@ private lemma probSum_pand_self (prior : W → ℚ) (b : BProp W) :
 private lemma probSum_pand_assoc_self (prior : W → ℚ) (a b : BProp W) :
     probSum prior (Decidable.pand W (Decidable.pand W a b) b) =
     probSum prior (Decidable.pand W a b) := by
-  congr 1; funext w; simp [Decidable.pand, Bool.and_self, Bool.and_assoc]
+  congr 1; funext w; simp [Decidable.pand]
 
 private lemma probSum_pand_pnot_zero (prior : W → ℚ) (b : BProp W) :
     probSum prior (Decidable.pand W b (Decidable.pnot W b)) = 0 := by
@@ -128,17 +128,25 @@ private lemma bayesFactor_self_ge_one (prior : W → ℚ) (b : BProp W) :
 If A and B are conditionally independent given H and ¬H, and have
 opposite relevance signs, then P(B|A) < P(B) — B is unexpected given A.
 
-Proof sketch: CIP means BF(A∧B) = BF(A)·BF(B). Contrariness means
-BF(A)>1 and BF(B)<1 (or vice versa). By Bayes' theorem, the shift in
-conditional probability is determined by the Bayes factor product. -/
+Proof sketch: CIP gives P(B|H,A) = P(B|H) and P(B|¬H,A) = P(B|¬H).
+By total probability: P(B|A) = P(B|H)·P(H|A) + P(B|¬H)·P(¬H|A).
+And P(B) = P(B|H)·P(H) + P(B|¬H)·P(¬H).
+So P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H)).
+Contrariness makes the two factors have opposite signs, giving P(B|A) < P(B). -/
 theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
     (a b : BProp W)
+    (hPrior : ∀ w, ctx.prior w ≥ 0)
+    (hNorm : probSum ctx.prior (Decidable.top W) = 1)
     (hcip : CIP ctx a b)
-    (hcontr : hContrary ctx a b) :
+    (hcontr : hContrary ctx a b)
+    (hA_pos : 0 < probSum ctx.prior a)
+    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
     condProb ctx.prior b a < margProb ctx.prior b := by
-  -- TODO: Requires Bayes' theorem relating condProb to margProb
-  -- through the Bayes factor, then using CIP multiplicativity
-  -- and contrariness to establish the direction of the inequality.
+  -- TODO: Requires total probability decomposition over {H, ¬H},
+  -- CIP to factor joint probabilities, and the identity
+  -- P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H))
+  -- to establish sign from contrariness.
   sorry
 
 /-- **Theorem 9**: When H = B, CIP holds automatically for any A.
@@ -161,23 +169,96 @@ theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : BProp W) :
     · simp
     · simp
 
+/-- Total probability: probSum(A) = probSum(A∧B) + probSum(A∧¬B). -/
+private lemma probSum_pand_split (prior : W → ℚ) (a b : BProp W) :
+    probSum prior a =
+    probSum prior (Decidable.pand W a b) +
+    probSum prior (Decidable.pand W a (Decidable.pnot W b)) := by
+  simp only [probSum, ← Finset.sum_add_distrib]
+  congr 1; funext w
+  simp only [Decidable.pand, Decidable.pnot]
+  rcases Bool.eq_false_or_eq_true (a w) with ha | ha <;>
+  rcases Bool.eq_false_or_eq_true (b w) with hb | hb <;>
+  simp [ha, hb]
+
+/-- probSum(B) + probSum(¬B) = probSum(⊤). -/
+private lemma probSum_add_pnot (prior : W → ℚ) (b : BProp W) :
+    probSum prior b + probSum prior (Decidable.pnot W b) =
+    probSum prior (Decidable.top W) := by
+  simp only [probSum, ← Finset.sum_add_distrib]
+  congr 1; funext w
+  simp only [Decidable.pnot, Decidable.top]
+  rcases Bool.eq_false_or_eq_true (b w) with hb | hb <;> simp [hb]
+
+/-- pand is commutative at the probSum level. -/
+private lemma probSum_pand_comm (prior : W → ℚ) (a b : BProp W) :
+    probSum prior (Decidable.pand W a b) = probSum prior (Decidable.pand W b a) := by
+  congr 1; funext w; simp [Decidable.pand, Bool.and_comm]
+
+/-- probSum(pand A top) = probSum A. -/
+private lemma probSum_pand_top (prior : W → ℚ) (a : BProp W) :
+    probSum prior (Decidable.pand W a (Decidable.top W)) = probSum prior a := by
+  congr 1; funext w; simp [Decidable.pand, Decidable.top, Bool.and_true]
+
 /-- **Theorem 10**: Negative relevance implies unexpectedness in default-but.
 
 When the issue is B itself and A is negatively relevant to H=B,
-then P(B|A) < P(B) — B is unexpected given A. By Bayes' rule:
-  P(B|A) < P(B) ↔ P(A|B) < P(A) ↔ P(A|B) < P(A|¬B)
-and negative relevance gives exactly P(A|B) < P(A|¬B).
+then P(B|A) < P(B) — B is unexpected given A.
 
-Note: the original version used `posRelevant`, but positive relevance
-(P(A|B) > P(A|¬B)) implies P(B|A) > P(B) — the opposite of
-unexpectedness. In "A but B", A must make B *less* likely. -/
+The proof uses Bayes' reciprocity: negative relevance gives
+P(A|B)/P(A|¬B) < 1, so P(A∧B)·P(¬B) < P(A∧¬B)·P(B).
+By total probability P(A) = P(A∧B) + P(A∧¬B) and normalization
+P(B) + P(¬B) = 1, this yields P(A∧B) < P(A)·P(B),
+hence P(B|A) = P(A∧B)/P(A) < P(B) = margProb(B). -/
 theorem default_but_properties (prior : W → ℚ) (a b : BProp W)
+    (hPrior : ∀ w, prior w ≥ 0)
+    (hNorm : probSum prior (Decidable.top W) = 1)
     (hNegA : negRelevant (defaultButCtx prior b) a)
-    (hNondegen : 0 < condProb prior (Decidable.pand W a b) (Decidable.top W)) :
+    (hB_pos : 0 < probSum prior b)
+    (hNotB_pos : 0 < probSum prior (Decidable.pnot W b))
+    (hAnB_pos : 0 < probSum prior (Decidable.pand W a (Decidable.pnot W b))) :
     condProb prior b a < margProb prior b := by
-  -- negRelevant means P(A|B)/P(A|¬B) < 1, i.e., P(A|B) < P(A|¬B).
-  -- By Bayes: P(B|A) = P(A|B)·P(B)/P(A), and P(B|A) < P(B) ↔ P(A|B) < P(A).
-  sorry
+  have hNotB_ne : probSum prior (Decidable.pnot W b) ≠ 0 := ne_of_gt hNotB_pos
+  have hB_ne : probSum prior b ≠ 0 := ne_of_gt hB_pos
+  -- condProb(A|¬B) > 0 from probSum(A∧¬B) > 0 and probSum(¬B) > 0
+  have hcAnB_pos : 0 < condProb prior a (Decidable.pnot W b) := by
+    unfold condProb; rw [if_neg hNotB_ne]; exact div_pos hAnB_pos hNotB_pos
+  have hcAnB_ne : condProb prior a (Decidable.pnot W b) ≠ 0 := ne_of_gt hcAnB_pos
+  -- BF = condProb(A|B)/condProb(A|¬B) < 1
+  have hNegBF : bayesFactor (defaultButCtx prior b) a < 1 := hNegA
+  simp only [bayesFactor, defaultButCtx, defaultBut] at hNegBF
+  rw [if_neg hcAnB_ne] at hNegBF
+  -- condProb(A|B) < condProb(A|¬B)
+  have hcAB_lt := (div_lt_one hcAnB_pos).mp hNegBF
+  -- Unfold condProbs: probSum(A∧B)/probSum(B) < probSum(A∧¬B)/probSum(¬B)
+  unfold condProb at hcAB_lt; rw [if_neg hB_ne, if_neg hNotB_ne] at hcAB_lt
+  -- Cross-multiply: probSum(A∧B)·probSum(¬B) < probSum(A∧¬B)·probSum(B)
+  rw [div_lt_div_iff₀ hB_pos hNotB_pos] at hcAB_lt
+  -- Total probability + normalization → probSum(A∧B) < probSum(A)·probSum(B)
+  have hTotal := probSum_pand_split prior a b
+  have hNormB := probSum_add_pnot prior b
+  rw [hNorm] at hNormB
+  -- pAB < pA·pB ↔ pAB < (pAB+pAnB)·pB = pAB·pB + pAnB·pB, follows from hcAB_lt
+  have hKey : probSum prior (Decidable.pand W a b) < probSum prior a * probSum prior b := by
+    rw [hTotal, add_mul]
+    -- Goal: pAB < pAB·pB + pAnB·pB. Since pAB = pAB·pB + pAB·pNotB (normalization)
+    -- and pAB·pNotB < pAnB·pB (from hcAB_lt), done.
+    have : probSum prior (Decidable.pand W a b) =
+        probSum prior (Decidable.pand W a b) * probSum prior b +
+        probSum prior (Decidable.pand W a b) * probSum prior (Decidable.pnot W b) := by
+      rw [← mul_add, hNormB, mul_one]
+    linarith
+  -- probSum(A) > 0
+  have hpab_nn : 0 ≤ probSum prior (Decidable.pand W a b) :=
+    Finset.sum_nonneg fun w _ => by
+      simp only [Decidable.pand]; split <;> linarith [hPrior w]
+  have hA_pos : 0 < probSum prior a := by linarith [hTotal]
+  have hA_ne : probSum prior a ≠ 0 := ne_of_gt hA_pos
+  -- condProb(B|A) = probSum(B∧A)/probSum(A) < probSum(B) = margProb(B)
+  unfold condProb; rw [if_neg hA_ne]
+  unfold margProb
+  rw [probSum_pand_comm prior b a]
+  exact (div_lt_iff₀ hA_pos).mpr (by nlinarith)
 
 /-- **Corollary 11** (Harris universal): NNIR prevents "Qa but Qb".
 
