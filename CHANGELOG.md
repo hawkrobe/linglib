@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.71] - 2026-02-20
+
+### Added
+- **Aissen (2003) DOM hierarchy** in `Case/Typology.lean` (818→1210 lines): Formalize two prominence scales (animacy: Human > Animate > Inanimate; definiteness: Pronoun > Proper Name > Definite > Indefinite Specific > Non-specific), bidimensional DOM grid, 8 language profiles (Spanish, Russian, Turkish, Hebrew, Persian, Catalan, Hindi, No-DOM), and the DOM monotonicity universal verified by `native_decide`
+
 ## [0.224.70] - 2026-02-20
 
 ### Added

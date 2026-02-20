@@ -93,7 +93,7 @@ grow the others as coverage expands.
 | `Imperatives/Typology.lean` | 948 | 17 | Ch 70--73: morphological imperative, prohibitive, hortative, optative |
 | `Modality/Typology.lean` | 813 | 17 | Ch 77--78: evidential systems and coding |
 | `Polarity/Typology.lean` | 1146 | 17 | Ch 46: Haspelmath's indefinite pronoun implicational map |
-| `Case/Typology.lean` | 818 | 16 | Ch 49--52: case count, differential marking, affix position, comitative |
+| `Case/Typology.lean` | 1210 | 16+8 | Ch 49--52 + Aissen 2003: case count, differential marking, DOM hierarchy |
 | `Gradability/Typology.lean` | 875 | 18 | Ch 121: comparative constructions, degree words, superlatives |
 | `WordOrder/Typology.lean` | 815 | 20 | Ch 81--83: basic SOV/SVO order + head-direction (Dryer/Gibson) |
 
@@ -241,10 +241,5 @@ Typological universals formalized and verified in linglib:
 | Concatenative fusion most common | Bickel & Nichols 2013 | `Morphology/Typology.lean` |
 | VO implies initial subordinator | Dryer 2013 | `Complementation/Typology.lean` |
 | Harmonic head-direction dominates (OV+Postp, VO+Prep) | Dryer 2013 | `Complementation/Typology.lean` |
-
-### To target
-
-| Universal | Source | Target File |
-|-----------|--------|-------------|
-| Differential object marking hierarchy | Aissen 2003 | `Case/Typology.lean` (extend) |
-| Corbett agreement target hierarchy | Corbett 1991 | `Gender/Typology.lean` (extend) |
+| DOM monotonicity (bidimensional prominence) | Aissen 2003 | `Case/Typology.lean` |
+| Corbett agreement target hierarchy | Corbett 1991 | `Gender/Typology.lean` |
