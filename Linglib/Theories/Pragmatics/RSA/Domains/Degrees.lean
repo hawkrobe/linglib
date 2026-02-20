@@ -188,6 +188,6 @@ theorem million_never_literal :
     ∀ w ∈ Price.standardWorlds, Price.meaning .million w = false := by
   intro w hw
   simp [Price.standardWorlds] at hw
-  rcases hw with rfl | rfl | rfl <;> sorry
+  rcases hw with rfl | rfl | rfl <;> native_decide
 
 end RSA.Domains.Degrees

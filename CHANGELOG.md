@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.53] - 2026-02-20
+
+### Changed
+- Close `million_never_literal` sorry in `RSA/Domains/Degrees.lean` (`native_decide`)
+
 ## [0.224.52] - 2026-02-20
 
 ### Changed
