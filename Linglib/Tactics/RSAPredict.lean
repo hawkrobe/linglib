@@ -908,12 +908,10 @@ elab "rsa_predict" : tactic => do
         s1Bounds := s1Bounds.push b
         count := count + 1
         if count % 100 = 0 then
-          let cacheSize := (← reifyCache.get).size
-          logInfo m!"rsa_predict: ... {count}/{total} scores reified (cache size: {cacheSize})"
+          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
 
-  let cacheSize := (← reifyCache.get).size
   let nonZero := s1Bounds.filter fun b => !(b.lo == 0 && b.hi == 0)
-  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores (final cache size: {cacheSize})"
+  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores"
 
   -- Find target indices
   let uIdx ← findElemIdx allUElems u
