@@ -1,11 +1,11 @@
 import Linglib.Theories.Semantics.Events.Agentivity
-import Linglib.Phenomena.Aspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Bridge: Agentivity → Aspect Diagnostics
 
 Connects Cruse (1973) agentivity decomposition to VendlerClass diagnostic
-predictions from `Phenomena.Aspect.DiagnosticsBridge`.
+predictions from `Phenomena.TenseAspect.DiagnosticsBridge`.
 
 The do-test prediction for each Vendler class is derived from the agentivity
 theory: the do-test accepts durative dynamic classes (activity, accomplishment)
@@ -18,10 +18,10 @@ and is marginal for others.
 -/
 
 
-namespace Phenomena.Aspect.AgentivityBridge
+namespace Phenomena.TenseAspect.AgentivityBridge
 
 open Semantics.Lexical.Verb.Aspect
-open Phenomena.Aspect.Diagnostics
+open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════
 -- Diagnostic Predictions
@@ -70,4 +70,4 @@ theorem doTest_agrees_imperative_for_dynamic_durative (c : VendlerClass)
   cases c <;> simp_all [doTestPrediction, imperativePrediction,
     VendlerClass.dynamicity, VendlerClass.duration]
 
-end Phenomena.Aspect.AgentivityBridge
+end Phenomena.TenseAspect.AgentivityBridge

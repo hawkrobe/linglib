@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Tense.Data
+import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Theories.Semantics.Tense.Abusch
 import Linglib.Theories.Semantics.Tense.VonStechow
 import Linglib.Theories.Semantics.Tense.Kratzer
@@ -35,11 +35,11 @@ per-datum verification theorems.
 - See individual theory files for citations.
 -/
 
-namespace Phenomena.Tense.Bridge
+namespace Phenomena.TenseAspect.Bridge
 
 open Core.Reichenbach
 open Core.Tense
-open Phenomena.Tense
+open Phenomena.TenseAspect
 open Semantics.Tense (satisfiesTense SOTParameter)
 open Semantics.Tense
 
@@ -655,4 +655,4 @@ theorem perfectPreterit_same_eventTime :
     perfectVisitedParis.eventTime = preteritVisitedParis.eventTime := rfl
 
 
-end Phenomena.Tense.Bridge
+end Phenomena.TenseAspect.Bridge

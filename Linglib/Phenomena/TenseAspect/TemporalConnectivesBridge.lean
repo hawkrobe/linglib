@@ -28,7 +28,7 @@ as intervals over ℕ, then verifies that `Anscombe.before`/`after` and
 - Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, Table 1.
 -/
 
-namespace Phenomena.Tense.TemporalConnectives.Examples
+namespace Phenomena.TenseAspect.TemporalConnectives.Examples
 
 open Core.Time
 open Core.Time.Interval
@@ -236,4 +236,4 @@ theorem complet_telic_ee :
     COMPLET B_telic = { j | j = Interval.point 8 } :=
   complet_bridges_cessation ee_accomplishment
 
-end Phenomena.Tense.TemporalConnectives.Examples
+end Phenomena.TenseAspect.TemporalConnectives.Examples

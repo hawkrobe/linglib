@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.224.73] - 2026-02-20
+
+### Changed
+- **Merge Tense/ + Aspect/ → TenseAspect/**: Unified `Phenomena/Tense/` (10 files) and `Phenomena/Aspect/` (5 files) into `Phenomena/TenseAspect/` (15 files). Motivated by Typology.lean's Generalization 3: no tense-vs-aspect typological divide. Added 3 previously missing imports to `Linglib.lean` (Typology, AgentivityBridge, Studies.AlstottAravind2026).
+
+### Fixed
+- **StankovaSimik2024 build error**: Fix `open Phenomena.Negation.CzechThreeWayNeg` → `CzechThreeWayNegTypologyBridge` (wrong namespace in both Data.lean and parent .lean)
+
+## [0.224.72] - 2026-02-20
+
+### Added
+- **Bondarenko & Elliott (2026) monotonicity via mereology**: Truthmaker semantics + attitude verb monotonicity classification
+  - `Theories/Semantics/Truthmaker/Basic.lean`: State-based propositions grounded in `Core/Mereology.lean`; conjunction via fusion, content parthood, `mono_att_distrib_and` (conjunction distribution from `le_sup_left`/`le_sup_right` — no sorry)
+  - `Theories/Semantics/Attitudes/Monotonicity.lean`: Attitude complement positions classified by `EntailmentSig`; neg-raising derived from monotonicity + EMP; bridge theorems showing agreement with veridicality-based derivation in `NegRaising.lean`
+  - `Phenomena/Complementation/Attitudes/ConjunctionDistribution/Data.lean`: Empirical data for 8 verbs (6 distributing, 2 non-distributing)
+  - `VerbCore.complementSig : Option EntailmentSig` field with derived `distribOverConj`/`isComplementUE`; populated for 10 attitude verbs in English fragment
+- **Bibliography**: `bondarenko-elliott-2026`, `fine-2017` added to `references.bib`
+
 ## [0.224.71] - 2026-02-20
 
 ### Added

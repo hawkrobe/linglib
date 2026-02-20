@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Questions.Polarity
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
-import Linglib.Phenomena.Aspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Kay & Fillmore (1999): *What's X Doing Y?* Construction
@@ -311,7 +311,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
 -- ============================================================================
 
 open Semantics.Lexical.Verb.Aspect
-open Phenomena.Aspect.Diagnostics
+open Phenomena.TenseAspect.Diagnostics
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates
 that are durative ∧ dynamic. This connects to the progressive diagnostic:

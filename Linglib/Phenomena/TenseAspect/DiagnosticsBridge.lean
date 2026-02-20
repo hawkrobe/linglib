@@ -47,7 +47,7 @@ The classic tests from Vendler (1957) and Dowty (1979):
 
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
-namespace Phenomena.Aspect.Diagnostics
+namespace Phenomena.TenseAspect.Diagnostics
 
 open Semantics.Lexical.Verb.Aspect
 
@@ -370,4 +370,4 @@ Import this module for empirical tests and example data.
 Use `runDiagnostics` to get predictions for any Vendler class.
 -/
 
-end Phenomena.Aspect.Diagnostics
+end Phenomena.TenseAspect.Diagnostics
