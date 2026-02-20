@@ -111,7 +111,8 @@ private def roundUpBin (q : ℚ) (bits : ℕ) : ℚ :=
     Maintains soundness: the rounded interval contains the original.
     Assumes both bounds are nonneg (always true for RSA scores). -/
 private def roundBounds (b : MetaBounds) (bits : ℕ := 48) : MetaBounds :=
-  ⟨roundDownBin b.lo bits, roundUpBin b.hi bits⟩
+  if b.lo == b.hi then b  -- point interval: already exact, rounding would only widen
+  else ⟨roundDownBin b.lo bits, roundUpBin b.hi bits⟩
 
 private def metaQIAdd (a b : MetaBounds) : MetaBounds := ⟨a.lo + b.lo, a.hi + b.hi⟩
 
@@ -119,11 +120,19 @@ private def metaQISumMap (scores : Array MetaBounds) : MetaBounds :=
   scores.foldl metaQIAdd ⟨0, 0⟩
 
 private def metaQIDivPosSafe (num denom : MetaBounds) : MetaBounds :=
-  if num.lo ≥ 0 && denom.lo > 0 then ⟨num.lo / denom.hi, num.hi / denom.lo⟩
+  if denom.hi ≤ 0 then ⟨0, 0⟩  -- all scores = 0 ⟹ policy = 0 (RationalAction convention)
+  else if num.lo ≥ 0 && denom.lo > 0 then ⟨num.lo / denom.hi, num.hi / denom.lo⟩
   else ⟨0, 1⟩
 
 private def metaQINormalize (scores : Array MetaBounds) (targetIdx : ℕ) : MetaBounds :=
-  roundBounds (metaQIDivPosSafe scores[targetIdx]! (metaQISumMap scores))
+  let target := scores[targetIdx]!
+  if target.hi ≤ 0 then ⟨0, 0⟩  -- target score is zero → policy = 0
+  else
+    -- If all non-target scores are zero, policy is exactly 1 (no interval widening)
+    let othersNonZero := (List.range scores.size).any fun i =>
+      i != targetIdx && scores[i]!.hi > 0
+    if !othersNonZero then ⟨1, 1⟩
+    else roundBounds (metaQIDivPosSafe target (metaQISumMap scores))
 
 /-- Compute L1 unnormalized score at meta level using MetaBounds.
       L1(u,w) = worldPrior(w) · Σ_l latentPrior(w,l) · S1_policy(l,w,u)
@@ -168,6 +177,44 @@ private partial def findEmbeddedNat (e : Expr) (depth : ℕ := 15) : Option ℕ 
   else if let some n := e.rawNatLit? then some n
   else e.getAppArgs.findSome? (findEmbeddedNat · (depth - 1))
 
+/-- Extract a ℤ from an expression in constructor form (Int.ofNat n or Int.negSucc n). -/
+private def extractIntExpr (e : Expr) : MetaM (Option ℤ) := do
+  let e' ← whnf e
+  if e'.isAppOfArity ``Int.ofNat 1 then
+    let n ← whnf e'.getAppArgs[0]!
+    return n.rawNatLit?.map Int.ofNat
+  else if e'.isAppOfArity ``Int.negSucc 1 then
+    let n ← whnf e'.getAppArgs[0]!
+    return n.rawNatLit?.map Int.negSucc
+  else if let some n := e'.rawNatLit? then
+    return some (Int.ofNat n)
+  else
+    return none
+
+/-- Extract ℚ from a Real.ofCauchy expression by evaluating the Cauchy sequence
+    at index 0 and reading the resulting ℚ literal.
+
+    CauSeq ℚ abs is a Subtype { val : ℕ → ℚ // IsCauSeq abs val }, so we project
+    .val (field 0 of Subtype), apply to 0, and whnf-reduce to get a concrete Rat
+    constructor (Rat.mk num den proof₁ proof₂). Then project .num and .den to
+    extract the ℚ value.
+
+    This handles fractions (2/3, 1/3, etc.) that findEmbeddedNat cannot,
+    since findEmbeddedNat only scans for the first raw nat literal. -/
+private def extractRatFromCauchy (e : Expr) : MetaM (Option ℚ) := do
+  let args := e.getAppArgs
+  if args.isEmpty then return none
+  let seq := args.back!
+  -- Project Subtype.val (field 0), apply to 0, and reduce
+  let fAtZero ← whnf (mkApp (mkProj ``Subtype 0 seq) (mkRawNatLit 0))
+  -- Project Rat.num (field 0) and Rat.den (field 1)
+  let numExpr ← whnf (mkProj ``Rat 0 fAtZero)
+  let denExpr ← whnf (mkProj ``Rat 1 fAtZero)
+  let some den := denExpr.rawNatLit? | return none
+  if den == 0 then return none
+  let some num ← extractIntExpr numExpr | return none
+  return some (mkRat num den)
+
 private def maxDepth : ℕ := 200
 
 /-- Memoization cache for reifyToRExpr, keyed on Expr structural hash. -/
@@ -203,10 +250,22 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   let fn := e.getAppFn
   let args := e.getAppArgs
 
-  -- Cauchy-form ℝ literal: Real.ofCauchy (↑n) from over-reduced OfNat.ofNat
-  -- When whnf reduces OfNat.ofNat ℝ n inst past the OfNat instance, it produces
-  -- the internal constructor form { cauchy := ↑n }. Recover n via findEmbeddedNat.
+  -- Cauchy-form ℝ literal: Real.ofCauchy wraps a constant Cauchy sequence.
+  -- Extract the ℚ value by evaluating the sequence at index 0.
   if fn.isConstOf ``Real.ofCauchy then
+    if let some q ← extractRatFromCauchy e then
+      if q.den == 1 && q.num ≥ 0 then
+        let n := q.num.toNat
+        let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
+        return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
+      else
+        -- Fraction or negative: build RExpr.div (possibly with RExpr.neg)
+        let numE ← mkAppM ``RExpr.nat #[mkRawNatLit q.num.natAbs]
+        let denE ← mkAppM ``RExpr.nat #[mkRawNatLit q.den]
+        let divE ← mkAppM ``RExpr.div #[numE, denE]
+        let rexpr ← if q.num < 0 then mkAppM ``RExpr.neg #[divE] else pure divE
+        return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
+    -- Fallback: scan for embedded nat (handles cases where Cauchy structure is unusual)
     if let some n := findEmbeddedNat e then
       let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
       return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
@@ -452,6 +511,17 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   if eType.isConstOf ``Real then
     -- Fast path: check Cauchy form before the isDefEq loop
     if e.getAppFn.isConstOf ``Real.ofCauchy then
+      if let some q ← extractRatFromCauchy e then
+        if q.den == 1 && q.num ≥ 0 then
+          let n := q.num.toNat
+          let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
+          return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
+        else
+          let numE ← mkAppM ``RExpr.nat #[mkRawNatLit q.num.natAbs]
+          let denE ← mkAppM ``RExpr.nat #[mkRawNatLit q.den]
+          let divE ← mkAppM ``RExpr.div #[numE, denE]
+          let rexpr ← if q.num < 0 then mkAppM ``RExpr.neg #[divE] else pure divE
+          return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
       if let some n := findEmbeddedNat e then
         let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
         return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
@@ -659,6 +729,10 @@ private partial def matchArithOp (e : Expr) (extractRat : Expr → MetaM ℚ) :
   if isAppOfMin' e ``Neg.neg 3 then
     let a ← extractRat e.getAppArgs[2]!
     return some (-a)
+  -- Inv (a⁻¹ = 1/a)
+  if isAppOfMin' e ``Inv.inv 3 then
+    let a ← extractRat e.getAppArgs[2]!
+    if a ≠ 0 then return some (1 / a)
   return none
 
 /-- Try to extract a ℚ literal from an ℝ expression.
@@ -676,10 +750,11 @@ private partial def extractRat (e : Expr) : MetaM ℚ := do
   if let some n := getNat?' e' then return (n : ℚ)
   if let some q ← matchArithOp e' extractRat then return q
   -- 4. Detect ℝ literal — may be in Cauchy sequence form after whnf
-  -- Fast-path: Cauchy-form ℝ literal (avoids 11 wasted isDefEq attempts for large nats)
-  if e'.getAppFn.isConstOf ``Real.ofCauchy then
-    if let some n := findEmbeddedNat e' then return (n : ℚ)
+  -- Extract ℚ from Cauchy form by evaluating the sequence at index 0
   let eType ← inferType e'
+  if e'.getAppFn.isConstOf ``Real.ofCauchy then
+    if let some q ← extractRatFromCauchy e' then return q
+    if let some n := findEmbeddedNat e' then return (n : ℚ)
   if eType.isConstOf ``Real then
     -- Try isDefEq for small numbers (handles Real.one✝, Real.zero✝, etc.)
     for n in ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List ℕ) do
@@ -689,35 +764,57 @@ private partial def extractRat (e : Expr) : MetaM ℚ := do
         try isDefEq e' target catch _ => return false
       if isEq then return (n : ℚ)
     -- Try scanning for embedded nat literal (handles large numbers like 4205)
-    if let some n := findEmbeddedNat e' then return (n : ℚ)
+    -- Only for Cauchy forms — not for internal ops like Real.mul which embed
+    -- multiple nats (numerator AND denominator) and findEmbeddedNat would pick
+    -- up only the first one.
+    if e'.getAppFn.isConstOf ``Real.ofCauchy then
+      if let some q ← extractRatFromCauchy e' then return q
+      if let some n := findEmbeddedNat e' then return (n : ℚ)
   -- 5. isDefEq fallback for binary ops after whnf
-  if eType.isConstOf ``Real && e'.getAppNumArgs ≥ 2 then
-    let a := e'.getAppArgs[e'.getAppNumArgs - 2]!
-    let b := e'.getAppArgs[e'.getAppNumArgs - 1]!
-    let isMul ← withNewMCtxDepth do
-      try isDefEq e' (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
-    if isMul then
-      let va ← extractRat a
-      let vb ← extractRat b
-      return va * vb
-    let isAdd ← withNewMCtxDepth do
-      try isDefEq e' (← mkAppM ``HAdd.hAdd #[a, b]) catch _ => return false
-    if isAdd then
-      let va ← extractRat a
-      let vb ← extractRat b
-      return va + vb
-    let isDiv ← withNewMCtxDepth do
-      try isDefEq e' (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
-    if isDiv then
-      let va ← extractRat a
-      let vb ← extractRat b
-      if vb ≠ 0 then return va / vb
-    let isSub ← withNewMCtxDepth do
-      try isDefEq e' (← mkAppM ``HSub.hSub #[a, b]) catch _ => return false
-    if isSub then
-      let va ← extractRat a
-      let vb ← extractRat b
-      return va - vb
+  -- Handles internal names like Real.mul, Real.add that don't match HMul/HAdd
+  let eType' ← if eType.isConstOf ``Real then pure eType else inferType e'
+  if eType'.isConstOf ``Real then
+    -- Binary ops
+    if e'.getAppNumArgs ≥ 2 then
+      let a := e'.getAppArgs[e'.getAppNumArgs - 2]!
+      let b := e'.getAppArgs[e'.getAppNumArgs - 1]!
+      let isMul ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
+      if isMul then
+        let va ← extractRat a
+        let vb ← extractRat b
+        return va * vb
+      let isAdd ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``HAdd.hAdd #[a, b]) catch _ => return false
+      if isAdd then
+        let va ← extractRat a
+        let vb ← extractRat b
+        return va + vb
+      let isDiv ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
+      if isDiv then
+        let va ← extractRat a
+        let vb ← extractRat b
+        if vb ≠ 0 then return va / vb
+      let isSub ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``HSub.hSub #[a, b]) catch _ => return false
+      if isSub then
+        let va ← extractRat a
+        let vb ← extractRat b
+        return va - vb
+    -- Unary ops (Inv.inv, Neg.neg)
+    if e'.getAppNumArgs ≥ 1 then
+      let a := e'.getAppArgs.back!
+      let isInv ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``Inv.inv #[a]) catch _ => return false
+      if isInv then
+        let va ← extractRat a
+        if va ≠ 0 then return 1 / va
+      let isNeg ← withNewMCtxDepth do
+        try isDefEq e' (← mkAppM ``Neg.neg #[a]) catch _ => return false
+      if isNeg then
+        let va ← extractRat a
+        return -va
   throwError "rsa_predict: cannot extract ℚ from: {← ppExpr e'}"
 
 -- ============================================================================
@@ -1106,8 +1203,9 @@ elab "rsa_predict" : tactic => do
     return
   catch _ => pure ()
 
-  -- ¬(_ > _): detect as P → False (Not is @[reducible])
-  if let .forallE _ inner (.const ``False []) _ := goalType then do
+  -- ¬(_ > _): detect as P → False (Not is @[reducible], so whnf reduces @Not P)
+  let goalTypeWhnf ← whnf goalType
+  if let .forallE _ inner (.const ``False []) _ := goalTypeWhnf then do
     let innerFn := inner.getAppFn
     let innerArgs := inner.getAppArgs
     unless innerFn.isConstOf ``GT.gt && innerArgs.size ≥ 4 do

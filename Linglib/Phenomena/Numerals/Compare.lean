@@ -32,7 +32,7 @@ have been removed pending reimplementation with the new RSAConfig framework.
 ## Architecture
 
 ```
-Phenomena.Imprecision.Numerals (k-ness core)
+Phenomena.Gradability.Imprecision.Numerals (k-ness core)
     ↑              ↑                ↑
     |              |                |
 Phenomena.        NeoGricean.       Semantics.Montague.

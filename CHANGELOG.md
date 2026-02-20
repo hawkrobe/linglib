@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.224.69] - 2026-02-20
+
+### Fixed
+- **`extractRat` fraction bug**: Fix `extractRat` dropping denominators from ℝ fractions like `2/3 : ℝ` — after `whnf`, these reduce to internal `Real.mul`/`Real.inv` forms (not `Real.ofCauchy`), causing `findEmbeddedNat` to return only the numerator
+  - Add `extractRatFromCauchy`: evaluates Cauchy sequences at index 0 to extract exact ℚ
+  - Add `extractIntExpr`: extracts ℤ from `Int.ofNat`/`Int.negSucc` constructor forms
+  - Guard `findEmbeddedNat` to only run for `Real.ofCauchy` heads (not internal ops)
+  - Add unary `Inv.inv`/`Neg.neg` isDefEq fallbacks in `extractRat` step 5
+  - Add `Inv.inv` handling to `matchArithOp`
+- **Interval precision for exact values**: Skip `roundBounds` for point intervals (`lo == hi`), preventing unnecessary widening of exact ℚ values through binary rounding
+- **S1 policy normalization**: Return exact `[1, 1]` in `metaQINormalize` when target is the only non-zero S1 score, preventing interval widening from `a/a` division
+
+### Changed
+- **Rewrite GS2013 implementation**: Replace 631-line hand-rolled evaluator with ~220-line `RSAConfig` formalization using compositional `s1Score = exp(α · E_belief[log L0(s|u)])` and explicit quality filter; eliminate all ℚ-duplicate definitions (`affectPrior_q`, `L0_policy_q`, `S1_score_qi`, etc.)
+- **Rewrite GS2013 bridge**: All 11 empirical findings from Goodman & Stuhlmuller (2013) now proved via `rsa_predict` — 5 positive (`>`) and 6 negation (`¬(>)`) theorems, plus `all_findings_verified` summary theorem
+
 ## [0.224.64] - 2026-02-20
 
 ### Changed

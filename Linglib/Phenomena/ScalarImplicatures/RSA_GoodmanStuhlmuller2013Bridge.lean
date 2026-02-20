@@ -1,3 +1,4 @@
+import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Implementations.GoodmanStuhlmuller2013
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 
@@ -7,14 +8,17 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 Bridge theorems verifying that the knowledge-sensitive RSA model reproduces the
 qualitative findings from Experiments 1 and 2.
 
-The model uses a quality-filtered S1 speaker (G&S Eq. 2-3) that can only utter
-sentences true at every world consistent with its observations. L1 marginalizes
-over observations to infer world states. All proofs are by `native_decide` on
-rational arithmetic.
+The model uses `RSAConfig` with a compositional S1 score:
 
-**Experiment 1** (quantifiers): `l1q` — L1 with quantifier meaning {none, some, all}.
+    S1(u | obs) ∝ exp(α · E_belief[log L0(s | u)])
 
-**Experiment 2** (number words): `l1_lb` — L1 with lower-bound numeral meaning
+with an explicit quality filter (utterances must be true at all worlds the speaker
+considers possible). L1 marginalizes over observations to infer world states. All
+proofs use `rsa_predict` on interval-arithmetic bounds.
+
+**Experiment 1** (quantifiers): `gsCfgQ` — quantifier meaning {none, some, all}.
+
+**Experiment 2** (number words): `gsCfgN` — lower-bound numeral meaning
 {one, two, three}, where "two" means "at least two".
 
 | # | Finding | Model prediction |
@@ -37,75 +41,85 @@ set_option autoImplicit false
 namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013Bridge
 
 open RSA.GoodmanStuhlmuller2013
-open RSA.GoodmanStuhlmuller2013.KnowledgeState
 open Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013 (Finding)
 
 -- ============================================================================
 -- Experiment 1: "some" x access
 -- ============================================================================
 
+set_option maxHeartbeats 4000000 in
 /-- Full access: L1 infers state 2 over state 3 — scalar implicature present. -/
 theorem some_full_implicature :
-    getScore (l1q .some_ .a3) .s2 > getScore (l1q .some_ .a3) .s3 := by
-  native_decide
+    (gsCfgQ .a3).L1 .some_ .s2 > (gsCfgQ .a3).L1 .some_ .s3 := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): implicature canceled — state 2 does not exceed state 3. -/
 theorem some_minimal_canceled :
-    ¬(getScore (l1q .some_ .a1) .s2 > getScore (l1q .some_ .a1) .s3) := by
-  native_decide
+    ¬((gsCfgQ .a1).L1 .some_ .s2 > (gsCfgQ .a1).L1 .some_ .s3) := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): implicature canceled — state 2 does not exceed state 3. -/
 theorem some_partial_canceled :
-    ¬(getScore (l1q .some_ .a2) .s2 > getScore (l1q .some_ .a2) .s3) := by
-  native_decide
+    ¬((gsCfgQ .a2).L1 .some_ .s2 > (gsCfgQ .a2).L1 .some_ .s3) := by
+  rsa_predict
 
 -- ============================================================================
 -- Experiment 2: "two" x access
 -- ============================================================================
 
+set_option maxHeartbeats 4000000 in
 /-- Full access: "two" → upper-bounded reading, state 2 > state 3. -/
 theorem two_full_upper_bounded :
-    getScore (l1_lb .two .a3) .s2 > getScore (l1_lb .two .a3) .s3 := by
-  native_decide
+    (gsCfgN .a3).L1 .two .s2 > (gsCfgN .a3).L1 .two .s3 := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): upper bound weakened — state 2 does not exceed state 3. -/
 theorem two_partial_weakened :
-    ¬(getScore (l1_lb .two .a2) .s2 > getScore (l1_lb .two .a2) .s3) := by
-  native_decide
+    ¬((gsCfgN .a2).L1 .two .s2 > (gsCfgN .a2).L1 .two .s3) := by
+  rsa_predict
 
 -- ============================================================================
 -- Experiment 2: "one" x access
 -- ============================================================================
 
+set_option maxHeartbeats 4000000 in
 /-- Full access: "one" → state 1 preferred over state 2. -/
 theorem one_full_1v2 :
-    getScore (l1_lb .one .a3) .s1 > getScore (l1_lb .one .a3) .s2 := by
-  native_decide
+    (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s2 := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Full access: "one" → state 1 preferred over state 3. -/
 theorem one_full_1v3 :
-    getScore (l1_lb .one .a3) .s1 > getScore (l1_lb .one .a3) .s3 := by
-  native_decide
+    (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s3 := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): canceled — state 1 does not exceed state 2. -/
 theorem one_minimal_1v2_canceled :
-    ¬(getScore (l1_lb .one .a1) .s1 > getScore (l1_lb .one .a1) .s2) := by
-  native_decide
+    ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s2) := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): canceled — state 1 does not exceed state 3. -/
 theorem one_minimal_1v3_canceled :
-    ¬(getScore (l1_lb .one .a1) .s1 > getScore (l1_lb .one .a1) .s3) := by
-  native_decide
+    ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s3) := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): state 1 > state 3 (partial implicature persists). -/
 theorem one_partial_1v3 :
-    getScore (l1_lb .one .a2) .s1 > getScore (l1_lb .one .a2) .s3 := by
-  native_decide
+    (gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s3 := by
+  rsa_predict
 
+set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): state 1 does not exceed state 2 (still canceled). -/
 theorem one_partial_1v2_canceled :
-    ¬(getScore (l1_lb .one .a2) .s1 > getScore (l1_lb .one .a2) .s2) := by
-  native_decide
+    ¬((gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s2) := by
+  rsa_predict
 
 -- ============================================================================
 -- Verification: every finding from the paper is accounted for
@@ -114,27 +128,27 @@ theorem one_partial_1v2_canceled :
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/
 def formalize : Finding → Prop
   | .some_full_implicature =>
-      getScore (l1q .some_ .a3) .s2 > getScore (l1q .some_ .a3) .s3
+      (gsCfgQ .a3).L1 .some_ .s2 > (gsCfgQ .a3).L1 .some_ .s3
   | .some_minimal_canceled =>
-      ¬(getScore (l1q .some_ .a1) .s2 > getScore (l1q .some_ .a1) .s3)
+      ¬((gsCfgQ .a1).L1 .some_ .s2 > (gsCfgQ .a1).L1 .some_ .s3)
   | .some_partial_canceled =>
-      ¬(getScore (l1q .some_ .a2) .s2 > getScore (l1q .some_ .a2) .s3)
+      ¬((gsCfgQ .a2).L1 .some_ .s2 > (gsCfgQ .a2).L1 .some_ .s3)
   | .two_full_upper_bounded =>
-      getScore (l1_lb .two .a3) .s2 > getScore (l1_lb .two .a3) .s3
+      (gsCfgN .a3).L1 .two .s2 > (gsCfgN .a3).L1 .two .s3
   | .two_partial_weakened =>
-      ¬(getScore (l1_lb .two .a2) .s2 > getScore (l1_lb .two .a2) .s3)
+      ¬((gsCfgN .a2).L1 .two .s2 > (gsCfgN .a2).L1 .two .s3)
   | .one_full_1v2 =>
-      getScore (l1_lb .one .a3) .s1 > getScore (l1_lb .one .a3) .s2
+      (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s2
   | .one_full_1v3 =>
-      getScore (l1_lb .one .a3) .s1 > getScore (l1_lb .one .a3) .s3
+      (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s3
   | .one_minimal_1v2_canceled =>
-      ¬(getScore (l1_lb .one .a1) .s1 > getScore (l1_lb .one .a1) .s2)
+      ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s2)
   | .one_minimal_1v3_canceled =>
-      ¬(getScore (l1_lb .one .a1) .s1 > getScore (l1_lb .one .a1) .s3)
+      ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s3)
   | .one_partial_1v3 =>
-      getScore (l1_lb .one .a2) .s1 > getScore (l1_lb .one .a2) .s3
+      (gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s3
   | .one_partial_1v2_canceled =>
-      ¬(getScore (l1_lb .one .a2) .s1 > getScore (l1_lb .one .a2) .s2)
+      ¬((gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s2)
 
 /-- The RSA model accounts for all 11 empirical findings from G&S (2013). -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
