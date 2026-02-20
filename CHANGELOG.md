@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.224.55] - 2026-02-20
+
+### Changed
+- **Kao et al. QUD refactor**: Replace manual `qudProject` match arms with declarative `project : World → Goal → ℕ` + `Finset.univ.filter.sum`; equivalence classes are derived from `project`, not hand-enumerated; remove `PriceState.sharp`; verified against memo reference implementation (all 12 values agree to ~7 significant figures)
+
+## [0.224.54] - 2026-02-20
+
+### Fixed
+- **qudProject bug in Kao et al. (2014)**: approxPrice/approxPriceValence projections didn't include both round and sharp members of the equivalence class for round states; all 6 findings now agree numerically with the Python reference (ratio error < 0.01%)
+
+### Changed
+- **Verified.lean cleanup**: Reduce from ~300 lines to 60 — keep only 3 bridge axioms (`L1_gt_of_precomputed`, `L1_latent_gt_of_precomputed`, `L1_sum_gt_of_precomputed`); remove all dead Gen 1/Gen 2 evaluator infrastructure
+- **Kao Data/Bridge redesign**: Replace `HyperbolePrediction`/`LiteralPrediction`/`HaloPrediction` Bool structures with `Finding` inductive (6 constructors); add `formalize : Finding → Prop` and `all_findings_verified : ∀ f, formalize f` to bridge file
+
 ## [0.224.53] - 2026-02-20
 
 ### Changed
