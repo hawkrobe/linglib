@@ -390,6 +390,7 @@ import Linglib.Phenomena.Tense.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Compare
 import Linglib.Phenomena.ScalarImplicatures.CompareAgreement
+import Linglib.Phenomena.ScalarImplicatures.RSA_GoodmanStuhlmuller2013Bridge
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic

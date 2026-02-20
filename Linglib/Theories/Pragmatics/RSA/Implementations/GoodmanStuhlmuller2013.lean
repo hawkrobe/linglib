@@ -45,13 +45,13 @@ open Semantics.Lexical.Numeral
 
 -- Local helpers (replacing removed RSA.Eval)
 
-private def sumScores (xs : List ℚ) : ℚ := xs.foldl (· + ·) 0
+def sumScores (xs : List ℚ) : ℚ := xs.foldl (· + ·) 0
 
-private def normalize {α : Type} [BEq α] (xs : List (α × ℚ)) : List (α × ℚ) :=
+def normalize {α : Type} [BEq α] (xs : List (α × ℚ)) : List (α × ℚ) :=
   let total := sumScores (xs.map Prod.snd)
   if total > 0 then xs.map (fun (a, s) => (a, s / total)) else xs
 
-private def getScore {α : Type} [BEq α] (xs : List (α × ℚ)) (a : α) : ℚ :=
+def getScore {α : Type} [BEq α] (xs : List (α × ℚ)) (a : α) : ℚ :=
   match xs.find? (fun p => p.1 == a) with
   | some (_, s) => s
   | none => 0
@@ -249,16 +249,6 @@ def quantifierMeaning : QUtt → WorldState → Bool
 
 def l1q (u : QUtt) (a : Access) := L1_scores quantifierMeaning allQUtts u a
 
-/-- With full access, implicature holds: L1("some") prefers s1 over s3. -/
-theorem implicature_with_full_access :
-    getScore (l1q .some_ .a3) .s1 > getScore (l1q .some_ .a3) .s3 := by
-  native_decide
-
-/-- With partial access (a=1), implicature is canceled. -/
-theorem implicature_canceled_access1 :
-    ¬(getScore (l1q .some_ .a1) .s2 > getScore (l1q .some_ .a1) .s3) := by
-  native_decide
-
 /-- Basic and knowledge-state RSA agree on full-access implicature. -/
 theorem models_consistent_on_implicature :
     (getScore l1_some (w1 (n := 3)) > getScore l1_some (wAll (n := 3)))
@@ -421,17 +411,6 @@ def l1_lb (u : NumUtterance) (a : Access) := L1_scores lbMeaning allNumUtterance
 /-- Lower-bound: "two" is ambiguous at L0 (compatible with s2 AND s3). -/
 theorem lb_has_ambiguity :
     (allWorldStates.filter (lbMeaning .two)).length = 2 := by native_decide
-
-/-- Lower-bound + full access: implicature emerges. -/
-theorem lb_full_access_implicature :
-    getScore (l1_lb .two .a3) .s2 > getScore (l1_lb .two .a3) .s3 := by
-  native_decide
-
-/-- Lower-bound + partial access: implicature weakens. -/
-theorem lb_partial_access_weakens :
-    getScore (l1_lb .two .a3) .s2 - getScore (l1_lb .two .a3) .s3 >
-    getScore (l1_lb .two .a2) .s2 - getScore (l1_lb .two .a2) .s3 := by
-  native_decide
 
 -- ============================================================================
 -- Section 5d: Empirical Predictions

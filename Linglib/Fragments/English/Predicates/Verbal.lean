@@ -222,6 +222,50 @@ def measure : VerbEntry := .mkRegular {
   objectTheta := some .theme
   levinClass := some .measure }
 
+/-- "buy" — irregular transitive -/
+def buy : VerbEntry where
+  form := "buy"
+  form3sg := "buys"
+  formPast := "bought"
+  formPastPart := "bought"
+  formPresPart := "buying"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+
+/-- "meet" — irregular transitive -/
+def meet : VerbEntry where
+  form := "meet"
+  form3sg := "meets"
+  formPast := "met"
+  formPastPart := "met"
+  formPresPart := "meeting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+
+/-- "sell" — irregular transitive -/
+def sell : VerbEntry where
+  form := "sell"
+  form3sg := "sells"
+  formPast := "sold"
+  formPastPart := "sold"
+  formPresPart := "selling"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+
+/-- "leave" — transitive (also used intransitively with argument drop) -/
+def leave : VerbEntry where
+  form := "leave"
+  form3sg := "leaves"
+  formPast := "left"
+  formPastPart := "left"
+  formPresPart := "leaving"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+
 /-- "see" — transitive, can also embed clauses -/
 def see : VerbEntry where
   form := "see"
@@ -493,10 +537,14 @@ def want : VerbEntry := .mkRegular {
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
   levinClass := some .want }
 
-/-- "hope" — preferential attitude verb (Class 3: anti-rogative) -/
+/-- "hope" — preferential attitude verb (Class 3: anti-rogative).
+    Primary frame: finite clause ("hope that John leaves").
+    Alternate frame: infinitival with subject control ("hope to leave"). -/
 def hope : VerbEntry := .mkRegular {
   form := "hope"
   complementType := .finiteClause
+  altComplementType := some .infinitival
+  altControlType := .subjectControl
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -928,7 +976,8 @@ def forget_rog : VerbEntry where
 /-- Get all verb entries as a list (for enumeration). -/
 def allVerbs : List VerbEntry := [
   -- Simple
-  sleep, run, arrive, eat, kick, give, put, see, devour, read, sweep, sweep_instr,
+  sleep, run, arrive, eat, kick, give, put, buy, meet, sell, leave, see, devour, read,
+  sweep, sweep_instr,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State
@@ -975,6 +1024,7 @@ def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
       , person := some .third
       , voice := some .active
       , vform := some .finite
+      , tense := some .present
     }
   }
 
@@ -985,6 +1035,7 @@ def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   , features := {
       valence := some (complementToValence v.complementType)
       , number := some .pl
+      , tense := some .present
     }
   }
 
@@ -995,6 +1046,41 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   , features := {
       valence := some (complementToValence v.complementType)
       , vform := some .infinitive
+    }
+  }
+
+/-- Convert a verb entry to a `Word` in past tense (active finite) form. -/
+def VerbEntry.toWordPast (v : VerbEntry) : Word :=
+  { form := v.formPast
+  , cat := .VERB
+  , features := {
+      valence := some (complementToValence v.complementType)
+      , vform := some .finite
+      , voice := some .active
+      , tense := some .past
+    }
+  }
+
+/-- Convert a verb entry to a `Word` in past participle form.
+    Retains original valence (for perfects: "has kicked the ball").
+    For passive constructions, compose with `Word.asPassive`:
+    `v.toWordPastPart.asPassive`. -/
+def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
+  { form := v.formPastPart
+  , cat := .VERB
+  , features := {
+      valence := some (complementToValence v.complementType)
+      , vform := some .pastParticiple
+    }
+  }
+
+/-- Convert a verb entry to a `Word` in present participle form. -/
+def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
+  { form := v.formPresPart
+  , cat := .VERB
+  , features := {
+      valence := some (complementToValence v.complementType)
+      , vform := some .presParticiple
     }
   }
 
