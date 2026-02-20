@@ -15,7 +15,7 @@ All three RSA levels are `RationalAction` instances:
 
     L0agent(l) : RationalAction U W    score(u, w) = meaning(l, u, w)
     S1agent(l) : RationalAction W U    score(w, u) = s1Score(L0.policy, α, l, w, u)
-    L1agent    : RationalAction U W    score(u, w) = prior(w) · Σ_l prior(l) · S1(u|w,l)
+    L1agent    : RationalAction U W    score(u, w) = prior(w) · Σ_l prior(l|w) · S1(u|w,l)
 
 L0 scores are just the meaning function — any prior the paper wants in L0
 is baked into `meaning`. The empirical `worldPrior` (object salience, base
@@ -100,10 +100,14 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   α : ℝ
   /-- Rationality is positive. -/
   α_pos : 0 < α
-  /-- Prior over latent variables (unnormalized). -/
-  latentPrior : Latent → ℝ := fun _ => 1
+  /-- Prior over latent variables (unnormalized), possibly world-dependent.
+      Default: uniform (ignores world). World-dependent priors support models
+      where the latent variable's distribution depends on the world state
+      (e.g., observation probability conditioned on true state in
+      Goodman & Stuhlmuller 2013). -/
+  latentPrior : W → Latent → ℝ := fun _ _ => 1
   /-- Latent prior is non-negative. -/
-  latentPrior_nonneg : ∀ l, 0 ≤ latentPrior l
+  latentPrior_nonneg : ∀ w l, 0 ≤ latentPrior w l
   /-- Empirical prior over worlds (unnormalized).
       Enters only at L1, not L0. This is the object salience / base rate
       that the pragmatic listener uses for Bayesian inversion. -/
@@ -180,7 +184,7 @@ theorem S1_sum_eq_one (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
 /-- L1 as a RationalAction.
 
 The pragmatic listener inverts S1 via Bayes' rule, marginalizing over
-latent variables. Score = prior(w) · Σ_l prior(l) · S1(u|w,l).
+latent variables. Score = prior(w) · Σ_l prior(l|w) · S1(u|w,l).
 
 The empirical `worldPrior` enters here (not at L0), so L0 stays fixed
 under iterated prior updates.
@@ -190,18 +194,18 @@ In other settings, L1 is updating beliefs about the world.
 Either way, the math is the same (Qing & Franke 2013). -/
 noncomputable def L1agent (cfg : RSAConfig U W) :
     RationalAction U W where
-  score u w := cfg.worldPrior w * ∑ l : cfg.Latent, cfg.latentPrior l * cfg.S1 l w u
+  score u w := cfg.worldPrior w * ∑ l : cfg.Latent, cfg.latentPrior w l * cfg.S1 l w u
   score_nonneg u w := mul_nonneg (cfg.worldPrior_nonneg w)
-    (Finset.sum_nonneg fun l _ => mul_nonneg (cfg.latentPrior_nonneg l) (cfg.S1_nonneg l w u))
+    (Finset.sum_nonneg fun l _ => mul_nonneg (cfg.latentPrior_nonneg w l) (cfg.S1_nonneg l w u))
 
 /-- L1 posterior: P(w|u) ∝ prior(w) · Σ_l prior(l) · S1(u|w,l). -/
 noncomputable def L1 (cfg : RSAConfig U W) (u : U) (w : W) : ℝ :=
   cfg.L1agent.policy u w
 
-/-- L1 posterior over latent variables: P(l|u) ∝ prior(l) · Σ_w prior(w) · S1(u|w,l). -/
+/-- L1 posterior over latent variables: P(l|u) ∝ Σ_w prior(w) · prior(l|w) · S1(u|w,l). -/
 noncomputable def L1_latent (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) : ℝ :=
-  let score := cfg.latentPrior l * ∑ w : W, cfg.worldPrior w * cfg.S1 l w u
-  let total := ∑ l' : cfg.Latent, cfg.latentPrior l' * ∑ w : W, cfg.worldPrior w * cfg.S1 l' w u
+  let score := ∑ w : W, cfg.worldPrior w * cfg.latentPrior w l * cfg.S1 l w u
+  let total := ∑ l' : cfg.Latent, ∑ w : W, cfg.worldPrior w * cfg.latentPrior w l' * cfg.S1 l' w u
   if total = 0 then 0 else score / total
 
 end RSAConfig

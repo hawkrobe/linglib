@@ -134,7 +134,7 @@ noncomputable def cfg : RSAConfig CausalExpression CausalWorld where
   s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
   α := 1
   α_pos := one_pos
-  latentPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
   worldPrior_nonneg _ := by positivity
 
 
