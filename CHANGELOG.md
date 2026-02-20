@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.224.58] - 2026-02-20
+
+### Added
+- **DG ValencyBridge**: Full derivation chain from Fragment lexicon through DG valency theory to ArgumentStructure phenomena (Osborne 2019 Ch 6); 6 levels: frame satisfaction → subcategorization → passive rule → catena analysis → data match; all theorems by `rfl`/`native_decide`
+- **DG ControlBridge**: Enhanced dependency analysis for control/raising (Osborne 2019 Ch 6 §6.8–6.9); proves information loss in basic trees, recovery in enhanced graphs, edge classification, and bridge to CTPDatum equi-deletion for all 7 English control verbs
+- **Fragment infrastructure**: Add `toWordPast`, `toWordPastPart`, `toWordPresPart` methods to VerbEntry; add `Word.asPassive` compositional modifier; add 4 verb entries (buy, meet, sell, leave)
+
+### Changed
+- **`complementToValence` fix**: Clause-embedding types (finiteClause, infinitival, gerund, question, smallClause) now map to new `Valence.clausal` instead of misleading `.transitive`; `.np_pp` maps to `.locative`
+- **VerbCore alternate frames**: Add `altComplementType`/`altControlType` fields for verbs with two complement types (e.g., hope: finiteClause + infinitival with subject control)
+- **Features.tense**: Add `tense : Option Tense` field; `toWord3sg`/`toWordPl` set present, `toWordPast` sets past; `Tense` aliased to `UD.Tense`
+
 ## [0.224.57] - 2026-02-20
 
 ### Fixed

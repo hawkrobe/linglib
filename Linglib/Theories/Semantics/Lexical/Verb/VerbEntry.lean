@@ -213,6 +213,13 @@ structure VerbCore where
   object2Theta : Option ThetaRole := none
   /-- Control type for infinitival complements -/
   controlType : ControlType := .none
+  /-- Alternate complement frame, for verbs with two complement types.
+      E.g., "hope" primarily takes .finiteClause ("hope that...") but
+      also takes .infinitival ("hope to...") with subject control.
+      When set, `altControlType` specifies the control type for this frame. -/
+  altComplementType : Option ComplementType := none
+  /-- Control type for the alternate complement frame. -/
+  altControlType : ControlType := .none
   /-- Is the verb unaccusative? (subject is underlying object) -/
   unaccusative : Bool := false
   /-- Can the verb passivize? -/
@@ -328,12 +335,17 @@ def VerbCore.entailsComplement (v : VerbCore) : Option Bool :=
 def VerbCore.isPreferentialAttitude (v : VerbCore) : Bool :=
   v.preferentialValence.isSome
 
-/-- Map complement type to syntactic valence. -/
+/-- Map complement type to syntactic valence.
+    Clause-embedding types (.finiteClause, .infinitival, .gerund, .question,
+    .smallClause) map to `.clausal` — they take xcomp/ccomp, not obj.
+    `checkVerbSubcat` skips `.clausal` verbs (their frames require
+    different validation than NP-argument counting). -/
 def complementToValence : ComplementType → Valence
   | .none => .intransitive
   | .np => .transitive
   | .np_np => .ditransitive
-  | _ => .transitive  -- Clause-embedding verbs are syntactically transitive
+  | .np_pp => .locative
+  | _ => .clausal
 
 /-- Look up a verb core by citation form and sense tag. -/
 def lookupSense (verbs : List VerbCore) (form : String) (tag : SenseTag := .default) :

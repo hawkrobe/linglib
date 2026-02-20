@@ -77,6 +77,18 @@ abbrev pastParticiple : VForm := .Part
 abbrev presParticiple : VForm := .Part
 end VForm
 
+/-- Tense. Aliased to UD.Tense. -/
+abbrev Tense := UD.Tense
+
+namespace Tense
+/-- Past tense (compatibility alias) -/
+abbrev past : Tense := .Past
+/-- Present tense (compatibility alias) -/
+abbrev present : Tense := .Pres
+/-- Future tense (compatibility alias) -/
+abbrev future : Tense := .Fut
+end Tense
+
 -- ============================================================================
 -- Thematic Roles (Language-Independent)
 -- ============================================================================
@@ -109,6 +121,7 @@ inductive Valence where
   | dative        -- give X to Y (prepositional dative)
   | locative      -- put X on Y
   | copular       -- be (takes predicate)
+  | clausal       -- manage to VP, believe that S (xcomp/ccomp complement)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Head direction of a syntactic construction.
@@ -155,6 +168,7 @@ structure Features where
   valence : Option Valence := none
   voice : Option Voice := none
   vform : Option VForm := none
+  tense : Option Tense := none
   countable : Option Bool := none  -- for count vs mass nouns
   deriving Repr, DecidableEq
 
@@ -167,6 +181,12 @@ structure Word where
 
 /-- Convenience constructor for a featureless word (form + category only). -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := ⟨form, cat, {}⟩
+
+/-- Derive a passive variant: sets voice to passive, valence to intransitive.
+    Used to compose with `VerbEntry.toWordPastPart` for passive constructions. -/
+def Word.asPassive (w : Word) : Word :=
+  { w with features := { w.features with
+      valence := some .intransitive, voice := some Voice.passive } }
 
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
