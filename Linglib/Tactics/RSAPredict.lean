@@ -282,8 +282,62 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     if let some e' ← unfoldDefinition? e then
       return ← reifyToRExpr cache e' (depth - 1)
 
-  -- Real.exp
+  -- Real.exp — with exp-log algebraic simplification
+  -- exp(α*(log(x)-c)) = x^α * exp(-α*c), avoiding expensive logPoint calls.
+  -- logPoint (50 bisection iterations of Padé ℚ arithmetic) is 98% of reification time.
   if fn.isConstOf ``Real.exp && args.size ≥ 1 then
+    let inner := args[0]!
+    -- Try to decompose: inner = α * rest, or just rest with α=1
+    let (αExprOpt, rest) :=
+      if isAppOfMin' inner ``HMul.hMul 6 then
+        (some (inner.getAppArgs[4]!), inner.getAppArgs[5]!)
+      else if isAppOfMin' inner ``Mul.mul 4 then
+        (some (inner.getAppArgs[2]!), inner.getAppArgs[3]!)
+      else (none, inner)
+    -- Try to decompose: rest = log(x) - c, or just log(x) with c=0
+    let (logCandidate, cExprOpt) :=
+      if isAppOfMin' rest ``HSub.hSub 6 then
+        (rest.getAppArgs[4]!, some (rest.getAppArgs[5]!))
+      else if isAppOfMin' rest ``Sub.sub 4 then
+        (rest.getAppArgs[2]!, some (rest.getAppArgs[3]!))
+      else (rest, none)
+    -- Check if logCandidate is Real.log(x)
+    if logCandidate.getAppFn.isConstOf ``Real.log && logCandidate.getAppNumArgs ≥ 1 then
+      let xExpr := logCandidate.getAppArgs[0]!
+      -- Reify sub-parts (none of these trigger logPoint)
+      let (αRExpr, αBounds) ← match αExprOpt with
+        | some e => reifyToRExpr cache e (depth - 1)
+        | none => do
+          let r ← mkAppM ``RExpr.nat #[mkRawNatLit 1]
+          pure (r, (⟨1, 1⟩ : MetaBounds))
+      if αBounds.lo == αBounds.hi && αBounds.lo > 0 && αBounds.lo.den == 1 then
+        let α := αBounds.lo
+        let n := α.num.toNat
+        let (xRExpr, xBounds) ← reifyToRExpr cache xExpr (depth - 1)
+        if xBounds.lo ≥ 0 then
+          let (cRExpr, cBounds) ← match cExprOpt with
+            | some e => reifyToRExpr cache e (depth - 1)
+            | none => do
+              let r ← mkAppM ``RExpr.nat #[mkRawNatLit 0]
+              pure (r, (⟨0, 0⟩ : MetaBounds))
+          -- x^n bounds (nonneg x, positive integer n → monotone increasing)
+          let xPowBounds : MetaBounds :=
+            if n == 1 then xBounds else ⟨xBounds.lo ^ n, xBounds.hi ^ n⟩
+          -- exp(-n*c) bounds (exp monotone: use lo_arg for lo, hi_arg for hi)
+          let expFactorBounds : MetaBounds :=
+            let lo_arg := -(α * cBounds.hi)
+            let hi_arg := -(α * cBounds.lo)
+            if lo_arg == 0 && hi_arg == 0 then ⟨1, 1⟩
+            else ⟨(Linglib.Interval.expPoint lo_arg).lo,
+                  (Linglib.Interval.expPoint hi_arg).hi⟩
+          let bounds := metaEvalMul' xPowBounds expFactorBounds
+          -- Build RExpr preserving original structure
+          let logR ← mkAppM ``RExpr.rlog #[xRExpr]
+          let subR ← mkAppM ``RExpr.sub #[logR, cRExpr]
+          let mulR ← mkAppM ``RExpr.mul #[αRExpr, subR]
+          let rexpr ← mkAppM ``RExpr.rexp #[mulR]
+          return ← cacheReturn cache key (rexpr, bounds)
+    -- Fallback: reify argument normally and compute expPoint bounds
     let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.rexp #[ra]
     let elo := (Linglib.Interval.expPoint ba.lo).lo
