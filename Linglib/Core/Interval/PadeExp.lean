@@ -42,22 +42,6 @@ def padeDen (x : ℚ) : ℚ := padeNum (-x)
 def padeExp (x : ℚ) : ℚ := padeNum x / padeDen x
 
 -- ============================================================================
--- Coefficient verification
--- ============================================================================
-
-/-- padeExp(0) = 1 (exact). -/
-theorem padeExp_zero : padeExp 0 = 1 := by native_decide
-
-/-- padeDen(1) > 0 (denominator positive on [-1, 1]). -/
-theorem padeDen_pos_at_one : 0 < padeDen 1 := by native_decide
-
-/-- padeDen(-1) > 0. -/
-theorem padeDen_pos_at_neg_one : 0 < padeDen (-1) := by native_decide
-
-/-- padeExp(1) ≈ e (within 10⁻⁷): 2721/1001 ≈ 2.71828171... vs e ≈ 2.71828183. -/
-theorem padeExp_at_one : padeExp 1 = 2721 / 1001 := by native_decide
-
--- ============================================================================
 -- Error Bound
 -- ============================================================================
 
@@ -191,13 +175,13 @@ theorem pade_error_bound (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
 
 /-- Interval containing exp(q) for q ∈ [-1, 1], computed via Padé.
     Returns [padeExp(q) - ε, padeExp(q) + ε] where ε = padeErrorBound. -/
-def expPointSmall (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
-    (hden_pos : 0 < padeDen q) : QInterval where
+private def expPointSmall (q : ℚ) (_hq_lo : -1 ≤ q) (_hq_hi : q ≤ 1)
+    (_hden_pos : 0 < padeDen q) : QInterval where
   lo := padeExp q - padeErrorBound
   hi := padeExp q + padeErrorBound
   valid := by simp only [padeErrorBound]; linarith
 
-theorem expPointSmall_containsReal (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
+private theorem expPointSmall_containsReal (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
     (hden_pos : 0 < padeDen q) :
     (expPointSmall q hq_lo hq_hi hden_pos).containsReal (Real.exp (↑q : ℝ)) := by
   simp only [expPointSmall, containsReal]
@@ -261,7 +245,7 @@ def expPoint (q : ℚ) : QInterval :=
 
 /-- padeDen(q) > 0 for -1 ≤ q ≤ 1. Writing padeDen(q) = (1 - q/2) + q²·(3/28 - q/84 + q²/1680),
     the first term ≥ 1/2 and the second ≥ 0 since 3/28 - q/84 ≥ 3/28 - 1/84 > 0. -/
-private theorem padeDen_pos (q : ℚ) (hlo : -1 ≤ q) (hhi : q ≤ 1) :
+private theorem padeDen_pos (q : ℚ) (_hlo : -1 ≤ q) (hhi : q ≤ 1) :
     0 < padeDen q := by
   simp only [padeDen, padeNum]
   nlinarith [sq_nonneg q, sq_nonneg (q * q), sq_nonneg (1 - q), sq_nonneg (1 + q),
