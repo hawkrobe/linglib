@@ -13,11 +13,11 @@ Empirical data from Thomas (2026) on argument-building uses of additive particle
 - Thomas (2026). A probabilistic, question-based approach to additivity.
 -/
 
-import Linglib.Phenomena.AdditiveParticles.Data
+import Linglib.Phenomena.Focus.AdditiveParticles.Data
 
-namespace Phenomena.AdditiveParticles.Studies.Thomas2026
+namespace Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 
-open Phenomena.AdditiveParticles
+open Phenomena.Focus.AdditiveParticles
 
 /-- Flagship argument-building example from Thomas (2026). -/
 def sueCooksFreetime : AdditiveParticleDatum :=
@@ -119,4 +119,4 @@ def infelicitousExamples : List AdditiveParticleDatum :=
 def allExamples : List AdditiveParticleDatum :=
   argumentBuildingExamples ++ infelicitousExamples
 
-end Phenomena.AdditiveParticles.Studies.Thomas2026
+end Phenomena.Focus.AdditiveParticles.Studies.Thomas2026

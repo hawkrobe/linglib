@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
+import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 
 /-!
@@ -39,7 +39,7 @@ attitude contexts without requiring witnesses. Two agents can think
 - Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §2.
 -/
 
-namespace Phenomena.Attitudes.IntentionalIdentity.Bridge
+namespace Phenomena.Complementation.Attitudes.IntentionalIdentity.Bridge
 
 open Semantics.TypeTheoretic
 
@@ -124,4 +124,4 @@ theorem intensional_distinction_enables_ii :
     ¬ witchType.intEq ⟨Empty, "ghost_who_haunts"⟩ :=
   ⟨⟨Equiv.refl Empty⟩, by simp [IType.intEq, witchType]⟩
 
-end Phenomena.Attitudes.IntentionalIdentity.Bridge
+end Phenomena.Complementation.Attitudes.IntentionalIdentity.Bridge

@@ -27,7 +27,7 @@ Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
 - Solt (2023): Imprecision without homogeneity
 -/
 
-namespace Phenomena.Imprecision.Numerals
+namespace Phenomena.Gradability.Imprecision.Numerals
 
 
 /--
@@ -414,4 +414,4 @@ theorem coarse_implies_kness (n : Nat) (h : n > 0) (hc : classifyRoundness n ≠
   have := Core.Roundness.score_ge_two_of_div10 n h10
   omega
 
-end Phenomena.Imprecision.Numerals
+end Phenomena.Gradability.Imprecision.Numerals

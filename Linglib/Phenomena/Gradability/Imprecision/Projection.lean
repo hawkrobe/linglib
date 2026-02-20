@@ -27,7 +27,7 @@ The `no` vs `not every` asymmetry is particularly important.
 - Križ (2015): Trivalent projection
 -/
 
-namespace Phenomena.Imprecision.Projection
+namespace Phenomena.Gradability.Imprecision.Projection
 
 
 /--
@@ -330,4 +330,4 @@ def augurzkyData : List QUDManipulationDatum :=
 def truthConditionsData : List EmbeddedTruthConditions :=
   [everyTruthConditions, noTruthConditions, exactlyOneTruthConditions]
 
-end Phenomena.Imprecision.Projection
+end Phenomena.Gradability.Imprecision.Projection

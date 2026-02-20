@@ -24,7 +24,7 @@ Based on Nina Haslinger's dissertation "Pragmatic Constraints on Imprecision" (2
 
 All phenomena files created and building successfully (2026-01-26).
 
-### 1.1 Homogeneity Gaps (Phenomena/Imprecision/Homogeneity.lean)
+### 1.1 Homogeneity Gaps (Phenomena/Gradability/Imprecision/Homogeneity.lean)
 - [x] Plural definites: "The doors are open" vs "The doors aren't open"
 - [x] Conjunctions: "Ann and Bert have red hair"
 - [x] Summative predicates: "The flag is blue"
@@ -32,14 +32,14 @@ All phenomena files created and building successfully (2026-01-26).
 - [x] Collective predicates: "The teachers met"
 - [x] Cumulative predicates: "The teachers sent the students grades"
 
-### 1.2 Non-Maximality (Phenomena/Imprecision/NonMaximality.lean)
+### 1.2 Non-Maximality (Phenomena/Gradability/Imprecision/NonMaximality.lean)
 - [x] SWITCHES scenarios (maximal vs non-maximal contexts)
 - [x] BANK ROBBERY scenario (fine-grained non-maximality)
 - [x] Issue-sensitivity patterns
 - [x] All removes non-maximality
 - [x] Strong relevance data structures
 
-### 1.3 Numeral Imprecision (Phenomena/Imprecision/Numerals.lean)
+### 1.3 Numeral Imprecision (Phenomena/Gradability/Imprecision/Numerals.lean)
 - [x] Round vs non-round asymmetry (100 vs 99)
 - [x] CARS scenarios (exact vs inexact contexts)
 - [x] Negation constraint (Solt & Waldon 2019)
@@ -47,7 +47,7 @@ All phenomena files created and building successfully (2026-01-26).
 - [x] Granularity/scale data structures
 - [x] Time expression patterns
 
-### 1.4 Form/Meaning Correspondences (Phenomena/Imprecision/FormMeaning.lean)
+### 1.4 Form/Meaning Correspondences (Phenomena/Gradability/Imprecision/FormMeaning.lean)
 - [x] Complexity pairs: "the doors" / "all the doors"
 - [x] Complexity pairs: "100 cars" / "exactly 100 cars"
 - [x] Complexity pairs: "Ann and Bert" / "both Ann and Bert"
@@ -55,7 +55,7 @@ All phenomena files created and building successfully (2026-01-26).
 - [x] Markedness data structures
 - [x] Cross-linguistic patterns
 
-### 1.5 Projection Patterns (Phenomena/Imprecision/Projection.lean)
+### 1.5 Projection Patterns (Phenomena/Gradability/Imprecision/Projection.lean)
 - [x] Under `every`: strong reading
 - [x] Under `no`: strong reading, limited non-maximality
 - [x] Under `exactly one`: strong reading
@@ -64,14 +64,14 @@ All phenomena files created and building successfully (2026-01-26).
 - [x] QUD manipulation data (Augurzky et al. 2023)
 - [x] No vs not-every asymmetry data
 
-### 1.6 Inference Preservation (Phenomena/Imprecision/InferencePreservation.lean)
+### 1.6 Inference Preservation (Phenomena/Gradability/Imprecision/InferencePreservation.lean)
 - [x] Conjunction entailments: "A and B are P" |= "A is P"
 - [x] Numeral alternatives: 99 vs 100 asymmetry
 - [x] Blocked imprecision patterns
 - [x] Alternative set asymmetry data
 - [x] Collective/cumulative exceptions
 
-### 1.7 Module Integration (Phenomena/Imprecision/Basic.lean)
+### 1.7 Module Integration (Phenomena/Gradability/Imprecision/Basic.lean)
 - [x] Proper attribution to Nina Haslinger
 - [x] Comprehensive references section
 - [x] Re-exports for convenient access

@@ -96,12 +96,12 @@ See `ROADMAP.md` for the formalization plan.
 
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
-import Linglib.Phenomena.Imprecision.Numerals
-import Linglib.Phenomena.Imprecision.FormMeaning
-import Linglib.Phenomena.Imprecision.Projection
-import Linglib.Phenomena.Imprecision.InferencePreservation
+import Linglib.Phenomena.Gradability.Imprecision.Numerals
+import Linglib.Phenomena.Gradability.Imprecision.FormMeaning
+import Linglib.Phenomena.Gradability.Imprecision.Projection
+import Linglib.Phenomena.Gradability.Imprecision.InferencePreservation
 
-namespace Phenomena.Imprecision
+namespace Phenomena.Gradability.Imprecision
 
 -- Re-exports for convenient access
 
@@ -226,4 +226,4 @@ we will need:
 See ROADMAP.md for detailed formalization plan.
 -/
 
-end Phenomena.Imprecision
+end Phenomena.Gradability.Imprecision

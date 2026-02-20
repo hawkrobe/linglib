@@ -35,7 +35,7 @@ sample by `native_decide`.
   https://wals.info
 -/
 
-namespace Phenomena.Agreement.CaseTypology
+namespace Phenomena.Case.Typology
 
 -- ============================================================================
 -- WALSCount Infrastructure
@@ -815,4 +815,4 @@ theorem ch51_same_sample :
     WALSCount.totalOf ch51Distribution =
     WALSCount.totalOf ch50Distribution := by native_decide
 
-end Phenomena.Agreement.CaseTypology
+end Phenomena.Case.Typology
