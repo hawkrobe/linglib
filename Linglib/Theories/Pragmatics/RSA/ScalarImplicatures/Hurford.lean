@@ -128,7 +128,7 @@ This is the semantic redundancy that causes Hurford violations.
 -/
 theorem base_redundancy :
     someOrAllTrueWorlds_base = someTrueWorlds_base := by
-  sorry  -- TODO: re-derive with new infrastructure
+  native_decide
 
 /-- Worlds where "some or all" is true under refined lexicon -/
 def someOrAllTrueWorlds_refined : List HWorld :=
@@ -144,7 +144,7 @@ This is why the disjunction is informative and the Hurford violation is rescued.
 -/
 theorem refined_disjunction_informative :
     someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length := by
-  sorry  -- TODO: re-derive with new infrastructure
+  native_decide
 
 
 /--
@@ -165,7 +165,7 @@ theorem hurford_model_captures_rescue :
     someOrAllTrueWorlds_refined.length > someTrueWorlds_refined.length ∧
     -- But under base lexicon, it's redundant
     someOrAllTrueWorlds_base = someTrueWorlds_base := by
-  sorry  -- TODO: re-derive with new infrastructure
+  exact ⟨refined_disjunction_informative, base_redundancy⟩
 
 /-
 For "American or Californian", there's no exhaustification that breaks the
@@ -220,6 +220,6 @@ For hyponymy, the disjunction is always redundant -- no rescue possible.
 -/
 theorem hyponym_always_redundant :
     americanOrCalifornianTrueWorlds = americanTrueWorlds := by
-  sorry  -- TODO: re-derive with new infrastructure
+  native_decide
 
 end RSA.Hurford
