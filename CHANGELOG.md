@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.224.51] - 2026-02-20
+
+### Changed
+- **Chierchia1998 `Individual` refactor**: Replace `inductive Individual` with `abbrev Individual Atom := Set Atom`; atoms are singletons, pluralities are larger sets; `PartialOrder`/`SemilatticeSup` from Mathlib for free; remove `partOf`, `join`, `LE` instance, `Kind.isPlurality`; add `IsMass` mass-noun condition; close both `up_down_id` and `down_up_id` sorries (2→0); bridge theorems `isMass_div`/`isMass_cum` connect to `Core/Mereology`
+
+## [0.224.50] - 2026-02-20
+
+### Changed
+- **Kao et al. (2014) rewrite**: Slim Theory file to pure model definition (674→209 lines); move theorems to `Phenomena/Nonliteral/Hyperbole/RSA_KaoEtAl2014Bridge.lean` with Data/Bridge split; all 6 theorems proved by `rsa_predict` (0 sorries, was 1)
+- **`rsa_predict` extended**: Three new goal forms — marginal L1 sum comparison, latent inference (`L1_latent`), and cross-utterance policy sum; `List.map/sum ↔ +` chain bridging via simp+linarith fallback
+- **`Verified.lean`**: Three new bridge axioms — `L1_marginal_gt_of_precomputed`, `L1_latent_gt_of_precomputed`, `L1_sum_gt_of_precomputed`
+
+### Added
+- `Phenomena/Nonliteral/Hyperbole/Studies/KaoEtAl2014.lean`: Empirical data (qualitative predictions)
+- `Phenomena/Nonliteral/Hyperbole/RSA_KaoEtAl2014Bridge.lean`: 6 bridge theorems (hyperbole affect, marginal affect, QUD inference, literal correctness, literal non-hyperbolic, pragmatic halo)
+
 ## [0.224.49] - 2026-02-20
 
 ### Added
