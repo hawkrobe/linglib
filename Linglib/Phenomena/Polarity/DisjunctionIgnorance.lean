@@ -1,3 +1,5 @@
+import Linglib.Core.NaturalLogic
+
 /-
 # Disjunction Ignorance: Empirical Data
 
@@ -336,18 +338,12 @@ inductive DisjunctionPosition where
   | negation_scope    -- Under negation (DE)
   deriving DecidableEq, BEq, Repr
 
-/--
-Context polarity: upward-entailing or downward-entailing.
--/
-inductive ContextPolarity' where
-  | upward    -- ∀: if φ ⊆ ψ then C(φ) ⊆ C(ψ)
-  | downward  -- ∀: if φ ⊆ ψ then C(ψ) ⊆ C(φ)
-  deriving DecidableEq, BEq, Repr
+open Core.NaturalLogic (ContextPolarity)
 
 /--
 Determine context polarity from position.
 -/
-def positionPolarity : DisjunctionPosition → ContextPolarity'
+def positionPolarity : DisjunctionPosition → ContextPolarity
   | .matrix => .upward
   | .conditional_cons => .upward
   | .conditional_ant => .downward
@@ -358,10 +354,12 @@ def positionPolarity : DisjunctionPosition → ContextPolarity'
 /--
 Predict preferred reading from polarity.
 UE → exclusive (SI computed), DE → inclusive (SI not computed).
+NM → inclusive (no clear strength ordering, so no exclusive SI).
 -/
-def predictReading : ContextPolarity' → DisjunctionReading
+def predictReading : ContextPolarity → DisjunctionReading
   | .upward => .exclusive
   | .downward => .inclusive
+  | .nonMonotonic => .inclusive
 
 /--
 Example showing exclusive/inclusive asymmetry.
@@ -372,7 +370,7 @@ structure ExclusiveInclusiveExample where
   /-- Position of disjunction -/
   position : DisjunctionPosition
   /-- Polarity of that position -/
-  polarity : ContextPolarity'
+  polarity : ContextPolarity
   /-- Preferred reading -/
   preferredReading : DisjunctionReading
   /-- Can the other reading be forced with context? -/
