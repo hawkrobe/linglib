@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.57] - 2026-02-20
+
+### Fixed
+- **Close 5 sorries in ReflectInterval.lean**: Add `evalValid` precondition to `eval_sound` — the fallback intervals (div by non-positive, log of non-positive, inv, rpow of negative) were genuinely unsound (unbounded results in finite intervals); `evalValid` is verified via `native_decide` in the tactic; update `RSADecide.lean` to produce validity proofs; all 104 `rsa_decide`/`rsa_predict` invocations pass
+
+## [0.224.56] - 2026-02-20
+
+### Changed
+- **Goodman & Stuhlmuller (2013) Data/Bridge split**: Add `Finding` inductive (11 findings from Experiments 1-2) to Data file; create Bridge file with `formalize : Finding → Prop` and `all_findings_verified` (all 11 native_decide proofs); move experiment-specific theorems from Theory to Bridge; make `getScore`/`normalize`/`sumScores` public
+
 ## [0.224.55] - 2026-02-20
 
 ### Changed
