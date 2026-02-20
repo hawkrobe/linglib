@@ -1143,9 +1143,25 @@ elab "rsa_decide" : tactic => do
       setGoals [sepMVar.mvarId!]
       evalTactic (← `(tactic| native_decide))
       setGoals savedGoals
-      -- Build full proof: gt_of_eval_separated lhs_rexpr rhs_rexpr sep_proof
+      -- Prove evalValid for both sides via native_decide
+      let boolTrue := mkConst ``Bool.true
+      let lhsValidType ← mkAppM ``Eq
+        #[← mkAppM ``RExpr.evalValid #[rl.rexpr], boolTrue]
+      let lhsValidMVar ← mkFreshExprMVar lhsValidType
+      let savedGoals2 ← getGoals
+      setGoals [lhsValidMVar.mvarId!]
+      evalTactic (← `(tactic| native_decide))
+      setGoals savedGoals2
+      let rhsValidType ← mkAppM ``Eq
+        #[← mkAppM ``RExpr.evalValid #[rr.rexpr], boolTrue]
+      let rhsValidMVar ← mkFreshExprMVar rhsValidType
+      let savedGoals3 ← getGoals
+      setGoals [rhsValidMVar.mvarId!]
+      evalTactic (← `(tactic| native_decide))
+      setGoals savedGoals3
+      -- Build full proof: gt_of_eval_separated lhs rhs hlv hrv sep
       let proof ← mkAppM ``Linglib.Interval.RExpr.gt_of_eval_separated
-        #[rl.rexpr, rr.rexpr, sepMVar]
+        #[rl.rexpr, rr.rexpr, lhsValidMVar, rhsValidMVar, sepMVar]
       -- Assign proof. RExpr.denote uses Nat.cast while goals use OfNat.ofNat;
       -- unfold denote first, then bridge the cast mismatch.
       let proofType ← inferType proof
