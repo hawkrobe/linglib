@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.38] - 2026-02-19
+
+### Fixed
+- `DecisionTheoretic/Core.lean`: Prove `conjunction_dominates_disjunction` — add inclusion-exclusion helpers, positivity/monotonicity lemmas, and a pure-arithmetic `max_div_gt_or_div` lemma to avoid set/rw interaction issues; eliminates all sorrys in Core
+- `DecisionTheoretic/ScalarImplicature.lean`: Prove `if_not_indeed_conjunction` via `conjunction_dominates_disjunction` with transitivity; eliminates all sorrys
+- `DecisionTheoretic/But.lean`: Prove `default_but_properties` (Theorem 10) via Bayes reciprocity — negative relevance cross-multiplied with total probability and normalization; add helper lemmas for probSum splitting and commutativity; one sorry remains (Theorem 8, requires total probability decomposition)
+
 ## [0.224.37] - 2026-02-19
 
 ### Fixed
