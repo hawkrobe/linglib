@@ -46,8 +46,8 @@ grow the others as coverage expands.
 
 ## Current Coverage
 
-28 typology files across 2 Theories/ and 26 Phenomena/ locations, covering
-~250 languages.
+33 typology files across 2 Theories/ and 31 Phenomena/ locations, covering
+~300 languages.
 
 ### Theories/ (formal universals)
 
@@ -64,7 +64,7 @@ grow the others as coverage expands.
 |------|-----------|-----------|
 | `Modality/TypologyBridge.lean` | 10 | Nauze 2008; IFF/SAV verification |
 | `Coordination/Typology.lean` | 17 | Haspelmath 2007 + Mitrovic & Sauerland 2014 |
-| `Complementation/Typology.lean` | 7 | Noonan 2007; CTP classes |
+| `Complementation/Typology.lean` | 7+20 | Noonan 2007 + WALS Ch 94--95 subordination |
 | `Negation/CzechThreeWayNegBridge/TypologyBridge.lean` | 1 (deep) | Romero's PQ typology |
 | `Anaphora/Typology.lean` | 11 | Patel-Grosz & Grosz 2017 |
 | `Agreement/Typology.lean` | 12 | Cysouw 2009 |
@@ -74,7 +74,7 @@ grow the others as coverage expands.
 | `AuxiliaryVerbs/Typology.lean` | 5 | Anderson 2006; AVC inflection |
 | `Questions/Typology.lean` | 5 | Dayal 2025; clause-typing, shiftiness |
 | `Questions/TypologyBridge.lean` | 5 | Dayal 2025; Q-particle layers |
-| `Morphology/Typology.lean` | 10 | Ackerman & Malouf 2013 |
+| `Morphology/Typology.lean` | 10+18 | Ackerman & Malouf 2013 + WALS Ch 20--27 |
 
 **Tier 1 — WALS-based** (added 0.224.60):
 
@@ -104,6 +104,16 @@ grow the others as coverage expands.
 | `Possession/Typology.lean` | ~700 | 15+ | Ch 58--59: obligatory possession, possessive classification |
 | `Gender/Typology.lean` | ~700 | 15+ | Ch 30--32: gender count, sex-based systems, assignment |
 | `Copulas/Typology.lean` | ~700 | 15+ | Ch 117--120: predicative adjectives/nouns, zero copula |
+
+**Tier 3 — WALS-based** (added 0.224.70):
+
+| File | Lines | Languages | WALS Chapters |
+|------|-------|-----------|---------------|
+| `Alignment/Typology.lean` | 818 | 20 | Ch 98--100: NP/pronoun alignment, verbal person marking |
+| `FillerGap/Typology.lean` | 943 | 19 | Ch 122--123: relativization strategies, accessibility hierarchy |
+| `Numerals/Typology.lean` | 816 | 19 | Ch 53--56: classifiers, ordinals, distributives |
+| `Morphology/Typology.lean` | 1109 | 18 | Ch 20--27: fusion, exponence, locus, prefix/suffix (extended) |
+| `Complementation/Typology.lean` | 1614 | 20 | Ch 94--95: subordination, complementizers (extended) |
 
 ---
 
@@ -188,58 +198,13 @@ Within the 30--40 range for basic-level categories.
 - Gender (Ch 30--32) → `Gender/Typology.lean`
 - Predication/Copulas (Ch 117--120) → `Copulas/Typology.lean`
 
-### Tier 3: Remaining gaps
+#### Tier 3 (done: 0.224.70)
 
-#### Alignment (WALS Ch 98--100)
-
-Target: `ArgumentStructure/AlignmentTypology.lean` or new `Alignment/` dir
-
-The ergative/accusative/active alignment typology. Which argument of a
-transitive verb patterns like the sole argument of an intransitive? Major
-typological parameter with implications for case, agreement, and word order.
-
-Key sources: Comrie (1978), Dixon (1994), Bickel & Nichols (2009).
-
-#### Relativization (WALS Ch 122--123)
-
-Target: `FillerGap/Typology.lean`
-
-Relativization strategies (gap, resumptive pronoun, relative pronoun) and
-which positions are accessible to relativization (Keenan & Comrie 1977
-accessibility hierarchy).
-
-Existing infrastructure: 6 FillerGap files (islands, gaps).
-
-Key sources: Keenan & Comrie (1977), Comrie & Kuteva (2013).
-
-#### Numeral Classifiers (WALS Ch 53--56)
-
-Target: `Numerals/Typology.lean`
-
-Classifier systems, ordinal formation, distributive numerals. Current
-Numerals/ work is pragmatics-focused (roundness, precision); this would
-add the morphosyntactic dimension.
-
-Key sources: Gil (2013), Aikhenvald (2000) *Classifiers*.
-
-#### Morphological mechanisms (WALS B: Ch 20--29)
-
-Target: extend `Morphology/Typology.lean`
-
-Cross-cutting chapters on fusion, exponence, locus of marking (head vs
-dependent), prefixing/suffixing, reduplication. These organize by
-*mechanism* rather than *phenomenon*, which makes placement tricky.
-
-Key sources: Bickel & Nichols (2013), Dryer (2013).
-
-#### Subordination (WALS Ch 94--95, 122--123)
-
-Target: `Complementation/Typology.lean` (extend) or `FillerGap/Typology.lean`
-
-Relative clause position, adverbial subordination strategies, complementizer
-placement. Overlaps with word order and relativization.
-
-Key sources: Dryer (2013), Diessel (2013).
+- Alignment (Ch 98--100) → `Alignment/Typology.lean` (new dir)
+- Relativization (Ch 122--123) → `FillerGap/Typology.lean`
+- Numeral Classifiers (Ch 53--56) → `Numerals/Typology.lean`
+- Morphological mechanisms (Ch 20--27) → `Morphology/Typology.lean` (extended)
+- Subordination (Ch 94--95) → `Complementation/Typology.lean` (extended)
 
 ---
 
@@ -265,13 +230,21 @@ Typological universals formalized and verified in linglib:
 | Prohibitive specialization | van der Auwera 2013 | `Imperatives/Typology.lean` |
 | Case-rich languages are suffixal | Iggesen 2013 | `Case/Typology.lean` |
 | Locational comparatives correlate with SOV | Stassen 2013 | `Gradability/Typology.lean` |
+| Dixon's split-ergative hierarchy | Dixon 1994 | `Alignment/Typology.lean` |
+| Accusative alignment dominant for pronouns | Comrie 1978 | `Alignment/Typology.lean` |
+| Keenan-Comrie accessibility hierarchy | Keenan & Comrie 1977 | `FillerGap/Typology.lean` |
+| All languages can relativize subjects | Keenan & Comrie 1977 | `FillerGap/Typology.lean` |
+| Gap-to-resumptive shift down AH | Comrie & Kuteva 2013 | `FillerGap/Typology.lean` |
+| Sanches-Slobin (classifiers ↔ no obligatory plural) | Sanches & Slobin 1973 | `Numerals/Typology.lean` |
+| Greenberg ordinal suppletion hierarchy | Greenberg 1978 | `Numerals/Typology.lean` |
+| Greenberg Universal 27 (suffixing dominates) | Greenberg 1963 | `Morphology/Typology.lean` |
+| Concatenative fusion most common | Bickel & Nichols 2013 | `Morphology/Typology.lean` |
+| VO implies initial subordinator | Dryer 2013 | `Complementation/Typology.lean` |
+| Harmonic head-direction dominates (OV+Postp, VO+Prep) | Dryer 2013 | `Complementation/Typology.lean` |
 
 ### To target
 
 | Universal | Source | Target File |
 |-----------|--------|-------------|
-| Keenan-Comrie accessibility hierarchy | Keenan & Comrie 1977 | `FillerGap/Typology.lean` |
 | Differential object marking hierarchy | Aissen 2003 | `Case/Typology.lean` (extend) |
 | Corbett agreement target hierarchy | Corbett 1991 | `Gender/Typology.lean` (extend) |
-| Ergative-absolutive implicational patterns | Dixon 1994 | `ArgumentStructure/AlignmentTypology.lean` |
-| Numeral classifier hierarchy | Gil 2013 | `Numerals/Typology.lean` |

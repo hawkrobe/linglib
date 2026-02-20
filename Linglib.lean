@@ -168,6 +168,7 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
+import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -229,6 +230,7 @@ import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
 import Linglib.Phenomena.FillerGap.CrossSerial
 import Linglib.Phenomena.FillerGap.LongDistance
+import Linglib.Phenomena.FillerGap.Typology
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
@@ -269,6 +271,7 @@ import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
 import Linglib.Phenomena.Numerals.Embedding
 import Linglib.Phenomena.Numerals.Compare
+import Linglib.Phenomena.Numerals.Typology
 import Linglib.Phenomena.Quantification.BaleSchwarz2026Bridge
 import Linglib.Phenomena.Quantification.Scontras2014Bridge
 import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
