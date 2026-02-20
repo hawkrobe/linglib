@@ -198,15 +198,92 @@ def mul (a b : QInterval) : QInterval where
           le_max_left _ _
 
 /-- Containment for general interval multiplication.
-
-    Proof sketch: for `a.lo ≤ x ≤ a.hi` and `b.lo ≤ y ≤ b.hi`, `x*y` is
-    bilinear in (x,y) on the rectangle, so its extrema occur at the 4 corners.
-    Thus `min(corners) ≤ x*y ≤ max(corners)`.
-
-    TODO: prove from bilinear extrema or case analysis on signs. -/
-axiom mul_containsReal {a b : QInterval} {x y : ℝ}
+    For `a.lo ≤ x ≤ a.hi` and `b.lo ≤ y ≤ b.hi`, `x·y` lies between
+    `min(corners)` and `max(corners)` since extrema of a bilinear function
+    on a rectangle occur at corners. -/
+theorem mul_containsReal {a b : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hy : b.containsReal y) :
-    (a.mul b).containsReal (x * y)
+    (a.mul b).containsReal (x * y) := by
+  simp only [mul, containsReal] at *
+  push_cast
+  obtain ⟨hxlo, hxhi⟩ := hx
+  obtain ⟨hylo, hyhi⟩ := hy
+  constructor
+  · -- Lower bound: min₄(corners) ≤ x * y
+    by_cases hx0 : (0 : ℝ) ≤ x <;> by_cases hy0 : (0 : ℝ) ≤ y
+    · -- x ≥ 0, y ≥ 0
+      by_cases halo : (0 : ℝ) ≤ ↑a.lo
+      · -- a.lo*b.lo ≤ a.lo*y ≤ x*y
+        exact le_trans (min_le_of_left_le (min_le_left _ _))
+          (le_trans (mul_le_mul_of_nonneg_left hylo halo)
+                    (mul_le_mul_of_nonneg_right hxlo hy0))
+      · -- a.lo*b.hi ≤ 0 ≤ x*y
+        push_neg at halo
+        exact le_trans (min_le_of_left_le (min_le_right _ _))
+          (le_trans (mul_nonpos_of_nonpos_of_nonneg (le_of_lt halo) (le_trans hy0 hyhi))
+                    (mul_nonneg hx0 hy0))
+    · -- x ≥ 0, y < 0: a.hi*b.lo ≤ x*b.lo ≤ x*y
+      push_neg at hy0
+      have hblo_np : (↑b.lo : ℝ) ≤ 0 := le_trans hylo (le_of_lt hy0)
+      exact le_trans (min_le_of_right_le (min_le_left _ _))
+        (le_trans (mul_le_mul_of_nonpos_right hxhi hblo_np)
+                  (mul_le_mul_of_nonneg_left hylo hx0))
+    · -- x < 0, y ≥ 0: a.lo*b.hi ≤ x*b.hi ≤ x*y
+      push_neg at hx0
+      have hbhi_nn : (0 : ℝ) ≤ ↑b.hi := le_trans hy0 hyhi
+      exact le_trans (min_le_of_left_le (min_le_right _ _))
+        (le_trans (mul_le_mul_of_nonneg_right hxlo hbhi_nn)
+                  (mul_le_mul_of_nonpos_left hyhi (le_of_lt hx0)))
+    · -- x < 0, y < 0
+      push_neg at hx0 hy0
+      by_cases hahi : (↑a.hi : ℝ) ≤ 0
+      · -- a.hi*b.hi ≤ a.hi*y ≤ x*y
+        exact le_trans (min_le_of_right_le (min_le_right _ _))
+          (le_trans (mul_le_mul_of_nonpos_left hyhi hahi)
+                    (mul_le_mul_of_nonpos_right hxhi (le_of_lt hy0)))
+      · -- a.hi*b.lo ≤ 0 ≤ x*y
+        push_neg at hahi
+        have hblo_np : (↑b.lo : ℝ) ≤ 0 := le_trans hylo (le_of_lt hy0)
+        exact le_trans (min_le_of_right_le (min_le_left _ _))
+          (le_trans (mul_nonpos_of_nonneg_of_nonpos (le_of_lt hahi) hblo_np)
+                    (le_of_lt (mul_pos_of_neg_of_neg hx0 hy0)))
+  · -- Upper bound: x * y ≤ max₄(corners)
+    by_cases hx0 : (0 : ℝ) ≤ x <;> by_cases hy0 : (0 : ℝ) ≤ y
+    · -- x ≥ 0, y ≥ 0: x*y ≤ a.hi*y ≤ a.hi*b.hi
+      exact le_trans
+        (le_trans (mul_le_mul_of_nonneg_right hxhi hy0)
+                  (mul_le_mul_of_nonneg_left hyhi (le_trans hx0 hxhi)))
+        (le_max_of_le_right (le_max_right _ _))
+    · -- x ≥ 0, y < 0: x*y ≤ x*b.hi ≤ corner
+      push_neg at hy0
+      by_cases hbhi : (0 : ℝ) ≤ ↑b.hi
+      · exact le_trans
+          (le_trans (mul_le_mul_of_nonneg_left hyhi hx0)
+                    (mul_le_mul_of_nonneg_right hxhi hbhi))
+          (le_max_of_le_right (le_max_right _ _))
+      · push_neg at hbhi
+        exact le_trans
+          (le_trans (mul_le_mul_of_nonneg_left hyhi hx0)
+                    (mul_le_mul_of_nonpos_right hxlo (le_of_lt hbhi)))
+          (le_max_of_le_left (le_max_right _ _))
+    · -- x < 0, y ≥ 0: x*y ≤ a.hi*y ≤ corner
+      push_neg at hx0
+      by_cases hahi : (0 : ℝ) ≤ ↑a.hi
+      · exact le_trans
+          (le_trans (mul_le_mul_of_nonneg_right hxhi hy0)
+                    (mul_le_mul_of_nonneg_left hyhi hahi))
+          (le_max_of_le_right (le_max_right _ _))
+      · push_neg at hahi
+        exact le_trans
+          (le_trans (mul_le_mul_of_nonneg_right hxhi hy0)
+                    (mul_le_mul_of_nonpos_left hylo (le_of_lt hahi)))
+          (le_max_of_le_right (le_max_left _ _))
+    · -- x < 0, y < 0: x*y ≤ a.lo*y ≤ a.lo*b.lo
+      push_neg at hx0 hy0
+      exact le_trans
+        (le_trans (mul_le_mul_of_nonpos_right hxlo (le_of_lt hy0))
+                  (mul_le_mul_of_nonpos_left hylo (le_trans hxlo (le_of_lt hx0))))
+        (le_max_of_le_left (le_max_left _ _))
 
 -- ============================================================================
 -- Scale by nonneg constant

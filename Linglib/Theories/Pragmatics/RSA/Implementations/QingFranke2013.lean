@@ -183,7 +183,7 @@ noncomputable def mkConfig
   worldPrior_nonneg := lp_nonneg
   α := αS
   α_pos := hα
-  latentPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
 
 -- ============================================================================
 -- Speaker Models

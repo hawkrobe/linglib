@@ -43,7 +43,7 @@ axiom L1_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
 
     The `rsa_predict` tactic computes L1_latent score intervals at meta time
     using the latent score formula:
-      latent_score(l) = latentPrior(l) · Σ_w worldPrior(w) · S1_policy(l,w,u)
+      latent_score(l) = Σ_w worldPrior(w) · latentPrior(w,l) · S1_policy(l,w,u)
     The latent scores share a denominator (Σ_l latent_score(l)), so unnormalized
     score ordering implies policy ordering. -/
 axiom L1_latent_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
@@ -61,5 +61,15 @@ axiom L1_sum_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
     (cfg : RSAConfig U W) (u₁ : U) (ws₁ : List W) (u₂ : U) (ws₂ : List W)
     (hi₂ lo₁ : ℚ) (h_sep : hi₂ < lo₁) :
     (ws₁.map (cfg.L1 u₁)).sum > (ws₂.map (cfg.L1 u₂)).sum
+
+/-- L1 non-strict comparison from pre-computed score bounds.
+
+    If the upper bound of w₁'s unnormalized score does not exceed the lower bound
+    of w₂'s, then L1(u,w₁) ≤ L1(u,w₂), hence ¬(L1(u,w₁) > L1(u,w₂)). -/
+axiom L1_not_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
+    (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W)
+    (hi₁ lo₂ : ℚ)
+    (h_le : hi₁ ≤ lo₂) :
+    ¬(cfg.L1 u w₁ > cfg.L1 u w₂)
 
 end RSA.Verified

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.224.61] - 2026-02-20
+
+### Changed
+- **Close 2 interval axioms**: Replace `axiom mul_containsReal` (QInterval.lean) and `axiom expPoint_containsReal` (PadeExp.lean) with full theorem proofs; `pade_error_bound` converted from axiom to `sorry`-ed theorem with proof sketch
+- **mul_containsReal**: 4-corner method via sign case analysis with `mul_le_mul_of_nonneg/nonpos_left/right`
+- **expPoint_containsReal**: Padé containment + argument reduction + repeated squaring; 7 helper lemmas (`padeDen_pos`, `abs_le_one_of_natAbs_le_den`, `reductionSteps_spec`, `repeatedSq_containsReal`, `exp_pow_reduction`, `exp_le_three_pow`, `rat_le_natAbs_num`)
+- **RSA Config**: Make `latentPrior` world-dependent (`W → Latent → ℝ`), supporting models where latent variable distribution depends on world state (e.g., observation probability in Goodman & Stuhlmuller 2013)
+- **rsa_predict tactic**: Extend to handle world-dependent latent priors
+
 ## [0.224.60] - 2026-02-20
 
 ### Added

@@ -204,7 +204,7 @@ noncomputable def cfg (item : Item) : RSA.RSAConfig PriceState World where
   α := 1
   α_pos := one_pos
   worldPrior := fun ⟨s, a⟩ => pricePrior item s * affectPrior s a
-  latentPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
   worldPrior_nonneg := by
     intro ⟨s, a⟩; apply mul_nonneg
     · cases item <;> cases s <;> simp [pricePrior]
