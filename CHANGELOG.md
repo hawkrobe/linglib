@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.224.76] - 2026-02-20
+
+### Changed
+- **Truthmaker refactor**: `bilAnd`/`bilOr` now defined in terms of `tmAnd`/`tmOr` (duality explicit: conjunction fuses verifiers + unions falsifiers, disjunction vice versa; De Morgan laws still `rfl`); removed redundant coherence section (§10); dropped `subjectMatterFinite`
+- **Monotonicity refactor**: Removed per-verb signature defs (`believeSig`, `knowSig`, etc.) that duplicated fragment data; per-verb classifications live solely on `VerbCore.complementSig`; `#guard` checks now test `EntailmentSig` values directly
+
+## [0.224.75] - 2026-02-20
+
+### Added
+- **TAME unification infrastructure**: Shared types for tense, aspect, mood, evidentiality, and mirativity
+  - `Core/UtteranceContext.lean`: Utterance-fixed temporal anchor with bidirectional `ReichenbachFrame` projections
+  - `Core/Evidence.lean`: `MirativityValue` enum (expected/unexpected/neutral) with `isMirative` predicate (DeLancey 1997, Aikhenvald 2004)
+  - `Phenomena/TenseAspect/Typology.lean`: WALS Ch 78 `EvidentialityCoding` enum, `TAMEProfile` structure bundling all TAME parameters, 5 sample language profiles (Turkish, Quechua, Korean, English, Mandarin), Generalization 11 (evidentiality co-occurs with tense/aspect marking)
+
+### Changed
+- **Rename `TenseEvidentialParadigm` → `TAMEEntry`** in `Theories/Semantics/Tense/Evidential.lean`: Added optional `mood : Option GramMood` and `mirative : Option MirativityValue` fields (both defaulting to `none`). Updated all downstream references in `Fragments/English/Tense.lean`, `Fragments/Korean/Evidentials.lean`, `Fragments/Bulgarian/Evidentials.lean`, `Phenomena/TenseAspect/Studies/Cumming2026/Bridge.lean`
+
 ## [0.224.74] - 2026-02-20
 
 ### Added

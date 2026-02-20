@@ -41,6 +41,7 @@ import Linglib.Core.Alternatives
 import Linglib.Core.Time
 import Linglib.Core.AtomicDistributivity
 import Linglib.Core.Reichenbach
+import Linglib.Core.UtteranceContext
 import Linglib.Core.Tense
 import Linglib.Core.Context
 import Linglib.Core.InformationStructure
@@ -385,7 +386,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025Bridge
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
-import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
 import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021Bridge
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024

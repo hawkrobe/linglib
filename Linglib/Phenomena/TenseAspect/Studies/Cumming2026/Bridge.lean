@@ -36,17 +36,17 @@ open Fragments.Bulgarian.Evidentials
 -- ════════════════════════════════════════════════════
 
 /-- All paradigm entries across the three languages. -/
-def allParadigms : List TenseEvidentialParadigm :=
+def allParadigms : List TAMEEntry :=
   Fragments.English.Tense.allEntries ++
   Fragments.Korean.Evidentials.allEntries ++
   Fragments.Bulgarian.Evidentials.allEntries
 
 /-- Nonfuture paradigm entries (across all languages). -/
-def nonfutureParadigms : List TenseEvidentialParadigm :=
+def nonfutureParadigms : List TAMEEntry :=
   allParadigms.filter (·.isNonfuture)
 
 /-- Future paradigm entries (across all languages). -/
-def futureParadigms : List TenseEvidentialParadigm :=
+def futureParadigms : List TAMEEntry :=
   allParadigms.filter (!·.isNonfuture)
 
 -- ════════════════════════════════════════════════════
@@ -81,7 +81,7 @@ theorem nfutL_nonfuture : nfutL.isNonfuture = true := rfl
 /-- **Generic nonfuture downstream** (Cumming 2026, §5): any paradigm entry
     whose EP constraint is nonfuture entails T ≤ A (downstream evidence).
     Delegates to `EPCondition.nonfuture_implies_downstream`. -/
-theorem nonfuture_downstream (p : TenseEvidentialParadigm) (f : EvidentialFrame ℤ)
+theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
     (h_nf : p.isNonfuture = true) (h_ep : p.epConstraint f) :
     downstreamEvidence f :=
   EPCondition.nonfuture_implies_downstream p.ep f h_nf h_ep

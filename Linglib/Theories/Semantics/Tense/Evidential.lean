@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Core.Evidence
 import Linglib.Core.Presupposition
+import Linglib.Theories.Semantics.Mood.Basic
 
 /-!
 # Tense and Evidence (Cumming 2026)
@@ -148,29 +149,34 @@ def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
 -- § 4. Tense-Evidential Paradigm
 -- ════════════════════════════════════════════════════
 
-/-- A row in Cumming's tense-evidential paradigm tables (17)–(22).
-    Each row specifies a morphological label, an EP constraint (T vs A),
-    and a UP constraint (T vs S). The `Language` field is eliminated —
-    each Fragment directory IS the language. -/
-structure TenseEvidentialParadigm where
+/-- A row in a tense-aspect-mood-evidentiality paradigm table.
+    Generalizes Cumming's (2026) tense-evidential paradigm (Tables 17–22)
+    with optional mood and mirativity fields, enabling unified TAME
+    fragment entries. Existing `{ label, ep, up }` constructions still
+    work because `mood` and `mirative` have default values (`none`). -/
+structure TAMEEntry where
   /-- Morphological label (e.g., "simple past", "-te PAST") -/
   label : String
   /-- Evidential perspective constraint: T vs A -/
   ep : EPCondition
   /-- Utterance perspective constraint: T vs S -/
   up : UPCondition
+  /-- Grammatical mood (indicative, subjunctive), if specified -/
+  mood : Option Semantics.Mood.GramMood := none
+  /-- Mirativity value (expected, unexpected, neutral), if specified -/
+  mirative : Option Core.Evidence.MirativityValue := none
 
 /-- Is this a nonfuture tense? Derived from the EP constraint. -/
-def TenseEvidentialParadigm.isNonfuture (p : TenseEvidentialParadigm) : Bool :=
+def TAMEEntry.isNonfuture (p : TAMEEntry) : Bool :=
   p.ep.isNonfuture
 
 /-- The EP constraint as a predicate over `EvidentialFrame ℤ`. -/
-def TenseEvidentialParadigm.epConstraint (p : TenseEvidentialParadigm) :
+def TAMEEntry.epConstraint (p : TAMEEntry) :
     EvidentialFrame ℤ → Prop :=
   p.ep.toConstraint
 
 /-- The UP constraint as a predicate over `EvidentialFrame ℤ`. -/
-def TenseEvidentialParadigm.upConstraint (p : TenseEvidentialParadigm) :
+def TAMEEntry.upConstraint (p : TAMEEntry) :
     EvidentialFrame ℤ → Prop :=
   p.up.toConstraint
 

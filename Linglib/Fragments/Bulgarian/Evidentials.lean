@@ -23,19 +23,19 @@ namespace Fragments.Bulgarian.Evidentials
 open Semantics.Tense.Evidential
 
 /-- Bulgarian NFUT + -l: T ≤ A (downstream), T ≤ S (nonfuture). -/
-def nfutL : TenseEvidentialParadigm where
+def nfutL : TAMEEntry where
   label := "NFUT + -l"
   ep := .downstream
   up := .nonfuture
 
 /-- Bulgarian FUT + -l: A < T (prospective). -/
-def futL : TenseEvidentialParadigm where
+def futL : TAMEEntry where
   label := "FUT + -l"
   ep := .prospective
   up := .unconstrained
 
 /-- All Bulgarian evidential entries. -/
-def allEntries : List TenseEvidentialParadigm :=
+def allEntries : List TAMEEntry :=
   [nfutL, futL]
 
 end Fragments.Bulgarian.Evidentials

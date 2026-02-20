@@ -30,19 +30,19 @@ open Semantics.Tense.Evidential
 -- ════════════════════════════════════════════════════
 
 /-- Korean -te PAST: T < A (strict downstream), T < S (past). -/
-def tePast : TenseEvidentialParadigm where
+def tePast : TAMEEntry where
   label := "-te PAST"
   ep := .strictDownstream
   up := .past
 
 /-- Korean -te PRESENT: T = A (contemporaneous), T < S (past). -/
-def tePresent : TenseEvidentialParadigm where
+def tePresent : TAMEEntry where
   label := "-te PRES"
   ep := .contemporaneous
   up := .past
 
 /-- Korean -te FUTURE: A < T (prospective). -/
-def teFuture : TenseEvidentialParadigm where
+def teFuture : TAMEEntry where
   label := "-te FUT"
   ep := .prospective
   up := .unconstrained
@@ -52,19 +52,19 @@ def teFuture : TenseEvidentialParadigm where
 -- ════════════════════════════════════════════════════
 
 /-- Korean -ney PAST: T < A (strict downstream), T < S (past). -/
-def neyPast : TenseEvidentialParadigm where
+def neyPast : TAMEEntry where
   label := "-ney PAST"
   ep := .strictDownstream
   up := .past
 
 /-- Korean -ney PRESENT: T = A (contemporaneous), T = S (present). -/
-def neyPresent : TenseEvidentialParadigm where
+def neyPresent : TAMEEntry where
   label := "-ney PRES"
   ep := .contemporaneous
   up := .present
 
 /-- Korean -ney FUTURE: A < T (prospective), S < T (future). -/
-def neyFuture : TenseEvidentialParadigm where
+def neyFuture : TAMEEntry where
   label := "-ney FUT"
   ep := .prospective
   up := .future
@@ -74,15 +74,15 @@ def neyFuture : TenseEvidentialParadigm where
 -- ════════════════════════════════════════════════════
 
 /-- All Korean -te entries. -/
-def teEntries : List TenseEvidentialParadigm :=
+def teEntries : List TAMEEntry :=
   [tePast, tePresent, teFuture]
 
 /-- All Korean -ney entries. -/
-def neyEntries : List TenseEvidentialParadigm :=
+def neyEntries : List TAMEEntry :=
   [neyPast, neyPresent, neyFuture]
 
 /-- All Korean evidential entries. -/
-def allEntries : List TenseEvidentialParadigm :=
+def allEntries : List TAMEEntry :=
   teEntries ++ neyEntries
 
 end Fragments.Korean.Evidentials
