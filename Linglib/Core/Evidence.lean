@@ -64,4 +64,17 @@ def EvidentialSource.toEvidentialPerspective : EvidentialSource → EvidentialPe
   | .hearsay => .retrospective
   | .inference => .retrospective
 
+/-- Mirativity: whether the propositional content is expected or
+    surprising to the speaker (DeLancey 1997, Aikhenvald 2004 Ch 6). -/
+inductive MirativityValue where
+  | expected
+  | unexpected
+  | neutral
+  deriving DecidableEq, Repr, BEq
+
+/-- Does this mirativity value mark surprise/new information? -/
+def MirativityValue.isMirative : MirativityValue → Bool
+  | .unexpected => true
+  | _ => false
+
 end Core.Evidence

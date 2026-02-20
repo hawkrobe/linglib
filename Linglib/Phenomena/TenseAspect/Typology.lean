@@ -709,4 +709,153 @@ theorem ta_empty_and_no_inflection :
     fullyIsolating.length ≥ 2 := by
   native_decide
 
+-- ============================================================================
+-- Types: WALS Chapter 78 — Coding of Evidentiality
+-- ============================================================================
+
+/-- WALS Ch 78: How evidentiality is coded in the language (de Haan 2013).
+
+    "Evidentiality" here means grammaticalized marking of information source.
+    Languages differ in whether evidentiality is part of the tense system,
+    expressed by verbal affixes, clitics, particles, or not grammaticalized. -/
+inductive EvidentialityCoding where
+  /-- No grammatical evidentiality -/
+  | none
+  /-- Evidentiality is part of the tense paradigm (e.g., Turkish -miş) -/
+  | partOfTense
+  /-- Evidentiality marked by verbal affix -/
+  | verbalAffix
+  /-- Evidentiality marked by clitic -/
+  | clitic
+  /-- Evidentiality marked by particle -/
+  | particle
+  /-- Other strategy -/
+  | other
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether a language has any grammatical evidentiality. -/
+def EvidentialityCoding.hasEvidentiality : EvidentialityCoding → Bool
+  | .none => false
+  | _ => true
+
+-- ============================================================================
+-- TAMEProfile: Unified Tense-Aspect-Mood-Evidentiality Profile
+-- ============================================================================
+
+/-- A language's typological profile across the full TAME space:
+    tense (Ch 66–67), aspect (Ch 65), perfect (Ch 68), morphological
+    position (Ch 69), and evidentiality (Ch 78).
+
+    Extends `TAProfile` with the evidentiality dimension. -/
+structure TAMEProfile where
+  /-- Language name -/
+  language : String
+  /-- ISO 639-3 code -/
+  iso : String
+  /-- Language family -/
+  family : String
+  /-- WALS Ch 65: perfective/imperfective aspect -/
+  aspect : AspectMarking
+  /-- WALS Ch 66: past tense marking -/
+  past : PastMarking
+  /-- WALS Ch 67: inflectional future -/
+  future : FutureMarking
+  /-- WALS Ch 68: perfect category -/
+  perfect : PerfectType
+  /-- WALS Ch 69: tense-aspect affix position -/
+  affixPosition : TAAffixPosition
+  /-- WALS Ch 78: coding of evidentiality -/
+  evidentiality : EvidentialityCoding
+  deriving Repr, DecidableEq, BEq
+
+-- ============================================================================
+-- Sample Language TAMEProfiles
+-- ============================================================================
+
+/--
+Turkish (Turkic). Evidentiality is part of the tense paradigm:
+-miş marks indirect evidence (hearsay/inference) vs -di (direct).
+-/
+def turkishTAME : TAMEProfile :=
+  { language := "Turkish", iso := "tur", family := "Turkic"
+  , aspect := .grammatical, past := .marked, future := .inflectional
+  , perfect := .other, affixPosition := .suffixing
+  , evidentiality := .partOfTense }
+
+/--
+Quechua (Quechuan). Evidentiality via verbal suffixes:
+-mi (direct), -si (hearsay), -chá (conjecture).
+-/
+def quechuaTAME : TAMEProfile :=
+  { language := "Quechua", iso := "que", family := "Quechuan"
+  , aspect := .none, past := .markedRemoteness2_3, future := .inflectional
+  , perfect := .other, affixPosition := .suffixing
+  , evidentiality := .verbalAffix }
+
+/--
+Korean (Koreanic). Evidentiality via verbal suffixes:
+-te (retrospective evidential), -ney (contemporaneous evidential).
+Cumming (2026) analyzes these as tense-evidential interactions.
+-/
+def koreanTAME : TAMEProfile :=
+  { language := "Korean", iso := "kor", family := "Koreanic"
+  , aspect := .grammatical, past := .marked, future := .inflectional
+  , perfect := .none, affixPosition := .suffixing
+  , evidentiality := .verbalAffix }
+
+/--
+English (Indo-European). No grammatical evidentiality.
+Evidential distinctions are expressed lexically ("apparently",
+"I heard that..."), not grammatically.
+-/
+def englishTAME : TAMEProfile :=
+  { language := "English", iso := "eng", family := "Indo-European"
+  , aspect := .grammatical, past := .marked, future := .none
+  , perfect := .fromPossessive, affixPosition := .suffixing
+  , evidentiality := .none }
+
+/--
+Mandarin Chinese (Sino-Tibetan). No grammatical evidentiality,
+no tense-aspect inflection. Isolating type.
+-/
+def mandarinTAME : TAMEProfile :=
+  { language := "Mandarin Chinese", iso := "cmn", family := "Sino-Tibetan"
+  , aspect := .grammatical, past := .none, future := .none
+  , perfect := .none, affixPosition := .noInflection
+  , evidentiality := .none }
+
+/-- All TAME-profiled languages. -/
+def allTAMELanguages : List TAMEProfile :=
+  [turkishTAME, quechuaTAME, koreanTAME, englishTAME, mandarinTAME]
+
+-- ============================================================================
+-- Generalization 11: Evidentiality co-occurs with tense/aspect marking
+-- ============================================================================
+
+/-- Whether a `TAMEProfile` has any tense or aspect marking
+    (aspect, past, or future). -/
+def TAMEProfile.hasTenseOrAspect (p : TAMEProfile) : Bool :=
+  p.aspect == .grammatical || p.past.hasMarking || p.future == .inflectional
+
+/-- In our TAME sample, every language with grammatical evidentiality
+    also has tense or aspect marking.
+
+    This reinforces the "no tense-vs-aspect divide" finding (Generalization 3)
+    by showing that evidentiality also clusters with tense/aspect marking
+    rather than replacing it. -/
+theorem evidential_implies_tense_aspect :
+    (allTAMELanguages.filter (·.evidentiality.hasEvidentiality)).all
+      (·.hasTenseOrAspect) = true := by
+  native_decide
+
+-- ============================================================================
+-- Per-Language TAME Verification
+-- ============================================================================
+
+example : turkishTAME.evidentiality = .partOfTense := by native_decide
+example : quechuaTAME.evidentiality = .verbalAffix := by native_decide
+example : koreanTAME.evidentiality = .verbalAffix := by native_decide
+example : englishTAME.evidentiality = .none := by native_decide
+example : mandarinTAME.evidentiality = .none := by native_decide
+
 end Phenomena.TenseAspect.Typology

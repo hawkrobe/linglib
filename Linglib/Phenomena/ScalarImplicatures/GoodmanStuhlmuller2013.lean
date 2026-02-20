@@ -1,17 +1,22 @@
+import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 
 /-!
 # Goodman & Stuhlmuller (2013): Knowledge and Implicature @cite{goodman-stuhlmuller-2013}
 
+"Knowledge and Implicature: Modeling Language Understanding as Social Cognition"
 Topics in Cognitive Science 5(1): 173-184
 
-Scalar implicature and upper-bounded numeral interpretations are modulated by
-speaker knowledge. When the speaker has full access, listeners draw upper-bounded
-inferences; when access is partial, these weaken or disappear.
+## Paradigm
+
+Three objects that may have a property. Speaker observes a subset (access = 1, 2,
+or 3) and makes a quantified or numeral statement. Listener divides $100 among
+world states (0-3 objects have property). Speaker access is common knowledge.
+
+Trials with knowledgeability bet <= 70 excluded from primary analysis.
 
 ## Architecture
 
@@ -26,29 +31,28 @@ The quality filter (utterances must be true at all believed worlds) is
 explicit because `Real.log 0 = 0` in Lean/Mathlib, unlike WebPPL where
 `log(0) = -∞` makes quality emerge from the expected utility computation.
 
-## Theorems
+## Qualitative Findings
 
-The model reproduces all 11 qualitative findings from Experiments 1 and 2.
-All proofs use `rsa_predict` on interval-arithmetic bounds.
+The paper's central finding: scalar implicature and upper-bounded numeral
+interpretations are modulated by speaker knowledge. When the speaker has full
+access, listeners draw upper-bounded inferences; when access is partial, these
+inferences weaken or disappear.
 
-**Experiment 1** (quantifiers): `gsCfgQ` — quantifier meaning {none, some, all}.
+| # | Finding | Word | Access | Comparison | Evidence |
+|---|---------|------|--------|------------|----------|
+| 1 | Implicature present | "some" | 3 | state 2 > state 3 | t(43)=-10.2, p<.001 |
+| 2 | Implicature canceled | "some" | 1 | state 2 not > state 3 | t(31)=0.77, p=.78 |
+| 3 | Implicature canceled | "some" | 2 | state 2 not > state 3 | t(28)=-0.82, p=.21 |
+| 4 | Upper-bounded | "two" | 3 | state 2 > state 3 | t(43)=-10.2, p<.001 |
+| 5 | Not upper-bounded | "two" | 2 | state 2 not > state 3 | t(24)=1.1, p=.87 |
+| 6 | Upper-bounded | "one" | 3 | state 1 > state 2 | t(42)=-13.1, p<.001 |
+| 7 | Upper-bounded | "one" | 3 | state 1 > state 3 | t(42)=-17.1, p<.001 |
+| 8 | Not upper-bounded | "one" | 1 | state 1 not > state 2 | t(24)=1.9, p=.96 |
+| 9 | Not upper-bounded | "one" | 1 | state 1 not > state 3 | t(24)=3.2, p=1.0 |
+| 10 | Partial | "one" | 2 | state 1 > state 3 | t(25)=-3.9, p<.001 |
+| 11 | Partial | "one" | 2 | state 1 not > state 2 | t(25)=1.5, p=.92 |
 
-**Experiment 2** (number words): `gsCfgN` — lower-bound numeral meaning
-{one, two, three}, where "two" means "at least two".
-
-| # | Finding | Model prediction |
-|---|---------|-----------------|
-| 1 | some + full → implicature | L1("some", a=3): s2 > s3 |
-| 2 | some + a=1 → canceled | L1("some", a=1): NOT (s2 > s3) |
-| 3 | some + a=2 → canceled | L1("some", a=2): NOT (s2 > s3) |
-| 4 | two + full → upper-bounded | L1("two", a=3): s2 > s3 |
-| 5 | two + a=2 → weakened | L1("two", a=2): NOT (s2 > s3) |
-| 6 | one + full → s1 > s2 | L1("one", a=3): s1 > s2 |
-| 7 | one + full → s1 > s3 | L1("one", a=3): s1 > s3 |
-| 8 | one + a=1 → canceled (s2) | L1("one", a=1): NOT (s1 > s2) |
-| 9 | one + a=1 → canceled (s3) | L1("one", a=1): NOT (s1 > s3) |
-| 10 | one + a=2 → partial (s3) | L1("one", a=2): s1 > s3 |
-| 11 | one + a=2 → canceled (s2) | L1("one", a=2): NOT (s1 > s2) |
+The model reproduces all 11 findings. All proofs use `rsa_predict`.
 
 ## References
 
@@ -61,10 +65,223 @@ set_option autoImplicit false
 
 namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
 
-open Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013 (Finding)
+open Phenomena
 
 -- ============================================================================
--- §1. Domain Types
+-- §1. Empirical Data
+-- ============================================================================
+
+def citation : String :=
+  "Goodman & Stuhlmuller (2013). Topics in Cognitive Science 5(1): 173-184."
+
+def measure : MeasureSpec :=
+  { scale := .continuous, task := .forcedChoice, unit := "dollars (out of $100)" }
+
+def nPerExperiment : Nat := 50
+def nObjects : Nat := 3
+
+/-- The 11 qualitative findings from Goodman & Stuhlmuller (2013) Experiments 1-2.
+    Each finding is a pairwise bet comparison between world states under a specific
+    (word, access) condition. -/
+inductive Finding where
+  -- Experiment 1: "some" x speaker access (Fig 2A)
+  /-- Full access: bets on state 2 > state 3 (scalar implicature present).
+      Evidence: t(43) = -10.2, p < .001. -/
+  | some_full_implicature
+  /-- Minimal access (a=1): state 2 does not exceed state 3 (canceled).
+      Evidence: t(31) = 0.77, p = .78. -/
+  | some_minimal_canceled
+  /-- Partial access (a=2): state 2 does not exceed state 3 (canceled).
+      Evidence: t(28) = -0.82, p = .21. -/
+  | some_partial_canceled
+  -- Experiment 2: "two" x speaker access (Fig 2B)
+  /-- Full access: "two" -> state 2 > state 3 (upper-bounded reading).
+      Evidence: t(43) = -10.2, p < .001. -/
+  | two_full_upper_bounded
+  /-- Partial access (a=2): state 2 does not exceed state 3 (weakened).
+      Evidence: t(24) = 1.1, p = .87. -/
+  | two_partial_weakened
+  -- Experiment 2: "one" x speaker access (Fig 2B)
+  /-- Full access: "one" -> state 1 > state 2.
+      Evidence: t(42) = -13.1, p < .001. -/
+  | one_full_1v2
+  /-- Full access: "one" -> state 1 > state 3.
+      Evidence: t(42) = -17.1, p < .001. -/
+  | one_full_1v3
+  /-- Minimal access (a=1): state 1 does not exceed state 2 (canceled).
+      Evidence: t(24) = 1.9, p = .96. -/
+  | one_minimal_1v2_canceled
+  /-- Minimal access (a=1): state 1 does not exceed state 3 (canceled).
+      Evidence: t(24) = 3.2, p = 1.0. -/
+  | one_minimal_1v3_canceled
+  /-- Partial access (a=2): state 1 > state 3 (partial implicature holds).
+      Evidence: t(25) = -3.9, p < .001. -/
+  | one_partial_1v3
+  /-- Partial access (a=2): state 1 does not exceed state 2 (still canceled).
+      Evidence: t(25) = 1.5, p = .92. -/
+  | one_partial_1v2_canceled
+  deriving DecidableEq, BEq, Repr
+
+/-- All findings from the paper. -/
+def findings : List Finding :=
+  [.some_full_implicature, .some_minimal_canceled, .some_partial_canceled,
+   .two_full_upper_bounded, .two_partial_weakened,
+   .one_full_1v2, .one_full_1v3,
+   .one_minimal_1v2_canceled, .one_minimal_1v3_canceled,
+   .one_partial_1v3, .one_partial_1v2_canceled]
+
+-- ============================================================================
+-- §2. Statistical Evidence
+-- ============================================================================
+
+/-- A pairwise comparison of bets on two world states in a condition.
+
+The key observable: did participants allocate significantly more money to
+world state `stateA` than to `stateB`? A theory that predicts the listener's
+posterior P(state | word, access) can be checked against this. -/
+structure BetComparison where
+  experiment : Nat
+  word : String
+  /-- How many of 3 objects the speaker observed -/
+  access : Nat
+  stateA : Nat
+  stateB : Nat
+  /-- Did bets on stateA significantly exceed bets on stateB? -/
+  aExceedsB : Bool
+  evidence : String
+  deriving Repr
+
+-- Experiment 1: "some" x access (N = 50)
+
+/-- Access = 3: bets on state 2 > bets on state 3. -/
+def exp1_some_a3_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 3, stateA := 2, stateB := 3
+    aExceedsB := true, evidence := "t(43) = -10.2, p < .001" }
+
+/-- Access = 1: bets on state 2 did NOT exceed bets on state 3. -/
+def exp1_some_a1_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 1, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(31) = 0.77, p = .78" }
+
+/-- Access = 2: bets on state 2 did NOT exceed bets on state 3. -/
+def exp1_some_a2_2v3 : BetComparison :=
+  { experiment := 1, word := "some", access := 2, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(28) = -0.82, p = .21" }
+
+/-- Bets on state 3 at access = 3 significantly lower than at access = 1. -/
+def exp1_a3_vs_a1_on_state3 : BetComparison :=
+  { experiment := 1, word := "some", access := 3, stateA := 3, stateB := 3
+    aExceedsB := false
+    evidence := "access 3 < access 1 on state 3: t(47) = -4.0, p < .001" }
+
+-- Experiment 2: number words x access (N = 50)
+
+/-- "two", access = 3: bets on state 2 > bets on state 3. -/
+def exp2_two_a3_2v3 : BetComparison :=
+  { experiment := 2, word := "two", access := 3, stateA := 2, stateB := 3
+    aExceedsB := true, evidence := "t(43) = -10.2, p < .001" }
+
+/-- "two", access = 2: bets on state 2 did NOT exceed bets on state 3. -/
+def exp2_two_a2_2v3 : BetComparison :=
+  { experiment := 2, word := "two", access := 2, stateA := 2, stateB := 3
+    aExceedsB := false, evidence := "t(24) = 1.1, p = .87" }
+
+/-- "one", access = 3: bets on state 1 > bets on state 2. -/
+def exp2_one_a3_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 3, stateA := 1, stateB := 2
+    aExceedsB := true, evidence := "t(42) = -13.1, p < .001" }
+
+/-- "one", access = 3: bets on state 1 > bets on state 3. -/
+def exp2_one_a3_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 3, stateA := 1, stateB := 3
+    aExceedsB := true, evidence := "t(42) = -17.1, p < .001" }
+
+/-- "one", access = 1: bets on state 1 did NOT exceed bets on state 2. -/
+def exp2_one_a1_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 1, stateA := 1, stateB := 2
+    aExceedsB := false, evidence := "t(24) = 1.9, p = .96" }
+
+/-- "one", access = 1: bets on state 1 did NOT exceed bets on state 3. -/
+def exp2_one_a1_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 1, stateA := 1, stateB := 3
+    aExceedsB := false, evidence := "t(24) = 3.2, p = 1.0" }
+
+/-- "one", access = 2: bets on state 1 > bets on state 3 (partial). -/
+def exp2_one_a2_1v3 : BetComparison :=
+  { experiment := 2, word := "one", access := 2, stateA := 1, stateB := 3
+    aExceedsB := true, evidence := "t(25) = -3.9, p < .001" }
+
+/-- "one", access = 2: bets on state 1 did NOT exceed bets on state 2. -/
+def exp2_one_a2_1v2 : BetComparison :=
+  { experiment := 2, word := "one", access := 2, stateA := 1, stateB := 2
+    aExceedsB := false, evidence := "t(25) = 1.5, p = .92" }
+
+-- Omnibus effects
+
+structure OmnibusTest where
+  description : String
+  testType : String
+  statistic : Float
+  p : Float
+  deriving Repr
+
+def exp1_access_effect : OmnibusTest :=
+  { description := "Effect of access on bets on state 3"
+    testType := "one-way ANOVA, F(2, 102)", statistic := 10.18, p := 0.001 }
+
+def exp2_access_main : OmnibusTest :=
+  { description := "Main effect of access"
+    testType := "ANOVA, F(2, 205)", statistic := 6.57, p := 0.01 }
+
+def exp2_word_main : OmnibusTest :=
+  { description := "Main effect of word"
+    testType := "ANOVA, F(2, 205)", statistic := 269.8, p := 0.001 }
+
+def exp2_interaction : OmnibusTest :=
+  { description := "Word x access interaction"
+    testType := "ANOVA, F(1, 205)", statistic := 34.7, p := 0.001 }
+
+-- Manipulation check
+
+structure KnowledgeabilityCheck where
+  access : Nat
+  meanBet : Float
+  sd : Float
+  deriving Repr
+
+def knowledge_a1 : KnowledgeabilityCheck := { access := 1, meanBet := 27.1, sd := 4.9 }
+def knowledge_a2 : KnowledgeabilityCheck := { access := 2, meanBet := 34.8, sd := 5.7 }
+def knowledge_a3 : KnowledgeabilityCheck := { access := 3, meanBet := 93.0, sd := 2.7 }
+
+-- Finding → Evidence linking
+
+/-- The statistical evidence for each finding. -/
+def Finding.evidence : Finding → BetComparison
+  | .some_full_implicature => exp1_some_a3_2v3
+  | .some_minimal_canceled => exp1_some_a1_2v3
+  | .some_partial_canceled => exp1_some_a2_2v3
+  | .two_full_upper_bounded => exp2_two_a3_2v3
+  | .two_partial_weakened => exp2_two_a2_2v3
+  | .one_full_1v2 => exp2_one_a3_1v2
+  | .one_full_1v3 => exp2_one_a3_1v3
+  | .one_minimal_1v2_canceled => exp2_one_a1_1v2
+  | .one_minimal_1v3_canceled => exp2_one_a1_1v3
+  | .one_partial_1v3 => exp2_one_a2_1v3
+  | .one_partial_1v2_canceled => exp2_one_a2_1v2
+
+/-- Does this finding predict that the comparison holds (stateA > stateB)? -/
+def Finding.predicted : Finding → Bool
+  | .some_full_implicature | .two_full_upper_bounded
+  | .one_full_1v2 | .one_full_1v3 | .one_partial_1v3 => true
+  | _ => false
+
+/-- The statistical evidence matches the predicted direction for every finding. -/
+theorem evidence_matches_prediction :
+    ∀ f : Finding, f.evidence.aExceedsB = f.predicted := by
+  intro f; cases f <;> rfl
+
+-- ============================================================================
+-- §3. Domain Types
 -- ============================================================================
 
 /-- World states: how many of 3 objects have the property. -/
@@ -107,7 +324,7 @@ def Obs.sampleSize : Obs → Nat
   | .o0a3 | .o1a3 | .o2a3 | .o3a3 => 3
 
 -- ============================================================================
--- §2. Observation Model (Hypergeometric)
+-- §4. Observation Model (Hypergeometric)
 -- ============================================================================
 
 /-- Hypergeometric feasibility: can you draw `obs.count` successes when
@@ -147,7 +364,7 @@ noncomputable def speakerBelief (obs : Obs) (s : WorldState) : ℝ :=
   obsPriorTable obs.access s obs / ∑ s' : WorldState, obsPriorTable obs.access s' obs
 
 -- ============================================================================
--- §3. Quality Filter
+-- §5. Quality Filter
 -- ============================================================================
 
 /-- Quality filter: utterance u must be true at every world the speaker
@@ -158,7 +375,7 @@ def qualityOk {U : Type*} (meaning : U → WorldState → Bool)
   [.s0, .s1, .s2, .s3].all fun s => !obsCompatible obs s || meaning u s
 
 -- ============================================================================
--- §4. Unified Config Constructor
+-- §6. RSA Config
 -- ============================================================================
 
 open RSA in
@@ -200,7 +417,7 @@ noncomputable def gsCfg {U : Type*} [Fintype U]
   worldPrior_nonneg _ := by positivity
 
 -- ============================================================================
--- §5. Quantifier Model
+-- §7. Quantifier Model
 -- ============================================================================
 
 inductive QUtt where
@@ -216,7 +433,7 @@ def qMeaning : QUtt → WorldState → Bool
 noncomputable abbrev gsCfgQ := gsCfg qMeaning
 
 -- ============================================================================
--- §6. Numeral Model (Lower-Bound Semantics)
+-- §8. Numeral Model (Lower-Bound Semantics)
 -- ============================================================================
 
 inductive NumUtt where
@@ -232,7 +449,7 @@ def lbMeaning : NumUtt → WorldState → Bool
 noncomputable abbrev gsCfgN := gsCfg lbMeaning
 
 -- ============================================================================
--- §7. Grounding
+-- §9. Grounding
 -- ============================================================================
 
 /-- Quantifier meaning derives from Montague semantics (not stipulated). -/
@@ -252,7 +469,7 @@ theorem lb_meaning_grounded (u : NumUtt) (s : WorldState) :
   cases u <;> cases s <;> rfl
 
 -- ============================================================================
--- §8. Experiment 1: "some" x access
+-- §10. Experiment 1: "some" x access
 -- ============================================================================
 
 set_option maxHeartbeats 4000000 in
@@ -274,7 +491,7 @@ theorem some_partial_canceled :
   rsa_predict
 
 -- ============================================================================
--- §9. Experiment 2: "two" x access
+-- §11. Experiment 2: "two" x access
 -- ============================================================================
 
 set_option maxHeartbeats 4000000 in
@@ -290,7 +507,7 @@ theorem two_partial_weakened :
   rsa_predict
 
 -- ============================================================================
--- §10. Experiment 2: "one" x access
+-- §12. Experiment 2: "one" x access
 -- ============================================================================
 
 set_option maxHeartbeats 4000000 in
@@ -330,7 +547,7 @@ theorem one_partial_1v2_canceled :
   rsa_predict
 
 -- ============================================================================
--- §11. Verification: every finding from the paper is accounted for
+-- §13. Verification: every finding is accounted for
 -- ============================================================================
 
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/

@@ -12,7 +12,7 @@ The first part formalizes the unilateral fragment needed by
 Bondarenko & Elliott (2026): propositions as sets of verifiers,
 conjunction via fusion, content parthood, and attitude distribution.
 
-## Part II: Bilateral Propositions (§§7–11)
+## Part II: Bilateral Propositions (§§7–13)
 
 The second part formalizes Fine's full bilateral conception: propositions
 as *pairs* (V, F) of verifier and falsifier sets, with negation as
@@ -244,19 +244,22 @@ def bilNot {S : Type*} (p : BilProp S) : BilProp S :=
 
 /-- Conjunction: verified by fusion, falsified by union (Fine 2017 §5).
     - s verifies A ∧ B iff s = s₁ ⊔ s₂ where s₁ verifies A and s₂ verifies B
-    - s falsifies A ∧ B iff s falsifies A or s falsifies B -/
+    - s falsifies A ∧ B iff s falsifies A or s falsifies B
+
+    Defined in terms of `tmAnd`/`tmOr` — the duality is explicit:
+    conjunction *fuses* verifiers but *unions* falsifiers. -/
 def bilAnd {S : Type*} [SemilatticeSup S] (p q : BilProp S) : BilProp S where
-  ver := λ s => ∃ s₁ s₂, p.ver s₁ ∧ q.ver s₂ ∧ s = s₁ ⊔ s₂
-  fal := λ s => p.fal s ∨ q.fal s
+  ver := tmAnd p.ver q.ver
+  fal := tmOr p.fal q.fal
 
 /-- Disjunction: verified by union, falsified by fusion (Fine 2017 §5).
     - s verifies A ∨ B iff s verifies A or s verifies B
     - s falsifies A ∨ B iff s = s₁ ⊔ s₂ where s₁ falsifies A and s₂ falsifies B
 
-    Note the exact duality with conjunction: fusion and union swap roles. -/
+    Exact dual of `bilAnd`: disjunction *unions* verifiers but *fuses* falsifiers. -/
 def bilOr {S : Type*} [SemilatticeSup S] (p q : BilProp S) : BilProp S where
-  ver := λ s => p.ver s ∨ q.ver s
-  fal := λ s => ∃ s₁ s₂, p.fal s₁ ∧ q.fal s₂ ∧ s = s₁ ⊔ s₂
+  ver := tmOr p.ver q.ver
+  fal := tmAnd p.fal q.fal
 
 -- ════════════════════════════════════════════════════
 -- § 9. Double Negation and De Morgan Duality
@@ -283,27 +286,7 @@ theorem deMorgan_or {S : Type*} [SemilatticeSup S] (p q : BilProp S) :
     bilNot (bilOr p q) = bilAnd (bilNot p) (bilNot q) := rfl
 
 -- ════════════════════════════════════════════════════
--- § 10. Coherence with Unilateral Connectives
--- ════════════════════════════════════════════════════
-
-/-- Bilateral conjunction agrees with unilateral conjunction on verifiers. -/
-theorem bilAnd_ver_eq_tmAnd {S : Type*} [SemilatticeSup S] (p q : BilProp S) :
-    (bilAnd p q).toTM = tmAnd p.toTM q.toTM := rfl
-
-/-- Bilateral disjunction agrees with unilateral disjunction on verifiers. -/
-theorem bilOr_ver_eq_tmOr {S : Type*} [SemilatticeSup S] (p q : BilProp S) :
-    (bilOr p q).toTM = tmOr p.toTM q.toTM := rfl
-
-/-- Content parthood on bilateral propositions reduces to content parthood
-    on their verifier projections. -/
-theorem contentPart_bil_iff_tm {S : Type*} [SemilatticeSup S]
-    (p q : BilProp S) :
-    contentPart p.toTM q.toTM ↔
-    ∀ s, q.ver s → ∃ t, p.ver t ∧ t ≤ s :=
-  Iff.rfl
-
--- ════════════════════════════════════════════════════
--- § 11. Modalized State Space and Compatibility
+-- § 10. Modalized State Space and Compatibility
 -- ════════════════════════════════════════════════════
 
 /-- A possibility predicate distinguishes possible from impossible states
@@ -332,7 +315,7 @@ theorem compatible_symm {S : Type*} [SemilatticeSup S] (P : Possibility S)
   simp only [compatible, sup_comm]
 
 -- ════════════════════════════════════════════════════
--- § 12. Exclusivity and Exhaustivity
+-- § 11. Exclusivity and Exhaustivity
 -- ════════════════════════════════════════════════════
 
 /-- Exclusivity (Fine 2017 §5): no verifier is compatible with a falsifier.
@@ -372,27 +355,15 @@ theorem exhaustive_bilNot {S : Type*} [SemilatticeSup S]
   | inr hf => exact Or.inl hf
 
 -- ════════════════════════════════════════════════════
--- § 13. Subject-Matter
+-- § 12. Subject-Matter
 -- ════════════════════════════════════════════════════
 
 /-- Subject-matter of a proposition: the fusion of all its verifiers
     (Fine 2017 §II.2). Two sentences can be logically equivalent (true
-    at the same worlds) but differ in subject-matter.
-
-    For general state spaces, this uses `sSup` (requires `SupSet`).
-    For finite models, use `subjectMatterFinite` below. -/
+    at the same worlds) but differ in subject-matter. -/
 noncomputable def subjectMatter {S : Type*} [SupSet S]
     (A : BilProp S) : S :=
   sSup {s | A.ver s}
-
-/-- Subject-matter for finite verifier sets. Computes the iterated
-    fusion of a given list of verifiers. -/
-def subjectMatterFinite {S : Type*} [SemilatticeSup S]
-    (verifiers : List S) : Option S :=
-  verifiers.foldl (λ acc s =>
-    match acc with
-    | none => some s
-    | some a => some (a ⊔ s)) none
 
 /-- A proposition is about another if its subject-matter is part of the
     other's. This gives a mereological account of "aboutness": "It's raining"
@@ -403,7 +374,7 @@ def isAbout {S : Type*} [Preorder S] [SupSet S]
   subjectMatter A ≤ subjectMatter B
 
 -- ════════════════════════════════════════════════════
--- § 14. Conjunction Exclusivity Propagation
+-- § 13. Conjunction Exclusivity Propagation
 -- ════════════════════════════════════════════════════
 
 /-- If A and B are both exclusive, then A ∧ B is exclusive.
@@ -420,23 +391,16 @@ theorem exclusive_bilAnd {S : Type*} [SemilatticeSup S]
   intro s t ⟨s₁, s₂, hvA, hvB, hs⟩ hfAB hcompat
   cases hfAB with
   | inl hfA =>
-    -- t falsifies A, s₁ verifies A
-    -- Need: s₁ ⊔ t is impossible
-    -- We have: (s₁ ⊔ s₂) ⊔ t is possible, and s₁ ≤ s₁ ⊔ s₂
-    -- hMono doesn't directly help in this direction; we use hA
+    -- t falsifies A, s₁ verifies A; show s₁ ⊔ t is impossible
+    -- (s₁ ⊔ s₂) ⊔ t is possible and s₁ ⊔ t ≤ (s₁ ⊔ s₂) ⊔ t, so downClosed gives us compatible P s₁ t
     have : compatible P s₁ t := by
-      unfold compatible
-      unfold compatible at hcompat
+      unfold compatible at hcompat ⊢
       rw [hs] at hcompat
-      -- s₁ ⊔ s₂ ⊔ t is possible, s₁ ≤ s₁ ⊔ s₂
-      -- We need s₁ ⊔ t possible from (s₁ ⊔ s₂) ⊔ t possible
-      -- This requires downward closure + s₁ ⊔ t ≤ (s₁ ⊔ s₂) ⊔ t
       exact P.downClosed _ _ hcompat (sup_le_sup_right le_sup_left t)
     exact hA s₁ t hvA hfA this
   | inr hfB =>
     have : compatible P s₂ t := by
-      unfold compatible
-      unfold compatible at hcompat
+      unfold compatible at hcompat ⊢
       rw [hs] at hcompat
       exact P.downClosed _ _ hcompat (sup_le_sup_right le_sup_right t)
     exact hB s₂ t hvB hfB this

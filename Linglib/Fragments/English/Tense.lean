@@ -21,8 +21,8 @@ constraints via `EPCondition` and `UPCondition` enums.
 
 ## Lakoff Perspective Entries (§4)
 
-`TensePerspectiveEntry` extends `TenseEvidentialParadigm` with the morphological
-form type (synthetic vs periphrastic) and grammatical tense, connecting Cumming's
+`TensePerspectiveEntry` extends `TAMEEntry` with the morphological form
+type (synthetic vs periphrastic) and grammatical tense, connecting Cumming's
 evidential constraints to Lakoff's false-tense diagnostic.
 
 ## References
@@ -40,19 +40,19 @@ open Semantics.Tense.Evidential
 -- ════════════════════════════════════════════════════
 
 /-- English simple past: T ≤ A (downstream), T < S (past). -/
-def simplePast : TenseEvidentialParadigm where
+def simplePast : TAMEEntry where
   label := "simple past"
   ep := .downstream
   up := .past
 
 /-- English present progressive: T ≤ A (downstream), T = S (present). -/
-def presentProg : TenseEvidentialParadigm where
+def presentProg : TAMEEntry where
   label := "present progressive"
   ep := .downstream
   up := .present
 
 /-- English future (will): no EP constraint, S < T (future). -/
-def future : TenseEvidentialParadigm where
+def future : TAMEEntry where
   label := "future (will)"
   ep := .unconstrained
   up := .future
@@ -62,19 +62,19 @@ def future : TenseEvidentialParadigm where
 -- ════════════════════════════════════════════════════
 
 /-- English "will have V-ed": A < T (prospective), S < T (future). -/
-def willHave : TenseEvidentialParadigm where
+def willHave : TAMEEntry where
   label := "will have V-ed"
   ep := .prospective
   up := .future
 
 /-- English "will now be V-ing": A < T (prospective), T = S (present). -/
-def willNow : TenseEvidentialParadigm where
+def willNow : TAMEEntry where
   label := "will now be V-ing"
   ep := .prospective
   up := .present
 
 /-- English bare "will": no EP constraint, S < T (future). -/
-def willBare : TenseEvidentialParadigm where
+def willBare : TAMEEntry where
   label := "will (bare)"
   ep := .unconstrained
   up := .future
@@ -84,11 +84,11 @@ def willBare : TenseEvidentialParadigm where
 -- ════════════════════════════════════════════════════
 
 /-- All English tense paradigm entries. -/
-def allEntries : List TenseEvidentialParadigm :=
+def allEntries : List TAMEEntry :=
   [simplePast, presentProg, future, willHave, willNow, willBare]
 
 /-- English nonfuture entries. -/
-def nonfutureEntries : List TenseEvidentialParadigm :=
+def nonfutureEntries : List TAMEEntry :=
   allEntries.filter (·.isNonfuture)
 
 -- ════════════════════════════════════════════════════
@@ -103,7 +103,7 @@ open Core.Morphology.Tense
     grammatical tense and morphological form type (synthetic vs periphrastic).
 
     `allowsFalseTense` is derived: only synthetic forms permit false tense. -/
-structure TensePerspectiveEntry extends TenseEvidentialParadigm where
+structure TensePerspectiveEntry extends TAMEEntry where
   /-- The grammatical tense this form realizes -/
   gramTense : GramTense
   /-- Synthetic (inflectional) or periphrastic (auxiliary-based) -/

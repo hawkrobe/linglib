@@ -10,20 +10,23 @@ determiners. This makes the parallel between quantifier monotonicity and
 attitude monotonicity explicit: both are instances of the same algebraic
 classification.
 
+Per-verb monotonicity data lives on `VerbCore.complementSig` in the
+fragment lexicon (`Fragments/English/Predicates/Verbal.lean`), not here.
+This file provides only the derivation logic: given an `EntailmentSig`,
+what follows about conjunction distribution and neg-raising?
+
 ## Key contributions
 
 1. **Conjunction distribution derived from EntailmentSig**: An attitude verb
    distributes over conjunction iff its complement signature refines `.mono`.
-   This is not stipulated — it follows from the definition of upward
-   monotonicity.
 
 2. **Neg-raising from monotonicity + EMP**: Bondarenko & Elliott derive
    neg-raising from upward monotonicity plus an excluded-middle
    presupposition (EMP), NOT from veridicality (as in `NegRaising.lean`).
-   Both derivations agree on believe/think/know.
+   Both derivations agree on standard doxastic verbs.
 
 3. **Mereological grounding**: The conjunction distribution theorem
-   (`mono_att_distrib_and` in `Truthmaker.Basic`) proves that the
+   (`mono_att_distrib_and_iff` in `Truthmaker.Basic`) proves that the
    distribution follows from the `SemilatticeSup` structure of states.
 
 ## References
@@ -40,31 +43,7 @@ open Semantics.Attitudes.NegRaising (negRaisingAvailable)
 open Semantics.Attitudes.Doxastic (Veridicality)
 
 -- ════════════════════════════════════════════════════
--- § 1. Attitude Complement Signatures
--- ════════════════════════════════════════════════════
-
-/-- Believe: upward monotone in its complement.
-    "believe (p and q)" ↔ "believe p and believe q". -/
-def believeSig : EntailmentSig := .mono
-
-/-- Know: upward monotone in its complement.
-    Factive, but still monotone: "know (p and q)" ↔ "know p and know q". -/
-def knowSig : EntailmentSig := .mono
-
-/-- Think: upward monotone in its complement. -/
-def thinkSig : EntailmentSig := .mono
-
-/-- Hope: upward monotone in its complement. -/
-def hopeSig : EntailmentSig := .mono
-
-/-- Be surprised: multiplicative but not additive.
-    Distributes over ∧ but not ∨: "surprised that p and q" ↔
-    "surprised that p and surprised that q", but
-    "surprised that p or q" does NOT distribute. -/
-def surpriseSig : EntailmentSig := .mult
-
--- ════════════════════════════════════════════════════
--- § 2. Conjunction Distribution from Signature
+-- § 1. Conjunction Distribution from Signature
 -- ════════════════════════════════════════════════════
 
 /-- An attitude distributes over conjunction iff its complement signature
@@ -76,19 +55,21 @@ def surpriseSig : EntailmentSig := .mult
 def distribOverConj (sig : EntailmentSig) : Bool :=
   sig.refines .mono
 
--- Verification: monotone attitudes distribute
-#guard distribOverConj believeSig   -- believe distributes
-#guard distribOverConj knowSig      -- know distributes
-#guard distribOverConj thinkSig     -- think distributes
-#guard distribOverConj hopeSig      -- hope distributes
-#guard distribOverConj surpriseSig  -- surprise distributes (multiplicative!)
+-- Verification: signatures that distribute over conjunction
+#guard distribOverConj .mono       -- upward monotone
+#guard distribOverConj .mult       -- multiplicative (∧-distributing but not ∨)
+#guard distribOverConj .additive   -- additive
+#guard distribOverConj .addMult    -- both additive and multiplicative
+#guard distribOverConj .all        -- top of lattice
 
--- Non-monotone attitudes would not distribute:
-#guard !distribOverConj .anti       -- antitone does not
-#guard !distribOverConj .antiAdd    -- anti-additive does not
+-- Signatures that do NOT distribute
+#guard !distribOverConj .anti      -- antitone
+#guard !distribOverConj .antiAdd   -- anti-additive
+#guard !distribOverConj .antiMult     -- anti-multiplicative
+#guard !distribOverConj .antiAddMult  -- anti-additive + anti-multiplicative
 
 -- ════════════════════════════════════════════════════
--- § 3. Neg-Raising: Monotonicity + EMP Account
+-- § 2. Neg-Raising: Monotonicity + EMP Account
 -- ════════════════════════════════════════════════════
 
 /-- Excluded-Middle Presupposition (EMP).
@@ -118,54 +99,29 @@ def negRaisingFromMono (sig : EntailmentSig) (v : Veridicality) : Bool :=
   hasEMP sig && v == .nonVeridical
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge Theorems: Two Routes to Neg-Raising
+-- § 3. Bridge: Two Routes to Neg-Raising Agree
 -- ════════════════════════════════════════════════════
-
-/-- For believe: both accounts predict neg-raising.
-    Veridicality account: nonVeridical → negRaising ✓
-    Monotonicity account: mono + EMP + nonVeridical → negRaising ✓ -/
-theorem believe_negRaising_both_accounts :
-    negRaisingAvailable .nonVeridical = true ∧
-    negRaisingFromMono believeSig .nonVeridical = true :=
-  ⟨rfl, rfl⟩
-
-/-- For think: both accounts predict neg-raising. -/
-theorem think_negRaising_both_accounts :
-    negRaisingAvailable .nonVeridical = true ∧
-    negRaisingFromMono thinkSig .nonVeridical = true :=
-  ⟨rfl, rfl⟩
-
-/-- For know: both accounts predict NO neg-raising.
-    Veridicality account: veridical → no negRaising ✓
-    Monotonicity account: mono + EMP, but veridical → no negRaising ✓
-    (Know has EMP but is veridical, so the pragmatic inference is
-    blocked by the factivity presupposition.) -/
-theorem know_no_negRaising_both_accounts :
-    negRaisingAvailable .veridical = false ∧
-    negRaisingFromMono knowSig .veridical = false :=
-  ⟨rfl, rfl⟩
 
 /-- The veridicality and monotonicity accounts agree on all standard
     doxastic verbs: both predict neg-raising for non-veridical monotone
     verbs and no neg-raising for veridical ones.
 
     They could diverge for hypothetical verbs that are:
-    - Monotone but veridical (know-like) → both block neg-raising
     - Non-monotone but non-veridical → veridicality allows, monotonicity blocks
 
     Currently both routes agree because all non-veridical doxastic verbs
     in the lexicon are also monotone. -/
-theorem negRaising_accounts_agree_doxastic (v : Veridicality) :
+theorem negRaising_accounts_agree (v : Veridicality) :
     negRaisingFromMono .mono v = negRaisingAvailable v := by
   cases v <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Connection to Mereological Foundation
+-- § 4. Mereological Grounding
 -- ════════════════════════════════════════════════════
 
 /-- The truthmaker conjunction distribution theorem
-    (`Truthmaker.mono_att_distrib_and`) provides the semantic *why* for
-    the monotonicity classification.
+    (`Truthmaker.mono_att_distrib_and_iff`) provides the semantic *why*
+    for the monotonicity classification.
 
     This re-export makes the connection explicit: the EntailmentSig
     classification of attitude verbs is *grounded* in the SemilatticeSup
