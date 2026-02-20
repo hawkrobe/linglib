@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.62] - 2026-02-20
+
+### Changed
+- **Close `logPoint_containsReal` axiom** (LogInterval.lean): Full proof via bisection invariant `exp(lo) ≤ q ≤ exp(hi)` + monotonicity of log; 4 helper lemmas (`nat_le_exp`, `logBisectCore_sound`, `initial_lower_bound`, `initial_upper_bound`)
+- All 3 core interval axioms (`mul_containsReal`, `expPoint_containsReal`, `logPoint_containsReal`) now have full proofs; only `pade_error_bound` and `reductionSteps_spec` k>0 remain as `sorry`
+
 ## [0.224.61] - 2026-02-20
 
 ### Changed
