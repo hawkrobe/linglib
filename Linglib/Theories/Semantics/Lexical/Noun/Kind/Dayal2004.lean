@@ -42,8 +42,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 namespace Semantics.Lexical.Noun.Kind.Dayal2004
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple Individual Kind Property
-                              NounType downDefinedFor)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple NounType downDefinedFor)
 
 variable (World Atom : Type)
 
