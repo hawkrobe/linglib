@@ -15,6 +15,7 @@ projection; `KContext` is the full Kaplanian structure.
 -/
 
 import Linglib.Core.Time
+import Linglib.Core.Reichenbach
 
 namespace Core.Context
 
@@ -56,5 +57,16 @@ def LocatedContext {W E P T : Type*} (c : KContext W E P T)
 def KContext.toSituation {W E P T : Type*} (c : KContext W E P T) :
     Situation W T :=
   ⟨c.world, c.time⟩
+
+/-- Project a KContext into a root-clause ReichenbachFrame.
+    Speech time S = context time; perspective time P = S (root clause
+    default, Kiparsky 2002); R and E are supplied per clause. -/
+def KContext.toReichenbachFrame {W E P T : Type*}
+    (c : KContext W E P T) (R Ev : T) :
+    Core.Reichenbach.ReichenbachFrame T where
+  speechTime := c.time
+  perspectiveTime := c.time  -- root clause default: P = S
+  referenceTime := R
+  eventTime := Ev
 
 end Core.Context
