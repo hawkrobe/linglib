@@ -91,6 +91,25 @@ private def metaEvalMul' (a b : MetaBounds) : MetaBounds :=
 -- Meta-level QInterval Combinators
 -- ============================================================================
 
+/-- Round a nonneg ℚ down to `bits` binary digits: floor(q · 2^bits) / 2^bits.
+    The result has a power-of-2 denominator, preventing denominator blowup. -/
+private def roundDownBin (q : ℚ) (bits : ℕ) : ℚ :=
+  let scale := (2 ^ bits : ℕ)
+  let n := q.num.toNat * scale / q.den  -- Nat division = floor for nonneg
+  (n : ℚ) / (scale : ℚ)
+
+/-- Round a nonneg ℚ up to `bits` binary digits: ceil(q · 2^bits) / 2^bits. -/
+private def roundUpBin (q : ℚ) (bits : ℕ) : ℚ :=
+  let scale := (2 ^ bits : ℕ)
+  let n := (q.num.toNat * scale + q.den - 1) / q.den  -- ceil
+  (n : ℚ) / (scale : ℚ)
+
+/-- Round MetaBounds outward (lo down, hi up) to `bits` binary digits.
+    Maintains soundness: the rounded interval contains the original.
+    Assumes both bounds are nonneg (always true for RSA scores). -/
+private def roundBounds (b : MetaBounds) (bits : ℕ := 48) : MetaBounds :=
+  ⟨roundDownBin b.lo bits, roundUpBin b.hi bits⟩
+
 private def metaQIAdd (a b : MetaBounds) : MetaBounds := ⟨a.lo + b.lo, a.hi + b.hi⟩
 
 private def metaQISumMap (scores : Array MetaBounds) : MetaBounds :=
@@ -101,7 +120,7 @@ private def metaQIDivPosSafe (num denom : MetaBounds) : MetaBounds :=
   else ⟨0, 1⟩
 
 private def metaQINormalize (scores : Array MetaBounds) (targetIdx : ℕ) : MetaBounds :=
-  metaQIDivPosSafe scores[targetIdx]! (metaQISumMap scores)
+  roundBounds (metaQIDivPosSafe scores[targetIdx]! (metaQISumMap scores))
 
 /-- Compute L1 score at meta level using MetaBounds.
     Mirrors `L1_latent_score_qi` from `RSA.Verified`:
@@ -118,8 +137,8 @@ private def metaL1Score
     let s1Scores := Array.range nU |>.map fun iu =>
       s1Bounds[il * nW * nU + wIdx * nU + iu]!
     let s1Policy := metaQINormalize s1Scores uIdx
-    metaQIAdd acc (metaEvalMul' lp s1Policy)
-  metaEvalMul' wp latentSum
+    metaQIAdd acc (roundBounds (metaEvalMul' lp s1Policy))
+  roundBounds (metaEvalMul' wp latentSum)
 
 /-- Find the index of `target` in `elems` by definitional equality. -/
 private def findElemIdx (elems : Array Expr) (target : Expr) : MetaM ℕ := do

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.39] - 2026-02-19
+
+### Changed
+- `Tactics/RSAPredict.lean`: Compute L1 scores entirely at meta time — meta-level QInterval combinators (`metaQINormalize`, `metaL1Score`) mirror the object-level evaluators but run in MetaM with native ℚ arithmetic; `native_decide` now only checks separation of two concrete ℚ literals instead of evaluating the full QInterval composition pipeline; power-of-2 rounding (`roundBounds`) keeps intermediate ℚ denominators bounded
+
 ## [0.224.38] - 2026-02-19
 
 ### Fixed
