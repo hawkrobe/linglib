@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.52] - 2026-02-20
+
+### Changed
+- **Chierchia1998 cleanup**: Remove dead `Domain` struct, `Individual.plural` (was `id`), `Kind.isNatural` (always `True`); drop `Option` from `down` — round-trip theorems now `up (down P) = P` / `down (up k) = k` (no `Option` peeling); unify `pluralize`/`massExtension` into single `pluralize`; scope DKP derivation section; trim unused opens in Dayal2004
+
 ## [0.224.51] - 2026-02-20
 
 ### Changed
