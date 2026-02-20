@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.77] - 2026-02-20
+
+### Added
+- **Kennedy exact semantics in GS2013**: `KennedyInterp` (exact vs type-lowered), `KennedyUtt` (bare/moreThan/atLeast), `gsCfgK` RSA config with `Latent = Obs × KennedyInterp`; 8 Kennedy theorems (findings 4–11) proved via `rsa_predict`; `kennedy_numeral_findings_verified` omnibus theorem showing both lower-bound and Kennedy exact semantics account for all numeral data
+
+### Changed
+- **Merge `UtteranceContext` into `Context`**: `KContext.toReichenbachFrame` replaces standalone `UtteranceContext`; deleted `Core/UtteranceContext.lean`
+
 ## [0.224.76] - 2026-02-20
 
 ### Changed
@@ -10,7 +18,7 @@
 
 ### Added
 - **TAME unification infrastructure**: Shared types for tense, aspect, mood, evidentiality, and mirativity
-  - `Core/UtteranceContext.lean`: Utterance-fixed temporal anchor with bidirectional `ReichenbachFrame` projections
+  - `Core/Context.lean`: `KContext.toReichenbachFrame` projection — speech time S = context time, P = S root-clause default; `KContext` is the unified root, `ReichenbachFrame` is the per-clause temporal projection
   - `Core/Evidence.lean`: `MirativityValue` enum (expected/unexpected/neutral) with `isMirative` predicate (DeLancey 1997, Aikhenvald 2004)
   - `Phenomena/TenseAspect/Typology.lean`: WALS Ch 78 `EvidentialityCoding` enum, `TAMEProfile` structure bundling all TAME parameters, 5 sample language profiles (Turkish, Quechua, Korean, English, Mandarin), Generalization 11 (evidentiality co-occurs with tense/aspect marking)
 

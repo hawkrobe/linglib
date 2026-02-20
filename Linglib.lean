@@ -41,7 +41,6 @@ import Linglib.Core.Alternatives
 import Linglib.Core.Time
 import Linglib.Core.AtomicDistributivity
 import Linglib.Core.Reichenbach
-import Linglib.Core.UtteranceContext
 import Linglib.Core.Tense
 import Linglib.Core.Context
 import Linglib.Core.InformationStructure
