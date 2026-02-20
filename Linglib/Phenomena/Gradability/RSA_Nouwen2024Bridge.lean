@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
+import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Mathlib.Data.Rat.Defs

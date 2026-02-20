@@ -26,7 +26,7 @@ The reverse pattern (adding complexity to add imprecision) is unattested.
 - Dissertation Chapter 3: No Needless Manner Violations
 -/
 
-namespace Phenomena.Imprecision.FormMeaning
+namespace Phenomena.Gradability.Imprecision.FormMeaning
 
 
 /--
@@ -350,4 +350,4 @@ def apparentCounterexamples : List ApparentCounterexample :=
 def predictions : List MannerPrediction :=
   [prediction1, prediction2, prediction3]
 
-end Phenomena.Imprecision.FormMeaning
+end Phenomena.Gradability.Imprecision.FormMeaning

@@ -1,12 +1,12 @@
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
-import Linglib.Phenomena.Imprecision.Numerals
-import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
+import Linglib.Phenomena.Gradability.Imprecision.Numerals
+import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
 
 /-!
 # Bridge: RSA Imprecision Model → Phenomena Data
 
 Connects the BIR closed-form predictions from Egre et al. (2023)
-to empirical data in `Phenomena.Imprecision.Studies.EgreEtAl2023`.
+to empirical data in `Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023`.
 
 ## Bridge Theorems
 
@@ -15,20 +15,20 @@ to empirical data in `Phenomena.Imprecision.Studies.EgreEtAl2023`.
 -/
 
 
-namespace Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
+namespace Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
 
 open RSA.EgreEtAl2023
 
 /-- Closed form matches Phenomena datum for center: P(x=20 | around 20) = 21/441. -/
 theorem closed_form_matches_phenomena_center :
     birClosedForm 20 20 =
-    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_center.expectedProb := by
+    Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023.closedForm_center.expectedProb := by
   native_decide
 
 /-- Closed form matches Phenomena datum for offset: P(x=15 | around 20) = 16/441. -/
 theorem closed_form_matches_phenomena_offset5 :
     birClosedForm 20 15 =
-    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_offset5.expectedProb := by
+    Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023.closedForm_offset5.expectedProb := by
   native_decide
 
-end Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
+end Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge

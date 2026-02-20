@@ -24,7 +24,7 @@ English pronouns show morphological case:
 
 import Linglib.Core.Basic
 
-namespace Phenomena.Agreement.Case
+namespace Phenomena.Case
 
 /-- Case marking data.
 
@@ -68,4 +68,4 @@ def data : StringPhenomenonData := {
   ]
 }
 
-end Phenomena.Agreement.Case
+end Phenomena.Case

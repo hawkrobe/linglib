@@ -19,7 +19,7 @@ Empirical data on additive particles (too, also, either) and their felicity cond
 - Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
-namespace Phenomena.AdditiveParticles
+namespace Phenomena.Focus.AdditiveParticles
 
 -- Basic Data Structures
 
@@ -473,4 +473,4 @@ def infelicitousCount : Nat :=
 /-- Total example count. -/
 def totalCount : Nat := allExamples.length
 
-end Phenomena.AdditiveParticles
+end Phenomena.Focus.AdditiveParticles

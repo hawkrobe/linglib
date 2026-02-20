@@ -17,12 +17,12 @@ Theory-neutral empirical observations from "On the optimality of vagueness."
   of vagueness. Linguistics and Philosophy, 46, 1101–1130.
 -/
 
-import Linglib.Phenomena.Imprecision.Numerals
+import Linglib.Phenomena.Gradability.Imprecision.Numerals
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.Imprecision.Studies.EgreEtAl2023
+namespace Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
 
-open Phenomena.Imprecision.Numerals
+open Phenomena.Gradability.Imprecision.Numerals
 
 /--
 Shape inference datum: "around n" vs "between a b" interpretation shape.
@@ -222,4 +222,4 @@ def luLimitationData : List LULimitationDatum :=
 def closedFormData : List ClosedFormDatum :=
   [closedForm_center, closedForm_offset5]
 
-end Phenomena.Imprecision.Studies.EgreEtAl2023
+end Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023

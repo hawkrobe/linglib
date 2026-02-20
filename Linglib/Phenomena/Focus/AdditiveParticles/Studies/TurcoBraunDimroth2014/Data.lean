@@ -30,7 +30,7 @@ in contrast vs. correction contexts.
   produce and realize focus, contrast and correction. *JASA* 136(3), 1400–1414.
 -/
 
-namespace Phenomena.AdditiveParticles.Studies.TurcoBraunDimroth2014
+namespace Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014
 
 open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
@@ -201,4 +201,4 @@ theorem both_strategies_context_general :
     (verumFocus.contrastOk = true ∧ verumFocus.correctionOk = true) := by
   exact ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-end Phenomena.AdditiveParticles.Studies.TurcoBraunDimroth2014
+end Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014

@@ -27,7 +27,7 @@ This explains:
 - Križ (2015): Conjunctions and homogeneity
 -/
 
-namespace Phenomena.Imprecision.InferencePreservation
+namespace Phenomena.Gradability.Imprecision.InferencePreservation
 
 
 /--
@@ -373,4 +373,4 @@ def predictions : List InferencePreservationPrediction :=
 def openQuestions : List OpenQuestion :=
   [question1, question2, question3]
 
-end Phenomena.Imprecision.InferencePreservation
+end Phenomena.Gradability.Imprecision.InferencePreservation
