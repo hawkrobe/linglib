@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.48] - 2026-02-20
+
+### Changed
+- `DenicEtAl2021Bridge.lean`: Rewrite bridge with genuine derivations — general coarsening theorem (`de_composed_is_ue`, universally quantified, structural proof via monoid homomorphism), UE strength as discriminating dimension, `envSignature` map deriving `isGloballyUE` from theory, `predictNPIEffect`/`predictPPIEffect` prediction functions verified against all 8 data points and `experiment1` list, full data file coverage (17/19 definitions linked)
+- `DisjunctionIgnorance.lean`: Replace duplicate `ContextPolarity'` (2-valued) with canonical `ContextPolarity` from `Core.NaturalLogic` (3-valued), adding `.nonMonotonic → .inclusive` case
+
 ## [0.224.47] - 2026-02-20
 
 ### Changed
