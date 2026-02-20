@@ -123,52 +123,6 @@ private lemma bayesFactor_self_ge_one (prior : W → ℚ) (b : BProp W) :
   simp only [bayesFactor, defaultButCtx, defaultBut, condProb_self_given_not]
   simp; split <;> linarith
 
-/-- **Theorem 8**: CIP + contrariness implies unexpectedness.
-
-If A and B are conditionally independent given H and ¬H, and have
-opposite relevance signs, then P(B|A) < P(B) — B is unexpected given A.
-
-Proof sketch: CIP gives P(B|H,A) = P(B|H) and P(B|¬H,A) = P(B|¬H).
-By total probability: P(B|A) = P(B|H)·P(H|A) + P(B|¬H)·P(¬H|A).
-And P(B) = P(B|H)·P(H) + P(B|¬H)·P(¬H).
-So P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H)).
-Contrariness makes the two factors have opposite signs, giving P(B|A) < P(B). -/
-theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
-    (a b : BProp W)
-    (hPrior : ∀ w, ctx.prior w ≥ 0)
-    (hNorm : probSum ctx.prior (Decidable.top W) = 1)
-    (hcip : CIP ctx a b)
-    (hcontr : hContrary ctx a b)
-    (hA_pos : 0 < probSum ctx.prior a)
-    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
-    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
-    condProb ctx.prior b a < margProb ctx.prior b := by
-  -- TODO: Requires total probability decomposition over {H, ¬H},
-  -- CIP to factor joint probabilities, and the identity
-  -- P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H))
-  -- to establish sign from contrariness.
-  sorry
-
-/-- **Theorem 9**: When H = B, CIP holds automatically for any A.
-
-P(A∧B|B) = P(A|B)·P(B|B) because B∧(A∧B) = A∧B and B∧B = B.
-P(A∧B|¬B) = P(A|¬B)·P(B|¬B) because (A∧B)∧¬B = ⊥ and B∧¬B = ⊥. -/
-theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : BProp W) :
-    CIP (defaultButCtx prior b) a b := by
-  constructor
-  · -- P(A∧B|B) = P(A|B) · P(B|B)
-    simp only [defaultButCtx, defaultBut, condProb]
-    rw [probSum_pand_assoc_self, probSum_pand_self]
-    split
-    · simp
-    · rename_i h; field_simp
-  · -- P(A∧B|¬B) = P(A|¬B) · P(B|¬B)
-    simp only [defaultButCtx, defaultBut, condProb]
-    rw [probSum_pand_pand_pnot_zero, probSum_pand_pnot_zero]
-    split
-    · simp
-    · simp
-
 /-- Total probability: probSum(A) = probSum(A∧B) + probSum(A∧¬B). -/
 private lemma probSum_pand_split (prior : W → ℚ) (a b : BProp W) :
     probSum prior a =
@@ -199,6 +153,234 @@ private lemma probSum_pand_comm (prior : W → ℚ) (a b : BProp W) :
 private lemma probSum_pand_top (prior : W → ℚ) (a : BProp W) :
     probSum prior (Decidable.pand W a (Decidable.top W)) = probSum prior a := by
   congr 1; funext w; simp [Decidable.pand, Decidable.top, Bool.and_true]
+
+/-- probSum is non-negative when prior is non-negative. -/
+private lemma probSum_nonneg' (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p : BProp W) :
+    0 ≤ probSum prior p := by
+  unfold probSum; apply Finset.sum_nonneg; intro w _; split <;> linarith [hP w]
+
+/-- CIP in probSum form: P(A∧B∧H)·P(H) = P(A∧H)·P(B∧H). -/
+private lemma cip_probSum (prior : W → ℚ) (a b h : BProp W)
+    (hh : probSum prior h ≠ 0)
+    (hcip : condProb prior (Decidable.pand W a b) h =
+      condProb prior a h * condProb prior b h) :
+    probSum prior (Decidable.pand W (Decidable.pand W a b) h) * probSum prior h =
+    probSum prior (Decidable.pand W a h) * probSum prior (Decidable.pand W b h) := by
+  simp only [condProb, hh, ↓reduceIte] at hcip
+  field_simp at hcip; linarith
+
+/-- Cross-product factorization identity (with normalization). -/
+private lemma cross_product_factorization (aH anH bH bnH pH pnH : ℚ)
+    (hsum : pH + pnH = 1) :
+    (aH + anH) * (bH + bnH) * (pH * pnH) - (aH * bH * pnH + anH * bnH * pH) =
+    (pnH * aH - pH * anH) * (pH * bnH - pnH * bH) := by
+  have : pnH = 1 - pH := by linarith
+  subst this; ring
+
+/-- negRelevant implies condProb(e|¬H) ≠ 0. -/
+private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : BProp W)
+    (hNeg : negRelevant ctx e) :
+    condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0 := by
+  intro h
+  have hbf : bayesFactor ctx e ≥ 1 := by
+    unfold bayesFactor; dsimp only; rw [if_pos h]; split <;> linarith
+  exact absurd hbf (not_le.mpr hNeg)
+
+/-- posRelevant implies the cross-product sign: P(E∧H)·P(¬H) > P(E∧¬H)·P(H).
+    When condProb(E|¬H) = 0, reduces to showing P(E∧H) > 0. -/
+private lemma posRelevant_cross (ctx : DTSContext W) (e : BProp W)
+    (hPrior : ∀ w, ctx.prior w ≥ 0)
+    (hpos : posRelevant ctx e)
+    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
+    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) *
+      probSum ctx.prior ctx.issue.topic <
+    probSum ctx.prior (Decidable.pand W e ctx.issue.topic) *
+      probSum ctx.prior (Decidable.pnot W ctx.issue.topic) := by
+  have hH_ne := ne_of_gt hH_pos
+  have hNH_ne := ne_of_gt hNH_pos
+  by_cases hcnH : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) = 0
+  · -- condProb(E|¬H) = 0 means P(E∧¬H) = 0
+    have hEnH_zero : probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) = 0 := by
+      have h1 := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic))
+      unfold condProb at hcnH; rw [if_neg hNH_ne] at hcnH
+      rw [div_eq_zero_iff] at hcnH
+      cases hcnH with
+      | inl h => linarith
+      | inr h => exact absurd h hNH_ne
+    rw [hEnH_zero, zero_mul]
+    -- Need P(E∧H) > 0; BF > 1 with condProb(E|¬H) = 0 forces condProb(E|H) > 0
+    have hcH_pos : condProb ctx.prior e ctx.issue.topic > 0 := by
+      by_contra hle; push_neg at hle
+      have hbf_le : bayesFactor ctx e ≤ 1 := by
+        unfold bayesFactor; dsimp only; rw [if_pos hcnH, if_neg (not_lt.mpr hle)]
+      exact absurd hbf_le (not_le.mpr hpos)
+    have hEH_pos : 0 < probSum ctx.prior (Decidable.pand W e ctx.issue.topic) := by
+      unfold condProb at hcH_pos; rw [if_neg hH_ne] at hcH_pos
+      have h_nn := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e ctx.issue.topic)
+      by_contra hle; push_neg at hle
+      have := le_antisymm hle h_nn
+      simp [this] at hcH_pos
+    positivity
+  · -- condProb(E|¬H) ≠ 0: BF = condProb(E|H)/condProb(E|¬H) > 1
+    have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+      have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+        unfold condProb; rw [if_neg hNH_ne]
+        exact div_nonneg (probSum_nonneg' ctx.prior hPrior _) (le_of_lt hNH_pos)
+      exact lt_of_le_of_ne h_nn (Ne.symm hcnH)
+    have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.issue.topic /
+        condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+      unfold bayesFactor; dsimp only; rw [if_neg hcnH]
+    have hcH_gt : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) <
+        condProb ctx.prior e ctx.issue.topic := by
+      rw [← one_lt_div hcnH_pos, ← hbf_eq]; exact hpos
+    unfold condProb at hcH_gt; rw [if_neg hH_ne, if_neg hNH_ne] at hcH_gt
+    rw [div_lt_div_iff₀ hNH_pos hH_pos] at hcH_gt
+    linarith
+
+/-- negRelevant implies the cross-product sign: P(E∧H)·P(¬H) < P(E∧¬H)·P(H). -/
+private lemma negRelevant_cross (ctx : DTSContext W) (e : BProp W)
+    (hPrior : ∀ w, ctx.prior w ≥ 0)
+    (hneg : negRelevant ctx e)
+    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
+    probSum ctx.prior (Decidable.pand W e ctx.issue.topic) *
+      probSum ctx.prior (Decidable.pnot W ctx.issue.topic) <
+    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) *
+      probSum ctx.prior ctx.issue.topic := by
+  have hH_ne := ne_of_gt hH_pos
+  have hNH_ne := ne_of_gt hNH_pos
+  have hcnH_ne := negRelevant_condProb_ne ctx e hneg
+  have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+    have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+      unfold condProb; rw [if_neg hNH_ne]
+      exact div_nonneg (probSum_nonneg' ctx.prior hPrior _) (le_of_lt hNH_pos)
+    exact lt_of_le_of_ne h_nn (Ne.symm hcnH_ne)
+  have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.issue.topic /
+      condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+    unfold bayesFactor; dsimp only; rw [if_neg hcnH_ne]
+  have hcH_lt : condProb ctx.prior e ctx.issue.topic <
+      condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+    rw [← div_lt_one hcnH_pos, ← hbf_eq]; exact hneg
+  unfold condProb at hcH_lt; rw [if_neg hH_ne, if_neg hNH_ne] at hcH_lt
+  have := (div_lt_div_iff₀ hH_pos hNH_pos).mp hcH_lt
+  linarith
+
+/-- **Theorem 8**: CIP + contrariness implies unexpectedness.
+
+If A and B are conditionally independent given H and ¬H, and have
+opposite relevance signs, then P(B|A) < P(B) — B is unexpected given A.
+
+Proof sketch: CIP gives P(B|H,A) = P(B|H) and P(B|¬H,A) = P(B|¬H).
+By total probability: P(B|A) = P(B|H)·P(H|A) + P(B|¬H)·P(¬H|A).
+And P(B) = P(B|H)·P(H) + P(B|¬H)·P(¬H).
+So P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H)).
+Contrariness makes the two factors have opposite signs, giving P(B|A) < P(B). -/
+theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
+    (a b : BProp W)
+    (hPrior : ∀ w, ctx.prior w ≥ 0)
+    (hNorm : probSum ctx.prior (Decidable.top W) = 1)
+    (hcip : CIP ctx a b)
+    (hcontr : hContrary ctx a b)
+    (hA_pos : 0 < probSum ctx.prior a)
+    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
+    condProb ctx.prior b a < margProb ctx.prior b := by
+  set prior := ctx.prior
+  set H := ctx.issue.topic
+  set nH := Decidable.pnot W H
+  -- Abbreviations for probSum values
+  set pH := probSum prior H
+  set pnH := probSum prior nH
+  set aH := probSum prior (Decidable.pand W a H)
+  set anH := probSum prior (Decidable.pand W a nH)
+  set bH := probSum prior (Decidable.pand W b H)
+  set bnH := probSum prior (Decidable.pand W b nH)
+  set abH := probSum prior (Decidable.pand W (Decidable.pand W a b) H)
+  set abnH := probSum prior (Decidable.pand W (Decidable.pand W a b) nH)
+  set pAB := probSum prior (Decidable.pand W a b)
+  set pA := probSum prior a
+  set pB := probSum prior b
+  -- Non-negativity
+  have haH := probSum_nonneg' prior hPrior (Decidable.pand W a H)
+  have hanH := probSum_nonneg' prior hPrior (Decidable.pand W a nH)
+  have hbH := probSum_nonneg' prior hPrior (Decidable.pand W b H)
+  have hbnH := probSum_nonneg' prior hPrior (Decidable.pand W b nH)
+  have hpAB_nn := probSum_nonneg' prior hPrior (Decidable.pand W a b)
+  -- Normalization: pH + pnH = 1
+  have hNormHP : pH + pnH = 1 := by
+    have := probSum_add_pnot prior H
+    rw [hNorm] at this; exact this
+  -- Total probability decompositions
+  have htotA : pA = aH + anH := probSum_pand_split prior a H
+  have htotB : pB = bH + bnH := probSum_pand_split prior b H
+  have htotAB : pAB = abH + abnH := probSum_pand_split prior (Decidable.pand W a b) H
+  -- CIP in probSum form
+  have hH_ne := ne_of_gt hH_pos
+  have hNH_ne := ne_of_gt hNH_pos
+  obtain ⟨hcipH, hcipNH⟩ := hcip
+  have hcipH' : abH * pH = aH * bH := cip_probSum prior a b H hH_ne hcipH
+  have hcipNH' : abnH * pnH = anH * bnH := cip_probSum prior a b nH hNH_ne hcipNH
+  -- From CIP + total probability: pAB · pH · pnH = aH·bH·pnH + anH·bnH·pH
+  have h_cip_sum : pAB * pH * pnH = aH * bH * pnH + anH * bnH * pH := by
+    rw [htotAB]; nlinarith
+  -- Contrariness gives the sign of the cross-product
+  have hSign : 0 < (pnH * aH - pH * anH) * (pH * bnH - pnH * bH) := by
+    rcases hcontr with ⟨hposA, hnegB⟩ | ⟨hnegA, hposB⟩
+    · -- posRelevant A → aH·pnH > anH·pH, i.e., pnH·aH - pH·anH > 0
+      have hA_cross := posRelevant_cross ctx a hPrior hposA hH_pos hNH_pos
+      -- negRelevant B → bH·pnH < bnH·pH, i.e., pH·bnH - pnH·bH > 0
+      have hB_cross := negRelevant_cross ctx b hPrior hnegB hH_pos hNH_pos
+      nlinarith
+    · -- negRelevant A → aH·pnH < anH·pH, i.e., pnH·aH - pH·anH < 0
+      have hA_cross := negRelevant_cross ctx a hPrior hnegA hH_pos hNH_pos
+      -- posRelevant B → bH·pnH > bnH·pH, i.e., pH·bnH - pnH·bH < 0
+      have hB_cross := posRelevant_cross ctx b hPrior hposB hH_pos hNH_pos
+      nlinarith
+  -- Apply factorization identity
+  have hFact := cross_product_factorization aH anH bH bnH pH pnH hNormHP
+  -- pA·pB·pH·pnH > pAB·pH·pnH
+  have hIneq : pAB * (pH * pnH) < pA * pB * (pH * pnH) := by
+    have h1 : pA * pB * (pH * pnH) - (aH * bH * pnH + anH * bnH * pH) > 0 := by
+      rw [htotA, htotB]; linarith [hFact, hSign]
+    have h2 : pAB * (pH * pnH) = aH * bH * pnH + anH * bnH * pH := by
+      have := h_cip_sum; ring_nf; linarith
+    linarith
+  -- pAB < pA · pB
+  have hProd_pos : 0 < pH * pnH := mul_pos hH_pos hNH_pos
+  have hKey : pAB < pA * pB := by
+    by_contra hle; push_neg at hle
+    have : pA * pB * (pH * pnH) ≤ pAB * (pH * pnH) := by
+      have := mul_le_mul_of_nonneg_right hle (le_of_lt hProd_pos)
+      ring_nf at this ⊢; linarith
+    linarith [hIneq]
+  -- condProb(B|A) = P(B∧A)/P(A) < P(B) = margProb(B)
+  have hA_ne : probSum prior a ≠ 0 := ne_of_gt hA_pos
+  show condProb prior b a < margProb prior b
+  unfold condProb; dsimp only; rw [if_neg hA_ne]
+  unfold margProb
+  rw [probSum_pand_comm prior b a]
+  exact (div_lt_iff₀ hA_pos).mpr (by nlinarith [hKey])
+
+/-- **Theorem 9**: When H = B, CIP holds automatically for any A.
+
+P(A∧B|B) = P(A|B)·P(B|B) because B∧(A∧B) = A∧B and B∧B = B.
+P(A∧B|¬B) = P(A|¬B)·P(B|¬B) because (A∧B)∧¬B = ⊥ and B∧¬B = ⊥. -/
+theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : BProp W) :
+    CIP (defaultButCtx prior b) a b := by
+  constructor
+  · -- P(A∧B|B) = P(A|B) · P(B|B)
+    simp only [defaultButCtx, defaultBut, condProb]
+    rw [probSum_pand_assoc_self, probSum_pand_self]
+    split
+    · simp
+    · rename_i h; field_simp
+  · -- P(A∧B|¬B) = P(A|¬B) · P(B|¬B)
+    simp only [defaultButCtx, defaultBut, condProb]
+    rw [probSum_pand_pand_pnot_zero, probSum_pand_pnot_zero]
+    split
+    · simp
+    · simp
 
 /-- **Theorem 10**: Negative relevance implies unexpectedness in default-but.
 
