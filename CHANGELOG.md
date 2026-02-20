@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.41] - 2026-02-19
+
+### Added
+- `Core/Categorical/MereoCat.lean`: Category of mereological domains — bundled partially ordered types with `StrictMono` morphisms; `DimensionChain.toMereoMor` bridge connects dimension chains to categorical composition
+- `Core/Categorical/PartitionCat.lean`: Thin category of QUD partitions — refinement witnesses as morphisms via `PLift`; `QUDHom.toTrivial` (terminal), `QUDHom.composeLeft` (meet projection)
+- `Core/Categorical/ScaleCat.lean`: Category of comparative scales — `OrderHom` morphisms over bundled preordered types with `ComparativeScale` metadata; `licensing_invariant` for same-boundedness morphisms
+- `Core/Categorical/AgentCat.lean`: Category of rational action agents — score-proportionality morphisms form a groupoid; `AgentMor.preserves_policy` via Luce scale invariance
+- `Events/DimensionCoherence.lean`: Cross-chain coherence theorems — `dimension_coherence` (two chains, same QUA pullback), `any_chain_qua_transfer` (falsifiable prediction for future dimension chains), `mereoMor_qua_pullback` (functorial QUA action)
+- `DecisionTheoretic/PartitionAdjunction.lean`: Sufficient partition construction — `sufficientPartition` (coarsest utility-preserving QUD), forward Galois direction (`refinement_preserves_utility`), `dominance_transfers_within_cell`, counterexample proving backward direction false, `dpRefinement` preorder on decision problems
+
 ## [0.224.39] - 2026-02-19
 
 ### Changed

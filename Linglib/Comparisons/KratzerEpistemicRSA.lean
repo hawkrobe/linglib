@@ -18,7 +18,7 @@ World preorder  ge_w : World → World → Prop
 EpistemicSystemW
     ↓  + totality, transitivity, additivity
 EpistemicSystemFA
-    ↓  theorem6_completeness (representation theorem)
+    ↓  theorem8a (|World4| = 4 < 5, so FA = FP∞)
 FinAddMeasure
     ↓  mu {w} → worldPrior
 RSAConfig.worldPrior
