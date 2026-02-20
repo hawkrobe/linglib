@@ -9,14 +9,17 @@ set_option autoImplicit false
 
 The `rsa_predict` tactic proves ℝ comparison goals on RSA models by:
 
-1. Pattern-matching the goal to find the RSA config, utterance, and worlds
-2. Pre-computing each S1 score individually via RExpr reification (bounded per element)
-3. Composing L1 scores using generic evaluators from `RSA.Verified`
-4. Delegating the final comparison to `native_decide`
+1. Pattern-matching the goal to identify the comparison form (L1, L1_latent, sums)
+2. Reifying each S1 score individually via RExpr → ℚ interval arithmetic
+3. Computing L1/L1_latent/marginal bounds entirely at meta level
+4. Applying a bridge axiom from `RSA.Verified` with the computed ℚ separation
 
-Unlike `rsa_decide` (which reifies the entire L1 expression as one giant term),
-`rsa_predict` reifies S1 scores one at a time. This prevents exponential blowup
-on nested models (L0→S1→L1) like Kao et al. (2014).
+## Supported Goal Forms
+
+- `cfg.L1 u w₁ > cfg.L1 u w₂` — L1 world comparison
+- `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent variable inference
+- `Σ cfg.L1 u wᵢ > Σ cfg.L1 u wⱼ` — marginal comparison (same utterance)
+- `Σ cfg.L1 u₁ wᵢ > Σ cfg.L1 u₂ wⱼ` — cross-utterance sum comparison
 
 ## Usage
 
@@ -122,8 +125,7 @@ private def metaQIDivPosSafe (num denom : MetaBounds) : MetaBounds :=
 private def metaQINormalize (scores : Array MetaBounds) (targetIdx : ℕ) : MetaBounds :=
   roundBounds (metaQIDivPosSafe scores[targetIdx]! (metaQISumMap scores))
 
-/-- Compute L1 score at meta level using MetaBounds.
-    Mirrors `L1_latent_score_qi` from `RSA.Verified`:
+/-- Compute L1 unnormalized score at meta level using MetaBounds.
       L1(u,w) = worldPrior(w) · Σ_l latentPrior(l) · S1_policy(l,w,u)
     where S1_policy(l,w,u) = S1(l,w,u) / Σ_{u'} S1(l,w,u'). -/
 private def metaL1Score
@@ -777,13 +779,303 @@ private def parseL1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := 
 -- Main Tactic
 -- ============================================================================
 
+-- ============================================================================
+-- Goal Form Parsing
+-- ============================================================================
+
+/-- Parsed goal forms that rsa_predict can handle. -/
+private inductive GoalForm where
+  /-- cfg.L1 u w₁ > cfg.L1 u w₂ -/
+  | l1Compare (cfg u w₁ w₂ : Expr)
+  /-- (ws₁.map (cfg.L1 u)).sum > (ws₂.map (cfg.L1 u)).sum (marginal) -/
+  | l1Marginal (cfg u : Expr) (ws₁ ws₂ : Array Expr)
+  /-- cfg.L1_latent u l₁ > cfg.L1_latent u l₂ -/
+  | l1Latent (cfg u l₁ l₂ : Expr)
+  /-- (ws₁.map (cfg.L1 u₁)).sum > (ws₂.map (cfg.L1 u₂)).sum (cross-utterance) -/
+  | l1CrossUtterance (cfg u₁ : Expr) (ws₁ : Array Expr) (u₂ : Expr) (ws₂ : Array Expr)
+
+/-- Try to unfold an expression to `cfg.L1_latent u l`. -/
+private def parseL1Latent (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 10 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``RSA.RSAConfig.L1_latent && args.size ≥ 5 then
+      return some (args[4]!, args[5]!, args[6]!)  -- cfg, u, l
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Collect L1 policy summands from an expression.
+    Returns (cfg, u, ws) where ws are the world arguments, or none.
+    Handles Finset.sum, List.sum of map, and nested HAdd of L1 terms. -/
+private partial def collectL1Summands (e : Expr) : MetaM (Option (Expr × Expr × Array Expr)) := do
+  -- Try single L1 term first
+  if let some (cfg, u, w) ← parseL1Policy e then
+    return some (cfg, u, #[w])
+  -- Try HAdd of L1 terms
+  if isAppOfMin' e ``HAdd.hAdd 6 then
+    let a := e.getAppArgs[4]!
+    let b := e.getAppArgs[5]!
+    if let some (cfg1, u1, ws1) ← collectL1Summands a then
+      if let some (cfg2, u2, ws2) ← collectL1Summands b then
+        if (← isDefEq cfg1 cfg2) && (← isDefEq u1 u2) then
+          return some (cfg1, u1, ws1 ++ ws2)
+        -- Different utterances: return cfg1, u1, ws1 for LHS; caller handles
+  -- Try Finset.sum: unfold and recurse
+  let fn := e.getAppFn
+  if fn.constName? == some ``Finset.sum ||
+     fn.constName? == some ``Multiset.sum ||
+     fn.constName? == some ``Multiset.fold ||
+     fn.constName? == some ``List.foldr ||
+     fn.constName? == some ``List.foldl ||
+     fn.constName? == some ``List.sum ||
+     fn.constName? == some ``Quot.lift then
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← collectL1Summands e'
+  -- Try unfolding
+  if let some e' ← unfoldDefinition? e then
+    return ← collectL1Summands e'.headBeta
+  return none
+
+/-- Collect L1 summands allowing different utterances on each side.
+    Returns (cfg, u, ws) pairs. For cross-utterance goals, the two sides
+    may have different u values. -/
+private partial def collectL1SummandsAnyU (e : Expr) :
+    MetaM (Option (Expr × Array (Expr × Array Expr))) := do
+  -- Try single L1 term first
+  if let some (cfg, u, w) ← parseL1Policy e then
+    return some (cfg, #[(u, #[w])])
+  -- Try HAdd of L1 terms (may have different utterances)
+  if isAppOfMin' e ``HAdd.hAdd 6 then
+    let a := e.getAppArgs[4]!
+    let b := e.getAppArgs[5]!
+    if let some (cfg1, groups1) ← collectL1SummandsAnyU a then
+      if let some (cfg2, groups2) ← collectL1SummandsAnyU b then
+        if ← isDefEq cfg1 cfg2 then
+          -- Merge groups by utterance
+          let mut merged := groups1
+          for (u2, ws2) in groups2 do
+            let mut found := false
+            for i in List.range merged.size do
+              if ← isDefEq merged[i]!.1 u2 then
+                merged := merged.set! i (merged[i]!.1, merged[i]!.2 ++ ws2)
+                found := true
+                break
+            unless found do
+              merged := merged.push (u2, ws2)
+          return some (cfg1, merged)
+  -- Try Finset.sum: unfold and recurse
+  let fn := e.getAppFn
+  if fn.constName? == some ``Finset.sum ||
+     fn.constName? == some ``Multiset.sum ||
+     fn.constName? == some ``Multiset.fold ||
+     fn.constName? == some ``List.foldr ||
+     fn.constName? == some ``List.foldl ||
+     fn.constName? == some ``List.sum ||
+     fn.constName? == some ``Quot.lift then
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← collectL1SummandsAnyU e'
+  -- Try unfolding
+  if let some e' ← unfoldDefinition? e then
+    return ← collectL1SummandsAnyU e'.headBeta
+  return none
+
+/-- Parse the goal into a GoalForm. -/
+private def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
+  -- Path A: Both sides are cfg.L1 u w
+  if let some (cfg, u, w₁) ← parseL1Policy lhs then
+    if let some (cfg₂, _u₂, w₂) ← parseL1Policy rhs then
+      if ← isDefEq cfg cfg₂ then
+        return .l1Compare cfg u w₁ w₂
+
+  -- Path B: cfg.L1_latent u l₁ > cfg.L1_latent u l₂
+  if let some (cfg, u, l₁) ← parseL1Latent lhs then
+    if let some (cfg₂, _u₂, l₂) ← parseL1Latent rhs then
+      if ← isDefEq cfg cfg₂ then
+        return .l1Latent cfg u l₁ l₂
+
+  -- Path C/D: sums of L1 terms
+  if let some (cfg1, groups1) ← collectL1SummandsAnyU lhs then
+    if let some (cfg2, groups2) ← collectL1SummandsAnyU rhs then
+      if ← isDefEq cfg1 cfg2 then
+        -- Same utterance on both sides → marginal
+        if groups1.size == 1 && groups2.size == 1 then
+          let (u1, ws1) := groups1[0]!
+          let (u2, ws2) := groups2[0]!
+          if ← isDefEq u1 u2 then
+            return .l1Marginal cfg1 u1 ws1 ws2
+          else
+            return .l1CrossUtterance cfg1 u1 ws1 u2 ws2
+        -- Different utterances → cross-utterance
+        -- Flatten all groups into one side each
+        let allWs1 := groups1.foldl (init := #[]) fun acc (_, ws) => acc ++ ws
+        let allWs2 := groups2.foldl (init := #[]) fun acc (_, ws) => acc ++ ws
+        -- For cross-utterance, we need exactly one u per side
+        if groups1.size == 1 && groups2.size == 1 then
+          return .l1CrossUtterance cfg1 groups1[0]!.1 allWs1 groups2[0]!.1 allWs2
+
+  throwError "rsa_predict: cannot parse goal. Expected one of:\n\
+    • cfg.L1 u w₁ > cfg.L1 u w₂\n\
+    • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
+    • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
+    • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)"
+
+-- ============================================================================
+-- Shared S1 Reification
+-- ============================================================================
+
+/-- Shared infrastructure: extract config info, reify all S1 scores.
+    Returns (U, W, L types, element arrays, s1Bounds, wpValues, lpValues). -/
+private def reifyS1Scores (cfg : Expr) :
+    MetaM (Expr × Expr × Expr ×
+           Array Expr × Array Expr × Array Expr ×
+           Array MetaBounds × Array ℚ × Array ℚ) := do
+  let cfgType ← whnf (← inferType cfg)
+  let cfgArgs := cfgType.getAppArgs
+  unless cfgArgs.size ≥ 2 do
+    throwError "rsa_predict: cannot extract U, W from config type"
+  let U := cfgArgs[0]!
+  let W := cfgArgs[1]!
+  let latentExpr ← mkAppM ``RSA.RSAConfig.Latent #[cfg]
+  let L ← whnf latentExpr
+
+  let (_, allUElems) ← getFiniteElems U
+  let (_, allWElems) ← getFiniteElems W
+  let (_, allLElems) ← getFiniteElems L
+
+  logInfo m!"rsa_predict: |U| = {allUElems.size}, |W| = {allWElems.size}, |L| = {allLElems.size}"
+
+  -- Extract worldPrior and latentPrior ℚ values
+  let mut wpValues : Array ℚ := #[]
+  for w in allWElems do
+    let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
+    wpValues := wpValues.push (← extractRat wpExpr)
+
+  let mut lpValues : Array ℚ := #[]
+  for l in allLElems do
+    let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, l]
+    lpValues := lpValues.push (← extractRat lpExpr)
+
+  -- Warm up cache: pre-compute all L0 values
+  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
+  for l in allLElems do
+    let l0agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
+    for u in allUElems do
+      for w in allWElems do
+        let l0Expr ← mkAppM ``Core.RationalAction.policy #[l0agent, u, w]
+        let _ ← reifyToRExpr reifyCache l0Expr maxDepth
+
+  -- Reify S1 scores
+  let mut s1Bounds : Array MetaBounds := #[]
+  let total := allLElems.size * allWElems.size * allUElems.size
+  logInfo m!"rsa_predict: reifying {total} S1 scores..."
+  let mut count : ℕ := 0
+  for l in allLElems do
+    let s1agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
+    for w in allWElems do
+      for u in allUElems do
+        let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
+        let (_, b) ← reifyToRExpr reifyCache scoreExpr maxDepth
+        s1Bounds := s1Bounds.push b
+        count := count + 1
+        if count % 100 = 0 then
+          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
+
+  let nonZero := s1Bounds.filter fun b => !(b.lo == 0 && b.hi == 0)
+  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores"
+
+  return (U, W, L, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues)
+
+-- ============================================================================
+-- Meta-level L1 Latent Score
+-- ============================================================================
+
+/-- Compute latent inference score at meta level:
+    latent_score(l) = latentPrior(l) · Σ_w worldPrior(w) · S1_policy(l,w,u)
+    where S1_policy(l,w,u) = S1(l,w,u) / Σ_{u'} S1(l,w,u'). -/
+private def metaL1LatentScore
+    (_nL nW nU : ℕ)
+    (s1Bounds : Array MetaBounds)
+    (wpValues : Array ℚ) (lpValues : Array ℚ)
+    (uIdx lIdx : ℕ) : MetaBounds :=
+  let lp : MetaBounds := ⟨lpValues[lIdx]!, lpValues[lIdx]!⟩
+  let worldSum := (List.range nW).foldl (init := (⟨0, 0⟩ : MetaBounds)) fun acc iw =>
+    let wp : MetaBounds := ⟨wpValues[iw]!, wpValues[iw]!⟩
+    let s1Scores := Array.range nU |>.map fun iu =>
+      s1Bounds[lIdx * nW * nU + iw * nU + iu]!
+    let s1Policy := metaQINormalize s1Scores uIdx
+    metaQIAdd acc (roundBounds (metaEvalMul' wp s1Policy))
+  roundBounds (metaEvalMul' lp worldSum)
+
+/-- Compute L1 policy bounds at meta level (score / total).
+    Used for cross-utterance comparisons where denominators differ. -/
+private def metaL1Policy
+    (nL nW nU : ℕ)
+    (s1Bounds : Array MetaBounds)
+    (wpValues : Array ℚ) (lpValues : Array ℚ)
+    (uIdx : ℕ) (allWIndices : Array ℕ) (targetWIdx : ℕ) : MetaBounds :=
+  let scores := allWIndices.map fun wIdx =>
+    metaL1Score nL nW nU s1Bounds wpValues lpValues uIdx wIdx
+  let totalBounds := metaQISumMap scores
+  let targetScore := metaL1Score nL nW nU s1Bounds wpValues lpValues uIdx targetWIdx
+  roundBounds (metaQIDivPosSafe targetScore totalBounds)
+
+-- ============================================================================
+-- Proof Construction Helpers
+-- ============================================================================
+
+/-- Prove `hi₂ < lo₁` via native_decide and return the proof term. -/
+private def proveQSeparation (hi₂ lo₁ : ℚ) : TacticM Expr := do
+  let hi2Expr ← mkRatExpr hi₂
+  let lo1Expr ← mkRatExpr lo₁
+  let sepType ← mkAppM ``LT.lt #[hi2Expr, lo1Expr]
+  let sepMVar ← mkFreshExprMVar sepType
+  let savedGoals ← getGoals
+  setGoals [sepMVar.mvarId!]
+  try
+    evalTactic (← `(tactic| native_decide))
+  catch e =>
+    setGoals savedGoals
+    throwError "rsa_predict: native_decide failed on ℚ comparison: {e.toMessageData}"
+  setGoals savedGoals
+  return sepMVar
+
+/-- Assign proof to goal, with cast/simp fallbacks. -/
+private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit := do
+  let proofType ← inferType proof
+  let goalType ← goal.getType
+  if ← isDefEq proofType goalType then
+    goal.assign proof
+  else
+    let goalWithH ← goal.assert `h_rsa proofType proof
+    let (_, finalGoal) ← goalWithH.intro1
+    setGoals [finalGoal]
+    -- Try various simplification strategies to bridge the gap
+    -- between List.map/sum form and direct addition form
+    try
+      evalTactic (← `(tactic| simp only [List.map, List.sum_cons, List.sum_nil, add_zero] at *))
+      evalTactic (← `(tactic| linarith))
+    catch _ =>
+    try evalTactic (← `(tactic| assumption_mod_cast))
+    catch _ =>
+      try evalTactic (← `(tactic| push_cast at *; assumption))
+      catch _ => evalTactic (← `(tactic| norm_cast at *; assumption))
+
+-- ============================================================================
+-- Main Tactic
+-- ============================================================================
+
 /-- `rsa_predict` proves RSA prediction goals by level-aware interval arithmetic.
 
-    Given a goal like `cfg.L1 u w₁ > cfg.L1 u w₂`, it:
-    1. Extracts the config and arguments
-    2. Pre-computes S1 scores individually via RExpr reification
-    3. Composes L1 scores using generic evaluators
-    4. Proves separation via `native_decide` -/
+    Supported goal forms:
+    - `cfg.L1 u w₁ > cfg.L1 u w₂` — L1 world comparison
+    - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent inference
+    - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
+    - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum -/
 elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
@@ -804,139 +1096,150 @@ elab "rsa_predict" : tactic => do
   let lhs := args[2]!
   let rhs := args[3]!
 
-  -- Parse both sides as L1 policies
-  let some (cfg, u, w₁) ← parseL1Policy lhs |
-    throwError "rsa_predict: cannot parse LHS as cfg.L1 u w"
-  let some (cfg₂, _u₂, w₂) ← parseL1Policy rhs |
-    throwError "rsa_predict: cannot parse RHS as cfg.L1 u w"
+  let goalForm ← parseGoalForm lhs rhs
 
-  -- Verify same config
-  unless ← isDefEq cfg cfg₂ do
-    throwError "rsa_predict: LHS and RHS use different configs"
+  match goalForm with
+  | .l1Compare cfg u w₁ w₂ => do
+    logInfo m!"rsa_predict: parsed goal as L1 comparison"
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
+      reifyS1Scores cfg
 
-  logInfo m!"rsa_predict: parsed goal as L1 comparison"
+    let uIdx ← findElemIdx allUElems u
+    let w1Idx ← findElemIdx allWElems w₁
+    let w2Idx ← findElemIdx allWElems w₂
 
-  -- Get types U, W, and Latent
-  let cfgType ← inferType cfg
-  let cfgType ← whnf cfgType
-  let cfgArgs := cfgType.getAppArgs
-  logInfo m!"rsa_predict: config type = {← ppExpr cfgType}, #args = {cfgArgs.size}"
-  unless cfgArgs.size ≥ 2 do
-    throwError "rsa_predict: cannot extract U, W from config type: {← ppExpr cfgType}"
-  let U := cfgArgs[0]!
-  let W := cfgArgs[1]!
-  -- Get Latent type
-  let latentExpr ← mkAppM ``RSA.RSAConfig.Latent #[cfg]
-  let L ← whnf latentExpr
+    let l1_w1 := metaL1Score allLElems.size allWElems.size allUElems.size
+      s1Bounds wpValues lpValues uIdx w1Idx
+    let l1_w2 := metaL1Score allLElems.size allWElems.size allUElems.size
+      s1Bounds wpValues lpValues uIdx w2Idx
 
-  logInfo m!"rsa_predict: U = {← ppExpr U}, W = {← ppExpr W}, Latent = {← ppExpr L}"
+    logInfo m!"rsa_predict: L1(u, w₁) ∈ [{l1_w1.lo}, {l1_w1.hi}]"
+    logInfo m!"rsa_predict: L1(u, w₂) ∈ [{l1_w2.lo}, {l1_w2.hi}]"
 
-  -- Get enum lists
-  let (_, allUElems) ← getFiniteElems U
-  let (_, allWElems) ← getFiniteElems W
-  let (_, allLElems) ← getFiniteElems L
+    unless l1_w2.hi < l1_w1.lo do
+      throwError "rsa_predict: L1 scores not separated: w₂.hi = {l1_w2.hi} ≥ w₁.lo = {l1_w1.lo}"
 
-  logInfo m!"rsa_predict: |U| = {allUElems.size}, |W| = {allWElems.size}, |L| = {allLElems.size}"
+    let sepProof ← proveQSeparation l1_w2.hi l1_w1.lo
+    let hi2Expr ← mkRatExpr l1_w2.hi
+    let lo1Expr ← mkRatExpr l1_w1.lo
+    let proof ← mkAppM ``RSA.Verified.L1_gt_of_precomputed
+      #[cfg, u, w₁, w₂, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via L1_gt_of_precomputed"
 
-  -- Extract worldPrior ℚ values
-  let mut wpValues : Array ℚ := #[]
-  for w in allWElems do
-    let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
-    wpValues := wpValues.push (← extractRat wpExpr)
+  | .l1Marginal cfg u ws₁ ws₂ => do
+    logInfo m!"rsa_predict: parsed goal as marginal L1 comparison ({ws₁.size} vs {ws₂.size} worlds)"
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
+      reifyS1Scores cfg
 
-  -- Extract latentPrior ℚ values
-  let mut lpValues : Array ℚ := #[]
-  for l in allLElems do
-    let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, l]
-    lpValues := lpValues.push (← extractRat lpExpr)
+    let uIdx ← findElemIdx allUElems u
 
-  logInfo m!"rsa_predict: extracted worldPrior and latentPrior ℚ values"
+    -- Sum L1 scores over each world set
+    let mut marg1 : MetaBounds := ⟨0, 0⟩
+    for w in ws₁ do
+      let wIdx ← findElemIdx allWElems w
+      let score := metaL1Score allLElems.size allWElems.size allUElems.size
+        s1Bounds wpValues lpValues uIdx wIdx
+      marg1 := metaQIAdd marg1 score
+    marg1 := roundBounds marg1
 
-  -- Warm up cache by pre-computing all L0 values.
-  -- L0(l,u,w) = meaning(l,u,w) / Σ_w' meaning(l,u,w') — the denominator depends
-  -- only on (l,u), so pre-computing L0 for all (l,u,w) caches each denominator once,
-  -- avoiding redundant reification when S1 scores unfold to L0 subexpressions.
-  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
-  for l in allLElems do
-    let l0agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
-    for u in allUElems do
-      for w in allWElems do
-        let l0Expr ← mkAppM ``Core.RationalAction.policy #[l0agent, u, w]
-        let _ ← reifyToRExpr reifyCache l0Expr maxDepth
+    let mut marg2 : MetaBounds := ⟨0, 0⟩
+    for w in ws₂ do
+      let wIdx ← findElemIdx allWElems w
+      let score := metaL1Score allLElems.size allWElems.size allUElems.size
+        s1Bounds wpValues lpValues uIdx wIdx
+      marg2 := metaQIAdd marg2 score
+    marg2 := roundBounds marg2
 
-  -- Reify S1 scores → MetaBounds (no Expr function needed)
-  let mut s1Bounds : Array MetaBounds := #[]
-  let total := allLElems.size * allWElems.size * allUElems.size
-  logInfo m!"rsa_predict: reifying {total} S1 scores..."
-  let mut count : ℕ := 0
-  for l in allLElems do
-    let s1agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
-    for w in allWElems do
-      for u in allUElems do
-        let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
-        let (_, b) ← reifyToRExpr reifyCache scoreExpr maxDepth
-        s1Bounds := s1Bounds.push b
-        count := count + 1
-        if count % 100 = 0 then
-          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
+    logInfo m!"rsa_predict: marginal₁ ∈ [{marg1.lo}, {marg1.hi}]"
+    logInfo m!"rsa_predict: marginal₂ ∈ [{marg2.lo}, {marg2.hi}]"
 
-  let nonZero := s1Bounds.filter fun b => !(b.lo == 0 && b.hi == 0)
-  logInfo m!"rsa_predict: {nonZero.size}/{total} non-zero S1 scores"
+    unless marg2.hi < marg1.lo do
+      throwError "rsa_predict: marginal scores not separated: hi₂ = {marg2.hi} ≥ lo₁ = {marg1.lo}"
 
-  -- Find target indices
-  let uIdx ← findElemIdx allUElems u
-  let w1Idx ← findElemIdx allWElems w₁
-  let w2Idx ← findElemIdx allWElems w₂
+    let sepProof ← proveQSeparation marg2.hi marg1.lo
+    let hi2Expr ← mkRatExpr marg2.hi
+    let lo1Expr ← mkRatExpr marg1.lo
+    -- Build world lists as Lean exprs
+    let W ← inferType ws₁[0]!
+    let ws1ListExpr ← mkListLit W ws₁.toList
+    let ws2ListExpr ← mkListLit W ws₂.toList
+    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
+      #[cfg, u, ws1ListExpr, u, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (marginal)"
 
-  -- Compute L1 scores entirely at meta time (no ℚ blowup in native_decide)
-  let l1_w1 := metaL1Score allLElems.size allWElems.size allUElems.size
-    s1Bounds wpValues lpValues uIdx w1Idx
-  let l1_w2 := metaL1Score allLElems.size allWElems.size allUElems.size
-    s1Bounds wpValues lpValues uIdx w2Idx
+  | .l1Latent cfg u l₁ l₂ => do
+    logInfo m!"rsa_predict: parsed goal as L1_latent comparison"
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
+      reifyS1Scores cfg
 
-  logInfo m!"rsa_predict: L1(u, w₁) ∈ [{l1_w1.lo}, {l1_w1.hi}]"
-  logInfo m!"rsa_predict: L1(u, w₂) ∈ [{l1_w2.lo}, {l1_w2.hi}]"
+    let uIdx ← findElemIdx allUElems u
+    let l1Idx ← findElemIdx allLElems l₁
+    let l2Idx ← findElemIdx allLElems l₂
 
-  -- Check separation at meta level
-  unless l1_w2.hi < l1_w1.lo do
-    throwError "rsa_predict: L1 scores not separated: w₂.hi = {l1_w2.hi} ≥ w₁.lo = {l1_w1.lo}"
+    let score1 := metaL1LatentScore allLElems.size allWElems.size allUElems.size
+      s1Bounds wpValues lpValues uIdx l1Idx
+    let score2 := metaL1LatentScore allLElems.size allWElems.size allUElems.size
+      s1Bounds wpValues lpValues uIdx l2Idx
 
-  logInfo m!"rsa_predict: separation confirmed, building proof..."
+    logInfo m!"rsa_predict: latent_score(l₁) ∈ [{score1.lo}, {score1.hi}]"
+    logInfo m!"rsa_predict: latent_score(l₂) ∈ [{score2.lo}, {score2.hi}]"
 
-  -- Build concrete ℚ expressions for the two bounds
-  let hi2Expr ← mkRatExpr l1_w2.hi
-  let lo1Expr ← mkRatExpr l1_w1.lo
+    unless score2.hi < score1.lo do
+      throwError "rsa_predict: latent scores not separated: hi₂ = {score2.hi} ≥ lo₁ = {score1.lo}"
 
-  -- Prove separation via native_decide: hi₂ < lo₁ (just two ℚ literals)
-  let sepType ← mkAppM ``LT.lt #[hi2Expr, lo1Expr]
-  let sepMVar ← mkFreshExprMVar sepType
-  let savedGoals ← getGoals
-  setGoals [sepMVar.mvarId!]
-  try
-    evalTactic (← `(tactic| native_decide))
-  catch e =>
-    setGoals savedGoals
-    throwError "rsa_predict: native_decide failed on ℚ comparison: {e.toMessageData}"
-  setGoals savedGoals
+    let sepProof ← proveQSeparation score2.hi score1.lo
+    let hi2Expr ← mkRatExpr score2.hi
+    let lo1Expr ← mkRatExpr score1.lo
+    let proof ← mkAppM ``RSA.Verified.L1_latent_gt_of_precomputed
+      #[cfg, u, l₁, l₂, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via L1_latent_gt_of_precomputed"
 
-  -- Apply bridge axiom
-  let proof ← mkAppM ``RSA.Verified.L1_gt_of_precomputed
-    #[cfg, u, w₁, w₂, hi2Expr, lo1Expr, sepMVar]
+  | .l1CrossUtterance cfg u₁ ws₁ u₂ ws₂ => do
+    logInfo m!"rsa_predict: parsed goal as cross-utterance L1 sum ({ws₁.size} vs {ws₂.size})"
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
+      reifyS1Scores cfg
 
-  -- Assign proof to goal
-  let proofType ← inferType proof
-  let goalType' ← goal.getType
-  if ← isDefEq proofType goalType' then
-    goal.assign proof
-  else
-    let goalWithH ← goal.assert `h_rsa proofType proof
-    let (_, finalGoal) ← goalWithH.intro1
-    setGoals [finalGoal]
-    try evalTactic (← `(tactic| assumption_mod_cast))
-    catch _ =>
-      try evalTactic (← `(tactic| push_cast at *; assumption))
-      catch _ => evalTactic (← `(tactic| norm_cast at *; assumption))
+    let nL := allLElems.size
+    let nW := allWElems.size
+    let nU := allUElems.size
 
-  logInfo m!"rsa_predict: ✓ proved via L1_gt_of_precomputed"
+    -- Compute policy bounds for each utterance
+    let allWIndices := Array.range nW
+
+    let u1Idx ← findElemIdx allUElems u₁
+    let mut psum1 : MetaBounds := ⟨0, 0⟩
+    for w in ws₁ do
+      let wIdx ← findElemIdx allWElems w
+      let policy := metaL1Policy nL nW nU s1Bounds wpValues lpValues u1Idx allWIndices wIdx
+      psum1 := metaQIAdd psum1 policy
+    psum1 := roundBounds psum1
+
+    let u2Idx ← findElemIdx allUElems u₂
+    let mut psum2 : MetaBounds := ⟨0, 0⟩
+    for w in ws₂ do
+      let wIdx ← findElemIdx allWElems w
+      let policy := metaL1Policy nL nW nU s1Bounds wpValues lpValues u2Idx allWIndices wIdx
+      psum2 := metaQIAdd psum2 policy
+    psum2 := roundBounds psum2
+
+    logInfo m!"rsa_predict: policy_sum₁ ∈ [{psum1.lo}, {psum1.hi}]"
+    logInfo m!"rsa_predict: policy_sum₂ ∈ [{psum2.lo}, {psum2.hi}]"
+
+    unless psum2.hi < psum1.lo do
+      throwError "rsa_predict: policy sums not separated: hi₂ = {psum2.hi} ≥ lo₁ = {psum1.lo}"
+
+    let sepProof ← proveQSeparation psum2.hi psum1.lo
+    let hi2Expr ← mkRatExpr psum2.hi
+    let lo1Expr ← mkRatExpr psum1.lo
+    let W ← inferType ws₁[0]!
+    let ws1ListExpr ← mkListLit W ws₁.toList
+    let ws2ListExpr ← mkListLit W ws₂.toList
+    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
+      #[cfg, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed"
 
 end Linglib.Tactics

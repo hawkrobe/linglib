@@ -244,6 +244,8 @@ import Linglib.Phenomena.Gradability.Studies.KursatDegen2021Bridge
 import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Linglib.Phenomena.Gradability.Vagueness
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
+import Linglib.Phenomena.Nonliteral.Hyperbole.Studies.KaoEtAl2014
+import Linglib.Phenomena.Nonliteral.Hyperbole.RSA_KaoEtAl2014Bridge
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
