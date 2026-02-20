@@ -3,7 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
-import Linglib.Phenomena.Modality.Aloni2022
+import Linglib.Phenomena.Modality.Studies.Aloni2022Bridge
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
@@ -46,7 +46,7 @@ open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
 open Semantics.Dynamic.BSML
-open Phenomena.Modality.Aloni2022
+open Phenomena.Modality.Studies.Aloni2022Bridge
 
 -- ============================================================================
 -- SECTION 1: The Free Choice Puzzle

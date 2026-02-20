@@ -27,7 +27,7 @@ complement, while those with **imperfective** aspect do not.
 - Mari, A. & Martin, F. (2007). Tense, abilities and actuality entailments.
 -/
 
-namespace Phenomena.Modality.ActualityInferences
+namespace Phenomena.Modality.ActualityInferencesBridge
 
 open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
 
@@ -180,4 +180,4 @@ theorem balanced_design :
     perfData.length = 4 ∧ impfData.length = 4 := by
   constructor <;> native_decide
 
-end Phenomena.Modality.ActualityInferences
+end Phenomena.Modality.ActualityInferencesBridge

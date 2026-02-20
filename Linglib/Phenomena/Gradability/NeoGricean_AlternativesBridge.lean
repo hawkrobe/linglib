@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
-import Linglib.Phenomena.Gradability.Evaluativity
+import Linglib.Phenomena.Gradability.EvaluativityBridge
 
 /-!
 # Bridge: NeoGricean Alternatives → M-Alternative Verification

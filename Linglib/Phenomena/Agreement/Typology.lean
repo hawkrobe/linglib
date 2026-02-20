@@ -39,7 +39,7 @@ sharing a class are homophonous (marked by the same form).
 - Greenberg, J. (1963). Some universals of grammar.
 -/
 
-namespace Phenomena.Agreement.PersonMarkingTypology
+namespace Phenomena.Agreement.Typology
 
 -- Re-export PersonCategory from Core for backwards compatibility
 open Core.PersonCategory
@@ -688,4 +688,4 @@ def ParadigmaticStructure.cognitiveMapPosition
     firstPersonComplexType := s.firstPersonComplexType
     weFormCount := s.weFormCount }
 
-end Phenomena.Agreement.PersonMarkingTypology
+end Phenomena.Agreement.Typology

@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
 import Linglib.Phenomena.Questions.Typology
+import Linglib.Phenomena.Questions.TypologyBridge
 
 /-!
 # Bridge: Left Periphery Theory -> Embedding/Typology Data
@@ -25,6 +26,7 @@ namespace Phenomena.Questions.LeftPeripheryBridge
 open Semantics.Questions.LeftPeriphery
 open Phenomena.Questions.Embedding
 open Phenomena.Questions.Typology
+open Phenomena.Questions.TypologyBridge
 
 -- ============================================================================
 -- F. Verification against empirical data

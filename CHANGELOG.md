@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.64] - 2026-02-20
+
+### Changed
+- **Phenomena naming normalization**: 10 renames enforcing the `Typology.lean`/`TypologyBridge.lean` and `*Bridge.lean` conventions
+  - Typology: `PersonMarkingTypology` → `Agreement/Typology`, `PronounTypology` → `Anaphora/Typology`, `ChangeOfStateTypology` → `Causatives/Studies/BeaversEtAl2021`
+  - Bridge suffix: `CzechThreeWayNeg` → `CzechThreeWayNegBridge`, `Composition` → `CompositionBridge`, `DegreeComposition` → `DegreeCompositionBridge`, `ActualityInferences` → `ActualityInferencesBridge`, `Evaluativity` → `EvaluativityBridge`
+  - Move to Studies/: `Modality/Aloni2022` → `Modality/Studies/Aloni2022Bridge`
+  - Split: `Questions/Typology.lean` → data-only `Typology.lean` + theory-importing `TypologyBridge.lean`
+- All namespaces, imports, and `open` statements updated across 16 files
+
 ## [0.224.62] - 2026-02-20
 
 ### Changed

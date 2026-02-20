@@ -27,7 +27,7 @@ and that Horn scale generation works correctly.
 - Bybee, J. L. (1985). Morphology.
 -/
 
-namespace Phenomena.Morphology.DegreeComposition
+namespace Phenomena.Morphology.DegreeCompositionBridge
 
 open Core.Morphology
 open Core.Morphology.Degree
@@ -238,4 +238,4 @@ theorem tall_all_degree_category :
 theorem good_all_degree_category :
     goodStem.paradigm.all (·.category == .degree) = true := rfl
 
-end Phenomena.Morphology.DegreeComposition
+end Phenomena.Morphology.DegreeCompositionBridge

@@ -24,7 +24,7 @@ from real English lexical entries in `Fragments/English/`.
 - Link, G. (1983). The logical analysis of plurals and mass terms.
 -/
 
-namespace Phenomena.Morphology.Composition
+namespace Phenomena.Morphology.CompositionBridge
 
 open Core.Morphology
 open Core.Morphology.Number
@@ -349,4 +349,4 @@ theorem regular_verbs_match_rules :
       v.formPresPart == regularPresPart v.form)
     = true := by native_decide
 
-end Phenomena.Morphology.Composition
+end Phenomena.Morphology.CompositionBridge

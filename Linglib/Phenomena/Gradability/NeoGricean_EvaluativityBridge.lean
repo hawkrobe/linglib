@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Evaluativity
-import Linglib.Phenomena.Gradability.Evaluativity
+import Linglib.Phenomena.Gradability.EvaluativityBridge
 
 /-!
 # Bridge: NeoGricean Evaluativity → Empirical Data
@@ -21,7 +21,7 @@ empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
 namespace Phenomena.Gradability.NeoGricean_EvaluativityBridge
 
 open NeoGricean.Evaluativity
-open Phenomena.Gradability.Evaluativity
+open Phenomena.Gradability.EvaluativityBridge
 
 
 /--
