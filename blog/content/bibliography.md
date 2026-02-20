@@ -70,10 +70,12 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean)
 
 **Kao, J. T., Bergen, L. & Goodman, N. D.** (2014). Formalizing the Pragmatics of Metaphor Understanding. *Proceedings of the Annual Meeting of the Cognitive Science Society, 36*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)\
+cited in: [KaoEtAl2014_Metaphor](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)
 
 **Kao, J. T., Wu, J. Y., Bergen, L. & Goodman, N. D.** (2014). Nonliteral Understanding of Number Words. *Proceedings of the National Academy of Sciences, 111(33), 12002–12007*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)\
+cited in: [KaoEtAl2014_Hyperbole](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/LassiterGoodman2017.lean)
@@ -82,17 +84,23 @@ cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/RSA_Nouwen2024Bridge.lean)
 
 **Potts, C., Lassiter, D., Levy, R. & Frank, M. C.** (2016). Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty. *Journal of Semantics, 33(4), 755–802*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)\
+cited in: [PottsEtAl2016](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)
 
 **Qing, C., Goodman, N. D. & Lassiter, D.** (2016). A Rational Speech-Act Model of Projective Content. *Proceedings of the Annual Meeting of the Cognitive Science Society, 38*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean)
 
 **Scontras, G. & Pearl, L. S.** (2021). When Pragmatics Matters More for Truth-Value Judgments: An Investigation of Quantifier Scope Ambiguity. *Glossa, 6(1), 110*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)\
+cited in: [ScontrasPearl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
 
 **Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)\
 cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean), [ScontrasTonhauser2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)
+
+**Sikos, L., Venhuizen, N. J., Drenhaus, H. & Crocker, M. W.** (2021). Reevaluating Pragmatic Reasoning in Language Games. *PLOS ONE, 16(3), e0248388*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/SikosEtAl2021.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/SikosEtAl2021Bridge.lean)\
+cited in: [SikosEtAl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/SikosEtAl2021.lean)
 
 **Sumers, T. R., Ho, M. K., Griffiths, T. L. & Hawkins, R. D.** (2024). Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility. *Psychological Review, 131(1), 194*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
@@ -126,6 +134,10 @@ cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/EgreEtAl2023.lean)
 
 ## Pragmatics — NeoGricean / Exhaustivity
+
+**Bale, A. C., Noguchi, H., Rolland, M. & Barner, D.** (2025). Competence by Default: Do Listeners Assume That Speakers Are Knowledgeable When Computing Conversational Inferences?. *Journal of Semantics, 42(1–2), 39–55*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/BaleEtAl2025.lean)\
+cited in: [BaleEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/BaleEtAl2025.lean)
 
 **Bar-Lev, M. E. & Fox, D.** (2020). Free Choice, Simplification, and Innocent Inclusion. *Natural Language Semantics, 28, 175–223*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Implementations/BarLevFox2020.lean)
@@ -179,7 +191,12 @@ cited in: [Warstadt2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 ## Semantics — Modality & Conditionals
 
 **Aloni, M.** (2022). Logic and Conversation: The Case of Free Choice. *Semantics and Pragmatics, 15*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/FreeChoice/Aloni2022.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/FreeChoice/Aloni2022.lean)\
+cited in: [Aloni2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Aloni2022.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/Basic.lean), [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/FreeChoice.lean)
+
+**Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
+cited in: [Scale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)
 
 **Kratzer, A.** (1981). The Notional Category of Modality. *Words, Worlds, and Contexts, 38–74*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Kratzer.lean)
@@ -358,6 +375,10 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 
 **Marcolli, M., Chomsky, N. & Berwick, R. C.** (2023). Mathematical Structure of Syntactic Merge. *arXiv:2305.18278*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean)
+
+**Osborne, T. & Groß, T.** (2012). Constructions Are Catenae: Construction Grammar Meets Dependency Grammar. *Cognitive Linguistics, 23(1), 165–216*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/CatenalConstruction.lean)\
+cited in: [CatenalConstruction](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/CatenalConstruction.lean)
 
 **Pollard, C. & Sag, I. A.** (1994). Head-Driven Phrase Structure Grammar. *University of Chicago Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/Basic.lean)

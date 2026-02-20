@@ -200,6 +200,7 @@ import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
+import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
 import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Causatives.ChangeOfStateTypology
 import Linglib.Phenomena.Causatives.Data
@@ -434,6 +435,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.CatenalConstruction
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.VPDivergence
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
@@ -523,6 +525,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor198
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Phenomena.Constructions.CxG_KayFillmore1999Bridge
+import Linglib.Phenomena.Constructions.DG_OsborneGross2012Bridge
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 -- Theories: HPSG
