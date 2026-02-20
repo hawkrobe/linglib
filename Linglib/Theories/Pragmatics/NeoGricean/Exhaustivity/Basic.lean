@@ -2059,4 +2059,74 @@ theorem flat_empty : flat (∅ : Set (Set (Prop' World))) = {λ _ => True} := by
 
 end FlatOperator
 
+-- ============================================================================
+-- Innocent Inclusion (II)
+-- ============================================================================
+
+/-!
+## Innocent Inclusion
+
+From Bar-Lev & Fox (2020), Definition (51):
+
+> II(p, C) = ∩{C'' ⊆ C : C'' is maximal s.t.
+>            {r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)} is consistent}
+
+After computing IE, find all maximal subsets of alternatives that
+can consistently be assigned TRUE (given that IE alternatives are false).
+An alternative is innocently includable iff it appears in ALL such maximal sets.
+-/
+
+variable {World : Type*}
+variable (ALT : Set (Prop' World))
+variable (φ : Prop' World)
+
+/--
+**Definition (II-compatible set)**: A set of propositions R is (ALT, φ, IE)-compatible
+for inclusion if:
+a) R ⊆ ALT
+b) {r : r ∈ R} ∪ {φ} ∪ {¬q : q ∈ IE(ALT, φ)} is consistent
+-/
+def isIICompatible (R : Set (Prop' World)) : Prop :=
+  R ⊆ ALT ∧
+  SetConsistent ({φ} ∪ {ψ | ∃ q, isInnocentlyExcludable ALT φ q ∧ ψ = ∼q} ∪ R)
+
+/--
+**Definition (MI-set)**: Maximal II-compatible set.
+A set R is maximally (ALT, φ, IE)-compatible if it is II-compatible
+and not properly included in any other II-compatible set.
+-/
+def isMISet (R : Set (Prop' World)) : Prop :=
+  isIICompatible ALT φ R ∧
+  ∀ R', isIICompatible ALT φ R' → R ⊆ R' → R' ⊆ R
+
+/--
+**Definition (II)**: II(ALT, φ) = {r ∈ ALT : r belongs to every MI-set}
+
+An alternative r is innocently includable iff it belongs to every MI-set.
+-/
+def II : Set (Prop' World) :=
+  {r ∈ ALT | ∀ R, isMISet ALT φ R → r ∈ R}
+
+/--
+An alternative a is innocently includable given ALT and φ
+if and only if a ∈ II(ALT, φ).
+-/
+def isInnocentlyIncludable (a : Prop' World) : Prop :=
+  a ∈ II ALT φ
+
+/--
+**Definition (Exh^{IE+II})**: The exhaustivity operator with both IE and II.
+
+  ⟦Exh^{IE+II}⟧(ALT)(φ)(w) ⇔
+    φ(w) ∧
+    ∀q ∈ IE(ALT,φ)[¬q(w)] ∧    -- exclude IE alternatives
+    ∀r ∈ II(ALT,φ)[r(w)]        -- include II alternatives
+
+This is Bar-Lev & Fox's key operator that derives free choice.
+-/
+def exhIEII : Prop' World := λ w =>
+  φ w ∧
+  (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
+  (∀ r, isInnocentlyIncludable ALT φ r → r w)
+
 end NeoGricean.Exhaustivity

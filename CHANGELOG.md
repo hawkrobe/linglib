@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.46] - 2026-02-20
+
+### Changed
+- `BarLevFox2020.lean`: Move II infrastructure (`isIICompatible`, `isMISet`, `II`, `isInnocentlyIncludable`, `exhIEII`) to `Exhaustivity/Basic.lean`; remove 7 dead definitions; parametrize A/B duplication via `extend_II_with_target` and `target_in_II`; extract `perm_cover` shared helper (688→534 lines, 0 sorries)
+
 ## [0.224.44] - 2026-02-20
 
 ### Fixed
