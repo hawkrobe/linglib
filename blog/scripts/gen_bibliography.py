@@ -64,6 +64,7 @@ def clean_bibtex_value(val: str) -> str:
         "{\\'e}": "é", "{\\'E}": "É",
         "{\\v{z}}": "ž", "{\\v{c}}": "č", "{\\v{s}}": "š",
         "{\\c{c}}": "ç",
+        "{\\ss}": "ß",
     }
     for latex, char in replacements.items():
         val = val.replace(latex, char)

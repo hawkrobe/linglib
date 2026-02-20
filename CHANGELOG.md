@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.49] - 2026-02-20
+
+### Added
+- **Osborne & Groß (2012) "Constructions are catenae"**: Three-file integration following Theories/Phenomena separation:
+  - `CatenalConstruction.lean` (Theories): `CatenalCx` bridge type pairing CxG `Construction` with DG catena witness; derived predicates (`isConstituent`, `isNonConstituentCatena`, `isContiguous`); `singleton` smart constructor; `nodes_nonempty` theorem; general `constituent_implies_catena` statement (1 sorry — requires BFS correctness bridge)
+  - `OsborneGross2012/Data.lean` (Phenomena): 11 concrete dependency trees across 5 construction types — idioms (4), LVCs (3), verb chains (2), displacement (1), comparative correlative (1)
+  - `DG_OsborneGross2012Bridge.lean` (Phenomena): Claim 1 (all construction types are catenae, 12 verified), Claim 2 (interleaving preserves catena-hood, 16 verified), 4 `CatenalCx` instances spanning full specificity spectrum, FKO1988 idiom typology bridge; 0 sorries in bridge
+
 ## [0.224.48] - 2026-02-20
 
 ### Changed
