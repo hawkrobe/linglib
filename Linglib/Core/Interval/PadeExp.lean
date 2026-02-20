@@ -65,17 +65,125 @@ theorem padeExp_at_one : padeExp 1 = 2721 / 1001 := by native_decide
     True error is ~4.3×10⁻⁸; this bound gives 2.3× safety margin. -/
 def padeErrorBound : ℚ := 1 / 4000000
 
+/-- Triangle inequality for 6 terms (left-associated addition). -/
+private lemma abs_sum6_le {a b c d e f A B C D E F : ℝ}
+    (ha : |a| ≤ A) (hb : |b| ≤ B) (hc : |c| ≤ C)
+    (hd : |d| ≤ D) (he : |e| ≤ E) (hf : |f| ≤ F) :
+    |a + b + c + d + e + f| ≤ A + B + C + D + E + F := by
+  calc |a + b + c + d + e + f|
+      ≤ |a + b + c + d + e| + |f| := abs_add_le _ f
+    _ ≤ (|a + b + c + d| + |e|) + |f| := by linarith [abs_add_le (a + b + c + d) e]
+    _ ≤ ((|a + b + c| + |d|) + |e|) + |f| := by linarith [abs_add_le (a + b + c) d]
+    _ ≤ (((|a + b| + |c|) + |d|) + |e|) + |f| := by linarith [abs_add_le (a + b) c]
+    _ ≤ ((((|a| + |b|) + |c|) + |d|) + |e|) + |f| := by linarith [abs_add_le a b]
+    _ ≤ A + B + C + D + E + F := by linarith
+
+/-- padeDen(q) ≥ 143/240 for q ≤ 1 (minimum at q = 1). -/
+private lemma padeDen_lower_real (q : ℚ) (hhi : q ≤ 1) :
+    (143 : ℝ) / 240 ≤ (↑(padeDen q) : ℝ) := by
+  suffices h : (143 : ℚ) / 240 ≤ padeDen q by
+    have h' : (↑((143 : ℚ) / 240) : ℝ) ≤ ↑(padeDen q) := by exact_mod_cast h
+    simp only [Rat.cast_div, Rat.cast_ofNat] at h'; exact h'
+  simp only [padeDen, padeNum]
+  nlinarith [sq_nonneg q, sq_nonneg (q * q), sq_nonneg (1 - q), sq_nonneg (1 + q),
+             mul_self_nonneg (q^2 - q/2), sq_nonneg (q^2 - 7*q)]
+
+set_option maxHeartbeats 800000 in
+/-- Σ_{k=0}^{10} x^k/k! in Horner form. -/
+private lemma taylor_eq_horner (x : ℝ) :
+    ∑ m ∈ Finset.range 11, x ^ m / (m.factorial : ℝ) =
+    1 + x * (1 + x * (1/2 + x * (1/6 + x * (1/24 + x * (1/120 +
+    x * (1/720 + x * (1/5040 + x * (1/40320 + x * (1/362880 +
+    x * (1/3628800)))))))))) := by
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero]
+  simp only [Nat.factorial]; push_cast; ring
+
+set_option maxHeartbeats 800000 in
+/-- T₁₀(q) · padeDen(q) - padeNum(q) = D₁₁(q), a degree-14 polynomial with
+    terms only at degrees 9-14 (the Padé matching property). -/
+private lemma poly_identity (q : ℚ) :
+    let x := (q : ℝ)
+    (1 + x * (1 + x * (1/2 + x * (1/6 + x * (1/24 + x * (1/120 +
+      x * (1/720 + x * (1/5040 + x * (1/40320 + x * (1/362880 +
+      x * (1/3628800))))))))))) *
+    (↑(padeDen q) : ℝ) - (↑(padeNum q) : ℝ) =
+    x^9 / 25401600 + x^10 / 50803200 - x^11 / 50803200 +
+    x^12 / 87091200 - x^13 / 609638400 + x^14 / 6096384000 := by
+  simp only [padeDen, padeNum]; push_cast; ring
+
+/-- Coefficient-sum bound on D₁₁: |D₁₁(x)| ≤ 187/2032128000 for |x| ≤ 1. -/
+private lemma D11_bound (x : ℝ) (hx : |x| ≤ 1) :
+    |x^9 / 25401600 + x^10 / 50803200 - x^11 / 50803200 +
+     x^12 / 87091200 - x^13 / 609638400 + x^14 / 6096384000| ≤
+    (187 : ℝ) / 2032128000 := by
+  have hpow : ∀ n : ℕ, |x ^ n| ≤ 1 := fun n => by
+    rw [abs_pow]; exact pow_le_one₀ (abs_nonneg _) hx
+  have hterm : ∀ (n : ℕ) (d : ℝ), 0 < d → |x ^ n / d| ≤ 1 / d := fun n d hd => by
+    rw [abs_div, abs_of_pos hd]
+    exact div_le_div_of_nonneg_right (hpow n) (le_of_lt hd)
+  have hnterm : ∀ (n : ℕ) (d : ℝ), 0 < d → |-(x ^ n) / d| ≤ 1 / d := fun n d hd => by
+    rw [neg_div, abs_neg]; exact hterm n d hd
+  rw [show x^9 / 25401600 + x^10 / 50803200 - x^11 / 50803200 +
+      x^12 / 87091200 - x^13 / 609638400 + x^14 / 6096384000 =
+      x^9 / 25401600 + x^10 / 50803200 + (-(x^11) / 50803200) +
+      x^12 / 87091200 + (-(x^13) / 609638400) + x^14 / 6096384000 from by ring]
+  calc |x ^ 9 / 25401600 + x ^ 10 / 50803200 + -(x ^ 11) / 50803200 +
+        x ^ 12 / 87091200 + -(x ^ 13) / 609638400 + x ^ 14 / 6096384000|
+      ≤ 1/25401600 + 1/50803200 + 1/50803200 + 1/87091200 + 1/609638400 + 1/6096384000 :=
+        abs_sum6_le (hterm 9 _ (by norm_num)) (hterm 10 _ (by norm_num))
+          (hnterm 11 _ (by norm_num)) (hterm 12 _ (by norm_num))
+          (hnterm 13 _ (by norm_num)) (hterm 14 _ (by norm_num))
+    _ ≤ 187 / 2032128000 := by norm_num
+
+set_option maxHeartbeats 1600000 in
 /-- The Padé [4/4] approximant is within `padeErrorBound` of exp on [-1, 1].
 
-    Proof approach: use `Real.exp_bound` with n ≥ 11 to get |exp(q) - T_n(q)| ≤ ε₁,
-    then bound |T_n(q) - padeExp(q)| ≤ ε₂ via polynomial algebra on the numerator
-    T_n(q)·padeDen(q) - padeNum(q). The polynomial algebra (~200 lines) is deferred.
-
-    True error is ~4.3×10⁻⁸; the bound 1/4000000 = 2.5×10⁻⁷ has a 2.3× margin. -/
+    Proof via triangle inequality: |exp(q) - P(q)/Q(q)| ≤ |exp(q) - T₁₀(q)| + |T₁₀(q) - P(q)/Q(q)|
+    where T₁₀ is the degree-10 Taylor polynomial. The first term is bounded by `Real.exp_bound`
+    with n = 11 (≤ 1/36590400 ≈ 2.73×10⁻⁸). The second term equals |T₁₀·Q - P|/Q; the numerator
+    is a polynomial with terms only at degrees 9-14 (Padé matching property), bounded by
+    187/2032128000 ≈ 9.2×10⁻⁸ via coefficient sum, and Q ≥ 143/240. -/
 theorem pade_error_bound (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
     (hden_pos : 0 < padeDen q) :
     |Real.exp (↑q : ℝ) - (↑(padeExp q) : ℝ)| ≤ (↑padeErrorBound : ℝ) := by
-  sorry
+  set x := (q : ℝ) with hx_def
+  set T := ∑ m ∈ Finset.range 11, x ^ m / (m.factorial : ℝ)
+  set P := (↑(padeNum q) : ℝ)
+  set Q := (↑(padeDen q) : ℝ)
+  have hQ_pos : (0 : ℝ) < Q := by
+    show (0 : ℝ) < ↑(padeDen q); exact_mod_cast hden_pos
+  have hQ_ne : Q ≠ 0 := ne_of_gt hQ_pos
+  have hx_abs : |x| ≤ 1 := by
+    rw [abs_le]; exact ⟨by show (-1 : ℝ) ≤ ↑q; exact_mod_cast hq_lo,
+                         by show (↑q : ℝ) ≤ 1; exact_mod_cast hq_hi⟩
+  -- padeExp = P / Q
+  have h_pade : (↑(padeExp q) : ℝ) = P / Q := by
+    simp only [padeExp, P, Q]; push_cast; rfl
+  -- |exp(x) - T₁₀| ≤ 1/36590400  (Taylor remainder with n = 11)
+  have hA : |Real.exp x - T| ≤ 1 / 36590400 := by
+    calc |Real.exp x - T|
+        ≤ |x| ^ 11 * ((12 : ℝ) / (↑(Nat.factorial 11) * 11)) :=
+          Real.exp_bound hx_abs (by norm_num : (0 : ℕ) < 11)
+      _ ≤ 1 * ((12 : ℝ) / (↑(Nat.factorial 11) * 11)) := by
+          exact mul_le_mul_of_nonneg_right (pow_le_one₀ (abs_nonneg _) hx_abs) (by positivity)
+      _ = 1 / 36590400 := by simp [Nat.factorial]; norm_num
+  -- T₁₀·Q - P = D₁₁ (polynomial identity verified by ring)
+  have hD_eq : T * Q - P = x^9 / 25401600 + x^10 / 50803200 - x^11 / 50803200 +
+      x^12 / 87091200 - x^13 / 609638400 + x^14 / 6096384000 := by
+    show T * Q - P = _; rw [show T = _ from taylor_eq_horner x]; exact poly_identity q
+  -- |D₁₁| ≤ 187/2032128000
+  have hTQ : |T * Q - P| ≤ 187 / 2032128000 := by rw [hD_eq]; exact D11_bound x hx_abs
+  -- Combine: exp(x) - P/Q = ((exp(x) - T)·Q + (T·Q - P)) / Q
+  rw [h_pade, show Real.exp x - P / Q = ((Real.exp x - T) * Q + (T * Q - P)) / Q from
+    by field_simp; ring]
+  rw [abs_div, abs_of_pos hQ_pos, div_le_iff₀ hQ_pos]
+  calc |(Real.exp x - T) * Q + (T * Q - P)|
+      ≤ |(Real.exp x - T) * Q| + |T * Q - P| := abs_add_le _ _
+    _ = |Real.exp x - T| * Q + |T * Q - P| := by rw [abs_mul, abs_of_pos hQ_pos]
+    _ ≤ (1 / 36590400) * Q + 187 / 2032128000 := by
+        linarith [mul_le_mul_of_nonneg_right hA (le_of_lt hQ_pos)]
+    _ ≤ ↑padeErrorBound * Q := by
+        simp only [padeErrorBound]; push_cast; nlinarith [padeDen_lower_real q hq_hi]
 
 -- ============================================================================
 -- Point interval for exp at a rational
