@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.47] - 2026-02-20
+
+### Changed
+- `Tactics/RSAPredict.lean`: Exp-log algebraic simplification — detect `exp(α*(log(x)-c))` pattern in MetaBounds computation and evaluate as `x^α * exp(-α*c)` instead of calling `logPoint` (50-iteration bisection); eliminates 600 logPoint calls for Kao et al. 2014, reducing S1 reification from 14s to <1s (total: 204s → 2.4s, 85× speedup from original)
+
 ## [0.224.46] - 2026-02-20
 
 ### Changed
