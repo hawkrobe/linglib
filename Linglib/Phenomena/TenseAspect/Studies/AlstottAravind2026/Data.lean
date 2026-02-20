@@ -31,7 +31,7 @@ Key findings:
 - Brennan, J. & Pylkkänen, L. (2010). Processing events.
 -/
 
-namespace Phenomena.Aspect.Studies.AlstottAravind2026
+namespace Phenomena.TenseAspect.Studies.AlstottAravind2026
 
 open Phenomena
 
@@ -268,4 +268,4 @@ theorem pragmatic_vs_semantic_delay :
     exp2_rt.region = .verbPlus2 ∧ exp1b_rt.region = .verbPlus1 :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Aspect.Studies.AlstottAravind2026
+end Phenomena.TenseAspect.Studies.AlstottAravind2026

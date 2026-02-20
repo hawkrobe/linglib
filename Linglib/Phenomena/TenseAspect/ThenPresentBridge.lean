@@ -53,7 +53,7 @@ The presuppositional generalization (`then_perspective_clash` in
 - Kiparsky, P. (2002). Event structure and the perfect.
 -/
 
-namespace Phenomena.Tense.ThenPresentBridge
+namespace Phenomena.TenseAspect.ThenPresentBridge
 
 open Core.Reichenbach
 open Semantics.Tense
@@ -125,4 +125,4 @@ theorem then_compatible_with_deleted_tense {Time : Type*}
     thenPresup f :=
   then_deleted_tense_compatible f hShifted hOverlap
 
-end Phenomena.Tense.ThenPresentBridge
+end Phenomena.TenseAspect.ThenPresentBridge

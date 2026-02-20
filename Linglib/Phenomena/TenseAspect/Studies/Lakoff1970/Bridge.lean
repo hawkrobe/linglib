@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Tense.Studies.Lakoff1970.Data
+import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Data
 import Linglib.Fragments.English.Tense
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
@@ -23,9 +23,9 @@ from `Perspective.lean` (Lakoff predicates) and `Fragments/English/Tense.lean`
 - Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
 -/
 
-namespace Phenomena.Tense.Studies.Lakoff1970.Bridge
+namespace Phenomena.TenseAspect.Studies.Lakoff1970.Bridge
 
-open Phenomena.Tense.Studies.Lakoff1970.Data
+open Phenomena.TenseAspect.Studies.Lakoff1970.Data
 open Fragments.English.Tense
 open Semantics.Tense.ParticipantPerspective
 open Semantics.Tense
@@ -146,4 +146,4 @@ theorem false_periphrastic_is_ungrammatical :
      ex8a.formType == .periphrastic &&
      ex8a.acceptability == .ungrammatical) = true := rfl
 
-end Phenomena.Tense.Studies.Lakoff1970.Bridge
+end Phenomena.TenseAspect.Studies.Lakoff1970.Bridge

@@ -20,7 +20,7 @@ predictions to the Fragment-level particle licensing.
   Semantics of Degree and Time. MIT dissertation, Ch. 5–6.
 -/
 
-namespace Phenomena.Aspect.CrossDomainBridge
+namespace Phenomena.TenseAspect.CrossDomainBridge
 
 open Semantics.Lexical.Verb.Aspect
 open Fragments.Mandarin.AspectComparison
@@ -47,4 +47,4 @@ theorem meiyou_temporal_licensed_iff_dynamic (c : VendlerClass) :
 theorem guo_compatible_with_all :
     guo.requiresAntiAtomDist = false := rfl
 
-end Phenomena.Aspect.CrossDomainBridge
+end Phenomena.TenseAspect.CrossDomainBridge

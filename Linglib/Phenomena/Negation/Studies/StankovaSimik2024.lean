@@ -33,7 +33,7 @@ in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
 
 namespace Phenomena.Negation.Studies.StankovaSimik2024.Data
 
-open Phenomena.Negation.CzechThreeWayNeg
+open Phenomena.Negation.CzechThreeWayNegTypologyBridge
 open Semantics.Polarity.CzechNegation
 
 -- ============================================================================

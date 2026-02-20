@@ -77,7 +77,7 @@ are in `Bridge.lean`.
 - Declerck, R. (2006). The Grammar of the English Tense System.
 -/
 
-namespace Phenomena.Tense
+namespace Phenomena.TenseAspect
 
 open Core.Reichenbach
 open Core.Time (SituationBoundedness)
@@ -1378,4 +1378,4 @@ theorem preterit_is_perfective :
     preteritVisitedParis.isPerfective := rfl
 
 
-end Phenomena.Tense
+end Phenomena.TenseAspect

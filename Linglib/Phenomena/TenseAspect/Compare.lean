@@ -34,7 +34,7 @@ scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
 - Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
 -/
 
-namespace Phenomena.Tense.Compare
+namespace Phenomena.TenseAspect.Compare
 
 open Semantics.Tense.TemporalConnectives
 open Fragments.English.TemporalExpressions
@@ -152,4 +152,4 @@ theorem both_telicity_sensitive :
     before_.embeddedTelicityEffect = true ∧ after_.embeddedTelicityEffect = true :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Tense.Compare
+end Phenomena.TenseAspect.Compare

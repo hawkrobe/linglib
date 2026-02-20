@@ -40,7 +40,7 @@ new theoretical machinery.
 - Kennedy, C. (2007). Vagueness and grammar.
 -/
 
-namespace Phenomena.Tense.TemporalAdverbials.Rouillard2026
+namespace Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026
 
 open Semantics.Lexical.Verb.Aspect
 open Semantics.Montague.Sentence.MaximalInformativity
@@ -415,4 +415,4 @@ def stacking_predicted (d : StackingDatum) : Bool :=
 theorem stacking_all_predicted :
     stackingData.all stacking_predicted = true := by native_decide
 
-end Phenomena.Tense.TemporalAdverbials.Rouillard2026
+end Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026

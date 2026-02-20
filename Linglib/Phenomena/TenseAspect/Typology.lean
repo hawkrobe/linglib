@@ -49,7 +49,7 @@ Asian languages consistently lack morphological tense-aspect marking.
   University of Chicago Press.
 -/
 
-namespace Phenomena.Tense.Typology
+namespace Phenomena.TenseAspect.Typology
 
 -- ============================================================================
 -- Types: WALS Chapter 65 — Perfective/Imperfective Aspect
@@ -709,4 +709,4 @@ theorem ta_empty_and_no_inflection :
     fullyIsolating.length ≥ 2 := by
   native_decide
 
-end Phenomena.Tense.Typology
+end Phenomena.TenseAspect.Typology
