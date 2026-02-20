@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.43] - 2026-02-19
+
+### Changed
+- `Tactics/RSAPredict.lean`: L0 cache warm-up and Cauchy fast-path — pre-compute all L0(l,u,w) values before S1 loop so denominators are cached; fast-path `Real.ofCauchy` detection skips the isDefEq loop for large numeric literals; remove dead code (`buildIteFn`, `buildS1ScoreTable`, `mkQIExact`, `mkQIntervalFromBounds`)
+
 ## [0.224.42] - 2026-02-19
 
 ### Changed
