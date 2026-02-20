@@ -815,4 +815,396 @@ theorem ch51_same_sample :
     WALSCount.totalOf ch51Distribution =
     WALSCount.totalOf ch50Distribution := by native_decide
 
+-- ============================================================================
+-- Aissen (2003) Prominence Scales and Differential Object Marking
+-- ============================================================================
+
+/-! ## Aissen (2003) DOM Hierarchy
+
+Formalizes the two prominence scales and bidimensional DOM predictions from:
+
+- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
+  Natural Language & Linguistic Theory 21(3): 435--483.
+
+Aissen proposes that differential object marking (DOM) is conditioned by
+two independently motivated prominence scales — **animacy** and
+**definiteness** — and that the set of marked cells in the animacy ×
+definiteness grid must form an **upper set** (upward-closed in the
+product partial order). This "monotonicity" property predicts that if a
+language marks a less-prominent object, it must also mark all more-prominent
+objects, yielding the attested "staircase" cutoff patterns.
+
+### Scales
+
+- **Animacy**: Human > Animate > Inanimate
+- **Definiteness**: Personal Pronoun > Proper Name > Definite NP >
+  Indefinite Specific NP > Non-specific NP
+
+### Typological prediction
+
+For any attested DOM system, the marking function `marks(a, d)` is
+monotone: if `marks(a, d) = true` then `marks(a', d') = true` for all
+`a'` at least as prominent as `a` and `d'` at least as prominent as `d`.
+-/
+
+-- ============================================================================
+-- Animacy Scale (Aissen 2003, §2)
+-- ============================================================================
+
+/-- Levels of the animacy prominence scale (Aissen 2003, §2).
+Human > Animate > Inanimate. -/
+inductive AnimacyLevel where
+  /-- Most prominent: human referents -/
+  | human
+  /-- Non-human animates -/
+  | animate
+  /-- Least prominent: inanimate referents -/
+  | inanimate
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Numeric rank on the animacy scale: Human (2) > Animate (1) > Inanimate (0). -/
+def AnimacyLevel.rank : AnimacyLevel → Nat
+  | .human     => 2
+  | .animate   => 1
+  | .inanimate => 0
+
+/-- All animacy levels (exhaustive enumeration for finite verification). -/
+def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
+
+theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
+
+-- ============================================================================
+-- Definiteness Scale (Aissen 2003, §2)
+-- ============================================================================
+
+/-- Levels of the definiteness prominence scale (Aissen 2003, §2).
+Personal Pronoun > Proper Name > Definite NP > Indefinite Specific NP >
+Non-specific NP. -/
+inductive DefinitenessLevel where
+  /-- Most prominent: personal pronouns -/
+  | personalPronoun
+  /-- Proper names -/
+  | properName
+  /-- Definite NPs (with article or demonstrative) -/
+  | definite
+  /-- Indefinite but specific NPs -/
+  | indefiniteSpecific
+  /-- Least prominent: non-specific indefinites -/
+  | nonSpecific
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Numeric rank on the definiteness scale:
+Pronoun (4) > Proper (3) > Definite (2) > IndSp (1) > NonSp (0). -/
+def DefinitenessLevel.rank : DefinitenessLevel → Nat
+  | .personalPronoun    => 4
+  | .properName         => 3
+  | .definite           => 2
+  | .indefiniteSpecific => 1
+  | .nonSpecific        => 0
+
+/-- All definiteness levels (exhaustive enumeration). -/
+def DefinitenessLevel.all : List DefinitenessLevel :=
+  [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
+
+theorem DefinitenessLevel.all_length : DefinitenessLevel.all.length = 5 := by
+  native_decide
+
+-- ============================================================================
+-- Scale Ordering Verification
+-- ============================================================================
+
+/-! The rank functions encode the strict ordering of the two scales. -/
+
+theorem animacy_human_gt_animate :
+    AnimacyLevel.human.rank > AnimacyLevel.animate.rank := by decide
+
+theorem animacy_animate_gt_inanimate :
+    AnimacyLevel.animate.rank > AnimacyLevel.inanimate.rank := by decide
+
+theorem definiteness_pronoun_gt_proper :
+    DefinitenessLevel.personalPronoun.rank > DefinitenessLevel.properName.rank := by decide
+
+theorem definiteness_proper_gt_definite :
+    DefinitenessLevel.properName.rank > DefinitenessLevel.definite.rank := by decide
+
+theorem definiteness_definite_gt_indSp :
+    DefinitenessLevel.definite.rank > DefinitenessLevel.indefiniteSpecific.rank := by decide
+
+theorem definiteness_indSp_gt_nonSp :
+    DefinitenessLevel.indefiniteSpecific.rank > DefinitenessLevel.nonSpecific.rank := by decide
+
+-- ============================================================================
+-- DOM Profiles: Bidimensional Marking Grids
+-- ============================================================================
+
+/-- A DOM (Differential Object Marking) profile: which cells in the
+animacy × definiteness grid receive overt case marking.
+
+Each cell `(a, d)` records whether an object with animacy level `a`
+and definiteness level `d` obligatorily receives an overt DOM marker
+(e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`). -/
+structure DOMProfile where
+  /-- Language name -/
+  name : String
+  /-- Whether cell (a, d) receives overt DOM marking -/
+  marks : AnimacyLevel → DefinitenessLevel → Bool
+
+/-- The monotonicity (upper-set) property: if a cell is marked, then all
+cells at least as prominent on BOTH dimensions are also marked.
+
+This is Aissen's central prediction: DOM cutoffs form a "staircase"
+in the bidimensional grid, never marking a less-prominent cell while
+leaving a more-prominent one unmarked. -/
+def DOMProfile.isMonotone (p : DOMProfile) : Bool :=
+  AnimacyLevel.all.all λ a =>
+    DefinitenessLevel.all.all λ d =>
+      if p.marks a d then
+        AnimacyLevel.all.all λ a' =>
+          DefinitenessLevel.all.all λ d' =>
+            if a'.rank ≥ a.rank && d'.rank ≥ d.rank then p.marks a' d'
+            else true
+      else true
+
+/-- Whether a DOM profile depends only on animacy (definiteness is irrelevant). -/
+def DOMProfile.isAnimacyOnly (p : DOMProfile) : Bool :=
+  DefinitenessLevel.all.all λ d₁ =>
+    DefinitenessLevel.all.all λ d₂ =>
+      AnimacyLevel.all.all λ a =>
+        p.marks a d₁ == p.marks a d₂
+
+/-- Whether a DOM profile depends only on definiteness (animacy is irrelevant). -/
+def DOMProfile.isDefinitenessOnly (p : DOMProfile) : Bool :=
+  AnimacyLevel.all.all λ a₁ =>
+    AnimacyLevel.all.all λ a₂ =>
+      DefinitenessLevel.all.all λ d =>
+        p.marks a₁ d == p.marks a₂ d
+
+-- ============================================================================
+-- Cutoff Constructors for One-Dimensional DOM
+-- ============================================================================
+
+/-- Construct a one-dimensional animacy-based DOM profile: objects at or
+above the cutoff animacy level are marked, regardless of definiteness.
+Example: Spanish marks human objects (cutoff = .human). -/
+def DOMProfile.animacyCutoff (name : String) (cutoff : AnimacyLevel) : DOMProfile :=
+  { name, marks := λ a _ => a.rank ≥ cutoff.rank }
+
+/-- Construct a one-dimensional definiteness-based DOM profile: objects at
+or above the cutoff definiteness level are marked, regardless of animacy.
+Example: Turkish marks definite+ objects (cutoff = .definite). -/
+def DOMProfile.definitenessCutoff (name : String) (cutoff : DefinitenessLevel) : DOMProfile :=
+  { name, marks := λ _ d => d.rank ≥ cutoff.rank }
+
+/-- Animacy-cutoff DOM is always monotone, for any cutoff level.
+One-dimensional patterns are automatically upper sets. -/
+theorem animacy_cutoff_monotone (cutoff : AnimacyLevel) :
+    (DOMProfile.animacyCutoff "" cutoff).isMonotone = true := by
+  cases cutoff <;> native_decide
+
+/-- Definiteness-cutoff DOM is always monotone, for any cutoff level. -/
+theorem definiteness_cutoff_monotone (cutoff : DefinitenessLevel) :
+    (DOMProfile.definitenessCutoff "" cutoff).isMonotone = true := by
+  cases cutoff <;> native_decide
+
+-- ============================================================================
+-- Language DOM Profiles
+-- ============================================================================
+
+section DOMLanguages
+
+/-- Spanish: `a`-marking for human direct objects regardless of definiteness.
+One-dimensional (animacy-based), cutoff between human and animate
+(Aissen 2003, §4). -/
+def spanishDOM : DOMProfile :=
+  DOMProfile.animacyCutoff "Spanish" .human
+
+/-- Russian: animate accusative (genitive form used as accusative for
+animate nouns). One-dimensional (animacy-based), cutoff between animate
+and inanimate (Aissen 2003, §4). -/
+def russianDOM : DOMProfile :=
+  DOMProfile.animacyCutoff "Russian" .animate
+
+/-- Turkish: `-(y)I` marking for definite direct objects regardless of
+animacy. One-dimensional (definiteness-based), cutoff between definite
+and indefinite specific (Aissen 2003, §4). -/
+def turkishDOM : DOMProfile :=
+  DOMProfile.definitenessCutoff "Turkish" .definite
+
+/-- Hebrew: `ʔet` marking for definite direct objects regardless of
+animacy. Same one-dimensional definiteness cutoff as Turkish
+(Aissen 2003, §4). -/
+def hebrewDOM : DOMProfile :=
+  DOMProfile.definitenessCutoff "Hebrew" .definite
+
+/-- Persian: `-rā` marking for definite direct objects. One-dimensional
+(definiteness-based) for obligatory marking; optional extension to
+specific indefinite animates (Aissen 2003, §5). Modeled here with the
+definiteness-based obligatory core. -/
+def persianDOM : DOMProfile :=
+  DOMProfile.definitenessCutoff "Persian" .definite
+
+/-- Catalan: `a`-marking restricted to personal pronouns. The most
+restrictive DOM pattern attested: only the highest cell on the
+definiteness scale receives marking (Aissen 2003, §4). -/
+def catalanDOM : DOMProfile :=
+  DOMProfile.definitenessCutoff "Catalan" .personalPronoun
+
+/-- Hindi-Urdu: `-ko` marking conditioned by BOTH animacy and definiteness.
+Two-dimensional DOM with a staircase cutoff (Aissen 2003, §5, Table 12):
+- Human objects: marked when indefinite specific or more prominent
+- Animate objects: marked when definite or more prominent
+- Inanimate objects: not obligatorily marked
+
+This captures the obligatory marking core. Optional/variable marking
+extends further down the staircase at the boundary cells. -/
+def hindiDOM : DOMProfile :=
+  { name := "Hindi-Urdu"
+    marks := λ a d =>
+      match a with
+      | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
+      | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
+      | .inanimate => false }
+
+/-- No DOM: no differential marking (either no case at all, or uniform
+case on all objects). Trivially monotone. -/
+def noDOMProfile : DOMProfile :=
+  { name := "No DOM"
+    marks := λ _ _ => false }
+
+end DOMLanguages
+
+-- ============================================================================
+-- DOM Profile Collection
+-- ============================================================================
+
+/-- All DOM profiles in the sample. -/
+def allDOMProfiles : List DOMProfile :=
+  [spanishDOM, russianDOM, turkishDOM, hebrewDOM, persianDOM,
+   catalanDOM, hindiDOM, noDOMProfile]
+
+theorem allDOMProfiles_count : allDOMProfiles.length = 8 := by native_decide
+
+-- ============================================================================
+-- Per-Language Monotonicity Verification
+-- ============================================================================
+
+/-! Each language's DOM pattern forms an upper set in the bidimensional
+animacy × definiteness grid — Aissen's central prediction. -/
+
+theorem spanish_monotone : spanishDOM.isMonotone = true := by native_decide
+theorem russian_monotone : russianDOM.isMonotone = true := by native_decide
+theorem turkish_monotone : turkishDOM.isMonotone = true := by native_decide
+theorem hebrew_monotone : hebrewDOM.isMonotone = true := by native_decide
+theorem persian_monotone : persianDOM.isMonotone = true := by native_decide
+theorem catalan_monotone : catalanDOM.isMonotone = true := by native_decide
+theorem hindi_monotone : hindiDOM.isMonotone = true := by native_decide
+theorem no_dom_monotone : noDOMProfile.isMonotone = true := by native_decide
+
+/-- **Aissen's DOM monotonicity universal**: all attested DOM patterns in
+the sample form upper sets in the bidimensional animacy × definiteness
+grid. No language marks a less-prominent object while leaving a
+more-prominent one unmarked. -/
+theorem dom_monotonicity_universal :
+    allDOMProfiles.all (·.isMonotone) = true := by native_decide
+
+-- ============================================================================
+-- One-Dimensional Classification
+-- ============================================================================
+
+/-! Verify that the one-dimensional profiles are indeed one-dimensional,
+and that Hindi is genuinely two-dimensional. -/
+
+theorem spanish_animacy_only : spanishDOM.isAnimacyOnly = true := by native_decide
+theorem russian_animacy_only : russianDOM.isAnimacyOnly = true := by native_decide
+
+theorem turkish_definiteness_only : turkishDOM.isDefinitenessOnly = true := by native_decide
+theorem hebrew_definiteness_only : hebrewDOM.isDefinitenessOnly = true := by native_decide
+theorem persian_definiteness_only : persianDOM.isDefinitenessOnly = true := by native_decide
+theorem catalan_definiteness_only : catalanDOM.isDefinitenessOnly = true := by native_decide
+
+/-- Hindi DOM depends on both animacy and definiteness — it cannot be
+reduced to a single scale. -/
+theorem hindi_not_animacy_only : hindiDOM.isAnimacyOnly = false := by native_decide
+theorem hindi_not_definiteness_only : hindiDOM.isDefinitenessOnly = false := by native_decide
+
+-- ============================================================================
+-- Scale Dominance Theorems
+-- ============================================================================
+
+/-! Consequences of monotonicity: higher prominence on one dimension
+implies at least as much marking, holding the other dimension constant. -/
+
+/-- In all sample languages, human objects are never less marked than
+animate objects at the same definiteness level. -/
+theorem human_dominates_animate :
+    allDOMProfiles.all (λ p =>
+      DefinitenessLevel.all.all (λ d =>
+        if p.marks .animate d then p.marks .human d else true)) = true := by
+  native_decide
+
+/-- In all sample languages, animate objects are never less marked than
+inanimate objects at the same definiteness level. -/
+theorem animate_dominates_inanimate :
+    allDOMProfiles.all (λ p =>
+      DefinitenessLevel.all.all (λ d =>
+        if p.marks .inanimate d then p.marks .animate d else true)) = true := by
+  native_decide
+
+/-- In all sample languages, pronouns are never less marked than proper
+names at the same animacy level. -/
+theorem pronoun_dominates_properName :
+    allDOMProfiles.all (λ p =>
+      AnimacyLevel.all.all (λ a =>
+        if p.marks a .properName then p.marks a .personalPronoun else true)) = true := by
+  native_decide
+
+/-- In all sample languages, definite NPs are never less marked than
+indefinite specific NPs at the same animacy level. -/
+theorem definite_dominates_indefiniteSpecific :
+    allDOMProfiles.all (λ p =>
+      AnimacyLevel.all.all (λ a =>
+        if p.marks a .indefiniteSpecific then p.marks a .definite else true)) = true := by
+  native_decide
+
+-- ============================================================================
+-- Extreme Cell Theorems
+-- ============================================================================
+
+/-! The most prominent cell (human, pronoun) is always marked when any
+DOM exists; the least prominent cell (inanimate, non-specific) is never
+marked in our sample. -/
+
+/-- If any cell is marked, the most prominent cell (human, pronoun)
+is also marked. -/
+theorem top_cell_marked_if_any :
+    allDOMProfiles.all (λ p =>
+      if AnimacyLevel.all.any (λ a =>
+           DefinitenessLevel.all.any (λ d => p.marks a d))
+      then p.marks .human .personalPronoun
+      else true) = true := by native_decide
+
+/-- The least prominent cell (inanimate, non-specific) is unmarked in
+all DOM languages in the sample. -/
+theorem bottom_cell_unmarked :
+    allDOMProfiles.all (λ p =>
+      p.marks .inanimate .nonSpecific == false) = true := by native_decide
+
+-- ============================================================================
+-- Grid Size
+-- ============================================================================
+
+/-- The bidimensional grid has 3 × 5 = 15 cells per language. -/
+theorem grid_size :
+    AnimacyLevel.all.length * DefinitenessLevel.all.length = 15 := by native_decide
+
+/-- Total marked cells across all sample languages. -/
+def totalMarkedCells : Nat :=
+  allDOMProfiles.foldl (λ acc p =>
+    acc + (AnimacyLevel.all.foldl (λ acc₂ a =>
+      acc₂ + (DefinitenessLevel.all.filter (p.marks a)).length) 0)) 0
+
+/-- Marked cells: Spanish (5) + Russian (10) + Turkish (9) + Hebrew (9) +
+Persian (9) + Catalan (3) + Hindi (7) + NoDOM (0) = 52. -/
+theorem total_marked_cells_value : totalMarkedCells = 52 := by native_decide
+
 end Phenomena.Case.Typology
