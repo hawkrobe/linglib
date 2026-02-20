@@ -1,5 +1,6 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Phenomena.Complementation.Typology
 
@@ -69,8 +70,8 @@ private abbrev seems := Fragments.English.Predicates.Verbal.seem.toWord3sg
 private abbrev sleep_ := Fragments.English.Predicates.Verbal.sleep.toWordBase
 private abbrev run_ := Fragments.English.Predicates.Verbal.run.toWordBase
 
--- Particle "to" (not in Fragment — functional item)
-private abbrev to_ := Word.mk' "to" .PART
+-- Infinitival marker "to" (from Fragment)
+private abbrev to_ := Fragments.English.FunctionWords.toInf
 
 -- ============================================================================
 -- §2: Fragment Grounding Theorems

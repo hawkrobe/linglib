@@ -346,4 +346,12 @@ def only_ : ParticleEntry := { form := "only", requiresSharedCQ := true, nonRoot
 
 def allParticles : List ParticleEntry := [just_, only_]
 
+-- ============================================================================
+-- Infinitival Marker
+-- ============================================================================
+
+/-- Infinitival marker "to" (UD: PART). Distinct from the preposition "to" (ADP).
+    Used in infinitival complements: "John managed to sleep". -/
+def toInf : Word := Word.mk' "to" .PART
+
 end Fragments.English.FunctionWords

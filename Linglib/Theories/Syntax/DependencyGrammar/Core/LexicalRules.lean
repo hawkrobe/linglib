@@ -25,41 +25,22 @@ namespace DepGrammar
 -- Lexical Entries with Argument Structures
 -- ============================================================================
 
-/-- Features for lexical entries -/
-structure LexFeatures where
-  inv : Bool := false      -- inverted (for auxiliaries)
-  passive : Bool := false  -- passive voice
-  finite : Bool := true
-  number : Option Number := none
-  person : Option Person := none
-  deriving Repr, DecidableEq
-
-/-- A lexical entry: word form + category + features + argument structure -/
+/-- A lexical entry: word form + category + features + argument structure.
+    Uses the shared `Features` bundle from Core/Basic.lean.
+    The `inv` field is DG-specific (auxiliary inversion state). -/
 structure LexEntry where
   form : String
   cat : UD.UPOS
-  features : LexFeatures
+  features : Features
   argStr : ArgStr
+  inv : Bool := false
   deriving Repr
 
 -- ============================================================================
--- Standard Argument Structures
+-- Auxiliary Argument Structures (DG-specific, used with LexEntry/lexical rules)
+-- Standard frames (argStr_V0, argStr_VN, argStr_VNN, argStr_VPassive) and
+-- satisfiesArgStr are in Core/Basic.lean.
 -- ============================================================================
-
-/-- Intransitive verb: subject to the left -/
-def argStr_V0 : ArgStr :=
-  { slots := [⟨.nsubj, .left, true, some .DET⟩] }
-
-/-- Transitive verb: subject left, object right -/
-def argStr_VN : ArgStr :=
-  { slots := [⟨.nsubj, .left, true, some .DET⟩,
-              ⟨.obj, .right, true, some .DET⟩] }
-
-/-- Ditransitive verb: subject left, indirect object right, object right -/
-def argStr_VNN : ArgStr :=
-  { slots := [⟨.nsubj, .left, true, some .DET⟩,
-              ⟨.iobj, .right, true, some .DET⟩,
-              ⟨.obj, .right, true, some .DET⟩] }
 
 /-- Auxiliary verb (non-inverted): subject left, main verb right -/
 def argStr_Aux : ArgStr :=
@@ -70,11 +51,6 @@ def argStr_Aux : ArgStr :=
 def argStr_AuxInv : ArgStr :=
   { slots := [⟨.nsubj, .right, true, some .DET⟩,
               ⟨.aux, .right, true, some .VERB⟩] }
-
-/-- Passive transitive: subject left (was patient), optional by-phrase right -/
-def argStr_VPassive : ArgStr :=
-  { slots := [⟨.nsubj, .left, true, some .DET⟩,
-              ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
 
 -- ============================================================================
 -- Lexical Rules
@@ -93,14 +69,14 @@ structure LexRule where
 def auxInversionRule : LexRule :=
   { name := "Auxiliary Inversion"
     applies := λ e =>
-      e.cat == .AUX && !e.features.inv
+      e.cat == .AUX && !e.inv
     transform := λ e =>
       let newSlots := e.argStr.slots.map λ slot =>
         if slot.depType == .nsubj then
           { slot with dir := .right }  -- subject now goes to the right
         else slot
       { e with
-        features := { e.features with inv := true }
+        inv := true
         argStr := { slots := newSlots } } }
 
 /-- Passive Rule: VN → V+passive
@@ -108,13 +84,13 @@ def auxInversionRule : LexRule :=
 def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
-      e.cat == .VERB && !e.features.passive &&
+      e.cat == .VERB && e.features.voice != some Voice.passive &&
       e.argStr.slots.any (·.depType == .obj)
     transform := λ e =>
       let newSlots := e.argStr.slots.filter (·.depType != .obj)
       let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .ADP⟩]
       { e with
-        features := { e.features with passive := true }
+        features := { e.features with voice := some Voice.passive }
         argStr := { slots := withByPhrase } } }
 
 -- ============================================================================
@@ -131,82 +107,40 @@ def deriveEntries (rules : List LexRule) (entry : LexEntry) : List LexEntry :=
   entry :: rules.filterMap (applyRule · entry)
 
 -- ============================================================================
--- Example Lexical Entries
+-- Lexical Entries (derived from Fragment)
 -- ============================================================================
 
-/-- "can" - modal auxiliary (non-inverted) -/
+/-- "can" - modal auxiliary (non-inverted).
+    Features derived from Fragment FunctionWords.can. -/
 def lex_can : LexEntry :=
-  { form := "can"
+  { form := Fragments.English.FunctionWords.can.toWord.form
     cat := .AUX
-    features := { inv := false, finite := true }
+    features := Fragments.English.FunctionWords.can.toWord.features
     argStr := argStr_Aux }
 
 /-- "can" - modal auxiliary (inverted, derived) -/
 def lex_can_inv : LexEntry :=
   auxInversionRule.transform lex_can
 
-/-- "does" - do-support auxiliary (non-inverted) -/
+/-- "does" - do-support auxiliary (non-inverted).
+    Features derived from Fragment FunctionWords.does. -/
 def lex_does : LexEntry :=
-  { form := "does"
+  { form := Fragments.English.FunctionWords.does.toWord.form
     cat := .AUX
-    features := { inv := false, finite := true, number := some .sg, person := some .third }
+    features := Fragments.English.FunctionWords.does.toWord.features
     argStr := argStr_Aux }
 
-/-- "kicked" - transitive verb -/
+/-- "kicked" - transitive verb.
+    Features derived from Fragment kick.toWordPast. -/
 def lex_kicked : LexEntry :=
-  { form := "kicked"
+  { form := Fragments.English.Predicates.Verbal.kick.toWordPast.form
     cat := .VERB
-    features := { passive := false, finite := true }
+    features := Fragments.English.Predicates.Verbal.kick.toWordPast.features
     argStr := argStr_VN }
 
 /-- "kicked" - passive (derived) -/
 def lex_kicked_passive : LexEntry :=
   passiveRule.transform lex_kicked
-
--- ============================================================================
--- Tests
--- ============================================================================
-
--- Auxiliary inversion
-#eval lex_can.features.inv           -- false
-#eval lex_can_inv.features.inv       -- true
-
--- Check subject direction changes
-#eval lex_can.argStr.slots.map (·.dir)      -- [left, right]
-#eval lex_can_inv.argStr.slots.map (·.dir)  -- [right, right]
-
--- Passive
-#eval lex_kicked.features.passive           -- false
-#eval lex_kicked_passive.features.passive   -- true
-
--- Check object removed in passive
-#eval lex_kicked.argStr.slots.map (·.depType)         -- [subj, obj]
-#eval lex_kicked_passive.argStr.slots.map (·.depType) -- [subj, obl]
-
--- ============================================================================
--- Building Dependency Trees from Argument Structures
--- ============================================================================
-
-/-- Check if a dependency tree satisfies an argument structure -/
-def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
-  argStr.slots.all λ slot =>
-    if slot.required then
-      -- Required slot: must have a matching dependency
-      t.deps.any λ d =>
-        d.headIdx == headIdx &&
-        d.depType == slot.depType &&
-        -- Check direction
-        (match slot.dir with
-         | .left => d.depIdx < headIdx
-         | .right => d.depIdx > headIdx)
-    else
-      -- Optional slot: if present, must be in correct direction
-      t.deps.all λ d =>
-        if d.headIdx == headIdx && d.depType == slot.depType then
-          match slot.dir with
-          | .left => d.depIdx < headIdx
-          | .right => d.depIdx > headIdx
-        else true
 
 -- ============================================================================
 -- Example: Declarative vs Interrogative Trees
@@ -233,12 +167,6 @@ def canJohnSleepTree : DepTree :=
     deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .aux⟩]
     rootIdx := 0 }
 
--- Check argument structure satisfaction
-#eval satisfiesArgStr johnCanSleepTree 1 argStr_Aux     -- true (subj left)
-#eval satisfiesArgStr johnCanSleepTree 1 argStr_AuxInv  -- false (subj should be right)
-#eval satisfiesArgStr canJohnSleepTree 0 argStr_AuxInv  -- true (subj right)
-#eval satisfiesArgStr canJohnSleepTree 0 argStr_Aux     -- false (subj should be left)
-
 -- ============================================================================
 -- Formal Proofs
 -- ============================================================================
@@ -249,7 +177,7 @@ theorem aux_inv_applies :
 
 /-- Auxiliary inversion sets the inv feature -/
 theorem aux_inv_sets_inv :
-    lex_can_inv.features.inv = true := rfl
+    lex_can_inv.inv = true := rfl
 
 /-- Auxiliary inversion moves subject from left to right -/
 theorem aux_inv_moves_subj :
@@ -261,9 +189,9 @@ theorem aux_inv_moves_subj :
 theorem passive_applies :
     passiveRule.applies lex_kicked = true := rfl
 
-/-- Passive rule sets the passive feature -/
-theorem passive_sets_passive :
-    lex_kicked_passive.features.passive = true := rfl
+/-- Passive rule sets passive voice -/
+theorem passive_sets_voice :
+    lex_kicked_passive.features.voice = some Voice.passive := rfl
 
 /-- Passive rule removes object, adds oblique -/
 theorem passive_removes_obj :
@@ -297,5 +225,17 @@ theorem inversion_distinguishes_clause_types :
     (satisfiesArgStr canJohnSleepTree 0 argStr_AuxInv = true ∧
      satisfiesArgStr canJohnSleepTree 0 argStr_Aux = false) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+-- ============================================================================
+-- Fragment Grounding
+-- ============================================================================
+
+/-- lex_kicked's argument structure matches the standard transitive frame,
+    and the Fragment's valence maps to that frame via valenceToArgStr. -/
+theorem lex_kicked_from_fragment :
+    lex_kicked.argStr = argStr_VN ∧
+    Fragments.English.Predicates.Verbal.kick.toWordPast.features.valence = some .transitive ∧
+    valenceToArgStr .transitive = some argStr_VN :=
+  ⟨rfl, rfl, rfl⟩
 
 end DepGrammar
