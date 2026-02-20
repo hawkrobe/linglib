@@ -78,7 +78,7 @@ cited in: [KaoEtAl2014_Metaphor](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [KaoEtAl2014_Hyperbole](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/LassiterGoodman2017.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)
 
 **Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/RSA_Nouwen2024Bridge.lean)

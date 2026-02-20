@@ -151,7 +151,7 @@ The contextual score derives from actual divisibility properties relative
 to the base (not a flat bonus), paralleling how standard k-ness derives
 from divisibility by 2/2.5/5/10 × powers of 10.
 
-Composes with `GranularityDatum` in `Phenomena.Imprecision.Numerals`.
+Composes with `GranularityDatum` in `Phenomena.Gradability.Imprecision.Numerals`.
 -/
 def roundnessInContext (n : Nat) (base : Nat) : Nat :=
   max (roundnessScore n) (contextualRoundnessScore n base)

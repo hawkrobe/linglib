@@ -15,7 +15,7 @@ across four ranked constraints:
 3. **QSIMP** (quantifier simplicity): prefer bare numerals
 4. **NSAL** (numeral salience): prefer round/salient numerals
 
-The key insight connecting to the k-ness model (Phenomena.Imprecision.Numerals):
+The key insight connecting to the k-ness model (Phenomena.Gradability.Imprecision.Numerals):
 NSAL violations = maxRoundnessScore - roundnessScore(n).
 Rounder numbers incur fewer NSAL violations, making them preferred candidates.
 

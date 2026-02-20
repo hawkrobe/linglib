@@ -353,7 +353,7 @@ The selectional semantics connects to:
 
 2. **Homogeneity in Plurals**:
    Similar patterns occur with plural definites under quantifiers.
-   See `Phenomena/Imprecision/Homogeneity.lean`.
+   See `Phenomena/Gradability/Imprecision/Homogeneity.lean`.
 
 3. **Causal Counterfactuals**:
    Selection functions can be grounded in causal intervention.
