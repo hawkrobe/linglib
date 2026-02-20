@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.224.70] - 2026-02-20
+
+### Added
+- **Tier 3 WALS typology files**: Complete WALS coverage for remaining gaps
+  - `Alignment/Typology.lean` (818 lines, 20 languages): WALS Ch 98--100 — NP/pronoun case alignment, verbal person marking; Dixon's split-ergative hierarchy
+  - `FillerGap/Typology.lean` (943 lines, 19 languages): WALS Ch 122--123 — relativization strategies, Keenan-Comrie accessibility hierarchy
+  - `Numerals/Typology.lean` (816 lines, 19 languages): WALS Ch 53--56 — classifiers, ordinals, distributive numerals; Sanches-Slobin generalization, Greenberg suppletion hierarchy
+  - `Morphology/Typology.lean` extended (178→1109 lines, 18 languages): WALS Ch 20--27 — fusion, exponence, locus of marking, prefix/suffix, reduplication; Greenberg Universal 27
+  - `Complementation/Typology.lean` extended (~700→1614 lines, 20 languages): WALS Ch 94--95 — subordination strategies, complementizer position, head-direction harmony
+- **12 new verified universals** across 5 files (see typology-roadmap.md)
+
 ## [0.224.69] - 2026-02-20
 
 ### Fixed
