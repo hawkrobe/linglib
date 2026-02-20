@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.74] - 2026-02-20
+
+### Added
+- **Bilateral truthmaker semantics** (Fine 2017 §§5–6) in `Truthmaker/Basic.lean`: `BilProp` (verifier + falsifier pairs), `bilNot` (swap), `bilAnd`/`bilOr` with verification/falsification duality (fusion ↔ union), De Morgan laws (`rfl`), modalized state space (`Possibility` with downward closure), Exclusivity/Exhaustivity, `exclusive_bilAnd` propagation, subject-matter (`sSup` of verifiers)
+
 ## [0.224.73] - 2026-02-20
 
 ### Changed

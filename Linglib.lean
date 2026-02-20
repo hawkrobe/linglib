@@ -408,7 +408,7 @@ import Linglib.Phenomena.TenseAspect.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Compare
 import Linglib.Phenomena.ScalarImplicatures.CompareAgreement
-import Linglib.Phenomena.ScalarImplicatures.RSA_GoodmanStuhlmuller2013Bridge
+import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -846,7 +846,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 import Linglib.Theories.Pragmatics.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.FrankGoodman2012
-import Linglib.Theories.Pragmatics.RSA.Implementations.GoodmanStuhlmuller2013
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025

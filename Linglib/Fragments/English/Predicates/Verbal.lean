@@ -296,6 +296,7 @@ def know : VerbEntry where
   presupType := some .softTrigger
   factivePresup := true
   takesQuestionBase := true
+  complementSig := some .mono
 
 /-- "regret" — factive, presupposes complement is true -/
 def regret : VerbEntry where
@@ -507,7 +508,8 @@ def believe : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.doxastic .nonVeridical) }
+  attitudeBuilder := some (.doxastic .nonVeridical)
+  complementSig := some .mono }
 
 /-- "think" — doxastic attitude verb -/
 def think : VerbEntry where
@@ -521,6 +523,7 @@ def think : VerbEntry where
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.doxastic .nonVeridical)
+  complementSig := some .mono
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Preferential Attitude
@@ -535,6 +538,7 @@ def want : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  complementSig := some .mono
   levinClass := some .want }
 
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative).
@@ -548,7 +552,8 @@ def hope : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  complementSig := some .mono }
 
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
 def expect : VerbEntry := .mkRegular {
@@ -557,7 +562,8 @@ def expect : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  complementSig := some .mono }
 
 /-- "wish" — preferential attitude verb (Class 3: anti-rogative) -/
 def wish : VerbEntry where
@@ -571,6 +577,7 @@ def wish : VerbEntry where
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  complementSig := some .mono
   levinClass := some .want
 
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
@@ -581,6 +588,7 @@ def fear : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  complementSig := some .mono
   levinClass := some .admire }
 
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
@@ -591,6 +599,7 @@ def dread : VerbEntry := .mkRegular {
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  complementSig := some .mono
   levinClass := some .admire }
 
 /-- "worry" — preferential attitude verb (Class 1: takes questions, non-C-distributive) -/
@@ -605,6 +614,7 @@ def worry : VerbEntry where
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
+  complementSig := some .mono
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Raising

@@ -52,7 +52,7 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 
 **Goodman, N. D. & Stuhlmüller, A.** (2013). Knowledge and Implicature: Modeling Language Understanding as Social Cognition. *Topics in Cognitive Science, 5(1), 173–184*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)\
-cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)
+cited in: [RSA_GoodmanStuhlmuller2013Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/RSA_GoodmanStuhlmuller2013Bridge.lean), [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013.lean), [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)
 
 **Grusdt, B., Lassiter, D. & Franke, M.** (2022). Probabilistic Modeling of Rational Communication with Conditionals. *Semantics and Pragmatics, 15, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GrusdtLassiterFranke2022.lean)
@@ -75,7 +75,7 @@ cited in: [KaoEtAl2014_Metaphor](https://github.com/hawkrobe/linglib/blob/main/L
 
 **Kao, J. T., Wu, J. Y., Bergen, L. & Goodman, N. D.** (2014). Nonliteral Understanding of Number Words. *Proceedings of the National Academy of Sciences, 111(33), 12002–12007*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)\
-cited in: [KaoEtAl2014_Hyperbole](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
+cited in: [RSA_KaoEtAl2014Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/RSA_KaoEtAl2014Bridge.lean), [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/Studies/KaoEtAl2014.lean), [KaoEtAl2014_Hyperbole](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)
@@ -192,7 +192,7 @@ cited in: [BaleEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 
 **Aloni, M.** (2022). Logic and Conversation: The Case of Free Choice. *Semantics and Pragmatics, 15*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/FreeChoice/Aloni2022.lean)\
-cited in: [Aloni2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Aloni2022.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/Basic.lean), [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/FreeChoice.lean)
+cited in: [Aloni2022Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/Aloni2022Bridge.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/Basic.lean), [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/FreeChoice.lean)
 
 **Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
@@ -266,7 +266,7 @@ cited in: [FocusParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib
 
 **Tsilia, D., Zhao, Z. & Sharvit, Y.** (2026). Tense and Perspective. *Manuscript*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)\
-cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean), [TsiliaEtAl2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)
+cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/ThenPresentBridge.lean), [TsiliaEtAl2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)
 
 **von Stechow, A.** (2009). Tenses in Compositional Semantics. *The Expression of Time*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/VonStechow.lean)
@@ -276,7 +276,7 @@ cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Ling
 
 **Zhao, Z.** (2026). Cross-Linguistic and Cross-Domain Parallels in the Semantics of Degree and Time. *PhD dissertation, Massachusetts Institute of Technology*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Aspect/CrossDomainBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean)\
-cited in: [AtomicDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean), [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean), [CrossDomainBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Aspect/CrossDomainBridge.lean), [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean), [DegreeEvents](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean)
+cited in: [AtomicDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean), [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean), [CrossDomainBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/CrossDomainBridge.lean), [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/ThenPresentBridge.lean), [DegreeEvents](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean)
 
 ## Semantics — Lexical (Adjectives, Nouns, Plurals, Events)
 

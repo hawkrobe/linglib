@@ -242,4 +242,33 @@ def knowledge_a1 : KnowledgeabilityCheck := { access := 1, meanBet := 27.1, sd :
 def knowledge_a2 : KnowledgeabilityCheck := { access := 2, meanBet := 34.8, sd := 5.7 }
 def knowledge_a3 : KnowledgeabilityCheck := { access := 3, meanBet := 93.0, sd := 2.7 }
 
+-- ============================================================================
+-- Finding → Evidence Linking
+-- ============================================================================
+
+/-- The statistical evidence for each finding. -/
+def Finding.evidence : Finding → BetComparison
+  | .some_full_implicature => exp1_some_a3_2v3
+  | .some_minimal_canceled => exp1_some_a1_2v3
+  | .some_partial_canceled => exp1_some_a2_2v3
+  | .two_full_upper_bounded => exp2_two_a3_2v3
+  | .two_partial_weakened => exp2_two_a2_2v3
+  | .one_full_1v2 => exp2_one_a3_1v2
+  | .one_full_1v3 => exp2_one_a3_1v3
+  | .one_minimal_1v2_canceled => exp2_one_a1_1v2
+  | .one_minimal_1v3_canceled => exp2_one_a1_1v3
+  | .one_partial_1v3 => exp2_one_a2_1v3
+  | .one_partial_1v2_canceled => exp2_one_a2_1v2
+
+/-- Does this finding predict that the comparison holds (stateA > stateB)? -/
+def Finding.predicted : Finding → Bool
+  | .some_full_implicature | .two_full_upper_bounded
+  | .one_full_1v2 | .one_full_1v3 | .one_partial_1v3 => true
+  | _ => false
+
+/-- The statistical evidence matches the predicted direction for every finding. -/
+theorem evidence_matches_prediction :
+    ∀ f : Finding, f.evidence.aExceedsB = f.predicted := by
+  intro f; cases f <;> rfl
+
 end Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
