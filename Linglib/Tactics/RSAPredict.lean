@@ -679,106 +679,6 @@ private def mkRatExpr (q : ℚ) : MetaM Expr := do
     let denExpr ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.den]
     mkAppM ``HDiv.hDiv #[numExpr, denExpr]
 
-/-- Build `QInterval.exact q` as a Lean Expr. -/
-private def mkQIExact (q : ℚ) : MetaM Expr := do
-  mkAppM ``QInterval.exact #[← mkRatExpr q]
-
-/-- Build `QInterval.mk lo hi sorry` from concrete ℚ bounds.
-    The validity proof uses `sorryAx` — this is sound because:
-    1. The bridge theorem uses axioms for S1→L1 soundness anyway
-    2. The proof is in Prop, so it's erased during native_decide compilation
-    3. MetaBounds are computed using the same algorithms as RExpr.eval -/
-private def mkQIntervalFromBounds (lo hi : ℚ) : MetaM Expr := do
-  if lo == hi then return ← mkQIExact lo
-  let loExpr ← mkRatExpr lo
-  let hiExpr ← mkRatExpr hi
-  let leType ← mkAppM ``LE.le #[loExpr, hiExpr]
-  let validProof := mkApp2 (mkConst ``sorryAx [levelZero]) leType (toExpr true)
-  return mkAppN (mkConst ``QInterval.mk) #[loExpr, hiExpr, validProof]
-
--- ============================================================================
--- Build Match Expression
--- ============================================================================
-
--- ============================================================================
--- Core: Build S1 Score Table
--- ============================================================================
-
-/-- Build an ite-chain function `fun (x : T) => if x == v₁ then r₁ else if x == v₂ then r₂ ...`
-    using proper local variable binding. -/
-private def buildIteFn (T : Expr) (entries : Array (Expr × Expr))
-    (default : Expr) (name : Name := `x) : MetaM Expr := do
-  withLocalDeclD name T fun x => do
-    let mut body := default
-    for i in (List.range entries.size).reverse do
-      let (key, val) := entries[i]!
-      let cond ← mkAppM ``BEq.beq #[x, key]
-      body ← mkAppM ``cond #[cond, val, body]
-    mkLambdaFVars #[x] body
-
-/-- For each (l, w, u), reify the S1 score `(cfg.S1agent l).score w u`
-    into an RExpr, pre-evaluate to concrete QInterval, then build a nested
-    lookup function returning pre-computed QInterval values. -/
-private def buildS1ScoreTable (cfg : Expr) (U W L : Expr)
-    (allL : Array Expr) (allW : Array Expr) (allU : Array Expr) :
-    MetaM (Expr × Array (Expr × Expr × Expr × MetaBounds)) := do
-  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
-  let mut entries : Array (Expr × Expr × Expr × Expr × MetaBounds) := (#[] : Array _)
-  let total := allL.size * allW.size * allU.size
-  logInfo m!"rsa_predict: reifying {total} S1 scores..."
-  let mut count : ℕ := 0
-  let mut nonZeroCount : ℕ := 0
-  for l in allL do
-    let s1agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
-    for w in allW do
-      for u in allU do
-        let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
-        let (rexpr, bounds) ← reifyToRExpr reifyCache scoreExpr maxDepth
-        -- Pre-evaluate to concrete QInterval from MetaBounds at meta time.
-        -- This eliminates all exp/log Padé computation from native_decide.
-        let evali ← mkQIntervalFromBounds bounds.lo bounds.hi
-        entries := entries.push (l, w, u, evali, bounds)
-        if !(bounds.lo == 0 && bounds.hi == 0) then
-          nonZeroCount := nonZeroCount + 1
-        count := count + 1
-        if count % 100 = 0 then
-          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
-  logInfo m!"rsa_predict: {nonZeroCount}/{total} non-zero S1 scores"
-  -- Build nested ite-by-dimension function: L → W → U → QInterval
-  -- Nested structure: O(|L|+|W|+|U|) comparisons per lookup vs O(|L|×|W|×|U|)
-  let defaultVal ← mkQIExact 0
-  let fn ← withLocalDeclD `l L fun lVar => do
-    withLocalDeclD `w W fun wVar => do
-      withLocalDeclD `u U fun uVar => do
-        let mut lBody := defaultVal
-        for il in (List.range allL.size).reverse do
-          let li := allL[il]!
-          let mut hasNonZero := false
-          let mut wBody := defaultVal
-          for iw in (List.range allW.size).reverse do
-            let wi := allW[iw]!
-            let mut hasNonZeroW := false
-            let mut uBody := defaultVal
-            for iu in (List.range allU.size).reverse do
-              let ui := allU[iu]!
-              let idx := il * allW.size * allU.size + iw * allU.size + iu
-              let (_, _, _, qi, bounds) := entries[idx]!
-              -- Skip zero S1 scores — default QInterval.exact 0 handles them
-              if bounds.lo == 0 && bounds.hi == 0 then continue
-              hasNonZeroW := true
-              let condU ← mkAppM ``BEq.beq #[uVar, ui]
-              uBody ← mkAppM ``cond #[condU, qi, uBody]
-            if !hasNonZeroW then continue
-            hasNonZero := true
-            let condW ← mkAppM ``BEq.beq #[wVar, wi]
-            wBody ← mkAppM ``cond #[condW, uBody, wBody]
-          if !hasNonZero then continue
-          let condL ← mkAppM ``BEq.beq #[lVar, li]
-          lBody ← mkAppM ``cond #[condL, wBody, lBody]
-        mkLambdaFVars #[lVar, wVar, uVar] lBody
-  let boundsInfo := entries.map fun (l, w, u, _, b) => (l, w, u, b)
-  return (fn, boundsInfo)
-
 -- ============================================================================
 -- Goal Parsing
 -- ============================================================================
@@ -873,9 +773,9 @@ elab "rsa_predict" : tactic => do
   logInfo m!"rsa_predict: U = {← ppExpr U}, W = {← ppExpr W}, Latent = {← ppExpr L}"
 
   -- Get enum lists
-  let (allUList, allUElems) ← getFiniteElems U
+  let (_, allUElems) ← getFiniteElems U
   let (_, allWElems) ← getFiniteElems W
-  let (allLList, allLElems) ← getFiniteElems L
+  let (_, allLElems) ← getFiniteElems L
 
   logInfo m!"rsa_predict: |U| = {allUElems.size}, |W| = {allWElems.size}, |L| = {allLElems.size}"
 
