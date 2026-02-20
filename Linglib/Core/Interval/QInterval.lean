@@ -304,16 +304,6 @@ theorem scaleNonneg_containsReal {q : ℚ} {a : QInterval} {x : ℝ}
   exact ⟨mul_le_mul_of_nonneg_left hx.1 hq_r, mul_le_mul_of_nonneg_left hx.2 hq_r⟩
 
 -- ============================================================================
--- Folded sum
--- ============================================================================
-
-/-- Sum a list of intervals via fold. -/
-def sum : List QInterval → QInterval
-  | [] => exact 0
-  | [x] => x
-  | x :: xs => x.add (sum xs)
-
--- ============================================================================
 -- Separation and Ordering
 -- ============================================================================
 
