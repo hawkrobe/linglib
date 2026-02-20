@@ -393,6 +393,11 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   -- Tertiary: detect numeric literals via isDefEq (small) or findEmbeddedNat (large)
   let eType ← inferType e
   if eType.isConstOf ``Real then
+    -- Fast path: check Cauchy form before the isDefEq loop
+    if e.getAppFn.isConstOf ``Real.ofCauchy then
+      if let some n := findEmbeddedNat e then
+        let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
+        return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
     for n in ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List ℕ) do
       let nE := mkRawNatLit n
       let target ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, nE, none]
@@ -402,7 +407,7 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
         let rexpr ← mkAppM ``RExpr.nat #[nE]
         return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
 
-  -- Quaternary: detect binary ops via isDefEq
+  -- Quaternary: detect binary ops via isDefEq (catches internal forms like Real.add✝)
   if args.size ≥ 2 then
     let a := args[args.size - 2]!
     let b := args[args.size - 1]!
@@ -430,7 +435,7 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                     else ⟨-1, 1⟩
       return ← cacheReturn cache key (rexpr, bounds)
 
-  -- Detect exp/log via isDefEq
+  -- Detect exp/log/inv/rpow via isDefEq (catches internal forms after whnf)
   if eType.isConstOf ``Real then
     let expMatch ← withNewMCtxDepth do
       try
@@ -472,7 +477,7 @@ private partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let bounds := if ba.lo > 0 then ⟨1 / ba.hi, 1 / ba.lo⟩ else ⟨-1, 1⟩
       return ← cacheReturn cache key (rexpr, bounds)
 
-  -- Detect exp/log/inv/rpow via isDefEq (handles internal forms after whnf)
+  -- rpow via isDefEq
   if eType.isConstOf ``Real then
     let rpowMatch ← withNewMCtxDepth do
       try
@@ -793,8 +798,19 @@ elab "rsa_predict" : tactic => do
 
   logInfo m!"rsa_predict: extracted worldPrior and latentPrior ℚ values"
 
-  -- Reify S1 scores → MetaBounds (no Expr function needed)
+  -- Warm up cache by pre-computing all L0 values.
+  -- L0(l,u,w) = meaning(l,u,w) / Σ_w' meaning(l,u,w') — the denominator depends
+  -- only on (l,u), so pre-computing L0 for all (l,u,w) caches each denominator once,
+  -- avoiding redundant reification when S1 scores unfold to L0 subexpressions.
   let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
+  for l in allLElems do
+    let l0agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
+    for u in allUElems do
+      for w in allWElems do
+        let l0Expr ← mkAppM ``Core.RationalAction.policy #[l0agent, u, w]
+        let _ ← reifyToRExpr reifyCache l0Expr maxDepth
+
+  -- Reify S1 scores → MetaBounds (no Expr function needed)
   let mut s1Bounds : Array MetaBounds := #[]
   let total := allLElems.size * allWElems.size * allUElems.size
   logInfo m!"rsa_predict: reifying {total} S1 scores..."
