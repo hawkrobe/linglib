@@ -40,6 +40,7 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 namespace Comparisons.FreeChoice
 
 open Phenomena.Modality.FreeChoice
+open NeoGricean.Exhaustivity
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
@@ -117,7 +118,7 @@ For FC alternatives:
 
 /-- Bar-Lev & Fox: Free choice is derived via Innocent Inclusion -/
 theorem barlevfox_derives_fc :
-    ∀ w, NeoGricean.FreeChoice.exhIEII fcALT fcPrejacent w →
+    ∀ w, exhIEII fcALT fcPrejacent w →
       NeoGricean.FreeChoice.permA w ∧ NeoGricean.FreeChoice.permB w :=
   NeoGricean.FreeChoice.free_choice
 

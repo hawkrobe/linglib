@@ -34,77 +34,7 @@ namespace NeoGricean.FreeChoice
 
 open NeoGricean.Exhaustivity
 
--- SECTION 1: Innocent Inclusion (II)
-
-/-!
-## Definition of Innocent Inclusion
-
-From Bar-Lev & Fox (2020), Definition (51):
-
-> II(p, C) = ∩{C'' ⊆ C : C'' is maximal s.t.
->            {r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)} is consistent}
-
-That is: after computing IE, find all maximal subsets of alternatives that
-can consistently be assigned TRUE (given that IE alternatives are false).
-An alternative is innocently includable iff it appears in ALL such maximal sets.
--/
-
-variable {World : Type*}
-variable (ALT : Set (Prop' World))
-variable (φ : Prop' World)
-
-/--
-**Definition (II-compatible set)**: A set of propositions R is (ALT, φ, IE)-compatible
-for inclusion if:
-a) R ⊆ ALT
-b) {r : r ∈ R} ∪ {φ} ∪ {¬q : q ∈ IE(ALT, φ)} is consistent
--/
-def isIICompatible (R : Set (Prop' World)) : Prop :=
-  R ⊆ ALT ∧
-  SetConsistent ({φ} ∪ {ψ | ∃ q, isInnocentlyExcludable ALT φ q ∧ ψ = ∼q} ∪ R)
-
-/--
-**Definition (MI-set)**: Maximal II-compatible set.
-A set R is maximally (ALT, φ, IE)-compatible if it is II-compatible
-and not properly included in any other II-compatible set.
--/
-def isMISet (R : Set (Prop' World)) : Prop :=
-  isIICompatible ALT φ R ∧
-  ∀ R', isIICompatible ALT φ R' → R ⊆ R' → R' ⊆ R
-
-/--
-**Definition (II)**: II(ALT, φ) = {r ∈ ALT : r belongs to every MI-set}
-
-An alternative r is innocently includable iff it belongs to every MI-set.
--/
-def II : Set (Prop' World) :=
-  {r ∈ ALT | ∀ R, isMISet ALT φ R → r ∈ R}
-
-/--
-An alternative a is innocently includable given ALT and φ
-if and only if a ∈ II(ALT, φ).
--/
-def isInnocentlyIncludable (a : Prop' World) : Prop :=
-  a ∈ II ALT φ
-
--- SECTION 2: Combined Exhaustivity Operator (Exh^{IE+II})
-
-/--
-**Definition (Exh^{IE+II})**: The exhaustivity operator with both IE and II.
-
-  ⟦Exh^{IE+II}⟧(ALT)(φ)(w) ⇔
-    φ(w) ∧
-    ∀q ∈ IE(ALT,φ)[¬q(w)] ∧    -- exclude IE alternatives
-    ∀r ∈ II(ALT,φ)[r(w)]        -- include II alternatives
-
-This is Bar-Lev & Fox's key operator that derives free choice.
--/
-def exhIEII : Prop' World := λ w =>
-  φ w ∧
-  (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
-  (∀ r, isInnocentlyIncludable ALT φ r → r w)
-
--- SECTION 3: Free Choice Setup
+-- SECTION 1: Free Choice Setup
 
 /-!
 ## Free Choice Configuration
@@ -196,22 +126,6 @@ For FC disjunction:
 - NOT closed under conjunction
 -/
 
-/-- ◇a ∧ ◇b (permission for each individually) -/
-def permAandPermB : Prop' FCWorld
-  | .neither => False
-  | .onlyA => False
-  | .onlyB => False
-  | .both => True
-  | .separatelyAB => True  -- each individually permitted
-
-/-- Key distinction: ◇(a ∧ b) ≠ ◇a ∧ ◇b — they differ at `separatelyAB`
-    where a and b are each individually permitted but not jointly.
-    This is the modal non-equivalence that drives free choice. -/
-theorem permAandB_ne_permAandPermB :
-    ¬(∀ w, permAandB w ↔ permAandPermB w) := by
-  intro h
-  exact absurd ((h .separatelyAB).mpr trivial) id
-
 /-- The free choice alternatives are NOT closed under conjunction in the
     relevant sense: the conjunction of two alternatives is not equivalent
     to any single alternative in the general case.
@@ -267,24 +181,6 @@ This is where standard exhaustivity stops: Exh^{IE}(◇(a ∨ b)) = ◇(a ∨ b)
 which does NOT entail ◇a ∧ ◇b.
 -/
 
-/-- The conjunction alternative is excludable -/
-theorem conjunction_excludable :
-    ∃ w, fcPrejacent w ∧ ¬permAandB w := by
-  use FCWorld.onlyA
-  simp [fcPrejacent, permAorB, permAandB]
-
-/-- permA is not excludable (negating it at some φ-worlds is inconsistent) -/
-theorem permA_not_excludable_witness :
-    ∃ w, fcPrejacent w ∧ permA w ∧ ¬permB w := by
-  use FCWorld.onlyA
-  simp [fcPrejacent, permAorB, permA, permB]
-
-/-- permB is not excludable (negating it at some φ-worlds is inconsistent) -/
-theorem permB_not_excludable_witness :
-    ∃ w, fcPrejacent w ∧ permB w ∧ ¬permA w := by
-  use FCWorld.onlyB
-  simp [fcPrejacent, permAorB, permA, permB]
-
 -- SECTION 6: II Analysis for Free Choice
 
 /-!
@@ -307,18 +203,6 @@ Therefore: II = {◇a, ◇b}
 
 This is FREE CHOICE!
 -/
-
-/-- ◇a is consistent with φ and ¬◇(a ∧ b) -/
-theorem permA_includable_witness :
-    ∃ w, fcPrejacent w ∧ ¬permAandB w ∧ permA w := by
-  use FCWorld.onlyA
-  simp [fcPrejacent, permAorB, permAandB, permA]
-
-/-- ◇b is consistent with φ and ¬◇(a ∧ b) -/
-theorem permB_includable_witness :
-    ∃ w, fcPrejacent w ∧ ¬permAandB w ∧ permB w := by
-  use FCWorld.onlyB
-  simp [fcPrejacent, permAorB, permAandB, permB]
 
 -- SECTION 7: Free Choice Theorem
 
@@ -347,6 +231,10 @@ private theorem permAorB_not_ie :
   obtain ⟨u, hu⟩ := hMC.1.2.2
   exact hu (∼permAorB) (hIE E hMC) (hu fcPrejacent hMC.1.1)
 
+/-- Helper: fcPrejacent ∧ ¬permA ∧ ¬permB is inconsistent. -/
+private theorem perm_cover : ∀ u, fcPrejacent u → ¬permA u → ¬permB u → False :=
+  fun u => by cases u <;> simp [fcPrejacent, permAorB, permA, permB]
+
 /-- Helper: An MC-set that omits ∼permA. -/
 private theorem mc_set_without_neg_permA :
     isMCSet fcALT fcPrejacent {fcPrejacent, ∼permB, ∼permAandB} := by
@@ -374,11 +262,10 @@ private theorem mc_set_without_neg_permA :
         exact hu (∼permAorB) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
       · -- ∼permA + ∼permB + fcPrejacent is inconsistent
         exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        have h1 : permAorB u := hu fcPrejacent (hsub (Set.mem_insert _ _))
-        have h2 : ¬permA u := hu (∼permA) hψ'
-        have h3 : ¬permB u :=
-          hu (∼permB) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _)))
-        cases u <;> simp_all [permAorB, permA, permB]
+        exact perm_cover u
+          (hu fcPrejacent (hsub (Set.mem_insert _ _)))
+          (hu (∼permA) hψ')
+          (hu (∼permB) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
       · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
       · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
 
@@ -409,11 +296,10 @@ private theorem mc_set_without_neg_permB :
       · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
       · -- ∼permB + ∼permA + fcPrejacent is inconsistent
         exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        have h1 : permAorB u := hu fcPrejacent (hsub (Set.mem_insert _ _))
-        have h2 : ¬permA u :=
-          hu (∼permA) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _)))
-        have h3 : ¬permB u := hu (∼permB) hψ'
-        cases u <;> simp_all [permAorB, permA, permB]
+        exact perm_cover u
+          (hu fcPrejacent (hsub (Set.mem_insert _ _)))
+          (hu (∼permA) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
+          (hu (∼permB) hψ')
       · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
 
 /-- Helper: permA is NOT innocently excludable. -/
@@ -450,117 +336,78 @@ private theorem ie_neg_at_separatelyAB (q : Prop' FCWorld)
   · exact absurd hqIE permB_not_ie
   · exact id  -- (∼permAandB) .separatelyAB = ¬False
 
-/-- Helper: For any II-compatible R, adding permA preserves II-compatibility. -/
-private theorem extend_II_with_permA (R : Set (Prop' FCWorld))
-    (hRcompat : isIICompatible fcALT fcPrejacent R) (_hpA : permA ∉ R) :
-    isIICompatible fcALT fcPrejacent (R ∪ {permA}) := by
+/-- Helper: For any II-compatible R, adding a target alternative that holds at
+    .separatelyAB and is implied by permAandB preserves II-compatibility. -/
+private theorem extend_II_with_target
+    (target : Prop' FCWorld)
+    (htarget_alt : target ∈ fcALT)
+    (htarget_sep : target FCWorld.separatelyAB)
+    (hAandB_implies : ∀ u, permAandB u → target u)
+    (R : Set (Prop' FCWorld))
+    (hRcompat : isIICompatible fcALT fcPrejacent R) (_hNotIn : target ∉ R) :
+    isIICompatible fcALT fcPrejacent (R ∪ {target}) := by
   constructor
   · intro x hx
-    rcases hx with hxR | hxA
+    rcases hx with hxR | hxT
     · exact hRcompat.1 hxR
-    · rw [Set.mem_singleton_iff.mp hxA]; simp [fcALT]
-  · -- Get witness from R's consistency
-    obtain ⟨u₀, hu₀⟩ := hRcompat.2
-    by_cases hpAu₀ : permA u₀
-    · -- u₀ also witnesses the extended set
-      exact ⟨u₀, fun ψ hψ => by
+    · rw [Set.mem_singleton_iff.mp hxT]; exact htarget_alt
+  · obtain ⟨u₀, hu₀⟩ := hRcompat.2
+    by_cases htarg : target u₀
+    · exact ⟨u₀, fun ψ hψ => by
         rcases hψ with hψ_left | hψ_right
         · exact hu₀ ψ (Set.mem_union_left _ hψ_left)
-        · rcases hψ_right with hψR | hψA
+        · rcases hψ_right with hψR | hψT
           · exact hu₀ ψ (Set.mem_union_right _ hψR)
-          · rw [Set.mem_singleton_iff.mp hψA]; exact hpAu₀⟩
-    · -- ¬permA u₀: use .separatelyAB as witness
+          · rw [Set.mem_singleton_iff.mp hψT]; exact htarg⟩
+    · -- ¬target u₀: use .separatelyAB as witness
       refine ⟨.separatelyAB, fun ψ hψ => ?_⟩
       rcases hψ with hψ_left | hψ_right
       · rcases hψ_left with hψ_φ | hψ_ie
         · rw [Set.mem_singleton_iff.mp hψ_φ]; exact trivial
         · obtain ⟨q, hqIE, rfl⟩ := hψ_ie
           exact ie_neg_at_separatelyAB q hqIE
-      · rcases hψ_right with hψR | hψA
-        · -- ψ ∈ R ⊆ fcALT, show ψ .separatelyAB
+      · rcases hψ_right with hψR | hψT
+        · -- ψ ∈ R ⊆ fcALT: all members except permAandB hold at .separatelyAB
           have hψ_fcALT := hRcompat.1 hψR
           simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ_fcALT
           rcases hψ_fcALT with rfl | rfl | rfl | rfl
           · exact trivial  -- permAorB .separatelyAB
-          · -- permA ∈ R, but hu₀ gives permA u₀, contradicting ¬permA u₀
-            exact absurd (hu₀ permA (Set.mem_union_right _ hψR)) hpAu₀
-          · exact trivial  -- permB .separatelyAB
-          · -- permAandB ∈ R: derive contradiction from u₀
-            exfalso
-            have hAandB := hu₀ permAandB (Set.mem_union_right _ hψR)
-            have hAorB := hu₀ fcPrejacent
-              (Set.mem_union_left _ (Set.mem_union_left _ rfl))
-            cases u₀ <;> simp_all [fcPrejacent, permA, permAandB]
-        · rw [Set.mem_singleton_iff.mp hψA]; exact trivial
-
-/-- Helper: For any II-compatible R, adding permB preserves II-compatibility. -/
-private theorem extend_II_with_permB (R : Set (Prop' FCWorld))
-    (hRcompat : isIICompatible fcALT fcPrejacent R) (_hpB : permB ∉ R) :
-    isIICompatible fcALT fcPrejacent (R ∪ {permB}) := by
-  constructor
-  · intro x hx
-    rcases hx with hxR | hxB
-    · exact hRcompat.1 hxR
-    · rw [Set.mem_singleton_iff.mp hxB]; simp [fcALT]
-  · obtain ⟨u₀, hu₀⟩ := hRcompat.2
-    by_cases hpBu₀ : permB u₀
-    · exact ⟨u₀, fun ψ hψ => by
-        rcases hψ with hψ_left | hψ_right
-        · exact hu₀ ψ (Set.mem_union_left _ hψ_left)
-        · rcases hψ_right with hψR | hψB
-          · exact hu₀ ψ (Set.mem_union_right _ hψR)
-          · rw [Set.mem_singleton_iff.mp hψB]; exact hpBu₀⟩
-    · refine ⟨.separatelyAB, fun ψ hψ => ?_⟩
-      rcases hψ with hψ_left | hψ_right
-      · rcases hψ_left with hψ_φ | hψ_ie
-        · rw [Set.mem_singleton_iff.mp hψ_φ]; exact trivial
-        · obtain ⟨q, hqIE, rfl⟩ := hψ_ie
-          exact ie_neg_at_separatelyAB q hqIE
-      · rcases hψ_right with hψR | hψB
-        · have hψ_fcALT := hRcompat.1 hψR
-          simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ_fcALT
-          rcases hψ_fcALT with rfl | rfl | rfl | rfl
-          · exact trivial
           · exact trivial  -- permA .separatelyAB
-          · exact absurd (hu₀ permB (Set.mem_union_right _ hψR)) hpBu₀
-          · exfalso
-            have hAandB := hu₀ permAandB (Set.mem_union_right _ hψR)
-            have hAorB := hu₀ fcPrejacent
-              (Set.mem_union_left _ (Set.mem_union_left _ rfl))
-            cases u₀ <;> simp_all [fcPrejacent, permB, permAandB]
-        · rw [Set.mem_singleton_iff.mp hψB]; exact trivial
+          · exact trivial  -- permB .separatelyAB
+          · -- permAandB ∈ R: hAandB_implies gives target u₀, contradicting ¬target u₀
+            exact absurd (hAandB_implies u₀ (hu₀ permAandB (Set.mem_union_right _ hψR))) htarg
+        · rw [Set.mem_singleton_iff.mp hψT]; exact htarget_sep
 
-/-- Helper: permA is innocently includable. -/
-private theorem permA_in_II :
-    isInnocentlyIncludable fcALT fcPrejacent permA := by
+/-- Helper: a target alternative in fcALT that holds at .separatelyAB and is
+    implied by permAandB is innocently includable. -/
+private theorem target_in_II
+    (target : Prop' FCWorld)
+    (htarget_alt : target ∈ fcALT)
+    (htarget_sep : target FCWorld.separatelyAB)
+    (hAandB_implies : ∀ u, permAandB u → target u) :
+    isInnocentlyIncludable fcALT fcPrejacent target := by
   constructor
-  · simp [fcALT]
+  · exact htarget_alt
   · intro R ⟨hRcompat, hRmax⟩
-    by_contra hpA
-    have hext := extend_II_with_permA R hRcompat hpA
-    exact hpA (hRmax (R ∪ {permA}) hext Set.subset_union_left (Set.mem_union_right R rfl))
-
-/-- Helper: permB is innocently includable. -/
-private theorem permB_in_II :
-    isInnocentlyIncludable fcALT fcPrejacent permB := by
-  constructor
-  · simp [fcALT]
-  · intro R ⟨hRcompat, hRmax⟩
-    by_contra hpB
-    have hext := extend_II_with_permB R hRcompat hpB
-    exact hpB (hRmax (R ∪ {permB}) hext Set.subset_union_left (Set.mem_union_right R rfl))
+    by_contra hNotIn
+    have hext := extend_II_with_target target htarget_alt htarget_sep hAandB_implies
+      R hRcompat hNotIn
+    exact hNotIn (hRmax (R ∪ {target}) hext Set.subset_union_left
+      (Set.mem_union_right R rfl))
 
 /-- The free choice inference: exhaustified ◇(a ∨ b) entails ◇a -/
 theorem fc_entails_permA :
     ∀ w, exhIEII fcALT fcPrejacent w → permA w := by
   intro w ⟨_, _, hII⟩
-  exact hII permA permA_in_II
+  exact hII permA (target_in_II permA (by simp [fcALT]) trivial
+    (fun u h => by cases u <;> simp_all [permAandB, permA]))
 
 /-- The free choice inference: exhaustified ◇(a ∨ b) entails ◇b -/
 theorem fc_entails_permB :
     ∀ w, exhIEII fcALT fcPrejacent w → permB w := by
   intro w ⟨_, _, hII⟩
-  exact hII permB permB_in_II
+  exact hII permB (target_in_II permB (by simp [fcALT]) trivial
+    (fun u h => by cases u <;> simp_all [permAandB, permB]))
 
 /-- Main Free Choice Theorem: Exh^{IE+II}(◇(a ∨ b)) ⊢ ◇a ∧ ◇b -/
 theorem free_choice :
