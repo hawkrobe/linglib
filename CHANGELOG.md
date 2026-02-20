@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.224.60] - 2026-02-20
+
+### Added
+- **Typology Tier 1**: Five new WALS-based cross-linguistic typology files covering 20 chapters and ~86 languages:
+  - `Tense/Typology.lean` (Ch 65–69): aspect marking, past/future/perfect tense, affix position; 19 languages, 11 verified generalizations
+  - `Negation/Typology.lean` (Ch 112–115): negative morpheme types, symmetric/asymmetric negation, negative indefinite strategies; 17 languages, 10 theorems
+  - `Plurals/Typology.lean` (Ch 33–36): plural coding, occurrence, pronoun plurality, associative plurals, animacy hierarchy; 16 languages, 14 theorems
+  - `Reference/Typology.lean` (Ch 37–38, 41–43): definite/indefinite articles, demonstrative distance systems, pronoun-demonstrative relationship, grammaticalization cline; 16 languages, 10 theorems
+  - `ArgumentStructure/Typology.lean` (Ch 106–111): reciprocals, passives, antipassives, applicatives, causative morphology; 18 languages, 8 theorems
+- **`docs/typology-roadmap.md`**: Roadmap mapping WALS chapters to linglib phenomena, codifying the `Typology.lean`/`TypologyBridge.lean` convention and five-part phenomenon directory anatomy
+
 ## [0.224.59] - 2026-02-20
 
 ### Changed
