@@ -176,6 +176,21 @@ private theorem abs_le_one_of_natAbs_le_den (q : ℚ) (h : q.num.natAbs ≤ q.de
     apply div_le_div_of_nonneg_right _ (le_of_lt hd_pos)
     exact_mod_cast le_trans Int.le_natAbs (Int.ofNat_le.mpr h)
 
+/-- natAbs ≤ den * 2^k where k = log₂(natAbs) - log₂(den) + 1.
+    Key step: natAbs < 2^(log₂ natAbs + 1) = 2^(log₂ den + k) = 2^(log₂ den) · 2^k ≤ den · 2^k. -/
+private lemma natAbs_le_den_mul_pow (den natAbs : ℕ) (hden : 0 < den) (hgt : den < natAbs) :
+    natAbs ≤ den * 2 ^ (Nat.log 2 natAbs - Nat.log 2 den + 1) := by
+  have hden_ne : den ≠ 0 := by omega
+  have h_log_le : Nat.log 2 den ≤ Nat.log 2 natAbs :=
+    Nat.log_mono_right (le_of_lt hgt)
+  calc natAbs
+      ≤ 2 ^ (Nat.log 2 natAbs + 1) :=
+        le_of_lt (Nat.lt_pow_succ_log_self (by norm_num : 1 < 2) natAbs)
+    _ = 2 ^ (Nat.log 2 den + (Nat.log 2 natAbs - Nat.log 2 den + 1)) := by congr 1; omega
+    _ = 2 ^ Nat.log 2 den * 2 ^ (Nat.log 2 natAbs - Nat.log 2 den + 1) := by ring_nf
+    _ ≤ den * 2 ^ (Nat.log 2 natAbs - Nat.log 2 den + 1) := by
+        apply Nat.mul_le_mul_right; exact Nat.pow_log_le_self 2 hden_ne
+
 /-- q / 2^(reductionSteps q) ∈ [-1, 1]. -/
 private theorem reductionSteps_spec (q : ℚ) :
     -1 ≤ q / (2 ^ reductionSteps q : ℚ) ∧ q / (2 ^ reductionSteps q : ℚ) ≤ 1 := by
@@ -186,10 +201,28 @@ private theorem reductionSteps_spec (q : ℚ) :
     exact abs_le_one_of_natAbs_le_den q ‹_›
   · -- q.num.natAbs > q.den, k = log₂(natAbs) - log₂(den) + 1
     rename_i hgt; push_neg at hgt
-    -- q / 2^k has numerator q.num and denominator q.den * 2^k
-    -- We need: (q / 2^k).num.natAbs ≤ (q / 2^k).den
-    -- This follows from 2^k ≥ q.num.natAbs / q.den
-    sorry
+    set k := Nat.log 2 q.num.natAbs - Nat.log 2 q.den + 1
+    have hpow_pos : (0 : ℚ) < 2 ^ k := pow_pos (by norm_num : (0 : ℚ) < 2) k
+    have hna_le := natAbs_le_den_mul_pow q.den q.num.natAbs q.pos hgt
+    have hd_pos : (0 : ℚ) < ↑q.den := Nat.cast_pos.mpr q.pos
+    have hq_le : q ≤ (2 : ℚ) ^ k := by
+      rw [← Rat.num_div_den q, div_le_iff₀ hd_pos]
+      calc (↑q.num : ℚ)
+          ≤ ↑(↑q.num.natAbs : ℤ) := by exact_mod_cast Int.le_natAbs
+        _ ≤ ↑(q.den * 2 ^ k : ℕ) := by exact_mod_cast hna_le
+        _ = 2 ^ k * ↑q.den := by push_cast; ring
+    have hq_ge : -((2 : ℚ) ^ k) ≤ q := by
+      rw [← Rat.num_div_den q, le_div_iff₀ hd_pos]
+      calc -(2 ^ k : ℚ) * ↑q.den
+          = -(↑(q.den * 2 ^ k : ℕ) : ℚ) := by push_cast; ring
+        _ ≤ -(↑(↑q.num.natAbs : ℤ) : ℚ) := by
+            apply neg_le_neg; exact_mod_cast hna_le
+        _ ≤ ↑q.num := by
+            show -(↑(↑q.num.natAbs : ℤ) : ℚ) ≤ ↑q.num
+            exact_mod_cast show -(↑q.num.natAbs : ℤ) ≤ q.num from
+              by rw [← Int.abs_eq_natAbs]; exact neg_abs_le _
+    exact ⟨by rwa [le_div_iff₀ hpow_pos, neg_mul, one_mul],
+           by rwa [div_le_iff₀ hpow_pos, one_mul]⟩
 
 /-- Repeated squaring preserves containment: if I contains z ≥ 0,
     then repeatedSq I n h contains z^(2^n). -/
