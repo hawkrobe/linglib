@@ -66,6 +66,39 @@ structure ArgStr where
 
 end ArgumentStructure
 
+section StandardArgStr
+
+/-- Intransitive verb: subject to the left -/
+def argStr_V0 : ArgStr :=
+  { slots := [⟨.nsubj, .left, true, some .DET⟩] }
+
+/-- Transitive verb: subject left, object right -/
+def argStr_VN : ArgStr :=
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
+              ⟨.obj, .right, true, some .DET⟩] }
+
+/-- Ditransitive verb: subject left, indirect object right, object right -/
+def argStr_VNN : ArgStr :=
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
+              ⟨.iobj, .right, true, some .DET⟩,
+              ⟨.obj, .right, true, some .DET⟩] }
+
+/-- Passive transitive: subject left (was patient), optional by-phrase right -/
+def argStr_VPassive : ArgStr :=
+  { slots := [⟨.nsubj, .left, true, some .DET⟩,
+              ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
+
+/-- Map Valence to the corresponding standard DG argument structure.
+    Returns `none` for valences without a standard frame
+    (clausal, copular, dative, locative). -/
+def valenceToArgStr : Valence → Option ArgStr
+  | .intransitive => some argStr_V0
+  | .transitive => some argStr_VN
+  | .ditransitive => some argStr_VNN
+  | _ => none  -- clausal/copular/dative/locative: no standard frame
+
+end StandardArgStr
+
 section WellFormedness
 
 /-- Check if every word except root has exactly one head. -/
@@ -147,7 +180,8 @@ def checkVerbSubcat (t : DepTree) : Bool :=
         | some .intransitive => subjCount >= 1 && objCount == 0
         | some .transitive => subjCount >= 1 && objCount == 1
         | some .ditransitive => subjCount >= 1 && objCount == 1 && iobjCount == 1
-        | _ => true
+        | some .clausal | some .copular | some .dative | some .locative => true
+        | none => true
       else true
     | none => true
 
@@ -180,5 +214,30 @@ def mkDitransTree (subj verb iobj obj : Word) : DepTree :=
     rootIdx := 1 }
 
 end TreeConstructionHelpers
+
+section ArgStrSatisfaction
+
+/-- Check if a dependency tree satisfies an argument structure -/
+def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
+  argStr.slots.all λ slot =>
+    if slot.required then
+      -- Required slot: must have a matching dependency
+      t.deps.any λ d =>
+        d.headIdx == headIdx &&
+        d.depType == slot.depType &&
+        -- Check direction
+        (match slot.dir with
+         | .left => d.depIdx < headIdx
+         | .right => d.depIdx > headIdx)
+    else
+      -- Optional slot: if present, must be in correct direction
+      t.deps.all λ d =>
+        if d.headIdx == headIdx && d.depType == slot.depType then
+          match slot.dir with
+          | .left => d.depIdx < headIdx
+          | .right => d.depIdx > headIdx
+        else true
+
+end ArgStrSatisfaction
 
 end DepGrammar

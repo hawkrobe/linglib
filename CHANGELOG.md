@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.224.59] - 2026-02-20
+
+### Changed
+- **DG infrastructure cleanup**: Eliminate `LexFeatures`; `LexEntry.features` now uses shared `Features` from Core/Basic.lean with DG-specific `inv` field on `LexEntry` directly; passive rule checks `voice` instead of `passive` boolean
+- **Fragment-grounded lex entries**: `lex_kicked`, `lex_can`, `lex_does` now derive features from Fragment (`kick.toWordPast`, `FunctionWords.can.toWord`, `FunctionWords.does.toWord`) instead of manually duplicating field values
+- **Move standard ArgStr to Core/Basic.lean**: `argStr_V0`/`VN`/`VNN`/`VPassive` and `satisfiesArgStr` moved from LexicalRules.lean to Core/Basic.lean alongside the types they operate on
+- **Add `valenceToArgStr`**: Maps `Valence` → `Option ArgStr`, connecting `checkVerbSubcat` (count-based) to `satisfiesArgStr` (slot-based); grounding theorem `lex_kicked_from_fragment` proves the connection
+- **Make `checkVerbSubcat` wildcard explicit**: Enumerate `clausal`/`copular`/`dative`/`locative`/`none` instead of catch-all `_`
+- **Add `FunctionWords.toInf`**: Infinitival marker "to" (PART) in Fragment; DG_ControlBridge uses it instead of hardcoded `Word.mk'`
+- Remove 14 lines of `#eval` tests from LexicalRules.lean (duplicated by formal theorems)
+
 ## [0.224.58] - 2026-02-20
 
 ### Added
