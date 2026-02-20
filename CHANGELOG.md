@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.37] - 2026-02-19
+
+### Fixed
+- `Tactics/RSAPredict.lean`: Handle Cauchy-form ℝ literals (`Real.ofCauchy`) in reifier — when `whnf` reduces `OfNat.ofNat ℝ n` past the OfNat instance to the internal constructor form, recover n via `findEmbeddedNat`; Kao et al. 2014 (10×20×5 = 1000 S1 scores) now passes
+
 ## [0.224.36] - 2026-02-19
 
 ### Added

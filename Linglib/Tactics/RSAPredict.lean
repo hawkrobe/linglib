@@ -122,6 +122,14 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
   let fn := e.getAppFn
   let args := e.getAppArgs
 
+  -- Cauchy-form ℝ literal: Real.ofCauchy (↑n) from over-reduced OfNat.ofNat
+  -- When whnf reduces OfNat.ofNat ℝ n inst past the OfNat instance, it produces
+  -- the internal constructor form { cauchy := ↑n }. Recover n via findEmbeddedNat.
+  if fn.isConstOf ``Real.ofCauchy then
+    if let some n := findEmbeddedNat e then
+      let rexpr ← mkAppM ``RExpr.nat #[mkRawNatLit n]
+      return (rexpr, ⟨n, n⟩)
+
   -- Addition: @HAdd.hAdd ℝ ℝ ℝ _ a b
   if isAppOfMin' e ``HAdd.hAdd 6 then
     let (ra, ba) ← reifyToRExpr args[4]! (depth - 1)
@@ -393,7 +401,7 @@ private partial def reifyToRExpr (e : Expr) (depth : ℕ) : MetaM (Expr × MetaB
                       else ⟨0, 1⟩
         return (rexpr, bounds)
 
-  throwError "rsa_predict: cannot reify: {← ppExpr e}"
+  throwError "rsa_predict: cannot reify: {← ppExpr e} (depth: {depth})"
 
 -- ============================================================================
 -- Enum Extraction
@@ -610,6 +618,7 @@ private def buildS1ScoreTable (cfg : Expr) (U W L : Expr)
   let mut entries : Array (Expr × Expr × Expr × Expr × MetaBounds) := (#[] : Array _)
   let total := allL.size * allW.size * allU.size
   logInfo m!"rsa_predict: reifying {total} S1 scores..."
+  let mut count : ℕ := 0
   for l in allL do
     let s1agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
     for w in allW do
@@ -617,6 +626,9 @@ private def buildS1ScoreTable (cfg : Expr) (U W L : Expr)
         let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1agent, w, u]
         let (rexpr, bounds) ← reifyToRExpr scoreExpr maxDepth
         entries := entries.push (l, w, u, rexpr, bounds)
+        count := count + 1
+        if count % 100 = 0 then
+          logInfo m!"rsa_predict: ... {count}/{total} scores reified"
   -- Build the function L → W → U → QInterval using nested lambdas
   let defaultVal ← mkAppM ``RExpr.eval #[← mkAppM ``RExpr.nat #[mkRawNatLit 0]]
   let fn ← withLocalDeclD `l L fun lVar => do
