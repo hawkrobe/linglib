@@ -37,7 +37,7 @@ context counts, and strength-level counts.
 - Déchaine, R.-M. & M. Wiltschko (2002). Decomposing Pronouns. LI 33(3).
 -/
 
-namespace Phenomena.Anaphora.PronounTypology
+namespace Phenomena.Anaphora.Typology
 
 open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
@@ -623,4 +623,4 @@ theorem covert_deixis_layer :
     (allData.filter (λ d => d.articleType == .none_ ∧ d.dLayers == 2)).length > 0 := by
   native_decide
 
-end Phenomena.Anaphora.PronounTypology
+end Phenomena.Anaphora.Typology

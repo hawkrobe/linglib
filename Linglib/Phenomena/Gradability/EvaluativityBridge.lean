@@ -18,7 +18,7 @@ are evaluative, comparatives are not, equatives show asymmetry.
 - Rett (2015), Kennedy (2007), Bierwisch (1989)
 -/
 
-namespace Phenomena.Gradability.Evaluativity
+namespace Phenomena.Gradability.EvaluativityBridge
 
 open Semantics.Lexical.Adjective (AdjectivalConstruction)
 
@@ -342,4 +342,4 @@ def allPredictions : List EvaluativityPrediction :=
 - RSA listener infers threshold jointly with degree
 -/
 
-end Phenomena.Gradability.Evaluativity
+end Phenomena.Gradability.EvaluativityBridge

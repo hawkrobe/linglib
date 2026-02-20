@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Negation.CzechThreeWayNeg
+import Linglib.Phenomena.Negation.CzechThreeWayNegBridge
 import Linglib.Theories.Semantics.Polarity.CzechNegation
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 
@@ -64,7 +64,7 @@ def NegPosition.requiresFocus : NegPosition → Bool
 
 end Semantics.Polarity.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNeg
+namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
 open Semantics.Polarity.CzechNegation
 open Semantics.Modality.BiasedPQ
@@ -142,10 +142,10 @@ inductive VerbPosition where
   | nonV1
   deriving DecidableEq, BEq, Repr
 
-end Phenomena.Negation.CzechThreeWayNeg
+end Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
 namespace Semantics.Polarity.CzechNegation
-open Phenomena.Negation.CzechThreeWayNeg (VerbPosition)
+open Phenomena.Negation.CzechThreeWayNegTypologyBridge (VerbPosition)
 
 /-- Map negation positions to verb position.
 
@@ -158,9 +158,10 @@ def NegPosition.toVerbPosition : NegPosition → VerbPosition
 
 end Semantics.Polarity.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNeg
+namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
 open Semantics.Polarity.CzechNegation
 open Semantics.Modality.BiasedPQ
+open Phenomena.Negation.CzechThreeWayNegBridge (signature)
 
 /-- A Czech PQ negation example with its reading and Romero classification. -/
 structure CzechNegDatum where
@@ -420,10 +421,10 @@ def CzechPQForm.toPQForm : CzechPQForm → PQForm
 theorem interNPQ_is_hiNQ : CzechPQForm.interNPQ.toPQForm = .HiNQ := rfl
 theorem declNPQ_is_loNQ : CzechPQForm.declNPQ.toPQForm = .LoNQ := rfl
 
-end Phenomena.Negation.CzechThreeWayNeg
+end Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
 namespace Semantics.Polarity.CzechNegation
-open Phenomena.Negation.CzechThreeWayNeg (CzechPQForm)
+open Phenomena.Negation.CzechThreeWayNegTypologyBridge (CzechPQForm)
 
 /-- Map negation positions to Czech PQ forms.
 
@@ -436,7 +437,7 @@ def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
 
 end Semantics.Polarity.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNeg
+namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
 open Semantics.Polarity.CzechNegation
 open Semantics.Modality.BiasedPQ
 
@@ -697,4 +698,4 @@ theorem explanationSeeking_most_common :
     interNPQDistribution .explanationSeeking >
     interNPQDistribution .belief := by decide
 
-end Phenomena.Negation.CzechThreeWayNeg
+end Phenomena.Negation.CzechThreeWayNegTypologyBridge

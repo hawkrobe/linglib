@@ -31,7 +31,7 @@ Romero (2024), Šimík (2024), verb position, and bias profiles are in
 - Zeijlstra, H. (2004). Sentential Negation and Negative Concord. LOT.
 -/
 
-namespace Phenomena.Negation.CzechThreeWayNeg
+namespace Phenomena.Negation.CzechThreeWayNegBridge
 
 open Semantics.Polarity.CzechNegation
 
@@ -117,4 +117,4 @@ theorem noninner_licenses_ppi :
     licenses .medial .ppiOutscoping = true ∧
     licenses .outer .ppiOutscoping = true := ⟨rfl, rfl⟩
 
-end Phenomena.Negation.CzechThreeWayNeg
+end Phenomena.Negation.CzechThreeWayNegBridge
