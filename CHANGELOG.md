@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.224.44] - 2026-02-20
+
+### Fixed
+- `Theories/Pragmatics/RSA/ScalarImplicatures/Hurford.lean`: Close 4 sorries — `base_redundancy`, `refined_disjunction_informative` via `native_decide`; `hurford_model_captures_rescue` from components; `hyponym_always_redundant` via `native_decide`
+- `Phenomena/ScalarImplicatures/RSA_HurfordBridge.lean`: Close 2 sorries — `rsa_matches_data_someOrAll` and `rsa_matches_data_americanCalifornian` via `rfl`
+- `Theories/Pragmatics/NeoGricean/Implementations/BarLevFox2020.lean`: Close 3 sorries — `fc_not_closed_general`, `fc_entails_permA`, `fc_entails_permB`; fix modeling bug (add `separatelyAB` world to distinguish ◇a∧◇b from ◇(a∧b)); prove free choice theorem via Innocent Inclusion with full MC-set/MI-set computation
+
 ## [0.224.43] - 2026-02-19
 
 ### Changed
