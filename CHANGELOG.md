@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.42] - 2026-02-19
+
+### Changed
+- `Tactics/RSAPredict.lean`: Add expression-level memoization cache to `reifyToRExpr` — shared subexpressions (L0 denominators, meaning functions, cost terms) are computed once and reused across S1 score reifications; Kao et al. 2014 (1000 S1 scores) drops from 204s to 16s (12.7x speedup)
+
 ## [0.224.41] - 2026-02-19
 
 ### Added
