@@ -1,6 +1,7 @@
 import Linglib.Core.Basic
 import Linglib.Core.Presupposition
 import Linglib.Core.RootDimensions
+import Linglib.Core.NaturalLogic
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Attitudes.Doxastic
@@ -42,6 +43,7 @@ open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Probabilistic.Measurement (Dimension)
 open Semantics.Attitudes.Doxastic (Veridicality)
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+open Core.NaturalLogic (EntailmentSig)
 
 /--
 Which Montague predicate builder this verb uses.
@@ -257,6 +259,12 @@ structure VerbCore where
   attitudeBuilder : Option AttitudeBuilder := none
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
+  /-- Entailment signature of the complement position (Icard 2012).
+      Classifies this verb's monotonicity w.r.t. its clausal complement.
+      `.mono` = upward monotone (believe, know); `.mult` = multiplicative only
+      (be surprised). Used to derive conjunction distribution and neg-raising.
+      See Bondarenko & Elliott (2026). -/
+  complementSig : Option EntailmentSig := none
 
   -- === Polysemy ===
   /-- Disambiguates entries that share a citation form.
@@ -281,6 +289,17 @@ def VerbCore.isDoxastic (v : VerbCore) : Bool :=
 /-- Is this verb a preferential attitude? -/
 def VerbCore.isPreferential (v : VerbCore) : Bool :=
   v.attitudeBuilder.map (·.isPreferential) |>.getD false
+
+/-- Does this attitude distribute over conjunction?
+    DERIVED from complementSig: any signature that refines `.mono`
+    (mono, additive, mult, addMult, all) distributes. -/
+def VerbCore.distribOverConj (v : VerbCore) : Bool :=
+  v.complementSig.map (·.refines .mono) |>.getD false
+
+/-- Is the complement position upward-entailing?
+    DERIVED from complementSig. -/
+def VerbCore.isComplementUE (v : VerbCore) : Bool :=
+  v.complementSig.map (·.refines .mono) |>.getD false
 
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def VerbCore.preferentialValence (v : VerbCore) : Option AttitudeValence :=
