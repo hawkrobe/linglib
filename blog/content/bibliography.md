@@ -52,7 +52,7 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 
 **Goodman, N. D. & Stuhlmüller, A.** (2013). Knowledge and Implicature: Modeling Language Understanding as Social Cognition. *Topics in Cognitive Science, 5(1), 173–184*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)\
-cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013.lean)
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013/Data.lean), [KennedyExact](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013/KennedyExact.lean)
 
 **Grusdt, B., Lassiter, D. & Franke, M.** (2022). Probabilistic Modeling of Rational Communication with Conditionals. *Semantics and Pragmatics, 15, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GrusdtLassiterFranke2022.lean)
@@ -240,6 +240,10 @@ cited in: [FocusParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Kratzer, A. & Shimoyama, J.** (2017). Indeterminate Pronouns: The View from Japanese. *Contrastiveness in Information Structure, Alternatives and Scalar Implicatures, 123–143*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean)
 
+**Rooth, M.** (1992). A Theory of Focus Interpretation. *Natural Language Semantics, 1, 75–116*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Interpretation.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Rooth1992Bridge.lean)\
+cited in: [Rooth1992Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Rooth1992Bridge.lean), [Interpretation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Interpretation.lean)
+
 ## Semantics — Causation
 
 **Cao, A., White, A. S. & Lassiter, D.** (2025). Cause, Make, and Force as Graded Causatives. *Experiments in Linguistic Meaning, 3, 88–103*.\
@@ -281,7 +285,7 @@ cited in: [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Ling
 
 **Zhao, Z.** (2026). Cross-Linguistic and Cross-Domain Parallels in the Semantics of Degree and Time. *PhD dissertation, Massachusetts Institute of Technology*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Aspect/CrossDomainBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Tense/ThenPresentBridge.lean)\
-cited in: [AtomicDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/AtomicDistributivity.lean), [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean), [CrossDomainBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/CrossDomainBridge.lean), [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/ThenPresentBridge.lean), [DegreeEvents](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean)
+cited in: [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/AspectComparison.lean), [CrossDomainBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/CrossDomainBridge.lean), [ThenPresentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/ThenPresentBridge.lean), [DegreeEvents](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DegreeEvents.lean)
 
 ## Semantics — Lexical (Adjectives, Nouns, Plurals, Events)
 
