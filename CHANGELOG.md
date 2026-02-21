@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.81] - 2026-02-20
+
+### Changed
+- **Beltrama & Schwarz (2024) cleanup**: Merge `Data.lean` + `Bridge.lean` into single `BeltramaSchwarz2024.lean` (follows GS2013 single-file pattern); remove 8 fluff theorems (definition read-backs); fix hallucinated "Beltrama 2018" reference → Beltrama, Solt & Burnett (2022); move `personaDimension` from data section to bridge section (theoretical interpretation, not raw data)
+
 ## [0.224.80] - 2026-02-20
 
 ### Changed
