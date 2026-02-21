@@ -262,7 +262,8 @@ import Linglib.Phenomena.Gradability.Imprecision.InferencePreservation
 import Linglib.Phenomena.Gradability.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Data
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Bridge
 import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Imprecision.Projection
@@ -385,6 +386,7 @@ import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021Bridge
 import Linglib.Phenomena.Reference.Studies.Percus2000
+import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025Bridge
@@ -412,7 +414,9 @@ import Linglib.Phenomena.TenseAspect.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Compare
 import Linglib.Phenomena.ScalarImplicatures.CompareAgreement
-import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
+import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Data
+import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
+import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.KennedyExact
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
