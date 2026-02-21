@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.94] - 2026-02-20
+
+### Added
+- **`Phenomena/Focus/Rooth1992Bridge.lean`**: Bridge file connecting `Focus/Basic.lean` data to `Focus/Interpretation.lean` theory. Exercises 7 previously unexercised `Core.InformationStructure` definitions in Phenomena: `AltMeaning.unfeatured`, `Focus`, `Background`, `Theme`, `Rheme`, `InfoStructure`, `HasInfoStructure`. Q-A congruence model (4 worlds) proves FIP holds for subject focus and fails for object focus; "only" association model (3 worlds) proves focus determines exclusion domain
+
 ## [0.224.93] - 2026-02-20
 
 ### Added

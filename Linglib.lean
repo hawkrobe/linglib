@@ -235,6 +235,7 @@ import Linglib.Phenomena.FillerGap.CrossSerial
 import Linglib.Phenomena.FillerGap.LongDistance
 import Linglib.Phenomena.FillerGap.Typology
 import Linglib.Phenomena.Focus.Basic
+import Linglib.Phenomena.Focus.Rooth1992Bridge
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Generics.BareNames
