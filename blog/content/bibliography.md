@@ -39,7 +39,7 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 
 **Frank, M. C. & Goodman, N. D.** (2012). Predicting Pragmatic Reasoning in Language Games. *Science, 336(6084), 998*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/FrankGoodman2012.lean)\
-cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/FrankGoodman2012.lean)
+cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/FrankGoodman2012.lean)
 
 **Franke, M.** (2011). Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation. *Semantics and Pragmatics, 4(1), 1–82*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)
@@ -52,7 +52,7 @@ cited in: [FrankGoodman2012](https://github.com/hawkrobe/linglib/blob/main/Lingl
 
 **Goodman, N. D. & Stuhlmüller, A.** (2013). Knowledge and Implicature: Modeling Language Understanding as Social Cognition. *Topics in Cognitive Science, 5(1), 173–184*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)\
-cited in: [RSA_GoodmanStuhlmuller2013Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/RSA_GoodmanStuhlmuller2013Bridge.lean), [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013.lean), [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GoodmanStuhlmuller2013.lean)
+cited in: [GoodmanStuhlmuller2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013.lean)
 
 **Grusdt, B., Lassiter, D. & Franke, M.** (2022). Probabilistic Modeling of Rational Communication with Conditionals. *Semantics and Pragmatics, 15, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/GrusdtLassiterFranke2022.lean)
@@ -70,12 +70,16 @@ cited in: [RSA_GoodmanStuhlmuller2013Bridge](https://github.com/hawkrobe/linglib
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean)
 
 **Kao, J. T., Bergen, L. & Goodman, N. D.** (2014). Formalizing the Pragmatics of Metaphor Understanding. *Proceedings of the Annual Meeting of the Cognitive Science Society, 36*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)\
-cited in: [KaoEtAl2014_Metaphor](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean)\
+cited in: [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean)
+
+**Kao, J. T., Levy, R. & Goodman, N. D.** (2015). A Computational Model of Irony. *Proceedings of the 37th Annual Meeting of the Cognitive Science Society*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Irony/KaoEtAl2015.lean)\
+cited in: [KaoEtAl2015](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Irony/KaoEtAl2015.lean)
 
 **Kao, J. T., Wu, J. Y., Bergen, L. & Goodman, N. D.** (2014). Nonliteral Understanding of Number Words. *Proceedings of the National Academy of Sciences, 111(33), 12002–12007*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)\
-cited in: [RSA_KaoEtAl2014Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/RSA_KaoEtAl2014Bridge.lean), [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/Studies/KaoEtAl2014.lean), [KaoEtAl2014_Hyperbole](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/RSA_KaoEtAl2014Bridge.lean)\
+cited in: [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/KaoEtAl2014.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)
@@ -256,7 +260,8 @@ cited in: [FocusParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
 
 **Kratzer, A.** (1998). More Structural Analogies between Pronouns and Tenses. *Proceedings of SALT, 8*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)\
+cited in: [Kratzer](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)
 
 **Ogihara, T.** (1996). Tense, Attitudes, and Scope. *Kluwer Academic Publishers*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Ogihara.lean)

@@ -434,7 +434,7 @@ From a `QuantityWord` you can reach:
   `intersection_conservative_symmetric` (C5)
 - **Threshold semantics**: `QuantityWord.gqtMeaning` (scalar GQT representation)
 - **Prototype semantics**: `QuantityWord.ptMeaning` (gradient PT representation)
-- **RSA domains**: `RSA.Domains.Quantity` (pragmatic reasoning over quantity scales)
+- **RSA domains**: `RSA.Quantity` (pragmatic reasoning over quantity scales)
 - **Monotonicity**: `Semantics.Entailment.Monotonicity` (polarity)
 - **Complexity**: `Core.Conjectures.simplicity_explains_universals` (van de Pol et al. 2023)
 -/

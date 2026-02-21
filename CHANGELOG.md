@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.87] - 2026-02-20
+
+### Removed
+- **Delete `Theories/Pragmatics/RSA/Domains/`**: Remove entire directory (5 files). `QUD.lean`, `LexicalAmbiguity.lean`, `Scope.lean` were dead code (only imported by `Linglib.lean`). `Degrees.lean` was nominally imported by `TesslerFranke2020` and `Evaluativity` but neither used any of its definitions — they relied on it only for transitive imports they already had. `Quantities.lean` (the only genuinely-used file) relocated to `Theories/Pragmatics/RSA/Quantities.lean`
+
+## [0.224.86] - 2026-02-20
+
+### Added
+- **Kao, Levy & Goodman (2015) Irony**: Full RSA implementation in `Phenomena/Nonliteral/Irony/KaoEtAl2015.lean` — 3 weather states × 2 valence × 2 arousal = 12 world states, rpow-based QUD-projected S1 with α=1, fitted QUD prior [3,3,4] + valence-only ablation [1,1,0], all 6 qualitative findings proved via `rsa_predict`. Core finding: `no_irony_without_arousal` proves that removing the arousal QUD eliminates the valence flip that defines irony, leaving only hyperbole — the paper's central mechanistic claim
+
 ## [0.224.85] - 2026-02-20
 
 ### Added

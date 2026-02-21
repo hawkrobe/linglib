@@ -826,11 +826,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
-import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
-import Linglib.Theories.Pragmatics.RSA.Domains.LexicalAmbiguity
-import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
-import Linglib.Theories.Pragmatics.RSA.Domains.QUD
-import Linglib.Theories.Pragmatics.RSA.Domains.Scope
+import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Extensions.NoncooperativeCommunication
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
