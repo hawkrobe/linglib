@@ -910,6 +910,8 @@ private inductive GoalForm where
   | l1Latent (cfg u l₁ l₂ : Expr)
   /-- (ws₁.map (cfg.L1 u₁)).sum > (ws₂.map (cfg.L1 u₂)).sum (cross-utterance) -/
   | l1CrossUtterance (cfg u₁ : Expr) (ws₁ : Array Expr) (u₂ : Expr) (ws₂ : Array Expr)
+  /-- (ws₁.map (cfg₁.L1 u₁)).sum > (ws₂.map (cfg₂.L1 u₂)).sum (cross-config) -/
+  | l1CrossConfig (cfg₁ u₁ : Expr) (ws₁ : Array Expr) (cfg₂ u₂ : Expr) (ws₂ : Array Expr)
   /-- cfg.S1 l w u₁ > cfg.S1 l w u₂ -/
   | s1Compare (cfg l w u₁ u₂ : Expr)
 
@@ -1007,9 +1009,11 @@ private partial def collectL1SummandsAnyU (e : Expr) :
 private def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
   -- Path A: Both sides are cfg.L1 u w
   if let some (cfg, u, w₁) ← parseL1Policy lhs then
-    if let some (cfg₂, _u₂, w₂) ← parseL1Policy rhs then
+    if let some (cfg₂, u₂, w₂) ← parseL1Policy rhs then
       if ← isDefEq cfg cfg₂ then
         return .l1Compare cfg u w₁ w₂
+      else
+        return .l1CrossConfig cfg u #[w₁] cfg₂ u₂ #[w₂]
 
   -- Path B: cfg.L1_latent u l₁ > cfg.L1_latent u l₂
   if let some (cfg, u, l₁) ← parseL1Latent lhs then
@@ -1042,13 +1046,20 @@ private def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
         -- For cross-utterance, we need exactly one u per side
         if groups1.size == 1 && groups2.size == 1 then
           return .l1CrossUtterance cfg1 groups1[0]!.1 allWs1 groups2[0]!.1 allWs2
+      else
+        -- Cross-config: different RSAConfigs on each side
+        if groups1.size == 1 && groups2.size == 1 then
+          let (u1, ws1) := groups1[0]!
+          let (u2, ws2) := groups2[0]!
+          return .l1CrossConfig cfg1 u1 ws1 cfg2 u2 ws2
 
   throwError "rsa_predict: cannot parse goal. Expected one of:\n\
     • cfg.L1 u w₁ > cfg.L1 u w₂\n\
     • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
     • cfg.S1 l w u₁ > cfg.S1 l w u₂\n\
     • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
-    • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)"
+    • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)\n\
+    • (cfg₁.L1 u₁ w₁ + ...) > (cfg₂.L1 u₂ w₃ + ...)"
 
 -- ============================================================================
 -- Shared S1 Reification
@@ -1222,7 +1233,8 @@ private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit
     - `cfg.S1 l w u₁ > cfg.S1 l w u₂` — S1 speaker comparison
     - `¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)` — S1 non-strict
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
-    - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum -/
+    - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum
+    - `cfg₁.L1 u₁ w₁ + ... > cfg₂.L1 u₂ w₃ + ...` — cross-config sum -/
 elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
@@ -1374,7 +1386,7 @@ elab "rsa_predict" : tactic => do
     let ws1ListExpr ← mkListLit W ws₁.toList
     let ws2ListExpr ← mkListLit W ws₂.toList
     let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
-      #[cfg, u, ws1ListExpr, u, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+      #[cfg, cfg, u, ws1ListExpr, u, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
     assignWithCastFallback goal proof
     logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (marginal)"
 
@@ -1447,9 +1459,57 @@ elab "rsa_predict" : tactic => do
     let ws1ListExpr ← mkListLit W ws₁.toList
     let ws2ListExpr ← mkListLit W ws₂.toList
     let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
-      #[cfg, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+      #[cfg, cfg, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
     assignWithCastFallback goal proof
-    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed"
+    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (cross-utterance)"
+
+  | .l1CrossConfig cfg₁ u₁ ws₁ cfg₂ u₂ ws₂ => do
+    logInfo m!"rsa_predict: parsed goal as cross-config L1 sum ({ws₁.size} vs {ws₂.size})"
+    let (_, _, _, allUElems1, allWElems1, allLElems1, s1Bounds1, wpValues1, lpValues1) ←
+      reifyS1Scores cfg₁
+    let (_, _, _, allUElems2, allWElems2, allLElems2, s1Bounds2, wpValues2, lpValues2) ←
+      reifyS1Scores cfg₂
+    let nL1 := allLElems1.size
+    let nW1 := allWElems1.size
+    let nU1 := allUElems1.size
+    let nL2 := allLElems2.size
+    let nW2 := allWElems2.size
+    let nU2 := allUElems2.size
+    let allWIndices1 := Array.range nW1
+    let allWIndices2 := Array.range nW2
+
+    let u1Idx ← findElemIdx allUElems1 u₁
+    let mut psum1 : MetaBounds := ⟨0, 0⟩
+    for w in ws₁ do
+      let wIdx ← findElemIdx allWElems1 w
+      let policy := metaL1Policy nL1 nW1 nU1 s1Bounds1 wpValues1 lpValues1 u1Idx allWIndices1 wIdx
+      psum1 := metaQIAdd psum1 policy
+    psum1 := roundBounds psum1
+
+    let u2Idx ← findElemIdx allUElems2 u₂
+    let mut psum2 : MetaBounds := ⟨0, 0⟩
+    for w in ws₂ do
+      let wIdx ← findElemIdx allWElems2 w
+      let policy := metaL1Policy nL2 nW2 nU2 s1Bounds2 wpValues2 lpValues2 u2Idx allWIndices2 wIdx
+      psum2 := metaQIAdd psum2 policy
+    psum2 := roundBounds psum2
+
+    logInfo m!"rsa_predict: policy_sum₁ ∈ [{psum1.lo}, {psum1.hi}]"
+    logInfo m!"rsa_predict: policy_sum₂ ∈ [{psum2.lo}, {psum2.hi}]"
+
+    unless psum2.hi < psum1.lo do
+      throwError "rsa_predict: cross-config policy sums not separated: hi₂ = {psum2.hi} ≥ lo₁ = {psum1.lo}"
+
+    let sepProof ← proveQSeparation psum2.hi psum1.lo
+    let hi2Expr ← mkRatExpr psum2.hi
+    let lo1Expr ← mkRatExpr psum1.lo
+    let W ← inferType ws₁[0]!
+    let ws1ListExpr ← mkListLit W ws₁.toList
+    let ws2ListExpr ← mkListLit W ws₂.toList
+    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
+      #[cfg₁, cfg₂, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (cross-config)"
 
   | .s1Compare cfg l w u₁ u₂ => do
     logInfo m!"rsa_predict: parsed goal as S1 comparison"
