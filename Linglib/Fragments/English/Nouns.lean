@@ -115,6 +115,8 @@ def teacher : NounEntry := { formSg := "teacher", formPl := "teachers" }
 def fireman : NounEntry := { formSg := "fireman", formPl := "firemen" }
 def soldier : NounEntry := { formSg := "soldier", formPl := "soldiers" }
 def horse : NounEntry := { formSg := "horse", formPl := "horses" }
+def brother : NounEntry := { formSg := "brother", formPl := "brothers" }
+def spy : NounEntry := { formSg := "spy", formPl := "spies" }
 
 def water : NounEntry := { formSg := "water", formPl := none, countable := false }
 def sand : NounEntry := { formSg := "sand", formPl := none, countable := false }
@@ -132,7 +134,7 @@ def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true }
 
 def allNouns : List NounEntry := [
   pizza, book, cat, dog, girl, boy, ball, table, squirrel,
-  man, woman, person, child, lawyer, student, teacher, fireman, soldier, horse,
+  man, woman, person, child, lawyer, student, teacher, fireman, soldier, horse, brother, spy,
   water, sand, furniture, rice, gold, air,
   john, mary, bill, sue
 ]
