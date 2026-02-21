@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.82] - 2026-02-20
+
+### Added
+- **Beltrama, Solt & Burnett (2022) formalization**: `BeltramaSoltBurnett2022.lean` — three-way variant type (precise/underspecified/approximate), cell means from both experiments (N=72, N=400), core indexical orderings proved from data, underspecified-as-diagnostic theorems (dimension-dependent clustering + crossover), context modulation (high-demand amplifies competence, low-demand amplifies warmth), roundness gating for variant collapse
+- **Fragment→Variant derivation chain**: `classifyVariant` composes `Core.Roundness.roundnessScore` with `NumeralModifiers.about.modType` to classify stimuli end-to-end; bridge theorems verify 49→precise, bare 50→underspecified, "about 50"→approximate
+- **`about` numeral modifier**: `Fragments.English.NumeralModifiers.about` (tolerance modifier, peakedSignal) — the most common English approximator, used in BSB2022 stimuli
+- **`SocialDimension.antiSolidarity`**: third constructor in `Core.SocialMeaning.SocialDimension` (pedantic, uptight); BSB2022's PCA Factor 3; B&S 2024 `precisionField` extended with `.antiSolidarity` cases
+
 ## [0.224.81] - 2026-02-20
 
 ### Changed

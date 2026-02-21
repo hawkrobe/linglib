@@ -263,13 +263,14 @@ import Linglib.Phenomena.Gradability.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Imprecision.Projection
 import Linglib.Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
-import Linglib.Phenomena.Nonliteral.Metaphor.Studies.KaoBergenGoodman2014
+import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
 import Linglib.Phenomena.Numerals.Embedding
@@ -852,7 +853,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Phenomena.Gradability.RSA_Nouwen2024Bridge
 import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
