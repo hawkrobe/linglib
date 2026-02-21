@@ -262,8 +262,7 @@ import Linglib.Phenomena.Gradability.Imprecision.InferencePreservation
 import Linglib.Phenomena.Gradability.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Data
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Bridge
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Imprecision.Projection
 import Linglib.Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
