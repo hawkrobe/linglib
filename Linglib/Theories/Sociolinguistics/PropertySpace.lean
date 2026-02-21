@@ -89,23 +89,8 @@ structure Persona (ps : PropertySpace) where
   maximal : ∀ (p : ps.Property), p ∉ properties →
     ∃ (q : ps.Property), q ∈ properties ∧ ps.incompatible p q = true
 
-/-- Whether a persona has a given property. -/
-def Persona.hasProperty {ps : PropertySpace} (persona : Persona ps) (p : ps.Property) : Bool :=
-  p ∈ persona.properties
-
 -- ============================================================================
--- §4. Bipolar dimensions
--- ============================================================================
-
-/-- A bipolar dimension: two opposing poles (e.g., competent/incompetent). -/
-structure BipolarDimension (α : Type) where
-  /-- The positive pole (e.g., "competent"). -/
-  positive : α
-  /-- The negative pole (e.g., "incompetent"). -/
-  negative : α
-
--- ============================================================================
--- §5. Enumeration
+-- §4. Enumeration
 -- ============================================================================
 
 /-- Enumerate all personae by filtering the powerset for maximal consistent
