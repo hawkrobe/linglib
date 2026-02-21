@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
+import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)
@@ -157,5 +158,57 @@ theorem simplePresent_allows_false : simplePresentPerspective.allowsFalseTense =
 /-- Periphrastic entries block false tense. -/
 theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
 theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Kratzer Decomposition (Kratzer 1998)
+-- ════════════════════════════════════════════════════
+
+open Semantics.Tense.Kratzer
+open Core.Tense
+
+/-- English simple past: Kratzer decomposition.
+    Surface "V-ed" = PRESENT tense + PERFECT aspect.
+    The tense head is present (indexical), so the form can be
+    used deictically ("out of the blue"). -/
+def kratzerSimplePast : KratzerDecomposition where
+  language := "English"
+  surfaceForm := "V-ed"
+  tensePronoun := kratzerEnglishPast
+  hasPerfect := true
+
+/-- English present perfect: no decomposition mismatch.
+    Surface "have V-ed" = PRESENT tense + PERFECT aspect.
+    Identical underlying structure to simple past — the difference
+    is that the present perfect is morphologically transparent. -/
+def kratzerPresentPerfect : KratzerDecomposition where
+  language := "English"
+  surfaceForm := "have V-ed"
+  tensePronoun := kratzerEnglishPast
+  hasPerfect := true
+
+/-- English simple past can be deictic (from decomposition). -/
+theorem kratzerSimplePast_deictic :
+    kratzerSimplePast.canBeDeictic = true := rfl
+
+/-- The underlying tense head is PRESENT, not PAST.
+    Pastness comes from the PERF aspect head, not the tense. -/
+theorem kratzerSimplePast_underlyingPresent :
+    kratzerSimplePast.tensePronoun.constraint = GramTense.present := rfl
+
+/-- Simple past and present perfect share the same underlying decomposition:
+    both are PRESENT + PERFECT. The difference is that simple past fuses
+    the two morphemes while present perfect makes the PERF transparent
+    via auxiliary "have". -/
+theorem simplePast_presentPerfect_same_decomposition :
+    kratzerSimplePast.tensePronoun = kratzerPresentPerfect.tensePronoun ∧
+    kratzerSimplePast.hasPerfect = kratzerPresentPerfect.hasPerfect :=
+  ⟨rfl, rfl⟩
+
+/-- The Lakoff `gramTense = .past` records the surface morphology;
+    the Kratzer `constraint = .present` records the underlying tense head.
+    These are DIFFERENT for English simple past — that's Kratzer's point. -/
+theorem lakoff_kratzer_diverge :
+    simplePastPerspective.gramTense = GramTense.past ∧
+    kratzerSimplePast.tensePronoun.constraint = GramTense.present := ⟨rfl, rfl⟩
 
 end Fragments.English.Tense

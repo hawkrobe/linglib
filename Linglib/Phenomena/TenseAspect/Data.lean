@@ -1378,4 +1378,78 @@ theorem preterit_is_perfective :
     preteritVisitedParis.isPerfective := rfl
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § 29. Cross-Linguistic Tense Referential Mode (Kratzer 1998)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Kratzer (1998) predicts that the distribution of deictic vs anaphoric
+past tense varies cross-linguistically because surface "past" can decompose
+differently:
+
+**English simple past** = PRESENT + PERFECT (Kratzer 1998 §4). The tense
+head is PRESENT (indexical), so it can be used deictically.
+
+**German Preterit** = genuine PAST pronoun (Kratzer 1998 §5). The tense
+head is PAST (anaphoric), requiring a discourse antecedent.
+
+The empirical contrast:
+  English: "I didn't turn off the stove." ✓ (out of the blue)
+  German:  #"Ich schaltete den Herd nicht aus." ✗ (out of the blue)
+  German:  "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect)
+
+This data is tested against the theory in `Bridge.lean` §29. -/
+
+open Core.Tense
+open Core.ReferentialMode (ReferentialMode)
+
+/-- Whether a surface past tense form can be used deictically
+    (without a discourse-established temporal antecedent). -/
+structure TenseDeicticDatum where
+  /-- Language -/
+  language : String
+  /-- Surface morphological form -/
+  surfaceForm : String
+  /-- Example sentence -/
+  sentence : String
+  /-- Can this form be used "out of the blue"? -/
+  outOfTheBlue : Bool
+  /-- The underlying referential mode (indexical = deictic-compatible,
+      anaphoric = requires antecedent) -/
+  underlyingMode : ReferentialMode
+  deriving Repr, DecidableEq, BEq
+
+/-- English simple past: CAN be used out of the blue. -/
+def englishSimplePastDatum : TenseDeicticDatum where
+  language := "English"
+  surfaceForm := "V-ed"
+  sentence := "I didn't turn off the stove."
+  outOfTheBlue := true
+  underlyingMode := .indexical
+
+/-- German Preterit: CANNOT be used out of the blue. -/
+def germanPreteritDatum : TenseDeicticDatum where
+  language := "German"
+  surfaceForm := "V-te"
+  sentence := "Ich schaltete den Herd nicht aus."
+  outOfTheBlue := false
+  underlyingMode := .anaphoric
+
+/-- German Perfekt: CAN be used out of the blue (present tense head). -/
+def germanPerfektDatum : TenseDeicticDatum where
+  language := "German"
+  surfaceForm := "hat/ist V-t"
+  sentence := "Ich habe den Herd nicht ausgeschaltet."
+  outOfTheBlue := true
+  underlyingMode := .indexical
+
+/-- The cross-linguistic deictic data set. -/
+def tenseDeicticData : List TenseDeicticDatum :=
+  [englishSimplePastDatum, germanPreteritDatum, germanPerfektDatum]
+
+/-- Deictic compatibility tracks indexical mode. -/
+theorem deictic_tracks_indexical :
+    (tenseDeicticData.map (·.outOfTheBlue)) =
+    (tenseDeicticData.map (·.underlyingMode == .indexical)) := rfl
+
+
 end Phenomena.TenseAspect

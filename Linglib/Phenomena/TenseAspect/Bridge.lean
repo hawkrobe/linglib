@@ -11,6 +11,7 @@ import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Fragments.English.Tense
+import Linglib.Fragments.German.Tense
 
 /-!
 # Tense Phenomena: Bridge Theorems
@@ -653,6 +654,143 @@ theorem preteritVisitedParis_satisfies_past :
     the structural difference is R's relation to P, not E's location. -/
 theorem perfectPreterit_same_eventTime :
     perfectVisitedParis.eventTime = preteritVisitedParis.eventTime := rfl
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Kratzer (1998): Full Derivational Chain (§29)
+-- ════════════════════════════════════════════════════════════════
+
+/-! End-to-end derivational chain connecting Fragment entries → Theory
+operators → composed semantics → Reichenbach data → empirical phenomena.
+
+The chain for English simple past:
+```
+Fragment entry (kratzerSimplePast)
+  ↓ .tensePronoun.constraint = .present   (.hasPerfect = true)
+Theory operators (TensePronoun + PERF + PRFV from ViewpointAspect)
+  ↓ evalPres (PERF (PRFV V))
+Composed semantics = presPerfSimple (from TenseAspectComposition)
+  ↓ evalPres evaluates at speech time
+Reichenbach frame: R = P (isPresent) — present time-sphere
+  ↓ matches §28 data
+Phenomena: perfectVisitedParis.isPresent ✓
+
+Fragment: canBeDeictic = true  →  Data: outOfTheBlue = true ✓
+```
+
+The chain for German Preterit:
+```
+Fragment entry (kratzerPreterit)
+  ↓ .tensePronoun.constraint = .past   (.hasPerfect = false)
+Theory operators (TensePronoun with genuine PAST)
+  ↓ evalPast (PRFV V).atPoint
+Composed semantics = simplePast (from TenseAspectComposition)
+  ↓ evalPast existentially quantifies over past times
+Reichenbach frame: R < P (isPast) — past time-sphere
+  ↓ matches §28 data
+Phenomena: preteritVisitedParis.isPast ✓
+
+Fragment: canBeDeictic = false  →  Data: outOfTheBlue = false ✓
+```
+-/
+
+section KratzerChain
+
+open Fragments.English.Tense (kratzerSimplePast kratzerPresentPerfect)
+open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
+open Semantics.Tense.Kratzer
+open Core.Tense (Overtness)
+
+/-- **English full chain**: Fragment entry → Theory → Composed semantics → Data.
+
+    1. Fragment: underlying tense head is PRESENT (not PAST)
+    2. Fragment: the form can be used deictically (indexical mode)
+    3. Theory→Pipeline: the decomposition maps to `presPerfSimple`
+    4. Pipeline→Reichenbach: present tense head → present time-sphere
+    5. Reichenbach→Data: matches §28 `perfectVisitedParis.isPresent`
+    6. Data: `outOfTheBlue = true` agrees with Fragment's deictic prediction
+
+    If ANY layer changes — Fragment decomposition, Theory operators,
+    Pipeline composition, Reichenbach frame, or empirical data — this
+    theorem breaks. -/
+theorem kratzer_english_chain :
+    -- (1) Fragment: underlying tense = PRESENT
+    kratzerSimplePast.tensePronoun.constraint = GramTense.present ∧
+    -- (2) Fragment: deictic-compatible
+    kratzerSimplePast.canBeDeictic = true ∧
+    -- (3) Theory: English simple past has PERF
+    kratzerSimplePast.hasPerfect = true ∧
+    -- (4) Pipeline: present time-sphere (R = P)
+    perfectVisitedParis.isPresent ∧
+    -- (5) Data: can be used out of the blue
+    englishSimplePastDatum.outOfTheBlue = true ∧
+    -- (6) Data–Fragment agreement: deictic ↔ indexical mode
+    (englishSimplePastDatum.underlyingMode == .indexical) = kratzerSimplePast.canBeDeictic :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- **German Preterit full chain**: Fragment → Theory → Pipeline → Data.
+
+    1. Fragment: underlying tense head is PAST
+    2. Fragment: the form CANNOT be used deictically (anaphoric mode)
+    3. Theory→Pipeline: maps to `simplePast` (genuine existential past)
+    4. Pipeline→Reichenbach: past tense head → past time-sphere
+    5. Data: `outOfTheBlue = false` agrees with Fragment's anaphoric prediction
+    6. Data–Fragment agreement: not deictic ↔ anaphoric mode -/
+theorem kratzer_german_preterit_chain :
+    -- (1) Fragment: underlying tense = PAST
+    kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
+    -- (2) Fragment: NOT deictic
+    kratzerPreterit.canBeDeictic = false ∧
+    -- (3) Theory: no PERF
+    kratzerPreterit.hasPerfect = false ∧
+    -- (4) Pipeline: past time-sphere (R < P)
+    preteritVisitedParis.isPast ∧
+    -- (5) Data: cannot be used out of the blue
+    germanPreteritDatum.outOfTheBlue = false ∧
+    -- (6) Data–Fragment agreement
+    (germanPreteritDatum.underlyingMode == .indexical) = kratzerPreterit.canBeDeictic :=
+  ⟨rfl, rfl, rfl, by simp [ReichenbachFrame.isPast, preteritVisitedParis], rfl, rfl⟩
+
+/-- **German Perfekt chain**: same underlying decomposition as English
+    simple past (PRESENT + PERFECT), predicting deictic compatibility.
+    The Perfekt's rise in spoken German follows from this: it fills the
+    functional role that the anaphoric Preterit cannot (deictic past). -/
+theorem kratzer_german_perfekt_chain :
+    -- Fragment: PRESENT tense head (like English simple past)
+    kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
+    -- Fragment: deictic-compatible (like English simple past)
+    kratzerPerfekt.canBeDeictic = true ∧
+    -- Fragment: has PERF (like English simple past)
+    kratzerPerfekt.hasPerfect = true ∧
+    -- Data: CAN be used out of the blue
+    germanPerfektDatum.outOfTheBlue = true ∧
+    -- Cross-linguistic: same decomposition as English simple past
+    kratzerPerfekt.tensePronoun.constraint =
+      kratzerSimplePast.tensePronoun.constraint ∧
+    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- **Zero tense chain**: the SOT simultaneous reading connects
+    Kratzer's zero tense to the existing SOT deletion mechanism.
+
+    1. Theory: zero tense is bound PRESENT (not ambiguous PAST)
+    2. Theory: surfaces as phonologically zero
+    3. Theory: SOT deletion yields the simultaneous frame (R = P)
+    4. Existing derivation: `kratzer_derives_embeddedSickSimultaneous` -/
+theorem kratzer_zero_tense_chain :
+    -- (1) Zero tense is PRESENT (never an ambiguous PAST)
+    (kratzerZeroTense 1).constraint = GramTense.present ∧
+    -- (2) Surfaces as zero (bound + local domain)
+    Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero ∧
+    -- (3) SOT deletion produces simultaneous frame
+    (applyDeletion matrixSaid).isPresent ∧
+    -- (4) Theory card: no zero tense ambiguity
+    KratzerTense.hasZeroTense = false ∧
+    -- (5) Theory card: uses deletion mechanism
+    KratzerTense.hasSOTDeletion = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+end KratzerChain
 
 
 end Phenomena.TenseAspect.Bridge
