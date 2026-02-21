@@ -1,6 +1,7 @@
 import Linglib.Core.Roundness
 import Linglib.Core.SocialMeaning
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Sociolinguistics.SCM
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -276,6 +277,7 @@ theorem chill_effect_larger_in_exp2 :
 -- ============================================================================
 
 open Core.SocialMeaning
+open Sociolinguistics.SCM
 open Semantics.Lexical.Numeral.Precision
 
 /-- Precision variants for numeral use: the sociolinguistic variable whose

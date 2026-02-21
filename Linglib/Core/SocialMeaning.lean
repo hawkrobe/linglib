@@ -138,25 +138,11 @@ def IndexicalField.indexes {Variant Trait : Type}
   field.association v t > 0
 
 -- ============================================================================
--- Social meaning cluster
+-- Social meaning dimensions
 -- ============================================================================
 
-/-- Social-meaning dimensions, grounded in Fiske et al.'s (2002, 2007)
-    universal dimensions of social cognition.
-
-    * `competence`: precision, intelligence, reliability, education —
-      Fiske et al.'s competence dimension; BSB2022's "Status" PCA factor
-      (articulate, intelligent, confident, trustworthy)
-    * `warmth`: friendliness, spontaneity, casualness, approachability —
-      Fiske et al.'s warmth dimension; BSB2022's "Solidarity" PCA factor
-      (friendly, cool, laid-back, likeable)
-    * `antiSolidarity`: pedantic, uptight — the negative pole of warmth,
-      factored out as an independent PCA component in BSB2022 because
-      pedantic/uptight load separately from the positive warmth scales -/
-inductive SocialDimension where
-  | competence
-  | warmth
-  | antiSolidarity
-  deriving DecidableEq, BEq, Repr
+-- `SocialDimension` (Fiske et al.'s competence/warmth/antiSolidarity axes)
+-- has moved to `Theories/Sociolinguistics/SCM.lean`, where it belongs as part
+-- of the Stereotype Content Model theory rather than framework-agnostic Core.
 
 end Core.SocialMeaning
