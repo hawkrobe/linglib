@@ -325,7 +325,7 @@ open Semantics.Lexical.Verb.ViewpointAspect (perfSimple EventPred PointPred)
 theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
     (P : EventPred W Time) (s s' : Core.Situation W Time) :
     PAST (perfSimple P).toSitProp s s' ↔
-    s.time < s'.time ∧ (perfSimple P) s.world s.time := by
+    s.time < s'.time ∧ (perfSimple P) s := by
   rfl
 
 

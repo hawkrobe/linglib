@@ -35,7 +35,7 @@ Intuition: At time t in world w, multiple futures are possible.
 The historical alternatives are all worlds that share the same
 past with w up to t.
 -/
-def WorldHistory (W Time : Type*) := W → Time → Set W
+def WorldHistory (W Time : Type*) := Situation W Time → Set W
 
 /--
 Historical modal base: situations whose worlds agree with s up to τ(s),
@@ -50,13 +50,13 @@ hist(s) = {s' : w_{s'} ∈ H(wₛ, τ(s)) ∧ τ(s') ≥ τ(s)}
 def historicalBase {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (s : Situation W Time) : Set (Situation W Time) :=
-  { s' | s'.world ∈ history s.world s.time ∧ s'.time ≥ s.time }
+  { s' | s'.world ∈ history s ∧ s'.time ≥ s.time }
 
 /--
 A world history is reflexive if every world agrees with itself.
 -/
 def WorldHistory.reflexive {W Time : Type*} (h : WorldHistory W Time) : Prop :=
-  ∀ w t, w ∈ h w t
+  ∀ s : Situation W Time, s.world ∈ h s
 
 /--
 A world history is backwards-closed: if w' agrees with w up to t,
@@ -66,7 +66,7 @@ and t' ≤ t, then w' agrees with w up to t'.
 -/
 def WorldHistory.backwardsClosed {W Time : Type*} [LE Time]
     (h : WorldHistory W Time) : Prop :=
-  ∀ w w' t t', t' ≤ t → w' ∈ h w t → w' ∈ h w t'
+  ∀ (w w' : W) (t t' : Time), t' ≤ t → w' ∈ h ⟨w, t⟩ → w' ∈ h ⟨w, t'⟩
 
 /--
 Standard historical modal base properties.

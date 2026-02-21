@@ -320,7 +320,7 @@ theorem subj_current_option {W Time : Type*} [Preorder Time]
   refine ⟨?_, h_P⟩
   -- s₀ ∈ historicalBase history s₀
   simp only [historicalBase, Set.mem_setOf_eq]
-  exact ⟨h_refl s₀.world s₀.time, le_refl s₀.time⟩
+  exact ⟨h_refl s₀, le_refl s₀.time⟩
 
 
 /--
