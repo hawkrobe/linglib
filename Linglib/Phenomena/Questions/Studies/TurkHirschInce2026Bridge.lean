@@ -1,4 +1,4 @@
-import Linglib.Core.Alternatives
+import Linglib.Core.InformationStructure
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers
@@ -38,7 +38,7 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 namespace Phenomena.Questions.Studies.TurkHirschInce2026Bridge
 
-open Core.Alternatives
+open Core.InformationStructure
 open Semantics.Questions.Hamblin
 
 -- ═══════════════════════════════════════════════════════════════════════

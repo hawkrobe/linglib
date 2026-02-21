@@ -23,15 +23,63 @@ are the result of default prosody.
 - Steedman (2000). The Syntactic Process, Chapter 5.
 - Rooth (1992). A theory of focus interpretation.
 - Kratzer, A. & Selkirk, E. (2020). Deconstructing Information Structure.
+- Fox, D. & Katzir, R. (2011). On the characterization of alternatives.
 - Roberts (1996/2012). Information structure in discourse.
 - Beaver & Clark (2008). Sense and Sensitivity.
 -/
 
-import Linglib.Core.Alternatives
-
-open Core.Alternatives
+import Linglib.Core.UD
 
 namespace Core.InformationStructure
+
+-- ════════════════════════════════════════════════════
+-- § Alternative Semantics (Rooth 1992, Kratzer & Selkirk 2020)
+-- ════════════════════════════════════════════════════
+
+/-- Two-dimensional meaning in Alternatives Semantics.
+    Every expression has an O-value and an A-value.
+
+    Kratzer & Selkirk (2020) §3, §8. -/
+structure AltMeaning (α : Type) where
+  /-- O(rdinary)-value: the actual denotation -/
+  oValue : α
+  /-- A(lternatives)-value: the set of alternatives (including oValue) -/
+  aValue : List α
+
+/-- The O-value of a non-featured expression equals its ordinary denotation.
+    The A-value of a non-featured expression is a singleton containing
+    its O-value (no alternatives evoked). -/
+def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
+  { oValue := x, aValue := [x] }
+
+-- Category-Gated Alternatives (Fox & Katzir 2011)
+
+/-- A denotation tagged with its UPOS category.
+    Pairs a semantic value with a UD part-of-speech tag, enabling
+    category-gated alternative computation (Fox & Katzir 2011).
+
+    Fox & Katzir argue that Rooth's (1985/1992) type-theoretic
+    alternative computation (D_τ) over-generates: any expression of the
+    same semantic type counts as an alternative. Category match restricts
+    alternatives to expressions sharing the same UPOS tag. -/
+structure CatItem (α : Type) where
+  /-- The UPOS category of this lexical item -/
+  cat : UD.UPOS
+  /-- The semantic denotation -/
+  den : α
+  deriving Repr
+
+/-- Category-match alternatives: only denotations with the same UPOS tag
+    count as alternatives (Fox & Katzir 2011).
+
+    This is strictly more restrictive than Rooth's D_τ computation. -/
+def categoryMatchAlts {α : Type} (target : UD.UPOS) (lexicon : List (CatItem α)) : List α :=
+  (lexicon.filter (·.cat == target)).map (·.den)
+
+/-- Type-theoretic alternatives: all denotations regardless of category
+    (Rooth 1985/1992 D_τ computation). -/
+def typeTheoAlts {α : Type} (lexicon : List (CatItem α)) : List α :=
+  lexicon.map (·.den)
 
 -- Theme and Rheme
 
@@ -83,8 +131,8 @@ Focus is orthogonal to theme/rheme: both can contain focused elements.
 structure Focus (α : Type) where
   /-- The focused element -/
   focused : α
-  /-- Alternatives evoked by focus -/
-  alternatives : Alternatives α
+  /-- Alternatives evoked by focus (including the focused element) -/
+  alternatives : List α
 
 /--
 Background: the non-focused, given material.

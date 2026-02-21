@@ -31,21 +31,14 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 - Hamblin, C. (1973). Questions in Montague English. Foundations of Language.
 -/
 
-import Linglib.Core.Alternatives
 import Linglib.Core.InformationStructure
 import Linglib.Theories.Semantics.Questions.Hamblin
 
-open Core.Alternatives
 open Core.InformationStructure
 
 namespace Semantics.FocusInterpretation
 
 -- Focus Semantic Values (Rooth 1985, 1992)
-
-/-- Focus semantic value: a set of propositions (alternatives).
-    Reuses the Alternatives structure from Core.InformationStructure.
-    In Rooth's notation: ⟦α⟧f = {p | p is a focus alternative of α} -/
-abbrev FocusValue (α : Type) := Alternatives α
 
 /-- Propositional focus value: set of propositions.
     Type: <<s,t>,t> - same as Hamblin questions! -/
