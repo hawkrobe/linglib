@@ -42,6 +42,7 @@ This module adds adjective-specific infrastructure:
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Scale
+import Linglib.Theories.Semantics.Lexical.Adjective.MLScale
 
 namespace Semantics.Lexical.Adjective
 
@@ -337,14 +338,14 @@ open Core.Scale
 
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
     Core.Scale.MIPDomain α W where
-  ml : Core.Scale.MLScale α
+  ml : Semantics.Lexical.Adjective.MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]
-    (ml : Core.Scale.MLScale α) (norm degree : α) : Prop :=
+    (ml : Semantics.Lexical.Adjective.MLScale α) (norm degree : α) : Prop :=
   ml.L norm degree
 
 theorem marginality_entails_standard {α : Type*} [LinearOrder α]
-    (ml : Core.Scale.MLScale α) (norm degree : α)
+    (ml : Semantics.Lexical.Adjective.MLScale α) (norm degree : α)
     (h : marginalityPositive ml norm degree) : norm < degree :=
   h.1
 
