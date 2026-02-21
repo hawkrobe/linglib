@@ -22,7 +22,8 @@ indexicals and the theory of singular propositions (Almog 2014, Ch 2).
 
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Core.ModalLogic
-import Linglib.Core.Context
+import Linglib.Core.Context.Tower
+import Linglib.Core.Context.Shifts
 
 namespace Semantics.Reference.Kaplan
 
@@ -143,5 +144,165 @@ theorem i_am_here_now_logically_true {W E : Type*}
     (hCtx : ∀ c : Context W E, here c c.agent c.world = true) :
     ∀ c : Context W E, here c c.agent c.world = true :=
   hCtx
+
+/-! ## Indexicals as Tower Access Patterns
+
+Connects the character/content theory above to the ContextTower infrastructure.
+Each pure indexical is an `AccessPattern` reading from the origin (speech-act context)
+with a projection to the relevant coordinate. Kaplan's thesis that English indexicals
+are invariant under embedding operators becomes a corollary of `origin_stable`. -/
+
+section TowerIndexicals
+
+open Core.Context
+
+variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
+
+-- ════════════════════════════════════════════════════════════════
+-- § Pure Indexicals as Access Patterns
+-- ════════════════════════════════════════════════════════════════
+
+/-- "I" — first person pronoun. Reads the agent from the speech-act context.
+
+    Kaplan (1989): the character of "I" is the function that maps every
+    context to the agent of that context. In tower terms, "I" reads from
+    the origin (depth 0), projecting `KContext.agent`. -/
+def pronI_access : AccessPattern (KContext W' E' P' T') E' :=
+  ⟨.origin, KContext.agent⟩
+
+/-- "you" — second person pronoun. Reads the addressee from the speech-act context.
+
+    Following Speas & Tenny (2003), the addressee is a coordinate of the
+    Kaplanian context. "You" reads from the origin, projecting `KContext.addressee`. -/
+def pronYou_access : AccessPattern (KContext W' E' P' T') E' :=
+  ⟨.origin, KContext.addressee⟩
+
+/-- "now" — temporal indexical. Reads the time from the speech-act context.
+
+    Kaplan (1989) §VI: N (now) is a content operator that shifts the
+    evaluation time to the context time. As an access pattern, "now"
+    reads `KContext.time` from the origin. -/
+def opNow_access : AccessPattern (KContext W' E' P' T') T' :=
+  ⟨.origin, KContext.time⟩
+
+/-- "here" — spatial indexical. Reads the position from the speech-act context. -/
+def opHere_access : AccessPattern (KContext W' E' P' T') P' :=
+  ⟨.origin, KContext.position⟩
+
+/-- "actually" — modal indexical. Reads the world from the speech-act context.
+
+    Kaplan (1989) §VI: A (actually) shifts the evaluation world to the
+    context world. As an access pattern, "actually" reads `KContext.world`
+    from the origin. -/
+def opActually_access : AccessPattern (KContext W' E' P' T') W' :=
+  ⟨.origin, KContext.world⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § Depth Verification
+-- ════════════════════════════════════════════════════════════════
+
+@[simp] theorem pronI_depth :
+    (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
+
+@[simp] theorem pronYou_depth :
+    (pronYou_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
+
+@[simp] theorem opNow_depth :
+    (opNow_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
+
+@[simp] theorem opHere_depth :
+    (opHere_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
+
+@[simp] theorem opActually_depth :
+    (opActually_access (W' := W') (E' := E') (P' := P') (T' := T')).depth = .origin := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Shift Invariance: "I" Under Embedding
+-- ════════════════════════════════════════════════════════════════
+
+/-- "I" is invariant under any tower push. This is the formal content of
+    Kaplan's thesis for the first person pronoun: no embedding operator
+    (attitude verb, temporal shift, mood operator) changes what "I" refers to.
+
+    "John said that I am happy" => "I" = the actual speaker, not John. -/
+theorem pronI_shift_invariant
+    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    pronI_access.resolve (t.push σ) = pronI_access.resolve t :=
+  AccessPattern.origin_stable pronI_access rfl t σ
+
+/-- "you" is invariant under any tower push. -/
+theorem pronYou_shift_invariant
+    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    pronYou_access.resolve (t.push σ) = pronYou_access.resolve t :=
+  AccessPattern.origin_stable pronYou_access rfl t σ
+
+/-- "now" is invariant under any tower push. -/
+theorem opNow_shift_invariant
+    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    opNow_access.resolve (t.push σ) = opNow_access.resolve t :=
+  AccessPattern.origin_stable opNow_access rfl t σ
+
+/-- "here" is invariant under any tower push. -/
+theorem opHere_shift_invariant
+    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    opHere_access.resolve (t.push σ) = opHere_access.resolve t :=
+  AccessPattern.origin_stable opHere_access rfl t σ
+
+/-- "actually" is invariant under any tower push. -/
+theorem opActually_shift_invariant
+    (t : ContextTower (KContext W' E' P' T')) (σ : ContextShift (KContext W' E' P' T')) :
+    opActually_access.resolve (t.push σ) = opActually_access.resolve t :=
+  AccessPattern.origin_stable opActually_access rfl t σ
+
+-- ════════════════════════════════════════════════════════════════
+-- § Kaplan's Thesis (Tower Formulation)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Kaplan's thesis as a tower property: an access pattern is Kaplan-compliant
+    iff its depth is `.origin`. This means it reads from the speech-act context
+    and is unaffected by any embedding operators. -/
+def IsKaplanCompliant {C R : Type*} (ap : AccessPattern C R) : Prop :=
+  ap.depth = .origin
+
+/-- All English pure indexicals are Kaplan-compliant: they all read from
+    the origin (speech-act context).
+
+    This is the tower formulation of Kaplan (1989) §VIII: natural language
+    (English) operators cannot shift the context of utterance. In tower
+    terms, English indexicals have `depth = .origin`, so embedding (pushing
+    shifts) has no effect on their resolution. -/
+theorem kaplansThesisTower :
+    IsKaplanCompliant (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
+    IsKaplanCompliant (pronYou_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
+    IsKaplanCompliant (opNow_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
+    IsKaplanCompliant (opHere_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧
+    IsKaplanCompliant (opActually_access (W' := W') (E' := E') (P' := P') (T' := T')) :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § Resolution in Root Tower
+-- ════════════════════════════════════════════════════════════════
+
+/-- In a root tower, "I" resolves to the context's agent. -/
+theorem pronI_root (c : KContext W' E' P' T') :
+    pronI_access.resolve (ContextTower.root c) = c.agent := rfl
+
+/-- In a root tower, "you" resolves to the context's addressee. -/
+theorem pronYou_root (c : KContext W' E' P' T') :
+    pronYou_access.resolve (ContextTower.root c) = c.addressee := rfl
+
+/-- In a root tower, "now" resolves to the context's time. -/
+theorem opNow_root (c : KContext W' E' P' T') :
+    opNow_access.resolve (ContextTower.root c) = c.time := rfl
+
+/-- In a root tower, "here" resolves to the context's position. -/
+theorem opHere_root (c : KContext W' E' P' T') :
+    opHere_access.resolve (ContextTower.root c) = c.position := rfl
+
+/-- In a root tower, "actually" resolves to the context's world. -/
+theorem opActually_root (c : KContext W' E' P' T') :
+    opActually_access.resolve (ContextTower.root c) = c.world := rfl
+
+end TowerIndexicals
 
 end Semantics.Reference.Kaplan

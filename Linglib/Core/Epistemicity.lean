@@ -1,19 +1,19 @@
 import Linglib.Core.Evidence
-import Linglib.Core.Context
+import Linglib.Core.Context.Tower
 
 /-!
 # Epistemic Profile Layer
 
 Connective layer bundling evidential source, epistemic authority (egophoricity),
 and mirativity into a unified `EpistemicProfile`. Bridges these feature-geometric
-dimensions to the model-theoretic level (`KContext`).
+dimensions to the model-theoretic level (`KContext` / `ContextTower`).
 
 ## Motivation
 
 Gawne & Spronck (2024) identify 10 concept areas forming a coherent epistemic
 domain. Linglib already covers evidential source (`Core/Evidence.lean`), epistemic
 modality (`Modality/Kernel.lean`), and mirativity (`Core/Evidence.lean`), but these
-are scattered with no connective tissue. The main gap is **egophoricity** — the
+are scattered with no connective tissue. The main gap is **egophoricity** -- the
 dimension of WHO has privileged epistemic access (speaker vs addressee vs third
 party), which the glossary argues is independent of evidential source.
 
@@ -21,8 +21,9 @@ party), which the glossary argues is independent of evidential source.
 
 `EpistemicAuthority` fills the egophoricity gap. `EpistemicProfile` bundles it
 with `EvidentialSource` and `MirativityValue` for unified epistemic specification.
-`epistemicAuthority` bridges epistemic authority to `KContext` (which already has
-agent/addressee fields).
+`epistemicAuthority` bridges epistemic authority to `ContextTower` by resolving
+from the origin (speech-act context), since egophoric marking reflects the
+actual speech-act participants, not reported ones.
 
 ## Not Yet Formalized
 
@@ -35,10 +36,10 @@ extension respectively) and are left for future work.
 - Gawne, L. & Spronck, S. (2024). Evidentiality, egophoricity, and engagement:
   the epistemicity glossary. *Linguistic Typology*.
 - Tournadre, N. (2008). Arguments against the concept of "conjunct"/"disjunct".
-  *Linguistics of the Tibeto-Burman Area* 31(2):121–146.
+  *Linguistics of the Tibeto-Burman Area* 31(2):121-146.
 - Floyd, S. (2018). Egophoricity and argument structure in Cha'palaa.
   In Simeon Floyd, Elisabeth Norcliffe & Lila San Roque (eds.),
-  *Egophoricity*, 269–304. John Benjamins.
+  *Egophoricity*, 269-304. John Benjamins.
 -/
 
 namespace Core.Epistemicity
@@ -47,7 +48,7 @@ open Core.Evidence
 open Core.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
-    Egophoric systems (Tournadre 2008, Floyd 2018, Gawne & Spronck glossary §2)
+    Egophoric systems (Tournadre 2008, Floyd 2018, Gawne & Spronck glossary 2)
     grammaticalize the distinction between:
     - ego: speaker has privileged access (1st person knowledge, volition, intention)
     - allocutive: addressee has privileged access (2nd person questions)
@@ -69,16 +70,19 @@ structure EpistemicProfile where
   mirativity : MirativityValue := .neutral
   deriving Repr, BEq
 
-/-- Determine epistemic authority from a KContext: ego if the knower is the
-    agent, allocutive if the knower is the addressee, nonparticipant otherwise. -/
+/-- Determine epistemic authority from a ContextTower, resolving from the
+    origin (speech-act context). Egophoric marking reflects the actual
+    speech-act participants: ego if the knower is the speaker, allocutive
+    if the knower is the addressee, nonparticipant otherwise. -/
 def epistemicAuthority {W E P T : Type*} [DecidableEq E]
-    (ctx : KContext W E P T) (knower : E) : EpistemicAuthority :=
+    (tower : ContextTower (KContext W E P T)) (knower : E) : EpistemicAuthority :=
+  let ctx := tower.origin
   if knower == ctx.agent then .ego
   else if knower == ctx.addressee then .allocutive
   else .nonparticipant
 
 /-- Ego authority with direct evidence: the canonical "strong assertion" profile.
-    The speaker saw it themselves — maximally authoritative. -/
+    The speaker saw it themselves -- maximally authoritative. -/
 def strongAssertion : EpistemicProfile :=
   { source := .direct, authority := .ego }
 
@@ -92,10 +96,18 @@ def inferentialClaim : EpistemicProfile :=
     ("I'm going to leave") use ego marking, not evidential marking. -/
 theorem ego_default_direct : strongAssertion.source = .direct := rfl
 
-/-- In allocutive contexts, evidential source is typically irrelevant —
+/-- In allocutive contexts, evidential source is typically irrelevant --
     the addressee's authority overrides source distinctions.
     (Tibetan -payin ego vs -pa'dug non-ego; Akhvakh -eri ego vs -ari non-ego) -/
 def allocutiveProfile (s : EvidentialSource) : EpistemicProfile :=
   { source := s, authority := .allocutive }
+
+/-- Epistemic authority is invariant under tower push: egophoric marking
+    reflects speech-act participants (from origin), not embedded ones. -/
+theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
+    (tower : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T))
+    (knower : E) :
+    epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
+  simp only [epistemicAuthority, ContextTower.push_origin]
 
 end Core.Epistemicity

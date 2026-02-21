@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.225.0] - 2026-02-21
+
+### Added
+- **ContextTower infrastructure** (`Core/Context/Tower.lean`, `Core/Context/Shifts.lean`): Depth-indexed context stack unifying Kaplanian indexicals, shifted indexicals, De Bruijn temporal indexing, FID, domain expansion, and evidentials. `ContextTower C` (origin + list of `ContextShift C`), `DepthSpec` (origin/local/relative k), `AccessPattern C R` (depth + projection), standard shifts (`attitudeShift`, `temporalShift`, `perspectiveShift`, `identityShift`) with algebraic theorems
+- **`Core/Context/Rich.lean`**: `RichContext W E P T` extending KContext with `domain : Set W` and `evidence : EvidentialSource` for domain expansion (Condoravdi 2002) and evidential perspective (Cumming 2026). `DomainExpanding` property, `hpShift`, `evidentialSourceShift`
+- **`Theories/Semantics/Reference/ShiftedIndexicals.lean`**: Cross-linguistic indexical variation via tower depth — Amharic shifted "I" (Schlenker 2003), `UniformShiftParam` (Anand & Nevins 2004), `MixedShiftLexicon` (Deal 2020, Nez Perce), `schlenker_counterexample` theorem
+- **`Theories/Semantics/Reference/FreeIndirectDiscourse.lean`**: `FIDProfile` per-coordinate depth specification — `classicFID` (agent=origin, rest=local), `directSpeech`, `indirectSpeech`, `fid_is_mixed` theorem
+- **`Theories/Semantics/Tense/Anderson.lean`**: Anderson conditionals with HP domain expansion, `hp_achieves_expansion` (Mizuno's argument), `historicalBase_monotone`, SUBJ bridge
+
+### Changed
+- **`Theories/Semantics/Reference/Kaplan.lean`**: Added `TowerIndexicals` section — `pronI_access` through `opActually_access` as `AccessPattern`s with `depth = .origin`, shift invariance theorems, `IsKaplanCompliant`, `kaplansThesisTower`
+- **`Theories/Semantics/Reference/Monsters.lean`**: Rewritten with tower composition — `IsTowerMonster`, `sayMTower` (Schlenker's Say_m via tower push), `KaplansThesisHolds`, `kaplansThesisAsTower`; legacy operator types preserved
+- **`Core/Tense.lean`**: Temporal tower bridge folded in — `tensePronounAccessPattern`, `towerFaithful`, `tense_tower_bridge` (Abusch's De Bruijn indexing IS tower-depth access), `von_stechow_tower` theorems
+- **`Core/Epistemicity.lean`**: `epistemicAuthority` now tower-aware (resolves from origin), `epistemicAuthority_shift_invariant`
+- **`Core/DiscourseRole.lean`**: `resolveRole` now tower-aware (resolves from origin), `resolveRole_shift_invariant`
+- **`Theories/Semantics/Intensional/Situations/Percus.lean`**: GeneralizationX as tower depth constraint (`GenXAsTowerDepth`), `RestrictorUnconstrained`
+- **`Theories/Semantics/Mood/Basic.lean`**: `subjShift` — SUBJ as mood-labeled tower push, `subj_as_tower_push` equivalence
+- **`Theories/Semantics/Presupposition/LocalContext.lean`**: `beliefTower` (belief embedding as tower), `negation_depth_matches_tower_push`
+- **`Theories/Semantics/Tense/Declerck.lean`**: TO-chain ↔ tower bridge — `declercianToShifts`, `declercianToTower`, depth agreement theorems
+- **`Theories/Semantics/Tense/Evidential.lean`**: `evidentialTimeShift`, `downstreamAtDepth` (Cumming's T ≤ A as tower property)
+
 ## [0.224.98] - 2026-02-20
 
 ### Added

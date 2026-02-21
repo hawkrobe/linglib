@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Core.Evidence
 import Linglib.Core.Presupposition
 import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Core.Context.Shifts
 
 /-!
 # Tense and Evidence (Cumming 2026)
@@ -225,5 +226,79 @@ def nonfutureMeaning {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) : PrProp W
 /-- The presupposition of nonfutureMeaning checks downstream evidence. -/
 theorem nonfutureMeaning_presup {W : Type*} (f : EvidentialFrame ℤ) (p : Bool) (w : W) :
     (nonfutureMeaning f p).presup w = decide (f.eventTime ≤ f.acquisitionTime) := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8. Tower Integration: Evidential Shift
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Evidential Shift as Tower Push
+
+Cumming's (2026) key insight is that nonfuture tenses encode an evidential
+constraint: T ≤ A (evidence is downstream of the event). In the tower
+framework, this is modeled as a property of the local context at the
+tense's depth: the evidence-acquisition time at that tower layer must be
+downstream of the event time.
+
+The `evidentialShift` changes the evidence-acquisition time in the context,
+modeling the operator that introduces a new evidential perspective (e.g.,
+a hearsay report shifts the acquisition time to report time).
+-/
+
+section TowerEvidential
+
+variable {W : Type*} {E : Type*} {P : Type*}
+
+/-- Evidential shift: changes the time coordinate to the evidence-acquisition
+    time. When the temporal coordinate of a `KContext` represents the
+    evidence-acquisition time (Cumming's A), this shift moves A to a new value.
+
+    In the tower framework, a hearsay report pushes an evidential shift
+    that sets A to the time of the report. -/
+def evidentialTimeShift (acquisitionTime : ℤ) :
+    Core.Context.ContextShift (Core.Context.KContext W E P ℤ) where
+  apply := λ c => { c with time := acquisitionTime }
+  label := .evidential
+
+/-- Pushing an evidential shift sets the time to the acquisition time. -/
+theorem evidentialTimeShift_sets_time
+    (acquisitionTime : ℤ) (c : Core.Context.KContext W E P ℤ) :
+    ((evidentialTimeShift (W := W) (E := E) (P := P) acquisitionTime).apply c).time =
+      acquisitionTime := rfl
+
+/-- Cumming's downstream evidence constraint as a property of the tower's
+    local context: at the tense's depth, the event time must not exceed
+    the acquisition time (the time coordinate at that layer).
+
+    This bridges Cumming's frame-level constraint `T ≤ A` to the tower's
+    depth-indexed context. -/
+def downstreamAtDepth
+    (tower : Core.Context.ContextTower (Core.Context.KContext W E P ℤ))
+    (eventTime : ℤ) (depth : ℕ) : Prop :=
+  eventTime ≤ (tower.contextAt depth).time
+
+/-- In a root tower whose origin time is the acquisition time,
+    `downstreamAtDepth` at depth 0 is equivalent to the frame-level
+    `downstreamEvidence` constraint. -/
+theorem downstreamAtDepth_root_eq
+    (c : Core.Context.KContext W E P ℤ)
+    (eventTime : ℤ) :
+    downstreamAtDepth (Core.Context.ContextTower.root c) eventTime 0 ↔
+      eventTime ≤ c.time := by
+  simp only [downstreamAtDepth, Core.Context.ContextTower.root_contextAt]
+
+/-- The downstream constraint is preserved by domain-expanding shifts:
+    if T ≤ A holds at depth k, and the shift at depth k doesn't decrease
+    the time coordinate, then T ≤ A still holds after the shift. -/
+theorem downstream_preserved_by_nondecreasing_shift
+    (tower : Core.Context.ContextTower (Core.Context.KContext W E P ℤ))
+    (σ : Core.Context.ContextShift (Core.Context.KContext W E P ℤ))
+    (eventTime : ℤ) (k : ℕ)
+    (h_downstream : downstreamAtDepth tower eventTime k)
+    (h_nondecreasing : (tower.contextAt k).time ≤ (σ.apply (tower.contextAt k)).time) :
+    eventTime ≤ (σ.apply (tower.contextAt k)).time :=
+  le_trans h_downstream h_nondecreasing
+
+end TowerEvidential
 
 end Semantics.Tense.Evidential

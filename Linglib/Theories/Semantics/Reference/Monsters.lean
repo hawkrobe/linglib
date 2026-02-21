@@ -1,144 +1,175 @@
-/-
-# Kaplan's Anti-Monster Thesis
+import Linglib.Core.Intension
+import Linglib.Theories.Semantics.Reference.Kaplan
 
-Kaplan (1989) "Demonstratives" §VIII: the claim that natural language
+/-!
+# Kaplan's Anti-Monster Thesis (Tower Formulation)
+
+Kaplan (1989) "Demonstratives" VIII: the claim that natural language
 operators are *content operators* (shifting circumstances of evaluation)
 rather than *context operators* (shifting contexts of utterance).
 
-Context operators — "monsters" — would shift the context, changing what
-"I", "here", and "now" refer to. Kaplan argues English has none.
-Cross-linguistic work (Schlenker 2003, Anand & Nevins 2004) challenges
-this with indexical shift under attitude verbs in Amharic and Zazaki.
+Under the tower analysis, a monster is a non-identity context shift:
+an embedding operator that pushes a shift where .apply c != c for some c.
+Kaplan's thesis for English says attitude verbs push identity shifts —
+they embed without changing the context of utterance.
+
+Cross-linguistic counterexamples (Schlenker 2003, Anand & Nevins 2004)
+are languages where attitude verbs push non-identity shifts (e.g.,
+`attitudeShift` changes the agent to the attitude holder).
 
 ## Key Definitions
 
-- `ContentOperator`: shifts circumstances (modal, tense — standard)
-- `ContextOperator`: shifts context (the monster)
-- `IsMonster`: an operator whose output depends on input at OTHER contexts
-- `KaplansThesis`: all NL operators are content operators
-- `SchlenkerCounterexample`: cross-linguistic monster evidence
+- `IsTowerMonster`: a shift where apply c != c for some c
+- `kaplansThesisAsTower`: English embedding verbs push identity shifts
+- `sayM`: Schlenker's monster operator, rewritten via tower push + fold
+- Bridge: old `IsMonster` concept <-> `IsTowerMonster`
 
 ## References
 
-- Kaplan, D. (1989). Demonstratives, §VIII.
+- Kaplan, D. (1989). Demonstratives, VIII.
 - Schlenker, P. (2003). A Plea for Monsters. Linguistics & Philosophy.
 - Anand, P. & Nevins, A. (2004). Shifty Operators in Changing Contexts.
   SALT XIV.
 -/
 
-import Linglib.Core.Context
-import Linglib.Core.Intension
-
 namespace Semantics.Reference.Monsters
 
+open Core.Context
 open Core.Intension (Intension IsRigid)
 
-/-! ## Operator Types -/
+-- ════════════════════════════════════════════════════════════════
+-- § Tower Monster
+-- ════════════════════════════════════════════════════════════════
+
+/-- A context shift is a tower monster iff it is non-identity: there exists
+    some context c where applying the shift produces a different context.
+
+    Under the tower analysis, monsters are exactly the non-identity shifts.
+    English attitude verbs push identity shifts (not monsters); Amharic
+    attitude verbs push attitude shifts (monsters). -/
+def IsTowerMonster {C : Type*} (σ : ContextShift C) : Prop :=
+  ∃ (c : C), σ.apply c ≠ c
+
+/-- The identity shift is not a monster. -/
+theorem identityShift_not_monster {W : Type*} {E : Type*} {P : Type*} {T : Type*} :
+    ¬ IsTowerMonster (identityShift (W := W) (E := E) (P := P) (T := T)) := by
+  intro ⟨c, h⟩
+  exact h (identityShift_apply c)
+
+/-- An attitude shift is a monster when the holder differs from some
+    context's agent. -/
+theorem attitudeShift_is_monster {W : Type*} {E : Type*} {P : Type*} {T : Type*}
+    (holder : E) (attWorld : W) (c : KContext W E P T)
+    (hAgent : c.agent ≠ holder) :
+    IsTowerMonster (attitudeShift (P := P) (T := T) holder attWorld) := by
+  refine ⟨c, λ h => ?_⟩
+  have : (attitudeShift (P := P) (T := T) holder attWorld).apply c = c := h
+  have hagent : ((attitudeShift (P := P) (T := T) holder attWorld).apply c).agent = c.agent :=
+    congrArg KContext.agent this
+  simp only [attitudeShift] at hagent
+  exact hAgent hagent.symm
+
+-- ════════════════════════════════════════════════════════════════
+-- § Kaplan's Thesis (Tower Formulation)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Kaplan's thesis as a tower property: embedding verbs in a language push
+    shifts that are not monsters (i.e., identity shifts).
+
+    For English, this means all attitude verbs push `identityShift`:
+    "John said that I am happy" evaluates "I" at the original context,
+    because the embedding verb didn't shift anything.
+
+    The `embeddingShifts` parameter lists the shifts that the language's
+    embedding verbs produce. The thesis holds iff none of them is a monster. -/
+def KaplansThesisHolds {C : Type*} (embeddingShifts : List (ContextShift C)) : Prop :=
+  ∀ σ ∈ embeddingShifts, ¬ IsTowerMonster σ
+
+/-- English embedding verbs push identity shifts. Kaplan's thesis holds. -/
+theorem kaplansThesisAsTower {W : Type*} {E : Type*} {P : Type*} {T : Type*} :
+    KaplansThesisHolds
+      [identityShift (W := W) (E := E) (P := P) (T := T)] := by
+  intro σ hMem
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hMem
+  rw [hMem]
+  exact identityShift_not_monster
+
+-- ════════════════════════════════════════════════════════════════
+-- § Schlenker's Say_m (Tower Formulation)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Schlenker's monstrous `Say_m`, rewritten via tower push.
+
+    Standard analysis: "John says that phi" quantifies over worlds compatible
+    with John's assertion. Schlenker's monster analysis: "John says that phi"
+    pushes an attitude shift onto the tower, making the embedded clause
+    see John as the agent.
+
+    `sayMTower assert attHolder phi t w` pushes `attitudeShift attHolder w'`
+    for each compatible world w', evaluating phi against the shifted tower. -/
+def sayMTower {W E P T : Type*}
+    (assert : E → W → W → Prop)
+    (attHolder : E)
+    (φ : ContextTower (KContext W E P T) → W → Prop)
+    (t : ContextTower (KContext W E P T)) (w : W) : Prop :=
+  ∀ w', assert attHolder w w' →
+    φ (t.push (attitudeShift attHolder w')) w'
+
+/-- `sayMTower` accesses shifted contexts: the embedded clause is evaluated
+    with the attitude holder as agent at the compatible world. -/
+theorem sayMTower_shifts_agent {W E P T : Type*}
+    (assert : E → W → W → Prop)
+    (attHolder : E) (w w' : W)
+    (hCompat : assert attHolder w w')
+    (φ : ContextTower (KContext W E P T) → W → Prop)
+    (t : ContextTower (KContext W E P T))
+    (h : sayMTower assert attHolder φ t w) :
+    φ (t.push (attitudeShift attHolder w')) w' :=
+  h w' hCompat
+
+-- ════════════════════════════════════════════════════════════════
+-- § Legacy Operator Types (for backward reference)
+-- ════════════════════════════════════════════════════════════════
 
 /-- A content operator: maps intensions to intensions by operating on the
-circumstance of evaluation. Standard operators (modals, tense) are content
-operators.
-
-Given an intension (W → τ), a content operator produces a new intension
-that may quantify over worlds/times but does NOT shift the context. -/
+    circumstance of evaluation. Standard operators (modals, tense) are content
+    operators. -/
 abbrev ContentOperator (W : Type*) (τ : Type*) := Intension W τ → Intension W τ
 
 /-- A context operator: maps characters to characters by operating on the
-context of utterance. Kaplan calls these "monsters."
-
-Given a character (C → W → τ), a context operator produces a new character
-that may shift which context the embedded expression is evaluated at. -/
+    context of utterance. Kaplan calls these "monsters." -/
 abbrev ContextOperator (C : Type*) (W : Type*) (τ : Type*) :=
   (C → Intension W τ) → (C → Intension W τ)
 
 /-- An operator is a monster if its output at context c can depend on the
-input's value at contexts OTHER than c.
-
-Formally: there exist two characters that agree at c but produce different
-outputs, meaning the operator "looked at" other contexts. -/
+    input's value at contexts OTHER than c. -/
 def IsMonster {C W τ : Type*} (op : ContextOperator C W τ) : Prop :=
   ∃ (char₁ char₂ : C → Intension W τ) (c : C),
     char₁ c = char₂ c ∧ op char₁ c ≠ op char₂ c
 
-/-! ## Schlenker's Fixity Thesis (Schlenker 2003, (1)) -/
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge: IsTowerMonster <-> IsMonster
+-- ════════════════════════════════════════════════════════════════
 
 /-- The Fixity Thesis: the semantic value of an indexical is fixed solely by
-the context of the actual speech act, and cannot be affected by any logical
-operators.
+    the context of the actual speech act, and cannot be affected by any logical
+    operators.
 
-Schlenker (2003, p. 30): "The semantic value of an indexical is fixed solely
-by the context of the actual speech act, and cannot be affected by any
-logical operators."
-
-This is the formal content of Kaplan's ban on monsters, stated as a property
-of indexicals rather than of operators. An indexical satisfies fixity iff
-its content at context c does not depend on what operators embed it. -/
+    Schlenker (2003, p. 30). Under the tower analysis, fixity is equivalent
+    to reading from `.origin` — an `AccessPattern` with depth `.origin` is
+    invariant under any push (by `origin_stable`). -/
 def FixityThesis {C W E : Type*} (indexicalChar : C → Intension W E) : Prop :=
   ∀ (op : ContextOperator C W E) (c : C), op indexicalChar c = indexicalChar c
 
-/-! ## Schlenker's Say_m Operator (Schlenker 2003, (6)) -/
-
-/-- Schlenker's monstrous `Say_m`: attitude verbs as quantifiers over contexts.
-
-Standard analysis: "John says that φ" quantifies over worlds compatible
-with John's assertion. Schlenker's monster analysis: "John says that φ"
-quantifies over *contexts* compatible with John's assertion, where the
-shifted context has John as agent.
-
-`sayM attHolder assert φ c w` is true iff for every context c' compatible
-with what `attHolder` asserts at time/world, φ is true at c'. The
-`assert` function returns the set of compatible contexts. -/
-def sayM {C W E : Type*}
-    (assert : E → W → C → Prop)
-    (attHolder : E)
-    (φ : C → W → Prop)
-    (_c : C) (w : W) : Prop :=
-  ∀ c', assert attHolder w c' → φ c' w
-
-/-- `sayM` depends on φ's value at contexts other than c: if a compatible
-context c' exists where φ differs, then `sayM ... φ c w` requires φ c' w. -/
-theorem sayM_accesses_shifted_context {C W E : Type*}
-    (assert : E → W → C → Prop)
-    (attHolder : E) (w : W) (c' : C)
-    (hCompat : assert attHolder w c')
-    (φ : C → W → Prop) :
-    ∀ c, sayM assert attHolder φ c w → φ c' w :=
-  λ _c h => h c' hCompat
-
-/-! ## Kaplan's Thesis -/
-
-/-- Kaplan's thesis (1989 §VIII): natural language has no monsters.
-
-All natural language operators are content operators — they shift
-circumstances of evaluation, never contexts of utterance.
-
-Quotation is explicitly excluded: Kaplan acknowledges that quotation
-shifts context but treats it as a metalinguistic device, not an operator
-within the object language.
-
-In English, this thesis appears to hold: "I", "here", "now" always refer
-to the actual speaker, place, and time, even under attitude verbs.
-"John said that I am happy" ⟹ the speaker (not John) is happy. -/
-structure KaplansThesis where
-  /-- The thesis applies to this language -/
-  language : String
-  /-- All operators in the language are content operators -/
-  noMonsters : Bool
-  /-- Quotation is excluded from the thesis -/
-  quotationExcluded : Bool := true
-
-/-- English obeys Kaplan's thesis. -/
-def englishThesis : KaplansThesis :=
-  { language := "English"
-  , noMonsters := true }
-
-/-! ## Cross-Linguistic Counterexamples -/
+-- ════════════════════════════════════════════════════════════════
+-- § Cross-Linguistic Counterexamples
+-- ════════════════════════════════════════════════════════════════
 
 /-- A Schlenker-style counterexample: a language where an indexical shifts
-under an embedding verb, violating Kaplan's thesis.
+    under an embedding verb, violating Kaplan's thesis.
 
-Records the language, the shifted indexical, the embedding verb, and
-the citation. -/
+    In tower terms: the embedding verb pushes a non-identity shift, and
+    the indexical reads from `.local` rather than `.origin`. -/
 structure SchlenkerCounterexample where
   /-- Language exhibiting the shift -/
   language : String
@@ -156,12 +187,12 @@ structure SchlenkerCounterexample where
 In Amharic, the first person pronoun can shift under 'say' to refer to
 the subject of the attitude verb rather than the actual speaker.
 
-"John yä-nä Ïnä dässïtäñ alä" ≈ "John said that {I/he} am happy"
+"John ya-na Ina dassitany ala" = "John said that {I/he} am happy"
 where "I" refers to John, not the speaker. -/
 def amharicShift : SchlenkerCounterexample :=
   { language := "Amharic"
   , shiftedIndexical := "first person pronoun"
-  , embeddingVerb := "say (alä)"
+  , embeddingVerb := "say (ala)"
   , citation := "Schlenker (2003)"
   , description := "'I' shifts to refer to the attitude holder under 'say'" }
 
@@ -177,8 +208,6 @@ def zazakiShift : SchlenkerCounterexample :=
   , citation := "Anand & Nevins (2004)"
   , description := "Both 'I' and 'you' shift uniformly under attitude verbs" }
 
-/-! ## Debate Status -/
-
 /-- The current status of the monster debate.
 
 Kaplan's thesis holds for English (and most European languages). It is
@@ -189,9 +218,8 @@ The leading analysis (Anand & Nevins 2004) treats attitude verbs in these
 languages as context-shifting operators: the embedded clause is evaluated
 relative to a *shifted context* whose agent is the attitude holder.
 
-This connects to `Attitude/Doxastic.lean`: the doxastic accessibility
-relation determines the shifted context's world, while the shifted
-agent comes from the embedding predicate's subject. -/
+Under the tower analysis, the debate reduces to: what shift does an
+attitude verb push? Identity (Kaplan) or non-identity (Schlenker)? -/
 structure MonsterDebate where
   /-- Languages supporting the thesis -/
   supporting : List String
@@ -211,7 +239,7 @@ monster-like behavior: "yesterday" can shift under attitude verbs to
 refer to the day before the reported speech act, not the actual one.
 
 "On Tuesday, John said that yesterday it was raining"
-→ "yesterday" = Monday (day before John's speech), not the day before
+-> "yesterday" = Monday (day before John's speech), not the day before
 the actual utterance. This is an English quasi-monster in the temporal
 domain. -/
 def englishTemporalShift : SchlenkerCounterexample :=
