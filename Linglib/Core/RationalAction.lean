@@ -108,6 +108,14 @@ theorem RationalAction.policy_monotone (ra : RationalAction S A) (s : S)
       lt_of_le_of_ne (ra.totalScore_nonneg s) (Ne.symm hne)
     exact div_le_div_of_nonneg_right h (le_of_lt hpos)
 
+/-- Policy respects score equality: equal scores → equal probabilities.
+    Follows directly from the Luce rule: both sides are `score / totalScore`
+    with the same denominator. -/
+theorem RationalAction.policy_eq_of_score_eq (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) (h : ra.score s a₁ = ra.score s a₂) :
+    ra.policy s a₁ = ra.policy s a₂ := by
+  simp only [policy, h]
+
 /-- Strict policy monotonicity: strictly higher score → strictly higher probability.
 
     Used by `rsa_decide` to eliminate shared denominator computations: when

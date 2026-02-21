@@ -227,7 +227,9 @@ theorem beliefGoalScore_nonneg (cost : Utterance → ℝ) :
     The speaker maximizes the raw probability that the listener picks the correct
     referent, rather than log-probability. Unlike beliefGoalScore, this gives
     nonzero score even for false utterances (exp(-λ·C) > 0 when y=0).
-    Footnote 7: predictions restricted to truthful choices for model comparison. -/
+    The paper notes (Footnote 7) that model comparison restricts to truthful
+    predictions; here the model comparison theorems (§13) only compare
+    utterances that are true of the target object, so no gating is needed. -/
 noncomputable def actionGoalScore (cost : Utterance → ℝ) :
     (Utterance → Object → ℝ) → ℝ → Unit → Object → Utterance → ℝ :=
   fun l0 α _ w u => exp (α * (l0 u w - cost u))
@@ -359,26 +361,26 @@ noncomputable def salienceCfg : RSAConfig Utterance Object :=
 
     The RSAConfig API doesn't directly support this, so it's defined as a composable
     extension, demonstrating that the API is open for extension without modification. -/
-noncomputable def L1_action (cfg : RSAConfig Utterance Object)
-    (αL : ℝ) (u : Utterance) (w : Object) : ℝ :=
+noncomputable def L1_action {U W : Type*} [Fintype U] [Fintype W]
+    (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) : ℝ :=
   softmax (cfg.L1 u) αL w
 
 /-- The action-oriented listener always assigns positive probability. -/
-theorem L1_action_pos (cfg : RSAConfig Utterance Object) (αL : ℝ)
-    (u : Utterance) (w : Object) :
+theorem L1_action_pos {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
+    (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) :
     0 < L1_action cfg αL u w :=
   softmax_pos _ _ _
 
 /-- The action-oriented listener produces a valid probability distribution. -/
-theorem L1_action_sum_eq_one (cfg : RSAConfig Utterance Object) (αL : ℝ)
-    (u : Utterance) :
-    ∑ w : Object, L1_action cfg αL u w = 1 :=
+theorem L1_action_sum_eq_one {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
+    (cfg : RSAConfig U W) (αL : ℝ) (u : U) :
+    ∑ w : W, L1_action cfg αL u w = 1 :=
   softmax_sum_eq_one _ _
 
 /-- Higher α_L sharpens the action-oriented listener's distribution:
     if L1 prefers w₁ over w₂, ρ_a amplifies this preference. -/
-theorem L1_action_amplifies (cfg : RSAConfig Utterance Object)
-    {αL : ℝ} (hα : 0 < αL) (u : Utterance) (w₁ w₂ : Object)
+theorem L1_action_amplifies {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
+    (cfg : RSAConfig U W) {αL : ℝ} (hα : 0 < αL) (u : U) (w₁ w₂ : W)
     (h : cfg.L1 u w₁ > cfg.L1 u w₂) :
     L1_action cfg αL u w₁ > L1_action cfg αL u w₂ :=
   softmax_strict_mono _ hα _ _ h
@@ -562,12 +564,6 @@ score for "circle" enough to match or exceed "blue". -/
   simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
   ring
 
-private theorem policy_eq_of_score_eq {S A : Type*} [Fintype A]
-    (ra : RationalAction S A) (s : S) (a₁ a₂ : A)
-    (h : ra.score s a₁ = ra.score s a₂) :
-    ra.policy s a₁ = ra.policy s a₂ := by
-  simp only [RationalAction.policy, h]
-
 -- Concrete configs: all use adjCost 1/2 and uniform listener prior.
 -- (Listener prior doesn't affect S1, so any prior works for speaker comparison.)
 
@@ -632,7 +628,7 @@ theorem σ_aU_blue_circ_tie :
     ¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
     ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue) := by
   have heq : σ_aU_cfg.S1 () .blue_circle .blue = σ_aU_cfg.S1 () .blue_circle .circle :=
-    policy_eq_of_score_eq _ _ _ _ σ_aU_score_blue_eq_circle
+    RationalAction.policy_eq_of_score_eq _ _ _ _ σ_aU_score_blue_eq_circle
   exact ⟨fun h => absurd heq (ne_of_gt h), fun h => absurd heq.symm (ne_of_gt h)⟩
 
 -- §13b. σ_bS: Belief-oriented, salience belief
