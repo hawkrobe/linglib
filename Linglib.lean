@@ -263,24 +263,40 @@ import Linglib.Phenomena.Gradability.EvaluativityBridge
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021Bridge
 import Linglib.Phenomena.Gradability.IntensifiersBridge
-import Linglib.Phenomena.Gradability.Typology
 import Linglib.Phenomena.Gradability.Vagueness
+-- Phenomena: Comparison (extracted from Gradability/)
+import Linglib.Phenomena.Comparison.Data
+import Linglib.Phenomena.Comparison.Comparative.Data
+import Linglib.Phenomena.Comparison.Comparative.Differential
+import Linglib.Phenomena.Comparison.Comparative.Subcomparative
+import Linglib.Phenomena.Comparison.Comparative.KennedyBridge
+import Linglib.Phenomena.Comparison.Comparative.HeimBridge
+import Linglib.Phenomena.Comparison.Comparative.Compare
+import Linglib.Phenomena.Comparison.Equative.Data
+import Linglib.Phenomena.Comparison.Superlative.Data
+import Linglib.Phenomena.Comparison.DegreeQuestion.Data
+import Linglib.Phenomena.Comparison.CrossCategorial
+import Linglib.Phenomena.Comparison.Typology
+import Linglib.Phenomena.Comparison.TypologyBridge
+import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
+import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Bridge
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
-import Linglib.Phenomena.Gradability.Imprecision.Basic
-import Linglib.Phenomena.Gradability.Imprecision.FormMeaning
-import Linglib.Phenomena.Gradability.Imprecision.InferencePreservation
-import Linglib.Phenomena.Gradability.Imprecision.Numerals
+-- Phenomena: Imprecision (extracted from Gradability/)
+import Linglib.Phenomena.Imprecision.Basic
+import Linglib.Phenomena.Imprecision.FormMeaning
+import Linglib.Phenomena.Imprecision.InferencePreservation
+import Linglib.Phenomena.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
-import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Data
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Bridge
-import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSoltBurnett2022
-import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
-import Linglib.Phenomena.Gradability.Imprecision.Projection
-import Linglib.Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
+import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
+import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024.Data
+import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024.Bridge
+import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
+import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
+import Linglib.Phenomena.Imprecision.Projection
+import Linglib.Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
@@ -618,8 +634,22 @@ import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
 
+-- Theories: Semantics.Degree (degree semantics frameworks)
+import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Theories.Semantics.Degree.Equative
+import Linglib.Theories.Semantics.Degree.Superlative
+import Linglib.Theories.Semantics.Degree.ThanClause
+import Linglib.Theories.Semantics.Degree.Differential
+import Linglib.Theories.Semantics.Degree.DegreeQuestion
+import Linglib.Theories.Semantics.Degree.Wellwood
+import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
+import Linglib.Theories.Semantics.Degree.Frameworks.Heim
+import Linglib.Theories.Semantics.Degree.Frameworks.Klein
+import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
+import Linglib.Theories.Semantics.Degree.Frameworks.Rett
+
 -- Theories: Semantics.Montague (Montague architecture)
-import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding

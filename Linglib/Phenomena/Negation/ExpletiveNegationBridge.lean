@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Comparative
+import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -48,7 +48,7 @@ Two types of EN with different syntactic positions and licensing:
 namespace Phenomena.Negation.ExpletiveNegation
 
 open Core.Scale (Boundedness isAmbidirectional)
-open Semantics.Lexical.Adjective.Comparative (MannerEffect)
+open Semantics.Degree.Comparative (MannerEffect)
 open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 
 -- ════════════════════════════════════════════════════

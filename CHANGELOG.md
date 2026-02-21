@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.226.0] - 2026-02-21
+
+### Added
+- **`Theories/Semantics/Degree/`** (13 new files): Degree semantics infrastructure with five formal frameworks
+  - `Core.lean`: `GradablePredicate`, `DegPType`, `StandardType`, `positiveSem`
+  - `Frameworks/Kennedy.lean`: Measure function approach — `adjDenotation`, `kennedyComparative`, `interpretiveEconomy`
+  - `Frameworks/Heim.lean`: Sentential operator approach — `DegreePredicate`, `heimComparativeWithMeasure`, `kennedy_heim_extensional_equivalence`
+  - `Frameworks/Klein.lean`: Delineation approach — `ComparisonClass`, `comparativeSem`, `IsMonotoneDelineation`
+  - `Frameworks/Schwarzschild.lean`: Interval semantics — `Interval`, `intervalComparative`, `interval_eq_point`
+  - `Frameworks/Rett.lean`: Order-sensitive MAX — `rettComparative`, `MannerEffect`, `enEvaluativeEffect`
+  - `Comparative.lean`: Framework-independent — `comparativeSem`, `equativeSem`, antonymy, `comparative_than_DE`
+  - `Equative.lean`, `Superlative.lean`, `ThanClause.lean`, `Differential.lean`, `DegreeQuestion.lean`, `Wellwood.lean`
+- **`Phenomena/Comparison/`** (15 new files): Comparison constructions separated from Gradability
+  - `Comparative/Data.lean`, `Differential.lean`, `Subcomparative.lean`: Comparative construction data
+  - `Equative/Data.lean`, `Superlative/Data.lean`, `DegreeQuestion/Data.lean`: Other comparison types
+  - `CrossCategorial.lean`: Wellwood-style cross-categorial parallels
+  - `Comparative/KennedyBridge.lean`, `HeimBridge.lean`: Framework-to-data bridges
+  - `Comparative/Compare.lean`: Formal comparison of all five frameworks — `four_degree_frameworks_agree`, `schwarzschild_agrees`, `rett_agrees_with_kennedy`, `klein_correspondence`
+- **`Phenomena/Imprecision/`** (11 new files): Extracted from `Gradability/Imprecision/` to top-level phenomenon
+
+### Changed
+- **`Lexical/Adjective/Comparative.lean`**: Converted to re-export shim for `Degree/Comparative` + `Degree/Frameworks/Rett`
+- **`Lexical/Degree.lean`**: Converted to re-export shim for `Degree/Wellwood`
+- **`Negation/ExpletiveNegationBridge.lean`**: Updated imports to new `Degree.Comparative` path
+- **`Gradability/Typology.lean`**, **`TypologyBridge.lean`**, **`Studies/Wellwood2015/`**: Moved to `Comparison/`, old paths are re-export shims
+- **`Gradability/Imprecision/`** (11 files): Converted to re-export shims pointing to `Phenomena/Imprecision/`
+- **`Linglib.lean`**: Added 28 new imports for Degree, Comparison, and Imprecision modules; removed 2 redundant shim imports
+
 ## [0.225.7] - 2026-02-21
 
 ### Added
