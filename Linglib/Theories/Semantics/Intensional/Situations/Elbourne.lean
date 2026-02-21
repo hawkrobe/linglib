@@ -3,12 +3,10 @@ import Linglib.Core.Definiteness
 import Linglib.Core.Intension
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Reference.Donnellan
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Pronouns
 import Linglib.Core.QUD
 
 /-!
-# Elbourne (2013): Situation-Semantic Definite Descriptions
+# Elbourne (2013): Situation-Semantic Definite Descriptions @cite{elbourne-2013}
 
 Formalizes the core theoretical machinery from:
 
@@ -30,12 +28,12 @@ unifies:
 
 ## Key Results
 
-- `the_sit`: Elbourne's situation-relative ⟦the⟧ — the core entry
+- `the_sit` / `the_sit'`: Elbourne's situation-relative ⟦the⟧
 - `the_sit_at_world_eq_the_uniq_w`: specializes to existing `the_uniq_w`
-- `refAttr_not_ambiguity`: ref/attr are NOT a semantic ambiguity — same entry
+- `attributive_is_the_sit_bound`: Donnellan's attributive = `the_sit'` (bound s)
 - `donkey_uniqueness_from_minimality`: minimal situations yield uniqueness
-- `english_the_is_the_sit`: Fragment "the" connected to `the_sit`
 - `pronoun_is_definite_article`: ⟦it⟧ = ⟦the⟧ (Postal 1966, Elbourne 2005)
+- `the_sit_assertion_implies_presup`: assertion entails presupposition
 
 ## References
 
@@ -57,8 +55,6 @@ open Semantics.Lexical.Determiner.Definite (the_uniq_w DiscourseContext
   the_fam qforceToPresupType qforceToDefiniteness)
 open Semantics.Reference.Donnellan (definitePrProp
   attributiveContent UseMode)
-open Fragments.English.Determiners (QForce QuantifierEntry)
-open Fragments.English.Pronouns (PronounType PronounEntry)
 
 -- ============================================================================
 -- §1: Situation Ontology (Barwise & Perry 1983, Kratzer 1989)
@@ -166,44 +162,57 @@ theorem the_sit_at_world_eq_the_uniq_w
     the_sit' domain restrictor scope = the_uniq_w domain restrictor scope :=
   rfl
 
-/-- The familiarity-based definite (Schwarz's strong article) corresponds to
-`the_sit` evaluated at a *discourse-restricted* situation — one whose domain
-contains only entities salient in the discourse.
+/-- The presupposition of `the_sit'` is determined solely by the filter result.
 
-More precisely: when the situation `s` is small enough that only discourse-
-familiar entities are "in" it, uniqueness in `s` is effectively familiarity.
-The weak/strong article distinction is a distinction in *which situation*
-the definite is evaluated at, not in the lexical entry of "the". -/
-theorem familiarity_is_restricted_situation :
-    demonstrativePresupType = DefPresupType.familiarity := rfl
+The weak/strong article distinction (Schwarz 2009) reduces to situation size:
+- Weak article: evaluated at a world-sized situation (global uniqueness)
+- Strong article: evaluated at a discourse-restricted situation (familiarity)
+
+Since both are instances of `the_sit'`, the presupposition behavior depends
+only on which entities satisfy the restrictor at the evaluation situation —
+not on the full domain. Two domains yielding the same satisfiers produce
+identical presupposition behavior. -/
+theorem the_sit_presup_depends_on_filter
+    {W E : Type} (domain₁ domain₂ : List E) [DecidableEq E]
+    (restrictor scope : E → W → Bool) (w : W)
+    (h : domain₁.filter (λ e => restrictor e w) =
+         domain₂.filter (λ e => restrictor e w)) :
+    (the_sit' domain₁ restrictor scope).presup w =
+    (the_sit' domain₂ restrictor scope).presup w := by
+  simp only [the_sit']
+  rw [h]
+
+/-- A true assertion entails a satisfied presupposition.
+
+This is the formal content of Frege/Strawson: `the_sit'` cannot assert
+anything about an entity unless the presupposition of existence+uniqueness
+holds. Failure of the presupposition forces the assertion to `false`. -/
+theorem the_sit_assertion_implies_presup
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → W → Bool) (scope : E → W → Bool)
+    (w : W) (h : (the_sit' domain restrictor scope).assertion w = true) :
+    (the_sit' domain restrictor scope).presup w = true := by
+  simp only [the_sit'] at h ⊢
+  split at h <;> simp_all
 
 -- ============================================================================
 -- §4: Referential vs Attributive (Elbourne 2013, Ch 5)
 -- ============================================================================
 
-/-- Elbourne's central argument against Donnellan's ambiguity: referential
-and attributive uses arise from the SAME lexical entry. The difference is
-whether the situation pronoun is free (referential) or bound (attributive).
-
-- Free s → s is mapped to a salient restrictor situation s*;
-  the referent is fixed by context (= Donnellan's referential use)
-- Bound s → s is bound by an operator (attitude verb, modal, quantifier);
-  the referent varies across evaluation situations (= Donnellan's attributive use)
-
-This means Donnellan (1966) identified a real pragmatic phenomenon
-(use-types) but was wrong to posit a semantic ambiguity. -/
-def situationToUseMode (bound : Bool) : UseMode :=
-  if bound then .attributive else .referential
-
-/-- The referential/attributive distinction is NOT a lexical ambiguity.
-Both uses are generated by a single lexical entry (`the_sit`). -/
-theorem refAttr_not_ambiguity :
-    ∀ b : Bool, ∃ (_ : UseMode), situationToUseMode b = situationToUseMode b :=
-  λ b => ⟨situationToUseMode b, rfl⟩
-
 /-- Donnellan's attributive semantics IS `the_sit'` with a bound situation
 variable. Both filter the domain for the unique restrictor-satisfier,
-varying the evaluation index. -/
+varying the evaluation index.
+
+This formalizes Elbourne's central argument against Donnellan's ambiguity:
+referential and attributive uses arise from the SAME lexical entry. The
+difference is whether the situation pronoun is free (referential) or
+bound (attributive).
+
+- Free s → s mapped to a salient restrictor situation s* (= referential)
+- Bound s → s bound by an operator (attitude verb, modal, quantifier) (= attributive)
+
+Donnellan (1966) identified a real pragmatic phenomenon (use-types) but
+was wrong to posit a semantic ambiguity (Kripke 1977). -/
 theorem attributive_is_the_sit_bound
     {W E : Type} (domain : List E) [DecidableEq E]
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
@@ -325,26 +334,6 @@ structure ExistenceEntailmentDatum where
   /-- Source -/
   source : String := "Elbourne 2013"
 
-/-- Ch 8: "Hans wants the ghost in his attic to be quiet tonight."
-Speaker need not believe there's a ghost; Hans must believe it. -/
-def hansGhost : ExistenceEntailmentDatum :=
-  { sentence := "Hans wants the ghost in his attic to be quiet tonight."
-  , speakerPresupposes := false
-  , subjectBelieves := true
-  , existenceActual := false
-  , elbournePrediction := "Presupposition projects to Hans's beliefs via Karttunen (1974)"
-  , source := "Elbourne 2013, Ch 8 §8.6" }
-
-/-- Ch 8: "Ponce de León is wondering whether the fountain of youth is in Florida."
-Narrow scope under wonder — no speaker commitment to existence. -/
-def ponceFountain : ExistenceEntailmentDatum :=
-  { sentence := "Ponce de León is wondering whether the fountain of youth is in Florida."
-  , speakerPresupposes := false
-  , subjectBelieves := true
-  , existenceActual := false
-  , elbournePrediction := "Narrow scope: situation bound within wonder → no speaker commitment"
-  , source := "Elbourne 2013, Ch 8 §8.8" }
-
 -- ============================================================================
 -- §8: Incomplete Definites (Elbourne 2013, Ch 9)
 -- ============================================================================
@@ -433,103 +422,46 @@ structure PronounAsDefinite where
   equivalentDefinite : String
   deriving Repr, BEq
 
-/-- Ch 10 §10.3: "Every man who owns a donkey beats it."
-"it" = [the donkey s₃] — NP "donkey" recovered from indefinite. -/
-def donkeyPronounExample : PronounAsDefinite :=
-  { pronounForm := "it"
-  , deletedNP := "donkey"
-  , npSource := .donkeyRestrictor
-  , equivalentDefinite := "the donkey" }
+/-- Pronoun denotation in Elbourne's system (Postal 1966, Elbourne 2005, 2013 Ch 10).
 
-/-- Ch 10 §10.4: "I saw the Junior Dean. He was worried."
-"He" = [the Junior Dean s₁] — NP recovered from antecedent. -/
-def anaphoricPronounExample : PronounAsDefinite :=
-  { pronounForm := "he"
-  , deletedNP := "Junior Dean"
-  , npSource := .antecedent
-  , equivalentDefinite := "the Junior Dean" }
+A pronoun with recovered NP content `R` has the SAME denotation as the
+definite article applied to `R`:
 
-/-- Ch 10 §10.6: "He who hesitates is lost."
-"He" = [he [person [who hesitates]]] s₁ — NP is "person". -/
-def voldemortExample : PronounAsDefinite :=
-  { pronounForm := "he"
-  , deletedNP := "person"
-  , npSource := .generalKnowledge
-  , equivalentDefinite := "the person who hesitates" }
+  ⟦pronoun⟧(R)(scope)(s) = ⟦the⟧(R)(scope)(s) = the_sit'(domain)(R)(scope)(s)
 
--- ============================================================================
--- §10: Bridge to English Fragment (Determiners.lean + Pronouns.lean)
--- ============================================================================
+The only difference between "the dog" and "it" (with recovered NP "dog")
+is phonological: the pronoun has a deleted NP complement. The semantic
+function is literally `the_sit'` in both cases. -/
+abbrev pronounDenot {W E : Type} (domain : List E) [DecidableEq E]
+    (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+  the_sit' domain recoveredNP scope
 
-/-- The English fragment entry "the" (QForce.definite) receives its
-compositional semantics from `the_sit`.
+/-- Pronouns = definite articles: ⟦it⟧ = ⟦the⟧ (Postal 1966, Elbourne 2005, 2013 Ch 10).
 
-Chain: Fragment "the" → QForce.definite → the_sit F domain restrictor scope
+A pronoun's denotation, given a contextually recovered NP restrictor, is
+extensionally identical to the definite article applied to the same restrictor.
+There is no semantic distinction — only a phonological one (NP-deletion).
 
-Since English has only one article form (ArticleType.weakOnly), the
-default situation is world-sized (uniqueness). The familiarity reading
-arises when the situation pronoun refers to a discourse-restricted
-situation (pragmatic, not structural). -/
-def english_the_is_the_sit :
-    Fragments.English.Determiners.the.qforce = .definite := rfl
+This is the formal statement of Elbourne's unification: the same function
+`the_sit'` serves as the denotation of both "the [NP]" and "pronoun [∅_NP]".
+The surface difference between definite descriptions and pronouns is entirely
+syntactic (overt vs deleted NP). -/
+theorem pronoun_is_definite_article
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor scope : E → W → Bool) :
+    pronounDenot domain restrictor scope = the_sit' domain restrictor scope :=
+  rfl
 
-/-- The fragment's QForce.definite maps to uniqueness (= weak article). -/
-theorem english_the_is_uniqueness :
-    qforceToPresupType Fragments.English.Determiners.the.qforce =
-    some DefPresupType.uniqueness := rfl
-
-/-- Demonstratives "this"/"that" (also QForce.definite in the fragment)
-are structurally distinguished by requiring a FAMILIARITY situation
-(= strong article / D_deix layer).
-
-Schwarz (2009): "this"/"that" project D_deix. PG&G (2017): DEM pronouns
-require the extra D_deix layer that PER pronouns lack. -/
-theorem english_demonstratives_are_definite :
-    Fragments.English.Determiners.this.qforce = .definite ∧
-    Fragments.English.Determiners.that.qforce = .definite :=
-  ⟨rfl, rfl⟩
-
-/-- English 3rd-person pronouns (he/she/it) are definite articles
-(Postal 1966, Elbourne 2005, 2013 Ch 10).
-
-⟦it⟧ = ⟦the⟧ = the_sit
-
-The pronoun fragment entry is PronounType.personal, but its SEMANTICS
-is that of QForce.definite — a definite article with NP-deletion. -/
-def pronoun_is_definite_article : Prop :=
-  ∀ (p : PronounEntry),
-    p.pronounType = .personal →
-    p.person = some .third →
-    -- The semantic claim: 3rd-person personal pronouns
-    -- have the semantics of the definite article
-    True  -- The content is in the docstring; formal bridge requires
-          -- extending PronounEntry with a semantic field
-
-/-- Per-entry verification: "it" is personal, 3rd person, sg.
-Under Elbourne's analysis, its semantics is `the_sit` with NP-deletion. -/
-theorem it_entry_classification :
-    Fragments.English.Pronouns.it.pronounType = .personal ∧
-    Fragments.English.Pronouns.it.person = some .third ∧
-    Fragments.English.Pronouns.it.number = some .sg :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- "he" is personal, 3rd person, sg, nominative.
-Under Elbourne: ⟦he⟧ = ⟦the⟧ + NP-deletion + [+masculine] φ-features. -/
-theorem he_entry_classification :
-    Fragments.English.Pronouns.he.pronounType = .personal ∧
-    Fragments.English.Pronouns.he.person = some .third ∧
-    Fragments.English.Pronouns.he.number = some .sg ∧
-    Fragments.English.Pronouns.he.case_ = some .nom :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- "she" is personal, 3rd person, sg, nominative.
-Under Elbourne: ⟦she⟧ = ⟦the⟧ + NP-deletion + [+feminine] φ-features. -/
-theorem she_entry_classification :
-    Fragments.English.Pronouns.she.pronounType = .personal ∧
-    Fragments.English.Pronouns.she.person = some .third ∧
-    Fragments.English.Pronouns.she.number = some .sg ∧
-    Fragments.English.Pronouns.she.case_ = some .nom :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Pronoun assertions entail pronoun presuppositions (inherits from `the_sit'`).
+This confirms that the Frege/Strawson property carries over to Elbourne's
+analysis of pronouns: "it" presupposes existence+uniqueness of the deleted
+NP's referent, just like "the [NP]" does. -/
+theorem pronoun_assertion_implies_presup
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (recoveredNP : E → W → Bool) (scope : E → W → Bool)
+    (w : W) (h : (pronounDenot domain recoveredNP scope).assertion w = true) :
+    (pronounDenot domain recoveredNP scope).presup w = true :=
+  the_sit_assertion_implies_presup domain recoveredNP scope w h
 
 -- ============================================================================
 -- §11: Bridge to Definiteness Types (Core/Definiteness.lean)
