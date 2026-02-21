@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.225.5] - 2026-02-21
+
+### Added
+- **`Theories/Semantics/Lexical/Measurement.lean`**: Wellwood (2015) cross-categorial measurement semantics — `MereologicalStatus` (.cumulative/.quantized) with `toBoundedness` bridge to Kennedy scales, `MuchSem` as `StrictMono` (= CSW's `admissibleMeasure` = `MereoDim`), cross-categorial bridges (`telicityToStatus`, `numberToStatus`, `gradableToStatus`, `nonGradableToStatus`, `vendlerToStatus`), aspectual shift bridges (`telicize_shifts_status`, `atelicize_shifts_status`) grounded in `AspectualProfile`, `DimensionallyRestricted` predicate with `linearOrder_dimensionallyRestricted` proof and `statesBasedEntry_restricted` CSW bridge
+- **`Phenomena/Gradability/Studies/Wellwood2015/Data.lean`**: Theory-neutral empirical data — `LexCat` enum (6 categories), `MuchFelicityDatum` (6 per-category data points), `GrammarShiftDatum` (rock/run shifts), `CrossCategorialParallel`, `MuchManyDistribution`
+- **`Phenomena/Gradability/Studies/Wellwood2015/Bridge.lean`**: Per-datum verification — `lexCatToStatus` mapping, 6 felicity bridge theorems, 4 cross-categorial parallel theorems, grammar shift bridges grounded in `telicize_shifts_status`/`atelicize_shifts_status`, boundedness bridge theorems. All rfl
+- **Bibliography**: Updated `wellwood-2015` from `cited` to `formalized` in `references.bib`
+
 ## [0.225.3] - 2026-02-21
 
 ### Added
