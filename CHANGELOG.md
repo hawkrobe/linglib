@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.83] - 2026-02-20
+
+### Added
+- **Kao, Bergen & Goodman (2014) Metaphor**: Full RSA implementation in `Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean` — 2 categories × 8 feature combos = 16 world states, rpow-based QUD-projected S1 scoring, parametric goal prior (vague + specific), all 6 qualitative findings proved via `rsa_predict` including cross-config context sensitivity
+- **`rsa_predict` cross-config support**: Generalize `L1_sum_gt_of_precomputed` bridge axiom from single config to `(cfg₁ cfg₂ : RSAConfig U W)`; new `GoalForm.l1CrossConfig` case with two `reifyS1Scores` calls and normalized policy comparison; single-world cross-config routed through sum path via singleton arrays
+
+### Removed
+- `Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Metaphor.lean` (old stub, replaced by consolidated file)
+- `Phenomena/Nonliteral/Metaphor/Studies/KaoBergenGoodman2014.lean` (old data file, replaced by consolidated file)
+
 ## [0.224.82] - 2026-02-20
 
 ### Added

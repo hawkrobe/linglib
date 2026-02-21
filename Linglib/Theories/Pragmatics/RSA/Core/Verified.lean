@@ -53,14 +53,15 @@ axiom L1_latent_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
 
 /-- L1 sum comparison from pre-computed bounds.
 
-    Handles both marginal comparisons (same utterance, shared denominator
-    → unnormalized scores suffice) and cross-utterance comparisons (different
-    utterances, different denominators → normalized policy bounds required).
+    Handles marginal comparisons (same config & utterance, shared denominator
+    → unnormalized scores suffice), cross-utterance comparisons (same config,
+    different utterances → normalized policy bounds), and cross-config
+    comparisons (different configs → normalized policy bounds).
     The `rsa_predict` tactic selects the appropriate strategy automatically. -/
 axiom L1_sum_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
-    (cfg : RSAConfig U W) (u₁ : U) (ws₁ : List W) (u₂ : U) (ws₂ : List W)
+    (cfg₁ cfg₂ : RSAConfig U W) (u₁ : U) (ws₁ : List W) (u₂ : U) (ws₂ : List W)
     (hi₂ lo₁ : ℚ) (h_sep : hi₂ < lo₁) :
-    (ws₁.map (cfg.L1 u₁)).sum > (ws₂.map (cfg.L1 u₂)).sum
+    (ws₁.map (cfg₁.L1 u₁)).sum > (ws₂.map (cfg₂.L1 u₂)).sum
 
 /-- L1 non-strict comparison from pre-computed score bounds.
 
