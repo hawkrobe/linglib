@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.225.2] - 2026-02-21
+
+### Added
+- **`Theories/Semantics/Conditionals/Iatridou.lean`**: Iatridou (2000) "The Grammatical Ingredients of Counterfactuality" — `ExclF` as tower predicate (`origin ≠ innermost` on temporal/modal dimension), `ExclDimension.toDealUse` bridge to Deal's tense typology, tower bridge theorems (`subjShift` → modal ExclF, `temporalShift` → temporal ExclF, two shifts → both), `IatridouPredType` with `VendlerClass.toIatridou`, `CounterfactualType` (FLV/PresCF/PastCF) with `classifyCounterfactual`, gating theorems, unification theorem, xMarking bridge, depth counting. All sorry-free
+- **`Phenomena/Conditionals/Studies/Iatridou2000/Data.lean`**: Cross-linguistic morphological data from Tables 1–2 — 9 `CFMorphologyDatum` entries (English/Greek/French × FLV/PresCF/PastCF), 3 `SubjRequirementDatum` entries, data-level verification theorems
+- **`Phenomena/Conditionals/Studies/Iatridou2000/Bridge.lean`**: Per-datum verification — 9 past-layer = ExclF-count theorems, 3 subjunctive generalization theorems, 5 classification bridges, Deal bridge with ULC exemption. All rfl
+- **`Core/Context/Rich.lean`**: `RichContext.toSituation` — project to `Situation W T` via `KContext.toSituation`
+
 ## [0.225.1] - 2026-02-21
 
 ### Added
