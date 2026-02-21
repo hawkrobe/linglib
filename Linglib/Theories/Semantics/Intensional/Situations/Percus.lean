@@ -220,7 +220,8 @@ theorem sitVar_other_unaffected {W Time : Type*}
 
 /-- Project a situation assignment to a temporal assignment.
     This is `Core.Tense.situationToTemporal` with a transparent
-    definition: we extract the temporal coordinate from each situation. -/
+    definition: we extract the temporal coordinate from each situation
+    (Kratzer 1998, formula 38: `time(e)` on eventualities/situations). -/
 def toTemporalAssignment {W Time : Type*}
     (g : SituationAssignment W Time) : Core.Tense.TemporalAssignment Time :=
   λ n => (g n).time

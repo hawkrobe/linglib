@@ -165,7 +165,9 @@ abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     TemporalAssignment Time → Time → α :=
   varLambdaAbs n body
 
-/-- Project a situation assignment to a temporal assignment. -/
+/-- Project a situation assignment to a temporal assignment (Kratzer 1998).
+    This is the formal bridge between situation semantics and tense semantics:
+    the temporal coordinate of each situation is extracted. -/
 def situationToTemporal {W Time : Type*}
     (g : ℕ → Situation W Time) : TemporalAssignment Time :=
   λ n => (g n).time

@@ -42,42 +42,4 @@ This is the most basic composition of ontological primitives.
   time : Time
   deriving Repr
 
-namespace Situation
-
-variable {W Time : Type*}
-
-/-- Temporal trace: extract the time of a situation -/
-@[simp]
-def τ (s : Situation W Time) : Time := s.time
-
-/-- World of a situation -/
-@[simp]
-def w (s : Situation W Time) : W := s.world
-
-/-- Create a situation from world and time -/
-def mk' (world : W) (time : Time) : Situation W Time :=
-  { world := world, time := time }
-
-/-- Situations at the same world -/
-def sameWorld (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.world = s₂.world
-
-/-- Situations at the same time -/
-def sameTime (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time = s₂.time
-
-/-- s₁ temporally precedes s₂ -/
-def before [LT Time] (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time < s₂.time
-
-/-- s₁ temporally follows s₂ -/
-def after [LT Time] (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time > s₂.time
-
-/-- s₁ is contemporaneous with s₂ -/
-def contemporaneous (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time = s₂.time
-
-end Situation
-
 end Core

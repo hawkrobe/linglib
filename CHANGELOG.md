@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.84] - 2026-02-20
+
+### Changed
+- **Elbourne.lean refactoring**: Remove Theories→Fragments dependency violation (was importing `Fragments.English.Determiners` and `Fragments.English.Pronouns`); delete tautological theorems (`familiarity_is_restricted_situation`, `refAttr_not_ambiguity`, `situationToUseMode`); move empirical data (`hansGhost`, `ponceFountain`, pronoun examples) and Fragment bridge theorems to Phenomena file; implement `pronoun_is_definite_article` properly via `pronounDenot` (was `True` placeholder); add `@cite{elbourne-2013}` tag
+- **Core/Situation.lean**: Strip 7 unused wrappers (`τ`, `w`, `mk'`, `sameWorld`, `sameTime`, `before`, `after`, `contemporaneous`) — all dead code, field accessors `.world`/`.time` used directly everywhere
+
+### Added
+- **Elbourne.lean**: `the_sit_presup_depends_on_filter` (presupposition determined by filter result), `the_sit_assertion_implies_presup` (Frege/Strawson: assertion entails presupposition), `pronounDenot` + `pronoun_is_definite_article` (⟦it⟧ = ⟦the⟧), `pronoun_assertion_implies_presup`
+- **Elbourne2013.lean**: Phenomena file for Elbourne (2013) with 6 concrete examples exercising `the_sit'`, `SituationFrame`, `isMinimal`, `SitVarStatus`, `DonkeyConfig`, `pronounDenot`, plus Fragment bridges and moved empirical data
+
 ## [0.224.83] - 2026-02-20
 
 ### Added
