@@ -299,6 +299,10 @@ cited in: [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Lingl
 **Barker, C.** (2011). Possessives and Relational Nouns. *Semantics: An International Handbook*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Relational/Barker2011.lean)
 
+**Cariani, F., Santorio, P. & Wellwood, A.** (2024). Confidence Reports. *Semantics \& Pragmatics, 17(14), 1–40*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Confidence.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/CarianiSantorioWellwood2024/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/CarianiSantorioWellwood2024/Data.lean), [Confidence](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Confidence.lean), [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean)
+
 **Carlson, G.** (1977). Reference to Kinds in English. *PhD dissertation, University of Massachusetts Amherst*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)
 
@@ -325,6 +329,10 @@ cited in: [AspectComparison](https://github.com/hawkrobe/linglib/blob/main/Lingl
 
 **Krifka, M.** (2003). Bare NPs: Kind-Referring, Indefinites, Both, or Neither?. *Proceedings of SALT, 13*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean)
+
+**Wellwood, A.** (2015). On the Semantics of Comparison Across Categories. *Linguistics and Philosophy, 38(1), 67–101*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean)\
+cited in: [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean)
 
 ## Semantics — Questions
 
