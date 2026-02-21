@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.98] - 2026-02-20
+
+### Added
+- **`Phenomena/Reference/Studies/QingFranke2015.lean`**: Full RSA formalization of Qing & Franke (2015) — 4 speaker models (σ_bU, σ_aU, σ_bS, σ_aS), 6 qualitative findings (speaker preferences + salience reversal), action-oriented listener extension (softmax ∘ L1), and model comparison section proving σ_bU uniquely predicts all 3 speaker observations. 18 verified proofs total: 8 via `rsa_predict`, 1 manual score-equality proof (exp/log non-cancellation in action-oriented scoring), 9 composite theorems
+
 ## [0.224.97] - 2026-02-20
 
 ### Changed
