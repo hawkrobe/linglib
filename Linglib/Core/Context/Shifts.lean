@@ -60,23 +60,23 @@ def identityShift : ContextShift (KContext W E P T) where
 -- § Attitude Shift Preservation
 -- ════════════════════════════════════════════════════════════════
 
-theorem attitudeShift_preserves_addressee (holder : E) (attWorld : W)
+@[simp] theorem attitudeShift_preserves_addressee (holder : E) (attWorld : W)
     (c : KContext W E P T) :
     ((attitudeShift holder attWorld).apply c).addressee = c.addressee := rfl
 
-theorem attitudeShift_preserves_time (holder : E) (attWorld : W)
+@[simp] theorem attitudeShift_preserves_time (holder : E) (attWorld : W)
     (c : KContext W E P T) :
     ((attitudeShift holder attWorld).apply c).time = c.time := rfl
 
-theorem attitudeShift_preserves_position (holder : E) (attWorld : W)
+@[simp] theorem attitudeShift_preserves_position (holder : E) (attWorld : W)
     (c : KContext W E P T) :
     ((attitudeShift holder attWorld).apply c).position = c.position := rfl
 
-theorem attitudeShift_changes_agent (holder : E) (attWorld : W)
+@[simp] theorem attitudeShift_changes_agent (holder : E) (attWorld : W)
     (c : KContext W E P T) :
     ((attitudeShift holder attWorld).apply c).agent = holder := rfl
 
-theorem attitudeShift_changes_world (holder : E) (attWorld : W)
+@[simp] theorem attitudeShift_changes_world (holder : E) (attWorld : W)
     (c : KContext W E P T) :
     ((attitudeShift holder attWorld).apply c).world = attWorld := rfl
 
@@ -84,23 +84,23 @@ theorem attitudeShift_changes_world (holder : E) (attWorld : W)
 -- § Temporal Shift Preservation
 -- ════════════════════════════════════════════════════════════════
 
-theorem temporalShift_preserves_agent (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_agent (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).agent = c.agent := rfl
 
-theorem temporalShift_preserves_world (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_world (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).world = c.world := rfl
 
-theorem temporalShift_preserves_addressee (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_preserves_addressee (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).addressee = c.addressee := rfl
 
-theorem temporalShift_changes_time (newTime : T) (c : KContext W E P T) :
+@[simp] theorem temporalShift_changes_time (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).time = newTime := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Identity Shift
 -- ════════════════════════════════════════════════════════════════
 
-theorem identityShift_apply (c : KContext W E P T) :
+@[simp] theorem identityShift_apply (c : KContext W E P T) :
     (identityShift (W := W) (E := E) (P := P) (T := T)).apply c = c := rfl
 
 /-- Pushing an identity shift doesn't change the innermost context. -/
@@ -112,23 +112,23 @@ theorem push_identityShift_innermost (t : ContextTower (KContext W E P T)) :
 -- § Perspective Shift Properties
 -- ════════════════════════════════════════════════════════════════
 
-theorem perspectiveShift_changes_agent (a : E) (t : T) (w : W)
+@[simp] theorem perspectiveShift_changes_agent (a : E) (t : T) (w : W)
     (c : KContext W E P T) :
     ((perspectiveShift a t w).apply c).agent = a := rfl
 
-theorem perspectiveShift_changes_time (a : E) (t : T) (w : W)
+@[simp] theorem perspectiveShift_changes_time (a : E) (t : T) (w : W)
     (c : KContext W E P T) :
     ((perspectiveShift a t w).apply c).time = t := rfl
 
-theorem perspectiveShift_changes_world (a : E) (t : T) (w : W)
+@[simp] theorem perspectiveShift_changes_world (a : E) (t : T) (w : W)
     (c : KContext W E P T) :
     ((perspectiveShift a t w).apply c).world = w := rfl
 
-theorem perspectiveShift_preserves_addressee (a : E) (t : T) (w : W)
+@[simp] theorem perspectiveShift_preserves_addressee (a : E) (t : T) (w : W)
     (c : KContext W E P T) :
     ((perspectiveShift a t w).apply c).addressee = c.addressee := rfl
 
-theorem perspectiveShift_preserves_position (a : E) (t : T) (w : W)
+@[simp] theorem perspectiveShift_preserves_position (a : E) (t : T) (w : W)
     (c : KContext W E P T) :
     ((perspectiveShift a t w).apply c).position = c.position := rfl
 

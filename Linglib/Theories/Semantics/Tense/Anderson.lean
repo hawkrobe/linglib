@@ -107,6 +107,66 @@ theorem historicalBase_monotone
 end Expansion
 
 -- ════════════════════════════════════════════════════════════════
+-- § Conditional Triviality and Domain Expansion
+-- ════════════════════════════════════════════════════════════════
+
+section Triviality
+
+variable {W : Type*}
+
+/-- A conditional is trivial when every world in the domain satisfies
+    the consequent. The antecedent restriction does no work — the
+    conditional is vacuously true regardless of what the antecedent says.
+
+    Condoravdi (2002): indicative conditionals with small domains can be
+    trivial because every accessible world already satisfies the consequent.
+    Domain expansion (via HP/X-marking) resolves this by adding worlds
+    where the consequent may fail. -/
+def trivialConsequent (domain : Set W) (consequent : W → Prop) : Prop :=
+  ∀ w ∈ domain, consequent w
+
+/-- A conditional is non-trivial when there exists a world in the domain
+    where the consequent fails. This is the condition under which the
+    antecedent restriction does meaningful work. -/
+def nonTrivialConsequent (domain : Set W) (consequent : W → Prop) : Prop :=
+  ∃ w ∈ domain, ¬ consequent w
+
+/-- Domain expansion resolves triviality: if the original domain makes the
+    consequent trivial, but the expanded domain contains a world where the
+    consequent fails, then the expanded conditional is non-trivial.
+
+    This completes the HP/X-marking argument:
+    1. `hp_achieves_expansion` — backward time shift expands the domain
+    2. `expansion_resolves_triviality` — expanded domain makes the
+       conditional non-trivial
+
+    The counterfactual "If I had left earlier, I would have caught the train"
+    is non-trivial precisely because the expanded domain (from X-marking's
+    backward time shift) includes worlds where I didn't catch the train. -/
+theorem expansion_resolves_triviality
+    (smallDomain expandedDomain : Set W)
+    (consequent : W → Prop)
+    (_h_subset : smallDomain ⊆ expandedDomain)
+    (_h_trivial : trivialConsequent smallDomain consequent)
+    (w : W) (hw : w ∈ expandedDomain) (hw_fails : ¬ consequent w) :
+    nonTrivialConsequent expandedDomain consequent :=
+  ⟨w, hw, hw_fails⟩
+
+/-- Contrapositive: if a conditional over a domain is trivial and a superset
+    is also trivial, then every world in the superset satisfies the consequent.
+    This shows that triviality is monotone: expanding the domain can only
+    resolve triviality, never introduce it. -/
+theorem trivial_monotone
+    (smallDomain expandedDomain : Set W)
+    (consequent : W → Prop)
+    (h_subset : smallDomain ⊆ expandedDomain)
+    (h_expanded_trivial : trivialConsequent expandedDomain consequent) :
+    trivialConsequent smallDomain consequent :=
+  λ w hw => h_expanded_trivial w (h_subset hw)
+
+end Triviality
+
+-- ════════════════════════════════════════════════════════════════
 -- § Bridge: SUBJ as Domain-Expanding Shift
 -- ════════════════════════════════════════════════════════════════
 

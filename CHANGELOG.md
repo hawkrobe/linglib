@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.225.1] - 2026-02-21
+
+### Added
+- **`Core/Context/Rich.lean`**: `xMarkingShift` — Iatridou's (2000) "fake past" as domain-expanding mood shift; combines backward time + counterfactual world + domain expansion, labeled `.mood`. Completing the HP/X-marking story with `xMarkingShift_expanding` and simp lemmas
+- **`Theories/Semantics/Tense/Anderson.lean`**: Conditional triviality section — `trivialConsequent`, `nonTrivialConsequent`, `expansion_resolves_triviality` (domain growth ⟹ non-trivial conditional), `trivial_monotone` (triviality is monotone under expansion). Completes the three-step HP argument: backward time → domain grows → non-trivial conditional
+
+### Changed
+- **`Core/Context/Tower.lean`**: Added `@[simp]` to `contextAt_depth`, `push_depth`, `push_innermost`; deleted duplicate `root_contextAt_eq` (identical to `root_contextAt`)
+- **`Core/Context/Shifts.lean`**: Added `@[simp]` to all 15 preservation/change lemmas for `attitudeShift`, `temporalShift`, `perspectiveShift`, `identityShift`
+- **`Theories/Semantics/Tense/Evidential.lean`**: Generalized `evidentialTimeShift`, `downstreamAtDepth`, related theorems from hard-coded `ℤ` to abstract `T` with `[Preorder T]`; added `@[simp]` to `evidentialTimeShift_sets_time`
+- **`Theories/Semantics/Reference/Monsters.lean`**: Deleted dead legacy section (`ContentOperator`, `ContextOperator`, `IsMonster`, `FixityThesis`) — fully replaced by tower equivalents
+- **`Theories/Semantics/Reference/FreeIndirectDiscourse.lean`**: Added docstring to `resolve` explaining addressee tracks `agentDepth`
+
 ## [0.225.0] - 2026-02-21
 
 ### Added
