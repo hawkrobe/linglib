@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.89] - 2026-02-20
+
+### Removed
+- **Delete 10 RSA/Core stub files**: `Basic.lean`, `BasicQ.lean`, `ChainComparison.lean`, `Discourse.lean`, `DiscourseIntegration.lean`, `Distribution.lean`, `DistributionPMF.lean`, `Eval.lean`, `Intensional.lean`, `RationalPower.lean` — 5-14 line docstring-only files left over from the old ℚ-based RSAScenario API, replaced by `RSAConfig`
+
+### Fixed
+- **Broken imports in `Linglib.lean`**: `PracticalReasoning` → `PracticalReasoningBridge`, `InformationalBackgrounds` → `InformationalBackgroundsBridge` (files were renamed during an earlier migration but imports weren't updated)
+
 ## [0.224.88] - 2026-02-20
 
 ### Added
