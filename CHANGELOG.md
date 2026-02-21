@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.224.91] - 2026-02-20
+
+### Removed
+- **Delete `Core/Alternatives.lean`**: Merge live definitions into `Core/InformationStructure.lean`; delete dead code (`Alternatives α` struct, `Alternatives.singleton`, `Alternatives.mk'`, `HasAlternatives` — all unused outside the file). Eliminates naming conflict with `NeoGricean/Core/Alternatives.lean`
+
+### Changed
+- **`Core/InformationStructure.lean`**: Absorbs `AltMeaning`, `AltMeaning.unfeatured`, `CatItem`, `categoryMatchAlts`, `typeTheoAlts` from deleted `Core/Alternatives.lean`. `Focus.alternatives` field simplified from `Alternatives α` to `List α`
+- Updated imports in `Focus/Interpretation.lean`, `Focus/KratzerSelkirk2020.lean`, `Fragments/Turkish/QuestionParticles.lean`, `Phenomena/Questions/Studies/TurkHirschInce2026Bridge.lean`
+- Deleted dead `FocusValue` alias from `Focus/Interpretation.lean` (0 downstream uses)
+
 ## [0.224.90] - 2026-02-20
 
 ### Changed

@@ -20,7 +20,7 @@ are the result of default prosody.
 - [FoC] and [G] both contribute **use-conditional** (expressive) meaning, not at-issue
   content → grounded in `Expressives/Basic.lean` `TwoDimProp`
 - [G] is a **contextual presupposition** → grounded in `Core/Presupposition.lean`
-- [FoC] introduces **alternatives** → grounded in `Core/Alternatives.lean`
+- [FoC] introduces **alternatives** → grounded in `Core/InformationStructure.lean`
 - The ~ operator is [FoC]'s obligatory companion → refines existing `Squiggle`
 
 ## Key Formal Results
@@ -44,13 +44,11 @@ are the result of default prosody.
 - Beaver, D. et al. (2007). When semantics meets phonetics. Language 83: 245-276.
 -/
 
-import Linglib.Core.Alternatives
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Core.Presupposition
 
-open Core.Alternatives
 open Core.InformationStructure
 open Core.Prosody
 open Semantics.Lexical.Expressives

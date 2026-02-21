@@ -39,7 +39,6 @@ import Linglib.Core.RationalAction
 import Linglib.Core.UtilityTheory
 import Linglib.Core.Evidence
 import Linglib.Core.ProcessingModel
-import Linglib.Core.Alternatives
 import Linglib.Core.Time
 import Linglib.Core.AtomicDistributivity
 import Linglib.Core.Reichenbach

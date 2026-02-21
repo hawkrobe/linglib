@@ -1,4 +1,4 @@
-import Linglib.Core.Alternatives
+import Linglib.Core.InformationStructure
 import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
