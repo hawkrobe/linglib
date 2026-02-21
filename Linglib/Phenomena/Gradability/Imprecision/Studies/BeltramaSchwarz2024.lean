@@ -303,10 +303,12 @@ inductive PrecisionVariant where
     subject to overt metapragmatic commentary. -/
 def precisionField : IndexicalField PrecisionVariant SocialDimension :=
   { association := λ v d => match v, d with
-    | .exact,       .competence =>  1
-    | .exact,       .warmth     => -1
-    | .approximate, .warmth     =>  1
-    | .approximate, .competence => -1
+    | .exact,       .competence      =>  1
+    | .exact,       .warmth          => -1
+    | .exact,       .antiSolidarity  =>  1
+    | .approximate, .warmth          =>  1
+    | .approximate, .competence      => -1
+    | .approximate, .antiSolidarity  => -1
   , order := .third }
 
 -- ============================================================================

@@ -109,6 +109,27 @@ structure NumeralModifierEntry where
 -- ============================================================================
 
 /--
+"about": tolerance-based approximation.
+
+The most common English approximator. Used in BSB2022's stimuli:
+"about fifty minutes" vs "fifty minutes" vs "forty-nine minutes."
+
+⟦about n⟧ = λy.λx. |n-x| ≤ y
+Pragmatically signals peaked private distribution centered on n.
+
+Source: Beltrama, Solt & Burnett (2022)
+-/
+def about : NumeralModifierEntry :=
+  { form := "about"
+  , modType := .tolerance
+  , pragFunction := .peakedSignal
+  , requiresRound := false
+  , isVague := true
+  , conveysShape := true
+  , soritesSusceptible := true
+  }
+
+/--
 "around": tolerance-based approximation.
 
 ⟦around n⟧ = λy.λx. |n-x| ≤ y
@@ -411,7 +432,7 @@ def aroundBetweenScale : ModifierScale :=
 -- Collections
 
 def toleranceModifiers : List NumeralModifierEntry :=
-  [around, approximately, roughly]
+  [about, around, approximately, roughly]
 
 def intervalModifiers : List NumeralModifierEntry :=
   [between]

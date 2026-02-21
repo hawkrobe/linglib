@@ -141,15 +141,22 @@ def IndexicalField.indexes {Variant Trait : Type}
 -- Social meaning cluster
 -- ============================================================================
 
-/-- A coarse social-meaning dimension, connecting Eckert's framework to
-    the competence/warmth dichotomy (Fiske et al. 2002) already used in
-    `Core.Register.SocialIndex`.
+/-- Social-meaning dimensions, grounded in Fiske et al.'s (2002, 2007)
+    universal dimensions of social cognition.
 
-    * `competence`: precision, intelligence, reliability, education
-    * `warmth`: friendliness, spontaneity, casualness, approachability -/
+    * `competence`: precision, intelligence, reliability, education —
+      Fiske et al.'s competence dimension; BSB2022's "Status" PCA factor
+      (articulate, intelligent, confident, trustworthy)
+    * `warmth`: friendliness, spontaneity, casualness, approachability —
+      Fiske et al.'s warmth dimension; BSB2022's "Solidarity" PCA factor
+      (friendly, cool, laid-back, likeable)
+    * `antiSolidarity`: pedantic, uptight — the negative pole of warmth,
+      factored out as an independent PCA component in BSB2022 because
+      pedantic/uptight load separately from the positive warmth scales -/
 inductive SocialDimension where
   | competence
   | warmth
+  | antiSolidarity
   deriving DecidableEq, BEq, Repr
 
 end Core.SocialMeaning
