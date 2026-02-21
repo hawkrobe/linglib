@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Focus.Basic
 
 /-!
-# Rooth (1992) Bridge — Focus Interpretation
+# Rooth (1992) Bridge — Focus Interpretation @cite{rooth-1992}
 
 Bridges the empirical data in `Focus/Basic.lean` to the formal theory
 in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full

@@ -1,5 +1,5 @@
 /-
-# Focus Interpretation (Rooth 1992)
+# Focus Interpretation (Rooth 1992) @cite{rooth-1992}
 
 Rooth's "A Theory of Focus Interpretation" introduces the Focus Interpretation
 Principle (FIP) and the ~ operator to connect focus semantic values with context.
