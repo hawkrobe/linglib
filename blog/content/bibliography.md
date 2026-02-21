@@ -91,6 +91,10 @@ cited in: [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)\
 cited in: [PottsEtAl2016](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/PottsEtAl2016.lean)
 
+**Qing, C. & Franke, M.** (2015). Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning. *Bayesian Natural Language Semantics and Pragmatics, 2, 201–220*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/QingFranke2015.lean)\
+cited in: [QingFranke2015](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/QingFranke2015.lean)
+
 **Qing, C., Goodman, N. D. & Lassiter, D.** (2016). A Rational Speech-Act Model of Projective Content. *Proceedings of the Annual Meeting of the Cognitive Science Society, 38*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean)
 

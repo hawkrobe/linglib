@@ -521,7 +521,206 @@ theorem salience_reversal_green :
   ⟨uniform_green_green_circ, salience_green_green_sq⟩
 
 -- ============================================================================
--- §13. Verification
+-- §13. Model Comparison: Alternative Speaker Models
+-- ============================================================================
+
+/-! The paper compares 4 speaker models along the speaker-goal × speaker-belief
+dimensions (Table 3). Only σ_bU correctly predicts all three speaker preferences.
+Each alternative fails on at least one observation:
+
+| Model | green_sq (sq > gr) | blue_circ (bl > ci) | green_circ (ci > gr) | Score |
+|-------|-------------------|--------------------|--------------------|-------|
+| σ_bU  | ✓                 | ✓                  | ✓                  | 3/3   |
+| σ_aU  | ✓                 | = (tie)            | ✓                  | 2/3   |
+| σ_bS  | ✓                 | ✗ (ci > bl)        | ✗ (gr > ci)        | 1/3   |
+| σ_aS  | ✓                 | ✗ (ci > bl)        | ✓                  | 2/3   |
+
+The discriminating observation is **blue_circle**: only σ_bU predicts "blue" > "circle".
+σ_aU ties (equal S1 scores), while σ_bS and σ_aS reverse the preference.
+
+Salience in the speaker is harmful: it inflates L0's posterior for blue_circle given
+"circle" (since blue_circle has the highest salience, 139 vs 30), which raises S1's
+score for "circle" enough to match or exceed "blue". -/
+
+-- Auxiliary: expand finite sums for manual score-equality proofs
+
+@[simp] private theorem Object.sum_expand {f : Object → ℝ} :
+    ∑ x : Object, f x = f .green_square + f .blue_circle + f .green_circle := by
+  change (Finset.univ : Finset Object).sum f = _
+  have : (Finset.univ : Finset Object) = {.green_square, .blue_circle, .green_circle} :=
+    by native_decide
+  rw [this]
+  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
+  ring
+
+@[simp] private theorem Utterance.sum_expand {f : Utterance → ℝ} :
+    ∑ x : Utterance, f x = f .square + f .circle + f .green + f .blue := by
+  change (Finset.univ : Finset Utterance).sum f = _
+  have : (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} :=
+    by native_decide
+  rw [this]
+  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
+  ring
+
+private theorem policy_eq_of_score_eq {S A : Type*} [Fintype A]
+    (ra : RationalAction S A) (s : S) (a₁ a₂ : A)
+    (h : ra.score s a₁ = ra.score s a₂) :
+    ra.policy s a₁ = ra.policy s a₂ := by
+  simp only [RationalAction.policy, h]
+
+-- Concrete configs: all use adjCost 1/2 and uniform listener prior.
+-- (Listener prior doesn't affect S1, so any prior works for speaker comparison.)
+
+/-- σ_aU with adjective cost = 1/2. Action-oriented speaker, uniform L0.
+    S1 score = exp(λ · (U(t|m) - Cost(m))). No exp/log cancellation. -/
+@[reducible]
+noncomputable def σ_aU_cfg : RSAConfig Utterance Object :=
+  σ_aU (adjCost (1/2)) uniformPrior uniformPrior_nonneg
+
+/-- σ_bS with adjective cost = 1/2. Belief-oriented speaker, salience-weighted L0.
+    L0 weights worlds by perceptual salience; S1 score = exp(λ · (log S(t|m) - Cost(m))). -/
+@[reducible]
+noncomputable def σ_bS_cfg : RSAConfig Utterance Object :=
+  σ_bS (adjCost (1/2)) uniformPrior uniformPrior_nonneg
+
+/-- σ_aS with adjective cost = 1/2. Action-oriented speaker, salience-weighted L0. -/
+@[reducible]
+noncomputable def σ_aS_cfg : RSAConfig Utterance Object :=
+  σ_aS (adjCost (1/2)) uniformPrior uniformPrior_nonneg
+
+-- §13a. σ_aU: Action-oriented, uniform belief
+-- Agrees on green_sq and green_circ; ties on blue_circ.
+-- The tie arises because exp/log don't cancel in actionGoalScore:
+-- score(blue) = exp(1 * (1 - 1/2)) = exp(1/2)
+-- score(circle) = exp(1 * (1/2 - 0)) = exp(1/2)
+
+set_option maxHeartbeats 800000 in
+/-- σ_aU agrees: "square" > "green" for green_square. -/
+theorem σ_aU_green_sq :
+    σ_aU_cfg.S1 () .green_square .square > σ_aU_cfg.S1 () .green_square .green := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- σ_aU agrees: "circle" > "green" for green_circle (cost breaks symmetry). -/
+theorem σ_aU_green_circ :
+    σ_aU_cfg.S1 () .green_circle .circle > σ_aU_cfg.S1 () .green_circle .green := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- The S1 scores for "blue" and "circle" at blue_circle are exactly equal under σ_aU.
+    Both compute to exp(1/2): "blue" has L0 = 1 and cost = 1/2 (so arg = 1 - 1/2),
+    while "circle" has L0 = 1/2 and cost = 0 (so arg = 1/2 - 0).
+    This is why `rsa_predict` cannot handle this case — interval arithmetic
+    approximates exp(1/2) independently for each utterance, yielding overlapping
+    intervals. The proof instead shows exact score equality and lifts to policy. -/
+private theorem σ_aU_score_blue_eq_circle :
+    (σ_aU_cfg.S1agent ()).score .blue_circle .blue =
+    (σ_aU_cfg.S1agent ()).score .blue_circle .circle := by
+  simp only [RSAConfig.S1agent, actionGoalScore,
+             RSAConfig.L0agent, RationalAction.policy, RationalAction.totalScore,
+             adjCost, uniformPrior, Utterance.appliesTo,
+             Object.sum_expand, Utterance.sum_expand]
+  norm_num
+
+/-- σ_aU fails: "blue" and "circle" are tied for blue_circle.
+    This is the key prediction that distinguishes σ_aU from σ_bU.
+    Under belief-oriented scoring (σ_bU), the log transform amplifies the
+    informativity advantage of "blue" (L0 = 1) over "circle" (L0 = 1/2);
+    under action-oriented scoring (σ_aU), the raw difference is exactly
+    offset by cost. -/
+theorem σ_aU_blue_circ_tie :
+    ¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
+    ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue) := by
+  have heq : σ_aU_cfg.S1 () .blue_circle .blue = σ_aU_cfg.S1 () .blue_circle .circle :=
+    policy_eq_of_score_eq _ _ _ _ σ_aU_score_blue_eq_circle
+  exact ⟨fun h => absurd heq (ne_of_gt h), fun h => absurd heq.symm (ne_of_gt h)⟩
+
+-- §13b. σ_bS: Belief-oriented, salience belief
+-- Agrees on green_sq; reverses on both blue_circ and green_circ.
+-- Worst speaker model (1/3).
+
+set_option maxHeartbeats 800000 in
+/-- σ_bS agrees: "square" > "green" for green_square.
+    The unique shape word wins regardless of speaker belief, since "square"
+    applies to only one object while "green" is ambiguous. -/
+theorem σ_bS_green_sq :
+    σ_bS_cfg.S1 () .green_square .square > σ_bS_cfg.S1 () .green_square .green := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- σ_bS reverses blue_circle: predicts "circle" > "blue".
+    With salience-weighted L0, blue_circle has the highest salience (139),
+    so L0(blue_circ|"circle") = 139/169 ≈ 0.82, making "circle" quite
+    informative. Combined with zero cost for "circle" vs cost 1/2 for "blue",
+    the pragmatic advantage of "blue" is overcome. -/
+theorem σ_bS_blue_circ_reversal :
+    σ_bS_cfg.S1 () .blue_circle .circle > σ_bS_cfg.S1 () .blue_circle .blue := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- σ_bS reverses green_circle: predicts "green" > "circle".
+    With salience weights, L0(green_circ|"green") = 30/101 ≈ 0.30 and
+    L0(green_circ|"circle") = 30/169 ≈ 0.18. "green" has higher L0 posterior
+    for green_circ, and the log transform in belief-oriented scoring
+    amplifies this advantage enough to overcome its cost disadvantage. -/
+theorem σ_bS_green_circ_reversal :
+    σ_bS_cfg.S1 () .green_circle .green > σ_bS_cfg.S1 () .green_circle .circle := by
+  rsa_predict
+
+-- §13c. σ_aS: Action-oriented, salience belief
+-- Agrees on green_sq and green_circ; reverses on blue_circ.
+
+set_option maxHeartbeats 800000 in
+/-- σ_aS agrees: "square" > "green" for green_square. -/
+theorem σ_aS_green_sq :
+    σ_aS_cfg.S1 () .green_square .square > σ_aS_cfg.S1 () .green_square .green := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- σ_aS reverses blue_circle: predicts "circle" > "blue".
+    Same mechanism as σ_bS: salience inflates L0(blue_circ|"circle") = 139/169.
+    Under action-oriented scoring, this raw probability advantage
+    (plus zero cost) overcomes "blue"'s informativity. -/
+theorem σ_aS_blue_circ_reversal :
+    σ_aS_cfg.S1 () .blue_circle .circle > σ_aS_cfg.S1 () .blue_circle .blue := by
+  rsa_predict
+
+set_option maxHeartbeats 800000 in
+/-- σ_aS agrees: "circle" > "green" for green_circle.
+    Unlike σ_bS, the action-oriented scoring doesn't amplify the L0
+    advantage of "green" via log, so cost wins for green_circle. -/
+theorem σ_aS_green_circ :
+    σ_aS_cfg.S1 () .green_circle .circle > σ_aS_cfg.S1 () .green_circle .green := by
+  rsa_predict
+
+-- §13d. Capstone: σ_bU is the best speaker model
+
+/-- σ_bU uniquely predicts "blue" > "circle" for blue_circle.
+
+    The blue_circle observation is the decisive test: 36/42 speakers chose "blue"
+    over "circle" (Table 3). σ_bU is the only model that predicts this:
+    - σ_bU: blue > circle (correct) — log transform amplifies informativity
+    - σ_aU: blue = circle (tie) — raw probability and cost exactly cancel
+    - σ_bS: circle > blue (reversal) — salience makes "circle" informative
+    - σ_aS: circle > blue (reversal) — same salience effect
+
+    This is Q&F's main speaker-side finding: standard RSA (belief-oriented,
+    uniform L0) best explains production data. -/
+theorem σ_bU_best_speaker_model :
+    -- σ_bU correctly predicts blue > circle
+    (costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle) ∧
+    -- σ_aU ties: neither blue > circle nor circle > blue
+    (¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
+     ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue)) ∧
+    -- σ_bS reverses: circle > blue
+    (σ_bS_cfg.S1 () .blue_circle .circle > σ_bS_cfg.S1 () .blue_circle .blue) ∧
+    -- σ_aS reverses: circle > blue
+    (σ_aS_cfg.S1 () .blue_circle .circle > σ_aS_cfg.S1 () .blue_circle .blue) :=
+  ⟨speaker_prefers_unique_color, σ_aU_blue_circ_tie,
+   σ_bS_blue_circ_reversal, σ_aS_blue_circ_reversal⟩
+
+-- ============================================================================
+-- §14. Verification
 -- ============================================================================
 
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/
@@ -575,6 +774,12 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
    `softmax ∘ L1`, extending the API without modifying RSAConfig. The
    softmax properties (positivity, sum-to-one, monotonicity) transfer
    directly from Core.RationalAction.
+
+6. **Model comparison**: All 4 speaker models instantiate the same RSAConfig
+   API with different `s1Score` and `meaning` choices. `rsa_predict` handles
+   most comparisons; the σ_aU tie requires manual score-equality proof
+   (exp/log don't cancel in action-oriented scoring). The capstone theorem
+   shows σ_bU uniquely predicts the blue_circle observation.
 -/
 
 end Phenomena.Reference.Studies.QingFranke2015
