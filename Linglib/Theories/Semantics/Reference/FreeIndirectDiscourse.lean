@@ -78,7 +78,13 @@ def resolveWorld (p : FIDProfile) (t : ContextTower (KContext W E P T)) : W :=
 def resolvePosition (p : FIDProfile) (t : ContextTower (KContext W E P T)) : P :=
   (t.contextAt (p.positionDepth.resolve t.depth)).position
 
-/-- Resolve all coordinates into a full KContext. -/
+/-- Resolve all coordinates into a full KContext.
+
+    Addressee tracks `agentDepth` — it reads from the same tower layer as the
+    agent. This reflects the linguistic convention that addressee and agent are
+    co-determined by the same speech-act context: if you shift who the speaker
+    is, you also shift who they're speaking to. No attested phenomenon requires
+    independent depth control for addressee. -/
 def resolve (p : FIDProfile) (t : ContextTower (KContext W E P T)) :
     KContext W E P T :=
   { agent := p.resolveAgent t

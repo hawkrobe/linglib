@@ -152,6 +152,56 @@ theorem hpShift_changes_time (newTime : T) (expandedDomain : Set W)
     ((hpShift (E := E) (P := P) newTime expandedDomain).apply rc).time = newTime := rfl
 
 -- ════════════════════════════════════════════════════════════════
+-- § X-Marking Shift (Iatridou 2000)
+-- ════════════════════════════════════════════════════════════════
+
+/-- X-marking shift: the morphological "fake past" (Iatridou 2000) on
+    counterfactual conditionals, reanalyzed as a domain-expanding shift.
+
+    Iatridou's insight: subjunctive/past morphology on conditionals doesn't
+    locate the event in the past — it signals exclusion from the actual world.
+    Under branching time (Condoravdi 2002), this exclusion IS domain expansion:
+    the X-marked conditional quantifies over a wider set of historical
+    alternatives than the indicative, because the past morphology shifts
+    the evaluation time backward, expanding the branch set.
+
+    `xMarkingShift` combines backward time shift with domain expansion,
+    unifying Iatridou's morphological observation with Condoravdi's
+    semantic mechanism. The `hpShift` handles the same operation for
+    the historical present; `xMarkingShift` adds world shift (to a
+    counterfactual world) and labels as `.mood` rather than `.temporal`. -/
+def xMarkingShift (pastTime : T) (cfWorld : W) (expandedDomain : Set W) :
+    ContextShift (RichContext W E P T) where
+  apply := λ rc => {
+    base := { rc.base with time := pastTime, world := cfWorld }
+    domain := expandedDomain
+    evidence := rc.evidence
+  }
+  label := .mood
+
+/-- X-marking is domain-expanding when the provided domain is a superset. -/
+theorem xMarkingShift_expanding (pastTime : T) (cfWorld : W) (expandedDomain : Set W)
+    (h : ∀ (rc : RichContext W E P T), rc.domain ⊆ expandedDomain) :
+    DomainExpanding (xMarkingShift (E := E) (P := P) pastTime cfWorld expandedDomain) := by
+  intro rc
+  exact h rc
+
+@[simp] theorem xMarkingShift_changes_time (pastTime : T) (cfWorld : W)
+    (expandedDomain : Set W) (rc : RichContext W E P T) :
+    ((xMarkingShift (E := E) (P := P) pastTime cfWorld expandedDomain).apply rc).time =
+      pastTime := rfl
+
+@[simp] theorem xMarkingShift_changes_world (pastTime : T) (cfWorld : W)
+    (expandedDomain : Set W) (rc : RichContext W E P T) :
+    ((xMarkingShift (E := E) (P := P) pastTime cfWorld expandedDomain).apply rc).world =
+      cfWorld := rfl
+
+@[simp] theorem xMarkingShift_preserves_agent (pastTime : T) (cfWorld : W)
+    (expandedDomain : Set W) (rc : RichContext W E P T) :
+    ((xMarkingShift (E := E) (P := P) pastTime cfWorld expandedDomain).apply rc).agent =
+      rc.agent := rfl
+
+-- ════════════════════════════════════════════════════════════════
 -- § Evidential Shift
 -- ════════════════════════════════════════════════════════════════
 

@@ -114,7 +114,7 @@ def push (t : ContextTower C) (σ : ContextShift C) : ContextTower C :=
 
 @[simp] theorem contextAt_zero (t : ContextTower C) : t.contextAt 0 = t.origin := rfl
 
-theorem contextAt_depth (t : ContextTower C) :
+@[simp] theorem contextAt_depth (t : ContextTower C) :
     t.contextAt t.depth = t.innermost := by
   simp only [contextAt, innermost, depth, List.take_length]
 
@@ -123,7 +123,7 @@ theorem contextAt_depth (t : ContextTower C) :
 
 @[simp] theorem root_depth (c : C) : (root c).depth = 0 := rfl
 
-theorem push_depth (t : ContextTower C) (σ : ContextShift C) :
+@[simp] theorem push_depth (t : ContextTower C) (σ : ContextShift C) :
     (t.push σ).depth = t.depth + 1 := by
   simp [push, depth]
 
@@ -131,13 +131,9 @@ theorem push_depth (t : ContextTower C) (σ : ContextShift C) :
   simp [root, contextAt]
 
 /-- Pushing a shift updates the innermost context. -/
-theorem push_innermost (t : ContextTower C) (σ : ContextShift C) :
+@[simp] theorem push_innermost (t : ContextTower C) (σ : ContextShift C) :
     (t.push σ).innermost = σ.apply t.innermost := by
   simp only [push, innermost, List.foldl_append, List.foldl_cons, List.foldl_nil]
-
-/-- In a root tower, all depths return the origin. -/
-theorem root_contextAt_eq (c : C) (k : ℕ) : (root c).contextAt k = c := by
-  simp [root, contextAt]
 
 end ContextTower
 
