@@ -172,4 +172,148 @@ def muchManyData : MuchManyDistribution :=
   { much_with_cum := true
   , many_with_qua := true }
 
+-- ════════════════════════════════════════════════════
+-- § 6. Measured Domain (§3.4)
+-- ════════════════════════════════════════════════════
+
+/-- What is actually measured in a comparative — the ontological domain
+    whose mereological structure determines available dimensions.
+
+    Wellwood's key §3.4 insight: dimension type (intensive vs extensive)
+    tracks the measured domain, not lexical category. GAs like `hot` and
+    `hard` measure states (intensive), while GAs like `full` and `heavy`
+    measure entities (extensive). Nouns like `heat` and `firmness` measure
+    states (intensive), while `coffee` and `plastic` measure entities
+    (extensive). -/
+inductive MeasuredDomain where
+  | entity  -- physical objects (coffee, plastic, glass)
+  | event   -- events/processes (driving, singing)
+  | state   -- states (heat, hardness, speed, loudness)
+  deriving DecidableEq, BEq, Repr
+
+-- ════════════════════════════════════════════════════
+-- § 7. Dimension Reversal Data (§3.4)
+-- ════════════════════════════════════════════════════
+
+/-- Dimension reversal datum: a comparative form paired with its
+    lexical category, available dimension, and what's actually measured.
+
+    The key empirical claim (§3.4, p. 85–87): changing the expression
+    changes the measured domain, and available dimensions follow from
+    the measured domain, not from the syntactic category.
+
+    - (82): GA `hotter`/`harder` — measures states → intensive
+    - (83): Noun `more coffee`/`more plastic` — measures entities → extensive
+    - (84): GA `fuller`/`heavier` — measures entities → extensive (reversal!)
+    - (85): Noun `more heat`/`more firmness` — measures states → intensive (reversal!)
+    - (86–89): Verbal/adverbal parallels -/
+structure DimensionReversalDatum where
+  form : String
+  category : LexCat
+  dimensionName : String
+  measuredDomain : MeasuredDomain
+  /-- Is the dimension intensive (state-measuring) rather than extensive? -/
+  intensive : Bool
+  deriving Repr
+
+/-- (82a): "This coffee is hotter than that coffee is." — TEMPERATURE, *VOLUME.
+    GA measuring states → intensive. -/
+def hotterDatum : DimensionReversalDatum :=
+  { form := "hotter", category := .gradableAdj, dimensionName := "temperature"
+  , measuredDomain := .state, intensive := true }
+
+/-- (82b): "This plastic is harder than that plastic is." — HARDNESS, *WEIGHT.
+    GA measuring states → intensive. -/
+def harderDatum : DimensionReversalDatum :=
+  { form := "harder", category := .gradableAdj, dimensionName := "hardness"
+  , measuredDomain := .state, intensive := true }
+
+/-- (83a): "Al has more coffee than Bill does." — *TEMPERATURE, VOLUME.
+    Mass noun measuring entities → extensive. -/
+def moreCoffeeDatum : DimensionReversalDatum :=
+  { form := "more coffee", category := .massNoun, dimensionName := "volume"
+  , measuredDomain := .entity, intensive := false }
+
+/-- (83b): "Al has more plastic than Bill does." — *HARDNESS, WEIGHT.
+    Mass noun measuring entities → extensive. -/
+def morePlasticDatum : DimensionReversalDatum :=
+  { form := "more plastic", category := .massNoun, dimensionName := "weight"
+  , measuredDomain := .entity, intensive := false }
+
+/-- (84a): "This glass is fuller than that glass is." — *TEMPERATURE, VOLUME.
+    GA measuring entities (via container contents) → extensive.
+    **Reversal**: GA but extensive, because measured domain is entity. -/
+def fullerDatum : DimensionReversalDatum :=
+  { form := "fuller", category := .gradableAdj, dimensionName := "volume"
+  , measuredDomain := .entity, intensive := false }
+
+/-- (84b): "This plastic is heavier than that plastic is." — *HARDNESS, WEIGHT.
+    GA measuring entities → extensive.
+    **Reversal**: GA but extensive, because measured domain is entity. -/
+def heavierDatum : DimensionReversalDatum :=
+  { form := "heavier", category := .gradableAdj, dimensionName := "weight"
+  , measuredDomain := .entity, intensive := false }
+
+/-- (85a): "This rock has more heat than that one does." — TEMPERATURE, *VOLUME.
+    Mass noun measuring states → intensive.
+    **Reversal**: noun but intensive, because measured domain is state. -/
+def moreHeatDatum : DimensionReversalDatum :=
+  { form := "more heat", category := .massNoun, dimensionName := "temperature"
+  , measuredDomain := .state, intensive := true }
+
+/-- (85b): "This mattress has more firmness than that one does." — HARDNESS, *WEIGHT.
+    Mass noun measuring states → intensive.
+    **Reversal**: noun but intensive, because measured domain is state. -/
+def moreFirmnessDatum : DimensionReversalDatum :=
+  { form := "more firmness", category := .massNoun, dimensionName := "hardness"
+  , measuredDomain := .state, intensive := true }
+
+/-- (89a): "Al sped up more than Peter did." — SPEED, *DISTANCE.
+    Atelic VP measuring states (speed) → intensive.
+    **Reversal**: verb but intensive, because measured domain is state. -/
+def spedUpMoreDatum : DimensionReversalDatum :=
+  { form := "sped up more", category := .atelicVP, dimensionName := "speed"
+  , measuredDomain := .state, intensive := true }
+
+/-- (87a): "Al drove more than Peter did." — *SPEED, DISTANCE.
+    Atelic VP measuring events → extensive. -/
+def droveMoreDatum : DimensionReversalDatum :=
+  { form := "drove more", category := .atelicVP, dimensionName := "distance"
+  , measuredDomain := .event, intensive := false }
+
+/-- All dimension reversal data from §3.4. -/
+def dimensionReversalData : List DimensionReversalDatum :=
+  [ hotterDatum, harderDatum, moreCoffeeDatum, morePlasticDatum
+  , fullerDatum, heavierDatum, moreHeatDatum, moreFirmnessDatum
+  , spedUpMoreDatum, droveMoreDatum ]
+
+-- ════════════════════════════════════════════════════
+-- § 8. State Modification Data (§3.2, §3.5)
+-- ════════════════════════════════════════════════════
+
+/-- State modification datum: an adjective with a modifier that applies to
+    the state argument, illustrating that states (like events) support
+    predicate modification via conjunction (§3.2, p. 81; §3.5, p. 88).
+
+    "happy in the morning" = ∃s. happy(s) ∧ Holder(x, s) ∧ in-the-morning(s)
+
+    This parallels Davidson's event modification: states are eventualities
+    of sort `.state`, so `EventModifier` applies to them. -/
+structure StateModificationDatum where
+  adjective : String
+  modifier : String
+  /-- Full modified form -/
+  form : String
+  deriving Repr
+
+/-- "happy in the morning" — temporal modifier on a state (§3.5). -/
+def happyMorningDatum : StateModificationDatum :=
+  { adjective := "happy", modifier := "in the morning"
+  , form := "happy in the morning" }
+
+/-- "patient with Mary on the playground" — multiple modifiers on a state (§3.5). -/
+def patientPlaygroundDatum : StateModificationDatum :=
+  { adjective := "patient", modifier := "with Mary on the playground"
+  , form := "patient with Mary on the playground" }
+
 end Phenomena.Gradability.Wellwood2015

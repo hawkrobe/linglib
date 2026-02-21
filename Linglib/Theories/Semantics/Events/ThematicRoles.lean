@@ -227,4 +227,51 @@ theorem modify_assoc {Time : Type*} [LE Time]
   exact propext ⟨λ ⟨⟨hp, hm1⟩, hm2⟩ => ⟨hp, hm1, hm2⟩,
                 λ ⟨hp, hm1, hm2⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
+-- ════════════════════════════════════════════════════
+-- § 9. Stative Logical Forms (Wellwood 2015, §3.2)
+-- ════════════════════════════════════════════════════
+
+/-- Neo-Davidsonian logical form for a stative predicate with a holder:
+    "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s)
+
+    Parallel to `intransitiveLogicalForm` but using `holder` instead of
+    `agent`, reflecting that states select for holders, not agents
+    (Parsons 1990). Wellwood (2015, §3.2, p. 81): gradable adjectives
+    predicate of states with mereological structure.
+
+    Note: `EventModifier` applies to states since states are events
+    (of sort `.state`). -/
+def stativeLogicalForm {Entity Time : Type*} [LE Time]
+    (P : EvPred Time) (frame : ThematicFrame Entity Time)
+    (x : Entity) : Prop :=
+  ∃ s : Ev Time, P s ∧ frame.holder x s
+
+/-- Modified stative logical form (Wellwood 2015, §3.5):
+    "x is happy in the morning" ↦ ∃s. P(s) ∧ Holder(x, s) ∧ M(s)
+
+    State modification is event modification applied to states:
+    the modifier M restricts the state variable via conjunction,
+    exactly as adverbial modifiers restrict event variables in
+    Davidson (1967). -/
+def modifiedStativeLogicalForm {Entity Time : Type*} [LE Time]
+    (P : EvPred Time) (frame : ThematicFrame Entity Time)
+    (x : Entity) (M : EventModifier Time) : Prop :=
+  ∃ s : Ev Time, P s ∧ frame.holder x s ∧ M s
+
+/-- Modified stative = stative of modified predicate (Predicate Modification):
+    `modifiedStativeLogicalForm P frame x M ↔ stativeLogicalForm (modify P M) frame x`
+
+    This makes explicit that state modification is an instance of
+    Davidson's conjunction-based event modification: modifying the state
+    predicate P by M and then existentially closing is the same as
+    existentially closing P ∧ Holder ∧ M. -/
+theorem modified_stative_is_pm {Entity Time : Type*} [LE Time]
+    (P : EvPred Time) (frame : ThematicFrame Entity Time)
+    (x : Entity) (M : EventModifier Time) :
+    modifiedStativeLogicalForm P frame x M ↔
+      stativeLogicalForm (modify P M) frame x := by
+  simp only [modifiedStativeLogicalForm, stativeLogicalForm, modify]
+  exact ⟨fun ⟨s, hp, hh, hm⟩ => ⟨s, ⟨hp, hm⟩, hh⟩,
+         fun ⟨s, ⟨hp, hm⟩, hh⟩ => ⟨s, hp, hh, hm⟩⟩
+
 end Semantics.Events.ThematicRoles

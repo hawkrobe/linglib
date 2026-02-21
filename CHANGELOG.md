@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.225.7] - 2026-02-21
+
+### Added
+- **`Theories/Semantics/Lexical/Degree.lean`** (new): Wellwood (2015) §2–3 compositional comparative derivation — `ComparativeDomain` (.nominal/.verbal/.adjectival), `comparativeTruth` (universal truth condition template parameterized by role/extract/μ), three instantiations (`nominalComparative`, `verbalComparative`, `adjectivalComparative`), `comparativeTruth_max` (maximality reduction), bridges to `statesComparativeSem` (CSW) and `comparativeSem` (Rett/Schwarzschild), `DimensionallyRestricted` connection (`state_domain_restricted`, `not_restricted_of_disagreement`)
+- **`Theories/Semantics/Events/ThematicRoles.lean`**: `stativeLogicalForm` (∃s. P(s) ∧ Holder(x,s)), `modifiedStativeLogicalForm` (∃s. P(s) ∧ Holder(x,s) ∧ M(s)), `modified_stative_is_pm` (modified stative ↔ stative of modified predicate via PM)
+- **`Phenomena/Gradability/Studies/Wellwood2015/Data.lean`**: `MeasuredDomain` (.entity/.event/.state), `DimensionReversalDatum` (10 data points from §3.4), `StateModificationDatum` (2 examples from §3.5)
+- **`Phenomena/Gradability/Studies/Wellwood2015/Bridge.lean`**: `measuredDomainRestricted` prediction function, 10 per-datum dimension reversal bridge theorems (all rfl), `state_mod_pm_bridge` connecting to `modified_stative_is_pm`
+
 ## [0.225.6] - 2026-02-21
 
 ### Changed

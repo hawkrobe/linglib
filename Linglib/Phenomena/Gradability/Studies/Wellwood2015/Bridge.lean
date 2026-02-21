@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Gradability.Studies.Wellwood2015.Data
 import Linglib.Theories.Semantics.Lexical.Measurement
+import Linglib.Theories.Semantics.Events.ThematicRoles
 
 /-!
 # Wellwood (2015): Theory–Data Bridge
@@ -154,5 +155,96 @@ theorem atelicVP_open_scale :
 
 theorem telicVP_closed_scale :
     (lexCatToStatus .telicVP).toBoundedness = .closed := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Dimension Reversal Bridges (§3.4)
+-- ════════════════════════════════════════════════════
+
+/-- Dimension type tracks measured domain, not lexical category.
+    States are dimensionally restricted (single dimension available);
+    entities and events are not (multiple dimensions available).
+
+    This is the prediction function for Wellwood's §3.4 argument:
+    - `hot`/`hard` (GA) and `heat`/`firmness` (noun) both access
+      intensive dimensions because both measure states.
+    - `full`/`heavy` (GA) and `coffee`/`plastic` (noun) both access
+      extensive dimensions because both measure entities.
+    - The syntactic category is irrelevant to dimension type. -/
+def measuredDomainRestricted : MeasuredDomain → Bool
+  | .state  => true
+  | .entity => false
+  | .event  => false
+
+/-- (82a) "hotter": GA measuring states → dimensionally restricted. ✓ -/
+theorem hotter_restricted :
+    measuredDomainRestricted hotterDatum.measuredDomain = hotterDatum.intensive := rfl
+
+/-- (82b) "harder": GA measuring states → dimensionally restricted. ✓ -/
+theorem harder_restricted :
+    measuredDomainRestricted harderDatum.measuredDomain = harderDatum.intensive := rfl
+
+/-- (83a) "more coffee": mass noun measuring entities → not restricted. ✓ -/
+theorem moreCoffee_not_restricted :
+    measuredDomainRestricted moreCoffeeDatum.measuredDomain = moreCoffeeDatum.intensive := rfl
+
+/-- (83b) "more plastic": mass noun measuring entities → not restricted. ✓ -/
+theorem morePlastic_not_restricted :
+    measuredDomainRestricted morePlasticDatum.measuredDomain = morePlasticDatum.intensive := rfl
+
+/-- (84a) "fuller": GA measuring entities → NOT restricted.
+    **Reversal**: GA but extensive, because measured domain is entity. ✓ -/
+theorem fuller_not_restricted :
+    measuredDomainRestricted fullerDatum.measuredDomain = fullerDatum.intensive := rfl
+
+/-- (84b) "heavier": GA measuring entities → NOT restricted.
+    **Reversal**: GA but extensive, because measured domain is entity. ✓ -/
+theorem heavier_not_restricted :
+    measuredDomainRestricted heavierDatum.measuredDomain = heavierDatum.intensive := rfl
+
+/-- (85a) "more heat": mass noun measuring states → restricted.
+    **Reversal**: noun but intensive, because measured domain is state. ✓ -/
+theorem moreHeat_restricted :
+    measuredDomainRestricted moreHeatDatum.measuredDomain = moreHeatDatum.intensive := rfl
+
+/-- (85b) "more firmness": mass noun measuring states → restricted.
+    **Reversal**: noun but intensive, because measured domain is state. ✓ -/
+theorem moreFirmness_restricted :
+    measuredDomainRestricted moreFirmnessDatum.measuredDomain = moreFirmnessDatum.intensive := rfl
+
+/-- (89a) "sped up more": atelic VP measuring states → restricted.
+    **Reversal**: verb but intensive, because measured domain is state. ✓ -/
+theorem spedUpMore_restricted :
+    measuredDomainRestricted spedUpMoreDatum.measuredDomain = spedUpMoreDatum.intensive := rfl
+
+/-- (87a) "drove more": atelic VP measuring events → not restricted. ✓ -/
+theorem droveMore_not_restricted :
+    measuredDomainRestricted droveMoreDatum.measuredDomain = droveMoreDatum.intensive := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7. State Modification Bridge (§3.5)
+-- ════════════════════════════════════════════════════
+
+open Semantics.Events (Ev EvPred)
+open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
+  modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
+
+/-- State modification data (§3.5) confirms that stative predicates
+    support event modification via conjunction (Predicate Modification),
+    just as dynamic predicates do.
+
+    The PM equivalence `modified_stative_is_pm` from ThematicRoles grounds
+    this observation: "happy in the morning" has logical form
+    ∃s. happy(s) ∧ Holder(x,s) ∧ in-the-morning(s), which is equivalently
+    `stativeLogicalForm (modify happy in-the-morning) frame x`.
+
+    This is the bridge between the empirical observation (states can be
+    modified) and the theoretical prediction (states are eventualities,
+    so Davidson's event modification applies to them). -/
+theorem state_mod_pm_bridge {Entity Time : Type*} [LE Time]
+    (P : EvPred Time) (frame : ThematicFrame Entity Time)
+    (x : Entity) (M : EventModifier Time) :
+    modifiedStativeLogicalForm P frame x M ↔
+      stativeLogicalForm (modify P M) frame x :=
+  modified_stative_is_pm P frame x M
 
 end Phenomena.Gradability.Wellwood2015.Bridge
