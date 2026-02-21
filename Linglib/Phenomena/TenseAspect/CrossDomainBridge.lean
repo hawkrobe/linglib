@@ -1,4 +1,3 @@
-import Linglib.Core.AtomicDistributivity
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Fragments.Mandarin.AspectComparison
 
@@ -24,7 +23,6 @@ namespace Phenomena.TenseAspect.CrossDomainBridge
 
 open Semantics.Lexical.Verb.Aspect
 open Fragments.Mandarin.AspectComparison
-open Core.AtomicDistributivity
 open Core.Time
 
 /-- le is temporally licensed for a VendlerClass iff the class is dynamic:

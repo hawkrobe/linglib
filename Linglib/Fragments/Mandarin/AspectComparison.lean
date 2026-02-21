@@ -1,4 +1,4 @@
-import Linglib.Core.AtomicDistributivity
+import Linglib.Core.Time
 
 /-!
 # Mandarin Cross-Domain Particles (Zhao 2026, Ch. 6) @cite{zhao-2026}
@@ -18,7 +18,7 @@ guo has no such presupposition.
 
 ## Cross-Module Connections
 
-- `Core.AtomicDistributivity`: ATOM-DIST and antiAtomDistLicensed
+- `Core.Time`: ATOM-DIST and antiAtomDistLicensed
 - `Fragments.Mandarin.Particles`: existing Mandarin particle pattern
 
 ## References
@@ -29,7 +29,6 @@ guo has no such presupposition.
 
 namespace Fragments.Mandarin.AspectComparison
 
-open Core.AtomicDistributivity
 open Core.Time
 
 -- ════════════════════════════════════════════════════
