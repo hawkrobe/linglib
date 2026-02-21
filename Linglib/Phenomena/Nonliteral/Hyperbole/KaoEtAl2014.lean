@@ -1,12 +1,21 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Tactics.RSAPredict
 
 /-!
 # Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
 
 "Nonliteral understanding of number words"
 PNAS 111(33): 12002-12007
+
+## Experimental Design
+
+Participants heard price utterances ("It cost $X") about items with known
+typical prices (electric kettles, laptops, watches). Three experiments
+measured: (3a) price priors, (3b) affect priors conditional on price,
+(3c) listener interpretations of literal, hyperbolic, and round/sharp
+utterances.
 
 ## The Model
 
@@ -26,16 +35,63 @@ L1 marginalizes over goals:
 
 Price semantics is grounded in `HasDegree`. The literal meaning of
 "fifty dollars" is `numeralExact 50 price` — the price equals $50.
+
+## Qualitative Findings
+
+Any model of hyperbole should account for these 6 findings:
+
+| # | Finding | Theorem |
+|---|---------|---------|
+| 1 | At the inferred price, the listener infers notable affect | `hyperbole_affect_at_modal` |
+| 2 | Marginal notable affect > no affect for hyperbolic utterances | `hyperbole_affect` |
+| 3 | Listener infers speaker's QUD is valence, not price | `hyperbole_qud` |
+| 4 | Literal utterance → listener infers correct price | `literal_correct` |
+| 5 | Literal utterance is not interpreted hyperbolically | `literal_not_hyperbolic` |
+| 6 | Sharp numbers interpreted more precisely than round | `halo_sharp_500` |
 -/
 
-namespace RSA.KaoEtAl2014_Hyperbole
+set_option autoImplicit false
+
+namespace Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 
 open Core.Scale (HasDegree)
 open Semantics.Lexical.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
 open Real (exp log exp_pos)
 
 -- ============================================================================
--- §1. Domain Types
+-- §1. Empirical Findings
+-- ============================================================================
+
+/-- The 6 qualitative findings from Kao et al. (2014) Experiments 3a–3c.
+    Each model of hyperbole should formalize and prove all 6 findings. -/
+inductive Finding where
+  /-- Hearing "$10,000" for a kettle, the listener infers notable affect
+      at the modal price (the most likely actual price under the posterior). -/
+  | affect_at_modal
+  /-- Marginalizing over all prices, notable affect dominates for "$10,000":
+      Σ_s P(s, notable | "$10K") > Σ_s P(s, none | "$10K"). -/
+  | affect_marginal
+  /-- The listener infers the speaker's communicative goal (QUD) is to
+      express valence/affect rather than to communicate exact price. -/
+  | qud_valence
+  /-- Hearing "$50" for a $50 kettle, the listener infers the correct price:
+      P($50 | "$50") > P($500 | "$50"). -/
+  | literal_correct
+  /-- Literal utterances are not interpreted hyperbolically:
+      P($50 | "$50") > P($10K | "$50"). -/
+  | literal_not_hyperbolic
+  /-- Sharp numbers are interpreted more precisely than round numbers:
+      P(exact match | "$501") > P(exact match | "$500"). -/
+  | halo_sharp_precise
+  deriving DecidableEq, BEq, Repr
+
+/-- All findings from the paper. -/
+def findings : List Finding :=
+  [.affect_at_modal, .affect_marginal, .qud_valence,
+   .literal_correct, .literal_not_hyperbolic, .halo_sharp_precise]
+
+-- ============================================================================
+-- §2. Domain Types
 -- ============================================================================
 
 /-- Item types (Experiments 3a/3b): electric kettles, laptops, watches. -/
@@ -212,4 +268,109 @@ noncomputable def cfg (item : Item) : RSA.RSAConfig PriceState World where
 
 noncomputable abbrev kettleCfg := cfg .electricKettle
 
-end RSA.KaoEtAl2014_Hyperbole
+-- ============================================================================
+-- §7. Bridge Theorems
+-- ============================================================================
+
+-- Hyperbole: "$10,000" for an electric kettle
+
+set_option maxHeartbeats 400000 in
+/-- At the modal price ($10K), notable affect > no affect.
+    The speaker saying "$10K" about a kettle signals frustration. -/
+theorem hyperbole_affect_at_modal :
+    kettleCfg.L1 .s10000 (.s10000, .notable) >
+    kettleCfg.L1 .s10000 (.s10000, .none) := by
+  rsa_predict
+
+set_option maxHeartbeats 400000 in
+/-- Marginal: notable affect dominates overall for "$10K".
+    Σ_s L1(s, notable | "$10K") > Σ_s L1(s, none | "$10K"). -/
+theorem hyperbole_affect :
+    kettleCfg.L1 .s10000 (.s50, .notable) + kettleCfg.L1 .s10000 (.s51, .notable) +
+    kettleCfg.L1 .s10000 (.s500, .notable) + kettleCfg.L1 .s10000 (.s501, .notable) +
+    kettleCfg.L1 .s10000 (.s1000, .notable) + kettleCfg.L1 .s10000 (.s1001, .notable) +
+    kettleCfg.L1 .s10000 (.s5000, .notable) + kettleCfg.L1 .s10000 (.s5001, .notable) +
+    kettleCfg.L1 .s10000 (.s10000, .notable) + kettleCfg.L1 .s10000 (.s10001, .notable) >
+    kettleCfg.L1 .s10000 (.s50, .none) + kettleCfg.L1 .s10000 (.s51, .none) +
+    kettleCfg.L1 .s10000 (.s500, .none) + kettleCfg.L1 .s10000 (.s501, .none) +
+    kettleCfg.L1 .s10000 (.s1000, .none) + kettleCfg.L1 .s10000 (.s1001, .none) +
+    kettleCfg.L1 .s10000 (.s5000, .none) + kettleCfg.L1 .s10000 (.s5001, .none) +
+    kettleCfg.L1 .s10000 (.s10000, .none) + kettleCfg.L1 .s10000 (.s10001, .none) := by
+  rsa_predict
+
+set_option maxHeartbeats 400000 in
+/-- The listener infers valence QUD over price QUD. -/
+theorem hyperbole_qud :
+    kettleCfg.L1_latent .s10000 .valence >
+    kettleCfg.L1_latent .s10000 .price := by
+  rsa_predict
+
+-- Literal: "$50" for an electric kettle
+
+set_option maxHeartbeats 400000 in
+/-- Hearing "$50", the listener infers $50 > $500. -/
+theorem literal_correct :
+    kettleCfg.L1 .s50 (.s50, .none) >
+    kettleCfg.L1 .s50 (.s500, .none) := by
+  rsa_predict
+
+set_option maxHeartbeats 400000 in
+/-- Literal utterances are not interpreted hyperbolically. -/
+theorem literal_not_hyperbolic :
+    kettleCfg.L1 .s50 (.s50, .none) >
+    kettleCfg.L1 .s50 (.s10000, .none) := by
+  rsa_predict
+
+-- Pragmatic halo: round vs sharp numbers
+
+set_option maxHeartbeats 400000 in
+/-- Sharp "$501" is interpreted more precisely than round "$500". -/
+theorem halo_sharp_500 :
+    kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
+    kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) := by
+  rsa_predict
+
+-- ============================================================================
+-- §8. Verification: every finding from the paper is accounted for
+-- ============================================================================
+
+/-- Map each empirical finding to the RSA model prediction that accounts for it. -/
+def formalize : Finding → Prop
+  | .affect_at_modal =>
+      kettleCfg.L1 .s10000 (.s10000, .notable) >
+      kettleCfg.L1 .s10000 (.s10000, .none)
+  | .affect_marginal =>
+      kettleCfg.L1 .s10000 (.s50, .notable) + kettleCfg.L1 .s10000 (.s51, .notable) +
+      kettleCfg.L1 .s10000 (.s500, .notable) + kettleCfg.L1 .s10000 (.s501, .notable) +
+      kettleCfg.L1 .s10000 (.s1000, .notable) + kettleCfg.L1 .s10000 (.s1001, .notable) +
+      kettleCfg.L1 .s10000 (.s5000, .notable) + kettleCfg.L1 .s10000 (.s5001, .notable) +
+      kettleCfg.L1 .s10000 (.s10000, .notable) + kettleCfg.L1 .s10000 (.s10001, .notable) >
+      kettleCfg.L1 .s10000 (.s50, .none) + kettleCfg.L1 .s10000 (.s51, .none) +
+      kettleCfg.L1 .s10000 (.s500, .none) + kettleCfg.L1 .s10000 (.s501, .none) +
+      kettleCfg.L1 .s10000 (.s1000, .none) + kettleCfg.L1 .s10000 (.s1001, .none) +
+      kettleCfg.L1 .s10000 (.s5000, .none) + kettleCfg.L1 .s10000 (.s5001, .none) +
+      kettleCfg.L1 .s10000 (.s10000, .none) + kettleCfg.L1 .s10000 (.s10001, .none)
+  | .qud_valence =>
+      kettleCfg.L1_latent .s10000 .valence >
+      kettleCfg.L1_latent .s10000 .price
+  | .literal_correct =>
+      kettleCfg.L1 .s50 (.s50, .none) >
+      kettleCfg.L1 .s50 (.s500, .none)
+  | .literal_not_hyperbolic =>
+      kettleCfg.L1 .s50 (.s50, .none) >
+      kettleCfg.L1 .s50 (.s10000, .none)
+  | .halo_sharp_precise =>
+      kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
+      kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable)
+
+/-- The RSA model accounts for all 6 empirical findings from Kao et al. (2014). -/
+theorem all_findings_verified : ∀ f : Finding, formalize f := by
+  intro f; cases f
+  · exact hyperbole_affect_at_modal
+  · exact hyperbole_affect
+  · exact hyperbole_qud
+  · exact literal_correct
+  · exact literal_not_hyperbolic
+  · exact halo_sharp_500
+
+end Phenomena.Nonliteral.Hyperbole.KaoEtAl2014

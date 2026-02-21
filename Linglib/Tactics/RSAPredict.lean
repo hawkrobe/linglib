@@ -873,6 +873,25 @@ private def parseL1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := 
       else break
   return none
 
+/-- Extract RSA config and arguments from a policy expression.
+    Returns (cfg, l, w, u) where the expression is `cfg.S1 l w u`. -/
+private def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := do
+  -- Try to unfold to cfg.S1agent(l).policy w u
+  if let some (ra, w, u) := ← unfoldToPolicy e then
+    -- Check if ra is cfg.S1agent l
+    let mut raC := ra
+    for _ in List.range 5 do
+      let fn := raC.getAppFn
+      let args := raC.getAppArgs
+      if fn.isConstOf ``RSA.RSAConfig.S1agent && args.size ≥ 6 then
+        let cfg := args[4]!
+        let l := args[5]!
+        return some (cfg, l, w, u)
+      if let some ra' ← unfoldDefinition? raC then
+        raC := ra'.headBeta
+      else break
+  return none
+
 -- ============================================================================
 -- Main Tactic
 -- ============================================================================
@@ -891,6 +910,8 @@ private inductive GoalForm where
   | l1Latent (cfg u l₁ l₂ : Expr)
   /-- (ws₁.map (cfg.L1 u₁)).sum > (ws₂.map (cfg.L1 u₂)).sum (cross-utterance) -/
   | l1CrossUtterance (cfg u₁ : Expr) (ws₁ : Array Expr) (u₂ : Expr) (ws₂ : Array Expr)
+  /-- cfg.S1 l w u₁ > cfg.S1 l w u₂ -/
+  | s1Compare (cfg l w u₁ u₂ : Expr)
 
 /-- Try to unfold an expression to `cfg.L1_latent u l`. -/
 private def parseL1Latent (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
@@ -996,6 +1017,12 @@ private def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
       if ← isDefEq cfg cfg₂ then
         return .l1Latent cfg u l₁ l₂
 
+  -- Path B2: cfg.S1 l w u₁ > cfg.S1 l w u₂
+  if let some (cfg, l, w, u₁) ← parseS1Policy lhs then
+    if let some (cfg₂, _l₂, _w₂, u₂) ← parseS1Policy rhs then
+      if ← isDefEq cfg cfg₂ then
+        return .s1Compare cfg l w u₁ u₂
+
   -- Path C/D: sums of L1 terms
   if let some (cfg1, groups1) ← collectL1SummandsAnyU lhs then
     if let some (cfg2, groups2) ← collectL1SummandsAnyU rhs then
@@ -1019,6 +1046,7 @@ private def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
   throwError "rsa_predict: cannot parse goal. Expected one of:\n\
     • cfg.L1 u w₁ > cfg.L1 u w₂\n\
     • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
+    • cfg.S1 l w u₁ > cfg.S1 l w u₂\n\
     • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
     • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)"
 
@@ -1191,6 +1219,8 @@ private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit
     - `cfg.L1 u w₁ > cfg.L1 u w₂` — L1 world comparison
     - `¬(cfg.L1 u w₁ > cfg.L1 u w₂)` — L1 non-strict (implicature canceled)
     - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent inference
+    - `cfg.S1 l w u₁ > cfg.S1 l w u₂` — S1 speaker comparison
+    - `¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)` — S1 non-strict
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
     - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum -/
 elab "rsa_predict" : tactic => do
@@ -1237,7 +1267,33 @@ elab "rsa_predict" : tactic => do
       assignWithCastFallback goal proof
       logInfo m!"rsa_predict: ✓ proved via L1_not_gt_of_precomputed"
       return
-    | _ => throwError "rsa_predict: ¬(_ > _) only supported for L1 comparisons, got: {← ppExpr goalType}"
+    | .s1Compare cfg l w u₁ u₂ => do
+      logInfo m!"rsa_predict: parsed goal as ¬(S1 comparison)"
+      let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, _, _) ←
+        reifyS1Scores cfg
+      let lIdx ← findElemIdx allLElems l
+      let wIdx ← findElemIdx allWElems w
+      let u1Idx ← findElemIdx allUElems u₁
+      let u2Idx ← findElemIdx allUElems u₂
+      let nU := allUElems.size
+      let nW := allWElems.size
+      let idx1 := lIdx * nW * nU + wIdx * nU + u1Idx
+      let idx2 := lIdx * nW * nU + wIdx * nU + u2Idx
+      let s1_u1 := s1Bounds[idx1]!
+      let s1_u2 := s1Bounds[idx2]!
+      logInfo m!"rsa_predict: S1_score(u₁) ∈ [{s1_u1.lo}, {s1_u1.hi}]"
+      logInfo m!"rsa_predict: S1_score(u₂) ∈ [{s1_u2.lo}, {s1_u2.hi}]"
+      unless s1_u1.hi ≤ s1_u2.lo do
+        throwError "rsa_predict: cannot prove ¬(S1 u₁ > S1 u₂): u₁.hi = {s1_u1.hi} > u₂.lo = {s1_u2.lo}"
+      let leProof ← proveQLeq s1_u1.hi s1_u2.lo
+      let hi1Expr ← mkRatExpr s1_u1.hi
+      let lo2Expr ← mkRatExpr s1_u2.lo
+      let proof ← mkAppM ``RSA.Verified.S1_not_gt_of_precomputed
+        #[cfg, l, w, u₁, u₂, hi1Expr, lo2Expr, leProof]
+      assignWithCastFallback goal proof
+      logInfo m!"rsa_predict: ✓ proved via S1_not_gt_of_precomputed"
+      return
+    | _ => throwError "rsa_predict: ¬(_ > _) only supported for L1 and S1 comparisons, got: {← ppExpr goalType}"
 
   let fn := goalType.getAppFn
   let args := goalType.getAppArgs
@@ -1394,5 +1450,36 @@ elab "rsa_predict" : tactic => do
       #[cfg, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
     assignWithCastFallback goal proof
     logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed"
+
+  | .s1Compare cfg l w u₁ u₂ => do
+    logInfo m!"rsa_predict: parsed goal as S1 comparison"
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, _, _) ←
+      reifyS1Scores cfg
+
+    let lIdx ← findElemIdx allLElems l
+    let wIdx ← findElemIdx allWElems w
+    let u1Idx ← findElemIdx allUElems u₁
+    let u2Idx ← findElemIdx allUElems u₂
+
+    let nU := allUElems.size
+    let nW := allWElems.size
+    let idx1 := lIdx * nW * nU + wIdx * nU + u1Idx
+    let idx2 := lIdx * nW * nU + wIdx * nU + u2Idx
+    let s1_u1 := s1Bounds[idx1]!
+    let s1_u2 := s1Bounds[idx2]!
+
+    logInfo m!"rsa_predict: S1_score(u₁) ∈ [{s1_u1.lo}, {s1_u1.hi}]"
+    logInfo m!"rsa_predict: S1_score(u₂) ∈ [{s1_u2.lo}, {s1_u2.hi}]"
+
+    unless s1_u2.hi < s1_u1.lo do
+      throwError "rsa_predict: S1 scores not separated: hi₂ = {s1_u2.hi} ≥ lo₁ = {s1_u1.lo}"
+
+    let sepProof ← proveQSeparation s1_u2.hi s1_u1.lo
+    let hi2Expr ← mkRatExpr s1_u2.hi
+    let lo1Expr ← mkRatExpr s1_u1.lo
+    let proof ← mkAppM ``RSA.Verified.S1_gt_of_precomputed
+      #[cfg, l, w, u₁, u₂, hi2Expr, lo1Expr, sepProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via S1_gt_of_precomputed"
 
 end Linglib.Tactics

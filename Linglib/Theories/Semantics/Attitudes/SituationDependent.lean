@@ -124,7 +124,7 @@ def liftAccess {W Time E : Type*} (R : AgentAccessRel W E) : SitAccessRel W Time
 
     `sitBoxAt (liftAccess R) agent s sits (liftProp p)`
     is equivalent to
-    `boxAt R agent s.world (sits.map Situation.world) p`.
+    `boxAt R agent s.world (sits.map (·.world)) p`.
 
     This means code using the old world-only operators produces
     identical results when embedded in the situation framework. -/
@@ -132,7 +132,7 @@ theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
     (R : AgentAccessRel W E) (agent : E) (s : Situation W Time)
     (sits : List (Situation W Time)) (p : W → Bool) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) =
-    boxAt R agent s.world (sits.map Situation.world) p := by
+    boxAt R agent s.world (sits.map (·.world)) p := by
   simp only [sitBoxAt, boxAt, liftAccess, liftProp]
   induction sits with
   | nil => rfl
@@ -219,7 +219,7 @@ theorem liftDoxastic_holdsAt_eq {W Time E : Type*}
     (p : W → Bool) (s : Situation W Time)
     (sits : List (Situation W Time)) :
     (liftDoxastic V Time).holdsAt agent (liftProp p) s sits =
-    V.holdsAt agent p s.world (sits.map Situation.world) := by
+    V.holdsAt agent p s.world (sits.map (·.world)) := by
   simp only [SitDoxasticPredicate.holdsAt, DoxasticPredicate.holdsAt,
     liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_boxAt]
 

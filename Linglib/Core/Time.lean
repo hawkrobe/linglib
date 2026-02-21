@@ -1,7 +1,10 @@
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Scale
+import Linglib.Core.Situation
 import Linglib.Tactics.OntSort
+
+export Core (Situation)
 
 /-!
 # Theory-Neutral Temporal Infrastructure
@@ -215,60 +218,8 @@ end Interval
 abbrev DenseTime (Time : Type*) [LinearOrder Time] := DenselyOrdered Time
 
 
-/--
-A situation is a part of a world at a time.
-
-Following Kratzer's situation semantics:
-- Situations are "slices" of possible worlds
-- They have both spatial and temporal extent
-- They can be minimal witnesses for propositions
-
-We model situations as world-time pairs, abstracting from spatial extent.
--/
-@[ont_sort] structure Situation (W Time : Type*) where
-  /-- The world this situation is part of -/
-  world : W
-  /-- The temporal coordinate of the situation -/
-  time : Time
-  deriving Repr
-
-namespace Situation
-
-variable {W Time : Type*}
-
-/-- Temporal trace: extract the time of a situation -/
-@[simp]
-def τ (s : Situation W Time) : Time := s.time
-
-/-- World of a situation -/
-@[simp]
-def w (s : Situation W Time) : W := s.world
-
-/-- Create a situation from world and time -/
-def mk' (world : W) (time : Time) : Situation W Time :=
-  { world := world, time := time }
-
-/-- Situations at the same world -/
-def sameWorld (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.world = s₂.world
-
-/-- Situations at the same time -/
-def sameTime (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time = s₂.time
-
-/-- s₁ temporally precedes s₂ -/
-def before [LT Time] (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time < s₂.time
-
-/-- s₁ temporally follows s₂ -/
-def after [LT Time] (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time > s₂.time
-
-/-- s₁ is contemporaneous with s₂ -/
-def contemporaneous (s₁ s₂ : Situation W Time) : Prop :=
-  s₁.time = s₂.time
-
-end Situation
+-- Situation is now defined in Core/Ontology.lean (Core.Situation).
+-- Re-exported via `export Core (Situation)` above.
 
 
 -- ════════════════════════════════════════════════════

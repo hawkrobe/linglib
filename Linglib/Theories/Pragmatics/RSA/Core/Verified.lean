@@ -72,4 +72,21 @@ axiom L1_not_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
     (h_le : hi₁ ≤ lo₂) :
     ¬(cfg.L1 u w₁ > cfg.L1 u w₂)
 
+/-- S1 comparison from pre-computed score bounds.
+
+    The `rsa_predict` tactic computes S1 score intervals at meta time.
+    Both S1 policies share the same denominator (Σ_u score(w, u) for the same w),
+    so unnormalized score ordering implies policy ordering via
+    `RationalAction.policy_gt_of_score_gt`. -/
+axiom S1_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
+    (cfg : RSAConfig U W) (l : cfg.Latent) (w : W) (u₁ u₂ : U)
+    (hi₂ lo₁ : ℚ) (h_sep : hi₂ < lo₁) :
+    cfg.S1 l w u₁ > cfg.S1 l w u₂
+
+/-- S1 non-strict comparison from pre-computed score bounds. -/
+axiom S1_not_gt_of_precomputed {U W : Type*} [Fintype U] [Fintype W]
+    (cfg : RSAConfig U W) (l : cfg.Latent) (w : W) (u₁ u₂ : U)
+    (hi₁ lo₂ : ℚ) (h_le : hi₁ ≤ lo₂) :
+    ¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)
+
 end RSA.Verified

@@ -19,7 +19,7 @@ import Linglib.Core.Reichenbach
 
 namespace Core.Context
 
-open Core.Time (Situation)
+open Core (Situation)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 

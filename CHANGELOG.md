@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.80] - 2026-02-20
+
+### Changed
+- **Kao et al. (2014) Hyperbole consolidation**: Merge three files (Theories implementation + Phenomena data + Phenomena bridge) into single `Phenomena/Nonliteral/Hyperbole/KaoEtAl2014.lean`; delete `Theories/Pragmatics/RSA/Implementations/KaoEtAl2014_Hyperbole.lean` and `Studies/KaoEtAl2014.lean`; all 6 `rsa_predict` proofs preserved
+
 ## [0.224.79] - 2026-02-20
 
 ### Added
