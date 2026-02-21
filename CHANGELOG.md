@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.224.79] - 2026-02-20
+
+### Added
+- **FG2012 parameterized context types**: `ContextSpec` (4-boolean distractor overlap), `mkRefGame` constructor, all 7 FG2012 context types (1/1, 1/2, 1/3, 2/2a, 2/2b, 2/3, 3/3) with `Obj3`/`Dim2Feature` types; 9 L1 predictions proved via `rsa_predict` covering pragmatic narrowing (2/2b), symmetric non-narrowing (1/2), uniform informativity (1/3), and featural indistinguishability (2/2a, 2/3, 3/3)
+
+## [0.224.78] - 2026-02-20
+
+### Added
+- **Percus (2000) situation variable constraints**: `Theories/Semantics/Intensional/Situations/Percus.lean` — `SituationAssignment` (specializes `VarAssignment` to `Situation W Time`), `interpSitVar`, `updateSitVar`, `sitLambdaAbs`, `believeSit` (attitude verb with situation binding), `PredicateBinding`, `genXWellFormed` (Generalization X well-formedness filter)
+- **Percus (2000) empirical predictions**: `Phenomena/Reference/Studies/Percus2000.lean` — end-to-end chain from `Core.Situation` through situation assignments to concrete de re / de dicto predictions; two-world model with `isCanadian`, `isBrother`, `isSpy` predicates; Example 1 ("Mary believes John is Canadian") shows Gen X correctly blocks de re reading of main predicate; Example 2 ("Mary believes my brother is a spy") shows Gen X allows de re for NP restrictors while blocking mixed pred-de-re reading; 14 `rfl` theorems verifying truth values and Gen X compliance
+
 ## [0.224.77] - 2026-02-20
 
 ### Added
@@ -7,6 +18,7 @@
 
 ### Changed
 - **Merge `UtteranceContext` into `Context`**: `KContext.toReichenbachFrame` replaces standalone `UtteranceContext`; deleted `Core/UtteranceContext.lean`
+- **Extract `Core/Situation.lean`**: `Situation` (World × Time) moved from `Core/Time.lean` to its own root file (`Core.Situation`); `Core/Time.lean` imports and re-exports it; 4 downstream `open` statements updated
 
 ## [0.224.76] - 2026-02-20
 
