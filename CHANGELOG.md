@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.224.92] - 2026-02-20
+
+### Changed
+- **Move K&S-specific machinery from `Core/InformationStructure.lean` to `Theories/Semantics/Focus/KratzerSelkirk2020.lean`**: `ISFeature`, `isNew`, `applyFoC`, `foc_preserves_oValue`, `isGiven`, `applyG`, `g_preserves_oValue`, `g_preserves_aValue`, `foc_g_exclusion` — all K&S §8 theory. `DiscourseStatus` stays in Core (used broadly as a descriptive type by Arnold et al. 2000, BackgroundedIslands, BiasedPQ)
+
 ## [0.224.91] - 2026-02-20
 
 ### Removed
