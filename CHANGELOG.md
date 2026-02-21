@@ -13,8 +13,10 @@
 ## [0.224.78] - 2026-02-20
 
 ### Added
-- **Percus (2000) situation variable constraints**: `Theories/Semantics/Intensional/Situations/Percus.lean` — `SituationAssignment` (specializes `VarAssignment` to `Situation W Time`), `interpSitVar`, `updateSitVar`, `sitLambdaAbs`, `believeSit` (attitude verb with situation binding), `PredicateBinding`, `genXWellFormed` (Generalization X well-formedness filter)
-- **Percus (2000) empirical predictions**: `Phenomena/Reference/Studies/Percus2000.lean` — end-to-end chain from `Core.Situation` through situation assignments to concrete de re / de dicto predictions; two-world model with `isCanadian`, `isBrother`, `isSpy` predicates; Example 1 ("Mary believes John is Canadian") shows Gen X correctly blocks de re reading of main predicate; Example 2 ("Mary believes my brother is a spy") shows Gen X allows de re for NP restrictors while blocking mixed pred-de-re reading; 14 `rfl` theorems verifying truth values and Gen X compliance
+- **Percus (2000) situation variable constraints**: `Theories/Semantics/Intensional/Situations/Percus.lean` — `SituationAssignment` (specializes `VarAssignment` to `Situation W Time`), `interpSitVar`, `updateSitVar`, `sitLambdaAbs`, `believeSit` (attitude verb with situation binding), `alwaysAt` (adverbial quantifier with situation binding), `PredicateBinding`, `genXWellFormed` (Generalization X), `genYWellFormed` (Generalization Y for adverbial quantifiers), `genXYWellFormed` (combined)
+- **Percus (2000) empirical predictions**: `Phenomena/Reference/Studies/Percus2000.lean` — end-to-end Fragment→Theory→Phenomena chain; Fragment bridge derives situation-binder introduction from `VerbEntry.opaqueContext` and quantification type from `attitudeBuilder`; per-entry verification theorems for `believe`, `think`, `always`, proper/common nouns; three examples with `rfl` proofs: Ex 1 ("Mary believes John is Canadian") Gen X blocks de re predicate; Ex 2 ("Mary believes my brother is a spy") Gen X allows NP-de-re but blocks pred-de-re; Ex 3 ("Mary thinks my brother always won the game") Gen Y has independent bite — Gen X satisfied by both readings, Gen Y alone distinguishes them
+- **Adverbial quantifiers in Fragment lexicon**: `Fragments/English/FunctionWords.lean` — `AdvQuantForce` enum (universal/existential/proportional/negative), `AdvQuantEntry` structure, entries for `always`, `usually`, `sometimes`, `never`
+- **Fragment noun additions**: `Fragments/English/Nouns.lean` — `brother`, `spy` entries
 
 ## [0.224.77] - 2026-02-20
 
