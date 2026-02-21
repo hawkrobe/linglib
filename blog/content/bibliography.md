@@ -215,6 +215,16 @@ cited in: [Scale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Sca
 **Phillips-Brown, M.** (2025). Some-Things-Considered Desire. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/PhillipsBrown.lean)
 
+## Semantics — Modality & Conditionals
+
+**Evcen, E., Bale, A. & Barner, D.** (2026). Conditional Inference and Access to Alternatives: The Role of QUD and Speaker Knowledge in Conditional Perfection. *Journal of Semantics*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Data.lean)
+
+**Mizuno, T.** (2024). Strategies for Anderson Conditionals. *Semantics and Pragmatics, 17(8), 1–14*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Anderson.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/Mizuno2024/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/Mizuno2024/Data.lean), [Anderson](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Anderson.lean)
+
 ## Semantics — Reference & Attitudes
 
 **Ahn, D. & Zhu, Z.** (2025). A Bridge to Definiteness: Identifying Unique and Relational Definites through Bridging. *Natural Language Semantics, 1–52*.\

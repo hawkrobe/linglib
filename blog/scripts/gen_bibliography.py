@@ -27,6 +27,7 @@ SUBFIELD_LABELS = {
     "pragmatics/dts": "Pragmatics — Decision-Theoretic Semantics",
     "semantics/compositional": "Semantics — Compositional / Montague",
     "semantics/modality": "Semantics — Modality & Conditionals",
+    "semantics/conditionals": "Semantics — Modality & Conditionals",
     "semantics/reference": "Semantics — Reference & Attitudes",
     "semantics/focus": "Semantics — Focus & Information Structure",
     "semantics/causation": "Semantics — Causation",
