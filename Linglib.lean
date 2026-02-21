@@ -270,6 +270,7 @@ import Linglib.Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
+import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
@@ -875,6 +876,12 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Conditionals
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
+
+-- Theories: Sociolinguistics
+import Linglib.Theories.Sociolinguistics.PropertySpace
+import Linglib.Theories.Sociolinguistics.SCM
+import Linglib.Theories.Sociolinguistics.EckertMontague
+import Linglib.Theories.Sociolinguistics.SMG
 
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core

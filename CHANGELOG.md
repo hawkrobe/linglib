@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.224.85] - 2026-02-20
+
+### Added
+- **Theories/Sociolinguistics/PropertySpace.lean**: Burnett (2019) Defs. 3.1–3.3 — `PropertySpace` (incompatibility relation), `Persona` (maximal consistent subset), `BipolarDimension`, `allPersonaeSets` enumeration
+- **Theories/Sociolinguistics/SCM.lean**: Stereotype Content Model — `SCMProperty` (6 poles), `SocialDimension` (3 axes, moved from Core), `scmSpace`, `scm_persona_count` (= 8 via `native_decide`)
+- **Theories/Sociolinguistics/EckertMontague.lean**: Burnett Def. 3.4 — `GroundedField`, `emField` (Eckert-Montague lift), `emField_antitone`, `fromIndexicalField` bridge from sign-valued `IndexicalField` to SCM grounded field
+- **Theories/Sociolinguistics/SMG.lean**: Burnett Defs. 4.1–4.4 — `SocialMeaningGame`, `toInterpGame` (bridge to Franke IBR), `naiveListener` + `naiveListener_eq_L0` (grounding by `rfl`), `strategicSpeaker`, `uncoveringListener`
+
+### Changed
+- **Core/SocialMeaning.lean**: Move `SocialDimension` to `Theories/Sociolinguistics/SCM.lean` (theory-specific, not framework-agnostic)
+- **BSB2022.lean, BeltramaSchwarz2024.lean**: Add `import Linglib.Theories.Sociolinguistics.SCM` + `open Sociolinguistics.SCM` for `SocialDimension`
+
 ## [0.224.84] - 2026-02-20
 
 ### Changed

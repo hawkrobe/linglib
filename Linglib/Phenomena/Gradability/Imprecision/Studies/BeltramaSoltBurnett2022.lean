@@ -1,6 +1,7 @@
 import Linglib.Core.Roundness
 import Linglib.Core.SocialMeaning
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
@@ -57,6 +58,7 @@ tolerance modifier:
 namespace Phenomena.Gradability.Imprecision.Studies.BeltramaSoltBurnett2022
 
 open Core.SocialMeaning
+open Sociolinguistics.SCM
 
 -- ============================================================================
 -- §1. Three-way precision variant
