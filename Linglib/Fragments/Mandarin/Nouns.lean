@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Core.NounCategorization
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998

@@ -33,7 +33,7 @@ In this formalization, we use separate lexical entries for the two frames:
 A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 namespace Phenomena.ArgumentStructure.DativeAlternation
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Linglib.Core.QUD
 import Linglib.Core.Proposition
 

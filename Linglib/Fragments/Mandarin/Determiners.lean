@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Core.NounCategorization
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)

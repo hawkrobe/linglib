@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Indefinite Pronoun Typology (Haspelmath 1997 / WALS Ch 46)

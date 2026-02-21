@@ -14,7 +14,7 @@
 Function application: if α has type σ → τ and β has type σ, then ⟦α β⟧ = ⟦α⟧(⟦β⟧).
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Core.Proposition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic

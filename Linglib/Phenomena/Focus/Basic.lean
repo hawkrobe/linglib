@@ -16,7 +16,7 @@ Empirical data on focus interpretation effects (association with focus, contrast
 - Jackendoff, R. (1972). Semantic Interpretation in Generative Grammar.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Core.InformationStructure
 
 open Core.InformationStructure (FIPApplication)

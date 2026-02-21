@@ -27,7 +27,7 @@ from its canonical position, leaving a "gap":
 Reference: Gibson (2025) "Syntax", MIT Press, Section 3.9
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 private def what : Word := ⟨"what", .PRON, { wh := true }⟩
 private def did : Word := ⟨"did", .AUX, {}⟩

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Linglib.Core.Presupposition
 import Linglib.Core.CommonGround
 

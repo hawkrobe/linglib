@@ -8,7 +8,7 @@ combinatory rules (>, <, B, T, S) deriving phrases.
 - Steedman & Baldridge (2011). Combinatory Categorial Grammar.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 namespace CCG
 

@@ -18,7 +18,7 @@ embedded questions do not.
   (3b) *I wonder what can John eat.     ✗
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 private def what : Word := ⟨"what", .PRON, { wh := true }⟩
 private def can : Word := ⟨"can", .AUX, {}⟩

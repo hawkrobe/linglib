@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.224.97] - 2026-02-20
+
+### Changed
+- **Split `Core/Basic.lean` → `Core/Word.lean` + `Core/Grammar.lean`**: `Word.lean` (158 lines) has UD morphological aliases, `Valence`, `HeadDirection`, `Features`, `Word`; `Grammar.lean` (135 lines) has `ClauseType`, `Grammar` typeclass, `MinimalPair`, `PhenomenonData`, `SentencePair`, capture predicates, agreement theorems. 86 downstream imports updated
+- **Move `ThetaRole` → `Theories/Semantics/Events/ThematicRoles.lean`**: Co-located with `ThematicFrame` and `ThetaRole.toRel` where it belongs
+- **Move `WhSemanticType` → `Phenomena/Questions/Basic.lean`**: Moved to its sole consumer
+
+### Removed
+- **`Core/Basic.lean`**: Replaced by `Core/Word.lean` + `Core/Grammar.lean`
+- **`GrammarWithParsing`**, `capturesStringPair`, `capturesStringPhenomenon`: Dead code (0 instantiations)
+
 ## [0.224.96] - 2026-02-20
 
 ### Added

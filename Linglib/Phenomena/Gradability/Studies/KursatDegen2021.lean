@@ -12,7 +12,7 @@ Perceptual difficulty predicts redundant modifier use. Material adjectives are h
 - Kursat & Degen (2021)
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 namespace Phenomena.KursatDegen2021
 

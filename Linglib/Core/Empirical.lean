@@ -4,7 +4,7 @@
 Scale and task types for specifying empirical measures in phenomena data.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 namespace Phenomena
 

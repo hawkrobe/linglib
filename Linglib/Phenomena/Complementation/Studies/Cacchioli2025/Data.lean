@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Cacchioli (2025) — Empirical Data @cite{cacchioli-2025}
