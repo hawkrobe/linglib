@@ -1,4 +1,5 @@
 import Linglib.Core.Scale
+import Linglib.Core.EpistemicScale
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
 import Linglib.Theories.Pragmatics.RSA.Core.Config

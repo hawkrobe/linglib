@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.225.6] - 2026-02-21
+
+### Changed
+- **`Core/Scale.lean` refactoring**: Extract domain-specific theory, add missing abstractions
+  - Extracted §14 epistemic comparative likelihood (~380 lines) to new **`Core/EpistemicScale.lean`** (Holliday & Icard 2013 axiom hierarchy, FinAddMeasure, QualAddMeasure, halpernLift, Theorems 6–8, EpistemicTag, five_frameworks_agree)
+  - Moved §10 MLScale (~80 lines) to new **`Theories/Semantics/Lexical/Adjective/MLScale.lean`** (Dinis & Jacinto 2026 marginality scales)
+  - Added `ScalePolarity` (CSW §3.4): intrinsic positive/negative polarity of scale dimensions, lifted from `Comparative.lean`'s `ScaleDirection` (now an abbrev)
+  - Added `PositiveRegion` typeclass: shared interface for "when does a gradable predicate hold?" — Kennedy threshold (`Degree`/`Threshold` instance) and CSW contrast point both instantiate
+  - Added `ScaleRepresentation` structure (KLST 1971): the fundamental bridge from qualitative ordering to quantitative measure, unifying `AdditiveScale.IsRepresentable`, Kennedy's μ, and CSW's g(μ)
+
 ## [0.225.5] - 2026-02-21
 
 ### Added

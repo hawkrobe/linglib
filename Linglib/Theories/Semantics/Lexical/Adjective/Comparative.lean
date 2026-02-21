@@ -55,13 +55,10 @@ open Core.Scale (Boundedness maxOnScale maxOnScale_singleton maxOnScale_ge_atMos
 -- § 1. Scale Direction
 -- ════════════════════════════════════════════════════
 
-/-- Which pole of a degree scale the comparative targets.
+/-- Comparative direction reuses scale polarity from Core.
     `positive`: "taller" — MAX picks the highest degrees.
     `negative`: "shorter" — MAX picks the lowest degrees. -/
-inductive ScaleDirection where
-  | positive  -- MAX on (· > ·): higher is better
-  | negative  -- MAX on (· < ·): lower is better
-  deriving DecidableEq, BEq, Repr
+abbrev ScaleDirection := Core.Scale.ScalePolarity
 
 -- ════════════════════════════════════════════════════
 -- § 2. Comparative Morpheme
