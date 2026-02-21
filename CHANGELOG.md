@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.224.93] - 2026-02-20
+
+### Added
+- **`Phenomena/Reference/Studies/QingFranke2015.lean`**: Full RSA implementation of Qing & Franke (2015) "Variations on a Bayesian Theme". Formalizes the 3-dimensional decomposition of Bayesian reference games (belief × goal × listener action): 4 speaker models (σ_bU, σ_aU, σ_bS, σ_aS), action-oriented listener (ρ_a via softmax ∘ L1), and 6 qualitative findings all proved via `rsa_predict` — including the salience reversal result where uniform and salience priors make opposite L1 predictions
+
+### Removed
+- **`Theories/Pragmatics/RSA/Implementations/QingFranke2013.lean`**: Replaced by `Phenomena/Reference/Studies/QingFranke2015.lean` (correct directory per dependency discipline; all 5 `sorry` theorems now proved; uses concrete parameters for `rsa_predict`)
+
 ## [0.224.92] - 2026-02-20
 
 ### Changed
