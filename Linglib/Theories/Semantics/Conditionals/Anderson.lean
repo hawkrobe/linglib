@@ -89,33 +89,42 @@ inductive MarkingStrategy where
 -- § Strategy Properties
 -- ════════════════════════════════════════════════════════════════
 
-/-- X-marking strategy uses counterfactual morphology; O-marking does not. -/
+/-- X-marking strategy uses counterfactual morphology; O-marking does not.
+
+    This is the single primitive property of marking strategies. All other
+    properties (ExclF production, "actually" requirement, FLV availability)
+    are derived from it — they are `abbrev`s equal to `hasXMarking`, with
+    docstrings explaining *why* the correlation holds.
+
+    Both strategies access the actual world in the consequent — X-marking
+    via Kaplanian "actually" (origin access through shifted tower), O-marking
+    directly (no world shift). This is universal, not a distinguishing
+    property. -/
 def MarkingStrategy.hasXMarking : MarkingStrategy → Bool
   | .xMarking => true
   | .oMarking => false
 
-/-- X-marking strategy produces modal ExclF (world exclusion);
-    O-marking does not (no world shift). -/
-def MarkingStrategy.producesExclF : MarkingStrategy → Bool
-  | .xMarking => true
-  | .oMarking => false
+/-- X-marking produces ExclF; O-marking does not.
 
-/-- Both strategies access the actual world in the consequent.
-    X-marking: via Kaplanian "actually" (origin access through shifted tower).
-    O-marking: directly, because no world shift has occurred. -/
-def MarkingStrategy.accessesActualWorld : MarkingStrategy → Bool
-  | .xMarking => true
-  | .oMarking => true
+    X-marking is counterfactual morphology: `subjShift` changes the evaluation
+    world, creating modal ExclF (origin.world ≠ innermost.world). O-marking
+    leaves the tower at the root, so no ExclF arises.
 
-/-- Whether the strategy requires an explicit indexical ("actually") to
-    access the actual world.
+    Definitionally equal to `hasXMarking` — the correlation holds because
+    ExclF is the *mechanism* of X-marking. -/
+abbrev MarkingStrategy.producesExclF (s : MarkingStrategy) : Bool := s.hasXMarking
 
-    X-marking: yes — the tower has been pushed, so "actually" is needed to
-    read from the origin.
-    O-marking: no — the tower has not been pushed, so origin = innermost. -/
-def MarkingStrategy.requiresActuallyOperator : MarkingStrategy → Bool
-  | .xMarking => true
-  | .oMarking => false
+/-- X-marking requires "actually" to recover the actual world; O-marking
+    does not.
+
+    When X-marking produces ExclF, the actual world is excluded from the
+    shifted evaluation. "Actually" (Kaplanian origin access) is needed to
+    reach back through the shift. With O-marking, the evaluation world IS
+    the actual world, so no recovery operator is needed.
+
+    Definitionally equal to `hasXMarking` — the "actually" requirement is
+    a direct consequence of ExclF. -/
+abbrev MarkingStrategy.requiresActuallyOperator (s : MarkingStrategy) : Bool := s.hasXMarking
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower-Level Theorems
@@ -162,27 +171,17 @@ theorem oMarking_no_exclF (c : KContext W E P T) :
     ¬ ExclF .modal (ContextTower.root c) :=
   Iatridou.root_no_modal_exclF c
 
--- ════════════════════════════════════════════════════════════════
--- § FLV Correlation
--- ════════════════════════════════════════════════════════════════
-
-/-- Whether X-marking is available for Future Less Vivid conditionals
-    in languages that use a given Anderson strategy.
+/-- X-marking is available for FLV where it's available for Anderson.
 
     Mizuno (2024, §4.2): "the availability of X-marking for Anderson
     conditionals and the availability of X-marking for Future Less Vivid
     conditionals seem to stand or fall together."
 
     English (X-marking for Anderson) → X-marking available for FLV.
-    Japanese (O-marking for Anderson) → X-marking NOT available for FLV. -/
-def MarkingStrategy.flvXMarkingAvailable : MarkingStrategy → Bool
-  | .xMarking => true
-  | .oMarking => false
+    Japanese (O-marking for Anderson) → X-marking NOT available for FLV.
 
-/-- The FLV correlation: Anderson X-marking availability = FLV X-marking
-    availability. Both properties co-vary with the marking strategy. -/
-theorem flv_correlation (s : MarkingStrategy) :
-    s.hasXMarking = s.flvXMarkingAvailable := by
-  cases s <;> rfl
+    Definitionally equal to `hasXMarking` — an empirical generalization
+    over English, Japanese, and Mandarin, not a logical necessity. -/
+abbrev MarkingStrategy.flvXMarkingAvailable (s : MarkingStrategy) : Bool := s.hasXMarking
 
 end Semantics.Conditionals.Anderson
