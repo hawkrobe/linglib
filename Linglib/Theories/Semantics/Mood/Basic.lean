@@ -42,6 +42,7 @@ In CDRT (Muskens 1996), these operators compose dynamically:
 -/
 
 import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Context.Shifts
 
 namespace Semantics.Mood
 
@@ -401,5 +402,71 @@ theorem subj_temporal_anchor {W Time : Type*} [LE Time]
   exact hmem.2
 
 end AttitudeTemporalAnchor
+
+-- ════════════════════════════════════════════════════════════════
+-- § Tower Integration: SUBJ as Context Shift
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### SUBJ as Tower Push
+
+SUBJ introduces a new situation from the historical base. In the tower
+framework, this corresponds to pushing a mood-labeled context shift that
+changes the world and time coordinates to those of the introduced situation.
+
+The tower-based `subjShift` is *not* a replacement for the existential
+`SUBJ` operator — rather, it is the shift that the tower records when
+a subjunctive clause is entered. The existential quantification over
+situations is a separate semantic step. Both descriptions are independently
+useful: the tower version tracks depth and enables interaction with other
+depth-sensitive operations (presupposition, tense indexing); the existential
+version directly models the semantics.
+-/
+
+section TowerMood
+
+variable {W : Type*} {Time : Type*}
+
+/-- SUBJ as a context shift: a mood-labeled shift that changes the
+    world and time to those of the introduced situation.
+
+    This is the shift that the tower records when a subjunctive clause
+    is entered. The `newWorld` and `newTime` are the coordinates of the
+    existentially introduced situation s₁. -/
+def subjShift {E P : Type*} (newWorld : W) (newTime : Time) :
+    Core.Context.ContextShift (Core.Context.KContext W E P Time) where
+  apply := λ c => { c with world := newWorld, time := newTime }
+  label := .mood
+
+/-- Pushing a `subjShift` changes the world to the introduced situation's world. -/
+theorem subjShift_changes_world {E P : Type*}
+    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    ((subjShift (E := E) (P := P) w t).apply c).world = w := rfl
+
+/-- Pushing a `subjShift` changes the time to the introduced situation's time. -/
+theorem subjShift_changes_time {E P : Type*}
+    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    ((subjShift (E := E) (P := P) w t).apply c).time = t := rfl
+
+/-- Pushing a `subjShift` preserves the agent. -/
+theorem subjShift_preserves_agent {E P : Type*}
+    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    ((subjShift (E := E) (P := P) w t).apply c).agent = c.agent := rfl
+
+/-- The tower-based subjunctive: SUBJ holds iff there exists a situation
+    in the historical base such that pushing `subjShift` for that situation
+    and evaluating the predicate yields truth.
+
+    This is the bridge between the existential `SUBJ` and the tower `push`. -/
+theorem subj_as_tower_push [LE Time]
+    (history : WorldHistory W Time)
+    (Q : SitPred W Time)
+    (s₀ : Situation W Time) :
+    SUBJ history Q s₀ ↔
+    ∃ s₁ ∈ historicalBase history s₀,
+      Q s₁ s₀ := by
+  simp only [SUBJ]
+
+end TowerMood
 
 end Semantics.Mood

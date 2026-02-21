@@ -1,5 +1,6 @@
 import Linglib.Core.Time
 import Linglib.Core.Reichenbach
+import Linglib.Core.Context.Tower
 
 /-!
 # Declerck's Tense Theory (1991/2006)
@@ -612,5 +613,96 @@ theorem exConditionalPerfect_chain_valid :
     (-5 : ℤ) < 0 ∧ (-3 : ℤ) > (-5 : ℤ) ∧ exConditionalPerfect.toSit < (-3 : ℤ) := by
   simp [exConditionalPerfect, conditionalPerfect, DeclercianSchema.toSit]
 
+
+-- ════════════════════════════════════════════════════════════════
+-- § Tower Bridge: TO-Chain as Context Tower
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Declerck TO-Chain ↔ Context Tower
+
+Each link in a TO-chain corresponds to a temporal shift in a context tower.
+The chain runs from TO₁ outward to TO_sit; each link introduces a new temporal
+perspective point, which is exactly what pushing a `temporalShift` does.
+
+- TO₁ corresponds to the tower origin (the basic temporal reference point)
+- Each subsequent TO in the chain maps to a tower push with `temporalShift`
+- `DeclercianSchema.depth` = `chain.length + 1` corresponds to tower depth + 1
+  (the tower counts shifts, while Declerck counts TOs including TO₁)
+
+The mapping is `tower.depth = schema.chain.length`, and
+`schema.depth = tower.depth + 1` (because Declerck counts TO₁ as depth 1).
+-/
+
+section TowerBridge
+
+variable {Time : Type*}
+
+open Core.Context (ContextTower ContextShift KContext)
+
+/-- Convert a Declercian TO-chain to a list of temporal shifts.
+    Each `TOLink` becomes a `temporalShift` with `.temporal` label.
+    The relation in the link is not encoded in the shift itself —
+    it is a constraint on the times, not a transformation. -/
+def declercianToShifts {E P : Type*} (chain : List (TOLink Time)) :
+    List (ContextShift (KContext Time E P Time)) :=
+  chain.map λ link => {
+    apply := λ c => { c with time := link.time }
+    label := .temporal
+  }
+
+/-- Convert a Declercian schema to a context tower.
+    The origin context has `time := to1` (the basic TO).
+    Each chain link becomes a temporal shift. -/
+def declercianToTower {E P : Type*}
+    (s : DeclercianSchema Time) (agent addressee : E) (world : Time) (pos : P) :
+    ContextTower (KContext Time E P Time) where
+  origin := {
+    agent := agent
+    addressee := addressee
+    world := world
+    time := s.to1
+    position := pos
+  }
+  shifts := declercianToShifts (E := E) (P := P) s.chain
+
+/-- The tower depth equals the chain length. -/
+theorem declercianToTower_depth {E P : Type*}
+    (s : DeclercianSchema Time) (agent addr : E) (world : Time) (pos : P) :
+    (declercianToTower (E := E) (P := P) s agent addr world pos).depth = s.chain.length := by
+  simp only [declercianToTower, ContextTower.depth, declercianToShifts, List.length_map]
+
+/-- Declerck's depth = tower depth + 1. The "+1" is because Declerck counts
+    TO₁ as part of the depth (depth = number of TOs), while the tower counts
+    only shifts (depth = number of pushes). -/
+theorem declerck_depth_is_tower_depth_plus_one {E P : Type*}
+    (s : DeclercianSchema Time) (agent addr : E) (world : Time) (pos : P) :
+    s.depth = (declercianToTower (E := E) (P := P) s agent addr world pos).depth + 1 := by
+  simp only [DeclercianSchema.depth, declercianToTower_depth]
+
+/-- For simple tenses (chain length 1), the tower has depth 1. -/
+theorem preterit_tower_depth (t0 toSit : Time) {E P : Type*}
+    (agent addr : E) (world : Time) (pos : P) :
+    (declercianToTower (E := E) (P := P) (preterit t0 toSit) agent addr world pos).depth = 1 := by
+  simp only [declercianToTower, ContextTower.depth, declercianToShifts,
+             preterit, List.length_map, List.length_cons, List.length_nil]
+
+/-- For compound tenses (chain length 2), the tower has depth 2. -/
+theorem pastPerfect_tower_depth (t0 to2 toSit : Time) {E P : Type*}
+    (agent addr : E) (world : Time) (pos : P) :
+    (declercianToTower (E := E) (P := P) (pastPerfect t0 to2 toSit)
+      agent addr world pos).depth = 2 := by
+  simp only [declercianToTower, ContextTower.depth, declercianToShifts,
+             pastPerfect, List.length_map, List.length_cons, List.length_nil]
+
+/-- For the conditional perfect (chain length 3), the tower has depth 3. -/
+theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
+    (agent addr : E) (world : Time) (pos : P) :
+    (declercianToTower (E := E) (P := P) (conditionalPerfect t0 to2 to3 toSit)
+      agent addr world pos).depth = 3 := by
+  simp only [declercianToTower, ContextTower.depth, declercianToShifts,
+             conditionalPerfect, List.length_map, List.length_cons, List.length_nil]
+
+end TowerBridge
 
 end Semantics.Tense.Declerck

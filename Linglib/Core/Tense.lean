@@ -1,6 +1,8 @@
 import Linglib.Core.Intension
 import Linglib.Core.Time
 import Linglib.Core.Reichenbach
+import Linglib.Core.Context.Tower
+import Linglib.Core.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
@@ -381,5 +383,121 @@ theorem Overtness.bound_local_is_zero :
 theorem Overtness.bound_nonlocal_is_overt :
     Overtness.fromBinding .bound false = .overt := rfl
 
+
+-- ════════════════════════════════════════════════════════════════
+-- § Temporal Tower Bridge (Abusch 1997 ↔ ContextTower)
+-- ════════════════════════════════════════════════════════════════
+
+/-! The key bridge showing that Abusch's (1997) De Bruijn temporal indexing is already
+tower-style depth access. `TensePronoun.evalTimeIndex` is a depth-relative index
+into the tower: when the temporal assignment encodes tower time coordinates
+(`g k = (tower.contextAt k).time`), `interpTense` agrees with `AccessPattern.resolve`.
+
+- `tensePronounAccessPattern` — converts `TensePronoun.evalTimeIndex` to an
+  `AccessPattern` with `depth := .relative tp.evalTimeIndex`
+- `tense_tower_bridge` — when `g` encodes tower time coordinates, `interpTense`
+  agrees with `AccessPattern.resolve`
+- `tense_root_bridge` — root clause: `evalTimeIndex = 0` means origin time
+- `von_stechow_tower` — pushing a temporal shift = Von Stechow's perspective shift -/
+
+section TemporalBridge
+
+open Core.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
+  temporalShift)
+
+variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
+
+/-- Convert a `TensePronoun`'s eval-time index to an `AccessPattern` that reads
+    the time coordinate at the corresponding tower depth.
+
+    `evalTimeIndex = 0` → origin (speech-act context time)
+    `evalTimeIndex = k` → depth k (the k-th embedding's time)
+
+    This makes explicit the observation that Abusch's variable indices ARE
+    tower depth indices for the temporal coordinate. -/
+def tensePronounAccessPattern (tp : TensePronoun) :
+    AccessPattern (KContext W E P T) T where
+  depth := .relative tp.evalTimeIndex
+  project := KContext.time
+
+/-- A temporal assignment that faithfully represents a tower: `g k` returns
+    the time coordinate at tower depth `k`. This is the bridge condition
+    connecting the variable-assignment world to the tower world. -/
+def towerFaithful (g : TemporalAssignment T) (t : ContextTower (KContext W E P T)) : Prop :=
+  ∀ (k : ℕ), g k = (t.contextAt k).time
+
+/-- When the temporal assignment encodes tower time coordinates,
+    `interpTense` at the eval-time index agrees with resolving
+    the `tensePronounAccessPattern` against the tower.
+
+    This is the central result: Abusch's De Bruijn indexing IS
+    tower-depth access for the temporal coordinate. -/
+theorem tense_tower_bridge
+    (tp : TensePronoun) (g : TemporalAssignment T)
+    (t : ContextTower (KContext W E P T))
+    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g t) :
+    tp.evalTime g = (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve t := by
+  simp only [TensePronoun.evalTime, interpTense, Core.VarAssignment.lookupVar,
+             tensePronounAccessPattern, AccessPattern.resolve,
+             DepthSpec.relative_resolve]
+  exact hFaithful tp.evalTimeIndex
+
+/-- In a root tower (no shifts), `evalTimeIndex = 0` accesses the origin time.
+    This is the root-clause default: tense is checked against speech time.
+
+    Combined with `evalTime_root_is_speech`, this shows that root-clause
+    temporal evaluation is origin access — exactly Kaplan's thesis for time. -/
+theorem tense_root_bridge
+    (tp : TensePronoun) (c : KContext W E P T)
+    (hEval : tp.evalTimeIndex = 0)
+    (g : TemporalAssignment T)
+    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g (ContextTower.root c)) :
+    tp.evalTime g = c.time := by
+  have h1 := hFaithful 0
+  simp only [ContextTower.root_contextAt] at h1
+  simp only [TensePronoun.evalTime, interpTense, Core.VarAssignment.lookupVar, hEval]
+  exact h1
+
+/-- The access pattern for a root-clause tense pronoun (evalTimeIndex = 0)
+    resolves to depth 0, which is the origin. -/
+theorem tensePronounAccessPattern_root_resolves
+    (tp : TensePronoun) (hEval : tp.evalTimeIndex = 0)
+    (c : KContext W E P T) :
+    (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve
+      (ContextTower.root c) = c.time := by
+  simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
+             DepthSpec.relative_resolve, ContextTower.root_contextAt]
+
+/-- Von Stechow's (2009) perspective shift — the attitude verb transmits
+    its event time to the embedded clause — corresponds to pushing a
+    `temporalShift` onto the tower.
+
+    Concretely: the updated assignment at the tower depth yields the new time. -/
+theorem von_stechow_tower
+    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
+    (newTime : T) :
+    updateTemporal g t.depth newTime t.depth = newTime :=
+  Core.VarAssignment.update_lookup_same g t.depth newTime
+
+/-- Under faithful encoding, layers below the push point are preserved. -/
+theorem von_stechow_tower_preserves
+    (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
+    (newTime : T)
+    (hFaithful : towerFaithful g t)
+    (k : ℕ) (hk : k < t.depth) :
+    updateTemporal g t.depth newTime k = (t.contextAt k).time := by
+  simp only [updateTemporal, Core.VarAssignment.updateVar]
+  rw [if_neg (Nat.ne_of_lt hk)]
+  exact hFaithful k
+
+/-- Pushing a temporal shift assigns `newTime` to the new depth in
+    the extended tower, mirroring `von_stechow_tower` on the assignment side. -/
+theorem von_stechow_tower_innermost
+    (t : ContextTower (KContext W E P T)) (newTime : T) :
+    (t.push (temporalShift newTime)).innermost.time = newTime := by
+  rw [ContextTower.push_innermost]
+  simp only [temporalShift]
+
+end TemporalBridge
 
 end Core.Tense

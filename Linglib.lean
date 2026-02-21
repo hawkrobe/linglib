@@ -45,6 +45,9 @@ import Linglib.Core.Time
 import Linglib.Core.Reichenbach
 import Linglib.Core.Tense
 import Linglib.Core.Context
+import Linglib.Core.Context.Tower
+import Linglib.Core.Context.Shifts
+import Linglib.Core.Context.Rich
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
@@ -676,6 +679,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
 import Linglib.Theories.Semantics.Tense.Declerck
+import Linglib.Theories.Semantics.Tense.Anderson
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
@@ -750,6 +754,8 @@ import Linglib.Theories.Semantics.Reference.Almog2014
 import Linglib.Theories.Semantics.Reference.Demonstratives
 import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Reference.Monsters
+import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
+import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Theories.Semantics.Intensional.Situations.Percus

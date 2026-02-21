@@ -40,6 +40,7 @@ For a sentence S with embedded clause φ at position i:
 
 import Linglib.Core.CommonGround
 import Linglib.Core.Presupposition
+import Linglib.Core.Context.Tower
 
 namespace Semantics.Presupposition.LocalContext
 
@@ -249,5 +250,48 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     cases ha : p.assertion w
     · simp
     · simp [himp ha]
+
+-- ════════════════════════════════════════════════════════════════
+-- § Tower Depth Bridge
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Tower Depth = Local Context Depth
+
+`LocalCtx.depth` tracks embedding depth for intermediate accommodation.
+`ContextTower.depth` tracks the number of context shifts. These two
+quantities coincide when each embedding operator (negation, attitude verb,
+conditional) pushes exactly one shift onto the tower.
+
+The bridge is stated as a definitional correspondence rather than a
+universally quantified theorem, because the alignment depends on the
+particular sentence structure (each operator must push one shift).
+-/
+
+/-- When each embedding operator pushes exactly one shift onto the tower,
+    the local context depth at the corresponding position equals the
+    tower depth. This connects Schlenker's (2009) incremental depth
+    tracking to the tower's structural depth.
+
+    Concretely: `localCtxNegation` increments depth by 1, and pushing
+    a shift onto a tower increments depth by 1. The bridge holds by
+    construction when the sentence structure is faithfully mirrored. -/
+theorem negation_depth_matches_tower_push (lc : LocalCtx W) :
+    (localCtxNegation lc).depth = lc.depth + 1 := rfl
+
+/-- A belief embedding tower: root context (speech-act context) plus
+    one attitude shift (the belief operator). The tower has depth 1,
+    matching the local context depth after one embedding. -/
+def beliefTower {C : Type*} (rootCtx : C)
+    (attShift : Core.Context.ContextShift C) :
+    Core.Context.ContextTower C :=
+  (Core.Context.ContextTower.root rootCtx).push attShift
+
+/-- The belief tower has depth 1. -/
+theorem beliefTower_depth {C : Type*} (rootCtx : C)
+    (attShift : Core.Context.ContextShift C) :
+    (beliefTower rootCtx attShift).depth = 1 := by
+  simp only [beliefTower, Core.Context.ContextTower.push_depth,
+             Core.Context.ContextTower.root_depth]
 
 end Semantics.Presupposition.LocalContext
