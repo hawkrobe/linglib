@@ -1,7 +1,7 @@
 import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
+import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 /-!

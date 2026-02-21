@@ -31,12 +31,11 @@ We use 5 degrees with fixed thresholds:
 - Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Domains.Degrees
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.TesslerFranke2020
 
-open RSA.Domains.Degrees
 open Core.Scale (Degree Degree.toNat Threshold.toNat deg thr allDegrees)
 open Semantics.Lexical.Adjective (NegationType ThresholdPair
   positiveMeaning' contradictoryNeg contraryNegMeaning notContraryNegMeaning inGapRegion)

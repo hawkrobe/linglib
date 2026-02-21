@@ -33,7 +33,7 @@ and semantic functions remain for use with the new RSAConfig-based system.
 Connects to `Semantics.Montague.Quantifiers` for threshold semantics.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Domains.Quantities
+import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 namespace RSA.VanTielEtAl2021
