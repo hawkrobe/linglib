@@ -23,10 +23,9 @@ reasoning applied to a social-meaning interpretation game.
 
 The key design choice: `toInterpGame` converts any SMG into Franke's
 `InterpGame`, so SMG agents reuse the existing IBR iteration machinery.
-The grounding theorems (`naiveListener_eq_L0`, `uncovering_eq_hearerUpdate`)
-verify that this reuse is semantically correct: the SMG definitions
-produce the same results as running Franke's L₀ and hearerUpdate on
-the converted game.
+The grounding theorem `naiveListener_eq_L0` verifies that this reuse
+is semantically correct: the SMG L₀ definition produces the same
+results as running Franke's L₀ on the converted game.
 
 ## References
 
@@ -50,25 +49,25 @@ open RSA.IBR
 /-- A Social Meaning Game (Burnett Def. 4.1): a signalling game where
     variant choice conveys social information.
 
-    - `Persona`: types (social categories the listener is trying to infer)
-    - `Variant`: messages (linguistic forms the speaker chooses)
+    - `P`: persona types (social categories the listener is trying to infer)
+    - `V`: variant types (linguistic forms the speaker chooses)
     - `prior`: probability distribution over personae
     - `meaning`: whether a variant is compatible with a persona
       (derived from the EM field: `v` means `t` iff the EM lift of `v`
       includes persona `t`)
     - `socialEval`: the speaker's utility μ(t, v) — how much persona `t`
       values being associated with variant `v` -/
-structure SocialMeaningGame (Persona Variant : Type)
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant] where
+structure SocialMeaningGame (P V : Type)
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V] where
   /-- Prior probability over personae. -/
-  prior : Persona → ℚ
+  prior : P → ℚ
   /-- Prior is non-negative. -/
-  prior_nonneg : ∀ (t : Persona), 0 ≤ prior t
+  prior_nonneg : ∀ (t : P), 0 ≤ prior t
   /-- Semantic meaning: is variant `v` compatible with persona `t`? -/
-  meaning : Variant → Persona → Bool
+  meaning : V → P → Bool
   /-- Social evaluation: how much persona `t` values variant `v`. -/
-  socialEval : Persona → Variant → ℚ
+  socialEval : P → V → ℚ
 
 -- ============================================================================
 -- §2. Bridge to Franke's InterpGame
@@ -85,12 +84,12 @@ structure SocialMeaningGame (Persona Variant : Type)
     - Messages = Variants (what the speaker chooses)
     - meaning = SMG meaning (EM field compatibility)
     - prior = SMG prior over personae -/
-def SocialMeaningGame.toInterpGame {Persona Variant : Type}
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant]
-    (smg : SocialMeaningGame Persona Variant) : InterpGame :=
-  { State := Persona
-    Message := Variant
+def SocialMeaningGame.toInterpGame {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V) : InterpGame :=
+  { State := P
+    Message := V
     meaning := smg.meaning
     prior := smg.prior }
 
@@ -102,19 +101,19 @@ def SocialMeaningGame.toInterpGame {Persona Variant : Type}
 
     Bayes' rule with literal meaning as likelihood. This is exactly
     Franke's L₀ applied to the converted InterpGame. -/
-def naiveListener {Persona Variant : Type}
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant]
-    (smg : SocialMeaningGame Persona Variant)
-    (v : Variant) (t : Persona) : ℚ :=
+def naiveListener {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (v : V) (t : P) : ℚ :=
   (L0 smg.toInterpGame).respond v t
 
 /-- **Grounding theorem**: The SMG naive listener IS Franke's L₀
     applied to the converted game. True by construction. -/
-theorem naiveListener_eq_L0 {Persona Variant : Type}
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant]
-    (smg : SocialMeaningGame Persona Variant) :
+theorem naiveListener_eq_L0 {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V) :
     naiveListener smg = fun v t => (L0 smg.toInterpGame).respond v t := rfl
 
 -- ============================================================================
@@ -127,11 +126,11 @@ theorem naiveListener_eq_L0 {Persona Variant : Type}
     Unlike Franke's best-response speaker (which maximizes hearer success),
     the SMG speaker maximizes *social* utility: a persona chooses variants
     that make the listener more likely to infer a desirable persona. -/
-def strategicSpeaker {Persona Variant : Type}
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant]
-    (smg : SocialMeaningGame Persona Variant)
-    (t : Persona) (v : Variant) : ℚ :=
+def strategicSpeaker {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (t : P) (v : V) : ℚ :=
   if smg.meaning v t then
     let numerator := smg.socialEval t v
     let denominator := Finset.univ.sum fun v' =>
@@ -145,14 +144,14 @@ def strategicSpeaker {Persona Variant : Type}
 
 /-- The uncovering listener (Burnett Def. 4.4): L₁(t | v) ∝ Pr(t) · S₁(v | t).
 
-    This is Franke's `hearerUpdate` applied to the strategic speaker.
     The listener uses Bayes' rule to infer the speaker's persona from
-    the observed variant choice. -/
-def uncoveringListener {Persona Variant : Type}
-    [Fintype Persona] [Fintype Variant]
-    [DecidableEq Persona] [DecidableEq Variant]
-    (smg : SocialMeaningGame Persona Variant)
-    (v : Variant) (t : Persona) : ℚ :=
+    the observed variant choice, using the strategic speaker's production
+    probabilities as the likelihood. -/
+def uncoveringListener {P V : Type}
+    [Fintype P] [Fintype V]
+    [DecidableEq P] [DecidableEq V]
+    (smg : SocialMeaningGame P V)
+    (v : V) (t : P) : ℚ :=
   let numerator := strategicSpeaker smg t v * smg.prior t
   let denominator := Finset.univ.sum fun t' => strategicSpeaker smg t' v * smg.prior t'
   if denominator == 0 then 0 else numerator / denominator
@@ -165,17 +164,17 @@ def uncoveringListener {Persona Variant : Type}
     social evaluation function.
 
     The meaning function is derived from the EM field: variant `v`
-    is compatible with a persona set `p` iff the EM lift of `v`
-    contains `p`. -/
-def fromGroundedField {Variant : Type} [Fintype Variant] [DecidableEq Variant]
+    is compatible with a persona set `p` iff `v`'s indexed properties
+    are a subset of `p`'s properties. -/
+def fromGroundedField {V : Type} [Fintype V] [DecidableEq V]
     (ps : PropertySpace)
-    (gf : GroundedField Variant ps)
+    (gf : GroundedField V ps)
     (personaeSets : Finset (Finset ps.Property))
     [Fintype personaeSets] [DecidableEq personaeSets]
     (prior : personaeSets → ℚ)
     (prior_nonneg : ∀ (t : personaeSets), 0 ≤ prior t)
-    (socialEval : personaeSets → Variant → ℚ) :
-    SocialMeaningGame personaeSets Variant :=
+    (socialEval : personaeSets → V → ℚ) :
+    SocialMeaningGame personaeSets V :=
   { prior := prior
     prior_nonneg := prior_nonneg
     meaning := fun v t => gf.indexedProperties v ⊆ t.val

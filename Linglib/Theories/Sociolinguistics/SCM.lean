@@ -133,17 +133,7 @@ def scmSpace : PropertySpace :=
     incomp_irrefl := scm_incomp_irrefl }
 
 -- ============================================================================
--- §6. Bipolar dimensions
--- ============================================================================
-
-/-- The 3 SCM dimensions as bipolar pairs. -/
-def scmDimensions : List (BipolarDimension SCMProperty) :=
-  [ { positive := .competent,  negative := .incompetent }
-  , { positive := .warm,       negative := .cold }
-  , { positive := .solidary,   negative := .antiSolidary } ]
-
--- ============================================================================
--- §7. Persona count
+-- §6. Persona count
 -- ============================================================================
 
 /-- The SCM has exactly 8 personae (2^3 from 3 binary dimensions). -/
