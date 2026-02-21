@@ -289,8 +289,8 @@ import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025Bridge
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
-import Linglib.Phenomena.Modality.PracticalReasoning
-import Linglib.Phenomena.Modality.InformationalBackgrounds
+import Linglib.Phenomena.Modality.PracticalReasoningBridge
+import Linglib.Phenomena.Modality.InformationalBackgroundsBridge
 import Linglib.Phenomena.Modality.DegreeCollapse
 import Linglib.Phenomena.Modality.GermanModalsBridge
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
@@ -808,22 +808,13 @@ import Linglib.Theories.Pragmatics.NeoGricean.Constraints.Wang2025
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Operations
 
 -- Theories: RSA
-import Linglib.Theories.Pragmatics.RSA.Core.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.BasicQ
-import Linglib.Theories.Pragmatics.RSA.Core.ChainComparison
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA
 import Linglib.Theories.Pragmatics.RSA.Core.Convergence
-import Linglib.Theories.Pragmatics.RSA.Core.Discourse
-import Linglib.Theories.Pragmatics.RSA.Core.DiscourseIntegration
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
-import Linglib.Theories.Pragmatics.RSA.Core.Eval
-import Linglib.Theories.Pragmatics.RSA.Core.Intensional
 import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
-import Linglib.Theories.Pragmatics.RSA.Core.Distribution
-import Linglib.Theories.Pragmatics.RSA.Core.RationalPower
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
