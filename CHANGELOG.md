@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.95] - 2026-02-20
+
+### Added
+- **`Phenomena/Focus/Rooth1992Bridge.lean` §10–§15**: Full end-to-end derivational chain from Fragment entries through Montague composition to FIP. Adds `focusModel` (4-entity model), world-parameterized lexicon, `SynTree` derivations for "Fred ate beans"/"Mary ate beans"/"Fred ate rice", `interpTree` composition, `SemDeriv` bundles, grounding theorems (`comp_grounds_*`), Fragment connection (linking `Fragments.English.Nouns.fred`/`bean` and `Predicates.Verbal.eat` to the model), and `endToEnd_question_grounded` proving compositionally-derived question = hand-defined question
+- **`Fragments/English/Nouns.lean`**: Add `fred` (proper name) and `bean` (count noun, irregular plural "beans") to English noun lexicon
+
 ## [0.224.94] - 2026-02-20
 
 ### Added

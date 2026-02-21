@@ -130,13 +130,16 @@ def john : NounEntry := { formSg := "John", formPl := none, proper := true }
 def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true }
 def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true }
 def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true }
+def fred : NounEntry := { formSg := "Fred", formPl := none, proper := true }
 
+def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
 
 def allNouns : List NounEntry := [
   pizza, book, cat, dog, girl, boy, ball, table, squirrel,
   man, woman, person, child, lawyer, student, teacher, fireman, soldier, horse, brother, spy,
   water, sand, furniture, rice, gold, air,
-  john, mary, bill, sue
+  john, mary, bill, sue, fred,
+  bean
 ]
 
 /-- Convert a noun entry to a `Word` in singular form.
