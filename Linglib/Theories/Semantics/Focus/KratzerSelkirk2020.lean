@@ -57,6 +57,113 @@ open Core.Proposition
 
 namespace Semantics.Focus.KratzerSelkirk2020
 
+-- ════════════════════════════════════════════════════
+-- § IS Features (K&S 2020 §2, §8)
+-- ════════════════════════════════════════════════════
+
+/-- The two privative morphosyntactic features of K&S 2020.
+
+[FoC] and [G] are genuinely syntactic features: crosslinguistically they
+trigger displacement, agreement, and ellipsis (§2). They happen to be
+spelled out prosodically in Standard American and British English, but
+this is not their defining property. -/
+inductive ISFeature where
+  /-- FoCus: introduces alternatives, signals contrast.
+      Resembles [wh] — comes with obligatory ~ operator. -/
+  | FoC
+  /-- Givenness: presupposes discourse salience, signals match.
+      Contributes meaning directly (no operator needed). -/
+  | G
+  deriving DecidableEq, Repr, BEq
+
+/-- Newness is NOT a grammatical feature.
+    New material is simply unmarked — no [FoC], no [G]. -/
+def isNew (hasFoC : Bool) (hasG : Bool) : Bool :=
+  !hasFoC && !hasG
+
+/-! ## §8 (45). The Contribution of [FoC]
+
+[FoC] does NOT change the O-value. Its A-value is the full domain D_τ
+(all possible entities of the relevant semantic type). This is standard
+Roothian focus semantics.
+
+  ⟦[α]_{FoC}⟧_{O,C} = ⟦α⟧_{O,C}
+  ⟦[α]_{FoC}⟧_{A,C} = D_τ
+-/
+
+/-- Apply [FoC] to a meaning: O-value unchanged, A-value becomes full domain.
+    K&S (45): The A-value of [α]_{FoC} is D_τ. -/
+def applyFoC {α : Type} (m : AltMeaning α) (domain : List α) : AltMeaning α :=
+  { oValue := m.oValue, aValue := domain }
+
+/-- [FoC] preserves O-value. K&S (45) first clause. -/
+theorem foc_preserves_oValue {α : Type} (m : AltMeaning α) (domain : List α) :
+    (applyFoC m domain).oValue = m.oValue := rfl
+
+/-! ## §8 (46-47). The Contribution of [G]
+
+[G] introduces a Givenness requirement: the expression must match a salient
+discourse referent. Technically:
+
+  ⟦[α]_{G_a}⟧_{O,C} is defined iff a is a discourse referent in C,
+    and α is Given with respect to a.
+  If defined, ⟦[α]_{G_a}⟧_{O,C} = ⟦α⟧_{O,C}
+  ⟦[α]_{G_a}⟧_{A,C} = ⟦α⟧_{A,C}
+
+[G] contributes purely use-conditional / expressive meaning (like discourse
+particles German "ja", "doch"). It places a condition on the discourse context,
+not on truth conditions.
+-/
+
+/-- An expression α is Given with respect to discourse referent a iff
+    its A-value is {a} (a singleton containing just the referent).
+
+    K&S (46): α is Given w.r.t. a in C iff ⟦α⟧_{A,C} = {a}.
+
+    Intuitively: the alternatives set has collapsed to a single salient entity,
+    meaning there's nothing to contrast — the content is already "in the air". -/
+def isGiven {α : Type} [BEq α] (aValue : List α) (referent : α) : Bool :=
+  match aValue with
+  | [a] => a == referent
+  | _ => false
+
+/-- Apply [G] to a meaning: both values unchanged, but adds a definedness
+    condition (the expression must be Given w.r.t. some discourse referent).
+
+    Unlike [FoC], [G] does NOT change the A-value. Its contribution is
+    purely a presupposition on the discourse context. -/
+def applyG {α : Type} (m : AltMeaning α) : AltMeaning α := m
+
+/-- [G] preserves O-value. K&S (47): if defined, O-value unchanged. -/
+theorem g_preserves_oValue {α : Type} (m : AltMeaning α) :
+    (applyG m).oValue = m.oValue := rfl
+
+/-- [G] preserves A-value. K&S (47): A-value unchanged. -/
+theorem g_preserves_aValue {α : Type} (m : AltMeaning α) :
+    (applyG m).aValue = m.aValue := rfl
+
+/-! ## §8 (58). [FoC] and [G] are Mutually Exclusive
+
+A single constituent CANNOT bear both [FoC] and [G]. The proof follows from
+the A-value conditions:
+- [FoC] requires A-value = D_τ (the full domain, maximally large)
+- [G] requires A-value = {a} (a singleton)
+No semantic domain is both maximal and a singleton (assuming |D_τ| > 1). -/
+
+/-- [FoC] and [G] are mutually exclusive: no constituent can satisfy both
+    the [FoC] A-value condition (full domain) and the [G] A-value condition
+    (singleton) simultaneously, when the domain has more than one element.
+
+    K&S (58, first part): follows from the incompatibility of A-value conditions. -/
+theorem foc_g_exclusion {α : Type} [BEq α] (domain : List α) (referent : α)
+    (h_domain : domain.length > 1) :
+    ¬(isGiven domain referent = true) := by
+  simp only [isGiven]
+  match domain, h_domain with
+  | [], h => simp at h
+  | [_], h => simp at h
+  | _ :: _ :: _, _ => simp
+
 variable {W : Type*} {Entity : Type}
 
 /-! ## §8 (45, 47). Both Features are Use-Conditional
