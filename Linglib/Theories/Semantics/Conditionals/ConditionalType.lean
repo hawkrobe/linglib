@@ -76,10 +76,11 @@ def requiresDiscourseAnchor : ConditionalType → Bool
   | .hypothetical => false
   | .premise => true
 
-/-- Can this conditional type be paraphrased with "given that" or "since"? -/
-def canUseGivenThat : ConditionalType → Bool
-  | .hypothetical => false
-  | .premise => true
+/-- Can this conditional type be paraphrased with "given that" or "since"?
+
+    Definitionally equal to `requiresDiscourseAnchor`: a conditional
+    admits "given that" paraphrase iff its antecedent is discourse-anchored. -/
+abbrev canUseGivenThat (ct : ConditionalType) : Bool := ct.requiresDiscourseAnchor
 
 end ConditionalType
 
@@ -213,17 +214,7 @@ def licensesPPI (ctx : ConditionalPolarityContext) : Bool :=
 
 end ConditionalPolarityContext
 
--- Theorems: Semantic Equivalence, Polarity Licensing
-
-/--
-**HCs and PCs have identical truth conditions.**
-
-The distinction is entirely in felicity/discourse conditions, not semantics.
-Both are interpreted via the same conditional semantics (material, strict,
-Kratzer, etc.).
--/
-theorem hc_pc_same_semantics {W : Type*} (p q : Prop' W) :
-    (materialImp p q) = (materialImp p q) := rfl
+-- Theorems: Polarity Licensing
 
 /--
 **PCs are felicitous iff antecedent echoes prior discourse.**
@@ -310,6 +301,17 @@ def antecedentPolarityContext (tc : TypedConditional W) : ConditionalPolarityCon
 
 end TypedConditional
 
+/--
+**HCs and PCs have identical truth conditions.**
+
+The distinction is entirely in felicity/discourse conditions, not semantics.
+Both are interpreted via the same conditional semantics (material, strict,
+Kratzer, etc.).
+-/
+theorem hc_pc_same_semantics {W : Type*} (p q : BProp W) :
+    (TypedConditional.mk p q .hypothetical).semantics =
+    (TypedConditional.mk p q .premise).semantics := rfl
+
 -- Cross-Linguistic Markers
 
 /--
@@ -317,14 +319,19 @@ Cross-linguistic conditional markers and their type restrictions.
 
 Some languages have distinct lexical items for HC vs PC conditionals.
 This captures the typological pattern.
+
+Note: `pcOnly` is currently uninstantiated across known languages;
+included for typological completeness.
 -/
 inductive ConditionalMarkerType where
   | hcOnly     -- Only marks HCs (e.g., Japanese -ra, German falls)
-  | pcOnly     -- Only marks PCs (e.g., Japanese nara for some speakers)
+  | pcOnly     -- Only marks PCs (currently uninstantiated)
   | both       -- Can mark either (e.g., English "if", German wenn)
   deriving DecidableEq, Repr, BEq
 
-/-- Cross-linguistic conditional marker datum -/
+/-- Cross-linguistic conditional marker datum.
+
+    Per-language marker entries live in `Fragments/{Language}/Conditionals.lean`. -/
 structure ConditionalMarker where
   language : String
   marker : String
@@ -332,55 +339,6 @@ structure ConditionalMarker where
   markerType : ConditionalMarkerType
   notes : String
   deriving Repr
-
-/-- Japanese ra: HC-only marker -/
-def japaneseRa : ConditionalMarker :=
-  { language := "Japanese"
-    marker := "-ra/-tara"
-    gloss := "if (hypothetical)"
-    markerType := .hcOnly
-    notes := "Cannot mark premise conditionals"
-  }
-
-/-- Japanese nara: Can mark PCs -/
-def japaneseNara : ConditionalMarker :=
-  { language := "Japanese"
-    marker := "nara"
-    gloss := "if/given that"
-    markerType := .both
-    notes := "Can mark premise conditionals (unlike -ra)"
-  }
-
-/-- German falls: HC-only marker -/
-def germanFalls : ConditionalMarker :=
-  { language := "German"
-    marker := "falls"
-    gloss := "in case"
-    markerType := .hcOnly
-    notes := "Only hypothetical; implies speaker uncertainty"
-  }
-
-/-- German wenn: Both HC and PC -/
-def germanWenn : ConditionalMarker :=
-  { language := "German"
-    marker := "wenn"
-    gloss := "if/when"
-    markerType := .both
-    notes := "Can mark either HC or PC"
-  }
-
-/-- English if: Both HC and PC -/
-def englishIf : ConditionalMarker :=
-  { language := "English"
-    marker := "if"
-    gloss := "if"
-    markerType := .both
-    notes := "Ambiguous between HC and PC; context determines reading"
-  }
-
-/-- All cross-linguistic markers -/
-def conditionalMarkers : List ConditionalMarker :=
-  [japaneseRa, japaneseNara, germanFalls, germanWenn, englishIf]
 
 -- Summary
 
@@ -394,7 +352,8 @@ This module provides:
 - `AntecedentStatus`: Epistemic status for polarity
 - `ConditionalPolarityContext`: Full polarity context (monotonicity + epistemic)
 - `TypedConditional`: Conditional with explicit interpretation type
-- `ConditionalMarker`: Cross-linguistic marker data
+- `ConditionalMarkerType` / `ConditionalMarker`: Marker type vocabulary
+  (per-language data in `Fragments/{Language}/Conditionals.lean`)
 
 ### Key Operations
 - `echoesDiscourse`: Check if proposition echoes prior discourse

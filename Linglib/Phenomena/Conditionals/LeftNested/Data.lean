@@ -1,4 +1,6 @@
-/-
+import Linglib.Core.Empirical
+
+/-!
 # Left-Nested Conditionals: Empirical Data
 
 Theory-neutral empirical observations about left-nested conditionals (LNCs)
@@ -25,8 +27,6 @@ This file documents:
 - Iatridou (1991). Topics in Conditionals.
 - Haegeman (2003). Conditional clauses: External and internal syntax.
 -/
-
-import Linglib.Core.Empirical
 
 namespace Phenomena.Conditionals.LeftNested
 

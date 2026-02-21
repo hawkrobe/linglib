@@ -95,6 +95,7 @@ import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
+import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
@@ -104,6 +105,7 @@ import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
+import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
@@ -121,6 +123,7 @@ import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
@@ -194,7 +197,8 @@ import Linglib.Phenomena.TenseAspect.Studies.Cumming2026.Bridge
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Data
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Bridge
 import Linglib.Phenomena.Conditionals.Data
-import Linglib.Phenomena.Conditionals.LeftNested
+import Linglib.Phenomena.Conditionals.LeftNested.Data
+import Linglib.Phenomena.Conditionals.LeftNested.Bridge
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
@@ -202,6 +206,8 @@ import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Data
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Bridge
+import Linglib.Phenomena.Conditionals.Studies.Mizuno2024.Data
+import Linglib.Phenomena.Conditionals.Studies.Mizuno2024.Bridge
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology

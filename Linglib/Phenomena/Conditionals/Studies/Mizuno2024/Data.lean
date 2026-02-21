@@ -41,7 +41,9 @@ structure AndersonDatum where
   antecedentForm : String
   /-- Morphological form of the consequent -/
   consequentForm : String
-  /-- Whether the consequent uses X-marking (fake past / CF morphology) -/
+  /-- Whether this datum uses X-marking (counterfactual morphology).
+      Where X-marking surfaces varies by language: in English, both
+      antecedent and consequent; in Japanese/Mandarin, the consequent. -/
   hasXMarking : Bool
   /-- Whether the form is felicitous for an Anderson reading -/
   felicitousForAnderson : Bool

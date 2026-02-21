@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024.Data
 import Linglib.Theories.Semantics.Conditionals.Anderson
+import Linglib.Fragments.Japanese.Conditionals
 
 /-!
 # Mizuno (2024) — Bridge @cite{mizuno-2024}
@@ -84,14 +85,24 @@ theorem mandarin_xMarking_has_xMarking :
 
 /-- English: X-marking for Anderson ↔ X-marking for FLV. -/
 theorem english_flv_correlation :
-    english_strategy.hasXMarking = english_flv.xMarkingAvailable := rfl
+    english_strategy.flvXMarkingAvailable = english_flv.xMarkingAvailable := rfl
 
 /-- Japanese: no X-marking for Anderson ↔ no X-marking for FLV. -/
 theorem japanese_flv_correlation :
-    japanese_strategy.hasXMarking = japanese_flv.xMarkingAvailable := rfl
+    japanese_strategy.flvXMarkingAvailable = japanese_flv.xMarkingAvailable := rfl
 
 /-- Mandarin: no X-marking for Anderson ↔ no X-marking for FLV. -/
 theorem mandarin_flv_correlation :
-    mandarin_strategy.hasXMarking = mandarin_flv.xMarkingAvailable := rfl
+    mandarin_strategy.flvXMarkingAvailable = mandarin_flv.xMarkingAvailable := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Fragment Marker Connection
+-- ════════════════════════════════════════════════════════════════
+
+-- Japanese Anderson conditionals use -(r)eba, a marker that can mark
+-- both HC and PC (unlike HC-only -ra). This connects the Anderson
+-- data's antecedent form to the Fragment marker typology.
+#guard Fragments.Japanese.Conditionals.eba.markerType ==
+  Semantics.Conditionals.ConditionalMarkerType.both
 
 end Phenomena.Conditionals.Studies.Mizuno2024.Bridge
