@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.224.96] - 2026-02-20
+
+### Added
+- **`Core/Epistemicity.lean`**: Epistemic profile layer (Gawne & Spronck 2024 glossary integration). `EpistemicAuthority` (ego/allocutive/nonparticipant) fills the egophoricity gap; `EpistemicProfile` bundles evidential source, authority, and mirativity; `epistemicAuthority` bridges to `KContext`
+- **`Comparisons/TenseModalEvidentiality.lean` §4**: Bridge theorems connecting `EpistemicProfile` to `Kernel` semantics — strong assertions (ego+direct) map to settling kernels, inferential claims (nonparticipant+inference) to `must`-defined kernels
+
 ## [0.224.95] - 2026-02-20
 
 ### Added

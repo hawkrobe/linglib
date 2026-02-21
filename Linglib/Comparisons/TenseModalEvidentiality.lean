@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Modality.Kernel
+import Linglib.Core.Epistemicity
 
 /-!
 # Tense–Modal Evidentiality Bridge
@@ -136,5 +137,41 @@ theorem direct_evidence_blocks_both :
     downstreamEvidence directFrame := by
   refine ⟨by native_decide, by native_decide, ?_⟩
   show (-1 : ℤ) ≤ -1; omega
+
+-- ════════════════════════════════════════════════════
+-- § 4. Epistemic Authority Bridge
+-- ════════════════════════════════════════════════════
+
+open Core.Epistemicity
+open Core.Evidence
+
+/-- Strong assertions (ego + direct) correspond to settling kernels.
+    When the speaker has privileged access AND direct evidence, the kernel
+    settles the prejacent — 'must' is infelicitous, bare assertion is used. -/
+theorem strong_assertion_settles :
+    strongAssertion.source = .direct ∧
+    strongAssertion.authority = .ego ∧
+    -- Concrete witness: direct kernel settles isRaining
+    let directK : Kernel := ⟨[isRaining]⟩
+    directlySettlesExplicit directK isRaining = true := by
+  exact ⟨rfl, rfl, by native_decide⟩
+
+/-- Inferential claims (nonparticipant + inference) correspond to non-settling
+    kernels with must-defined presuppositions — the canonical 'must' profile. -/
+theorem inferential_claim_must_profile :
+    inferentialClaim.source = .inference ∧
+    inferentialClaim.authority = .nonparticipant ∧
+    -- Concrete witness: raincoat kernel doesn't settle but must is defined
+    directlySettlesExplicit raincoatK isRaining = false ∧
+    (kernelMust raincoatK isRaining).presup .w0 = true := by
+  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+
+/-- Ego↔direct and nonparticipant↔indirect form natural pairs.
+    This is the core glossary insight: epistemic authority and evidential
+    source are orthogonal dimensions that CORRELATE but don't reduce. -/
+theorem authority_source_correlation :
+    strongAssertion.authority = .ego ∧ strongAssertion.source = .direct ∧
+    inferentialClaim.authority = .nonparticipant ∧ inferentialClaim.source = .inference := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
 end Comparisons.TenseModalEvidentiality
