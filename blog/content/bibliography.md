@@ -341,8 +341,8 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean)
 
 **Wellwood, A.** (2015). On the Semantics of Comparison Across Categories. *Linguistics and Philosophy, 38(1), 67–101*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean)\
-cited in: [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Measurement.lean, Theories/Semantics/Lexical/Adjective/StatesBased.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/Wellwood2015/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/Wellwood2015/Data.lean), [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean), [Measurement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Measurement.lean)
 
 ## Semantics — Questions
 
