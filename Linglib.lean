@@ -7,7 +7,8 @@ and their interfaces. See README.md for documentation links.
 
 -- Core
 import Linglib.Core.Situation
-import Linglib.Core.Basic
+import Linglib.Core.Word
+import Linglib.Core.Grammar
 import Linglib.Core.Pronouns
 import Linglib.Core.Kleene
 import Linglib.Core.Empirical
@@ -38,6 +39,7 @@ import Linglib.Core.DecisionTheory
 import Linglib.Core.RationalAction
 import Linglib.Core.UtilityTheory
 import Linglib.Core.Evidence
+import Linglib.Core.Epistemicity
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Time
 import Linglib.Core.Reichenbach
