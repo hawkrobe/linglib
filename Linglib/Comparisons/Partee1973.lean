@@ -69,7 +69,7 @@ open Semantics.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
 open Semantics.Reference.KaplanLD (opNow)
 open Semantics.Intensional.Situations.Elbourne (SitVarStatus)
-open Core.Time (Situation)
+open Core (Situation)
 open Core.ReferentialMode (ReferentialMode)
 
 

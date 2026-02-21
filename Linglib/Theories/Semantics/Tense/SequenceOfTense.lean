@@ -94,7 +94,7 @@ situations. All three descriptions collapse to the same truth condition.
 -/
 
 open Semantics.Attitudes.SituationDependent (temporallyBound)
-open Core.Time (Situation)
+open Core (Situation)
 
 /-- Temporal binding extracts a time-equality constraint from situation
     accessibility. This is the situation-semantic formulation of "the

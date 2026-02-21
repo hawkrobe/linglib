@@ -322,7 +322,7 @@ open Semantics.Lexical.Verb.ViewpointAspect (perfSimple EventPred PointPred)
 
 /-- The compositional pipeline from aspect to tense is well-typed. -/
 theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
-    (P : EventPred W Time) (s s' : Core.Time.Situation W Time) :
+    (P : EventPred W Time) (s s' : Core.Situation W Time) :
     PAST (perfSimple P).toSitProp s s' ↔
     s.time < s'.time ∧ (perfSimple P) s.world s.time := by
   rfl

@@ -6,6 +6,7 @@ and their interfaces. See README.md for documentation links.
 -/
 
 -- Core
+import Linglib.Core.Situation
 import Linglib.Core.Basic
 import Linglib.Core.Pronouns
 import Linglib.Core.Kleene
@@ -19,6 +20,7 @@ import Linglib.Core.HornScale
 import Linglib.Core.Intension
 import Linglib.Core.ModalLogic
 import Linglib.Core.Register
+import Linglib.Core.SocialMeaning
 import Linglib.Core.Conjectures
 import Linglib.Core.CommonGround
 import Linglib.Core.Parse
@@ -251,8 +253,7 @@ import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Linglib.Phenomena.Gradability.Typology
 import Linglib.Phenomena.Gradability.Vagueness
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
-import Linglib.Phenomena.Nonliteral.Hyperbole.Studies.KaoEtAl2014
-import Linglib.Phenomena.Nonliteral.Hyperbole.RSA_KaoEtAl2014Bridge
+import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
 import Linglib.Phenomena.Gradability.Imprecision.Basic
@@ -261,6 +262,8 @@ import Linglib.Phenomena.Gradability.Imprecision.InferencePreservation
 import Linglib.Phenomena.Gradability.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Gradability.Imprecision.Studies.EgreEtAl2023
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Data
+import Linglib.Phenomena.Gradability.Imprecision.Studies.BeltramaSchwarz2024.Bridge
 import Linglib.Phenomena.Gradability.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Imprecision.Projection
 import Linglib.Phenomena.Gradability.Imprecision.RSA_EgreEtAl2023Bridge
@@ -380,6 +383,7 @@ import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021Bridge
+import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025Bridge
@@ -741,6 +745,7 @@ import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Reference.Monsters
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
+import Linglib.Theories.Semantics.Intensional.Situations.Percus
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Abusch
 import Linglib.Theories.Semantics.Tense.VonStechow
@@ -844,12 +849,10 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 import Linglib.Theories.Pragmatics.RSA.Implementations.FrankeBergen2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.FrankGoodman2012
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Hyperbole
 import Linglib.Theories.Pragmatics.RSA.Implementations.KaoEtAl2014_Metaphor
 import Linglib.Phenomena.Gradability.RSA_Nouwen2024Bridge
 import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
