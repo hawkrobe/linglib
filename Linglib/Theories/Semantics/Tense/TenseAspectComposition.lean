@@ -7,12 +7,11 @@ evaluation, following Knick & Sharf (2026).
 ## The Pipeline
 
 ```
-EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ W → Prop
+EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
 ```
 
-The gap: existing tense operators (`TenseOp`) require two situations, but the
-aspect chain produces `PointPred W Time = W → Time → Prop`. This module defines
-lightweight tense evaluation operators that close the gap.
+The aspect chain produces `PointPred W Time = Situation W Time → Prop`.
+The eval* operators instantiate the situation (fixing world and time).
 
 ## Composed Forms
 
@@ -57,17 +56,17 @@ variable {W Time : Type*} [LinearOrder Time]
 /-- Evaluate a point predicate at speech time (PRESENT).
     PRES: p holds at tc in world w. -/
 def evalPres (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
-  p w tc
+  p ⟨w, tc⟩
 
 /-- Evaluate a point predicate with existential past (PAST).
     PAST: ∃t < tc, p(w)(t). -/
 def evalPast (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
-  ∃ t : Time, t < tc ∧ p w t
+  ∃ t : Time, t < tc ∧ p ⟨w, t⟩
 
 /-- Evaluate a point predicate with existential future (FUTURE).
     FUT: ∃t > tc, p(w)(t). -/
 def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
-  ∃ t : Time, t > tc ∧ p w t
+  ∃ t : Time, t > tc ∧ p ⟨w, t⟩
 
 -- ════════════════════════════════════════════════════
 -- § Composed Tense–Aspect Forms
@@ -181,7 +180,7 @@ theorem broad_focus_equiv (V : EventPred W Time) (tc : Time) (w : W) :
     PTS₂ ⊆ PTS₁ ⊆ τ(e), and PTS₂ ⊂ τ(e) follows from PTS₁ ⊂ τ(e). -/
 theorem earlier_lb_stronger_impf (V : EventPred W Time)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
-    PERF_XN (IMPF V) {tLB₁} w tc → PERF_XN (IMPF V) {tLB₂} w tc := by
+    PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨⟨hS1, hS2⟩, _hOr⟩, hV⟩
   -- tLB = tLB₁ (from singleton), pts = [tLB₁, tc]
   -- e.τ ⊃ pts, so e.τ.start ≤ tLB₁ < tLB₂ and tc ≤ e.τ.finish
@@ -211,7 +210,7 @@ theorem earlier_lb_stronger_impf (V : EventPred W Time)
     so τ(e) ⊆ PTS₁. -/
 theorem later_lb_stronger_prfv (V : EventPred W Time)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) :
-    PERF_XN (PRFV V) {tLB₂} w tc → PERF_XN (PRFV V) {tLB₁} w tc := by
+    PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨hS1, hS2⟩, hV⟩
   -- tLB = tLB₂ (singleton), pts = [tLB₂, tc]
   -- e.τ ⊆ pts: pts.start ≤ e.τ.start ∧ e.τ.finish ≤ pts.finish
@@ -237,14 +236,14 @@ theorem later_lb_stronger_prfv (V : EventPred W Time)
 theorem earlier_lb_not_weaker_impf :
     ¬ ∀ (V : EventPred Unit ℤ) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ →
-      PERF_XN (IMPF V) {tLB₂} w tc → PERF_XN (IMPF V) {tLB₁} w tc := by
+      PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ := by
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
   let e₀ : Eventuality ℤ := ⟨⟨1, 5, by omega⟩⟩
   let V : EventPred Unit ℤ := fun _ e => e = e₀
-  -- Premise: PERF_XN(IMPF(V), {2})((), 4)
+  -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
-  have prem : PERF_XN (IMPF V) {(2 : ℤ)} () 4 := by
+  have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by
     refine ⟨⟨2, 4, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
     dsimp only [e₀]
     simp only [Interval.properSubinterval, Interval.subinterval, Eventuality.τ]

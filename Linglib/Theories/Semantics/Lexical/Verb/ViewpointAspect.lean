@@ -132,8 +132,11 @@ abbrev EventPred (W Time : Type*) [LE Time] := W → Eventuality Time → Prop
 /-- Predicate over time intervals (output of IMPF/PRFV). -/
 abbrev IntervalPred (W Time : Type*) [LE Time] := W → Interval Time → Prop
 
-/-- Predicate over time points (output of PERF, input to TENSE). -/
-abbrev PointPred (W Time : Type*) := W → Time → Prop
+/-- Predicate over time points (output of PERF, input to TENSE).
+    Defined as `Situation W Time → Prop` to make the situation structure
+    explicit in the tense-aspect pipeline, connecting directly to
+    situation semantics (Elbourne, Percus, Kratzer). -/
+abbrev PointPred (W Time : Type*) := Situation W Time → Prop
 
 -- ════════════════════════════════════════════════════
 -- § Klein's Viewpoint Classification
@@ -225,15 +228,15 @@ def LB (tLB : Time) (pts : Interval Time) : Prop := pts.start = tLB
 /-- **PERFECT**: introduces Perfect Time Span.
     Knick & Sharf (2026) eq. 22b. -/
 def PERF (p : IntervalPred W Time) : PointPred W Time :=
-  λ w t => ∃ pts : Interval Time, RB pts t ∧ p w pts
+  λ s => ∃ pts : Interval Time, RB pts s.time ∧ p s.world pts
 
 /-- **PERFECT with Extended Now** (domain-restricted left boundary).
     Knick & Sharf (2026) eq. 23b.
     The domain restriction tᵣ constrains where the LB can be placed.
     Narrow focus on BEEN generates alternatives over tᵣ. -/
 def PERF_XN (p : IntervalPred W Time) (tᵣ : Set Time) : PointPred W Time :=
-  λ w t => ∃ pts : Interval Time, ∃ tLB ∈ tᵣ,
-    LB tLB pts ∧ RB pts t ∧ p w pts
+  λ s => ∃ pts : Interval Time, ∃ tLB ∈ tᵣ,
+    LB tLB pts ∧ RB pts s.time ∧ p s.world pts
 
 -- ════════════════════════════════════════════════════
 -- § Klein Correspondence
@@ -264,7 +267,7 @@ abbrev perfSimple (P : EventPred W Time) : PointPred W Time :=
 /-- PERF(IMPF(P)) unfolds: ∃ PTS and event, with PTS right-bounded at t,
     the PTS properly inside the event, and P holds of the event. -/
 theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
-    perfProg P w t ↔
+    perfProg P ⟨w, t⟩ ↔
     ∃ pts : Interval Time, ∃ e : Eventuality Time,
       RB pts t ∧ pts.properSubinterval e.τ ∧ P w e := by
   constructor
@@ -276,7 +279,7 @@ theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
 /-- PERF(PRFV(P)) unfolds: ∃ PTS and event, with PTS right-bounded at t,
     the event inside the PTS, and P holds of the event. -/
 theorem perf_prfv_unfold (P : EventPred W Time) (w : W) (t : Time) :
-    perfSimple P w t ↔
+    perfSimple P ⟨w, t⟩ ↔
     ∃ pts : Interval Time, ∃ e : Eventuality Time,
       RB pts t ∧ e.τ.subinterval pts ∧ P w e := by
   constructor
@@ -292,13 +295,13 @@ theorem perf_prfv_unfold (P : EventPred W Time) (w : W) (t : Time) :
 /-- Extended Now entails basic perfect (PERF_XN is stronger). -/
 theorem perf_xn_entails_perf (p : IntervalPred W Time) (tᵣ : Set Time)
     (w : W) (t : Time) :
-    PERF_XN p tᵣ w t → PERF p w t := by
+    PERF_XN p tᵣ ⟨w, t⟩ → PERF p ⟨w, t⟩ := by
   intro ⟨pts, _tLB, _hmem, _hLB, hRB, hp⟩
   exact ⟨pts, hRB, hp⟩
 
 /-- With maximal domain (Set.univ), PERF_XN collapses to PERF. -/
 theorem perf_xn_univ_iff_perf (p : IntervalPred W Time) (w : W) (t : Time) :
-    PERF_XN p Set.univ w t ↔ PERF p w t := by
+    PERF_XN p Set.univ ⟨w, t⟩ ↔ PERF p ⟨w, t⟩ := by
   constructor
   · exact perf_xn_entails_perf p Set.univ w t
   · intro ⟨pts, hRB, hp⟩
@@ -307,7 +310,7 @@ theorem perf_xn_univ_iff_perf (p : IntervalPred W Time) (w : W) (t : Time) :
 /-- Narrower domain restriction is stronger (monotone in tᵣ). -/
 theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
     (hSub : tᵣ₁ ⊆ tᵣ₂) (w : W) (t : Time) :
-    PERF_XN p tᵣ₁ w t → PERF_XN p tᵣ₂ w t := by
+    PERF_XN p tᵣ₁ ⟨w, t⟩ → PERF_XN p tᵣ₂ ⟨w, t⟩ := by
   intro ⟨pts, tLB, hmem, hLB, hRB, hp⟩
   exact ⟨pts, tLB, hSub hmem, hLB, hRB, hp⟩
 
@@ -365,7 +368,7 @@ theorem prfv_entails_event (P : EventPred W Time) (w : W) (t : Interval Time) :
 /-- PERF is monotone: p ⊆ q → PERF(p) ⊆ PERF(q). -/
 theorem perf_monotone (p q : IntervalPred W Time)
     (h : ∀ w t, p w t → q w t) (w : W) (t : Time) :
-    PERF p w t → PERF q w t :=
+    PERF p ⟨w, t⟩ → PERF q ⟨w, t⟩ :=
   λ ⟨pts, hRB, hp⟩ => ⟨pts, hRB, h w pts hp⟩
 
 /-- IMPF and PRFV impose opposite containment directions.
@@ -417,7 +420,7 @@ def PERF_P (p : IntervalPred W Time) : IntervalPred W Time :=
 /-- Point-based PERF is the special case of interval-based PERF_P
     where the reference interval degenerates to a point [t, t]. -/
 theorem perf_p_at_point_iff_perf (p : IntervalPred W Time) (w : W) (t : Time) :
-    PERF_P p w (Interval.point t) ↔ PERF p w t := by
+    PERF_P p w (Interval.point t) ↔ PERF p ⟨w, t⟩ := by
   constructor
   · intro ⟨pts, hFin, hp⟩
     exact ⟨pts, hFin.2.symm, hp⟩
@@ -465,7 +468,7 @@ abbrev resultativePerfect (P : EventPred W Time) : IntervalPred W Time :=
     Since IMPF (strict ⊂) entails UNBOUNDED (non-strict ⊆),
     PERF(IMPF(V)) entails PERF(UNBOUNDED(V)) = universalPerfect. -/
 theorem perf_prog_entails_universal_at_point (P : EventPred W Time) (w : W) (t : Time) :
-    perfProg P w t → universalPerfect P w (Interval.point t) :=
+    perfProg P ⟨w, t⟩ → universalPerfect P w (Interval.point t) :=
   λ h => (perf_p_at_point_iff_perf (UNBOUNDED P) w t).mpr
     (perf_monotone (IMPF P) (UNBOUNDED P) (impf_entails_unbounded P) w t h)
 
@@ -476,10 +479,11 @@ theorem perf_prog_entails_universal_at_point (P : EventPred W Time) (w : W) (t :
 /-- Evaluate an interval predicate at a point (trivial interval [t, t]).
     Bridge for non-perfect forms. -/
 def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
-  λ w t => p w (Interval.point t)
+  λ s => p s.world (Interval.point s.time)
 
-/-- Lift a point predicate to Situation (for tense operator compatibility). -/
-def PointPred.toSitProp (p : PointPred W Time) : Situation W Time → Prop :=
-  λ s => p s.world s.time
+/-- `PointPred` is now `Situation W Time → Prop`, so `toSitProp` is the identity.
+    Retained as an abbreviation for backward compatibility at call sites. -/
+abbrev PointPred.toSitProp (p : PointPred W Time) : Situation W Time → Prop :=
+  p
 
 end Semantics.Lexical.Verb.ViewpointAspect

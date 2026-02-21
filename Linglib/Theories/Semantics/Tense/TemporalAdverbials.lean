@@ -103,7 +103,7 @@ def PTSConstraint.toLBDomain (adv : PTSConstraint Time) (tc : Time) : Set Time :
     Combines PERF with an adverbial constraint on the PTS.
     Equivalent to PERF_XN with the adverbial's derived LB domain. -/
 def PERF_ADV (p : IntervalPred W Time) (adv : PTSConstraint Time) : PointPred W Time :=
-  λ w t => ∃ pts : Interval Time, RB pts t ∧ adv pts ∧ p w pts
+  λ s => ∃ pts : Interval Time, RB pts s.time ∧ adv pts ∧ p s.world pts
 
 -- ════════════════════════════════════════════════════
 -- § Adverbial Type Properties
@@ -127,7 +127,7 @@ def AdverbialType.specifiesLB : AdverbialType → Bool
     toLBDomain: tLB ∈ toLBDomain ↔ tLB ≤ tc ∧ adv([tLB, tc]). -/
 theorem perf_adv_eq_perf_xn (p : IntervalPred W Time) (adv : PTSConstraint Time)
     (tc : Time) (w : W) :
-    PERF_ADV p adv w tc ↔ PERF_XN p (adv.toLBDomain tc) w tc := by
+    PERF_ADV p adv ⟨w, tc⟩ ↔ PERF_XN p (adv.toLBDomain tc) ⟨w, tc⟩ := by
   constructor
   · intro ⟨pts, hRB, hadv, hp⟩
     refine ⟨pts, pts.start, ⟨le_trans pts.valid (le_of_eq hRB), fun h => ?_⟩, rfl, hRB, hp⟩

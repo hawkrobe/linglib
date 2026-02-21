@@ -409,7 +409,7 @@ theorem atelic_predicts_blocking (c : VendlerClass) (h : c.telicity = .atelic) :
       runtime always exists (the one abutting the runtime's boundary),
       so a maximally informative number exists. -/
 def PERF_open (p : IntervalPred W Time) : PointPred W Time :=
-  λ w t => ∃ pts : Interval Time, RB pts t ∧ p w pts
+  λ s => ∃ pts : Interval Time, RB pts s.time ∧ p s.world pts
   -- The openness constraint is enforced at the level of the G-TIA
   -- semantics rather than structurally in PERF, since the basic Interval
   -- type is always closed. The semantic effect is captured in

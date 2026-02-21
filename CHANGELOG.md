@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.224.90] - 2026-02-20
+
+### Changed
+- **`PointPred` → `Situation W Time → Prop`**: Make situation structure explicit in the tense-aspect pipeline. `PointPred W Time` was `W → Time → Prop` (threading world and time separately); now `Situation W Time → Prop`, closing the gap between aspect operators and situation semantics (Elbourne, Percus, Kratzer)
+- **`WorldHistory` → `Situation W Time → Set W`**: Same principle applied to branching-time modal bases — `WorldHistory` was `W → Time → Set W`, now takes a `Situation` directly
+- **`PointPred.toSitProp`**: Now the identity (retained as `abbrev` for backward compatibility) since `PointPred` already is `Situation → Prop`
+- Updated `PERF`, `PERF_XN`, `PERF_ADV`, `PERF_open`, `IntervalPred.atPoint`, `evalPres`, `evalPast`, `evalFut`, `historicalBase`, `WorldHistory.reflexive`, `WorldHistory.backwardsClosed` to use situation-threaded signatures
+- All downstream theorems updated: K&S Theorems 3–7, monotonicity, unfold lemmas, pipeline bridges, mood proof
+
 ## [0.224.89] - 2026-02-20
 
 ### Removed
