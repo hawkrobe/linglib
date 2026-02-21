@@ -1,5 +1,7 @@
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
+import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Core.Scale
+import Linglib.Core.Time
 import Linglib.Fragments.English.TemporalAdverbials
 
 /-!
@@ -414,5 +416,46 @@ def stacking_predicted (d : StackingDatum) : Bool :=
 
 theorem stacking_all_predicted :
     stackingData.all stacking_predicted = true := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 11. LicensingPipeline Extension
+-- ════════════════════════════════════════════════════
+
+/-! ### Connecting E-TIA data to the universal LicensingPipeline
+
+The E-TIA data (§1–3) is verified against `scaleBoundedness` (§3) and
+`telicity` (§2). Here we extend the bridge to `LicensingPipeline`, the
+universal interface that connects adjective licensing, path licensing,
+mereological licensing, and temporal licensing through a single mechanism. -/
+
+/-- Every E-TIA datum is predicted by `LicensingPipeline.isLicensed`. -/
+def eTIA_predicted_by_pipeline (d : ETIADatum) : Bool :=
+  LicensingPipeline.isLicensed d.vendlerClass == d.acceptable
+
+theorem eTIA_pipeline_all_predicted :
+    eTIAData.all eTIA_predicted_by_pipeline = true := by native_decide
+
+/-- Pipeline agrees with direct scaleBoundedness on all four Vendler classes. -/
+theorem pipeline_agrees_with_boundedness :
+    (∀ c : VendlerClass,
+      LicensingPipeline.isLicensed c =
+      (scaleBoundedness c).isLicensed) := by
+  intro c; simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness]
+
+-- ════════════════════════════════════════════════════
+-- § 12. SituationBoundedness Bridge
+-- ════════════════════════════════════════════════════
+
+/-- Atelic (state/activity) collapses like open adjective (tall):
+    SituationBoundedness.unbounded ↔ Boundedness.open_. -/
+theorem atelic_collapses_like_open_adj :
+    LicensingPipeline.isLicensed Core.Time.SituationBoundedness.unbounded =
+    LicensingPipeline.isLicensed Boundedness.open_ := rfl
+
+/-- Bounded situations license like closed adjectives (full):
+    SituationBoundedness.bounded ↔ Boundedness.closed. -/
+theorem bounded_licenses_like_closed_adj :
+    LicensingPipeline.isLicensed Core.Time.SituationBoundedness.bounded =
+    LicensingPipeline.isLicensed Boundedness.closed := rfl
 
 end Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026

@@ -245,6 +245,17 @@ inductive SituationBoundedness where
   | unbounded  -- atelic / imperfective / open
   deriving DecidableEq, Repr, BEq
 
+instance : Core.Scale.LicensingPipeline SituationBoundedness where
+  toBoundedness
+    | .bounded   => .closed
+    | .unbounded => .open_
+
+theorem bounded_licensed :
+    Core.Scale.LicensingPipeline.isLicensed SituationBoundedness.bounded = true := rfl
+
+theorem unbounded_blocked :
+    Core.Scale.LicensingPipeline.isLicensed SituationBoundedness.unbounded = false := rfl
+
 /--
 Temporal relation type for tense operators.
 
