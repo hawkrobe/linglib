@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Core.Definiteness
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Reference.DirectReference

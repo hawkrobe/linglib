@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!

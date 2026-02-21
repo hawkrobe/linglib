@@ -22,7 +22,7 @@ Key constraints:
 Reference: Gibson (2025) "Syntax", MIT Press, Section 3.8
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 -- ============================================================================
 -- Core Coordination Data (String-Based)

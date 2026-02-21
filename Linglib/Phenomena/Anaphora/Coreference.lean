@@ -17,7 +17,7 @@ Empirical data on coreference constraints for reflexives, pronouns, and full nom
 - König, E. & P. Siemund (2000). Intensifiers and Reflexives.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third }⟩
 private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩

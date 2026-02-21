@@ -26,7 +26,7 @@ and Adger (2003) Chapter 3.
 - Collins, C. & E. Stabler (2016). A Formalization of Minimalist Syntax.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 namespace Minimalism

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)

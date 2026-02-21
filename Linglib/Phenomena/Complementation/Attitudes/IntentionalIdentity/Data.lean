@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Intentional Identity Data @cite{chatzikyriakidis-etal-2025}

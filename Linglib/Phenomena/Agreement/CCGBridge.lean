@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Fragments.English.Lexicon

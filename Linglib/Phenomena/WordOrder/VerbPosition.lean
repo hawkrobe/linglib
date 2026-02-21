@@ -10,7 +10,7 @@ Theory-neutral empirical data on verb position alternations.
 - Vikner (1995:32, (11d)): German V2
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 namespace Phenomena.WordOrderAlternations.VerbPosition
 

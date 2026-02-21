@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon

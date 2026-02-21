@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Fragments.English.Determiners
 
 /-! # Japanese Quantifier Fragment

@@ -12,7 +12,7 @@ Lexical entries with semantic denotations and scalar alternatives.
 Montague (1973)
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.HornScale

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)

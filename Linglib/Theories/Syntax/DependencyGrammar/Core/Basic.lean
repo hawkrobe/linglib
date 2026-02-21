@@ -7,7 +7,7 @@ Dependency relations use UD.DepRel from Core/UD.lean (Universal Dependencies v2)
 References: Hudson (1984, 1990, 2007), Gibson (2025) Syntax, MIT Press.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Mathlib.Data.List.Basic
 
 namespace DepGrammar

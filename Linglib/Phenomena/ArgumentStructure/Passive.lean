@@ -36,7 +36,7 @@ This changes:
 - The verb takes passive morphology (past participle)
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 namespace Phenomena.ArgumentStructure.Passive
 

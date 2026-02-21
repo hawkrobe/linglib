@@ -4,7 +4,7 @@ Shared nominal classification and phi-feature agreement for DG coreference theor
 Used by both d-command (Coreference.lean) and CRDC (CRDC.lean) binding analyses.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal

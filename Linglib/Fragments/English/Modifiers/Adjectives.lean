@@ -22,7 +22,7 @@ Both share scale type and antonym information, but serve different grammatical f
 - Kennedy (2007). Vagueness and grammar.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 

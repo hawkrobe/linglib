@@ -1,7 +1,7 @@
 import Linglib.Core.Proposition
 import Linglib.Core.Intension
 import Linglib.Core.CommonGround
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 import Linglib.Core.Presupposition
 import Linglib.Core.ModalLogic
 

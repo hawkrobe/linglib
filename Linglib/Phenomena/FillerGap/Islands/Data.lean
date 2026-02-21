@@ -41,7 +41,7 @@ observed across diverse theoretical frameworks.
 - Szabolcsi, A. (2006). "Strong vs. Weak Islands" in The Blackwell Companion to Syntax.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 private def what : Word := ⟨"what", .PRON, { wh := true }⟩
 private def did : Word := ⟨"did", .AUX, {}⟩

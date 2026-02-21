@@ -20,7 +20,7 @@ In English, the verb must agree with its subject in number (and person for some 
   (4b) *The cats sleeps.             ✗  pl subject, sg verb
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 namespace Phenomena.Agreement
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 /-!
 # Cross-Linguistic Typology of Evidentiality (WALS Chapters 77--78)

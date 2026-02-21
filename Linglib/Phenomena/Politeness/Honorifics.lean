@@ -21,7 +21,7 @@ encode addressee features — and the morphosyntactic expression of honorifics.
   the syntax-semantics interface.
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Word
 
 namespace Phenomena.Politeness.Honorifics
 

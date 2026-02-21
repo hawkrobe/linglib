@@ -22,7 +22,7 @@ English pronouns show morphological case:
   (3c) *I see he.                    ✗  nom in object position
 -/
 
-import Linglib.Core.Basic
+import Linglib.Core.Grammar
 
 namespace Phenomena.Case
 
