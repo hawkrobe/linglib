@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Compositional
+import Linglib.Theories.Semantics.Tense.Kratzer
 import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Core.Intension
@@ -206,6 +207,91 @@ theorem bound_tense_receives_attitude_time {Time α : Type*}
     (n : ℕ) (attitudeEventTime : Time) :
     temporalLambdaAbs n body g attitudeEventTime =
     body (updateTemporal g n attitudeEventTime) := by rfl
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8. Zero Forms and Locality (Kratzer 1998)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Kratzer (1998 §3) extends the Partee analogy to a FOURTH parallel:
+the distribution of overt vs. zero (phonologically empty) referential
+expressions. Just as the three-way classification (indexical/anaphoric/bound)
+applies uniformly to entities, times, and situations, the locality
+condition on zero forms applies uniformly across all three domains:
+
+| Mode | Entity | Time | Surface |
+|------|--------|------|---------|
+| Indexical | "I" | PRESENT | overt |
+| Anaphoric | "he" | PAST (German) | overt |
+| Bound, local | reflexive | simultaneous (SOT) | zero |
+| Bound, non-local | "him" in ∀x...him... | embedded tense (Persian) | overt |
+
+The key generalization: bound + local agreement domain → zero.
+This explains why Persian has zero PRONOUNS but NOT zero TENSE
+(tense is in C, outside the local domain of Agr in Infl).
+
+`Overtness.fromBinding` (Core/Tense.lean) formalizes this as a function
+from `(ReferentialMode × localDomain)` to `Overtness`. -/
+
+open Semantics.Tense.Kratzer
+open Core.Tense (Overtness)
+
+/-- The four-way classification: all three referential modes produce
+    overt forms except bound+local, which produces zero.
+
+    This extends the Partee three-way analogy with a morphophonological
+    dimension: the same `ReferentialMode` that determines how a referential
+    expression gets its reference ALSO determines (via locality) whether
+    it surfaces overtly. -/
+theorem overtness_classification :
+    -- Free (indexical): always overt
+    Overtness.fromBinding .indexical true = .overt ∧
+    Overtness.fromBinding .indexical false = .overt ∧
+    -- Free (anaphoric): always overt
+    Overtness.fromBinding .anaphoric true = .overt ∧
+    Overtness.fromBinding .anaphoric false = .overt ∧
+    -- Bound, local: zero
+    Overtness.fromBinding .bound true = .zero ∧
+    -- Bound, non-local: overt
+    Overtness.fromBinding .bound false = .overt :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The zero tense under SOT is bound + local → zero, just as
+    a reflexive pronoun is bound + local → reduced/zero.
+    This connects Kratzer's zero tense analysis to `Core.Tense.Overtness`. -/
+theorem zero_tense_parallels_reflexive (n : ℕ) :
+    -- Zero tense: bound + local = zero
+    (kratzerZeroTense n).isBound = true ∧
+    Overtness.fromBinding (kratzerZeroTense n).mode true = .zero ∧
+    -- Kratzer's English indexical tense: free = overt
+    Overtness.fromBinding kratzerEnglishPast.mode true = .overt ∧
+    -- German Preterit: free (anaphoric) = overt
+    Overtness.fromBinding (kratzerGermanPreterit n).mode true = .overt :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The Partee analogy extended from three to four dimensions:
+
+    | Dimension | Original Partee (1973) | + Kratzer (1998) |
+    |-----------|----------------------|------------------|
+    | Domain    | Entity ↔ Time         | + Situation       |
+    | Mode      | Indexical/Anaphoric/Bound | (same)       |
+    | Resolution| Context/Discourse/Binder | (same)        |
+    | Overtness | —                      | overt/zero      |
+
+    The `toSitVarStatus` bridge from §6 collapses the indexical/anaphoric
+    distinction (both → free). Kratzer's `Overtness.fromBinding` collapses
+    differently: free → overt, bound + local → zero. Together, they show
+    that the three-way classification has TWO natural coarsenings:
+    - Elbourne's {free, bound} (structural)
+    - Kratzer's {overt, zero} (morphophonological) -/
+theorem two_coarsenings (m : ReferentialMode) :
+    -- Elbourne: indexical and anaphoric both → free
+    (m == .indexical || m == .anaphoric) = m.isFree ∧
+    -- Kratzer: free (either kind) → overt regardless of locality
+    (m.isFree → ∀ (l : Bool), Overtness.fromBinding m l = .overt) := by
+  constructor
+  · cases m <;> rfl
+  · cases m <;> simp [ReferentialMode.isFree, Overtness.fromBinding]
 
 
 end Comparisons.Partee1973

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.224.88] - 2026-02-20
+
+### Added
+- **Kratzer (1998) deep integration**: Enrich `Theories/Semantics/Tense/Kratzer.lean` from ~130 lines (SOT deletion only) to ~330 lines covering all four contributions: aspect decomposition (English simple past = PRESENT + PERFECT), zero forms & locality, reflexive ↔ simultaneous parallel, cross-linguistic predictions
+- **Core/Tense.lean**: `Overtness` type and `fromBinding` function — bound + local → zero, free → overt; unifies zero tense, reflexive reduction, and pro-drop under one mechanism
+- **`KratzerDecomposition`** structure linking surface morphology to underlying tense head + aspect; `canBeDeictic`, `tenseOvertness` derived methods
+- **Fragments/German/Tense.lean**: New file — Preterit (anaphoric PAST) and Perfekt (indexical PRESENT + PERF) decomposition entries with contrast theorems
+- **Fragments/English/Tense.lean**: `kratzerSimplePast`, `kratzerPresentPerfect` decomposition entries; `lakoff_kratzer_diverge` theorem (surface past ≠ underlying present)
+- **Phenomena/TenseAspect/Data.lean**: `TenseDeicticDatum` structure + cross-linguistic deictic data (English simple past, German Preterit, German Perfekt); `deictic_tracks_indexical` theorem
+- **Phenomena/TenseAspect/Bridge.lean**: Full derivational chain theorems (`kratzer_english_chain`, `kratzer_german_preterit_chain`, `kratzer_german_perfekt_chain`, `kratzer_zero_tense_chain`) — each connects Fragment → Theory → Pipeline → Reichenbach → Data so changes at any layer break the theorem
+- **Comparisons/Partee1973.lean**: § 8 zero forms (Kratzer 1998) — `overtness_classification`, `zero_tense_parallels_reflexive`, `two_coarsenings` proving Elbourne's {free,bound} and Kratzer's {overt,zero} are two natural coarsenings of Partee's three-way classification
+
 ## [0.224.87] - 2026-02-20
 
 ### Removed

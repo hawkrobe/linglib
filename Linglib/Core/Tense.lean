@@ -332,4 +332,54 @@ theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Tim
   exact hPresup
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § Overtness (Kratzer 1998)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Phonological overtness of a referential expression (Kratzer 1998 §3).
+
+    Applies uniformly to pronouns and tenses: English has zero tense
+    under SOT (bound present surfaces as ∅); Japanese has zero pronouns
+    in subject position (locally bound by Agr). Persian has zero pronouns
+    but NOT zero tense (tense is in C, outside the local agreement domain).
+
+    The distribution of overt vs. zero is governed by locality of agreement:
+    a referential expression that is locally bound by an agreeing head
+    surfaces as zero. -/
+inductive Overtness where
+  | overt  -- Phonologically realized (English "he", German Preterit -te)
+  | zero   -- Phonologically empty (zero tense under SOT, pro-drop subjects)
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- Kratzer's locality generalization (1998, formula 26):
+
+    A referential expression that is locally bound by an agreeing head
+    surfaces as zero. Free (indexical or anaphoric) expressions surface
+    as overt. This unifies:
+    - Reflexives = locally bound entity pronouns → zero/reduced
+    - Simultaneous tense = locally bound temporal pronoun → zero under SOT
+    - Japanese subject pro = locally bound by Agr → zero
+    - Persian pronouns = locally bound by Agr → zero, but tense is NOT
+      local to Agr (tense is in C) → overt -/
+def Overtness.fromBinding : ReferentialMode → (localDomain : Bool) → Overtness
+  | .bound, true => .zero
+  | _, _ => .overt
+
+/-- Free (indexical or anaphoric) expressions are always overt. -/
+theorem Overtness.free_always_overt (m : ReferentialMode) (l : Bool)
+    (hFree : m.isFree = true) :
+    Overtness.fromBinding m l = .overt := by
+  cases m <;> simp_all [Overtness.fromBinding, ReferentialMode.isFree]
+
+/-- Bound expressions in a local domain are zero. -/
+theorem Overtness.bound_local_is_zero :
+    Overtness.fromBinding .bound true = .zero := rfl
+
+/-- Bound expressions outside the local domain remain overt.
+    This is the Persian case: tense is bound but not in a local
+    agreement domain (tense is in C, Agr is in Infl). -/
+theorem Overtness.bound_nonlocal_is_overt :
+    Overtness.fromBinding .bound false = .overt := rfl
+
+
 end Core.Tense

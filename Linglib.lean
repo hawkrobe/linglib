@@ -96,6 +96,7 @@ import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
