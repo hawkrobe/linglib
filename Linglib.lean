@@ -200,6 +200,8 @@ import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
+import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Data
+import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Bridge
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Bridge
 import Linglib.Phenomena.Complementation.Typology
@@ -734,6 +736,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
+import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Theories.Semantics.Modality.Compare
