@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.225.3] - 2026-02-21
+
+### Added
+- **`Theories/Semantics/Lexical/Adjective/StatesBased.lean`**: Cariani, Santorio & Wellwood (2024) states-based gradable adjective semantics — `StatesBasedEntry` (background ordering + contrast point), `inPositiveRegion`, `areScaleMates`, `asymEntails` with positive-region inclusion, `admissibleMeasure` (StrictMono), `statesComparativeSem`, `comparative_ignores_contrastPoint`, `statesBased_iff_kennedy` bridge theorem (CSW ↔ Kennedy under monotone measure), `comparative_scalemate_equiv` (CSW (72))
+- **`Theories/Semantics/Attitudes/Confidence.lean`**: Confidence states and orderings — `ConfidenceState` (holder + propositional theme), `ConfidenceOrdering` (holder-relativized preorder), `confidentEntry`/`certainEntry` as `StatesBasedEntry` instances, `certain_entails_confident`/`confident_not_entails_certain` (CSW (65)), logic of confidence: `comparative_transitive` (CSW (54)), `comparative_antisymmetric` (CSW (55)), `confidence_upward_monotone` (CSW (53)), `conjunction_fallacy_compatible` (CSW (52))
+- **`Phenomena/Gradability/Studies/CarianiSantorioWellwood2024/Data.lean`**: Theory-neutral empirical data — `ConfidenceCertaintyEntailment` (CSW (65)–(66)), `ConjunctionFallacyDatum` (CSW (52)), `TransitivityDatum` (CSW (57)), `ComparativeEquivalenceDatum` (CSW (72)), `ConditionalConfidenceDatum` (CSW (61))
+- **`Phenomena/Gradability/Studies/CarianiSantorioWellwood2024/Bridge.lean`**: Per-datum verification — `certain_confident_bridge`, `conjunction_fallacy_bridge`, `transitivity_bridge`, `comparative_equivalence_bridge`. All rfl
+- **Bibliography**: Added `cariani-santorio-wellwood-2024` (formalized) and `wellwood-2015` (cited) to `references.bib`
+
 ## [0.225.2] - 2026-02-21
 
 ### Added
