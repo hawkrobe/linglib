@@ -9,10 +9,12 @@ conditional strategy typology in `Semantics.Conditionals.Anderson`.
 
 ## Bridge Structure
 
-1. **Strategy classification**: per-datum verification that each language's
-   felicitous form matches the predicted marking strategy.
-2. **ExclF connection**: X-marking produces ExclF, O-marking does not —
-   verified against the strategy properties.
+1. **Strategy classification**: per-language assignment of `MarkingStrategy`,
+   expressing which strategy each language uses for Anderson conditionals.
+   These are empirical facts about languages, expressed using theoretical
+   vocabulary — the reason they live in Bridge rather than Data.
+2. **Per-datum verification**: each datum's `hasXMarking` agrees with its
+   language's strategy assignment.
 3. **FLV correlation**: per-language verification that Anderson X-marking
    availability co-varies with FLV X-marking availability.
 -/
@@ -22,85 +24,59 @@ namespace Phenomena.Conditionals.Studies.Mizuno2024.Bridge
 open Semantics.Conditionals.Anderson (MarkingStrategy)
 
 -- ════════════════════════════════════════════════════════════════
--- § Strategy Classification
+-- § Per-Language Strategy Classification
 -- ════════════════════════════════════════════════════════════════
 
-/-- English uses X-marking for Anderson conditionals. -/
+/-- English uses X-marking for Anderson conditionals:
+    X-marking is felicitous (ex. 1), O-marking is not (ex. 2–3). -/
 def english_strategy : MarkingStrategy := .xMarking
 
-/-- Japanese uses O-marking for Anderson conditionals. -/
+/-- Japanese uses O-marking for Anderson conditionals:
+    O-marking is felicitous (ex. 4a), X-marking is not (ex. 4b). -/
 def japanese_strategy : MarkingStrategy := .oMarking
 
-/-- Mandarin uses O-marking for Anderson conditionals. -/
+/-- Mandarin uses O-marking for Anderson conditionals:
+    O-marking is felicitous (ex. 13a without le), X-marking is not
+    (ex. 13a with le). -/
 def mandarin_strategy : MarkingStrategy := .oMarking
-
--- ════════════════════════════════════════════════════════════════
--- § Per-Datum Marking Verification
--- ════════════════════════════════════════════════════════════════
-
-/-- English X-marking datum has X-marking. -/
-theorem english_xMarking_has_xMarking :
-    english_xMarking.hasXMarking = true := rfl
-
-/-- English O-marking datum lacks X-marking. -/
-theorem english_oMarking_no_xMarking :
-    english_oMarking.hasXMarking = false := rfl
-
-/-- Japanese O-marking datum lacks X-marking. -/
-theorem japanese_oMarking_no_xMarking :
-    japanese_oMarking.hasXMarking = false := rfl
-
-/-- Japanese X-marking datum has X-marking. -/
-theorem japanese_xMarking_has_xMarking :
-    japanese_xMarking.hasXMarking = true := rfl
-
-/-- Mandarin O-marking datum lacks X-marking. -/
-theorem mandarin_oMarking_no_xMarking :
-    mandarin_oMarking.hasXMarking = false := rfl
-
-/-- Mandarin X-marking datum has X-marking. -/
-theorem mandarin_xMarking_has_xMarking :
-    mandarin_xMarking.hasXMarking = true := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Strategy–Datum Agreement
 -- ════════════════════════════════════════════════════════════════
 
-/-- English: the X-marking strategy predicts X-marking. -/
-theorem english_strategy_xMarking :
+/-- English: strategy predicts X-marking = felicitous datum's marking. -/
+theorem english_strategy_matches :
     english_strategy.hasXMarking = english_xMarking.hasXMarking := rfl
 
-/-- Japanese: the O-marking strategy predicts no X-marking. -/
-theorem japanese_strategy_no_xMarking :
+/-- Japanese: strategy predicts no X-marking = felicitous datum's marking. -/
+theorem japanese_strategy_matches :
     japanese_strategy.hasXMarking = japanese_oMarking.hasXMarking := rfl
 
-/-- Mandarin: the O-marking strategy predicts no X-marking. -/
-theorem mandarin_strategy_no_xMarking :
+/-- Mandarin: strategy predicts no X-marking = felicitous datum's marking. -/
+theorem mandarin_strategy_matches :
     mandarin_strategy.hasXMarking = mandarin_oMarking.hasXMarking := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § ExclF Connection
+-- § Per-Datum Marking Verification
 -- ════════════════════════════════════════════════════════════════
 
-/-- English X-marking strategy produces ExclF (modal world exclusion). -/
-theorem english_produces_exclF :
-    english_strategy.producesExclF = true := rfl
+theorem english_xMarking_has_xMarking :
+    english_xMarking.hasXMarking = true := rfl
 
-/-- Japanese O-marking strategy does not produce ExclF. -/
-theorem japanese_no_exclF :
-    japanese_strategy.producesExclF = false := rfl
+theorem english_oMarking_no_xMarking :
+    english_oMarking.hasXMarking = false := rfl
 
-/-- Mandarin O-marking strategy does not produce ExclF. -/
-theorem mandarin_no_exclF :
-    mandarin_strategy.producesExclF = false := rfl
+theorem japanese_oMarking_no_xMarking :
+    japanese_oMarking.hasXMarking = false := rfl
 
-/-- English X-marking requires "actually" to recover the actual world. -/
-theorem english_requires_actually :
-    english_strategy.requiresActuallyOperator = true := rfl
+theorem japanese_xMarking_has_xMarking :
+    japanese_xMarking.hasXMarking = true := rfl
 
-/-- Japanese O-marking does not require "actually". -/
-theorem japanese_no_actually_required :
-    japanese_strategy.requiresActuallyOperator = false := rfl
+theorem mandarin_oMarking_no_xMarking :
+    mandarin_oMarking.hasXMarking = false := rfl
+
+theorem mandarin_xMarking_has_xMarking :
+    mandarin_xMarking.hasXMarking = true := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § FLV Correlation Verification
@@ -108,14 +84,14 @@ theorem japanese_no_actually_required :
 
 /-- English: X-marking for Anderson ↔ X-marking for FLV. -/
 theorem english_flv_correlation :
-    english_strategy.flvXMarkingAvailable = english_flv.xMarkingAvailable := rfl
+    english_strategy.hasXMarking = english_flv.xMarkingAvailable := rfl
 
 /-- Japanese: no X-marking for Anderson ↔ no X-marking for FLV. -/
 theorem japanese_flv_correlation :
-    japanese_strategy.flvXMarkingAvailable = japanese_flv.xMarkingAvailable := rfl
+    japanese_strategy.hasXMarking = japanese_flv.xMarkingAvailable := rfl
 
 /-- Mandarin: no X-marking for Anderson ↔ no X-marking for FLV. -/
 theorem mandarin_flv_correlation :
-    mandarin_strategy.flvXMarkingAvailable = mandarin_flv.xMarkingAvailable := rfl
+    mandarin_strategy.hasXMarking = mandarin_flv.xMarkingAvailable := rfl
 
 end Phenomena.Conditionals.Studies.Mizuno2024.Bridge

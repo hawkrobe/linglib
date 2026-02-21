@@ -35,6 +35,8 @@ for the Anderson reading. -/
 structure AndersonDatum where
   /-- Language name -/
   language : String
+  /-- Example number in Mizuno (2024) -/
+  exampleNumber : String
   /-- Morphological form of the antecedent -/
   antecedentForm : String
   /-- Morphological form of the consequent -/
@@ -69,6 +71,7 @@ structure FLVAvailabilityDatum where
     accesses the actual world. Felicitous for Anderson reading. -/
 def english_xMarking : AndersonDatum where
   language := "English"
+  exampleNumber := "1"
   antecedentForm := "had taken (past perfect)"
   consequentForm := "would have shown ... is actually showing"
   hasXMarking := true
@@ -85,6 +88,7 @@ def english_xMarking : AndersonDatum where
     accessible worlds. Not felicitous for Anderson reading. -/
 def english_oMarking : AndersonDatum where
   language := "English"
+  exampleNumber := "2"
   antecedentForm := "takes (present)"
   consequentForm := "shows ... is actually showing"
   hasXMarking := false
@@ -106,6 +110,7 @@ def english_oMarking : AndersonDatum where
     exactly the same symptoms as his actual symptoms.' -/
 def japanese_oMarking : AndersonDatum where
   language := "Japanese"
+  exampleNumber := "4a"
   antecedentForm := "nom-eba (COND)"
   consequentForm := "mise-ru (Non-Past) hazuda (MOD)"
   hasXMarking := false
@@ -123,6 +128,7 @@ def japanese_oMarking : AndersonDatum where
     Same gloss but with Past -ta: yields CF reading only. -/
 def japanese_xMarking : AndersonDatum where
   language := "Japanese"
+  exampleNumber := "4b"
   antecedentForm := "nom-eba (COND)"
   consequentForm := "mise-ta (Past) hazuda (MOD)"
   hasXMarking := true
@@ -143,6 +149,7 @@ def japanese_xMarking : AndersonDatum where
     symptoms he is actually showing.' -/
 def mandarin_oMarking : AndersonDatum where
   language := "Mandarin"
+  exampleNumber := "13a"
   antecedentForm := "ruguo ... he le (PERF) pishuang"
   consequentForm := "jiu hui chuxian ... (no final le)"
   hasXMarking := false
@@ -158,6 +165,7 @@ def mandarin_oMarking : AndersonDatum where
     With final le: infelicitous for Anderson reading. -/
 def mandarin_xMarking : AndersonDatum where
   language := "Mandarin"
+  exampleNumber := "13a"
   antecedentForm := "ruguo ... he le (PERF) pishuang"
   consequentForm := "jiu hui chuxian ... le (PERF)"
   hasXMarking := true
