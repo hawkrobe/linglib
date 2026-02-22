@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scale
 import Linglib.Core.Time
@@ -10,6 +11,26 @@ import Linglib.Core.Time
 The showcase theorem: six independent classification systems from different
 linguistic subfields all agree on licensing predictions, because they all
 route through `LicensingPipeline.isLicensed` → `Boundedness.isLicensed`.
+
+## Compositional Chain Architecture
+
+`MereoTag` (QUA/CUM) serves as the canonical bottleneck — all binary domain
+classifications route through it, and `MereoTag.toBoundedness` is the single
+point where the licensing prediction is made:
+
+```
+VendlerClass ─.telicity─→ Telicity ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
+PathShape ─pathShapeToTelicity─→ Telicity ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
+SituationBoundedness ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
+BoundaryType ─.toBoundedness─→ Boundedness  (direct — concepts are identical)
+EpistemicTag ─.toBoundedness─→ Boundedness  (direct — weak mereological link)
+```
+
+Each arrow encodes an independently motivated theoretical insight:
+- `.telicity`: Vendler classes determine telicity (Vendler 1957, Dowty 1979)
+- `pathShapeToTelicity`: bounded paths create telic VPs (Zwarts 2005)
+- `.toMereoTag`: telic = quantized (Krifka 1989, 1998)
+- `.toBoundedness`: quantized = closed scale (Kennedy 2007, Champollion 2017)
 
 ## The Six Sources
 
@@ -30,7 +51,9 @@ to `Boundedness.closed`/`.open_`, yielding identical licensing predictions.
 - Kennedy, C. (2007). Vagueness and grammar.
 - Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
 - Krifka, M. (1989). Nominal reference, temporal constitution.
+- Krifka, M. (1998). The origins of telicity.
 - Zwarts, J. (2005). Prepositional aspect and the algebra of paths.
+- Champollion, L. (2017). Parts of a Whole.
 -/
 
 namespace Phenomena.Gradability.CrossDomainLicensingBridge
@@ -76,8 +99,8 @@ theorem six_sources_agree_open :
 /-- Kennedy adjective (closed) and Rouillard E-TIA (closed) agree. -/
 theorem kennedy_rouillard_agree {max : Nat} {W₁ W₂ : Type*}
     (μ₁ : W₁ → Degree max) (μ₂ : W₂ → ℕ) :
-    (adjMIPDomain μ₁ full).licensed =
-    (MIPDomain.rouillardETIA μ₂ .closed).licensed := rfl
+    (adjMeasure μ₁ full).licensed =
+    (DirectedMeasure.rouillardETIA μ₂ .closed).licensed := rfl
 
 /-- Adjective licensing and VP licensing use the same reason:
     both derive from `Boundedness.closed.isLicensed`. -/
@@ -109,5 +132,39 @@ theorem activity_eq_state :
 theorem bounded_eq_closedBoundary :
     LicensingPipeline.isLicensed SituationBoundedness.bounded =
     LicensingPipeline.isLicensed Interval.BoundaryType.closed := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 5. Epistemic Modal Domain (Lassiter 2017)
+-- ════════════════════════════════════════════════════
+
+/-! Lassiter (2017) Ch. 4: the epistemic probability scale is closed [0,1],
+so epistemic adjectives like "certain" license degree modification ("completely
+certain") for the same structural reason that "full" does — closed-scale
+boundedness routes through `Boundedness.closed → isLicensed = true`.
+
+This connects the seventh licensing source (epistemic modality) to the
+existing six, demonstrating that the `LicensingPipeline` unification extends
+beyond the adjectival and verbal domains into epistemic modal semantics. -/
+
+open Semantics.Attitudes.EpistemicThreshold (epistemicBoundedness)
+
+/-- Epistemic probability licensing agrees with Kennedy adjective licensing:
+    both are `Boundedness.closed → isLicensed = true`.
+    "completely certain" is licensed for the same reason as "completely full". -/
+theorem epistemic_agrees_with_adj_closed :
+    LicensingPipeline.isLicensed epistemicBoundedness =
+    LicensingPipeline.isLicensed full.scaleType := rfl
+
+/-- Epistemic licensing agrees with telic VP licensing:
+    "completely certain" licensed for the same reason as
+    "in an hour" with accomplishments (both closed). -/
+theorem epistemic_agrees_with_telic :
+    LicensingPipeline.isLicensed epistemicBoundedness =
+    LicensingPipeline.isLicensed Telicity.telic := rfl
+
+/-- Epistemic licensing agrees with QUA mereological licensing. -/
+theorem epistemic_agrees_with_qua :
+    LicensingPipeline.isLicensed epistemicBoundedness =
+    LicensingPipeline.isLicensed MereoTag.qua := rfl
 
 end Phenomena.Gradability.CrossDomainLicensingBridge

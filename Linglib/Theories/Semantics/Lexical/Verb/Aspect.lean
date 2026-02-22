@@ -1,3 +1,5 @@
+import Linglib.Core.Scale
+
 /-
 Aspectual categories following Vendler (1957) and Dowty (1979).
 Three binary features (telicity, duration, dynamicity) yield four Vendler classes.
@@ -31,6 +33,13 @@ inductive Dynamicity where
   deriving DecidableEq, Repr, BEq, Inhabited
 
 end Features
+
+/-- Telicity → MereoTag: telic = quantized (Krifka 1989, 1998).
+    Telic predicates are QUA (no proper part of a telic event is telic);
+    atelic predicates are CUM (the sum of two atelic events is atelic). -/
+def Telicity.toMereoTag : Telicity → Core.Scale.MereoTag
+  | .telic  => .qua
+  | .atelic => .cum
 
 section VendlerClassification
 

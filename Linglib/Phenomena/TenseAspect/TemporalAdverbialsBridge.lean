@@ -267,7 +267,8 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
     (h : p.isHomogeneous = false) :
     scaleBoundedness p.toVendlerClass = .closed := by
   have := (homogeneous_iff_atelic p)
-  cases hc : p.toVendlerClass <;> simp [scaleBoundedness]
+  cases hc : p.toVendlerClass <;>
+    simp [scaleBoundedness, VendlerClass.telicity, Telicity.toMereoTag, MereoTag.toBoundedness]
   all_goals (simp [hc, AspectualProfile.isHomogeneous] at h)
 
 -- ════════════════════════════════════════════════════
@@ -435,12 +436,16 @@ def eTIA_predicted_by_pipeline (d : ETIADatum) : Bool :=
 theorem eTIA_pipeline_all_predicted :
     eTIAData.all eTIA_predicted_by_pipeline = true := by native_decide
 
-/-- Pipeline agrees with direct scaleBoundedness on all four Vendler classes. -/
+/-- Pipeline agrees with direct scaleBoundedness on all four Vendler classes.
+    With compositional chains, the pipeline instance and `scaleBoundedness`
+    both route through `VendlerClass →.telicity Telicity →.toMereoTag
+    MereoTag →.toBoundedness Boundedness`, so agreement is definitional. -/
 theorem pipeline_agrees_with_boundedness :
     (∀ c : VendlerClass,
       LicensingPipeline.isLicensed c =
       (scaleBoundedness c).isLicensed) := by
-  intro c; simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness]
+  intro c; simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
+                  Semantics.Events.DimensionBridge.telicityToBoundedness, scaleBoundedness]
 
 -- ════════════════════════════════════════════════════
 -- § 12. SituationBoundedness Bridge

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.226.11] - 2026-02-22
+
+### Changed
+- **`Theories/Semantics/Lexical/Verb/Aspect.lean`**: Add `import Linglib.Core.Scale`; add `Telicity.toMereoTag` (telic→qua, atelic→cum) — the Krifka (1989, 1998) link between telicity and mereological quantization
+- **`Core/Time.lean`**: Add `SituationBoundedness.toMereoTag` (bounded→qua, unbounded→cum); reroute `LicensingPipeline` instance through `toMereoTag.toBoundedness`
+- **`Theories/Semantics/Tense/MaximalInformativity.lean`**: Redefine `scaleBoundedness` as compositional chain `v.telicity.toMereoTag.toBoundedness` instead of direct pattern match; simplify `telic_closed`/`atelic_open` proofs
+- **`Theories/Semantics/Events/DimensionBridge.lean`**: Redefine `telicityToBoundedness` as `t.toMereoTag.toBoundedness`; reroute `VendlerClass` instance through `telicityToBoundedness v.telicity` and `PathShape` instance through `telicityToBoundedness (pathShapeToTelicity p)`; `vendler_comm` becomes `rfl` (both sides are now the same chain); `commutativity_diamond` simplifies to four `rfl`s
+- **`Phenomena/TenseAspect/TemporalAdverbialsBridge.lean`**: Update `nonhomogeneous_implies_closed_scale` and `pipeline_agrees_with_boundedness` simp sets for chain definitions
+- **`Phenomena/Gradability/CrossDomainLicensingBridge.lean`**: Update module docstring with compositional chain architecture diagram
+
 ## [0.226.10] - 2026-02-22
 
 ### Changed

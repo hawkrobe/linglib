@@ -97,6 +97,59 @@ def precedes (i₁ i₂ : Interval Time) : Prop :=
 def meets (i₁ i₂ : Interval Time) : Prop :=
   i₁.finish = i₂.start
 
+/-- Proper subinterval: i₁ ⊆ i₂ with at least one strict boundary.
+    Required for IMPF: reference time PROPERLY inside event runtime. -/
+def properSubinterval (i₁ i₂ : Interval Time) : Prop :=
+  i₁.subinterval i₂ ∧ (i₂.start < i₁.start ∨ i₁.finish < i₂.finish)
+
+/-- i₁ is entirely after i₂ (i₁ starts at or after i₂ finishes). -/
+def isAfter (i₁ i₂ : Interval Time) : Prop :=
+  i₂.finish ≤ i₁.start
+
+/-- i₁ is entirely before i₂. -/
+def isBefore (i₁ i₂ : Interval Time) : Prop :=
+  i₁.finish ≤ i₂.start
+
+theorem properSub_implies_sub (i₁ i₂ : Interval Time)
+    (h : i₁.properSubinterval i₂) : i₁.subinterval i₂ :=
+  h.1
+
+theorem subinterval_refl (i : Interval Time) : i.subinterval i :=
+  ⟨le_refl _, le_refl _⟩
+
+/-- No interval is properly contained in itself. -/
+theorem properSubinterval_irrefl (i : Interval Time) :
+    ¬ i.properSubinterval i := by
+  intro ⟨_, h⟩
+  cases h with
+  | inl h => exact lt_irrefl _ h
+  | inr h => exact lt_irrefl _ h
+
+theorem isAfter_iff_isBefore (i₁ i₂ : Interval Time) :
+    i₁.isAfter i₂ ↔ i₂.isBefore i₁ :=
+  Iff.rfl
+
+/-- Final subinterval: i₁ ⊆ i₂ and they share the same right endpoint.
+    Pancheva (2003): PTS(i', i) iff i is a final subinterval of i'. -/
+def finalSubinterval (i₁ i₂ : Interval Time) : Prop :=
+  i₁.subinterval i₂ ∧ i₁.finish = i₂.finish
+
+/-- Initial overlap (∂): i₁ and i₂ overlap, and the start of i₂ is in i₁.
+    Pancheva (2003): i ∂τ(e) — the beginning of the eventuality is included
+    in the reference interval but the end may not be.
+    Used for NEUTRAL viewpoint aspect. -/
+def initialOverlap (i₁ i₂ : Interval Time) : Prop :=
+  i₁.overlaps i₂ ∧ i₁.contains i₂.start
+
+/-- Final subinterval implies subinterval. -/
+theorem finalSub_implies_sub (i₁ i₂ : Interval Time)
+    (h : i₁.finalSubinterval i₂) : i₁.subinterval i₂ :=
+  h.1
+
+/-- Every interval is a final subinterval of itself. -/
+theorem finalSubinterval_refl (i : Interval Time) : i.finalSubinterval i :=
+  ⟨subinterval_refl i, rfl⟩
+
 -- ════════════════════════════════════════════════════
 -- § Open/Closed Interval Distinction (Rouillard 2026)
 -- ════════════════════════════════════════════════════
@@ -245,10 +298,15 @@ inductive SituationBoundedness where
   | unbounded  -- atelic / imperfective / open
   deriving DecidableEq, Repr, BEq
 
+/-- SituationBoundedness → MereoTag: bounded = quantized, unbounded = cumulative.
+    Bounded situations (telic/perfective) are mereologically quantized;
+    unbounded situations (atelic/imperfective) are cumulative. -/
+def SituationBoundedness.toMereoTag : SituationBoundedness → Core.Scale.MereoTag
+  | .bounded   => .qua
+  | .unbounded => .cum
+
 instance : Core.Scale.LicensingPipeline SituationBoundedness where
-  toBoundedness
-    | .bounded   => .closed
-    | .unbounded => .open_
+  toBoundedness s := s.toMereoTag.toBoundedness
 
 theorem bounded_licensed :
     Core.Scale.LicensingPipeline.isLicensed SituationBoundedness.bounded = true := rfl

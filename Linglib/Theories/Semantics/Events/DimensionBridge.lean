@@ -53,12 +53,13 @@ namespace Semantics.Events.DimensionBridge
 -- § 1. Telicity → Boundedness Bridge
 -- ════════════════════════════════════════════════════
 
-/-- Telicity maps to scale boundedness: telic → closed, atelic → open.
+/-- Telicity maps to scale boundedness via MereoTag: telic → QUA → closed,
+    atelic → CUM → open. Derived through the compositional chain
+    Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness.
     This is the shared core of all four licensing frameworks:
     Kennedy (2007), Rouillard (2026), Krifka (1989), Zwarts (2005). -/
-def telicityToBoundedness : Telicity → Boundedness
-  | .telic => .closed
-  | .atelic => .open_
+def telicityToBoundedness (t : Telicity) : Boundedness :=
+  t.toMereoTag.toBoundedness
 
 theorem telic_is_closed : telicityToBoundedness .telic = .closed := rfl
 theorem atelic_is_open : telicityToBoundedness .atelic = .open_ := rfl
@@ -71,23 +72,27 @@ instance : LicensingPipeline Telicity where
   toBoundedness := telicityToBoundedness
 
 instance : LicensingPipeline VendlerClass where
-  toBoundedness := scaleBoundedness
+  toBoundedness v := telicityToBoundedness v.telicity
 
 instance : LicensingPipeline PathShape where
-  toBoundedness := PathShape.toBoundedness
+  toBoundedness p := telicityToBoundedness (pathShapeToTelicity p)
 
 -- ════════════════════════════════════════════════════
 -- § 3. Commutativity Squares
 -- ════════════════════════════════════════════════════
 
 /-- VendlerClass → Telicity → Boundedness = VendlerClass → Boundedness.
-    The two paths (via telicity or directly via scaleBoundedness) agree. -/
+    Both paths route through the same compositional chain
+    (VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness),
+    so agreement is definitional. -/
 theorem vendler_comm (c : VendlerClass) :
-    telicityToBoundedness c.telicity = scaleBoundedness c := by
-  cases c <;> rfl
+    telicityToBoundedness c.telicity = scaleBoundedness c := rfl
 
 /-- PathShape → Telicity → Boundedness = PathShape → Boundedness.
-    The spatial classification agrees with the direct toBoundedness. -/
+    The compositional chain (PathShape → Telicity → MereoTag → Boundedness)
+    agrees with the direct `PathShape.toBoundedness` from Core/Path.lean.
+    This is a genuine commutativity proof: the Core-level direct classification
+    and the Theories-level compositional derivation yield the same result. -/
 theorem pathShape_comm (s : PathShape) :
     telicityToBoundedness (pathShapeToTelicity s) = s.toBoundedness := by
   cases s <;> rfl
@@ -105,7 +110,9 @@ theorem boundaryType_closed : Interval.BoundaryType.toBoundedness .closed = .clo
 theorem boundaryType_open : Interval.BoundaryType.toBoundedness .open_ = .open_ := rfl
 
 /-- The full commutativity diamond: every path through the classification
-    diagram produces the same licensing prediction. -/
+    diagram produces the same licensing prediction.
+    With compositional chains, the VendlerClass and PathShape arms are
+    definitional (both sides route through the same chain). -/
 theorem commutativity_diamond :
     (∀ c : VendlerClass,
       LicensingPipeline.isLicensed c.telicity =
@@ -116,12 +123,8 @@ theorem commutativity_diamond :
     (LicensingPipeline.isLicensed MereoTag.qua =
      LicensingPipeline.isLicensed Boundedness.closed) ∧
     (LicensingPipeline.isLicensed MereoTag.cum =
-     LicensingPipeline.isLicensed Boundedness.open_) := by
-  refine ⟨fun c => ?_, fun s => ?_, rfl, rfl⟩
-  · simp only [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
-               vendler_comm]
-  · simp only [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
-               pathShape_comm]
+     LicensingPipeline.isLicensed Boundedness.open_) :=
+  ⟨fun _ => rfl, fun _ => rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Concrete Dimension Chain Instantiations
