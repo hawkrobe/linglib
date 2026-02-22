@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.17] - 2026-02-22
+
+### Changed
+- **`Tactics/RSAPredict/AutoDetect.lean`**: Handle exp+log s1Score form (`exp(α * log(L0))`) — relax `findCostSubExpr` to accept constant costs (e.g., literal 0); add zero-cost fallback when no subtraction found; downgrade `beliefAction` with zero cost to `beliefBased` (avoids expBounds interval approximation, enabling exact equality proofs); implement S1 auto-detect (`tryAutoDetectS1Compare`, `tryAutoDetectS1NotGt`) with Latent type bridging via `Eq.mpr`
+- **`Phenomena/Reference/Studies/FrankGoodman2012.lean`**: Rewrite s1Score from collapsed `rpow(L0, α)` to SM standard equations `exp(α · log L0)` with D(w) = 0; all 16 proofs pass via auto-detect reflection (~25–45ms each)
+
 ## [0.226.16] - 2026-02-22
 
 ### Added
@@ -9,7 +15,7 @@
 ### Changed
 - **`Tactics/RSAPredict/ReflectBridge.lean`**: Wire Tier 2 as fallback — each `tryReflect*` function calls corresponding `tryAutoDetect*` when `extractConfigData?` returns none; import `AutoDetect`
 - **`Tactics/RSAPredict.lean`**: Add reflection fast path for ¬(L1), S1, ¬(S1) handlers (tries `tryReflect*` before CProof pipeline)
-- **`Phenomena/Reference/Studies/FrankGoodman2012.lean`**: Migrate to `RSAConfigData` with detailed SM equations in docstring
+- **`Phenomena/Reference/Studies/FrankGoodman2012.lean`**: Migrate to raw RSAConfig with detailed SM equations in docstring
 
 ## [0.226.15] - 2026-02-22
 

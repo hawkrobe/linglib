@@ -155,18 +155,19 @@ def extractLatentPriorValues (cfg : Expr) (allWElems allLElems : Array Expr) :
 
 /-- Find a sub-expression that looks like a cost term:
     - Appears as the RHS of a subtraction (... - cost)
-    - Mentions uFvar but not wFvar -/
+    - Does NOT mention wFvar (cost depends on utterance, not world)
+    - May or may not mention uFvar (constant cost like 0 is valid) -/
 partial def findCostSubExpr (e : Expr) (wFvar uFvar : FVarId) : Option Expr :=
   -- Check HSub.hSub _ _ _ _ lhs rhs
   if isAppOfMin e ``HSub.hSub 6 then
     let rhs := e.getAppArgs[5]!
-    -- cost mentions u but not w
-    if !rhs.containsFVar wFvar && rhs.containsFVar uFvar then
+    -- cost must not mention w (it's utterance-specific or constant)
+    if !rhs.containsFVar wFvar then
       some rhs
     else none
   else if isAppOfMin e ``Sub.sub 4 then
     let rhs := e.getAppArgs[3]!
-    if !rhs.containsFVar wFvar && rhs.containsFVar uFvar then
+    if !rhs.containsFVar wFvar then
       some rhs
     else none
   else
@@ -225,18 +226,23 @@ def extractCostFromScore (cfg : Expr) (_U _W _L : Expr)
   -- mentions uFvar but NOT wFvar. Walk the expression tree to find it.
   -- This is heuristic: look for HSub.hSub where the RHS doesn't mention wFvar.
   let costExpr? := findCostSubExpr body wFvar uFvar
-  let some costExpr := costExpr? | return none
-
-  -- Evaluate cost at each utterance
-  let mut costs : Array ℚ := #[]
-  for u in allUElems do
-    let specialized := costExpr.replaceFVar (mkFVar uFvar) u
-    try
-      let q ← extractRat specialized
-      costs := costs.push q
-    catch _ =>
-      return none
-  return some costs
+  match costExpr? with
+  | some costExpr =>
+    -- Evaluate cost at each utterance
+    let mut costs : Array ℚ := #[]
+    for u in allUElems do
+      let specialized := costExpr.replaceFVar (mkFVar uFvar) u
+      try
+        let q ← extractRat specialized
+        costs := costs.push q
+      catch _ =>
+        return none
+    return some costs
+  | none =>
+    -- No subtraction found — could be zero cost (e.g., exp(α * log(l0)))
+    -- Default to zero cost for all utterances
+    let zeros : Array ℚ := Array.replicate allUElems.size 0
+    return some zeros
 
 -- ============================================================================
 -- Build ite-Chain Functions (ℚ-valued)
@@ -474,15 +480,26 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
     return false
 
   -- Extract cost for action-based patterns
-  let costVals ← match pattern with
+  let (pattern, costVals) ← match pattern with
     | .beliefAction | .actionBased | .qudAction => do
-      extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
-    | _ => pure none
+      let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
+      -- Downgrade to beliefBased when all costs are zero.
+      -- beliefAction with zero cost is algebraically L0^α (= beliefBased),
+      -- but the ℚ pipeline for beliefAction uses expBounds which introduces
+      -- interval approximation error, preventing exact equality proofs.
+      match cv with
+      | some costs =>
+        if costs.all (· == 0) && pattern matches .beliefAction then
+          pure (.beliefBased, none)
+        else
+          pure (pattern, cv)
+      | none => pure (pattern, cv)
+    | _ => pure (pattern, none)
 
   -- Build RSAConfigData
   let some d ← buildConfigData U W L allUElems allWElems allLElems
       meaningVals wpVals lpVals αNat pattern costVals | do
-    logInfo m!"rsa_predict: [auto-detect] RSAConfigData construction failed"
+    logInfo m!"rsa_predict: [auto-detect] RSAConfigData construction failed (cost={costVals.isSome})"
     return false
 
   let t1 ← IO.monoMsNow
@@ -525,7 +542,9 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
   -- Extract types
   let cfgType ← whnf (← inferType cfg)
   let cfgArgs := cfgType.getAppArgs
-  unless cfgArgs.size ≥ 2 do return false
+  unless cfgArgs.size ≥ 2 do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: cfg type args < 2"
+    return false
   let U := cfgArgs[0]!
   let W := cfgArgs[1]!
   let L ← whnf (← mkAppM ``RSA.RSAConfig.Latent #[cfg])
@@ -535,24 +554,49 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
   let (_, allLElems) ← getFiniteElems L
 
   let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
-  let some αNat ← resolveNat? αExpr | return false
-
-  let some pattern ← detectScorePattern cfg | return false
-
-  let some meaningVals ← extractMeaningValues cfg allLElems allUElems allWElems | return false
-  let some wpVals ← extractWorldPriorValues cfg allWElems | return false
-  let some lpVals ← extractLatentPriorValues cfg allWElems allLElems | return false
-
-  unless meaningVals.all (· ≥ 0) && wpVals.all (· ≥ 0) && lpVals.all (· ≥ 0) do
+  let some αNat ← resolveNat? αExpr | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: α not ℕ"
     return false
 
-  let costVals ← match pattern with
-    | .beliefAction | .actionBased | .qudAction =>
-      extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
-    | _ => pure none
+  let some pattern ← detectScorePattern cfg | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: no pattern detected"
+    return false
+
+  let patternName := match pattern with
+    | .beliefBased => "beliefBased" | .qudBelief => "qudBelief"
+    | .qudAction => "qudAction" | .beliefAction => "beliefAction"
+    | .actionBased => "actionBased" | .beliefWeighted => "beliefWeighted"
+  logInfo m!"rsa_predict: [auto-detect/¬L1] detected {patternName}"
+
+  let some meaningVals ← extractMeaningValues cfg allLElems allUElems allWElems | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: meaning extraction"
+    return false
+  let some wpVals ← extractWorldPriorValues cfg allWElems | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: worldPrior extraction"
+    return false
+  let some lpVals ← extractLatentPriorValues cfg allWElems allLElems | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: latentPrior extraction"
+    return false
+
+  unless meaningVals.all (· ≥ 0) && wpVals.all (· ≥ 0) && lpVals.all (· ≥ 0) do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: negative values"
+    return false
+
+  let (pattern, costVals) ← match pattern with
+    | .beliefAction | .actionBased | .qudAction => do
+      let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
+      match cv with
+      | some costs =>
+        if costs.all (· == 0) && pattern matches .beliefAction then
+          pure (.beliefBased, none)
+        else pure (pattern, cv)
+      | none => pure (pattern, cv)
+    | _ => pure (pattern, none)
 
   let some d ← buildConfigData U W L allUElems allWElems allLElems
-      meaningVals wpVals lpVals αNat pattern costVals | return false
+      meaningVals wpVals lpVals αNat pattern costVals | do
+    logInfo m!"rsa_predict: [auto-detect/¬L1] failed: buildConfigData"
+    return false
 
   try
     let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreNotGt #[d, u, w₁, u, w₂]
@@ -563,25 +607,139 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     setGoals [eqMVar.mvarId!]
     try
       evalTactic (← `(tactic| native_decide))
-    catch _ =>
+    catch e =>
       setGoals savedGoals
+      logInfo m!"rsa_predict: [auto-detect/¬L1] native_decide failed: {e.toMessageData}"
       return false
     setGoals savedGoals
     let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_check_ext #[cfg, d, u, w₁, w₂, eqMVar]
     goal.assign proof
     logInfo m!"rsa_predict: [auto-detect/¬L1] ✓ succeeded"
     return true
-  catch _ => return false
+  catch e =>
+    logInfo m!"rsa_predict: [auto-detect/¬L1] bridge failed: {e.toMessageData}"
+    return false
 
-/-- Tier 2 pipeline for S1 comparison.
-    TODO: S1 ext bridge requires Latent type matching. Falls through to CProof. -/
-def tryAutoDetectS1Compare (_goal : MVarId) (_cfg _l _w _u₁ _u₂ : Expr) : TacticM Bool :=
-  return false
+/-- Shared helper: extract ℚ data, detect pattern, build RSAConfigData for S1 goals. -/
+private def buildS1ConfigData (cfg : Expr) :
+    TacticM (Option (Expr × Expr × Expr)) := do
+  let cfgType ← whnf (← inferType cfg)
+  let cfgArgs := cfgType.getAppArgs
+  unless cfgArgs.size ≥ 2 do return none
+  let U := cfgArgs[0]!
+  let W := cfgArgs[1]!
+  let L ← whnf (← mkAppM ``RSA.RSAConfig.Latent #[cfg])
 
-/-- Tier 2 pipeline for ¬(S1 gt).
-    TODO: S1 ext bridge requires Latent type matching. Falls through to CProof. -/
-def tryAutoDetectS1NotGt (_goal : MVarId) (_cfg _l _w _u₁ _u₂ : Expr) : TacticM Bool :=
-  return false
+  let (_, allUElems) ← getFiniteElems U
+  let (_, allWElems) ← getFiniteElems W
+  let (_, allLElems) ← getFiniteElems L
+
+  let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
+  let some αNat ← resolveNat? αExpr | return none
+
+  let some pattern ← detectScorePattern cfg | return none
+
+  let some meaningVals ← extractMeaningValues cfg allLElems allUElems allWElems | return none
+  let some wpVals ← extractWorldPriorValues cfg allWElems | return none
+  let some lpVals ← extractLatentPriorValues cfg allWElems allLElems | return none
+
+  unless meaningVals.all (· ≥ 0) && wpVals.all (· ≥ 0) && lpVals.all (· ≥ 0) do
+    return none
+
+  let (pattern, costVals) ← match pattern with
+    | .beliefAction | .actionBased | .qudAction => do
+      let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
+      match cv with
+      | some costs =>
+        if costs.all (· == 0) && pattern matches .beliefAction then
+          pure (.beliefBased, none)
+        else pure (pattern, cv)
+      | none => pure (pattern, cv)
+    | _ => pure (pattern, none)
+
+  let some d ← buildConfigData U W L allUElems allWElems allLElems
+      meaningVals wpVals lpVals αNat pattern costVals | return none
+
+  -- Build h_lat : d.Latent = cfg.Latent proof (should be rfl since d.Latent = L = cfg.Latent)
+  let dLatent ← whnf (← mkAppM ``RSA.RSAConfigData.Latent #[d])
+  let cfgLatent ← whnf (← mkAppM ``RSA.RSAConfig.Latent #[cfg])
+  let hLatType ← mkEq dLatent cfgLatent
+  let hLat ← try
+    let m ← mkFreshExprMVar hLatType
+    if ← isDefEq dLatent cfgLatent then
+      m.mvarId!.assign (← mkEqRefl dLatent)
+      pure m
+    else
+      logInfo m!"rsa_predict: [auto-detect/S1] Latent types not defEq"
+      return none
+  catch _ =>
+    logInfo m!"rsa_predict: [auto-detect/S1] Latent type proof failed"
+    return none
+
+  return some (d, L, hLat)
+
+/-- Tier 2 pipeline for S1 comparison. -/
+def tryAutoDetectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
+  logInfo m!"rsa_predict: [auto-detect/S1] trying pattern detection..."
+
+  let some (d, _L, hLat) ← buildS1ConfigData cfg | do
+    logInfo m!"rsa_predict: [auto-detect/S1] setup failed"
+    return false
+
+  try
+    -- Cast l from cfg.Latent to d.Latent using h_lat
+    let castL ← mkAppM ``Eq.mpr #[hLat, l]
+    let checkExpr ← mkAppM ``RSA.Verify.checkS1PolicyGt #[d, castL, w, u₁, u₂]
+    let trueExpr := mkConst ``Bool.true
+    let eqType ← mkEq checkExpr trueExpr
+    let eqMVar ← mkFreshExprMVar eqType
+    let savedGoals ← getGoals
+    setGoals [eqMVar.mvarId!]
+    try
+      evalTactic (← `(tactic| native_decide))
+    catch e =>
+      setGoals savedGoals
+      logInfo m!"rsa_predict: [auto-detect/S1] native_decide failed: {e.toMessageData}"
+      return false
+    setGoals savedGoals
+    let proof ← mkAppM ``RSA.Verify.s1_gt_of_check_ext #[cfg, d, hLat, l, w, u₁, u₂, eqMVar]
+    goal.assign proof
+    logInfo m!"rsa_predict: [auto-detect/S1] ✓ succeeded"
+    return true
+  catch e =>
+    logInfo m!"rsa_predict: [auto-detect/S1] bridge failed: {e.toMessageData}"
+    return false
+
+/-- Tier 2 pipeline for ¬(S1 gt). -/
+def tryAutoDetectS1NotGt (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
+  logInfo m!"rsa_predict: [auto-detect/¬S1] trying pattern detection..."
+
+  let some (d, _L, hLat) ← buildS1ConfigData cfg | do
+    logInfo m!"rsa_predict: [auto-detect/¬S1] setup failed"
+    return false
+
+  try
+    let castL ← mkAppM ``Eq.mpr #[hLat, l]
+    let checkExpr ← mkAppM ``RSA.Verify.checkS1PolicyNotGt #[d, castL, w, u₁, u₂]
+    let trueExpr := mkConst ``Bool.true
+    let eqType ← mkEq checkExpr trueExpr
+    let eqMVar ← mkFreshExprMVar eqType
+    let savedGoals ← getGoals
+    setGoals [eqMVar.mvarId!]
+    try
+      evalTactic (← `(tactic| native_decide))
+    catch e =>
+      setGoals savedGoals
+      logInfo m!"rsa_predict: [auto-detect/¬S1] native_decide failed: {e.toMessageData}"
+      return false
+    setGoals savedGoals
+    let proof ← mkAppM ``RSA.Verify.s1_not_gt_of_check_ext #[cfg, d, hLat, l, w, u₁, u₂, eqMVar]
+    goal.assign proof
+    logInfo m!"rsa_predict: [auto-detect/¬S1] ✓ succeeded"
+    return true
+  catch e =>
+    logInfo m!"rsa_predict: [auto-detect/¬S1] bridge failed: {e.toMessageData}"
+    return false
 
 /-- Tier 2 pipeline for L1 score gt (cross-utterance). -/
 def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : TacticM Bool := do
@@ -610,10 +768,16 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
   unless meaningVals.all (· ≥ 0) && wpVals.all (· ≥ 0) && lpVals.all (· ≥ 0) do
     return false
 
-  let costVals ← match pattern with
-    | .beliefAction | .actionBased | .qudAction =>
-      extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
-    | _ => pure none
+  let (pattern, costVals) ← match pattern with
+    | .beliefAction | .actionBased | .qudAction => do
+      let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
+      match cv with
+      | some costs =>
+        if costs.all (· == 0) && pattern matches .beliefAction then
+          pure (.beliefBased, none)
+        else pure (pattern, cv)
+      | none => pure (pattern, cv)
+    | _ => pure (pattern, none)
 
   let some d ← buildConfigData U W L allUElems allWElems allLElems
       meaningVals wpVals lpVals αNat pattern costVals | return false

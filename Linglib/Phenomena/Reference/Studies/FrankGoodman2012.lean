@@ -2,7 +2,7 @@ import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Montague.Modification
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Frank & Goodman (2012) @cite{frank-goodman-2012}
@@ -20,13 +20,14 @@ Utterances: {blue, green, square, circle}
 
 ## Architecture (SM Eq. S1–S4)
 
-    ⟦w⟧(o)         Boolean denotation: does word w apply to object o?
-    L0(o|w)     =  ⟦w⟧(o) / Σ_o' ⟦w⟧(o')                       (Eq. S3)
-    P(w|rₛ,C)  ∝  L0(rₛ|w)^α                                    (Eq. S1, belief-based)
-                =  |w|⁻¹ / Σ_{w'} |w'|⁻¹    when α = 1          (Eq. 2, size principle)
-    L1(rₛ|w)   ∝  P(w|rₛ,C) · P(rₛ)                             (Eq. 1)
+    ⟦w⟧(o)              Boolean denotation: does word w apply to object o?
+    L0(rₛ|w)        =   ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o)                   (Eq. S4)
+    U(w; rₛ, C)     =   log L0(rₛ|w) − D(w)                     (Eq. S2)
+    P_S1(w|rₛ, C)  ∝   e^{α · U(w; rₛ, C)}                      (Eq. S1)
+    L1(rₛ|w)       ∝   P_S1(w|rₛ, C) · P(rₛ)                    (Eq. 1)
 
-No latent variables, uniform priors, zero cost.
+With D(w) = 0 (no word cost) and α = 1 (Luce choice rule).
+No latent variables, uniform priors.
 
 ## Qualitative Findings
 
@@ -144,15 +145,24 @@ def Feature.appliesTo (f : Feature) (o : Object) : Bool :=
 open RSA Real in
 /-- Frank & Goodman (2012) reference game as RSA model.
 
-    ⟦w⟧(o)        =  1 if w applies to o, 0 otherwise    (Boolean semantics)
-    S1(w|rₛ)      ∝  L0(rₛ|w)^α                           (Eq. S1, belief-based)
-    α             =  1                                     (Luce choice rule)
-    P(rₛ), D(w)   =  uniform, 0                            (no salience, no cost) -/
+    SM Eq. S1–S4:
+    ⟦w⟧(o)         =  1 if w applies to o, 0 otherwise   (Eq. S3, Boolean semantics)
+    L0(rₛ|w)       =  ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o)              (Eq. S4, literal listener)
+    U(w; rₛ, C)    =  log L0(rₛ|w) − D(w)                (Eq. S2, informativity − cost)
+    P(w|rₛ, C)    ∝  e^{α · U(w; rₛ, C)}                 (Eq. S1, soft-max speaker)
+
+    With D(w) = 0 and α = 1 (Luce choice rule). -/
 noncomputable def cfg : RSAConfig Feature Object where
   meaning _ u w := if u.appliesTo w then 1 else 0              -- ⟦w⟧(o)  (Eq. S3)
   meaning_nonneg _ _ _ := by split <;> norm_num
-  s1Score l0 α _ w u := rpow (l0 u w) α                       -- P(w|rₛ) ∝ L0^α  (Eq. S1)
-  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  -- Eq. S1+S2: e^{α · log L0(rₛ|w)}, with D(w) = 0
+  s1Score l0 α _ w u :=
+    if l0 u w = 0 then 0
+    else exp (α * log (l0 u w))
+  s1Score_nonneg l0 α _ _ u _ _ := by
+    split
+    · exact le_refl 0
+    · exact le_of_lt (exp_pos _)
   α := 1
   α_pos := by norm_num
   worldPrior_nonneg _ := by norm_num
@@ -415,13 +425,18 @@ def ContextSpec.applies (ctx : ContextSpec) : Dim2Feature → Obj3 → Bool
 
 open RSA Real in
 /-- Build a reference game from a boolean applicability matrix.
-    All contexts share: belief-based S1 (Eq. S1), α = 1, uniform priors, no cost. -/
+    All contexts share: SM Eq. S1 (e^{α·log L0}), α = 1, uniform priors, D(w) = 0. -/
 noncomputable def mkRefGame (applies : Dim2Feature → Obj3 → Bool) :
     RSAConfig Dim2Feature Obj3 where
   meaning _ u w := if applies u w then 1 else 0
   meaning_nonneg _ _ _ := by split <;> norm_num
-  s1Score l0 α _ w u := rpow (l0 u w) α
-  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  s1Score l0 α _ w u :=
+    if l0 u w = 0 then 0
+    else exp (α * log (l0 u w))
+  s1Score_nonneg l0 α _ _ u _ _ := by
+    split
+    · exact le_refl 0
+    · exact le_of_lt (exp_pos _)
   α := 1
   α_pos := by norm_num
   worldPrior_nonneg _ := by norm_num
