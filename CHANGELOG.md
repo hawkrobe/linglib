@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.13] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Events/TemporalDecomposition.lean`**: `phasePred` converts interval phases to `EventPred Unit Time`; `impf_phasePred`/`prfv_phasePred` reduce operator applications to interval containment; `progressive_before_result` (imperfective paradox via counterexample); `perfective_full_entails_result`/`perfective_full_entails_activity` (PRFV covers all phases); `perfective_full_covers_phases` (compositional completion entailment); `impf_activity_prfv_full_incompatible` (progressive/perfective mutual exclusion)
+- **`Theories/Semantics/Tense/PerfectPolysemy.lean`**: § 6 compositional derivation — `existential_eq_perf_prfv` (existential reading = PERF(PRFV(full))), `universal_eq_perf_unbounded` (universal = PERF(UNBOUNDED(full))), `resultative_from_result_contains`, `existential_available_for_all_classes`
+
 ## [0.226.12] - 2026-02-22
 
 ### Added

@@ -30,6 +30,7 @@ This module integrates:
 3. **Reading availability from VendlerClass**: telicity gates resultative
 4. **Pancheva bridge**: Pancheva's types embed into Kiparsky's
 5. **Kiparsky's three puzzles**: SOT asymmetry, present perfect puzzle, wh-puzzle
+6. **Compositional derivation**: existential = PERF(PRFV), universal = PERF(UNBOUNDED)
 
 ## References
 
@@ -246,5 +247,68 @@ theorem wh_targets_assertion (split : ResultativeContentSplit Prop) :
     -- (This is a structural statement; the extraction-from-presupposition
     -- filter requires the presupposition module for full formalization.)
     split.assertedResult = split.assertedResult := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Compositional Derivation via ViewpointAspect
+-- ════════════════════════════════════════════════════
+
+/-! The Kiparsky readings defined in § 2 as interval relations can be
+compositionally derived by stacking ViewpointAspect operators (IMPF, PRFV,
+PERF, UNBOUNDED) on `phasePred` event predicates. This section proves that
+the two characterizations are equivalent, grounding the readings in the
+same compositional pipeline used by ViewpointAspect.lean. -/
+
+/-- Kiparsky's existential reading = PERF(PRFV(full event)).
+    The PTS is right-bounded at R, and the full event runtime is
+    contained within the PTS — exactly PRFV (runtime ⊆ PTS)
+    composed with PERF (PTS ends at R). -/
+theorem existential_eq_perf_prfv {Time : Type*} [LinearOrder Time]
+    (d : TemporalDecomposition Time) (R : Time) :
+    (∃ pts, existentialReading d pts R) ↔
+    PERF (PRFV (phasePred d.runtime)) ⟨(), R⟩ := by
+  simp only [existentialReading, PERF, RB, PRFV, phasePred, Eventuality.τ]
+  constructor
+  · rintro ⟨pts, hR, hSub⟩
+    exact ⟨pts, hR, ⟨d.runtime⟩, hSub, rfl⟩
+  · rintro ⟨pts, hR, e, hSub, heq⟩
+    exact ⟨pts, hR, heq ▸ hSub⟩
+
+/-- Kiparsky's universal reading = PERF(UNBOUNDED(full event)).
+    The PTS is right-bounded at R, and the PTS is contained within
+    the event runtime — exactly UNBOUNDED (PTS ⊆ runtime)
+    composed with PERF (PTS ends at R). -/
+theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
+    (d : TemporalDecomposition Time) (R : Time) :
+    (∃ pts, universalReading d pts R) ↔
+    PERF (UNBOUNDED (phasePred d.runtime)) ⟨(), R⟩ := by
+  simp only [universalReading, PERF, RB, UNBOUNDED, phasePred, Eventuality.τ]
+  constructor
+  · rintro ⟨pts, hR, hSub⟩
+    exact ⟨pts, hR, ⟨d.runtime⟩, hSub, rfl⟩
+  · rintro ⟨pts, hR, e, hSub, heq⟩
+    exact ⟨pts, hR, heq ▸ hSub⟩
+
+/-- The resultative reading requires a complex decomposition. When available,
+    it holds whenever R falls within the result trace. PRFV on the full
+    event guarantees the result trace is within the reference time (by
+    `perfective_full_entails_result`), but the reading itself depends
+    only on R's position relative to the result phase. -/
+theorem resultative_from_result_contains {Time : Type*} [LinearOrder Time]
+    (rt : Interval Time) (phases : SubeventPhases Time)
+    (h_act : phases.activityTrace.subinterval rt)
+    (h_res : phases.resultTrace.subinterval rt)
+    (R : Time)
+    (h_R_in_result : phases.resultTrace.contains R) :
+    resultativeReading (.complex rt phases h_act h_res) R :=
+  h_R_in_result
+
+/-- The existential reading is available for all Vendler classes (it uses
+    only the full runtime, not the subevent structure). The universal
+    reading is similarly available for all classes. These correspond to
+    the atelic-compatible readings. -/
+theorem existential_available_for_all_classes (c : VendlerClass) :
+    PerfectReading.existential ∈ availableReadings c ∧
+    PerfectReading.universal ∈ availableReadings c := by
+  cases c <;> simp [availableReadings]
 
 end Semantics.Tense.PerfectPolysemy
