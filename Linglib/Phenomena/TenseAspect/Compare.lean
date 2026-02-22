@@ -2,36 +2,48 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!
-# Before/After Semantics: Under-specification vs Ambiguity
+# Before/After Semantics: Four-Theory Comparison
 
-Compares two theories of English temporal connectives:
+Compares four theories of English temporal connectives at different
+levels of semantic representation:
 
-1. **Under-specification (Anscombe 1964; Krifka 2010b)**: Single lexical entry
-   per connective. Multiple readings arise from semantic under-specification +
-   pragmatic strengthening. No covert aspectual operators.
+1. **Level 1 — Under-specification (Anscombe 1964; Krifka 2010b)**: Point-level.
+   Single lexical entry per connective. Multiple readings from under-specification
+   + pragmatic strengthening. No covert aspectual operators.
 
-2. **Ambiguity (Rett 2020; Beaver & Condoravdi 2003)**: Strong defaults
+2. **Level 2 — Ambiguity (Rett 2020)**: Interval-set-level. Strong defaults
    (before-start, after-finish). Non-default readings require covert
    **INCHOAT** or **COMPLET** operators that incur measurable processing cost.
+
+3. **Level 3 — Quantificational Event (Ogihara & Steinert-Threlkeld 2024)**:
+   Event-level. Derives the veridicality asymmetry from quantificational
+   structure (∃∃ for *after*, ∃∀ for *before*).
+
+4. **Level 4 — Intensional Uniform (Beaver & Condoravdi 2003)**: World–time pairs
+   with historical alternatives. Uniform `earliest` operator for both connectives.
+   Derives veridicality from branching time (initial branch point condition).
 
 ## Empirical Discriminators
 
 The theories make identical truth-conditional predictions for all 6
 scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
 
-1. **Processing cost**: Rett predicts coercion costs; Anscombe does not
+1. **Processing cost**: Rett predicts coercion costs; Anscombe/O&ST/B&C do not
 2. **Cross-linguistic morphology**: Rett's covert operators have overt reflexes
    (Tagalog PFV.NEUT/AIA, Serbo-Croatian PFV/IMPF)
-3. **NPI licensing mechanism**: Anscombe derives NPIs from downward entailment
-   of ∀; Rett from Strawson-entailment of the strong default
+3. **NPI licensing mechanism**: Anscombe/O&ST from ∀; Rett from Strawson-entailment;
+   B&C from the `earliest` operator's universal force
+4. **Veridicality derivation**: O&ST and B&C derive it; Anscombe and Rett stipulate it
 
 ## References
 
 - Anscombe, E. (1964). Before and after.
 - Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24.
+- Ogihara, T. & Steinert-Threlkeld, S. (2024). An interval-based semantics for
+  *before* and *after*.
+- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
 - Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
 - Krifka, M. (2010b). *Before* and *after* without coercion.
-- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
 -/
 
 namespace Phenomena.TenseAspect.Compare
@@ -43,10 +55,12 @@ open Fragments.English.TemporalExpressions
 -- § 1: Theory Classification
 -- ============================================================================
 
-/-- The two competing theories of temporal connective semantics. -/
+/-- Theories of temporal connective semantics. -/
 inductive BeforeAfterTheory where
-  | underspecification  -- Anscombe 1964, Krifka 2010b
-  | ambiguity           -- Rett 2020, Beaver & Condoravdi 2003
+  | underspecification     -- Anscombe 1964, Krifka 2010b
+  | ambiguity              -- Rett 2020
+  | quantificationalEvent  -- Ogihara & Steinert-Threlkeld 2024
+  | intensionalUniform     -- Beaver & Condoravdi 2003
   deriving DecidableEq, Repr, BEq
 
 /-- Theory profile: what each theory posits and predicts. -/
@@ -60,6 +74,10 @@ structure TheoryProfile where
   predictsProcessingCost : Bool
   /-- Mechanism for NPI licensing in *before*-clauses -/
   npiMechanism : String
+  /-- Does the theory derive the veridicality asymmetry from its semantics? -/
+  derivesVeridicality : Bool := false
+  /-- Level of semantic representation (1 = point, 2 = interval, 3 = event, 4 = intensional) -/
+  level : Nat := 0
   deriving Repr
 
 -- ============================================================================
@@ -72,16 +90,43 @@ def anscombeProfile : TheoryProfile :=
   , singleLexicalEntry := true
   , positsCoercion := false
   , predictsProcessingCost := false
-  , npiMechanism := "downward entailment from universal quantifier over times" }
+  , npiMechanism := "downward entailment from universal quantifier over times"
+  , derivesVeridicality := false
+  , level := 1 }
 
-/-- Rett/B&C: dual entries via coercion, processing cost predicted, NPIs from
+/-- Rett: dual entries via coercion, processing cost predicted, NPIs from
     Strawson-entailment of the strong default reading. -/
 def rettProfile : TheoryProfile :=
   { theory := .ambiguity
   , singleLexicalEntry := false
   , positsCoercion := true
   , predictsProcessingCost := true
-  , npiMechanism := "Strawson-entailment of strong default (before-start)" }
+  , npiMechanism := "Strawson-entailment of strong default (before-start)"
+  , derivesVeridicality := false
+  , level := 2 }
+
+/-- O&ST: event-level quantificational asymmetry derives the veridicality contrast
+    directly from the semantics (∃∃ for after, ∃∀ for before). -/
+def ostProfile : TheoryProfile :=
+  { theory := .quantificationalEvent
+  , singleLexicalEntry := true
+  , positsCoercion := false
+  , predictsProcessingCost := false
+  , npiMechanism := "universal quantifier over complement events (∀e₂)"
+  , derivesVeridicality := true
+  , level := 3 }
+
+/-- B&C: uniform analysis with `earliest` across historical alternatives.
+    Veridicality derived from branching time (initial branch point condition),
+    not from quantificational asymmetry. Single lexical entry per connective. -/
+def bcProfile : TheoryProfile :=
+  { theory := .intensionalUniform
+  , singleLexicalEntry := true
+  , positsCoercion := false
+  , predictsProcessingCost := false
+  , npiMechanism := "downward entailment from universal quantifier (earliest operator)"
+  , derivesVeridicality := true
+  , level := 4 }
 
 -- ============================================================================
 -- § 3: Empirical Discriminators
@@ -102,6 +147,34 @@ def rettPredictsOvertMorphology : Bool :=
 theorem coercion_cost_discriminates : rettPredictsCoercionCost = true := rfl
 theorem morphology_discriminates : rettPredictsOvertMorphology = true := rfl
 theorem theories_distinct : anscombeProfile.theory ≠ rettProfile.theory := by decide
+
+/-- O&ST and B&C both derive veridicality; Anscombe and Rett do not.
+    O&ST derives it from quantificational asymmetry (∃∃ vs ∃∀);
+    B&C derives it from branching time (initial branch point condition). -/
+theorem veridicality_derivation :
+    ostProfile.derivesVeridicality = true ∧
+    bcProfile.derivesVeridicality = true ∧
+    anscombeProfile.derivesVeridicality = false ∧
+    rettProfile.derivesVeridicality = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The four theories form a strict level hierarchy:
+    Anscombe (1) < Rett (2) < O&ST (3) < B&C (4). -/
+theorem level_hierarchy :
+    anscombeProfile.level < rettProfile.level ∧
+    rettProfile.level < ostProfile.level ∧
+    ostProfile.level < bcProfile.level :=
+  ⟨by decide, by decide, by decide⟩
+
+/-- All four theories are distinct. -/
+theorem all_theories_distinct :
+    anscombeProfile.theory ≠ rettProfile.theory ∧
+    anscombeProfile.theory ≠ ostProfile.theory ∧
+    anscombeProfile.theory ≠ bcProfile.theory ∧
+    rettProfile.theory ≠ ostProfile.theory ∧
+    rettProfile.theory ≠ bcProfile.theory ∧
+    ostProfile.theory ≠ bcProfile.theory := by
+  exact ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 4: Truth-Conditional Agreement

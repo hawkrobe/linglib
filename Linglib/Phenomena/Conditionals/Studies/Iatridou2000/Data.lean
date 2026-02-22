@@ -12,8 +12,9 @@ Iatridou (2000) "The Grammatical Ingredients of Counterfactuality",
 2. **Imperfective is not universal**: languages that lack imperfective
    (e.g., English) omit it in CFs; languages with imperfective (e.g., Greek)
    use it in all CF types.
-3. **Subjunctive mirrors past subjunctive availability**: a language requires
-   subjunctive in CFs iff it has a distinct past subjunctive form.
+3. **Subjunctive mirrors past subjunctive availability**: a CF can contain
+   subjunctive only if the language has a distinct past subjunctive form
+   (generalization 42).
 
 ## Data Sources
 
@@ -109,7 +110,11 @@ def english_pastCF : CFMorphologyDatum where
 -- § Greek Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- Greek FLV: "An + past + impf, tha + past + impf" -/
+/-- Greek FLV: "An + past + impf, tha + past + impf"
+
+Based on Iatridou (2000, p.234), example (6). Greek FLV and PresCF have
+identical morphological form; the FLV/PresCF distinction is made by
+predicate type and temporal adverbials, not by morphology. -/
 def greek_flv : CFMorphologyDatum where
   language := "Greek"
   cfType := "FLV"
@@ -119,9 +124,13 @@ def greek_flv : CFMorphologyDatum where
   hasImpfMorph := true
   hasSubjMorph := false
   pastLayers := 1
-  gloss := "An edine to diyagonisma avrio, tha to pernouse."
+  gloss := "An eperne to siropi tu avrio, tha yinotan kala."
 
-/-- Greek PresCF: "An + past + impf, tha + past + impf" -/
+/-- Greek PresCF: "An + past + impf, tha + past + impf"
+
+Based on Iatridou (2000, p.234), example (6). Morphologically identical
+to FLV in Greek; the counterfactual reading arises from the stative
+predicate. -/
 def greek_presCF : CFMorphologyDatum where
   language := "Greek"
   cfType := "PresCF"
@@ -131,9 +140,13 @@ def greek_presCF : CFMorphologyDatum where
   hasImpfMorph := true
   hasSubjMorph := false
   pastLayers := 1
-  gloss := "An iksere tin apandisi, tha mas tin elege."
+  gloss := "An eperne to siropi tu, tha yinotan kala."
 
-/-- Greek PastCF: "An + past + past + impf, tha + past + past + impf" -/
+/-- Greek PastCF: "An + past + past + impf, tha + past + past + impf"
+
+Based on Iatridou (2000, p.234), example (6c). The additional past
+layer (the pluperfect ixe + participle) distinguishes PastCF from
+PresCF/FLV. -/
 def greek_pastCF : CFMorphologyDatum where
   language := "Greek"
   cfType := "PastCF"
@@ -143,7 +156,7 @@ def greek_pastCF : CFMorphologyDatum where
   hasImpfMorph := true
   hasSubjMorph := false
   pastLayers := 2
-  gloss := "An ixe dosi to diyagonisma xthes, tha to ixe perasi."
+  gloss := "An ixe pari to siropi tu xthes, tha ixe yini kala."
 
 -- ════════════════════════════════════════════════════════════════
 -- § French Data
@@ -195,15 +208,35 @@ def english_subj : SubjRequirementDatum where
   hasPastSubjunctive := false
   cfRequiresSubjunctive := false
 
-/-- Greek: has distinct past subjunctive, subjunctive required. -/
+/-- Greek: no past subjunctive, no subjunctive required in CFs.
+
+Greek CFs use past + imperfective morphology (indicative), not subjunctive.
+Greek has a subjunctive-like particle (na), but this is not used in
+counterfactual conditionals (Iatridou 2000, p.244–245). -/
 def greek_subj : SubjRequirementDatum where
   language := "Greek"
-  hasPastSubjunctive := true
-  cfRequiresSubjunctive := true
+  hasPastSubjunctive := false
+  cfRequiresSubjunctive := false
 
-/-- French: has distinct past subjunctive, subjunctive required. -/
+/-- French: no productive past subjunctive, no subjunctive required in CFs.
+
+French CFs use the indicative imparfait ("si j'avais..."), not the
+subjonctif. French has a literary past subjunctive (subjonctif imparfait),
+but it is not used productively in counterfactuals. -/
 def french_subj : SubjRequirementDatum where
   language := "French"
+  hasPastSubjunctive := false
+  cfRequiresSubjunctive := false
+
+/-- Italian: has distinct past subjunctive, subjunctive required in CFs.
+
+Italian CFs require the congiuntivo (subjunctive), which has a robust
+past form (congiuntivo trapassato). This is one of the positive cases
+for Iatridou's generalization (42): "A CF can contain a subjunctive
+morpheme only if that subjunctive morpheme has a past tense form."
+(Iatridou 2000, p.247) -/
+def italian_subj : SubjRequirementDatum where
+  language := "Italian"
   hasPastSubjunctive := true
   cfRequiresSubjunctive := true
 

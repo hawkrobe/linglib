@@ -122,14 +122,6 @@ theorem exclF_temporal_is_deal_temporal :
 theorem exclF_modal_is_deal_cf :
     ExclDimension.toDealUse .modal = .counterfactual := rfl
 
-/-- Modal ExclF gives counterfactual distance: when the tower's innermost
-world differs from the origin world, we have a `CounterfactualDistance`. -/
-theorem exclF_modal_gives_cf_distance
-    (tower : ContextTower (KContext W E P T))
-    (h : ExclF .modal tower) :
-    tower.innermost.world ≠ tower.origin.world :=
-  h
-
 -- ════════════════════════════════════════════════════════════════
 -- § ExclF–Tower Bridge: Shifts Produce ExclF
 -- ════════════════════════════════════════════════════════════════
@@ -257,23 +249,6 @@ theorem no_modal_not_cf (temporalExcl : Bool) (pred : IatridouPredType) :
   cases temporalExcl <;> rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § Unification Theorem
--- ════════════════════════════════════════════════════════════════
-
-/-- ExclF unification: the SAME predicate, on different dimensions, produces
-temporal past vs counterfactual past.
-
-This is Iatridou's core claim: there is no lexical ambiguity in past
-morphology. The temporal/counterfactual distinction arises from which
-dimension ExclF targets, not from two different morphemes. -/
-theorem exclF_unification :
-    (∀ (tower : ContextTower (KContext W E P T)),
-      ExclF .temporal tower ↔ tower.innermost.time ≠ tower.origin.time) ∧
-    (∀ (tower : ContextTower (KContext W E P T)),
-      ExclF .modal tower ↔ tower.innermost.world ≠ tower.origin.world) :=
-  ⟨λ _ => Iff.rfl, λ _ => Iff.rfl⟩
-
--- ════════════════════════════════════════════════════════════════
 -- § Root Tower Has No ExclF
 -- ════════════════════════════════════════════════════════════════
 
@@ -291,37 +266,17 @@ theorem root_no_modal_exclF (c : KContext W E P T) :
 -- § Fake Imp / Subjunctive Generalization
 -- ════════════════════════════════════════════════════════════════
 
-/-- Iatridou's subjunctive generalization: a language requires subjunctive
-in counterfactuals iff it has a morphologically distinct past subjunctive.
+/-- Iatridou's subjunctive generalization (42): "A CF can contain a
+subjunctive morpheme only if that subjunctive morpheme has a past tense
+form" (Iatridou 2000, p.247).
 
-Imperfective appears in CFs only when the language requires overt viewpoint
-aspect; subjunctive appears only when the language has past subjunctive
-morphology. -/
+Strictly, the paper states this as a one-directional conditional
+(requires → has). We encode the biconditional because all languages
+in our data satisfy both directions: English and Greek lack past
+subjunctive and don't require subjunctive in CFs; Italian has past
+subjunctive and requires it. -/
 def iatridouSubjGeneralization (hasPastSubj requiresSubj : Bool) : Prop :=
   requiresSubj = hasPastSubj
-
--- ════════════════════════════════════════════════════════════════
--- § SUBJ Bridge
--- ════════════════════════════════════════════════════════════════
-
-/-- SUBJ can satisfy modal ExclF: when the historical base contains a
-situation whose world differs from the origin, there exists a tower push
-that produces modal ExclF.
-
-This connects the existential SUBJ operator (which introduces a situation
-from the historical base) to the tower-based ExclF predicate. -/
-theorem subj_can_produce_exclF [LE T] (history : WorldHistory W T) (s₀ : Core.Situation W T)
-    (h : ∃ s₁ ∈ historicalBase history s₀, s₁.world ≠ s₀.world) :
-    ∃ s₁ ∈ historicalBase history s₀, s₁.world ≠ s₀.world :=
-  h
-
-/-- When SUBJ introduces a situation with a different world, the tower
-records modal ExclF. This is the constructive version: given a specific
-alternative situation, build the tower and verify ExclF. -/
-theorem subj_tower_exclF (c : KContext W E P T)
-    (w' : W) (t' : T) (hw : w' ≠ c.world) :
-    ExclF .modal ((ContextTower.root c).push (subjShift w' t')) :=
-  hw
 
 -- ════════════════════════════════════════════════════════════════
 -- § XMarking Bridge
@@ -352,10 +307,5 @@ theorem pastCF_tower_depth (c : KContext W E P T) (w' : W) (t' t'' : T) :
     (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')
       ).depth = 2 := by
   simp [ContextTower.push, ContextTower.depth, ContextTower.root]
-
-/-- ExclF count matches counterfactual type. -/
-theorem exclFCount_flv : CounterfactualType.flv.exclFCount = 1 := rfl
-theorem exclFCount_presCF : CounterfactualType.presCF.exclFCount = 1 := rfl
-theorem exclFCount_pastCF : CounterfactualType.pastCF.exclFCount = 2 := rfl
 
 end Semantics.Conditionals.Iatridou

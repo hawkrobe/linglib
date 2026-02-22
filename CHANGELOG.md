@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.226.1] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Tense/TemporalConnectives/`** (6 new files): Four-level temporal connective semantics
+  - `Basic.lean`: Shared types (`SentDenotation`, `EvPred`, `Ev`, `timeTrace`, `stativeDenotation`)
+  - `Anscombe.lean`: Level 1 point-level semantics (`Anscombe.before` ∃∀, `Anscombe.after` ∃∃)
+  - `Rett.lean`: Level 2 interval-set semantics with INCHOAT/COMPLET coercion operators
+  - `EventBridge.lean`: Level 3→2 projection via `eventDenotation` (τ-image)
+  - `OST.lean`: Level 3 event-level semantics with quantificational asymmetry, cross-level comparison and divergence proofs
+  - `BeaverCondoravdi.lean`: Level 4 intensional uniform analysis with `earliestAlt`, branching time, three readings of *before*
+- **`Phenomena/TenseAspect/Studies/OgiharaST2024/`** (2 files): O&ST empirical data and bridge
+  - `Data.lean`: Veridicality data, B&C logical properties, oddity examples, O&ST counterexamples to B&C, non-committal reading problems, Japanese cross-linguistic data
+  - `Bridge.lean`: Fragment↔Data agreement, Theory→Fragment derivation, concrete scenario verification, cross-level projection, logical property proofs (antisymmetry, transitivity), general theorems, NPI and Japanese bridges
+- **`Fragments/Japanese/TemporalConnectives.lean`**: *mae*/*ato* entries with cross-linguistic agreement theorems
+- **`Fragments/Serbian/TemporalConnectives.lean`**: *pre*/*posle* entries with PFV/IMPF aspect–reading mapping (Rett 2020 evidence)
+
+### Changed
+- **`Phenomena/TenseAspect/Compare.lean`**: Four-theory comparison (Anscombe/Rett/O&ST/B&C) with level hierarchy, veridicality derivation, and distinctness theorems
+- **`Fragments/English/TemporalExpressions.lean`**: Added `complementVeridical` field to `TemporalConnectiveEntry`
+- **`Theories/Semantics/Tense/TemporalConnectives.lean`**: Refactored into directory; re-exports all submodules
+- **`Phenomena/Conditionals/Studies/Iatridou2000/Data.lean`**: Fixed Greek and French subjunctive data (neither has productive past subjunctive; CFs use indicative), added Italian as positive case, corrected Greek glosses to use consistent example paradigm
+- **`Phenomena/Conditionals/Studies/Iatridou2000/Bridge.lean`**: Added `italian_subj_gen` bridge, updated docstrings for Greek/French corrections
+- **`Theories/Semantics/Conditionals/Iatridou.lean`**: Removed tautological theorems (`exclF_unification`, `subj_can_produce_exclF`, `subj_tower_exclF`, `exclFCount_*`), clarified subjunctive generalization docstring
+
 ## [0.226.0] - 2026-02-21
 
 ### Added

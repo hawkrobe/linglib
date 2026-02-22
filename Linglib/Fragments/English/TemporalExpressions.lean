@@ -71,6 +71,11 @@ structure TemporalConnectiveEntry where
   embeddedTelicityEffect : Bool
   /-- Attested in all 17 languages of Rett's (2020) typological survey -/
   crossLinguisticBasic : Bool
+  /-- Does the connective entail the truth of its complement clause?
+      *after* is veridical: "He left after she arrived" entails she arrived.
+      *before* is non-veridical: "He left before she arrived" is compatible
+      with her not arriving. (Ogihara & Steinert-Threlkeld 2024) -/
+  complementVeridical : Bool
   deriving Repr, BEq
 
 /-- *before*: licenses NPIs; default = before-start; coerced = before-finish
@@ -82,7 +87,8 @@ def before_ : TemporalConnectiveEntry :=
   , defaultReading := .beforeStart
   , coercedReading := some .beforeFinish
   , embeddedTelicityEffect := true
-  , crossLinguisticBasic := true }
+  , crossLinguisticBasic := true
+  , complementVeridical := false }
 
 /-- *after*: no NPIs; default = after-finish; coerced = after-start
     (requires INCHOAT to extract onset of atelic EE). -/
@@ -93,7 +99,8 @@ def after_ : TemporalConnectiveEntry :=
   , defaultReading := .afterFinish
   , coercedReading := some .afterStart
   , embeddedTelicityEffect := true
-  , crossLinguisticBasic := true }
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
 
 /-- *while*: durative overlap, no coercion, no telicity sensitivity. -/
 def while_conn : TemporalConnectiveEntry :=
@@ -103,7 +110,8 @@ def while_conn : TemporalConnectiveEntry :=
   , defaultReading := .durative
   , coercedReading := none
   , embeddedTelicityEffect := false
-  , crossLinguisticBasic := true }
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
 
 def allConnectives : List TemporalConnectiveEntry :=
   [before_, after_, while_conn]

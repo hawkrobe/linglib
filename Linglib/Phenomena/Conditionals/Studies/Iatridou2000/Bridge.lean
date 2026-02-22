@@ -74,15 +74,20 @@ theorem english_subj_gen :
     iatridouSubjGeneralization english_subj.hasPastSubjunctive
       english_subj.cfRequiresSubjunctive := rfl
 
-/-- Greek: has past subjunctive, CF requires subjunctive. -/
+/-- Greek: no past subjunctive, no CF subjunctive required. -/
 theorem greek_subj_gen :
     iatridouSubjGeneralization greek_subj.hasPastSubjunctive
       greek_subj.cfRequiresSubjunctive := rfl
 
-/-- French: has past subjunctive, CF requires subjunctive. -/
+/-- French: no productive past subjunctive, no CF subjunctive required. -/
 theorem french_subj_gen :
     iatridouSubjGeneralization french_subj.hasPastSubjunctive
       french_subj.cfRequiresSubjunctive := rfl
+
+/-- Italian: has past subjunctive, CF requires subjunctive. -/
+theorem italian_subj_gen :
+    iatridouSubjGeneralization italian_subj.hasPastSubjunctive
+      italian_subj.cfRequiresSubjunctive := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Classification Bridges
@@ -112,18 +117,14 @@ theorem had_known_is_pastCF :
 -- § Deal Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- Modal ExclF = Deal's counterfactual use. -/
-theorem exclF_modal_is_deal_cf :
-    ExclDimension.toDealUse .modal = .counterfactual := rfl
-
-/-- Temporal ExclF = Deal's temporal use. -/
-theorem exclF_temporal_is_deal_temporal :
-    ExclDimension.toDealUse .temporal = .temporal := rfl
-
 /-- PastCF is exempt from ULC via Deal's refined ULC.
 
 The counterfactual tense in PastCF is not subject to the upper limit
-constraint, because modal ExclF does not encode temporal precedence. -/
+constraint, because modal ExclF does not encode temporal precedence.
+
+The ExclDimension → PastMorphologyUse mapping is established by
+`exclF_temporal_is_deal_temporal` and `exclF_modal_is_deal_cf` in
+`Semantics.Conditionals.Iatridou`. -/
 theorem pastCF_exempt_from_ulc {T : Type*} [LE T] (R E : T) :
     refinedULC .counterfactual R E :=
   trivial
