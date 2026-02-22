@@ -8,6 +8,11 @@ Bridges the gap between `EventStructure.Template` (predicate-role decomposition,
 no temporal information) and `ViewpointAspect` (temporal operators on opaque
 predicates, no subevent structure).
 
+TODO: Bridge DecomposedEv to ViewpointAspect operators. E.g., IMPF applied to
+the activity phase gives the progressive ("was building"); PRFV applied to the
+full event gives the simple past ("built"). Needed for Kiparsky (2002) perfect
+polysemy analysis in PerfectPolysemy.lean.
+
 Accomplishments and achievements have internal temporal structure: an activity
 phase and a result phase with ordering constraints. States and activities are
 temporally simple. This module makes that structure explicit via

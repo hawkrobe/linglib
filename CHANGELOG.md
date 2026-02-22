@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.226.12] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Tense/TemporalConnectives/Giannakidou.lean`**: Bridge ViewpointAspect (IMPF/PRFV) into temporal connective layer; `impfDenotation`/`prfvDenotation` project event predicates (W=Unit) to `SentDenotation`; prove IMPF gives subinterval closure (homogeneity), PRFV does not; connect to existing `stativeDenotation`/`accomplishmentDenotation`; prove time traces identical (Level 1 blindness); define `wideScopeNotUntil`/`narrowScopeNotUntil` with concrete counterexamples for distinctness; `ScopeGeneralization` encoding Giannakidou's IMPF→both scopes, PRFV→narrow only
+
+### Changed
+- **`Theories/Semantics/Lexical/Verb/ViewpointAspect.lean`**: Remove 63-line `Core.Time.Interval` namespace extension block (interval operations now in `Core/Time.lean`)
+- **`Theories/Semantics/Tense/TemporalConnectives/Rett.lean`**: Remove unnecessary ViewpointAspect import
+- **`Theories/Semantics/Events/StratifiedReference.lean`**: Remove unnecessary ViewpointAspect import and open (uses `properSubinterval` from `Core/Time.lean`)
+- **`Theories/Semantics/Events/TemporalDecomposition.lean`**: Add TODO for IMPF/PRFV bridge to DecomposedEv
+- **`blog/data/references.bib`**: Update `giannakidou-2002` sources; add `rouillard-2026` and `fox-hackl-2006` entries
+
 ## [0.226.11] - 2026-02-22
 
 ### Changed

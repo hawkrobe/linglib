@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Rett (2020): Antonymy + Aspectual Coercion

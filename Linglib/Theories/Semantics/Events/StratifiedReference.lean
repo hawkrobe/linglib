@@ -23,7 +23,6 @@ a proper part along that dimension).
 -/
 
 import Linglib.Theories.Semantics.Events.Mereology
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 namespace Semantics.Events.StratifiedReference
 
@@ -32,7 +31,6 @@ open Semantics.Events.Mereology
 open _root_.Mereology
 open Core.Time
 open Semantics.Lexical.Verb.Aspect
-open Semantics.Lexical.Verb.ViewpointAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Stratified Reference (eq. 62)
