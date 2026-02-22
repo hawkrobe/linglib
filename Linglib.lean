@@ -72,7 +72,6 @@ import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
 import Linglib.Tactics.NonnegOfForall
-import Linglib.Tactics.RSADecide
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 
