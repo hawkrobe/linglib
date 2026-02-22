@@ -317,6 +317,20 @@ def BToMModel.mediumMarginal (model : BToMModel F A P B D S M W)
   ∑ p : P, ∑ b : B, ∑ d : D, ∑ s : S, ∑ w : W,
     model.jointScore a p b d s m w
 
+/-- Belief-weighted expectation: given a scoring function on belief states,
+    compute the belief-marginal weighted sum.
+
+    This is the general form of LaBToM's Pr(Agent, φ) computation
+    (Ying et al. 2025): instantiate `f b = if φ(b) then 1 else 0` to get
+    the unnormalized Pr_obs(Agent, φ | a) from BToM belief marginals.
+
+    More generally, any quantity that depends on the agent's belief state
+    (credence, expected utility, prediction error) can be computed as a
+    belief expectation. -/
+def BToMModel.beliefExpectation (model : BToMModel F A P B D S M W)
+    (f : B → F) (a : A) : F :=
+  ∑ b : B, model.beliefMarginal a b * f b
+
 end OtherMarginals
 
 /-!

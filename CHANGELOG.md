@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.7] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Attitudes/EpistemicThreshold.lean`**: Ying, Zhi-Xuan, Wong, Mansinghka & Tenenbaum (2025) LaBToM epistemic threshold semantics — full Table 1 lexicon (believes/knows/certain/must/should/likely/may/might/could/uncertain/unlikely), `failsThreshold` for reversed-polarity entries, structural operators (`knowsIf`, `notKnowsThat`, `uncertainIf`), degree function and superlative `mostStr` with α_most=1.5, entailment chain (must→should→likely, certain→believes→may, must→might), degree-threshold bridge (`epistemicAsGradable`, `meetsThreshold_eq_positiveSem`) connecting epistemic scales to Kennedy/Lassiter degree semantics via `Core.Scale`
+
+### Changed
+- **`Core/BToM.lean`**: Added `beliefExpectation` — belief-marginal weighted sum for deriving agent credence from BToM inference (LaBToM's Pr(Agent, φ))
+
 ## [0.226.4] - 2026-02-22
 
 ### Changed

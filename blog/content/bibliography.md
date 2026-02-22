@@ -204,7 +204,7 @@ cited in: [Aloni2022Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 
 **Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
-cited in: [Scale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)
+cited in: [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/EpistemicScale.lean)
 
 **Kratzer, A.** (1981). The Notional Category of Modality. *Words, Worlds, and Contexts, 38–74*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Kratzer.lean)
@@ -271,8 +271,24 @@ cited in: [Rooth1992Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 **Abusch, D.** (1997). Sequence of Tense and Temporal De Re. *Linguistics and Philosophy, 20(1), 1–50*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Abusch.lean)
 
+**Anscombe, G. E. M.** (1964). Before and After. *The Philosophical Review, 73(1), 3–24*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)\
+cited in: [Anscombe](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)
+
+**Beaver, D. & Condoravdi, C.** (2003). . *Proceedings of SALT, 13, 37–54*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean)\
+cited in: [BeaverCondoravdi](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean)
+
 **Deal, A. R.** (2020). A Theory of Indexical Shift: Meaning, Grammar, and Crosslinguistic Variation. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Deal.lean)
+
+**Heinämäki, O.** (1974). Semantics of English Temporal Connectives. *PhD dissertation, Indiana University*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalConnectivesBridge.lean)\
+cited in: [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
+
+**Karttunen, L.** (1974). Until. *Papers from the Tenth Regional Meeting of the Chicago Linguistic Society, 284–297*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean)\
+cited in: [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
 
 **Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(9), 1–55*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
@@ -281,11 +297,23 @@ cited in: [Rooth1992Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)\
 cited in: [Kratzer](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)
 
+**Krifka, M.** (2010). . *Natural Language and Linguistic Theory, 28(4), 911–929*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)\
+cited in: [Anscombe](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)
+
 **Ogihara, T.** (1996). Tense, Attitudes, and Scope. *Kluwer Academic Publishers*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Ogihara.lean)
 
+**Ogihara, T. & Steinert-Threlkeld, S.** (2024). . *Semantics and Pragmatics, 17(1), 1–21*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/OST.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/OgiharaST2024/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/OgiharaST2024/Data.lean), [OST](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/OST.lean)
+
 **Partee, B.** (1973). Some Structural Analogies between Tenses and Pronouns in English. *Journal of Philosophy, 70(18), 601–609*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/Partee1973.lean)
+
+**Rett, J.** (2020). Eliminating EARLIEST. *Proceedings of Sinn und Bedeutung, 24, 201–218*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalConnectivesBridge.lean)\
+cited in: [Rett](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean)
 
 **Tsilia, D., Zhao, Z. & Sharvit, Y.** (2026). Tense and Perspective. *Manuscript*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)\
@@ -342,7 +370,7 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 
 **Wellwood, A.** (2015). On the Semantics of Comparison Across Categories. *Linguistics and Philosophy, 38(1), 67–101*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Measurement.lean, Theories/Semantics/Lexical/Adjective/StatesBased.lean)\
-cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/Wellwood2015/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Studies/Wellwood2015/Data.lean), [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean), [Measurement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Measurement.lean)
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Comparison/Studies/Wellwood2015/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Comparison/Studies/Wellwood2015/Data.lean), [Wellwood](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Wellwood.lean), [StatesBased](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/StatesBased.lean), [Measurement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Measurement.lean)
 
 ## Semantics — Questions
 
