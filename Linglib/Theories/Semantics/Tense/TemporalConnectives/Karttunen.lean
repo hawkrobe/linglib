@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
 
 /-!
 # Karttunen (1974): *Until*, *When*, and the Two-*Until* Hypothesis
-@cite{karttunen-1974}
+@cite{karttunen-1974} @cite{heinamaki-1974}
 
 Karttunen argues that English has **two** *until*s:
 
@@ -22,14 +22,17 @@ T (temporal coincidence, i.e., *when*).
 ## Level
 
 **Level 1 (point sets)**: all definitions operate on `timeTrace` projections,
-at the same level as Anscombe. The five English temporal connectives reduce
+at the same level as Anscombe. The eight English temporal connectives reduce
 to four Level 1 primitives:
 
-- *before* = ∃∀ + ordering (Anscombe)
-- *after*  = ∃∃ + ordering (Anscombe)
+- *before* = ∃∀ + strict ordering (Anscombe)
+- *after*  = ∃∃ + strict ordering (Anscombe)
 - *when*   = ∃ overlap (this file)
 - *while*  = ∀ containment (this file)
 - *until*  = ¬*before* (punctual) or *when* (durative) — derived, not primitive
+- *till*   = *until* (dialectal variant, Heinämäki Ch. 9)
+- *since*  = ∃∈B ∀∈A + ≤ ordering (starting-point, Heinämäki Ch. 6)
+- *by*     = ∃∈A ∀∈B + ≤ ordering (deadline, Heinämäki Ch. 8)
 
 ## Cross-Linguistic Evidence
 
@@ -79,6 +82,32 @@ def Karttunen.while_ (A B : SentDenotation Time) : Prop :=
     (Karttunen 1974, p. 272). -/
 def Karttunen.until (A B : SentDenotation Time) : Prop :=
   ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+
+/-- *Till*: dialectal variant of durative *until* (Heinämäki 1974, Ch. 9).
+    Truth-conditionally identical to durative *until* (= *when* = ∃-overlap).
+    Dialectally restricted in English; some varieties use *till* where
+    standard English uses *until*. -/
+def Karttunen.till (A B : SentDenotation Time) : Prop :=
+  ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+
+/-- *Since*: lower-bound / starting-point semantics (Heinämäki 1974, Ch. 6).
+    "A since B" holds when some B-time precedes or coincides with all A-times.
+    This mirrors *before* with swapped arguments and non-strict ordering:
+    *before* = ∃t∈A, ∀t'∈B, t < t'; *since* = ∃t∈B, ∀t'∈A, t ≤ t'.
+
+    Veridical for B (the ∃ over B forces a witness).
+    Equivalent to `by_` with swapped arguments: `since A B ↔ by_ B A`. -/
+def Karttunen.since (A B : SentDenotation Time) : Prop :=
+  ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
+
+/-- *By*: deadline / upper-bound semantics (Heinämäki 1974, Ch. 8).
+    "A by B" holds when some A-time precedes or coincides with all B-times.
+    "He arrived by 3pm" = his arrival has a time point at or before 3pm.
+
+    Weaker than *before* (allows temporal coincidence: ≤ rather than <).
+    Veridical for A (the ∃ over A forces a witness). -/
+def Karttunen.by_ (A B : SentDenotation Time) : Prop :=
+  ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t ≤ t'
 
 /-- Punctual *until* = ¬(*before*) (Karttunen 1974, eq. 33).
     "The princess didn't wake up until the prince kissed her"
@@ -272,5 +301,75 @@ theorem veridicality_mirrors_quantifier_force :
     · exact ⟨0, ⟨Interval.point 0, rfl, le_refl _, le_refl _⟩,
         fun t' ⟨i, hi, _⟩ => absurd hi (Set.mem_empty_iff_false i).mp⟩
     · intro ⟨_, i, hi, _⟩; exact absurd hi (Set.mem_empty_iff_false i).mp
+
+-- ============================================================================
+-- § 8: *Till* — Dialectal *Until*
+-- ============================================================================
+
+/-- *Till* and *until* are truth-conditionally identical. -/
+theorem till_iff_until (A B : SentDenotation Time) :
+    Karttunen.till A B ↔ Karttunen.until A B :=
+  Iff.rfl
+
+/-- *Till* and *when* are truth-conditionally identical. -/
+theorem till_iff_when (A B : SentDenotation Time) :
+    Karttunen.till A B ↔ Karttunen.when_ A B :=
+  Iff.rfl
+
+-- ============================================================================
+-- § 9: *Since* — Starting-Point Semantics
+-- ============================================================================
+
+/-- *Since* is veridical w.r.t. its complement: B must have a witness. -/
+theorem since_veridical_complement (A B : SentDenotation Time) :
+    Karttunen.since A B → ∃ t, t ∈ timeTrace B := by
+  rintro ⟨t, ht, _⟩; exact ⟨t, ht⟩
+
+/-- *Since* is the argument-swapped form of *by*:
+    "A since B" ↔ "B by A". Both have the form ∃t∈X, ∀t'∈Y, t ≤ t'. -/
+theorem since_eq_by_swap (A B : SentDenotation Time) :
+    Karttunen.since A B ↔ Karttunen.by_ B A :=
+  Iff.rfl
+
+-- ============================================================================
+-- § 10: *By* — Deadline Semantics
+-- ============================================================================
+
+/-- *By* is veridical w.r.t. its main clause: A must have a witness. -/
+theorem by_veridical_main (A B : SentDenotation Time) :
+    Karttunen.by_ A B → ∃ t, t ∈ timeTrace A := by
+  rintro ⟨t, ht, _⟩; exact ⟨t, ht⟩
+
+/-- *Before* implies *by*: strict temporal ordering entails non-strict.
+    "He left before 3pm" → "He left by 3pm." -/
+theorem before_implies_by (A B : SentDenotation Time) :
+    Anscombe.before A B → Karttunen.by_ A B := by
+  rintro ⟨t, ht, hall⟩
+  exact ⟨t, ht, fun t' ht' => le_of_lt (hall t' ht')⟩
+
+/-- *By* does NOT imply *before*: coincidence is allowed under *by* but
+    not *before*.
+
+    Counterexample: A = B = {point 5}. "He arrived by 5" is true when
+    he arrives at 5, but "he arrived before 5" is false. -/
+theorem by_not_implies_before :
+    ¬ ∀ (A B : SentDenotation ℤ),
+      Karttunen.by_ A B → Anscombe.before A B := by
+  intro h
+  let iP : Interval ℤ := ⟨5, 5, by omega⟩
+  have hmem : (5 : ℤ) ∈ timeTrace ({iP} : SentDenotation ℤ) :=
+    ⟨iP, rfl, le_refl _, le_refl _⟩
+  have hby : Karttunen.by_ ({iP} : SentDenotation ℤ) {iP} :=
+    ⟨5, hmem, fun t' ht' => by
+      obtain ⟨i, hi, hts, htf⟩ := ht'
+      simp only [Set.mem_singleton_iff] at hi; subst hi
+      omega⟩
+  obtain ⟨t, ht, hall⟩ := h _ _ hby
+  have hlt := hall 5 hmem
+  obtain ⟨i, hi, hts, htf⟩ := ht
+  simp only [Set.mem_singleton_iff] at hi; subst hi
+  have hs : iP.start = 5 := rfl
+  have hf : iP.finish = 5 := rfl
+  omega
 
 end Semantics.Tense.TemporalConnectives

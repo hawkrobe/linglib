@@ -10,7 +10,7 @@ import Linglib.Fragments.Japanese.TemporalConnectives
 
 Connects the empirical veridicality data to:
 
-1. **Fragment entries**: `TemporalConnectiveEntry.complementVeridical` matches data
+1. **Fragment entries**: `TemporalExprEntry.complementVeridical` matches data
 2. **Theory predictions**: O&ST's `after_veridical` / `before_nonveridical` theorems
    derive the Fragment properties from the quantificational structure
 3. **Cross-level comparison**: O&ST (Level 3) projects to Anscombe (Level 1) via

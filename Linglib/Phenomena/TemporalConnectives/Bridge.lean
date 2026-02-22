@@ -4,31 +4,35 @@ import Linglib.Fragments.English.TemporalExpressions
 /-!
 # Temporal Connective Truth-Condition Examples
 
-Concrete scenarios verifying that the Anscombe and Rett formalizations
-produce correct truth-value judgments for the scenario types in
-Rett (2020) Table 1.
+Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
+formalizations produce correct truth-value judgments.
 
-Each scenario defines a main eventuality (ME) and an embedded eventuality (EE)
-as intervals over ℕ, then verifies that `Anscombe.before`/`after` and
-`Rett.before`/`after` return the expected truth values.
+Scenarios 1–6 verify Rett (2020) Table 1 for *before*/*after*.
+Scenarios 7–10 verify Heinämäki (1974) Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 ## Scenarios (ℕ time points)
 
-| # | ME       | EE                   | Connective | Result |
-|---|----------|----------------------|------------|--------|
-| 1 | point(1) | stative [5,10]       | before     | True   |
-| 2 | point(12)| stative [5,10]       | after      | True   |
-| 3 | point(1) | accomplishment [3,8] | before     | True   |
-| 4 | point(12)| accomplishment [3,8] | after      | True   |
-| 5 | point(7) | stative [5,10]       | before     | False  |
-| 6 | point(7) | stative [5,10]       | after      | False  |
+| # | ME           | EE                   | Connective | Result |
+|---|--------------|----------------------|------------|--------|
+| 1 | point(1)     | stative [5,10]       | before     | True   |
+| 2 | point(12)    | stative [5,10]       | after      | True   |
+| 3 | point(1)     | accomplishment [3,8] | before     | True   |
+| 4 | point(12)    | accomplishment [3,8] | after      | True   |
+| 5 | point(7)     | stative [5,10]       | before     | False  |
+| 6 | point(7)     | stative [5,10]       | after      | False  |
+| 7 | stative[5,10]| point(5)             | since      | True   |
+| 8 | point(1)     | point(3)             | by         | True   |
+| 9 | point(3)     | point(3)             | by         | True   |
+| 9'| point(3)     | point(3)             | before     | False  |
+|10 | stative[5,10]| point(5)             | till       | True   |
 
 ## References
 
 - Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, Table 1.
+- Heinämäki, O. (1974). *Semantics of English temporal connectives*. PhD.
 -/
 
-namespace Phenomena.TenseAspect.TemporalConnectives.Examples
+namespace Phenomena.TemporalConnectives.Examples
 
 open Core.Time
 open Core.Time.Interval
@@ -236,4 +240,94 @@ theorem complet_telic_ee :
     COMPLET B_telic = { j | j = Interval.point 8 } :=
   complet_bridges_cessation ee_accomplishment
 
-end Phenomena.TenseAspect.TemporalConnectives.Examples
+-- ============================================================================
+-- § 9: *Since*, *By*, *Till* on Concrete Data (Heinämäki 1974)
+-- ============================================================================
+
+/-- ME: stative [5, 10] — "He has been happy." -/
+abbrev A_stative := stativeDenotation ee_stative
+
+/-- EE: punctual event at time 5 — "she arrived." -/
+def ee_onset : Interval ℕ := Interval.point 5
+abbrev B_onset := accomplishmentDenotation ee_onset
+
+/-- Rewriting lemma: membership in timeTrace of onset EE. -/
+private theorem mem_tt_onset {t : ℕ} :
+    t ∈ timeTrace B_onset ↔ t = 5 := by
+  rw [timeTrace_accomplishmentDenotation]
+  simp only [contains, ee_onset, Interval.point, Set.mem_setOf_eq]
+  omega
+
+/-- ME: punctual event at time 3 — "arrived at 3pm" (for *by* coincidence case). -/
+def me_at_deadline : Interval ℕ := Interval.point 3
+abbrev A_at_deadline := accomplishmentDenotation me_at_deadline
+
+/-- EE: punctual event at time 3 — "3pm" (deadline). -/
+def ee_deadline : Interval ℕ := Interval.point 3
+abbrev B_deadline := accomplishmentDenotation ee_deadline
+
+/-- Rewriting lemma: membership in timeTrace of the at-deadline ME. -/
+private theorem mem_tt_at_deadline {t : ℕ} :
+    t ∈ timeTrace A_at_deadline ↔ t = 3 := by
+  rw [timeTrace_accomplishmentDenotation]
+  simp only [contains, me_at_deadline, Interval.point, Set.mem_setOf_eq]
+  omega
+
+/-- Rewriting lemma: membership in timeTrace of the deadline EE. -/
+private theorem mem_tt_deadline {t : ℕ} :
+    t ∈ timeTrace B_deadline ↔ t = 3 := by
+  rw [timeTrace_accomplishmentDenotation]
+  simp only [contains, ee_deadline, Interval.point, Set.mem_setOf_eq]
+  omega
+
+/-- "He has been happy₅₋₁₀ since she arrived₅" — True under `Karttunen.since`.
+    Witness: t = 5 ∈ B, and ∀t' ∈ A (i.e., 5 ≤ t' ≤ 10), 5 ≤ t'. -/
+theorem scenario_since : Karttunen.since A_stative B_onset := by
+  refine ⟨5, mem_tt_onset.mpr rfl, ?_⟩
+  intro t' ht'
+  exact (mem_tt_stative.mp ht').1
+
+/-- *Since* is veridical for its complement in scenario: she arrived. -/
+theorem scenario_since_veridical :
+    Karttunen.since A_stative B_onset → ∃ t, t ∈ timeTrace B_onset :=
+  since_veridical_complement _ _
+
+/-- "He arrived₁ by 3pm₃" — True under `Karttunen.by_`.
+    Witness: t = 1 ∈ A, and ∀t' ∈ B (t' = 3), 1 ≤ 3. -/
+theorem scenario_by_strict : Karttunen.by_ A_early B_deadline := by
+  refine ⟨1, mem_tt_early.mpr rfl, ?_⟩
+  intro t' ht'; have := mem_tt_deadline.mp ht'; omega
+
+/-- "He arrived₃ by 3pm₃" — True under `Karttunen.by_`.
+    Witness: t = 3 ∈ A, 3 ≤ 3 (coincidence allowed). -/
+theorem scenario_by_coincidence : Karttunen.by_ A_at_deadline B_deadline := by
+  refine ⟨3, mem_tt_at_deadline.mpr rfl, ?_⟩
+  intro t' ht'; have := mem_tt_deadline.mp ht'; omega
+
+/-- "He arrived₃ before 3pm₃" — FALSE under `Anscombe.before`.
+    Need 3 < 3, which fails. Shows *by* ⊋ *before*. -/
+theorem scenario_before_coincidence_false :
+    ¬ Anscombe.before A_at_deadline B_deadline := by
+  intro ⟨t, ht, hall⟩
+  have ht3 := mem_tt_at_deadline.mp ht
+  have hlt := hall 3 (mem_tt_deadline.mpr rfl)
+  omega
+
+/-- *By* but not *before* on the same scenario: demonstrates the strict
+    weakening from `before_implies_by`. -/
+theorem by_without_before :
+    Karttunen.by_ A_at_deadline B_deadline ∧
+    ¬ Anscombe.before A_at_deadline B_deadline :=
+  ⟨scenario_by_coincidence, scenario_before_coincidence_false⟩
+
+/-- "He slept₅₋₁₀ till she arrived₅" — True under `Karttunen.till`.
+    Witness: t = 5 ∈ both time traces (overlap). -/
+theorem scenario_till : Karttunen.till A_stative B_onset := by
+  exact ⟨5, mem_tt_stative.mpr ⟨le_refl _, by omega⟩, mem_tt_onset.mpr rfl⟩
+
+/-- *Till* agrees with *until* on the same scenario (definitional). -/
+theorem till_matches_until_scenario :
+    Karttunen.till A_stative B_onset ↔ Karttunen.until A_stative B_onset :=
+  till_iff_until _ _
+
+end Phenomena.TemporalConnectives.Examples

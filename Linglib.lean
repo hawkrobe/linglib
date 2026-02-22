@@ -155,7 +155,7 @@ import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Bridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
-import Linglib.Phenomena.TenseAspect.TemporalConnectivesBridge
+import Linglib.Phenomena.TemporalConnectives.Bridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
@@ -432,7 +432,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Phenomena.TenseAspect.Bridge
 import Linglib.Phenomena.TenseAspect.ThenPresentBridge
-import Linglib.Phenomena.TenseAspect.Compare
+import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TenseAspect.Typology
 import Linglib.Phenomena.TenseAspect.AgentivityBridge
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026

@@ -46,7 +46,7 @@ scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
 - Krifka, M. (2010b). *Before* and *after* without coercion.
 -/
 
-namespace Phenomena.TenseAspect.Compare
+namespace Phenomena.TemporalConnectives.Compare
 
 open Semantics.Tense.TemporalConnectives
 open Fragments.English.TemporalExpressions
@@ -225,4 +225,4 @@ theorem both_telicity_sensitive :
     before_.embeddedTelicityEffect = true ∧ after_.embeddedTelicityEffect = true :=
   ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Compare
+end Phenomena.TemporalConnectives.Compare

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.226.8] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean`**: `since`, `by_`, `till` definitions with 7 theorems — `till_iff_until`, `till_iff_when`, `since_veridical_complement`, `since_eq_by_swap`, `by_veridical_main`, `before_implies_by`, `by_not_implies_before` (counterexample at t=5)
+- **`Phenomena/TemporalConnectives/Bridge.lean`**: Scenarios 7–10 for *since*/*by*/*till* (Heinämäki 1974 Chs. 6, 8, 9), `by_without_before` distinctness, `till_matches_until_scenario`
+- **`blog/data/references.bib`**: 7 new entries — `heinamaki-1974`, `karttunen-1974`, `anscombe-1964`, `krifka-2010b`, `rett-2020`, `ogihara-steinert-threlkeld-2024`, `beaver-condoravdi-2003`
+
+### Changed
+- **`Fragments/English/TemporalExpressions.lean`**: Unified `TemporalConnectiveEntry` + `TemporalModifierEntry` → `TemporalExprEntry` with `ComplementType` enum; added `.since_`/`.by_` to `TemporalOrder`; `since_conn`, `till_conn`, `by_deadline` entries; `complement_type_classification` theorem
+- **`Fragments/Finnish/TemporalConnectives.lean`**: Updated to `TemporalExprEntry`; added `kunnes_covers_till`, `since_by_not_single_lexeme`
+- **`Fragments/Tagalog/TemporalConnectives.lean`**: Updated to `TemporalExprEntry`
+- **`Fragments/Japanese/TemporalConnectives.lean`**: Updated to `TemporalExprEntry`
+- **`Fragments/Serbian/TemporalConnectives.lean`**: Updated to `TemporalExprEntry`
+- **`Phenomena/TenseAspect/TemporalConnectivesBridge.lean`** → **`Phenomena/TemporalConnectives/Bridge.lean`**: Moved to own phenomenon directory per grouping principles
+- **`Phenomena/TenseAspect/Compare.lean`** → **`Phenomena/TemporalConnectives/Compare.lean`**: Moved with bridge
+
 ## [0.226.7] - 2026-02-22
 
 ### Added

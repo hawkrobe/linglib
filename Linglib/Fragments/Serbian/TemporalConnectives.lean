@@ -31,7 +31,7 @@ PFV/IMPF opposition rather than Tagalog's finer-grained system.
 namespace Fragments.Serbian.TemporalConnectives
 
 open Semantics.Lexical.Verb.ViewpointAspect
-open Fragments.English.TemporalExpressions (Reading TemporalConnectiveEntry)
+open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================
 -- § 1: Aspect–Reading Mapping
@@ -113,27 +113,33 @@ def posle_impf : AspectReadingEntry :=
 
 /-- Serbian *pre* ('before'): licenses NPIs, non-veridical.
     Mirrors English *before* on all semantic properties. -/
-def pre : TemporalConnectiveEntry :=
+def pre : TemporalExprEntry :=
   { form := "pre"
+  , complementType := .clausal
   , order := .before
   , licensesNPI := true
   , defaultReading := .beforeStart
   , coercedReading := some .beforeFinish
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := false }
+  , complementVeridical := false
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 /-- Serbian *posle* ('after'): does not license NPIs, veridical.
     Mirrors English *after* on all semantic properties. -/
-def posle : TemporalConnectiveEntry :=
+def posle : TemporalExprEntry :=
   { form := "posle"
+  , complementType := .clausal
   , order := .after
   , licensesNPI := false
   , defaultReading := .afterFinish
   , coercedReading := some .afterStart
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := true }
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 -- ============================================================================
 -- § 5: Verification

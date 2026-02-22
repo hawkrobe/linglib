@@ -26,7 +26,7 @@ overt aspect markers in Tagalog.
 namespace Fragments.Tagalog.TemporalConnectives
 
 open Semantics.Lexical.Verb.ViewpointAspect
-open Fragments.English.TemporalExpressions (Reading TemporalConnectiveEntry)
+open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================
 -- § 1: Tagalog Aspect–Reading Mapping
@@ -104,27 +104,33 @@ def pagkatapos_aia : AspectReadingEntry :=
 
 /-- Tagalog *bago* ('before'): licenses NPIs, non-veridical.
     Mirrors English *before* on all semantic properties. -/
-def bago : TemporalConnectiveEntry :=
+def bago : TemporalExprEntry :=
   { form := "bago"
+  , complementType := .clausal
   , order := .before
   , licensesNPI := true
   , defaultReading := .beforeStart
   , coercedReading := some .beforeFinish
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := false }
+  , complementVeridical := false
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 /-- Tagalog *pagkatapos* ('after'): does not license NPIs, veridical.
     Mirrors English *after* on all semantic properties. -/
-def pagkatapos : TemporalConnectiveEntry :=
+def pagkatapos : TemporalExprEntry :=
   { form := "pagkatapos"
+  , complementType := .clausal
   , order := .after
   , licensesNPI := false
   , defaultReading := .afterFinish
   , coercedReading := some .afterStart
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := true }
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 -- ============================================================================
 -- § 5: Verification

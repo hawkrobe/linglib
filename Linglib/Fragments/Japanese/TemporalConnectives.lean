@@ -4,7 +4,7 @@ import Linglib.Fragments.English.TemporalExpressions
 # Japanese Temporal Connectives Fragment
 
 Lexical entries for Japanese temporal subordinating connectives *前 mae*
-('before') and *後 ato* ('after'), typed by `TemporalConnectiveEntry`.
+('before') and *後 ato* ('after'), typed by `TemporalExprEntry`.
 
 The key cross-linguistic observation (O&ST 2024, §3): *mae* requires
 non-past tense in its complement even in past-tense contexts, while
@@ -32,29 +32,35 @@ open Fragments.English.TemporalExpressions
     Non-veridical: 「爆弾が誰かが解除する前に爆発した」
     "The bomb exploded before anyone defused it" — compatible with
     nobody defusing it. -/
-def mae : TemporalConnectiveEntry :=
+def mae : TemporalExprEntry :=
   { form := "前"
+  , complementType := .clausal
   , order := .before
   , licensesNPI := true
   , defaultReading := .beforeStart
   , coercedReading := some .beforeFinish
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := false }
+  , complementVeridical := false
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 /-- Japanese *後 ato* ('after'): does not license NPIs,
     complement allows past tense.
     Veridical: 「彼女が着いた後に彼は出発した」
     "He left after she arrived" — entails she arrived. -/
-def ato : TemporalConnectiveEntry :=
+def ato : TemporalExprEntry :=
   { form := "後"
+  , complementType := .clausal
   , order := .after
   , licensesNPI := false
   , defaultReading := .afterFinish
   , coercedReading := some .afterStart
   , embeddedTelicityEffect := true
   , crossLinguisticBasic := true
-  , complementVeridical := true }
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
 
 -- ============================================================================
 -- § 2: Cross-Linguistic Agreement
