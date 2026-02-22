@@ -1,7 +1,8 @@
 import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.ConfigData
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Montague.Modification
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Frank & Goodman (2012) @cite{frank-goodman-2012}
@@ -140,20 +141,22 @@ def Feature.appliesTo (f : Feature) (o : Object) : Bool :=
 -- §4. RSAConfig
 -- ============================================================================
 
-open RSA in
-/-- Frank & Goodman (2012) reference game as computable RSA model.
+open RSA Real in
+/-- Frank & Goodman (2012) reference game as RSA model.
 
     ⟦w⟧(o)        =  1 if w applies to o, 0 otherwise    (Boolean semantics)
     S1(w|rₛ)      ∝  L0(rₛ|w)^α                           (Eq. S1, belief-based)
     α             =  1                                     (Luce choice rule)
     P(rₛ), D(w)   =  uniform, 0                            (no salience, no cost) -/
-def cfgData : RSAConfigData Feature Object where
-  meaning _ u w := if u.appliesTo w then 1 else 0  -- ⟦w⟧(o)
+noncomputable def cfg : RSAConfig Feature Object where
+  meaning _ u w := if u.appliesTo w then 1 else 0              -- ⟦w⟧(o)  (Eq. S3)
   meaning_nonneg _ _ _ := by split <;> norm_num
-  scoreSpec := .beliefBased  -- S1 ∝ L0^α → size principle (Eq. 2) when α = 1
+  s1Score l0 α _ w u := rpow (l0 u w) α                       -- P(w|rₛ) ∝ L0^α  (Eq. S1)
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
   α := 1
-
-noncomputable def cfg : RSA.RSAConfig Feature Object := cfgData.toRSAConfig
+  α_pos := by norm_num
+  worldPrior_nonneg _ := by norm_num
+  latentPrior_nonneg _ _ := by norm_num
 
 -- ============================================================================
 -- §5. Structural Properties
@@ -410,18 +413,19 @@ def ContextSpec.applies (ctx : ContextSpec) : Dim2Feature → Obj3 → Bool
 -- §8c. RSAConfig Constructor
 -- ============================================================================
 
-open RSA in
-/-- Build a computable reference game from a boolean applicability matrix.
-    All contexts share: belief-based S1, α = 1, uniform priors, no cost. -/
-def mkRefGameData (applies : Dim2Feature → Obj3 → Bool) :
-    RSAConfigData Dim2Feature Obj3 where
+open RSA Real in
+/-- Build a reference game from a boolean applicability matrix.
+    All contexts share: belief-based S1 (Eq. S1), α = 1, uniform priors, no cost. -/
+noncomputable def mkRefGame (applies : Dim2Feature → Obj3 → Bool) :
+    RSAConfig Dim2Feature Obj3 where
   meaning _ u w := if applies u w then 1 else 0
   meaning_nonneg _ _ _ := by split <;> norm_num
-  scoreSpec := .beliefBased
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
   α := 1
-
-noncomputable def mkRefGame (applies : Dim2Feature → Obj3 → Bool) :
-    RSA.RSAConfig Dim2Feature Obj3 := (mkRefGameData applies).toRSAConfig
+  α_pos := by norm_num
+  worldPrior_nonneg _ := by norm_num
+  latentPrior_nonneg _ _ := by norm_num
 
 -- ============================================================================
 -- §8d. The 7 Context Specifications
