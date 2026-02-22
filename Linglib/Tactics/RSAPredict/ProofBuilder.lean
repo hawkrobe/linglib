@@ -713,43 +713,17 @@ private def getS1ScoreProofs (cfg l w : Expr)
     return sp
 
 /-- Build CProof for cfg.S1 l w u = (cfg.S1agent l).policy w u.
-    Uses pre-built S1 score CProofs from cache if provided. -/
+    Uses pre-built S1 score CProofs from cache if provided.
+    Checks zero-score and self-cancellation BEFORE building the total sum,
+    since both paths don't need it. Only builds the expensive `buildChainAdd`
+    when the general division path is needed. -/
 def buildS1PolicyCProof (cfg l w : Expr)
     (allWElems allUElems allLElems : Array Expr) (uIdx : ℕ) (αNat : ℕ)
     (isBeliefBased : Bool) (s1Cache : Option S1Cache := none) : TacticM CProof := do
   let scoreProofs ← getS1ScoreProofs cfg l w allWElems allUElems allLElems αNat isBeliefBased s1Cache
-  let totalProof ← buildChainAdd scoreProofs
   let scoreProof := scoreProofs[uIdx]!
-  -- Check for self-cancellation: all non-target scores are zero, target is positive.
-  -- This avoids interval widening from divPos when score / totalScore = score / score.
-  let allOthersZero := (List.range scoreProofs.size).all fun i =>
-    i == uIdx || (scoreProofs[i]!.lo == 0 && scoreProofs[i]!.hi == 0)
-  if allOthersZero && scoreProof.lo > 0 then
-    -- Self-cancellation: policy = 1 (score is the only nonzero, so total = score)
-    let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
-    let target := allUElems[uIdx]!
-    -- Build h_zeros: ∀ a', a' ≠ target → score w a' = 0
-    let hZeros ← buildForallScoreZero s1Agent w allUElems uIdx scoreProofs
-    -- Build h_sum: totalScore w = score w target (via Fintype.sum_eq_single)
-    let hSum ← mkAppM ``Fintype.sum_eq_single #[target, hZeros]
-    -- Build h_pos: 0 < score w target
-    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
-    let lo ← mkAppM ``QInterval.lo #[scoreProof.iExpr]
-    let hloLt ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, lo])
-    let hpos ← mkAppM ``QInterval.pos_of_lo_pos #[scoreProof.proof, hloLt]
-    -- policy_eq_one_of_totalScore_eq: totalScore = score → 0 < score → policy = 1
-    let policyEqOne ← mkAppM ``Core.RationalAction.policy_eq_one_of_totalScore_eq
-      #[s1Agent, w, target, hSum, hpos]
-    -- Wrap: (exact 1).containsReal (policy w target) via containsReal_of_eq
-    let oneProof := mkConst ``QInterval.exact_one_containsReal
-    let proof ← mkAppM ``QInterval.containsReal_of_eq #[policyEqOne, oneProof]
-    let oneQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 1, none]
-    let iExpr ← mkAppM ``QInterval.exact #[oneQ]
-    return ⟨iExpr, proof, 1, 1⟩
-  else if totalProof.lo > 0 then
-    buildPolicyProof scoreProof totalProof
-  else if scoreProof.hi == 0 then
-    -- S1 score for this utterance is 0 → S1 policy is 0
+  -- Fast path 1: zero score → zero policy (no total needed)
+  if scoreProof.hi == 0 then
     let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
     let sloExpr ← mkAppM ``QInterval.lo #[scoreProof.iExpr]
     let shiExpr ← mkAppM ``QInterval.hi #[scoreProof.iExpr]
@@ -764,26 +738,80 @@ def buildS1PolicyCProof (cfg l w : Expr)
     let zeroProof := mkConst ``QInterval.exact_zero_containsReal
     let proof ← mkAppM ``QInterval.containsReal_of_eq #[policyEqZero, zeroProof]
     return ⟨(← buildExact 0).iExpr, proof, 0, 0⟩
+  -- Fast path 2: self-cancellation (all others zero, target positive → policy = 1, no total needed)
+  let allOthersZero := (List.range scoreProofs.size).all fun i =>
+    i == uIdx || (scoreProofs[i]!.lo == 0 && scoreProofs[i]!.hi == 0)
+  if allOthersZero && scoreProof.lo > 0 then
+    let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
+    let target := allUElems[uIdx]!
+    let hZeros ← buildForallScoreZero s1Agent w allUElems uIdx scoreProofs
+    let hSum ← mkAppM ``Fintype.sum_eq_single #[target, hZeros]
+    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+    let lo ← mkAppM ``QInterval.lo #[scoreProof.iExpr]
+    let hloLt ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, lo])
+    let hpos ← mkAppM ``QInterval.pos_of_lo_pos #[scoreProof.proof, hloLt]
+    let policyEqOne ← mkAppM ``Core.RationalAction.policy_eq_one_of_totalScore_eq
+      #[s1Agent, w, target, hSum, hpos]
+    let oneProof := mkConst ``QInterval.exact_one_containsReal
+    let proof ← mkAppM ``QInterval.containsReal_of_eq #[policyEqOne, oneProof]
+    let oneQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 1, none]
+    let iExpr ← mkAppM ``QInterval.exact #[oneQ]
+    return ⟨iExpr, proof, 1, 1⟩
+  -- General path: need total for division
+  let totalProof ← buildChainAdd scoreProofs
+  if totalProof.lo > 0 then
+    buildPolicyProof scoreProof totalProof
   else
     throwError "rsa_predict: S1 policy proof failed: total.lo={totalProof.lo}, score≠0"
+
+/-- Pre-built leaf CProofs for worldPrior and latentPrior.
+    Avoids redundant whnf + buildRealExprProof across phases. -/
+structure LeafCache where
+  wpProofs : Array CProof     -- indexed by wIdx
+  lpProofs : Array CProof     -- indexed by wIdx * nL + lIdx
+
+/-- Build leaf CProofs for all worldPrior and latentPrior values. -/
+def buildLeafCache (cfg : Expr) (allWElems allLElems : Array Expr)
+    (wpValues lpValues : Array ℚ) : TacticM LeafCache := do
+  let nL := allLElems.size
+  let mut wpProofs : Array CProof := #[]
+  for w in allWElems do
+    let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
+    wpProofs := wpProofs.push (← buildLeaf wpValues[wpProofs.size]! wpExpr)
+  let mut lpProofs : Array CProof := #[]
+  for wIdx in List.range allWElems.size do
+    let w := allWElems[wIdx]!
+    for lIdx in List.range allLElems.size do
+      let l := allLElems[lIdx]!
+      let lpQ := lpValues[wIdx * nL + lIdx]!
+      let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]
+      lpProofs := lpProofs.push (← buildLeaf lpQ lpExpr)
+  return ⟨wpProofs, lpProofs⟩
 
 /-- Build CProof for cfg.L1agent.score u w =
     worldPrior(w) * ∑ l, latentPrior(w,l) * S1(l,w,u). -/
 def buildL1ScoreCProof (cfg u w : Expr)
     (allUElems allWElems allLElems : Array Expr)
     (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
-    (s1Cache : Option S1Cache := none) : TacticM CProof := do
+    (s1Cache : Option S1Cache := none)
+    (leafCache : Option LeafCache := none) : TacticM CProof := do
   let wIdx ← findElemIdx allWElems w
   let uIdx ← findElemIdx allUElems u
   let nL := allLElems.size
-  let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
-  let wpProof ← buildLeaf wpValues[wIdx]! wpExpr
+  let wpProof ← match leafCache with
+    | some lc => pure lc.wpProofs[wIdx]!
+    | none =>
+      let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
+      buildLeaf wpValues[wIdx]! wpExpr
   let mut latentTermProofs : Array CProof := #[]
   for lIdx in List.range allLElems.size do
     let l := allLElems[lIdx]!
-    let lpQ := lpValues[wIdx * nL + lIdx]!
-    let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]
-    let lpProof ← buildLeaf lpQ lpExpr
+    let lpProof ← match leafCache with
+      | some lc => pure lc.lpProofs[wIdx * nL + lIdx]!
+      | none =>
+        let lpQ := lpValues[wIdx * nL + lIdx]!
+        let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]
+        buildLeaf lpQ lpExpr
     let s1Proof ← buildS1PolicyCProof cfg l w allWElems allUElems allLElems uIdx αNat isBeliefBased s1Cache
     let termProof ← buildCMulNN lpProof s1Proof
     latentTermProofs := latentTermProofs.push termProof
@@ -795,12 +823,13 @@ def buildL1ScoreCProof (cfg u w : Expr)
 def buildAllL1ScoreCProofs (cfg u : Expr)
     (allUElems allWElems allLElems : Array Expr)
     (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
-    (s1Cache : Option S1Cache := none) :
+    (s1Cache : Option S1Cache := none)
+    (leafCache : Option LeafCache := none) :
     TacticM (Array CProof × CProof) := do
   let mut allScoreProofs : Array CProof := #[]
   for w' in allWElems do
     allScoreProofs := allScoreProofs.push
-      (← buildL1ScoreCProof cfg u w' allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache)
+      (← buildL1ScoreCProof cfg u w' allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache leafCache)
   let totalProof ← buildChainAdd allScoreProofs
   return (allScoreProofs, totalProof)
 
@@ -832,9 +861,10 @@ def buildL1PolicyFromScores (cfg u w : Expr) (allWElems : Array Expr)
 def buildL1PolicyCProof (cfg u w : Expr)
     (allUElems allWElems allLElems : Array Expr)
     (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
-    (s1Cache : Option S1Cache := none) : TacticM CProof := do
+    (s1Cache : Option S1Cache := none)
+    (leafCache : Option LeafCache := none) : TacticM CProof := do
   let (allScoreProofs, totalProof) ← buildAllL1ScoreCProofs cfg u
-    allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache
+    allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache leafCache
   buildL1PolicyFromScores cfg u w allWElems allScoreProofs totalProof
 
 /-- Build CProof for (cfg.L1_latent_agent u).score () l =

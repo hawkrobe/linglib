@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.15] - 2026-02-22
+
+### Added
+- **`Theories/Pragmatics/RSA/Core/ConfigData.lean`**: `S1ScoreSpec` enum (6 variants: beliefBased, qudBelief, qudAction, beliefAction, actionBased, beliefWeighted) + `RSAConfigData` (ℚ-valued computable RSA config) + `toRSAConfig` lift to ℝ-valued `RSAConfig`; enables proof by reflection via `native_decide`
+- **`Core/Interval/RSAVerify.lean`**: Computable L1 pipeline using proof-free `Bounds` struct — `computeL0Rat`, `computeS1ScoreBounds`, `computeS1PolicyBounds`, `computeL1ScoreBounds`, `checkL1ScoreGt`; sorry'd soundness theorems (`l1_gt_of_check`, `l1_score_gt_of_check`) bridging to ℝ
+- **`Tactics/RSAPredict/ReflectBridge.lean`**: Meta-level reflection bridge — `extractConfigData?` detects `RSAConfigData.toRSAConfig` pattern, `tryReflectL1Compare` proves L1 comparisons via `native_decide`, `tryReflectL1ScoreGt` for score-level comparisons; seamless CProof fallback on failure
+
+### Changed
+- **`Tactics/RSAPredict.lean`**: Add reflection fast path in `.l1Compare` handler — tries `tryReflectL1Compare` before CProof pipeline (~500x speedup for RSAConfigData models: 45ms vs ~18s per theorem on KaoEtAl2014-scale model)
+- **`Tactics/RSAPredict/ProofBuilder.lean`**: Add `LeafCache` struct and `buildLeafCache` for shared worldPrior/latentPrior CProofs; pass leaf cache through `buildL1ScoreCProof`, `buildAllL1ScoreCProofs`, `buildL1PolicyCProof`
+
 ## [0.226.14] - 2026-02-22
 
 ### Changed

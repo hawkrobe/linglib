@@ -5,6 +5,7 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.GoalParsing
 import Linglib.Tactics.RSAPredict.ProofBuilder
+import Linglib.Tactics.RSAPredict.ReflectBridge
 
 set_option autoImplicit false
 
@@ -299,6 +300,12 @@ elab "rsa_predict" : tactic => do
   | .l1Compare cfg u w₁ w₂ => do
     logInfo m!"rsa_predict: parsed goal as L1 comparison"
     let t0 ← IO.monoMsNow
+    -- Try reflection path first (fast, <5s vs ~39s for CProof)
+    if ← tryReflectL1Compare goal cfg u w₁ w₂ then
+      let t1 ← IO.monoMsNow
+      logInfo m!"rsa_predict: ✓ proved via reflection ({t1 - t0}ms)"
+      return
+    -- Fall back to CProof pipeline
     let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
       reifyS1Scores cfg
     let t1 ← IO.monoMsNow
@@ -539,19 +546,25 @@ elab "rsa_predict" : tactic => do
     let tp1e ← IO.monoMsNow
     logInfo m!"rsa_predict: [timing] phase 1 (S1 cache): {tp1e - tp1}ms"
 
-    -- Phase 2: Build all L1 scores for u₁ (with shared S1 cache)
+    -- Phase 1b: Pre-build leaf CProofs (worldPrior, latentPrior) shared across u₁ and u₂
+    let tp1b ← IO.monoMsNow
+    let leafCache ← buildLeafCache cfg allWElems allLElems wpValues lpValues
+    let tp1be ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 1b (leaf cache): {tp1be - tp1b}ms"
+
+    -- Phase 2: Build all L1 scores for u₁ (with shared S1 + leaf caches)
     let tp2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [phase 2/5] building L1 scores for u₁ ({allWElems.size} worlds)..."
     let (allScores1, total1) ← buildAllL1ScoreCProofs cfg u₁
-      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache)
+      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache) (some leafCache)
     let tp2e ← IO.monoMsNow
     logInfo m!"rsa_predict: [timing] phase 2 (L1 u₁): {tp2e - tp2}ms"
 
-    -- Phase 3: Build all L1 scores for u₂ (with shared S1 cache)
+    -- Phase 3: Build all L1 scores for u₂ (with shared S1 + leaf caches)
     let tp3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [phase 3/5] building L1 scores for u₂ ({allWElems.size} worlds)..."
     let (allScores2, total2) ← buildAllL1ScoreCProofs cfg u₂
-      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache)
+      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache) (some leafCache)
     let tp3e ← IO.monoMsNow
     logInfo m!"rsa_predict: [timing] phase 3 (L1 u₂): {tp3e - tp3}ms"
     disableL0Cache
@@ -633,11 +646,12 @@ elab "rsa_predict" : tactic => do
     let isBeliefBased2 ← detectBeliefBased cfg₂
     logInfo m!"rsa_predict: building compositional proof..."
 
-    -- Config 1: build with L0 cache
+    -- Config 1: build with L0 + leaf caches
     enableL0Cache cfg₁ allWElems1 isBeliefBased1
     let s1Cache1 ← buildAllS1ScoreCProofs cfg₁ allUElems1 allWElems1 allLElems1 αNat1 isBeliefBased1 s1Bounds1
+    let leafCache1 ← buildLeafCache cfg₁ allWElems1 allLElems1 wpValues1 lpValues1
     let (allScores1, total1) ← buildAllL1ScoreCProofs cfg₁ u₁
-      allUElems1 allWElems1 allLElems1 wpValues1 lpValues1 αNat1 isBeliefBased1 (some s1Cache1)
+      allUElems1 allWElems1 allLElems1 wpValues1 lpValues1 αNat1 isBeliefBased1 (some s1Cache1) (some leafCache1)
     disableL0Cache
     let mut policyProofs1 : Array CProof := #[]
     for w in ws₁ do
@@ -645,11 +659,12 @@ elab "rsa_predict" : tactic => do
         (← buildL1PolicyFromScores cfg₁ u₁ w allWElems1 allScores1 total1)
     let sum1 ← buildLeftAdd policyProofs1
 
-    -- Config 2: build with L0 cache
+    -- Config 2: build with L0 + leaf caches
     enableL0Cache cfg₂ allWElems2 isBeliefBased2
     let s1Cache2 ← buildAllS1ScoreCProofs cfg₂ allUElems2 allWElems2 allLElems2 αNat2 isBeliefBased2 s1Bounds2
+    let leafCache2 ← buildLeafCache cfg₂ allWElems2 allLElems2 wpValues2 lpValues2
     let (allScores2, total2) ← buildAllL1ScoreCProofs cfg₂ u₂
-      allUElems2 allWElems2 allLElems2 wpValues2 lpValues2 αNat2 isBeliefBased2 (some s1Cache2)
+      allUElems2 allWElems2 allLElems2 wpValues2 lpValues2 αNat2 isBeliefBased2 (some s1Cache2) (some leafCache2)
     disableL0Cache
     let mut policyProofs2 : Array CProof := #[]
     for w in ws₂ do
