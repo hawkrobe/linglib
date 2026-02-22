@@ -113,8 +113,40 @@ def while_conn : TemporalConnectiveEntry :=
   , crossLinguisticBasic := true
   , complementVeridical := true }
 
+/-- *until*: durative persistence up to complement time.
+    Has two uses (Karttunen 1974):
+    - **Durative**: "John slept until 3pm" — main clause is stative, *until*
+      marks minimum extent. Truth-conditionally = temporal overlap.
+    - **Punctual** (with negation): "He didn't wake up until 3pm" — logical
+      form = NOT(A BEFORE T). Licenses NPIs in this use.
+
+    We encode the durative reading as default, with the punctual reading
+    arising compositionally via negation + the `before` semantics. -/
+def until_ : TemporalConnectiveEntry :=
+  { form := "until"
+  , order := .until_
+  , licensesNPI := true
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
+/-- *when*: temporal coincidence, no coercion. Veridical complement.
+    "John arrived when Mary left" — the two events overlap in time.
+    Symmetric: "A when B" ↔ "B when A" (Karttunen 1974). -/
+def when_conn : TemporalConnectiveEntry :=
+  { form := "when"
+  , order := .when_
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
 def allConnectives : List TemporalConnectiveEntry :=
-  [before_, after_, while_conn]
+  [before_, after_, while_conn, until_, when_conn]
 
 -- ============================================================================
 -- § 3: Temporal Adverbial Modifiers
@@ -162,5 +194,39 @@ theorem before_form_agrees : before_.form = FunctionWords.before.form := rfl
 
 open Fragments.English.FunctionWords in
 theorem after_form_agrees : after_.form = FunctionWords.after.form := rfl
+
+-- ============================================================================
+-- § 5: Coverage — Every TemporalOrder Has an Entry
+-- ============================================================================
+
+/-- All five temporal orders in the enum have corresponding connective entries. -/
+theorem all_orders_covered :
+    before_.order = .before ∧
+    after_.order = .after ∧
+    while_conn.order = .while_ ∧
+    until_.order = .until_ ∧
+    when_conn.order = .when_ :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Veridicality pattern: *before* is the only non-veridical connective. -/
+theorem only_before_nonveridical :
+    before_.complementVeridical = false ∧
+    after_.complementVeridical = true ∧
+    while_conn.complementVeridical = true ∧
+    until_.complementVeridical = true ∧
+    when_conn.complementVeridical = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- NPI licensing pattern: only *before* and *until* license NPIs.
+    For *before*, this follows from downward entailment of the complement.
+    For *until*, this arises in the punctual (*not...until*) construction,
+    which is truth-conditionally ¬*before* (Karttunen 1974). -/
+theorem npi_pattern :
+    before_.licensesNPI = true ∧
+    until_.licensesNPI = true ∧
+    after_.licensesNPI = false ∧
+    while_conn.licensesNPI = false ∧
+    when_conn.licensesNPI = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end Fragments.English.TemporalExpressions

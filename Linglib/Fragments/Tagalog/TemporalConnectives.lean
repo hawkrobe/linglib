@@ -4,12 +4,14 @@ import Linglib.Fragments.English.TemporalExpressions
 /-!
 # Tagalog Temporal Connectives Fragment
 
-Cross-linguistic data on Tagalog *bago* ('before') showing overt morphological
-marking of the aspectual coercion that English leaves covert.
+Cross-linguistic data on Tagalog *bago* ('before') and *pagkatapos* ('after')
+showing overt morphological marking of the aspectual coercion that English
+leaves covert.
 
 Tagalog distinguishes two perfective aspects in embedded temporal clauses:
-- **PFV.NEUT** (neutral, non-culminating perfective): yields ≺ initial reading
-- **AIA** (ability-and-involuntary-action, culminating perfective): yields ≺ final reading
+- **PFV.NEUT** (neutral, non-culminating perfective): yields start-point reading
+- **AIA** (ability-and-involuntary-action, culminating perfective): yields
+  finish-point reading
 
 This morphological evidence supports Rett's (2020) ambiguity analysis:
 the covert INCHOAT/COMPLET operators posited for English correspond to
@@ -24,7 +26,7 @@ overt aspect markers in Tagalog.
 namespace Fragments.Tagalog.TemporalConnectives
 
 open Semantics.Lexical.Verb.ViewpointAspect
-open Fragments.English.TemporalExpressions (Reading)
+open Fragments.English.TemporalExpressions (Reading TemporalConnectiveEntry)
 
 -- ============================================================================
 -- § 1: Tagalog Aspect–Reading Mapping
@@ -47,7 +49,7 @@ structure AspectReadingEntry where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 2: Entries (Rett 2020, ex. 12; Dell 1983)
+-- § 2: *bago* ('before') Entries (Rett 2020, ex. 12; Dell 1983)
 -- ============================================================================
 
 /-- *bago* + PFV.NEUT → before-start (≺ initial).
@@ -72,7 +74,60 @@ def bago_aia : AspectReadingEntry :=
   , reading := .beforeFinish }
 
 -- ============================================================================
--- § 3: Verification
+-- § 3: *pagkatapos* ('after') Entries
+-- ============================================================================
+
+/-- *pagkatapos* + PFV.NEUT → after-start (≻ initial).
+    Non-culminating perfective with *after* yields the coerced initial-point
+    reading: the main event follows the onset of the embedded event.
+    PFV.NEUT is the morphological realization of INCHOAT. -/
+def pagkatapos_neut : AspectReadingEntry :=
+  { connective := "pagkatapos"
+  , aspectLabel := "PFV.NEUT"
+  , aspect := .perfective
+  , culminating := false
+  , reading := .afterStart }
+
+/-- *pagkatapos* + AIA → after-finish (≻ final).
+    Culminating perfective with *after* yields the default final-point reading:
+    the main event follows the culmination of the embedded event. -/
+def pagkatapos_aia : AspectReadingEntry :=
+  { connective := "pagkatapos"
+  , aspectLabel := "AIA"
+  , aspect := .perfective
+  , culminating := true
+  , reading := .afterFinish }
+
+-- ============================================================================
+-- § 4: Connective Entries
+-- ============================================================================
+
+/-- Tagalog *bago* ('before'): licenses NPIs, non-veridical.
+    Mirrors English *before* on all semantic properties. -/
+def bago : TemporalConnectiveEntry :=
+  { form := "bago"
+  , order := .before
+  , licensesNPI := true
+  , defaultReading := .beforeStart
+  , coercedReading := some .beforeFinish
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := true
+  , complementVeridical := false }
+
+/-- Tagalog *pagkatapos* ('after'): does not license NPIs, veridical.
+    Mirrors English *after* on all semantic properties. -/
+def pagkatapos : TemporalConnectiveEntry :=
+  { form := "pagkatapos"
+  , order := .after
+  , licensesNPI := false
+  , defaultReading := .afterFinish
+  , coercedReading := some .afterStart
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
+-- ============================================================================
+-- § 5: Verification
 -- ============================================================================
 
 /-- Same connective (*bago*), same viewpoint aspect (perfective), but different
@@ -88,5 +143,54 @@ theorem culmination_determines_reading :
     (bago_aia.culminating = true ∧ bago_aia.reading = .beforeFinish) ∧
     (bago_neut.culminating = false ∧ bago_neut.reading = .beforeStart) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+/-- Same connective (*pagkatapos*), same viewpoint aspect (perfective), but
+    different culmination marking → different temporal reading. -/
+theorem pagkatapos_different_reading :
+    pagkatapos_neut.connective = pagkatapos_aia.connective ∧
+    pagkatapos_neut.reading ≠ pagkatapos_aia.reading := by
+  exact ⟨rfl, by decide⟩
+
+/-- The culmination→reading mapping is consistent across connectives:
+    culminating = finish-point, non-culminating = start-point. -/
+theorem culmination_symmetry :
+    (bago_aia.culminating = true ∧ pagkatapos_aia.culminating = true) ∧
+    (bago_neut.culminating = false ∧ pagkatapos_neut.culminating = false) :=
+  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+/-- The veridicality asymmetry holds: *bago* is non-veridical, *pagkatapos*
+    is veridical. -/
+theorem veridicality_asymmetry :
+    bago.complementVeridical = false ∧ pagkatapos.complementVeridical = true :=
+  ⟨rfl, rfl⟩
+
+/-- The NPI asymmetry holds: *bago* licenses NPIs, *pagkatapos* does not. -/
+theorem npi_asymmetry :
+    bago.licensesNPI = true ∧ pagkatapos.licensesNPI = false :=
+  ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 6: Cross-Linguistic Agreement
+-- ============================================================================
+
+open Fragments.English.TemporalExpressions in
+/-- Tagalog *bago* and English *before* agree on all semantic properties. -/
+theorem bago_matches_before :
+    bago.order = before_.order ∧
+    bago.licensesNPI = before_.licensesNPI ∧
+    bago.defaultReading = before_.defaultReading ∧
+    bago.coercedReading = before_.coercedReading ∧
+    bago.complementVeridical = before_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Tagalog *pagkatapos* and English *after* agree on all semantic properties. -/
+theorem pagkatapos_matches_after :
+    pagkatapos.order = after_.order ∧
+    pagkatapos.licensesNPI = after_.licensesNPI ∧
+    pagkatapos.defaultReading = after_.defaultReading ∧
+    pagkatapos.coercedReading = after_.coercedReading ∧
+    pagkatapos.complementVeridical = after_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 end Fragments.Tagalog.TemporalConnectives

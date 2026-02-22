@@ -179,7 +179,33 @@ theorem rett_implies_anscombe_telic_after_finish
   exact ⟨t, ht_A, m, by rw [timeTrace_accomplishmentDenotation]; exact hm_mem, htm⟩
 
 -- ============================================================================
--- § 5: Ambidirectionality (Rett 2026)
+-- § 5: Rett → Anscombe (General Projection)
+-- ============================================================================
+
+/-- Rett's *before* implies Anscombe's *before* in general.
+
+    From Rett: t < m where m = min(timeTrace B). Since m < all other
+    points in timeTrace B (by maxOnScale), t < every point in timeTrace B.
+    This gives Anscombe's ∀-quantified conclusion. -/
+theorem rett_before_implies_anscombe (A B : SentDenotation Time) :
+    Rett.before A B → Anscombe.before A B := by
+  rintro ⟨t, ht, m, ⟨hm_mem, hm_min⟩, htm⟩
+  exact ⟨t, ht, fun t' ht' => by
+    by_cases heq : t' = m
+    · exact heq ▸ htm
+    · exact lt_trans htm (hm_min t' ht' heq)⟩
+
+/-- Rett's *after* implies Anscombe's *after* in general.
+
+    Immediate: m ∈ maxOnScale(timeTrace B) implies m ∈ timeTrace B,
+    and t > m gives the existential witness for Anscombe.after. -/
+theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
+    Rett.after A B → Anscombe.after A B := by
+  rintro ⟨t, ht, m, ⟨hm_mem, _⟩, htm⟩
+  exact ⟨t, ht, m, hm_mem, htm⟩
+
+-- ============================================================================
+-- § 6: Ambidirectionality (Rett 2026)
 -- ============================================================================
 
 /-! ### Expletive negation and ambidirectionality

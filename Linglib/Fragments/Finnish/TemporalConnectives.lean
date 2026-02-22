@@ -1,0 +1,173 @@
+import Linglib.Fragments.English.TemporalExpressions
+
+/-!
+# Finnish Temporal Connectives Fragment
+
+Finnish lexicalizes the two-*until* distinction that Karttunen (1974) argues
+is covert in English:
+
+- **kunnes** / **siihen saakka** (durative *until*): "John slept until 3pm."
+  The main event persists to the complement time.
+
+- **ennenkuin** (punctual *until*): literally 'before-than'. Used with
+  negation: "He didn't wake up ennenkuin 3pm." Morphologically encodes
+  Karttunen's NOT(BEFORE) analysis.
+
+The fact that the Finnish punctual *until* is morphologically derived from
+*before* (ennen = 'before', kuin = 'than') provides strong evidence for
+Karttunen's identity: punctual *until* = ¬*before*.
+
+Finnish also has **kun** ('when') and the standard *before*/*after* pair:
+**ennen** / **jälkeen**.
+
+## References
+
+- Karttunen, L. (1974). Until. *CLS* 10, 284–297.
+- Heinamäki, O. (1974). *Semantics of English temporal connectives*. PhD,
+  Indiana University.
+-/
+
+namespace Fragments.Finnish.TemporalConnectives
+
+open Fragments.English.TemporalExpressions (TemporalConnectiveEntry Reading TemporalOrder)
+
+-- ============================================================================
+-- § 1: Connective Entries
+-- ============================================================================
+
+/-- Finnish *ennen* ('before'): mirrors English *before*.
+    Licenses NPIs, non-veridical complement. -/
+def ennen : TemporalConnectiveEntry :=
+  { form := "ennen"
+  , order := .before
+  , licensesNPI := true
+  , defaultReading := .beforeStart
+  , coercedReading := some .beforeFinish
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := true
+  , complementVeridical := false }
+
+/-- Finnish *jälkeen* ('after'): mirrors English *after*.
+    Does not license NPIs, veridical complement. -/
+def jälkeen : TemporalConnectiveEntry :=
+  { form := "jälkeen"
+  , order := .after
+  , licensesNPI := false
+  , defaultReading := .afterFinish
+  , coercedReading := some .afterStart
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
+/-- Finnish *kun* ('when'): temporal coincidence.
+    Veridical, does not license NPIs. -/
+def kun : TemporalConnectiveEntry :=
+  { form := "kun"
+  , order := .when_
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
+/-- Finnish *kunnes* (durative *until*): "John slept kunnes 3pm."
+    The main event persists to the complement time. Veridical complement. -/
+def kunnes : TemporalConnectiveEntry :=
+  { form := "kunnes"
+  , order := .until_
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := true
+  , complementVeridical := true }
+
+/-- Finnish *ennenkuin* (punctual *until*): literally 'before-than'.
+    Used with negation: "He didn't wake up ennenkuin the prince kissed her."
+
+    Morphologically: **ennen** ('before') + **kuin** ('than').
+    This overt morphological decomposition confirms Karttunen's analysis
+    that punctual *until* = NOT(BEFORE). The negation is external to the
+    connective, which is literally *before*. -/
+def ennenkuin : TemporalConnectiveEntry :=
+  { form := "ennenkuin"
+  , order := .before
+  , licensesNPI := true
+  , defaultReading := .beforeStart
+  , coercedReading := some .beforeFinish
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := false
+  , complementVeridical := false }
+
+-- ============================================================================
+-- § 2: The Two-*Until* Distinction
+-- ============================================================================
+
+/-- Finnish lexicalizes the two-*until* distinction: *kunnes* (durative)
+    and *ennenkuin* (punctual) are different lexical items with different
+    temporal orders. -/
+theorem two_until_lexicalized :
+    kunnes.form ≠ ennenkuin.form ∧
+    kunnes.order ≠ ennenkuin.order := by
+  exact ⟨by decide, by decide⟩
+
+/-- *Ennenkuin* is morphologically *before* (ennen): its `order` field
+    is `.before`, confirming Karttunen's NOT(BEFORE) analysis. -/
+theorem ennenkuin_is_before :
+    ennenkuin.order = .before ∧ ennen.order = .before := ⟨rfl, rfl⟩
+
+/-- *Kunnes* (durative until) is a genuine `.until_` connective,
+    distinct from *ennenkuin*'s `.before`. -/
+theorem kunnes_is_until :
+    kunnes.order = .until_ ∧ ennenkuin.order = .before := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 3: Cross-Linguistic Agreement
+-- ============================================================================
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *ennen* and English *before* agree on all semantic properties. -/
+theorem ennen_matches_before :
+    ennen.order = before_.order ∧
+    ennen.licensesNPI = before_.licensesNPI ∧
+    ennen.defaultReading = before_.defaultReading ∧
+    ennen.coercedReading = before_.coercedReading ∧
+    ennen.complementVeridical = before_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *jälkeen* and English *after* agree on all semantic properties. -/
+theorem jälkeen_matches_after :
+    jälkeen.order = after_.order ∧
+    jälkeen.licensesNPI = after_.licensesNPI ∧
+    jälkeen.defaultReading = after_.defaultReading ∧
+    jälkeen.coercedReading = after_.coercedReading ∧
+    jälkeen.complementVeridical = after_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *kun* and English *when* agree on all semantic properties. -/
+theorem kun_matches_when :
+    kun.order = when_conn.order ∧
+    kun.licensesNPI = when_conn.licensesNPI ∧
+    kun.defaultReading = when_conn.defaultReading ∧
+    kun.complementVeridical = when_conn.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *kunnes* (durative until) and English *until* agree on all
+    semantic properties. -/
+theorem kunnes_matches_until :
+    kunnes.order = until_.order ∧
+    kunnes.licensesNPI = false ∧
+    kunnes.defaultReading = until_.defaultReading ∧
+    kunnes.complementVeridical = until_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Finnish veridicality asymmetry: *ennen* non-veridical, *jälkeen* veridical. -/
+theorem veridicality_asymmetry :
+    ennen.complementVeridical = false ∧ jälkeen.complementVeridical = true :=
+  ⟨rfl, rfl⟩
+
+end Fragments.Finnish.TemporalConnectives

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.226.2] - 2026-02-22
+
+### Added
+- **`Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean`**: Karttunen (1974) *until*/*when*/*while* at Level 1 — `when_` (∃-overlap), `while_` (∀-containment), `until` (= when), `notUntil` (= ¬before); Karttunen identity, presupposition theorem, veridicality-mirrors-quantifier-force
+- **`Fragments/Finnish/TemporalConnectives.lean`**: *ennen*/*jälkeen*/*kun*/*kunnes*/*ennenkuin* with two-*until* lexicalization and cross-linguistic agreement
+- **`Phenomena/TenseAspect/Studies/AlstottAravind2026/Bridge.lean`**: Connects experiments to Rett INCHOAT/COMPLET, English/Tagalog/Serbian fragments, triple convergence theorem
+
+### Changed
+- **`Theories/Semantics/Tense/TemporalConnectives/Rett.lean`**: Added Rett→Anscombe general projection theorems (§5)
+- **`Theories/Semantics/Tense/TemporalConnectives/OST.lean`**: Added O&ST↛Rett divergence counterexample (§5); added Rett import
+- **`Fragments/English/TemporalExpressions.lean`**: Added `until_`/`when_conn` entries; `all_orders_covered`, `only_before_nonveridical`, `npi_pattern` theorems
+- **`Fragments/Tagalog/TemporalConnectives.lean`**: Added *pagkatapos* ('after') entries + `TemporalConnectiveEntry` values for `bago`/`pagkatapos` with cross-linguistic agreement
+- **`Theories/Semantics/Tense/TemporalConnectives.lean`**: Hub updated for Karttunen; five-connective Level 1 reduction summary
+
 ## [0.226.1] - 2026-02-22
 
 ### Added

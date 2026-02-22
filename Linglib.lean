@@ -111,6 +111,7 @@ import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Coordination
+import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
@@ -153,6 +154,7 @@ import Linglib.Fragments.Spanish.PersonFeatures
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Data
+import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Bridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TenseAspect.TemporalConnectivesBridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Data

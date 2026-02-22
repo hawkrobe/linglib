@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.EventBridge
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
+import Linglib.Theories.Semantics.Tense.TemporalConnectives.Rett
 
 /-!
 # Ogihara & Steinert-Threlkeld (2024): Event-Level Temporal Connectives
@@ -201,5 +202,57 @@ theorem anscombe_after_not_implies_ost :
   have host := h P Q hansc
   obtain ⟨e₁, e₂, rfl, rfl, hprec⟩ := host
   simp [precedes, Ev.τ, eP, eQ] at hprec
+
+-- ============================================================================
+-- § 5: Divergence — O&ST Does NOT Imply Rett
+-- ============================================================================
+
+/-! O&ST and Rett are **incomparable** when projected through `eventDenotation`:
+
+For *after*: O&ST requires only ONE Q-event to entirely precede the P-event
+(∃e₂, τ(e₂) ≺ τ(e₁)). Rett requires the P-event to follow the MAX of ALL
+Q-times (t > max(timeTrace Q)). When Q has multiple events and some extend
+past the P-event, O&ST.after holds but Rett.after fails.
+
+For *before*: O&ST allows vacuously true *before* when Q is empty (the ∀ over
+an empty domain). But Rett.before requires a witness in maxOnScale(timeTrace Q),
+which is empty when Q is empty. So O&ST.before holds vacuously but Rett.before
+fails. When Q has witnesses and a well-defined minimum, both agree. -/
+
+/-- O&ST's *after* does NOT imply Rett's *after*: the existential quantifier
+    in O&ST selects a single Q-event, but Rett's MAX aggregates over ALL Q-events.
+
+    Counterexample: P at [5,5], Q₁ at [1,1], Q₂ at [10,10].
+    - O&ST: eQ₁.τ = [1,1] precedes eP.τ = [5,5]. ✓
+    - Rett: max(timeTrace Q) = 10, and 5 > 10 is false. ✗ -/
+theorem ost_after_not_implies_rett :
+    ¬∀ (P Q : EvPred ℤ),
+      OST.after P Q → Rett.after (eventDenotation P) (eventDenotation Q) := by
+  intro h
+  let eP : Ev ℤ := ⟨⟨5, 5, by omega⟩, .action⟩
+  let eQ₁ : Ev ℤ := ⟨⟨1, 1, by omega⟩, .action⟩
+  let eQ₂ : Ev ℤ := ⟨⟨10, 10, by omega⟩, .action⟩
+  let P : EvPred ℤ := fun e => e = eP
+  let Q : EvPred ℤ := fun e => e = eQ₁ ∨ e = eQ₂
+  -- O&ST holds: eQ₁ at [1,1] precedes eP at [5,5]
+  have host : OST.after P Q :=
+    ⟨eP, eQ₁, rfl, Or.inl rfl, by simp [precedes, Ev.τ, eP, eQ₁]⟩
+  -- Rett would require t > max(timeTrace Q). But max(timeTrace Q) ≥ 10.
+  have hrett := h P Q host
+  obtain ⟨t, ht, m, ⟨hm_mem, hm_dom⟩, htm⟩ := hrett
+  -- t ∈ timeTrace(eventDenotation P), so t ∈ [5,5], i.e. t = 5
+  rw [timeTrace_eventDenotation] at ht
+  obtain ⟨e, rfl, ht_lo, ht_hi⟩ := ht
+  simp only [Ev.τ, eP] at ht_lo ht_hi
+  -- m ∈ maxOnScale (· > ·) (timeTrace(eventDenotation Q))
+  -- m must be ≥ 10 (it dominates all other points, including 10 ∈ timeTrace Q)
+  have h10 : (10 : ℤ) ∈ timeTrace (eventDenotation Q) := by
+    rw [timeTrace_eventDenotation]
+    exact ⟨eQ₂, Or.inr rfl, by simp [Ev.τ, eQ₂], by simp [Ev.τ, eQ₂]⟩
+  by_cases heq : m = 10
+  · -- m = 10, t > 10, but t ≤ 5 — contradiction
+    omega
+  · -- m ≠ 10, so m > 10 (from maxOnScale), t > m > 10, but t ≤ 5
+    have := hm_dom 10 h10 (Ne.symm heq); omega
 
 end Semantics.Tense.TemporalConnectives
