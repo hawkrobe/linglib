@@ -106,6 +106,7 @@ import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.Georgian.Coordination
+import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.HindiUrdu.Particles
@@ -155,6 +156,8 @@ import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Bridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
+import Linglib.Phenomena.TemporalConnectives.AspectInteractionBridge
+import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Phenomena.TemporalConnectives.Bridge
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
@@ -433,6 +436,8 @@ import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Phenomena.TenseAspect.Bridge
 import Linglib.Phenomena.TenseAspect.ThenPresentBridge
 import Linglib.Phenomena.TemporalConnectives.Compare
+import Linglib.Phenomena.TemporalConnectives.NegationData
+import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge
 import Linglib.Phenomena.TenseAspect.Typology
 import Linglib.Phenomena.TenseAspect.AgentivityBridge
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026

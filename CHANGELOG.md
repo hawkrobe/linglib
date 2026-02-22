@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.9] - 2026-02-22
+
+### Added
+- **`Phenomena/TemporalConnectives/VeridicalityBridge.lean`**: Three-layer consistency proofs connecting Fragment `complementVeridical` fields → Theory veridicality proofs → O&ST (2024) empirical data; PrProp presupposition modeling for veridical/non-veridical connectives; B&C's three readings of *before* (veridical/counterfactual/non-committal); quantifier-force explanation of veridicality pattern
+- **`Phenomena/TemporalConnectives/AspectInteractionData.lean`**: Moens & Steedman (1988) data — 12 connective × Vendler class interaction judgments, 5 coercion network edges, `satisfiesDurativeRestriction` predicate with equivalence to `isHomogeneous`, *when*/*until*/*since*/*before*/*after* selectional restriction patterns
+- **`Phenomena/TemporalConnectives/AspectInteractionBridge.lean`**: Bridges Fragment `embeddedTelicityEffect` → VendlerClass telicity; durative selectional restriction = homogeneity; INCHOAT/COMPLET ↔ coercion network transitions; *when* compatibility predicate
+- **`Phenomena/TemporalConnectives/NegationData.lean`**: Giannakidou (2002) two-*until* data (Greek *prin*/*mexri*, English NPI/durative *until*), four diagnostic tests (mood/veridicality/aspect/NPI); Greco (2020) expletive negation data (Italian *prima che non*/*finché non*, French *avant que ne*); EN distribution (ambidirectional ↔ EN); Jin & Koenig (2021) survey (50/70 languages)
+- **`Fragments/Greek/TemporalConnectives.lean`**: *prin* (πριν, before), *mexri* (μέχρι, until), *afou* (αφού, after), *otan* (όταν, when); mood ↔ veridicality correlation; cross-linguistic agreement with English entries; `MoodType` enum with `moodSelection`
+- **`Bridge.lean`**: Scenarios 11–13 for punctual *not...until* — concrete ℕ verification of Karttunen's NOT(BEFORE) identity, presupposition satisfaction, disjunctive syllogism to *when*, presupposition failure case
+- **`blog/data/references.bib`**: 5 entries — `moens-steedman-1988`, `giannakidou-2002`, `greco-2020`, `jin-koenig-2021`; updated `beaver-condoravdi-2003` sources
+
 ## [0.226.8] - 2026-02-22
 
 ### Added
