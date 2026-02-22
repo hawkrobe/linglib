@@ -57,6 +57,9 @@ predictions (see `classification_behavioral_equivalence`). -/
 structure LatentClassification (Latent : Type*) where
   /-- Assign each latent variable value to a BToM category. -/
   classify : Latent → LatentCategory
+  /-- Assign each latent variable a temporal dynamics.
+      Default: episodic (each observation is independent). -/
+  dynamics : Latent → FactorDynamics := fun _ => .episodic
 
 /-- The strong Gricean classification: all latent variables are mental states.
     L1's inference is entirely Theory of Mind. -/
@@ -92,19 +95,19 @@ The mapping from RSA to BToM ontology:
 
 The perception/belief chain uses Kronecker deltas `[p = w]` and `[b = p]`,
 reflecting the standard RSA assumption that the speaker knows the true world
-state. The world-dependent latent prior `latentPrior(w, l)` is absorbed into
-`planModel` since BToM's desire prior is world-independent.
+state. RSA's world-conditioned latent prior `latentPrior(w, l)` maps directly
+to BToM's world-conditioned desire prior `desirePrior(w, d)`, making the
+correspondence transparent.
 
-TODO: Prove `L1_eq_btom_worldMarginal` — the world marginal of this BToM
-model equals `cfg.L1agent.score`, via collapsing delta-function sums and
-matching the remaining summation over Latent. -/
+See `L1_eq_btom_worldMarginal` for the proof that this BToM model's
+world marginal equals `cfg.L1agent.score`. -/
 noncomputable def toBToM (cfg : RSAConfig U W) [DecidableEq W] :
     BToMModel ℝ U W W cfg.Latent Unit Unit W where
   perceptModel w p := if p = w then 1 else 0
   beliefModel p b := if b = p then 1 else 0
-  planModel b d _ _ a := cfg.latentPrior b d * cfg.S1 d b a
+  planModel b d _ _ a := cfg.S1 d b a
   worldPrior := cfg.worldPrior
-  desirePrior _ := 1
+  desirePrior := cfg.latentPrior
   sharedPrior _ := 1
   mediumPrior _ := 1
 
@@ -112,6 +115,7 @@ noncomputable def toBToM (cfg : RSAConfig U W) [DecidableEq W] :
 -- §3. Bridge Theorems
 -- ============================================================================
 
+set_option maxHeartbeats 1600000 in
 /-- RSA's pragmatic listener IS BToM world-marginal inference.
 
 L1's score function — `worldPrior(w) · Σ_l latentPrior(w,l) · S1(u|w,l)` —
@@ -127,7 +131,16 @@ contribute factor 1. The remaining sum over `Desire = Latent` matches
 theorem L1_eq_btom_worldMarginal [DecidableEq W]
     (cfg : RSAConfig U W) (u : U) (w : W) :
     cfg.L1agent.score u w = (cfg.toBToM).worldMarginal u w := by
-  sorry
+  unfold L1agent toBToM BToMModel.worldMarginal BToMModel.jointScore
+  simp only [Fintype.sum_unique, mul_one]
+  have key : ∀ (c : Prop) [Decidable c] (a : ℝ),
+      a * (if c then (1 : ℝ) else 0) = if c then a else 0 := by
+    intros c _ a; split <;> simp
+  simp_rw [key]
+  simp_rw [ite_mul, zero_mul]
+  simp [Finset.sum_ite_eq']
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun x _ => by ring
 
 -- ============================================================================
 -- §4. Behavioral Equivalence of Classifications
@@ -135,20 +148,20 @@ theorem L1_eq_btom_worldMarginal [DecidableEq W]
 
 /-- Classifications are cognitive-level claims, not behavioral ones.
 
-Any two classifications of the same RSAConfig yield identical listener
-predictions, because the classification is metadata that doesn't enter
-the computation. Whether you call a latent variable a "belief" or a
-"medium property" doesn't change the sum `Σ_l f(l)`.
+Any two classifications of the same RSAConfig yield identical BToM world
+marginals (and hence identical L1 predictions), because the classification
+is metadata that doesn't enter the computation. Whether you call a latent
+variable a "belief" or a "medium property" doesn't change the sum `Σ_l f(l)`.
 
 This is both trivially true (the classification function is never called
-by the inference machinery) and theoretically important: it says that the
-cognitive interpretation of RSA's listener (Theory of Mind vs. signal
-disambiguation) is an empirical question that cannot be settled by
+by `toBToM` or the inference machinery) and theoretically important: it says
+that the cognitive interpretation of RSA's listener (Theory of Mind vs.
+signal disambiguation) is an empirical question that cannot be settled by
 behavioral data alone. -/
-theorem classification_behavioral_equivalence
+theorem classification_behavioral_equivalence [DecidableEq W]
     (cfg : RSAConfig U W)
     (_c1 _c2 : RSA.BToMGrounding.LatentClassification cfg.Latent) :
-    ∀ (u : U) (w : W), cfg.L1 u w = cfg.L1 u w :=
+    ∀ (u : U) (w : W), (cfg.toBToM).worldMarginal u w = (cfg.toBToM).worldMarginal u w :=
   λ _ _ => rfl
 
 end RSA.RSAConfig

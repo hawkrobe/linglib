@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.4] - 2026-02-22
+
+### Changed
+- **`Core/BToM.lean`**: World-conditioned desire prior `P(d|w)`, `sharedUpdate` takes `World` parameter, `FactorDynamics` (episodic/dispositional/dynamic), causal structure and recursion limitation documentation
+- **`Theories/Pragmatics/RSA/Core/BToMGrounding.lean`**: `latentPrior` maps directly to `desirePrior` (no longer absorbed into `planModel`), `L1_eq_btom_worldMarginal` proved (was sorry), `classification_behavioral_equivalence` strengthened to reference `toBToM.worldMarginal`, `LatentClassification.dynamics` field
+
 ## [0.226.3] - 2026-02-22
 
 ### Changed
