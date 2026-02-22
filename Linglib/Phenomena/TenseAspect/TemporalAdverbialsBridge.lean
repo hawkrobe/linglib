@@ -266,10 +266,8 @@ theorem homogeneous_implies_open_scale (p : AspectualProfile)
 theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
     (h : p.isHomogeneous = false) :
     scaleBoundedness p.toVendlerClass = .closed := by
-  have := (homogeneous_iff_atelic p)
   cases hc : p.toVendlerClass <;>
-    simp [scaleBoundedness, VendlerClass.telicity, Telicity.toMereoTag, MereoTag.toBoundedness]
-  all_goals (simp [hc, AspectualProfile.isHomogeneous] at h)
+    first | rfl | (simp [hc, AspectualProfile.isHomogeneous] at h)
 
 -- ════════════════════════════════════════════════════
 -- § 8. NPI Bridge: G-TIAs as NPIs Licensed by MIP
@@ -443,9 +441,8 @@ theorem eTIA_pipeline_all_predicted :
 theorem pipeline_agrees_with_boundedness :
     (∀ c : VendlerClass,
       LicensingPipeline.isLicensed c =
-      (scaleBoundedness c).isLicensed) := by
-  intro c; simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
-                  Semantics.Events.DimensionBridge.telicityToBoundedness, scaleBoundedness]
+      (scaleBoundedness c).isLicensed) :=
+  fun _ => rfl
 
 -- ════════════════════════════════════════════════════
 -- § 12. SituationBoundedness Bridge

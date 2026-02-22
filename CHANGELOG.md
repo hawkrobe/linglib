@@ -11,6 +11,9 @@
 - **`Theories/Semantics/Events/StratifiedReference.lean`**: Remove unnecessary ViewpointAspect import and open (uses `properSubinterval` from `Core/Time.lean`)
 - **`Theories/Semantics/Events/TemporalDecomposition.lean`**: Add TODO for IMPF/PRFV bridge to DecomposedEv
 - **`blog/data/references.bib`**: Update `giannakidou-2002` sources; add `rouillard-2026` and `fox-hackl-2006` entries
+- **`Theories/Semantics/Tense/MaximalInformativity.lean`**: `scaleBoundedness` `def` → `abbrev` (transparent to kernel); proofs use `show`/`rw`/`rfl` through the chain
+- **`Theories/Semantics/Events/DimensionBridge.lean`**: `telicityToBoundedness` `def` → `abbrev`
+- **`Phenomena/TenseAspect/TemporalAdverbialsBridge.lean`**: `pipeline_agrees_with_boundedness` simplified to `fun _ => rfl`; `nonhomogeneous_implies_closed_scale` simplified to `cases <;> first | rfl | simp at h`
 
 ## [0.226.11] - 2026-02-22
 

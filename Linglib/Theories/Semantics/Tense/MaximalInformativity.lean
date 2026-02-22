@@ -370,18 +370,18 @@ open Core.Scale
     VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness.
     Telic VPs → QUA → closed/bounded (max⊨ exists).
     Atelic VPs → CUM → open/unbounded (information collapse). -/
-def scaleBoundedness (v : VendlerClass) : Boundedness :=
+abbrev scaleBoundedness (v : VendlerClass) : Boundedness :=
   v.telicity.toMereoTag.toBoundedness
 
 /-- Telic VPs map to closed/bounded scales (E-TIA licensed). -/
 theorem telic_closed (c : VendlerClass) (h : c.telicity = .telic) :
     scaleBoundedness c = .closed := by
-  unfold scaleBoundedness; rw [h]; rfl
+  show c.telicity.toMereoTag.toBoundedness = .closed; rw [h]; rfl
 
 /-- Atelic VPs map to open/unbounded scales (E-TIA blocked). -/
 theorem atelic_open (c : VendlerClass) (h : c.telicity = .atelic) :
     scaleBoundedness c = .open_ := by
-  unfold scaleBoundedness; rw [h]; rfl
+  show c.telicity.toMereoTag.toBoundedness = .open_; rw [h]; rfl
 
 /-- Telic VPs are licensed: telicity → closed boundedness → `isLicensed`. -/
 theorem telic_predicts_licensing (c : VendlerClass) (h : c.telicity = .telic) :

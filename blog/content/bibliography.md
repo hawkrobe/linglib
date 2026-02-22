@@ -276,19 +276,34 @@ cited in: [Rooth1992Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 cited in: [Anscombe](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)
 
 **Beaver, D. & Condoravdi, C.** (2003). . *Proceedings of SALT, 13, 37–54*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean)\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/VeridicalityBridge.lean)\
 cited in: [BeaverCondoravdi](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean)
 
 **Deal, A. R.** (2020). A Theory of Indexical Shift: Meaning, Grammar, and Crosslinguistic Variation. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Deal.lean)
 
+**Fox, D. & Hackl, M.** (2006). The Universal Density of Measurement. *Linguistics and Philosophy, 29(5), 537–586*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Time.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/MaximalInformativity.lean)
+
+**Giannakidou, A.** (2002). . *Proceedings of SALT, 12, 84–103*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Giannakidou.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Greek/TemporalConnectives.lean)\
+cited in: [TemporalConnectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Greek/TemporalConnectives.lean), [NegationData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean), [Giannakidou](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Giannakidou.lean)
+
+**Greco, M.** (2020). On the Syntax of Surprise Negation Sentences: A Case Study on Expletive Negation. *Natural Language \& Linguistic Theory, 38(3), 775–825*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)\
+cited in: [NegationData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)
+
 **Heinämäki, O.** (1974). Semantics of English Temporal Connectives. *PhD dissertation, Indiana University*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalConnectivesBridge.lean)\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/Bridge.lean)\
 cited in: [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
+
+**Jin, Y. & Koenig, J.** (2021). A Cross-Linguistic Study of Expletive Negation. *Linguistic Typology, 25(1), 39–78*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)\
+cited in: [NegationData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)
 
 **Karttunen, L.** (1974). Until. *Papers from the Tenth Regional Meeting of the Chicago Linguistic Society, 284–297*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean)\
-cited in: [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
+cited in: [Giannakidou](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Giannakidou.lean), [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
 
 **Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(9), 1–55*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
@@ -301,6 +316,10 @@ cited in: [Kratzer](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theori
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)\
 cited in: [Anscombe](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Anscombe.lean)
 
+**Moens, M. & Steedman, M.** (1988). Temporal Ontology and Temporal Reference. *Computational Linguistics, 14(2), 15–28*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/AspectInteractionData.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/AspectInteractionBridge.lean)\
+cited in: [AspectInteractionData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/AspectInteractionData.lean)
+
 **Ogihara, T.** (1996). Tense, Attitudes, and Scope. *Kluwer Academic Publishers*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Ogihara.lean)
 
@@ -312,8 +331,11 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/Partee1973.lean)
 
 **Rett, J.** (2020). Eliminating EARLIEST. *Proceedings of Sinn und Bedeutung, 24, 201–218*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalConnectivesBridge.lean)\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/Bridge.lean)\
 cited in: [Rett](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean)
+
+**Rouillard, V.** (2026). Maximal Informativity Accounts for the Distribution of Temporal \emphin-Adverbials. *Linguistics and Philosophy, 49, 1–56*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/MaximalInformativity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalAdverbialsBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Time.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)
 
 **Tsilia, D., Zhao, Z. & Sharvit, Y.** (2026). Tense and Perspective. *Manuscript*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TsiliaEtAl2026.lean)\

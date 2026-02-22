@@ -58,7 +58,7 @@ namespace Semantics.Events.DimensionBridge
     Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness.
     This is the shared core of all four licensing frameworks:
     Kennedy (2007), Rouillard (2026), Krifka (1989), Zwarts (2005). -/
-def telicityToBoundedness (t : Telicity) : Boundedness :=
+abbrev telicityToBoundedness (t : Telicity) : Boundedness :=
   t.toMereoTag.toBoundedness
 
 theorem telic_is_closed : telicityToBoundedness .telic = .closed := rfl
